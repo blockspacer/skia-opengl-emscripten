@@ -27,10 +27,29 @@ add_executable(${PROJECT_NAME}
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 17)
 
 if(EMSCRIPTEN)
-    set(CMAKE_CXX_FLAGS "-o test.html -O3 -s EXPORT_ES6=1 --std=c++17 -s WASM=1 -s USE_SDL=2 -s FULL_ES2=1 -s ALLOW_MEMORY_GROWTH=1 -s USE_SDL_IMAGE=2 -s USE_SDL_TTF=2 -s SDL2_IMAGE_FORMATS=\"['png']\" -s EXPORTED_FUNCTIONS=\"['_main']\" -std=c++17 -s NO_EXIT_RUNTIME=1")
+    set(HTML_TEMPLATE "assets/index.html")
 
-    #set(EM_TARGET_JS ${PROJECT_NAME}.js)
-    #configure_file(shell.html index.html @ONLY)
+    #message("using template " ${HTML_TEMPLATE})
+
+    #set(TEMPLATE_OPTION "--shell-file ${HTML_TEMPLATE}")
+
+    set(CMAKE_CXX_FLAGS "--emrun -O3 -std=c++17")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s WASM=1")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s GL_UNSAFE_OPTS=0 -s GL_ASSERTIONS=1")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s ASSERTIONS=1")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s USE_SDL=2")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s FULL_ES2=1")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s ALLOW_MEMORY_GROWTH=1")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s NO_EXIT_RUNTIME=1")
+
+    set(EM_TARGET_JS ${PROJECT_NAME}.asm.js)
+    configure_file(${HTML_TEMPLATE} index.html @ONLY)
+
+  if (WASM)
+    SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES SUFFIX .html)
+  else()
+    SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES SUFFIX .asm.js)
+  endif()
 else()
   ### Find Libraries
   include(FindOpenGL)
@@ -48,7 +67,7 @@ else()
 
   include(FindGLEW)
 message(${GLEW_INCLUDE_PATH})
-  target_include_directories(${PROJECT_NAME} PRIVATE
+  target_include_directories(${PROJECT_NAME} SYSTEM INTERFACE
     ${GLEW_INCLUDE_PATH}
     ${OPENGL_INCLUDE_DIR}
     ${SDL2_INCLUDE_DIRS}

@@ -3,6 +3,7 @@
 ```
 sudo -E apt-get update
 sudo -E apt-get install git build-essential wget
+sudo -E apt-get install build-essential --reinstall
 git clone --recursive {repourl_here}
 ```
 
@@ -46,8 +47,8 @@ Used deps:
 > https://github.com/nigels-com/glew.git
 ```
 # see https://github.com/nigels-com/glew#linux-and-mac
-sudo -E apt-get install build-essential libxmu-dev libxi-dev libgl-dev
-sudo -E apt install libegl1-mesa-dev
+sudo -E apt-get install build-essential libxmu-dev libxi-dev libgl-dev --reinstall
+sudo -E apt install libegl1-mesa-dev --reinstall
 cd thirdparty/glew/
 cd auto
 make
@@ -76,5 +77,5 @@ sudo make install
 ### Compile example on Linux
 
 ```
-sh tools/build.sh
+sh tools/build_linux.sh
 ```
