@@ -4,3 +4,6 @@
 [submodule "thirdparty/glew"]
 	path = thirdparty/glew
 	url = https://github.com/nigels-com/glew.git
+[submodule "cmake/sdl2"]
+	path = cmake/sdl2
+	url = ../../aminosbh/sdl2-cmake-modules
