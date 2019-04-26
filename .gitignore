@@ -61,6 +61,5 @@ out*
 build-emscripten/
 build-linux/
 *.tmp
-*thirdparty/*
 thirdparty/SDL2/
 thirdparty/glew/

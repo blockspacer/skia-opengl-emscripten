@@ -1,0 +1,6 @@
+[submodule "thirdparty/SDL2"]
+	path = thirdparty/SDL2
+	url = https://github.com/spurious/SDL-mirror.git
+[submodule "thirdparty/glew"]
+	path = thirdparty/glew
+	url = https://github.com/nigels-com/glew.git
