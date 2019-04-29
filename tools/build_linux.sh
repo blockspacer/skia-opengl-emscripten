@@ -2,7 +2,10 @@ mkdir build-linux
 
 cd build-linux
 
-cmake ..
+CC="/usr/bin/clang-6.0" CXX="/usr/bin/clang++-6.0" \
+  cmake .. -DCMAKE_C_COMPILER="/usr/bin/clang-6.0" \
+  -DCMAKE_CXX_COMPILER="/usr/bin/clang++-6.0" \
+  -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 
-# For windows make command use http://www.mingw.org/wiki/mingw !!!You must add C:\MinGW\bin; to your user PATH environment variable manually!!!
-cmake --build .
+CC="/usr/bin/clang-6.0" CXX="/usr/bin/clang++-6.0" \
+  cmake --build . --clean-first --parallel 8
