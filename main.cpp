@@ -1,5 +1,9 @@
 // based on https://github.com/blockspacer/minos/blob/master/hello_world.cc
 
+// see MakeFromBackendRenderTarget https://github.com/google/skia/blob/master/src/image/SkSurface_Gpu.cpp
+
+// see https://github.com/google/skia/blob/81abc43e6f0b1a789e1bf116820c8ede68d778ab/example/SkiaSDLExample.cpp
+
 #ifdef __EMSCRIPTEN__
 //#include <SDL.h>
 //#include <SDL_opengles2.h>
@@ -7,7 +11,7 @@
 #include <SDL2/SDL_opengles2.h>
 //#include <SDL2/SDL_thread.h>
 //#include <SDL2/SDL_syswm.h>
-//#include <SDL2/SDL_video.h>
+#include <SDL2/SDL_video.h>
 #include <emscripten.h>
 #include <emscripten/html5.h>
 //#include "SDL_opengles2.h"
@@ -16,6 +20,9 @@
 // TODO
 //#define GL_RGBA8 0x8058
 #include <GL/gl.h>
+#include <GLES2/gl2.h>
+#include <EGL/egl.h>
+//#include <OpenGL/gl.h>
 #else
 #include "SDL2/SDL.h"
 #include <GL/glew.h>
@@ -39,6 +46,17 @@
 #include <SkStream.h>
 #include <SkSurface.h>
 #include <SkTypeface.h>
+
+#include "GrContext.h"
+
+#include "GrTypes.h"
+#include "GrTypesPriv.h"
+#include "SkRefCnt.h"
+
+#include "GrContextPriv.h"
+#include "GrGpu.h"
+//#include "src/gpu/GrDirectContext.h"
+#include "src/gpu/gl/GrGLGpu.h"
 
 #include "GrAHardwareBufferUtils.h"
 #include "GrBackendSurface.h"
@@ -90,62 +108,14 @@
 #include <vector>
 
 static const int kStencilBits = 8;  // Skia needs 8 stencil bits
-static const int kMsaaSampleCount = 4;
+static const int kMsaaSampleCount = 0;//4;
 
-GrContext* sContext = nullptr;
-sk_sp<SkSurface> sSurface = nullptr;
-
-static void
-init_skia(int w, int h)
-{
-  GrContextOptions options;
-  // options.fRequireDecodeDisableForSRGB = false;
-  // options.fDisableGpuYUVConversion = false;
-  sContext = GrContext::MakeGL(nullptr, options).release();
-
-  GrGLFramebufferInfo framebufferInfo;
-  framebufferInfo.fFBOID = 0; // assume default framebuffer
-  // We are always using OpenGL and we use RGBA8 internal format for both RGBA
-  // and BGRA configs in OpenGL.
-  //(replace line below with this one to enable correct color spaces)
-  //framebufferInfo.fFormat = GL_SRGB8_ALPHA8;
-  framebufferInfo.fFormat = GL_RGBA8;
-
-  SkColorType colorType;
-  if (kRGBA_8888_GrPixelConfig == kSkia8888_GrPixelConfig) {
-    colorType = kRGBA_8888_SkColorType;
-  } else {
-    colorType = kBGRA_8888_SkColorType;
-  }
-  GrBackendRenderTarget backendRenderTarget(w,
-                                            h,
-                                            0, // sample count
-                                            0, // stencil bits
-                                            framebufferInfo);
-
-  //(replace line below with this one to enable correct color spaces) sSurface =
-  //SkSurface::MakeFromBackendRenderTarget(sContext, backendRenderTarget,
-  //kBottomLeft_GrSurfaceOrigin, colorType, SkColorSpace::MakeSRGB(),
-  //nullptr).release();
-  sSurface = SkSurface::MakeFromBackendRenderTarget(sContext,
-                                                    backendRenderTarget,
-                                                    kBottomLeft_GrSurfaceOrigin,
-                                                    colorType,
-                                                    nullptr,
-                                                    nullptr);
-  if (sSurface == nullptr) {
-    printf("Error while creating SkSurface\n");
-    abort();
-  }
-}
-
-static void
-cleanup_skia()
-{
-  //delete sSurface;
-  delete sSurface.release();
-  delete sContext;
-}
+//static sk_sp<GrContext> sContext = nullptr;
+static GrContext* sContext = nullptr;
+//static sk_sp<SkSurface> sSurface = nullptr;
+static SkSurface* sSurface = nullptr;
+//static sk_sp<const GrGLInterface> sInterface = nullptr;
+//static const GrGLInterface* sInterface = nullptr;
 
 /*        SkCanvas *canvas = nullptr;
         SkCanvas *cacheCanvas = nullptr;
@@ -185,6 +155,143 @@ static SDL_Event e;
     1.0f, -1.0f, 1.0f, 1.0f,
     -1.0f, -1.0f, 0.0f, 1.0f
 };*/
+
+// see https://github.com/flutter/engine/blob/master/shell/gpu/gpu_surface_gl.cc#L125
+static void
+init_skia(int w, int h)
+{
+#ifdef __EMSCRIPTEN__
+  sContext = GrContext::MakeGL(nullptr).release();
+#else
+  auto sInterface = GrGLMakeNativeInterface(); //sk_sp<const GrGLInterface>(GrGLCreateNativeInterface());
+  if (sInterface == nullptr) {
+    printf("Error while creating GrGLInterface\n");
+    abort();
+  }
+  // Validates that the GrGLInterface supports its advertised standard. This means the necessary
+  // function pointers have been initialized for both the GL version and any advertised
+  // extensions.
+  if (!sInterface->validate()) {
+    printf("Error while validating GrGLInterface\n");
+    abort();
+  }
+
+  GrGLint bufferID;
+  GR_GL_GetIntegerv(sInterface.get(), GR_GL_FRAMEBUFFER_BINDING, &bufferID);
+
+  GrContextOptions options;
+  //options.fDisableDistanceFieldPaths = true;
+  //options.fDisableCoverageCountingPaths = true;
+  //options.fRequireDecodeDisableForSRGB = false;
+  //options.fDisableGpuYUVConversion = false;
+  //sContext = GrContext::Create(kOpenGL_GrBackend, (GrBackendContext)fInterface);
+  sContext = GrContext::MakeGL(std::move(sInterface), options).release();
+#endif
+
+  //using GrBackend::kOpenGL_GrBackend;
+  /*{
+    sk_sp<GrContext> context(new GrDirectContext(kOpenGL_GrBackend));
+
+    context->fGpu = GrGLGpu::Make(std::move(sInterface), options, context.get());
+    if (!context->fGpu) {
+        return nullptr;
+    }
+
+    context->fCaps = context->fGpu->refCaps();
+    if (!context->init(options)) {
+        return nullptr;
+    }
+  }*/
+
+  //sContext = GrContext::MakeGL(sInterface).release();
+  if (sContext == nullptr) {
+    printf("Error while creating GrContext\n");
+    abort();
+  }
+  //sContext = GrContext::MakeGL(kOpenGL_GrBackend, (GrBackendContext)interface.get());
+  SkASSERT(sContext);
+  //assert(sContext != nullptr);
+
+  GrGLFramebufferInfo framebufferInfo;
+#ifdef __EMSCRIPTEN__
+  framebufferInfo.fFBOID = 0; // assume default framebuffer
+#else
+  framebufferInfo.fFBOID = static_cast<GrGLuint>(bufferID);
+#endif
+  // We are always using OpenGL and we use RGBA8 internal format for both RGBA
+  // and BGRA configs in OpenGL.
+  //(replace line below with this one to enable correct color spaces)
+  //framebufferInfo.fFormat = GL_SRGB8_ALPHA8;
+  //framebufferInfo.fFormat = GL_RGBA8;
+
+  uint32_t windowFormat = SDL_GetWindowPixelFormat(window);
+  int contextType;
+  SDL_GL_GetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, &contextType);
+  SkColorType colorType;
+
+  if (SDL_PIXELFORMAT_RGBA8888 == windowFormat) {
+      framebufferInfo.fFormat = GR_GL_RGBA8;
+      colorType = kRGBA_8888_SkColorType;
+  } else {
+      colorType = kBGRA_8888_SkColorType;
+      if (SDL_GL_CONTEXT_PROFILE_ES == contextType) {
+          framebufferInfo.fFormat = GR_GL_BGRA8;
+      } else {
+          // We assume the internal format is RGBA8 on desktop GL
+          framebufferInfo.fFormat = GR_GL_RGBA8;
+      }
+  }
+
+    const SkImageInfo info = SkImageInfo::MakeN32(800, 600, kPremul_SkAlphaType);
+    sSurface = SkSurface::MakeRenderTarget(sContext, SkBudgeted::kNo, info, 0,
+                                                               kTopLeft_GrSurfaceOrigin,
+                                                               nullptr, false).release();
+    printf("gpuSurface %p\n", sSurface);
+    if (!sSurface) {
+        printf("failed to create gpu surface.");
+    }
+
+  /*GrBackendRenderTarget backendRenderTarget(w,
+                                            h,
+                                            kMsaaSampleCount, // sample count
+                                            kStencilBits, // stencil bits
+                                            framebufferInfo);
+
+  //(replace line below with this one to enable correct color spaces) sSurface =
+  //SkSurface::MakeFromBackendRenderTarget(sContext, backendRenderTarget,
+  //kBottomLeft_GrSurfaceOrigin, colorType, SkColorSpace::MakeSRGB(),
+  //nullptr).release();
+
+  // setup SkSurface
+  // To use distance field text, use commented out SkSurfaceProps instead
+  // SkSurfaceProps props(SkSurfaceProps::kUseDeviceIndependentFonts_Flag,
+  //                      SkSurfaceProps::kLegacyFontHost_InitType);
+  SkSurfaceProps props(SkSurfaceProps::kLegacyFontHost_InitType);
+
+  sSurface = SkSurface::MakeFromBackendRenderTarget((GrContext*)sContext,
+                                                    backendRenderTarget,
+                                                    kBottomLeft_GrSurfaceOrigin,
+                                                    colorType,
+                                                    nullptr,
+                                                    //&props);
+                                                    nullptr).release();
+  if (sSurface == nullptr) {
+    printf("Error while creating SkSurface\n");
+    abort();
+  }*/
+
+  //SkCanvas* canvas = sSurface->getCanvas();
+  //canvas->scale((float)dw/dm.w, (float)dh/dm.h);
+}
+
+static void
+cleanup_skia()
+{
+  delete sSurface;
+  //delete sSurface.release();
+  delete sContext;
+  //delete sContext.release();
+}
 
 static sk_sp<SkSurface>
 MakeSurface(int width, int height)
@@ -422,15 +529,17 @@ Draw()
 
   glDrawArrays(GL_TRIANGLES, 0, 3);
 
-  // Draw to the surface via its SkCanvas.
-  // We don't manage this pointer's lifetime.
-  SkCanvas* canvas = sSurface->getCanvas();
+  {
+    // Draw to the surface via its SkCanvas.
+    // We don't manage this pointer's lifetime.
+    SkCanvas* canvas = sSurface->getCanvas();
 
-  canvas->clear(SK_ColorWHITE);
+    canvas->clear(SK_ColorWHITE);
 
-  myView->onDraw(canvas);
+    myView->onDraw(canvas);
 
-  sContext->flush();
+    sContext->flush();
+  }
 }
 
 void
@@ -458,7 +567,29 @@ mainLoop()
 int
 main(int argc, char** argv)
 {
-  if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0) {
+#ifdef __EMSCRIPTEN__
+  //SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
+  //SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
+  //SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
+
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+#else
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+#endif
+  SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
+  SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
+  SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
+  SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+  SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 0);
+  SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, kStencilBits);
+
+  SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
+
+  if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_EVENTS) != 0) {
     printf("Unable to initialize SDL: %s\n", SDL_GetError());
     return 1;
   }
@@ -466,6 +597,9 @@ main(int argc, char** argv)
   if (!SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1")) {
     printf("Warning: Linear texture filtering not enabled!");
   }
+
+  //SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
+  //SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, kMsaaSampleCount);
 
   window = SDL_CreateWindow("sdl_gl_read",
                             SDL_WINDOWPOS_UNDEFINED,
@@ -480,40 +614,62 @@ main(int argc, char** argv)
   }
 
 #ifdef __EMSCRIPTEN__
-  SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
-  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
-  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
+    EmscriptenWebGLContextAttributes attr;
+    emscripten_webgl_init_context_attributes(&attr);
+    attr.alpha = 1;
+    attr.depth = attr.stencil = attr.antialias = attr.preserveDrawingBuffer = attr.preferLowPowerToHighPerformance = attr.failIfMajorPerformanceCaveat = 0;
+    attr.enableExtensionsByDefault = 1;
+    //attr.premultipliedAlpha = 0;
+    //attr.majorVersion = 1;
+    //attr.minorVersion = 0;
+    EMSCRIPTEN_WEBGL_CONTEXT_HANDLE ctx = emscripten_webgl_create_context(0, &attr);
+    printf("create webgl context %d\n", ctx);
+    if (ctx < 0) {
+        printf("failed to create webgl context %d\n", ctx);
+    }
+    EMSCRIPTEN_RESULT r = emscripten_webgl_make_context_current(ctx);
+    printf("make webgl current %d\n", r);
+    if (r < 0) {
+        printf("failed to make webgl current %d\n", r);
+    }
 #else
-  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
-  SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-#endif
-  SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
-  SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
-  SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
-  SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-  SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 0);
-  SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, kStencilBits);
-  SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
-  SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
-  SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, kMsaaSampleCount);
 
   glContext = SDL_GL_CreateContext(window);
-  SDL_GL_MakeCurrent(window, glContext);
+  if (!glContext) {
+      printf("Error while SDL_GL_CreateContext %s\n", SDL_GetError());
+      SDL_ClearError();
+      return 0;
+  }
 
-#ifndef __EMSCRIPTEN__
   // Initialize GLEW
   glewExperimental = GL_TRUE;
   GLenum glewError = glewInit();
   if (glewError != GLEW_OK) {
     printf("Error initializing GLEW! %s\n", glewGetErrorString(glewError));
   }
+
+  int success =  SDL_GL_MakeCurrent(window, glContext);
+  if (success != 0) {
+      printf("Error while SDL_GL_MakeCurrent %s\n", SDL_GetError());
+      SDL_ClearError();
+      return success;
+  }
 #endif
+
+  glDisable(GL_DEPTH_TEST);
+  glViewport(0, 0, (int) width, (int) height);
+  glClearColor(1, 1, 1, 1);
+  glClearStencil(0);
+  glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
   // Use Vsync
   if (SDL_GL_SetSwapInterval(1) < 0) {
     printf("Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError());
   }
+
+  printf("Initializing subsystems...\n");
+
+  Init();
 
   printf("Initializing skia...\n");
 
@@ -522,10 +678,6 @@ main(int argc, char** argv)
   printf("Initializing skia view...\n");
 
   myView = new SkPainter(SK_ColorRED, 200);
-
-  printf("Initializing subsystems...\n");
-
-  Init();
 
 #ifdef __EMSCRIPTEN__
   printf("running with __EMSCRIPTEN__\n");
@@ -541,8 +693,12 @@ main(int argc, char** argv)
 
   cleanup_skia();
 
+  if (glContext) {
+    SDL_GL_DeleteContext(glContext);
+  }
+
   SDL_DestroyWindow(window);
-  window = NULL;
+  window = nullptr;
 
   // Quit SDL subsystems
   SDL_Quit();

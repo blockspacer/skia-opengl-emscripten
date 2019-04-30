@@ -110,6 +110,7 @@ cd harfbuzz
 ./configure
 make && sudo make install
 # see https://github.com/google/skia/blob/master/site/user/build.md
+# see https://github.com/google/skia/blob/master/modules/pathkit/README.md
 ls ${PWD}/thirdparty/depot_tools
 export PATH="${PWD}/thirdparty/depot_tools:${PATH}"
 cd thirdparty/skia

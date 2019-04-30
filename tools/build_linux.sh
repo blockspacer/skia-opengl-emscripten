@@ -8,4 +8,4 @@ CC="/usr/bin/clang-6.0" CXX="/usr/bin/clang++-6.0" \
   -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 
 CC="/usr/bin/clang-6.0" CXX="/usr/bin/clang++-6.0" \
-  cmake --build . --clean-first --parallel 8
+  cmake --build . --clean-first -- -j 8
