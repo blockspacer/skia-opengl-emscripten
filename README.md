@@ -81,6 +81,17 @@ sudo make install
 # NOTE You can even specify a custom path to find the SDL2, SDL2_net, ...
 # see https://stackoverflow.com/a/55075667
 ```
+> https://github.com/davidsiaw/SDL2_ttf
+```
+# see https://www.libsdl.org/projects/SDL_ttf/
+# see https://www.libsdl.org/projects/SDL_ttf/docs/SDL_ttf_2.html
+sudo apt-get install automake build-essential xorg-dev libudev-dev libts-dev libgl1-mesa-dev libglu1-mesa-dev libasound2-dev libpulse-dev libopenal-dev libogg-dev libvorbis-dev libaudiofile-dev libpng-dev libfreetype6-dev libusb-dev libdbus-1-dev zlib1g-dev libdirectfb-dev
+sh autogen.sh
+chmod +x configure
+./configure
+make
+sudo make install
+```
 > https://github.com/aminosbh/sdl2-cmake-modules
 ```
 # see https://stackoverflow.com/a/55075667

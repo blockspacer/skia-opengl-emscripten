@@ -1,8 +1,18 @@
+// TODO https://github.com/blockspacer/sk_glft
+
 // based on https://github.com/blockspacer/minos/blob/master/hello_world.cc
 
 // see MakeFromBackendRenderTarget https://github.com/google/skia/blob/master/src/image/SkSurface_Gpu.cpp
 
 // see https://github.com/google/skia/blob/81abc43e6f0b1a789e1bf116820c8ede68d778ab/example/SkiaSDLExample.cpp
+
+// see https://github.com/marcj/Pesto
+
+// see https://github.com/donghaoren/Allofw/blob/master/liballofw/src/graphics_skia.cpp
+
+// see https://github.com/lijianegret/SkiaInGL/tree/f9ee0f81ab46243cfc331ac74b47c272969422f4/SkiaInGL/gl
+
+// see https://github.com/google/skia/blob/master/example/SkiaSDLExample.cpp
 
 #ifdef __EMSCRIPTEN__
 //#include <SDL.h>
@@ -23,12 +33,17 @@
 #include <GLES2/gl2.h>
 #include <EGL/egl.h>
 //#include <OpenGL/gl.h>
+//#include <SDL/SDL_ttf.h>
+//#include <SDL2/SDL_image.h>
 #else
 #include "SDL2/SDL.h"
 #include <GL/glew.h>
 #include <SDL_opengl.h>
 #include <SDL_opengl_glext.h>
 #endif
+
+// see https://lyceum-allotments.github.io/2016/06/emscripten-and-sdl-2-tutorial-part-1/
+#include <SDL2/SDL_ttf.h>
 
 #include <SkCanvas.h>
 #include <SkColorFilter.h>
@@ -46,6 +61,7 @@
 #include <SkStream.h>
 #include <SkSurface.h>
 #include <SkTypeface.h>
+#include <SkFont.h>
 
 #include "SkBitmap.h"
 #include "SkPixelRef.h"
@@ -120,33 +136,11 @@
 #include <vector>
 
 static const int kStencilBits = 8;  // Skia needs 8 stencil bits
-static const int kMsaaSampleCount = 0;//4;
-
-//static sk_sp<GrContext> sContext = nullptr;
-static GrContext* sContext = nullptr;
-//static sk_sp<SkSurface> sSurface = nullptr;
-static SkSurface* sSurface = nullptr;
-
-static sk_sp<SkSurface> rasterSurface;
+static const int kMsaaSampleCount = 4;
+static TTF_Font* ttfFont = nullptr;
+static sk_sp<SkSurface> sRasterSurface;
 
 static GLuint skia_texture = 0;
-
-//static sk_sp<const GrGLInterface> sInterface = nullptr;
-//static const GrGLInterface* sInterface = nullptr;
-
-/*        SkCanvas *canvas = nullptr;
-        SkCanvas *cacheCanvas = nullptr;
-        sk_sp<SkImage> cacheImage;
-
-        sk_sp<SkSurface> surface;
-        sk_sp<SkSurface> cacheSurface;
-
-static SkCanvas* hardwareCanvas = nullptr;
-static sk_sp<const GrGLInterface> interface;
-
-        sk_sp<GrContext> grContext;*/
-
-// static GLuint programObject;
 
 // must be POT
 static int width = 512;
@@ -166,6 +160,12 @@ static GLuint vertexPosObject;
 // Event handler
 static SDL_Event e;
 
+class SkPainter;
+
+static SkPainter* myView = nullptr;
+
+static GLuint programObject;
+
 static GLfloat const kVertexData[] = {
     1.0f, 1.0f, 1.0f, 0.0f,
     -1.0f, 1.0f, 0.0f, 0.0f,
@@ -177,224 +177,19 @@ static GLfloat const kVertexData[] = {
 static void
 init_skia(int w, int h)
 {
-#ifdef __EMSCRIPTEN__
-  sContext = GrContext::MakeGL(nullptr).release();
-#else
-  auto sInterface = GrGLMakeNativeInterface(); //sk_sp<const GrGLInterface>(GrGLCreateNativeInterface());
-  if (sInterface == nullptr) {
-    printf("Error while creating GrGLInterface\n");
-    abort();
+  const SkImageInfo info = SkImageInfo::MakeN32(width, height, kPremul_SkAlphaType);
+  sRasterSurface = SkSurface::MakeRaster(info);
+  if (!sRasterSurface) {
+      printf("failed to create raster surface\n");
   }
-  // Validates that the GrGLInterface supports its advertised standard. This means the necessary
-  // function pointers have been initialized for both the GL version and any advertised
-  // extensions.
-  if (!sInterface->validate()) {
-    printf("Error while validating GrGLInterface\n");
-    abort();
-  }
-
-  GrGLint bufferID;
-  GR_GL_GetIntegerv(sInterface.get(), GR_GL_FRAMEBUFFER_BINDING, &bufferID);
-
-  GrContextOptions options;
-  //options.fDisableDistanceFieldPaths = true;
-  //options.fDisableCoverageCountingPaths = true;
-  //options.fRequireDecodeDisableForSRGB = false;
-  //options.fDisableGpuYUVConversion = false;
-  //sContext = GrContext::Create(kOpenGL_GrBackend, (GrBackendContext)fInterface);
-  sContext = GrContext::MakeGL(std::move(sInterface), options).release();
-#endif
-
-  //using GrBackend::kOpenGL_GrBackend;
-  /*{
-    sk_sp<GrContext> context(new GrDirectContext(kOpenGL_GrBackend));
-
-    context->fGpu = GrGLGpu::Make(std::move(sInterface), options, context.get());
-    if (!context->fGpu) {
-        return nullptr;
-    }
-
-    context->fCaps = context->fGpu->refCaps();
-    if (!context->init(options)) {
-        return nullptr;
-    }
-  }*/
-
-  //sContext = GrContext::MakeGL(sInterface).release();
-  if (sContext == nullptr) {
-    printf("Error while creating GrContext\n");
-    abort();
-  }
-  //sContext = GrContext::MakeGL(kOpenGL_GrBackend, (GrBackendContext)interface.get());
-  SkASSERT(sContext);
-  //assert(sContext != nullptr);
-
-  GrGLFramebufferInfo framebufferInfo;
-#ifdef __EMSCRIPTEN__
-  framebufferInfo.fFBOID = 0; // assume default framebuffer
-#else
-  framebufferInfo.fFBOID = static_cast<GrGLuint>(bufferID);
-#endif
-  // We are always using OpenGL and we use RGBA8 internal format for both RGBA
-  // and BGRA configs in OpenGL.
-  //(replace line below with this one to enable correct color spaces)
-  //framebufferInfo.fFormat = GL_SRGB8_ALPHA8;
-  //framebufferInfo.fFormat = GL_RGBA8;
-
-  uint32_t windowFormat = SDL_GetWindowPixelFormat(window);
-  int contextType;
-  SDL_GL_GetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, &contextType);
-  SkColorType colorType;
-
-  if (SDL_PIXELFORMAT_RGBA8888 == windowFormat) {
-      framebufferInfo.fFormat = GR_GL_RGBA8;
-      colorType = kRGBA_8888_SkColorType;
-  } else {
-      colorType = kBGRA_8888_SkColorType;
-      if (SDL_GL_CONTEXT_PROFILE_ES == contextType) {
-          framebufferInfo.fFormat = GR_GL_BGRA8;
-      } else {
-          // We assume the internal format is RGBA8 on desktop GL
-          framebufferInfo.fFormat = GR_GL_RGBA8;
-      }
-  }
-
-    const SkImageInfo info = SkImageInfo::MakeN32(width, height, kPremul_SkAlphaType);
-    sSurface = SkSurface::MakeRenderTarget(sContext, SkBudgeted::kNo, info, 0,
-                                                               kTopLeft_GrSurfaceOrigin,
-                                                               nullptr, false).release();
-    printf("gpuSurface %p\n", sSurface);
-    if (!sSurface) {
-        printf("failed to create gpu surface.");
-    }
-
-    //rasterSurface = SkSurface::MakeRasterN32Premul(width, height);
-    SkImageInfo image_info = SkImageInfo::Make(
-      width, height, kN32_SkColorType, kPremul_SkAlphaType);
-    /*SkImageInfo image_info = SkImageInfo::MakeN32(
-      width, height,
-      kPremul_SkAlphaType, SkColorSpace::MakeSRGB());*/
-      //SkImageInfo::MakeN32(width, height, SkAlphaType::kOpaque_SkAlphaType)
-    rasterSurface = SkSurface::MakeRaster(info);
-    if (!rasterSurface) {
-        printf("failed to create raster surface.");
-    }
-
-  /*GrBackendRenderTarget backendRenderTarget(w,
-                                            h,
-                                            kMsaaSampleCount, // sample count
-                                            kStencilBits, // stencil bits
-                                            framebufferInfo);
-
-  //(replace line below with this one to enable correct color spaces) sSurface =
-  //SkSurface::MakeFromBackendRenderTarget(sContext, backendRenderTarget,
-  //kBottomLeft_GrSurfaceOrigin, colorType, SkColorSpace::MakeSRGB(),
-  //nullptr).release();
-
-  // setup SkSurface
-  // To use distance field text, use commented out SkSurfaceProps instead
-  // SkSurfaceProps props(SkSurfaceProps::kUseDeviceIndependentFonts_Flag,
-  //                      SkSurfaceProps::kLegacyFontHost_InitType);
-  SkSurfaceProps props(SkSurfaceProps::kLegacyFontHost_InitType);
-
-  sSurface = SkSurface::MakeFromBackendRenderTarget((GrContext*)sContext,
-                                                    backendRenderTarget,
-                                                    kBottomLeft_GrSurfaceOrigin,
-                                                    colorType,
-                                                    nullptr,
-                                                    //&props);
-                                                    nullptr).release();
-  if (sSurface == nullptr) {
-    printf("Error while creating SkSurface\n");
-    abort();
-  }*/
-
-  //SkCanvas* canvas = sSurface->getCanvas();
-  //canvas->scale((float)dw/dm.w, (float)dh/dm.h);
 }
 
 static void
 cleanup_skia()
 {
-  delete sSurface;
-  //delete sSurface.release();
-  delete sContext;
-  //delete sContext.release();
+  if (sRasterSurface.get())
+    delete sRasterSurface.release();
 }
-
-/*static sk_sp<SkSurface>
-MakeSurface(int width, int height)
-{
-  return SkSurface::MakeRasterN32Premul(width, height);
-}*/
-
-/*SkCanvas *createCanvas(int width, int height) {
-//    uint32_t windowFormat = SDL_GetWindowPixelFormat(window);
-    int contextType;
-    SDL_GL_GetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, &contextType);
-
-    // Wrap the frame buffer object attached to the screen in a Skia render
-target so Skia can
-    // render to it
-    GrGLint buffer;
-    GR_GL_GetIntegerv(interface.get(), GR_GL_FRAMEBUFFER_BINDING, &buffer);
-    GrGLFramebufferInfo info;
-    info.fFBOID = (GrGLuint) buffer;
-    SkColorType colorType;
-
-    uint32_t windowFormat = SDL_GetWindowPixelFormat(window);
-
-    //SkDebugf("%s", SDL_GetPixelFormatName(windowFormat));
-    // TODO: the windowFormat is never any of these?
-    if (SDL_PIXELFORMAT_RGBA8888 == windowFormat) {
-        info.fFormat = GR_GL_RGBA8;
-        colorType = kRGBA_8888_SkColorType;
-    } else {
-        colorType = kBGRA_8888_SkColorType;
-        if (SDL_GL_CONTEXT_PROFILE_ES == contextType) {
-            info.fFormat = GR_GL_BGRA8;
-        } else {
-            // We assume the internal format is RGBA8 on desktop GL
-            info.fFormat = GR_GL_RGBA8;
-        }
-    }
-
-    int kStencilBits = 8;  // Skia needs 8 stencil bits
-    int kMsaaSampleCount = 0; //4;
-    GrBackendRenderTarget target(width, height, kMsaaSampleCount, kStencilBits,
-info);
-
-    // setup SkSurface
-    // To use distance field text, use commented out SkSurfaceProps instead
-    // SkSurfaceProps props(SkSurfaceProps::kUseDeviceIndependentFonts_Flag,
-    //                      SkSurfaceProps::kLegacyFontHost_InitType);
-    SkSurfaceProps props(SkSurfaceProps::kLegacyFontHost_InitType);
-
-    surface = SkSurface::MakeFromBackendRenderTarget(grContext.get(), target,
-                                                     kBottomLeft_GrSurfaceOrigin,
-                                                     colorType, nullptr,
-&props);
-
-//    auto imageInfo = SkImageInfo::MakeN32Premul(width, height);
-////    surface = SkSurface::SkSurface::MakeRaster(imageInfo);
-//    surface = SkSurface::SkSurface::MakeR(grContext.get(), SkBudgeted::kNo,
-imageInfo);
-
-    hardwareCanvas = surface->getCanvas();
-    if (!hardwareCanvas) {
-        throw std::runtime_error("Could not create canvas");
-    }
-
-    hardwareCanvas->clear(0xffffffff);
-    hardwareCanvas->flush();
-
-//    cacheSurface = SkSurface::MakeRenderTarget(hardwareCanvas->getGrContext(),
-SkBudgeted::kNo,
-//                                               hardwareCanvas->imageInfo());
-//    cacheCanvas = cacheSurface->getCanvas();
-
-    return hardwareCanvas;
-}*/
 
 class SkPainter
 {
@@ -404,8 +199,6 @@ public:
   SkColor m_color = SK_ColorDKGRAY;
   SkScalar m_size = 200;
 
-  // sk_sp<SkSurface> m_surface;
-
   void onDraw(SkCanvas* canvas)
   {
     /*if (!canvas->getGrContext()) {
@@ -414,9 +207,6 @@ public:
 
     SkPaint paint;
 
-    //paint.setColor(SK_ColorYELLOW);
-    //canvas->drawPaint(paint);
-
     //paint.setAlpha(255);
     paint.setAntiAlias(true);
     paint.setColor(SK_ColorRED);
@@ -424,42 +214,40 @@ public:
 
     canvas->drawLine(m_pos.x(), m_pos.y(), m_prev.x(), m_prev.y(), paint);
 
-    paint.setColor(SK_ColorGREEN);
+    /*paint.setColor(SK_ColorGREEN);
     canvas->drawRect({ 0, 0, 50, 50 }, paint);
 
     paint.setColor(SK_ColorBLUE);
-    canvas->drawRect({ 100, 200, 300, 500 }, paint);
+    canvas->drawRect({ 100, 200, 300, 500 }, paint);*/
 
-    //paint.setTextSize(32.0f);
-    //paint.setColor(SK_ColorBLACK);
-    //paint.setStyle(SkPaint::kFill_Style);
-    //canvas->drawString("Skia Test", 20, 32, paint);
+    paint.setColor(SK_ColorBLACK);
+    paint.setStyle(SkPaint::kFill_Style);
+    SkFont font;//(nullptr, 24);//SkFont::kA8_MaskType, flags);
+    canvas->drawString("Skia Test Skia Test Skia Test", 20, 32, font, paint);
 
-    /*const SkScalar sigma = 1.65f;
-    const SkScalar xDrop = 2.0f;
-    const SkScalar yDrop = 2.0f;
-    const SkScalar x = 8.0f;
-    const SkScalar y = 52.0f;
-    const SkScalar textSize = 48.0f;
-    const uint8_t blurAlpha = 127;
-    auto blob = SkTextBlob::MakeFromString("Skia", SkFont(nullptr, textSize));
-    paint.setAntiAlias(true);
-    SkPaint blur(paint);
-    blur.setAlpha(blurAlpha);
-    blur.setMaskFilter(SkMaskFilter::MakeBlur(kNormal_SkBlurStyle, sigma, 0));
-    canvas->drawColor(SK_ColorWHITE);
-    canvas->drawTextBlob(blob.get(), x + xDrop, y + yDrop, blur);
-    canvas->drawTextBlob(blob.get(), x,         y,         paint);*/
+    /*{
+      const SkScalar sigma = 1.65f;
+      const SkScalar xDrop = 2.0f;
+      const SkScalar yDrop = 2.0f;
+      const SkScalar x = 8.0f;
+      const SkScalar y = 52.0f;
+      const SkScalar textSize = 48.0f;
+      const uint8_t blurAlpha = 127;
+      auto blob = SkTextBlob::MakeFromString("Skia!", SkFont(nullptr, textSize));
+      paint.setAntiAlias(true);
+      SkPaint blur(paint);
+      blur.setAlpha(blurAlpha);
+      blur.setMaskFilter(SkMaskFilter::MakeBlur(kNormal_SkBlurStyle, sigma, 0));
+      canvas->drawColor(SK_ColorWHITE);
+      canvas->drawTextBlob(blob.get(), x + xDrop, y + yDrop, blur);
+      canvas->drawTextBlob(blob.get(), x,         y,         paint);
+    }*/
   }
   SkPainter(SkColor color, SkScalar size)
     : m_color(color)
     , m_size(size)
   {}
 };
-
-static SkPainter* myView = nullptr;
-
-GLuint programObject;
 
 GLuint
 LoadShader(GLenum type, const char* shaderSrc)
@@ -492,7 +280,6 @@ LoadShader(GLenum type, const char* shaderSrc)
 int
 Init()
 {
-
   char vShaderStr[] =
     "attribute vec2 vPosition;                \n"
     "attribute vec2 vUV;                \n"
@@ -568,99 +355,39 @@ Init()
   return GL_TRUE;
 }
 
-
-    // A SkWStream that wrapps ByteStreams.
-    /*class ByteStreamWrapper : public SkWStream {
-    public:
-
-        ByteStreamWrapper(ByteStream* s) : stream(s) { }
-        virtual bool write(const void *buffer, size_t size) {
-            return stream->write(buffer, size) == size;
-        }
-        virtual size_t bytesWritten() const {
-            return stream->position();
-        }
-        virtual void flush() {
-            stream->flush();
-        }
-
-        ByteStream* stream;
-    };*/
-
-
 ///
 // Draw a triangle using the shader pair created in Init()
 //
 void
 Draw()
 {
-  /*GLfloat vVertices[] = { 0.0f, 0.5f, 0.0f,  -0.5f, -0.5f,
-                          0.0f, 0.5f, -0.5f, 0.0f };
-
-  // No clientside arrays, so do this in a webgl-friendly manner
-  GLuint vertexPosObject;
-  glGenBuffers(1, &vertexPosObject);
-  glBindBuffer(GL_ARRAY_BUFFER, vertexPosObject);
-  glBufferData(GL_ARRAY_BUFFER, 9 * 4, vVertices, GL_STATIC_DRAW);*/
-
   glViewport(0, 0, width, height);
   glClear(GL_COLOR_BUFFER_BIT);
 
   glUseProgram(programObject);
   glActiveTexture(GL_TEXTURE0);
 
-  /*glUseProgram(programObject);
-
-  glBindBuffer(GL_ARRAY_BUFFER, vertexPosObject);
-  glVertexAttribPointer(0, 3, GL_FLOAT, 0, 0, 0);
-  glEnableVertexAttribArray(0);
-
-  glDrawArrays(GL_TRIANGLES, 0, 3);*/
-
   {
     // Draw to the surface via its SkCanvas.
     // We don't manage this pointer's lifetime.
-    //SkCanvas* canvas = sSurface->getCanvas();
-    SkCanvas* canvas = rasterSurface->getCanvas();
+    SkCanvas* canvas = sRasterSurface->getCanvas();
 
     canvas->clear(SkColorSetARGB(255, 255, 255, 255));
 
-    /*SkPaint paint;
-    paint.setColor(SK_ColorYELLOW);
-    canvas->drawRect(SkRect::MakeXYWH(0, 0, 100, 100), paint);*/
-
     myView->onDraw(canvas);
 
-    //sContext->flush();
+    sRasterSurface->flush();
 
-    rasterSurface->flush();
-
-    // getBackendTexture
-    const sk_sp<SkImage> pImage = rasterSurface->makeImageSnapshot();
+    const sk_sp<SkImage> pImage = sRasterSurface->makeImageSnapshot();
     if (nullptr == pImage) {
       printf("can`t makeImageSnapshot\n");
     }
-
-    /*sk_sp<SkData> data = pImage->encodeToData(SkEncodedImageFormat::kPNG, 0);
-    if(!data) {
-        return;
-    }*/
 
     SkPixmap pixmap;
     if (!pImage->peekPixels(&pixmap)) {
       printf("can`t peekPixels\n");
     }
 
-    /*SkWStream wrapper;
-    if(SkEncodeImage(&wrapper, bitmap, SkEncodedImageFormat::kPNG, 80)) {
-    } else {
-        cout << bitmap.width() << ", " << bitmap.height() << ", " << bitmap.rowBytes() << endl;
-        cout << "Warning: unable to save." << endl;
-    }*/
-
-    /*pixmap.setColorSpace(SkColorSpace::MakeRGB(SkColorSpace::kSRGB_RenderTargetGamma,
-                                        SkColorSpace::kDCIP3_D65_Gamut));
-    */
     glBindTexture(GL_TEXTURE_2D, skia_texture);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
@@ -669,16 +396,8 @@ Draw()
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, pixmap.width(), pixmap.height(), 0,
                  GL_RGBA, GL_UNSIGNED_BYTE, pixmap.addr());
   }
-    /*glBindTexture(GL_TEXTURE_2D, skia_texture);
-    cairo_surface_flush(cairo_surface);
-    unsigned char *data = cairo_image_surface_get_data(cairo_surface);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
-                 cairo_image_surface_get_width(cairo_surface),
-                 cairo_image_surface_get_height(cairo_surface),
-                 0, GL_RGBA, GL_UNSIGNED_BYTE, (GLvoid*)data);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);*/
-    glUniform1i(uniformTex, 0);
+
+  glUniform1i(uniformTex, 0);
 
   glBindBuffer(GL_ARRAY_BUFFER, vertexPosObject);
   //
@@ -692,7 +411,8 @@ Draw()
 
   int w, h, fs;
 #ifdef __EMSCRIPTEN__
-  emscripten_get_canvas_size(&w, &h, &fs); // width, height, isFullscreen
+  // see https://github.com/floooh/oryol/blob/master/code/Modules/Gfx/private/emsc/emscDisplayMgr.cc#L174
+  emscripten_get_canvas_element_size("#canvas", &w, &h); //, &fs); // width, height, isFullscreen
 #else
   w = width;
   h = height;
@@ -723,12 +443,6 @@ mainLoop()
     // Render
     Draw();
 
-/*#ifdef __EMSCRIPTEN__
-    int res = emscripten_webgl_commit_frame();
-        if (res != EMSCRIPTEN_RESULT_SUCCESS)
-            std::printf("Commit %d\n", res);
-#endif*/
-
     // Update screen
     SDL_GL_SwapWindow(window);
     if (e.type == SDL_QUIT) {
@@ -742,18 +456,15 @@ int
 main(int argc, char** argv)
 {
 #ifdef __EMSCRIPTEN__
-  //SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
-  //SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
-  //SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
-
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
-  SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
 #else
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 #endif
+
   SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
   SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
   SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
@@ -772,10 +483,12 @@ main(int argc, char** argv)
     printf("Warning: Linear texture filtering not enabled!");
   }
 
-  //SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
-  //SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, kMsaaSampleCount);
+  if (kMsaaSampleCount > 0) {
+    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
+    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, kMsaaSampleCount);
+  }
 
-  window = SDL_CreateWindow("sdl_gl_read",
+  window = SDL_CreateWindow("skemgl",
                             SDL_WINDOWPOS_UNDEFINED,
                             SDL_WINDOWPOS_UNDEFINED,
                             width,
@@ -787,28 +500,6 @@ main(int argc, char** argv)
     return 1;
   }
 
-#ifdef __EMSCRIPTEN__
-    EmscriptenWebGLContextAttributes attr;
-    emscripten_webgl_init_context_attributes(&attr);
-    //attr.explicitSwapControl = EM_TRUE;
-    attr.alpha = 1;
-    attr.depth = attr.stencil = attr.antialias = attr.preserveDrawingBuffer = attr.preferLowPowerToHighPerformance = attr.failIfMajorPerformanceCaveat = 0;
-    attr.enableExtensionsByDefault = 1;
-    //attr.premultipliedAlpha = 0;
-    //attr.majorVersion = 1;
-    //attr.minorVersion = 0;
-    EMSCRIPTEN_WEBGL_CONTEXT_HANDLE ctx = emscripten_webgl_create_context(0, &attr);
-    printf("create webgl context %d\n", ctx);
-    if (ctx < 0) {
-        printf("failed to create webgl context %d\n", ctx);
-    }
-    EMSCRIPTEN_RESULT r = emscripten_webgl_make_context_current(ctx);
-    printf("make webgl current %d\n", r);
-    if (r < 0) {
-        printf("failed to make webgl current %d\n", r);
-    }
-#else
-
   glContext = SDL_GL_CreateContext(window);
   if (!glContext) {
       printf("Error while SDL_GL_CreateContext %s\n", SDL_GetError());
@@ -816,12 +507,14 @@ main(int argc, char** argv)
       return 0;
   }
 
+#ifndef __EMSCRIPTEN__
   // Initialize GLEW
   glewExperimental = GL_TRUE;
   GLenum glewError = glewInit();
   if (glewError != GLEW_OK) {
     printf("Error initializing GLEW! %s\n", glewGetErrorString(glewError));
   }
+#endif
 
   int success =  SDL_GL_MakeCurrent(window, glContext);
   if (success != 0) {
@@ -829,7 +522,6 @@ main(int argc, char** argv)
       SDL_ClearError();
       return success;
   }
-#endif
 
   glDisable(GL_DEPTH_TEST);
   glViewport(0, 0, (int) width, (int) height);
@@ -840,6 +532,24 @@ main(int argc, char** argv)
   // Use Vsync
   if (SDL_GL_SetSwapInterval(1) < 0) {
     printf("Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError());
+  }
+
+  /*// Initialize PNG loading
+  int imgFlags = IMG_INIT_PNG;
+  if (!(IMG_Init(imgFlags) & imgFlags)) {
+    printf("SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError());
+  }*/
+
+  printf("Initializing fonts...\n");
+
+  // Initialize SDL_ttf
+  if (TTF_Init() == -1) {
+    printf("SDL_ttf could not initialize! SDL_ttf Error: %s\n", TTF_GetError());
+  }
+
+  ttfFont = TTF_OpenFont("./resources/FreeSans.ttf", 30);
+  if (ttfFont == nullptr) {
+    printf("Failed to load lazy font! SDL_ttf Error: %s\n", TTF_GetError());
   }
 
   printf("Initializing subsystems...\n");
@@ -868,7 +578,6 @@ main(int argc, char** argv)
 
   cleanup_skia();
 
-
   glDeleteTextures(1, &skia_texture);
   glDeleteBuffers(1, &vertexPosObject);
 
@@ -876,10 +585,16 @@ main(int argc, char** argv)
     SDL_GL_DeleteContext(glContext);
   }
 
+  if (ttfFont) {
+    TTF_CloseFont(ttfFont);
+    ttfFont = nullptr;
+  }
+
   SDL_DestroyWindow(window);
   window = nullptr;
 
   // Quit SDL subsystems
+  TTF_Quit();
   SDL_Quit();
   return 0;
 }

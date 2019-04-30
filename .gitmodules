@@ -13,3 +13,6 @@
 [submodule "thirdparty/depot_tools"]
 	path = thirdparty/depot_tools
 	url = https://chromium.googlesource.com/chromium/tools/depot_tools.git
+[submodule "thirdparty/SDL2_ttf"]
+	path = thirdparty/SDL2_ttf
+	url = https://github.com/davidsiaw/SDL2_ttf

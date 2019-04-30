@@ -27,30 +27,33 @@ if(EMSCRIPTEN)
   set(EMCC_COMMON "${EMCC_COMMON} -s USE_FREETYPE=1")
   set(EMCC_COMMON "${EMCC_COMMON} -s USE_LIBPNG=1")
   set(EMCC_COMMON "${EMCC_COMMON} -s USE_PTHREADS=0")
-  set(EMCC_COMMON "${EMCC_COMMON} -s USE_FREETYPE=1")
   set(EMCC_COMMON "${EMCC_COMMON} -s USE_ZLIB=1")
-  #set(EMCC_COMMON "${EMCC_COMMON} -s USE_HARFBUZZ=1")
+  #set(EMCC_COMMON "${EMCC_COMMON} -s USE_HARFBUZZ=1") # < TODO
   set(EMCC_COMMON "${EMCC_COMMON} -s USE_ICU=1")
   set(EMCC_COMMON "${EMCC_COMMON} -s USE_LIBPNG=1")
   set(EMCC_COMMON "${EMCC_COMMON} -s USE_SDL=2")
   set(EMCC_COMMON "${EMCC_COMMON} -s USE_SDL_IMAGE=2")
-  #set(EMCC_COMMON "${EMCC_COMMON} -s USE_WEBGL2=2")
+  set(EMCC_COMMON "${EMCC_COMMON} -s USE_SDL_TTF=2")
+  set(EMCC_COMMON "${EMCC_COMMON} -s USE_WEBGL2=2")
   # set(EMCC_COMMON "${EMCC_COMMON} -s FULL_ES2=1")
-  #set(EMCC_COMMON "${EMCC_COMMON} -s FULL_ES3=1")
+  set(EMCC_COMMON "${EMCC_COMMON} -s FULL_ES3=1")
   set(EMCC_COMMON "${EMCC_COMMON} -frtti")
   set(EMCC_COMMON "${EMCC_COMMON} -DSK_RELEASE")
+  set(EMCC_COMMON "${EMCC_COMMON} -DSK_ASSUME_WEBGL=1")
+  #set(EMCC_COMMON "${EMCC_COMMON} -DSK_ASSUME_GL_ES=1")
+  #set(EMCC_COMMON "${EMCC_COMMON} -DSK_ASSUME_GL=1")
   set(EMCC_COMMON "${EMCC_COMMON} -DIS_WEBGL=1")
   set(EMCC_COMMON "${EMCC_COMMON} -DSKOTTIE_HACK")
   # https://github.com/qinjidong/qt5.13/blob/master/src/qtwebengine/src/3rdparty/chromium/third_party/skia/experimental/canvaskit/compile.sh
   set(EMCC_COMMON "${EMCC_COMMON} -DSKNX_NO_SIMD")
-  #set(EMCC_COMMON "${EMCC_COMMON} -DWEB_ASSEMBLY=1")
-  #set(EMCC_COMMON "${EMCC_COMMON} -DSK_BUILD_FOR_PATHKIT=1")
+  set(EMCC_COMMON "${EMCC_COMMON} -DWEB_ASSEMBLY=1")
+  set(EMCC_COMMON "${EMCC_COMMON} -DSK_BUILD_FOR_PATHKIT=1")
   set(EMCC_COMMON "${EMCC_COMMON} -DSK_SUPPORT_OPENCL=0")
   set(EMCC_COMMON "${EMCC_COMMON} -DSK_SAMPLES_FOR_X=1") # always set for linux, even if there's no X used
   set(EMCC_COMMON "${EMCC_COMMON} -DSK_SUPPORT_GPU=1") # skia_enable_gpu
   set(EMCC_COMMON "${EMCC_COMMON} -DSK_SUPPORT_GPU") # skia_enable_gpu
   set(EMCC_COMMON "${EMCC_COMMON} -DSK_HAS_PNG_LIBRARY=1") # skia_use_libpng
-  #set(EMCC_COMMON "${EMCC_COMMON} -DSK_DISABLE_READBUFFER=1")
+  set(EMCC_COMMON "${EMCC_COMMON} -DSK_DISABLE_READBUFFER=1")
   set(EMCC_COMMON "${EMCC_COMMON} -DLIBANGLE_IMPLEMENTATION=1")
   set(EMCC_COMMON "${EMCC_COMMON} -DLIBGLESV2_IMPLEMENTATION=1")
   set(EMCC_COMMON "${EMCC_COMMON} -DLIBEGL_IMPLEMENTATION=1")
@@ -64,10 +67,17 @@ if(EMSCRIPTEN)
 
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${EMCC_COMMON}")
 
+  # TODO EMCC_LINKER_FLAGS
+  # TODO -s SAFE_HEAP=1
+  # TODO LEGACY_GL_EMULATION
+  # OFFSCREENCANVAS_SUPPORT
+
   # https://emscripten.org/docs/tools_reference/emcc.html#arguments
   #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Oz")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --emrun")
+  # With --use-preload-plugins, files can be automatically decoded based on their extension.
+  # see https://emscripten.org/docs/porting/files/packaging_files.html
+  #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --preload-file resources --use-preload-plugins")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${EMCC_COMMON}")
   # https://emscripten.org/docs/getting_started/FAQ.html#why-does-my-code-break-and-gives-odd-errors-when-using-o2-closure-1
   #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --closure 1")
@@ -76,12 +86,13 @@ if(EMSCRIPTEN)
   #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s SIMD=1")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s ERROR_ON_MISSING_LIBRARIES=1")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s ERROR_ON_UNDEFINED_SYMBOLS=1")
-  #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s SDL2_IMAGE_FORMATS='["png"]'")
+  #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s SDL2_IMAGE_FORMATS='[\"png\"]'")
   #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s FORCE_FILESYSTEM=0")
   #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s MODULARIZE=1")
   #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s GL_UNSAFE_OPTS=0")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s GL_ASSERTIONS=1")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s ASSERTIONS=1")
+  #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s ASSERTIONS=1")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s ASSERTIONS=2")
   # In theory there should be no limit, but in practice,
   # 2GB is a practical limit because many (all?)
   # browsers apply that limit, in particular I know Chrome and Firefox do.
@@ -109,11 +120,26 @@ else()
 
   find_package(SDL2 REQUIRED)
   if(SDL2_FOUND)
-    #include_directories(${SDL2_INCLUDE_DIR})
     message("Found SDL2 libraries")
     message("SDL2_INCLUDE_DIR = ${SDL2_INCLUDE_DIR} ")
     message("SDL2_LIBRARY = ${SDL2_LIBRARY} ")
     add_definitions(-DUSE_SDL2_LIB)
+  endif ()
+
+  #find_package(SDL2_net REQUIRED)
+  #if(SDL2_net_FOUND)
+  #  message("Found SDL2_net libraries")
+  #  message("SDL2_net_INCLUDE_DIR = ${SDL2_net_INCLUDE_DIR} ")
+  #  message("SDL2_net_LIBRARY = ${SDL2_net_LIBRARY} ")
+  #  add_definitions(-DUSE_SDL2_net_LIB)
+  #endif ()
+
+  find_package(SDL2_ttf REQUIRED)
+  if(SDL2_ttf_FOUND)
+    message("Found SDL2_ttf libraries")
+    message("SDL2_ttf_INCLUDE_DIR = ${SDL2_ttf_INCLUDE_DIR} ")
+    message("SDL2_ttf_LIBRARY = ${SDL2_ttf_LIBRARY} ")
+    add_definitions(-DUSE_SDL2_ttf_LIB)
   endif ()
 
   find_package(GLEW REQUIRED) # First try to find using the find_package method (works with vcpkg)
@@ -280,6 +306,7 @@ skia_use_icu=false \
 skia_enable_ccpr=false \
 skia_enable_nvpr=false \
 skia_use_expat=false \
+skia_enable_skottie=false \
 skia_use_libjpeg_turbo=false \
 skia_use_libpng=true \
 skia_use_system_libpng=true \
@@ -297,10 +324,11 @@ skia_use_piex=false \
 skia_use_angle=false \
 skia_use_dng_sdk=false \
 skia_use_metal=false \
-skia_enable_fontmgr_empty=true \
-skia_enable_fontmgr_custom =true \
+skia_enable_fontmgr_empty=false \
+skia_enable_fontmgr_custom=true \
 skia_use_libheif=false \
-skia_use_harfbuzz=false"
+skia_enable_skshaper=true \
+skia_use_harfbuzz=true"
 )
 
 message(STATUS "GN_ARGS=${GN_ARGS}")
@@ -388,7 +416,7 @@ set(SKIA_HEADERS
 # this must match what BUILD.gn sets
 # if it's wrong it can result in all kinds of funny behavior
 # see https://github.com/google/skia/blob/master/modules/pathkit/compile.sh#L94
-  # TODO: skia_enable_skshaper
+  # TODO:
   # SK_RELEASE"
   # PATHKIT_TESTING"
   #"SK_INTERNAL"
@@ -427,8 +455,6 @@ set(SKIA_HEADERS
   #SK_DISABLE_READBUFFER=1
   #SK_DISABLE_READBUFFER
   # see https://skia-review.googlesource.com/c/skia/+/158341
-  #WEB_ASSEMBLY=1
-  #WEB_ASSEMBLY
   #GL_GLEXT_PROTOTYPES
   #EGL_EGLEXT_PROTOTYPES
   #LIBEGL_IMPLEMENTATION
@@ -454,21 +480,30 @@ set(SKIA_DEFINES
 #<listOptionValue builtIn="false" value="SK_SUPPORT_GPU=1"/>
 
 if (EMSCRIPTEN)
-  list(APPEND SKIA_DEFINES IS_WEBGL=1)
+  list(APPEND SKIA_DEFINES SK_ASSUME_WEBGL)
+  list(APPEND SKIA_DEFINES SK_ASSUME_WEBGL=1)
+  #list(APPEND SKIA_DEFINES SK_ASSUME_GL_ES)
+  #list(APPEND SKIA_DEFINES SK_ASSUME_GL_ES=1)
+  #list(APPEND SKIA_DEFINES SK_ASSUME_GL)
+  #list(APPEND SKIA_DEFINES SK_ASSUME_GL=1)
   list(APPEND SKIA_DEFINES IS_WEBGL)
-  list(APPEND SKIA_DEFINES SKOTTIE_HACK=1)
+  list(APPEND SKIA_DEFINES IS_WEBGL=1)
   list(APPEND SKIA_DEFINES SKOTTIE_HACK)
-  list(APPEND SKIA_DEFINES LIBANGLE_IMPLEMENTATION)
-  list(APPEND SKIA_DEFINES LIBGLESV2_IMPLEMENTATION)
-  list(APPEND SKIA_DEFINES LIBEGL_IMPLEMENTATION)
+  list(APPEND SKIA_DEFINES SKOTTIE_HACK=1)
+  list(APPEND SKIA_DEFINES LIBANGLE_IMPLEMENTATION=1)
+  list(APPEND SKIA_DEFINES LIBGLESV2_IMPLEMENTATION=1)
+  list(APPEND SKIA_DEFINES LIBEGL_IMPLEMENTATION=1)
   # https://github.com/google/skia/blob/master/third_party/skcms/skcms.cc#L1836
   # list(APPEND SKIA_DEFINES SKCMS_PORTABLE)
-  list(APPEND SKIA_DEFINES ANGLE_ENABLE_ESSL)
-  list(APPEND SKIA_DEFINES ANGLE_ENABLE_GLSL)
-  list(APPEND SKIA_DEFINES ANGLE_ENABLE_HLSL)
-  list(APPEND SKIA_DEFINES ANGLE_ENABLE_OPENGL)
-  list(APPEND SKIA_DEFINES EGL_EGLEXT_PROTOTYPES)
-  list(APPEND SKIA_DEFINES GL_GLEXT_PROTOTYPES)
+  list(APPEND SKIA_DEFINES ANGLE_ENABLE_ESSL=1)
+  list(APPEND SKIA_DEFINES ANGLE_ENABLE_GLSL=1)
+  list(APPEND SKIA_DEFINES ANGLE_ENABLE_HLSL=1)
+  list(APPEND SKIA_DEFINES ANGLE_ENABLE_OPENGL=1)
+  list(APPEND SKIA_DEFINES EGL_EGLEXT_PROTOTYPES=1)
+  list(APPEND SKIA_DEFINES GL_GLEXT_PROTOTYPES=1)
+  list(APPEND SKIA_DEFINES WEB_ASSEMBLY=1)
+  list(APPEND SKIA_DEFINES SK_BUILD_FOR_PATHKIT=1)
+  list(APPEND SKIA_DEFINES SK_DISABLE_READBUFFER=1)
 endif ()
 
 if (SK_CONF_SHARED)
@@ -505,8 +540,8 @@ if (NOT EXT_SKIA_SHARED)
 
   # seem to be always required...
   ADD_SKIA_LIBRARY_DEPENDENCY("dl")
-  ###ADD_SKIA_LIBRARY_DEPENDENCY("pthread")
-  #ADD_SKIA_LIBRARY_DEPENDENCY("harfbuzz")
+  ADD_SKIA_LIBRARY_DEPENDENCY("pthread")
+  ADD_SKIA_LIBRARY_DEPENDENCY("harfbuzz")
 
   # when skia_enable_gpu:
 if(SK_IS_EGL)
@@ -554,7 +589,8 @@ add_dependencies(SKIA SKIA_build)
 
 if(EMSCRIPTEN)
   # -s ENVIRONMENT=web
-  #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --emrun")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --emrun")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --preload-file resources/fonts/FreeSans.ttf")
 endif() # EMSCRIPTEN
 
 if(EMSCRIPTEN)
@@ -590,6 +626,8 @@ else()
     #${OPENGLES2_LIBRARIES}
     ${GLEW_LIBRARY}
     SDL2::Main
+    SDL2:Net
+    SDL2:tff
   )
   target_compile_definitions(${PROJECT_NAME} PRIVATE
     GLEW_NO_GLU
