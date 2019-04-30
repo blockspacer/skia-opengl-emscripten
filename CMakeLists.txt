@@ -11,32 +11,84 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/sdl2)
 
 #include(FindPkgMacros)
 
-set (PROJECT_NAME "projmake")
+set (PROJECT_NAME "skemgl")
 
 project(${PROJECT_NAME} CXX)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR})
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++17 -DSK_DISABLE_READBUFFER=1 -fno-rtti -fno-exceptions -DEMSCRIPTEN_HAS_UNBOUND_TYPE_NAMES=0")
+# -fno-exceptions
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++14")
+
+set(SKIA_COMMON_DEFINES "${SKIA_COMMON_DEFINES}")
+set(SKIA_COMMON_DEFINES "${SKIA_COMMON_DEFINES} -DSK_RELEASE")
+set(SKIA_COMMON_DEFINES "${SKIA_COMMON_DEFINES} -DSK_DISABLE_READBUFFER=1")
+set(SKIA_COMMON_DEFINES "${SKIA_COMMON_DEFINES} -DSKOTTIE_HACK")
+# https://github.com/qinjidong/qt5.13/blob/master/src/qtwebengine/src/3rdparty/chromium/third_party/skia/experimental/canvaskit/compile.sh
+set(SKIA_COMMON_DEFINES "${SKIA_COMMON_DEFINES} -DSKNX_NO_SIMD")
+set(SKIA_COMMON_DEFINES "${SKIA_COMMON_DEFINES} -DWEB_ASSEMBLY=1")
+set(SKIA_COMMON_DEFINES "${SKIA_COMMON_DEFINES} -DSK_BUILD_FOR_PATHKIT=1")
+set(SKIA_COMMON_DEFINES "${SKIA_COMMON_DEFINES} -DSK_SUPPORT_OPENCL=0")
+set(SKIA_COMMON_DEFINES "${SKIA_COMMON_DEFINES} -DSK_SAMPLES_FOR_X=1") # always set for linux, even if there's no X used
+set(SKIA_COMMON_DEFINES "${SKIA_COMMON_DEFINES} -DSK_SUPPORT_GPU=1") # skia_enable_gpu
+set(SKIA_COMMON_DEFINES "${SKIA_COMMON_DEFINES} -DSK_HAS_PNG_LIBRARY=1") # skia_use_libpng
+set(SKIA_COMMON_DEFINES "${SKIA_COMMON_DEFINES} -DSK_DISABLE_READBUFFER=1")
+if (EMSCRIPTEN)
+  list(APPEND SKIA_COMMON_DEFINES "${SKIA_COMMON_DEFINES} -DIS_WEBGL=1")
+  list(APPEND SKIA_COMMON_DEFINES "${SKIA_COMMON_DEFINES} -DSKOTTIE_HACK")
+  list(APPEND SKIA_COMMON_DEFINES "${SKIA_COMMON_DEFINES} -DSKNX_NO_SIMD")
+endif ()
 
 if(EMSCRIPTEN)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s WASM=0")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s USE_PTHREADS=0")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s USE_FREETYPE=1")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s SIMD=1")
-    #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s USE_HARFBUZZ=1")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s USE_ICU=1")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s USE_LIBPNG=1")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s USE_SDL=2")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s USE_SDL_IMAGE=2")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s ERROR_ON_MISSING_LIBRARIES=1")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s ERROR_ON_UNDEFINED_SYMBOLS=1")
-    #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s SDL2_IMAGE_FORMATS='["png"]'")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s USE_WEBGL2=2")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s FULL_ES3=1")
-    #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s FORCE_FILESYSTEM=0")
-    #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s MODULARIZE=1")
+  set(EMCC_COMMON "${EMCC_COMMON} -s WASM=1")
+  set(EMCC_COMMON "${EMCC_COMMON} -DEMSCRIPTEN_HAS_UNBOUND_TYPE_NAMES=0")
+  set(EMCC_COMMON "${EMCC_COMMON} -s USE_FREETYPE=1")
+  set(EMCC_COMMON "${EMCC_COMMON} -s USE_LIBPNG=1")
+  set(EMCC_COMMON "${EMCC_COMMON} -s USE_PTHREADS=0")
+  set(EMCC_COMMON "${EMCC_COMMON} -s USE_FREETYPE=1")
+  set(EMCC_COMMON "${EMCC_COMMON} -s USE_ZLIB=1")
+  #set(EMCC_COMMON "${EMCC_COMMON} -s USE_HARFBUZZ=1")
+  set(EMCC_COMMON "${EMCC_COMMON} -s USE_ICU=1")
+  set(EMCC_COMMON "${EMCC_COMMON} -s USE_LIBPNG=1")
+  set(EMCC_COMMON "${EMCC_COMMON} -s USE_SDL=2")
+  set(EMCC_COMMON "${EMCC_COMMON} -s USE_SDL_IMAGE=2")
+  set(EMCC_COMMON "${EMCC_COMMON} -s USE_WEBGL2=2")
+  set(EMCC_COMMON "${EMCC_COMMON} -frtti")
+  set(EMCC_COMMON "${EMCC_COMMON} -DIS_WEBGL=1")
+
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${EMCC_COMMON}")
+  #set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${SKIA_COMMON_DEFINES}")
+
+  # https://emscripten.org/docs/tools_reference/emcc.html#arguments
+  #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Oz")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --emrun")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${EMCC_COMMON}")
+  #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${SKIA_COMMON_DEFINES}")
+  # https://emscripten.org/docs/getting_started/FAQ.html#why-does-my-code-break-and-gives-odd-errors-when-using-o2-closure-1
+  #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --closure 1")
+  # Enables LLVM link-time optimizations (LTO)
+  # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --llvm-lto 3")
+  #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s SIMD=1")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s ERROR_ON_MISSING_LIBRARIES=1")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s ERROR_ON_UNDEFINED_SYMBOLS=1")
+  #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s SDL2_IMAGE_FORMATS='["png"]'")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s FULL_ES3=1")
+  #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s FORCE_FILESYSTEM=0")
+  #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s MODULARIZE=1")
+  #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s GL_UNSAFE_OPTS=0")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s GL_ASSERTIONS=1")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s ASSERTIONS=1")
+  # In theory there should be no limit, but in practice,
+  # 2GB is a practical limit because many (all?)
+  # browsers apply that limit, in particular I know Chrome and Firefox do.
+  # https://github.com/emscripten-core/emscripten/issues/6566
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s ALLOW_MEMORY_GROWTH=1")
+  # TOTAL_MEMORY: multiple of 16MB
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s TOTAL_MEMORY=512MB")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s NO_EXIT_RUNTIME=1")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s WARN_UNALIGNED=1")
 else()
   ### Find Libraries
   find_package(OpenGL REQUIRED)
@@ -93,7 +145,7 @@ add_executable(${PROJECT_NAME}
   ${PROJECT_SRC}
 )
 
-set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 17)
+set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 14)
 
 include(ExternalProject)
 
@@ -151,11 +203,12 @@ message(STATUS "SKIA_C_FLAGS=${SKIA_C_FLAGS}")
 #STRING(REGEX REPLACE ";" "\";\"" NEW_CMAKE_CXX_FLAGS "${NEW_CMAKE_CXX_FLAGS}")
 #set(SKIA_CXX_FLAGS "\"${NEW_CMAKE_CXX_FLAGS}\"")
 
+set(NEW_CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+
 if(EMSCRIPTEN)
-  #set(NEW_CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s MODULARIZE=1 -s EXPORT_NAME=\"PathKitInit\"")
-  set(NEW_CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s STRICT=1")
-  #set(NEW_CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s NO_FILESYSTEM=1")
-  set(NEW_CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s WARN_UNALIGNED=1")
+  #set(NEW_CMAKE_CXX_FLAGS "${NEW_CMAKE_CXX_FLAGS} -s MODULARIZE=1 -s EXPORT_NAME=\"PathKitInit\"")
+  #set(NEW_CMAKE_CXX_FLAGS "${NEW_CMAKE_CXX_FLAGS} -s STRICT=1")
+  #set(NEW_CMAKE_CXX_FLAGS "${NEW_CMAKE_CXX_FLAGS} -s NO_FILESYSTEM=1")
 endif() # EMSCRIPTEN
 
 # The string literal "\\\\" represents "\\" in memory which is a valid regex (representing a single backslash).
@@ -223,8 +276,8 @@ skia_use_vulkan=false \
 skia_enable_vulkan_debug_layers=false \
 skia_enable_spirv_validation=false \
 skia_use_icu=false \
-skia_enable_ccpr=true \
-skia_enable_nvpr=true \
+skia_enable_ccpr=false \
+skia_enable_nvpr=false \
 skia_use_expat=false \
 skia_use_libjpeg_turbo=false \
 skia_use_libpng=true \
@@ -235,7 +288,7 @@ skia_enable_pdf=false \
 skia_use_sfntly=false \
 skia_enable_atlas_text=false \
 skia_use_fontconfig=false \
-skia_use_freetype=false \
+skia_use_freetype=true \
 skia_enable_tools=false \
 skia_use_lua=false \
 skia_use_piex=false \
@@ -272,6 +325,11 @@ endif ()
 # taken from BUILD.gn (skia_public_includes, minus things that are obviously useless for us)
 set(SKIA_HEADERS
   ${SKIA_SRC}
+  ${SKIA_SRC}/tools
+  ${SKIA_SRC}/modules/skottie/include
+  ${SKIA_SRC}/modules/pathkit
+  ${SKIA_SRC}/modules/sksg/include
+  ${SKIA_SRC}/modules/skshaper/include
 #  ${SKIA_SRC}/tools/timer
   ${SKIA_SRC}/src/gpu
   ${SKIA_SRC}/src/sksl
@@ -327,36 +385,26 @@ set(SKIA_HEADERS
 # this must match what BUILD.gn sets
 # if it's wrong it can result in all kinds of funny behavior
 # see https://github.com/google/skia/blob/master/modules/pathkit/compile.sh#L94
-set(SKIA_DEFINES
-# TODO:
-# SK_RELEASE
-# PATHKIT_TESTING
-#SK_INTERNAL
-#SK_GAMMA_SRGB
-#SK_GAMMA_APPLY_TO_A8
-#SK_SCALAR_TO_FLOAT_EXCLUDED
-#SK_ALLOW_STATIC_GLOBAL_INITIALIZERS=1
-#SK_FORCE_DISTANCEFIELD_FONTS=0
-#SK_SCALAR_IS_FLOAT
-#SK_CAN_USE_FLOAT
-#SK_BUILD_FOR_WIN32
-#SK_BUILD_JSON_WRITER
-#SK_DEBUG
-#SK_DEVELOPER=1
-#
-  "WEB_ASSEMBLY=1"
-  "SK_BUILD_FOR_PATHKIT=1"
-  "SK_DISABLE_READBUFFER=1"
-  "SK_SUPPORT_GPU=1"
-  "SK_SUPPORT_OPENCL=0"
-  # "SK_SUPPORT_ATLAS_TEXT=0"
-  "SK_SAMPLES_FOR_X=1" # always set for linux, even if there's no X used
-  "SK_SUPPORT_GPU=1" # skia_enable_gpu
+  # TODO:
+  # SK_RELEASE"
+  # PATHKIT_TESTING"
+  #"SK_INTERNAL"
+  #"SK_GAMMA_SRGB"
+  #"SK_GAMMA_APPLY_TO_A8"
+  #"SK_SCALAR_TO_FLOAT_EXCLUDED"
+  #"SK_ALLOW_STATIC_GLOBAL_INITIALIZERS=1"
+  #"SK_FORCE_DISTANCEFIELD_FONTS=0"
+  #"SK_SCALAR_IS_FLOAT"
+  #"SK_CAN_USE_FLOAT"
+  #"SK_BUILD_FOR_WIN32"
+  #"SK_BUILD_JSON_WRITER"
+  #"SK_DEBUG"
+  #"SK_DEVELOPER=1"
   #"SK_VULKAN=1" # skia_use_vulkan
   #"SK_ENABLE_VK_LAYERS=1" # skia_enable_vulkan_debug_layers
   #"SK_ENABLE_SPIRV_VALIDATION=1" # skia_enable_spirv_validation
   #"SK_HAS_JPEG_LIBRARY=1" # skia_use_libjpeg_turbo
-  "SK_HAS_PNG_LIBRARY=1" # skia_use_libpng
+  #"SK_SUPPORT_ATLAS_TEXT=0"
   #"SK_SUPPORT_PDF=1" # skia_enable_pdf
   #"SK_PDF_USE_SFNTLY=1" # skia_use_sfntly
   #"SK_HAS_WEBP_LIBRARY=1" # skia_use_libwebp
@@ -366,10 +414,15 @@ set(SKIA_DEFINES
   #"SK_VULKAN"
   #"SK_MOLTENVK"
   #"SK_CODEC_DECODES_RAW"
+# convert to list to pass into compile options
+string(REPLACE "-D" "" SKIA_COMMON_DEFINES_LIST ${SKIA_COMMON_DEFINES})
+string(REPLACE " " ";" SKIA_COMMON_DEFINES_LIST ${SKIA_COMMON_DEFINES_LIST})
+set(SKIA_DEFINES
+  ${SKIA_COMMON_DEFINES_LIST}
 )
-
+#message(FATAL_ERROR "${SKIA_DEFINES}")
 if (SK_CONF_SHARED)
-  liast(APPEND SKIA_DEFINES "SKIA_DLL")
+  list(APPEND SKIA_DEFINES -DSKIA_DLL=1)
 endif ()
 
 # GN doesn't seem to do any fancy stuff with library dependencies - it just
@@ -383,7 +436,7 @@ endif ()
 # to be added explicitly.
 
 if(EMSCRIPTEN)
-  # ...
+  # message(FATAL_ERROR "${TODO}")
 else()
 
 if (NOT EXT_SKIA_SHARED)
@@ -449,12 +502,7 @@ add_dependencies(SKIA SKIA_build)
 
 if(EMSCRIPTEN)
   # -s ENVIRONMENT=web
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --emrun")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O1")
-  #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s GL_UNSAFE_OPTS=0 -s GL_ASSERTIONS=1")
-  #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s ASSERTIONS=1")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s ALLOW_MEMORY_GROWTH=1")
-  set(NEW_CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s NO_EXIT_RUNTIME=1")
+  #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --emrun")
 endif() # EMSCRIPTEN
 
 if(EMSCRIPTEN)
@@ -468,7 +516,7 @@ if(EMSCRIPTEN)
     SKIA
   )
 
-  set(EM_TARGET_JS ${PROJECT_NAME}.asm.js)
+  set(EM_TARGET_JS ${PROJECT_NAME}.js)
   configure_file(${HTML_TEMPLATE} index.html @ONLY)
   target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE
   )

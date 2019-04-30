@@ -48,6 +48,7 @@ git submodule update --init --recursive
 
 ```
 # see http://commondatastorage.googleapis.com/chrome-infra-docs/flat/depot_tools/docs/html/depot_tools_tutorial.html#_setting_up
+ls ${PWD}/thirdparty/depot_tools
 export PATH="${PWD}/thirdparty/depot_tools:${PATH}"
 ```
 
@@ -81,7 +82,9 @@ sudo make install
 # see https://stackoverflow.com/a/55075667
 ```
 > https://github.com/aminosbh/sdl2-cmake-modules
+```
 # see https://stackoverflow.com/a/55075667
+```
 > https://skia.googlesource.com/skia.git
 ```
 ## clang
@@ -107,6 +110,7 @@ cd harfbuzz
 ./configure
 make && sudo make install
 # see https://github.com/google/skia/blob/master/site/user/build.md
+ls ${PWD}/thirdparty/depot_tools
 export PATH="${PWD}/thirdparty/depot_tools:${PATH}"
 cd thirdparty/skia
 tools/git-sync-deps
@@ -118,7 +122,7 @@ tools/git-sync-deps
 sh tools/build_linux.sh
 ```
 
-### Run example on HTML5 platform
+### Run example on HTML5 platform (needs '--emrun' cxx flag)
 
 ```
 emrun build-emscripten/index.html
