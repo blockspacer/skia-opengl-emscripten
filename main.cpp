@@ -47,6 +47,18 @@
 #include <SkSurface.h>
 #include <SkTypeface.h>
 
+#include "SkBitmap.h"
+#include "SkPixelRef.h"
+#include "SkImageEncoder.h"
+#include "SkImageInfo.h"
+#include "SkColor.h"
+#include "SkColorPriv.h"
+#include "SkColorSpace.h"
+#include "SkHalf.h"
+#include "SkMatrix44.h"
+#include "SkUnPreMultiply.h"
+#include "SkStream.h"
+
 #include "GrContext.h"
 
 #include "GrTypes.h"
@@ -114,6 +126,11 @@ static const int kMsaaSampleCount = 0;//4;
 static GrContext* sContext = nullptr;
 //static sk_sp<SkSurface> sSurface = nullptr;
 static SkSurface* sSurface = nullptr;
+
+static sk_sp<SkSurface> rasterSurface;
+
+static GLuint skia_texture = 0;
+
 //static sk_sp<const GrGLInterface> sInterface = nullptr;
 //static const GrGLInterface* sInterface = nullptr;
 
@@ -136,7 +153,7 @@ static int width = 512;
 // must be POT
 static int height = 512;
 
-// static GLint uniformTex;
+static GLint uniformTex;
 
 static SDL_Window* window;
 static SDL_GLContext glContext;
@@ -144,17 +161,17 @@ static SDL_GLContext glContext;
 // Main loop flag
 static bool quit = false;
 
-// static GLuint vertexPosObject;
+static GLuint vertexPosObject;
 
 // Event handler
 static SDL_Event e;
 
-/*static GLfloat const kVertexData[] = {
+static GLfloat const kVertexData[] = {
     1.0f, 1.0f, 1.0f, 0.0f,
     -1.0f, 1.0f, 0.0f, 0.0f,
     1.0f, -1.0f, 1.0f, 1.0f,
     -1.0f, -1.0f, 0.0f, 1.0f
-};*/
+};
 
 // see https://github.com/flutter/engine/blob/master/shell/gpu/gpu_surface_gl.cc#L125
 static void
@@ -242,13 +259,25 @@ init_skia(int w, int h)
       }
   }
 
-    const SkImageInfo info = SkImageInfo::MakeN32(800, 600, kPremul_SkAlphaType);
+    const SkImageInfo info = SkImageInfo::MakeN32(width, height, kPremul_SkAlphaType);
     sSurface = SkSurface::MakeRenderTarget(sContext, SkBudgeted::kNo, info, 0,
                                                                kTopLeft_GrSurfaceOrigin,
                                                                nullptr, false).release();
     printf("gpuSurface %p\n", sSurface);
     if (!sSurface) {
         printf("failed to create gpu surface.");
+    }
+
+    //rasterSurface = SkSurface::MakeRasterN32Premul(width, height);
+    SkImageInfo image_info = SkImageInfo::Make(
+      width, height, kN32_SkColorType, kPremul_SkAlphaType);
+    /*SkImageInfo image_info = SkImageInfo::MakeN32(
+      width, height,
+      kPremul_SkAlphaType, SkColorSpace::MakeSRGB());*/
+      //SkImageInfo::MakeN32(width, height, SkAlphaType::kOpaque_SkAlphaType)
+    rasterSurface = SkSurface::MakeRaster(info);
+    if (!rasterSurface) {
+        printf("failed to create raster surface.");
     }
 
   /*GrBackendRenderTarget backendRenderTarget(w,
@@ -293,11 +322,11 @@ cleanup_skia()
   //delete sContext.release();
 }
 
-static sk_sp<SkSurface>
+/*static sk_sp<SkSurface>
 MakeSurface(int width, int height)
 {
   return SkSurface::MakeRasterN32Premul(width, height);
-}
+}*/
 
 /*SkCanvas *createCanvas(int width, int height) {
 //    uint32_t windowFormat = SDL_GetWindowPixelFormat(window);
@@ -379,20 +408,25 @@ public:
 
   void onDraw(SkCanvas* canvas)
   {
-    if (!canvas->getGrContext()) {
+    /*if (!canvas->getGrContext()) {
       return;
-    }
+    }*/
 
     SkPaint paint;
-    paint.setAlpha(255);
+
+    //paint.setColor(SK_ColorYELLOW);
+    //canvas->drawPaint(paint);
+
+    //paint.setAlpha(255);
     paint.setAntiAlias(true);
-    paint.setColor(m_color);
+    paint.setColor(SK_ColorRED);
     canvas->drawCircle(m_pos.x(), m_pos.y(), m_size, paint);
 
     canvas->drawLine(m_pos.x(), m_pos.y(), m_prev.x(), m_prev.y(), paint);
 
-    paint.setColor(SK_ColorWHITE);
-    canvas->drawPaint(paint);
+    paint.setColor(SK_ColorGREEN);
+    canvas->drawRect({ 0, 0, 50, 50 }, paint);
+
     paint.setColor(SK_ColorBLUE);
     canvas->drawRect({ 100, 200, 300, 500 }, paint);
 
@@ -459,17 +493,34 @@ int
 Init()
 {
 
-  char vShaderStr[] = "attribute vec4 vPosition;    \n"
-                      "void main()                  \n"
-                      "{                            \n"
-                      "   gl_Position = vPosition;  \n"
-                      "}                            \n";
+  char vShaderStr[] =
+    "attribute vec2 vPosition;                \n"
+    "attribute vec2 vUV;                \n"
+    "varying vec2 v_texcoord;\n"
+    //"uniform mat4 uMVPMatrix; \n"
+    //"uniform float zoom;	\n"
+    "void main()                              \n"
+    "{                                        \n"
+    "    v_texcoord = vUV;\n"
+    "    gl_Position = vec4(vPosition, -1, 1);\n"
+//		"   gl_Position = uMVPMatrix * vPosition;              \n"
+//		"   gl_Position.x = gl_Position.x * zoom; \n"
+//		"   gl_Position.y = gl_Position.y * zoom; \n"
+    "}                                        \n";
 
-  char fShaderStr[] = "precision mediump float;\n"
-                      "void main()                                  \n"
-                      "{                                            \n"
-                      "  gl_FragColor = vec4 ( 0.0, 0.0, 1.0, 1.0 );\n"
-                      "}                                            \n";
+  char fShaderStr[] =
+    "precision mediump float;\n"
+    "uniform sampler2D u_tex;\n"
+    "varying vec2 v_texcoord;\n"
+//		"uniform vec4 vColor;"
+    "void main()                                  \n"
+    "{                                            \n"
+//		"  gl_FragColor = vColor;        \n"
+    "    vec4 colour = texture2D(u_tex, v_texcoord);\n"
+//    "    vec4 colour = vec4(100, 0, 100, 100);\n"
+    "    colour.rgba = colour.rgba;\n"
+    "    gl_FragColor = colour;\n"
+    "}                                            \n";
 
   GLuint vertexShader;
   GLuint fragmentShader;
@@ -485,12 +536,16 @@ Init()
   glAttachShader(programObject, vertexShader);
   glAttachShader(programObject, fragmentShader);
   glBindAttribLocation(programObject, 0, "vPosition");
+  glBindAttribLocation(programObject, 1, "vUV");
   glLinkProgram(programObject);
+  uniformTex = glGetUniformLocation(programObject, "u_tex");
   glGetProgramiv(programObject, GL_LINK_STATUS, &linked);
-  if (!linked) {
+  if (!linked)
+  {
     GLint infoLen = 0;
     glGetProgramiv(programObject, GL_INFO_LOG_LENGTH, &infoLen);
-    if (infoLen > 1) {
+    if (infoLen > 1)
+    {
       char* infoLog = static_cast<char*>(malloc(sizeof(char) * infoLen));
       glGetProgramInfoLog(programObject, infoLen, NULL, infoLog);
       printf("Error linking program:\n%s\n", infoLog);
@@ -500,9 +555,38 @@ Init()
     return GL_FALSE;
   }
 
+    glGenTextures(1, &skia_texture);
+
+  // No clientside arrays, so do this in a webgl-friendly manner
+  glGenBuffers(1, &vertexPosObject);
+  glBindBuffer(GL_ARRAY_BUFFER, vertexPosObject);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(kVertexData), kVertexData,
+                 GL_STATIC_DRAW);
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
+
   glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
   return GL_TRUE;
 }
+
+
+    // A SkWStream that wrapps ByteStreams.
+    /*class ByteStreamWrapper : public SkWStream {
+    public:
+
+        ByteStreamWrapper(ByteStream* s) : stream(s) { }
+        virtual bool write(const void *buffer, size_t size) {
+            return stream->write(buffer, size) == size;
+        }
+        virtual size_t bytesWritten() const {
+            return stream->position();
+        }
+        virtual void flush() {
+            stream->flush();
+        }
+
+        ByteStream* stream;
+    };*/
+
 
 ///
 // Draw a triangle using the shader pair created in Init()
@@ -510,36 +594,120 @@ Init()
 void
 Draw()
 {
-  GLfloat vVertices[] = { 0.0f, 0.5f, 0.0f,  -0.5f, -0.5f,
+  /*GLfloat vVertices[] = { 0.0f, 0.5f, 0.0f,  -0.5f, -0.5f,
                           0.0f, 0.5f, -0.5f, 0.0f };
 
   // No clientside arrays, so do this in a webgl-friendly manner
   GLuint vertexPosObject;
   glGenBuffers(1, &vertexPosObject);
   glBindBuffer(GL_ARRAY_BUFFER, vertexPosObject);
-  glBufferData(GL_ARRAY_BUFFER, 9 * 4, vVertices, GL_STATIC_DRAW);
+  glBufferData(GL_ARRAY_BUFFER, 9 * 4, vVertices, GL_STATIC_DRAW);*/
 
   glViewport(0, 0, width, height);
   glClear(GL_COLOR_BUFFER_BIT);
+
   glUseProgram(programObject);
+  glActiveTexture(GL_TEXTURE0);
+
+  /*glUseProgram(programObject);
 
   glBindBuffer(GL_ARRAY_BUFFER, vertexPosObject);
   glVertexAttribPointer(0, 3, GL_FLOAT, 0, 0, 0);
   glEnableVertexAttribArray(0);
 
-  glDrawArrays(GL_TRIANGLES, 0, 3);
+  glDrawArrays(GL_TRIANGLES, 0, 3);*/
 
   {
     // Draw to the surface via its SkCanvas.
     // We don't manage this pointer's lifetime.
-    SkCanvas* canvas = sSurface->getCanvas();
+    //SkCanvas* canvas = sSurface->getCanvas();
+    SkCanvas* canvas = rasterSurface->getCanvas();
 
-    canvas->clear(SK_ColorWHITE);
+    canvas->clear(SkColorSetARGB(255, 255, 255, 255));
+
+    /*SkPaint paint;
+    paint.setColor(SK_ColorYELLOW);
+    canvas->drawRect(SkRect::MakeXYWH(0, 0, 100, 100), paint);*/
 
     myView->onDraw(canvas);
 
-    sContext->flush();
+    //sContext->flush();
+
+    rasterSurface->flush();
+
+    // getBackendTexture
+    const sk_sp<SkImage> pImage = rasterSurface->makeImageSnapshot();
+    if (nullptr == pImage) {
+      printf("can`t makeImageSnapshot\n");
+    }
+
+    /*sk_sp<SkData> data = pImage->encodeToData(SkEncodedImageFormat::kPNG, 0);
+    if(!data) {
+        return;
+    }*/
+
+    SkPixmap pixmap;
+    if (!pImage->peekPixels(&pixmap)) {
+      printf("can`t peekPixels\n");
+    }
+
+    /*SkWStream wrapper;
+    if(SkEncodeImage(&wrapper, bitmap, SkEncodedImageFormat::kPNG, 80)) {
+    } else {
+        cout << bitmap.width() << ", " << bitmap.height() << ", " << bitmap.rowBytes() << endl;
+        cout << "Warning: unable to save." << endl;
+    }*/
+
+    /*pixmap.setColorSpace(SkColorSpace::MakeRGB(SkColorSpace::kSRGB_RenderTargetGamma,
+                                        SkColorSpace::kDCIP3_D65_Gamut));
+    */
+    glBindTexture(GL_TEXTURE_2D, skia_texture);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, pixmap.width(), pixmap.height(), 0,
+                 GL_RGBA, GL_UNSIGNED_BYTE, pixmap.addr());
   }
+    /*glBindTexture(GL_TEXTURE_2D, skia_texture);
+    cairo_surface_flush(cairo_surface);
+    unsigned char *data = cairo_image_surface_get_data(cairo_surface);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
+                 cairo_image_surface_get_width(cairo_surface),
+                 cairo_image_surface_get_height(cairo_surface),
+                 0, GL_RGBA, GL_UNSIGNED_BYTE, (GLvoid*)data);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);*/
+    glUniform1i(uniformTex, 0);
+
+  glBindBuffer(GL_ARRAY_BUFFER, vertexPosObject);
+  //
+  glVertexAttribPointer(0,  2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat),
+                          NULL);
+  glEnableVertexAttribArray(0);
+  //
+  glVertexAttribPointer(1,  2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat),
+                          (GLvoid*)(2 * sizeof(GLfloat)));
+  glEnableVertexAttribArray(1);
+
+  int w, h, fs;
+#ifdef __EMSCRIPTEN__
+  emscripten_get_canvas_size(&w, &h, &fs); // width, height, isFullscreen
+#else
+  w = width;
+  h = height;
+#endif
+  float xs = (float)h / w;
+  float ys = 1.0f;
+  float mat[] = { xs, 0, 0, 0, 0, ys, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 };
+
+ glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+    glDisableVertexAttribArray(0);
+    glDisableVertexAttribArray(1);
+
 }
 
 void
@@ -554,6 +722,12 @@ mainLoop()
   while (SDL_PollEvent(&e) != 0) {
     // Render
     Draw();
+
+/*#ifdef __EMSCRIPTEN__
+    int res = emscripten_webgl_commit_frame();
+        if (res != EMSCRIPTEN_RESULT_SUCCESS)
+            std::printf("Commit %d\n", res);
+#endif*/
 
     // Update screen
     SDL_GL_SwapWindow(window);
@@ -616,6 +790,7 @@ main(int argc, char** argv)
 #ifdef __EMSCRIPTEN__
     EmscriptenWebGLContextAttributes attr;
     emscripten_webgl_init_context_attributes(&attr);
+    //attr.explicitSwapControl = EM_TRUE;
     attr.alpha = 1;
     attr.depth = attr.stencil = attr.antialias = attr.preserveDrawingBuffer = attr.preferLowPowerToHighPerformance = attr.failIfMajorPerformanceCaveat = 0;
     attr.enableExtensionsByDefault = 1;
@@ -692,6 +867,10 @@ main(int argc, char** argv)
   printf("Running cleanup...\n");
 
   cleanup_skia();
+
+
+  glDeleteTextures(1, &skia_texture);
+  glDeleteBuffers(1, &vertexPosObject);
 
   if (glContext) {
     SDL_GL_DeleteContext(glContext);
