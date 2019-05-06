@@ -2,6 +2,8 @@
 Shrink skia size
 see https://github.com/skui-org/skia/blob/m74/CMakeLists.txt
 
+https://github.com/keishi/webkit/blob/master/Source/WebCore/platform/graphics/skia/PlatformContextSkia.h#L68
+
 ### Clone with --recursive
 
 ```
@@ -86,11 +88,26 @@ sudo make install
 # see https://www.libsdl.org/projects/SDL_ttf/
 # see https://www.libsdl.org/projects/SDL_ttf/docs/SDL_ttf_2.html
 sudo apt-get install automake build-essential xorg-dev libudev-dev libts-dev libgl1-mesa-dev libglu1-mesa-dev libasound2-dev libpulse-dev libopenal-dev libogg-dev libvorbis-dev libaudiofile-dev libpng-dev libfreetype6-dev libusb-dev libdbus-1-dev zlib1g-dev libdirectfb-dev
+cd thirdparty/SDL_ttf
 sh autogen.sh
 chmod +x configure
 ./configure
 make
 sudo make install
+export SDL2DIR=/usr/local/include
+```
+> https://github.com/SDL-mirror/SDL_net.git
+```
+# see https://www.libsdl.org/projects/SDL_net/
+# see https://www.libsdl.org/projects/SDL_net/docs/SDL_net.html
+sudo apt-get install automake build-essential xorg-dev libudev-dev libts-dev libgl1-mesa-dev libglu1-mesa-dev libasound2-dev libpulse-dev libopenal-dev libogg-dev libvorbis-dev libaudiofile-dev libpng-dev libfreetype6-dev libusb-dev libdbus-1-dev zlib1g-dev libdirectfb-dev
+cd thirdparty/SDL_net
+sh autogen.sh
+chmod +x configure
+./configure
+make
+sudo make install
+export SDL2NETDIR=/usr/local/include
 ```
 > https://github.com/aminosbh/sdl2-cmake-modules
 ```
@@ -111,8 +128,14 @@ sudo -E apt-get install clang-tools-6.0
 sudo -E apt-get install libclang-common-6.0-dev libclang1-6.0 libclang-6.0-dev
 sudo -E apt-get install libc++abi-dev libc++-dev
 sudo apt-get install ninja-build libfreetype6-dev
-sudo -E apt-get install libicu-dev libjpeg-dev libicu-dev libwebp-dev -y
+sudo -E apt-get install libicu-dev libjpeg-dev libwebp-dev -y
 # install icu https://stackoverflow.com/a/41314630
+# see archive.ubuntu.com/ubuntu/pool/main/i/icu/
+# NOTE: install same version as libicu-dev
+wget http://archive.ubuntu.com/ubuntu/pool/main/i/icu/libicu60_60.2-3ubuntu3_amd64.deb
+sudo dpkg -i libicu60_60.2-3ubuntu3_amd64.deb
+sudo apt-get -f install
+export ICU_ROOT=/usr/include
 # harfbuzz
 sudo apt-get install autoconf automake libtool pkg-config ragel gtk-doc-tools
 git clone https://github.com/harfbuzz/harfbuzz.git

@@ -16,3 +16,6 @@
 [submodule "thirdparty/SDL2_ttf"]
 	path = thirdparty/SDL2_ttf
 	url = https://github.com/davidsiaw/SDL2_ttf
+[submodule "thirdparty/SDL_net"]
+	path = thirdparty/SDL_net
+	url = https://github.com/SDL-mirror/SDL_net.git

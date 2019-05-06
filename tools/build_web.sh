@@ -10,4 +10,4 @@ emcmake cmake ..
 emmake make -j8
 
 # index.html generates from configure_file - see shell.html from CMakeLists.txt
-emrun index.html
+# emrun index.html

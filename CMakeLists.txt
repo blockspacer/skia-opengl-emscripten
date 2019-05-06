@@ -21,7 +21,31 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}
 # -fno-exceptions
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++14")
 
+# TODO https://github.com/mbbill/JSC.js
+# # http://userguide.icu-project.org/howtouseicu
+# set(ICU_DEFINES "${ICU_DEFINES} -DU_STATIC_IMPLEMENTATION=1")
+# set(ICU_DEFINES "${ICU_DEFINES} -DU_COMMON_IMPLEMENTATION=1")
+# set(ICU_DEFINES "${ICU_DEFINES} -DU_I18N_IMPLEMENTATION=1")
+# set(ICU_DEFINES "${ICU_DEFINES} -DU_ENABLE_DYLOAD=0")
+# set(ICU_DEFINES "${ICU_DEFINES} -DHAVE_DLFCN_H=0")
+# set(ICU_DEFINES "${ICU_DEFINES} -DHAVE_DLOPEN=0")
+# if(EMSCRIPTEN)
+#   # Tell ICU that we are a 32 bit platform, otherwise,
+#   # double-conversion-utils.h doesn't know how to operate.
+#   set(ICU_DEFINES "${ICU_DEFINES} -D__i386__=1")
+# endif()
+# set(ICU_DEFINES "${ICU_DEFINES} -DU_NO_DEFAULT_INCLUDE_UTF_HEADERS=0")
+# # undefines U_ATTRIBUTE_DEPRECATED
+# set(ICU_DEFINES "${ICU_DEFINES} -UU_ATTRIBUTE_DEPRECATED")
+# # undefines U_NO_DEFAULT_INCLUDE_UTF_HEADERS
+# #set(ICU_DEFINES "${ICU_DEFINES} -UU_NO_DEFAULT_INCLUDE_UTF_HEADERS")
+#
+# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${ICU_DEFINES}")
+# set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${ICU_DEFINES}")
+
 if(EMSCRIPTEN)
+  #set(EMCC_COMMON "${EMCC_COMMON} -DSTATICALLY_LINKED_WITH_WTF")
+  set(EMCC_COMMON "${EMCC_COMMON} -DTARGET_EMSCRIPTEN")
   set(EMCC_COMMON "${EMCC_COMMON} -s WASM=1")
   set(EMCC_COMMON "${EMCC_COMMON} -DEMSCRIPTEN_HAS_UNBOUND_TYPE_NAMES=0")
   set(EMCC_COMMON "${EMCC_COMMON} -s USE_FREETYPE=1")
@@ -134,11 +158,12 @@ else()
   #  add_definitions(-DUSE_SDL2_net_LIB)
   #endif ()
 
+  #include(sdl2/FindSDL2_ttf.cmake)
   find_package(SDL2_ttf REQUIRED)
   if(SDL2_ttf_FOUND)
     message("Found SDL2_ttf libraries")
-    message("SDL2_ttf_INCLUDE_DIR = ${SDL2_ttf_INCLUDE_DIR} ")
-    message("SDL2_ttf_LIBRARY = ${SDL2_ttf_LIBRARY} ")
+    message("SDL2_TTF_INCLUDE_DIR = ${SDL2_TTF_INCLUDE_DIR} ")
+    message("SDL2_TTF_LIBRARY = ${SDL2_TTF_LIBRARY} ")
     add_definitions(-DUSE_SDL2_ttf_LIB)
   endif ()
 
@@ -167,7 +192,7 @@ else()
 
 endif() # EMSCRIPTEN
 
-set(PROJECT_SRC main.cpp)
+set(PROJECT_SRC src/main.cpp)
 
 add_executable(${PROJECT_NAME}
   ${PROJECT_SRC}
@@ -176,6 +201,12 @@ add_executable(${PROJECT_NAME}
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 14)
 
 include(ExternalProject)
+
+#
+# WTF
+#
+
+add_subdirectory(src/wtf)
 
 #
 # Skia
@@ -311,6 +342,7 @@ skia_use_libjpeg_turbo=false \
 skia_use_libpng=true \
 skia_use_system_libpng=true \
 skia_use_zlib=true \
+skia_use_system_zlib=true \
 skia_use_libwebp=false \
 skia_enable_pdf=false \
 skia_use_sfntly=false \
@@ -460,9 +492,6 @@ set(SKIA_HEADERS
   #LIBEGL_IMPLEMENTATION
 set(SKIA_DEFINES
   SKIA_IMPLEMENTATION
-  SK_CPU_SSE_LEVEL=0
-  SKNX_NO_SIMD=1
-  SKNX_NO_SIMD
   SK_SUPPORT_OPENCL=0
   SK_SAMPLES_FOR_X=1 # always set for linux, even if there's no X used
   SK_SAMPLES_FOR_X
@@ -480,6 +509,9 @@ set(SKIA_DEFINES
 #<listOptionValue builtIn="false" value="SK_SUPPORT_GPU=1"/>
 
 if (EMSCRIPTEN)
+  list(APPEND SKIA_DEFINES SK_CPU_SSE_LEVEL=0)
+  list(APPEND SKIA_DEFINES SKNX_NO_SIMD)
+  list(APPEND SKIA_DEFINES SKNX_NO_SIMD=1)
   list(APPEND SKIA_DEFINES SK_ASSUME_WEBGL)
   list(APPEND SKIA_DEFINES SK_ASSUME_WEBGL=1)
   #list(APPEND SKIA_DEFINES SK_ASSUME_GL_ES)
@@ -549,7 +581,7 @@ if(SK_IS_EGL)
 else()
   ADD_SKIA_LIBRARY_DEPENDENCY("GL") # !skia_use_egl # TODO: GLU?
 endif() # SK_IS_EGL
-  ADD_SKIA_LIBRARY_DEPENDENCY("icuuc") # skia_use_system_icu
+  #ADD_SKIA_LIBRARY_DEPENDENCY("icuuc") # skia_use_system_icu
 
   ADD_SKIA_LIBRARY_DEPENDENCY("expat") #skia_use_system_expat
   #ADD_SKIA_LIBRARY_DEPENDENCY("jpeg") # skia_use_system_libjpeg_turbo
@@ -593,6 +625,9 @@ if(EMSCRIPTEN)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --preload-file resources/fonts/FreeSans.ttf")
 endif() # EMSCRIPTEN
 
+set(WTF_LIBRARY_NAME wtf)
+#message(FATAL_ERROR ${WTF_LIBRARY_NAME})
+
 if(EMSCRIPTEN)
   set(HTML_TEMPLATE "${CMAKE_CURRENT_SOURCE_DIR}/assets/index.html")
 
@@ -600,15 +635,12 @@ if(EMSCRIPTEN)
 
   #set(TEMPLATE_OPTION "--shell-file ${HTML_TEMPLATE}")
 
-  target_link_libraries(${PROJECT_NAME}
-    SKIA
-  )
-
   set(EM_TARGET_JS ${PROJECT_NAME}.js)
   configure_file(${HTML_TEMPLATE} index.html @ONLY)
   target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE
   )
   target_link_libraries(${PROJECT_NAME}
+    ${WTF_LIBRARY_NAME}
     SKIA
   )
 else()
@@ -616,18 +648,22 @@ else()
     ${GLEW_INCLUDE_PATH}
     ${OPENGL_INCLUDE_DIR}
     ${SDL2_INCLUDE_DIRS}
+    ${SDL2_TTF_INCLUDE_DIR}
     ${HARFBUZZ_INCLUDE_DIRS}
     #${OPENGLES2_INCLUDE_DIR}
   )
   target_link_libraries(${PROJECT_NAME}
+    ${WTF_LIBRARY_NAME}
     SKIA
+    ${SDL2_TTF_INCLUDE_DIR}
     ${HARFBUZZ_LIBRARIES}
     ${OPENGL_LIBRARIES}
     #${OPENGLES2_LIBRARIES}
     ${GLEW_LIBRARY}
     SDL2::Main
-    SDL2:Net
-    SDL2:tff
+    #SDL2:Net
+    #SDL2:tff
+    ${SDL2_TTF_LIBRARY}
   )
   target_compile_definitions(${PROJECT_NAME} PRIVATE
     GLEW_NO_GLU
@@ -636,3 +672,9 @@ endif() # EMSCRIPTEN
 
 target_compile_options(${PROJECT_NAME} PRIVATE
   -Wno-error)
+
+add_custom_target(copy-runtime-files ALL
+  COMMAND cmake -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/resources ${CMAKE_CURRENT_BINARY_DIR}/resources
+  #DEPENDS ${PROJECT_NAME}
+)
+add_dependencies(${PROJECT_NAME} copy-runtime-files)
