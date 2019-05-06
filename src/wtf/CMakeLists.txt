@@ -131,13 +131,13 @@ list(APPEND WTF_SOURCES
 if (EMSCRIPTEN)
   list(APPEND WTF_SOURCES
     # port
-    wtf/JSC.js/CPUTime.cpp
-    wtf/JSC.js/FileSystem.cpp
-    wtf/JSC.js/NumberOfCores.cpp
-    wtf/JSC.js/RAMSize.cpp
-    wtf/JSC.js/RandomDeviceGeneric.cpp
-    wtf/JSC.js/TextBreakIteratorInternalICU.cpp
-    wtf/JSC.js/ThreadMessage.cpp)
+    wtf/JS/JS_CPUTime.cpp
+    wtf/JS/JS_FileSystem.cpp
+    wtf/JS/JS_NumberOfCores.cpp
+    wtf/JS/JS_RAMSize.cpp
+    wtf/JS/JS_RandomDeviceGeneric.cpp
+    wtf/JS/JS_TextBreakIteratorInternalICU.cpp
+    wtf/JS/JS_ThreadMessage.cpp)
 endif()
 
 #list(APPEND WTF_HEADERS
@@ -800,6 +800,7 @@ target_compile_definitions(${WTF_LIBRARY_NAME} PUBLIC
 
 target_compile_definitions(${WTF_LIBRARY_NAME} PRIVATE
   ${ICU_PRIVATE_DEFINES}
+  WTF_IMPLEMENTATION
 )
 
 #if(EMSCRIPTEN)

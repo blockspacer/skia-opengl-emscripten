@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
 
 if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_CURRENT_BINARY_DIR)
-    message(FATAL_ERROR "You must set your binary directory different from your source")
+  message(FATAL_ERROR "You must set your binary directory different from your source")
 endif()
 
 # this sets the paths that cmake will use to locate libs (via the FindXXX.cmake or XXConfig.cmake scripts)
@@ -96,9 +96,9 @@ if(EMSCRIPTEN)
   # TODO LEGACY_GL_EMULATION
   # OFFSCREENCANVAS_SUPPORT
 
-  # https://emscripten.org/docs/tools_reference/emcc.html#arguments
-  #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Oz")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2")
+  # https://emscripten.org/docs/tools_reference/emcc.html#emcc-oz
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Oz")
+  #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2")
   # With --use-preload-plugins, files can be automatically decoded based on their extension.
   # see https://emscripten.org/docs/porting/files/packaging_files.html
   #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --preload-file resources --use-preload-plugins")
@@ -191,14 +191,6 @@ else()
   #include_directories(${HARFBUZZ_INCLUDE_DIRS})
 
 endif() # EMSCRIPTEN
-
-set(PROJECT_SRC src/main.cpp)
-
-add_executable(${PROJECT_NAME}
-  ${PROJECT_SRC}
-)
-
-set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 14)
 
 include(ExternalProject)
 
@@ -342,7 +334,6 @@ skia_use_libjpeg_turbo=false \
 skia_use_libpng=true \
 skia_use_system_libpng=true \
 skia_use_zlib=true \
-skia_use_system_zlib=true \
 skia_use_libwebp=false \
 skia_enable_pdf=false \
 skia_use_sfntly=false \
@@ -606,9 +597,15 @@ message(STATUS "SKIA_DEPENDENCIES=${SKIA_DEPENDENCIES}")
 if (EXT_SKIA_SHARED)
   add_library(SKIA SHARED IMPORTED GLOBAL)
   set(SKIA_LIBRARY "${SKIA_BUILD_DIR}/${CMAKE_SHARED_LIBRARY_PREFIX}skia${CMAKE_SHARED_LIBRARY_SUFFIX}")
+  #
+  add_library(pathkit SHARED IMPORTED GLOBAL)
+  set(PATHKIT_LIBRARY "${SKIA_BUILD_DIR}/${CMAKE_SHARED_LIBRARY_PREFIX}pathkit${CMAKE_SHARED_LIBRARY_SUFFIX}")
 else (EXT_SKIA_SHARED)
   add_library(SKIA STATIC IMPORTED GLOBAL)
   set(SKIA_LIBRARY "${SKIA_BUILD_DIR}/${CMAKE_STATIC_LIBRARY_PREFIX}skia${CMAKE_STATIC_LIBRARY_SUFFIX}")
+  #
+  add_library(pathkit SHARED IMPORTED GLOBAL)
+  set(PATHKIT_LIBRARY "${SKIA_BUILD_DIR}/${CMAKE_STATIC_LIBRARY_PREFIX}pathkit${CMAKE_STATIC_LIBRARY_SUFFIX}")
 endif (EXT_SKIA_SHARED)
 
 set_target_properties(SKIA PROPERTIES
@@ -617,7 +614,24 @@ set_target_properties(SKIA PROPERTIES
   INTERFACE_COMPILE_DEFINITIONS "${SKIA_DEFINES}"
   IMPORTED_LINK_INTERFACE_LIBRARIES "${SKIA_DEPENDENCIES}"
 )
+#
+set_target_properties(pathkit PROPERTIES
+  IMPORTED_LOCATION "${PATHKIT_LIBRARY}"
+  INTERFACE_INCLUDE_DIRECTORIES "${SKIA_HEADERS}"
+  INTERFACE_COMPILE_DEFINITIONS "${SKIA_DEFINES}"
+  IMPORTED_LINK_INTERFACE_LIBRARIES "${SKIA_DEPENDENCIES}"
+)
 add_dependencies(SKIA SKIA_build)
+
+set(PROJECT_SRC src/main.cpp)
+
+add_executable(${PROJECT_NAME}
+  ${PROJECT_SRC}
+  #DEPENDS SKIA
+)
+add_dependencies(${PROJECT_NAME} SKIA)
+
+set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 14)
 
 if(EMSCRIPTEN)
   # -s ENVIRONMENT=web
@@ -627,6 +641,16 @@ endif() # EMSCRIPTEN
 
 set(WTF_LIBRARY_NAME wtf)
 #message(FATAL_ERROR ${WTF_LIBRARY_NAME})
+
+set(SKIA_INCLUDES
+    thirdparty
+    thirdparty/skia
+    thirdparty/skia/include
+    thirdparty/skia/include/c
+    thirdparty/skia/include/core
+    thirdparty/skia/third_party
+    thirdparty/skia/third_party/skcms
+)
 
 if(EMSCRIPTEN)
   set(HTML_TEMPLATE "${CMAKE_CURRENT_SOURCE_DIR}/assets/index.html")
@@ -638,13 +662,16 @@ if(EMSCRIPTEN)
   set(EM_TARGET_JS ${PROJECT_NAME}.js)
   configure_file(${HTML_TEMPLATE} index.html @ONLY)
   target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE
+    ${SKIA_INCLUDES}
   )
   target_link_libraries(${PROJECT_NAME}
     ${WTF_LIBRARY_NAME}
     SKIA
+    #pathkit
   )
 else()
   target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE
+    ${SKIA_INCLUDES}
     ${GLEW_INCLUDE_PATH}
     ${OPENGL_INCLUDE_DIR}
     ${SDL2_INCLUDE_DIRS}
@@ -662,7 +689,7 @@ else()
     ${GLEW_LIBRARY}
     SDL2::Main
     #SDL2:Net
-    #SDL2:tff
+    #SDL2:tff # see ${SDL2_TTF_LIBRARY}
     ${SDL2_TTF_LIBRARY}
   )
   target_compile_definitions(${PROJECT_NAME} PRIVATE

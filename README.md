@@ -1,8 +1,15 @@
 # TODO
 Shrink skia size
 see https://github.com/skui-org/skia/blob/m74/CMakeLists.txt
+https://github.com/google/skia/blob/master/BUILD.gn#L1085
+https://github.com/google/skia/blob/master/gn/core.gni#L100
 
-https://github.com/keishi/webkit/blob/master/Source/WebCore/platform/graphics/skia/PlatformContextSkia.h#L68
+with wtf & skia: 3.0M
+
+New renderer
+https://github.com/chromium/chromium/blob/master/third_party/blink/renderer/platform/graphics/graphics_context.cc
+https://github.com/chromium/chromium/blob/master/cc/paint/skia_paint_canvas.cc
+# https://github.com/keishi/webkit/blob/master/Source/WebCore/platform/graphics/skia/PlatformContextSkia.h#L68
 
 ### Clone with --recursive
 

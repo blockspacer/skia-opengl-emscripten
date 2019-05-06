@@ -47,82 +47,86 @@
 // see https://lyceum-allotments.github.io/2016/06/emscripten-and-sdl-2-tutorial-part-1/
 #include <SDL2/SDL_ttf.h>
 
-#include <SkCanvas.h>
-#include <SkColorFilter.h>
-#include <SkColorMatrixFilter.h>
-#include <SkColorPriv.h>
-#include <SkData.h>
-#include <SkDocument.h>
-#include <SkGraphics.h>
-#include <SkImage.h>
-#include <SkImageEncoder.h>
-#include <SkMallocPixelRef.h>
-#include <SkMatrix.h>
-#include <SkPaint.h>
-#include <SkPath.h>
-#include <SkStream.h>
-#include <SkSurface.h>
-#include <SkTypeface.h>
-#include <SkFont.h>
+#include <skia/include/core/SkCanvas.h>
+#include <skia/include/core/SkSurface.h>
+#include <skia/include/core/SkFont.h>
 
-#include "SkBitmap.h"
-#include "SkPixelRef.h"
-#include "SkImageEncoder.h"
-#include "SkImageInfo.h"
-#include "SkColor.h"
-#include "SkColorPriv.h"
-#include "SkColorSpace.h"
-#include "SkHalf.h"
-#include "SkMatrix44.h"
-#include "SkUnPreMultiply.h"
-#include "SkStream.h"
-
-#include "GrContext.h"
-
-#include "GrTypes.h"
-#include "GrTypesPriv.h"
-#include "SkRefCnt.h"
-
-#include "GrContextPriv.h"
-#include "GrGpu.h"
-//#include "src/gpu/GrDirectContext.h"
-#include "src/gpu/gl/GrGLGpu.h"
-
-#include "GrAHardwareBufferUtils.h"
-#include "GrBackendSurface.h"
-#include "GrCaps.h"
-#include "GrContextPriv.h"
-#include "GrContextThreadSafeProxyPriv.h"
-#include "GrRecordingContext.h"
-#include "GrRecordingContextPriv.h"
-#include "GrRenderTarget.h"
-#include "GrRenderTargetContextPriv.h"
-#include "GrRenderTargetProxyPriv.h"
-#include "GrTexture.h"
-#include "SkCanvas.h"
-#include "SkDeferredDisplayList.h"
-#include "SkGpuDevice.h"
-#include "SkImagePriv.h"
-#include "SkImage_Base.h"
-#include "SkImage_Gpu.h"
-#include "SkSurfaceCharacterization.h"
-#include "SkSurface_Base.h"
-#include "SkSurface_Gpu.h"
-
-#include "gl/GrGLConfig.h"
-#include "gl/GrGLInterface.h"
-#include "gl/GrGLUtil.h"
-
-#include "src/gpu/gl/GrGLDefines.h"
-
-#include "GrBackendSurface.h"
-#include "GrContext.h"
-#include "GrRenderTargetContext.h"
-#include "SkCanvas.h"
-#include "SkGraphics.h"
-#include "SkRandom.h"
-#include "SkSurface.h"
-#include "SkSurface_Gpu.h"
+//#include <SkCanvas.h>
+//#include <SkColorFilter.h>
+//#include <SkColorMatrixFilter.h>
+//#include <SkColorPriv.h>
+//#include <SkData.h>
+//#include <SkDocument.h>
+//#include <SkGraphics.h>
+//#include <SkImage.h>
+//#include <SkImageEncoder.h>
+//#include <SkMallocPixelRef.h>
+//#include <SkMatrix.h>
+//#include <SkPaint.h>
+//#include <SkPath.h>
+//#include <SkStream.h>
+//#include <SkSurface.h>
+//#include <SkTypeface.h>
+//#include <SkFont.h>
+//
+//#include "SkBitmap.h"
+//#include "SkPixelRef.h"
+//#include "SkImageEncoder.h"
+//#include "SkImageInfo.h"
+//#include "SkColor.h"
+//#include "SkColorPriv.h"
+//#include "SkColorSpace.h"
+//#include "SkHalf.h"
+//#include "SkMatrix44.h"
+//#include "SkUnPreMultiply.h"
+//#include "SkStream.h"
+//
+//#include "GrContext.h"
+//
+//#include "GrTypes.h"
+//#include "GrTypesPriv.h"
+//#include "SkRefCnt.h"
+//
+//#include "GrContextPriv.h"
+//#include "GrGpu.h"
+////#include "src/gpu/GrDirectContext.h"
+//#include "src/gpu/gl/GrGLGpu.h"
+//
+//#include "GrAHardwareBufferUtils.h"
+//#include "GrBackendSurface.h"
+//#include "GrCaps.h"
+//#include "GrContextPriv.h"
+//#include "GrContextThreadSafeProxyPriv.h"
+//#include "GrRecordingContext.h"
+//#include "GrRecordingContextPriv.h"
+//#include "GrRenderTarget.h"
+//#include "GrRenderTargetContextPriv.h"
+//#include "GrRenderTargetProxyPriv.h"
+//#include "GrTexture.h"
+//#include "SkCanvas.h"
+//#include "SkDeferredDisplayList.h"
+//#include "SkGpuDevice.h"
+//#include "SkImagePriv.h"
+//#include "SkImage_Base.h"
+//#include "SkImage_Gpu.h"
+//#include "SkSurfaceCharacterization.h"
+//#include "SkSurface_Base.h"
+//#include "SkSurface_Gpu.h"
+//
+//#include "gl/GrGLConfig.h"
+//#include "gl/GrGLInterface.h"
+//#include "gl/GrGLUtil.h"
+//
+//#include "src/gpu/gl/GrGLDefines.h"
+//
+//#include "GrBackendSurface.h"
+//#include "GrContext.h"
+//#include "GrRenderTargetContext.h"
+//#include "SkCanvas.h"
+//#include "SkGraphics.h"
+//#include "SkRandom.h"
+//#include "SkSurface.h"
+//#include "SkSurface_Gpu.h"
 
 #include <stdio.h>
 #include <string>
