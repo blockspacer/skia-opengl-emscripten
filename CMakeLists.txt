@@ -64,12 +64,15 @@ if(EMSCRIPTEN)
   set(EMCC_COMMON "${EMCC_COMMON} -frtti")
   set(EMCC_COMMON "${EMCC_COMMON} -DSK_RELEASE")
   set(EMCC_COMMON "${EMCC_COMMON} -DSK_ASSUME_WEBGL=1")
+  set(EMCC_COMMON "${EMCC_COMMON} -DSK_DISABLE_LEGACY_SHADERCONTEXT=1")
   #set(EMCC_COMMON "${EMCC_COMMON} -DSK_ASSUME_GL_ES=1")
   #set(EMCC_COMMON "${EMCC_COMMON} -DSK_ASSUME_GL=1")
   set(EMCC_COMMON "${EMCC_COMMON} -DIS_WEBGL=1")
   set(EMCC_COMMON "${EMCC_COMMON} -DSKOTTIE_HACK")
   # https://github.com/qinjidong/qt5.13/blob/master/src/qtwebengine/src/3rdparty/chromium/third_party/skia/experimental/canvaskit/compile.sh
   set(EMCC_COMMON "${EMCC_COMMON} -DSKNX_NO_SIMD")
+  set(EMCC_COMMON "${EMCC_COMMON} -DSK_DISABLE_AAA")
+  set(EMCC_COMMON "${EMCC_COMMON} -DSK_DISABLE_EFFECT_DESERIALIZATION")
   set(EMCC_COMMON "${EMCC_COMMON} -DWEB_ASSEMBLY=1")
   set(EMCC_COMMON "${EMCC_COMMON} -DSK_BUILD_FOR_PATHKIT=1")
   set(EMCC_COMMON "${EMCC_COMMON} -DSK_SUPPORT_OPENCL=0")
@@ -81,6 +84,8 @@ if(EMSCRIPTEN)
   set(EMCC_COMMON "${EMCC_COMMON} -DLIBANGLE_IMPLEMENTATION=1")
   set(EMCC_COMMON "${EMCC_COMMON} -DLIBGLESV2_IMPLEMENTATION=1")
   set(EMCC_COMMON "${EMCC_COMMON} -DLIBEGL_IMPLEMENTATION=1")
+  # see modules/skottie/utils/SkottieUtils.cpp
+  set(EMCC_COMMON "${EMCC_COMMON} -DSK_INCLUDE_MANAGED_SKOTTIE=1")
 
   set(EMCC_COMMON "${EMCC_COMMON} -DANGLE_ENABLE_ESSL=1")
   set(EMCC_COMMON "${EMCC_COMMON} -DANGLE_ENABLE_GLSL=1")
@@ -293,17 +298,24 @@ if (EMSCRIPTEN)
   # https://github.com/Zubnix/skia-wasm-port/blob/master/build_skia_wasm_bitcode.sh#L16
   # TODO: PATCH https://github.com/Zubnix/skia-wasm-port/blob/master/wasm_compatible_build.patch
   set(SK_TARGET_CPU "target_cpu=\"wasm\"")
+  # see DSK_ASSUME_WEBGL
+  # see skia/modules/canvaskit/compile.sh
+  set(SK_GL_STANDARD "skia_gl_standard=\"webgl\"")
 else ()
   set(SK_IS_EGL "false")
   set(SK_TARGET_CPU "")
+  set(SK_GL_STANDARD "")
 endif ()
 
 # TODO: target_cpu=\"wasm\" \
 # skia_use_system_zlib=true \
 # skia_use_system_icu=false \
+# skia_use_system_harfbuzz=false \
 # skia_use_system_expat=true \
 # skia_use_mesa=false \
 # is_skia_standalone=true
+# skia_enable_effects=true \
+# skia_enable_effects_imagefilters=true \
 
 # see https://github.com/google/skia/blob/master/BUILD.gn
   # getting right the wonky cmake string handling (with the extra level of ExternalProject)
@@ -312,6 +324,7 @@ endif ()
   # but then the args can't be indented because GN is written by somone with overly strong opinions:
   # "You got a tab character in here. Tabs are evil. Convert to spaces."
 set(GN_ARGS "${SK_TARGET_CPU} \
+${SK_GL_STANDARD} \
 ar=\"${CMAKE_AR}\" \
 cc=\"${CMAKE_C_COMPILER}\" \
 cxx=\"${CMAKE_CXX_COMPILER}\" \
@@ -329,11 +342,13 @@ skia_use_icu=false \
 skia_enable_ccpr=false \
 skia_enable_nvpr=false \
 skia_use_expat=false \
-skia_enable_skottie=false \
-skia_use_libjpeg_turbo=false \
+skia_enable_skottie=true \
+skia_use_libjpeg_turbo=true \
+skia_use_system_libjpeg_turbo=false \
 skia_use_libpng=true \
 skia_use_system_libpng=true \
 skia_use_zlib=true \
+skia_use_wuffs=true \
 skia_use_libwebp=false \
 skia_enable_pdf=false \
 skia_use_sfntly=false \
@@ -350,8 +365,13 @@ skia_use_metal=false \
 skia_enable_fontmgr_empty=false \
 skia_enable_fontmgr_custom=true \
 skia_use_libheif=false \
+skia_enable_skpicture=true \
 skia_enable_skshaper=true \
 skia_use_harfbuzz=true"
+
+# \
+#modules/skottie/utils/SkottieUtils.cpp
+
 )
 
 message(STATUS "GN_ARGS=${GN_ARGS}")
@@ -432,7 +452,7 @@ set(SKIA_HEADERS
 #  ${SKIA_SRC}/third_party/spirv-headers
 #  ${SKIA_SRC}/third_party/spirv-tools
 #  ${SKIA_SRC}/third_party/vulkanmemoryallocator
-#  ${SKIA_SRC}/third_party/wuffs
+  ${SKIA_SRC}/third_party/wuffs
   ${SKIA_SRC}/third_party/zlib
 )
 
@@ -457,7 +477,6 @@ set(SKIA_HEADERS
   #"SK_VULKAN=1" # skia_use_vulkan
   #"SK_ENABLE_VK_LAYERS=1" # skia_enable_vulkan_debug_layers
   #"SK_ENABLE_SPIRV_VALIDATION=1" # skia_enable_spirv_validation
-  #"SK_HAS_JPEG_LIBRARY=1" # skia_use_libjpeg_turbo
   #"SK_SUPPORT_ATLAS_TEXT=0"
   #"SK_SUPPORT_PDF=1" # skia_enable_pdf
   #"SK_PDF_USE_SFNTLY=1" # skia_use_sfntly
@@ -490,6 +509,10 @@ set(SKIA_DEFINES
   SK_SUPPORT_GPU
   SK_HAS_PNG_LIBRARY=1 # skia_use_libpng
   SK_HAS_PNG_LIBRARY
+  SK_HAS_JPEG_LIBRARY=1 # skia_use_libjpeg_turbo
+  SK_HAS_JPEG_LIBRARY
+  SK_INCLUDE_MANAGED_SKOTTIE=1
+  SK_INCLUDE_MANAGED_SKOTTIE
 )
 
 #<listOptionValue builtIn="false" value="SK_DEFAULT_FONT_CACHE_LIMIT=20971520"/>
@@ -525,7 +548,7 @@ if (EMSCRIPTEN)
   list(APPEND SKIA_DEFINES EGL_EGLEXT_PROTOTYPES=1)
   list(APPEND SKIA_DEFINES GL_GLEXT_PROTOTYPES=1)
   list(APPEND SKIA_DEFINES WEB_ASSEMBLY=1)
-  list(APPEND SKIA_DEFINES SK_BUILD_FOR_PATHKIT=1)
+  #list(APPEND SKIA_DEFINES SK_BUILD_FOR_PATHKIT=1)
   list(APPEND SKIA_DEFINES SK_DISABLE_READBUFFER=1)
 endif ()
 
@@ -606,6 +629,24 @@ else (EXT_SKIA_SHARED)
   #
   add_library(pathkit SHARED IMPORTED GLOBAL)
   set(PATHKIT_LIBRARY "${SKIA_BUILD_DIR}/${CMAKE_STATIC_LIBRARY_PREFIX}pathkit${CMAKE_STATIC_LIBRARY_SUFFIX}")
+  #
+  add_library(sksg SHARED IMPORTED GLOBAL)
+  set(sksg_LIBRARY "${SKIA_BUILD_DIR}/${CMAKE_STATIC_LIBRARY_PREFIX}sksg${CMAKE_STATIC_LIBRARY_SUFFIX}")
+  #
+  add_library(skshaper SHARED IMPORTED GLOBAL)
+  set(skshaper_LIBRARY "${SKIA_BUILD_DIR}/${CMAKE_STATIC_LIBRARY_PREFIX}skshaper${CMAKE_STATIC_LIBRARY_SUFFIX}")
+  #
+  add_library(skottie SHARED IMPORTED GLOBAL)
+  set(skottie_LIBRARY "${SKIA_BUILD_DIR}/${CMAKE_STATIC_LIBRARY_PREFIX}skottie${CMAKE_STATIC_LIBRARY_SUFFIX}")
+  #
+  add_library(particles SHARED IMPORTED GLOBAL)
+  set(particles_LIBRARY "${SKIA_BUILD_DIR}/${CMAKE_STATIC_LIBRARY_PREFIX}particles${CMAKE_STATIC_LIBRARY_SUFFIX}")
+  #
+  add_library(wuffs SHARED IMPORTED GLOBAL)
+  set(wuffs_LIBRARY "${SKIA_BUILD_DIR}/${CMAKE_STATIC_LIBRARY_PREFIX}wuffs${CMAKE_STATIC_LIBRARY_SUFFIX}")
+  #
+  add_library(jpeg SHARED IMPORTED GLOBAL)
+  set(jpeg_LIBRARY "${SKIA_BUILD_DIR}/${CMAKE_STATIC_LIBRARY_PREFIX}jpeg${CMAKE_STATIC_LIBRARY_SUFFIX}")
 endif (EXT_SKIA_SHARED)
 
 set_target_properties(SKIA PROPERTIES
@@ -621,22 +662,172 @@ set_target_properties(pathkit PROPERTIES
   INTERFACE_COMPILE_DEFINITIONS "${SKIA_DEFINES}"
   IMPORTED_LINK_INTERFACE_LIBRARIES "${SKIA_DEPENDENCIES}"
 )
+#
+set_target_properties(sksg PROPERTIES
+  IMPORTED_LOCATION "${sksg_LIBRARY}"
+  INTERFACE_INCLUDE_DIRECTORIES "${SKIA_HEADERS}"
+  INTERFACE_COMPILE_DEFINITIONS "${SKIA_DEFINES}"
+  IMPORTED_LINK_INTERFACE_LIBRARIES "${SKIA_DEPENDENCIES}"
+)
+#
+set_target_properties(skshaper PROPERTIES
+  IMPORTED_LOCATION "${skshaper_LIBRARY}"
+  INTERFACE_INCLUDE_DIRECTORIES "${SKIA_HEADERS}"
+  INTERFACE_COMPILE_DEFINITIONS "${SKIA_DEFINES}"
+  IMPORTED_LINK_INTERFACE_LIBRARIES "${SKIA_DEPENDENCIES}"
+)
+#
+set_target_properties(skottie PROPERTIES
+  IMPORTED_LOCATION "${skottie_LIBRARY}"
+  INTERFACE_INCLUDE_DIRECTORIES "${SKIA_HEADERS}"
+  INTERFACE_COMPILE_DEFINITIONS "${SKIA_DEFINES}"
+  IMPORTED_LINK_INTERFACE_LIBRARIES "${SKIA_DEPENDENCIES}"
+)
+#
+set_target_properties(particles PROPERTIES
+  IMPORTED_LOCATION "${particles_LIBRARY}"
+  INTERFACE_INCLUDE_DIRECTORIES "${SKIA_HEADERS}"
+  INTERFACE_COMPILE_DEFINITIONS "${SKIA_DEFINES}"
+  IMPORTED_LINK_INTERFACE_LIBRARIES "${SKIA_DEPENDENCIES}"
+)
+#
+set_target_properties(wuffs PROPERTIES
+  IMPORTED_LOCATION "${wuffs_LIBRARY}"
+  INTERFACE_INCLUDE_DIRECTORIES "${SKIA_HEADERS}"
+  INTERFACE_COMPILE_DEFINITIONS "${SKIA_DEFINES}"
+  IMPORTED_LINK_INTERFACE_LIBRARIES "${SKIA_DEPENDENCIES}"
+)
+#
+set_target_properties(jpeg PROPERTIES
+  IMPORTED_LOCATION "${jpeg_LIBRARY}"
+  INTERFACE_INCLUDE_DIRECTORIES "${SKIA_HEADERS}"
+  INTERFACE_COMPILE_DEFINITIONS "${SKIA_DEFINES}"
+  IMPORTED_LINK_INTERFACE_LIBRARIES "${SKIA_DEPENDENCIES}"
+)
+
 add_dependencies(SKIA SKIA_build)
 
-set(PROJECT_SRC src/main.cpp)
+set(PROJECT_SRC
+  src/main.cpp
+  # skottie
+  thirdparty/skia/modules/skottie/utils/SkottieUtils.cpp
+  # skia effects
+  thirdparty/skia/src/c/sk_effects.cpp
+  thirdparty/skia/src/effects/Sk1DPathEffect.cpp
+  thirdparty/skia/src/effects/Sk2DPathEffect.cpp
+  thirdparty/skia/src/effects/SkColorMatrix.cpp
+  thirdparty/skia/src/effects/SkColorMatrixFilter.cpp
+  thirdparty/skia/src/effects/SkCornerPathEffect.cpp
+  thirdparty/skia/src/effects/SkDashPathEffect.cpp
+  thirdparty/skia/src/effects/SkDiscretePathEffect.cpp
+  thirdparty/skia/src/effects/SkEmbossMask.cpp
+  thirdparty/skia/src/effects/SkEmbossMaskFilter.cpp
+  thirdparty/skia/src/effects/SkHighContrastFilter.cpp
+  thirdparty/skia/src/effects/SkLayerDrawLooper.cpp
+  thirdparty/skia/src/effects/SkLumaColorFilter.cpp
+  thirdparty/skia/src/effects/SkOpPathEffect.cpp
+  thirdparty/skia/src/effects/SkOverdrawColorFilter.cpp
+  thirdparty/skia/src/effects/SkPackBits.cpp
+  thirdparty/skia/src/effects/SkShaderMaskFilter.cpp
+  thirdparty/skia/src/effects/SkTableColorFilter.cpp
+  thirdparty/skia/src/effects/SkTableMaskFilter.cpp
+  thirdparty/skia/src/effects/SkTrimPathEffect.cpp
+  thirdparty/skia/src/shaders/SkPerlinNoiseShader.cpp
+  thirdparty/skia/src/shaders/gradients/Sk4fGradientBase.cpp
+  thirdparty/skia/src/shaders/gradients/Sk4fLinearGradient.cpp
+  thirdparty/skia/src/shaders/gradients/SkGradientShader.cpp
+  thirdparty/skia/src/shaders/gradients/SkLinearGradient.cpp
+  thirdparty/skia/src/shaders/gradients/SkRadialGradient.cpp
+  thirdparty/skia/src/shaders/gradients/SkTwoPointConicalGradient.cpp
+  thirdparty/skia/src/shaders/gradients/SkSweepGradient.cpp
+  # skia utils (utils.gni)
+  thirdparty/skia/src/utils/Sk3D.cpp
+  thirdparty/skia/src/utils/SkBase64.cpp
+  thirdparty/skia/src/utils/SkFrontBufferedStream.cpp
+  thirdparty/skia/src/utils/SkCamera.cpp
+  thirdparty/skia/src/utils/SkCanvasStack.cpp
+  thirdparty/skia/src/utils/SkCanvasStateUtils.cpp
+  thirdparty/skia/src/utils/SkDashPath.cpp
+  thirdparty/skia/src/utils/SkEventTracer.cpp
+  thirdparty/skia/src/utils/SkFloatToDecimal.cpp
+  thirdparty/skia/src/utils/SkInterpolator.cpp
+  thirdparty/skia/src/utils/SkJSON.cpp
+  thirdparty/skia/src/utils/SkJSONWriter.cpp
+  thirdparty/skia/src/utils/SkMatrix22.cpp
+  thirdparty/skia/src/utils/SkMultiPictureDocument.cpp
+  thirdparty/skia/src/utils/SkNWayCanvas.cpp
+  thirdparty/skia/src/utils/SkNullCanvas.cpp
+  thirdparty/skia/src/utils/SkOSPath.cpp
+  thirdparty/skia/src/utils/SkPaintFilterCanvas.cpp
+  thirdparty/skia/src/utils/SkParse.cpp
+  thirdparty/skia/src/utils/SkParseColor.cpp
+  thirdparty/skia/src/utils/SkParsePath.cpp
+  thirdparty/skia/src/utils/SkPatchUtils.cpp
+  thirdparty/skia/src/utils/SkPolyUtils.cpp
+  thirdparty/skia/src/utils/SkShadowTessellator.cpp
+  thirdparty/skia/src/utils/SkShadowUtils.cpp
+  thirdparty/skia/src/utils/SkThreadUtils_pthread.cpp
+  thirdparty/skia/src/utils/SkThreadUtils_win.cpp
+  thirdparty/skia/src/utils/SkWhitelistTypefaces.cpp
+  #mac
+  #"$_src/utils/mac/SkCreateCGImageRef.cpp",
+  #windows
+  #"$_src/utils/win/SkAutoCoInitialize.h",
+  #"$_src/utils/win/SkAutoCoInitialize.cpp",
+  #"$_src/utils/win/SkDWrite.h",
+  #"$_src/utils/win/SkDWrite.cpp",
+  #"$_src/utils/win/SkDWriteFontFileStream.cpp",
+  #"$_src/utils/win/SkDWriteFontFileStream.h",
+  #"$_src/utils/win/SkDWriteGeometrySink.cpp",
+  #"$_src/utils/win/SkDWriteGeometrySink.h",
+  #"$_src/utils/win/SkDWriteNTDDI_VERSION.h",
+  #"$_src/utils/win/SkHRESULT.h",
+  #"$_src/utils/win/SkHRESULT.cpp",
+  #"$_src/utils/win/SkIStream.h",
+  #"$_src/utils/win/SkIStream.cpp",
+  #"$_src/utils/win/SkTScopedComPtr.h",
+  #"$_src/utils/win/SkWGL.h",
+  #"$_src/utils/win/SkWGL_win.cpp",
+  # effects_imagefilters (effects_imagefilters.gni)
+  thirdparty/skia/src/effects/imagefilters/SkAlphaThresholdFilter.cpp
+  thirdparty/skia/src/effects/imagefilters/SkArithmeticImageFilter.cpp
+  thirdparty/skia/src/effects/imagefilters/SkBlurImageFilter.cpp
+  thirdparty/skia/src/effects/imagefilters/SkColorFilterImageFilter.cpp
+  thirdparty/skia/src/effects/imagefilters/SkComposeImageFilter.cpp
+  thirdparty/skia/src/effects/imagefilters/SkDisplacementMapEffect.cpp
+  thirdparty/skia/src/effects/imagefilters/SkDropShadowImageFilter.cpp
+  thirdparty/skia/src/effects/imagefilters/SkImageSource.cpp
+  thirdparty/skia/src/effects/imagefilters/SkLightingImageFilter.cpp
+  thirdparty/skia/src/effects/imagefilters/SkMagnifierImageFilter.cpp
+  thirdparty/skia/src/effects/imagefilters/SkMatrixConvolutionImageFilter.cpp
+  thirdparty/skia/src/effects/imagefilters/SkMergeImageFilter.cpp
+  thirdparty/skia/src/effects/imagefilters/SkMorphologyImageFilter.cpp
+  thirdparty/skia/src/effects/imagefilters/SkOffsetImageFilter.cpp
+  thirdparty/skia/src/effects/imagefilters/SkPaintImageFilter.cpp
+  thirdparty/skia/src/effects/imagefilters/SkPictureImageFilter.cpp
+  thirdparty/skia/src/effects/imagefilters/SkTileImageFilter.cpp
+  thirdparty/skia/src/effects/imagefilters/SkXfermodeImageFilter.cpp
+)
 
 add_executable(${PROJECT_NAME}
   ${PROJECT_SRC}
   #DEPENDS SKIA
 )
-add_dependencies(${PROJECT_NAME} SKIA)
+add_dependencies(${PROJECT_NAME}
+    SKIA
+    skottie
+    sksg
+    skshaper
+    particles
+)
 
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 14)
 
 if(EMSCRIPTEN)
   # -s ENVIRONMENT=web
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --emrun")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --preload-file resources/fonts/FreeSans.ttf")
+  #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --preload-file resources/fonts/FreeSans.ttf")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --preload-file resources")
 endif() # EMSCRIPTEN
 
 set(WTF_LIBRARY_NAME wtf)
@@ -666,8 +857,16 @@ if(EMSCRIPTEN)
   )
   target_link_libraries(${PROJECT_NAME}
     ${WTF_LIBRARY_NAME}
+    #
     SKIA
-    #pathkit
+    skottie
+    sksg
+    skshaper
+    particles
+    pathkit
+    wuffs
+    jpeg
+    #
   )
 else()
   target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE
@@ -681,7 +880,16 @@ else()
   )
   target_link_libraries(${PROJECT_NAME}
     ${WTF_LIBRARY_NAME}
+    #
     SKIA
+    skottie
+    sksg
+    skshaper
+    particles
+    pathkit
+    wuffs
+    jpeg
+    #
     ${SDL2_TTF_INCLUDE_DIR}
     ${HARFBUZZ_LIBRARIES}
     ${OPENGL_LIBRARIES}

@@ -1,15 +1,31 @@
-# TODO
-Shrink skia size
+# Features
+
+> skia compiled to wasm (emscripten)
+> supports skottie (Bodymovin animation / lottie)
+> supports custom fonts
+> Uses SDL to create window
+
+## Experimental features
+
+> supports WTF (Web Template Framework)
+https://chromium.googlesource.com/chromium/src.git/+/62.0.3178.1/third_party/WebKit/Source/platform/wtf/README.md
+
+## TODO
+> Test linux & windows support
+
+> Shrink skia size
 see https://github.com/skui-org/skia/blob/m74/CMakeLists.txt
 https://github.com/google/skia/blob/master/BUILD.gn#L1085
 https://github.com/google/skia/blob/master/gn/core.gni#L100
 
 with wtf & skia: 3.0M
 
-New renderer
+> New renderer (blink)
 https://github.com/chromium/chromium/blob/master/third_party/blink/renderer/platform/graphics/graphics_context.cc
 https://github.com/chromium/chromium/blob/master/cc/paint/skia_paint_canvas.cc
-# https://github.com/keishi/webkit/blob/master/Source/WebCore/platform/graphics/skia/PlatformContextSkia.h#L68
+
+> Webkit
+https://github.com/keishi/webkit/blob/master/Source/WebCore/platform/graphics/skia/PlatformContextSkia.h#L68
 
 ### Clone with --recursive
 

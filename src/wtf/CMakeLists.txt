@@ -800,7 +800,7 @@ target_compile_definitions(${WTF_LIBRARY_NAME} PUBLIC
 
 target_compile_definitions(${WTF_LIBRARY_NAME} PRIVATE
   ${ICU_PRIVATE_DEFINES}
-  WTF_IMPLEMENTATION
+  WTF_IMPLEMENTATION=1
 )
 
 #if(EMSCRIPTEN)

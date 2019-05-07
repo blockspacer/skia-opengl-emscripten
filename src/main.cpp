@@ -50,6 +50,17 @@
 #include <skia/include/core/SkCanvas.h>
 #include <skia/include/core/SkSurface.h>
 #include <skia/include/core/SkFont.h>
+#include <skia/include/core/SkCanvas.h>
+#include <skia/include/core/SkGraphics.h>
+#include <skia/include/core/SkPictureRecorder.h>
+#include <skia/include/core/SkStream.h>
+#include <skia/include/core/SkSurface.h>
+#include <skia/modules/skottie/include/Skottie.h>
+#include <skia/modules/skottie/utils/SkottieUtils.h>
+#include <skia/src/core/SkMakeUnique.h>
+
+#include <skia/src/core/SkOSFile.h>
+#include <skia/src/utils/SkOSPath.h>
 
 //#include <SkCanvas.h>
 //#include <SkColorFilter.h>
@@ -141,6 +152,26 @@
 #include <string>
 #include <vector>
 
+static SkString                           fPath = SkString("./resources/animations/data.json");
+//static SkString                           fPath = SkString("./resources/fonts/FreeSans.ttf");
+static sk_sp<skottie::Animation>          fAnimation;
+static skottie::Animation::Builder::Stats fAnimationStats;
+static SkSize                             fWinSize = SkSize::Make(512,512);
+static SkMSec                             fTimeBase  = 0;
+static bool                               fShowAnimationInval = false;
+static bool                               fShowAnimationStats = false;
+
+static SkFont* skFont = nullptr;
+
+//static std::string input    = "Input .json file.";//);
+////static std::string(writePath, w, nullptr, "Output directory.  Frames are names [0-9]{6}.png.");
+//static std::string format   = "png";//  , "Output format (png or skp)");
+//static double t0=   0;//, "Timeline start [0..1].");
+//static double t1=   1;//, "Timeline stop [0..1].");
+//static double fps= 30;//, "Decode frames per second.");
+//static int width = 800;//, "Render width.");
+//static int height= 600;//, "Render height.");
+
 static const int kStencilBits = 8;  // Skia needs 8 stencil bits
 static const int kMsaaSampleCount = 4;
 static TTF_Font* ttfFont = nullptr;
@@ -216,6 +247,8 @@ public:
     //paint.setAlpha(255);
     paint.setAntiAlias(true);
     paint.setColor(SK_ColorRED);
+    ///paint.setColor(0xffeeeeee);
+
     canvas->drawCircle(m_pos.x(), m_pos.y(), m_size, paint);
 
     canvas->drawLine(m_pos.x(), m_pos.y(), m_prev.x(), m_prev.y(), paint);
@@ -228,8 +261,8 @@ public:
 
     paint.setColor(SK_ColorBLACK);
     paint.setStyle(SkPaint::kFill_Style);
-    SkFont font;//(nullptr, 24);//SkFont::kA8_MaskType, flags);
-    canvas->drawString("Skia Test Skia Test Skia Test", 20, 32, font, paint);
+    //SkFont font;//(nullptr, 24);//SkFont::kA8_MaskType, flags);
+    canvas->drawString("Skia Test Skia Test Skia Test", 20, 32, *skFont, paint);
 
     /*{
       const SkScalar sigma = 1.65f;
@@ -248,6 +281,15 @@ public:
       canvas->drawTextBlob(blob.get(), x + xDrop, y + yDrop, blur);
       canvas->drawTextBlob(blob.get(), x,         y,         paint);
     }*/
+
+    if (fAnimation) {
+        SkAutoCanvasRestore acr(canvas, true);
+        const auto dstR = SkRect::MakeSize(fWinSize);
+        fAnimation->render(canvas, &dstR);
+        /*if (fShowAnimationStats) {
+            draw_stats_box(canvas, fAnimationStats);
+        }*/
+    }
   }
   SkPainter(SkColor color, SkScalar size)
     : m_color(color)
@@ -436,26 +478,43 @@ Draw()
 
 }
 
-void
-mainLoop()
+static void animate()
 {
+  if (fTimeBase == 0) {
+      // Reset the animation time.
+      fTimeBase = SDL_GetTicks();
+  }
+  if (fAnimation) {
+      const auto t = SDL_GetTicks() - fTimeBase;
+      const auto d = fAnimation->duration() * 1000;
+      fAnimation->seek(std::fmod(t, d) / d);
+  }
+}
+
+static void mainLoop()
+{
+  animate();
+
+  // Render
+  Draw();
+
+  // Update screen
+  SDL_GL_SwapWindow(window);
+
+  while (SDL_PollEvent(&e) != 0) {
+    switch (e.type) {
+      case SDL_QUIT: {
+        quit = true;
+        printf("recieved quit signal\n");
+      }
+    }
+  }
 #ifdef __EMSCRIPTEN__
   if (quit) {
     printf("quitting main loop\n");
     emscripten_cancel_main_loop();
   }
 #endif
-  while (SDL_PollEvent(&e) != 0) {
-    // Render
-    Draw();
-
-    // Update screen
-    SDL_GL_SwapWindow(window);
-    if (e.type == SDL_QUIT) {
-      quit = true;
-      printf("recieved quit signal\n");
-    }
-  }
 }
 
 int
@@ -553,10 +612,12 @@ main(int argc, char** argv)
     printf("SDL_ttf could not initialize! SDL_ttf Error: %s\n", TTF_GetError());
   }
 
-  ttfFont = TTF_OpenFont("./resources/FreeSans.ttf", 30);
+  ttfFont = TTF_OpenFont("./resources/fonts/FreeSans.ttf", 30);
   if (ttfFont == nullptr) {
     printf("Failed to load lazy font! SDL_ttf Error: %s\n", TTF_GetError());
   }
+
+  skFont = new SkFont(SkTypeface::MakeFromFile("./resources/fonts/FreeSans.ttf"));
 
   printf("Initializing subsystems...\n");
 
@@ -569,6 +630,53 @@ main(int argc, char** argv)
   printf("Initializing skia view...\n");
 
   myView = new SkPainter(SK_ColorRED, 200);
+
+//
+  //sk_sp<skottie_utils::FileResourceProvider> frp
+  //  = skottie_utils::FileResourceProvider::Make(SkOSPath::Dirname(fPath.c_str()));
+  //frp->load(fPath.c_str(), "data.json");
+//
+
+  skottie::Animation::Builder builder;
+  /*fAnimation      = builder
+            //.setLogger(logger)
+            .setResourceProvider(
+                skottie_utils::FileResourceProvider::Make(SkOSPath::Dirname(fPath.c_str())))
+            .makeFromFile(fPath.c_str());*/
+  /*SDL_RWops* fileHandle = SDL_RWFromFile(fPath.c_str(), "r");
+  if (fileHandle == nullptr) {
+      SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Can't find the file!\n");
+  }*/
+
+  FILE *f = fopen(fPath.c_str(), "rb");
+  if (!f) {
+    printf("failed to open file: %s\n", fPath.c_str());
+    return 1;
+  }
+  fseek(f, 0, SEEK_END);
+  long int fsize = ftell(f);
+  fseek(f, 0, SEEK_SET);  /* same as rewind(f); */
+  char* fileString = new char[fsize + 1];
+  fread(fileString, 1, fsize, f);
+  fclose(f);
+  fileString[fsize] = 0;
+
+  fAnimation      = builder.make(fileString, fsize);
+  fAnimationStats = builder.getStats();
+  fTimeBase       = 0; // force a time reset
+  if (fAnimation) {
+    fAnimation->setShowInval(fShowAnimationInval);
+    printf("Loaded Bodymovin animation v: %s, size: [%f %f]\n",
+             fAnimation->version().c_str(),
+             fAnimation->size().width(),
+             fAnimation->size().height());
+  } else {
+    printf("failed to load Bodymovin animation: %s\n", fPath.c_str());
+    return 1;
+  }
+
+  delete[] fileString; // TODO
+//
 
 #ifdef __EMSCRIPTEN__
   printf("running with __EMSCRIPTEN__\n");
@@ -595,6 +703,8 @@ main(int argc, char** argv)
     TTF_CloseFont(ttfFont);
     ttfFont = nullptr;
   }
+
+  fAnimation.reset();
 
   SDL_DestroyWindow(window);
   window = nullptr;
