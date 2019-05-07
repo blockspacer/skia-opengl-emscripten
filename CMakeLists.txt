@@ -55,6 +55,7 @@ if(EMSCRIPTEN)
   #set(EMCC_COMMON "${EMCC_COMMON} -s EMULATE_FUNCTION_POINTER_CASTS=1")
   #set(EMCC_COMMON "${EMCC_COMMON} -s LEGACY_GL_EMULATION=0")
 
+  #set(EMCC_COMMON "${EMCC_COMMON} -s SIDE_MODULE=1")
 
   set(EMCC_COMMON "${EMCC_COMMON} -s USE_PTHREADS=0")
   set(EMCC_COMMON "${EMCC_COMMON} -s USE_ZLIB=1")
@@ -815,6 +816,10 @@ set(PROJECT_SRC
   thirdparty/skia/src/effects/imagefilters/SkXfermodeImageFilter.cpp
 )
 
+# https://www.mail-archive.com/emscripten-discuss@googlegroups.com/msg07864.html
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s SIDE_MODULE=0")
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s MAIN_MODULE=1")
+
 add_executable(${PROJECT_NAME}
   ${PROJECT_SRC}
   #DEPENDS SKIA
@@ -826,6 +831,11 @@ add_dependencies(${PROJECT_NAME}
     skshaper
     particles
 )
+
+# https://www.mail-archive.com/emscripten-discuss@googlegroups.com/msg07864.html
+#set_target_properties(
+#  ${PROJECT_NAME}
+#  PROPERTIES LINK_FLAGS "-s MAIN_MODULE=1")
 
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 14)
 
