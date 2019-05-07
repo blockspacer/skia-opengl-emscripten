@@ -37,6 +37,8 @@
 //#include <OpenGL/gl.h>
 //#include <SDL/SDL_ttf.h>
 //#include <SDL2/SDL_image.h>
+#include <GL/gl.h>
+#include <GL/glext.h>
 #else
 #include "SDL2/SDL.h"
 #include <GL/glew.h>
@@ -59,8 +61,18 @@
 #include <skia/modules/skottie/utils/SkottieUtils.h>
 #include <skia/src/core/SkMakeUnique.h>
 
+#include <skia/include/effects/SkGradientShader.h>
+
 #include <skia/src/core/SkOSFile.h>
 #include <skia/src/utils/SkOSPath.h>
+
+#include <skia/include/core/SkMaskFilter.h>
+#include <skia/include/core/SkTextBlob.h>
+
+
+#include <skia/include/gpu/gl/GrGLAssembleInterface.h>
+#include <skia/include/gpu/gl/GrGLInterface.h>
+#include <skia/src/gpu/gl/GrGLUtil.h>
 
 //#include <SkCanvas.h>
 //#include <SkColorFilter.h>
@@ -92,22 +104,22 @@
 //#include "SkUnPreMultiply.h"
 //#include "SkStream.h"
 //
-//#include "GrContext.h"
+#include "skia/include/gpu/GrContext.h"
 //
-//#include "GrTypes.h"
-//#include "GrTypesPriv.h"
-//#include "SkRefCnt.h"
+#include "skia/include/gpu/GrTypes.h"
+//#include "skia/include/gpu/GrTypesPriv.h"
+#include "skia/include/core/SkRefCnt.h"
 //
 //#include "GrContextPriv.h"
-//#include "GrGpu.h"
+#include "skia/src/gpu/GrGpu.h"
 ////#include "src/gpu/GrDirectContext.h"
-//#include "src/gpu/gl/GrGLGpu.h"
+#include "skia/src/gpu/gl/GrGLGpu.h"
 //
 //#include "GrAHardwareBufferUtils.h"
 //#include "GrBackendSurface.h"
 //#include "GrCaps.h"
-//#include "GrContextPriv.h"
-//#include "GrContextThreadSafeProxyPriv.h"
+#include "skia/src/gpu/GrContextPriv.h"
+#include "skia/src/gpu/GrContextThreadSafeProxyPriv.h"
 //#include "GrRecordingContext.h"
 //#include "GrRecordingContextPriv.h"
 //#include "GrRenderTarget.h"
@@ -152,6 +164,59 @@
 #include <string>
 #include <vector>
 
+//#define TODO
+
+#ifdef TODO
+//extern "C" { extern void* emscripten_GetProcAddress(const char *x); }
+
+// https://github.com/google/skia/blob/master/src/gpu/gl/egl/GrGLMakeNativeInterface_egl.cpp
+static GrGLFuncPtr emscripten_get_gl_proc(void* ctx, const char name[]) {
+ SkASSERT(nullptr == ctx);
+ //return emscripten_GetProcAddress(name);
+ return (GrGLFuncPtr) SDL_GL_GetProcAddress(name);
+}
+
+//extern void* emscripten_GetProcAddress(const char *x);
+
+#include "include/gpu/gl/GrGLAssembleHelpers.h"
+#include "include/gpu/gl/GrGLAssembleInterface.h"
+#include "src/gpu/gl/GrGLUtil.h"
+
+sk_sp<const GrGLInterface> emscripten_GrGLMakeNativeInterface() {
+    void *ctx = nullptr;
+    GrGLGetProc get = emscripten_get_gl_proc;
+
+    //return GrGLMakeAssembledWebGLInterface(nullptr, emscripten_get_gl_proc);
+    /*GET_PROC_LOCAL(GetString);
+    if (nullptr == GetString) {
+        return nullptr;
+    }
+
+    const char* verStr = reinterpret_cast<const char*>(GetString(GR_GL_VERSION));
+    if (nullptr == verStr) {
+        return nullptr;
+    }*/
+
+    GrGLStandard standard = kWebGL_GrGLStandard;//GrGLGetStandardInUseFromString("verStr");
+    // standard can be unused (optimzed away) if SK_ASSUME_GL_ES is set
+    sk_ignore_unused_variable(standard);
+
+    // https://github.com/Rusino/skia/blob/b3929a01f476c63e5358e97128ba7eb9f14e806e/src/gpu/gl/GrGLAssembleWebGLInterfaceAutogen.cpp#L22
+
+    if (GR_IS_GR_GL_ES(standard)) {
+        printf("GR_IS_GR_GL_ES");
+        return GrGLMakeAssembledGLESInterface(ctx, get);
+    } else if (GR_IS_GR_GL(standard)) {
+        printf("GR_IS_GR_GL");
+        return GrGLMakeAssembledGLInterface(ctx, get);
+    } else if (GR_IS_GR_WEBGL(standard)) {
+        printf("GR_IS_GR_WEBGL");
+        return GrGLMakeAssembledWebGLInterface(ctx, get);
+    }
+    return nullptr;
+}
+#endif
+
 static SkString                           fPath = SkString("./resources/animations/data.json");
 //static SkString                           fPath = SkString("./resources/fonts/FreeSans.ttf");
 static sk_sp<skottie::Animation>          fAnimation;
@@ -161,7 +226,8 @@ static SkMSec                             fTimeBase  = 0;
 static bool                               fShowAnimationInval = false;
 static bool                               fShowAnimationStats = false;
 
-static SkFont* skFont = nullptr;
+static SkFont* skFont1 = nullptr;
+static SkFont* skFont2 = nullptr;
 
 //static std::string input    = "Input .json file.";//);
 ////static std::string(writePath, w, nullptr, "Output directory.  Frames are names [0-9]{6}.png.");
@@ -176,6 +242,13 @@ static const int kStencilBits = 8;  // Skia needs 8 stencil bits
 static const int kMsaaSampleCount = 4;
 static TTF_Font* ttfFont = nullptr;
 static sk_sp<SkSurface> sRasterSurface;
+
+#ifdef TODO
+//static sk_sp<GrContext> sContext = nullptr;
+static GrContext* grContext = nullptr;
+//static sk_sp<SkSurface> sSurface = nullptr;
+static SkSurface* sSurface = nullptr;
+#endif
 
 static GLuint skia_texture = 0;
 
@@ -214,6 +287,83 @@ static GLfloat const kVertexData[] = {
 static void
 init_skia(int w, int h)
 {
+#ifdef TODO
+  {
+    auto sInterface = emscripten_GrGLMakeNativeInterface(); //sk_sp<const GrGLInterface>(GrGLCreateNativeInterface());
+    if (sInterface == nullptr) {
+      printf("Error while creating GrGLInterface\n");
+      abort();
+    }
+    // Validates that the GrGLInterface supports its advertised standard. This means the necessary
+    // function pointers have been initialized for both the GL version and any advertised
+    // extensions.
+    if (!sInterface->validate()) {
+      printf("Error while validating GrGLInterface\n");
+      abort();
+    }
+
+    printf("create GrContext...");
+
+    GrContextOptions options;
+    grContext = GrContext::MakeGL(std::move(sInterface), options).release();
+    if (!grContext) {
+        printf("failed to create grContext.");
+    }
+    SkASSERT(grContext);
+
+    printf("created GrContext...");
+
+    GrGLint bufferID;
+    // Wrap the frame buffer object attached to the screen in a Skia render target so Skia can
+    // render to it
+    GR_GL_GetIntegerv(sInterface.get(), GR_GL_FRAMEBUFFER_BINDING, &bufferID);
+    GrGLFramebufferInfo info;
+    info.fFBOID = (GrGLuint) bufferID;
+    SkColorType colorType;
+
+    printf("SDL_GetWindowPixelFormat...");
+
+    uint32_t windowFormat = SDL_GetWindowPixelFormat(window);
+    int contextType;
+    SDL_GL_GetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, &contextType);
+
+    printf("get windowFormat...");
+
+      //SkDebugf("%s", SDL_GetPixelFormatName(windowFormat));
+      // TODO: the windowFormat is never any of these?
+      if (SDL_PIXELFORMAT_RGBA8888 == windowFormat) {
+          info.fFormat = GR_GL_RGBA8;
+          colorType = kRGBA_8888_SkColorType;
+      } else {
+          colorType = kBGRA_8888_SkColorType;
+          if (SDL_GL_CONTEXT_PROFILE_ES == contextType) {
+              info.fFormat = GR_GL_BGRA8;
+          } else {
+              // We assume the internal format is RGBA8 on desktop GL
+              info.fFormat = GR_GL_RGBA8;
+          }
+      }
+
+      info.fFormat = GR_GL_BGRA8; //  TODO
+
+      printf("create GrBackendRenderTarget...");
+
+      GrBackendRenderTarget target(width, height, kMsaaSampleCount, kStencilBits, info);
+
+      // setup SkSurface
+      // To use distance field text, use commented out SkSurfaceProps instead
+      // SkSurfaceProps props(SkSurfaceProps::kUseDeviceIndependentFonts_Flag,
+      //                      SkSurfaceProps::kLegacyFontHost_InitType);
+      SkSurfaceProps props(SkSurfaceProps::kLegacyFontHost_InitType);
+
+      sk_sp<SkSurface> surface(SkSurface::MakeFromBackendRenderTarget(grContext, target,
+                                                                      kBottomLeft_GrSurfaceOrigin,
+                                                                      colorType, nullptr, &props));
+      if (!surface) {
+          printf("failed to create surface.");
+      }
+  }
+#endif
   const SkImageInfo info = SkImageInfo::MakeN32(width, height, kPremul_SkAlphaType);
   sRasterSurface = SkSurface::MakeRaster(info);
   if (!sRasterSurface) {
@@ -251,7 +401,15 @@ public:
 
     canvas->drawCircle(m_pos.x(), m_pos.y(), m_size, paint);
 
-    canvas->drawLine(m_pos.x(), m_pos.y(), m_prev.x(), m_prev.y(), paint);
+    {
+      SkColor colors[4] = {
+          SK_ColorCYAN, SK_ColorMAGENTA, SK_ColorYELLOW, SK_ColorCYAN};
+      paint.setShader(SkGradientShader::MakeSweep(
+                  128.0f, 128.0f, colors, nullptr, 4, 0, nullptr));
+
+    }
+
+    //canvas->drawLine(m_pos.x(), m_pos.y(), m_prev.x(), m_prev.y(), paint);
 
     /*paint.setColor(SK_ColorGREEN);
     canvas->drawRect({ 0, 0, 50, 50 }, paint);
@@ -262,9 +420,11 @@ public:
     paint.setColor(SK_ColorBLACK);
     paint.setStyle(SkPaint::kFill_Style);
     //SkFont font;//(nullptr, 24);//SkFont::kA8_MaskType, flags);
-    canvas->drawString("Skia Test Skia Test Skia Test", 20, 32, *skFont, paint);
+    canvas->drawString("Skia Test Skia Test Skia Test", 20, 32, *skFont1, paint);
+    canvas->drawString("Skia Test Skia Test Skia Test", 20, 37, *skFont2, paint);
 
-    /*{
+    // see https://skia.org/user/api/skpaint_overview
+    {
       const SkScalar sigma = 1.65f;
       const SkScalar xDrop = 2.0f;
       const SkScalar yDrop = 2.0f;
@@ -272,15 +432,23 @@ public:
       const SkScalar y = 52.0f;
       const SkScalar textSize = 48.0f;
       const uint8_t blurAlpha = 127;
-      auto blob = SkTextBlob::MakeFromString("Skia!", SkFont(nullptr, textSize));
-      paint.setAntiAlias(true);
+      auto blob1 = SkTextBlob::MakeFromString("Skia! skFont1", *skFont1);
+      auto blob2 = SkTextBlob::MakeFromString("Skia! skFont2", *skFont2);
+      //paint.setAntiAlias(true);
       SkPaint blur(paint);
       blur.setAlpha(blurAlpha);
       blur.setMaskFilter(SkMaskFilter::MakeBlur(kNormal_SkBlurStyle, sigma, 0));
-      canvas->drawColor(SK_ColorWHITE);
-      canvas->drawTextBlob(blob.get(), x + xDrop, y + yDrop, blur);
-      canvas->drawTextBlob(blob.get(), x,         y,         paint);
-    }*/
+      //canvas->drawColor(SK_ColorWHITE);
+      canvas->drawTextBlob(blob1.get(), x + xDrop, y + yDrop, blur);
+      canvas->drawTextBlob(blob1.get(), x,         y,         paint);
+
+      canvas->drawTextBlob(blob2.get(), x + xDrop, 20 + y + yDrop, blur);
+
+      SkPaint strokePaint(paint);
+      strokePaint.setStyle(SkPaint::kStroke_Style);
+      strokePaint.setStrokeWidth(3.0f);
+      canvas->drawTextBlob(blob2.get(), x,         20 + y,         strokePaint);
+    }
 
     if (fAnimation) {
         SkAutoCanvasRestore acr(canvas, true);
@@ -617,7 +785,9 @@ main(int argc, char** argv)
     printf("Failed to load lazy font! SDL_ttf Error: %s\n", TTF_GetError());
   }
 
-  skFont = new SkFont(SkTypeface::MakeFromFile("./resources/fonts/FreeSans.ttf"));
+  skFont1 = new SkFont(SkTypeface::MakeFromFile("./resources/fonts/FreeSans.ttf"), 22.0f, 1.0f, 0.0f);
+
+  skFont2 = new SkFont(SkTypeface::MakeFromFile("./resources/fonts/FreeSans.ttf"), 30.0f, 1.5f, 0.0f);
 
   printf("Initializing subsystems...\n");
 
@@ -708,6 +878,9 @@ main(int argc, char** argv)
 
   SDL_DestroyWindow(window);
   window = nullptr;
+
+  delete skFont1;
+  delete skFont2;
 
   // Quit SDL subsystems
   TTF_Quit();

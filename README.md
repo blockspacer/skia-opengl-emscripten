@@ -1,13 +1,14 @@
 # Features
 
 > skia compiled to wasm (emscripten)
-> supports skottie (Bodymovin animation / lottie)
-> supports custom fonts
-> Uses SDL to create window
+> skottie (Bodymovin animation / lottie)
+> custom fonts
+> Uses SDL2 to create window
+> Uses CMake
 
 ## Experimental features
 
-> supports WTF (Web Template Framework)
+> WTF (Web Template Framework)
 https://chromium.googlesource.com/chromium/src.git/+/62.0.3178.1/third_party/WebKit/Source/platform/wtf/README.md
 
 ## TODO
