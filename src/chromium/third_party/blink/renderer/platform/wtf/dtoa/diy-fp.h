@@ -25,12 +25,14 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef DOUBLE_CONVERSION_DIY_FP_H_
-#define DOUBLE_CONVERSION_DIY_FP_H_
+#ifndef THIRD_PARTY_BLINK_RENDERER_PLATFORM_WTF_DTOA_DIY_FP_H_
+#define THIRD_PARTY_BLINK_RENDERER_PLATFORM_WTF_DTOA_DIY_FP_H_
 
-#include <wtf/dtoa/utils.h>
+#include "third_party/blink/renderer/platform/wtf/allocator.h"
+#include "third_party/blink/renderer/platform/wtf/dtoa/utils.h"
 
 namespace WTF {
+
 namespace double_conversion {
 
 // This "Do It Yourself Floating Point" class implements a floating-point number
@@ -39,19 +41,21 @@ namespace double_conversion {
 // Multiplication and Subtraction do not normalize their results.
 // DiyFp are not designed to contain special doubles (NaN and Infinity).
 class DiyFp {
+  STACK_ALLOCATED();
+
  public:
   static const int kSignificandSize = 64;
 
   DiyFp() : f_(0), e_(0) {}
-  DiyFp(uint64_t significand, int exponent) : f_(significand), e_(exponent) {}
+  DiyFp(uint64_t f, int e) : f_(f), e_(e) {}
 
   // this = this - other.
   // The exponents of both numbers must be the same and the significand of this
   // must be bigger than the significand of other.
   // The result will not be normalized.
   void Subtract(const DiyFp& other) {
-    ASSERT(e_ == other.e_);
-    ASSERT(f_ >= other.f_);
+    DCHECK_EQ(e_, other.e_);
+    DCHECK_GE(f_, other.f_);
     f_ -= other.f_;
   }
 
@@ -64,7 +68,6 @@ class DiyFp {
     return result;
   }
 
-
   // this = this * other.
   void Multiply(const DiyFp& other);
 
@@ -76,23 +79,23 @@ class DiyFp {
   }
 
   void Normalize() {
-    ASSERT(f_ != 0);
-    uint64_t significand = f_;
-    int exponent = e_;
+    DCHECK_NE(f_, 0u);
+    uint64_t f = f_;
+    int e = e_;
 
     // This method is mainly called for normalizing boundaries. In general
     // boundaries need to be shifted by 10 bits. We thus optimize for this case.
-    const uint64_t k10MSBits = UINT64_2PART_C(0xFFC00000, 00000000);
-    while ((significand & k10MSBits) == 0) {
-      significand <<= 10;
-      exponent -= 10;
+    const uint64_t kK10MSBits = UINT64_2PART_C(0xFFC00000, 00000000);
+    while ((f & kK10MSBits) == 0) {
+      f <<= 10;
+      e -= 10;
     }
-    while ((significand & kUint64MSB) == 0) {
-      significand <<= 1;
-      exponent--;
+    while ((f & kUint64MSB) == 0) {
+      f <<= 1;
+      e--;
     }
-    f_ = significand;
-    e_ = exponent;
+    f_ = f;
+    e_ = e;
   }
 
   static DiyFp Normalize(const DiyFp& a) {
@@ -101,8 +104,8 @@ class DiyFp {
     return result;
   }
 
-  uint64_t f() const { return f_; }
-  int e() const { return e_; }
+  uint64_t F() const { return f_; }
+  int E() const { return e_; }
 
   void set_f(uint64_t new_value) { f_ = new_value; }
   void set_e(int new_value) { e_ = new_value; }
@@ -115,6 +118,7 @@ class DiyFp {
 };
 
 }  // namespace double_conversion
+
 }  // namespace WTF
 
-#endif  // DOUBLE_CONVERSION_DIY_FP_H_
+#endif  // THIRD_PARTY_BLINK_RENDERER_PLATFORM_WTF_DTOA_DIY_FP_H_

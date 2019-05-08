@@ -25,12 +25,13 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef DOUBLE_CONVERSION_BIGNUM_DTOA_H_
-#define DOUBLE_CONVERSION_BIGNUM_DTOA_H_
+#ifndef THIRD_PARTY_BLINK_RENDERER_PLATFORM_WTF_DTOA_BIGNUM_DTOA_H_
+#define THIRD_PARTY_BLINK_RENDERER_PLATFORM_WTF_DTOA_BIGNUM_DTOA_H_
 
-#include <wtf/dtoa/utils.h>
+#include "third_party/blink/renderer/platform/wtf/dtoa/utils.h"
 
 namespace WTF {
+
 namespace double_conversion {
 
 enum BignumDtoaMode {
@@ -38,8 +39,6 @@ enum BignumDtoaMode {
   // For example the output of 0.299999999999999988897 is (the less accurate but
   // correct) 0.3.
   BIGNUM_DTOA_SHORTEST,
-  // Same as BIGNUM_DTOA_SHORTEST but for single-precision floats.
-  BIGNUM_DTOA_SHORTEST_SINGLE,
   // Return a fixed number of digits after the decimal point.
   // For instance fixed(0.1, 4) becomes 0.1000
   // If the input number is big, the output will be big.
@@ -77,10 +76,15 @@ enum BignumDtoaMode {
 //   Halfway cases are again rounded up.
 // 'BignumDtoa' expects the given buffer to be big enough to hold all digits
 // and a terminating null-character.
-void BignumDtoa(double v, BignumDtoaMode mode, int requested_digits,
-                BufferReference<char> buffer, int* length, int* point);
+void BignumDtoa(double v,
+                BignumDtoaMode mode,
+                int requested_digits,
+                Vector<char> buffer,
+                int* length,
+                int* point);
 
 }  // namespace double_conversion
+
 }  // namespace WTF
 
-#endif  // DOUBLE_CONVERSION_BIGNUM_DTOA_H_
+#endif  // THIRD_PARTY_BLINK_RENDERER_PLATFORM_WTF_DTOA_BIGNUM_DTOA_H_

@@ -25,12 +25,13 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef DOUBLE_CONVERSION_FAST_DTOA_H_
-#define DOUBLE_CONVERSION_FAST_DTOA_H_
+#ifndef THIRD_PARTY_BLINK_RENDERER_PLATFORM_WTF_DTOA_FAST_DTOA_H_
+#define THIRD_PARTY_BLINK_RENDERER_PLATFORM_WTF_DTOA_FAST_DTOA_H_
 
-#include <wtf/dtoa/utils.h>
+#include "third_party/blink/renderer/platform/wtf/dtoa/utils.h"
 
 namespace WTF {
+
 namespace double_conversion {
 
 enum FastDtoaMode {
@@ -38,8 +39,6 @@ enum FastDtoaMode {
   // result will be the most accurate number of this length. Longer
   // representations might be more accurate.
   FAST_DTOA_SHORTEST,
-  // Same as FAST_DTOA_SHORTEST but for single-precision floats.
-  FAST_DTOA_SHORTEST_SINGLE,
   // Computes a representation where the precision (number of digits) is
   // given as input. The precision is independent of the decimal point.
   FAST_DTOA_PRECISION
@@ -48,8 +47,6 @@ enum FastDtoaMode {
 // FastDtoa will produce at most kFastDtoaMaximalLength digits. This does not
 // include the terminating '\0' character.
 static const int kFastDtoaMaximalLength = 17;
-// Same for single-precision numbers.
-static const int kFastDtoaMaximalSingleLength = 9;
 
 // Provides a decimal representation of v.
 // The result should be interpreted as buffer * 10^(point - length).
@@ -80,11 +77,12 @@ static const int kFastDtoaMaximalSingleLength = 9;
 bool FastDtoa(double d,
               FastDtoaMode mode,
               int requested_digits,
-              BufferReference<char> buffer,
+              Vector<char> buffer,
               int* length,
               int* decimal_point);
 
 }  // namespace double_conversion
+
 }  // namespace WTF
 
-#endif  // DOUBLE_CONVERSION_FAST_DTOA_H_
+#endif  // THIRD_PARTY_BLINK_RENDERER_PLATFORM_WTF_DTOA_FAST_DTOA_H_

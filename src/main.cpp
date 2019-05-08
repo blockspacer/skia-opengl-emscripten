@@ -164,13 +164,85 @@
 #include <string>
 #include <vector>
 
-#include "wtf/ASCIICType.h"
-#include "wtf/Vector.h"
+#include "third_party/blink/renderer/platform/wtf/vector.h"
+
 #include "base/base_switches.h"
 #include "base/command_line.h"
 #include "base/i18n/icu_util.h"
 #include "base/i18n/rtl.h"
 #include "base/containers/small_map.h"
+
+/*#include <stddef.h>
+
+#include <cassert>
+#include <cstring>
+#include <sstream>
+#include <string>
+#include <type_traits>
+#include <utility>
+
+#include "base/logging.h"
+#include "base/base_export.h"
+#include "base/callback_forward.h"
+#include "base/compiler_specific.h"
+#include "base/debug/debugger.h"
+#include "base/macros.h"
+#include "base/scoped_clear_last_error.h"
+#include "base/strings/string_piece_forward.h"
+#include "base/template_util.h"
+#include "build/build_config.h"
+
+
+// The vprintf_stderr_common function triggers this error in the Mac build.
+// Feel free to remove this pragma if this file builds on Mac.
+// According to
+// http://gcc.gnu.org/onlinedocs/gcc-4.2.1/gcc/Diagnostic-Pragmas.html#Diagnostic-Pragmas
+// we need to place this directive before any data or functions are defined.
+#pragma GCC diagnostic ignored "-Wmissing-format-attribute"
+
+#include "third_party/blink/renderer/platform/wtf/assertions.h"
+
+#include "build/build_config.h"
+
+#if defined(OS_MACOSX)
+#include <asl.h>
+#elif defined(OS_ANDROID)
+#include <android/log.h>
+#elif defined(OS_WIN)
+#include <windows.h>
+#endif
+
+PRINTF_FORMAT(1, 0)
+void vprintf_stderr_common(const char* format, va_list args) {
+#if defined(OS_MACOSX)
+  va_list copyOfArgs;
+  va_copy(copyOfArgs, args);
+  asl_vlog(0, 0, ASL_LEVEL_NOTICE, format, copyOfArgs);
+  va_end(copyOfArgs);
+#elif defined(OS_ANDROID)
+  __android_log_vprint(ANDROID_LOG_WARN, "WebKit", format, args);
+#elif defined(OS_WIN)
+  if (IsDebuggerPresent()) {
+    size_t size = 1024;
+
+    do {
+      char* buffer = (char*)malloc(size);
+      if (!buffer)
+        break;
+
+      if (_vsnprintf(buffer, size, format, args) != -1) {
+        OutputDebugStringA(buffer);
+        free(buffer);
+        break;
+      }
+
+      free(buffer);
+      size *= 2;
+    } while (size > 1024);
+  }
+#endif
+  vfprintf(stderr, format, args);
+}*/
 
 //#define TODO
 
@@ -700,14 +772,14 @@ main(int argc, char** argv)
 
   {
     WTF::Vector<int> vec;
-    vec.append(1);
-    vec.append(2);
-    vec.append(3);
-    vec.append(4);
-    vec.append(5);
+    vec.push_back(1);
+    vec.push_back(2);
+    vec.push_back(3);
+    vec.push_back(4);
+    vec.push_back(5);
     printf("vec begin is %d\n", *vec.begin());
     printf("vec.at(2) is %d\n", vec.at(2));
-    printf("vec end is %d\n", vec.last());
+    //printf("vec end is %d\n", vec.last());
   }
 
   {

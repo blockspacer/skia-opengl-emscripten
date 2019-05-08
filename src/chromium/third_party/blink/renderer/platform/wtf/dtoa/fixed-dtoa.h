@@ -25,12 +25,13 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef DOUBLE_CONVERSION_FIXED_DTOA_H_
-#define DOUBLE_CONVERSION_FIXED_DTOA_H_
+#ifndef THIRD_PARTY_BLINK_RENDERER_PLATFORM_WTF_DTOA_FIXED_DTOA_H_
+#define THIRD_PARTY_BLINK_RENDERER_PLATFORM_WTF_DTOA_FIXED_DTOA_H_
 
-#include <wtf/dtoa/utils.h>
+#include "third_party/blink/renderer/platform/wtf/dtoa/utils.h"
 
 namespace WTF {
+
 namespace double_conversion {
 
 // Produces digits necessary to print a given number with
@@ -49,10 +50,14 @@ namespace double_conversion {
 //
 // This method only works for some parameters. If it can't handle the input it
 // returns false. The output is null-terminated when the function succeeds.
-bool FastFixedDtoa(double v, int fractional_count,
-                   BufferReference<char> buffer, int* length, int* decimal_point);
+bool FastFixedDtoa(double v,
+                   int fractional_count,
+                   Vector<char> buffer,
+                   int* length,
+                   int* decimal_point);
 
 }  // namespace double_conversion
+
 }  // namespace WTF
 
-#endif  // DOUBLE_CONVERSION_FIXED_DTOA_H_
+#endif  // THIRD_PARTY_BLINK_RENDERER_PLATFORM_WTF_DTOA_FIXED_DTOA_H_

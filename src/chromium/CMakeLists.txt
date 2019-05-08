@@ -1109,7 +1109,7 @@ list(APPEND BASE_SOURCES
    ## ${BASE_DIR}files/file_descriptor_watcher_posix.h
    ## ${BASE_DIR}files/file_enumerator_posix.cc
    ## ${BASE_DIR}files/file_posix.cc
-   ## ${BASE_DIR}files/file_util_posix.cc
+   ${BASE_DIR}files/file_util_posix.cc
    ${BASE_DIR}files/memory_mapped_file_posix.cc
    ${BASE_DIR}memory/protected_memory_posix.cc
    ${BASE_DIR}message_loop/watchable_io_message_pump_posix.cc
@@ -1148,7 +1148,32 @@ list(APPEND BASE_SOURCES
    ${BASE_DIR}threading/thread_local_storage_posix.cc
    ${BASE_DIR}timer/hi_res_timer_manager_posix.cc
    # https://github.com/chromium/chromium/blob/master/base/BUILD.gn#L1185
-   ${BASE_DIR}base_paths_posix.h
+   # ${BASE_DIR}base_paths_posix.h
+   # https://github.com/chromium/chromium/blob/master/base/BUILD.gn#L1633
+   ${BASE_DIR}allocator/partition_allocator/address_space_randomization.cc
+   ${BASE_DIR}allocator/partition_allocator/address_space_randomization.h
+   ${BASE_DIR}allocator/partition_allocator/oom.h
+   ${BASE_DIR}allocator/partition_allocator/oom_callback.cc
+   ${BASE_DIR}allocator/partition_allocator/oom_callback.h
+   ${BASE_DIR}allocator/partition_allocator/page_allocator.cc
+   ${BASE_DIR}allocator/partition_allocator/page_allocator.h
+   ${BASE_DIR}allocator/partition_allocator/page_allocator_internal.h
+   ${BASE_DIR}allocator/partition_allocator/partition_alloc.cc
+   ${BASE_DIR}allocator/partition_allocator/partition_alloc.h
+   ${BASE_DIR}allocator/partition_allocator/partition_alloc_constants.h
+   ${BASE_DIR}allocator/partition_allocator/partition_bucket.cc
+   ${BASE_DIR}allocator/partition_allocator/partition_bucket.h
+   ${BASE_DIR}allocator/partition_allocator/partition_cookie.h
+   ${BASE_DIR}allocator/partition_allocator/partition_direct_map_extent.h
+   ${BASE_DIR}allocator/partition_allocator/partition_freelist_entry.h
+   ${BASE_DIR}allocator/partition_allocator/partition_oom.cc
+   ${BASE_DIR}allocator/partition_allocator/partition_oom.h
+   ${BASE_DIR}allocator/partition_allocator/partition_page.cc
+   ${BASE_DIR}allocator/partition_allocator/partition_page.h
+   ${BASE_DIR}allocator/partition_allocator/partition_root_base.cc
+   ${BASE_DIR}allocator/partition_allocator/partition_root_base.h
+   ${BASE_DIR}allocator/partition_allocator/spin_lock.cc
+   ${BASE_DIR}allocator/partition_allocator/spin_lock.h
    # https://github.com/chromium/chromium/blob/master/base/BUILD.gn#L1665
    ${BASE_DIR}allocator/partition_allocator/page_allocator_internals_posix.h
    # https://github.com/chromium/chromium/blob/master/base/BUILD.gn#L1903
@@ -1176,137 +1201,192 @@ list(APPEND BASE_SOURCES
    build/build_config.h
 )
 
+
 list(APPEND WTF_SOURCES
-    ${WTF_DIR}ASCIICType.cpp
-    ${WTF_DIR}Assertions.cpp
-    ${WTF_DIR}AutomaticThread.cpp
-    ${WTF_DIR}BitVector.cpp
-    ${WTF_DIR}ClockType.cpp
-    ${WTF_DIR}CompilationThread.cpp
-    ${WTF_DIR}ConcurrentPtrHashSet.cpp
-    ${WTF_DIR}CountingLock.cpp
-    ${WTF_DIR}CPUTime.cpp
-    ${WTF_DIR}CrossThreadCopier.cpp
-    ${WTF_DIR}CrossThreadTaskHandler.cpp
-    ${WTF_DIR}CryptographicallyRandomNumber.cpp
-    ${WTF_DIR}CryptographicUtilities.cpp
-    ${WTF_DIR}CurrentTime.cpp
-    ${WTF_DIR}DataLog.cpp
-    ${WTF_DIR}DateMath.cpp
-    ${WTF_DIR}dtoa.cpp
-    ${WTF_DIR}dtoa/bignum-dtoa.cc
-    ${WTF_DIR}dtoa/bignum.cc
-    ${WTF_DIR}dtoa/cached-powers.cc
-    ${WTF_DIR}dtoa/diy-fp.cc
-    ${WTF_DIR}dtoa/double-conversion.cc
-    ${WTF_DIR}dtoa/fast-dtoa.cc
-    ${WTF_DIR}dtoa/fixed-dtoa.cc
-    ${WTF_DIR}dtoa/strtod.cc
-    ${WTF_DIR}FastBitVector.cpp
-    ${WTF_DIR}FastMalloc.cpp
-    ${WTF_DIR}FilePrintStream.cpp
-    ${WTF_DIR}FileSystem.cpp
-    ${WTF_DIR}FunctionDispatcher.cpp
-    ${WTF_DIR}generic/MainThreadGeneric.cpp
-    ${WTF_DIR}generic/MemoryFootprintGeneric.cpp
-    ${WTF_DIR}generic/MemoryPressureHandlerGeneric.cpp
-    ${WTF_DIR}generic/RunLoopGeneric.cpp
-    ${WTF_DIR}generic/WorkQueueGeneric.cpp
-    ${WTF_DIR}Gigacage.cpp
-    ${WTF_DIR}GlobalVersion.cpp
-    ${WTF_DIR}GregorianDateTime.cpp
-    ${WTF_DIR}HashTable.cpp
-    ${WTF_DIR}HexNumber.cpp
-    ${WTF_DIR}JSONValues.cpp
-    ${WTF_DIR}JSValueMalloc.cpp
-    ${WTF_DIR}Language.cpp
-    ${WTF_DIR}Lock.cpp
-    ${WTF_DIR}LockedPrintStream.cpp
-    ${WTF_DIR}Logger.cpp
-    ${WTF_DIR}MainThread.cpp
-    ${WTF_DIR}MD5.cpp
-    ${WTF_DIR}MediaTime.cpp
-    ${WTF_DIR}MemoryPressureHandler.cpp
-    ${WTF_DIR}MetaAllocator.cpp
-    ${WTF_DIR}MonotonicTime.cpp
-    ${WTF_DIR}ObjectIdentifier.cpp
-    ${WTF_DIR}OSRandomSource.cpp
-    ${WTF_DIR}PageBlock.cpp
-    ${WTF_DIR}ParallelHelperPool.cpp
-    ${WTF_DIR}ParallelJobsGeneric.cpp
-    ${WTF_DIR}ParkingLot.cpp
-    ${WTF_DIR}persistence/PersistentCoders.cpp
-    ${WTF_DIR}persistence/PersistentDecoder.cpp
-    ${WTF_DIR}persistence/PersistentEncoder.cpp
-    ${WTF_DIR}posix/FileSystemPOSIX.cpp
-    ${WTF_DIR}posix/OSAllocatorPOSIX.cpp
-    ${WTF_DIR}posix/ThreadingPOSIX.cpp
-    ${WTF_DIR}PrintStream.cpp
-    ${WTF_DIR}ProcessPrivilege.cpp
-    ${WTF_DIR}RandomNumber.cpp
-    ${WTF_DIR}ReadWriteLock.cpp
-    ${WTF_DIR}RefCountedLeakCounter.cpp
-    ${WTF_DIR}RunLoop.cpp
-    ${WTF_DIR}Seconds.cpp
-    ${WTF_DIR}SHA1.cpp
-    ${WTF_DIR}SixCharacterHash.cpp
-    ${WTF_DIR}SizeLimits.cpp
-    ${WTF_DIR}StackBounds.cpp
-    ${WTF_DIR}StackPointer.cpp
-    ${WTF_DIR}StackStats.cpp
-    ${WTF_DIR}StackTrace.cpp
-    ${WTF_DIR}StringPrintStream.cpp
-    ${WTF_DIR}text/ASCIILiteral.cpp
-    ${WTF_DIR}text/AtomicString.cpp
-    ${WTF_DIR}text/AtomicStringImpl.cpp
-    ${WTF_DIR}text/AtomicStringTable.cpp
-    ${WTF_DIR}text/Base64.cpp
-    ${WTF_DIR}text/CString.cpp
-    ${WTF_DIR}text/ExternalStringImpl.cpp
-    ${WTF_DIR}text/icu/UTextProvider.cpp
-    ${WTF_DIR}text/icu/UTextProviderLatin1.cpp
-    ${WTF_DIR}text/icu/UTextProviderUTF16.cpp
-    ${WTF_DIR}text/LineEnding.cpp
-    ${WTF_DIR}text/StringBuilder.cpp
-    ${WTF_DIR}text/StringBuilderJSON.cpp
-    ${WTF_DIR}text/StringImpl.cpp
-    ${WTF_DIR}text/StringView.cpp
-    ${WTF_DIR}text/SymbolImpl.cpp
-    ${WTF_DIR}text/SymbolRegistry.cpp
-    ${WTF_DIR}text/TextBreakIterator.cpp
-    ${WTF_DIR}text/TextStream.cpp
-    ${WTF_DIR}text/WTFString.cpp
-    ${WTF_DIR}ThreadGroup.cpp
-    ${WTF_DIR}Threading.cpp
-    ${WTF_DIR}threads/BinarySemaphore.cpp
-    ${WTF_DIR}TimeWithDynamicClockType.cpp
-    ${WTF_DIR}TimingScope.cpp
-    ${WTF_DIR}unicode/CollatorDefault.cpp
-    ${WTF_DIR}unicode/icu/CollatorICU.cpp
-    ${WTF_DIR}unicode/UTF8Conversion.cpp
-    ${WTF_DIR}unix/LanguageUnix.cpp
-    ${WTF_DIR}URL.cpp
-    ${WTF_DIR}URLHelpers.cpp
-    ${WTF_DIR}URLParser.cpp
-    ${WTF_DIR}UUID.cpp
-    ${WTF_DIR}WallTime.cpp
-    ${WTF_DIR}WordLock.cpp
-    ${WTF_DIR}WorkerPool.cpp
-    ${WTF_DIR}WorkQueue.cpp
-    ${WTF_DIR}WTFAssertions.cpp
-    # wtf/unix/CPUTimeUnix.cpp
-  )
+  ${WTF_DIR}allocator.cc
+  #${WTF_DIR}allocator.h
+  ${WTF_DIR}allocator/partition_allocator.cc
+  #${WTF_DIR}allocator/partition_allocator.h
+  ${WTF_DIR}allocator/partitions.cc
+  #${WTF_DIR}allocator/partitions.h
+  ${WTF_DIR}assertions.cc
+  #${WTF_DIR}assertions.h
+  #${WTF_DIR}bloom_filter.h
+  #${WTF_DIR}casting.h
+  #${WTF_DIR}conditional_destructor.h
+  #${WTF_DIR}container_annotations.h
+  # ${WTF_DIR}date_math.cc
+  #${WTF_DIR}date_math.h
+  # ${WTF_DIR}decimal.cc
+  #${WTF_DIR}decimal.h
+  #${WTF_DIR}deque.h
+  #${WTF_DIR}doubly_linked_list.h
+  # ${WTF_DIR}dtoa/bignum-dtoa.cc
+  # #${WTF_DIR}dtoa/bignum-dtoa.h
+  # ${WTF_DIR}dtoa/bignum.cc
+  # #${WTF_DIR}dtoa/bignum.h
+  # ${WTF_DIR}dtoa/cached-powers.cc
+  # #${WTF_DIR}dtoa/cached-powers.h
+  # ${WTF_DIR}dtoa/diy-fp.cc
+  # #${WTF_DIR}dtoa/diy-fp.h
+  # ${WTF_DIR}dtoa/double-conversion.cc
+  # #${WTF_DIR}dtoa/double-conversion.h
+  # #${WTF_DIR}dtoa/double.h
+  # ${WTF_DIR}dtoa/dtoa.cc
+  # #${WTF_DIR}dtoa/dtoa.h
+  # ${WTF_DIR}dtoa/fast-dtoa.cc
+  # #${WTF_DIR}dtoa/fast-dtoa.h
+  # ${WTF_DIR}dtoa/fixed-dtoa.cc
+  # #${WTF_DIR}dtoa/fixed-dtoa.h
+  # ${WTF_DIR}dtoa/strtod.cc
+  # #${WTF_DIR}dtoa/strtod.h
+  # #${WTF_DIR}dtoa/utils.h
+  ${WTF_DIR}dynamic_annotations.cc
+  #${WTF_DIR}dynamic_annotations.h
+  #${WTF_DIR}forward.h
+  #${WTF_DIR}functional.h
+  #${WTF_DIR}get_ptr.h
+  #${WTF_DIR}hash_counted_set.h
+  #${WTF_DIR}hash_functions.h
+  #${WTF_DIR}hash_iterators.h
+  #${WTF_DIR}hash_map.h
+  #${WTF_DIR}hash_set.h
+  ${WTF_DIR}hash_table.cc
+  #${WTF_DIR}hash_table.h
+  #${WTF_DIR}hash_table_deleted_value_type.h
+  #${WTF_DIR}hash_traits.h
+  #${WTF_DIR}leak_annotations.h
+  #${WTF_DIR}linked_hash_set.h
+  #${WTF_DIR}list_hash_set.h
+  #${WTF_DIR}math_extras.h
+  #${WTF_DIR}pod_arena.h
+  #${WTF_DIR}pod_free_list_arena.h
+  #${WTF_DIR}pod_interval.h
+  #${WTF_DIR}pod_interval_tree.h
+  #${WTF_DIR}pod_red_black_tree.h
+  #${WTF_DIR}ref_counted.h
+  #${WTF_DIR}sanitizers.h
+  ${WTF_DIR}scoped_logger.cc
+  #${WTF_DIR}scoped_logger.h
+  # ${WTF_DIR}size_assertions.cc
+  #${WTF_DIR}size_assertions.h
+  # ${WTF_DIR}stack_util.cc
+  #${WTF_DIR}stack_util.h
+  #${WTF_DIR}static_constructors.h
+  #${WTF_DIR}std_lib_extras.h
+  # ${WTF_DIR}text/ascii_ctype.cc
+  # #${WTF_DIR}text/ascii_ctype.h
+  # #${WTF_DIR}text/ascii_fast_path.h
+  # ${WTF_DIR}text/atomic_string.cc
+  # #${WTF_DIR}text/atomic_string.h
+  # ${WTF_DIR}text/atomic_string_cf.cc
+  # #${WTF_DIR}text/atomic_string_hash.h
+  # ${WTF_DIR}text/atomic_string_table.cc
+  # #${WTF_DIR}text/atomic_string_table.h
+  # ${WTF_DIR}text/base64.cc
+  # #${WTF_DIR}text/base64.h
+  # #${WTF_DIR}text/character_names.h
+  # ${WTF_DIR}text/cstring.cc
+  # #${WTF_DIR}text/cstring.h
+  # #${WTF_DIR}text/integer_to_string_conversion.h
+  # ${WTF_DIR}text/line_ending.cc
+  # #${WTF_DIR}text/line_ending.h
+  # #${WTF_DIR}text/number_parsing_options.h
+  # #${WTF_DIR}text/parsing_utilities.h
+  # #${WTF_DIR}text/string_buffer.h
+  # ${WTF_DIR}text/string_builder.cc
+  # #${WTF_DIR}text/string_builder.h
+  # ${WTF_DIR}text/string_concatenate.cc
+  # #${WTF_DIR}text/string_concatenate.h
+  # #${WTF_DIR}text/string_hash.h
+  # #${WTF_DIR}text/string_hasher.h
+  # ${WTF_DIR}text/string_impl.cc
+  # #${WTF_DIR}text/string_impl.h
+  # #${WTF_DIR}text/string_impl_mac.mm
+  # #${WTF_DIR}text/string_mac.mm
+  # #${WTF_DIR}text/string_operators.h
+  # ${WTF_DIR}text/string_statics.cc
+  # #${WTF_DIR}text/string_statics.h
+  # ${WTF_DIR}text/string_to_number.cc
+  # #${WTF_DIR}text/string_to_number.h
+  # ${WTF_DIR}text/string_utf8_adaptor.cc
+  # #${WTF_DIR}text/string_utf8_adaptor.h
+  # ${WTF_DIR}text/string_view.cc
+  # #${WTF_DIR}text/string_view.h
+  # ${WTF_DIR}text/text_codec.cc
+  # #${WTF_DIR}text/text_codec.h
+  # #${WTF_DIR}text/text_codec_ascii_fast_path.h
+  # ${WTF_DIR}text/text_codec_icu.cc
+  # #${WTF_DIR}text/text_codec_icu.h
+  # ${WTF_DIR}text/text_codec_latin1.cc
+  # #${WTF_DIR}text/text_codec_latin1.h
+  # ${WTF_DIR}text/text_codec_replacement.cc
+  # #${WTF_DIR}text/text_codec_replacement.h
+  # ${WTF_DIR}text/text_codec_user_defined.cc
+  # #${WTF_DIR}text/text_codec_user_defined.h
+  # ${WTF_DIR}text/text_codec_utf16.cc
+  # #${WTF_DIR}text/text_codec_utf16.h
+  # ${WTF_DIR}text/text_codec_utf8.cc
+  # #${WTF_DIR}text/text_codec_utf8.h
+  # ${WTF_DIR}text/text_encoding.cc
+  # #${WTF_DIR}text/text_encoding.h
+  # ${WTF_DIR}text/text_encoding_registry.cc
+  # #${WTF_DIR}text/text_encoding_registry.h
+  # ${WTF_DIR}text/text_position.cc
+  # #${WTF_DIR}text/text_position.h
+  # ${WTF_DIR}text/text_stream.cc
+  # #${WTF_DIR}text/text_stream.h
+  # #${WTF_DIR}text/unicode.h
+  # ${WTF_DIR}text/utf8.cc
+  # #${WTF_DIR}text/utf8.h
+  # ${WTF_DIR}text/wtf_string.cc
+  #${WTF_DIR}text/wtf_string.h
+  # #${WTF_DIR}thread_restriction_verifier.h
+  # #${WTF_DIR}thread_safe_ref_counted.h
+  # #${WTF_DIR}thread_specific.h
+  # ${WTF_DIR}threading.cc
+  # #${WTF_DIR}threading.h
+  # #${WTF_DIR}threading_primitives.h
+  # ${WTF_DIR}threading_pthreads.cc
+  # ${WTF_DIR}threading_win.cc
+  # ${WTF_DIR}time.cc
+  #${WTF_DIR}time.h
+  #${WTF_DIR}tree_node.h
+  #${WTF_DIR}type_traits.h
+  ${WTF_DIR}typed_arrays/array_buffer.cc
+  #${WTF_DIR}typed_arrays/array_buffer.h
+  ${WTF_DIR}typed_arrays/array_buffer_contents.cc
+  #${WTF_DIR}typed_arrays/array_buffer_contents.h
+  ${WTF_DIR}typed_arrays/array_buffer_view.cc
+  #${WTF_DIR}typed_arrays/array_buffer_view.h
+  ${WTF_DIR}typed_arrays/array_piece.cc
+  #${WTF_DIR}typed_arrays/array_piece.h
+  #${WTF_DIR}typed_arrays/bigint64_array.h
+  #${WTF_DIR}typed_arrays/biguint64_array.h
+  #${WTF_DIR}typed_arrays/float32_array.h
+  #${WTF_DIR}typed_arrays/float64_array.h
+  #${WTF_DIR}typed_arrays/int16_array.h
+  #${WTF_DIR}typed_arrays/int32_array.h
+  #${WTF_DIR}typed_arrays/int8_array.h
+  #${WTF_DIR}typed_arrays/integral_typed_array_base.h
+  #${WTF_DIR}typed_arrays/typed_array_base.h
+  #${WTF_DIR}typed_arrays/uint16_array.h
+  #${WTF_DIR}typed_arrays/uint32_array.h
+  #${WTF_DIR}typed_arrays/uint8_array.h
+  #${WTF_DIR}typed_arrays/uint8_clamped_array.h
+  #${WTF_DIR}vector.h
+  #${WTF_DIR}vector_traits.h
+  # ${WTF_DIR}wtf.cc
+  #${WTF_DIR}wtf.h
+  #${WTF_DIR}wtf_export.h
+  # #${WTF_DIR}wtf_size_t.h
+)
 
 if (EMSCRIPTEN)
   list(APPEND WTF_SOURCES
     # port
-    ${WTF_DIR}JS/JS_CPUTime.cpp
-    ${WTF_DIR}JS/JS_FileSystem.cpp
-    ${WTF_DIR}JS/JS_NumberOfCores.cpp
-    ${WTF_DIR}JS/JS_RAMSize.cpp
-    ${WTF_DIR}JS/JS_RandomDeviceGeneric.cpp
-    ${WTF_DIR}JS/JS_TextBreakIteratorInternalICU.cpp
-    ${WTF_DIR}JS/JS_ThreadMessage.cpp)
+    # TODO
+  )
 endif()
 
 #list(APPEND WTF_HEADERS
@@ -1913,20 +1993,6 @@ set(ICU_SOURCES
 add_definitions(-DBUILDING_WTF)
 add_definitions(-DSTATICALLY_LINKED_WITH_WTF)
 
-add_library(libevent ${LIBEVENT_SOURCES})
-
-target_include_directories(libevent PUBLIC
-  ${LIBEVENT_INCLUDE_DIRS}
-)
-
-target_include_directories(libevent PRIVATE
-  ${CMAKE_CURRENT_SOURCE_DIR}
-)
-
-target_compile_definitions(libevent PUBLIC
-  ${LIBEVENT_DEFINES}
-)
-
 if(EMSCRIPTEN)
   set(WTF_EMCC_DEFINITIONS
     OS_ASMJS=1
@@ -1945,7 +2011,26 @@ else ()
   set(WTF_EMCC_DEFINITIONS "")
 endif ()
 
+add_library(libevent ${LIBEVENT_SOURCES})
+
+set_property(TARGET libevent PROPERTY CXX_STANDARD 17)
+
+target_include_directories(libevent PUBLIC
+  ${LIBEVENT_INCLUDE_DIRS}
+)
+
+target_include_directories(libevent PRIVATE
+  ${CMAKE_CURRENT_SOURCE_DIR}
+)
+
+target_compile_definitions(libevent PUBLIC
+  ${LIBEVENT_DEFINES}
+  ${WTF_EMCC_DEFINITIONS}
+)
+
 add_library(base ${BASE_SOURCES})
+
+set_property(TARGET base PROPERTY CXX_STANDARD 17)
 
 set(BASE_DEFINES
   BASE_IMPLEMENTATION=1
@@ -1968,17 +2053,98 @@ target_compile_definitions(base PUBLIC
   ${WTF_EMCC_DEFINITIONS}
 )
 
+add_library(icu ${ICU_SOURCES})
+
+set_property(TARGET icu PROPERTY CXX_STANDARD 17)
+
+# In your source, include files from base/ like normal.
+# So if you want to use the string printf API, do:
+# #include <base/stringprintf.h>
+target_include_directories(icu PUBLIC
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  ${ICU_INCLUDE_DIRS}
+)
+
+target_include_directories(icu PRIVATE
+  #${BASE_DIR}
+)
+
+# http://userguide.icu-project.org/howtouseicu#TOC-C-With-Your-Own-Build-System
+set(ICU_PUBLIC_DEFINES
+    "U_ENABLE_DYLOAD=0"
+    "U_STATIC_IMPLEMENTATION"
+    "ICU_UTIL_DATA_IMPL=ICU_UTIL_DATA_STATIC"
+)
+
+set(ICU_PRIVATE_DEFINES
+    "HAVE_DLOPEN=0"
+    "UCONFIG_ONLY_HTML_CONVERSION=1"
+    "U_CHARSET_IS_UTF8=1"
+    # custom
+    "HAVE_DLFCN_H=0"
+)
+
+if (WIN32)
+    list(APPEND ICU_PUBLIC_DEFINES
+        "UCHAR_TYPE=wchar_t"
+    )
+else ()
+    list(APPEND ICU_PUBLIC_DEFINES
+        "UCHAR_TYPE=uint16_t"
+    )
+endif ()
+
+target_compile_definitions(icu PUBLIC
+  ${ICU_PUBLIC_DEFINES}
+  ${WTF_EMCC_DEFINITIONS}
+  U_STATIC_IMPLEMENTATION
+  U_COMMON_IMPLEMENTATION
+  U_I18N_IMPLEMENTATION
+  U_ENABLE_DYLOAD=0
+  LIB_ICU_I18N_STATIC
+  ICU_UTIL_DATA_IMPL=ICU_UTIL_DATA_STATIC
+  U_CHARSET_IS_UTF8=1
+  U_NO_DEFAULT_INCLUDE_UTF_HEADERS=0
+  #U_ATTRIBUTE_DEPRECATED
+  #U_NO_DEFAULT_INCLUDE_UTF_HEADERS
+)
+
+target_compile_definitions(icu PRIVATE
+  ICU_IMPLEMENTATION=1
+  ${ICU_PRIVATE_DEFINES}
+  OFFICIAL_BUILD=1
+  # https://cs.chromium.org/chromium/src/build/build_config.h?g=0&l=86
+  COMPONENT_BUILD=1
+  # https://github.com/cool-easy/libchromiumbase/blob/master/build/config/linux/BUILD.gn#L88
+  # USE_GLIB=1
+  __STDC_FORMAT_MACROS
+  ${WTF_EMCC_DEFINITIONS}
+
+  #SYSTEM_NATIVE_UTF8
+  #COM_INIT_CHECK_HOOK_DISABLED
+  #USE_SYMBOLIZE
+  #BASE_I18N_IMPLEMENTATION
+  #MALLOC_WRAPPER_LIB=\"${shlib_prefix}malloc_wrapper${shlib_extension}\"
+  #MEMORY_TOOL_REPLACES_ALLOCATOR=1
+)
+
+target_compile_options(icu PRIVATE
+  -Wno-error
+)
+
 if (EMSCRIPTEN)
   #find_package(ICU REQUIRED COMPONENTS I18N UC REQUIRED)
-  add_library(${WTF_LIBRARY_NAME} ${ICU_SOURCES} ${WTF_SOURCES})# ${BASE_SOURCES})
+  add_library(${WTF_LIBRARY_NAME} ${WTF_SOURCES})# ${BASE_SOURCES})
   #target_link_libraries(${WTF_LIBRARY_NAME}
   #  ${ICU_UC_LIBRARIES}
   #  ${ICU_I18N_LIBRARIES}
   #)
 else ()
   #find_package(ICU) # REQUIRED)
-  add_library(${WTF_LIBRARY_NAME} ${ICU_SOURCES} ${WTF_SOURCES})# ${BASE_SOURCES})
+  add_library(${WTF_LIBRARY_NAME} ${WTF_SOURCES})# ${BASE_SOURCES})
 endif ()
+
+set_property(TARGET ${WTF_LIBRARY_NAME} PROPERTY CXX_STANDARD 17)
 
 #include_directories(
 #  ${CMAKE_CURRENT_SOURCE_DIR}
@@ -1995,14 +2161,14 @@ endif ()
 #)
 
 set(WTF_PRIVATE_INCLUDE_DIRECTORIES
-  ${WTF_DIR}
-  ${WTF_DIR}dtoa
-  ${WTF_DIR}persistence
-  ${WTF_DIR}text
-  ${WTF_DIR}text/icu
-  ${WTF_DIR}threads
-  ${WTF_DIR}unicode
-  ${WTF_DIR}icu
+  #${WTF_DIR}
+  #${WTF_DIR}dtoa
+  #${WTF_DIR}persistence
+  #${WTF_DIR}text
+  #${WTF_DIR}text/icu
+  #${WTF_DIR}threads
+  #${WTF_DIR}unicode
+  #${WTF_DIR}icu
 )
 
 #message(FATAL_ERROR ${CMAKE_CXX_FLAGS})
@@ -2010,16 +2176,15 @@ set(WTF_PRIVATE_INCLUDE_DIRECTORIES
 target_include_directories(${WTF_LIBRARY_NAME} PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}
   # folder containing wtf subdirectory
-  ${WTF_DIR}/..
-  ${CMAKE_CURRENT_SOURCE_DIR}/global_headers
+  #${WTF_DIR}/..
+  #${CMAKE_CURRENT_SOURCE_DIR}/global_headers
 )
 
 target_include_directories(${WTF_LIBRARY_NAME} PRIVATE
-  ${ICU_INCLUDE_DIRS}
   #${LIBEVENT_INCLUDE_DIRS}
   ${modp_b64_INCLUDE_DIRS}
   ${WTF_PRIVATE_INCLUDE_DIRECTORIES}
-  ${WTF_DIR}
+  #${WTF_DIR}
 )
 
 #target_include_directories(${WTF_LIBRARY_NAME} SYSTEM PRIVATE
@@ -2031,6 +2196,7 @@ target_include_directories(${WTF_LIBRARY_NAME} PRIVATE
 set(WTF_LIBRARIES
   libevent
   base
+  icu
 )
 
 if (UNIX)
@@ -2067,47 +2233,11 @@ endif ()
 
 target_link_libraries(${WTF_LIBRARY_NAME} ${WTF_LIBRARIES})
 
-# http://userguide.icu-project.org/howtouseicu#TOC-C-With-Your-Own-Build-System
-set(ICU_PUBLIC_DEFINES
-    "U_ENABLE_DYLOAD=0"
-    "U_STATIC_IMPLEMENTATION"
-    "ICU_UTIL_DATA_IMPL=ICU_UTIL_DATA_STATIC"
-)
-
-set(ICU_PRIVATE_DEFINES
-    "HAVE_DLOPEN=0"
-    "UCONFIG_ONLY_HTML_CONVERSION=1"
-    "U_CHARSET_IS_UTF8=1"
-    # custom
-    "HAVE_DLFCN_H=0"
-)
-
-if (WIN32)
-    list(APPEND ICU_PUBLIC_DEFINES
-        "UCHAR_TYPE=wchar_t"
-    )
-else ()
-    list(APPEND ICU_PUBLIC_DEFINES
-        "UCHAR_TYPE=uint16_t"
-    )
-endif ()
-
 target_compile_definitions(${WTF_LIBRARY_NAME} PUBLIC
-  ${ICU_PUBLIC_DEFINES}
-  U_STATIC_IMPLEMENTATION
-  U_COMMON_IMPLEMENTATION
-  U_I18N_IMPLEMENTATION
-  U_ENABLE_DYLOAD=0
-  LIB_ICU_I18N_STATIC
-  ICU_UTIL_DATA_IMPL=ICU_UTIL_DATA_STATIC
-  U_CHARSET_IS_UTF8=1
-  U_NO_DEFAULT_INCLUDE_UTF_HEADERS=0
-  #U_ATTRIBUTE_DEPRECATED
-  #U_NO_DEFAULT_INCLUDE_UTF_HEADERS
+  # TODO
 )
 
 target_compile_definitions(${WTF_LIBRARY_NAME} PRIVATE
-  ${ICU_PRIVATE_DEFINES}
   WTF_IMPLEMENTATION=1
   OFFICIAL_BUILD=1
   # https://cs.chromium.org/chromium/src/build/build_config.h?g=0&l=86

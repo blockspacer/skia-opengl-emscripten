@@ -25,15 +25,19 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef DOUBLE_CONVERSION_BIGNUM_H_
-#define DOUBLE_CONVERSION_BIGNUM_H_
+#ifndef THIRD_PARTY_BLINK_RENDERER_PLATFORM_WTF_DTOA_BIGNUM_H_
+#define THIRD_PARTY_BLINK_RENDERER_PLATFORM_WTF_DTOA_BIGNUM_H_
 
-#include <wtf/dtoa/utils.h>
+#include "third_party/blink/renderer/platform/wtf/allocator.h"
+#include "third_party/blink/renderer/platform/wtf/dtoa/utils.h"
 
 namespace WTF {
+
 namespace double_conversion {
 
 class Bignum {
+  DISALLOW_NEW();
+
  public:
   // 3584 = 128 * 28. We can represent 2^3584 > 10^1000 accurately.
   // This bignum can encode much bigger numbers, since it contains an
@@ -45,11 +49,12 @@ class Bignum {
   void AssignUInt64(uint64_t value);
   void AssignBignum(const Bignum& other);
 
-  void AssignDecimalString(BufferReference<const char> value);
-  void AssignHexString(BufferReference<const char> value);
+  void AssignDecimalString(Vector<const char> value);
+  void AssignHexString(Vector<const char> value);
 
   void AssignPowerUInt16(uint16_t base, int exponent);
 
+  void AddUInt16(uint16_t operand);
   void AddUInt64(uint64_t operand);
   void AddBignum(const Bignum& other);
   // Precondition: this >= other.
@@ -69,10 +74,6 @@ class Bignum {
 
   bool ToHexString(char* buffer, int buffer_size) const;
 
-  // Returns
-  //  -1 if a < b,
-  //   0 if a == b, and
-  //  +1 if a > b.
   static int Compare(const Bignum& a, const Bignum& b);
   static bool Equal(const Bignum& a, const Bignum& b) {
     return Compare(a, b) == 0;
@@ -97,6 +98,7 @@ class Bignum {
   static bool PlusLess(const Bignum& a, const Bignum& b, const Bignum& c) {
     return PlusCompare(a, b, c) < 0;
   }
+
  private:
   typedef uint32_t Chunk;
   typedef uint64_t DoubleChunk;
@@ -130,17 +132,18 @@ class Bignum {
   void SubtractTimes(const Bignum& other, int factor);
 
   Chunk bigits_buffer_[kBigitCapacity];
-  // A BufferReference backed by bigits_buffer_. This way accesses to the array are
+  // A vector backed by bigits_buffer_. This way accesses to the array are
   // checked for out-of-bounds errors.
-  BufferReference<Chunk> bigits_;
+  Vector<Chunk> bigits_;
   int used_digits_;
   // The Bignum's value equals value(bigits_) * 2^(exponent_ * kBigitSize).
   int exponent_;
 
-  DC_DISALLOW_COPY_AND_ASSIGN(Bignum);
+  DISALLOW_COPY_AND_ASSIGN(Bignum);
 };
 
 }  // namespace double_conversion
+
 }  // namespace WTF
 
-#endif  // DOUBLE_CONVERSION_BIGNUM_H_
+#endif  // THIRD_PARTY_BLINK_RENDERER_PLATFORM_WTF_DTOA_BIGNUM_H_
