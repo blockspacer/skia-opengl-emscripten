@@ -46,6 +46,10 @@
 #include <SDL_opengl_glext.h>
 #endif
 
+// START: FIX for EMSCRIPTEN build
+using namespace std;
+// END: FIX for EMSCRIPTEN build
+
 // see https://lyceum-allotments.github.io/2016/06/emscripten-and-sdl-2-tutorial-part-1/
 #include <SDL2/SDL_ttf.h>
 
@@ -164,8 +168,8 @@
 #include <string>
 #include <vector>
 
-#include "wtf/ASCIICType.h"
-#include "wtf/Vector.h"
+//#include "wtf/Vector.h"
+
 #include "base/base_switches.h"
 #include "base/command_line.h"
 #include "base/i18n/icu_util.h"
@@ -698,7 +702,7 @@ main(int argc, char** argv)
 {
   printf("Testing ...\n");
 
-  {
+  /*{
     WTF::Vector<int> vec;
     vec.append(1);
     vec.append(2);
@@ -708,7 +712,7 @@ main(int argc, char** argv)
     printf("vec begin is %d\n", *vec.begin());
     printf("vec.at(2) is %d\n", vec.at(2));
     printf("vec end is %d\n", vec.last());
-  }
+  }*/
 
   {
     base::small_map<std::map<std::string, std::string>> foo;

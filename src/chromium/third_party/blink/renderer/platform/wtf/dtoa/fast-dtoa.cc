@@ -1,4 +1,4 @@
-// Copyright 2012 the V8 project authors. All rights reserved.
+// Copyright 2010 the V8 project authors. All rights reserved.
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are
 // met:
@@ -25,15 +25,14 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "config.h"
+#include "third_party/blink/renderer/platform/wtf/dtoa/fast-dtoa.h"
 
-#include <wtf/dtoa/fast-dtoa.h>
-
-#include <wtf/dtoa/cached-powers.h>
-#include <wtf/dtoa/diy-fp.h>
-#include <wtf/dtoa/ieee.h>
+#include "third_party/blink/renderer/platform/wtf/dtoa/cached-powers.h"
+#include "third_party/blink/renderer/platform/wtf/dtoa/diy-fp.h"
+#include "third_party/blink/renderer/platform/wtf/dtoa/double.h"
 
 namespace WTF {
+
 namespace double_conversion {
 
 // The minimal and maximal target exponent define the range of w's binary
@@ -44,7 +43,6 @@ namespace double_conversion {
 // generation, but a smaller range requires more powers of ten to be cached.
 static const int kMinimalTargetExponent = -60;
 static const int kMaximalTargetExponent = -32;
-
 
 // Adjusts the last digit of the generated number, and screens out generated
 // solutions that may be inaccurate. A solution may be inaccurate if it is
@@ -61,7 +59,7 @@ static const int kMaximalTargetExponent = -32;
 // Output: returns true if the buffer is guaranteed to contain the closest
 //    representable number to the input.
 //  Modifies the generated digits in the buffer to approach (round towards) w.
-static bool RoundWeed(BufferReference<char> buffer,
+static bool RoundWeed(Vector<char> buffer,
                       int length,
                       uint64_t distance_too_high_w,
                       uint64_t unsafe_interval,
@@ -141,10 +139,10 @@ static bool RoundWeed(BufferReference<char> buffer,
   // Conceptually rest ~= too_high - buffer
   // We need to do the following tests in this order to avoid over- and
   // underflows.
-  ASSERT(rest <= unsafe_interval);
-  while (rest < small_distance &&  // Negated condition 1
+  DCHECK_LE(rest, unsafe_interval);
+  while (rest < small_distance &&                // Negated condition 1
          unsafe_interval - rest >= ten_kappa &&  // Negated condition 2
-         (rest + ten_kappa < small_distance ||  // buffer{-1} > w_high
+         (rest + ten_kappa < small_distance ||   // buffer{-1} > w_high
           small_distance - rest >= rest + ten_kappa - small_distance)) {
     buffer[length - 1]--;
     rest += ten_kappa;
@@ -153,8 +151,7 @@ static bool RoundWeed(BufferReference<char> buffer,
   // We have approached w+ as much as possible. We now test if approaching w-
   // would require changing the buffer. If yes, then we have two possible
   // representations close to w, but we cannot decide which one is closer.
-  if (rest < big_distance &&
-      unsafe_interval - rest >= ten_kappa &&
+  if (rest < big_distance && unsafe_interval - rest >= ten_kappa &&
       (rest + ten_kappa < big_distance ||
        big_distance - rest > rest + ten_kappa - big_distance)) {
     return false;
@@ -168,7 +165,6 @@ static bool RoundWeed(BufferReference<char> buffer,
   return (2 * unit <= rest) && (rest <= unsafe_interval - 4 * unit);
 }
 
-
 // Rounds the buffer upwards if the result is closer to v by possibly adding
 // 1 to the buffer. If the precision of the calculation is not sufficient to
 // round correctly, return false.
@@ -181,24 +177,26 @@ static bool RoundWeed(BufferReference<char> buffer,
 // unambiguously determined.
 //
 // Precondition: rest < ten_kappa.
-static bool RoundWeedCounted(BufferReference<char> buffer,
+static bool RoundWeedCounted(Vector<char> buffer,
                              int length,
                              uint64_t rest,
                              uint64_t ten_kappa,
                              uint64_t unit,
                              int* kappa) {
-  ASSERT(rest < ten_kappa);
+  DCHECK_LT(rest, ten_kappa);
   // The following tests are done in a specific order to avoid overflows. They
   // will work correctly with any uint64 values of rest < ten_kappa and unit.
   //
   // If the unit is too big, then we don't know which way to round. For example
   // a unit of 50 means that the real number lies within rest +/- 50. If
   // 10^kappa == 40 then there is no way to tell which way to round.
-  if (unit >= ten_kappa) return false;
+  if (unit >= ten_kappa)
+    return false;
   // Even if unit is just half the size of 10^kappa we are already completely
   // lost. (And after the previous test we know that the expression will not
   // over/underflow.)
-  if (ten_kappa - unit <= unit) return false;
+  if (ten_kappa - unit <= unit)
+    return false;
   // If 2 * (rest + unit) <= 10^kappa we can safely round down.
   if ((ten_kappa - rest > rest) && (ten_kappa - 2 * rest >= 2 * unit)) {
     return true;
@@ -208,7 +206,8 @@ static bool RoundWeedCounted(BufferReference<char> buffer,
     // Increment the last digit recursively until we find a non '9' digit.
     buffer[length - 1]++;
     for (int i = length - 1; i > 0; --i) {
-      if (buffer[i] != '0' + 10) break;
+      if (buffer[i] != '0' + 10)
+        break;
       buffer[i] = '0';
       buffer[i - 1]++;
     }
@@ -225,37 +224,127 @@ static bool RoundWeedCounted(BufferReference<char> buffer,
   return false;
 }
 
+static const uint32_t kTen4 = 10000;
+static const uint32_t kTen5 = 100000;
+static const uint32_t kTen6 = 1000000;
+static const uint32_t kTen7 = 10000000;
+static const uint32_t kTen8 = 100000000;
+static const uint32_t kTen9 = 1000000000;
+
 // Returns the biggest power of ten that is less than or equal to the given
 // number. We furthermore receive the maximum number of bits 'number' has.
-//
-// Returns power == 10^(exponent_plus_one-1) such that
-//    power <= number < power * 10.
-// If number_bits == 0 then 0^(0-1) is returned.
+// If number_bits == 0 then 0^-1 is returned
 // The number of bits must be <= 32.
 // Precondition: number < (1 << (number_bits + 1)).
-
-// Inspired by the method for finding an integer log base 10 from here:
-// http://graphics.stanford.edu/~seander/bithacks.html#IntegerLog10
-static unsigned int const kSmallPowersOfTen[] =
-    {0, 1, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000,
-     1000000000};
-
 static void BiggestPowerTen(uint32_t number,
                             int number_bits,
                             uint32_t* power,
-                            int* exponent_plus_one) {
-  ASSERT(number < (1u << (number_bits + 1)));
-  // 1233/4096 is approximately 1/lg(10).
-  int exponent_plus_one_guess = ((number_bits + 1) * 1233 >> 12);
-  // We increment to skip over the first entry in the kPowersOf10 table.
-  // Note: kPowersOf10[i] == 10^(i-1).
-  exponent_plus_one_guess++;
-  // We don't have any guarantees that 2^number_bits <= number.
-  if (number < kSmallPowersOfTen[exponent_plus_one_guess]) {
-    exponent_plus_one_guess--;
+                            int* exponent) {
+  DCHECK_LT(number, (uint32_t)(1 << (number_bits + 1)));
+
+  switch (number_bits) {
+    case 32:
+    case 31:
+    case 30:
+      if (kTen9 <= number) {
+        *power = kTen9;
+        *exponent = 9;
+        break;
+      }
+      FALLTHROUGH;
+    case 29:
+    case 28:
+    case 27:
+      if (kTen8 <= number) {
+        *power = kTen8;
+        *exponent = 8;
+        break;
+      }
+      FALLTHROUGH;
+    case 26:
+    case 25:
+    case 24:
+      if (kTen7 <= number) {
+        *power = kTen7;
+        *exponent = 7;
+        break;
+      }
+      FALLTHROUGH;
+    case 23:
+    case 22:
+    case 21:
+    case 20:
+      if (kTen6 <= number) {
+        *power = kTen6;
+        *exponent = 6;
+        break;
+      }
+      FALLTHROUGH;
+    case 19:
+    case 18:
+    case 17:
+      if (kTen5 <= number) {
+        *power = kTen5;
+        *exponent = 5;
+        break;
+      }
+      FALLTHROUGH;
+    case 16:
+    case 15:
+    case 14:
+      if (kTen4 <= number) {
+        *power = kTen4;
+        *exponent = 4;
+        break;
+      }
+      FALLTHROUGH;
+    case 13:
+    case 12:
+    case 11:
+    case 10:
+      if (1000 <= number) {
+        *power = 1000;
+        *exponent = 3;
+        break;
+      }
+      FALLTHROUGH;
+    case 9:
+    case 8:
+    case 7:
+      if (100 <= number) {
+        *power = 100;
+        *exponent = 2;
+        break;
+      }
+      FALLTHROUGH;
+    case 6:
+    case 5:
+    case 4:
+      if (10 <= number) {
+        *power = 10;
+        *exponent = 1;
+        break;
+      }
+      FALLTHROUGH;
+    case 3:
+    case 2:
+    case 1:
+      if (1 <= number) {
+        *power = 1;
+        *exponent = 0;
+        break;
+      }
+      FALLTHROUGH;
+    case 0:
+      *power = 0;
+      *exponent = -1;
+      break;
+    default:
+      // Following assignments are here to silence compiler warnings.
+      *power = 0;
+      *exponent = 0;
+      UNREACHABLE();
   }
-  *power = kSmallPowersOfTen[exponent_plus_one_guess];
-  *exponent_plus_one = exponent_plus_one_guess;
 }
 
 // Generates the digits of input number w.
@@ -303,70 +392,69 @@ static void BiggestPowerTen(uint32_t number,
 static bool DigitGen(DiyFp low,
                      DiyFp w,
                      DiyFp high,
-                     BufferReference<char> buffer,
+                     Vector<char> buffer,
                      int* length,
                      int* kappa) {
-  ASSERT(low.e() == w.e() && w.e() == high.e());
-  ASSERT(low.f() + 1 <= high.f() - 1);
-  ASSERT(kMinimalTargetExponent <= w.e() && w.e() <= kMaximalTargetExponent);
-  // low, w and high are imprecise, but by less than one ulp (unit in the last
-  // place).
-  // If we remove (resp. add) 1 ulp from low (resp. high) we are certain that
-  // the new numbers are outside of the interval we want the final
-  // representation to lie in.
-  // Inversely adding (resp. removing) 1 ulp from low (resp. high) would yield
-  // numbers that are certain to lie in the interval. We will use this fact
-  // later on.
-  // We will now start by generating the digits within the uncertain
-  // interval. Later we will weed out representations that lie outside the safe
-  // interval and thus _might_ lie outside the correct interval.
+  DCHECK_EQ(low.E(), w.E());
+  DCHECK_EQ(w.E(), high.E());
+  DCHECK_LE(low.F() + 1, high.F() - 1);
+  DCHECK_LE(kMinimalTargetExponent, w.E());
+  DCHECK_LE(w.E(), kMaximalTargetExponent);
+  // low, w and high are imprecise, but by less than one ulp (unit in the
+  // last place). If we remove (resp. add) 1 ulp from low (resp. high) we
+  // are certain that the new numbers are outside of the interval we want
+  // the final representation to lie in. Inversely adding (resp. removing) 1
+  // ulp from low (resp. high) would yield numbers that are certain to lie
+  // in the interval. We will use this fact later on. We will now start by
+  // generating the digits within the uncertain interval. Later we will weed
+  // out representations that lie outside the safe interval and thus _might_
+  // lie outside the correct interval.
   uint64_t unit = 1;
-  DiyFp too_low = DiyFp(low.f() - unit, low.e());
-  DiyFp too_high = DiyFp(high.f() + unit, high.e());
-  // too_low and too_high are guaranteed to lie outside the interval we want the
-  // generated number in.
+  DiyFp too_low = DiyFp(low.F() - unit, low.E());
+  DiyFp too_high = DiyFp(high.F() + unit, high.E());
+  // too_low and too_high are guaranteed to lie outside the interval we want
+  // the generated number in.
   DiyFp unsafe_interval = DiyFp::Minus(too_high, too_low);
   // We now cut the input number into two parts: the integral digits and the
   // fractionals. We will not write any decimal separator though, but adapt
   // kappa instead.
-  // Reminder: we are currently computing the digits (stored inside the buffer)
-  // such that:   too_low < buffer * 10^kappa < too_high
-  // We use too_high for the digit_generation and stop as soon as possible.
-  // If we stop early we effectively round down.
-  DiyFp one = DiyFp(static_cast<uint64_t>(1) << -w.e(), w.e());
+  // Reminder: we are currently computing the digits (stored inside the
+  // buffer) such that:   too_low < buffer * 10^kappa < too_high We use
+  // too_high for the digit_generation and stop as soon as possible. If we
+  // stop early we effectively round down.
+  DiyFp one = DiyFp(static_cast<uint64_t>(1) << -w.E(), w.E());
   // Division by one is a shift.
-  uint32_t integrals = static_cast<uint32_t>(too_high.f() >> -one.e());
+  uint32_t integrals = static_cast<uint32_t>(too_high.F() >> -one.E());
   // Modulo by one is an and.
-  uint64_t fractionals = too_high.f() & (one.f() - 1);
+  uint64_t fractionals = too_high.F() & (one.F() - 1);
   uint32_t divisor;
-  int divisor_exponent_plus_one;
-  BiggestPowerTen(integrals, DiyFp::kSignificandSize - (-one.e()),
-                  &divisor, &divisor_exponent_plus_one);
-  *kappa = divisor_exponent_plus_one;
+  int divisor_exponent;
+  BiggestPowerTen(integrals, DiyFp::kSignificandSize - (-one.E()), &divisor,
+                  &divisor_exponent);
+  *kappa = divisor_exponent + 1;
   *length = 0;
   // Loop invariant: buffer = too_high / 10^kappa  (integer division)
   // The invariant holds for the first iteration: kappa has been initialized
-  // with the divisor exponent + 1. And the divisor is the biggest power of ten
-  // that is smaller than integrals.
+  // with the divisor exponent + 1. And the divisor is the biggest power of
+  // ten that is smaller than integrals.
   while (*kappa > 0) {
-    int digit = integrals / divisor;
-    ASSERT(digit <= 9);
-    buffer[*length] = static_cast<char>('0' + digit);
+    char digit = static_cast<char>(integrals / divisor);
+    buffer[*length] = '0' + digit;
     (*length)++;
     integrals %= divisor;
     (*kappa)--;
     // Note that kappa now equals the exponent of the divisor and that the
     // invariant thus holds again.
     uint64_t rest =
-        (static_cast<uint64_t>(integrals) << -one.e()) + fractionals;
+        (static_cast<uint64_t>(integrals) << -one.E()) + fractionals;
     // Invariant: too_high = buffer * 10^kappa + DiyFp(rest, one.e())
     // Reminder: unsafe_interval.e() == one.e()
-    if (rest < unsafe_interval.f()) {
-      // Rounding down (by not emitting the remaining digits) yields a number
-      // that lies within the unsafe interval.
-      return RoundWeed(buffer, *length, DiyFp::Minus(too_high, w).f(),
-                       unsafe_interval.f(), rest,
-                       static_cast<uint64_t>(divisor) << -one.e(), unit);
+    if (rest < unsafe_interval.F()) {
+      // Rounding down (by not emitting the remaining digits) yields a
+      // number that lies within the unsafe interval.
+      return RoundWeed(buffer, *length, DiyFp::Minus(too_high, w).F(),
+                       unsafe_interval.F(), rest,
+                       static_cast<uint64_t>(divisor) << -one.E(), unit);
     }
     divisor /= 10;
   }
@@ -377,28 +465,25 @@ static bool DigitGen(DiyFp low,
   // data (like the interval or 'unit'), too.
   // Note that the multiplication by 10 does not overflow, because w.e >= -60
   // and thus one.e >= -60.
-  ASSERT(one.e() >= -60);
-  ASSERT(fractionals < one.f());
-  ASSERT(UINT64_2PART_C(0xFFFFFFFF, FFFFFFFF) / 10 >= one.f());
-  for (;;) {
+  DCHECK_GE(one.E(), -60);
+  DCHECK_LT(fractionals, one.F());
+  DCHECK_GE(UINT64_2PART_C(0xFFFFFFFF, FFFFFFFF) / 10, one.F());
+  while (true) {
     fractionals *= 10;
     unit *= 10;
-    unsafe_interval.set_f(unsafe_interval.f() * 10);
+    unsafe_interval.set_f(unsafe_interval.F() * 10);
     // Integer division by one.
-    int digit = static_cast<int>(fractionals >> -one.e());
-    ASSERT(digit <= 9);
-    buffer[*length] = static_cast<char>('0' + digit);
+    char digit = static_cast<char>(fractionals >> -one.E());
+    buffer[*length] = '0' + digit;
     (*length)++;
-    fractionals &= one.f() - 1;  // Modulo by one.
+    fractionals &= one.F() - 1;  // Modulo by one.
     (*kappa)--;
-    if (fractionals < unsafe_interval.f()) {
-      return RoundWeed(buffer, *length, DiyFp::Minus(too_high, w).f() * unit,
-                       unsafe_interval.f(), fractionals, one.f(), unit);
+    if (fractionals < unsafe_interval.F()) {
+      return RoundWeed(buffer, *length, DiyFp::Minus(too_high, w).F() * unit,
+                       unsafe_interval.F(), fractionals, one.F(), unit);
     }
   }
 }
-
-
 
 // Generates (at most) requested_digits digits of input number w.
 // w is a floating-point number (DiyFp), consisting of a significand and an
@@ -430,54 +515,55 @@ static bool DigitGen(DiyFp low,
 //   increases with higher requested_digits.
 static bool DigitGenCounted(DiyFp w,
                             int requested_digits,
-                            BufferReference<char> buffer,
+                            Vector<char> buffer,
                             int* length,
                             int* kappa) {
-  ASSERT(kMinimalTargetExponent <= w.e() && w.e() <= kMaximalTargetExponent);
-  ASSERT(kMinimalTargetExponent >= -60);
-  ASSERT(kMaximalTargetExponent <= -32);
+  DCHECK_LE(kMinimalTargetExponent, w.E());
+  DCHECK_LE(w.E(), kMaximalTargetExponent);
+  DCHECK_GE(kMinimalTargetExponent, -60);
+  DCHECK_LE(kMaximalTargetExponent, -32);
   // w is assumed to have an error less than 1 unit. Whenever w is scaled we
   // also scale its error.
   uint64_t w_error = 1;
   // We cut the input number into two parts: the integral digits and the
   // fractional digits. We don't emit any decimal separator, but adapt kappa
-  // instead. Example: instead of writing "1.2" we put "12" into the buffer and
-  // increase kappa by 1.
-  DiyFp one = DiyFp(static_cast<uint64_t>(1) << -w.e(), w.e());
+  // instead. Example: instead of writing "1.2" we put "12" into the buffer
+  // and increase kappa by 1.
+  DiyFp one = DiyFp(static_cast<uint64_t>(1) << -w.E(), w.E());
   // Division by one is a shift.
-  uint32_t integrals = static_cast<uint32_t>(w.f() >> -one.e());
+  uint32_t integrals = static_cast<uint32_t>(w.F() >> -one.E());
   // Modulo by one is an and.
-  uint64_t fractionals = w.f() & (one.f() - 1);
+  uint64_t fractionals = w.F() & (one.F() - 1);
   uint32_t divisor;
-  int divisor_exponent_plus_one;
-  BiggestPowerTen(integrals, DiyFp::kSignificandSize - (-one.e()),
-                  &divisor, &divisor_exponent_plus_one);
-  *kappa = divisor_exponent_plus_one;
+  int divisor_exponent;
+  BiggestPowerTen(integrals, DiyFp::kSignificandSize - (-one.E()), &divisor,
+                  &divisor_exponent);
+  *kappa = divisor_exponent + 1;
   *length = 0;
 
   // Loop invariant: buffer = w / 10^kappa  (integer division)
   // The invariant holds for the first iteration: kappa has been initialized
-  // with the divisor exponent + 1. And the divisor is the biggest power of ten
-  // that is smaller than 'integrals'.
+  // with the divisor exponent + 1. And the divisor is the biggest power of
+  // ten that is smaller than 'integrals'.
   while (*kappa > 0) {
-    int digit = integrals / divisor;
-    ASSERT(digit <= 9);
-    buffer[*length] = static_cast<char>('0' + digit);
+    char digit = static_cast<char>(integrals / divisor);
+    buffer[*length] = '0' + digit;
     (*length)++;
     requested_digits--;
     integrals %= divisor;
     (*kappa)--;
     // Note that kappa now equals the exponent of the divisor and that the
     // invariant thus holds again.
-    if (requested_digits == 0) break;
+    if (requested_digits == 0)
+      break;
     divisor /= 10;
   }
 
   if (requested_digits == 0) {
     uint64_t rest =
-        (static_cast<uint64_t>(integrals) << -one.e()) + fractionals;
+        (static_cast<uint64_t>(integrals) << -one.E()) + fractionals;
     return RoundWeedCounted(buffer, *length, rest,
-                            static_cast<uint64_t>(divisor) << -one.e(), w_error,
+                            static_cast<uint64_t>(divisor) << -one.E(), w_error,
                             kappa);
   }
 
@@ -487,26 +573,25 @@ static bool DigitGenCounted(DiyFp w,
   // data (the 'unit'), too.
   // Note that the multiplication by 10 does not overflow, because w.e >= -60
   // and thus one.e >= -60.
-  ASSERT(one.e() >= -60);
-  ASSERT(fractionals < one.f());
-  ASSERT(UINT64_2PART_C(0xFFFFFFFF, FFFFFFFF) / 10 >= one.f());
+  DCHECK_GE(one.E(), -60);
+  DCHECK_LT(fractionals, one.F());
+  DCHECK_GE(UINT64_2PART_C(0xFFFFFFFF, FFFFFFFF) / 10, one.F());
   while (requested_digits > 0 && fractionals > w_error) {
     fractionals *= 10;
     w_error *= 10;
     // Integer division by one.
-    int digit = static_cast<int>(fractionals >> -one.e());
-    ASSERT(digit <= 9);
-    buffer[*length] = static_cast<char>('0' + digit);
+    char digit = static_cast<char>(fractionals >> -one.E());
+    buffer[*length] = '0' + digit;
     (*length)++;
     requested_digits--;
-    fractionals &= one.f() - 1;  // Modulo by one.
+    fractionals &= one.F() - 1;  // Modulo by one.
     (*kappa)--;
   }
-  if (requested_digits != 0) return false;
-  return RoundWeedCounted(buffer, *length, fractionals, one.f(), w_error,
+  if (requested_digits != 0)
+    return false;
+  return RoundWeedCounted(buffer, *length, fractionals, one.F(), w_error,
                           kappa);
 }
-
 
 // Provides a decimal representation of v.
 // Returns true if it succeeds, otherwise the result cannot be trusted.
@@ -520,8 +605,7 @@ static bool DigitGenCounted(DiyFp w,
 // digits might correctly yield 'v' when read again, the closest will be
 // computed.
 static bool Grisu3(double v,
-                   FastDtoaMode mode,
-                   BufferReference<char> buffer,
+                   Vector<char> buffer,
                    int* length,
                    int* decimal_exponent) {
   DiyFp w = Double(v).AsNormalizedDiyFp();
@@ -530,28 +614,21 @@ static bool Grisu3(double v,
   // boundary_minus and boundary_plus will round to v when convert to a double.
   // Grisu3 will never output representations that lie exactly on a boundary.
   DiyFp boundary_minus, boundary_plus;
-  if (mode == FAST_DTOA_SHORTEST) {
-    Double(v).NormalizedBoundaries(&boundary_minus, &boundary_plus);
-  } else {
-    ASSERT(mode == FAST_DTOA_SHORTEST_SINGLE);
-    float single_v = static_cast<float>(v);
-    Single(single_v).NormalizedBoundaries(&boundary_minus, &boundary_plus);
-  }
-  ASSERT(boundary_plus.e() == w.e());
+  Double(v).NormalizedBoundaries(&boundary_minus, &boundary_plus);
+  DCHECK_EQ(boundary_plus.E(), w.E());
   DiyFp ten_mk;  // Cached power of ten: 10^-k
   int mk;        // -k
   int ten_mk_minimal_binary_exponent =
-     kMinimalTargetExponent - (w.e() + DiyFp::kSignificandSize);
+      kMinimalTargetExponent - (w.E() + DiyFp::kSignificandSize);
   int ten_mk_maximal_binary_exponent =
-     kMaximalTargetExponent - (w.e() + DiyFp::kSignificandSize);
+      kMaximalTargetExponent - (w.E() + DiyFp::kSignificandSize);
   PowersOfTenCache::GetCachedPowerForBinaryExponentRange(
-      ten_mk_minimal_binary_exponent,
-      ten_mk_maximal_binary_exponent,
-      &ten_mk, &mk);
-  ASSERT((kMinimalTargetExponent <= w.e() + ten_mk.e() +
-          DiyFp::kSignificandSize) &&
-         (kMaximalTargetExponent >= w.e() + ten_mk.e() +
-          DiyFp::kSignificandSize));
+      ten_mk_minimal_binary_exponent, ten_mk_maximal_binary_exponent, &ten_mk,
+      &mk);
+  DCHECK_LE(kMinimalTargetExponent,
+            w.E() + ten_mk.E() + DiyFp::kSignificandSize);
+  DCHECK_GE(kMaximalTargetExponent,
+            w.E() + ten_mk.E() + DiyFp::kSignificandSize);
   // Note that ten_mk is only an approximation of 10^-k. A DiyFp only contains a
   // 64 bit significand and ten_mk is thus only precise up to 64 bits.
 
@@ -562,15 +639,15 @@ static bool Grisu3(double v,
   // In other words: let f = scaled_w.f() and e = scaled_w.e(), then
   //           (f-1) * 2^e < w*10^k < (f+1) * 2^e
   DiyFp scaled_w = DiyFp::Times(w, ten_mk);
-  ASSERT(scaled_w.e() ==
-         boundary_plus.e() + ten_mk.e() + DiyFp::kSignificandSize);
+  DCHECK_EQ(scaled_w.E(),
+            boundary_plus.E() + ten_mk.E() + DiyFp::kSignificandSize);
   // In theory it would be possible to avoid some recomputations by computing
   // the difference between w and boundary_minus/plus (a power of 2) and to
   // compute scaled_boundary_minus/plus by subtracting/adding from
   // scaled_w. However the code becomes much less readable and the speed
   // enhancements are not terriffic.
   DiyFp scaled_boundary_minus = DiyFp::Times(boundary_minus, ten_mk);
-  DiyFp scaled_boundary_plus  = DiyFp::Times(boundary_plus,  ten_mk);
+  DiyFp scaled_boundary_plus = DiyFp::Times(boundary_plus, ten_mk);
 
   // DigitGen will generate the digits of scaled_w. Therefore we have
   // v == (double) (scaled_w * 10^-mk).
@@ -585,7 +662,6 @@ static bool Grisu3(double v,
   return result;
 }
 
-
 // The "counted" version of grisu3 (see above) only generates requested_digits
 // number of digits. This version does not generate the shortest representation,
 // and with enough requested digits 0.1 will at some point print as 0.9999999...
@@ -593,24 +669,23 @@ static bool Grisu3(double v,
 // therefore the rounding strategy for halfway cases is irrelevant.
 static bool Grisu3Counted(double v,
                           int requested_digits,
-                          BufferReference<char> buffer,
+                          Vector<char> buffer,
                           int* length,
                           int* decimal_exponent) {
   DiyFp w = Double(v).AsNormalizedDiyFp();
   DiyFp ten_mk;  // Cached power of ten: 10^-k
   int mk;        // -k
   int ten_mk_minimal_binary_exponent =
-     kMinimalTargetExponent - (w.e() + DiyFp::kSignificandSize);
+      kMinimalTargetExponent - (w.E() + DiyFp::kSignificandSize);
   int ten_mk_maximal_binary_exponent =
-     kMaximalTargetExponent - (w.e() + DiyFp::kSignificandSize);
+      kMaximalTargetExponent - (w.E() + DiyFp::kSignificandSize);
   PowersOfTenCache::GetCachedPowerForBinaryExponentRange(
-      ten_mk_minimal_binary_exponent,
-      ten_mk_maximal_binary_exponent,
-      &ten_mk, &mk);
-  ASSERT((kMinimalTargetExponent <= w.e() + ten_mk.e() +
-          DiyFp::kSignificandSize) &&
-         (kMaximalTargetExponent >= w.e() + ten_mk.e() +
-          DiyFp::kSignificandSize));
+      ten_mk_minimal_binary_exponent, ten_mk_maximal_binary_exponent, &ten_mk,
+      &mk);
+  DCHECK_LE(kMinimalTargetExponent,
+            w.E() + ten_mk.E() + DiyFp::kSignificandSize);
+  DCHECK_GE(kMaximalTargetExponent,
+            w.E() + ten_mk.E() + DiyFp::kSignificandSize);
   // Note that ten_mk is only an approximation of 10^-k. A DiyFp only contains a
   // 64 bit significand and ten_mk is thus only precise up to 64 bits.
 
@@ -628,32 +703,30 @@ static bool Grisu3Counted(double v,
   // will not always be exactly the same since DigitGenCounted only produces a
   // limited number of digits.)
   int kappa;
-  bool result = DigitGenCounted(scaled_w, requested_digits,
-                                buffer, length, &kappa);
+  bool result =
+      DigitGenCounted(scaled_w, requested_digits, buffer, length, &kappa);
   *decimal_exponent = -mk + kappa;
   return result;
 }
 
-
 bool FastDtoa(double v,
               FastDtoaMode mode,
               int requested_digits,
-              BufferReference<char> buffer,
+              Vector<char> buffer,
               int* length,
               int* decimal_point) {
-  ASSERT(v > 0);
-  ASSERT(!Double(v).IsSpecial());
+  DCHECK_GT(v, 0);
+  DCHECK(!Double(v).IsSpecial());
 
   bool result = false;
   int decimal_exponent = 0;
   switch (mode) {
     case FAST_DTOA_SHORTEST:
-    case FAST_DTOA_SHORTEST_SINGLE:
-      result = Grisu3(v, mode, buffer, length, &decimal_exponent);
+      result = Grisu3(v, buffer, length, &decimal_exponent);
       break;
     case FAST_DTOA_PRECISION:
-      result = Grisu3Counted(v, requested_digits,
-                             buffer, length, &decimal_exponent);
+      result =
+          Grisu3Counted(v, requested_digits, buffer, length, &decimal_exponent);
       break;
     default:
       UNREACHABLE();
@@ -666,4 +739,5 @@ bool FastDtoa(double v,
 }
 
 }  // namespace double_conversion
+
 }  // namespace WTF

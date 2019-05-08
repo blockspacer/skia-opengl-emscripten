@@ -25,12 +25,12 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "config.h"
+#include "third_party/blink/renderer/platform/wtf/dtoa/diy-fp.h"
 
-#include <wtf/dtoa/diy-fp.h>
-#include <wtf/dtoa/utils.h>
+#include "third_party/blink/renderer/platform/wtf/dtoa/utils.h"
 
 namespace WTF {
+
 namespace double_conversion {
 
 void DiyFp::Multiply(const DiyFp& other) {
@@ -57,4 +57,5 @@ void DiyFp::Multiply(const DiyFp& other) {
 }
 
 }  // namespace double_conversion
+
 }  // namespace WTF

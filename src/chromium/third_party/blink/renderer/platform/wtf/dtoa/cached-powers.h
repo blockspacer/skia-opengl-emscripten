@@ -25,17 +25,20 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef DOUBLE_CONVERSION_CACHED_POWERS_H_
-#define DOUBLE_CONVERSION_CACHED_POWERS_H_
+#ifndef THIRD_PARTY_BLINK_RENDERER_PLATFORM_WTF_DTOA_CACHED_POWERS_H_
+#define THIRD_PARTY_BLINK_RENDERER_PLATFORM_WTF_DTOA_CACHED_POWERS_H_
 
-#include <wtf/dtoa/diy-fp.h>
+#include "third_party/blink/renderer/platform/wtf/allocator.h"
+#include "third_party/blink/renderer/platform/wtf/dtoa/diy-fp.h"
 
 namespace WTF {
+
 namespace double_conversion {
 
 class PowersOfTenCache {
- public:
+  STATIC_ONLY(PowersOfTenCache);
 
+ public:
   // Not all powers of ten are cached. The decimal exponent of two neighboring
   // cached numbers will differ by kDecimalExponentDistance.
   static const int kDecimalExponentDistance;
@@ -59,8 +62,8 @@ class PowersOfTenCache {
                                                DiyFp* power,
                                                int* found_exponent);
 };
-
 }  // namespace double_conversion
+
 }  // namespace WTF
 
-#endif  // DOUBLE_CONVERSION_CACHED_POWERS_H_
+#endif  // THIRD_PARTY_BLINK_RENDERER_PLATFORM_WTF_DTOA_CACHED_POWERS_H_

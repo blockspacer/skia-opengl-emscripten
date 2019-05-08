@@ -1,4 +1,4 @@
-// Copyright 2012 the V8 project authors. All rights reserved.
+// Copyright 2010 the V8 project authors. All rights reserved.
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are
 // met:
@@ -25,15 +25,19 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef DOUBLE_CONVERSION_DOUBLE_CONVERSION_H_
-#define DOUBLE_CONVERSION_DOUBLE_CONVERSION_H_
+#ifndef THIRD_PARTY_BLINK_RENDERER_PLATFORM_WTF_DTOA_DOUBLE_CONVERSION_H_
+#define THIRD_PARTY_BLINK_RENDERER_PLATFORM_WTF_DTOA_DOUBLE_CONVERSION_H_
 
-#include <wtf/dtoa/utils.h>
+#include "third_party/blink/renderer/platform/wtf/allocator.h"
+#include "third_party/blink/renderer/platform/wtf/dtoa/utils.h"
 
 namespace WTF {
+
 namespace double_conversion {
 
 class DoubleToStringConverter {
+  STACK_ALLOCATED();
+
  public:
   // When calling ToFixed with a double > 10^kMaxFixedDigitsBeforePoint
   // or a requested_digits parameter > kMaxFixedDigitsAfterPoint then the
@@ -97,7 +101,7 @@ class DoubleToStringConverter {
   // Example with max_leading_padding_zeroes_in_precision_mode = 6.
   //   ToPrecision(0.0000012345, 2) -> "0.0000012"
   //   ToPrecision(0.00000012345, 2) -> "1.2e-7"
-  // Similarily the converter may add up to
+  // Similarly the converter may add up to
   // max_trailing_padding_zeroes_in_precision_mode in precision mode to avoid
   // returning an exponential representation. A zero added by the
   // EMIT_TRAILING_ZERO_AFTER_POINT flag is counted for this limit.
@@ -125,12 +129,12 @@ class DoubleToStringConverter {
             max_trailing_padding_zeroes_in_precision_mode) {
     // When 'trailing zero after the point' is set, then 'trailing point'
     // must be set too.
-    ASSERT(((flags & EMIT_TRAILING_DECIMAL_POINT) != 0) ||
-        !((flags & EMIT_TRAILING_ZERO_AFTER_POINT) != 0));
+    DCHECK(((flags & EMIT_TRAILING_DECIMAL_POINT) != 0) ||
+           !((flags & EMIT_TRAILING_ZERO_AFTER_POINT) != 0));
   }
 
   // Returns a converter following the EcmaScript specification.
-  WTF_EXPORT_PRIVATE static const DoubleToStringConverter& EcmaScriptConverter();
+  static const DoubleToStringConverter& EcmaScriptConverter();
 
   // Computes the shortest string of digits that correctly represent the input
   // number. Depending on decimal_in_shortest_low and decimal_in_shortest_high
@@ -139,7 +143,7 @@ class DoubleToStringConverter {
   // Example with decimal_in_shortest_low = -6,
   //              decimal_in_shortest_high = 21,
   //              EMIT_POSITIVE_EXPONENT_SIGN activated, and
-  //              EMIT_TRAILING_DECIMAL_POINT deactived:
+  //              EMIT_TRAILING_DECIMAL_POINT deactivated:
   //   ToShortest(0.000001)  -> "0.000001"
   //   ToShortest(0.0000001) -> "1e-7"
   //   ToShortest(111111111111111111111.0)  -> "111111111111111110000"
@@ -155,15 +159,7 @@ class DoubleToStringConverter {
   // Returns true if the conversion succeeds. The conversion always succeeds
   // except when the input value is special and no infinity_symbol or
   // nan_symbol has been given to the constructor.
-  bool ToShortest(double value, StringBuilder* result_builder) const {
-    return ToShortestIeeeNumber(value, result_builder, SHORTEST);
-  }
-
-  // Same as ToShortest, but for single-precision floats.
-  bool ToShortestSingle(float value, StringBuilder* result_builder) const {
-    return ToShortestIeeeNumber(value, result_builder, SHORTEST_SINGLE);
-  }
-
+  bool ToShortest(double value, StringBuilder* result_builder) const;
 
   // Computes a decimal representation with a fixed number of digits after the
   // decimal point. The last emitted digit is rounded.
@@ -230,9 +226,9 @@ class DoubleToStringConverter {
   // kMaxExponentialDigits + 8 characters (the sign, the digit before the
   // decimal point, the decimal point, the exponent character, the
   // exponent's sign, and at most 3 exponent digits).
-  WTF_EXPORT_PRIVATE bool ToExponential(double value,
-                                        int requested_digits,
-                                        StringBuilder* result_builder) const;
+  bool ToExponential(double value,
+                     int requested_digits,
+                     StringBuilder* result_builder) const;
 
   // Computes 'precision' leading digits of the given 'value' and returns them
   // either in exponential or decimal format, depending on
@@ -243,7 +239,7 @@ class DoubleToStringConverter {
   // Example with max_leading_padding_zeroes_in_precision_mode = 6.
   //   ToPrecision(0.0000012345, 2) -> "0.0000012"
   //   ToPrecision(0.00000012345, 2) -> "1.2e-7"
-  // Similarily the converter may add up to
+  // Similarly the converter may add up to
   // max_trailing_padding_zeroes_in_precision_mode in precision mode to avoid
   // returning an exponential representation. A zero added by the
   // EMIT_TRAILING_ZERO_AFTER_POINT flag is counted for this limit.
@@ -277,8 +273,6 @@ class DoubleToStringConverter {
     // For example the output of 0.299999999999999988897 is (the less accurate
     // but correct) 0.3.
     SHORTEST,
-    // Same as SHORTEST, but for single-precision floats.
-    SHORTEST_SINGLE,
     // Produce a fixed number of digits after the decimal point.
     // For instance fixed(0.1, 4) becomes 0.1000
     // If the input number is big, the output will be big.
@@ -295,17 +289,8 @@ class DoubleToStringConverter {
   // should be at least kBase10MaximalLength + 1 characters long.
   static const int kBase10MaximalLength = 17;
 
-  // Converts the given double 'v' to digit characters. 'v' must not be NaN,
-  // +Infinity, or -Infinity. In SHORTEST_SINGLE-mode this restriction also
-  // applies to 'v' after it has been casted to a single-precision float. That
-  // is, in this mode static_cast<float>(v) must not be NaN, +Infinity or
-  // -Infinity.
-  //
+  // Converts the given double 'v' to ascii.
   // The result should be interpreted as buffer * 10^(point-length).
-  //
-  // The digits are written to the buffer in the platform's charset, which is
-  // often UTF-8 (with ASCII-range digits) but may be another charset, such
-  // as EBCDIC.
   //
   // The output depends on the given mode:
   //  - SHORTEST: produce the least amount of digits for which the internal
@@ -315,7 +300,6 @@ class DoubleToStringConverter {
   //   'v'. If there are two at the same distance, than the one farther away
   //   from 0 is chosen (halfway cases - ending with 5 - are rounded up).
   //   In this mode the 'requested_digits' parameter is ignored.
-  //  - SHORTEST_SINGLE: same as SHORTEST but with single-precision.
   //  - FIXED: produces digits necessary to print a given number with
   //   'requested_digits' digits after the decimal point. The produced digits
   //   might be too short in which case the caller has to fill the remainder
@@ -333,11 +317,9 @@ class DoubleToStringConverter {
   // DoubleToAscii expects the given buffer to be big enough to hold all
   // digits and a terminating null-character. In SHORTEST-mode it expects a
   // buffer of at least kBase10MaximalLength + 1. In all other modes the
-  // requested_digits parameter and the padding-zeroes limit the size of the
-  // output. Don't forget the decimal point, the exponent character and the
-  // terminating null-character when computing the maximal output size.
-  // The given length is only used in debug mode to ensure the buffer is big
-  // enough.
+  // requested_digits parameter (+ 1 for the null-character) limits the size of
+  // the output. The given length is only used in debug mode to ensure the
+  // buffer is big enough.
   static void DoubleToAscii(double v,
                             DtoaMode mode,
                             int requested_digits,
@@ -348,11 +330,6 @@ class DoubleToStringConverter {
                             int* point);
 
  private:
-  // Implementation for ToShortest and ToShortestSingle.
-  bool ToShortestIeeeNumber(double value,
-                            StringBuilder* result_builder,
-                            DtoaMode mode) const;
-
   // If the value is a special value (NaN or Infinity) constructs the
   // corresponding string using the configured infinity/nan-symbol.
   // If either of them is NULL or the value is not special then the
@@ -380,41 +357,26 @@ class DoubleToStringConverter {
   const int max_leading_padding_zeroes_in_precision_mode_;
   const int max_trailing_padding_zeroes_in_precision_mode_;
 
-  DC_DISALLOW_IMPLICIT_CONSTRUCTORS(DoubleToStringConverter);
+  DISALLOW_IMPLICIT_CONSTRUCTORS(DoubleToStringConverter);
 };
 
-
 class StringToDoubleConverter {
+  STACK_ALLOCATED();
+
  public:
   // Performs the conversion.
   // The output parameter 'processed_characters_count' is set to the number
   // of characters that have been processed to read the number.
-  WTF_EXPORT_PRIVATE static double StringToDouble(const char* buffer,
-                                                  size_t length,
-                                                  size_t* processed_characters_count);
-
-  // Same as StringToDouble above but for 16 bit characters.
-  WTF_EXPORT_PRIVATE static double StringToDouble(const uc16* buffer,
-                                                  size_t length,
-                                                  size_t* processed_characters_count);
-
-  // Same as StringToDouble but reads a float.
-  // Note that this is not equivalent to static_cast<float>(StringToDouble(...))
-  // due to potential double-rounding.
-  WTF_EXPORT_PRIVATE static float StringToFloat(const char* buffer,
-                                                size_t length,
-                                                size_t* processed_characters_count);
-
-  // Same as StringToFloat above but for 16 bit characters.
-  WTF_EXPORT_PRIVATE static float StringToFloat(const uc16* buffer,
-                                                size_t length,
-                                                size_t* processed_characters_count);
+  static double StringToDouble(const char* buffer,
+                               size_t length,
+                               size_t* processed_characters_count);
 
  private:
-  DC_DISALLOW_IMPLICIT_CONSTRUCTORS(StringToDoubleConverter);
+  DISALLOW_IMPLICIT_CONSTRUCTORS(StringToDoubleConverter);
 };
 
 }  // namespace double_conversion
+
 }  // namespace WTF
 
-#endif  // DOUBLE_CONVERSION_DOUBLE_CONVERSION_H_
+#endif  // THIRD_PARTY_BLINK_RENDERER_PLATFORM_WTF_DTOA_DOUBLE_CONVERSION_H_

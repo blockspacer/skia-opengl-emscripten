@@ -63,6 +63,8 @@ if(EMSCRIPTEN)
   #set(EMCC_COMMON "${EMCC_COMMON} -s SIDE_MODULE=1")
 
   #set(EMCC_COMMON "${EMCC_COMMON} -s USE_PTHREADS=0")
+  #set(EMCC_COMMON "${EMCC_COMMON} -s USE_PTHREADS=1")
+  #set(EMCC_COMMON "${EMCC_COMMON} -s PTHREAD_POOL_SIZE=1")
   set(EMCC_COMMON "${EMCC_COMMON} -s USE_ZLIB=1")
   #set(EMCC_COMMON "${EMCC_COMMON} -s USE_HARFBUZZ=1") # < TODO
   set(EMCC_COMMON "${EMCC_COMMON} -s USE_ICU=1")
@@ -135,13 +137,17 @@ if(EMSCRIPTEN)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s GL_ASSERTIONS=1")
   #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s ASSERTIONS=1")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s ASSERTIONS=2")
+
   # In theory there should be no limit, but in practice,
   # 2GB is a practical limit because many (all?)
   # browsers apply that limit, in particular I know Chrome and Firefox do.
   # https://github.com/emscripten-core/emscripten/issues/6566
+  # NOTE: Memory growth is not yet supported with pthreads
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s ALLOW_MEMORY_GROWTH=1")
-  # TOTAL_MEMORY: multiple of 16MB
+  # TOTAL_MEMORY must be multiple of 16MB
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s TOTAL_MEMORY=512MB")
+  #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s TOTAL_MEMORY=1024MB")
+
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s NO_EXIT_RUNTIME=1")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s WARN_UNALIGNED=1")
 else()
