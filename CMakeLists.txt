@@ -19,7 +19,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR})
 
 # -fno-exceptions
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++14")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++17")
 
 # TODO https://github.com/mbbill/JSC.js
 # # http://userguide.icu-project.org/howtouseicu
@@ -47,9 +47,14 @@ if(EMSCRIPTEN)
   #set(EMCC_COMMON "${EMCC_COMMON} -DSTATICALLY_LINKED_WITH_WTF")
   set(EMCC_COMMON "${EMCC_COMMON} -DTARGET_EMSCRIPTEN")
   set(EMCC_COMMON "${EMCC_COMMON} -s WASM=1")
-  set(EMCC_COMMON "${EMCC_COMMON} -DEMSCRIPTEN_HAS_UNBOUND_TYPE_NAMES=0")
+  #set(EMCC_COMMON "${EMCC_COMMON} -DEMSCRIPTEN_HAS_UNBOUND_TYPE_NAMES=0")
   set(EMCC_COMMON "${EMCC_COMMON} -s USE_FREETYPE=1")
   set(EMCC_COMMON "${EMCC_COMMON} -s USE_LIBPNG=1")
+  #set(EMCC_COMMON "${EMCC_COMMON} -D__EMSCRIPTEN__=1")
+
+  # Tell ICU that we are a 32 bit platform, otherwise,
+  # double-conversion-utils.h doesn't know how to operate.
+  # set(EMCC_COMMON "${EMCC_COMMON} -D__i386__=1")
 
   # TODO https://groups.google.com/forum/?nomobile=true#!topic/emscripten-discuss/slgrOM-BnCk
   #set(EMCC_COMMON "${EMCC_COMMON} -s EMULATE_FUNCTION_POINTER_CASTS=1")
@@ -57,7 +62,7 @@ if(EMSCRIPTEN)
 
   #set(EMCC_COMMON "${EMCC_COMMON} -s SIDE_MODULE=1")
 
-  set(EMCC_COMMON "${EMCC_COMMON} -s USE_PTHREADS=0")
+  #set(EMCC_COMMON "${EMCC_COMMON} -s USE_PTHREADS=0")
   set(EMCC_COMMON "${EMCC_COMMON} -s USE_ZLIB=1")
   #set(EMCC_COMMON "${EMCC_COMMON} -s USE_HARFBUZZ=1") # < TODO
   set(EMCC_COMMON "${EMCC_COMMON} -s USE_ICU=1")
@@ -68,6 +73,7 @@ if(EMSCRIPTEN)
   set(EMCC_COMMON "${EMCC_COMMON} -s USE_WEBGL2=2")
   # set(EMCC_COMMON "${EMCC_COMMON} -s FULL_ES2=1")
   set(EMCC_COMMON "${EMCC_COMMON} -s FULL_ES3=1")
+  # rtti required by skia
   set(EMCC_COMMON "${EMCC_COMMON} -frtti")
   set(EMCC_COMMON "${EMCC_COMMON} -DSK_RELEASE")
   set(EMCC_COMMON "${EMCC_COMMON} -DSK_ASSUME_WEBGL=1")
@@ -210,7 +216,7 @@ include(ExternalProject)
 # WTF
 #
 
-add_subdirectory(src/wtf)
+add_subdirectory(src/chromium)
 
 #
 # Skia
@@ -252,6 +258,9 @@ set(SKIA_BUILD_DIR "${CMAKE_CURRENT_BINARY_DIR}/skia")
 
 # Skia comes with -Werror on by default. That's a cool feature for release...
 set(NEW_CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
+
+set(NEW_CMAKE_C_FLAGS "${NEW_CMAKE_C_FLAGS} -Wno-error")
+
 STRING(REGEX REPLACE " " "\",\"" NEW_CMAKE_C_FLAGS "${NEW_CMAKE_C_FLAGS}")
 set(SKIA_C_FLAGS "\"${NEW_CMAKE_C_FLAGS}\"")
 message(STATUS "SKIA_C_FLAGS=${SKIA_C_FLAGS}")
@@ -274,10 +283,15 @@ if(EMSCRIPTEN)
   #set(NEW_CMAKE_CXX_FLAGS "${NEW_CMAKE_CXX_FLAGS} -s NO_FILESYSTEM=1")
 endif() # EMSCRIPTEN
 
+set(NEW_CMAKE_CXX_FLAGS "${NEW_CMAKE_CXX_FLAGS} -Wno-error")
+
 # The string literal "\\\\" represents "\\" in memory which is a valid regex (representing a single backslash).
 STRING(REGEX REPLACE " " "\",\"" NEW_CMAKE_CXX_FLAGS "${NEW_CMAKE_CXX_FLAGS}")
 set(SKIA_CXX_FLAGS "\"${NEW_CMAKE_CXX_FLAGS}\"")
 message(STATUS "SKIA_CXX_FLAGS=${SKIA_CXX_FLAGS}")
+
+set(SKIA_LDFLAGS "\"-Wno-error\"")
+#set(SKIA_LDFLAGS "\"\"")
 
 function(SET_SKIA_CONFIG_OPTION OPT_NAME OPT_VALUE)
   if (OPT_VALUE)
@@ -330,6 +344,7 @@ endif ()
   # at least Cmake 3.0 has the line continuation feature wich is cool
   # but then the args can't be indented because GN is written by somone with overly strong opinions:
   # "You got a tab character in here. Tabs are evil. Convert to spaces."
+
 set(GN_ARGS "${SK_TARGET_CPU} \
 ${SK_GL_STANDARD} \
 ar=\"${CMAKE_AR}\" \
@@ -337,6 +352,7 @@ cc=\"${CMAKE_C_COMPILER}\" \
 cxx=\"${CMAKE_CXX_COMPILER}\" \
 extra_cflags_c=[${SKIA_C_FLAGS}] \
 extra_cflags_cc=[${SKIA_CXX_FLAGS}] \
+extra_ldflags=[${SKIA_LDFLAGS}] \
 is_official_build=${SK_CONF_IS_OFFICIAL_BUILD} \
 is_component_build=${SK_CONF_SHARED} \
 is_debug=${SK_CONF_DEBUG} \
@@ -837,7 +853,7 @@ add_dependencies(${PROJECT_NAME}
 #  ${PROJECT_NAME}
 #  PROPERTIES LINK_FLAGS "-s MAIN_MODULE=1")
 
-set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 14)
+set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 17)
 
 if(EMSCRIPTEN)
   # -s ENVIRONMENT=web

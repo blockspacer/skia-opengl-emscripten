@@ -164,6 +164,14 @@
 #include <string>
 #include <vector>
 
+#include "wtf/ASCIICType.h"
+#include "wtf/Vector.h"
+#include "base/base_switches.h"
+#include "base/command_line.h"
+#include "base/i18n/icu_util.h"
+#include "base/i18n/rtl.h"
+#include "base/containers/small_map.h"
+
 //#define TODO
 
 #ifdef TODO
@@ -239,7 +247,7 @@ static SkFont* skFont2 = nullptr;
 //static int height= 600;//, "Render height.");
 
 static const int kStencilBits = 8;  // Skia needs 8 stencil bits
-static const int kMsaaSampleCount = 4;
+static const int kMsaaSampleCount = 0;
 static TTF_Font* ttfFont = nullptr;
 static sk_sp<SkSurface> sRasterSurface;
 
@@ -639,10 +647,10 @@ Draw()
 
  glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+  glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
-    glDisableVertexAttribArray(0);
-    glDisableVertexAttribArray(1);
+  glDisableVertexAttribArray(0);
+  glDisableVertexAttribArray(1);
 
 }
 
@@ -688,6 +696,42 @@ static void mainLoop()
 int
 main(int argc, char** argv)
 {
+  printf("Testing ...\n");
+
+  {
+    WTF::Vector<int> vec;
+    vec.append(1);
+    vec.append(2);
+    vec.append(3);
+    vec.append(4);
+    vec.append(5);
+    printf("vec begin is %d\n", *vec.begin());
+    printf("vec.at(2) is %d\n", vec.at(2));
+    printf("vec end is %d\n", vec.last());
+  }
+
+  {
+    base::small_map<std::map<std::string, std::string>> foo;
+    foo.insert(std::make_pair("foo", "bar"));
+    foo.insert(std::make_pair("bar", "bar"));
+    foo.insert(std::make_pair("foo1", "bar"));
+    foo.insert(std::make_pair("bar1",  "bar"));
+    foo.insert(std::make_pair("foo", "bar"));
+    foo.insert(std::make_pair("bar","bar"));
+    auto found = foo.find("asdf");
+    printf("1 Found is %d\n", (int)(found == foo.end()));
+    found = foo.find("foo");
+    printf("2 Found is %d\n", (int)(found == foo.end()));
+    found = foo.find("bar");
+    printf("3 Found is %d\n", (int)(found == foo.end()));
+    found = foo.find("asdfhf");
+    printf("4 Found is %d\n", (int)(found == foo.end()));
+    found = foo.find("bar1");
+    printf("5 Found is %d\n", (int)(found == foo.end()));
+  }
+
+  printf("Starting ...\n");
+
 #ifdef __EMSCRIPTEN__
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
@@ -707,10 +751,15 @@ main(int argc, char** argv)
 
   SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
 
-  if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_EVENTS) != 0) {
+  printf("SDL_Init ...\n");
+
+  // note video subsystem automatically initializes the events subsystem
+  if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_EVENTS | SDL_INIT_TIMER) != 0) {
     printf("Unable to initialize SDL: %s\n", SDL_GetError());
     return 1;
   }
+
+  printf("SDL_SetHint ...\n");
 
   if (!SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1")) {
     printf("Warning: Linear texture filtering not enabled!");
@@ -720,6 +769,8 @@ main(int argc, char** argv)
     SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
     SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, kMsaaSampleCount);
   }
+
+  printf("SDL_CreateWindow ...\n");
 
   window = SDL_CreateWindow("skemgl",
                             SDL_WINDOWPOS_UNDEFINED,
@@ -732,6 +783,8 @@ main(int argc, char** argv)
     printf("Unable to create window: %s\n", SDL_GetError());
     return 1;
   }
+
+  printf("SDL_GL_CreateContext ...\n");
 
   glContext = SDL_GL_CreateContext(window);
   if (!glContext) {
@@ -749,6 +802,8 @@ main(int argc, char** argv)
   }
 #endif
 
+  printf("SDL_GL_MakeCurrent ...\n");
+
   int success =  SDL_GL_MakeCurrent(window, glContext);
   if (success != 0) {
       printf("Error while SDL_GL_MakeCurrent %s\n", SDL_GetError());
@@ -762,10 +817,26 @@ main(int argc, char** argv)
   glClearStencil(0);
   glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
+  printf("SDL_GL_SetSwapInterval ...\n");
+
+  /**
+   * @note (emscripten)
+   * Native builds require a call to SDL_GL_SetSwapInterval(1)
+   * to enable vertical sync.
+   * But with Emscripten, SDL_GL_SetSwapInterval
+   * is just a wrapper for emscripten_set_main_loop_timing,
+   * which will complain when called outside of the main loop:
+   * emscripten_set_main_loop_timing:
+   * Cannot set timing mode for main loop since a main loop does not exist!
+   * Call emscripten_set_main_loop first to set one up.
+   * @see http://tristanpenman.com/blog/posts/2018/01/08/porting-an-asteroids-clone-to-javascript/
+   **/
+#ifndef __EMSCRIPTEN__
   // Use Vsync
   if (SDL_GL_SetSwapInterval(1) < 0) {
     printf("Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError());
   }
+#endif
 
   /*// Initialize PNG loading
   int imgFlags = IMG_INIT_PNG;

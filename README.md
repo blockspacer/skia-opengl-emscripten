@@ -6,12 +6,78 @@
 > Uses SDL2 to create window
 > Uses CMake
 
+## PATCHES
+
+1
+#define FRIEND_TEST
+
+2
+https://github.com/invokr/protobuf-emscripten/blob/master/patches/3.1/0001-stubs.patch
+https://groups.google.com/forum/#!msg/emscripten-discuss/97HYhPgd6Ag/5gDrTcyCAAAJ
+
+#if defined(EMSCRIPTEN) || defined(__EMSCRIPTEN__)
+typedef Atomic32 AtomicWord;
+#else
+typedef intptr_t AtomicWord;
+#endif
+
+
+#if defined(EMSCRIPTEN) || defined(__EMSCRIPTEN__)
+typedef subtle::Atomic32 AtomicType;
+typedef subtle::Atomic32 UAtomicType;
+#else
+typedef intptr_t AtomicType;
+typedef uintptr_t UAtomicType;
+#endif
+3
+https://github.com/TunSafe/TunSafe/blob/master/build_config.h
+
+
+#elif defined(EMSCRIPTEN)
+#define OS_EMSCRIPTEN 1
+
+#elif defined(EMSCRIPTEN) || defined(__EMSCRIPTEN__)
+#define OS_EMSCRIPTEN 1
+
+
+
+#elif defined(EMSCRIPTEN)
+#define ARCH_CPU_JS 1
+#define ARCH_CPU_32_BITS 1
+#define ARCH_CPU_LITTLE_ENDIAN 1
+
+4
+see https://github.com/cliqz-oss/ceba.js/blob/master/patches/tor/0002-emscripten-main-loop.patch#L7
+
+    #ifdef __EMSCRIPTEN__
+    const int flags_ONCE = EVLOOP_ONCE | EVLOOP_NONBLOCK;
+    #else
+    const int flags_ONCE = EVLOOP_ONCE;
+    #endif
+
+5
+patched libevent, added 'emscripten' subfolder
+
+6
+#elif defined(OS_LINUX) || defined(OS_BSD) || defined(OS_EMSCRIPTEN)
+using MessagePumpForUI = MessagePumpLibevent;
+
+7
+search for OS_EMSCRIPTEN:
+
+#if defined(OS_WIN) || defined(OS_MACOSX) || defined(OS_LINUX) || \
+    defined(OS_ANDROID) || defined(OS_AIX) || defined(OS_FUCHSIA) || defined(OS_EMSCRIPTEN)
+
 ## Experimental features
 
-> WTF (Web Template Framework)
+> WTF (Web Template Framework) from WebKit ported to WASM
 https://chromium.googlesource.com/chromium/src.git/+/62.0.3178.1/third_party/WebKit/Source/platform/wtf/README.md
+> chromium base (libchrome) from Blink ported to WASM
+https://www.chromium.org/chromium-os/packages/libchrome
 
 ## TODO
+> port base/debug folder to wasm and remove some "if !defined(OS_EMSCRIPTEN)"
+
 > Test linux & windows support
 
 > Shrink skia size
