@@ -39,11 +39,10 @@
 
 namespace WTF {
 
-const base::Feature kNoPartitionAllocDecommit{
-    "NoPartitionAllocDecommit", base::FEATURE_DISABLED_BY_DEFAULT};
+const base::Feature kNoPartitionAllocDecommit{"NoPartitionAllocDecommit",
+                                              base::FEATURE_DISABLED_BY_DEFAULT};
 
-const char* const Partitions::kAllocatedObjectPoolName =
-    "partition_alloc/allocated_objects";
+const char* const Partitions::kAllocatedObjectPoolName = "partition_alloc/allocated_objects";
 
 static base::LazyInstance<base::subtle::SpinLock>::Leaky initialization_lock_ =
     LAZY_INSTANCE_INITIALIZER;
@@ -54,26 +53,25 @@ bool Partitions::initialized_ = false;
 base::PartitionAllocatorGeneric* Partitions::fast_malloc_allocator_ = nullptr;
 base::PartitionAllocatorGeneric* Partitions::array_buffer_allocator_ = nullptr;
 base::PartitionAllocatorGeneric* Partitions::buffer_allocator_ = nullptr;
-base::SizeSpecificPartitionAllocator<1024>* Partitions::layout_allocator_ =
-    nullptr;
+base::SizeSpecificPartitionAllocator<1024>* Partitions::layout_allocator_ = nullptr;
 
-static base::LazyInstance<base::PartitionAllocatorGeneric>::Leaky
-    lazy_fast_malloc = LAZY_INSTANCE_INITIALIZER;
-static base::LazyInstance<base::PartitionAllocatorGeneric>::Leaky
-    lazy_array_buffer = LAZY_INSTANCE_INITIALIZER;
+static base::LazyInstance<base::PartitionAllocatorGeneric>::Leaky lazy_fast_malloc =
+    LAZY_INSTANCE_INITIALIZER;
+static base::LazyInstance<base::PartitionAllocatorGeneric>::Leaky lazy_array_buffer =
+    LAZY_INSTANCE_INITIALIZER;
 static base::LazyInstance<base::PartitionAllocatorGeneric>::Leaky lazy_buffer =
     LAZY_INSTANCE_INITIALIZER;
-static base::LazyInstance<base::SizeSpecificPartitionAllocator<1024>>::Leaky
-    lazy_layout = LAZY_INSTANCE_INITIALIZER;
+static base::LazyInstance<base::SizeSpecificPartitionAllocator<1024>>::Leaky lazy_layout =
+    LAZY_INSTANCE_INITIALIZER;
 
-Partitions::ReportPartitionAllocSizeFunction Partitions::report_size_function_ =
-    nullptr;
+Partitions::ReportPartitionAllocSizeFunction Partitions::report_size_function_ = nullptr;
 
-void Partitions::Initialize(
-    ReportPartitionAllocSizeFunction report_size_function) {
+void Partitions::Initialize(ReportPartitionAllocSizeFunction report_size_function) {
+  printf("Partitions::Initialize1\n");
   base::subtle::SpinLock::Guard guard(initialization_lock_.Get());
-
+  printf("Partitions::Initialize2\n");
   if (!initialized_) {
+    printf("Partitions::Initialize2\n");
     fast_malloc_allocator_ = lazy_fast_malloc.Pointer();
     array_buffer_allocator_ = lazy_array_buffer.Pointer();
     buffer_allocator_ = lazy_buffer.Pointer();
@@ -91,19 +89,16 @@ void Partitions::Initialize(
 
 void Partitions::DecommitFreeableMemory() {
   CHECK(IsMainThread());
-  if (!initialized_ ||
-      base::FeatureList::IsEnabled(kNoPartitionAllocDecommit)) {
+  if (!initialized_ || base::FeatureList::IsEnabled(kNoPartitionAllocDecommit)) {
     return;
   }
 
-  ArrayBufferPartition()->PurgeMemory(
-      base::PartitionPurgeDecommitEmptyPages |
-      base::PartitionPurgeDiscardUnusedSystemPages);
+  ArrayBufferPartition()->PurgeMemory(base::PartitionPurgeDecommitEmptyPages |
+                                      base::PartitionPurgeDiscardUnusedSystemPages);
   BufferPartition()->PurgeMemory(base::PartitionPurgeDecommitEmptyPages |
                                  base::PartitionPurgeDiscardUnusedSystemPages);
-  FastMallocPartition()->PurgeMemory(
-      base::PartitionPurgeDecommitEmptyPages |
-      base::PartitionPurgeDiscardUnusedSystemPages);
+  FastMallocPartition()->PurgeMemory(base::PartitionPurgeDecommitEmptyPages |
+                                     base::PartitionPurgeDiscardUnusedSystemPages);
   LayoutPartition()->PurgeMemory(base::PartitionPurgeDecommitEmptyPages |
                                  base::PartitionPurgeDiscardUnusedSystemPages);
 }
@@ -124,18 +119,15 @@ void Partitions::ReportMemoryUsageHistogram() {
   }
 }
 
-void Partitions::DumpMemoryStats(
-    bool is_light_dump,
-    base::PartitionStatsDumper* partition_stats_dumper) {
+void Partitions::DumpMemoryStats(bool is_light_dump,
+                                 base::PartitionStatsDumper* partition_stats_dumper) {
   // Object model and rendering partitions are not thread safe and can be
   // accessed only on the main thread.
   DCHECK(IsMainThread());
 
   DecommitFreeableMemory();
-  FastMallocPartition()->DumpStats("fast_malloc", is_light_dump,
-                                   partition_stats_dumper);
-  ArrayBufferPartition()->DumpStats("array_buffer", is_light_dump,
-                                    partition_stats_dumper);
+  FastMallocPartition()->DumpStats("fast_malloc", is_light_dump, partition_stats_dumper);
+  ArrayBufferPartition()->DumpStats("array_buffer", is_light_dump, partition_stats_dumper);
   BufferPartition()->DumpStats("buffer", is_light_dump, partition_stats_dumper);
   LayoutPartition()->DumpStats("layout", is_light_dump, partition_stats_dumper);
 }
@@ -143,26 +135,24 @@ void Partitions::DumpMemoryStats(
 namespace {
 
 class LightPartitionStatsDumperImpl : public base::PartitionStatsDumper {
- public:
+public:
   LightPartitionStatsDumperImpl() : total_active_bytes_(0) {}
 
-  void PartitionDumpTotals(
-      const char* partition_name,
-      const base::PartitionMemoryStats* memory_stats) override {
+  void PartitionDumpTotals(const char* partition_name,
+                           const base::PartitionMemoryStats* memory_stats) override {
     total_active_bytes_ += memory_stats->total_active_bytes;
   }
 
-  void PartitionsDumpBucketStats(
-      const char* partition_name,
-      const base::PartitionBucketMemoryStats*) override {}
+  void PartitionsDumpBucketStats(const char* partition_name,
+                                 const base::PartitionBucketMemoryStats*) override {}
 
   size_t TotalActiveBytes() const { return total_active_bytes_; }
 
- private:
+private:
   size_t total_active_bytes_;
 };
 
-}  // namespace
+} // namespace
 
 size_t Partitions::TotalActiveBytes() {
   LightPartitionStatsDumperImpl dumper;
@@ -249,4 +239,4 @@ void Partitions::HandleOutOfMemory() {
   PartitionsOutOfMemoryUsingLessThan16M();
 }
 
-}  // namespace WTF
+} // namespace WTF

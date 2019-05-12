@@ -122,7 +122,9 @@ tar -xvzf cmake-$CMAKE_VERSION.$CMAKE_BUILD.tar.gz
 rm cmake-$CMAKE_VERSION.$CMAKE_BUILD.tar.gz
 cd cmake-$CMAKE_VERSION.$CMAKE_BUILD
 ./bootstrap
+# build
 make -j4
+# install
 sudo make install
 ```
 
@@ -153,12 +155,12 @@ sudo -E apt-get install build-essential libxmu-dev libxi-dev libgl-dev --reinsta
 sudo -E apt install libegl1-mesa-dev --reinstall
 cd thirdparty/glew
 cd auto
+# build
 make
-
 cd ../build
 cmake ./cmake
 cmake --build . -- -j4
-
+# install
 sudo make install
 ```
 > https://github.com/spurious/SDL-mirror.git
@@ -168,7 +170,9 @@ cd thirdparty/SDL2
 mkdir build
 cd build
 cmake ..
+# build
 cmake --build . -- -j4
+# install
 sudo make install
 # NOTE You can even specify a custom path to find the SDL2, SDL2_net, ...
 # see https://stackoverflow.com/a/55075667
@@ -178,11 +182,13 @@ sudo make install
 # see https://www.libsdl.org/projects/SDL_ttf/
 # see https://www.libsdl.org/projects/SDL_ttf/docs/SDL_ttf_2.html
 sudo apt-get install automake build-essential xorg-dev libudev-dev libts-dev libgl1-mesa-dev libglu1-mesa-dev libasound2-dev libpulse-dev libopenal-dev libogg-dev libvorbis-dev libaudiofile-dev libpng-dev libfreetype6-dev libusb-dev libdbus-1-dev zlib1g-dev libdirectfb-dev
-cd thirdparty/SDL_ttf
+cd thirdparty/SDL2_ttf
 sh autogen.sh
 chmod +x configure
 ./configure
+# build
 make
+# install
 sudo make install
 export SDL2DIR=/usr/local/include
 ```
@@ -195,7 +201,9 @@ cd thirdparty/SDL_net
 sh autogen.sh
 chmod +x configure
 ./configure
+# build
 make
+# install
 sudo make install
 export SDL2NETDIR=/usr/local/include
 ```
@@ -232,23 +240,58 @@ git clone https://github.com/harfbuzz/harfbuzz.git
 cd harfbuzz
 ./autogen.sh
 ./configure
-make && sudo make install
+# build
+make
+# install
+sudo make install
 # see https://github.com/google/skia/blob/master/site/user/build.md
 # see https://github.com/google/skia/blob/master/modules/pathkit/README.md
 ls ${PWD}/thirdparty/depot_tools
 export PATH="${PWD}/thirdparty/depot_tools:${PATH}"
 cd thirdparty/skia
 tools/git-sync-deps
+# see https://github.com/google/skia/blob/master/src/sksl/README#L77
+bin/fetch-clang-format
 ```
 
 ### Compile example on Linux
 
 ```
+chmod a+x tools/build_linux.sh
 sh tools/build_linux.sh
 ```
 
-### Run example on HTML5 platform (needs '--emrun' cxx flag)
+### Compile example on HTML5 platform / browser / WASM
+
+```
+chmod a+x tools/build_web.sh
+sh tools/build_web.sh
+```
+
+### Run example on HTML5 platform / browser / WASM (needs '--emrun' cxx flag)
 
 ```
 emrun build-emscripten/index.html
+```
+
+## NOTE
+
+Use latest chromium!
+
+AVOID OUTDATED REPO https://chromium.googlesource.com/chromium/
+
+READ
+> https://github.com/chromium/chromium/blob/master/docs/linux_cast_build_instructions.md
+> https://chromium.googlesource.com/chromium/src/+/master/docs/linux_build_instructions.md
+
+```
+git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git
+export PATH=$PATH:`pwd`/depot_tools
+mkdir ~/chromium
+cd ~/chromium
+fetch --nohooks --no-history chromium
+gclient sync
+cd src
+build/install-build-deps.sh
+gclient runhooks
 ```
