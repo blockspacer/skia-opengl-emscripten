@@ -238,13 +238,16 @@ namespace {
       // there a demonstrated need.  Here's how one could do it though
       // (would need to be made more portable).
 #if 0
+
 #if defined(OS_EMSCRIPTEN)
-#error "Emscripten PThread implementation does not support signals."
-#endif // OS_EMSCRIPTEN
+#warning "tcmalloc: Emscripten PThread implementation does not support signals."
+#else
         sigset_t all;
         sigfillset(&all);
         this->mask_valid_ =
             (pthread_sigmask(SIG_BLOCK, &all, &this->mask_) == 0);
+#endif // OS_EMSCRIPTEN
+
 #else
         RAW_CHECK(false, "We do not yet support async-signal-safe arena.");
 #endif
@@ -256,11 +259,12 @@ namespace {
       this->arena_->mu.Unlock();
 #if 0
 #if defined(OS_EMSCRIPTEN)
-#error "Emscripten PThread implementation does not support signals."
-#endif // OS_EMSCRIPTEN
+#warning "tcmalloc: Emscripten PThread implementation does not support signals."
+#else
       if (this->mask_valid_) {
         pthread_sigmask(SIG_SETMASK, &this->mask_, 0);
       }
+#endif // OS_EMSCRIPTEN
 #endif
       this->left_ = true;
     }

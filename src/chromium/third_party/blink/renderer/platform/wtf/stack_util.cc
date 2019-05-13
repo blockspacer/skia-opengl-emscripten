@@ -156,7 +156,9 @@ void* GetStackStart() {
 }
 
 uintptr_t GetCurrentStackPosition() {
-#if defined(COMPILER_MSVC)
+#if defined(OS_EMSCRIPTEN)
+  return reinterpret_cast<uintptr_t>(nullptr);
+#elif defined(COMPILER_MSVC)
   return reinterpret_cast<uintptr_t>(_AddressOfReturnAddress());
 #else
   return reinterpret_cast<uintptr_t>(__builtin_frame_address(0));

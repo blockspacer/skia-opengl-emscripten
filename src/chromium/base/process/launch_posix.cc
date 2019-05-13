@@ -96,6 +96,7 @@ void SetEnvironment(char** env) {
 // the previous signal mask.
 sigset_t SetSignalMask(const sigset_t& new_sigmask) {
   sigset_t old_sigmask;
+
 #if defined(OS_ANDROID)
   // POSIX says pthread_sigmask() must be used in multi-threaded processes,
   // but Android's pthread_sigmask() was broken until 4.1:
@@ -103,11 +104,14 @@ sigset_t SetSignalMask(const sigset_t& new_sigmask) {
   // http://stackoverflow.com/questions/13777109/pthread-sigmask-on-android-not-working
   RAW_CHECK(sigprocmask(SIG_SETMASK, &new_sigmask, &old_sigmask) == 0);
 #else
+
 #if defined(OS_EMSCRIPTEN)
 // https://github.com/abseil/abseil-cpp/blob/master/absl/base/internal/thread_identity.cc#L72
-#error "Emscripten PThread implementation does not support signals."
-#endif // OS_EMSCRIPTEN
+#warning "base: Emscripten PThread implementation does not support signals."
+#else
   RAW_CHECK(pthread_sigmask(SIG_SETMASK, &new_sigmask, &old_sigmask) == 0);
+#endif // OS_EMSCRIPTEN
+
 #endif
   return old_sigmask;
 }
@@ -220,9 +224,16 @@ static const char kFDDir[] = "/dev/fd";
 static const char kFDDir[] = "/dev/fd";
 #elif defined(OS_ANDROID)
 static const char kFDDir[] = "/proc/self/fd";
+#elif defined(OS_EMSCRIPTEN)
+static const char kFDDir[] = "/proc/self/fd"; // TODO
 #endif
 
 void CloseSuperfluousFds(const base::InjectiveMultimap& saved_mapping) {
+
+#if defined(OS_EMSCRIPTEN)
+  return; /// @TODO
+#endif // OS_EMSCRIPTEN
+
   // DANGER: no calls to malloc or locks are allowed from now on:
   // http://crbug.com/36678
 

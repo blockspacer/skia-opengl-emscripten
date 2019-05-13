@@ -220,7 +220,7 @@ class BASE_EXPORT PlatformThread {
 
   static ThreadPriority GetCurrentThreadPriority();
 
-#if defined(OS_LINUX) || defined(OS_EMSCRIPTEN)
+#if defined(OS_LINUX) //|| defined(OS_EMSCRIPTEN)
   // Toggles a specific thread's priority at runtime. This can be used to
   // change the priority of a thread in a different process and will fail
   // if the calling process does not have proper permissions. The

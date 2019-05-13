@@ -16,7 +16,7 @@
 #include "base/threading/thread_id_name_manager.h"
 #include "build/build_config.h"
 
-#if !defined(OS_NACL) && !defined(OS_AIX)
+#if !defined(OS_NACL) && !defined(OS_AIX) && !defined(OS_EMSCRIPTEN)
 #include <pthread.h>
 #include <sys/prctl.h>
 #include <sys/resource.h>
@@ -99,7 +99,7 @@ const ThreadPriorityToNiceValuePair kThreadPriorityToNiceValueMap[4] = {
 
 Optional<bool> CanIncreaseCurrentThreadPriorityForPlatform(
     ThreadPriority priority) {
-#if !defined(OS_NACL)
+#if !defined(OS_NACL) && !defined(OS_EMSCRIPTEN)
   // A non-zero soft-limit on RLIMIT_RTPRIO is required to be allowed to invoke
   // pthread_setschedparam in SetCurrentThreadPriorityForPlatform().
   struct rlimit rlim;
@@ -141,7 +141,7 @@ Optional<ThreadPriority> GetCurrentThreadPriorityForPlatform() {
 void PlatformThread::SetName(const std::string& name) {
   ThreadIdNameManager::GetInstance()->SetName(name);
 
-#if !defined(OS_NACL) && !defined(OS_AIX)
+#if !defined(OS_NACL) && !defined(OS_AIX) && !defined(OS_EMSCRIPTEN)
   // On linux we can get the thread names to show up in the debugger by setting
   // the process name for the LWP.  We don't want to do this for the main
   // thread because that would rename the process, causing tools like killall
@@ -161,7 +161,7 @@ void PlatformThread::SetName(const std::string& name) {
 #endif  //  !defined(OS_NACL) && !defined(OS_AIX)
 }
 
-#if !defined(OS_NACL) && !defined(OS_AIX)
+#if !defined(OS_NACL) && !defined(OS_AIX) && !defined(OS_EMSCRIPTEN)
 // static
 void PlatformThread::SetThreadPriority(PlatformThreadId thread_id,
                                        ThreadPriority priority) {

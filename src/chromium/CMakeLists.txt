@@ -1257,7 +1257,76 @@ list(APPEND BASE_SOURCES
 
 if(EMSCRIPTEN)
   list(APPEND BASE_SOURCES
-    ${BASE_DIR}atomicops_internals_portable.h
+    #${BASE_DIR}atomicops_internals_portable.h
+    #${BASE_DIR}critical_closure_internal_ios.mm
+    ${BASE_DIR}debug/activity_analyzer.cc
+    ${BASE_DIR}debug/activity_analyzer.h
+    ${BASE_DIR}debug/activity_tracker.cc
+    ${BASE_DIR}debug/activity_tracker.h
+    ###${BASE_DIR}debug/alias.cc
+    ###${BASE_DIR}debug/alias.h
+    ### ${BASE_DIR}debug/asan_invalid_access.cc
+    ### ${BASE_DIR}debug/asan_invalid_access.h
+    #${BASE_DIR}debug/close_handle_hook_win.cc
+    #${BASE_DIR}debug/close_handle_hook_win.h
+    ${BASE_DIR}debug/crash_logging.cc
+    ${BASE_DIR}debug/crash_logging.h
+    ${BASE_DIR}debug/debugger.cc
+    ${BASE_DIR}debug/debugger.h
+    #${BASE_DIR}debug/debugger_win.cc
+    ${BASE_DIR}debug/dump_without_crashing.cc
+    ${BASE_DIR}debug/dump_without_crashing.h
+    #${BASE_DIR}debug/gdi_debug_util_win.cc
+    #${BASE_DIR}debug/gdi_debug_util_win.h
+    #${BASE_DIR}debug/invalid_access_win.cc
+    #${BASE_DIR}debug/invalid_access_win.h
+    ${BASE_DIR}debug/leak_annotations.h
+    ${BASE_DIR}debug/leak_tracker.h
+    ##${BASE_DIR}debug/proc_maps_linux.cc
+    ##${BASE_DIR}debug/proc_maps_linux.h
+    ${BASE_DIR}debug/profiler.cc
+    ${BASE_DIR}debug/profiler.h
+    ${BASE_DIR}debug/stack_trace.cc
+    ${BASE_DIR}debug/stack_trace.h
+    #${BASE_DIR}debug/stack_trace_android.cc
+    #${BASE_DIR}debug/stack_trace_win.cc
+    ${BASE_DIR}debug/task_trace.cc
+    ${BASE_DIR}debug/task_trace.h
+    #
+    ${BASE_DIR}threading/platform_thread_linux.cc
+    #
+    ${BASE_DIR}files/file_util_linux.cc
+    ${BASE_DIR}process/memory_linux.cc
+    ${BASE_DIR}process/process_handle_linux.cc
+    #${BASE_DIR}process/process_metrics_linux.cc
+    #
+    ${BASE_DIR}debug/debugger_posix.cc
+    ${BASE_DIR}debug/stack_trace_posix.cc
+    ${BASE_DIR}files/file_descriptor_watcher_posix.cc
+    ${BASE_DIR}files/file_descriptor_watcher_posix.h
+    ${BASE_DIR}files/file_enumerator_posix.cc
+    ${BASE_DIR}files/file_posix.cc
+    ${BASE_DIR}posix/eintr_wrapper.h
+    ${BASE_DIR}posix/file_descriptor_shuffle.cc
+    ${BASE_DIR}posix/file_descriptor_shuffle.h
+    ${BASE_DIR}posix/global_descriptors.cc
+    ${BASE_DIR}posix/global_descriptors.h
+    ${BASE_DIR}posix/unix_domain_socket.cc
+    ${BASE_DIR}posix/unix_domain_socket.h
+    ${BASE_DIR}process/launch_posix.cc
+    ##${BASE_DIR}process/process_metrics_posix.cc
+    ${BASE_DIR}base_paths_posix.h
+    ${BASE_DIR}posix/can_lower_nice_to.cc
+    ${BASE_DIR}posix/can_lower_nice_to.h
+    # https://github.com/chromium/chromium/blob/master/base/BUILD.gn#L1929
+    ${BASE_DIR}power_monitor/power_monitor_device_source_stub.cc
+    # https://github.com/chromium/chromium/blob/master/base/BUILD.gn#L2747
+    ###${BASE_DIR}files/dir_reader_posix_unittest.cc
+    ###${BASE_DIR}files/file_descriptor_watcher_posix_unittest.cc
+    ###${BASE_DIR}message_loop/message_loop_io_posix_unittest.cc
+    ###${BASE_DIR}posix/file_descriptor_shuffle_unittest.cc
+    ###${BASE_DIR}posix/unix_domain_socket_unittest.cc
+    ###${BASE_DIR}task/thread_pool/task_tracker_posix_unittest.cc
   )
 elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
   list(APPEND BASE_SOURCES
@@ -2556,7 +2625,6 @@ if(EMSCRIPTEN)
     __asmjs__
     # see build/build_config.h
     #OS_POSIX=1
-    _FILE_OFFSET_BITS=64
     DYNAMIC_ANNOTATIONS_ENABLED=0
     WTF_USE_DYNAMIC_ANNOTATIONS=0
     # see src/chromium/build/build_config.h

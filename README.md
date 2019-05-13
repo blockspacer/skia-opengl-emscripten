@@ -3,8 +3,11 @@
 > skia compiled to wasm (emscripten)
 > skottie (Bodymovin animation / lottie)
 > custom fonts
-> Uses SDL2 to create window
-> Uses CMake
+> uses SDL2 to create window
+> uses CMake
+
+## TODO
+https://github.com/emscripten-core/emscripten/issues/5033
 
 ## PATCHES
 
@@ -70,10 +73,12 @@ search for OS_EMSCRIPTEN:
 
 ## Experimental features
 
-> WTF (Web Template Framework) from WebKit ported to WASM
-https://chromium.googlesource.com/chromium/src.git/+/62.0.3178.1/third_party/WebKit/Source/platform/wtf/README.md
 > chromium base (libchrome) from Blink ported to WASM
 https://www.chromium.org/chromium-os/packages/libchrome
+> WTF (Web Template Framework) from Blink ported to WASM
+https://github.com/endlessm/chromium-browser/tree/master/third_party/blink/renderer
+> WTF (Web Template Framework) from WebKit ported to WASM
+https://chromium.googlesource.com/chromium/src.git/+/62.0.3178.1/third_party/WebKit/Source/platform/wtf/README.md
 
 ## TODO
 > port base/debug folder to wasm and remove some "if !defined(OS_EMSCRIPTEN)"

@@ -82,6 +82,8 @@ class AdjustOOMScoreHelper {
 
 // static.
 bool AdjustOOMScoreHelper::AdjustOOMScore(ProcessId process, int score) {
+
+#if !defined(OS_EMSCRIPTEN)
   if (score < 0 || score > kMaxOomScore)
     return false;
 
@@ -114,6 +116,7 @@ bool AdjustOOMScoreHelper::AdjustOOMScore(ProcessId process, int score) {
     int score_len = static_cast<int>(score_str.length());
     return (score_len == WriteFile(oom_file, score_str.c_str(), score_len));
   }
+#endif // OS_EMSCRIPTEN
 
   return false;
 }

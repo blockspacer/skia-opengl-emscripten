@@ -92,7 +92,26 @@ if(EMSCRIPTEN)
 
   #set(EMCC_COMMON "${EMCC_COMMON} -s SIDE_MODULE=1")
 
-  #set(EMCC_COMMON "${EMCC_COMMON} -s USE_PTHREADS=0")
+  #
+  # PTHREADS
+  #
+  # At runtime, you can use the emscripten_has_threading_support()
+  # function to test whether the currently executing code
+  # was compiled with pthreads support enabled.
+  # If this function returns true, then the currently executing code
+  # was compiled with -s USE_PTHREADS=1
+  # (and the current browser supports multithreading).
+  #
+  # see https://github.com/emscripten-core/emscripten/wiki/Pthreads-with-WebAssembly
+  # set(EMCC_COMMON "${EMCC_COMMON} -s USE_PTHREADS=1")
+  # https://github.com/emscripten-core/emscripten/issues/3636
+  # set(EMCC_COMMON "${EMCC_COMMON} -s PTHREAD_POOL_SIZE=1")
+  # see emscripten_num_logical_cores
+  # https://github.com/hongkk/urho/blob/master/Source/Urho3D/Core/ProcessUtils.cpp#L449
+  # set(EMCC_COMMON "${EMCC_COMMON} -s PTHREAD_HINT_NUM_CORES=1")
+  # Use the option -s PROXY_TO_PTHREAD=1 if you want to run
+  # the main thread of a multithreaded application in a web worker.
+
   set(EMCC_COMMON "${EMCC_COMMON} -s USE_ZLIB=1")
   #set(EMCC_COMMON "${EMCC_COMMON} -s USE_HARFBUZZ=1") # < TODO
   # https://github.com/klzgrad/naiveproxy/blob/master/src/third_party/skia/modules/skshaper/BUILD.gn#L11
@@ -125,6 +144,11 @@ if(EMSCRIPTEN)
   set(EMCC_COMMON "${EMCC_COMMON} -DSK_SUPPORT_OPENCL=0")
   set(EMCC_COMMON "${EMCC_COMMON} -DSK_SAMPLES_FOR_X=1") # always set for linux, even if there's no X used
   set(EMCC_COMMON "${EMCC_COMMON} -DSK_HAS_PNG_LIBRARY=1") # skia_use_libpng
+
+  # https://github.com/emscripten-core/emscripten/issues/4932
+  # https://github.com/kosh04/newlisp/blob/master/newlisp.h#L164
+  set(EMCC_COMMON "${EMCC_COMMON} -D_FILE_OFFSET_BITS=64")
+  set(EMCC_COMMON "${EMCC_COMMON} -D_LARGEFILE_SOURCE=1")
 
   # https://github.com/Rusino/skia/blob/master/BUILD.gn#L1688
   set(EMCC_COMMON "${EMCC_COMMON} -DSK_USING_SKSHAPER=1") # skia_enable_skshaper
@@ -162,13 +186,17 @@ if(EMSCRIPTEN)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s GL_ASSERTIONS=1")
   #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s ASSERTIONS=1")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s ASSERTIONS=2")
+
   # In theory there should be no limit, but in practice,
   # 2GB is a practical limit because many (all?)
   # browsers apply that limit, in particular I know Chrome and Firefox do.
   # https://github.com/emscripten-core/emscripten/issues/6566
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s ALLOW_MEMORY_GROWTH=1")
+  # Memory growth is not yet supported with pthreads!
+  #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s ALLOW_MEMORY_GROWTH=1")
   # TOTAL_MEMORY: multiple of 16MB
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s TOTAL_MEMORY=512MB")
+  #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s TOTAL_MEMORY=512MB")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s TOTAL_MEMORY=1024MB")
+
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s NO_EXIT_RUNTIME=1")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s WARN_UNALIGNED=1")
 else()

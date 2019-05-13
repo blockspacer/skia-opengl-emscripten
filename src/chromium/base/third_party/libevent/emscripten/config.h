@@ -17,7 +17,7 @@
 #define HAVE_DLFCN_H 1
 
 /* Define if your system supports the epoll system calls */
-#define HAVE_EPOLL 1
+// #define HAVE_EPOLL 1
 
 /* Define to 1 if you have the `epoll_ctl' function. */
 #define HAVE_EPOLL_CTL 1

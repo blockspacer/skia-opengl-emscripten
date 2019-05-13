@@ -203,7 +203,12 @@ int64_t File::Seek(Whence whence, int64_t offset) {
 
   SCOPED_FILE_TRACE_WITH_SIZE("Seek", offset);
 
-#if defined(OS_ANDROID)
+#if defined(OS_EMSCRIPTEN)
+  #warning "off_t must be 64 bits"
+  // https://github.com/mmicko/VeriEMU/blob/master/src/osd/modules/file/posixfile.cpp#L139
+  return lseek(file_.get(), static_cast<off_t>(offset),
+               static_cast<int>(whence));
+#elif defined(OS_ANDROID)
   static_assert(sizeof(int64_t) == sizeof(off64_t), "off64_t must be 64 bits");
   return lseek64(file_.get(), static_cast<off64_t>(offset),
                  static_cast<int>(whence));

@@ -5,8 +5,8 @@
 #include "base/logging.h"
 
 #if defined(OS_EMSCRIPTEN)
-  #include <emscripten/emscripten.h>
-#endif
+#include <emscripten/emscripten.h>
+#endif // OS_EMSCRIPTEN
 
 #include <limits.h>
 #include <stdint.h>

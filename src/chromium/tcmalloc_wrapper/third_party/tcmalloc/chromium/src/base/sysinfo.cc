@@ -33,6 +33,11 @@
 # define PLATFORM_WINDOWS 1
 #endif
 
+#if defined(OS_EMSCRIPTEN) && defined(__EMSCRIPTEN_PTHREADS__)
+#include <emscripten/emscripten.h>
+#include <emscripten/threading.h>
+#endif // OS_EMSCRIPTEN
+
 #include <ctype.h>    // for isspace()
 #include <stdlib.h>   // for getenv()
 #include <stdio.h>    // for snprintf(), sscanf()
@@ -263,7 +268,14 @@ void SleepForMilliseconds(int milliseconds) {
 int GetSystemCPUsCount()
 {
 #if defined(OS_EMSCRIPTEN)
+  // see https://github.com/hongkk/urho/blob/master/Source/Urho3D/Core/ProcessUtils.cpp#L448
+  // see https://emscripten.org/docs/porting/pthreads.html
+#ifdef __EMSCRIPTEN_PTHREADS__
+  return emscripten_num_logical_cores();
+#else
+  #warning "emscripten built without PTHREADS"
   return 1;
+#endif
 #elif defined(PLATFORM_WINDOWS)
   // Get the number of processors.
   SYSTEM_INFO info;

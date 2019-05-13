@@ -51,7 +51,7 @@
 #endif
 
 // see https://lyceum-allotments.github.io/2016/06/emscripten-and-sdl-2-tutorial-part-1/
-#include <SDL2/SDL_ttf.h>
+//#include <SDL2/SDL_ttf.h>
 
 #include <skia/include/core/SkCanvas.h>
 #include <skia/include/core/SkFont.h>
@@ -347,8 +347,12 @@ static SkMSec fTimeBase = 0;
 static bool fShowAnimationInval = false;
 static bool fShowAnimationStats = false;
 
+#define ENABLE_CUSTOM_FONTS 1
+
+#ifdef ENABLE_CUSTOM_FONTS
 static SkFont* skFont1 = nullptr;
 static SkFont* skFont2 = nullptr;
+#endif
 
 // static std::string input    = "Input .json file.";//);
 ////static std::string(writePath, w, nullptr, "Output directory.  Frames are names [0-9]{6}.png.");
@@ -361,7 +365,7 @@ static SkFont* skFont2 = nullptr;
 
 static const int kStencilBits = 8; // Skia needs 8 stencil bits
 static const int kMsaaSampleCount = 0;
-static TTF_Font* ttfFont = nullptr;
+//static TTF_Font* ttfFont = nullptr;
 static sk_sp<SkSurface> sRasterSurface;
 
 #ifdef TODO
@@ -528,6 +532,8 @@ public:
 
     paint.setColor(SK_ColorBLACK);
     paint.setStyle(SkPaint::kFill_Style);
+
+#ifdef ENABLE_CUSTOM_FONTS
     // SkFont font;//(nullptr, 24);//SkFont::kA8_MaskType, flags);
     canvas->drawString("Skia Test Skia Test Skia Test", 20, 32, *skFont1, paint);
     canvas->drawString("Skia Test Skia Test Skia Test", 20, 37, *skFont2, paint);
@@ -558,6 +564,7 @@ public:
       strokePaint.setStrokeWidth(3.0f);
       canvas->drawTextBlob(blob2.get(), x, 20 + y, strokePaint);
     }
+#endif
 
     if (fAnimation) {
       SkAutoCanvasRestore acr(canvas, true);
@@ -809,9 +816,11 @@ int main(int argc, char** argv) {
   // see
   // https://cs.chromium.org/chromium/src/third_party/blink/renderer/controller/blink_initializer.cc?sq=package:chromium&dr=C&g=0&l=88
   {
+    /// @TODO don`t reserve much memory on WASM/EMSCRIPTEN platform
     // Try to reserve as much address space as we reasonably can.
     const size_t kMB = 1024 * 1024;
-    for (size_t size = 512 * kMB; size >= 32 * kMB; size -= 16 * kMB) {
+   // for (size_t size = 512 * kMB; size >= 32 * kMB; size -= 16 * kMB) {
+    for (size_t size = 128 * kMB; size >= 32 * kMB; size -= 16 * kMB) {
       printf("ReserveAddressSpace...\n");
       if (base::ReserveAddressSpace(size)) {
         // Report successful reservation.
@@ -842,14 +851,15 @@ int main(int argc, char** argv) {
     printf("WTF::Bind!\n");
   }).Run();
 
-  base::OnceClosure* closure = nullptr;
-  base::OnceCallback<void()> binded = base::BindOnce(&MakeClosure, &closure);
-  //std::move(binded).Run();
-
+  // TODO: causes hang on WASM
   /*{
+    base::OnceClosure* closure = nullptr;
+    //base::OnceCallback<void()> binded = base::BindOnce(&MakeClosure, &closure);
+    //std::move(binded).Run();
+
     base::Thread thread("testing");
     thread.Start();
-    thread.task_runner()->PostTask(FROM_HERE, binded);
+    thread.task_runner()->PostTask(FROM_HERE, base::BindOnce(&MakeClosure, &closure));
     thread.Stop();
   }*/
 
@@ -1060,6 +1070,14 @@ int main(int argc, char** argv) {
   printf("Starting ...\n");
 
 #ifdef __EMSCRIPTEN__
+// TODO
+// // see https://github.com/emscripten-core/emscripten/issues/7684
+// EmscriptenWebGLContextAttributes attr;
+// emscripten_webgl_init_context_attributes(&attr);
+// attr.majorVersion = 3; attr.minorVersion = 0;
+// EMSCRIPTEN_WEBGL_CONTEXT_HANDLE ctx = emscripten_webgl_create_context(0, &attr);
+// emscripten_webgl_make_context_current(ctx);
+
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
@@ -1167,7 +1185,7 @@ int main(int argc, char** argv) {
     printf("SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError());
   }*/
 
-  printf("Initializing fonts...\n");
+  /*printf("Initializing ttf...\n");
 
   // Initialize SDL_ttf
   if (TTF_Init() == -1) {
@@ -1177,13 +1195,17 @@ int main(int argc, char** argv) {
   ttfFont = TTF_OpenFont("./resources/fonts/FreeSans.ttf", 30);
   if (ttfFont == nullptr) {
     printf("Failed to load lazy font! SDL_ttf Error: %s\n", TTF_GetError());
-  }
+  }*/
 
+  printf("Initializing fonts...\n");
+
+#ifdef ENABLE_CUSTOM_FONTS
   skFont1 =
       new SkFont(SkTypeface::MakeFromFile("./resources/fonts/FreeSans.ttf"), 22.0f, 1.0f, 0.0f);
 
   skFont2 =
       new SkFont(SkTypeface::MakeFromFile("./resources/fonts/FreeSans.ttf"), 30.0f, 1.5f, 0.0f);
+#endif
 
   printf("Initializing subsystems...\n");
 
@@ -1263,21 +1285,24 @@ int main(int argc, char** argv) {
     SDL_GL_DeleteContext(glContext);
   }
 
-  if (ttfFont) {
+  /*if (ttfFont) {
     TTF_CloseFont(ttfFont);
     ttfFont = nullptr;
-  }
+  }*/
 
   fAnimation.reset();
 
   SDL_DestroyWindow(window);
   window = nullptr;
 
+#ifdef ENABLE_CUSTOM_FONTS
   delete skFont1;
   delete skFont2;
+#endif
 
   // Quit SDL subsystems
-  TTF_Quit();
+  //TTF_Quit();
+
   SDL_Quit();
   return 0;
 }
