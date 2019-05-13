@@ -48,7 +48,7 @@
 #elif defined(ARCH_CPU_S390_FAMILY)
 // just do nothing
 #define YIELD_PROCESSOR ((void)0)
-#endif // ARCH
+#endif  // ARCH
 
 #ifndef YIELD_PROCESSOR
 #warning "Processor yield not supported on this architecture."
@@ -57,12 +57,12 @@
 
 #define YIELD_THREAD sched_yield()
 
-#else // Other OS
+#else  // Other OS
 
 #warning "Thread yield not supported on this OS."
 #define YIELD_THREAD ((void)0)
 
-#endif // OS_WIN
+#endif  // OS_WIN
 
 namespace base {
 namespace subtle {
@@ -100,5 +100,5 @@ void SpinLock::LockSlow() {
   } while (UNLIKELY(lock_.exchange(true, std::memory_order_acquire)));
 }
 
-} // namespace subtle
-} // namespace base
+}  // namespace subtle
+}  // namespace base

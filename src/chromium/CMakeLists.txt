@@ -9,7 +9,7 @@ set(BASE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/base/)
 
 set(3RDPARTY_DIR "${CMAKE_CURRENT_SOURCE_DIR}/")
 
-# Location of build tools dir (required for generating "generated_build_date.h "features.h" and "debugging_flags.h")
+# Location of build tools dir (required for generating "generated_build_date.h", "features.h" and "debugging_flags.h")
 SET(BUILD_TOOLS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/build")
 #message(FATAL_ERROR ${BUILD_TOOLS_DIR})
 
@@ -119,13 +119,7 @@ if(EMSCRIPTEN)
   ${LIBEVENT_DIR}emscripten/event-config.h
   )
 elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
-  list(APPEND LIBEVENT_INCLUDE_DIRS
-    ${LIBEVENT_DIR}linux
-  )
-  list(APPEND LIBEVENT_SOURCES
-  ${LIBEVENT_DIR}linux/config.h
-  ${LIBEVENT_DIR}linux/event-config.h
-  )
+  # TODO
 else()
   message(FATAL_ERROR "TODO: port libevent")
 endif()
@@ -145,6 +139,7 @@ list(APPEND BASE_SOURCES
    ${BASE_DIR}atomic_sequence_num.h
    ${BASE_DIR}atomicops.h
    ${BASE_DIR}atomicops_internals_atomicword_compat.h
+   ${BASE_DIR}atomicops_internals_portable.h
    #${BASE_DIR}atomicops_internals_x86_msvc.h
    ${BASE_DIR}auto_reset.h
    ${BASE_DIR}barrier_closure.cc
@@ -205,8 +200,8 @@ list(APPEND BASE_SOURCES
    ## ${BASE_DIR}debug/activity_analyzer.h
    ## ${BASE_DIR}debug/activity_tracker.cc
    ## ${BASE_DIR}debug/activity_tracker.h
-   ${BASE_DIR}debug/alias.cc
-   ${BASE_DIR}debug/alias.h
+   ## ${BASE_DIR}debug/alias.cc
+   ## ${BASE_DIR}debug/alias.h
    ## ### ${BASE_DIR}debug/asan_invalid_access.cc
    ## ### ${BASE_DIR}debug/asan_invalid_access.h
    ## #${BASE_DIR}debug/close_handle_hook_win.cc
@@ -1191,8 +1186,8 @@ list(APPEND BASE_SOURCES
    ${BASE_DIR}time/time_exploded_posix.cc
    ${BASE_DIR}time/time_now_posix.cc
    # https://github.com/chromium/chromium/blob/master/base/BUILD.gn#L1922
-   ##"posix/can_lower_nice_to.cc
-   ##"posix/can_lower_nice_to.h
+   ##"posix/can_lower_nice_to.cc",
+   ##"posix/can_lower_nice_to.h",
    # https://github.com/chromium/chromium/blob/master/base/BUILD.gn#L1929
    ## "power_monitor/power_monitor_device_source_stub.cc"
    # https://github.com/chromium/chromium/blob/master/base/BUILD.gn#L2747
@@ -1206,85 +1201,6 @@ list(APPEND BASE_SOURCES
    build/build_config.h
 )
 
-if(EMSCRIPTEN)
-  list(APPEND BASE_SOURCES
-    ${BASE_DIR}atomicops_internals_portable.h
-  )
-elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
-  list(APPEND BASE_SOURCES
-    #${BASE_DIR}critical_closure_internal_ios.mm
-    ${BASE_DIR}debug/activity_analyzer.cc
-    ${BASE_DIR}debug/activity_analyzer.h
-    ${BASE_DIR}debug/activity_tracker.cc
-    ${BASE_DIR}debug/activity_tracker.h
-    ###${BASE_DIR}debug/alias.cc
-    ###${BASE_DIR}debug/alias.h
-    ### ${BASE_DIR}debug/asan_invalid_access.cc
-    ### ${BASE_DIR}debug/asan_invalid_access.h
-    #${BASE_DIR}debug/close_handle_hook_win.cc
-    #${BASE_DIR}debug/close_handle_hook_win.h
-    ${BASE_DIR}debug/crash_logging.cc
-    ${BASE_DIR}debug/crash_logging.h
-    ${BASE_DIR}debug/debugger.cc
-    ${BASE_DIR}debug/debugger.h
-    #${BASE_DIR}debug/debugger_win.cc
-    ${BASE_DIR}debug/dump_without_crashing.cc
-    ${BASE_DIR}debug/dump_without_crashing.h
-    #${BASE_DIR}debug/gdi_debug_util_win.cc
-    #${BASE_DIR}debug/gdi_debug_util_win.h
-    #${BASE_DIR}debug/invalid_access_win.cc
-    #${BASE_DIR}debug/invalid_access_win.h
-    ${BASE_DIR}debug/leak_annotations.h
-    ${BASE_DIR}debug/leak_tracker.h
-    ${BASE_DIR}debug/proc_maps_linux.cc
-    ${BASE_DIR}debug/proc_maps_linux.h
-    ${BASE_DIR}debug/profiler.cc
-    ${BASE_DIR}debug/profiler.h
-    ${BASE_DIR}debug/stack_trace.cc
-    ${BASE_DIR}debug/stack_trace.h
-    #${BASE_DIR}debug/stack_trace_android.cc
-    #${BASE_DIR}debug/stack_trace_win.cc
-    ${BASE_DIR}debug/task_trace.cc
-    ${BASE_DIR}debug/task_trace.h
-    #
-    ${BASE_DIR}threading/platform_thread_linux.cc
-    #
-    ${BASE_DIR}files/file_util_linux.cc
-    ${BASE_DIR}process/memory_linux.cc
-    ${BASE_DIR}process/process_handle_linux.cc
-    ${BASE_DIR}process/process_metrics_linux.cc
-    #
-    ${BASE_DIR}debug/debugger_posix.cc
-    ${BASE_DIR}debug/stack_trace_posix.cc
-    ${BASE_DIR}files/file_descriptor_watcher_posix.cc
-    ${BASE_DIR}files/file_descriptor_watcher_posix.h
-    ${BASE_DIR}files/file_enumerator_posix.cc
-    ${BASE_DIR}files/file_posix.cc
-    ${BASE_DIR}posix/eintr_wrapper.h
-    ${BASE_DIR}posix/file_descriptor_shuffle.cc
-    ${BASE_DIR}posix/file_descriptor_shuffle.h
-    ${BASE_DIR}posix/global_descriptors.cc
-    ${BASE_DIR}posix/global_descriptors.h
-    ${BASE_DIR}posix/unix_domain_socket.cc
-    ${BASE_DIR}posix/unix_domain_socket.h
-    ${BASE_DIR}process/launch_posix.cc
-    ${BASE_DIR}process/process_metrics_posix.cc
-    ${BASE_DIR}base_paths_posix.h
-    ${BASE_DIR}posix/can_lower_nice_to.cc
-    ${BASE_DIR}posix/can_lower_nice_to.h
-    # https://github.com/chromium/chromium/blob/master/base/BUILD.gn#L1929
-    ${BASE_DIR}power_monitor/power_monitor_device_source_stub.cc
-    # https://github.com/chromium/chromium/blob/master/base/BUILD.gn#L2747
-    ###${BASE_DIR}files/dir_reader_posix_unittest.cc
-    ###${BASE_DIR}files/file_descriptor_watcher_posix_unittest.cc
-    ###${BASE_DIR}message_loop/message_loop_io_posix_unittest.cc
-    ###${BASE_DIR}posix/file_descriptor_shuffle_unittest.cc
-    ###${BASE_DIR}posix/unix_domain_socket_unittest.cc
-    ###${BASE_DIR}task/thread_pool/task_tracker_posix_unittest.cc
-  )
-else()
-  message(FATAL_ERROR "TODO: port base")
-endif()
 
 list(APPEND WTF_SOURCES
   ${WTF_DIR}allocator.cc
@@ -1465,17 +1381,6 @@ list(APPEND WTF_SOURCES
   #${WTF_DIR}wtf_export.h
   # #${WTF_DIR}wtf_size_t.h
 )
-
-if(EMSCRIPTEN)
-  # TODO
-elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
-  list(APPEND WTF_SOURCES
-    # TODO
-    # ${WTF_DIR}wtf.cc
-  )
-else()
-  message(FATAL_ERROR "TODO: port WTF")
-endif()
 
 if (EMSCRIPTEN)
   list(APPEND WTF_SOURCES
@@ -2088,19 +1993,7 @@ set(ICU_SOURCES
 add_definitions(-DBUILDING_WTF)
 add_definitions(-DSTATICALLY_LINKED_WITH_WTF)
 
-set(WTF_COMMON_DEFINITIONS
-  # see in src/chromium/build/build_config.h
-  # USE_TCMALLOC=0
-  # set in src/chromium/allocator_buildflags.h.inc
-  # USE_NEW_TCMALLOC=1
-)
-
 if(EMSCRIPTEN)
-  list(APPEND WTF_COMMON_DEFINITIONS
-    # see src/chromium/build/build_config.h
-    NO_TCMALLOC=1
-  )
-
   set(WTF_EMCC_DEFINITIONS
     OS_ASMJS=1
     __asmjs__
@@ -2108,28 +2001,17 @@ if(EMSCRIPTEN)
     _FILE_OFFSET_BITS=64
     DYNAMIC_ANNOTATIONS_ENABLED=0
     WTF_USE_DYNAMIC_ANNOTATIONS=0
-    # see src/chromium/build/build_config.h
-    # NO_TCMALLOC=1
+    NO_TCMALLOC
     DISABLE_NACL
+    #USE_TCMALLOC=0
     POSIX_AVOID_MMAP
-    #USE_EXPERIMENTAL_ALLOCATOR_SHIM=0
+    USE_EXPERIMENTAL_ALLOCATOR_SHIM=0
   )
 else ()
-  list(APPEND WTF_COMMON_DEFINITIONS
-    # see in src/chromium/build/build_config.h
-    # USE_TCMALLOC=1
-    # see in src/chromium/allocator_buildflags.h.inc
-    # USE_NEW_TCMALLOC=1
-  )
-
   set(WTF_EMCC_DEFINITIONS "")
 endif ()
 
-### --- libevent ---###
-
-add_library(libevent STATIC
-  ${LIBEVENT_SOURCES}
-)
+add_library(libevent ${LIBEVENT_SOURCES})
 
 set_property(TARGET libevent PROPERTY CXX_STANDARD 17)
 
@@ -2144,251 +2026,9 @@ target_include_directories(libevent PRIVATE
 target_compile_definitions(libevent PUBLIC
   ${LIBEVENT_DEFINES}
   ${WTF_EMCC_DEFINITIONS}
-  ${WTF_COMMON_DEFINITIONS}
 )
 
-### --- tcmalloc ---###
-
-#function(find_static_library LIB_NAME OUT)
-#    if (WIN32 OR MSVC)
-#        set(CMAKE_FIND_LIBRARY_SUFFIXES ".lib")
-#    elseif (UNIX)
-#        set(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
-#    endif()
-#
-#    find_library(
-#        FOUND_${LIB_NAME}_STATIC
-#        ${LIB_NAME}
-#        )
-#
-#    if (FOUND_${LIB_NAME}_STATIC)
-#        get_filename_component(ABS_FILE ${FOUND_${LIB_NAME}_STATIC} ABSOLUTE)
-#    else()
-#        message(SEND_ERROR "Unable to find library ${LIB_NAME}")
-#    endif()
-#
-#    set(${OUT} ${ABS_FILE} PARENT_SCOPE)
-#endfunction()
-
-#if(EMSCRIPTEN)
-#else(EMSCRIPTEN)
-#  # You should install Google Perftools.
-#  # Example: sudo apt-get install libgoogle-perftools-dev # or libevent2-devel
-#  find_static_library(tcmalloc TCMALLOC_LIB)
-#
-#  target_link_libraries(base PUBLIC
-#    ${TCMALLOC_LIB}
-#  )
-#endif(EMSCRIPTEN)
-
-if(EMSCRIPTEN)
-else(EMSCRIPTEN)
-  # see https://github.com/chromium/chromium/blob/master/base/allocator/BUILD.gn#L77
-  set(TCMALLOC_DIR "tcmalloc_wrapper/third_party/tcmalloc/chromium/")
-  list(APPEND TCMALLOC_SOURCES
-    # Generated for our configuration from tcmalloc's build
-    # and checked in.
-    #${TCMALLOC_DIR}src/config.h
-    #${TCMALLOC_DIR}src/config_android.h
-    #${TCMALLOC_DIR}src/config_linux.h
-    #${TCMALLOC_DIR}src/config_win.h
-    #
-    # tcmalloc native and forked files.
-    ${TCMALLOC_DIR}src/base/abort.cc
-    ${TCMALLOC_DIR}src/base/abort.h
-    # arm_
-    #${TCMALLOC_DIR}src/base/arm_instruction_set_select.h
-    # atomicops
-    #${TCMALLOC_DIR}src/base/atomicops-internals-arm-generic.h
-    #${TCMALLOC_DIR}src/base/atomicops-internals-arm-v6plus.h
-    #${TCMALLOC_DIR}src/base/atomicops-internals-linuxppc.h
-    #${TCMALLOC_DIR}src/base/atomicops-internals-macosx.h
-    #${TCMALLOC_DIR}src/base/atomicops-internals-windows.h
-    ${TCMALLOC_DIR}src/base/atomicops-internals-x86.cc
-    ${TCMALLOC_DIR}src/base/atomicops-internals-x86.h
-    ${TCMALLOC_DIR}src/base/atomicops.h
-    ${TCMALLOC_DIR}src/base/commandlineflags.h
-    #${TCMALLOC_DIR}src/base/cycleclock.h
-    #
-    # We don't list dynamic_annotations.c since its copy is already
-    # present in the dynamic_annotations target.
-    ${TCMALLOC_DIR}src/base/elf_mem_image.cc
-    ${TCMALLOC_DIR}src/base/elf_mem_image.h
-    ${TCMALLOC_DIR}src/base/linuxthreads.cc
-    ${TCMALLOC_DIR}src/base/linuxthreads.h
-    ${TCMALLOC_DIR}src/base/logging.cc
-    ${TCMALLOC_DIR}src/base/logging.h
-    ${TCMALLOC_DIR}src/base/low_level_alloc.cc
-    ${TCMALLOC_DIR}src/base/low_level_alloc.h
-    ${TCMALLOC_DIR}src/base/spinlock.cc
-    ${TCMALLOC_DIR}src/base/spinlock.h
-    ${TCMALLOC_DIR}src/base/spinlock_internal.cc
-    ${TCMALLOC_DIR}src/base/spinlock_internal.h
-    #${TCMALLOC_DIR}src/base/synchronization_profiling.h
-    ${TCMALLOC_DIR}src/base/sysinfo.cc
-    ${TCMALLOC_DIR}src/base/sysinfo.h
-    ${TCMALLOC_DIR}src/base/vdso_support.cc
-    ${TCMALLOC_DIR}src/base/vdso_support.h
-    ${TCMALLOC_DIR}src/central_freelist.cc
-    ${TCMALLOC_DIR}src/central_freelist.h
-    ${TCMALLOC_DIR}src/common.cc
-    ${TCMALLOC_DIR}src/common.h
-    #
-    # #included by debugallocation_shim.cc
-    #${TCMALLOC_DIR}src/debugallocation.cc
-    ${TCMALLOC_DIR}src/free_list.cc
-    ${TCMALLOC_DIR}src/free_list.h
-    ${TCMALLOC_DIR}src/gperftools/heap-profiler.h
-    ${TCMALLOC_DIR}src/gperftools/malloc_extension.h
-    ${TCMALLOC_DIR}src/gperftools/malloc_hook.h
-    ${TCMALLOC_DIR}src/gperftools/stacktrace.h
-    ${TCMALLOC_DIR}src/internal_logging.cc
-    ${TCMALLOC_DIR}src/internal_logging.h
-    ${TCMALLOC_DIR}src/linked_list.h
-    ${TCMALLOC_DIR}src/malloc_extension.cc
-    ${TCMALLOC_DIR}src/malloc_hook-inl.h
-    ${TCMALLOC_DIR}src/malloc_hook.cc
-    ${TCMALLOC_DIR}src/maybe_threads.cc
-    ${TCMALLOC_DIR}src/maybe_threads.h
-    ${TCMALLOC_DIR}src/page_heap.cc
-    ${TCMALLOC_DIR}src/page_heap.h
-    ${TCMALLOC_DIR}src/raw_printer.cc
-    ${TCMALLOC_DIR}src/raw_printer.h
-    ${TCMALLOC_DIR}src/sampler.cc
-    ${TCMALLOC_DIR}src/sampler.h
-    ${TCMALLOC_DIR}src/span.cc
-    ${TCMALLOC_DIR}src/span.h
-    ${TCMALLOC_DIR}src/stack_trace_table.cc
-    ${TCMALLOC_DIR}src/stack_trace_table.h
-    ${TCMALLOC_DIR}src/stacktrace.cc
-    ${TCMALLOC_DIR}src/static_vars.cc
-    ${TCMALLOC_DIR}src/static_vars.h
-    ${TCMALLOC_DIR}src/symbolize.cc
-    ${TCMALLOC_DIR}src/symbolize.h
-    ${TCMALLOC_DIR}src/system-alloc.cc
-    ${TCMALLOC_DIR}src/system-alloc.h
-    #
-    # #included by debugallocation_shim.cc
-    ${TCMALLOC_DIR}src/tcmalloc.cc
-    ${TCMALLOC_DIR}src/tcmalloc.h
-    #
-    ${TCMALLOC_DIR}src/thread_cache.cc
-    ${TCMALLOC_DIR}src/thread_cache.h
-    #${TCMALLOC_DIR}src/windows/port.cc
-    #${TCMALLOC_DIR}src/windows/port.h
-    #"debugallocation_shim.cc
-    #
-    # These are both #included by allocator_shim for maximal linking.
-    ###"generic_allocators.cc
-    ###"win_allocator.cc
-    #
-    # if (use_new_tcmalloc)
-    ${TCMALLOC_DIR}src/emergency_malloc_for_stacktrace.cc
-    ${TCMALLOC_DIR}src/fake_stacktrace_scope.cc
-    #
-    # if (is_linux || is_android)
-    ${TCMALLOC_DIR}src/system-alloc.h
-    #${TCMALLOC_DIR}src/windows/port.cc
-    #${TCMALLOC_DIR}src/windows/port.h
-    #
-    ### build ###
-    build/build_config.h
-  )
-
-  # https://github.com/chromium/chromium/blob/master/base/allocator/BUILD.gn#L204
-  list(APPEND TCMALLOC_PRIVATE_DEFINES NO_HEAP_CHECK=1)
-  # https://github.com/chromium/chromium/blob/master/base/allocator/BUILD.gn#L247
-  list(APPEND TCMALLOC_PRIVATE_DEFINES ENABLE_PROFILING=0)
-  # https://github.com/chromium/chromium/blob/master/base/allocator/BUILD.gn#L30
-  list(APPEND TCMALLOC_PRIVATE_DEFINES TCMALLOC_USE_DOUBLYLINKED_FREELIST=1)
-  list(APPEND TCMALLOC_PRIVATE_DEFINES TCMALLOC_DISABLE_HUGE_ALLOCATIONS=1)
-  # TCMALLOC_FOR_DEBUGALLOCATION # if (enable_debugallocation)
-  # TCMALLOC_DONT_REPLACE_SYSTEM_ALLOC # if (use_allocator_shim)
-  # TCMALLOC_SMALL_BUT_SLOW # if (use_tcmalloc_small_but_slow)
-
-  # https://github.com/chromium/chromium/blob/master/base/allocator/BUILD.gn#L204
-  list(APPEND TCMALLOC_PUBLIC_INCLUDE_DIRS
-    #base/allocator
-    #${TCMALLOC_DIR}
-    tcmalloc_wrapper/
-  )
-
-  add_library(tcmalloc STATIC
-    ${TCMALLOC_SOURCES}
-  )
-
-  set_property(TARGET tcmalloc PROPERTY CXX_STANDARD 17)
-
-  target_include_directories(tcmalloc PRIVATE
-    #${CMAKE_CURRENT_SOURCE_DIR}
-    ${TCMALLOC_DIR}
-    ${TCMALLOC_DIR}src/
-    ${TCMALLOC_DIR}src/base/
-  )
-
-  target_include_directories(tcmalloc PUBLIC
-    ${TCMALLOC_PUBLIC_INCLUDE_DIRS}
-  )
-
-  target_compile_definitions(tcmalloc PRIVATE
-    ${TCMALLOC_PRIVATE_DEFINES}
-  )
-
-#  target_compile_options(tcmalloc PRIVATE
-#    # if (is_linux || is_android)
-#    # Don't let linker rip this symbol out, otherwise the heap&cpu
-#    # profilers will not initialize properly on startup.
-#    -Wl,-uIsHeapProfilerRunning,-uProfilerStart
-#    # Do the same for heap leak checker.
-#    -Wl,-u_Z21InitialMallocHook_NewPKvj,-u_Z22InitialMallocHook_MMapPKvS0_jiiix,-u_Z22InitialMallocHook_SbrkPKvi
-#    -Wl,-u_Z21InitialMallocHook_NewPKvm,-u_Z22InitialMallocHook_MMapPKvS0_miiil,-u_Z22InitialMallocHook_SbrkPKvl
-#    -Wl,-u_ZN15HeapLeakChecker12IgnoreObjectEPKv,-u_ZN15HeapLeakChecker14UnIgnoreObjectEPKv
-#  )
-endif(EMSCRIPTEN)
-
-### --- dynamic_annotations ---###
-
-add_library(dynamic_annotations STATIC
-  ${CMAKE_CURRENT_SOURCE_DIR}/base/third_party/dynamic_annotations/dynamic_annotations.c
-)
-
-target_include_directories(dynamic_annotations PRIVATE
-  ${CMAKE_CURRENT_SOURCE_DIR}
-  ${CMAKE_CURRENT_SOURCE_DIR}/base/third_party
-  ${CMAKE_CURRENT_SOURCE_DIR}/base/third_party/dynamic_annotations
-  ${CMAKE_CURRENT_SOURCE_DIR}/base/third_party/valgrind
-  ${BASE_DIR}
-)
-
-set_property(TARGET dynamic_annotations PROPERTY CXX_STANDARD 17)
-
-### --- base ---###
-
-add_library(base STATIC
-  ${BASE_SOURCES}
-)
-
-if(EMSCRIPTEN)
-  #set(BASE_LIBRARIES
-  #  # TODO
-  #)
-  #add_dependencies(base
-  #  ${BASE_LIBRARIES}
-  #)
-else(EMSCRIPTEN)
-  list(APPEND BASE_LIBRARIES
-    tcmalloc
-    atomic
-  )
-  add_dependencies(base
-    ${BASE_LIBRARIES}
-  )
-endif(EMSCRIPTEN)
-
-target_link_libraries(base PUBLIC
-  dynamic_annotations
-  ${BASE_LIBRARIES}
-)
+add_library(base ${BASE_SOURCES})
 
 set_property(TARGET base PROPERTY CXX_STANDARD 17)
 
@@ -2405,24 +2045,15 @@ target_include_directories(base PUBLIC
 )
 
 target_include_directories(base PRIVATE
-  third_party
-  third_party/tcmalloc
-  third_party/tcmalloc/chromium/src
-  third_party/tcmalloc/chromium/src/gperftools
   ${BASE_DIR}
 )
 
 target_compile_definitions(base PUBLIC
   ${BASE_DEFINES}
   ${WTF_EMCC_DEFINITIONS}
-  ${WTF_COMMON_DEFINITIONS}
 )
 
-### --- icu ---###
-
-add_library(icu STATIC
-  ${ICU_SOURCES}
-)
+add_library(icu ${ICU_SOURCES})
 
 set_property(TARGET icu PROPERTY CXX_STANDARD 17)
 
@@ -2466,7 +2097,6 @@ endif ()
 target_compile_definitions(icu PUBLIC
   ${ICU_PUBLIC_DEFINES}
   ${WTF_EMCC_DEFINITIONS}
-  ${WTF_COMMON_DEFINITIONS}
   U_STATIC_IMPLEMENTATION
   U_COMMON_IMPLEMENTATION
   U_I18N_IMPLEMENTATION
@@ -2489,7 +2119,6 @@ target_compile_definitions(icu PRIVATE
   # USE_GLIB=1
   __STDC_FORMAT_MACROS
   ${WTF_EMCC_DEFINITIONS}
-  ${WTF_COMMON_DEFINITIONS}
 
   #SYSTEM_NATIVE_UTF8
   #COM_INIT_CHECK_HOOK_DISABLED
@@ -2505,18 +2134,14 @@ target_compile_options(icu PRIVATE
 
 if (EMSCRIPTEN)
   #find_package(ICU REQUIRED COMPONENTS I18N UC REQUIRED)
-  add_library(${WTF_LIBRARY_NAME} STATIC
-    ${WTF_SOURCES}
-  )# ${BASE_SOURCES})
-  #target_link_libraries(${WTF_LIBRARY_NAME} PUBLIC
+  add_library(${WTF_LIBRARY_NAME} ${WTF_SOURCES})# ${BASE_SOURCES})
+  #target_link_libraries(${WTF_LIBRARY_NAME}
   #  ${ICU_UC_LIBRARIES}
   #  ${ICU_I18N_LIBRARIES}
   #)
 else ()
   #find_package(ICU) # REQUIRED)
-  add_library(${WTF_LIBRARY_NAME} STATIC
-    ${WTF_SOURCES}
-  )# ${BASE_SOURCES})
+  add_library(${WTF_LIBRARY_NAME} ${WTF_SOURCES})# ${BASE_SOURCES})
 endif ()
 
 set_property(TARGET ${WTF_LIBRARY_NAME} PROPERTY CXX_STANDARD 17)
@@ -2574,17 +2199,6 @@ set(WTF_LIBRARIES
   icu
 )
 
-#if(EMSCRIPTEN)
-#else(EMSCRIPTEN)
-#  list(APPEND WTF_LIBRARIES
-#    tcmalloc
-#  )
-#endif(EMSCRIPTEN)
-
-add_dependencies(${WTF_LIBRARY_NAME}
-  ${WTF_LIBRARIES}
-)
-
 if (UNIX)
   #list(APPEND WTF_SOURCES wtf/OSAllocatorPosix.cpp)
 elseif (WIN32)
@@ -2617,9 +2231,7 @@ else ()
   set(HAVE_PTHREADS 1)
 endif ()
 
-target_link_libraries(${WTF_LIBRARY_NAME} PUBLIC
-  ${WTF_LIBRARIES}
-)
+target_link_libraries(${WTF_LIBRARY_NAME} ${WTF_LIBRARIES})
 
 target_compile_definitions(${WTF_LIBRARY_NAME} PUBLIC
   # TODO
@@ -2634,7 +2246,6 @@ target_compile_definitions(${WTF_LIBRARY_NAME} PRIVATE
   # USE_GLIB=1
   __STDC_FORMAT_MACROS
   ${WTF_EMCC_DEFINITIONS}
-  ${WTF_COMMON_DEFINITIONS}
 
   #SYSTEM_NATIVE_UTF8
   #COM_INIT_CHECK_HOOK_DISABLED
