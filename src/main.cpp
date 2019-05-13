@@ -2,19 +2,23 @@
 
 // based on https://github.com/blockspacer/minos/blob/master/hello_world.cc
 
-// see MakeFromBackendRenderTarget https://github.com/google/skia/blob/master/src/image/SkSurface_Gpu.cpp
+// see MakeFromBackendRenderTarget
+// https://github.com/google/skia/blob/master/src/image/SkSurface_Gpu.cpp
 
-// see https://github.com/google/skia/blob/81abc43e6f0b1a789e1bf116820c8ede68d778ab/example/SkiaSDLExample.cpp
+// see
+// https://github.com/google/skia/blob/81abc43e6f0b1a789e1bf116820c8ede68d778ab/example/SkiaSDLExample.cpp
 
 // see https://github.com/marcj/Pesto
 
 // see https://github.com/donghaoren/Allofw/blob/master/liballofw/src/graphics_skia.cpp
 
-// see https://github.com/lijianegret/SkiaInGL/tree/f9ee0f81ab46243cfc331ac74b47c272969422f4/SkiaInGL/gl
+// see
+// https://github.com/lijianegret/SkiaInGL/tree/f9ee0f81ab46243cfc331ac74b47c272969422f4/SkiaInGL/gl
 
 // see https://github.com/google/skia/blob/master/example/SkiaSDLExample.cpp
 
-// see https://github.com/WebKit/webkit/blob/master/Source/WebCore/rendering/RenderBoxModelObject.cpp#L741
+// see
+// https://github.com/WebKit/webkit/blob/master/Source/WebCore/rendering/RenderBoxModelObject.cpp#L741
 
 #ifdef __EMSCRIPTEN__
 //#include <SDL.h>
@@ -31,9 +35,9 @@
 //#include <SDL_opengles2_gl2ext.h>
 // TODO
 //#define GL_RGBA8 0x8058
+#include <EGL/egl.h>
 #include <GL/gl.h>
 #include <GLES2/gl2.h>
-#include <EGL/egl.h>
 //#include <OpenGL/gl.h>
 //#include <SDL/SDL_ttf.h>
 //#include <SDL2/SDL_image.h>
@@ -50,9 +54,7 @@
 #include <SDL2/SDL_ttf.h>
 
 #include <skia/include/core/SkCanvas.h>
-#include <skia/include/core/SkSurface.h>
 #include <skia/include/core/SkFont.h>
-#include <skia/include/core/SkCanvas.h>
 #include <skia/include/core/SkGraphics.h>
 #include <skia/include/core/SkPictureRecorder.h>
 #include <skia/include/core/SkStream.h>
@@ -68,7 +70,6 @@
 
 #include <skia/include/core/SkMaskFilter.h>
 #include <skia/include/core/SkTextBlob.h>
-
 
 #include <skia/include/gpu/gl/GrGLAssembleInterface.h>
 #include <skia/include/gpu/gl/GrGLInterface.h>
@@ -168,9 +169,13 @@
 
 #include "base/base_switches.h"
 #include "base/command_line.h"
+#include "base/containers/small_map.h"
 #include "base/i18n/icu_util.h"
 #include "base/i18n/rtl.h"
-#include "base/containers/small_map.h"
+
+/// @note init allocator before executing any code.
+#include "base/allocator/partition_allocator/page_allocator.h"
+#include "third_party/blink/renderer/platform/wtf/allocator/partitions.h"
 
 /*#include <stddef.h>
 
@@ -181,11 +186,11 @@
 #include <type_traits>
 #include <utility>
 
-#include "base/logging.h"
 #include "base/base_export.h"
 #include "base/callback_forward.h"
 #include "base/compiler_specific.h"
 #include "base/debug/debugger.h"
+#include "base/logging.h"
 #include "base/macros.h"
 #include "base/scoped_clear_last_error.h"
 #include "base/strings/string_piece_forward.h"
@@ -247,86 +252,86 @@ void vprintf_stderr_common(const char* format, va_list args) {
 //#define TODO
 
 #ifdef TODO
-//extern "C" { extern void* emscripten_GetProcAddress(const char *x); }
+// extern "C" { extern void* emscripten_GetProcAddress(const char *x); }
 
 // https://github.com/google/skia/blob/master/src/gpu/gl/egl/GrGLMakeNativeInterface_egl.cpp
 static GrGLFuncPtr emscripten_get_gl_proc(void* ctx, const char name[]) {
- SkASSERT(nullptr == ctx);
- //return emscripten_GetProcAddress(name);
- return (GrGLFuncPtr) SDL_GL_GetProcAddress(name);
+  SkASSERT(nullptr == ctx);
+  // return emscripten_GetProcAddress(name);
+  return (GrGLFuncPtr)SDL_GL_GetProcAddress(name);
 }
 
-//extern void* emscripten_GetProcAddress(const char *x);
+// extern void* emscripten_GetProcAddress(const char *x);
 
 #include "include/gpu/gl/GrGLAssembleHelpers.h"
 #include "include/gpu/gl/GrGLAssembleInterface.h"
 #include "src/gpu/gl/GrGLUtil.h"
 
 sk_sp<const GrGLInterface> emscripten_GrGLMakeNativeInterface() {
-    void *ctx = nullptr;
-    GrGLGetProc get = emscripten_get_gl_proc;
+  void* ctx = nullptr;
+  GrGLGetProc get = emscripten_get_gl_proc;
 
-    //return GrGLMakeAssembledWebGLInterface(nullptr, emscripten_get_gl_proc);
-    /*GET_PROC_LOCAL(GetString);
-    if (nullptr == GetString) {
-        return nullptr;
-    }
+  // return GrGLMakeAssembledWebGLInterface(nullptr, emscripten_get_gl_proc);
+  /*GET_PROC_LOCAL(GetString);
+  if (nullptr == GetString) {
+      return nullptr;
+  }
 
-    const char* verStr = reinterpret_cast<const char*>(GetString(GR_GL_VERSION));
-    if (nullptr == verStr) {
-        return nullptr;
-    }*/
+  const char* verStr = reinterpret_cast<const char*>(GetString(GR_GL_VERSION));
+  if (nullptr == verStr) {
+      return nullptr;
+  }*/
 
-    GrGLStandard standard = kWebGL_GrGLStandard;//GrGLGetStandardInUseFromString("verStr");
-    // standard can be unused (optimzed away) if SK_ASSUME_GL_ES is set
-    sk_ignore_unused_variable(standard);
+  GrGLStandard standard = kWebGL_GrGLStandard; // GrGLGetStandardInUseFromString("verStr");
+  // standard can be unused (optimzed away) if SK_ASSUME_GL_ES is set
+  sk_ignore_unused_variable(standard);
 
-    // https://github.com/Rusino/skia/blob/b3929a01f476c63e5358e97128ba7eb9f14e806e/src/gpu/gl/GrGLAssembleWebGLInterfaceAutogen.cpp#L22
+  // https://github.com/Rusino/skia/blob/b3929a01f476c63e5358e97128ba7eb9f14e806e/src/gpu/gl/GrGLAssembleWebGLInterfaceAutogen.cpp#L22
 
-    if (GR_IS_GR_GL_ES(standard)) {
-        printf("GR_IS_GR_GL_ES");
-        return GrGLMakeAssembledGLESInterface(ctx, get);
-    } else if (GR_IS_GR_GL(standard)) {
-        printf("GR_IS_GR_GL");
-        return GrGLMakeAssembledGLInterface(ctx, get);
-    } else if (GR_IS_GR_WEBGL(standard)) {
-        printf("GR_IS_GR_WEBGL");
-        return GrGLMakeAssembledWebGLInterface(ctx, get);
-    }
-    return nullptr;
+  if (GR_IS_GR_GL_ES(standard)) {
+    printf("GR_IS_GR_GL_ES");
+    return GrGLMakeAssembledGLESInterface(ctx, get);
+  } else if (GR_IS_GR_GL(standard)) {
+    printf("GR_IS_GR_GL");
+    return GrGLMakeAssembledGLInterface(ctx, get);
+  } else if (GR_IS_GR_WEBGL(standard)) {
+    printf("GR_IS_GR_WEBGL");
+    return GrGLMakeAssembledWebGLInterface(ctx, get);
+  }
+  return nullptr;
 }
 #endif
 
-static SkString                           fPath = SkString("./resources/animations/data.json");
-//static SkString                           fPath = SkString("./resources/fonts/FreeSans.ttf");
-static sk_sp<skottie::Animation>          fAnimation;
+static SkString fPath = SkString("./resources/animations/data.json");
+// static SkString                           fPath = SkString("./resources/fonts/FreeSans.ttf");
+static sk_sp<skottie::Animation> fAnimation;
 static skottie::Animation::Builder::Stats fAnimationStats;
-static SkSize                             fWinSize = SkSize::Make(512,512);
-static SkMSec                             fTimeBase  = 0;
-static bool                               fShowAnimationInval = false;
-static bool                               fShowAnimationStats = false;
+static SkSize fWinSize = SkSize::Make(512, 512);
+static SkMSec fTimeBase = 0;
+static bool fShowAnimationInval = false;
+static bool fShowAnimationStats = false;
 
 static SkFont* skFont1 = nullptr;
 static SkFont* skFont2 = nullptr;
 
-//static std::string input    = "Input .json file.";//);
+// static std::string input    = "Input .json file.";//);
 ////static std::string(writePath, w, nullptr, "Output directory.  Frames are names [0-9]{6}.png.");
-//static std::string format   = "png";//  , "Output format (png or skp)");
-//static double t0=   0;//, "Timeline start [0..1].");
-//static double t1=   1;//, "Timeline stop [0..1].");
-//static double fps= 30;//, "Decode frames per second.");
-//static int width = 800;//, "Render width.");
-//static int height= 600;//, "Render height.");
+// static std::string format   = "png";//  , "Output format (png or skp)");
+// static double t0=   0;//, "Timeline start [0..1].");
+// static double t1=   1;//, "Timeline stop [0..1].");
+// static double fps= 30;//, "Decode frames per second.");
+// static int width = 800;//, "Render width.");
+// static int height= 600;//, "Render height.");
 
-static const int kStencilBits = 8;  // Skia needs 8 stencil bits
+static const int kStencilBits = 8; // Skia needs 8 stencil bits
 static const int kMsaaSampleCount = 0;
 static TTF_Font* ttfFont = nullptr;
 static sk_sp<SkSurface> sRasterSurface;
 
 #ifdef TODO
-//static sk_sp<GrContext> sContext = nullptr;
+// static sk_sp<GrContext> sContext = nullptr;
 static GrContext* grContext = nullptr;
-//static sk_sp<SkSurface> sSurface = nullptr;
+// static sk_sp<SkSurface> sSurface = nullptr;
 static SkSurface* sSurface = nullptr;
 #endif
 
@@ -356,20 +361,16 @@ static SkPainter* myView = nullptr;
 
 static GLuint programObject;
 
-static GLfloat const kVertexData[] = {
-    1.0f, 1.0f, 1.0f, 0.0f,
-    -1.0f, 1.0f, 0.0f, 0.0f,
-    1.0f, -1.0f, 1.0f, 1.0f,
-    -1.0f, -1.0f, 0.0f, 1.0f
-};
+static GLfloat const kVertexData[] = {1.0f, 1.0f,  1.0f, 0.0f, -1.0f, 1.0f,  0.0f, 0.0f,
+                                      1.0f, -1.0f, 1.0f, 1.0f, -1.0f, -1.0f, 0.0f, 1.0f};
 
 // see https://github.com/flutter/engine/blob/master/shell/gpu/gpu_surface_gl.cc#L125
-static void
-init_skia(int w, int h)
-{
+static void init_skia(int w, int h) {
 #ifdef TODO
   {
-    auto sInterface = emscripten_GrGLMakeNativeInterface(); //sk_sp<const GrGLInterface>(GrGLCreateNativeInterface());
+    auto sInterface =
+        emscripten_GrGLMakeNativeInterface(); // sk_sp<const
+                                              // GrGLInterface>(GrGLCreateNativeInterface());
     if (sInterface == nullptr) {
       printf("Error while creating GrGLInterface\n");
       abort();
@@ -387,7 +388,7 @@ init_skia(int w, int h)
     GrContextOptions options;
     grContext = GrContext::MakeGL(std::move(sInterface), options).release();
     if (!grContext) {
-        printf("failed to create grContext.");
+      printf("failed to create grContext.");
     }
     SkASSERT(grContext);
 
@@ -398,7 +399,7 @@ init_skia(int w, int h)
     // render to it
     GR_GL_GetIntegerv(sInterface.get(), GR_GL_FRAMEBUFFER_BINDING, &bufferID);
     GrGLFramebufferInfo info;
-    info.fFBOID = (GrGLuint) bufferID;
+    info.fFBOID = (GrGLuint)bufferID;
     SkColorType colorType;
 
     printf("SDL_GetWindowPixelFormat...");
@@ -409,87 +410,79 @@ init_skia(int w, int h)
 
     printf("get windowFormat...");
 
-      //SkDebugf("%s", SDL_GetPixelFormatName(windowFormat));
-      // TODO: the windowFormat is never any of these?
-      if (SDL_PIXELFORMAT_RGBA8888 == windowFormat) {
-          info.fFormat = GR_GL_RGBA8;
-          colorType = kRGBA_8888_SkColorType;
+    // SkDebugf("%s", SDL_GetPixelFormatName(windowFormat));
+    // TODO: the windowFormat is never any of these?
+    if (SDL_PIXELFORMAT_RGBA8888 == windowFormat) {
+      info.fFormat = GR_GL_RGBA8;
+      colorType = kRGBA_8888_SkColorType;
+    } else {
+      colorType = kBGRA_8888_SkColorType;
+      if (SDL_GL_CONTEXT_PROFILE_ES == contextType) {
+        info.fFormat = GR_GL_BGRA8;
       } else {
-          colorType = kBGRA_8888_SkColorType;
-          if (SDL_GL_CONTEXT_PROFILE_ES == contextType) {
-              info.fFormat = GR_GL_BGRA8;
-          } else {
-              // We assume the internal format is RGBA8 on desktop GL
-              info.fFormat = GR_GL_RGBA8;
-          }
+        // We assume the internal format is RGBA8 on desktop GL
+        info.fFormat = GR_GL_RGBA8;
       }
+    }
 
-      info.fFormat = GR_GL_BGRA8; //  TODO
+    info.fFormat = GR_GL_BGRA8; //  TODO
 
-      printf("create GrBackendRenderTarget...");
+    printf("create GrBackendRenderTarget...");
 
-      GrBackendRenderTarget target(width, height, kMsaaSampleCount, kStencilBits, info);
+    GrBackendRenderTarget target(width, height, kMsaaSampleCount, kStencilBits, info);
 
-      // setup SkSurface
-      // To use distance field text, use commented out SkSurfaceProps instead
-      // SkSurfaceProps props(SkSurfaceProps::kUseDeviceIndependentFonts_Flag,
-      //                      SkSurfaceProps::kLegacyFontHost_InitType);
-      SkSurfaceProps props(SkSurfaceProps::kLegacyFontHost_InitType);
+    // setup SkSurface
+    // To use distance field text, use commented out SkSurfaceProps instead
+    // SkSurfaceProps props(SkSurfaceProps::kUseDeviceIndependentFonts_Flag,
+    //                      SkSurfaceProps::kLegacyFontHost_InitType);
+    SkSurfaceProps props(SkSurfaceProps::kLegacyFontHost_InitType);
 
-      sk_sp<SkSurface> surface(SkSurface::MakeFromBackendRenderTarget(grContext, target,
-                                                                      kBottomLeft_GrSurfaceOrigin,
-                                                                      colorType, nullptr, &props));
-      if (!surface) {
-          printf("failed to create surface.");
-      }
+    sk_sp<SkSurface> surface(SkSurface::MakeFromBackendRenderTarget(
+        grContext, target, kBottomLeft_GrSurfaceOrigin, colorType, nullptr, &props));
+    if (!surface) {
+      printf("failed to create surface.");
+    }
   }
 #endif
   const SkImageInfo info = SkImageInfo::MakeN32(width, height, kPremul_SkAlphaType);
   sRasterSurface = SkSurface::MakeRaster(info);
   if (!sRasterSurface) {
-      printf("failed to create raster surface\n");
+    printf("failed to create raster surface\n");
   }
 }
 
-static void
-cleanup_skia()
-{
+static void cleanup_skia() {
   if (sRasterSurface.get())
     delete sRasterSurface.release();
 }
 
-class SkPainter
-{
+class SkPainter {
 public:
   SkPoint m_pos = SkPoint::Make(100, 100);
   SkPoint m_prev = SkPoint::Make(110, 110);
   SkColor m_color = SK_ColorDKGRAY;
   SkScalar m_size = 200;
 
-  void onDraw(SkCanvas* canvas)
-  {
+  void onDraw(SkCanvas* canvas) {
     /*if (!canvas->getGrContext()) {
       return;
     }*/
 
     SkPaint paint;
 
-    //paint.setAlpha(255);
+    // paint.setAlpha(255);
     paint.setAntiAlias(true);
     paint.setColor(SK_ColorRED);
-    ///paint.setColor(0xffeeeeee);
+    /// paint.setColor(0xffeeeeee);
 
     canvas->drawCircle(m_pos.x(), m_pos.y(), m_size, paint);
 
     {
-      SkColor colors[4] = {
-          SK_ColorCYAN, SK_ColorMAGENTA, SK_ColorYELLOW, SK_ColorCYAN};
-      paint.setShader(SkGradientShader::MakeSweep(
-                  128.0f, 128.0f, colors, nullptr, 4, 0, nullptr));
-
+      SkColor colors[4] = {SK_ColorCYAN, SK_ColorMAGENTA, SK_ColorYELLOW, SK_ColorCYAN};
+      paint.setShader(SkGradientShader::MakeSweep(128.0f, 128.0f, colors, nullptr, 4, 0, nullptr));
     }
 
-    //canvas->drawLine(m_pos.x(), m_pos.y(), m_prev.x(), m_prev.y(), paint);
+    // canvas->drawLine(m_pos.x(), m_pos.y(), m_prev.x(), m_prev.y(), paint);
 
     /*paint.setColor(SK_ColorGREEN);
     canvas->drawRect({ 0, 0, 50, 50 }, paint);
@@ -499,7 +492,7 @@ public:
 
     paint.setColor(SK_ColorBLACK);
     paint.setStyle(SkPaint::kFill_Style);
-    //SkFont font;//(nullptr, 24);//SkFont::kA8_MaskType, flags);
+    // SkFont font;//(nullptr, 24);//SkFont::kA8_MaskType, flags);
     canvas->drawString("Skia Test Skia Test Skia Test", 20, 32, *skFont1, paint);
     canvas->drawString("Skia Test Skia Test Skia Test", 20, 37, *skFont2, paint);
 
@@ -514,40 +507,35 @@ public:
       const uint8_t blurAlpha = 127;
       auto blob1 = SkTextBlob::MakeFromString("Skia! skFont1", *skFont1);
       auto blob2 = SkTextBlob::MakeFromString("Skia! skFont2", *skFont2);
-      //paint.setAntiAlias(true);
+      // paint.setAntiAlias(true);
       SkPaint blur(paint);
       blur.setAlpha(blurAlpha);
       blur.setMaskFilter(SkMaskFilter::MakeBlur(kNormal_SkBlurStyle, sigma, 0));
-      //canvas->drawColor(SK_ColorWHITE);
+      // canvas->drawColor(SK_ColorWHITE);
       canvas->drawTextBlob(blob1.get(), x + xDrop, y + yDrop, blur);
-      canvas->drawTextBlob(blob1.get(), x,         y,         paint);
+      canvas->drawTextBlob(blob1.get(), x, y, paint);
 
       canvas->drawTextBlob(blob2.get(), x + xDrop, 20 + y + yDrop, blur);
 
       SkPaint strokePaint(paint);
       strokePaint.setStyle(SkPaint::kStroke_Style);
       strokePaint.setStrokeWidth(3.0f);
-      canvas->drawTextBlob(blob2.get(), x,         20 + y,         strokePaint);
+      canvas->drawTextBlob(blob2.get(), x, 20 + y, strokePaint);
     }
 
     if (fAnimation) {
-        SkAutoCanvasRestore acr(canvas, true);
-        const auto dstR = SkRect::MakeSize(fWinSize);
-        fAnimation->render(canvas, &dstR);
-        /*if (fShowAnimationStats) {
-            draw_stats_box(canvas, fAnimationStats);
-        }*/
+      SkAutoCanvasRestore acr(canvas, true);
+      const auto dstR = SkRect::MakeSize(fWinSize);
+      fAnimation->render(canvas, &dstR);
+      /*if (fShowAnimationStats) {
+          draw_stats_box(canvas, fAnimationStats);
+      }*/
     }
   }
-  SkPainter(SkColor color, SkScalar size)
-    : m_color(color)
-    , m_size(size)
-  {}
+  SkPainter(SkColor color, SkScalar size) : m_color(color), m_size(size) {}
 };
 
-GLuint
-LoadShader(GLenum type, const char* shaderSrc)
-{
+GLuint LoadShader(GLenum type, const char* shaderSrc) {
   GLuint shader;
   GLint compiled;
 
@@ -573,37 +561,33 @@ LoadShader(GLenum type, const char* shaderSrc)
   return shader;
 }
 
-int
-Init()
-{
-  char vShaderStr[] =
-    "attribute vec2 vPosition;                \n"
-    "attribute vec2 vUV;                \n"
-    "varying vec2 v_texcoord;\n"
-    //"uniform mat4 uMVPMatrix; \n"
-    //"uniform float zoom;	\n"
-    "void main()                              \n"
-    "{                                        \n"
-    "    v_texcoord = vUV;\n"
-    "    gl_Position = vec4(vPosition, -1, 1);\n"
-//		"   gl_Position = uMVPMatrix * vPosition;              \n"
-//		"   gl_Position.x = gl_Position.x * zoom; \n"
-//		"   gl_Position.y = gl_Position.y * zoom; \n"
-    "}                                        \n";
+int Init() {
+  char vShaderStr[] = "attribute vec2 vPosition;                \n"
+                      "attribute vec2 vUV;                \n"
+                      "varying vec2 v_texcoord;\n"
+                      //"uniform mat4 uMVPMatrix; \n"
+                      //"uniform float zoom;	\n"
+                      "void main()                              \n"
+                      "{                                        \n"
+                      "    v_texcoord = vUV;\n"
+                      "    gl_Position = vec4(vPosition, -1, 1);\n"
+                      //		"   gl_Position = uMVPMatrix * vPosition;              \n"
+                      //		"   gl_Position.x = gl_Position.x * zoom; \n"
+                      //		"   gl_Position.y = gl_Position.y * zoom; \n"
+                      "}                                        \n";
 
-  char fShaderStr[] =
-    "precision mediump float;\n"
-    "uniform sampler2D u_tex;\n"
-    "varying vec2 v_texcoord;\n"
-//		"uniform vec4 vColor;"
-    "void main()                                  \n"
-    "{                                            \n"
-//		"  gl_FragColor = vColor;        \n"
-    "    vec4 colour = texture2D(u_tex, v_texcoord);\n"
-//    "    vec4 colour = vec4(100, 0, 100, 100);\n"
-    "    colour.rgba = colour.rgba;\n"
-    "    gl_FragColor = colour;\n"
-    "}                                            \n";
+  char fShaderStr[] = "precision mediump float;\n"
+                      "uniform sampler2D u_tex;\n"
+                      "varying vec2 v_texcoord;\n"
+                      //		"uniform vec4 vColor;"
+                      "void main()                                  \n"
+                      "{                                            \n"
+                      //		"  gl_FragColor = vColor;        \n"
+                      "    vec4 colour = texture2D(u_tex, v_texcoord);\n"
+                      //    "    vec4 colour = vec4(100, 0, 100, 100);\n"
+                      "    colour.rgba = colour.rgba;\n"
+                      "    gl_FragColor = colour;\n"
+                      "}                                            \n";
 
   GLuint vertexShader;
   GLuint fragmentShader;
@@ -623,12 +607,10 @@ Init()
   glLinkProgram(programObject);
   uniformTex = glGetUniformLocation(programObject, "u_tex");
   glGetProgramiv(programObject, GL_LINK_STATUS, &linked);
-  if (!linked)
-  {
+  if (!linked) {
     GLint infoLen = 0;
     glGetProgramiv(programObject, GL_INFO_LOG_LENGTH, &infoLen);
-    if (infoLen > 1)
-    {
+    if (infoLen > 1) {
       char* infoLog = static_cast<char*>(malloc(sizeof(char) * infoLen));
       glGetProgramInfoLog(programObject, infoLen, NULL, infoLog);
       printf("Error linking program:\n%s\n", infoLog);
@@ -638,13 +620,12 @@ Init()
     return GL_FALSE;
   }
 
-    glGenTextures(1, &skia_texture);
+  glGenTextures(1, &skia_texture);
 
   // No clientside arrays, so do this in a webgl-friendly manner
   glGenBuffers(1, &vertexPosObject);
   glBindBuffer(GL_ARRAY_BUFFER, vertexPosObject);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(kVertexData), kVertexData,
-                 GL_STATIC_DRAW);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(kVertexData), kVertexData, GL_STATIC_DRAW);
   glBindBuffer(GL_ARRAY_BUFFER, 0);
 
   glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
@@ -654,9 +635,7 @@ Init()
 ///
 // Draw a triangle using the shader pair created in Init()
 //
-void
-Draw()
-{
+void Draw() {
   glViewport(0, 0, width, height);
   glClear(GL_COLOR_BUFFER_BIT);
 
@@ -689,25 +668,25 @@ Draw()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, pixmap.width(), pixmap.height(), 0,
-                 GL_RGBA, GL_UNSIGNED_BYTE, pixmap.addr());
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, pixmap.width(), pixmap.height(), 0, GL_RGBA,
+                 GL_UNSIGNED_BYTE, pixmap.addr());
   }
 
   glUniform1i(uniformTex, 0);
 
   glBindBuffer(GL_ARRAY_BUFFER, vertexPosObject);
   //
-  glVertexAttribPointer(0,  2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat),
-                          NULL);
+  glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), NULL);
   glEnableVertexAttribArray(0);
   //
-  glVertexAttribPointer(1,  2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat),
-                          (GLvoid*)(2 * sizeof(GLfloat)));
+  glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat),
+                        (GLvoid*)(2 * sizeof(GLfloat)));
   glEnableVertexAttribArray(1);
 
   int w, h, fs;
 #ifdef __EMSCRIPTEN__
-  // see https://github.com/floooh/oryol/blob/master/code/Modules/Gfx/private/emsc/emscDisplayMgr.cc#L174
+  // see
+  // https://github.com/floooh/oryol/blob/master/code/Modules/Gfx/private/emsc/emscDisplayMgr.cc#L174
   emscripten_get_canvas_element_size("#canvas", &w, &h); //, &fs); // width, height, isFullscreen
 #else
   w = width;
@@ -715,32 +694,29 @@ Draw()
 #endif
   float xs = (float)h / w;
   float ys = 1.0f;
-  float mat[] = { xs, 0, 0, 0, 0, ys, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 };
+  float mat[] = {xs, 0, 0, 0, 0, ys, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1};
 
- glBindBuffer(GL_ARRAY_BUFFER, 0);
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
 
   glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
   glDisableVertexAttribArray(0);
   glDisableVertexAttribArray(1);
-
 }
 
-static void animate()
-{
+static void animate() {
   if (fTimeBase == 0) {
-      // Reset the animation time.
-      fTimeBase = SDL_GetTicks();
+    // Reset the animation time.
+    fTimeBase = SDL_GetTicks();
   }
   if (fAnimation) {
-      const auto t = SDL_GetTicks() - fTimeBase;
-      const auto d = fAnimation->duration() * 1000;
-      fAnimation->seek(std::fmod(t, d) / d);
+    const auto t = SDL_GetTicks() - fTimeBase;
+    const auto d = fAnimation->duration() * 1000;
+    fAnimation->seek(std::fmod(t, d) / d);
   }
 }
 
-static void mainLoop()
-{
+static void mainLoop() {
   animate();
 
   // Render
@@ -751,10 +727,10 @@ static void mainLoop()
 
   while (SDL_PollEvent(&e) != 0) {
     switch (e.type) {
-      case SDL_QUIT: {
-        quit = true;
-        printf("recieved quit signal\n");
-      }
+    case SDL_QUIT: {
+      quit = true;
+      printf("recieved quit signal\n");
+    }
     }
   }
 #ifdef __EMSCRIPTEN__
@@ -765,9 +741,43 @@ static void mainLoop()
 #endif
 }
 
-int
-main(int argc, char** argv)
-{
+/*static void CallOnMainThreadFunction(WTF::MainThreadFunction function, void* context) {
+  // TODO
+  //
+https://github.com/chromium/chromium/blob/master/third_party/blink/renderer/platform/scheduler/public/post_cross_thread_task.h#L17
+  PostCrossThreadTask(
+      *Thread::MainThread()->GetTaskRunner(), FROM_HERE,
+      CrossThreadBind(function, CrossThreadUnretained(context)));
+}*/
+
+int main(int argc, char** argv) {
+  printf("Init alloc ...\n");
+  // see
+  // https://cs.chromium.org/chromium/src/third_party/blink/renderer/controller/blink_initializer.cc?sq=package:chromium&dr=C&g=0&l=88
+  {
+    // Try to reserve as much address space as we reasonably can.
+    const size_t kMB = 1024 * 1024;
+    for (size_t size = 512 * kMB; size >= 32 * kMB; size -= 16 * kMB) {
+      printf("ReserveAddressSpace...\n");
+      if (base::ReserveAddressSpace(size)) {
+        // Report successful reservation.
+        // DEFINE_STATIC_LOCAL(CustomCountHistogram, reservation_size_histogram,
+        //                    ("Renderer4.ReservedMemory", 32, 512, 32));
+        // reservation_size_histogram.Count(size / kMB);
+
+        break;
+      }
+    }
+  }
+
+  printf("Init Partitions ...\n");
+  // see
+  // https://github.com/chromium/chromium/blob/master/third_party/blink/renderer/platform/exported/platform.cc#L119
+  WTF::Partitions::Initialize(nullptr);
+
+  printf("Init WTF ...\n");
+  // WTF::Initialize(nullptr); // TODO
+
   printf("Testing ...\n");
 
   {
@@ -777,9 +787,9 @@ main(int argc, char** argv)
     vec.push_back(3);
     vec.push_back(4);
     vec.push_back(5);
-    printf("vec begin is %d\n", *vec.begin());
+    printf("vec front is %d\n", vec.front());
     printf("vec.at(2) is %d\n", vec.at(2));
-    //printf("vec end is %d\n", vec.last());
+    printf("vec back is %d\n", vec.back());
   }
 
   {
@@ -787,9 +797,9 @@ main(int argc, char** argv)
     foo.insert(std::make_pair("foo", "bar"));
     foo.insert(std::make_pair("bar", "bar"));
     foo.insert(std::make_pair("foo1", "bar"));
-    foo.insert(std::make_pair("bar1",  "bar"));
+    foo.insert(std::make_pair("bar1", "bar"));
     foo.insert(std::make_pair("foo", "bar"));
-    foo.insert(std::make_pair("bar","bar"));
+    foo.insert(std::make_pair("bar", "bar"));
     auto found = foo.find("asdf");
     printf("1 Found is %d\n", (int)(found == foo.end()));
     found = foo.find("foo");
@@ -844,12 +854,8 @@ main(int argc, char** argv)
 
   printf("SDL_CreateWindow ...\n");
 
-  window = SDL_CreateWindow("skemgl",
-                            SDL_WINDOWPOS_UNDEFINED,
-                            SDL_WINDOWPOS_UNDEFINED,
-                            width,
-                            height,
-                            SDL_WINDOW_OPENGL);
+  window = SDL_CreateWindow("skemgl", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width,
+                            height, SDL_WINDOW_OPENGL);
 
   if (!window) {
     printf("Unable to create window: %s\n", SDL_GetError());
@@ -860,9 +866,9 @@ main(int argc, char** argv)
 
   glContext = SDL_GL_CreateContext(window);
   if (!glContext) {
-      printf("Error while SDL_GL_CreateContext %s\n", SDL_GetError());
-      SDL_ClearError();
-      return 0;
+    printf("Error while SDL_GL_CreateContext %s\n", SDL_GetError());
+    SDL_ClearError();
+    return 0;
   }
 
 #ifndef __EMSCRIPTEN__
@@ -876,15 +882,15 @@ main(int argc, char** argv)
 
   printf("SDL_GL_MakeCurrent ...\n");
 
-  int success =  SDL_GL_MakeCurrent(window, glContext);
+  int success = SDL_GL_MakeCurrent(window, glContext);
   if (success != 0) {
-      printf("Error while SDL_GL_MakeCurrent %s\n", SDL_GetError());
-      SDL_ClearError();
-      return success;
+    printf("Error while SDL_GL_MakeCurrent %s\n", SDL_GetError());
+    SDL_ClearError();
+    return success;
   }
 
   glDisable(GL_DEPTH_TEST);
-  glViewport(0, 0, (int) width, (int) height);
+  glViewport(0, 0, (int)width, (int)height);
   glClearColor(1, 1, 1, 1);
   glClearStencil(0);
   glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
@@ -928,9 +934,11 @@ main(int argc, char** argv)
     printf("Failed to load lazy font! SDL_ttf Error: %s\n", TTF_GetError());
   }
 
-  skFont1 = new SkFont(SkTypeface::MakeFromFile("./resources/fonts/FreeSans.ttf"), 22.0f, 1.0f, 0.0f);
+  skFont1 =
+      new SkFont(SkTypeface::MakeFromFile("./resources/fonts/FreeSans.ttf"), 22.0f, 1.0f, 0.0f);
 
-  skFont2 = new SkFont(SkTypeface::MakeFromFile("./resources/fonts/FreeSans.ttf"), 30.0f, 1.5f, 0.0f);
+  skFont2 =
+      new SkFont(SkTypeface::MakeFromFile("./resources/fonts/FreeSans.ttf"), 30.0f, 1.5f, 0.0f);
 
   printf("Initializing subsystems...\n");
 
@@ -944,11 +952,11 @@ main(int argc, char** argv)
 
   myView = new SkPainter(SK_ColorRED, 200);
 
-//
-  //sk_sp<skottie_utils::FileResourceProvider> frp
+  //
+  // sk_sp<skottie_utils::FileResourceProvider> frp
   //  = skottie_utils::FileResourceProvider::Make(SkOSPath::Dirname(fPath.c_str()));
-  //frp->load(fPath.c_str(), "data.json");
-//
+  // frp->load(fPath.c_str(), "data.json");
+  //
 
   skottie::Animation::Builder builder;
   /*fAnimation      = builder
@@ -961,35 +969,33 @@ main(int argc, char** argv)
       SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Can't find the file!\n");
   }*/
 
-  FILE *f = fopen(fPath.c_str(), "rb");
+  FILE* f = fopen(fPath.c_str(), "rb");
   if (!f) {
     printf("failed to open file: %s\n", fPath.c_str());
     return 1;
   }
   fseek(f, 0, SEEK_END);
   long int fsize = ftell(f);
-  fseek(f, 0, SEEK_SET);  /* same as rewind(f); */
+  fseek(f, 0, SEEK_SET); /* same as rewind(f); */
   char* fileString = new char[fsize + 1];
   fread(fileString, 1, fsize, f);
   fclose(f);
   fileString[fsize] = 0;
 
-  fAnimation      = builder.make(fileString, fsize);
+  fAnimation = builder.make(fileString, fsize);
   fAnimationStats = builder.getStats();
-  fTimeBase       = 0; // force a time reset
+  fTimeBase = 0; // force a time reset
   if (fAnimation) {
     fAnimation->setShowInval(fShowAnimationInval);
-    printf("Loaded Bodymovin animation v: %s, size: [%f %f]\n",
-             fAnimation->version().c_str(),
-             fAnimation->size().width(),
-             fAnimation->size().height());
+    printf("Loaded Bodymovin animation v: %s, size: [%f %f]\n", fAnimation->version().c_str(),
+           fAnimation->size().width(), fAnimation->size().height());
   } else {
     printf("failed to load Bodymovin animation: %s\n", fPath.c_str());
     return 1;
   }
 
   delete[] fileString; // TODO
-//
+  //
 
 #ifdef __EMSCRIPTEN__
   printf("running with __EMSCRIPTEN__\n");

@@ -200,8 +200,8 @@ list(APPEND BASE_SOURCES
    ## ${BASE_DIR}debug/activity_analyzer.h
    ## ${BASE_DIR}debug/activity_tracker.cc
    ## ${BASE_DIR}debug/activity_tracker.h
-   ## ${BASE_DIR}debug/alias.cc
-   ## ${BASE_DIR}debug/alias.h
+   ${BASE_DIR}debug/alias.cc
+   ${BASE_DIR}debug/alias.h
    ## ### ${BASE_DIR}debug/asan_invalid_access.cc
    ## ### ${BASE_DIR}debug/asan_invalid_access.h
    ## #${BASE_DIR}debug/close_handle_hook_win.cc
