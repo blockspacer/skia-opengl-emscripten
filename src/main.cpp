@@ -845,8 +845,8 @@ int main(int argc, char** argv) {
   base::OnceClosure* closure = nullptr;
   base::OnceCallback<void()> binded = base::BindOnce(&MakeClosure, &closure);
   //std::move(binded).Run();
-  /*{
 
+  /*{
     base::Thread thread("testing");
     thread.Start();
     thread.task_runner()->PostTask(FROM_HERE, binded);
