@@ -274,9 +274,7 @@ sh tools/build_web.sh
 emrun build-emscripten/index.html
 ```
 
-## NOTE
-
-Use latest chromium!
+## NOTE: Use latest chromium!
 
 1 parent 9178b0a commit 2d57e5b8afc6d01b344a8d95d3470d46b35845c5 deskop-pwa: Try to reinstall placeholders on startup
 
@@ -297,3 +295,18 @@ cd src
 build/install-build-deps.sh
 gclient runhooks
 ```
+
+## NOTE: Use latest skia!
+
+Commit: Update SKP version
+
+Automatic commit by the RecreateSKPs bot.
+
+TBR=rmistry@google.com
+NO_MERGE_BUILDS
+
+Change-Id: Ic0a9fe4225fca395f1b72f450f3efd18199094b5
+Reviewed-on: https://skia-review.googlesource.com/c/skia/+/213360
+Reviewed-by: <skia-recreate-skps@skia-swarming-bots.iam.gserviceaccount.com>
+Commit-Queue: <skia-recreate-skps@skia-swarming-bots.iam.gserviceaccount.com>
+
