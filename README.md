@@ -278,6 +278,8 @@ emrun build-emscripten/index.html
 
 Use latest chromium!
 
+1 parent 9178b0a commit 2d57e5b8afc6d01b344a8d95d3470d46b35845c5 deskop-pwa: Try to reinstall placeholders on startup
+
 AVOID OUTDATED REPO https://chromium.googlesource.com/chromium/
 
 READ
