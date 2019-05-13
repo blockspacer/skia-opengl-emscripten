@@ -62,3 +62,4 @@ build-linux/
 thirdparty/SDL2/
 thirdparty/glew/
 *generated_build_date.h
+/src/chromium/base/generated_build_date.h
