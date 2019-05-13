@@ -19,3 +19,6 @@
 [submodule "thirdparty/SDL_net"]
 	path = thirdparty/SDL_net
 	url = https://github.com/SDL-mirror/SDL_net.git
+[submodule "src/chromium/third_party/ced/src"]
+	path = src/chromium/third_party/ced/src
+	url = https://chromium.googlesource.com/external/github.com/google/compact_enc_det.git
