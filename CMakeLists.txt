@@ -21,6 +21,32 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}
 # -fno-exceptions
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++17")
 
+# https://stackoverflow.com/a/4184877/10904212
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -frtti")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -frtti")
+
+set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_SUPPORT_GPU=1") # skia_enable_gpu
+set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_SUPPORT_GPU") # skia_enable_gpu
+set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_DISABLE_READBUFFER=1")
+set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DLIBANGLE_IMPLEMENTATION=1")
+set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DLIBGLESV2_IMPLEMENTATION=1")
+set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DLIBEGL_IMPLEMENTATION=1")
+# see modules/skottie/utils/SkottieUtils.cpp
+set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_INCLUDE_MANAGED_SKOTTIE=1")
+
+set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DANGLE_ENABLE_ESSL=1")
+set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DANGLE_ENABLE_GLSL=1")
+set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DANGLE_ENABLE_HLSL=1")
+set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DANGLE_ENABLE_OPENGL=1")
+set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DEGL_EGLEXT_PROTOTYPES=1")
+set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DGL_GLEXT_PROTOTYPES=1")
+# https://github.com/klzgrad/naiveproxy/blob/master/src/third_party/skia/modules/skottie/BUILD.gn#L14
+set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_ENABLE_SKOTTIE=1")
+
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${SK_COMMON_FLAGS}")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${SK_COMMON_FLAGS}")
+
+
 # TODO https://github.com/mbbill/JSC.js
 # # http://userguide.icu-project.org/howtouseicu
 # set(ICU_DEFINES "${ICU_DEFINES} -DU_STATIC_IMPLEMENTATION=1")
@@ -65,6 +91,8 @@ if(EMSCRIPTEN)
   #set(EMCC_COMMON "${EMCC_COMMON} -s USE_PTHREADS=0")
   set(EMCC_COMMON "${EMCC_COMMON} -s USE_ZLIB=1")
   #set(EMCC_COMMON "${EMCC_COMMON} -s USE_HARFBUZZ=1") # < TODO
+  # https://github.com/klzgrad/naiveproxy/blob/master/src/third_party/skia/modules/skshaper/BUILD.gn#L11
+  # SK_SHAPER_HARFBUZZ_AVAILABLE # < TODO if skia_use_icu
   set(EMCC_COMMON "${EMCC_COMMON} -s USE_ICU=1")
   set(EMCC_COMMON "${EMCC_COMMON} -s USE_LIBPNG=1")
   set(EMCC_COMMON "${EMCC_COMMON} -s USE_SDL=2")
@@ -76,6 +104,8 @@ if(EMSCRIPTEN)
   # rtti required by skia
   set(EMCC_COMMON "${EMCC_COMMON} -frtti")
   set(EMCC_COMMON "${EMCC_COMMON} -DSK_RELEASE")
+  # https://github.com/google/skia/blob/master/BUILD.gn#L502
+  # set(EMCC_COMMON "${EMCC_COMMON} -DSKSL_STANDALONE") # if (skia_compile_processors)
   set(EMCC_COMMON "${EMCC_COMMON} -DSK_ASSUME_WEBGL=1")
   set(EMCC_COMMON "${EMCC_COMMON} -DSK_DISABLE_LEGACY_SHADERCONTEXT=1")
   #set(EMCC_COMMON "${EMCC_COMMON} -DSK_ASSUME_GL_ES=1")
@@ -90,22 +120,15 @@ if(EMSCRIPTEN)
   set(EMCC_COMMON "${EMCC_COMMON} -DSK_BUILD_FOR_PATHKIT=1")
   set(EMCC_COMMON "${EMCC_COMMON} -DSK_SUPPORT_OPENCL=0")
   set(EMCC_COMMON "${EMCC_COMMON} -DSK_SAMPLES_FOR_X=1") # always set for linux, even if there's no X used
-  set(EMCC_COMMON "${EMCC_COMMON} -DSK_SUPPORT_GPU=1") # skia_enable_gpu
-  set(EMCC_COMMON "${EMCC_COMMON} -DSK_SUPPORT_GPU") # skia_enable_gpu
   set(EMCC_COMMON "${EMCC_COMMON} -DSK_HAS_PNG_LIBRARY=1") # skia_use_libpng
-  set(EMCC_COMMON "${EMCC_COMMON} -DSK_DISABLE_READBUFFER=1")
-  set(EMCC_COMMON "${EMCC_COMMON} -DLIBANGLE_IMPLEMENTATION=1")
-  set(EMCC_COMMON "${EMCC_COMMON} -DLIBGLESV2_IMPLEMENTATION=1")
-  set(EMCC_COMMON "${EMCC_COMMON} -DLIBEGL_IMPLEMENTATION=1")
-  # see modules/skottie/utils/SkottieUtils.cpp
-  set(EMCC_COMMON "${EMCC_COMMON} -DSK_INCLUDE_MANAGED_SKOTTIE=1")
 
-  set(EMCC_COMMON "${EMCC_COMMON} -DANGLE_ENABLE_ESSL=1")
-  set(EMCC_COMMON "${EMCC_COMMON} -DANGLE_ENABLE_GLSL=1")
-  set(EMCC_COMMON "${EMCC_COMMON} -DANGLE_ENABLE_HLSL=1")
-  set(EMCC_COMMON "${EMCC_COMMON} -DANGLE_ENABLE_OPENGL=1")
-  set(EMCC_COMMON "${EMCC_COMMON} -DEGL_EGLEXT_PROTOTYPES=1")
-  set(EMCC_COMMON "${EMCC_COMMON} -DGL_GLEXT_PROTOTYPES=1")
+  # https://github.com/Rusino/skia/blob/master/BUILD.gn#L1688
+  set(EMCC_COMMON "${EMCC_COMMON} -DSK_USING_SKSHAPER=1") # skia_enable_skshaper
+  set(EMCC_COMMON "${EMCC_COMMON} -DSK_HAS_WUFFS_LIBRARY=1") # skia_use_wuffs
+  # SK_HAS_WEBP_LIBRARY # skia_use_libwebp
+  # SK_XML # skia_use_expat
+  # https://github.com/Rusino/skia/blob/master/BUILD.gn#L191
+  set(EMCC_COMMON "${EMCC_COMMON} -DSK_ALLOW_STATIC_GLOBAL_INITIALIZERS=0")
 
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${EMCC_COMMON}")
 
@@ -145,6 +168,9 @@ if(EMSCRIPTEN)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s NO_EXIT_RUNTIME=1")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s WARN_UNALIGNED=1")
 else()
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DSK_ASSUME_GL=1")
+
+
   ### Find Libraries
   find_package(OpenGL REQUIRED)
   if(OPENGL_FOUND)
@@ -225,7 +251,7 @@ add_subdirectory(src/chromium)
 # case-insensitive match TODO: is debug, Debug, DEBUG all valid?
 if (CMAKE_BUILD_TYPE MATCHES "[dD][eE][bB][uU][gG]")
   set(IS_DEBUG_BUILD ON)
-else ()
+else()
   set(IS_DEBUG_BUILD OFF)
   set(EXT_SKIA_OFFICIAL_BUILD "true")
 endif ()
@@ -315,6 +341,10 @@ if (EMSCRIPTEN)
   set(SK_CONF_IS_OFFICIAL_BUILD "true")
   set(SK_CONF_SHARED "false")
 
+  set(SK_IS_processors "false") # see SKSL_STANDALONE
+  set(SK_IS_workarounds "false")
+  set(SK_IS_ccpr "false")
+
   set(SK_IS_EGL "true")
   # https://github.com/Zubnix/skia-wasm-port/blob/master/build_skia_wasm_bitcode.sh#L16
   # TODO: PATCH https://github.com/Zubnix/skia-wasm-port/blob/master/wasm_compatible_build.patch
@@ -323,6 +353,10 @@ if (EMSCRIPTEN)
   # see skia/modules/canvaskit/compile.sh
   set(SK_GL_STANDARD "skia_gl_standard=\"webgl\"")
 else ()
+  set(SK_IS_processors "false") # see SKSL_STANDALONE
+  set(SK_IS_workarounds "false")
+  set(SK_IS_ccpr "true")
+
   set(SK_IS_EGL "false")
   set(SK_TARGET_CPU "")
   set(SK_GL_STANDARD "")
@@ -362,7 +396,7 @@ skia_use_vulkan=false \
 skia_enable_vulkan_debug_layers=false \
 skia_enable_spirv_validation=false \
 skia_use_icu=false \
-skia_enable_ccpr=false \
+skia_enable_ccpr=${SK_IS_ccpr} \
 skia_enable_nvpr=false \
 skia_use_expat=false \
 skia_enable_skottie=true \
@@ -390,6 +424,10 @@ skia_enable_fontmgr_custom=true \
 skia_use_libheif=false \
 skia_enable_skpicture=true \
 skia_enable_skshaper=true \
+skia_use_x11=true \
+skia_lex=false \
+skia_compile_processors=${SK_IS_processors} \
+skia_generate_workarounds=${SK_IS_workarounds} \
 skia_use_harfbuzz=true"
 
 # \
@@ -545,6 +583,9 @@ set(SKIA_DEFINES
 #<listOptionValue builtIn="false" value="SK_IGNORE_LINEONLY_AA_CONVEX_PATH_OPTS"/>
 #<listOptionValue builtIn="false" value="SK_SUPPORT_GPU=1"/>
 
+list(APPEND SKIA_DEFINES SKOTTIE_HACK)
+list(APPEND SKIA_DEFINES SKOTTIE_HACK=1)
+
 if (EMSCRIPTEN)
   list(APPEND SKIA_DEFINES SK_CPU_SSE_LEVEL=0)
   list(APPEND SKIA_DEFINES SKNX_NO_SIMD)
@@ -557,8 +598,6 @@ if (EMSCRIPTEN)
   #list(APPEND SKIA_DEFINES SK_ASSUME_GL=1)
   list(APPEND SKIA_DEFINES IS_WEBGL)
   list(APPEND SKIA_DEFINES IS_WEBGL=1)
-  list(APPEND SKIA_DEFINES SKOTTIE_HACK)
-  list(APPEND SKIA_DEFINES SKOTTIE_HACK=1)
   list(APPEND SKIA_DEFINES LIBANGLE_IMPLEMENTATION=1)
   list(APPEND SKIA_DEFINES LIBGLESV2_IMPLEMENTATION=1)
   list(APPEND SKIA_DEFINES LIBEGL_IMPLEMENTATION=1)
@@ -641,85 +680,79 @@ message(STATUS "SKIA_HEADERS=${SKIA_HEADERS}")
 message(STATUS "SKIA_DEPENDENCIES=${SKIA_DEPENDENCIES}")
 
 if (EXT_SKIA_SHARED)
-  add_library(SKIA SHARED IMPORTED GLOBAL)
-  set(SKIA_LIBRARY "${SKIA_BUILD_DIR}/${CMAKE_SHARED_LIBRARY_PREFIX}skia${CMAKE_SHARED_LIBRARY_SUFFIX}")
-  #
-  add_library(pathkit SHARED IMPORTED GLOBAL)
-  set(PATHKIT_LIBRARY "${SKIA_BUILD_DIR}/${CMAKE_SHARED_LIBRARY_PREFIX}pathkit${CMAKE_SHARED_LIBRARY_SUFFIX}")
+  set(SKIA_LIBRARY_PREFIX "${CMAKE_SHARED_LIBRARY_PREFIX}")
+  set(SKIA_LIBRARY_SUFFIX "${CMAKE_SHARED_LIBRARY_SUFFIX}")
+  message(FATAL_ERROR "TODO: SUPPORT SHARED BUILDS") # TODO
+  set(SK_LIBRARY_TYPE SHARED)
 else (EXT_SKIA_SHARED)
-  add_library(SKIA STATIC IMPORTED GLOBAL)
-  set(SKIA_LIBRARY "${SKIA_BUILD_DIR}/${CMAKE_STATIC_LIBRARY_PREFIX}skia${CMAKE_STATIC_LIBRARY_SUFFIX}")
-  #
-  add_library(pathkit SHARED IMPORTED GLOBAL)
-  set(PATHKIT_LIBRARY "${SKIA_BUILD_DIR}/${CMAKE_STATIC_LIBRARY_PREFIX}pathkit${CMAKE_STATIC_LIBRARY_SUFFIX}")
-  #
-  add_library(sksg SHARED IMPORTED GLOBAL)
-  set(sksg_LIBRARY "${SKIA_BUILD_DIR}/${CMAKE_STATIC_LIBRARY_PREFIX}sksg${CMAKE_STATIC_LIBRARY_SUFFIX}")
-  #
-  add_library(skshaper SHARED IMPORTED GLOBAL)
-  set(skshaper_LIBRARY "${SKIA_BUILD_DIR}/${CMAKE_STATIC_LIBRARY_PREFIX}skshaper${CMAKE_STATIC_LIBRARY_SUFFIX}")
-  #
-  add_library(skottie SHARED IMPORTED GLOBAL)
-  set(skottie_LIBRARY "${SKIA_BUILD_DIR}/${CMAKE_STATIC_LIBRARY_PREFIX}skottie${CMAKE_STATIC_LIBRARY_SUFFIX}")
-  #
-  add_library(particles SHARED IMPORTED GLOBAL)
-  set(particles_LIBRARY "${SKIA_BUILD_DIR}/${CMAKE_STATIC_LIBRARY_PREFIX}particles${CMAKE_STATIC_LIBRARY_SUFFIX}")
-  #
-  add_library(wuffs SHARED IMPORTED GLOBAL)
-  set(wuffs_LIBRARY "${SKIA_BUILD_DIR}/${CMAKE_STATIC_LIBRARY_PREFIX}wuffs${CMAKE_STATIC_LIBRARY_SUFFIX}")
-  #
-  add_library(jpeg SHARED IMPORTED GLOBAL)
-  set(jpeg_LIBRARY "${SKIA_BUILD_DIR}/${CMAKE_STATIC_LIBRARY_PREFIX}jpeg${CMAKE_STATIC_LIBRARY_SUFFIX}")
+  set(SKIA_LIBRARY_PREFIX "${CMAKE_STATIC_LIBRARY_PREFIX}")
+  set(SKIA_LIBRARY_SUFFIX "${CMAKE_STATIC_LIBRARY_SUFFIX}")
+  set(SK_LIBRARY_TYPE STATIC)
 endif (EXT_SKIA_SHARED)
 
-set_target_properties(SKIA PROPERTIES
-  IMPORTED_LOCATION "${SKIA_LIBRARY}"
-  INTERFACE_INCLUDE_DIRECTORIES "${SKIA_HEADERS}"
-  INTERFACE_COMPILE_DEFINITIONS "${SKIA_DEFINES}"
-  IMPORTED_LINK_INTERFACE_LIBRARIES "${SKIA_DEPENDENCIES}"
-)
+if(EMSCRIPTEN)
+  set(SK_LIBRARY_TYPE STATIC) # FORCE STATIC
+else()
+  # TODO
+endif() # EMSCRIPTEN
+
+add_library(SKIA STATIC IMPORTED GLOBAL)
+if(NOT TARGET SKIA)
+  message(FATAL_ERROR "SKIA LIB NOT FOUND")
+endif()
+set(SKIA_LIBRARY "${SKIA_BUILD_DIR}/${SKIA_LIBRARY_PREFIX}skia${SKIA_LIBRARY_SUFFIX}")
 #
-set_target_properties(pathkit PROPERTIES
-  IMPORTED_LOCATION "${PATHKIT_LIBRARY}"
-  INTERFACE_INCLUDE_DIRECTORIES "${SKIA_HEADERS}"
-  INTERFACE_COMPILE_DEFINITIONS "${SKIA_DEFINES}"
-  IMPORTED_LINK_INTERFACE_LIBRARIES "${SKIA_DEPENDENCIES}"
-)
+add_library(pathkit ${SK_LIBRARY_TYPE} IMPORTED GLOBAL)
+if(NOT TARGET pathkit)
+  message(FATAL_ERROR "SKIA LIB NOT FOUND")
+endif()
+set(PATHKIT_LIBRARY "${SKIA_BUILD_DIR}/${SKIA_LIBRARY_PREFIX}pathkit${SKIA_LIBRARY_SUFFIX}")
 #
-set_target_properties(sksg PROPERTIES
-  IMPORTED_LOCATION "${sksg_LIBRARY}"
-  INTERFACE_INCLUDE_DIRECTORIES "${SKIA_HEADERS}"
-  INTERFACE_COMPILE_DEFINITIONS "${SKIA_DEFINES}"
-  IMPORTED_LINK_INTERFACE_LIBRARIES "${SKIA_DEPENDENCIES}"
-)
+add_library(sksg ${SK_LIBRARY_TYPE} IMPORTED GLOBAL)
+if(NOT TARGET sksg)
+  message(FATAL_ERROR "SKIA LIB NOT FOUND")
+endif()
+set(sksg_LIBRARY "${SKIA_BUILD_DIR}/${SKIA_LIBRARY_PREFIX}sksg${SKIA_LIBRARY_SUFFIX}")
 #
-set_target_properties(skshaper PROPERTIES
-  IMPORTED_LOCATION "${skshaper_LIBRARY}"
-  INTERFACE_INCLUDE_DIRECTORIES "${SKIA_HEADERS}"
-  INTERFACE_COMPILE_DEFINITIONS "${SKIA_DEFINES}"
-  IMPORTED_LINK_INTERFACE_LIBRARIES "${SKIA_DEPENDENCIES}"
-)
+add_library(skshaper ${SK_LIBRARY_TYPE} IMPORTED GLOBAL)
+if(NOT TARGET skshaper)
+  message(FATAL_ERROR "SKIA LIB NOT FOUND")
+endif()
+set(skshaper_LIBRARY "${SKIA_BUILD_DIR}/${SKIA_LIBRARY_PREFIX}skshaper${SKIA_LIBRARY_SUFFIX}")
 #
-set_target_properties(skottie PROPERTIES
-  IMPORTED_LOCATION "${skottie_LIBRARY}"
-  INTERFACE_INCLUDE_DIRECTORIES "${SKIA_HEADERS}"
-  INTERFACE_COMPILE_DEFINITIONS "${SKIA_DEFINES}"
-  IMPORTED_LINK_INTERFACE_LIBRARIES "${SKIA_DEPENDENCIES}"
-)
+add_library(skottie ${SK_LIBRARY_TYPE} IMPORTED GLOBAL)
+if(NOT TARGET skottie)
+  message(FATAL_ERROR "SKIA LIB NOT FOUND")
+endif()
+set(skottie_LIBRARY "${SKIA_BUILD_DIR}/${SKIA_LIBRARY_PREFIX}skottie${SKIA_LIBRARY_SUFFIX}")
 #
-set_target_properties(particles PROPERTIES
-  IMPORTED_LOCATION "${particles_LIBRARY}"
-  INTERFACE_INCLUDE_DIRECTORIES "${SKIA_HEADERS}"
-  INTERFACE_COMPILE_DEFINITIONS "${SKIA_DEFINES}"
-  IMPORTED_LINK_INTERFACE_LIBRARIES "${SKIA_DEPENDENCIES}"
-)
+add_library(particles ${SK_LIBRARY_TYPE} IMPORTED GLOBAL)
+if(NOT TARGET particles)
+  message(FATAL_ERROR "SKIA LIB NOT FOUND")
+endif()
+set(particles_LIBRARY "${SKIA_BUILD_DIR}/${SKIA_LIBRARY_PREFIX}particles${SKIA_LIBRARY_SUFFIX}")
 #
+add_library(wuffs ${SK_LIBRARY_TYPE} IMPORTED GLOBAL)
+if(NOT TARGET wuffs)
+  message(FATAL_ERROR "SKIA LIB NOT FOUND")
+endif()
+set(wuffs_LIBRARY "${SKIA_BUILD_DIR}/${SKIA_LIBRARY_PREFIX}wuffs${SKIA_LIBRARY_SUFFIX}")
+#
+add_library(jpeg ${SK_LIBRARY_TYPE} IMPORTED GLOBAL)
+if(NOT TARGET jpeg)
+  message(FATAL_ERROR "SKIA LIB NOT FOUND")
+endif()
+set(jpeg_LIBRARY "${SKIA_BUILD_DIR}/${SKIA_LIBRARY_PREFIX}jpeg${SKIA_LIBRARY_SUFFIX}")
+
+#
+#message(FATAL_ERROR "${skottie_LIBRARY}")
 set_target_properties(wuffs PROPERTIES
   IMPORTED_LOCATION "${wuffs_LIBRARY}"
   INTERFACE_INCLUDE_DIRECTORIES "${SKIA_HEADERS}"
   INTERFACE_COMPILE_DEFINITIONS "${SKIA_DEFINES}"
   IMPORTED_LINK_INTERFACE_LIBRARIES "${SKIA_DEPENDENCIES}"
 )
+add_dependencies(wuffs SKIA_build)
 #
 set_target_properties(jpeg PROPERTIES
   IMPORTED_LOCATION "${jpeg_LIBRARY}"
@@ -727,12 +760,91 @@ set_target_properties(jpeg PROPERTIES
   INTERFACE_COMPILE_DEFINITIONS "${SKIA_DEFINES}"
   IMPORTED_LINK_INTERFACE_LIBRARIES "${SKIA_DEPENDENCIES}"
 )
-
-add_dependencies(SKIA SKIA_build)
+add_dependencies(jpeg SKIA_build)
+#
+set_target_properties(SKIA PROPERTIES
+  IMPORTED_LOCATION "${SKIA_LIBRARY}"
+  INTERFACE_INCLUDE_DIRECTORIES "${SKIA_HEADERS}"
+  INTERFACE_COMPILE_DEFINITIONS "${SKIA_DEFINES}"
+  # https://stackoverflow.com/a/28102243/10904212
+  #IMPORTED_LINK_INTERFACE_LIBRARIES "${SKIA_DEPENDENCIES}"
+  IMPORTED_LINK_INTERFACE_LIBRARIES "${wuffs_LIBRARY};${jpeg_LIBRARY};${SKIA_DEPENDENCIES}"
+)
+add_dependencies(SKIA SKIA_build wuffs jpeg)
+# https://stackoverflow.com/a/53945809
+target_link_libraries(SKIA INTERFACE
+  wuffs jpeg)
+#
+set_target_properties(pathkit PROPERTIES
+  IMPORTED_LOCATION "${PATHKIT_LIBRARY}"
+  INTERFACE_INCLUDE_DIRECTORIES "${SKIA_HEADERS}"
+  INTERFACE_COMPILE_DEFINITIONS "${SKIA_DEFINES}"
+  # https://stackoverflow.com/a/28102243/10904212
+  IMPORTED_LINK_INTERFACE_LIBRARIES "${SKIA_LIBRARY};${SKIA_DEPENDENCIES}"
+)
+add_dependencies(pathkit SKIA)
+# https://stackoverflow.com/a/53945809
+target_link_libraries(pathkit INTERFACE
+  SKIA)
+#
+set_target_properties(skshaper PROPERTIES
+  IMPORTED_LOCATION "${skshaper_LIBRARY}"
+  INTERFACE_INCLUDE_DIRECTORIES "${SKIA_HEADERS}"
+  INTERFACE_COMPILE_DEFINITIONS "${SKIA_DEFINES}"
+  # https://stackoverflow.com/a/28102243/10904212
+  #IMPORTED_LINK_INTERFACE_LIBRARIES "${SKIA_DEPENDENCIES}"
+  IMPORTED_LINK_INTERFACE_LIBRARIES "${SKIA_LIBRARY};${SKIA_DEPENDENCIES}"
+)
+add_dependencies(skshaper SKIA)# https://stackoverflow.com/a/53945809
+# https://stackoverflow.com/a/53945809
+target_link_libraries(skshaper INTERFACE
+  SKIA)
+#
+set_target_properties(sksg PROPERTIES
+  IMPORTED_LOCATION "${sksg_LIBRARY}"
+  INTERFACE_INCLUDE_DIRECTORIES "${SKIA_HEADERS}"
+  INTERFACE_COMPILE_DEFINITIONS "${SKIA_DEFINES}"
+  # https://stackoverflow.com/a/28102243/10904212
+  #IMPORTED_LINK_INTERFACE_LIBRARIES "${SKIA_DEPENDENCIES}"
+  IMPORTED_LINK_INTERFACE_LIBRARIES "${SKIA_LIBRARY};${skshaper_LIBRARY};${SKIA_DEPENDENCIES}"
+)
+add_dependencies(sksg SKIA skshaper)
+# https://stackoverflow.com/a/53945809
+target_link_libraries(sksg INTERFACE
+  SKIA skshaper)
+#
+#message(FATAL_ERROR "${skottie_LIBRARY}")
+#message(FATAL_ERROR "${SKIA_LIBRARY};${SKIA_DEPENDENCIES}")
+set_target_properties(skottie PROPERTIES
+  IMPORTED_LOCATION "${skottie_LIBRARY}"
+  INTERFACE_INCLUDE_DIRECTORIES "${SKIA_HEADERS}"
+  INTERFACE_COMPILE_DEFINITIONS "${SKIA_DEFINES}"
+  # https://stackoverflow.com/a/28102243/10904212
+  #IMPORTED_LINK_INTERFACE_LIBRARIES "${SKIA_DEPENDENCIES}"
+  IMPORTED_LINK_INTERFACE_LIBRARIES "${SKIA_LIBRARY};${sksg_LIBRARY};${skshaper_LIBRARY};${SKIA_DEPENDENCIES}"
+)
+# https://stackoverflow.com/a/53945809
+target_link_libraries(skottie INTERFACE
+  SKIA sksg skshaper)
+add_dependencies(skottie SKIA sksg skshaper)
+#
+set_target_properties(particles PROPERTIES
+  IMPORTED_LOCATION "${particles_LIBRARY}"
+  INTERFACE_INCLUDE_DIRECTORIES "${SKIA_HEADERS}"
+  INTERFACE_COMPILE_DEFINITIONS "${SKIA_DEFINES}"
+  # https://stackoverflow.com/a/28102243/10904212
+  #IMPORTED_LINK_INTERFACE_LIBRARIES "${SKIA_DEPENDENCIES}"
+  IMPORTED_LINK_INTERFACE_LIBRARIES "${SKIA_LIBRARY};${SKIA_DEPENDENCIES}"
+)
+# https://stackoverflow.com/a/53945809
+target_link_libraries(particles INTERFACE
+  SKIA)
+add_dependencies(particles SKIA)
 
 set(PROJECT_SRC
   src/main.cpp
   # skottie
+  # https://github.com/klzgrad/naiveproxy/blob/master/src/third_party/skia/modules/skottie/BUILD.gn#L45
   thirdparty/skia/modules/skottie/utils/SkottieUtils.cpp
   # skia effects
   thirdparty/skia/src/c/sk_effects.cpp
@@ -812,6 +924,7 @@ set(PROJECT_SRC
   #"$_src/utils/win/SkWGL.h",
   #"$_src/utils/win/SkWGL_win.cpp",
   # effects_imagefilters (effects_imagefilters.gni)
+  # https://chromium.googlesource.com/skia/+/master/gn/effects_imagefilters.gni
   thirdparty/skia/src/effects/imagefilters/SkAlphaThresholdFilter.cpp
   thirdparty/skia/src/effects/imagefilters/SkArithmeticImageFilter.cpp
   thirdparty/skia/src/effects/imagefilters/SkBlurImageFilter.cpp
@@ -840,12 +953,16 @@ add_executable(${PROJECT_NAME}
   ${PROJECT_SRC}
   #DEPENDS SKIA
 )
+
 add_dependencies(${PROJECT_NAME}
-    SKIA
-    skottie
-    sksg
-    skshaper
-    particles
+  wuffs
+  jpeg
+  pathkit
+  SKIA
+  sksg
+  skshaper
+  particles
+  skottie
 )
 
 # https://www.mail-archive.com/emscripten-discuss@googlegroups.com/msg07864.html
@@ -887,8 +1004,16 @@ if(EMSCRIPTEN)
   target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE
     ${SKIA_INCLUDES}
   )
-  target_link_libraries(${PROJECT_NAME}
+  # link order is top down:
+  # Top is the executable, followed by directly used libraries.
+  # see https://floooh.github.io/2016/01/12/cmake-dependency-juggling.html
+  target_link_libraries(${PROJECT_NAME} PUBLIC
     ${WTF_LIBRARY_NAME}
+    base
+    libevent
+    icu
+    # tcmalloc only for posix/linux/e.t.c.
+    #tcmalloc
     #
     SKIA
     skottie
@@ -910,8 +1035,16 @@ else()
     ${HARFBUZZ_INCLUDE_DIRS}
     #${OPENGLES2_INCLUDE_DIR}
   )
-  target_link_libraries(${PROJECT_NAME}
+  # link order is top down:
+  # Top is the executable, followed by directly used libraries.
+  # see https://floooh.github.io/2016/01/12/cmake-dependency-juggling.html
+  target_link_libraries(${PROJECT_NAME} PUBLIC
     ${WTF_LIBRARY_NAME}
+    base
+    libevent
+    icu
+    # tcmalloc only for posix/linux/e.t.c.
+    tcmalloc
     #
     SKIA
     skottie
@@ -921,6 +1054,7 @@ else()
     pathkit
     wuffs
     jpeg
+    #
     #
     ${SDL2_TTF_INCLUDE_DIR}
     ${HARFBUZZ_LIBRARIES}
