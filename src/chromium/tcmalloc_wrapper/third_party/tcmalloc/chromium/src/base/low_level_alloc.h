@@ -86,6 +86,12 @@ class LowLevelAlloc {
     // Set in the DefaultArena.
     kCallMallocHook = 0x0001,
 
+    // Using LowLevelAlloc with kAsyncSignalSafe isn't supported on Windows or
+    // asm.js / WebAssembly.
+    // See https://kripken.github.io/emscripten-site/docs/porting/pthreads.html
+    // for more information.
+    // https://github.com/abseil/abseil-cpp/blob/master/absl/base/internal/low_level_alloc.h
+
     // Make calls to Alloc(), Free() be async-signal-safe.  Not set in
     // DefaultArena().
     kAsyncSignalSafe = 0x0002,

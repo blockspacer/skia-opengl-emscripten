@@ -86,7 +86,7 @@
 #if defined(OS_AIX) || defined(OS_ANDROID) || defined(OS_ASMJS) ||    \
     defined(OS_FREEBSD) || defined(OS_LINUX) || defined(OS_MACOSX) || \
     defined(OS_NACL) || defined(OS_NETBSD) || defined(OS_OPENBSD) ||  \
-    defined(OS_QNX) || defined(OS_SOLARIS)
+    defined(OS_QNX) || defined(OS_SOLARIS) || defined(OS_EMSCRIPTEN)
 #define OS_POSIX 1
 #endif
 
@@ -115,7 +115,10 @@
 #define ARCH_CPU_64_BITS 1
 #define ARCH_CPU_LITTLE_ENDIAN 1
 #elif defined(EMSCRIPTEN) || defined(__EMSCRIPTEN__) || defined(OS_EMSCRIPTEN)
+// https://github.com/TunSafe/TunSafe/blob/master/build_config.h#L107
 #define ARCH_CPU_JS 1
+//#define ARCH_CPU_X86_FAMILY 1
+//#define ARCH_CPU_X86 1
 #define ARCH_CPU_32_BITS 1
 #define ARCH_CPU_LITTLE_ENDIAN 1
 #elif defined(_M_IX86) || defined(__i386__)

@@ -103,6 +103,10 @@ sigset_t SetSignalMask(const sigset_t& new_sigmask) {
   // http://stackoverflow.com/questions/13777109/pthread-sigmask-on-android-not-working
   RAW_CHECK(sigprocmask(SIG_SETMASK, &new_sigmask, &old_sigmask) == 0);
 #else
+#if defined(OS_EMSCRIPTEN)
+// https://github.com/abseil/abseil-cpp/blob/master/absl/base/internal/thread_identity.cc#L72
+#error "Emscripten PThread implementation does not support signals."
+#endif // OS_EMSCRIPTEN
   RAW_CHECK(pthread_sigmask(SIG_SETMASK, &new_sigmask, &old_sigmask) == 0);
 #endif
   return old_sigmask;

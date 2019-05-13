@@ -167,6 +167,14 @@
 
 #include "third_party/blink/renderer/platform/wtf/vector.h"
 
+#include "third_party/blink/renderer/platform/wtf/text/wtf_string.h"
+#include <limits>
+#include "base/stl_util.h"
+#include "third_party/blink/renderer/platform/wtf/math_extras.h"
+#include "third_party/blink/renderer/platform/wtf/text/cstring.h"
+
+#include "third_party/blink/renderer/platform/wtf/text/string_impl.h"
+
 #include "base/base_switches.h"
 #include "base/command_line.h"
 #include "base/containers/small_map.h"
@@ -176,6 +184,34 @@
 /// @note init allocator before executing any code.
 #include "base/allocator/partition_allocator/page_allocator.h"
 #include "third_party/blink/renderer/platform/wtf/allocator/partitions.h"
+
+#include "base/memory/scoped_refptr.h"
+
+#include "base/memory/ref_counted_memory.h"
+#include <stdint.h>
+#include <utility>
+#include "base/memory/read_only_shared_memory_region.h"
+#include "base/stl_util.h"
+//#include "testing/gmock/include/gmock/gmock.h"
+//#include "testing/gtest/include/gtest/gtest.h"
+
+#include "third_party/blink/renderer/platform/wtf/text/atomic_string.h"
+
+#include "third_party/blink/renderer/platform/wtf/dtoa/dtoa.h"
+
+
+#include "third_party/blink/renderer/platform/wtf/functional.h"
+#include <memory>
+#include <utility>
+#include "base/bind.h"
+#include "base/memory/weak_ptr.h"
+//#include "base/test/gtest_util.h"
+#include "base/threading/thread.h"
+//#include "testing/gtest/include/gtest/gtest.h"
+#include "third_party/blink/renderer/platform/wtf/allocator.h"
+#include "third_party/blink/renderer/platform/wtf/leak_annotations.h"
+#include "third_party/blink/renderer/platform/wtf/ref_counted.h"
+//#include "third_party/blink/renderer/platform/wtf/wtf_test_helper.h"
 
 /*#include <stddef.h>
 
@@ -750,6 +786,24 @@ https://github.com/chromium/chromium/blob/master/third_party/blink/renderer/plat
       CrossThreadBind(function, CrossThreadUnretained(context)));
 }*/
 
+static void MakeClosure(base::OnceClosure** closure_out) {
+  *closure_out = new base::OnceClosure(WTF::Bind([] {
+    printf("OnceClosure!\n");
+  }));
+  LEAK_SANITIZER_IGNORE_OBJECT(*closure_out);
+}
+
+
+class BindChecks{
+public:
+  int Run(){
+    return base::BindOnce(&BindChecks::ConstNoexceptMethod, base::Unretained(this))
+              .Run();
+  }
+
+  int ConstNoexceptMethod() const noexcept { return 42; }
+};
+
 int main(int argc, char** argv) {
   printf("Init alloc ...\n");
   // see
@@ -773,12 +827,162 @@ int main(int argc, char** argv) {
   printf("Init Partitions ...\n");
   // see
   // https://github.com/chromium/chromium/blob/master/third_party/blink/renderer/platform/exported/platform.cc#L119
-  WTF::Partitions::Initialize(nullptr);
+  WTF::Partitions::Initialize(nullptr); // TODO
 
   printf("Init WTF ...\n");
   WTF::Initialize(nullptr); // TODO
-
   printf("Testing ...\n");
+
+  {
+    BindChecks bc;
+    printf("BindChecks ... %d\n", bc.Run());
+  }
+
+  WTF::Bind([] {
+    printf("WTF::Bind!\n");
+  }).Run();
+
+  base::OnceClosure* closure = nullptr;
+  base::OnceCallback<void()> binded = base::BindOnce(&MakeClosure, &closure);
+  //std::move(binded).Run();
+  /*{
+
+    base::Thread thread("testing");
+    thread.Start();
+    thread.task_runner()->PostTask(FROM_HERE, binded);
+    thread.Stop();
+  }*/
+
+  {
+    WTF::NumberToStringBuffer buffer;
+    WTF::NumberToFixedPrecisionString(0.000000123123123, 6, buffer);
+    //EXPECT_STREQ("1.23123e-7", buffer);
+    printf("EXPECT_EQ 1.23123e-7 %s...\n", buffer);
+
+    // Up to 6 places before the decimal.
+    WTF::NumberToFixedPrecisionString(123123.123, 6, buffer);
+    //EXPECT_STREQ("123123", buffer);
+    printf("EXPECT_EQ 123123 %s...\n", buffer);
+  }
+
+  {
+    int16_t int_value = 1234;
+    //EXPECT_EQ("1234", AtomicString::Number(int_value));
+    printf("EXPECT_EQ 1234 %s...\n", AtomicString::Number(int_value).Ascii().data());
+    int_value = -1234;
+    //EXPECT_EQ("-1234", AtomicString::Number(int_value));
+    printf("EXPECT_EQ -1234 %s...\n", AtomicString::Number(int_value).Ascii().data());
+    uint16_t unsigned_value = 1234u;
+    //EXPECT_EQ("1234", AtomicString::Number(unsigned_value));
+    printf("EXPECT_EQ 1234 %s...\n", AtomicString::Number(unsigned_value).Ascii().data());
+    int32_t long_value = 6553500;
+    //EXPECT_EQ("6553500", AtomicString::Number(long_value));
+    printf("EXPECT_EQ 6553500 %s...\n", AtomicString::Number(long_value).Ascii().data());
+    long_value = -6553500;
+    //EXPECT_EQ("-6553500", AtomicString::Number(long_value));
+    printf("EXPECT_EQ -6553500 %s...\n", AtomicString::Number(long_value).Ascii().data());
+    uint32_t unsigned_long_value = 4294967295u;
+    //EXPECT_EQ("4294967295", AtomicString::Number(unsigned_long_value));
+    printf("EXPECT_EQ 4294967295 %s...\n", AtomicString::Number(unsigned_long_value).Ascii().data());
+    int64_t longlong_value = 9223372036854775807;
+    //EXPECT_EQ("9223372036854775807", AtomicString::Number(longlong_value));
+    printf("EXPECT_EQ 9223372036854775807 %s...\n", AtomicString::Number(longlong_value).Ascii().data());
+    longlong_value = -9223372036854775807;
+    //EXPECT_EQ("-9223372036854775807", AtomicString::Number(longlong_value));
+    printf("EXPECT_EQ -9223372036854775807 %s...\n", AtomicString::Number(longlong_value).Ascii().data());
+    uint64_t unsigned_long_long_value = 18446744073709551615u;
+    //EXPECT_EQ("18446744073709551615",
+    //          AtomicString::Number(unsigned_long_long_value));
+    printf("EXPECT_EQ 18446744073709551615 %s...\n", AtomicString::Number(unsigned_long_long_value).Ascii().data());
+    double double_value = 1234.56;
+    //EXPECT_EQ("1234.56", AtomicString::Number(double_value));
+    printf("EXPECT_EQ 1234.56 %s...\n", AtomicString::Number(double_value).Ascii().data());
+    double_value = 1234.56789;
+    //EXPECT_EQ("1234.56789", AtomicString::Number(double_value, 9));
+    printf("EXPECT_EQ 1234.56789 %s...\n", AtomicString::Number(double_value, 9).Ascii().data());
+  }
+
+  {
+    scoped_refptr<StringImpl> test_string_impl = StringImpl::Create("link");
+    printf("EXPECT_TRUE Is8Bit %d...\n", test_string_impl->Is8Bit());
+    //EXPECT_TRUE(test_string_impl->Is8Bit());
+    printf("EXPECT_TRUE Is8Bit %d...\n", StringImpl::Create("a\xE1")->Is8Bit());
+    //EXPECT_TRUE(StringImpl::Create("a\xE1")->Is8Bit());
+
+    /*EXPECT_TRUE(Equal(test_string_impl.get(),
+                      StringImpl::Create("link")->LowerASCII().get()));
+    EXPECT_TRUE(Equal(test_string_impl.get(),
+                      StringImpl::Create("LINK")->LowerASCII().get()));
+    EXPECT_TRUE(Equal(test_string_impl.get(),
+                      StringImpl::Create("lInk")->LowerASCII().get()));
+
+    EXPECT_TRUE(Equal(StringImpl::Create("LINK")->LowerUnicode().get(),
+                      StringImpl::Create("LINK")->LowerASCII().get()));
+    EXPECT_TRUE(Equal(StringImpl::Create("lInk")->LowerUnicode().get(),
+                      StringImpl::Create("lInk")->LowerASCII().get()));
+
+    EXPECT_TRUE(Equal(StringImpl::Create("a\xE1").get(),
+                      StringImpl::Create("A\xE1")->LowerASCII().get()));
+    EXPECT_TRUE(Equal(StringImpl::Create("a\xC1").get(),
+                      StringImpl::Create("A\xC1")->LowerASCII().get()));
+
+    EXPECT_FALSE(Equal(StringImpl::Create("a\xE1").get(),
+                       StringImpl::Create("a\xC1")->LowerASCII().get()));
+    EXPECT_FALSE(Equal(StringImpl::Create("A\xE1").get(),
+                       StringImpl::Create("A\xC1")->LowerASCII().get()));*/
+
+    static const UChar kTest[5] = {0x006c, 0x0069, 0x006e, 0x006b, 0};  // link
+    static const UChar kTestCapitalized[5] = {0x004c, 0x0049, 0x004e, 0x004b,
+                                              0};  // LINK
+
+    scoped_refptr<StringImpl> test_string_impl16 = StringImpl::Create(kTest, 4);
+    //EXPECT_FALSE(test_string_impl16->Is8Bit());
+    printf("EXPECT_FALSE Is8Bit %d...\n", test_string_impl16->Is8Bit());
+
+    //EXPECT_TRUE(Equal(test_string_impl16.get(),
+    //                  StringImpl::Create(kTest, 4)->LowerASCII().get()));
+    //EXPECT_TRUE(
+    //    Equal(test_string_impl16.get(),
+    //          StringImpl::Create(kTestCapitalized, 4)->LowerASCII().get()));
+
+    /*static const UChar kTestWithNonASCII[3] = {0x0061, 0x00e1, 0};  // a\xE1
+    static const UChar kTestWithNonASCIIComparison[3] = {0x0061, 0x00c1,
+                                                         0};  // a\xC1
+    static const UChar kTestWithNonASCIICapitalized[3] = {0x0041, 0x00e1,
+                                                          0};  // A\xE1*/
+
+    // Make sure we support scoped_refptr<const StringImpl>.
+    scoped_refptr<const StringImpl> const_ref = test_string_impl->IsolatedCopy();
+    DCHECK(const_ref->HasOneRef());
+    //EXPECT_TRUE(Equal(
+    //    StringImpl::Create(kTestWithNonASCII, 2).get(),
+    //    StringImpl::Create(kTestWithNonASCIICapitalized, 2)->LowerASCII().get()));
+    //EXPECT_FALSE(Equal(
+    //    StringImpl::Create(kTestWithNonASCII, 2).get(),
+    //    StringImpl::Create(kTestWithNonASCIIComparison, 2)->LowerASCII().get()));
+  }
+
+  {
+    WTF::String test_string = "1224";
+    String string_from_literal("Explicit construction syntax");
+    printf("strlen %d = %d...\n", strlen("Explicit construction syntax"), string_from_literal.length());
+    printf("Ascii().data() %s...\n", string_from_literal.Ascii().data());
+    printf("Is8Bit %d...\n", string_from_literal.Is8Bit());
+    /// TODO: FIXME ON WASM (EMSCRIPTEN)
+    /// string_view.cc(19) Check failed: !impl_->HasOneRef() || impl_->IsStatic()
+    // TODO
+    // printf("EXPECT_EQ literal == %d...\n", string_from_literal == "Explicit construction syntax");
+    printf("EXPECT_EQ String == %d...\n", String("Explicit construction syntax") == string_from_literal);
+  }
+
+  {
+    WTF::String test_string = String::FromUTF8("r\xC3\xA9sum\xC3\xA9");
+    printf("EXPECT_FALSE %d...\n", test_string.Is8Bit());
+    test_string.Replace(UChar(0x00E9), "e");
+    /// TODO: FIXME ON WASM (EMSCRIPTEN)
+    /// string_view.cc(19) Check failed: !impl_->HasOneRef() || impl_->IsStatic()
+    printf("EXPECT_STREQ resume = %s...\n", test_string.Utf8().data());
+  }
 
   {
     WTF::Vector<int> vec;
@@ -793,6 +997,47 @@ int main(int argc, char** argv) {
   }
 
   {
+    std::string s("destroy me");
+    scoped_refptr<base::RefCountedMemory> mem = base::RefCountedString::TakeString(&s);
+
+    //EXPECT_EQ(0U, s.size());
+    printf("EXPECT_EQ %d\n", 0U == s.size());
+
+    //ASSERT_EQ(10U, mem->size());
+    printf("ASSERT_EQ %d\n", 10U == mem->size());
+    //EXPECT_EQ('d', mem->front()[0]);
+    printf("EXPECT_EQ 'd' %u\n", mem->front()[0]);
+    //EXPECT_EQ('e', mem->front()[1]);
+    printf("EXPECT_EQ 'e' %u\n", mem->front()[1]);
+    //EXPECT_EQ('e', mem->front()[9]);
+    printf("EXPECT_EQ 'e' %u\n", mem->front()[9]);
+  }
+
+  {
+    const UChar kTestBUChars[6] = {0x41, 0x95, 0xFFFF, 0x1080, 0x01, 0};
+    const unsigned kTestBHash1 = 0xEA32B004;
+    const unsigned kTestBHash2 = 0x93F0F71E;
+    //const unsigned kTestBHash3 = 0x59EB1B2C;
+    //const unsigned kTestBHash4 = 0xA7BCCC0A;
+    //const unsigned kTestBHash5 = 0x79201649;
+    WTF::StringHasher hasher;
+    hasher.AddCharacter(kTestBUChars[0]);
+    printf("EXPECT_EQ kTestBHash1 %d\n", kTestBHash1 == hasher.GetHash());
+    //EXPECT_EQ(kTestBHash1, hasher.GetHash());
+    printf("EXPECT_EQ kTestBHash1 & 0xFFFFFF %d\n", (kTestBHash1 & 0xFFFFFF) == hasher.HashWithTop8BitsMasked());
+    //EXPECT_EQ(kTestBHash1 & 0xFFFFFF, hasher.HashWithTop8BitsMasked());
+    hasher.AddCharacter(kTestBUChars[1]);
+    printf("EXPECT_EQ kTestBHash2 %d\n", kTestBHash2 == hasher.GetHash());
+    //EXPECT_EQ(kTestBHash2, hasher.GetHash());
+    printf("EXPECT_EQ kTestBHash2 & 0xFFFFFF %d\n", (kTestBHash2 & 0xFFFFFF) == hasher.HashWithTop8BitsMasked());
+    //EXPECT_EQ(kTestBHash2 & 0xFFFFFF, hasher.HashWithTop8BitsMasked());
+
+    //
+    //printf("EXPECT_EQ kTestBHash5 %d\n", kTestBHash5 == hasher.GetHash());
+    //EXPECT_EQ(kTestBHash5, hasher.GetHash());
+  }
+
+  {
     base::small_map<std::map<std::string, std::string>> foo;
     foo.insert(std::make_pair("foo", "bar"));
     foo.insert(std::make_pair("bar", "bar"));
@@ -801,15 +1046,15 @@ int main(int argc, char** argv) {
     foo.insert(std::make_pair("foo", "bar"));
     foo.insert(std::make_pair("bar", "bar"));
     auto found = foo.find("asdf");
-    printf("1 Found is %d\n", (int)(found == foo.end()));
+    printf("1 Found == foo.end() %d\n", (int)(found == foo.end()));
     found = foo.find("foo");
-    printf("2 Found is %d\n", (int)(found == foo.end()));
+    printf("2 Found == foo.end() %d\n", (int)(found == foo.end()));
     found = foo.find("bar");
-    printf("3 Found is %d\n", (int)(found == foo.end()));
+    printf("3 Found == foo.end() %d\n", (int)(found == foo.end()));
     found = foo.find("asdfhf");
-    printf("4 Found is %d\n", (int)(found == foo.end()));
+    printf("4 Found == foo.end() %d\n", (int)(found == foo.end()));
     found = foo.find("bar1");
-    printf("5 Found is %d\n", (int)(found == foo.end()));
+    printf("5 Found == foo.end() %d\n", (int)(found == foo.end()));
   }
 
   printf("Starting ...\n");

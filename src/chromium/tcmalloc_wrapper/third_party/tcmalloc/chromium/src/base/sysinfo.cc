@@ -262,7 +262,9 @@ void SleepForMilliseconds(int milliseconds) {
 
 int GetSystemCPUsCount()
 {
-#if defined(PLATFORM_WINDOWS)
+#if defined(OS_EMSCRIPTEN)
+  return 1;
+#elif defined(PLATFORM_WINDOWS)
   // Get the number of processors.
   SYSTEM_INFO info;
   GetSystemInfo(&info);

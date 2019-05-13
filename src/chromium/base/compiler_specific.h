@@ -223,7 +223,7 @@
 #endif
 
 // Macro for telling -Wimplicit-fallthrough that a fallthrough is intentional.
-#if defined(__clang__)
+#if defined(__clang__) || defined(OS_EMSCRIPTEN)
 #define FALLTHROUGH [[clang::fallthrough]]
 #else
 #define FALLTHROUGH

@@ -132,46 +132,46 @@ endif()
 
 list(APPEND BASE_SOURCES
    # sources = [
-   #   "i18n/base_i18n_export.h",
-   #   "i18n/base_i18n_switches.cc",
-   #   "i18n/base_i18n_switches.h",
-   #   "i18n/break_iterator.cc",
-   #   "i18n/break_iterator.h",
-   #   "i18n/case_conversion.cc",
-   #   "i18n/case_conversion.h",
-   #   "i18n/char_iterator.cc",
-   #   "i18n/char_iterator.h",
-   #   "i18n/character_encoding.cc",
-   #   "i18n/character_encoding.h",
-   #   "i18n/encoding_detection.cc",
-   #   "i18n/encoding_detection.h",
-   #   "i18n/file_util_icu.cc",
-   #   "i18n/file_util_icu.h",
-   #   "i18n/i18n_constants.cc",
-   #   "i18n/i18n_constants.h",
-   #   "i18n/icu_string_conversions.cc",
-   #   "i18n/icu_string_conversions.h",
-   #   "i18n/icu_util.cc",
-   #   "i18n/icu_util.h",
-   #   "i18n/message_formatter.cc",
-   #   "i18n/message_formatter.h",
-   #   "i18n/number_formatting.cc",
-   #   "i18n/number_formatting.h",
-   #   "i18n/rtl.cc",
-   #   "i18n/rtl.h",
-   #   "i18n/streaming_utf8_validator.cc",
-   #   "i18n/streaming_utf8_validator.h",
-   #   "i18n/string_compare.cc",
-   #   "i18n/string_compare.h",
-   #   "i18n/string_search.cc",
-   #   "i18n/string_search.h",
-   #   "i18n/time_formatting.cc",
-   #   "i18n/time_formatting.h",
-   #   "i18n/timezone.cc",
-   #   "i18n/timezone.h",
-   #   "i18n/unicodestring.h",
-   #   "i18n/utf8_validator_tables.cc",
-   #   "i18n/utf8_validator_tables.h",
+   ${BASE_DIR}i18n/base_i18n_export.h
+   ${BASE_DIR}i18n/base_i18n_switches.cc
+   ${BASE_DIR}i18n/base_i18n_switches.h
+   ${BASE_DIR}i18n/break_iterator.cc
+   ${BASE_DIR}i18n/break_iterator.h
+   ${BASE_DIR}i18n/case_conversion.cc
+   ${BASE_DIR}i18n/case_conversion.h
+   ${BASE_DIR}i18n/char_iterator.cc
+   ${BASE_DIR}i18n/char_iterator.h
+   ${BASE_DIR}i18n/character_encoding.cc
+   ${BASE_DIR}i18n/character_encoding.h
+   ${BASE_DIR}i18n/encoding_detection.cc
+   ${BASE_DIR}i18n/encoding_detection.h
+   ${BASE_DIR}i18n/file_util_icu.cc
+   ${BASE_DIR}i18n/file_util_icu.h
+   ${BASE_DIR}i18n/i18n_constants.cc
+   ${BASE_DIR}i18n/i18n_constants.h
+   ${BASE_DIR}i18n/icu_string_conversions.cc
+   ${BASE_DIR}i18n/icu_string_conversions.h
+   ${BASE_DIR}i18n/icu_util.cc
+   ${BASE_DIR}i18n/icu_util.h
+   ${BASE_DIR}i18n/message_formatter.cc
+   ${BASE_DIR}i18n/message_formatter.h
+   ${BASE_DIR}i18n/number_formatting.cc
+   ${BASE_DIR}i18n/number_formatting.h
+   ${BASE_DIR}i18n/rtl.cc
+   ${BASE_DIR}i18n/rtl.h
+   ${BASE_DIR}i18n/streaming_utf8_validator.cc
+   ${BASE_DIR}i18n/streaming_utf8_validator.h
+   ${BASE_DIR}i18n/string_compare.cc
+   ${BASE_DIR}i18n/string_compare.h
+   ${BASE_DIR}i18n/string_search.cc
+   ${BASE_DIR}i18n/string_search.h
+   ${BASE_DIR}i18n/time_formatting.cc
+   ${BASE_DIR}i18n/time_formatting.h
+   ${BASE_DIR}i18n/timezone.cc
+   ${BASE_DIR}i18n/timezone.h
+   ${BASE_DIR}i18n/unicodestring.h
+   ${BASE_DIR}i18n/utf8_validator_tables.cc
+   ${BASE_DIR}i18n/utf8_validator_tables.h
    # ]
    # defines = [ "BASE_I18N_IMPLEMENTATION" ]
    # configs += [ "//build/config/compiler:wexit_time_destructors" ]
@@ -1686,10 +1686,409 @@ set(modp_b64_SOURCES
   ${modp_b64_FULL_DIR}/modp_b64_data.h
 )
 
+#set(ICU_FULL_DIR
+#  #third_party/icu/
+#  #../../thirdparty/skia/third_party/externals/icu/
+#  #../../thirdparty/icu/
+#  ${CMAKE_CURRENT_SOURCE_DIR}/third_party/icu/
+#)
+#
+#set(ICU_INCLUDE_DIRS
+#  ${ICU_FULL_DIR}
+#  #${ICU_FULL_DIR}source/common/unicode
+#  #${ICU_FULL_DIR}source/common
+#  #${ICU_FULL_DIR}source/i18n
+#  ${ICU_FULL_DIR}unicode
+#)
+#
+## find source/i18n -maxdepth 1 ! -type d | egrep '\.(c|cpp)$' |  sort | sed "s/^\(.*\)$/ '\1',/"
+## find source/common -maxdepth 1 ! -type d | egrep '\.(c|cpp)$' |  sort | sed "s/^\(.*\)$/ '\1',/"
+## see https://github.com/unicode-org/icu/tree/master/icu4c/source/common
+## see https://chromium.googlesource.com/chromium/deps/icu/+/refs/heads/master/icu.gypi
+#set(ICU_SOURCES
+# ${ICU_FULL_DIR}cmemory.c
+# ${ICU_FULL_DIR}cstring.c
+# ${ICU_FULL_DIR}cwchar.c
+# ${ICU_FULL_DIR}decContext.c
+# ${ICU_FULL_DIR}decNumber.c
+# ${ICU_FULL_DIR}icudataver.c
+# ${ICU_FULL_DIR}locmap.c
+# ${ICU_FULL_DIR}propsvec.c
+# ${ICU_FULL_DIR}uarrsort.c
+# ${ICU_FULL_DIR}ubidi.c
+# ${ICU_FULL_DIR}ubidiln.c
+# ${ICU_FULL_DIR}ubidiwrt.c
+# ${ICU_FULL_DIR}ubidi_props.c
+# ${ICU_FULL_DIR}ucat.c
+# ${ICU_FULL_DIR}uchar.c
+# ${ICU_FULL_DIR}ucmndata.c
+# ${ICU_FULL_DIR}ucnv.c
+# ${ICU_FULL_DIR}ucnvdisp.c
+# ${ICU_FULL_DIR}ucnvhz.c
+# ${ICU_FULL_DIR}ucnvisci.c
+# ${ICU_FULL_DIR}ucnvlat1.c
+# ${ICU_FULL_DIR}ucnvscsu.c
+# ${ICU_FULL_DIR}ucnv_cb.c
+# ${ICU_FULL_DIR}ucnv_cnv.c
+# ${ICU_FULL_DIR}ucnv_ct.c
+# ${ICU_FULL_DIR}ucnv_err.c
+# ${ICU_FULL_DIR}ucnv_lmb.c
+# ${ICU_FULL_DIR}ucnv_set.c
+# ${ICU_FULL_DIR}ucnv_u16.c
+# ${ICU_FULL_DIR}ucnv_u32.c
+# ${ICU_FULL_DIR}ucnv_u7.c
+# ${ICU_FULL_DIR}ucnv_u8.c
+# ${ICU_FULL_DIR}udatamem.c
+# ${ICU_FULL_DIR}udataswp.c
+# ${ICU_FULL_DIR}uenum.c
+# ${ICU_FULL_DIR}uhash.c
+# ${ICU_FULL_DIR}uinvchar.c
+# ${ICU_FULL_DIR}ulist.c
+# ${ICU_FULL_DIR}ulocdata.c
+# ${ICU_FULL_DIR}uloc_tag.c
+# ${ICU_FULL_DIR}umapfile.c
+# ${ICU_FULL_DIR}umath.c
+# ${ICU_FULL_DIR}uresdata.c
+# ${ICU_FULL_DIR}ures_cnv.c
+# ${ICU_FULL_DIR}uscript.c
+# ${ICU_FULL_DIR}usc_impl.c
+# ${ICU_FULL_DIR}ustrfmt.c
+# ${ICU_FULL_DIR}utf_impl.c
+# ${ICU_FULL_DIR}utmscale.c
+# ${ICU_FULL_DIR}utrace.c
+# ${ICU_FULL_DIR}utypes.c
+# ${ICU_FULL_DIR}wintz.c
+# ${ICU_FULL_DIR}stubdata.c
+# ${ICU_FULL_DIR}affixpatternparser.cpp
+# ${ICU_FULL_DIR}alphaindex.cpp
+# ${ICU_FULL_DIR}anytrans.cpp
+# ${ICU_FULL_DIR}appendable.cpp
+# ${ICU_FULL_DIR}astro.cpp
+# ${ICU_FULL_DIR}basictz.cpp
+# ${ICU_FULL_DIR}bmpset.cpp
+# ${ICU_FULL_DIR}bocsu.cpp
+# ${ICU_FULL_DIR}brkeng.cpp
+# ${ICU_FULL_DIR}brkiter.cpp
+# ${ICU_FULL_DIR}brktrans.cpp
+# ${ICU_FULL_DIR}buddhcal.cpp
+# ${ICU_FULL_DIR}bytestream.cpp
+# ${ICU_FULL_DIR}bytestrie.cpp
+# ${ICU_FULL_DIR}bytestriebuilder.cpp
+# ${ICU_FULL_DIR}bytestrieiterator.cpp
+# ${ICU_FULL_DIR}calendar.cpp
+# ${ICU_FULL_DIR}caniter.cpp
+# ${ICU_FULL_DIR}casetrn.cpp
+# ${ICU_FULL_DIR}cecal.cpp
+# ${ICU_FULL_DIR}chariter.cpp
+# ${ICU_FULL_DIR}charstr.cpp
+# ${ICU_FULL_DIR}chnsecal.cpp
+# ${ICU_FULL_DIR}choicfmt.cpp
+# ${ICU_FULL_DIR}coleitr.cpp
+# ${ICU_FULL_DIR}coll.cpp
+# ${ICU_FULL_DIR}collation.cpp
+# ${ICU_FULL_DIR}collationbuilder.cpp
+# ${ICU_FULL_DIR}collationcompare.cpp
+# ${ICU_FULL_DIR}collationdata.cpp
+# ${ICU_FULL_DIR}collationdatabuilder.cpp
+# ${ICU_FULL_DIR}collationdatareader.cpp
+# ${ICU_FULL_DIR}collationdatawriter.cpp
+# ${ICU_FULL_DIR}collationfastlatin.cpp
+# ${ICU_FULL_DIR}collationfastlatinbuilder.cpp
+# ${ICU_FULL_DIR}collationfcd.cpp
+# ${ICU_FULL_DIR}collationiterator.cpp
+# ${ICU_FULL_DIR}collationkeys.cpp
+# ${ICU_FULL_DIR}collationroot.cpp
+# ${ICU_FULL_DIR}collationrootelements.cpp
+# ${ICU_FULL_DIR}collationruleparser.cpp
+# ${ICU_FULL_DIR}collationsets.cpp
+# ${ICU_FULL_DIR}collationsettings.cpp
+# ${ICU_FULL_DIR}collationtailoring.cpp
+# ${ICU_FULL_DIR}collationweights.cpp
+# ${ICU_FULL_DIR}compactdecimalformat.cpp
+# ${ICU_FULL_DIR}coptccal.cpp
+# ${ICU_FULL_DIR}cpdtrans.cpp
+# ${ICU_FULL_DIR}csdetect.cpp
+# ${ICU_FULL_DIR}csmatch.cpp
+# ${ICU_FULL_DIR}csr2022.cpp
+# ${ICU_FULL_DIR}csrecog.cpp
+# ${ICU_FULL_DIR}csrmbcs.cpp
+# ${ICU_FULL_DIR}csrsbcs.cpp
+# ${ICU_FULL_DIR}csrucode.cpp
+# ${ICU_FULL_DIR}csrutf8.cpp
+# ${ICU_FULL_DIR}curramt.cpp
+# ${ICU_FULL_DIR}currfmt.cpp
+# ${ICU_FULL_DIR}currpinf.cpp
+# ${ICU_FULL_DIR}currunit.cpp
+# ${ICU_FULL_DIR}dangical.cpp
+# ${ICU_FULL_DIR}datefmt.cpp
+# ${ICU_FULL_DIR}dcfmtsym.cpp
+# ${ICU_FULL_DIR}decfmtst.cpp
+# ${ICU_FULL_DIR}decimalformatpattern.cpp
+# ${ICU_FULL_DIR}decimfmt.cpp
+# ${ICU_FULL_DIR}decimfmtimpl.cpp
+# ${ICU_FULL_DIR}dictbe.cpp
+# ${ICU_FULL_DIR}dictionarydata.cpp
+# ${ICU_FULL_DIR}digitaffix.cpp
+# ${ICU_FULL_DIR}digitaffixesandpadding.cpp
+# ${ICU_FULL_DIR}digitformatter.cpp
+# ${ICU_FULL_DIR}digitgrouping.cpp
+# ${ICU_FULL_DIR}digitinterval.cpp
+# ${ICU_FULL_DIR}digitlst.cpp
+# ${ICU_FULL_DIR}dtfmtsym.cpp
+# ${ICU_FULL_DIR}dtintrv.cpp
+# ${ICU_FULL_DIR}dtitvfmt.cpp
+# ${ICU_FULL_DIR}dtitvinf.cpp
+# ${ICU_FULL_DIR}dtptngen.cpp
+# ${ICU_FULL_DIR}dtrule.cpp
+# ${ICU_FULL_DIR}errorcode.cpp
+# ${ICU_FULL_DIR}esctrn.cpp
+# ${ICU_FULL_DIR}ethpccal.cpp
+# ${ICU_FULL_DIR}filteredbrk.cpp
+# ${ICU_FULL_DIR}filterednormalizer2.cpp
+# ${ICU_FULL_DIR}fmtable.cpp
+# ${ICU_FULL_DIR}fmtable_cnv.cpp
+# ${ICU_FULL_DIR}format.cpp
+# ${ICU_FULL_DIR}fphdlimp.cpp
+# ${ICU_FULL_DIR}fpositer.cpp
+# ${ICU_FULL_DIR}funcrepl.cpp
+# ${ICU_FULL_DIR}gender.cpp
+# ${ICU_FULL_DIR}gregocal.cpp
+# ${ICU_FULL_DIR}gregoimp.cpp
+# ${ICU_FULL_DIR}hebrwcal.cpp
+# ${ICU_FULL_DIR}icuplug.cpp
+# ${ICU_FULL_DIR}identifier_info.cpp
+# ${ICU_FULL_DIR}indiancal.cpp
+# ${ICU_FULL_DIR}inputext.cpp
+# ${ICU_FULL_DIR}islamcal.cpp
+# ${ICU_FULL_DIR}japancal.cpp
+# ${ICU_FULL_DIR}listformatter.cpp
+# ${ICU_FULL_DIR}loadednormalizer2impl.cpp
+# ${ICU_FULL_DIR}locavailable.cpp
+# ${ICU_FULL_DIR}locbased.cpp
+# ${ICU_FULL_DIR}locdispnames.cpp
+# ${ICU_FULL_DIR}locdspnm.cpp
+# ${ICU_FULL_DIR}locid.cpp
+# ${ICU_FULL_DIR}loclikely.cpp
+# ${ICU_FULL_DIR}locresdata.cpp
+# ${ICU_FULL_DIR}locutil.cpp
+# ${ICU_FULL_DIR}measfmt.cpp
+# ${ICU_FULL_DIR}measunit.cpp
+# ${ICU_FULL_DIR}measure.cpp
+# ${ICU_FULL_DIR}messagepattern.cpp
+# ${ICU_FULL_DIR}msgfmt.cpp
+# ${ICU_FULL_DIR}name2uni.cpp
+# ${ICU_FULL_DIR}nfrs.cpp
+# ${ICU_FULL_DIR}nfrule.cpp
+# ${ICU_FULL_DIR}nfsubs.cpp
+# ${ICU_FULL_DIR}normalizer2.cpp
+# ${ICU_FULL_DIR}normalizer2impl.cpp
+# ${ICU_FULL_DIR}normlzr.cpp
+# ${ICU_FULL_DIR}nortrans.cpp
+# ${ICU_FULL_DIR}nultrans.cpp
+# ${ICU_FULL_DIR}numfmt.cpp
+# ${ICU_FULL_DIR}numsys.cpp
+# ${ICU_FULL_DIR}olsontz.cpp
+# ${ICU_FULL_DIR}parsepos.cpp
+# ${ICU_FULL_DIR}patternprops.cpp
+# ${ICU_FULL_DIR}persncal.cpp
+# ${ICU_FULL_DIR}pluralaffix.cpp
+# ${ICU_FULL_DIR}pluralmap.cpp
+# ${ICU_FULL_DIR}plurfmt.cpp
+# ${ICU_FULL_DIR}plurrule.cpp
+# ${ICU_FULL_DIR}precision.cpp
+# ${ICU_FULL_DIR}propname.cpp
+# ${ICU_FULL_DIR}punycode.cpp
+# ${ICU_FULL_DIR}putil.cpp
+# ${ICU_FULL_DIR}quant.cpp
+# ${ICU_FULL_DIR}quantityformatter.cpp
+# ${ICU_FULL_DIR}rbbi.cpp
+# ${ICU_FULL_DIR}rbbidata.cpp
+# ${ICU_FULL_DIR}rbbinode.cpp
+# ${ICU_FULL_DIR}rbbirb.cpp
+# ${ICU_FULL_DIR}rbbiscan.cpp
+# ${ICU_FULL_DIR}rbbisetb.cpp
+# ${ICU_FULL_DIR}rbbistbl.cpp
+# ${ICU_FULL_DIR}rbbitblb.cpp
+# ${ICU_FULL_DIR}rbnf.cpp
+# ${ICU_FULL_DIR}rbt.cpp
+# ${ICU_FULL_DIR}rbtz.cpp
+# ${ICU_FULL_DIR}rbt_data.cpp
+# ${ICU_FULL_DIR}rbt_pars.cpp
+# ${ICU_FULL_DIR}rbt_rule.cpp
+# ${ICU_FULL_DIR}rbt_set.cpp
+# ${ICU_FULL_DIR}regexcmp.cpp
+# ${ICU_FULL_DIR}regeximp.cpp
+# ${ICU_FULL_DIR}regexst.cpp
+# ${ICU_FULL_DIR}regextxt.cpp
+# ${ICU_FULL_DIR}region.cpp
+# ${ICU_FULL_DIR}reldatefmt.cpp
+# ${ICU_FULL_DIR}reldtfmt.cpp
+# ${ICU_FULL_DIR}rematch.cpp
+# ${ICU_FULL_DIR}remtrans.cpp
+# ${ICU_FULL_DIR}repattrn.cpp
+# ${ICU_FULL_DIR}resbund.cpp
+# ${ICU_FULL_DIR}resbund_cnv.cpp
+# ${ICU_FULL_DIR}rulebasedcollator.cpp
+# ${ICU_FULL_DIR}ruleiter.cpp
+# ${ICU_FULL_DIR}schriter.cpp
+# ${ICU_FULL_DIR}scientificnumberformatter.cpp
+# ${ICU_FULL_DIR}scriptset.cpp
+# ${ICU_FULL_DIR}search.cpp
+# ${ICU_FULL_DIR}selfmt.cpp
+# ${ICU_FULL_DIR}serv.cpp
+# ${ICU_FULL_DIR}servlk.cpp
+# ${ICU_FULL_DIR}servlkf.cpp
+# ${ICU_FULL_DIR}servls.cpp
+# ${ICU_FULL_DIR}servnotf.cpp
+# ${ICU_FULL_DIR}servrbf.cpp
+# ${ICU_FULL_DIR}servslkf.cpp
+# ${ICU_FULL_DIR}sharedbreakiterator.cpp
+# ${ICU_FULL_DIR}sharedobject.cpp
+# ${ICU_FULL_DIR}simplepatternformatter.cpp
+# ${ICU_FULL_DIR}simpletz.cpp
+# ${ICU_FULL_DIR}smallintformatter.cpp
+# ${ICU_FULL_DIR}smpdtfmt.cpp
+# ${ICU_FULL_DIR}smpdtfst.cpp
+# ${ICU_FULL_DIR}sortkey.cpp
+# ${ICU_FULL_DIR}stringpiece.cpp
+# ${ICU_FULL_DIR}stringtriebuilder.cpp
+# ${ICU_FULL_DIR}strmatch.cpp
+# ${ICU_FULL_DIR}strrepl.cpp
+# ${ICU_FULL_DIR}stsearch.cpp
+# ${ICU_FULL_DIR}taiwncal.cpp
+# ${ICU_FULL_DIR}timezone.cpp
+# ${ICU_FULL_DIR}titletrn.cpp
+# ${ICU_FULL_DIR}tmunit.cpp
+# ${ICU_FULL_DIR}tmutamt.cpp
+# ${ICU_FULL_DIR}tmutfmt.cpp
+# ${ICU_FULL_DIR}tolowtrn.cpp
+# ${ICU_FULL_DIR}toupptrn.cpp
+# ${ICU_FULL_DIR}translit.cpp
+# ${ICU_FULL_DIR}transreg.cpp
+# ${ICU_FULL_DIR}tridpars.cpp
+# ${ICU_FULL_DIR}tzfmt.cpp
+# ${ICU_FULL_DIR}tzgnames.cpp
+# ${ICU_FULL_DIR}tznames.cpp
+# ${ICU_FULL_DIR}tznames_impl.cpp
+# ${ICU_FULL_DIR}tzrule.cpp
+# ${ICU_FULL_DIR}tztrans.cpp
+# ${ICU_FULL_DIR}ubrk.cpp
+# ${ICU_FULL_DIR}ucal.cpp
+# ${ICU_FULL_DIR}ucase.cpp
+# ${ICU_FULL_DIR}ucasemap.cpp
+# ${ICU_FULL_DIR}ucasemap_titlecase_brkiter.cpp
+# ${ICU_FULL_DIR}ucharstrie.cpp
+# ${ICU_FULL_DIR}ucharstriebuilder.cpp
+# ${ICU_FULL_DIR}ucharstrieiterator.cpp
+# ${ICU_FULL_DIR}uchriter.cpp
+# ${ICU_FULL_DIR}ucln_cmn.cpp
+# ${ICU_FULL_DIR}ucln_in.cpp
+# ${ICU_FULL_DIR}ucnv2022.cpp
+# ${ICU_FULL_DIR}ucnvbocu.cpp
+# ${ICU_FULL_DIR}ucnvmbcs.cpp
+# ${ICU_FULL_DIR}ucnvsel.cpp
+# ${ICU_FULL_DIR}ucnv_bld.cpp
+# ${ICU_FULL_DIR}ucnv_ext.cpp
+# ${ICU_FULL_DIR}ucnv_io.cpp
+# ${ICU_FULL_DIR}ucol.cpp
+# ${ICU_FULL_DIR}ucoleitr.cpp
+# ${ICU_FULL_DIR}ucol_res.cpp
+# ${ICU_FULL_DIR}ucol_sit.cpp
+# ${ICU_FULL_DIR}ucol_swp.cpp
+# ${ICU_FULL_DIR}ucsdet.cpp
+# ${ICU_FULL_DIR}ucurr.cpp
+# ${ICU_FULL_DIR}udat.cpp
+# ${ICU_FULL_DIR}udata.cpp
+# ${ICU_FULL_DIR}udateintervalformat.cpp
+# ${ICU_FULL_DIR}udatpg.cpp
+# ${ICU_FULL_DIR}ufieldpositer.cpp
+# ${ICU_FULL_DIR}uhash_us.cpp
+# ${ICU_FULL_DIR}uidna.cpp
+# ${ICU_FULL_DIR}uinit.cpp
+# ${ICU_FULL_DIR}uiter.cpp
+# ${ICU_FULL_DIR}uitercollationiterator.cpp
+# ${ICU_FULL_DIR}ulistformatter.cpp
+# ${ICU_FULL_DIR}uloc.cpp
+# ${ICU_FULL_DIR}uloc_keytype.cpp
+# ${ICU_FULL_DIR}umsg.cpp
+# ${ICU_FULL_DIR}umutex.cpp
+# ${ICU_FULL_DIR}unames.cpp
+# ${ICU_FULL_DIR}unesctrn.cpp
+# ${ICU_FULL_DIR}uni2name.cpp
+# ${ICU_FULL_DIR}unifiedcache.cpp
+# ${ICU_FULL_DIR}unifilt.cpp
+# ${ICU_FULL_DIR}unifunct.cpp
+# ${ICU_FULL_DIR}uniset.cpp
+# ${ICU_FULL_DIR}unisetspan.cpp
+# ${ICU_FULL_DIR}uniset_closure.cpp
+# ${ICU_FULL_DIR}uniset_props.cpp
+# ${ICU_FULL_DIR}unistr.cpp
+# ${ICU_FULL_DIR}unistr_case.cpp
+# ${ICU_FULL_DIR}unistr_case_locale.cpp
+# ${ICU_FULL_DIR}unistr_cnv.cpp
+# ${ICU_FULL_DIR}unistr_props.cpp
+# ${ICU_FULL_DIR}unistr_titlecase_brkiter.cpp
+# ${ICU_FULL_DIR}unorm.cpp
+# ${ICU_FULL_DIR}unormcmp.cpp
+# ${ICU_FULL_DIR}unum.cpp
+# ${ICU_FULL_DIR}unumsys.cpp
+# ${ICU_FULL_DIR}uobject.cpp
+# ${ICU_FULL_DIR}upluralrules.cpp
+# ${ICU_FULL_DIR}uprops.cpp
+# ${ICU_FULL_DIR}uregex.cpp
+# ${ICU_FULL_DIR}uregexc.cpp
+# ${ICU_FULL_DIR}uregion.cpp
+# ${ICU_FULL_DIR}uresbund.cpp
+# ${ICU_FULL_DIR}uscript_props.cpp
+# ${ICU_FULL_DIR}usearch.cpp
+# ${ICU_FULL_DIR}uset.cpp
+# ${ICU_FULL_DIR}usetiter.cpp
+# ${ICU_FULL_DIR}uset_props.cpp
+# ${ICU_FULL_DIR}ushape.cpp
+# ${ICU_FULL_DIR}uspoof.cpp
+# ${ICU_FULL_DIR}uspoof_build.cpp
+# ${ICU_FULL_DIR}uspoof_conf.cpp
+# ${ICU_FULL_DIR}uspoof_impl.cpp
+# ${ICU_FULL_DIR}uspoof_wsconf.cpp
+# ${ICU_FULL_DIR}usprep.cpp
+# ${ICU_FULL_DIR}ustack.cpp
+# ${ICU_FULL_DIR}ustrcase.cpp
+# ${ICU_FULL_DIR}ustrcase_locale.cpp
+# ${ICU_FULL_DIR}ustrenum.cpp
+# ${ICU_FULL_DIR}ustring.cpp
+# ${ICU_FULL_DIR}ustrtrns.cpp
+# ${ICU_FULL_DIR}ustr_cnv.cpp
+# ${ICU_FULL_DIR}ustr_titlecase_brkiter.cpp
+# ${ICU_FULL_DIR}ustr_wcs.cpp
+# ${ICU_FULL_DIR}utext.cpp
+# ${ICU_FULL_DIR}utf16collationiterator.cpp
+# ${ICU_FULL_DIR}utf8collationiterator.cpp
+# ${ICU_FULL_DIR}util.cpp
+# ${ICU_FULL_DIR}util_props.cpp
+# ${ICU_FULL_DIR}utrans.cpp
+# ${ICU_FULL_DIR}utrie.cpp
+# ${ICU_FULL_DIR}utrie2.cpp
+# ${ICU_FULL_DIR}utrie2_builder.cpp
+# ${ICU_FULL_DIR}uts46.cpp
+# ${ICU_FULL_DIR}uvector.cpp
+# ${ICU_FULL_DIR}uvectr32.cpp
+# ${ICU_FULL_DIR}uvectr64.cpp
+# ${ICU_FULL_DIR}valueformatter.cpp
+# ${ICU_FULL_DIR}visibledigits.cpp
+# ${ICU_FULL_DIR}vtzone.cpp
+# ${ICU_FULL_DIR}vzone.cpp
+# ${ICU_FULL_DIR}windtfmt.cpp
+# ${ICU_FULL_DIR}winnmfmt.cpp
+# ${ICU_FULL_DIR}wintzimpl.cpp
+# ${ICU_FULL_DIR}zonemeta.cpp
+# ${ICU_FULL_DIR}zrule.cpp
+# ${ICU_FULL_DIR}ztrans.cpp
+#)
+
 set(ICU_FULL_DIR
   #third_party/icu/
   #../../thirdparty/skia/third_party/externals/icu/
-  ../../thirdparty/icu/icu4c/
+  ../../thirdparty/icu_wrapper/third_party/icu/
 )
 
 set(ICU_INCLUDE_DIRS
@@ -2414,6 +2813,18 @@ target_include_directories(dynamic_annotations PRIVATE
 
 set_property(TARGET dynamic_annotations PROPERTY CXX_STANDARD 17)
 
+#
+# compact_enc_det
+# https://github.com/google/compact_enc_det
+#
+
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/third_party/ced/src)
+
+
+target_include_directories(ced PUBLIC
+  ${CMAKE_CURRENT_SOURCE_DIR}/third_party/ced/src
+)
+
 ### --- base ---###
 
 add_library(base STATIC
@@ -2421,16 +2832,19 @@ add_library(base STATIC
 )
 
 if(EMSCRIPTEN)
-  #set(BASE_LIBRARIES
-  #  # TODO
-  #)
-  #add_dependencies(base
-  #  ${BASE_LIBRARIES}
-  #)
+  list(APPEND BASE_LIBRARIES
+    ced
+    icu
+  )
+  add_dependencies(base
+    ${BASE_LIBRARIES}
+  )
 else()
   list(APPEND BASE_LIBRARIES
     tcmalloc
     atomic
+    ced
+    icu
   )
   add_dependencies(base
     ${BASE_LIBRARIES}
@@ -2445,7 +2859,6 @@ target_link_libraries(base PUBLIC
 set_property(TARGET base PROPERTY CXX_STANDARD 17)
 
 set(BASE_DEFINES
-  BASE_IMPLEMENTATION=1
   OFFICIAL_BUILD=1
 )
 
@@ -2455,8 +2868,13 @@ set(BASE_DEFINES
 target_include_directories(base PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}
 )
-
+#/home/avakimov_am/skia-opengl-emscripten/src/chromium/../../thirdparty/icu/source/common/unicode/normalizer2.h
+#/home/avakimov_am/skia-opengl-emscripten/src/chromium/../../
+#message(FATAL_ERROR ${CMAKE_CURRENT_SOURCE_DIR}/../../thirdparty/ced/src/)
 target_include_directories(base PRIVATE
+  #${CMAKE_CURRENT_SOURCE_DIR}/../..
+  #${CMAKE_CURRENT_SOURCE_DIR}/../../thirdparty/ced/src
+  ../../thirdparty/icu_wrapper/
   third_party
   third_party/tcmalloc
   third_party/tcmalloc/chromium/src
@@ -2468,6 +2886,11 @@ target_compile_definitions(base PUBLIC
   ${BASE_DEFINES}
   ${WTF_EMCC_DEFINITIONS}
   ${WTF_COMMON_DEFINITIONS}
+)
+
+target_compile_definitions(base PUBLIC
+  BASE_IMPLEMENTATION=1
+  BASE_I18N_IMPLEMENTATION=1
 )
 
 ### --- icu ---###
@@ -2505,21 +2928,22 @@ set(ICU_PRIVATE_DEFINES
 )
 
 if (WIN32)
-    list(APPEND ICU_PUBLIC_DEFINES
-        UCHAR_TYPE=wchar_t
-    )
+  list(APPEND ICU_PUBLIC_DEFINES
+    UCHAR_TYPE=wchar_t
+  )
 elseif(EMSCRIPTEN)
-    list(APPEND ICU_PUBLIC_DEFINES
-        UCHAR_TYPE=uint16_t
-    )
+  list(APPEND ICU_PUBLIC_DEFINES
+    UCHAR_TYPE=uint16_t
+  )
 else()
-    list(APPEND ICU_PUBLIC_DEFINES
-        UCHAR_TYPE=uint16_t
-    )
+  list(APPEND ICU_PUBLIC_DEFINES
+    UCHAR_TYPE=uint16_t
+  )
 endif()
 
+# see https://github.com/webrtc-uwp/chromium-build/blob/master/linux/unbundle/icu.gn#L37
 list(APPEND ICU_PUBLIC_DEFINES
-    U_IMPORT=U_EXPORT
+  U_IMPORT=U_EXPORT
 )
 
 #    "USING_SYSTEM_ICU=1",
@@ -2562,6 +2986,7 @@ target_compile_definitions(icu PRIVATE
   U_STATIC_IMPLEMENTATION=1
   U_COMMON_IMPLEMENTATION=1
   U_I18N_IMPLEMENTATION=1
+  U_ATTRIBUTE_DEPRECATED=
   ${ICU_PRIVATE_DEFINES}
   OFFICIAL_BUILD=1
   # https://cs.chromium.org/chromium/src/build/build_config.h?g=0&l=86

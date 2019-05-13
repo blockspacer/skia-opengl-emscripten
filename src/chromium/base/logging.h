@@ -797,7 +797,8 @@ DEFINE_CHECK_OP_IMPL(GT, > )
 #define CHECK_GE(val1, val2) CHECK_OP(GE, >=, val1, val2)
 #define CHECK_GT(val1, val2) CHECK_OP(GT, > , val1, val2)
 
-#if defined(NDEBUG) && !defined(DCHECK_ALWAYS_ON)
+// TODO: DCHECK support on OS_EMSCRIPTEN || defined(OS_EMSCRIPTEN)
+#if (defined(NDEBUG) && !defined(DCHECK_ALWAYS_ON))
 #define DCHECK_IS_ON() 0
 #else
 #define DCHECK_IS_ON() 1

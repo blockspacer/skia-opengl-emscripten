@@ -78,6 +78,10 @@ if(EMSCRIPTEN)
   set(EMCC_COMMON "${EMCC_COMMON} -s USE_LIBPNG=1")
   #set(EMCC_COMMON "${EMCC_COMMON} -D__EMSCRIPTEN__=1")
 
+  # see https://github.com/endlessm/chromium-browser/blob/master/third_party/skia/third_party/skcms/skcms.cc#L1813
+  #set(EMCC_COMMON "${EMCC_COMMON} -DSKCMS_PORTABLE=1")
+  # NOTE: SKCMS_PORTABLE <=> __EMSCRIPTEN_major__
+
   # Tell ICU that we are a 32 bit platform, otherwise,
   # double-conversion-utils.h doesn't know how to operate.
   # set(EMCC_COMMON "${EMCC_COMMON} -D__i386__=1")
@@ -601,8 +605,11 @@ if (EMSCRIPTEN)
   list(APPEND SKIA_DEFINES LIBANGLE_IMPLEMENTATION=1)
   list(APPEND SKIA_DEFINES LIBGLESV2_IMPLEMENTATION=1)
   list(APPEND SKIA_DEFINES LIBEGL_IMPLEMENTATION=1)
-  # https://github.com/google/skia/blob/master/third_party/skcms/skcms.cc#L1836
+
+  # see https://github.com/endlessm/chromium-browser/blob/master/third_party/skia/third_party/skcms/skcms.cc#L1813
+  # see https://github.com/google/skia/blob/master/third_party/skcms/skcms.cc#L1836
   # list(APPEND SKIA_DEFINES SKCMS_PORTABLE)
+
   list(APPEND SKIA_DEFINES ANGLE_ENABLE_ESSL=1)
   list(APPEND SKIA_DEFINES ANGLE_ENABLE_GLSL=1)
   list(APPEND SKIA_DEFINES ANGLE_ENABLE_HLSL=1)

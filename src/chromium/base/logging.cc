@@ -4,6 +4,10 @@
 
 #include "base/logging.h"
 
+#if defined(OS_EMSCRIPTEN)
+  #include <emscripten/emscripten.h>
+#endif
+
 #include <limits.h>
 #include <stdint.h>
 
@@ -190,6 +194,10 @@ uint64_t TickCount() {
          static_cast<zx_time_t>(base::Time::kNanosecondsPerMicrosecond);
 #elif defined(OS_MACOSX)
   return mach_absolute_time();
+#elif defined(OS_EMSCRIPTEN)
+  // this goes above x86-specific code because old versions of Emscripten
+  // define __x86_64__, although they have nothing to do with it.
+  return static_cast<int64_t>(emscripten_get_now() * 1e+6);
 #elif defined(OS_NACL)
   // NaCl sadly does not have _POSIX_TIMERS enabled in sys/features.h
   // So we have to use clock() for now.

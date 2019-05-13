@@ -13,12 +13,19 @@ namespace WTF {
 StringView::StringView(const UChar* chars)
     : StringView(chars, chars ? LengthOfNullTerminatedString(chars) : 0) {}
 
-#if DCHECK_IS_ON()
+#if DCHECK_IS_ON() && !defined(OS_EMSCRIPTEN)
 StringView::~StringView() {
   DCHECK(impl_);
+
+  ///
+  /// TODO: FIXME ON WASM (EMSCRIPTEN)
+  ///
+//#if !defined(OS_EMSCRIPTEN)
   DCHECK(!impl_->HasOneRef() || impl_->IsStatic())
       << "StringView does not own the StringImpl, it "
          "must not have the last ref.";
+//#endif // OS_EMSCRIPTEN
+
 }
 #endif
 

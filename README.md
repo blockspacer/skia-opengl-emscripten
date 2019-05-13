@@ -88,6 +88,13 @@ https://github.com/google/skia/blob/master/gn/core.gni#L100
 with wtf & skia: 3.0M
 
 > New renderer (blink)
+https://zhuanlan.zhihu.com/p/63318397
+http://www.html5dw.com/post/4518
+https://github.com/chromium/chromium/blob/master/third_party/blink/renderer/core/paint/box_painter.cc#L109
+https://github.com/chromium/chromium/blob/master/third_party/blink/renderer/core/paint/box_border_painter.cc#L831
+https://github.com/chromium/chromium/blob/master/third_party/blink/renderer/core/paint/block_painter.cc#L230
+https://github.com/chromium/chromium/blob/master/third_party/blink/renderer/core/paint/inline_box_painter_base.cc#L16
+https://github.com/chromium/chromium/blob/master/third_party/blink/renderer/core/paint/box_painter_base.cc#L156
 https://github.com/chromium/chromium/blob/master/third_party/blink/renderer/platform/graphics/graphics_context.cc
 https://github.com/chromium/chromium/blob/master/cc/paint/skia_paint_canvas.cc
 
@@ -286,6 +293,12 @@ READ
 
 ```
 git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git
+# clone OR
+# mkdir depot_tools ; cd depot_tools
+# curl -O https://storage.googleapis.com/chrome-infra/depot_tools.zip
+# cmake -E tar xf "depot_tools.zip" --format=zip
+# rm depot_tools.zip
+# cd ..
 export PATH=$PATH:`pwd`/depot_tools
 mkdir ~/chromium
 cd ~/chromium

@@ -238,6 +238,9 @@ namespace {
       // there a demonstrated need.  Here's how one could do it though
       // (would need to be made more portable).
 #if 0
+#if defined(OS_EMSCRIPTEN)
+#error "Emscripten PThread implementation does not support signals."
+#endif // OS_EMSCRIPTEN
         sigset_t all;
         sigfillset(&all);
         this->mask_valid_ =
@@ -252,6 +255,9 @@ namespace {
     void Leave() /*UNLOCK_FUNCTION()*/ {
       this->arena_->mu.Unlock();
 #if 0
+#if defined(OS_EMSCRIPTEN)
+#error "Emscripten PThread implementation does not support signals."
+#endif // OS_EMSCRIPTEN
       if (this->mask_valid_) {
         pthread_sigmask(SIG_SETMASK, &this->mask_, 0);
       }
@@ -320,11 +326,18 @@ LowLevelAlloc::Arena *LowLevelAlloc::NewArenaWithCustomAlloc(int32 flags,
                                                              PagesAllocator *allocator) {
   RAW_CHECK(meta_data_arena != 0, "must pass a valid arena");
   if (meta_data_arena == &default_arena) {
+
+#if defined(OS_EMSCRIPTEN)
+      // https://github.com/abseil/abseil-cpp/blob/master/absl/base/internal/low_level_alloc.cc#L413
+      meta_data_arena = &unhooked_arena;
+#else
     if ((flags & LowLevelAlloc::kAsyncSignalSafe) != 0) {
       meta_data_arena = &unhooked_async_sig_safe_arena;
     } else if ((flags & LowLevelAlloc::kCallMallocHook) == 0) {
       meta_data_arena = &unhooked_arena;
     }
+#endif // OS_EMSCRIPTEN
+
   }
   // Arena(0) uses the constructor for non-static contexts
   Arena *result =
@@ -359,11 +372,18 @@ bool LowLevelAlloc::DeleteArena(Arena *arena) {
       RAW_CHECK(reinterpret_cast<intptr_t>(region) % arena->pagesize == 0,
                 "empty arena has non-page-aligned block");
       int munmap_result;
+
+#if defined(OS_EMSCRIPTEN)
+      // https://github.com/abseil/abseil-cpp/blob/master/absl/base/internal/low_level_alloc.cc#L413
+      munmap_result = munmap(region, size);
+#else
       if ((arena->flags & LowLevelAlloc::kAsyncSignalSafe) == 0) {
         munmap_result = munmap(region, size);
       } else {
         munmap_result = MallocHook::UnhookedMUnmap(region, size);
       }
+#endif // OS_EMSCRIPTEN
+
       RAW_CHECK(munmap_result == 0,
                 "LowLevelAlloc::DeleteArena:  munmap failed address");
     }
@@ -556,6 +576,13 @@ LowLevelAlloc::PagesAllocator *LowLevelAlloc::GetDefaultPagesAllocator(void) {
 
 void *DefaultPagesAllocator::MapPages(int32 flags, size_t size) {
   void *new_pages;
+
+#if defined(OS_EMSCRIPTEN)
+  // https://github.com/abseil/abseil-cpp/blob/master/absl/base/internal/low_level_alloc.cc#L413
+  new_pages = mmap(0, size,
+                   PROT_WRITE|PROT_READ,
+                   MAP_ANONYMOUS|MAP_PRIVATE, -1, 0);
+#else
   if ((flags & LowLevelAlloc::kAsyncSignalSafe) != 0) {
     new_pages = MallocHook::UnhookedMMap(0, size,
                                          PROT_WRITE|PROT_READ,
@@ -565,6 +592,8 @@ void *DefaultPagesAllocator::MapPages(int32 flags, size_t size) {
                      PROT_WRITE|PROT_READ,
                      MAP_ANONYMOUS|MAP_PRIVATE, -1, 0);
   }
+#endif // OS_EMSCRIPTEN
+
   RAW_CHECK(new_pages != MAP_FAILED, "mmap error");
 
   return new_pages;
@@ -572,11 +601,18 @@ void *DefaultPagesAllocator::MapPages(int32 flags, size_t size) {
 
 void DefaultPagesAllocator::UnMapPages(int32 flags, void *region, size_t size) {
   int munmap_result;
+
+#if defined(OS_EMSCRIPTEN)
+  // https://github.com/abseil/abseil-cpp/blob/master/absl/base/internal/low_level_alloc.cc#L413
+  munmap_result = munmap(region, size);
+#else
   if ((flags & LowLevelAlloc::kAsyncSignalSafe) == 0) {
     munmap_result = munmap(region, size);
   } else {
     munmap_result = MallocHook::UnhookedMUnmap(region, size);
   }
+#endif // OS_EMSCRIPTEN
+
   RAW_CHECK(munmap_result == 0,
             "LowLevelAlloc::DeleteArena: munmap failed address");
 }
