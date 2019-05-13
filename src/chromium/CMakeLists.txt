@@ -131,6 +131,55 @@ else()
 endif()
 
 list(APPEND BASE_SOURCES
+   # sources = [
+   #   "i18n/base_i18n_export.h",
+   #   "i18n/base_i18n_switches.cc",
+   #   "i18n/base_i18n_switches.h",
+   #   "i18n/break_iterator.cc",
+   #   "i18n/break_iterator.h",
+   #   "i18n/case_conversion.cc",
+   #   "i18n/case_conversion.h",
+   #   "i18n/char_iterator.cc",
+   #   "i18n/char_iterator.h",
+   #   "i18n/character_encoding.cc",
+   #   "i18n/character_encoding.h",
+   #   "i18n/encoding_detection.cc",
+   #   "i18n/encoding_detection.h",
+   #   "i18n/file_util_icu.cc",
+   #   "i18n/file_util_icu.h",
+   #   "i18n/i18n_constants.cc",
+   #   "i18n/i18n_constants.h",
+   #   "i18n/icu_string_conversions.cc",
+   #   "i18n/icu_string_conversions.h",
+   #   "i18n/icu_util.cc",
+   #   "i18n/icu_util.h",
+   #   "i18n/message_formatter.cc",
+   #   "i18n/message_formatter.h",
+   #   "i18n/number_formatting.cc",
+   #   "i18n/number_formatting.h",
+   #   "i18n/rtl.cc",
+   #   "i18n/rtl.h",
+   #   "i18n/streaming_utf8_validator.cc",
+   #   "i18n/streaming_utf8_validator.h",
+   #   "i18n/string_compare.cc",
+   #   "i18n/string_compare.h",
+   #   "i18n/string_search.cc",
+   #   "i18n/string_search.h",
+   #   "i18n/time_formatting.cc",
+   #   "i18n/time_formatting.h",
+   #   "i18n/timezone.cc",
+   #   "i18n/timezone.h",
+   #   "i18n/unicodestring.h",
+   #   "i18n/utf8_validator_tables.cc",
+   #   "i18n/utf8_validator_tables.h",
+   # ]
+   # defines = [ "BASE_I18N_IMPLEMENTATION" ]
+   # configs += [ "//build/config/compiler:wexit_time_destructors" ]
+   # public_deps = [
+   #   "//third_party/ced",
+   #   "//third_party/icu",
+   # ]
+   #
    ${BASE_DIR}allocator/allocator_check.cc
    ${BASE_DIR}allocator/allocator_check.h
    ${BASE_DIR}allocator/allocator_extension.cc
@@ -1299,30 +1348,30 @@ list(APPEND WTF_SOURCES
   #${WTF_DIR}casting.h
   #${WTF_DIR}conditional_destructor.h
   #${WTF_DIR}container_annotations.h
-  # ${WTF_DIR}date_math.cc
+  ${WTF_DIR}date_math.cc
   #${WTF_DIR}date_math.h
-  # ${WTF_DIR}decimal.cc
+  ${WTF_DIR}decimal.cc
   #${WTF_DIR}decimal.h
   #${WTF_DIR}deque.h
   #${WTF_DIR}doubly_linked_list.h
-  # ${WTF_DIR}dtoa/bignum-dtoa.cc
+  ${WTF_DIR}dtoa/bignum-dtoa.cc
   # #${WTF_DIR}dtoa/bignum-dtoa.h
-  # ${WTF_DIR}dtoa/bignum.cc
+  ${WTF_DIR}dtoa/bignum.cc
   # #${WTF_DIR}dtoa/bignum.h
-  # ${WTF_DIR}dtoa/cached-powers.cc
+  ${WTF_DIR}dtoa/cached-powers.cc
   # #${WTF_DIR}dtoa/cached-powers.h
-  # ${WTF_DIR}dtoa/diy-fp.cc
+  ${WTF_DIR}dtoa/diy-fp.cc
   # #${WTF_DIR}dtoa/diy-fp.h
-  # ${WTF_DIR}dtoa/double-conversion.cc
+  ${WTF_DIR}dtoa/double-conversion.cc
   # #${WTF_DIR}dtoa/double-conversion.h
   # #${WTF_DIR}dtoa/double.h
-  # ${WTF_DIR}dtoa/dtoa.cc
+  ${WTF_DIR}dtoa/dtoa.cc
   # #${WTF_DIR}dtoa/dtoa.h
-  # ${WTF_DIR}dtoa/fast-dtoa.cc
+  ${WTF_DIR}dtoa/fast-dtoa.cc
   # #${WTF_DIR}dtoa/fast-dtoa.h
-  # ${WTF_DIR}dtoa/fixed-dtoa.cc
+  ${WTF_DIR}dtoa/fixed-dtoa.cc
   # #${WTF_DIR}dtoa/fixed-dtoa.h
-  # ${WTF_DIR}dtoa/strtod.cc
+  ${WTF_DIR}dtoa/strtod.cc
   # #${WTF_DIR}dtoa/strtod.h
   # #${WTF_DIR}dtoa/utils.h
   ${WTF_DIR}dynamic_annotations.cc
@@ -1352,88 +1401,88 @@ list(APPEND WTF_SOURCES
   #${WTF_DIR}sanitizers.h
   ${WTF_DIR}scoped_logger.cc
   #${WTF_DIR}scoped_logger.h
-  # ${WTF_DIR}size_assertions.cc
+  ${WTF_DIR}size_assertions.cc
   #${WTF_DIR}size_assertions.h
-  # ${WTF_DIR}stack_util.cc
+  ${WTF_DIR}stack_util.cc
   #${WTF_DIR}stack_util.h
   #${WTF_DIR}static_constructors.h
   #${WTF_DIR}std_lib_extras.h
-  # ${WTF_DIR}text/ascii_ctype.cc
+  ${WTF_DIR}text/ascii_ctype.cc
   # #${WTF_DIR}text/ascii_ctype.h
   # #${WTF_DIR}text/ascii_fast_path.h
-  # ${WTF_DIR}text/atomic_string.cc
+  ${WTF_DIR}text/atomic_string.cc
   # #${WTF_DIR}text/atomic_string.h
-  # ${WTF_DIR}text/atomic_string_cf.cc
+  ${WTF_DIR}text/atomic_string_cf.cc
   # #${WTF_DIR}text/atomic_string_hash.h
-  # ${WTF_DIR}text/atomic_string_table.cc
+  ${WTF_DIR}text/atomic_string_table.cc
   # #${WTF_DIR}text/atomic_string_table.h
-  # ${WTF_DIR}text/base64.cc
+  ${WTF_DIR}text/base64.cc
   # #${WTF_DIR}text/base64.h
   # #${WTF_DIR}text/character_names.h
-  # ${WTF_DIR}text/cstring.cc
+  ${WTF_DIR}text/cstring.cc
   # #${WTF_DIR}text/cstring.h
   # #${WTF_DIR}text/integer_to_string_conversion.h
-  # ${WTF_DIR}text/line_ending.cc
+  ${WTF_DIR}text/line_ending.cc
   # #${WTF_DIR}text/line_ending.h
   # #${WTF_DIR}text/number_parsing_options.h
   # #${WTF_DIR}text/parsing_utilities.h
   # #${WTF_DIR}text/string_buffer.h
-  # ${WTF_DIR}text/string_builder.cc
+  ${WTF_DIR}text/string_builder.cc
   # #${WTF_DIR}text/string_builder.h
-  # ${WTF_DIR}text/string_concatenate.cc
+  ${WTF_DIR}text/string_concatenate.cc
   # #${WTF_DIR}text/string_concatenate.h
   # #${WTF_DIR}text/string_hash.h
   # #${WTF_DIR}text/string_hasher.h
-  # ${WTF_DIR}text/string_impl.cc
+  ${WTF_DIR}text/string_impl.cc
   # #${WTF_DIR}text/string_impl.h
   # #${WTF_DIR}text/string_impl_mac.mm
   # #${WTF_DIR}text/string_mac.mm
   # #${WTF_DIR}text/string_operators.h
-  # ${WTF_DIR}text/string_statics.cc
+  ${WTF_DIR}text/string_statics.cc
   # #${WTF_DIR}text/string_statics.h
-  # ${WTF_DIR}text/string_to_number.cc
+  ${WTF_DIR}text/string_to_number.cc
   # #${WTF_DIR}text/string_to_number.h
-  # ${WTF_DIR}text/string_utf8_adaptor.cc
+  ${WTF_DIR}text/string_utf8_adaptor.cc
   # #${WTF_DIR}text/string_utf8_adaptor.h
-  # ${WTF_DIR}text/string_view.cc
+  ${WTF_DIR}text/string_view.cc
   # #${WTF_DIR}text/string_view.h
-  # ${WTF_DIR}text/text_codec.cc
+  ${WTF_DIR}text/text_codec.cc
   # #${WTF_DIR}text/text_codec.h
   # #${WTF_DIR}text/text_codec_ascii_fast_path.h
-  # ${WTF_DIR}text/text_codec_icu.cc
+  ${WTF_DIR}text/text_codec_icu.cc
   # #${WTF_DIR}text/text_codec_icu.h
-  # ${WTF_DIR}text/text_codec_latin1.cc
+  ${WTF_DIR}text/text_codec_latin1.cc
   # #${WTF_DIR}text/text_codec_latin1.h
-  # ${WTF_DIR}text/text_codec_replacement.cc
+  ${WTF_DIR}text/text_codec_replacement.cc
   # #${WTF_DIR}text/text_codec_replacement.h
-  # ${WTF_DIR}text/text_codec_user_defined.cc
+  ${WTF_DIR}text/text_codec_user_defined.cc
   # #${WTF_DIR}text/text_codec_user_defined.h
-  # ${WTF_DIR}text/text_codec_utf16.cc
+  ${WTF_DIR}text/text_codec_utf16.cc
   # #${WTF_DIR}text/text_codec_utf16.h
-  # ${WTF_DIR}text/text_codec_utf8.cc
+  ${WTF_DIR}text/text_codec_utf8.cc
   # #${WTF_DIR}text/text_codec_utf8.h
-  # ${WTF_DIR}text/text_encoding.cc
+  ${WTF_DIR}text/text_encoding.cc
   # #${WTF_DIR}text/text_encoding.h
-  # ${WTF_DIR}text/text_encoding_registry.cc
+  ${WTF_DIR}text/text_encoding_registry.cc
   # #${WTF_DIR}text/text_encoding_registry.h
-  # ${WTF_DIR}text/text_position.cc
+  ${WTF_DIR}text/text_position.cc
   # #${WTF_DIR}text/text_position.h
-  # ${WTF_DIR}text/text_stream.cc
+  ${WTF_DIR}text/text_stream.cc
   # #${WTF_DIR}text/text_stream.h
   # #${WTF_DIR}text/unicode.h
-  # ${WTF_DIR}text/utf8.cc
+  ${WTF_DIR}text/utf8.cc
   # #${WTF_DIR}text/utf8.h
-  # ${WTF_DIR}text/wtf_string.cc
+  ${WTF_DIR}text/wtf_string.cc
   #${WTF_DIR}text/wtf_string.h
   # #${WTF_DIR}thread_restriction_verifier.h
   # #${WTF_DIR}thread_safe_ref_counted.h
   # #${WTF_DIR}thread_specific.h
-  # ${WTF_DIR}threading.cc
+  ${WTF_DIR}threading.cc
   # #${WTF_DIR}threading.h
   # #${WTF_DIR}threading_primitives.h
-  # ${WTF_DIR}threading_pthreads.cc
+  ${WTF_DIR}threading_pthreads.cc
   # ${WTF_DIR}threading_win.cc
-  # ${WTF_DIR}time.cc
+  ${WTF_DIR}time.cc
   #${WTF_DIR}time.h
   #${WTF_DIR}tree_node.h
   #${WTF_DIR}type_traits.h
@@ -1460,7 +1509,7 @@ list(APPEND WTF_SOURCES
   #${WTF_DIR}typed_arrays/uint8_clamped_array.h
   #${WTF_DIR}vector.h
   #${WTF_DIR}vector_traits.h
-  # ${WTF_DIR}wtf.cc
+  ${WTF_DIR}wtf.cc
   #${WTF_DIR}wtf.h
   #${WTF_DIR}wtf_export.h
   # #${WTF_DIR}wtf_size_t.h
@@ -2102,9 +2151,12 @@ if(EMSCRIPTEN)
   )
 
   set(WTF_EMCC_DEFINITIONS
-    OS_ASMJS=1
+    # see build/build_config.h
+    #OS_ASMJS=1
+    # see build/build_config.h
     __asmjs__
-    OS_POSIX=1
+    # see build/build_config.h
+    #OS_POSIX=1
     _FILE_OFFSET_BITS=64
     DYNAMIC_ANNOTATIONS_ENABLED=0
     WTF_USE_DYNAMIC_ANNOTATIONS=0
@@ -2440,36 +2492,62 @@ target_include_directories(icu PRIVATE
 
 # http://userguide.icu-project.org/howtouseicu#TOC-C-With-Your-Own-Build-System
 set(ICU_PUBLIC_DEFINES
-    "U_ENABLE_DYLOAD=0"
-    "U_STATIC_IMPLEMENTATION"
-    "ICU_UTIL_DATA_IMPL=ICU_UTIL_DATA_STATIC"
+  U_ENABLE_DYLOAD=0
+  ICU_UTIL_DATA_IMPL=ICU_UTIL_DATA_STATIC
 )
 
 set(ICU_PRIVATE_DEFINES
-    "HAVE_DLOPEN=0"
-    "UCONFIG_ONLY_HTML_CONVERSION=1"
-    "U_CHARSET_IS_UTF8=1"
-    # custom
-    "HAVE_DLFCN_H=0"
+  HAVE_DLOPEN=0
+  UCONFIG_ONLY_HTML_CONVERSION=1
+  U_CHARSET_IS_UTF8=1
+  # custom
+  HAVE_DLFCN_H=0
 )
 
 if (WIN32)
     list(APPEND ICU_PUBLIC_DEFINES
-        "UCHAR_TYPE=wchar_t"
+        UCHAR_TYPE=wchar_t
+    )
+elseif(EMSCRIPTEN)
+    list(APPEND ICU_PUBLIC_DEFINES
+        UCHAR_TYPE=uint16_t
     )
 else()
     list(APPEND ICU_PUBLIC_DEFINES
-        "UCHAR_TYPE=uint16_t"
+        UCHAR_TYPE=uint16_t
     )
-endif ()
+endif()
+
+list(APPEND ICU_PUBLIC_DEFINES
+    U_IMPORT=U_EXPORT
+)
+
+#    "USING_SYSTEM_ICU=1",
+#    "ICU_UTIL_DATA_IMPL=ICU_UTIL_DATA_STATIC",
+#    "UCHAR_TYPE=uint16_t",
+#
+#    # U_EXPORT (defined in unicode/platform.h) is used to set public visibility
+#    # on classes through the U_COMMON_API and U_I18N_API macros (among others).
+#    # When linking against the system ICU library, we want its symbols to have
+#    # public LTO visibility. This disables CFI checks for the ICU classes and
+#    # allows whole-program optimization to be applied to the rest of Chromium.
+#    #
+#    # Both U_COMMON_API and U_I18N_API macros would be defined to U_EXPORT only
+#    # when U_COMBINED_IMPLEMENTATION is defined (see unicode/utypes.h). Because
+#    # we override the default system UCHAR_TYPE (char16_t), it is not possible
+#    # to use U_COMBINED_IMPLEMENTATION at this moment, meaning the U_COMMON_API
+#    # and U_I18N_API macros are set to U_IMPORT which is an empty definition.
+#    #
+#    # Until building with UCHAR_TYPE=char16_t is supported, one way to apply
+#    # public visibility (and thus public LTO visibility) to all ICU classes is
+#    # to define U_IMPORT to have the same value as U_EXPORT. For more details,
+#    # please see: https://crbug.com/822820
+#    "U_IMPORT=U_EXPORT",
 
 target_compile_definitions(icu PUBLIC
   ${ICU_PUBLIC_DEFINES}
   ${WTF_EMCC_DEFINITIONS}
   ${WTF_COMMON_DEFINITIONS}
-  U_STATIC_IMPLEMENTATION
-  U_COMMON_IMPLEMENTATION
-  U_I18N_IMPLEMENTATION
   U_ENABLE_DYLOAD=0
   LIB_ICU_I18N_STATIC
   ICU_UTIL_DATA_IMPL=ICU_UTIL_DATA_STATIC
@@ -2481,6 +2559,9 @@ target_compile_definitions(icu PUBLIC
 
 target_compile_definitions(icu PRIVATE
   ICU_IMPLEMENTATION=1
+  U_STATIC_IMPLEMENTATION=1
+  U_COMMON_IMPLEMENTATION=1
+  U_I18N_IMPLEMENTATION=1
   ${ICU_PRIVATE_DEFINES}
   OFFICIAL_BUILD=1
   # https://cs.chromium.org/chromium/src/build/build_config.h?g=0&l=86

@@ -63,6 +63,8 @@
 #define OS_QNX 1
 #elif defined(EMSCRIPTEN) || defined(__EMSCRIPTEN__)
 #define OS_EMSCRIPTEN 1
+// https://github.com/kwonoj/docker-pdfium-wasm/blob/master/patches/build_config.h.patch
+#define OS_ASMJS 1
 #elif defined(_AIX)
 #define OS_AIX 1
 #elif defined(__asmjs__)

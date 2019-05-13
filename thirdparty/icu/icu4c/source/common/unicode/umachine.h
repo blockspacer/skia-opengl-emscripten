@@ -338,8 +338,10 @@ typedef int8_t UBool;
     typedef UCHAR_TYPE UChar;
 #elif defined(__cplusplus)
     typedef char16_t UChar;
+    //#error "not custom"
 #else
     typedef uint16_t UChar;
+    //#error "not custom 2"
 #endif
 
 /**

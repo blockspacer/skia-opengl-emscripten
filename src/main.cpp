@@ -776,7 +776,7 @@ int main(int argc, char** argv) {
   WTF::Partitions::Initialize(nullptr);
 
   printf("Init WTF ...\n");
-  // WTF::Initialize(nullptr); // TODO
+  WTF::Initialize(nullptr); // TODO
 
   printf("Testing ...\n");
 

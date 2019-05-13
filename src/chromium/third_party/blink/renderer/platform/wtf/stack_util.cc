@@ -91,7 +91,9 @@ size_t GetUnderestimatedStackSize() {
 #elif defined(OS_WIN) && defined(COMPILER_MSVC)
 return Threading::ThreadStackSize();
 #else
+#if !defined(OS_EMSCRIPTEN)
 #error "Stack frame size estimation not supported on this platform."
+#endif // OS_EMSCRIPTEN
   return 0;
 #endif
 }
@@ -147,7 +149,9 @@ void* GetStackStart() {
   return reinterpret_cast<void*>(highLimit);
 #endif
 #else
+#if !defined(OS_EMSCRIPTEN)
 #error Unsupported getStackStart on this platform.
+#endif // OS_EMSCRIPTEN
 #endif
 }
 
