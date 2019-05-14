@@ -98,6 +98,9 @@ if(EMSCRIPTEN)
   # see https://developers.google.com/web/updates/2018/10/wasm-threads
   # see https://github.com/emscripten-core/emscripten/blob/incoming/tests/gl_only_in_pthread.cpp
   #
+  # Embind doesn't work on pthreads
+  # https://github.com/emscripten-core/emscripten/issues/8299
+  #
   # At runtime, you can use the emscripten_has_threading_support()
   # function to test whether the currently executing code
   # was compiled with pthreads support enabled.
@@ -129,11 +132,20 @@ if(EMSCRIPTEN)
   #
   # see emscripten_num_logical_cores
   # https://github.com/hongkk/urho/blob/master/Source/Urho3D/Core/ProcessUtils.cpp#L449
-  # set(EMCC_COMMON "${EMCC_COMMON} -s PTHREAD_HINT_NUM_CORES=1")
+  #set(EMCC_COMMON "${EMCC_COMMON} -s PTHREAD_HINT_NUM_CORES=8")
   #
   # Use the option -s PROXY_TO_PTHREAD=1 if you want to run
   # the main thread of a multithreaded application in a web worker.
   # if PROXY_TO_PTHREAD see emscripten_pthread_attr_settransferredcanvases
+  # also see emscripten_current_thread_process_queued_calls
+  # see https://github.com/emscripten-ports/SDL2/pull/77
+  # see https://github.com/emscripten-core/emscripten/issues/8325
+  # see https://github.com/emscripten-core/emscripten/issues/6009
+  # see https://github.com/emscripten-core/emscripten/blob/incoming/tests/canvas_animate_resize.cpp
+  # set(EMCC_COMMON "${EMCC_COMMON} -s PROXY_TO_PTHREAD=1")
+  #
+  # see https://github.com/emscripten-core/emscripten/pull/7672
+  # PROXY_POSIX_SOCKETS
   #
   # PTHREADS_PROFILING
   #
@@ -156,13 +168,13 @@ if(EMSCRIPTEN)
   set(EMCC_COMMON "${EMCC_COMMON} -s USE_SDL_TTF=2")
 
   #
-  # WEBGL
+  # WEBGL (see also OFFSCREEN_CAVAS settings)
   #
   # see https://github.com/emscripten-core/emscripten/blob/master/src/settings.js#L369
   # see https://www.khronos.org/registry/webgl/specs/2.0/#4.1.2
-  # BUG: WebGL 2 is not working with OffscreenCanvas
+  # BUG: WebGL 2 was not working with OffscreenCanvas in firefox
   # https://bugzilla.mozilla.org/show_bug.cgi?id=1388299
-  # TODO: freezes with threads
+  # TODO: check freezes with threads
   set(EMCC_COMMON "${EMCC_COMMON} -s USE_WEBGL2=1")
   set(EMCC_COMMON "${EMCC_COMMON} -DWEBGL2_SUPPORT=1") # custom define
   #
@@ -218,11 +230,12 @@ if(EMSCRIPTEN)
 
   # https://github.com/google/skia/blob/master/BUILD.gn#L502
   # set(EMCC_COMMON "${EMCC_COMMON} -DSKSL_STANDALONE") # if (skia_compile_processors)
-  set(EMCC_COMMON "${EMCC_COMMON} -DSK_ASSUME_WEBGL=1")
   set(EMCC_COMMON "${EMCC_COMMON} -DSK_DISABLE_LEGACY_SHADERCONTEXT=1")
-  #set(EMCC_COMMON "${EMCC_COMMON} -DSK_ASSUME_GL_ES=1")
-  #set(EMCC_COMMON "${EMCC_COMMON} -DSK_ASSUME_GL=1")
+  set(EMCC_COMMON "${EMCC_COMMON} -DSK_ASSUME_WEBGL=1") # see skia_gl_standard
+  #set(EMCC_COMMON "${EMCC_COMMON} -DSK_ASSUME_GL_ES=1") # see skia_gl_standard
+  #set(EMCC_COMMON "${EMCC_COMMON} -DSK_ASSUME_GL=1") # see skia_gl_standard
   set(EMCC_COMMON "${EMCC_COMMON} -DIS_WEBGL=1")
+  # see https://github.com/xzwang2005/Prelude/blob/master/third_party/skia/src/pathops/SkPathOpsTypes.cpp#L106
   set(EMCC_COMMON "${EMCC_COMMON} -DSKOTTIE_HACK")
   # https://github.com/qinjidong/qt5.13/blob/master/src/qtwebengine/src/3rdparty/chromium/third_party/skia/experimental/canvaskit/compile.sh
   set(EMCC_COMMON "${EMCC_COMMON} -DSKNX_NO_SIMD")
@@ -519,7 +532,9 @@ if (EMSCRIPTEN)
   set(SK_TARGET_CPU "target_cpu=\"wasm\"")
   # see DSK_ASSUME_WEBGL
   # see skia/modules/canvaskit/compile.sh
-  set(SK_GL_STANDARD "skia_gl_standard=\"webgl\"")
+  set(SK_GL_STANDARD "skia_gl_standard=\"webgl\"") # SK_ASSUME_WEBGL
+  #set(SK_GL_STANDARD "skia_gl_standard=\"gles\"") # SK_ASSUME_GL_ES
+  #set(SK_GL_STANDARD "skia_gl_standard=\"gl\"") # SK_ASSUME_GL
 else ()
   set(SK_IS_processors "false") # see SKSL_STANDALONE
   set(SK_IS_workarounds "false")
@@ -527,7 +542,7 @@ else ()
 
   set(SK_IS_EGL "false")
   set(SK_TARGET_CPU "")
-  set(SK_GL_STANDARD "")
+  set(SK_GL_STANDARD "") # default
 endif ()
 
 # TODO: target_cpu=\"wasm\" \
@@ -734,6 +749,7 @@ set(SKIA_DEFINES
   SK_SUPPORT_OPENCL=0
   SK_SAMPLES_FOR_X=1 # always set for linux, even if there's no X used
   SK_SAMPLES_FOR_X
+  # see https://skia.org/user/api/skcanvas_creation
   SK_SUPPORT_GPU=1 # skia_enable_gpu
   SK_SUPPORT_GPU
   SK_HAS_PNG_LIBRARY=1 # skia_use_libpng
@@ -751,6 +767,7 @@ set(SKIA_DEFINES
 #<listOptionValue builtIn="false" value="SK_IGNORE_LINEONLY_AA_CONVEX_PATH_OPTS"/>
 #<listOptionValue builtIn="false" value="SK_SUPPORT_GPU=1"/>
 
+# see https://github.com/xzwang2005/Prelude/blob/master/third_party/skia/src/pathops/SkPathOpsTypes.cpp#L106
 list(APPEND SKIA_DEFINES SKOTTIE_HACK)
 list(APPEND SKIA_DEFINES SKOTTIE_HACK=1)
 

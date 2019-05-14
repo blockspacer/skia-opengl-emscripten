@@ -21,11 +21,25 @@
 // https://github.com/WebKit/webkit/blob/master/Source/WebCore/rendering/RenderBoxModelObject.cpp#L741
 
 // see https://github.com/save7502/youkyoung/blob/master/Engine/Source/Runtime/OpenGLDrv/Private/HTML5/HTML5OpenGL.cpp#L5
+// see https://github.com/emscripten-core/emscripten/issues/6009
 #define ENABLE_HTML5_SDL 1
 
-#define ENABLE_SKOTTIE_ANIMATIONS 1
+// see https://github.com/emscripten-core/emscripten/pull/8430#issuecomment-486635898
+// #define SKIA_GR_CONTEXT 1
 
-//#define ENABLE_CUSTOM_FONTS 1
+#define ENABLE_SKOTTIE_ANIMATIONS 1
+//
+#if defined(__EMSCRIPTEN__) && defined(__EMSCRIPTEN_PTHREADS__) \
+  && defined(ENABLE_SKOTTIE_ANIMATIONS)
+#warning "TODO: PORT SKOTTIE & PTHREADS"
+#endif
+
+#define ENABLE_CUSTOM_FONTS 1
+//
+#if defined(__EMSCRIPTEN__) && defined(__EMSCRIPTEN_PTHREADS__) \
+  && defined(ENABLE_CUSTOM_FONTS)
+#warning "TODO: PORT SKIA FONTS & PTHREADS"
+#endif
 
 /// \note place before glext.h
 /// \note defined by CMAKE
@@ -243,6 +257,8 @@
 #include "third_party/blink/renderer/platform/wtf/ref_counted.h"
 //#include "third_party/blink/renderer/platform/wtf/wtf_test_helper.h"
 
+#include "base/synchronization/waitable_event.h"
+
 /*#include <stddef.h>
 
 #include <cassert>
@@ -337,19 +353,36 @@ static void CheckOpenGLError(const char* stmt, const char* fname, int line)
     #define GL_CHECK_WITH_MESSAGE(stmt) (void)(0);
 #endif
 
-//#define TODO
+#ifdef SKIA_GR_CONTEXT
 
-#ifdef TODO
-// extern "C" { extern void* emscripten_GetProcAddress(const char *x); }
+#if defined(__EMSCRIPTEN__)
+// see https://github.com/emscripten-core/emscripten/pull/5951/commits/7f373a3d86a426ea146e8288972afce4d9396321
+extern "C" { extern void* emscripten_GetProcAddress(const char *x); }
+//extern "C" { extern void* emscripten_webgl1_get_proc_address(const char *x); }
+//extern "C" { extern void* emscripten_webgl2_get_proc_address(const char *x); }
+// see https://github.com/emscripten-core/emscripten/pull/8541
+//extern "C" { extern void* emscripten_webgl_get_proc_address(const char *x); }
+#endif
 
 // https://github.com/google/skia/blob/master/src/gpu/gl/egl/GrGLMakeNativeInterface_egl.cpp
 static GrGLFuncPtr emscripten_get_gl_proc(void* ctx, const char name[]) {
   SkASSERT(nullptr == ctx);
-  // return emscripten_GetProcAddress(name);
-  // TODO:
-  em_ctx
-ENABLE_HTML5_SDL
+
+#if defined(__EMSCRIPTEN__)
+  // see https://github.com/emscripten-core/emscripten/pull/8430#issuecomment-486635898
+  // see https://github.com/emscripten-core/emscripten/pull/5951/commits/7f373a3d86a426ea146e8288972afce4d9396321
+  // see https://github.com/emscripten-core/emscripten/blob/incoming/system/lib/gl/gl.c#L1831
+  //return (GrGLFuncPtr)emscripten_webgl_get_proc_address(name);
+  //return (GrGLFuncPtr)emscripten_webgl1_get_proc_address(name);
+  //return (GrGLFuncPtr)emscripten_webgl2_get_proc_address(name);
+  return (GrGLFuncPtr)emscripten_GetProcAddress(name);
+#else
   return (GrGLFuncPtr)SDL_GL_GetProcAddress(name);
+#endif
+  // TODO:
+//  em_ctx
+//ENABLE_HTML5_SDL
+//  return (GrGLFuncPtr)SDL_GL_GetProcAddress(name);
 }
 
 // extern void* emscripten_GetProcAddress(const char *x);
@@ -423,7 +456,10 @@ static const int kMsaaSampleCount = 0;
 //static TTF_Font* ttfFont = nullptr;
 static sk_sp<SkSurface> sRasterSurface;
 
-#ifdef TODO
+#ifdef SKIA_GR_CONTEXT
+/// \note In OpenGL mode skia assumes that the correct OpenGL context
+/// has been made current to the current thread when Skia calls are made.
+/// \see https://skia.org/user/api/skcanvas_creation
 // static sk_sp<GrContext> sContext = nullptr;
 static GrContext* grContext = nullptr;
 // static sk_sp<SkSurface> sSurface = nullptr;
@@ -480,7 +516,7 @@ static GLfloat const kVertexData[] = {1.0f, 1.0f,  1.0f, 0.0f, -1.0f, 1.0f,  0.0
 
 // see https://github.com/flutter/engine/blob/master/shell/gpu/gpu_surface_gl.cc#L125
 static void init_skia(int w, int h) {
-#ifdef TODO
+#ifdef SKIA_GR_CONTEXT
   {
     auto sInterface =
         emscripten_GrGLMakeNativeInterface(); // sk_sp<const
@@ -516,36 +552,40 @@ static void init_skia(int w, int h) {
     info.fFBOID = (GrGLuint)bufferID;
     SkColorType colorType;
 
-defined(ENABLE_HTML5_SDL) || !defined(__EMSCRIPTEN__)
-    printf("SDL_GetWindowPixelFormat...");
+// TODO: we use em_ctx for now
+//#if defined(ENABLE_HTML5_SDL) || !defined(__EMSCRIPTEN__)
+//    printf("SDL_GetWindowPixelFormat...");
+//
+//    uint32_t windowFormat = SDL_GetWindowPixelFormat(window);
+//    int contextType;
+//
+//    // TODO: use em_ctx
+//    //em_ctx
+//    SDL_GL_GetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, &contextType);
+//
+//    printf("get windowFormat...");
+//
+//    // SkDebugf("%s", SDL_GetPixelFormatName(windowFormat));
+//    // TODO: the windowFormat is never any of these?
+//    if (SDL_PIXELFORMAT_RGBA8888 == windowFormat) {
+//      info.fFormat = GR_GL_RGBA8;
+//      colorType = kRGBA_8888_SkColorType;
+//    } else {
+//      colorType = kBGRA_8888_SkColorType;
+//      // TODO: use em_ctx
+//      //em_ctx
+//      if (SDL_GL_CONTEXT_PROFILE_ES == contextType) {
+//        info.fFormat = GR_GL_BGRA8;
+//      } else {
+//        // We assume the internal format is RGBA8 on desktop GL
+//        info.fFormat = GR_GL_RGBA8;
+//      }
+//    }
+//#endif // ENABLE_HTML5_SDL || !__EMSCRIPTEN__
 
-    uint32_t windowFormat = SDL_GetWindowPixelFormat(window);
-    int contextType;
-
-    // TODO: use em_ctx
-    em_ctx
-    SDL_GL_GetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, &contextType);
-
-    printf("get windowFormat...");
-
-    // SkDebugf("%s", SDL_GetPixelFormatName(windowFormat));
-    // TODO: the windowFormat is never any of these?
-    if (SDL_PIXELFORMAT_RGBA8888 == windowFormat) {
-      info.fFormat = GR_GL_RGBA8;
-      colorType = kRGBA_8888_SkColorType;
-    } else {
-      colorType = kBGRA_8888_SkColorType;
-      // TODO: use em_ctx
-      em_ctx
-      if (SDL_GL_CONTEXT_PROFILE_ES == contextType) {
-        info.fFormat = GR_GL_BGRA8;
-      } else {
-        // We assume the internal format is RGBA8 on desktop GL
-        info.fFormat = GR_GL_RGBA8;
-      }
-    }
-
+    // TODO: we use em_ctx for now
     info.fFormat = GR_GL_BGRA8; //  TODO
+    colorType = kBGRA_8888_SkColorType;
 
     printf("create GrBackendRenderTarget...");
 
@@ -584,9 +624,11 @@ public:
   SkScalar m_size = 200;
 
   void onDraw(SkCanvas* canvas) {
+    // TODO: needs SKIA_GR_CONTEXT
     /*if (!canvas->getGrContext()) {
       return;
     }*/
+
       //printf("onDraw() 1\n");
 
     SkPaint paint;
@@ -933,12 +975,17 @@ static void mainLoop() {
 #if defined(ENABLE_HTML5_SDL) || !defined(__EMSCRIPTEN__)
   while (SDL_PollEvent(&e) != 0) {
     switch (e.type) {
-    case SDL_QUIT: {
-      quit = true;
-      printf("recieved quit signal\n");
-    }
+      case SDL_QUIT: {
+        quit = true;
+        printf("recieved quit signal\n");
+      }
     }
   }
+#elif defined(__EMSCRIPTEN__)
+  #warning "TODO: port SDL_PollEvent (emscripten_set_mousedown_callback, e.t.c.)"
+  #warning "see https://github.com/floooh/sokol/blob/master/sokol_app.h#L2403 for example"
+#else
+  #error "TODO: port SDL_PollEvent"
 #endif
 
 #ifdef __EMSCRIPTEN__
@@ -975,6 +1022,48 @@ public:
 
   int ConstNoexceptMethod() const noexcept { return 42; }
 };
+
+// TODO https://kapadia.github.io/emscripten/2013/09/13/emscripten-pointers-and-pointers.html
+static int read_file(const char* fPath, char*& fileString, long int& fsize)
+{
+    FILE* f = fopen(fPath, "rb");
+    if (!f) {
+      printf("failed to open file: %s\n", fPath);
+      return 1;
+    }
+    fseek(f, 0, SEEK_END);
+    fsize = ftell(f);
+    fseek(f, 0, SEEK_SET); /* same as rewind(f); */
+    fileString = new char[fsize + 1];
+    fread(fileString, 1, fsize, f);
+    fclose(f);
+    fileString[fsize] = 0;
+    return 0;
+}
+
+static int SomeHardcoreTask(int max_num) {
+  //TRACE_EVENT1(kCategoryName, "SomeHardcoreTask", "max_num", max_num);
+  //float x = 1.5f;
+  int x = 0;
+  for (int i = 0; i < max_num; ++i) {
+    //x *= sin(x) / atan(x) * tanh(x) * sqrt(x);
+    x += i;
+  }
+
+  return x;
+}
+
+static void SomeHardcoreAsyncTask(
+    base::WaitableEvent* event,
+    const base::Callback<void(int)>& out_cb) {
+  //TRACE_EVENT0(kCategoryName, "SomeHardcoreAsyncTask");
+  printf("SomeHardcoreAsyncTask...\n");
+
+  for (int i : {20000, 5000, 800})
+    out_cb.Run(SomeHardcoreTask(i));
+
+  event->Signal();
+}
 
 int main(int argc, char** argv) {
   printf("Init alloc ...\n");
@@ -1016,17 +1105,60 @@ int main(int argc, char** argv) {
     printf("WTF::Bind!\n");
   }).Run();
 
-  // TODO: causes hang on WASM
-  /*{
+#if defined(__EMSCRIPTEN__) && defined(__EMSCRIPTEN_PTHREADS__)
+  // TODO: causes skia/GL hang on WASM
+#warning "TODO: port threads & support skia"
+#elif defined(__EMSCRIPTEN__) // wasm without PTHREAD support
+  // TODO: error undefined pthread_setschedparam
+  // see https://github.com/emscripten-core/emscripten/pull/8301
+  // TODO: port as in https://github.com/emscripten-core/emscripten/pull/8301/files#diff-3a4a6b777ac7df56ef826737ea093be8R37
+#else
+  {
+    printf("thread testing started\n");
     base::OnceClosure* closure = nullptr;
     //base::OnceCallback<void()> binded = base::BindOnce(&MakeClosure, &closure);
     //std::move(binded).Run();
 
+    //PlatformThread::CurrentId()
+    //base::Thread::ThreadMain().
+
     base::Thread thread("testing");
+
     thread.Start();
-    thread.task_runner()->PostTask(FROM_HERE, base::BindOnce(&MakeClosure, &closure));
+    //thread.task_runner()->PostTask(FROM_HERE, base::BindOnce(&MakeClosure, &closure));
+    //thread.Stop();
+
+    base::WaitableEvent event(base::WaitableEvent::ResetPolicy::MANUAL,
+      base::WaitableEvent::InitialState::NOT_SIGNALED);
+
+    auto AsyncTaskCb = [](const int x) {
+      //printf("AsyncTaskCb %d\n", x);
+      std::cout << "AsyncTaskCb " << x << " " << base::Time::Now() << std::endl;
+    };
+
+    //printf("thread testing PostDelayedTask...\n");
+
+    std::cout << "thread testing PostDelayedTask..." << base::Time::Now() << std::endl;
+
+    // see https://habr.com/ru/post/256907/
+    thread.task_runner()->PostDelayedTask(
+      FROM_HERE,
+      base::Bind(&SomeHardcoreAsyncTask,
+                 &event,
+                 base::Bind(AsyncTaskCb)),
+      base::TimeDelta::FromSeconds(10));
+
+    //printf("thread testing Wait...\n");
+    std::cout << "thread testing Wait..." << base::Time::Now() << std::endl;
+
+    event.Wait();
+
     thread.Stop();
-  }*/
+
+    std::cout << "thread testing ended..." << base::Time::Now() << std::endl;
+    //printf("thread testing ended\n");
+  }
+#endif
 
   {
     WTF::NumberToStringBuffer buffer;
@@ -1509,13 +1641,51 @@ int main(int argc, char** argv) {
   }*/
 
 #ifdef ENABLE_CUSTOM_FONTS
+  printf("Reading fonts...\n");
+
+  const char* fontPath = "./resources/fonts/FreeSans.ttf";
+
+  /*char* fileString1 = nullptr;
+  long int fsize1;
+  int readRes = read_file(fontPath, &fileString1, fsize1);
+  if (readRes != 0) {
+    printf("can`t read font %s\n", fontPath);
+  }*/
+
+  /*char* fileString2;
+  long int fsize2;
+  ///read_file(fontPath, fileString2, fsize2);
+  ///int readRes = read_file(fontPath, &fileString1, fsize1);
+  ///if (readRes != 0) {
+  ///  printf("can`t read font %s\n", fontPath);
+  ///}
+  */
+
   printf("Initializing fonts...\n");
 
+  //sk_sp<SkData> data = SkData::MakeFromMalloc(fileString1, fsize1);
+  sk_sp<SkData> data = SkData::MakeFromFileName(fontPath);
+  if (!data) {
+    printf("failed SkData::MakeFromMalloc for font %s\n", fontPath);
+  }
+
+  printf("Initializing font data...\n");
+
+  /// \note SkTypeface::MakeFromFile don`t support wasm pthreads,
+  /// so we use MakeFromData
+  //sk_sp<SkTypeface> sktp = SkTypeface::MakeFromFile("./resources/fonts/FreeSans.ttf");
+  sk_sp<SkTypeface> sktp = SkTypeface::MakeFromData(std::move(data));
+
+  printf("Creating fonts...\n");
+
   skFont1 =
-      new SkFont(SkTypeface::MakeFromFile("./resources/fonts/FreeSans.ttf"), 22.0f, 1.0f, 0.0f);
+      new SkFont(sktp, 22.0f, 1.0f, 0.0f);
 
   skFont2 =
-      new SkFont(SkTypeface::MakeFromFile("./resources/fonts/FreeSans.ttf"), 30.0f, 1.5f, 0.0f);
+      new SkFont(sktp, 30.0f, 1.5f, 0.0f);
+
+  //delete[] fileString1;
+  //delete[] fileString2;
 #endif
 
   printf("Initializing subsystems...\n");
@@ -1531,64 +1701,74 @@ int main(int argc, char** argv) {
   myView = new SkPainter(SK_ColorRED, 200);
 
 #ifdef ENABLE_SKOTTIE_ANIMATIONS
-  printf("Initializing skottie animations...\n");
+  {
+    printf("Initializing skottie animations...\n");
 
-  //
-  // sk_sp<skottie_utils::FileResourceProvider> frp
-  //  = skottie_utils::FileResourceProvider::Make(SkOSPath::Dirname(fPath.c_str()));
-  // frp->load(fPath.c_str(), "data.json");
-  //
+    //
+    // sk_sp<skottie_utils::FileResourceProvider> frp
+    //  = skottie_utils::FileResourceProvider::Make(SkOSPath::Dirname(fPath.c_str()));
+    // frp->load(fPath.c_str(), "data.json");
+    //
 
-  skottie::Animation::Builder builder;
-  /*fAnimation      = builder
-            //.setLogger(logger)
-            .setResourceProvider(
-                skottie_utils::FileResourceProvider::Make(SkOSPath::Dirname(fPath.c_str())))
-            .makeFromFile(fPath.c_str());*/
-  /*
-  defined(ENABLE_HTML5_SDL) || !defined(__EMSCRIPTEN__)
-  SDL_RWops* fileHandle = SDL_RWFromFile(fPath.c_str(), "r");
-  if (fileHandle == nullptr) {
-      SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Can't find the file!\n");
-  }*/
+    skottie::Animation::Builder builder;
+    /*fAnimation      = builder
+              //.setLogger(logger)
+              .setResourceProvider(
+                  skottie_utils::FileResourceProvider::Make(SkOSPath::Dirname(fPath.c_str())))
+              .makeFromFile(fPath.c_str());*/
+    /*
+    defined(ENABLE_HTML5_SDL) || !defined(__EMSCRIPTEN__)
+    SDL_RWops* fileHandle = SDL_RWFromFile(fPath.c_str(), "r");
+    if (fileHandle == nullptr) {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Can't find the file!\n");
+    }*/
 
-  printf("Reading skottie animations...\n");
+    printf("Reading skottie animations...\n");
 
-  FILE* f = fopen(fPath.c_str(), "rb");
-  if (!f) {
-    printf("failed to open file: %s\n", fPath.c_str());
-    return 1;
+    char* fileString = nullptr;
+    long int fsize;
+    int readRes = read_file(fPath.c_str(), fileString, fsize);
+    if (readRes != 0) {
+      printf("can`t read skottie anim %s\n", fontPath);
+      return 1;
+    }
+    DCHECK(fileString != nullptr);
+
+    /*FILE* f = fopen(fPath.c_str(), "rb");
+    if (!f) {
+      printf("failed to open file: %s\n", fPath.c_str());
+      return 1;
+    }
+    fseek(f, 0, SEEK_END);
+    long int fsize = ftell(f);
+    fseek(f, 0, SEEK_SET);
+    char* fileString = new char[fsize + 1];
+    fread(fileString, 1, fsize, f);
+    fclose(f);
+    fileString[fsize] = 0;*/
+
+    printf("Building skottie animations...\n");
+
+    // see https://github.com/google/skia/blob/master/modules/skottie/src/Skottie.cpp#L459
+    fAnimation = builder.make(fileString, fsize);
+    printf("Built skottie animations...\n");
+
+    printf("Get skottie stats...\n");
+    fAnimationStats = builder.getStats();
+    fTimeBase = 0; // force a time reset
+    if (fAnimation) {
+      fAnimation->setShowInval(fShowAnimationInval);
+      printf("Loaded Bodymovin animation v: %s, size: [%f %f]\n", fAnimation->version().c_str(),
+             fAnimation->size().width(), fAnimation->size().height());
+    } else {
+      printf("failed to load Bodymovin animation: %s\n", fPath.c_str());
+      return 1;
+    }
+    printf("Got skottie stats...\n");
+
+    delete[] fileString; // TODO
+    printf("skottie animations are ready...\n");
   }
-  fseek(f, 0, SEEK_END);
-  long int fsize = ftell(f);
-  fseek(f, 0, SEEK_SET); /* same as rewind(f); */
-  char* fileString = new char[fsize + 1];
-  fread(fileString, 1, fsize, f);
-  fclose(f);
-  fileString[fsize] = 0;
-
-  printf("Building skottie animations...\n");
-
-  // see https://github.com/google/skia/blob/master/modules/skottie/src/Skottie.cpp#L459
-  fAnimation = builder.make(fileString, fsize);
-  printf("Built skottie animations...\n");
-
-  printf("Get skottie stats...\n");
-  fAnimationStats = builder.getStats();
-  fTimeBase = 0; // force a time reset
-  if (fAnimation) {
-    fAnimation->setShowInval(fShowAnimationInval);
-    printf("Loaded Bodymovin animation v: %s, size: [%f %f]\n", fAnimation->version().c_str(),
-           fAnimation->size().width(), fAnimation->size().height());
-  } else {
-    printf("failed to load Bodymovin animation: %s\n", fPath.c_str());
-    return 1;
-  }
-  printf("Got skottie stats...\n");
-
-  delete[] fileString; // TODO
-  printf("skottie animations are ready...\n");
-  //
 #endif // ENABLE_SKOTTIE_ANIMATIONS
 
 // __EMSCRIPTEN_PTHREADS__ can be used to detect whether Emscripten is currently targeting pthreads.
