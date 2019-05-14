@@ -40,6 +40,14 @@
 #include <windows.h>
 #endif
 
+// __EMSCRIPTEN_PTHREADS__ can be used to detect whether Emscripten is currently targeting pthreads.
+// At runtime, you can use the emscripten_has_threading_support()
+// see https://emscripten.org/docs/porting/pthreads.html
+#if (defined(OS_EMSCRIPTEN) || defined(__EMSCRIPTEN__)) && defined(__EMSCRIPTEN_PTHREADS__)
+#include <emscripten/emscripten.h>
+#include <emscripten/threading.h>
+#endif // OS_EMSCRIPTEN
+
 namespace WTF {
 
 int numberOfProcessorCores()
