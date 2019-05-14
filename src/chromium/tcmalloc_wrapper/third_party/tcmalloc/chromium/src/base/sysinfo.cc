@@ -33,6 +33,9 @@
 # define PLATFORM_WINDOWS 1
 #endif
 
+// __EMSCRIPTEN_PTHREADS__ can be used to detect whether Emscripten is currently targeting pthreads.
+// At runtime, you can use the emscripten_has_threading_support()
+// see https://emscripten.org/docs/porting/pthreads.html
 #if defined(OS_EMSCRIPTEN) && defined(__EMSCRIPTEN_PTHREADS__)
 #include <emscripten/emscripten.h>
 #include <emscripten/threading.h>
@@ -267,15 +270,22 @@ void SleepForMilliseconds(int milliseconds) {
 
 int GetSystemCPUsCount()
 {
-#if defined(OS_EMSCRIPTEN)
+#if defined(OS_EMSCRIPTEN) || defined(__EMSCRIPTEN__)
+
+  //return 1; // TODO
+
   // see https://github.com/hongkk/urho/blob/master/Source/Urho3D/Core/ProcessUtils.cpp#L448
   // see https://emscripten.org/docs/porting/pthreads.html
 #ifdef __EMSCRIPTEN_PTHREADS__
+  if (!emscripten_has_threading_support()) {
+    printf("warning: !emscripten_has_threading_support\n");
+  }
   return emscripten_num_logical_cores();
 #else
   #warning "emscripten built without PTHREADS"
   return 1;
 #endif
+
 #elif defined(PLATFORM_WINDOWS)
   // Get the number of processors.
   SYSTEM_INFO info;
