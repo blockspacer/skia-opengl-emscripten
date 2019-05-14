@@ -59,7 +59,23 @@ int numberOfProcessorCores()
             fprintf(stderr, "WARNING: failed to parse WTF_numberOfProcessorCores=%s\n", coresEnv);
     }
 
-#if OS(DARWIN)
+#if defined(OS_EMSCRIPTEN) || defined(__EMSCRIPTEN__)
+
+  //return 1; // TODO
+
+  // see https://github.com/hongkk/urho/blob/master/Source/Urho3D/Core/ProcessUtils.cpp#L448
+  // see https://emscripten.org/docs/porting/pthreads.html
+#ifdef __EMSCRIPTEN_PTHREADS__
+  if (!emscripten_has_threading_support()) {
+    printf("warning: !emscripten_has_threading_support\n");
+  }
+  return emscripten_num_logical_cores();
+#else
+  #warning "emscripten built without PTHREADS"
+  return 1;
+#endif
+
+#elif OS(DARWIN)
     unsigned result;
     size_t length = sizeof(result);
     int name[] = {
