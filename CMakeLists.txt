@@ -88,12 +88,15 @@ if(EMSCRIPTEN)
 
   # TODO https://groups.google.com/forum/?nomobile=true#!topic/emscripten-discuss/slgrOM-BnCk
   #set(EMCC_COMMON "${EMCC_COMMON} -s EMULATE_FUNCTION_POINTER_CASTS=1")
-  #set(EMCC_COMMON "${EMCC_COMMON} -s LEGACY_GL_EMULATION=0")
+  # -s EMULATED_FUNCTION_POINTERS=2.
 
   #set(EMCC_COMMON "${EMCC_COMMON} -s SIDE_MODULE=1")
 
   #
   # PTHREADS
+  #
+  # see https://developers.google.com/web/updates/2018/10/wasm-threads
+  # see https://github.com/emscripten-core/emscripten/blob/incoming/tests/gl_only_in_pthread.cpp
   #
   # At runtime, you can use the emscripten_has_threading_support()
   # function to test whether the currently executing code
@@ -102,15 +105,45 @@ if(EMSCRIPTEN)
   # was compiled with -s USE_PTHREADS=1
   # (and the current browser supports multithreading).
   #
+  # Pthreads do not work in non-browser environments yet
+  # (need Web Workers, or an alternative to them)
+  #
+  # DOM operations can only be done on the main thread
+  # That includes things like printing to the console (!!!),
+  # and even things like XMLHttpRequests!
+  #
+  # fopen(), fread(), printf(), fprintf() etc. are not multithreaded
+  #
+  # For backwards compatibility, two separate builds must be done,
+  # one with -s USE_PTHREADS=1 and the other with -s USE_PTHREADS=0.
+  #
   # see https://github.com/emscripten-core/emscripten/wiki/Pthreads-with-WebAssembly
-  # set(EMCC_COMMON "${EMCC_COMMON} -s USE_PTHREADS=1")
+  #set(EMCC_COMMON "${EMCC_COMMON} -s USE_PTHREADS=1")
+  #
+  # When the linker flag -s PTHREAD_POOL_SIZE=<integer> is not specified
+  # and pthread_create() is called, the new thread will not actually start
+  # to run immediately, but the main JS thread must yield execution back
+  # to browser first. This behavior is a result of #1049079.
   # https://github.com/emscripten-core/emscripten/issues/3636
-  # set(EMCC_COMMON "${EMCC_COMMON} -s PTHREAD_POOL_SIZE=1")
+  #set(EMCC_COMMON "${EMCC_COMMON} -s PTHREAD_POOL_SIZE=8")
+  #
   # see emscripten_num_logical_cores
   # https://github.com/hongkk/urho/blob/master/Source/Urho3D/Core/ProcessUtils.cpp#L449
   # set(EMCC_COMMON "${EMCC_COMMON} -s PTHREAD_HINT_NUM_CORES=1")
+  #
   # Use the option -s PROXY_TO_PTHREAD=1 if you want to run
   # the main thread of a multithreaded application in a web worker.
+  # if PROXY_TO_PTHREAD see emscripten_pthread_attr_settransferredcanvases
+  #
+  # PTHREADS_PROFILING
+  #
+  # debug traces for diagnosing pthreads related issues.
+  # see https://github.com/emscripten-core/emscripten/blob/master/src/settings.js#L1117
+  # set(EMCC_COMMON "${EMCC_COMMON} -s PTHREADS_DEBUG=1")
+  #
+  # dlmalloc is necessary for multithreading, split memory, e.t.c.
+  # default: dlmalloc
+  # set(EMCC_COMMON "${EMCC_COMMON} -s MALLOC=dlmalloc")
 
   set(EMCC_COMMON "${EMCC_COMMON} -s USE_ZLIB=1")
   #set(EMCC_COMMON "${EMCC_COMMON} -s USE_HARFBUZZ=1") # < TODO
@@ -121,12 +154,68 @@ if(EMSCRIPTEN)
   set(EMCC_COMMON "${EMCC_COMMON} -s USE_SDL=2")
   set(EMCC_COMMON "${EMCC_COMMON} -s USE_SDL_IMAGE=2")
   set(EMCC_COMMON "${EMCC_COMMON} -s USE_SDL_TTF=2")
-  set(EMCC_COMMON "${EMCC_COMMON} -s USE_WEBGL2=2")
+
+  #
+  # WEBGL
+  #
+  # see https://github.com/emscripten-core/emscripten/blob/master/src/settings.js#L369
+  # see https://www.khronos.org/registry/webgl/specs/2.0/#4.1.2
+  # BUG: WebGL 2 is not working with OffscreenCanvas
+  # https://bugzilla.mozilla.org/show_bug.cgi?id=1388299
+  # TODO: freezes with threads
+  set(EMCC_COMMON "${EMCC_COMMON} -s USE_WEBGL2=1")
+  set(EMCC_COMMON "${EMCC_COMMON} -DWEBGL2_SUPPORT=1") # custom define
+  #
+  # emulates some WebGL 1 features on WebGL 2 contexts
+  # see https://github.com/emscripten-core/emscripten/blob/master/src/settings.js#L394
+  # performs a string search-replace based automatic migration of #version 100 shaders to #version 300 es
+  set(EMCC_COMMON "${EMCC_COMMON} -s WEBGL2_BACKWARDS_COMPATIBILITY_EMULATION=1")
+  #
+  # see https://emscripten.org/docs/porting/multimedia_and_graphics/OpenGL-support.html?highlight=use_webgl2#emulation-of-older-desktop-opengl-api-features
+  # Incomplete but useful
+  # cannot emulate both ES2/ES3 and legacy GL
+  # set(EMCC_COMMON "${EMCC_COMMON} -s LEGACY_GL_EMULATION=1")
+
+  # see https://github.com/emscripten-core/emscripten/blob/master/src/settings.js#L369
+  # debug printing of WebGL related operations
+  # set(EMCC_COMMON "${EMCC_COMMON} -s GL_DEBUG=1")
+  #
+  #set(EMCC_COMMON "${EMCC_COMMON} -s TRACE_WEBGL_CALLS=1")
+  #
+  # Adds extra checks for error situations in the GL library.
+  # Can impact performance.
+  # see https://github.com/emscripten-core/emscripten/blob/master/src/settings.js#L362
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s GL_ASSERTIONS=1")
+  #
+  # // Forces support for all GLES2 features, not just the WebGL-friendly subset.
   # set(EMCC_COMMON "${EMCC_COMMON} -s FULL_ES2=1")
+  # Forces support for all GLES3 features, not just the WebGL2-friendly subset.
   set(EMCC_COMMON "${EMCC_COMMON} -s FULL_ES3=1")
+  #
+  #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s GL_UNSAFE_OPTS=0")
+
+  # see https://github.com/emscripten-core/emscripten/blob/master/src/settings.js#L456
+  # DISABLE_EXCEPTION_CATCHING = 0 - generate code to actually catch exceptions
+  # DISABLE_EXCEPTION_CATCHING = 1 - disable exception catching at all
+  # DISABLE_EXCEPTION_CATCHING = 2 - disable exception catching, but enables
+  #                                  catching in whitelist
+
+  # Enables catching exception in the listed functions only, if
+  # DISABLE_EXCEPTION_CATCHING = 2 is set
+  # EXCEPTION_CATCHING_WHITELIST
+
+  # https://github.com/emscripten-core/emscripten/issues/3773
+  # requires merge of https://github.com/luser/emscripten/commits/webrtc-sockets
+  # should be complete and running on master.
+  # -s SOCKET_WEBRTC=1
+
+  # -s DEMANGLE_SUPPORT to choose whether to compile the
+  # application with libcxxabi-provided demangling support ___cxa_demangle().
+
   # rtti required by skia
   set(EMCC_COMMON "${EMCC_COMMON} -frtti")
   set(EMCC_COMMON "${EMCC_COMMON} -DSK_RELEASE")
+
   # https://github.com/google/skia/blob/master/BUILD.gn#L502
   # set(EMCC_COMMON "${EMCC_COMMON} -DSKSL_STANDALONE") # if (skia_compile_processors)
   set(EMCC_COMMON "${EMCC_COMMON} -DSK_ASSUME_WEBGL=1")
@@ -147,6 +236,7 @@ if(EMSCRIPTEN)
 
   # https://github.com/emscripten-core/emscripten/issues/4932
   # https://github.com/kosh04/newlisp/blob/master/newlisp.h#L164
+  # TODO
   set(EMCC_COMMON "${EMCC_COMMON} -D_FILE_OFFSET_BITS=64")
   set(EMCC_COMMON "${EMCC_COMMON} -D_LARGEFILE_SOURCE=1")
 
@@ -162,8 +252,6 @@ if(EMSCRIPTEN)
 
   # TODO EMCC_LINKER_FLAGS
   # TODO -s SAFE_HEAP=1
-  # TODO LEGACY_GL_EMULATION
-  # OFFSCREENCANVAS_SUPPORT
 
   # https://emscripten.org/docs/tools_reference/emcc.html#emcc-oz
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Oz")
@@ -180,12 +268,40 @@ if(EMSCRIPTEN)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s ERROR_ON_MISSING_LIBRARIES=1")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s ERROR_ON_UNDEFINED_SYMBOLS=1")
   #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s SDL2_IMAGE_FORMATS='[\"png\"]'")
+
+  #
+  # FILESYSTEM
+  #
+  # if your C code uses no files, but you include
+  # some JS that does, you might need this.
+  # see https://github.com/emscripten-core/emscripten/blob/master/src/settings.js#L549
   #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s FORCE_FILESYSTEM=0")
+  #
+  #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s NO_FILESYSTEM=1")
+  #
+  # If set to 1, uses the multithreaded filesystem that is implemented within the
+  # asm.js module, using emscripten_fetch.
+  # Implies -s FETCH=1 (!!!)
+  # see https://github.com/emscripten-core/emscripten/blob/master/src/settings.js#L1214
+  #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s ASMFS=1")
+  # enables emscripten_fetch API.
+  # see https://github.com/emscripten-core/emscripten/blob/master/src/settings.js#L1214
+  #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s FETCH=1")
+  # FETCH_DEBUG
+  #
+  # Log all FS operations.
+  # see https://github.com/emscripten-core/emscripten/blob/master/src/settings.js#L524
+  # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s FS_LOG=1")
+  #
+  #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s CASE_INSENSITIVE_FS=1")
+
   #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s MODULARIZE=1")
-  #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s GL_UNSAFE_OPTS=0")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s GL_ASSERTIONS=1")
+
   #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s ASSERTIONS=1")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s ASSERTIONS=2")
+
+  # see https://github.com/emscripten-core/emscripten/blob/master/src/settings.js#L443
+  #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s LZ4=1")
 
   # In theory there should be no limit, but in practice,
   # 2GB is a practical limit because many (all?)
@@ -197,11 +313,32 @@ if(EMSCRIPTEN)
   #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s TOTAL_MEMORY=512MB")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s TOTAL_MEMORY=1024MB")
 
+  # Also remember to pass -s NO_EXIT_RUNTIME=1 if you want pthreads to stay alive
+  # when main() exits on the main thread, otherwise they will be terminated
+  # as the C runtime closes at the end of main().
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s NO_EXIT_RUNTIME=1")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s WARN_UNALIGNED=1")
-else()
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DSK_ASSUME_GL=1")
 
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s WARN_UNALIGNED=1")
+
+  #
+  # offscreen canvas
+  #
+  # emscripten_webgl_commit_frame requires offscreen canvas support
+  # see https://github.com/emscripten-core/emscripten/issues/5437
+  # see explicitSwapControl
+  #
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s OFFSCREENCANVAS_SUPPORT=1")
+  #
+  # When building simultaneously with both -s OFFSCREEN_FRAMEBUFFER=1
+  # and -s OFFSCREENCANVAS_SUPPORT=1 linker flags enabled,
+  # offscreen backbuffer can be used as a polyfill-like compatibility
+  # fallback to enable rendering WebGL from a pthread when the browser
+  # does not support the OffscreenCanvas API.
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s OFFSCREEN_FRAMEBUFFER=1")
+
+else()
+
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DSK_ASSUME_GL=1")
 
   ### Find Libraries
   find_package(OpenGL REQUIRED)
@@ -338,7 +475,6 @@ set(NEW_CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 if(EMSCRIPTEN)
   #set(NEW_CMAKE_CXX_FLAGS "${NEW_CMAKE_CXX_FLAGS} -s MODULARIZE=1 -s EXPORT_NAME=\"PathKitInit\"")
   #set(NEW_CMAKE_CXX_FLAGS "${NEW_CMAKE_CXX_FLAGS} -s STRICT=1")
-  #set(NEW_CMAKE_CXX_FLAGS "${NEW_CMAKE_CXX_FLAGS} -s NO_FILESYSTEM=1")
 endif() # EMSCRIPTEN
 
 set(NEW_CMAKE_CXX_FLAGS "${NEW_CMAKE_CXX_FLAGS} -Wno-error")
@@ -983,6 +1119,13 @@ set(PROJECT_SRC
 # https://www.mail-archive.com/emscripten-discuss@googlegroups.com/msg07864.html
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s SIDE_MODULE=0")
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s MAIN_MODULE=1")
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s MAIN_MODULE=2")
+
+#  -s NO_DYNAMIC_EXECUTION=1 and -s RELOCATABLE=1 build modes are mutually exclusive.
+
+# -s NO_DYNAMIC_EXECUTION=2 which demotes eval() errors
+# to warnings at runtime, useful for iterating fixes in a codebase for multiple
+# eval()s
 
 add_executable(${PROJECT_NAME}
   ${PROJECT_SRC}
@@ -1103,6 +1246,8 @@ else()
   )
   target_compile_definitions(${PROJECT_NAME} PRIVATE
     GLEW_NO_GLU
+    # NOTE: prefer #ifndef NDEBUG, see https://stackoverflow.com/a/8594122
+    "$<$<CONFIG:DEBUG>:DEBUG>"
   )
 endif() # EMSCRIPTEN
 

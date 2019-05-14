@@ -20,7 +20,23 @@
 // see
 // https://github.com/WebKit/webkit/blob/master/Source/WebCore/rendering/RenderBoxModelObject.cpp#L741
 
+// see https://github.com/save7502/youkyoung/blob/master/Engine/Source/Runtime/OpenGLDrv/Private/HTML5/HTML5OpenGL.cpp#L5
+#define ENABLE_HTML5_SDL 1
+
+#define ENABLE_SKOTTIE_ANIMATIONS 1
+
+//#define ENABLE_CUSTOM_FONTS 1
+
+/// \note place before glext.h
+/// \note defined by CMAKE
+// #define GL_GLEXT_PROTOTYPES
+
 #ifdef __EMSCRIPTEN__
+
+/// \note defined by CMAKE
+//#define WEBGL2_SUPPORT 1
+
+#if defined(ENABLE_HTML5_SDL) || !defined(__EMSCRIPTEN__)
 //#include <SDL.h>
 //#include <SDL_opengles2.h>
 #include <SDL2/SDL.h>
@@ -28,16 +44,23 @@
 //#include <SDL2/SDL_thread.h>
 //#include <SDL2/SDL_syswm.h>
 #include <SDL2/SDL_video.h>
-#include <emscripten.h>
-#include <emscripten/html5.h>
 //#include "SDL_opengles2.h"
 //#include <SDL_opengles2_gl2.h>
 //#include <SDL_opengles2_gl2ext.h>
+#endif
+
+#if defined(WEBGL2_SUPPORT)
+#include <GLES3/gl3.h>
+#else
+#include <GLES2/gl2.h>
+#endif
+
+#include <emscripten.h>
+#include <emscripten/html5.h>
 // TODO
 //#define GL_RGBA8 0x8058
 #include <EGL/egl.h>
 #include <GL/gl.h>
-#include <GLES2/gl2.h>
 //#include <OpenGL/gl.h>
 //#include <SDL/SDL_ttf.h>
 //#include <SDL2/SDL_image.h>
@@ -49,6 +72,13 @@
 #include <SDL_opengl.h>
 #include <SDL_opengl_glext.h>
 #endif
+
+// __EMSCRIPTEN_PTHREADS__ can be used to detect whether Emscripten is currently targeting pthreads.
+// At runtime, you can use the emscripten_has_threading_support()
+// see https://emscripten.org/docs/porting/pthreads.html
+#if defined(__EMSCRIPTEN__) && defined(__EMSCRIPTEN_PTHREADS__)
+#include <emscripten/threading.h>
+#endif // __EMSCRIPTEN__
 
 // see https://lyceum-allotments.github.io/2016/06/emscripten-and-sdl-2-tutorial-part-1/
 //#include <SDL2/SDL_ttf.h>
@@ -285,6 +315,28 @@ void vprintf_stderr_common(const char* format, va_list args) {
   vfprintf(stderr, format, args);
 }*/
 
+static void CheckOpenGLError(const char* stmt, const char* fname, int line)
+{
+    GLenum err = glGetError();
+    if (err != GL_NO_ERROR)
+    {
+        printf("OpenGL error %08x, at %s:%i - for %s\n", err, fname, line, stmt);
+    }
+}
+
+#ifndef NDEBUG
+    #define GL_CHECK_WITH_MESSAGE(msg) do { \
+            CheckOpenGLError(msg, __FILE__, __LINE__); \
+        } while (0)
+    #define GL_CHECK(stmt) do { \
+            stmt; \
+            GL_CHECK_WITH_MESSAGE(#stmt); \
+        } while (0)
+#else
+    #define GL_CHECK(stmt) stmt
+    #define GL_CHECK_WITH_MESSAGE(stmt) (void)(0);
+#endif
+
 //#define TODO
 
 #ifdef TODO
@@ -294,6 +346,9 @@ void vprintf_stderr_common(const char* format, va_list args) {
 static GrGLFuncPtr emscripten_get_gl_proc(void* ctx, const char name[]) {
   SkASSERT(nullptr == ctx);
   // return emscripten_GetProcAddress(name);
+  // TODO:
+  em_ctx
+ENABLE_HTML5_SDL
   return (GrGLFuncPtr)SDL_GL_GetProcAddress(name);
 }
 
@@ -338,6 +393,7 @@ sk_sp<const GrGLInterface> emscripten_GrGLMakeNativeInterface() {
 }
 #endif
 
+#ifdef ENABLE_SKOTTIE_ANIMATIONS
 static SkString fPath = SkString("./resources/animations/data.json");
 // static SkString                           fPath = SkString("./resources/fonts/FreeSans.ttf");
 static sk_sp<skottie::Animation> fAnimation;
@@ -346,8 +402,7 @@ static SkSize fWinSize = SkSize::Make(512, 512);
 static SkMSec fTimeBase = 0;
 static bool fShowAnimationInval = false;
 static bool fShowAnimationStats = false;
-
-#define ENABLE_CUSTOM_FONTS 1
+#endif // ENABLE_SKOTTIE_ANIMATIONS
 
 #ifdef ENABLE_CUSTOM_FONTS
 static SkFont* skFont1 = nullptr;
@@ -384,16 +439,35 @@ static int height = 512;
 
 static GLint uniformTex;
 
+#if defined(ENABLE_HTML5_SDL) || !defined(__EMSCRIPTEN__)
 static SDL_Window* window;
+#endif
+
+#ifdef __EMSCRIPTEN__
+static EMSCRIPTEN_WEBGL_CONTEXT_HANDLE em_ctx;
+
+// @see https://emscripten.org/docs/api_reference/html5.h.html?highlight=emscripten_webgl_create_context#c.EmscriptenWebGLContextAttributes
+// @see https://github.com/emscripten-core/emscripten/blob/incoming/system/include/emscripten/html5.h#L440
+static EmscriptenWebGLContextAttributes attr;
+
+// @see explicitSwapControl
+static EM_BOOL enableSwapControl = EM_TRUE;
+
+// @see enableExtensionsByDefault
+static EM_BOOL enableEmscriptenExtensionsByDefault = EM_TRUE;
+#else
 static SDL_GLContext glContext;
+#endif
+
+#if defined(ENABLE_HTML5_SDL) || !defined(__EMSCRIPTEN__)
+// Event handler
+static SDL_Event e;
+#endif
 
 // Main loop flag
 static bool quit = false;
 
 static GLuint vertexPosObject;
-
-// Event handler
-static SDL_Event e;
 
 class SkPainter;
 
@@ -442,10 +516,14 @@ static void init_skia(int w, int h) {
     info.fFBOID = (GrGLuint)bufferID;
     SkColorType colorType;
 
+defined(ENABLE_HTML5_SDL) || !defined(__EMSCRIPTEN__)
     printf("SDL_GetWindowPixelFormat...");
 
     uint32_t windowFormat = SDL_GetWindowPixelFormat(window);
     int contextType;
+
+    // TODO: use em_ctx
+    em_ctx
     SDL_GL_GetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, &contextType);
 
     printf("get windowFormat...");
@@ -457,6 +535,8 @@ static void init_skia(int w, int h) {
       colorType = kRGBA_8888_SkColorType;
     } else {
       colorType = kBGRA_8888_SkColorType;
+      // TODO: use em_ctx
+      em_ctx
       if (SDL_GL_CONTEXT_PROFILE_ES == contextType) {
         info.fFormat = GR_GL_BGRA8;
       } else {
@@ -507,6 +587,7 @@ public:
     /*if (!canvas->getGrContext()) {
       return;
     }*/
+      //printf("onDraw() 1\n");
 
     SkPaint paint;
 
@@ -514,13 +595,22 @@ public:
     paint.setAntiAlias(true);
     paint.setColor(SK_ColorRED);
     /// paint.setColor(0xffeeeeee);
+      //printf("onDraw() 2\n");
 
     canvas->drawCircle(m_pos.x(), m_pos.y(), m_size, paint);
+      //printf("onDraw() 2.1\n");
 
     {
       SkColor colors[4] = {SK_ColorCYAN, SK_ColorMAGENTA, SK_ColorYELLOW, SK_ColorCYAN};
-      paint.setShader(SkGradientShader::MakeSweep(128.0f, 128.0f, colors, nullptr, 4, 0, nullptr));
+
+      //printf("onDraw() 2.2\n");
+      sk_sp<SkShader> shdr = SkGradientShader::MakeSweep(128.0f, 128.0f, colors, nullptr, 4, 0, nullptr);
+
+      //printf("onDraw() 2.3\n");
+      paint.setShader(shdr);
+      //printf("onDraw() 2.4\n");
     }
+      //printf("onDraw() 3\n");
 
     // canvas->drawLine(m_pos.x(), m_pos.y(), m_prev.x(), m_prev.y(), paint);
 
@@ -532,6 +622,7 @@ public:
 
     paint.setColor(SK_ColorBLACK);
     paint.setStyle(SkPaint::kFill_Style);
+      //printf("onDraw() 4\n");
 
 #ifdef ENABLE_CUSTOM_FONTS
     // SkFont font;//(nullptr, 24);//SkFont::kA8_MaskType, flags);
@@ -565,46 +656,59 @@ public:
       canvas->drawTextBlob(blob2.get(), x, 20 + y, strokePaint);
     }
 #endif
+      //printf("onDraw() 5\n");
 
+#ifdef ENABLE_SKOTTIE_ANIMATIONS
+      //printf("onDraw() 6\n");
     if (fAnimation) {
+      //printf("SkAutoCanvasRestore...\n");
       SkAutoCanvasRestore acr(canvas, true);
+      //printf("SkRect::MakeSize...\n");
       const auto dstR = SkRect::MakeSize(fWinSize);
+      //printf("fAnimation->render...\n");
       fAnimation->render(canvas, &dstR);
+      //printf("fAnimation->rendered\n");
       /*if (fShowAnimationStats) {
           draw_stats_box(canvas, fAnimationStats);
       }*/
     }
+#endif // ENABLE_SKOTTIE_ANIMATIONS
+      //printf("onDraw() 7\n");
   }
+
   SkPainter(SkColor color, SkScalar size) : m_color(color), m_size(size) {}
 };
 
-GLuint LoadShader(GLenum type, const char* shaderSrc) {
+static GLuint LoadShader(GLenum type, const char* shaderSrc) {
   GLuint shader;
   GLint compiled;
 
   shader = glCreateShader(type);
-  if (shader == 0)
+  GL_CHECK_WITH_MESSAGE((std::string("failed glCreateShader for") + shaderSrc).c_str());
+  if (shader == 0) {
+    printf("shader == 0 \n");
     return 0;
+  }
 
-  glShaderSource(shader, 1, &shaderSrc, NULL);
-  glCompileShader(shader);
-  glGetShaderiv(shader, GL_COMPILE_STATUS, &compiled);
+  GL_CHECK( glShaderSource(shader, 1, &shaderSrc, NULL) );
+  GL_CHECK( glCompileShader(shader) );
+  GL_CHECK( glGetShaderiv(shader, GL_COMPILE_STATUS, &compiled) );
   if (!compiled) {
     GLint infoLen = 0;
-    glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &infoLen);
+    GL_CHECK( glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &infoLen) );
     if (infoLen > 1) {
       char* infoLog = static_cast<char*>(malloc(sizeof(char) * infoLen));
-      glGetShaderInfoLog(shader, infoLen, NULL, infoLog);
+      GL_CHECK( glGetShaderInfoLog(shader, infoLen, NULL, infoLog) );
       printf("Error compiling shader:\n%s\n", infoLog);
       free(infoLog);
     }
-    glDeleteShader(shader);
+    GL_CHECK( glDeleteShader(shader) );
     return 0;
   }
   return shader;
 }
 
-int Init() {
+static int Init() {
   char vShaderStr[] = "attribute vec2 vPosition;                \n"
                       "attribute vec2 vUV;                \n"
                       "varying vec2 v_texcoord;\n"
@@ -640,50 +744,55 @@ int Init() {
   fragmentShader = LoadShader(GL_FRAGMENT_SHADER, fShaderStr);
 
   programObject = glCreateProgram();
-  if (programObject == 0)
+  GL_CHECK_WITH_MESSAGE((std::string("failed glCreateProgram for") + vShaderStr).c_str());
+  if (programObject == 0) {
+    printf("programObject == 0 \n");
     return 0;
+  }
 
-  glAttachShader(programObject, vertexShader);
-  glAttachShader(programObject, fragmentShader);
-  glBindAttribLocation(programObject, 0, "vPosition");
-  glBindAttribLocation(programObject, 1, "vUV");
-  glLinkProgram(programObject);
+  GL_CHECK( glAttachShader(programObject, vertexShader) );
+  GL_CHECK( glAttachShader(programObject, fragmentShader) );
+  GL_CHECK( glBindAttribLocation(programObject, 0, "vPosition") );
+  GL_CHECK( glBindAttribLocation(programObject, 1, "vUV") );
+  GL_CHECK( glLinkProgram(programObject) );
   uniformTex = glGetUniformLocation(programObject, "u_tex");
-  glGetProgramiv(programObject, GL_LINK_STATUS, &linked);
+  GL_CHECK( glGetProgramiv(programObject, GL_LINK_STATUS, &linked) );
   if (!linked) {
     GLint infoLen = 0;
-    glGetProgramiv(programObject, GL_INFO_LOG_LENGTH, &infoLen);
+    GL_CHECK( glGetProgramiv(programObject, GL_INFO_LOG_LENGTH, &infoLen) );
     if (infoLen > 1) {
       char* infoLog = static_cast<char*>(malloc(sizeof(char) * infoLen));
-      glGetProgramInfoLog(programObject, infoLen, NULL, infoLog);
+      GL_CHECK( glGetProgramInfoLog(programObject, infoLen, NULL, infoLog) );
       printf("Error linking program:\n%s\n", infoLog);
       free(infoLog);
     }
-    glDeleteProgram(programObject);
+    GL_CHECK( glDeleteProgram(programObject) );
     return GL_FALSE;
   }
 
-  glGenTextures(1, &skia_texture);
+  GL_CHECK( glGenTextures(1, &skia_texture) );
 
   // No clientside arrays, so do this in a webgl-friendly manner
-  glGenBuffers(1, &vertexPosObject);
-  glBindBuffer(GL_ARRAY_BUFFER, vertexPosObject);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(kVertexData), kVertexData, GL_STATIC_DRAW);
-  glBindBuffer(GL_ARRAY_BUFFER, 0);
+  GL_CHECK( glGenBuffers(1, &vertexPosObject) );
+  GL_CHECK( glBindBuffer(GL_ARRAY_BUFFER, vertexPosObject) );
+  GL_CHECK( glBufferData(GL_ARRAY_BUFFER, sizeof(kVertexData), kVertexData, GL_STATIC_DRAW) );
+  GL_CHECK( glBindBuffer(GL_ARRAY_BUFFER, 0) );
 
-  glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+  GL_CHECK( glClearColor(0.0f, 0.0f, 0.0f, 0.0f) );
   return GL_TRUE;
 }
 
 ///
 // Draw a triangle using the shader pair created in Init()
 //
-void Draw() {
-  glViewport(0, 0, width, height);
-  glClear(GL_COLOR_BUFFER_BIT);
+static void Draw() {
+      //printf("Draw() 1\n");
+  GL_CHECK( glViewport(0, 0, width, height) );
+  GL_CHECK( glClear(GL_COLOR_BUFFER_BIT) );
 
-  glUseProgram(programObject);
-  glActiveTexture(GL_TEXTURE0);
+  GL_CHECK( glUseProgram(programObject) );
+  GL_CHECK( glActiveTexture(GL_TEXTURE0) );
+      //printf("Draw() 2\n");
 
   {
     // Draw to the surface via its SkCanvas.
@@ -691,40 +800,44 @@ void Draw() {
     SkCanvas* canvas = sRasterSurface->getCanvas();
 
     canvas->clear(SkColorSetARGB(255, 255, 255, 255));
+      //printf("Draw() 3\n");
 
     myView->onDraw(canvas);
+      //printf("Draw() 4\n");
 
     sRasterSurface->flush();
+      //printf("Draw() 5\n");
 
     const sk_sp<SkImage> pImage = sRasterSurface->makeImageSnapshot();
     if (nullptr == pImage) {
-      printf("can`t makeImageSnapshot\n");
+      //printf("can`t makeImageSnapshot\n");
     }
 
     SkPixmap pixmap;
     if (!pImage->peekPixels(&pixmap)) {
-      printf("can`t peekPixels\n");
+      //printf("can`t peekPixels\n");
     }
+      //printf("Draw() 6\n");
 
-    glBindTexture(GL_TEXTURE_2D, skia_texture);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, pixmap.width(), pixmap.height(), 0, GL_RGBA,
-                 GL_UNSIGNED_BYTE, pixmap.addr());
+    GL_CHECK( glBindTexture(GL_TEXTURE_2D, skia_texture) );
+    GL_CHECK( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE) );
+    GL_CHECK( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE) );
+    GL_CHECK( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR) );
+    GL_CHECK( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR) );
+    GL_CHECK( glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, pixmap.width(), pixmap.height(), 0, GL_RGBA,
+                 GL_UNSIGNED_BYTE, pixmap.addr()) );
   }
 
-  glUniform1i(uniformTex, 0);
+  GL_CHECK( glUniform1i(uniformTex, 0) );
 
-  glBindBuffer(GL_ARRAY_BUFFER, vertexPosObject);
+  GL_CHECK( glBindBuffer(GL_ARRAY_BUFFER, vertexPosObject) );
   //
-  glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), NULL);
-  glEnableVertexAttribArray(0);
+  GL_CHECK( glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), NULL) );
+  GL_CHECK( glEnableVertexAttribArray(0) );
   //
-  glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat),
-                        (GLvoid*)(2 * sizeof(GLfloat)));
-  glEnableVertexAttribArray(1);
+  GL_CHECK( glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat),
+                        (GLvoid*)(2 * sizeof(GLfloat))) );
+  GL_CHECK( glEnableVertexAttribArray(1) );
 
   int w, h, fs;
 #ifdef __EMSCRIPTEN__
@@ -739,15 +852,19 @@ void Draw() {
   float ys = 1.0f;
   float mat[] = {xs, 0, 0, 0, 0, ys, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1};
 
-  glBindBuffer(GL_ARRAY_BUFFER, 0);
+  GL_CHECK( glBindBuffer(GL_ARRAY_BUFFER, 0) );
 
-  glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+  GL_CHECK( glDrawArrays(GL_TRIANGLE_STRIP, 0, 4) );
 
-  glDisableVertexAttribArray(0);
-  glDisableVertexAttribArray(1);
+  GL_CHECK( glDisableVertexAttribArray(0) );
+  GL_CHECK( glDisableVertexAttribArray(1) );
+      //printf("Draw() 7\n");
 }
 
 static void animate() {
+#ifdef ENABLE_SKOTTIE_ANIMATIONS
+
+#if defined(ENABLE_HTML5_SDL) || !defined(__EMSCRIPTEN__)
   if (fTimeBase == 0) {
     // Reset the animation time.
     fTimeBase = SDL_GetTicks();
@@ -757,17 +874,63 @@ static void animate() {
     const auto d = fAnimation->duration() * 1000;
     fAnimation->seek(std::fmod(t, d) / d);
   }
+#else
+#error "TODO: port SDL_GetTicks without SDL"
+#endif
+
+#endif // ENABLE_SKOTTIE_ANIMATIONS
 }
 
 static void mainLoop() {
+#ifdef __EMSCRIPTEN__
+  /*{
+    // see https://github.com/emscripten-core/emscripten/issues/8307
+    EMSCRIPTEN_RESULT r = emscripten_webgl_make_context_current(em_ctx);
+    if( r != EMSCRIPTEN_RESULT_SUCCESS )
+    {
+      printf( "Unable to make OffscreenCanvas instance the current context (code %d)\n", r );
+    }
+  }
+  DCHECK(emscripten_webgl_get_current_context() == em_ctx);*/
+#endif
+
+  //printf("animate...\n");
+
   animate();
+
+// __EMSCRIPTEN_PTHREADS__ can be used to detect whether Emscripten is currently targeting pthreads.
+// At runtime, you can use the emscripten_has_threading_support()
+// see https://emscripten.org/docs/porting/pthreads.html
+#if defined(__EMSCRIPTEN__) && defined(__EMSCRIPTEN_PTHREADS__)
+  // TODO
+  // printf("emscripten_current_thread_process_queued_calls...\n");
+  // emscripten_current_thread_process_queued_calls();
+#endif
+
+  //printf("draw...\n");
 
   // Render
   Draw();
 
+#ifdef __EMSCRIPTEN__
+  if (enableSwapControl) {
+    // emscripten_webgl_commit_frame requires offscreen canvas support
+    // see https://github.com/emscripten-core/emscripten/issues/5437
+    EMSCRIPTEN_RESULT r = emscripten_webgl_commit_frame();
+    if(r != EMSCRIPTEN_RESULT_SUCCESS)
+    {
+      // TODO: https://github.com/emscripten-core/emscripten/issues/5437
+      // printf( "There was an issue commiting the frame to the offscreen canvas (code %d)\n", r );
+    }
+  }
+#else
+
   // Update screen
   SDL_GL_SwapWindow(window);
 
+#endif
+
+#if defined(ENABLE_HTML5_SDL) || !defined(__EMSCRIPTEN__)
   while (SDL_PollEvent(&e) != 0) {
     switch (e.type) {
     case SDL_QUIT: {
@@ -776,6 +939,8 @@ static void mainLoop() {
     }
     }
   }
+#endif
+
 #ifdef __EMSCRIPTEN__
   if (quit) {
     printf("quitting main loop\n");
@@ -1070,22 +1235,144 @@ int main(int argc, char** argv) {
   printf("Starting ...\n");
 
 #ifdef __EMSCRIPTEN__
-// TODO
-// // see https://github.com/emscripten-core/emscripten/issues/7684
-// EmscriptenWebGLContextAttributes attr;
-// emscripten_webgl_init_context_attributes(&attr);
-// attr.majorVersion = 3; attr.minorVersion = 0;
-// EMSCRIPTEN_WEBGL_CONTEXT_HANDLE ctx = emscripten_webgl_create_context(0, &attr);
-// emscripten_webgl_make_context_current(ctx);
+  double dpr = emscripten_get_device_pixel_ratio();
+  emscripten_set_element_css_size("#canvas", width / dpr, height / dpr);
+  emscripten_set_canvas_element_size("#canvas", width, height);
 
-  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
-  SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
+  /// @note use EmscriptenWebGLContextAttributes, not SDL_GL
+  /// @see https://github.com/emscripten-core/emscripten/issues/7684
+  ///
+  emscripten_webgl_init_context_attributes(&attr);
+
+  /*
+  * In order to be able to set explicitSwapControl==true,
+  * support for it must explicitly be enabled either
+  * 1) via adding the -s OFFSCREEN_FRAMEBUFFER=1 Emscripten linker flag,
+  * and enabling renderViaOffscreenBackBuffer==1,
+  * or
+  * 2) via adding the the linker flag -s OFFSCREENCANVAS_SUPPORT=1,
+  * and running in a browser that supports OffscreenCanvas.
+  */
+  // control of swapping is given to the user to manage, via the emscripten_webgl_commit_frame
+  attr.explicitSwapControl = enableSwapControl;
+
+  // If false, no extensions are enabled by default, and you need to manually call emscripten_webgl_enable_extension()
+  attr.enableExtensionsByDefault = enableEmscriptenExtensionsByDefault;
+
+  /*
+   * If ``true``, an extra intermediate backbuffer (offscreen render target)
+   * is allocated to the created WebGL context, and rendering occurs
+   * to this backbuffer instead of directly onto the WebGL "default backbuffer".
+   * This is required to be enabled if
+   * 1) ``explicitSwapControl==true``
+   * and the browser does not support OffscreenCanvas,
+   * 2) when performing WebGL rendering in a worker thread
+   * and the browser does not support OffscreenCanvas,
+   * and
+   * 3) when performing WebGL context accesses from multiple threads
+   * simultaneously (independent of whether OffscreenCanvas is supported or not).
+   *
+   * Because supporting offscreen framebuffer adds some amount of
+   * extra code to the compiled output, support for it must explicitly
+   * be enabled via the -s OFFSCREEN_FRAMEBUFFER=1 Emscripten linker flag.
+   * When building simultaneously with both -s OFFSCREEN_FRAMEBUFFER=1
+   * and -s OFFSCREENCANVAS_SUPPORT=1 linker flags enabled,
+   * offscreen backbuffer can be used as a polyfill-like compatibility
+   * fallback to enable rendering WebGL from a pthread when the browser
+   * does not support the OffscreenCanvas API.
+   */
+  attr.renderViaOffscreenBackBuffer = EM_FALSE;
+  if( enableSwapControl && !emscripten_supports_offscreencanvas() )
+  {
+    printf( "WARNING: explicitSwapControl requires offscreen canvas support, trying fallback to renderViaOffscreenBackBuffer...\n");
+    attr.renderViaOffscreenBackBuffer = EM_TRUE;
+  }
+
+  // EMSCRIPTEN_WEBGL_CONTEXT_PROXY_DISALLOW, if the WebGL context is being created on the main thread
+  // @note by default WebGL contexts created on the main thread are not shareable between multiple threads
+  // @see https://github.com/save7502/youkyoung/blob/master/Engine/Source/Runtime/OpenGLDrv/Private/HTML5/HTML5OpenGL.cpp#L291
+  attr.proxyContextToMainThread = EMSCRIPTEN_WEBGL_CONTEXT_PROXY_DISALLOW;
+
+  // blend the canvas rendering with the underlying web page contents.
+  attr.alpha = EM_FALSE;
+
+  //  If false, no depth buffer will be initialized
+  attr.depth = EM_TRUE;
+
+  // If false, no stencil buffer will be initialized
+  attr.stencil = EM_TRUE;
+
+  // If true, antialiasing will be initialized with a browser-specified algorithm and quality level
+  attr.antialias = EM_FALSE;
+
+  // If false, the alpha channel represents non-premultiplied alpha.
+  attr.premultipliedAlpha = EM_TRUE;
+
+  //  If false, color, depth and stencil are cleared at the beginning of each requestAnimationFrame
+  attr.preserveDrawingBuffer = EM_FALSE;
+
+  // how it should choose the use of available GPU resources
+  // attr.powerPreference = EM_WEBGL_POWER_PREFERENCE_DEFAULT;
+
+  // preferLowPowerToHighPerformance
+
+  // abort if the browser is only able to create a context that does not give good hardware-accelerated performance
+  attr.failIfMajorPerformanceCaveat = EM_FALSE;
+
+#if defined(WEBGL2_SUPPORT)
+  printf("creating WEBGL2 context\n");
+  // majorVersion=2, minorVersion=0 to request a WebGL 2.0 context (-s USE_WEBGL2=1).
+  attr.majorVersion = 2;
+  attr.minorVersion = 0;
+#else
+  printf("creating WEBGL1 context\n");
+  attr.majorVersion = 1;
+  attr.minorVersion = 0;
+#endif
+
+  //em_ctx = emscripten_webgl_create_context(/* target = */ nullptr, &attr);
+  em_ctx = emscripten_webgl_create_context("#canvas", &attr);
+  if (em_ctx == 0) {
+    printf ("error: can't create EMSCRIPTEN_WEBGL_CONTEXT_HANDLE\n");
+  }
+
+  // see https://github.com/emscripten-core/emscripten/issues/8307
+  {
+    EMSCRIPTEN_RESULT r = emscripten_webgl_make_context_current(em_ctx);
+    if( r != EMSCRIPTEN_RESULT_SUCCESS )
+    {
+      printf( "Unable to make OffscreenCanvas instance the current context (code %d)\n", r );
+    }
+  }
+
+  // see WebGL Extension Registry https://www.khronos.org/registry/webgl/extensions/
+  if (!enableEmscriptenExtensionsByDefault) {
+    /// @note see enableExtensionsByDefault
+    if (!emscripten_webgl_enable_extension(em_ctx, "OES_vertex_array_object")) {
+      printf("cannot run without browser support for OES_vertex_array_object.\n");
+    }
+  }
+
+#if defined(ENABLE_HTML5_SDL) || !defined(__EMSCRIPTEN__)
+  /// \note we don`t use SDL_WINDOW_OPENGL, see emscripten_webgl_create_context
+  // see https://github.com/emscripten-ports/SDL2/issues
+  // SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+  // SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+  // SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
+#endif
+
+// __EMSCRIPTEN_PTHREADS__ can be used to detect whether Emscripten is currently targeting pthreads.
+// At runtime, you can use the emscripten_has_threading_support()
+// see https://emscripten.org/docs/porting/pthreads.html
+#if defined(__EMSCRIPTEN__) && defined(__EMSCRIPTEN_PTHREADS__)
+  // TODO
+  // emscripten_pthread_attr_settransferredcanvases(&attr, "#canvas");
+#endif
+
 #else
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-#endif
 
   SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
   SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
@@ -1096,9 +1383,18 @@ int main(int argc, char** argv) {
 
   SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
 
+  if (kMsaaSampleCount > 0) {
+    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
+    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, kMsaaSampleCount);
+  }
+#endif
+
+#if defined(ENABLE_HTML5_SDL) || !defined(__EMSCRIPTEN__)
   printf("SDL_Init ...\n");
 
-  // note video subsystem automatically initializes the events subsystem
+  /// \note ignore printed 'Calling stub instead of sigaction()' from here,
+  /// see https://github.com/emscripten-core/emscripten/issues/8567
+  /// \note video subsystem automatically initializes the events subsystem
   if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_EVENTS | SDL_INIT_TIMER) != 0) {
     printf("Unable to initialize SDL: %s\n", SDL_GetError());
     return 1;
@@ -1110,21 +1406,25 @@ int main(int argc, char** argv) {
     printf("Warning: Linear texture filtering not enabled!");
   }
 
-  if (kMsaaSampleCount > 0) {
-    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
-    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, kMsaaSampleCount);
-  }
-
   printf("SDL_CreateWindow ...\n");
 
+#if defined(__EMSCRIPTEN__)
+  /// \note we don`t use SDL_WINDOW_OPENGL, see emscripten_webgl_create_context
+  window = SDL_CreateWindow("skemgl", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width,
+                            // height, SDL_WINDOW_SHOWN); // TODO
+                            height, SDL_WINDOW_OPENGL); // TODO
+#else
   window = SDL_CreateWindow("skemgl", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width,
                             height, SDL_WINDOW_OPENGL);
+#endif
 
   if (!window) {
     printf("Unable to create window: %s\n", SDL_GetError());
     return 1;
   }
+#endif // ENABLE_HTML5_SDL
 
+#ifndef __EMSCRIPTEN__
   printf("SDL_GL_CreateContext ...\n");
 
   glContext = SDL_GL_CreateContext(window);
@@ -1134,14 +1434,12 @@ int main(int argc, char** argv) {
     return 0;
   }
 
-#ifndef __EMSCRIPTEN__
   // Initialize GLEW
   glewExperimental = GL_TRUE;
   GLenum glewError = glewInit();
   if (glewError != GLEW_OK) {
     printf("Error initializing GLEW! %s\n", glewGetErrorString(glewError));
   }
-#endif
 
   printf("SDL_GL_MakeCurrent ...\n");
 
@@ -1151,14 +1449,25 @@ int main(int argc, char** argv) {
     SDL_ClearError();
     return success;
   }
+#endif
 
-  glDisable(GL_DEPTH_TEST);
-  glViewport(0, 0, (int)width, (int)height);
-  glClearColor(1, 1, 1, 1);
-  glClearStencil(0);
-  glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+#if defined(WEBGL2_SUPPORT) || !defined(__EMSCRIPTEN__)
+  int numExtensions = 0;
+  // see https://github.com/emscripten-core/emscripten/issues/3472
+  GL_CHECK( glGetIntegerv(GL_NUM_EXTENSIONS, &numExtensions) );
+  for(int i = 0; i < numExtensions; ++i)
+  {
+    const char *ext = (const char *)glGetStringi(GL_EXTENSIONS, i);
+    GL_CHECK_WITH_MESSAGE("glGetStringi");
+    printf("has GL extension %d: %s\n", i, ext);
+  }
+#endif
 
-  printf("SDL_GL_SetSwapInterval ...\n");
+  GL_CHECK( glDisable(GL_DEPTH_TEST) );
+  GL_CHECK( glViewport(0, 0, (int)width, (int)height) );
+  GL_CHECK( glClearColor(1, 1, 1, 1) );
+  GL_CHECK( glClearStencil(0) );
+  GL_CHECK( glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT) );
 
   /**
    * @note (emscripten)
@@ -1173,6 +1482,8 @@ int main(int argc, char** argv) {
    * @see http://tristanpenman.com/blog/posts/2018/01/08/porting-an-asteroids-clone-to-javascript/
    **/
 #ifndef __EMSCRIPTEN__
+  printf("SDL_GL_SetSwapInterval ...\n");
+
   // Use Vsync
   if (SDL_GL_SetSwapInterval(1) < 0) {
     printf("Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError());
@@ -1197,9 +1508,9 @@ int main(int argc, char** argv) {
     printf("Failed to load lazy font! SDL_ttf Error: %s\n", TTF_GetError());
   }*/
 
+#ifdef ENABLE_CUSTOM_FONTS
   printf("Initializing fonts...\n");
 
-#ifdef ENABLE_CUSTOM_FONTS
   skFont1 =
       new SkFont(SkTypeface::MakeFromFile("./resources/fonts/FreeSans.ttf"), 22.0f, 1.0f, 0.0f);
 
@@ -1219,6 +1530,9 @@ int main(int argc, char** argv) {
 
   myView = new SkPainter(SK_ColorRED, 200);
 
+#ifdef ENABLE_SKOTTIE_ANIMATIONS
+  printf("Initializing skottie animations...\n");
+
   //
   // sk_sp<skottie_utils::FileResourceProvider> frp
   //  = skottie_utils::FileResourceProvider::Make(SkOSPath::Dirname(fPath.c_str()));
@@ -1231,10 +1545,14 @@ int main(int argc, char** argv) {
             .setResourceProvider(
                 skottie_utils::FileResourceProvider::Make(SkOSPath::Dirname(fPath.c_str())))
             .makeFromFile(fPath.c_str());*/
-  /*SDL_RWops* fileHandle = SDL_RWFromFile(fPath.c_str(), "r");
+  /*
+  defined(ENABLE_HTML5_SDL) || !defined(__EMSCRIPTEN__)
+  SDL_RWops* fileHandle = SDL_RWFromFile(fPath.c_str(), "r");
   if (fileHandle == nullptr) {
       SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Can't find the file!\n");
   }*/
+
+  printf("Reading skottie animations...\n");
 
   FILE* f = fopen(fPath.c_str(), "rb");
   if (!f) {
@@ -1249,7 +1567,13 @@ int main(int argc, char** argv) {
   fclose(f);
   fileString[fsize] = 0;
 
+  printf("Building skottie animations...\n");
+
+  // see https://github.com/google/skia/blob/master/modules/skottie/src/Skottie.cpp#L459
   fAnimation = builder.make(fileString, fsize);
+  printf("Built skottie animations...\n");
+
+  printf("Get skottie stats...\n");
   fAnimationStats = builder.getStats();
   fTimeBase = 0; // force a time reset
   if (fAnimation) {
@@ -1260,12 +1584,27 @@ int main(int argc, char** argv) {
     printf("failed to load Bodymovin animation: %s\n", fPath.c_str());
     return 1;
   }
+  printf("Got skottie stats...\n");
 
   delete[] fileString; // TODO
+  printf("skottie animations are ready...\n");
   //
+#endif // ENABLE_SKOTTIE_ANIMATIONS
+
+// __EMSCRIPTEN_PTHREADS__ can be used to detect whether Emscripten is currently targeting pthreads.
+// At runtime, you can use the emscripten_has_threading_support()
+// see https://emscripten.org/docs/porting/pthreads.html
+#if defined(__EMSCRIPTEN__) && defined(__EMSCRIPTEN_PTHREADS__)
+  if (!emscripten_has_threading_support()) {
+    printf("warning: !emscripten_has_threading_support\n");
+  } else {
+    printf("emscripten threading has %d cores\n", emscripten_num_logical_cores());
+  }
+#endif
 
 #ifdef __EMSCRIPTEN__
   printf("running with __EMSCRIPTEN__\n");
+  // If using own main loop, must use explicit context swapping (explicitSwapControl and OFFSCREENCANVAS_SUPPORT)
   emscripten_set_main_loop(mainLoop, 0, 1);
 #else
   printf("running with glew\n");
@@ -1278,22 +1617,43 @@ int main(int argc, char** argv) {
 
   cleanup_skia();
 
-  glDeleteTextures(1, &skia_texture);
-  glDeleteBuffers(1, &vertexPosObject);
+  GL_CHECK( glDeleteTextures(1, &skia_texture) );
+  GL_CHECK( glDeleteBuffers(1, &vertexPosObject) );
 
+#ifdef __EMSCRIPTEN__
+  {
+    EMSCRIPTEN_RESULT r = emscripten_webgl_make_context_current(0);
+    if( r != EMSCRIPTEN_RESULT_SUCCESS )
+    {
+      printf( "Unable to make OffscreenCanvas instance the current context (code %d)\n", r );
+    }
+  }
+  {
+    EMSCRIPTEN_RESULT r = emscripten_webgl_destroy_context(em_ctx);
+    if( r != EMSCRIPTEN_RESULT_SUCCESS )
+    {
+      printf( "Unable to emscripten_webgl_destroy_context (code %d)\n", r );
+    }
+  }
+#else
   if (glContext) {
     SDL_GL_DeleteContext(glContext);
   }
+#endif
 
   /*if (ttfFont) {
     TTF_CloseFont(ttfFont);
     ttfFont = nullptr;
   }*/
 
+#ifdef ENABLE_SKOTTIE_ANIMATIONS
   fAnimation.reset();
+#endif
 
+#if defined(ENABLE_HTML5_SDL) || !defined(__EMSCRIPTEN__)
   SDL_DestroyWindow(window);
   window = nullptr;
+#endif
 
 #ifdef ENABLE_CUSTOM_FONTS
   delete skFont1;
@@ -1303,6 +1663,9 @@ int main(int argc, char** argv) {
   // Quit SDL subsystems
   //TTF_Quit();
 
+#if defined(ENABLE_HTML5_SDL) || !defined(__EMSCRIPTEN__)
   SDL_Quit();
+#endif
+
   return 0;
 }
