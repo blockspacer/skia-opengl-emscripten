@@ -377,7 +377,7 @@ TraceLog::TraceLog()
       filter_factory_for_testing_(nullptr) {
   CategoryRegistry::Initialize();
 
-#if defined(OS_NACL)  // NaCl shouldn't expose the process id.
+#if defined(OS_NACL) && !defined(OS_EMSCRIPTEN) // NaCl shouldn't expose the process id.
   SetProcessID(0);
 #else
   SetProcessID(static_cast<int>(GetCurrentProcId()));
@@ -1501,7 +1501,7 @@ void TraceLog::AddMetadataEventsWhileLocked() {
     }
   }
 
-#if !defined(OS_NACL)  // NaCl shouldn't expose the process id.
+#if !defined(OS_NACL) && !defined(OS_EMSCRIPTEN) // NaCl shouldn't expose the process id.
   AddMetadataEventWhileLocked(0, "num_cpus", "number",
                               base::SysInfo::NumberOfProcessors());
 #endif
