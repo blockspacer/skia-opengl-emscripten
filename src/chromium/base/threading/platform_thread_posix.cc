@@ -2,6 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#if defined(OS_EMSCRIPTEN) || defined(__EMSCRIPTEN__)
+#include <emscripten/emscripten.h>
+#include <emscripten/html5.h>
+#endif
+
 #include "base/threading/platform_thread.h"
 
 #include <errno.h>
@@ -28,7 +33,7 @@
 #include "base/posix/can_lower_nice_to.h"
 #endif
 
-#if defined(OS_LINUX)
+#if defined(OS_LINUX) || (defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__))
 #include <sys/syscall.h>
 #endif
 
@@ -135,7 +140,7 @@ bool CreateThread(size_t stack_size,
   return success;
 }
 
-#if defined(OS_LINUX)
+#if defined(OS_LINUX) || (defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__))
 
 // Store the thread ids in local storage since calling the SWI can
 // expensive and PlatformThread::CurrentId is used liberally. Clear
@@ -157,7 +162,7 @@ class InitAtFork {
 
 }  // namespace
 
-#if defined(OS_LINUX)
+#if defined(OS_LINUX) || (defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__))
 
 namespace internal {
 
@@ -175,7 +180,7 @@ PlatformThreadId PlatformThread::CurrentId() {
   // into the kernel.
 #if defined(OS_MACOSX)
   return pthread_mach_thread_np(pthread_self());
-#elif defined(OS_LINUX)
+#elif defined(OS_LINUX) || (defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__))
   static NoDestructor<InitAtFork> init_at_fork;
   if (g_thread_id == -1) {
     g_thread_id = syscall(__NR_gettid);
@@ -232,8 +237,23 @@ void PlatformThread::Sleep(TimeDelta duration) {
   duration -= TimeDelta::FromSeconds(sleep_time.tv_sec);
   sleep_time.tv_nsec = duration.InMicroseconds() * 1000;  // nanoseconds
 
+#if defined(OS_EMSCRIPTEN) || defined(__EMSCRIPTEN__)
+#warning "base TODO: port sleep() on wasm!"
+// see https://github.com/h-s-c/libKD/blob/master/source/kd_threads.c#L861
+// see https://emscripten.org/docs/api_reference/emscripten.h.html?highlight=emscripten_sleep#c.emscripten_sleep
+// Sleep for ms milliseconds. blocks all other operations while it runs
+emscripten_sleep(duration.InMilliseconds());
+// Sleep for ms milliseconds, while allowing other asynchronous operations, e.g. caused by emscripten_async_call
+// emscripten_sleep_with_yield(duration.InMilliseconds());
+
+  remaining.tv_sec = 0;
+  remaining.tv_nsec = 0;
+
+  sleep_time = remaining;
+#else
   while (nanosleep(&sleep_time, &remaining) == -1 && errno == EINTR)
     sleep_time = remaining;
+#endif
 }
 
 // static

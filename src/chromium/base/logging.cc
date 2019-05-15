@@ -199,6 +199,7 @@ uint64_t TickCount() {
   // define __x86_64__, although they have nothing to do with it.
   /// \note The result is not an absolute time,
   /// and is only meaningful in comparison to other calls to this function (!!!)
+  // emscripten_get_now() returns a wallclock time as a float in milliseconds (1e-3).
   return static_cast<int64_t>(emscripten_get_now() * 1e+6);
 #elif defined(OS_NACL)
   // NaCl sadly does not have _POSIX_TIMERS enabled in sys/features.h

@@ -53,6 +53,9 @@ uintptr_t GetNextStackFrame(uintptr_t fp) {
 }
 
 uintptr_t GetStackFramePC(uintptr_t fp) {
+#if defined(OS_EMSCRIPTEN) || defined(__EMSCRIPTEN__)
+#error "TODO: port stack on wasm!"
+#endif
   const uintptr_t* fp_addr = reinterpret_cast<const uintptr_t*>(fp);
   MSAN_UNPOISON(&fp_addr[1], sizeof(uintptr_t));
   return fp_addr[1];
@@ -152,6 +155,10 @@ void* LinkStackFrames(void* fpp, void* parent_fp) {
 
 #if BUILDFLAG(CAN_UNWIND_WITH_FRAME_POINTERS)
 uintptr_t GetStackEnd() {
+#if defined(OS_EMSCRIPTEN) || defined(__EMSCRIPTEN__)
+#warning "todo: stack on wasm"
+#endif
+
 #if defined(OS_ANDROID)
   // Bionic reads proc/maps on every call to pthread_getattr_np() when called
   // from the main thread. So we need to cache end of stack in that case to get

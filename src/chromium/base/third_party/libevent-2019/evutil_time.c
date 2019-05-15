@@ -134,6 +134,11 @@ evutil_usleep_(const struct timeval *tv)
 		struct timespec ts;
 		ts.tv_sec = tv->tv_sec;
 		ts.tv_nsec = tv->tv_usec*1000;
+
+#if defined(OS_EMSCRIPTEN) || defined(__EMSCRIPTEN__)
+#warning "libevent TODO: port sleep() on wasm!"
+#endif
+
 		nanosleep(&ts, NULL);
 	}
 #elif defined(EVENT__HAVE_USLEEP)
