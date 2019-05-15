@@ -56,7 +56,9 @@ File::File(Error error_details)
 
 File::File(File&& other)
     : file_(other.TakePlatformFile()),
+#if !defined(OS_EMSCRIPTEN)
       tracing_path_(other.tracing_path_),
+#endif
       error_details_(other.error_details()),
       created_(other.created()),
       async_(other.async_) {}
@@ -69,7 +71,9 @@ File::~File() {
 File& File::operator=(File&& other) {
   Close();
   SetPlatformFile(other.TakePlatformFile());
+#if !defined(OS_EMSCRIPTEN)
   tracing_path_ = other.tracing_path_;
+#endif
   error_details_ = other.error_details();
   created_ = other.created();
   async_ = other.async_;
@@ -89,9 +93,13 @@ void File::Initialize(const FilePath& path, uint32_t flags) {
     error_details_ = FILE_ERROR_ACCESS_DENIED;
     return;
   }
+
+#if !defined(OS_EMSCRIPTEN)
   if (FileTracing::IsCategoryEnabled())
     tracing_path_ = path;
   SCOPED_FILE_TRACE("Initialize");
+#endif
+
   DoInitialize(path, flags);
 }
 #endif

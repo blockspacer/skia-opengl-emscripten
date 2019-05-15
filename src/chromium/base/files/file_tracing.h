@@ -12,12 +12,19 @@
 
 #define FILE_TRACING_PREFIX "File"
 
+#if defined(OS_EMSCRIPTEN)
+#define SCOPED_FILE_TRACE_WITH_SIZE(name, size) \
+    (void)(0);
+
+#define SCOPED_FILE_TRACE(name) (void)(0);
+#else
 #define SCOPED_FILE_TRACE_WITH_SIZE(name, size) \
     FileTracing::ScopedTrace scoped_file_trace; \
     if (FileTracing::IsCategoryEnabled()) \
       scoped_file_trace.Initialize(FILE_TRACING_PREFIX "::" name, this, size)
 
 #define SCOPED_FILE_TRACE(name) SCOPED_FILE_TRACE_WITH_SIZE(name, 0)
+#endif
 
 namespace base {
 

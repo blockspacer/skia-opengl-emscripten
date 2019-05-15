@@ -366,12 +366,14 @@ class BASE_EXPORT File {
 
   ScopedPlatformFile file_;
 
+#if !defined(OS_EMSCRIPTEN)
   // A path to use for tracing purposes. Set if file tracing is enabled during
   // |Initialize()|.
   FilePath tracing_path_;
 
   // Object tied to the lifetime of |this| that enables/disables tracing.
   FileTracing::ScopedEnabler trace_enabler_;
+#endif
 
   Error error_details_;
   bool created_;
