@@ -2309,6 +2309,9 @@ extern "C" void MallocHook_InitAtFirstAllocation_HeapLeakChecker() {
 
 // This function is executed after all global object destructors run.
 void HeapLeakChecker_AfterDestructors() {
+#if defined(OS_EMSCRIPTEN) || defined(__EMSCRIPTEN__)
+#warning "tcmalloc TODO: port sleep() on wasm!"
+#endif
   { SpinLockHolder l(&heap_checker_lock);
     // can get here (via forks?) with other pids
     if (heap_checker_pid != getpid()) return;

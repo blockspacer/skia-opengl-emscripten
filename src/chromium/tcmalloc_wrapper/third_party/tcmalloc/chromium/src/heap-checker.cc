@@ -2316,6 +2316,9 @@ void HeapLeakChecker_AfterDestructors() {
   if (FLAGS_heap_check_after_destructors) {
     if (HeapLeakChecker::DoMainHeapCheck()) {
       const struct timespec sleep_time = { 0, 500000000 };  // 500 ms
+#if defined(OS_EMSCRIPTEN) || defined(__EMSCRIPTEN__)
+#warning "tcmalloc TODO: port sleep() on wasm!"
+#endif
       nanosleep(&sleep_time, NULL);
         // Need this hack to wait for other pthreads to exit.
         // Otherwise tcmalloc find errors

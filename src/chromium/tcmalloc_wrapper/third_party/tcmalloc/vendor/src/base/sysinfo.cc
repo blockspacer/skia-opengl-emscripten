@@ -246,6 +246,9 @@ void SleepForMilliseconds(int milliseconds) {
 #ifdef PLATFORM_WINDOWS
   _sleep(milliseconds);   // Windows's _sleep takes milliseconds argument
 #else
+#if defined(OS_EMSCRIPTEN) || defined(__EMSCRIPTEN__)
+#warning "tcmalloc TODO: port sleep() on wasm!"
+#endif
   // Sleep for a few milliseconds
   struct timespec sleep_time;
   sleep_time.tv_sec = milliseconds / 1000;

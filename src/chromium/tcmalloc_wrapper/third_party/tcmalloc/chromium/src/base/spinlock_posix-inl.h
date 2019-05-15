@@ -51,6 +51,9 @@ void SpinLockDelay(volatile Atomic32 *w, int32 value, int loop) {
     struct timespec tm;
     tm.tv_sec = 0;
     tm.tv_nsec = base::internal::SuggestedDelayNS(loop);
+#if defined(OS_EMSCRIPTEN) || defined(__EMSCRIPTEN__)
+#warning "tcmalloc TODO: port sleep() on wasm!"
+#endif
     nanosleep(&tm, NULL);
   }
   errno = save_errno;

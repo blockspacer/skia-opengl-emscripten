@@ -263,6 +263,9 @@ void SleepForMilliseconds(int milliseconds) {
   struct timespec sleep_time;
   sleep_time.tv_sec = milliseconds / 1000;
   sleep_time.tv_nsec = (milliseconds % 1000) * 1000000;
+#if defined(OS_EMSCRIPTEN) || defined(__EMSCRIPTEN__)
+#warning "tcmalloc TODO: port sleep() on wasm!"
+#endif
   while (nanosleep(&sleep_time, &sleep_time) != 0 && errno == EINTR)
     ;  // Ignore signals and wait for the full interval to elapse.
 #endif

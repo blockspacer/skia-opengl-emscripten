@@ -67,6 +67,9 @@ namespace base {
 namespace internal {
 
 void SpinLockDelay(volatile Atomic32 *w, int32 value, int loop) {
+#if defined(OS_EMSCRIPTEN) || defined(__EMSCRIPTEN__)
+#warning "tcmalloc TODO: port sleep() on wasm!"
+#endif
   if (loop != 0) {
     int save_errno = errno;
     struct timespec tm;
