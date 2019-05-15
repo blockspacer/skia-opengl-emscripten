@@ -48,7 +48,7 @@ std::string SystemErrorCodeToString(int error_code) {
 // Lock::PriorityInheritanceAvailable still must be checked as the code may
 // compile but the underlying platform still may not correctly support priority
 // inheritance locks.
-#if defined(OS_NACL) || defined(OS_ANDROID) || defined(OS_FUCHSIA)
+#if defined(OS_NACL) || defined(OS_ANDROID) || defined(OS_FUCHSIA) || defined(OS_EMSCRIPTEN)
 #define PRIORITY_INHERITANCE_LOCKS_POSSIBLE() 0
 #else
 #define PRIORITY_INHERITANCE_LOCKS_POSSIBLE() 1
