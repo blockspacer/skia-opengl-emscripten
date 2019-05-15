@@ -181,7 +181,10 @@ String String::Format(const char* format, ...) {
   // locale so that we aren't just lucky. Android's locales work
   // differently so can't check the same way there.
   DCHECK_EQ(strcmp(localeconv()->decimal_point, "."), 0);
-#if !defined(OS_ANDROID)
+#if defined(OS_EMSCRIPTEN)
+  // see https://github.com/h-s-c/libKD/blob/master/source/kd_general.c#L389
+  setlocale(LC_NUMERIC, NULL);
+#elif !defined(OS_ANDROID)
   DCHECK_EQ(strcmp(setlocale(LC_NUMERIC, NULL), "C"), 0);
 #endif  // !OS_ANDROID
 

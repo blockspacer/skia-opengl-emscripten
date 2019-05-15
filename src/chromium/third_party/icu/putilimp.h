@@ -241,6 +241,9 @@ typedef size_t uintptr_t;
     __has_builtin(__c11_atomic_fetch_add) && \
     __has_builtin(__c11_atomic_fetch_sub)
 #    define U_HAVE_CLANG_ATOMICS 1
+#if defined(OS_EMSCRIPTEN) || defined(__EMSCRIPTEN__)
+#warning "TODO: check __c11_atomic on wasm!"
+#endif
 #else
 #    define U_HAVE_CLANG_ATOMICS 0
 #endif
