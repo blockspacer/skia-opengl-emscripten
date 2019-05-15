@@ -52,7 +52,7 @@ namespace i18n {
 #endif
 
 namespace {
-#if !defined(OS_NACL)
+#if !defined(OS_NACL) && !defined(OS_EMSCRIPTEN)
 #if DCHECK_IS_ON()
 // Assert that we are not called more than once.  Even though calling this
 // function isn't harmful (ICU can handle it), being called twice probably
@@ -209,7 +209,7 @@ bool InitializeICUWithFileDescriptorInternal(
 
 }  // namespace
 
-#if !defined(OS_NACL)
+#if !defined(OS_NACL) && !defined(OS_EMSCRIPTEN)
 #if ICU_UTIL_DATA_IMPL == ICU_UTIL_DATA_FILE
 #if defined(OS_ANDROID)
 bool InitializeICUWithFileDescriptor(
@@ -324,7 +324,7 @@ bool InitializeICU() {
 #endif  // !defined(OS_NACL)
 
 void AllowMultipleInitializeCallsForTesting() {
-#if DCHECK_IS_ON() && !defined(OS_NACL)
+#if DCHECK_IS_ON() && !defined(OS_NACL) && !defined(OS_EMSCRIPTEN)
   g_check_called_once = false;
 #endif
 }
