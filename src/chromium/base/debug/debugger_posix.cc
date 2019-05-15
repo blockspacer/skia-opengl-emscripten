@@ -256,7 +256,7 @@ void VerifyDebugger() {}
 #define DEBUG_BREAK_ASM() asm("int3")
 #endif
 
-#if defined(NDEBUG) && !defined(OS_MACOSX) && !defined(OS_ANDROID)
+#if defined(NDEBUG) && !defined(OS_MACOSX) && !defined(OS_ANDROID)  && !defined(OS_EMSCRIPTEN)
 #define DEBUG_BREAK() abort()
 #elif defined(OS_NACL)
 // The NaCl verifier doesn't let use use int3.  For now, we call abort().  We
