@@ -125,6 +125,30 @@ search for OS_EMSCRIPTEN and __EMSCRIPTEN__ (all occurrences)
 num_cores
 
 
+10
+
+// TODO: check wasm threads
+#if defined(OS_EMSCRIPTEN) || defined(__EMSCRIPTEN__)
+DEFINE_int(gpuThreads,
+             0,
+             "Create this many extra threads to assist with GPU work, "
+             "including software path rendering. Defaults to two.");
+#else
+DEFINE_int(gpuThreads,
+             2,
+             "Create this many extra threads to assist with GPU work, "
+             "including software path rendering. Defaults to two.");
+#endif
+
+static DEFINE_bool(cachePathMasks, true,
+                   "Allows path mask textures to be cached in GPU configs.");
+
+#if defined(OS_EMSCRIPTEN) || defined(__EMSCRIPTEN__)
+static DEFINE_bool(noGS, true, "Disables support for geometry shaders.");
+#else
+static DEFINE_bool(noGS, false, "Disables support for geometry shaders.");
+#endif
+
 ## Experimental features
 
 > chromium base (libchrome) from Blink ported to WASM
