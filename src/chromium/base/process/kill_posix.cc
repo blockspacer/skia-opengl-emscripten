@@ -77,7 +77,7 @@ TerminationStatus GetTerminationStatusImpl(ProcessHandle handle,
 
 }  // namespace
 
-#if !defined(OS_NACL_NONSFI)
+#if !defined(OS_NACL_NONSFI) && !defined(OS_EMSCRIPTEN)
 bool KillProcessGroup(ProcessHandle process_group_id) {
   bool result = kill(-1 * process_group_id, SIGKILL) == 0;
   if (!result)

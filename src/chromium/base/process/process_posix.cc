@@ -26,7 +26,7 @@
 
 namespace {
 
-#if !defined(OS_NACL_NONSFI)
+#if !defined(OS_NACL_NONSFI) && !defined(OS_EMSCRIPTEN)
 
 bool WaitpidWithTimeout(base::ProcessHandle handle,
                         int* status,
@@ -310,7 +310,7 @@ void Process::Close() {
   // end up w/ a zombie when it does finally exit.
 }
 
-#if !defined(OS_NACL_NONSFI)
+#if !defined(OS_NACL_NONSFI) && !defined(OS_EMSCRIPTEN)
 bool Process::Terminate(int exit_code, bool wait) const {
   // exit_code isn't supportable.
   DCHECK(IsValid());
@@ -344,6 +344,9 @@ bool Process::WaitForExitWithTimeout(TimeDelta timeout, int* exit_code) const {
   if (!timeout.is_zero())
     internal::AssertBaseSyncPrimitivesAllowed();
 
+#if defined(OS_EMSCRIPTEN)
+  return false; // TODO
+#else
   // Record the event that this thread is blocking upon (for hang diagnosis).
   base::debug::ScopedProcessWaitActivity process_activity(this);
 
@@ -355,6 +358,7 @@ bool Process::WaitForExitWithTimeout(TimeDelta timeout, int* exit_code) const {
       *exit_code = local_exit_code;
   }
   return exited;
+#endif
 }
 
 void Process::Exited(int exit_code) const {}

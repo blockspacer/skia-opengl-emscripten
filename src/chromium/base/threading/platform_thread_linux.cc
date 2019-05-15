@@ -27,7 +27,7 @@
 
 namespace base {
 namespace {
-#if !defined(OS_NACL)
+#if !defined(OS_NACL) && !defined(OS_EMSCRIPTEN)
 const FilePath::CharType kCgroupDirectory[] =
     FILE_PATH_LITERAL("/sys/fs/cgroup");
 
@@ -85,7 +85,7 @@ void SetThreadCgroupsForThreadPriority(PlatformThreadId thread_id,
 namespace internal {
 
 namespace {
-#if !defined(OS_NACL)
+#if !defined(OS_NACL) && !defined(OS_EMSCRIPTEN)
 const struct sched_param kRealTimePrio = {8};
 #endif
 }  // namespace
@@ -112,7 +112,7 @@ Optional<bool> CanIncreaseCurrentThreadPriorityForPlatform(
 }
 
 bool SetCurrentThreadPriorityForPlatform(ThreadPriority priority) {
-#if !defined(OS_NACL)
+#if !defined(OS_NACL) && !defined(OS_EMSCRIPTEN)
   SetThreadCgroupsForThreadPriority(PlatformThread::CurrentId(), priority);
   return priority == ThreadPriority::REALTIME_AUDIO &&
          pthread_setschedparam(pthread_self(), SCHED_RR, &kRealTimePrio) == 0;
@@ -122,7 +122,7 @@ bool SetCurrentThreadPriorityForPlatform(ThreadPriority priority) {
 }
 
 Optional<ThreadPriority> GetCurrentThreadPriorityForPlatform() {
-#if !defined(OS_NACL)
+#if !defined(OS_NACL) && !defined(OS_EMSCRIPTEN)
   int maybe_sched_rr = 0;
   struct sched_param maybe_realtime_prio = {0};
   if (pthread_getschedparam(pthread_self(), &maybe_sched_rr,
@@ -188,6 +188,11 @@ size_t GetDefaultThreadStackSize(const pthread_attr_t& attributes) {
 #if !defined(THREAD_SANITIZER)
   return 0;
 #else
+
+#if defined(OS_EMSCRIPTEN)
+#error "wasm can`t support GetDefaultThreadStackSize"
+#endif
+
   // ThreadSanitizer bloats the stack heavily. Evidence has been that the
   // default stack size isn't enough for some browser tests.
   return 2 * (1 << 23);  // 2 times 8192K (the default stack size on Linux).

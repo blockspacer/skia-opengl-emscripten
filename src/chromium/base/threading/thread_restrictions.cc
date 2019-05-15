@@ -16,7 +16,7 @@ namespace base {
 
 namespace {
 
-#if defined(OS_NACL)
+#if defined(OS_NACL) && !defined(OS_EMSCRIPTEN)
 using ThreadLocalBooleanWithStacks = ThreadLocalBoolean;
 #else
 class ThreadLocalBooleanWithStacks {

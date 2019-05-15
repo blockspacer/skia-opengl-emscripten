@@ -71,7 +71,7 @@ void* ThreadFunc(void* params) {
     if (!thread_params->joinable)
       base::ThreadRestrictions::SetSingletonAllowed(false);
 
-#if !defined(OS_NACL)
+#if !defined(OS_NACL) && !defined(OS_EMSCRIPTEN)
     // Threads on linux/android may inherit their priority from the thread
     // where they were created. This explicitly sets the priority of all new
     // threads.
@@ -155,6 +155,13 @@ thread_local pid_t g_thread_id = -1;
 
 class InitAtFork {
  public:
+
+  // The Emscripten implementation does also not support multiprocessing via fork() and join().
+  // see https://emscripten.org/docs/porting/pthreads.html
+#if defined(OS_EMSCRIPTEN)
+#warning "wasm: Unsupported architecture for pthread_atfork"
+#endif
+
   InitAtFork() { pthread_atfork(nullptr, nullptr, internal::ClearTidCache); }
 };
 
@@ -180,7 +187,12 @@ PlatformThreadId PlatformThread::CurrentId() {
   // into the kernel.
 #if defined(OS_MACOSX)
   return pthread_mach_thread_np(pthread_self());
-#elif defined(OS_LINUX) || (defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__))
+#elif (defined(OS_EMSCRIPTEN) && !defined(__EMSCRIPTEN_PTHREADS__))
+  //return 0; // TODO
+  return reinterpret_cast<pthread_t>(pthread_self());
+#elif (defined(OS_EMSCRIPTEN) && defined(__EMSCRIPTEN_PTHREADS__))
+  return reinterpret_cast<pthread_t>(pthread_self());
+#elif defined(OS_LINUX)
   static NoDestructor<InitAtFork> init_at_fork;
   if (g_thread_id == -1) {
     g_thread_id = syscall(__NR_gettid);
@@ -191,8 +203,6 @@ PlatformThreadId PlatformThread::CurrentId() {
            "through fork().";
   }
   return g_thread_id;
-#elif defined(OS_EMSCRIPTEN)
-  return reinterpret_cast<pthread_t>(pthread_self());
 #elif defined(OS_ANDROID)
   return gettid();
 #elif defined(OS_FUCHSIA)
@@ -310,7 +320,7 @@ void PlatformThread::Detach(PlatformThreadHandle thread_handle) {
 
 // static
 bool PlatformThread::CanIncreaseThreadPriority(ThreadPriority priority) {
-#if defined(OS_NACL)
+#if defined(OS_NACL) || defined(OS_EMSCRIPTEN)
   return false;
 #else
   auto platform_specific_ability =
@@ -325,7 +335,7 @@ bool PlatformThread::CanIncreaseThreadPriority(ThreadPriority priority) {
 
 // static
 void PlatformThread::SetCurrentThreadPriorityImpl(ThreadPriority priority) {
-#if defined(OS_NACL)
+#if defined(OS_NACL) || defined(OS_EMSCRIPTEN)
   NOTIMPLEMENTED();
 #else
   if (internal::SetCurrentThreadPriorityForPlatform(priority))
@@ -347,7 +357,7 @@ void PlatformThread::SetCurrentThreadPriorityImpl(ThreadPriority priority) {
 
 // static
 ThreadPriority PlatformThread::GetCurrentThreadPriority() {
-#if defined(OS_NACL)
+#if defined(OS_NACL) || defined(OS_EMSCRIPTEN)
   NOTIMPLEMENTED();
   return ThreadPriority::NORMAL;
 #else

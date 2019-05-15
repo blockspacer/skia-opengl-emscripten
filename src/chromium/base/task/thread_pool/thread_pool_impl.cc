@@ -133,7 +133,7 @@ void ThreadPoolImpl::Start(const ThreadPool::InitParams& init_params,
   // FileDescriptorWatcher in the scope in which tasks run.
   ServiceThread::Options service_thread_options;
   service_thread_options.message_loop_type =
-#if defined(OS_POSIX) && !defined(OS_NACL_SFI)
+#if defined(OS_POSIX) && !defined(OS_NACL_SFI) && !defined(OS_EMSCRIPTEN)
       MessageLoop::TYPE_IO;
 #else
       MessageLoop::TYPE_DEFAULT;
@@ -141,7 +141,7 @@ void ThreadPoolImpl::Start(const ThreadPool::InitParams& init_params,
   service_thread_options.timer_slack = TIMER_SLACK_MAXIMUM;
   CHECK(service_thread_->StartWithOptions(service_thread_options));
 
-#if defined(OS_POSIX) && !defined(OS_NACL_SFI)
+#if defined(OS_POSIX) && !defined(OS_NACL_SFI) && !defined(OS_EMSCRIPTEN)
   // Needs to happen after starting the service thread to get its
   // task_runner().
   task_tracker_->set_io_thread_task_runner(service_thread_->task_runner());

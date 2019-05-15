@@ -353,6 +353,13 @@ Process LaunchProcess(const std::vector<std::string>& argv,
   } else
 #endif
   {
+
+  // The Emscripten implementation does also not support multiprocessing via fork() and join().
+  // see https://emscripten.org/docs/porting/pthreads.html
+#if defined(OS_EMSCRIPTEN)
+#warning "wasm: Unsupported architecture for fork"
+#endif
+
     pid = fork();
   }
 
@@ -560,6 +567,12 @@ static bool GetAppOutputInternal(
   if (pipe(pipe_fd) < 0)
     return false;
 
+  // The Emscripten implementation does also not support multiprocessing via fork() and join().
+  // see https://emscripten.org/docs/porting/pthreads.html
+#if defined(OS_EMSCRIPTEN)
+#warning "wasm: Unsupported architecture for fork"
+#endif
+
   pid_t pid = fork();
   switch (pid) {
     case -1: {
@@ -710,6 +723,9 @@ NOINLINE pid_t CloneAndLongjmpInChild(unsigned long flags,
                                       pid_t* ptid,
                                       pid_t* ctid,
                                       jmp_buf* env) {
+#if defined(OS_EMSCRIPTEN)
+#error "wasm: Unsupported architecture for CloneAndLongjmpInChild"
+#endif
   // We use the libc clone wrapper instead of making the syscall
   // directly because making the syscall may fail to update the libc's
   // internal pid cache. The libc interface unfortunately requires

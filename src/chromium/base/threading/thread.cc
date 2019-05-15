@@ -279,7 +279,7 @@ void Thread::ThreadMain() {
   DCHECK(MessageLoopCurrent::Get());
   DCHECK(ThreadTaskRunnerHandle::IsSet());
 
-#if defined(OS_POSIX) && !defined(OS_NACL)
+#if defined(OS_POSIX) && !defined(OS_NACL) && !defined(OS_EMSCRIPTEN)
   // Allow threads running a MessageLoopForIO to use FileDescriptorWatcher API.
   std::unique_ptr<FileDescriptorWatcher> file_descriptor_watcher;
   if (MessageLoopCurrentForIO::IsSet()) {
