@@ -52,7 +52,7 @@ std::string Location::ToString() const {
 #define RETURN_ADDRESS() nullptr
 #elif defined(COMPILER_MSVC)
 #define RETURN_ADDRESS() _ReturnAddress()
-#elif defined(COMPILER_GCC) && !defined(OS_NACL)
+#elif defined(COMPILER_GCC) && !defined(OS_NACL) && !defined(OS_EMSCRIPTEN)
 #define RETURN_ADDRESS() \
   __builtin_extract_return_addr(__builtin_return_address(0))
 #else

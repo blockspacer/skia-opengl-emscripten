@@ -53,7 +53,7 @@ typedef HANDLE MutexHandle;
 #include <mach-o/dyld.h>
 
 #elif defined(OS_POSIX) || defined(OS_FUCHSIA)
-#if defined(OS_NACL)
+#if defined(OS_NACL) || defined(OS_EMSCRIPTEN)
 #include <sys/time.h>  // timespec doesn't seem to be in <time.h>
 #endif
 #include <time.h>
