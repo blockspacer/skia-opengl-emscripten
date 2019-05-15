@@ -20,6 +20,10 @@ extern "C" void* __libc_stack_end;  // NOLINT
 namespace WTF {
 
 size_t GetUnderestimatedStackSize() {
+#if defined(OS_EMSCRIPTEN) || defined(__EMSCRIPTEN__)
+return 0;
+#endif
+
 // FIXME: ASAN bot uses a fake stack as a thread stack frame,
 // and its size is different from the value which APIs tells us.
 #if defined(ADDRESS_SANITIZER)
@@ -99,6 +103,10 @@ return Threading::ThreadStackSize();
 }
 
 void* GetStackStart() {
+#if defined(OS_EMSCRIPTEN) || defined(__EMSCRIPTEN__)
+return nullptr;
+#endif
+
 #if defined(__GLIBC__) || defined(OS_ANDROID) || defined(OS_FREEBSD) || \
     defined(OS_FUCHSIA)
   pthread_attr_t attr;
