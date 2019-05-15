@@ -463,14 +463,14 @@ Optional<PendingTask> SequenceManagerImpl::TakeTask() {
                      "task_type", executing_task.task_type);
   TRACE_EVENT_BEGIN0("sequence_manager", executing_task.task_queue_name);
 
-#if DCHECK_IS_ON() && !defined(OS_NACL)
+#if DCHECK_IS_ON() && !defined(OS_NACL) && !defined(OS_EMSCRIPTEN)
   LogTaskDebugInfo(executing_task);
 #endif
 
   return task;
 }
 
-#if DCHECK_IS_ON() && !defined(OS_NACL)
+#if DCHECK_IS_ON() && !defined(OS_NACL) && !defined(OS_EMSCRIPTEN)
 void SequenceManagerImpl::LogTaskDebugInfo(
     const ExecutingTask& executing_task) {
   switch (settings_.task_execution_logging) {
@@ -1037,7 +1037,7 @@ NOINLINE bool SequenceManagerImpl::Validate() {
 
 void SequenceManagerImpl::EnableCrashKeys(const char* async_stack_crash_key) {
   DCHECK(!main_thread_only().async_stack_crash_key);
-#if !defined(OS_NACL)
+#if !defined(OS_NACL) && !defined(OS_EMSCRIPTEN)
   main_thread_only().async_stack_crash_key = debug::AllocateCrashKeyString(
       async_stack_crash_key, debug::CrashKeySize::Size64);
   static_assert(sizeof(main_thread_only().async_stack_buffer) ==
@@ -1047,7 +1047,7 @@ void SequenceManagerImpl::EnableCrashKeys(const char* async_stack_crash_key) {
 }
 
 void SequenceManagerImpl::RecordCrashKeys(const PendingTask& pending_task) {
-#if !defined(OS_NACL)
+#if !defined(OS_NACL) && !defined(OS_EMSCRIPTEN)
   // SetCrashKeyString is a no-op even if the crash key is null, but we'd still
   // have construct the StringPiece that is passed in.
   if (!main_thread_only().async_stack_crash_key)
