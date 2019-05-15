@@ -885,7 +885,7 @@ class BASE_EXPORT GlobalActivityTracker {
       int stack_depth,
       int64_t process_id);
 
-#if !defined(OS_NACL)
+#if !defined(OS_NACL) && !defined(OS_EMSCRIPTEN)
   // Like above but internally creates an allocator around a disk file with
   // the specified |size| at the given |file_path|. Any existing file will be
   // overwritten. The |id| and |name| are arbitrary and stored in the allocator
@@ -1336,7 +1336,7 @@ class BASE_EXPORT ScopedThreadJoinActivity
 };
 
 // Some systems don't have base::Process
-#if !defined(OS_NACL) && !defined(OS_IOS)
+#if !defined(OS_NACL) && !defined(OS_EMSCRIPTEN) && !defined(OS_IOS)
 class BASE_EXPORT ScopedProcessWaitActivity
     : public GlobalActivityTracker::ScopedThreadActivity {
  public:
