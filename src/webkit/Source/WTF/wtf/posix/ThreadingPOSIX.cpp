@@ -239,6 +239,11 @@ void Thread::initializeCurrentThreadInternal(const char* threadName)
 void Thread::changePriority(int delta)
 {
 #if HAVE(PTHREAD_SETSCHEDPARAM)
+
+#if (defined(OS_EMSCRIPTEN) || defined(__EMSCRIPTEN__))
+#error "TODO: PTHREAD_SETSCHEDPARAM on WASM"
+#endif
+
     auto locker = holdLock(m_mutex);
 
     int policy;

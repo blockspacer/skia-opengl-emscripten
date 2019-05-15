@@ -118,6 +118,9 @@
 #define WTF_CPU_KNOWN 1
 #endif
 
+// see https://github.com/korczis/emscripten-qt/blob/master/src/3rdparty/javascriptcore/JavaScriptCore/wtf/Platform.h#L976
+#if !defined(OS_EMSCRIPTEN) && !defined(__EMSCRIPTEN__)
+
 /* CPU(X86) - i386 / x86 32-bit */
 #if   defined(__i386__) \
     || defined(i386)     \
@@ -140,6 +143,8 @@
 #define WTF_CPU_X86_SSE2 1
 #define WTF_CPU_KNOWN 1
 #endif
+
+#endif // EMSCRIPTEN
 
 /* CPU(ARM64) - Apple */
 #if (defined(__arm64__) && defined(__APPLE__)) || defined(__aarch64__)
@@ -326,7 +331,8 @@
 #define WTF_CPU_UNKNOWN 1
 #endif
 
-#if CPU(ARM) || CPU(MIPS) || CPU(UNKNOWN)
+// see https://github.com/mbbill/JSC.js/blob/master/Source/WTF/wtf/Platform.h#L325
+#if CPU(ARM) || CPU(MIPS) || CPU(UNKNOWN) || defined(__EMSCRIPTEN__) || defined(OS_EMSCRIPTEN)
 #define WTF_CPU_NEEDS_ALIGNED_ACCESS 1
 #endif
 
@@ -436,8 +442,15 @@
     || OS(OPENBSD)          \
     || defined(unix)        \
     || defined(__unix)      \
-    || defined(__unix__)
+    || defined(__unix__)    \
+    || OS(EMSCRIPTEN)
+    // also see WTF_OS_EMSCRIPTEN
 #define WTF_OS_UNIX 1
+#endif
+
+// see https://github.com/korczis/emscripten-qt/blob/master/src/3rdparty/javascriptcore/JavaScriptCore/wtf/Platform.h#L381
+#ifdef EMSCRIPTEN
+#define WTF_OS_EMSCRIPTEN 1
 #endif
 
 /* Operating environments */
@@ -568,6 +581,13 @@
 #define WTF_PLATFORM_WATCHOS 1
 #endif
 
+/* PLATFORM(EMSCRIPTEN) */
+#if defined(OS_EMSCRIPTEN) || defined(__EMSCRIPTEN__)
+#define WTF_PLATFORM_EMSCRIPTEN 1
+// see https://github.com/derofim/webkitjs-bugtest/blob/master/deps/WebKit/Source/WTF/wtf/Platform.h#L443
+#define WTF_PLATFORM_JS 1
+#endif
+
 /* Graphics engines */
 
 /* USE(CG) and PLATFORM(CI) */
@@ -686,7 +706,7 @@
 #define USE_PTHREADS 1
 #endif /* OS(UNIX) */
 
-#if OS(UNIX) && !OS(FUCHSIA)
+#if OS(UNIX) && !OS(FUCHSIA) && !OS(EMSCRIPTEN)
 #define HAVE_RESOURCE_H 1
 #define HAVE_PTHREAD_SETSCHEDPARAM 1
 #endif
@@ -979,9 +999,12 @@
 #define ENABLE_SEPARATED_WX_HEAP 0
 #endif
 
+// see https://github.com/korczis/emscripten-qt/blob/master/src/3rdparty/javascriptcore/JavaScriptCore/wtf/Platform.h#L976
+#if !defined(OS_EMSCRIPTEN) && !defined(__EMSCRIPTEN__)
 /* Configure the interpreter */
 #if COMPILER(GCC_COMPATIBLE)
 #define HAVE_COMPUTED_GOTO 1
+#endif
 #endif
 
 /* Determine if we need to enable Computed Goto Opcodes or not: */
