@@ -198,7 +198,7 @@ void AddFeatureAndFieldTrialFlags(const char* enable_features_switch,
 }
 
 void OnOutOfMemory(size_t size) {
-#if defined(OS_NACL)
+#if defined(OS_NACL) && !defined(OS_EMSCRIPTEN)
   NOTREACHED();
 #else
   TerminateBecauseOutOfMemory(size);
