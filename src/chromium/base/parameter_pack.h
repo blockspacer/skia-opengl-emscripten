@@ -90,7 +90,7 @@ struct ParameterPack {
 
   // Helper for extracting the Nth type from a parameter pack.
   template <size_t N>
-#if defined(__clang__) && !defined(OS_NACL)
+#if defined(__clang__) && !defined(OS_NACL) && !defined(OS_EMSCRIPTEN)
   // A clang extension which efficiently returns the Nth type from a pack. This
   // is faster to compile than std::tuple_element<>.
   // See: https://ldionne.com/2015/11/29/efficient-parameter-pack-indexing/
