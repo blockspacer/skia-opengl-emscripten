@@ -28,18 +28,18 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -frtti")
 set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_SUPPORT_GPU=1") # skia_enable_gpu
 set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_SUPPORT_GPU") # skia_enable_gpu
 set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_DISABLE_READBUFFER=1")
-set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DLIBANGLE_IMPLEMENTATION=1")
-set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DLIBGLESV2_IMPLEMENTATION=1")
+#set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DLIBANGLE_IMPLEMENTATION=1")
+#set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DLIBGLESV2_IMPLEMENTATION=1")
 set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DLIBEGL_IMPLEMENTATION=1")
 # see modules/skottie/utils/SkottieUtils.cpp
 set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_INCLUDE_MANAGED_SKOTTIE=1")
 
-set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DANGLE_ENABLE_ESSL=1")
-set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DANGLE_ENABLE_GLSL=1")
-set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DANGLE_ENABLE_HLSL=1")
-set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DANGLE_ENABLE_OPENGL=1")
+#set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DANGLE_ENABLE_ESSL=1")
+#set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DANGLE_ENABLE_GLSL=1")
+#set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DANGLE_ENABLE_HLSL=1")
+#set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DANGLE_ENABLE_OPENGL=1")
 set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DEGL_EGLEXT_PROTOTYPES=1")
-set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DGL_GLEXT_PROTOTYPES=1")
+#set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DGL_GLEXT_PROTOTYPES=1")
 # https://github.com/klzgrad/naiveproxy/blob/master/src/third_party/skia/modules/skottie/BUILD.gn#L14
 set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_ENABLE_SKOTTIE=1")
 
@@ -86,14 +86,41 @@ if(EMSCRIPTEN)
   # double-conversion-utils.h doesn't know how to operate.
   # set(EMCC_COMMON "${EMCC_COMMON} -D__i386__=1")
 
+  # NOTE: This can add significant runtime overhead
+  # Function pointers must be called with the correct type: it is undefined behavior
+  # in C and C++ to cast a function pointer to another type and call it that way.
+  # This does work in most native platforms, however, despite it being UB,
+  # but in asm.js and in wasm it can fail
+  # (Invalid function pointer called / implicit declaration of function)
+  # see https://emscripten.org/docs/porting/guidelines/function_pointer_issues.html
   # TODO https://groups.google.com/forum/?nomobile=true#!topic/emscripten-discuss/slgrOM-BnCk
   #set(EMCC_COMMON "${EMCC_COMMON} -s EMULATE_FUNCTION_POINTER_CASTS=1")
+  #
+  # TODO bug: https://github.com/emscripten-core/emscripten/pull/8065
+  # the problem comes when we use WASM and EMULATED_FUNCTION_POINTERS together,
+  # i.e. dynamic linking. it generates the mftCall_X call but does not translate
+  # it to an actual table call in the later passes.
   # -s EMULATED_FUNCTION_POINTERS=2.
+  #set(EMCC_COMMON "${EMCC_COMMON} -s EMULATED_FUNCTION_POINTERS=1")
 
   #set(EMCC_COMMON "${EMCC_COMMON} -s SIDE_MODULE=1")
 
+set(ENABLE_WASM_PTHREADS TRUE)
+#set(ENABLE_WASM_PTHREADS FALSE)
+if (ENABLE_WASM_PTHREADS)
   #
   # PTHREADS
+  #
+  # pthread_join() on the main browser thread is not going to work!
+  # or use PROXY_TO_PTHREAD
+  # see https://github.com/emscripten-core/emscripten/pull/8286
+  #
+  # avoid having main thread synchronously block on a pthread
+  # (the ".. sync blocking on main thread is bad.." mantra),
+  # so dropping the pthread_join()
+  # (and ensuring NO_EXIT_RUNTIME so runtime stays alive)
+  # should also avoid the hang
+  # https://github.com/emscripten-core/emscripten/issues/7535
   #
   # see https://developers.google.com/web/updates/2018/10/wasm-threads
   # see https://github.com/emscripten-core/emscripten/blob/incoming/tests/gl_only_in_pthread.cpp
@@ -121,14 +148,22 @@ if(EMSCRIPTEN)
   # one with -s USE_PTHREADS=1 and the other with -s USE_PTHREADS=0.
   #
   # see https://github.com/emscripten-core/emscripten/wiki/Pthreads-with-WebAssembly
-  #set(EMCC_COMMON "${EMCC_COMMON} -s USE_PTHREADS=1")
+  set(EMCC_COMMON "${EMCC_COMMON} -s USE_PTHREADS=1")
+  # see https://github.com/emscripten-core/emscripten/issues/8503
+  set(EMCC_COMMON "${EMCC_COMMON} -pthread")
+  set(EMCC_COMMON "${EMCC_COMMON} -Wl,--shared-memory")
   #
   # When the linker flag -s PTHREAD_POOL_SIZE=<integer> is not specified
   # and pthread_create() is called, the new thread will not actually start
   # to run immediately, but the main JS thread must yield execution back
   # to browser first. This behavior is a result of #1049079.
   # https://github.com/emscripten-core/emscripten/issues/3636
-  #set(EMCC_COMMON "${EMCC_COMMON} -s PTHREAD_POOL_SIZE=8")
+  # NOTE: For web security purposes, there exists a fixed limit
+  # (by default 20) of threads that can be spawned
+  #set(EMCC_COMMON "${EMCC_COMMON} -s PTHREAD_POOL_SIZE=16")
+  #set(EMCC_COMMON "${EMCC_COMMON} -s PTHREAD_POOL_SIZE=19")
+  set(EMCC_COMMON "${EMCC_COMMON} -s PTHREAD_POOL_SIZE=8")
+  #set(EMCC_COMMON "${EMCC_COMMON} -s PTHREAD_POOL_SIZE=1")
   #
   # see emscripten_num_logical_cores
   # https://github.com/hongkk/urho/blob/master/Source/Urho3D/Core/ProcessUtils.cpp#L449
@@ -142,7 +177,12 @@ if(EMSCRIPTEN)
   # see https://github.com/emscripten-core/emscripten/issues/8325
   # see https://github.com/emscripten-core/emscripten/issues/6009
   # see https://github.com/emscripten-core/emscripten/blob/incoming/tests/canvas_animate_resize.cpp
-  # set(EMCC_COMMON "${EMCC_COMMON} -s PROXY_TO_PTHREAD=1")
+  # NOTE: USE_SDL and USE_PTHREAD/PROXY_TO_PTHREAD seem to be incompatible.
+  # https://github.com/emscripten-core/emscripten/issues/6009
+  # https://github.com/emscripten-core/emscripten/pull/8282
+  # NOTE In that mode, you can drop the -s PTHREAD_POOL_SIZE
+  # https://github.com/emscripten-core/emscripten/issues/8117
+  #set(EMCC_COMMON "${EMCC_COMMON} -s PROXY_TO_PTHREAD=1")
   #
   # see https://github.com/emscripten-core/emscripten/pull/7672
   # PROXY_POSIX_SOCKETS
@@ -156,6 +196,7 @@ if(EMSCRIPTEN)
   # dlmalloc is necessary for multithreading, split memory, e.t.c.
   # default: dlmalloc
   # set(EMCC_COMMON "${EMCC_COMMON} -s MALLOC=dlmalloc")
+endif(ENABLE_WASM_PTHREADS)
 
   set(EMCC_COMMON "${EMCC_COMMON} -s USE_ZLIB=1")
   #set(EMCC_COMMON "${EMCC_COMMON} -s USE_HARFBUZZ=1") # < TODO
@@ -167,44 +208,60 @@ if(EMSCRIPTEN)
   set(EMCC_COMMON "${EMCC_COMMON} -s USE_SDL_IMAGE=2")
   set(EMCC_COMMON "${EMCC_COMMON} -s USE_SDL_TTF=2")
 
+set(ENABLE_WEBGL2 TRUE)
+#set(ENABLE_WEBGL2 FALSE)
+set(ENABLE_WEBGL1 TRUE)
+#set(ENABLE_WEBGL1 FALSE)
+set(ENABLE_WEBGL_DEBUG_CHECKS TRUE)
+#set(ENABLE_WEBGL_DEBUG_CHECKS FALSE)
+if (ENABLE_WEBGL2 OR ENABLE_WEBGL1)
   #
   # WEBGL (see also OFFSCREEN_CAVAS settings)
   #
+  # see https://bugs.chromium.org/p/skia/issues/detail?id=9052&q=&sort=-modified&colspec=ID%20Type%20Status%20Priority%20M%20Area%20Owner%20Summary%20Modified
   # see https://github.com/emscripten-core/emscripten/blob/master/src/settings.js#L369
   # see https://www.khronos.org/registry/webgl/specs/2.0/#4.1.2
   # BUG: WebGL 2 was not working with OffscreenCanvas in firefox
   # https://bugzilla.mozilla.org/show_bug.cgi?id=1388299
   # TODO: check freezes with threads
-  set(EMCC_COMMON "${EMCC_COMMON} -s USE_WEBGL2=1")
-  set(EMCC_COMMON "${EMCC_COMMON} -DWEBGL2_SUPPORT=1") # custom define
-  #
-  # emulates some WebGL 1 features on WebGL 2 contexts
-  # see https://github.com/emscripten-core/emscripten/blob/master/src/settings.js#L394
-  # performs a string search-replace based automatic migration of #version 100 shaders to #version 300 es
-  set(EMCC_COMMON "${EMCC_COMMON} -s WEBGL2_BACKWARDS_COMPATIBILITY_EMULATION=1")
-  #
-  # see https://emscripten.org/docs/porting/multimedia_and_graphics/OpenGL-support.html?highlight=use_webgl2#emulation-of-older-desktop-opengl-api-features
-  # Incomplete but useful
-  # cannot emulate both ES2/ES3 and legacy GL
-  # set(EMCC_COMMON "${EMCC_COMMON} -s LEGACY_GL_EMULATION=1")
+  if (ENABLE_WEBGL2)
+    set(EMCC_COMMON "${EMCC_COMMON} -s USE_WEBGL2=1")
+    set(EMCC_COMMON "${EMCC_COMMON} -DWEBGL2_SUPPORT=1") # custom define
+    #
+    # emulates some WebGL 1 features on WebGL 2 contexts
+    # see https://github.com/emscripten-core/emscripten/blob/master/src/settings.js#L394
+    # performs a string search-replace based automatic migration of #version 100 shaders to #version 300 es
+    set(EMCC_COMMON "${EMCC_COMMON} -s WEBGL2_BACKWARDS_COMPATIBILITY_EMULATION=1")
+  endif(ENABLE_WEBGL2)
+  # ES3/ES2
+  if (ENABLE_WEBGL2)
+    # Forces support for all GLES3 features, not just the WebGL2-friendly subset.
+    set(EMCC_COMMON "${EMCC_COMMON} -s FULL_ES3=1")
+  elseif (ENABLE_WEBGL1)
+    # // Forces support for all GLES2 features, not just the WebGL-friendly subset.
+    # set(EMCC_COMMON "${EMCC_COMMON} -s FULL_ES2=1")
+  endif(ENABLE_WEBGL2)
+  if (ENABLE_WEBGL_DEBUG_CHECKS)
+    #
+    # see https://emscripten.org/docs/porting/multimedia_and_graphics/OpenGL-support.html?highlight=use_webgl2#emulation-of-older-desktop-opengl-api-features
+    # Incomplete but useful
+    # cannot emulate both ES2/ES3 and legacy GL
+    # set(EMCC_COMMON "${EMCC_COMMON} -s LEGACY_GL_EMULATION=1")
 
-  # see https://github.com/emscripten-core/emscripten/blob/master/src/settings.js#L369
-  # debug printing of WebGL related operations
-  # set(EMCC_COMMON "${EMCC_COMMON} -s GL_DEBUG=1")
-  #
-  #set(EMCC_COMMON "${EMCC_COMMON} -s TRACE_WEBGL_CALLS=1")
-  #
-  # Adds extra checks for error situations in the GL library.
-  # Can impact performance.
-  # see https://github.com/emscripten-core/emscripten/blob/master/src/settings.js#L362
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s GL_ASSERTIONS=1")
-  #
-  # // Forces support for all GLES2 features, not just the WebGL-friendly subset.
-  # set(EMCC_COMMON "${EMCC_COMMON} -s FULL_ES2=1")
-  # Forces support for all GLES3 features, not just the WebGL2-friendly subset.
-  set(EMCC_COMMON "${EMCC_COMMON} -s FULL_ES3=1")
-  #
-  #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s GL_UNSAFE_OPTS=0")
+    # see https://github.com/emscripten-core/emscripten/blob/master/src/settings.js#L369
+    # debug printing of WebGL related operations
+    # set(EMCC_COMMON "${EMCC_COMMON} -s GL_DEBUG=1")
+    #
+    #set(EMCC_COMMON "${EMCC_COMMON} -s TRACE_WEBGL_CALLS=1")
+    #
+    # Adds extra checks for error situations in the GL library.
+    # Can impact performance.
+    # see https://github.com/emscripten-core/emscripten/blob/master/src/settings.js#L362
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s GL_ASSERTIONS=1")
+    #
+    #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s GL_UNSAFE_OPTS=0")
+  endif(ENABLE_WEBGL_DEBUG_CHECKS)
+endif(ENABLE_WEBGL2)
 
   # see https://github.com/emscripten-core/emscripten/blob/master/src/settings.js#L456
   # DISABLE_EXCEPTION_CATCHING = 0 - generate code to actually catch exceptions
@@ -230,19 +287,19 @@ if(EMSCRIPTEN)
 
   # https://github.com/google/skia/blob/master/BUILD.gn#L502
   # set(EMCC_COMMON "${EMCC_COMMON} -DSKSL_STANDALONE") # if (skia_compile_processors)
-  set(EMCC_COMMON "${EMCC_COMMON} -DSK_DISABLE_LEGACY_SHADERCONTEXT=1")
+  #set(EMCC_COMMON "${EMCC_COMMON} -DSK_DISABLE_LEGACY_SHADERCONTEXT=1")
   set(EMCC_COMMON "${EMCC_COMMON} -DSK_ASSUME_WEBGL=1") # see skia_gl_standard
   #set(EMCC_COMMON "${EMCC_COMMON} -DSK_ASSUME_GL_ES=1") # see skia_gl_standard
   #set(EMCC_COMMON "${EMCC_COMMON} -DSK_ASSUME_GL=1") # see skia_gl_standard
   set(EMCC_COMMON "${EMCC_COMMON} -DIS_WEBGL=1")
   # see https://github.com/xzwang2005/Prelude/blob/master/third_party/skia/src/pathops/SkPathOpsTypes.cpp#L106
-  set(EMCC_COMMON "${EMCC_COMMON} -DSKOTTIE_HACK")
+  #set(EMCC_COMMON "${EMCC_COMMON} -DSKOTTIE_HACK")
   # https://github.com/qinjidong/qt5.13/blob/master/src/qtwebengine/src/3rdparty/chromium/third_party/skia/experimental/canvaskit/compile.sh
   set(EMCC_COMMON "${EMCC_COMMON} -DSKNX_NO_SIMD")
   set(EMCC_COMMON "${EMCC_COMMON} -DSK_DISABLE_AAA")
   set(EMCC_COMMON "${EMCC_COMMON} -DSK_DISABLE_EFFECT_DESERIALIZATION")
   set(EMCC_COMMON "${EMCC_COMMON} -DWEB_ASSEMBLY=1")
-  set(EMCC_COMMON "${EMCC_COMMON} -DSK_BUILD_FOR_PATHKIT=1")
+  #set(EMCC_COMMON "${EMCC_COMMON} -DSK_BUILD_FOR_PATHKIT=1")
   set(EMCC_COMMON "${EMCC_COMMON} -DSK_SUPPORT_OPENCL=0")
   set(EMCC_COMMON "${EMCC_COMMON} -DSK_SAMPLES_FOR_X=1") # always set for linux, even if there's no X used
   set(EMCC_COMMON "${EMCC_COMMON} -DSK_HAS_PNG_LIBRARY=1") # skia_use_libpng
@@ -251,7 +308,12 @@ if(EMSCRIPTEN)
   # https://github.com/kosh04/newlisp/blob/master/newlisp.h#L164
   # TODO
   set(EMCC_COMMON "${EMCC_COMMON} -D_FILE_OFFSET_BITS=64")
-  set(EMCC_COMMON "${EMCC_COMMON} -D_LARGEFILE_SOURCE=1")
+  #set(EMCC_COMMON "${EMCC_COMMON} -D_LARGEFILE_SOURCE=1")
+
+  # CLANG_ATOMICS for ICU lib
+  # see https://github.com/emscripten-core/emscripten/commit/9c4dfa12feb2b3d68bc2a44ad42b95f3b647728d
+  # see https://github.com/h-s-c/libKD/blob/master/source/kd_atomic_ops.c#L202
+  # set(EMCC_COMMON "${EMCC_COMMON} -DU_HAVE_CLANG_ATOMICS=0")
 
   # https://github.com/Rusino/skia/blob/master/BUILD.gn#L1688
   set(EMCC_COMMON "${EMCC_COMMON} -DSK_USING_SKSHAPER=1") # skia_enable_skshaper
@@ -261,10 +323,14 @@ if(EMSCRIPTEN)
   # https://github.com/Rusino/skia/blob/master/BUILD.gn#L191
   set(EMCC_COMMON "${EMCC_COMMON} -DSK_ALLOW_STATIC_GLOBAL_INITIALIZERS=0")
 
+  # Check each write to the heap, for example, this will give a clear error
+  # on what would be segfaults in a native build (like dereferencing 0)
+  # see https://github.com/emscripten-core/emscripten/blob/master/src/settings.js#L262
+  set(EMCC_COMMON "${EMCC_COMMON} -s SAFE_HEAP=1")
+
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${EMCC_COMMON}")
 
   # TODO EMCC_LINKER_FLAGS
-  # TODO -s SAFE_HEAP=1
 
   # https://emscripten.org/docs/tools_reference/emcc.html#emcc-oz
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Oz")
@@ -310,7 +376,9 @@ if(EMSCRIPTEN)
 
   #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s MODULARIZE=1")
 
+  # see https://github.com/emscripten-core/emscripten/blob/master/src/settings.js#L41
   #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s ASSERTIONS=1")
+  # ASSERTIONS == 2 gives even more runtime checks
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s ASSERTIONS=2")
 
   # see https://github.com/emscripten-core/emscripten/blob/master/src/settings.js#L443
@@ -523,7 +591,7 @@ if (EMSCRIPTEN)
   set(SK_CONF_SHARED "false")
 
   set(SK_IS_processors "false") # see SKSL_STANDALONE
-  set(SK_IS_workarounds "false")
+  set(SK_IS_workarounds "false") # TODO
   set(SK_IS_ccpr "false")
 
   set(SK_IS_EGL "true")
@@ -562,6 +630,7 @@ endif ()
   # but then the args can't be indented because GN is written by somone with overly strong opinions:
   # "You got a tab character in here. Tabs are evil. Convert to spaces."
 
+# NOTE: modifying skia src requires full rebuild!
 set(GN_ARGS "${SK_TARGET_CPU} \
 ${SK_GL_STANDARD} \
 ar=\"${CMAKE_AR}\" \
@@ -768,10 +837,11 @@ set(SKIA_DEFINES
 #<listOptionValue builtIn="false" value="SK_SUPPORT_GPU=1"/>
 
 # see https://github.com/xzwang2005/Prelude/blob/master/third_party/skia/src/pathops/SkPathOpsTypes.cpp#L106
-list(APPEND SKIA_DEFINES SKOTTIE_HACK)
-list(APPEND SKIA_DEFINES SKOTTIE_HACK=1)
+#list(APPEND SKIA_DEFINES SKOTTIE_HACK)
+#list(APPEND SKIA_DEFINES SKOTTIE_HACK=1)
 
 if (EMSCRIPTEN)
+  list(APPEND SKIA_DEFINES OS_EMSCRIPTEN=1) # same as in base/WTF/blink
   list(APPEND SKIA_DEFINES SK_CPU_SSE_LEVEL=0)
   list(APPEND SKIA_DEFINES SKNX_NO_SIMD)
   list(APPEND SKIA_DEFINES SKNX_NO_SIMD=1)
@@ -783,20 +853,20 @@ if (EMSCRIPTEN)
   #list(APPEND SKIA_DEFINES SK_ASSUME_GL=1)
   list(APPEND SKIA_DEFINES IS_WEBGL)
   list(APPEND SKIA_DEFINES IS_WEBGL=1)
-  list(APPEND SKIA_DEFINES LIBANGLE_IMPLEMENTATION=1)
-  list(APPEND SKIA_DEFINES LIBGLESV2_IMPLEMENTATION=1)
+  #list(APPEND SKIA_DEFINES LIBANGLE_IMPLEMENTATION=1)
+  #list(APPEND SKIA_DEFINES LIBGLESV2_IMPLEMENTATION=1)
   list(APPEND SKIA_DEFINES LIBEGL_IMPLEMENTATION=1)
 
   # see https://github.com/endlessm/chromium-browser/blob/master/third_party/skia/third_party/skcms/skcms.cc#L1813
   # see https://github.com/google/skia/blob/master/third_party/skcms/skcms.cc#L1836
   # list(APPEND SKIA_DEFINES SKCMS_PORTABLE)
 
-  list(APPEND SKIA_DEFINES ANGLE_ENABLE_ESSL=1)
-  list(APPEND SKIA_DEFINES ANGLE_ENABLE_GLSL=1)
-  list(APPEND SKIA_DEFINES ANGLE_ENABLE_HLSL=1)
-  list(APPEND SKIA_DEFINES ANGLE_ENABLE_OPENGL=1)
+  #list(APPEND SKIA_DEFINES ANGLE_ENABLE_ESSL=1)
+  #list(APPEND SKIA_DEFINES ANGLE_ENABLE_GLSL=1)
+  #list(APPEND SKIA_DEFINES ANGLE_ENABLE_HLSL=1)
+  #list(APPEND SKIA_DEFINES ANGLE_ENABLE_OPENGL=1)
   list(APPEND SKIA_DEFINES EGL_EGLEXT_PROTOTYPES=1)
-  list(APPEND SKIA_DEFINES GL_GLEXT_PROTOTYPES=1)
+  #list(APPEND SKIA_DEFINES GL_GLEXT_PROTOTYPES=1)
   list(APPEND SKIA_DEFINES WEB_ASSEMBLY=1)
   #list(APPEND SKIA_DEFINES SK_BUILD_FOR_PATHKIT=1)
   list(APPEND SKIA_DEFINES SK_DISABLE_READBUFFER=1)
@@ -1170,6 +1240,8 @@ set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 17)
 if(EMSCRIPTEN)
   # -s ENVIRONMENT=web
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --emrun")
+  # https://emscripten.org/docs/getting_started/Tutorial.html#generating-html
+  #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -o hello.html")
   #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --preload-file resources/fonts/FreeSans.ttf")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --preload-file resources")
 endif() # EMSCRIPTEN

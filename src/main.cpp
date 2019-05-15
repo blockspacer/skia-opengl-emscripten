@@ -20,6 +20,10 @@
 // see
 // https://github.com/WebKit/webkit/blob/master/Source/WebCore/rendering/RenderBoxModelObject.cpp#L741
 
+#define ENABLE_SKIA 1
+
+#define ENABLE_THREAD_TESTS 0
+
 // see https://github.com/save7502/youkyoung/blob/master/Engine/Source/Runtime/OpenGLDrv/Private/HTML5/HTML5OpenGL.cpp#L5
 // see https://github.com/emscripten-core/emscripten/issues/6009
 #define ENABLE_HTML5_SDL 1
@@ -40,6 +44,8 @@
   && defined(ENABLE_CUSTOM_FONTS)
 #warning "TODO: PORT SKIA FONTS & PTHREADS"
 #endif
+
+#define ENABLE_SK_EFFECTS 1 // requires ENABLE_CUSTOM_FONTS
 
 /// \note place before glext.h
 /// \note defined by CMAKE
@@ -97,6 +103,7 @@
 // see https://lyceum-allotments.github.io/2016/06/emscripten-and-sdl-2-tutorial-part-1/
 //#include <SDL2/SDL_ttf.h>
 
+#ifdef ENABLE_SKIA
 #include <skia/include/core/SkCanvas.h>
 #include <skia/include/core/SkFont.h>
 #include <skia/include/core/SkGraphics.h>
@@ -195,6 +202,8 @@
 //#include "SkRandom.h"
 //#include "SkSurface.h"
 //#include "SkSurface_Gpu.h"
+
+#endif // ENABLE_SKIA
 
 #include <stdio.h>
 #include <string>
@@ -353,7 +362,7 @@ static void CheckOpenGLError(const char* stmt, const char* fname, int line)
     #define GL_CHECK_WITH_MESSAGE(stmt) (void)(0);
 #endif
 
-#ifdef SKIA_GR_CONTEXT
+#if defined(ENABLE_SKIA) && defined(SKIA_GR_CONTEXT)
 
 #if defined(__EMSCRIPTEN__)
 // see https://github.com/emscripten-core/emscripten/pull/5951/commits/7f373a3d86a426ea146e8288972afce4d9396321
@@ -364,6 +373,7 @@ extern "C" { extern void* emscripten_GetProcAddress(const char *x); }
 //extern "C" { extern void* emscripten_webgl_get_proc_address(const char *x); }
 #endif
 
+// see https://github.com/servo/skia/blob/master/experimental/SkV8Example/SkV8Example.cpp
 // https://github.com/google/skia/blob/master/src/gpu/gl/egl/GrGLMakeNativeInterface_egl.cpp
 static GrGLFuncPtr emscripten_get_gl_proc(void* ctx, const char name[]) {
   SkASSERT(nullptr == ctx);
@@ -426,7 +436,7 @@ sk_sp<const GrGLInterface> emscripten_GrGLMakeNativeInterface() {
 }
 #endif
 
-#ifdef ENABLE_SKOTTIE_ANIMATIONS
+#if defined(ENABLE_SKIA) && defined(ENABLE_SKOTTIE_ANIMATIONS)
 static SkString fPath = SkString("./resources/animations/data.json");
 // static SkString                           fPath = SkString("./resources/fonts/FreeSans.ttf");
 static sk_sp<skottie::Animation> fAnimation;
@@ -437,7 +447,7 @@ static bool fShowAnimationInval = false;
 static bool fShowAnimationStats = false;
 #endif // ENABLE_SKOTTIE_ANIMATIONS
 
-#ifdef ENABLE_CUSTOM_FONTS
+#if defined(ENABLE_SKIA) && defined(ENABLE_CUSTOM_FONTS)
 static SkFont* skFont1 = nullptr;
 static SkFont* skFont2 = nullptr;
 #endif
@@ -453,8 +463,19 @@ static SkFont* skFont2 = nullptr;
 
 static const int kStencilBits = 8; // Skia needs 8 stencil bits
 static const int kMsaaSampleCount = 0;
+
+static GLclampf redClrTintAnim = 0.0f;
+
+#if defined(ENABLE_SKIA)
+
 //static TTF_Font* ttfFont = nullptr;
 static sk_sp<SkSurface> sRasterSurface;
+
+class SkPainter;
+
+static SkPainter* myView = nullptr;
+
+static GLuint skia_texture = 0;
 
 #ifdef SKIA_GR_CONTEXT
 /// \note In OpenGL mode skia assumes that the correct OpenGL context
@@ -466,7 +487,7 @@ static GrContext* grContext = nullptr;
 static SkSurface* sSurface = nullptr;
 #endif
 
-static GLuint skia_texture = 0;
+#endif // ENABLE_SKIA
 
 // must be POT
 static int width = 512;
@@ -474,6 +495,8 @@ static int width = 512;
 static int height = 512;
 
 static GLint uniformTex;
+
+static GLint uniformRedClrTint;
 
 #if defined(ENABLE_HTML5_SDL) || !defined(__EMSCRIPTEN__)
 static SDL_Window* window;
@@ -505,17 +528,14 @@ static bool quit = false;
 
 static GLuint vertexPosObject;
 
-class SkPainter;
-
-static SkPainter* myView = nullptr;
-
 static GLuint programObject;
 
 static GLfloat const kVertexData[] = {1.0f, 1.0f,  1.0f, 0.0f, -1.0f, 1.0f,  0.0f, 0.0f,
                                       1.0f, -1.0f, 1.0f, 1.0f, -1.0f, -1.0f, 0.0f, 1.0f};
 
+#if defined(ENABLE_SKIA)
 // see https://github.com/flutter/engine/blob/master/shell/gpu/gpu_surface_gl.cc#L125
-static void init_skia(int w, int h) {
+static void initSkiaSurface(int w, int h) {
 #ifdef SKIA_GR_CONTEXT
   {
     auto sInterface =
@@ -634,7 +654,8 @@ public:
     SkPaint paint;
 
     // paint.setAlpha(255);
-    paint.setAntiAlias(true);
+    paint.setAntiAlias(false);
+    paint.setFilterQuality( SkFilterQuality::kNone_SkFilterQuality );
     paint.setColor(SK_ColorRED);
     /// paint.setColor(0xffeeeeee);
       //printf("onDraw() 2\n");
@@ -642,6 +663,7 @@ public:
     canvas->drawCircle(m_pos.x(), m_pos.y(), m_size, paint);
       //printf("onDraw() 2.1\n");
 
+#ifdef ENABLE_SK_EFFECTS
     {
       SkColor colors[4] = {SK_ColorCYAN, SK_ColorMAGENTA, SK_ColorYELLOW, SK_ColorCYAN};
 
@@ -652,6 +674,7 @@ public:
       paint.setShader(shdr);
       //printf("onDraw() 2.4\n");
     }
+#endif
       //printf("onDraw() 3\n");
 
     // canvas->drawLine(m_pos.x(), m_pos.y(), m_prev.x(), m_prev.y(), paint);
@@ -671,6 +694,7 @@ public:
     canvas->drawString("Skia Test Skia Test Skia Test", 20, 32, *skFont1, paint);
     canvas->drawString("Skia Test Skia Test Skia Test", 20, 37, *skFont2, paint);
 
+#ifdef ENABLE_SK_EFFECTS
     // see https://skia.org/user/api/skpaint_overview
     {
       const SkScalar sigma = 1.65f;
@@ -697,7 +721,9 @@ public:
       strokePaint.setStrokeWidth(3.0f);
       canvas->drawTextBlob(blob2.get(), x, 20 + y, strokePaint);
     }
-#endif
+#endif // ENABLE_SK_EFFECTS
+#endif // ENABLE_CUSTOM_FONTS
+
       //printf("onDraw() 5\n");
 
 #ifdef ENABLE_SKOTTIE_ANIMATIONS
@@ -720,6 +746,8 @@ public:
 
   SkPainter(SkColor color, SkScalar size) : m_color(color), m_size(size) {}
 };
+
+#endif // ENABLE_SKIA
 
 static GLuint LoadShader(GLenum type, const char* shaderSrc) {
   GLuint shader;
@@ -750,7 +778,7 @@ static GLuint LoadShader(GLenum type, const char* shaderSrc) {
   return shader;
 }
 
-static int Init() {
+static int InitGL() {
   char vShaderStr[] = "attribute vec2 vPosition;                \n"
                       "attribute vec2 vUV;                \n"
                       "varying vec2 v_texcoord;\n"
@@ -767,6 +795,7 @@ static int Init() {
 
   char fShaderStr[] = "precision mediump float;\n"
                       "uniform sampler2D u_tex;\n"
+                      "uniform float clrRedTint;\n"
                       "varying vec2 v_texcoord;\n"
                       //		"uniform vec4 vColor;"
                       "void main()                                  \n"
@@ -775,6 +804,7 @@ static int Init() {
                       "    vec4 colour = texture2D(u_tex, v_texcoord);\n"
                       //    "    vec4 colour = vec4(100, 0, 100, 100);\n"
                       "    colour.rgba = colour.rgba;\n"
+                      "    colour.r = clrRedTint;\n"
                       "    gl_FragColor = colour;\n"
                       "}                                            \n";
 
@@ -798,6 +828,7 @@ static int Init() {
   GL_CHECK( glBindAttribLocation(programObject, 1, "vUV") );
   GL_CHECK( glLinkProgram(programObject) );
   uniformTex = glGetUniformLocation(programObject, "u_tex");
+  uniformRedClrTint = glGetUniformLocation(programObject, "clrRedTint");
   GL_CHECK( glGetProgramiv(programObject, GL_LINK_STATUS, &linked) );
   if (!linked) {
     GLint infoLen = 0;
@@ -812,7 +843,9 @@ static int Init() {
     return GL_FALSE;
   }
 
+#if defined(ENABLE_SKIA)
   GL_CHECK( glGenTextures(1, &skia_texture) );
+#endif // ENABLE_SKIA
 
   // No clientside arrays, so do this in a webgl-friendly manner
   GL_CHECK( glGenBuffers(1, &vertexPosObject) );
@@ -821,6 +854,7 @@ static int Init() {
   GL_CHECK( glBindBuffer(GL_ARRAY_BUFFER, 0) );
 
   GL_CHECK( glClearColor(0.0f, 0.0f, 0.0f, 0.0f) );
+
   return GL_TRUE;
 }
 
@@ -836,6 +870,7 @@ static void Draw() {
   GL_CHECK( glActiveTexture(GL_TEXTURE0) );
       //printf("Draw() 2\n");
 
+#if defined(ENABLE_SKIA)
   {
     // Draw to the surface via its SkCanvas.
     // We don't manage this pointer's lifetime.
@@ -869,8 +904,12 @@ static void Draw() {
     GL_CHECK( glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, pixmap.width(), pixmap.height(), 0, GL_RGBA,
                  GL_UNSIGNED_BYTE, pixmap.addr()) );
   }
+#endif // ENABLE_SKIA
 
   GL_CHECK( glUniform1i(uniformTex, 0) );
+
+  //printf("redClrTintAnim %f\n", redClrTintAnim);
+  GL_CHECK( glUniform1f(uniformRedClrTint, (sin(redClrTintAnim) / 2.0f + 0.5f)) );
 
   GL_CHECK( glBindBuffer(GL_ARRAY_BUFFER, vertexPosObject) );
   //
@@ -904,7 +943,12 @@ static void Draw() {
 }
 
 static void animate() {
-#ifdef ENABLE_SKOTTIE_ANIMATIONS
+  redClrTintAnim += 0.01f;
+  if (redClrTintAnim > 360.0f) {
+    redClrTintAnim = 0.0f;
+  }
+
+#if defined(ENABLE_SKIA) && defined(ENABLE_SKOTTIE_ANIMATIONS)
 
 #if defined(ENABLE_HTML5_SDL) || !defined(__EMSCRIPTEN__)
   if (fTimeBase == 0) {
@@ -984,6 +1028,8 @@ static void mainLoop() {
 #elif defined(__EMSCRIPTEN__)
   #warning "TODO: port SDL_PollEvent (emscripten_set_mousedown_callback, e.t.c.)"
   #warning "see https://github.com/floooh/sokol/blob/master/sokol_app.h#L2403 for example"
+  #warning "see https://github.com/hongkk/urho/blob/master/Source/Urho3D/Input/Input.cpp for example"
+  #warning "see https://github.com/h-s-c/libKD/blob/master/source/kd.c#L2658 for example"
 #else
   #error "TODO: port SDL_PollEvent"
 #endif
@@ -1105,14 +1151,17 @@ int main(int argc, char** argv) {
     printf("WTF::Bind!\n");
   }).Run();
 
+#if defined(ENABLE_THREAD_TESTS)
+
 #if defined(__EMSCRIPTEN__) && defined(__EMSCRIPTEN_PTHREADS__)
   // TODO: causes skia/GL hang on WASM
-#warning "TODO: port threads & support skia"
+  #warning "TODO: port threads & support skia"
 #elif defined(__EMSCRIPTEN__) // wasm without PTHREAD support
   // TODO: error undefined pthread_setschedparam
   // see https://github.com/emscripten-core/emscripten/pull/8301
   // TODO: port as in https://github.com/emscripten-core/emscripten/pull/8301/files#diff-3a4a6b777ac7df56ef826737ea093be8R37
-#else
+  #warning "TODO: port threads to wasm without PTHREAD support"
+#endif
   {
     printf("thread testing started\n");
     base::OnceClosure* closure = nullptr;
@@ -1146,7 +1195,7 @@ int main(int argc, char** argv) {
       base::Bind(&SomeHardcoreAsyncTask,
                  &event,
                  base::Bind(AsyncTaskCb)),
-      base::TimeDelta::FromSeconds(10));
+      base::TimeDelta::FromSeconds(3));
 
     //printf("thread testing Wait...\n");
     std::cout << "thread testing Wait..." << base::Time::Now() << std::endl;
@@ -1158,7 +1207,7 @@ int main(int argc, char** argv) {
     std::cout << "thread testing ended..." << base::Time::Now() << std::endl;
     //printf("thread testing ended\n");
   }
-#endif
+#endif // ENABLE_THREAD_TESTS
 
   {
     WTF::NumberToStringBuffer buffer;
@@ -1597,7 +1646,7 @@ int main(int argc, char** argv) {
 
   GL_CHECK( glDisable(GL_DEPTH_TEST) );
   GL_CHECK( glViewport(0, 0, (int)width, (int)height) );
-  GL_CHECK( glClearColor(1, 1, 1, 1) );
+  GL_CHECK( glClearColor(redClrTintAnim, 1.0f, 1.0f, 1.0f) );
   GL_CHECK( glClearStencil(0) );
   GL_CHECK( glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT) );
 
@@ -1640,6 +1689,12 @@ int main(int argc, char** argv) {
     printf("Failed to load lazy font! SDL_ttf Error: %s\n", TTF_GetError());
   }*/
 
+  printf("Initializing opengl subsystem...\n");
+
+  InitGL();
+
+#if defined(ENABLE_SKIA)
+
 #ifdef ENABLE_CUSTOM_FONTS
   printf("Reading fonts...\n");
 
@@ -1647,22 +1702,15 @@ int main(int argc, char** argv) {
 
   /*char* fileString1 = nullptr;
   long int fsize1;
-  int readRes = read_file(fontPath, &fileString1, fsize1);
+  int readRes = read_file(fontPath, fileString1, fsize1);
   if (readRes != 0) {
     printf("can`t read font %s\n", fontPath);
   }*/
 
-  /*char* fileString2;
-  long int fsize2;
-  ///read_file(fontPath, fileString2, fsize2);
-  ///int readRes = read_file(fontPath, &fileString1, fsize1);
-  ///if (readRes != 0) {
-  ///  printf("can`t read font %s\n", fontPath);
-  ///}
-  */
-
   printf("Initializing fonts...\n");
 
+  /// \note SkData::MakeFromFileName don`t support wasm pthreads,
+  /// so we use MakeFromMalloc
   //sk_sp<SkData> data = SkData::MakeFromMalloc(fileString1, fsize1);
   sk_sp<SkData> data = SkData::MakeFromFileName(fontPath);
   if (!data) {
@@ -1685,16 +1733,11 @@ int main(int argc, char** argv) {
       new SkFont(sktp, 30.0f, 1.5f, 0.0f);
 
   //delete[] fileString1;
-  //delete[] fileString2;
 #endif
-
-  printf("Initializing subsystems...\n");
-
-  Init();
 
   printf("Initializing skia...\n");
 
-  init_skia(width, height);
+  initSkiaSurface(width, height);
 
   printf("Initializing skia view...\n");
 
@@ -1729,7 +1772,7 @@ int main(int argc, char** argv) {
     long int fsize;
     int readRes = read_file(fPath.c_str(), fileString, fsize);
     if (readRes != 0) {
-      printf("can`t read skottie anim %s\n", fontPath);
+      printf("can`t read skottie anim %s\n", fPath.c_str());
       return 1;
     }
     DCHECK(fileString != nullptr);
@@ -1771,6 +1814,8 @@ int main(int argc, char** argv) {
   }
 #endif // ENABLE_SKOTTIE_ANIMATIONS
 
+#endif // ENABLE_SKIA
+
 // __EMSCRIPTEN_PTHREADS__ can be used to detect whether Emscripten is currently targeting pthreads.
 // At runtime, you can use the emscripten_has_threading_support()
 // see https://emscripten.org/docs/porting/pthreads.html
@@ -1795,9 +1840,12 @@ int main(int argc, char** argv) {
 
   printf("Running cleanup...\n");
 
+#if defined(ENABLE_SKIA)
   cleanup_skia();
 
   GL_CHECK( glDeleteTextures(1, &skia_texture) );
+#endif // ENABLE_SKIA
+
   GL_CHECK( glDeleteBuffers(1, &vertexPosObject) );
 
 #ifdef __EMSCRIPTEN__
@@ -1826,7 +1874,7 @@ int main(int argc, char** argv) {
     ttfFont = nullptr;
   }*/
 
-#ifdef ENABLE_SKOTTIE_ANIMATIONS
+#if defined(ENABLE_SKIA) && defined(ENABLE_SKOTTIE_ANIMATIONS)
   fAnimation.reset();
 #endif
 
@@ -1835,7 +1883,7 @@ int main(int argc, char** argv) {
   window = nullptr;
 #endif
 
-#ifdef ENABLE_CUSTOM_FONTS
+#if defined(ENABLE_SKIA) && defined(ENABLE_CUSTOM_FONTS)
   delete skFont1;
   delete skFont2;
 #endif
