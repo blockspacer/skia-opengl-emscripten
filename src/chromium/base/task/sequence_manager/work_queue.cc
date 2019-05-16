@@ -265,6 +265,14 @@ bool WorkQueue::InsertFence(EnqueueOrder fence) {
 }
 
 bool WorkQueue::RemoveFence() {
+
+//printf("WorkQueue::RemoveFence()\n");
+
+//#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+//  fence_ = EnqueueOrder::none();
+//  work_queue_sets_->OnTaskPushedToEmptyQueue(this);
+//  return true;
+//#else
   bool was_blocked_by_fence = BlockedByFence();
   fence_ = EnqueueOrder::none();
   if (work_queue_sets_ && !tasks_.empty() && was_blocked_by_fence) {
@@ -272,6 +280,7 @@ bool WorkQueue::RemoveFence() {
     return true;
   }
   return false;
+//#endif
 }
 
 bool WorkQueue::ShouldRunBefore(const WorkQueue* other_queue) const {

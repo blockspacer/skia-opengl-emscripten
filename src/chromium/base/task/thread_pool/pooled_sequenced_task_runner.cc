@@ -23,6 +23,7 @@ PooledSequencedTaskRunner::~PooledSequencedTaskRunner() = default;
 bool PooledSequencedTaskRunner::PostDelayedTask(const Location& from_here,
                                                 OnceClosure closure,
                                                 TimeDelta delay) {
+printf("PooledSequencedTaskRunner::PostDelayedTask 1\n");
   if (!PooledTaskRunnerDelegate::Exists())
     return false;
 

@@ -83,13 +83,20 @@ class BASE_EXPORT ThreadPoolImpl : public ThreadPool,
                                  const TaskTraits& traits,
                                  OnceClosure task,
                                  TimeDelta delay) override;
+
+//#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+//#else
   scoped_refptr<TaskRunner> CreateTaskRunnerWithTraits(
       const TaskTraits& traits) override;
+
   scoped_refptr<SequencedTaskRunner> CreateSequencedTaskRunnerWithTraits(
       const TaskTraits& traits) override;
+//#endif
+
   scoped_refptr<SingleThreadTaskRunner> CreateSingleThreadTaskRunnerWithTraits(
       const TaskTraits& traits,
       SingleThreadTaskRunnerThreadMode thread_mode) override;
+
 #if defined(OS_WIN)
   scoped_refptr<SingleThreadTaskRunner> CreateCOMSTATaskRunnerWithTraits(
       const TaskTraits& traits,

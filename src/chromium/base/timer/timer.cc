@@ -290,8 +290,12 @@ void RepeatingTimer::Start(const Location& posted_from,
 
 void RepeatingTimer::OnStop() {}
 void RepeatingTimer::RunUserTask() {
+#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+  #warning "TODO: port timers, see https://github.com/trevorlinton/webkit.js/blob/master/src/WebCoreSupport/AcceleratedContext.cpp#L155"
+#endif
   // Make a local copy of the task to run in case the task destroy the timer
   // instance.
+  printf("RepeatingTimer::RunUserTask()\n");
   RepeatingClosure task = user_task_;
   PostNewScheduledTask(GetCurrentDelay());
   task.Run();

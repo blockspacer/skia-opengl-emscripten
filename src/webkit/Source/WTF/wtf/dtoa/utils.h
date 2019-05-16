@@ -45,7 +45,13 @@
 #ifndef UNREACHABLE
 #ifdef _MSC_VER
 void DOUBLE_CONVERSION_NO_RETURN abort_noreturn();
-inline void abort_noreturn() { abort(); }
+inline void abort_noreturn() {
+  #if defined(__EMSCRIPTEN__)
+    printf("wtf::abort_noreturn\n");
+  #else
+    abort();
+  #endif
+}
 #define UNREACHABLE()   (abort_noreturn())
 #else
 #define UNREACHABLE()   (abort())

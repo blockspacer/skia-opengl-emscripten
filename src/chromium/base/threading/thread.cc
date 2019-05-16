@@ -74,10 +74,17 @@ bool Thread::Start() {
   if (com_status_ == STA)
     options.message_loop_type = MessageLoop::TYPE_UI;
 #endif
+
+#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+options.message_loop_type = MessageLoop::TYPE_DEFAULT;
+//options.joinable = false;
+#endif
+
   return StartWithOptions(options);
 }
 
 bool Thread::StartWithOptions(const Options& options) {
+printf("Thread::StartWithOptions 1\n");
   DCHECK(owning_sequence_checker_.CalledOnValidSequence());
   DCHECK(!task_environment_);
   DCHECK(!IsRunning());
@@ -103,6 +110,7 @@ bool Thread::StartWithOptions(const Options& options) {
     task_environment_ = std::make_unique<internal::MessageLoopTaskEnvironment>(
         MessageLoop::CreateUnbound(options.message_pump_factory.Run()));
   } else {
+    printf("MessageLoop::CreateUnbound(options.message_loop_type)\n");
     task_environment_ = std::make_unique<internal::MessageLoopTaskEnvironment>(
         MessageLoop::CreateUnbound(options.message_loop_type));
   }
@@ -121,6 +129,7 @@ bool Thread::StartWithOptions(const Options& options) {
             : PlatformThread::CreateNonJoinableWithPriority(
                   options.stack_size, this, options.priority);
     if (!success) {
+printf("Thread:: failed to create thread\n");
       DLOG(ERROR) << "failed to create thread";
       return false;
     }
@@ -128,6 +137,7 @@ bool Thread::StartWithOptions(const Options& options) {
 
   joinable_ = options.joinable;
 
+printf("Thread::StartWithOptions 2\n");
   return true;
 }
 
@@ -163,7 +173,11 @@ void Thread::FlushForTesting() {
 }
 
 void Thread::Stop() {
-  DCHECK(joinable_);
+//#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+//  // don`t join in main thread
+//#else
+//  DCHECK(joinable_);
+//#endif
 
   // TODO(gab): Fix improper usage of this API (http://crbug.com/629139) and
   // enable this check, until then synchronization with Start() via
@@ -238,7 +252,7 @@ void Thread::Run(RunLoop* run_loop) {
   // Overridable protected method to be called from our |thread_| only.
   DCHECK(id_event_.IsSignaled());
   DCHECK_EQ(id_, PlatformThread::CurrentId());
-
+printf("Thread::Run\n");
   run_loop->Run();
 }
 
@@ -257,6 +271,7 @@ bool Thread::GetThreadWasQuitProperly() {
 }
 
 void Thread::ThreadMain() {
+printf("Thread::ThreadMain 1\n");
   // First, make GetThreadId() available to avoid deadlocks. It could be called
   // any place in the following thread initialization code.
   DCHECK(!id_event_.IsSignaled());
@@ -267,6 +282,8 @@ void Thread::ThreadMain() {
   id_ = PlatformThread::CurrentId();
   DCHECK_NE(kInvalidThreadId, id_);
   id_event_.Signal();
+
+printf("Thread::ThreadMain 2\n");
 
   // Complete the initialization of our Thread object.
   PlatformThread::SetName(name_.c_str());
@@ -300,6 +317,8 @@ void Thread::ThreadMain() {
   // Let the thread do extra initialization.
   Init();
 
+printf("Thread::ThreadMain 3\n");
+
   {
     AutoLock lock(running_lock_);
     running_ = true;
@@ -307,15 +326,23 @@ void Thread::ThreadMain() {
 
   start_event_.Signal();
 
+printf("Thread::ThreadMain 4\n");
+
   RunLoop run_loop;
   run_loop_ = &run_loop;
   Run(run_loop_);
 
+#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+  // TODO: delegate_->Run is async, so we reached function end immediately
+#else
+
+printf("Thread::ThreadMain 5\n");
   {
     AutoLock lock(running_lock_);
     running_ = false;
   }
 
+printf("Thread::ThreadMain 6\n");
   // Let the thread do extra cleanup.
   CleanUp();
 
@@ -325,10 +352,13 @@ void Thread::ThreadMain() {
 
   DCHECK(GetThreadWasQuitProperly());
 
+printf("Thread::ThreadMain 7\n");
   // We can't receive messages anymore.
   // (The message loop is destructed at the end of this block)
   task_environment_.reset();
   run_loop_ = nullptr;
+#endif
+
 }
 
 void Thread::ThreadQuitHelper() {

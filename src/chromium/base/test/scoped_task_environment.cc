@@ -540,6 +540,12 @@ void ScopedTaskEnvironment::RunUntilIdle() {
   // This can also be simplified even further once TaskTracker becomes directly
   // aware of main thread tasks. https://crbug.com/660078.
 
+#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+printf("TODO: ScopedTaskEnvironment::RunUntilIdle\n");
+#warning "TODO: ScopedTaskEnvironment::RunUntilIdle"
+abort();
+#endif
+
   for (;;) {
     task_tracker_->AllowRunTasks();
 

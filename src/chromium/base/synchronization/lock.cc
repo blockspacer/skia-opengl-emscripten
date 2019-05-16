@@ -12,6 +12,9 @@
 
 namespace base {
 
+#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+  // no lock
+#else
 Lock::Lock() : lock_() {
 }
 
@@ -32,6 +35,7 @@ void Lock::CheckUnheldAndMark() {
   DCHECK(owning_thread_ref_.is_null());
   owning_thread_ref_ = PlatformThread::CurrentRef();
 }
+#endif
 
 }  // namespace base
 

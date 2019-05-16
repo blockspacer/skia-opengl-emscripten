@@ -78,7 +78,14 @@ class BASE_EXPORT TaskQueueImpl {
   enum class WorkQueueType { kImmediate, kDelayed };
 
   // Some methods have fast paths when on the main thread.
-  enum class CurrentThread { kMainThread, kNotMainThread };
+  enum class CurrentThread {
+  kMainThread,
+//#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+//  // only one thread
+//#else
+  kNotMainThread
+//#endif
+  };
 
   // Non-nestable tasks may get deferred but such queue is being maintained on
   // SequenceManager side, so we need to keep information how to requeue it.

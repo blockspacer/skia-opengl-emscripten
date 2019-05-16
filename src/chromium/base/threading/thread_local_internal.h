@@ -4,8 +4,9 @@
 
 #ifndef BASE_THREADING_THREAD_LOCAL_INTERNAL_H_
 #define BASE_THREADING_THREAD_LOCAL_INTERNAL_H_
-
-#if DCHECK_IS_ON()
+#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+  // todo
+#elif DCHECK_IS_ON()
 
 #include <atomic>
 #include <memory>

@@ -263,6 +263,7 @@ void MessagePumpLibevent::Quit() {
 }
 
 void MessagePumpLibevent::ScheduleWork() {
+printf("MessagePumpLibevent::ScheduleWork 1\n");
   // Tell libevent (in a threadsafe way) that it should break out of its loop.
   char buf = 0;
   int nwrite = HANDLE_EINTR(write(wakeup_pipe_in_, &buf, 1));

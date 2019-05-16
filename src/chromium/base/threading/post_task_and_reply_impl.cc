@@ -109,6 +109,7 @@ class PostTaskAndReplyRelay {
   // Static function is used because it is not possible to bind a method call to
   // a non-pointer type.
   static void RunReply(PostTaskAndReplyRelay relay) {
+    printf("RunReply 1\n");
     DCHECK(!relay.task_);
     DCHECK(relay.reply_);
     std::move(relay.reply_).Run();
@@ -130,6 +131,7 @@ namespace internal {
 bool PostTaskAndReplyImpl::PostTaskAndReply(const Location& from_here,
                                             OnceClosure task,
                                             OnceClosure reply) {
+  printf("PostTaskAndReplyImpl::PostTaskAndReply 1\n");
   DCHECK(task) << from_here.ToString();
   DCHECK(reply) << from_here.ToString();
 

@@ -94,6 +94,8 @@ bool PostTaskWithTraitsAndReply(const Location& from_here,
       from_here, std::move(task), std::move(reply));
 }
 
+//#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+//#else
 scoped_refptr<TaskRunner> CreateTaskRunnerWithTraits(const TaskTraits& traits) {
   const TaskTraits adjusted_traits = GetTaskTraitsWithExplicitPriority(traits);
   return GetTaskExecutorForTraits(adjusted_traits)
@@ -106,6 +108,7 @@ scoped_refptr<SequencedTaskRunner> CreateSequencedTaskRunnerWithTraits(
   return GetTaskExecutorForTraits(adjusted_traits)
       ->CreateSequencedTaskRunnerWithTraits(adjusted_traits);
 }
+//#endif
 
 scoped_refptr<SingleThreadTaskRunner> CreateSingleThreadTaskRunnerWithTraits(
     const TaskTraits& traits,

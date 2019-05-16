@@ -20,7 +20,14 @@ namespace base {
 // AssertAcquired() method.
 class LOCKABLE BASE_EXPORT Lock {
  public:
-#if !DCHECK_IS_ON()
+#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+  Lock() {}
+  ~Lock() {}
+  void Acquire() {}
+  void Release() {}
+  bool Try() { return true; }
+  void AssertAcquired() const {}
+#elif !DCHECK_IS_ON()
   // Optimized wrapper implementation
   Lock() : lock_() {}
   ~Lock() {}
@@ -103,8 +110,12 @@ class LOCKABLE BASE_EXPORT Lock {
   base::PlatformThreadRef owning_thread_ref_;
 #endif  // DCHECK_IS_ON()
 
+#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+  // no lock
+#else
   // Platform specific underlying lock implementation.
   internal::LockImpl lock_;
+#endif // !defined(__EMSCRIPTEN_PTHREADS__)
 
   DISALLOW_COPY_AND_ASSIGN(Lock);
 };

@@ -286,10 +286,7 @@ class SimpleThread;
 class StackSamplingProfiler;
 class Thread;
 
-#if DCHECK_IS_ON()
-#define INLINE_IF_DCHECK_IS_OFF BASE_EXPORT
-#define EMPTY_BODY_IF_DCHECK_IS_OFF
-#else
+#if (defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)) || !DCHECK_IS_ON()
 #define INLINE_IF_DCHECK_IS_OFF inline
 
 // The static_assert() eats follow-on semicolons. `= default` would work
@@ -298,6 +295,9 @@ class Thread;
 #define EMPTY_BODY_IF_DCHECK_IS_OFF \
   {}                                \
   static_assert(true, "")
+#elif DCHECK_IS_ON()
+#define INLINE_IF_DCHECK_IS_OFF BASE_EXPORT
+#define EMPTY_BODY_IF_DCHECK_IS_OFF
 #endif
 
 namespace internal {
@@ -320,7 +320,9 @@ class BASE_EXPORT ScopedDisallowBlocking {
   ~ScopedDisallowBlocking() EMPTY_BODY_IF_DCHECK_IS_OFF;
 
  private:
-#if DCHECK_IS_ON()
+#if (defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)) || !DCHECK_IS_ON()
+ // todo
+#elif DCHECK_IS_ON()
   const bool was_disallowed_;
 #endif
 
@@ -351,7 +353,9 @@ class BASE_EXPORT ScopedAllowBlocking {
   ScopedAllowBlocking() EMPTY_BODY_IF_DCHECK_IS_OFF;
   ~ScopedAllowBlocking() EMPTY_BODY_IF_DCHECK_IS_OFF;
 
-#if DCHECK_IS_ON()
+#if (defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)) || !DCHECK_IS_ON()
+ // todo
+#elif  DCHECK_IS_ON()
   const bool was_disallowed_;
 #endif
 
@@ -364,7 +368,9 @@ class ScopedAllowBlockingForTesting {
   ~ScopedAllowBlockingForTesting() {}
 
  private:
-#if DCHECK_IS_ON()
+#if (defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)) || !DCHECK_IS_ON()
+ // todo
+#elif DCHECK_IS_ON()
   ScopedAllowBlocking scoped_allow_blocking_;
 #endif
 
@@ -419,7 +425,9 @@ class BASE_EXPORT ScopedAllowBaseSyncPrimitives {
   ScopedAllowBaseSyncPrimitives() EMPTY_BODY_IF_DCHECK_IS_OFF;
   ~ScopedAllowBaseSyncPrimitives() EMPTY_BODY_IF_DCHECK_IS_OFF;
 
-#if DCHECK_IS_ON()
+#if (defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)) || !DCHECK_IS_ON()
+ // todo
+#elif DCHECK_IS_ON()
   const bool was_disallowed_;
 #endif
 
@@ -500,7 +508,9 @@ class BASE_EXPORT ScopedAllowBaseSyncPrimitivesOutsideBlockingScope {
   ~ScopedAllowBaseSyncPrimitivesOutsideBlockingScope()
       EMPTY_BODY_IF_DCHECK_IS_OFF;
 
-#if DCHECK_IS_ON()
+#if (defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)) || !DCHECK_IS_ON()
+ // todo
+#elif DCHECK_IS_ON()
   const bool was_disallowed_;
 #endif
 
@@ -513,7 +523,9 @@ class BASE_EXPORT ScopedAllowBaseSyncPrimitivesForTesting {
   ~ScopedAllowBaseSyncPrimitivesForTesting() EMPTY_BODY_IF_DCHECK_IS_OFF;
 
  private:
-#if DCHECK_IS_ON()
+#if (defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)) || !DCHECK_IS_ON()
+ // todo
+#elif DCHECK_IS_ON()
   const bool was_disallowed_;
 #endif
 
@@ -552,14 +564,23 @@ class BASE_EXPORT ThreadRestrictions {
     ~ScopedAllowIO() EMPTY_BODY_IF_DCHECK_IS_OFF;
 
    private:
-#if DCHECK_IS_ON()
+#if (defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)) || !DCHECK_IS_ON()
+ // todo
+#elif DCHECK_IS_ON()
     const bool was_allowed_;
 #endif
 
     DISALLOW_COPY_AND_ASSIGN(ScopedAllowIO);
   };
 
-#if DCHECK_IS_ON()
+#if (defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)) || !DCHECK_IS_ON()
+  // Inline the empty definitions of these functions so that they can be
+  // compiled out.
+  static bool SetIOAllowed(bool allowed) { return true; }
+  static bool SetSingletonAllowed(bool allowed) { return true; }
+  static void AssertSingletonAllowed() {}
+  static void DisallowWaiting() {}
+#elif DCHECK_IS_ON()
   // Set whether the current thread to make IO calls.
   // Threads start out in the *allowed* state.
   // Returns the previous value.
@@ -580,13 +601,6 @@ class BASE_EXPORT ThreadRestrictions {
   //
   // DEPRECATED. Use DisallowBaseSyncPrimitives.
   static void DisallowWaiting();
-#else
-  // Inline the empty definitions of these functions so that they can be
-  // compiled out.
-  static bool SetIOAllowed(bool allowed) { return true; }
-  static bool SetSingletonAllowed(bool allowed) { return true; }
-  static void AssertSingletonAllowed() {}
-  static void DisallowWaiting() {}
 #endif
 
  private:
@@ -613,11 +627,16 @@ class BASE_EXPORT ThreadRestrictions {
 #endif
 // END USAGE THAT NEEDS TO BE FIXED.
 
-#if DCHECK_IS_ON()
+#if (defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__))
+  static bool SetWaitAllowed(bool allowed) {
+    return true;
+    //return false; // todo
+  }
+#elif !DCHECK_IS_ON()
+  static bool SetWaitAllowed(bool allowed) { return true; }
+#elif DCHECK_IS_ON()
   // DEPRECATED. Use ScopedAllowBaseSyncPrimitives.
   static bool SetWaitAllowed(bool allowed);
-#else
-  static bool SetWaitAllowed(bool allowed) { return true; }
 #endif
 
   DISALLOW_IMPLICIT_CONSTRUCTORS(ThreadRestrictions);

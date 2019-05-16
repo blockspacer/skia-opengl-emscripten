@@ -21,6 +21,7 @@ PooledParallelTaskRunner::~PooledParallelTaskRunner() = default;
 bool PooledParallelTaskRunner::PostDelayedTask(const Location& from_here,
                                                OnceClosure closure,
                                                TimeDelta delay) {
+printf("PooledParallelTaskRunner::PostDelayedTask 1\n");
   if (!PooledTaskRunnerDelegate::Exists())
     return false;
 

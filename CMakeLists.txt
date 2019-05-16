@@ -72,7 +72,14 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${SK_COMMON_FLAGS}")
 if(EMSCRIPTEN)
   #set(EMCC_COMMON "${EMCC_COMMON} -DSTATICALLY_LINKED_WITH_WTF")
   set(EMCC_COMMON "${EMCC_COMMON} -DTARGET_EMSCRIPTEN")
+  #
   set(EMCC_COMMON "${EMCC_COMMON} -s WASM=1")
+  #
+  # Whether we should use binaryen's wasm2js to convert our wasm to JS. Set when
+  # wasm backend is in use with WASM=0 (to enable non-wasm output, we compile to
+  # wasm normally, then compile that to JS).
+  # set(EMCC_COMMON "${EMCC_COMMON} -s WASM2JS=1")
+  #
   #set(EMCC_COMMON "${EMCC_COMMON} -DEMSCRIPTEN_HAS_UNBOUND_TYPE_NAMES=0")
   set(EMCC_COMMON "${EMCC_COMMON} -s USE_FREETYPE=1")
   set(EMCC_COMMON "${EMCC_COMMON} -s USE_LIBPNG=1")
@@ -196,6 +203,22 @@ if (ENABLE_WASM_PTHREADS)
   # dlmalloc is necessary for multithreading, split memory, e.t.c.
   # default: dlmalloc
   # set(EMCC_COMMON "${EMCC_COMMON} -s MALLOC=dlmalloc")
+  #
+  # PTHREAD_WORKER_FILE
+else(ENABLE_WASM_PTHREADS)
+  # deprecated, switching our backend from fastcomp to the upstream LLVM backend.
+  # Both Asyncify and the Emterpreter can't work with that backend,
+  # see https://github.com/emscripten-core/emscripten/issues/8561
+  # ASYNCIFY has a bad worst-case of large code size:
+  # If it needs to modify many methods, it can grow code size very significantly (even 10x more was seen)
+  # Asyncify can make performance much slower, if it ends up splitting a function which you need to be fast.
+  # setjmp/longjmp and C++ exception are not working!
+  # emscripten_sleep requires ASYNCIFY!
+  # see https://emscripten.org/docs/porting/asyncify.html
+  #set(EMCC_COMMON "${EMCC_COMMON} -s ASYNCIFY=1")
+  #set(EMCC_COMMON "${EMCC_COMMON} -DHAS_ASYNCIFY=1")
+  #
+  # ASYNCIFY_WHITELIST==["qsort", "trinkle", "__toread", "__uflow", "__fwritex", "MUSL_vfprintf"]
 endif(ENABLE_WASM_PTHREADS)
 
   set(EMCC_COMMON "${EMCC_COMMON} -s USE_ZLIB=1")
@@ -280,6 +303,11 @@ endif(ENABLE_WEBGL2)
 
   # -s DEMANGLE_SUPPORT to choose whether to compile the
   # application with libcxxabi-provided demangling support ___cxa_demangle().
+  # If 1, build in libcxxabi's full c++ demangling code, to allow stackTrace()
+  #                        // to emit fully proper demangled c++ names
+  # see https://emscripten.org/docs/api_reference/emscripten.h.html?highlight=demangle#c.EM_LOG_DEMANGLE
+  # see https://github.com/emscripten-core/emscripten/blob/incoming/src/settings.js#L288
+  set(EMCC_COMMON "${EMCC_COMMON} -s DEMANGLE_SUPPORT=1")
 
   # rtti required by skia
   set(EMCC_COMMON "${EMCC_COMMON} -frtti")
@@ -326,14 +354,25 @@ endif(ENABLE_WEBGL2)
   # Check each write to the heap, for example, this will give a clear error
   # on what would be segfaults in a native build (like dereferencing 0)
   # see https://github.com/emscripten-core/emscripten/blob/master/src/settings.js#L262
+  # see https://emscripten.org/docs/porting/Debugging.html#memory-alignment-issues
   set(EMCC_COMMON "${EMCC_COMMON} -s SAFE_HEAP=1")
+  #
+  # Build with SAFE_HEAP=1 and function pointer aliasing disabled.
+  # This should make it impossible for a function pointer to
+  # be called with the wrong type without raising an error
+  # ALIASING_FUNCTION_POINTERS=0 is also useful because it ensures
+  # that calls to function pointer addresses in the wrong table result
+  # in clear errors. Without this setting such calls just execute
+  # whatever function is at the address, which can be much harder to debug.
+  set(EMCC_COMMON "${EMCC_COMMON} -s ALIASING_FUNCTION_POINTERS=0")
 
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${EMCC_COMMON}")
 
   # TODO EMCC_LINKER_FLAGS
 
   # https://emscripten.org/docs/tools_reference/emcc.html#emcc-oz
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Oz")
+  #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Oz")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O1")
   #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2")
   # With --use-preload-plugins, files can be automatically decoded based on their extension.
   # see https://emscripten.org/docs/porting/files/packaging_files.html
@@ -399,7 +438,12 @@ endif(ENABLE_WEBGL2)
   # as the C runtime closes at the end of main().
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s NO_EXIT_RUNTIME=1")
 
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s WARN_UNALIGNED=1")
+  # This is currently only supported in asm.js, not  wasm (!!!)
+  # Warn at compile time about instructions that LLVM tells us are not fully
+  # aligned.  This is useful to find places in your code where you might refactor
+  # to ensure proper alignment.
+  # see https://github.com/emscripten-core/emscripten/blob/incoming/src/settings.js#L161
+  # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s WARN_UNALIGNED=1")
 
   #
   # offscreen canvas

@@ -85,10 +85,7 @@ class ThreadLocalPointer {
 // it. Typically this means that ThreadLocalOwnedPointer instances are held in
 // static storage or at the very least only recycled in the single-threaded
 // phase between tests in the same process.
-#if DCHECK_IS_ON()
-template <typename T>
-using ThreadLocalOwnedPointer = internal::CheckedThreadLocalOwnedPointer<T>;
-#else   // DCHECK_IS_ON()
+#if !DCHECK_IS_ON() || (defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__))
 template <typename T>
 class ThreadLocalOwnedPointer {
  public:
@@ -114,6 +111,9 @@ class ThreadLocalOwnedPointer {
 
   DISALLOW_COPY_AND_ASSIGN(ThreadLocalOwnedPointer<T>);
 };
+#elif DCHECK_IS_ON()
+template <typename T>
+using ThreadLocalOwnedPointer = internal::CheckedThreadLocalOwnedPointer<T>;
 #endif  // DCHECK_IS_ON()
 
 class ThreadLocalBoolean {

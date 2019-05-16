@@ -35,6 +35,8 @@ class BASE_EXPORT TaskExecutor {
                                          OnceClosure task,
                                          TimeDelta delay) = 0;
 
+//#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+//#else
   // Returns a TaskRunner whose PostTask invocations result in scheduling tasks
   // using |traits|. Tasks may run in any order and in parallel.
   virtual scoped_refptr<TaskRunner> CreateTaskRunnerWithTraits(
@@ -44,6 +46,7 @@ class BASE_EXPORT TaskExecutor {
   // scheduling tasks using |traits|. Tasks run one at a time in posting order.
   virtual scoped_refptr<SequencedTaskRunner>
   CreateSequencedTaskRunnerWithTraits(const TaskTraits& traits) = 0;
+//#endif
 
   // Returns a SingleThreadTaskRunner whose PostTask invocations result in
   // scheduling tasks using |traits|. Tasks run on a single thread in posting

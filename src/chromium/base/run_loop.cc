@@ -97,6 +97,7 @@ bool RunLoop::Delegate::ShouldQuitWhenIdle() {
 
 // static
 void RunLoop::RegisterDelegateForCurrentThread(Delegate* delegate) {
+printf("RunLoop::RegisterDelegateForCurrentThread 1\n");
   // Bind |delegate| to this thread.
   DCHECK(!delegate->bound_);
   DCHECK_CALLED_ON_VALID_THREAD(delegate->bound_thread_checker_);
@@ -126,15 +127,18 @@ RunLoop::~RunLoop() {
 }
 
 void RunLoop::Run() {
+printf("RunLoop::Run()\n");
   RunWithTimeout(TimeDelta::Max());
 }
 
 void RunLoop::RunWithTimeout(TimeDelta timeout) {
+printf("RunLoop::RunWithTimeout() 1\n");
   DCHECK_CALLED_ON_VALID_SEQUENCE(sequence_checker_);
 
   if (!BeforeRun())
     return;
 
+printf("RunLoop::RunWithTimeout() 2\n");
   // If there is a ScopedRunTimeoutForTest active then set the timeout.
   // TODO(crbug.com/905412): Use real-time for Run() timeouts so that they
   // can be applied even in tests which mock TimeTicks::Now().
@@ -147,6 +151,7 @@ void RunLoop::RunWithTimeout(TimeDelta timeout) {
         FROM_HERE, cancelable_timeout.callback(), run_timeout->timeout());
   }
 
+printf("RunLoop::RunWithTimeout() 3\n");
   // It is okay to access this RunLoop from another sequence while Run() is
   // active as this RunLoop won't touch its state until after that returns (if
   // the RunLoop's state is accessed while processing Run(), it will be re-bound
@@ -158,13 +163,21 @@ void RunLoop::RunWithTimeout(TimeDelta timeout) {
   const bool application_tasks_allowed =
       delegate_->active_run_loops_.size() == 1U ||
       type_ == Type::kNestableTasksAllowed;
+
+printf("RunLoop::RunWithTimeout() 4\n");
   delegate_->Run(application_tasks_allowed, timeout);
 
   // Rebind this RunLoop to the current thread after Run().
   DETACH_FROM_SEQUENCE(sequence_checker_);
   DCHECK_CALLED_ON_VALID_SEQUENCE(sequence_checker_);
 
+printf("RunLoop::RunWithTimeout() 5\n");
+
+#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+  // TODO: delegate_->Run is async, so we reached function end immediately
+#else
   AfterRun();
+#endif
 }
 
 void RunLoop::RunUntilIdle() {
@@ -234,47 +247,71 @@ Closure RunLoop::QuitWhenIdleClosure() {
 
 // static
 bool RunLoop::IsRunningOnCurrentThread() {
+#if (defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__))
+  return true;
+#else
   Delegate* delegate = tls_delegate.Get().Get();
   return delegate && !delegate->active_run_loops_.empty();
+#endif
 }
 
 // static
 bool RunLoop::IsNestedOnCurrentThread() {
+#if (defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__))
+  return false;
+#else
   Delegate* delegate = tls_delegate.Get().Get();
   return delegate && delegate->active_run_loops_.size() > 1;
+#endif
 }
 
 // static
 void RunLoop::AddNestingObserverOnCurrentThread(NestingObserver* observer) {
+#if (defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__))
+  return;
+#else
   Delegate* delegate = tls_delegate.Get().Get();
   DCHECK(delegate);
   delegate->nesting_observers_.AddObserver(observer);
+#endif
 }
 
 // static
 void RunLoop::RemoveNestingObserverOnCurrentThread(NestingObserver* observer) {
+#if (defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__))
+  return;
+#else
   Delegate* delegate = tls_delegate.Get().Get();
   DCHECK(delegate);
   delegate->nesting_observers_.RemoveObserver(observer);
+#endif
 }
 
 // static
 void RunLoop::QuitCurrentDeprecated() {
+#if (defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__))
+  return;
+#else
   DCHECK(IsRunningOnCurrentThread());
   Delegate* delegate = tls_delegate.Get().Get();
   DCHECK(delegate->active_run_loops_.top()->allow_quit_current_deprecated_)
       << "Please migrate off QuitCurrentDeprecated(), e.g. to QuitClosure().";
   delegate->active_run_loops_.top()->Quit();
+#endif
 }
 
 // static
 void RunLoop::QuitCurrentWhenIdleDeprecated() {
+#if (defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__))
+  return;
+#else
   DCHECK(IsRunningOnCurrentThread());
   Delegate* delegate = tls_delegate.Get().Get();
   DCHECK(delegate->active_run_loops_.top()->allow_quit_current_deprecated_)
       << "Please migrate off QuitCurrentWhenIdleDeprecated(), e.g. to "
          "QuitWhenIdleClosure().";
   delegate->active_run_loops_.top()->QuitWhenIdle();
+#endif
 }
 
 // static
@@ -286,7 +323,15 @@ Closure RunLoop::QuitCurrentWhenIdleClosureDeprecated() {
   //        "QuitWhenIdleClosure().";
   return Bind(&RunLoop::QuitCurrentWhenIdleDeprecated);
 }
-
+#if (defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__))
+// Defined out of line so that the compiler doesn't inline these and realize
+// the scope has no effect and then throws an "unused variable" warning in
+// non-dcheck builds.
+RunLoop::ScopedDisallowRunningForTesting::ScopedDisallowRunningForTesting() =
+    default;
+RunLoop::ScopedDisallowRunningForTesting::~ScopedDisallowRunningForTesting() =
+    default;
+#else
 #if DCHECK_IS_ON()
 RunLoop::ScopedDisallowRunningForTesting::ScopedDisallowRunningForTesting()
     : current_delegate_(tls_delegate.Get().Get()),
@@ -311,11 +356,13 @@ RunLoop::ScopedDisallowRunningForTesting::ScopedDisallowRunningForTesting() =
 RunLoop::ScopedDisallowRunningForTesting::~ScopedDisallowRunningForTesting() =
     default;
 #endif  // DCHECK_IS_ON()
+#endif
 
 bool RunLoop::BeforeRun() {
   DCHECK_CALLED_ON_VALID_SEQUENCE(sequence_checker_);
 
-#if DCHECK_IS_ON()
+#if (defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__))
+#elif DCHECK_IS_ON()
   DCHECK(delegate_->allow_running_for_testing_)
       << "RunLoop::Run() isn't allowed in the scope of a "
          "ScopedDisallowRunningForTesting. Hint: if mixing "

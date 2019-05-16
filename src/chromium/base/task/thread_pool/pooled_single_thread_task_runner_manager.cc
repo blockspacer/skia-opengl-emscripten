@@ -67,7 +67,11 @@ class AtomicThreadRefChecker {
   }
 
   bool IsCurrentThreadSameAsSetThread() {
+#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+    return true;
+#else
     return is_set_.IsSet() && thread_ref_ == PlatformThread::CurrentRef();
+#endif
   }
 
  private:
@@ -365,9 +369,10 @@ class PooledSingleThreadTaskRunnerManager::PooledSingleThreadTaskRunner
   bool PostDelayedTask(const Location& from_here,
                        OnceClosure closure,
                        TimeDelta delay) override {
+printf("pooled_single_thread_task_runner_manager::PostTask 0\n");
     if (!g_manager_is_alive)
       return false;
-
+printf("pooled_single_thread_task_runner_manager::PostDelayedTask 1\n");
     Task task(from_here, std::move(closure), delay);
 
     if (!outer_->task_tracker_->WillPostTask(&task,
@@ -378,6 +383,7 @@ class PooledSingleThreadTaskRunnerManager::PooledSingleThreadTaskRunner
     if (task.delayed_run_time.is_null()) {
       GetDelegate()->PostTaskNow(sequence_, std::move(task));
     } else {
+printf("pooled_single_thread_task_runner_manager::PostDelayedTask 3\n");
       // Unretained(GetDelegate()) is safe because this TaskRunner and its
       // worker are kept alive as long as there are pending Tasks.
       outer_->delayed_task_manager_->AddDelayedTask(

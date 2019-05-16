@@ -62,6 +62,7 @@ struct ThreadParams {
 
 void* ThreadFunc(void* params) {
   PlatformThread::Delegate* delegate = nullptr;
+  printf("void* ThreadFunc(void* params) 1\n");
 
   {
     std::unique_ptr<ThreadParams> thread_params(
@@ -98,6 +99,54 @@ bool CreateThread(size_t stack_size,
                   PlatformThread::Delegate* delegate,
                   PlatformThreadHandle* thread_handle,
                   ThreadPriority priority) {
+  printf("CreateThread 1\n");
+
+#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+  DCHECK(thread_handle);
+  base::InitThreading();
+
+  std::unique_ptr<ThreadParams> params(new ThreadParams);
+  params->delegate = delegate;
+  params->joinable = joinable;
+  params->priority = priority;
+
+  printf("CreateThread 2\n");
+
+  {
+    PlatformThread::Delegate* delegate = nullptr;
+    printf("void* ThreadFunc(void* params) 1\n");
+
+    {
+      std::unique_ptr<ThreadParams> thread_params(
+          static_cast<ThreadParams*>(params.get()));
+
+      delegate = thread_params->delegate;
+      if (!thread_params->joinable)
+        base::ThreadRestrictions::SetSingletonAllowed(false);
+
+  #if !defined(OS_NACL) && !defined(OS_EMSCRIPTEN)
+      // Threads on linux/android may inherit their priority from the thread
+      // where they were created. This explicitly sets the priority of all new
+      // threads.
+      PlatformThread::SetCurrentThreadPriority(thread_params->priority);
+  #endif
+    }
+
+    ThreadIdNameManager::GetInstance()->RegisterThread(
+        PlatformThread::CurrentHandle().platform_handle(),
+        PlatformThread::CurrentId());
+
+    delegate->ThreadMain();
+
+    ThreadIdNameManager::GetInstance()->RemoveName(
+        PlatformThread::CurrentHandle().platform_handle(),
+        PlatformThread::CurrentId());
+
+    base::TerminateOnThread();
+  }
+
+  return true; // TODO
+#else
   DCHECK(thread_handle);
   base::InitThreading();
 
@@ -138,6 +187,7 @@ bool CreateThread(size_t stack_size,
   pthread_attr_destroy(&attributes);
 
   return success;
+#endif
 }
 
 #if defined(OS_LINUX) || (defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__))
@@ -162,7 +212,14 @@ class InitAtFork {
 #warning "wasm: Unsupported architecture for pthread_atfork"
 #endif
 
-  InitAtFork() { pthread_atfork(nullptr, nullptr, internal::ClearTidCache); }
+  InitAtFork() {
+  printf("InitAtFork 1\n");
+#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+    return;
+#else
+    pthread_atfork(nullptr, nullptr, internal::ClearTidCache);
+#endif
+  }
 };
 
 #endif  // defined(OS_LINUX)
@@ -188,8 +245,7 @@ PlatformThreadId PlatformThread::CurrentId() {
 #if defined(OS_MACOSX)
   return pthread_mach_thread_np(pthread_self());
 #elif (defined(OS_EMSCRIPTEN) && !defined(__EMSCRIPTEN_PTHREADS__))
-  //return 0; // TODO
-  return reinterpret_cast<pthread_t>(pthread_self());
+  return 0; // TODO
 #elif (defined(OS_EMSCRIPTEN) && defined(__EMSCRIPTEN_PTHREADS__))
   return reinterpret_cast<pthread_t>(pthread_self());
 #elif defined(OS_LINUX)
@@ -223,21 +279,33 @@ PlatformThreadId PlatformThread::CurrentId() {
 
 // static
 PlatformThreadRef PlatformThread::CurrentRef() {
+#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+  return PlatformThreadRef(0);
+#else
   return PlatformThreadRef(pthread_self());
+#endif
 }
 
 // static
 PlatformThreadHandle PlatformThread::CurrentHandle() {
+#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+  return PlatformThreadHandle(0);
+#else
   return PlatformThreadHandle(pthread_self());
+#endif
 }
 
 // static
 void PlatformThread::YieldCurrentThread() {
+#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+#else
   sched_yield();
+#endif
 }
 
 // static
 void PlatformThread::Sleep(TimeDelta duration) {
+  printf("PlatformThread::Sleep 1\n");
   struct timespec sleep_time, remaining;
 
   // Break the duration into seconds and nanoseconds.
@@ -247,18 +315,27 @@ void PlatformThread::Sleep(TimeDelta duration) {
   duration -= TimeDelta::FromSeconds(sleep_time.tv_sec);
   sleep_time.tv_nsec = duration.InMicroseconds() * 1000;  // nanoseconds
 
-#if defined(OS_EMSCRIPTEN) || defined(__EMSCRIPTEN__)
-#warning "base TODO: port sleep() on wasm!"
-// see https://github.com/h-s-c/libKD/blob/master/source/kd_threads.c#L861
-// see https://emscripten.org/docs/api_reference/emscripten.h.html?highlight=emscripten_sleep#c.emscripten_sleep
-// Sleep for ms milliseconds. blocks all other operations while it runs
-emscripten_sleep(duration.InMilliseconds());
-// Sleep for ms milliseconds, while allowing other asynchronous operations, e.g. caused by emscripten_async_call
-// emscripten_sleep_with_yield(duration.InMilliseconds());
 
+#if defined(__EMSCRIPTEN__) && defined(__EMSCRIPTEN_PTHREADS__)
+#warning "todo: check PlatformThread::Sleep on wasm platform with pthreads"
+  while (nanosleep(&sleep_time, &remaining) == -1 && errno == EINTR)
+    sleep_time = remaining;
+#elif defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+  // don`t sleep in main thread
+  #warning "base TODO: port sleep() on wasm without pthreads!"
+  // see https://github.com/h-s-c/libKD/blob/master/source/kd_threads.c#L861
+  // see https://emscripten.org/docs/api_reference/emscripten.h.html?highlight=emscripten_sleep#c.emscripten_sleep
+  // Sleep for ms milliseconds. blocks all other operations while it runs
+  #ifndef HAS_ASYNCIFY
+  #warning "emscripten_sleep requires https://emscripten.org/docs/porting/asyncify.html"
+  #endif
+  emscripten_sleep(duration.InMilliseconds());
+  // Sleep for ms milliseconds, while allowing other asynchronous operations, e.g. caused by emscripten_async_call
+  // emscripten_sleep_with_yield(duration.InMilliseconds());
+  //
+  // no need to sleep
   remaining.tv_sec = 0;
   remaining.tv_nsec = 0;
-
   sleep_time = remaining;
 #else
   while (nanosleep(&sleep_time, &remaining) == -1 && errno == EINTR)
@@ -268,6 +345,7 @@ emscripten_sleep(duration.InMilliseconds());
 
 // static
 const char* PlatformThread::GetName() {
+  printf("PlatformThread::GetName 1\n");
   return ThreadIdNameManager::GetInstance()->GetName(CurrentId());
 }
 
@@ -275,8 +353,13 @@ const char* PlatformThread::GetName() {
 bool PlatformThread::CreateWithPriority(size_t stack_size, Delegate* delegate,
                                         PlatformThreadHandle* thread_handle,
                                         ThreadPriority priority) {
+#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+  // don`t join in main thread
+  return CreateNonJoinableWithPriority(stack_size, delegate, priority);
+#else
   return CreateThread(stack_size, true /* joinable thread */, delegate,
                       thread_handle, priority);
+#endif
 }
 
 // static
@@ -298,6 +381,10 @@ bool PlatformThread::CreateNonJoinableWithPriority(size_t stack_size,
 
 // static
 void PlatformThread::Join(PlatformThreadHandle thread_handle) {
+  printf("PlatformThread::Join 1\n");
+#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+  // don`t join in main thread
+#else
   // Record the event that this thread is blocking upon (for hang diagnosis).
   base::debug::ScopedThreadJoinActivity thread_activity(&thread_handle);
 
@@ -307,11 +394,17 @@ void PlatformThread::Join(PlatformThreadHandle thread_handle) {
   base::internal::ScopedBlockingCallWithBaseSyncPrimitives scoped_blocking_call(
       base::BlockingType::MAY_BLOCK);
   CHECK_EQ(0, pthread_join(thread_handle.platform_handle(), nullptr));
+#endif
 }
 
 // static
 void PlatformThread::Detach(PlatformThreadHandle thread_handle) {
+  printf("PlatformThread::Detach 1\n");
+#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+  // don`t detach in main thread
+#else
   CHECK_EQ(0, pthread_detach(thread_handle.platform_handle()));
+#endif
 }
 
 // Mac and Fuchsia have their own Set/GetCurrentThreadPriority()
@@ -320,6 +413,7 @@ void PlatformThread::Detach(PlatformThreadHandle thread_handle) {
 
 // static
 bool PlatformThread::CanIncreaseThreadPriority(ThreadPriority priority) {
+  printf("PlatformThread::CanIncreaseThreadPriority 1\n");
 #if defined(OS_NACL) || defined(OS_EMSCRIPTEN)
   return false;
 #else
@@ -335,6 +429,7 @@ bool PlatformThread::CanIncreaseThreadPriority(ThreadPriority priority) {
 
 // static
 void PlatformThread::SetCurrentThreadPriorityImpl(ThreadPriority priority) {
+  printf("PlatformThread::SetCurrentThreadPriorityImpl 1\n");
 #if defined(OS_NACL) || defined(OS_EMSCRIPTEN)
   NOTIMPLEMENTED();
 #else
@@ -357,6 +452,7 @@ void PlatformThread::SetCurrentThreadPriorityImpl(ThreadPriority priority) {
 
 // static
 ThreadPriority PlatformThread::GetCurrentThreadPriority() {
+  printf("PlatformThread::GetCurrentThreadPriority 1\n");
 #if defined(OS_NACL) || defined(OS_EMSCRIPTEN)
   NOTIMPLEMENTED();
   return ThreadPriority::NORMAL;
@@ -385,6 +481,7 @@ ThreadPriority PlatformThread::GetCurrentThreadPriority() {
 
 // static
 size_t PlatformThread::GetDefaultThreadStackSize() {
+  printf("PlatformThread::GetDefaultThreadStackSize 1\n");
   pthread_attr_t attributes;
   pthread_attr_init(&attributes);
   return base::GetDefaultThreadStackSize(attributes);

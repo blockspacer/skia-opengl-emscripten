@@ -4,7 +4,9 @@
 
 #include "base/threading/thread_restrictions.h"
 
-#if DCHECK_IS_ON()
+#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+  // todo
+#elif DCHECK_IS_ON()
 
 #include "base/debug/stack_trace.h"
 #include "base/lazy_instance.h"

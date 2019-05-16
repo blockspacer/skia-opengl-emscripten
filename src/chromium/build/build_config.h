@@ -64,6 +64,16 @@
 #elif defined(EMSCRIPTEN) || defined(__EMSCRIPTEN__)
 #define OS_EMSCRIPTEN 1
 // https://github.com/kwonoj/docker-pdfium-wasm/blob/master/patches/build_config.h.patch
+
+// see https://github.com/google/xrtl/blob/master/xrtl/tools/target_platform/target_platform.h#L63
+#if defined(__wasm32__)
+#define ARCH_CPU_ARCH_WASM_32 1
+#elif defined(__wasm64__)
+#define ARCH_CPU_ARCH_WASM_64 1
+#elif defined(__asmjs__)
+#define ARCH_CPU_ARCH_ASMJS 1
+#endif  // wasm/asmjs
+
 #define OS_ASMJS 1
 #elif defined(_AIX)
 #define OS_AIX 1

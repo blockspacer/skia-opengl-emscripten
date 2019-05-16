@@ -79,6 +79,7 @@ void ThreadControllerWithMessagePumpImpl::SetSequencedTaskSource(
 
 void ThreadControllerWithMessagePumpImpl::BindToCurrentThread(
     std::unique_ptr<MessagePump> message_pump) {
+printf("ThreadControllerWithMessagePumpImpl::BindToCurrentThread 1\n");
   associated_thread_->BindToCurrentThread();
   pump_ = std::move(message_pump);
   work_id_provider_ = WorkIdProvider::GetForCurrentThread();
@@ -117,11 +118,17 @@ void ThreadControllerWithMessagePumpImpl::WillQueueTask(
 }
 
 void ThreadControllerWithMessagePumpImpl::ScheduleWork() {
+printf("ThreadControllerWithMessagePumpImpl::ScheduleWork 1\n");
   base::internal::CheckedLock::AssertNoLockHeldOnCurrentThread();
+printf("ThreadControllerWithMessagePumpImpl::ScheduleWork 2\n");
+
+// TODO!
   if (work_deduplicator_.OnWorkRequested() ==
       ShouldScheduleWork::kScheduleImmediate) {
     pump_->ScheduleWork();
   }
+
+printf("ThreadControllerWithMessagePumpImpl::ScheduleWork 3\n");
 }
 
 void ThreadControllerWithMessagePumpImpl::SetNextDelayedDoWork(
@@ -437,6 +444,7 @@ bool ThreadControllerWithMessagePumpImpl::DoIdleWork() {
 
 void ThreadControllerWithMessagePumpImpl::Run(bool application_tasks_allowed,
                                               TimeDelta timeout) {
+  printf("ThreadControllerWithMessagePumpImpl::Run 1\n");
   DCHECK(RunsTasksInCurrentSequence());
   // RunLoops can be nested so we need to restore the previous value of
   // |quit_runloop_after| upon exit. NB we could use saturated arithmetic here
@@ -446,7 +454,7 @@ void ThreadControllerWithMessagePumpImpl::Run(bool application_tasks_allowed,
       &main_thread_only().quit_runloop_after,
       (timeout == TimeDelta::Max()) ? TimeTicks::Max()
                                     : time_source_->NowTicks() + timeout);
-
+  printf("ThreadControllerWithMessagePumpImpl::Run 2\n");
 #if DCHECK_IS_ON()
   AutoReset<bool> quit_when_idle_requested(&quit_when_idle_requested_, false);
 #endif
@@ -465,6 +473,7 @@ void ThreadControllerWithMessagePumpImpl::Run(bool application_tasks_allowed,
   } else {
     pump_->Run(this);
   }
+  printf("ThreadControllerWithMessagePumpImpl::Run 3\n");
 
 #if DCHECK_IS_ON()
   if (log_runloop_quit_and_quit_when_idle_)

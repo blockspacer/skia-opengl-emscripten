@@ -55,6 +55,8 @@ std::string SystemErrorCodeToString(int error_code) {
 #endif
 
 LockImpl::LockImpl() {
+#if defined(OS_EMSCRIPTEN) && !defined(__EMSCRIPTEN_PTHREADS__)
+#else
   pthread_mutexattr_t mta;
   int rv = pthread_mutexattr_init(&mta);
   DCHECK_EQ(rv, 0) << ". " << SystemErrorCodeToString(rv);
@@ -73,20 +75,30 @@ LockImpl::LockImpl() {
   DCHECK_EQ(rv, 0) << ". " << SystemErrorCodeToString(rv);
   rv = pthread_mutexattr_destroy(&mta);
   DCHECK_EQ(rv, 0) << ". " << SystemErrorCodeToString(rv);
+#endif // !__EMSCRIPTEN_PTHREADS__
 }
 
 LockImpl::~LockImpl() {
+#if defined(OS_EMSCRIPTEN) && !defined(__EMSCRIPTEN_PTHREADS__)
+#else
   int rv = pthread_mutex_destroy(&native_handle_);
   DCHECK_EQ(rv, 0) << ". " << SystemErrorCodeToString(rv);
+#endif // !__EMSCRIPTEN_PTHREADS__
 }
 
 bool LockImpl::Try() {
+#if defined(OS_EMSCRIPTEN) && !defined(__EMSCRIPTEN_PTHREADS__)
+  return true;
+#else
   int rv = pthread_mutex_trylock(&native_handle_);
   DCHECK(rv == 0 || rv == EBUSY) << ". " << SystemErrorCodeToString(rv);
   return rv == 0;
+#endif // !__EMSCRIPTEN_PTHREADS__
 }
 
 void LockImpl::Lock() {
+#if defined(OS_EMSCRIPTEN) && !defined(__EMSCRIPTEN_PTHREADS__)
+#else
   // The ScopedLockAcquireActivity below is relatively expensive and so its
   // actions can become significant due to the very large number of locks
   // that tend to be used throughout the build. To avoid this cost in the
@@ -103,6 +115,7 @@ void LockImpl::Lock() {
 #endif // !defined(OS_EMSCRIPTEN)
   int rv = pthread_mutex_lock(&native_handle_);
   DCHECK_EQ(rv, 0) << ". " << SystemErrorCodeToString(rv);
+#endif // !__EMSCRIPTEN_PTHREADS__
 }
 
 // static

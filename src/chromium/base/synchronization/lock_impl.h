@@ -62,7 +62,10 @@ class BASE_EXPORT LockImpl {
   DISALLOW_COPY_AND_ASSIGN(LockImpl);
 };
 
-#if defined(OS_WIN)
+#if defined(OS_EMSCRIPTEN) && !defined(__EMSCRIPTEN_PTHREADS__)
+void LockImpl::Unlock() {
+}
+#elif defined(OS_WIN)
 void LockImpl::Unlock() {
   ::ReleaseSRWLockExclusive(reinterpret_cast<PSRWLOCK>(&native_handle_));
 }
@@ -79,24 +82,40 @@ class SCOPED_LOCKABLE BasicAutoLock {
  public:
   struct AlreadyAcquired {};
 
+#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+  explicit BasicAutoLock(LockType& lock) EXCLUSIVE_LOCK_FUNCTION(lock) {}
+#else
   explicit BasicAutoLock(LockType& lock) EXCLUSIVE_LOCK_FUNCTION(lock)
       : lock_(lock) {
     lock_.Acquire();
   }
+#endif
 
+#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+  BasicAutoLock(LockType& lock, const AlreadyAcquired&)
+      EXCLUSIVE_LOCKS_REQUIRED(lock) {}
+#else
   BasicAutoLock(LockType& lock, const AlreadyAcquired&)
       EXCLUSIVE_LOCKS_REQUIRED(lock)
       : lock_(lock) {
     lock_.AssertAcquired();
   }
+#endif
 
   ~BasicAutoLock() UNLOCK_FUNCTION() {
+#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+#else
     lock_.AssertAcquired();
     lock_.Release();
+#endif
   }
 
  private:
+#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+  // no lock
+#else
   LockType& lock_;
+#endif
   DISALLOW_COPY_AND_ASSIGN(BasicAutoLock);
 };
 
@@ -104,6 +123,11 @@ class SCOPED_LOCKABLE BasicAutoLock {
 template <class LockType>
 class BasicAutoUnlock {
  public:
+#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+  explicit BasicAutoUnlock(LockType& lock) {}
+
+  ~BasicAutoUnlock() {}
+#else
   explicit BasicAutoUnlock(LockType& lock) : lock_(lock) {
     // We require our caller to have the lock.
     lock_.AssertAcquired();
@@ -111,9 +135,14 @@ class BasicAutoUnlock {
   }
 
   ~BasicAutoUnlock() { lock_.Acquire(); }
+#endif
 
  private:
+#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+  // no lock
+#else
   LockType& lock_;
+#endif
   DISALLOW_COPY_AND_ASSIGN(BasicAutoUnlock);
 };
 
@@ -121,21 +150,33 @@ class BasicAutoUnlock {
 template <class LockType>
 class SCOPED_LOCKABLE BasicAutoLockMaybe {
  public:
+
+#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+  explicit BasicAutoLockMaybe(LockType* lock) EXCLUSIVE_LOCK_FUNCTION(lock) {}
+#else
   explicit BasicAutoLockMaybe(LockType* lock) EXCLUSIVE_LOCK_FUNCTION(lock)
       : lock_(lock) {
     if (lock_)
       lock_->Acquire();
   }
+#endif
 
   ~BasicAutoLockMaybe() UNLOCK_FUNCTION() {
+#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+#else
     if (lock_) {
       lock_->AssertAcquired();
       lock_->Release();
     }
+#endif
   }
 
  private:
+#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+  // no lock
+#else
   LockType* const lock_;
+#endif
   DISALLOW_COPY_AND_ASSIGN(BasicAutoLockMaybe);
 };
 
@@ -144,28 +185,45 @@ class SCOPED_LOCKABLE BasicAutoLockMaybe {
 template <class LockType>
 class SCOPED_LOCKABLE BasicReleasableAutoLock {
  public:
+#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+  explicit BasicReleasableAutoLock(LockType* lock) EXCLUSIVE_LOCK_FUNCTION(lock) {}
+#else
   explicit BasicReleasableAutoLock(LockType* lock) EXCLUSIVE_LOCK_FUNCTION(lock)
       : lock_(lock) {
     DCHECK(lock_);
     lock_->Acquire();
   }
+#endif
 
   ~BasicReleasableAutoLock() UNLOCK_FUNCTION() {
+
+#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+  // no lock
+#else
     if (lock_) {
       lock_->AssertAcquired();
       lock_->Release();
     }
+#endif
   }
 
   void Release() UNLOCK_FUNCTION() {
+#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+  // no lock
+#else
     DCHECK(lock_);
     lock_->AssertAcquired();
     lock_->Release();
     lock_ = nullptr;
+#endif
   }
 
  private:
+#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+  // no lock
+#else
   LockType* lock_;
+#endif
   DISALLOW_COPY_AND_ASSIGN(BasicReleasableAutoLock);
 };
 

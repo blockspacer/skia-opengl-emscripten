@@ -39,15 +39,23 @@ class SafeAcquisitionTracker {
 
   void RecordAcquisition(const CheckedLockImpl* const lock) {
     AssertSafeAcquire(lock);
+#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+  AssertNoLockHeldOnCurrentThread();
+#else
     GetAcquiredLocksOnCurrentThread()->push_back(lock);
+#endif
   }
 
   void RecordRelease(const CheckedLockImpl* const lock) {
+#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+  AssertNoLockHeldOnCurrentThread();
+#else
     LockVector* acquired_locks = GetAcquiredLocksOnCurrentThread();
     const auto iter_at_lock =
         std::find(acquired_locks->begin(), acquired_locks->end(), lock);
     DCHECK(iter_at_lock != acquired_locks->end());
     acquired_locks->erase(iter_at_lock);
+#endif
   }
 
   void AssertNoLockHeldOnCurrentThread() {
@@ -62,6 +70,9 @@ class SafeAcquisitionTracker {
   // This asserts that the lock is safe to acquire. This means that this should
   // be run before actually recording the acquisition.
   void AssertSafeAcquire(const CheckedLockImpl* const lock) {
+#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+  AssertNoLockHeldOnCurrentThread();
+#else
     const LockVector* acquired_locks = GetAcquiredLocksOnCurrentThread();
 
     // If the thread currently holds no locks, this is inherently safe.
@@ -82,6 +93,7 @@ class SafeAcquisitionTracker {
     const CheckedLockImpl* allowed_predecessor =
         allowed_predecessor_map_.at(lock);
     DCHECK_EQ(previous_lock, allowed_predecessor);
+#endif
   }
 
   // Asserts that |lock|'s registered predecessor is safe. Because

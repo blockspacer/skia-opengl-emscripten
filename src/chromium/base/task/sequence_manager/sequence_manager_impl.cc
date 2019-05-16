@@ -242,6 +242,7 @@ std::unique_ptr<SequenceManagerImpl> SequenceManagerImpl::CreateOnCurrentThread(
 // static
 std::unique_ptr<SequenceManagerImpl> SequenceManagerImpl::CreateUnbound(
     SequenceManager::Settings settings) {
+printf("SequenceManagerImpl::CreateUnbound 1\n");
   return WrapUnique(new SequenceManagerImpl(
       ThreadControllerWithMessagePumpImpl::CreateUnbound(settings),
       std::move(settings)));
@@ -416,6 +417,7 @@ void SequenceManagerImpl::OnExitNestedRunLoop() {
 }
 
 void SequenceManagerImpl::ScheduleWork() {
+printf("SequenceManagerImpl::ScheduleWork 1\n");
   controller_->ScheduleWork();
 }
 

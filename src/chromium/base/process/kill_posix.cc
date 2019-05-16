@@ -104,6 +104,10 @@ TerminationStatus GetKnownDeadTerminationStatus(ProcessHandle handle,
 bool WaitForProcessesToExit(const FilePath::StringType& executable_name,
                             TimeDelta wait,
                             const ProcessFilter* filter) {
+#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+#warning "todo: port WaitForProcessesToExit on wasm platform"
+#endif
+
   bool result = false;
 
   // TODO(port): This is inefficient, but works if there are multiple procs.

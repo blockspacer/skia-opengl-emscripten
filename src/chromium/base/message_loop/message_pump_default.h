@@ -29,11 +29,22 @@ class BASE_EXPORT MessagePumpDefault : public MessagePump {
 #endif
 
  private:
+#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+  void periodicWrapper();
+  void loopCore();
+#endif
+  void loopCore(Delegate *delegate);
+
+ private:
   // This flag is set to false when Run should return.
   bool keep_running_;
 
   // Used to sleep until there is more work to do.
   WaitableEvent event_;
+
+#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+  Delegate* g_delegate = nullptr;
+#endif
 
   DISALLOW_COPY_AND_ASSIGN(MessagePumpDefault);
 };

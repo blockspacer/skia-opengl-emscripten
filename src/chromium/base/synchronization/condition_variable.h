@@ -113,6 +113,10 @@ class BASE_EXPORT ConditionVariable {
 
  private:
 
+#if defined(OS_EMSCRIPTEN)
+//#warning "todo: port thread locals, see https://github.com/arielm/googletest/blob/master/include/gtest/internal/gtest-port.h#L1895"
+#endif
+
 #if defined(OS_WIN)
   CHROME_CONDITION_VARIABLE cv_;
   CHROME_SRWLOCK* const srwlock_;
@@ -121,7 +125,9 @@ class BASE_EXPORT ConditionVariable {
   pthread_mutex_t* user_mutex_;
 #endif
 
-#if DCHECK_IS_ON()
+#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+  // no lock
+#elif DCHECK_IS_ON()
   base::Lock* const user_lock_;  // Needed to adjust shadow lock state on wait.
 #endif
 

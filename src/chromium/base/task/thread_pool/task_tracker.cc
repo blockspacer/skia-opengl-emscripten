@@ -498,6 +498,7 @@ void TaskTracker::RunOrSkipTask(Task task,
                                 TaskSource* task_source,
                                 const TaskTraits& traits,
                                 bool can_run_task) {
+printf("TaskTracker::RunOrSkipTask\n");
   DCHECK(task_source);
   RecordLatencyHistogram(LatencyHistogramType::TASK_LATENCY, traits,
                          task.queue_time);
@@ -534,6 +535,12 @@ void TaskTracker::RunOrSkipTask(Task task,
     // Set up TaskRunnerHandle as expected for the scope of the task.
     Optional<SequencedTaskRunnerHandle> sequenced_task_runner_handle;
     Optional<ThreadTaskRunnerHandle> single_thread_task_runner_handle;
+
+//#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+//        DCHECK(task_source->task_runner());
+//        single_thread_task_runner_handle.emplace(
+//            static_cast<SingleThreadTaskRunner*>(task_source->task_runner()));
+//#else
     switch (task_source->execution_mode()) {
       case TaskSourceExecutionMode::kParallel:
         break;
@@ -548,6 +555,7 @@ void TaskTracker::RunOrSkipTask(Task task,
             static_cast<SingleThreadTaskRunner*>(task_source->task_runner()));
         break;
     }
+//#endif
 
     if (can_run_task) {
       TRACE_TASK_EXECUTION("ThreadPool_RunTask", task);
@@ -570,9 +578,15 @@ void TaskTracker::RunOrSkipTask(Task task,
     task.task = OnceClosure();
   }
 
+//#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+//  ThreadRestrictions::SetWaitAllowed(false);
+//  ThreadRestrictions::SetIOAllowed(false);
+//  ThreadRestrictions::SetSingletonAllowed(false);
+//#else
   ThreadRestrictions::SetWaitAllowed(previous_wait_allowed);
   ThreadRestrictions::SetIOAllowed(previous_io_allowed);
   ThreadRestrictions::SetSingletonAllowed(previous_singleton_allowed);
+//#endif
 }
 
 bool TaskTracker::HasIncompleteUndelayedTasksForTesting() const {

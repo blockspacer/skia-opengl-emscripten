@@ -47,6 +47,7 @@ void TimeDomain::RequestDoWork() {
 }
 
 void TimeDomain::UnregisterQueue(internal::TaskQueueImpl* queue) {
+printf("TimeDomain::UnregisterQueue 1\n");
   DCHECK_CALLED_ON_VALID_THREAD(associated_thread_->thread_checker);
   DCHECK_EQ(queue->GetTimeDomain(), this);
   LazyNow lazy_now(CreateLazyNow());
@@ -59,6 +60,7 @@ void TimeDomain::SetNextWakeUpForQueue(
     Optional<internal::DelayedWakeUp> wake_up,
     internal::WakeUpResolution resolution,
     LazyNow* lazy_now) {
+printf("TimeDomain::SetNextWakeUpForQueue 1\n");
   DCHECK_CALLED_ON_VALID_THREAD(associated_thread_->thread_checker);
   DCHECK_EQ(queue->GetTimeDomain(), this);
   DCHECK(queue->IsQueueEnabled() || !wake_up);
@@ -104,6 +106,8 @@ void TimeDomain::SetNextWakeUpForQueue(
   // SequenceManager's time. Right now it's not an issue since
   // VirtualTimeDomain doesn't invoke SequenceManager itself.
 
+printf("TimeDomain::SetNextWakeUpForQueue 2\n");
+
   if (new_wake_up == previous_wake_up) {
     // Nothing to be done
     return;
@@ -119,6 +123,7 @@ void TimeDomain::SetNextWakeUpForQueue(
   } else {
     SetNextDelayedDoWork(lazy_now, *new_wake_up);
   }
+printf("TimeDomain::SetNextWakeUpForQueue 3\n");
 }
 
 void TimeDomain::MoveReadyDelayedTasksToWorkQueues(LazyNow* lazy_now) {

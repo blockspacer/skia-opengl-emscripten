@@ -27,21 +27,34 @@ class BASE_EXPORT SpinLock {
   using Guard = std::lock_guard<SpinLock>;
 
   ALWAYS_INLINE void lock() {
+#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+//#warning "todo: port SpinLock on wasm platform"
+#else
     static_assert(sizeof(lock_) == sizeof(int),
                   "int and lock_ are different sizes");
     if (LIKELY(!lock_.exchange(true, std::memory_order_acquire)))
       return;
     LockSlow();
+#endif
   }
 
+#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+//#warning "todo: port SpinLock on wasm platform"
+  ALWAYS_INLINE void unlock() { }
+#else
   ALWAYS_INLINE void unlock() { lock_.store(false, std::memory_order_release); }
+#endif
 
  private:
   // This is called if the initial attempt to acquire the lock fails. It's
   // slower, but has a much better scheduling and power consumption behavior.
   void LockSlow();
 
+#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+//#warning "todo: port SpinLock on wasm platform"
+#else
   std::atomic_int lock_{0};
+#endif
 };
 
 }  // namespace subtle

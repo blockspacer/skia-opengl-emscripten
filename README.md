@@ -23,6 +23,11 @@ b2 --with-system --with-filesystem toolset=emscripten link=static
 
 wasm to asm.js fallback
 
+emscripten_logging_sink
+https://github.com/google/xrtl/blob/master/xrtl/port/emscripten/base/emscripten_logging_sink.cc
+
+libwehttps://github.com/HumbleNet/HumbleNet/blob/master/src/humblenet/src/libwebrtc_asmjs.cppbrtc_asmjs.cpp
+
 ## PATCHES
 
 1
@@ -155,6 +160,14 @@ static DEFINE_bool(cachePathMasks, true,
 static DEFINE_bool(noGS, true, "Disables support for geometry shaders.");
 #else
 static DEFINE_bool(noGS, false, "Disables support for geometry shaders.");
+#endif
+
+11
+
+#ifdef __EMSCRIPTEN__
+    // See https://github.com/kripken/emscripten/issues/4929
+    // use std::chrono::system_clock::now(), not std::chrono::steady_clock::now()
+    #warning "TODO: test steady_clock on wasm/emcc (safary browser)";
 #endif
 
 ## Experimental features

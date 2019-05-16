@@ -17,6 +17,15 @@
 #include "base/mac/scoped_nsautorelease_pool.h"
 #endif
 
+#if defined(__EMSCRIPTEN__)
+#include <emscripten/emscripten.h>
+#endif
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <functional>
+#include <memory>
+
 namespace base {
 
 MessagePumpDefault::MessagePumpDefault()
@@ -28,34 +37,105 @@ MessagePumpDefault::MessagePumpDefault()
 
 MessagePumpDefault::~MessagePumpDefault() = default;
 
-void MessagePumpDefault::Run(Delegate* delegate) {
-  AutoReset<bool> auto_reset_keep_running(&keep_running_, true);
-
-  for (;;) {
-#if defined(OS_MACOSX)
-    mac::ScopedNSAutoreleasePool autorelease_pool;
+#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+// see https://github.com/chadaustin/Web-Benchmarks/blob/master/embind_calls/bench.cpp#L90
+static void emscripten_yield_call(std::function<void()> f, const int ms = 500) {
+    printf("emscripten_yield_call pump\n");
+    auto p = new std::function<void()>(f);
+    emscripten_async_call([](void* p) {
+        printf("emscripten_async_call pump\n");
+        auto q = reinterpret_cast<std::function<void()>*>(p);
+        (*q)();
+        delete q;
+    }, p, ms);
+}
 #endif
 
+void MessagePumpDefault::Run(Delegate* delegate) {
+#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+  //DCHECK(g_delegate = nullptr); // may be changed!
+  g_delegate = delegate;
+#endif
+
+  AutoReset<bool> auto_reset_keep_running(&keep_running_, true);
+  //printf("MessagePumpDefault::Run 1\n");
+
+#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+  // TODO
+  periodicWrapper();
+#else
+  for (;;) loopCore(delegate);
+#endif
+}
+
+#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+void MessagePumpDefault::periodicWrapper() {
+    if (!g_delegate || !keep_running_) {
+      //printf("periodicWrapper stopped\n");
+      return;
+    }
+
+    /// \note need to prolong binded args lifetime
+    std::function<void()> f = std::bind(&MessagePumpDefault::periodicWrapper, this);
+
+    loopCore();
+
+    const int em_call_millis = 100; // check period
+    // see https://emscripten.org/docs/api_reference/emscripten.h.html#c.emscripten_async_call
+    emscripten_yield_call(f, em_call_millis);
+}
+
+void MessagePumpDefault::loopCore() {
+  if (!g_delegate || !keep_running_) {
+    //printf("loopCore stopped\n");
+    return;
+  }
+  loopCore(g_delegate);
+}
+#endif
+
+void MessagePumpDefault::loopCore(Delegate* delegate) {
+  //if (!delegate || !keep_running_) {
+  //  printf("invalid delegate in MessagePump\n");
+  //  return;
+  //}
+  // was 'for (;;)' and caused hang in browser
+  for (int i = 0; i < 1; i++) {
+    //printf("MessagePumpDefault::Run 2\n");
+  #if defined(OS_MACOSX)
+    mac::ScopedNSAutoreleasePool autorelease_pool;
+  #endif
+    //if (!delegate || !keep_running_) {
+    //  printf("invalid delegate in MessagePump\n");
+    //  return;
+    //}
     Delegate::NextWorkInfo next_work_info = delegate->DoSomeWork();
     bool has_more_immediate_work = next_work_info.is_immediate();
     if (!keep_running_)
       break;
 
+    //printf("MessagePumpDefault::Run 3\n");
     if (has_more_immediate_work)
       continue;
 
+    //printf("MessagePumpDefault::Run 4\n");
     has_more_immediate_work = delegate->DoIdleWork();
     if (!keep_running_)
       break;
 
+    //printf("MessagePumpDefault::Run 5\n");
     if (has_more_immediate_work)
       continue;
 
+  // TODO: try emscripten_sleep on wasm without pthread support (-s ASYNCIFY)
+  #if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
     if (next_work_info.delayed_run_time.is_max()) {
       event_.Wait();
     } else {
       event_.TimedWait(next_work_info.remaining_delay());
     }
+  #endif
+
     // Since event_ is auto-reset, we don't need to do anything special here
     // other than service each delegate method.
   }
@@ -68,6 +148,7 @@ void MessagePumpDefault::Quit() {
 void MessagePumpDefault::ScheduleWork() {
   // Since this can be called on any thread, we need to ensure that our Run
   // loop wakes up.
+//printf("MessagePumpDefault::ScheduleWork 1\n");
   event_.Signal();
 }
 

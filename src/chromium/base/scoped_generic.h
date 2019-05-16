@@ -135,7 +135,11 @@ class ScopedGeneric {
   // http://crbug.com/162971
   void reset(const element_type& value = traits_type::InvalidValue()) {
     if (data_.generic != traits_type::InvalidValue() && data_.generic == value)
-      abort();
+      #if defined(OS_EMSCRIPTEN)
+        printf("base::reset\n");
+      #else
+        abort();
+      #endif
     FreeIfNecessary();
     data_.generic = value;
     TrackAcquire(value);

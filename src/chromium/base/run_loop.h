@@ -210,7 +210,8 @@ class BASE_EXPORT RunLoop {
     RunLoopStack active_run_loops_;
     ObserverList<RunLoop::NestingObserver>::Unchecked nesting_observers_;
 
-#if DCHECK_IS_ON()
+#if (defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__))
+#elif DCHECK_IS_ON()
     bool allow_running_for_testing_ = true;
 #endif
 
@@ -312,7 +313,8 @@ class BASE_EXPORT RunLoop {
     ~ScopedDisallowRunningForTesting();
 
    private:
-#if DCHECK_IS_ON()
+#if (defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__))
+#elif DCHECK_IS_ON()
     Delegate* current_delegate_;
     const bool previous_run_allowance_;
 #endif  // DCHECK_IS_ON()
@@ -339,10 +341,13 @@ class BASE_EXPORT RunLoop {
   bool BeforeRun();
   void AfterRun();
 
+//#if (defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__))
+//#else
   // A copy of RunLoop::Delegate for the thread driven by tis RunLoop for quick
   // access without using TLS (also allows access to state from another sequence
   // during Run(), ref. |sequence_checker_| below).
   Delegate* delegate_;
+//#endif
 
   const Type type_;
 

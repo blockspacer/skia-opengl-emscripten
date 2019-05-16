@@ -70,6 +70,7 @@ TaskQueueImpl::TaskRunner::~TaskRunner() {}
 bool TaskQueueImpl::TaskRunner::PostDelayedTask(const Location& location,
                                                 OnceClosure callback,
                                                 TimeDelta delay) {
+printf("TaskQueueImpl::TaskRunner::PostDelayedTask 1\n");
   return task_poster_->PostTask(PostedTask(std::move(callback), location, delay,
                                            Nestable::kNestable, task_type_));
 }
@@ -200,10 +201,16 @@ const char* TaskQueueImpl::GetName() const {
 }
 
 void TaskQueueImpl::PostTask(PostedTask task) {
+printf("TaskQueueImpl::PostTask 1\n");
+
+//#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+//  CurrentThread current_thread = TaskQueueImpl::CurrentThread::kMainThread;
+//#else
   CurrentThread current_thread =
       associated_thread_->IsBoundToCurrentThread()
           ? TaskQueueImpl::CurrentThread::kMainThread
           : TaskQueueImpl::CurrentThread::kNotMainThread;
+//#endif
 
 #if DCHECK_IS_ON()
   MaybeLogPostTask(&task);
@@ -229,6 +236,10 @@ void TaskQueueImpl::MaybeLogPostTask(PostedTask* task) {
 
 void TaskQueueImpl::MaybeAdjustTaskDelay(PostedTask* task,
                                          CurrentThread current_thread) {
+#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+  // todo
+#else
+
 #if DCHECK_IS_ON()
   if (current_thread == TaskQueueImpl::CurrentThread::kNotMainThread) {
     base::internal::CheckedAutoLock lock(any_thread_lock_);
@@ -243,10 +254,14 @@ void TaskQueueImpl::MaybeAdjustTaskDelay(PostedTask* task,
             [main_thread_only().immediate_work_queue->work_queue_set_index()];
   }
 #endif  // DCHECK_IS_ON()
+
+#endif
 }
 
 void TaskQueueImpl::PostImmediateTaskImpl(PostedTask task,
                                           CurrentThread current_thread) {
+printf("TaskQueueImpl::PostImmediateTaskImpl 1\n");
+
   // Use CHECK instead of DCHECK to crash earlier. See http://crbug.com/711167
   // for details.
   CHECK(task.callback);
@@ -274,11 +289,22 @@ void TaskQueueImpl::PostImmediateTaskImpl(PostedTask task,
     any_thread_.immediate_incoming_queue.push_back(
         Task(std::move(task), now, sequence_number, sequence_number));
 
+//#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+//  // nothing to do
+//#if DCHECK_IS_ON()
+//  any_thread_.immediate_incoming_queue.back().cross_thread_ = false;
+//#endif
+
+//#else
+
 #if DCHECK_IS_ON()
     any_thread_.immediate_incoming_queue.back().cross_thread_ =
         (current_thread == TaskQueueImpl::CurrentThread::kNotMainThread);
 #endif
 
+//#endif
+
+printf("TaskQueueImpl::PostImmediateTaskImpl 2\n");
     sequence_manager_->WillQueueTask(
         &any_thread_.immediate_incoming_queue.back(), name_);
 
@@ -293,7 +319,7 @@ void TaskQueueImpl::PostImmediateTaskImpl(PostedTask task,
           any_thread_.post_immediate_task_should_schedule_work;
     }
   }
-
+printf("TaskQueueImpl::PostImmediateTaskImpl 3\n");
   // On windows it's important to call this outside of a lock because calling a
   // pump while holding a lock can result in priority inversions. See
   // http://shortn/_ntnKNqjDQT for a discussion.
@@ -307,12 +333,13 @@ void TaskQueueImpl::PostImmediateTaskImpl(PostedTask task,
   // when it computes what continuation (if any) is needed.
   if (should_schedule_work)
     sequence_manager_->ScheduleWork();
-
+printf("TaskQueueImpl::PostImmediateTaskImpl 4\n");
   TraceQueueSize();
 }
 
 void TaskQueueImpl::PostDelayedTaskImpl(PostedTask task,
                                         CurrentThread current_thread) {
+printf("TaskQueueImpl::PostDelayedTaskImpl 1\n");
   // Use CHECK instead of DCHECK to crash earlier. See http://crbug.com/711167
   // for details.
   CHECK(task.callback);
@@ -369,6 +396,7 @@ void TaskQueueImpl::PushOntoDelayedIncomingQueueFromMainThread(
     Task pending_task,
     TimeTicks now,
     bool notify_task_annotator) {
+printf("TaskQueueImpl::PushOntoDelayedIncomingQueueFromMainThread 1\n");
 #if DCHECK_IS_ON()
   pending_task.cross_thread_ = false;
 #endif
@@ -386,6 +414,22 @@ void TaskQueueImpl::PushOntoDelayedIncomingQueueFromMainThread(
 void TaskQueueImpl::PushOntoDelayedIncomingQueue(Task pending_task) {
   sequence_manager_->WillQueueTask(&pending_task, name_);
 
+//#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+//
+//#if DCHECK_IS_ON()
+//  pending_task.cross_thread_ = false;
+//#endif
+//
+//  TimeTicks time_domain_now = main_thread_only().time_domain->Now();
+//  PushOntoDelayedIncomingQueueFromMainThread(
+//    std::move(pending_task),
+//    time_domain_now,
+//    /* notify_task_annotator */ true);
+//
+//  // TODO
+//  // PostDelayedTaskImpl(std::move(pending_task), TaskQueueImpl::CurrentThread::kMainThread);
+//#else
+
 #if DCHECK_IS_ON()
   pending_task.cross_thread_ = true;
 #endif
@@ -397,6 +441,8 @@ void TaskQueueImpl::PushOntoDelayedIncomingQueue(Task pending_task) {
                  FROM_HERE, TimeDelta(), Nestable::kNonNestable,
                  pending_task.task_type),
       CurrentThread::kNotMainThread);
+
+//#endif
 }
 
 void TaskQueueImpl::ScheduleDelayedWorkTask(Task pending_task) {
@@ -996,6 +1042,9 @@ void TaskQueueImpl::UpdateDelayedWakeUp(LazyNow* lazy_now) {
 
 void TaskQueueImpl::UpdateDelayedWakeUpImpl(LazyNow* lazy_now,
                                             Optional<DelayedWakeUp> wake_up) {
+
+printf("TaskQueueImpl::UpdateDelayedWakeUpImpl 1\n");
+
   if (main_thread_only().scheduled_wake_up == wake_up)
     return;
   main_thread_only().scheduled_wake_up = wake_up;
@@ -1006,9 +1055,11 @@ void TaskQueueImpl::UpdateDelayedWakeUpImpl(LazyNow* lazy_now,
     main_thread_only().on_next_wake_up_changed_callback.Run(wake_up->time);
   }
 
+printf("TaskQueueImpl::UpdateDelayedWakeUpImpl 2\n");
   WakeUpResolution resolution = has_pending_high_resolution_tasks()
                                     ? WakeUpResolution::kHigh
                                     : WakeUpResolution::kLow;
+printf("TaskQueueImpl::UpdateDelayedWakeUpImpl 3\n");
   main_thread_only().time_domain->SetNextWakeUpForQueue(this, wake_up,
                                                         resolution, lazy_now);
 }
@@ -1045,18 +1096,21 @@ void TaskQueueImpl::SetOnTaskStartedHandler(
 
 void TaskQueueImpl::OnTaskStarted(const Task& task,
                                   const TaskQueue::TaskTiming& task_timing) {
+printf("TaskQueueImpl::OnTaskStarted\n");
   if (!main_thread_only().on_task_started_handler.is_null())
     main_thread_only().on_task_started_handler.Run(task, task_timing);
 }
 
 void TaskQueueImpl::SetOnTaskCompletedHandler(
     TaskQueueImpl::OnTaskCompletedHandler handler) {
+printf("TaskQueueImpl::SetOnTaskCompletedHandler\n");
   DCHECK(should_notify_observers_ || handler.is_null());
   main_thread_only().on_task_completed_handler = std::move(handler);
 }
 
 void TaskQueueImpl::OnTaskCompleted(const Task& task,
                                     const TaskQueue::TaskTiming& task_timing) {
+printf("TaskQueueImpl::OnTaskCompleted\n");
   if (!main_thread_only().on_task_completed_handler.is_null())
     main_thread_only().on_task_completed_handler.Run(task, task_timing);
 }

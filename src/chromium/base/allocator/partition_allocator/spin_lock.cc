@@ -68,6 +68,10 @@ namespace base {
 namespace subtle {
 
 void SpinLock::LockSlow() {
+#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+#warning "todo: port SpinLock on wasm platform"
+#else
+
   // The value of |kYieldProcessorTries| is cargo culted from TCMalloc, Windows
   // critical section defaults, and various other recommendations.
   // TODO(jschuh): Further tuning may be warranted.
@@ -98,6 +102,7 @@ void SpinLock::LockSlow() {
       }
     } while (lock_.load(std::memory_order_relaxed));
   } while (UNLIKELY(lock_.exchange(true, std::memory_order_acquire)));
+#endif
 }
 
 }  // namespace subtle

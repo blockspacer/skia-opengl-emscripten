@@ -7,6 +7,8 @@
 #include <algorithm>
 #include <limits>
 #include <vector>
+#include <memory>
+#include <functional>
 
 #include "base/debug/activity_tracker.h"
 #include "base/logging.h"
@@ -16,6 +18,10 @@
 #include "base/synchronization/waitable_event.h"
 #include "base/threading/scoped_blocking_call.h"
 #include "base/threading/thread_restrictions.h"
+
+#if defined(__EMSCRIPTEN__)
+#include <emscripten/emscripten.h>
+#endif
 
 // -----------------------------------------------------------------------------
 // A WaitableEvent on POSIX is implemented as a wait-list. Currently we don't
@@ -162,7 +168,28 @@ bool WaitableEvent::TimedWait(const TimeDelta& wait_delta) {
   return TimedWaitUntil(TimeTicks::Now() + wait_delta);
 }
 
+// hotfix for EMSCRIPTEN
+struct WaitableEventRes{
+  bool isFiredOrExpired;
+  bool isFired;
+};
+
+#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+// see https://github.com/chadaustin/Web-Benchmarks/blob/master/embind_calls/bench.cpp#L90
+static void emscripten_yield_call(std::function<void()> f, const int ms = 500) {
+    printf("emscripten_yield_call waitable\n");
+    auto p = new std::function<void()>(f);
+    emscripten_async_call([](void* p) {
+        printf("emscripten_async_call waitable\n");
+        auto q = reinterpret_cast<std::function<void()>*>(p);
+        (*q)();
+        delete q;
+    }, p, ms);
+}
+#endif
+
 bool WaitableEvent::TimedWaitUntil(const TimeTicks& end_time) {
+printf("TimedWaitUntil 1\n");
   // Record the event that this thread is blocking upon (for hang diagnosis) and
   // consider it blocked for scheduling purposes. Ignore this for non-blocking
   // WaitableEvents.
@@ -187,6 +214,7 @@ bool WaitableEvent::TimedWaitUntil(const TimeTicks& end_time) {
     kernel_->lock_.Release();
     return true;
   }
+printf("TimedWaitUntil 2\n");
 
   SyncWaiter sw;
   if (!waiting_is_blocking_)
@@ -199,7 +227,11 @@ bool WaitableEvent::TimedWaitUntil(const TimeTicks& end_time) {
   // the WaitableEvent lock. However, this is safe because we don't lock @lock_
   // again before unlocking it.
 
-  for (;;) {
+  WaitableEventRes waitableEventRes;
+  waitableEventRes.isFiredOrExpired = false;
+  waitableEventRes.isFired = false;
+
+  auto timedCheckLambda = [&finite_time, &sw, &end_time, &waitableEventRes, this]() {
     // Only sample Now() if waiting for a |finite_time|.
     Optional<TimeTicks> current_time;
     if (finite_time)
@@ -225,7 +257,12 @@ bool WaitableEvent::TimedWaitUntil(const TimeTicks& end_time) {
       kernel_->Dequeue(&sw, &sw);
       kernel_->lock_.Release();
 
-      return return_value;
+      waitableEventRes.isFiredOrExpired = true;
+      waitableEventRes.isFired = return_value;
+      // must return void, use args
+      // see https://emscripten.org/docs/api_reference/emscripten.h.html#c.em_arg_callback_func
+      //return return_value;
+      return;
     }
 
     if (finite_time) {
@@ -234,7 +271,58 @@ bool WaitableEvent::TimedWaitUntil(const TimeTicks& end_time) {
     } else {
       sw.cv()->Wait();
     }
+
+    waitableEventRes.isFiredOrExpired = false;
+    waitableEventRes.isFired = false;
+
+    // must return void, use args
+    // see https://emscripten.org/docs/api_reference/emscripten.h.html#c.em_arg_callback_func
+    ///return false;
+    return;
+  };
+
+#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+    const int emscripten_call_millis = 100; // check period
+    // typedef void (*em_arg_callback_func)(void*)
+    //auto timedCheckWrap = [&timedCheckLambda, &waitableEventRes, &emscripten_call_millis](){
+      // \note: endless loop may hang browser!
+      //for (;;) { /// \note need to prolong binded args lifetime
+      //  // see https://emscripten.org/docs/api_reference/emscripten.h.html#c.emscripten_async_call
+      //  emscripten_yield_call(timedCheckLambda, emscripten_call_millis);
+      //  if (waitableEventRes.isFiredOrExpired) {
+      //    return waitableEventRes.isFired;
+      //  }
+      //}
+    //};
+    // TODO https://emscripten.org/docs/porting/asyncify.html
+    printf("TODO: timedCheckWrap\n");
+    //timedCheckWrap();
+    // TODO
+
+#ifdef HAS_ASYNCIFY
+    Optional<TimeTicks> current_time;
+    current_time = TimeTicks::Now();
+    if (finite_time && *current_time < end_time) {
+      const TimeDelta max_wait(end_time - *current_time);
+      printf("called emscripten_sleep(%lld)", max_wait.InMilliseconds());
+      // emscripten_sleep requires https://emscripten.org/docs/porting/asyncify.html
+      // TODO: split max_wait into small timeframes to check for conditional var
+      emscripten_sleep(max_wait.InMilliseconds());
+      printf("finished emscripten_sleep(%lld)", max_wait.InMilliseconds());
+    }
+#else
+// todo (!!!)
+#warning "emscripten_sleep requires https://emscripten.org/docs/porting/asyncify.html"
+#endif
+    return true;
+#else
+  for (;;) { /// \note need to prolong binded args lifetime
+    timedCheckLambda();
+    if (waitableEventRes.isFiredOrExpired) {
+      return waitableEventRes.isFired;
+    }
   }
+#endif
 }
 
 // -----------------------------------------------------------------------------
@@ -249,6 +337,12 @@ cmp_fst_addr(const std::pair<WaitableEvent*, unsigned> &a,
 // static
 size_t WaitableEvent::WaitMany(WaitableEvent** raw_waitables,
                                size_t count) {
+#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+printf("TODO: WaitableEvent::WaitMany\n");
+#warning "TODO: WaitableEvent::WaitMany"
+abort();
+#endif
+
   DCHECK(count) << "Cannot wait on no events";
   internal::ScopedBlockingCallWithBaseSyncPrimitives scoped_blocking_call(
       BlockingType::MAY_BLOCK);

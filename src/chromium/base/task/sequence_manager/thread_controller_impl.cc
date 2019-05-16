@@ -83,12 +83,15 @@ void ThreadControllerImpl::SetTimerSlack(TimerSlack timer_slack) {
 }
 
 void ThreadControllerImpl::ScheduleWork() {
+printf("ThreadControllerImpl::ScheduleWork() 1");
   TRACE_EVENT0(TRACE_DISABLED_BY_DEFAULT("sequence_manager"),
                "ThreadControllerImpl::ScheduleWork::PostTask");
 
+printf("ThreadControllerImpl::ScheduleWork() 2");
   if (work_deduplicator_.OnWorkRequested() ==
       ShouldScheduleWork::kScheduleImmediate)
     task_runner_->PostTask(FROM_HERE, immediate_do_work_closure_);
+printf("ThreadControllerImpl::ScheduleWork() 3");
 }
 
 void ThreadControllerImpl::SetNextDelayedDoWork(LazyNow* lazy_now,

@@ -207,9 +207,15 @@ bool ThreadPoolImpl::PostDelayedTaskWithTraits(const Location& from_here,
   return PostTaskWithSequence(
       Task(from_here, std::move(task), delay),
       MakeRefCounted<Sequence>(new_traits, nullptr,
+//#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+//                               TaskSourceExecutionMode::kSingleThread));
+//#else
                                TaskSourceExecutionMode::kParallel));
+//#endif
 }
 
+//#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+//#else
 scoped_refptr<TaskRunner> ThreadPoolImpl::CreateTaskRunnerWithTraits(
     const TaskTraits& traits) {
   const TaskTraits new_traits = SetUserBlockingPriorityIfNeeded(traits);
@@ -221,6 +227,7 @@ ThreadPoolImpl::CreateSequencedTaskRunnerWithTraits(const TaskTraits& traits) {
   const TaskTraits new_traits = SetUserBlockingPriorityIfNeeded(traits);
   return MakeRefCounted<PooledSequencedTaskRunner>(new_traits, this);
 }
+//#endif
 
 scoped_refptr<SingleThreadTaskRunner>
 ThreadPoolImpl::CreateSingleThreadTaskRunnerWithTraits(

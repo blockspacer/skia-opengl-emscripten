@@ -168,6 +168,8 @@ bool PostTaskWithTraitsAndReplyWithResult(
                std::move(reply), Owned(result)));
 }
 
+//#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+//#else
 // Returns a TaskRunner whose PostTask invocations result in scheduling tasks
 // using |traits|. Tasks may run in any order and in parallel.
 BASE_EXPORT scoped_refptr<TaskRunner> CreateTaskRunnerWithTraits(
@@ -177,6 +179,7 @@ BASE_EXPORT scoped_refptr<TaskRunner> CreateTaskRunnerWithTraits(
 // tasks using |traits|. Tasks run one at a time in posting order.
 BASE_EXPORT scoped_refptr<SequencedTaskRunner>
 CreateSequencedTaskRunnerWithTraits(const TaskTraits& traits);
+//#endif
 
 // Returns a SingleThreadTaskRunner whose PostTask invocations result in
 // scheduling tasks using |traits| on a thread determined by |thread_mode|. See

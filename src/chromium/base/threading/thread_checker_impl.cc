@@ -16,6 +16,9 @@ ThreadCheckerImpl::ThreadCheckerImpl() {
 ThreadCheckerImpl::~ThreadCheckerImpl() = default;
 
 bool ThreadCheckerImpl::CalledOnValidThread() const {
+#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+  return true;
+#else
   AutoLock auto_lock(lock_);
   EnsureAssigned();
 
@@ -35,16 +38,24 @@ bool ThreadCheckerImpl::CalledOnValidThread() const {
   }
 
   return thread_id_ == PlatformThread::CurrentRef();
+#endif
 }
 
 void ThreadCheckerImpl::DetachFromThread() {
+#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+  // TODO
+#else
   AutoLock auto_lock(lock_);
   thread_id_ = PlatformThreadRef();
   task_token_ = TaskToken();
   sequence_token_ = SequenceToken();
+#endif
 }
 
 void ThreadCheckerImpl::EnsureAssigned() const {
+#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+  // TODO
+#else
   lock_.AssertAcquired();
   if (!thread_id_.is_null())
     return;
@@ -52,6 +63,7 @@ void ThreadCheckerImpl::EnsureAssigned() const {
   thread_id_ = PlatformThread::CurrentRef();
   task_token_ = TaskToken::GetForCurrentThread();
   sequence_token_ = SequenceToken::GetForCurrentThread();
+#endif
 }
 
 }  // namespace base

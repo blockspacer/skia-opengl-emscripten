@@ -61,6 +61,10 @@ MessageLoop::~MessageLoop() {
   // associated TaskRunner instances.
   default_task_queue_->ShutdownTaskQueue();
 
+#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+  // no checks
+#else
+
   // If |pump_| is non-null, this message loop has been bound and should be the
   // current one on this thread. Otherwise, this loop is being destructed before
   // it was bound to a thread, so a different message loop (or no loop at all)
@@ -77,6 +81,9 @@ MessageLoop::~MessageLoop() {
   DCHECK((!pump_ && !IsBoundToCurrentThread()) ||
          !RunLoop::IsRunningOnCurrentThread());
 #endif  // !defined(OS_IOS)
+
+
+#endif // !EMSCRIPTEN
 }
 
 // static
@@ -169,6 +176,7 @@ MessageLoop::MessageLoop(Type type, std::unique_ptr<MessagePump> custom_pump)
       default_task_queue_(CreateDefaultTaskQueue()),
       type_(type),
       custom_pump_(std::move(custom_pump)) {
+printf("MessageLoop::MessageLoop 1\n");
   // Bound in BindToCurrentThread();
   DETACH_FROM_THREAD(bound_thread_checker_);
 }

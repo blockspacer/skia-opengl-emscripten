@@ -1070,6 +1070,7 @@ public:
 };
 
 // TODO https://kapadia.github.io/emscripten/2013/09/13/emscripten-pointers-and-pointers.html
+// TODO https://github.com/bakerstu/openmrn/blob/5f6bb8934fe13b2897d5f52ec6b358bd87dd886a/src/utils/FileUtils.cxx#L44
 static int read_file(const char* fPath, char*& fileString, long int& fsize)
 {
     FILE* f = fopen(fPath, "rb");
@@ -1112,6 +1113,23 @@ static void SomeHardcoreAsyncTask(
 }
 
 int main(int argc, char** argv) {
+#if defined(FORCE_WASM_FS)
+  printf("Init emscripten FS ...\n");
+  EM_ASM(
+      try {
+          // emscripten cannot mount all of / in the vfs,
+          // we can only mount subdirectories...
+          FS.mount(NODEFS, { root: '/home' }, '/home');
+          FS.mkdir('/root');
+          FS.mount(NODEFS, { root: '/root' }, '/root');
+
+          FS.chdir(process.cwd());
+      } catch (e) {
+          console.log(e);
+      });
+#endif
+
+
   printf("Init alloc ...\n");
   // see
   // https://cs.chromium.org/chromium/src/third_party/blink/renderer/controller/blink_initializer.cc?sq=package:chromium&dr=C&g=0&l=88
@@ -1181,13 +1199,12 @@ int main(int argc, char** argv) {
       base::WaitableEvent::InitialState::NOT_SIGNALED);
 
     auto AsyncTaskCb = [](const int x) {
-      //printf("AsyncTaskCb %d\n", x);
+      printf("AsyncTaskCb %d\n", x);
       std::cout << "AsyncTaskCb " << x << " " << base::Time::Now() << std::endl;
     };
 
     //printf("thread testing PostDelayedTask...\n");
-
-    std::cout << "thread testing PostDelayedTask..." << base::Time::Now() << std::endl;
+    std::cout << "thread testing PostTask 0..." << base::Time::Now() << std::endl;
 
     // see https://habr.com/ru/post/256907/
     thread.task_runner()->PostDelayedTask(
@@ -1196,6 +1213,27 @@ int main(int argc, char** argv) {
                  &event,
                  base::Bind(AsyncTaskCb)),
       base::TimeDelta::FromSeconds(3));
+
+    // std::cout << "thread testing PostTask 1..." << base::Time::Now() << std::endl;
+
+    /*thread.task_runner()->PostTask(
+      FROM_HERE,
+      base::BindOnce(
+          [](base::RepeatingCallback<void()> cb) {
+            printf("BindOncePostTask 1\n");
+            cb.Run();
+          },
+          base::BindRepeating([]() {
+            printf("BindOncePostTask 2\n");
+          })));*/
+
+    //std::cout << "thread testing PostTask 2..." << base::Time::Now() << std::endl;
+
+    //thread.task_runner()->PostTask(
+    //  FROM_HERE,
+    //  base::Bind(&SomeHardcoreAsyncTask,
+    //             &event,
+    //             base::Bind(AsyncTaskCb)));
 
     //printf("thread testing Wait...\n");
     std::cout << "thread testing Wait..." << base::Time::Now() << std::endl;
