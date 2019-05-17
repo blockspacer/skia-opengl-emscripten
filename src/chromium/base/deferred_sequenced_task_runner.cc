@@ -45,6 +45,7 @@ bool DeferredSequencedTaskRunner::PostDelayedTask(const Location& from_here,
   AutoLock lock(lock_);
   if (started_) {
     DCHECK(deferred_tasks_queue_.empty());
+    DCHECK(target_task_runner_);
     return target_task_runner_->PostDelayedTask(from_here, std::move(task),
                                                 delay);
   }
@@ -70,6 +71,7 @@ bool DeferredSequencedTaskRunner::PostNonNestableDelayedTask(
   AutoLock lock(lock_);
   if (started_) {
     DCHECK(deferred_tasks_queue_.empty());
+    DCHECK(target_task_runner_);
     return target_task_runner_->PostNonNestableDelayedTask(
         from_here, std::move(task), delay);
   }

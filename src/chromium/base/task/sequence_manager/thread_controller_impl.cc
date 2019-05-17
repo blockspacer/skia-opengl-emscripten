@@ -86,6 +86,7 @@ void ThreadControllerImpl::ScheduleWork() {
   TRACE_EVENT0(TRACE_DISABLED_BY_DEFAULT("sequence_manager"),
                "ThreadControllerImpl::ScheduleWork::PostTask");
 
+  DCHECK(task_runner_);
   if (work_deduplicator_.OnWorkRequested() ==
       ShouldScheduleWork::kScheduleImmediate)
     task_runner_->PostTask(FROM_HERE, immediate_do_work_closure_);
@@ -119,6 +120,7 @@ void ThreadControllerImpl::SetNextDelayedDoWork(LazyNow* lazy_now,
   main_sequence_only().next_delayed_do_work = run_time;
   // Reset also causes cancellation of the previous DoWork task.
   cancelable_delayed_do_work_closure_.Reset(delayed_do_work_closure_);
+  DCHECK(task_runner_);
   task_runner_->PostDelayedTask(
       FROM_HERE, cancelable_delayed_do_work_closure_.callback(), delay);
 }
@@ -224,6 +226,7 @@ void ThreadControllerImpl::DoWork(WorkType work_type) {
     if (work_deduplicator_.DidCheckForMoreWork(
             WorkDeduplicator::NextTask::kIsImmediate) ==
         ShouldScheduleWork::kScheduleImmediate) {
+      DCHECK(task_runner_);
       task_runner_->PostTask(FROM_HERE, immediate_do_work_closure_);
     }
     return;
@@ -234,6 +237,7 @@ void ThreadControllerImpl::DoWork(WorkType work_type) {
   if (work_deduplicator_.DidCheckForMoreWork(
           WorkDeduplicator::NextTask::kIsDelayed) ==
       ShouldScheduleWork::kScheduleImmediate) {
+    DCHECK(task_runner_);
     task_runner_->PostTask(FROM_HERE, immediate_do_work_closure_);
     return;
   }
@@ -254,6 +258,7 @@ void ThreadControllerImpl::DoWork(WorkType work_type) {
   // callback.
   main_sequence_only().next_delayed_do_work = next_task_at;
   cancelable_delayed_do_work_closure_.Reset(delayed_do_work_closure_);
+  DCHECK(task_runner_);
   task_runner_->PostDelayedTask(FROM_HERE,
                                 cancelable_delayed_do_work_closure_.callback(),
                                 delay_till_next_task);
@@ -285,6 +290,7 @@ void ThreadControllerImpl::OnBeginNestedRunLoop() {
   // Just assume we have a pending task and post a DoWork to make sure we don't
   // grind to a halt while nested.
   work_deduplicator_.OnWorkRequested();  // Set the pending DoWork flag.
+  DCHECK(task_runner_);
   task_runner_->PostTask(FROM_HERE, immediate_do_work_closure_);
 
   if (nesting_observer_)

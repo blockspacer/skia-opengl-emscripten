@@ -34,6 +34,8 @@ bool ObjectWatcher::StopWatching() {
   if (!wait_object_)
     return false;
 
+
+  DCHECK(task_runner_);
   // Make sure ObjectWatcher is used in a sequenced fashion.
   DCHECK(task_runner_->RunsTasksInCurrentSequence());
 
@@ -63,6 +65,7 @@ void CALLBACK ObjectWatcher::DoneWaiting(void* param, BOOLEAN timed_out) {
   // The destructor blocks on any callbacks that are in flight, so we know that
   // that is always a pointer to a valid ObjectWater.
   ObjectWatcher* that = static_cast<ObjectWatcher*>(param);
+  DCHECK(that->task_runner_);
   that->task_runner_->PostTask(FROM_HERE, that->callback_);
   if (that->run_once_)
     that->callback_.Reset();

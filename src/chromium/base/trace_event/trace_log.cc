@@ -917,6 +917,7 @@ void TraceLog::FlushInternal(const TraceLog::OutputCallback& cb,
           FROM_HERE, BindOnce(&TraceLog::FlushCurrentThread, Unretained(this),
                               gen, discard_events));
     }
+    DCHECK(flush_task_runner_);
     flush_task_runner_->PostDelayedTask(
         FROM_HERE,
         BindOnce(&TraceLog::OnFlushTimeout, Unretained(this), gen,

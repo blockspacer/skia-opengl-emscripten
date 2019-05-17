@@ -141,6 +141,7 @@ void DelayedTaskManager::ScheduleProcessRipeTasksOnServiceThread(
     return;
   const TimeTicks now = tick_clock_->NowTicks();
   TimeDelta delay = std::max(TimeDelta(), next_delayed_task_run_time - now);
+  DCHECK(service_thread_task_runner_);
   service_thread_task_runner_->PostDelayedTask(
       FROM_HERE, process_ripe_tasks_closure_, delay);
 }

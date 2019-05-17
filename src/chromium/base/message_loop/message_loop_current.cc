@@ -58,6 +58,7 @@ scoped_refptr<SingleThreadTaskRunner> MessageLoopCurrent::task_runner() const {
 
 void MessageLoopCurrent::SetTaskRunner(
     scoped_refptr<SingleThreadTaskRunner> task_runner) {
+  DCHECK(task_runner);
   DCHECK(current_->IsBoundToCurrentThread());
   current_->SetTaskRunner(std::move(task_runner));
 }

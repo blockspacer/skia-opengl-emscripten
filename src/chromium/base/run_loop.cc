@@ -179,10 +179,9 @@ void RunLoop::RunUntilIdle() {
 }
 
 void RunLoop::Quit() {
-#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
-  #warning "TODO: port RunLoop::Quit"
-#endif
   // Thread-safe.
+
+  DCHECK(origin_task_runner_);
 
   // This can only be hit if run_loop->Quit() is called directly (QuitClosure()
   // proxies through ProxyToTaskRunner() as it can only deref its WeakPtr on
@@ -203,6 +202,8 @@ void RunLoop::Quit() {
 void RunLoop::QuitWhenIdle() {
   // Thread-safe.
 
+  DCHECK(origin_task_runner_);
+
   // This can only be hit if run_loop->QuitWhenIdle() is called directly
   // (QuitWhenIdleClosure() proxies through ProxyToTaskRunner() as it can only
   // deref its WeakPtr on |origin_task_runner_|).
@@ -219,6 +220,8 @@ Closure RunLoop::QuitClosure() {
   // TODO(gab): Fix bad usage and enable this check, http://crbug.com/715235.
   // DCHECK_CALLED_ON_VALID_SEQUENCE(sequence_checker_);
   allow_quit_current_deprecated_ = false;
+
+  DCHECK(origin_task_runner_);
 
   // Need to use ProxyToTaskRunner() as WeakPtrs vended from
   // |weak_factory_| may only be accessed on |origin_task_runner_|.
@@ -241,9 +244,6 @@ Closure RunLoop::QuitWhenIdleClosure() {
 
 // static
 bool RunLoop::IsRunningOnCurrentThread() {
-#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
-  #warning "TODO: port RunLoop::IsRunningOnCurrentThread"
-#endif
   Delegate* delegate = tls_delegate.Get().Get();
   return delegate && !delegate->active_run_loops_.empty();
 }
@@ -279,9 +279,6 @@ void RunLoop::QuitCurrentDeprecated() {
 
 // static
 void RunLoop::QuitCurrentWhenIdleDeprecated() {
-#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
-  #warning "TODO: port RunLoop::QuitCurrentWhenIdleDeprecated"
-#endif
   DCHECK(IsRunningOnCurrentThread());
   Delegate* delegate = tls_delegate.Get().Get();
   DCHECK(delegate->active_run_loops_.top()->allow_quit_current_deprecated_)
@@ -334,6 +331,7 @@ bool RunLoop::BeforeRun() {
          "ScopedDisallowRunningForTesting. Hint: if mixing "
          "TestMockTimeTaskRunners on same thread, use TestMockTimeTaskRunner's "
          "API instead of RunLoop to drive individual task runners.";
+
   DCHECK(!run_called_);
   run_called_ = true;
 #endif  // DCHECK_IS_ON()

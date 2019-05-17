@@ -3965,6 +3965,7 @@ class PostTaskWhenDeleted {
     tasks_deleted_->push_back(full_name());
 
     if (depth_ > 0) {
+      DCHECK(task_runner_);
       task_runner_->PostTask(
           FROM_HERE, base::BindOnce(&CallbackWithDestructor,
                                     std::make_unique<PostTaskWhenDeleted>(

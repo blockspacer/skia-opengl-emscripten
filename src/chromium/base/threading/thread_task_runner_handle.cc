@@ -86,12 +86,14 @@ ThreadTaskRunnerHandle::ThreadTaskRunnerHandle(
     scoped_refptr<SingleThreadTaskRunner> task_runner)
     : task_runner_(std::move(task_runner)),
       sequenced_task_runner_handle_(task_runner_) {
+  DCHECK(task_runner_);
   DCHECK(task_runner_->BelongsToCurrentThread());
   DCHECK(!thread_task_runner_tls.Pointer()->Get());
   thread_task_runner_tls.Pointer()->Set(this);
 }
 
 ThreadTaskRunnerHandle::~ThreadTaskRunnerHandle() {
+  DCHECK(task_runner_);
   DCHECK(task_runner_->BelongsToCurrentThread());
   DCHECK_EQ(thread_task_runner_tls.Pointer()->Get(), this);
   thread_task_runner_tls.Pointer()->Set(nullptr);

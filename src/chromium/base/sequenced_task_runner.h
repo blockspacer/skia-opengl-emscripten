@@ -176,6 +176,7 @@ struct BASE_EXPORT OnTaskRunnerDeleter {
   // For compatibility with std:: deleters.
   template <typename T>
   void operator()(const T* ptr) {
+    DCHECK(task_runner_);
     if (ptr)
       task_runner_->DeleteSoon(FROM_HERE, ptr);
   }

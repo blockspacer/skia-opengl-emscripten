@@ -36,12 +36,14 @@ bool SequencedTaskRunnerHandle::IsSet() {
 SequencedTaskRunnerHandle::SequencedTaskRunnerHandle(
     scoped_refptr<SequencedTaskRunner> task_runner)
     : task_runner_(std::move(task_runner)) {
+  DCHECK(task_runner_);
   DCHECK(task_runner_->RunsTasksInCurrentSequence());
   DCHECK(!SequencedTaskRunnerHandle::IsSet());
   sequenced_task_runner_tls.Pointer()->Set(this);
 }
 
 SequencedTaskRunnerHandle::~SequencedTaskRunnerHandle() {
+  DCHECK(task_runner_);
   DCHECK(task_runner_->RunsTasksInCurrentSequence());
   DCHECK_EQ(sequenced_task_runner_tls.Pointer()->Get(), this);
   sequenced_task_runner_tls.Pointer()->Set(nullptr);

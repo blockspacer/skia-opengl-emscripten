@@ -900,6 +900,7 @@ WeakPtr<SequenceManagerImpl> SequenceManagerImpl::GetWeakPtr() {
 
 void SequenceManagerImpl::SetDefaultTaskRunner(
     scoped_refptr<SingleThreadTaskRunner> task_runner) {
+  DCHECK(task_runner);
   controller_->SetDefaultTaskRunner(task_runner);
 }
 

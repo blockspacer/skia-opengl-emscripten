@@ -69,6 +69,7 @@ class PostTaskAndReplyRelay {
     }
 
     // Case 2:
+    DCHECK(reply_task_runner_);
     if (!reply_task_runner_->RunsTasksInCurrentSequence()) {
       DCHECK(reply_);
 
