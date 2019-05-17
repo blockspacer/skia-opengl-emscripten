@@ -27,6 +27,10 @@
 #include "base/template_util.h"
 #include "build/build_config.h"
 
+#if defined(OS_EMSCRIPTEN)
+#include <emscripten/emscripten.h>
+#endif
+
 //
 // Optional message capabilities
 // -----------------------------
@@ -867,14 +871,24 @@ const LogSeverity LOG_DCHECK = LOG_FATAL;
 // DCHECK_IS_ON() is true. When DCHECK_IS_ON() is false, the macros use
 // EAT_STREAM_PARAMETERS to avoid expressions that would create temporaries.
 
+/// \note macro may be empty/multiple instructions, so place {}
+/// \example "if { MACRO() } else ...", not "if MACRO() else ..."
 #if DCHECK_IS_ON()
-
+#if defined(OS_EMSCRIPTEN)
+#define DCHECK(condition)                                           \
+  LAZY_STREAM(LOG_STREAM(DCHECK), !ANALYZER_ASSUME_TRUE(condition)) \
+      << "Check failed: " #condition ". " << HTML5_STACKTRACE_WRAP()
+#define DPCHECK(condition)                                           \
+  LAZY_STREAM(PLOG_STREAM(DCHECK), !ANALYZER_ASSUME_TRUE(condition)) \
+      << "Check failed: " #condition ". " << HTML5_STACKTRACE_WRAP()
+#else
 #define DCHECK(condition)                                           \
   LAZY_STREAM(LOG_STREAM(DCHECK), !ANALYZER_ASSUME_TRUE(condition)) \
       << "Check failed: " #condition ". "
 #define DPCHECK(condition)                                           \
   LAZY_STREAM(PLOG_STREAM(DCHECK), !ANALYZER_ASSUME_TRUE(condition)) \
       << "Check failed: " #condition ". "
+#endif
 
 #else  // DCHECK_IS_ON()
 
