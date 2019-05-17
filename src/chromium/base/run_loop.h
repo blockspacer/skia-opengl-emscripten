@@ -346,7 +346,7 @@ class BASE_EXPORT RunLoop {
 
   const Type type_;
 
-#if DCHECK_IS_ON()
+#if DCHECK_IS_ON() && !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   bool run_called_ = false;
 #endif
 
