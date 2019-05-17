@@ -33,14 +33,6 @@
 # define PLATFORM_WINDOWS 1
 #endif
 
-// __EMSCRIPTEN_PTHREADS__ can be used to detect whether Emscripten is currently targeting pthreads.
-// At runtime, you can use the emscripten_has_threading_support()
-// see https://emscripten.org/docs/porting/pthreads.html
-#if (defined(OS_EMSCRIPTEN) || defined(__EMSCRIPTEN__)) && defined(__EMSCRIPTEN_PTHREADS__)
-#include <emscripten/emscripten.h>
-#include <emscripten/threading.h>
-#endif // OS_EMSCRIPTEN
-
 #include <ctype.h>    // for isspace()
 #include <stdlib.h>   // for getenv()
 #include <stdio.h>    // for snprintf(), sscanf()
@@ -68,6 +60,14 @@
 #include "base/commandlineflags.h"
 #include "base/dynamic_annotations.h"   // for RunningOnValgrind
 #include "base/logging.h"
+
+// __EMSCRIPTEN_PTHREADS__ can be used to detect whether Emscripten is currently targeting pthreads.
+// At runtime, you can use the emscripten_has_threading_support()
+// see https://emscripten.org/docs/porting/pthreads.html
+#if (defined(OS_EMSCRIPTEN) || defined(__EMSCRIPTEN__)) && defined(__EMSCRIPTEN_PTHREADS__)
+#include <emscripten/emscripten.h>
+#include <emscripten/threading.h>
+#endif // OS_EMSCRIPTEN
 
 #ifdef PLATFORM_WINDOWS
 #ifdef MODULEENTRY32

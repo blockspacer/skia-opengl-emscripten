@@ -4,10 +4,6 @@
 
 #include "base/logging.h"
 
-#if defined(OS_EMSCRIPTEN)
-#include <emscripten/emscripten.h>
-#endif // OS_EMSCRIPTEN
-
 #include <limits.h>
 #include <stdint.h>
 
@@ -119,6 +115,10 @@ typedef pthread_mutex_t* MutexHandle;
 #include "base/posix/safe_strerror.h"
 #endif
 
+#if defined(OS_EMSCRIPTEN)
+#include <emscripten/emscripten.h>
+#endif // OS_EMSCRIPTEN
+
 namespace logging {
 
 namespace {
@@ -194,7 +194,7 @@ uint64_t TickCount() {
          static_cast<zx_time_t>(base::Time::kNanosecondsPerMicrosecond);
 #elif defined(OS_MACOSX)
   return mach_absolute_time();
-#elif defined(OS_EMSCRIPTEN) || defined(__EMSCRIPTEN__)
+#elif defined(OS_EMSCRIPTEN)
   // this goes above x86-specific code because old versions of Emscripten
   // define __x86_64__, although they have nothing to do with it.
   /// \note The result is not an absolute time,
@@ -240,7 +240,7 @@ PathString GetDefaultLogFile() {
     log_name.erase(last_backslash + 1);
   log_name += STRING16_LITERAL("debug.log");
   return log_name;
-#elif defined(OS_POSIX) || defined(OS_FUCHSIA)
+#elif defined(OS_POSIX) || defined(OS_FUCHSIA) || defined(OS_EMSCRIPTEN)
   // On other platforms we just use the current directory.
   return PathString("debug.log");
 #endif
@@ -420,7 +420,7 @@ LoggingSettings::LoggingSettings()
       delete_old(APPEND_TO_OLD_LOG_FILE) {}
 
 bool BaseInitLoggingImpl(const LoggingSettings& settings) {
-#if defined(OS_NACL)
+#if defined(OS_NACL) || defined(OS_EMSCRIPTEN)
   // Can log only to the system debug log.
   CHECK_EQ(settings.logging_dest & ~LOG_TO_SYSTEM_DEBUG_LOG, 0);
 #endif

@@ -53,7 +53,7 @@ uintptr_t GetNextStackFrame(uintptr_t fp) {
 }
 
 uintptr_t GetStackFramePC(uintptr_t fp) {
-#if defined(OS_EMSCRIPTEN) || defined(__EMSCRIPTEN__)
+#if defined(OS_EMSCRIPTEN)
 #error "TODO: port stack on wasm!"
 #endif
   const uintptr_t* fp_addr = reinterpret_cast<const uintptr_t*>(fp);
@@ -155,7 +155,7 @@ void* LinkStackFrames(void* fpp, void* parent_fp) {
 
 #if BUILDFLAG(CAN_UNWIND_WITH_FRAME_POINTERS)
 uintptr_t GetStackEnd() {
-#if defined(OS_EMSCRIPTEN) || defined(__EMSCRIPTEN__)
+#if defined(OS_EMSCRIPTEN)
 #warning "todo: stack on wasm"
 #endif
 

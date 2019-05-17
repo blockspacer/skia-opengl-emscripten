@@ -12,6 +12,10 @@ namespace base {
 namespace internal {
 
 bool NeedsLazyInstance(subtle::AtomicWord* state) {
+#if defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS)
+#warning "todo: port LazyInstance on wasm platform"
+#endif
+
   // Try to create the instance, if we're the first, will go from 0 to
   // kLazyInstanceStateCreating, otherwise we've already been beaten here.
   // The memory access has no memory ordering as state 0 and

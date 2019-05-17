@@ -23,10 +23,18 @@
 #include "base/win/scoped_com_initializer.h"
 #endif
 
+#if defined(OS_EMSCRIPTEN)
+#include "emscripten/emscripten.h"
+#endif
+
 namespace base {
 namespace internal {
 
 void WorkerThread::Delegate::WaitForWork(WaitableEvent* wake_up_event) {
+#if defined(OS_EMSCRIPTEN)
+  printf("can`t use WorkerThread::Delegate on wasm platform!");
+  HTML5_STACKTRACE();
+#endif
   DCHECK(wake_up_event);
   const TimeDelta sleep_time = GetSleepTimeout();
   if (sleep_time.is_max()) {
@@ -184,6 +192,10 @@ void WorkerThread::UpdateThreadPriority(
 }
 
 void WorkerThread::ThreadMain() {
+#if defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS)
+  #warning "TODO: port WorkerThread thread"
+  P_LOG("TODO: port WorkerThread thread\n");
+#endif
   if (priority_hint_ == ThreadPriority::BACKGROUND) {
     switch (delegate_->GetThreadLabel()) {
       case ThreadLabel::POOLED:

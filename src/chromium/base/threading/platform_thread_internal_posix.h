@@ -47,7 +47,7 @@ bool SetCurrentThreadPriorityForPlatform(ThreadPriority priority);
 // of CanIncreaseThreadPriority().
 Optional<ThreadPriority> GetCurrentThreadPriorityForPlatform();
 
-#if defined(OS_LINUX) || (defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__))
+#if defined(OS_LINUX) || defined(DISABLE_PTHREADS)
 // Current thread id is cached in thread local storage for performance reasons.
 // In some rare cases it's important to clear that cache explicitly (e.g. after
 // going through clone() syscall which does not call pthread_atfork()

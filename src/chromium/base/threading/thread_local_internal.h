@@ -5,7 +5,8 @@
 #ifndef BASE_THREADING_THREAD_LOCAL_INTERNAL_H_
 #define BASE_THREADING_THREAD_LOCAL_INTERNAL_H_
 
-#if DCHECK_IS_ON()
+#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+#elif DCHECK_IS_ON()
 
 #include <atomic>
 #include <memory>

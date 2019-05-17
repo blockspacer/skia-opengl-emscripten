@@ -19,11 +19,17 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR})
 
 # -fno-exceptions
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++17")
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
 
 # https://stackoverflow.com/a/4184877/10904212
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -frtti")
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -frtti")
+set(COMMON_FLAGS "${COMMON_FLAGS} -frtti")
+
+# custom defines
+set(COMMON_FLAGS "${COMMON_FLAGS} -DPORT_OWN_DLOG=1")
+
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${COMMON_FLAGS}")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${COMMON_FLAGS}")
 
 set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_SUPPORT_GPU=1") # skia_enable_gpu
 set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_SUPPORT_GPU") # skia_enable_gpu
@@ -206,6 +212,11 @@ if (ENABLE_WASM_PTHREADS)
   #
   # PTHREAD_WORKER_FILE
 else(ENABLE_WASM_PTHREADS)
+  # custom defines
+  set(EMCC_COMMON "${EMCC_COMMON} -DDISABLE_PTHREADS=1")
+  set(EMCC_COMMON "${EMCC_COMMON} -DUSE_FAKE_THREAD_LS=1")
+  set(EMCC_COMMON "${EMCC_COMMON} -DDISABLE_LOCKS=1")
+  #
   # deprecated, switching our backend from fastcomp to the upstream LLVM backend.
   # Both Asyncify and the Emterpreter can't work with that backend,
   # see https://github.com/emscripten-core/emscripten/issues/8561
@@ -215,11 +226,58 @@ else(ENABLE_WASM_PTHREADS)
   # setjmp/longjmp and C++ exception are not working!
   # emscripten_sleep requires ASYNCIFY!
   # see https://emscripten.org/docs/porting/asyncify.html
-  #set(EMCC_COMMON "${EMCC_COMMON} -s ASYNCIFY=1")
-  #set(EMCC_COMMON "${EMCC_COMMON} -DHAS_ASYNCIFY=1")
   #
-  # ASYNCIFY_WHITELIST==["qsort", "trinkle", "__toread", "__uflow", "__fwritex", "MUSL_vfprintf"]
+  #set(EMCC_COMMON "${EMCC_COMMON} -s ASYNCIFY=1")
+  #set(HAS_ASYNCIFY TRUE)
+  #
+  #
+  # ASYNCIFY_WHITELIST=["qsort", "trinkle", "__toread", "__uflow", "__fwritex", "MUSL_vfprintf"]
+  #
+  # see https://emscripten.org/docs/porting/emterpreter.html
+  #
+  #set(EMCC_COMMON "${EMCC_COMMON} -s EMTERPRETIFY=1")
+  #set(HAS_EMTERPRETIFY TRUE)
+  #
+  # see https://emscripten.org/docs/porting/emterpreter.html#emterpreter-async-run-synchronous-code
+  #set(EMCC_COMMON "${EMCC_COMMON} -s EMTERPRETIFY_ASYNC=1")
+  #
+  # run parts of your codebase in an interpreter!
+  # you can use -s EMTERPRETIFY_WHITELIST=@../empterpreter_whitelist.json
+  # see ConditionVariable::Wait, ConditionVariable::TimedWait
+  # see https://github.com/caiiiycuk/js-dos/blob/6.22/CMakeLists.txt
+  # see https://github.com/caiiiycuk/js-dos/blob/6.22/js-dos-cpp/emterpretify.txt
+  #set(EMCC_COMMON "${EMCC_COMMON} -s EMTERPRETIFY_WHITELIST=@${CMAKE_CURRENT_SOURCE_DIR}/assets/emterpretify_whitelist.txt")
+  #set(EMCC_COMMON "${EMCC_COMMON} -s EMTERPRETIFY_WHITELIST=["qsort", "trinkle", "__toread", "__uflow", "__fwritex", "MUSL_vfprintf", "__Wait", "__TimedWait"]")
+  #
+  # ORIGINAL_EXPORTED_FUNCTIONS
+  #
+  # EXPORT_FUNCTION_TABLES
+  #
+  # EXPORTED_RUNTIME_METHODS=["FS_createFolder",
+  #
+  # DEFAULT_LIBRARY_FUNCS_TO_INCLUDE=["memcpy", "memset", "malloc", "free"]'
+  # https://stackoverflow.com/a/55933880
+  #set(EMCC_COMMON "${EMCC_COMMON} -s EXTRA_EXPORTED_RUNTIME_METHODS=["ccall", "cwrap"]")
+  #
+  # see https://stackoverflow.com/a/21220605
+  # see https://stackoverflow.com/a/16725147
+  # Create an "extern c" block.
+  # Inside this block define the functions you want to expose to javascript.
+  # These functions should be prefixed with an underscore.
+  # Inside one of these functions you can instantiate your C++ class.
+  # NOTE: EMSCRIPTEN_KEEPALIVE also exports the function, as if it were on EXPORTED_FUNCTIONS.
+  # see https://emscripten.org/docs/getting_started/FAQ.html#why-do-functions-in-my-c-c-source-code-vanish-when-i-compile-to-javascript-and-or-i-get-no-functions-to-process
+  #set(EMCC_COMMON "${EMCC_COMMON} -s EXPORTED_FUNCTIONS=["_main", "qsort", "trinkle", "__toread", "__uflow", "__fwritex", "MUSL_vfprintf", "__Wait", "__TimedWait"]")
+  #set(EMCC_COMMON "${EMCC_COMMON} -s EXPORTED_FUNCTIONS=["_main", "qsort", "trinkle", "__toread", "__uflow", "__fwritex", "MUSL_vfprintf", "_Wait", "_TimedWait"]")
+  #
+  # You can optionally use -s 'EMTERPRETIFY_FILE="data.binary"' to store the emterpreter bytecode in a file
+  #
 endif(ENABLE_WASM_PTHREADS)
+
+if (HAS_ASYNCIFY OR HAS_EMTERPRETIFY)
+  #custom defines
+  set(EMCC_COMMON "${EMCC_COMMON} -DHAS_ASYNC=1")
+endif(HAS_ASYNCIFY OR EMTERPRETIFY)
 
   set(EMCC_COMMON "${EMCC_COMMON} -s USE_ZLIB=1")
   #set(EMCC_COMMON "${EMCC_COMMON} -s USE_HARFBUZZ=1") # < TODO
@@ -230,6 +288,11 @@ endif(ENABLE_WASM_PTHREADS)
   set(EMCC_COMMON "${EMCC_COMMON} -s USE_SDL=2")
   set(EMCC_COMMON "${EMCC_COMMON} -s USE_SDL_IMAGE=2")
   set(EMCC_COMMON "${EMCC_COMMON} -s USE_SDL_TTF=2")
+
+set(PORT_OWN_DLOG TRUE)
+if (PORT_OWN_DLOG)
+  set(EMCC_COMMON "${EMCC_COMMON} -DPORT_OWN_DLOG=1")
+endif(PORT_OWN_DLOG)
 
 set(ENABLE_WEBGL2 TRUE)
 #set(ENABLE_WEBGL2 FALSE)
@@ -249,7 +312,8 @@ if (ENABLE_WEBGL2 OR ENABLE_WEBGL1)
   # TODO: check freezes with threads
   if (ENABLE_WEBGL2)
     set(EMCC_COMMON "${EMCC_COMMON} -s USE_WEBGL2=1")
-    set(EMCC_COMMON "${EMCC_COMMON} -DWEBGL2_SUPPORT=1") # custom define
+    # custom defines
+    set(EMCC_COMMON "${EMCC_COMMON} -DWEBGL2_SUPPORT=1")
     #
     # emulates some WebGL 1 features on WebGL 2 contexts
     # see https://github.com/emscripten-core/emscripten/blob/master/src/settings.js#L394
@@ -366,6 +430,14 @@ endif(ENABLE_WEBGL2)
   # whatever function is at the address, which can be much harder to debug.
   set(EMCC_COMMON "${EMCC_COMMON} -s ALIASING_FUNCTION_POINTERS=0")
 
+  # EMTERPRETIFY is not compatible with source maps
+  # (maps are not useful in emterpreted code,
+  # and splitting out non-emterpreted source maps is not yet implemented)
+if (!HAS_EMTERPRETIFY)
+  # see http://webassemblycode.com/using-browsers-debug-webassembly/
+  set(EMCC_COMMON "${EMCC_COMMON} -g4 --source-map-base http://localhost:9090/")
+endif(!HAS_EMTERPRETIFY)
+
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${EMCC_COMMON}")
 
   # TODO EMCC_LINKER_FLAGS
@@ -416,6 +488,8 @@ endif(ENABLE_WEBGL2)
 
   #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s MODULARIZE=1")
 
+  # also enables STACK_OVERFLOW_CHECK
+  # see https://emscripten.org/docs/porting/Debugging.html
   # see https://github.com/emscripten-core/emscripten/blob/master/src/settings.js#L41
   #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s ASSERTIONS=1")
   # ASSERTIONS == 2 gives even more runtime checks

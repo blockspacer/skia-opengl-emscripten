@@ -162,6 +162,23 @@ bool WaitableEvent::TimedWait(const TimeDelta& wait_delta) {
   return TimedWaitUntil(TimeTicks::Now() + wait_delta);
 }
 
+/*#if defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS)
+
+#ifdef __EMSCRIPTEN__
+extern "C" {
+   EMSCRIPTEN_KEEPALIVE
+#endif
+static void loopWrap(WaitableEvent*) {
+  for (;;) {
+    HTML5_ASYNC_SLEEP(100);
+  }
+}
+#ifdef __EMSCRIPTEN__
+} // extern "C"
+#endif // __EMSCRIPTEN__
+
+#endif // defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS)*/
+
 bool WaitableEvent::TimedWaitUntil(const TimeTicks& end_time) {
   // Record the event that this thread is blocking upon (for hang diagnosis) and
   // consider it blocked for scheduling purposes. Ignore this for non-blocking
@@ -199,14 +216,26 @@ bool WaitableEvent::TimedWaitUntil(const TimeTicks& end_time) {
   // the WaitableEvent lock. However, this is safe because we don't lock @lock_
   // again before unlocking it.
 
+#if defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS)
+  #warning "TODO: port WaitableEvent"
+  /// \TODO endless loop may hang browser!
+  for (int i = 0; i < 1; i++) {
+#else
   for (;;) {
+#endif
     // Only sample Now() if waiting for a |finite_time|.
     Optional<TimeTicks> current_time;
     if (finite_time)
       current_time = TimeTicks::Now();
 
     if (sw.fired() || (finite_time && *current_time >= end_time)) {
+
+#if defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS)
+      #warning "TODO: port WaitableEvent"
+      const bool return_value = true;
+#else
       const bool return_value = sw.fired();
+#endif
 
       // We can't acquire @lock_ before releasing the SyncWaiter lock (because
       // of locking order), however, in between the two a signal could be fired
@@ -249,6 +278,11 @@ cmp_fst_addr(const std::pair<WaitableEvent*, unsigned> &a,
 // static
 size_t WaitableEvent::WaitMany(WaitableEvent** raw_waitables,
                                size_t count) {
+#if defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS)
+P_LOG("TODO: WaitableEvent::WaitMany\n");
+#warning "TODO: WaitableEvent::WaitMany"
+#endif
+
   DCHECK(count) << "Cannot wait on no events";
   internal::ScopedBlockingCallWithBaseSyncPrimitives scoped_blocking_call(
       BlockingType::MAY_BLOCK);
@@ -291,11 +325,18 @@ size_t WaitableEvent::WaitMany(WaitableEvent** raw_waitables,
       waitables[count - (1 + i)].first->kernel_->lock_.Release();
     }
 
-    for (;;) {
+#if defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS)
+  #warning "TODO: port WaitableEvent::WaitMany"
+  /// \TODO endless loop may hang browser!
+  for (int i = 0; i < 999999; i++) {
+#else
+  for (;;) {
+#endif
       if (sw.fired())
         break;
 
       sw.cv()->Wait();
+
     }
   sw.lock()->Release();
 
@@ -408,7 +449,13 @@ bool WaitableEvent::SignalAll() {
 // held.
 // ---------------------------------------------------------------------------
 bool WaitableEvent::SignalOne() {
+#if defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS)
+  #warning "TODO: port WaitableEvent::SignalOne"
+  /// \TODO endless loop may hang browser!
+  for (int i = 0; i < 999999; i++) {
+#else
   for (;;) {
+#endif
     if (kernel_->waiters_.empty())
       return false;
 

@@ -260,6 +260,10 @@ class FilePathWatcherImpl : public FilePathWatcher::PlatformDelegate {
 LazyInstance<InotifyReader>::Leaky g_inotify_reader = LAZY_INSTANCE_INITIALIZER;
 
 void InotifyReaderThreadDelegate::ThreadMain() {
+#if defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS)
+  #warning "TODO: port InotifyReaderThreadDelegate thread"
+  P_LOG("TODO: port InotifyReaderThreadDelegate thread\n");
+#endif
   PlatformThread::SetName("inotify_reader");
 
   // Make sure the file descriptors are good for use with select().

@@ -240,7 +240,7 @@ namespace {
 #if 0
 
 #if defined(OS_EMSCRIPTEN)
-#warning "tcmalloc: Emscripten PThread implementation does not support signals."
+//#warning "tcmalloc: Emscripten PThread implementation does not support signals."
 #else
         sigset_t all;
         sigfillset(&all);
@@ -259,7 +259,7 @@ namespace {
       this->arena_->mu.Unlock();
 #if 0
 #if defined(OS_EMSCRIPTEN)
-#warning "tcmalloc: Emscripten PThread implementation does not support signals."
+//#warning "tcmalloc: Emscripten PThread implementation does not support signals."
 #else
       if (this->mask_valid_) {
         pthread_sigmask(SIG_SETMASK, &this->mask_, 0);

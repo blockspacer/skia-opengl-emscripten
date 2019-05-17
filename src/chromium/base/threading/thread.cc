@@ -73,6 +73,9 @@ bool Thread::Start() {
 #if defined(OS_WIN)
   if (com_status_ == STA)
     options.message_loop_type = MessageLoop::TYPE_UI;
+#elif defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+options.message_loop_type = MessageLoop::TYPE_DEFAULT;
+/// \note you can set options.joinable = false;
 #endif
   return StartWithOptions(options);
 }
@@ -163,7 +166,11 @@ void Thread::FlushForTesting() {
 }
 
 void Thread::Stop() {
+#if defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS)
+  // no check
+#else
   DCHECK(joinable_);
+#endif
 
   // TODO(gab): Fix improper usage of this API (http://crbug.com/629139) and
   // enable this check, until then synchronization with Start() via
@@ -311,6 +318,9 @@ void Thread::ThreadMain() {
   run_loop_ = &run_loop;
   Run(run_loop_);
 
+#if defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS)
+  // TODO: delegate_->Run is async, so we reached function end immediately
+#else
   {
     AutoLock lock(running_lock_);
     running_ = false;
@@ -329,6 +339,7 @@ void Thread::ThreadMain() {
   // (The message loop is destructed at the end of this block)
   task_environment_.reset();
   run_loop_ = nullptr;
+#endif
 }
 
 void Thread::ThreadQuitHelper() {

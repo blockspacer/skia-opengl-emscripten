@@ -90,8 +90,12 @@ class BASE_EXPORT AssociatedThreadId
   //
   // Attention:: The result might be stale by the time this method returns.
   bool IsBoundToCurrentThread() const {
+#if defined(DISABLE_PTHREADS)
+    return true;
+#else
     return thread_id_.load(std::memory_order_relaxed) ==
            PlatformThread::CurrentId();
+#endif
   }
 
   // TODO(eseckler): Add a method that checks that we are either bound already

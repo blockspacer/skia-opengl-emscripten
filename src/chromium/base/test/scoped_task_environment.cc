@@ -508,6 +508,12 @@ bool ScopedTaskEnvironment::MainThreadIsIdle() const {
 }
 
 void ScopedTaskEnvironment::RunUntilIdle() {
+#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+P_LOG("TODO: ScopedTaskEnvironment::RunUntilIdle\n");
+#warning "TODO: ScopedTaskEnvironment::RunUntilIdle"
+abort();
+#endif
+
   // Prevent virtual time from advancing while within this call.
   if (mock_time_domain_)
     mock_time_domain_->SetAllowTimeToAutoAdvanceUntil(TimeTicks());

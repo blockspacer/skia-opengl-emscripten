@@ -210,7 +210,7 @@ class BASE_EXPORT RunLoop {
     RunLoopStack active_run_loops_;
     ObserverList<RunLoop::NestingObserver>::Unchecked nesting_observers_;
 
-#if DCHECK_IS_ON()
+#if DCHECK_IS_ON() && !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
     bool allow_running_for_testing_ = true;
 #endif
 
@@ -312,7 +312,7 @@ class BASE_EXPORT RunLoop {
     ~ScopedDisallowRunningForTesting();
 
    private:
-#if DCHECK_IS_ON()
+#if DCHECK_IS_ON() && !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
     Delegate* current_delegate_;
     const bool previous_run_allowance_;
 #endif  // DCHECK_IS_ON()

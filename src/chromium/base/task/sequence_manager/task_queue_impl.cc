@@ -229,7 +229,9 @@ void TaskQueueImpl::MaybeLogPostTask(PostedTask* task) {
 
 void TaskQueueImpl::MaybeAdjustTaskDelay(PostedTask* task,
                                          CurrentThread current_thread) {
-#if DCHECK_IS_ON()
+#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+  // todo
+#elif DCHECK_IS_ON()
   if (current_thread == TaskQueueImpl::CurrentThread::kNotMainThread) {
     base::internal::CheckedAutoLock lock(any_thread_lock_);
     // Add a per-priority delay to cross thread tasks. This can help diagnose

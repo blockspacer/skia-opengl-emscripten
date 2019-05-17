@@ -107,7 +107,7 @@ sigset_t SetSignalMask(const sigset_t& new_sigmask) {
 
 #if defined(OS_EMSCRIPTEN)
 // https://github.com/abseil/abseil-cpp/blob/master/absl/base/internal/thread_identity.cc#L72
-#warning "base: Emscripten PThread implementation does not support signals."
+//#warning "base: Emscripten PThread implementation does not support signals."
 #else
   RAW_CHECK(pthread_sigmask(SIG_SETMASK, &new_sigmask, &old_sigmask) == 0);
 #endif // OS_EMSCRIPTEN
@@ -357,7 +357,7 @@ Process LaunchProcess(const std::vector<std::string>& argv,
   // The Emscripten implementation does also not support multiprocessing via fork() and join().
   // see https://emscripten.org/docs/porting/pthreads.html
 #if defined(OS_EMSCRIPTEN)
-#warning "wasm: Unsupported architecture for fork"
+//#warning "wasm: Unsupported architecture for fork"
 #endif
 
     pid = fork();
@@ -570,7 +570,7 @@ static bool GetAppOutputInternal(
   // The Emscripten implementation does also not support multiprocessing via fork() and join().
   // see https://emscripten.org/docs/porting/pthreads.html
 #if defined(OS_EMSCRIPTEN)
-#warning "wasm: Unsupported architecture for fork"
+//#warning "wasm: Unsupported architecture for fork"
 #endif
 
   pid_t pid = fork();

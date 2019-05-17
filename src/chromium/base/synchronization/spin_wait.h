@@ -30,6 +30,12 @@
 // typically used to get the padding needed on a given test platform to assure
 // that the test passes, even if load varies, and external events vary.
 
+#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+#define SPIN_FOR_1_SECOND_OR_UNTIL_TRUE(expression) \
+  (void)(0)
+#define SPIN_FOR_TIMEDELTA_OR_UNTIL_TRUE(delta, expression) \
+  (void)(0)
+#else
 #define SPIN_FOR_1_SECOND_OR_UNTIL_TRUE(expression) \
     SPIN_FOR_TIMEDELTA_OR_UNTIL_TRUE(base::TimeDelta::FromSeconds(1), \
                                      (expression))
@@ -46,5 +52,6 @@
       base::PlatformThread::Sleep(base::TimeDelta::FromMilliseconds(50)); \
     } \
   } while (0)
+#endif
 
 #endif  // BASE_SYNCHRONIZATION_SPIN_WAIT_H_

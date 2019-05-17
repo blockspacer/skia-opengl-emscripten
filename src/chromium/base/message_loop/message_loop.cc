@@ -61,6 +61,9 @@ MessageLoop::~MessageLoop() {
   // associated TaskRunner instances.
   default_task_queue_->ShutdownTaskQueue();
 
+#if defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS)
+  // no check
+#else
   // If |pump_| is non-null, this message loop has been bound and should be the
   // current one on this thread. Otherwise, this loop is being destructed before
   // it was bound to a thread, so a different message loop (or no loop at all)
@@ -77,6 +80,8 @@ MessageLoop::~MessageLoop() {
   DCHECK((!pump_ && !IsBoundToCurrentThread()) ||
          !RunLoop::IsRunningOnCurrentThread());
 #endif  // !defined(OS_IOS)
+
+#endif // defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS)
 }
 
 // static

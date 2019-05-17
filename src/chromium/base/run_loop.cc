@@ -164,7 +164,11 @@ void RunLoop::RunWithTimeout(TimeDelta timeout) {
   DETACH_FROM_SEQUENCE(sequence_checker_);
   DCHECK_CALLED_ON_VALID_SEQUENCE(sequence_checker_);
 
+#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+  // TODO: delegate_->Run is async, so we reached function end immediately
+#else
   AfterRun();
+#endif
 }
 
 void RunLoop::RunUntilIdle() {
@@ -175,6 +179,9 @@ void RunLoop::RunUntilIdle() {
 }
 
 void RunLoop::Quit() {
+#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+  #warning "TODO: port RunLoop::Quit"
+#endif
   // Thread-safe.
 
   // This can only be hit if run_loop->Quit() is called directly (QuitClosure()
@@ -234,6 +241,9 @@ Closure RunLoop::QuitWhenIdleClosure() {
 
 // static
 bool RunLoop::IsRunningOnCurrentThread() {
+#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+  #warning "TODO: port RunLoop::IsRunningOnCurrentThread"
+#endif
   Delegate* delegate = tls_delegate.Get().Get();
   return delegate && !delegate->active_run_loops_.empty();
 }
@@ -269,6 +279,9 @@ void RunLoop::QuitCurrentDeprecated() {
 
 // static
 void RunLoop::QuitCurrentWhenIdleDeprecated() {
+#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+  #warning "TODO: port RunLoop::QuitCurrentWhenIdleDeprecated"
+#endif
   DCHECK(IsRunningOnCurrentThread());
   Delegate* delegate = tls_delegate.Get().Get();
   DCHECK(delegate->active_run_loops_.top()->allow_quit_current_deprecated_)
@@ -287,7 +300,15 @@ Closure RunLoop::QuitCurrentWhenIdleClosureDeprecated() {
   return Bind(&RunLoop::QuitCurrentWhenIdleDeprecated);
 }
 
-#if DCHECK_IS_ON()
+#if !DCHECK_IS_ON() || (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+// Defined out of line so that the compiler doesn't inline these and realize
+// the scope has no effect and then throws an "unused variable" warning in
+// non-dcheck builds.
+RunLoop::ScopedDisallowRunningForTesting::ScopedDisallowRunningForTesting() =
+    default;
+RunLoop::ScopedDisallowRunningForTesting::~ScopedDisallowRunningForTesting() =
+    default;
+#elif DCHECK_IS_ON()
 RunLoop::ScopedDisallowRunningForTesting::ScopedDisallowRunningForTesting()
     : current_delegate_(tls_delegate.Get().Get()),
       previous_run_allowance_(
@@ -302,20 +323,12 @@ RunLoop::ScopedDisallowRunningForTesting::~ScopedDisallowRunningForTesting() {
   if (current_delegate_)
     current_delegate_->allow_running_for_testing_ = previous_run_allowance_;
 }
-#else   // DCHECK_IS_ON()
-// Defined out of line so that the compiler doesn't inline these and realize
-// the scope has no effect and then throws an "unused variable" warning in
-// non-dcheck builds.
-RunLoop::ScopedDisallowRunningForTesting::ScopedDisallowRunningForTesting() =
-    default;
-RunLoop::ScopedDisallowRunningForTesting::~ScopedDisallowRunningForTesting() =
-    default;
 #endif  // DCHECK_IS_ON()
 
 bool RunLoop::BeforeRun() {
   DCHECK_CALLED_ON_VALID_SEQUENCE(sequence_checker_);
 
-#if DCHECK_IS_ON()
+#if DCHECK_IS_ON() && !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   DCHECK(delegate_->allow_running_for_testing_)
       << "RunLoop::Run() isn't allowed in the scope of a "
          "ScopedDisallowRunningForTesting. Hint: if mixing "

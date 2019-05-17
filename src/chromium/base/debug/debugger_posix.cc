@@ -56,6 +56,10 @@
 #include "base/third_party/symbolize/symbolize.h"
 #endif
 
+#if defined(OS_EMSCRIPTEN)
+#include <emscripten.h>
+#endif
+
 namespace base {
 namespace debug {
 
@@ -179,6 +183,11 @@ bool BeingDebugged() {
 
 void VerifyDebugger() {
 #if BUILDFLAG(ENABLE_GDBINIT_WARNING)
+
+#if defined(OS_EMSCRIPTEN)
+#error "EMSCRIPTEN can`t support ENABLE_GDBINIT_WARNING"
+#endif
+
   // Quick check before potentially slower GetDebuggerProcess().
   if (Environment::Create()->HasVar("CHROMIUM_GDBINIT_SOURCED"))
     return;
@@ -245,7 +254,9 @@ void VerifyDebugger() {}
 // Mac: Always send SIGTRAP.
 
 #if defined(OS_EMSCRIPTEN)
-  // skip
+// see https://github.com/google/xrtl/blob/master/xrtl/base/debugging.h#L78
+// to popup the browser debugger
+#define DEBUG_BREAK_ASM() EM_ASM({ debugger; });
 #elif defined(ARCH_CPU_ARMEL)
 #define DEBUG_BREAK_ASM() asm("bkpt 0")
 #elif defined(ARCH_CPU_ARM64)

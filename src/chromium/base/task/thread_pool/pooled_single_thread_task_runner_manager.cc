@@ -67,7 +67,11 @@ class AtomicThreadRefChecker {
   }
 
   bool IsCurrentThreadSameAsSetThread() {
+#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+    return true;
+#else
     return is_set_.IsSet() && thread_ref_ == PlatformThread::CurrentRef();
+#endif
   }
 
  private:

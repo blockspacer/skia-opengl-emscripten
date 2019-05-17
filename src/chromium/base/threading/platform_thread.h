@@ -101,7 +101,11 @@ class PlatformThreadHandle {
   Handle handle_;
 };
 
+#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+const PlatformThreadId kInvalidThreadId(-999); // 0 = main thread
+#else
 const PlatformThreadId kInvalidThreadId(0);
+#endif
 
 // Valid values for priority of Thread::Options and SimpleThread::Options, and
 // SetCurrentThreadPriority(), listed in increasing order of importance.

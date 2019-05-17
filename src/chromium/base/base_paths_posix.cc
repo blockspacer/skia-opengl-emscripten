@@ -37,7 +37,11 @@ bool PathProviderPosix(int key, FilePath* result) {
   switch (key) {
     case FILE_EXE:
     case FILE_MODULE: {  // TODO(evanm): is this correct?
-#if defined(OS_LINUX)
+#if defined(OS_EMSCRIPTEN)
+      //*result = FilePath("/usr/local/chrome/chrome");
+      *result = FilePath("/"); // TODO
+      return true;
+#elif defined(OS_LINUX)
       FilePath bin_dir;
       if (!ReadSymbolicLink(FilePath(kProcSelfExe), &bin_dir)) {
         NOTREACHED() << "Unable to resolve " << kProcSelfExe << ".";

@@ -15,6 +15,10 @@
 #include "base/time/time.h"
 #include "build/build_config.h"
 
+#if defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS)
+#include <emscripten/emscripten.h>
+#endif
+
 namespace base {
 
 ConditionVariable::ConditionVariable(Lock* user_lock)
@@ -30,7 +34,9 @@ ConditionVariable::ConditionVariable(Lock* user_lock)
   // non-standard pthread_cond_timedwait_monotonic_np. Newer platform
   // versions have pthread_condattr_setclock.
   // Mac can use relative time deadlines.
-#if !defined(OS_MACOSX) && !defined(OS_NACL) && \
+#if defined(DISABLE_PTHREADS)
+  // no threading
+#elif !defined(OS_MACOSX) && !defined(OS_NACL) && \
       !(defined(OS_ANDROID) && defined(HAVE_PTHREAD_COND_TIMEDWAIT_MONOTONIC))
   pthread_condattr_t attrs;
   rv = pthread_condattr_init(&attrs);
@@ -59,8 +65,12 @@ ConditionVariable::~ConditionVariable() {
   }
 #endif
 
+#if defined(DISABLE_PTHREADS)
+  // no threading
+#else
   int rv = pthread_cond_destroy(&condition_);
   DCHECK_EQ(0, rv);
+#endif // DISABLE_PTHREADS
 }
 
 void ConditionVariable::Wait() {
@@ -72,8 +82,26 @@ void ConditionVariable::Wait() {
 #if DCHECK_IS_ON()
   user_lock_->CheckHeldAndUnmark();
 #endif
+
+#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS)) && !defined(HAS_ASYNC)
+  // todo
+#elif defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS) && defined(HAS_ASYNC)
+  // can`t wait infinitely on main (single) thread
+  const TimeDelta max_wait = TimeDelta::FromMinutes(1);
+  const bool finite_time = !max_wait.is_max();
+  if (finite_time) {
+    // requires emscripten.h
+    HTML5_ASYNC_SLEEP(max_wait.InMilliseconds());
+  } else {
+    P_LOG("WARNING: ConditionVariable::TimedWait infinite SLEEP\n");
+  }
+#elif defined(DISABLE_PTHREADS)
+  // no threading
+#else
   int rv = pthread_cond_wait(&condition_, user_mutex_);
   DCHECK_EQ(0, rv);
+#endif // DISABLE_PTHREADS
+
 #if DCHECK_IS_ON()
   user_lock_->CheckUnheldAndMark();
 #endif
@@ -95,7 +123,25 @@ void ConditionVariable::TimedWait(const TimeDelta& max_time) {
   user_lock_->CheckHeldAndUnmark();
 #endif
 
-#if defined(OS_MACOSX)
+#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS)) && !defined(HAS_ASYNC)
+  // no threading
+  int rv = 0;
+  // todo
+#elif defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS) && defined(HAS_ASYNC)
+  // no threading
+  int rv = 0;
+  Optional<TimeTicks> current_time;
+  const bool finite_time = !max_time.is_max();
+  if (finite_time) {
+    // requires emscripten.h
+    HTML5_ASYNC_SLEEP(max_time.InMilliseconds());
+  } else {
+    P_LOG("WARNING: ConditionVariable::TimedWait infinite SLEEP\n");
+  }
+#elif defined(DISABLE_PTHREADS)
+  // no threading
+  int rv = 0;
+#elif defined(OS_MACOSX)
   int rv = pthread_cond_timedwait_relative_np(
       &condition_, user_mutex_, &relative_time);
 #else
@@ -137,13 +183,21 @@ void ConditionVariable::TimedWait(const TimeDelta& max_time) {
 }
 
 void ConditionVariable::Broadcast() {
+#if defined(DISABLE_PTHREADS)
+  // no threading
+#else
   int rv = pthread_cond_broadcast(&condition_);
   DCHECK_EQ(0, rv);
+#endif // DISABLE_PTHREADS
 }
 
 void ConditionVariable::Signal() {
+#if defined(DISABLE_PTHREADS)
+  // no threading
+#else
   int rv = pthread_cond_signal(&condition_);
   DCHECK_EQ(0, rv);
+#endif // DISABLE_PTHREADS
 }
 
 }  // namespace base

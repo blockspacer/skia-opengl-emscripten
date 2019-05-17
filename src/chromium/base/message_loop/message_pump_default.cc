@@ -31,7 +31,17 @@ MessagePumpDefault::~MessagePumpDefault() = default;
 void MessagePumpDefault::Run(Delegate* delegate) {
   AutoReset<bool> auto_reset_keep_running(&keep_running_, true);
 
+#if defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS) && defined(HAVE_ASYNC)
   for (;;) {
+#elif defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS) && !defined(HAVE_ASYNC)
+  #warning "TODO: port MessagePumpDefault"
+  /// \TODO endless loop may hang browser!
+  for (int i = 0; i < 1; i++) {
+#elif defined(DISABLE_PTHREADS)
+  #error "TODO: port MessagePumpDefault"
+#else
+  for (;;) {
+#endif
 #if defined(OS_MACOSX)
     mac::ScopedNSAutoreleasePool autorelease_pool;
 #endif

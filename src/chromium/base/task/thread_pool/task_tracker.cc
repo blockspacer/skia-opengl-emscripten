@@ -26,6 +26,10 @@
 #include "base/trace_event/trace_event.h"
 #include "base/values.h"
 
+#if defined(OS_EMSCRIPTEN)
+#include "emscripten/emscripten.h"
+#endif
+
 namespace base {
 namespace internal {
 
@@ -344,6 +348,11 @@ void TaskTracker::CompleteShutdown() {
 }
 
 void TaskTracker::FlushForTesting() {
+#if defined(OS_EMSCRIPTEN)
+  printf("can`t FlushForTesting on wasm platform!");
+  HTML5_STACKTRACE();
+#endif
+
   CheckedAutoLock auto_lock(flush_lock_);
   while (subtle::Acquire_Load(&num_incomplete_undelayed_tasks_) != 0 &&
          !IsShutdownComplete()) {

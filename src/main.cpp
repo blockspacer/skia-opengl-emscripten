@@ -822,11 +822,35 @@ static int InitGL() {
     return 0;
   }
 
+  char errbuf[4096];
+  GLint status;
+  GLsizei len;
+
   GL_CHECK( glAttachShader(programObject, vertexShader) );
   GL_CHECK( glAttachShader(programObject, fragmentShader) );
+
   GL_CHECK( glBindAttribLocation(programObject, 0, "vPosition") );
   GL_CHECK( glBindAttribLocation(programObject, 1, "vUV") );
+
   GL_CHECK( glLinkProgram(programObject) );
+  GL_CHECK( glGetProgramInfoLog(programObject, sizeof(errbuf), &len, errbuf) );
+  GL_CHECK( glGetProgramiv(programObject, GL_LINK_STATUS, &status) );
+  if (status != GL_TRUE) {
+      printf("failed to link program %s: %s\n", vShaderStr, errbuf);
+  }
+  else if (len > 16) {
+      printf("link log for program %s: %s\n", vShaderStr, errbuf);
+  }
+
+/// \todo unused
+/// \see https://github.com/lolengine/lol/blob/master/src/gpu/shader.cpp
+#if __EMSCRIPTEN__ // WebGL doesn't support GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, so chose a default size value.
+    GLint max_len = 256;
+#else
+    GLint max_len;
+    GL_CHECK( glGetProgramiv(programObject, GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, &max_len) );
+#endif
+
   uniformTex = glGetUniformLocation(programObject, "u_tex");
   uniformRedClrTint = glGetUniformLocation(programObject, "clrRedTint");
   GL_CHECK( glGetProgramiv(programObject, GL_LINK_STATUS, &linked) );
@@ -1070,6 +1094,7 @@ public:
 };
 
 // TODO https://kapadia.github.io/emscripten/2013/09/13/emscripten-pointers-and-pointers.html
+// TODO https://github.com/bakerstu/openmrn/blob/5f6bb8934fe13b2897d5f52ec6b358bd87dd886a/src/utils/FileUtils.cxx#L44
 static int read_file(const char* fPath, char*& fileString, long int& fsize)
 {
     FILE* f = fopen(fPath, "rb");
@@ -1112,6 +1137,23 @@ static void SomeHardcoreAsyncTask(
 }
 
 int main(int argc, char** argv) {
+#if defined(FORCE_WASM_FS)
+  printf("Init emscripten FS ...\n");
+  EM_ASM(
+      try {
+          // emscripten cannot mount all of / in the vfs,
+          // we can only mount subdirectories...
+          FS.mount(NODEFS, { root: '/home' }, '/home');
+          FS.mkdir('/root');
+          FS.mount(NODEFS, { root: '/root' }, '/root');
+
+          FS.chdir(process.cwd());
+      } catch (e) {
+          console.log(e);
+      });
+#endif
+
+
   printf("Init alloc ...\n");
   // see
   // https://cs.chromium.org/chromium/src/third_party/blink/renderer/controller/blink_initializer.cc?sq=package:chromium&dr=C&g=0&l=88
@@ -1182,12 +1224,11 @@ int main(int argc, char** argv) {
 
     auto AsyncTaskCb = [](const int x) {
       //printf("AsyncTaskCb %d\n", x);
-      std::cout << "AsyncTaskCb " << x << " " << base::Time::Now() << std::endl;
+      std::cout << "AsyncTaskCb " << x << " " << base::Time::Now() << "\n";
     };
 
     //printf("thread testing PostDelayedTask...\n");
-
-    std::cout << "thread testing PostDelayedTask..." << base::Time::Now() << std::endl;
+    std::cout << "thread testing PostTask 0..." << base::Time::Now() << "\n";
 
     // see https://habr.com/ru/post/256907/
     thread.task_runner()->PostDelayedTask(
@@ -1195,16 +1236,37 @@ int main(int argc, char** argv) {
       base::Bind(&SomeHardcoreAsyncTask,
                  &event,
                  base::Bind(AsyncTaskCb)),
-      base::TimeDelta::FromSeconds(3));
+      base::TimeDelta::FromSeconds(5));
 
-    //printf("thread testing Wait...\n");
-    std::cout << "thread testing Wait..." << base::Time::Now() << std::endl;
+    // std::cout << "thread testing PostTask 1..." << base::Time::Now() << "\n";
+
+    thread.task_runner()->PostTask(
+      FROM_HERE,
+      base::BindOnce(
+          [](base::RepeatingCallback<void()> cb) {
+            printf("BindOncePostTask 1\n");
+            cb.Run();
+          },
+          base::BindRepeating([]() {
+            printf("BindOncePostTask 2\n");
+          })));
+
+    //std::cout << "thread testing PostTask 2..." << base::Time::Now() << "\n";
+
+    //thread.task_runner()->PostTask(
+    //  FROM_HERE,
+    //  base::Bind(&SomeHardcoreAsyncTask,
+    //             &event2,
+    //             base::Bind(AsyncTaskCb)));
+    //
+    ////printf("thread testing Wait...\n");
+    std::cout << "thread testing start Wait..." << base::Time::Now() << "\n";
 
     event.Wait();
 
     thread.Stop();
 
-    std::cout << "thread testing ended..." << base::Time::Now() << std::endl;
+    std::cout << "thread testing ended..." << base::Time::Now() << "\n";
     //printf("thread testing ended\n");
   }
 #endif // ENABLE_THREAD_TESTS

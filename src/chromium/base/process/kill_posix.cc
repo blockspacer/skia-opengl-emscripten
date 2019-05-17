@@ -104,6 +104,10 @@ TerminationStatus GetKnownDeadTerminationStatus(ProcessHandle handle,
 bool WaitForProcessesToExit(const FilePath::StringType& executable_name,
                             TimeDelta wait,
                             const ProcessFilter* filter) {
+#if defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS)
+#warning "todo: port WaitForProcessesToExit on wasm platform"
+#endif
+
   bool result = false;
 
   // TODO(port): This is inefficient, but works if there are multiple procs.
@@ -142,6 +146,10 @@ class BackgroundReaper : public PlatformThread::Delegate {
       : child_process_(std::move(child_process)), wait_time_(wait_time) {}
 
   void ThreadMain() override {
+#if defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS)
+  #warning "TODO: port BackgroundReaper thread"
+  P_LOG("TODO: port BackgroundReaper thread\n");
+#endif
     if (!wait_time_.is_zero()) {
       child_process_.WaitForExitWithTimeout(wait_time_, nullptr);
       kill(child_process_.Handle(), SIGKILL);
