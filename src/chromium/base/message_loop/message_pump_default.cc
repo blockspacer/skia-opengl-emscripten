@@ -36,7 +36,7 @@ void MessagePumpDefault::Run(Delegate* delegate) {
 #elif defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS) && !defined(HAVE_ASYNC)
   #warning "TODO: port MessagePumpDefault"
   /// \TODO endless loop may hang browser!
-  for (int i = 0; i < 1; i++) {
+  for (int i = 0; i < 2; i++) {
 #elif defined(DISABLE_PTHREADS)
   #error "TODO: port MessagePumpDefault"
 #else
