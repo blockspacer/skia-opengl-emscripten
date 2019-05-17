@@ -118,6 +118,9 @@ if(EMSCRIPTEN)
 
   #set(EMCC_COMMON "${EMCC_COMMON} -s SIDE_MODULE=1")
 
+set(HAS_EMTERPRETIFY FALSE)
+set(HAS_ASYNCIFY FALSE)
+
 #set(ENABLE_WASM_PTHREADS TRUE)
 set(ENABLE_WASM_PTHREADS FALSE)
 if (ENABLE_WASM_PTHREADS)
@@ -276,8 +279,9 @@ endif(ENABLE_WASM_PTHREADS)
 
 if (HAS_ASYNCIFY OR HAS_EMTERPRETIFY)
   #custom defines
+  message(FATAL_ERROR "TODO: SUPPORT HAS_ASYNC")
   set(EMCC_COMMON "${EMCC_COMMON} -DHAS_ASYNC=1")
-endif(HAS_ASYNCIFY OR EMTERPRETIFY)
+endif(HAS_ASYNCIFY OR HAS_EMTERPRETIFY)
 
   set(EMCC_COMMON "${EMCC_COMMON} -s USE_ZLIB=1")
   #set(EMCC_COMMON "${EMCC_COMMON} -s USE_HARFBUZZ=1") # < TODO
@@ -348,7 +352,7 @@ if (ENABLE_WEBGL2 OR ENABLE_WEBGL1)
     #
     #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s GL_UNSAFE_OPTS=0")
   endif(ENABLE_WEBGL_DEBUG_CHECKS)
-endif(ENABLE_WEBGL2)
+endif(ENABLE_WEBGL2 OR ENABLE_WEBGL1)
 
   # see https://github.com/emscripten-core/emscripten/blob/master/src/settings.js#L456
   # DISABLE_EXCEPTION_CATCHING = 0 - generate code to actually catch exceptions
@@ -433,10 +437,12 @@ endif(ENABLE_WEBGL2)
   # EMTERPRETIFY is not compatible with source maps
   # (maps are not useful in emterpreted code,
   # and splitting out non-emterpreted source maps is not yet implemented)
-if (!HAS_EMTERPRETIFY)
+if (HAS_EMTERPRETIFY)
+  message(FATAL_ERROR "TODO: REMOVE DEBUG FLAGS IN PROD MODE")
+else()
   # see http://webassemblycode.com/using-browsers-debug-webassembly/
   set(EMCC_COMMON "${EMCC_COMMON} -g4 --source-map-base http://localhost:9090/")
-endif(!HAS_EMTERPRETIFY)
+endif(HAS_EMTERPRETIFY)
 
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${EMCC_COMMON}")
 
@@ -444,7 +450,8 @@ endif(!HAS_EMTERPRETIFY)
 
   # https://emscripten.org/docs/tools_reference/emcc.html#emcc-oz
   #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Oz")
-  # NOTE: compile with -O1 to see crash message/assert
+  # NOTE: compile with -O1 or -O0 to see crash message/assert
+  #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O1")
   #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2")
   # With --use-preload-plugins, files can be automatically decoded based on their extension.
@@ -541,6 +548,7 @@ else()
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DSK_ASSUME_GL=1")
 
   ### Find Libraries
+  set(USE_OPENGL_LIB FALSE)
   find_package(OpenGL REQUIRED)
   if(OPENGL_FOUND)
     message("OPENGL_LIBRARIES = ${OPENGL_LIBRARIES} ")
@@ -548,6 +556,7 @@ else()
     set(USE_OPENGL_LIB TRUE)
   endif()
 
+  #set(USE_OPENGLES2_LIB FALSE)
   #find_package(OpenGLES2 REQUIRED)
   #if(OPENGLES2_FOUND)
   #  message("OPENGLES2_LIBRARIES = ${OPENGLES2_LIBRARIES} ")
@@ -580,6 +589,7 @@ else()
     add_definitions(-DUSE_SDL2_ttf_LIB)
   endif ()
 
+  set(USE_GLEW_LIB FALSE)
   find_package(GLEW REQUIRED) # First try to find using the find_package method (works with vcpkg)
   if(GLEW_FOUND) # Works with some other methods
     message(STATUS "GLEW_INCLUDE_PATH=${GLEW_INCLUDE_PATH}")
