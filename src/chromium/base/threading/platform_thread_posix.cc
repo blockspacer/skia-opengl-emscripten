@@ -85,8 +85,7 @@ void* ThreadFunc(void* params) {
 
   delegate->ThreadMain();
 
-#if defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS)
-  // reached function end immediately cause of async behavior
+#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
 #else
   ThreadIdNameManager::GetInstance()->RemoveName(
       PlatformThread::CurrentHandle().platform_handle(),
@@ -94,6 +93,7 @@ void* ThreadFunc(void* params) {
 
   base::TerminateOnThread();
 #endif
+
   return nullptr;
 }
 
@@ -113,38 +113,7 @@ bool CreateThread(size_t stack_size,
 
   printf("CreateThread 2\n");
 
-  {
-    PlatformThread::Delegate* delegate = nullptr;
-    printf("void* ThreadFunc(void* params) 1\n");
-
-    {
-      std::unique_ptr<ThreadParams> thread_params(
-          static_cast<ThreadParams*>(params.get()));
-
-      delegate = thread_params->delegate;
-      if (!thread_params->joinable)
-        base::ThreadRestrictions::SetSingletonAllowed(false);
-
-  #if !defined(OS_NACL) && !defined(OS_EMSCRIPTEN)
-      // Threads on linux/android may inherit their priority from the thread
-      // where they were created. This explicitly sets the priority of all new
-      // threads.
-      PlatformThread::SetCurrentThreadPriority(thread_params->priority);
-  #endif
-    }
-
-    ThreadIdNameManager::GetInstance()->RegisterThread(
-        PlatformThread::CurrentHandle().platform_handle(),
-        PlatformThread::CurrentId());
-
-    delegate->ThreadMain();
-
-    ThreadIdNameManager::GetInstance()->RemoveName(
-        PlatformThread::CurrentHandle().platform_handle(),
-        PlatformThread::CurrentId());
-
-    base::TerminateOnThread();
-  }
+  ThreadFunc(params.get());
 
   return true; // TODO
 #else
