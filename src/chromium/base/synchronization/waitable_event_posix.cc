@@ -328,7 +328,7 @@ P_LOG("TODO: WaitableEvent::WaitMany\n");
 #if defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS)
   #warning "TODO: port WaitableEvent::WaitMany"
   /// \TODO endless loop may hang browser!
-  for (int i = 0; i < 999999; i++) {
+  for (int i = 0; i < 2; i++) {
 #else
   for (;;) {
 #endif
@@ -452,7 +452,7 @@ bool WaitableEvent::SignalOne() {
 #if defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS)
   #warning "TODO: port WaitableEvent::SignalOne"
   /// \TODO endless loop may hang browser!
-  for (int i = 0; i < 999999; i++) {
+  for (int i = 0; i < 2; i++) {
 #else
   for (;;) {
 #endif
