@@ -1216,6 +1216,7 @@ int main(int argc, char** argv) {
     base::Thread thread("testing");
 
     thread.Start();
+    //DCHECK(thread.task_runner());
     //thread.task_runner()->PostTask(FROM_HERE, base::BindOnce(&MakeClosure, &closure));
     //thread.Stop();
 
@@ -1231,6 +1232,7 @@ int main(int argc, char** argv) {
     std::cout << "thread testing PostTask 0..." << base::Time::Now() << "\n";
 
     // see https://habr.com/ru/post/256907/
+    DCHECK(thread.task_runner());
     thread.task_runner()->PostDelayedTask(
       FROM_HERE,
       base::Bind(&SomeHardcoreAsyncTask,
@@ -1240,6 +1242,7 @@ int main(int argc, char** argv) {
 
     // std::cout << "thread testing PostTask 1..." << base::Time::Now() << "\n";
 
+    DCHECK(thread.task_runner());
     thread.task_runner()->PostTask(
       FROM_HERE,
       base::BindOnce(
@@ -1253,6 +1256,7 @@ int main(int argc, char** argv) {
 
     //std::cout << "thread testing PostTask 2..." << base::Time::Now() << "\n";
 
+    //DCHECK(thread.task_runner());
     //thread.task_runner()->PostTask(
     //  FROM_HERE,
     //  base::Bind(&SomeHardcoreAsyncTask,
