@@ -15,6 +15,10 @@
 #include "base/logging.h"
 #include "base/macros.h"
 
+#if defined(OS_EMSCRIPTEN)
+#include <emscripten/emscripten.h>
+#endif
+
 template <class T>
 class scoped_refptr;
 
@@ -217,6 +221,9 @@ class scoped_refptr {
   }
 
   T* operator->() const {
+#if defined(__EMSCRIPTEN__)
+    HTML5_STACKTRACE_IF(!ptr_);
+#endif
     DCHECK(ptr_);
     return ptr_;
   }
