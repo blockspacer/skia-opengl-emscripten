@@ -10,7 +10,7 @@
 #include "base/threading/platform_thread.h"
 
 #if defined(OS_EMSCRIPTEN)
-#include "emscripten/emscripten.h"
+#include <emscripten/emscripten.h>
 #endif
 
 namespace base {
