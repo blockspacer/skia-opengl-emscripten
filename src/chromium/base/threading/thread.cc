@@ -257,7 +257,7 @@ void Thread::SetThreadWasQuitProperly(bool flag) {
 // static
 bool Thread::GetThreadWasQuitProperly() {
   bool quit_properly = true;
-#if DCHECK_IS_ON()
+#if DCHECK_IS_ON() && !defined(DISABLE_PTHREADS)
   quit_properly = lazy_tls_bool.Pointer()->Get();
 #endif
   return quit_properly;
@@ -318,8 +318,7 @@ void Thread::ThreadMain() {
   run_loop_ = &run_loop;
   Run(run_loop_);
 
-#if defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS)
-  // TODO: delegate_->Run is async, so we reached function end immediately
+#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
 #else
   {
     AutoLock lock(running_lock_);
