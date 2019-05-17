@@ -37,6 +37,11 @@ DeferredSequencedTaskRunner::DeferredSequencedTaskRunner()
 bool DeferredSequencedTaskRunner::PostDelayedTask(const Location& from_here,
                                                   OnceClosure task,
                                                   TimeDelta delay) {
+#if defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS)
+  std::move(task).Run();
+  // Returns true if the task may be run
+  return false;
+#else
   AutoLock lock(lock_);
   if (started_) {
     DCHECK(deferred_tasks_queue_.empty());
@@ -47,6 +52,7 @@ bool DeferredSequencedTaskRunner::PostDelayedTask(const Location& from_here,
   QueueDeferredTask(from_here, std::move(task), delay,
                     false /* is_non_nestable */);
   return true;
+#endif
 }
 
 bool DeferredSequencedTaskRunner::RunsTasksInCurrentSequence() const {

@@ -70,8 +70,14 @@ TaskQueueImpl::TaskRunner::~TaskRunner() {}
 bool TaskQueueImpl::TaskRunner::PostDelayedTask(const Location& location,
                                                 OnceClosure callback,
                                                 TimeDelta delay) {
+#if defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS)
+  std::move(callback).Run();
+  // Returns true if the task may be run
+  return false;
+#else
   return task_poster_->PostTask(PostedTask(std::move(callback), location, delay,
                                            Nestable::kNestable, task_type_));
+#endif
 }
 
 bool TaskQueueImpl::TaskRunner::PostNonNestableDelayedTask(

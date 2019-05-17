@@ -21,6 +21,11 @@ PooledParallelTaskRunner::~PooledParallelTaskRunner() = default;
 bool PooledParallelTaskRunner::PostDelayedTask(const Location& from_here,
                                                OnceClosure closure,
                                                TimeDelta delay) {
+#if defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS)
+  std::move(closure).Run();
+  // Returns true if the task may be run
+  return false;
+#else
   if (!PooledTaskRunnerDelegate::Exists())
     return false;
 
@@ -35,6 +40,7 @@ bool PooledParallelTaskRunner::PostDelayedTask(const Location& from_here,
 
   return pooled_task_runner_delegate_->PostTaskWithSequence(
       Task(from_here, std::move(closure), delay), std::move(sequence));
+#endif
 }
 
 bool PooledParallelTaskRunner::RunsTasksInCurrentSequence() const {

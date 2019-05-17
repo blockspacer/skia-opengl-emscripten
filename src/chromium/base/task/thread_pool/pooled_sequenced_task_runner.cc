@@ -23,6 +23,11 @@ PooledSequencedTaskRunner::~PooledSequencedTaskRunner() = default;
 bool PooledSequencedTaskRunner::PostDelayedTask(const Location& from_here,
                                                 OnceClosure closure,
                                                 TimeDelta delay) {
+#if defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS)
+  std::move(closure).Run();
+  // Returns true if the task may be run
+  return false;
+#else
   if (!PooledTaskRunnerDelegate::Exists())
     return false;
 
@@ -31,6 +36,7 @@ bool PooledSequencedTaskRunner::PostDelayedTask(const Location& from_here,
   // Post the task as part of |sequence_|.
   return pooled_task_runner_delegate_->PostTaskWithSequence(std::move(task),
                                                             sequence_);
+#endif
 }
 
 bool PooledSequencedTaskRunner::PostNonNestableDelayedTask(

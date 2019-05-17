@@ -369,6 +369,11 @@ class PooledSingleThreadTaskRunnerManager::PooledSingleThreadTaskRunner
   bool PostDelayedTask(const Location& from_here,
                        OnceClosure closure,
                        TimeDelta delay) override {
+#if defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS)
+    std::move(closure).Run();
+    // Returns true if the task may be run
+    return false;
+#else
     if (!g_manager_is_alive)
       return false;
 
@@ -391,6 +396,7 @@ class PooledSingleThreadTaskRunnerManager::PooledSingleThreadTaskRunner
           this);
     }
     return true;
+#endif
   }
 
   bool PostNonNestableDelayedTask(const Location& from_here,
