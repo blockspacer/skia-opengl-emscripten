@@ -162,23 +162,6 @@ bool WaitableEvent::TimedWait(const TimeDelta& wait_delta) {
   return TimedWaitUntil(TimeTicks::Now() + wait_delta);
 }
 
-/*#if defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS)
-
-#ifdef __EMSCRIPTEN__
-extern "C" {
-   EMSCRIPTEN_KEEPALIVE
-#endif
-static void loopWrap(WaitableEvent*) {
-  for (;;) {
-    HTML5_ASYNC_SLEEP(100);
-  }
-}
-#ifdef __EMSCRIPTEN__
-} // extern "C"
-#endif // __EMSCRIPTEN__
-
-#endif // defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS)*/
-
 bool WaitableEvent::TimedWaitUntil(const TimeTicks& end_time) {
   // Record the event that this thread is blocking upon (for hang diagnosis) and
   // consider it blocked for scheduling purposes. Ignore this for non-blocking
