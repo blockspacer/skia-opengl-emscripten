@@ -86,11 +86,15 @@ void* ThreadFunc(void* params) {
 
   delegate->ThreadMain();
 
+#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+#else
+
   ThreadIdNameManager::GetInstance()->RemoveName(
       PlatformThread::CurrentHandle().platform_handle(),
       PlatformThread::CurrentId());
 
   base::TerminateOnThread();
+#endif
   return nullptr;
 }
 
@@ -138,11 +142,11 @@ bool CreateThread(size_t stack_size,
 
     delegate->ThreadMain();
 
-    ThreadIdNameManager::GetInstance()->RemoveName(
-        PlatformThread::CurrentHandle().platform_handle(),
-        PlatformThread::CurrentId());
-
-    base::TerminateOnThread();
+    //ThreadIdNameManager::GetInstance()->RemoveName(
+    //    PlatformThread::CurrentHandle().platform_handle(),
+    //    PlatformThread::CurrentId());
+    //
+    //base::TerminateOnThread();
   }
 
   return true; // TODO

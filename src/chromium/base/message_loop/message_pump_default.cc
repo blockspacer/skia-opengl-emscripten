@@ -129,6 +129,7 @@ void MessagePumpDefault::loopCore(Delegate* delegate) {
 
   // TODO: try emscripten_sleep on wasm without pthread support (-s ASYNCIFY)
   #if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+  #else
     if (next_work_info.delayed_run_time.is_max()) {
       event_.Wait();
     } else {

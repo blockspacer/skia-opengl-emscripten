@@ -307,7 +307,7 @@ endif(ENABLE_WEBGL2)
   #                        // to emit fully proper demangled c++ names
   # see https://emscripten.org/docs/api_reference/emscripten.h.html?highlight=demangle#c.EM_LOG_DEMANGLE
   # see https://github.com/emscripten-core/emscripten/blob/incoming/src/settings.js#L288
-  set(EMCC_COMMON "${EMCC_COMMON} -s DEMANGLE_SUPPORT=1")
+  #set(EMCC_COMMON "${EMCC_COMMON} -s DEMANGLE_SUPPORT=1")
 
   # rtti required by skia
   set(EMCC_COMMON "${EMCC_COMMON} -frtti")
@@ -364,15 +364,15 @@ endif(ENABLE_WEBGL2)
   # that calls to function pointer addresses in the wrong table result
   # in clear errors. Without this setting such calls just execute
   # whatever function is at the address, which can be much harder to debug.
-  set(EMCC_COMMON "${EMCC_COMMON} -s ALIASING_FUNCTION_POINTERS=0")
+  #set(EMCC_COMMON "${EMCC_COMMON} -s ALIASING_FUNCTION_POINTERS=0")
 
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${EMCC_COMMON}")
 
   # TODO EMCC_LINKER_FLAGS
 
   # https://emscripten.org/docs/tools_reference/emcc.html#emcc-oz
-  #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Oz")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O1")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Oz")
+  #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O1")
   #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2")
   # With --use-preload-plugins, files can be automatically decoded based on their extension.
   # see https://emscripten.org/docs/porting/files/packaging_files.html
@@ -443,7 +443,7 @@ endif(ENABLE_WEBGL2)
   # aligned.  This is useful to find places in your code where you might refactor
   # to ensure proper alignment.
   # see https://github.com/emscripten-core/emscripten/blob/incoming/src/settings.js#L161
-  # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s WARN_UNALIGNED=1")
+  #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s WARN_UNALIGNED=1")
 
   #
   # offscreen canvas

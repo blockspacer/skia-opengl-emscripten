@@ -1199,7 +1199,7 @@ int main(int argc, char** argv) {
       base::WaitableEvent::InitialState::NOT_SIGNALED);
 
     auto AsyncTaskCb = [](const int x) {
-      printf("AsyncTaskCb %d\n", x);
+      //printf("AsyncTaskCb %d\n", x);
       std::cout << "AsyncTaskCb " << x << " " << base::Time::Now() << std::endl;
     };
 

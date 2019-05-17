@@ -23,8 +23,11 @@ namespace base {
 namespace internal {
 
 enum class TaskSourceExecutionMode {
+//#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+//#else
   kParallel,
   kSequenced,
+//#endif
   kSingleThread,
   kMax = kSingleThread,
 };

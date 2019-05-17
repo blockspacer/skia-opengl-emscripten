@@ -78,7 +78,7 @@ void DelayedTaskManager::AddDelayedTask(
   DCHECK(task.task);
   DCHECK(!task.delayed_run_time.is_null());
 
-printf("AddDelayedTask 1");
+//printf("AddDelayedTask 1");
 
   // Use CHECK instead of DCHECK to crash earlier. See http://crbug.com/711167
   // for details.

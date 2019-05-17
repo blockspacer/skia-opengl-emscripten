@@ -37,7 +37,7 @@ DeferredSequencedTaskRunner::DeferredSequencedTaskRunner()
 bool DeferredSequencedTaskRunner::PostDelayedTask(const Location& from_here,
                                                   OnceClosure task,
                                                   TimeDelta delay) {
-printf("DeferredSequencedTaskRunner::PostDelayedTask 1\n");
+//printf("DeferredSequencedTaskRunner::PostDelayedTask 1\n");
   AutoLock lock(lock_);
   if (started_) {
     DCHECK(deferred_tasks_queue_.empty());

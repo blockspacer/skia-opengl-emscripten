@@ -65,6 +65,10 @@ bool SimpleThread::HasBeenStarted() {
 }
 
 void SimpleThread::ThreadMain() {
+#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+  #warning "TODO: port SimpleThread thread"
+  printf(""TODO: port SimpleThread thread"\n");
+#endif
   tid_ = PlatformThread::CurrentId();
   PlatformThread::SetName(name_);
 

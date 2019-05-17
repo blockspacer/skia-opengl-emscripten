@@ -357,7 +357,7 @@ printf("Thread::ThreadMain 7\n");
   // (The message loop is destructed at the end of this block)
   task_environment_.reset();
   run_loop_ = nullptr;
-#endif
+#endif // !defined(__EMSCRIPTEN_PTHREADS__)
 
 }
 

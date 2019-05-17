@@ -146,6 +146,10 @@ class BackgroundReaper : public PlatformThread::Delegate {
       : child_process_(std::move(child_process)), wait_time_(wait_time) {}
 
   void ThreadMain() override {
+#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+  #warning "TODO: port BackgroundReaper thread"
+  printf(""TODO: port BackgroundReaper thread"\n");
+#endif
     if (!wait_time_.is_zero()) {
       child_process_.WaitForExitWithTimeout(wait_time_, nullptr);
       kill(child_process_.Handle(), SIGKILL);

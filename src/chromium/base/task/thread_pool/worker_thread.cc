@@ -184,6 +184,10 @@ void WorkerThread::UpdateThreadPriority(
 }
 
 void WorkerThread::ThreadMain() {
+#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+  #warning "TODO: port WorkerThread thread"
+  printf(""TODO: port WorkerThread thread"\n");
+#endif
   if (priority_hint_ == ThreadPriority::BACKGROUND) {
     switch (delegate_->GetThreadLabel()) {
       case ThreadLabel::POOLED:

@@ -115,6 +115,10 @@ void Watchdog::Alarm() {
 // Internal private methods that the watchdog thread uses.
 
 void Watchdog::ThreadDelegate::ThreadMain() {
+#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+  #warning "TODO: port Watchdog thread"
+  printf(""TODO: port Watchdog thread"\n");
+#endif
   SetThreadName();
   TimeDelta remaining_duration;
   StaticData* static_data = GetStaticData();
