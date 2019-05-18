@@ -1762,7 +1762,7 @@ set(modp_b64_SOURCES
 #  ${CMAKE_CURRENT_SOURCE_DIR}/third_party/icu/
 #)
 #
-#set(ICU_INCLUDE_DIRS
+#set(OWN_ICU_INCLUDE_DIRS
 #  ${ICU_FULL_DIR}
 #  #${ICU_FULL_DIR}source/common/unicode
 #  #${ICU_FULL_DIR}source/common
@@ -2160,7 +2160,9 @@ set(ICU_FULL_DIR
   ../../thirdparty/icu_wrapper/third_party/icu/
 )
 
-set(ICU_INCLUDE_DIRS
+message(WARNING "TODO: add icu data file, see stubdata.cpp, ICU_UTIL_DATA_IMPL=ICU_UTIL_DATA_FILE, U_ICUDATAENTRY_IN_COMMON, icu_use_data_file_flag")
+
+set(OWN_ICU_INCLUDE_DIRS
   ${ICU_FULL_DIR}
   ${ICU_FULL_DIR}source/common/unicode
   ${ICU_FULL_DIR}source/common
@@ -2173,6 +2175,7 @@ set(ICU_INCLUDE_DIRS
 # see https://chromium.googlesource.com/chromium/deps/icu/+/refs/heads/master/icu.gypi
 set(ICU_SOURCES
   ## ${ICU_FULL_DIR}cmemory.c
+ ${ICU_FULL_DIR}source/stubdata/stubdata.cpp # if 'OS == "win" or icu_use_data_file_flag==1'
   # I18N_SRC_START
  ${ICU_FULL_DIR}source/i18n/alphaindex.cpp
  ${ICU_FULL_DIR}source/i18n/anytrans.cpp
@@ -2625,6 +2628,9 @@ if(EMSCRIPTEN)
     __asmjs__
     # see build/build_config.h
     #OS_POSIX=1
+    # DYNAMIC_ANNOTATIONS useful when implementing condition variables such as CondVar,
+    # using conditional critical sections (Await/LockWhen) and when constructing
+    # user-defined synchronization mechanisms.
     DYNAMIC_ANNOTATIONS_ENABLED=0
     WTF_USE_DYNAMIC_ANNOTATIONS=0
     # see src/chromium/build/build_config.h
@@ -2886,8 +2892,71 @@ set_property(TARGET dynamic_annotations PROPERTY CXX_STANDARD 17)
 # https://github.com/google/compact_enc_det
 #
 
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/third_party/ced/src)
+#add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/third_party/ced/src)
+set(ced_PATH ${CMAKE_CURRENT_SOURCE_DIR}/third_party/ced/src/)
+if (WIN32)
+  if (NOT EXISTS "${ced_PATH}compact_enc_det/compact_enc_det.h")
+    message(FATAL_ERROR "\nCould not find ced source code.")
+  endif()
+endif()
 
+option(CED_BUILD_SHARED_LIBS "Build shared libraries" OFF)
+
+if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+  set(CED_CMAKE_CXX_FLAGS "${CED_CMAKE_CXX_FLAGS} -std=c++11 -Wno-narrowing")
+elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+  set(CED_CMAKE_CXX_FLAGS "${CED_CMAKE_CXX_FLAGS} -std=c++11 -Wno-c++11-narrowing")
+elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
+  if (NOT BUILD_SHARED_LIBS)
+    foreach(flag_var
+            CED_CMAKE_CXX_FLAGS CED_CMAKE_CXX_FLAGS_DEBUG CED_CMAKE_CXX_FLAGS_RELEASE
+            CED_CMAKE_CXX_FLAGS_MINSIZEREL CED_CMAKE_CXX_FLAGS_RELWITHDEBINFO)
+      if(${flag_var} MATCHES "/MD")
+        string(REGEX REPLACE "/MD" "/MT" ${flag_var} "${${flag_var}}")
+      endif(${flag_var} MATCHES "/MD")
+    endforeach(flag_var)
+  endif()
+else()
+  set(CED_CMAKE_CXX_FLAGS "${CED_CMAKE_CXX_FLAGS} -std=c++11 -Wno-c++11-narrowing")
+endif()
+
+set(CED_LIBRARY_SOURCES
+    ${ced_PATH}compact_enc_det/compact_enc_det.cc
+    ${ced_PATH}compact_enc_det/compact_enc_det_hint_code.cc
+    ${ced_PATH}util/encodings/encodings.cc
+    ${ced_PATH}util/languages/languages.cc
+    )
+
+add_library(ced STATIC ${CED_LIBRARY_SOURCES})
+
+# https://stackoverflow.com/a/28294859/10904212
+string(REPLACE " " ";" CED_REPLACED_FLAGS ${CED_CMAKE_CXX_FLAGS})
+target_compile_options(ced PRIVATE
+  ${CED_REPLACED_FLAGS}
+)
+
+set(EXTRA_TARGET_LINK_LIBRARIES)
+
+if(WIN32)
+  target_compile_definitions(ced PRIVATE
+    UNICODE
+    _UNICODE
+    STRICT
+    NOMINMAX)
+  set(CED_THREADING threadwin)
+else()
+  set(CED_THREADING thread)
+  list(APPEND EXTRA_TARGET_LINK_LIBRARIES -pthread)
+endif()
+
+#set(CED_CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+#set(CED_CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+#set(CED_CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+
+set_property(TARGET ced PROPERTY CXX_STANDARD 11)
+
+target_include_directories(ced PRIVATE
+  ${CMAKE_CURRENT_SOURCE_DIR})
 
 target_include_directories(ced PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}/third_party/ced/src
@@ -2915,7 +2984,10 @@ else()
     icu
   )
   add_dependencies(base
-    ${BASE_LIBRARIES}
+    tcmalloc
+    #atomic # from system, no dep
+    ced
+    icu
   )
 endif(EMSCRIPTEN)
 
@@ -2962,120 +3034,136 @@ target_compile_definitions(base PUBLIC
 )
 
 ### --- icu ---###
-
-add_library(icu STATIC
-  ${ICU_SOURCES}
-)
-
-set_property(TARGET icu PROPERTY CXX_STANDARD 17)
-
-# In your source, include files from base/ like normal.
-# So if you want to use the string printf API, do:
-# #include <base/stringprintf.h>
-target_include_directories(icu PUBLIC
-  ${CMAKE_CURRENT_SOURCE_DIR}
-  ${ICU_INCLUDE_DIRS}
-)
-
-target_include_directories(icu PRIVATE
-  #${BASE_DIR}
-)
-
-# http://userguide.icu-project.org/howtouseicu#TOC-C-With-Your-Own-Build-System
-set(ICU_PUBLIC_DEFINES
-  U_ENABLE_DYLOAD=0
-  ICU_UTIL_DATA_IMPL=ICU_UTIL_DATA_STATIC
-)
-
-set(ICU_PRIVATE_DEFINES
-  HAVE_DLOPEN=0
-  UCONFIG_ONLY_HTML_CONVERSION=1
-  U_CHARSET_IS_UTF8=1
-  # custom
-  HAVE_DLFCN_H=0
-)
-
-if (WIN32)
-  list(APPEND ICU_PUBLIC_DEFINES
-    UCHAR_TYPE=wchar_t
-  )
-elseif(EMSCRIPTEN)
-  list(APPEND ICU_PUBLIC_DEFINES
-    UCHAR_TYPE=uint16_t
-  )
+if(EMSCRIPTEN)
+  set(USE_OWN_ICU TRUE)
+elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+  set(USE_OWN_ICU TRUE)
+  if (NOT USE_OWN_ICU)
+    # todo
+    set(EXTRA_ICU_DEFINITIONS
+      USING_SYSTEM_ICU=1
+      ICU_UTIL_DATA_IMPL=ICU_UTIL_DATA_FILE
+      U_ICUDATAENTRY_IN_COMMON # if 'OS == "win" or icu_use_data_file_flag==1'
+      UCHAR_TYPE=uint16_t
+    )
+  endif(USE_OWN_ICU)
 else()
-  list(APPEND ICU_PUBLIC_DEFINES
-    UCHAR_TYPE=uint16_t
-  )
+  message(FATAL_ERROR "icu platform not supported")
 endif()
 
-# see https://github.com/webrtc-uwp/chromium-build/blob/master/linux/unbundle/icu.gn#L37
-list(APPEND ICU_PUBLIC_DEFINES
-  U_IMPORT=U_EXPORT
-)
+if(USE_OWN_ICU)
+  add_library(icu STATIC
+    ${ICU_SOURCES}
+  )
 
-#    "USING_SYSTEM_ICU=1",
-#    "ICU_UTIL_DATA_IMPL=ICU_UTIL_DATA_STATIC",
-#    "UCHAR_TYPE=uint16_t",
-#
-#    # U_EXPORT (defined in unicode/platform.h) is used to set public visibility
-#    # on classes through the U_COMMON_API and U_I18N_API macros (among others).
-#    # When linking against the system ICU library, we want its symbols to have
-#    # public LTO visibility. This disables CFI checks for the ICU classes and
-#    # allows whole-program optimization to be applied to the rest of Chromium.
-#    #
-#    # Both U_COMMON_API and U_I18N_API macros would be defined to U_EXPORT only
-#    # when U_COMBINED_IMPLEMENTATION is defined (see unicode/utypes.h). Because
-#    # we override the default system UCHAR_TYPE (char16_t), it is not possible
-#    # to use U_COMBINED_IMPLEMENTATION at this moment, meaning the U_COMMON_API
-#    # and U_I18N_API macros are set to U_IMPORT which is an empty definition.
-#    #
-#    # Until building with UCHAR_TYPE=char16_t is supported, one way to apply
-#    # public visibility (and thus public LTO visibility) to all ICU classes is
-#    # to define U_IMPORT to have the same value as U_EXPORT. For more details,
-#    # please see: https://crbug.com/822820
-#    "U_IMPORT=U_EXPORT",
+  set_property(TARGET icu PROPERTY CXX_STANDARD 17)
 
-target_compile_definitions(icu PUBLIC
-  ${ICU_PUBLIC_DEFINES}
-  ${WTF_EMCC_DEFINITIONS}
-  ${WTF_COMMON_DEFINITIONS}
-  U_ENABLE_DYLOAD=0
-  LIB_ICU_I18N_STATIC
-  ICU_UTIL_DATA_IMPL=ICU_UTIL_DATA_STATIC
-  U_CHARSET_IS_UTF8=1
-  U_NO_DEFAULT_INCLUDE_UTF_HEADERS=0
-  #U_ATTRIBUTE_DEPRECATED
-  #U_NO_DEFAULT_INCLUDE_UTF_HEADERS
-)
+  # In your source, include files from base/ like normal.
+  # So if you want to use the string printf API, do:
+  # #include <base/stringprintf.h>
+  target_include_directories(icu PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${OWN_ICU_INCLUDE_DIRS}
+  )
 
-target_compile_definitions(icu PRIVATE
-  ICU_IMPLEMENTATION=1
-  U_STATIC_IMPLEMENTATION=1
-  U_COMMON_IMPLEMENTATION=1
-  U_I18N_IMPLEMENTATION=1
-  U_ATTRIBUTE_DEPRECATED=
-  ${ICU_PRIVATE_DEFINES}
-  OFFICIAL_BUILD=1
-  # https://cs.chromium.org/chromium/src/build/build_config.h?g=0&l=86
-  COMPONENT_BUILD=1
-  # https://github.com/cool-easy/libchromiumbase/blob/master/build/config/linux/BUILD.gn#L88
-  # USE_GLIB=1
-  __STDC_FORMAT_MACROS
-  ${WTF_EMCC_DEFINITIONS}
-  ${WTF_COMMON_DEFINITIONS}
+  target_include_directories(icu PRIVATE
+    #${BASE_DIR}
+  )
 
-  #SYSTEM_NATIVE_UTF8
-  #COM_INIT_CHECK_HOOK_DISABLED
-  #USE_SYMBOLIZE
-  #BASE_I18N_IMPLEMENTATION
-  #MALLOC_WRAPPER_LIB=\"${shlib_prefix}malloc_wrapper${shlib_extension}\"
-  #MEMORY_TOOL_REPLACES_ALLOCATOR=1
-)
+  # http://userguide.icu-project.org/howtouseicu#TOC-C-With-Your-Own-Build-System
+  set(ICU_PUBLIC_DEFINES
+    U_ENABLE_DYLOAD=0
+    ICU_UTIL_DATA_IMPL=ICU_UTIL_DATA_FILE
+  )
 
-target_compile_options(icu PRIVATE
-  -Wno-error
-)
+  set(ICU_PRIVATE_DEFINES
+    HAVE_DLOPEN=0
+    UCONFIG_ONLY_HTML_CONVERSION=1
+    U_CHARSET_IS_UTF8=1
+    # custom
+    HAVE_DLFCN_H=0
+  )
+
+  if (WIN32)
+    list(APPEND ICU_PUBLIC_DEFINES
+      UCHAR_TYPE=wchar_t
+    )
+  elseif(EMSCRIPTEN)
+    list(APPEND ICU_PUBLIC_DEFINES
+      UCHAR_TYPE=uint16_t
+    )
+  else()
+    list(APPEND ICU_PUBLIC_DEFINES
+      UCHAR_TYPE=uint16_t
+    )
+  endif()
+
+  # see https://github.com/webrtc-uwp/chromium-build/blob/master/linux/unbundle/icu.gn#L37
+  list(APPEND ICU_PUBLIC_DEFINES
+    U_IMPORT=U_EXPORT
+  )
+
+  #    "USING_SYSTEM_ICU=1",
+  #    "ICU_UTIL_DATA_IMPL=ICU_UTIL_DATA_STATIC",
+  #    "UCHAR_TYPE=uint16_t",
+  #
+  #    # U_EXPORT (defined in unicode/platform.h) is used to set public visibility
+  #    # on classes through the U_COMMON_API and U_I18N_API macros (among others).
+  #    # When linking against the system ICU library, we want its symbols to have
+  #    # public LTO visibility. This disables CFI checks for the ICU classes and
+  #    # allows whole-program optimization to be applied to the rest of Chromium.
+  #    #
+  #    # Both U_COMMON_API and U_I18N_API macros would be defined to U_EXPORT only
+  #    # when U_COMBINED_IMPLEMENTATION is defined (see unicode/utypes.h). Because
+  #    # we override the default system UCHAR_TYPE (char16_t), it is not possible
+  #    # to use U_COMBINED_IMPLEMENTATION at this moment, meaning the U_COMMON_API
+  #    # and U_I18N_API macros are set to U_IMPORT which is an empty definition.
+  #    #
+  #    # Until building with UCHAR_TYPE=char16_t is supported, one way to apply
+  #    # public visibility (and thus public LTO visibility) to all ICU classes is
+  #    # to define U_IMPORT to have the same value as U_EXPORT. For more details,
+  #    # please see: https://crbug.com/822820
+  #    "U_IMPORT=U_EXPORT",
+
+  target_compile_definitions(icu PUBLIC
+    ${ICU_PUBLIC_DEFINES}
+    ${WTF_EMCC_DEFINITIONS}
+    ${WTF_COMMON_DEFINITIONS}
+    LIB_ICU_I18N_STATIC
+    U_CHARSET_IS_UTF8=1
+    U_NO_DEFAULT_INCLUDE_UTF_HEADERS=0
+    #U_ATTRIBUTE_DEPRECATED
+    #U_NO_DEFAULT_INCLUDE_UTF_HEADERS
+  )
+
+  target_compile_definitions(icu PRIVATE
+    ICU_IMPLEMENTATION=1
+    U_STATIC_IMPLEMENTATION=1
+    U_COMMON_IMPLEMENTATION=1
+    U_I18N_IMPLEMENTATION=1
+    U_ATTRIBUTE_DEPRECATED=
+    ${ICU_PRIVATE_DEFINES}
+    OFFICIAL_BUILD=1
+    # https://cs.chromium.org/chromium/src/build/build_config.h?g=0&l=86
+    COMPONENT_BUILD=1
+    # https://github.com/cool-easy/libchromiumbase/blob/master/build/config/linux/BUILD.gn#L88
+    # USE_GLIB=1
+    __STDC_FORMAT_MACROS
+    ${WTF_EMCC_DEFINITIONS}
+    ${WTF_COMMON_DEFINITIONS}
+
+    #SYSTEM_NATIVE_UTF8
+    #COM_INIT_CHECK_HOOK_DISABLED
+    #USE_SYMBOLIZE
+    #BASE_I18N_IMPLEMENTATION
+    #MALLOC_WRAPPER_LIB=\"${shlib_prefix}malloc_wrapper${shlib_extension}\"
+    #MEMORY_TOOL_REPLACES_ALLOCATOR=1
+  )
+
+  target_compile_options(icu PRIVATE
+    -Wno-error
+  )
+endif()
 
 if (EMSCRIPTEN)
   #find_package(ICU REQUIRED COMPONENTS I18N UC REQUIRED)
@@ -3086,12 +3174,12 @@ if (EMSCRIPTEN)
   #  ${ICU_UC_LIBRARIES}
   #  ${ICU_I18N_LIBRARIES}
   #)
-else()
+else(EMSCRIPTEN)
   #find_package(ICU) # REQUIRED)
   add_library(${WTF_LIBRARY_NAME} STATIC
     ${WTF_SOURCES}
   )# ${BASE_SOURCES})
-endif ()
+endif (EMSCRIPTEN)
 
 set_property(TARGET ${WTF_LIBRARY_NAME} PROPERTY CXX_STANDARD 17)
 
@@ -3129,13 +3217,6 @@ target_include_directories(${WTF_LIBRARY_NAME} PUBLIC
   #${CMAKE_CURRENT_SOURCE_DIR}/global_headers
 )
 
-target_include_directories(${WTF_LIBRARY_NAME} PRIVATE
-  #${LIBEVENT_INCLUDE_DIRS}
-  ${modp_b64_INCLUDE_DIRS}
-  ${WTF_PRIVATE_INCLUDE_DIRECTORIES}
-  #${WTF_DIR}
-)
-
 #target_include_directories(${WTF_LIBRARY_NAME} SYSTEM PRIVATE
 #  ${CMAKE_CURRENT_SOURCE_DIR}
 #  ${CMAKE_CURRENT_SOURCE_DIR}/wtf
@@ -3145,8 +3226,28 @@ target_include_directories(${WTF_LIBRARY_NAME} PRIVATE
 set(WTF_LIBRARIES
   libevent
   base
-  icu
 )
+
+if(EMSCRIPTEN)
+  set(ICU_LIBRARIES icu)
+  list(APPEND WTF_LIBRARIES
+    ${ICU_LIBRARIES}
+  )
+elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+  #Components can include any of: data, i18n, io, le, lx, test, tu and uc.
+  # Note that on Windows data is named dt and i18n is named in;
+  # any of the names may be used, and the appropriate platform-specific library name will be automatically selected.
+  #find_package(ICU REQUIRED COMPONENTS i18n uc data REQUIRED)
+  #MESSAGE("ICU_INCLUDE_DIRS: " ${ICU_INCLUDE_DIRS})
+  #MESSAGE("ICU_LIBRARY_DIRS: " ${ICU_LIBRARY_DIRS})
+  #MESSAGE("ICU_LIBRARIES: " ${ICU_LIBRARIES})
+  ##
+  #list(APPEND WTF_LIBRARIES
+  #  ${ICU_LIBRARIES}
+  #)
+else()
+  message(FATAL_ERROR "icu platform not supported")
+endif()
 
 #if(EMSCRIPTEN)
 #else()
@@ -3154,6 +3255,15 @@ set(WTF_LIBRARIES
 #    tcmalloc
 #  )
 #endif(EMSCRIPTEN)
+
+target_include_directories(${WTF_LIBRARY_NAME} PRIVATE
+  #${LIBEVENT_INCLUDE_DIRS}
+  ${modp_b64_INCLUDE_DIRS}
+  ${WTF_PRIVATE_INCLUDE_DIRECTORIES}
+  #${WTF_DIR}
+  ${OWN_ICU_INCLUDE_DIRS}
+  ${ICU_INCLUDE_DIRS}
+)
 
 add_dependencies(${WTF_LIBRARY_NAME}
   ${WTF_LIBRARIES}
@@ -3209,6 +3319,7 @@ target_compile_definitions(${WTF_LIBRARY_NAME} PRIVATE
   __STDC_FORMAT_MACROS
   ${WTF_EMCC_DEFINITIONS}
   ${WTF_COMMON_DEFINITIONS}
+  ${EXTRA_ICU_DEFINITIONS}
 
   #SYSTEM_NATIVE_UTF8
   #COM_INIT_CHECK_HOOK_DISABLED

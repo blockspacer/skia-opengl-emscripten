@@ -20,9 +20,40 @@
 // see
 // https://github.com/WebKit/webkit/blob/master/Source/WebCore/rendering/RenderBoxModelObject.cpp#L741
 
+//#define PRINT_GL_EXT 1
+
 #define ENABLE_SKIA 1
 
-#define ENABLE_THREAD_TESTS 0
+// high quality: anialias, e.t.c.
+#define ENABLE_SKIA_HQ 1
+
+/// \note defined by CMAKE
+// #define ENABLE_BASE 1
+//#undef ENABLE_BASE
+
+/// \note defined by CMAKE
+// #define ENABLE_WTF 1
+//#undef ENABLE_WTF
+
+#if defined(ENABLE_WTF) && !defined(ENABLE_BASE)
+#error "requires BASE"
+#endif
+
+#define ENABLE_THREAD_TESTS 1
+#if defined(ENABLE_THREAD_TESTS) && !defined(ENABLE_WTF)
+#warning "ENABLE_THREAD_TESTS requires WTF"
+#undef ENABLE_THREAD_TESTS
+#endif
+
+#if !defined(ENABLE_BASE)
+#define DCHECK(x) \
+    { \
+        if(!(x)) { \
+            printf("DCHECK failed at %s:%d:%s\n",  __FILE__, __LINE__, __func__); \
+            abort(); \
+        } \
+    }
+#endif
 
 // see https://github.com/save7502/youkyoung/blob/master/Engine/Source/Runtime/OpenGLDrv/Private/HTML5/HTML5OpenGL.cpp#L5
 // see https://github.com/emscripten-core/emscripten/issues/6009
@@ -32,6 +63,10 @@
 // #define SKIA_GR_CONTEXT 1
 
 #define ENABLE_SKOTTIE_ANIMATIONS 1
+#if defined(ENABLE_SKOTTIE_ANIMATIONS) && !defined(ENABLE_SKIA)
+#warning "ENABLE_SKOTTIE_ANIMATIONS requires SKIA"
+#undef ENABLE_SKOTTIE_ANIMATIONS
+#endif
 //
 #if defined(__EMSCRIPTEN__) && defined(__EMSCRIPTEN_PTHREADS__) \
   && defined(ENABLE_SKOTTIE_ANIMATIONS)
@@ -39,6 +74,10 @@
 #endif
 
 #define ENABLE_CUSTOM_FONTS 1
+#if defined(ENABLE_CUSTOM_FONTS) && !defined(ENABLE_SKIA)
+#warning "ENABLE_CUSTOM_FONTS requires SKIA"
+#undef ENABLE_CUSTOM_FONTS
+#endif
 //
 #if defined(__EMSCRIPTEN__) && defined(__EMSCRIPTEN_PTHREADS__) \
   && defined(ENABLE_CUSTOM_FONTS)
@@ -46,15 +85,23 @@
 #endif
 
 #define ENABLE_SK_EFFECTS 1 // requires ENABLE_CUSTOM_FONTS
+#if defined(ENABLE_SK_EFFECTS) && (!defined(ENABLE_SKIA) || !defined(ENABLE_CUSTOM_FONTS))
+#warning "ENABLE_SK_EFFECTS requires SKIA and CUSTOM_FONTS"
+#undef ENABLE_SK_EFFECTS
+#endif
 
 /// \note place before glext.h
 /// \note defined by CMAKE
 // #define GL_GLEXT_PROTOTYPES
+//#undef GL_GLEXT_PROTOTYPES
 
 #ifdef __EMSCRIPTEN__
 
+/// \todo WEBGL1_SUPPORT
+
 /// \note defined by CMAKE
 //#define WEBGL2_SUPPORT 1
+//#undef WEBGL2_SUPPORT
 
 #if defined(ENABLE_HTML5_SDL) || !defined(__EMSCRIPTEN__)
 //#include <SDL.h>
@@ -217,34 +264,46 @@
 #include <sstream>
 #include <string>
 #include <vector>
-
-#include "third_party/blink/renderer/platform/wtf/vector.h"
-
-#include "third_party/blink/renderer/platform/wtf/text/wtf_string.h"
 #include <limits>
+#include <stdint.h>
+#include <utility>
+#include <memory>
+#include <utility>
+
+#ifdef ENABLE_BASE
 #include "base/stl_util.h"
-#include "third_party/blink/renderer/platform/wtf/math_extras.h"
-#include "third_party/blink/renderer/platform/wtf/text/cstring.h"
-
-#include "third_party/blink/renderer/platform/wtf/text/string_impl.h"
-
 #include "base/base_switches.h"
 #include "base/command_line.h"
 #include "base/containers/small_map.h"
 #include "base/i18n/icu_util.h"
 #include "base/i18n/rtl.h"
-
-/// @note init allocator before executing any code.
 #include "base/allocator/partition_allocator/page_allocator.h"
-#include "third_party/blink/renderer/platform/wtf/allocator/partitions.h"
 
 #include "base/memory/scoped_refptr.h"
 
 #include "base/memory/ref_counted_memory.h"
-#include <stdint.h>
-#include <utility>
 #include "base/memory/read_only_shared_memory_region.h"
 #include "base/stl_util.h"
+#include "base/bind.h"
+#include "base/memory/weak_ptr.h"
+//#include "base/test/gtest_util.h"
+#include "base/threading/thread.h"
+
+#include "base/synchronization/waitable_event.h"
+#endif
+
+#ifdef ENABLE_WTF
+#include "third_party/blink/renderer/platform/wtf/vector.h"
+
+#include "third_party/blink/renderer/platform/wtf/text/wtf_string.h"
+#include "third_party/blink/renderer/platform/wtf/math_extras.h"
+#include "third_party/blink/renderer/platform/wtf/text/cstring.h"
+
+#include "third_party/blink/renderer/platform/wtf/text/string_impl.h"
+
+
+/// @note init allocator before executing any code.
+#include "third_party/blink/renderer/platform/wtf/allocator/partitions.h"
 //#include "testing/gmock/include/gmock/gmock.h"
 //#include "testing/gtest/include/gtest/gtest.h"
 
@@ -252,21 +311,14 @@
 
 #include "third_party/blink/renderer/platform/wtf/dtoa/dtoa.h"
 
-
 #include "third_party/blink/renderer/platform/wtf/functional.h"
-#include <memory>
-#include <utility>
-#include "base/bind.h"
-#include "base/memory/weak_ptr.h"
-//#include "base/test/gtest_util.h"
-#include "base/threading/thread.h"
 //#include "testing/gtest/include/gtest/gtest.h"
 #include "third_party/blink/renderer/platform/wtf/allocator.h"
 #include "third_party/blink/renderer/platform/wtf/leak_annotations.h"
 #include "third_party/blink/renderer/platform/wtf/ref_counted.h"
 //#include "third_party/blink/renderer/platform/wtf/wtf_test_helper.h"
 
-#include "base/synchronization/waitable_event.h"
+#endif
 
 /*#include <stddef.h>
 
@@ -437,7 +489,7 @@ sk_sp<const GrGLInterface> emscripten_GrGLMakeNativeInterface() {
 #endif
 
 #if defined(ENABLE_SKIA) && defined(ENABLE_SKOTTIE_ANIMATIONS)
-static SkString fPath = SkString("./resources/animations/data.json");
+static SkString fAnimPath = SkString("./resources/animations/data.json");
 // static SkString                           fPath = SkString("./resources/fonts/FreeSans.ttf");
 static sk_sp<skottie::Animation> fAnimation;
 static skottie::Animation::Builder::Stats fAnimationStats;
@@ -510,7 +562,11 @@ static EMSCRIPTEN_WEBGL_CONTEXT_HANDLE em_ctx;
 static EmscriptenWebGLContextAttributes attr;
 
 // @see explicitSwapControl
+#if defined(HAVE_SWAP_CONTROL)
 static EM_BOOL enableSwapControl = EM_TRUE;
+#else
+static EM_BOOL enableSwapControl = EM_FALSE;
+#endif
 
 // @see enableExtensionsByDefault
 static EM_BOOL enableEmscriptenExtensionsByDefault = EM_TRUE;
@@ -624,6 +680,7 @@ static void initSkiaSurface(int w, int h) {
     }
   }
 #endif
+  // see https://github.com/midasitdev/aliceui/blob/master/example/OpenGLExample/OpenGLExample/main.cpp#L391
   const SkImageInfo info = SkImageInfo::MakeN32(width, height, kPremul_SkAlphaType);
   sRasterSurface = SkSurface::MakeRaster(info);
   if (!sRasterSurface) {
@@ -654,8 +711,12 @@ public:
     SkPaint paint;
 
     // paint.setAlpha(255);
+#ifdef ENABLE_SKIA_HQ
+    paint.setAntiAlias(true);
+#else
     paint.setAntiAlias(false);
     paint.setFilterQuality( SkFilterQuality::kNone_SkFilterQuality );
+#endif
     paint.setColor(SK_ColorRED);
     /// paint.setColor(0xffeeeeee);
       //printf("onDraw() 2\n");
@@ -706,7 +767,6 @@ public:
       const uint8_t blurAlpha = 127;
       auto blob1 = SkTextBlob::MakeFromString("Skia! skFont1", *skFont1);
       auto blob2 = SkTextBlob::MakeFromString("Skia! skFont2", *skFont2);
-      // paint.setAntiAlias(true);
       SkPaint blur(paint);
       blur.setAlpha(blurAlpha);
       blur.setMaskFilter(SkMaskFilter::MakeBlur(kNormal_SkBlurStyle, sigma, 0));
@@ -1022,7 +1082,7 @@ static void mainLoop() {
   // Render
   Draw();
 
-#ifdef __EMSCRIPTEN__
+#ifdef defined(__EMSCRIPTEN__) && defined(HAVE_SWAP_CONTROL)
   if (enableSwapControl) {
     // emscripten_webgl_commit_frame requires offscreen canvas support
     // see https://github.com/emscripten-core/emscripten/issues/5437
@@ -1030,7 +1090,7 @@ static void mainLoop() {
     if(r != EMSCRIPTEN_RESULT_SUCCESS)
     {
       // TODO: https://github.com/emscripten-core/emscripten/issues/5437
-      // printf( "There was an issue commiting the frame to the offscreen canvas (code %d)\n", r );
+      printf( "There was an issue commiting the frame to the offscreen canvas (code %d)\n", r );
     }
   }
 #else
@@ -1066,6 +1126,7 @@ static void mainLoop() {
 #endif
 }
 
+#ifdef ENABLE_WTF
 /*static void CallOnMainThreadFunction(WTF::MainThreadFunction function, void* context) {
   // TODO
   //
@@ -1093,10 +1154,39 @@ public:
   int ConstNoexceptMethod() const noexcept { return 42; }
 };
 
+static int SomeHardcoreTask(int max_num) {
+    //TRACE_EVENT1(kCategoryName, "SomeHardcoreTask", "max_num", max_num);
+    //float x = 1.5f;
+    int x = 0;
+    for (int i = 0; i < max_num; ++i) {
+        //x *= sin(x) / atan(x) * tanh(x) * sqrt(x);
+        x += i;
+    }
+
+    return x;
+}
+
+static void SomeHardcoreAsyncTask(
+    base::WaitableEvent* event,
+    const base::Callback<void(int)>& out_cb) {
+    //TRACE_EVENT0(kCategoryName, "SomeHardcoreAsyncTask");
+    printf("SomeHardcoreAsyncTask...\n");
+
+    for (int i : {20000, 5000, 800})
+        out_cb.Run(SomeHardcoreTask(i));
+
+    event->Signal();
+}
+#endif
+
 // TODO https://kapadia.github.io/emscripten/2013/09/13/emscripten-pointers-and-pointers.html
 // TODO https://github.com/bakerstu/openmrn/blob/5f6bb8934fe13b2897d5f52ec6b358bd87dd886a/src/utils/FileUtils.cxx#L44
 static int read_file(const char* fPath, char*& fileString, long int& fsize)
 {
+    if(!strlen(fPath)){
+        printf("failed to open file with empty path\n");
+        return 1;
+    }
     FILE* f = fopen(fPath, "rb");
     if (!f) {
       printf("failed to open file: %s\n", fPath);
@@ -1110,30 +1200,6 @@ static int read_file(const char* fPath, char*& fileString, long int& fsize)
     fclose(f);
     fileString[fsize] = 0;
     return 0;
-}
-
-static int SomeHardcoreTask(int max_num) {
-  //TRACE_EVENT1(kCategoryName, "SomeHardcoreTask", "max_num", max_num);
-  //float x = 1.5f;
-  int x = 0;
-  for (int i = 0; i < max_num; ++i) {
-    //x *= sin(x) / atan(x) * tanh(x) * sqrt(x);
-    x += i;
-  }
-
-  return x;
-}
-
-static void SomeHardcoreAsyncTask(
-    base::WaitableEvent* event,
-    const base::Callback<void(int)>& out_cb) {
-  //TRACE_EVENT0(kCategoryName, "SomeHardcoreAsyncTask");
-  printf("SomeHardcoreAsyncTask...\n");
-
-  for (int i : {20000, 5000, 800})
-    out_cb.Run(SomeHardcoreTask(i));
-
-  event->Signal();
 }
 
 int main(int argc, char** argv) {
@@ -1153,7 +1219,7 @@ int main(int argc, char** argv) {
       });
 #endif
 
-
+#ifdef ENABLE_BASE
   printf("Init alloc ...\n");
   // see
   // https://cs.chromium.org/chromium/src/third_party/blink/renderer/controller/blink_initializer.cc?sq=package:chromium&dr=C&g=0&l=88
@@ -1174,7 +1240,9 @@ int main(int argc, char** argv) {
       }
     }
   }
+#endif
 
+#ifdef ENABLE_WTF
   printf("Init Partitions ...\n");
   // see
   // https://github.com/chromium/chromium/blob/master/third_party/blink/renderer/platform/exported/platform.cc#L119
@@ -1192,6 +1260,7 @@ int main(int argc, char** argv) {
   WTF::Bind([] {
     printf("WTF::Bind!\n");
   }).Run();
+#endif
 
 #if defined(ENABLE_THREAD_TESTS)
 
@@ -1238,7 +1307,7 @@ int main(int argc, char** argv) {
       base::Bind(&SomeHardcoreAsyncTask,
                  &event,
                  base::Bind(AsyncTaskCb)),
-      base::TimeDelta::FromSeconds(5));
+      base::TimeDelta::FromSeconds(3));
 
     // std::cout << "thread testing PostTask 1..." << base::Time::Now() << "\n";
 
@@ -1275,6 +1344,7 @@ int main(int argc, char** argv) {
   }
 #endif // ENABLE_THREAD_TESTS
 
+#ifdef ENABLE_WTF
   {
     WTF::NumberToStringBuffer buffer;
     WTF::NumberToFixedPrecisionString(0.000000123123123, 6, buffer);
@@ -1419,6 +1489,32 @@ int main(int argc, char** argv) {
   }
 
   {
+      const UChar kTestBUChars[6] = {0x41, 0x95, 0xFFFF, 0x1080, 0x01, 0};
+      const unsigned kTestBHash1 = 0xEA32B004;
+      const unsigned kTestBHash2 = 0x93F0F71E;
+      //const unsigned kTestBHash3 = 0x59EB1B2C;
+      //const unsigned kTestBHash4 = 0xA7BCCC0A;
+      //const unsigned kTestBHash5 = 0x79201649;
+      WTF::StringHasher hasher;
+      hasher.AddCharacter(kTestBUChars[0]);
+      printf("EXPECT_EQ kTestBHash1 %d\n", kTestBHash1 == hasher.GetHash());
+      //EXPECT_EQ(kTestBHash1, hasher.GetHash());
+      printf("EXPECT_EQ kTestBHash1 & 0xFFFFFF %d\n", (kTestBHash1 & 0xFFFFFF) == hasher.HashWithTop8BitsMasked());
+      //EXPECT_EQ(kTestBHash1 & 0xFFFFFF, hasher.HashWithTop8BitsMasked());
+      hasher.AddCharacter(kTestBUChars[1]);
+      printf("EXPECT_EQ kTestBHash2 %d\n", kTestBHash2 == hasher.GetHash());
+      //EXPECT_EQ(kTestBHash2, hasher.GetHash());
+      printf("EXPECT_EQ kTestBHash2 & 0xFFFFFF %d\n", (kTestBHash2 & 0xFFFFFF) == hasher.HashWithTop8BitsMasked());
+      //EXPECT_EQ(kTestBHash2 & 0xFFFFFF, hasher.HashWithTop8BitsMasked());
+
+      //
+      //printf("EXPECT_EQ kTestBHash5 %d\n", kTestBHash5 == hasher.GetHash());
+      //EXPECT_EQ(kTestBHash5, hasher.GetHash());
+  }
+#endif
+
+#ifdef ENABLE_BASE
+  {
     std::string s("destroy me");
     scoped_refptr<base::RefCountedMemory> mem = base::RefCountedString::TakeString(&s);
 
@@ -1436,55 +1532,33 @@ int main(int argc, char** argv) {
   }
 
   {
-    const UChar kTestBUChars[6] = {0x41, 0x95, 0xFFFF, 0x1080, 0x01, 0};
-    const unsigned kTestBHash1 = 0xEA32B004;
-    const unsigned kTestBHash2 = 0x93F0F71E;
-    //const unsigned kTestBHash3 = 0x59EB1B2C;
-    //const unsigned kTestBHash4 = 0xA7BCCC0A;
-    //const unsigned kTestBHash5 = 0x79201649;
-    WTF::StringHasher hasher;
-    hasher.AddCharacter(kTestBUChars[0]);
-    printf("EXPECT_EQ kTestBHash1 %d\n", kTestBHash1 == hasher.GetHash());
-    //EXPECT_EQ(kTestBHash1, hasher.GetHash());
-    printf("EXPECT_EQ kTestBHash1 & 0xFFFFFF %d\n", (kTestBHash1 & 0xFFFFFF) == hasher.HashWithTop8BitsMasked());
-    //EXPECT_EQ(kTestBHash1 & 0xFFFFFF, hasher.HashWithTop8BitsMasked());
-    hasher.AddCharacter(kTestBUChars[1]);
-    printf("EXPECT_EQ kTestBHash2 %d\n", kTestBHash2 == hasher.GetHash());
-    //EXPECT_EQ(kTestBHash2, hasher.GetHash());
-    printf("EXPECT_EQ kTestBHash2 & 0xFFFFFF %d\n", (kTestBHash2 & 0xFFFFFF) == hasher.HashWithTop8BitsMasked());
-    //EXPECT_EQ(kTestBHash2 & 0xFFFFFF, hasher.HashWithTop8BitsMasked());
-
-    //
-    //printf("EXPECT_EQ kTestBHash5 %d\n", kTestBHash5 == hasher.GetHash());
-    //EXPECT_EQ(kTestBHash5, hasher.GetHash());
+      base::small_map<std::map<std::string, std::string>> foo;
+      foo.insert(std::make_pair("foo", "bar"));
+      foo.insert(std::make_pair("bar", "bar"));
+      foo.insert(std::make_pair("foo1", "bar"));
+      foo.insert(std::make_pair("bar1", "bar"));
+      foo.insert(std::make_pair("foo", "bar"));
+      foo.insert(std::make_pair("bar", "bar"));
+      auto found = foo.find("asdf");
+      printf("1 Found == foo.end() %d\n", (int)(found == foo.end()));
+      found = foo.find("foo");
+      printf("2 Found == foo.end() %d\n", (int)(found == foo.end()));
+      found = foo.find("bar");
+      printf("3 Found == foo.end() %d\n", (int)(found == foo.end()));
+      found = foo.find("asdfhf");
+      printf("4 Found == foo.end() %d\n", (int)(found == foo.end()));
+      found = foo.find("bar1");
+      printf("5 Found == foo.end() %d\n", (int)(found == foo.end()));
   }
-
-  {
-    base::small_map<std::map<std::string, std::string>> foo;
-    foo.insert(std::make_pair("foo", "bar"));
-    foo.insert(std::make_pair("bar", "bar"));
-    foo.insert(std::make_pair("foo1", "bar"));
-    foo.insert(std::make_pair("bar1", "bar"));
-    foo.insert(std::make_pair("foo", "bar"));
-    foo.insert(std::make_pair("bar", "bar"));
-    auto found = foo.find("asdf");
-    printf("1 Found == foo.end() %d\n", (int)(found == foo.end()));
-    found = foo.find("foo");
-    printf("2 Found == foo.end() %d\n", (int)(found == foo.end()));
-    found = foo.find("bar");
-    printf("3 Found == foo.end() %d\n", (int)(found == foo.end()));
-    found = foo.find("asdfhf");
-    printf("4 Found == foo.end() %d\n", (int)(found == foo.end()));
-    found = foo.find("bar1");
-    printf("5 Found == foo.end() %d\n", (int)(found == foo.end()));
-  }
+#endif
 
   printf("Starting ...\n");
 
 #ifdef __EMSCRIPTEN__
-  double dpr = emscripten_get_device_pixel_ratio();
-  emscripten_set_element_css_size("#canvas", width / dpr, height / dpr);
-  emscripten_set_canvas_element_size("#canvas", width, height);
+  //https://github.com/Becavalier/Book-DISO-WebAssembly/issues/10
+  //double dpr = emscripten_get_device_pixel_ratio();
+  //emscripten_set_element_css_size("#canvas", width / dpr, height / dpr);
+  //emscripten_set_canvas_element_size("#canvas", width, height);
 
   /// @note use EmscriptenWebGLContextAttributes, not SDL_GL
   /// @see https://github.com/emscripten-core/emscripten/issues/7684
@@ -1698,7 +1772,8 @@ int main(int argc, char** argv) {
   }
 #endif
 
-#if defined(WEBGL2_SUPPORT) || !defined(__EMSCRIPTEN__)
+/// \todo WEBGL1_SUPPORT
+#if defined(PRINT_GL_EXT) && (defined(WEBGL2_SUPPORT) || !defined(__EMSCRIPTEN__))
   int numExtensions = 0;
   // see https://github.com/emscripten-core/emscripten/issues/3472
   GL_CHECK( glGetIntegerv(GL_NUM_EXTENSIONS, &numExtensions) );
@@ -1836,9 +1911,9 @@ int main(int argc, char** argv) {
 
     char* fileString = nullptr;
     long int fsize;
-    int readRes = read_file(fPath.c_str(), fileString, fsize);
+    int readRes = read_file(fAnimPath.c_str(), fileString, fsize);
     if (readRes != 0) {
-      printf("can`t read skottie anim %s\n", fPath.c_str());
+      printf("can`t read skottie anim %s\n", fAnimPath.c_str());
       return 1;
     }
     DCHECK(fileString != nullptr);
@@ -1870,7 +1945,7 @@ int main(int argc, char** argv) {
       printf("Loaded Bodymovin animation v: %s, size: [%f %f]\n", fAnimation->version().c_str(),
              fAnimation->size().width(), fAnimation->size().height());
     } else {
-      printf("failed to load Bodymovin animation: %s\n", fPath.c_str());
+      printf("failed to load Bodymovin animation: %s\n", fAnimPath.c_str());
       return 1;
     }
     printf("Got skottie stats...\n");

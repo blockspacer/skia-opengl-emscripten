@@ -345,6 +345,7 @@ sudo -E apt-get install libicu-dev libjpeg-dev libwebp-dev -y
 # NOTE: install same version as libicu-dev
 wget http://archive.ubuntu.com/ubuntu/pool/main/i/icu/libicu60_60.2-3ubuntu3_amd64.deb
 sudo dpkg -i libicu60_60.2-3ubuntu3_amd64.deb
+rm libicu60_60.2-3ubuntu3_amd64.deb
 sudo apt-get -f install
 export ICU_ROOT=/usr/include
 # harfbuzz
@@ -435,6 +436,81 @@ Commit-Queue: <skia-recreate-skps@skia-swarming-bots.iam.gserviceaccount.com>
 
 ## NOTE: need emcc version > 1.38.21
 
+> see https://emscripten.org/docs/getting_started/downloads.html#updating-the-sdk
+
+```
+# go to dir containing emsdk
+cd "$(dirname "$(which emsdk)" )"
+
+# Fetch the latest registry of available tools.
+git pull
+./emsdk update
+./emsdk update-tags
+
+# Download and install the latest SDK tools.
+./emsdk install latest
+
+# Set up the compiler configuration to point to the "latest" SDK.
+./emsdk activate latest
+
+# Activate PATH and other environment variables in the current terminal
+source ./emsdk_env.sh
+
+# check emcc version
+which emcc
+
+# https://emscripten.org/docs/tools_reference/emcc.html
+emcc --clear-cache
+emcc --clear-ports
+emcc --show-ports
+
+# test emcc on small app
+cd /tmp
+# create small app
+cat <<EOF >>hello.cpp
+#include <GLES3/gl3.h>
+#include <GLES2/gl2ext.h>
+
+#include <stdio.h>
+#include <string.h>
+#include <assert.h>
+#include <emscripten.h>
+#include <emscripten/html5.h>
+
+EMSCRIPTEN_WEBGL_CONTEXT_HANDLE context;
+
+int main()
+{
+  EmscriptenWebGLContextAttributes attrs;
+  emscripten_webgl_init_context_attributes(&attrs);
+  attrs.majorVersion = 2;
+  attrs.minorVersion = 0;
+
+  int result = 0;
+
+  EMSCRIPTEN_WEBGL_CONTEXT_HANDLE context = emscripten_webgl_create_context(nullptr, &attrs);
+  assert(context);
+  EMSCRIPTEN_RESULT res = emscripten_webgl_make_context_current(context);
+  assert(res == EMSCRIPTEN_RESULT_SUCCESS);
+  assert(emscripten_webgl_get_current_context() == context);
+  GLuint tex;
+  glGenTextures(1, &tex);
+  glBindTexture(GL_TEXTURE_2D, tex);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 16, 16, 0, GL_RGBA, GL_HALF_FLOAT_OES, 0);
+  assert(glGetError() == 0);
+  emscripten_webgl_destroy_context(context);
+
+  return 0;
+}
+EOF
+em++ -s WASM=1 -s USE_PTHREADS=1 -s PTHREAD_POOL_SIZE=8 -s USE_WEBGL2=1 -s WEBGL2_BACKWARDS_COMPATIBILITY_EMULATION=1 -s GL_ASSERTIONS=1 -s FULL_ES3=1 -s DEMANGLE_SUPPORT=1 -frtti -s SAFE_HEAP=1 -s ALIASING_FUNCTION_POINTERS=0 -s ERROR_ON_MISSING_LIBRARIES=1 -s ERROR_ON_UNDEFINED_SYMBOLS=1 -s ASSERTIONS=2 -s TOTAL_MEMORY=1024MB -s NO_EXIT_RUNTIME=1 -s OFFSCREENCANVAS_SUPPORT=1 -s OFFSCREEN_FRAMEBUFFER=1 -Wall -s USE_SDL=2 -std=c++17 -O1 --emrun -g4 --source-map-base http://localhost:9090/ -s DISABLE_DEPRECATED_FIND_EVENT_TARGET_BEHAVIOR=0 hello.cpp -o hello.html
+# TODO: remove deprecated DISABLE_DEPRECATED_FIND_EVENT_TARGET_BEHAVIOR in emcc >= 1.39
+# run, & check console for crashes (also check enabled browser flags & browser version)
+emrun --port 9090 --serve_root / hello.html
+# delete old builds
+# cd to project dir
+rm -rf build-*
+```
 ## NOTE (If need support of pthreads in wasm)
 enable use of OffscreenCanvas with pthreads.
 
@@ -452,11 +528,13 @@ enable SharedArrayBuffer and WebWorkers/threads in browser flags, see https://ca
 
 May need Cross-Origin header browser.tabs.remote.useCrossOriginPolicy to allow SharedArrayBuffer to work, see https://developer.mozilla.org/en-US/docs/Mozilla/Firefox/Experimental_features
 
-see chrome://flags "WebAssembly threads support"
+see chrome://flags/#enable-webassembly-threads "WebAssembly threads support" and chrome://flags/#shared-array-buffer "Experimental enabled SharedArrayBuffer support in JavaScript."
+see Firefox about:config "javascript.options.shared_memory"
+see https://github.com/hostilefork/replpad-js/wiki/Enable-WASM-Threads
 
 also see PTHREAD_POOL_SIZE
 
-## NOTE: Offscreen canvas
+## NOTE: Offscreen canvas (WEBGL2)
 https://developers.google.com/web/updates/2018/08/offscreen-canvas
 you can render your graphics off the main thread with OffscreenCanvas!
 

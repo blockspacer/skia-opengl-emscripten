@@ -11,7 +11,15 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/sdl2)
 
 #include(FindPkgMacros)
 
-set (PROJECT_NAME "skemgl")
+set(PROJECT_NAME "skemgl")
+
+# NOTE: measure performace on RELEASE builds!
+#set(RELEASE_BUILD TRUE)
+set(RELEASE_BUILD FALSE)
+
+# WebAssembly
+#set(ENABLE_WASM TRUE)
+set(ENABLE_WASM FALSE)
 
 project(${PROJECT_NAME} CXX)
 
@@ -20,16 +28,43 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}
 
 # -fno-exceptions
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17") # use target options
 
 # https://stackoverflow.com/a/4184877/10904212
 set(COMMON_FLAGS "${COMMON_FLAGS} -frtti")
 
-# custom defines
-set(COMMON_FLAGS "${COMMON_FLAGS} -DPORT_OWN_DLOG=1")
+# custom debug logger for wasm
+set(PORT_OWN_DLOG TRUE)
+if (PORT_OWN_DLOG)
+  if (EMSCRIPTEN)
+    set(EMCC_COMMON "${EMCC_COMMON} -DPORT_OWN_DLOG=1")
+  elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+    set(COMMON_FLAGS "${COMMON_FLAGS} -DPORT_OWN_DLOG=1")
+  else()
+    message(FATAL_ERROR "platform not supported")
+  endif()
+endif(PORT_OWN_DLOG)
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${COMMON_FLAGS}")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${COMMON_FLAGS}")
+# https://github.com/emscripten-core/emscripten/issues/4932
+# https://github.com/kosh04/newlisp/blob/master/newlisp.h#L164
+# TODO
+set(COMMON_FLAGS "${COMMON_FLAGS} -D_FILE_OFFSET_BITS=64")
+set(COMMON_FLAGS "${COMMON_FLAGS} -D_LARGEFILE_SOURCE=1")
+if(EMSCRIPTEN)
+  # todo
+elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+  set(COMMON_FLAGS "${COMMON_FLAGS} -D_LARGEFILE64_SOURCE=1")
+  set(COMMON_FLAGS "${COMMON_FLAGS} -DHAVE_PTHREAD=1")
+  # Annotations useful when implementing condition variables such as CondVar,
+  # using conditional critical sections (Await/LockWhen) and when constructing
+  # user-defined synchronization mechanisms.
+  set(COMMON_FLAGS "${COMMON_FLAGS} -DDYNAMIC_ANNOTATIONS_ENABLED=1")
+else()
+  message(FATAL_ERROR "platform not supported")
+endif()
+
+# NVALGRIND used in tcmalloc and third_party/valgrind.h
+set(COMMON_FLAGS "${COMMON_FLAGS} -DNVALGRIND=1")
 
 set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_SUPPORT_GPU=1") # skia_enable_gpu
 set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_SUPPORT_GPU") # skia_enable_gpu
@@ -48,9 +83,6 @@ set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DEGL_EGLEXT_PROTOTYPES=1")
 #set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DGL_GLEXT_PROTOTYPES=1")
 # https://github.com/klzgrad/naiveproxy/blob/master/src/third_party/skia/modules/skottie/BUILD.gn#L14
 set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_ENABLE_SKOTTIE=1")
-
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${SK_COMMON_FLAGS}")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${SK_COMMON_FLAGS}")
 
 
 # TODO https://github.com/mbbill/JSC.js
@@ -71,20 +103,29 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${SK_COMMON_FLAGS}")
 # set(ICU_DEFINES "${ICU_DEFINES} -UU_ATTRIBUTE_DEPRECATED")
 # # undefines U_NO_DEFAULT_INCLUDE_UTF_HEADERS
 # #set(ICU_DEFINES "${ICU_DEFINES} -UU_NO_DEFAULT_INCLUDE_UTF_HEADERS")
-#
-# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${ICU_DEFINES}")
-# set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${ICU_DEFINES}")
 
 if(EMSCRIPTEN)
+  # https://github.com/emscripten-core/emscripten/pull/7977
+  # https://github.com/emscripten-ports/SDL2/pull/75
+  # (new since 1.38.27) — leads to minor code size savings
+  # NOTE: will drop support for DISABLE_DEPRECATED_FIND_EVENT_TARGET_BEHAVIOR=0 at 1.39
+  # https://github.com/emscripten-core/emscripten/issues/8047
+  # set(EMCC_COMMON "${EMCC_COMMON} -s DISABLE_DEPRECATED_FIND_EVENT_TARGET_BEHAVIOR=1")
+  set(EMCC_COMMON "${EMCC_COMMON} -s DISABLE_DEPRECATED_FIND_EVENT_TARGET_BEHAVIOR=0")
+
   #set(EMCC_COMMON "${EMCC_COMMON} -DSTATICALLY_LINKED_WITH_WTF")
   set(EMCC_COMMON "${EMCC_COMMON} -DTARGET_EMSCRIPTEN")
   #
-  set(EMCC_COMMON "${EMCC_COMMON} -s WASM=1")
-  #
-  # Whether we should use binaryen's wasm2js to convert our wasm to JS. Set when
-  # wasm backend is in use with WASM=0 (to enable non-wasm output, we compile to
-  # wasm normally, then compile that to JS).
-  # set(EMCC_COMMON "${EMCC_COMMON} -s WASM2JS=1")
+  if(ENABLE_WASM)
+    #
+    set(EMCC_COMMON "${EMCC_COMMON} -s WASM=1")
+    #
+    # Whether we should use binaryen's wasm2js to convert our wasm to JS. Set when
+    # wasm backend is in use with WASM=0 (to enable non-wasm output, we compile to
+    # wasm normally, then compile that to JS).
+    # set(EMCC_COMMON "${EMCC_COMMON} -s WASM2JS=1")
+    #
+  endif(ENABLE_WASM)
   #
   #set(EMCC_COMMON "${EMCC_COMMON} -DEMSCRIPTEN_HAS_UNBOUND_TYPE_NAMES=0")
   set(EMCC_COMMON "${EMCC_COMMON} -s USE_FREETYPE=1")
@@ -118,12 +159,24 @@ if(EMSCRIPTEN)
 
   #set(EMCC_COMMON "${EMCC_COMMON} -s SIDE_MODULE=1")
 
+  if(RELEASE_BUILD)
+    # remove duplicate functions, which C++ templates often create.
+    # NOTE: done by default for wasm, in -O1 and above
+    # set(EMCC_COMMON "${EMCC_COMMON} -s ELIMINATE_DUPLICATE_FUNCTIONS=1")
+    #
+    # EVAL_CTORS evaluates global data initializer constructors at link time,
+    # which would improve startup time and reduce code size of these ctors.
+    set(EMCC_COMMON "${EMCC_COMMON} -s EVAL_CTORS=1")
+  endif(RELEASE_BUILD)
+
 set(HAS_EMTERPRETIFY FALSE)
 set(HAS_ASYNCIFY FALSE)
 
-#set(ENABLE_WASM_PTHREADS TRUE)
-set(ENABLE_WASM_PTHREADS FALSE)
-if (ENABLE_WASM_PTHREADS)
+#set(ENABLE_WEB_PTHREADS TRUE)
+set(ENABLE_WEB_PTHREADS FALSE)
+if (ENABLE_WEB_PTHREADS)
+  #custom defines
+  set(EMCC_COMMON "${EMCC_COMMON} -DHAVE_PTHREAD=1")
   #
   # PTHREADS
   #
@@ -167,7 +220,7 @@ if (ENABLE_WASM_PTHREADS)
   set(EMCC_COMMON "${EMCC_COMMON} -s USE_PTHREADS=1")
   # see https://github.com/emscripten-core/emscripten/issues/8503
   set(EMCC_COMMON "${EMCC_COMMON} -pthread")
-  set(EMCC_COMMON "${EMCC_COMMON} -Wl,--shared-memory")
+  #set(EMCC_COMMON "${EMCC_COMMON} -Wl,--shared-memory") # unsupported on wasm
   #
   # When the linker flag -s PTHREAD_POOL_SIZE=<integer> is not specified
   # and pthread_create() is called, the new thread will not actually start
@@ -207,14 +260,16 @@ if (ENABLE_WASM_PTHREADS)
   #
   # debug traces for diagnosing pthreads related issues.
   # see https://github.com/emscripten-core/emscripten/blob/master/src/settings.js#L1117
-  # set(EMCC_COMMON "${EMCC_COMMON} -s PTHREADS_DEBUG=1")
+  if(NOT RELEASE_BUILD)
+    # set(EMCC_COMMON "${EMCC_COMMON} -s PTHREADS_DEBUG=1")
+  endif(NOT RELEASE_BUILD)
   #
   # dlmalloc is necessary for multithreading, split memory, e.t.c.
   # default: dlmalloc
   # set(EMCC_COMMON "${EMCC_COMMON} -s MALLOC=dlmalloc")
   #
   # PTHREAD_WORKER_FILE
-else(ENABLE_WASM_PTHREADS)
+else(ENABLE_WEB_PTHREADS)
   # custom defines
   set(EMCC_COMMON "${EMCC_COMMON} -DDISABLE_PTHREADS=1")
   set(EMCC_COMMON "${EMCC_COMMON} -DUSE_FAKE_THREAD_LS=1")
@@ -275,7 +330,7 @@ else(ENABLE_WASM_PTHREADS)
   #
   # You can optionally use -s 'EMTERPRETIFY_FILE="data.binary"' to store the emterpreter bytecode in a file
   #
-endif(ENABLE_WASM_PTHREADS)
+endif(ENABLE_WEB_PTHREADS)
 
 if (HAS_ASYNCIFY OR HAS_EMTERPRETIFY)
   #custom defines
@@ -293,17 +348,18 @@ endif(HAS_ASYNCIFY OR HAS_EMTERPRETIFY)
   set(EMCC_COMMON "${EMCC_COMMON} -s USE_SDL_IMAGE=2")
   set(EMCC_COMMON "${EMCC_COMMON} -s USE_SDL_TTF=2")
 
-set(PORT_OWN_DLOG TRUE)
-if (PORT_OWN_DLOG)
-  set(EMCC_COMMON "${EMCC_COMMON} -DPORT_OWN_DLOG=1")
-endif(PORT_OWN_DLOG)
-
 set(ENABLE_WEBGL2 TRUE)
 #set(ENABLE_WEBGL2 FALSE)
+
 set(ENABLE_WEBGL1 TRUE)
 #set(ENABLE_WEBGL1 FALSE)
+
 set(ENABLE_WEBGL_DEBUG_CHECKS TRUE)
 #set(ENABLE_WEBGL_DEBUG_CHECKS FALSE)
+if(RELEASE_BUILD)
+  set(ENABLE_WEBGL_DEBUG_CHECKS FALSE)
+endif(RELEASE_BUILD)
+
 if (ENABLE_WEBGL2 OR ENABLE_WEBGL1)
   #
   # WEBGL (see also OFFSCREEN_CAVAS settings)
@@ -311,8 +367,6 @@ if (ENABLE_WEBGL2 OR ENABLE_WEBGL1)
   # see https://bugs.chromium.org/p/skia/issues/detail?id=9052&q=&sort=-modified&colspec=ID%20Type%20Status%20Priority%20M%20Area%20Owner%20Summary%20Modified
   # see https://github.com/emscripten-core/emscripten/blob/master/src/settings.js#L369
   # see https://www.khronos.org/registry/webgl/specs/2.0/#4.1.2
-  # BUG: WebGL 2 was not working with OffscreenCanvas in firefox
-  # https://bugzilla.mozilla.org/show_bug.cgi?id=1388299
   # TODO: check freezes with threads
   if (ENABLE_WEBGL2)
     set(EMCC_COMMON "${EMCC_COMMON} -s USE_WEBGL2=1")
@@ -348,27 +402,31 @@ if (ENABLE_WEBGL2 OR ENABLE_WEBGL1)
     # Adds extra checks for error situations in the GL library.
     # Can impact performance.
     # see https://github.com/emscripten-core/emscripten/blob/master/src/settings.js#L362
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s GL_ASSERTIONS=1")
+    set(EMCC_COMMON "${EMCC_COMMON} -s GL_ASSERTIONS=1")
     #
-    #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s GL_UNSAFE_OPTS=0")
+    #set(EMCC_COMMON "${EMCC_COMMON} -s GL_UNSAFE_OPTS=0")
   endif(ENABLE_WEBGL_DEBUG_CHECKS)
 endif(ENABLE_WEBGL2 OR ENABLE_WEBGL1)
 
+if(NOT RELEASE_BUILD)
+  # NOTE: Catching C++ exceptions is turned off by default in -O1 (and above)
   # see https://github.com/emscripten-core/emscripten/blob/master/src/settings.js#L456
   # DISABLE_EXCEPTION_CATCHING = 0 - generate code to actually catch exceptions
   # DISABLE_EXCEPTION_CATCHING = 1 - disable exception catching at all
   # DISABLE_EXCEPTION_CATCHING = 2 - disable exception catching, but enables
   #                                  catching in whitelist
-
-  # Enables catching exception in the listed functions only, if
-  # DISABLE_EXCEPTION_CATCHING = 2 is set
-  # EXCEPTION_CATCHING_WHITELIST
+  set(EMCC_COMMON "${EMCC_COMMON} -s DISABLE_EXCEPTION_CATCHING=0")
+  # Enables catching exception in the listed functions only,
+  # if DISABLE_EXCEPTION_CATCHING = 2 is set
+  #set(EMCC_COMMON "${EMCC_COMMON} -s EXCEPTION_CATCHING_WHITELIST=[]")
+endif(NOT RELEASE_BUILD)
 
   # https://github.com/emscripten-core/emscripten/issues/3773
   # requires merge of https://github.com/luser/emscripten/commits/webrtc-sockets
   # should be complete and running on master.
   # -s SOCKET_WEBRTC=1
 
+  if(NOT RELEASE_BUILD)
   # -s DEMANGLE_SUPPORT to choose whether to compile the
   # application with libcxxabi-provided demangling support ___cxa_demangle().
   # If 1, build in libcxxabi's full c++ demangling code, to allow stackTrace()
@@ -376,14 +434,17 @@ endif(ENABLE_WEBGL2 OR ENABLE_WEBGL1)
   # see https://emscripten.org/docs/api_reference/emscripten.h.html?highlight=demangle#c.EM_LOG_DEMANGLE
   # see https://github.com/emscripten-core/emscripten/blob/incoming/src/settings.js#L288
   set(EMCC_COMMON "${EMCC_COMMON} -s DEMANGLE_SUPPORT=1")
+endif(NOT RELEASE_BUILD)
 
   # rtti required by skia
-  set(EMCC_COMMON "${EMCC_COMMON} -frtti")
+  set(EMCC_COMMON "${EMCC_COMMON} -frtti") # force enable rtti on wasm!
   set(EMCC_COMMON "${EMCC_COMMON} -DSK_RELEASE")
 
   # https://github.com/google/skia/blob/master/BUILD.gn#L502
   # set(EMCC_COMMON "${EMCC_COMMON} -DSKSL_STANDALONE") # if (skia_compile_processors)
   #set(EMCC_COMMON "${EMCC_COMMON} -DSK_DISABLE_LEGACY_SHADERCONTEXT=1")
+  #set(EMCC_COMMON "${EMCC_COMMON} -DSK_DISABLE_LOWP_RASTER_PIPELINE=1")
+  #set(EMCC_COMMON "${EMCC_COMMON} -DSK_FORCE_RASTER_PIPELINE_BLITTER=1")
   set(EMCC_COMMON "${EMCC_COMMON} -DSK_ASSUME_WEBGL=1") # see skia_gl_standard
   #set(EMCC_COMMON "${EMCC_COMMON} -DSK_ASSUME_GL_ES=1") # see skia_gl_standard
   #set(EMCC_COMMON "${EMCC_COMMON} -DSK_ASSUME_GL=1") # see skia_gl_standard
@@ -391,7 +452,8 @@ endif(ENABLE_WEBGL2 OR ENABLE_WEBGL1)
   # see https://github.com/xzwang2005/Prelude/blob/master/third_party/skia/src/pathops/SkPathOpsTypes.cpp#L106
   #set(EMCC_COMMON "${EMCC_COMMON} -DSKOTTIE_HACK")
   # https://github.com/qinjidong/qt5.13/blob/master/src/qtwebengine/src/3rdparty/chromium/third_party/skia/experimental/canvaskit/compile.sh
-  set(EMCC_COMMON "${EMCC_COMMON} -DSKNX_NO_SIMD")
+  #if(ENABLE_WASM)
+  set(EMCC_COMMON "${EMCC_COMMON} -DSKNX_NO_SIMD") # see "-s SIMD=1" and -msimd128
   set(EMCC_COMMON "${EMCC_COMMON} -DSK_DISABLE_AAA")
   set(EMCC_COMMON "${EMCC_COMMON} -DSK_DISABLE_EFFECT_DESERIALIZATION")
   set(EMCC_COMMON "${EMCC_COMMON} -DWEB_ASSEMBLY=1")
@@ -399,12 +461,6 @@ endif(ENABLE_WEBGL2 OR ENABLE_WEBGL1)
   set(EMCC_COMMON "${EMCC_COMMON} -DSK_SUPPORT_OPENCL=0")
   set(EMCC_COMMON "${EMCC_COMMON} -DSK_SAMPLES_FOR_X=1") # always set for linux, even if there's no X used
   set(EMCC_COMMON "${EMCC_COMMON} -DSK_HAS_PNG_LIBRARY=1") # skia_use_libpng
-
-  # https://github.com/emscripten-core/emscripten/issues/4932
-  # https://github.com/kosh04/newlisp/blob/master/newlisp.h#L164
-  # TODO
-  set(EMCC_COMMON "${EMCC_COMMON} -D_FILE_OFFSET_BITS=64")
-  #set(EMCC_COMMON "${EMCC_COMMON} -D_LARGEFILE_SOURCE=1")
 
   # CLANG_ATOMICS for ICU lib
   # see https://github.com/emscripten-core/emscripten/commit/9c4dfa12feb2b3d68bc2a44ad42b95f3b647728d
@@ -423,7 +479,9 @@ endif(ENABLE_WEBGL2 OR ENABLE_WEBGL1)
   # on what would be segfaults in a native build (like dereferencing 0)
   # see https://github.com/emscripten-core/emscripten/blob/master/src/settings.js#L262
   # see https://emscripten.org/docs/porting/Debugging.html#memory-alignment-issues
-  set(EMCC_COMMON "${EMCC_COMMON} -s SAFE_HEAP=1")
+  if(NOT RELEASE_BUILD)
+    set(EMCC_COMMON "${EMCC_COMMON} -s SAFE_HEAP=1")
+  endif(NOT RELEASE_BUILD)
   #
   # Build with SAFE_HEAP=1 and function pointer aliasing disabled.
   # This should make it impossible for a function pointer to
@@ -432,40 +490,92 @@ endif(ENABLE_WEBGL2 OR ENABLE_WEBGL1)
   # that calls to function pointer addresses in the wrong table result
   # in clear errors. Without this setting such calls just execute
   # whatever function is at the address, which can be much harder to debug.
-  set(EMCC_COMMON "${EMCC_COMMON} -s ALIASING_FUNCTION_POINTERS=0")
+  if(NOT RELEASE_BUILD)
+    set(EMCC_COMMON "${EMCC_COMMON} -s ALIASING_FUNCTION_POINTERS=0")
+  endif(NOT RELEASE_BUILD)
 
   # EMTERPRETIFY is not compatible with source maps
   # (maps are not useful in emterpreted code,
   # and splitting out non-emterpreted source maps is not yet implemented)
-if (HAS_EMTERPRETIFY)
-  message(FATAL_ERROR "TODO: REMOVE DEBUG FLAGS IN PROD MODE")
-else()
-  # see http://webassemblycode.com/using-browsers-debug-webassembly/
-  set(EMCC_COMMON "${EMCC_COMMON} -g4 --source-map-base http://localhost:9090/")
-endif(HAS_EMTERPRETIFY)
+  if (HAS_EMTERPRETIFY)
+    message(FATAL_ERROR "TODO: REMOVE DEBUG FLAGS IN PROD MODE")
+  else(HAS_EMTERPRETIFY)
+    # see http://webassemblycode.com/using-browsers-debug-webassembly/
+    set(EMCC_COMMON "${EMCC_COMMON} --source-map-base http://localhost:9090/")
+  endif(HAS_EMTERPRETIFY)
 
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${EMCC_COMMON}")
+  if(NOT RELEASE_BUILD)
+    # -g4: Preserve LLVM debug information. This is the highest level of debuggability
+    # see https://emscripten.org/docs/tools_reference/emcc.html#emcc-compiler-optimization-options
+    # NOTE: -01 and higher by default discard LLVM debug information
+    set(EMCC_COMMON "${EMCC_COMMON} -g4")
+  endif(NOT RELEASE_BUILD)
 
   # TODO EMCC_LINKER_FLAGS
 
-  # https://emscripten.org/docs/tools_reference/emcc.html#emcc-oz
-  #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Oz")
+  # see https://doc.magnum.graphics/magnum/platforms-html5.html#platforms-html5-code-size
+  # see https://emscripten.org/docs/tools_reference/emcc.html#emcc-oz
   # NOTE: compile with -O1 or -O0 to see crash message/assert
-  #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O1")
-  #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2")
+  if(RELEASE_BUILD)
+    #set(EMCC_COMMON "${EMCC_COMMON} -O1")
+    # best performance. This is a good setting for a release build (!!!)
+    set(EMCC_COMMON "${EMCC_COMMON} -O3")
+    # reduces code size at the expense of performance (!!!)
+    #set(EMCC_COMMON "${EMCC_COMMON} -Os")
+    # Oz reduces code size even further at the expense of performance (!!!)
+    # see https://github.com/emscripten-core/emscripten/issues/362
+    #set(EMCC_COMMON "${EMCC_COMMON} -Oz")
+  else(RELEASE_BUILD)
+    set(EMCC_COMMON "${EMCC_COMMON} -O0")
+    # NOTE Catching C++ exceptions is turned off by default in -O1 (and above).
+    # set(EMCC_COMMON "${EMCC_COMMON} -O1")
+    #set(EMCC_COMMON "${EMCC_COMMON} -O2")
+    # see https://emscripten.org/docs/tools_reference/emcc.html#emcc-compiler-optimization-options
+    set(EMCC_COMMON "${EMCC_COMMON} --profiling")
+    # see https://emscripten.org/docs/tools_reference/emcc.html#emcc-compiler-optimization-options
+    set(EMCC_COMMON "${EMCC_COMMON} --profiling-funcs")
+    # see https://emscripten.org/docs/tools_reference/emcc.html#emcc-compiler-optimization-options
+    set(EMCC_COMMON "${EMCC_COMMON} --tracing")
+    # allows you, for example, to reconstruct meaningful stack traces.
+    set(EMCC_COMMON "${EMCC_COMMON} --emit-symbol-map")
+    # Enables warnings about the use of absolute paths in -I and -L command line directives.
+    # set(EMCC_COMMON "${EMCC_COMMON} -Wwarn-absolute-paths")
+    # see https://emscripten.org/docs/tools_reference/emcc.html#emcc-compiler-optimization-options
+    set(EMCC_COMMON "${EMCC_COMMON} --memoryprofiler")
+    # see https://emscripten.org/docs/tools_reference/emcc.html#emcc-compiler-optimization-options
+    if (ENABLE_WEB_PTHREADS)
+      set(EMCC_COMMON "${EMCC_COMMON} --threadprofiler")
+    endif(ENABLE_WEB_PTHREADS)
+    set(EMCC_COMMON "${EMCC_COMMON} -DPATHKIT_TESTING")
+  endif(RELEASE_BUILD)
+  #
+  # TODO: remove some DEAD FUNCTIONS to improve skia webassembly size
+  # -s DEAD_FUNCTIONS
+  #
   # With --use-preload-plugins, files can be automatically decoded based on their extension.
   # see https://emscripten.org/docs/porting/files/packaging_files.html
-  #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --preload-file resources --use-preload-plugins")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${EMCC_COMMON}")
+  #set(EMCC_COMMON "${EMCC_COMMON} --preload-file resources --use-preload-plugins")
   # https://emscripten.org/docs/getting_started/FAQ.html#why-does-my-code-break-and-gives-odd-errors-when-using-o2-closure-1
-  #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --closure 1")
+  #set(EMCC_COMMON "${EMCC_COMMON} --closure 1") # UNSAFE optimization
   # Enables LLVM link-time optimizations (LTO)
-  # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --llvm-lto 3")
-  #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s SIMD=1")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s ERROR_ON_MISSING_LIBRARIES=1")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s ERROR_ON_UNDEFINED_SYMBOLS=1")
-  #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s SDL2_IMAGE_FORMATS='[\"png\"]'")
+  #set(EMCC_COMMON "${EMCC_COMMON} --llvm-lto 1") # UNSAFE optimization
+  # set(EMCC_COMMON "${EMCC_COMMON} --llvm-lto 3") # UNSAFE optimization
+  if(ENABLE_WASM)
+    # TODO: test if it may increase performance
+    # To enable WASM SIMD, pass the -msimd128 flag at compile time
+    # see Limitations and behavioral differences (!!!) from
+    # https://github.com/emscripten-core/emscripten/pull/8582/commits/1ab1600024823d430ce08bddd4e000e822d75c7d
+    #set(EMCC_COMMON "${EMCC_COMMON} -msimd128")
+  else()
+    # NOTE: Emscripten's SIMD.js support should be considered deprecated and may be removed
+    # see https://github.com/emscripten-core/emscripten/pull/8582/commits/1ab1600024823d430ce08bddd4e000e822d75c7d
+    # set(EMCC_COMMON "${EMCC_COMMON} -s SIMD=1")
+  endif()
+
+
+  set(EMCC_COMMON "${EMCC_COMMON} -s ERROR_ON_MISSING_LIBRARIES=1")
+  set(EMCC_COMMON "${EMCC_COMMON} -s ERROR_ON_UNDEFINED_SYMBOLS=1")
+  #set(EMCC_COMMON "${EMCC_COMMON} -s SDL2_IMAGE_FORMATS='[\"png\"]'")
 
   #
   # FILESYSTEM
@@ -473,79 +583,91 @@ endif(HAS_EMTERPRETIFY)
   # if your C code uses no files, but you include
   # some JS that does, you might need this.
   # see https://github.com/emscripten-core/emscripten/blob/master/src/settings.js#L549
-  #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s FORCE_FILESYSTEM=0")
+  #set(EMCC_COMMON "${EMCC_COMMON} -s FORCE_FILESYSTEM=1")
   #
-  #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s NO_FILESYSTEM=1")
+  #set(EMCC_COMMON "${EMCC_COMMON} -s NO_FILESYSTEM=1")
   #
   # If set to 1, uses the multithreaded filesystem that is implemented within the
   # asm.js module, using emscripten_fetch.
   # Implies -s FETCH=1 (!!!)
   # see https://github.com/emscripten-core/emscripten/blob/master/src/settings.js#L1214
-  #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s ASMFS=1")
+  #set(EMCC_COMMON "${EMCC_COMMON} -s ASMFS=1")
   # enables emscripten_fetch API.
   # see https://github.com/emscripten-core/emscripten/blob/master/src/settings.js#L1214
-  #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s FETCH=1")
+  #set(EMCC_COMMON "${EMCC_COMMON} -s FETCH=1")
   # FETCH_DEBUG
   #
   # Log all FS operations.
   # see https://github.com/emscripten-core/emscripten/blob/master/src/settings.js#L524
-  # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s FS_LOG=1")
+  # set(EMCC_COMMON "${EMCC_COMMON} -s FS_LOG=1")
   #
-  #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s CASE_INSENSITIVE_FS=1")
+  #set(EMCC_COMMON "${EMCC_COMMON} -s CASE_INSENSITIVE_FS=1")
 
-  #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s MODULARIZE=1")
+  #set(EMCC_COMMON "${EMCC_COMMON} -s MODULARIZE=1")
 
   # also enables STACK_OVERFLOW_CHECK
   # see https://emscripten.org/docs/porting/Debugging.html
   # see https://github.com/emscripten-core/emscripten/blob/master/src/settings.js#L41
-  #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s ASSERTIONS=1")
-  # ASSERTIONS == 2 gives even more runtime checks
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s ASSERTIONS=2")
+  if(NOT RELEASE_BUILD)
+    #set(EMCC_COMMON "${EMCC_COMMON} -s ASSERTIONS=1")
+    # ASSERTIONS == 2 gives even more runtime checks
+    set(EMCC_COMMON "${EMCC_COMMON} -s ASSERTIONS=2")
+  endif(NOT RELEASE_BUILD)
 
   # see https://github.com/emscripten-core/emscripten/blob/master/src/settings.js#L443
-  #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s LZ4=1")
+  #set(EMCC_COMMON "${EMCC_COMMON} -s LZ4=1")
 
   # In theory there should be no limit, but in practice,
   # 2GB is a practical limit because many (all?)
   # browsers apply that limit, in particular I know Chrome and Firefox do.
   # https://github.com/emscripten-core/emscripten/issues/6566
   # Memory growth is not yet supported with pthreads!
-  #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s ALLOW_MEMORY_GROWTH=1")
+  #set(EMCC_COMMON "${EMCC_COMMON} -s ALLOW_MEMORY_GROWTH=1")
   # TOTAL_MEMORY: multiple of 16MB
-  #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s TOTAL_MEMORY=512MB")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s TOTAL_MEMORY=1024MB")
+  #set(EMCC_COMMON "${EMCC_COMMON} -s TOTAL_MEMORY=512MB")
+  set(EMCC_COMMON "${EMCC_COMMON} -s TOTAL_MEMORY=1024MB")
 
   # Also remember to pass -s NO_EXIT_RUNTIME=1 if you want pthreads to stay alive
   # when main() exits on the main thread, otherwise they will be terminated
   # as the C runtime closes at the end of main().
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s NO_EXIT_RUNTIME=1")
+  set(EMCC_COMMON "${EMCC_COMMON} -s NO_EXIT_RUNTIME=1")
 
-  # This is currently only supported in asm.js, not  wasm (!!!)
   # Warn at compile time about instructions that LLVM tells us are not fully
   # aligned.  This is useful to find places in your code where you might refactor
   # to ensure proper alignment.
   # see https://github.com/emscripten-core/emscripten/blob/incoming/src/settings.js#L161
-  #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s WARN_UNALIGNED=1")
+  if(NOT RELEASE_BUILD)
+    # This is currently only supported in asm.js, not  wasm (!!!)
+    #set(EMCC_COMMON "${EMCC_COMMON} -s WARN_UNALIGNED=1")
+  endif(NOT RELEASE_BUILD)
 
-  #
-  # offscreen canvas
-  #
-  # emscripten_webgl_commit_frame requires offscreen canvas support
-  # see https://github.com/emscripten-core/emscripten/issues/5437
-  # see explicitSwapControl
-  #
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s OFFSCREENCANVAS_SUPPORT=1")
-  #
-  # When building simultaneously with both -s OFFSCREEN_FRAMEBUFFER=1
-  # and -s OFFSCREENCANVAS_SUPPORT=1 linker flags enabled,
-  # offscreen backbuffer can be used as a polyfill-like compatibility
-  # fallback to enable rendering WebGL from a pthread when the browser
-  # does not support the OffscreenCanvas API.
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s OFFSCREEN_FRAMEBUFFER=1")
+  # if GL context must be used in web workers - enable SWAP_CONTROL
+  #set(HAVE_SWAP_CONTROL TRUE)
+  set(HAVE_SWAP_CONTROL FALSE)
+  if(HAVE_SWAP_CONTROL)
+    # custom defines
+    set(EMCC_COMMON "${EMCC_COMMON} -DHAVE_SWAP_CONTROL=1")
+    #
+    # offscreen canvas
+    #
+    # emscripten_webgl_commit_frame requires offscreen canvas support
+    # see https://github.com/emscripten-core/emscripten/issues/5437
+    # see explicitSwapControl
+    #
+    set(EMCC_COMMON "${EMCC_COMMON} -s OFFSCREENCANVAS_SUPPORT=1")
+    #
+    # When building simultaneously with both -s OFFSCREEN_FRAMEBUFFER=1
+    # and -s OFFSCREENCANVAS_SUPPORT=1 linker flags enabled,
+    # offscreen backbuffer can be used as a polyfill-like compatibility
+    # fallback to enable rendering WebGL from a pthread when the browser
+    # does not support the OffscreenCanvas API.
+    # see https://github.com/emscripten-core/emscripten/pull/4412
+    set(EMCC_COMMON "${EMCC_COMMON} -s OFFSCREEN_FRAMEBUFFER=1")
+  endif(HAVE_SWAP_CONTROL)
 
-else()
+else(EMSCRIPTEN)
 
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DSK_ASSUME_GL=1")
+  set(COMMON_FLAGS "${COMMON_FLAGS} -DSK_ASSUME_GL=1")
 
   ### Find Libraries
   set(USE_OPENGL_LIB FALSE)
@@ -613,15 +735,52 @@ else()
   message(STATUS "HARFBUZZ_INCLUDE_DIRS=${HARFBUZZ_INCLUDE_DIRS}")
   #include_directories(${HARFBUZZ_INCLUDE_DIRS})
 
-endif() # EMSCRIPTEN
+endif(EMSCRIPTEN)
+
+set(ENABLE_WTF TRUE)
+#set(ENABLE_WTF FALSE)
+# custom flags
+if(ENABLE_WTF)
+  set(COMMON_FLAGS "${COMMON_FLAGS} -DENABLE_BASE=1")
+  # NOTE: WTF requires BASE
+  set(COMMON_FLAGS "${COMMON_FLAGS} -DENABLE_WTF=1")
+endif(ENABLE_WTF)
+
+#
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${COMMON_C_FLAGS}")
+#
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${COMMON_CXX_FLAGS}")
+#
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${COMMON_FLAGS}")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${COMMON_FLAGS}")
+#
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${SK_COMMON_FLAGS}")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${SK_COMMON_FLAGS}")
+#
+# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${ICU_DEFINES}")
+# set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${ICU_DEFINES}")
+#
+if(EMSCRIPTEN)
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${EMCC_COMMON}")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${EMCC_COMMON}")
+endif(EMSCRIPTEN)
 
 include(ExternalProject)
 
 #
 # WTF
 #
-
-add_subdirectory(src/chromium)
+if(ENABLE_WTF)
+  add_subdirectory(src/chromium)
+  set(WTF_LIBRARY_NAME wtf)
+  #message(FATAL_ERROR ${WTF_LIBRARY_NAME})
+  set(WTF_LIBS
+    ${WTF_LIBRARY_NAME}
+    base
+    libevent
+    icu
+  )
+endif(ENABLE_WTF)
 
 #
 # Skia
@@ -634,6 +793,11 @@ else()
   set(IS_DEBUG_BUILD OFF)
   set(EXT_SKIA_OFFICIAL_BUILD "true")
 endif ()
+
+if(RELEASE_BUILD)
+  set(IS_DEBUG_BUILD OFF)
+  set(EXT_SKIA_OFFICIAL_BUILD "true")
+endif(RELEASE_BUILD)
 
 # I wanted to expose (almost) all Skia options as CMake options but sadly
 # GN is a really bad tool - It produces non-overridable configure errors like:
@@ -648,8 +812,12 @@ endif ()
 # the ExternalProject setup is beyond reasonable.
 option(EXT_SKIA_ALWAYS_BUILD "" OFF)
 option(EXT_SKIA_DEBUG "" ${IS_DEBUG_BUILD})
-# NOTE: Use is_component_build=false with EMSCRIPTEN
-option(EXT_SKIA_SHARED "build a shared lbrary (ON) or a static library (OFF)" OFF)
+if(EMSCRIPTEN)
+  # NOTE: Use is_component_build=false with EMSCRIPTEN
+  option(EXT_SKIA_SHARED "build a shared lbrary (ON) or a static library (OFF)" OFF)
+else(EMSCRIPTEN)
+  option(EXT_SKIA_SHARED "build a shared lbrary (ON) or a static library (OFF)" OFF)
+endif(EMSCRIPTEN)
 
 set(SKIA_SRC "${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/skia")
 
@@ -732,7 +900,7 @@ if (EMSCRIPTEN)
   set(SK_GL_STANDARD "skia_gl_standard=\"webgl\"") # SK_ASSUME_WEBGL
   #set(SK_GL_STANDARD "skia_gl_standard=\"gles\"") # SK_ASSUME_GL_ES
   #set(SK_GL_STANDARD "skia_gl_standard=\"gl\"") # SK_ASSUME_GL
-else ()
+else (EMSCRIPTEN)
   set(SK_IS_processors "false") # see SKSL_STANDALONE
   set(SK_IS_workarounds "false")
   set(SK_IS_ccpr "true")
@@ -740,7 +908,7 @@ else ()
   set(SK_IS_EGL "false")
   set(SK_TARGET_CPU "")
   set(SK_GL_STANDARD "") # default
-endif ()
+endif (EMSCRIPTEN)
 
 # TODO: target_cpu=\"wasm\" \
 # skia_use_system_zlib=true \
@@ -972,8 +1140,9 @@ set(SKIA_DEFINES
 if (EMSCRIPTEN)
   list(APPEND SKIA_DEFINES OS_EMSCRIPTEN=1) # same as in base/WTF/blink
   list(APPEND SKIA_DEFINES SK_CPU_SSE_LEVEL=0)
-  list(APPEND SKIA_DEFINES SKNX_NO_SIMD)
-  list(APPEND SKIA_DEFINES SKNX_NO_SIMD=1)
+  #list(APPEND SKIA_DEFINES SK_CPU_SSE_LEVEL=SK_CPU_SSE_LEVEL_SSE1)
+  #if(ENABLE_WASM)
+  list(APPEND SKIA_DEFINES SKNX_NO_SIMD) # see "-s SIMD=1" and -msimd128
   list(APPEND SKIA_DEFINES SK_ASSUME_WEBGL)
   list(APPEND SKIA_DEFINES SK_ASSUME_WEBGL=1)
   #list(APPEND SKIA_DEFINES SK_ASSUME_GL_ES)
@@ -998,8 +1167,17 @@ if (EMSCRIPTEN)
   #list(APPEND SKIA_DEFINES GL_GLEXT_PROTOTYPES=1)
   list(APPEND SKIA_DEFINES WEB_ASSEMBLY=1)
   #list(APPEND SKIA_DEFINES SK_BUILD_FOR_PATHKIT=1)
+
+  # we don't deserialize anything.
   list(APPEND SKIA_DEFINES SK_DISABLE_READBUFFER=1)
-endif ()
+  #list(APPEND SKIA_DEFINES SK_DISABLE_EFFECT_DESERIALIZATION=1)
+else(EMSCRIPTEN)
+  # Remove software rasterizers to save some code size.
+  #list(APPEND SKIA_DEFINES SK_DISABLE_AAA=1)
+
+  # see https://github.com/flutter/flutter/issues/11402
+  list(APPEND SKIA_DEFINES SK_ENABLE_DUMP_GPU=1)
+endif (EMSCRIPTEN)
 
 if (SK_CONF_SHARED)
   list(APPEND SKIA_DEFINES SKIA_DLL=1)
@@ -1332,6 +1510,7 @@ set(PROJECT_SRC
   thirdparty/skia/src/effects/imagefilters/SkXfermodeImageFilter.cpp
 )
 
+# NOTE: -s LINKABLE=1 is not supported with -s USE_PTHREADS>0
 # https://www.mail-archive.com/emscripten-discuss@googlegroups.com/msg07864.html
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s SIDE_MODULE=0")
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s MAIN_MODULE=1")
@@ -1364,19 +1543,21 @@ add_dependencies(${PROJECT_NAME}
 #  ${PROJECT_NAME}
 #  PROPERTIES LINK_FLAGS "-s MAIN_MODULE=1")
 
+# see LINK_OPTIONS
+#set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS
+#  "-s MAIN_MODULE=1"
+#  "-s FORCE_FILESYSTEM=1"
+#)
+
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 17)
 
 if(EMSCRIPTEN)
-  # -s ENVIRONMENT=web
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --emrun")
   # https://emscripten.org/docs/getting_started/Tutorial.html#generating-html
   #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -o hello.html")
   #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --preload-file resources/fonts/FreeSans.ttf")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --preload-file resources")
 endif() # EMSCRIPTEN
-
-set(WTF_LIBRARY_NAME wtf)
-#message(FATAL_ERROR ${WTF_LIBRARY_NAME})
 
 set(SKIA_INCLUDES
     thirdparty
@@ -1389,6 +1570,30 @@ set(SKIA_INCLUDES
 )
 
 if(EMSCRIPTEN)
+  # It is recommended to use target_link_libraries() for linker flags,
+  # not set_target_properties (!!!)
+  # see https://stackoverflow.com/a/45905060/10904212
+  set (LINK_OPTIONS
+    # NOTE: -s LINKABLE=1 is not supported with -s USE_PTHREADS>0
+    #"-s MAIN_MODULE=1"
+    #
+    # if your C code uses no files, but you include
+    # some JS that does, you might need this.
+    # see https://github.com/emscripten-core/emscripten/blob/master/src/settings.js#L549
+    # make the compiler include file system support even though it doesn’t see it being used.
+    "-s FORCE_FILESYSTEM=1"
+    #
+    # The ENVIRONMENT flag lets you specify that the output will
+    # only run on the web, or only run in node.js, etc.
+    # This prevents the compiler from emitting code to
+    # support all possible runtime environments, saving ~2KB.
+    # see https://github.com/emscripten-core/emscripten/blob/master/src/settings.js#L441
+    # see https://github.com/emscripten-core/emscripten/issues/6717
+    # NOTE: notice the single quoted 'web'
+    # "-s ENVIRONMENT=\"'web'\""
+    "-s ENVIRONMENT='web'"
+  )
+
   set(HTML_TEMPLATE "${CMAKE_CURRENT_SOURCE_DIR}/assets/index.html")
 
   #message("using template " ${HTML_TEMPLATE})
@@ -1404,10 +1609,7 @@ if(EMSCRIPTEN)
   # Top is the executable, followed by directly used libraries.
   # see https://floooh.github.io/2016/01/12/cmake-dependency-juggling.html
   target_link_libraries(${PROJECT_NAME} PUBLIC
-    ${WTF_LIBRARY_NAME}
-    base
-    libevent
-    icu
+    ${WTF_LIBS}
     # tcmalloc only for posix/linux/e.t.c.
     #tcmalloc
     #
@@ -1420,6 +1622,7 @@ if(EMSCRIPTEN)
     wuffs
     jpeg
     #
+    ${LINK_OPTIONS}
   )
 else()
   target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE
@@ -1435,10 +1638,7 @@ else()
   # Top is the executable, followed by directly used libraries.
   # see https://floooh.github.io/2016/01/12/cmake-dependency-juggling.html
   target_link_libraries(${PROJECT_NAME} PUBLIC
-    ${WTF_LIBRARY_NAME}
-    base
-    libevent
-    icu
+    ${WTF_LIBS}
     # tcmalloc only for posix/linux/e.t.c.
     tcmalloc
     #
@@ -1461,6 +1661,8 @@ else()
     #SDL2:Net
     #SDL2:tff # see ${SDL2_TTF_LIBRARY}
     ${SDL2_TTF_LIBRARY}
+    #
+    ${LINK_OPTIONS}
   )
   target_compile_definitions(${PROJECT_NAME} PRIVATE
     GLEW_NO_GLU
