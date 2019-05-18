@@ -1227,7 +1227,7 @@ int main(int argc, char** argv) {
     /// @TODO don`t reserve much memory on WASM/EMSCRIPTEN platform
     // Try to reserve as much address space as we reasonably can.
     const size_t kMB = 1024 * 1024;
-   // for (size_t size = 512 * kMB; size >= 32 * kMB; size -= 16 * kMB) {
+    // for (size_t size = 512 * kMB; size >= 32 * kMB; size -= 16 * kMB) {
     for (size_t size = 128 * kMB; size >= 32 * kMB; size -= 16 * kMB) {
       printf("ReserveAddressSpace...\n");
       if (base::ReserveAddressSpace(size)) {

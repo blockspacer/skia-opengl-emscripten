@@ -13,13 +13,22 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/sdl2)
 
 set(PROJECT_NAME "skemgl")
 
+# build mode
 # NOTE: measure performace on RELEASE builds!
 #set(RELEASE_BUILD TRUE)
 set(RELEASE_BUILD FALSE)
 
 # WebAssembly
-#set(ENABLE_WASM TRUE)
-set(ENABLE_WASM FALSE)
+set(ENABLE_WASM TRUE)
+#set(ENABLE_WASM FALSE)
+
+# PTHREADS
+#set(ENABLE_WEB_PTHREADS TRUE)
+set(ENABLE_WEB_PTHREADS FALSE)
+
+if(NOT ENABLE_WASM)
+  message(FATAL_ERROR "only WASM build supported for now")
+endif(NOT ENABLE_WASM)
 
 project(${PROJECT_NAME} CXX)
 
@@ -28,7 +37,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}
 
 # -fno-exceptions
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
-#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17") # use target options
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17") # use target options
 
 # https://stackoverflow.com/a/4184877/10904212
 set(COMMON_FLAGS "${COMMON_FLAGS} -frtti")
@@ -113,7 +122,6 @@ if(EMSCRIPTEN)
   # set(EMCC_COMMON "${EMCC_COMMON} -s DISABLE_DEPRECATED_FIND_EVENT_TARGET_BEHAVIOR=1")
   set(EMCC_COMMON "${EMCC_COMMON} -s DISABLE_DEPRECATED_FIND_EVENT_TARGET_BEHAVIOR=0")
 
-  #set(EMCC_COMMON "${EMCC_COMMON} -DSTATICALLY_LINKED_WITH_WTF")
   set(EMCC_COMMON "${EMCC_COMMON} -DTARGET_EMSCRIPTEN")
   #
   if(ENABLE_WASM)
@@ -172,8 +180,6 @@ if(EMSCRIPTEN)
 set(HAS_EMTERPRETIFY FALSE)
 set(HAS_ASYNCIFY FALSE)
 
-#set(ENABLE_WEB_PTHREADS TRUE)
-set(ENABLE_WEB_PTHREADS FALSE)
 if (ENABLE_WEB_PTHREADS)
   #custom defines
   set(EMCC_COMMON "${EMCC_COMMON} -DHAVE_PTHREAD=1")
@@ -408,6 +414,7 @@ if (ENABLE_WEBGL2 OR ENABLE_WEBGL1)
   endif(ENABLE_WEBGL_DEBUG_CHECKS)
 endif(ENABLE_WEBGL2 OR ENABLE_WEBGL1)
 
+# BUG: causes functions count of 1344484 exceeds internal limit of 1000000
 if(NOT RELEASE_BUILD)
   # NOTE: Catching C++ exceptions is turned off by default in -O1 (and above)
   # see https://github.com/emscripten-core/emscripten/blob/master/src/settings.js#L456
@@ -415,7 +422,7 @@ if(NOT RELEASE_BUILD)
   # DISABLE_EXCEPTION_CATCHING = 1 - disable exception catching at all
   # DISABLE_EXCEPTION_CATCHING = 2 - disable exception catching, but enables
   #                                  catching in whitelist
-  set(EMCC_COMMON "${EMCC_COMMON} -s DISABLE_EXCEPTION_CATCHING=0")
+  #set(EMCC_COMMON "${EMCC_COMMON} -s DISABLE_EXCEPTION_CATCHING=0")
   # Enables catching exception in the listed functions only,
   # if DISABLE_EXCEPTION_CATCHING = 2 is set
   #set(EMCC_COMMON "${EMCC_COMMON} -s EXCEPTION_CATCHING_WHITELIST=[]")
@@ -426,7 +433,7 @@ endif(NOT RELEASE_BUILD)
   # should be complete and running on master.
   # -s SOCKET_WEBRTC=1
 
-  if(NOT RELEASE_BUILD)
+if(NOT RELEASE_BUILD)
   # -s DEMANGLE_SUPPORT to choose whether to compile the
   # application with libcxxabi-provided demangling support ___cxa_demangle().
   # If 1, build in libcxxabi's full c++ demangling code, to allow stackTrace()
@@ -481,16 +488,14 @@ endif(NOT RELEASE_BUILD)
   # see https://emscripten.org/docs/porting/Debugging.html#memory-alignment-issues
   if(NOT RELEASE_BUILD)
     set(EMCC_COMMON "${EMCC_COMMON} -s SAFE_HEAP=1")
-  endif(NOT RELEASE_BUILD)
-  #
-  # Build with SAFE_HEAP=1 and function pointer aliasing disabled.
-  # This should make it impossible for a function pointer to
-  # be called with the wrong type without raising an error
-  # ALIASING_FUNCTION_POINTERS=0 is also useful because it ensures
-  # that calls to function pointer addresses in the wrong table result
-  # in clear errors. Without this setting such calls just execute
-  # whatever function is at the address, which can be much harder to debug.
-  if(NOT RELEASE_BUILD)
+    #
+    # Build with SAFE_HEAP=1 and function pointer aliasing disabled.
+    # This should make it impossible for a function pointer to
+    # be called with the wrong type without raising an error
+    # ALIASING_FUNCTION_POINTERS=0 is also useful because it ensures
+    # that calls to function pointer addresses in the wrong table result
+    # in clear errors. Without this setting such calls just execute
+    # whatever function is at the address, which can be much harder to debug.
     set(EMCC_COMMON "${EMCC_COMMON} -s ALIASING_FUNCTION_POINTERS=0")
   endif(NOT RELEASE_BUILD)
 
@@ -498,7 +503,7 @@ endif(NOT RELEASE_BUILD)
   # (maps are not useful in emterpreted code,
   # and splitting out non-emterpreted source maps is not yet implemented)
   if (HAS_EMTERPRETIFY)
-    message(FATAL_ERROR "TODO: REMOVE DEBUG FLAGS IN PROD MODE")
+    message(FATAL_ERROR "TODO: REMOVE EMTERPRETIFY FLAGS")
   else(HAS_EMTERPRETIFY)
     # see http://webassemblycode.com/using-browsers-debug-webassembly/
     set(EMCC_COMMON "${EMCC_COMMON} --source-map-base http://localhost:9090/")
@@ -526,26 +531,35 @@ endif(NOT RELEASE_BUILD)
     # see https://github.com/emscripten-core/emscripten/issues/362
     #set(EMCC_COMMON "${EMCC_COMMON} -Oz")
   else(RELEASE_BUILD)
-    set(EMCC_COMMON "${EMCC_COMMON} -O0")
+    # set(EMCC_COMMON "${EMCC_COMMON} -O0")
     # NOTE Catching C++ exceptions is turned off by default in -O1 (and above).
-    # set(EMCC_COMMON "${EMCC_COMMON} -O1")
+    set(EMCC_COMMON "${EMCC_COMMON} -O1")
     #set(EMCC_COMMON "${EMCC_COMMON} -O2")
+    #
     # see https://emscripten.org/docs/tools_reference/emcc.html#emcc-compiler-optimization-options
-    set(EMCC_COMMON "${EMCC_COMMON} --profiling")
-    # see https://emscripten.org/docs/tools_reference/emcc.html#emcc-compiler-optimization-options
-    set(EMCC_COMMON "${EMCC_COMMON} --profiling-funcs")
-    # see https://emscripten.org/docs/tools_reference/emcc.html#emcc-compiler-optimization-options
-    set(EMCC_COMMON "${EMCC_COMMON} --tracing")
-    # allows you, for example, to reconstruct meaningful stack traces.
+    #set(EMCC_COMMON "${EMCC_COMMON} --profiling")
+    #
+    ## see https://emscripten.org/docs/tools_reference/emcc.html#emcc-compiler-optimization-options
+    #set(EMCC_COMMON "${EMCC_COMMON} --profiling-funcs")
+    #
+    ## see https://emscripten.org/docs/tools_reference/emcc.html#emcc-compiler-optimization-options
+    #set(EMCC_COMMON "${EMCC_COMMON} --tracing")
+    #
+    ## allows you, for example, to reconstruct meaningful stack traces.
+    ## see https://habr.com/ru/post/343784/
     set(EMCC_COMMON "${EMCC_COMMON} --emit-symbol-map")
-    # Enables warnings about the use of absolute paths in -I and -L command line directives.
-    # set(EMCC_COMMON "${EMCC_COMMON} -Wwarn-absolute-paths")
-    # see https://emscripten.org/docs/tools_reference/emcc.html#emcc-compiler-optimization-options
+    #
+    ## Enables warnings about the use of absolute paths in -I and -L command line directives.
+    ## set(EMCC_COMMON "${EMCC_COMMON} -Wwarn-absolute-paths")
+    ## see https://emscripten.org/docs/tools_reference/emcc.html#emcc-compiler-optimization-options
+    #
     set(EMCC_COMMON "${EMCC_COMMON} --memoryprofiler")
-    # see https://emscripten.org/docs/tools_reference/emcc.html#emcc-compiler-optimization-options
+    ## see https://emscripten.org/docs/tools_reference/emcc.html#emcc-compiler-optimization-options
+    #
     if (ENABLE_WEB_PTHREADS)
       set(EMCC_COMMON "${EMCC_COMMON} --threadprofiler")
     endif(ENABLE_WEB_PTHREADS)
+    #
     set(EMCC_COMMON "${EMCC_COMMON} -DPATHKIT_TESTING")
   endif(RELEASE_BUILD)
   #
@@ -626,6 +640,7 @@ endif(NOT RELEASE_BUILD)
   # TOTAL_MEMORY: multiple of 16MB
   #set(EMCC_COMMON "${EMCC_COMMON} -s TOTAL_MEMORY=512MB")
   set(EMCC_COMMON "${EMCC_COMMON} -s TOTAL_MEMORY=1024MB")
+  #set(EMCC_COMMON "${EMCC_COMMON} -s TOTAL_MEMORY=512MB")
 
   # Also remember to pass -s NO_EXIT_RUNTIME=1 if you want pthreads to stay alive
   # when main() exits on the main thread, otherwise they will be terminated
@@ -794,6 +809,7 @@ else()
   set(EXT_SKIA_OFFICIAL_BUILD "true")
 endif ()
 
+# force OFFICIAL_BUILD
 if(RELEASE_BUILD)
   set(IS_DEBUG_BUILD OFF)
   set(EXT_SKIA_OFFICIAL_BUILD "true")
@@ -1143,6 +1159,7 @@ if (EMSCRIPTEN)
   #list(APPEND SKIA_DEFINES SK_CPU_SSE_LEVEL=SK_CPU_SSE_LEVEL_SSE1)
   #if(ENABLE_WASM)
   list(APPEND SKIA_DEFINES SKNX_NO_SIMD) # see "-s SIMD=1" and -msimd128
+  list(APPEND SKIA_DEFINES SKNX_NO_SIMD=1) # see "-s SIMD=1" and -msimd128
   list(APPEND SKIA_DEFINES SK_ASSUME_WEBGL)
   list(APPEND SKIA_DEFINES SK_ASSUME_WEBGL=1)
   #list(APPEND SKIA_DEFINES SK_ASSUME_GL_ES)
@@ -1592,6 +1609,7 @@ if(EMSCRIPTEN)
     # NOTE: notice the single quoted 'web'
     # "-s ENVIRONMENT=\"'web'\""
     "-s ENVIRONMENT='web'"
+    #
   )
 
   set(HTML_TEMPLATE "${CMAKE_CURRENT_SOURCE_DIR}/assets/index.html")
@@ -1666,6 +1684,7 @@ else()
   )
   target_compile_definitions(${PROJECT_NAME} PRIVATE
     GLEW_NO_GLU
+    STATICALLY_LINKED_WITH_WTF=1 # NOTE: meaningful only if USE(EXPORT_MACROS)
     # NOTE: prefer #ifndef NDEBUG, see https://stackoverflow.com/a/8594122
     "$<$<CONFIG:DEBUG>:DEBUG>"
   )

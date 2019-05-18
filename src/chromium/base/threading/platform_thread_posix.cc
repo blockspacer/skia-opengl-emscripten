@@ -41,7 +41,10 @@
 #if defined(OS_EMSCRIPTEN)
 #include <emscripten/emscripten.h>
 #include <emscripten/html5.h>
-#endif
+#ifdef __EMSCRIPTEN_PTHREADS__
+#include <emscripten/threading.h>
+#endif // __EMSCRIPTEN_PTHREADS__
+#endif // OS_EMSCRIPTEN
 
 namespace base {
 
@@ -63,11 +66,20 @@ struct ThreadParams {
 void* ThreadFunc(void* params) {
   PlatformThread::Delegate* delegate = nullptr;
 
+#if defined(OS_EMSCRIPTEN)
+  DCHECK(params);
+#endif
+
   {
     std::unique_ptr<ThreadParams> thread_params(
         static_cast<ThreadParams*>(params));
 
     delegate = thread_params->delegate;
+
+#if defined(OS_EMSCRIPTEN)
+    DCHECK(delegate);
+#endif
+
     if (!thread_params->joinable)
       base::ThreadRestrictions::SetSingletonAllowed(false);
 
@@ -301,8 +313,11 @@ void PlatformThread::Sleep(TimeDelta duration) {
   // remaining.tv_sec = 0;
   // remaining.tv_nsec = 0;
   // sleep_time = remaining;
-  while (nanosleep(&sleep_time, &remaining) == -1 && errno == EINTR)
-    sleep_time = remaining;
+  //
+  emscripten_thread_sleep(duration.InMilliseconds());
+  //
+  //while (nanosleep(&sleep_time, &remaining) == -1 && errno == EINTR)
+  //  sleep_time = remaining;
 #else
   while (nanosleep(&sleep_time, &remaining) == -1 && errno == EINTR)
     sleep_time = remaining;

@@ -163,6 +163,11 @@ bool WaitableEvent::TimedWait(const TimeDelta& wait_delta) {
 }
 
 bool WaitableEvent::TimedWaitUntil(const TimeTicks& end_time) {
+#if defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS)
+    P_LOG("TODO: WaitableEvent::TimedWaitUntil\n");
+#warning "TODO: WaitableEvent::TimedWaitUntil"
+    return true; // Return true if the event was signaled.
+#endif
   // Record the event that this thread is blocking upon (for hang diagnosis) and
   // consider it blocked for scheduling purposes. Ignore this for non-blocking
   // WaitableEvents.
@@ -202,7 +207,7 @@ bool WaitableEvent::TimedWaitUntil(const TimeTicks& end_time) {
 #if defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS)
   #warning "TODO: port WaitableEvent"
   /// \TODO endless loop may hang browser!
-  for (int i = 0; i < 1; i++) {
+  for (int i = 0; i < 2; i++) {
 #else
   for (;;) {
 #endif
@@ -264,6 +269,7 @@ size_t WaitableEvent::WaitMany(WaitableEvent** raw_waitables,
 #if defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS)
 P_LOG("TODO: WaitableEvent::WaitMany\n");
 #warning "TODO: WaitableEvent::WaitMany"
+HTML5_STACKTRACE();
 #endif
 
   DCHECK(count) << "Cannot wait on no events";
@@ -435,7 +441,7 @@ bool WaitableEvent::SignalOne() {
 #if defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS)
   #warning "TODO: port WaitableEvent::SignalOne"
   /// \TODO endless loop may hang browser!
-  for (int i = 0; i < 2; i++) {
+  for (int i = 0; i < 1; i++) {
 #else
   for (;;) {
 #endif
