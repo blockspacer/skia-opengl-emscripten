@@ -1,7 +1,10 @@
-#!/usr/bin/env bash
+﻿#!/usr/bin/env bash
 
 # https://explainshell.com/explain?cmd=set+-e
 set -e
+#set -ev
+
+export LANG=C.UTF-8
 
 # defaults if args not passed
 #

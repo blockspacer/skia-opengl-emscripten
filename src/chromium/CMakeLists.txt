@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+﻿cmake_minimum_required(VERSION 2.8)
 project(WTF)
 set(WTF_LIBRARY_NAME wtf)
 
@@ -3124,7 +3124,7 @@ elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
       U_ICUDATAENTRY_IN_COMMON # if 'OS == "win" or icu_use_data_file_flag==1'
       UCHAR_TYPE=uint16_t
     )
-  endif(USE_OWN_ICU)
+  endif(NOT USE_OWN_ICU)
 else()
   message(FATAL_ERROR "icu platform not supported")
 endif()

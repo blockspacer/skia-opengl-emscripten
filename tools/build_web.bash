@@ -1,7 +1,9 @@
-#!/usr/bin/env bash
+﻿#!/usr/bin/env bash
+
+# removing UTF8 BOM breaks emscripten toolchain for some reason
 
 # https://explainshell.com/explain?cmd=set+-e
-set -e
+# set -e # -e breaks emscripten toolchain for some reason
 
 # defaults if args not passed
 #
@@ -41,8 +43,13 @@ fi
 extra_args=''
 if [[ "${build_type}" == "Debug" ]]; then
   extra_args=-DRELEASE_BUILD=OFF
-else
+elif [[ "${build_type}" == "RelWithDebInfo" ]]; then
+  extra_args=-DRELEASE_BUILD=OFF
+elif [[ "${build_type}" == "Release" ]]; then
   extra_args=-DRELEASE_BUILD=ON
+else
+  printf '%s\n' "Unknown build mode" >&2  # write error message to stderr
+  exit 1                                  # or exit
 fi
 
 # mkdir build
@@ -50,7 +57,12 @@ cmake -E make_directory ${build_dir}
 
 cd ${build_dir}
 
-emcmake cmake -E time cmake .. \
+# make sure you are using llvm-ar
+emcmake cmake ..
+  -G"Unix Makefiles" \
+  -DCMAKE_C_COMPILER=`which emcc` \
+  -DCMAKE_CXX_COMPILER=`which em++` \
+  -DCMAKE_AR=`which llvm-ar` \
   -DCMAKE_BUILD_TYPE=${build_type} \
   ${extra_args}
 

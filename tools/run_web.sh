@@ -1,8 +1,7 @@
-#!/usr/bin/env bash
+﻿#!/usr/bin/env bash
 
 # https://explainshell.com/explain?cmd=set+-e
-set -e
-#set -ev
+# set -e # -e breaks emscripten toolchain for some reason
 
 build_dir='build-emscripten'
 

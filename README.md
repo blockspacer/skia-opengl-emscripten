@@ -1,4 +1,4 @@
-# NOTE/NEED
+ï»¿# NOTE/NEED
 
 needs
 > https://bugs.chromium.org/p/skia/issues/detail?id=9052&q=&sort=-modified&colspec=ID%20Type%20Status%20Priority%20M%20Area%20Owner%20Summary%20Modified
@@ -382,22 +382,19 @@ bin/fetch-clang-format
 ### Compile example on Linux
 
 ```
-chmod a+x tools/build_linux.sh
-bash tools/build_linux.sh -c -b Debug
+emcmake cmake -DBUILD_TYPE="Debug" -DCLEAN_BUILD=OFF -P tools/buildUnix.cmake
 ```
 
 ### Compile example on HTML5 platform / browser / WASM
 
 ```
-chmod a+x tools/build_web.sh
-bash tools/build_web.sh -c -b Debug
+emcmake cmake -DBUILD_TYPE="Debug" -DCLEAN_BUILD=OFF -P tools/buildWeb.cmake
 ```
 
 ### Run example on HTML5 platform / browser / WASM (needs '--emrun' cxx flag)
 
 ```
-chmod a+x tools/run_web.sh
-bash tools/run_web.sh
+emcmake cmake -DRUN_APP=ON -DBUILD_APP=OFF  -P tools/buildWeb.cmake
 ```
 
 > see http://webassemblycode.com/using-browsers-debug-webassembly/
@@ -560,7 +557,7 @@ If rendering is performed on an offscreen thread, pass the ID of the canvas to e
 see https://github.com/emscripten-core/emscripten/issues/5437
 
 ## NOTE:
-› webassembly compiling can be greatly sped up in chrome by enabling the #enable-webassembly-baseline setting from chrome:flags
-› Streaming Instantiation: Combining Download and Instantiation https://pspdfkit.com/blog/2018/optimize-webassembly-startup-performance/
-› Prefer WebIDL as bindings toolchain to embind https://github.com/emscripten-core/emscripten/issues/8476
+ï¿½ webassembly compiling can be greatly sped up in chrome by enabling the #enable-webassembly-baseline setting from chrome:flags
+ï¿½ Streaming Instantiation: Combining Download and Instantiation https://pspdfkit.com/blog/2018/optimize-webassembly-startup-performance/
+ï¿½ Prefer WebIDL as bindings toolchain to embind https://github.com/emscripten-core/emscripten/issues/8476
 

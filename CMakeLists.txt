@@ -1,4 +1,8 @@
-cmake_minimum_required(VERSION 3.5)
+﻿cmake_minimum_required(VERSION 3.5)
+
+# project() must be before checks, see https://stackoverflow.com/a/26437667/10904212
+set(PROJECT_NAME "skemgl")
+project(${PROJECT_NAME} CXX)
 
 if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_CURRENT_BINARY_DIR)
   message(FATAL_ERROR "You must set your binary directory different from your source")
@@ -11,18 +15,23 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/sdl2)
 
 #include(FindPkgMacros)
 
-set(PROJECT_NAME "skemgl")
-
 message("CMAKE_BUILD_TYPE = ${CMAKE_BUILD_TYPE}")
 IF( NOT CMAKE_BUILD_TYPE )
    SET( CMAKE_BUILD_TYPE Debug ... FORCE )
 ENDIF()
 
 # build mode. separated from CMAKE_BUILD_TYPE to provide custom debug level
+# for example, you may want build optimized wasm with debug stack trace support
 # NOTE: measure performace on RELEASE builds!
 #set(RELEASE_BUILD TRUE)
 #set(RELEASE_BUILD FALSE)
 option(RELEASE_BUILD "RELEASE_BUILD" OFF)
+message("RELEASE_BUILD = ${RELEASE_BUILD}")
+
+message("CMAKE_SYSTEM_NAME = ${CMAKE_SYSTEM_NAME}")
+if(EMSCRIPTEN)
+  message("DETECTED EMSCRIPTEN")
+endif(EMSCRIPTEN)
 
 # WebAssembly
 set(ENABLE_WASM TRUE)
@@ -42,16 +51,21 @@ endif(NOT ENABLE_WASM)
 
 if(RELEASE_BUILD)
   if(NOT CMAKE_BUILD_TYPE MATCHES Release)
-    message(FATAL_ERROR "build with -DCMAKE_BUILD_TYPE=Release")
+    if(EMSCRIPTEN)
+      message(WARNING "build with -DCMAKE_BUILD_TYPE=Release")
+    else(EMSCRIPTEN)
+      message(FATAL_ERROR "build with -DCMAKE_BUILD_TYPE=Release")
+    endif(EMSCRIPTEN)
   endif(NOT CMAKE_BUILD_TYPE MATCHES Release)
 else()
   if(NOT CMAKE_BUILD_TYPE MATCHES Debug)
-    message(FATAL_ERROR "build with -DCMAKE_BUILD_TYPE=Debug")
+    if(EMSCRIPTEN)
+      message(WARNING "build with -DCMAKE_BUILD_TYPE=Debug")
+    else(EMSCRIPTEN)
+      message(FATAL_ERROR "build with -DCMAKE_BUILD_TYPE=Debug")
+    endif(EMSCRIPTEN)
   endif(NOT CMAKE_BUILD_TYPE MATCHES Debug)
 endif(RELEASE_BUILD)
-
-
-project(${PROJECT_NAME} CXX)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR})
@@ -113,7 +127,6 @@ set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DEGL_EGLEXT_PROTOTYPES=1")
 #set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DGL_GLEXT_PROTOTYPES=1")
 # https://github.com/klzgrad/naiveproxy/blob/master/src/third_party/skia/modules/skottie/BUILD.gn#L14
 set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_ENABLE_SKOTTIE=1")
-
 
 # TODO https://github.com/mbbill/JSC.js
 # # http://userguide.icu-project.org/howtouseicu
@@ -1490,34 +1503,34 @@ set(PROJECT_SRC
 if (EMSCRIPTEN)
   list(APPEND PROJECT_SRC
     # skia effects
-    thirdparty/skia/src/c/sk_effects.cpp
-    thirdparty/skia/src/effects/Sk1DPathEffect.cpp
-    thirdparty/skia/src/effects/Sk2DPathEffect.cpp
-    thirdparty/skia/src/effects/SkColorMatrix.cpp
-    thirdparty/skia/src/effects/SkColorMatrixFilter.cpp
-    thirdparty/skia/src/effects/SkCornerPathEffect.cpp
-    thirdparty/skia/src/effects/SkDashPathEffect.cpp
-    thirdparty/skia/src/effects/SkDiscretePathEffect.cpp
-    thirdparty/skia/src/effects/SkEmbossMask.cpp
-    thirdparty/skia/src/effects/SkEmbossMaskFilter.cpp
-    thirdparty/skia/src/effects/SkHighContrastFilter.cpp
-    thirdparty/skia/src/effects/SkLayerDrawLooper.cpp
-    thirdparty/skia/src/effects/SkLumaColorFilter.cpp
-    thirdparty/skia/src/effects/SkOpPathEffect.cpp
-    thirdparty/skia/src/effects/SkOverdrawColorFilter.cpp
-    thirdparty/skia/src/effects/SkPackBits.cpp
-    thirdparty/skia/src/effects/SkShaderMaskFilter.cpp
-    thirdparty/skia/src/effects/SkTableColorFilter.cpp
-    thirdparty/skia/src/effects/SkTableMaskFilter.cpp
-    thirdparty/skia/src/effects/SkTrimPathEffect.cpp
-    thirdparty/skia/src/shaders/SkPerlinNoiseShader.cpp
-    thirdparty/skia/src/shaders/gradients/Sk4fGradientBase.cpp
-    thirdparty/skia/src/shaders/gradients/Sk4fLinearGradient.cpp
-    thirdparty/skia/src/shaders/gradients/SkGradientShader.cpp
-    thirdparty/skia/src/shaders/gradients/SkLinearGradient.cpp
-    thirdparty/skia/src/shaders/gradients/SkRadialGradient.cpp
-    thirdparty/skia/src/shaders/gradients/SkTwoPointConicalGradient.cpp
-    thirdparty/skia/src/shaders/gradients/SkSweepGradient.cpp
+    #thirdparty/skia/src/c/sk_effects.cpp
+    #thirdparty/skia/src/effects/Sk1DPathEffect.cpp
+    #thirdparty/skia/src/effects/Sk2DPathEffect.cpp
+    #thirdparty/skia/src/effects/SkColorMatrix.cpp
+    #thirdparty/skia/src/effects/SkColorMatrixFilter.cpp
+    #thirdparty/skia/src/effects/SkCornerPathEffect.cpp
+    #thirdparty/skia/src/effects/SkDashPathEffect.cpp
+    #thirdparty/skia/src/effects/SkDiscretePathEffect.cpp
+    #thirdparty/skia/src/effects/SkEmbossMask.cpp
+    #thirdparty/skia/src/effects/SkEmbossMaskFilter.cpp
+    #thirdparty/skia/src/effects/SkHighContrastFilter.cpp
+    #thirdparty/skia/src/effects/SkLayerDrawLooper.cpp
+    #thirdparty/skia/src/effects/SkLumaColorFilter.cpp
+    #thirdparty/skia/src/effects/SkOpPathEffect.cpp
+    #thirdparty/skia/src/effects/SkOverdrawColorFilter.cpp
+    #thirdparty/skia/src/effects/SkPackBits.cpp
+    #thirdparty/skia/src/effects/SkShaderMaskFilter.cpp
+    #thirdparty/skia/src/effects/SkTableColorFilter.cpp
+    #thirdparty/skia/src/effects/SkTableMaskFilter.cpp
+    #thirdparty/skia/src/effects/SkTrimPathEffect.cpp
+    #thirdparty/skia/src/shaders/SkPerlinNoiseShader.cpp
+    #thirdparty/skia/src/shaders/gradients/Sk4fGradientBase.cpp
+    #thirdparty/skia/src/shaders/gradients/Sk4fLinearGradient.cpp
+    #thirdparty/skia/src/shaders/gradients/SkGradientShader.cpp
+    #thirdparty/skia/src/shaders/gradients/SkLinearGradient.cpp
+    #thirdparty/skia/src/shaders/gradients/SkRadialGradient.cpp
+    #thirdparty/skia/src/shaders/gradients/SkTwoPointConicalGradient.cpp
+    #thirdparty/skia/src/shaders/gradients/SkSweepGradient.cpp
     # skia utils (utils.gni)
     thirdparty/skia/src/utils/Sk3D.cpp
     thirdparty/skia/src/utils/SkBase64.cpp
@@ -1568,24 +1581,24 @@ if (EMSCRIPTEN)
     #"$_src/utils/win/SkWGL_win.cpp",
     # effects_imagefilters (effects_imagefilters.gni)
     # https://chromium.googlesource.com/skia/+/master/gn/effects_imagefilters.gni
-    thirdparty/skia/src/effects/imagefilters/SkAlphaThresholdFilter.cpp
-    thirdparty/skia/src/effects/imagefilters/SkArithmeticImageFilter.cpp
-    thirdparty/skia/src/effects/imagefilters/SkBlurImageFilter.cpp
-    thirdparty/skia/src/effects/imagefilters/SkColorFilterImageFilter.cpp
-    thirdparty/skia/src/effects/imagefilters/SkComposeImageFilter.cpp
-    thirdparty/skia/src/effects/imagefilters/SkDisplacementMapEffect.cpp
-    thirdparty/skia/src/effects/imagefilters/SkDropShadowImageFilter.cpp
-    thirdparty/skia/src/effects/imagefilters/SkImageSource.cpp
-    thirdparty/skia/src/effects/imagefilters/SkLightingImageFilter.cpp
-    thirdparty/skia/src/effects/imagefilters/SkMagnifierImageFilter.cpp
-    thirdparty/skia/src/effects/imagefilters/SkMatrixConvolutionImageFilter.cpp
-    thirdparty/skia/src/effects/imagefilters/SkMergeImageFilter.cpp
-    thirdparty/skia/src/effects/imagefilters/SkMorphologyImageFilter.cpp
-    thirdparty/skia/src/effects/imagefilters/SkOffsetImageFilter.cpp
-    thirdparty/skia/src/effects/imagefilters/SkPaintImageFilter.cpp
-    thirdparty/skia/src/effects/imagefilters/SkPictureImageFilter.cpp
-    thirdparty/skia/src/effects/imagefilters/SkTileImageFilter.cpp
-    thirdparty/skia/src/effects/imagefilters/SkXfermodeImageFilter.cpp
+    #thirdparty/skia/src/effects/imagefilters/SkAlphaThresholdFilter.cpp
+    #thirdparty/skia/src/effects/imagefilters/SkArithmeticImageFilter.cpp
+    #thirdparty/skia/src/effects/imagefilters/SkBlurImageFilter.cpp
+    #thirdparty/skia/src/effects/imagefilters/SkColorFilterImageFilter.cpp
+    #thirdparty/skia/src/effects/imagefilters/SkComposeImageFilter.cpp
+    #thirdparty/skia/src/effects/imagefilters/SkDisplacementMapEffect.cpp
+    #thirdparty/skia/src/effects/imagefilters/SkDropShadowImageFilter.cpp
+    #thirdparty/skia/src/effects/imagefilters/SkImageSource.cpp
+    #thirdparty/skia/src/effects/imagefilters/SkLightingImageFilter.cpp
+    #thirdparty/skia/src/effects/imagefilters/SkMagnifierImageFilter.cpp
+    #thirdparty/skia/src/effects/imagefilters/SkMatrixConvolutionImageFilter.cpp
+    #thirdparty/skia/src/effects/imagefilters/SkMergeImageFilter.cpp
+    #thirdparty/skia/src/effects/imagefilters/SkMorphologyImageFilter.cpp
+    #thirdparty/skia/src/effects/imagefilters/SkOffsetImageFilter.cpp
+    #thirdparty/skia/src/effects/imagefilters/SkPaintImageFilter.cpp
+    #thirdparty/skia/src/effects/imagefilters/SkPictureImageFilter.cpp
+    #thirdparty/skia/src/effects/imagefilters/SkTileImageFilter.cpp
+    #thirdparty/skia/src/effects/imagefilters/SkXfermodeImageFilter.cpp
   )
 endif(EMSCRIPTEN)
 

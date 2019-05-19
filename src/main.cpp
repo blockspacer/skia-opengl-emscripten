@@ -1,4 +1,4 @@
-// TODO https://github.com/blockspacer/sk_glft
+﻿// TODO https://github.com/blockspacer/sk_glft
 
 // based on https://github.com/blockspacer/minos/blob/master/hello_world.cc
 
@@ -34,9 +34,14 @@
 /// \note defined by CMAKE
 // #define ENABLE_WTF 1
 //#undef ENABLE_WTF
-
 #if defined(ENABLE_WTF) && !defined(ENABLE_BASE)
 #error "requires BASE"
+#endif
+
+#define ENABLE_GFX_GEOMETRY 1
+#if defined(ENABLE_GFX_GEOMETRY) && !defined(ENABLE_BASE)
+#warning "ENABLE_GFX_GEOMETRY requires BASE"
+#undef ENABLE_GFX_GEOMETRY
 #endif
 
 #define ENABLE_THREAD_TESTS 1
@@ -286,6 +291,10 @@
 #include <utility>
 #include <memory>
 #include <utility>
+
+#ifdef ENABLE_GFX_GEOMETRY
+#include "ui/gfx/geometry/rect.h"
+#endif
 
 #ifdef ENABLE_BASE
 #include "base/stl_util.h"
@@ -1405,6 +1414,12 @@ int main(int argc, char** argv) {
       } catch (e) {
           console.log(e);
       });
+#endif
+
+#ifdef ENABLE_GFX_GEOMETRY
+    printf("test GFX_GEOMETRY ...\n");
+    gfx::Rect gfxRect(100, 200);
+    printf("gfxRect top_right = %s ...\n", gfxRect.top_right().ToString().c_str());
 #endif
 
 #ifdef ENABLE_BASE
