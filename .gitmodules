@@ -22,3 +22,9 @@
 [submodule "src/chromium/third_party/ced/src"]
 	path = src/chromium/third_party/ced/src
 	url = https://chromium.googlesource.com/external/github.com/google/compact_enc_det.git
+[submodule "src/chromium/third_party/boringssl/src"]
+	path = src/chromium/third_party/boringssl/src
+	url = https://boringssl.googlesource.com/boringssl.git
+[submodule "src/net/third_party/quiche/src"]
+	path = src/net/third_party/quiche/src
+	url = https://quiche.googlesource.com/quiche.git
