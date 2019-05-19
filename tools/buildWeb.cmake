@@ -5,7 +5,7 @@
 # emcmake cmake -DBUILD_TYPE="Debug" -DCLEAN_BUILD=OFF -P tools/buildWeb.cmake
 #
 # example (full Release rebuild & run, -j9 for 9 threads):
-# emcmake cmake -DRUN_APP=ON -DBUILD_APP=ON -DEXTRA_MAKE_OPTS="-j;9" -DBUILD_TYPE="Release" -DCLEAN_BUILD=ON -P tools/buildWeb.cmake
+# emcmake cmake -DRUN_APP=ON -DBUILD_APP=ON -DEXTRA_EMMAKE_OPTS="-j;9" -DBUILD_TYPE="Release" -DCLEAN_BUILD=ON -P tools/buildWeb.cmake
 #
 # example (run only):
 # emcmake cmake -DRUN_APP=ON -DBUILD_APP=OFF  -P tools/buildWeb.cmake

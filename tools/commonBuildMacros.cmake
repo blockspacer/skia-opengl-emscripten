@@ -1,7 +1,8 @@
 ﻿# Helpfull build utils
 
 macro(build_dir_step ARG_BUILD_DIR ARG_WORKING_DIR)
-  if (CLEAN_BUILD)
+  # todo: pass CLEAN_BUILD as arg, check if`s
+  if(CLEAN_BUILD)
     execute_process(
       COMMAND ${CMAKE_COMMAND} "-E" "remove_directory" "${ARG_BUILD_DIR}"
       WORKING_DIRECTORY ${ARG_WORKING_DIR}
