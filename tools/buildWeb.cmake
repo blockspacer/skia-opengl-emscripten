@@ -38,13 +38,17 @@ if (BUILD_APP)
 
   # --- configure ---
   execute_process(
-    COMMAND ${EMSCRIPTEN_CMAKE} "cmake" ".." ${CMAKE_OPTS} ${EXTRA_EMCMAKE_OPTS}
+    COMMAND
+      ${COLORED_OUTPUT_ENABLER}
+        ${EMSCRIPTEN_CMAKE} "cmake" ".." ${CMAKE_OPTS} ${EXTRA_EMCMAKE_OPTS}
     WORKING_DIRECTORY ${BUILD_DIR}
   )
 
   # --- build ---
   execute_process(
-    COMMAND ${EMSCRIPTEN_MAKE} "make" ${MAKE_OPTS} ${EXTRA_EMMAKE_OPTS}
+    COMMAND
+    ${COLORED_OUTPUT_ENABLER}
+      ${EMSCRIPTEN_MAKE} "make" ${MAKE_OPTS} ${EXTRA_EMMAKE_OPTS}
     WORKING_DIRECTORY ${BUILD_DIR}
   )
 endif(BUILD_APP)

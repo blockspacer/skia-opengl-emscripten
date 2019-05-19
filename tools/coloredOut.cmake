@@ -22,6 +22,13 @@
 # switches to cmake message() system (preferred)
 option(HAS_COLORED_OUTPUT "is running from terminal" ON)
 
+if(HAS_COLORED_OUTPUT)
+  # WHY CLICOLOR_FORCE? see https://stackoverflow.com/a/36233927/10904212
+  set(COLORED_OUTPUT_ENABLER "${CMAKE_COMMAND}" "-E" "env" "CLICOLOR_FORCE=1")
+else(HAS_COLORED_OUTPUT)
+  set(COLORED_OUTPUT_ENABLER "")
+endif(HAS_COLORED_OUTPUT)
+
 # NOTE: not recommended, see HAS_COLORED_OUTPUT
 option(DISABLE_COLORED_OUTPUT "full disable of output" OFF)
 
@@ -84,8 +91,7 @@ function(colored_print_implementation)
   if(NOT DISABLE_COLORED_OUTPUT)
     if(HAS_COLORED_OUTPUT)
       execute_process(COMMAND
-        # WHY CLICOLOR_FORCE? see https://stackoverflow.com/a/36233927/10904212
-        ${CMAKE_COMMAND} -E env CLICOLOR_FORCE=1
+        ${COLORED_OUTPUT_ENABLER}
           # see https://github.com/Kitware/CMake/blob/master/Source/cmcmd.cxx#L1408
           ${CMAKE_COMMAND} -E cmake_echo_color ${PARAMS} --switch=${TOGGLE_COLORED_OUTPUT} "${MESSAGE}"
       )
@@ -101,8 +107,7 @@ endfunction()
 #  if(NOT DISABLE_COLORED_OUTPUT)
 #    if(HAS_COLORED_OUTPUT)
 #      execute_process(COMMAND
-#        # WHY CLICOLOR_FORCE? see https://stackoverflow.com/a/36233927/10904212
-#        ${CMAKE_COMMAND} -E env CLICOLOR_FORCE=1
+#        ${COLORED_OUTPUT_ENABLER}
 #          # see https://github.com/Kitware/CMake/blob/master/Source/cmcmd.cxx#L1408
 #          ${CMAKE_COMMAND} -E cmake_echo_color ${ARGN} --switch=${TOGGLE_COLORED_OUTPUT} ${MESSAGE}
 #      )

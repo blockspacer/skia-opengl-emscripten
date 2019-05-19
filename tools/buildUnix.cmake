@@ -47,13 +47,17 @@ if (BUILD_APP)
 
   # --- configure ---
   execute_process(
-    COMMAND ${CMAKE_COMMAND} "-E" "time" "cmake" ".." ${CMAKE_OPTS} ${EXTRA_CMAKE_OPTS}
+    COMMAND
+      ${COLORED_OUTPUT_ENABLER}
+        ${CMAKE_COMMAND} "-E" "time" "cmake" ".." ${CMAKE_OPTS} ${EXTRA_CMAKE_OPTS}
     WORKING_DIRECTORY ${BUILD_DIR}
   )
 
   # --- build ---
   execute_process(
-    COMMAND ${CMAKE_COMMAND} "--build" "." "--clean-first" "--" ${MAKE_OPTS} ${EXTRA_MAKE_OPTS}
+    COMMAND
+      ${COLORED_OUTPUT_ENABLER}
+        ${CMAKE_COMMAND} "--build" "." "--clean-first" "--" ${MAKE_OPTS} ${EXTRA_MAKE_OPTS}
     WORKING_DIRECTORY ${BUILD_DIR}
   )
 endif(BUILD_APP)
