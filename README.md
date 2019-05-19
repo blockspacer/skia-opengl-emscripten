@@ -9,7 +9,7 @@ needs
 > use CMakeLists for skia build https://github.com/skui-org/skia/blob/m74/CMakeLists.txt
 
 notes
-> set RELEASE_BUILD to TRUE in CMakeLists.txt if you want good performance. Also set -DCMAKE_BUILD_TYPE=Release
+> if you want good performance - set RELEASE_BUILD to TRUE in CMakeLists.txt and set -DCMAKE_BUILD_TYPE=Release. Or even better - use scripts from tools directory with right arguments.
 
 # Features
 
@@ -383,20 +383,21 @@ bin/fetch-clang-format
 
 ```
 chmod a+x tools/build_linux.sh
-sh tools/build_linux.sh
+bash tools/build_linux.sh -c -b Debug
 ```
 
 ### Compile example on HTML5 platform / browser / WASM
 
 ```
 chmod a+x tools/build_web.sh
-sh tools/build_web.sh
+bash tools/build_web.sh -c -b Debug
 ```
 
 ### Run example on HTML5 platform / browser / WASM (needs '--emrun' cxx flag)
 
 ```
-sh tools/run_web.sh
+chmod a+x tools/run_web.sh
+bash tools/run_web.sh
 ```
 
 > see http://webassemblycode.com/using-browsers-debug-webassembly/

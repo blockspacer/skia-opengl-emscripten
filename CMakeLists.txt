@@ -21,7 +21,8 @@ ENDIF()
 # build mode. separated from CMAKE_BUILD_TYPE to provide custom debug level
 # NOTE: measure performace on RELEASE builds!
 #set(RELEASE_BUILD TRUE)
-set(RELEASE_BUILD FALSE)
+#set(RELEASE_BUILD FALSE)
+option(RELEASE_BUILD "RELEASE_BUILD" FALSE)
 
 # WebAssembly
 set(ENABLE_WASM TRUE)

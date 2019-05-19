@@ -1,6 +1,15 @@
-mkdir build-emscripten
+#!/usr/bin/env bash
 
-cd build-emscripten
+# https://explainshell.com/explain?cmd=set+-e
+set -e
+#set -ev
+
+build_dir='build-emscripten'
+
+# mkdir build
+cmake -E make_directory ${build_dir}
+
+cd ${build_dir}
 
 # see http://webassemblycode.com/using-browsers-debug-webassembly/
 # source-map-base sets port number
