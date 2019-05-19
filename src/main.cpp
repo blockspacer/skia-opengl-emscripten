@@ -79,6 +79,18 @@
 #undef ENABLE_CUSTOM_FONTS
 #endif
 //
+#define ENABLE_HARFBUZZ 1
+#if defined(ENABLE_HARFBUZZ) && !defined(ENABLE_CUSTOM_FONTS)
+#warning "ENABLE_HARFBUZZ requires CUSTOM_FONTS"
+#undef ENABLE_HARFBUZZ
+#endif
+//
+#define HARFBUZZ_UNICODE 1
+#if defined(HARFBUZZ_UNICODE) && !defined(ENABLE_HARFBUZZ)
+#warning "HARFBUZZ_UNICODE requires HARFBUZZ"
+#undef HARFBUZZ_UNICODE
+#endif
+//
 #if defined(__EMSCRIPTEN__) && defined(__EMSCRIPTEN_PTHREADS__) \
   && defined(ENABLE_CUSTOM_FONTS)
 #warning "TODO: PORT SKIA FONTS & PTHREADS"
@@ -172,6 +184,11 @@
 #include <skia/include/gpu/gl/GrGLAssembleInterface.h>
 #include <skia/include/gpu/gl/GrGLInterface.h>
 #include <skia/src/gpu/gl/GrGLUtil.h>
+
+#include <skia/include/core/SkTypeface.h>
+#include <skia/include/core/SkTextBlob.h>
+#include <skia/include/core/SkStream.h>
+#include <skia/include/core/SkDocument.h>
 
 //#include <SkCanvas.h>
 //#include <SkColorFilter.h>
@@ -318,7 +335,12 @@
 #include "third_party/blink/renderer/platform/wtf/ref_counted.h"
 //#include "third_party/blink/renderer/platform/wtf/wtf_test_helper.h"
 
-#endif
+#endif // ENABLE_WTF
+
+
+#ifdef ENABLE_HARFBUZZ
+#include <hb-ot.h>
+#endif // ENABLE_HARFBUZZ
 
 /*#include <stddef.h>
 
@@ -504,6 +526,93 @@ static SkFont* skFont1 = nullptr;
 static SkFont* skFont2 = nullptr;
 #endif
 
+#ifdef ENABLE_HARFBUZZ
+// see https://github.com/sam8dec/skia/blob/master/tools/using_skia_and_harfbuzz.cpp#L140
+// see https://github.com/chromium/chromium/blob/master/third_party/blink/renderer/platform/fonts/shaping/harfbuzz_face.cc#L68
+struct HBFDel { void operator()(hb_face_t* f) { hb_face_destroy(f); } };
+static std::unique_ptr<hb_face_t, HBFDel> fHarfBuzzFace;
+struct HBFontDel {
+    void operator()(hb_font_t* f) { hb_font_destroy(f); }
+};
+static std::unique_ptr<hb_font_t, HBFontDel> fHarfBuzzFont;
+static const int FONT_SIZE_SCALE = 512;
+static const float FONT_SIZE_F = 22.0f;
+//static SkPaint glyph_paint;
+
+/// \note see SkShaper_harfbuzz.cpp if you want shaping in rectangle
+/// \see https://github.com/skui-org/skia/blob/f577133e703ea6a81602426aea879857cfd0b2e1/experimental/canvaskit/canvaskit_bindings.cpp#L477
+/// \see https://github.com/skui-org/skia/blob/f577133e703ea6a81602426aea879857cfd0b2e1/modules/skshaper/src/SkShaper_harfbuzz.cpp#L888
+static bool DrawGlyphs(double current_x, double current_y,
+                       SkPaint& glyph_paint, SkFont& sfont,
+                       SkCanvas* canvas, hb_buffer_t *hb_buffer) {
+    SkTextBlobBuilder textBlobBuilder;
+    unsigned len = hb_buffer_get_length (hb_buffer);
+    if (len == 0) {
+        printf("empty hb_buffer_get_length \n");
+        return true;
+    }
+    hb_glyph_info_t *info = hb_buffer_get_glyph_infos (hb_buffer, NULL);
+    hb_glyph_position_t *pos = hb_buffer_get_glyph_positions (hb_buffer, NULL);
+    auto runBuffer = textBlobBuilder.allocRunPos(sfont, len);
+
+    double x = 0;
+    double y = 0;
+    for (unsigned int i = 0; i < len; i++)
+    {
+        runBuffer.glyphs[i] = info[i].codepoint;
+        reinterpret_cast<SkPoint*>(runBuffer.pos)[i] = SkPoint::Make(
+            x + pos[i].x_offset / FONT_SIZE_SCALE,
+            y - pos[i].y_offset / FONT_SIZE_SCALE);
+        x += pos[i].x_advance / FONT_SIZE_SCALE;
+        y += pos[i].y_advance / FONT_SIZE_SCALE;
+    }
+
+    canvas->drawTextBlob(textBlobBuilder.make(), current_x, current_y, glyph_paint);
+    return true;
+} // end of DrawGlyphs
+
+/*static SkScalar shape(SkTextBlobBuilder* builder,
+                         const SkPaint& srcPaint,
+                         const char* utf8text,
+                         size_t textBytes,
+                         SkPoint point) const {
+    SkPaint paint(srcPaint);
+    //paint.setTextEncoding(SkPaint::kGlyphID_TextEncoding);
+    //paint.setTypeface(fTypeface);
+    SkASSERT(builder);
+    hb_buffer_t* buffer = fBuffer.get();
+    hb_buffer_add_utf8(buffer, utf8text, -1, 0, -1);
+    hb_buffer_guess_segment_properties(buffer);
+    hb_shape(fHarfBuzzFont.get(), buffer, nullptr, 0);
+    unsigned len = hb_buffer_get_length(buffer);
+    if (len == 0) {
+        hb_buffer_clear_contents(buffer);
+        return 0;
+    }
+    hb_glyph_info_t* info = hb_buffer_get_glyph_infos(buffer, NULL);
+    hb_glyph_position_t* pos =
+        hb_buffer_get_glyph_positions(buffer, NULL);
+    auto runBuffer = builder->allocRunTextPos(
+        paint, SkToInt(len), SkToInt(textBytes), SkString());
+    memcpy(runBuffer.utf8text, utf8text, textBytes);
+    double x = point.x();
+    double y = point.y();
+    double textSizeY = paint.getTextSize() / (double)FONT_SIZE_SCALE;
+    double textSizeX = textSizeY * paint.getTextScaleX();
+    for (unsigned i = 0; i < len; i++) {
+        runBuffer.glyphs[i] = info[i].codepoint;
+        runBuffer.clusters[i] = info[i].cluster;
+        reinterpret_cast<SkPoint*>(runBuffer.pos)[i] =
+            SkPoint::Make(SkDoubleToScalar(x + pos[i].x_offset * textSizeX),
+                          SkDoubleToScalar(y - pos[i].y_offset * textSizeY));
+        x += pos[i].x_advance * textSizeX;
+        y += pos[i].y_advance * textSizeY;
+    }
+    hb_buffer_clear_contents(buffer);
+    return (SkScalar)x;
+}*/
+#endif // ENABLE_HARFBUZZ
+
 // static std::string input    = "Input .json file.";//);
 ////static std::string(writePath, w, nullptr, "Output directory.  Frames are names [0-9]{6}.png.");
 // static std::string format   = "png";//  , "Output format (png or skp)");
@@ -542,9 +651,9 @@ static SkSurface* sSurface = nullptr;
 #endif // ENABLE_SKIA
 
 // must be POT
-static int width = 512;
+static int width = 1920;//1024;//512;
 // must be POT
-static int height = 512;
+static int height = 1200;//1024;//512;
 
 static GLint uniformTex;
 
@@ -752,8 +861,85 @@ public:
 
 #ifdef ENABLE_CUSTOM_FONTS
     // SkFont font;//(nullptr, 24);//SkFont::kA8_MaskType, flags);
-    canvas->drawString("Skia Test Skia Test Skia Test", 20, 32, *skFont1, paint);
-    canvas->drawString("Skia Test Skia Test Skia Test", 20, 37, *skFont2, paint);
+    canvas->drawString("1 Skia Test 1 Skia Test 1 Skia Test 1", 60, 32, *skFont1, paint);
+    canvas->drawString("2 Skia Test 2 Skia Test 2 Skia Test 2", 20, 97, *skFont2, paint);
+
+// see https://github.com/google/skia/blob/master/modules/skshaper/src/SkShaper_harfbuzz.cpp#L1221
+#ifdef ENABLE_HARFBUZZ
+        paint.setColor(SK_ColorBLACK);
+        paint.setStyle(SkPaint::kFill_Style);
+
+        SkPaint glyph_paint(paint);
+
+        //glyph_paint.setFlags(
+        //    SkPaint::kAntiAlias_Flag |
+        //    SkPaint::kSubpixelText_Flag);  // ... avoid waggly text when rotating.
+        glyph_paint.setColor(SK_ColorBLACK);
+        /*paint.setTextEncoding(SkPaint::kGlyphID_TextEncoding);
+        paint.setTypeface(sk_ref_sp(font->currentTypeface()));
+        glyph_paint.setTextSize(config.font_size->value);
+        glyph_paint.setTypeface(face->fSkiaTypeface);
+        glyph_paint.setTextEncoding(SkPaint::kGlyphID_TextEncoding);*/
+
+        double current_x = 400.0;
+        double current_y = 400.0;
+        double line_spacing_ratio = 1.5f;
+        double font_size = FONT_SIZE_F;
+
+        auto WriteLine = [this, &current_x, &current_y, &line_spacing_ratio, &font_size, &glyph_paint, &canvas](const char *text) {
+            /* Create hb-buffer and populate. */
+            hb_buffer_t *hb_buffer = hb_buffer_create ();
+
+            hb_buffer_set_direction(hb_buffer, HB_DIRECTION_LTR);
+#ifdef HARFBUZZ_UNICODE
+            hb_buffer_set_script(hb_buffer, HB_SCRIPT_CYRILLIC);
+            hb_buffer_set_language(hb_buffer, hb_language_from_string("ru", 2));
+#else
+            hb_buffer_set_script(hb_buffer, HB_SCRIPT_LATIN);
+            hb_buffer_set_language(hb_buffer, hb_language_from_string("en", 2));
+#endif
+            //hb_buffer_add_latin1(hb_buffer, text, -1, 0, -1);
+            hb_buffer_add_utf8 (hb_buffer, text, -1, 0, -1);
+
+            //hb_buffer_add_utf8 (hb_buffer, text, strlen(text), 0, -1);
+            hb_buffer_guess_segment_properties (hb_buffer);
+            /* Shape it! */
+            hb_shape (fHarfBuzzFont.get(), hb_buffer, NULL, 0);
+            unsigned len = hb_buffer_get_length(hb_buffer);
+            if (len == 0) {
+                printf("empty hb_buffer_get_length\n");
+                return;
+            }
+            DrawGlyphs(current_x, current_y, glyph_paint, *skFont1, canvas, hb_buffer);
+
+            hb_buffer_destroy (hb_buffer);
+
+            // Advance to the next line.
+            current_y += line_spacing_ratio * font_size;
+            /*if (current_y > config.page_height->value) {
+            pdfDocument->endPage();
+            NewPage();
+        }*/
+        };
+
+#ifdef HARFBUZZ_UNICODE
+        const char *textLine1 = "harfbuzz_skia_ex1 РУССКИЙ ТЕКСТ";
+        const char *textLine2 = "2 РУССКИЙ ТЕКСТ";
+        const char *textLine3 = "2 РУССКИЙ ТЕКСТ";
+#else
+        const char *textLine1 = "harfbuzz_skia_ex1 ENGLISH TEXT";
+        const char *textLine2 = "2 ENGLISH TEXT";
+        const char *textLine3 = "3 ENGLISH TEXT";
+#endif
+
+        WriteLine(textLine1);
+        WriteLine(textLine2);
+        WriteLine(textLine3);
+
+        // test again without hb
+        auto blob3 = SkTextBlob::MakeFromString("blob3blob3blob3", *skFont2);
+        canvas->drawTextBlob(blob3.get(), 500, 500, glyph_paint);
+#endif // ENABLE_HARFBUZZ
 
 #ifdef ENABLE_SK_EFFECTS
     // see https://skia.org/user/api/skpaint_overview
@@ -765,8 +951,8 @@ public:
       const SkScalar y = 52.0f;
       const SkScalar textSize = 48.0f;
       const uint8_t blurAlpha = 127;
-      auto blob1 = SkTextBlob::MakeFromString("Skia! skFont1", *skFont1);
-      auto blob2 = SkTextBlob::MakeFromString("Skia! skFont2", *skFont2);
+      auto blob1 = SkTextBlob::MakeFromString("?123Skia! skFont1", *skFont1);
+      auto blob2 = SkTextBlob::MakeFromString("skFont2 !!! skFont2", *skFont2);
       SkPaint blur(paint);
       blur.setAlpha(blurAlpha);
       blur.setMaskFilter(SkMaskFilter::MakeBlur(kNormal_SkBlurStyle, sigma, 0));
@@ -774,12 +960,12 @@ public:
       canvas->drawTextBlob(blob1.get(), x + xDrop, y + yDrop, blur);
       canvas->drawTextBlob(blob1.get(), x, y, paint);
 
-      canvas->drawTextBlob(blob2.get(), x + xDrop, 20 + y + yDrop, blur);
+      canvas->drawTextBlob(blob2.get(), x + xDrop, 50 + y + yDrop, blur);
 
       SkPaint strokePaint(paint);
       strokePaint.setStyle(SkPaint::kStroke_Style);
       strokePaint.setStrokeWidth(3.0f);
-      canvas->drawTextBlob(blob2.get(), x, 20 + y, strokePaint);
+      canvas->drawTextBlob(blob2.get(), x, 80 + y, strokePaint);
     }
 #endif // ENABLE_SK_EFFECTS
 #endif // ENABLE_CUSTOM_FONTS
@@ -1082,7 +1268,7 @@ static void mainLoop() {
   // Render
   Draw();
 
-#ifdef defined(__EMSCRIPTEN__) && defined(HAVE_SWAP_CONTROL)
+#if defined(__EMSCRIPTEN__) && defined(HAVE_SWAP_CONTROL)
   if (enableSwapControl) {
     // emscripten_webgl_commit_frame requires offscreen canvas support
     // see https://github.com/emscripten-core/emscripten/issues/5437
@@ -1181,7 +1367,7 @@ static void SomeHardcoreAsyncTask(
 
 // TODO https://kapadia.github.io/emscripten/2013/09/13/emscripten-pointers-and-pointers.html
 // TODO https://github.com/bakerstu/openmrn/blob/5f6bb8934fe13b2897d5f52ec6b358bd87dd886a/src/utils/FileUtils.cxx#L44
-static int read_file(const char* fPath, char*& fileString, long int& fsize)
+static int read_file(const char* fPath, char*& fileString, long int& fsize, const bool closeString)
 {
     if(!strlen(fPath)){
         printf("failed to open file with empty path\n");
@@ -1198,7 +1384,8 @@ static int read_file(const char* fPath, char*& fileString, long int& fsize)
     fileString = new char[fsize + 1];
     fread(fileString, 1, fsize, f);
     fclose(f);
-    fileString[fsize] = 0;
+    if(closeString)
+      fileString[fsize] = 0;
     return 0;
 }
 
@@ -1556,9 +1743,9 @@ int main(int argc, char** argv) {
 
 #ifdef __EMSCRIPTEN__
   //https://github.com/Becavalier/Book-DISO-WebAssembly/issues/10
-  //double dpr = emscripten_get_device_pixel_ratio();
-  //emscripten_set_element_css_size("#canvas", width / dpr, height / dpr);
-  //emscripten_set_canvas_element_size("#canvas", width, height);
+  double dpr = emscripten_get_device_pixel_ratio();
+  emscripten_set_element_css_size("#canvas", width / dpr, height / dpr);
+  emscripten_set_canvas_element_size("#canvas", width, height);
 
   /// @note use EmscriptenWebGLContextAttributes, not SDL_GL
   /// @see https://github.com/emscripten-core/emscripten/issues/7684
@@ -1841,9 +2028,9 @@ int main(int argc, char** argv) {
 
   const char* fontPath = "./resources/fonts/FreeSans.ttf";
 
-  /*char* fileString1 = nullptr;
+  /*char* fileData1 = nullptr;
   long int fsize1;
-  int readRes = read_file(fontPath, fileString1, fsize1);
+  int readRes = read_file(fontPath, fileData1, fsize1, true);
   if (readRes != 0) {
     printf("can`t read font %s\n", fontPath);
   }*/
@@ -1852,7 +2039,7 @@ int main(int argc, char** argv) {
 
   /// \note SkData::MakeFromFileName don`t support wasm pthreads,
   /// so we use MakeFromMalloc
-  //sk_sp<SkData> data = SkData::MakeFromMalloc(fileString1, fsize1);
+  //sk_sp<SkData> data = SkData::MakeFromMalloc(fileData1, fsize1);
   sk_sp<SkData> data = SkData::MakeFromFileName(fontPath);
   if (!data) {
     printf("failed SkData::MakeFromMalloc for font %s\n", fontPath);
@@ -1862,19 +2049,68 @@ int main(int argc, char** argv) {
 
   /// \note SkTypeface::MakeFromFile don`t support wasm pthreads,
   /// so we use MakeFromData
+  const int index = 0;
   //sk_sp<SkTypeface> sktp = SkTypeface::MakeFromFile("./resources/fonts/FreeSans.ttf");
-  sk_sp<SkTypeface> sktp = SkTypeface::MakeFromData(std::move(data));
+
+#ifdef ENABLE_HARFBUZZ
+  sk_sp<SkTypeface> sktp = SkTypeface::MakeFromData(data, index);
+#else
+  /// \note use std::move only if data will not be used any more
+  sk_sp<SkTypeface> sktp = SkTypeface::MakeFromData(std::move(data), index);
+#endif
+
+  //sk_sp<SkTypeface> sktp = SkTypeface::MakeFromStream(new SkMemoryStream(data), index);
+
+  printf("Creating harfbuzz fonts...\n");
+
+#ifdef ENABLE_HARFBUZZ
+  auto destroy = [](void *d) { static_cast<SkData*>(d)->unref(); };
+  const char* bytes = (const char*)data->data();
+  unsigned int size = (unsigned int)data->size();
+  hb_blob_t* blob = hb_blob_create(bytes,
+                                   size,
+                                   HB_MEMORY_MODE_READONLY,
+                                   data.release(),
+                                   destroy);
+  assert(blob);
+  hb_blob_make_immutable(blob);
+  hb_face_t* face = hb_face_create(blob, (unsigned)index);
+  hb_blob_destroy(blob);
+  //assert(face);
+  if (!face) {
+      printf("Can`t create harfbuzz face...\n");
+      sktp.reset();
+      return 1;
+  }
+  hb_face_set_index(face, (unsigned)index);
+  hb_face_set_upem(face, sktp->getUnitsPerEm());
+  fHarfBuzzFace.reset(face);
+
+  // see https://chromium.googlesource.com/skia/+/chrome/m56/tools/SkShaper_harfbuzz.cpp
+  fHarfBuzzFont.reset(hb_font_create(fHarfBuzzFace.get()));
+  if (!fHarfBuzzFont.get()) {
+      printf("Can`t create harfbuzz font...\n");
+      sktp.reset();
+      return 1;
+  }
+
+  // see https://github.com/aam/skiaex/blob/master/app/main.cpp#L177
+  // see https://github.com/harfbuzz/harfbuzz-tutorial/blob/master/hello-harfbuzz-opentype.c#L31
+  hb_font_set_scale(fHarfBuzzFont.get(), FONT_SIZE_SCALE * FONT_SIZE_F, FONT_SIZE_SCALE * FONT_SIZE_F);
+  hb_ot_font_set_funcs(fHarfBuzzFont.get());
+#endif // ENABLE_HARFBUZZ
 
   printf("Creating fonts...\n");
 
   skFont1 =
-      new SkFont(sktp, 22.0f, 1.0f, 0.0f);
+      new SkFont(sktp, FONT_SIZE_F, 1.0f, 0.0f);
 
   skFont2 =
       new SkFont(sktp, 30.0f, 1.5f, 0.0f);
 
-  //delete[] fileString1;
-#endif
+  //delete[] fileData1;
+
+#endif // ENABLE_CUSTOM_FONTS
 
   printf("Initializing skia...\n");
 
@@ -1911,7 +2147,7 @@ int main(int argc, char** argv) {
 
     char* fileString = nullptr;
     long int fsize;
-    int readRes = read_file(fAnimPath.c_str(), fileString, fsize);
+    int readRes = read_file(fAnimPath.c_str(), fileString, fsize, true);
     if (readRes != 0) {
       printf("can`t read skottie anim %s\n", fAnimPath.c_str());
       return 1;

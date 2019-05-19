@@ -1,4 +1,4 @@
-# NOTE
+# NOTE/NEED
 
 needs
 > https://bugs.chromium.org/p/skia/issues/detail?id=9052&q=&sort=-modified&colspec=ID%20Type%20Status%20Priority%20M%20Area%20Owner%20Summary%20Modified
@@ -6,18 +6,27 @@ needs
 > skia & pthreads support on wasm platform: bugged traces, skOnce, SetDefaultTrivialExecutor, e.t.c.
 > FreeType thread safety https://bugs.chromium.org/p/skia/issues/detail?id=8997&q=thread&sort=-modified&colspec=ID%20Type%20Status%20Priority%20M%20Area%20Owner%20Summary%20Modified
 > delayed tasks without pthread support & wait on condition variable
+> use CMakeLists for skia build https://github.com/skui-org/skia/blob/m74/CMakeLists.txt
+
+notes
+> set RELEASE_BUILD to TRUE in CMakeLists.txt if you want good performance. Also set -DCMAKE_BUILD_TYPE=Release
 
 # Features
 
 > skia compiled to wasm (emscripten)
-> skottie (Bodymovin animation / lottie)
+> skottie (Bodymovin animation / lottie), see https://skia.org/user/modules/skottie
 > custom fonts
+> unicode fonts & harfbuzz
 > uses SDL2 to create window
 > uses CMake
 > supports WebGL 2 / GLSL 300 es as there really isn`t a reason to support WebGL 1 at this point
+> supports WASM as there really isn`t a reason to support ASM.js at this point
 
 ## TODO
 https://github.com/emscripten-core/emscripten/issues/5033
+
+emscripten_get_font_by_name
+https://github.com/livecode/livecode/blob/d780d79e800afd65897631f840296075ff6573e9/engine/src/em-fontlist.cpp#L256
 
 boost to wasm:
 b2 --with-system --with-filesystem toolset=emscripten link=static
@@ -364,6 +373,8 @@ ls ${PWD}/thirdparty/depot_tools
 export PATH="${PWD}/thirdparty/depot_tools:${PATH}"
 cd thirdparty/skia
 tools/git-sync-deps
+# If some header files are missing, install the corresponding dependencies
+tools/install_dependencies.sh
 # see https://github.com/google/skia/blob/master/src/sksl/README#L77
 bin/fetch-clang-format
 ```
