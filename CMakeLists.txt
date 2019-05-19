@@ -1703,6 +1703,7 @@ if(EMSCRIPTEN)
   # see https://floooh.github.io/2016/01/12/cmake-dependency-juggling.html
   target_link_libraries(${PROJECT_NAME} PUBLIC
     ${WTF_LIBS}
+    BORINGSSL
     GFX_GEOMETRY
     # tcmalloc only for posix/linux/e.t.c.
     #tcmalloc
@@ -1733,6 +1734,7 @@ else()
   # see https://floooh.github.io/2016/01/12/cmake-dependency-juggling.html
   target_link_libraries(${PROJECT_NAME} PUBLIC
     ${WTF_LIBS}
+    BORINGSSL
     GFX_GEOMETRY
     # tcmalloc only for posix/linux/e.t.c.
     tcmalloc

@@ -27,6 +27,12 @@
 // high quality: anialias, e.t.c.
 #define ENABLE_SKIA_HQ 1
 
+#define ENABLE_BORINGSSL
+#if defined(ENABLE_BORINGSSL) && !defined(ENABLE_BASE)
+#warning "ENABLE_BORINGSSL requires BASE"
+#undef ENABLE_BORINGSSL
+#endif
+
 /// \note defined by CMAKE
 // #define ENABLE_BASE 1
 //#undef ENABLE_BASE
@@ -106,6 +112,28 @@
 #warning "ENABLE_SK_EFFECTS requires SKIA and CUSTOM_FONTS"
 #undef ENABLE_SK_EFFECTS
 #endif
+
+#ifdef ENABLE_BORINGSSL
+#include <third_party/boringssl/src/include/openssl/ssl.h>
+#include <assert.h>
+#include <string.h>
+#include <third_party/boringssl/src/include/openssl/aead.h>
+#include <third_party/boringssl/src/include/openssl/bn.h>
+#include <third_party/boringssl/src/include/openssl/buf.h>
+#include <third_party/boringssl/src/include/openssl/bytestring.h>
+#include <third_party/boringssl/src/include/openssl/dh.h>
+#include <third_party/boringssl/src/include/openssl/ec_key.h>
+#include <third_party/boringssl/src/include/openssl/ecdsa.h>
+#include <third_party/boringssl/src/include/openssl/err.h>
+#include <third_party/boringssl/src/include/openssl/evp.h>
+#include <third_party/boringssl/src/include/openssl/md5.h>
+#include <third_party/boringssl/src/include/openssl/mem.h>
+#include <third_party/boringssl/src/include/openssl/rand.h>
+#include <third_party/boringssl/src/include/openssl/x509.h>
+#include <third_party/boringssl/src/include/openssl/x509v3.h>
+#include "third_party/boringssl/src/include/openssl/crypto.h"
+#include "third_party/boringssl/src/crypto/internal.h"
+#endif // ENABLE_BORINGSSL
 
 /// \note place before glext.h
 /// \note defined by CMAKE
@@ -1400,6 +1428,11 @@ static int read_file(const char* fPath, char*& fileString, long int& fsize, cons
 }
 
 int main(int argc, char** argv) {
+#ifdef ENABLE_BORINGSSL
+    // see https://boringssl.googlesource.com/boringssl/+/version_for_cocoapods_1.0/ssl/ssl_test.cc
+    CRYPTO_library_init();
+#endif // ENABLE_BORINGSSL
+
 #if defined(FORCE_WASM_FS)
   printf("Init emscripten FS ...\n");
   EM_ASM(
