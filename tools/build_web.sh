@@ -40,9 +40,9 @@ fi
 
 extra_args=''
 if [[ "${build_type}" == "Debug" ]]; then
-  extra_args='-DRELEASE_BUILD=TRUE'
+  extra_args=-DRELEASE_BUILD=OFF
 else
-  extra_args='-DRELEASE_BUILD=FALSE'
+  extra_args=-DRELEASE_BUILD=ON
 fi
 
 # mkdir build

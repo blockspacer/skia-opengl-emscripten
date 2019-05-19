@@ -22,7 +22,7 @@ ENDIF()
 # NOTE: measure performace on RELEASE builds!
 #set(RELEASE_BUILD TRUE)
 #set(RELEASE_BUILD FALSE)
-option(RELEASE_BUILD "RELEASE_BUILD" FALSE)
+option(RELEASE_BUILD "RELEASE_BUILD" OFF)
 
 # WebAssembly
 set(ENABLE_WASM TRUE)
@@ -39,6 +39,17 @@ set(ENABLE_WEB_PTHREADS FALSE)
 if(NOT ENABLE_WASM)
   message(FATAL_ERROR "only WASM build supported for now")
 endif(NOT ENABLE_WASM)
+
+if(RELEASE_BUILD)
+  if(NOT CMAKE_BUILD_TYPE MATCHES Release)
+    message(FATAL_ERROR "build with -DCMAKE_BUILD_TYPE=Release")
+  endif(NOT CMAKE_BUILD_TYPE MATCHES Release)
+else()
+  if(NOT CMAKE_BUILD_TYPE MATCHES Debug)
+    message(FATAL_ERROR "build with -DCMAKE_BUILD_TYPE=Debug")
+  endif(NOT CMAKE_BUILD_TYPE MATCHES Debug)
+endif(RELEASE_BUILD)
+
 
 project(${PROJECT_NAME} CXX)
 
@@ -492,7 +503,7 @@ endif(NOT RELEASE_BUILD)
   # SK_HAS_WEBP_LIBRARY # skia_use_libwebp
   # SK_XML # skia_use_expat
   # https://github.com/Rusino/skia/blob/master/BUILD.gn#L191
-  set(EMCC_COMMON "${EMCC_COMMON} -DSK_ALLOW_STATIC_GLOBAL_INITIALIZERS=0")
+  #set(EMCC_COMMON "${EMCC_COMMON} -DSK_ALLOW_STATIC_GLOBAL_INITIALIZERS=0") # don`t redefine
 
   # Check each write to the heap, for example, this will give a clear error
   # on what would be segfaults in a native build (like dereferencing 0)
@@ -712,14 +723,8 @@ else(EMSCRIPTEN)
     add_definitions(-DDEBUG -D_DEBUG)
     set(COMMON_FLAGS "${COMMON_FLAGS} -g")
     set(COMMON_FLAGS "${COMMON_FLAGS} -O0")
-    if(NOT CMAKE_BUILD_TYPE MATCHES Debug)
-      message(FATAL_ERROR "build with -DCMAKE_BUILD_TYPE=Debug")
-    endif(NOT CMAKE_BUILD_TYPE MATCHES Debug)
   else()
     set(COMMON_FLAGS "${COMMON_FLAGS} -O3")
-    if(NOT CMAKE_BUILD_TYPE MATCHES Release)
-      message(FATAL_ERROR "build with -DCMAKE_BUILD_TYPE=Release")
-    endif(NOT CMAKE_BUILD_TYPE MATCHES Release)
   endif(NOT RELEASE_BUILD)
 
   ### Find Libraries
@@ -944,7 +949,9 @@ else ()
 endif ()
 
 if (EMSCRIPTEN)
-  set(SK_CONF_IS_OFFICIAL_BUILD "true")
+  # todo
+  #set(SK_CONF_IS_OFFICIAL_BUILD "true")
+
   set(SK_CONF_SHARED "false")
 
   set(SK_IS_processors "false") # see SKSL_STANDALONE
@@ -1683,6 +1690,7 @@ if(EMSCRIPTEN)
   # see https://floooh.github.io/2016/01/12/cmake-dependency-juggling.html
   target_link_libraries(${PROJECT_NAME} PUBLIC
     ${WTF_LIBS}
+    GFX_GEOMETRY
     # tcmalloc only for posix/linux/e.t.c.
     #tcmalloc
     #
@@ -1712,6 +1720,7 @@ else()
   # see https://floooh.github.io/2016/01/12/cmake-dependency-juggling.html
   target_link_libraries(${PROJECT_NAME} PUBLIC
     ${WTF_LIBS}
+    GFX_GEOMETRY
     # tcmalloc only for posix/linux/e.t.c.
     tcmalloc
     #
