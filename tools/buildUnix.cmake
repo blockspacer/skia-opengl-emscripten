@@ -25,6 +25,10 @@ include(${CURRENT_SCRIPT_DIR}/commonBuildMacros.cmake)
 
 set(BUILD_DIR "${CMAKE_CURRENT_SOURCE_DIR}/build-linux/" CACHE STRING "output directory")
 
+set(C_COMPILER "/usr/bin/clang-6.0" CACHE STRING "C COMPILER, must be full path to clang > 4")
+
+set(CXX_COMPILER "/usr/bin/clang++-6.0" CACHE STRING "C++ COMPILER, must be full path to clang > 4")
+
 if (BUILD_APP)
   message("building for Unix from ${CMAKE_CURRENT_SOURCE_DIR} into ${BUILD_DIR}...")
 
@@ -38,9 +42,8 @@ if (BUILD_APP)
   colored_notify("Building with CMAKE_OPTS=${CMAKE_OPTS} and EXTRA_CMAKE_OPTS=${EXTRA_CMAKE_OPTS}")
   colored_notify("Building with MAKE_OPTS=${MAKE_OPTS} and EXTRA_MAKE_OPTS=${EXTRA_MAKE_OPTS}")
 
-
-  set(CMAKE_OPTS "${CMAKE_OPTS};-DCMAKE_C_COMPILER=/usr/bin/clang-6.0")
-  set(CMAKE_OPTS "${CMAKE_OPTS};-DCMAKE_CXX_COMPILER=/usr/bin/clang++-6.0")
+  set(CMAKE_OPTS "${CMAKE_OPTS};-DCMAKE_C_COMPILER=${C_COMPILER}")
+  set(CMAKE_OPTS "${CMAKE_OPTS};-DCMAKE_CXX_COMPILER=${CXX_COMPILER}")
 
   # --- configure ---
   execute_process(
