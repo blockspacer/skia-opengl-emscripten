@@ -3400,10 +3400,13 @@ set_property(TARGET BORINGSSL PROPERTY CXX_STANDARD 17)
 
 target_include_directories(BORINGSSL PRIVATE
   ${BORINGSSL_DIR}
-  ${BORINGSSL_DIR}src/
-  ${BORINGSSL_DIR}src/include/
-  #${BORINGSSL_DIR}src/include/openssl
   ${BASE_DIR}
+  ${BORINGSSL_DIR}src/
+)
+
+target_include_directories(BORINGSSL PUBLIC
+  ${BORINGSSL_DIR}src/include/
+  ${BORINGSSL_DIR}src/include/openssl
 )
 
 target_compile_definitions(BORINGSSL PRIVATE
