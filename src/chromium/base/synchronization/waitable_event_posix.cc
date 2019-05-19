@@ -1,4 +1,4 @@
-// Copyright (c) 2012 The Chromium Authors. All rights reserved.
+﻿// Copyright (c) 2012 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -267,9 +267,9 @@ cmp_fst_addr(const std::pair<WaitableEvent*, unsigned> &a,
 size_t WaitableEvent::WaitMany(WaitableEvent** raw_waitables,
                                size_t count) {
 #if defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS)
-P_LOG("TODO: WaitableEvent::WaitMany\n");
-#warning "TODO: WaitableEvent::WaitMany"
-HTML5_STACKTRACE();
+    P_LOG("TODO: WaitableEvent::WaitMany\n");
+    #warning "TODO: WaitableEvent::WaitMany"
+    HTML5_STACKTRACE();
 #endif
 
   DCHECK(count) << "Cannot wait on no events";
@@ -371,6 +371,11 @@ HTML5_STACKTRACE();
 size_t WaitableEvent::EnqueueMany(std::pair<WaitableEvent*, size_t>* waitables,
                                   size_t count,
                                   Waiter* waiter) {
+#if defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS)
+    P_LOG("TODO: WaitableEvent::EnqueueMany\n");
+    #warning "TODO: WaitableEvent::EnqueueMany"
+    HTML5_STACKTRACE();
+#endif
   size_t winner = count;
   size_t winner_index = count;
   for (size_t i = 0; i < count; ++i) {

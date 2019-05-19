@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2008 The Chromium Authors. All rights reserved.
+﻿// Copyright (c) 2006-2008 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -30,6 +30,9 @@ MessagePumpDefault::~MessagePumpDefault() = default;
 
 void MessagePumpDefault::Run(Delegate* delegate) {
   AutoReset<bool> auto_reset_keep_running(&keep_running_, true);
+#if defined(OS_EMSCRIPTEN)
+  DCHECK(delegate);
+#endif
 
 #if defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS) && defined(HAVE_ASYNC)
   for (;;) {

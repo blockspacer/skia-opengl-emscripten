@@ -1,4 +1,4 @@
-// Copyright (c) 2012 The Chromium Authors. All rights reserved.
+﻿// Copyright (c) 2012 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -135,6 +135,10 @@ bool Thread::StartWithOptions(const Options& options) {
 }
 
 bool Thread::StartAndWaitForTesting() {
+#if defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS)
+    P_LOG("TODO: Thread::FlushForTesting\n");
+    HTML5_STACKTRACE();
+#endif
   DCHECK(owning_sequence_checker_.CalledOnValidSequence());
   bool result = Start();
   if (!result)
@@ -154,12 +158,23 @@ bool Thread::WaitUntilThreadStarted() const {
 }
 
 void Thread::FlushForTesting() {
+#if defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS)
+    P_LOG("TODO: Thread::FlushForTesting\n");
+    HTML5_STACKTRACE();
+#endif
+
   DCHECK(owning_sequence_checker_.CalledOnValidSequence());
   if (!task_environment_)
     return;
 
   WaitableEvent done(WaitableEvent::ResetPolicy::AUTOMATIC,
                      WaitableEvent::InitialState::NOT_SIGNALED);
+#if defined(OS_EMSCRIPTEN)
+  DCHECK(task_runner());
+  if (!task_runner()){
+      P_LOG("invalid task_runner\n");
+  }
+#endif
   task_runner()->PostTask(FROM_HERE,
                           BindOnce(&WaitableEvent::Signal, Unretained(&done)));
   done.Wait();
@@ -208,6 +223,12 @@ void Thread::StopSoon() {
 
   stopping_ = true;
 
+#if defined(OS_EMSCRIPTEN)
+  DCHECK(task_runner());
+  if (!task_runner()){
+      P_LOG("invalid task_runner\n");
+  }
+#endif
   task_runner()->PostTask(
       FROM_HERE, base::BindOnce(&Thread::ThreadQuitHelper, Unretained(this)));
 }
@@ -246,16 +267,25 @@ void Thread::Run(RunLoop* run_loop) {
   DCHECK(id_event_.IsSignaled());
   DCHECK_EQ(id_, PlatformThread::CurrentId());
 
+#if defined(OS_EMSCRIPTEN)
+  DCHECK(run_loop);
+#endif
   run_loop->Run();
 }
 
 // static
 void Thread::SetThreadWasQuitProperly(bool flag) {
+#if defined(OS_EMSCRIPTEN)
+    DCHECK(lazy_tls_bool.Pointer());
+#endif
   lazy_tls_bool.Pointer()->Set(flag);
 }
 
 // static
 bool Thread::GetThreadWasQuitProperly() {
+#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+    return true;
+#endif
   bool quit_properly = true;
 #if DCHECK_IS_ON() && !defined(DISABLE_PTHREADS)
   quit_properly = lazy_tls_bool.Pointer()->Get();
@@ -357,10 +387,16 @@ MessageLoopTaskEnvironment::~MessageLoopTaskEnvironment() {}
 
 scoped_refptr<SingleThreadTaskRunner>
 MessageLoopTaskEnvironment::GetDefaultTaskRunner() {
+#if defined(OS_EMSCRIPTEN)
+    DCHECK(message_loop_);
+#endif
   return message_loop_->task_runner();
 }
 
 void MessageLoopTaskEnvironment::BindToCurrentThread(TimerSlack timer_slack) {
+#if defined(OS_EMSCRIPTEN)
+    DCHECK(message_loop_);
+#endif
   message_loop_->BindToCurrentThread();
   message_loop_->SetTimerSlack(timer_slack);
 }
