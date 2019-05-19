@@ -30,7 +30,7 @@ if (BUILD_APP)
   build_vars_step()
 
   # --- prepare build dirs ---
-  build_dir_step(${CLEAN_BUILD} ${BUILD_DIR} ${CMAKE_CURRENT_SOURCE_DIR})
+  build_dir_step(${BUILD_DIR} ${CMAKE_CURRENT_SOURCE_DIR})
 
   # --- some info before build ---
   colored_notify("Building with CMAKE_OPTS=${CMAKE_OPTS} and EXTRA_EMCMAKE_OPTS=${EXTRA_EMCMAKE_OPTS}")
