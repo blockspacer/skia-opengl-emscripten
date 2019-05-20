@@ -1724,6 +1724,7 @@ if(EMSCRIPTEN)
   target_link_libraries(${PROJECT_NAME} PUBLIC
     ${WTF_LIBS}
     BORINGSSL
+    GCRYPTO
     GFX_GEOMETRY
     # tcmalloc only for posix/linux/e.t.c.
     #tcmalloc
@@ -1755,6 +1756,7 @@ else()
   target_link_libraries(${PROJECT_NAME} PUBLIC
     ${WTF_LIBS}
     BORINGSSL
+    GCRYPTO
     GFX_GEOMETRY
     # tcmalloc only for posix/linux/e.t.c.
     tcmalloc
