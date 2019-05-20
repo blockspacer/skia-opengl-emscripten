@@ -252,6 +252,9 @@ bool WaitableEvent::TimedWaitUntil(const TimeTicks& end_time) {
       sw.cv()->Wait();
     }
   }
+#if defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS)
+  return true;
+#endif
 }
 
 // -----------------------------------------------------------------------------
@@ -458,6 +461,10 @@ bool WaitableEvent::SignalOne() {
     if (r)
       return true;
   }
+
+#if defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS)
+      return true;
+#endif
 }
 
 // -----------------------------------------------------------------------------
