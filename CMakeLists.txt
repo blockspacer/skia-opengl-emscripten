@@ -1725,6 +1725,7 @@ if(EMSCRIPTEN)
     ${WTF_LIBS}
     BORINGSSL
     GCRYPTO
+    GURL
     GFX_GEOMETRY
     # tcmalloc only for posix/linux/e.t.c.
     #tcmalloc
@@ -1757,6 +1758,7 @@ else()
     ${WTF_LIBS}
     BORINGSSL
     GCRYPTO
+    GURL
     GFX_GEOMETRY
     # tcmalloc only for posix/linux/e.t.c.
     tcmalloc

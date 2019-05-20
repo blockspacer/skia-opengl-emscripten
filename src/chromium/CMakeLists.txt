@@ -10,6 +10,7 @@ set(GFX_GEOMETRY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/ui/gfx/geometry/)
 set(BLINK_PLATFORM_DIR ${CMAKE_CURRENT_SOURCE_DIR}/third_party/blink/renderer/platform/)
 set(BORINGSSL_DIR ${CMAKE_CURRENT_SOURCE_DIR}/third_party/boringssl/)
 set(GCRYPTO_DIR ${CMAKE_CURRENT_SOURCE_DIR}/crypto/)
+set(GURL_DIR ${CMAKE_CURRENT_SOURCE_DIR}/url/)
 
 set(3RDPARTY_DIR "${CMAKE_CURRENT_SOURCE_DIR}/")
 
@@ -3513,8 +3514,8 @@ target_compile_definitions(GCRYPTO PRIVATE
   CRYPTO_IMPLEMENTATION=1
 )
 
-#### --- GNET ---###
-#
+### --- GNET ---###
+
 ## TODO https://github.com/chromium/chromium/blob/master/third_party/blink/renderer/platform/BUILD.gn
 #set(GNET_SOURCES
 #  ${GNET_DIR}weborigin/known_ports.cc
@@ -3525,6 +3526,7 @@ target_compile_definitions(GCRYPTO PRIVATE
 #)
 #
 #target_link_libraries(GNET PUBLIC
+#  GCRYPTO
 #  dynamic_annotations
 #  ${BASE_LIBRARIES}
 #)
@@ -3540,32 +3542,77 @@ target_compile_definitions(GCRYPTO PRIVATE
 ##  BLINK_PLATFORM_IMPLEMENTATION=1
 ##)
 
-# ### --- GURL ---###
-#
-# # TODO https://github.com/chromium/chromium/blob/master/third_party/blink/renderer/platform/BUILD.gn
-# set(GURL_SOURCES
-#   ${GURL_DIR}weborigin/known_ports.cc
-# )
-#
-# add_library(GURL STATIC
-#   ${GURL_SOURCES}
-# )
-#
-# target_link_libraries(GURL PUBLIC
-#   dynamic_annotations
-#   ${BASE_LIBRARIES}
-# )
-#
-# set_property(TARGET GURL PROPERTY CXX_STANDARD 17)
-#
-# target_include_directories(GURL PRIVATE
-#   ${GURL_DIR}
-#   ${BASE_DIR}
-# )
-#
-# #target_compile_definitions(GURL PRIVATE
-# #  BLINK_PLATFORM_IMPLEMENTATION=1
-# #)
+### --- GURL ---###
+
+# TODO https://github.com/chromium/chromium/blob/master/third_party/blink/renderer/platform/BUILD.gn
+set(GURL_SOURCES
+  ${GURL_DIR}gurl.cc
+  #${GURL_DIR}gurl.h",
+  ${GURL_DIR}origin.cc
+  #${GURL_DIR}origin.h",
+  ${GURL_DIR}scheme_host_port.cc
+  #${GURL_DIR}scheme_host_port.h",
+  ${GURL_DIR}third_party/mozilla/url_parse.cc
+  #${GURL_DIR}third_party/mozilla/url_parse.h",
+  ${GURL_DIR}url_canon.cc
+  #${GURL_DIR}url_canon.h",
+  ${GURL_DIR}url_canon_etc.cc
+  ${GURL_DIR}url_canon_filesystemurl.cc
+  ${GURL_DIR}url_canon_fileurl.cc
+  ${GURL_DIR}url_canon_host.cc
+  ${GURL_DIR}url_canon_internal.cc
+  #${GURL_DIR}url_canon_internal.h",
+  #${GURL_DIR}url_canon_internal_file.h",
+  ${GURL_DIR}url_canon_ip.cc
+  #${GURL_DIR}url_canon_ip.h",
+  ${GURL_DIR}url_canon_mailtourl.cc
+  ${GURL_DIR}url_canon_path.cc
+  ${GURL_DIR}url_canon_pathurl.cc
+  ${GURL_DIR}url_canon_query.cc
+  ${GURL_DIR}url_canon_relative.cc
+  ${GURL_DIR}url_canon_stdstring.cc
+  #${GURL_DIR}url_canon_stdstring.h",
+  ${GURL_DIR}url_canon_stdurl.cc
+  ${GURL_DIR}url_constants.cc
+  #${GURL_DIR}url_constants.h",
+  #${GURL_DIR}url_file.h",
+  ${GURL_DIR}url_parse_file.cc
+  #${GURL_DIR}url_parse_internal.h",
+  ${GURL_DIR}url_util.cc
+  #${GURL_DIR}url_util.h",
+  #${GURL_DIR}url_util_internal.h",
+  #
+  # icu, use_platform_icu_alternatives
+  #
+  ${GURL_DIR}url_canon_icu.cc
+  #${GURL_DIR}url_canon_icu.h",
+  ${GURL_DIR}url_idna_icu.cc
+  #
+)
+
+add_library(GURL STATIC
+  ${GURL_SOURCES}
+)
+
+target_link_libraries(GURL PUBLIC
+  dynamic_annotations
+  ${BASE_LIBRARIES}
+)
+
+set_property(TARGET GURL PROPERTY CXX_STANDARD 17)
+
+target_include_directories(GURL PRIVATE
+  ${GURL_DIR}
+  ${BASE_DIR}
+)
+
+# uses USE_PLATFORM_ICU_ALTERNATIVES from buildflags.h
+#configure_file(${CMAKE_CURRENT_SOURCE_DIR}/gurl_buildflags.h.inc
+#  ${GURL_DIR}/buildflags.h COPYONLY)
+
+target_compile_definitions(GURL PRIVATE
+  IS_URL_IMPL=1
+)
 
 ### --- BLINK_PLATFORM ---###
 
