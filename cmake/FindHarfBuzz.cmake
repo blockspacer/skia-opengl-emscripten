@@ -70,11 +70,11 @@ find_package_handle_standard_args(HarfBuzz
 set(HARFBUZZ_FOUND ${HarfBuzz_FOUND})
 
 if(HarfBuzz_FOUND)
-  set(HarfBuzz_INCLUDE_DIRS "${HarfBuzz_INCLUDE_DIR}")
+  set(HarfBuzz_INCLUDE_DIRS "${HarfBuzz_INCLUDE_DIR};${HarfBuzz_INCLUDE_DIR}/harfbuzz")
   set(HarfBuzz_LIBRARIES "${HarfBuzz_LIBRARY}")
 
-  set(HARFBUZZ_INCLUDE_DIRS "${HarfBuzz_INCLUDE_DIR}")
-  set(HARFBUZZ_LIBRARIES "${HarfBuzz_LIBRARY}")
+  set(HARFBUZZ_INCLUDE_DIRS "${HarfBuzz_INCLUDE_DIRS}")
+  set(HARFBUZZ_LIBRARIES "${HarfBuzz_LIBRARIES}")
 endif()
 
 mark_as_advanced(HarfBuzz_INCLUDE_DIR HarfBuzz_LIBRARY)
