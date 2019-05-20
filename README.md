@@ -6,7 +6,9 @@ needs
 > skia & pthreads support on wasm platform: bugged traces, skOnce, SetDefaultTrivialExecutor, e.t.c.
 > FreeType thread safety https://bugs.chromium.org/p/skia/issues/detail?id=8997&q=thread&sort=-modified&colspec=ID%20Type%20Status%20Priority%20M%20Area%20Owner%20Summary%20Modified
 > delayed tasks without pthread support & wait on condition variable
-> use CMakeLists for skia build https://github.com/skui-org/skia/blob/m74/CMakeLists.txt
+> use CMakeLists for skia build
+  https://github.com/skui-org/skia/blob/m74/CMakeLists.txt
+  https://github.com/Tarnyko/chromium-lite/blob/master/05b-skia/CMakeLists.txt
 
 notes
 > if you want good performance - set RELEASE_BUILD to TRUE in CMakeLists.txt and set -DCMAKE_BUILD_TYPE=Release. Or even better - use scripts from tools directory with right arguments.
