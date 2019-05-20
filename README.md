@@ -367,6 +367,9 @@ cd harfbuzz
 make
 # install
 sudo make install
+# You can also set HARFBUZZ_DIR,
+# see https://github.com/SFTtech/openage/blob/master/buildsystem/modules/FindHarfBuzz.cmake#L30
+## skia
 # see https://github.com/google/skia/blob/master/site/user/build.md
 # see https://github.com/google/skia/blob/master/modules/pathkit/README.md
 ls ${PWD}/thirdparty/depot_tools
