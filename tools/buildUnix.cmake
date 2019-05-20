@@ -4,13 +4,13 @@
 # requirements: CC="/usr/bin/clang-6.0" CXX="/usr/bin/clang++-6.0"
 #
 # example (Debug build without run)
-# cmake -P tools/buildUnix.cmake -DBUILD_TYPE="Debug" -DCLEAN_BUILD=OFF
+# cmake -DBUILD_TYPE="Debug" -DCLEAN_BUILD=OFF -P tools/buildUnix.cmake
 #
 # example (full Release rebuild & run, -j9 for 9 threads):
-# cmake -P tools/buildUnix.cmake -DRUN_APP=ON -DBUILD_APP=ON -DEXTRA_MAKE_OPTS="-j;9" -DBUILD_TYPE="Release" -DCLEAN_BUILD=ON
+# cmake -DRUN_APP=ON -DBUILD_APP=ON -DEXTRA_MAKE_OPTS="-j;9" -DBUILD_TYPE="Release" -DCLEAN_BUILD=ON -P tools/buildUnix.cmake
 #
 # example (run only):
-# cmake -P tools/buildUnix.cmake -DRUN_APP=ON
+# cmake -DRUN_APP=ON -P tools/buildUnix.cmake
 #
 # run that file with cmake -DVAR=VALUE -DFOO=BAR -P <script-file> <arg5> <arg6> ...
 
