@@ -2,13 +2,13 @@
 # portable build script based on "cmake -P"
 #
 # example (Debug build without run)
-# emcmake cmake -DBUILD_TYPE="Debug" -DCLEAN_BUILD=OFF -P tools/buildWeb.cmake
+# cmake -P tools/buildWeb.cmake -DBUILD_TYPE="Debug" -DCLEAN_BUILD=OFF
 #
 # example (full Release rebuild & run, -j9 for 9 threads):
-# emcmake cmake -DRUN_APP=ON -DBUILD_APP=ON -DEXTRA_EMMAKE_OPTS="-j;9" -DBUILD_TYPE="Release" -DCLEAN_BUILD=ON -P tools/buildWeb.cmake
+# cmake -P tools/buildWeb.cmake -DRUN_APP=ON -DBUILD_APP=ON -DEXTRA_EMMAKE_OPTS="-j;9" -DBUILD_TYPE="Release" -DCLEAN_BUILD=ON
 #
 # example (run only):
-# emcmake cmake -DRUN_APP=ON -DBUILD_APP=OFF  -P tools/buildWeb.cmake
+# cmake -P tools/buildWeb.cmake -DRUN_APP=ON -DBUILD_APP=OFF
 #
 # run that file with cmake -DVAR=VALUE -DFOO=BAR -P <script-file> <arg5> <arg6> ...
 

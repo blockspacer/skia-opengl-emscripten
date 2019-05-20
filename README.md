@@ -385,19 +385,19 @@ bin/fetch-clang-format
 ### Compile example on Linux
 
 ```
-emcmake cmake -DBUILD_TYPE="Debug" -DCLEAN_BUILD=OFF -P tools/buildUnix.cmake
+cmake -P tools/buildUnix.cmake -DBUILD_TYPE="Debug" -DCLEAN_BUILD=OFF
 ```
 
 ### Compile example on HTML5 platform / browser / WASM
 
 ```
-emcmake cmake -DBUILD_TYPE="Debug" -DCLEAN_BUILD=OFF -P tools/buildWeb.cmake
+cmake -P tools/buildWeb.cmake -DBUILD_TYPE="Debug" -DCLEAN_BUILD=OFF
 ```
 
 ### Run example on HTML5 platform / browser / WASM (needs '--emrun' cxx flag)
 
 ```
-emcmake cmake -DRUN_APP=ON -DBUILD_APP=OFF  -P tools/buildWeb.cmake
+cmake -P tools/buildWeb.cmake -DRUN_APP=ON -DBUILD_APP=OFF
 ```
 
 > see http://webassemblycode.com/using-browsers-debug-webassembly/
