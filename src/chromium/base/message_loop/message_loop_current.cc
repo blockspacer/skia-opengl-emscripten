@@ -110,7 +110,7 @@ bool MessageLoopCurrent::operator==(const MessageLoopCurrent& other) const {
   return current_ == other.current_;
 }
 
-#if !defined(OS_NACL)
+#if !defined(OS_NACL) && !defined(OS_EMSCRIPTEN)
 
 //------------------------------------------------------------------------------
 // MessageLoopCurrentForUI
@@ -205,7 +205,7 @@ MessagePumpForIO* MessageLoopCurrentForIO::GetMessagePumpForIO() const {
   return static_cast<MessagePumpForIO*>(current_->GetMessagePump());
 }
 
-#if !defined(OS_NACL_SFI)
+#if !defined(OS_NACL_SFI) && !defined(OS_EMSCRIPTEN)
 
 #if defined(OS_WIN)
 HRESULT MessageLoopCurrentForIO::RegisterIOHandler(

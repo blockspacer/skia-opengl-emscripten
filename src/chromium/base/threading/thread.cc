@@ -19,7 +19,7 @@
 #include "base/threading/thread_task_runner_handle.h"
 #include "build/build_config.h"
 
-#if defined(OS_POSIX) && !defined(OS_NACL)
+#if defined(OS_POSIX) && !defined(OS_NACL) && !defined(OS_EMSCRIPTEN)
 #include "base/files/file_descriptor_watcher_posix.h"
 #endif
 
@@ -349,6 +349,7 @@ void Thread::ThreadMain() {
   Run(run_loop_);
 
 #if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+  // nothing
 #else
   {
     AutoLock lock(running_lock_);

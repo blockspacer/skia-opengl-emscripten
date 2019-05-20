@@ -201,7 +201,7 @@ class BASE_EXPORT MessageLoopCurrent {
   sequence_manager::internal::SequenceManagerImpl* current_;
 };
 
-#if !defined(OS_NACL)
+#if !defined(OS_NACL) && !defined(OS_EMSCRIPTEN)
 
 // ForUI extension of MessageLoopCurrent.
 class BASE_EXPORT MessageLoopCurrentForUI : public MessageLoopCurrent {
@@ -270,7 +270,7 @@ class BASE_EXPORT MessageLoopCurrentForIO : public MessageLoopCurrent {
 
   MessageLoopCurrentForIO* operator->() { return this; }
 
-#if !defined(OS_NACL_SFI)
+#if !defined(OS_NACL_SFI) && !defined(OS_EMSCRIPTEN)
 
 #if defined(OS_WIN)
   // Please see MessagePumpWin for definitions of these methods.

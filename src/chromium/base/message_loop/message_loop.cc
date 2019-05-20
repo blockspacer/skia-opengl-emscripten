@@ -100,7 +100,7 @@ std::unique_ptr<MessagePump> MessageLoop::CreateMessagePumpForType(Type type) {
       return message_pump_for_ui_factory_();
 #if defined(OS_IOS) || defined(OS_MACOSX)
     return MessagePumpMac::Create();
-#elif defined(OS_NACL) || defined(OS_AIX)
+#elif defined(OS_NACL) || defined(OS_AIX) || defined(OS_EMSCRIPTEN)
     // Currently NaCl and AIX don't have a UI MessageLoop.
     // TODO(abarth): Figure out if we need this.
     NOTREACHED();
@@ -223,7 +223,7 @@ void MessageLoop::SetTaskRunner(
   sequence_manager_->SetTaskRunner(task_runner);
 }
 
-#if !defined(OS_NACL)
+#if !defined(OS_NACL) && !defined(OS_EMSCRIPTEN)
 
 //------------------------------------------------------------------------------
 // MessageLoopForUI
