@@ -1130,6 +1130,8 @@ if(EMSCRIPTEN)
     GCRYPTO
     GURL
     GNET
+    #CC
+    GPU_COMMAND_BUFFER
     GFX_GEOMETRY
     # tcmalloc only for posix/linux/e.t.c.
     #tcmalloc
@@ -1164,6 +1166,8 @@ else()
     GCRYPTO
     GURL
     GNET
+    #CC
+    GPU_COMMAND_BUFFER
     GFX_GEOMETRY
     # tcmalloc only for posix/linux/e.t.c.
     tcmalloc

@@ -13,6 +13,9 @@ set(BASE_DIR ${BASE_PARENT_DIR}base/)
 set(GFX_GEOMETRY_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/ui/gfx/)
 set(GFX_GEOMETRY_DIR ${GFX_GEOMETRY_PARENT_DIR}geometry/)
 
+set(CC_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/)
+set(CC_DIR ${CC_PARENT_DIR}cc/)
+
 set(BLINK_PLATFORM_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/third_party/)
 set(BLINK_PLATFORM_DIR ${BLINK_PLATFORM_PARENT_DIR}blink/renderer/platform/)
 
@@ -149,7 +152,10 @@ include(GFX_GEOMETRY.cmake)
 
 # GPU_COMMAND_BUFFER: GPU command helper library.
 # Depends on : base
-#include(GPU_COMMAND_BUFFER.cmake)
+include(GPU_COMMAND_BUFFER.cmake)
+
+# CC
+#include(CC.cmake)
 
 # BLINK_PLATFORM
 #include(BLINK_PLATFORM.cmake)
