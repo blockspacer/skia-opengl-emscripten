@@ -13,6 +13,20 @@ LIST(APPEND CMAKE_PREFIX_PATH ${CMAKE_CURRENT_SOURCE_DIR}/lib/SDL2 )
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/sdl2)
 
+set(OPTIMIZE_LEVEL "" CACHE STRING "for example, -O0")
+if(OPTIMIZE_LEVEL)
+  message(STATUS "OPTIMIZE_LEVEL=${OPTIMIZE_LEVEL}")
+else(OPTIMIZE_LEVEL)
+  message(STATUS "OPTIMIZE_LEVEL will be detected based on BUILD_TYPE/RELEASE_BUILD")
+endif(OPTIMIZE_LEVEL)
+
+set(DEBUG_LEVEL "" CACHE STRING "for example, -g4")
+if(DEBUG_LEVEL)
+  message(STATUS "DEBUG_LEVEL=${DEBUG_LEVEL}")
+else(DEBUG_LEVEL)
+  message(STATUS "DEBUG_LEVEL will be detected based on BUILD_TYPE/RELEASE_BUILD")
+endif(DEBUG_LEVEL)
+
 #include(FindPkgMacros)
 
 message("CMAKE_BUILD_TYPE = ${CMAKE_BUILD_TYPE}")
@@ -572,8 +586,12 @@ endif(NOT RELEASE_BUILD)
     # -g4: Preserve LLVM debug information. This is the highest level of debuggability
     # see https://emscripten.org/docs/tools_reference/emcc.html#emcc-compiler-optimization-options
     # NOTE: -01 and higher by default discard LLVM debug information
-    set(EMCC_COMMON "${EMCC_COMMON} -g4")
+    if(NOT DEBUG_LEVEL)
+      set(DEBUG_LEVEL "${DEBUG_LEVEL} -g4")
+    endif(NOT DEBUG_LEVEL)
   endif(NOT RELEASE_BUILD)
+  # see above
+  set(EMCC_COMMON "${EMCC_COMMON} ${DEBUG_LEVEL}")
 
   # TODO EMCC_LINKER_FLAGS
 
@@ -583,7 +601,9 @@ endif(NOT RELEASE_BUILD)
   if(RELEASE_BUILD)
     #set(EMCC_COMMON "${EMCC_COMMON} -O1")
     # best performance. This is a good setting for a release build (!!!)
-    set(EMCC_COMMON "${EMCC_COMMON} -O3")
+    if(NOT OPTIMIZE_LEVEL)
+      set(OPTIMIZE_LEVEL "${OPTIMIZE_LEVEL} -O3")
+    endif(NOT OPTIMIZE_LEVEL)
     # reduces code size at the expense of performance (!!!)
     #set(EMCC_COMMON "${EMCC_COMMON} -Os")
     # Oz reduces code size even further at the expense of performance (!!!)
@@ -592,7 +612,9 @@ endif(NOT RELEASE_BUILD)
   else(RELEASE_BUILD)
     # set(EMCC_COMMON "${EMCC_COMMON} -O0")
     # NOTE Catching C++ exceptions is turned off by default in -O1 (and above).
-    set(EMCC_COMMON "${EMCC_COMMON} -O1")
+    if(NOT OPTIMIZE_LEVEL)
+      set(OPTIMIZE_LEVEL "${OPTIMIZE_LEVEL} -O1")
+    endif(NOT OPTIMIZE_LEVEL)
     #set(EMCC_COMMON "${EMCC_COMMON} -O2")
     #
     # see https://emscripten.org/docs/tools_reference/emcc.html#emcc-compiler-optimization-options
@@ -621,6 +643,8 @@ endif(NOT RELEASE_BUILD)
     #
     set(EMCC_COMMON "${EMCC_COMMON} -DPATHKIT_TESTING")
   endif(RELEASE_BUILD)
+  # see above
+  set(EMCC_COMMON "${EMCC_COMMON} ${OPTIMIZE_LEVEL}")
   #
   # TODO: remove some DEAD FUNCTIONS to improve skia webassembly size
   # -s DEAD_FUNCTIONS
@@ -757,11 +781,21 @@ else(EMSCRIPTEN)
     # see https://github.com/mmatyas/supermariowar/blob/master/CMakeLists.txt#L165
     # see http://www.brendangregg.com/blog/2016-08-09/gdb-example-ncurses.html
     add_definitions(-DDEBUG -D_DEBUG)
-    set(COMMON_FLAGS "${COMMON_FLAGS} -g")
-    set(COMMON_FLAGS "${COMMON_FLAGS} -O0")
+    if(NOT DEBUG_LEVEL)
+      set(DEBUG_LEVEL "${DEBUG_LEVEL} -g")
+    endif(NOT DEBUG_LEVEL)
+    if(NOT OPTIMIZE_LEVEL)
+      set(OPTIMIZE_LEVEL "${OPTIMIZE_LEVEL} -O0")
+    endif(NOT OPTIMIZE_LEVEL)
   else()
+    if(NOT OPTIMIZE_LEVEL)
+      set(OPTIMIZE_LEVEL "${OPTIMIZE_LEVEL} -O3")
+    endif(NOT OPTIMIZE_LEVEL)
     set(COMMON_FLAGS "${COMMON_FLAGS} -O3")
   endif(NOT RELEASE_BUILD)
+  # see above
+  set(COMMON_FLAGS "${COMMON_FLAGS} ${OPTIMIZE_LEVEL}")
+  set(COMMON_FLAGS "${DEBUG_LEVEL} ${DEBUG_LEVEL}")
 
   ### Find Libraries
   set(USE_OPENGL_LIB FALSE)
@@ -873,9 +907,9 @@ if(ENABLE_WTF)
   #message(FATAL_ERROR ${WTF_LIBRARY_NAME})
   set(WTF_LIBS
     ${WTF_LIBRARY_NAME}
-    base
-    libevent
-    icu
+    #base
+    #libevent
+    #icu
   )
 endif(ENABLE_WTF)
 
@@ -1095,6 +1129,7 @@ if(EMSCRIPTEN)
     BORINGSSL
     GCRYPTO
     GURL
+    GNET
     GFX_GEOMETRY
     # tcmalloc only for posix/linux/e.t.c.
     #tcmalloc
@@ -1128,6 +1163,7 @@ else()
     BORINGSSL
     GCRYPTO
     GURL
+    GNET
     GFX_GEOMETRY
     # tcmalloc only for posix/linux/e.t.c.
     tcmalloc

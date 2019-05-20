@@ -391,16 +391,19 @@ target_include_directories(${WTF_LIBRARY_NAME} PUBLIC
 #)
 
 set(WTF_LIBRARIES
-  libevent
+  icu
   base
 )
 
 if(EMSCRIPTEN)
-  set(ICU_LIBRARIES icu)
-  list(APPEND WTF_LIBRARIES
-    ${ICU_LIBRARIES}
-  )
+  #set(ICU_LIBRARIES icu)
+  #list(APPEND WTF_LIBRARIES
+  #  ${ICU_LIBRARIES}
+  #)
 elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+  list(APPEND WTF_LIBRARIES
+    libevent
+  )
   #Components can include any of: data, i18n, io, le, lx, test, tu and uc.
   # Note that on Windows data is named dt and i18n is named in;
   # any of the names may be used, and the appropriate platform-specific library name will be automatically selected.
