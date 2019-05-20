@@ -1017,9 +1017,6 @@ list(APPEND BASE_SOURCES
    # base_static ###
    ${BASE_DIR}base_switches.cc
    ${BASE_DIR}base_switches.h
-   # https://github.com/chromium/chromium/blob/master/base/BUILD.gn#L1894
-   ${BASE_DIR}message_loop/message_pump_libevent.cc
-   ${BASE_DIR}message_loop/message_pump_libevent.h
    # https://github.com/chromium/chromium/blob/master/base/BUILD.gn#L1942
    #${BASE_DIR}message_loop/message_pump_glib.cc
    #${BASE_DIR}message_loop/message_pump_glib.h
@@ -1064,8 +1061,8 @@ list(APPEND BASE_SOURCES
    ${BASE_DIR}synchronization/waitable_event_posix.cc
    ${BASE_DIR}synchronization/waitable_event_watcher_posix.cc
    ${BASE_DIR}system/sys_info_posix.cc
-   ${BASE_DIR}task/thread_pool/task_tracker_posix.cc
-   ${BASE_DIR}task/thread_pool/task_tracker_posix.h
+   #${BASE_DIR}task/thread_pool/task_tracker_posix.cc
+   #${BASE_DIR}task/thread_pool/task_tracker_posix.h
    ${BASE_DIR}threading/platform_thread_internal_posix.cc
    ${BASE_DIR}threading/platform_thread_internal_posix.h
    ${BASE_DIR}threading/platform_thread_posix.cc
@@ -1172,8 +1169,8 @@ if(EMSCRIPTEN)
     #
     ${BASE_DIR}debug/debugger_posix.cc
     ${BASE_DIR}debug/stack_trace_posix.cc
-    ${BASE_DIR}files/file_descriptor_watcher_posix.cc
-    ${BASE_DIR}files/file_descriptor_watcher_posix.h
+    #${BASE_DIR}files/file_descriptor_watcher_posix.cc
+    #${BASE_DIR}files/file_descriptor_watcher_posix.h
     ${BASE_DIR}files/file_enumerator_posix.cc
     ${BASE_DIR}files/file_posix.cc
     ${BASE_DIR}posix/eintr_wrapper.h
@@ -1244,8 +1241,8 @@ elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
     #
     ${BASE_DIR}debug/debugger_posix.cc
     ${BASE_DIR}debug/stack_trace_posix.cc
-    ${BASE_DIR}files/file_descriptor_watcher_posix.cc
-    ${BASE_DIR}files/file_descriptor_watcher_posix.h
+    #${BASE_DIR}files/file_descriptor_watcher_posix.cc
+    #${BASE_DIR}files/file_descriptor_watcher_posix.h
     ${BASE_DIR}files/file_enumerator_posix.cc
     ${BASE_DIR}files/file_posix.cc
     ${BASE_DIR}posix/eintr_wrapper.h
@@ -1270,6 +1267,23 @@ elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
     ###${BASE_DIR}posix/unix_domain_socket_unittest.cc
     ###${BASE_DIR}task/thread_pool/task_tracker_posix_unittest.cc
   )
+
+  if(EMSCRIPTEN)
+    # nothing
+  elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+    list(APPEND BASE_SOURCES
+     # https://github.com/chromium/chromium/blob/master/base/BUILD.gn#L1894
+     ${BASE_DIR}message_loop/message_pump_libevent.cc
+     #${BASE_DIR}message_loop/message_pump_libevent.h
+     ${BASE_DIR}task/thread_pool/task_tracker_posix.cc
+     #${BASE_DIR}task/thread_pool/task_tracker_posix.h
+     ${BASE_DIR}files/file_descriptor_watcher_posix.cc
+     #${BASE_DIR}files/file_descriptor_watcher_posix.h
+    )
+  else()
+    message(FATAL_ERROR "base platform not supported")
+  endif()
+
 else()
   message(FATAL_ERROR "TODO: port base")
 endif()
