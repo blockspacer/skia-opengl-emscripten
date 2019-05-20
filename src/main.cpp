@@ -90,7 +90,8 @@
 #undef ENABLE_CUSTOM_FONTS
 #endif
 //
-#define ENABLE_HARFBUZZ 1
+/// \note defined by CMAKE
+//#define ENABLE_HARFBUZZ 1
 #if defined(ENABLE_HARFBUZZ) && !defined(ENABLE_CUSTOM_FONTS)
 #warning "ENABLE_HARFBUZZ requires CUSTOM_FONTS"
 #undef ENABLE_HARFBUZZ
@@ -562,6 +563,7 @@ static bool fShowAnimationStats = false;
 #if defined(ENABLE_SKIA) && defined(ENABLE_CUSTOM_FONTS)
 static SkFont* skFont1 = nullptr;
 static SkFont* skFont2 = nullptr;
+static const float FONT_SIZE_F = 22.0f;
 #endif
 
 #ifdef ENABLE_HARFBUZZ
@@ -574,7 +576,6 @@ struct HBFontDel {
 };
 static std::unique_ptr<hb_font_t, HBFontDel> fHarfBuzzFont;
 static const int FONT_SIZE_SCALE = 512;
-static const float FONT_SIZE_F = 22.0f;
 //static SkPaint glyph_paint;
 
 /// \note see SkShaper_harfbuzz.cpp if you want shaping in rectangle

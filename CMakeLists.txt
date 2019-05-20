@@ -28,6 +28,8 @@ ENDIF()
 option(RELEASE_BUILD "RELEASE_BUILD" OFF)
 message("RELEASE_BUILD = ${RELEASE_BUILD}")
 
+option(ENABLE_HARFBUZZ "ENABLE_HARFBUZZ" OFF)
+
 message("CMAKE_SYSTEM_NAME = ${CMAKE_SYSTEM_NAME}")
 if(EMSCRIPTEN)
   message("DETECTED EMSCRIPTEN")
@@ -387,9 +389,14 @@ if (HAS_ASYNCIFY OR HAS_EMTERPRETIFY)
 endif(HAS_ASYNCIFY OR HAS_EMTERPRETIFY)
 
   set(EMCC_COMMON "${EMCC_COMMON} -s USE_ZLIB=1")
-  set(EMCC_COMMON "${EMCC_COMMON} -s USE_HARFBUZZ=1") # < TODO
-  # https://github.com/klzgrad/naiveproxy/blob/master/src/third_party/skia/modules/skshaper/BUILD.gn#L11
-  # SK_SHAPER_HARFBUZZ_AVAILABLE # < TODO if skia_use_icu
+  if(ENABLE_HARFBUZZ)
+    # harfbuzz
+    set(EMCC_COMMON "${EMCC_COMMON} -s USE_HARFBUZZ=1")
+    # custom flags
+    set(COMMON_FLAGS "${COMMON_FLAGS} -DENABLE_HARFBUZZ=1")
+    # https://github.com/klzgrad/naiveproxy/blob/master/src/third_party/skia/modules/skshaper/BUILD.gn#L11
+    # SK_SHAPER_HARFBUZZ_AVAILABLE # < TODO if skia_use_icu
+  endif(ENABLE_HARFBUZZ)
   set(EMCC_COMMON "${EMCC_COMMON} -s USE_ICU=1")
   set(EMCC_COMMON "${EMCC_COMMON} -s USE_LIBPNG=1")
   set(EMCC_COMMON "${EMCC_COMMON} -s USE_SDL=2")
@@ -802,17 +809,20 @@ else(EMSCRIPTEN)
 
   find_package(Freetype)
 
-  # harfbuzz
-  set(USE_SHARED_HARFBUZZ "true")
-  if(USE_SHARED_HARFBUZZ)
-    find_package(HarfBuzz REQUIRED)
-  else()
-    set(HARFBUZZ_LIBRARIES harfbuzz)
-    set(HARFBUZZ_INCLUDE_DIRS ${HARFBUZZ_DIR}/src)
-  endif()
-  message(STATUS "HARFBUZZ_LIBRARIES=${HARFBUZZ_LIBRARIES}")
-  message(STATUS "HARFBUZZ_INCLUDE_DIRS=${HARFBUZZ_INCLUDE_DIRS}")
-  #include_directories(${HARFBUZZ_INCLUDE_DIRS})
+  if(ENABLE_HARFBUZZ)
+    # harfbuzz
+    set(USE_SHARED_HARFBUZZ "true")
+    if(USE_SHARED_HARFBUZZ)
+      find_package(HarfBuzz REQUIRED)
+    else()
+      set(HARFBUZZ_LIBRARIES harfbuzz)
+      set(HARFBUZZ_INCLUDE_DIRS ${HARFBUZZ_DIR}/src)
+    endif()
+    message(STATUS "HARFBUZZ_LIBRARIES=${HARFBUZZ_LIBRARIES}")
+    message(STATUS "HARFBUZZ_INCLUDE_DIRS=${HARFBUZZ_INCLUDE_DIRS}")
+    # custom flags
+    set(COMMON_FLAGS "${COMMON_FLAGS} -DENABLE_HARFBUZZ=1")
+  endif(ENABLE_HARFBUZZ)
 
 endif(EMSCRIPTEN)
 
@@ -1308,7 +1318,9 @@ if (NOT EXT_SKIA_SHARED)
   # seem to be always required...
   ADD_SKIA_LIBRARY_DEPENDENCY("dl")
   ADD_SKIA_LIBRARY_DEPENDENCY("pthread")
-  ADD_SKIA_LIBRARY_DEPENDENCY("harfbuzz")
+  if(ENABLE_HARFBUZZ)
+    ADD_SKIA_LIBRARY_DEPENDENCY("harfbuzz")
+  endif(ENABLE_HARFBUZZ)
 
   # when skia_enable_gpu:
 if(SK_IS_EGL)
