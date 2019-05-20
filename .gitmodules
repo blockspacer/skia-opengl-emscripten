@@ -28,3 +28,6 @@
 [submodule "src/chromium/net/third_party/quiche/src"]
 	path = src/chromium/net/third_party/quiche/src
 	url = https://quiche.googlesource.com/quiche.git
+[submodule "src/chromium/media/cdm/api"]
+	path = src/chromium/media/cdm/api
+	url = https://chromium.googlesource.com/chromium/cdm.git
