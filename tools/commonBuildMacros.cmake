@@ -15,7 +15,11 @@ macro(build_dir_step ARG_BUILD_DIR ARG_WORKING_DIR)
   execute_process(
     COMMAND ${CMAKE_COMMAND} "-E" "make_directory" "${ARG_BUILD_DIR}"
     WORKING_DIRECTORY ${ARG_WORKING_DIR}
+    RESULT_VARIABLE retcode
   )
+  if(NOT "${retcode}" STREQUAL "0")
+    message( FATAL_ERROR "Bad exit status")
+  endif()
   # checks result of make_directory
   if (NOT EXISTS ${ARG_BUILD_DIR})
     colored_fatal("invalid output directory ${ARG_BUILD_DIR}" --red --bold)

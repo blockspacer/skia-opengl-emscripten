@@ -10,6 +10,9 @@
 # example (run only):
 # cmake -DRUN_APP=ON -DBUILD_APP=OFF -P tools/buildWeb.cmake
 #
+# You can also pass own options like:
+# ... -DEXTRA_EMCMAKE_OPTS="-DOPTIMIZE_LEVEL=-O0;-DDEBUG_LEVEL=-g4" ...
+#
 # run that file with cmake -DVAR=VALUE -DFOO=BAR -P <script-file> <arg5> <arg6> ...
 
 # --- includes ---
@@ -42,7 +45,11 @@ if (BUILD_APP)
       ${COLORED_OUTPUT_ENABLER}
         ${EMSCRIPTEN_CMAKE} "cmake" ".." ${CMAKE_OPTS} ${EXTRA_EMCMAKE_OPTS}
     WORKING_DIRECTORY ${BUILD_DIR}
+    RESULT_VARIABLE retcode
   )
+  if(NOT "${retcode}" STREQUAL "0")
+    message( FATAL_ERROR "Bad exit status")
+  endif()
 
   # --- build ---
   execute_process(
@@ -50,7 +57,11 @@ if (BUILD_APP)
     ${COLORED_OUTPUT_ENABLER}
       ${EMSCRIPTEN_MAKE} "make" ${MAKE_OPTS} ${EXTRA_EMMAKE_OPTS}
     WORKING_DIRECTORY ${BUILD_DIR}
+    RESULT_VARIABLE retcode
   )
+  if(NOT "${retcode}" STREQUAL "0")
+    message( FATAL_ERROR "Bad exit status")
+  endif()
 endif(BUILD_APP)
 
 # --- run ---
@@ -67,5 +78,9 @@ if(RUN_APP)
   execute_process(
     COMMAND "emrun" "--port" "9090" "--serve_root" "/" "."
     WORKING_DIRECTORY ${BUILD_DIR}
+    RESULT_VARIABLE retcode
   )
+  if(NOT "${retcode}" STREQUAL "0")
+    message( FATAL_ERROR "Bad exit status")
+  endif()
 endif(RUN_APP)

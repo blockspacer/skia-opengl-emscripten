@@ -12,6 +12,9 @@
 # example (run only):
 # cmake -DRUN_APP=ON -P tools/buildUnix.cmake
 #
+# You can also pass own options like:
+# ... -DEXTRA_CMAKE_OPTS="-DOPTIMIZE_LEVEL=-O0;-DDEBUG_LEVEL=-g4" ...
+#
 # run that file with cmake -DVAR=VALUE -DFOO=BAR -P <script-file> <arg5> <arg6> ...
 
 # --- includes ---
@@ -51,7 +54,11 @@ if (BUILD_APP)
       ${COLORED_OUTPUT_ENABLER}
         ${CMAKE_COMMAND} "-E" "time" "cmake" ".." ${CMAKE_OPTS} ${EXTRA_CMAKE_OPTS}
     WORKING_DIRECTORY ${BUILD_DIR}
+    RESULT_VARIABLE retcode
   )
+  if(NOT "${retcode}" STREQUAL "0")
+    message( FATAL_ERROR "Bad exit status")
+  endif()
 
   # --- build ---
   execute_process(
@@ -59,7 +66,11 @@ if (BUILD_APP)
       ${COLORED_OUTPUT_ENABLER}
         ${CMAKE_COMMAND} "--build" "." "--clean-first" "--" ${MAKE_OPTS} ${EXTRA_MAKE_OPTS}
     WORKING_DIRECTORY ${BUILD_DIR}
+    RESULT_VARIABLE retcode
   )
+  if(NOT "${retcode}" STREQUAL "0")
+    message( FATAL_ERROR "Bad exit status")
+  endif()
 endif(BUILD_APP)
 
 # --- run ---
@@ -72,5 +83,9 @@ if(RUN_APP)
   execute_process(
     COMMAND "${BUILD_DIR}/skemgl"
     WORKING_DIRECTORY ${BUILD_DIR}
+    RESULT_VARIABLE retcode
   )
+  if(NOT "${retcode}" STREQUAL "0")
+    message( FATAL_ERROR "Bad exit status")
+  endif()
 endif(RUN_APP)
