@@ -42,3 +42,12 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/partition_alloc_buildflags.h.inc
 # https://github.com/chromium/chromium/blob/master/base/BUILD.gn#L2044
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/clang_coverage_buildflags.h.inc
   ${BASE_DIR}/base/clang_coverage_buildflags.h COPYONLY)
+
+# https://github.com/stormcenter/QuicDemo/blob/master/app/src/main/jni/third_party/chromium/include/net/net_buildflags.h
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/gnet_buildflags.h.inc
+  ${CMAKE_CURRENT_SOURCE_DIR}/net/net_buildflags.h COPYONLY)
+
+## uses BUILDFLAG_INTERNAL_IPC_MESSAGE_LOG_ENABLED from ipc_buildflags.h
+#configure_file(${CMAKE_CURRENT_SOURCE_DIR}/gipc_buildflags.h.inc
+#  ${GIPC_DIR}/ipc_buildflags.h COPYONLY)
+#

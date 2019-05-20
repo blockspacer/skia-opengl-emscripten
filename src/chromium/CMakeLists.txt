@@ -4,9 +4,14 @@ set(WTF_LIBRARY_NAME wtf)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
-set(WTF_DIR ${CMAKE_CURRENT_SOURCE_DIR}/third_party/blink/renderer/platform/wtf/)
-set(BASE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/base/)
-set(GFX_GEOMETRY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/ui/gfx/geometry/)
+set(WTF_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/third_party/blink/renderer/platform/)
+set(WTF_DIR ${WTF_PARENT_DIR}wtf/)
+
+set(BASE_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/)
+set(BASE_DIR ${BASE_PARENT_DIR}base/)
+
+set(GFX_GEOMETRY_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/ui/gfx/)
+set(GFX_GEOMETRY_DIR ${GFX_GEOMETRY_PARENT_DIR}geometry/)
 
 set(BLINK_PLATFORM_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/third_party/)
 set(BLINK_PLATFORM_DIR ${BLINK_PLATFORM_PARENT_DIR}blink/renderer/platform/)
@@ -17,8 +22,18 @@ set(BORINGSSL_DIR ${BORINGSSL_PARENT_DIR}boringssl/)
 set(GCRYPTO_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/)
 set(GCRYPTO_DIR ${GCRYPTO_PARENT_DIR}crypto/)
 
-set(GURL_DIR ${CMAKE_CURRENT_SOURCE_DIR}/url/)
-set(GIPC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/ipc/)
+set(GNET_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/)
+set(GNET_DIR ${GNET_PARENT_DIR}net/)
+
+set(GURL_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/)
+set(GURL_DIR ${GURL_PARENT_DIR}url/)
+
+set(GIPC_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/)
+set(GIPC_DIR ${GIPC_PARENT_DIR}ipc/)
+
+set(GPU_COMMAND_BUFFER_DIR_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/gpu/)
+set(GPU_COMMAND_BUFFER_DIR ${GPU_COMMAND_BUFFER_DIR_PARENT_DIR}command_buffer/)
+
 set(3RDPARTY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/)
 
 # Location of build tools dir (required for generating "generated_build_date.h "features.h" and "debugging_flags.h")
@@ -63,7 +78,7 @@ if(EMSCRIPTEN)
     # see src/chromium/build/build_config.h
     # NO_TCMALLOC=1
     DISABLE_NACL
-    POSIX_AVOID_MMAP
+    # POSIX_AVOID_MMAP #BUILDFLAG
     #USE_EXPERIMENTAL_ALLOCATOR_SHIM=0
   )
 else()
@@ -114,18 +129,30 @@ include(GCRYPTO.cmake)
 #
 include(base.cmake)
 
-# GNET
+# GNET: Net helper library.
+# Depends on : base, url, crypto, sql,
+# protobuf, libnss, libnspr, open-vcdiff
+# NOTE: uses protobuf-compiler
+# NOTE: "third_party/nss". https://github.com/Tarnyko/chromium-lite/blob/master/README#L136
 include(GNET.cmake)
 
 # GIPC:  Mojo IPC and bindings library.
 # Depends on : base, url, crypto, gin, net
+include(MOJO.cmake)
+
+# GIPC:  IPC helper library.
+# Depends on : base, mojo
 include(GIPC.cmake)
 
 # GFX_GEOMETRY
 include(GFX_GEOMETRY.cmake)
 
+# GPU_COMMAND_BUFFER: GPU command helper library.
+# Depends on : base
+#include(GPU_COMMAND_BUFFER.cmake)
+
 # BLINK_PLATFORM
-include(BLINK_PLATFORM.cmake)
+#include(BLINK_PLATFORM.cmake)
 
 # WTF
 include(WTF.cmake)

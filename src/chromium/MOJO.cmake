@@ -1,4 +1,4 @@
-#### --- GIPC ---###
+#### --- MOJO ---###
 #
 ## TODO https://github.com/chromium/chromium/blob/master/third_party/blink/renderer/platform/BUILD.gn
 #set(GIPC_SOURCES

@@ -63,11 +63,6 @@ target_include_directories(GURL PRIVATE
   ${GURL_DIR}
   ${BASE_DIR}
 )
-
-# uses USE_PLATFORM_ICU_ALTERNATIVES from buildflags.h
-#configure_file(${CMAKE_CURRENT_SOURCE_DIR}/gurl_buildflags.h.inc
-#  ${GURL_DIR}/buildflags.h COPYONLY)
-
 target_compile_definitions(GURL PRIVATE
   IS_URL_IMPL=1
 )
