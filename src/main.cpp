@@ -326,6 +326,11 @@
 #endif
 
 #ifdef ENABLE_BASE
+
+#include "base/numerics/checked_math.h"
+#include "base/numerics/clamped_math.h"
+#include "base/numerics/safe_conversions.h"
+
 #include "base/stl_util.h"
 #include "base/base_switches.h"
 #include "base/command_line.h"
@@ -376,6 +381,79 @@
 
 #endif // ENABLE_WTF
 
+#define ENABLE_UI 1
+#ifdef ENABLE_UI
+#include "base/stl_util.h"
+#include "base/strings/utf_string_conversions.h"
+#include "ui/gfx/canvas.h"
+#include "ui/gfx/font_list.h"
+//#include "ui/views/border.h"
+//#include "ui/views/controls/button/checkbox.h"
+//#include "ui/views/controls/combobox/combobox.h"
+//#include "ui/views/controls/label.h"
+//#include "ui/views/examples/example_combobox_model.h"
+//#include "ui/views/layout/grid_layout.h"
+//#include "ui/views/view.h"
+#include "base/logging.h"
+//#include "ui/compositor/layer.h"
+//#include "ui/compositor/layer_delegate.h"
+//#include "ui/compositor/layer_owner.h"
+//#include "ui/compositor/paint_recorder.h"
+#include "ui/gfx/canvas.h"
+#include "ui/gfx/geometry/insets.h"
+#include "ui/gfx/geometry/insets_f.h"
+#include "ui/gfx/geometry/rect_f.h"
+#include "ui/gfx/geometry/size.h"
+#include "ui/gfx/nine_image_painter.h"
+#include "ui/gfx/scoped_canvas.h"
+//#include "ui/views/view.h"
+#include "ui/gfx/paint_vector_icon.h"
+#include "ui/gfx/scoped_canvas.h"
+#include "ui/gfx/vector_icon_types.h"
+//static gfx::Canvas gfx_canvas;
+#include "third_party/icu/source/common/unicode/uscript.h"
+#include "ui/gfx/canvas.h"
+#include "ui/gfx/font_list.h"
+#include "ui/gfx/geometry/rect.h"
+#include "ui/gfx/geometry/safe_integer_conversions.h"
+#include "ui/gfx/geometry/vector2d.h"
+#include "ui/gfx/render_text.h"
+#include "ui/gfx/shadow_value.h"
+#include "ui/gfx/text_elider.h"
+
+#include "ui/gfx/codec/jpeg_codec.h"
+#include "ui/gfx/codec/png_codec.h"
+#include "ui/gfx/geometry/size.h"
+#include "ui/gfx/image/image_skia.h"
+#include "ui/gfx/image/image_skia_operations.h"
+#include "ui/gfx/image/image_util.h"
+
+//
+//#include "ui/base/l10n/l10n_util.h"
+//#include "ui/base/layout.h"
+//#include "ui/base/resource/resource_bundle.h"
+//#include "ui/gfx/canvas.h"
+//#include "ui/gfx/font_list.h"
+//#include "ui/gfx/image/image.h"
+//#include "ui/gfx/image/image_skia_source.h"
+//#include "ui/gfx/scoped_canvas.h"
+//#include "ui/gfx/skia_util.h"
+//#include "ui/gfx/text_utils.h"
+//#include "ui/views/accessibility/view_accessibility.h"
+//#include "ui/views/background.h"
+//#include "ui/views/controls/button/image_button.h"
+//#include "ui/views/controls/button/label_button.h"
+//#include "ui/views/controls/button/menu_button.h"
+//#include "ui/views/controls/label.h"
+//#include "ui/views/controls/menu/menu_config.h"
+//#include "ui/views/controls/menu/menu_item_view.h"
+//#include "ui/views/controls/menu/menu_model_adapter.h"
+//#include "ui/views/controls/menu/menu_runner.h"
+//#include "ui/views/controls/menu/menu_scroll_view_container.h"
+//#include "ui/views/controls/menu/submenu_view.h"
+//#include "ui/views/widget/widget.h"
+
+#endif // ENABLE_UI
 
 #ifdef ENABLE_HARFBUZZ
 #include <hb-ot.h>
@@ -548,6 +626,8 @@ sk_sp<const GrGLInterface> emscripten_GrGLMakeNativeInterface() {
   return nullptr;
 }
 #endif
+
+static SkString fImagePath = SkString("./resources/images/image.png");
 
 #if defined(ENABLE_SKIA) && defined(ENABLE_SKOTTIE_ANIMATIONS)
 static SkString fAnimPath = SkString("./resources/animations/data.json");
@@ -737,6 +817,30 @@ static GLuint programObject;
 static GLfloat const kVertexData[] = {1.0f, 1.0f,  1.0f, 0.0f, -1.0f, 1.0f,  0.0f, 0.0f,
                                       1.0f, -1.0f, 1.0f, 1.0f, -1.0f, -1.0f, 0.0f, 1.0f};
 
+// TODO https://kapadia.github.io/emscripten/2013/09/13/emscripten-pointers-and-pointers.html
+// TODO https://github.com/bakerstu/openmrn/blob/5f6bb8934fe13b2897d5f52ec6b358bd87dd886a/src/utils/FileUtils.cxx#L44
+static int read_file(const char* fPath, char*& fileString, long int& fsize, const bool closeString)
+{
+    if(!strlen(fPath)){
+        printf("failed to open file with empty path\n");
+        return 1;
+    }
+    FILE* f = fopen(fPath, "rb");
+    if (!f) {
+      printf("failed to open file: %s\n", fPath);
+      return 1;
+    }
+    fseek(f, 0, SEEK_END);
+    fsize = ftell(f);
+    fseek(f, 0, SEEK_SET); /* same as rewind(f); */
+    fileString = new char[fsize + 1];
+    fread(fileString, 1, fsize, f);
+    fclose(f);
+    if(closeString)
+      fileString[fsize] = 0;
+    return 0;
+}
+
 #if defined(ENABLE_SKIA)
 // see https://github.com/flutter/engine/blob/master/shell/gpu/gpu_surface_gl.cc#L125
 static void initSkiaSurface(int w, int h) {
@@ -848,7 +952,7 @@ public:
   SkColor m_color = SK_ColorDKGRAY;
   SkScalar m_size = 200;
 
-  void onDraw(SkCanvas* canvas) {
+  void onDraw(SkCanvas* sk_canvas) {
     // TODO: needs SKIA_GR_CONTEXT
     /*if (!canvas->getGrContext()) {
       return;
@@ -869,8 +973,79 @@ public:
     /// paint.setColor(0xffeeeeee);
       //printf("onDraw() 2\n");
 
-    canvas->drawCircle(m_pos.x(), m_pos.y(), m_size, paint);
+    paint.setColor(SK_ColorGREEN);
+    sk_canvas->drawRect({ 1000, 1700, 50, 50 }, paint);
+
+    paint.setColor(SK_ColorBLUE);
+    sk_canvas->drawRect({ 500, 700, 300, 500 }, paint);
+
+    paint.setColor(SK_ColorWHITE);
+    sk_canvas->drawCircle(m_pos.x(), m_pos.y(), m_size, paint);
       //printf("onDraw() 2.1\n");
+
+#ifdef ENABLE_UI
+    cc::SkiaPaintCanvas paint_canvas(sk_canvas);
+    gfx::Canvas gfx_canvas(&paint_canvas, 1.0f);
+    {
+      paint.setColor(SK_ColorDKGRAY);
+      paint.setStrokeWidth(2);
+      gfx_canvas.DrawCircle(gfx::Point(200,200), 100, cc::PaintFlags());
+      paint.setColor(SK_ColorMAGENTA);
+      gfx_canvas.DrawRoundRect(gfx::Rect(550, 550, 200, 200), 50, cc::PaintFlags());
+    }
+    {
+      // see https://github.com/codebyravi/electron/blob/master/atom/common/api/atom_api_native_image.cc#L115
+      SkImageInfo skImageInfo = SkImageInfo::Make(
+        100,
+        100,
+        SkColorType::kRGBA_8888_SkColorType,
+        SkAlphaType::kPremul_SkAlphaType, // alpha type can also be opaque if there is no alpha information
+        SkColorSpace::MakeSRGBLinear()
+      );
+      //SkBitmap::Config config = SkImageInfoToBitmapConfig(info, &isOpaque);
+      //SkBitmap fetched_bitmap;
+      void* pixels = nullptr;
+      char* fileData = nullptr;
+      long int fsize;
+      int readRes = read_file(fImagePath.c_str(), fileData, fsize, true);
+      if (readRes != 0) {
+        printf("can`t read file %s\n", fImagePath.c_str());
+        return;
+      }
+      DCHECK(fileData != nullptr);
+      std::unique_ptr<SkBitmap> decoded(new SkBitmap());
+      /*
+    static bool Decode(const unsigned char* input, size_t input_size,
+                       ColorFormat format, std::vector<unsigned char>* output,
+                       int* w, int* h);
+    static bool Decode(const unsigned char* input, size_t input_size,
+                       SkBitmap* bitmap);
+       */
+      const unsigned char* data =
+        reinterpret_cast<const unsigned char*>(fileData);
+      if (!gfx::PNGCodec::Decode(data, fsize, decoded.get())) {
+        printf("can`t decode png file %s\n", fImagePath.c_str());
+        return;
+      }
+      //fetched_bitmap.setPixels(pixels);
+      //fetched_bitmap.setIsOpaque(isOpaque);
+      gfx::ImageSkia imageSkia(gfx::ImageSkiaRep(*decoded, /*scale=*/1.0));
+      gfx_canvas.DrawImageInt(imageSkia, 330, 330);
+    }
+#ifdef ENABLE_HARFBUZZ
+    {
+      // https://github.com/chromium/chromium/blob/422f901782f0a5f274a6065fbff3983279ef3c0b/chrome/browser/vr/elements/text.cc#L424
+      std::unique_ptr<gfx::RenderText> render_text_ptr = gfx::RenderText::CreateHarfBuzzInstance();
+      gfx::RenderText* render_text = render_text_ptr.get();
+      WTF::String render_test_string = String::FromUTF8("r\xC3\xA9sum\xC3\xA9");
+      render_text->SetText(render_test_string.Characters16());
+      render_text->Draw(&gfx_canvas);
+    }
+#endif // ENABLE_HARFBUZZ
+    {
+      //views::Label* zoom_label_;
+    }
+#endif
 
 #ifdef ENABLE_SK_EFFECTS
     {
@@ -888,20 +1063,14 @@ public:
 
     // canvas->drawLine(m_pos.x(), m_pos.y(), m_prev.x(), m_prev.y(), paint);
 
-    /*paint.setColor(SK_ColorGREEN);
-    canvas->drawRect({ 0, 0, 50, 50 }, paint);
-
-    paint.setColor(SK_ColorBLUE);
-    canvas->drawRect({ 100, 200, 300, 500 }, paint);*/
-
     paint.setColor(SK_ColorBLACK);
     paint.setStyle(SkPaint::kFill_Style);
       //printf("onDraw() 4\n");
 
 #ifdef ENABLE_CUSTOM_FONTS
     // SkFont font;//(nullptr, 24);//SkFont::kA8_MaskType, flags);
-    canvas->drawString("1 Skia Test 1 Skia Test 1 Skia Test 1", 60, 32, *skFont1, paint);
-    canvas->drawString("2 Skia Test 2 Skia Test 2 Skia Test 2", 20, 97, *skFont2, paint);
+    sk_canvas->drawString("1 Skia Test 1 Skia Test 1 Skia Test 1", 60, 32, *skFont1, paint);
+    sk_canvas->drawString("2 Skia Test 2 Skia Test 2 Skia Test 2", 20, 97, *skFont2, paint);
 
 // see https://github.com/google/skia/blob/master/modules/skshaper/src/SkShaper_harfbuzz.cpp#L1221
 #ifdef ENABLE_HARFBUZZ
@@ -996,15 +1165,15 @@ public:
       blur.setAlpha(blurAlpha);
       blur.setMaskFilter(SkMaskFilter::MakeBlur(kNormal_SkBlurStyle, sigma, 0));
       // canvas->drawColor(SK_ColorWHITE);
-      canvas->drawTextBlob(blob1.get(), x + xDrop, y + yDrop, blur);
-      canvas->drawTextBlob(blob1.get(), x, y, paint);
+      sk_canvas->drawTextBlob(blob1.get(), x + xDrop, y + yDrop, blur);
+      sk_canvas->drawTextBlob(blob1.get(), x, y, paint);
 
-      canvas->drawTextBlob(blob2.get(), x + xDrop, 50 + y + yDrop, blur);
+      sk_canvas->drawTextBlob(blob2.get(), x + xDrop, 50 + y + yDrop, blur);
 
       SkPaint strokePaint(paint);
       strokePaint.setStyle(SkPaint::kStroke_Style);
       strokePaint.setStrokeWidth(3.0f);
-      canvas->drawTextBlob(blob2.get(), x, 80 + y, strokePaint);
+      sk_canvas->drawTextBlob(blob2.get(), x, 80 + y, strokePaint);
     }
 #endif // ENABLE_SK_EFFECTS
 #endif // ENABLE_CUSTOM_FONTS
@@ -1015,11 +1184,11 @@ public:
       //printf("onDraw() 6\n");
     if (fAnimation) {
       //printf("SkAutoCanvasRestore...\n");
-      SkAutoCanvasRestore acr(canvas, true);
+      SkAutoCanvasRestore acr(sk_canvas, true);
       //printf("SkRect::MakeSize...\n");
       const auto dstR = SkRect::MakeSize(fWinSize);
       //printf("fAnimation->render...\n");
-      fAnimation->render(canvas, &dstR);
+      fAnimation->render(sk_canvas, &dstR);
       //printf("fAnimation->rendered\n");
       /*if (fShowAnimationStats) {
           draw_stats_box(canvas, fAnimationStats);
@@ -1404,30 +1573,6 @@ static void SomeHardcoreAsyncTask(
 }
 #endif
 
-// TODO https://kapadia.github.io/emscripten/2013/09/13/emscripten-pointers-and-pointers.html
-// TODO https://github.com/bakerstu/openmrn/blob/5f6bb8934fe13b2897d5f52ec6b358bd87dd886a/src/utils/FileUtils.cxx#L44
-static int read_file(const char* fPath, char*& fileString, long int& fsize, const bool closeString)
-{
-    if(!strlen(fPath)){
-        printf("failed to open file with empty path\n");
-        return 1;
-    }
-    FILE* f = fopen(fPath, "rb");
-    if (!f) {
-      printf("failed to open file: %s\n", fPath);
-      return 1;
-    }
-    fseek(f, 0, SEEK_END);
-    fsize = ftell(f);
-    fseek(f, 0, SEEK_SET); /* same as rewind(f); */
-    fileString = new char[fsize + 1];
-    fread(fileString, 1, fsize, f);
-    fclose(f);
-    if(closeString)
-      fileString[fsize] = 0;
-    return 0;
-}
-
 int main(int argc, char** argv) {
 #ifdef ENABLE_BORINGSSL
     // see https://boringssl.googlesource.com/boringssl/+/version_for_cocoapods_1.0/ssl/ssl_test.cc
@@ -1574,6 +1719,7 @@ int main(int argc, char** argv) {
 
     event.Wait();
 
+    printf("thread.Stop()...\n");
     thread.Stop();
 
     std::cout << "thread testing ended..." << base::Time::Now() << "\n";
