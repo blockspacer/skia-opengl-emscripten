@@ -10,7 +10,7 @@
 #include <limits>
 #include <type_traits>
 
-#if defined(__GNUC__) || defined(__clang__)
+#if (defined(__GNUC__) || defined(__clang__)) && !defined(OS_EMSCRIPTEN)
 #define BASE_NUMERICS_LIKELY(x) __builtin_expect(!!(x), 1)
 #define BASE_NUMERICS_UNLIKELY(x) __builtin_expect(!!(x), 0)
 #else
