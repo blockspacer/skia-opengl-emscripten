@@ -42,9 +42,9 @@ else(EMSCRIPTEN)
   option(EXT_SKIA_SHARED "build a shared lbrary (ON) or a static library (OFF)" OFF)
 endif(EMSCRIPTEN)
 
-set(SKIA_SRC "${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/skia")
+set(SKIA_SRC_DIR "${SKIA_DIR}")
 
-if (NOT EXISTS ${SKIA_SRC})
+if (NOT EXISTS ${SKIA_SRC_DIR})
   message(FATAL_ERROR "Can't find Skia sources. Please run download-dependencies.sh.")
 endif ()
 
@@ -84,6 +84,9 @@ set(NEW_CMAKE_CXX_FLAGS "${NEW_CMAKE_CXX_FLAGS} -Wno-error")
 STRING(REGEX REPLACE " " "\",\"" NEW_CMAKE_CXX_FLAGS "${NEW_CMAKE_CXX_FLAGS}")
 set(SKIA_CXX_FLAGS "\"${NEW_CMAKE_CXX_FLAGS}\"")
 message(STATUS "SKIA_CXX_FLAGS=${SKIA_CXX_FLAGS}")
+
+# NOTE: header from SKIA_EXT
+# set(SKIA_CXX_FLAGS "${SKIA_CXX_FLAGS},\"-DSK_USER_CONFIG_HEADER=\"${CMAKE_CURRENT_SOURCE_DIR}/src/chromium/skia/config/SkUserConfig.h\"\"") # skia_use_libpng
 
 set(SKIA_LDFLAGS "\"-Wno-error\"")
 #set(SKIA_LDFLAGS "\"\"")
@@ -210,12 +213,12 @@ skia_use_harfbuzz=true"
 )
 
 message(STATUS "GN_ARGS=${GN_ARGS}")
-set(CONFIGURE_COMMAND "${SKIA_SRC}/bin/gn;gen;--root=${SKIA_SRC};${SKIA_BUILD_DIR};--args=${GN_ARGS}")
+set(CONFIGURE_COMMAND "${SKIA_SRC_DIR}/bin/gn;gen;--root=${SKIA_SRC_DIR};${SKIA_BUILD_DIR};--args=${GN_ARGS}")
 
 ExternalProject_Add(SKIA_build
   # LIST_SEPARATOR is needed for list expansion of C(XX)_FLAGS.
   LIST_SEPARATOR "^^"
-  SOURCE_DIR ${SKIA_SRC}
+  SOURCE_DIR ${SKIA_SRC_DIR}
   CONFIGURE_COMMAND "${CONFIGURE_COMMAND}"
   BUILD_COMMAND ninja -C ${SKIA_BUILD_DIR} -j8
   # there is no install step provided
@@ -230,66 +233,73 @@ if (EXT_SKIA_ALWAYS_BUILD)
   # targets that depend on the library. :(
   ExternalProject_Add_Step(SKIA_build ForceBuild COMMAND true DEPENDERS build ALWAYS 1)
 endif ()
-
+#message(FATAL_ERROR ${SKIA_EXT_PARENT_DIR}/skia/config/sk_ref_cnt_ext_release.h)
 # taken from BUILD.gn (skia_public_includes, minus things that are obviously useless for us)
 set(SKIA_HEADERS
-  ${SKIA_SRC}
-  ${SKIA_SRC}/tools
-  ${SKIA_SRC}/modules/skottie/include
-  ${SKIA_SRC}/modules/pathkit
-  ${SKIA_SRC}/modules/sksg/include
-  ${SKIA_SRC}/modules/skshaper/include
-#  ${SKIA_SRC}/tools/timer
-  ${SKIA_SRC}/src/gpu
-  ${SKIA_SRC}/src/sksl
-  ${SKIA_SRC}/src/gpu/gl
-  ${SKIA_SRC}/src/shaders
-  ${SKIA_SRC}/src/core
-  ${SKIA_SRC}/src/image
-  ${SKIA_SRC}/src/utils
-#  ${SKIA_SRC}/src/tools
-  ${SKIA_SRC}/include/c
-  ${SKIA_SRC}/include/codec
-  ${SKIA_SRC}/include/config
-  ${SKIA_SRC}/include/core
-  ${SKIA_SRC}/include/effects
-  ${SKIA_SRC}/include/gpu
-  ${SKIA_SRC}/include/gpu/gl
-  ${SKIA_SRC}/include/pathops
-  ${SKIA_SRC}/include/ports
-  ${SKIA_SRC}/include/svg
-  ${SKIA_SRC}/include/utils
-#  ${SKIA_SRC}/include/views
-  ${SKIA_SRC}/include/private
-#  ${SKIA_SRC}/third_party/angle2
-#  ${SKIA_SRC}/third_party/cpu-features
-#  ${SKIA_SRC}/third_party/dng_sdk
-#  ${SKIA_SRC}/third_party/etc1
-  ${SKIA_SRC}/third_party/expat
-#  ${SKIA_SRC}/third_party/externals
-  ${SKIA_SRC}/third_party/freetype2
-#  ${SKIA_SRC}/third_party/gif
-  ${SKIA_SRC}/third_party/harfbuzz
-  ${SKIA_SRC}/third_party/icu
-#  ${SKIA_SRC}/third_party/imgui
-  ${SKIA_SRC}/third_party/libjpeg-turbo
-#  ${SKIA_SRC}/third_party/libmicrohttpd
-  ${SKIA_SRC}/third_party/libpng
-#  ${SKIA_SRC}/third_party/libsdl
-#  ${SKIA_SRC}/third_party/libwebp
-#  ${SKIA_SRC}/third_party/lua
-#  ${SKIA_SRC}/third_party/native_app_glue
-  ${SKIA_SRC}/third_party/Nima-Cpp
-#  ${SKIA_SRC}/third_party/opencl
-#  ${SKIA_SRC}/third_party/piex
-  ${SKIA_SRC}/third_party/skcms
-#  ${SKIA_SRC}/third_party/sfntly
-#  ${SKIA_SRC}/third_party/spirv-headers
-#  ${SKIA_SRC}/third_party/spirv-tools
-#  ${SKIA_SRC}/third_party/vulkanmemoryallocator
-  ${SKIA_SRC}/third_party/wuffs
-  ${SKIA_SRC}/third_party/zlib
+  #src/chromium/third_party/
+  ${SKIA_EXT_PARENT_DIR}
+  ${SKIA_EXT_DIR}
+  ${SKIA_SRC_DIR}
+  ${SKIA_SRC_DIR}/tools
+  ${SKIA_SRC_DIR}/modules/skottie/include
+  ${SKIA_SRC_DIR}/modules/pathkit
+  ${SKIA_SRC_DIR}/modules/sksg/include
+  ${SKIA_SRC_DIR}/modules/skshaper/include
+#  ${SKIA_SRC_DIR}/tools/timer
+  ${SKIA_SRC_DIR}/src/gpu
+  ${SKIA_SRC_DIR}/src/sksl
+  ${SKIA_SRC_DIR}/src/gpu/gl
+  ${SKIA_SRC_DIR}/src/shaders
+  ${SKIA_SRC_DIR}/src/core
+  ${SKIA_SRC_DIR}/src/image
+  ${SKIA_SRC_DIR}/src/utils
+#  ${SKIA_SRC_DIR}/src/tools
+  ${SKIA_SRC_DIR}/include/c
+  ${SKIA_SRC_DIR}/include/codec
+  ${SKIA_SRC_DIR}/include/config
+  ${SKIA_SRC_DIR}/include/core
+  ${SKIA_SRC_DIR}/include/effects
+  ${SKIA_SRC_DIR}/include/gpu
+  ${SKIA_SRC_DIR}/include/gpu/gl
+  ${SKIA_SRC_DIR}/include/pathops
+  ${SKIA_SRC_DIR}/include/ports
+  ${SKIA_SRC_DIR}/include/svg
+  ${SKIA_SRC_DIR}/include/utils
+#  ${SKIA_SRC_DIR}/include/views
+  ${SKIA_SRC_DIR}/include/private
+#  ${SKIA_SRC_DIR}/third_party/angle2
+#  ${SKIA_SRC_DIR}/third_party/cpu-features
+#  ${SKIA_SRC_DIR}/third_party/dng_sdk
+#  ${SKIA_SRC_DIR}/third_party/etc1
+  ${SKIA_SRC_DIR}/third_party/expat
+#  ${SKIA_SRC_DIR}/third_party/externals
+  ${SKIA_SRC_DIR}/third_party/freetype2
+#  ${SKIA_SRC_DIR}/third_party/gif
+  ${SKIA_SRC_DIR}/third_party/harfbuzz
+  ${SKIA_SRC_DIR}/third_party/icu
+#  ${SKIA_SRC_DIR}/third_party/imgui
+  ${SKIA_SRC_DIR}/third_party/libjpeg-turbo
+#  ${SKIA_SRC_DIR}/third_party/libmicrohttpd
+  ${SKIA_SRC_DIR}/third_party/libpng
+#  ${SKIA_SRC_DIR}/third_party/libsdl
+#  ${SKIA_SRC_DIR}/third_party/libwebp
+#  ${SKIA_SRC_DIR}/third_party/lua
+#  ${SKIA_SRC_DIR}/third_party/native_app_glue
+  ${SKIA_SRC_DIR}/third_party/Nima-Cpp
+#  ${SKIA_SRC_DIR}/third_party/opencl
+#  ${SKIA_SRC_DIR}/third_party/piex
+  ${SKIA_SRC_DIR}/third_party/skcms
+#  ${SKIA_SRC_DIR}/third_party/sfntly
+#  ${SKIA_SRC_DIR}/third_party/spirv-headers
+#  ${SKIA_SRC_DIR}/third_party/spirv-tools
+#  ${SKIA_SRC_DIR}/third_party/vulkanmemoryallocator
+  ${SKIA_SRC_DIR}/third_party/wuffs
+  ${SKIA_SRC_DIR}/third_party/zlib
 )
+
+#include_directories(
+#  src/chromium/third_party
+#)
 
 # this must match what BUILD.gn sets
 # if it's wrong it can result in all kinds of funny behavior
