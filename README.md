@@ -382,7 +382,7 @@ sudo make install
 # see https://github.com/google/skia/blob/master/modules/pathkit/README.md
 ls ${PWD}/thirdparty/depot_tools
 export PATH="${PWD}/thirdparty/depot_tools:${PATH}"
-cd thirdparty/skia
+cd src/chromium/third_party/skia
 tools/git-sync-deps
 # If some header files are missing, install the corresponding dependencies
 tools/install_dependencies.sh
