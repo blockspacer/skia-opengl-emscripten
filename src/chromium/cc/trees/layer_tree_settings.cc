@@ -5,7 +5,13 @@
 #include "cc/trees/layer_tree_settings.h"
 
 #include "components/viz/common/resources/platform_color.h"
+#if defined(OS_EMSCRIPTEN)
+#include <GLES2/gl2.h>
+#include <GLES2/gl2ext.h>
+#else
 #include "third_party/khronos/GLES2/gl2.h"
+#include "third_party/khronos/GLES2/gl2ext.h"
+#endif // OS_EMSCRIPTEN
 
 namespace cc {
 

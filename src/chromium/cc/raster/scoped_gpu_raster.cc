@@ -8,8 +8,13 @@
 #include "components/viz/common/gpu/context_provider.h"
 #include "gpu/command_buffer/client/context_support.h"
 #include "gpu/command_buffer/client/gles2_interface.h"
+#if defined(OS_EMSCRIPTEN)
+#include <GLES2/gl2.h>
+#include <GLES2/gl2ext.h>
+#else
 #include "third_party/khronos/GLES2/gl2.h"
 #include "third_party/khronos/GLES2/gl2ext.h"
+#endif // OS_EMSCRIPTEN
 #include "third_party/skia/include/gpu/GrContext.h"
 
 using gpu::gles2::GLES2Interface;
