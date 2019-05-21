@@ -91,7 +91,7 @@ uint32_t GetPlatformSpecificTextureTarget() {
   return GL_TEXTURE_RECTANGLE_ARB;
 #elif defined(OS_ANDROID) || defined(OS_LINUX)
   return GL_TEXTURE_EXTERNAL_OES;
-#elif defined(OS_WIN) || defined(OS_FUCHSIA)
+#elif defined(OS_WIN) || defined(OS_FUCHSIA) || defined(OS_EMSCRIPTEN)
   return GL_TEXTURE_2D;
 #elif defined(OS_NACL)
   NOTREACHED();
