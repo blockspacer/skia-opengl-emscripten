@@ -1,4 +1,4 @@
-### --- base ---###
+﻿### --- base ---###
 
 list(APPEND BASE_SOURCES
    # sources = [
@@ -1300,20 +1300,26 @@ if(EMSCRIPTEN)
   add_dependencies(base
     ${BASE_LIBRARIES}
   )
-else()
+elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
   list(APPEND BASE_LIBRARIES
     tcmalloc
     atomic
     ced
     icu
+    # libevent only for posix/linux/e.t.c.
+    libevent
+    modp_b64
   )
   add_dependencies(base
     tcmalloc
     #atomic # from system, no dep
     ced
     icu
+    modp_b64
   )
-endif(EMSCRIPTEN)
+else()
+  message(FATAL_ERROR "platform not supported")
+endif()
 
 target_link_libraries(base PUBLIC
   dynamic_annotations
