@@ -163,6 +163,14 @@ elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
   )
   # khronos
   include(khronos.cmake)
+  # zlib
+  include(zlib.cmake)
+  # libxml
+  include(libxml.cmake)
+  # libjpeg
+  include(libjpeg.cmake)
+  # libpng
+  include(libpng.cmake)
 else()
   message(FATAL_ERROR "platform not supported")
 endif()
