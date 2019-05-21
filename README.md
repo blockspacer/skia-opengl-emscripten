@@ -183,6 +183,11 @@ static DEFINE_bool(noGS, false, "Disables support for geometry shaders.");
     #warning "TODO: test steady_clock on wasm/emcc (safary browser)";
 #endif
 
+12 copy src/chromium/skia/ext dir to src/chromium/third_party/skia/
+add || defined(__EMSCRIPTEN__) to
+CreatePlatformCanvasWithPixels
+remove SK_CRASH
+
 ## Experimental features
 
 > chromium base (libchrome) from Blink ported to WASM
@@ -223,6 +228,7 @@ https://github.com/keishi/webkit/blob/master/Source/WebCore/platform/graphics/sk
 ```
 sudo -E apt-get update
 sudo -E apt-get install git build-essential wget
+sudo apt-get install libgles2-mesa-dev libegl1-mesa-dev
 sudo -E apt-get install build-essential --reinstall
 git clone --recursive {repourl_here}
 ```
