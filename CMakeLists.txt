@@ -58,7 +58,7 @@ else()
   message(STATUS "\"python\" found...")
 endif(NOT PYTHON_FOUND)
 
-option(ENABLE_HARFBUZZ "ENABLE_HARFBUZZ" OFF)
+option(ENABLE_HARFBUZZ "ENABLE_HARFBUZZ" ON)
 
 message("CMAKE_SYSTEM_NAME = ${CMAKE_SYSTEM_NAME}")
 if(EMSCRIPTEN)
@@ -434,6 +434,8 @@ if (HAS_ASYNCIFY OR HAS_EMTERPRETIFY)
 endif(HAS_ASYNCIFY OR HAS_EMTERPRETIFY)
 
   set(EMCC_COMMON "${EMCC_COMMON} -s USE_ZLIB=1")
+  #set(EMCC_COMMON "${EMCC_COMMON} -s USE_BZIP2=1")
+
   if(ENABLE_HARFBUZZ)
     # harfbuzz
     set(EMCC_COMMON "${EMCC_COMMON} -s USE_HARFBUZZ=1")
@@ -442,8 +444,10 @@ endif(HAS_ASYNCIFY OR HAS_EMTERPRETIFY)
     # https://github.com/klzgrad/naiveproxy/blob/master/src/third_party/skia/modules/skshaper/BUILD.gn#L11
     # SK_SHAPER_HARFBUZZ_AVAILABLE # < TODO if skia_use_icu
   endif(ENABLE_HARFBUZZ)
+
   set(EMCC_COMMON "${EMCC_COMMON} -s USE_ICU=1")
   set(EMCC_COMMON "${EMCC_COMMON} -s USE_LIBPNG=1")
+  set(EMCC_COMMON "${EMCC_COMMON} -s USE_LIBJPEG=1")
   set(EMCC_COMMON "${EMCC_COMMON} -s USE_SDL=2")
   set(EMCC_COMMON "${EMCC_COMMON} -s USE_SDL_IMAGE=2")
   set(EMCC_COMMON "${EMCC_COMMON} -s USE_SDL_TTF=2")
@@ -1252,6 +1256,8 @@ else()
     G_GFX
     # tcmalloc only for posix/linux/e.t.c.
     tcmalloc
+    # libevent only for posix/linux/e.t.c.
+    libevent
     #
     SKIA
     skottie
