@@ -6,24 +6,33 @@ set(GFX_CODEC_SOURCES
   ${GFX_CODEC_DIR}jpeg_codec.h
   # TODO # ${GFX_CODEC_DIR}png_codec.cc
   ${GFX_CODEC_DIR}png_codec.h
+  ${GFX_CODEC_DIR}png_codec.h
   ${GFX_CODEC_DIR}vector_wstream.cc
   ${GFX_CODEC_DIR}vector_wstream.h
   # is_ios
   # "jpeg_codec.cc",
   # "jpeg_codec.h",
+  ${GFX_CODEC_DIR}jpeg_codec.h
 )
 
 add_library(GFX_CODEC STATIC
   ${GFX_CODEC_SOURCES}
 )
 
-target_link_libraries(GFX_CODEC PUBLIC
-  #dynamic_annotations
-  #${BASE_LIBRARIES}
+target_link_libraries(GFX_CODEC PRIVATE
+  dynamic_annotations
+  ${BASE_LIBRARIES}
   GFX_GEOMETRY_SKIA
   GFX_GEOMETRY
   #libjpeg
   SKIA
+  #
+  skottie
+  sksg
+  skshaper
+  particles
+  pathkit
+  wuffs
   jpeg
   #libpng
   #zlib
