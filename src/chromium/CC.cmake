@@ -1,4 +1,4 @@
-### --- CC ---###
+﻿### --- CC ---###
 
 set(CC_SOURCES
   ${CC_DIR}cc_export.h
@@ -383,6 +383,7 @@ target_include_directories(CC PRIVATE
   #${CC_DIR}
   ${BASE_DIR}
   ${SERVICES_METRICS_PUBLIC_CPP_DIR}
+  ${CC_PARENT_DIR} # requires "cc/resources/ui_resource_client.h"
 )
 
 target_compile_definitions(CC PRIVATE
