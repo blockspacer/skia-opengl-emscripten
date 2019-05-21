@@ -1007,6 +1007,7 @@ public:
       void* pixels = nullptr;
       char* fileData = nullptr;
       long int fsize;
+      //size_t fsize;
       int readRes = read_file(fImagePath.c_str(), fileData, fsize, true);
       if (readRes != 0) {
         printf("can`t read file %s\n", fImagePath.c_str());
@@ -1023,7 +1024,7 @@ public:
        */
       const unsigned char* data =
         reinterpret_cast<const unsigned char*>(fileData);
-      if (!gfx::PNGCodec::Decode(data, fsize, decoded.get())) {
+      if (!gfx::PNGCodec::Decode(data, static_cast<size_t>(fsize), decoded.get())) {
         printf("can`t decode png file %s\n", fImagePath.c_str());
         return;
       }
@@ -1094,7 +1095,7 @@ public:
         double line_spacing_ratio = 1.5f;
         double font_size = FONT_SIZE_F;
 
-        auto WriteLine = [this, &current_x, &current_y, &line_spacing_ratio, &font_size, &glyph_paint, &canvas](const char *text) {
+        auto WriteLine = [this, &current_x, &current_y, &line_spacing_ratio, &font_size, &glyph_paint, &sk_canvas](const char *text) {
             /* Create hb-buffer and populate. */
             hb_buffer_t *hb_buffer = hb_buffer_create ();
 
@@ -1118,7 +1119,7 @@ public:
                 printf("empty hb_buffer_get_length\n");
                 return;
             }
-            DrawGlyphs(current_x, current_y, glyph_paint, *skFont1, canvas, hb_buffer);
+            DrawGlyphs(current_x, current_y, glyph_paint, *skFont1, sk_canvas, hb_buffer);
 
             hb_buffer_destroy (hb_buffer);
 
@@ -1146,7 +1147,7 @@ public:
 
         // test again without hb
         auto blob3 = SkTextBlob::MakeFromString("blob3blob3blob3", *skFont2);
-        canvas->drawTextBlob(blob3.get(), 500, 500, glyph_paint);
+        sk_canvas->drawTextBlob(blob3.get(), 500, 500, glyph_paint);
 #endif // ENABLE_HARFBUZZ
 
 #ifdef ENABLE_SK_EFFECTS
