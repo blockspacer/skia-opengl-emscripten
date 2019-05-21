@@ -31,3 +31,6 @@
 [submodule "src/chromium/third_party/libsync/src"]
 	path = src/chromium/third_party/libsync/src
 	url = https://chromium.googlesource.com/aosp/platform/system/core/libsync.git
+[submodule "thirdparty/skia"]
+	path = thirdparty/skia
+	url = https://skia.googlesource.com/skia.git
