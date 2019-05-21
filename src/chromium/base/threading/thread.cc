@@ -31,6 +31,11 @@ namespace base {
 
 namespace {
 
+#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+  // only one main thread = only one run loop
+  static RunLoop* run_loop;
+#endif
+
 // We use this thread-local variable to record whether or not a thread exited
 // because its Stop method was called.  This allows us to catch cases where
 // MessageLoop::QuitWhenIdle() is called directly, which is unexpected when
@@ -224,10 +229,11 @@ void Thread::StopSoon() {
   stopping_ = true;
 
 #if defined(OS_EMSCRIPTEN)
-  DCHECK(task_runner());
   if (!task_runner()){
       P_LOG("invalid task_runner\n");
+      return;
   }
+  DCHECK(task_runner());
 #endif
   task_runner()->PostTask(
       FROM_HERE, base::BindOnce(&Thread::ThreadQuitHelper, Unretained(this)));
@@ -344,8 +350,16 @@ void Thread::ThreadMain() {
 
   start_event_.Signal();
 
+#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+  if(!run_loop) {
+    run_loop = new RunLoop();
+  }
+  run_loop_ = run_loop;
+#else
   RunLoop run_loop;
   run_loop_ = &run_loop;
+#endif
+
   Run(run_loop_);
 
 #if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
