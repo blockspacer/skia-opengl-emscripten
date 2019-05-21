@@ -28,6 +28,13 @@ target_link_libraries(GFX_CODEC PUBLIC
   #libpng
   #zlib
   base
+  #
+  # "//base",
+  # "//skia",
+  # "//third_party/libpng",
+  # "//ui/gfx:geometry_skia",
+  # "//ui/gfx:gfx_export",
+  # "//ui/gfx/geometry",
 )
 
 set_property(TARGET GFX_CODEC PROPERTY CXX_STANDARD 17)

@@ -929,10 +929,15 @@ endif(EMSCRIPTEN)
 include(ExternalProject)
 
 #
+# skia
+#
+include(skia.cmake)
+
+#
 # WTF
 #
 if(ENABLE_WTF)
-  add_subdirectory(src/chromium)
+  add_subdirectory(src/chromium) # requires skia above
   set(WTF_LIBRARY_NAME wtf)
   #message(FATAL_ERROR ${WTF_LIBRARY_NAME})
   set(WTF_LIBS
@@ -942,11 +947,6 @@ if(ENABLE_WTF)
     #icu
   )
 endif(ENABLE_WTF)
-
-#
-# skia
-#
-include(skia.cmake)
 
 #
 # PROJECT
