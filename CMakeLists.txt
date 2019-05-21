@@ -1155,6 +1155,21 @@ if(EMSCRIPTEN)
 
   #set(TEMPLATE_OPTION "--shell-file ${HTML_TEMPLATE}")
 
+  add_dependencies(SKIA_EXT SKIA)
+  add_dependencies(G_GFX SKIA)
+  add_dependencies(CC SKIA)
+  add_dependencies(ANIMATION_CC SKIA)
+  add_dependencies(PAINT_CC SKIA)
+  add_dependencies(DEBUG_CC SKIA)
+  add_dependencies(BASE_CC SKIA)
+  add_dependencies(GPU_COMMAND_BUFFER SKIA)
+  add_dependencies(GFX_CODEC SKIA)
+  add_dependencies(GFX_GEOMETRY SKIA)
+  add_dependencies(GFX_GEOMETRY_SKIA SKIA)
+  add_dependencies(GFX_COLOR_SPACE SKIA)
+  add_dependencies(GFX_SWITCHES SKIA)
+  add_dependencies(GFX_RANGE SKIA)
+
   set(EM_TARGET_JS ${PROJECT_NAME}.js)
   configure_file(${HTML_TEMPLATE} index.html @ONLY)
   target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE
@@ -1164,6 +1179,17 @@ if(EMSCRIPTEN)
   # Top is the executable, followed by directly used libraries.
   # see https://floooh.github.io/2016/01/12/cmake-dependency-juggling.html
   target_link_libraries(${PROJECT_NAME} PUBLIC
+    #
+    SKIA
+    #
+    skottie
+    sksg
+    skshaper
+    particles
+    pathkit
+    wuffs
+    jpeg
+    #
     ${WTF_LIBS}
     # tcmalloc only for posix/linux/e.t.c.
     #tcmalloc
@@ -1188,16 +1214,6 @@ if(EMSCRIPTEN)
     #GURL
     #GCRYPTO
     BORINGSSL
-    #
-    SKIA
-    #
-    skottie
-    sksg
-    skshaper
-    particles
-    pathkit
-    wuffs
-    jpeg
     #
     ${LINK_OPTIONS}
   )
