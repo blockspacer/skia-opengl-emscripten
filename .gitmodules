@@ -31,3 +31,6 @@
 [submodule "src/chromium/media/cdm/api"]
 	path = src/chromium/media/cdm/api
 	url = https://chromium.googlesource.com/chromium/cdm.git
+[submodule "src/chromium/third_party/libsync/src"]
+	path = src/chromium/third_party/libsync/src
+	url = https://chromium.googlesource.com/aosp/platform/system/core/libsync.git
