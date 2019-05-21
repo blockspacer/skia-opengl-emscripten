@@ -43,8 +43,13 @@
 #include "media/base/video_frame.h"
 #include "media/renderers/paint_canvas_video_renderer.h"
 #include "media/video/half_float_maker.h"
+#if defined(OS_EMSCRIPTEN)
+#include <GLES2/gl2.h>
+#include <GLES2/gl2ext.h>
+#else
 #include "third_party/khronos/GLES2/gl2.h"
 #include "third_party/khronos/GLES2/gl2ext.h"
+#endif // OS_EMSCRIPTEN
 #include "third_party/libyuv/include/libyuv.h"
 #include "third_party/skia/include/core/SkCanvas.h"
 #include "ui/gfx/geometry/size_conversions.h"
