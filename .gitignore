@@ -63,3 +63,5 @@ thirdparty/SDL2/
 thirdparty/glew/
 *generated_build_date.h
 /src/chromium/base/generated_build_date.h
+/src/chromium/device/vr/buildflags/buildflags.h
+/src/chromium/gpu/vulkan/buildflags.h
