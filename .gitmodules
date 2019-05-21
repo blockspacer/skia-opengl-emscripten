@@ -34,3 +34,6 @@
 [submodule "thirdparty/skia"]
 	path = thirdparty/skia
 	url = https://skia.googlesource.com/skia.git
+[submodule "src/net/third_party/quiche/src"]
+	path = src/net/third_party/quiche/src
+	url = https://quiche.googlesource.com/quiche.git
