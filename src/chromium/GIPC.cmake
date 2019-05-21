@@ -65,7 +65,8 @@
 #
 #target_link_libraries(GIPC PUBLIC
 #  dynamic_annotations
-#  ${BASE_LIBRARIES}
+#  #${BASE_LIBRARIES}
+#  base
 #)
 #
 #set_property(TARGET GIPC PROPERTY CXX_STANDARD 17)

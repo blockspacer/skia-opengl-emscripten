@@ -10,14 +10,65 @@ set(WTF_DIR ${WTF_PARENT_DIR}wtf/)
 set(BASE_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/)
 set(BASE_DIR ${BASE_PARENT_DIR}base/)
 
-set(GFX_GEOMETRY_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/ui/gfx/)
+set(UI_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/)
+set(UI_DIR ${UI_PARENT_DIR}ui/)
+
+set(G_GFX_PARENT_DIR ${UI_DIR}/)
+set(G_GFX_DIR ${G_GFX_PARENT_DIR}gfx/)
+
+set(SERVICES_METRICS_PUBLIC_CPP_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/services/metrics/public/)
+set(SERVICES_METRICS_PUBLIC_CPP_DIR ${SERVICES_METRICS_PUBLIC_CPP_PARENT_DIR}cpp/)
+
+set(COMPONENTS_VIZ_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/components/)
+set(COMPONENTS_VIZ_DIR ${COMPONENTS_VIZ_PARENT_DIR}viz/)
+
+set(COMPONENTS_VIZ_COMMON_PARENT_DIR ${COMPONENTS_VIZ_DIR}/)
+set(COMPONENTS_VIZ_COMMON_DIR ${COMPONENTS_VIZ_COMMON_PARENT_DIR}common/)
+
+set(libsync_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/third_party/)
+set(libsync_DIR ${libsync_PARENT_DIR}libsync/)
+
+set(khronos_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/third_party/)
+set(khronos_DIR ${khronos_PARENT_DIR}khronos/)
+
+set(GFX_GEOMETRY_PARENT_DIR ${UI_DIR}/gfx/)
 set(GFX_GEOMETRY_DIR ${GFX_GEOMETRY_PARENT_DIR}geometry/)
+
+set(GFX_RANGE_PARENT_DIR ${UI_DIR}/gfx/)
+set(GFX_RANGE_DIR ${GFX_RANGE_PARENT_DIR}range/)
+
+set(GFX_GEOMETRY_SKIA_PARENT_DIR ${UI_DIR}/gfx/)
+set(GFX_GEOMETRY_SKIA_DIR ${GFX_GEOMETRY_SKIA_PARENT_DIR})
+
+set(GFX_COLOR_SPACE_PARENT_DIR ${UI_DIR}/gfx/)
+set(GFX_COLOR_SPACE_DIR ${GFX_COLOR_SPACE_PARENT_DIR})
+
+set(GFX_ANIMATION_PARENT_DIR ${UI_DIR}/gfx/)
+set(GFX_ANIMATION_DIR ${GFX_ANIMATION_PARENT_DIR}/animation/)
+
+set(GFX_CODEC_PARENT_DIR ${UI_DIR}/gfx/)
+set(GFX_CODEC_DIR ${GFX_CODEC_PARENT_DIR}/codec/)
+
+set(GFX_SWITCHES_PARENT_DIR ${UI_DIR}/gfx/)
+set(GFX_SWITCHES_DIR ${GFX_SWITCHES_PARENT_DIR})
 
 set(CC_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/)
 set(CC_DIR ${CC_PARENT_DIR}cc/)
 
 set(BLINK_PLATFORM_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/third_party/)
 set(BLINK_PLATFORM_DIR ${BLINK_PLATFORM_PARENT_DIR}blink/renderer/platform/)
+
+set(BASE_CC_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/cc/)
+set(BASE_CC_DIR ${BASE_CC_PARENT_DIR}base/)
+
+set(DEBUG_CC_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/cc/)
+set(DEBUG_CC_DIR ${DEBUG_CC_PARENT_DIR}debug/)
+
+set(PAINT_CC_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/cc/)
+set(PAINT_CC_DIR ${PAINT_CC_PARENT_DIR}paint/)
+
+set(ANIMATION_CC_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/cc/)
+set(ANIMATION_CC_DIR ${ANIMATION_CC_PARENT_DIR}animation/)
 
 set(BORINGSSL_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/third_party/)
 set(BORINGSSL_DIR ${BORINGSSL_PARENT_DIR}boringssl/)
@@ -34,8 +85,11 @@ set(GURL_DIR ${GURL_PARENT_DIR}url/)
 set(GIPC_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/)
 set(GIPC_DIR ${GIPC_PARENT_DIR}ipc/)
 
-set(GPU_COMMAND_BUFFER_DIR_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/gpu/)
-set(GPU_COMMAND_BUFFER_DIR ${GPU_COMMAND_BUFFER_DIR_PARENT_DIR}command_buffer/)
+set(GPU_GLES2_DIR_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/gpu/)
+set(GPU_GLES2_DIR ${GPU_GLES2_PARENT_DIR}GLES2/)
+
+set(GPU_COMMAND_BUFFER_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/gpu/)
+set(GPU_COMMAND_BUFFER_DIR ${GPU_COMMAND_BUFFER_PARENT_DIR}command_buffer/)
 
 set(3RDPARTY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/)
 
@@ -95,6 +149,24 @@ else()
   set(WTF_EMCC_DEFINITIONS "")
 endif ()
 
+if (EMSCRIPTEN)
+  # nothing to do
+elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+  # libsync
+  set(libsync_LIB
+    libsync
+  )
+  include(libsync.cmake)
+  # khronos
+  set(khronos_LIB
+    khronos
+  )
+  # khronos
+  include(khronos.cmake)
+else()
+  message(FATAL_ERROR "platform not supported")
+endif()
+
 # BORINGSSL
 include(BORINGSSL.cmake)
 
@@ -132,6 +204,9 @@ include(GCRYPTO.cmake)
 #
 include(base.cmake)
 
+# WTF
+include(WTF.cmake)
+
 # GNET: Net helper library.
 # Depends on : base, url, crypto, sql,
 # protobuf, libnss, libnspr, open-vcdiff
@@ -150,18 +225,67 @@ include(GIPC.cmake)
 # GFX_GEOMETRY
 include(GFX_GEOMETRY.cmake)
 
+# GFX_RANGE
+include(GFX_RANGE.cmake)
+
+# GFX_GEOMETRY_SKIA
+include(GFX_GEOMETRY_SKIA.cmake)
+
+# GFX_COLOR_SPACE
+include(GFX_COLOR_SPACE.cmake)
+
+# GFX_ANIMATION
+include(GFX_ANIMATION.cmake)
+
+# GFX_CODEC
+include(GFX_CODEC.cmake)
+add_dependencies(GFX_CODEC
+  GFX_GEOMETRY_SKIA
+  GFX_GEOMETRY
+  pathkit
+  SKIA
+  sksg
+  skshaper
+  particles
+  skottie
+  #dynamic_annotations
+  #${BASE_LIBRARIES}
+  #libjpeg
+  #libpng
+  #zlib
+  base
+  wuffs
+  jpeg
+)
+
+# GFX_SWITCHES
+include(GFX_SWITCHES.cmake)
+
+# SKIA_EXT
+include(SKIA_EXT.cmake)
+
+# G_GFX
+include(G_GFX.cmake)
+
+# COMPONENTS_VIZ_COMMON
+#include(COMPONENTS_VIZ_COMMON.cmake)
+
+# GPU_GLES2
+#include(GPU_GLES2.cmake)
+
 # GPU_COMMAND_BUFFER: GPU command helper library.
-# Depends on : base
+# Depends on : base, (ui/gfx), (GPU_GLES2)
 include(GPU_COMMAND_BUFFER.cmake)
 
 # CC
-#include(CC.cmake)
+include(BASE_CC.cmake)
+include(DEBUG_CC.cmake)
+include(PAINT_CC.cmake)
+include(ANIMATION_CC.cmake)
+include(CC.cmake)
 
 # BLINK_PLATFORM
-#include(BLINK_PLATFORM.cmake)
-
-# WTF
-include(WTF.cmake)
+# include(BLINK_PLATFORM.cmake)
 
 #install(FILES ${WTF_HEADERS} DESTINATION include/wtf)
 #install(FILES ${WTF_TEXT_HEADERS} DESTINATION include/wtf/text)

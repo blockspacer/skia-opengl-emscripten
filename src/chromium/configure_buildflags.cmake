@@ -44,8 +44,14 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/clang_coverage_buildflags.h.inc
   ${BASE_DIR}/base/clang_coverage_buildflags.h COPYONLY)
 
 # https://github.com/stormcenter/QuicDemo/blob/master/app/src/main/jni/third_party/chromium/include/net/net_buildflags.h
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/gpu_vulkan_buildflags.h.inc
+  ${CMAKE_CURRENT_SOURCE_DIR}/gpu/vulkan/buildflags.h COPYONLY)
+
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/gnet_buildflags.h.inc
   ${CMAKE_CURRENT_SOURCE_DIR}/net/net_buildflags.h COPYONLY)
+
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/device_vr_buildflags.h.inc
+  ${CMAKE_CURRENT_SOURCE_DIR}/device/vr/buildflags/buildflags.h COPYONLY)
 
 ## uses BUILDFLAG_INTERNAL_IPC_MESSAGE_LOG_ENABLED from ipc_buildflags.h
 #configure_file(${CMAKE_CURRENT_SOURCE_DIR}/gipc_buildflags.h.inc

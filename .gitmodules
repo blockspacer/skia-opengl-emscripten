@@ -7,9 +7,6 @@
 [submodule "cmake/sdl2"]
 	path = cmake/sdl2
 	url = ../../aminosbh/sdl2-cmake-modules
-[submodule "thirdparty/skia"]
-	path = thirdparty/skia
-	url = https://skia.googlesource.com/skia.git
 [submodule "thirdparty/depot_tools"]
 	path = thirdparty/depot_tools
 	url = https://chromium.googlesource.com/chromium/tools/depot_tools.git

@@ -1332,8 +1332,7 @@ set(BASE_DEFINES
 target_include_directories(base PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}
 )
-#/home/avakimov_am/skia-opengl-emscripten/src/chromium/../../thirdparty/icu/source/common/unicode/normalizer2.h
-#/home/avakimov_am/skia-opengl-emscripten/src/chromium/../../
+
 #message(FATAL_ERROR ${CMAKE_CURRENT_SOURCE_DIR}/../../thirdparty/ced/src/)
 target_include_directories(base PRIVATE
   #${CMAKE_CURRENT_SOURCE_DIR}/../..

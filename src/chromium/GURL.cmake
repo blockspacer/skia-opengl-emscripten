@@ -61,7 +61,8 @@ set_property(TARGET GURL PROPERTY CXX_STANDARD 17)
 
 target_include_directories(GURL PRIVATE
   ${GURL_DIR}
-  ${BASE_DIR}
+  #${BASE_LIBRARIES}
+  base
 )
 target_compile_definitions(GURL PRIVATE
   IS_URL_IMPL=1

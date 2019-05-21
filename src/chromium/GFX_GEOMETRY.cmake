@@ -60,8 +60,9 @@ add_library(GFX_GEOMETRY STATIC
 )
 
 target_link_libraries(GFX_GEOMETRY PUBLIC
-  dynamic_annotations
-  ${BASE_LIBRARIES}
+  #dynamic_annotations
+  #${BASE_LIBRARIES}
+  base
 )
 
 set_property(TARGET GFX_GEOMETRY PROPERTY CXX_STANDARD 17)

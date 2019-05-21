@@ -1704,7 +1704,8 @@ add_library(GNET STATIC
 )
 
 target_link_libraries(GNET PUBLIC
-  ${BASE_LIBRARIES}
+  #${BASE_LIBRARIES}
+  base
   GCRYPTO
   GURL
   # sql

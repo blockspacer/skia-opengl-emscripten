@@ -14,7 +14,8 @@ set(GPU_COMMAND_BUFFER_COMMON_SOURCES
   #${GPU_COMMAND_BUFFER_DIR}common/command_buffer_id.h",
   #${GPU_COMMAND_BUFFER_DIR}common/common_cmd_format.h",
   #${GPU_COMMAND_BUFFER_DIR}common/constants.h",
-  ${GPU_COMMAND_BUFFER_DIR}common/context_creation_attribs.cc
+  # TODO # ${GPU_COMMAND_BUFFER_DIR}common/context_creation_attribs.cc
+   ${GPU_COMMAND_BUFFER_DIR}common/context_creation_attribs.cc
   #${GPU_COMMAND_BUFFER_DIR}common/context_creation_attribs.h",
   ${GPU_COMMAND_BUFFER_DIR}common/context_result.cc
   #${GPU_COMMAND_BUFFER_DIR}common/context_result.h",
@@ -23,7 +24,8 @@ set(GPU_COMMAND_BUFFER_COMMON_SOURCES
   ${GPU_COMMAND_BUFFER_DIR}common/discardable_handle.cc
   #${GPU_COMMAND_BUFFER_DIR}common/discardable_handle.h",
   #${GPU_COMMAND_BUFFER_DIR}common/gl2_types.h",
-  ${GPU_COMMAND_BUFFER_DIR}common/gpu_memory_buffer_support.cc
+  # TODO # ${GPU_COMMAND_BUFFER_DIR}common/gpu_memory_buffer_support.cc
+    ${GPU_COMMAND_BUFFER_DIR}common/gpu_memory_buffer_support.cc
   #${GPU_COMMAND_BUFFER_DIR}common/gpu_memory_buffer_support.h",
   ${GPU_COMMAND_BUFFER_DIR}common/id_allocator.cc
   #${GPU_COMMAND_BUFFER_DIR}common/id_allocator.h",
@@ -59,7 +61,8 @@ set(GPU_COMMAND_BUFFER_COMMON_SOURCES
   #
   # component("gles2_utils")
   #
-  ${GPU_COMMAND_BUFFER_DIR}common/gles2_cmd_utils.cc
+  # TODO # ${GPU_COMMAND_BUFFER_DIR}common/gles2_cmd_utils.cc
+    ${GPU_COMMAND_BUFFER_DIR}common/gles2_cmd_utils.cc
   #${GPU_COMMAND_BUFFER_DIR}common/gles2_cmd_utils.h",
   #${GPU_COMMAND_BUFFER_DIR}common/gles2_utils_export.h",
 
@@ -70,18 +73,30 @@ add_library(GPU_COMMAND_BUFFER STATIC
 )
 
 target_link_libraries(GPU_COMMAND_BUFFER PUBLIC
-  ${BASE_LIBRARIES}
+  #UI_GL
+  GFX_GEOMETRY
+  SKIA
+  #GPU_GLES2
+  #${BASE_LIBRARIES}
+  base
 )
-
+#message(FATAL_ERROR ${GPU_COMMAND_BUFFER_PARENT_DIR}GLES2/gl2extchromium.h)
 set_property(TARGET GPU_COMMAND_BUFFER PROPERTY CXX_STANDARD 17)
 
 target_include_directories(GPU_COMMAND_BUFFER PRIVATE
+  #${UI_PARENT_DIR}
   ${GPU_COMMAND_BUFFER_DIR}
-  ${GPU_COMMAND_BUFFER_DIR}/common
-  ${BASE_DIR}
+  ${GPU_COMMAND_BUFFER_PARENT_DIR}
+  #${GPU_COMMAND_BUFFER_DIR}/common
+  #${BASE_DIR}
 )
 
 target_compile_definitions(GPU_COMMAND_BUFFER PRIVATE
   GLES2_UTILS_IMPLEMENTATION=1
-  #NET_DISABLE_BROTLI=1
+  GPU_IMPLEMENTATION=1
+  GPU_GLES2_IMPLEMENTATION=1
+  GPU_IMPLEMENTATION=1
+  GPU_UTIL_IMPLEMENTATION=1
+  RASTER_IMPLEMENTATION=1
+  # WEBGPU_IMPLEMENTATION
 )

@@ -71,7 +71,8 @@ add_library(GCRYPTO STATIC
 target_link_libraries(GCRYPTO PUBLIC
   BORINGSSL
   dynamic_annotations
-  ${BASE_LIBRARIES}
+  #${BASE_LIBRARIES}
+  base
 )
 
 set_property(TARGET GCRYPTO PROPERTY CXX_STANDARD 17)

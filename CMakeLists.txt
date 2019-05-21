@@ -27,6 +27,14 @@ else(DEBUG_LEVEL)
   message(STATUS "DEBUG_LEVEL will be detected based on BUILD_TYPE/RELEASE_BUILD")
 endif(DEBUG_LEVEL)
 
+set(SKIA_PARENT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src/chromium/third_party/")
+set(SKIA_DIR "${SKIA_PARENT_DIR}skia/")
+
+#set(SKIA_EXT_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src/chromium/)
+#set(SKIA_EXT_DIR ${SKIA_EXT_PARENT_DIR}skia/)
+set(SKIA_EXT_PARENT_DIR ${SKIA_PARENT_DIR})
+set(SKIA_EXT_DIR ${SKIA_EXT_PARENT_DIR}skia/)
+
 #include(FindPkgMacros)
 
 message("CMAKE_BUILD_TYPE = ${CMAKE_BUILD_TYPE}")
@@ -101,10 +109,25 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}
 
 # -fno-exceptions
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17") # use target options
+set(COMMON_CXX_FLAGS "${COMMON_CXX_FLAGS} -std=c++17") # use target options
+
+# TODO
+set(COMMON_CXX_FLAGS "${COMMON_CXX_FLAGS} -DCODEC_IMPLEMENTATION=1")
 
 # https://stackoverflow.com/a/4184877/10904212
 set(COMMON_FLAGS "${COMMON_FLAGS} -frtti")
+
+if (EMSCRIPTEN)
+  #set(COMMON_FLAGS "${COMMON_FLAGS} -DUSE_X11=0")
+  # custom define
+  set(COMMON_FLAGS "${COMMON_FLAGS} -DNO_CHROMIUM_WINDOW=1")
+elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+  set(COMMON_FLAGS "${COMMON_FLAGS} -DUSE_X11=1")
+  # custom define
+  set(COMMON_FLAGS "${COMMON_FLAGS} -DNO_CHROMIUM_WINDOW=1")
+else()
+  message(FATAL_ERROR "platform not supported")
+endif()
 
 # custom debug logger for wasm
 set(PORT_OWN_DLOG TRUE)
@@ -207,7 +230,7 @@ if(EMSCRIPTEN)
   #set(EMCC_COMMON "${EMCC_COMMON} -D__EMSCRIPTEN__=1")
 
   # see https://github.com/endlessm/chromium-browser/blob/master/third_party/skia/third_party/skcms/skcms.cc#L1813
-  #set(EMCC_COMMON "${EMCC_COMMON} -DSKCMS_PORTABLE=1")
+  #set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSKCMS_PORTABLE=1")
   # NOTE: SKCMS_PORTABLE <=> __EMSCRIPTEN_major__
 
   # Tell ICU that we are a 32 bit platform, otherwise,
@@ -516,30 +539,30 @@ endif(NOT RELEASE_BUILD)
 
   # rtti required by skia
   set(EMCC_COMMON "${EMCC_COMMON} -frtti") # force enable rtti on wasm!
-  set(EMCC_COMMON "${EMCC_COMMON} -DSK_RELEASE")
+  set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_RELEASE")
 
   # https://github.com/google/skia/blob/master/BUILD.gn#L502
-  # set(EMCC_COMMON "${EMCC_COMMON} -DSKSL_STANDALONE") # if (skia_compile_processors)
-  #set(EMCC_COMMON "${EMCC_COMMON} -DSK_DISABLE_LEGACY_SHADERCONTEXT=1")
-  #set(EMCC_COMMON "${EMCC_COMMON} -DSK_DISABLE_LOWP_RASTER_PIPELINE=1")
-  #set(EMCC_COMMON "${EMCC_COMMON} -DSK_FORCE_RASTER_PIPELINE_BLITTER=1")
-  set(EMCC_COMMON "${EMCC_COMMON} -DSK_ASSUME_WEBGL=1") # see skia_gl_standard
-  #set(EMCC_COMMON "${EMCC_COMMON} -DSK_ASSUME_GL_ES=1") # see skia_gl_standard
-  #set(EMCC_COMMON "${EMCC_COMMON} -DSK_ASSUME_GL=1") # see skia_gl_standard
+  # set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSKSL_STANDALONE") # if (skia_compile_processors)
+  #set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_DISABLE_LEGACY_SHADERCONTEXT=1")
+  #set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_DISABLE_LOWP_RASTER_PIPELINE=1")
+  #set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_FORCE_RASTER_PIPELINE_BLITTER=1")
+  set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_ASSUME_WEBGL=1") # see skia_gl_standard
+  #set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_ASSUME_GL_ES=1") # see skia_gl_standard
+  #set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_ASSUME_GL=1") # see skia_gl_standard
   set(EMCC_COMMON "${EMCC_COMMON} -DIS_WEBGL=1")
   # see https://github.com/xzwang2005/Prelude/blob/master/third_party/skia/src/pathops/SkPathOpsTypes.cpp#L106
-  #set(EMCC_COMMON "${EMCC_COMMON} -DSKOTTIE_HACK")
+  #set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSKOTTIE_HACK")
   # https://github.com/qinjidong/qt5.13/blob/master/src/qtwebengine/src/3rdparty/chromium/third_party/skia/experimental/canvaskit/compile.sh
   if(NOT ENABLE_SIMD)
-    set(EMCC_COMMON "${EMCC_COMMON} -DSKNX_NO_SIMD") # see "-s SIMD=1" and -msimd128
+    set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSKNX_NO_SIMD") # see "-s SIMD=1" and -msimd128
   endif(NOT ENABLE_SIMD)
-  set(EMCC_COMMON "${EMCC_COMMON} -DSK_DISABLE_AAA")
-  set(EMCC_COMMON "${EMCC_COMMON} -DSK_DISABLE_EFFECT_DESERIALIZATION")
-  set(EMCC_COMMON "${EMCC_COMMON} -DWEB_ASSEMBLY=1")
-  #set(EMCC_COMMON "${EMCC_COMMON} -DSK_BUILD_FOR_PATHKIT=1")
-  set(EMCC_COMMON "${EMCC_COMMON} -DSK_SUPPORT_OPENCL=0")
-  set(EMCC_COMMON "${EMCC_COMMON} -DSK_SAMPLES_FOR_X=1") # always set for linux, even if there's no X used
-  set(EMCC_COMMON "${EMCC_COMMON} -DSK_HAS_PNG_LIBRARY=1") # skia_use_libpng
+  set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_DISABLE_AAA")
+  set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_DISABLE_EFFECT_DESERIALIZATION")
+  set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DWEB_ASSEMBLY=1")
+  #set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_BUILD_FOR_PATHKIT=1")
+  set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_SUPPORT_OPENCL=0")
+  set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_SAMPLES_FOR_X=1") # always set for linux, even if there's no X used
+  set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_HAS_PNG_LIBRARY=1") # skia_use_libpng
 
   # CLANG_ATOMICS for ICU lib
   # see https://github.com/emscripten-core/emscripten/commit/9c4dfa12feb2b3d68bc2a44ad42b95f3b647728d
@@ -548,12 +571,12 @@ endif(NOT RELEASE_BUILD)
 
   # https://github.com/Rusino/skia/blob/master/BUILD.gn#L1688
   # NOTE: on wasm  by default skia don`t use harfbuzz skshaper
-  set(EMCC_COMMON "${EMCC_COMMON} -DSK_USING_SKSHAPER=1") # skia_enable_skshaper
-  set(EMCC_COMMON "${EMCC_COMMON} -DSK_HAS_WUFFS_LIBRARY=1") # skia_use_wuffs
+  set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_USING_SKSHAPER=1") # skia_enable_skshaper
+  set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_HAS_WUFFS_LIBRARY=1") # skia_use_wuffs
   # SK_HAS_WEBP_LIBRARY # skia_use_libwebp
   # SK_XML # skia_use_expat
   # https://github.com/Rusino/skia/blob/master/BUILD.gn#L191
-  #set(EMCC_COMMON "${EMCC_COMMON} -DSK_ALLOW_STATIC_GLOBAL_INITIALIZERS=0") # don`t redefine
+  #set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_ALLOW_STATIC_GLOBAL_INITIALIZERS=0") # don`t redefine
 
   # Check each write to the heap, for example, this will give a clear error
   # on what would be segfaults in a native build (like dereferencing 0)
@@ -772,7 +795,7 @@ endif(NOT RELEASE_BUILD)
 
 else(EMSCRIPTEN)
 
-  set(COMMON_FLAGS "${COMMON_FLAGS} -DSK_ASSUME_GL=1")
+  set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_ASSUME_GL=1")
 
   # set -DCMAKE_BUILD_TYPE=Debug
   # see https://stackoverflow.com/a/25199377/10904212
@@ -795,7 +818,7 @@ else(EMSCRIPTEN)
   endif(NOT RELEASE_BUILD)
   # see above
   set(COMMON_FLAGS "${COMMON_FLAGS} ${OPTIMIZE_LEVEL}")
-  set(COMMON_FLAGS "${DEBUG_LEVEL} ${DEBUG_LEVEL}")
+  set(COMMON_FLAGS "${COMMON_FLAGS} ${DEBUG_LEVEL}")
 
   ### Find Libraries
   set(USE_OPENGL_LIB FALSE)
@@ -806,13 +829,14 @@ else(EMSCRIPTEN)
     set(USE_OPENGL_LIB TRUE)
   endif()
 
-  #set(USE_OPENGLES2_LIB FALSE)
-  #find_package(OpenGLES2 REQUIRED)
-  #if(OPENGLES2_FOUND)
-  #  message("OPENGLES2_LIBRARIES = ${OPENGLES2_LIBRARIES} ")
-  #  message("OPENGLES2_INCLUDE_DIR = ${OPENGLES2_INCLUDE_DIR} ")
-  #  set(USE_OPENGLES2_LIB TRUE)
-  #endif()
+  set(USE_OPENGLES2_LIB FALSE)
+  find_package(OpenGLES2 REQUIRED)
+  if(OPENGLES2_FOUND)
+    message("OPENGLES2_DEFINITIONS = ${OPENGLES2_DEFINITIONS} ")
+    message("OPENGLES2_LIBRARIES = ${OPENGLES2_LIBRARIES} ")
+    message("OPENGLES2_INCLUDE_DIRS = ${OPENGLES2_INCLUDE_DIRS} ")
+    set(USE_OPENGLES2_LIB TRUE)
+  endif()
 
   find_package(SDL2 REQUIRED)
   if(SDL2_FOUND)
@@ -877,6 +901,11 @@ if(ENABLE_WTF)
   set(COMMON_FLAGS "${COMMON_FLAGS} -DENABLE_WTF=1")
 endif(ENABLE_WTF)
 
+# NOTE: header from SKIA_EXT
+#set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_USER_CONFIG_HEADER=\\\"${SKIA_EXT_DIR}config/SkUserConfig.h\\\"")
+# NOTE: modified SkUserConfig.h
+#set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_REF_CNT_MIXIN_INCLUDE=\\\"${SKIA_EXT_DIR}config/sk_ref_cnt_ext_release.h\\\"")
+
 #
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${COMMON_C_FLAGS}")
 #
@@ -884,6 +913,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${COMMON_CXX_FLAGS}")
 #
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${COMMON_FLAGS}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${COMMON_FLAGS}")
+
 #
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${SK_COMMON_FLAGS}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${SK_COMMON_FLAGS}")
@@ -913,76 +943,82 @@ if(ENABLE_WTF)
   )
 endif(ENABLE_WTF)
 
+#
+# skia
+#
 include(skia.cmake)
 
+#
+# PROJECT
+#
 set(PROJECT_SRC
   src/main.cpp
   # skottie
   # https://github.com/klzgrad/naiveproxy/blob/master/src/third_party/skia/modules/skottie/BUILD.gn#L45
-  thirdparty/skia/modules/skottie/utils/SkottieUtils.cpp
+  ${SKIA_DIR}/modules/skottie/utils/SkottieUtils.cpp
 )
 
 # TODO
 if (EMSCRIPTEN)
   list(APPEND PROJECT_SRC
     # skia effects
-    #thirdparty/skia/src/c/sk_effects.cpp
-    #thirdparty/skia/src/effects/Sk1DPathEffect.cpp
-    #thirdparty/skia/src/effects/Sk2DPathEffect.cpp
-    #thirdparty/skia/src/effects/SkColorMatrix.cpp
-    #thirdparty/skia/src/effects/SkColorMatrixFilter.cpp
-    #thirdparty/skia/src/effects/SkCornerPathEffect.cpp
-    #thirdparty/skia/src/effects/SkDashPathEffect.cpp
-    #thirdparty/skia/src/effects/SkDiscretePathEffect.cpp
-    #thirdparty/skia/src/effects/SkEmbossMask.cpp
-    #thirdparty/skia/src/effects/SkEmbossMaskFilter.cpp
-    #thirdparty/skia/src/effects/SkHighContrastFilter.cpp
-    #thirdparty/skia/src/effects/SkLayerDrawLooper.cpp
-    #thirdparty/skia/src/effects/SkLumaColorFilter.cpp
-    #thirdparty/skia/src/effects/SkOpPathEffect.cpp
-    #thirdparty/skia/src/effects/SkOverdrawColorFilter.cpp
-    #thirdparty/skia/src/effects/SkPackBits.cpp
-    #thirdparty/skia/src/effects/SkShaderMaskFilter.cpp
-    #thirdparty/skia/src/effects/SkTableColorFilter.cpp
-    #thirdparty/skia/src/effects/SkTableMaskFilter.cpp
-    #thirdparty/skia/src/effects/SkTrimPathEffect.cpp
-    #thirdparty/skia/src/shaders/SkPerlinNoiseShader.cpp
-    #thirdparty/skia/src/shaders/gradients/Sk4fGradientBase.cpp
-    #thirdparty/skia/src/shaders/gradients/Sk4fLinearGradient.cpp
-    #thirdparty/skia/src/shaders/gradients/SkGradientShader.cpp
-    #thirdparty/skia/src/shaders/gradients/SkLinearGradient.cpp
-    #thirdparty/skia/src/shaders/gradients/SkRadialGradient.cpp
-    #thirdparty/skia/src/shaders/gradients/SkTwoPointConicalGradient.cpp
-    #thirdparty/skia/src/shaders/gradients/SkSweepGradient.cpp
+    #${SKIA_DIR}/src/c/sk_effects.cpp
+    #${SKIA_DIR}/src/effects/Sk1DPathEffect.cpp
+    #${SKIA_DIR}/src/effects/Sk2DPathEffect.cpp
+    #${SKIA_DIR}/src/effects/SkColorMatrix.cpp
+    #${SKIA_DIR}/src/effects/SkColorMatrixFilter.cpp
+    #${SKIA_DIR}/src/effects/SkCornerPathEffect.cpp
+    #${SKIA_DIR}/src/effects/SkDashPathEffect.cpp
+    #${SKIA_DIR}/src/effects/SkDiscretePathEffect.cpp
+    #${SKIA_DIR}/src/effects/SkEmbossMask.cpp
+    #${SKIA_DIR}/src/effects/SkEmbossMaskFilter.cpp
+    #${SKIA_DIR}/src/effects/SkHighContrastFilter.cpp
+    #${SKIA_DIR}/src/effects/SkLayerDrawLooper.cpp
+    #${SKIA_DIR}/src/effects/SkLumaColorFilter.cpp
+    #${SKIA_DIR}/src/effects/SkOpPathEffect.cpp
+    #${SKIA_DIR}/src/effects/SkOverdrawColorFilter.cpp
+    #${SKIA_DIR}/src/effects/SkPackBits.cpp
+    #${SKIA_DIR}/src/effects/SkShaderMaskFilter.cpp
+    #${SKIA_DIR}/src/effects/SkTableColorFilter.cpp
+    #${SKIA_DIR}/src/effects/SkTableMaskFilter.cpp
+    #${SKIA_DIR}/src/effects/SkTrimPathEffect.cpp
+    #${SKIA_DIR}/src/shaders/SkPerlinNoiseShader.cpp
+    #${SKIA_DIR}/src/shaders/gradients/Sk4fGradientBase.cpp
+    #${SKIA_DIR}/src/shaders/gradients/Sk4fLinearGradient.cpp
+    #${SKIA_DIR}/src/shaders/gradients/SkGradientShader.cpp
+    #${SKIA_DIR}/src/shaders/gradients/SkLinearGradient.cpp
+    #${SKIA_DIR}/src/shaders/gradients/SkRadialGradient.cpp
+    #${SKIA_DIR}/src/shaders/gradients/SkTwoPointConicalGradient.cpp
+    #${SKIA_DIR}/src/shaders/gradients/SkSweepGradient.cpp
     # skia utils (utils.gni)
-    thirdparty/skia/src/utils/Sk3D.cpp
-    thirdparty/skia/src/utils/SkBase64.cpp
-    thirdparty/skia/src/utils/SkFrontBufferedStream.cpp
-    thirdparty/skia/src/utils/SkCamera.cpp
-    thirdparty/skia/src/utils/SkCanvasStack.cpp
-    thirdparty/skia/src/utils/SkCanvasStateUtils.cpp
-    thirdparty/skia/src/utils/SkDashPath.cpp
-    thirdparty/skia/src/utils/SkEventTracer.cpp
-    thirdparty/skia/src/utils/SkFloatToDecimal.cpp
-    thirdparty/skia/src/utils/SkInterpolator.cpp
-    thirdparty/skia/src/utils/SkJSON.cpp
-    thirdparty/skia/src/utils/SkJSONWriter.cpp
-    thirdparty/skia/src/utils/SkMatrix22.cpp
-    thirdparty/skia/src/utils/SkMultiPictureDocument.cpp
-    thirdparty/skia/src/utils/SkNWayCanvas.cpp
-    thirdparty/skia/src/utils/SkNullCanvas.cpp
-    thirdparty/skia/src/utils/SkOSPath.cpp
-    thirdparty/skia/src/utils/SkPaintFilterCanvas.cpp
-    thirdparty/skia/src/utils/SkParse.cpp
-    thirdparty/skia/src/utils/SkParseColor.cpp
-    thirdparty/skia/src/utils/SkParsePath.cpp
-    thirdparty/skia/src/utils/SkPatchUtils.cpp
-    thirdparty/skia/src/utils/SkPolyUtils.cpp
-    thirdparty/skia/src/utils/SkShadowTessellator.cpp
-    thirdparty/skia/src/utils/SkShadowUtils.cpp
-    thirdparty/skia/src/utils/SkThreadUtils_pthread.cpp
-    thirdparty/skia/src/utils/SkThreadUtils_win.cpp
-    thirdparty/skia/src/utils/SkWhitelistTypefaces.cpp
+    ${SKIA_DIR}/src/utils/Sk3D.cpp
+    ${SKIA_DIR}/src/utils/SkBase64.cpp
+    ${SKIA_DIR}/src/utils/SkFrontBufferedStream.cpp
+    ${SKIA_DIR}/src/utils/SkCamera.cpp
+    ${SKIA_DIR}/src/utils/SkCanvasStack.cpp
+    ${SKIA_DIR}/src/utils/SkCanvasStateUtils.cpp
+    ${SKIA_DIR}/src/utils/SkDashPath.cpp
+    ${SKIA_DIR}/src/utils/SkEventTracer.cpp
+    ${SKIA_DIR}/src/utils/SkFloatToDecimal.cpp
+    ${SKIA_DIR}/src/utils/SkInterpolator.cpp
+    ${SKIA_DIR}/src/utils/SkJSON.cpp
+    ${SKIA_DIR}/src/utils/SkJSONWriter.cpp
+    ${SKIA_DIR}/src/utils/SkMatrix22.cpp
+    ${SKIA_DIR}/src/utils/SkMultiPictureDocument.cpp
+    ${SKIA_DIR}/src/utils/SkNWayCanvas.cpp
+    ${SKIA_DIR}/src/utils/SkNullCanvas.cpp
+    ${SKIA_DIR}/src/utils/SkOSPath.cpp
+    ${SKIA_DIR}/src/utils/SkPaintFilterCanvas.cpp
+    ${SKIA_DIR}/src/utils/SkParse.cpp
+    ${SKIA_DIR}/src/utils/SkParseColor.cpp
+    ${SKIA_DIR}/src/utils/SkParsePath.cpp
+    ${SKIA_DIR}/src/utils/SkPatchUtils.cpp
+    ${SKIA_DIR}/src/utils/SkPolyUtils.cpp
+    ${SKIA_DIR}/src/utils/SkShadowTessellator.cpp
+    ${SKIA_DIR}/src/utils/SkShadowUtils.cpp
+    ${SKIA_DIR}/src/utils/SkThreadUtils_pthread.cpp
+    ${SKIA_DIR}/src/utils/SkThreadUtils_win.cpp
+    ${SKIA_DIR}/src/utils/SkWhitelistTypefaces.cpp
     #mac
     #"$_src/utils/mac/SkCreateCGImageRef.cpp",
     #windows
@@ -1004,24 +1040,24 @@ if (EMSCRIPTEN)
     #"$_src/utils/win/SkWGL_win.cpp",
     # effects_imagefilters (effects_imagefilters.gni)
     # https://chromium.googlesource.com/skia/+/master/gn/effects_imagefilters.gni
-    #thirdparty/skia/src/effects/imagefilters/SkAlphaThresholdFilter.cpp
-    #thirdparty/skia/src/effects/imagefilters/SkArithmeticImageFilter.cpp
-    #thirdparty/skia/src/effects/imagefilters/SkBlurImageFilter.cpp
-    #thirdparty/skia/src/effects/imagefilters/SkColorFilterImageFilter.cpp
-    #thirdparty/skia/src/effects/imagefilters/SkComposeImageFilter.cpp
-    #thirdparty/skia/src/effects/imagefilters/SkDisplacementMapEffect.cpp
-    #thirdparty/skia/src/effects/imagefilters/SkDropShadowImageFilter.cpp
-    #thirdparty/skia/src/effects/imagefilters/SkImageSource.cpp
-    #thirdparty/skia/src/effects/imagefilters/SkLightingImageFilter.cpp
-    #thirdparty/skia/src/effects/imagefilters/SkMagnifierImageFilter.cpp
-    #thirdparty/skia/src/effects/imagefilters/SkMatrixConvolutionImageFilter.cpp
-    #thirdparty/skia/src/effects/imagefilters/SkMergeImageFilter.cpp
-    #thirdparty/skia/src/effects/imagefilters/SkMorphologyImageFilter.cpp
-    #thirdparty/skia/src/effects/imagefilters/SkOffsetImageFilter.cpp
-    #thirdparty/skia/src/effects/imagefilters/SkPaintImageFilter.cpp
-    #thirdparty/skia/src/effects/imagefilters/SkPictureImageFilter.cpp
-    #thirdparty/skia/src/effects/imagefilters/SkTileImageFilter.cpp
-    #thirdparty/skia/src/effects/imagefilters/SkXfermodeImageFilter.cpp
+    #${SKIA_DIR}/src/effects/imagefilters/SkAlphaThresholdFilter.cpp
+    #${SKIA_DIR}/src/effects/imagefilters/SkArithmeticImageFilter.cpp
+    #${SKIA_DIR}/src/effects/imagefilters/SkBlurImageFilter.cpp
+    #${SKIA_DIR}/src/effects/imagefilters/SkColorFilterImageFilter.cpp
+    #${SKIA_DIR}/src/effects/imagefilters/SkComposeImageFilter.cpp
+    #${SKIA_DIR}/src/effects/imagefilters/SkDisplacementMapEffect.cpp
+    #${SKIA_DIR}/src/effects/imagefilters/SkDropShadowImageFilter.cpp
+    #${SKIA_DIR}/src/effects/imagefilters/SkImageSource.cpp
+    #${SKIA_DIR}/src/effects/imagefilters/SkLightingImageFilter.cpp
+    #${SKIA_DIR}/src/effects/imagefilters/SkMagnifierImageFilter.cpp
+    #${SKIA_DIR}/src/effects/imagefilters/SkMatrixConvolutionImageFilter.cpp
+    #${SKIA_DIR}/src/effects/imagefilters/SkMergeImageFilter.cpp
+    #${SKIA_DIR}/src/effects/imagefilters/SkMorphologyImageFilter.cpp
+    #${SKIA_DIR}/src/effects/imagefilters/SkOffsetImageFilter.cpp
+    #${SKIA_DIR}/src/effects/imagefilters/SkPaintImageFilter.cpp
+    #${SKIA_DIR}/src/effects/imagefilters/SkPictureImageFilter.cpp
+    #${SKIA_DIR}/src/effects/imagefilters/SkTileImageFilter.cpp
+    #${SKIA_DIR}/src/effects/imagefilters/SkXfermodeImageFilter.cpp
   )
 endif(EMSCRIPTEN)
 
@@ -1075,13 +1111,16 @@ if(EMSCRIPTEN)
 endif() # EMSCRIPTEN
 
 set(SKIA_INCLUDES
-    thirdparty
-    thirdparty/skia
-    thirdparty/skia/include
-    thirdparty/skia/include/c
-    thirdparty/skia/include/core
-    thirdparty/skia/third_party
-    thirdparty/skia/third_party/skcms
+    ${SKIA_HEADERS}
+    ${SKIA_EXT_DIR}
+    ${SKIA_EXT_PARENT_DIR}
+    ${SKIA_PARENT_DIR}
+    ${SKIA_DIR}
+    ${SKIA_DIR}/include
+    ${SKIA_DIR}/include/c
+    ${SKIA_DIR}/include/core
+    ${SKIA_DIR}/third_party
+    ${SKIA_DIR}/third_party/skcms
 )
 
 if(EMSCRIPTEN)
@@ -1126,17 +1165,32 @@ if(EMSCRIPTEN)
   # see https://floooh.github.io/2016/01/12/cmake-dependency-juggling.html
   target_link_libraries(${PROJECT_NAME} PUBLIC
     ${WTF_LIBS}
-    BORINGSSL
-    GCRYPTO
-    GURL
-    GNET
-    #CC
-    GPU_COMMAND_BUFFER
-    GFX_GEOMETRY
     # tcmalloc only for posix/linux/e.t.c.
     #tcmalloc
     #
+    G_GFX
+    CC
+    #ANIMATION_CC
+    #PAINT_CC
+    #DEBUG_CC
+    #BASE_CC
+    #GPU_COMMAND_BUFFER
+    #GFX_CODEC
+    #GFX_GEOMETRY
+    #GFX_GEOMETRY_SKIA
+    #GFX_COLOR_SPACE
+    #GFX_SWITCHES
+    #GFX_RANGE
+    ##
+    #SKIA_EXT
+    ##
+    #GNET
+    #GURL
+    #GCRYPTO
+    BORINGSSL
+    #
     SKIA
+    #
     skottie
     sksg
     skshaper
@@ -1155,7 +1209,7 @@ else()
     ${SDL2_INCLUDE_DIRS}
     ${SDL2_TTF_INCLUDE_DIR}
     ${HARFBUZZ_INCLUDE_DIRS}
-    #${OPENGLES2_INCLUDE_DIR}
+    ${OPENGLES2_INCLUDE_DIRS}
   )
   # link order is top down:
   # Top is the executable, followed by directly used libraries.
@@ -1166,9 +1220,20 @@ else()
     GCRYPTO
     GURL
     GNET
-    #CC
+    CC
+    BASE_CC
+    DEBUG_CC
+    PAINT_CC
+    ANIMATION_CC
     GPU_COMMAND_BUFFER
+    GFX_CODEC
     GFX_GEOMETRY
+    GFX_GEOMETRY_SKIA
+    GFX_COLOR_SPACE
+    GFX_SWITCHES
+    GFX_RANGE
+    SKIA_EXT
+    G_GFX
     # tcmalloc only for posix/linux/e.t.c.
     tcmalloc
     #
@@ -1185,7 +1250,7 @@ else()
     ${SDL2_TTF_INCLUDE_DIR}
     ${HARFBUZZ_LIBRARIES}
     ${OPENGL_LIBRARIES}
-    #${OPENGLES2_LIBRARIES}
+    ${OPENGLES2_LIBRARIES}
     ${GLEW_LIBRARY}
     SDL2::Main
     #SDL2:Net
@@ -1197,6 +1262,7 @@ else()
   target_compile_definitions(${PROJECT_NAME} PRIVATE
     GLEW_NO_GLU
     STATICALLY_LINKED_WITH_WTF=1 # NOTE: meaningful only if USE(EXPORT_MACROS)
+    ${OPENGLES2_DEFINITIONS}
     # NOTE: prefer #ifndef NDEBUG, see https://stackoverflow.com/a/8594122
     "$<$<CONFIG:DEBUG>:DEBUG>"
   )

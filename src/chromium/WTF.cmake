@@ -392,6 +392,7 @@ target_include_directories(${WTF_LIBRARY_NAME} PUBLIC
 
 set(WTF_LIBRARIES
   icu
+  #${BASE_LIBRARIES}
   base
 )
 

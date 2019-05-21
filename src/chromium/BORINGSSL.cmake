@@ -279,7 +279,8 @@ add_library(BORINGSSL STATIC
 
 target_link_libraries(BORINGSSL PUBLIC
   dynamic_annotations
-  ${BASE_LIBRARIES}
+  #${BASE_LIBRARIES}
+  base
 )
 
 set_property(TARGET BORINGSSL PROPERTY CXX_STANDARD 17)
