@@ -1,4 +1,9 @@
-﻿# NOTE/NEED
+﻿# FAQ
+
+> WHY? - Inspired by chromium, WebAssembly, emscripten, web workers, WEBGL2, flutter, hummingbird, HTML5 & CSS3, VUE.js & REACT.js & ANGULAR.js, electron, blink. Let`s combine best of them all together.
+> Can`t build? - Check readme & issues.
+
+# NOTE/NEED
 
 needs
 > https://bugs.chromium.org/p/skia/issues/detail?id=9052&q=&sort=-modified&colspec=ID%20Type%20Status%20Priority%20M%20Area%20Owner%20Summary%20Modified
