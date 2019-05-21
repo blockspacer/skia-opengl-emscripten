@@ -12,7 +12,13 @@
 #include "third_party/blink/renderer/platform/graphics/graphics_types.h"
 #include "third_party/blink/renderer/platform/graphics/image.h"
 #include "third_party/blink/renderer/platform/wtf/typed_arrays/uint8_array.h"
+#if defined(OS_EMSCRIPTEN)
+#include <GLES2/gl2.h>
+#include <GLES2/gl2ext.h>
+#else
 #include "third_party/khronos/GLES2/gl2.h"
+#include "third_party/khronos/GLES2/gl2ext.h"
+#endif // OS_EMSCRIPTEN
 #include "third_party/skia/include/core/SkRefCnt.h"
 
 namespace WTF {

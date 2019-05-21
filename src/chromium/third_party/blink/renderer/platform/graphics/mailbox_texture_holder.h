@@ -12,7 +12,13 @@
 #include "third_party/blink/renderer/platform/graphics/web_graphics_context_3d_provider_wrapper.h"
 #include "third_party/blink/renderer/platform/platform_export.h"
 #include "third_party/blink/renderer/platform/scheduler/public/thread.h"
+#if defined(OS_EMSCRIPTEN)
+#include <GLES2/gl2.h>
+#include <GLES2/gl2ext.h>
+#else
 #include "third_party/khronos/GLES2/gl2.h"
+#include "third_party/khronos/GLES2/gl2ext.h"
+#endif // OS_EMSCRIPTEN
 
 namespace blink {
 

@@ -13,7 +13,13 @@
 #include "third_party/blink/renderer/platform/wtf/hash_set.h"
 #include "third_party/blink/renderer/platform/wtf/text/string_hash.h"
 #include "third_party/blink/renderer/platform/wtf/text/wtf_string.h"
+#if defined(OS_EMSCRIPTEN)
+#include <GLES2/gl2.h>
+#include <GLES2/gl2ext.h>
+#else
 #include "third_party/khronos/GLES2/gl2.h"
+#include "third_party/khronos/GLES2/gl2ext.h"
+#endif // OS_EMSCRIPTEN
 
 namespace gpu {
 namespace gles2 {

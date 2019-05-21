@@ -6,9 +6,15 @@
 
 #include "cc/paint/skia_paint_canvas.h"
 #include "third_party/blink/renderer/platform/runtime_enabled_features.h"
+#if defined(OS_EMSCRIPTEN)
+#include <GLES2/gl2.h>
+#include <GLES2/gl2ext.h>
+#include <GLES3/gl3.h>
+#else
 #include "third_party/khronos/GLES2/gl2.h"
 #include "third_party/khronos/GLES2/gl2ext.h"
 #include "third_party/khronos/GLES3/gl3.h"
+#endif // OS_EMSCRIPTEN
 #include "third_party/skia/include/core/SkSurfaceProps.h"
 #include "ui/gfx/color_space.h"
 
