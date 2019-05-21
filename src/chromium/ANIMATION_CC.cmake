@@ -1,4 +1,4 @@
-### --- ANIMATION_CC ---###
+﻿### --- ANIMATION_CC ---###
 
 # TODO https://github.com/chromium/chromium/blob/master/third_party/blink/renderer/platform/BUILD.gn
 set(ANIMATION_CC_SOURCES

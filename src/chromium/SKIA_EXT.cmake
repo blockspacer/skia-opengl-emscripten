@@ -1,4 +1,4 @@
-## --- SKIA_EXT ---###
+﻿## --- SKIA_EXT ---###
 
 set(SKIA_EXT_COMMON_SOURCES
   # Chrome sources.
@@ -10,7 +10,8 @@ set(SKIA_EXT_COMMON_SOURCES
   ${SKIA_EXT_DIR}ext/SkMemory_new_handler.cpp # .cpp???
   ${SKIA_EXT_DIR}ext/benchmarking_canvas.cc
   #${SKIA_EXT_DIR}ext/benchmarking_canvas.h",
-  # TODO #${SKIA_EXT_DIR}ext/convolver.cc
+  # TODO #
+  ${SKIA_EXT_DIR}ext/convolver.cc
   ${SKIA_EXT_DIR}ext/convolver.cc
   #${SKIA_EXT_DIR}ext/convolver.h",
   ${SKIA_EXT_DIR}ext/event_tracer_impl.cc
@@ -22,7 +23,17 @@ set(SKIA_EXT_COMMON_SOURCES
   #${SKIA_EXT_DIR}ext/opacity_filter_canvas.h",
   ${SKIA_EXT_DIR}ext/recursive_gaussian_convolution.cc
   #${SKIA_EXT_DIR}ext/recursive_gaussian_convolution.h",
-  # TODO # ${SKIA_EXT_DIR}ext/skia_histogram.cc
+)
+
+if(EMSCRIPTEN)
+  # TODO #
+else()
+  list(APPEND SKIA_EXT_COMMON_SOURCES
+    ${SKIA_EXT_DIR}ext/skia_histogram.cc
+  )
+endif()
+
+list(APPEND SKIA_EXT_COMMON_SOURCES
   #${SKIA_EXT_DIR}ext/skia_histogram.h",
   ${SKIA_EXT_DIR}ext/skia_memory_dump_provider.cc
   #${SKIA_EXT_DIR}ext/skia_memory_dump_provider.h",
@@ -42,19 +53,32 @@ set(SKIA_EXT_COMMON_SOURCES
   ${SKIA_EXT_DIR}ext/fontmgr_default.cc
   #${SKIA_EXT_DIR}ext/fontmgr_default.h",
   # TODO # ${SKIA_EXT_DIR}ext/fontmgr_default_android.cc
-  # TODO # ${SKIA_EXT_DIR}ext/fontmgr_default_linux.cc
+)
+
+if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+  list(APPEND SKIA_EXT_COMMON_SOURCES
+    ${SKIA_EXT_DIR}ext/fontmgr_default_linux.cc
+  )
+endif()
+
+list(APPEND SKIA_EXT_COMMON_SOURCES
   # TODO # ${SKIA_EXT_DIR}ext/fontmgr_default_win.cc
   #
   # !is_ios
   #
   ${SKIA_EXT_DIR}ext/platform_canvas.cc
   #${SKIA_EXT_DIR}ext/platform_canvas.h",
-  #
-  # !is_ios && (current_cpu == "x86" || current_cpu == "x64")
-  #
-  # TODO # ${SKIA_EXT_DIR}ext/convolver_SSE2.cc
-  #${SKIA_EXT_DIR}ext/convolver_SSE2.h",
 )
+
+#
+# !is_ios && (current_cpu == "x86" || current_cpu == "x64")
+#
+if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+  list(APPEND SKIA_EXT_COMMON_SOURCES
+    ${SKIA_EXT_DIR}ext/convolver_SSE2.cc
+    ${SKIA_EXT_DIR}ext/convolver_SSE2.h
+  )
+endif()
 
 add_library(SKIA_EXT STATIC
   ${SKIA_EXT_COMMON_SOURCES}

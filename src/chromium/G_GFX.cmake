@@ -1,4 +1,4 @@
-### --- G_GFX ---###
+﻿### --- G_GFX ---###
 
 set(G_GFX_SOURCES
   #${G_GFX_DIR}gfx_export.h
@@ -14,7 +14,7 @@ set(G_GFX_SOURCES
   #${G_GFX_DIR}color_transform.h",
   ${G_GFX_DIR}color_utils.cc
   #${G_GFX_DIR}color_utils.h",
-  # TODO # ${G_GFX_DIR}decorated_text.cc # native_widget_types
+  ${G_GFX_DIR}decorated_text.cc # native_widget_types
   #${G_GFX_DIR}decorated_text.h",
   #${G_GFX_DIR}decorated_text_mac.h",
   # TODO # ${G_GFX_DIR}decorated_text_mac.mm",
@@ -22,19 +22,29 @@ set(G_GFX_SOURCES
   #${G_GFX_DIR}extension_set.h",
   ${G_GFX_DIR}favicon_size.cc
   #${G_GFX_DIR}favicon_size.h",
-  # # TODO # ${G_GFX_DIR}font.cc # native_widget_types
+  ${G_GFX_DIR}font.cc # native_widget_types
   #${G_GFX_DIR}font.h",
   #${G_GFX_DIR}font_fallback.h",
-  # # TODO # ${G_GFX_DIR}font_fallback_linux.cc
+)
+
+if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+  list(APPEND G_GFX_SOURCES
+    ${G_GFX_DIR}font_fallback_linux.cc
+  )
+endif()
+
+list(APPEND G_GFX_SOURCES
   #${G_GFX_DIR}font_fallback_linux.h",
   # # TODO # ${G_GFX_DIR}font_fallback_mac.mm",
   # # TODO # ${G_GFX_DIR}font_fallback_win.cc
   #${G_GFX_DIR}font_fallback_win.h",
-  # # TODO # ${G_GFX_DIR}font_list.cc
+  ${G_GFX_DIR}font_list.cc
   #${G_GFX_DIR}font_list.h", # native_widget_types
-  # # TODO # ${G_GFX_DIR}font_list_impl.cc # native_widget_types
+  # TODO #
+  ${G_GFX_DIR}font_list_impl.cc # native_widget_types
   #${G_GFX_DIR}font_list_impl.h",
-  # TODO # ${G_GFX_DIR}font_render_params.cc # native_widget_types
+  # TODO #
+  ${G_GFX_DIR}font_render_params.cc # native_widget_types
   #
   # if (is_android || is_fuchsia)
   #
@@ -57,6 +67,9 @@ if(ENABLE_HARFBUZZ)
     ${G_GFX_DIR}render_text.cc
     #${G_GFX_DIR}render_text.h",
   )
+else()
+  # message( "HARFBUZZ disabled")
+  message(FATAL_ERROR "HARFBUZZ disabled (ENABLE_HARFBUZZ=${ENABLE_HARFBUZZ})")
 endif(ENABLE_HARFBUZZ)
 
 list(APPEND G_GFX_SOURCES
@@ -68,7 +81,37 @@ list(APPEND G_GFX_SOURCES
   #${G_GFX_DIR}vector_icon_types.h",
   #
   #${G_GFX_DIR}font_render_params.h",
-  # TODO # ${G_GFX_DIR}font_render_params_linux.cc
+)
+
+if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+  list(APPEND G_GFX_SOURCES
+    ${G_GFX_DIR}font_render_params_linux.cc
+    #if (is_linux || is_android || is_fuchsia)
+    ${G_GFX_DIR}platform_font_skia.cc
+    #${G_GFX_DIR}platform_font_skia.h
+    ${G_GFX_DIR}skia_font_delegate.cc
+    #${G_GFX_DIR}skia_font_delegate.h
+    #
+    # if ((is_linux || use_ozone) && !is_nacl)
+    # TODO # ${G_GFX_DIR}native_pixmap_handle.cc # TODO: libdrm
+    #native_pixmap_handle.h",
+
+    #if (is_linux) {
+    #  sources += [
+    #    "linux/client_native_pixmap_dmabuf.cc",
+    #    "linux/client_native_pixmap_dmabuf.h",
+    #    "linux/client_native_pixmap_factory_dmabuf.cc",
+    #    "linux/client_native_pixmap_factory_dmabuf.h",
+    #    "linux/native_pixmap_dmabuf.cc",
+    #    "linux/native_pixmap_dmabuf.h",
+    #  ]
+    #
+    #  deps += [ "//build/config/linux/libdrm" ]
+    #}
+  )
+endif()
+
+list(APPEND G_GFX_SOURCES
   # TODO # ${G_GFX_DIR}font_render_params_mac.cc
   # TODO # ${G_GFX_DIR}font_render_params_win.cc
   # TODO win # ${G_GFX_DIR}gdi_util.cc
@@ -150,7 +193,8 @@ list(APPEND G_GFX_SOURCES
   # TODO # ${G_GFX_DIR}system_fonts_win.cc
   #${G_GFX_DIR}system_fonts_win.h",
   #${G_GFX_DIR}text_constants.h",
-  # TODO #${G_GFX_DIR}text_elider.cc # native_widget_types
+  # TODO #
+  ${G_GFX_DIR}text_elider.cc # native_widget_types
   #${G_GFX_DIR}text_elider.h",
   ${G_GFX_DIR}text_utils.cc
   #${G_GFX_DIR}text_utils.h",
@@ -243,6 +287,10 @@ list(APPEND G_GFX_SOURCES
 add_library(G_GFX STATIC
   ${G_GFX_SOURCES}
 )
+
+#if (is_linux) {
+#  deps += [ "//third_party/fontconfig" ]
+#}
 
 target_link_libraries(G_GFX PUBLIC
   #${BASE_LIBRARIES}
