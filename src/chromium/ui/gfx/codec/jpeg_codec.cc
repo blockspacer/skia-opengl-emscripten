@@ -1,4 +1,4 @@
-// Copyright (c) 2011 The Chromium Authors. All rights reserved.
+﻿// Copyright (c) 2011 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -15,9 +15,7 @@
 
 extern "C" {
 
-#if defined(OS_EMSCRIPTEN)
-#include "jpeglib.h"
-#elif defined(USE_SYSTEM_LIBJPEG)
+#if defined(USE_SYSTEM_LIBJPEG)
 #include <jpeglib.h>
 #elif defined(USE_LIBJPEG_TURBO)
 #include "third_party/libjpeg_turbo/jpeglib.h"

@@ -1,4 +1,4 @@
-
+﻿
 #### --- GCRYPTO ---###
 
 # TODO https://github.com/chromium/chromium/blob/master/third_party/blink/renderer/platform/BUILD.gn
@@ -88,4 +88,6 @@ target_include_directories(GCRYPTO PUBLIC
 
 target_compile_definitions(GCRYPTO PRIVATE
   CRYPTO_IMPLEMENTATION=1
+  #USE_SYSTEM_LIBJPEG=1
+  USE_LIBJPEG_TURBO=1
 )

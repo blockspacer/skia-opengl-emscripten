@@ -3,8 +3,8 @@
 set(GFX_CODEC_SOURCES
   #${GFX_CODEC_DIR}codec_export.h
   # TODO # ${GFX_CODEC_DIR}jpeg_codec.cc
-  ${GFX_CODEC_DIR}jpeg_codec.cc
-  ${GFX_CODEC_DIR}jpeg_codec.h
+ # TODO #${GFX_CODEC_DIR}jpeg_codec.cc
+ # TODO #${GFX_CODEC_DIR}jpeg_codec.h
   # TODO # ${GFX_CODEC_DIR}png_codec.cc
   ${GFX_CODEC_DIR}png_codec.cc
   ${GFX_CODEC_DIR}png_codec.h
