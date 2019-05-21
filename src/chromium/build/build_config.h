@@ -16,6 +16,12 @@
 #ifndef BUILD_BUILD_CONFIG_H_
 #define BUILD_BUILD_CONFIG_H_
 
+// TODO
+#ifndef SK_CRASH
+#define SK_CRASH() \
+  printf("called SK_CRASH");
+#endif
+
 // TODO: remove custom debug messages than wasm port will be finalized
 #if defined(PORT_OWN_DLOG)
 #define P_LOG(...) \
