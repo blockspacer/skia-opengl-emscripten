@@ -37,3 +37,9 @@
 [submodule "src/net/third_party/quiche/src"]
 	path = src/net/third_party/quiche/src
 	url = https://quiche.googlesource.com/quiche.git
+[submodule "src/chromium/third_party/libjpeg_turbo"]
+	path = src/chromium/third_party/libjpeg_turbo
+	url = https://chromium.googlesource.com/chromium/deps/libjpeg_turbo.git
+[submodule "src/chromium/third_party/fontconfig/src"]
+	path = src/chromium/third_party/fontconfig/src
+	url = https://chromium.googlesource.com/external/fontconfig.git
