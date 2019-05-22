@@ -352,6 +352,7 @@ export SDL2NETDIR=/usr/local/include
 > https://skia.googlesource.com/skia.git
 ```
 ## clang
+```
 wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key --no-check-certificate | sudo apt-key add -
 sudo apt-add-repository "deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial-5.0 main"
 sudo apt-add-repository "deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial-6.0 main"
@@ -397,6 +398,9 @@ tools/install_dependencies.sh
 # see https://github.com/google/skia/blob/master/src/sksl/README#L77
 bin/fetch-clang-format
 ```
+> pip
+```
+sudo -E pip2 install Jinja2 --index-url=https://pypi.python.org/simple/ --trusted-host pypi.org --trusted-host pypi.python.org
 ```
 > libpng12-0
 ```
