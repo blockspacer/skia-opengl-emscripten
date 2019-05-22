@@ -89,6 +89,7 @@ class GL_EXPORT GLImage : public base::RefCounted<GLImage> {
                                const gfx::Point& offset,
                                const gfx::Rect& rect) = 0;
 
+//#if !defined(NO_CHROMIUM_WINDOW)
   // Schedule image as an overlay plane to be shown at swap time for |widget|.
   virtual bool ScheduleOverlayPlane(
       gfx::AcceleratedWidget widget,
@@ -98,6 +99,7 @@ class GL_EXPORT GLImage : public base::RefCounted<GLImage> {
       const gfx::RectF& crop_rect,
       bool enable_blend,
       std::unique_ptr<gfx::GpuFence> gpu_fence) = 0;
+//#endif
 
   // Set the color space when image is used as an overlay.
   virtual void SetColorSpace(const gfx::ColorSpace& color_space);

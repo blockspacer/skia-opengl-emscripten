@@ -235,7 +235,7 @@ typedef intptr_t NativeViewId;
 #if defined(OS_WIN)
 typedef HWND AcceleratedWidget;
 constexpr AcceleratedWidget kNullAcceleratedWidget = NULL;
-#elif defined(USE_X11)
+#elif defined(USE_X11) || defined(__EMSCRIPTEN__)
 typedef unsigned long AcceleratedWidget;
 constexpr AcceleratedWidget kNullAcceleratedWidget = 0;
 #elif defined(OS_IOS)

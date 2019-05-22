@@ -4,8 +4,8 @@ set(WTF_LIBRARY_NAME wtf)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
-set(WTF_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/third_party/blink/renderer/platform/)
-set(WTF_DIR ${WTF_PARENT_DIR}wtf/)
+set(BLINK_WTF_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/third_party/blink/renderer/platform/)
+set(BLINK_WTF_DIR ${BLINK_WTF_PARENT_DIR}wtf/)
 
 set(BASE_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/)
 set(BASE_DIR ${BASE_PARENT_DIR}base/)
@@ -13,8 +13,11 @@ set(BASE_DIR ${BASE_PARENT_DIR}base/)
 set(UI_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/)
 set(UI_DIR ${UI_PARENT_DIR}ui/)
 
-set(G_GFX_PARENT_DIR ${UI_DIR}/)
-set(G_GFX_DIR ${G_GFX_PARENT_DIR}gfx/)
+set(UI_GFX_PARENT_DIR ${UI_DIR}/)
+set(UI_GFX_DIR ${UI_GFX_PARENT_DIR}gfx/)
+
+set(UI_GL_PARENT_DIR ${UI_DIR}/)
+set(UI_GL_DIR ${UI_GL_PARENT_DIR}gl/)
 
 set(SERVICES_METRICS_PUBLIC_CPP_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/services/metrics/public/)
 set(SERVICES_METRICS_PUBLIC_CPP_DIR ${SERVICES_METRICS_PUBLIC_CPP_PARENT_DIR}cpp/)
@@ -156,6 +159,13 @@ else()
   set(WTF_EMCC_DEFINITIONS "")
 endif ()
 
+# khronos
+set(khronos_LIB
+  khronos
+)
+# khronos
+include(khronos.cmake)
+
 if (EMSCRIPTEN)
   # libxml
   include(GLIBXML.cmake)
@@ -169,12 +179,6 @@ elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
     libsync
   )
   include(libsync.cmake)
-  # khronos
-  set(khronos_LIB
-    khronos
-  )
-  # khronos
-  include(khronos.cmake)
   # zlib
   include(GZLIB.cmake)
   # libxml
@@ -229,7 +233,7 @@ include(GCRYPTO.cmake)
 include(base.cmake)
 
 # WTF
-include(WTF.cmake)
+include(BLINK_WTF.cmake)
 
 # GNET: Net helper library.
 # Depends on : base, url, crypto, sql,
@@ -288,14 +292,34 @@ include(GFX_SWITCHES.cmake)
 # SKIA_EXT
 include(SKIA_EXT.cmake)
 
-# G_GFX
-include(G_GFX.cmake)
+# UI_GFX
+include(UI_GFX.cmake)
+
+# UI_GL
+#include(UI_GL.cmake)
+
+# "+ui/events",
+# "+ui/base/x",
+# "+ui/gfx",
+#+gpu/GLES2",
+#+gpu/command_buffer/client",
+#+gpu/command_buffer/common",
+#+gpu/command_buffer/service",
+#+gpu/ipc/common",
 
 # COMPONENTS_VIZ_COMMON
 #include(COMPONENTS_VIZ_COMMON.cmake)
 
+# COMPONENTS_VIZ_CLIENT
+#include(COMPONENTS_VIZ_CLIENT.cmake)
+
+# MOJO
+#include(MOJO.cmake)
+
 # GPU_GLES2
 #include(GPU_GLES2.cmake)
+
+# ui/gl
 
 # GPU_COMMAND_BUFFER: GPU command helper library.
 # see https://www.chromium.org/developers/design-documents/gpu-command-buffer
@@ -323,7 +347,10 @@ include(CC.cmake)
 # include(UI_GL.cmake)
 
 # BLINK_PLATFORM
-# include(BLINK_PLATFORM.cmake)
+#include(BLINK_PLATFORM.cmake)
+
+# BLINK_RENDERER_CORE
+#include(BLINK_RENDERER_CORE.cmake)
 
 #install(FILES ${WTF_HEADERS} DESTINATION include/wtf)
 #install(FILES ${WTF_TEXT_HEADERS} DESTINATION include/wtf/text)

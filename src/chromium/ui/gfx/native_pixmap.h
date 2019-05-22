@@ -11,9 +11,9 @@
 #include "ui/gfx/buffer_types.h"
 #include "ui/gfx/geometry/size.h"
 #include "ui/gfx/native_pixmap_handle.h"
-#if !defined(OS_EMSCRIPTEN)
+//#if !defined(OS_EMSCRIPTEN)
 #include "ui/gfx/native_widget_types.h"
-#endif // OS_EMSCRIPTEN
+//#endif // OS_EMSCRIPTEN
 #include "ui/gfx/overlay_transform.h"
 
 namespace gfx {

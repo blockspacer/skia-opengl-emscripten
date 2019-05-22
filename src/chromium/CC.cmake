@@ -375,15 +375,18 @@ target_link_libraries(CC PUBLIC
   GFX_RANGE
   SKIA
   base
+  khronos
 )
 
 set_property(TARGET CC PROPERTY CXX_STANDARD 17)
 
 target_include_directories(CC PRIVATE
+  #${CC_PARENT_DIR}/gpu # requires "GLES2/gl2chromium.h"
   #${CC_DIR}
   ${BASE_DIR}
   ${SERVICES_METRICS_PUBLIC_CPP_DIR}
   ${CC_PARENT_DIR} # requires "cc/resources/ui_resource_client.h"
+  #
 )
 
 target_compile_definitions(CC PRIVATE

@@ -43,10 +43,14 @@
 #include "components/viz/common/surfaces/frame_sink_id.h"
 #include "mojo/public/cpp/system/data_pipe.h"
 #include "mojo/public/cpp/system/message_pipe.h"
+#if !defined(OS_EMSCRIPTEN) && defined(ENABLE_NETWORK)
 #include "services/network/public/cpp/shared_url_loader_factory.h"
+#endif // OS_EMSCRIPTEN
 #include "third_party/blink/public/common/feature_policy/feature_policy.h"
 #include "third_party/blink/public/common/user_agent/user_agent_metadata.h"
+#if !defined(OS_EMSCRIPTEN) && defined(ENABLE_MOJOM)
 #include "third_party/blink/public/mojom/loader/code_cache.mojom-shared.h"
+#endif // OS_EMSCRIPTEN
 #include "third_party/blink/public/platform/blame_context.h"
 #include "third_party/blink/public/platform/code_cache_loader.h"
 #include "third_party/blink/public/platform/user_metrics_action.h"

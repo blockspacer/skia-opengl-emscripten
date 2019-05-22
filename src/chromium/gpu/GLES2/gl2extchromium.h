@@ -7,8 +7,11 @@
 #ifndef GPU_GLES2_GL2EXTCHROMIUM_H_
 #define GPU_GLES2_GL2EXTCHROMIUM_H_
 
-#include <GLES2/gl2.h>
-#include <GLES2/gl2ext.h>
+// TODO: EMSCRIPTEN
+//#include <GLES2/gl2.h>
+//#include <GLES2/gl2ext.h>
+#include "third_party/khronos/GLES2/gl2.h"
+#include "third_party/khronos/GLES2/gl2ext.h"
 
 #ifdef __cplusplus
 extern "C" {

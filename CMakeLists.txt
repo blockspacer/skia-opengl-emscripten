@@ -1170,7 +1170,7 @@ if(EMSCRIPTEN)
   #set(TEMPLATE_OPTION "--shell-file ${HTML_TEMPLATE}")
 
   add_dependencies(SKIA_EXT SKIA_build sksg skshaper SKIA)
-  add_dependencies(G_GFX SKIA_build sksg skshaper SKIA)
+  add_dependencies(UI_GFX SKIA_build sksg skshaper SKIA)
   add_dependencies(CC SKIA_build sksg skshaper SKIA)
   add_dependencies(ANIMATION_CC SKIA_build sksg skshaper SKIA)
   add_dependencies(PAINT_CC SKIA_build sksg skshaper SKIA)
@@ -1193,6 +1193,7 @@ if(EMSCRIPTEN)
   # Top is the executable, followed by directly used libraries.
   # see https://floooh.github.io/2016/01/12/cmake-dependency-juggling.html
   target_link_libraries(${PROJECT_NAME} PUBLIC
+    #BLINK_PLATFORM
     #
     SKIA
     #
@@ -1208,7 +1209,7 @@ if(EMSCRIPTEN)
     # tcmalloc only for posix/linux/e.t.c.
     #tcmalloc
     #
-    G_GFX
+    UI_GFX
     CC
     #ANIMATION_CC
     #PAINT_CC
@@ -1245,6 +1246,7 @@ else()
   # Top is the executable, followed by directly used libraries.
   # see https://floooh.github.io/2016/01/12/cmake-dependency-juggling.html
   target_link_libraries(${PROJECT_NAME} PUBLIC
+    #BLINK_PLATFORM
     ${WTF_LIBS}
     BORINGSSL
     GCRYPTO
@@ -1263,7 +1265,7 @@ else()
     GFX_SWITCHES
     GFX_RANGE
     SKIA_EXT
-    G_GFX
+    UI_GFX
     # tcmalloc only for posix/linux/e.t.c.
     tcmalloc
     # libevent only for posix/linux/e.t.c.
