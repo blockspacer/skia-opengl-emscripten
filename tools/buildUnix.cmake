@@ -67,9 +67,10 @@ if (BUILD_APP)
         ${CMAKE_COMMAND} "--build" "." "--clean-first" "--" ${MAKE_OPTS} ${EXTRA_MAKE_OPTS}
     WORKING_DIRECTORY ${BUILD_DIR}
     RESULT_VARIABLE retcode
+    ERROR_VARIABLE _ERROR_VARIABLE
   )
   if(NOT "${retcode}" STREQUAL "0")
-    message( FATAL_ERROR "Bad exit status")
+    message( FATAL_ERROR "Bad exit status ${retcode} ${_ERROR_VARIABLE}")
   endif()
 endif(BUILD_APP)
 
@@ -84,8 +85,9 @@ if(RUN_APP)
     COMMAND "${BUILD_DIR}/skemgl"
     WORKING_DIRECTORY ${BUILD_DIR}
     RESULT_VARIABLE retcode
+    ERROR_VARIABLE _ERROR_VARIABLE
   )
   if(NOT "${retcode}" STREQUAL "0")
-    message( FATAL_ERROR "Bad exit status")
+    message( FATAL_ERROR "Bad exit status ${retcode} ${_ERROR_VARIABLE}")
   endif()
 endif(RUN_APP)

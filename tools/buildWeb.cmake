@@ -46,9 +46,10 @@ if (BUILD_APP)
         ${EMSCRIPTEN_CMAKE} "cmake" ".." ${CMAKE_OPTS} ${EXTRA_EMCMAKE_OPTS}
     WORKING_DIRECTORY ${BUILD_DIR}
     RESULT_VARIABLE retcode
+    ERROR_VARIABLE _ERROR_VARIABLE
   )
   if(NOT "${retcode}" STREQUAL "0")
-    message( FATAL_ERROR "Bad exit status")
+    message( FATAL_ERROR "Bad exit status ${retcode} ${_ERROR_VARIABLE}")
   endif()
 
   # --- build ---
@@ -58,9 +59,10 @@ if (BUILD_APP)
       ${EMSCRIPTEN_MAKE} "make" ${MAKE_OPTS} ${EXTRA_EMMAKE_OPTS}
     WORKING_DIRECTORY ${BUILD_DIR}
     RESULT_VARIABLE retcode
+    ERROR_VARIABLE _ERROR_VARIABLE
   )
   if(NOT "${retcode}" STREQUAL "0")
-    message( FATAL_ERROR "Bad exit status")
+    message( FATAL_ERROR "Bad exit status ${retcode} ${_ERROR_VARIABLE}")
   endif()
 endif(BUILD_APP)
 
@@ -79,8 +81,9 @@ if(RUN_APP)
     COMMAND "emrun" "--port" "9090" "--serve_root" "/" "."
     WORKING_DIRECTORY ${BUILD_DIR}
     RESULT_VARIABLE retcode
+    ERROR_VARIABLE _ERROR_VARIABLE
   )
   if(NOT "${retcode}" STREQUAL "0")
-    message( FATAL_ERROR "Bad exit status")
+    message( FATAL_ERROR "Bad exit status ${retcode} ${_ERROR_VARIABLE}")
   endif()
 endif(RUN_APP)

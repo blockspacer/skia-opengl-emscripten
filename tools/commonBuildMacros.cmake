@@ -16,9 +16,10 @@ macro(build_dir_step ARG_BUILD_DIR ARG_WORKING_DIR)
     COMMAND ${CMAKE_COMMAND} "-E" "make_directory" "${ARG_BUILD_DIR}"
     WORKING_DIRECTORY ${ARG_WORKING_DIR}
     RESULT_VARIABLE retcode
+    ERROR_VARIABLE _ERROR_VARIABLE
   )
   if(NOT "${retcode}" STREQUAL "0")
-    message( FATAL_ERROR "Bad exit status")
+    message( FATAL_ERROR "Bad exit status ${retcode} ${_ERROR_VARIABLE}")
   endif()
   # checks result of make_directory
   if (NOT EXISTS ${ARG_BUILD_DIR})
