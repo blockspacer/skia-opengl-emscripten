@@ -65,3 +65,4 @@ thirdparty/glew/
 /src/chromium/base/generated_build_date.h
 /src/chromium/device/vr/buildflags/buildflags.h
 /src/chromium/gpu/vulkan/buildflags.h
+/src/chromium/ui/gl/buildflags.h

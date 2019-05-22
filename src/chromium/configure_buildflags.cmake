@@ -1,12 +1,38 @@
 find_package(Git)
 
+# https://cmake.org/cmake/help/latest/module/FindPythonInterp.html
+find_package( PythonInterp 2.7 REQUIRED )
+#find_package( PythonLibs 2.7 REQUIRED )
+message("Found python ${PYTHON_EXECUTABLE}")
+
 execute_process(
   COMMAND ${GIT_EXECUTABLE} log -n1 --format="%at"
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
   OUTPUT_VARIABLE _build_timestamp
-  ERROR_QUIET
+  #ERROR_QUIET
   OUTPUT_STRIP_TRAILING_WHITESPACE
+  ERROR_VARIABLE _ERROR_VARIABLE
+  RESULT_VARIABLE retcode
 )
+if(NOT "${retcode}" STREQUAL "0")
+  message( FATAL_ERROR "Bad exit status ${_ERROR_VARIABLE}")
+endif()
+
+execute_process(
+  COMMAND ${PYTHON_EXECUTABLE}
+    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/blink/renderer/build/scripts/make_runtime_features.py
+    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/blink/renderer/platform/runtime_enabled_features.json5
+    --output_dir ${CMAKE_CURRENT_SOURCE_DIR}/third_party/blink/renderer/platform
+  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/third_party/blink/renderer/platform
+  OUTPUT_VARIABLE _OUTPUT_VARIABLE
+  #ERROR_QUIET
+  OUTPUT_STRIP_TRAILING_WHITESPACE
+  RESULT_VARIABLE retcode
+  ERROR_VARIABLE _ERROR_VARIABLE
+)
+if(NOT "${retcode}" STREQUAL "0")
+  message( WARNING "Bad exit status ${retcode} ${_ERROR_VARIABLE}")
+endif()
 
 string(REPLACE "\"" "" _build_timestamp ${_build_timestamp})
 #message(FATAL_ERROR ${_build_timestamp})
@@ -52,6 +78,9 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/gnet_buildflags.h.inc
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/device_vr_buildflags.h.inc
   ${CMAKE_CURRENT_SOURCE_DIR}/device/vr/buildflags/buildflags.h COPYONLY)
+
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/ui_gl_buildflags.h.inc
+  ${CMAKE_CURRENT_SOURCE_DIR}/ui/gl/buildflags.h COPYONLY)
 
 ## uses BUILDFLAG_INTERNAL_IPC_MESSAGE_LOG_ENABLED from ipc_buildflags.h
 #configure_file(${CMAKE_CURRENT_SOURCE_DIR}/gipc_buildflags.h.inc
