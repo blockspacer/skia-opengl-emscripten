@@ -13,9 +13,14 @@
 #ifndef JPEGLIB_H
 #define JPEGLIB_H
 
+#ifdef __EMSCRIPTEN__
+  // see NEED_SHORT_EXTERNAL_NAMES
+#else
+#error "TODO: jpeglibmangler"
 /* Begin chromium edits */
 #include "jpeglibmangler.h"
 /* End chromium edits */
+#endif
 
 /*
  * First we include the configuration files that record how this
