@@ -1,15 +1,15 @@
-### --- BLINK_CORE ---###
+### --- BLINK_RENDERER_CORE ---###
 
 # TODO https://github.com/chromium/chromium/blob/master/third_party/blink/renderer/platform/BUILD.gn
-set(BLINK_CORE_SOURCES
-  ${BLINK_CORE_DIR}
+set(BLINK_RENDERER_CORE_SOURCES
+  ${BLINK_RENDERER_CORE_DIR}
 )
 
-add_library(BLINK_CORE STATIC
-  ${BLINK_CORE_SOURCES}
+add_library(BLINK_RENDERER_CORE STATIC
+  ${BLINK_RENDERER_CORE_SOURCES}
 )
 
-target_link_libraries(BLINK_CORE PUBLIC
+target_link_libraries(BLINK_RENDERER_CORE PUBLIC
   GURL
   GNET
   GCRYPTO
@@ -31,15 +31,15 @@ target_link_libraries(BLINK_CORE PUBLIC
   G_GPU
 )
 
-set_property(TARGET BLINK_CORE PROPERTY CXX_STANDARD 17)
+set_property(TARGET BLINK_RENDERER_CORE PROPERTY CXX_STANDARD 17)
 
-target_include_directories(BLINK_CORE PRIVATE
-  ${BLINK_CORE_DIR}
+target_include_directories(BLINK_RENDERER_CORE PRIVATE
+  ${BLINK_RENDERER_CORE_DIR}
   #${BASE_DIR}
 )
 
-target_compile_definitions(BLINK_CORE PRIVATE
-  BLINK_CORE_IMPLEMENTATION=1
+target_compile_definitions(BLINK_RENDERER_CORE PRIVATE
+  BLINK_RENDERER_CORE_IMPLEMENTATION=1
   # USING_V8_SHARED
   #
   # if (blink_animation_use_time_delta)

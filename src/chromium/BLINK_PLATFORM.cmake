@@ -36,179 +36,180 @@ set(BLINK_PLATFORM_SOURCES
   #${BLINK_PLATFORM_DIR}animation/compositor_transform_operations.h",
   ${BLINK_PLATFORM_DIR}animation/timing_function.cc
   #${BLINK_PLATFORM_DIR}animation/timing_function.h",
-  #${BLINK_PLATFORM_DIR}audio/audio_array.h",
-  ${BLINK_PLATFORM_DIR}audio/audio_bus.cc
-  #${BLINK_PLATFORM_DIR}audio/audio_bus.h",
-  ${BLINK_PLATFORM_DIR}audio/audio_channel.cc
-  #${BLINK_PLATFORM_DIR}audio/audio_channel.h",
-  ${BLINK_PLATFORM_DIR}audio/audio_delay_dsp_kernel.cc
-  #${BLINK_PLATFORM_DIR}audio/audio_delay_dsp_kernel.h",
-  ${BLINK_PLATFORM_DIR}audio/audio_destination.cc
-  #${BLINK_PLATFORM_DIR}audio/audio_destination.h",
-  #${BLINK_PLATFORM_DIR}audio/audio_destination_consumer.h",
-  ${BLINK_PLATFORM_DIR}audio/audio_dsp_kernel.cc
-  #${BLINK_PLATFORM_DIR}audio/audio_dsp_kernel.h",
-  ${BLINK_PLATFORM_DIR}audio/audio_dsp_kernel_processor.cc
-  #${BLINK_PLATFORM_DIR}audio/audio_dsp_kernel_processor.h",
-  #${BLINK_PLATFORM_DIR}audio/audio_file_reader.h",
-  #${BLINK_PLATFORM_DIR}audio/audio_io_callback.h",
-  ${BLINK_PLATFORM_DIR}audio/audio_processor.cc
-  #${BLINK_PLATFORM_DIR}audio/audio_processor.h",
-  ${BLINK_PLATFORM_DIR}audio/audio_resampler.cc
-  #${BLINK_PLATFORM_DIR}audio/audio_resampler.h",
-  ${BLINK_PLATFORM_DIR}audio/audio_resampler_kernel.cc
-  #${BLINK_PLATFORM_DIR}audio/audio_resampler_kernel.h",
-  #${BLINK_PLATFORM_DIR}audio/audio_source_provider.h",
-  #${BLINK_PLATFORM_DIR}audio/audio_source_provider_client.h",
-  ${BLINK_PLATFORM_DIR}audio/audio_utilities.cc
-  #${BLINK_PLATFORM_DIR}audio/audio_utilities.h",
-  ${BLINK_PLATFORM_DIR}audio/biquad.cc
-  #${BLINK_PLATFORM_DIR}audio/biquad.h",
-  ${BLINK_PLATFORM_DIR}audio/cone_effect.cc
-  #${BLINK_PLATFORM_DIR}audio/cone_effect.h",
-  #${BLINK_PLATFORM_DIR}audio/cpu/arm/vector_math_neon.h",
-  #${BLINK_PLATFORM_DIR}audio/cpu/mips/vector_math_msa.h",
-  ${BLINK_PLATFORM_DIR}audio/cpu/x86/vector_math_avx.cc
-  #${BLINK_PLATFORM_DIR}audio/cpu/x86/vector_math_avx.h",
-  #${BLINK_PLATFORM_DIR}audio/cpu/x86/vector_math_impl.h",
-  ${BLINK_PLATFORM_DIR}audio/cpu/x86/vector_math_sse.cc
-  #${BLINK_PLATFORM_DIR}audio/cpu/x86/vector_math_sse.h",
-  #${BLINK_PLATFORM_DIR}audio/cpu/x86/vector_math_x86.h",
-  #${BLINK_PLATFORM_DIR}audio/denormal_disabler.h",
-  ${BLINK_PLATFORM_DIR}audio/direct_convolver.cc
-  #${BLINK_PLATFORM_DIR}audio/direct_convolver.h",
-  ${BLINK_PLATFORM_DIR}audio/distance_effect.cc
-  #${BLINK_PLATFORM_DIR}audio/distance_effect.h",
-  ${BLINK_PLATFORM_DIR}audio/down_sampler.cc
-  #${BLINK_PLATFORM_DIR}audio/down_sampler.h",
-  ${BLINK_PLATFORM_DIR}audio/dynamics_compressor.cc
-  #${BLINK_PLATFORM_DIR}audio/dynamics_compressor.h",
-  ${BLINK_PLATFORM_DIR}audio/dynamics_compressor_kernel.cc
-  #${BLINK_PLATFORM_DIR}audio/dynamics_compressor_kernel.h",
-  ${BLINK_PLATFORM_DIR}audio/equal_power_panner.cc
-  #${BLINK_PLATFORM_DIR}audio/equal_power_panner.h",
-  ${BLINK_PLATFORM_DIR}audio/ffmpeg/fft_frame_ffmpeg.cc
-  ${BLINK_PLATFORM_DIR}audio/fft_convolver.cc
-  #${BLINK_PLATFORM_DIR}audio/fft_convolver.h",
-  ${BLINK_PLATFORM_DIR}audio/fft_frame.cc
-  #${BLINK_PLATFORM_DIR}audio/fft_frame.h",
-  ${BLINK_PLATFORM_DIR}audio/fft_frame_stub.cc
-  #${BLINK_PLATFORM_DIR}audio/hrtf_database.cc
-  #${BLINK_PLATFORM_DIR}audio/hrtf_database.h",
-  ${BLINK_PLATFORM_DIR}audio/hrtf_database_loader.cc
-  #${BLINK_PLATFORM_DIR}audio/hrtf_database_loader.h",
-  ${BLINK_PLATFORM_DIR}audio/hrtf_elevation.cc
-  #${BLINK_PLATFORM_DIR}audio/hrtf_elevation.h",
-  ${BLINK_PLATFORM_DIR}audio/hrtf_kernel.cc
-  #${BLINK_PLATFORM_DIR}audio/hrtf_kernel.h",
-  ${BLINK_PLATFORM_DIR}audio/hrtf_panner.cc
-  #${BLINK_PLATFORM_DIR}audio/hrtf_panner.h",
-  ${BLINK_PLATFORM_DIR}audio/iir_filter.cc
-  #${BLINK_PLATFORM_DIR}audio/iir_filter.h",
-  ${BLINK_PLATFORM_DIR}audio/mac/fft_frame_mac.cc
-  #${BLINK_PLATFORM_DIR}audio/mac/vector_math_mac.h",
-  ${BLINK_PLATFORM_DIR}audio/media_multi_channel_resampler.cc
-  #${BLINK_PLATFORM_DIR}audio/media_multi_channel_resampler.h",
-  ${BLINK_PLATFORM_DIR}audio/multi_channel_resampler.cc
-  #${BLINK_PLATFORM_DIR}audio/multi_channel_resampler.h",
-  ${BLINK_PLATFORM_DIR}audio/panner.cc
-  #${BLINK_PLATFORM_DIR}audio/panner.h",
-  ${BLINK_PLATFORM_DIR}audio/pffft/fft_frame_pffft.cc
-  ${BLINK_PLATFORM_DIR}audio/push_pull_fifo.cc
-  #${BLINK_PLATFORM_DIR}audio/push_pull_fifo.h",
-  ${BLINK_PLATFORM_DIR}audio/reverb.cc
-  #${BLINK_PLATFORM_DIR}audio/reverb.h",
-  ${BLINK_PLATFORM_DIR}audio/reverb_accumulation_buffer.cc
-  #${BLINK_PLATFORM_DIR}audio/reverb_accumulation_buffer.h",
-  ${BLINK_PLATFORM_DIR}audio/reverb_convolver.cc
-  #${BLINK_PLATFORM_DIR}audio/reverb_convolver.h",
-  ${BLINK_PLATFORM_DIR}audio/reverb_convolver_stage.cc
-  #${BLINK_PLATFORM_DIR}audio/reverb_convolver_stage.h",
-  ${BLINK_PLATFORM_DIR}audio/reverb_input_buffer.cc
-  #${BLINK_PLATFORM_DIR}audio/reverb_input_buffer.h",
-  ${BLINK_PLATFORM_DIR}audio/simple_fft_convolver.cc
-  #${BLINK_PLATFORM_DIR}audio/simple_fft_convolver.h",
-  ${BLINK_PLATFORM_DIR}audio/sinc_resampler.cc
-  #${BLINK_PLATFORM_DIR}audio/sinc_resampler.h",
-  ${BLINK_PLATFORM_DIR}audio/stereo_panner.cc
-  #${BLINK_PLATFORM_DIR}audio/stereo_panner.h",
-  ${BLINK_PLATFORM_DIR}audio/up_sampler.cc
-  #${BLINK_PLATFORM_DIR}audio/up_sampler.h",
-  ${BLINK_PLATFORM_DIR}audio/vector_math.cc
-  #${BLINK_PLATFORM_DIR}audio/vector_math.h",
-  #${BLINK_PLATFORM_DIR}audio/vector_math_scalar.h",
-  ${BLINK_PLATFORM_DIR}bindings/active_script_wrappable_base.cc
-  #${BLINK_PLATFORM_DIR}bindings/active_script_wrappable_base.h",
-  ${BLINK_PLATFORM_DIR}bindings/binding_security_for_platform.cc
-  #${BLINK_PLATFORM_DIR}bindings/binding_security_for_platform.h",
-  ${BLINK_PLATFORM_DIR}bindings/callback_function_base.cc
-  #${BLINK_PLATFORM_DIR}bindings/callback_function_base.h",
-  ${BLINK_PLATFORM_DIR}bindings/callback_interface_base.cc
-  #${BLINK_PLATFORM_DIR}bindings/callback_interface_base.h",
-  ${BLINK_PLATFORM_DIR}bindings/callback_method_retriever.cc
-  #${BLINK_PLATFORM_DIR}bindings/callback_method_retriever.h",
-  #${BLINK_PLATFORM_DIR}bindings/custom_wrappable.h",
-  #${BLINK_PLATFORM_DIR}bindings/dom_data_store.h",
-  ${BLINK_PLATFORM_DIR}bindings/dom_wrapper_world.cc
-  #${BLINK_PLATFORM_DIR}bindings/dom_wrapper_world.h",
-  #${BLINK_PLATFORM_DIR}bindings/exception_code.h",
-  ${BLINK_PLATFORM_DIR}bindings/exception_messages.cc
-  #${BLINK_PLATFORM_DIR}bindings/exception_messages.h",
-  ${BLINK_PLATFORM_DIR}bindings/exception_state.cc
-  #${BLINK_PLATFORM_DIR}bindings/exception_state.h",
-  ${BLINK_PLATFORM_DIR}bindings/microtask.cc
-  #${BLINK_PLATFORM_DIR}bindings/microtask.h",
-  #${BLINK_PLATFORM_DIR}bindings/name_client.h",
-  ${BLINK_PLATFORM_DIR}bindings/origin_trial_features.cc
-  #${BLINK_PLATFORM_DIR}bindings/origin_trial_features.h",
-  ${BLINK_PLATFORM_DIR}bindings/parkable_string.cc
-  #${BLINK_PLATFORM_DIR}bindings/parkable_string.h",
-  ${BLINK_PLATFORM_DIR}bindings/parkable_string_manager.cc
-  #${BLINK_PLATFORM_DIR}bindings/parkable_string_manager.h",
-  ${BLINK_PLATFORM_DIR}bindings/runtime_call_stats.cc
-  #${BLINK_PLATFORM_DIR}bindings/runtime_call_stats.h",
-  #${BLINK_PLATFORM_DIR}bindings/scoped_persistent.h",
-  ${BLINK_PLATFORM_DIR}bindings/script_forbidden_scope.cc
-  #${BLINK_PLATFORM_DIR}bindings/script_forbidden_scope.h",
-  #${BLINK_PLATFORM_DIR}bindings/script_promise_properties.h",
-  ${BLINK_PLATFORM_DIR}bindings/script_state.cc
-  #${BLINK_PLATFORM_DIR}bindings/script_state.h",
-  ${BLINK_PLATFORM_DIR}bindings/script_wrappable.cc
-  #${BLINK_PLATFORM_DIR}bindings/script_wrappable.h",
-  #${BLINK_PLATFORM_DIR}bindings/shared_persistent.h",
-  ${BLINK_PLATFORM_DIR}bindings/string_resource.cc
-  #${BLINK_PLATFORM_DIR}bindings/string_resource.h",
-  #${BLINK_PLATFORM_DIR}bindings/to_v8.h",
-  #${BLINK_PLATFORM_DIR}bindings/trace_wrapper_member.h",
-  #${BLINK_PLATFORM_DIR}bindings/trace_wrapper_v8_reference.h",
-  ${BLINK_PLATFORM_DIR}bindings/trace_wrapper_v8_string.cc
-  #${BLINK_PLATFORM_DIR}bindings/trace_wrapper_v8_string.h",
-  ${BLINK_PLATFORM_DIR}bindings/v0_custom_element_binding.cc
-  #${BLINK_PLATFORM_DIR}bindings/v0_custom_element_binding.h",
-  ${BLINK_PLATFORM_DIR}bindings/v8_binding.cc
-  #${BLINK_PLATFORM_DIR}bindings/v8_binding.h",
-  #${BLINK_PLATFORM_DIR}bindings/v8_binding_macros.h",
-  #${BLINK_PLATFORM_DIR}bindings/v8_cross_origin_setter_info.h",
-  ${BLINK_PLATFORM_DIR}bindings/v8_dom_activity_logger.cc
-  #${BLINK_PLATFORM_DIR}bindings/v8_dom_activity_logger.h",
-  ${BLINK_PLATFORM_DIR}bindings/v8_dom_wrapper.cc
-  #${BLINK_PLATFORM_DIR}bindings/v8_dom_wrapper.h",
-  #${BLINK_PLATFORM_DIR}bindings/v8_global_value_map.h",
-  ${BLINK_PLATFORM_DIR}bindings/v8_object_constructor.cc
-  #${BLINK_PLATFORM_DIR}bindings/v8_object_constructor.h",
-  ${BLINK_PLATFORM_DIR}bindings/v8_per_context_data.cc
-  #${BLINK_PLATFORM_DIR}bindings/v8_per_context_data.h",
-  ${BLINK_PLATFORM_DIR}bindings/v8_per_isolate_data.cc
-  #${BLINK_PLATFORM_DIR}bindings/v8_per_isolate_data.h",
-  ${BLINK_PLATFORM_DIR}bindings/v8_private_property.cc
-  #${BLINK_PLATFORM_DIR}bindings/v8_private_property.h",
-  ${BLINK_PLATFORM_DIR}bindings/v8_throw_exception.cc
-  #${BLINK_PLATFORM_DIR}bindings/v8_throw_exception.h",
-  ${BLINK_PLATFORM_DIR}bindings/v8_value_cache.cc
-  #${BLINK_PLATFORM_DIR}bindings/v8_value_cache.h",
-  ${BLINK_PLATFORM_DIR}bindings/v8_value_or_script_wrappable_adapter.cc
-  #${BLINK_PLATFORM_DIR}bindings/v8_value_or_script_wrappable_adapter.h",
-  ${BLINK_PLATFORM_DIR}bindings/wrapper_type_info.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}audio/audio_array.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}audio/audio_bus.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}audio/audio_bus.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}audio/audio_channel.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}audio/audio_channel.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}audio/audio_delay_dsp_kernel.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}audio/audio_delay_dsp_kernel.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}audio/audio_destination.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}audio/audio_destination.h",
+  ## TODO ## #${BLINK_PLATFORM_DIR}audio/audio_destination_consumer.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}audio/audio_dsp_kernel.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}audio/audio_dsp_kernel.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}audio/audio_dsp_kernel_processor.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}audio/audio_dsp_kernel_processor.h",
+  ## TODO ## #${BLINK_PLATFORM_DIR}audio/audio_file_reader.h",
+  ## TODO ## #${BLINK_PLATFORM_DIR}audio/audio_io_callback.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}audio/audio_processor.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}audio/audio_processor.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}audio/audio_resampler.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}audio/audio_resampler.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}audio/audio_resampler_kernel.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}audio/audio_resampler_kernel.h",
+  ## TODO ## #${BLINK_PLATFORM_DIR}audio/audio_source_provider.h",
+  ## TODO ## #${BLINK_PLATFORM_DIR}audio/audio_source_provider_client.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}audio/audio_utilities.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}audio/audio_utilities.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}audio/biquad.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}audio/biquad.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}audio/cone_effect.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}audio/cone_effect.h",
+  ## TODO ## #${BLINK_PLATFORM_DIR}audio/cpu/arm/vector_math_neon.h",
+  ## TODO ## #${BLINK_PLATFORM_DIR}audio/cpu/mips/vector_math_msa.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}audio/cpu/x86/vector_math_avx.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}audio/cpu/x86/vector_math_avx.h",
+  ## TODO ## #${BLINK_PLATFORM_DIR}audio/cpu/x86/vector_math_impl.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}audio/cpu/x86/vector_math_sse.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}audio/cpu/x86/vector_math_sse.h",
+  ## TODO ## #${BLINK_PLATFORM_DIR}audio/cpu/x86/vector_math_x86.h",
+  ## TODO ## #${BLINK_PLATFORM_DIR}audio/denormal_disabler.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}audio/direct_convolver.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}audio/direct_convolver.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}audio/distance_effect.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}audio/distance_effect.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}audio/down_sampler.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}audio/down_sampler.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}audio/dynamics_compressor.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}audio/dynamics_compressor.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}audio/dynamics_compressor_kernel.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}audio/dynamics_compressor_kernel.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}audio/equal_power_panner.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}audio/equal_power_panner.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}audio/ffmpeg/fft_frame_ffmpeg.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}audio/fft_convolver.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}audio/fft_convolver.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}audio/fft_frame.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}audio/fft_frame.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}audio/fft_frame_stub.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}audio/hrtf_database.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}audio/hrtf_database.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}audio/hrtf_database_loader.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}audio/hrtf_database_loader.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}audio/hrtf_elevation.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}audio/hrtf_elevation.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}audio/hrtf_kernel.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}audio/hrtf_kernel.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}audio/hrtf_panner.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}audio/hrtf_panner.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}audio/iir_filter.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}audio/iir_filter.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}audio/mac/fft_frame_mac.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}audio/mac/vector_math_mac.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}audio/media_multi_channel_resampler.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}audio/media_multi_channel_resampler.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}audio/multi_channel_resampler.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}audio/multi_channel_resampler.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}audio/panner.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}audio/panner.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}audio/pffft/fft_frame_pffft.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}audio/push_pull_fifo.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}audio/push_pull_fifo.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}audio/reverb.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}audio/reverb.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}audio/reverb_accumulation_buffer.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}audio/reverb_accumulation_buffer.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}audio/reverb_convolver.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}audio/reverb_convolver.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}audio/reverb_convolver_stage.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}audio/reverb_convolver_stage.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}audio/reverb_input_buffer.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}audio/reverb_input_buffer.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}audio/simple_fft_convolver.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}audio/simple_fft_convolver.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}audio/sinc_resampler.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}audio/sinc_resampler.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}audio/stereo_panner.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}audio/stereo_panner.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}audio/up_sampler.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}audio/up_sampler.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}audio/vector_math.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}audio/vector_math.h",
+  ## TODO ## #${BLINK_PLATFORM_DIR}audio/vector_math_scalar.h",
+  #
+  ## TODO ## ${BLINK_PLATFORM_DIR}bindings/active_script_wrappable_base.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}bindings/active_script_wrappable_base.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}bindings/binding_security_for_platform.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}bindings/binding_security_for_platform.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}bindings/callback_function_base.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}bindings/callback_function_base.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}bindings/callback_interface_base.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}bindings/callback_interface_base.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}bindings/callback_method_retriever.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}bindings/callback_method_retriever.h",
+  ## TODO ## #${BLINK_PLATFORM_DIR}bindings/custom_wrappable.h",
+  ## TODO ## #${BLINK_PLATFORM_DIR}bindings/dom_data_store.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}bindings/dom_wrapper_world.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}bindings/dom_wrapper_world.h",
+  ## TODO ## #${BLINK_PLATFORM_DIR}bindings/exception_code.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}bindings/exception_messages.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}bindings/exception_messages.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}bindings/exception_state.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}bindings/exception_state.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}bindings/microtask.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}bindings/microtask.h",
+  ## TODO ## #${BLINK_PLATFORM_DIR}bindings/name_client.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}bindings/origin_trial_features.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}bindings/origin_trial_features.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}bindings/parkable_string.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}bindings/parkable_string.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}bindings/parkable_string_manager.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}bindings/parkable_string_manager.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}bindings/runtime_call_stats.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}bindings/runtime_call_stats.h",
+  ## TODO ## #${BLINK_PLATFORM_DIR}bindings/scoped_persistent.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}bindings/script_forbidden_scope.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}bindings/script_forbidden_scope.h",
+  ## TODO ## #${BLINK_PLATFORM_DIR}bindings/script_promise_properties.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}bindings/script_state.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}bindings/script_state.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}bindings/script_wrappable.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}bindings/script_wrappable.h",
+  ## TODO ## #${BLINK_PLATFORM_DIR}bindings/shared_persistent.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}bindings/string_resource.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}bindings/string_resource.h",
+  ## TODO ## #${BLINK_PLATFORM_DIR}bindings/to_v8.h",
+  ## TODO ## #${BLINK_PLATFORM_DIR}bindings/trace_wrapper_member.h",
+  ## TODO ## #${BLINK_PLATFORM_DIR}bindings/trace_wrapper_v8_reference.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}bindings/trace_wrapper_v8_string.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}bindings/trace_wrapper_v8_string.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}bindings/v0_custom_element_binding.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}bindings/v0_custom_element_binding.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}bindings/v8_binding.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}bindings/v8_binding.h",
+  ## TODO ## #${BLINK_PLATFORM_DIR}bindings/v8_binding_macros.h",
+  ## TODO ## #${BLINK_PLATFORM_DIR}bindings/v8_cross_origin_setter_info.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}bindings/v8_dom_activity_logger.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}bindings/v8_dom_activity_logger.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}bindings/v8_dom_wrapper.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}bindings/v8_dom_wrapper.h",
+  ## TODO ## #${BLINK_PLATFORM_DIR}bindings/v8_global_value_map.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}bindings/v8_object_constructor.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}bindings/v8_object_constructor.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}bindings/v8_per_context_data.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}bindings/v8_per_context_data.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}bindings/v8_per_isolate_data.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}bindings/v8_per_isolate_data.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}bindings/v8_private_property.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}bindings/v8_private_property.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}bindings/v8_throw_exception.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}bindings/v8_throw_exception.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}bindings/v8_value_cache.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}bindings/v8_value_cache.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}bindings/v8_value_or_script_wrappable_adapter.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}bindings/v8_value_or_script_wrappable_adapter.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}bindings/wrapper_type_info.cc
   #${BLINK_PLATFORM_DIR}bindings/wrapper_type_info.h",
   #${BLINK_PLATFORM_DIR}content_decryption_module_result.h",
   #${BLINK_PLATFORM_DIR}cpu/mips/common_macros_msa.h",
@@ -224,275 +225,278 @@ set(BLINK_PLATFORM_SOURCES
   #${BLINK_PLATFORM_DIR}data_resource_helper.h",
   ${BLINK_PLATFORM_DIR}date_components.cc
   #${BLINK_PLATFORM_DIR}date_components.h",
-  ${BLINK_PLATFORM_DIR}exported/file_path_conversion.cc
-  ${BLINK_PLATFORM_DIR}exported/interface_registry.cc
-  ${BLINK_PLATFORM_DIR}exported/mediastream/media_stream_audio_processor_options.cc
-  ${BLINK_PLATFORM_DIR}exported/mediastream/media_stream_audio_source.cc
-  ${BLINK_PLATFORM_DIR}exported/mediastream/media_stream_audio_track.cc
-  ${BLINK_PLATFORM_DIR}exported/mediastream/web_platform_media_stream_source.cc
-  ${BLINK_PLATFORM_DIR}exported/mediastream/web_platform_media_stream_track.cc
-  ${BLINK_PLATFORM_DIR}exported/mediastream/webrtc_uma_histograms.cc
-  ${BLINK_PLATFORM_DIR}exported/notification_data_conversions.cc
-  ${BLINK_PLATFORM_DIR}exported/platform.cc
-  ${BLINK_PLATFORM_DIR}exported/service_registry.cc
-  ${BLINK_PLATFORM_DIR}exported/url_conversion.cc
-  ${BLINK_PLATFORM_DIR}exported/web_audio_bus.cc
-  ${BLINK_PLATFORM_DIR}exported/web_audio_device.cc
-  ${BLINK_PLATFORM_DIR}exported/web_blob_info.cc
-  ${BLINK_PLATFORM_DIR}exported/web_cache.cc
-  ${BLINK_PLATFORM_DIR}exported/web_canonical_cookie.cc
-  ${BLINK_PLATFORM_DIR}exported/web_coalesced_input_event.cc
-  ${BLINK_PLATFORM_DIR}exported/web_content_decryption_module.cc
-  ${BLINK_PLATFORM_DIR}exported/web_content_decryption_module_access.cc
-  ${BLINK_PLATFORM_DIR}exported/web_content_decryption_module_result.cc
-  ${BLINK_PLATFORM_DIR}exported/web_content_decryption_module_session.cc
-  ${BLINK_PLATFORM_DIR}exported/web_crypto_algorithm.cc
-  ${BLINK_PLATFORM_DIR}exported/web_crypto_key.cc
-  ${BLINK_PLATFORM_DIR}exported/web_crypto_key_algorithm.cc
-  ${BLINK_PLATFORM_DIR}exported/web_crypto_result.cc
-  ${BLINK_PLATFORM_DIR}exported/web_cursor_info.cc
-  ${BLINK_PLATFORM_DIR}exported/web_data.cc
-  ${BLINK_PLATFORM_DIR}exported/web_drag_data.cc
-  ${BLINK_PLATFORM_DIR}exported/web_encrypted_media_client.cc
-  ${BLINK_PLATFORM_DIR}exported/web_encrypted_media_key_information.cc
-  ${BLINK_PLATFORM_DIR}exported/web_encrypted_media_request.cc
-  ${BLINK_PLATFORM_DIR}exported/web_font.cc
-  ${BLINK_PLATFORM_DIR}exported/web_font_description.cc
-  ${BLINK_PLATFORM_DIR}exported/web_http_body.cc
-  ${BLINK_PLATFORM_DIR}exported/web_http_header_map.cc
-  ${BLINK_PLATFORM_DIR}exported/web_http_load_info.cc
-  ${BLINK_PLATFORM_DIR}exported/web_image.cc
-  ${BLINK_PLATFORM_DIR}exported/web_image_generator.cc
-  ${BLINK_PLATFORM_DIR}exported/web_input_event.cc
-  ${BLINK_PLATFORM_DIR}exported/web_media_constraints.cc
-  ${BLINK_PLATFORM_DIR}exported/web_media_player_client.cc
-  ${BLINK_PLATFORM_DIR}exported/web_media_player_encrypted_media_client.cc
-  ${BLINK_PLATFORM_DIR}exported/web_media_player_source.cc
-  ${BLINK_PLATFORM_DIR}exported/web_media_recorder_handler.cc
-  ${BLINK_PLATFORM_DIR}exported/web_media_stream.cc
-  ${BLINK_PLATFORM_DIR}exported/web_media_stream_audio_sink.cc
-  ${BLINK_PLATFORM_DIR}exported/web_media_stream_source.cc
-  ${BLINK_PLATFORM_DIR}exported/web_media_stream_track.cc
-  ${BLINK_PLATFORM_DIR}exported/web_memory_pressure_listener.cc
-  ${BLINK_PLATFORM_DIR}exported/web_mixed_content.cc
-  ${BLINK_PLATFORM_DIR}exported/web_network_state_notifier.cc
-  ${BLINK_PLATFORM_DIR}exported/web_prerender.cc
-  ${BLINK_PLATFORM_DIR}exported/web_prerendering_support.cc
-  ${BLINK_PLATFORM_DIR}exported/web_resource_timing_info.cc
-  ${BLINK_PLATFORM_DIR}exported/web_rtc_answer_options.cc
-  ${BLINK_PLATFORM_DIR}exported/web_rtc_ice_candidate.cc
-  ${BLINK_PLATFORM_DIR}exported/web_rtc_offer_options.cc
-  ${BLINK_PLATFORM_DIR}exported/web_rtc_peer_connection_handler_client.cc
-  ${BLINK_PLATFORM_DIR}exported/web_rtc_rtp_receiver.cc
-  ${BLINK_PLATFORM_DIR}exported/web_rtc_rtp_sender.cc
-  ${BLINK_PLATFORM_DIR}exported/web_rtc_rtp_source.cc
-  ${BLINK_PLATFORM_DIR}exported/web_rtc_rtp_transceiver.cc
-  ${BLINK_PLATFORM_DIR}exported/web_rtc_session_description.cc
-  ${BLINK_PLATFORM_DIR}exported/web_rtc_session_description_request.cc
-  ${BLINK_PLATFORM_DIR}exported/web_rtc_stats.cc
-  ${BLINK_PLATFORM_DIR}exported/web_rtc_stats_request.cc
-  ${BLINK_PLATFORM_DIR}exported/web_rtc_stats_response.cc
-  ${BLINK_PLATFORM_DIR}exported/web_rtc_void_request.cc
-  ${BLINK_PLATFORM_DIR}exported/web_runtime_features.cc
-  ${BLINK_PLATFORM_DIR}exported/web_security_origin.cc
-  ${BLINK_PLATFORM_DIR}exported/web_service_worker_request.cc
-  ${BLINK_PLATFORM_DIR}exported/web_service_worker_response.cc
-  ${BLINK_PLATFORM_DIR}exported/web_service_worker_stream_handle.cc
-  ${BLINK_PLATFORM_DIR}exported/web_speech_synthesis_utterance.cc
-  ${BLINK_PLATFORM_DIR}exported/web_speech_synthesis_voice.cc
-  ${BLINK_PLATFORM_DIR}exported/web_speech_synthesizer_client_impl.cc
-  #${BLINK_PLATFORM_DIR}exported/web_speech_synthesizer_client_impl.h",
-  ${BLINK_PLATFORM_DIR}exported/web_string.cc
-  ${BLINK_PLATFORM_DIR}exported/web_surface_layer_bridge.cc
-  ${BLINK_PLATFORM_DIR}exported/web_text_run.cc
-  ${BLINK_PLATFORM_DIR}exported/web_thread_safe_data.cc
-  ${BLINK_PLATFORM_DIR}exported/web_url.cc
-  ${BLINK_PLATFORM_DIR}exported/web_url_error.cc
-  ${BLINK_PLATFORM_DIR}exported/web_url_load_timing.cc
-  ${BLINK_PLATFORM_DIR}exported/web_url_loader_client.cc
-  ${BLINK_PLATFORM_DIR}exported/web_url_loader_test_delegate.cc
-  ${BLINK_PLATFORM_DIR}exported/web_url_request.cc
-  ${BLINK_PLATFORM_DIR}exported/web_url_response.cc
-  ${BLINK_PLATFORM_DIR}exported/web_video_frame_submitter.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/file_path_conversion.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/interface_registry.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/mediastream/media_stream_audio_processor_options.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/mediastream/media_stream_audio_source.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/mediastream/media_stream_audio_track.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/mediastream/web_platform_media_stream_source.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/mediastream/web_platform_media_stream_track.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/mediastream/webrtc_uma_histograms.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/notification_data_conversions.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/platform.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/service_registry.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/url_conversion.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/web_audio_bus.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/web_audio_device.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/web_blob_info.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/web_cache.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/web_canonical_cookie.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/web_coalesced_input_event.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/web_content_decryption_module.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/web_content_decryption_module_access.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/web_content_decryption_module_result.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/web_content_decryption_module_session.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/web_crypto_algorithm.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/web_crypto_key.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/web_crypto_key_algorithm.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/web_crypto_result.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/web_cursor_info.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/web_data.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/web_drag_data.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/web_encrypted_media_client.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/web_encrypted_media_key_information.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/web_encrypted_media_request.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/web_font.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/web_font_description.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/web_http_body.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/web_http_header_map.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/web_http_load_info.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/web_image.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/web_image_generator.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/web_input_event.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/web_media_constraints.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/web_media_player_client.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/web_media_player_encrypted_media_client.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/web_media_player_source.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/web_media_recorder_handler.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/web_media_stream.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/web_media_stream_audio_sink.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/web_media_stream_source.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/web_media_stream_track.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/web_memory_pressure_listener.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/web_mixed_content.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/web_network_state_notifier.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/web_prerender.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/web_prerendering_support.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/web_resource_timing_info.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/web_rtc_answer_options.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/web_rtc_ice_candidate.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/web_rtc_offer_options.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/web_rtc_peer_connection_handler_client.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/web_rtc_rtp_receiver.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/web_rtc_rtp_sender.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/web_rtc_rtp_source.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/web_rtc_rtp_transceiver.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/web_rtc_session_description.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/web_rtc_session_description_request.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/web_rtc_stats.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/web_rtc_stats_request.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/web_rtc_stats_response.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/web_rtc_void_request.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/web_runtime_features.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/web_security_origin.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/web_service_worker_request.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/web_service_worker_response.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/web_service_worker_stream_handle.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/web_speech_synthesis_utterance.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/web_speech_synthesis_voice.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/web_speech_synthesizer_client_impl.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}exported/web_speech_synthesizer_client_impl.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/web_string.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/web_surface_layer_bridge.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/web_text_run.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/web_thread_safe_data.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/web_url.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/web_url_error.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/web_url_load_timing.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/web_url_loader_client.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/web_url_loader_test_delegate.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/web_url_request.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/web_url_response.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}exported/web_video_frame_submitter.cc
   #${BLINK_PLATFORM_DIR}exported/wrapped_resource_request.h",
   #${BLINK_PLATFORM_DIR}exported/wrapped_resource_response.h",
-  ${BLINK_PLATFORM_DIR}file_metadata.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}file_metadata.cc
   #${BLINK_PLATFORM_DIR}file_metadata.h",
   #${BLINK_PLATFORM_DIR}fonts/alternate_font_family.h",
-  ${BLINK_PLATFORM_DIR}fonts/android/font_cache_android.cc
-  ${BLINK_PLATFORM_DIR}fonts/android/font_unique_name_lookup_android.cc
-  #${BLINK_PLATFORM_DIR}fonts/android/font_unique_name_lookup_android.h",
-  ${BLINK_PLATFORM_DIR}fonts/bitmap_glyphs_block_list.cc
-  #${BLINK_PLATFORM_DIR}fonts/bitmap_glyphs_block_list.h",
-  #${BLINK_PLATFORM_DIR}fonts/canvas_rotation_in_vertical.h",
-  #${BLINK_PLATFORM_DIR}fonts/character_range.h",
-  #${BLINK_PLATFORM_DIR}fonts/custom_font_data.h",
-  #${BLINK_PLATFORM_DIR}fonts/fallback_list_composite_key.h",
-  ${BLINK_PLATFORM_DIR}fonts/font.cc
-  #${BLINK_PLATFORM_DIR}fonts/font.h",
-  #${BLINK_PLATFORM_DIR}fonts/font_baseline.h",
-  ${BLINK_PLATFORM_DIR}fonts/font_cache.cc
-  #${BLINK_PLATFORM_DIR}fonts/font_cache.h",
-  #${BLINK_PLATFORM_DIR}fonts/font_cache_client.h",
-  #${BLINK_PLATFORM_DIR}fonts/font_cache_key.h",
-  ${BLINK_PLATFORM_DIR}fonts/font_cache_memory_dump_provider.cc
-  #${BLINK_PLATFORM_DIR}fonts/font_cache_memory_dump_provider.h",
-  ${BLINK_PLATFORM_DIR}fonts/font_custom_platform_data.cc
-  #${BLINK_PLATFORM_DIR}fonts/font_custom_platform_data.h",
-  ${BLINK_PLATFORM_DIR}fonts/font_data.cc
-  #${BLINK_PLATFORM_DIR}fonts/font_data.h",
-  ${BLINK_PLATFORM_DIR}fonts/font_data_cache.cc
-  #${BLINK_PLATFORM_DIR}fonts/font_data_cache.h",
-  ${BLINK_PLATFORM_DIR}fonts/font_data_for_range_set.cc
-  #${BLINK_PLATFORM_DIR}fonts/font_data_for_range_set.h",
-  ${BLINK_PLATFORM_DIR}fonts/font_description.cc
-  #${BLINK_PLATFORM_DIR}fonts/font_description.h",
-  #${BLINK_PLATFORM_DIR}fonts/font_face_creation_params.h",
-  ${BLINK_PLATFORM_DIR}fonts/font_fallback_iterator.cc
-  #${BLINK_PLATFORM_DIR}fonts/font_fallback_iterator.h",
-  ${BLINK_PLATFORM_DIR}fonts/font_fallback_list.cc
-  #${BLINK_PLATFORM_DIR}fonts/font_fallback_list.h",
-  ${BLINK_PLATFORM_DIR}fonts/font_fallback_priority.cc
-  #${BLINK_PLATFORM_DIR}fonts/font_fallback_priority.h",
-  ${BLINK_PLATFORM_DIR}fonts/font_family.cc
-  #${BLINK_PLATFORM_DIR}fonts/font_family.h",
-  ${BLINK_PLATFORM_DIR}fonts/font_global_context.cc
-  #${BLINK_PLATFORM_DIR}fonts/font_global_context.h",
-  ${BLINK_PLATFORM_DIR}fonts/font_metrics.cc
-  #${BLINK_PLATFORM_DIR}fonts/font_metrics.h",
-  ${BLINK_PLATFORM_DIR}fonts/font_orientation.cc
-  #${BLINK_PLATFORM_DIR}fonts/font_orientation.h",
-  ${BLINK_PLATFORM_DIR}fonts/font_platform_data.cc
-  #${BLINK_PLATFORM_DIR}fonts/font_platform_data.h",
-  ${BLINK_PLATFORM_DIR}fonts/font_selection_algorithm.cc
-  #${BLINK_PLATFORM_DIR}fonts/font_selection_algorithm.h",
-  ${BLINK_PLATFORM_DIR}fonts/font_selection_types.cc
-  #${BLINK_PLATFORM_DIR}fonts/font_selection_types.h",
-  ${BLINK_PLATFORM_DIR}fonts/font_selector.cc
-  #${BLINK_PLATFORM_DIR}fonts/font_selector.h",
-  #${BLINK_PLATFORM_DIR}fonts/font_selector_client.h",
-  ${BLINK_PLATFORM_DIR}fonts/font_smoothing_mode.cc
-  #${BLINK_PLATFORM_DIR}fonts/font_smoothing_mode.h",
-  ${BLINK_PLATFORM_DIR}fonts/font_unique_name_lookup.cc
-  #${BLINK_PLATFORM_DIR}fonts/font_unique_name_lookup.h",
-  ${BLINK_PLATFORM_DIR}fonts/font_variant_east_asian.cc
-  #${BLINK_PLATFORM_DIR}fonts/font_variant_east_asian.h",
-  ${BLINK_PLATFORM_DIR}fonts/font_variant_numeric.cc
-  #${BLINK_PLATFORM_DIR}fonts/font_variant_numeric.h",
-  #${BLINK_PLATFORM_DIR}fonts/font_vertical_position_type.h",
-  ${BLINK_PLATFORM_DIR}fonts/font_width_variant.cc
-  #${BLINK_PLATFORM_DIR}fonts/font_width_variant.h",
-  ${BLINK_PLATFORM_DIR}fonts/generic_font_family_settings.cc
-  #${BLINK_PLATFORM_DIR}fonts/generic_font_family_settings.h",
-  #${BLINK_PLATFORM_DIR}fonts/glyph_metrics_map.h",
-  ${BLINK_PLATFORM_DIR}fonts/linux/font_cache_linux.cc
-  ${BLINK_PLATFORM_DIR}fonts/linux/font_unique_name_lookup_linux.cc
-  #${BLINK_PLATFORM_DIR}fonts/linux/font_unique_name_lookup_linux.h",
-  ${BLINK_PLATFORM_DIR}fonts/mac/core_text_font_format_support.cc
-  #${BLINK_PLATFORM_DIR}fonts/mac/core_text_font_format_support.h",
-  # TODO #${BLINK_PLATFORM_DIR}fonts/mac/font_cache_mac.mm",
-  #${BLINK_PLATFORM_DIR}fonts/mac/font_matcher_mac.h",
-  # TODO # ${BLINK_PLATFORM_DIR}fonts/mac/font_matcher_mac.mm",
-  #${BLINK_PLATFORM_DIR}fonts/mac/font_platform_data_mac.h",
-  # TODO #${BLINK_PLATFORM_DIR}fonts/mac/font_platform_data_mac.mm",
-  #${BLINK_PLATFORM_DIR}fonts/ng_text_fragment_paint_info.h",
-  ${BLINK_PLATFORM_DIR}fonts/opentype/font_format_check.cc
-  #${BLINK_PLATFORM_DIR}fonts/opentype/font_format_check.h",
-  ${BLINK_PLATFORM_DIR}fonts/opentype/font_settings.cc
-  #${BLINK_PLATFORM_DIR}fonts/opentype/font_settings.h",
-  ${BLINK_PLATFORM_DIR}fonts/opentype/open_type_caps_support.cc
-  #${BLINK_PLATFORM_DIR}fonts/opentype/open_type_caps_support.h",
-  ${BLINK_PLATFORM_DIR}fonts/opentype/open_type_caps_support_mpl.cc
-  #${BLINK_PLATFORM_DIR}fonts/opentype/open_type_types.h",
-  ${BLINK_PLATFORM_DIR}fonts/opentype/open_type_vertical_data.cc
-  #${BLINK_PLATFORM_DIR}fonts/opentype/open_type_vertical_data.h",
-  ${BLINK_PLATFORM_DIR}fonts/orientation_iterator.cc
-  #${BLINK_PLATFORM_DIR}fonts/orientation_iterator.h",
-  ${BLINK_PLATFORM_DIR}fonts/script_run_iterator.cc
-  #${BLINK_PLATFORM_DIR}fonts/script_run_iterator.h",
-  ${BLINK_PLATFORM_DIR}fonts/segmented_font_data.cc
-  #${BLINK_PLATFORM_DIR}fonts/segmented_font_data.h",
-  ${BLINK_PLATFORM_DIR}fonts/shaping/caching_word_shape_iterator.cc
-  #${BLINK_PLATFORM_DIR}fonts/shaping/caching_word_shape_iterator.h",
-  ${BLINK_PLATFORM_DIR}fonts/shaping/caching_word_shaper.cc
-  #${BLINK_PLATFORM_DIR}fonts/shaping/caching_word_shaper.h",
-  ${BLINK_PLATFORM_DIR}fonts/shaping/case_mapping_harfbuzz_buffer_filler.cc
-  #${BLINK_PLATFORM_DIR}fonts/shaping/case_mapping_harfbuzz_buffer_filler.h",
-  #${BLINK_PLATFORM_DIR}fonts/shaping/glyph_bounds_accumulator.h",
-  ${BLINK_PLATFORM_DIR}fonts/shaping/harfbuzz_face.cc
-  #${BLINK_PLATFORM_DIR}fonts/shaping/harfbuzz_face.h",
-  ${BLINK_PLATFORM_DIR}fonts/shaping/harfbuzz_font_cache.cc
-  #${BLINK_PLATFORM_DIR}fonts/shaping/harfbuzz_font_cache.h",
-  #${BLINK_PLATFORM_DIR}fonts/shaping/harfbuzz_font_data.h",
-  ${BLINK_PLATFORM_DIR}fonts/shaping/harfbuzz_shaper.cc
-  #${BLINK_PLATFORM_DIR}fonts/shaping/harfbuzz_shaper.h",
-  ${BLINK_PLATFORM_DIR}fonts/shaping/run_segmenter.cc
-  #${BLINK_PLATFORM_DIR}fonts/shaping/run_segmenter.h",
-  ${BLINK_PLATFORM_DIR}fonts/shaping/shape_cache.cc
-  #${BLINK_PLATFORM_DIR}fonts/shaping/shape_cache.h",
-  ${BLINK_PLATFORM_DIR}fonts/shaping/shape_result.cc
-  #${BLINK_PLATFORM_DIR}fonts/shaping/shape_result.h",
-  ${BLINK_PLATFORM_DIR}fonts/shaping/shape_result_bloberizer.cc
-  #${BLINK_PLATFORM_DIR}fonts/shaping/shape_result_bloberizer.h",
-  ${BLINK_PLATFORM_DIR}fonts/shaping/shape_result_buffer.cc
-  #${BLINK_PLATFORM_DIR}fonts/shaping/shape_result_buffer.h",
-  #${BLINK_PLATFORM_DIR}fonts/shaping/shape_result_inline_headers.h",
-  ${BLINK_PLATFORM_DIR}fonts/shaping/shape_result_spacing.cc
-  #${BLINK_PLATFORM_DIR}fonts/shaping/shape_result_spacing.h",
-  ${BLINK_PLATFORM_DIR}fonts/shaping/shape_result_test_info.cc
-  #${BLINK_PLATFORM_DIR}fonts/shaping/shape_result_test_info.h",
-  ${BLINK_PLATFORM_DIR}fonts/shaping/shape_result_view.cc
-  #${BLINK_PLATFORM_DIR}fonts/shaping/shape_result_view.h",
-  ${BLINK_PLATFORM_DIR}fonts/shaping/shaping_line_breaker.cc
-  #${BLINK_PLATFORM_DIR}fonts/shaping/shaping_line_breaker.h",
-  ${BLINK_PLATFORM_DIR}fonts/simple_font_data.cc
-  #${BLINK_PLATFORM_DIR}fonts/simple_font_data.h",
-  ${BLINK_PLATFORM_DIR}fonts/skia/font_cache_skia.cc
-  ${BLINK_PLATFORM_DIR}fonts/skia/skia_text_metrics.cc
-  #${BLINK_PLATFORM_DIR}fonts/skia/skia_text_metrics.h",
-  ${BLINK_PLATFORM_DIR}fonts/skia/sktypeface_factory.cc
-  #${BLINK_PLATFORM_DIR}fonts/skia/sktypeface_factory.h",
-  ${BLINK_PLATFORM_DIR}fonts/small_caps_iterator.cc
-  #${BLINK_PLATFORM_DIR}fonts/small_caps_iterator.h",
-  ${BLINK_PLATFORM_DIR}fonts/string_truncator.cc
-  #${BLINK_PLATFORM_DIR}fonts/string_truncator.h",
-  ${BLINK_PLATFORM_DIR}fonts/symbols_iterator.cc
-  #${BLINK_PLATFORM_DIR}fonts/symbols_iterator.h",
-  ${BLINK_PLATFORM_DIR}fonts/text_rendering_mode.cc
-  #${BLINK_PLATFORM_DIR}fonts/text_rendering_mode.h",
-  #${BLINK_PLATFORM_DIR}fonts/text_run_paint_info.h",
-  ${BLINK_PLATFORM_DIR}fonts/typesetting_features.cc
-  #${BLINK_PLATFORM_DIR}fonts/typesetting_features.h",
-  ${BLINK_PLATFORM_DIR}fonts/unicode_range_set.cc
-  #${BLINK_PLATFORM_DIR}fonts/unicode_range_set.h",
-  ${BLINK_PLATFORM_DIR}fonts/utf16_ragel_iterator.cc
-  #${BLINK_PLATFORM_DIR}fonts/utf16_ragel_iterator.h",
-  ${BLINK_PLATFORM_DIR}fonts/utf16_text_iterator.cc
-  #${BLINK_PLATFORM_DIR}fonts/utf16_text_iterator.h",
-  ${BLINK_PLATFORM_DIR}fonts/vdmx_parser.cc
-  #${BLINK_PLATFORM_DIR}fonts/vdmx_parser.h",
-  ${BLINK_PLATFORM_DIR}fonts/web_font_decoder.cc
-  #${BLINK_PLATFORM_DIR}fonts/web_font_decoder.h",
-  ${BLINK_PLATFORM_DIR}fonts/web_font_render_style.cc
-  ${BLINK_PLATFORM_DIR}fonts/web_font_typeface_factory.cc
-  #${BLINK_PLATFORM_DIR}fonts/web_font_typeface_factory.h",
-  ${BLINK_PLATFORM_DIR}fonts/win/dwrite_font_format_support.cc
-  #${BLINK_PLATFORM_DIR}fonts/win/dwrite_font_format_support.h",
-  ${BLINK_PLATFORM_DIR}fonts/win/font_cache_skia_win.cc
-  ${BLINK_PLATFORM_DIR}fonts/win/font_fallback_win.cc
-  #${BLINK_PLATFORM_DIR}fonts/win/font_fallback_win.h",
-  ${BLINK_PLATFORM_DIR}fonts/win/font_platform_data_win.cc
-  ${BLINK_PLATFORM_DIR}fonts/win/font_unique_name_lookup_win.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}fonts/android/font_cache_android.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}fonts/android/font_unique_name_lookup_android.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}fonts/android/font_unique_name_lookup_android.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}fonts/bitmap_glyphs_block_list.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}fonts/bitmap_glyphs_block_list.h",
+  ## TODO ## #${BLINK_PLATFORM_DIR}fonts/canvas_rotation_in_vertical.h",
+  ## TODO ## #${BLINK_PLATFORM_DIR}fonts/character_range.h",
+  ## TODO ## #${BLINK_PLATFORM_DIR}fonts/custom_font_data.h",
+  ## TODO ## #${BLINK_PLATFORM_DIR}fonts/fallback_list_composite_key.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}fonts/font.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}fonts/font.h",
+  ## TODO ## #${BLINK_PLATFORM_DIR}fonts/font_baseline.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}fonts/font_cache.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}fonts/font_cache.h",
+  ## TODO ## #${BLINK_PLATFORM_DIR}fonts/font_cache_client.h",
+  ## TODO ## #${BLINK_PLATFORM_DIR}fonts/font_cache_key.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}fonts/font_cache_memory_dump_provider.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}fonts/font_cache_memory_dump_provider.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}fonts/font_custom_platform_data.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}fonts/font_custom_platform_data.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}fonts/font_data.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}fonts/font_data.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}fonts/font_data_cache.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}fonts/font_data_cache.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}fonts/font_data_for_range_set.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}fonts/font_data_for_range_set.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}fonts/font_description.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}fonts/font_description.h",
+  ## TODO ## #${BLINK_PLATFORM_DIR}fonts/font_face_creation_params.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}fonts/font_fallback_iterator.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}fonts/font_fallback_iterator.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}fonts/font_fallback_list.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}fonts/font_fallback_list.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}fonts/font_fallback_priority.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}fonts/font_fallback_priority.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}fonts/font_family.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}fonts/font_family.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}fonts/font_global_context.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}fonts/font_global_context.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}fonts/font_metrics.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}fonts/font_metrics.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}fonts/font_orientation.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}fonts/font_orientation.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}fonts/font_platform_data.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}fonts/font_platform_data.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}fonts/font_selection_algorithm.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}fonts/font_selection_algorithm.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}fonts/font_selection_types.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}fonts/font_selection_types.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}fonts/font_selector.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}fonts/font_selector.h",
+  ## TODO ## #${BLINK_PLATFORM_DIR}fonts/font_selector_client.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}fonts/font_smoothing_mode.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}fonts/font_smoothing_mode.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}fonts/font_unique_name_lookup.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}fonts/font_unique_name_lookup.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}fonts/font_variant_east_asian.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}fonts/font_variant_east_asian.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}fonts/font_variant_numeric.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}fonts/font_variant_numeric.h",
+  ## TODO ## #${BLINK_PLATFORM_DIR}fonts/font_vertical_position_type.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}fonts/font_width_variant.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}fonts/font_width_variant.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}fonts/generic_font_family_settings.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}fonts/generic_font_family_settings.h",
+  ## TODO ## #${BLINK_PLATFORM_DIR}fonts/glyph_metrics_map.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}fonts/linux/font_cache_linux.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}fonts/linux/font_unique_name_lookup_linux.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}fonts/linux/font_unique_name_lookup_linux.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}fonts/mac/core_text_font_format_support.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}fonts/mac/core_text_font_format_support.h",
+  ## TODO ## # TODO #${BLINK_PLATFORM_DIR}fonts/mac/font_cache_mac.mm",
+  ## TODO ## #${BLINK_PLATFORM_DIR}fonts/mac/font_matcher_mac.h",
+  ## TODO ## # TODO # ${BLINK_PLATFORM_DIR}fonts/mac/font_matcher_mac.mm",
+  ## TODO ## #${BLINK_PLATFORM_DIR}fonts/mac/font_platform_data_mac.h",
+  ## TODO ## # TODO #${BLINK_PLATFORM_DIR}fonts/mac/font_platform_data_mac.mm",
+  ## TODO ## #${BLINK_PLATFORM_DIR}fonts/ng_text_fragment_paint_info.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}fonts/opentype/font_format_check.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}fonts/opentype/font_format_check.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}fonts/opentype/font_settings.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}fonts/opentype/font_settings.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}fonts/opentype/open_type_caps_support.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}fonts/opentype/open_type_caps_support.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}fonts/opentype/open_type_caps_support_mpl.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}fonts/opentype/open_type_types.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}fonts/opentype/open_type_vertical_data.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}fonts/opentype/open_type_vertical_data.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}fonts/orientation_iterator.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}fonts/orientation_iterator.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}fonts/script_run_iterator.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}fonts/script_run_iterator.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}fonts/segmented_font_data.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}fonts/segmented_font_data.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}fonts/shaping/caching_word_shape_iterator.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}fonts/shaping/caching_word_shape_iterator.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}fonts/shaping/caching_word_shaper.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}fonts/shaping/caching_word_shaper.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}fonts/shaping/case_mapping_harfbuzz_buffer_filler.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}fonts/shaping/case_mapping_harfbuzz_buffer_filler.h",
+  ## TODO ## #${BLINK_PLATFORM_DIR}fonts/shaping/glyph_bounds_accumulator.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}fonts/shaping/harfbuzz_face.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}fonts/shaping/harfbuzz_face.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}fonts/shaping/harfbuzz_font_cache.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}fonts/shaping/harfbuzz_font_cache.h",
+  ## TODO ## #${BLINK_PLATFORM_DIR}fonts/shaping/harfbuzz_font_data.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}fonts/shaping/harfbuzz_shaper.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}fonts/shaping/harfbuzz_shaper.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}fonts/shaping/run_segmenter.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}fonts/shaping/run_segmenter.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}fonts/shaping/shape_cache.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}fonts/shaping/shape_cache.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}fonts/shaping/shape_result.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}fonts/shaping/shape_result.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}fonts/shaping/shape_result_bloberizer.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}fonts/shaping/shape_result_bloberizer.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}fonts/shaping/shape_result_buffer.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}fonts/shaping/shape_result_buffer.h",
+  ## TODO ## #${BLINK_PLATFORM_DIR}fonts/shaping/shape_result_inline_headers.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}fonts/shaping/shape_result_spacing.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}fonts/shaping/shape_result_spacing.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}fonts/shaping/shape_result_test_info.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}fonts/shaping/shape_result_test_info.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}fonts/shaping/shape_result_view.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}fonts/shaping/shape_result_view.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}fonts/shaping/shaping_line_breaker.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}fonts/shaping/shaping_line_breaker.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}fonts/simple_font_data.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}fonts/simple_font_data.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}fonts/skia/font_cache_skia.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}fonts/skia/skia_text_metrics.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}fonts/skia/skia_text_metrics.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}fonts/skia/sktypeface_factory.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}fonts/skia/sktypeface_factory.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}fonts/small_caps_iterator.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}fonts/small_caps_iterator.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}fonts/string_truncator.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}fonts/string_truncator.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}fonts/symbols_iterator.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}fonts/symbols_iterator.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}fonts/text_rendering_mode.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}fonts/text_rendering_mode.h",
+  ## TODO ## #${BLINK_PLATFORM_DIR}fonts/text_run_paint_info.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}fonts/typesetting_features.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}fonts/typesetting_features.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}fonts/unicode_range_set.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}fonts/unicode_range_set.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}fonts/utf16_ragel_iterator.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}fonts/utf16_ragel_iterator.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}fonts/utf16_text_iterator.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}fonts/utf16_text_iterator.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}fonts/vdmx_parser.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}fonts/vdmx_parser.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}fonts/web_font_decoder.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}fonts/web_font_decoder.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}fonts/web_font_render_style.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}fonts/web_font_typeface_factory.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}fonts/web_font_typeface_factory.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}fonts/win/dwrite_font_format_support.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}fonts/win/dwrite_font_format_support.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}fonts/win/font_cache_skia_win.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}fonts/win/font_fallback_win.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}fonts/win/font_fallback_win.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}fonts/win/font_platform_data_win.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}fonts/win/font_unique_name_lookup_win.cc
   #${BLINK_PLATFORM_DIR}fonts/win/font_unique_name_lookup_win.h",
   #${BLINK_PLATFORM_DIR}geometry/blend.h",
   #${BLINK_PLATFORM_DIR}geometry/calculation_value.h",
-  ${BLINK_PLATFORM_DIR}geometry/cg/float_point_cg.cc
-  ${BLINK_PLATFORM_DIR}geometry/cg/float_rect_cg.cc
-  ${BLINK_PLATFORM_DIR}geometry/cg/float_size_cg.cc
-  ${BLINK_PLATFORM_DIR}geometry/cg/int_point_cg.cc
-  ${BLINK_PLATFORM_DIR}geometry/cg/int_rect_cg.cc
-  ${BLINK_PLATFORM_DIR}geometry/cg/int_size_cg.cc
-  ${BLINK_PLATFORM_DIR}geometry/double_point.cc
+  #
+  # if (is_mac)
+  #
+  ## TODO ## ${BLINK_PLATFORM_DIR}geometry/cg/float_point_cg.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}geometry/cg/float_rect_cg.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}geometry/cg/float_size_cg.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}geometry/cg/int_point_cg.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}geometry/cg/int_rect_cg.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}geometry/cg/int_size_cg.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}geometry/double_point.cc
   #${BLINK_PLATFORM_DIR}geometry/double_point.h",
   ${BLINK_PLATFORM_DIR}geometry/double_rect.cc
   #${BLINK_PLATFORM_DIR}geometry/double_rect.h",
@@ -935,17 +939,17 @@ set(BLINK_PLATFORM_SOURCES
   # TODO #${BLINK_PLATFORM_DIR}mac/local_current_graphics_context.mm",
   #${BLINK_PLATFORM_DIR}mac/web_core_ns_cell_extras.h",
   # TODO #${BLINK_PLATFORM_DIR}mac/web_core_ns_cell_extras.mm",
-  ${BLINK_PLATFORM_DIR}mediastream/media_stream_center.cc
-  #${BLINK_PLATFORM_DIR}mediastream/media_stream_center.h",
-  ${BLINK_PLATFORM_DIR}mediastream/media_stream_component.cc
-  #${BLINK_PLATFORM_DIR}mediastream/media_stream_component.h",
-  ${BLINK_PLATFORM_DIR}mediastream/media_stream_descriptor.cc
-  #${BLINK_PLATFORM_DIR}mediastream/media_stream_descriptor.h",
-  ${BLINK_PLATFORM_DIR}mediastream/media_stream_source.cc
-  #${BLINK_PLATFORM_DIR}mediastream/media_stream_source.h",
-  ${BLINK_PLATFORM_DIR}mediastream/media_stream_web_audio_source.cc
-  #${BLINK_PLATFORM_DIR}mediastream/media_stream_web_audio_source.h",
-  ${BLINK_PLATFORM_DIR}memory_pressure_listener.cc
+  ## TODO ## ${BLINK_PLATFORM_DIR}mediastream/media_stream_center.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}mediastream/media_stream_center.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}mediastream/media_stream_component.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}mediastream/media_stream_component.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}mediastream/media_stream_descriptor.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}mediastream/media_stream_descriptor.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}mediastream/media_stream_source.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}mediastream/media_stream_source.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}mediastream/media_stream_web_audio_source.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}mediastream/media_stream_web_audio_source.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}memory_pressure_listener.cc
   #${BLINK_PLATFORM_DIR}memory_pressure_listener.h",
   ${BLINK_PLATFORM_DIR}mhtml/archive_resource.cc
   #${BLINK_PLATFORM_DIR}mhtml/archive_resource.h",
@@ -956,44 +960,44 @@ set(BLINK_PLATFORM_SOURCES
   #${BLINK_PLATFORM_DIR}mhtml/serialized_resource.h",
   ${BLINK_PLATFORM_DIR}mhtml/shared_buffer_chunk_reader.cc
   #${BLINK_PLATFORM_DIR}mhtml/shared_buffer_chunk_reader.h",
-  #${BLINK_PLATFORM_DIR}mojo/big_string_mojom_traits.h",
-  ${BLINK_PLATFORM_DIR}mojo/bluetooth_struct_traits.cc
-  #${BLINK_PLATFORM_DIR}mojo/bluetooth_struct_traits.h",
-  ${BLINK_PLATFORM_DIR}mojo/canonical_cookie_mojom_traits.cc
-  #${BLINK_PLATFORM_DIR}mojo/canonical_cookie_mojom_traits.h",
-  #${BLINK_PLATFORM_DIR}mojo/fetch_api_request_headers_mojom_traits.h",
-  ${BLINK_PLATFORM_DIR}mojo/interface_invalidator.cc
-  #${BLINK_PLATFORM_DIR}mojo/interface_invalidator.h",
-  #${BLINK_PLATFORM_DIR}mojo/mojo_helper.h",
-  #${BLINK_PLATFORM_DIR}mojo/revocable_binding.h",
-  #${BLINK_PLATFORM_DIR}mojo/revocable_interface_ptr.h",
-  #${BLINK_PLATFORM_DIR}mojo/revocable_strong_binding.h",
-  ${BLINK_PLATFORM_DIR}mojo/string16_mojom_traits.cc
-  #${BLINK_PLATFORM_DIR}mojo/string16_mojom_traits.h",
-  ${BLINK_PLATFORM_DIR}partition_alloc_memory_dump_provider.cc
-  #${BLINK_PLATFORM_DIR}partition_alloc_memory_dump_provider.h",
-  #${BLINK_PLATFORM_DIR}peerconnection/rtc_answer_options_platform.h",
-  #${BLINK_PLATFORM_DIR}peerconnection/rtc_offer_options_platform.h",
-  #${BLINK_PLATFORM_DIR}peerconnection/rtc_session_description_request.h",
-  #${BLINK_PLATFORM_DIR}peerconnection/rtc_stats_request.h",
-  #${BLINK_PLATFORM_DIR}peerconnection/rtc_stats_response_base.h",
-  #${BLINK_PLATFORM_DIR}peerconnection/rtc_void_request.h",
+  ## TODO ## #${BLINK_PLATFORM_DIR}mojo/big_string_mojom_traits.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}mojo/bluetooth_struct_traits.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}mojo/bluetooth_struct_traits.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}mojo/canonical_cookie_mojom_traits.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}mojo/canonical_cookie_mojom_traits.h",
+  ## TODO ## #${BLINK_PLATFORM_DIR}mojo/fetch_api_request_headers_mojom_traits.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}mojo/interface_invalidator.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}mojo/interface_invalidator.h",
+  ## TODO ## #${BLINK_PLATFORM_DIR}mojo/mojo_helper.h",
+  ## TODO ## #${BLINK_PLATFORM_DIR}mojo/revocable_binding.h",
+  ## TODO ## #${BLINK_PLATFORM_DIR}mojo/revocable_interface_ptr.h",
+  ## TODO ## #${BLINK_PLATFORM_DIR}mojo/revocable_strong_binding.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}mojo/string16_mojom_traits.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}mojo/string16_mojom_traits.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}partition_alloc_memory_dump_provider.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}partition_alloc_memory_dump_provider.h",
+  ## TODO ## #${BLINK_PLATFORM_DIR}peerconnection/rtc_answer_options_platform.h",
+  ## TODO ## #${BLINK_PLATFORM_DIR}peerconnection/rtc_offer_options_platform.h",
+  ## TODO ## #${BLINK_PLATFORM_DIR}peerconnection/rtc_session_description_request.h",
+  ## TODO ## #${BLINK_PLATFORM_DIR}peerconnection/rtc_stats_request.h",
+  ## TODO ## #${BLINK_PLATFORM_DIR}peerconnection/rtc_stats_response_base.h",
+  ## TODO ## #${BLINK_PLATFORM_DIR}peerconnection/rtc_void_request.h",
   ${BLINK_PLATFORM_DIR}prerender.cc
   #${BLINK_PLATFORM_DIR}prerender.h",
   #${BLINK_PLATFORM_DIR}prerender_client.h",
-  ${BLINK_PLATFORM_DIR}probe/platform_probes.cc
-  #${BLINK_PLATFORM_DIR}probe/platform_probes.h",
-  ${BLINK_PLATFORM_DIR}probe/platform_trace_events_agent.cc
-  #${BLINK_PLATFORM_DIR}probe/platform_trace_events_agent.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}probe/platform_probes.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}probe/platform_probes.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}probe/platform_trace_events_agent.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}probe/platform_trace_events_agent.h",
   #${BLINK_PLATFORM_DIR}resolution_units.h",
   ${BLINK_PLATFORM_DIR}shared_buffer.cc
   #${BLINK_PLATFORM_DIR}shared_buffer.h",
-  ${BLINK_PLATFORM_DIR}speech/platform_speech_synthesis_utterance.cc
-  #${BLINK_PLATFORM_DIR}speech/platform_speech_synthesis_utterance.h",
-  ${BLINK_PLATFORM_DIR}speech/platform_speech_synthesis_voice.cc
-  #${BLINK_PLATFORM_DIR}speech/platform_speech_synthesis_voice.h",
-  ${BLINK_PLATFORM_DIR}speech/platform_speech_synthesizer.cc
-  #${BLINK_PLATFORM_DIR}speech/platform_speech_synthesizer.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}speech/platform_speech_synthesis_utterance.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}speech/platform_speech_synthesis_utterance.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}speech/platform_speech_synthesis_voice.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}speech/platform_speech_synthesis_voice.h",
+  ## TODO ## ${BLINK_PLATFORM_DIR}speech/platform_speech_synthesizer.cc
+  ## TODO ## #${BLINK_PLATFORM_DIR}speech/platform_speech_synthesizer.h",
   ${BLINK_PLATFORM_DIR}supplementable.cc
   #${BLINK_PLATFORM_DIR}supplementable.h",
   #${BLINK_PLATFORM_DIR}text/bidi_character_run.h",
@@ -1162,6 +1166,7 @@ target_link_libraries(BLINK_PLATFORM PUBLIC
   # services/ws/public/cpp/gpu
   #${BASE_LIBRARIES}
   base
+  BLINK_WTF
   SKIA
   skcms
   ced
@@ -1176,6 +1181,7 @@ target_link_libraries(BLINK_PLATFORM PUBLIC
 set_property(TARGET BLINK_PLATFORM PROPERTY CXX_STANDARD 17)
 
 target_include_directories(BLINK_PLATFORM PRIVATE
+  ${CMAKE_CURRENT_SOURCE_DIR} # requires "third_party/blink/public/platform/web_common.h"
   ${BLINK_PLATFORM_DIR}
   #${BASE_DIR}
 )

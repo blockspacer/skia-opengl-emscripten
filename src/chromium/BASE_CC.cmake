@@ -50,7 +50,7 @@ target_link_libraries(BASE_CC PUBLIC
   base
   SKIA
   dynamic_annotations
-  G_GFX
+  UI_GFX
 )
 
 set_property(TARGET BASE_CC PROPERTY CXX_STANDARD 17)
