@@ -503,6 +503,13 @@ using cc::TransformKeyframe;
 static std::unique_ptr<gfx::ImageSkia> imageSkia;
 #endif // ENABLE_UI
 
+//#define ENABLE_BLINK_PLATFORM 1
+#ifdef ENABLE_BLINK_PLATFORM
+
+#include <third_party/blink/renderer/platform/runtime_enabled_features.h>
+
+#endif // ENABLE_BLINK_PLATFORM
+
 #ifdef ENABLE_HARFBUZZ
 #include <hb-ot.h>
 #endif // ENABLE_HARFBUZZ
@@ -1641,6 +1648,14 @@ int main(int argc, char** argv) {
     gfx::Rect gfxRect(100, 200);
     printf("gfxRect top_right = %s ...\n", gfxRect.top_right().ToString().c_str());
 #endif
+
+#ifdef ENABLE_BLINK_PLATFORM
+  printf("Init RuntimeEnabledFeatures ...\n");
+  // Disable all runtime enabled features
+  blink::RuntimeEnabledFeatures::SetStableFeaturesEnabled(false);
+  blink::RuntimeEnabledFeatures::SetExperimentalFeaturesEnabled(false);
+  blink::RuntimeEnabledFeatures::SetTestFeaturesEnabled(false);
+#endif // ENABLE_BLINK_PLATFORM
 
 #ifdef ENABLE_BASE
   printf("Init alloc ...\n");
