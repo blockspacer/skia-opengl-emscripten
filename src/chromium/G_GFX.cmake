@@ -69,7 +69,7 @@ if(ENABLE_HARFBUZZ)
   )
 else()
   # message( "HARFBUZZ disabled")
-  message(FATAL_ERROR "HARFBUZZ disabled (ENABLE_HARFBUZZ=${ENABLE_HARFBUZZ})")
+  message(WARNING "HARFBUZZ disabled (ENABLE_HARFBUZZ=${ENABLE_HARFBUZZ})")
 endif(ENABLE_HARFBUZZ)
 
 list(APPEND G_GFX_SOURCES
@@ -288,9 +288,11 @@ add_library(G_GFX STATIC
   ${G_GFX_SOURCES}
 )
 
-#if (is_linux) {
-#  deps += [ "//third_party/fontconfig" ]
-#}
+if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+  list(APPEND EXTRA_DEPS
+    fontconfig
+  )
+endif()
 
 target_link_libraries(G_GFX PUBLIC
   #${BASE_LIBRARIES}
@@ -310,6 +312,8 @@ target_link_libraries(G_GFX PUBLIC
   ${libsync_LIB}
   # khronos
   ${khronos_LIB}
+  #
+  ${EXTRA_DEPS}
 )
 
 set_property(TARGET G_GFX PROPERTY CXX_STANDARD 17)
