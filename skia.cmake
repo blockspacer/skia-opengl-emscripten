@@ -454,23 +454,64 @@ if (NOT EXT_SKIA_SHARED)
 
   # seem to be always required...
   ADD_SKIA_LIBRARY_DEPENDENCY("dl")
-  ADD_SKIA_LIBRARY_DEPENDENCY("pthread")
+
+  #ADD_SKIA_LIBRARY_DEPENDENCY("pthread")
+  find_package(Threads REQUIRED)
+  #target_link_libraries(SKIA Threads::Threads)
+  message("CMAKE_THREAD_LIBS_INIT=${CMAKE_THREAD_LIBS_INIT}")
+  set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};Threads::Threads" PARENT_SCOPE)
+
   if(ENABLE_HARFBUZZ)
     ADD_SKIA_LIBRARY_DEPENDENCY("harfbuzz")
   endif(ENABLE_HARFBUZZ)
 
   # when skia_enable_gpu:
+  #
+  # OpenGL::GL
+  #   Defined to the platform-specific OpenGL libraries if the system has OpenGL.
+  # OpenGL::OpenGL
+  #   Defined to libOpenGL if the system is GLVND-based.
+  # OpenGL::GLU
+  #   Defined if the system has GLU.
+  # OpenGL::GLX
+  #   Defined if the system has GLX.
+  # OpenGL::EGL
+  #   Defined if the system has EGL.
+  find_package(OpenGL REQUIRED) # see OPENGL_LIBRARIES
+  #
 if(SK_IS_EGL)
-  ADD_SKIA_LIBRARY_DEPENDENCY("EGL") # skia_use_egl
+  #ADD_SKIA_LIBRARY_DEPENDENCY("EGL") # skia_use_egl
+  set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};OpenGL::EGL" PARENT_SCOPE)
+  #see OPENGL_EGL_INCLUDE_DIRS
 else()
-  ADD_SKIA_LIBRARY_DEPENDENCY("GL") # !skia_use_egl # TODO: GLU?
+  #ADD_SKIA_LIBRARY_DEPENDENCY("GL") # !skia_use_egl # TODO: GLU?
+  set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};OpenGL::GL" PARENT_SCOPE)
+  #see OPENGL_INCLUDE_DIR
 endif() # SK_IS_EGL
+
   #ADD_SKIA_LIBRARY_DEPENDENCY("icuuc") # skia_use_system_icu
 
-  ADD_SKIA_LIBRARY_DEPENDENCY("expat") #skia_use_system_expat
+  #ADD_SKIA_LIBRARY_DEPENDENCY("expat") #skia_use_system_expat
+  find_package(EXPAT REQUIRED)
+  set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};EXPAT::EXPAT" PARENT_SCOPE)
+
   #ADD_SKIA_LIBRARY_DEPENDENCY("jpeg") # skia_use_system_libjpeg_turbo
-  ADD_SKIA_LIBRARY_DEPENDENCY("png") # skia_use_system_libpng
-  ADD_SKIA_LIBRARY_DEPENDENCY(${EXT_SKIA_USE_SYSTEM_ZLIB} "z") # skia_use_system_zlib
+
+  #ADD_SKIA_LIBRARY_DEPENDENCY(${EXT_SKIA_USE_SYSTEM_ZLIB} "z") # skia_use_system_zlib
+  find_package(ZLIB REQUIRED)
+  set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};ZLIB::ZLIB" PARENT_SCOPE)
+
+  #ADD_SKIA_LIBRARY_DEPENDENCY("png") # skia_use_system_libpng
+  find_package(PNG REQUIRED)
+  # none of the above will be defined unless ZLib can be found!
+  #PNG_INCLUDE_DIRS, where to find png.h, etc.
+  #PNG_LIBRARIES, the libraries to link against to use PNG.
+  #PNG_DEFINITIONS - You should add_definitons(${PNG_DEFINITIONS}) before compiling code that includes png library files.
+  #PNG_FOUND, If false, do not try to use PNG.
+  #PNG_VERSION_STRING - the version of the PNG library found (since CMake 2.8.8)
+  set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};PNG::PNG" PARENT_SCOPE)
+  list(APPEND SKIA_DEFINES ${PNG_DEFINITIONS})
+  #message("SKIA_DEFINES=${SKIA_DEFINES}")
 
   # webp integration doesn't expose the system option...
   #ADD_SKIA_LIBRARY_DEPENDENCY("webp") # SK_CONF_IS_OFFICIAL_BUILD && skia_use_libwebp
@@ -479,7 +520,7 @@ endif() # SK_IS_EGL
   ADD_SKIA_LIBRARY_DEPENDENCY(${EXT_SKIA_USE_FREETYPE2} "freetype") # skia_use_system_freetype2
 endif (NOT EXT_SKIA_SHARED)
 
-set(SKIA_HEADERS "${SKIA_HEADERS};${HARFBUZZ_INCLUDE_DIRS};${OPENGL_INCLUDE_DIR}")
+set(SKIA_HEADERS "${SKIA_HEADERS};${HARFBUZZ_INCLUDE_DIRS};${OPENGL_INCLUDE_DIR};${OPENGL_EGL_INCLUDE_DIRS}")
 set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${HARFBUZZ_LIBRARIES};${OPENGL_LIBRARIES}")
 
 endif() # EMSCRIPTEN
