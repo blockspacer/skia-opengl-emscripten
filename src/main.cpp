@@ -441,6 +441,40 @@
 //#include "ui/views/layout/grid_layout.h"
 //#include "ui/views/view.h"
 
+#include "cc/animation/transform_operations.h"
+
+#include <stddef.h>
+
+#include <limits>
+#include <vector>
+
+#include "ui/gfx/animation/tween.h"
+#include "ui/gfx/geometry/box_f.h"
+#include "ui/gfx/geometry/rect_conversions.h"
+#include "ui/gfx/geometry/vector3d_f.h"
+
+#include "base/memory/ptr_util.h"
+#include "cc/animation/animation_host.h"
+#include "cc/animation/animation_id_provider.h"
+#include "cc/animation/element_animations.h"
+#include "cc/animation/keyframe_effect.h"
+#include "cc/animation/keyframed_animation_curve.h"
+#include "cc/animation/scroll_offset_animation_curve.h"
+#include "cc/animation/single_keyframe_effect_animation.h"
+#include "cc/animation/timing_function.h"
+#include "cc/animation/transform_operations.h"
+#include "cc/base/time_util.h"
+#include "cc/layers/layer.h"
+//#include "cc/layers/layer_impl.h"
+
+using cc::KeyframeModel;
+using cc::AnimationCurve;
+using cc::FloatKeyframe;
+using cc::KeyframedFloatAnimationCurve;
+using cc::KeyframedTransformAnimationCurve;
+using cc::TimingFunction;
+using cc::TransformKeyframe;
+
 //
 //#include "ui/base/l10n/l10n_util.h"
 //#include "ui/base/layout.h"
@@ -1001,7 +1035,9 @@ public:
     sk_canvas->drawCircle(m_pos.x(), m_pos.y(), m_size, paint);
       //printf("onDraw() 2.1\n");*/
 
+    //printf("ENABLE_UI 1\n");
 #ifdef ENABLE_UI
+    //printf("ENABLE_UI 2\n");
     cc::SkiaPaintCanvas paint_canvas(sk_canvas);
     gfx::Canvas gfx_canvas(&paint_canvas, 1.0f);
     /*{
@@ -1022,6 +1058,20 @@ public:
           gfx::CreateGradientShader(0, 500, SK_ColorRED, SK_ColorGREEN));
       flags.setStyle(cc::PaintFlags::kFill_Style);
       gfx_canvas.DrawRoundRect(gfx::Rect(350, 350, 200, 400), 50, flags);
+    }
+    {
+      cc::TransformOperations operations_from;
+      operations_from.AppendIdentity();
+      cc::TransformOperations operations_to;
+      operations_to.AppendIdentity();
+      gfx::BoxF box(1.f, 2.f, 3.f);
+      gfx::BoxF bounds;
+      SkMScalar min_progress = 0.f;
+      SkMScalar max_progress = 1.f;
+      const bool bres = operations_to.BlendedBoundsForBox(
+        box, operations_from, min_progress, max_progress, &bounds);
+      // 1 box 0.000000,0.000000,0.000000 1.000000x2.000000x3.000000 bounds 0.000000,0.000000,0.000000 1.000000x2.000000x3.000000
+      //printf("%i box %s bounds %s\n", bres, box.ToString().c_str(), bounds.ToString().c_str());
     }
 #ifdef ENABLE_HARFBUZZ
     {

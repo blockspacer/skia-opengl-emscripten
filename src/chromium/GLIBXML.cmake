@@ -76,7 +76,7 @@ set(GLIBXML_SOURCES
   ${GLIBXML_DIR}src/include/libxml/xpath.h
   ${GLIBXML_DIR}src/include/libxml/xpathInternals.h
   ${GLIBXML_DIR}src/include/libxml/xpointer.h
-  ${GLIBXML_DIR}src/include/win32config.h
+  ## TODO ## ${GLIBXML_DIR}src/include/win32config.h
   ${GLIBXML_DIR}src/include/wsockcompat.h
   ${GLIBXML_DIR}
   #### ${GLIBXML_DIR}src/legacy.c
@@ -128,13 +128,19 @@ set(GLIBXML_SOURCES
   #### ${GLIBXML_DIR}src/xpointer.c
   #### ${GLIBXML_DIR}src/xzlib.c
   ${GLIBXML_DIR}src/xzlib.h
-  ${GLIBXML_DIR}win32/config.h
-  ${GLIBXML_DIR}win32/include/libxml/xmlversion.h
+  ## TODO ## ${GLIBXML_DIR}win32/config.h
+  ## TODO ## ${GLIBXML_DIR}win32/include/libxml/xmlversion.h
 )
 
 # if (current_cpu == "x86" || current_cpu == "x64")
 if(EMSCRIPTEN)
   # nothing to do
+  list(APPEND GLIBXML_OS_PRIVATE_DIRS
+    ${CMAKE_CURRENT_SOURCE_DIR}/web_ports/libxml_wrapper/emscripten # requires "config.h"
+  )
+  list(APPEND GLIBXML_OS_PUBLIC_DIRS
+    ${CMAKE_CURRENT_SOURCE_DIR}/web_ports/libxml_wrapper/emscripten/include # requires "libxml/xmlversion.h"
+  )
 elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
   if(CMAKE_CL_64)
     #
@@ -162,14 +168,20 @@ add_library(GLIBXML STATIC
   ${GLIBXML_SOURCES}
 )
 
-target_link_libraries(GLIBXML PUBLIC
-  #${BASE_LIBRARIES}
-  #base
-  #${ZLIB_LIBRARIES}
-  #zlib
-  GZLIB
-  icu # icuuc
-)
+if (EMSCRIPTEN)
+  target_link_libraries(GLIBXML PUBLIC
+    icu # icuuc
+  )
+else()
+  target_link_libraries(GLIBXML PUBLIC
+    #${BASE_LIBRARIES}
+    #base
+    #${ZLIB_LIBRARIES}
+    #zlib
+    GZLIB
+    icu # icuuc
+  )
+endif()
 
 set_property(TARGET GLIBXML PROPERTY CXX_STANDARD 17)
 

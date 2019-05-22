@@ -91,6 +91,13 @@ set(GPU_GLES2_DIR ${GPU_GLES2_PARENT_DIR}GLES2/)
 set(GPU_COMMAND_BUFFER_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/gpu/)
 set(GPU_COMMAND_BUFFER_DIR ${GPU_COMMAND_BUFFER_PARENT_DIR}command_buffer/)
 
+set(GLIBXML_PARENT_DIR
+  ${CMAKE_CURRENT_SOURCE_DIR}/third_party/
+)
+set(GLIBXML_DIR
+  ${GLIBXML_PARENT_DIR}libxml/
+)
+
 set(3RDPARTY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/)
 
 # Location of build tools dir (required for generating "generated_build_date.h "features.h" and "debugging_flags.h")
@@ -150,7 +157,12 @@ else()
 endif ()
 
 if (EMSCRIPTEN)
-  # nothing to do
+  # libxml
+  include(GLIBXML.cmake)
+  # libjpeg
+  include(GLIBJPEG.cmake)
+  # GLIBJPEG_TURBO
+  include(GLIBJPEG_TURBO.cmake)
 elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
   # libsync
   set(libsync_LIB
@@ -164,13 +176,17 @@ elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
   # khronos
   include(khronos.cmake)
   # zlib
-  include(zlib.cmake)
+  include(GZLIB.cmake)
   # libxml
-  include(libxml.cmake)
+  include(GLIBXML.cmake)
   # libjpeg
-  include(libjpeg.cmake)
+  include(GLIBJPEG.cmake)
+  # GLIBJPEG_TURBO
+  include(GLIBJPEG_TURBO.cmake)
   # libpng
-  include(libpng.cmake)
+  #include(GLIBPNG.cmake)
+  # fontconfig
+  include(fontconfig.cmake)
 else()
   message(FATAL_ERROR "platform not supported")
 endif()
@@ -282,6 +298,7 @@ include(G_GFX.cmake)
 #include(GPU_GLES2.cmake)
 
 # GPU_COMMAND_BUFFER: GPU command helper library.
+# see https://www.chromium.org/developers/design-documents/gpu-command-buffer
 # Depends on : base, (ui/gfx), (GPU_GLES2)
 include(GPU_COMMAND_BUFFER.cmake)
 
@@ -291,6 +308,19 @@ include(DEBUG_CC.cmake)
 include(PAINT_CC.cmake)
 include(ANIMATION_CC.cmake)
 include(CC.cmake)
+
+# UI_BASE
+# Depends on :
+# * base, url, net, skia, ui_gfx, ui_events,
+# * ui_strings, ui_resources
+# * x11, xcursor, xext, xfixes, xrender, xscrnsaver (x11)
+# include(UI_BASE.cmake)
+
+# UI_GL
+# Depends on :
+# * base, gpu_command_buffer, skia, ui_gfx, ui_base, glesv2
+# * ozone (wayland) / x11, xcomposite, xext (x11)
+# include(UI_GL.cmake)
 
 # BLINK_PLATFORM
 # include(BLINK_PLATFORM.cmake)

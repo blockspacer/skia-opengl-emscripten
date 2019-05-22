@@ -69,15 +69,21 @@ add_library(GLIBJPEG STATIC
 #  find_package(ZLIB)
 #endif()
 
-target_link_libraries(GLIBJPEG PUBLIC
-  #${BASE_LIBRARIES}
-  #base
-  #${ZLIB_LIBRARIES}
-  GZLIB
-  GLIBXML
-  #freetype
-  # todo sudo apt-get install libjpeg-dev
-)
+if (EMSCRIPTEN)
+  target_link_libraries(GLIBJPEG PUBLIC
+    GLIBXML
+  )
+else()
+  target_link_libraries(GLIBJPEG PUBLIC
+    #${BASE_LIBRARIES}
+    #base
+    #${ZLIB_LIBRARIES}
+    GZLIB
+    GLIBXML
+    #freetype
+    # todo sudo apt-get install libjpeg-dev
+  )
+endif()
 
 set_property(TARGET GLIBJPEG PROPERTY CXX_STANDARD 17)
 
@@ -89,6 +95,13 @@ target_include_directories(GLIBJPEG PRIVATE
   #${BASE_DIR}
 )
 
+if(EMSCRIPTEN)
+  list(APPEND EXTRA_DEFINES
+    NEED_SHORT_EXTERNAL_NAMES=1
+  )
+endif()
+
 target_compile_definitions(GLIBJPEG PRIVATE
   NO_GETENV=1  # getenv() is not thread-safe.
+  ${EXTRA_DEFINES}
 )

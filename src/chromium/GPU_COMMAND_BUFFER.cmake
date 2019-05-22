@@ -62,11 +62,116 @@ set(GPU_COMMAND_BUFFER_COMMON_SOURCES
   # component("gles2_utils")
   #
   # TODO # ${GPU_COMMAND_BUFFER_DIR}common/gles2_cmd_utils.cc
-    ${GPU_COMMAND_BUFFER_DIR}common/gles2_cmd_utils.cc
+  ${GPU_COMMAND_BUFFER_DIR}common/gles2_cmd_utils.cc
   #${GPU_COMMAND_BUFFER_DIR}common/gles2_cmd_utils.h",
   #${GPU_COMMAND_BUFFER_DIR}common/gles2_utils_export.h",
-
 )
+
+### GPU_COMMAND_BUFFER_ES2 ###
+
+#set(GPU_COMMAND_BUFFER_ES2_SOURCES
+#  ${GPU_COMMAND_BUFFER_ES2_DIR}gles2_conform_support/egl/config.cc
+#  ${GPU_COMMAND_BUFFER_ES2_DIR}gles2_conform_support/egl/config.h
+#  ${GPU_COMMAND_BUFFER_ES2_DIR}gles2_conform_support/egl/context.cc
+#  ${GPU_COMMAND_BUFFER_ES2_DIR}gles2_conform_support/egl/context.h
+#  ${GPU_COMMAND_BUFFER_ES2_DIR}gles2_conform_support/egl/display.cc
+#  ${GPU_COMMAND_BUFFER_ES2_DIR}gles2_conform_support/egl/display.h
+#  ${GPU_COMMAND_BUFFER_ES2_DIR}gles2_conform_support/egl/egl.cc
+#  ${GPU_COMMAND_BUFFER_ES2_DIR}gles2_conform_support/egl/surface.cc
+#  ${GPU_COMMAND_BUFFER_ES2_DIR}gles2_conform_support/egl/surface.h
+#  ${GPU_COMMAND_BUFFER_ES2_DIR}gles2_conform_support/egl/test_support.cc
+#  ${GPU_COMMAND_BUFFER_ES2_DIR}gles2_conform_support/egl/test_support.h
+#  ${GPU_COMMAND_BUFFER_ES2_DIR}gles2_conform_support/egl/thread_state.cc
+#  ${GPU_COMMAND_BUFFER_ES2_DIR}gles2_conform_support/egl/thread_state.h
+#)
+#  deps = [
+#    ":gpu",
+#    "//base",
+#    "//gpu/command_buffer/client:gles2_c_lib",
+#    "//gpu/command_buffer/client:gles2_cmd_helper",
+#    "//gpu/command_buffer/client:gles2_implementation",
+#    "//gpu/command_buffer/service:gles2",
+#    "//ui/gl",
+#    "//ui/gl/init",
+#  ]
+#  defines = [
+#    "COMMAND_BUFFER_GLES_LIB_SUPPORT_ONLY",
+#    "EGLAPIENTRY=",
+#  ]
+#  if (is_android) {
+#    configs -= [ "//build/config/android:hide_all_but_jni_onload" ]
+#  }
+#  if (current_os == "win") {
+#    defines += [ "EGLAPI=__declspec(dllexport)" ]
+#  } else {
+#    defines += [ "EGLAPI=__attribute__((visibility(\"default\")))" ]
+#  }
+
+### GPU_CONFIG ###
+set(GPU_CONFIG_SOURCES
+  ${GPU_CONFIG_DIR}dx_diag_node.cc
+  ${GPU_CONFIG_DIR}dx_diag_node.h
+  ${GPU_CONFIG_DIR}gpu_blacklist.cc
+  ${GPU_CONFIG_DIR}gpu_blacklist.h
+  ${GPU_CONFIG_DIR}gpu_control_list.cc
+  ${GPU_CONFIG_DIR}gpu_control_list.h
+  ${GPU_CONFIG_DIR}gpu_crash_keys.cc
+  ${GPU_CONFIG_DIR}gpu_crash_keys.h
+  ${GPU_CONFIG_DIR}gpu_domain_guilt.h
+  ${GPU_CONFIG_DIR}gpu_driver_bug_list.cc
+  ${GPU_CONFIG_DIR}gpu_driver_bug_list.h
+  ${GPU_CONFIG_DIR}gpu_driver_bug_workaround_type.h
+  ${GPU_CONFIG_DIR}gpu_driver_bug_workarounds.cc
+  ${GPU_CONFIG_DIR}gpu_driver_bug_workarounds.h
+  ## TODO ## ${GPU_CONFIG_DIR}gpu_dx_diagnostics_win.cc
+  ${GPU_CONFIG_DIR}gpu_feature_info.cc
+  ${GPU_CONFIG_DIR}gpu_feature_info.h
+  ${GPU_CONFIG_DIR}gpu_feature_type.h
+  ${GPU_CONFIG_DIR}gpu_finch_features.cc
+  ${GPU_CONFIG_DIR}gpu_finch_features.h
+  ${GPU_CONFIG_DIR}gpu_info.cc
+  ${GPU_CONFIG_DIR}gpu_info.h
+  ${GPU_CONFIG_DIR}gpu_info_collector.cc
+  ${GPU_CONFIG_DIR}gpu_info_collector.h
+  ## TODO ## ${GPU_CONFIG_DIR}gpu_info_collector_android.cc
+  ## TODO ## ${GPU_CONFIG_DIR}gpu_info_collector_linux.cc
+  ## TODO ## ${GPU_CONFIG_DIR}gpu_info_collector_mac.mm
+  ## TODO ## ${GPU_CONFIG_DIR}gpu_info_collector_win.cc
+  ${GPU_CONFIG_DIR}gpu_mode.h
+  ${GPU_CONFIG_DIR}gpu_preferences.cc
+  ${GPU_CONFIG_DIR}gpu_preferences.h
+  ${GPU_CONFIG_DIR}gpu_switches.cc
+  ${GPU_CONFIG_DIR}gpu_switches.h
+  ${GPU_CONFIG_DIR}gpu_switching.cc
+  ${GPU_CONFIG_DIR}gpu_switching.h
+  ${GPU_CONFIG_DIR}gpu_test_config.cc
+  ${GPU_CONFIG_DIR}gpu_test_config.h
+  ${GPU_CONFIG_DIR}gpu_test_expectations_parser.cc
+  ${GPU_CONFIG_DIR}gpu_test_expectations_parser.h
+  ${GPU_CONFIG_DIR}gpu_util.cc
+  ${GPU_CONFIG_DIR}gpu_util.h
+)
+#deps = [
+#  ":process_json",
+#  "//base",
+#  "//gpu/ipc/common:gpu_preferences_interface",
+#  "//media:media_buildflags",
+#  "//third_party/re2",
+#  "//ui/gl",
+#  "//ui/gl:buildflags",
+#  "//ui/gl/init",
+#]
+#
+#public_deps = [
+#  "//components/crash/core/common:crash_key",
+#]
+#
+#include_rules = [
+#  "+components/crash/core/common/crash_key.h",
+#  "+media/media_buildflags.h",
+#  "+third_party/skia",
+#  "+third_party/vulkan/include/vulkan/vulkan.h",
+#]
 
 add_library(GPU_COMMAND_BUFFER STATIC
   ${GPU_COMMAND_BUFFER_COMMON_SOURCES}
@@ -76,7 +181,7 @@ target_link_libraries(GPU_COMMAND_BUFFER PUBLIC
   #UI_GL
   GFX_GEOMETRY
   SKIA
-  #GPU_GLES2
+  #GPU_GLES2 # same as ${GPU_COMMAND_BUFFER_DIR}
   #${BASE_LIBRARIES}
   base
 )
@@ -98,5 +203,6 @@ target_compile_definitions(GPU_COMMAND_BUFFER PRIVATE
   GPU_IMPLEMENTATION=1
   GPU_UTIL_IMPLEMENTATION=1
   RASTER_IMPLEMENTATION=1
+  GL_GLEXT_PROTOTYPES=1
   # WEBGPU_IMPLEMENTATION
 )

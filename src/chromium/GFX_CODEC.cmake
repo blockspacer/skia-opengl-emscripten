@@ -3,8 +3,6 @@
 set(GFX_CODEC_SOURCES
   #${GFX_CODEC_DIR}codec_export.h
   # TODO # ${GFX_CODEC_DIR}jpeg_codec.cc
- # TODO #${GFX_CODEC_DIR}jpeg_codec.cc
- # TODO #${GFX_CODEC_DIR}jpeg_codec.h
   # TODO # ${GFX_CODEC_DIR}png_codec.cc
   ${GFX_CODEC_DIR}png_codec.cc
   ${GFX_CODEC_DIR}png_codec.h
@@ -16,17 +14,34 @@ set(GFX_CODEC_SOURCES
   ${GFX_CODEC_DIR}jpeg_codec.h
 )
 
+if (NOT EMSCRIPTEN)
+  find_package(PNG REQUIRED) # PNG::PNG
+  set(libpng_LIB PNG::PNG)
+  #set(libpng_LIB GLIBPNG)
+endif()
+
+if(USE_LIBJPEG)
+  list(APPEND GFX_CODEC_SOURCES
+    ${GFX_CODEC_DIR}jpeg_codec.cc
+    ${GFX_CODEC_DIR}jpeg_codec.h
+  )
+  #
+  if(EMSCRIPTEN)
+    set(libjpeg_LIB GLIBJPEG)
+    set(libjpeg_TURBO_LIB GLIBJPEG_TURBO)
+  elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+    set(libjpeg_LIB GLIBJPEG)
+    set(libjpeg_TURBO_LIB GLIBJPEG_TURBO)
+  endif()
+endif()
+
 add_library(GFX_CODEC STATIC
   ${GFX_CODEC_SOURCES}
 )
 
-if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
-  set(libjpeg_LIB libjpeg)
-  set(libpng_LIB libpng)
-endif()
-
 target_link_libraries(GFX_CODEC PRIVATE
   ${libjpeg_LIB}
+  ${libjpeg_TURBO_LIB}
   ${libpng_LIB}
   dynamic_annotations
   ${BASE_LIBRARIES}
@@ -41,7 +56,7 @@ target_link_libraries(GFX_CODEC PRIVATE
   particles
   pathkit
   wuffs
-  jpeg
+  #jpeg
   #libpng
   #zlib
   base
@@ -63,4 +78,5 @@ target_include_directories(GFX_CODEC PRIVATE
 
 target_compile_definitions(GFX_CODEC PRIVATE
   CODEC_IMPLEMENTATION=1
+  USE_LIBJPEG_TURBO=1
 )

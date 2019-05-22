@@ -73,6 +73,7 @@ target_link_libraries(GCRYPTO PUBLIC
   dynamic_annotations
   #${BASE_LIBRARIES}
   base
+  GLIBJPEG_TURBO
 )
 
 set_property(TARGET GCRYPTO PROPERTY CXX_STANDARD 17)

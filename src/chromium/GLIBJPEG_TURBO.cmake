@@ -179,15 +179,22 @@ add_library(GLIBJPEG_TURBO STATIC
 #  find_package(ZLIB)
 #endif()
 
-target_link_libraries(GLIBJPEG_TURBO PUBLIC
-  #${BASE_LIBRARIES}
-  #base
-  #${ZLIB_LIBRARIES}
-  GZLIB
-  GLIBXML
-  #freetype
-  # todo sudo apt-get install libjpeg-dev
-)
+if (EMSCRIPTEN)
+  target_link_libraries(GLIBJPEG_TURBO PUBLIC
+    #${BASE_LIBRARIES}
+    #base
+    #${ZLIB_LIBRARIES}
+    #GZLIB
+    GLIBXML
+    #freetype
+    # todo sudo apt-get install libjpeg-dev
+  )
+else()
+  target_link_libraries(GLIBJPEG_TURBO PUBLIC
+    GZLIB
+    GLIBXML
+  )
+endif()
 
 set_property(TARGET GLIBJPEG_TURBO PROPERTY CXX_STANDARD 17)
 
