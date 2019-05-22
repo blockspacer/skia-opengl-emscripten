@@ -1,7 +1,7 @@
 ﻿### --- fontconfig ---###
 
 set(fontconfig_DIR
-  third_party/fontconfig
+  third_party/fontconfig/
 )
 
 set(fontconfig_SOURCES
@@ -41,9 +41,24 @@ add_library(fontconfig STATIC
   ${fontconfig_SOURCES}
 )
 
+find_package(Freetype REQUIRED)
+
+# sudo apt-get install uuid-dev uuid-dev uuid-runtime
+# LibUUID::LibUUID
+# LibUUID_FOUND, LibUUID_INCLUDE_DIRS, LibUUID_LIBRARIES
+# https://gitlab.kitware.com/cmake/cmake/blob/master/Source/Modules/FindLibUUID.cmake
+find_package(LibUUID REQUIRED)
+message(INFO "LibUUID_INCLUDE_DIRS=${LibUUID_INCLUDE_DIRS}")
+message(INFO "LibUUID_LIBRARIES=${LibUUID_LIBRARIES}")
+
 target_link_libraries(fontconfig PUBLIC
   #${BASE_LIBRARIES}
   base
+  GLIBXML
+  GZLIB
+  #freetype
+  ${FREETYPE_LIBRARIES}
+  ${LibUUID_LIBRARIES}
 )
 
 set_property(TARGET fontconfig PROPERTY CXX_STANDARD 17)
@@ -51,9 +66,12 @@ set_property(TARGET fontconfig PROPERTY CXX_STANDARD 17)
 target_include_directories(fontconfig PRIVATE
   ${fontconfig_DIR}
   ${fontconfig_DIR}/include
+  ${fontconfig_DIR}/include/src # requires fcstdint.h
   ${fontconfig_DIR}/src
   ${fontconfig_DIR}/src/src
   #${BASE_DIR}
+  ${FREETYPE_INCLUDE_DIRS}
+  ${LibUUID_INCLUDE_DIRS}
 )
 
 #deps = [
@@ -64,11 +82,11 @@ target_include_directories(fontconfig PRIVATE
 
 target_compile_definitions(fontconfig PRIVATE
   HAVE_CONFIG_H=1
-  FC_CACHEDIR=\"/var/cache/fontconfig\"
-  FC_TEMPLATEDIR=\"/usr/share/fontconfig/conf.avail\"
-  FONTCONFIG_PATH=\"/etc/fonts\"
+  "FC_CACHEDIR=\"/var/cache/fontconfig\""
+  "FC_TEMPLATEDIR=\"/usr/share/fontconfig/conf.avail\""
+  "FONTCONFIG_PATH=\"/etc/fonts\""
   #
   # if (!is_component_build)
-  FC_ATTRIBUTE_VISIBILITY_HIDDEN=__attribute((visibility(\"hidden\")))
-  FC_ATTRIBUTE_VISIBILITY_EXPORT=__attribute((visibility(\"hidden\")))
+  "FC_ATTRIBUTE_VISIBILITY_HIDDEN=__attribute((visibility(\"hidden\")))"
+  "FC_ATTRIBUTE_VISIBILITY_EXPORT=__attribute((visibility(\"hidden\")))"
 )
