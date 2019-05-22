@@ -428,6 +428,19 @@
 #include "ui/gfx/image/image_skia_operations.h"
 #include "ui/gfx/image/image_util.h"
 
+#include "base/macros.h"
+#include "base/strings/stringprintf.h"
+#include "base/strings/utf_string_conversions.h"
+#include "cc/paint/paint_flags.h"
+#include "ui/gfx/canvas.h"
+#include "ui/gfx/color_utils.h"
+#include "ui/gfx/skia_paint_util.h"
+//#include "ui/views/background.h"
+//#include "ui/views/controls/button/label_button.h"
+//#include "ui/views/controls/button/radio_button.h"
+//#include "ui/views/layout/grid_layout.h"
+//#include "ui/views/view.h"
+
 //
 //#include "ui/base/l10n/l10n_util.h"
 //#include "ui/base/layout.h"
@@ -453,6 +466,7 @@
 //#include "ui/views/controls/menu/submenu_view.h"
 //#include "ui/views/widget/widget.h"
 
+static std::unique_ptr<gfx::ImageSkia> imageSkia;
 #endif // ENABLE_UI
 
 #ifdef ENABLE_HARFBUZZ
@@ -627,7 +641,11 @@ sk_sp<const GrGLInterface> emscripten_GrGLMakeNativeInterface() {
 }
 #endif
 
+#ifdef USE_LIBJPEG
+static SkString fImagePath = SkString("./resources/images/JPEG_example.jpg");
+#else
 static SkString fImagePath = SkString("./resources/images/image.png");
+#endif
 
 #if defined(ENABLE_SKIA) && defined(ENABLE_SKOTTIE_ANIMATIONS)
 static SkString fAnimPath = SkString("./resources/animations/data.json");
@@ -974,64 +992,36 @@ public:
       //printf("onDraw() 2\n");
 
     paint.setColor(SK_ColorGREEN);
-    sk_canvas->drawRect({ 1000, 1700, 50, 50 }, paint);
+    /*sk_canvas->drawRect({ 1000, 1700, 50, 50 }, paint);
 
     paint.setColor(SK_ColorBLUE);
     sk_canvas->drawRect({ 500, 700, 300, 500 }, paint);
 
     paint.setColor(SK_ColorWHITE);
     sk_canvas->drawCircle(m_pos.x(), m_pos.y(), m_size, paint);
-      //printf("onDraw() 2.1\n");
+      //printf("onDraw() 2.1\n");*/
 
 #ifdef ENABLE_UI
     cc::SkiaPaintCanvas paint_canvas(sk_canvas);
     gfx::Canvas gfx_canvas(&paint_canvas, 1.0f);
-    {
+    /*{
       paint.setColor(SK_ColorDKGRAY);
       paint.setStrokeWidth(2);
       gfx_canvas.DrawCircle(gfx::Point(200,200), 100, cc::PaintFlags());
       paint.setColor(SK_ColorMAGENTA);
       gfx_canvas.DrawRoundRect(gfx::Rect(550, 550, 200, 200), 50, cc::PaintFlags());
-    }
+    }*/
     {
       // see https://github.com/codebyravi/electron/blob/master/atom/common/api/atom_api_native_image.cc#L115
-      SkImageInfo skImageInfo = SkImageInfo::Make(
-        100,
-        100,
-        SkColorType::kRGBA_8888_SkColorType,
-        SkAlphaType::kPremul_SkAlphaType, // alpha type can also be opaque if there is no alpha information
-        SkColorSpace::MakeSRGBLinear()
-      );
-      //SkBitmap::Config config = SkImageInfoToBitmapConfig(info, &isOpaque);
-      //SkBitmap fetched_bitmap;
-      void* pixels = nullptr;
-      char* fileData = nullptr;
-      long int fsize;
-      //size_t fsize;
-      int readRes = read_file(fImagePath.c_str(), fileData, fsize, true);
-      if (readRes != 0) {
-        printf("can`t read file %s\n", fImagePath.c_str());
-        return;
-      }
-      DCHECK(fileData != nullptr);
-      std::unique_ptr<SkBitmap> decoded(new SkBitmap());
-      /*
-    static bool Decode(const unsigned char* input, size_t input_size,
-                       ColorFormat format, std::vector<unsigned char>* output,
-                       int* w, int* h);
-    static bool Decode(const unsigned char* input, size_t input_size,
-                       SkBitmap* bitmap);
-       */
-      const unsigned char* data =
-        reinterpret_cast<const unsigned char*>(fileData);
-      if (!gfx::PNGCodec::Decode(data, static_cast<size_t>(fsize), decoded.get())) {
-        printf("can`t decode png file %s\n", fImagePath.c_str());
-        return;
-      }
-      //fetched_bitmap.setPixels(pixels);
-      //fetched_bitmap.setIsOpaque(isOpaque);
-      gfx::ImageSkia imageSkia(gfx::ImageSkiaRep(*decoded, /*scale=*/1.0));
-      gfx_canvas.DrawImageInt(imageSkia, 330, 330);
+      //gfx_canvas.DrawImageInt(*imageSkia.get(), 330, 330);
+      gfx_canvas.DrawImageInt(gfx::ImageSkia(imageSkia->GetRepresentation(10.0f)), 330, 330);
+    }
+    {
+      cc::PaintFlags flags;
+      flags.setShader(
+          gfx::CreateGradientShader(0, 500, SK_ColorRED, SK_ColorGREEN));
+      flags.setStyle(cc::PaintFlags::kFill_Style);
+      gfx_canvas.DrawRoundRect(gfx::Rect(350, 350, 200, 400), 50, flags);
     }
 #ifdef ENABLE_HARFBUZZ
     {
@@ -2219,6 +2209,52 @@ int main(int argc, char** argv) {
   InitGL();
 
 #if defined(ENABLE_SKIA)
+
+#if defined(ENABLE_UI)
+  {
+    SkImageInfo skImageInfo = SkImageInfo::Make(
+      100,
+      100,
+      SkColorType::kRGBA_8888_SkColorType,
+      SkAlphaType::kPremul_SkAlphaType, // alpha type can also be opaque if there is no alpha information
+      SkColorSpace::MakeSRGBLinear()
+    );
+    //SkBitmap::Config config = SkImageInfoToBitmapConfig(info, &isOpaque);
+    //SkBitmap fetched_bitmap;
+    void* pixels = nullptr;
+    char* fileData = nullptr;
+    long int fsize;
+    //size_t fsize;
+    int readRes = read_file(fImagePath.c_str(), fileData, fsize, true);
+    if (readRes != 0) {
+      printf("can`t read file %s\n", fImagePath.c_str());
+      return 1;
+    }
+    DCHECK(fileData != nullptr);
+    std::unique_ptr<SkBitmap> decoded(new SkBitmap());
+    /*
+  static bool Decode(const unsigned char* input, size_t input_size,
+                     ColorFormat format, std::vector<unsigned char>* output,
+                     int* w, int* h);
+  static bool Decode(const unsigned char* input, size_t input_size,
+                     SkBitmap* bitmap);
+     */
+    const unsigned char* data =
+      reinterpret_cast<const unsigned char*>(fileData);
+    if (!gfx::PNGCodec::Decode(data, static_cast<size_t>(fsize), decoded.get())) {
+      printf("can`t decode png file %s\n", fImagePath.c_str());
+      decoded = gfx::JPEGCodec::Decode(data, static_cast<size_t>(fsize));
+      if (!decoded) {
+        printf("can`t decode JPEG file %s\n", fImagePath.c_str());
+        return 1;
+      }
+    }
+    //fetched_bitmap.setPixels(pixels);
+    //fetched_bitmap.setIsOpaque(isOpaque);
+    //gfx::ImageSkia imageSkia(gfx::ImageSkiaRep(*decoded, /*scale=*/1.0));
+    imageSkia = std::make_unique<gfx::ImageSkia>(gfx::ImageSkiaRep(*decoded, /*scale=*/1.0));
+  }
+#endif // ENABLE_UI
 
 #ifdef ENABLE_CUSTOM_FONTS
   printf("Reading fonts...\n");
