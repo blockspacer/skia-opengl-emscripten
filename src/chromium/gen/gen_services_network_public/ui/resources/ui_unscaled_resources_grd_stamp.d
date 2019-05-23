@@ -1,0 +1,1 @@
+gen/ui/resources/ui_unscaled_resources_grd_stamp.d.stamp: ./../../tools/gritsettings/resource_ids

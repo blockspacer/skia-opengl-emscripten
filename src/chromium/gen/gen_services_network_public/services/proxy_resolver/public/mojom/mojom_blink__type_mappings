@@ -1,0 +1,19 @@
+{
+  "c++": {
+    "url.mojom.Url": {
+      "hashable": false, 
+      "force_serialize": true, 
+      "non_copyable_non_movable": false, 
+      "typename": "::blink::KURL", 
+      "traits_headers": [
+        "third_party/blink/renderer/platform/mojo/kurl_struct_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "third_party/blink/renderer/platform/weborigin/kurl.h"
+      ]
+    }
+  }
+}

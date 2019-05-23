@@ -1,0 +1,1124 @@
+{
+  "c++": {
+    "gfx.mojom.Transform": {
+      "hashable": false, 
+      "force_serialize": false, 
+      "non_copyable_non_movable": false, 
+      "typename": "gfx::Transform", 
+      "traits_headers": [
+        "ui/gfx/mojo/transform_struct_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "ui/gfx/transform.h"
+      ]
+    }, 
+    "mojo_base.mojom.Value": {
+      "hashable": false, 
+      "typename": "base::Value", 
+      "non_copyable_non_movable": false, 
+      "force_serialize": false, 
+      "traits_headers": [
+        "mojo/public/cpp/base/values_mojom_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": true, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "base/values.h"
+      ]
+    }, 
+    "gfx.mojom.BufferFormat": {
+      "hashable": false, 
+      "force_serialize": false, 
+      "non_copyable_non_movable": false, 
+      "typename": "gfx::BufferFormat", 
+      "traits_headers": [
+        "ui/gfx/mojo/buffer_types_struct_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "ui/gfx/buffer_types.h", 
+        "ui/gfx/gpu_memory_buffer.h", 
+        "ui/gfx/native_pixmap_handle.h"
+      ]
+    }, 
+    "gfx.mojom.SubpixelRendering": {
+      "hashable": false, 
+      "force_serialize": false, 
+      "non_copyable_non_movable": false, 
+      "typename": "gfx::FontRenderParams::SubpixelRendering", 
+      "traits_headers": [
+        "ui/gfx/mojo/font_render_params_struct_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "ui/gfx/font_render_params.h"
+      ]
+    }, 
+    "gfx.mojom.Insets": {
+      "hashable": false, 
+      "typename": "gfx::Insets", 
+      "non_copyable_non_movable": false, 
+      "force_serialize": false, 
+      "traits_headers": [
+        "ui/gfx/geometry/mojo/geometry_struct_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "ui/gfx/geometry/point.h", 
+        "ui/gfx/geometry/point_f.h", 
+        "ui/gfx/geometry/point3_f.h", 
+        "ui/gfx/geometry/size.h", 
+        "ui/gfx/geometry/rect.h", 
+        "ui/gfx/geometry/rect_f.h", 
+        "ui/gfx/geometry/safe_integer_conversions.h", 
+        "ui/gfx/geometry/scroll_offset.h", 
+        "ui/gfx/geometry/insets.h", 
+        "ui/gfx/geometry/vector2d.h", 
+        "ui/gfx/geometry/vector2d_f.h", 
+        "ui/gfx/geometry/vector3d_f.h"
+      ]
+    }, 
+    "mojo_base.mojom.Token": {
+      "hashable": false, 
+      "typename": "base::Token", 
+      "non_copyable_non_movable": false, 
+      "force_serialize": false, 
+      "traits_headers": [
+        "mojo/public/cpp/base/token_mojom_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "base/token.h"
+      ]
+    }, 
+    "mojo_base.mojom.BigString": {
+      "hashable": false, 
+      "typename": "std::string", 
+      "non_copyable_non_movable": false, 
+      "force_serialize": false, 
+      "traits_headers": [
+        "mojo/public/cpp/base/big_string_mojom_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "public_headers": []
+    }, 
+    "gfx.mojom.GpuMemoryBufferId": {
+      "hashable": false, 
+      "force_serialize": false, 
+      "non_copyable_non_movable": false, 
+      "typename": "gfx::GpuMemoryBufferId", 
+      "traits_headers": [
+        "ui/gfx/mojo/buffer_types_struct_traits.h"
+      ], 
+      "copyable_pass_by_value": true, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "ui/gfx/buffer_types.h", 
+        "ui/gfx/gpu_memory_buffer.h", 
+        "ui/gfx/native_pixmap_handle.h"
+      ]
+    }, 
+    "gfx.mojom.NativePixmapPlane": {
+      "hashable": false, 
+      "force_serialize": false, 
+      "non_copyable_non_movable": false, 
+      "typename": "gfx::NativePixmapPlane", 
+      "traits_headers": [
+        "ui/gfx/mojo/buffer_types_struct_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": true, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "ui/gfx/buffer_types.h", 
+        "ui/gfx/gpu_memory_buffer.h", 
+        "ui/gfx/native_pixmap_handle.h"
+      ]
+    }, 
+    "mojo_base.mojom.UnsafeSharedMemoryRegion": {
+      "hashable": false, 
+      "typename": "base::UnsafeSharedMemoryRegion", 
+      "non_copyable_non_movable": false, 
+      "force_serialize": false, 
+      "traits_headers": [
+        "mojo/public/cpp/base/shared_memory_mojom_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": true, 
+      "nullable_is_same_type": true, 
+      "public_headers": [
+        "base/memory/platform_shared_memory_region.h", 
+        "base/memory/read_only_shared_memory_region.h", 
+        "base/memory/unsafe_shared_memory_region.h", 
+        "base/memory/writable_shared_memory_region.h"
+      ]
+    }, 
+    "gfx.mojom.AcceleratedWidget": {
+      "hashable": false, 
+      "force_serialize": false, 
+      "non_copyable_non_movable": false, 
+      "typename": "gfx::AcceleratedWidget", 
+      "traits_headers": [
+        "ui/gfx/mojo/accelerated_widget_struct_traits.h"
+      ], 
+      "copyable_pass_by_value": true, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "ui/gfx/native_widget_types.h"
+      ]
+    }, 
+    "mojo_base.mojom.ListValue": {
+      "hashable": false, 
+      "typename": "base::Value", 
+      "non_copyable_non_movable": false, 
+      "force_serialize": false, 
+      "traits_headers": [
+        "mojo/public/cpp/base/values_mojom_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": true, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "base/values.h"
+      ]
+    }, 
+    "mojo_base.mojom.DictionaryValue": {
+      "hashable": false, 
+      "typename": "base::Value", 
+      "non_copyable_non_movable": false, 
+      "force_serialize": false, 
+      "traits_headers": [
+        "mojo/public/cpp/base/values_mojom_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": true, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "base/values.h"
+      ]
+    }, 
+    "mojo_base.mojom.WritableSharedMemoryRegion": {
+      "hashable": false, 
+      "typename": "base::WritableSharedMemoryRegion", 
+      "non_copyable_non_movable": false, 
+      "force_serialize": false, 
+      "traits_headers": [
+        "mojo/public/cpp/base/shared_memory_mojom_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": true, 
+      "nullable_is_same_type": true, 
+      "public_headers": [
+        "base/memory/platform_shared_memory_region.h", 
+        "base/memory/read_only_shared_memory_region.h", 
+        "base/memory/unsafe_shared_memory_region.h", 
+        "base/memory/writable_shared_memory_region.h"
+      ]
+    }, 
+    "mojo_base.mojom.MemoryPressureLevel": {
+      "hashable": false, 
+      "typename": "base::MemoryPressureListener::MemoryPressureLevel", 
+      "non_copyable_non_movable": false, 
+      "force_serialize": false, 
+      "traits_headers": [
+        "mojo/public/cpp/base/memory_pressure_level_mojom_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "base/memory/memory_pressure_listener.h"
+      ]
+    }, 
+    "gfx.mojom.SizeF": {
+      "hashable": false, 
+      "typename": "gfx::SizeF", 
+      "non_copyable_non_movable": false, 
+      "force_serialize": false, 
+      "traits_headers": [
+        "ui/gfx/geometry/mojo/geometry_struct_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "ui/gfx/geometry/point.h", 
+        "ui/gfx/geometry/point_f.h", 
+        "ui/gfx/geometry/point3_f.h", 
+        "ui/gfx/geometry/size.h", 
+        "ui/gfx/geometry/rect.h", 
+        "ui/gfx/geometry/rect_f.h", 
+        "ui/gfx/geometry/safe_integer_conversions.h", 
+        "ui/gfx/geometry/scroll_offset.h", 
+        "ui/gfx/geometry/insets.h", 
+        "ui/gfx/geometry/vector2d.h", 
+        "ui/gfx/geometry/vector2d_f.h", 
+        "ui/gfx/geometry/vector3d_f.h"
+      ]
+    }, 
+    "mojo_base.mojom.ProcessId": {
+      "hashable": false, 
+      "typename": "base::ProcessId", 
+      "non_copyable_non_movable": false, 
+      "force_serialize": false, 
+      "traits_headers": [
+        "mojo/public/cpp/base/process_id_mojom_traits.h"
+      ], 
+      "copyable_pass_by_value": true, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "base/process/process_handle.h"
+      ]
+    }, 
+    "gfx.mojom.RectF": {
+      "hashable": false, 
+      "typename": "gfx::RectF", 
+      "non_copyable_non_movable": false, 
+      "force_serialize": false, 
+      "traits_headers": [
+        "ui/gfx/geometry/mojo/geometry_struct_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "ui/gfx/geometry/point.h", 
+        "ui/gfx/geometry/point_f.h", 
+        "ui/gfx/geometry/point3_f.h", 
+        "ui/gfx/geometry/size.h", 
+        "ui/gfx/geometry/rect.h", 
+        "ui/gfx/geometry/rect_f.h", 
+        "ui/gfx/geometry/safe_integer_conversions.h", 
+        "ui/gfx/geometry/scroll_offset.h", 
+        "ui/gfx/geometry/insets.h", 
+        "ui/gfx/geometry/vector2d.h", 
+        "ui/gfx/geometry/vector2d_f.h", 
+        "ui/gfx/geometry/vector3d_f.h"
+      ]
+    }, 
+    "gfx.mojom.GpuFenceHandle": {
+      "hashable": false, 
+      "force_serialize": false, 
+      "non_copyable_non_movable": false, 
+      "typename": "::gfx::GpuFenceHandle", 
+      "traits_headers": [
+        "ui/gfx/mojo/gpu_fence_handle_struct_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "ui/gfx/gpu_fence_handle.h"
+      ]
+    }, 
+    "gfx.mojom.Point3F": {
+      "hashable": false, 
+      "typename": "gfx::Point3F", 
+      "non_copyable_non_movable": false, 
+      "force_serialize": false, 
+      "traits_headers": [
+        "ui/gfx/geometry/mojo/geometry_struct_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "ui/gfx/geometry/point.h", 
+        "ui/gfx/geometry/point_f.h", 
+        "ui/gfx/geometry/point3_f.h", 
+        "ui/gfx/geometry/size.h", 
+        "ui/gfx/geometry/rect.h", 
+        "ui/gfx/geometry/rect_f.h", 
+        "ui/gfx/geometry/safe_integer_conversions.h", 
+        "ui/gfx/geometry/scroll_offset.h", 
+        "ui/gfx/geometry/insets.h", 
+        "ui/gfx/geometry/vector2d.h", 
+        "ui/gfx/geometry/vector2d_f.h", 
+        "ui/gfx/geometry/vector3d_f.h"
+      ]
+    }, 
+    "gfx.mojom.PresentationFeedback": {
+      "hashable": false, 
+      "force_serialize": false, 
+      "non_copyable_non_movable": false, 
+      "typename": "gfx::PresentationFeedback", 
+      "traits_headers": [
+        "ui/gfx/mojo/presentation_feedback_struct_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "ui/gfx/presentation_feedback.h"
+      ]
+    }, 
+    "gfx.mojom.GpuMemoryBufferType": {
+      "hashable": false, 
+      "force_serialize": false, 
+      "non_copyable_non_movable": false, 
+      "typename": "gfx::GpuMemoryBufferType", 
+      "traits_headers": [
+        "ui/gfx/mojo/buffer_types_struct_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "ui/gfx/buffer_types.h", 
+        "ui/gfx/gpu_memory_buffer.h", 
+        "ui/gfx/native_pixmap_handle.h"
+      ]
+    }, 
+    "mojo_base.mojom.TimeDelta": {
+      "hashable": false, 
+      "typename": "base::TimeDelta", 
+      "non_copyable_non_movable": false, 
+      "force_serialize": false, 
+      "traits_headers": [
+        "mojo/public/cpp/base/time_mojom_traits.h"
+      ], 
+      "copyable_pass_by_value": true, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "base/time/time.h"
+      ]
+    }, 
+    "gfx.mojom.RRectF": {
+      "hashable": false, 
+      "force_serialize": false, 
+      "non_copyable_non_movable": false, 
+      "typename": "gfx::RRectF", 
+      "traits_headers": [
+        "ui/gfx/mojo/rrect_f_struct_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "ui/gfx/rrect_f.h"
+      ]
+    }, 
+    "mojo_base.mojom.FilePath": {
+      "hashable": false, 
+      "typename": "base::FilePath", 
+      "non_copyable_non_movable": false, 
+      "force_serialize": false, 
+      "traits_headers": [
+        "mojo/public/cpp/base/file_path_mojom_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "base/files/file_path.h"
+      ]
+    }, 
+    "gfx.mojom.Vector2d": {
+      "hashable": false, 
+      "typename": "gfx::Vector2d", 
+      "non_copyable_non_movable": false, 
+      "force_serialize": false, 
+      "traits_headers": [
+        "ui/gfx/geometry/mojo/geometry_struct_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "ui/gfx/geometry/point.h", 
+        "ui/gfx/geometry/point_f.h", 
+        "ui/gfx/geometry/point3_f.h", 
+        "ui/gfx/geometry/size.h", 
+        "ui/gfx/geometry/rect.h", 
+        "ui/gfx/geometry/rect_f.h", 
+        "ui/gfx/geometry/safe_integer_conversions.h", 
+        "ui/gfx/geometry/scroll_offset.h", 
+        "ui/gfx/geometry/insets.h", 
+        "ui/gfx/geometry/vector2d.h", 
+        "ui/gfx/geometry/vector2d_f.h", 
+        "ui/gfx/geometry/vector3d_f.h"
+      ]
+    }, 
+    "gfx.mojom.SwapResult": {
+      "hashable": false, 
+      "force_serialize": false, 
+      "non_copyable_non_movable": false, 
+      "typename": "gfx::SwapResult", 
+      "traits_headers": [
+        "ui/gfx/mojo/swap_result_mojom_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "ui/gfx/swap_result.h"
+      ]
+    }, 
+    "gfx.mojom.Point": {
+      "hashable": false, 
+      "typename": "gfx::Point", 
+      "non_copyable_non_movable": false, 
+      "force_serialize": false, 
+      "traits_headers": [
+        "ui/gfx/geometry/mojo/geometry_struct_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "ui/gfx/geometry/point.h", 
+        "ui/gfx/geometry/point_f.h", 
+        "ui/gfx/geometry/point3_f.h", 
+        "ui/gfx/geometry/size.h", 
+        "ui/gfx/geometry/rect.h", 
+        "ui/gfx/geometry/rect_f.h", 
+        "ui/gfx/geometry/safe_integer_conversions.h", 
+        "ui/gfx/geometry/scroll_offset.h", 
+        "ui/gfx/geometry/insets.h", 
+        "ui/gfx/geometry/vector2d.h", 
+        "ui/gfx/geometry/vector2d_f.h", 
+        "ui/gfx/geometry/vector3d_f.h"
+      ]
+    }, 
+    "gfx.mojom.Rect": {
+      "hashable": false, 
+      "typename": "gfx::Rect", 
+      "non_copyable_non_movable": false, 
+      "force_serialize": false, 
+      "traits_headers": [
+        "ui/gfx/geometry/mojo/geometry_struct_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "ui/gfx/geometry/point.h", 
+        "ui/gfx/geometry/point_f.h", 
+        "ui/gfx/geometry/point3_f.h", 
+        "ui/gfx/geometry/size.h", 
+        "ui/gfx/geometry/rect.h", 
+        "ui/gfx/geometry/rect_f.h", 
+        "ui/gfx/geometry/safe_integer_conversions.h", 
+        "ui/gfx/geometry/scroll_offset.h", 
+        "ui/gfx/geometry/insets.h", 
+        "ui/gfx/geometry/vector2d.h", 
+        "ui/gfx/geometry/vector2d_f.h", 
+        "ui/gfx/geometry/vector3d_f.h"
+      ]
+    }, 
+    "gfx.mojom.InsetsF": {
+      "hashable": false, 
+      "typename": "gfx::InsetsF", 
+      "non_copyable_non_movable": false, 
+      "force_serialize": false, 
+      "traits_headers": [
+        "ui/gfx/geometry/mojo/geometry_struct_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "ui/gfx/geometry/point.h", 
+        "ui/gfx/geometry/point_f.h", 
+        "ui/gfx/geometry/point3_f.h", 
+        "ui/gfx/geometry/size.h", 
+        "ui/gfx/geometry/rect.h", 
+        "ui/gfx/geometry/rect_f.h", 
+        "ui/gfx/geometry/safe_integer_conversions.h", 
+        "ui/gfx/geometry/scroll_offset.h", 
+        "ui/gfx/geometry/insets.h", 
+        "ui/gfx/geometry/vector2d.h", 
+        "ui/gfx/geometry/vector2d_f.h", 
+        "ui/gfx/geometry/vector3d_f.h"
+      ]
+    }, 
+    "mojo_base.mojom.ReadOnlySharedMemoryRegion": {
+      "hashable": false, 
+      "typename": "base::ReadOnlySharedMemoryRegion", 
+      "non_copyable_non_movable": false, 
+      "force_serialize": false, 
+      "traits_headers": [
+        "mojo/public/cpp/base/shared_memory_mojom_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": true, 
+      "nullable_is_same_type": true, 
+      "public_headers": [
+        "base/memory/platform_shared_memory_region.h", 
+        "base/memory/read_only_shared_memory_region.h", 
+        "base/memory/unsafe_shared_memory_region.h", 
+        "base/memory/writable_shared_memory_region.h"
+      ]
+    }, 
+    "gfx.mojom.GpuMemoryBufferHandle": {
+      "hashable": false, 
+      "force_serialize": false, 
+      "non_copyable_non_movable": false, 
+      "typename": "gfx::GpuMemoryBufferHandle", 
+      "traits_headers": [
+        "ui/gfx/mojo/buffer_types_struct_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": true, 
+      "nullable_is_same_type": true, 
+      "public_headers": [
+        "ui/gfx/buffer_types.h", 
+        "ui/gfx/gpu_memory_buffer.h", 
+        "ui/gfx/native_pixmap_handle.h"
+      ]
+    }, 
+    "gfx.mojom.CALayerParams": {
+      "hashable": false, 
+      "force_serialize": false, 
+      "non_copyable_non_movable": false, 
+      "typename": "gfx::CALayerParams", 
+      "traits_headers": [
+        "ui/gfx/mojo/ca_layer_params_struct_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "ui/gfx/ca_layer_params.h"
+      ]
+    }, 
+    "mojo_base.mojom.PlatformSharedMemoryRegion": {
+      "hashable": false, 
+      "typename": "base::subtle::PlatformSharedMemoryRegion", 
+      "non_copyable_non_movable": false, 
+      "force_serialize": false, 
+      "traits_headers": [
+        "mojo/public/cpp/base/shared_memory_mojom_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": true, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "base/memory/platform_shared_memory_region.h", 
+        "base/memory/read_only_shared_memory_region.h", 
+        "base/memory/unsafe_shared_memory_region.h", 
+        "base/memory/writable_shared_memory_region.h"
+      ]
+    }, 
+    "mojo_base.mojom.PlatformSharedMemoryHandle": {
+      "hashable": false, 
+      "typename": "base::subtle::PlatformSharedMemoryRegion::ScopedPlatformHandle", 
+      "non_copyable_non_movable": false, 
+      "force_serialize": false, 
+      "traits_headers": [
+        "mojo/public/cpp/base/shared_memory_mojom_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": true, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "base/memory/platform_shared_memory_region.h", 
+        "base/memory/read_only_shared_memory_region.h", 
+        "base/memory/unsafe_shared_memory_region.h", 
+        "base/memory/writable_shared_memory_region.h"
+      ]
+    }, 
+    "gpu.mojom.VpxDecodeVendors": {
+      "hashable": false, 
+      "typename": "gpu::GpuPreferences::VpxDecodeVendors", 
+      "traits_headers": [
+        "gpu/ipc/common/gpu_preferences_struct_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "force_serialize": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "non_copyable_non_movable": false, 
+      "public_headers": [
+        "gpu/config/gpu_preferences.h"
+      ]
+    }, 
+    "mojo_base.mojom.UnguessableToken": {
+      "hashable": false, 
+      "typename": "base::UnguessableToken", 
+      "non_copyable_non_movable": false, 
+      "force_serialize": false, 
+      "traits_headers": [
+        "mojo/public/cpp/base/unguessable_token_mojom_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "base/unguessable_token.h"
+      ]
+    }, 
+    "gfx.mojom.ScrollOffset": {
+      "hashable": false, 
+      "typename": "gfx::ScrollOffset", 
+      "non_copyable_non_movable": false, 
+      "force_serialize": false, 
+      "traits_headers": [
+        "ui/gfx/geometry/mojo/geometry_struct_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "ui/gfx/geometry/point.h", 
+        "ui/gfx/geometry/point_f.h", 
+        "ui/gfx/geometry/point3_f.h", 
+        "ui/gfx/geometry/size.h", 
+        "ui/gfx/geometry/rect.h", 
+        "ui/gfx/geometry/rect_f.h", 
+        "ui/gfx/geometry/safe_integer_conversions.h", 
+        "ui/gfx/geometry/scroll_offset.h", 
+        "ui/gfx/geometry/insets.h", 
+        "ui/gfx/geometry/vector2d.h", 
+        "ui/gfx/geometry/vector2d_f.h", 
+        "ui/gfx/geometry/vector3d_f.h"
+      ]
+    }, 
+    "mojo_base.mojom.PlatformSharedMemoryRegion.Mode": {
+      "hashable": false, 
+      "typename": "base::subtle::PlatformSharedMemoryRegion::Mode", 
+      "non_copyable_non_movable": false, 
+      "force_serialize": false, 
+      "traits_headers": [
+        "mojo/public/cpp/base/shared_memory_mojom_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "base/memory/platform_shared_memory_region.h", 
+        "base/memory/read_only_shared_memory_region.h", 
+        "base/memory/unsafe_shared_memory_region.h", 
+        "base/memory/writable_shared_memory_region.h"
+      ]
+    }, 
+    "mojo_base.mojom.ThreadPriority": {
+      "hashable": false, 
+      "typename": "base::ThreadPriority", 
+      "non_copyable_non_movable": false, 
+      "force_serialize": false, 
+      "traits_headers": [
+        "mojo/public/cpp/base/thread_priority_mojom_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "base/threading/platform_thread.h"
+      ]
+    }, 
+    "mojo_base.mojom.TextDirection": {
+      "hashable": false, 
+      "typename": "base::i18n::TextDirection", 
+      "non_copyable_non_movable": false, 
+      "force_serialize": false, 
+      "traits_headers": [
+        "mojo/public/cpp/base/text_direction_mojom_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "base/i18n/rtl.h"
+      ]
+    }, 
+    "gfx.mojom.SelectionBound": {
+      "hashable": false, 
+      "force_serialize": false, 
+      "non_copyable_non_movable": false, 
+      "typename": "gfx::SelectionBound", 
+      "traits_headers": [
+        "ui/gfx/mojo/selection_bound_struct_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "ui/gfx/selection_bound.h"
+      ]
+    }, 
+    "gfx.mojom.Hinting": {
+      "hashable": false, 
+      "force_serialize": false, 
+      "non_copyable_non_movable": false, 
+      "typename": "gfx::FontRenderParams::Hinting", 
+      "traits_headers": [
+        "ui/gfx/mojo/font_render_params_struct_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "ui/gfx/font_render_params.h"
+      ]
+    }, 
+    "mojo_base.mojom.MemoryAllocatorDumpCrossProcessUid": {
+      "hashable": false, 
+      "typename": "base::trace_event::MemoryAllocatorDumpGuid", 
+      "non_copyable_non_movable": false, 
+      "force_serialize": false, 
+      "traits_headers": [
+        "mojo/public/cpp/base/memory_allocator_dump_cross_process_uid_mojom_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "base/trace_event/memory_allocator_dump_guid.h"
+      ]
+    }, 
+    "gfx.mojom.ColorSpace": {
+      "hashable": false, 
+      "force_serialize": false, 
+      "non_copyable_non_movable": false, 
+      "typename": "gfx::ColorSpace", 
+      "traits_headers": [
+        "ui/gfx/mojo/color_space_mojom_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "ui/gfx/color_space.h"
+      ]
+    }, 
+    "mojo_base.mojom.FileError": {
+      "hashable": false, 
+      "typename": "::base::File::Error", 
+      "non_copyable_non_movable": false, 
+      "force_serialize": false, 
+      "traits_headers": [
+        "mojo/public/cpp/base/file_error_mojom_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "base/files/file.h"
+      ]
+    }, 
+    "gpu.mojom.GpuPreferences": {
+      "hashable": false, 
+      "typename": "gpu::GpuPreferences", 
+      "traits_headers": [
+        "gpu/ipc/common/gpu_preferences_struct_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "force_serialize": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "non_copyable_non_movable": false, 
+      "public_headers": [
+        "gpu/config/gpu_preferences.h"
+      ]
+    }, 
+    "mojo_base.mojom.Time": {
+      "hashable": false, 
+      "typename": "base::Time", 
+      "non_copyable_non_movable": false, 
+      "force_serialize": false, 
+      "traits_headers": [
+        "mojo/public/cpp/base/time_mojom_traits.h"
+      ], 
+      "copyable_pass_by_value": true, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "base/time/time.h"
+      ]
+    }, 
+    "gfx.mojom.OverlayTransform": {
+      "hashable": false, 
+      "force_serialize": false, 
+      "non_copyable_non_movable": false, 
+      "typename": "gfx::OverlayTransform", 
+      "traits_headers": [
+        "ui/gfx/mojo/overlay_transform_struct_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "ui/gfx/overlay_transform.h"
+      ]
+    }, 
+    "mojo.common.mojom.RefCountedMemory": {
+      "hashable": false, 
+      "typename": "scoped_refptr<base::RefCountedMemory>", 
+      "non_copyable_non_movable": false, 
+      "force_serialize": false, 
+      "traits_headers": [
+        "mojo/public/cpp/base/ref_counted_memory_mojom_traits.h"
+      ], 
+      "copyable_pass_by_value": true, 
+      "move_only": false, 
+      "nullable_is_same_type": true, 
+      "public_headers": [
+        "base/memory/ref_counted_memory.h"
+      ]
+    }, 
+    "gfx.mojom.PointF": {
+      "hashable": false, 
+      "typename": "gfx::PointF", 
+      "non_copyable_non_movable": false, 
+      "force_serialize": false, 
+      "traits_headers": [
+        "ui/gfx/geometry/mojo/geometry_struct_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "ui/gfx/geometry/point.h", 
+        "ui/gfx/geometry/point_f.h", 
+        "ui/gfx/geometry/point3_f.h", 
+        "ui/gfx/geometry/size.h", 
+        "ui/gfx/geometry/rect.h", 
+        "ui/gfx/geometry/rect_f.h", 
+        "ui/gfx/geometry/safe_integer_conversions.h", 
+        "ui/gfx/geometry/scroll_offset.h", 
+        "ui/gfx/geometry/insets.h", 
+        "ui/gfx/geometry/vector2d.h", 
+        "ui/gfx/geometry/vector2d_f.h", 
+        "ui/gfx/geometry/vector3d_f.h"
+      ]
+    }, 
+    "gfx.mojom.Size": {
+      "hashable": false, 
+      "typename": "gfx::Size", 
+      "non_copyable_non_movable": false, 
+      "force_serialize": false, 
+      "traits_headers": [
+        "ui/gfx/geometry/mojo/geometry_struct_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "ui/gfx/geometry/point.h", 
+        "ui/gfx/geometry/point_f.h", 
+        "ui/gfx/geometry/point3_f.h", 
+        "ui/gfx/geometry/size.h", 
+        "ui/gfx/geometry/rect.h", 
+        "ui/gfx/geometry/rect_f.h", 
+        "ui/gfx/geometry/safe_integer_conversions.h", 
+        "ui/gfx/geometry/scroll_offset.h", 
+        "ui/gfx/geometry/insets.h", 
+        "ui/gfx/geometry/vector2d.h", 
+        "ui/gfx/geometry/vector2d_f.h", 
+        "ui/gfx/geometry/vector3d_f.h"
+      ]
+    }, 
+    "mojo_base.mojom.BigString16": {
+      "hashable": false, 
+      "typename": "base::string16", 
+      "non_copyable_non_movable": false, 
+      "force_serialize": false, 
+      "traits_headers": [
+        "mojo/public/cpp/base/string16_mojom_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "base/strings/string16.h"
+      ]
+    }, 
+    "mojo_base.mojom.TimeTicks": {
+      "hashable": false, 
+      "typename": "base::TimeTicks", 
+      "non_copyable_non_movable": false, 
+      "force_serialize": false, 
+      "traits_headers": [
+        "mojo/public/cpp/base/time_mojom_traits.h"
+      ], 
+      "copyable_pass_by_value": true, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "base/time/time.h"
+      ]
+    }, 
+    "mojo_base.mojom.File": {
+      "hashable": false, 
+      "typename": "base::File", 
+      "non_copyable_non_movable": false, 
+      "force_serialize": false, 
+      "traits_headers": [
+        "mojo/public/cpp/base/file_mojom_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": true, 
+      "nullable_is_same_type": true, 
+      "public_headers": [
+        "base/files/file.h"
+      ]
+    }, 
+    "mojo_base.mojom.BigBuffer": {
+      "hashable": false, 
+      "typename": "mojo_base::BigBuffer", 
+      "non_copyable_non_movable": false, 
+      "force_serialize": false, 
+      "traits_headers": [
+        "mojo/public/cpp/base/big_buffer_mojom_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": true, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "mojo/public/cpp/base/big_buffer.h"
+      ]
+    }, 
+    "gfx.mojom.Vector2dF": {
+      "hashable": false, 
+      "typename": "gfx::Vector2dF", 
+      "non_copyable_non_movable": false, 
+      "force_serialize": false, 
+      "traits_headers": [
+        "ui/gfx/geometry/mojo/geometry_struct_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "ui/gfx/geometry/point.h", 
+        "ui/gfx/geometry/point_f.h", 
+        "ui/gfx/geometry/point3_f.h", 
+        "ui/gfx/geometry/size.h", 
+        "ui/gfx/geometry/rect.h", 
+        "ui/gfx/geometry/rect_f.h", 
+        "ui/gfx/geometry/safe_integer_conversions.h", 
+        "ui/gfx/geometry/scroll_offset.h", 
+        "ui/gfx/geometry/insets.h", 
+        "ui/gfx/geometry/vector2d.h", 
+        "ui/gfx/geometry/vector2d_f.h", 
+        "ui/gfx/geometry/vector3d_f.h"
+      ]
+    }, 
+    "mojo_base.mojom.String16": {
+      "hashable": false, 
+      "typename": "base::string16", 
+      "non_copyable_non_movable": false, 
+      "force_serialize": false, 
+      "traits_headers": [
+        "mojo/public/cpp/base/string16_mojom_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "base/strings/string16.h"
+      ]
+    }, 
+    "gfx.mojom.BufferUsage": {
+      "hashable": false, 
+      "force_serialize": false, 
+      "non_copyable_non_movable": false, 
+      "typename": "gfx::BufferUsage", 
+      "traits_headers": [
+        "ui/gfx/mojo/buffer_types_struct_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "ui/gfx/buffer_types.h", 
+        "ui/gfx/gpu_memory_buffer.h", 
+        "ui/gfx/native_pixmap_handle.h"
+      ]
+    }, 
+    "gfx.mojom.Vector3dF": {
+      "hashable": false, 
+      "typename": "gfx::Vector3dF", 
+      "non_copyable_non_movable": false, 
+      "force_serialize": false, 
+      "traits_headers": [
+        "ui/gfx/geometry/mojo/geometry_struct_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "ui/gfx/geometry/point.h", 
+        "ui/gfx/geometry/point_f.h", 
+        "ui/gfx/geometry/point3_f.h", 
+        "ui/gfx/geometry/size.h", 
+        "ui/gfx/geometry/rect.h", 
+        "ui/gfx/geometry/rect_f.h", 
+        "ui/gfx/geometry/safe_integer_conversions.h", 
+        "ui/gfx/geometry/scroll_offset.h", 
+        "ui/gfx/geometry/insets.h", 
+        "ui/gfx/geometry/vector2d.h", 
+        "ui/gfx/geometry/vector2d_f.h", 
+        "ui/gfx/geometry/vector3d_f.h"
+      ]
+    }, 
+    "gfx.mojom.NativePixmapHandle": {
+      "hashable": false, 
+      "force_serialize": false, 
+      "non_copyable_non_movable": false, 
+      "typename": "gfx::NativePixmapHandle", 
+      "traits_headers": [
+        "ui/gfx/mojo/buffer_types_struct_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": true, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "ui/gfx/buffer_types.h", 
+        "ui/gfx/gpu_memory_buffer.h", 
+        "ui/gfx/native_pixmap_handle.h"
+      ]
+    }, 
+    "gfx.mojom.BufferUsageAndFormat": {
+      "hashable": false, 
+      "force_serialize": false, 
+      "non_copyable_non_movable": false, 
+      "typename": "gfx::BufferUsageAndFormat", 
+      "traits_headers": [
+        "ui/gfx/mojo/buffer_types_struct_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "ui/gfx/buffer_types.h", 
+        "ui/gfx/gpu_memory_buffer.h", 
+        "ui/gfx/native_pixmap_handle.h"
+      ]
+    }, 
+    "mojo_base.mojom.FileInfo": {
+      "hashable": false, 
+      "typename": "base::File::Info", 
+      "non_copyable_non_movable": false, 
+      "force_serialize": false, 
+      "traits_headers": [
+        "mojo/public/cpp/base/file_info_mojom_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "base/files/file.h"
+      ]
+    }
+  }
+}
