@@ -1,0 +1,2 @@
+gen/chrome/browser/ui/webui/app_management/mojo_bindings.sources_list
+gen/chrome/services/app_service/public/mojom/mojom.sources_list

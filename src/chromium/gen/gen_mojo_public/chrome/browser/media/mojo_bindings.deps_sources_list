@@ -1,0 +1,2 @@
+gen/chrome/browser/media/mojo_bindings.sources_list
+gen/url/mojom/url_mojom_origin.sources_list

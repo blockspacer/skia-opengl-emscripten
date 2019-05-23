@@ -1,0 +1,3 @@
+gen/gpu/ipc/common/test_interfaces.sources_list
+gen/gpu/ipc/common/gpu_preferences_interface.sources_list
+gen/gpu/ipc/common/interfaces.sources_list

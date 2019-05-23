@@ -1,0 +1,3 @@
+gen/chrome/browser/ui/webui/discards/mojo_bindings.sources_list
+gen/chrome/browser/performance_manager/mojo_bindings.sources_list
+gen/chrome/browser/resource_coordinator/mojo_bindings.sources_list

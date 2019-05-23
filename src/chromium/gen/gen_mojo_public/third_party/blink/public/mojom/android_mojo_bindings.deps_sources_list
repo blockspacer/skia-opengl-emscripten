@@ -1,0 +1,7 @@
+gen/third_party/blink/public/mojom/android_mojo_bindings.sources_list
+gen/components/payments/mojom/mojom.sources_list
+gen/mojo/public/mojom/base/base.sources_list
+gen/services/media_session/public/mojom/mojom.sources_list
+gen/services/network/public/mojom/mojom.sources_list
+gen/url/mojom/url_mojom_gurl.sources_list
+gen/url/mojom/url_mojom_origin.sources_list

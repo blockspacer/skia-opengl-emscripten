@@ -1,0 +1,3 @@
+gen/components/services/leveldb/public/interfaces/interfaces.sources_list
+gen/components/services/filesystem/public/interfaces/interfaces.sources_list
+gen/mojo/public/mojom/base/base.sources_list

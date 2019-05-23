@@ -1,0 +1,2 @@
+gen/components/metrics/public/interfaces/call_stack_mojo_test_bindings.sources_list
+gen/components/metrics/public/interfaces/call_stack_mojo_bindings.sources_list
