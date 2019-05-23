@@ -1,6 +1,12 @@
 ### --- COMPONENTS_VIZ_COMMON ---###
 
 set(COMPONENTS_VIZ_COMMON_SOURCES
+  #
+  ${COMPONENTS_VIZ_COMMON_DIR}resources/resource_format_utils.cc
+  #${COMPONENTS_VIZ_COMMON_DIR}resources/resource_format_utils.h
+  #${COMPONENTS_VIZ_COMMON_DIR}resources/resource_sizes.h
+  #${COMPONENTS_VIZ_COMMON_DIR}viz_resource_format_export.h
+  #
   ${COMPONENTS_VIZ_COMMON_DIR}constants.cc
   #${COMPONENTS_VIZ_COMMON_DIR}constants.h",
   ${COMPONENTS_VIZ_COMMON_DIR}display/overlay_strategy.cc
@@ -136,8 +142,38 @@ add_library(COMPONENTS_VIZ_COMMON STATIC
 )
 
 target_link_libraries(COMPONENTS_VIZ_COMMON PUBLIC
+  #deps = [
+  #  "//base",
+  #
+  #  # TODO(staraz): cc/base was added because SharedQuadState includes
+  #  # cc::MathUtil. Remove it once cc/base/math_util* are moved to viz.
+  #  "//cc/base",
+  #  "//cc/paint",
+  #  "//gpu/command_buffer/client:gles2_implementation",
+  #  "//gpu/command_buffer/client:gles2_interface",
+  #  "//gpu/command_buffer/client:raster",
+  #  "//gpu/command_buffer/client:raster_interface",
+  #  "//gpu/vulkan:buildflags",
+  #  "//mojo/public/cpp/base",
+  #  "//mojo/public/cpp/system",
+  #  "//third_party/libyuv",
+  #  "//ui/gfx",
+  #  "//ui/gfx:color_space",
+  #  "//ui/gfx:geometry_skia",
+  #  "//ui/gfx/geometry",
+  #  "//ui/gl",
+  #  "//ui/latency",
+  #]
+  #public_deps = [
+  #  ":resource_format_utils",
+  #  "//gpu/command_buffer/client",
+  #  "//gpu/command_buffer/common",
+  #  "//mojo/public/cpp/bindings",
+  #  "//skia",
+  #]
   GPU_COMMAND_BUFFER
   #${BASE_LIBRARIES}
+  UI_GL
   BASE_CC
   PAINT_CC
   base
@@ -149,19 +185,29 @@ target_link_libraries(COMPONENTS_VIZ_COMMON PUBLIC
   GFX_GEOMETRY
   GFX_SWITCHES
   GFX_RANGE
+  libyuv
+  # khronos
+  ${khronos_LIB}
+  #UI_GFX
 )
 
 set_property(TARGET COMPONENTS_VIZ_COMMON PROPERTY CXX_STANDARD 17)
 
 target_include_directories(COMPONENTS_VIZ_COMMON PRIVATE
-  ${COMPONENTS_VIZ_COMMON_DIR}
+  ${COMPONENTS_VIZ_PARENT_DIR}
+  #${COMPONENTS_VIZ_COMMON_DIR}
   ${BASE_DIR}
 )
 
 target_compile_definitions(COMPONENTS_VIZ_COMMON PRIVATE
-  #VIZ_RESOURCE_FORMAT_IMPLEMENTATION=1
+  VIZ_RESOURCE_FORMAT_IMPLEMENTATION=1
   #VIZ_METAL_CONTEXT_PROVIDER_IMPLEMENTATION=1
   #VIZ_VULKAN_CONTEXT_PROVIDER_IMPLEMENTATION=1
   #VK_USE_PLATFORM_ANDROID_KHR=1
   VIZ_COMMON_IMPLEMENTATION=1
+)
+
+target_compile_options(COMPONENTS_VIZ_COMMON PRIVATE
+  -Wno-error
+  -Wno-c++11-narrowing
 )

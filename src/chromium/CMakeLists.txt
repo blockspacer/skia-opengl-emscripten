@@ -10,11 +10,20 @@ set(BLINK_WTF_DIR ${BLINK_WTF_PARENT_DIR}wtf/)
 set(BASE_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/)
 set(BASE_DIR ${BASE_PARENT_DIR}base/)
 
+set(MOJO_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/)
+set(MOJO_DIR ${MOJO_PARENT_DIR}mojo/)
+
 set(UI_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/)
 set(UI_DIR ${UI_PARENT_DIR}ui/)
 
 set(UI_GFX_PARENT_DIR ${UI_DIR}/)
 set(UI_GFX_DIR ${UI_GFX_PARENT_DIR}gfx/)
+
+set(UI_EVENTS_PARENT_DIR ${UI_DIR}/)
+set(UI_EVENTS_DIR ${UI_EVENTS_PARENT_DIR}events/)
+
+set(UI_BASE_PARENT_DIR ${UI_DIR}/)
+set(UI_BASE_DIR ${UI_BASE_PARENT_DIR}base/)
 
 set(UI_GL_PARENT_DIR ${UI_DIR}/)
 set(UI_GL_DIR ${UI_GL_PARENT_DIR}gl/)
@@ -22,14 +31,43 @@ set(UI_GL_DIR ${UI_GL_PARENT_DIR}gl/)
 set(SERVICES_METRICS_PUBLIC_CPP_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/services/metrics/public/)
 set(SERVICES_METRICS_PUBLIC_CPP_DIR ${SERVICES_METRICS_PUBLIC_CPP_PARENT_DIR}cpp/)
 
-set(COMPONENTS_VIZ_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/components/)
+set(SERVICES_NETWORK_PUBLIC_CPP_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/services/network/public/)
+set(SERVICES_NETWORK_PUBLIC_CPP_DIR ${SERVICES_NETWORK_PUBLIC_CPP_PARENT_DIR}cpp/)
+
+set(GN_GEN_DIR ${CMAKE_CURRENT_SOURCE_DIR}/gen/)
+
+# autoninja -C out/Default/ services/network/public/cpp services/network/public/mojom services/network/public/mojom:websocket_mojom services/network/public/mojom:mutable_network_traffic_annotation_interface services/network/public/mojom:mojom_shared services/network/public/mojom:mojom_ip_address services/network/public/mojom:mojom_headers services/network/public/mojom:mojom_blink services/network/public/mojom:data_pipe_interfaces
+set(GEN_SERVICES_NETWORK_PUBLIC_DIR ${GN_GEN_DIR}gen_services_network_public/)
+
+# autoninja -C out/Default/ third_party/blink/public:all_blink third_party/blink/public:blink third_party/blink/public:blink_devtools_frontend_resources third_party/blink/public:blink_devtools_frontend_resources_files third_party/blink/public:blink_generate_devtools_grd third_party/blink/public:blink_headers third_party/blink/public:buildflags third_party/blink/public:image_resources third_party/blink/public:image_resources_grit third_party/blink/public:resources third_party/blink/public:resources_grit third_party/blink/public:scaled_resources third_party/blink/public:scaled_resources_100_percent third_party/blink/public:scaled_resources_200_percent third_party/blink/public/common:common third_party/blink/public/common:headers third_party/blink/public/mojom:embedded_frame_sink_mojo_bindings third_party/blink/public/mojom:mojom_broadcastchannel_bindings third_party/blink/public/mojom:mojom_core third_party/blink/public/mojom:mojom_mhtml_load_result third_party/blink/public/mojom:mojom_modules third_party/blink/public/mojom:mojom_platform third_party/blink/public/mojom:web_client_hints_types_mojo_bindings third_party/blink/public/mojom:web_feature_mojo_bindings
+set(GEN_BLINK_PUBLIC_DIR ${GN_GEN_DIR}gen_blink_public/)
+
+# autoninja -C out/Default/ mojo/public/interfaces/bindings mojo/public/cpp/base mojo/public/cpp/bindings mojo/public/cpp/platform mojo/public/cpp/system mojo/public/mojom/base mojo/public:sdk mojo/public:public
+set(GEN_MOJO_PUBLIC_DIR ${GN_GEN_DIR}gen_mojo_public/)
+
+# autoninja -C out/Default/ components/content_settings/core/common:mojo_bindings
+set(GEN_COMPONENTS_CONTENT_SETTINGS_CORE_COMMON_DIR ${GN_GEN_DIR}gen_components_content_settings/)
+
+# autoninja -C out/Default/ third_party/blink/renderer/core/mojo
+#set(GEN_BLINK_RENDERER_CORE_DIR ${GN_GEN_DIR}gen_blink_renderer_core/)
+
+set(COMPONENTS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/components/)
+
+set(COMPONENTS_VIZ_PARENT_DIR ${COMPONENTS_DIR})
 set(COMPONENTS_VIZ_DIR ${COMPONENTS_VIZ_PARENT_DIR}viz/)
 
-set(COMPONENTS_VIZ_COMMON_PARENT_DIR ${COMPONENTS_VIZ_DIR}/)
-set(COMPONENTS_VIZ_COMMON_DIR ${COMPONENTS_VIZ_COMMON_PARENT_DIR}common/)
+set(COMPONENTS_VIZ_COMMON_DIR ${COMPONENTS_VIZ_DIR}common/)
+
+set(COMPONENTS_VIZ_CLIENT_DIR ${COMPONENTS_VIZ_DIR}client/)
+
+set(COMPONENTS_CONTENT_SETTINGS_CORE_COMMON_PARENT_DIR ${COMPONENTS_DIR}content_settings/core/)
+set(COMPONENTS_CONTENT_SETTINGS_CORE_COMMON_DIR ${COMPONENTS_CONTENT_SETTINGS_CORE_COMMON_PARENT_DIR}common/)
 
 set(libsync_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/third_party/)
 set(libsync_DIR ${libsync_PARENT_DIR}libsync/)
+
+set(libyuv_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/third_party/)
+set(libyuv_DIR ${libyuv_PARENT_DIR}libyuv/)
 
 set(khronos_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/third_party/)
 set(khronos_DIR ${khronos_PARENT_DIR}khronos/)
@@ -58,8 +96,11 @@ set(GFX_SWITCHES_DIR ${GFX_SWITCHES_PARENT_DIR})
 set(CC_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/)
 set(CC_DIR ${CC_PARENT_DIR}cc/)
 
-set(BLINK_PLATFORM_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/third_party/)
-set(BLINK_PLATFORM_DIR ${BLINK_PLATFORM_PARENT_DIR}blink/renderer/platform/)
+set(BLINK_RENDERER_PLATFORM_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/third_party/)
+set(BLINK_RENDERER_PLATFORM_DIR ${BLINK_RENDERER_PLATFORM_PARENT_DIR}blink/renderer/platform/)
+
+set(BLINK_PUBLIC_COMMON_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/third_party/)
+set(BLINK_PUBLIC_COMMON_DIR ${BLINK_PUBLIC_COMMON_PARENT_DIR}blink/public/common/)
 
 set(BASE_CC_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/cc/)
 set(BASE_CC_DIR ${BASE_CC_PARENT_DIR}base/)
@@ -88,11 +129,18 @@ set(GURL_DIR ${GURL_PARENT_DIR}url/)
 set(GIPC_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/)
 set(GIPC_DIR ${GIPC_PARENT_DIR}ipc/)
 
-set(GPU_GLES2_DIR_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/gpu/)
+set(GPU_DIR ${CMAKE_CURRENT_SOURCE_DIR}/gpu/)
+
+set(GPU_GLES2_DIR_PARENT_DIR ${GPU_DIR}/)
 set(GPU_GLES2_DIR ${GPU_GLES2_PARENT_DIR}GLES2/)
 
-set(GPU_COMMAND_BUFFER_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/gpu/)
+set(GRE2_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/third_party/)
+set(GRE2_DIR ${GRE2_PARENT_DIR}re2/)
+
+set(GPU_COMMAND_BUFFER_PARENT_DIR ${GPU_DIR}/)
 set(GPU_COMMAND_BUFFER_DIR ${GPU_COMMAND_BUFFER_PARENT_DIR}command_buffer/)
+
+#set(GPU_COMMAND_BUFFER_ES2_DIR ${GPU_COMMAND_BUFFER_PARENT_DIR}GLES2/)
 
 set(GLIBXML_PARENT_DIR
   ${CMAKE_CURRENT_SOURCE_DIR}/third_party/
@@ -159,13 +207,24 @@ else()
   set(WTF_EMCC_DEFINITIONS "")
 endif ()
 
+# re2
+include(GRE2.cmake)
+
+# libxml
+include(GLIBXML.cmake)
+
+# libjpeg: requires LIBXML
+include(GLIBJPEG.cmake)
+
+# GLIBJPEG_TURBO: requires LIBJPEG
+include(GLIBJPEG_TURBO.cmake)
+
+# libyuv: requires LIBJPEG
+include(libyuv.cmake)
+
 if (EMSCRIPTEN)
   # libxml
-  include(GLIBXML.cmake)
-  # libjpeg
-  include(GLIBJPEG.cmake)
-  # GLIBJPEG_TURBO
-  include(GLIBJPEG_TURBO.cmake)
+  #include(GLIBXML.cmake)
 elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
   # khronos
   set(khronos_LIB
@@ -180,12 +239,6 @@ elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
   include(libsync.cmake)
   # zlib
   include(GZLIB.cmake)
-  # libxml
-  include(GLIBXML.cmake)
-  # libjpeg
-  include(GLIBJPEG.cmake)
-  # GLIBJPEG_TURBO
-  include(GLIBJPEG_TURBO.cmake)
   # libpng
   #include(GLIBPNG.cmake)
   # fontconfig
@@ -294,8 +347,31 @@ include(SKIA_EXT.cmake)
 # UI_GFX
 include(UI_GFX.cmake)
 
+# UI_EVENTS
+# Handles : hardware detection, keyboard events, motion and gesture
+#           detection. Basically, this library uses platform-specific
+#           APIs (XInput under X11, UDev under Ozone/Wayland) to
+#           handle keyboard, mouse, touch... events.
+# Notes : the Ozone implementation may also support "evdev", but this
+#         seems to be required only by the higher-level Ozone DRM
+#         backend, which we do not build (see above).
+# Depends on :
+# * base, skia, ipc, ui_gfx, xkbcommon
+# * python, libudev (wayland) / x11, xi, xproto, libevent (x11)
+include(UI_EVENTS.cmake)
+
+# UI_BASE
+# Depends on :
+# * base, url, net, skia, ui_gfx, ui_events,
+# * ui_strings, ui_resources
+# * x11, xcursor, xext, xfixes, xrender, xscrnsaver (x11)
+include(UI_BASE.cmake)
+
 # UI_GL
-#include(UI_GL.cmake)
+# Depends on :
+# * base, gpu_command_buffer, skia, ui_gfx, ui_base, glesv2
+# * ozone (wayland) / x11, xcomposite, xext (x11)
+include(UI_GL.cmake)
 
 # "+ui/events",
 # "+ui/base/x",
@@ -307,13 +383,10 @@ include(UI_GFX.cmake)
 #+gpu/ipc/common",
 
 # COMPONENTS_VIZ_COMMON
-#include(COMPONENTS_VIZ_COMMON.cmake)
+include(COMPONENTS_VIZ_COMMON.cmake)
 
 # COMPONENTS_VIZ_CLIENT
-#include(COMPONENTS_VIZ_CLIENT.cmake)
-
-# MOJO
-#include(MOJO.cmake)
+include(COMPONENTS_VIZ_CLIENT.cmake)
 
 # GPU_GLES2
 #include(GPU_GLES2.cmake)
@@ -332,21 +405,17 @@ include(PAINT_CC.cmake)
 include(ANIMATION_CC.cmake)
 include(CC.cmake)
 
-# UI_BASE
-# Depends on :
-# * base, url, net, skia, ui_gfx, ui_events,
-# * ui_strings, ui_resources
-# * x11, xcursor, xext, xfixes, xrender, xscrnsaver (x11)
-# include(UI_BASE.cmake)
+# SERVICES_NETWORK_PUBLIC_CPP
+include(COMPONENTS_CONTENT_SETTINGS_CORE_COMMON.cmake)
 
-# UI_GL
-# Depends on :
-# * base, gpu_command_buffer, skia, ui_gfx, ui_base, glesv2
-# * ozone (wayland) / x11, xcomposite, xext (x11)
-# include(UI_GL.cmake)
+# SERVICES_NETWORK_PUBLIC_CPP
+include(SERVICES_NETWORK_PUBLIC_CPP.cmake)
 
-# BLINK_PLATFORM
-#include(BLINK_PLATFORM.cmake)
+# BLINK_PUBLIC_COMMON
+include(BLINK_PUBLIC_COMMON.cmake)
+
+# BLINK_RENDERER_PLATFORM
+include(BLINK_RENDERER_PLATFORM.cmake)
 
 # BLINK_RENDERER_CORE
 #include(BLINK_RENDERER_CORE.cmake)

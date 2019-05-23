@@ -32,6 +32,8 @@ if(USE_LIBJPEG)
   elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
     set(libjpeg_LIB GLIBJPEG)
     set(libjpeg_TURBO_LIB GLIBJPEG_TURBO)
+  else()
+    message(FATAL_ERROR "platform not supported")
   endif()
 endif()
 

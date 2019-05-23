@@ -31,7 +31,9 @@ set(GLIBPNG_SOURCES
 )
 
 # if (current_cpu == "x86" || current_cpu == "x64")
-if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+if(EMSCRIPTEN)
+  # nothing
+elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
   if(CMAKE_CL_64)
     #
   else(CMAKE_CL_64)
@@ -43,6 +45,9 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
   endif(CMAKE_CL_64)
 
   #find_package(ZLIB)
+
+else()
+  message(FATAL_ERROR "platform not supported")
 endif()
 
 #if (current_cpu == "x86" || current_cpu == "x64") {

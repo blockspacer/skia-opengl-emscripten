@@ -203,6 +203,7 @@ https://github.com/endlessm/chromium-browser/tree/master/third_party/blink/rende
 https://chromium.googlesource.com/chromium/src.git/+/62.0.3178.1/third_party/WebKit/Source/platform/wtf/README.md
 
 ## TODO
+
 > port base/debug folder to wasm and remove some "if !defined(OS_EMSCRIPTEN)"
 
 > Test linux & windows support
@@ -400,7 +401,11 @@ bin/fetch-clang-format
 ```
 > pip
 ```
-sudo -E pip2 install Jinja2 --index-url=https://pypi.python.org/simple/ --trusted-host pypi.org --trusted-host pypi.python.org
+sudo -E pip2 install ply Jinja2 --index-url=https://pypi.python.org/simple/ --trusted-host pypi.org --trusted-host pypi.python.org
+# OR manual download & install (usefull under proxy):
+# wget https://files.pythonhosted.org/packages/a3/58/35da89ee790598a0700ea49b2a66594140f44dec458c07e8e3d4979137fc/ply-3.11-py2.py3-none-any.whl
+# # ... wget https://pypi.magicstack.net/packages/urllib3/download/79187/urllib3-1.22-py2.py3-none-any.whl
+# pip2 install *.whl
 ```
 > libpng12-0
 ```
@@ -592,6 +597,83 @@ In order to be able to set explicitSwapControl==true, support for it must explic
 If rendering is performed on an offscreen thread, pass the ID of the canvas to emscripten_pthread_attr_settransferredcanvases()
 
 see https://github.com/emscripten-core/emscripten/issues/5437
+
+## How to generate files based on *.mojo
+> read https://github.com/chromium/chromium/blob/master/third_party/blink/public/mojom/BUILD.gn#L15
+> get depot_tools (see above)
+> go to original chromium repo
+> Follow "Get the code" https://chromium.googlesource.com/chromium/src/+/master/docs/linux_build_instructions.md#get-the-code
+> gn gen out/Default
+> get mojo cpp targets:
+gn ls out/Default | grep mojo | grep cpp
+> read
+* https://chromium.googlesource.com/chromium/src/+/master/mojo/public/tools/bindings/README.md
+* https://chromium.googlesource.com/chromium/src.git/+/51.0.2704.48/docs/mojo_in_chromium.md
+* https://chromium.googlesource.com/chromium/src/+/master/mojo/public/cpp/bindings/README.md
+* https://chromium.googlesource.com/chromium/src/+/HEAD/docs/mojo_ipc_conversion.md
+* https://www.chromium.org/developers/design-documents/inter-process-communication
+> Build mojom based on desired dir:
+autoninja -C out/Default/ services/network/public/mojom services/network/public/mojom:websocket_mojom services/network/public/mojom:mutable_network_traffic_annotation_interface services/network/public/mojom:mojom_shared services/network/public/mojom:mojom_ip_address services/network/public/mojom:mojom_headers services/network/public/mojom:mojom_blink services/network/public/mojom:data_pipe_interfaces
+...
+services/network/public/cpp
+services/network/public/mojom
+services/network/public/mojom:websocket_mojom
+services/network/public/mojom:mutable_network_traffic_annotation_interface
+services/network/public/mojom:mojom_shared
+services/network/public/mojom:mojom_ip_address
+services/network/public/mojom:mojom_headers
+services/network/public/mojom:mojom_blink
+services/network/public/mojom:data_pipe_interfaces
+mojo/public/interfaces/bindings
+mojo/public/cpp/base
+mojo/public/cpp/bindings
+mojo/public/cpp/platform
+mojo/public/cpp/system
+mojo/public/mojom/base
+mojo/public:sdk
+mojo/public:public
+ui/base/accelerators
+ui/base
+ui/display
+ui/events
+ui/gfx/geometry
+ui/gfx/image
+ui/gfx/mojo
+ui/gfx/range/mojo
+ui/latency
+services/viz/public
+third_party/blink/public:all_blink
+third_party/blink/public:blink
+third_party/blink/public:blink_devtools_frontend_resources
+third_party/blink/public:blink_devtools_frontend_resources_files
+third_party/blink/public:blink_generate_devtools_grd
+third_party/blink/public:blink_headers
+third_party/blink/public:buildflags
+third_party/blink/public:image_resources
+third_party/blink/public:image_resources_grit
+third_party/blink/public:resources
+third_party/blink/public:resources_grit
+third_party/blink/public:scaled_resources
+third_party/blink/public:scaled_resources_100_percent
+third_party/blink/public:scaled_resources_200_percent
+third_party/blink/public/common:common
+third_party/blink/public/common:headers
+third_party/blink/public/mojom:embedded_frame_sink_mojo_bindings
+third_party/blink/public/mojom:mojom_broadcastchannel_bindings
+third_party/blink/public/mojom:mojom_core
+third_party/blink/public/mojom:mojom_mhtml_load_result
+third_party/blink/public/mojom:mojom_modules
+third_party/blink/public/mojom:mojom_platform
+third_party/blink/public/mojom:web_client_hints_types_mojo_bindings
+third_party/blink/public/mojom:web_feature_mojo_bindings
+chrome/browser/media
+components/metrics
+components/content_settings/core/common:mojo_bindings
+services/metrics
+services/tracing
+url/mojom
+...
+> see out/Default/gen/services/network/public/mojom
 
 ## NOTE:
 � webassembly compiling can be greatly sped up in chrome by enabling the #enable-webassembly-baseline setting from chrome:flags

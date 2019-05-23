@@ -73,11 +73,14 @@ list(APPEND SKIA_EXT_COMMON_SOURCES
 #
 # !is_ios && (current_cpu == "x86" || current_cpu == "x64")
 #
-if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+if(EMSCRIPTEN)
+elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
   list(APPEND SKIA_EXT_COMMON_SOURCES
     ${SKIA_EXT_DIR}ext/convolver_SSE2.cc
     ${SKIA_EXT_DIR}ext/convolver_SSE2.h
   )
+else()
+  message(FATAL_ERROR "platform not supported")
 endif()
 
 add_library(SKIA_EXT STATIC

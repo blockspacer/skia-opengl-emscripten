@@ -1,5 +1,5 @@
 
-# see G_GFX
+# see UI_GFX
 
 # TODO #
 
@@ -127,7 +127,7 @@ set(UI_GL_SOURCES
   ## TODO ## #${UI_GL_DIR}gl_surface_egl.h",
   #
   #  if (is_linux || use_ozone)
-  ${UI_GL_DIR}gl_image_native_pixmap.cc
+  ## TODO ## ${UI_GL_DIR}gl_image_native_pixmap.cc
   #${UI_GL_DIR}gl_image_native_pixmap.h
   #
   #     "gl_fence_android_native_fence_sync.cc",
@@ -162,8 +162,8 @@ target_link_libraries(UI_GL PUBLIC
   # linux libsync
   ${libsync_LIB}
   SKIA
-  #"+ui/events",
-  #"+ui/base/x",
+  UI_EVENTS
+  UI_BASE
   UI_GFX
   #
   base

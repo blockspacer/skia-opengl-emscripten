@@ -87,7 +87,7 @@ endif()
 
 set_property(TARGET GLIBJPEG PROPERTY CXX_STANDARD 17)
 
-target_include_directories(GLIBJPEG PRIVATE
+target_include_directories(GLIBJPEG PUBLIC
   ${GLIBJPEG_DIR}
   #${GLIBJPEG_DIR}/include
   #${GLIBJPEG_DIR}/src

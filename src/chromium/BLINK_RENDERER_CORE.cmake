@@ -10,11 +10,12 @@ add_library(BLINK_RENDERER_CORE STATIC
 )
 
 target_link_libraries(BLINK_RENDERER_CORE PUBLIC
+  BLINK_PUBLIC_COMMON
   GURL
   GNET
   GCRYPTO
   GFX_GEOMETRY
-  G_GFX
+  UI_GFX
   # mojo
   # services/service_manager
   # services/ws/public/cpp/gpu
@@ -28,7 +29,7 @@ target_link_libraries(BLINK_RENDERER_CORE PUBLIC
   # zlib
   # icu
   CC
-  G_GPU
+  #G_GPU
 )
 
 set_property(TARGET BLINK_RENDERER_CORE PROPERTY CXX_STANDARD 17)
@@ -36,6 +37,10 @@ set_property(TARGET BLINK_RENDERER_CORE PROPERTY CXX_STANDARD 17)
 target_include_directories(BLINK_RENDERER_CORE PRIVATE
   ${BLINK_RENDERER_CORE_DIR}
   #${BASE_DIR}
+)
+
+target_include_directories(BLINK_RENDERER_CORE PUBLIC
+  ${GEN_BLINK_PUBLIC_DIR}
 )
 
 target_compile_definitions(BLINK_RENDERER_CORE PRIVATE

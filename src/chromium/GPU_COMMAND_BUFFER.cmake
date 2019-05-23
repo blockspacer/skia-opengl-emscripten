@@ -1,6 +1,10 @@
 ## --- GPU_COMMAND_BUFFER ---###
 
-set(GPU_COMMAND_BUFFER_COMMON_SOURCES
+set(GPU_CONFIG_DIR
+  ${GPU_DIR}config/
+)
+
+list(APPEND GPU_COMMAND_BUFFER_COMMON_SOURCES
   ${GPU_COMMAND_BUFFER_DIR}common/activity_flags.cc
   #${GPU_COMMAND_BUFFER_DIR}common/activity_flags.h",
   #${GPU_COMMAND_BUFFER_DIR}common/bitfield_helpers.h",
@@ -77,37 +81,37 @@ set(GPU_COMMAND_BUFFER_COMMON_SOURCES
 
 ### GPU_COMMAND_BUFFER_CLIENT ###
 
-set(GPU_COMMAND_BUFFER_CLIENT_SOURCES
-  ${GPU_COMMAND_BUFFER_DIR}client_discardable_manager.cc
-  ${GPU_COMMAND_BUFFER_DIR}client_discardable_manager.h
-  ${GPU_COMMAND_BUFFER_DIR}client_discardable_texture_manager.cc
-  ${GPU_COMMAND_BUFFER_DIR}client_discardable_texture_manager.h
-  ${GPU_COMMAND_BUFFER_DIR}cmd_buffer_helper.cc
-  ${GPU_COMMAND_BUFFER_DIR}cmd_buffer_helper.h
-  ${GPU_COMMAND_BUFFER_DIR}fenced_allocator.cc
-  ${GPU_COMMAND_BUFFER_DIR}fenced_allocator.h
-  ${GPU_COMMAND_BUFFER_DIR}gpu_control.h
-  ${GPU_COMMAND_BUFFER_DIR}gpu_memory_buffer_manager.cc
-  ${GPU_COMMAND_BUFFER_DIR}gpu_memory_buffer_manager.h
-  ${GPU_COMMAND_BUFFER_DIR}image_decode_accelerator_interface.h
-  ${GPU_COMMAND_BUFFER_DIR}mapped_memory.cc
-  ${GPU_COMMAND_BUFFER_DIR}mapped_memory.h
-  ${GPU_COMMAND_BUFFER_DIR}ring_buffer.cc
-  ${GPU_COMMAND_BUFFER_DIR}ring_buffer.h
-  ${GPU_COMMAND_BUFFER_DIR}shared_image_interface.h
-  ${GPU_COMMAND_BUFFER_DIR}transfer_buffer.cc
-  ${GPU_COMMAND_BUFFER_DIR}transfer_buffer.h
-  ${GPU_COMMAND_BUFFER_DIR}transfer_buffer_cmd_copy_helpers.h
+list(APPEND GPU_COMMAND_BUFFER_CLIENT_SOURCES
+  ${GPU_COMMAND_BUFFER_DIR}client/client_discardable_manager.cc
+  ${GPU_COMMAND_BUFFER_DIR}client/client_discardable_manager.h
+  ${GPU_COMMAND_BUFFER_DIR}client/client_discardable_texture_manager.cc
+  ${GPU_COMMAND_BUFFER_DIR}client/client_discardable_texture_manager.h
+  ${GPU_COMMAND_BUFFER_DIR}client/cmd_buffer_helper.cc
+  ${GPU_COMMAND_BUFFER_DIR}client/cmd_buffer_helper.h
+  ${GPU_COMMAND_BUFFER_DIR}client/fenced_allocator.cc
+  ${GPU_COMMAND_BUFFER_DIR}client/fenced_allocator.h
+  ${GPU_COMMAND_BUFFER_DIR}client/gpu_control.h
+  ${GPU_COMMAND_BUFFER_DIR}client/gpu_memory_buffer_manager.cc
+  ${GPU_COMMAND_BUFFER_DIR}client/gpu_memory_buffer_manager.h
+  ${GPU_COMMAND_BUFFER_DIR}client/image_decode_accelerator_interface.h
+  ${GPU_COMMAND_BUFFER_DIR}client/mapped_memory.cc
+  ${GPU_COMMAND_BUFFER_DIR}client/mapped_memory.h
+  ${GPU_COMMAND_BUFFER_DIR}client/ring_buffer.cc
+  ${GPU_COMMAND_BUFFER_DIR}client/ring_buffer.h
+  ${GPU_COMMAND_BUFFER_DIR}client/shared_image_interface.h
+  ${GPU_COMMAND_BUFFER_DIR}client/transfer_buffer.cc
+  ${GPU_COMMAND_BUFFER_DIR}client/transfer_buffer.h
+  ${GPU_COMMAND_BUFFER_DIR}client/transfer_buffer_cmd_copy_helpers.h
 )
 
-set(GPU_COMMAND_BUFFER_CLIENT_SOURCES
+list(APPEND GPU_COMMAND_BUFFER_CLIENT_SOURCES
   # gles2_c_lib_source_files
   #
-  ${GPU_COMMAND_BUFFER_DIR}/client/gles2_c_lib.cc
-  ${GPU_COMMAND_BUFFER_DIR}/client/gles2_c_lib_autogen.h
-  ${GPU_COMMAND_BUFFER_DIR}/client/gles2_c_lib_export.h
-  ${GPU_COMMAND_BUFFER_DIR}/client/gles2_lib.cc
-  ${GPU_COMMAND_BUFFER_DIR}/client/gles2_lib.h
+  ${GPU_COMMAND_BUFFER_DIR}client/gles2_c_lib.cc
+  ${GPU_COMMAND_BUFFER_DIR}client/gles2_c_lib_autogen.h
+  ${GPU_COMMAND_BUFFER_DIR}client/gles2_c_lib_export.h
+  ${GPU_COMMAND_BUFFER_DIR}client/gles2_lib.cc
+  ${GPU_COMMAND_BUFFER_DIR}client/gles2_lib.h
   #
 )
 
@@ -127,24 +131,28 @@ set(GPU_COMMAND_BUFFER_CLIENT_SOURCES
 #]
 
 ### GPU_COMMAND_BUFFER_ES2 ###
-
-#set(GPU_COMMAND_BUFFER_ES2_SOURCES
-#  ${GPU_COMMAND_BUFFER_ES2_DIR}gles2_conform_support/egl/config.cc
-#  ${GPU_COMMAND_BUFFER_ES2_DIR}gles2_conform_support/egl/config.h
-#  ${GPU_COMMAND_BUFFER_ES2_DIR}gles2_conform_support/egl/context.cc
-#  ${GPU_COMMAND_BUFFER_ES2_DIR}gles2_conform_support/egl/context.h
-#  ${GPU_COMMAND_BUFFER_ES2_DIR}gles2_conform_support/egl/display.cc
-#  ${GPU_COMMAND_BUFFER_ES2_DIR}gles2_conform_support/egl/display.h
-#  ${GPU_COMMAND_BUFFER_ES2_DIR}gles2_conform_support/egl/egl.cc
-#  ${GPU_COMMAND_BUFFER_ES2_DIR}gles2_conform_support/egl/surface.cc
-#  ${GPU_COMMAND_BUFFER_ES2_DIR}gles2_conform_support/egl/surface.h
-#  ${GPU_COMMAND_BUFFER_ES2_DIR}gles2_conform_support/egl/test_support.cc
-#  ${GPU_COMMAND_BUFFER_ES2_DIR}gles2_conform_support/egl/test_support.h
-#  ${GPU_COMMAND_BUFFER_ES2_DIR}gles2_conform_support/egl/thread_state.cc
-#  ${GPU_COMMAND_BUFFER_ES2_DIR}gles2_conform_support/egl/thread_state.h
+#
+list(APPEND GPU_COMMAND_BUFFER_ES2_SOURCES
+  ${GPU_DIR}gles2_conform_support/egl/config.cc
+  ${GPU_DIR}gles2_conform_support/egl/config.h
+  # TODO # ${GPU_DIR}gles2_conform_support/egl/context.cc
+  # TODO # ${GPU_DIR}gles2_conform_support/egl/context.h
+  # TODO # ${GPU_DIR}gles2_conform_support/egl/display.cc
+  # TODO # ${GPU_DIR}gles2_conform_support/egl/display.h
+  # TODO # ${GPU_DIR}gles2_conform_support/egl/egl.cc
+  ${GPU_DIR}gles2_conform_support/egl/surface.cc
+  ${GPU_DIR}gles2_conform_support/egl/surface.h
+  ${GPU_DIR}gles2_conform_support/egl/test_support.cc
+  ${GPU_DIR}gles2_conform_support/egl/test_support.h
+  # TODO # ${GPU_DIR}gles2_conform_support/egl/thread_state.cc
+  # TODO # ${GPU_DIR}gles2_conform_support/egl/thread_state.h
+)
 #
 # gles2_cmd_helper_sources
 #
+list(APPEND GPU_COMMAND_BUFFER_CLIENT_SOURCES
+  ${GPU_COMMAND_BUFFER_DIR}client/gles2_cmd_helper.cc
+)
 #  ${GPU_COMMAND_BUFFER_ES2_DIR}gles2_cmd_helper.cc
 #  #  "gles2_cmd_helper.h",
 #  # "gles2_cmd_helper_autogen.h",
@@ -339,45 +347,45 @@ set(GPU_COMMAND_BUFFER_CLIENT_SOURCES
 set(GPU_CONFIG_SOURCES
   ${GPU_CONFIG_DIR}dx_diag_node.cc
   ${GPU_CONFIG_DIR}dx_diag_node.h
-  ${GPU_CONFIG_DIR}gpu_blacklist.cc
+  ## TODO ## ${GPU_CONFIG_DIR}gpu_blacklist.cc
   ${GPU_CONFIG_DIR}gpu_blacklist.h
-  ${GPU_CONFIG_DIR}gpu_control_list.cc
-  ${GPU_CONFIG_DIR}gpu_control_list.h
-  ${GPU_CONFIG_DIR}gpu_crash_keys.cc
+  ## TODO ## ${GPU_CONFIG_DIR}gpu_control_list.cc
+  ## TODO ## ${GPU_CONFIG_DIR}gpu_control_list.h
+  ## TODO ## ${GPU_CONFIG_DIR}gpu_crash_keys.cc
   ${GPU_CONFIG_DIR}gpu_crash_keys.h
   ${GPU_CONFIG_DIR}gpu_domain_guilt.h
-  ${GPU_CONFIG_DIR}gpu_driver_bug_list.cc
-  ${GPU_CONFIG_DIR}gpu_driver_bug_list.h
-  ${GPU_CONFIG_DIR}gpu_driver_bug_workaround_type.hlib
-  ${GPU_CONFIG_DIR}gpu_driver_bug_workarounds.cc
-  ${GPU_CONFIG_DIR}gpu_driver_bug_workarounds.h
+  ## TODO ## ${GPU_CONFIG_DIR}gpu_driver_bug_list.cc
+  ## TODO ## ${GPU_CONFIG_DIR}gpu_driver_bug_list.h
+  ## TODO ## ${GPU_CONFIG_DIR}gpu_driver_bug_workaround_type.hlib
+  ## TODO ## ${GPU_CONFIG_DIR}gpu_driver_bug_workarounds.cc
+  ## TODO ## ${GPU_CONFIG_DIR}gpu_driver_bug_workarounds.h
   ## TODO ## ${GPU_CONFIG_DIR}gpu_dx_diagnostics_win.cc
-  ${GPU_CONFIG_DIR}gpu_feature_info.cc
-  ${GPU_CONFIG_DIR}gpu_feature_info.h
+  ## TODO ## ${GPU_CONFIG_DIR}gpu_feature_info.cc
+  ## TODO ## ${GPU_CONFIG_DIR}gpu_feature_info.h
   ${GPU_CONFIG_DIR}gpu_feature_type.h
   ${GPU_CONFIG_DIR}gpu_finch_features.cc
   ${GPU_CONFIG_DIR}gpu_finch_features.h
   ${GPU_CONFIG_DIR}gpu_info.cc
   ${GPU_CONFIG_DIR}gpu_info.h
-  ${GPU_CONFIG_DIR}gpu_info_collector.cc
-  ${GPU_CONFIG_DIR}gpu_info_collector.h
+  ## TODO ## ${GPU_CONFIG_DIR}gpu_info_collector.cc
+  ## TODO ## ${GPU_CONFIG_DIR}gpu_info_collector.h
   ## TODO ## ${GPU_CONFIG_DIR}gpu_info_collector_android.cc
   ## TODO ## ${GPU_CONFIG_DIR}gpu_info_collector_linux.cc
   ## TODO ## ${GPU_CONFIG_DIR}gpu_info_collector_mac.mm
   ## TODO ## ${GPU_CONFIG_DIR}gpu_info_collector_win.cc
   ${GPU_CONFIG_DIR}gpu_mode.h
-  ${GPU_CONFIG_DIR}gpu_preferences.cc
-  ${GPU_CONFIG_DIR}gpu_preferences.h
+  ## TODO ## ${GPU_CONFIG_DIR}gpu_preferences.cc
+  ## TODO ## ${GPU_CONFIG_DIR}gpu_preferences.h
   ${GPU_CONFIG_DIR}gpu_switches.cc
   ${GPU_CONFIG_DIR}gpu_switches.h
-  ${GPU_CONFIG_DIR}gpu_switching.cc
-  ${GPU_CONFIG_DIR}gpu_switching.h
+  ## TODO ## ${GPU_CONFIG_DIR}gpu_switching.cc
+  ## TODO ## ${GPU_CONFIG_DIR}gpu_switching.h
   ${GPU_CONFIG_DIR}gpu_test_config.cc
   ${GPU_CONFIG_DIR}gpu_test_config.h
   ${GPU_CONFIG_DIR}gpu_test_expectations_parser.cc
   ${GPU_CONFIG_DIR}gpu_test_expectations_parser.h
-  ${GPU_CONFIG_DIR}gpu_util.cc
-  ${GPU_CONFIG_DIR}gpu_util.h
+  ## TODO ## ${GPU_CONFIG_DIR}gpu_util.cc
+  ## TODO ## ${GPU_CONFIG_DIR}gpu_util.h
 )
 #deps = [
 #  ":process_json",
@@ -404,7 +412,8 @@ set(GPU_CONFIG_SOURCES
 add_library(GPU_COMMAND_BUFFER STATIC
   ${GPU_COMMAND_BUFFER_COMMON_SOURCES}
   ${GPU_COMMAND_BUFFER_CLIENT_SOURCES}
-  ${GPU_COMMAND_BUFFER_CLIENT_SOURCES}
+  ${GPU_CONFIG_SOURCES}
+  ${GPU_COMMAND_BUFFER_ES2_SOURCES}
 )
 
 target_link_libraries(GPU_COMMAND_BUFFER PUBLIC
@@ -414,8 +423,10 @@ target_link_libraries(GPU_COMMAND_BUFFER PUBLIC
   SKIA
   #GPU_GLES2 # same as ${GPU_COMMAND_BUFFER_DIR}
   #${BASE_LIBRARIES}
+  #mojom
   base
   ${khronos_LIB}
+  GRE2
 )
 #message(FATAL_ERROR ${GPU_COMMAND_BUFFER_PARENT_DIR}GLES2/gl2extchromium.h)
 set_property(TARGET GPU_COMMAND_BUFFER PROPERTY CXX_STANDARD 17)
@@ -424,8 +435,16 @@ target_include_directories(GPU_COMMAND_BUFFER PRIVATE
   #${UI_PARENT_DIR}
   ${GPU_COMMAND_BUFFER_DIR}
   ${GPU_COMMAND_BUFFER_PARENT_DIR}
-  #${GPU_COMMAND_BUFFER_DIR}/common
+  ${GPU_CONFIG_DIR}
+  ${GPU_DIR}gles2_conform_support
+  ${GPU_COMMAND_BUFFER_DIR}client
+  #${GPU_COMMAND_BUFFER_DIR}common
   #${BASE_DIR}
+  ${GRE2_PARENT_DIR}
+)
+
+target_include_directories(GPU_COMMAND_BUFFER PUBLIC
+  ${GPU_DIR}
 )
 
 target_compile_definitions(GPU_COMMAND_BUFFER PRIVATE
@@ -435,5 +454,10 @@ target_compile_definitions(GPU_COMMAND_BUFFER PRIVATE
   GPU_UTIL_IMPLEMENTATION=1
   RASTER_IMPLEMENTATION=1
   #GL_GLEXT_PROTOTYPES=1
-  # WEBGPU_IMPLEMENTATION
+  # WEBGPU_IMPLEMENTATION=1
+  GLES2_IMPL_IMPLEMENTATION=1
+  GLES2_C_LIB_IMPLEMENTATION=1
+  #GL_IN_PROCESS_CONTEXT_IMPLEMENTATION=1
+  #USE_AURA=1
+  #-DANGLE_ENABLE_OPENGL -DANGLE_ENABLE_ESSL -DANGLE_ENABLE_GLSL
 )

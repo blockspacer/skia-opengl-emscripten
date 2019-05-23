@@ -169,6 +169,8 @@ elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
       WITH_SIMD=1
     )
   endif(CMAKE_CL_64)
+else()
+  message(FATAL_ERROR "platform not supported")
 endif()
 
 add_library(GLIBJPEG_TURBO STATIC

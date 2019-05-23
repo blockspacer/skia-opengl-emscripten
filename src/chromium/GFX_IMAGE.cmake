@@ -1,5 +1,5 @@
 
-# see G_GFX
+# see UI_GFX
 
 #### --- GFX_IMAGE ---###
 #
