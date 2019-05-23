@@ -8,10 +8,13 @@
 #define GPU_GLES2_GL2EXTCHROMIUM_H_
 
 // TODO: EMSCRIPTEN
-//#include <GLES2/gl2.h>
-//#include <GLES2/gl2ext.h>
+#if defined(__EMSCRIPTEN__)
+#include <GLES2/gl2.h>
+#include <GLES2/gl2ext.h>
+#else
 #include "third_party/khronos/GLES2/gl2.h"
 #include "third_party/khronos/GLES2/gl2ext.h"
+#endif
 
 #ifdef __cplusplus
 extern "C" {

@@ -375,7 +375,7 @@ target_link_libraries(CC PUBLIC
   GFX_RANGE
   SKIA
   base
-  khronos
+  ${khronos_LIB}
 )
 
 set_property(TARGET CC PROPERTY CXX_STANDARD 17)

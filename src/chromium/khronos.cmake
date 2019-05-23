@@ -1,3 +1,9 @@
+if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+  # nothing
+else()
+  message(FATAL_ERROR "platform not supported")
+endif()
+
 add_library(khronos INTERFACE)
 target_include_directories(khronos INTERFACE
   ${khronos_DIR}

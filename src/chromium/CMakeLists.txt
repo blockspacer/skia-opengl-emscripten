@@ -159,13 +159,6 @@ else()
   set(WTF_EMCC_DEFINITIONS "")
 endif ()
 
-# khronos
-set(khronos_LIB
-  khronos
-)
-# khronos
-include(khronos.cmake)
-
 if (EMSCRIPTEN)
   # libxml
   include(GLIBXML.cmake)
@@ -174,6 +167,12 @@ if (EMSCRIPTEN)
   # GLIBJPEG_TURBO
   include(GLIBJPEG_TURBO.cmake)
 elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+  # khronos
+  set(khronos_LIB
+    khronos
+  )
+  # khronos
+  include(khronos.cmake)
   # libsync
   set(libsync_LIB
     libsync

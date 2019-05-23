@@ -1935,6 +1935,7 @@ void GL_APIENTRY GLES2EndSharedImageAccessDirectCHROMIUM(GLuint texture) {
 
 namespace gles2 {
 
+#if !defined(__EMSCRIPTEN__)
 extern const NameToFunc g_gles2_function_table[] = {
     {
         "glActiveTexture",
@@ -2968,35 +2969,67 @@ extern const NameToFunc g_gles2_function_table[] = {
     },
     {
         "glGetProgramInterfaceiv",
+        #if defined(__EMSCRIPTEN__)
+        reinterpret_cast<GLES2FunctionPointer>(GLES2GetProgramInterfaceiv),
+        #else
         reinterpret_cast<GLES2FunctionPointer>(glGetProgramInterfaceiv),
+        #endif
     },
     {
         "glGetProgramResourceIndex",
+        #if defined(__EMSCRIPTEN__)
+        reinterpret_cast<GLES2FunctionPointer>(GLES2GetProgramResourceIndex),
+        #else
         reinterpret_cast<GLES2FunctionPointer>(glGetProgramResourceIndex),
+        #endif
     },
     {
         "glGetProgramResourceName",
+        #if defined(__EMSCRIPTEN__)
+        reinterpret_cast<GLES2FunctionPointer>(GLES2GetProgramResourceName),
+        #else
         reinterpret_cast<GLES2FunctionPointer>(glGetProgramResourceName),
+        #endif
     },
     {
         "glGetProgramResourceiv",
+        #if defined(__EMSCRIPTEN__)
+        reinterpret_cast<GLES2FunctionPointer>(GLES2GetProgramResourceiv),
+        #else
         reinterpret_cast<GLES2FunctionPointer>(glGetProgramResourceiv),
+        #endif
     },
     {
         "glGetProgramResourceLocation",
+        #if defined(__EMSCRIPTEN__)
+        reinterpret_cast<GLES2FunctionPointer>(GLES2GetProgramResourceLocation),
+        #else
         reinterpret_cast<GLES2FunctionPointer>(glGetProgramResourceLocation),
+        #endif
     },
     {
         "glMemoryBarrierEXT",
+        #if defined(__EMSCRIPTEN__)
+        reinterpret_cast<GLES2FunctionPointer>(GLES2MemoryBarrierEXT),
+        #else
         reinterpret_cast<GLES2FunctionPointer>(glMemoryBarrierEXT),
+        #endif
     },
     {
         "glMemoryBarrierByRegion",
+        #if defined(__EMSCRIPTEN__)
+        reinterpret_cast<GLES2FunctionPointer>(GLES2MemoryBarrierByRegion),
+        #else
         reinterpret_cast<GLES2FunctionPointer>(glMemoryBarrierByRegion),
+        #endif
     },
     {
         "glSwapBuffers",
+        #if defined(__EMSCRIPTEN__)
+        reinterpret_cast<GLES2FunctionPointer>(GLES2SwapBuffers),
+        #else
         reinterpret_cast<GLES2FunctionPointer>(glSwapBuffers),
+        #endif
     },
     {
         "glGetMaxValueInBufferCHROMIUM",
@@ -3443,5 +3476,8 @@ extern const NameToFunc g_gles2_function_table[] = {
     },
 };
 
+#endif // __EMSCRIPTEN__
+
 }  // namespace gles2
+
 #endif  // GPU_COMMAND_BUFFER_CLIENT_GLES2_C_LIB_AUTOGEN_H_

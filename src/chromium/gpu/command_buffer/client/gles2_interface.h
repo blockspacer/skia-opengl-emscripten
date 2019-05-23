@@ -6,8 +6,13 @@
 #define GPU_COMMAND_BUFFER_CLIENT_GLES2_INTERFACE_H_
 
 // TODO: EMSCRIPTEN
-//#include <GLES2/gl2.h>
+#if defined(__EMSCRIPTEN__)
+#include <GLES2/gl2.h>
+#include <GLES2/gl2ext.h>
+#else
 #include "third_party/khronos/GLES2/gl2.h"
+#include "third_party/khronos/GLES2/gl2ext.h"
+#endif
 
 #include "base/compiler_specific.h"
 #include "gpu/command_buffer/client/interface_base.h"
