@@ -1,0 +1,2 @@
+gen/chrome/common/service_process_mojom.sources_list
+gen/mojo/public/mojom/base/base.sources_list

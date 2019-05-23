@@ -1,0 +1,8 @@
+gen/services/viz/public/interfaces/interfaces.sources_list
+gen/services/viz/public/interfaces/constants.sources_list
+gen/gpu/ipc/common/interfaces.sources_list
+gen/mojo/public/mojom/base/base.sources_list
+gen/skia/public/interfaces/interfaces.sources_list
+gen/ui/gfx/geometry/mojo/mojo.sources_list
+gen/ui/gfx/mojo/mojo.sources_list
+gen/ui/latency/mojo/interfaces.sources_list

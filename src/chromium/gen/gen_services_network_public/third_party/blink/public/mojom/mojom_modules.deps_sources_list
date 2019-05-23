@@ -1,0 +1,4 @@
+gen/third_party/blink/public/mojom/mojom_modules.sources_list
+gen/third_party/blink/public/mojom/android_mojo_bindings.sources_list
+gen/third_party/blink/public/mojom/mojom_core.sources_list
+gen/mojo/public/mojom/base/base.sources_list

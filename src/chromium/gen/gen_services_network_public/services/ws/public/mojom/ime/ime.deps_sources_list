@@ -1,0 +1,7 @@
+gen/services/ws/public/mojom/ime/ime.sources_list
+gen/mojo/public/mojom/base/base.sources_list
+gen/ui/base/ime/mojo/mojo.sources_list
+gen/ui/events/mojo/interfaces.sources_list
+gen/ui/gfx/geometry/mojo/mojo.sources_list
+gen/ui/gfx/range/mojo/mojo.sources_list
+gen/ui/platform_window/mojo/interfaces.sources_list

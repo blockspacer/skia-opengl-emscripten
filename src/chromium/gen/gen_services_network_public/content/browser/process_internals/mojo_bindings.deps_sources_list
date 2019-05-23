@@ -1,0 +1,2 @@
+gen/content/browser/process_internals/mojo_bindings.sources_list
+gen/url/mojom/url_mojom_gurl.sources_list

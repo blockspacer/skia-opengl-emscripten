@@ -1,0 +1,151 @@
+{
+  "c++": {
+    "network.mojom.AddressList": {
+      "hashable": false, 
+      "force_serialize": false, 
+      "non_copyable_non_movable": false, 
+      "typename": "net::AddressList", 
+      "traits_headers": [
+        "services/network/public/cpp/address_list_mojom_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "net/base/address_list.h"
+      ]
+    }, 
+    "proxy_resolver.mojom.ProxyServer": {
+      "hashable": false, 
+      "typename": "net::ProxyServer", 
+      "traits_headers": [
+        "services/proxy_resolver/public/cpp/mojo_host_struct_traits.h", 
+        "services/proxy_resolver/public/cpp/proxy_resolver_mojom_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "force_serialize": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "non_copyable_non_movable": false, 
+      "public_headers": [
+        "net/base/proxy_server.h", 
+        "net/proxy_resolution/proxy_info.h", 
+        "net/proxy_resolution/proxy_resolve_dns_operation.h"
+      ]
+    }, 
+    "url.mojom.Url": {
+      "hashable": false, 
+      "force_serialize": false, 
+      "non_copyable_non_movable": false, 
+      "typename": "GURL", 
+      "traits_headers": [
+        "url/mojom/url_gurl_mojom_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "url/gurl.h"
+      ]
+    }, 
+    "proxy_resolver.mojom.ProxyServer::Scheme": {
+      "hashable": false, 
+      "typename": "net::ProxyScheme", 
+      "traits_headers": [
+        "services/proxy_resolver/public/cpp/mojo_host_struct_traits.h", 
+        "services/proxy_resolver/public/cpp/proxy_resolver_mojom_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "force_serialize": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "non_copyable_non_movable": false, 
+      "public_headers": [
+        "net/base/proxy_server.h", 
+        "net/proxy_resolution/proxy_info.h", 
+        "net/proxy_resolution/proxy_resolve_dns_operation.h"
+      ]
+    }, 
+    "network.mojom.IPEndPoint": {
+      "hashable": false, 
+      "force_serialize": false, 
+      "non_copyable_non_movable": false, 
+      "typename": "net::IPEndPoint", 
+      "traits_headers": [
+        "services/network/public/cpp/ip_endpoint_mojom_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "net/base/ip_endpoint.h"
+      ]
+    }, 
+    "proxy_resolver.mojom.HostResolveOperation": {
+      "hashable": false, 
+      "typename": "net::ProxyResolveDnsOperation", 
+      "traits_headers": [
+        "services/proxy_resolver/public/cpp/mojo_host_struct_traits.h", 
+        "services/proxy_resolver/public/cpp/proxy_resolver_mojom_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "force_serialize": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "non_copyable_non_movable": false, 
+      "public_headers": [
+        "net/base/proxy_server.h", 
+        "net/proxy_resolution/proxy_info.h", 
+        "net/proxy_resolution/proxy_resolve_dns_operation.h"
+      ]
+    }, 
+    "network.mojom.AddressFamily": {
+      "hashable": false, 
+      "force_serialize": false, 
+      "non_copyable_non_movable": false, 
+      "typename": "net::AddressFamily", 
+      "traits_headers": [
+        "services/network/public/cpp/address_family_mojom_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "net/base/address_family.h"
+      ]
+    }, 
+    "network.mojom.IPAddress": {
+      "hashable": false, 
+      "force_serialize": false, 
+      "non_copyable_non_movable": false, 
+      "typename": "net::IPAddress", 
+      "traits_headers": [
+        "services/network/public/cpp/ip_address_mojom_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "net/base/ip_address.h"
+      ]
+    }, 
+    "proxy_resolver.mojom.ProxyInfo": {
+      "hashable": false, 
+      "typename": "net::ProxyInfo", 
+      "traits_headers": [
+        "services/proxy_resolver/public/cpp/mojo_host_struct_traits.h", 
+        "services/proxy_resolver/public/cpp/proxy_resolver_mojom_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "force_serialize": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "non_copyable_non_movable": false, 
+      "public_headers": [
+        "net/base/proxy_server.h", 
+        "net/proxy_resolution/proxy_info.h", 
+        "net/proxy_resolution/proxy_resolve_dns_operation.h"
+      ]
+    }
+  }
+}

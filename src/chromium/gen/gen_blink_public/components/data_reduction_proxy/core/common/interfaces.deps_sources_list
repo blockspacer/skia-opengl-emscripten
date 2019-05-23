@@ -1,0 +1,4 @@
+gen/components/data_reduction_proxy/core/common/interfaces.sources_list
+gen/mojo/public/mojom/base/base.sources_list
+gen/services/network/public/mojom/mojom.sources_list
+gen/services/proxy_resolver/public/mojom/mojom.sources_list

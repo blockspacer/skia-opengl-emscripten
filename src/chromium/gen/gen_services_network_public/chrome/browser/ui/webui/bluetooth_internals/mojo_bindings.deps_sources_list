@@ -1,0 +1,2 @@
+gen/chrome/browser/ui/webui/bluetooth_internals/mojo_bindings.sources_list
+gen/device/bluetooth/public/mojom/deprecated_experimental_interfaces.sources_list

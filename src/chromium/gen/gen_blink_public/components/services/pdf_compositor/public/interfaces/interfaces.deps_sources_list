@@ -1,0 +1,3 @@
+gen/components/services/pdf_compositor/public/interfaces/interfaces.sources_list
+gen/mojo/public/mojom/base/base.sources_list
+gen/url/mojom/url_mojom_gurl.sources_list

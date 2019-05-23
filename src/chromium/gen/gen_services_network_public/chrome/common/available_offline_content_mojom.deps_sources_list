@@ -1,0 +1,2 @@
+gen/chrome/common/available_offline_content_mojom.sources_list
+gen/url/mojom/url_mojom_gurl.sources_list

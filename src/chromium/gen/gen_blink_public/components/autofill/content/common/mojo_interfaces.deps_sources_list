@@ -1,0 +1,5 @@
+gen/components/autofill/content/common/mojo_interfaces.sources_list
+gen/components/autofill/content/common/mojo_types.sources_list
+gen/mojo/public/mojom/base/base.sources_list
+gen/ui/gfx/geometry/mojo/mojo.sources_list
+gen/url/mojom/url_mojom_gurl.sources_list

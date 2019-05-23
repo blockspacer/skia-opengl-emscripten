@@ -1,0 +1,5 @@
+dawn_native/ProcTable.cpp
+dawn_native/dawn_structs_autogen.h
+dawn_native/dawn_structs_autogen.cpp
+dawn_native/ValidationUtils_autogen.h
+dawn_native/ValidationUtils_autogen.cpp

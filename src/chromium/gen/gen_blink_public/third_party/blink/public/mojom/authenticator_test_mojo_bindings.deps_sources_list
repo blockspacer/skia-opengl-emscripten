@@ -1,0 +1,3 @@
+gen/third_party/blink/public/mojom/authenticator_test_mojo_bindings.sources_list
+gen/third_party/blink/public/mojom/android_mojo_bindings.sources_list
+gen/url/mojom/url_mojom_gurl.sources_list

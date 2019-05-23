@@ -1,0 +1,4 @@
+gen/components/safe_browsing/common/interfaces.sources_list
+gen/content/public/common/resource_type_bindings.sources_list
+gen/services/network/public/mojom/mojom.sources_list
+gen/url/mojom/url_mojom_gurl.sources_list

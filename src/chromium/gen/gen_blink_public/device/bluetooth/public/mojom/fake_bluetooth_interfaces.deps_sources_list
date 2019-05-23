@@ -1,0 +1,2 @@
+gen/device/bluetooth/public/mojom/fake_bluetooth_interfaces.sources_list
+gen/device/bluetooth/public/mojom/mojom.sources_list

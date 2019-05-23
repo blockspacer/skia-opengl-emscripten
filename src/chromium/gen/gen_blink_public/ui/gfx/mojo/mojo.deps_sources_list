@@ -1,0 +1,3 @@
+gen/ui/gfx/mojo/mojo.sources_list
+gen/mojo/public/mojom/base/base.sources_list
+gen/ui/gfx/geometry/mojo/mojo.sources_list

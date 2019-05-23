@@ -1,0 +1,3 @@
+gen/services/image_annotation/public/mojom/mojom.sources_list
+gen/mojo/public/mojom/base/base.sources_list
+gen/services/image_annotation/public/mojom/constants.sources_list

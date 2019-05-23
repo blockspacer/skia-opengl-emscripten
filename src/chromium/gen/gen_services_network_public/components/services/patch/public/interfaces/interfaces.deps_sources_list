@@ -1,0 +1,3 @@
+gen/components/services/patch/public/interfaces/interfaces.sources_list
+gen/components/services/patch/public/interfaces/constants.sources_list
+gen/mojo/public/mojom/base/base.sources_list

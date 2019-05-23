@@ -1,0 +1,3 @@
+gen/chrome/services/app_service/public/mojom/types.sources_list
+gen/mojo/public/mojom/base/base.sources_list
+gen/ui/gfx/image/mojo/interfaces.sources_list

@@ -1,0 +1,34 @@
+{
+  "c++": {
+    "network.mojom.MutableNetworkTrafficAnnotationTag": {
+      "hashable": false, 
+      "typename": "net::MutableNetworkTrafficAnnotationTag", 
+      "traits_headers": [
+        "services/network/public/cpp/mutable_network_traffic_annotation_tag_mojom_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "force_serialize": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "non_copyable_non_movable": false, 
+      "public_headers": [
+        "net/traffic_annotation/network_traffic_annotation.h"
+      ]
+    }, 
+    "network.mojom.MutablePartialNetworkTrafficAnnotationTag": {
+      "hashable": false, 
+      "typename": "net::MutablePartialNetworkTrafficAnnotationTag", 
+      "traits_headers": [
+        "services/network/public/cpp/mutable_partial_network_traffic_annotation_tag_mojom_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "force_serialize": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "non_copyable_non_movable": false, 
+      "public_headers": [
+        "net/traffic_annotation/network_traffic_annotation.h"
+      ]
+    }
+  }
+}

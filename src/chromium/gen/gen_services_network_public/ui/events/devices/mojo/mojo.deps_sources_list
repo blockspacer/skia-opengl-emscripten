@@ -1,0 +1,3 @@
+gen/ui/events/devices/mojo/mojo.sources_list
+gen/ui/gfx/geometry/mojo/mojo.sources_list
+gen/ui/gfx/mojo/mojo.sources_list

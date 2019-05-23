@@ -1,0 +1,4 @@
+gen/services/audio/public/mojom/mojom.sources_list
+gen/services/audio/public/mojom/constants.sources_list
+gen/media/mojo/interfaces/interfaces.sources_list
+gen/mojo/public/mojom/base/base.sources_list

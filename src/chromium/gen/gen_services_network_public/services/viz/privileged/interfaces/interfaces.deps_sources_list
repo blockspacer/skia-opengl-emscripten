@@ -1,0 +1,7 @@
+gen/services/viz/privileged/interfaces/interfaces.sources_list
+gen/components/discardable_memory/public/interfaces/interfaces.sources_list
+gen/services/network/public/mojom/mojom.sources_list
+gen/services/viz/privileged/interfaces/compositing/compositing.sources_list
+gen/services/viz/privileged/interfaces/gl/gl.sources_list
+gen/services/viz/public/interfaces/interfaces.sources_list
+gen/ui/gfx/mojo/mojo.sources_list

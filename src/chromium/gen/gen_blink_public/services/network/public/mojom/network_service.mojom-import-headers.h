@@ -1,0 +1,48 @@
+// Copyright 2019 The Chromium Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+#ifndef SERVICES_NETWORK_PUBLIC_MOJOM_NETWORK_SERVICE_MOJOM_IMPORT_HEADERS_H_
+#define SERVICES_NETWORK_PUBLIC_MOJOM_NETWORK_SERVICE_MOJOM_IMPORT_HEADERS_H_
+#include "mojo/public/mojom/base/file.mojom.h"
+#include "mojo/public/mojom/base/file.mojom-import-headers.h"
+#include "mojo/public/mojom/base/file_path.mojom.h"
+#include "mojo/public/mojom/base/file_path.mojom-import-headers.h"
+#include "mojo/public/mojom/base/memory_pressure_level.mojom.h"
+#include "mojo/public/mojom/base/memory_pressure_level.mojom-import-headers.h"
+#include "mojo/public/mojom/base/read_only_buffer.mojom.h"
+#include "mojo/public/mojom/base/read_only_buffer.mojom-import-headers.h"
+#include "mojo/public/mojom/base/string16.mojom.h"
+#include "mojo/public/mojom/base/string16.mojom-import-headers.h"
+#include "mojo/public/mojom/base/unguessable_token.mojom.h"
+#include "mojo/public/mojom/base/unguessable_token.mojom-import-headers.h"
+#include "mojo/public/mojom/base/values.mojom.h"
+#include "mojo/public/mojom/base/values.mojom-import-headers.h"
+#include "services/network/public/mojom/cookie_manager.mojom.h"
+#include "services/network/public/mojom/cookie_manager.mojom-import-headers.h"
+#include "services/network/public/mojom/host_resolver.mojom.h"
+#include "services/network/public/mojom/host_resolver.mojom-import-headers.h"
+#include "services/network/public/mojom/net_log.mojom.h"
+#include "services/network/public/mojom/net_log.mojom-import-headers.h"
+#include "services/network/public/mojom/network_change_manager.mojom.h"
+#include "services/network/public/mojom/network_change_manager.mojom-import-headers.h"
+#include "services/network/public/mojom/network_context.mojom.h"
+#include "services/network/public/mojom/network_context.mojom-import-headers.h"
+#include "services/network/public/mojom/network_interface.mojom.h"
+#include "services/network/public/mojom/network_interface.mojom-import-headers.h"
+#include "services/network/public/mojom/network_param.mojom.h"
+#include "services/network/public/mojom/network_param.mojom-import-headers.h"
+#include "services/network/public/mojom/network_quality_estimator_manager.mojom.h"
+#include "services/network/public/mojom/network_quality_estimator_manager.mojom-import-headers.h"
+#include "services/network/public/mojom/url_loader.mojom.h"
+#include "services/network/public/mojom/url_loader.mojom-import-headers.h"
+#include "services/network/public/mojom/url_loader_factory.mojom.h"
+#include "services/network/public/mojom/url_loader_factory.mojom-import-headers.h"
+#include "url/mojom/origin.mojom.h"
+#include "url/mojom/origin.mojom-import-headers.h"
+#include "url/mojom/url.mojom.h"
+#include "url/mojom/url.mojom-import-headers.h"
+#include "services/network/public/mojom/signed_tree_head.mojom.h"
+#include "services/network/public/mojom/signed_tree_head.mojom-import-headers.h"
+
+#endif  // SERVICES_NETWORK_PUBLIC_MOJOM_NETWORK_SERVICE_MOJOM_IMPORT_HEADERS_H_

@@ -1,0 +1,3 @@
+gen/components/mirroring/mojom/common.sources_list
+gen/mojo/public/mojom/base/base.sources_list
+gen/services/network/public/mojom/mojom_ip_address.sources_list

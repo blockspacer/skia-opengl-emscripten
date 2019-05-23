@@ -1,0 +1,19 @@
+{
+  "c++": {
+    "url.mojom.Url": {
+      "hashable": false, 
+      "typename": "GURL", 
+      "traits_headers": [
+        "url/mojom/url_gurl_mojom_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "force_serialize": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "non_copyable_non_movable": false, 
+      "public_headers": [
+        "url/gurl.h"
+      ]
+    }
+  }
+}

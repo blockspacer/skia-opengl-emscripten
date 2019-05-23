@@ -1,0 +1,19 @@
+{
+  "c++": {
+    "mojo_base.mojom.ReadOnlyBuffer": {
+      "hashable": false, 
+      "typename": "base::span<const uint8_t>", 
+      "traits_headers": [
+        "mojo/public/cpp/base/read_only_buffer_mojom_traits.h"
+      ], 
+      "copyable_pass_by_value": true, 
+      "force_serialize": true, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "non_copyable_non_movable": false, 
+      "public_headers": [
+        "base/containers/span.h"
+      ]
+    }
+  }
+}

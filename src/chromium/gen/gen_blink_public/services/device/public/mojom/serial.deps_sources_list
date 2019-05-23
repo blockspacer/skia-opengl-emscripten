@@ -1,0 +1,2 @@
+gen/services/device/public/mojom/serial.sources_list
+gen/mojo/public/mojom/base/base.sources_list

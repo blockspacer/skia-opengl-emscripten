@@ -1,0 +1,3 @@
+gen/third_party/blink/public/mojom/usb/usb.sources_list
+gen/mojo/public/mojom/base/base.sources_list
+gen/device/usb/public/mojom/mojom.sources_list
