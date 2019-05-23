@@ -43,3 +43,9 @@
 [submodule "src/chromium/third_party/fontconfig/src"]
 	path = src/chromium/third_party/fontconfig/src
 	url = https://chromium.googlesource.com/external/fontconfig.git
+[submodule "src/chromium/third_party/libyuv"]
+	path = src/chromium/third_party/libyuv
+	url = https://chromium.googlesource.com/libyuv/libyuv.git
+[submodule "src/chromium/third_party/re2/src"]
+	path = src/chromium/third_party/re2/src
+	url = https://chromium.googlesource.com/external/github.com/google/re2.git
