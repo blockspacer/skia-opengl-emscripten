@@ -112,6 +112,12 @@ namespace gfx {
 
 #if defined(NO_CHROMIUM_WINDOW)
   // TODO
+typedef void* NativeCursor;
+typedef void* NativeView;
+typedef void* NativeWindow;
+typedef void* NativeEvent;
+constexpr NativeView kNullNativeView = nullptr;
+constexpr NativeWindow kNullNativeWindow = nullptr;
 #elif defined(USE_AURA)
 typedef ui::Cursor NativeCursor;
 typedef aura::Window* NativeView;
@@ -217,7 +223,7 @@ typedef UnimplementedNativeViewAccessible* NativeViewAccessible;
 
 // A constant value to indicate that gfx::NativeCursor refers to no cursor.
 #if defined(NO_CHROMIUM_WINDOW)
-  // TODO
+  // nothing
 #elif defined(USE_AURA)
 const ui::CursorType kNullCursor = static_cast<ui::CursorType>(0);
 #else

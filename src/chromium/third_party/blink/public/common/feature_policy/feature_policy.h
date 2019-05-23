@@ -16,7 +16,9 @@
 #include "base/macros.h"
 #include "third_party/blink/public/common/common_export.h"
 #include "third_party/blink/public/common/feature_policy/policy_value.h"
+#if !defined(OS_EMSCRIPTEN) && defined(ENABLE_MOJOM)
 #include "third_party/blink/public/mojom/feature_policy/feature_policy.mojom.h"
+#endif
 #include "url/origin.h"
 
 namespace blink {

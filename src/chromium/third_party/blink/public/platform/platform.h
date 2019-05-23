@@ -43,17 +43,30 @@
 #include "components/viz/common/surfaces/frame_sink_id.h"
 #include "mojo/public/cpp/system/data_pipe.h"
 #include "mojo/public/cpp/system/message_pipe.h"
+
 #if !defined(OS_EMSCRIPTEN) && defined(ENABLE_NETWORK)
 #include "services/network/public/cpp/shared_url_loader_factory.h"
 #endif // OS_EMSCRIPTEN
+
+#if !defined(OS_EMSCRIPTEN) && defined(ENABLE_MOJOM)
 #include "third_party/blink/public/common/feature_policy/feature_policy.h"
+#endif // OS_EMSCRIPTEN
+
 #include "third_party/blink/public/common/user_agent/user_agent_metadata.h"
+
 #if !defined(OS_EMSCRIPTEN) && defined(ENABLE_MOJOM)
 #include "third_party/blink/public/mojom/loader/code_cache.mojom-shared.h"
 #endif // OS_EMSCRIPTEN
+
 #include "third_party/blink/public/platform/blame_context.h"
+
+#if !defined(OS_EMSCRIPTEN) && defined(ENABLE_MOJOM)
 #include "third_party/blink/public/platform/code_cache_loader.h"
+#endif // OS_EMSCRIPTEN
+
 #include "third_party/blink/public/platform/user_metrics_action.h"
+
+#if !defined(OS_EMSCRIPTEN) && defined(ENABLE_MOJOM)
 #include "third_party/blink/public/platform/web_audio_device.h"
 #include "third_party/blink/public/platform/web_common.h"
 #include "third_party/blink/public/platform/web_data.h"
@@ -67,6 +80,7 @@
 #include "third_party/blink/public/platform/web_url_error.h"
 #include "third_party/blink/public/platform/web_url_loader.h"
 #include "third_party/blink/public/platform/web_url_loader_factory.h"
+#endif // OS_EMSCRIPTEN
 
 namespace base {
 class SingleThreadTaskRunner;
@@ -196,6 +210,7 @@ class BLINK_PLATFORM_EXPORT Platform {
     return nullptr;
   }
 
+#if !defined(OS_EMSCRIPTEN) && defined(ENABLE_MOJOM)
   // Audio --------------------------------------------------------------
 
   virtual double AudioHardwareSampleRate() { return 0; }
@@ -382,6 +397,7 @@ class BLINK_PLATFORM_EXPORT Platform {
                                FetchCachedCodeCallback) {}
   virtual void ClearCodeCacheEntry(blink::mojom::CodeCacheType cache_type,
                                    const GURL&) {}
+
 
   // A suggestion to cache this metadata in association with this URL which
   // resource is in CacheStorage.
@@ -714,6 +730,7 @@ class BLINK_PLATFORM_EXPORT Platform {
   // tools/v8_context_snapshot/v8_context_snapshot_generator is running (which
   // runs during Chromium's build step).
   virtual bool IsTakingV8ContextSnapshot() { return false; }
+#endif
 
  private:
   static void InitializeCommon(Platform* platform,
