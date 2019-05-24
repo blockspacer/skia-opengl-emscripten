@@ -37,6 +37,14 @@ set(SKIA_EXT_DIR ${SKIA_EXT_PARENT_DIR}skia/)
 
 set(USE_LIBJPEG TRUE)
 
+# NOTE: SOURCE_MAP requires -g4 and --source-map-base
+# see http://webassemblycode.com/using-browsers-debug-webassembly/
+set(EMSCRIPTEN_USE_SOURCE_MAP TRUE)
+
+set(EMSCRIPTEN_USE_SAFE_HEAP TRUE)
+
+set(EMSCRIPTEN_USE_PROFILING FALSE)
+
 #include(FindPkgMacros)
 
 message("CMAKE_BUILD_TYPE = ${CMAKE_BUILD_TYPE}")
@@ -597,8 +605,16 @@ endif(NOT RELEASE_BUILD)
   # see https://github.com/emscripten-core/emscripten/blob/master/src/settings.js#L262
   # see https://emscripten.org/docs/porting/Debugging.html#memory-alignment-issues
   if(NOT RELEASE_BUILD)
-    set(EMCC_COMMON "${EMCC_COMMON} -s SAFE_HEAP=1")
-    #
+    if(EMSCRIPTEN_USE_SAFE_HEAP AND EMSCRIPTEN_USE_SAFE_HEAP)
+      message(WARNING "SAFE_HEAP may break SOURCE_MAP, see https://github.com/emscripten-core/emscripten/issues/8584#issuecomment-495411386")
+    endif()
+    if(EMSCRIPTEN_USE_SAFE_HEAP)
+      #
+      # NOTE: SAFE_HEAP breaks source maps
+      # see https://github.com/emscripten-core/emscripten/issues/8584#issuecomment-495411386
+      #
+      set(EMCC_COMMON "${EMCC_COMMON} -s SAFE_HEAP=1")
+    endif()
     # Build with SAFE_HEAP=1 and function pointer aliasing disabled.
     # This should make it impossible for a function pointer to
     # be called with the wrong type without raising an error
@@ -615,9 +631,15 @@ endif(NOT RELEASE_BUILD)
   if (HAS_EMTERPRETIFY)
     message(FATAL_ERROR "TODO: REMOVE EMTERPRETIFY FLAGS")
   else(HAS_EMTERPRETIFY)
-    # see http://webassemblycode.com/using-browsers-debug-webassembly/
-    set(EMCC_COMMON "${EMCC_COMMON} --source-map-base http://localhost:9090/")
+    if(EMSCRIPTEN_USE_SOURCE_MAP)
+      # see http://webassemblycode.com/using-browsers-debug-webassembly/
+      set(EMCC_COMMON "${EMCC_COMMON} --source-map-base http://localhost:9090/")
+    endif()
   endif(HAS_EMTERPRETIFY)
+
+  if(HAS_EMTERPRETIFY AND EMSCRIPTEN_USE_SOURCE_MAP)
+    message(FATAL_ERROR "EMTERPRETIFY breaks source map")
+  endif()
 
   if(NOT RELEASE_BUILD)
     # -g4: Preserve LLVM debug information. This is the highest level of debuggability
@@ -625,6 +647,11 @@ endif(NOT RELEASE_BUILD)
     # NOTE: -01 and higher by default discard LLVM debug information
     if(NOT DEBUG_LEVEL)
       set(DEBUG_LEVEL "${DEBUG_LEVEL} -g4")
+    else()
+      # NOTE: DEBUG_LEVEL may contain not only "-g4" (multiple flags allowed)
+      if(EMSCRIPTEN_USE_SOURCE_MAP AND NOT DEBUG_LEVEL MATCHES "-g4")
+        message(WARNING "SOURCE_MAP requires DEBUG_LEVEL = -g4. Your DEBUG_LEVEL=${DEBUG_LEVEL}")
+      endif()
     endif(NOT DEBUG_LEVEL)
   endif(NOT RELEASE_BUILD)
   # see above
@@ -654,11 +681,18 @@ endif(NOT RELEASE_BUILD)
     endif(NOT OPTIMIZE_LEVEL)
     #set(EMCC_COMMON "${EMCC_COMMON} -O2")
     #
-    # see https://emscripten.org/docs/tools_reference/emcc.html#emcc-compiler-optimization-options
-    #set(EMCC_COMMON "${EMCC_COMMON} --profiling")
-    #
-    ## see https://emscripten.org/docs/tools_reference/emcc.html#emcc-compiler-optimization-options
-    #set(EMCC_COMMON "${EMCC_COMMON} --profiling-funcs")
+    if(EMSCRIPTEN_USE_SOURCE_MAP AND EMSCRIPTEN_USE_PROFILING)
+      message(WARNING "--profiling may break SOURCE_MAP, see https://github.com/emscripten-core/emscripten/issues/8584#issuecomment-495344200")
+    endif()
+    if(EMSCRIPTEN_USE_PROFILING)
+      #
+      # breaks source maps. see https://github.com/emscripten-core/emscripten/issues/8584#issuecomment-495344200
+      # see https://emscripten.org/docs/tools_reference/emcc.html#emcc-compiler-optimization-options
+      set(EMCC_COMMON "${EMCC_COMMON} --profiling")
+      #
+      ## see https://emscripten.org/docs/tools_reference/emcc.html#emcc-compiler-optimization-options
+      set(EMCC_COMMON "${EMCC_COMMON} --profiling-funcs")
+    endif()
     #
     ## see https://emscripten.org/docs/tools_reference/emcc.html#emcc-compiler-optimization-options
     #set(EMCC_COMMON "${EMCC_COMMON} --tracing")

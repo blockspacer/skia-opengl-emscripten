@@ -1,9 +1,14 @@
 ﻿# FAQ
 
-> WHY? - Inspired by chromium, WebAssembly, emscripten, web workers, WEBGL2, flutter, hummingbird, HTML5 & CSS3, VUE.js & REACT.js & ANGULAR.js, electron, blink. Let`s combine best of them all together.
+> WHY? - Inspired by chromium, WebAssembly, emscripten, web workers, CoherentGT, WEBGL2, flutter, hummingbird, Ultralight, Awesomium, libRocket, servo, sciter, cobalt.foo, EAWebKit, QML (Qt), CEF, HTML5 & CSS3, VUE.js & REACT.js & ANGULAR.js, electron, https://github.com/livecode/livecode/blob/develop/libgraphics/src/context.cpp, chromium-lite, blink. Let`s combine best of them all together.
+also see https://news.ycombinator.com/item?id=17733515
 > Can`t build? - Check readme & issues.
 
 # NOTE/NEED
+
+todos
+> https://cobalt.googlesource.com/cobalt
+> license If this is based off of Chromium it may be required to be Open-Source. Unless the LGPL parts are dynamically linked, you must share the statically linked source just like with the GPL.
 
 needs
 > https://bugs.chromium.org/p/skia/issues/detail?id=9052&q=&sort=-modified&colspec=ID%20Type%20Status%20Priority%20M%20Area%20Owner%20Summary%20Modified
@@ -45,6 +50,9 @@ https://github.com/google/xrtl/blob/master/xrtl/port/emscripten/base/emscripten_
 https://webassemblycode.com/how-to-debug-webassemly/
 
 libwehttps://github.com/HumbleNet/HumbleNet/blob/master/src/humblenet/src/libwebrtc_asmjs.cppbrtc_asmjs.cpp
+
+RasterCache
+https://github.com/flutter/engine/blob/master/flow/raster_cache.cc
 
 ## PATCHES
 
@@ -602,6 +610,9 @@ see https://github.com/emscripten-core/emscripten/issues/5437
 > read https://github.com/chromium/chromium/blob/master/third_party/blink/public/mojom/BUILD.gn#L15
 > get depot_tools (see above)
 > go to original chromium repo
+> sudo apt-get install file
+> see https://chromium.googlesource.com/chromium/src/+/master/build/install-build-deps.sh#147
+> sudo -E build/install-build-deps.sh --no-arm
 > Follow "Get the code" https://chromium.googlesource.com/chromium/src/+/master/docs/linux_build_instructions.md#get-the-code
 > gn gen out/Default
 > get mojo cpp targets:

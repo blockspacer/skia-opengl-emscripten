@@ -816,6 +816,8 @@ static SkPainter* myView = nullptr;
 
 static GLuint skia_texture = 0;
 
+// TODO: https://github.com/flutter/engine/blob/master/shell/gpu/gpu_surface_gl.cc
+// TODO: https://github.com/vsrinivas/fuchsia/blob/master/garnet/lib/vulkan/tests/vklatency/skia_gpu_painter.cc#L123
 #ifdef SKIA_GR_CONTEXT
 /// \note In OpenGL mode skia assumes that the correct OpenGL context
 /// has been made current to the current thread when Skia calls are made.
