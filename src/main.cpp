@@ -1072,6 +1072,7 @@ public:
     // paint.setAlpha(255);
 #ifdef ENABLE_SKIA_HQ
     paint.setAntiAlias(true);
+    paint.setFilterQuality( SkFilterQuality::kMedium_SkFilterQuality );
 #else
     paint.setAntiAlias(false);
     paint.setFilterQuality( SkFilterQuality::kNone_SkFilterQuality );
@@ -1096,22 +1097,25 @@ public:
     cc::SkiaPaintCanvas paint_canvas(sk_canvas);
     gfx::Canvas gfx_canvas(&paint_canvas, 1.0f);
     /*{
+      cc::PaintFlags flags;
+      flags.setAntiAlias(true);
       paint.setColor(SK_ColorDKGRAY);
       paint.setStrokeWidth(2);
-      gfx_canvas.DrawCircle(gfx::Point(200,200), 100, cc::PaintFlags());
+      gfx_canvas.DrawCircle(gfx::Point(200,200), 100, flags);
       paint.setColor(SK_ColorMAGENTA);
-      gfx_canvas.DrawRoundRect(gfx::Rect(550, 550, 200, 200), 50, cc::PaintFlags());
+      gfx_canvas.DrawRoundRect(gfx::Rect(550, 550, 200, 200), 50, flags);
     }*/
     {
       // see https://github.com/codebyravi/electron/blob/master/atom/common/api/atom_api_native_image.cc#L115
       //gfx_canvas.DrawImageInt(*imageSkia.get(), 330, 330);
-      gfx_canvas.DrawImageInt(gfx::ImageSkia(gfxImageSkia->GetRepresentation(10.0f)), 330, 330);
+      gfx_canvas.DrawImageInt(gfx::ImageSkia(gfxImageSkia->GetRepresentation(10.0f)), 630, 30);
     }
     {
       cc::PaintFlags flags;
       flags.setShader(
           gfx::CreateGradientShader(0, 500, SK_ColorRED, SK_ColorGREEN));
       flags.setStyle(cc::PaintFlags::kFill_Style);
+      flags.setAntiAlias(true);
       gfx_canvas.DrawRoundRect(gfx::Rect(350, 350, 200, 400), 50, flags);
     }
     {
@@ -1278,9 +1282,17 @@ public:
 
 #ifdef ENABLE_SKOTTIE_ANIMATIONS
       //printf("onDraw() 6\n");
+
     if (fAnimation) {
       //printf("SkAutoCanvasRestore...\n");
       SkAutoCanvasRestore acr(sk_canvas, true);
+#ifdef ENABLE_SKIA_HQ
+      paint.setAntiAlias(true);
+      paint.setFilterQuality( SkFilterQuality::kMedium_SkFilterQuality );
+#else
+      paint.setAntiAlias(false);
+      paint.setFilterQuality( SkFilterQuality::kNone_SkFilterQuality );
+#endif
       //printf("SkRect::MakeSize...\n");
       const auto dstR = SkRect::MakeSize(fWinSize);
       //printf("fAnimation->render...\n");
@@ -1299,14 +1311,22 @@ public:
   auto paint_controller = std::make_unique<blink::PaintController>();
   blink::GraphicsContext context(*paint_controller);
   //
+  blink::PaintFlags flags;
+  //
+  //
 #ifdef ENABLE_SKIA_HQ
+    flags.setAntiAlias(true);
+    flags.setFilterQuality(SkFilterQuality::kMedium_SkFilterQuality);
     context.SetShouldAntialias(true);
+    context.SetImageInterpolationQuality(blink::InterpolationQuality::kInterpolationMedium);
 #else
+    flags.setAntiAlias(false);
+    flags.setFilterQuality(SkFilterQuality::kNone_SkFilterQuality);
     context.SetShouldAntialias(false);
     // SetImageInterpolationQuality calls setFilterQuality
     context.SetImageInterpolationQuality(blink::InterpolationQuality::kInterpolationNone);
 #endif
-  context.SetMiterLimit(1);
+  //context.SetMiterLimit(1);
   context.SetStrokeThickness(5);
   context.SetLineCap(blink::kSquareCap);
   context.SetStrokeStyle(blink::kSolidStroke);
@@ -1321,10 +1341,9 @@ public:
   context.FillRect(blink::FloatRect(40, 40, 150, 550),
     blink::Color(0.0f, 1.0f, 1.0f, 0.5f),
     SkBlendMode::kSrcOver);
-  //
   //printf("FillRect 3\n");
   context.DrawOval(blink::FloatRect(40, 40, 150, 550),
-    blink::PaintFlags());
+    flags);
   //
   //printf("FillRect 4\n");
   // Clip to the left edge of the opaque area.
@@ -1336,7 +1355,6 @@ public:
   blink::Path path;
   path.MoveTo(blink::FloatPoint(10, 10));
   path.AddLineTo(blink::FloatPoint(40, 40));
-  blink::PaintFlags flags;
   flags.setColor(blink::Color(0.0f, 1.0f, 0.0f, 0.5f).Rgb());
   flags.setBlendMode(SkBlendMode::kSrcOver);
   context.DrawPath(path.GetSkPath(), flags);
@@ -1368,7 +1386,7 @@ public:
   scoped_refptr<blink::StaticBitmapImage> bitmap =
       blink::StaticBitmapImage::Create(skImageSp, std::move(wptr));
   if (!bitmap || bitmap->IsNull() || !bitmap->IsValid()) {
-    //printf("Invalid StaticBitmapImage\n");
+    printf("Invalid StaticBitmapImage\n");
   }
 
   //blink::Image* img = blink::ImageBitmap::cr;
@@ -1381,11 +1399,11 @@ public:
   //printf("FillRect 70\n");
 
   context.DrawImageTiled(bitmap.get(),
-    blink::FloatRect(400, 400, 1000, 1000),
-    blink::FloatRect(400, 400, 1000, 1000),
-    blink::FloatSize(10, 10),
+    blink::FloatRect(0, 0, 400, 400),
+    blink::FloatRect(0, 0, 1000, 1000),
+    blink::FloatSize(1, 1),
     blink::FloatPoint{1.0, 1.0},
-    blink::FloatSize(10, 10),
+    blink::FloatSize(0.0, 0.0),
     SkBlendMode::kSrcOver);
 
   //printf("FillRect 71\n");
