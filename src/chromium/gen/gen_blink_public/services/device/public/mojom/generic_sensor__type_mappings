@@ -1,0 +1,19 @@
+{
+  "c++": {
+    "device.mojom.SensorConfiguration": {
+      "hashable": false, 
+      "typename": "device::PlatformSensorConfiguration", 
+      "traits_headers": [
+        "services/device/public/cpp/generic_sensor/sensor_mojom_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "force_serialize": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "non_copyable_non_movable": false, 
+      "public_headers": [
+        "services/device/public/cpp/generic_sensor/platform_sensor_configuration.h"
+      ]
+    }
+  }
+}

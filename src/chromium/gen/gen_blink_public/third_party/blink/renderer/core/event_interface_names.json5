@@ -1,0 +1,162 @@
+{
+metadata: {
+  namespace: "event_interface_names",
+  export: "CORE_EXPORT",
+},
+data: [
+  {
+    name: "FontFaceSetLoadEvent",
+    interfaceHeaderDir: "third_party/blink/renderer/core/css",
+  },
+  {
+    name: "MediaQueryListEvent",
+    interfaceHeaderDir: "third_party/blink/renderer/core/css",
+  },
+  {
+    name: "BeforeActivateEvent",
+    interfaceHeaderDir: "third_party/blink/renderer/core/display_lock",
+    RuntimeEnabled: "DisplayLockingEnabled",
+  },
+  {
+    name: "CustomEvent",
+    interfaceHeaderDir: "third_party/blink/renderer/core/dom/events",
+  },
+  {
+    name: "Event",
+    interfaceHeaderDir: "third_party/blink/renderer/core/dom/events",
+  },
+  {
+    name: "AnimationEvent",
+    interfaceHeaderDir: "third_party/blink/renderer/core/events",
+  },
+  {
+    name: "AnimationPlaybackEvent",
+    interfaceHeaderDir: "third_party/blink/renderer/core/events",
+    RuntimeEnabled: "WebAnimationsAPIEnabled",
+  },
+  {
+    name: "ApplicationCacheErrorEvent",
+    interfaceHeaderDir: "third_party/blink/renderer/core/events",
+  },
+  {
+    name: "BeforeUnloadEvent",
+    interfaceHeaderDir: "third_party/blink/renderer/core/events",
+  },
+  {
+    name: "ClipboardEvent",
+    interfaceHeaderDir: "third_party/blink/renderer/core/events",
+  },
+  {
+    name: "CompositionEvent",
+    interfaceHeaderDir: "third_party/blink/renderer/core/events",
+  },
+  {
+    name: "DragEvent",
+    interfaceHeaderDir: "third_party/blink/renderer/core/events",
+  },
+  {
+    name: "ErrorEvent",
+    interfaceHeaderDir: "third_party/blink/renderer/core/events",
+  },
+  {
+    name: "FocusEvent",
+    interfaceHeaderDir: "third_party/blink/renderer/core/events",
+  },
+  {
+    name: "HashChangeEvent",
+    interfaceHeaderDir: "third_party/blink/renderer/core/events",
+  },
+  {
+    name: "InputEvent",
+    interfaceHeaderDir: "third_party/blink/renderer/core/events",
+  },
+  {
+    name: "KeyboardEvent",
+    interfaceHeaderDir: "third_party/blink/renderer/core/events",
+  },
+  {
+    name: "MessageEvent",
+    interfaceHeaderDir: "third_party/blink/renderer/core/events",
+  },
+  {
+    name: "MouseEvent",
+    interfaceHeaderDir: "third_party/blink/renderer/core/events",
+  },
+  {
+    name: "MutationEvent",
+    interfaceHeaderDir: "third_party/blink/renderer/core/events",
+  },
+  {
+    name: "OverscrollEvent",
+    interfaceHeaderDir: "third_party/blink/renderer/core/events",
+    RuntimeEnabled: "OverscrollCustomizationEnabled",
+  },
+  {
+    name: "PageTransitionEvent",
+    interfaceHeaderDir: "third_party/blink/renderer/core/events",
+  },
+  {
+    name: "PointerEvent",
+    interfaceHeaderDir: "third_party/blink/renderer/core/events",
+  },
+  {
+    name: "PopStateEvent",
+    interfaceHeaderDir: "third_party/blink/renderer/core/events",
+  },
+  {
+    name: "ProgressEvent",
+    interfaceHeaderDir: "third_party/blink/renderer/core/events",
+  },
+  {
+    name: "PromiseRejectionEvent",
+    interfaceHeaderDir: "third_party/blink/renderer/core/events",
+  },
+  {
+    name: "ResourceProgressEvent",
+    interfaceHeaderDir: "third_party/blink/renderer/core/events",
+  },
+  {
+    name: "SecurityPolicyViolationEvent",
+    interfaceHeaderDir: "third_party/blink/renderer/core/events",
+  },
+  {
+    name: "TextEvent",
+    interfaceHeaderDir: "third_party/blink/renderer/core/events",
+  },
+  {
+    name: "TouchEvent",
+    interfaceHeaderDir: "third_party/blink/renderer/core/events",
+  },
+  {
+    name: "TransitionEvent",
+    interfaceHeaderDir: "third_party/blink/renderer/core/events",
+  },
+  {
+    name: "UIEvent",
+    interfaceHeaderDir: "third_party/blink/renderer/core/events",
+  },
+  {
+    name: "WheelEvent",
+    interfaceHeaderDir: "third_party/blink/renderer/core/events",
+  },
+  {
+    name: "FormDataEvent",
+    interfaceHeaderDir: "third_party/blink/renderer/core/html/forms",
+    RuntimeEnabled: "FormDataEventEnabled",
+  },
+  {
+    name: "TrackEvent",
+    interfaceHeaderDir: "third_party/blink/renderer/core/html/track",
+  },
+  {
+    name: "ActivateInvisibleEvent",
+    interfaceHeaderDir: "third_party/blink/renderer/core/invisible_dom",
+    RuntimeEnabled: "InvisibleDOMEnabled",
+  },
+  {
+    name: "MojoInterfaceRequestEvent",
+    interfaceHeaderDir: "third_party/blink/renderer/core/mojo/test",
+    RuntimeEnabled: "MojoJSTestEnabled",
+  },
+]
+}

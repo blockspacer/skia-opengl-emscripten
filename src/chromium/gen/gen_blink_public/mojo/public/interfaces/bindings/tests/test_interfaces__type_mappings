@@ -1,0 +1,94 @@
+{
+  "c++": {
+    "mojo.test.PickledStruct": {
+      "hashable": false, 
+      "typename": "mojo::test::PickledStructChromium", 
+      "traits_headers": [], 
+      "copyable_pass_by_value": false, 
+      "force_serialize": false, 
+      "move_only": true, 
+      "nullable_is_same_type": false, 
+      "non_copyable_non_movable": false, 
+      "public_headers": [
+        "mojo/public/cpp/bindings/tests/pickled_types_chromium.h", 
+        "mojo/public/cpp/bindings/tests/test_native_types.h"
+      ]
+    }, 
+    "mojo.test.PickledEnum": {
+      "hashable": false, 
+      "typename": "mojo::test::PickledEnumChromium", 
+      "traits_headers": [], 
+      "copyable_pass_by_value": false, 
+      "force_serialize": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "non_copyable_non_movable": false, 
+      "public_headers": [
+        "mojo/public/cpp/bindings/tests/pickled_types_chromium.h", 
+        "mojo/public/cpp/bindings/tests/test_native_types.h"
+      ]
+    }, 
+    "mojo.test.TypemappedRect": {
+      "hashable": true, 
+      "typename": "mojo::test::RectChromium", 
+      "traits_headers": [
+        "mojo/public/cpp/bindings/tests/rect_chromium_traits.h", 
+        "mojo/public/cpp/bindings/tests/shared_rect_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "force_serialize": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "non_copyable_non_movable": false, 
+      "public_headers": [
+        "mojo/public/cpp/bindings/tests/rect_chromium.h", 
+        "mojo/public/cpp/bindings/tests/shared_rect.h"
+      ]
+    }, 
+    "mojo.test.TestNativeStructMojom": {
+      "hashable": false, 
+      "typename": "mojo::test::TestNativeStruct", 
+      "traits_headers": [], 
+      "copyable_pass_by_value": false, 
+      "force_serialize": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "non_copyable_non_movable": false, 
+      "public_headers": [
+        "mojo/public/cpp/bindings/tests/pickled_types_chromium.h", 
+        "mojo/public/cpp/bindings/tests/test_native_types.h"
+      ]
+    }, 
+    "mojo.test.TestNativeStructWithAttachmentsMojom": {
+      "hashable": false, 
+      "typename": "mojo::test::TestNativeStructWithAttachments", 
+      "traits_headers": [], 
+      "copyable_pass_by_value": false, 
+      "force_serialize": false, 
+      "move_only": true, 
+      "nullable_is_same_type": false, 
+      "non_copyable_non_movable": false, 
+      "public_headers": [
+        "mojo/public/cpp/bindings/tests/pickled_types_chromium.h", 
+        "mojo/public/cpp/bindings/tests/test_native_types.h"
+      ]
+    }, 
+    "mojo.test.SharedTypemappedRect": {
+      "hashable": false, 
+      "typename": "mojo::test::SharedRect", 
+      "traits_headers": [
+        "mojo/public/cpp/bindings/tests/rect_chromium_traits.h", 
+        "mojo/public/cpp/bindings/tests/shared_rect_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "force_serialize": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "non_copyable_non_movable": false, 
+      "public_headers": [
+        "mojo/public/cpp/bindings/tests/rect_chromium.h", 
+        "mojo/public/cpp/bindings/tests/shared_rect.h"
+      ]
+    }
+  }
+}

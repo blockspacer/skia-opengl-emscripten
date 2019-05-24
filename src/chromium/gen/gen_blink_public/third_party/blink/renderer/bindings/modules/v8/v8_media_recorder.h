@@ -1,0 +1,93 @@
+// Copyright 2014 The Chromium Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+// This file has been auto-generated from the Jinja2 template
+// third_party/blink/renderer/bindings/templates/interface.h.tmpl
+// by the script code_generator_v8.py.
+// DO NOT MODIFY!
+
+// clang-format off
+#ifndef THIRD_PARTY_BLINK_RENDERER_BINDINGS_MODULES_V8_V8_MEDIA_RECORDER_H_
+#define THIRD_PARTY_BLINK_RENDERER_BINDINGS_MODULES_V8_V8_MEDIA_RECORDER_H_
+
+#include "third_party/blink/renderer/bindings/core/v8/generated_code_helper.h"
+#include "third_party/blink/renderer/bindings/core/v8/native_value_traits.h"
+#include "third_party/blink/renderer/bindings/core/v8/to_v8_for_core.h"
+#include "third_party/blink/renderer/bindings/core/v8/v8_binding_for_core.h"
+#include "third_party/blink/renderer/bindings/core/v8/v8_event_target.h"
+#include "third_party/blink/renderer/modules/mediarecorder/media_recorder.h"
+#include "third_party/blink/renderer/modules/modules_export.h"
+#include "third_party/blink/renderer/platform/bindings/script_wrappable.h"
+#include "third_party/blink/renderer/platform/bindings/v8_dom_wrapper.h"
+#include "third_party/blink/renderer/platform/bindings/wrapper_type_info.h"
+#include "third_party/blink/renderer/platform/heap/handle.h"
+
+namespace blink {
+
+MODULES_EXPORT extern const WrapperTypeInfo v8_media_recorder_wrapper_type_info;
+
+class V8MediaRecorder {
+  STATIC_ONLY(V8MediaRecorder);
+ public:
+  MODULES_EXPORT static bool HasInstance(v8::Local<v8::Value>, v8::Isolate*);
+  static v8::Local<v8::Object> FindInstanceInPrototypeChain(v8::Local<v8::Value>, v8::Isolate*);
+  MODULES_EXPORT static v8::Local<v8::FunctionTemplate> DomTemplate(v8::Isolate*, const DOMWrapperWorld&);
+  static MediaRecorder* ToImpl(v8::Local<v8::Object> object) {
+    return ToScriptWrappable(object)->ToImpl<MediaRecorder>();
+  }
+  MODULES_EXPORT static MediaRecorder* ToImplWithTypeCheck(v8::Isolate*, v8::Local<v8::Value>);
+
+  MODULES_EXPORT static constexpr const WrapperTypeInfo* GetWrapperTypeInfo() {
+    return &v8_media_recorder_wrapper_type_info;
+  }
+
+  static constexpr int kInternalFieldCount = kV8DefaultWrapperInternalFieldCount;
+
+  // Callback functions
+
+  MODULES_EXPORT static void StreamAttributeGetterCallback(const v8::FunctionCallbackInfo<v8::Value>&);
+  MODULES_EXPORT static void MimeTypeAttributeGetterCallback(const v8::FunctionCallbackInfo<v8::Value>&);
+  MODULES_EXPORT static void StateAttributeGetterCallback(const v8::FunctionCallbackInfo<v8::Value>&);
+  MODULES_EXPORT static void OnstartAttributeGetterCallback(const v8::FunctionCallbackInfo<v8::Value>&);
+  MODULES_EXPORT static void OnstartAttributeSetterCallback(const v8::FunctionCallbackInfo<v8::Value>&);
+  MODULES_EXPORT static void OnstopAttributeGetterCallback(const v8::FunctionCallbackInfo<v8::Value>&);
+  MODULES_EXPORT static void OnstopAttributeSetterCallback(const v8::FunctionCallbackInfo<v8::Value>&);
+  MODULES_EXPORT static void OndataavailableAttributeGetterCallback(const v8::FunctionCallbackInfo<v8::Value>&);
+  MODULES_EXPORT static void OndataavailableAttributeSetterCallback(const v8::FunctionCallbackInfo<v8::Value>&);
+  MODULES_EXPORT static void OnpauseAttributeGetterCallback(const v8::FunctionCallbackInfo<v8::Value>&);
+  MODULES_EXPORT static void OnpauseAttributeSetterCallback(const v8::FunctionCallbackInfo<v8::Value>&);
+  MODULES_EXPORT static void OnresumeAttributeGetterCallback(const v8::FunctionCallbackInfo<v8::Value>&);
+  MODULES_EXPORT static void OnresumeAttributeSetterCallback(const v8::FunctionCallbackInfo<v8::Value>&);
+  MODULES_EXPORT static void OnerrorAttributeGetterCallback(const v8::FunctionCallbackInfo<v8::Value>&);
+  MODULES_EXPORT static void OnerrorAttributeSetterCallback(const v8::FunctionCallbackInfo<v8::Value>&);
+  MODULES_EXPORT static void VideoBitsPerSecondAttributeGetterCallback(const v8::FunctionCallbackInfo<v8::Value>&);
+  MODULES_EXPORT static void AudioBitsPerSecondAttributeGetterCallback(const v8::FunctionCallbackInfo<v8::Value>&);
+
+  MODULES_EXPORT static void StartMethodCallback(const v8::FunctionCallbackInfo<v8::Value>&);
+  MODULES_EXPORT static void StopMethodCallback(const v8::FunctionCallbackInfo<v8::Value>&);
+  MODULES_EXPORT static void PauseMethodCallback(const v8::FunctionCallbackInfo<v8::Value>&);
+  MODULES_EXPORT static void ResumeMethodCallback(const v8::FunctionCallbackInfo<v8::Value>&);
+  MODULES_EXPORT static void RequestDataMethodCallback(const v8::FunctionCallbackInfo<v8::Value>&);
+  MODULES_EXPORT static void IsTypeSupportedMethodCallback(const v8::FunctionCallbackInfo<v8::Value>&);
+
+  static void InstallRuntimeEnabledFeaturesOnTemplate(
+      v8::Isolate*,
+      const DOMWrapperWorld&,
+      v8::Local<v8::FunctionTemplate> interface_template);
+};
+
+template <>
+struct NativeValueTraits<MediaRecorder> : public NativeValueTraitsBase<MediaRecorder> {
+  MODULES_EXPORT static MediaRecorder* NativeValue(v8::Isolate*, v8::Local<v8::Value>, ExceptionState&);
+  MODULES_EXPORT static MediaRecorder* NullValue() { return nullptr; }
+};
+
+template <>
+struct V8TypeOf<MediaRecorder> {
+  typedef V8MediaRecorder Type;
+};
+
+}  // namespace blink
+
+#endif  // THIRD_PARTY_BLINK_RENDERER_BINDINGS_MODULES_V8_V8_MEDIA_RECORDER_H_

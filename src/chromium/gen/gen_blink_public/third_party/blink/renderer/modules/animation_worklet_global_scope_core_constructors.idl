@@ -1,0 +1,10 @@
+[
+    ImplementedAs=animation_worklet_global_scope_core_constructors
+] partial interface AnimationWorkletGlobalScope {
+    [RuntimeEnabled=StreamsNative] attribute ReadableStreamDefaultReaderConstructor ReadableStreamDefaultReader;
+    [RuntimeEnabled=StreamsNative] attribute WritableStreamDefaultWriterConstructor WritableStreamDefaultWriter;
+    attribute ReadableStreamConstructor ReadableStream;
+    attribute TransformStreamConstructor TransformStream;
+    attribute WorkletGlobalScopeConstructor WorkletGlobalScope;
+    attribute WritableStreamConstructor WritableStream;
+};

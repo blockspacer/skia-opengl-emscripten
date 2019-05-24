@@ -1,0 +1,10 @@
+IDS_ERRORPAGES_SUGGESTION_NETWORK_PREDICTION_BODY,15040,../../components/components_google_chrome_strings.grd
+IDS_ERRORPAGES_SUGGESTION_FIREWALL_CONFIG_HEADER,15041,../../components/components_google_chrome_strings.grd
+IDS_ERRORPAGES_SUMMARY_BLOCKED_ENROLLMENT_CHECK_PENDING,15042,../../components/components_google_chrome_strings.grd
+IDS_ERRORPAGES_SUGGESTION_PROXY_DISABLE_PLATFORM,15043,../../components/components_google_chrome_strings.grd
+IDS_FLAGS_UI_RELAUNCH_NOTICE,15044,../../components/components_google_chrome_strings.grd
+IDS_CRASH_DISABLED_MESSAGE,15045,../../components/components_google_chrome_strings.grd
+IDS_VERSION_UI_LICENSE,15046,../../components/components_google_chrome_strings.grd
+IDS_PAGE_INFO_INTERNAL_PAGE,15047,../../components/components_google_chrome_strings.grd
+IDS_PAGE_INFO_SECURITY_TAB_SECURE_IDENTITY_VERIFIED,15048,../../components/components_google_chrome_strings.grd
+IDS_SESSION_CRASHED_VIEW_MESSAGE,15049,../../components/components_google_chrome_strings.grd

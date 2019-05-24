@@ -1,0 +1,692 @@
+// Copyright (c) 2014 The Chromium Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+// Generated from template:
+//   templates/make_names.cc.tmpl
+// and input files:
+//   ../../third_party/blink/renderer/core/events/event_type_names.json5
+
+
+#include "third_party/blink/renderer/core/event_type_names.h"
+
+#include "base/stl_util.h"  // for base::size()
+#include "third_party/blink/renderer/platform/wtf/std_lib_extras.h"
+
+namespace blink {
+namespace event_type_names {
+
+void* names_storage[kNamesCount * ((sizeof(AtomicString) + sizeof(void *) - 1) / sizeof(void *))];
+
+const AtomicString& kDOMActivate = reinterpret_cast<AtomicString*>(&names_storage)[0];
+const AtomicString& kDOMCharacterDataModified = reinterpret_cast<AtomicString*>(&names_storage)[1];
+const AtomicString& kDOMContentLoaded = reinterpret_cast<AtomicString*>(&names_storage)[2];
+const AtomicString& kDOMFocusIn = reinterpret_cast<AtomicString*>(&names_storage)[3];
+const AtomicString& kDOMFocusOut = reinterpret_cast<AtomicString*>(&names_storage)[4];
+const AtomicString& kDOMNodeInserted = reinterpret_cast<AtomicString*>(&names_storage)[5];
+const AtomicString& kDOMNodeInsertedIntoDocument = reinterpret_cast<AtomicString*>(&names_storage)[6];
+const AtomicString& kDOMNodeRemoved = reinterpret_cast<AtomicString*>(&names_storage)[7];
+const AtomicString& kDOMNodeRemovedFromDocument = reinterpret_cast<AtomicString*>(&names_storage)[8];
+const AtomicString& kDOMSubtreeModified = reinterpret_cast<AtomicString*>(&names_storage)[9];
+const AtomicString& kAbort = reinterpret_cast<AtomicString*>(&names_storage)[10];
+const AtomicString& kAbortpayment = reinterpret_cast<AtomicString*>(&names_storage)[11];
+const AtomicString& kAccessibleclick = reinterpret_cast<AtomicString*>(&names_storage)[12];
+const AtomicString& kAccessiblecontextmenu = reinterpret_cast<AtomicString*>(&names_storage)[13];
+const AtomicString& kAccessibledecrement = reinterpret_cast<AtomicString*>(&names_storage)[14];
+const AtomicString& kAccessiblefocus = reinterpret_cast<AtomicString*>(&names_storage)[15];
+const AtomicString& kAccessibleincrement = reinterpret_cast<AtomicString*>(&names_storage)[16];
+const AtomicString& kAccessiblescrollintoview = reinterpret_cast<AtomicString*>(&names_storage)[17];
+const AtomicString& kActivate = reinterpret_cast<AtomicString*>(&names_storage)[18];
+const AtomicString& kActivateinvisible = reinterpret_cast<AtomicString*>(&names_storage)[19];
+const AtomicString& kActive = reinterpret_cast<AtomicString*>(&names_storage)[20];
+const AtomicString& kActivechange = reinterpret_cast<AtomicString*>(&names_storage)[21];
+const AtomicString& kAddsourcebuffer = reinterpret_cast<AtomicString*>(&names_storage)[22];
+const AtomicString& kAddstream = reinterpret_cast<AtomicString*>(&names_storage)[23];
+const AtomicString& kAddtrack = reinterpret_cast<AtomicString*>(&names_storage)[24];
+const AtomicString& kAdvertisementreceived = reinterpret_cast<AtomicString*>(&names_storage)[25];
+const AtomicString& kAfterprint = reinterpret_cast<AtomicString*>(&names_storage)[26];
+const AtomicString& kAnimationend = reinterpret_cast<AtomicString*>(&names_storage)[27];
+const AtomicString& kAnimationiteration = reinterpret_cast<AtomicString*>(&names_storage)[28];
+const AtomicString& kAnimationstart = reinterpret_cast<AtomicString*>(&names_storage)[29];
+const AtomicString& kAppinstalled = reinterpret_cast<AtomicString*>(&names_storage)[30];
+const AtomicString& kAudioend = reinterpret_cast<AtomicString*>(&names_storage)[31];
+const AtomicString& kAudioprocess = reinterpret_cast<AtomicString*>(&names_storage)[32];
+const AtomicString& kAudiostart = reinterpret_cast<AtomicString*>(&names_storage)[33];
+const AtomicString& kAuxclick = reinterpret_cast<AtomicString*>(&names_storage)[34];
+const AtomicString& kAvailablechange = reinterpret_cast<AtomicString*>(&names_storage)[35];
+const AtomicString& kBackgroundfetchabort = reinterpret_cast<AtomicString*>(&names_storage)[36];
+const AtomicString& kBackgroundfetchclick = reinterpret_cast<AtomicString*>(&names_storage)[37];
+const AtomicString& kBackgroundfetchfail = reinterpret_cast<AtomicString*>(&names_storage)[38];
+const AtomicString& kBackgroundfetchsuccess = reinterpret_cast<AtomicString*>(&names_storage)[39];
+const AtomicString& kBeforeactivate = reinterpret_cast<AtomicString*>(&names_storage)[40];
+const AtomicString& kBeforecopy = reinterpret_cast<AtomicString*>(&names_storage)[41];
+const AtomicString& kBeforecut = reinterpret_cast<AtomicString*>(&names_storage)[42];
+const AtomicString& kBeforeinput = reinterpret_cast<AtomicString*>(&names_storage)[43];
+const AtomicString& kBeforeinstallprompt = reinterpret_cast<AtomicString*>(&names_storage)[44];
+const AtomicString& kBeforepaste = reinterpret_cast<AtomicString*>(&names_storage)[45];
+const AtomicString& kBeforeprint = reinterpret_cast<AtomicString*>(&names_storage)[46];
+const AtomicString& kBeforeunload = reinterpret_cast<AtomicString*>(&names_storage)[47];
+const AtomicString& kBeginEvent = reinterpret_cast<AtomicString*>(&names_storage)[48];
+const AtomicString& kBlocked = reinterpret_cast<AtomicString*>(&names_storage)[49];
+const AtomicString& kBlur = reinterpret_cast<AtomicString*>(&names_storage)[50];
+const AtomicString& kBoundary = reinterpret_cast<AtomicString*>(&names_storage)[51];
+const AtomicString& kBufferedamountlow = reinterpret_cast<AtomicString*>(&names_storage)[52];
+const AtomicString& kCached = reinterpret_cast<AtomicString*>(&names_storage)[53];
+const AtomicString& kCancel = reinterpret_cast<AtomicString*>(&names_storage)[54];
+const AtomicString& kCanmakepayment = reinterpret_cast<AtomicString*>(&names_storage)[55];
+const AtomicString& kCanplay = reinterpret_cast<AtomicString*>(&names_storage)[56];
+const AtomicString& kCanplaythrough = reinterpret_cast<AtomicString*>(&names_storage)[57];
+const AtomicString& kChange = reinterpret_cast<AtomicString*>(&names_storage)[58];
+const AtomicString& kCharacteristicvaluechanged = reinterpret_cast<AtomicString*>(&names_storage)[59];
+const AtomicString& kChargingchange = reinterpret_cast<AtomicString*>(&names_storage)[60];
+const AtomicString& kChargingtimechange = reinterpret_cast<AtomicString*>(&names_storage)[61];
+const AtomicString& kChecking = reinterpret_cast<AtomicString*>(&names_storage)[62];
+const AtomicString& kClick = reinterpret_cast<AtomicString*>(&names_storage)[63];
+const AtomicString& kClose = reinterpret_cast<AtomicString*>(&names_storage)[64];
+const AtomicString& kComplete = reinterpret_cast<AtomicString*>(&names_storage)[65];
+const AtomicString& kCompositionend = reinterpret_cast<AtomicString*>(&names_storage)[66];
+const AtomicString& kCompositionstart = reinterpret_cast<AtomicString*>(&names_storage)[67];
+const AtomicString& kCompositionupdate = reinterpret_cast<AtomicString*>(&names_storage)[68];
+const AtomicString& kConnect = reinterpret_cast<AtomicString*>(&names_storage)[69];
+const AtomicString& kConnecting = reinterpret_cast<AtomicString*>(&names_storage)[70];
+const AtomicString& kConnectionavailable = reinterpret_cast<AtomicString*>(&names_storage)[71];
+const AtomicString& kConnectionstatechange = reinterpret_cast<AtomicString*>(&names_storage)[72];
+const AtomicString& kContextlost = reinterpret_cast<AtomicString*>(&names_storage)[73];
+const AtomicString& kContextmenu = reinterpret_cast<AtomicString*>(&names_storage)[74];
+const AtomicString& kContextrestored = reinterpret_cast<AtomicString*>(&names_storage)[75];
+const AtomicString& kControllerchange = reinterpret_cast<AtomicString*>(&names_storage)[76];
+const AtomicString& kCookiechange = reinterpret_cast<AtomicString*>(&names_storage)[77];
+const AtomicString& kCopy = reinterpret_cast<AtomicString*>(&names_storage)[78];
+const AtomicString& kCrossoriginmessage = reinterpret_cast<AtomicString*>(&names_storage)[79];
+const AtomicString& kCuechange = reinterpret_cast<AtomicString*>(&names_storage)[80];
+const AtomicString& kCut = reinterpret_cast<AtomicString*>(&names_storage)[81];
+const AtomicString& kDataavailable = reinterpret_cast<AtomicString*>(&names_storage)[82];
+const AtomicString& kDatachannel = reinterpret_cast<AtomicString*>(&names_storage)[83];
+const AtomicString& kDblclick = reinterpret_cast<AtomicString*>(&names_storage)[84];
+const AtomicString& kDefaultsessionstart = reinterpret_cast<AtomicString*>(&names_storage)[85];
+const AtomicString& kDevicechange = reinterpret_cast<AtomicString*>(&names_storage)[86];
+const AtomicString& kDevicemotion = reinterpret_cast<AtomicString*>(&names_storage)[87];
+const AtomicString& kDeviceorientation = reinterpret_cast<AtomicString*>(&names_storage)[88];
+const AtomicString& kDeviceorientationabsolute = reinterpret_cast<AtomicString*>(&names_storage)[89];
+const AtomicString& kDischargingtimechange = reinterpret_cast<AtomicString*>(&names_storage)[90];
+const AtomicString& kDisconnect = reinterpret_cast<AtomicString*>(&names_storage)[91];
+const AtomicString& kDisplay = reinterpret_cast<AtomicString*>(&names_storage)[92];
+const AtomicString& kDownloading = reinterpret_cast<AtomicString*>(&names_storage)[93];
+const AtomicString& kDrag = reinterpret_cast<AtomicString*>(&names_storage)[94];
+const AtomicString& kDragend = reinterpret_cast<AtomicString*>(&names_storage)[95];
+const AtomicString& kDragenter = reinterpret_cast<AtomicString*>(&names_storage)[96];
+const AtomicString& kDragleave = reinterpret_cast<AtomicString*>(&names_storage)[97];
+const AtomicString& kDragover = reinterpret_cast<AtomicString*>(&names_storage)[98];
+const AtomicString& kDragstart = reinterpret_cast<AtomicString*>(&names_storage)[99];
+const AtomicString& kDrop = reinterpret_cast<AtomicString*>(&names_storage)[100];
+const AtomicString& kDurationchange = reinterpret_cast<AtomicString*>(&names_storage)[101];
+const AtomicString& kElementtimingbufferfull = reinterpret_cast<AtomicString*>(&names_storage)[102];
+const AtomicString& kEmptied = reinterpret_cast<AtomicString*>(&names_storage)[103];
+const AtomicString& kEncrypted = reinterpret_cast<AtomicString*>(&names_storage)[104];
+const AtomicString& kEnd = reinterpret_cast<AtomicString*>(&names_storage)[105];
+const AtomicString& kEndEvent = reinterpret_cast<AtomicString*>(&names_storage)[106];
+const AtomicString& kEnded = reinterpret_cast<AtomicString*>(&names_storage)[107];
+const AtomicString& kEnter = reinterpret_cast<AtomicString*>(&names_storage)[108];
+const AtomicString& kEnterpictureinpicture = reinterpret_cast<AtomicString*>(&names_storage)[109];
+const AtomicString& kError = reinterpret_cast<AtomicString*>(&names_storage)[110];
+const AtomicString& kEventtimingbufferfull = reinterpret_cast<AtomicString*>(&names_storage)[111];
+const AtomicString& kExit = reinterpret_cast<AtomicString*>(&names_storage)[112];
+const AtomicString& kFetch = reinterpret_cast<AtomicString*>(&names_storage)[113];
+const AtomicString& kFinish = reinterpret_cast<AtomicString*>(&names_storage)[114];
+const AtomicString& kFocus = reinterpret_cast<AtomicString*>(&names_storage)[115];
+const AtomicString& kFocusin = reinterpret_cast<AtomicString*>(&names_storage)[116];
+const AtomicString& kFocusout = reinterpret_cast<AtomicString*>(&names_storage)[117];
+const AtomicString& kForeignfetch = reinterpret_cast<AtomicString*>(&names_storage)[118];
+const AtomicString& kFormdata = reinterpret_cast<AtomicString*>(&names_storage)[119];
+const AtomicString& kFreeze = reinterpret_cast<AtomicString*>(&names_storage)[120];
+const AtomicString& kFullscreenchange = reinterpret_cast<AtomicString*>(&names_storage)[121];
+const AtomicString& kFullscreenerror = reinterpret_cast<AtomicString*>(&names_storage)[122];
+const AtomicString& kGamepadconnected = reinterpret_cast<AtomicString*>(&names_storage)[123];
+const AtomicString& kGamepaddisconnected = reinterpret_cast<AtomicString*>(&names_storage)[124];
+const AtomicString& kGatheringstatechange = reinterpret_cast<AtomicString*>(&names_storage)[125];
+const AtomicString& kGattserverdisconnected = reinterpret_cast<AtomicString*>(&names_storage)[126];
+const AtomicString& kGeofenceenter = reinterpret_cast<AtomicString*>(&names_storage)[127];
+const AtomicString& kGeofenceleave = reinterpret_cast<AtomicString*>(&names_storage)[128];
+const AtomicString& kGestureflingstart = reinterpret_cast<AtomicString*>(&names_storage)[129];
+const AtomicString& kGesturelongpress = reinterpret_cast<AtomicString*>(&names_storage)[130];
+const AtomicString& kGesturescrollend = reinterpret_cast<AtomicString*>(&names_storage)[131];
+const AtomicString& kGesturescrollstart = reinterpret_cast<AtomicString*>(&names_storage)[132];
+const AtomicString& kGesturescrollupdate = reinterpret_cast<AtomicString*>(&names_storage)[133];
+const AtomicString& kGestureshowpress = reinterpret_cast<AtomicString*>(&names_storage)[134];
+const AtomicString& kGesturetap = reinterpret_cast<AtomicString*>(&names_storage)[135];
+const AtomicString& kGesturetapdown = reinterpret_cast<AtomicString*>(&names_storage)[136];
+const AtomicString& kGesturetapunconfirmed = reinterpret_cast<AtomicString*>(&names_storage)[137];
+const AtomicString& kGotpointercapture = reinterpret_cast<AtomicString*>(&names_storage)[138];
+const AtomicString& kHashchange = reinterpret_cast<AtomicString*>(&names_storage)[139];
+const AtomicString& kIcecandidate = reinterpret_cast<AtomicString*>(&names_storage)[140];
+const AtomicString& kIceconnectionstatechange = reinterpret_cast<AtomicString*>(&names_storage)[141];
+const AtomicString& kIcegatheringstatechange = reinterpret_cast<AtomicString*>(&names_storage)[142];
+const AtomicString& kInactive = reinterpret_cast<AtomicString*>(&names_storage)[143];
+const AtomicString& kInput = reinterpret_cast<AtomicString*>(&names_storage)[144];
+const AtomicString& kInputreport = reinterpret_cast<AtomicString*>(&names_storage)[145];
+const AtomicString& kInputsourceschange = reinterpret_cast<AtomicString*>(&names_storage)[146];
+const AtomicString& kInstall = reinterpret_cast<AtomicString*>(&names_storage)[147];
+const AtomicString& kInterfacerequest = reinterpret_cast<AtomicString*>(&names_storage)[148];
+const AtomicString& kInvalid = reinterpret_cast<AtomicString*>(&names_storage)[149];
+const AtomicString& kKeydown = reinterpret_cast<AtomicString*>(&names_storage)[150];
+const AtomicString& kKeypress = reinterpret_cast<AtomicString*>(&names_storage)[151];
+const AtomicString& kKeystatuseschange = reinterpret_cast<AtomicString*>(&names_storage)[152];
+const AtomicString& kKeyup = reinterpret_cast<AtomicString*>(&names_storage)[153];
+const AtomicString& kLanguagechange = reinterpret_cast<AtomicString*>(&names_storage)[154];
+const AtomicString& kLeavepictureinpicture = reinterpret_cast<AtomicString*>(&names_storage)[155];
+const AtomicString& kLevelchange = reinterpret_cast<AtomicString*>(&names_storage)[156];
+const AtomicString& kLoad = reinterpret_cast<AtomicString*>(&names_storage)[157];
+const AtomicString& kLoadeddata = reinterpret_cast<AtomicString*>(&names_storage)[158];
+const AtomicString& kLoadedmetadata = reinterpret_cast<AtomicString*>(&names_storage)[159];
+const AtomicString& kLoadend = reinterpret_cast<AtomicString*>(&names_storage)[160];
+const AtomicString& kLoading = reinterpret_cast<AtomicString*>(&names_storage)[161];
+const AtomicString& kLoadingdone = reinterpret_cast<AtomicString*>(&names_storage)[162];
+const AtomicString& kLoadingerror = reinterpret_cast<AtomicString*>(&names_storage)[163];
+const AtomicString& kLoadstart = reinterpret_cast<AtomicString*>(&names_storage)[164];
+const AtomicString& kLostpointercapture = reinterpret_cast<AtomicString*>(&names_storage)[165];
+const AtomicString& kMark = reinterpret_cast<AtomicString*>(&names_storage)[166];
+const AtomicString& kMessage = reinterpret_cast<AtomicString*>(&names_storage)[167];
+const AtomicString& kMessageerror = reinterpret_cast<AtomicString*>(&names_storage)[168];
+const AtomicString& kMidimessage = reinterpret_cast<AtomicString*>(&names_storage)[169];
+const AtomicString& kMousedown = reinterpret_cast<AtomicString*>(&names_storage)[170];
+const AtomicString& kMouseenter = reinterpret_cast<AtomicString*>(&names_storage)[171];
+const AtomicString& kMouseleave = reinterpret_cast<AtomicString*>(&names_storage)[172];
+const AtomicString& kMousemove = reinterpret_cast<AtomicString*>(&names_storage)[173];
+const AtomicString& kMouseout = reinterpret_cast<AtomicString*>(&names_storage)[174];
+const AtomicString& kMouseover = reinterpret_cast<AtomicString*>(&names_storage)[175];
+const AtomicString& kMouseup = reinterpret_cast<AtomicString*>(&names_storage)[176];
+const AtomicString& kMousewheel = reinterpret_cast<AtomicString*>(&names_storage)[177];
+const AtomicString& kMute = reinterpret_cast<AtomicString*>(&names_storage)[178];
+const AtomicString& kNegotiationneeded = reinterpret_cast<AtomicString*>(&names_storage)[179];
+const AtomicString& kNomatch = reinterpret_cast<AtomicString*>(&names_storage)[180];
+const AtomicString& kNotificationclick = reinterpret_cast<AtomicString*>(&names_storage)[181];
+const AtomicString& kNotificationclose = reinterpret_cast<AtomicString*>(&names_storage)[182];
+const AtomicString& kNotificationerror = reinterpret_cast<AtomicString*>(&names_storage)[183];
+const AtomicString& kNoupdate = reinterpret_cast<AtomicString*>(&names_storage)[184];
+const AtomicString& kObsolete = reinterpret_cast<AtomicString*>(&names_storage)[185];
+const AtomicString& kOffline = reinterpret_cast<AtomicString*>(&names_storage)[186];
+const AtomicString& kOnline = reinterpret_cast<AtomicString*>(&names_storage)[187];
+const AtomicString& kOpen = reinterpret_cast<AtomicString*>(&names_storage)[188];
+const AtomicString& kOrientationchange = reinterpret_cast<AtomicString*>(&names_storage)[189];
+const AtomicString& kOverscroll = reinterpret_cast<AtomicString*>(&names_storage)[190];
+const AtomicString& kPagehide = reinterpret_cast<AtomicString*>(&names_storage)[191];
+const AtomicString& kPageshow = reinterpret_cast<AtomicString*>(&names_storage)[192];
+const AtomicString& kPaste = reinterpret_cast<AtomicString*>(&names_storage)[193];
+const AtomicString& kPause = reinterpret_cast<AtomicString*>(&names_storage)[194];
+const AtomicString& kPayerdetailchange = reinterpret_cast<AtomicString*>(&names_storage)[195];
+const AtomicString& kPaymentmethodchange = reinterpret_cast<AtomicString*>(&names_storage)[196];
+const AtomicString& kPaymentrequest = reinterpret_cast<AtomicString*>(&names_storage)[197];
+const AtomicString& kPeriodicsync = reinterpret_cast<AtomicString*>(&names_storage)[198];
+const AtomicString& kPlay = reinterpret_cast<AtomicString*>(&names_storage)[199];
+const AtomicString& kPlaying = reinterpret_cast<AtomicString*>(&names_storage)[200];
+const AtomicString& kPointercancel = reinterpret_cast<AtomicString*>(&names_storage)[201];
+const AtomicString& kPointerdown = reinterpret_cast<AtomicString*>(&names_storage)[202];
+const AtomicString& kPointerenter = reinterpret_cast<AtomicString*>(&names_storage)[203];
+const AtomicString& kPointerleave = reinterpret_cast<AtomicString*>(&names_storage)[204];
+const AtomicString& kPointerlockchange = reinterpret_cast<AtomicString*>(&names_storage)[205];
+const AtomicString& kPointerlockerror = reinterpret_cast<AtomicString*>(&names_storage)[206];
+const AtomicString& kPointermove = reinterpret_cast<AtomicString*>(&names_storage)[207];
+const AtomicString& kPointerout = reinterpret_cast<AtomicString*>(&names_storage)[208];
+const AtomicString& kPointerover = reinterpret_cast<AtomicString*>(&names_storage)[209];
+const AtomicString& kPointerrawupdate = reinterpret_cast<AtomicString*>(&names_storage)[210];
+const AtomicString& kPointerup = reinterpret_cast<AtomicString*>(&names_storage)[211];
+const AtomicString& kPopstate = reinterpret_cast<AtomicString*>(&names_storage)[212];
+const AtomicString& kPortalactivate = reinterpret_cast<AtomicString*>(&names_storage)[213];
+const AtomicString& kProcessorerror = reinterpret_cast<AtomicString*>(&names_storage)[214];
+const AtomicString& kProgress = reinterpret_cast<AtomicString*>(&names_storage)[215];
+const AtomicString& kPush = reinterpret_cast<AtomicString*>(&names_storage)[216];
+const AtomicString& kQuicstream = reinterpret_cast<AtomicString*>(&names_storage)[217];
+const AtomicString& kRatechange = reinterpret_cast<AtomicString*>(&names_storage)[218];
+const AtomicString& kReading = reinterpret_cast<AtomicString*>(&names_storage)[219];
+const AtomicString& kReadystatechange = reinterpret_cast<AtomicString*>(&names_storage)[220];
+const AtomicString& kRejectionhandled = reinterpret_cast<AtomicString*>(&names_storage)[221];
+const AtomicString& kRemovesourcebuffer = reinterpret_cast<AtomicString*>(&names_storage)[222];
+const AtomicString& kRemovestream = reinterpret_cast<AtomicString*>(&names_storage)[223];
+const AtomicString& kRemovetrack = reinterpret_cast<AtomicString*>(&names_storage)[224];
+const AtomicString& kRepeatEvent = reinterpret_cast<AtomicString*>(&names_storage)[225];
+const AtomicString& kReset = reinterpret_cast<AtomicString*>(&names_storage)[226];
+const AtomicString& kResetpose = reinterpret_cast<AtomicString*>(&names_storage)[227];
+const AtomicString& kResize = reinterpret_cast<AtomicString*>(&names_storage)[228];
+const AtomicString& kResourcetimingbufferfull = reinterpret_cast<AtomicString*>(&names_storage)[229];
+const AtomicString& kResult = reinterpret_cast<AtomicString*>(&names_storage)[230];
+const AtomicString& kResume = reinterpret_cast<AtomicString*>(&names_storage)[231];
+const AtomicString& kScroll = reinterpret_cast<AtomicString*>(&names_storage)[232];
+const AtomicString& kScrollend = reinterpret_cast<AtomicString*>(&names_storage)[233];
+const AtomicString& kSearch = reinterpret_cast<AtomicString*>(&names_storage)[234];
+const AtomicString& kSecuritypolicyviolation = reinterpret_cast<AtomicString*>(&names_storage)[235];
+const AtomicString& kSeeked = reinterpret_cast<AtomicString*>(&names_storage)[236];
+const AtomicString& kSeeking = reinterpret_cast<AtomicString*>(&names_storage)[237];
+const AtomicString& kSelect = reinterpret_cast<AtomicString*>(&names_storage)[238];
+const AtomicString& kSelectedcandidatepairchange = reinterpret_cast<AtomicString*>(&names_storage)[239];
+const AtomicString& kSelectend = reinterpret_cast<AtomicString*>(&names_storage)[240];
+const AtomicString& kSelectionchange = reinterpret_cast<AtomicString*>(&names_storage)[241];
+const AtomicString& kSelectstart = reinterpret_cast<AtomicString*>(&names_storage)[242];
+const AtomicString& kShippingaddresschange = reinterpret_cast<AtomicString*>(&names_storage)[243];
+const AtomicString& kShippingoptionchange = reinterpret_cast<AtomicString*>(&names_storage)[244];
+const AtomicString& kShow = reinterpret_cast<AtomicString*>(&names_storage)[245];
+const AtomicString& kSignalingstatechange = reinterpret_cast<AtomicString*>(&names_storage)[246];
+const AtomicString& kSlotchange = reinterpret_cast<AtomicString*>(&names_storage)[247];
+const AtomicString& kSoundend = reinterpret_cast<AtomicString*>(&names_storage)[248];
+const AtomicString& kSoundstart = reinterpret_cast<AtomicString*>(&names_storage)[249];
+const AtomicString& kSourceclose = reinterpret_cast<AtomicString*>(&names_storage)[250];
+const AtomicString& kSourceended = reinterpret_cast<AtomicString*>(&names_storage)[251];
+const AtomicString& kSourceopen = reinterpret_cast<AtomicString*>(&names_storage)[252];
+const AtomicString& kSpeechend = reinterpret_cast<AtomicString*>(&names_storage)[253];
+const AtomicString& kSpeechstart = reinterpret_cast<AtomicString*>(&names_storage)[254];
+const AtomicString& kStalled = reinterpret_cast<AtomicString*>(&names_storage)[255];
+const AtomicString& kStart = reinterpret_cast<AtomicString*>(&names_storage)[256];
+const AtomicString& kStatechange = reinterpret_cast<AtomicString*>(&names_storage)[257];
+const AtomicString& kStop = reinterpret_cast<AtomicString*>(&names_storage)[258];
+const AtomicString& kStorage = reinterpret_cast<AtomicString*>(&names_storage)[259];
+const AtomicString& kSubmit = reinterpret_cast<AtomicString*>(&names_storage)[260];
+const AtomicString& kSuccess = reinterpret_cast<AtomicString*>(&names_storage)[261];
+const AtomicString& kSuspend = reinterpret_cast<AtomicString*>(&names_storage)[262];
+const AtomicString& kSync = reinterpret_cast<AtomicString*>(&names_storage)[263];
+const AtomicString& kTerminate = reinterpret_cast<AtomicString*>(&names_storage)[264];
+const AtomicString& kTextInput = reinterpret_cast<AtomicString*>(&names_storage)[265];
+const AtomicString& kTimeout = reinterpret_cast<AtomicString*>(&names_storage)[266];
+const AtomicString& kTimeupdate = reinterpret_cast<AtomicString*>(&names_storage)[267];
+const AtomicString& kToggle = reinterpret_cast<AtomicString*>(&names_storage)[268];
+const AtomicString& kTonechange = reinterpret_cast<AtomicString*>(&names_storage)[269];
+const AtomicString& kTouchcancel = reinterpret_cast<AtomicString*>(&names_storage)[270];
+const AtomicString& kTouchend = reinterpret_cast<AtomicString*>(&names_storage)[271];
+const AtomicString& kTouchmove = reinterpret_cast<AtomicString*>(&names_storage)[272];
+const AtomicString& kTouchstart = reinterpret_cast<AtomicString*>(&names_storage)[273];
+const AtomicString& kTrack = reinterpret_cast<AtomicString*>(&names_storage)[274];
+const AtomicString& kTransitioncancel = reinterpret_cast<AtomicString*>(&names_storage)[275];
+const AtomicString& kTransitionend = reinterpret_cast<AtomicString*>(&names_storage)[276];
+const AtomicString& kTransitionrun = reinterpret_cast<AtomicString*>(&names_storage)[277];
+const AtomicString& kTransitionstart = reinterpret_cast<AtomicString*>(&names_storage)[278];
+const AtomicString& kTypechange = reinterpret_cast<AtomicString*>(&names_storage)[279];
+const AtomicString& kUnhandledrejection = reinterpret_cast<AtomicString*>(&names_storage)[280];
+const AtomicString& kUnload = reinterpret_cast<AtomicString*>(&names_storage)[281];
+const AtomicString& kUnmute = reinterpret_cast<AtomicString*>(&names_storage)[282];
+const AtomicString& kUpdate = reinterpret_cast<AtomicString*>(&names_storage)[283];
+const AtomicString& kUpdateend = reinterpret_cast<AtomicString*>(&names_storage)[284];
+const AtomicString& kUpdatefound = reinterpret_cast<AtomicString*>(&names_storage)[285];
+const AtomicString& kUpdateready = reinterpret_cast<AtomicString*>(&names_storage)[286];
+const AtomicString& kUpdatestart = reinterpret_cast<AtomicString*>(&names_storage)[287];
+const AtomicString& kUpgradeneeded = reinterpret_cast<AtomicString*>(&names_storage)[288];
+const AtomicString& kVersionchange = reinterpret_cast<AtomicString*>(&names_storage)[289];
+const AtomicString& kVisibilitychange = reinterpret_cast<AtomicString*>(&names_storage)[290];
+const AtomicString& kVoiceschanged = reinterpret_cast<AtomicString*>(&names_storage)[291];
+const AtomicString& kVolumechange = reinterpret_cast<AtomicString*>(&names_storage)[292];
+const AtomicString& kVrdisplayactivate = reinterpret_cast<AtomicString*>(&names_storage)[293];
+const AtomicString& kVrdisplayblur = reinterpret_cast<AtomicString*>(&names_storage)[294];
+const AtomicString& kVrdisplayconnect = reinterpret_cast<AtomicString*>(&names_storage)[295];
+const AtomicString& kVrdisplaydeactivate = reinterpret_cast<AtomicString*>(&names_storage)[296];
+const AtomicString& kVrdisplaydisconnect = reinterpret_cast<AtomicString*>(&names_storage)[297];
+const AtomicString& kVrdisplayfocus = reinterpret_cast<AtomicString*>(&names_storage)[298];
+const AtomicString& kVrdisplaypresentchange = reinterpret_cast<AtomicString*>(&names_storage)[299];
+const AtomicString& kWaiting = reinterpret_cast<AtomicString*>(&names_storage)[300];
+const AtomicString& kWaitingforkey = reinterpret_cast<AtomicString*>(&names_storage)[301];
+const AtomicString& kWebglcontextcreationerror = reinterpret_cast<AtomicString*>(&names_storage)[302];
+const AtomicString& kWebglcontextlost = reinterpret_cast<AtomicString*>(&names_storage)[303];
+const AtomicString& kWebglcontextrestored = reinterpret_cast<AtomicString*>(&names_storage)[304];
+const AtomicString& kWebkitAnimationEnd = reinterpret_cast<AtomicString*>(&names_storage)[305];
+const AtomicString& kWebkitAnimationIteration = reinterpret_cast<AtomicString*>(&names_storage)[306];
+const AtomicString& kWebkitAnimationStart = reinterpret_cast<AtomicString*>(&names_storage)[307];
+const AtomicString& kWebkitBeforeTextInserted = reinterpret_cast<AtomicString*>(&names_storage)[308];
+const AtomicString& kWebkitEditableContentChanged = reinterpret_cast<AtomicString*>(&names_storage)[309];
+const AtomicString& kWebkitTransitionEnd = reinterpret_cast<AtomicString*>(&names_storage)[310];
+const AtomicString& kWebkitfullscreenchange = reinterpret_cast<AtomicString*>(&names_storage)[311];
+const AtomicString& kWebkitfullscreenerror = reinterpret_cast<AtomicString*>(&names_storage)[312];
+const AtomicString& kWebkitprerenderdomcontentloaded = reinterpret_cast<AtomicString*>(&names_storage)[313];
+const AtomicString& kWebkitprerenderload = reinterpret_cast<AtomicString*>(&names_storage)[314];
+const AtomicString& kWebkitprerenderstart = reinterpret_cast<AtomicString*>(&names_storage)[315];
+const AtomicString& kWebkitprerenderstop = reinterpret_cast<AtomicString*>(&names_storage)[316];
+const AtomicString& kWebkitspeechchange = reinterpret_cast<AtomicString*>(&names_storage)[317];
+const AtomicString& kWebkitvisibilitychange = reinterpret_cast<AtomicString*>(&names_storage)[318];
+const AtomicString& kWheel = reinterpret_cast<AtomicString*>(&names_storage)[319];
+const AtomicString& kWrite = reinterpret_cast<AtomicString*>(&names_storage)[320];
+const AtomicString& kWriteend = reinterpret_cast<AtomicString*>(&names_storage)[321];
+const AtomicString& kWritestart = reinterpret_cast<AtomicString*>(&names_storage)[322];
+const AtomicString& kZoom = reinterpret_cast<AtomicString*>(&names_storage)[323];
+
+void Init() {
+  static bool is_loaded = false;
+  if (is_loaded) return;
+  is_loaded = true;
+
+  struct NameEntry {
+    const char* name;
+    unsigned hash;
+    unsigned char length;
+  };
+
+  static const NameEntry kNames[] = {
+    { "DOMActivate", 1580932, 11 },
+    { "DOMCharacterDataModified", 1747391, 24 },
+    { "DOMContentLoaded", 10217403, 16 },
+    { "DOMFocusIn", 13717889, 10 },
+    { "DOMFocusOut", 14725020, 11 },
+    { "DOMNodeInserted", 3305523, 15 },
+    { "DOMNodeInsertedIntoDocument", 9765719, 27 },
+    { "DOMNodeRemoved", 15338285, 14 },
+    { "DOMNodeRemovedFromDocument", 16284219, 26 },
+    { "DOMSubtreeModified", 6084203, 18 },
+    { "abort", 15390287, 5 },
+    { "abortpayment", 8219725, 12 },
+    { "accessibleclick", 12776382, 15 },
+    { "accessiblecontextmenu", 8673538, 21 },
+    { "accessibledecrement", 10834834, 19 },
+    { "accessiblefocus", 99278, 15 },
+    { "accessibleincrement", 4944534, 19 },
+    { "accessiblescrollintoview", 5748551, 24 },
+    { "activate", 8463533, 8 },
+    { "activateinvisible", 10648348, 17 },
+    { "active", 4650789, 6 },
+    { "activechange", 5874857, 12 },
+    { "addsourcebuffer", 7452490, 15 },
+    { "addstream", 15110493, 9 },
+    { "addtrack", 3675244, 8 },
+    { "advertisementreceived", 10504476, 21 },
+    { "afterprint", 10607019, 10 },
+    { "animationend", 2356336, 12 },
+    { "animationiteration", 4399371, 18 },
+    { "animationstart", 1171773, 14 },
+    { "appinstalled", 12895466, 12 },
+    { "audioend", 4005439, 8 },
+    { "audioprocess", 7432340, 12 },
+    { "audiostart", 12162534, 10 },
+    { "auxclick", 6467501, 8 },
+    { "availablechange", 12524858, 15 },
+    { "backgroundfetchabort", 14646640, 20 },
+    { "backgroundfetchclick", 1587016, 20 },
+    { "backgroundfetchfail", 6720670, 19 },
+    { "backgroundfetchsuccess", 1456465, 22 },
+    { "beforeactivate", 1329934, 14 },
+    { "beforecopy", 15623218, 10 },
+    { "beforecut", 6886552, 9 },
+    { "beforeinput", 4688220, 11 },
+    { "beforeinstallprompt", 15019623, 19 },
+    { "beforepaste", 5049674, 11 },
+    { "beforeprint", 12907291, 11 },
+    { "beforeunload", 16009443, 12 },
+    { "beginEvent", 3946429, 10 },
+    { "blocked", 7188319, 7 },
+    { "blur", 3880931, 4 },
+    { "boundary", 8113195, 8 },
+    { "bufferedamountlow", 11352552, 17 },
+    { "cached", 2984957, 6 },
+    { "cancel", 9877073, 6 },
+    { "canmakepayment", 4032593, 14 },
+    { "canplay", 10609174, 7 },
+    { "canplaythrough", 3645779, 14 },
+    { "change", 3980998, 6 },
+    { "characteristicvaluechanged", 13435903, 26 },
+    { "chargingchange", 12089746, 14 },
+    { "chargingtimechange", 2233255, 18 },
+    { "checking", 12242986, 8 },
+    { "click", 10125525, 5 },
+    { "close", 3222970, 5 },
+    { "complete", 6079763, 8 },
+    { "compositionend", 5906550, 14 },
+    { "compositionstart", 16133899, 16 },
+    { "compositionupdate", 7385090, 17 },
+    { "connect", 12649850, 7 },
+    { "connecting", 1432354, 10 },
+    { "connectionavailable", 4548175, 19 },
+    { "connectionstatechange", 16527941, 21 },
+    { "contextlost", 9876436, 11 },
+    { "contextmenu", 14578063, 11 },
+    { "contextrestored", 81548, 15 },
+    { "controllerchange", 2370586, 16 },
+    { "cookiechange", 6006430, 12 },
+    { "copy", 16438426, 4 },
+    { "crossoriginmessage", 10776580, 18 },
+    { "cuechange", 3496656, 9 },
+    { "cut", 6810636, 3 },
+    { "dataavailable", 1423638, 13 },
+    { "datachannel", 3404486, 11 },
+    { "dblclick", 9054393, 8 },
+    { "defaultsessionstart", 1473789, 19 },
+    { "devicechange", 1508887, 12 },
+    { "devicemotion", 1024162, 12 },
+    { "deviceorientation", 12165871, 17 },
+    { "deviceorientationabsolute", 3802800, 25 },
+    { "dischargingtimechange", 16138730, 21 },
+    { "disconnect", 13405069, 10 },
+    { "display", 16245385, 7 },
+    { "downloading", 576780, 11 },
+    { "drag", 1532976, 4 },
+    { "dragend", 11982793, 7 },
+    { "dragenter", 10351130, 9 },
+    { "dragleave", 11297414, 9 },
+    { "dragover", 2973271, 8 },
+    { "dragstart", 15174021, 9 },
+    { "drop", 13413407, 4 },
+    { "durationchange", 4541505, 14 },
+    { "elementtimingbufferfull", 9462274, 23 },
+    { "emptied", 15126627, 7 },
+    { "encrypted", 5262076, 9 },
+    { "end", 1590106, 3 },
+    { "endEvent", 10314310, 8 },
+    { "ended", 54732, 5 },
+    { "enter", 3509546, 5 },
+    { "enterpictureinpicture", 3538880, 21 },
+    { "error", 6654137, 5 },
+    { "eventtimingbufferfull", 3307584, 21 },
+    { "exit", 15251726, 4 },
+    { "fetch", 10988466, 5 },
+    { "finish", 15149124, 6 },
+    { "focus", 1849182, 5 },
+    { "focusin", 13489365, 7 },
+    { "focusout", 13124807, 8 },
+    { "foreignfetch", 2569877, 12 },
+    { "formdata", 2984969, 8 },
+    { "freeze", 13909909, 6 },
+    { "fullscreenchange", 4189571, 16 },
+    { "fullscreenerror", 16209384, 15 },
+    { "gamepadconnected", 3715619, 16 },
+    { "gamepaddisconnected", 3966662, 19 },
+    { "gatheringstatechange", 6252501, 20 },
+    { "gattserverdisconnected", 9138677, 22 },
+    { "geofenceenter", 5978322, 13 },
+    { "geofenceleave", 9484968, 13 },
+    { "gestureflingstart", 14201329, 17 },
+    { "gesturelongpress", 3143202, 16 },
+    { "gesturescrollend", 5471896, 16 },
+    { "gesturescrollstart", 16516609, 18 },
+    { "gesturescrollupdate", 11683597, 19 },
+    { "gestureshowpress", 111807, 16 },
+    { "gesturetap", 1938166, 10 },
+    { "gesturetapdown", 8907849, 14 },
+    { "gesturetapunconfirmed", 793435, 21 },
+    { "gotpointercapture", 1398160, 17 },
+    { "hashchange", 3959696, 10 },
+    { "icecandidate", 16268761, 12 },
+    { "iceconnectionstatechange", 9120814, 24 },
+    { "icegatheringstatechange", 15031684, 23 },
+    { "inactive", 14538941, 8 },
+    { "input", 10365436, 5 },
+    { "inputreport", 8646776, 11 },
+    { "inputsourceschange", 12974375, 18 },
+    { "install", 7743126, 7 },
+    { "interfacerequest", 3365604, 16 },
+    { "invalid", 2059736, 7 },
+    { "keydown", 5301006, 7 },
+    { "keypress", 13845508, 8 },
+    { "keystatuseschange", 6044643, 17 },
+    { "keyup", 1054547, 5 },
+    { "languagechange", 3401938, 14 },
+    { "leavepictureinpicture", 14406269, 21 },
+    { "levelchange", 4445458, 11 },
+    { "load", 8207817, 4 },
+    { "loadeddata", 13874190, 10 },
+    { "loadedmetadata", 9550378, 14 },
+    { "loadend", 15911784, 7 },
+    { "loading", 13228638, 7 },
+    { "loadingdone", 6190750, 11 },
+    { "loadingerror", 5585167, 12 },
+    { "loadstart", 5495169, 9 },
+    { "lostpointercapture", 16324405, 18 },
+    { "mark", 16508213, 4 },
+    { "message", 11017471, 7 },
+    { "messageerror", 9382311, 12 },
+    { "midimessage", 3928734, 11 },
+    { "mousedown", 5740218, 9 },
+    { "mouseenter", 632853, 10 },
+    { "mouseleave", 1144826, 10 },
+    { "mousemove", 7356044, 9 },
+    { "mouseout", 685204, 8 },
+    { "mouseover", 12064397, 9 },
+    { "mouseup", 8467273, 7 },
+    { "mousewheel", 15891108, 10 },
+    { "mute", 15335886, 4 },
+    { "negotiationneeded", 7270370, 17 },
+    { "nomatch", 8258898, 7 },
+    { "notificationclick", 9870337, 17 },
+    { "notificationclose", 8298704, 17 },
+    { "notificationerror", 12723301, 17 },
+    { "noupdate", 8885664, 8 },
+    { "obsolete", 12364910, 8 },
+    { "offline", 8847130, 7 },
+    { "online", 9492271, 6 },
+    { "open", 13703631, 4 },
+    { "orientationchange", 14664026, 17 },
+    { "overscroll", 9381924, 10 },
+    { "pagehide", 16640617, 8 },
+    { "pageshow", 12320166, 8 },
+    { "paste", 369957, 5 },
+    { "pause", 5413740, 5 },
+    { "payerdetailchange", 11967552, 17 },
+    { "paymentmethodchange", 5497715, 19 },
+    { "paymentrequest", 5931071, 14 },
+    { "periodicsync", 13404718, 12 },
+    { "play", 10707022, 4 },
+    { "playing", 12380358, 7 },
+    { "pointercancel", 10214742, 13 },
+    { "pointerdown", 3878957, 11 },
+    { "pointerenter", 11845251, 12 },
+    { "pointerleave", 10895050, 12 },
+    { "pointerlockchange", 7047632, 17 },
+    { "pointerlockerror", 16321958, 16 },
+    { "pointermove", 14409529, 11 },
+    { "pointerout", 11792654, 10 },
+    { "pointerover", 10978871, 11 },
+    { "pointerrawupdate", 5266192, 16 },
+    { "pointerup", 5447091, 9 },
+    { "popstate", 12585208, 8 },
+    { "portalactivate", 6702825, 14 },
+    { "processorerror", 12526392, 14 },
+    { "progress", 11461517, 8 },
+    { "push", 4758933, 4 },
+    { "quicstream", 740661, 10 },
+    { "ratechange", 9044681, 10 },
+    { "reading", 1100371, 7 },
+    { "readystatechange", 11011948, 16 },
+    { "rejectionhandled", 7761403, 16 },
+    { "removesourcebuffer", 13594278, 18 },
+    { "removestream", 4604809, 12 },
+    { "removetrack", 6131613, 11 },
+    { "repeatEvent", 7182823, 11 },
+    { "reset", 13674204, 5 },
+    { "resetpose", 1385911, 9 },
+    { "resize", 11716975, 6 },
+    { "resourcetimingbufferfull", 7620714, 24 },
+    { "result", 15954886, 6 },
+    { "resume", 3214184, 6 },
+    { "scroll", 7626286, 6 },
+    { "scrollend", 1650724, 9 },
+    { "search", 6906057, 6 },
+    { "securitypolicyviolation", 7930261, 23 },
+    { "seeked", 16049377, 6 },
+    { "seeking", 10757715, 7 },
+    { "select", 210571, 6 },
+    { "selectedcandidatepairchange", 13482922, 27 },
+    { "selectend", 16318808, 9 },
+    { "selectionchange", 8861459, 15 },
+    { "selectstart", 5847864, 11 },
+    { "shippingaddresschange", 14329062, 21 },
+    { "shippingoptionchange", 8759120, 20 },
+    { "show", 3191658, 4 },
+    { "signalingstatechange", 14107818, 20 },
+    { "slotchange", 1816250, 10 },
+    { "soundend", 5959322, 8 },
+    { "soundstart", 14237399, 10 },
+    { "sourceclose", 10570717, 11 },
+    { "sourceended", 16675086, 11 },
+    { "sourceopen", 7526202, 10 },
+    { "speechend", 15574659, 9 },
+    { "speechstart", 10183406, 11 },
+    { "stalled", 4001267, 7 },
+    { "start", 1021290, 5 },
+    { "statechange", 9232255, 11 },
+    { "stop", 16220638, 4 },
+    { "storage", 3034291, 7 },
+    { "submit", 12328646, 6 },
+    { "success", 15544773, 7 },
+    { "suspend", 2237992, 7 },
+    { "sync", 14643608, 4 },
+    { "terminate", 10804689, 9 },
+    { "textInput", 12906447, 9 },
+    { "timeout", 5983938, 7 },
+    { "timeupdate", 10406103, 10 },
+    { "toggle", 8404466, 6 },
+    { "tonechange", 3007488, 10 },
+    { "touchcancel", 5916858, 11 },
+    { "touchend", 2956176, 8 },
+    { "touchmove", 9499787, 9 },
+    { "touchstart", 13231026, 10 },
+    { "track", 10988706, 5 },
+    { "transitioncancel", 4434367, 16 },
+    { "transitionend", 9031405, 13 },
+    { "transitionrun", 5924987, 13 },
+    { "transitionstart", 8091942, 15 },
+    { "typechange", 5883421, 10 },
+    { "unhandledrejection", 3461649, 18 },
+    { "unload", 4411490, 6 },
+    { "unmute", 1582770, 6 },
+    { "update", 5546488, 6 },
+    { "updateend", 13034123, 9 },
+    { "updatefound", 15608898, 11 },
+    { "updateready", 3196224, 11 },
+    { "updatestart", 4286012, 11 },
+    { "upgradeneeded", 492799, 13 },
+    { "versionchange", 1334380, 13 },
+    { "visibilitychange", 11206348, 16 },
+    { "voiceschanged", 3637255, 13 },
+    { "volumechange", 16288075, 12 },
+    { "vrdisplayactivate", 15644546, 17 },
+    { "vrdisplayblur", 352063, 13 },
+    { "vrdisplayconnect", 15259222, 16 },
+    { "vrdisplaydeactivate", 15487133, 19 },
+    { "vrdisplaydisconnect", 13994654, 19 },
+    { "vrdisplayfocus", 12764310, 14 },
+    { "vrdisplaypresentchange", 9089454, 22 },
+    { "waiting", 10489636, 7 },
+    { "waitingforkey", 6526383, 13 },
+    { "webglcontextcreationerror", 2718866, 25 },
+    { "webglcontextlost", 16605358, 16 },
+    { "webglcontextrestored", 8624464, 20 },
+    { "webkitAnimationEnd", 11845628, 18 },
+    { "webkitAnimationIteration", 9040977, 24 },
+    { "webkitAnimationStart", 4844440, 20 },
+    { "webkitBeforeTextInserted", 5393700, 24 },
+    { "webkitEditableContentChanged", 1212374, 28 },
+    { "webkitTransitionEnd", 16021356, 19 },
+    { "webkitfullscreenchange", 5579857, 22 },
+    { "webkitfullscreenerror", 12520378, 21 },
+    { "webkitprerenderdomcontentloaded", 14089645, 31 },
+    { "webkitprerenderload", 15469365, 19 },
+    { "webkitprerenderstart", 4709816, 20 },
+    { "webkitprerenderstop", 7661225, 19 },
+    { "webkitspeechchange", 11755315, 18 },
+    { "webkitvisibilitychange", 440449, 22 },
+    { "wheel", 5389519, 5 },
+    { "write", 10020319, 5 },
+    { "writeend", 6300360, 8 },
+    { "writestart", 2198394, 10 },
+    { "zoom", 6082914, 4 },
+  };
+
+  for (size_t i = 0; i < base::size(kNames); ++i) {
+    StringImpl* impl = StringImpl::CreateStatic(kNames[i].name, kNames[i].length, kNames[i].hash);
+    void* address = reinterpret_cast<AtomicString*>(&names_storage) + i;
+    new (address) AtomicString(impl);
+  }
+}
+
+}  // namespace event_type_names
+}  // namespace blink

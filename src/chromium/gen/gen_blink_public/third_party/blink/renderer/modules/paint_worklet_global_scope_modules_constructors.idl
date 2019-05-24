@@ -1,0 +1,8 @@
+[
+    ImplementedAs=paint_worklet_global_scope_modules_constructors
+] partial interface PaintWorkletGlobalScope {
+    [RuntimeEnabled=StableBlinkFeatures] attribute Path2DConstructor Path2D;
+    attribute PaintRenderingContext2DConstructor PaintRenderingContext2D;
+    attribute PaintSizeConstructor PaintSize;
+    attribute PaintWorkletGlobalScopeConstructor PaintWorkletGlobalScope;
+};

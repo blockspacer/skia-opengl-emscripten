@@ -1,0 +1,104 @@
+{
+  "c++": {
+    "gfx.mojom.RectF": {
+      "hashable": false, 
+      "typename": "::blink::WebFloatRect", 
+      "traits_headers": [
+        "third_party/blink/renderer/platform/mojo/geometry_struct_traits.h", 
+        "ui/gfx/geometry/mojo/geometry_struct_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "force_serialize": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "non_copyable_non_movable": false, 
+      "public_headers": [
+        "third_party/blink/public/platform/web_float_rect.h", 
+        "third_party/blink/public/platform/web_float_point.h", 
+        "third_party/blink/public/platform/web_point.h", 
+        "third_party/blink/public/platform/web_rect.h", 
+        "third_party/blink/public/platform/web_size.h"
+      ]
+    }, 
+    "gfx.mojom.PointF": {
+      "hashable": false, 
+      "typename": "::blink::WebFloatPoint", 
+      "traits_headers": [
+        "third_party/blink/renderer/platform/mojo/geometry_struct_traits.h", 
+        "ui/gfx/geometry/mojo/geometry_struct_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "force_serialize": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "non_copyable_non_movable": false, 
+      "public_headers": [
+        "third_party/blink/public/platform/web_float_rect.h", 
+        "third_party/blink/public/platform/web_float_point.h", 
+        "third_party/blink/public/platform/web_point.h", 
+        "third_party/blink/public/platform/web_rect.h", 
+        "third_party/blink/public/platform/web_size.h"
+      ]
+    }, 
+    "gfx.mojom.Point": {
+      "hashable": false, 
+      "typename": "::blink::WebPoint", 
+      "traits_headers": [
+        "third_party/blink/renderer/platform/mojo/geometry_struct_traits.h", 
+        "ui/gfx/geometry/mojo/geometry_struct_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "force_serialize": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "non_copyable_non_movable": false, 
+      "public_headers": [
+        "third_party/blink/public/platform/web_float_rect.h", 
+        "third_party/blink/public/platform/web_float_point.h", 
+        "third_party/blink/public/platform/web_point.h", 
+        "third_party/blink/public/platform/web_rect.h", 
+        "third_party/blink/public/platform/web_size.h"
+      ]
+    }, 
+    "gfx.mojom.Size": {
+      "hashable": false, 
+      "typename": "::blink::WebSize", 
+      "traits_headers": [
+        "third_party/blink/renderer/platform/mojo/geometry_struct_traits.h", 
+        "ui/gfx/geometry/mojo/geometry_struct_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "force_serialize": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "non_copyable_non_movable": false, 
+      "public_headers": [
+        "third_party/blink/public/platform/web_float_rect.h", 
+        "third_party/blink/public/platform/web_float_point.h", 
+        "third_party/blink/public/platform/web_point.h", 
+        "third_party/blink/public/platform/web_rect.h", 
+        "third_party/blink/public/platform/web_size.h"
+      ]
+    }, 
+    "gfx.mojom.Rect": {
+      "hashable": false, 
+      "typename": "::blink::WebRect", 
+      "traits_headers": [
+        "third_party/blink/renderer/platform/mojo/geometry_struct_traits.h", 
+        "ui/gfx/geometry/mojo/geometry_struct_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "force_serialize": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "non_copyable_non_movable": false, 
+      "public_headers": [
+        "third_party/blink/public/platform/web_float_rect.h", 
+        "third_party/blink/public/platform/web_float_point.h", 
+        "third_party/blink/public/platform/web_point.h", 
+        "third_party/blink/public/platform/web_rect.h", 
+        "third_party/blink/public/platform/web_size.h"
+      ]
+    }
+  }
+}

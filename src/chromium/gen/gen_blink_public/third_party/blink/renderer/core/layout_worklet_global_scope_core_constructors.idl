@@ -1,0 +1,42 @@
+[
+    ImplementedAs=layout_worklet_global_scope_core_constructors
+] partial interface LayoutWorkletGlobalScope {
+    [RuntimeEnabled=CSSLayoutAPI] attribute LayoutChildConstructor LayoutChild;
+    [RuntimeEnabled=CSSLayoutAPI] attribute LayoutConstraintsConstructor LayoutConstraints;
+    [RuntimeEnabled=CSSLayoutAPI] attribute LayoutFragmentConstructor LayoutFragment;
+    [RuntimeEnabled=CSSLayoutAPI] attribute LayoutFragmentRequestConstructor LayoutFragmentRequest;
+    [RuntimeEnabled=CSSLayoutAPI] attribute LayoutWorkletGlobalScopeConstructor LayoutWorkletGlobalScope;
+    [RuntimeEnabled=StreamsNative] attribute ReadableStreamDefaultReaderConstructor ReadableStreamDefaultReader;
+    [RuntimeEnabled=StreamsNative] attribute WritableStreamDefaultWriterConstructor WritableStreamDefaultWriter;
+    attribute CSSImageValueConstructor CSSImageValue;
+    attribute CSSKeywordValueConstructor CSSKeywordValue;
+    attribute CSSMathInvertConstructor CSSMathInvert;
+    attribute CSSMathMaxConstructor CSSMathMax;
+    attribute CSSMathMinConstructor CSSMathMin;
+    attribute CSSMathNegateConstructor CSSMathNegate;
+    attribute CSSMathProductConstructor CSSMathProduct;
+    attribute CSSMathSumConstructor CSSMathSum;
+    attribute CSSMathValueConstructor CSSMathValue;
+    attribute CSSMatrixComponentConstructor CSSMatrixComponent;
+    attribute CSSNumericArrayConstructor CSSNumericArray;
+    attribute CSSNumericValueConstructor CSSNumericValue;
+    attribute CSSPerspectiveConstructor CSSPerspective;
+    attribute CSSPositionValueConstructor CSSPositionValue;
+    attribute CSSRotateConstructor CSSRotate;
+    attribute CSSScaleConstructor CSSScale;
+    attribute CSSSkewConstructor CSSSkew;
+    attribute CSSSkewXConstructor CSSSkewX;
+    attribute CSSSkewYConstructor CSSSkewY;
+    attribute CSSStyleValueConstructor CSSStyleValue;
+    attribute CSSTransformComponentConstructor CSSTransformComponent;
+    attribute CSSTransformValueConstructor CSSTransformValue;
+    attribute CSSTranslateConstructor CSSTranslate;
+    attribute CSSUnitValueConstructor CSSUnitValue;
+    attribute CSSUnparsedValueConstructor CSSUnparsedValue;
+    attribute CSSVariableReferenceValueConstructor CSSVariableReferenceValue;
+    attribute ReadableStreamConstructor ReadableStream;
+    attribute StylePropertyMapReadOnlyConstructor StylePropertyMapReadOnly;
+    attribute TransformStreamConstructor TransformStream;
+    attribute WorkletGlobalScopeConstructor WorkletGlobalScope;
+    attribute WritableStreamConstructor WritableStream;
+};

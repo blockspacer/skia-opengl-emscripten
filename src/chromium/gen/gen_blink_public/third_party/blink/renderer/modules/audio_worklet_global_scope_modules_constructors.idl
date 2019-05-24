@@ -1,0 +1,6 @@
+[
+    ImplementedAs=audio_worklet_global_scope_modules_constructors
+] partial interface AudioWorkletGlobalScope {
+    attribute AudioWorkletGlobalScopeConstructor AudioWorkletGlobalScope;
+    attribute AudioWorkletProcessorConstructor AudioWorkletProcessor;
+};

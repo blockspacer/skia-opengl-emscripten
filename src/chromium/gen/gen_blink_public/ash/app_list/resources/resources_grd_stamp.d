@@ -1,0 +1,1 @@
+gen/ash/app_list/resources/resources_grd_stamp.d.stamp: ./../../ash/app_list/resources/default_100_percent/common/app_list_folder_back_normal.png ./../../ash/app_list/resources/default_200_percent/common/app_list_folder_back_normal.png ./../../tools/gritsettings/resource_ids

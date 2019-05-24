@@ -1,0 +1,245 @@
+{
+metadata: {
+  namespace: "event_interface_names",
+  suffix: "Modules",
+  export: "MODULES_EXPORT",
+},
+data: [
+  {
+    name: "BeforeInstallPromptEvent",
+    interfaceHeaderDir: "third_party/blink/renderer/modules/app_banner",
+  },
+  {
+    name: "BackgroundFetchEvent",
+    interfaceHeaderDir: "third_party/blink/renderer/modules/background_fetch",
+    RuntimeEnabled: "BackgroundFetchEnabled",
+  },
+  {
+    name: "BackgroundFetchUpdateUIEvent",
+    interfaceHeaderDir: "third_party/blink/renderer/modules/background_fetch",
+    RuntimeEnabled: "BackgroundFetchEnabled",
+  },
+  {
+    name: "SyncEvent",
+    interfaceHeaderDir: "third_party/blink/renderer/modules/background_sync",
+  },
+  {
+    name: "CookieChangeEvent",
+    interfaceHeaderDir: "third_party/blink/renderer/modules/cookie_store",
+    RuntimeEnabled: "CookieStoreEnabled",
+  },
+  {
+    name: "ExtendableCookieChangeEvent",
+    interfaceHeaderDir: "third_party/blink/renderer/modules/cookie_store",
+    RuntimeEnabled: "CookieStoreEnabled",
+  },
+  {
+    name: "DeviceMotionEvent",
+    interfaceHeaderDir: "third_party/blink/renderer/modules/device_orientation",
+  },
+  {
+    name: "DeviceOrientationEvent",
+    interfaceHeaderDir: "third_party/blink/renderer/modules/device_orientation",
+  },
+  {
+    name: "MediaEncryptedEvent",
+    interfaceHeaderDir: "third_party/blink/renderer/modules/encryptedmedia",
+  },
+  {
+    name: "MediaKeyMessageEvent",
+    interfaceHeaderDir: "third_party/blink/renderer/modules/encryptedmedia",
+  },
+  {
+    name: "GamepadAxisEvent",
+    interfaceHeaderDir: "third_party/blink/renderer/modules/gamepad",
+    RuntimeEnabled: "GamepadButtonAxisEventsEnabled",
+  },
+  {
+    name: "GamepadButtonEvent",
+    interfaceHeaderDir: "third_party/blink/renderer/modules/gamepad",
+    RuntimeEnabled: "GamepadButtonAxisEventsEnabled",
+  },
+  {
+    name: "GamepadEvent",
+    interfaceHeaderDir: "third_party/blink/renderer/modules/gamepad",
+  },
+  {
+    name: "IDBVersionChangeEvent",
+    interfaceHeaderDir: "third_party/blink/renderer/modules/indexeddb",
+  },
+  {
+    name: "BlobEvent",
+    interfaceHeaderDir: "third_party/blink/renderer/modules/mediarecorder",
+  },
+  {
+    name: "MediaStreamEvent",
+    interfaceHeaderDir: "third_party/blink/renderer/modules/mediastream",
+  },
+  {
+    name: "MediaStreamTrackEvent",
+    interfaceHeaderDir: "third_party/blink/renderer/modules/mediastream",
+  },
+  {
+    name: "NotificationEvent",
+    interfaceHeaderDir: "third_party/blink/renderer/modules/notifications",
+    RuntimeEnabled: "NotificationsEnabled",
+  },
+  {
+    name: "AbortPaymentEvent",
+    interfaceHeaderDir: "third_party/blink/renderer/modules/payments",
+    RuntimeEnabled: "PaymentAppEnabled",
+  },
+  {
+    name: "CanMakePaymentEvent",
+    interfaceHeaderDir: "third_party/blink/renderer/modules/payments",
+    RuntimeEnabled: "PaymentAppEnabled",
+  },
+  {
+    name: "MerchantValidationEvent",
+    interfaceHeaderDir: "third_party/blink/renderer/modules/payments",
+    RuntimeEnabled: "PaymentRequestMerchantValidationEventEnabled",
+  },
+  {
+    name: "PaymentMethodChangeEvent",
+    interfaceHeaderDir: "third_party/blink/renderer/modules/payments",
+    RuntimeEnabled: "PaymentMethodChangeEventEnabled",
+  },
+  {
+    name: "PaymentMethodChangeResponse",
+    interfaceHeaderDir: "third_party/blink/renderer/modules/payments",
+  },
+  {
+    name: "PaymentRequestEvent",
+    interfaceHeaderDir: "third_party/blink/renderer/modules/payments",
+    RuntimeEnabled: "PaymentAppEnabled",
+  },
+  {
+    name: "PaymentRequestUpdateEvent",
+    interfaceHeaderDir: "third_party/blink/renderer/modules/payments",
+    RuntimeEnabled: "PaymentRequestEnabled",
+  },
+  {
+    name: "RTCDTMFToneChangeEvent",
+    interfaceHeaderDir: "third_party/blink/renderer/modules/peerconnection",
+  },
+  {
+    name: "RTCDataChannelEvent",
+    interfaceHeaderDir: "third_party/blink/renderer/modules/peerconnection",
+  },
+  {
+    name: "RTCPeerConnectionIceEvent",
+    interfaceHeaderDir: "third_party/blink/renderer/modules/peerconnection",
+  },
+  {
+    name: "RTCQuicStreamEvent",
+    interfaceHeaderDir: "third_party/blink/renderer/modules/peerconnection",
+    RuntimeEnabled: "RTCQuicTransportEnabled",
+  },
+  {
+    name: "EnterPictureInPictureEvent",
+    interfaceHeaderDir: "third_party/blink/renderer/modules/picture_in_picture",
+    RuntimeEnabled: "PictureInPictureAPIEnabled",
+  },
+  {
+    name: "PresentationConnectionAvailableEvent",
+    interfaceHeaderDir: "third_party/blink/renderer/modules/presentation",
+    RuntimeEnabled: "PresentationEnabled",
+  },
+  {
+    name: "PresentationConnectionCloseEvent",
+    interfaceHeaderDir: "third_party/blink/renderer/modules/presentation",
+    RuntimeEnabled: "PresentationEnabled",
+  },
+  {
+    name: "PushEvent",
+    interfaceHeaderDir: "third_party/blink/renderer/modules/push_messaging",
+    RuntimeEnabled: "PushMessagingEnabled",
+  },
+  {
+    name: "SensorErrorEvent",
+    interfaceHeaderDir: "third_party/blink/renderer/modules/sensor",
+    RuntimeEnabled: "SensorEnabled",
+  },
+  {
+    name: "ExtendableEvent",
+    interfaceHeaderDir: "third_party/blink/renderer/modules/service_worker",
+  },
+  {
+    name: "ExtendableMessageEvent",
+    interfaceHeaderDir: "third_party/blink/renderer/modules/service_worker",
+  },
+  {
+    name: "FetchEvent",
+    interfaceHeaderDir: "third_party/blink/renderer/modules/service_worker",
+  },
+  {
+    name: "InstallEvent",
+    interfaceHeaderDir: "third_party/blink/renderer/modules/service_worker",
+  },
+  {
+    name: "SpeechRecognitionError",
+    interfaceHeaderDir: "third_party/blink/renderer/modules/speech",
+  },
+  {
+    name: "SpeechRecognitionEvent",
+    interfaceHeaderDir: "third_party/blink/renderer/modules/speech",
+  },
+  {
+    name: "SpeechSynthesisErrorEvent",
+    interfaceHeaderDir: "third_party/blink/renderer/modules/speech",
+    RuntimeEnabled: "ScriptedSpeechSynthesisEnabled",
+  },
+  {
+    name: "SpeechSynthesisEvent",
+    interfaceHeaderDir: "third_party/blink/renderer/modules/speech",
+    RuntimeEnabled: "ScriptedSpeechSynthesisEnabled",
+  },
+  {
+    name: "StorageEvent",
+    interfaceHeaderDir: "third_party/blink/renderer/modules/storage",
+  },
+  {
+    name: "VRDisplayEvent",
+    interfaceHeaderDir: "third_party/blink/renderer/modules/vr",
+    RuntimeEnabled: "WebVREnabled",
+  },
+  {
+    name: "AudioProcessingEvent",
+    interfaceHeaderDir: "third_party/blink/renderer/modules/webaudio",
+  },
+  {
+    name: "OfflineAudioCompletionEvent",
+    interfaceHeaderDir: "third_party/blink/renderer/modules/webaudio",
+  },
+  {
+    name: "WebGLContextEvent",
+    interfaceHeaderDir: "third_party/blink/renderer/modules/webgl",
+  },
+  {
+    name: "MIDIConnectionEvent",
+    interfaceHeaderDir: "third_party/blink/renderer/modules/webmidi",
+  },
+  {
+    name: "MIDIMessageEvent",
+    interfaceHeaderDir: "third_party/blink/renderer/modules/webmidi",
+  },
+  {
+    name: "CloseEvent",
+    interfaceHeaderDir: "third_party/blink/renderer/modules/websockets",
+  },
+  {
+    name: "XRInputSourceEvent",
+    interfaceHeaderDir: "third_party/blink/renderer/modules/xr",
+    RuntimeEnabled: "WebXREnabled",
+  },
+  {
+    name: "XRReferenceSpaceEvent",
+    interfaceHeaderDir: "third_party/blink/renderer/modules/xr",
+  },
+  {
+    name: "XRSessionEvent",
+    interfaceHeaderDir: "third_party/blink/renderer/modules/xr",
+    RuntimeEnabled: "WebXREnabled",
+  },
+]
+}

@@ -1,0 +1,7 @@
+[
+    ImplementedAs=animation_worklet_global_scope_modules_constructors
+] partial interface AnimationWorkletGlobalScope {
+    [RuntimeEnabled=AnimationWorklet] attribute AnimationWorkletGlobalScopeConstructor AnimationWorkletGlobalScope;
+    [RuntimeEnabled=AnimationWorklet] attribute EffectProxyConstructor EffectProxy;
+    [RuntimeEnabled=AnimationWorklet] attribute WorkletGroupEffectProxyConstructor WorkletGroupEffectProxy;
+};
