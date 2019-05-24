@@ -1299,7 +1299,13 @@ public:
   auto paint_controller = std::make_unique<blink::PaintController>();
   blink::GraphicsContext context(*paint_controller);
   //
-  context.SetShouldAntialias(false);
+#ifdef ENABLE_SKIA_HQ
+    context.SetShouldAntialias(true);
+#else
+    context.SetShouldAntialias(false);
+    // SetImageInterpolationQuality calls setFilterQuality
+    context.SetImageInterpolationQuality(blink::InterpolationQuality::kInterpolationNone);
+#endif
   context.SetMiterLimit(1);
   context.SetStrokeThickness(5);
   context.SetLineCap(blink::kSquareCap);

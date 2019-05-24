@@ -145,17 +145,17 @@ endmacro(mojom_bindings_gen)
 #  ${MOJO_OUT_DIR}
 #)
 
-mojom_bindings_compile(
-  ${CMAKE_CURRENT_SOURCE_DIR}/services
-)
+#mojom_bindings_compile(
+#  ${CMAKE_CURRENT_SOURCE_DIR}/services
+#)
 
 #services/network/public/mojom/cors.mojom-shared.h
-mojom_bindings_gen(
-  ${CMAKE_CURRENT_SOURCE_DIR}/services/network/public/mojom/cors.mojom
-  #${MOJO_OUT_DIR}
-  ${CMAKE_CURRENT_SOURCE_DIR}/services/network/public/mojom/
-  ${CMAKE_CURRENT_SOURCE_DIR}/services/network
-)
+#mojom_bindings_gen(
+#  ${CMAKE_CURRENT_SOURCE_DIR}/services/network/public/mojom/cors.mojom
+#  #${MOJO_OUT_DIR}
+#  ${CMAKE_CURRENT_SOURCE_DIR}/services/network/public/mojom/
+#  ${CMAKE_CURRENT_SOURCE_DIR}/services/network
+#)
 
 #
 #
