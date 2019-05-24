@@ -210,7 +210,7 @@ class BLINK_PLATFORM_EXPORT Platform {
     return nullptr;
   }
 
-#if !defined(OS_EMSCRIPTEN) && defined(ENABLE_MOJOM)
+//#if !defined(OS_EMSCRIPTEN) && defined(ENABLE_MOJOM)
   // Audio --------------------------------------------------------------
 
   virtual double AudioHardwareSampleRate() { return 0; }
@@ -730,7 +730,7 @@ class BLINK_PLATFORM_EXPORT Platform {
   // tools/v8_context_snapshot/v8_context_snapshot_generator is running (which
   // runs during Chromium's build step).
   virtual bool IsTakingV8ContextSnapshot() { return false; }
-#endif
+//#endif
 
  private:
   static void InitializeCommon(Platform* platform,

@@ -36,16 +36,25 @@
 #include "base/threading/thread_task_runner_handle.h"
 #include "base/trace_event/memory_dump_manager.h"
 #include "build/build_config.h"
+
+#if !defined(__EMSCRIPTEN__)
 #include "services/service_manager/public/cpp/connector.h"
 #include "services/service_manager/public/cpp/interface_provider.h"
+#endif // __EMSCRIPTEN__
+
 #include "third_party/blink/public/platform/interface_provider.h"
 #include "third_party/blink/public/platform/scheduler/web_thread_scheduler.h"
 #include "third_party/blink/public/platform/web_graphics_context_3d_provider.h"
 #include "third_party/blink/public/platform/web_media_recorder_handler.h"
 #include "third_party/blink/public/platform/web_media_stream_center.h"
 #include "third_party/blink/public/platform/web_prerendering_support.h"
+
+#if !defined(__EMSCRIPTEN__)
 #include "third_party/blink/public/platform/web_rtc_certificate_generator.h"
 #include "third_party/blink/public/platform/web_rtc_peer_connection_handler.h"
+#endif // __EMSCRIPTEN__
+
+
 #include "third_party/blink/public/platform/web_storage_namespace.h"
 #include "third_party/blink/public/platform/websocket_handshake_throttle.h"
 #include "third_party/blink/renderer/platform/bindings/parkable_string_manager.h"
@@ -66,14 +75,18 @@
 #include "third_party/blink/renderer/platform/scheduler/public/thread.h"
 #include "third_party/blink/renderer/platform/wtf/allocator.h"
 #include "third_party/blink/renderer/platform/wtf/hash_map.h"
+
+#if !defined(__EMSCRIPTEN__)
 #include "third_party/webrtc/api/async_resolver_factory.h"
 #include "third_party/webrtc/api/rtp_parameters.h"
 #include "third_party/webrtc/p2p/base/port_allocator.h"
+#endif // __EMSCRIPTEN__
 
 namespace blink {
 
 namespace {
 
+#if !defined(__EMSCRIPTEN__)
 class DefaultConnector {
   USING_FAST_MALLOC(DefaultConnector);
 
@@ -88,12 +101,15 @@ class DefaultConnector {
  private:
   std::unique_ptr<service_manager::Connector> connector_;
 };
+#endif // __EMSCRIPTEN__
 
 }  // namespace
 
 static Platform* g_platform = nullptr;
 
+#if !defined(__EMSCRIPTEN__)
 static GCTaskRunner* g_gc_task_runner = nullptr;
+#endif // __EMSCRIPTEN__
 
 static void MaxObservedSizeFunction(size_t size_in_mb) {
   const size_t kSupportedMaxSizeInMB = 4 * 1024;
@@ -200,8 +216,11 @@ void Platform::InitializeCommon(Platform* platform,
   font_family_names::Init();
   InitializePlatformLanguage();
 
+#if !defined(__EMSCRIPTEN__)
   DCHECK(!g_gc_task_runner);
   g_gc_task_runner = new GCTaskRunner(Thread::MainThread());
+#endif // __EMSCRIPTEN__
+
   base::trace_event::MemoryDumpManager::GetInstance()->RegisterDumpProvider(
       PartitionAllocMemoryDumpProvider::Instance(), "PartitionAlloc",
       base::ThreadTaskRunnerHandle::Get());
@@ -249,10 +268,12 @@ Platform* Platform::Current() {
   return g_platform;
 }
 
+#if !defined(__EMSCRIPTEN__)
 service_manager::Connector* Platform::GetConnector() {
   DEFINE_STATIC_LOCAL(DefaultConnector, connector, ());
   return connector.Get();
 }
+#endif //__EMSCRIPTEN__
 
 InterfaceProvider* Platform::GetInterfaceProvider() {
   return InterfaceProvider::GetEmptyInterfaceProvider();
@@ -302,6 +323,7 @@ Platform::CreateWebGPUGraphicsContext3DProvider(const WebURL& top_document_url,
   return nullptr;
 }
 
+#if !defined(__EMSCRIPTEN__)
 std::unique_ptr<WebRTCPeerConnectionHandler>
 Platform::CreateRTCPeerConnectionHandler(
     WebRTCPeerConnectionHandlerClient*,
@@ -342,5 +364,6 @@ std::unique_ptr<webrtc::RtpCapabilities> Platform::GetRtpReceiverCapabilities(
     const WebString& kind) {
   return nullptr;
 }
+#endif // __EMSCRIPTEN__
 
 }  // namespace blink

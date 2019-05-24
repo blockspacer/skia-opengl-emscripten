@@ -500,13 +500,59 @@ using cc::TransformKeyframe;
 //#include "ui/views/controls/menu/submenu_view.h"
 //#include "ui/views/widget/widget.h"
 
-static std::unique_ptr<gfx::ImageSkia> imageSkia;
+static std::unique_ptr<gfx::ImageSkia> gfxImageSkia;
+static sk_sp<SkImage> skImageSp;
 #endif // ENABLE_UI
 
-//#define ENABLE_BLINK_PLATFORM 1
+#define ENABLE_BLINK_PLATFORM 1
 #ifdef ENABLE_BLINK_PLATFORM
 
 #include <third_party/blink/renderer/platform/runtime_enabled_features.h>
+
+#include "third_party/blink/renderer/platform/graphics/graphics_context.h"
+
+//#include "third_party/blink/renderer/platform/graphics/bitmap_image.h"
+#include "third_party/blink/renderer/platform/graphics/paint/paint_canvas.h"
+#include "third_party/blink/renderer/platform/graphics/paint/paint_controller.h"
+#include "third_party/blink/renderer/platform/graphics/paint/paint_record.h"
+#include "third_party/blink/renderer/platform/graphics/path.h"
+//#include "third_party/blink/renderer/platform/testing/font_test_helpers.h"
+//#include "third_party/blink/renderer/platform/testing/unit_test_helpers.h"
+#include "third_party/blink/renderer/platform/text/text_run.h"
+#include "third_party/skia/include/core/SkBitmap.h"
+#include "third_party/skia/include/core/SkCanvas.h"
+#include "third_party/skia/include/core/SkShader.h"
+
+//#include "third_party/blink/renderer/core/dom/document.h"
+//#include "third_party/blink/renderer/core/frame/local_frame_view.h"
+//#include "third_party/blink/renderer/core/html/canvas/html_canvas_element.h"
+//#include "third_party/blink/renderer/core/html/canvas/image_data.h"
+//#include "third_party/blink/renderer/core/html/html_image_element.h"
+//#include "third_party/blink/renderer/core/html/media/html_video_element.h"
+//#include "third_party/blink/renderer/core/loader/resource/image_resource_content.h"
+
+//#include "third_party/blink/renderer/core/imagebitmap/image_bitmap.h"
+
+#include "third_party/blink/renderer/platform/graphics/accelerated_static_bitmap_image.h"
+//#include "third_party/blink/renderer/platform/graphics/color_correction_test_utils.h"
+#include "third_party/blink/renderer/platform/graphics/gpu/shared_gpu_context.h"
+#include "third_party/blink/renderer/platform/graphics/skia/skia_utils.h"
+#include "third_party/blink/renderer/platform/graphics/static_bitmap_image.h"
+//#include "third_party/blink/renderer/platform/graphics/test/fake_gles2_interface.h"
+//#include "third_party/blink/renderer/platform/graphics/test/fake_web_graphics_context_3d_provider.h"
+#include "third_party/blink/renderer/platform/heap/handle.h"
+#include "third_party/blink/renderer/platform/heap/heap.h"
+//#include "third_party/blink/renderer/platform/image-decoders/image_decoder.h"
+//#include "third_party/blink/renderer/platform/loader/fetch/memory_cache.h"
+//#include "third_party/blink/renderer/platform/loader/fetch/resource_request.h"
+
+#include "third_party/blink/renderer/platform/geometry/float_rect.h"
+#include "third_party/blink/renderer/platform/geometry/int_rect.h"
+#include "third_party/blink/renderer/platform/geometry/layout_point.h"
+#include "third_party/blink/renderer/platform/geometry/layout_rect.h"
+#include "third_party/blink/renderer/platform/wtf/allocator.h"
+#include "third_party/blink/renderer/platform/wtf/forward.h"
+#include "third_party/blink/renderer/platform/wtf/vector.h"
 
 #endif // ENABLE_BLINK_PLATFORM
 
@@ -669,13 +715,13 @@ sk_sp<const GrGLInterface> emscripten_GrGLMakeNativeInterface() {
   // https://github.com/Rusino/skia/blob/b3929a01f476c63e5358e97128ba7eb9f14e806e/src/gpu/gl/GrGLAssembleWebGLInterfaceAutogen.cpp#L22
 
   if (GR_IS_GR_GL_ES(standard)) {
-    printf("GR_IS_GR_GL_ES");
+    printf("GR_IS_GR_GL_ES\n");
     return GrGLMakeAssembledGLESInterface(ctx, get);
   } else if (GR_IS_GR_GL(standard)) {
-    printf("GR_IS_GR_GL");
+    printf("GR_IS_GR_GL\n");
     return GrGLMakeAssembledGLInterface(ctx, get);
   } else if (GR_IS_GR_WEBGL(standard)) {
-    printf("GR_IS_GR_WEBGL");
+    printf("GR_IS_GR_WEBGL\n");
     return GrGLMakeAssembledWebGLInterface(ctx, get);
   }
   return nullptr;
@@ -922,16 +968,16 @@ static void initSkiaSurface(int w, int h) {
       abort();
     }
 
-    printf("create GrContext...");
+    printf("create GrContext...\n");
 
     GrContextOptions options;
     grContext = GrContext::MakeGL(std::move(sInterface), options).release();
     if (!grContext) {
-      printf("failed to create grContext.");
+      printf("failed to create grContext.\n");
     }
     SkASSERT(grContext);
 
-    printf("created GrContext...");
+    printf("created GrContext...\n");
 
     GrGLint bufferID;
     // Wrap the frame buffer object attached to the screen in a Skia render target so Skia can
@@ -943,7 +989,7 @@ static void initSkiaSurface(int w, int h) {
 
 // TODO: we use em_ctx for now
 //#if defined(ENABLE_HTML5_SDL) || !defined(__EMSCRIPTEN__)
-//    printf("SDL_GetWindowPixelFormat...");
+//    printf("SDL_GetWindowPixelFormat...\n");
 //
 //    uint32_t windowFormat = SDL_GetWindowPixelFormat(window);
 //    int contextType;
@@ -952,7 +998,7 @@ static void initSkiaSurface(int w, int h) {
 //    //em_ctx
 //    SDL_GL_GetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, &contextType);
 //
-//    printf("get windowFormat...");
+//    printf("get windowFormat...\n");
 //
 //    // SkDebugf("%s", SDL_GetPixelFormatName(windowFormat));
 //    // TODO: the windowFormat is never any of these?
@@ -976,7 +1022,7 @@ static void initSkiaSurface(int w, int h) {
     info.fFormat = GR_GL_BGRA8; //  TODO
     colorType = kBGRA_8888_SkColorType;
 
-    printf("create GrBackendRenderTarget...");
+    printf("create GrBackendRenderTarget...\n");
 
     GrBackendRenderTarget target(width, height, kMsaaSampleCount, kStencilBits, info);
 
@@ -989,7 +1035,7 @@ static void initSkiaSurface(int w, int h) {
     sk_sp<SkSurface> surface(SkSurface::MakeFromBackendRenderTarget(
         grContext, target, kBottomLeft_GrSurfaceOrigin, colorType, nullptr, &props));
     if (!surface) {
-      printf("failed to create surface.");
+      printf("failed to create surface.\n");
     }
   }
 #endif
@@ -1059,7 +1105,7 @@ public:
     {
       // see https://github.com/codebyravi/electron/blob/master/atom/common/api/atom_api_native_image.cc#L115
       //gfx_canvas.DrawImageInt(*imageSkia.get(), 330, 330);
-      gfx_canvas.DrawImageInt(gfx::ImageSkia(imageSkia->GetRepresentation(10.0f)), 330, 330);
+      gfx_canvas.DrawImageInt(gfx::ImageSkia(gfxImageSkia->GetRepresentation(10.0f)), 330, 330);
     }
     {
       cc::PaintFlags flags;
@@ -1245,6 +1291,109 @@ public:
       }*/
     }
 #endif // ENABLE_SKOTTIE_ANIMATIONS
+
+#ifdef ENABLE_BLINK_PLATFORM
+  // see https://chromium.googlesource.com/chromium/src/+/master/third_party/blink/renderer/platform/graphics/paint/README.md
+  // see https://blog.csdn.net/tornmy/article/details/82593718
+  // see https://github.com/chromium/chromium/blob/master/third_party/blink/renderer/platform/graphics/graphics_context_test.cc
+  auto paint_controller = std::make_unique<blink::PaintController>();
+  blink::GraphicsContext context(*paint_controller);
+  //
+  context.SetShouldAntialias(false);
+  context.SetMiterLimit(1);
+  context.SetStrokeThickness(5);
+  context.SetLineCap(blink::kSquareCap);
+  context.SetStrokeStyle(blink::kSolidStroke);
+  //
+  context.BeginRecording(blink::FloatRect(blink::LayoutRect::InfiniteIntRect()));
+  //
+  //printf("FillRect 1\n");
+  context.FillRect(blink::FloatRect(0, 0, 50, 50),
+    blink::Color(1.0f, 1.0f, 0.0f, 0.5f),
+    SkBlendMode::kSrcOver);
+  //printf("FillRect 2\n");
+  context.FillRect(blink::FloatRect(40, 40, 150, 550),
+    blink::Color(0.0f, 1.0f, 1.0f, 0.5f),
+    SkBlendMode::kSrcOver);
+  //
+  //printf("FillRect 3\n");
+  context.DrawOval(blink::FloatRect(40, 40, 150, 550),
+    blink::PaintFlags());
+  //
+  //printf("FillRect 4\n");
+  // Clip to the left edge of the opaque area.
+  context.Clip(blink::IntRect(100, 80, 500, 400));
+  //
+  // Draw a path that gets clipped. This should destroy the opaque area, but
+  // only inside the clip.
+  //printf("FillRect 5\n");
+  blink::Path path;
+  path.MoveTo(blink::FloatPoint(10, 10));
+  path.AddLineTo(blink::FloatPoint(40, 40));
+  blink::PaintFlags flags;
+  flags.setColor(blink::Color(0.0f, 1.0f, 0.0f, 0.5f).Rgb());
+  flags.setBlendMode(SkBlendMode::kSrcOver);
+  context.DrawPath(path.GetSkPath(), flags);
+
+  //printf("FillRect 6\n");
+  // Make skia unable to compute fast bounds for our paths.
+  DashArray dash_array;
+  dash_array.push_back(1);
+  dash_array.push_back(0);
+  context.SetLineDash(dash_array, 0);
+
+  //printf("FillRect 7\n");
+  // Make the device opaque in 10,10 40x40.
+  context.FillRoundedRect(blink::FloatRoundedRect(400, 400, 600, 600),
+    blink::Color(0.0f, 1.0f, 0.5f, 0.5f));
+
+  //printf("FillRect 8\n");
+  // The inset shadow case.
+  blink::GraphicsContext::Edges clipped_edges = blink::GraphicsContext::kNoEdge;
+  context.DrawInnerShadow(blink::FloatRoundedRect(510, 510, 640, 640),
+    blink::Color(0.0f, 1.0f, 0.5f, 0.5f),
+    blink::FloatSize(10, 10),
+    5.0f,
+    5.0f,
+    clipped_edges);
+  //printf("FillRect 9\n");
+
+  base::WeakPtr<blink::WebGraphicsContext3DProviderWrapper> wptr = nullptr;
+  scoped_refptr<blink::StaticBitmapImage> bitmap =
+      blink::StaticBitmapImage::Create(skImageSp, std::move(wptr));
+  if (!bitmap || bitmap->IsNull() || !bitmap->IsValid()) {
+    //printf("Invalid StaticBitmapImage\n");
+  }
+
+  //blink::Image* img = blink::ImageBitmap::cr;
+  //  CreatePaintImageBuilder()
+  //        .set_image(std::move(image), cc::PaintImage::GetNextContentId())
+  //blink::ImageBitmap image_bitmap_no_crop();
+  //
+  //blink::Image img = gfx::ImageSkia(imageSkia->GetRepresentation(10.0f));
+
+  //printf("FillRect 70\n");
+
+  context.DrawImageTiled(bitmap.get(),
+    blink::FloatRect(400, 400, 1000, 1000),
+    blink::FloatRect(400, 400, 1000, 1000),
+    blink::FloatSize(10, 10),
+    blink::FloatPoint{1.0, 1.0},
+    blink::FloatSize(10, 10),
+    SkBlendMode::kSrcOver);
+
+  //printf("FillRect 71\n");
+  auto rr = context.EndRecording();
+  //printf("FillRect 81\n");
+  paint_canvas.drawPicture(rr);
+
+  // Must be called when a painting is finished. Updates the current paint
+  // artifact with the new paintings.
+  paint_controller->CommitNewDisplayItems();
+
+  //printf("FillRect 91\n");
+#endif // ENABLE_BLINK_PLATFORM
+
       //printf("onDraw() 7\n");
   }
 
@@ -2165,7 +2314,7 @@ int main(int argc, char** argv) {
   printf("SDL_SetHint ...\n");
 
   if (!SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1")) {
-    printf("Warning: Linear texture filtering not enabled!");
+    printf("Warning: Linear texture filtering not enabled!\n");
   }
 
   printf("SDL_CreateWindow ...\n");
@@ -2319,7 +2468,19 @@ int main(int argc, char** argv) {
     //fetched_bitmap.setPixels(pixels);
     //fetched_bitmap.setIsOpaque(isOpaque);
     //gfx::ImageSkia imageSkia(gfx::ImageSkiaRep(*decoded, /*scale=*/1.0));
-    imageSkia = std::make_unique<gfx::ImageSkia>(gfx::ImageSkiaRep(*decoded, /*scale=*/1.0));
+    gfx::ImageSkiaRep rep = gfx::ImageSkiaRep(*decoded, /*scale=*/1.0);
+    gfxImageSkia = std::make_unique<gfx::ImageSkia>(rep);
+    if (!gfxImageSkia || gfxImageSkia->isNull()) {
+      printf("can`t get gfxImageSkia\n");
+      return 1;
+    }
+    //skImageSp = SkImage::MakeFromBitmap(
+    //  gfxImageSkia->GetRepresentation(/*scale=*/1.0).GetBitmap());
+    skImageSp = SkImage::MakeFromBitmap(rep.GetBitmap());
+    if (!skImageSp || !skImageSp->isValid(nullptr)) {
+      printf("can`t get skImageSp\n");
+      return 1;
+    }
   }
 #endif // ENABLE_UI
 

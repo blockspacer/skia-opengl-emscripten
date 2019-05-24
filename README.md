@@ -9,6 +9,7 @@ also see https://news.ycombinator.com/item?id=17733515
 todos
 > https://cobalt.googlesource.com/cobalt
 > license If this is based off of Chromium it may be required to be Open-Source. Unless the LGPL parts are dynamically linked, you must share the statically linked source just like with the GPL.
+> support godot, android, win e.t.c.
 
 needs
 > https://bugs.chromium.org/p/skia/issues/detail?id=9052&q=&sort=-modified&colspec=ID%20Type%20Status%20Priority%20M%20Area%20Owner%20Summary%20Modified
@@ -22,6 +23,8 @@ needs
 
 notes
 > if you want good performance - set RELEASE_BUILD to TRUE in CMakeLists.txt and set -DCMAKE_BUILD_TYPE=Release. Or even better - use scripts from tools directory with right arguments.
+> no embedded js engine, prefer C++/wasm
+> May break compatibility to the web (move beyond the web). Web pays enormous penalties for compatibility with 30-year-old web pages. See https://softwareengineeringdaily.com/wp-content/uploads/2018/06/SED625-Flutter.pdf
 
 # Features
 
@@ -691,3 +694,31 @@ url/mojom
 � Streaming Instantiation: Combining Download and Instantiation https://pspdfkit.com/blog/2018/optimize-webassembly-startup-performance/
 � Prefer WebIDL as bindings toolchain to embind https://github.com/emscripten-core/emscripten/issues/8476
 
+## FOUND CHROMIUM BUGS
+
+### Wrong memory alignment at WTF::ThreadSpecific<blink::ThreadState*>
+
+Built with SAFE_HEAP=1. SAFE_HEAP=1 adds additional memory access checks, and will give clear errors for problems like dereferencing 0 and memory alignment issues.
+
+NOTE: Generally it is best to avoid unaligned reads and writes
+
+NOTE: Use emscripten_align* if not bug
+
+See https://emscripten.org/docs/porting/Debugging.html#memory-alignment-issues
+
+2 UnacceleratedStaticBitmapImage::Create 1
+(index):1237 2 UnacceleratedStaticBitmapImage::Create 2
+(index):1237 segmentation fault
+(index):1246 segmentation fault
+printErr @ (index):1246
+skemgl.js:5924 Uncaught abort("segmentation fault") at Error
+    at jsStackTrace (http://localhost:9090/home/avakimov_am/skia-opengl-emscripten/build-emscripten/skemgl.js:1275:13)
+    at stackTrace (http://localhost:9090/home/avakimov_am/skia-opengl-emscripten/build-emscripten/skemgl.js:1292:12)
+    at abort (http://localhost:9090/home/avakimov_am/skia-opengl-emscripten/build-emscripten/skemgl.js:16460:44)
+    at segfault (http://localhost:9090/home/avakimov_am/skia-opengl-emscripten/build-emscripten/skemgl.js:600:3)
+    at SAFE_HEAP_STORE_i32_4_4 (wasm-function[779174]:29)
+    at WTF::ThreadSpecific<blink::ThreadState*>::operator blink::ThreadState**() [__ZN3WTF14ThreadSpecificIPN5blink11ThreadStateEEcvPS3_Ev] (wasm-function[3389]:134)
+    at WTF::ThreadSpecific<blink::ThreadState*>::operator*() [__ZN3WTF14ThreadSpecificIPN5blink11ThreadStateEEdeEv] (wasm-function[3388]:3)
+    at blink::ThreadState::Current() [__ZN5blink11ThreadState7CurrentEv] (wasm-function[3387]:11)
+    at blink::PersistentBase<blink::ImageObserver, (blink::WeaknessPersistentConfiguration)1, (blink::CrossThreadnessPersistentConfiguration)0>::SaveCreationThreadHeap() [__ZN5blink14PersistentBaseINS_13ImageObserverELNS_31WeaknessPersistentConfigurationE1ELNS_38CrossThreadnessPersistentConfigurationE0EE22SaveCreationThreadHeapEv] (wasm-function[3396]:48)
+    at blink::PersistentBase<blink::ImageObserver, (blink::WeaknessPersistentConfiguration)1, (blink::CrossThreadnessPersistentConfiguration)0>::PersistentBase(blink::ImageObserver*) [__ZN5blink14PersistentBaseINS_13ImageObserverELNS_31WeaknessPersistentConfigurationE1ELNS_38CrossThreadnessPersistentConfigurationE0EEC2EPS1_] (wasm-function[3395]:21)

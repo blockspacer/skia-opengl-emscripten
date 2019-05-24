@@ -225,7 +225,7 @@ class PersistentBase {
   void Uninitialize() { persistent_node_.Uninitialize(); }
 
   void CheckPointer() const {
-#if DCHECK_IS_ON()
+#if DCHECK_IS_ON() && !defined(__EMSCRIPTEN__)
     if (!raw_ || IsHashTableDeletedValue())
       return;
 
@@ -247,7 +247,7 @@ class PersistentBase {
   }
 
   void SaveCreationThreadHeap() {
-#if DCHECK_IS_ON()
+#if DCHECK_IS_ON() && !defined(__EMSCRIPTEN__)
     if (crossThreadnessConfiguration == kCrossThreadPersistentConfiguration) {
       creation_thread_state_ = nullptr;
     } else {
@@ -304,7 +304,7 @@ class PersistentBase {
       PersistentNodePtr<ThreadingTrait<T>::kAffinity, weaknessConfiguration>>
       persistent_node_;
 
-#if DCHECK_IS_ON()
+#if DCHECK_IS_ON() && !defined(__EMSCRIPTEN__)
   const ThreadState* creation_thread_state_;
 #endif
 };

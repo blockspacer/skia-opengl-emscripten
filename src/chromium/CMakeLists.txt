@@ -222,6 +222,12 @@ include(GLIBJPEG_TURBO.cmake)
 # libyuv: requires LIBJPEG
 include(libyuv.cmake)
 
+# iccjpeg: requires LIBJPEG
+include(iccjpeg.cmake)
+
+# libwebp: requires libpng, zlib
+include(libwebp.cmake)
+
 if (EMSCRIPTEN)
   # libxml
   #include(GLIBXML.cmake)
@@ -410,6 +416,12 @@ include(COMPONENTS_CONTENT_SETTINGS_CORE_COMMON.cmake)
 
 # SERVICES_NETWORK_PUBLIC_CPP
 include(SERVICES_NETWORK_PUBLIC_CPP.cmake)
+
+# LIB_V8_INTERFACE
+include(LIB_V8_INTERFACE.cmake)
+
+# COMPONENTS_SCHEDULING_METRICS
+include(COMPONENTS_SCHEDULING_METRICS.cmake)
 
 # BLINK_PUBLIC_COMMON
 include(BLINK_PUBLIC_COMMON.cmake)

@@ -113,7 +113,7 @@ class PLATFORM_EXPORT TimerBase {
 };
 
 template <typename TimerFiredClass,
-          bool = WTF::IsGarbageCollectedTypeInternal<TimerFiredClass>::value>
+          bool = WTF::IsGarbageCollectedType<TimerFiredClass>::value>
 class TaskRunnerTimer;
 
 template <typename TimerFiredClass>

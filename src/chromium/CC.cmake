@@ -265,92 +265,95 @@ set(CC_SOURCES
   ${CC_DIR}tiles/tiling_set_raster_queue_required.cc
   #${CC_DIR}tiles/tiling_set_raster_queue_required.h",
   #${CC_DIR}trees/animation_options.h",
-  # TODO # ${CC_DIR}trees/clip_expander.cc
-  # TODO # #${CC_DIR}trees/clip_expander.h",
-  # TODO # ${CC_DIR}trees/clip_node.cc
-  # TODO # #${CC_DIR}trees/clip_node.h",
-  # TODO # #${CC_DIR}trees/compositor_mode.h",
-  # TODO # ${CC_DIR}trees/damage_tracker.cc
-  # TODO # #${CC_DIR}trees/damage_tracker.h",
-  # TODO # ${CC_DIR}trees/debug_rect_history.cc
-  # TODO # #${CC_DIR}trees/debug_rect_history.h",
-  # TODO # ${CC_DIR}trees/draw_property_utils.cc
-  # TODO # #${CC_DIR}trees/draw_property_utils.h",
-  # TODO # ${CC_DIR}trees/effect_node.cc
-  # TODO # #${CC_DIR}trees/effect_node.h",
-  # TODO # ${CC_DIR}trees/element_id.cc
-  # TODO # #${CC_DIR}trees/element_id.h",
-  # TODO # ${CC_DIR}trees/frame_rate_counter.cc
-  # TODO # #${CC_DIR}trees/frame_rate_counter.h",
-  # TODO # ${CC_DIR}trees/image_animation_controller.cc
-  # TODO # #${CC_DIR}trees/image_animation_controller.h",
-  # TODO # ${CC_DIR}trees/latency_info_swap_promise.cc
-  # TODO # #${CC_DIR}trees/latency_info_swap_promise.h",
-  # TODO # ${CC_DIR}trees/latency_info_swap_promise_monitor.cc
-  # TODO # #${CC_DIR}trees/latency_info_swap_promise_monitor.h",
-  # TODO # ${CC_DIR}trees/layer_tree_frame_sink.cc
-  # TODO # #${CC_DIR}trees/layer_tree_frame_sink.h",
-  # TODO # #${CC_DIR}trees/layer_tree_frame_sink_client.h",
-  # TODO # # TODO # ${CC_DIR}trees/layer_tree_host.cc
-  # TODO # #${CC_DIR}trees/layer_tree_host.h",
-  # TODO # #${CC_DIR}trees/layer_tree_host_client.h",
-  # TODO # ${CC_DIR}trees/layer_tree_host_common.cc
-  # TODO # #${CC_DIR}trees/layer_tree_host_common.h",
-  # TODO # # TODO # ${CC_DIR}trees/layer_tree_host_impl.cc
-  # TODO # #${CC_DIR}trees/layer_tree_host_impl.h",
-  # TODO # #${CC_DIR}trees/layer_tree_host_single_thread_client.h",
-  # TODO # ${CC_DIR}trees/layer_tree_impl.cc
-  # TODO # #${CC_DIR}trees/layer_tree_impl.h",
-  # TODO # ${CC_DIR}trees/layer_tree_mutator.cc
-  # TODO # #${CC_DIR}trees/layer_tree_mutator.h",
-  # TODO # ${CC_DIR}trees/layer_tree_settings.cc
-  # TODO # #${CC_DIR}trees/layer_tree_settings.h",
-  # TODO # ${CC_DIR}trees/managed_memory_policy.cc
-  # TODO # #${CC_DIR}trees/managed_memory_policy.h",
-  # TODO # #${CC_DIR}trees/mutator_host.h",
-  # TODO # #${CC_DIR}trees/mutator_host_client.h",
-  # TODO # ${CC_DIR}trees/occlusion.cc
-  # TODO # #${CC_DIR}trees/occlusion.h",
-  # TODO # ${CC_DIR}trees/occlusion_tracker.cc
-  # TODO # #${CC_DIR}trees/occlusion_tracker.h",
-  # TODO # ${CC_DIR}trees/property_animation_state.cc
-  # TODO # #${CC_DIR}trees/property_animation_state.h",
-  # TODO # ${CC_DIR}trees/property_tree.cc
-  # TODO # #${CC_DIR}trees/property_tree.h",
-  # TODO # ${CC_DIR}trees/property_tree_builder.cc
-  # TODO # #${CC_DIR}trees/property_tree_builder.h",
-  # TODO # #${CC_DIR}trees/proxy.h",
-  # TODO # ${CC_DIR}trees/proxy_common.cc
-  # TODO # #${CC_DIR}trees/proxy_common.h",
-  # TODO # ${CC_DIR}trees/proxy_impl.cc
-  # TODO # #${CC_DIR}trees/proxy_impl.h",
-  # TODO # ${CC_DIR}trees/proxy_main.cc
-  # TODO # #${CC_DIR}trees/proxy_main.h",
-  # TODO # ${CC_DIR}trees/render_frame_metadata.cc
-  # TODO # #${CC_DIR}trees/render_frame_metadata.h",
-  # TODO # #${CC_DIR}trees/render_frame_metadata_observer.h",
-  # TODO # #${CC_DIR}trees/scoped_abort_remaining_swap_promises.h",
-  # TODO # ${CC_DIR}trees/scroll_node.cc
-  # TODO # #${CC_DIR}trees/scroll_node.h",
-  # TODO # ${CC_DIR}trees/single_thread_proxy.cc
-  # TODO # #${CC_DIR}trees/single_thread_proxy.h",
-  # TODO # #${CC_DIR}trees/swap_promise.h",
-  # TODO # ${CC_DIR}trees/swap_promise_manager.cc
-  # TODO # #${CC_DIR}trees/swap_promise_manager.h",
-  # TODO # ${CC_DIR}trees/swap_promise_monitor.cc
-  # TODO # #${CC_DIR}trees/swap_promise_monitor.h",
-  # TODO # ${CC_DIR}trees/target_property.cc
-  # TODO # #${CC_DIR}trees/target_property.h",
-  # TODO # ${CC_DIR}trees/task_runner_provider.cc
-  # TODO # #${CC_DIR}trees/task_runner_provider.h",
-  # TODO # ${CC_DIR}trees/transform_node.cc
-  # TODO # #${CC_DIR}trees/transform_node.h",
-  # TODO # ${CC_DIR}trees/tree_synchronizer.cc
-  # TODO # #${CC_DIR}trees/tree_synchronizer.h",
-  # TODO # ${CC_DIR}trees/ukm_manager.cc
-  # TODO # #${CC_DIR}trees/ukm_manager.h",
-  # TODO # ${CC_DIR}trees/viewport_layers.cc
-  # TODO # #${CC_DIR}trees/viewport_layers.h",
+  ${CC_DIR}trees/clip_expander.cc
+  #${CC_DIR}trees/clip_expander.h",
+  ${CC_DIR}trees/clip_node.cc
+  #${CC_DIR}trees/clip_node.h",
+  #${CC_DIR}trees/compositor_mode.h",
+  ${CC_DIR}trees/damage_tracker.cc
+  #${CC_DIR}trees/damage_tracker.h",
+  ${CC_DIR}trees/debug_rect_history.cc
+  #${CC_DIR}trees/debug_rect_history.h",
+  ${CC_DIR}trees/draw_property_utils.cc
+  #${CC_DIR}trees/draw_property_utils.h",
+  ${CC_DIR}trees/effect_node.cc
+  #${CC_DIR}trees/effect_node.h",
+  ${CC_DIR}trees/element_id.cc
+  #${CC_DIR}trees/element_id.h",
+  ${CC_DIR}trees/frame_rate_counter.cc
+  #${CC_DIR}trees/frame_rate_counter.h",
+  ${CC_DIR}trees/image_animation_controller.cc
+  #${CC_DIR}trees/image_animation_controller.h",
+  ${CC_DIR}trees/latency_info_swap_promise.cc
+  #${CC_DIR}trees/latency_info_swap_promise.h",
+  ${CC_DIR}trees/latency_info_swap_promise_monitor.cc
+  #${CC_DIR}trees/latency_info_swap_promise_monitor.h",
+  ${CC_DIR}trees/layer_tree_frame_sink.cc
+  #${CC_DIR}trees/layer_tree_frame_sink.h",
+  #${CC_DIR}trees/layer_tree_frame_sink_client.h",
+  # TODO # ${CC_DIR}trees/layer_tree_host.cc
+  #${CC_DIR}trees/layer_tree_host.h",
+  #${CC_DIR}trees/layer_tree_host_client.h",
+  ${CC_DIR}trees/layer_tree_host_common.cc
+  #${CC_DIR}trees/layer_tree_host_common.h",
+  # TODO # ${CC_DIR}trees/layer_tree_host_impl.cc
+  #${CC_DIR}trees/layer_tree_host_impl.h",
+  #${CC_DIR}trees/layer_tree_host_single_thread_client.h",
+  ${CC_DIR}trees/layer_tree_impl.cc
+  #${CC_DIR}trees/layer_tree_impl.h",
+  ${CC_DIR}trees/layer_tree_mutator.cc
+  #${CC_DIR}trees/layer_tree_mutator.h",
+  ${CC_DIR}trees/layer_tree_settings.cc
+  #${CC_DIR}trees/layer_tree_settings.h",
+  ${CC_DIR}trees/managed_memory_policy.cc
+  #${CC_DIR}trees/managed_memory_policy.h",
+  #${CC_DIR}trees/mutator_host.h",
+  #${CC_DIR}trees/mutator_host_client.h",
+  ${CC_DIR}trees/occlusion.cc
+  #${CC_DIR}trees/occlusion.h",
+  ${CC_DIR}trees/occlusion_tracker.cc
+  #${CC_DIR}trees/occlusion_tracker.h",
+  ${CC_DIR}trees/property_animation_state.cc
+  #${CC_DIR}trees/property_animation_state.h",
+  ${CC_DIR}trees/property_tree.cc
+  #${CC_DIR}trees/property_tree.h",
+  ${CC_DIR}trees/property_tree_builder.cc
+  #${CC_DIR}trees/property_tree_builder.h",
+  #${CC_DIR}trees/proxy.h",
+  ${CC_DIR}trees/proxy_common.cc
+  #${CC_DIR}trees/proxy_common.h",
+  # requires services/metrics/public/mojom/ukm_interface.mojom-forward.h
+  ## TODO ## ${CC_DIR}trees/proxy_impl.cc
+  #${CC_DIR}trees/proxy_impl.h",
+  # requires services/metrics/public/mojom/ukm_interface.mojom-forward.h
+  ## TODO ## ${CC_DIR}trees/proxy_main.cc
+  #${CC_DIR}trees/proxy_main.h",
+  ${CC_DIR}trees/render_frame_metadata.cc
+  #${CC_DIR}trees/render_frame_metadata.h",
+  #${CC_DIR}trees/render_frame_metadata_observer.h",
+  #${CC_DIR}trees/scoped_abort_remaining_swap_promises.h",
+  ${CC_DIR}trees/scroll_node.cc
+  #${CC_DIR}trees/scroll_node.h",
+  ${CC_DIR}trees/single_thread_proxy.cc
+  #${CC_DIR}trees/single_thread_proxy.h",
+  #${CC_DIR}trees/swap_promise.h",
+  ${CC_DIR}trees/swap_promise_manager.cc
+  #${CC_DIR}trees/swap_promise_manager.h",
+  ${CC_DIR}trees/swap_promise_monitor.cc
+  #${CC_DIR}trees/swap_promise_monitor.h",
+  ${CC_DIR}trees/target_property.cc
+  #${CC_DIR}trees/target_property.h",
+  ${CC_DIR}trees/task_runner_provider.cc
+  #${CC_DIR}trees/task_runner_provider.h",
+  ${CC_DIR}trees/transform_node.cc
+  #${CC_DIR}trees/transform_node.h",
+  ${CC_DIR}trees/tree_synchronizer.cc
+  #${CC_DIR}trees/tree_synchronizer.h",
+  # requires services/metrics/public/cpp/ukm_builders.h
+  ## TODO ## ${CC_DIR}trees/ukm_manager.cc
+  #${CC_DIR}trees/ukm_manager.h",
+  ${CC_DIR}trees/viewport_layers.cc
+  #${CC_DIR}trees/viewport_layers.h",
 )
 
 add_library(CC STATIC

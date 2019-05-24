@@ -1,5 +1,7 @@
 ### --- BLINK_PUBLIC_COMMON ---###
 
+# INTERFACE LIB
+
 # TODO https://github.com/chromium/chromium/blob/master/third_party/blink/renderer/platform/BUILD.gn
 #set(BLINK_PUBLIC_COMMON_SOURCES
 #  ${BLINK_PUBLIC_COMMON_DIR}associated_interfaces/associated_interface_provider.h

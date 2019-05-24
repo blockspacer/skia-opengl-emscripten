@@ -81,4 +81,5 @@ target_include_directories(GFX_CODEC PRIVATE
 target_compile_definitions(GFX_CODEC PRIVATE
   CODEC_IMPLEMENTATION=1
   USE_LIBJPEG_TURBO=1
+  #USE_SYSTEM_LIBJPEG
 )

@@ -194,10 +194,20 @@ class PLATFORM_EXPORT ThreadState final : private RAILModeObserver {
   // can no longer use the garbage collected heap after this call.
   static void DetachCurrentThread();
 
-  static ThreadState* Current() { return **thread_specific_; }
+  static ThreadState* Current() {
+#if defined(__EMSCRIPTEN__)
+  return nullptr;
+#else
+  return **thread_specific_;
+#endif
+  }
 
   static ThreadState* MainThreadState() {
+#if defined(__EMSCRIPTEN__)
+  return nullptr;
+#else
     return reinterpret_cast<ThreadState*>(main_thread_state_storage_);
+#endif
   }
 
   static ThreadState* FromObject(const void*);
@@ -428,6 +438,7 @@ class PLATFORM_EXPORT ThreadState final : private RAILModeObserver {
   // Stores whether some ThreadState is currently in incremental marking.
   static AtomicEntryFlag incremental_marking_flag_;
 
+#if !defined(__EMSCRIPTEN__)
   static WTF::ThreadSpecific<ThreadState*>* thread_specific_;
 
   // We can't create a static member of type ThreadState here because it will
@@ -437,6 +448,7 @@ class PLATFORM_EXPORT ThreadState final : private RAILModeObserver {
   // For this we reserve static storage for the main ThreadState and lazily
   // construct ThreadState in it using placement new.
   static uint8_t main_thread_state_storage_[];
+#endif
 
   ThreadState();
   ~ThreadState() override;

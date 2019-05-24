@@ -1,10 +1,24 @@
 ### --- BLINK_RENDERER_PLATFORM ---###
 
-# TODO https://github.com/chromium/chromium/blob/master/third_party/blink/renderer/platform/BUILD.gn
-set(BLINK_RENDERER_PLATFORM_SOURCES
+set(CUR_SRC_DIR ${BLINK_RENDERER_PLATFORM_DIR})
+
+# path to ...gen/third_party/blink/renderer/platform/
+set(CUR_OUT_DIR ${GEN_BLINK_PUBLIC_DIR}/third_party/blink/renderer/platform/)
+
+list(APPEND BLINK_RENDERER_PLATFORM_SOURCES
+  #
+  # see blink_python_runner("runtime_enabled_features")
+  # https://chromium.googlesource.com/chromium/src/third_party/+/master/blink/renderer/platform/BUILD.gn#31
+  #
+  # ...gen/third_party/blink/renderer/platform/runtime_enabled_features.cc
+  ${CUR_OUT_DIR}/runtime_enabled_features.cc
+)
+
+# see https://github.com/chromium/chromium/blob/master/third_party/blink/renderer/platform/BUILD.gn
+list(APPEND BLINK_RENDERER_PLATFORM_SOURCES
    #
    # blink_platform_sources("scheduler")
-   #
+   # see components/scheduling_metrics
    #deps = [
    # "//base",
    # "//cc",
@@ -16,360 +30,369 @@ set(BLINK_RENDERER_PLATFORM_SOURCES
    # "//third_party/blink/renderer/platform/wtf",
    # "//v8",
    # ]
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/scheduler/common/cancelable_closure_holder.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/scheduler/common/cancelable_closure_holder.h",
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/scheduler/common/cooperative_scheduling_manager.cc
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/scheduler/common/dummy_schedulers.cc
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/scheduler/common/event_loop.cc
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/scheduler/common/features.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/scheduler/common/features.h",
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/scheduler/common/frame_or_worker_scheduler.cc
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/scheduler/common/idle_helper.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/scheduler/common/idle_helper.h",
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/scheduler/common/metrics_helper.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/scheduler/common/metrics_helper.h",
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/scheduler/common/pollable_thread_safe_flag.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/scheduler/common/pollable_thread_safe_flag.h",
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/scheduler/common/post_cancellable_task.cc
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/scheduler/common/process_state.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/scheduler/common/process_state.h",
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/scheduler/common/scheduler_helper.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/scheduler/common/scheduler_helper.h",
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/scheduler/common/scheduling_lifecycle_state.cc
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/scheduler/common/scheduling_policy.cc
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/scheduler/common/simple_thread_scheduler.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/scheduler/common/simple_thread_scheduler.h",
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/scheduler/common/single_thread_idle_task_runner.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/scheduler/common/single_thread_idle_task_runner.h",
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/scheduler/common/thread.cc
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/scheduler/common/thread_cpu_throttler.cc
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/scheduler/common/thread_load_tracker.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/scheduler/common/thread_load_tracker.h",
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/scheduler/common/thread_scheduler.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/scheduler/common/thread_scheduler_impl.h",
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/scheduler/common/throttling/budget_pool.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/scheduler/common/throttling/budget_pool.h",
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/scheduler/common/throttling/cpu_time_budget_pool.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/scheduler/common/throttling/cpu_time_budget_pool.h",
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/scheduler/common/throttling/task_queue_throttler.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/scheduler/common/throttling/task_queue_throttler.h",
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/scheduler/common/throttling/throttled_time_domain.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/scheduler/common/throttling/throttled_time_domain.h",
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/scheduler/common/throttling/wake_up_budget_pool.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/scheduler/common/throttling/wake_up_budget_pool.h",
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/scheduler/common/tracing_helper.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/scheduler/common/tracing_helper.h",
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/scheduler/common/ukm_task_sampler.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/scheduler/common/ukm_task_sampler.h",
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/scheduler/common/unprioritized_resource_loading_task_runner_handle.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/scheduler/common/unprioritized_resource_loading_task_runner_handle.h",
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/scheduler/common/web_resource_loading_task_runner_handle.cc
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/scheduler/common/web_thread_scheduler.cc
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/scheduler/common/worker_pool.cc
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/scheduler/main_thread/auto_advancing_virtual_time_domain.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/scheduler/main_thread/auto_advancing_virtual_time_domain.h",
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/scheduler/main_thread/deadline_task_runner.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/scheduler/main_thread/deadline_task_runner.h",
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/scheduler/main_thread/frame_origin_type.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/scheduler/main_thread/frame_origin_type.h",
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/scheduler/main_thread/frame_scheduler_impl.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/scheduler/main_thread/frame_scheduler_impl.h",
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/scheduler/main_thread/frame_status.cc
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/scheduler/main_thread/frame_task_queue_controller.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/scheduler/main_thread/frame_task_queue_controller.h",
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/scheduler/main_thread/idle_time_estimator.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/scheduler/main_thread/idle_time_estimator.h",
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/scheduler/main_thread/main_thread.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/scheduler/main_thread/main_thread.h",
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/scheduler/main_thread/main_thread_metrics_helper.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/scheduler/main_thread/main_thread_metrics_helper.h",
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/scheduler/main_thread/main_thread_scheduler_helper.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/scheduler/main_thread/main_thread_scheduler_helper.h",
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/scheduler/main_thread/main_thread_scheduler_impl.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/scheduler/main_thread/main_thread_scheduler_impl.h",
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/scheduler/main_thread/main_thread_task_queue.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/scheduler/main_thread/main_thread_task_queue.h",
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/scheduler/main_thread/memory_purge_manager.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/scheduler/main_thread/memory_purge_manager.h",
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/scheduler/main_thread/page_scheduler_impl.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/scheduler/main_thread/page_scheduler_impl.h",
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/scheduler/main_thread/page_visibility_state.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/scheduler/main_thread/page_visibility_state.h",
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/scheduler/main_thread/pending_user_input.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/scheduler/main_thread/pending_user_input.h",
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/scheduler/main_thread/prioritize_compositing_after_input_experiment.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/scheduler/main_thread/prioritize_compositing_after_input_experiment.h",
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/scheduler/main_thread/queueing_time_estimator.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/scheduler/main_thread/queueing_time_estimator.h",
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/scheduler/main_thread/render_widget_signals.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/scheduler/main_thread/render_widget_signals.h",
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/scheduler/main_thread/resource_loading_task_runner_handle_impl.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/scheduler/main_thread/resource_loading_task_runner_handle_impl.h",
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/scheduler/main_thread/task_type_names.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/scheduler/main_thread/task_type_names.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/scheduler/main_thread/use_case.h",
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/scheduler/main_thread/user_model.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/scheduler/main_thread/user_model.h",
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/scheduler/main_thread/web_render_widget_scheduling_state.cc
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/scheduler/main_thread/web_scoped_virtual_time_pauser.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/scheduler/public/aggregated_metric_reporter.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/scheduler/public/cooperative_scheduling_manager.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/scheduler/public/dummy_schedulers.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/scheduler/public/event_loop.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/scheduler/public/frame_or_worker_scheduler.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/scheduler/public/frame_scheduler.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/scheduler/public/frame_status.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/scheduler/public/page_lifecycle_state.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/scheduler/public/page_scheduler.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/scheduler/public/pending_user_input_type.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/scheduler/public/post_cancellable_task.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/scheduler/public/post_cross_thread_task.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/scheduler/public/rail_mode_observer.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/scheduler/public/scheduling_lifecycle_state.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/scheduler/public/scheduling_policy.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/scheduler/public/thread.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/scheduler/public/thread_cpu_throttler.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/scheduler/public/thread_scheduler.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/scheduler/public/worker_pool.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/scheduler/public/worker_scheduler.h",
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/scheduler/worker/compositor_metrics_helper.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/scheduler/worker/compositor_metrics_helper.h",
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/scheduler/worker/compositor_thread.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/scheduler/worker/compositor_thread.h",
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/scheduler/worker/compositor_thread_scheduler.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/scheduler/worker/compositor_thread_scheduler.h",
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/scheduler/worker/non_main_thread_scheduler_helper.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/scheduler/worker/non_main_thread_scheduler_helper.h",
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/scheduler/worker/non_main_thread_scheduler_impl.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/scheduler/worker/non_main_thread_scheduler_impl.h",
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/scheduler/worker/non_main_thread_task_queue.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/scheduler/worker/non_main_thread_task_queue.h",
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/scheduler/worker/worker_metrics_helper.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/scheduler/worker/worker_metrics_helper.h",
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/scheduler/worker/worker_scheduler.cc
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/scheduler/worker/worker_scheduler_proxy.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/scheduler/worker/worker_scheduler_proxy.h",
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/scheduler/worker/worker_thread.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/scheduler/worker/worker_thread.h",
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/scheduler/worker/worker_thread_scheduler.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/scheduler/worker/worker_thread_scheduler.h",
+   ${CUR_SRC_DIR}scheduler/common/cancelable_closure_holder.cc
+   #${CUR_SRC_DIR}scheduler/common/cancelable_closure_holder.h",
+   ${CUR_SRC_DIR}scheduler/common/cooperative_scheduling_manager.cc
+   ## TODO ## ${CUR_SRC_DIR}scheduler/common/dummy_schedulers.cc
+   ${CUR_SRC_DIR}scheduler/common/event_loop.cc
+   ${CUR_SRC_DIR}scheduler/common/features.cc
+   #${CUR_SRC_DIR}scheduler/common/features.h",
+   ${CUR_SRC_DIR}scheduler/common/frame_or_worker_scheduler.cc
+   ${CUR_SRC_DIR}scheduler/common/idle_helper.cc
+   #${CUR_SRC_DIR}scheduler/common/idle_helper.h",
+   ## TODO ##error: no type named 'State' in 'base::sequence_manager::TaskQueue::TaskTiming'
+   ## TODO ##${CUR_SRC_DIR}scheduler/common/metrics_helper.cc
+   #${CUR_SRC_DIR}scheduler/common/metrics_helper.h",
+   ${CUR_SRC_DIR}scheduler/common/pollable_thread_safe_flag.cc
+   #${CUR_SRC_DIR}scheduler/common/pollable_thread_safe_flag.h",
+   ${CUR_SRC_DIR}scheduler/common/post_cancellable_task.cc
+   ${CUR_SRC_DIR}scheduler/common/process_state.cc
+   #${CUR_SRC_DIR}scheduler/common/process_state.h",
+   ${CUR_SRC_DIR}scheduler/common/scheduler_helper.cc
+   #${CUR_SRC_DIR}scheduler/common/scheduler_helper.h",
+   ${CUR_SRC_DIR}scheduler/common/scheduling_lifecycle_state.cc
+   ${CUR_SRC_DIR}scheduler/common/scheduling_policy.cc
+   ${CUR_SRC_DIR}scheduler/common/simple_thread_scheduler.cc
+   #${CUR_SRC_DIR}scheduler/common/simple_thread_scheduler.h",
+   ${CUR_SRC_DIR}scheduler/common/single_thread_idle_task_runner.cc
+   #${CUR_SRC_DIR}scheduler/common/single_thread_idle_task_runner.h",
+   ${CUR_SRC_DIR}scheduler/common/thread.cc
+   ${CUR_SRC_DIR}scheduler/common/thread_cpu_throttler.cc
+   ${CUR_SRC_DIR}scheduler/common/thread_load_tracker.cc
+   #${CUR_SRC_DIR}scheduler/common/thread_load_tracker.h",
+   ${CUR_SRC_DIR}scheduler/common/thread_scheduler.cc
+   #${CUR_SRC_DIR}scheduler/common/thread_scheduler_impl.h",
+   ${CUR_SRC_DIR}scheduler/common/throttling/budget_pool.cc
+   #${CUR_SRC_DIR}scheduler/common/throttling/budget_pool.h",
+   ${CUR_SRC_DIR}scheduler/common/throttling/cpu_time_budget_pool.cc
+   #${CUR_SRC_DIR}scheduler/common/throttling/cpu_time_budget_pool.h",
+   # requires services/service_manager
+   ## TODO ## ${CUR_SRC_DIR}scheduler/common/throttling/task_queue_throttler.cc
+   #${CUR_SRC_DIR}scheduler/common/throttling/task_queue_throttler.h",
+   ${CUR_SRC_DIR}scheduler/common/throttling/throttled_time_domain.cc
+   #${CUR_SRC_DIR}scheduler/common/throttling/throttled_time_domain.h",
+   ${CUR_SRC_DIR}scheduler/common/throttling/wake_up_budget_pool.cc
+   #${CUR_SRC_DIR}scheduler/common/throttling/wake_up_budget_pool.h",
+   ${CUR_SRC_DIR}scheduler/common/tracing_helper.cc
+   #${CUR_SRC_DIR}scheduler/common/tracing_helper.h",
+   ${CUR_SRC_DIR}scheduler/common/ukm_task_sampler.cc
+   #${CUR_SRC_DIR}scheduler/common/ukm_task_sampler.h",
+   ${CUR_SRC_DIR}scheduler/common/unprioritized_resource_loading_task_runner_handle.cc
+   #${CUR_SRC_DIR}scheduler/common/unprioritized_resource_loading_task_runner_handle.h",
+   ${CUR_SRC_DIR}scheduler/common/web_resource_loading_task_runner_handle.cc
+   ${CUR_SRC_DIR}scheduler/common/web_thread_scheduler.cc
+   ${CUR_SRC_DIR}scheduler/common/worker_pool.cc
+   ${CUR_SRC_DIR}scheduler/main_thread/auto_advancing_virtual_time_domain.cc
+   #${CUR_SRC_DIR}scheduler/main_thread/auto_advancing_virtual_time_domain.h",
+   ${CUR_SRC_DIR}scheduler/main_thread/deadline_task_runner.cc
+   #${CUR_SRC_DIR}scheduler/main_thread/deadline_task_runner.h",
+   ${CUR_SRC_DIR}scheduler/main_thread/frame_origin_type.cc
+   #${CUR_SRC_DIR}scheduler/main_thread/frame_origin_type.h",
+   # requires services/service_manager
+   ## TODO ## ${CUR_SRC_DIR}scheduler/main_thread/frame_scheduler_impl.cc
+   #${CUR_SRC_DIR}scheduler/main_thread/frame_scheduler_impl.h",
+   ## TODO ## ${CUR_SRC_DIR}scheduler/main_thread/frame_status.cc
+   ## TODO ## ${CUR_SRC_DIR}scheduler/main_thread/frame_task_queue_controller.cc
+   #${CUR_SRC_DIR}scheduler/main_thread/frame_task_queue_controller.h",
+   ${CUR_SRC_DIR}scheduler/main_thread/idle_time_estimator.cc
+   #${CUR_SRC_DIR}scheduler/main_thread/idle_time_estimator.h",
+   ${CUR_SRC_DIR}scheduler/main_thread/main_thread.cc
+   #${CUR_SRC_DIR}scheduler/main_thread/main_thread.h",
+   ## TODO ## error: no member named 'state' in 'base::sequence_manager::TaskQueue::TaskTiming'
+   ## TODO ## ${CUR_SRC_DIR}scheduler/main_thread/main_thread_metrics_helper.cc
+   #${CUR_SRC_DIR}scheduler/main_thread/main_thread_metrics_helper.h",
+   ## TODO ## ${CUR_SRC_DIR}scheduler/main_thread/main_thread_scheduler_helper.cc
+   ## TODO ## #${CUR_SRC_DIR}scheduler/main_thread/main_thread_scheduler_helper.h",
+   ## TODO ## ${CUR_SRC_DIR}scheduler/main_thread/main_thread_scheduler_impl.cc
+   ## TODO ## #${CUR_SRC_DIR}scheduler/main_thread/main_thread_scheduler_impl.h",
+   ## TODO ## ${CUR_SRC_DIR}scheduler/main_thread/main_thread_task_queue.cc
+   ## TODO ## #${CUR_SRC_DIR}scheduler/main_thread/main_thread_task_queue.h",
+   ## TODO ## ${CUR_SRC_DIR}scheduler/main_thread/memory_purge_manager.cc
+   ## TODO ## #${CUR_SRC_DIR}scheduler/main_thread/memory_purge_manager.h",
+   ## TODO ## ${CUR_SRC_DIR}scheduler/main_thread/page_scheduler_impl.cc
+   ## TODO ## #${CUR_SRC_DIR}scheduler/main_thread/page_scheduler_impl.h",
+   ## TODO ## ${CUR_SRC_DIR}scheduler/main_thread/page_visibility_state.cc
+   ## TODO ## #${CUR_SRC_DIR}scheduler/main_thread/page_visibility_state.h",
+   ## TODO ## ${CUR_SRC_DIR}scheduler/main_thread/pending_user_input.cc
+   ## TODO ## #${CUR_SRC_DIR}scheduler/main_thread/pending_user_input.h",
+   ## TODO ## ${CUR_SRC_DIR}scheduler/main_thread/prioritize_compositing_after_input_experiment.cc
+   ## TODO ## #${CUR_SRC_DIR}scheduler/main_thread/prioritize_compositing_after_input_experiment.h",
+   ## TODO ## ${CUR_SRC_DIR}scheduler/main_thread/queueing_time_estimator.cc
+   ## TODO ## #${CUR_SRC_DIR}scheduler/main_thread/queueing_time_estimator.h",
+   ## TODO ## ${CUR_SRC_DIR}scheduler/main_thread/render_widget_signals.cc
+   ## TODO ## #${CUR_SRC_DIR}scheduler/main_thread/render_widget_signals.h",
+   ## TODO ## ${CUR_SRC_DIR}scheduler/main_thread/resource_loading_task_runner_handle_impl.cc
+   ## TODO ## #${CUR_SRC_DIR}scheduler/main_thread/resource_loading_task_runner_handle_impl.h",
+   ## TODO ## ${CUR_SRC_DIR}scheduler/main_thread/task_type_names.cc
+   ## TODO ## #${CUR_SRC_DIR}scheduler/main_thread/task_type_names.h",
+   ## TODO ## #${CUR_SRC_DIR}scheduler/main_thread/use_case.h",
+   ## TODO ## ${CUR_SRC_DIR}scheduler/main_thread/user_model.cc
+   ## TODO ## #${CUR_SRC_DIR}scheduler/main_thread/user_model.h",
+   ## TODO ## ${CUR_SRC_DIR}scheduler/main_thread/web_render_widget_scheduling_state.cc
+   ## TODO ## ${CUR_SRC_DIR}scheduler/main_thread/web_scoped_virtual_time_pauser.cc
+   #${CUR_SRC_DIR}scheduler/public/aggregated_metric_reporter.h",
+   #${CUR_SRC_DIR}scheduler/public/cooperative_scheduling_manager.h",
+   #${CUR_SRC_DIR}scheduler/public/dummy_schedulers.h",
+   #${CUR_SRC_DIR}scheduler/public/event_loop.h",
+   #${CUR_SRC_DIR}scheduler/public/frame_or_worker_scheduler.h",
+   #${CUR_SRC_DIR}scheduler/public/frame_scheduler.h",
+   #${CUR_SRC_DIR}scheduler/public/frame_status.h",
+   #${CUR_SRC_DIR}scheduler/public/page_lifecycle_state.h",
+   #${CUR_SRC_DIR}scheduler/public/page_scheduler.h",
+   #${CUR_SRC_DIR}scheduler/public/pending_user_input_type.h",
+   #${CUR_SRC_DIR}scheduler/public/post_cancellable_task.h",
+   #${CUR_SRC_DIR}scheduler/public/post_cross_thread_task.h",
+   #${CUR_SRC_DIR}scheduler/public/rail_mode_observer.h",
+   #${CUR_SRC_DIR}scheduler/public/scheduling_lifecycle_state.h",
+   #${CUR_SRC_DIR}scheduler/public/scheduling_policy.h",
+   #${CUR_SRC_DIR}scheduler/public/thread.h",
+   #${CUR_SRC_DIR}scheduler/public/thread_cpu_throttler.h",
+   #${CUR_SRC_DIR}scheduler/public/thread_scheduler.h",
+   #${CUR_SRC_DIR}scheduler/public/worker_pool.h",
+   #${CUR_SRC_DIR}scheduler/public/worker_scheduler.h",
+   ## TODO ##error: no type named 'State' in 'base::sequence_manager::TaskQueue::TaskTiming'
+   ## TODO ## ${CUR_SRC_DIR}scheduler/worker/compositor_metrics_helper.cc
+   #${CUR_SRC_DIR}scheduler/worker/compositor_metrics_helper.h",
+   ## TODO ## ${CUR_SRC_DIR}scheduler/worker/compositor_thread.cc
+   ## TODO ## #${CUR_SRC_DIR}scheduler/worker/compositor_thread.h",
+   ## TODO ## ${CUR_SRC_DIR}scheduler/worker/compositor_thread_scheduler.cc
+   ## TODO ## #${CUR_SRC_DIR}scheduler/worker/compositor_thread_scheduler.h",
+   ## TODO ## ${CUR_SRC_DIR}scheduler/worker/non_main_thread_scheduler_helper.cc
+   ## TODO ## #${CUR_SRC_DIR}scheduler/worker/non_main_thread_scheduler_helper.h",
+   ## TODO ## ${CUR_SRC_DIR}scheduler/worker/non_main_thread_scheduler_impl.cc
+   ## TODO ## #${CUR_SRC_DIR}scheduler/worker/non_main_thread_scheduler_impl.h",
+   ## TODO ## ${CUR_SRC_DIR}scheduler/worker/non_main_thread_task_queue.cc
+   ## TODO ## #${CUR_SRC_DIR}scheduler/worker/non_main_thread_task_queue.h",
+   ## TODO ## # ## TODO ##error: no type named 'State' in 'base::sequence_manager::TaskQueue::TaskTiming'
+   ## TODO ## ## TODO ## ${CUR_SRC_DIR}scheduler/worker/worker_metrics_helper.cc
+   ## TODO ## #${CUR_SRC_DIR}scheduler/worker/worker_metrics_helper.h",
+   ## TODO ## ${CUR_SRC_DIR}scheduler/worker/worker_scheduler.cc
+   ## TODO ## ## TODO ## requires services/service_manager
+   ## TODO ## ${CUR_SRC_DIR}scheduler/worker/worker_scheduler_proxy.cc
+   ## TODO ## #${CUR_SRC_DIR}scheduler/worker/worker_scheduler_proxy.h",
+   ## TODO ## ${CUR_SRC_DIR}scheduler/worker/worker_thread.cc
+   ## TODO ## #${CUR_SRC_DIR}scheduler/worker/worker_thread.h",
+   ## TODO ## ${CUR_SRC_DIR}scheduler/worker/worker_thread_scheduler.cc
+   #${CUR_SRC_DIR}scheduler/worker/worker_thread_scheduler.h",
    #
    # blink_platform_sources("network")
    # deps = [ "//media", ]
+   # TODO: gen/gen_blink_public/third_party/blink/renderer/platform/network/http_names.cc
+   # see make_names("http_names")
    #
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/network/content_security_policy_parsers.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/network/content_security_policy_parsers.h",
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/network/content_security_policy_response_headers.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/network/content_security_policy_response_headers.h",
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/network/encoded_form_data.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/network/encoded_form_data.h",
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/network/encoded_form_data_mojom_traits.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/network/encoded_form_data_mojom_traits.h",
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/network/form_data_encoder.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/network/form_data_encoder.h",
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/network/header_field_tokenizer.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/network/header_field_tokenizer.h",
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/network/http_header_map.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/network/http_header_map.h",
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/network/http_parsers.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/network/http_parsers.h",
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/network/http_request_headers_mojom_traits.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/network/http_request_headers_mojom_traits.h",
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/network/mime/content_type.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/network/mime/content_type.h",
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/network/mime/mime_type_from_url.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/network/mime/mime_type_from_url.h",
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/network/mime/mime_type_registry.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/network/mime/mime_type_registry.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/network/network_log.h",
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/network/network_state_notifier.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/network/network_state_notifier.h",
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/network/network_utils.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/network/network_utils.h",
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/network/parsed_content_disposition.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/network/parsed_content_disposition.h",
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/network/parsed_content_header_field_parameters.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/network/parsed_content_header_field_parameters.h",
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/network/parsed_content_type.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/network/parsed_content_type.h",
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/network/server_timing_header.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/network/server_timing_header.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/network/wrapped_data_pipe_getter.h",
+   ${CUR_SRC_DIR}network/content_security_policy_parsers.cc
+   #${CUR_SRC_DIR}network/content_security_policy_parsers.h",
+   ${CUR_SRC_DIR}network/content_security_policy_response_headers.cc
+   #${CUR_SRC_DIR}network/content_security_policy_response_headers.h",
+   ${CUR_SRC_DIR}network/encoded_form_data.cc
+   #${CUR_SRC_DIR}network/encoded_form_data.h",
+   ${CUR_SRC_DIR}network/encoded_form_data_mojom_traits.cc
+   #${CUR_SRC_DIR}network/encoded_form_data_mojom_traits.h",
+   ${CUR_SRC_DIR}network/form_data_encoder.cc
+   #${CUR_SRC_DIR}network/form_data_encoder.h",
+   ${CUR_SRC_DIR}network/header_field_tokenizer.cc
+   #${CUR_SRC_DIR}network/header_field_tokenizer.h",
+   ${CUR_SRC_DIR}network/http_header_map.cc
+   #${CUR_SRC_DIR}network/http_header_map.h",
+   ${CUR_SRC_DIR}network/http_parsers.cc
+   #${CUR_SRC_DIR}network/http_parsers.h",
+   ${CUR_SRC_DIR}network/http_request_headers_mojom_traits.cc
+   #${CUR_SRC_DIR}network/http_request_headers_mojom_traits.h",
+   ${CUR_SRC_DIR}network/mime/content_type.cc
+   #${CUR_SRC_DIR}network/mime/content_type.h",
+   ${CUR_SRC_DIR}network/mime/mime_type_from_url.cc
+   #${CUR_SRC_DIR}network/mime/mime_type_from_url.h",
+   ${CUR_SRC_DIR}network/mime/mime_type_registry.cc
+   #${CUR_SRC_DIR}network/mime/mime_type_registry.h",
+   #${CUR_SRC_DIR}network/network_log.h",
+   ${CUR_SRC_DIR}network/network_state_notifier.cc
+   #${CUR_SRC_DIR}network/network_state_notifier.h",
+   ${CUR_SRC_DIR}network/network_utils.cc
+   #${CUR_SRC_DIR}network/network_utils.h",
+   ${CUR_SRC_DIR}network/parsed_content_disposition.cc
+   #${CUR_SRC_DIR}network/parsed_content_disposition.h",
+   ${CUR_SRC_DIR}network/parsed_content_header_field_parameters.cc
+   #${CUR_SRC_DIR}network/parsed_content_header_field_parameters.h",
+   ${CUR_SRC_DIR}network/parsed_content_type.cc
+   #${CUR_SRC_DIR}network/parsed_content_type.h",
+   ${CUR_SRC_DIR}network/server_timing_header.cc
+   #${CUR_SRC_DIR}network/server_timing_header.h",
+   #${CUR_SRC_DIR}network/wrapped_data_pipe_getter.h",
    #
    # platform/loader/
    # this directory will be removed once CORS support is moved to
    # //services/network
    # # see third_party/blink/renderer/platform/network/http_names.h
    #
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/allowed_by_nosniff.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/allowed_by_nosniff.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/cors/cors.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/cors/cors.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/cors/cors_error_string.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/cors/cors_error_string.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/fetch/buffering_bytes_consumer.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/fetch/buffering_bytes_consumer.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/fetch/bytes_consumer.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/fetch/bytes_consumer.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/fetch/cached_metadata.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/fetch/cached_metadata.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/fetch/cached_metadata_handler.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/fetch/cached_metadata_handler.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/fetch/client_hints_preferences.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/fetch/client_hints_preferences.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/fetch/console_logger.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/fetch/cross_origin_attribute_value.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/fetch/data_pipe_bytes_consumer.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/fetch/data_pipe_bytes_consumer.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/fetch/fetch_client_settings_object.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/fetch/fetch_client_settings_object_snapshot.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/fetch/fetch_client_settings_object_snapshot.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/fetch/fetch_context.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/fetch/fetch_context.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/fetch/fetch_initiator_info.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/fetch/fetch_parameters.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/fetch/fetch_parameters.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/fetch/fetch_utils.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/fetch/fetch_utils.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/fetch/https_state.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/fetch/https_state.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/fetch/integrity_metadata.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/fetch/integrity_metadata.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/fetch/memory_cache.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/fetch/memory_cache.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/fetch/null_resource_fetcher_properties.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/fetch/null_resource_fetcher_properties.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/fetch/preload_key.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/fetch/raw_resource.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/fetch/raw_resource.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/fetch/resource.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/fetch/resource.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/fetch/resource_client.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/fetch/resource_client.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/fetch/resource_client_walker.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/fetch/resource_error.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/fetch/resource_error.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/fetch/resource_fetcher.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/fetch/resource_fetcher.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/fetch/resource_fetcher_properties.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/fetch/resource_finish_observer.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/fetch/resource_load_info.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/fetch/resource_load_observer.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/fetch/resource_load_priority.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/fetch/resource_load_scheduler.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/fetch/resource_load_scheduler.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/fetch/resource_load_timing.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/fetch/resource_load_timing.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/fetch/resource_loader.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/fetch/resource_loader.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/fetch/resource_loader_options.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/fetch/resource_loading_log.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/fetch/resource_priority.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/fetch/resource_request.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/fetch/resource_request.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/fetch/resource_response.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/fetch/resource_response.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/fetch/resource_status.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/fetch/resource_timing_info.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/fetch/resource_timing_info.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/fetch/response_body_loader.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/fetch/response_body_loader.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/fetch/response_body_loader_client.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/fetch/script_cached_metadata_handler.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/fetch/script_cached_metadata_handler.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/fetch/script_fetch_options.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/fetch/script_fetch_options.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/fetch/shared_buffer_bytes_consumer.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/fetch/shared_buffer_bytes_consumer.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/fetch/source_keyed_cached_metadata_handler.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/fetch/source_keyed_cached_metadata_handler.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/fetch/stale_revalidation_resource_client.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/fetch/stale_revalidation_resource_client.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/fetch/text_resource_decoder_options.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/fetch/text_resource_decoder_options.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/fetch/unique_identifier.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/fetch/unique_identifier.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/fetch/worker_resource_timing_notifier.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/ftp_directory_listing.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/ftp_directory_listing.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/link_header.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/link_header.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/mixed_content_autoupgrade_status.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/static_data_navigation_body_loader.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/static_data_navigation_body_loader.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/subresource_integrity.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/subresource_integrity.h",
+   ## TODO ## ${CUR_SRC_DIR}loader/allowed_by_nosniff.cc
+   ## TODO ## #${CUR_SRC_DIR}loader/allowed_by_nosniff.h",
+   ## TODO ## ${CUR_SRC_DIR}loader/cors/cors.cc
+   ## TODO ## #${CUR_SRC_DIR}loader/cors/cors.h",
+   ## TODO ## ${CUR_SRC_DIR}loader/cors/cors_error_string.cc
+   ## TODO ## #${CUR_SRC_DIR}loader/cors/cors_error_string.h",
+   ## TODO ## ${CUR_SRC_DIR}loader/fetch/buffering_bytes_consumer.cc
+   ## TODO ## #${CUR_SRC_DIR}loader/fetch/buffering_bytes_consumer.h",
+   ## TODO ## ${CUR_SRC_DIR}loader/fetch/bytes_consumer.cc
+   ## TODO ## #${CUR_SRC_DIR}loader/fetch/bytes_consumer.h",
+   ## TODO ## ${CUR_SRC_DIR}loader/fetch/cached_metadata.cc
+   ## TODO ## #${CUR_SRC_DIR}loader/fetch/cached_metadata.h",
+   ## TODO ## ${CUR_SRC_DIR}loader/fetch/cached_metadata_handler.cc
+   ## TODO ## #${CUR_SRC_DIR}loader/fetch/cached_metadata_handler.h",
+   ## TODO ## ${CUR_SRC_DIR}loader/fetch/client_hints_preferences.cc
+   ## TODO ## #${CUR_SRC_DIR}loader/fetch/client_hints_preferences.h",
+   ## TODO ## #${CUR_SRC_DIR}loader/fetch/console_logger.h",
+   ## TODO ## #${CUR_SRC_DIR}loader/fetch/cross_origin_attribute_value.h",
+   ## TODO ## ${CUR_SRC_DIR}loader/fetch/data_pipe_bytes_consumer.cc
+   ## TODO ## #${CUR_SRC_DIR}loader/fetch/data_pipe_bytes_consumer.h",
+   ## TODO ## #${CUR_SRC_DIR}loader/fetch/fetch_client_settings_object.h",
+   ## TODO ## ${CUR_SRC_DIR}loader/fetch/fetch_client_settings_object_snapshot.cc
+   ## TODO ## #${CUR_SRC_DIR}loader/fetch/fetch_client_settings_object_snapshot.h",
+   ## TODO ## ${CUR_SRC_DIR}loader/fetch/fetch_context.cc
+   ## TODO ## #${CUR_SRC_DIR}loader/fetch/fetch_context.h",
+   ## TODO ## #${CUR_SRC_DIR}loader/fetch/fetch_initiator_info.h",
+   ## TODO ## ${CUR_SRC_DIR}loader/fetch/fetch_parameters.cc
+   ## TODO ## #${CUR_SRC_DIR}loader/fetch/fetch_parameters.h",
+   ## TODO ## ${CUR_SRC_DIR}loader/fetch/fetch_utils.cc
+   ## TODO ## #${CUR_SRC_DIR}loader/fetch/fetch_utils.h",
+   ## TODO ## ${CUR_SRC_DIR}loader/fetch/https_state.cc
+   ## TODO ## #${CUR_SRC_DIR}loader/fetch/https_state.h",
+   ## TODO ## ${CUR_SRC_DIR}loader/fetch/integrity_metadata.cc
+   ## TODO ## #${CUR_SRC_DIR}loader/fetch/integrity_metadata.h",
+   ## TODO ## ${CUR_SRC_DIR}loader/fetch/memory_cache.cc
+   ## TODO ## #${CUR_SRC_DIR}loader/fetch/memory_cache.h",
+   ## TODO ## ${CUR_SRC_DIR}loader/fetch/null_resource_fetcher_properties.cc
+   ## TODO ## #${CUR_SRC_DIR}loader/fetch/null_resource_fetcher_properties.h",
+   ## TODO ## #${CUR_SRC_DIR}loader/fetch/preload_key.h",
+   ## TODO ## ${CUR_SRC_DIR}loader/fetch/raw_resource.cc
+   ## TODO ## #${CUR_SRC_DIR}loader/fetch/raw_resource.h",
+   ## TODO ## ${CUR_SRC_DIR}loader/fetch/resource.cc
+   ## TODO ## #${CUR_SRC_DIR}loader/fetch/resource.h",
+   ## TODO ## ${CUR_SRC_DIR}loader/fetch/resource_client.cc
+   ## TODO ## #${CUR_SRC_DIR}loader/fetch/resource_client.h",
+   ## TODO ## #${CUR_SRC_DIR}loader/fetch/resource_client_walker.h",
+   ## TODO ## ${CUR_SRC_DIR}loader/fetch/resource_error.cc
+   ## TODO ## #${CUR_SRC_DIR}loader/fetch/resource_error.h",
+   ## TODO ## ${CUR_SRC_DIR}loader/fetch/resource_fetcher.cc
+   ## TODO ## #${CUR_SRC_DIR}loader/fetch/resource_fetcher.h",
+   ## TODO ## #${CUR_SRC_DIR}loader/fetch/resource_fetcher_properties.h",
+   ## TODO ## #${CUR_SRC_DIR}loader/fetch/resource_finish_observer.h",
+   ## TODO ## #${CUR_SRC_DIR}loader/fetch/resource_load_info.h",
+   ## TODO ## #${CUR_SRC_DIR}loader/fetch/resource_load_observer.h",
+   ## TODO ## #${CUR_SRC_DIR}loader/fetch/resource_load_priority.h",
+   ## TODO ## ${CUR_SRC_DIR}loader/fetch/resource_load_scheduler.cc
+   ## TODO ## #${CUR_SRC_DIR}loader/fetch/resource_load_scheduler.h",
+   ## TODO ## ${CUR_SRC_DIR}loader/fetch/resource_load_timing.cc
+   ## TODO ## #${CUR_SRC_DIR}loader/fetch/resource_load_timing.h",
+   ## TODO ## ${CUR_SRC_DIR}loader/fetch/resource_loader.cc
+   ## TODO ## #${CUR_SRC_DIR}loader/fetch/resource_loader.h",
+   ## TODO ## #${CUR_SRC_DIR}loader/fetch/resource_loader_options.h",
+   ## TODO ## #${CUR_SRC_DIR}loader/fetch/resource_loading_log.h",
+   ## TODO ## #${CUR_SRC_DIR}loader/fetch/resource_priority.h",
+   ## TODO ## ${CUR_SRC_DIR}loader/fetch/resource_request.cc
+   ## TODO ## #${CUR_SRC_DIR}loader/fetch/resource_request.h",
+   ## TODO ## ${CUR_SRC_DIR}loader/fetch/resource_response.cc
+   ## TODO ## #${CUR_SRC_DIR}loader/fetch/resource_response.h",
+   ## TODO ## #${CUR_SRC_DIR}loader/fetch/resource_status.h",
+   ## TODO ## ${CUR_SRC_DIR}loader/fetch/resource_timing_info.cc
+   ## TODO ## #${CUR_SRC_DIR}loader/fetch/resource_timing_info.h",
+   ## TODO ## ${CUR_SRC_DIR}loader/fetch/response_body_loader.cc
+   ## TODO ## #${CUR_SRC_DIR}loader/fetch/response_body_loader.h",
+   ## TODO ## #${CUR_SRC_DIR}loader/fetch/response_body_loader_client.h",
+   ## TODO ## ${CUR_SRC_DIR}loader/fetch/script_cached_metadata_handler.cc
+   ## TODO ## #${CUR_SRC_DIR}loader/fetch/script_cached_metadata_handler.h",
+   ## TODO ## ${CUR_SRC_DIR}loader/fetch/script_fetch_options.cc
+   ## TODO ## #${CUR_SRC_DIR}loader/fetch/script_fetch_options.h",
+   ## TODO ## ${CUR_SRC_DIR}loader/fetch/shared_buffer_bytes_consumer.cc
+   ## TODO ## #${CUR_SRC_DIR}loader/fetch/shared_buffer_bytes_consumer.h",
+   ## TODO ## ${CUR_SRC_DIR}loader/fetch/source_keyed_cached_metadata_handler.cc
+   ## TODO ## #${CUR_SRC_DIR}loader/fetch/source_keyed_cached_metadata_handler.h",
+   ## TODO ## ${CUR_SRC_DIR}loader/fetch/stale_revalidation_resource_client.cc
+   ## TODO ## #${CUR_SRC_DIR}loader/fetch/stale_revalidation_resource_client.h",
+   ## TODO ## ${CUR_SRC_DIR}loader/fetch/text_resource_decoder_options.cc
+   ## TODO ## #${CUR_SRC_DIR}loader/fetch/text_resource_decoder_options.h",
+   ## TODO ## ${CUR_SRC_DIR}loader/fetch/unique_identifier.cc
+   ## TODO ## #${CUR_SRC_DIR}loader/fetch/unique_identifier.h",
+   ## TODO ## #${CUR_SRC_DIR}loader/fetch/worker_resource_timing_notifier.h",
+   ## TODO ## ${CUR_SRC_DIR}loader/ftp_directory_listing.cc
+   ## TODO ## #${CUR_SRC_DIR}loader/ftp_directory_listing.h",
+   ## TODO ## ${CUR_SRC_DIR}loader/link_header.cc
+   ## TODO ## #${CUR_SRC_DIR}loader/link_header.h",
+   ## TODO ## #${CUR_SRC_DIR}loader/mixed_content_autoupgrade_status.h",
+   ## TODO ## ${CUR_SRC_DIR}loader/static_data_navigation_body_loader.cc
+   ## TODO ## #${CUR_SRC_DIR}loader/static_data_navigation_body_loader.h",
+   ## TODO ## ${CUR_SRC_DIR}loader/subresource_integrity.cc
+   ## TODO ## #${CUR_SRC_DIR}loader/subresource_integrity.h",
    #
    # blink_platform_sources("heap")
    # uses v8
    #
-   ## TODO ## # third_party/blink/renderer/platform/heap/heap_buildflags.h
-   ## TODO ## # BLINK_HEAP_VERIFICATION
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/heap/address_cache.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/heap/address_cache.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/heap/atomic_entry_flag.h",
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/heap/blink_gc.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/heap/blink_gc.h",
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/heap/blink_gc_memory_dump_provider.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/heap/blink_gc_memory_dump_provider.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/heap/finalizer_traits.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/heap/garbage_collected.h",
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/heap/gc_info.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/heap/gc_info.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/heap/gc_task_runner.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/heap/handle.h",
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/heap/heap.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/heap/heap.h",
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/heap/heap_allocator.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/heap/heap_allocator.h",
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/heap/heap_compact.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/heap/heap_compact.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/heap/heap_linked_stack.h",
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/heap/heap_page.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/heap/heap_page.h",
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/heap/heap_stats_collector.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/heap/heap_stats_collector.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/heap/heap_traits.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/heap/marking_verifier.h",
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/heap/marking_visitor.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/heap/marking_visitor.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/heap/member.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/heap/name_traits.h",
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/heap/page_memory.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/heap/page_memory.h",
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/heap/page_pool.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/heap/page_pool.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/heap/persistent.h",
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/heap/persistent_node.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/heap/persistent_node.h",
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/heap/process_heap.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/heap/process_heap.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/heap/self_keep_alive.h",
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/heap/thread_state.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/heap/thread_state.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/heap/thread_state_scopes.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/heap/threading_traits.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/heap/trace_traits.h",
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/heap/unified_heap_controller.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/heap/unified_heap_controller.h",
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/heap/unified_heap_marking_visitor.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/heap/unified_heap_marking_visitor.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/heap/visitor.h",
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/heap/worklist.h",
+   # third_party/blink/renderer/platform/heap/heap_buildflags.h
+   # BLINK_HEAP_VERIFICATION
+   ${CUR_SRC_DIR}heap/address_cache.cc
+   #${CUR_SRC_DIR}heap/address_cache.h",
+   #${CUR_SRC_DIR}heap/atomic_entry_flag.h",
+   ${CUR_SRC_DIR}heap/blink_gc.cc
+   #${CUR_SRC_DIR}heap/blink_gc.h",
+   ${CUR_SRC_DIR}heap/blink_gc_memory_dump_provider.cc
+   #${CUR_SRC_DIR}heap/blink_gc_memory_dump_provider.h",
+   #${CUR_SRC_DIR}heap/finalizer_traits.h",
+   #${CUR_SRC_DIR}heap/garbage_collected.h",
+   ${CUR_SRC_DIR}heap/gc_info.cc
+   #${CUR_SRC_DIR}heap/gc_info.h",
+   #${CUR_SRC_DIR}heap/gc_task_runner.h",
+   #${CUR_SRC_DIR}heap/handle.h",
+   ${CUR_SRC_DIR}heap/heap.cc
+   #${CUR_SRC_DIR}heap/heap.h",
+   ${CUR_SRC_DIR}heap/heap_allocator.cc
+   #${CUR_SRC_DIR}heap/heap_allocator.h",
+   ${CUR_SRC_DIR}heap/heap_compact.cc
+   #${CUR_SRC_DIR}heap/heap_compact.h",
+   #${CUR_SRC_DIR}heap/heap_linked_stack.h",
+   ${CUR_SRC_DIR}heap/heap_page.cc
+   #${CUR_SRC_DIR}heap/heap_page.h",
+   ${CUR_SRC_DIR}heap/heap_stats_collector.cc
+   #${CUR_SRC_DIR}heap/heap_stats_collector.h",
+   #${CUR_SRC_DIR}heap/heap_traits.h",
+   #${CUR_SRC_DIR}heap/marking_verifier.h",
+   ${CUR_SRC_DIR}heap/marking_visitor.cc
+   #${CUR_SRC_DIR}heap/marking_visitor.h",
+   #${CUR_SRC_DIR}heap/member.h",
+   #${CUR_SRC_DIR}heap/name_traits.h",
+   ${CUR_SRC_DIR}heap/page_memory.cc
+   #${CUR_SRC_DIR}heap/page_memory.h",
+   ${CUR_SRC_DIR}heap/page_pool.cc
+   #${CUR_SRC_DIR}heap/page_pool.h",
+   #${CUR_SRC_DIR}heap/persistent.h",
+   ${CUR_SRC_DIR}heap/persistent_node.cc
+   #${CUR_SRC_DIR}heap/persistent_node.h",
+   ${CUR_SRC_DIR}heap/process_heap.cc
+   #${CUR_SRC_DIR}heap/process_heap.h",
+   #${CUR_SRC_DIR}heap/self_keep_alive.h",
+   ${CUR_SRC_DIR}heap/thread_state.cc
+   #${CUR_SRC_DIR}heap/thread_state.h",
+   #${CUR_SRC_DIR}heap/thread_state_scopes.h",
+   #${CUR_SRC_DIR}heap/threading_traits.h",
+   #${CUR_SRC_DIR}heap/trace_traits.h",
+   ${CUR_SRC_DIR}heap/unified_heap_controller.cc
+   #${CUR_SRC_DIR}heap/unified_heap_controller.h",
+   ${CUR_SRC_DIR}heap/unified_heap_marking_visitor.cc
+   #${CUR_SRC_DIR}heap/unified_heap_marking_visitor.h",
+   #${CUR_SRC_DIR}heap/visitor.h",
+   #${CUR_SRC_DIR}heap/worklist.h",
    #
    # blink_platform_sources("blob")
    # see third_party/blink/public/mojom/blob/blob.mojom-blink.h
    #
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/blob/blob_bytes_provider.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/blob/blob_bytes_provider.h",
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/blob/blob_data.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/blob/blob_data.h",
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/blob/blob_registry.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/blob/blob_registry.h",
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/blob/blob_url.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/blob/blob_url.h",
-   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}/blob/serialized_blob_struct_traits.cc
-   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}/blob/serialized_blob_struct_traits.h",
+   ${CUR_SRC_DIR}blob/blob_bytes_provider.cc
+   #${CUR_SRC_DIR}blob/blob_bytes_provider.h",
+   ${CUR_SRC_DIR}blob/blob_data.cc
+   #${CUR_SRC_DIR}blob/blob_data.h",
+   ${CUR_SRC_DIR}blob/blob_registry.cc
+   #${CUR_SRC_DIR}blob/blob_registry.h",
+   ${CUR_SRC_DIR}blob/blob_url.cc
+   #${CUR_SRC_DIR}blob/blob_url.h",
+   ${CUR_SRC_DIR}blob/serialized_blob_struct_traits.cc
+   #${CUR_SRC_DIR}blob/serialized_blob_struct_traits.h",
    #
    #blink_platform_sources("instrumentation")
    # see services/resource_coordinator/public/mojom/coordination_unit.mojom-blink.h
@@ -599,283 +622,287 @@ set(BLINK_RENDERER_PLATFORM_SOURCES
 ## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}bindings/v8_value_or_script_wrappable_adapter.cc
 ## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}bindings/v8_value_or_script_wrappable_adapter.h",
 ## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}bindings/wrapper_type_info.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}bindings/wrapper_type_info.h",
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}content_decryption_module_result.h",
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}cpu/mips/common_macros_msa.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}cross_thread_copier.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}cross_thread_copier.h",
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}cross_thread_functional.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}crypto.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}crypto.h",
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}crypto_result.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}cursor.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}cursor.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}data_resource_helper.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}data_resource_helper.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}date_components.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}date_components.h",
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/file_path_conversion.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/interface_registry.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/mediastream/media_stream_audio_processor_options.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/mediastream/media_stream_audio_source.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/mediastream/media_stream_audio_track.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/mediastream/web_platform_media_stream_source.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/mediastream/web_platform_media_stream_track.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/mediastream/webrtc_uma_histograms.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/notification_data_conversions.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/platform.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/service_registry.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/url_conversion.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_audio_bus.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_audio_device.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_blob_info.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_cache.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_canonical_cookie.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_coalesced_input_event.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_content_decryption_module.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_content_decryption_module_access.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_content_decryption_module_result.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_content_decryption_module_session.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_crypto_algorithm.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_crypto_key.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_crypto_key_algorithm.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_crypto_result.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_cursor_info.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_data.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_drag_data.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_encrypted_media_client.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_encrypted_media_key_information.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_encrypted_media_request.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_font.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_font_description.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_http_body.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_http_header_map.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_http_load_info.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_image.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_image_generator.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_input_event.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_media_constraints.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_media_player_client.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_media_player_encrypted_media_client.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_media_player_source.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_media_recorder_handler.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_media_stream.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_media_stream_audio_sink.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_media_stream_source.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_media_stream_track.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_memory_pressure_listener.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_mixed_content.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_network_state_notifier.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_prerender.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_prerendering_support.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_resource_timing_info.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_rtc_answer_options.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_rtc_ice_candidate.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_rtc_offer_options.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_rtc_peer_connection_handler_client.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_rtc_rtp_receiver.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_rtc_rtp_sender.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_rtc_rtp_source.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_rtc_rtp_transceiver.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_rtc_session_description.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_rtc_session_description_request.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_rtc_stats.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_rtc_stats_request.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_rtc_stats_response.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_rtc_void_request.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_runtime_features.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_security_origin.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_service_worker_request.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_service_worker_response.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_service_worker_stream_handle.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_speech_synthesis_utterance.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_speech_synthesis_voice.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_speech_synthesizer_client_impl.cc
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}exported/web_speech_synthesizer_client_impl.h",
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_string.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_surface_layer_bridge.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_text_run.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_thread_safe_data.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_url.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_url_error.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_url_load_timing.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_url_loader_client.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_url_loader_test_delegate.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_url_request.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_url_response.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_video_frame_submitter.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}exported/wrapped_resource_request.h",
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}exported/wrapped_resource_response.h",
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}file_metadata.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}file_metadata.h",
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}fonts/alternate_font_family.h",
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/android/font_cache_android.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/android/font_unique_name_lookup_android.cc
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/android/font_unique_name_lookup_android.h",
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/bitmap_glyphs_block_list.cc
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/bitmap_glyphs_block_list.h",
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/canvas_rotation_in_vertical.h",
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/character_range.h",
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/custom_font_data.h",
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/fallback_list_composite_key.h",
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/font.cc
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/font.h",
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_baseline.h",
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_cache.cc
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_cache.h",
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_cache_client.h",
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_cache_key.h",
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_cache_memory_dump_provider.cc
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_cache_memory_dump_provider.h",
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_custom_platform_data.cc
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_custom_platform_data.h",
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_data.cc
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_data.h",
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_data_cache.cc
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_data_cache.h",
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_data_for_range_set.cc
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_data_for_range_set.h",
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_description.cc
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_description.h",
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_face_creation_params.h",
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_fallback_iterator.cc
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_fallback_iterator.h",
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_fallback_list.cc
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_fallback_list.h",
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_fallback_priority.cc
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_fallback_priority.h",
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_family.cc
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_family.h",
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_global_context.cc
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_global_context.h",
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_metrics.cc
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_metrics.h",
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_orientation.cc
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_orientation.h",
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_platform_data.cc
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_platform_data.h",
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_selection_algorithm.cc
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_selection_algorithm.h",
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_selection_types.cc
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_selection_types.h",
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_selector.cc
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_selector.h",
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_selector_client.h",
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_smoothing_mode.cc
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_smoothing_mode.h",
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_unique_name_lookup.cc
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_unique_name_lookup.h",
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_variant_east_asian.cc
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_variant_east_asian.h",
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_variant_numeric.cc
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_variant_numeric.h",
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_vertical_position_type.h",
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_width_variant.cc
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_width_variant.h",
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/generic_font_family_settings.cc
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/generic_font_family_settings.h",
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/glyph_metrics_map.h",
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/linux/font_cache_linux.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/linux/font_unique_name_lookup_linux.cc
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/linux/font_unique_name_lookup_linux.h",
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/mac/core_text_font_format_support.cc
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/mac/core_text_font_format_support.h",
-## TODO ##   ## TODO ## # TODO #${BLINK_RENDERER_PLATFORM_DIR}fonts/mac/font_cache_mac.mm",
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/mac/font_matcher_mac.h",
-## TODO ##   ## TODO ## # TODO # ${BLINK_RENDERER_PLATFORM_DIR}fonts/mac/font_matcher_mac.mm",
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/mac/font_platform_data_mac.h",
-## TODO ##   ## TODO ## # TODO #${BLINK_RENDERER_PLATFORM_DIR}fonts/mac/font_platform_data_mac.mm",
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/ng_text_fragment_paint_info.h",
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/opentype/font_format_check.cc
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/opentype/font_format_check.h",
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/opentype/font_settings.cc
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/opentype/font_settings.h",
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/opentype/open_type_caps_support.cc
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/opentype/open_type_caps_support.h",
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/opentype/open_type_caps_support_mpl.cc
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/opentype/open_type_types.h",
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/opentype/open_type_vertical_data.cc
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/opentype/open_type_vertical_data.h",
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/orientation_iterator.cc
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/orientation_iterator.h",
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/script_run_iterator.cc
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/script_run_iterator.h",
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/segmented_font_data.cc
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/segmented_font_data.h",
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/caching_word_shape_iterator.cc
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/caching_word_shape_iterator.h",
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/caching_word_shaper.cc
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/caching_word_shaper.h",
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/case_mapping_harfbuzz_buffer_filler.cc
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/case_mapping_harfbuzz_buffer_filler.h",
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/glyph_bounds_accumulator.h",
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/harfbuzz_face.cc
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/harfbuzz_face.h",
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/harfbuzz_font_cache.cc
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/harfbuzz_font_cache.h",
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/harfbuzz_font_data.h",
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/harfbuzz_shaper.cc
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/harfbuzz_shaper.h",
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/run_segmenter.cc
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/run_segmenter.h",
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/shape_cache.cc
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/shape_cache.h",
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/shape_result.cc
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/shape_result.h",
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/shape_result_bloberizer.cc
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/shape_result_bloberizer.h",
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/shape_result_buffer.cc
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/shape_result_buffer.h",
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/shape_result_inline_headers.h",
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/shape_result_spacing.cc
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/shape_result_spacing.h",
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/shape_result_test_info.cc
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/shape_result_test_info.h",
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/shape_result_view.cc
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/shape_result_view.h",
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/shaping_line_breaker.cc
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/shaping_line_breaker.h",
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/simple_font_data.cc
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/simple_font_data.h",
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/skia/font_cache_skia.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/skia/skia_text_metrics.cc
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/skia/skia_text_metrics.h",
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/skia/sktypeface_factory.cc
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/skia/sktypeface_factory.h",
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/small_caps_iterator.cc
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/small_caps_iterator.h",
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/string_truncator.cc
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/string_truncator.h",
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/symbols_iterator.cc
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/symbols_iterator.h",
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/text_rendering_mode.cc
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/text_rendering_mode.h",
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/text_run_paint_info.h",
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/typesetting_features.cc
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/typesetting_features.h",
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/unicode_range_set.cc
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/unicode_range_set.h",
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/utf16_ragel_iterator.cc
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/utf16_ragel_iterator.h",
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/utf16_text_iterator.cc
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/utf16_text_iterator.h",
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/vdmx_parser.cc
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/vdmx_parser.h",
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/web_font_decoder.cc
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/web_font_decoder.h",
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/web_font_render_style.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/web_font_typeface_factory.cc
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/web_font_typeface_factory.h",
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/win/dwrite_font_format_support.cc
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/win/dwrite_font_format_support.h",
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/win/font_cache_skia_win.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/win/font_fallback_win.cc
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/win/font_fallback_win.h",
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/win/font_platform_data_win.cc
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/win/font_unique_name_lookup_win.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}fonts/win/font_unique_name_lookup_win.h",
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}geometry/blend.h",
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}geometry/calculation_value.h",
+#${BLINK_RENDERER_PLATFORM_DIR}bindings/wrapper_type_info.h",
+#${BLINK_RENDERER_PLATFORM_DIR}content_decryption_module_result.h",
+#${BLINK_RENDERER_PLATFORM_DIR}cpu/mips/common_macros_msa.h",
+${BLINK_RENDERER_PLATFORM_DIR}cross_thread_copier.cc
+#${BLINK_RENDERER_PLATFORM_DIR}cross_thread_copier.h",
+#${BLINK_RENDERER_PLATFORM_DIR}cross_thread_functional.h",
+${BLINK_RENDERER_PLATFORM_DIR}crypto.cc
+#${BLINK_RENDERER_PLATFORM_DIR}crypto.h",
+#${BLINK_RENDERER_PLATFORM_DIR}crypto_result.h",
+${BLINK_RENDERER_PLATFORM_DIR}cursor.cc
+#${BLINK_RENDERER_PLATFORM_DIR}cursor.h",
+${BLINK_RENDERER_PLATFORM_DIR}data_resource_helper.cc
+#${BLINK_RENDERER_PLATFORM_DIR}data_resource_helper.h",
+${BLINK_RENDERER_PLATFORM_DIR}date_components.cc
+#${BLINK_RENDERER_PLATFORM_DIR}date_components.h",
+${BLINK_RENDERER_PLATFORM_DIR}exported/file_path_conversion.cc
+${BLINK_RENDERER_PLATFORM_DIR}exported/interface_registry.cc
+# requires third_party/webrtc/api/media_stream_interface.h
+#${BLINK_RENDERER_PLATFORM_DIR}exported/mediastream/media_stream_audio_processor_options.cc
+#${BLINK_RENDERER_PLATFORM_DIR}exported/mediastream/media_stream_audio_source.cc
+#${BLINK_RENDERER_PLATFORM_DIR}exported/mediastream/media_stream_audio_track.cc
+#${BLINK_RENDERER_PLATFORM_DIR}exported/mediastream/web_platform_media_stream_source.cc
+#${BLINK_RENDERER_PLATFORM_DIR}exported/mediastream/web_platform_media_stream_track.cc
+#${BLINK_RENDERER_PLATFORM_DIR}exported/mediastream/webrtc_uma_histograms.cc
+# requires modules/notifications
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/notification_data_conversions.cc
+# requires services/service_manager/public/cpp/connector.h
+${BLINK_RENDERER_PLATFORM_DIR}exported/platform.cc
+${BLINK_RENDERER_PLATFORM_DIR}exported/service_registry.cc
+${BLINK_RENDERER_PLATFORM_DIR}exported/url_conversion.cc
+${BLINK_RENDERER_PLATFORM_DIR}exported/web_audio_bus.cc
+${BLINK_RENDERER_PLATFORM_DIR}exported/web_audio_device.cc
+${BLINK_RENDERER_PLATFORM_DIR}exported/web_blob_info.cc
+${BLINK_RENDERER_PLATFORM_DIR}exported/web_cache.cc
+${BLINK_RENDERER_PLATFORM_DIR}exported/web_canonical_cookie.cc
+${BLINK_RENDERER_PLATFORM_DIR}exported/web_coalesced_input_event.cc
+${BLINK_RENDERER_PLATFORM_DIR}exported/web_content_decryption_module.cc
+${BLINK_RENDERER_PLATFORM_DIR}exported/web_content_decryption_module_access.cc
+${BLINK_RENDERER_PLATFORM_DIR}exported/web_content_decryption_module_result.cc
+${BLINK_RENDERER_PLATFORM_DIR}exported/web_content_decryption_module_session.cc
+${BLINK_RENDERER_PLATFORM_DIR}exported/web_crypto_algorithm.cc
+${BLINK_RENDERER_PLATFORM_DIR}exported/web_crypto_key.cc
+${BLINK_RENDERER_PLATFORM_DIR}exported/web_crypto_key_algorithm.cc
+${BLINK_RENDERER_PLATFORM_DIR}exported/web_crypto_result.cc
+${BLINK_RENDERER_PLATFORM_DIR}exported/web_cursor_info.cc
+${BLINK_RENDERER_PLATFORM_DIR}exported/web_data.cc
+## TODO ## web_vector.h:99:42: error: member reference base type 'const unsigned long' is not a structure
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_drag_data.cc
+${BLINK_RENDERER_PLATFORM_DIR}exported/web_encrypted_media_client.cc
+${BLINK_RENDERER_PLATFORM_DIR}exported/web_encrypted_media_key_information.cc
+${BLINK_RENDERER_PLATFORM_DIR}exported/web_encrypted_media_request.cc
+${BLINK_RENDERER_PLATFORM_DIR}exported/web_font.cc
+${BLINK_RENDERER_PLATFORM_DIR}exported/web_font_description.cc
+${BLINK_RENDERER_PLATFORM_DIR}exported/web_http_body.cc
+${BLINK_RENDERER_PLATFORM_DIR}exported/web_http_header_map.cc
+${BLINK_RENDERER_PLATFORM_DIR}exported/web_http_load_info.cc
+${BLINK_RENDERER_PLATFORM_DIR}exported/web_image.cc
+${BLINK_RENDERER_PLATFORM_DIR}exported/web_image_generator.cc
+${BLINK_RENDERER_PLATFORM_DIR}exported/web_input_event.cc
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_media_constraints.cc
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_media_player_client.cc
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_media_player_encrypted_media_client.cc
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_media_player_source.cc
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_media_recorder_handler.cc
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_media_stream.cc
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_media_stream_audio_sink.cc
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_media_stream_source.cc
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_media_stream_track.cc
+${BLINK_RENDERER_PLATFORM_DIR}exported/web_memory_pressure_listener.cc
+${BLINK_RENDERER_PLATFORM_DIR}exported/web_mixed_content.cc
+${BLINK_RENDERER_PLATFORM_DIR}exported/web_network_state_notifier.cc
+${BLINK_RENDERER_PLATFORM_DIR}exported/web_prerender.cc
+${BLINK_RENDERER_PLATFORM_DIR}exported/web_prerendering_support.cc
+${BLINK_RENDERER_PLATFORM_DIR}exported/web_resource_timing_info.cc
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_rtc_answer_options.cc
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_rtc_ice_candidate.cc
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_rtc_offer_options.cc
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_rtc_peer_connection_handler_client.cc
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_rtc_rtp_receiver.cc
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_rtc_rtp_sender.cc
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_rtc_rtp_source.cc
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_rtc_rtp_transceiver.cc
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_rtc_session_description.cc
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_rtc_session_description_request.cc
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_rtc_stats.cc
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_rtc_stats_request.cc
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_rtc_stats_response.cc
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_rtc_void_request.cc
+${BLINK_RENDERER_PLATFORM_DIR}exported/web_runtime_features.cc
+${BLINK_RENDERER_PLATFORM_DIR}exported/web_security_origin.cc
+${BLINK_RENDERER_PLATFORM_DIR}exported/web_service_worker_request.cc
+${BLINK_RENDERER_PLATFORM_DIR}exported/web_service_worker_response.cc
+${BLINK_RENDERER_PLATFORM_DIR}exported/web_service_worker_stream_handle.cc
+${BLINK_RENDERER_PLATFORM_DIR}exported/web_speech_synthesis_utterance.cc
+${BLINK_RENDERER_PLATFORM_DIR}exported/web_speech_synthesis_voice.cc
+${BLINK_RENDERER_PLATFORM_DIR}exported/web_speech_synthesizer_client_impl.cc
+#${BLINK_RENDERER_PLATFORM_DIR}exported/web_speech_synthesizer_client_impl.h",
+${BLINK_RENDERER_PLATFORM_DIR}exported/web_string.cc
+${BLINK_RENDERER_PLATFORM_DIR}exported/web_surface_layer_bridge.cc
+${BLINK_RENDERER_PLATFORM_DIR}exported/web_text_run.cc
+${BLINK_RENDERER_PLATFORM_DIR}exported/web_thread_safe_data.cc
+${BLINK_RENDERER_PLATFORM_DIR}exported/web_url.cc
+${BLINK_RENDERER_PLATFORM_DIR}exported/web_url_error.cc
+${BLINK_RENDERER_PLATFORM_DIR}exported/web_url_load_timing.cc
+${BLINK_RENDERER_PLATFORM_DIR}exported/web_url_loader_client.cc
+${BLINK_RENDERER_PLATFORM_DIR}exported/web_url_loader_test_delegate.cc
+${BLINK_RENDERER_PLATFORM_DIR}exported/web_url_request.cc
+${BLINK_RENDERER_PLATFORM_DIR}exported/web_url_response.cc
+${BLINK_RENDERER_PLATFORM_DIR}exported/web_video_frame_submitter.cc
+#${BLINK_RENDERER_PLATFORM_DIR}exported/wrapped_resource_request.h",
+#${BLINK_RENDERER_PLATFORM_DIR}exported/wrapped_resource_response.h",
+${BLINK_RENDERER_PLATFORM_DIR}file_metadata.cc
+#${BLINK_RENDERER_PLATFORM_DIR}file_metadata.h",
+#${BLINK_RENDERER_PLATFORM_DIR}fonts/alternate_font_family.h",
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/android/font_cache_android.cc
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/android/font_unique_name_lookup_android.cc
+## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/android/font_unique_name_lookup_android.h",
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/bitmap_glyphs_block_list.cc
+## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/bitmap_glyphs_block_list.h",
+## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/canvas_rotation_in_vertical.h",
+## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/character_range.h",
+## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/custom_font_data.h",
+## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/fallback_list_composite_key.h",
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/font.cc
+## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/font.h",
+## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_baseline.h",
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_cache.cc
+## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_cache.h",
+## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_cache_client.h",
+## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_cache_key.h",
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_cache_memory_dump_provider.cc
+## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_cache_memory_dump_provider.h",
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_custom_platform_data.cc
+## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_custom_platform_data.h",
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_data.cc
+## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_data.h",
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_data_cache.cc
+## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_data_cache.h",
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_data_for_range_set.cc
+## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_data_for_range_set.h",
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_description.cc
+## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_description.h",
+## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_face_creation_params.h",
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_fallback_iterator.cc
+## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_fallback_iterator.h",
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_fallback_list.cc
+## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_fallback_list.h",
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_fallback_priority.cc
+## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_fallback_priority.h",
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_family.cc
+## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_family.h",
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_global_context.cc
+## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_global_context.h",
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_metrics.cc
+## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_metrics.h",
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_orientation.cc
+## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_orientation.h",
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_platform_data.cc
+## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_platform_data.h",
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_selection_algorithm.cc
+## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_selection_algorithm.h",
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_selection_types.cc
+## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_selection_types.h",
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_selector.cc
+## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_selector.h",
+## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_selector_client.h",
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_smoothing_mode.cc
+## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_smoothing_mode.h",
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_unique_name_lookup.cc
+## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_unique_name_lookup.h",
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_variant_east_asian.cc
+## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_variant_east_asian.h",
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_variant_numeric.cc
+## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_variant_numeric.h",
+## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_vertical_position_type.h",
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_width_variant.cc
+## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_width_variant.h",
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/generic_font_family_settings.cc
+## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/generic_font_family_settings.h",
+## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/glyph_metrics_map.h",
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/linux/font_cache_linux.cc
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/linux/font_unique_name_lookup_linux.cc
+## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/linux/font_unique_name_lookup_linux.h",
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/mac/core_text_font_format_support.cc
+## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/mac/core_text_font_format_support.h",
+## TODO ## # TODO #${BLINK_RENDERER_PLATFORM_DIR}fonts/mac/font_cache_mac.mm",
+## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/mac/font_matcher_mac.h",
+## TODO ## # TODO # ${BLINK_RENDERER_PLATFORM_DIR}fonts/mac/font_matcher_mac.mm",
+## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/mac/font_platform_data_mac.h",
+## TODO ## # TODO #${BLINK_RENDERER_PLATFORM_DIR}fonts/mac/font_platform_data_mac.mm",
+## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/ng_text_fragment_paint_info.h",
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/opentype/font_format_check.cc
+## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/opentype/font_format_check.h",
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/opentype/font_settings.cc
+## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/opentype/font_settings.h",
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/opentype/open_type_caps_support.cc
+## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/opentype/open_type_caps_support.h",
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/opentype/open_type_caps_support_mpl.cc
+## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/opentype/open_type_types.h",
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/opentype/open_type_vertical_data.cc
+## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/opentype/open_type_vertical_data.h",
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/orientation_iterator.cc
+## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/orientation_iterator.h",
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/script_run_iterator.cc
+## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/script_run_iterator.h",
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/segmented_font_data.cc
+## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/segmented_font_data.h",
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/caching_word_shape_iterator.cc
+## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/caching_word_shape_iterator.h",
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/caching_word_shaper.cc
+## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/caching_word_shaper.h",
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/case_mapping_harfbuzz_buffer_filler.cc
+## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/case_mapping_harfbuzz_buffer_filler.h",
+## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/glyph_bounds_accumulator.h",
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/harfbuzz_face.cc
+## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/harfbuzz_face.h",
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/harfbuzz_font_cache.cc
+## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/harfbuzz_font_cache.h",
+## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/harfbuzz_font_data.h",
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/harfbuzz_shaper.cc
+## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/harfbuzz_shaper.h",
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/run_segmenter.cc
+## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/run_segmenter.h",
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/shape_cache.cc
+## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/shape_cache.h",
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/shape_result.cc
+## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/shape_result.h",
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/shape_result_bloberizer.cc
+## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/shape_result_bloberizer.h",
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/shape_result_buffer.cc
+## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/shape_result_buffer.h",
+## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/shape_result_inline_headers.h",
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/shape_result_spacing.cc
+## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/shape_result_spacing.h",
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/shape_result_test_info.cc
+## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/shape_result_test_info.h",
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/shape_result_view.cc
+## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/shape_result_view.h",
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/shaping_line_breaker.cc
+## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/shaping_line_breaker.h",
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/simple_font_data.cc
+## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/simple_font_data.h",
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/skia/font_cache_skia.cc
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/skia/skia_text_metrics.cc
+## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/skia/skia_text_metrics.h",
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/skia/sktypeface_factory.cc
+## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/skia/sktypeface_factory.h",
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/small_caps_iterator.cc
+## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/small_caps_iterator.h",
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/string_truncator.cc
+## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/string_truncator.h",
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/symbols_iterator.cc
+## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/symbols_iterator.h",
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/text_rendering_mode.cc
+## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/text_rendering_mode.h",
+## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/text_run_paint_info.h",
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/typesetting_features.cc
+## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/typesetting_features.h",
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/unicode_range_set.cc
+## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/unicode_range_set.h",
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/utf16_ragel_iterator.cc
+## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/utf16_ragel_iterator.h",
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/utf16_text_iterator.cc
+## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/utf16_text_iterator.h",
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/vdmx_parser.cc
+## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/vdmx_parser.h",
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/web_font_decoder.cc
+## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/web_font_decoder.h",
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/web_font_render_style.cc
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/web_font_typeface_factory.cc
+## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/web_font_typeface_factory.h",
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/win/dwrite_font_format_support.cc
+## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/win/dwrite_font_format_support.h",
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/win/font_cache_skia_win.cc
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/win/font_fallback_win.cc
+## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/win/font_fallback_win.h",
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/win/font_platform_data_win.cc
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/win/font_unique_name_lookup_win.cc
+#${BLINK_RENDERER_PLATFORM_DIR}fonts/win/font_unique_name_lookup_win.h",
+#${BLINK_RENDERER_PLATFORM_DIR}geometry/blend.h",
+#${BLINK_RENDERER_PLATFORM_DIR}geometry/calculation_value.h",
 ## TODO ##   #
 ## TODO ##   # if (is_mac)
 ## TODO ##   #
@@ -886,439 +913,443 @@ set(BLINK_RENDERER_PLATFORM_SOURCES
 ## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}geometry/cg/int_rect_cg.cc
 ## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}geometry/cg/int_size_cg.cc
 ## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}geometry/double_point.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}geometry/double_point.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}geometry/double_rect.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}geometry/double_rect.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}geometry/double_size.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}geometry/double_size.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}geometry/float_box.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}geometry/float_box.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}geometry/float_point.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}geometry/float_point.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}geometry/float_point_3d.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}geometry/float_point_3d.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}geometry/float_polygon.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}geometry/float_polygon.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}geometry/float_quad.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}geometry/float_quad.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}geometry/float_rect.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}geometry/float_rect.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}geometry/float_rect_outsets.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}geometry/float_rect_outsets.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}geometry/float_rounded_rect.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}geometry/float_rounded_rect.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}geometry/float_size.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}geometry/float_size.h",
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}geometry/geometry_as_json.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}geometry/int_point.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}geometry/int_point.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}geometry/int_rect.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}geometry/int_rect.h",
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}geometry/int_rect_outsets.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}geometry/int_size.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}geometry/int_size.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}geometry/layout_point.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}geometry/layout_point.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}geometry/layout_rect.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}geometry/layout_rect.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}geometry/layout_rect_outsets.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}geometry/layout_rect_outsets.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}geometry/layout_size.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}geometry/layout_size.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}geometry/layout_unit.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}geometry/layout_unit.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}geometry/length.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}geometry/length.h",
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}geometry/length_box.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}geometry/length_functions.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}geometry/length_functions.h",
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}geometry/length_point.h",
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}geometry/length_size.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}geometry/region.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}geometry/region.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/accelerated_static_bitmap_image.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/accelerated_static_bitmap_image.h",
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/animation_worklet_mutator.h",
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/animation_worklet_mutator_dispatcher.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/animation_worklet_mutator_dispatcher_impl.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/animation_worklet_mutator_dispatcher_impl.h",
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/animation_worklet_mutators_state.h",
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/apply_viewport_changes.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/begin_frame_provider.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/begin_frame_provider.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/bitmap_image.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/bitmap_image.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/bitmap_image_metrics.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/bitmap_image_metrics.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/box_reflection.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/box_reflection.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/canvas_2d_layer_bridge.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/canvas_2d_layer_bridge.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/canvas_color_params.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/canvas_color_params.h",
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/canvas_heuristic_parameters.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/canvas_resource.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/canvas_resource.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/canvas_resource_dispatcher.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/canvas_resource_dispatcher.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/canvas_resource_host.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/canvas_resource_host.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/canvas_resource_provider.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/canvas_resource_provider.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/color.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/color.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/color_behavior.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/color_behavior.h",
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/color_blend.h",
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/color_scheme.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/color_space_gamut.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/color_space_gamut.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/color_space_profile_data.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/color_space_profile_data.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/compositing/chunk_to_layer_mapper.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/compositing/chunk_to_layer_mapper.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/compositing/content_layer_client_impl.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/compositing/content_layer_client_impl.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/compositing/paint_artifact_compositor.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/compositing/paint_artifact_compositor.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/compositing/paint_chunks_to_cc_layer.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/compositing/paint_chunks_to_cc_layer.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/compositing/property_tree_manager.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/compositing/property_tree_manager.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/compositing_reasons.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/compositing_reasons.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/compositor_element_id.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/compositor_element_id.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/compositor_filter_operations.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/compositor_filter_operations.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/compositor_mutator_client.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/compositor_mutator_client.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/contiguous_container.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/contiguous_container.h",
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/cpu/arm/webgl_image_conversion_neon.h",
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/cpu/mips/webgl_image_conversion_msa.h",
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/cpu/x86/webgl_image_conversion_sse.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/crossfade_generated_image.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/crossfade_generated_image.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/dark_mode_bitmap_image_classifier.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/dark_mode_bitmap_image_classifier.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/dark_mode_color_classifier.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/dark_mode_color_classifier.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/dark_mode_filter.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/dark_mode_filter.h",
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/dark_mode_settings.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/darkmode/darkmode_classifier.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/darkmode/darkmode_classifier.h",
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/dash_array.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/decoding_image_generator.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/decoding_image_generator.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/deferred_image_decoder.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/deferred_image_decoder.h",
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/dom_node_id.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/draw_looper_builder.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/draw_looper_builder.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/distant_light_source.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/distant_light_source.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/fe_blend.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/fe_blend.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/fe_box_reflect.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/fe_box_reflect.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/fe_color_matrix.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/fe_color_matrix.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/fe_component_transfer.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/fe_component_transfer.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/fe_composite.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/fe_composite.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/fe_convolve_matrix.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/fe_convolve_matrix.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/fe_diffuse_lighting.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/fe_diffuse_lighting.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/fe_displacement_map.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/fe_displacement_map.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/fe_drop_shadow.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/fe_drop_shadow.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/fe_flood.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/fe_flood.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/fe_gaussian_blur.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/fe_gaussian_blur.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/fe_lighting.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/fe_lighting.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/fe_merge.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/fe_merge.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/fe_morphology.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/fe_morphology.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/fe_offset.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/fe_offset.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/fe_specular_lighting.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/fe_specular_lighting.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/fe_tile.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/fe_tile.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/fe_turbulence.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/fe_turbulence.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/filter.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/filter.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/filter_effect.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/filter_effect.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/light_source.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/light_source.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/paint_filter_builder.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/paint_filter_builder.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/paint_filter_effect.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/paint_filter_effect.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/point_light_source.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/point_light_source.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/source_alpha.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/source_alpha.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/source_graphic.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/source_graphic.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/spot_light_source.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/spot_light_source.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/generated_image.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/generated_image.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/gpu/dawn_control_client_holder.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/gpu/dawn_control_client_holder.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/gpu/drawing_buffer.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/gpu/drawing_buffer.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/gpu/extensions_3d_util.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/gpu/extensions_3d_util.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/gpu/graphics_context_3d_utils.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/gpu/graphics_context_3d_utils.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/gpu/image_layer_bridge.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/gpu/image_layer_bridge.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/gpu/shared_context_rate_limiter.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/gpu/shared_context_rate_limiter.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/gpu/shared_gpu_context.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/gpu/shared_gpu_context.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/gpu/webgl_image_conversion.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/gpu/webgl_image_conversion.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/gpu/webgpu_swap_buffer_provider.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/gpu/webgpu_swap_buffer_provider.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/gpu/xr_frame_transport.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/gpu/xr_frame_transport.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/gpu/xr_webgl_drawing_buffer.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/gpu/xr_webgl_drawing_buffer.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/gpu_memory_buffer_image_copy.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/gpu_memory_buffer_image_copy.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/gradient.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/gradient.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/gradient_generated_image.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/gradient_generated_image.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/graphics_context.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/graphics_context.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/graphics_context_state.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/graphics_context_state.h",
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/graphics_context_state_saver.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/graphics_layer.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/graphics_layer.h",
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/graphics_layer_client.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/graphics_types.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/graphics_types.h",
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/graphics_types_3d.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/hit_test_rect.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/hit_test_rect.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/image.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/image.h",
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/image_animation_policy.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/image_data_buffer.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/image_data_buffer.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/image_decoder_wrapper.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/image_decoder_wrapper.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/image_decoding_store.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/image_decoding_store.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/image_frame_generator.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/image_frame_generator.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/image_observer.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/image_observer.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/image_orientation.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/image_orientation.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/image_pattern.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/image_pattern.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/intercepting_canvas.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/intercepting_canvas.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/interpolation_space.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/interpolation_space.h",
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/lab_color_space.h",
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/link_highlight.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/logging_canvas.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/logging_canvas.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/mailbox_texture_holder.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/mailbox_texture_holder.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/main_thread_mutator_client.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/main_thread_mutator_client.h",
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/mutator_client.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/offscreen_canvas_placeholder.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/offscreen_canvas_placeholder.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/clip_paint_property_node.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/clip_paint_property_node.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/cull_rect.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/cull_rect.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/display_item.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/display_item.h",
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/display_item_cache_skipper.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/display_item_client.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/display_item_client.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/display_item_list.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/display_item_list.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/display_item_raster_invalidator.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/display_item_raster_invalidator.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/drawing_display_item.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/drawing_display_item.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/drawing_recorder.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/drawing_recorder.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/effect_paint_property_node.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/effect_paint_property_node.h",
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/float_clip_rect.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/foreign_layer_display_item.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/foreign_layer_display_item.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/geometry_mapper.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/geometry_mapper.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/geometry_mapper_clip_cache.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/geometry_mapper_clip_cache.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/geometry_mapper_transform_cache.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/geometry_mapper_transform_cache.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/hit_test_data.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/hit_test_data.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/hit_test_display_item.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/hit_test_display_item.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/paint_artifact.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/paint_artifact.h",
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/paint_canvas.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/paint_chunk.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/paint_chunk.h",
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/paint_chunk_subset.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/paint_chunker.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/paint_chunker.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/paint_controller.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/paint_controller.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/paint_controller_debug_data.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/paint_filter.h",
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/paint_flags.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/paint_property_node.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/paint_property_node.h",
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/paint_record.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/paint_record_builder.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/paint_record_builder.h",
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/paint_recorder.h",
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/paint_shader.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/property_tree_state.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/property_tree_state.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/raster_invalidation_tracking.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/raster_invalidation_tracking.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/raster_invalidator.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/raster_invalidator.h",
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/ref_counted_property_tree_state.h",
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/scoped_display_item_fragment.h",
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/scoped_paint_chunk_properties.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/scroll_hit_test_display_item.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/scroll_hit_test_display_item.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/scroll_paint_property_node.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/scroll_paint_property_node.h",
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/subsequence_recorder.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/transform_paint_property_node.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/transform_paint_property_node.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/paint_generated_image.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/paint_generated_image.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/paint_invalidation_reason.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/paint_invalidation_reason.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/paint_record_pattern.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/paint_record_pattern.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/paint_worklet_paint_dispatcher.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/paint_worklet_paint_dispatcher.h",
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/paint_worklet_painter.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/path.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/path.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/path_traversal_state.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/path_traversal_state.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/pattern.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/pattern.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/picture_snapshot.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/picture_snapshot.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/placeholder_image.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/placeholder_image.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/platform_paint_worklet_layer_painter.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/platform_paint_worklet_layer_painter.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/profiling_canvas.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/profiling_canvas.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/replaying_canvas.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/replaying_canvas.h",
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/scoped_interpolation_quality.h",
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/scroll_types.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/skia/image_pixel_locker.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/skia/image_pixel_locker.h",
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/skia/sk_size_hash.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/skia/skia_utils.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/skia/skia_utils.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/skia_texture_holder.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/skia_texture_holder.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/squashing_disallowed_reasons.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/squashing_disallowed_reasons.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/static_bitmap_image.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/static_bitmap_image.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/stroke_data.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/stroke_data.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/subtree_paint_property_update_reason.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/subtree_paint_property_update_reason.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/surface_layer_bridge.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/surface_layer_bridge.h",
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/texture_holder.h",
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/touch_action.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/unaccelerated_static_bitmap_image.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/unaccelerated_static_bitmap_image.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/video_frame_resource_provider.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/video_frame_resource_provider.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/video_frame_submitter.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/video_frame_submitter.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}graphics/web_graphics_context_3d_provider_wrapper.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}graphics/web_graphics_context_3d_provider_wrapper.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}histogram.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}histogram.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}image-decoders/bmp/bmp_image_decoder.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}image-decoders/bmp/bmp_image_decoder.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}image-decoders/bmp/bmp_image_reader.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}image-decoders/bmp/bmp_image_reader.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}image-decoders/fast_shared_buffer_reader.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}image-decoders/fast_shared_buffer_reader.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}image-decoders/gif/gif_image_decoder.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}image-decoders/gif/gif_image_decoder.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}image-decoders/ico/ico_image_decoder.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}image-decoders/ico/ico_image_decoder.h",
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}image-decoders/image_animation.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}image-decoders/image_decoder.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}image-decoders/image_decoder.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}image-decoders/image_frame.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}image-decoders/image_frame.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}image-decoders/jpeg/jpeg_image_decoder.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}image-decoders/jpeg/jpeg_image_decoder.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}image-decoders/png/png_image_decoder.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}image-decoders/png/png_image_decoder.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}image-decoders/png/png_image_reader.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}image-decoders/png/png_image_reader.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}image-decoders/segment_reader.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}image-decoders/segment_reader.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}image-decoders/segment_stream.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}image-decoders/segment_stream.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}image-decoders/webp/webp_image_decoder.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}image-decoders/webp/webp_image_decoder.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}image-encoders/image_encoder.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}image-encoders/image_encoder.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}image-encoders/image_encoder_utils.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}image-encoders/image_encoder_utils.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}instance_counters.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}instance_counters.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}instance_counters_memory_dump_provider.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}instance_counters_memory_dump_provider.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}json/json_parser.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}json/json_parser.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}json/json_values.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}json/json_values.h",
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}keyboard_codes.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}language.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}language.h",
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}lifecycle_notifier.h",
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}lifecycle_observer.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}link_hash.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}link_hash.h",
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}mac/block_exceptions.h",
+#${BLINK_RENDERER_PLATFORM_DIR}geometry/double_point.h",
+${BLINK_RENDERER_PLATFORM_DIR}geometry/double_rect.cc
+#${BLINK_RENDERER_PLATFORM_DIR}geometry/double_rect.h",
+${BLINK_RENDERER_PLATFORM_DIR}geometry/double_size.cc
+#${BLINK_RENDERER_PLATFORM_DIR}geometry/double_size.h",
+${BLINK_RENDERER_PLATFORM_DIR}geometry/float_box.cc
+#${BLINK_RENDERER_PLATFORM_DIR}geometry/float_box.h",
+${BLINK_RENDERER_PLATFORM_DIR}geometry/float_point.cc
+#${BLINK_RENDERER_PLATFORM_DIR}geometry/float_point.h",
+${BLINK_RENDERER_PLATFORM_DIR}geometry/float_point_3d.cc
+#${BLINK_RENDERER_PLATFORM_DIR}geometry/float_point_3d.h",
+${BLINK_RENDERER_PLATFORM_DIR}geometry/float_polygon.cc
+#${BLINK_RENDERER_PLATFORM_DIR}geometry/float_polygon.h",
+${BLINK_RENDERER_PLATFORM_DIR}geometry/float_quad.cc
+#${BLINK_RENDERER_PLATFORM_DIR}geometry/float_quad.h",
+${BLINK_RENDERER_PLATFORM_DIR}geometry/float_rect.cc
+#${BLINK_RENDERER_PLATFORM_DIR}geometry/float_rect.h",
+${BLINK_RENDERER_PLATFORM_DIR}geometry/float_rect_outsets.cc
+#${BLINK_RENDERER_PLATFORM_DIR}geometry/float_rect_outsets.h",
+${BLINK_RENDERER_PLATFORM_DIR}geometry/float_rounded_rect.cc
+#${BLINK_RENDERER_PLATFORM_DIR}geometry/float_rounded_rect.h",
+${BLINK_RENDERER_PLATFORM_DIR}geometry/float_size.cc
+#${BLINK_RENDERER_PLATFORM_DIR}geometry/float_size.h",
+#${BLINK_RENDERER_PLATFORM_DIR}geometry/geometry_as_json.h",
+${BLINK_RENDERER_PLATFORM_DIR}geometry/int_point.cc
+#${BLINK_RENDERER_PLATFORM_DIR}geometry/int_point.h",
+${BLINK_RENDERER_PLATFORM_DIR}geometry/int_rect.cc
+#${BLINK_RENDERER_PLATFORM_DIR}geometry/int_rect.h",
+#${BLINK_RENDERER_PLATFORM_DIR}geometry/int_rect_outsets.h",
+${BLINK_RENDERER_PLATFORM_DIR}geometry/int_size.cc
+#${BLINK_RENDERER_PLATFORM_DIR}geometry/int_size.h",
+${BLINK_RENDERER_PLATFORM_DIR}geometry/layout_point.cc
+#${BLINK_RENDERER_PLATFORM_DIR}geometry/layout_point.h",
+${BLINK_RENDERER_PLATFORM_DIR}geometry/layout_rect.cc
+#${BLINK_RENDERER_PLATFORM_DIR}geometry/layout_rect.h",
+${BLINK_RENDERER_PLATFORM_DIR}geometry/layout_rect_outsets.cc
+#${BLINK_RENDERER_PLATFORM_DIR}geometry/layout_rect_outsets.h",
+${BLINK_RENDERER_PLATFORM_DIR}geometry/layout_size.cc
+#${BLINK_RENDERER_PLATFORM_DIR}geometry/layout_size.h",
+${BLINK_RENDERER_PLATFORM_DIR}geometry/layout_unit.cc
+#${BLINK_RENDERER_PLATFORM_DIR}geometry/layout_unit.h",
+${BLINK_RENDERER_PLATFORM_DIR}geometry/length.cc
+#${BLINK_RENDERER_PLATFORM_DIR}geometry/length.h",
+#${BLINK_RENDERER_PLATFORM_DIR}geometry/length_box.h",
+${BLINK_RENDERER_PLATFORM_DIR}geometry/length_functions.cc
+#${BLINK_RENDERER_PLATFORM_DIR}geometry/length_functions.h",
+#${BLINK_RENDERER_PLATFORM_DIR}geometry/length_point.h",
+#${BLINK_RENDERER_PLATFORM_DIR}geometry/length_size.h",
+${BLINK_RENDERER_PLATFORM_DIR}geometry/region.cc
+#${BLINK_RENDERER_PLATFORM_DIR}geometry/region.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/accelerated_static_bitmap_image.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/accelerated_static_bitmap_image.h",
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/animation_worklet_mutator.h",
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/animation_worklet_mutator_dispatcher.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/animation_worklet_mutator_dispatcher_impl.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/animation_worklet_mutator_dispatcher_impl.h",
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/animation_worklet_mutators_state.h",
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/apply_viewport_changes.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/begin_frame_provider.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/begin_frame_provider.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/bitmap_image.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/bitmap_image.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/bitmap_image_metrics.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/bitmap_image_metrics.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/box_reflection.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/box_reflection.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/canvas_2d_layer_bridge.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/canvas_2d_layer_bridge.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/canvas_color_params.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/canvas_color_params.h",
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/canvas_heuristic_parameters.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/canvas_resource.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/canvas_resource.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/canvas_resource_dispatcher.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/canvas_resource_dispatcher.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/canvas_resource_host.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/canvas_resource_host.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/canvas_resource_provider.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/canvas_resource_provider.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/color.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/color.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/color_behavior.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/color_behavior.h",
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/color_blend.h",
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/color_scheme.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/color_space_gamut.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/color_space_gamut.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/color_space_profile_data.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/color_space_profile_data.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/compositing/chunk_to_layer_mapper.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/compositing/chunk_to_layer_mapper.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/compositing/content_layer_client_impl.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/compositing/content_layer_client_impl.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/compositing/paint_artifact_compositor.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/compositing/paint_artifact_compositor.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/compositing/paint_chunks_to_cc_layer.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/compositing/paint_chunks_to_cc_layer.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/compositing/property_tree_manager.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/compositing/property_tree_manager.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/compositing_reasons.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/compositing_reasons.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/compositor_element_id.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/compositor_element_id.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/compositor_filter_operations.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/compositor_filter_operations.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/compositor_mutator_client.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/compositor_mutator_client.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/contiguous_container.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/contiguous_container.h",
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/cpu/arm/webgl_image_conversion_neon.h",
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/cpu/mips/webgl_image_conversion_msa.h",
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/cpu/x86/webgl_image_conversion_sse.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/crossfade_generated_image.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/crossfade_generated_image.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/dark_mode_bitmap_image_classifier.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/dark_mode_bitmap_image_classifier.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/dark_mode_color_classifier.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/dark_mode_color_classifier.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/dark_mode_filter.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/dark_mode_filter.h",
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/dark_mode_settings.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/darkmode/darkmode_classifier.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/darkmode/darkmode_classifier.h",
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/dash_array.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/decoding_image_generator.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/decoding_image_generator.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/deferred_image_decoder.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/deferred_image_decoder.h",
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/dom_node_id.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/draw_looper_builder.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/draw_looper_builder.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/distant_light_source.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/distant_light_source.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/fe_blend.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/fe_blend.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/fe_box_reflect.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/fe_box_reflect.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/fe_color_matrix.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/fe_color_matrix.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/fe_component_transfer.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/fe_component_transfer.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/fe_composite.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/fe_composite.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/fe_convolve_matrix.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/fe_convolve_matrix.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/fe_diffuse_lighting.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/fe_diffuse_lighting.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/fe_displacement_map.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/fe_displacement_map.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/fe_drop_shadow.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/fe_drop_shadow.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/fe_flood.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/fe_flood.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/fe_gaussian_blur.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/fe_gaussian_blur.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/fe_lighting.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/fe_lighting.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/fe_merge.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/fe_merge.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/fe_morphology.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/fe_morphology.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/fe_offset.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/fe_offset.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/fe_specular_lighting.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/fe_specular_lighting.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/fe_tile.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/fe_tile.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/fe_turbulence.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/fe_turbulence.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/filter.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/filter.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/filter_effect.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/filter_effect.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/light_source.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/light_source.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/paint_filter_builder.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/paint_filter_builder.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/paint_filter_effect.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/paint_filter_effect.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/point_light_source.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/point_light_source.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/source_alpha.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/source_alpha.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/source_graphic.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/source_graphic.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/spot_light_source.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/filters/spot_light_source.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/generated_image.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/generated_image.h",
+# NOTE: dawn_* requires dawn/dawn.h
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}graphics/gpu/dawn_control_client_holder.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/gpu/dawn_control_client_holder.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/gpu/drawing_buffer.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/gpu/drawing_buffer.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/gpu/extensions_3d_util.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/gpu/extensions_3d_util.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/gpu/graphics_context_3d_utils.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/gpu/graphics_context_3d_utils.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/gpu/image_layer_bridge.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/gpu/image_layer_bridge.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/gpu/shared_context_rate_limiter.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/gpu/shared_context_rate_limiter.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/gpu/shared_gpu_context.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/gpu/shared_gpu_context.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/gpu/webgl_image_conversion.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/gpu/webgl_image_conversion.h",
+# webgpu_* requires dawn/dawn.h
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}graphics/gpu/webgpu_swap_buffer_provider.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/gpu/webgpu_swap_buffer_provider.h",
+# requies device/gamepad/public/cpp/gamepad.h
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}graphics/gpu/xr_frame_transport.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/gpu/xr_frame_transport.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/gpu/xr_webgl_drawing_buffer.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/gpu/xr_webgl_drawing_buffer.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/gpu_memory_buffer_image_copy.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/gpu_memory_buffer_image_copy.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/gradient.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/gradient.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/gradient_generated_image.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/gradient_generated_image.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/graphics_context.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/graphics_context.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/graphics_context_state.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/graphics_context_state.h",
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/graphics_context_state_saver.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/graphics_layer.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/graphics_layer.h",
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/graphics_layer_client.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/graphics_types.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/graphics_types.h",
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/graphics_types_3d.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/hit_test_rect.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/hit_test_rect.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/image.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/image.h",
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/image_animation_policy.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/image_data_buffer.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/image_data_buffer.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/image_decoder_wrapper.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/image_decoder_wrapper.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/image_decoding_store.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/image_decoding_store.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/image_frame_generator.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/image_frame_generator.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/image_observer.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/image_observer.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/image_orientation.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/image_orientation.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/image_pattern.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/image_pattern.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/intercepting_canvas.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/intercepting_canvas.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/interpolation_space.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/interpolation_space.h",
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/lab_color_space.h",
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/link_highlight.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/logging_canvas.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/logging_canvas.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/mailbox_texture_holder.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/mailbox_texture_holder.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/main_thread_mutator_client.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/main_thread_mutator_client.h",
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/mutator_client.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/offscreen_canvas_placeholder.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/offscreen_canvas_placeholder.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/clip_paint_property_node.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/clip_paint_property_node.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/cull_rect.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/cull_rect.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/display_item.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/display_item.h",
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/display_item_cache_skipper.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/display_item_client.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/display_item_client.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/display_item_list.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/display_item_list.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/display_item_raster_invalidator.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/display_item_raster_invalidator.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/drawing_display_item.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/drawing_display_item.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/drawing_recorder.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/drawing_recorder.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/effect_paint_property_node.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/effect_paint_property_node.h",
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/float_clip_rect.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/foreign_layer_display_item.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/foreign_layer_display_item.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/geometry_mapper.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/geometry_mapper.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/geometry_mapper_clip_cache.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/geometry_mapper_clip_cache.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/geometry_mapper_transform_cache.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/geometry_mapper_transform_cache.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/hit_test_data.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/hit_test_data.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/hit_test_display_item.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/hit_test_display_item.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/paint_artifact.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/paint_artifact.h",
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/paint_canvas.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/paint_chunk.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/paint_chunk.h",
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/paint_chunk_subset.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/paint_chunker.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/paint_chunker.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/paint_controller.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/paint_controller.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/paint_controller_debug_data.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/paint_filter.h",
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/paint_flags.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/paint_property_node.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/paint_property_node.h",
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/paint_record.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/paint_record_builder.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/paint_record_builder.h",
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/paint_recorder.h",
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/paint_shader.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/property_tree_state.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/property_tree_state.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/raster_invalidation_tracking.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/raster_invalidation_tracking.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/raster_invalidator.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/raster_invalidator.h",
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/ref_counted_property_tree_state.h",
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/scoped_display_item_fragment.h",
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/scoped_paint_chunk_properties.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/scroll_hit_test_display_item.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/scroll_hit_test_display_item.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/scroll_paint_property_node.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/scroll_paint_property_node.h",
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/subsequence_recorder.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/transform_paint_property_node.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/paint/transform_paint_property_node.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/paint_generated_image.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/paint_generated_image.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/paint_invalidation_reason.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/paint_invalidation_reason.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/paint_record_pattern.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/paint_record_pattern.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/paint_worklet_paint_dispatcher.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/paint_worklet_paint_dispatcher.h",
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/paint_worklet_painter.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/path.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/path.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/path_traversal_state.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/path_traversal_state.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/pattern.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/pattern.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/picture_snapshot.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/picture_snapshot.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/placeholder_image.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/placeholder_image.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/platform_paint_worklet_layer_painter.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/platform_paint_worklet_layer_painter.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/profiling_canvas.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/profiling_canvas.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/replaying_canvas.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/replaying_canvas.h",
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/scoped_interpolation_quality.h",
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/scroll_types.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/skia/image_pixel_locker.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/skia/image_pixel_locker.h",
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/skia/sk_size_hash.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/skia/skia_utils.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/skia/skia_utils.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/skia_texture_holder.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/skia_texture_holder.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/squashing_disallowed_reasons.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/squashing_disallowed_reasons.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/static_bitmap_image.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/static_bitmap_image.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/stroke_data.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/stroke_data.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/subtree_paint_property_update_reason.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/subtree_paint_property_update_reason.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/surface_layer_bridge.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/surface_layer_bridge.h",
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/texture_holder.h",
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/touch_action.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/unaccelerated_static_bitmap_image.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/unaccelerated_static_bitmap_image.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/video_frame_resource_provider.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/video_frame_resource_provider.h",
+# requires services/ws/public/cpp/gpu/context_provider_command_buffer.h
+## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}graphics/video_frame_submitter.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/video_frame_submitter.h",
+${BLINK_RENDERER_PLATFORM_DIR}graphics/web_graphics_context_3d_provider_wrapper.cc
+#${BLINK_RENDERER_PLATFORM_DIR}graphics/web_graphics_context_3d_provider_wrapper.h",
+${BLINK_RENDERER_PLATFORM_DIR}histogram.cc
+#${BLINK_RENDERER_PLATFORM_DIR}histogram.h",
+${BLINK_RENDERER_PLATFORM_DIR}image-decoders/bmp/bmp_image_decoder.cc
+#${BLINK_RENDERER_PLATFORM_DIR}image-decoders/bmp/bmp_image_decoder.h",
+${BLINK_RENDERER_PLATFORM_DIR}image-decoders/bmp/bmp_image_reader.cc
+#${BLINK_RENDERER_PLATFORM_DIR}image-decoders/bmp/bmp_image_reader.h",
+${BLINK_RENDERER_PLATFORM_DIR}image-decoders/fast_shared_buffer_reader.cc
+#${BLINK_RENDERER_PLATFORM_DIR}image-decoders/fast_shared_buffer_reader.h",
+${BLINK_RENDERER_PLATFORM_DIR}image-decoders/gif/gif_image_decoder.cc
+#${BLINK_RENDERER_PLATFORM_DIR}image-decoders/gif/gif_image_decoder.h",
+${BLINK_RENDERER_PLATFORM_DIR}image-decoders/ico/ico_image_decoder.cc
+#${BLINK_RENDERER_PLATFORM_DIR}image-decoders/ico/ico_image_decoder.h",
+#${BLINK_RENDERER_PLATFORM_DIR}image-decoders/image_animation.h",
+${BLINK_RENDERER_PLATFORM_DIR}image-decoders/image_decoder.cc
+#${BLINK_RENDERER_PLATFORM_DIR}image-decoders/image_decoder.h",
+${BLINK_RENDERER_PLATFORM_DIR}image-decoders/image_frame.cc
+#${BLINK_RENDERER_PLATFORM_DIR}image-decoders/image_frame.h",
+${BLINK_RENDERER_PLATFORM_DIR}image-decoders/jpeg/jpeg_image_decoder.cc
+#${BLINK_RENDERER_PLATFORM_DIR}image-decoders/jpeg/jpeg_image_decoder.h",
+${BLINK_RENDERER_PLATFORM_DIR}image-decoders/png/png_image_decoder.cc
+#${BLINK_RENDERER_PLATFORM_DIR}image-decoders/png/png_image_decoder.h",
+${BLINK_RENDERER_PLATFORM_DIR}image-decoders/png/png_image_reader.cc
+#${BLINK_RENDERER_PLATFORM_DIR}image-decoders/png/png_image_reader.h",
+${BLINK_RENDERER_PLATFORM_DIR}image-decoders/segment_reader.cc
+#${BLINK_RENDERER_PLATFORM_DIR}image-decoders/segment_reader.h",
+${BLINK_RENDERER_PLATFORM_DIR}image-decoders/segment_stream.cc
+#${BLINK_RENDERER_PLATFORM_DIR}image-decoders/segment_stream.h",
+${BLINK_RENDERER_PLATFORM_DIR}image-decoders/webp/webp_image_decoder.cc
+#${BLINK_RENDERER_PLATFORM_DIR}image-decoders/webp/webp_image_decoder.h",
+${BLINK_RENDERER_PLATFORM_DIR}image-encoders/image_encoder.cc
+#${BLINK_RENDERER_PLATFORM_DIR}image-encoders/image_encoder.h",
+${BLINK_RENDERER_PLATFORM_DIR}image-encoders/image_encoder_utils.cc
+#${BLINK_RENDERER_PLATFORM_DIR}image-encoders/image_encoder_utils.h",
+${BLINK_RENDERER_PLATFORM_DIR}instance_counters.cc
+#${BLINK_RENDERER_PLATFORM_DIR}instance_counters.h",
+${BLINK_RENDERER_PLATFORM_DIR}instance_counters_memory_dump_provider.cc
+#${BLINK_RENDERER_PLATFORM_DIR}instance_counters_memory_dump_provider.h",
+${BLINK_RENDERER_PLATFORM_DIR}json/json_parser.cc
+#${BLINK_RENDERER_PLATFORM_DIR}json/json_parser.h",
+${BLINK_RENDERER_PLATFORM_DIR}json/json_values.cc
+#${BLINK_RENDERER_PLATFORM_DIR}json/json_values.h",
+#${BLINK_RENDERER_PLATFORM_DIR}keyboard_codes.h",
+${BLINK_RENDERER_PLATFORM_DIR}language.cc
+#${BLINK_RENDERER_PLATFORM_DIR}language.h",
+#${BLINK_RENDERER_PLATFORM_DIR}lifecycle_notifier.h",
+#${BLINK_RENDERER_PLATFORM_DIR}lifecycle_observer.h",
+${BLINK_RENDERER_PLATFORM_DIR}link_hash.cc
+#${BLINK_RENDERER_PLATFORM_DIR}link_hash.h",
+#${BLINK_RENDERER_PLATFORM_DIR}mac/block_exceptions.h",
 ## TODO ##   # TODO #${BLINK_RENDERER_PLATFORM_DIR}mac/block_exceptions.mm",
 ## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}mac/color_mac.h",
 ## TODO ##   # TODO #${BLINK_RENDERER_PLATFORM_DIR}mac/color_mac.mm",
@@ -1339,56 +1370,56 @@ set(BLINK_RENDERER_PLATFORM_SOURCES
 ## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}mediastream/media_stream_web_audio_source.cc
 ## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}mediastream/media_stream_web_audio_source.h",
 ## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}memory_pressure_listener.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}memory_pressure_listener.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}mhtml/archive_resource.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}mhtml/archive_resource.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}mhtml/mhtml_archive.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}mhtml/mhtml_archive.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}mhtml/mhtml_parser.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}mhtml/mhtml_parser.h",
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}mhtml/serialized_resource.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}mhtml/shared_buffer_chunk_reader.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}mhtml/shared_buffer_chunk_reader.h",
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}mojo/big_string_mojom_traits.h",
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}mojo/bluetooth_struct_traits.cc
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}mojo/bluetooth_struct_traits.h",
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}mojo/canonical_cookie_mojom_traits.cc
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}mojo/canonical_cookie_mojom_traits.h",
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}mojo/fetch_api_request_headers_mojom_traits.h",
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}mojo/interface_invalidator.cc
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}mojo/interface_invalidator.h",
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}mojo/mojo_helper.h",
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}mojo/revocable_binding.h",
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}mojo/revocable_interface_ptr.h",
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}mojo/revocable_strong_binding.h",
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}mojo/string16_mojom_traits.cc
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}mojo/string16_mojom_traits.h",
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}partition_alloc_memory_dump_provider.cc
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}partition_alloc_memory_dump_provider.h",
+#${BLINK_RENDERER_PLATFORM_DIR}memory_pressure_listener.h",
+${BLINK_RENDERER_PLATFORM_DIR}mhtml/archive_resource.cc
+#${BLINK_RENDERER_PLATFORM_DIR}mhtml/archive_resource.h",
+${BLINK_RENDERER_PLATFORM_DIR}mhtml/mhtml_archive.cc
+#${BLINK_RENDERER_PLATFORM_DIR}mhtml/mhtml_archive.h",
+${BLINK_RENDERER_PLATFORM_DIR}mhtml/mhtml_parser.cc
+#${BLINK_RENDERER_PLATFORM_DIR}mhtml/mhtml_parser.h",
+#${BLINK_RENDERER_PLATFORM_DIR}mhtml/serialized_resource.h",
+${BLINK_RENDERER_PLATFORM_DIR}mhtml/shared_buffer_chunk_reader.cc
+#${BLINK_RENDERER_PLATFORM_DIR}mhtml/shared_buffer_chunk_reader.h",
+#${BLINK_RENDERER_PLATFORM_DIR}mojo/big_string_mojom_traits.h",
+${BLINK_RENDERER_PLATFORM_DIR}mojo/bluetooth_struct_traits.cc
+#${BLINK_RENDERER_PLATFORM_DIR}mojo/bluetooth_struct_traits.h",
+${BLINK_RENDERER_PLATFORM_DIR}mojo/canonical_cookie_mojom_traits.cc
+#${BLINK_RENDERER_PLATFORM_DIR}mojo/canonical_cookie_mojom_traits.h",
+#${BLINK_RENDERER_PLATFORM_DIR}mojo/fetch_api_request_headers_mojom_traits.h",
+${BLINK_RENDERER_PLATFORM_DIR}mojo/interface_invalidator.cc
+#${BLINK_RENDERER_PLATFORM_DIR}mojo/interface_invalidator.h",
+#${BLINK_RENDERER_PLATFORM_DIR}mojo/mojo_helper.h",
+#${BLINK_RENDERER_PLATFORM_DIR}mojo/revocable_binding.h",
+#${BLINK_RENDERER_PLATFORM_DIR}mojo/revocable_interface_ptr.h",
+#${BLINK_RENDERER_PLATFORM_DIR}mojo/revocable_strong_binding.h",
+${BLINK_RENDERER_PLATFORM_DIR}mojo/string16_mojom_traits.cc
+#${BLINK_RENDERER_PLATFORM_DIR}mojo/string16_mojom_traits.h",
+${BLINK_RENDERER_PLATFORM_DIR}partition_alloc_memory_dump_provider.cc
+#${BLINK_RENDERER_PLATFORM_DIR}partition_alloc_memory_dump_provider.h",
 ## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}peerconnection/rtc_answer_options_platform.h",
 ## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}peerconnection/rtc_offer_options_platform.h",
 ## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}peerconnection/rtc_session_description_request.h",
 ## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}peerconnection/rtc_stats_request.h",
 ## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}peerconnection/rtc_stats_response_base.h",
 ## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}peerconnection/rtc_void_request.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}prerender.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}prerender.h",
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}prerender_client.h",
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}probe/platform_probes.cc
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}probe/platform_probes.h",
-## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}probe/platform_trace_events_agent.cc
-## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}probe/platform_trace_events_agent.h",
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}resolution_units.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}shared_buffer.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}shared_buffer.h",
+${BLINK_RENDERER_PLATFORM_DIR}prerender.cc
+#${BLINK_RENDERER_PLATFORM_DIR}prerender.h",
+#${BLINK_RENDERER_PLATFORM_DIR}prerender_client.h",
+${BLINK_RENDERER_PLATFORM_DIR}probe/platform_probes.cc
+#${BLINK_RENDERER_PLATFORM_DIR}probe/platform_probes.h",
+${BLINK_RENDERER_PLATFORM_DIR}probe/platform_trace_events_agent.cc
+#${BLINK_RENDERER_PLATFORM_DIR}probe/platform_trace_events_agent.h",
+#${BLINK_RENDERER_PLATFORM_DIR}resolution_units.h",
+${BLINK_RENDERER_PLATFORM_DIR}shared_buffer.cc
+#${BLINK_RENDERER_PLATFORM_DIR}shared_buffer.h",
 ## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}speech/platform_speech_synthesis_utterance.cc
 ## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}speech/platform_speech_synthesis_utterance.h",
 ## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}speech/platform_speech_synthesis_voice.cc
 ## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}speech/platform_speech_synthesis_voice.h",
 ## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}speech/platform_speech_synthesizer.cc
 ## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}speech/platform_speech_synthesizer.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}supplementable.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}supplementable.h",
+${BLINK_RENDERER_PLATFORM_DIR}supplementable.cc
+#${BLINK_RENDERER_PLATFORM_DIR}supplementable.h",
 ## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}text/bidi_character_run.h",
 ## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}text/bidi_context.cc
 ## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}text/bidi_context.h",
@@ -1453,41 +1484,41 @@ set(BLINK_RENDERER_PLATFORM_SOURCES
 ## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}text/win/hyphenation_win.cc
 ## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}text/writing_mode.h",
 ## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}text/writing_mode_utils.h",
-#${BLINK_RENDERER_PLATFORM_DIR}timer.cc
+${BLINK_RENDERER_PLATFORM_DIR}timer.cc
 #${BLINK_RENDERER_PLATFORM_DIR}timer.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}transforms/affine_transform.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}transforms/affine_transform.h",
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}transforms/identity_transform_operation.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}transforms/interpolated_transform_operation.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}transforms/interpolated_transform_operation.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}transforms/matrix_3d_transform_operation.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}transforms/matrix_3d_transform_operation.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}transforms/matrix_transform_operation.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}transforms/matrix_transform_operation.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}transforms/perspective_transform_operation.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}transforms/perspective_transform_operation.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}transforms/rotate_transform_operation.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}transforms/rotate_transform_operation.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}transforms/rotation.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}transforms/rotation.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}transforms/scale_transform_operation.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}transforms/scale_transform_operation.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}transforms/skew_transform_operation.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}transforms/skew_transform_operation.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}transforms/transform_operations.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}transforms/transform_operations.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}transforms/transformation_matrix.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}transforms/transformation_matrix.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}transforms/translate_transform_operation.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}transforms/translate_transform_operation.h",
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}uuid.cc
-## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}uuid.h",
+${BLINK_RENDERER_PLATFORM_DIR}transforms/affine_transform.cc
+#${BLINK_RENDERER_PLATFORM_DIR}transforms/affine_transform.h",
+#${BLINK_RENDERER_PLATFORM_DIR}transforms/identity_transform_operation.h",
+${BLINK_RENDERER_PLATFORM_DIR}transforms/interpolated_transform_operation.cc
+#${BLINK_RENDERER_PLATFORM_DIR}transforms/interpolated_transform_operation.h",
+${BLINK_RENDERER_PLATFORM_DIR}transforms/matrix_3d_transform_operation.cc
+#${BLINK_RENDERER_PLATFORM_DIR}transforms/matrix_3d_transform_operation.h",
+${BLINK_RENDERER_PLATFORM_DIR}transforms/matrix_transform_operation.cc
+#${BLINK_RENDERER_PLATFORM_DIR}transforms/matrix_transform_operation.h",
+${BLINK_RENDERER_PLATFORM_DIR}transforms/perspective_transform_operation.cc
+#${BLINK_RENDERER_PLATFORM_DIR}transforms/perspective_transform_operation.h",
+${BLINK_RENDERER_PLATFORM_DIR}transforms/rotate_transform_operation.cc
+#${BLINK_RENDERER_PLATFORM_DIR}transforms/rotate_transform_operation.h",
+${BLINK_RENDERER_PLATFORM_DIR}transforms/rotation.cc
+#${BLINK_RENDERER_PLATFORM_DIR}transforms/rotation.h",
+${BLINK_RENDERER_PLATFORM_DIR}transforms/scale_transform_operation.cc
+#${BLINK_RENDERER_PLATFORM_DIR}transforms/scale_transform_operation.h",
+${BLINK_RENDERER_PLATFORM_DIR}transforms/skew_transform_operation.cc
+#${BLINK_RENDERER_PLATFORM_DIR}transforms/skew_transform_operation.h",
+${BLINK_RENDERER_PLATFORM_DIR}transforms/transform_operations.cc
+#${BLINK_RENDERER_PLATFORM_DIR}transforms/transform_operations.h",
+${BLINK_RENDERER_PLATFORM_DIR}transforms/transformation_matrix.cc
+#${BLINK_RENDERER_PLATFORM_DIR}transforms/transformation_matrix.h",
+${BLINK_RENDERER_PLATFORM_DIR}transforms/translate_transform_operation.cc
+#${BLINK_RENDERER_PLATFORM_DIR}transforms/translate_transform_operation.h",
+${BLINK_RENDERER_PLATFORM_DIR}uuid.cc
+#${BLINK_RENDERER_PLATFORM_DIR}uuid.h",
 ## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}web_gesture_event.cc
 ## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}web_icon_sizes_parser.cc
 ## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}web_mouse_event.cc
 ## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}web_mouse_wheel_event.cc
 ## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}web_pointer_event.cc
-## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}web_test_support.cc
+## TODO ##   ## TODO ##${BLINK_RENDERER_PLATFORM_DIR}web_test_support.cc
 ## TODO ##   #${BLINK_RENDERER_PLATFORM_DIR}web_test_support.h",
 ## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}web_text_input_info.cc
 ## TODO ##   ${BLINK_RENDERER_PLATFORM_DIR}web_thread_supporting_gc.cc
@@ -1525,6 +1556,26 @@ ${BLINK_RENDERER_PLATFORM_DIR}weborigin/security_policy.cc
 add_library(BLINK_RENDERER_PLATFORM STATIC
   ${BLINK_RENDERER_PLATFORM_SOURCES}
 )
+
+if(USE_LIBJPEG)
+  if(EMSCRIPTEN)
+    set(libjpeg_LIB GLIBJPEG)
+    set(libjpeg_TURBO_LIB GLIBJPEG_TURBO)
+    set(iccjpeg_LIB iccjpeg)
+  elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+    set(libjpeg_LIB GLIBJPEG)
+    set(libjpeg_TURBO_LIB GLIBJPEG_TURBO)
+    set(iccjpeg_LIB iccjpeg)
+  else()
+    message(FATAL_ERROR "platform not supported")
+  endif()
+endif()
+
+if (NOT EMSCRIPTEN)
+  find_package(PNG REQUIRED) # PNG::PNG
+  set(libpng_LIB PNG::PNG)
+  #set(libpng_LIB GLIBPNG)
+endif()
 
 target_link_libraries(BLINK_RENDERER_PLATFORM PUBLIC
   #public_deps = [
@@ -1633,12 +1684,16 @@ target_link_libraries(BLINK_RENDERER_PLATFORM PUBLIC
   PAINT_CC
   CC
   SERVICES_NETWORK_PUBLIC_CPP
+  libwebp # requires libpng
   ${libjpeg_LIB}
   ${libjpeg_TURBO_LIB}
   ${libpng_LIB}
+  ${iccjpeg_LIB}
   #
   # khronos
   ${khronos_LIB}
+  LIB_V8_INTERFACE
+  COMPONENTS_SCHEDULING_METRICS
 )
 
 set_property(TARGET BLINK_RENDERER_PLATFORM PROPERTY CXX_STANDARD 17)
@@ -1647,6 +1702,7 @@ target_include_directories(BLINK_RENDERER_PLATFORM PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR} # requires "third_party/blink/public/platform/web_common.h"
   ${BLINK_RENDERER_PLATFORM_DIR}
   #${BASE_DIR}
+  ${CUR_OUT_DIR} # see blink_python_runner("runtime_enabled_features")
 )
 
 target_include_directories(BLINK_RENDERER_PLATFORM PUBLIC
@@ -1661,4 +1717,8 @@ target_compile_definitions(BLINK_RENDERER_PLATFORM PRIVATE
   #USING_V8_SHARED
 )
 
-# no_size_t_to_int_warning
+target_compile_options(BLINK_RENDERER_PLATFORM PUBLIC # NOTE: PUBLIC
+  -Wno-implicit-function-declaration
+  -Wno-c++11-narrowing
+  -Wno-macro-redefined
+)
