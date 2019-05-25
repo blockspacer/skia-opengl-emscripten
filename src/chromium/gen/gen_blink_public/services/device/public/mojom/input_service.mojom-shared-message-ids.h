@@ -12,14 +12,14 @@ namespace mojom {
 namespace internal {
 
 
-// The 700816169 value is based on sha256(salt + "InputDeviceManagerClient1").
-constexpr uint32_t kInputDeviceManagerClient_InputDeviceAdded_Name = 700816169;
-// The 1081463907 value is based on sha256(salt + "InputDeviceManagerClient2").
-constexpr uint32_t kInputDeviceManagerClient_InputDeviceRemoved_Name = 1081463907;
-// The 1835566287 value is based on sha256(salt + "InputDeviceManager1").
-constexpr uint32_t kInputDeviceManager_GetDevicesAndSetClient_Name = 1835566287;
-// The 825413116 value is based on sha256(salt + "InputDeviceManager2").
-constexpr uint32_t kInputDeviceManager_GetDevices_Name = 825413116;
+// The 1504905301 value is based on sha256(salt + "InputDeviceManagerClient1").
+constexpr uint32_t kInputDeviceManagerClient_InputDeviceAdded_Name = 1504905301;
+// The 244645786 value is based on sha256(salt + "InputDeviceManagerClient2").
+constexpr uint32_t kInputDeviceManagerClient_InputDeviceRemoved_Name = 244645786;
+// The 1466873664 value is based on sha256(salt + "InputDeviceManager1").
+constexpr uint32_t kInputDeviceManager_GetDevicesAndSetClient_Name = 1466873664;
+// The 1285284313 value is based on sha256(salt + "InputDeviceManager2").
+constexpr uint32_t kInputDeviceManager_GetDevices_Name = 1285284313;
 
 }  // namespace internal
 }  // namespace mojom

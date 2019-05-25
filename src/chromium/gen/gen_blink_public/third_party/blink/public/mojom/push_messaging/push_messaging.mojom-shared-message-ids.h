@@ -12,12 +12,12 @@ namespace mojom {
 namespace internal {
 
 
-// The 2049140025 value is based on sha256(salt + "PushMessaging1").
-constexpr uint32_t kPushMessaging_Subscribe_Name = 2049140025;
-// The 1554064996 value is based on sha256(salt + "PushMessaging2").
-constexpr uint32_t kPushMessaging_Unsubscribe_Name = 1554064996;
-// The 1056265720 value is based on sha256(salt + "PushMessaging3").
-constexpr uint32_t kPushMessaging_GetSubscription_Name = 1056265720;
+// The 1941645304 value is based on sha256(salt + "PushMessaging1").
+constexpr uint32_t kPushMessaging_Subscribe_Name = 1941645304;
+// The 1850581324 value is based on sha256(salt + "PushMessaging2").
+constexpr uint32_t kPushMessaging_Unsubscribe_Name = 1850581324;
+// The 975647723 value is based on sha256(salt + "PushMessaging3").
+constexpr uint32_t kPushMessaging_GetSubscription_Name = 975647723;
 
 }  // namespace internal
 }  // namespace mojom

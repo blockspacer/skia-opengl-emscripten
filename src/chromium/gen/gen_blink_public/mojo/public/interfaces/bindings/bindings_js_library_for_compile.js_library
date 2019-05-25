@@ -1,8 +1,0 @@
-sources:
-gen/mojo/public/interfaces/bindings/interface_control_messages.mojom-lite-for-compile.js
-gen/mojo/public/interfaces/bindings/native_struct.mojom-lite-for-compile.js
-gen/mojo/public/interfaces/bindings/pipe_control_messages.mojom-lite-for-compile.js
-deps:
-externs:
-../../third_party/closure_compiler/externs/mojo_core.js
-../../third_party/closure_compiler/externs/pending.js

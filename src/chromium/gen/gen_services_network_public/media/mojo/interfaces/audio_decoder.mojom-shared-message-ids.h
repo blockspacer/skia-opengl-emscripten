@@ -12,20 +12,20 @@ namespace mojom {
 namespace internal {
 
 
-// The 626215185 value is based on sha256(salt + "AudioDecoder1").
-constexpr uint32_t kAudioDecoder_Construct_Name = 626215185;
-// The 892144328 value is based on sha256(salt + "AudioDecoder2").
-constexpr uint32_t kAudioDecoder_Initialize_Name = 892144328;
-// The 1802252149 value is based on sha256(salt + "AudioDecoder3").
-constexpr uint32_t kAudioDecoder_SetDataSource_Name = 1802252149;
-// The 1956789950 value is based on sha256(salt + "AudioDecoder4").
-constexpr uint32_t kAudioDecoder_Decode_Name = 1956789950;
-// The 1451656414 value is based on sha256(salt + "AudioDecoder5").
-constexpr uint32_t kAudioDecoder_Reset_Name = 1451656414;
-// The 49506368 value is based on sha256(salt + "AudioDecoderClient1").
-constexpr uint32_t kAudioDecoderClient_OnBufferDecoded_Name = 49506368;
-// The 328320047 value is based on sha256(salt + "AudioDecoderClient2").
-constexpr uint32_t kAudioDecoderClient_OnWaiting_Name = 328320047;
+// The 756481611 value is based on sha256(salt + "AudioDecoder1").
+constexpr uint32_t kAudioDecoder_Construct_Name = 756481611;
+// The 173663713 value is based on sha256(salt + "AudioDecoder2").
+constexpr uint32_t kAudioDecoder_Initialize_Name = 173663713;
+// The 183116289 value is based on sha256(salt + "AudioDecoder3").
+constexpr uint32_t kAudioDecoder_SetDataSource_Name = 183116289;
+// The 1665744156 value is based on sha256(salt + "AudioDecoder4").
+constexpr uint32_t kAudioDecoder_Decode_Name = 1665744156;
+// The 1857742848 value is based on sha256(salt + "AudioDecoder5").
+constexpr uint32_t kAudioDecoder_Reset_Name = 1857742848;
+// The 1248883436 value is based on sha256(salt + "AudioDecoderClient1").
+constexpr uint32_t kAudioDecoderClient_OnBufferDecoded_Name = 1248883436;
+// The 2015171613 value is based on sha256(salt + "AudioDecoderClient2").
+constexpr uint32_t kAudioDecoderClient_OnWaiting_Name = 2015171613;
 
 }  // namespace internal
 }  // namespace mojom

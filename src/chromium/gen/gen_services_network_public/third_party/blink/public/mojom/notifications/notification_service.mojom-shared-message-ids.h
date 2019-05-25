@@ -12,24 +12,24 @@ namespace mojom {
 namespace internal {
 
 
-// The 175937587 value is based on sha256(salt + "NonPersistentNotificationListener1").
-constexpr uint32_t kNonPersistentNotificationListener_OnShow_Name = 175937587;
-// The 1432238121 value is based on sha256(salt + "NonPersistentNotificationListener2").
-constexpr uint32_t kNonPersistentNotificationListener_OnClick_Name = 1432238121;
-// The 1994003645 value is based on sha256(salt + "NonPersistentNotificationListener3").
-constexpr uint32_t kNonPersistentNotificationListener_OnClose_Name = 1994003645;
-// The 1564674663 value is based on sha256(salt + "NotificationService1").
-constexpr uint32_t kNotificationService_GetPermissionStatus_Name = 1564674663;
-// The 1058161424 value is based on sha256(salt + "NotificationService2").
-constexpr uint32_t kNotificationService_DisplayNonPersistentNotification_Name = 1058161424;
-// The 1360610986 value is based on sha256(salt + "NotificationService3").
-constexpr uint32_t kNotificationService_CloseNonPersistentNotification_Name = 1360610986;
-// The 1031437954 value is based on sha256(salt + "NotificationService4").
-constexpr uint32_t kNotificationService_DisplayPersistentNotification_Name = 1031437954;
-// The 996849199 value is based on sha256(salt + "NotificationService5").
-constexpr uint32_t kNotificationService_ClosePersistentNotification_Name = 996849199;
-// The 1596983019 value is based on sha256(salt + "NotificationService6").
-constexpr uint32_t kNotificationService_GetNotifications_Name = 1596983019;
+// The 949021318 value is based on sha256(salt + "NonPersistentNotificationListener1").
+constexpr uint32_t kNonPersistentNotificationListener_OnShow_Name = 949021318;
+// The 2081437977 value is based on sha256(salt + "NonPersistentNotificationListener2").
+constexpr uint32_t kNonPersistentNotificationListener_OnClick_Name = 2081437977;
+// The 988847160 value is based on sha256(salt + "NonPersistentNotificationListener3").
+constexpr uint32_t kNonPersistentNotificationListener_OnClose_Name = 988847160;
+// The 1047804765 value is based on sha256(salt + "NotificationService1").
+constexpr uint32_t kNotificationService_GetPermissionStatus_Name = 1047804765;
+// The 116153708 value is based on sha256(salt + "NotificationService2").
+constexpr uint32_t kNotificationService_DisplayNonPersistentNotification_Name = 116153708;
+// The 1007893543 value is based on sha256(salt + "NotificationService3").
+constexpr uint32_t kNotificationService_CloseNonPersistentNotification_Name = 1007893543;
+// The 287582317 value is based on sha256(salt + "NotificationService4").
+constexpr uint32_t kNotificationService_DisplayPersistentNotification_Name = 287582317;
+// The 1764900306 value is based on sha256(salt + "NotificationService5").
+constexpr uint32_t kNotificationService_ClosePersistentNotification_Name = 1764900306;
+// The 59750742 value is based on sha256(salt + "NotificationService6").
+constexpr uint32_t kNotificationService_GetNotifications_Name = 59750742;
 
 }  // namespace internal
 }  // namespace mojom

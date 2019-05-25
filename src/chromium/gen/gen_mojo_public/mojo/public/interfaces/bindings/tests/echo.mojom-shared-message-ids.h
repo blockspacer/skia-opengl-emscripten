@@ -13,8 +13,8 @@ namespace mojom {
 namespace internal {
 
 
-// The 1119155912 value is based on sha256(salt + "Echo1").
-constexpr uint32_t kEcho_EchoPoint_Name = 1119155912;
+// The 2064284409 value is based on sha256(salt + "Echo1").
+constexpr uint32_t kEcho_EchoPoint_Name = 2064284409;
 
 }  // namespace internal
 }  // namespace mojom

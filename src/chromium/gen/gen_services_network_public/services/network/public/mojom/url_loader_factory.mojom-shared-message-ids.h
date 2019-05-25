@@ -12,10 +12,10 @@ namespace mojom {
 namespace internal {
 
 
-// The 357291492 value is based on sha256(salt + "URLLoaderFactory1").
-constexpr uint32_t kURLLoaderFactory_CreateLoaderAndStart_Name = 357291492;
-// The 1048497067 value is based on sha256(salt + "URLLoaderFactory2").
-constexpr uint32_t kURLLoaderFactory_Clone_Name = 1048497067;
+// The 410537011 value is based on sha256(salt + "URLLoaderFactory1").
+constexpr uint32_t kURLLoaderFactory_CreateLoaderAndStart_Name = 410537011;
+// The 2063085066 value is based on sha256(salt + "URLLoaderFactory2").
+constexpr uint32_t kURLLoaderFactory_Clone_Name = 2063085066;
 
 }  // namespace internal
 }  // namespace mojom

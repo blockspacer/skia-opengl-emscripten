@@ -12,10 +12,10 @@ namespace mojom {
 namespace internal {
 
 
-// The 725709644 value is based on sha256(salt + "MdnsResponder1").
-constexpr uint32_t kMdnsResponder_CreateNameForAddress_Name = 725709644;
-// The 333735640 value is based on sha256(salt + "MdnsResponder2").
-constexpr uint32_t kMdnsResponder_RemoveNameForAddress_Name = 333735640;
+// The 1808033039 value is based on sha256(salt + "MdnsResponder1").
+constexpr uint32_t kMdnsResponder_CreateNameForAddress_Name = 1808033039;
+// The 942021535 value is based on sha256(salt + "MdnsResponder2").
+constexpr uint32_t kMdnsResponder_RemoveNameForAddress_Name = 942021535;
 
 }  // namespace internal
 }  // namespace mojom

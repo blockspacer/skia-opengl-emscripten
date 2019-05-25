@@ -12,14 +12,14 @@ namespace mojom {
 namespace internal {
 
 
-// The 87885297 value is based on sha256(salt + "PowerMonitor1").
-constexpr uint32_t kPowerMonitor_AddClient_Name = 87885297;
-// The 1242630663 value is based on sha256(salt + "PowerMonitorClient1").
-constexpr uint32_t kPowerMonitorClient_PowerStateChange_Name = 1242630663;
-// The 700510803 value is based on sha256(salt + "PowerMonitorClient2").
-constexpr uint32_t kPowerMonitorClient_Suspend_Name = 700510803;
-// The 183912095 value is based on sha256(salt + "PowerMonitorClient3").
-constexpr uint32_t kPowerMonitorClient_Resume_Name = 183912095;
+// The 1282701402 value is based on sha256(salt + "PowerMonitor1").
+constexpr uint32_t kPowerMonitor_AddClient_Name = 1282701402;
+// The 159819990 value is based on sha256(salt + "PowerMonitorClient1").
+constexpr uint32_t kPowerMonitorClient_PowerStateChange_Name = 159819990;
+// The 738933499 value is based on sha256(salt + "PowerMonitorClient2").
+constexpr uint32_t kPowerMonitorClient_Suspend_Name = 738933499;
+// The 1210229826 value is based on sha256(salt + "PowerMonitorClient3").
+constexpr uint32_t kPowerMonitorClient_Resume_Name = 1210229826;
 
 }  // namespace internal
 }  // namespace mojom

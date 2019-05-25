@@ -12,8 +12,8 @@ namespace mojom {
 namespace internal {
 
 
-// The 1582112341 value is based on sha256(salt + "NativeFileSystemTransferToken1").
-constexpr uint32_t kNativeFileSystemTransferToken_GetInternalID_Name = 1582112341;
+// The 1458348168 value is based on sha256(salt + "NativeFileSystemTransferToken1").
+constexpr uint32_t kNativeFileSystemTransferToken_GetInternalID_Name = 1458348168;
 
 }  // namespace internal
 }  // namespace mojom

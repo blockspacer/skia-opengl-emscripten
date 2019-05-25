@@ -12,8 +12,8 @@ namespace mojom {
 namespace internal {
 
 
-// The 1565036458 value is based on sha256(salt + "TextDetection1").
-constexpr uint32_t kTextDetection_Detect_Name = 1565036458;
+// The 1553385328 value is based on sha256(salt + "TextDetection1").
+constexpr uint32_t kTextDetection_Detect_Name = 1553385328;
 
 }  // namespace internal
 }  // namespace mojom

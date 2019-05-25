@@ -12,10 +12,10 @@ namespace mojom {
 namespace internal {
 
 
-// The 1961050381 value is based on sha256(salt + "DataPipeGetter1").
-constexpr uint32_t kDataPipeGetter_Read_Name = 1961050381;
-// The 2001677708 value is based on sha256(salt + "DataPipeGetter2").
-constexpr uint32_t kDataPipeGetter_Clone_Name = 2001677708;
+// The 772341301 value is based on sha256(salt + "DataPipeGetter1").
+constexpr uint32_t kDataPipeGetter_Read_Name = 772341301;
+// The 323355724 value is based on sha256(salt + "DataPipeGetter2").
+constexpr uint32_t kDataPipeGetter_Clone_Name = 323355724;
 
 }  // namespace internal
 }  // namespace mojom

@@ -12,16 +12,16 @@ namespace mojom {
 namespace internal {
 
 
-// The 1689590988 value is based on sha256(salt + "ProxyConfigClient1").
-constexpr uint32_t kProxyConfigClient_OnProxyConfigUpdated_Name = 1689590988;
-// The 989442573 value is based on sha256(salt + "ProxyConfigClient2").
-constexpr uint32_t kProxyConfigClient_FlushProxyConfig_Name = 989442573;
-// The 2118360331 value is based on sha256(salt + "ProxyConfigPollerClient1").
-constexpr uint32_t kProxyConfigPollerClient_OnLazyProxyConfigPoll_Name = 2118360331;
-// The 350651665 value is based on sha256(salt + "ProxyErrorClient1").
-constexpr uint32_t kProxyErrorClient_OnPACScriptError_Name = 350651665;
-// The 1411500430 value is based on sha256(salt + "ProxyErrorClient2").
-constexpr uint32_t kProxyErrorClient_OnRequestMaybeFailedDueToProxySettings_Name = 1411500430;
+// The 1574573456 value is based on sha256(salt + "ProxyConfigClient1").
+constexpr uint32_t kProxyConfigClient_OnProxyConfigUpdated_Name = 1574573456;
+// The 2063193759 value is based on sha256(salt + "ProxyConfigClient2").
+constexpr uint32_t kProxyConfigClient_FlushProxyConfig_Name = 2063193759;
+// The 1769283096 value is based on sha256(salt + "ProxyConfigPollerClient1").
+constexpr uint32_t kProxyConfigPollerClient_OnLazyProxyConfigPoll_Name = 1769283096;
+// The 210259370 value is based on sha256(salt + "ProxyErrorClient1").
+constexpr uint32_t kProxyErrorClient_OnPACScriptError_Name = 210259370;
+// The 417240688 value is based on sha256(salt + "ProxyErrorClient2").
+constexpr uint32_t kProxyErrorClient_OnRequestMaybeFailedDueToProxySettings_Name = 417240688;
 
 }  // namespace internal
 }  // namespace mojom

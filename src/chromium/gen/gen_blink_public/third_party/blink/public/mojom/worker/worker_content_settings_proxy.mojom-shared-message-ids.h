@@ -12,12 +12,12 @@ namespace mojom {
 namespace internal {
 
 
-// The 1394963460 value is based on sha256(salt + "WorkerContentSettingsProxy1").
-constexpr uint32_t kWorkerContentSettingsProxy_AllowIndexedDB_Name = 1394963460;
-// The 620180654 value is based on sha256(salt + "WorkerContentSettingsProxy2").
-constexpr uint32_t kWorkerContentSettingsProxy_AllowCacheStorage_Name = 620180654;
-// The 262264467 value is based on sha256(salt + "WorkerContentSettingsProxy3").
-constexpr uint32_t kWorkerContentSettingsProxy_RequestFileSystemAccessSync_Name = 262264467;
+// The 2131701827 value is based on sha256(salt + "WorkerContentSettingsProxy1").
+constexpr uint32_t kWorkerContentSettingsProxy_AllowIndexedDB_Name = 2131701827;
+// The 1656813208 value is based on sha256(salt + "WorkerContentSettingsProxy2").
+constexpr uint32_t kWorkerContentSettingsProxy_AllowCacheStorage_Name = 1656813208;
+// The 513421556 value is based on sha256(salt + "WorkerContentSettingsProxy3").
+constexpr uint32_t kWorkerContentSettingsProxy_RequestFileSystemAccessSync_Name = 513421556;
 
 }  // namespace internal
 }  // namespace mojom

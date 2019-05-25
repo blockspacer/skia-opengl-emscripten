@@ -12,8 +12,8 @@ namespace mojom {
 namespace internal {
 
 
-// The 882255185 value is based on sha256(salt + "KeySystemSupport1").
-constexpr uint32_t kKeySystemSupport_IsKeySystemSupported_Name = 882255185;
+// The 657402680 value is based on sha256(salt + "KeySystemSupport1").
+constexpr uint32_t kKeySystemSupport_IsKeySystemSupported_Name = 657402680;
 
 }  // namespace internal
 }  // namespace mojom

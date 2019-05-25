@@ -12,16 +12,16 @@ namespace mojom {
 namespace internal {
 
 
-// The 130683082 value is based on sha256(salt + "AudioInputStream1").
-constexpr uint32_t kAudioInputStream_Record_Name = 130683082;
-// The 70528662 value is based on sha256(salt + "AudioInputStream2").
-constexpr uint32_t kAudioInputStream_SetVolume_Name = 70528662;
-// The 1172703233 value is based on sha256(salt + "AudioInputStreamClient1").
-constexpr uint32_t kAudioInputStreamClient_OnError_Name = 1172703233;
-// The 125631787 value is based on sha256(salt + "AudioInputStreamClient2").
-constexpr uint32_t kAudioInputStreamClient_OnMutedStateChanged_Name = 125631787;
-// The 952033131 value is based on sha256(salt + "AudioInputStreamObserver1").
-constexpr uint32_t kAudioInputStreamObserver_DidStartRecording_Name = 952033131;
+// The 1431054320 value is based on sha256(salt + "AudioInputStream1").
+constexpr uint32_t kAudioInputStream_Record_Name = 1431054320;
+// The 2004960821 value is based on sha256(salt + "AudioInputStream2").
+constexpr uint32_t kAudioInputStream_SetVolume_Name = 2004960821;
+// The 371213708 value is based on sha256(salt + "AudioInputStreamClient1").
+constexpr uint32_t kAudioInputStreamClient_OnError_Name = 371213708;
+// The 1298623619 value is based on sha256(salt + "AudioInputStreamClient2").
+constexpr uint32_t kAudioInputStreamClient_OnMutedStateChanged_Name = 1298623619;
+// The 443442228 value is based on sha256(salt + "AudioInputStreamObserver1").
+constexpr uint32_t kAudioInputStreamObserver_DidStartRecording_Name = 443442228;
 
 }  // namespace internal
 }  // namespace mojom

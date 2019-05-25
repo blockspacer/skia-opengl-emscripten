@@ -12,18 +12,18 @@ namespace mojom {
 namespace internal {
 
 
-// The 66275089 value is based on sha256(salt + "InterfaceFactory1").
-constexpr uint32_t kInterfaceFactory_CreateAudioDecoder_Name = 66275089;
-// The 181759656 value is based on sha256(salt + "InterfaceFactory2").
-constexpr uint32_t kInterfaceFactory_CreateVideoDecoder_Name = 181759656;
-// The 8729640 value is based on sha256(salt + "InterfaceFactory3").
-constexpr uint32_t kInterfaceFactory_CreateDefaultRenderer_Name = 8729640;
-// The 1620884047 value is based on sha256(salt + "InterfaceFactory4").
-constexpr uint32_t kInterfaceFactory_CreateCdm_Name = 1620884047;
-// The 847542670 value is based on sha256(salt + "InterfaceFactory5").
-constexpr uint32_t kInterfaceFactory_CreateDecryptor_Name = 847542670;
-// The 1820771334 value is based on sha256(salt + "InterfaceFactory6").
-constexpr uint32_t kInterfaceFactory_CreateCdmProxy_Name = 1820771334;
+// The 1020683870 value is based on sha256(salt + "InterfaceFactory1").
+constexpr uint32_t kInterfaceFactory_CreateAudioDecoder_Name = 1020683870;
+// The 1315637556 value is based on sha256(salt + "InterfaceFactory2").
+constexpr uint32_t kInterfaceFactory_CreateVideoDecoder_Name = 1315637556;
+// The 494496561 value is based on sha256(salt + "InterfaceFactory3").
+constexpr uint32_t kInterfaceFactory_CreateDefaultRenderer_Name = 494496561;
+// The 1629274453 value is based on sha256(salt + "InterfaceFactory4").
+constexpr uint32_t kInterfaceFactory_CreateCdm_Name = 1629274453;
+// The 1541629132 value is based on sha256(salt + "InterfaceFactory5").
+constexpr uint32_t kInterfaceFactory_CreateDecryptor_Name = 1541629132;
+// The 956111625 value is based on sha256(salt + "InterfaceFactory6").
+constexpr uint32_t kInterfaceFactory_CreateCdmProxy_Name = 956111625;
 
 }  // namespace internal
 }  // namespace mojom

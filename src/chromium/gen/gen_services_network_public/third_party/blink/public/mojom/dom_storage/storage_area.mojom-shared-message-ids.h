@@ -12,30 +12,30 @@ namespace mojom {
 namespace internal {
 
 
-// The 1087912680 value is based on sha256(salt + "StorageAreaObserver1").
-constexpr uint32_t kStorageAreaObserver_KeyAdded_Name = 1087912680;
-// The 1877777862 value is based on sha256(salt + "StorageAreaObserver2").
-constexpr uint32_t kStorageAreaObserver_KeyChanged_Name = 1877777862;
-// The 1886593535 value is based on sha256(salt + "StorageAreaObserver3").
-constexpr uint32_t kStorageAreaObserver_KeyDeleted_Name = 1886593535;
-// The 449271397 value is based on sha256(salt + "StorageAreaObserver4").
-constexpr uint32_t kStorageAreaObserver_AllDeleted_Name = 449271397;
-// The 1091802960 value is based on sha256(salt + "StorageAreaObserver5").
-constexpr uint32_t kStorageAreaObserver_ShouldSendOldValueOnMutations_Name = 1091802960;
-// The 299745848 value is based on sha256(salt + "StorageAreaGetAllCallback1").
-constexpr uint32_t kStorageAreaGetAllCallback_Complete_Name = 299745848;
-// The 1400666823 value is based on sha256(salt + "StorageArea1").
-constexpr uint32_t kStorageArea_AddObserver_Name = 1400666823;
-// The 1864207379 value is based on sha256(salt + "StorageArea2").
-constexpr uint32_t kStorageArea_Put_Name = 1864207379;
-// The 976938343 value is based on sha256(salt + "StorageArea3").
-constexpr uint32_t kStorageArea_Delete_Name = 976938343;
-// The 1169881874 value is based on sha256(salt + "StorageArea4").
-constexpr uint32_t kStorageArea_DeleteAll_Name = 1169881874;
-// The 1511985554 value is based on sha256(salt + "StorageArea5").
-constexpr uint32_t kStorageArea_Get_Name = 1511985554;
-// The 1520890806 value is based on sha256(salt + "StorageArea6").
-constexpr uint32_t kStorageArea_GetAll_Name = 1520890806;
+// The 1182467958 value is based on sha256(salt + "StorageAreaObserver1").
+constexpr uint32_t kStorageAreaObserver_KeyAdded_Name = 1182467958;
+// The 191117282 value is based on sha256(salt + "StorageAreaObserver2").
+constexpr uint32_t kStorageAreaObserver_KeyChanged_Name = 191117282;
+// The 198026542 value is based on sha256(salt + "StorageAreaObserver3").
+constexpr uint32_t kStorageAreaObserver_KeyDeleted_Name = 198026542;
+// The 1567766301 value is based on sha256(salt + "StorageAreaObserver4").
+constexpr uint32_t kStorageAreaObserver_AllDeleted_Name = 1567766301;
+// The 1072180506 value is based on sha256(salt + "StorageAreaObserver5").
+constexpr uint32_t kStorageAreaObserver_ShouldSendOldValueOnMutations_Name = 1072180506;
+// The 2098901287 value is based on sha256(salt + "StorageAreaGetAllCallback1").
+constexpr uint32_t kStorageAreaGetAllCallback_Complete_Name = 2098901287;
+// The 1417244046 value is based on sha256(salt + "StorageArea1").
+constexpr uint32_t kStorageArea_AddObserver_Name = 1417244046;
+// The 2039388070 value is based on sha256(salt + "StorageArea2").
+constexpr uint32_t kStorageArea_Put_Name = 2039388070;
+// The 947090676 value is based on sha256(salt + "StorageArea3").
+constexpr uint32_t kStorageArea_Delete_Name = 947090676;
+// The 169311990 value is based on sha256(salt + "StorageArea4").
+constexpr uint32_t kStorageArea_DeleteAll_Name = 169311990;
+// The 338693203 value is based on sha256(salt + "StorageArea5").
+constexpr uint32_t kStorageArea_Get_Name = 338693203;
+// The 127703061 value is based on sha256(salt + "StorageArea6").
+constexpr uint32_t kStorageArea_GetAll_Name = 127703061;
 
 }  // namespace internal
 }  // namespace mojom

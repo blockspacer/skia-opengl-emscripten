@@ -12,28 +12,28 @@ namespace mojom {
 namespace internal {
 
 
-// The 871113896 value is based on sha256(salt + "BackgroundFetchRegistrationObserver1").
-constexpr uint32_t kBackgroundFetchRegistrationObserver_OnProgress_Name = 871113896;
-// The 2125312477 value is based on sha256(salt + "BackgroundFetchRegistrationObserver2").
-constexpr uint32_t kBackgroundFetchRegistrationObserver_OnRecordsUnavailable_Name = 2125312477;
-// The 1597155213 value is based on sha256(salt + "BackgroundFetchRegistrationObserver3").
-constexpr uint32_t kBackgroundFetchRegistrationObserver_OnRequestCompleted_Name = 1597155213;
-// The 1614585878 value is based on sha256(salt + "BackgroundFetchService1").
-constexpr uint32_t kBackgroundFetchService_Fetch_Name = 1614585878;
-// The 1355730223 value is based on sha256(salt + "BackgroundFetchService2").
-constexpr uint32_t kBackgroundFetchService_GetRegistration_Name = 1355730223;
-// The 1249517665 value is based on sha256(salt + "BackgroundFetchService3").
-constexpr uint32_t kBackgroundFetchService_GetDeveloperIds_Name = 1249517665;
-// The 211142581 value is based on sha256(salt + "BackgroundFetchService4").
-constexpr uint32_t kBackgroundFetchService_GetIconDisplaySize_Name = 211142581;
-// The 177129600 value is based on sha256(salt + "BackgroundFetchRegistrationService1").
-constexpr uint32_t kBackgroundFetchRegistrationService_UpdateUI_Name = 177129600;
-// The 1604363771 value is based on sha256(salt + "BackgroundFetchRegistrationService2").
-constexpr uint32_t kBackgroundFetchRegistrationService_Abort_Name = 1604363771;
-// The 376613658 value is based on sha256(salt + "BackgroundFetchRegistrationService3").
-constexpr uint32_t kBackgroundFetchRegistrationService_MatchRequests_Name = 376613658;
-// The 736860190 value is based on sha256(salt + "BackgroundFetchRegistrationService4").
-constexpr uint32_t kBackgroundFetchRegistrationService_AddRegistrationObserver_Name = 736860190;
+// The 50409076 value is based on sha256(salt + "BackgroundFetchRegistrationObserver1").
+constexpr uint32_t kBackgroundFetchRegistrationObserver_OnProgress_Name = 50409076;
+// The 567813130 value is based on sha256(salt + "BackgroundFetchRegistrationObserver2").
+constexpr uint32_t kBackgroundFetchRegistrationObserver_OnRecordsUnavailable_Name = 567813130;
+// The 1298566091 value is based on sha256(salt + "BackgroundFetchRegistrationObserver3").
+constexpr uint32_t kBackgroundFetchRegistrationObserver_OnRequestCompleted_Name = 1298566091;
+// The 1726890115 value is based on sha256(salt + "BackgroundFetchService1").
+constexpr uint32_t kBackgroundFetchService_Fetch_Name = 1726890115;
+// The 637746350 value is based on sha256(salt + "BackgroundFetchService2").
+constexpr uint32_t kBackgroundFetchService_GetRegistration_Name = 637746350;
+// The 1701826751 value is based on sha256(salt + "BackgroundFetchService3").
+constexpr uint32_t kBackgroundFetchService_GetDeveloperIds_Name = 1701826751;
+// The 2102262936 value is based on sha256(salt + "BackgroundFetchService4").
+constexpr uint32_t kBackgroundFetchService_GetIconDisplaySize_Name = 2102262936;
+// The 1855074542 value is based on sha256(salt + "BackgroundFetchRegistrationService1").
+constexpr uint32_t kBackgroundFetchRegistrationService_UpdateUI_Name = 1855074542;
+// The 2010005149 value is based on sha256(salt + "BackgroundFetchRegistrationService2").
+constexpr uint32_t kBackgroundFetchRegistrationService_Abort_Name = 2010005149;
+// The 132437146 value is based on sha256(salt + "BackgroundFetchRegistrationService3").
+constexpr uint32_t kBackgroundFetchRegistrationService_MatchRequests_Name = 132437146;
+// The 1355952840 value is based on sha256(salt + "BackgroundFetchRegistrationService4").
+constexpr uint32_t kBackgroundFetchRegistrationService_AddRegistrationObserver_Name = 1355952840;
 
 }  // namespace internal
 }  // namespace mojom

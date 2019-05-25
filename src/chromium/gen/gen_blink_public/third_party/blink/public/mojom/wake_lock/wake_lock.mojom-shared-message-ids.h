@@ -12,8 +12,8 @@ namespace mojom {
 namespace internal {
 
 
-// The 1415766824 value is based on sha256(salt + "WakeLockService1").
-constexpr uint32_t kWakeLockService_GetWakeLock_Name = 1415766824;
+// The 2122039617 value is based on sha256(salt + "WakeLockService1").
+constexpr uint32_t kWakeLockService_GetWakeLock_Name = 2122039617;
 
 }  // namespace internal
 }  // namespace mojom

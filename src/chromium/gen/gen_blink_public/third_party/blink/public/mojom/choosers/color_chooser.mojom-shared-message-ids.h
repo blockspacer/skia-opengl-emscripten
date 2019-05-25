@@ -12,12 +12,12 @@ namespace mojom {
 namespace internal {
 
 
-// The 1950659245 value is based on sha256(salt + "ColorChooserFactory1").
-constexpr uint32_t kColorChooserFactory_OpenColorChooser_Name = 1950659245;
-// The 780391290 value is based on sha256(salt + "ColorChooser1").
-constexpr uint32_t kColorChooser_SetSelectedColor_Name = 780391290;
-// The 732369649 value is based on sha256(salt + "ColorChooserClient1").
-constexpr uint32_t kColorChooserClient_DidChooseColor_Name = 732369649;
+// The 1553101747 value is based on sha256(salt + "ColorChooserFactory1").
+constexpr uint32_t kColorChooserFactory_OpenColorChooser_Name = 1553101747;
+// The 697630913 value is based on sha256(salt + "ColorChooser1").
+constexpr uint32_t kColorChooser_SetSelectedColor_Name = 697630913;
+// The 1376370912 value is based on sha256(salt + "ColorChooserClient1").
+constexpr uint32_t kColorChooserClient_DidChooseColor_Name = 1376370912;
 
 }  // namespace internal
 }  // namespace mojom

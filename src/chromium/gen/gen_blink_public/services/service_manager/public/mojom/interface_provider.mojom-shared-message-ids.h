@@ -12,8 +12,8 @@ namespace mojom {
 namespace internal {
 
 
-// The 2111631154 value is based on sha256(salt + "InterfaceProvider1").
-constexpr uint32_t kInterfaceProvider_GetInterface_Name = 2111631154;
+// The 1376426842 value is based on sha256(salt + "InterfaceProvider1").
+constexpr uint32_t kInterfaceProvider_GetInterface_Name = 1376426842;
 
 }  // namespace internal
 }  // namespace mojom

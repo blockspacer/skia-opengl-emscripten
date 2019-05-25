@@ -12,8 +12,8 @@ namespace mojom {
 namespace internal {
 
 
-// The 1089369570 value is based on sha256(salt + "PublicIpAddressGeolocationProvider1").
-constexpr uint32_t kPublicIpAddressGeolocationProvider_CreateGeolocation_Name = 1089369570;
+// The 1511381600 value is based on sha256(salt + "PublicIpAddressGeolocationProvider1").
+constexpr uint32_t kPublicIpAddressGeolocationProvider_CreateGeolocation_Name = 1511381600;
 
 }  // namespace internal
 }  // namespace mojom

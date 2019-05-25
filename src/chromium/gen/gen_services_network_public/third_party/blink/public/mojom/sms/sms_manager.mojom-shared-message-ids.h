@@ -12,8 +12,8 @@ namespace mojom {
 namespace internal {
 
 
-// The 1766715716 value is based on sha256(salt + "SmsManager1").
-constexpr uint32_t kSmsManager_GetNextMessage_Name = 1766715716;
+// The 600022684 value is based on sha256(salt + "SmsManager1").
+constexpr uint32_t kSmsManager_GetNextMessage_Name = 600022684;
 
 }  // namespace internal
 }  // namespace mojom

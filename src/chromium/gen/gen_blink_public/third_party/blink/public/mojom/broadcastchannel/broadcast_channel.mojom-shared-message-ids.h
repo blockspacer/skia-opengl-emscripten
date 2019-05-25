@@ -12,10 +12,10 @@ namespace mojom {
 namespace internal {
 
 
-// The 203527454 value is based on sha256(salt + "BroadcastChannelClient1").
-constexpr uint32_t kBroadcastChannelClient_OnMessage_Name = 203527454;
-// The 1065779461 value is based on sha256(salt + "BroadcastChannelProvider1").
-constexpr uint32_t kBroadcastChannelProvider_ConnectToChannel_Name = 1065779461;
+// The 326780772 value is based on sha256(salt + "BroadcastChannelClient1").
+constexpr uint32_t kBroadcastChannelClient_OnMessage_Name = 326780772;
+// The 1690551443 value is based on sha256(salt + "BroadcastChannelProvider1").
+constexpr uint32_t kBroadcastChannelProvider_ConnectToChannel_Name = 1690551443;
 
 }  // namespace internal
 }  // namespace mojom

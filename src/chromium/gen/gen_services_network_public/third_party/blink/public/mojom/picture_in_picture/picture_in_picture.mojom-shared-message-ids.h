@@ -12,16 +12,16 @@ namespace mojom {
 namespace internal {
 
 
-// The 144663203 value is based on sha256(salt + "PictureInPictureDelegate1").
-constexpr uint32_t kPictureInPictureDelegate_PictureInPictureWindowSizeChanged_Name = 144663203;
-// The 1010983623 value is based on sha256(salt + "PictureInPictureService1").
-constexpr uint32_t kPictureInPictureService_StartSession_Name = 1010983623;
-// The 469461026 value is based on sha256(salt + "PictureInPictureService2").
-constexpr uint32_t kPictureInPictureService_EndSession_Name = 469461026;
-// The 1813495861 value is based on sha256(salt + "PictureInPictureService3").
-constexpr uint32_t kPictureInPictureService_UpdateSession_Name = 1813495861;
-// The 1170768516 value is based on sha256(salt + "PictureInPictureService4").
-constexpr uint32_t kPictureInPictureService_SetDelegate_Name = 1170768516;
+// The 331762757 value is based on sha256(salt + "PictureInPictureDelegate1").
+constexpr uint32_t kPictureInPictureDelegate_PictureInPictureWindowSizeChanged_Name = 331762757;
+// The 930200782 value is based on sha256(salt + "PictureInPictureService1").
+constexpr uint32_t kPictureInPictureService_StartSession_Name = 930200782;
+// The 993894760 value is based on sha256(salt + "PictureInPictureService2").
+constexpr uint32_t kPictureInPictureService_EndSession_Name = 993894760;
+// The 1274381318 value is based on sha256(salt + "PictureInPictureService3").
+constexpr uint32_t kPictureInPictureService_UpdateSession_Name = 1274381318;
+// The 32267460 value is based on sha256(salt + "PictureInPictureService4").
+constexpr uint32_t kPictureInPictureService_SetDelegate_Name = 32267460;
 
 }  // namespace internal
 }  // namespace mojom

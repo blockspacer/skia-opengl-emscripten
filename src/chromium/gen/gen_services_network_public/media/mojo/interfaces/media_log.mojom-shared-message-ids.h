@@ -12,8 +12,8 @@ namespace mojom {
 namespace internal {
 
 
-// The 370582255 value is based on sha256(salt + "MediaLog1").
-constexpr uint32_t kMediaLog_AddEvent_Name = 370582255;
+// The 924119008 value is based on sha256(salt + "MediaLog1").
+constexpr uint32_t kMediaLog_AddEvent_Name = 924119008;
 
 }  // namespace internal
 }  // namespace mojom

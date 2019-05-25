@@ -7,6 +7,5 @@ gen/mojo/public/mojom/base/base.sources_list
 gen/services/network/public/mojom/mojom.sources_list
 gen/services/service_manager/public/mojom/mojom.sources_list
 gen/skia/public/interfaces/interfaces.sources_list
-gen/ui/base/ime/mojo/mojo.sources_list
 gen/url/mojom/url_mojom_gurl.sources_list
 gen/url/mojom/url_mojom_origin.sources_list

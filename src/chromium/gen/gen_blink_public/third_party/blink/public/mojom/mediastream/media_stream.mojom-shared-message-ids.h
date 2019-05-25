@@ -12,28 +12,28 @@ namespace mojom {
 namespace internal {
 
 
-// The 1342751886 value is based on sha256(salt + "MediaStreamDeviceObserver1").
-constexpr uint32_t kMediaStreamDeviceObserver_OnDeviceStopped_Name = 1342751886;
-// The 1363590026 value is based on sha256(salt + "MediaStreamDeviceObserver2").
-constexpr uint32_t kMediaStreamDeviceObserver_OnDeviceChanged_Name = 1363590026;
-// The 2133495860 value is based on sha256(salt + "MediaStreamDispatcherHost1").
-constexpr uint32_t kMediaStreamDispatcherHost_GenerateStream_Name = 2133495860;
-// The 330115237 value is based on sha256(salt + "MediaStreamDispatcherHost2").
-constexpr uint32_t kMediaStreamDispatcherHost_CancelRequest_Name = 330115237;
-// The 1617512280 value is based on sha256(salt + "MediaStreamDispatcherHost3").
-constexpr uint32_t kMediaStreamDispatcherHost_StopStreamDevice_Name = 1617512280;
-// The 1750916187 value is based on sha256(salt + "MediaStreamDispatcherHost4").
-constexpr uint32_t kMediaStreamDispatcherHost_OpenDevice_Name = 1750916187;
-// The 232817781 value is based on sha256(salt + "MediaStreamDispatcherHost5").
-constexpr uint32_t kMediaStreamDispatcherHost_CloseDevice_Name = 232817781;
-// The 793077962 value is based on sha256(salt + "MediaStreamDispatcherHost6").
-constexpr uint32_t kMediaStreamDispatcherHost_SetCapturingLinkSecured_Name = 793077962;
-// The 636741099 value is based on sha256(salt + "MediaStreamDispatcherHost7").
-constexpr uint32_t kMediaStreamDispatcherHost_OnStreamStarted_Name = 636741099;
-// The 692045356 value is based on sha256(salt + "MediaStreamTrackMetricsHost1").
-constexpr uint32_t kMediaStreamTrackMetricsHost_AddTrack_Name = 692045356;
-// The 1957676815 value is based on sha256(salt + "MediaStreamTrackMetricsHost2").
-constexpr uint32_t kMediaStreamTrackMetricsHost_RemoveTrack_Name = 1957676815;
+// The 1387865158 value is based on sha256(salt + "MediaStreamDeviceObserver1").
+constexpr uint32_t kMediaStreamDeviceObserver_OnDeviceStopped_Name = 1387865158;
+// The 104631338 value is based on sha256(salt + "MediaStreamDeviceObserver2").
+constexpr uint32_t kMediaStreamDeviceObserver_OnDeviceChanged_Name = 104631338;
+// The 300354502 value is based on sha256(salt + "MediaStreamDispatcherHost1").
+constexpr uint32_t kMediaStreamDispatcherHost_GenerateStream_Name = 300354502;
+// The 2097020648 value is based on sha256(salt + "MediaStreamDispatcherHost2").
+constexpr uint32_t kMediaStreamDispatcherHost_CancelRequest_Name = 2097020648;
+// The 112931621 value is based on sha256(salt + "MediaStreamDispatcherHost3").
+constexpr uint32_t kMediaStreamDispatcherHost_StopStreamDevice_Name = 112931621;
+// The 499381357 value is based on sha256(salt + "MediaStreamDispatcherHost4").
+constexpr uint32_t kMediaStreamDispatcherHost_OpenDevice_Name = 499381357;
+// The 323347564 value is based on sha256(salt + "MediaStreamDispatcherHost5").
+constexpr uint32_t kMediaStreamDispatcherHost_CloseDevice_Name = 323347564;
+// The 874803311 value is based on sha256(salt + "MediaStreamDispatcherHost6").
+constexpr uint32_t kMediaStreamDispatcherHost_SetCapturingLinkSecured_Name = 874803311;
+// The 927059154 value is based on sha256(salt + "MediaStreamDispatcherHost7").
+constexpr uint32_t kMediaStreamDispatcherHost_OnStreamStarted_Name = 927059154;
+// The 1226737833 value is based on sha256(salt + "MediaStreamTrackMetricsHost1").
+constexpr uint32_t kMediaStreamTrackMetricsHost_AddTrack_Name = 1226737833;
+// The 732863003 value is based on sha256(salt + "MediaStreamTrackMetricsHost2").
+constexpr uint32_t kMediaStreamTrackMetricsHost_RemoveTrack_Name = 732863003;
 
 }  // namespace internal
 }  // namespace mojom

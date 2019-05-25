@@ -12,8 +12,8 @@ namespace mojom {
 namespace internal {
 
 
-// The 313345469 value is based on sha256(salt + "MediaService1").
-constexpr uint32_t kMediaService_CreateInterfaceFactory_Name = 313345469;
+// The 136207714 value is based on sha256(salt + "MediaService1").
+constexpr uint32_t kMediaService_CreateInterfaceFactory_Name = 136207714;
 
 }  // namespace internal
 }  // namespace mojom

@@ -12,12 +12,12 @@ namespace mojom {
 namespace internal {
 
 
-// The 1608057314 value is based on sha256(salt + "KeyboardLockService1").
-constexpr uint32_t kKeyboardLockService_RequestKeyboardLock_Name = 1608057314;
-// The 1986634332 value is based on sha256(salt + "KeyboardLockService2").
-constexpr uint32_t kKeyboardLockService_CancelKeyboardLock_Name = 1986634332;
-// The 1883693847 value is based on sha256(salt + "KeyboardLockService3").
-constexpr uint32_t kKeyboardLockService_GetKeyboardLayoutMap_Name = 1883693847;
+// The 2006870261 value is based on sha256(salt + "KeyboardLockService1").
+constexpr uint32_t kKeyboardLockService_RequestKeyboardLock_Name = 2006870261;
+// The 290809039 value is based on sha256(salt + "KeyboardLockService2").
+constexpr uint32_t kKeyboardLockService_CancelKeyboardLock_Name = 290809039;
+// The 1701820140 value is based on sha256(salt + "KeyboardLockService3").
+constexpr uint32_t kKeyboardLockService_GetKeyboardLayoutMap_Name = 1701820140;
 
 }  // namespace internal
 }  // namespace mojom

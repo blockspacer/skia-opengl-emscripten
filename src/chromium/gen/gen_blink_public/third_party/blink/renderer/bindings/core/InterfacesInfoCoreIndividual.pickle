@@ -67,7 +67,7 @@ p36
 I00
 sS'full_path'
 p37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/events/keyboard_event.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/events/keyboard_event.idl'
 p38
 ssS'KeyframeEffect'
 p39
@@ -154,7 +154,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/animation/keyframe_effect.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/animation/keyframe_effect.idl'
 p74
 ssS'CDATASection'
 p75
@@ -187,7 +187,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/dom/cdata_section.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/dom/cdata_section.idl'
 p85
 ssS'UnderlyingSinkBase'
 p86
@@ -220,7 +220,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/streams/underlying_sink_base.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/streams/underlying_sink_base.idl'
 p96
 ssS'TextTrackCueList'
 p97
@@ -251,7 +251,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/track/text_track_cue_list.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/track/text_track_cue_list.idl'
 p106
 ssS'HTMLFrameSetElement'
 p107
@@ -290,7 +290,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/html_frame_set_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/html_frame_set_element.idl'
 p120
 ssS'InternalRuntimeFlags'
 p121
@@ -321,7 +321,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/out/Default/gen/third_party/blink/renderer/core/testing/internal_runtime_flags.idl'
+S'/mnt/data/chromium/src/out/Default/gen/third_party/blink/renderer/core/testing/internal_runtime_flags.idl'
 p130
 ssS'PopStateEventInit'
 p131
@@ -353,7 +353,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/events/pop_state_event_init.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/events/pop_state_event_init.idl'
 p140
 ssS'SVGFEDropShadowElement'
 p141
@@ -388,7 +388,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_fe_drop_shadow_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_fe_drop_shadow_element.idl'
 p152
 ssS'XMLHttpRequestEventTarget'
 p153
@@ -448,7 +448,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/xmlhttprequest/xml_http_request_event_target.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/xmlhttprequest/xml_http_request_event_target.idl'
 p174
 ssS'ElementRegistrationOptions'
 p175
@@ -478,7 +478,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/dom/element_registration_options.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/dom/element_registration_options.idl'
 p183
 ssS'SVGFEMorphologyElement'
 p184
@@ -515,7 +515,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_fe_morphology_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_fe_morphology_element.idl'
 p196
 ssS'SVGFETileElement'
 p197
@@ -550,7 +550,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_fe_tile_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_fe_tile_element.idl'
 p208
 ssS'SVGLengthList'
 p209
@@ -586,7 +586,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_length_list.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_length_list.idl'
 p220
 ssS'SVGTSpanElement'
 p221
@@ -619,7 +619,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_tspan_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_tspan_element.idl'
 p231
 ssS'AnimationEffect'
 p232
@@ -661,7 +661,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/animation/animation_effect.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/animation/animation_effect.idl'
 p246
 ssS'ElementCreationOptions'
 p247
@@ -691,7 +691,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/dom/element_creation_options.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/dom/element_creation_options.idl'
 p255
 ssS'HTMLSpanElement'
 p256
@@ -726,7 +726,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/html_span_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/html_span_element.idl'
 p267
 ssS'Headers'
 p268
@@ -839,7 +839,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/fetch/headers.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/fetch/headers.idl'
 p311
 ssS'SVGRect'
 p312
@@ -875,7 +875,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_rect.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_rect.idl'
 p323
 ssS'WritableStreamDefaultController'
 p324
@@ -939,7 +939,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/streams/writable_stream_default_controller.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/streams/writable_stream_default_controller.idl'
 p347
 ssS'PerformanceNavigationTiming'
 p348
@@ -983,7 +983,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/timing/performance_navigation_timing.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/timing/performance_navigation_timing.idl'
 p363
 ssS'MojoCreateDataPipeOptions'
 p364
@@ -1013,7 +1013,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/mojo/mojo_create_data_pipe_options.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/mojo/mojo_create_data_pipe_options.idl'
 p372
 ssS'SVGAnimatedString'
 p373
@@ -1044,7 +1044,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_animated_string.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_animated_string.idl'
 p382
 ssS'SVGPointList'
 p383
@@ -1080,7 +1080,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_point_list.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_point_list.idl'
 p394
 ssS'HTMLOptionElement'
 p395
@@ -1127,7 +1127,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/forms/html_option_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/forms/html_option_element.idl'
 p412
 ssS'SVGAnimatedNumber'
 p413
@@ -1158,7 +1158,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_animated_number.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_animated_number.idl'
 p422
 ssS'Float32Array'
 p423
@@ -1198,7 +1198,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/typed_arrays/float32_array.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/typed_arrays/float32_array.idl'
 p436
 ssS'CSSStyleValue'
 p437
@@ -1256,7 +1256,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/css/cssom/css_style_value.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/css/cssom/css_style_value.idl'
 p457
 ssS'ReadableStream'
 p458
@@ -1324,7 +1324,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/streams/readable_stream.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/streams/readable_stream.idl'
 p483
 ssS'InternalSettingsGenerated'
 p484
@@ -1355,7 +1355,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/out/Default/gen/third_party/blink/renderer/core/testing/internal_settings_generated.idl'
+S'/mnt/data/chromium/src/out/Default/gen/third_party/blink/renderer/core/testing/internal_settings_generated.idl'
 p493
 ssS'FileReader'
 p494
@@ -1448,7 +1448,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/fileapi/file_reader.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/fileapi/file_reader.idl'
 p529
 ssS'BeforeUnloadEvent'
 p530
@@ -1492,7 +1492,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/events/before_unload_event.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/events/before_unload_event.idl'
 p545
 ssS'MediaError'
 p546
@@ -1523,7 +1523,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/media/media_error.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/media/media_error.idl'
 p555
 ssS'KeyboardEventInit'
 p556
@@ -1555,7 +1555,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/events/keyboard_event_init.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/events/keyboard_event_init.idl'
 p565
 ssS'HTMLTableColElement'
 p566
@@ -1590,7 +1590,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/html_table_col_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/html_table_col_element.idl'
 p577
 ssS'XMLDocument'
 p578
@@ -1623,7 +1623,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/dom/xml_document.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/dom/xml_document.idl'
 p588
 ssS'HTMLButtonElement'
 p589
@@ -1658,7 +1658,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/forms/html_button_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/forms/html_button_element.idl'
 p600
 ssS'CSSMatrixComponentOptions'
 p601
@@ -1688,7 +1688,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/css/cssom/css_matrix_component_options.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/css/cssom/css_matrix_component_options.idl'
 p609
 ssS'SVGFECompositeElement'
 p610
@@ -1725,7 +1725,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_fe_composite_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_fe_composite_element.idl'
 p622
 ssS'AbstractWorker'
 p623
@@ -1777,7 +1777,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/workers/abstract_worker.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/workers/abstract_worker.idl'
 p641
 ssS'Uint16Array'
 p642
@@ -1817,7 +1817,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/typed_arrays/uint16_array.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/typed_arrays/uint16_array.idl'
 p655
 ssS'FilePropertyBag'
 p656
@@ -1849,7 +1849,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/fileapi/file_property_bag.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/fileapi/file_property_bag.idl'
 p665
 ssS'ChildNode'
 p666
@@ -1906,7 +1906,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/dom/child_node.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/dom/child_node.idl'
 p686
 ssS'AccessibleNodeList'
 p687
@@ -1942,7 +1942,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/aom/accessible_node_list.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/aom/accessible_node_list.idl'
 p698
 ssS'InputEventInit'
 p699
@@ -1974,7 +1974,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/events/input_event_init.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/events/input_event_init.idl'
 p708
 ssS'HTMLCollection'
 p709
@@ -2007,7 +2007,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/html_collection.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/html_collection.idl'
 p719
 ssS'PerformanceLayoutJank'
 p720
@@ -2055,7 +2055,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/timing/performance_layout_jank.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/timing/performance_layout_jank.idl'
 p737
 ssS'Worker'
 p738
@@ -2125,7 +2125,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/workers/worker.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/workers/worker.idl'
 p764
 ssS'SVGPatternElement'
 p765
@@ -2164,7 +2164,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_pattern_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_pattern_element.idl'
 p778
 ssS'CustomLayoutConstraintsOptions'
 p779
@@ -2194,7 +2194,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/layout/custom/custom_layout_constraints_options.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/layout/custom/custom_layout_constraints_options.idl'
 p787
 ssS'SVGAnimatedRect'
 p788
@@ -2225,7 +2225,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_animated_rect.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_animated_rect.idl'
 p797
 ssS'Float64Array'
 p798
@@ -2265,7 +2265,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/typed_arrays/float64_array.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/typed_arrays/float64_array.idl'
 p811
 ssS'CSSStyleSheet'
 p812
@@ -2318,7 +2318,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/css/css_style_sheet.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/css/css_style_sheet.idl'
 p831
 ssS'WorkerLocation'
 p832
@@ -2360,7 +2360,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/workers/worker_location.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/workers/worker_location.idl'
 p846
 ssS'StaticRange'
 p847
@@ -2391,7 +2391,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/dom/static_range.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/dom/static_range.idl'
 p856
 ssS'ErrorEvent'
 p857
@@ -2448,7 +2448,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/events/error_event.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/events/error_event.idl'
 p877
 ssS'HTMLFormControlsCollection'
 p878
@@ -2512,7 +2512,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/forms/html_form_controls_collection.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/forms/html_form_controls_collection.idl'
 p900
 ssS'PointerEventInit'
 p901
@@ -2544,7 +2544,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/events/pointer_event_init.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/events/pointer_event_init.idl'
 p910
 ssS'OptionalEffectTiming'
 p911
@@ -2598,7 +2598,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/animation/optional_effect_timing.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/animation/optional_effect_timing.idl'
 p929
 ssS'HTMLAreaElement'
 p930
@@ -2637,7 +2637,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/html_area_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/html_area_element.idl'
 p943
 ssS'HTMLFormElement'
 p944
@@ -2698,7 +2698,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/forms/html_form_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/forms/html_form_element.idl'
 p966
 ssS'PerformancePaintTiming'
 p967
@@ -2731,7 +2731,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/timing/performance_paint_timing.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/timing/performance_paint_timing.idl'
 p977
 ssS'CSSViewportRule'
 p978
@@ -2768,7 +2768,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/css/css_viewport_rule.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/css/css_viewport_rule.idl'
 p990
 ssS'SVGLength'
 p991
@@ -2804,7 +2804,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_length.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_length.idl'
 p1002
 ssS'DataTransferItemList'
 p1003
@@ -2835,7 +2835,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/clipboard/data_transfer_item_list.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/clipboard/data_transfer_item_list.idl'
 p1012
 ssS'ResourceProgressEvent'
 p1013
@@ -2870,7 +2870,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/events/resource_progress_event.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/events/resource_progress_event.idl'
 p1024
 ssS'HTMLInputElement'
 p1025
@@ -2907,7 +2907,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/forms/html_input_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/forms/html_input_element.idl'
 p1037
 ssS'Selection'
 p1038
@@ -2943,7 +2943,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/editing/selection.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/editing/selection.idl'
 p1049
 ssS'TrustedTypePolicy'
 p1050
@@ -3073,7 +3073,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/trustedtypes/trusted_type_policy.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/trustedtypes/trusted_type_policy.idl'
 p1101
 ssS'PromiseRejectionEvent'
 p1102
@@ -3130,7 +3130,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/events/promise_rejection_event.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/events/promise_rejection_event.idl'
 p1122
 ssS'SVGGraphicsElement'
 p1123
@@ -3165,7 +3165,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_graphics_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_graphics_element.idl'
 p1134
 ssS'CSSNamespaceRule'
 p1135
@@ -3209,7 +3209,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/css/css_namespace_rule.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/css/css_namespace_rule.idl'
 p1150
 ssS'CSSMathMax'
 p1151
@@ -3274,7 +3274,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/css/cssom/css_math_max.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/css/cssom/css_math_max.idl'
 p1174
 ssS'InspectorOverlayHost'
 p1175
@@ -3307,7 +3307,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/inspector/inspector_overlay_host.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/inspector/inspector_overlay_host.idl'
 p1185
 ssS'CompositionEvent'
 p1186
@@ -3352,7 +3352,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/events/composition_event.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/events/composition_event.idl'
 p1201
 ssS'DOMStringMap'
 p1202
@@ -3385,7 +3385,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/dom/dom_string_map.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/dom/dom_string_map.idl'
 p1212
 ssS'DOMException'
 p1213
@@ -3438,7 +3438,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/dom/dom_exception.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/dom/dom_exception.idl'
 p1231
 ssS'UIEventInit'
 p1232
@@ -3470,7 +3470,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/events/ui_event_init.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/events/ui_event_init.idl'
 p1241
 ssS'TaskAttributionTiming'
 p1242
@@ -3503,7 +3503,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/timing/task_attribution_timing.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/timing/task_attribution_timing.idl'
 p1252
 ssS'SVGAElement'
 p1253
@@ -3538,7 +3538,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_a_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_a_element.idl'
 p1264
 ssS'SVGURIReference'
 p1265
@@ -3569,7 +3569,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_uri_reference.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_uri_reference.idl'
 p1274
 ssS'TextMetrics'
 p1275
@@ -3600,7 +3600,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/canvas/text_metrics.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/canvas/text_metrics.idl'
 p1284
 ssS'FontFace'
 p1285
@@ -3697,7 +3697,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/css/font_face.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/css/font_face.idl'
 p1322
 ssS'SVGAnimateTransformElement'
 p1323
@@ -3730,7 +3730,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_animate_transform_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_animate_transform_element.idl'
 p1333
 ssS'HTMLHeadElement'
 p1334
@@ -3765,7 +3765,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/html_head_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/html_head_element.idl'
 p1345
 ssS'Int8Array'
 p1346
@@ -3805,7 +3805,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/typed_arrays/int8_array.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/typed_arrays/int8_array.idl'
 p1359
 ssS'AriaAttributes'
 p1360
@@ -3842,7 +3842,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/dom/aria_attributes.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/dom/aria_attributes.idl'
 p1372
 ssS'ValidityState'
 p1373
@@ -3873,7 +3873,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/forms/validity_state.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/forms/validity_state.idl'
 p1382
 ssS'PerformanceEventTiming'
 p1383
@@ -3921,7 +3921,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/timing/performance_event_timing.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/timing/performance_event_timing.idl'
 p1400
 ssS'SVGTextPositioningElement'
 p1401
@@ -3954,7 +3954,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_text_positioning_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_text_positioning_element.idl'
 p1411
 ssS'GlobalEventHandlers'
 p1412
@@ -3987,7 +3987,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/dom/global_event_handlers.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/dom/global_event_handlers.idl'
 p1422
 ssS'DocumentOrShadowRoot'
 p1423
@@ -4020,7 +4020,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/dom/document_or_shadow_root.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/dom/document_or_shadow_root.idl'
 p1433
 ssS'SVGSwitchElement'
 p1434
@@ -4053,7 +4053,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_switch_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_switch_element.idl'
 p1444
 ssS'SVGAnimateElement'
 p1445
@@ -4086,7 +4086,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_animate_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_animate_element.idl'
 p1455
 ssS'WritableStreamDefaultWriter'
 p1456
@@ -4157,7 +4157,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/streams/writable_stream_default_writer.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/streams/writable_stream_default_writer.idl'
 p1482
 ssS'DragEventInit'
 p1483
@@ -4189,7 +4189,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/events/drag_event_init.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/events/drag_event_init.idl'
 p1492
 ssS'HTMLTableRowElement'
 p1493
@@ -4224,7 +4224,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/html_table_row_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/html_table_row_element.idl'
 p1504
 ssS'CSSImageValue'
 p1505
@@ -4289,7 +4289,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/css/cssom/css_image_value.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/css/cssom/css_image_value.idl'
 p1528
 ssS'NavigatorConcurrentHardware'
 p1529
@@ -4339,7 +4339,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/frame/navigator_concurrent_hardware.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/frame/navigator_concurrent_hardware.idl'
 p1546
 ssS'CSSGroupingRule'
 p1547
@@ -4383,7 +4383,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/css/css_grouping_rule.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/css/css_grouping_rule.idl'
 p1562
 ssS'MutationRecord'
 p1563
@@ -4414,7 +4414,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/dom/mutation_record.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/dom/mutation_record.idl'
 p1572
 ssS'SVGSetElement'
 p1573
@@ -4447,7 +4447,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_set_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_set_element.idl'
 p1583
 ssS'Text'
 p1584
@@ -4485,7 +4485,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/dom/text.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/dom/text.idl'
 p1596
 ssS'KeyframeEffectOptions'
 p1597
@@ -4517,7 +4517,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/animation/keyframe_effect_options.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/animation/keyframe_effect_options.idl'
 p1606
 ssS'LayoutWorkletGlobalScope'
 p1607
@@ -4582,7 +4582,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/layout/custom/layout_worklet_global_scope.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/layout/custom/layout_worklet_global_scope.idl'
 p1634
 ssS'StyleSheet'
 p1635
@@ -4626,7 +4626,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/css/style_sheet.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/css/style_sheet.idl'
 p1650
 ssS'HTMLDirectoryElement'
 p1651
@@ -4661,7 +4661,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/html_directory_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/html_directory_element.idl'
 p1662
 ssS'TrustedURL'
 p1663
@@ -4731,7 +4731,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/trustedtypes/trusted_url.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/trustedtypes/trusted_url.idl'
 p1689
 ssS'DocumentFragment'
 p1690
@@ -4773,7 +4773,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/dom/document_fragment.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/dom/document_fragment.idl'
 p1704
 ssS'VisualViewport'
 p1705
@@ -4811,7 +4811,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/frame/visual_viewport.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/frame/visual_viewport.idl'
 p1717
 ssS'ResizeObserverEntry'
 p1718
@@ -4842,7 +4842,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/resize_observer/resize_observer_entry.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/resize_observer/resize_observer_entry.idl'
 p1727
 ssS'SVGPreserveAspectRatio'
 p1728
@@ -4878,7 +4878,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_preserve_aspect_ratio.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_preserve_aspect_ratio.idl'
 p1739
 ssS'AnimationEvent'
 p1740
@@ -4912,7 +4912,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/events/animation_event.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/events/animation_event.idl'
 p1750
 ssS'SVGAnimatedTransformList'
 p1751
@@ -4943,7 +4943,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_animated_transform_list.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_animated_transform_list.idl'
 p1760
 ssS'WorkerTaskQueue'
 p1761
@@ -5000,7 +5000,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/workers/experimental/worker_task_queue.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/workers/experimental/worker_task_queue.idl'
 p1782
 ssS'IdleDeadline'
 p1783
@@ -5031,7 +5031,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/dom/idle_deadline.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/dom/idle_deadline.idl'
 p1792
 ssS'DOMImplementation'
 p1793
@@ -5062,7 +5062,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/dom/dom_implementation.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/dom/dom_implementation.idl'
 p1802
 ssS'ScrollState'
 p1803
@@ -5098,7 +5098,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/page/scrolling/scroll_state.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/page/scrolling/scroll_state.idl'
 p1814
 ssS'HTMLDivElement'
 p1815
@@ -5133,7 +5133,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/html_div_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/html_div_element.idl'
 p1826
 ssS'TestReportBody'
 p1827
@@ -5168,7 +5168,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/frame/test_report_body.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/frame/test_report_body.idl'
 p1838
 ssS'HTMLEmbedElement'
 p1839
@@ -5207,7 +5207,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/html_embed_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/html_embed_element.idl'
 p1852
 ssS'BlobPropertyBag'
 p1853
@@ -5237,7 +5237,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/fileapi/blob_property_bag.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/fileapi/blob_property_bag.idl'
 p1861
 ssS'CSSRule'
 p1862
@@ -5279,7 +5279,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/css/css_rule.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/css/css_rule.idl'
 p1876
 ssS'ImageData'
 p1877
@@ -5368,7 +5368,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/canvas/image_data.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/canvas/image_data.idl'
 p1910
 ssS'OriginTrialsTestDictionary'
 p1911
@@ -5398,7 +5398,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/testing/origin_trials_test_dictionary.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/testing/origin_trials_test_dictionary.idl'
 p1919
 ssS'GarbageCollectedScriptWrappable'
 p1920
@@ -5429,7 +5429,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/testing/garbage_collected_script_wrappable.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/testing/garbage_collected_script_wrappable.idl'
 p1929
 ssS'NavigatorUserAgent'
 p1930
@@ -5475,7 +5475,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/frame/navigator_user_agent.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/frame/navigator_user_agent.idl'
 p1946
 ssS'DeathAwareScriptWrappable'
 p1947
@@ -5506,7 +5506,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/testing/death_aware_script_wrappable.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/testing/death_aware_script_wrappable.idl'
 p1956
 ssS'MutationEvent'
 p1957
@@ -5539,7 +5539,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/events/mutation_event.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/events/mutation_event.idl'
 p1967
 ssS'Worklet'
 p1968
@@ -5572,7 +5572,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/workers/worklet.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/workers/worklet.idl'
 p1978
 ssS'SVGTextContentElement'
 p1979
@@ -5605,7 +5605,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_text_content_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_text_content_element.idl'
 p1989
 ssS'Attr'
 p1990
@@ -5638,7 +5638,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/dom/attr.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/dom/attr.idl'
 p2000
 ssS'Request'
 p2001
@@ -5725,7 +5725,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/fetch/request.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/fetch/request.idl'
 p2034
 ssS'SVGFEImageElement'
 p2035
@@ -5762,7 +5762,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_fe_image_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_fe_image_element.idl'
 p2047
 ssS'EventTarget'
 p2048
@@ -5878,7 +5878,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/dom/events/event_target.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/dom/events/event_target.idl'
 p2092
 ssS'OverscrollEventInit'
 p2093
@@ -5910,7 +5910,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/events/overscroll_event_init.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/events/overscroll_event_init.idl'
 p2102
 ssS'FormDataEventInit'
 p2103
@@ -5942,7 +5942,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/forms/form_data_event_init.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/forms/form_data_event_init.idl'
 p2112
 ssS'Int16Array'
 p2113
@@ -5982,7 +5982,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/typed_arrays/int16_array.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/typed_arrays/int16_array.idl'
 p2126
 ssS'FeaturePolicy'
 p2127
@@ -6024,7 +6024,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/feature_policy/feature_policy.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/feature_policy/feature_policy.idl'
 p2141
 ssS'CSSSupportsRule'
 p2142
@@ -6057,7 +6057,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/css/css_supports_rule.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/css/css_supports_rule.idl'
 p2152
 ssS'SVGDiscardElement'
 p2153
@@ -6090,7 +6090,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_discard_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_discard_element.idl'
 p2163
 ssS'HTMLQuoteElement'
 p2164
@@ -6125,7 +6125,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/html_quote_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/html_quote_element.idl'
 p2175
 ssS'SVGAnimatedLengthList'
 p2176
@@ -6156,7 +6156,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_animated_length_list.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_animated_length_list.idl'
 p2185
 ssS'File'
 p2186
@@ -6215,7 +6215,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/fileapi/file.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/fileapi/file.idl'
 p2207
 ssS'HTMLDialogElement'
 p2208
@@ -6250,7 +6250,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/html_dialog_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/html_dialog_element.idl'
 p2219
 ssS'Navigator'
 p2220
@@ -6310,7 +6310,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/frame/navigator.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/frame/navigator.idl'
 p2244
 ssS'SVGFEFuncGElement'
 p2245
@@ -6343,7 +6343,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_fe_func_g_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_fe_func_g_element.idl'
 p2255
 ssS'SVGFESpecularLightingElement'
 p2256
@@ -6378,7 +6378,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_fe_specular_lighting_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_fe_specular_lighting_element.idl'
 p2267
 ssS'SVGMatrix'
 p2268
@@ -6414,7 +6414,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_matrix.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_matrix.idl'
 p2279
 ssS'XPathEvaluator'
 p2280
@@ -6448,7 +6448,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/xml/xpath_evaluator.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/xml/xpath_evaluator.idl'
 p2290
 ssS'DataView'
 p2291
@@ -6486,7 +6486,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/typed_arrays/data_view.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/typed_arrays/data_view.idl'
 p2303
 ssS'NodeList'
 p2304
@@ -6517,7 +6517,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/dom/node_list.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/dom/node_list.idl'
 p2313
 ssS'Uint32Array'
 p2314
@@ -6557,7 +6557,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/typed_arrays/uint32_array.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/typed_arrays/uint32_array.idl'
 p2327
 ssS'KeyframeAnimationOptions'
 p2328
@@ -6589,7 +6589,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/animation/keyframe_animation_options.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/animation/keyframe_animation_options.idl'
 p2337
 ssS'SVGFEFuncAElement'
 p2338
@@ -6622,7 +6622,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_fe_func_a_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_fe_func_a_element.idl'
 p2348
 ssS'HTMLLinkElement'
 p2349
@@ -6659,7 +6659,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/html_link_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/html_link_element.idl'
 p2361
 ssS'SVGAnimatedBoolean'
 p2362
@@ -6690,7 +6690,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_animated_boolean.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_animated_boolean.idl'
 p2371
 ssS'HTMLTextAreaElement'
 p2372
@@ -6725,7 +6725,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/forms/html_text_area_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/forms/html_text_area_element.idl'
 p2383
 ssS'HTMLDetailsElement'
 p2384
@@ -6760,7 +6760,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/html_details_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/html_details_element.idl'
 p2395
 ssS'Body'
 p2396
@@ -6793,7 +6793,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/fetch/body.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/fetch/body.idl'
 p2406
 ssS'BeforeActivateEvent'
 p2407
@@ -6830,7 +6830,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/display_lock/before_activate_event.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/display_lock/before_activate_event.idl'
 p2419
 ssS'MutationObserverInit'
 p2420
@@ -6860,7 +6860,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/dom/mutation_observer_init.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/dom/mutation_observer_init.idl'
 p2428
 ssS'ProgressEventInit'
 p2429
@@ -6892,7 +6892,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/events/progress_event_init.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/events/progress_event_init.idl'
 p2438
 ssS'VideoTrack'
 p2439
@@ -6938,7 +6938,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/track/video_track.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/track/video_track.idl'
 p2455
 ssS'HTMLMetaElement'
 p2456
@@ -6973,7 +6973,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/html_meta_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/html_meta_element.idl'
 p2467
 ssS'Task'
 p2468
@@ -7019,7 +7019,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/workers/experimental/task.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/workers/experimental/task.idl'
 p2484
 ssS'HTMLLegendElement'
 p2485
@@ -7054,7 +7054,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/forms/html_legend_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/forms/html_legend_element.idl'
 p2496
 ssS'URL'
 p2497
@@ -7123,7 +7123,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/url/url.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/url/url.idl'
 p2523
 ssS'DOMTokenList'
 p2524
@@ -7165,7 +7165,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/dom/dom_token_list.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/dom/dom_token_list.idl'
 p2538
 ssS'DeprecationReportBody'
 p2539
@@ -7200,7 +7200,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/frame/deprecation_report_body.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/frame/deprecation_report_body.idl'
 p2550
 ssS'SVGFEColorMatrixElement'
 p2551
@@ -7237,7 +7237,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_fe_color_matrix_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_fe_color_matrix_element.idl'
 p2563
 ssS'TrustedTypePolicyFactory'
 p2564
@@ -7291,7 +7291,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/trustedtypes/trusted_type_policy_factory.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/trustedtypes/trusted_type_policy_factory.idl'
 p2583
 ssS'HTMLMenuElement'
 p2584
@@ -7326,7 +7326,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/html_menu_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/html_menu_element.idl'
 p2595
 ssS'MessageEvent'
 p2596
@@ -7391,7 +7391,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/events/message_event.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/events/message_event.idl'
 p2619
 ssS'SVGCircleElement'
 p2620
@@ -7424,7 +7424,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_circle_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_circle_element.idl'
 p2630
 ssS'HTMLPortalElement'
 p2631
@@ -7474,7 +7474,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/portal/html_portal_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/portal/html_portal_element.idl'
 p2649
 ssS'NodeFilter'
 p2650
@@ -7507,7 +7507,7 @@ I00
 sg36
 I01
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/dom/node_filter.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/dom/node_filter.idl'
 p2660
 ssS'PerformanceMark'
 p2661
@@ -7568,7 +7568,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/timing/performance_mark.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/timing/performance_mark.idl'
 p2683
 ssS'CSSTransformValue'
 p2684
@@ -7633,7 +7633,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/css/cssom/css_transform_value.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/css/cssom/css_transform_value.idl'
 p2707
 ssS'InternalSettings'
 p2708
@@ -7666,7 +7666,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/testing/internal_settings.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/testing/internal_settings.idl'
 p2718
 ssS'Iterator'
 p2719
@@ -7699,7 +7699,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/dom/iterator.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/dom/iterator.idl'
 p2729
 ssS'SVGSymbolElement'
 p2730
@@ -7734,7 +7734,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_symbol_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_symbol_element.idl'
 p2741
 ssS'Internals'
 p2742
@@ -7776,7 +7776,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/testing/internals.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/testing/internals.idl'
 p2757
 ssS'TextEvent'
 p2758
@@ -7809,7 +7809,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/events/text_event.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/events/text_event.idl'
 p2768
 ssS'OverscrollEvent'
 p2769
@@ -7847,7 +7847,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/events/overscroll_event.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/events/overscroll_event.idl'
 p2781
 ssS'WindowOrWorkerGlobalScope'
 p2782
@@ -7971,7 +7971,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/frame/window_or_worker_global_scope.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/frame/window_or_worker_global_scope.idl'
 p2828
 ssS'HTMLAudioElement'
 p2829
@@ -8014,7 +8014,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/media/html_audio_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/media/html_audio_element.idl'
 p2844
 ssS'SVGFEMergeNodeElement'
 p2845
@@ -8047,7 +8047,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_fe_merge_node_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_fe_merge_node_element.idl'
 p2855
 ssS'HTMLTableElement'
 p2856
@@ -8082,7 +8082,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/html_table_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/html_table_element.idl'
 p2867
 ssS'Event'
 p2868
@@ -8169,7 +8169,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/dom/events/event.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/dom/events/event.idl'
 p2897
 ssS'BarProp'
 p2898
@@ -8200,7 +8200,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/frame/bar_prop.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/frame/bar_prop.idl'
 p2907
 ssS'HTMLHyperlinkElementUtils'
 p2908
@@ -8231,7 +8231,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/html_hyperlink_element_utils.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/html_hyperlink_element_utils.idl'
 p2917
 ssS'ValidityStateFlags'
 p2918
@@ -8261,7 +8261,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/custom/validity_state_flags.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/custom/validity_state_flags.idl'
 p2926
 ssS'SVGPolygonElement'
 p2927
@@ -8294,7 +8294,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_polygon_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_polygon_element.idl'
 p2937
 ssS'CSSFontFaceRule'
 p2938
@@ -8327,7 +8327,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/css/css_font_face_rule.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/css/css_font_face_rule.idl'
 p2948
 ssS'PageTransitionEventInit'
 p2949
@@ -8359,7 +8359,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/events/page_transition_event_init.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/events/page_transition_event_init.idl'
 p2958
 ssS'ClipboardEvent'
 p2959
@@ -8404,7 +8404,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/events/clipboard_event.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/events/clipboard_event.idl'
 p2974
 ssS'MojoWriteDataOptions'
 p2975
@@ -8434,7 +8434,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/mojo/mojo_write_data_options.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/mojo/mojo_write_data_options.idl'
 p2983
 ssS'MojoHandle'
 p2984
@@ -8492,7 +8492,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/mojo/mojo_handle.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/mojo/mojo_handle.idl'
 p3005
 ssS'HTMLObjectElement'
 p3006
@@ -8531,7 +8531,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/html_object_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/html_object_element.idl'
 p3019
 ssS'CustomEvent'
 p3020
@@ -8588,7 +8588,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/dom/events/custom_event.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/dom/events/custom_event.idl'
 p3040
 ssS'HTMLMeterElement'
 p3041
@@ -8623,7 +8623,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/html_meter_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/html_meter_element.idl'
 p3052
 ssS'CSSRotate'
 p3053
@@ -8688,7 +8688,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/css/cssom/css_rotate.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/css/cssom/css_rotate.idl'
 p3076
 ssS'ReportBody'
 p3077
@@ -8721,7 +8721,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/frame/report_body.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/frame/report_body.idl'
 p3087
 ssS'HTMLBodyElement'
 p3088
@@ -8758,7 +8758,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/html_body_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/html_body_element.idl'
 p3100
 ssS'HTMLLabelElement'
 p3101
@@ -8793,7 +8793,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/forms/html_label_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/forms/html_label_element.idl'
 p3112
 ssS'Report'
 p3113
@@ -8826,7 +8826,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/frame/report.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/frame/report.idl'
 p3123
 ssS'IntersectionObserver'
 p3124
@@ -8872,7 +8872,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/intersection_observer/intersection_observer.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/intersection_observer/intersection_observer.idl'
 p3140
 ssS'LayoutFragmentRequest'
 p3141
@@ -8923,7 +8923,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/layout/custom/layout_fragment_request.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/layout/custom/layout_fragment_request.idl'
 p3159
 ssS'UnionTypesTest'
 p3160
@@ -8975,185 +8975,185 @@ NtRp3176
 g67
 S'DOMString'
 p3178
-sbag57
-(g289
-g59
-NtRp3179
-(dp3180
-g292
-g57
-(g64
-g59
-NtRp3181
-(dp3182
-g67
-S'DOMString'
-p3183
-sbsbasbsbag57
-(g523
-g59
-NtRp3184
-(dp3185
-g526
-g57
-(g58
-g59
-NtRp3186
-(dp3187
-g62
-(lp3188
-g57
-(g64
-g59
-NtRp3189
-(dp3190
-g67
-S'double'
-p3191
-sbag57
-(g64
-g59
-NtRp3192
-(dp3193
-g67
-S'DOMString'
-p3194
 sbasbsbag57
 (g58
 g59
-NtRp3195
-(dp3196
+NtRp3179
+(dp3180
 g62
-(lp3197
+(lp3181
 g57
 (g64
 g59
-NtRp3198
-(dp3199
+NtRp3182
+(dp3183
 g67
 S'double'
-p3200
+p3184
 sbag57
 (g64
 g59
-NtRp3201
-(dp3202
+NtRp3185
+(dp3186
 g67
 S'DOMString'
-p3203
+p3187
 sbag57
 (g289
 g59
-NtRp3204
-(dp3205
+NtRp3188
+(dp3189
 g292
 g57
 (g64
 g59
-NtRp3206
-(dp3207
+NtRp3190
+(dp3191
 g67
 S'DOMString'
-p3208
+p3192
 sbsbasbag57
 (g58
 g59
-NtRp3209
-(dp3210
+NtRp3193
+(dp3194
 g62
-(lp3211
+(lp3195
 g57
 (g64
 g59
-NtRp3212
-(dp3213
+NtRp3196
+(dp3197
 g67
 S'double'
-p3214
+p3198
 sbag57
 (g64
 g59
-NtRp3215
-(dp3216
+NtRp3199
+(dp3200
 g67
 S'DOMString'
-p3217
+p3201
 sbasbag57
 (g58
 g59
-NtRp3218
-(dp3219
+NtRp3202
+(dp3203
 g62
-(lp3220
+(lp3204
 g57
 (g64
 g59
-NtRp3221
-(dp3222
+NtRp3205
+(dp3206
 g67
 S'double'
-p3223
+p3207
 sbag57
 (g64
 g59
-NtRp3224
-(dp3225
+NtRp3208
+(dp3209
 g67
 S'InternalEnum'
-p3226
-sbasbag57
-(g58
-g59
-NtRp3227
-(dp3228
-g62
-(lp3229
-g57
-(g64
-g59
-NtRp3230
-(dp3231
-g67
-S'NodeList'
-p3232
-sbag57
-(g64
-g59
-NtRp3233
-(dp3234
-g67
-S'Element'
-p3235
+p3210
 sbasbag57
 (g523
 g59
-NtRp3236
-(dp3237
+NtRp3211
+(dp3212
 g526
 g57
 (g58
 g59
-NtRp3238
-(dp3239
+NtRp3213
+(dp3214
 g62
-(lp3240
+(lp3215
 g57
 (g64
 g59
-NtRp3241
-(dp3242
+NtRp3216
+(dp3217
 g67
 S'NodeList'
-p3243
+p3218
 sbag57
+(g64
+g59
+NtRp3219
+(dp3220
+g67
+S'Element'
+p3221
+sbasbsbag57
+(g58
+g59
+NtRp3222
+(dp3223
+g62
+(lp3224
+g57
+(g64
+g59
+NtRp3225
+(dp3226
+g67
+S'NodeList'
+p3227
+sbag57
+(g64
+g59
+NtRp3228
+(dp3229
+g67
+S'Element'
+p3230
+sbasbag57
+(g523
+g59
+NtRp3231
+(dp3232
+g526
+g57
+(g58
+g59
+NtRp3233
+(dp3234
+g62
+(lp3235
+g57
+(g64
+g59
+NtRp3236
+(dp3237
+g67
+S'double'
+p3238
+sbag57
+(g64
+g59
+NtRp3239
+(dp3240
+g67
+S'DOMString'
+p3241
+sbag57
+(g289
+g59
+NtRp3242
+(dp3243
+g292
+g57
 (g64
 g59
 NtRp3244
 (dp3245
 g67
-S'Element'
+S'DOMString'
 p3246
-sbasbsbatRp3247
+sbsbasbsbatRp3247
 sg33
 S'core/testing'
 p3248
@@ -9162,7 +9162,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/testing/union_types_test.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/testing/union_types_test.idl'
 p3249
 ssS'HTMLDocument'
 p3250
@@ -9195,7 +9195,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/html_document.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/html_document.idl'
 p3260
 ssS'IntersectionObserverInit'
 p3261
@@ -9255,7 +9255,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/intersection_observer/intersection_observer_init.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/intersection_observer/intersection_observer_init.idl'
 p3281
 ssS'RadioNodeList'
 p3282
@@ -9299,7 +9299,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/forms/radio_node_list.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/forms/radio_node_list.idl'
 p3297
 ssS'SVGScriptElement'
 p3298
@@ -9334,7 +9334,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_script_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_script_element.idl'
 p3309
 ssS'PerformanceMarkOptions'
 p3310
@@ -9364,7 +9364,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/timing/performance_mark_options.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/timing/performance_mark_options.idl'
 p3318
 ssS'HTMLModElement'
 p3319
@@ -9399,7 +9399,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/html_mod_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/html_mod_element.idl'
 p3330
 ssS'TransformStreamDefaultController'
 p3331
@@ -9463,7 +9463,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/streams/transform_stream_default_controller.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/streams/transform_stream_default_controller.idl'
 p3354
 ssS'MojoWriteDataResult'
 p3355
@@ -9493,7 +9493,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/mojo/mojo_write_data_result.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/mojo/mojo_write_data_result.idl'
 p3363
 ssS'NavigatorCookies'
 p3364
@@ -9524,7 +9524,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/frame/navigator_cookies.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/frame/navigator_cookies.idl'
 p3373
 ssS'CSS'
 p3374
@@ -9573,7 +9573,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/css/css.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/css/css.idl'
 p3392
 ssS'AccessibleNode'
 p3393
@@ -9615,7 +9615,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/aom/accessible_node.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/aom/accessible_node.idl'
 p3407
 ssS'SVGTextPathElement'
 p3408
@@ -9650,7 +9650,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_text_path_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_text_path_element.idl'
 p3419
 ssS'MojoMapBufferResult'
 p3420
@@ -9680,7 +9680,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/mojo/mojo_map_buffer_result.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/mojo/mojo_map_buffer_result.idl'
 p3428
 ssS'CSSPerspective'
 p3429
@@ -9745,7 +9745,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/css/cssom/css_perspective.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/css/cssom/css_perspective.idl'
 p3452
 ssS'FocusEvent'
 p3453
@@ -9790,7 +9790,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/events/focus_event.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/events/focus_event.idl'
 p3468
 ssS'SecurityPolicyViolationEventInit'
 p3469
@@ -9822,7 +9822,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/events/security_policy_violation_event_init.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/events/security_policy_violation_event_init.idl'
 p3478
 ssS'ScrollTimeline'
 p3479
@@ -9896,7 +9896,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/animation/scroll_timeline.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/animation/scroll_timeline.idl'
 p3507
 ssS'Touch'
 p3508
@@ -9943,7 +9943,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/input/touch.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/input/touch.idl'
 p3524
 ssS'TimeRanges'
 p3525
@@ -9974,7 +9974,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/time_ranges.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/time_ranges.idl'
 p3534
 ssS'InternalDictionaryDerivedDerived'
 p3535
@@ -10006,7 +10006,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/testing/internal_dictionary_derived_derived.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/testing/internal_dictionary_derived_derived.idl'
 p3544
 ssS'VTTCue'
 p3545
@@ -10068,7 +10068,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/track/vtt/vtt_cue.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/track/vtt/vtt_cue.idl'
 p3567
 ssS'ApplicationCacheErrorEvent'
 p3568
@@ -10106,7 +10106,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/events/application_cache_error_event.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/events/application_cache_error_event.idl'
 p3580
 ssS'ActivateInvisibleEvent'
 p3581
@@ -10143,7 +10143,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/invisible_dom/activate_invisible_event.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/invisible_dom/activate_invisible_event.idl'
 p3593
 ssS'HTMLDataElement'
 p3594
@@ -10178,7 +10178,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/html_data_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/html_data_element.idl'
 p3605
 ssS'XPathExpression'
 p3606
@@ -10209,7 +10209,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/xml/xpath_expression.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/xml/xpath_expression.idl'
 p3615
 ssS'ProgressEvent'
 p3616
@@ -10270,7 +10270,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/events/progress_event.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/events/progress_event.idl'
 p3637
 ssS'HTMLTimeElement'
 p3638
@@ -10305,7 +10305,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/html_time_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/html_time_element.idl'
 p3649
 ssS'SVGGeometryElement'
 p3650
@@ -10338,7 +10338,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_geometry_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_geometry_element.idl'
 p3660
 ssS'AbortSignal'
 p3661
@@ -10390,7 +10390,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/dom/abort_signal.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/dom/abort_signal.idl'
 p3679
 ssS'AddEventListenerOptions'
 p3680
@@ -10422,7 +10422,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/dom/events/add_event_listener_options.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/dom/events/add_event_listener_options.idl'
 p3689
 ssS'NonDocumentTypeChildNode'
 p3690
@@ -10455,7 +10455,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/dom/non_document_type_child_node.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/dom/non_document_type_child_node.idl'
 p3700
 ssS'Screen'
 p3701
@@ -10497,7 +10497,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/frame/screen.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/frame/screen.idl'
 p3715
 ssS'IdleRequestOptions'
 p3716
@@ -10527,7 +10527,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/dom/idle_request_options.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/dom/idle_request_options.idl'
 p3724
 ssS'Uint8Array'
 p3725
@@ -10567,7 +10567,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/typed_arrays/uint8_array.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/typed_arrays/uint8_array.idl'
 p3738
 ssS'GetRootNodeOptions'
 p3739
@@ -10597,7 +10597,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/dom/get_root_node_options.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/dom/get_root_node_options.idl'
 p3747
 ssS'ScriptedTaskQueue'
 p3748
@@ -10632,7 +10632,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/dom/scripted_task_queue.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/dom/scripted_task_queue.idl'
 p3759
 ssS'DOMQuad'
 p3760
@@ -10685,7 +10685,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/geometry/dom_quad.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/geometry/dom_quad.idl'
 p3778
 ssS'Response'
 p3779
@@ -10748,7 +10748,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/fetch/response.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/fetch/response.idl'
 p3802
 ssS'BaseKeyframe'
 p3803
@@ -10778,7 +10778,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/animation/base_keyframe.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/animation/base_keyframe.idl'
 p3811
 ssS'XPathNSResolver'
 p3812
@@ -10811,7 +10811,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/xml/xpath_ns_resolver.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/xml/xpath_ns_resolver.idl'
 p3822
 ssS'FullscreenOptions'
 p3823
@@ -10841,7 +10841,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/fullscreen/fullscreen_options.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/fullscreen/fullscreen_options.idl'
 p3831
 ssS'ApplicationCache'
 p3832
@@ -10880,7 +10880,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/loader/appcache/application_cache.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/loader/appcache/application_cache.idl'
 p3845
 ssS'HTMLOptGroupElement'
 p3846
@@ -10915,7 +10915,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/forms/html_opt_group_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/forms/html_opt_group_element.idl'
 p3857
 ssS'WheelEventInit'
 p3858
@@ -10947,7 +10947,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/events/wheel_event_init.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/events/wheel_event_init.idl'
 p3867
 ssS'MojoCreateSharedBufferResult'
 p3868
@@ -10977,7 +10977,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/mojo/mojo_create_shared_buffer_result.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/mojo/mojo_create_shared_buffer_result.idl'
 p3876
 ssS'TrustedTypePolicyOptions'
 p3877
@@ -11007,7 +11007,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/trustedtypes/trusted_type_policy_options.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/trustedtypes/trusted_type_policy_options.idl'
 p3885
 ssS'CSSVariableReferenceValue'
 p3886
@@ -11075,7 +11075,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/css/cssom/css_variable_reference_value.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/css/cssom/css_variable_reference_value.idl'
 p3910
 ssS'SequenceTest'
 p3911
@@ -11136,7 +11136,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/testing/sequence_test.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/testing/sequence_test.idl'
 p3932
 ssS'ParentNode'
 p3933
@@ -11193,7 +11193,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/dom/parent_node.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/dom/parent_node.idl'
 p3953
 ssS'ShadowRoot'
 p3954
@@ -11228,7 +11228,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/dom/shadow_root.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/dom/shadow_root.idl'
 p3965
 ssS'DevToolsHost'
 p3966
@@ -11261,7 +11261,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/inspector/dev_tools_host.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/inspector/dev_tools_host.idl'
 p3976
 ssS'NavigatorOnLine'
 p3977
@@ -11311,7 +11311,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/frame/navigator_on_line.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/frame/navigator_on_line.idl'
 p3994
 ssS'History'
 p3995
@@ -11342,7 +11342,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/frame/history.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/frame/history.idl'
 p4004
 ssS'SVGPoint'
 p4005
@@ -11378,7 +11378,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_point.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_point.idl'
 p4016
 ssS'NodeIterator'
 p4017
@@ -11409,7 +11409,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/dom/node_iterator.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/dom/node_iterator.idl'
 p4026
 ssS'MediaList'
 p4027
@@ -11451,7 +11451,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/css/media_list.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/css/media_list.idl'
 p4041
 ssS'AbortController'
 p4042
@@ -11508,7 +11508,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/dom/abort_controller.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/dom/abort_controller.idl'
 p4062
 ssS'HashChangeEventInit'
 p4063
@@ -11540,7 +11540,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/events/hash_change_event_init.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/events/hash_change_event_init.idl'
 p4072
 ssS'PerformanceResourceTiming'
 p4073
@@ -11592,7 +11592,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/timing/performance_resource_timing.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/timing/performance_resource_timing.idl'
 p4091
 ssS'ShadowRootInit'
 p4092
@@ -11622,7 +11622,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/dom/shadow_root_init.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/dom/shadow_root_init.idl'
 p4100
 ssS'SVGAnimationElement'
 p4101
@@ -11657,7 +11657,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_animation_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_animation_element.idl'
 p4112
 ssS'XMLHttpRequest'
 p4113
@@ -11795,7 +11795,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/xmlhttprequest/xml_http_request.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/xmlhttprequest/xml_http_request.idl'
 p4164
 ssS'HTMLOListElement'
 p4165
@@ -11830,7 +11830,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/html_olist_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/html_olist_element.idl'
 p4176
 ssS'CSSConditionRule'
 p4177
@@ -11863,7 +11863,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/css/css_condition_rule.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/css/css_condition_rule.idl'
 p4187
 ssS'SVGComponentTransferFunctionElement'
 p4188
@@ -11898,7 +11898,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_component_transfer_function_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_component_transfer_function_element.idl'
 p4199
 ssS'Window'
 p4200
@@ -12154,7 +12154,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/frame/window.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/frame/window.idl'
 p4295
 ssS'Animation'
 p4296
@@ -12209,7 +12209,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/animation/animation.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/animation/animation.idl'
 p4316
 ssS'HTMLPreElement'
 p4317
@@ -12244,7 +12244,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/html_pre_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/html_pre_element.idl'
 p4328
 ssS'CSSMathSum'
 p4329
@@ -12309,7 +12309,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/css/cssom/css_math_sum.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/css/cssom/css_math_sum.idl'
 p4352
 ssS'MemoryInfo'
 p4353
@@ -12342,7 +12342,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/timing/memory_info.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/timing/memory_info.idl'
 p4363
 ssS'XMLSerializer'
 p4364
@@ -12385,7 +12385,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/xml/xml_serializer.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/xml/xml_serializer.idl'
 p4378
 ssS'PerformanceMeasure'
 p4379
@@ -12437,7 +12437,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/timing/performance_measure.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/timing/performance_measure.idl'
 p4397
 ssS'DOMMatrix'
 p4398
@@ -12530,7 +12530,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/geometry/dom_matrix.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/geometry/dom_matrix.idl'
 p4433
 ssS'TouchEventInit'
 p4434
@@ -12562,7 +12562,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/events/touch_event_init.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/events/touch_event_init.idl'
 p4443
 ssS'StylePropertyMap'
 p4444
@@ -12630,7 +12630,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/css/cssom/style_property_map.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/css/cssom/style_property_map.idl'
 p4469
 ssS'StyleMedia'
 p4470
@@ -12663,7 +12663,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/css/style_media.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/css/style_media.idl'
 p4480
 ssS'SVGDefsElement'
 p4481
@@ -12696,7 +12696,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_defs_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_defs_element.idl'
 p4491
 ssS'SVGRectElement'
 p4492
@@ -12729,7 +12729,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_rect_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_rect_element.idl'
 p4502
 ssS'ScrollToOptions'
 p4503
@@ -12761,7 +12761,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/frame/scroll_to_options.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/frame/scroll_to_options.idl'
 p4512
 ssS'WindowEventHandlers'
 p4513
@@ -12794,7 +12794,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/frame/window_event_handlers.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/frame/window_event_handlers.idl'
 p4523
 ssS'UserAgent'
 p4524
@@ -12835,7 +12835,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/frame/user_agent.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/frame/user_agent.idl'
 p4537
 ssS'HTMLMapElement'
 p4538
@@ -12870,7 +12870,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/html_map_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/html_map_element.idl'
 p4549
 ssS'MessageChannel'
 p4550
@@ -12923,7 +12923,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/messaging/message_channel.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/messaging/message_channel.idl'
 p4568
 ssS'HTMLShadowElement'
 p4569
@@ -12956,7 +12956,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/html_shadow_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/html_shadow_element.idl'
 p4579
 ssS'SVGUseElement'
 p4580
@@ -12991,7 +12991,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_use_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_use_element.idl'
 p4591
 ssS'AnimationTimeline'
 p4592
@@ -13026,7 +13026,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/animation/animation_timeline.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/animation/animation_timeline.idl'
 p4603
 ssS'SVGImageElement'
 p4604
@@ -13063,7 +13063,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_image_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_image_element.idl'
 p4616
 ssS'SVGFEDistantLightElement'
 p4617
@@ -13096,7 +13096,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_fe_distant_light_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_fe_distant_light_element.idl'
 p4627
 ssS'FormData'
 p4628
@@ -13175,7 +13175,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/forms/form_data.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/forms/form_data.idl'
 p4657
 ssS'WorkerOptions'
 p4658
@@ -13205,7 +13205,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/workers/worker_options.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/workers/worker_options.idl'
 p4666
 ssS'HitTestLayerRectList'
 p4667
@@ -13236,7 +13236,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/testing/hit_test_layer_rect_list.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/testing/hit_test_layer_rect_list.idl'
 p4676
 ssS'TaskWorkletGlobalScope'
 p4677
@@ -13280,7 +13280,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/workers/experimental/task_worklet_global_scope.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/workers/experimental/task_worklet_global_scope.idl'
 p4693
 ssS'ErrorEventInit'
 p4694
@@ -13312,7 +13312,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/events/error_event_init.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/events/error_event_init.idl'
 p4703
 ssS'SVGStopElement'
 p4704
@@ -13345,7 +13345,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_stop_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_stop_element.idl'
 p4714
 ssS'PopStateEvent'
 p4715
@@ -13394,7 +13394,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/events/pop_state_event.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/events/pop_state_event.idl'
 p4732
 ssS'HTMLHeadingElement'
 p4733
@@ -13429,7 +13429,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/html_heading_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/html_heading_element.idl'
 p4744
 ssS'HTMLCanvasElement'
 p4745
@@ -13464,7 +13464,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/canvas/html_canvas_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/canvas/html_canvas_element.idl'
 p4756
 ssS'PagePopupController'
 p4757
@@ -13501,7 +13501,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/page/page_popup_controller.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/page/page_popup_controller.idl'
 p4769
 ssS'MojoReadMessageResult'
 p4770
@@ -13531,7 +13531,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/mojo/mojo_read_message_result.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/mojo/mojo_read_message_result.idl'
 p4778
 ssS'DisplayLockOptions'
 p4779
@@ -13561,7 +13561,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/display_lock/display_lock_options.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/display_lock/display_lock_options.idl'
 p4787
 ssS'ElementInternals'
 p4788
@@ -13639,7 +13639,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/custom/element_internals.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/custom/element_internals.idl'
 p4817
 ssS'NoncedElement'
 p4818
@@ -13670,7 +13670,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/dom/nonced_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/dom/nonced_element.idl'
 p4827
 ssS'SVGAnimatedNumberList'
 p4828
@@ -13701,7 +13701,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_animated_number_list.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_animated_number_list.idl'
 p4837
 ssS'ScrollOptions'
 p4838
@@ -13731,7 +13731,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/frame/scroll_options.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/frame/scroll_options.idl'
 p4846
 ssS'SVGFEGaussianBlurElement'
 p4847
@@ -13766,7 +13766,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_fe_gaussian_blur_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_fe_gaussian_blur_element.idl'
 p4858
 ssS'SVGTransformList'
 p4859
@@ -13802,7 +13802,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_transform_list.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_transform_list.idl'
 p4870
 ssS'MojoReadDataResult'
 p4871
@@ -13832,7 +13832,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/mojo/mojo_read_data_result.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/mojo/mojo_read_data_result.idl'
 p4879
 ssS'SVGFEFuncBElement'
 p4880
@@ -13865,7 +13865,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_fe_func_b_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_fe_func_b_element.idl'
 p4890
 ssS'UIEvent'
 p4891
@@ -13910,7 +13910,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/events/ui_event.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/events/ui_event.idl'
 p4906
 ssS'CSSNumericType'
 p4907
@@ -13967,7 +13967,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/css/cssom/css_numeric_type.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/css/cssom/css_numeric_type.idl'
 p4926
 ssS'ElementDefinitionOptions'
 p4927
@@ -13997,7 +13997,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/dom/element_definition_options.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/dom/element_definition_options.idl'
 p4935
 ssS'MediaQueryList'
 p4936
@@ -14043,7 +14043,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/css/media_query_list.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/css/media_query_list.idl'
 p4952
 ssS'SVGAnimateMotionElement'
 p4953
@@ -14076,7 +14076,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_animate_motion_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_animate_motion_element.idl'
 p4963
 ssS'DocumentAndElementEventHandlers'
 p4964
@@ -14109,7 +14109,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/dom/document_and_element_event_handlers.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/dom/document_and_element_event_handlers.idl'
 p4974
 ssS'Document'
 p4975
@@ -14264,7 +14264,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/dom/document.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/dom/document.idl'
 p5035
 ssS'SVGUnitTypes'
 p5036
@@ -14295,7 +14295,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_unit_types.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_unit_types.idl'
 p5045
 ssS'CSSMatrixComponent'
 p5046
@@ -14356,7 +14356,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/css/cssom/css_matrix_component.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/css/cssom/css_matrix_component.idl'
 p5067
 ssS'SVGForeignObjectElement'
 p5068
@@ -14389,7 +14389,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_foreign_object_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_foreign_object_element.idl'
 p5078
 ssS'CSPViolationReportBody'
 p5079
@@ -14424,7 +14424,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/frame/csp/csp_violation_report_body.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/frame/csp/csp_violation_report_body.idl'
 p5090
 ssS'SVGMarkerElement'
 p5091
@@ -14459,7 +14459,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_marker_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_marker_element.idl'
 p5102
 ssS'PortalActivateEventInit'
 p5103
@@ -14491,7 +14491,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/events/portal_activate_event_init.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/events/portal_activate_event_init.idl'
 p5112
 ssS'CSSPageRule'
 p5113
@@ -14537,7 +14537,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/css/css_page_rule.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/css/css_page_rule.idl'
 p5129
 ssS'MouseEventInit'
 p5130
@@ -14569,7 +14569,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/events/mouse_event_init.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/events/mouse_event_init.idl'
 p5139
 ssS'FontFaceSource'
 p5140
@@ -14602,7 +14602,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/css/font_face_source.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/css/font_face_source.idl'
 p5150
 ssS'PerformanceServerTiming'
 p5151
@@ -14652,7 +14652,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/timing/performance_server_timing.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/timing/performance_server_timing.idl'
 p5168
 ssS'DocumentType'
 p5169
@@ -14687,7 +14687,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/dom/document_type.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/dom/document_type.idl'
 p5180
 ssS'DOMRectList'
 p5181
@@ -14718,7 +14718,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/geometry/dom_rect_list.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/geometry/dom_rect_list.idl'
 p5190
 ssS'OffscreenCanvas'
 p5191
@@ -14781,7 +14781,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/offscreencanvas/offscreen_canvas.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/offscreencanvas/offscreen_canvas.idl'
 p5214
 ssS'PointerEvent'
 p5215
@@ -14815,7 +14815,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/events/pointer_event.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/events/pointer_event.idl'
 p5225
 ssS'ArrayBuffer'
 p5226
@@ -14853,7 +14853,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/typed_arrays/array_buffer.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/typed_arrays/array_buffer.idl'
 p5238
 ssS'HTMLSourceElement'
 p5239
@@ -14888,7 +14888,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/html_source_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/html_source_element.idl'
 p5250
 ssS'SVGAnimatedLength'
 p5251
@@ -14919,7 +14919,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_animated_length.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_animated_length.idl'
 p5260
 ssS'XMLHttpRequestUpload'
 p5261
@@ -14979,7 +14979,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/xmlhttprequest/xml_http_request_upload.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/xmlhttprequest/xml_http_request_upload.idl'
 p5282
 ssS'AudioTrackList'
 p5283
@@ -15027,7 +15027,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/track/audio_track_list.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/track/audio_track_list.idl'
 p5300
 ssS'SVGFEOffsetElement'
 p5301
@@ -15062,7 +15062,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_fe_offset_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_fe_offset_element.idl'
 p5312
 ssS'CallbackFunctionTest'
 p5313
@@ -15093,7 +15093,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/testing/callback_function_test.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/testing/callback_function_test.idl'
 p5322
 ssS'HTMLTitleElement'
 p5323
@@ -15128,7 +15128,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/html_title_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/html_title_element.idl'
 p5334
 ssS'InternalDictionaryDerived'
 p5335
@@ -15160,7 +15160,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/testing/internal_dictionary_derived.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/testing/internal_dictionary_derived.idl'
 p5344
 ssS'ReadableStreamDefaultController'
 p5345
@@ -15224,7 +15224,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/streams/readable_stream_default_controller.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/streams/readable_stream_default_controller.idl'
 p5368
 ssS'MediaQueryListEventInit'
 p5369
@@ -15256,7 +15256,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/css/media_query_list_event_init.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/css/media_query_list_event_init.idl'
 p5378
 ssS'CSSStyleSheetInit'
 p5379
@@ -15310,7 +15310,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/css/css_style_sheet_init.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/css/css_style_sheet_init.idl'
 p5397
 ssS'ScrollStateInit'
 p5398
@@ -15340,7 +15340,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/page/scrolling/scroll_state_init.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/page/scrolling/scroll_state_init.idl'
 p5406
 ssS'HTMLVideoElement'
 p5407
@@ -15377,7 +15377,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/media/html_video_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/media/html_video_element.idl'
 p5419
 ssS'ResponseInit'
 p5420
@@ -15407,7 +15407,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/fetch/response_init.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/fetch/response_init.idl'
 p5428
 ssS'ComputedAccessibleNode'
 p5429
@@ -15442,7 +15442,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/aom/computed_accessible_node.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/aom/computed_accessible_node.idl'
 p5440
 ssS'ImageBitmapOptions'
 p5441
@@ -15472,7 +15472,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/imagebitmap/image_bitmap_options.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/imagebitmap/image_bitmap_options.idl'
 p5449
 ssS'WorkletGlobalScope'
 p5450
@@ -15518,7 +15518,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/workers/worklet_global_scope.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/workers/worklet_global_scope.idl'
 p5466
 ssS'NavigatorDeviceMemory'
 p5467
@@ -15568,7 +15568,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/frame/navigator_device_memory.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/frame/navigator_device_memory.idl'
 p5484
 ssS'CSSFontFeatureValuesRule'
 p5485
@@ -15605,7 +15605,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/css/css_font_feature_values_rule.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/css/css_font_feature_values_rule.idl'
 p5497
 ssS'FormDataEvent'
 p5498
@@ -15654,7 +15654,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/forms/form_data_event.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/forms/form_data_event.idl'
 p5515
 ssS'EventListenerOptions'
 p5516
@@ -15684,7 +15684,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/dom/events/event_listener_options.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/dom/events/event_listener_options.idl'
 p5524
 ssS'EffectTiming'
 p5525
@@ -15738,7 +15738,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/animation/effect_timing.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/animation/effect_timing.idl'
 p5543
 ssS'Location'
 p5544
@@ -15782,129 +15782,129 @@ NtRp5559
 g1069
 I00
 sg1070
-S'href'
+S'protocol'
 p5561
 sg11
 (dp5562
-S'Unforgeable'
+S'RaisesException'
 p5563
-NsS'Affects'
+S'Setter'
 p5564
-S'Nothing'
+sS'Unforgeable'
 p5565
-sS'RaisesException'
+NsS'SetterCallWith'
 p5566
-S'Setter'
-p5567
-sS'CrossOrigin'
-p5568
-S'Setter'
-p5569
-sS'SetterCallWith'
-p5570
 S'Isolate'
-p5571
+p5567
 ssg1074
 g57
 (g64
 g59
-NtRp5572
-(dp5573
+NtRp5568
+(dp5569
 g67
-S'URLString'
-p5574
+S'USVString'
+p5570
 sbsg1078
 I00
 sg1079
 Nsbag57
 (g1066
 g59
-NtRp5575
-(dp5576
+NtRp5571
+(dp5572
+g1069
+I00
+sg1070
+S'href'
+p5573
+sg11
+(dp5574
+S'Unforgeable'
+p5575
+NsS'Affects'
+p5576
+S'Nothing'
+p5577
+sS'RaisesException'
+p5578
+S'Setter'
+p5579
+sS'CrossOrigin'
+p5580
+S'Setter'
+p5581
+sS'SetterCallWith'
+p5582
+S'Isolate'
+p5583
+ssg1074
+g57
+(g64
+g59
+NtRp5584
+(dp5585
+g67
+S'URLString'
+p5586
+sbsg1078
+I00
+sg1079
+Nsbag57
+(g1066
+g59
+NtRp5587
+(dp5588
 g1069
 I00
 sg1070
 S'origin'
-p5577
+p5589
 sg11
-(dp5578
+(dp5590
 S'MeasureAs'
-p5579
+p5591
 S'LocationOrigin'
-p5580
+p5592
 sS'Unforgeable'
-p5581
+p5593
 Nssg1074
 g57
 (g64
 g59
-NtRp5582
-(dp5583
+NtRp5594
+(dp5595
 g67
 S'USVString'
-p5584
+p5596
 sbsg1078
 I01
 sg1079
 Nsbag57
 (g1066
 g59
-NtRp5585
-(dp5586
+NtRp5597
+(dp5598
 g1069
 I00
 sg1070
 S'ancestorOrigins'
-p5587
-sg11
-(dp5588
-S'Unforgeable'
-p5589
-Nssg1074
-g57
-(g64
-g59
-NtRp5590
-(dp5591
-g67
-S'DOMStringList'
-p5592
-sbsg1078
-I01
-sg1079
-Nsbag57
-(g1066
-g59
-NtRp5593
-(dp5594
-g1069
-I00
-sg1070
-S'search'
-p5595
-sg11
-(dp5596
-S'RaisesException'
-p5597
-S'Setter'
-p5598
-sS'Unforgeable'
 p5599
-NsS'SetterCallWith'
-p5600
-S'Isolate'
+sg11
+(dp5600
+S'Unforgeable'
 p5601
-ssg1074
+Nssg1074
 g57
 (g64
 g59
 NtRp5602
 (dp5603
 g67
-S'USVString'
+S'DOMStringList'
 p5604
 sbsg1078
-I00
+I01
 sg1079
 Nsbag57
 (g1066
@@ -15914,7 +15914,7 @@ NtRp5605
 g1069
 I00
 sg1070
-S'hash'
+S'host'
 p5607
 sg11
 (dp5608
@@ -15948,7 +15948,7 @@ NtRp5617
 g1069
 I00
 sg1070
-S'pathname'
+S'hash'
 p5619
 sg11
 (dp5620
@@ -15982,7 +15982,7 @@ NtRp5629
 g1069
 I00
 sg1070
-S'hostname'
+S'search'
 p5631
 sg11
 (dp5632
@@ -16016,7 +16016,7 @@ NtRp5641
 g1069
 I00
 sg1070
-S'host'
+S'port'
 p5643
 sg11
 (dp5644
@@ -16050,7 +16050,7 @@ NtRp5653
 g1069
 I00
 sg1070
-S'port'
+S'hostname'
 p5655
 sg11
 (dp5656
@@ -16084,7 +16084,7 @@ NtRp5665
 g1069
 I00
 sg1070
-S'protocol'
+S'pathname'
 p5667
 sg11
 (dp5668
@@ -16122,7 +16122,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/frame/location.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/frame/location.idl'
 p5679
 ssS'InputDeviceCapabilities'
 p5680
@@ -16154,7 +16154,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/input/input_device_capabilities.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/input/input_device_capabilities.idl'
 p5689
 ssS'Performance'
 p5690
@@ -16237,7 +16237,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/timing/performance.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/timing/performance.idl'
 p5720
 ssS'HTMLFrameElement'
 p5721
@@ -16272,7 +16272,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/html_frame_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/html_frame_element.idl'
 p5732
 ssS'SVGTextElement'
 p5733
@@ -16305,7 +16305,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_text_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_text_element.idl'
 p5743
 ssS'CSSMathValue'
 p5744
@@ -16365,7 +16365,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/css/cssom/css_math_value.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/css/cssom/css_math_value.idl'
 p5765
 ssS'HTMLDListElement'
 p5766
@@ -16400,7 +16400,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/html_dlist_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/html_dlist_element.idl'
 p5777
 ssS'ScriptedTaskQueueController'
 p5778
@@ -16435,7 +16435,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/dom/scripted_task_queue_controller.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/dom/scripted_task_queue_controller.idl'
 p5789
 ssS'SVGLineElement'
 p5790
@@ -16468,7 +16468,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_line_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_line_element.idl'
 p5800
 ssS'MojoDiscardDataOptions'
 p5801
@@ -16498,7 +16498,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/mojo/mojo_discard_data_options.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/mojo/mojo_discard_data_options.idl'
 p5809
 ssS'HTMLOutputElement'
 p5810
@@ -16535,7 +16535,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/forms/html_output_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/forms/html_output_element.idl'
 p5822
 ssS'BasePropertyIndexedKeyframe'
 p5823
@@ -16665,7 +16665,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/animation/base_property_indexed_keyframe.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/animation/base_property_indexed_keyframe.idl'
 p5869
 ssS'SVGAnimatedPreserveAspectRatio'
 p5870
@@ -16696,7 +16696,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_animated_preserve_aspect_ratio.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_animated_preserve_aspect_ratio.idl'
 p5879
 ssS'TrustedScriptURL'
 p5880
@@ -16766,7 +16766,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/trustedtypes/trusted_script_url.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/trustedtypes/trusted_script_url.idl'
 p5906
 ssS'HTMLParagraphElement'
 p5907
@@ -16801,7 +16801,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/html_paragraph_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/html_paragraph_element.idl'
 p5918
 ssS'SVGFitToViewBox'
 p5919
@@ -16832,7 +16832,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_fit_to_view_box.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_fit_to_view_box.idl'
 p5928
 ssS'SVGAnimatedAngle'
 p5929
@@ -16863,7 +16863,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_animated_angle.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_animated_angle.idl'
 p5938
 ssS'SVGNumberList'
 p5939
@@ -16899,7 +16899,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_number_list.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_number_list.idl'
 p5950
 ssS'SVGPathElement'
 p5951
@@ -16932,7 +16932,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_path_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_path_element.idl'
 p5961
 ssS'TrustedHTML'
 p5962
@@ -17002,7 +17002,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/trustedtypes/trusted_html.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/trustedtypes/trusted_html.idl'
 p5988
 ssS'ReportingObserverOptions'
 p5989
@@ -17032,7 +17032,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/frame/reporting_observer_options.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/frame/reporting_observer_options.idl'
 p5997
 ssS'MojoCreateMessagePipeResult'
 p5998
@@ -17062,7 +17062,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/mojo/mojo_create_message_pipe_result.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/mojo/mojo_create_message_pipe_result.idl'
 p6006
 ssS'DOMMatrix2DInit'
 p6007
@@ -17092,7 +17092,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/geometry/dom_matrix_2d_init.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/geometry/dom_matrix_2d_init.idl'
 p6015
 ssS'SVGMPathElement'
 p6016
@@ -17127,7 +17127,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_mpath_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_mpath_element.idl'
 p6027
 ssS'CSSMathProduct'
 p6028
@@ -17192,7 +17192,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/css/cssom/css_math_product.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/css/cssom/css_math_product.idl'
 p6051
 ssS'HTMLAllCollection'
 p6052
@@ -17289,7 +17289,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/html_all_collection.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/html_all_collection.idl'
 p6087
 ssS'DOMStringList'
 p6088
@@ -17339,7 +17339,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/dom/dom_string_list.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/dom/dom_string_list.idl'
 p6105
 ssS'VTTRegion'
 p6106
@@ -17375,7 +17375,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/track/vtt/vtt_region.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/track/vtt/vtt_region.idl'
 p6117
 ssS'FontFaceSetLoadEventInit'
 p6118
@@ -17407,7 +17407,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/css/font_face_set_load_event_init.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/css/font_face_set_load_event_init.idl'
 p6127
 ssS'PageTransitionEvent'
 p6128
@@ -17452,7 +17452,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/events/page_transition_event.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/events/page_transition_event.idl'
 p6143
 ssS'GCObservation'
 p6144
@@ -17483,7 +17483,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/testing/gc_observation.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/testing/gc_observation.idl'
 p6153
 ssS'DOMRectReadOnly'
 p6154
@@ -17536,7 +17536,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/geometry/dom_rect_read_only.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/geometry/dom_rect_read_only.idl'
 p6172
 ssS'DictionaryTest'
 p6173
@@ -17567,7 +17567,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/testing/dictionary_test.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/testing/dictionary_test.idl'
 p6182
 ssS'PerformanceNavigation'
 p6183
@@ -17609,7 +17609,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/timing/performance_navigation.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/timing/performance_navigation.idl'
 p6197
 ssS'SVGFEBlendElement'
 p6198
@@ -17646,7 +17646,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_fe_blend_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_fe_blend_element.idl'
 p6210
 ssS'DOMQuadInit'
 p6211
@@ -17676,7 +17676,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/geometry/dom_quad_init.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/geometry/dom_quad_init.idl'
 p6219
 ssS'TransitionEventInit'
 p6220
@@ -17708,7 +17708,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/events/transition_event_init.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/events/transition_event_init.idl'
 p6229
 ssS'WritableStream'
 p6230
@@ -17779,7 +17779,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/streams/writable_stream.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/streams/writable_stream.idl'
 p6256
 ssS'FileReaderSync'
 p6257
@@ -17836,7 +17836,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/fileapi/file_reader_sync.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/fileapi/file_reader_sync.idl'
 p6277
 ssS'SVGEllipseElement'
 p6278
@@ -17869,7 +17869,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_ellipse_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_ellipse_element.idl'
 p6288
 ssS'CSSKeywordValue'
 p6289
@@ -17934,7 +17934,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/css/cssom/css_keyword_value.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/css/cssom/css_keyword_value.idl'
 p6312
 ssS'AssignedNodesOptions'
 p6313
@@ -17964,7 +17964,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/assigned_nodes_options.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/assigned_nodes_options.idl'
 p6321
 ssS'MojoWatcher'
 p6322
@@ -18024,7 +18024,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/mojo/mojo_watcher.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/mojo/mojo_watcher.idl'
 p6344
 ssS'HTMLScriptElement'
 p6345
@@ -18059,7 +18059,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/html_script_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/html_script_element.idl'
 p6356
 ssS'ResizeObserver'
 p6357
@@ -18101,7 +18101,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/resize_observer/resize_observer.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/resize_observer/resize_observer.idl'
 p6371
 ssS'TrustedScript'
 p6372
@@ -18171,7 +18171,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/trustedtypes/trusted_script.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/trustedtypes/trusted_script.idl'
 p6398
 ssS'HTMLTrackElement'
 p6399
@@ -18206,7 +18206,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/track/html_track_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/track/html_track_element.idl'
 p6410
 ssS'PerformanceLongTaskTiming'
 p6411
@@ -18239,7 +18239,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/timing/performance_long_task_timing.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/timing/performance_long_task_timing.idl'
 p6421
 ssS'PerformanceTiming'
 p6422
@@ -18281,7 +18281,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/timing/performance_timing.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/timing/performance_timing.idl'
 p6436
 ssS'PromiseRejectionEventInit'
 p6437
@@ -18313,7 +18313,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/events/promise_rejection_event_init.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/events/promise_rejection_event_init.idl'
 p6446
 ssS'EventListener'
 p6447
@@ -18344,7 +18344,7 @@ I00
 sg36
 I01
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/dom/events/event_listener.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/dom/events/event_listener.idl'
 p6456
 ssS'NamedNodeMap'
 p6457
@@ -18377,7 +18377,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/dom/named_node_map.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/dom/named_node_map.idl'
 p6467
 ssS'SVGFEDiffuseLightingElement'
 p6468
@@ -18412,7 +18412,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_fe_diffuse_lighting_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_fe_diffuse_lighting_element.idl'
 p6479
 ssS'SVGTransform'
 p6480
@@ -18448,7 +18448,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_transform.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_transform.idl'
 p6491
 ssS'SVGZoomAndPan'
 p6492
@@ -18479,7 +18479,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_zoom_and_pan.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_zoom_and_pan.idl'
 p6501
 ssS'SVGDescElement'
 p6502
@@ -18512,7 +18512,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_desc_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_desc_element.idl'
 p6512
 ssS'FontFaceSet'
 p6513
@@ -18570,7 +18570,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/css/font_face_set.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/css/font_face_set.idl'
 p6534
 ssS'MojoReadDataOptions'
 p6535
@@ -18600,7 +18600,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/mojo/mojo_read_data_options.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/mojo/mojo_read_data_options.idl'
 p6543
 ssS'VideoTrackList'
 p6544
@@ -18648,7 +18648,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/track/video_track_list.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/track/video_track_list.idl'
 p6561
 ssS'CSSKeyframesRule'
 p6562
@@ -18681,7 +18681,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/css/css_keyframes_rule.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/css/css_keyframes_rule.idl'
 p6572
 ssS'SharedWorkerGlobalScope'
 p6573
@@ -18741,7 +18741,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/workers/shared_worker_global_scope.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/workers/shared_worker_global_scope.idl'
 p6597
 ssS'HTMLBaseElement'
 p6598
@@ -18776,7 +18776,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/html_base_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/html_base_element.idl'
 p6609
 ssS'LayoutFragment'
 p6610
@@ -18827,7 +18827,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/layout/custom/layout_fragment.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/layout/custom/layout_fragment.idl'
 p6628
 ssS'Mojo'
 p6629
@@ -18885,7 +18885,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/mojo/mojo.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/mojo/mojo.idl'
 p6650
 ssS'Blob'
 p6651
@@ -18982,7 +18982,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/fileapi/blob.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/fileapi/blob.idl'
 p6687
 ssS'HTMLBRElement'
 p6688
@@ -19017,7 +19017,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/html_br_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/html_br_element.idl'
 p6699
 ssS'CSSUnparsedValue'
 p6700
@@ -19102,7 +19102,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/css/cssom/css_unparsed_value.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/css/cssom/css_unparsed_value.idl'
 p6731
 ssS'InputDeviceCapabilitiesInit'
 p6732
@@ -19132,7 +19132,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/input/input_device_capabilities_init.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/input/input_device_capabilities_init.idl'
 p6740
 ssS'VoidCallback'
 p6741
@@ -19163,7 +19163,7 @@ I00
 sg36
 I01
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/void_callback.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/void_callback.idl'
 p6750
 ssS'CSSScale'
 p6751
@@ -19228,7 +19228,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/css/cssom/css_scale.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/css/cssom/css_scale.idl'
 p6774
 ssS'CSSMediaRule'
 p6775
@@ -19274,7 +19274,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/css/css_media_rule.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/css/css_media_rule.idl'
 p6791
 ssS'CSSStyleRule'
 p6792
@@ -19320,7 +19320,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/css/css_style_rule.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/css/css_style_rule.idl'
 p6808
 ssS'HTMLUListElement'
 p6809
@@ -19355,7 +19355,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/html_ulist_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/html_ulist_element.idl'
 p6820
 ssS'IntersectionObserverEntry'
 p6821
@@ -19386,7 +19386,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/intersection_observer/intersection_observer_entry.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/intersection_observer/intersection_observer_entry.idl'
 p6830
 ssS'PortalActivateEvent'
 p6831
@@ -19435,7 +19435,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/events/portal_activate_event.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/events/portal_activate_event.idl'
 p6848
 ssS'DOMMatrixReadOnly'
 p6849
@@ -19526,7 +19526,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/geometry/dom_matrix_read_only.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/geometry/dom_matrix_read_only.idl'
 p6883
 ssS'LayoutConstraints'
 p6884
@@ -19577,7 +19577,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/layout/custom/layout_constraints.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/layout/custom/layout_constraints.idl'
 p6902
 ssS'ImageBitmap'
 p6903
@@ -19631,7 +19631,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/imagebitmap/image_bitmap.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/imagebitmap/image_bitmap.idl'
 p6922
 ssS'CSSUnitValue'
 p6923
@@ -19696,7 +19696,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/css/cssom/css_unit_value.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/css/cssom/css_unit_value.idl'
 p6946
 ssS'MutationObserver'
 p6947
@@ -19745,7 +19745,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/dom/mutation_observer.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/dom/mutation_observer.idl'
 p6964
 ssS'SVGPolylineElement'
 p6965
@@ -19778,7 +19778,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_polyline_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_polyline_element.idl'
 p6975
 ssS'CSSImportRule'
 p6976
@@ -19824,7 +19824,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/css/css_import_rule.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/css/css_import_rule.idl'
 p6992
 ssS'HTMLTableCaptionElement'
 p6993
@@ -19859,7 +19859,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/html_table_caption_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/html_table_caption_element.idl'
 p7004
 ssS'SVGNumber'
 p7005
@@ -19895,7 +19895,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_number.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_number.idl'
 p7016
 ssS'TouchInit'
 p7017
@@ -19925,7 +19925,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/input/touch_init.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/input/touch_init.idl'
 p7025
 ssS'MojoHandleSignals'
 p7026
@@ -19955,7 +19955,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/mojo/mojo_handle_signals.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/mojo/mojo_handle_signals.idl'
 p7034
 ssS'CSSSkewY'
 p7035
@@ -20028,7 +20028,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/css/cssom/css_skew_y.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/css/cssom/css_skew_y.idl'
 p7061
 ssS'CSSSkewX'
 p7062
@@ -20101,7 +20101,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/css/cssom/css_skew_x.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/css/cssom/css_skew_x.idl'
 p7088
 ssS'CSSNumericArray'
 p7089
@@ -20163,7 +20163,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/css/cssom/css_numeric_array.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/css/cssom/css_numeric_array.idl'
 p7111
 ssS'MessagePort'
 p7112
@@ -20227,7 +20227,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/messaging/message_port.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/messaging/message_port.idl'
 p7135
 ssS'HTMLContentElement'
 p7136
@@ -20260,7 +20260,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/html_content_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/html_content_element.idl'
 p7146
 ssS'DOMPoint'
 p7147
@@ -20315,7 +20315,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/geometry/dom_point.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/geometry/dom_point.idl'
 p7166
 ssS'NavigatorLanguage'
 p7167
@@ -20365,7 +20365,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/frame/navigator_language.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/frame/navigator_language.idl'
 p7184
 ssS'SVGElement'
 p7185
@@ -20406,7 +20406,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_element.idl'
 p7199
 ssS'AudioTrack'
 p7200
@@ -20452,7 +20452,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/track/audio_track.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/track/audio_track.idl'
 p7216
 ssS'MojoCreateDataPipeResult'
 p7217
@@ -20482,7 +20482,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/mojo/mojo_create_data_pipe_result.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/mojo/mojo_create_data_pipe_result.idl'
 p7225
 ssS'ArrayBufferView'
 p7226
@@ -20520,7 +20520,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/typed_arrays/array_buffer_view.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/typed_arrays/array_buffer_view.idl'
 p7238
 ssS'SVGFEConvolveMatrixElement'
 p7239
@@ -20557,7 +20557,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_fe_convolve_matrix_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_fe_convolve_matrix_element.idl'
 p7251
 ssS'SVGAnimatedEnumeration'
 p7252
@@ -20593,7 +20593,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_animated_enumeration.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_animated_enumeration.idl'
 p7263
 ssS'HTMLDataListElement'
 p7264
@@ -20628,7 +20628,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/forms/html_data_list_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/forms/html_data_list_element.idl'
 p7275
 ssS'HTMLMediaElement'
 p7276
@@ -20665,7 +20665,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/media/html_media_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/media/html_media_element.idl'
 p7288
 ssS'CSSTransformComponent'
 p7289
@@ -20723,7 +20723,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/css/cssom/css_transform_component.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/css/cssom/css_transform_component.idl'
 p7309
 ssS'CSSMathMin'
 p7310
@@ -20788,7 +20788,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/css/cssom/css_math_min.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/css/cssom/css_math_min.idl'
 p7333
 ssS'ScrollTimelineOptions'
 p7334
@@ -20842,7 +20842,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/animation/scroll_timeline_options.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/animation/scroll_timeline_options.idl'
 p7352
 ssS'CSSRuleList'
 p7353
@@ -20884,7 +20884,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/css/css_rule_list.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/css/css_rule_list.idl'
 p7367
 ssS'WorkerInternals'
 p7368
@@ -20924,7 +20924,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/testing/worker_internals.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/testing/worker_internals.idl'
 p7382
 ssS'NavigatorAutomationInformation'
 p7383
@@ -20970,7 +20970,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/frame/navigator_automation_information.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/frame/navigator_automation_information.idl'
 p7399
 ssS'BigInt64Array'
 p7400
@@ -21010,7 +21010,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/typed_arrays/big_int_64_array.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/typed_arrays/big_int_64_array.idl'
 p7413
 ssS'DocumentTimelineOptions'
 p7414
@@ -21040,7 +21040,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/animation/document_timeline_options.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/animation/document_timeline_options.idl'
 p7422
 ssS'SVGAngle'
 p7423
@@ -21076,7 +21076,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_angle.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_angle.idl'
 p7434
 ssS'MojoInterfaceRequestEventInit'
 p7435
@@ -21108,7 +21108,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/mojo/test/mojo_interface_request_event_init.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/mojo/test/mojo_interface_request_event_init.idl'
 p7444
 ssS'TextTrackCue'
 p7445
@@ -21141,7 +21141,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/track/text_track_cue.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/track/text_track_cue.idl'
 p7455
 ssS'FontFaceDescriptors'
 p7456
@@ -21171,7 +21171,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/css/font_face_descriptors.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/css/font_face_descriptors.idl'
 p7464
 ssS'PortalHost'
 p7465
@@ -21219,7 +21219,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/portal/portal_host.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/portal/portal_host.idl'
 p7482
 ssS'TextTrackList'
 p7483
@@ -21252,7 +21252,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/track/text_track_list.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/track/text_track_list.idl'
 p7493
 ssS'DocumentTimeline'
 p7494
@@ -21294,7 +21294,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/animation/document_timeline.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/animation/document_timeline.idl'
 p7508
 ssS'NavigatorID'
 p7509
@@ -21344,7 +21344,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/frame/navigator_id.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/frame/navigator_id.idl'
 p7526
 ssS'CSSMathNegate'
 p7527
@@ -21405,7 +21405,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/css/cssom/css_math_negate.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/css/cssom/css_math_negate.idl'
 p7548
 ssS'SVGAnimatedInteger'
 p7549
@@ -21436,7 +21436,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_animated_integer.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_animated_integer.idl'
 p7558
 ssS'HTMLSelectElement'
 p7559
@@ -21464,59 +21464,59 @@ Nsg30
 g31
 ((lp7568
 g57
-(g58
+(g523
 g59
 NtRp7569
 (dp7570
-g62
-(lp7571
+g526
 g57
-(g64
-g59
-NtRp7572
-(dp7573
-g67
-S'HTMLElement'
-p7574
-sbag57
-(g64
-g59
-NtRp7575
-(dp7576
-g67
-S'long'
-p7577
-sbasbag57
 (g58
 g59
-NtRp7578
-(dp7579
+NtRp7571
+(dp7572
 g62
-(lp7580
+(lp7573
 g57
 (g64
 g59
-NtRp7581
-(dp7582
+NtRp7574
+(dp7575
 g67
-S'HTMLOptionElement'
-p7583
+S'HTMLElement'
+p7576
 sbag57
 (g64
 g59
-NtRp7584
-(dp7585
+NtRp7577
+(dp7578
+g67
+S'long'
+p7579
+sbasbsbag57
+(g58
+g59
+NtRp7580
+(dp7581
+g62
+(lp7582
+g57
+(g64
+g59
+NtRp7583
+(dp7584
+g67
+S'HTMLOptionElement'
+p7585
+sbag57
+(g64
+g59
+NtRp7586
+(dp7587
 g67
 S'HTMLOptGroupElement'
-p7586
-sbasbag57
-(g523
-g59
-NtRp7587
-(dp7588
-g526
-g7569
-sbatRp7589
+p7588
+sbasbag7571
+atRp7589
 sg33
 S'core/html/forms'
 p7590
@@ -21525,7 +21525,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/forms/html_select_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/forms/html_select_element.idl'
 p7591
 ssS'PerformanceMeasureOptions'
 p7592
@@ -21615,7 +21615,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/timing/performance_measure_options.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/timing/performance_measure_options.idl'
 p7623
 ssS'TextTrack'
 p7624
@@ -21648,7 +21648,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/track/text_track.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/track/text_track.idl'
 p7634
 ssS'WorkerGlobalScope'
 p7635
@@ -21741,7 +21741,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/workers/worker_global_scope.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/workers/worker_global_scope.idl'
 p7670
 ssS'HTMLIFrameElement'
 p7671
@@ -21778,7 +21778,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/html_iframe_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/html_iframe_element.idl'
 p7683
 ssS'RecordTest'
 p7684
@@ -21886,7 +21886,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/testing/record_test.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/testing/record_test.idl'
 p7722
 ssS'TouchEvent'
 p7723
@@ -21931,7 +21931,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/events/touch_event.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/events/touch_event.idl'
 p7738
 ssS'PerformanceObserverEntryList'
 p7739
@@ -21981,7 +21981,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/timing/performance_observer_entry_list.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/timing/performance_observer_entry_list.idl'
 p7756
 ssS'HTMLTableCellElement'
 p7757
@@ -22016,7 +22016,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/html_table_cell_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/html_table_cell_element.idl'
 p7768
 ssS'DOMRect'
 p7769
@@ -22071,7 +22071,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/geometry/dom_rect.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/geometry/dom_rect.idl'
 p7788
 ssS'DOMRectInit'
 p7789
@@ -22101,7 +22101,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/geometry/dom_rect_init.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/geometry/dom_rect_init.idl'
 p7797
 ssS'DisplayLockContext'
 p7798
@@ -22138,7 +22138,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/display_lock/display_lock_context.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/display_lock/display_lock_context.idl'
 p7810
 ssS'XSLTProcessor'
 p7811
@@ -22182,7 +22182,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/xml/xslt_processor.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/xml/xslt_processor.idl'
 p7826
 ssS'WheelEvent'
 p7827
@@ -22227,7 +22227,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/events/wheel_event.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/events/wheel_event.idl'
 p7842
 ssS'CSSKeyframeRule'
 p7843
@@ -22262,7 +22262,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/css/css_keyframe_rule.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/css/css_keyframe_rule.idl'
 p7854
 ssS'CSSMathInvert'
 p7855
@@ -22323,7 +22323,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/css/cssom/css_math_invert.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/css/cssom/css_math_invert.idl'
 p7876
 ssS'MojoInterfaceRequestEvent'
 p7877
@@ -22380,7 +22380,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/mojo/test/mojo_interface_request_event.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/mojo/test/mojo_interface_request_event.idl'
 p7897
 ssS'HashChangeEvent'
 p7898
@@ -22425,7 +22425,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/events/hash_change_event.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/events/hash_change_event.idl'
 p7913
 ssS'SVGStringList'
 p7914
@@ -22461,7 +22461,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_string_list.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_string_list.idl'
 p7925
 ssS'HTMLTableSectionElement'
 p7926
@@ -22496,7 +22496,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/html_table_section_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/html_table_section_element.idl'
 p7937
 ssS'CustomEventInit'
 p7938
@@ -22528,7 +22528,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/dom/events/custom_event_init.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/dom/events/custom_event_init.idl'
 p7947
 ssS'PerformanceObserver'
 p7948
@@ -22585,7 +22585,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/timing/performance_observer.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/timing/performance_observer.idl'
 p7968
 ssS'PostMessageOptions'
 p7969
@@ -22615,7 +22615,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/messaging/post_message_options.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/messaging/post_message_options.idl'
 p7977
 ssS'SVGClipPathElement'
 p7978
@@ -22648,7 +22648,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_clip_path_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_clip_path_element.idl'
 p7988
 ssS'DOMParser'
 p7989
@@ -22695,7 +22695,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/xml/dom_parser.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/xml/dom_parser.idl'
 p8005
 ssS'InterventionReportBody'
 p8006
@@ -22730,7 +22730,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/frame/intervention_report_body.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/frame/intervention_report_body.idl'
 p8017
 ssS'PortalActivateOptions'
 p8018
@@ -22760,7 +22760,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/portal/portal_activate_options.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/portal/portal_activate_options.idl'
 p8026
 ssS'HTMLProgressElement'
 p8027
@@ -22795,7 +22795,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/html_progress_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/html_progress_element.idl'
 p8038
 ssS'ApplicationCacheErrorEventInit'
 p8039
@@ -22827,7 +22827,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/events/application_cache_error_event_init.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/events/application_cache_error_event_init.idl'
 p8048
 ssS'SVGGElement'
 p8049
@@ -22860,7 +22860,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_g_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_g_element.idl'
 p8059
 ssS'HTMLOptionsCollection'
 p8060
@@ -22947,7 +22947,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/forms/html_options_collection.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/forms/html_options_collection.idl'
 p8091
 ssS'AnimationEventInit'
 p8092
@@ -22979,7 +22979,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/events/animation_event_init.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/events/animation_event_init.idl'
 p8101
 ssS'TransitionEvent'
 p8102
@@ -23013,7 +23013,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/events/transition_event.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/events/transition_event.idl'
 p8112
 ssS'SVGFEDisplacementMapElement'
 p8113
@@ -23050,7 +23050,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_fe_displacement_map_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_fe_displacement_map_element.idl'
 p8125
 ssS'SharedArrayBuffer'
 p8126
@@ -23092,7 +23092,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/typed_arrays/shared_array_buffer.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/typed_arrays/shared_array_buffer.idl'
 p8140
 ssS'FileList'
 p8141
@@ -23144,7 +23144,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/fileapi/file_list.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/fileapi/file_list.idl'
 p8159
 ssS'WindowPostMessageOptions'
 p8160
@@ -23176,7 +23176,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/frame/window_post_message_options.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/frame/window_post_message_options.idl'
 p8169
 ssS'External'
 p8170
@@ -23218,7 +23218,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/frame/external.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/frame/external.idl'
 p8184
 ssS'HTMLFieldSetElement'
 p8185
@@ -23253,7 +23253,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/forms/html_field_set_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/forms/html_field_set_element.idl'
 p8196
 ssS'CSSStyleDeclaration'
 p8197
@@ -23295,7 +23295,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/css/css_style_declaration.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/css/css_style_declaration.idl'
 p8211
 ssS'OriginTrialsTest'
 p8212
@@ -23335,7 +23335,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/testing/origin_trials_test.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/testing/origin_trials_test.idl'
 p8226
 ssS'TreeWalker'
 p8227
@@ -23366,7 +23366,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/dom/tree_walker.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/dom/tree_walker.idl'
 p8236
 ssS'Node'
 p8237
@@ -23399,7 +23399,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/dom/node.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/dom/node.idl'
 p8247
 ssS'StylePropertyMapReadOnly'
 p8248
@@ -23457,7 +23457,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/css/cssom/style_property_map_read_only.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/css/cssom/style_property_map_read_only.idl'
 p8268
 ssS'TaskWorklet'
 p8269
@@ -23496,7 +23496,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/workers/experimental/task_worklet.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/workers/experimental/task_worklet.idl'
 p8282
 ssS'ImageEncodeOptions'
 p8283
@@ -23526,7 +23526,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/canvas/image_encode_options.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/canvas/image_encode_options.idl'
 p8291
 ssS'ReadableStreamDefaultReader'
 p8292
@@ -23597,7 +23597,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/streams/readable_stream_default_reader.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/streams/readable_stream_default_reader.idl'
 p8318
 ssS'InputEvent'
 p8319
@@ -23642,7 +23642,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/events/input_event.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/events/input_event.idl'
 p8334
 ssS'Range'
 p8335
@@ -23678,7 +23678,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/dom/range.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/dom/range.idl'
 p8346
 ssS'PropertyDescriptor'
 p8347
@@ -23708,7 +23708,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/css/property_descriptor.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/css/property_descriptor.idl'
 p8355
 ssS'ComputedEffectTiming'
 p8356
@@ -23740,7 +23740,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/animation/computed_effect_timing.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/animation/computed_effect_timing.idl'
 p8365
 ssS'EventModifierInit'
 p8366
@@ -23772,7 +23772,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/dom/events/event_modifier_init.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/dom/events/event_modifier_init.idl'
 p8375
 ssS'Element'
 p8376
@@ -23850,7 +23850,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/dom/element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/dom/element.idl'
 p8407
 ssS'CSSNumericValue'
 p8408
@@ -23934,7 +23934,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/css/cssom/css_numeric_value.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/css/cssom/css_numeric_value.idl'
 p8439
 ssS'Comment'
 p8440
@@ -23972,7 +23972,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/dom/comment.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/dom/comment.idl'
 p8452
 ssS'CSSTranslate'
 p8453
@@ -24037,7 +24037,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/css/cssom/css_translate.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/css/cssom/css_translate.idl'
 p8476
 ssS'DOMPointReadOnly'
 p8477
@@ -24090,7 +24090,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/geometry/dom_point_read_only.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/geometry/dom_point_read_only.idl'
 p8495
 ssS'ProcessingInstruction'
 p8496
@@ -24123,7 +24123,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/dom/processing_instruction.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/dom/processing_instruction.idl'
 p8506
 ssS'HTMLLIElement'
 p8507
@@ -24158,7 +24158,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/html_li_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/html_li_element.idl'
 p8518
 ssS'SVGTests'
 p8519
@@ -24189,7 +24189,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_tests.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_tests.idl'
 p8528
 ssS'SVGSVGElement'
 p8529
@@ -24226,7 +24226,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_svg_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_svg_element.idl'
 p8541
 ssS'DedicatedWorkerGlobalScope'
 p8542
@@ -24286,7 +24286,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/workers/dedicated_worker_global_scope.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/workers/dedicated_worker_global_scope.idl'
 p8566
 ssS'ImageDataColorSettings'
 p8567
@@ -24316,7 +24316,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/canvas/image_data_color_settings.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/canvas/image_data_color_settings.idl'
 p8575
 ssS'RequestInit'
 p8576
@@ -24346,7 +24346,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/fetch/request_init.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/fetch/request_init.idl'
 p8584
 ssS'Int32Array'
 p8585
@@ -24386,7 +24386,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/typed_arrays/int32_array.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/typed_arrays/int32_array.idl'
 p8598
 ssS'DOMPointInit'
 p8599
@@ -24416,7 +24416,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/geometry/dom_point_init.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/geometry/dom_point_init.idl'
 p8607
 ssS'UserActivation'
 p8608
@@ -24451,7 +24451,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/frame/user_activation.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/frame/user_activation.idl'
 p8619
 ssS'SharedWorker'
 p8620
@@ -24501,7 +24501,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/workers/shared_worker.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/workers/shared_worker.idl'
 p8638
 ssS'SVGMetadataElement'
 p8639
@@ -24534,7 +24534,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_metadata_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_metadata_element.idl'
 p8649
 ssS'CSSPositionValue'
 p8650
@@ -24599,7 +24599,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/css/cssom/css_position_value.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/css/cssom/css_position_value.idl'
 p8673
 ssS'CustomElementRegistry'
 p8674
@@ -24630,7 +24630,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/custom/custom_element_registry.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/custom/custom_element_registry.idl'
 p8683
 ssS'HTMLTemplateElement'
 p8684
@@ -24665,7 +24665,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/html_template_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/html_template_element.idl'
 p8695
 ssS'Baselines'
 p8696
@@ -24695,7 +24695,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/canvas/baselines.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/canvas/baselines.idl'
 p8704
 ssS'FocusOptions'
 p8705
@@ -24725,7 +24725,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/focus_options.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/focus_options.idl'
 p8713
 ssS'SVGFEMergeElement'
 p8714
@@ -24760,7 +24760,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_fe_merge_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_fe_merge_element.idl'
 p8725
 ssS'SVGFilterElement'
 p8726
@@ -24795,7 +24795,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_filter_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_filter_element.idl'
 p8737
 ssS'SVGStyleElement'
 p8738
@@ -24828,7 +24828,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_style_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_style_element.idl'
 p8748
 ssS'NonElementParentNode'
 p8749
@@ -24861,7 +24861,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/dom/non_element_parent_node.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/dom/non_element_parent_node.idl'
 p8759
 ssS'InternalDictionary'
 p8760
@@ -24944,7 +24944,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/testing/internal_dictionary.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/testing/internal_dictionary.idl'
 p8789
 ssS'CompositionEventInit'
 p8790
@@ -24976,7 +24976,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/events/composition_event_init.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/events/composition_event_init.idl'
 p8799
 ssS'HTMLUnknownElement'
 p8800
@@ -25020,7 +25020,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/html_unknown_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/html_unknown_element.idl'
 p8815
 ssS'CSSSkew'
 p8816
@@ -25085,7 +25085,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/css/cssom/css_skew.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/css/cssom/css_skew.idl'
 p8839
 ssS'DragEvent'
 p8840
@@ -25130,7 +25130,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/events/drag_event.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/events/drag_event.idl'
 p8855
 ssS'UnderlyingSourceBase'
 p8856
@@ -25165,7 +25165,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/streams/underlying_source_base.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/streams/underlying_source_base.idl'
 p8867
 ssS'HTMLHRElement'
 p8868
@@ -25200,7 +25200,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/html_hr_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/html_hr_element.idl'
 p8879
 ssS'LayoutChild'
 p8880
@@ -25251,7 +25251,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/layout/custom/layout_child.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/layout/custom/layout_child.idl'
 p8898
 ssS'HTMLPictureElement'
 p8899
@@ -25286,7 +25286,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/html_picture_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/html_picture_element.idl'
 p8910
 ssS'TouchList'
 p8911
@@ -25317,7 +25317,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/input/touch_list.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/input/touch_list.idl'
 p8920
 ssS'TrackEventInit'
 p8921
@@ -25342,44 +25342,44 @@ Nsg30
 g31
 ((lp8928
 g57
-(g58
+(g523
 g59
 NtRp8929
 (dp8930
+g526
+g57
+(g58
+g59
+NtRp8931
+(dp8932
 g62
-(lp8931
+(lp8933
 g57
 (g64
 g59
-NtRp8932
-(dp8933
+NtRp8934
+(dp8935
 g67
 S'VideoTrack'
-p8934
+p8936
 sbag57
 (g64
 g59
-NtRp8935
-(dp8936
+NtRp8937
+(dp8938
 g67
 S'AudioTrack'
-p8937
+p8939
 sbag57
 (g64
 g59
-NtRp8938
-(dp8939
+NtRp8940
+(dp8941
 g67
 S'TextTrack'
-p8940
-sbasbag57
-(g523
-g59
-NtRp8941
-(dp8942
-g526
-g8929
-sbatRp8943
+p8942
+sbasbsbag8931
+atRp8943
 sg33
 S'core/html/track'
 p8944
@@ -25388,7 +25388,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/track/track_event_init.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/track/track_event_init.idl'
 p8945
 ssS'FocusEventInit'
 p8946
@@ -25420,7 +25420,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/events/focus_event_init.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/events/focus_event_init.idl'
 p8955
 ssS'HTMLElement'
 p8956
@@ -25501,7 +25501,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/html_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/html_element.idl'
 p8987
 ssS'XPathResult'
 p8988
@@ -25532,7 +25532,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/xml/xpath_result.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/xml/xpath_result.idl'
 p8997
 ssS'SVGFESpotLightElement'
 p8998
@@ -25565,7 +25565,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_fe_spot_light_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_fe_spot_light_element.idl'
 p9008
 ssS'FeaturePolicyViolationReportBody'
 p9009
@@ -25600,7 +25600,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/frame/feature_policy_violation_report_body.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/frame/feature_policy_violation_report_body.idl'
 p9020
 ssS'MediaQueryListEvent'
 p9021
@@ -25645,7 +25645,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/css/media_query_list_event.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/css/media_query_list_event.idl'
 p9036
 ssS'SVGMaskElement'
 p9037
@@ -25680,7 +25680,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_mask_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_mask_element.idl'
 p9048
 ssS'PerformanceEntry'
 p9049
@@ -25730,7 +25730,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/timing/performance_entry.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/timing/performance_entry.idl'
 p9066
 ssS'MojoReadMessageFlags'
 p9067
@@ -25760,7 +25760,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/mojo/mojo_read_message_flags.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/mojo/mojo_read_message_flags.idl'
 p9075
 ssS'HTMLMarqueeElement'
 p9076
@@ -25795,7 +25795,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/html_marquee_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/html_marquee_element.idl'
 p9087
 ssS'MojoInterfaceInterceptor'
 p9088
@@ -25862,7 +25862,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/mojo/test/mojo_interface_interceptor.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/mojo/test/mojo_interface_interceptor.idl'
 p9113
 ssS'WorkerNavigator'
 p9114
@@ -25914,7 +25914,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/workers/worker_navigator.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/workers/worker_navigator.idl'
 p9133
 ssS'AnimationPlaybackEvent'
 p9134
@@ -25952,7 +25952,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/events/animation_playback_event.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/events/animation_playback_event.idl'
 p9146
 ssS'SVGGradientElement'
 p9147
@@ -25989,7 +25989,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_gradient_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_gradient_element.idl'
 p9159
 ssS'MessageEventInit'
 p9160
@@ -26021,7 +26021,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/events/message_event_init.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/events/message_event_init.idl'
 p9169
 ssS'HTMLFontElement'
 p9170
@@ -26056,7 +26056,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/html_font_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/html_font_element.idl'
 p9181
 ssS'PerformanceElementTiming'
 p9182
@@ -26093,7 +26093,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/timing/performance_element_timing.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/timing/performance_element_timing.idl'
 p9194
 ssS'PerformanceObserverInit'
 p9195
@@ -26123,7 +26123,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/timing/performance_observer_init.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/timing/performance_observer_init.idl'
 p9203
 ssS'SVGLinearGradientElement'
 p9204
@@ -26156,7 +26156,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_linear_gradient_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_linear_gradient_element.idl'
 p9214
 ssS'SVGFETurbulenceElement'
 p9215
@@ -26193,7 +26193,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_fe_turbulence_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_fe_turbulence_element.idl'
 p9227
 ssS'HTMLAnchorElement'
 p9228
@@ -26232,7 +26232,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/html_anchor_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/html_anchor_element.idl'
 p9241
 ssS'EventInit'
 p9242
@@ -26262,7 +26262,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/dom/events/event_init.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/dom/events/event_init.idl'
 p9250
 ssS'ReportingObserver'
 p9251
@@ -26300,7 +26300,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/frame/reporting_observer.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/frame/reporting_observer.idl'
 p9263
 ssS'SVGFEFuncRElement'
 p9264
@@ -26333,7 +26333,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_fe_func_r_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_fe_func_r_element.idl'
 p9274
 ssS'AccessibilityRole'
 p9275
@@ -26370,7 +26370,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/dom/accessibility_role.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/dom/accessibility_role.idl'
 p9287
 ssS'ClipboardEventInit'
 p9288
@@ -26402,7 +26402,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/events/clipboard_event_init.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/events/clipboard_event_init.idl'
 p9297
 ssS'URLSearchParams'
 p9298
@@ -26516,7 +26516,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/url/url_search_params.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/url/url_search_params.idl'
 p9339
 ssS'MouseEvent'
 p9340
@@ -26565,7 +26565,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/events/mouse_event.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/events/mouse_event.idl'
 p9357
 ssS'TypeConversions'
 p9358
@@ -26596,7 +26596,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/testing/type_conversions.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/testing/type_conversions.idl'
 p9367
 ssS'TrackEvent'
 p9368
@@ -26669,7 +26669,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/track/track_event.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/track/track_event.idl'
 p9393
 ssS'CharacterData'
 p9394
@@ -26706,7 +26706,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/dom/character_data.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/dom/character_data.idl'
 p9406
 ssS'HTMLHtmlElement'
 p9407
@@ -26741,7 +26741,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/html_html_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/html_html_element.idl'
 p9418
 ssS'SVGFEComponentTransferElement'
 p9419
@@ -26776,7 +26776,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_fe_component_transfer_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_fe_component_transfer_element.idl'
 p9430
 ssS'HTMLStyleElement'
 p9431
@@ -26811,7 +26811,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/html_style_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/html_style_element.idl'
 p9442
 ssS'SVGFEPointLightElement'
 p9443
@@ -26844,7 +26844,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_fe_point_light_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_fe_point_light_element.idl'
 p9453
 ssS'SVGFilterPrimitiveStandardAttributes'
 p9454
@@ -26875,7 +26875,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_filter_primitive_standard_attributes.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_filter_primitive_standard_attributes.idl'
 p9463
 ssS'Uint8ClampedArray'
 p9464
@@ -26915,7 +26915,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/typed_arrays/uint8_clamped_array.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/typed_arrays/uint8_clamped_array.idl'
 p9477
 ssS'HTMLImageElement'
 p9478
@@ -26960,7 +26960,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/html_image_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/html_image_element.idl'
 p9494
 ssS'BigUint64Array'
 p9495
@@ -27000,7 +27000,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/typed_arrays/big_uint_64_array.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/typed_arrays/big_uint_64_array.idl'
 p9508
 ssS'HitTestLayerRect'
 p9509
@@ -27031,7 +27031,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/testing/hit_test_layer_rect.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/testing/hit_test_layer_rect.idl'
 p9518
 ssS'StyleSheetList'
 p9519
@@ -27073,7 +27073,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/css/style_sheet_list.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/css/style_sheet_list.idl'
 p9533
 ssS'SecurityPolicyViolationEvent'
 p9534
@@ -27107,7 +27107,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/events/security_policy_violation_event.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/events/security_policy_violation_event.idl'
 p9544
 ssS'SVGFEFloodElement'
 p9545
@@ -27142,7 +27142,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_fe_flood_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_fe_flood_element.idl'
 p9556
 ssS'SVGViewElement'
 p9557
@@ -27179,7 +27179,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_view_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_view_element.idl'
 p9569
 ssS'StaticSelection'
 p9570
@@ -27210,7 +27210,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/testing/static_selection.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/testing/static_selection.idl'
 p9579
 ssS'DOMMatrixInit'
 p9580
@@ -27242,7 +27242,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/geometry/dom_matrix_init.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/geometry/dom_matrix_init.idl'
 p9589
 ssS'HTMLSlotElement'
 p9590
@@ -27277,7 +27277,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/html_slot_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/html_slot_element.idl'
 p9601
 ssS'SVGRadialGradientElement'
 p9602
@@ -27310,7 +27310,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_radial_gradient_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_radial_gradient_element.idl'
 p9612
 ssS'DataTransfer'
 p9613
@@ -27342,7 +27342,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/clipboard/data_transfer.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/clipboard/data_transfer.idl'
 p9622
 ssS'AnimationPlaybackEventInit'
 p9623
@@ -27374,7 +27374,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/events/animation_playback_event_init.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/events/animation_playback_event_init.idl'
 p9632
 ssS'WorkletOptions'
 p9633
@@ -27404,7 +27404,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/workers/worklet_options.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/workers/worklet_options.idl'
 p9641
 ssS'FontFaceSetLoadEvent'
 p9642
@@ -27449,7 +27449,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/css/font_face_set_load_event.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/css/font_face_set_load_event.idl'
 p9657
 ssS'HTMLParamElement'
 p9658
@@ -27484,7 +27484,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/html_param_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/html/html_param_element.idl'
 p9669
 ssS'SVGTitleElement'
 p9670
@@ -27517,7 +27517,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_title_element.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_title_element.idl'
 p9680
 ssS'ScrollIntoViewOptions'
 p9681
@@ -27549,7 +27549,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/frame/scroll_into_view_options.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/frame/scroll_into_view_options.idl'
 p9690
 ssS'TransformStream'
 p9691
@@ -27616,7 +27616,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/streams/transform_stream.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/streams/transform_stream.idl'
 p9715
 ssS'DataTransferItem'
 p9716
@@ -27647,7 +27647,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/clipboard/data_transfer_item.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/clipboard/data_transfer_item.idl'
 p9725
 ssS'Scheduling'
 p9726
@@ -27682,7 +27682,7 @@ I00
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/frame/scheduling.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/frame/scheduling.idl'
 p9737
 ssS'MojoDuplicateBufferHandleOptions'
 p9738
@@ -27712,7 +27712,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/mojo/mojo_duplicate_buffer_handle_options.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/mojo/mojo_duplicate_buffer_handle_options.idl'
 p9746
 ssS'FragmentResultOptions'
 p9747
@@ -27742,7 +27742,7 @@ I01
 sg36
 I00
 sg37
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/layout/custom/fragment_result_options.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/layout/custom/fragment_result_options.idl'
 p9755
 sssS'partial_interface_files'
 p9756
@@ -27756,7 +27756,7 @@ g2753
 asS'full_paths'
 p9761
 (lp9762
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/fetch/testing/internals_fetch.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/fetch/testing/internals_fetch.idl'
 p9763
 assg2497
 (dp9764
@@ -27765,7 +27765,7 @@ g9759
 g2519
 asg9761
 (lp9766
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/fileapi/url_file_api.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/fileapi/url_file_api.idl'
 p9767
 assS'LayoutWorkletGlobalScope'
 p9768
@@ -27775,7 +27775,7 @@ g9759
 g1630
 asg9761
 (lp9771
-S'/home/avakimov_am/chromium/src/out/Default/gen/third_party/blink/renderer/core/layout_worklet_global_scope_core_constructors.idl'
+S'/mnt/data/chromium/src/out/Default/gen/third_party/blink/renderer/core/layout_worklet_global_scope_core_constructors.idl'
 p9772
 assg7635
 (dp9773
@@ -27785,9 +27785,9 @@ g7665
 ag7666
 asg9761
 (lp9775
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/fetch/worker_fetch.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/fetch/worker_fetch.idl'
 p9776
-aS'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/timing/worker_global_scope_performance.idl'
+aS'/mnt/data/chromium/src/third_party/blink/renderer/core/timing/worker_global_scope_performance.idl'
 p9777
 assg8376
 (dp9778
@@ -27798,11 +27798,11 @@ ag8393
 ag8391
 asg9761
 (lp9780
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/animation/element_animation.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/animation/element_animation.idl'
 p9781
-aS'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/css/cssom/element_computed_style_map.idl'
+aS'/mnt/data/chromium/src/third_party/blink/renderer/core/css/cssom/element_computed_style_map.idl'
 p9782
-aS'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/fullscreen/element_fullscreen.idl'
+aS'/mnt/data/chromium/src/third_party/blink/renderer/core/fullscreen/element_fullscreen.idl'
 p9783
 assg4200
 (dp9784
@@ -27815,15 +27815,15 @@ ag4291
 ag4290
 asg9761
 (lp9786
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/fetch/window_fetch.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/fetch/window_fetch.idl'
 p9787
-aS'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/html/portal/window_portal_host.idl'
+aS'/mnt/data/chromium/src/third_party/blink/renderer/core/html/portal/window_portal_host.idl'
 p9788
-aS'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/timing/window_performance.idl'
+aS'/mnt/data/chromium/src/third_party/blink/renderer/core/timing/window_performance.idl'
 p9789
-aS'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/workers/experimental/window_task_worklet.idl'
+aS'/mnt/data/chromium/src/third_party/blink/renderer/core/workers/experimental/window_task_worklet.idl'
 p9790
-aS'/home/avakimov_am/chromium/src/out/Default/gen/third_party/blink/renderer/core/window_core_constructors.idl'
+aS'/mnt/data/chromium/src/out/Default/gen/third_party/blink/renderer/core/window_core_constructors.idl'
 p9791
 assS'DedicatedWorkerGlobalScope'
 p9792
@@ -27833,7 +27833,7 @@ g9759
 g8562
 asg9761
 (lp9795
-S'/home/avakimov_am/chromium/src/out/Default/gen/third_party/blink/renderer/core/dedicated_worker_global_scope_core_constructors.idl'
+S'/mnt/data/chromium/src/out/Default/gen/third_party/blink/renderer/core/dedicated_worker_global_scope_core_constructors.idl'
 p9796
 assS'SharedWorkerGlobalScope'
 p9797
@@ -27843,7 +27843,7 @@ g9759
 g6593
 asg9761
 (lp9800
-S'/home/avakimov_am/chromium/src/out/Default/gen/third_party/blink/renderer/core/shared_worker_global_scope_core_constructors.idl'
+S'/mnt/data/chromium/src/out/Default/gen/third_party/blink/renderer/core/shared_worker_global_scope_core_constructors.idl'
 p9801
 assS'OriginTrialsTest'
 p9802
@@ -27853,7 +27853,7 @@ g9759
 g8222
 asg9761
 (lp9805
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/testing/origin_trials_test_partial.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/testing/origin_trials_test_partial.idl'
 p9806
 assg2220
 (dp9807
@@ -27864,11 +27864,11 @@ ag2239
 ag2238
 asg9761
 (lp9809
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/events/navigator_events.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/events/navigator_events.idl'
 p9810
-aS'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/frame/navigator_scheduling.idl'
+aS'/mnt/data/chromium/src/third_party/blink/renderer/core/frame/navigator_scheduling.idl'
 p9811
-aS'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/frame/navigator_user_activation.idl'
+aS'/mnt/data/chromium/src/third_party/blink/renderer/core/frame/navigator_user_activation.idl'
 p9812
 assg4975
 (dp9813
@@ -27880,13 +27880,13 @@ ag5010
 ag5012
 asg9761
 (lp9815
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/animation/document_animation.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/animation/document_animation.idl'
 p9816
-aS'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/fullscreen/document_fullscreen.idl'
+aS'/mnt/data/chromium/src/third_party/blink/renderer/core/fullscreen/document_fullscreen.idl'
 p9817
-aS'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/svg/svg_document.idl'
+aS'/mnt/data/chromium/src/third_party/blink/renderer/core/svg/svg_document.idl'
 p9818
-aS'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/xml/document_xpath_evaluator.idl'
+aS'/mnt/data/chromium/src/third_party/blink/renderer/core/xml/document_xpath_evaluator.idl'
 p9819
 assS'CSS'
 p9820
@@ -27898,11 +27898,11 @@ ag3388
 ag3386
 asg9761
 (lp9823
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/css/cssom/css_unit_values.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/css/cssom/css_unit_values.idl'
 p9824
-aS'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/css/property_registration.idl'
+aS'/mnt/data/chromium/src/third_party/blink/renderer/core/css/property_registration.idl'
 p9825
-aS'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/layout/custom/css_layout_worklet.idl'
+aS'/mnt/data/chromium/src/third_party/blink/renderer/core/layout/custom/css_layout_worklet.idl'
 p9826
 assg7368
 (dp9827
@@ -27911,6 +27911,6 @@ g9759
 g7378
 asg9761
 (lp9829
-S'/home/avakimov_am/chromium/src/third_party/blink/renderer/core/fetch/testing/worker_internals_fetch.idl'
+S'/mnt/data/chromium/src/third_party/blink/renderer/core/fetch/testing/worker_internals_fetch.idl'
 p9830
 asss.

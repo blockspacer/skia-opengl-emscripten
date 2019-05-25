@@ -12,8 +12,8 @@ namespace mojom {
 namespace internal {
 
 
-// The 1026039150 value is based on sha256(salt + "TextureReleaser1").
-constexpr uint32_t kTextureReleaser_Release_Name = 1026039150;
+// The 323821514 value is based on sha256(salt + "TextureReleaser1").
+constexpr uint32_t kTextureReleaser_Release_Name = 323821514;
 
 }  // namespace internal
 }  // namespace mojom

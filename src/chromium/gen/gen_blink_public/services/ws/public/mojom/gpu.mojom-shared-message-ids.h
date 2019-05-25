@@ -12,16 +12,16 @@ namespace mojom {
 namespace internal {
 
 
-// The 1202659976 value is based on sha256(salt + "GpuMemoryBufferFactory1").
-constexpr uint32_t kGpuMemoryBufferFactory_CreateGpuMemoryBuffer_Name = 1202659976;
-// The 314114616 value is based on sha256(salt + "GpuMemoryBufferFactory2").
-constexpr uint32_t kGpuMemoryBufferFactory_DestroyGpuMemoryBuffer_Name = 314114616;
-// The 379765574 value is based on sha256(salt + "Gpu1").
-constexpr uint32_t kGpu_CreateGpuMemoryBufferFactory_Name = 379765574;
-// The 781235952 value is based on sha256(salt + "Gpu2").
-constexpr uint32_t kGpu_EstablishGpuChannel_Name = 781235952;
-// The 1356319312 value is based on sha256(salt + "Gpu3").
-constexpr uint32_t kGpu_CreateVideoEncodeAcceleratorProvider_Name = 1356319312;
+// The 105599474 value is based on sha256(salt + "GpuMemoryBufferFactory1").
+constexpr uint32_t kGpuMemoryBufferFactory_CreateGpuMemoryBuffer_Name = 105599474;
+// The 939784350 value is based on sha256(salt + "GpuMemoryBufferFactory2").
+constexpr uint32_t kGpuMemoryBufferFactory_DestroyGpuMemoryBuffer_Name = 939784350;
+// The 63673755 value is based on sha256(salt + "Gpu1").
+constexpr uint32_t kGpu_CreateGpuMemoryBufferFactory_Name = 63673755;
+// The 759535231 value is based on sha256(salt + "Gpu2").
+constexpr uint32_t kGpu_EstablishGpuChannel_Name = 759535231;
+// The 137340375 value is based on sha256(salt + "Gpu3").
+constexpr uint32_t kGpu_CreateVideoEncodeAcceleratorProvider_Name = 137340375;
 
 }  // namespace internal
 }  // namespace mojom

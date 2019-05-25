@@ -12,8 +12,8 @@ namespace mojom {
 namespace internal {
 
 
-// The 236221549 value is based on sha256(salt + "ServiceControl1").
-constexpr uint32_t kServiceControl_RequestQuit_Name = 236221549;
+// The 1107115663 value is based on sha256(salt + "ServiceControl1").
+constexpr uint32_t kServiceControl_RequestQuit_Name = 1107115663;
 
 }  // namespace internal
 }  // namespace mojom

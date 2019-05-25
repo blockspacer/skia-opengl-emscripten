@@ -12,20 +12,20 @@ namespace mojom {
 namespace internal {
 
 
-// The 895638527 value is based on sha256(salt + "ServiceManagerListener1").
-constexpr uint32_t kServiceManagerListener_OnInit_Name = 895638527;
-// The 1763257956 value is based on sha256(salt + "ServiceManagerListener2").
-constexpr uint32_t kServiceManagerListener_OnServiceCreated_Name = 1763257956;
-// The 1364910006 value is based on sha256(salt + "ServiceManagerListener3").
-constexpr uint32_t kServiceManagerListener_OnServiceStarted_Name = 1364910006;
-// The 2119397245 value is based on sha256(salt + "ServiceManagerListener4").
-constexpr uint32_t kServiceManagerListener_OnServicePIDReceived_Name = 2119397245;
-// The 1293492739 value is based on sha256(salt + "ServiceManagerListener5").
-constexpr uint32_t kServiceManagerListener_OnServiceFailedToStart_Name = 1293492739;
-// The 1686346282 value is based on sha256(salt + "ServiceManagerListener6").
-constexpr uint32_t kServiceManagerListener_OnServiceStopped_Name = 1686346282;
-// The 1708168831 value is based on sha256(salt + "ServiceManager1").
-constexpr uint32_t kServiceManager_AddListener_Name = 1708168831;
+// The 1021960314 value is based on sha256(salt + "ServiceManagerListener1").
+constexpr uint32_t kServiceManagerListener_OnInit_Name = 1021960314;
+// The 1134265505 value is based on sha256(salt + "ServiceManagerListener2").
+constexpr uint32_t kServiceManagerListener_OnServiceCreated_Name = 1134265505;
+// The 1817064069 value is based on sha256(salt + "ServiceManagerListener3").
+constexpr uint32_t kServiceManagerListener_OnServiceStarted_Name = 1817064069;
+// The 184954134 value is based on sha256(salt + "ServiceManagerListener4").
+constexpr uint32_t kServiceManagerListener_OnServicePIDReceived_Name = 184954134;
+// The 8536406 value is based on sha256(salt + "ServiceManagerListener5").
+constexpr uint32_t kServiceManagerListener_OnServiceFailedToStart_Name = 8536406;
+// The 457527731 value is based on sha256(salt + "ServiceManagerListener6").
+constexpr uint32_t kServiceManagerListener_OnServiceStopped_Name = 457527731;
+// The 857816324 value is based on sha256(salt + "ServiceManager1").
+constexpr uint32_t kServiceManager_AddListener_Name = 857816324;
 
 }  // namespace internal
 }  // namespace mojom

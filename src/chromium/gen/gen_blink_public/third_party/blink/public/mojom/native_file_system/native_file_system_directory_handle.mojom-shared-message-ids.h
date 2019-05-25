@@ -12,20 +12,20 @@ namespace mojom {
 namespace internal {
 
 
-// The 88168815 value is based on sha256(salt + "NativeFileSystemDirectoryHandle1").
-constexpr uint32_t kNativeFileSystemDirectoryHandle_GetFile_Name = 88168815;
-// The 572454418 value is based on sha256(salt + "NativeFileSystemDirectoryHandle2").
-constexpr uint32_t kNativeFileSystemDirectoryHandle_GetDirectory_Name = 572454418;
-// The 852550949 value is based on sha256(salt + "NativeFileSystemDirectoryHandle3").
-constexpr uint32_t kNativeFileSystemDirectoryHandle_GetEntries_Name = 852550949;
-// The 49767694 value is based on sha256(salt + "NativeFileSystemDirectoryHandle4").
-constexpr uint32_t kNativeFileSystemDirectoryHandle_MoveFrom_Name = 49767694;
-// The 1048919653 value is based on sha256(salt + "NativeFileSystemDirectoryHandle5").
-constexpr uint32_t kNativeFileSystemDirectoryHandle_CopyFrom_Name = 1048919653;
-// The 1046483108 value is based on sha256(salt + "NativeFileSystemDirectoryHandle6").
-constexpr uint32_t kNativeFileSystemDirectoryHandle_Remove_Name = 1046483108;
-// The 423690898 value is based on sha256(salt + "NativeFileSystemDirectoryHandle7").
-constexpr uint32_t kNativeFileSystemDirectoryHandle_Transfer_Name = 423690898;
+// The 564751454 value is based on sha256(salt + "NativeFileSystemDirectoryHandle1").
+constexpr uint32_t kNativeFileSystemDirectoryHandle_GetFile_Name = 564751454;
+// The 1133930125 value is based on sha256(salt + "NativeFileSystemDirectoryHandle2").
+constexpr uint32_t kNativeFileSystemDirectoryHandle_GetDirectory_Name = 1133930125;
+// The 1181969782 value is based on sha256(salt + "NativeFileSystemDirectoryHandle3").
+constexpr uint32_t kNativeFileSystemDirectoryHandle_GetEntries_Name = 1181969782;
+// The 737935815 value is based on sha256(salt + "NativeFileSystemDirectoryHandle4").
+constexpr uint32_t kNativeFileSystemDirectoryHandle_MoveFrom_Name = 737935815;
+// The 138018802 value is based on sha256(salt + "NativeFileSystemDirectoryHandle5").
+constexpr uint32_t kNativeFileSystemDirectoryHandle_CopyFrom_Name = 138018802;
+// The 1208263418 value is based on sha256(salt + "NativeFileSystemDirectoryHandle6").
+constexpr uint32_t kNativeFileSystemDirectoryHandle_Remove_Name = 1208263418;
+// The 746877257 value is based on sha256(salt + "NativeFileSystemDirectoryHandle7").
+constexpr uint32_t kNativeFileSystemDirectoryHandle_Transfer_Name = 746877257;
 
 }  // namespace internal
 }  // namespace mojom

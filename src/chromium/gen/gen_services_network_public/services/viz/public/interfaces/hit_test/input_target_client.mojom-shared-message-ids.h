@@ -12,8 +12,8 @@ namespace mojom {
 namespace internal {
 
 
-// The 1805080450 value is based on sha256(salt + "InputTargetClient1").
-constexpr uint32_t kInputTargetClient_FrameSinkIdAt_Name = 1805080450;
+// The 859825848 value is based on sha256(salt + "InputTargetClient1").
+constexpr uint32_t kInputTargetClient_FrameSinkIdAt_Name = 859825848;
 
 }  // namespace internal
 }  // namespace mojom

@@ -12,10 +12,10 @@ namespace mojom {
 namespace internal {
 
 
-// The 1284277351 value is based on sha256(salt + "PlatformVerification1").
-constexpr uint32_t kPlatformVerification_ChallengePlatform_Name = 1284277351;
-// The 1365968556 value is based on sha256(salt + "PlatformVerification2").
-constexpr uint32_t kPlatformVerification_GetStorageId_Name = 1365968556;
+// The 1915670138 value is based on sha256(salt + "PlatformVerification1").
+constexpr uint32_t kPlatformVerification_ChallengePlatform_Name = 1915670138;
+// The 278897928 value is based on sha256(salt + "PlatformVerification2").
+constexpr uint32_t kPlatformVerification_GetStorageId_Name = 278897928;
 
 }  // namespace internal
 }  // namespace mojom

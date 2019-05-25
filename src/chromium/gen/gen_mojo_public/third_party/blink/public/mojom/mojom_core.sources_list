@@ -1,4 +1,3 @@
-choosers/date_time_chooser.mojom
 messaging/cloneable_message.mojom
 messaging/transferable_message.mojom
 messaging/user_activation_snapshot.mojom

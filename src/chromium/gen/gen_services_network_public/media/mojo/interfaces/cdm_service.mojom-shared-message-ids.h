@@ -12,10 +12,10 @@ namespace mojom {
 namespace internal {
 
 
-// The 932328851 value is based on sha256(salt + "CdmService1").
-constexpr uint32_t kCdmService_LoadCdm_Name = 932328851;
-// The 477889692 value is based on sha256(salt + "CdmService2").
-constexpr uint32_t kCdmService_CreateCdmFactory_Name = 477889692;
+// The 1690230759 value is based on sha256(salt + "CdmService1").
+constexpr uint32_t kCdmService_LoadCdm_Name = 1690230759;
+// The 557253260 value is based on sha256(salt + "CdmService2").
+constexpr uint32_t kCdmService_CreateCdmFactory_Name = 557253260;
 
 }  // namespace internal
 }  // namespace mojom

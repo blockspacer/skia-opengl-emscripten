@@ -12,12 +12,12 @@ namespace mojom {
 namespace internal {
 
 
-// The 1443268209 value is based on sha256(salt + "RestrictedCookieManager1").
-constexpr uint32_t kRestrictedCookieManager_GetAllForUrl_Name = 1443268209;
-// The 333303379 value is based on sha256(salt + "RestrictedCookieManager2").
-constexpr uint32_t kRestrictedCookieManager_SetCanonicalCookie_Name = 333303379;
-// The 1801518492 value is based on sha256(salt + "RestrictedCookieManager3").
-constexpr uint32_t kRestrictedCookieManager_AddChangeListener_Name = 1801518492;
+// The 1078178671 value is based on sha256(salt + "RestrictedCookieManager1").
+constexpr uint32_t kRestrictedCookieManager_GetAllForUrl_Name = 1078178671;
+// The 1637161479 value is based on sha256(salt + "RestrictedCookieManager2").
+constexpr uint32_t kRestrictedCookieManager_SetCanonicalCookie_Name = 1637161479;
+// The 905463031 value is based on sha256(salt + "RestrictedCookieManager3").
+constexpr uint32_t kRestrictedCookieManager_AddChangeListener_Name = 905463031;
 
 }  // namespace internal
 }  // namespace mojom

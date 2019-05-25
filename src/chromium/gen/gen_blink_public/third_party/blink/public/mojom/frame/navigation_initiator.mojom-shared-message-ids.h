@@ -12,8 +12,8 @@ namespace mojom {
 namespace internal {
 
 
-// The 1175376520 value is based on sha256(salt + "NavigationInitiator1").
-constexpr uint32_t kNavigationInitiator_SendViolationReport_Name = 1175376520;
+// The 1542863408 value is based on sha256(salt + "NavigationInitiator1").
+constexpr uint32_t kNavigationInitiator_SendViolationReport_Name = 1542863408;
 
 }  // namespace internal
 }  // namespace mojom

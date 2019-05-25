@@ -12,10 +12,10 @@ namespace mojom {
 namespace internal {
 
 
-// The 752515785 value is based on sha256(salt + "NetLogExporter1").
-constexpr uint32_t kNetLogExporter_Start_Name = 752515785;
-// The 1294210848 value is based on sha256(salt + "NetLogExporter2").
-constexpr uint32_t kNetLogExporter_Stop_Name = 1294210848;
+// The 1677777507 value is based on sha256(salt + "NetLogExporter1").
+constexpr uint32_t kNetLogExporter_Start_Name = 1677777507;
+// The 1419722678 value is based on sha256(salt + "NetLogExporter2").
+constexpr uint32_t kNetLogExporter_Stop_Name = 1419722678;
 
 }  // namespace internal
 }  // namespace mojom

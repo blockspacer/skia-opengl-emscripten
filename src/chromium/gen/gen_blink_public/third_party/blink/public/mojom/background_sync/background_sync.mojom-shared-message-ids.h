@@ -12,12 +12,12 @@ namespace mojom {
 namespace internal {
 
 
-// The 351189335 value is based on sha256(salt + "BackgroundSyncService1").
-constexpr uint32_t kBackgroundSyncService_Register_Name = 351189335;
-// The 1430662273 value is based on sha256(salt + "BackgroundSyncService2").
-constexpr uint32_t kBackgroundSyncService_DidResolveRegistration_Name = 1430662273;
-// The 1322053306 value is based on sha256(salt + "BackgroundSyncService3").
-constexpr uint32_t kBackgroundSyncService_GetRegistrations_Name = 1322053306;
+// The 502060569 value is based on sha256(salt + "BackgroundSyncService1").
+constexpr uint32_t kBackgroundSyncService_Register_Name = 502060569;
+// The 2124130259 value is based on sha256(salt + "BackgroundSyncService2").
+constexpr uint32_t kBackgroundSyncService_DidResolveRegistration_Name = 2124130259;
+// The 466208904 value is based on sha256(salt + "BackgroundSyncService3").
+constexpr uint32_t kBackgroundSyncService_GetRegistrations_Name = 466208904;
 
 }  // namespace internal
 }  // namespace mojom

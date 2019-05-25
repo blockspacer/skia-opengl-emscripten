@@ -12,10 +12,10 @@ namespace mojom {
 namespace internal {
 
 
-// The 1496913509 value is based on sha256(salt + "ManifestManager1").
-constexpr uint32_t kManifestManager_RequestManifest_Name = 1496913509;
-// The 881560064 value is based on sha256(salt + "ManifestManager2").
-constexpr uint32_t kManifestManager_RequestManifestDebugInfo_Name = 881560064;
+// The 2010851930 value is based on sha256(salt + "ManifestManager1").
+constexpr uint32_t kManifestManager_RequestManifest_Name = 2010851930;
+// The 1073671476 value is based on sha256(salt + "ManifestManager2").
+constexpr uint32_t kManifestManager_RequestManifestDebugInfo_Name = 1073671476;
 
 }  // namespace internal
 }  // namespace mojom

@@ -12,8 +12,8 @@ namespace mojom {
 namespace internal {
 
 
-// The 1182834798 value is based on sha256(salt + "Hyphenation1").
-constexpr uint32_t kHyphenation_OpenDictionary_Name = 1182834798;
+// The 1322074194 value is based on sha256(salt + "Hyphenation1").
+constexpr uint32_t kHyphenation_OpenDictionary_Name = 1322074194;
 
 }  // namespace internal
 }  // namespace mojom

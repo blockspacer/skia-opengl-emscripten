@@ -12,30 +12,30 @@ namespace mojom {
 namespace internal {
 
 
-// The 1204956712 value is based on sha256(salt + "ServiceWorkerContainerHost1").
-constexpr uint32_t kServiceWorkerContainerHost_Register_Name = 1204956712;
-// The 832717590 value is based on sha256(salt + "ServiceWorkerContainerHost2").
-constexpr uint32_t kServiceWorkerContainerHost_GetRegistration_Name = 832717590;
-// The 1266048640 value is based on sha256(salt + "ServiceWorkerContainerHost3").
-constexpr uint32_t kServiceWorkerContainerHost_GetRegistrations_Name = 1266048640;
-// The 728034426 value is based on sha256(salt + "ServiceWorkerContainerHost4").
-constexpr uint32_t kServiceWorkerContainerHost_GetRegistrationForReady_Name = 728034426;
-// The 680369627 value is based on sha256(salt + "ServiceWorkerContainerHost5").
-constexpr uint32_t kServiceWorkerContainerHost_EnsureControllerServiceWorker_Name = 680369627;
-// The 1101959722 value is based on sha256(salt + "ServiceWorkerContainerHost6").
-constexpr uint32_t kServiceWorkerContainerHost_CloneContainerHost_Name = 1101959722;
-// The 1877469278 value is based on sha256(salt + "ServiceWorkerContainerHost7").
-constexpr uint32_t kServiceWorkerContainerHost_Ping_Name = 1877469278;
-// The 1616927503 value is based on sha256(salt + "ServiceWorkerContainerHost8").
-constexpr uint32_t kServiceWorkerContainerHost_HintToUpdateServiceWorker_Name = 1616927503;
-// The 642910875 value is based on sha256(salt + "ServiceWorkerContainerHost9").
-constexpr uint32_t kServiceWorkerContainerHost_OnExecutionReady_Name = 642910875;
-// The 1749515989 value is based on sha256(salt + "ServiceWorkerContainer1").
-constexpr uint32_t kServiceWorkerContainer_SetController_Name = 1749515989;
-// The 321281574 value is based on sha256(salt + "ServiceWorkerContainer2").
-constexpr uint32_t kServiceWorkerContainer_PostMessageToClient_Name = 321281574;
-// The 274720268 value is based on sha256(salt + "ServiceWorkerContainer3").
-constexpr uint32_t kServiceWorkerContainer_CountFeature_Name = 274720268;
+// The 1577417059 value is based on sha256(salt + "ServiceWorkerContainerHost1").
+constexpr uint32_t kServiceWorkerContainerHost_Register_Name = 1577417059;
+// The 272368236 value is based on sha256(salt + "ServiceWorkerContainerHost2").
+constexpr uint32_t kServiceWorkerContainerHost_GetRegistration_Name = 272368236;
+// The 1945626248 value is based on sha256(salt + "ServiceWorkerContainerHost3").
+constexpr uint32_t kServiceWorkerContainerHost_GetRegistrations_Name = 1945626248;
+// The 1328628282 value is based on sha256(salt + "ServiceWorkerContainerHost4").
+constexpr uint32_t kServiceWorkerContainerHost_GetRegistrationForReady_Name = 1328628282;
+// The 1292023059 value is based on sha256(salt + "ServiceWorkerContainerHost5").
+constexpr uint32_t kServiceWorkerContainerHost_EnsureControllerServiceWorker_Name = 1292023059;
+// The 706468329 value is based on sha256(salt + "ServiceWorkerContainerHost6").
+constexpr uint32_t kServiceWorkerContainerHost_CloneContainerHost_Name = 706468329;
+// The 385514728 value is based on sha256(salt + "ServiceWorkerContainerHost7").
+constexpr uint32_t kServiceWorkerContainerHost_Ping_Name = 385514728;
+// The 463220336 value is based on sha256(salt + "ServiceWorkerContainerHost8").
+constexpr uint32_t kServiceWorkerContainerHost_HintToUpdateServiceWorker_Name = 463220336;
+// The 1782222231 value is based on sha256(salt + "ServiceWorkerContainerHost9").
+constexpr uint32_t kServiceWorkerContainerHost_OnExecutionReady_Name = 1782222231;
+// The 823778778 value is based on sha256(salt + "ServiceWorkerContainer1").
+constexpr uint32_t kServiceWorkerContainer_SetController_Name = 823778778;
+// The 804309029 value is based on sha256(salt + "ServiceWorkerContainer2").
+constexpr uint32_t kServiceWorkerContainer_PostMessageToClient_Name = 804309029;
+// The 244622660 value is based on sha256(salt + "ServiceWorkerContainer3").
+constexpr uint32_t kServiceWorkerContainer_CountFeature_Name = 244622660;
 
 }  // namespace internal
 }  // namespace mojom

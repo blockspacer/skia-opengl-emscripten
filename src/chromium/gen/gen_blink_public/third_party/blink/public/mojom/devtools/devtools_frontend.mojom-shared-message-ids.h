@@ -12,12 +12,12 @@ namespace mojom {
 namespace internal {
 
 
-// The 1694480078 value is based on sha256(salt + "DevToolsFrontend1").
-constexpr uint32_t kDevToolsFrontend_SetupDevToolsFrontend_Name = 1694480078;
-// The 2128407159 value is based on sha256(salt + "DevToolsFrontend2").
-constexpr uint32_t kDevToolsFrontend_SetupDevToolsExtensionAPI_Name = 2128407159;
-// The 718112481 value is based on sha256(salt + "DevToolsFrontendHost1").
-constexpr uint32_t kDevToolsFrontendHost_DispatchEmbedderMessage_Name = 718112481;
+// The 844955653 value is based on sha256(salt + "DevToolsFrontend1").
+constexpr uint32_t kDevToolsFrontend_SetupDevToolsFrontend_Name = 844955653;
+// The 253013798 value is based on sha256(salt + "DevToolsFrontend2").
+constexpr uint32_t kDevToolsFrontend_SetupDevToolsExtensionAPI_Name = 253013798;
+// The 1392929724 value is based on sha256(salt + "DevToolsFrontendHost1").
+constexpr uint32_t kDevToolsFrontendHost_DispatchEmbedderMessage_Name = 1392929724;
 
 }  // namespace internal
 }  // namespace mojom

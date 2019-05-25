@@ -12,12 +12,12 @@ namespace mojom {
 namespace internal {
 
 
-// The 727817752 value is based on sha256(salt + "ControllerServiceWorker1").
-constexpr uint32_t kControllerServiceWorker_DispatchFetchEvent_Name = 727817752;
-// The 259125058 value is based on sha256(salt + "ControllerServiceWorker2").
-constexpr uint32_t kControllerServiceWorker_Clone_Name = 259125058;
-// The 322083697 value is based on sha256(salt + "ControllerServiceWorkerConnector1").
-constexpr uint32_t kControllerServiceWorkerConnector_UpdateController_Name = 322083697;
+// The 1103620473 value is based on sha256(salt + "ControllerServiceWorker1").
+constexpr uint32_t kControllerServiceWorker_DispatchFetchEvent_Name = 1103620473;
+// The 55119340 value is based on sha256(salt + "ControllerServiceWorker2").
+constexpr uint32_t kControllerServiceWorker_Clone_Name = 55119340;
+// The 1714979744 value is based on sha256(salt + "ControllerServiceWorkerConnector1").
+constexpr uint32_t kControllerServiceWorkerConnector_UpdateController_Name = 1714979744;
 
 }  // namespace internal
 }  // namespace mojom

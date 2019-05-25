@@ -12,8 +12,8 @@ namespace mojom {
 namespace internal {
 
 
-// The 1216135773 value is based on sha256(salt + "BarcodeDetection1").
-constexpr uint32_t kBarcodeDetection_Detect_Name = 1216135773;
+// The 1793818766 value is based on sha256(salt + "BarcodeDetection1").
+constexpr uint32_t kBarcodeDetection_Detect_Name = 1793818766;
 
 }  // namespace internal
 }  // namespace mojom

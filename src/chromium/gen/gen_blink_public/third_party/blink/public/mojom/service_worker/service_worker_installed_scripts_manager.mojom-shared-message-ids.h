@@ -12,10 +12,10 @@ namespace mojom {
 namespace internal {
 
 
-// The 760168323 value is based on sha256(salt + "ServiceWorkerInstalledScriptsManagerHost1").
-constexpr uint32_t kServiceWorkerInstalledScriptsManagerHost_RequestInstalledScript_Name = 760168323;
-// The 1106898383 value is based on sha256(salt + "ServiceWorkerInstalledScriptsManager1").
-constexpr uint32_t kServiceWorkerInstalledScriptsManager_TransferInstalledScript_Name = 1106898383;
+// The 1242147201 value is based on sha256(salt + "ServiceWorkerInstalledScriptsManagerHost1").
+constexpr uint32_t kServiceWorkerInstalledScriptsManagerHost_RequestInstalledScript_Name = 1242147201;
+// The 844190046 value is based on sha256(salt + "ServiceWorkerInstalledScriptsManager1").
+constexpr uint32_t kServiceWorkerInstalledScriptsManager_TransferInstalledScript_Name = 844190046;
 
 }  // namespace internal
 }  // namespace mojom

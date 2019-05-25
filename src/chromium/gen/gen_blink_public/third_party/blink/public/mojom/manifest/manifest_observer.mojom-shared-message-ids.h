@@ -12,8 +12,8 @@ namespace mojom {
 namespace internal {
 
 
-// The 1998834459 value is based on sha256(salt + "ManifestUrlChangeObserver1").
-constexpr uint32_t kManifestUrlChangeObserver_ManifestUrlChanged_Name = 1998834459;
+// The 1852932603 value is based on sha256(salt + "ManifestUrlChangeObserver1").
+constexpr uint32_t kManifestUrlChangeObserver_ManifestUrlChanged_Name = 1852932603;
 
 }  // namespace internal
 }  // namespace mojom

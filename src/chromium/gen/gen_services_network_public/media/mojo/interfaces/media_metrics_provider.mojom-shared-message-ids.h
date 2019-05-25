@@ -12,28 +12,28 @@ namespace mojom {
 namespace internal {
 
 
-// The 337324741 value is based on sha256(salt + "MediaMetricsProvider1").
-constexpr uint32_t kMediaMetricsProvider_Initialize_Name = 337324741;
-// The 268733987 value is based on sha256(salt + "MediaMetricsProvider2").
-constexpr uint32_t kMediaMetricsProvider_OnError_Name = 268733987;
-// The 1635241883 value is based on sha256(salt + "MediaMetricsProvider3").
-constexpr uint32_t kMediaMetricsProvider_SetIsAdMedia_Name = 1635241883;
-// The 799313418 value is based on sha256(salt + "MediaMetricsProvider4").
-constexpr uint32_t kMediaMetricsProvider_SetIsEME_Name = 799313418;
-// The 1917872438 value is based on sha256(salt + "MediaMetricsProvider5").
-constexpr uint32_t kMediaMetricsProvider_SetTimeToMetadata_Name = 1917872438;
-// The 357108738 value is based on sha256(salt + "MediaMetricsProvider6").
-constexpr uint32_t kMediaMetricsProvider_SetTimeToFirstFrame_Name = 357108738;
-// The 295689107 value is based on sha256(salt + "MediaMetricsProvider7").
-constexpr uint32_t kMediaMetricsProvider_SetTimeToPlayReady_Name = 295689107;
-// The 1511231166 value is based on sha256(salt + "MediaMetricsProvider8").
-constexpr uint32_t kMediaMetricsProvider_SetContainerName_Name = 1511231166;
-// The 1329592470 value is based on sha256(salt + "MediaMetricsProvider9").
-constexpr uint32_t kMediaMetricsProvider_AcquireWatchTimeRecorder_Name = 1329592470;
-// The 1965046827 value is based on sha256(salt + "MediaMetricsProvider10").
-constexpr uint32_t kMediaMetricsProvider_AcquireVideoDecodeStatsRecorder_Name = 1965046827;
-// The 870411858 value is based on sha256(salt + "MediaMetricsProvider11").
-constexpr uint32_t kMediaMetricsProvider_AddBytesReceived_Name = 870411858;
+// The 402473007 value is based on sha256(salt + "MediaMetricsProvider1").
+constexpr uint32_t kMediaMetricsProvider_Initialize_Name = 402473007;
+// The 997339136 value is based on sha256(salt + "MediaMetricsProvider2").
+constexpr uint32_t kMediaMetricsProvider_OnError_Name = 997339136;
+// The 1241043182 value is based on sha256(salt + "MediaMetricsProvider3").
+constexpr uint32_t kMediaMetricsProvider_SetIsAdMedia_Name = 1241043182;
+// The 232814361 value is based on sha256(salt + "MediaMetricsProvider4").
+constexpr uint32_t kMediaMetricsProvider_SetIsEME_Name = 232814361;
+// The 1282784882 value is based on sha256(salt + "MediaMetricsProvider5").
+constexpr uint32_t kMediaMetricsProvider_SetTimeToMetadata_Name = 1282784882;
+// The 1438509015 value is based on sha256(salt + "MediaMetricsProvider6").
+constexpr uint32_t kMediaMetricsProvider_SetTimeToFirstFrame_Name = 1438509015;
+// The 959989999 value is based on sha256(salt + "MediaMetricsProvider7").
+constexpr uint32_t kMediaMetricsProvider_SetTimeToPlayReady_Name = 959989999;
+// The 1244495561 value is based on sha256(salt + "MediaMetricsProvider8").
+constexpr uint32_t kMediaMetricsProvider_SetContainerName_Name = 1244495561;
+// The 1660501633 value is based on sha256(salt + "MediaMetricsProvider9").
+constexpr uint32_t kMediaMetricsProvider_AcquireWatchTimeRecorder_Name = 1660501633;
+// The 307736081 value is based on sha256(salt + "MediaMetricsProvider10").
+constexpr uint32_t kMediaMetricsProvider_AcquireVideoDecodeStatsRecorder_Name = 307736081;
+// The 1238993130 value is based on sha256(salt + "MediaMetricsProvider11").
+constexpr uint32_t kMediaMetricsProvider_AddBytesReceived_Name = 1238993130;
 
 }  // namespace internal
 }  // namespace mojom

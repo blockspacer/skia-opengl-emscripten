@@ -12,8 +12,8 @@ namespace mojom {
 namespace internal {
 
 
-// The 850895293 value is based on sha256(salt + "VideoDecodePerfHistory1").
-constexpr uint32_t kVideoDecodePerfHistory_GetPerfInfo_Name = 850895293;
+// The 1862220213 value is based on sha256(salt + "VideoDecodePerfHistory1").
+constexpr uint32_t kVideoDecodePerfHistory_GetPerfInfo_Name = 1862220213;
 
 }  // namespace internal
 }  // namespace mojom

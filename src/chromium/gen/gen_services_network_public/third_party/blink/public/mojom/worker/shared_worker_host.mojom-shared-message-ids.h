@@ -12,18 +12,18 @@ namespace mojom {
 namespace internal {
 
 
-// The 397206122 value is based on sha256(salt + "SharedWorkerHost1").
-constexpr uint32_t kSharedWorkerHost_OnConnected_Name = 397206122;
-// The 1978282767 value is based on sha256(salt + "SharedWorkerHost2").
-constexpr uint32_t kSharedWorkerHost_OnContextClosed_Name = 1978282767;
-// The 289060479 value is based on sha256(salt + "SharedWorkerHost3").
-constexpr uint32_t kSharedWorkerHost_OnReadyForInspection_Name = 289060479;
-// The 811568556 value is based on sha256(salt + "SharedWorkerHost4").
-constexpr uint32_t kSharedWorkerHost_OnScriptLoaded_Name = 811568556;
-// The 1189729301 value is based on sha256(salt + "SharedWorkerHost5").
-constexpr uint32_t kSharedWorkerHost_OnScriptLoadFailed_Name = 1189729301;
-// The 1488786389 value is based on sha256(salt + "SharedWorkerHost6").
-constexpr uint32_t kSharedWorkerHost_OnFeatureUsed_Name = 1488786389;
+// The 1030529365 value is based on sha256(salt + "SharedWorkerHost1").
+constexpr uint32_t kSharedWorkerHost_OnConnected_Name = 1030529365;
+// The 1661059892 value is based on sha256(salt + "SharedWorkerHost2").
+constexpr uint32_t kSharedWorkerHost_OnContextClosed_Name = 1661059892;
+// The 2113835523 value is based on sha256(salt + "SharedWorkerHost3").
+constexpr uint32_t kSharedWorkerHost_OnReadyForInspection_Name = 2113835523;
+// The 269919914 value is based on sha256(salt + "SharedWorkerHost4").
+constexpr uint32_t kSharedWorkerHost_OnScriptLoaded_Name = 269919914;
+// The 41514925 value is based on sha256(salt + "SharedWorkerHost5").
+constexpr uint32_t kSharedWorkerHost_OnScriptLoadFailed_Name = 41514925;
+// The 2019352621 value is based on sha256(salt + "SharedWorkerHost6").
+constexpr uint32_t kSharedWorkerHost_OnFeatureUsed_Name = 2019352621;
 
 }  // namespace internal
 }  // namespace mojom

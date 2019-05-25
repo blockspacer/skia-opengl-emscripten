@@ -12,8 +12,8 @@ namespace mojom {
 namespace internal {
 
 
-// The 121135307 value is based on sha256(salt + "PreviewsResourceLoadingHintsReceiver1").
-constexpr uint32_t kPreviewsResourceLoadingHintsReceiver_SetResourceLoadingHints_Name = 121135307;
+// The 159155465 value is based on sha256(salt + "PreviewsResourceLoadingHintsReceiver1").
+constexpr uint32_t kPreviewsResourceLoadingHintsReceiver_SetResourceLoadingHints_Name = 159155465;
 
 }  // namespace internal
 }  // namespace mojom

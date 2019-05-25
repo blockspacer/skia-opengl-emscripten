@@ -12,10 +12,10 @@ namespace mojom {
 namespace internal {
 
 
-// The 2121957598 value is based on sha256(salt + "NativeFileSystemManager1").
-constexpr uint32_t kNativeFileSystemManager_GetSandboxedFileSystem_Name = 2121957598;
-// The 1380365865 value is based on sha256(salt + "NativeFileSystemManager2").
-constexpr uint32_t kNativeFileSystemManager_ChooseEntries_Name = 1380365865;
+// The 899791634 value is based on sha256(salt + "NativeFileSystemManager1").
+constexpr uint32_t kNativeFileSystemManager_GetSandboxedFileSystem_Name = 899791634;
+// The 917222930 value is based on sha256(salt + "NativeFileSystemManager2").
+constexpr uint32_t kNativeFileSystemManager_ChooseEntries_Name = 917222930;
 
 }  // namespace internal
 }  // namespace mojom

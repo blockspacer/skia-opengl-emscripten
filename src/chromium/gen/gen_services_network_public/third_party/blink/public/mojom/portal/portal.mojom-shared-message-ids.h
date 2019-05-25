@@ -12,18 +12,18 @@ namespace mojom {
 namespace internal {
 
 
-// The 1497390086 value is based on sha256(salt + "Portal1").
-constexpr uint32_t kPortal_Navigate_Name = 1497390086;
-// The 370867264 value is based on sha256(salt + "Portal2").
-constexpr uint32_t kPortal_Activate_Name = 370867264;
-// The 1372131805 value is based on sha256(salt + "Portal3").
-constexpr uint32_t kPortal_PostMessageToGuest_Name = 1372131805;
-// The 749522377 value is based on sha256(salt + "PortalClient1").
-constexpr uint32_t kPortalClient_ForwardMessageFromGuest_Name = 749522377;
-// The 450896787 value is based on sha256(salt + "PortalClient2").
-constexpr uint32_t kPortalClient_DispatchLoadEvent_Name = 450896787;
-// The 1282506410 value is based on sha256(salt + "PortalHost1").
-constexpr uint32_t kPortalHost_PostMessageToHost_Name = 1282506410;
+// The 162578282 value is based on sha256(salt + "Portal1").
+constexpr uint32_t kPortal_Navigate_Name = 162578282;
+// The 1971737900 value is based on sha256(salt + "Portal2").
+constexpr uint32_t kPortal_Activate_Name = 1971737900;
+// The 667443263 value is based on sha256(salt + "Portal3").
+constexpr uint32_t kPortal_PostMessageToGuest_Name = 667443263;
+// The 149826047 value is based on sha256(salt + "PortalClient1").
+constexpr uint32_t kPortalClient_ForwardMessageFromGuest_Name = 149826047;
+// The 518727623 value is based on sha256(salt + "PortalClient2").
+constexpr uint32_t kPortalClient_DispatchLoadEvent_Name = 518727623;
+// The 42992376 value is based on sha256(salt + "PortalHost1").
+constexpr uint32_t kPortalHost_PostMessageToHost_Name = 42992376;
 
 }  // namespace internal
 }  // namespace mojom

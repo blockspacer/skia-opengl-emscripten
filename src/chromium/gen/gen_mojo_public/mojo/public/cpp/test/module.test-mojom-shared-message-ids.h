@@ -11,10 +11,10 @@ namespace test_module {
 namespace internal {
 
 
-// The 984490 value is based on sha256(salt + "Interface1").
-constexpr uint32_t kInterface_DoSomething_Name = 984490;
-// The 1698684052 value is based on sha256(salt + "Interface2").
-constexpr uint32_t kInterface_DoSomethingElse_Name = 1698684052;
+// The 1856444906 value is based on sha256(salt + "Interface1").
+constexpr uint32_t kInterface_DoSomething_Name = 1856444906;
+// The 1208547354 value is based on sha256(salt + "Interface2").
+constexpr uint32_t kInterface_DoSomethingElse_Name = 1208547354;
 
 }  // namespace internal
 }  // namespace test_module

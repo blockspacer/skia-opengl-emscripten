@@ -12,34 +12,34 @@ namespace mojom {
 namespace internal {
 
 
-// The 422998895 value is based on sha256(salt + "SerialPortManager1").
-constexpr uint32_t kSerialPortManager_GetDevices_Name = 422998895;
-// The 1417625937 value is based on sha256(salt + "SerialPortManager2").
-constexpr uint32_t kSerialPortManager_GetPort_Name = 1417625937;
-// The 1430493837 value is based on sha256(salt + "SerialPort1").
-constexpr uint32_t kSerialPort_Open_Name = 1430493837;
-// The 314654651 value is based on sha256(salt + "SerialPort2").
-constexpr uint32_t kSerialPort_ClearSendError_Name = 314654651;
-// The 1391832256 value is based on sha256(salt + "SerialPort3").
-constexpr uint32_t kSerialPort_ClearReadError_Name = 1391832256;
-// The 1793815278 value is based on sha256(salt + "SerialPort4").
-constexpr uint32_t kSerialPort_Flush_Name = 1793815278;
-// The 334548885 value is based on sha256(salt + "SerialPort5").
-constexpr uint32_t kSerialPort_GetControlSignals_Name = 334548885;
-// The 1352980616 value is based on sha256(salt + "SerialPort6").
-constexpr uint32_t kSerialPort_SetControlSignals_Name = 1352980616;
-// The 1629570034 value is based on sha256(salt + "SerialPort7").
-constexpr uint32_t kSerialPort_ConfigurePort_Name = 1629570034;
-// The 642906998 value is based on sha256(salt + "SerialPort8").
-constexpr uint32_t kSerialPort_GetPortInfo_Name = 642906998;
-// The 1699734787 value is based on sha256(salt + "SerialPort9").
-constexpr uint32_t kSerialPort_SetBreak_Name = 1699734787;
-// The 259022733 value is based on sha256(salt + "SerialPort10").
-constexpr uint32_t kSerialPort_ClearBreak_Name = 259022733;
-// The 1889306514 value is based on sha256(salt + "SerialPortClient1").
-constexpr uint32_t kSerialPortClient_OnReadError_Name = 1889306514;
-// The 1150681918 value is based on sha256(salt + "SerialPortClient2").
-constexpr uint32_t kSerialPortClient_OnSendError_Name = 1150681918;
+// The 1690960531 value is based on sha256(salt + "SerialPortManager1").
+constexpr uint32_t kSerialPortManager_GetDevices_Name = 1690960531;
+// The 508113172 value is based on sha256(salt + "SerialPortManager2").
+constexpr uint32_t kSerialPortManager_GetPort_Name = 508113172;
+// The 1024789080 value is based on sha256(salt + "SerialPort1").
+constexpr uint32_t kSerialPort_Open_Name = 1024789080;
+// The 1333798324 value is based on sha256(salt + "SerialPort2").
+constexpr uint32_t kSerialPort_ClearSendError_Name = 1333798324;
+// The 1635196831 value is based on sha256(salt + "SerialPort3").
+constexpr uint32_t kSerialPort_ClearReadError_Name = 1635196831;
+// The 1654016726 value is based on sha256(salt + "SerialPort4").
+constexpr uint32_t kSerialPort_Flush_Name = 1654016726;
+// The 871123182 value is based on sha256(salt + "SerialPort5").
+constexpr uint32_t kSerialPort_GetControlSignals_Name = 871123182;
+// The 320518629 value is based on sha256(salt + "SerialPort6").
+constexpr uint32_t kSerialPort_SetControlSignals_Name = 320518629;
+// The 1915236140 value is based on sha256(salt + "SerialPort7").
+constexpr uint32_t kSerialPort_ConfigurePort_Name = 1915236140;
+// The 1296062430 value is based on sha256(salt + "SerialPort8").
+constexpr uint32_t kSerialPort_GetPortInfo_Name = 1296062430;
+// The 1432937960 value is based on sha256(salt + "SerialPort9").
+constexpr uint32_t kSerialPort_SetBreak_Name = 1432937960;
+// The 1613493350 value is based on sha256(salt + "SerialPort10").
+constexpr uint32_t kSerialPort_ClearBreak_Name = 1613493350;
+// The 135651498 value is based on sha256(salt + "SerialPortClient1").
+constexpr uint32_t kSerialPortClient_OnReadError_Name = 135651498;
+// The 874952324 value is based on sha256(salt + "SerialPortClient2").
+constexpr uint32_t kSerialPortClient_OnSendError_Name = 874952324;
 
 }  // namespace internal
 }  // namespace mojom

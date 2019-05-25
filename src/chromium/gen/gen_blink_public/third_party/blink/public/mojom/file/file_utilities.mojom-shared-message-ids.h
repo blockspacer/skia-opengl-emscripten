@@ -12,8 +12,8 @@ namespace mojom {
 namespace internal {
 
 
-// The 1036205462 value is based on sha256(salt + "FileUtilitiesHost1").
-constexpr uint32_t kFileUtilitiesHost_GetFileInfo_Name = 1036205462;
+// The 798987915 value is based on sha256(salt + "FileUtilitiesHost1").
+constexpr uint32_t kFileUtilitiesHost_GetFileInfo_Name = 798987915;
 
 }  // namespace internal
 }  // namespace mojom

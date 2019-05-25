@@ -12,10 +12,10 @@ namespace mojom {
 namespace internal {
 
 
-// The 307605881 value is based on sha256(salt + "TimeZoneMonitor1").
-constexpr uint32_t kTimeZoneMonitor_AddClient_Name = 307605881;
-// The 1897182114 value is based on sha256(salt + "TimeZoneMonitorClient1").
-constexpr uint32_t kTimeZoneMonitorClient_OnTimeZoneChange_Name = 1897182114;
+// The 272621994 value is based on sha256(salt + "TimeZoneMonitor1").
+constexpr uint32_t kTimeZoneMonitor_AddClient_Name = 272621994;
+// The 521570261 value is based on sha256(salt + "TimeZoneMonitorClient1").
+constexpr uint32_t kTimeZoneMonitorClient_OnTimeZoneChange_Name = 521570261;
 
 }  // namespace internal
 }  // namespace mojom

@@ -12,8 +12,8 @@ namespace mojom {
 namespace internal {
 
 
-// The 1406552823 value is based on sha256(salt + "SSLConfigClient1").
-constexpr uint32_t kSSLConfigClient_OnSSLConfigUpdated_Name = 1406552823;
+// The 1068113683 value is based on sha256(salt + "SSLConfigClient1").
+constexpr uint32_t kSSLConfigClient_OnSSLConfigUpdated_Name = 1068113683;
 
 }  // namespace internal
 }  // namespace mojom

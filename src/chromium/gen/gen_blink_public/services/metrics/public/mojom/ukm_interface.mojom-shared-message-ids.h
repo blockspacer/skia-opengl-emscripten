@@ -12,10 +12,10 @@ namespace mojom {
 namespace internal {
 
 
-// The 963731108 value is based on sha256(salt + "UkmRecorderInterface1").
-constexpr uint32_t kUkmRecorderInterface_AddEntry_Name = 963731108;
-// The 153816209 value is based on sha256(salt + "UkmRecorderInterface2").
-constexpr uint32_t kUkmRecorderInterface_UpdateSourceURL_Name = 153816209;
+// The 699178147 value is based on sha256(salt + "UkmRecorderInterface1").
+constexpr uint32_t kUkmRecorderInterface_AddEntry_Name = 699178147;
+// The 1616769892 value is based on sha256(salt + "UkmRecorderInterface2").
+constexpr uint32_t kUkmRecorderInterface_UpdateSourceURL_Name = 1616769892;
 
 }  // namespace internal
 }  // namespace mojom

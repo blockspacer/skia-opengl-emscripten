@@ -12,8 +12,8 @@ namespace mojom {
 namespace internal {
 
 
-// The 1077594758 value is based on sha256(salt + "AutoplayConfigurationClient1").
-constexpr uint32_t kAutoplayConfigurationClient_AddAutoplayFlags_Name = 1077594758;
+// The 1168552807 value is based on sha256(salt + "AutoplayConfigurationClient1").
+constexpr uint32_t kAutoplayConfigurationClient_AddAutoplayFlags_Name = 1168552807;
 
 }  // namespace internal
 }  // namespace mojom

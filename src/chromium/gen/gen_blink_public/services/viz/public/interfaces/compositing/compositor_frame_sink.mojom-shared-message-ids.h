@@ -12,28 +12,28 @@ namespace mojom {
 namespace internal {
 
 
-// The 1173771966 value is based on sha256(salt + "CompositorFrameSink1").
-constexpr uint32_t kCompositorFrameSink_SetNeedsBeginFrame_Name = 1173771966;
-// The 2053343606 value is based on sha256(salt + "CompositorFrameSink2").
-constexpr uint32_t kCompositorFrameSink_SetWantsAnimateOnlyBeginFrames_Name = 2053343606;
-// The 905079522 value is based on sha256(salt + "CompositorFrameSink3").
-constexpr uint32_t kCompositorFrameSink_SubmitCompositorFrame_Name = 905079522;
-// The 472708910 value is based on sha256(salt + "CompositorFrameSink4").
-constexpr uint32_t kCompositorFrameSink_SubmitCompositorFrameSync_Name = 472708910;
-// The 600636426 value is based on sha256(salt + "CompositorFrameSink5").
-constexpr uint32_t kCompositorFrameSink_DidNotProduceFrame_Name = 600636426;
-// The 1904722982 value is based on sha256(salt + "CompositorFrameSink6").
-constexpr uint32_t kCompositorFrameSink_DidAllocateSharedBitmap_Name = 1904722982;
-// The 685486194 value is based on sha256(salt + "CompositorFrameSink7").
-constexpr uint32_t kCompositorFrameSink_DidDeleteSharedBitmap_Name = 685486194;
-// The 1148482709 value is based on sha256(salt + "CompositorFrameSinkClient1").
-constexpr uint32_t kCompositorFrameSinkClient_DidReceiveCompositorFrameAck_Name = 1148482709;
-// The 356353648 value is based on sha256(salt + "CompositorFrameSinkClient2").
-constexpr uint32_t kCompositorFrameSinkClient_OnBeginFrame_Name = 356353648;
-// The 776005784 value is based on sha256(salt + "CompositorFrameSinkClient3").
-constexpr uint32_t kCompositorFrameSinkClient_OnBeginFramePausedChanged_Name = 776005784;
-// The 919962509 value is based on sha256(salt + "CompositorFrameSinkClient4").
-constexpr uint32_t kCompositorFrameSinkClient_ReclaimResources_Name = 919962509;
+// The 1993786273 value is based on sha256(salt + "CompositorFrameSink1").
+constexpr uint32_t kCompositorFrameSink_SetNeedsBeginFrame_Name = 1993786273;
+// The 1430360963 value is based on sha256(salt + "CompositorFrameSink2").
+constexpr uint32_t kCompositorFrameSink_SetWantsAnimateOnlyBeginFrames_Name = 1430360963;
+// The 649592102 value is based on sha256(salt + "CompositorFrameSink3").
+constexpr uint32_t kCompositorFrameSink_SubmitCompositorFrame_Name = 649592102;
+// The 1098152945 value is based on sha256(salt + "CompositorFrameSink4").
+constexpr uint32_t kCompositorFrameSink_SubmitCompositorFrameSync_Name = 1098152945;
+// The 280403670 value is based on sha256(salt + "CompositorFrameSink5").
+constexpr uint32_t kCompositorFrameSink_DidNotProduceFrame_Name = 280403670;
+// The 99245752 value is based on sha256(salt + "CompositorFrameSink6").
+constexpr uint32_t kCompositorFrameSink_DidAllocateSharedBitmap_Name = 99245752;
+// The 307998388 value is based on sha256(salt + "CompositorFrameSink7").
+constexpr uint32_t kCompositorFrameSink_DidDeleteSharedBitmap_Name = 307998388;
+// The 1712904177 value is based on sha256(salt + "CompositorFrameSinkClient1").
+constexpr uint32_t kCompositorFrameSinkClient_DidReceiveCompositorFrameAck_Name = 1712904177;
+// The 1257227813 value is based on sha256(salt + "CompositorFrameSinkClient2").
+constexpr uint32_t kCompositorFrameSinkClient_OnBeginFrame_Name = 1257227813;
+// The 1737048750 value is based on sha256(salt + "CompositorFrameSinkClient3").
+constexpr uint32_t kCompositorFrameSinkClient_OnBeginFramePausedChanged_Name = 1737048750;
+// The 1526739050 value is based on sha256(salt + "CompositorFrameSinkClient4").
+constexpr uint32_t kCompositorFrameSinkClient_ReclaimResources_Name = 1526739050;
 
 }  // namespace internal
 }  // namespace mojom

@@ -12,8 +12,8 @@ namespace mojom {
 namespace internal {
 
 
-// The 1580555663 value is based on sha256(salt + "FaceDetection1").
-constexpr uint32_t kFaceDetection_Detect_Name = 1580555663;
+// The 956869428 value is based on sha256(salt + "FaceDetection1").
+constexpr uint32_t kFaceDetection_Detect_Name = 956869428;
 
 }  // namespace internal
 }  // namespace mojom

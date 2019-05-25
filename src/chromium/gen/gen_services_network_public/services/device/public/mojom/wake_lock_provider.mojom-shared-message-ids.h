@@ -12,16 +12,16 @@ namespace mojom {
 namespace internal {
 
 
-// The 1327835948 value is based on sha256(salt + "WakeLockProvider1").
-constexpr uint32_t kWakeLockProvider_GetWakeLockContextForID_Name = 1327835948;
-// The 1926951100 value is based on sha256(salt + "WakeLockProvider2").
-constexpr uint32_t kWakeLockProvider_GetWakeLockWithoutContext_Name = 1926951100;
-// The 297055829 value is based on sha256(salt + "WakeLockProvider3").
-constexpr uint32_t kWakeLockProvider_NotifyOnWakeLockDeactivation_Name = 297055829;
-// The 306506940 value is based on sha256(salt + "WakeLockProvider4").
-constexpr uint32_t kWakeLockProvider_GetActiveWakeLocksForTests_Name = 306506940;
-// The 1428684443 value is based on sha256(salt + "WakeLockObserver1").
-constexpr uint32_t kWakeLockObserver_OnWakeLockDeactivated_Name = 1428684443;
+// The 294368223 value is based on sha256(salt + "WakeLockProvider1").
+constexpr uint32_t kWakeLockProvider_GetWakeLockContextForID_Name = 294368223;
+// The 1170829262 value is based on sha256(salt + "WakeLockProvider2").
+constexpr uint32_t kWakeLockProvider_GetWakeLockWithoutContext_Name = 1170829262;
+// The 1540955828 value is based on sha256(salt + "WakeLockProvider3").
+constexpr uint32_t kWakeLockProvider_NotifyOnWakeLockDeactivation_Name = 1540955828;
+// The 1742860509 value is based on sha256(salt + "WakeLockProvider4").
+constexpr uint32_t kWakeLockProvider_GetActiveWakeLocksForTests_Name = 1742860509;
+// The 1497210956 value is based on sha256(salt + "WakeLockObserver1").
+constexpr uint32_t kWakeLockObserver_OnWakeLockDeactivated_Name = 1497210956;
 
 }  // namespace internal
 }  // namespace mojom

@@ -12,12 +12,12 @@ namespace mojom {
 namespace internal {
 
 
-// The 1767202102 value is based on sha256(salt + "CredentialManager1").
-constexpr uint32_t kCredentialManager_Store_Name = 1767202102;
-// The 1628136793 value is based on sha256(salt + "CredentialManager2").
-constexpr uint32_t kCredentialManager_PreventSilentAccess_Name = 1628136793;
-// The 1569559365 value is based on sha256(salt + "CredentialManager3").
-constexpr uint32_t kCredentialManager_Get_Name = 1569559365;
+// The 301481461 value is based on sha256(salt + "CredentialManager1").
+constexpr uint32_t kCredentialManager_Store_Name = 301481461;
+// The 765137658 value is based on sha256(salt + "CredentialManager2").
+constexpr uint32_t kCredentialManager_PreventSilentAccess_Name = 765137658;
+// The 1043983982 value is based on sha256(salt + "CredentialManager3").
+constexpr uint32_t kCredentialManager_Get_Name = 1043983982;
 
 }  // namespace internal
 }  // namespace mojom

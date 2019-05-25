@@ -12,12 +12,12 @@ namespace mojom {
 namespace internal {
 
 
-// The 419363593 value is based on sha256(salt + "ServiceWorkerWorkerClient1").
-constexpr uint32_t kServiceWorkerWorkerClient_OnControllerChanged_Name = 419363593;
-// The 1609450158 value is based on sha256(salt + "ServiceWorkerWorkerClientRegistry1").
-constexpr uint32_t kServiceWorkerWorkerClientRegistry_RegisterWorkerClient_Name = 1609450158;
-// The 1644897369 value is based on sha256(salt + "ServiceWorkerWorkerClientRegistry2").
-constexpr uint32_t kServiceWorkerWorkerClientRegistry_CloneWorkerClientRegistry_Name = 1644897369;
+// The 221090040 value is based on sha256(salt + "ServiceWorkerWorkerClient1").
+constexpr uint32_t kServiceWorkerWorkerClient_OnControllerChanged_Name = 221090040;
+// The 2115530144 value is based on sha256(salt + "ServiceWorkerWorkerClientRegistry1").
+constexpr uint32_t kServiceWorkerWorkerClientRegistry_RegisterWorkerClient_Name = 2115530144;
+// The 1259538567 value is based on sha256(salt + "ServiceWorkerWorkerClientRegistry2").
+constexpr uint32_t kServiceWorkerWorkerClientRegistry_CloneWorkerClientRegistry_Name = 1259538567;
 
 }  // namespace internal
 }  // namespace mojom

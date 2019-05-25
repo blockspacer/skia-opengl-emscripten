@@ -12,20 +12,20 @@ namespace mojom {
 namespace internal {
 
 
-// The 1501435065 value is based on sha256(salt + "MediaDevicesDispatcherHost1").
-constexpr uint32_t kMediaDevicesDispatcherHost_EnumerateDevices_Name = 1501435065;
-// The 2101187756 value is based on sha256(salt + "MediaDevicesDispatcherHost2").
-constexpr uint32_t kMediaDevicesDispatcherHost_GetVideoInputCapabilities_Name = 2101187756;
-// The 1910596664 value is based on sha256(salt + "MediaDevicesDispatcherHost3").
-constexpr uint32_t kMediaDevicesDispatcherHost_GetAllVideoInputDeviceFormats_Name = 1910596664;
-// The 1396042256 value is based on sha256(salt + "MediaDevicesDispatcherHost4").
-constexpr uint32_t kMediaDevicesDispatcherHost_GetAvailableVideoInputDeviceFormats_Name = 1396042256;
-// The 960935225 value is based on sha256(salt + "MediaDevicesDispatcherHost5").
-constexpr uint32_t kMediaDevicesDispatcherHost_GetAudioInputCapabilities_Name = 960935225;
-// The 1731283399 value is based on sha256(salt + "MediaDevicesDispatcherHost6").
-constexpr uint32_t kMediaDevicesDispatcherHost_AddMediaDevicesListener_Name = 1731283399;
-// The 1261595142 value is based on sha256(salt + "MediaDevicesListener1").
-constexpr uint32_t kMediaDevicesListener_OnDevicesChanged_Name = 1261595142;
+// The 1398861486 value is based on sha256(salt + "MediaDevicesDispatcherHost1").
+constexpr uint32_t kMediaDevicesDispatcherHost_EnumerateDevices_Name = 1398861486;
+// The 157575354 value is based on sha256(salt + "MediaDevicesDispatcherHost2").
+constexpr uint32_t kMediaDevicesDispatcherHost_GetVideoInputCapabilities_Name = 157575354;
+// The 371274618 value is based on sha256(salt + "MediaDevicesDispatcherHost3").
+constexpr uint32_t kMediaDevicesDispatcherHost_GetAllVideoInputDeviceFormats_Name = 371274618;
+// The 518617393 value is based on sha256(salt + "MediaDevicesDispatcherHost4").
+constexpr uint32_t kMediaDevicesDispatcherHost_GetAvailableVideoInputDeviceFormats_Name = 518617393;
+// The 1549862888 value is based on sha256(salt + "MediaDevicesDispatcherHost5").
+constexpr uint32_t kMediaDevicesDispatcherHost_GetAudioInputCapabilities_Name = 1549862888;
+// The 1339046912 value is based on sha256(salt + "MediaDevicesDispatcherHost6").
+constexpr uint32_t kMediaDevicesDispatcherHost_AddMediaDevicesListener_Name = 1339046912;
+// The 1195965223 value is based on sha256(salt + "MediaDevicesListener1").
+constexpr uint32_t kMediaDevicesListener_OnDevicesChanged_Name = 1195965223;
 
 }  // namespace internal
 }  // namespace mojom

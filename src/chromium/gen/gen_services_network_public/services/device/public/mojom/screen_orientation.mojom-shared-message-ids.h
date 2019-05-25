@@ -12,12 +12,12 @@ namespace mojom {
 namespace internal {
 
 
-// The 638713360 value is based on sha256(salt + "ScreenOrientation1").
-constexpr uint32_t kScreenOrientation_LockOrientation_Name = 638713360;
-// The 1728420221 value is based on sha256(salt + "ScreenOrientation2").
-constexpr uint32_t kScreenOrientation_UnlockOrientation_Name = 1728420221;
-// The 2128155361 value is based on sha256(salt + "ScreenOrientationListener1").
-constexpr uint32_t kScreenOrientationListener_IsAutoRotateEnabledByUser_Name = 2128155361;
+// The 1465913735 value is based on sha256(salt + "ScreenOrientation1").
+constexpr uint32_t kScreenOrientation_LockOrientation_Name = 1465913735;
+// The 1701989790 value is based on sha256(salt + "ScreenOrientation2").
+constexpr uint32_t kScreenOrientation_UnlockOrientation_Name = 1701989790;
+// The 1573347163 value is based on sha256(salt + "ScreenOrientationListener1").
+constexpr uint32_t kScreenOrientationListener_IsAutoRotateEnabledByUser_Name = 1573347163;
 
 }  // namespace internal
 }  // namespace mojom

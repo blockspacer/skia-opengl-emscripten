@@ -12,24 +12,24 @@ namespace mojom {
 namespace internal {
 
 
-// The 917582730 value is based on sha256(salt + "AudioLog1").
-constexpr uint32_t kAudioLog_OnCreated_Name = 917582730;
-// The 1761181106 value is based on sha256(salt + "AudioLog2").
-constexpr uint32_t kAudioLog_OnStarted_Name = 1761181106;
-// The 1136339000 value is based on sha256(salt + "AudioLog3").
-constexpr uint32_t kAudioLog_OnStopped_Name = 1136339000;
-// The 1731454400 value is based on sha256(salt + "AudioLog4").
-constexpr uint32_t kAudioLog_OnClosed_Name = 1731454400;
-// The 1543870819 value is based on sha256(salt + "AudioLog5").
-constexpr uint32_t kAudioLog_OnError_Name = 1543870819;
-// The 764246355 value is based on sha256(salt + "AudioLog6").
-constexpr uint32_t kAudioLog_OnSetVolume_Name = 764246355;
-// The 1489902264 value is based on sha256(salt + "AudioLog7").
-constexpr uint32_t kAudioLog_OnProcessingStateChanged_Name = 1489902264;
-// The 2145438126 value is based on sha256(salt + "AudioLog8").
-constexpr uint32_t kAudioLog_OnLogMessage_Name = 2145438126;
-// The 1092396306 value is based on sha256(salt + "AudioLogFactory1").
-constexpr uint32_t kAudioLogFactory_CreateAudioLog_Name = 1092396306;
+// The 1843112546 value is based on sha256(salt + "AudioLog1").
+constexpr uint32_t kAudioLog_OnCreated_Name = 1843112546;
+// The 152652227 value is based on sha256(salt + "AudioLog2").
+constexpr uint32_t kAudioLog_OnStarted_Name = 152652227;
+// The 331032924 value is based on sha256(salt + "AudioLog3").
+constexpr uint32_t kAudioLog_OnStopped_Name = 331032924;
+// The 964564866 value is based on sha256(salt + "AudioLog4").
+constexpr uint32_t kAudioLog_OnClosed_Name = 964564866;
+// The 1669985403 value is based on sha256(salt + "AudioLog5").
+constexpr uint32_t kAudioLog_OnError_Name = 1669985403;
+// The 1166125998 value is based on sha256(salt + "AudioLog6").
+constexpr uint32_t kAudioLog_OnSetVolume_Name = 1166125998;
+// The 534963981 value is based on sha256(salt + "AudioLog7").
+constexpr uint32_t kAudioLog_OnProcessingStateChanged_Name = 534963981;
+// The 961139909 value is based on sha256(salt + "AudioLog8").
+constexpr uint32_t kAudioLog_OnLogMessage_Name = 961139909;
+// The 217005554 value is based on sha256(salt + "AudioLogFactory1").
+constexpr uint32_t kAudioLogFactory_CreateAudioLog_Name = 217005554;
 
 }  // namespace internal
 }  // namespace mojom

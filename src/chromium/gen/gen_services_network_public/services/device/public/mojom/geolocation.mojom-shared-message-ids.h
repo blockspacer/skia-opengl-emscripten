@@ -12,10 +12,10 @@ namespace mojom {
 namespace internal {
 
 
-// The 1395288423 value is based on sha256(salt + "Geolocation1").
-constexpr uint32_t kGeolocation_SetHighAccuracy_Name = 1395288423;
-// The 495483797 value is based on sha256(salt + "Geolocation2").
-constexpr uint32_t kGeolocation_QueryNextPosition_Name = 495483797;
+// The 1114086328 value is based on sha256(salt + "Geolocation1").
+constexpr uint32_t kGeolocation_SetHighAccuracy_Name = 1114086328;
+// The 1585841627 value is based on sha256(salt + "Geolocation2").
+constexpr uint32_t kGeolocation_QueryNextPosition_Name = 1585841627;
 
 }  // namespace internal
 }  // namespace mojom

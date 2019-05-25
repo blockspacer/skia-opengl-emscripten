@@ -12,8 +12,8 @@ namespace mojom {
 namespace internal {
 
 
-// The 1243813877 value is based on sha256(salt + "ScreenProviderObserver1").
-constexpr uint32_t kScreenProviderObserver_OnDisplaysChanged_Name = 1243813877;
+// The 1136721154 value is based on sha256(salt + "ScreenProviderObserver1").
+constexpr uint32_t kScreenProviderObserver_OnDisplaysChanged_Name = 1136721154;
 
 }  // namespace internal
 }  // namespace mojom

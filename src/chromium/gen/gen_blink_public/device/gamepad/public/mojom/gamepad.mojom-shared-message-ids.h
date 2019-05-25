@@ -12,22 +12,22 @@ namespace mojom {
 namespace internal {
 
 
-// The 206354838 value is based on sha256(salt + "GamepadObserver1").
-constexpr uint32_t kGamepadObserver_GamepadConnected_Name = 206354838;
-// The 306677693 value is based on sha256(salt + "GamepadObserver2").
-constexpr uint32_t kGamepadObserver_GamepadDisconnected_Name = 306677693;
-// The 1183104285 value is based on sha256(salt + "GamepadObserver3").
-constexpr uint32_t kGamepadObserver_GamepadButtonOrAxisChanged_Name = 1183104285;
-// The 725084007 value is based on sha256(salt + "GamepadMonitor1").
-constexpr uint32_t kGamepadMonitor_GamepadStartPolling_Name = 725084007;
-// The 1525844144 value is based on sha256(salt + "GamepadMonitor2").
-constexpr uint32_t kGamepadMonitor_GamepadStopPolling_Name = 1525844144;
-// The 1391704236 value is based on sha256(salt + "GamepadMonitor3").
-constexpr uint32_t kGamepadMonitor_SetObserver_Name = 1391704236;
-// The 1752990601 value is based on sha256(salt + "GamepadHapticsManager1").
-constexpr uint32_t kGamepadHapticsManager_PlayVibrationEffectOnce_Name = 1752990601;
-// The 1369319802 value is based on sha256(salt + "GamepadHapticsManager2").
-constexpr uint32_t kGamepadHapticsManager_ResetVibrationActuator_Name = 1369319802;
+// The 1172572971 value is based on sha256(salt + "GamepadObserver1").
+constexpr uint32_t kGamepadObserver_GamepadConnected_Name = 1172572971;
+// The 1344715377 value is based on sha256(salt + "GamepadObserver2").
+constexpr uint32_t kGamepadObserver_GamepadDisconnected_Name = 1344715377;
+// The 969501178 value is based on sha256(salt + "GamepadObserver3").
+constexpr uint32_t kGamepadObserver_GamepadButtonOrAxisChanged_Name = 969501178;
+// The 1827564842 value is based on sha256(salt + "GamepadMonitor1").
+constexpr uint32_t kGamepadMonitor_GamepadStartPolling_Name = 1827564842;
+// The 1594039122 value is based on sha256(salt + "GamepadMonitor2").
+constexpr uint32_t kGamepadMonitor_GamepadStopPolling_Name = 1594039122;
+// The 764720800 value is based on sha256(salt + "GamepadMonitor3").
+constexpr uint32_t kGamepadMonitor_SetObserver_Name = 764720800;
+// The 893357777 value is based on sha256(salt + "GamepadHapticsManager1").
+constexpr uint32_t kGamepadHapticsManager_PlayVibrationEffectOnce_Name = 893357777;
+// The 62973833 value is based on sha256(salt + "GamepadHapticsManager2").
+constexpr uint32_t kGamepadHapticsManager_ResetVibrationActuator_Name = 62973833;
 
 }  // namespace internal
 }  // namespace mojom
