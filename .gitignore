@@ -1,4 +1,4 @@
-# C++ objects and libs
+﻿# C++ objects and libs
 
 *.slo
 *.lo
@@ -22,9 +22,7 @@
 moc_*.cpp
 moc_*.h
 qrc_*.cpp
-ui_*.h
 Makefile*
-*build-*
 bin
 temp
 .reggen
@@ -55,9 +53,8 @@ CMakeLists.txt.user*
 CMakeFiles/
 CMakeCache.txt*
 cmake_install.cmake*
-out*
-build-emscripten/
-build-linux/
+/out*
+build-*/
 *.tmp
 thirdparty/SDL2/
 thirdparty/glew/
@@ -66,3 +63,11 @@ thirdparty/glew/
 /src/chromium/device/vr/buildflags/buildflags.h
 /src/chromium/gpu/vulkan/buildflags.h
 /src/chromium/ui/gl/buildflags.h
+/src/chromium/third_party/blink/renderer/platform/testing/runtime_enabled_features_test_helpers.h
+/src/chromium/third_party/blink/renderer/platform/runtime_enabled_features.h
+/src/chromium/third_party/blink/renderer/platform/runtime_enabled_features.cc
+/src/chromium/third_party/blink/renderer/build/scripts/json5_generator.pyc
+/src/chromium/third_party/blink/renderer/build/scripts/make_runtime_features_utilities.pyc
+/src/chromium/third_party/blink/renderer/build/scripts/template_expander.pyc
+/src/chromium/third_party/blink/renderer/build/scripts/blinkbuild/__init__.pyc
+/src/chromium/third_party/blink/renderer/build/scripts/blinkbuild/name_style_converter.pyc
