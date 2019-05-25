@@ -1,4 +1,6 @@
-﻿# WHY CMAKE_CURRENT_LIST_DIR? see https://stackoverflow.com/a/12854575/10904212
+﻿cmake_minimum_required(VERSION 3.5)
+
+# WHY CMAKE_CURRENT_LIST_DIR? see https://stackoverflow.com/a/12854575/10904212
 set(CURRENT_SCRIPT_DIR ${CMAKE_CURRENT_LIST_DIR})
 
 include(${CURRENT_SCRIPT_DIR}/coloredOut.cmake)
@@ -20,7 +22,7 @@ set(BUILD_TYPE "Debug" CACHE STRING "Debug, RelWithDebInfo or Release")
 # DEBINFO = lower performance, better stacktrace
 set(HAVE_DEBINFO FALSE)
 
-macro(build_vars_step)
+macro(common_build_vars_step)
   # TOUPPER for ignore-case checks
   STRING(TOUPPER "${BUILD_TYPE}" BUILD_TYPE_UPPER)
   if (BUILD_TYPE_UPPER MATCHES "DEBUG")
@@ -47,4 +49,4 @@ macro(build_vars_step)
   set(CMAKE_OPTS "${CMAKE_OPTS};-DCMAKE_BUILD_TYPE=${TO_CMAKE_BUILD_TYPE}")
 
   set(CMAKE_OPTS "${CMAKE_OPTS};-DCMAKE_EXPORT_COMPILE_COMMANDS=ON")
-endmacro(build_vars_step)
+endmacro(common_build_vars_step)

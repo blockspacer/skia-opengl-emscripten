@@ -19,6 +19,8 @@
 # * colored_warn
 # * colored_notify
 
+cmake_minimum_required(VERSION 3.5)
+
 # switches to cmake message() system (preferred)
 option(HAS_COLORED_OUTPUT "is running from terminal" ON)
 

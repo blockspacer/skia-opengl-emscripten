@@ -1,4 +1,4 @@
-#buildflag_header("buildflags") {
+﻿#buildflag_header("buildflags") {
 #  header = "buildflags.h"
 #  flags = [
 #    "ENABLE_HIDPI=$enable_hidpi",
@@ -132,6 +132,7 @@ set(UI_BASE_SOURCES
   # TODO # ${UI_BASE_DIR}l10n/l10n_util_mac.mm",
   # TODO # ${UI_BASE_DIR}l10n/l10n_util_win.cc
   #${UI_BASE_DIR}l10n/l10n_util_win.h",
+  # requires 'ui/strings/grit/ui_strings.h'
   ${UI_BASE_DIR}l10n/time_format.cc
   #${UI_BASE_DIR}l10n/time_format.h",
   ${UI_BASE_DIR}layout.cc
@@ -370,6 +371,7 @@ set_property(TARGET UI_BASE PROPERTY CXX_STANDARD 17)
 target_include_directories(UI_BASE PRIVATE
   ${UI_BASE_DIR}
   ${BASE_DIR}
+  ${GEN_BLINK_PUBLIC_DIR} # requires 'ui/strings/grit/ui_strings.h'
 )
 
 target_compile_definitions(UI_BASE PRIVATE

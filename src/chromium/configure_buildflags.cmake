@@ -1,4 +1,4 @@
-find_package(Git)
+﻿find_package(Git)
 
 # https://cmake.org/cmake/help/latest/module/FindPythonInterp.html
 find_package( PythonInterp 2.7 REQUIRED )
@@ -30,11 +30,19 @@ if(NOT "${retcode}" STREQUAL "0")
   message( FATAL_ERROR "Bad exit status ${_ERROR_VARIABLE}")
 endif()
 
+# src/chromium/third_party/blink/renderer/platform/runtime_enabled_features.cc
+# src/chromium/gen/gen_blink_public/third_party/blink/renderer/platform/runtime_enabled_features.cc
+execute_process(COMMAND "mkdir"
+  "-p" "${GEN_BLINK_PUBLIC_DIR}third_party/blink/renderer/platform"
+  WORKING_DIRECTORY ${GEN_BLINK_PUBLIC_DIR})
+#message(FATAL_ERROR "${GEN_BLINK_PUBLIC_DIR}third_party/blink/renderer/platform")
+#
 execute_process(
   COMMAND ${PYTHON_EXECUTABLE}
     ${CMAKE_CURRENT_SOURCE_DIR}/third_party/blink/renderer/build/scripts/make_runtime_features.py
     ${CMAKE_CURRENT_SOURCE_DIR}/third_party/blink/renderer/platform/runtime_enabled_features.json5
     --output_dir ${CMAKE_CURRENT_SOURCE_DIR}/third_party/blink/renderer/platform
+    #--developer_dir
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/third_party/blink/renderer/platform
   OUTPUT_VARIABLE _OUTPUT_VARIABLE
   #ERROR_QUIET
@@ -53,9 +61,9 @@ endif()
 ### MOJO ###
 
 execute_process(COMMAND mkdir
-  -p mojo/public/tools/bindings
+  -p ${CMAKE_BINARY_DIR}/mojo/public/tools/bindings
   WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
-
+#
 set(MOJO_BYTECODE_DIR ${CMAKE_BINARY_DIR}/mojo/public/tools/bindings)
 set(MOJO_OUT_DIR ${CMAKE_BINARY_DIR}/mojo)
 set(MOJO_DIR ${CMAKE_CURRENT_SOURCE_DIR}/mojo)

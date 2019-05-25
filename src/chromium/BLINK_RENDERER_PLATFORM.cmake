@@ -1,4 +1,4 @@
-### --- BLINK_RENDERER_PLATFORM ---###
+﻿### --- BLINK_RENDERER_PLATFORM ---###
 
 set(CUR_SRC_DIR ${BLINK_RENDERER_PLATFORM_DIR})
 
@@ -11,7 +11,8 @@ list(APPEND BLINK_RENDERER_PLATFORM_SOURCES
   # https://chromium.googlesource.com/chromium/src/third_party/+/master/blink/renderer/platform/BUILD.gn#31
   #
   # ...gen/third_party/blink/renderer/platform/runtime_enabled_features.cc
-  ${CUR_OUT_DIR}/runtime_enabled_features.cc
+  #${CUR_OUT_DIR}/runtime_enabled_features.cc
+  ${CMAKE_CURRENT_SOURCE_DIR}/third_party/blink/renderer/platform/runtime_enabled_features.cc
 )
 
 # see https://github.com/chromium/chromium/blob/master/third_party/blink/renderer/platform/BUILD.gn

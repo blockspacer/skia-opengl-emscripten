@@ -17,15 +17,18 @@
 #
 # run that file with cmake -DVAR=VALUE -DFOO=BAR -P <script-file> <arg5> <arg6> ...
 
+cmake_minimum_required(VERSION 3.5)
+
 # --- includes ---
 # WHY CMAKE_CURRENT_LIST_DIR? see https://stackoverflow.com/a/12854575/10904212
 set(CURRENT_SCRIPT_DIR ${CMAKE_CURRENT_LIST_DIR})
 include(${CURRENT_SCRIPT_DIR}/coloredOut.cmake)
+include(${CURRENT_SCRIPT_DIR}/commonBuildMacros.cmake)
 # set BUILD_TYPE, CLEAN_BUILD, e.t.c.
 include(${CURRENT_SCRIPT_DIR}/commonBuildVars.cmake)
-include(${CURRENT_SCRIPT_DIR}/commonBuildVarsUnix.cmake)
-include(${CURRENT_SCRIPT_DIR}/commonBuildMacros.cmake)
+include(${CURRENT_SCRIPT_DIR}/unixBuildVars.cmake)
 
+# --- vars ---
 set(BUILD_DIR "${CMAKE_CURRENT_SOURCE_DIR}/build-linux/" CACHE STRING "output directory")
 
 set(C_COMPILER "/usr/bin/clang-6.0" CACHE STRING "C COMPILER, must be full path to clang > 4")
@@ -33,13 +36,13 @@ set(C_COMPILER "/usr/bin/clang-6.0" CACHE STRING "C COMPILER, must be full path 
 set(CXX_COMPILER "/usr/bin/clang++-6.0" CACHE STRING "C++ COMPILER, must be full path to clang > 4")
 
 if (BUILD_APP)
-  message("building for Unix from ${CMAKE_CURRENT_SOURCE_DIR} into ${BUILD_DIR}...")
+  message("building for Unix from ${CMAKE_CURRENT_SOURCE_DIR} into ${BUILD_DIR} ...")
 
   # --- set CMAKE_OPTS, MAKE_OPTS, e.t.c. ---
-  build_vars_step()
+  common_build_vars_step()
 
   # --- prepare build dirs ---
-  build_dir_step(${BUILD_DIR} ${CMAKE_CURRENT_SOURCE_DIR})
+  mkdir_with_rm_condition(${CLEAN_BUILD} ${BUILD_DIR} ${CMAKE_CURRENT_SOURCE_DIR})
 
   # --- some info before build ---
   colored_notify("Building with CMAKE_OPTS=${CMAKE_OPTS} and EXTRA_CMAKE_OPTS=${EXTRA_CMAKE_OPTS}")
@@ -80,7 +83,7 @@ if(RUN_APP)
   if (NOT EXISTS ${BUILD_DIR})
     colored_fatal("invalid app directory ${BUILD_DIR}" --red --bold)
   endif(NOT EXISTS ${BUILD_DIR})
-  message("starting app from ${BUILD_DIR}...")
+  message("starting app from ${BUILD_DIR} ...")
   execute_process(
     COMMAND "${BUILD_DIR}/skemgl"
     WORKING_DIRECTORY ${BUILD_DIR}
