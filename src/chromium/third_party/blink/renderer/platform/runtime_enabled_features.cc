@@ -5,7 +5,7 @@
 // Generated from template:
 //   templates/runtime_enabled_features.cc.tmpl
 // and input files:
-//   /home/avakimov_am/skia-opengl-emscripten/src/chromium/third_party/blink/renderer/platform/runtime_enabled_features.json5
+//   /home/denis/workspace/skia-opengl-emscripten/src/chromium/third_party/blink/renderer/platform/runtime_enabled_features.json5
 
 
 #include "build/build_config.h"
