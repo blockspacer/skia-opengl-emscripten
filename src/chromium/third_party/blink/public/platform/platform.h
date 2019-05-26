@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -94,9 +94,11 @@ namespace gpu {
 class GpuMemoryBufferManager;
 }
 
+#if defined(__TODO__)
 namespace rtc {
 class Thread;
 }
+#endif
 
 namespace service_manager {
 class Connector;
@@ -109,10 +111,12 @@ template <class T>
 class Local;
 }
 
+#if defined(__TODO__)
 namespace webrtc {
 struct RtpCapabilities;
 class AsyncResolverFactory;
 }
+#endif
 
 namespace blink {
 
@@ -136,9 +140,11 @@ class WebMediaStreamCenter;
 class WebPrescientNetworking;
 class WebPublicSuffixList;
 class WebPushProvider;
+#if defined(__TODO__)
 class WebRTCCertificateGenerator;
 class WebRTCPeerConnectionHandler;
 class WebRTCPeerConnectionHandlerClient;
+#endif
 class WebSandboxSupport;
 class WebSecurityOrigin;
 class WebSpeechSynthesizer;
@@ -608,7 +614,7 @@ class BLINK_PLATFORM_EXPORT Platform {
   virtual bool IsGpuCompositingDisabled() { return true; }
 
   // WebRTC ----------------------------------------------------------
-
+#if defined(__TODO__)
   // Creates a WebRTCPeerConnectionHandler for RTCPeerConnection.
   // May return null if WebRTC functionality is not avaliable or if it's out of
   // resources.
@@ -673,6 +679,7 @@ class BLINK_PLATFORM_EXPORT Platform {
   virtual base::Optional<double> GetWebRtcMaxCaptureFrameRate() {
     return base::nullopt;
   }
+#endif
 
   // WebWorker ----------------------------------------------------------
 

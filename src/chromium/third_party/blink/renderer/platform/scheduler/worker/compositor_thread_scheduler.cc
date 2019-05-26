@@ -1,4 +1,4 @@
-// Copyright 2016 The Chromium Authors. All rights reserved.
+﻿// Copyright 2016 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -43,8 +43,11 @@ CompositorThreadScheduler::CompositorThreadScheduler(
       input_task_runner_(input_task_queue_
                              ? input_task_queue_->CreateTaskRunner(
                                    TaskType::kCompositorThreadTaskQueueInput)
-                             : nullptr),
-      compositor_metrics_helper_(helper()->HasCPUTimingForEachTask()) {
+                             : nullptr)
+#ifdef __TODO__
+      , compositor_metrics_helper_(helper()->HasCPUTimingForEachTask())
+#endif
+{
   if (input_task_queue_) {
     input_task_queue_->SetQueuePriority(
         base::sequence_manager::TaskQueue::QueuePriority::kHighestPriority);
@@ -65,14 +68,27 @@ CompositorThreadScheduler::DefaultTaskQueue() {
 
 void CompositorThreadScheduler::InitImpl() {}
 
-void CompositorThreadScheduler::OnTaskCompleted(
+/*void CompositorThreadScheduler::OnTaskCompleted(
     NonMainThreadTaskQueue* worker_task_queue,
     const base::sequence_manager::Task& task,
     base::sequence_manager::TaskQueue::TaskTiming* task_timing,
     base::sequence_manager::LazyNow* lazy_now) {
   task_timing->RecordTaskEnd(lazy_now);
+#ifdef __TODO__
   compositor_metrics_helper_.RecordTaskMetrics(worker_task_queue, task,
                                                *task_timing);
+#endif
+}*/
+
+// __TODO__
+void CompositorThreadScheduler::OnTaskCompleted(
+    NonMainThreadTaskQueue* worker_task_queue,
+    const base::sequence_manager::Task& task,
+    const base::sequence_manager::TaskQueue::TaskTiming& task_timing) {
+#ifdef __TODO__
+    compositor_metrics_helper_.RecordTaskMetrics(worker_task_queue, task,
+                                                 task_timing);
+#endif
 }
 
 scoped_refptr<scheduler::SingleThreadIdleTaskRunner>

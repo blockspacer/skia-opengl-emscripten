@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (C) 2003, 2004, 2005, 2006, 2009 Apple Inc. All rights reserved.
  * Copyright (C) 2013 Google Inc. All rights reserved.
  *
@@ -31,7 +31,11 @@
 #include "base/optional.h"
 #include "build/build_config.h"
 #include "skia/ext/platform_canvas.h"
+
+#if defined(ENABLE_FONTS)
 #include "third_party/blink/renderer/platform/fonts/text_run_paint_info.h"
+#endif
+
 #include "third_party/blink/renderer/platform/geometry/float_rect.h"
 #include "third_party/blink/renderer/platform/geometry/float_rounded_rect.h"
 #include "third_party/blink/renderer/platform/geometry/int_rect.h"
@@ -772,6 +776,7 @@ void GraphicsContext::DrawRect(const IntRect& rect) {
   }
 }
 
+#if defined(ENABLE_FONTS)
 void GraphicsContext::DrawText(const Font& font,
                                const TextRunPaintInfo& text_info,
                                const FloatPoint& point,
@@ -892,6 +897,7 @@ void GraphicsContext::DrawHighlightForText(const Font& font,
   FillRect(font.SelectionRectForText(run, point, h, from, to),
            background_color);
 }
+#endif
 
 void GraphicsContext::DrawImage(
     Image* image,

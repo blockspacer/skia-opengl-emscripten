@@ -1,4 +1,4 @@
-// Copyright 2015 The Chromium Authors. All rights reserved.
+﻿// Copyright 2015 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -11,7 +11,9 @@
 #include "third_party/blink/public/common/features.h"
 #include "third_party/blink/public/web/blink.h"
 #include "third_party/blink/renderer/platform/cross_thread_functional.h"
+#if defined(ENABLE_BLINK_FONTS)
 #include "third_party/blink/renderer/platform/fonts/font_global_context.h"
+#endif
 #include "third_party/blink/renderer/platform/graphics/image_decoding_store.h"
 #include "third_party/blink/renderer/platform/instrumentation/tracing/trace_event.h"
 #include "third_party/blink/renderer/platform/scheduler/public/post_cross_thread_task.h"
@@ -120,7 +122,9 @@ void MemoryPressureListenerRegistry::OnPurgeMemory() {
 }
 
 void MemoryPressureListenerRegistry::ClearThreadSpecificMemory() {
+#if defined(ENABLE_BLINK_FONTS)
   FontGlobalContext::ClearMemory();
+#endif
 }
 
 void MemoryPressureListenerRegistry::Trace(blink::Visitor* visitor) {

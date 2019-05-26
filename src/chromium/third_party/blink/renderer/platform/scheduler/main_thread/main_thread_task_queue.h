@@ -1,4 +1,4 @@
-// Copyright 2015 The Chromium Authors. All rights reserved.
+﻿// Copyright 2015 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -303,9 +303,8 @@ class PLATFORM_EXPORT MainThreadTaskQueue
       const base::sequence_manager::TaskQueue::TaskTiming& task_timing);
 
   void OnTaskCompleted(
-      const base::sequence_manager::Task& task,
-      base::sequence_manager::TaskQueue::TaskTiming* task_timing,
-      base::sequence_manager::LazyNow* lazy_now);
+    const base::sequence_manager::Task& task,
+      const TaskQueue::TaskTiming& task_timing);
 
   void DetachFromMainThreadScheduler();
 

@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (C) 2013 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -1139,11 +1139,13 @@ static void DidPushRegisters(ThreadState* state, intptr_t* stack_end) {
 }
 
 void ThreadState::PushRegistersAndVisitStack() {
+#if defined(__TODO__)
   DCHECK(CheckThread());
   DCHECK(IsGCForbidden());
   DCHECK_EQ(current_gc_data_.stack_state, BlinkGC::kHeapPointersOnStack);
   PushAllRegisters(this, DidPushRegisters);
   VisitStack(static_cast<MarkingVisitor*>(CurrentVisitor()));
+#endif
 }
 
 void ThreadState::AddObserver(BlinkGCObserver* observer) {
@@ -1342,9 +1344,13 @@ bool ThreadState::FinishIncrementalMarkingIfRunning(
     // finalization of V8 upon Oilpan GCs during a unified GC. Alternative
     // include either breaking up the GCs or avoiding the call in first place.
     if (IsUnifiedGCMarkingInProgress()) {
+
+#if defined(__TODO__)
       V8PerIsolateData::From(isolate_)
           ->GetUnifiedHeapController()
           ->FinalizeTracing();
+#endif //__TODO__
+
     } else {
       RunAtomicPause(stack_state, marking_type, sweeping_type, reason);
     }
@@ -1579,11 +1585,13 @@ void ThreadState::MarkPhaseVisitRoots() {
     VisitDOMWrappers(visitor);
   }
 
+#if defined(__TODO__)
   // For unified garbage collections any active ScriptWrappable objects are
   // considered as roots.
   if (IsUnifiedGCMarkingInProgress()) {
     ActiveScriptWrappableBase::TraceActiveScriptWrappables(isolate_, visitor);
   }
+#endif
 
   if (current_gc_data_.stack_state == BlinkGC::kHeapPointersOnStack) {
     ThreadHeapStatsCollector::Scope stats_scope(

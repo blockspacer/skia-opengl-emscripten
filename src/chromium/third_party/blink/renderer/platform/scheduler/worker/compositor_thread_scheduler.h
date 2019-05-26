@@ -1,4 +1,4 @@
-// Copyright 2016 The Chromium Authors. All rights reserved.
+﻿// Copyright 2016 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -8,11 +8,13 @@
 #include "base/macros.h"
 #include "base/message_loop/message_loop.h"
 #include "base/single_thread_task_runner.h"
+#ifdef __TODO__
 #include "components/scheduling_metrics/task_duration_metric_reporter.h"
+#include "third_party/blink/renderer/platform/scheduler/worker/compositor_metrics_helper.h"
+#endif
 #include "third_party/blink/public/platform/web_thread_type.h"
 #include "third_party/blink/renderer/platform/platform_export.h"
 #include "third_party/blink/renderer/platform/scheduler/common/single_thread_idle_task_runner.h"
-#include "third_party/blink/renderer/platform/scheduler/worker/compositor_metrics_helper.h"
 #include "third_party/blink/renderer/platform/scheduler/worker/non_main_thread_scheduler_impl.h"
 
 namespace blink {
@@ -29,11 +31,19 @@ class PLATFORM_EXPORT CompositorThreadScheduler
 
   // NonMainThreadSchedulerImpl:
   scoped_refptr<NonMainThreadTaskQueue> DefaultTaskQueue() override;
+
+
+void  OnTaskCompleted(
+    NonMainThreadTaskQueue* worker_task_queue,
+    const base::sequence_manager::Task& task,
+    const base::sequence_manager::TaskQueue::TaskTiming& task_timing) override;
+
+/*
   void OnTaskCompleted(
       NonMainThreadTaskQueue* worker_task_queue,
       const base::sequence_manager::Task& task,
       base::sequence_manager::TaskQueue::TaskTiming* task_timing,
-      base::sequence_manager::LazyNow* lazy_now) override;
+      base::sequence_manager::LazyNow* lazy_now) override;*/
 
   // WebThreadScheduler:
   scoped_refptr<base::SingleThreadTaskRunner> V8TaskRunner() override;
@@ -67,7 +77,9 @@ class PLATFORM_EXPORT CompositorThreadScheduler
   scoped_refptr<NonMainThreadTaskQueue> input_task_queue_;
   scoped_refptr<base::SingleThreadTaskRunner> input_task_runner_;
 
+#ifdef __TODO__
   CompositorMetricsHelper compositor_metrics_helper_;
+#endif
 
   DISALLOW_COPY_AND_ASSIGN(CompositorThreadScheduler);
 };

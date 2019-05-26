@@ -1,4 +1,4 @@
-/* zconf.h -- configuration of the zlib compression library
+﻿/* zconf.h -- configuration of the zlib compression library
  * Copyright (C) 1995-2016 Jean-loup Gailly, Mark Adler
  * For conditions of distribution and use, see copyright notice in zlib.h
  */
@@ -8,9 +8,13 @@
 #ifndef ZCONF_H
 #define ZCONF_H
 
+#if defined(__TODO__)
 /* This include does prefixing as below, but with an updated set of names.  Also
  * sets up export macros in component builds. */
 #include "chromeconf.h"
+#else
+//#define Z_PREFIX 1
+#endif
 
 /*
  * If you *really* need a unique prefix for all types and library functions,

@@ -1,4 +1,4 @@
-// Copyright 2015 The Chromium Authors. All rights reserved.
+﻿// Copyright 2015 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -27,6 +27,7 @@ NonMainThreadTaskQueue::NonMainThreadTaskQueue(
 
 NonMainThreadTaskQueue::~NonMainThreadTaskQueue() = default;
 
+/*
 void NonMainThreadTaskQueue::OnTaskCompleted(
     const base::sequence_manager::Task& task,
     TaskQueue::TaskTiming* task_timing,
@@ -36,6 +37,15 @@ void NonMainThreadTaskQueue::OnTaskCompleted(
     non_main_thread_scheduler_->OnTaskCompleted(this, task, task_timing,
                                                 lazy_now);
   }
+}*/
+
+void NonMainThreadTaskQueue::OnTaskCompleted(
+    const base::sequence_manager::Task& task,
+    const TaskQueue::TaskTiming& task_timing) {
+    // |non_main_thread_scheduler_| can be nullptr in tests.
+    if (non_main_thread_scheduler_) {
+        non_main_thread_scheduler_->OnTaskCompleted(this, task, task_timing);
+    }
 }
 
 void NonMainThreadTaskQueue::SetPaused(bool paused) {

@@ -1,4 +1,4 @@
-// Copyright 2017 The Chromium Authors. All rights reserved.
+﻿// Copyright 2017 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -17,9 +17,11 @@ namespace blink {
 
 // Wrapper function defined in WebKit.h
 void LogRuntimeCallStats() {
+#if defined(__TODO__)
   LOG(INFO)
       << "\n"
       << RuntimeCallStats::From(MainThreadIsolate())->ToString().Utf8().data();
+#endif
 }
 
 namespace {

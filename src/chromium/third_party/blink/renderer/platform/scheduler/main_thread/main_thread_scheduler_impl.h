@@ -1,4 +1,4 @@
-// Copyright 2014 The Chromium Authors. All rights reserved.
+﻿// Copyright 2014 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -33,7 +33,9 @@
 #include "third_party/blink/renderer/platform/scheduler/main_thread/auto_advancing_virtual_time_domain.h"
 #include "third_party/blink/renderer/platform/scheduler/main_thread/deadline_task_runner.h"
 #include "third_party/blink/renderer/platform/scheduler/main_thread/idle_time_estimator.h"
+#ifdef __TODO__
 #include "third_party/blink/renderer/platform/scheduler/main_thread/main_thread_metrics_helper.h"
+#endif
 #include "third_party/blink/renderer/platform/scheduler/main_thread/main_thread_scheduler_helper.h"
 #include "third_party/blink/renderer/platform/scheduler/main_thread/main_thread_task_queue.h"
 #include "third_party/blink/renderer/platform/scheduler/main_thread/memory_purge_manager.h"
@@ -369,10 +371,15 @@ class PLATFORM_EXPORT MainThreadSchedulerImpl
       const base::sequence_manager::TaskQueue::TaskTiming& task_timing);
 
   void OnTaskCompleted(
+      MainThreadTaskQueue* queue,
+      const base::sequence_manager::Task& task,
+      const base::sequence_manager::TaskQueue::TaskTiming& task_timing);
+
+  /*void OnTaskCompleted(
       base::WeakPtr<MainThreadTaskQueue> queue,
       const base::sequence_manager::Task& task,
       base::sequence_manager::TaskQueue::TaskTiming* task_timing,
-      base::sequence_manager::LazyNow* lazy_now);
+      base::sequence_manager::LazyNow* lazy_now);*/
 
   bool IsAudioPlaying() const;
 
@@ -415,9 +422,11 @@ class PLATFORM_EXPORT MainThreadSchedulerImpl
 
  private:
   friend class WebRenderWidgetSchedulingState;
+#ifdef __TODO__
   friend class MainThreadMetricsHelper;
 
   friend class MainThreadMetricsHelperTest;
+#endif
   friend class main_thread_scheduler_impl_unittest::
       MainThreadSchedulerImplForTest;
   friend class main_thread_scheduler_impl_unittest::MainThreadSchedulerImplTest;
@@ -704,12 +713,14 @@ class PLATFORM_EXPORT MainThreadSchedulerImpl
       const base::sequence_manager::Task& task,
       const base::sequence_manager::TaskQueue::TaskTiming& task_timing);
 
+#ifdef __TODO__
   UkmRecordingStatus RecordTaskUkmImpl(
       MainThreadTaskQueue* queue,
       const base::sequence_manager::Task& task,
       const base::sequence_manager::TaskQueue::TaskTiming& task_timing,
       FrameSchedulerImpl* frame_scheduler,
       bool precise_attribution);
+#endif
 
   void InitWakeUpBudgetPoolIfNeeded();
 
@@ -838,7 +849,9 @@ class PLATFORM_EXPORT MainThreadSchedulerImpl
     base::ObserverList<RAILModeObserver>::Unchecked
         rail_mode_observers;                                      // Not owned.
     WakeUpBudgetPool* wake_up_budget_pool;                        // Not owned.
+#ifdef __TODO__
     MainThreadMetricsHelper metrics_helper;
+#endif
     TraceableState<WebRendererProcessType, TracingCategoryName::kTopLevel>
         process_type;
     TraceableState<base::Optional<TaskDescriptionForTracing>,

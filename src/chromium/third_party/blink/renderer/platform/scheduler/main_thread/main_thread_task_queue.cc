@@ -1,4 +1,4 @@
-// Copyright 2015 The Chromium Authors. All rights reserved.
+﻿// Copyright 2015 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -141,13 +141,25 @@ void MainThreadTaskQueue::OnTaskStarted(
 
 void MainThreadTaskQueue::OnTaskCompleted(
     const base::sequence_manager::Task& task,
+    const TaskQueue::TaskTiming& task_timing) {
+    if (main_thread_scheduler_) {
+        main_thread_scheduler_->OnTaskCompleted(this, task, task_timing);
+    }
+}
+
+
+/*
+__TODO__
+EMSCRIPTEN
+void MainThreadTaskQueue::OnTaskCompleted(
+    const base::sequence_manager::Task& task,
     TaskQueue::TaskTiming* task_timing,
     base::sequence_manager::LazyNow* lazy_now) {
   if (main_thread_scheduler_) {
     main_thread_scheduler_->OnTaskCompleted(weak_ptr_factory_.GetWeakPtr(),
                                             task, task_timing, lazy_now);
   }
-}
+}*/
 
 void MainThreadTaskQueue::DetachFromMainThreadScheduler() {
   weak_ptr_factory_.InvalidateWeakPtrs();

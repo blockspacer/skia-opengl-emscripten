@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright 2016 Google Inc.
  *
  * Use of this source code is governed by a BSD-style license that can be
@@ -12,6 +12,8 @@
  * This is necessary to build multiple copies of libpng.  We need this while pdfium has
  * its own copy of libpng.
  */
+
+#if defined(__TODO__)
 
 #define png_access_version_number cr_png_access_version_number
 #define png_app_error cr_png_app_error
@@ -461,5 +463,6 @@
 #define png_zfree cr_png_zfree
 #define png_zlib_inflate cr_png_zlib_inflate
 #define png_zstream_error cr_png_zstream_error
+#endif // __TODO__
 
 #endif  // PNGPREFIX_H

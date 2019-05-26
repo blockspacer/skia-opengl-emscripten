@@ -1,4 +1,4 @@
-/*
+﻿/*
  * jpeglib.h
  *
  * Copyright (C) 1991-1998, Thomas G. Lane.
@@ -13,10 +13,9 @@
 #ifndef JPEGLIB_H
 #define JPEGLIB_H
 
-#ifdef __EMSCRIPTEN__
+#if !defined(__TODO__)
   // see NEED_SHORT_EXTERNAL_NAMES
 #else
-#error "TODO: jpeglibmangler"
 /* Begin chromium edits */
 #include "jpeglibmangler.h"
 /* End chromium edits */

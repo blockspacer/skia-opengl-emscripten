@@ -1,4 +1,4 @@
-// Copyright 2015 The Chromium Authors. All rights reserved.
+﻿// Copyright 2015 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -44,11 +44,17 @@ class PLATFORM_EXPORT NonMainThreadSchedulerImpl : public ThreadSchedulerImpl {
   // initialization needed such as initializing idle period detection.
   void Init();
 
+  /*
   virtual void OnTaskCompleted(
       NonMainThreadTaskQueue* worker_task_queue,
       const base::sequence_manager::Task& task,
       base::sequence_manager::TaskQueue::TaskTiming* task_timing,
-      base::sequence_manager::LazyNow* lazy_now) = 0;
+      base::sequence_manager::LazyNow* lazy_now) = 0;*/
+
+  virtual void OnTaskCompleted(
+      NonMainThreadTaskQueue* worker_task_queue,
+      const base::sequence_manager::Task& task,
+      const base::sequence_manager::TaskQueue::TaskTiming& task_timing) = 0;
 
   // ThreadSchedulerImpl:
   scoped_refptr<base::SingleThreadTaskRunner> ControlTaskRunner() override;

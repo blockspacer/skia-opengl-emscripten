@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -37,10 +37,10 @@
 #include "base/trace_event/memory_dump_manager.h"
 #include "build/build_config.h"
 
-#if !defined(__EMSCRIPTEN__)
+//#if !defined(__EMSCRIPTEN__) && defined(__TODO__)
 #include "services/service_manager/public/cpp/connector.h"
 #include "services/service_manager/public/cpp/interface_provider.h"
-#endif // __EMSCRIPTEN__
+//#endif // __EMSCRIPTEN__
 
 #include "third_party/blink/public/platform/interface_provider.h"
 #include "third_party/blink/public/platform/scheduler/web_thread_scheduler.h"
@@ -49,7 +49,7 @@
 #include "third_party/blink/public/platform/web_media_stream_center.h"
 #include "third_party/blink/public/platform/web_prerendering_support.h"
 
-#if !defined(__EMSCRIPTEN__)
+#if !defined(__EMSCRIPTEN__) && defined(__TODO__)
 #include "third_party/blink/public/platform/web_rtc_certificate_generator.h"
 #include "third_party/blink/public/platform/web_rtc_peer_connection_handler.h"
 #endif // __EMSCRIPTEN__
@@ -59,13 +59,19 @@
 #include "third_party/blink/public/platform/websocket_handshake_throttle.h"
 #include "third_party/blink/renderer/platform/bindings/parkable_string_manager.h"
 #include "third_party/blink/renderer/platform/cross_thread_functional.h"
+#if defined(ENABLE_BLINK_FONTS)
 #include "third_party/blink/renderer/platform/font_family_names.h"
 #include "third_party/blink/renderer/platform/fonts/font_cache_memory_dump_provider.h"
+#endif
 #include "third_party/blink/renderer/platform/heap/blink_gc_memory_dump_provider.h"
 #include "third_party/blink/renderer/platform/heap/gc_task_runner.h"
 #include "third_party/blink/renderer/platform/histogram.h"
 #include "third_party/blink/renderer/platform/instance_counters_memory_dump_provider.h"
+
+#if defined(__TODO__)
 #include "third_party/blink/renderer/platform/instrumentation/resource_coordinator/renderer_resource_coordinator.h"
+#endif
+
 #include "third_party/blink/renderer/platform/instrumentation/tracing/memory_cache_dump_provider.h"
 #include "third_party/blink/renderer/platform/language.h"
 #include "third_party/blink/renderer/platform/memory_pressure_listener.h"
@@ -76,7 +82,7 @@
 #include "third_party/blink/renderer/platform/wtf/allocator.h"
 #include "third_party/blink/renderer/platform/wtf/hash_map.h"
 
-#if !defined(__EMSCRIPTEN__)
+#if !defined(__EMSCRIPTEN__) && defined(__TODO__)
 #include "third_party/webrtc/api/async_resolver_factory.h"
 #include "third_party/webrtc/api/rtp_parameters.h"
 #include "third_party/webrtc/p2p/base/port_allocator.h"
@@ -86,7 +92,7 @@ namespace blink {
 
 namespace {
 
-#if !defined(__EMSCRIPTEN__)
+//#if !defined(__EMSCRIPTEN__) && defined(__TODO__)
 class DefaultConnector {
   USING_FAST_MALLOC(DefaultConnector);
 
@@ -101,13 +107,13 @@ class DefaultConnector {
  private:
   std::unique_ptr<service_manager::Connector> connector_;
 };
-#endif // __EMSCRIPTEN__
+//#endif // __EMSCRIPTEN__
 
 }  // namespace
 
 static Platform* g_platform = nullptr;
 
-#if !defined(__EMSCRIPTEN__)
+#if !defined(__EMSCRIPTEN__) && defined(__TODO__)
 static GCTaskRunner* g_gc_task_runner = nullptr;
 #endif // __EMSCRIPTEN__
 
@@ -213,10 +219,12 @@ void Platform::InitializeCommon(Platform* platform,
   // font_family_names are used by platform/fonts and are initialized by core.
   // In case core is not available (like on PPAPI plugins), we need to init
   // them here.
+#if defined(ENABLE_BLINK_FONTS)
   font_family_names::Init();
+#endif
   InitializePlatformLanguage();
 
-#if !defined(__EMSCRIPTEN__)
+#if !defined(__EMSCRIPTEN__) && defined(__TODO__)
   DCHECK(!g_gc_task_runner);
   g_gc_task_runner = new GCTaskRunner(Thread::MainThread());
 #endif // __EMSCRIPTEN__
@@ -224,9 +232,13 @@ void Platform::InitializeCommon(Platform* platform,
   base::trace_event::MemoryDumpManager::GetInstance()->RegisterDumpProvider(
       PartitionAllocMemoryDumpProvider::Instance(), "PartitionAlloc",
       base::ThreadTaskRunnerHandle::Get());
+
+#if defined(ENABLE_BLINK_FONTS)
   base::trace_event::MemoryDumpManager::GetInstance()->RegisterDumpProvider(
       FontCacheMemoryDumpProvider::Instance(), "FontCaches",
       base::ThreadTaskRunnerHandle::Get());
+#endif
+
   base::trace_event::MemoryDumpManager::GetInstance()->RegisterDumpProvider(
       MemoryCacheDumpProvider::Instance(), "MemoryCache",
       base::ThreadTaskRunnerHandle::Get());
@@ -237,7 +249,9 @@ void Platform::InitializeCommon(Platform* platform,
       ParkableStringManagerDumpProvider::Instance(), "ParkableStrings",
       base::ThreadTaskRunnerHandle::Get());
 
+#if defined(__TODO__)
   RendererResourceCoordinator::MaybeInitialize();
+#endif
 }
 
 void Platform::SetCurrentPlatformForTesting(Platform* platform) {
@@ -268,12 +282,12 @@ Platform* Platform::Current() {
   return g_platform;
 }
 
-#if !defined(__EMSCRIPTEN__)
+//#if !defined(__EMSCRIPTEN__) && defined(__TODO__)
 service_manager::Connector* Platform::GetConnector() {
   DEFINE_STATIC_LOCAL(DefaultConnector, connector, ());
   return connector.Get();
 }
-#endif //__EMSCRIPTEN__
+//#endif //__EMSCRIPTEN__
 
 InterfaceProvider* Platform::GetInterfaceProvider() {
   return InterfaceProvider::GetEmptyInterfaceProvider();
@@ -323,7 +337,7 @@ Platform::CreateWebGPUGraphicsContext3DProvider(const WebURL& top_document_url,
   return nullptr;
 }
 
-#if !defined(__EMSCRIPTEN__)
+#if !defined(__EMSCRIPTEN__) && defined(__TODO__)
 std::unique_ptr<WebRTCPeerConnectionHandler>
 Platform::CreateRTCPeerConnectionHandler(
     WebRTCPeerConnectionHandlerClient*,

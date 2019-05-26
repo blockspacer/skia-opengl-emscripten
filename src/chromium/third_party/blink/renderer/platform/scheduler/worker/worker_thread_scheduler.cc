@@ -1,4 +1,4 @@
-// Copyright 2014 The Chromium Authors. All rights reserved.
+﻿// Copyright 2014 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -7,21 +7,28 @@
 #include <memory>
 
 #include "base/bind.h"
+
 #include "base/metrics/field_trial_params.h"
 #include "base/metrics/histogram_macros.h"
+
+#ifdef __TODO__
+#include "services/metrics/public/cpp/mojo_ukm_recorder.h"
+#include "services/metrics/public/cpp/ukm_builders.h"
+#endif
+
 #include "base/strings/string_number_conversions.h"
 #include "base/task/sequence_manager/sequence_manager.h"
 #include "base/task/sequence_manager/task_queue.h"
 #include "base/threading/thread_task_runner_handle.h"
 #include "base/trace_event/trace_event.h"
 #include "base/trace_event/traced_value.h"
-#include "services/metrics/public/cpp/mojo_ukm_recorder.h"
-#include "services/metrics/public/cpp/ukm_builders.h"
 #include "third_party/blink/renderer/platform/histogram.h"
 #include "third_party/blink/renderer/platform/scheduler/common/features.h"
 #include "third_party/blink/renderer/platform/scheduler/common/process_state.h"
 #include "third_party/blink/renderer/platform/scheduler/common/throttling/task_queue_throttler.h"
+#ifdef __TODO__
 #include "third_party/blink/renderer/platform/scheduler/public/event_loop.h"
+#endif
 #include "third_party/blink/renderer/platform/scheduler/public/worker_scheduler.h"
 #include "third_party/blink/renderer/platform/scheduler/worker/non_main_thread_scheduler_helper.h"
 #include "third_party/blink/renderer/platform/scheduler/worker/worker_scheduler_proxy.h"
@@ -113,20 +120,26 @@ WorkerThreadScheduler::WorkerThreadScheduler(
                     kUnspecifiedWorkerThreadLoadTrackerReportingInterval),
       lifecycle_state_(proxy ? proxy->lifecycle_state()
                              : SchedulingLifecycleState::kNotThrottled),
+#ifdef __TODO__
       worker_metrics_helper_(thread_type, helper()->HasCPUTimingForEachTask()),
+#endif
       initial_frame_status_(proxy ? proxy->initial_frame_status()
                                   : FrameStatus::kNone),
       ukm_source_id_(proxy ? proxy->ukm_source_id() : ukm::kInvalidSourceId),
       connector_(proxy ? proxy->TakeConnector() : nullptr) {
   if (connector_) {
+#ifdef __TODO__
     ukm_recorder_ = ukm::MojoUkmRecorder::Create(connector_.get());
+#endif
   }
   thread_start_time_ = helper()->NowTicks();
   load_tracker_.Resume(thread_start_time_);
   helper()->AddTaskTimeObserver(this);
 
   if (proxy && proxy->parent_frame_type())
+#ifdef __TODO__
     worker_metrics_helper_.SetParentFrameType(*proxy->parent_frame_type());
+#endif
 
   if (thread_type == WebThreadType::kDedicatedWorkerThread &&
       base::FeatureList::IsEnabled(kDedicatedWorkerThrottling)) {
@@ -226,6 +239,24 @@ void WorkerThreadScheduler::InitImpl() {
       TaskType::kWorkerThreadTaskQueueCompositor);
 }
 
+
+// __TODO__
+void WorkerThreadScheduler::OnTaskCompleted(
+    NonMainThreadTaskQueue* task_queue,
+    const base::sequence_manager::Task& task,
+    const base::sequence_manager::TaskQueue::TaskTiming& task_timing) {
+
+    //worker_metrics_helper_.RecordTaskMetrics(task_queue, task, task_timing);
+
+    if (task_queue_throttler_) {
+        task_queue_throttler_->OnTaskRunTimeReported(
+            task_queue, task_timing.start_time(), task_timing.end_time());
+    }
+
+    RecordTaskUkm(task_queue, task, task_timing);
+}
+
+/*
 void WorkerThreadScheduler::OnTaskCompleted(
     NonMainThreadTaskQueue* task_queue,
     const base::sequence_manager::Task& task,
@@ -234,7 +265,9 @@ void WorkerThreadScheduler::OnTaskCompleted(
   PerformMicrotaskCheckpoint();
 
   task_timing->RecordTaskEnd(lazy_now);
+#ifdef __TODO__
   worker_metrics_helper_.RecordTaskMetrics(task_queue, task, *task_timing);
+#endif
 
   if (task_queue_throttler_) {
     task_queue_throttler_->OnTaskRunTimeReported(
@@ -242,7 +275,7 @@ void WorkerThreadScheduler::OnTaskCompleted(
   }
 
   RecordTaskUkm(task_queue, task, *task_timing);
-}
+}*/
 
 SchedulerHelper* WorkerThreadScheduler::GetSchedulerHelperForTesting() {
   return helper();
@@ -315,6 +348,9 @@ void WorkerThreadScheduler::RecordTaskUkm(
     const base::sequence_manager::TaskQueue::TaskTiming& task_timing) {
   if (!helper()->ShouldRecordTaskUkm(task_timing.has_thread_time()))
     return;
+
+
+#ifdef __TODO__
   ukm::builders::RendererSchedulerTask builder(ukm_source_id_);
 
   builder.SetVersion(kUkmMetricVersion);
@@ -330,12 +366,15 @@ void WorkerThreadScheduler::RecordTaskUkm(
     builder.SetTaskCPUDuration(task_timing.thread_duration().InMicroseconds());
 
   builder.Record(ukm_recorder_.get());
+#endif
 }
 
+#ifdef __TODO__
 void WorkerThreadScheduler::SetUkmRecorderForTest(
     std::unique_ptr<ukm::UkmRecorder> ukm_recorder) {
   ukm_recorder_ = std::move(ukm_recorder);
 }
+#endif
 
 void WorkerThreadScheduler::SetUkmTaskSamplingRateForTest(double rate) {
   helper()->SetUkmTaskSamplingRateForTest(rate);
@@ -352,8 +391,10 @@ WorkerThreadScheduler::GetWorkerSchedulersForTesting() {
 }
 
 void WorkerThreadScheduler::PerformMicrotaskCheckpoint() {
+#ifdef __TODO__
   if (isolate())
     EventLoop::PerformIsolateGlobalMicrotasksCheckpoint(isolate());
+#endif
 }
 
 }  // namespace scheduler

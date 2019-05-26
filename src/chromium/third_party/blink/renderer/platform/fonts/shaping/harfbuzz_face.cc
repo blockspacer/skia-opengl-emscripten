@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (c) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -140,6 +140,7 @@ static hb_position_t HarfBuzzGetGlyphHorizontalAdvance(hb_font_t* hb_font,
   return advance;
 }
 
+#if defined(__TODO__)
 static void HarfBuzzGetGlyphHorizontalAdvances(
     hb_font_t* font,
     void* font_data,
@@ -154,6 +155,22 @@ static void HarfBuzzGetGlyphHorizontalAdvances(
   SkFontGetGlyphWidthForHarfBuzz(hb_font_data->font_, count, first_glyph,
                                  glyph_stride, first_advance, advance_stride);
 }
+#else
+static void HarfBuzzGetGlyphHorizontalAdvances(
+    hb_font_t* font,
+    void* font_data,
+    unsigned int count,
+    unsigned int* first_glyph,
+    unsigned int glyph_stride,
+    int* first_advance,
+    unsigned int advance_stride,
+    void* user_data) {
+  HarfBuzzFontData* hb_font_data =
+      reinterpret_cast<HarfBuzzFontData*>(font_data);
+  SkFontGetGlyphWidthForHarfBuzz(hb_font_data->font_, count, first_glyph,
+                                 glyph_stride, first_advance, advance_stride);
+}
+#endif
 
 static hb_bool_t HarfBuzzGetGlyphVerticalOrigin(hb_font_t* hb_font,
                                                 void* font_data,

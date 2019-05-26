@@ -1,4 +1,4 @@
-// Copyright 2018 The Chromium Authors. All rights reserved.
+﻿// Copyright 2018 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -53,7 +53,9 @@ void UnifiedHeapMarkingVisitor::Visit(
   if (v8_reference.Get().IsEmpty())
     return;
   DCHECK(isolate_);
+#if defined(__TODO__)
   controller_->RegisterEmbedderReference(v8_reference.Get());
+#endif
 }
 
 }  // namespace blink

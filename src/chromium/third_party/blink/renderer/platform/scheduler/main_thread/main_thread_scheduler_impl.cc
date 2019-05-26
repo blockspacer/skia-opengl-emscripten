@@ -1,4 +1,4 @@
-// Copyright 2014 The Chromium Authors. All rights reserved.
+﻿// Copyright 2014 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -21,13 +21,17 @@
 #include "base/trace_event/traced_value.h"
 #include "build/build_config.h"
 #include "components/viz/common/frame_sinks/begin_frame_args.h"
+
+#ifdef __TODO__
 #include "services/metrics/public/cpp/ukm_builders.h"
+#include "third_party/blink/renderer/platform/instrumentation/resource_coordinator/renderer_resource_coordinator.h"
+#endif
+
 #include "third_party/blink/public/common/page/launching_process_state.h"
 #include "third_party/blink/public/platform/scheduler/web_renderer_process_type.h"
 #include "third_party/blink/public/platform/web_mouse_wheel_event.h"
 #include "third_party/blink/public/platform/web_touch_event.h"
 #include "third_party/blink/renderer/platform/bindings/parkable_string_manager.h"
-#include "third_party/blink/renderer/platform/instrumentation/resource_coordinator/renderer_resource_coordinator.h"
 #include "third_party/blink/renderer/platform/runtime_enabled_features.h"
 #include "third_party/blink/renderer/platform/scheduler/common/features.h"
 #include "third_party/blink/renderer/platform/scheduler/common/process_state.h"
@@ -37,7 +41,9 @@
 #include "third_party/blink/renderer/platform/scheduler/main_thread/main_thread.h"
 #include "third_party/blink/renderer/platform/scheduler/main_thread/page_scheduler_impl.h"
 #include "third_party/blink/renderer/platform/scheduler/main_thread/task_type_names.h"
+#ifdef __TODO__
 #include "third_party/blink/renderer/platform/scheduler/public/event_loop.h"
+#endif
 #include "v8/include/v8.h"
 
 namespace blink {
@@ -445,11 +451,16 @@ MainThreadSchedulerImpl::MainThreadOnly::MainThreadOnly(
                                YesNoStateToString),
       background_status_changed_at(now),
       wake_up_budget_pool(nullptr),
+
+
+#ifdef __TODO__
       metrics_helper(
           main_thread_scheduler_impl,
           main_thread_scheduler_impl->helper_.HasCPUTimingForEachTask(),
           now,
           renderer_backgrounded),
+#endif
+
       process_type(WebRendererProcessType::kRenderer,
                    "RendererProcessType",
                    main_thread_scheduler_impl,
@@ -618,8 +629,9 @@ void MainThreadSchedulerImpl::Shutdown() {
     return;
 
   base::TimeTicks now = tick_clock()->NowTicks();
+#ifdef __TODO__
   main_thread_only().metrics_helper.OnRendererShutdown(now);
-
+#endif
   ShutdownAllQueues();
   task_queue_throttler_.reset();
   idle_helper_.Shutdown();
@@ -961,11 +973,13 @@ void MainThreadSchedulerImpl::SetRendererBackgrounded(bool backgrounded) {
   UpdatePolicy();
 
   base::TimeTicks now = tick_clock()->NowTicks();
+#ifdef __TODO__
   if (backgrounded) {
     main_thread_only().metrics_helper.OnRendererBackgrounded(now);
   } else {
     main_thread_only().metrics_helper.OnRendererForegrounded(now);
   }
+#endif
 
   ParkableStringManager::Instance().SetRendererBackgrounded(backgrounded);
   memory_purge_manager_.SetRendererBackgrounded(backgrounded);
@@ -1061,8 +1075,10 @@ void MainThreadSchedulerImpl::SetHaveSeenABlockingGestureForTesting(
 }
 
 void MainThreadSchedulerImpl::PerformMicrotaskCheckpoint() {
+#ifdef __TODO__
   if (isolate())
     EventLoop::PerformIsolateGlobalMicrotasksCheckpoint(isolate());
+#endif
 }
 
 // static
@@ -1538,9 +1554,11 @@ void MainThreadSchedulerImpl::UpdatePolicyLocked(UpdateType update_type) {
 
   main_thread_only().rail_mode_for_tracing = new_policy.rail_mode();
   if (new_policy.rail_mode() != main_thread_only().current_policy.rail_mode()) {
+#ifdef __TODO__
     if (isolate()) {
       isolate()->SetRAILMode(RAILModeToV8RAILMode(new_policy.rail_mode()));
     }
+#endif
     for (auto& observer : main_thread_only().rail_mode_observers) {
       observer.OnRAILModeChanged(new_policy.rail_mode());
     }
@@ -1776,7 +1794,9 @@ void MainThreadSchedulerImpl::DisableVirtualTimeForTesting() {
 
   // Reset the MetricsHelper because it gets confused by time going backwards.
   base::TimeTicks now = tick_clock()->NowTicks();
+#ifdef __TODO__
   main_thread_only().metrics_helper.ResetForTest(now);
+#endif
 }
 
 void MainThreadSchedulerImpl::SetVirtualTimeStopped(bool virtual_time_stopped) {
@@ -2380,6 +2400,40 @@ void MainThreadSchedulerImpl::OnTaskStarted(
 }
 
 void MainThreadSchedulerImpl::OnTaskCompleted(
+    MainThreadTaskQueue* queue,
+    const base::sequence_manager::Task& task,
+    const TaskQueue::TaskTiming& task_timing) {
+    DCHECK_LE(task_timing.start_time(), task_timing.end_time());
+    DCHECK(!main_thread_only().running_queues.empty());
+    DCHECK(!queue || main_thread_only().running_queues.top().get() == queue);
+    main_thread_only().running_queues.pop();
+    queueing_time_estimator_.OnExecutionStopped(task_timing.end_time());
+    if (main_thread_only().nested_runloop)
+        return;
+
+    if (queue) {
+        task_queue_throttler()->OnTaskRunTimeReported(
+            queue, task_timing.start_time(), task_timing.end_time());
+    }
+
+    main_thread_only().compositing_experiment.OnTaskCompleted(queue);
+
+    // TODO(altimin): Per-page metrics should also be considered.
+#ifdef __TODO__
+    main_thread_only().metrics_helper.RecordTaskMetrics(queue, task, task_timing);
+#endif
+    main_thread_only().task_description_for_tracing = base::nullopt;
+
+    // Unset the state of |task_priority_for_tracing|.
+    main_thread_only().task_priority_for_tracing = base::nullopt;
+
+    RecordTaskUkm(queue, task, task_timing);
+}
+
+/*
+ * EMSCRIPTEN
+ * __TODO__
+void MainThreadSchedulerImpl::OnTaskCompleted(
     base::WeakPtr<MainThreadTaskQueue> queue,
     const base::sequence_manager::Task& task,
     TaskQueue::TaskTiming* task_timing,
@@ -2408,10 +2462,11 @@ void MainThreadSchedulerImpl::OnTaskCompleted(
   }
 
   main_thread_only().compositing_experiment.OnTaskCompleted(queue.get());
-
+#ifdef __TODO__
   // TODO(altimin): Per-page metrics should also be considered.
   main_thread_only().metrics_helper.RecordTaskMetrics(queue.get(), task,
                                                       *task_timing);
+#endif
   main_thread_only().has_safepoint = false;
 
   main_thread_only().task_description_for_tracing = base::nullopt;
@@ -2420,7 +2475,7 @@ void MainThreadSchedulerImpl::OnTaskCompleted(
   main_thread_only().task_priority_for_tracing = base::nullopt;
 
   RecordTaskUkm(queue.get(), task, *task_timing);
-}
+}*/
 
 void MainThreadSchedulerImpl::RecordTaskUkm(
     MainThreadTaskQueue* queue,
@@ -2428,7 +2483,7 @@ void MainThreadSchedulerImpl::RecordTaskUkm(
     const TaskQueue::TaskTiming& task_timing) {
   if (!helper_.ShouldRecordTaskUkm(task_timing.has_thread_time()))
     return;
-
+#ifdef __TODO__
   if (queue && queue->GetFrameScheduler()) {
     auto status = RecordTaskUkmImpl(queue, task, task_timing,
                                     queue->GetFrameScheduler(), true);
@@ -2437,7 +2492,8 @@ void MainThreadSchedulerImpl::RecordTaskUkm(
         UkmRecordingStatus::kCount);
     return;
   }
-
+#endif
+#ifdef __TODO__
   for (PageSchedulerImpl* page_scheduler : main_thread_only().page_schedulers) {
     auto status = RecordTaskUkmImpl(
         queue, task, task_timing,
@@ -2446,8 +2502,10 @@ void MainThreadSchedulerImpl::RecordTaskUkm(
         "Scheduler.Experimental.Renderer.UkmRecordingStatus", status,
         UkmRecordingStatus::kCount);
   }
+#endif
 }
 
+#ifdef __TODO__
 UkmRecordingStatus MainThreadSchedulerImpl::RecordTaskUkmImpl(
     MainThreadTaskQueue* queue,
     const base::sequence_manager::Task& task,
@@ -2510,6 +2568,7 @@ UkmRecordingStatus MainThreadSchedulerImpl::RecordTaskUkmImpl(
 
   return UkmRecordingStatus::kSuccess;
 }
+#endif
 
 TaskQueue::QueuePriority MainThreadSchedulerImpl::ComputePriority(
     MainThreadTaskQueue* task_queue) const {
@@ -2600,11 +2659,13 @@ void MainThreadSchedulerImpl::OnQueueingTimeForWindowEstimated(
                  "estimated_queueing_time_for_window",
                  queueing_time.InMillisecondsF());
 
+#ifdef __TODO__
   if (auto* renderer_resource_coordinator =
           RendererResourceCoordinator::Get()) {
     renderer_resource_coordinator->SetExpectedTaskQueueingDuration(
         queueing_time);
   }
+#endif
 }
 
 AutoAdvancingVirtualTimeDomain*

@@ -1,4 +1,4 @@
-// Copyright 2015 The Chromium Authors. All rights reserved.
+﻿// Copyright 2015 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -9,14 +9,16 @@
 #include "base/message_loop/message_loop.h"
 #include "base/single_thread_task_runner.h"
 #include "base/task/sequence_manager/task_time_observer.h"
+#ifdef __TODO__
 #include "components/scheduling_metrics/task_duration_metric_reporter.h"
+#include "third_party/blink/renderer/platform/scheduler/worker/worker_metrics_helper.h"
+#endif
 #include "third_party/blink/public/platform/web_thread_type.h"
 #include "third_party/blink/renderer/platform/scheduler/common/idle_helper.h"
 #include "third_party/blink/renderer/platform/scheduler/common/thread_load_tracker.h"
 #include "third_party/blink/renderer/platform/scheduler/public/frame_scheduler.h"
 #include "third_party/blink/renderer/platform/scheduler/public/frame_status.h"
 #include "third_party/blink/renderer/platform/scheduler/worker/non_main_thread_scheduler_impl.h"
-#include "third_party/blink/renderer/platform/scheduler/worker/worker_metrics_helper.h"
 
 namespace base {
 namespace sequence_manager {
@@ -28,9 +30,11 @@ namespace service_manager {
 class Connector;
 }
 
+#ifdef __TODO__
 namespace ukm {
 class UkmRecorder;
 }
+#endif
 
 namespace blink {
 namespace scheduler {
@@ -72,11 +76,17 @@ class PLATFORM_EXPORT WorkerThreadScheduler
 
   // NonMainThreadSchedulerImpl implementation:
   scoped_refptr<NonMainThreadTaskQueue> DefaultTaskQueue() override;
-  void OnTaskCompleted(
+
+  /*void OnTaskCompleted(
       NonMainThreadTaskQueue* worker_task_queue,
       const base::sequence_manager::Task& task,
       base::sequence_manager::TaskQueue::TaskTiming* task_timing,
-      base::sequence_manager::LazyNow* lazy_now) override;
+      base::sequence_manager::LazyNow* lazy_now) override;*/
+
+  void  OnTaskCompleted(
+      NonMainThreadTaskQueue* worker_task_queue,
+      const base::sequence_manager::Task& task,
+      const base::sequence_manager::TaskQueue::TaskTiming& task_timing) override;
 
   // TaskTimeObserver implementation:
   void WillProcessTask(base::TimeTicks start_time) override;
@@ -132,7 +142,10 @@ class PLATFORM_EXPORT WorkerThreadScheduler
   std::unordered_set<WorkerScheduler*>& GetWorkerSchedulersForTesting();
 
   void SetUkmTaskSamplingRateForTest(double rate);
+
+#ifdef __TODO__
   void SetUkmRecorderForTest(std::unique_ptr<ukm::UkmRecorder> ukm_recorder);
+#endif
 
   virtual void PerformMicrotaskCheckpoint();
 
@@ -154,7 +167,9 @@ class PLATFORM_EXPORT WorkerThreadScheduler
   scoped_refptr<base::SingleThreadTaskRunner> compositor_task_runner_;
   SchedulingLifecycleState lifecycle_state_;
 
+#ifdef __TODO__
   WorkerMetricsHelper worker_metrics_helper_;
+#endif
 
   // This controller should be initialized before any TraceableVariables
   // because they require one to initialize themselves.
@@ -173,8 +188,9 @@ class PLATFORM_EXPORT WorkerThreadScheduler
 
   const ukm::SourceId ukm_source_id_;
   std::unique_ptr<service_manager::Connector> connector_;
+#ifdef __TODO__
   std::unique_ptr<ukm::UkmRecorder> ukm_recorder_;
-
+#endif
   DISALLOW_COPY_AND_ASSIGN(WorkerThreadScheduler);
 };
 

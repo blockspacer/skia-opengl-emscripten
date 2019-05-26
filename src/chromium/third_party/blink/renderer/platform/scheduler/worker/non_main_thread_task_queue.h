@@ -1,4 +1,4 @@
-// Copyright 2017 The Chromium Authors. All rights reserved.
+﻿// Copyright 2017 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -24,10 +24,14 @@ class PLATFORM_EXPORT NonMainThreadTaskQueue
       NonMainThreadSchedulerImpl* non_main_thread_scheduler);
   ~NonMainThreadTaskQueue() override;
 
-  void OnTaskCompleted(
+      void OnTaskCompleted(
+          const base::sequence_manager::Task& task,
+          const TaskQueue::TaskTiming& task_timing);
+
+  /*void OnTaskCompleted(
       const base::sequence_manager::Task& task,
       base::sequence_manager::TaskQueue::TaskTiming* task_timing,
-      base::sequence_manager::LazyNow* lazy_now);
+      base::sequence_manager::LazyNow* lazy_now);*/
 
   scoped_refptr<base::SingleThreadTaskRunner> CreateTaskRunner(
       TaskType task_type) {
