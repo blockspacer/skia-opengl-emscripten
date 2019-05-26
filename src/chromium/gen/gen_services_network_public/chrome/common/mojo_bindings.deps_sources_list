@@ -1,9 +1,0 @@
-gen/chrome/common/mojo_bindings.sources_list
-gen/components/content_settings/core/common/mojo_bindings.sources_list
-gen/content/public/common/interfaces.sources_list
-gen/mojo/public/mojom/base/base.sources_list
-gen/third_party/blink/public/mojom/mojom_platform.sources_list
-gen/ui/gfx/geometry/mojo/mojo.sources_list
-gen/url/mojom/url_mojom_gurl.sources_list
-gen/url/mojom/url_mojom_origin.sources_list
-gen/chrome/services/file_util/public/mojom/mojom.sources_list

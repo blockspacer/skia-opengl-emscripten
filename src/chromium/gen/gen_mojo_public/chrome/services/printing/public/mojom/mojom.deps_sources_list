@@ -1,4 +1,0 @@
-gen/chrome/services/printing/public/mojom/mojom.sources_list
-gen/ui/gfx/geometry/mojo/mojo.sources_list
-gen/mojo/public/mojom/base/base.sources_list
-gen/url/mojom/url_mojom_gurl.sources_list

@@ -1,6 +1,0 @@
-gen/services/viz/privileged/interfaces/gl/gl.sources_list
-gen/gpu/ipc/common/interfaces.sources_list
-gen/media/mojo/interfaces/interfaces.sources_list
-gen/ui/gfx/geometry/mojo/mojo.sources_list
-gen/ui/gfx/mojo/mojo.sources_list
-gen/url/mojom/url_mojom_gurl.sources_list

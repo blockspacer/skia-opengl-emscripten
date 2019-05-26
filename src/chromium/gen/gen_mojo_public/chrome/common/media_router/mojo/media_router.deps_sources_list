@@ -1,9 +1,0 @@
-gen/chrome/common/media_router/mojo/media_router.sources_list
-gen/chrome/common/media_router/mojo/media_controller.sources_list
-gen/components/mirroring/mojom/host.sources_list
-gen/media/mojo/interfaces/mirror_service_remoting.sources_list
-gen/mojo/public/mojom/base/base.sources_list
-gen/services/network/public/mojom/mojom_ip_address.sources_list
-gen/third_party/blink/public/mojom/mojom_platform.sources_list
-gen/url/mojom/url_mojom_gurl.sources_list
-gen/url/mojom/url_mojom_origin.sources_list
