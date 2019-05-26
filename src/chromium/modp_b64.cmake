@@ -21,7 +21,7 @@ set_property(TARGET modp_b64 PROPERTY CXX_STANDARD 17)
 
 target_include_directories(modp_b64 PUBLIC
   ${modp_b64_FULL_DIR}
-  ${CMAKE_CURRENT_SOURCE_DIR} # must include build/build_config.h
+  ${CHROMIUM_DIR} # must include build/build_config.h
 )
 
 target_compile_definitions(modp_b64 PUBLIC

@@ -16,11 +16,11 @@ set(GLIBXML_SOURCES
   ${GLIBXML_DIR}src/SAX2.c
   ${GLIBXML_DIR}src/buf.c
   ${GLIBXML_DIR}src/buf.h
-  ${GLIBXML_DIR}
+  #
   #### ${GLIBXML_DIR}src/c14n.c
   #### ${GLIBXML_DIR}src/catalog.c
   ${GLIBXML_DIR}src/chvalid.c
-  ${GLIBXML_DIR}
+  #
   #### ${GLIBXML_DIR}src/debugXML.c
   ${GLIBXML_DIR}src/dict.c
   ${GLIBXML_DIR}src/elfgcchack.h
@@ -78,7 +78,7 @@ set(GLIBXML_SOURCES
   ${GLIBXML_DIR}src/include/libxml/xpointer.h
   ## TODO ## ${GLIBXML_DIR}src/include/win32config.h
   ${GLIBXML_DIR}src/include/wsockcompat.h
-  ${GLIBXML_DIR}
+  #
   #### ${GLIBXML_DIR}src/legacy.c
   ${GLIBXML_DIR}src/libxml.h
   ${GLIBXML_DIR}src/list.c
@@ -95,7 +95,7 @@ set(GLIBXML_SOURCES
   ${GLIBXML_DIR}src/tree.c
   ${GLIBXML_DIR}src/triodef.h
   ${GLIBXML_DIR}src/trionan.h
-  ${GLIBXML_DIR}
+  #
   #### ${GLIBXML_DIR}src/trio.c
   #### ${GLIBXML_DIR}src/trio.h
   #### ${GLIBXML_DIR}src/triodef.h
@@ -136,10 +136,10 @@ set(GLIBXML_SOURCES
 if(EMSCRIPTEN)
   # nothing to do
   list(APPEND GLIBXML_OS_PRIVATE_DIRS
-    ${CMAKE_CURRENT_SOURCE_DIR}/web_ports/libxml_wrapper/emscripten # requires "config.h"
+    ${CHROMIUM_DIR}/web_ports/libxml_wrapper/emscripten # requires "config.h"
   )
   list(APPEND GLIBXML_OS_PUBLIC_DIRS
-    ${CMAKE_CURRENT_SOURCE_DIR}/web_ports/libxml_wrapper/emscripten/include # requires "libxml/xmlversion.h"
+    ${CHROMIUM_DIR}/web_ports/libxml_wrapper/emscripten/include # requires "libxml/xmlversion.h"
   )
 elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
   if(CMAKE_CL_64)
@@ -178,7 +178,7 @@ else()
     #base
     #${ZLIB_LIBRARIES}
     #zlib
-    GZLIB
+    ${libZLIB_LIB}
     icu # icuuc
   )
 endif()
@@ -186,7 +186,8 @@ endif()
 set_property(TARGET GLIBXML PROPERTY CXX_STANDARD 17)
 
 target_include_directories(GLIBXML PRIVATE
-  #${GLIBXML_DIR}
+  ${GLIBXML_PARENT_DIR}
+  ${GLIBXML_DIR}
   #${GLIBXML_DIR}/src
   ${GLIBXML_OS_PRIVATE_DIRS} # linux/android/...
   #${GLIBXML_DIR}/src/src
@@ -202,5 +203,5 @@ target_compile_definitions(GLIBXML PRIVATE
   # Define GLIBXML_STATIC as nothing to match how GLIBXML.h (an internal header)
   # defines GLIBXML_STATIC, otherwise we get the macro redefined warning from
   # GCC. ("defines" does "-DFOO" which defines the macro FOO as 1.)
-  GLIBXML_STATIC=
+  GLIBXML_STATIC=""
 )

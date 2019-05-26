@@ -1,4 +1,4 @@
-list(APPEND WTF_SOURCES
+﻿list(APPEND WTF_SOURCES
   ${BLINK_WTF_DIR}allocator.cc
   #${BLINK_WTF_DIR}allocator.h
   ${BLINK_WTF_DIR}allocator/partition_allocator.cc
@@ -351,11 +351,11 @@ endif (EMSCRIPTEN)
 set_property(TARGET ${WTF_LIBRARY_NAME} PROPERTY CXX_STANDARD 17)
 
 #include_directories(
-#  ${CMAKE_CURRENT_SOURCE_DIR}
-#  ${CMAKE_CURRENT_SOURCE_DIR}/wtf
-#  ${CMAKE_CURRENT_SOURCE_DIR}/global_headers
+#  ${CHROMIUM_DIR}
+#  ${CHROMIUM_DIR}/wtf
+#  ${CHROMIUM_DIR}/global_headers
 #)
-#message(FATAL_ERROR ${CMAKE_CURRENT_SOURCE_DIR}/global_headers)
+#message(FATAL_ERROR ${CHROMIUM_DIR}/global_headers)
 
 #set(WTF_INCLUDE_DIRECTORIES
 #    "${BMALLOC_DIR}"
@@ -378,16 +378,16 @@ set(WTF_PRIVATE_INCLUDE_DIRECTORIES
 #message(FATAL_ERROR ${CMAKE_CXX_FLAGS})
 
 target_include_directories(${WTF_LIBRARY_NAME} PUBLIC
-  ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CHROMIUM_DIR}
   # folder containing wtf subdirectory
   #${BLINK_WTF_DIR}/..
-  #${CMAKE_CURRENT_SOURCE_DIR}/global_headers
+  #${CHROMIUM_DIR}/global_headers
 )
 
 #target_include_directories(${WTF_LIBRARY_NAME} SYSTEM PRIVATE
-#  ${CMAKE_CURRENT_SOURCE_DIR}
-#  ${CMAKE_CURRENT_SOURCE_DIR}/wtf
-#  ${CMAKE_CURRENT_SOURCE_DIR}/global_headers
+#  ${CHROMIUM_DIR}
+#  ${CHROMIUM_DIR}/wtf
+#  ${CHROMIUM_DIR}/global_headers
 #)
 
 set(WTF_LIBRARIES

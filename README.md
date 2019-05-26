@@ -114,7 +114,7 @@ patched libevent, added 'emscripten' subfolder
 using MessagePumpForUI = MessagePumpLibevent;
 
 7
-search for OS_EMSCRIPTEN and __EMSCRIPTEN__ (all occurrences)
+search for OS_EMSCRIPTEN, __EMSCRIPTEN__, __TODO__, ENABLE_TRACING_SERVICE (all occurrences)
 
 #if defined(OS_WIN) || defined(OS_MACOSX) || defined(OS_LINUX) || \
     defined(OS_ANDROID) || defined(OS_AIX) || defined(OS_FUCHSIA) || defined(OS_EMSCRIPTEN)
@@ -722,3 +722,14 @@ skemgl.js:5924 Uncaught abort("segmentation fault") at Error
     at blink::ThreadState::Current() [__ZN5blink11ThreadState7CurrentEv] (wasm-function[3387]:11)
     at blink::PersistentBase<blink::ImageObserver, (blink::WeaknessPersistentConfiguration)1, (blink::CrossThreadnessPersistentConfiguration)0>::SaveCreationThreadHeap() [__ZN5blink14PersistentBaseINS_13ImageObserverELNS_31WeaknessPersistentConfigurationE1ELNS_38CrossThreadnessPersistentConfigurationE0EE22SaveCreationThreadHeapEv] (wasm-function[3396]:48)
     at blink::PersistentBase<blink::ImageObserver, (blink::WeaknessPersistentConfiguration)1, (blink::CrossThreadnessPersistentConfiguration)0>::PersistentBase(blink::ImageObserver*) [__ZN5blink14PersistentBaseINS_13ImageObserverELNS_31WeaknessPersistentConfigurationE1ELNS_38CrossThreadnessPersistentConfigurationE0EEC2EPS1_] (wasm-function[3395]:21)
+
+3
+Thread 1 "skemgl" received signal SIGSEGV, Segmentation fault.
+0x00000000008a5783 in GLES2Disable (cap=2929)
+    at /home/denis/workspace/skia-opengl-emscripten/src/chromium/gpu/command_buffer/client/gles2_c_lib_autogen.h:287
+287       gles2::GetGLContext()->Disable(cap);
+(gdb) bt
+#0  0x00000000008a5783 in GLES2Disable (cap=2929)
+    at /home/denis/workspace/skia-opengl-emscripten/src/chromium/gpu/command_buffer/client/gles2_c_lib_autogen.h:287
+#1  0x000000000041924e in main (argc=1, argv=0x7fffffffd3a8) at /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:2415
+(gdb)

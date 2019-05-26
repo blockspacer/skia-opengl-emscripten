@@ -1,4 +1,4 @@
-### --- tcmalloc ---###
+﻿### --- tcmalloc ---###
 
 #function(find_static_library LIB_NAME OUT)
 #    if (WIN32 OR MSVC)
@@ -171,7 +171,7 @@ else()
   set_property(TARGET tcmalloc PROPERTY CXX_STANDARD 17)
 
   target_include_directories(tcmalloc PRIVATE
-    #${CMAKE_CURRENT_SOURCE_DIR}
+    #${CHROMIUM_DIR}
     ${TCMALLOC_DIR}
     ${TCMALLOC_DIR}src/
     ${TCMALLOC_DIR}src/base/

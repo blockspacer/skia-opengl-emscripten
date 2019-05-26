@@ -395,3 +395,7 @@ target_include_directories(CC PRIVATE
 target_compile_definitions(CC PRIVATE
   CC_IMPLEMENTATION=1
 )
+
+target_compile_options(CC PRIVATE
+  -Wno-format
+)

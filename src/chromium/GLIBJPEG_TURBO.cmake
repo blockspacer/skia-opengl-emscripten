@@ -1,7 +1,7 @@
 ﻿### --- GLIBJPEG_TURBO ---###
 
 set(GLIBJPEG_TURBO_DIR
-  third_party/libjpeg_turbo/
+  ${CHROMIUM_DIR}third_party/libjpeg_turbo/
 )
 
 set(GLIBJPEG_TURBO_SOURCES
@@ -193,7 +193,7 @@ if (EMSCRIPTEN)
   )
 else()
   target_link_libraries(GLIBJPEG_TURBO PUBLIC
-    GZLIB
+    ${libZLIB_LIB}
     GLIBXML
   )
 endif()

@@ -1,28 +1,28 @@
 ﻿### --- GLIBPNG ---###
 
 set(GLIBPNG_DIR
-  third_party/libpng/
+  ${CHROMIUM_DIR}third_party/libpng/
 )
 
 set(GLIBPNG_SOURCES
   ${GLIBPNG_DIR}png.c
-  #${GLIBPNG_DIR}png.h
-  #${GLIBPNG_DIR}pngconf.h
-  #${GLIBPNG_DIR}pngdebug.h
+  ${GLIBPNG_DIR}png.h
+  ${GLIBPNG_DIR}pngconf.h
+  ${GLIBPNG_DIR}pngdebug.h
   ${GLIBPNG_DIR}pngerror.c
   ${GLIBPNG_DIR}pngget.c
-  #${GLIBPNG_DIR}pnginfo.h
-  #${GLIBPNG_DIR}pnglibconf.h
+  ${GLIBPNG_DIR}pnginfo.h
+  ${GLIBPNG_DIR}pnglibconf.h
   ${GLIBPNG_DIR}pngmem.c
   ${GLIBPNG_DIR}pngpread.c
-  #${GLIBPNG_DIR}pngprefix.h
-  #${GLIBPNG_DIR}pngpriv.h
+  ${GLIBPNG_DIR}pngprefix.h
+  ${GLIBPNG_DIR}pngpriv.h
   ${GLIBPNG_DIR}pngread.c
   ${GLIBPNG_DIR}pngrio.c
   ${GLIBPNG_DIR}pngrtran.c
   ${GLIBPNG_DIR}pngrutil.c
   ${GLIBPNG_DIR}pngset.c
-  #${GLIBPNG_DIR}pngstruct.h
+  ${GLIBPNG_DIR}pngstruct.h
   ${GLIBPNG_DIR}pngtrans.c
   ${GLIBPNG_DIR}pngwio.c
   ${GLIBPNG_DIR}pngwrite.c
@@ -81,7 +81,7 @@ target_link_libraries(GLIBPNG PUBLIC
   #${BASE_LIBRARIES}
   #base
   #${ZLIB_LIBRARIES}
-  GZLIB
+  ${libZLIB_LIB}
   #GLIBXML
 )
 
@@ -100,7 +100,11 @@ target_include_directories(GLIBPNG PRIVATE
 target_compile_definitions(GLIBPNG PRIVATE
   PNG_SET_OPTION_SUPPORTED=1
   #"PNG_USE_DLL",
-  #"PNG_NO_MODULEDEF",
+  #PNG_NO_MODULEDEF=1
   #PNG_BUILD_DLL
   ${EXTRA_DEFINES}
+)
+
+target_compile_options(GLIBPNG PRIVATE
+  -Wno-tautological-constant-out-of-range-compare
 )

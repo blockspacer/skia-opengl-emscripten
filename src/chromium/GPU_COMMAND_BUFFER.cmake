@@ -1,8 +1,49 @@
-## --- GPU_COMMAND_BUFFER ---###
+﻿## --- GPU_COMMAND_BUFFER ---###
 
 set(GPU_CONFIG_DIR
   ${GPU_DIR}config/
 )
+
+#./src/chromium/gen/gen_services_network_public/gpu/command_buffer/service/disk_cache_proto.pb.cc
+#./src/chromium/gen/gen_services_network_public/gpu/config/gpu_driver_bug_list_autogen.cc
+#./src/chromium/gen/gen_services_network_public/gpu/config/software_rendering_list_autogen.cc
+#./src/chromium/gen/gen_services_network_public/gpu/ipc/common/dx_diag_node.mojom-shared.cc
+#./src/chromium/gen/gen_services_network_public/gpu/ipc/common/memory_stats.mojom.cc
+#./src/chromium/gen/gen_services_network_public/gpu/ipc/common/context_result.mojom-shared.cc
+#./src/chromium/gen/gen_services_network_public/gpu/ipc/common/gpu_preferences.mojom-shared.cc
+#./src/chromium/gen/gen_services_network_public/gpu/ipc/common/gpu_info.mojom-test-utils.cc
+#./src/chromium/gen/gen_services_network_public/gpu/ipc/common/memory_stats.mojom-test-utils.cc
+#./src/chromium/gen/gen_services_network_public/gpu/ipc/common/memory_stats.mojom-shared.cc
+#./src/chromium/gen/gen_services_network_public/gpu/ipc/common/sync_token.mojom-shared.cc
+#./src/chromium/gen/gen_services_network_public/gpu/ipc/common/gpu_preferences.mojom.cc
+#./src/chromium/gen/gen_services_network_public/gpu/ipc/common/capabilities.mojom-test-utils.cc
+#./src/chromium/gen/gen_services_network_public/gpu/ipc/common/vulkan_ycbcr_info.mojom-test-utils.cc
+#./src/chromium/gen/gen_services_network_public/gpu/ipc/common/surface_handle.mojom.cc
+#./src/chromium/gen/gen_services_network_public/gpu/ipc/common/gpu_feature_info.mojom-test-utils.cc
+#./src/chromium/gen/gen_services_network_public/gpu/ipc/common/mailbox.mojom.cc
+#./src/chromium/gen/gen_services_network_public/gpu/ipc/common/sync_token.mojom.cc
+#./src/chromium/gen/gen_services_network_public/gpu/ipc/common/dx_diag_node.mojom-test-utils.cc
+#./src/chromium/gen/gen_services_network_public/gpu/ipc/common/sync_token.mojom-test-utils.cc
+#./src/chromium/gen/gen_services_network_public/gpu/ipc/common/dx_diag_node.mojom.cc
+#./src/chromium/gen/gen_services_network_public/gpu/ipc/common/gpu_feature_info.mojom-shared.cc
+#./src/chromium/gen/gen_services_network_public/gpu/ipc/common/gpu_info.mojom.cc
+#./src/chromium/gen/gen_services_network_public/gpu/ipc/common/surface_handle.mojom-shared.cc
+#./src/chromium/gen/gen_services_network_public/gpu/ipc/common/context_result.mojom.cc
+#./src/chromium/gen/gen_services_network_public/gpu/ipc/common/vulkan_ycbcr_info.mojom-shared.cc
+#./src/chromium/gen/gen_services_network_public/gpu/ipc/common/gpu_preferences.mojom-test-utils.cc
+#./src/chromium/gen/gen_services_network_public/gpu/ipc/common/context_result.mojom-test-utils.cc
+#./src/chromium/gen/gen_services_network_public/gpu/ipc/common/gpu_info.mojom-shared.cc
+#./src/chromium/gen/gen_services_network_public/gpu/ipc/common/gpu_feature_info.mojom.cc
+#./src/chromium/gen/gen_services_network_public/gpu/ipc/common/surface_handle.mojom-test-utils.cc
+#./src/chromium/gen/gen_services_network_public/gpu/ipc/common/mailbox.mojom-test-utils.cc
+#./src/chromium/gen/gen_services_network_public/gpu/ipc/common/mailbox_holder.mojom.cc
+#./src/chromium/gen/gen_services_network_public/gpu/ipc/common/capabilities.mojom.cc
+#./src/chromium/gen/gen_services_network_public/gpu/ipc/common/mailbox.mojom-shared.cc
+#./src/chromium/gen/gen_services_network_public/gpu/ipc/common/vulkan_ycbcr_info.mojom.cc
+#./src/chromium/gen/gen_services_network_public/gpu/ipc/common/capabilities.mojom-shared.cc
+#./src/chromium/gen/gen_services_network_public/gpu/ipc/common/mailbox_holder.mojom-test-utils.cc
+#./src/chromium/gen/gen_services_network_public/gpu/ipc/common/mailbox_holder.mojom-shared.cc
+
 
 list(APPEND GPU_COMMAND_BUFFER_COMMON_SOURCES
   ${GPU_COMMAND_BUFFER_DIR}common/activity_flags.cc
@@ -354,13 +395,16 @@ set(GPU_CONFIG_SOURCES
   ## TODO ## ${GPU_CONFIG_DIR}gpu_crash_keys.cc
   ${GPU_CONFIG_DIR}gpu_crash_keys.h
   ${GPU_CONFIG_DIR}gpu_domain_guilt.h
-  ## TODO ## ${GPU_CONFIG_DIR}gpu_driver_bug_list.cc
+  ## TODO ##
+  ${GPU_CONFIG_DIR}gpu_driver_bug_list.cc
   ## TODO ## ${GPU_CONFIG_DIR}gpu_driver_bug_list.h
   ## TODO ## ${GPU_CONFIG_DIR}gpu_driver_bug_workaround_type.hlib
-  ## TODO ## ${GPU_CONFIG_DIR}gpu_driver_bug_workarounds.cc
+  ## TODO ## requires gpu/config/gpu_driver_bug_workaround_autogen.h
+  ${GPU_CONFIG_DIR}gpu_driver_bug_workarounds.cc
   ## TODO ## ${GPU_CONFIG_DIR}gpu_driver_bug_workarounds.h
   ## TODO ## ${GPU_CONFIG_DIR}gpu_dx_diagnostics_win.cc
-  ## TODO ## ${GPU_CONFIG_DIR}gpu_feature_info.cc
+  ## TODO ##
+  ${GPU_CONFIG_DIR}gpu_feature_info.cc
   ## TODO ## ${GPU_CONFIG_DIR}gpu_feature_info.h
   ${GPU_CONFIG_DIR}gpu_feature_type.h
   ${GPU_CONFIG_DIR}gpu_finch_features.cc
@@ -445,6 +489,7 @@ target_include_directories(GPU_COMMAND_BUFFER PRIVATE
 
 target_include_directories(GPU_COMMAND_BUFFER PUBLIC
   ${GPU_DIR}
+  ${GEN_COMBINED_DIR} # requires gpu/config/gpu_driver_bug_list_autogen.h
 )
 
 target_compile_definitions(GPU_COMMAND_BUFFER PRIVATE

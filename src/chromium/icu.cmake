@@ -1,10 +1,10 @@
-### --- icu ---###
+﻿### --- icu ---###
 
 #set(ICU_FULL_DIR
 #  #third_party/icu/
 #  #../../thirdparty/skia/third_party/externals/icu/
 #  #../../thirdparty/icu/
-#  ${CMAKE_CURRENT_SOURCE_DIR}/third_party/icu/
+#  ${CHROMIUM_DIR}/third_party/icu/
 #)
 #
 #set(OWN_ICU_INCLUDE_DIRS
@@ -884,7 +884,7 @@ if(USE_OWN_ICU)
   # So if you want to use the string printf API, do:
   # #include <base/stringprintf.h>
   target_include_directories(icu PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CHROMIUM_DIR}
     ${OWN_ICU_INCLUDE_DIRS}
   )
 

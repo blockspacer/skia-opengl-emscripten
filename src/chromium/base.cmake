@@ -143,8 +143,6 @@ list(APPEND BASE_SOURCES
    ## #${BASE_DIR}debug/invalid_access_win.h
    ## ${BASE_DIR}debug/leak_annotations.h
    ## ${BASE_DIR}debug/leak_tracker.h
-   ## #${BASE_DIR}debug/proc_maps_linux.cc
-   ## #${BASE_DIR}debug/proc_maps_linux.h
    ## ${BASE_DIR}debug/profiler.cc
    ## ${BASE_DIR}debug/profiler.h
    ## ${BASE_DIR}debug/stack_trace.cc
@@ -191,7 +189,6 @@ list(APPEND BASE_SOURCES
    ${BASE_DIR}files/file_util.cc
    ${BASE_DIR}files/file_util.h
    #${BASE_DIR}files/file_util_android.cc
-   #${BASE_DIR}files/file_util_linux.cc
    #${BASE_DIR}files/file_util_mac.mm
    #${BASE_DIR}files/file_util_win.cc
    #${BASE_DIR}files/file_win.cc
@@ -492,7 +489,6 @@ list(APPEND BASE_SOURCES
    #${BASE_DIR}process/launch_win.cc
    ${BASE_DIR}process/memory.cc
    ${BASE_DIR}process/memory.h
-   #${BASE_DIR}process/memory_linux.cc
    #${BASE_DIR}process/memory_mac.mm
    #${BASE_DIR}process/memory_win.cc
    #${BASE_DIR}process/port_provider_mac.cc
@@ -500,7 +496,6 @@ list(APPEND BASE_SOURCES
    ${BASE_DIR}process/process.h
    ${BASE_DIR}process/process_handle.cc
    ${BASE_DIR}process/process_handle.h
-   #${BASE_DIR}process/process_handle_linux.cc
    #${BASE_DIR}process/process_handle_mac.cc
    #${BASE_DIR}process/process_handle_win.cc
    ${BASE_DIR}process/process_info.h
@@ -515,7 +510,6 @@ list(APPEND BASE_SOURCES
    ${BASE_DIR}process/process_metrics.cc
    ${BASE_DIR}process/process_metrics.h
    #${BASE_DIR}process/process_metrics_ios.cc
-   #${BASE_DIR}process/process_metrics_linux.cc
    #${BASE_DIR}process/process_metrics_mac.cc
    #${BASE_DIR}process/process_metrics_win.cc
    #${BASE_DIR}process/process_win.cc
@@ -776,7 +770,6 @@ list(APPEND BASE_SOURCES
    ${BASE_DIR}threading/platform_thread.cc
    ${BASE_DIR}threading/platform_thread.h
    #${BASE_DIR}threading/platform_thread_android.cc
-   #${BASE_DIR}threading/platform_thread_linux.cc
    #${BASE_DIR}threading/platform_thread_mac.mm
    #${BASE_DIR}threading/platform_thread_win.cc
    #${BASE_DIR}threading/platform_thread_win.h
@@ -1017,38 +1010,19 @@ list(APPEND BASE_SOURCES
    # base_static ###
    ${BASE_DIR}base_switches.cc
    ${BASE_DIR}base_switches.h
-   # https://github.com/chromium/chromium/blob/master/base/BUILD.gn#L1942
-   #${BASE_DIR}message_loop/message_pump_glib.cc
-   #${BASE_DIR}message_loop/message_pump_glib.h
    # posix
-   # https://github.com/chromium/chromium/blob/master/base/BUILD.gn#L1120
-   ## ${BASE_DIR}debug/debugger_posix.cc
-   ## ${BASE_DIR}debug/stack_trace_posix.cc
    ${BASE_DIR}file_descriptor_posix.h
    ${BASE_DIR}files/dir_reader_posix.h
-   ## ${BASE_DIR}files/file_descriptor_watcher_posix.cc
-   ## ${BASE_DIR}files/file_descriptor_watcher_posix.h
-   ## ${BASE_DIR}files/file_enumerator_posix.cc
-   ## ${BASE_DIR}files/file_posix.cc
    ${BASE_DIR}files/file_util_posix.cc
    ${BASE_DIR}files/memory_mapped_file_posix.cc
    ${BASE_DIR}memory/protected_memory_posix.cc
    ${BASE_DIR}message_loop/watchable_io_message_pump_posix.cc
    ${BASE_DIR}message_loop/watchable_io_message_pump_posix.h
    ${BASE_DIR}native_library_posix.cc
-   ## ${BASE_DIR}posix/eintr_wrapper.h
-   ## ${BASE_DIR}posix/file_descriptor_shuffle.cc
-   ## ${BASE_DIR}posix/file_descriptor_shuffle.h
-   ## ${BASE_DIR}posix/global_descriptors.cc
-   ## ${BASE_DIR}posix/global_descriptors.h
    ${BASE_DIR}posix/safe_strerror.cc
    ${BASE_DIR}posix/safe_strerror.h
-   ## ${BASE_DIR}posix/unix_domain_socket.cc
-   ## ${BASE_DIR}posix/unix_domain_socket.h
    ${BASE_DIR}process/kill_posix.cc
-   ## ${BASE_DIR}process/launch_posix.cc
    ${BASE_DIR}process/process_handle_posix.cc
-   ## ${BASE_DIR}process/process_metrics_posix.cc
    ${BASE_DIR}process/process_posix.cc
    ${BASE_DIR}profiler/stack_sampler_posix.cc
    ${BASE_DIR}rand_util_posix.cc
@@ -1061,8 +1035,6 @@ list(APPEND BASE_SOURCES
    ${BASE_DIR}synchronization/waitable_event_posix.cc
    ${BASE_DIR}synchronization/waitable_event_watcher_posix.cc
    ${BASE_DIR}system/sys_info_posix.cc
-   #${BASE_DIR}task/thread_pool/task_tracker_posix.cc
-   #${BASE_DIR}task/thread_pool/task_tracker_posix.h
    ${BASE_DIR}threading/platform_thread_internal_posix.cc
    ${BASE_DIR}threading/platform_thread_internal_posix.h
    ${BASE_DIR}threading/platform_thread_posix.cc
@@ -1149,8 +1121,6 @@ if(EMSCRIPTEN)
     #${BASE_DIR}debug/invalid_access_win.h
     ${BASE_DIR}debug/leak_annotations.h
     ${BASE_DIR}debug/leak_tracker.h
-    ##${BASE_DIR}debug/proc_maps_linux.cc
-    ##${BASE_DIR}debug/proc_maps_linux.h
     ${BASE_DIR}debug/profiler.cc
     ${BASE_DIR}debug/profiler.h
     ${BASE_DIR}debug/stack_trace.cc
@@ -1165,12 +1135,8 @@ if(EMSCRIPTEN)
     ${BASE_DIR}files/file_util_linux.cc
     ${BASE_DIR}process/memory_linux.cc
     ${BASE_DIR}process/process_handle_linux.cc
-    #${BASE_DIR}process/process_metrics_linux.cc
     #
     ${BASE_DIR}debug/debugger_posix.cc
-    ${BASE_DIR}debug/stack_trace_posix.cc
-    #${BASE_DIR}files/file_descriptor_watcher_posix.cc
-    #${BASE_DIR}files/file_descriptor_watcher_posix.h
     ${BASE_DIR}files/file_enumerator_posix.cc
     ${BASE_DIR}files/file_posix.cc
     ${BASE_DIR}posix/eintr_wrapper.h
@@ -1181,7 +1147,6 @@ if(EMSCRIPTEN)
     ${BASE_DIR}posix/unix_domain_socket.cc
     ${BASE_DIR}posix/unix_domain_socket.h
     ${BASE_DIR}process/launch_posix.cc
-    ##${BASE_DIR}process/process_metrics_posix.cc
     ${BASE_DIR}base_paths_posix.h
     ${BASE_DIR}posix/can_lower_nice_to.cc
     ${BASE_DIR}posix/can_lower_nice_to.h
@@ -1240,9 +1205,8 @@ elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
     ${BASE_DIR}process/process_metrics_linux.cc
     #
     ${BASE_DIR}debug/debugger_posix.cc
-    ${BASE_DIR}debug/stack_trace_posix.cc
-    #${BASE_DIR}files/file_descriptor_watcher_posix.cc
-    #${BASE_DIR}files/file_descriptor_watcher_posix.h
+    # requires mojo::StructTraits<mojo_base::mojom::ProcessIdDataView,
+    #${BASE_DIR}debug/stack_trace_posix.cc
     ${BASE_DIR}files/file_enumerator_posix.cc
     ${BASE_DIR}files/file_posix.cc
     ${BASE_DIR}posix/eintr_wrapper.h
@@ -1288,6 +1252,68 @@ else()
   message(FATAL_ERROR "TODO: port base")
 endif()
 
+
+if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+  list(APPEND BASE_SOURCES
+    ##${BASE_DIR}process/process_metrics_posix.cc
+    ## TODO ##
+    ${BASE_DIR}debug/stack_trace_posix.cc
+    #requires third_party/xdg_mime
+    ## TODO ##
+    ${BASE_DIR}nix/mime_util_xdg.cc
+    #${BASE_DIR}nix/mime_util_xdg.h
+    ##
+    ${BASE_DIR}nix/xdg_util.cc
+    #${BASE_DIR}nix/xdg_util.h
+    ${BASE_DIR}system/sys_info_linux.cc
+    ${BASE_DIR}linux_util.cc # if (!is_android)
+    #${BASE_DIR}linux_util.h # if (!is_android)
+    #
+    ${BASE_DIR}base_paths_posix.cc
+    ${BASE_DIR}debug/elf_reader.cc
+    ${BASE_DIR}debug/elf_reader.h
+    #
+    ${BASE_DIR}files/file_descriptor_watcher_posix.cc
+    ${BASE_DIR}files/file_descriptor_watcher_posix.h
+    # #${BASE_DIR}debug/proc_maps_linux.cc
+    # #${BASE_DIR}debug/proc_maps_linux.h
+    ${BASE_DIR}files/file_util_linux.cc
+    ${BASE_DIR}process/memory_linux.cc
+    ${BASE_DIR}process/process_handle_linux.cc
+    ${BASE_DIR}process/process_metrics_linux.cc
+    ${BASE_DIR}threading/platform_thread_linux.cc
+    ${BASE_DIR}process/process_metrics_linux.cc
+    #${BASE_DIR}debug/proc_maps_linux.cc
+    #${BASE_DIR}debug/proc_maps_linux.h
+    ##https://github.com/chromium/chromium/blob/master/base/BUILD.gn#L1942
+    #${BASE_DIR}message_loop/message_pump_glib.cc
+    #${BASE_DIR}message_loop/message_pump_glib.h
+    ##https://github.com/chromium/chromium/blob/master/base/BUILD.gn#L1120
+    # ${BASE_DIR}debug/debugger_posix.cc
+    # ${BASE_DIR}debug/stack_trace_posix.cc
+    # ${BASE_DIR}files/file_descriptor_watcher_posix.cc
+    # ${BASE_DIR}files/file_descriptor_watcher_posix.h
+    # ${BASE_DIR}files/file_enumerator_posix.cc
+    # ${BASE_DIR}files/file_posix.cc
+    # ${BASE_DIR}posix/eintr_wrapper.h
+    # ${BASE_DIR}posix/file_descriptor_shuffle.cc
+    # ${BASE_DIR}posix/file_descriptor_shuffle.h
+    # ${BASE_DIR}posix/global_descriptors.cc
+    # ${BASE_DIR}posix/global_descriptors.h
+    # ${BASE_DIR}posix/unix_domain_socket.cc
+    # ${BASE_DIR}posix/unix_domain_socket.h
+    # ${BASE_DIR}process/launch_posix.cc
+    # ${BASE_DIR}process/process_metrics_posix.cc
+    ${BASE_DIR}task/thread_pool/task_tracker_posix.cc
+    ${BASE_DIR}task/thread_pool/task_tracker_posix.h
+    ${BASE_DIR}files/file_descriptor_watcher_posix.cc
+    ${BASE_DIR}files/file_descriptor_watcher_posix.h
+  )
+  list(APPEND EXTRA_DEFINES
+    #USE_SYMBOLIZE=1
+  )
+endif()
+
 add_library(base STATIC
   ${BASE_SOURCES}
 )
@@ -1323,6 +1349,7 @@ endif()
 
 target_link_libraries(base PUBLIC
   dynamic_annotations
+  xdg_mime
   ${BASE_LIBRARIES}
 )
 
@@ -1336,13 +1363,13 @@ set(BASE_DEFINES
 # So if you want to use the string printf API, do:
 # #include <base/stringprintf.h>
 target_include_directories(base PUBLIC
-  ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CHROMIUM_DIR}
 )
 
-#message(FATAL_ERROR ${CMAKE_CURRENT_SOURCE_DIR}/../../thirdparty/ced/src/)
+#message(FATAL_ERROR ${CHROMIUM_DIR}/../../thirdparty/ced/src/)
 target_include_directories(base PRIVATE
-  #${CMAKE_CURRENT_SOURCE_DIR}/../..
-  #${CMAKE_CURRENT_SOURCE_DIR}/../../thirdparty/ced/src
+  #${CHROMIUM_DIR}/../..
+  #${CHROMIUM_DIR}/../../thirdparty/ced/src
   ../../thirdparty/icu_wrapper/
   third_party
   third_party/tcmalloc
@@ -1355,9 +1382,17 @@ target_compile_definitions(base PUBLIC
   ${BASE_DEFINES}
   ${WTF_EMCC_DEFINITIONS}
   ${WTF_COMMON_DEFINITIONS}
+  ${EXTRA_DEFINES}
 )
+
+if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+  list(APPEND EXTRA_DEFINITIONS
+    HAVE_MMAP=1
+  )
+endif()
 
 target_compile_definitions(base PUBLIC
   BASE_IMPLEMENTATION=1
   BASE_I18N_IMPLEMENTATION=1
+  ${EXTRA_DEFINITIONS}
 )

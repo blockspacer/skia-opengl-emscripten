@@ -1,9 +1,9 @@
-### --- libwebp ---###
+﻿### --- libwebp ---###
 
 set(libwebp_DIR
-  ${CMAKE_CURRENT_SOURCE_DIR}/third_party/libwebp/)
+  ${CHROMIUM_DIR}/third_party/libwebp/)
 
-set(libwebp_SOURCES
+list(APPEND libwebp_SOURCES
   #
   # source_set("libwebp_webp")
   #
@@ -96,41 +96,49 @@ set(libwebp_SOURCES
   #
   # static_library("libwebp_dsp_sse41")
   #
-  # "src/dsp/alpha_processing_sse41.c
-  # "src/dsp/common_sse41.h",
-  # "src/dsp/dec_sse41.c
-  # "src/dsp/enc_sse41.c
-  # "src/dsp/lossless_enc_sse41.c
-  # "src/dsp/upsampling_sse41.c
-  # "src/dsp/yuv_sse41.c
+  # ${libwebp_DIR}src/dsp/alpha_processing_sse41.c
+  # ${libwebp_DIR}src/dsp/common_sse41.h",
+  # ${libwebp_DIR}src/dsp/dec_sse41.c
+  # ${libwebp_DIR}src/dsp/enc_sse41.c
+  # ${libwebp_DIR}src/dsp/lossless_enc_sse41.c
+  # ${libwebp_DIR}src/dsp/upsampling_sse41.c
+  # ${libwebp_DIR}src/dsp/yuv_sse41.c
   #
-  # static_library("libwebp_dsp_sse2")
-  #
-  #src/dsp/alpha_processing_sse2.c
-  #src/dsp/common_sse2.h",
-  #src/dsp/cost_sse2.c
-  #src/dsp/dec_sse2.c
-  #src/dsp/enc_sse2.c
-  #src/dsp/filters_sse2.c
-  #src/dsp/lossless_enc_sse2.c
-  #src/dsp/lossless_sse2.c
-  #src/dsp/rescaler_sse2.c
-  #src/dsp/ssim_sse2.c
-  #src/dsp/upsampling_sse2.c
-  #src/dsp/yuv_sse2.c
+)
+
+if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+  list(APPEND libwebp_SOURCES
+    # static_library("libwebp_dsp_sse2")
+    #
+    ${libwebp_DIR}src/dsp/alpha_processing_sse2.c
+    #${libwebp_DIR}src/dsp/common_sse2.h
+    ${libwebp_DIR}src/dsp/cost_sse2.c
+    ${libwebp_DIR}src/dsp/dec_sse2.c
+    ${libwebp_DIR}src/dsp/enc_sse2.c
+    ${libwebp_DIR}src/dsp/filters_sse2.c
+    ${libwebp_DIR}src/dsp/lossless_enc_sse2.c
+    ${libwebp_DIR}src/dsp/lossless_sse2.c
+    ${libwebp_DIR}src/dsp/rescaler_sse2.c
+    ${libwebp_DIR}src/dsp/ssim_sse2.c
+    ${libwebp_DIR}src/dsp/upsampling_sse2.c
+    ${libwebp_DIR}src/dsp/yuv_sse2.c
+  )
+endif()
+
+list(APPEND libwebp_SOURCES
   #
   # static_library("libwebp_dsp_neon")
   #
-  #src/dsp/alpha_processing_neon.c
-  #src/dsp/cost_neon.c
-  #src/dsp/dec_neon.c
-  #src/dsp/enc_neon.c
-  #src/dsp/filters_neon.c
-  #src/dsp/lossless_enc_neon.c
-  #src/dsp/lossless_neon.c
-  #src/dsp/rescaler_neon.c
-  #src/dsp/upsampling_neon.c
-  #src/dsp/yuv_neon.c
+  #${libwebp_DIR}src/dsp/alpha_processing_neon.c
+  #${libwebp_DIR}src/dsp/cost_neon.c
+  #${libwebp_DIR}src/dsp/dec_neon.c
+  #${libwebp_DIR}src/dsp/enc_neon.c
+  #${libwebp_DIR}src/dsp/filters_neon.c
+  #${libwebp_DIR}src/dsp/lossless_enc_neon.c
+  #${libwebp_DIR}src/dsp/lossless_neon.c
+  #${libwebp_DIR}src/dsp/rescaler_neon.c
+  #${libwebp_DIR}src/dsp/upsampling_neon.c
+  #${libwebp_DIR}src/dsp/yuv_neon.c
   #
   # static_library("libwebp_enc")
   #
@@ -197,15 +205,16 @@ add_library(libwebp STATIC
   ${libwebp_SOURCES}
 )
 
-if (NOT EMSCRIPTEN)
-  find_package(PNG REQUIRED) # PNG::PNG
-  set(libpng_LIB PNG::PNG)
-  #set(libpng_LIB GLIBPNG)
-endif()
+#if (NOT EMSCRIPTEN)
+#  find_package(PNG REQUIRED) # PNG::PNG
+#  set(libpng_LIB PNG::PNG)
+#  #set(libpng_LIB GLIBPNG)
+#endif()
 
-target_link_libraries(libwebp PUBLIC
+target_link_libraries(libwebp PRIVATE
   ${libpng_LIB}
   # zlib
+  ${libZLIB_LIB}
 )
 
 set_property(TARGET libwebp PROPERTY CXX_STANDARD 17)
@@ -227,6 +236,18 @@ target_include_directories(libwebp PUBLIC
 #target_compile_options(libwebp PRIVATE
 #  -Wno-implicit-function-declaration)
 
+
+if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+  list(APPEND EXTRA_DEFINES
+    WEBP_HAVE_SSE2=1
+  )
+  list(APPEND EXTRA_OPTIONS
+    -msse
+    -msse2
+    -msse3
+  )
+endif()
+
 target_compile_definitions(libwebp PRIVATE
   WEBP_EXTERN=extern
   WEBP_NEAR_LOSSLESS=0
@@ -236,10 +257,11 @@ target_compile_definitions(libwebp PRIVATE
   #
   # if (current_cpu == "x86" || current_cpu == "x64")
   #
+  ${EXTRA_DEFINES}
   #WEBP_HAVE_SSE2=1
   #WEBP_HAVE_SSE41=1
   #-msse4.1 # libwebp_dsp_sse41
-  #"-msse2 # libwebp_dsp_sse2
+  #-msse2 # libwebp_dsp_sse2
   #
   # if (current_cpu == "arm")
   #
@@ -252,4 +274,8 @@ target_compile_definitions(libwebp PRIVATE
 
 target_compile_options(libwebp PRIVATE
   -Wno-incompatible-pointer-types
+)
+
+target_compile_options(libwebp PUBLIC
+  ${EXTRA_OPTIONS}
 )

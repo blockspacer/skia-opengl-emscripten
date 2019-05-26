@@ -1,4 +1,4 @@
-// Copyright 2012 the V8 project authors. All rights reserved.
+﻿// Copyright 2012 the V8 project authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -10814,7 +10814,9 @@ int64_t Isolate::AdjustAmountOfExternalAllocatedMemory(
   // Only check memory pressure and potentially trigger GC if the amount of
   // external memory increased.
   if (allocation_diff_since_last_mc > kMemoryReducerActivationLimit) {
+#if defined(__TODO__)
     CheckMemoryPressure();
+#endif
   }
 
   if (change_in_bytes < 0) {
@@ -10822,7 +10824,9 @@ int64_t Isolate::AdjustAmountOfExternalAllocatedMemory(
     if (lower_limit > I::kExternalAllocationSoftLimit)
       *external_memory_limit = lower_limit;
   } else if (change_in_bytes > 0 && amount > *external_memory_limit) {
+#if defined(__TODO__)
     ReportExternalAllocationLimitReached();
+#endif
   }
   return *external_memory;
 }

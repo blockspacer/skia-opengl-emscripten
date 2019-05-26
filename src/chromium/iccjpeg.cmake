@@ -1,7 +1,7 @@
-### --- iccjpeg ---###
+﻿### --- iccjpeg ---###
 
 set(iccjpeg_DIR
-  ${CMAKE_CURRENT_SOURCE_DIR}/third_party/iccjpeg/)
+  ${CHROMIUM_DIR}/third_party/iccjpeg/)
 
 set(iccjpeg_SOURCES
   ${iccjpeg_DIR}iccjpeg.c

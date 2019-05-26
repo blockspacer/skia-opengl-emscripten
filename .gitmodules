@@ -49,3 +49,6 @@
 [submodule "src/chromium/third_party/re2/src"]
 	path = src/chromium/third_party/re2/src
 	url = https://chromium.googlesource.com/external/github.com/google/re2.git
+[submodule "src/chromium/third_party/emoji-segmenter/src"]
+	path = src/chromium/third_party/emoji-segmenter/src
+	url = https://chromium.googlesource.com/external/github.com/googlei18n/emoji-segmenter.git

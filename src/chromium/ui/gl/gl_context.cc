@@ -1,4 +1,4 @@
-// Copyright (c) 2012 The Chromium Authors. All rights reserved.
+﻿// Copyright (c) 2012 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -329,7 +329,7 @@ bool GLContext::MakeVirtuallyCurrent(
   DCHECK(virtual_context->IsCurrent(surface));
 
   if (switched_real_contexts || virtual_context != current_virtual_context_) {
-#if DCHECK_IS_ON() && !defined(OS_EMSCRIPTEN)
+#if (DCHECK_IS_ON() && !defined(OS_EMSCRIPTEN)) && defined(__TODO__)
     GLenum error = glGetError();
     // Accepting a context loss error here enables using debug mode to work on
     // context loss handling in virtual context mode.
@@ -337,6 +337,14 @@ bool GLContext::MakeVirtuallyCurrent(
     // the new context.
     DCHECK(error == GL_NO_ERROR || error == GL_CONTEXT_LOST_KHR) <<
         "GL error was: " << error;
+#else
+      GLenum error = glGetError();
+      // Accepting a context loss error here enables using debug mode to work on
+      // context loss handling in virtual context mode.
+      // There should be no other errors from the previous context leaking into
+      // the new context.
+      DCHECK(error == GL_NO_ERROR) <<
+          "GL error was: " << error;
 #endif
 
     // Set all state that is different from the real state

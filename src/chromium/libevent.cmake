@@ -1,4 +1,4 @@
-### --- libevent ---###
+﻿### --- libevent ---###
 
 # libevent
 # see https://github.com/cliqz-oss/ceba.js/blob/master/patches/tor/0002-emscripten-main-loop.patch#L7
@@ -83,7 +83,7 @@ target_include_directories(libevent PUBLIC
 )
 
 target_include_directories(libevent PRIVATE
-  ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CHROMIUM_DIR}
 )
 
 target_compile_definitions(libevent PUBLIC

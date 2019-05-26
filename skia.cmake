@@ -1,4 +1,4 @@
-#
+﻿#
 # Skia
 # NOTE: use clang on ALL platforms
 # If you depend on software rasterization, image decoding, or color space conversion
@@ -499,17 +499,19 @@ endif() # SK_IS_EGL
 
   #ADD_SKIA_LIBRARY_DEPENDENCY(${EXT_SKIA_USE_SYSTEM_ZLIB} "z") # skia_use_system_zlib
   find_package(ZLIB REQUIRED)
-  set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};ZLIB::ZLIB" PARENT_SCOPE)
+  set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${libZLIB_LIB}" PARENT_SCOPE)
 
   #ADD_SKIA_LIBRARY_DEPENDENCY("png") # skia_use_system_libpng
-  find_package(PNG REQUIRED)
+  #find_package(PNG REQUIRED)
   # none of the above will be defined unless ZLib can be found!
   #PNG_INCLUDE_DIRS, where to find png.h, etc.
   #PNG_LIBRARIES, the libraries to link against to use PNG.
   #PNG_DEFINITIONS - You should add_definitons(${PNG_DEFINITIONS}) before compiling code that includes png library files.
   #PNG_FOUND, If false, do not try to use PNG.
   #PNG_VERSION_STRING - the version of the PNG library found (since CMake 2.8.8)
-  set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};PNG::PNG" PARENT_SCOPE)
+  #set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};PNG::PNG" PARENT_SCOPE)
+  set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${libpng_LIB}" PARENT_SCOPE)
+
   list(APPEND SKIA_DEFINES ${PNG_DEFINITIONS})
   #message("SKIA_DEFINES=${SKIA_DEFINES}")
 

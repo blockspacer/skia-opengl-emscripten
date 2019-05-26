@@ -1,4 +1,4 @@
-// Copyright 2014 The Chromium Authors. All rights reserved.
+﻿// Copyright 2014 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -1913,8 +1913,12 @@ void RenderTextHarfBuzz::ShapeRunsWithFont(
   std::vector<internal::TextRunHarfBuzz*> runs_with_missing_glyphs;
   for (internal::TextRunHarfBuzz*& run : *in_out_runs) {
     // First do a cache lookup.
+#if defined(OS_EMSCRIPTEN)
+    bool can_use_cache = false;
+#else
     bool can_use_cache = base::MessageLoopCurrentForUI::IsSet() &&
                          run->range.length() <= kMaxRunLengthToCache;
+#endif
     bool found_in_cache = false;
     const internal::ShapeRunWithFontInput cache_key(
         text, font_params, run->range, obscured(), glyph_width_for_test_,

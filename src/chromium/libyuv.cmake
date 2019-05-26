@@ -1,7 +1,7 @@
-### --- libyuv ---###
+﻿### --- libyuv ---###
 
 set(libyuv_DIR
-  third_party/libyuv/
+  ${CHROMIUM_DIR}third_party/libyuv/
 )
 
 set(libyuv_SOURCES
@@ -72,6 +72,7 @@ endif()
 target_link_libraries(libyuv PUBLIC
   ${libjpeg_LIB}
   ${libjpeg_TURBO_LIB}
+  ${libZLIB_LIB}
   #JPEG
   #
   #${BASE_LIBRARIES}

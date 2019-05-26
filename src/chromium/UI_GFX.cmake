@@ -319,7 +319,7 @@ target_link_libraries(UI_GFX PUBLIC
 set_property(TARGET UI_GFX PROPERTY CXX_STANDARD 17)
 
 target_include_directories(UI_GFX PRIVATE
-  ${CMAKE_CURRENT_SOURCE_DIR} # see /device/vr/buildflags/buildflags.h
+  ${CHROMIUM_DIR} # see /device/vr/buildflags/buildflags.h
   ${UI_GFX_DIR}
   ${BASE_DIR}
 )

@@ -1,4 +1,4 @@
-### --- BLINK_PUBLIC_COMMON ---###
+﻿### --- BLINK_PUBLIC_COMMON ---###
 
 # INTERFACE LIB
 
@@ -111,7 +111,7 @@ add_library(BLINK_PUBLIC_COMMON INTERFACE)
 #set_property(TARGET BLINK_PUBLIC_COMMON PROPERTY CXX_STANDARD 17)
 
 target_include_directories(BLINK_PUBLIC_COMMON INTERFACE
-  ${CMAKE_CURRENT_SOURCE_DIR} # requires "third_party/blink/..."
+  ${CHROMIUM_DIR} # requires "third_party/blink/..."
   #${BLINK_PUBLIC_COMMON_DIR}
   #${BASE_DIR}
 )

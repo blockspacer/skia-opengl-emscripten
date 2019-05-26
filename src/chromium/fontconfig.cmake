@@ -55,10 +55,12 @@ target_link_libraries(fontconfig PUBLIC
   #${BASE_LIBRARIES}
   base
   GLIBXML
-  GZLIB
+  #GZLIB
+  ${libZLIB_LIB}
   #freetype
   ${FREETYPE_LIBRARIES}
   ${LibUUID_LIBRARIES}
+  ${HARFBUZZ_LIBRARIES}
 )
 
 set_property(TARGET fontconfig PROPERTY CXX_STANDARD 17)
@@ -72,6 +74,7 @@ target_include_directories(fontconfig PRIVATE
   #${BASE_DIR}
   ${FREETYPE_INCLUDE_DIRS}
   ${LibUUID_INCLUDE_DIRS}
+  ${HARFBUZZ_INCLUDE_DIRS}
 )
 
 #deps = [
@@ -89,4 +92,9 @@ target_compile_definitions(fontconfig PRIVATE
   # if (!is_component_build)
   "FC_ATTRIBUTE_VISIBILITY_HIDDEN=__attribute((visibility(\"hidden\")))"
   "FC_ATTRIBUTE_VISIBILITY_EXPORT=__attribute((visibility(\"hidden\")))"
+)
+
+target_compile_options(fontconfig PRIVATE
+  -Wno-non-literal-null-conversion
+  -Wno-pointer-bool-conversion
 )

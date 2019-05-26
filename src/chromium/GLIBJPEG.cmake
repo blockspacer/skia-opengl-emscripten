@@ -1,7 +1,7 @@
 ﻿### --- GLIBJPEG ---###
 
 set(GLIBJPEG_DIR
-  third_party/libjpeg/
+  ${CHROMIUM_DIR}third_party/libjpeg/
 )
 
 set(GLIBJPEG_SOURCES
@@ -78,7 +78,7 @@ else()
     #${BASE_LIBRARIES}
     #base
     #${ZLIB_LIBRARIES}
-    GZLIB
+    ${libZLIB_LIB}
     GLIBXML
     #freetype
     # todo sudo apt-get install libjpeg-dev

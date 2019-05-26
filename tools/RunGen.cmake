@@ -2,7 +2,7 @@
 # portable build script based on "cmake -P"
 #
 # example:
-# cmake -DBUILD_FILE_DIR=/mnt/data/chromium/src -DTARGET=all -DCOPY_TO_PARENT_DIR=~/workspace/skia-opengl-emscripten/src/chromium/gen/ -DCLEAN_BUILD=OFF -DCLEAN_GEN=ON -DCLEAN_COPY=ON -P tools/RunGen.cmake
+# cmake -DBUILD_FILE_DIR=/mnt/data/chromium/src -DTARGET=combined -DCOPY_TO_PARENT_DIR=~/workspace/skia-opengl-emscripten/src/chromium/gen/ -DCLEAN_BUILD=OFF -DCLEAN_GEN=OFF -DCLEAN_COPY=OFF -P tools/RunGen.cmake
 #
 # run that file with cmake -DVAR=VALUE -DFOO=BAR -P <script-file> <arg5> <arg6> ...
 
@@ -43,6 +43,18 @@ endmacro(gen_ninja_build_step)
 
 macro(gen_copy_results_step ARG_CLEAN FROM_DIR TO_DIR ARG_WORKING_DIR)
   mkdir_with_rm_condition(${ARG_CLEAN} ${TO_DIR} ${ARG_WORKING_DIR})
+
+  colored_notify("removing generated *buildflag*.h (create own) from ${FROM_DIR} ..." --yellow --bold)
+  ## find chromium/gen/ -name "*buildflag*.h" -exec rm {} \;
+  execute_process(
+    COMMAND find ${FROM_DIR} -name *buildflag*.h -exec rm {} \;
+    WORKING_DIRECTORY ${ARG_WORKING_DIR}
+    RESULT_VARIABLE retcode
+    ERROR_VARIABLE _ERROR_VARIABLE
+  )
+  if(NOT "${retcode}" STREQUAL "0")
+    message( FATAL_ERROR "Bad exit status ${retcode} ${_ERROR_VARIABLE}")
+  endif()
 
   colored_notify("copying from ${FROM_DIR} to ${TO_DIR} ..." --yellow --bold)
   execute_process(
@@ -99,6 +111,7 @@ set(VALID_TARGETS
   mojo_public
   services_network_public
   all
+  combined
 )
 
 set(TARGET "" CACHE STRING "VALID_TARGETS=${VALID_TARGETS}")
@@ -573,8 +586,8 @@ list(APPEND mojo_public_GEN_TARGETS
   mojo/public:public
 )
 
-# see: gn ls out/Default | grep network
 list(APPEND services_network_public_GEN_TARGETS
+  # gn ls out/Default | grep network
   services/network/public/cpp
   services/network/public/mojom
   services/network/public/mojom:websocket_mojom
@@ -592,6 +605,47 @@ list(APPEND services_network_public_GEN_TARGETS
   services/network/public/mojom:mojom_headers
   services/network/public/mojom:mojom_blink
   services/network/public/mojom:data_pipe_interfaces
+  # gn ls out/Default | grep resource_coordinator
+  services/resource_coordinator:lib
+  #services/resource_coordinator:tests
+  services/resource_coordinator/public/cpp:manifest
+  services/resource_coordinator/public/cpp:resource_coordinator_cpp
+  services/resource_coordinator/public/cpp:resource_coordinator_cpp_features
+  services/resource_coordinator/public/cpp/memory_instrumentation:memory_instrumentation
+  services/resource_coordinator/public/mojom:mojom
+  services/resource_coordinator/public/mojom:mojom_blink
+  services/resource_coordinator/public/mojom:mojom_blink_headers
+  services/resource_coordinator/public/mojom:mojom_headers
+  services/resource_coordinator/public/mojom:mojom_js
+  services/resource_coordinator/public/mojom:mojom_shared
+  # gn ls out/Default | grep service_manager
+  #services/service_manager:all
+  services/service_manager:service_manager
+  services/service_manager/embedder:embedder
+  services/service_manager/public/cpp:cpp
+  #services/service_manager/public/cpp:unittests
+  services/service_manager/public/cpp/service_executable:main
+  services/service_manager/public/cpp/service_executable:support
+  services/service_manager/public/cpp/service_executable:switches
+  #services/service_manager/public/cpp/test:test_support
+  services/service_manager/public/mojom:constants
+  services/service_manager/public/mojom:mojom
+  services/service_manager/public/mojom:mojom_blink
+  services/service_manager/public/mojom:mojom_blink_headers
+  services/service_manager/public/mojom:mojom_headers
+  #services/service_manager/public/mojom:mojom_js
+  #services/service_manager/public/mojom:mojom_js_data_deps
+  #services/service_manager/public/mojom:mojom_js_library
+  #services/service_manager/public/mojom:mojom_js_library_for_compile
+  services/service_manager/public/mojom:mojom_shared
+  services/service_manager/sandbox:chromecast_sandbox_whitelist_buildflags
+  services/service_manager/sandbox:sandbox
+  services/service_manager/sandbox:sanitizer_buildflags
+  #services/service_manager/tests:background_service_manager_test_service
+  #services/service_manager/tests:interfaces
+  services/service_manager/zygote:zygote
+  services/service_manager/zygote:zygote_buildflags
+  services/service_manager/zygote:zygote_util
 )
 
 # --- build ---
@@ -601,6 +655,8 @@ if (TARGET_LOWER MATCHES "all")
   gen_target_files("blink_public" "${blink_public_GEN_TARGETS}")
   gen_target_files("mojo_public" "${mojo_public_GEN_TARGETS}")
   gen_target_files("services_network_public" "${services_network_public_GEN_TARGETS}")
+elseif (TARGET_LOWER MATCHES "combined")
+  gen_target_files("combined" "${blink_public_GEN_TARGETS};${mojo_public_GEN_TARGETS};${services_network_public_GEN_TARGETS}")
 elseif (TARGET_LOWER MATCHES "blink_public")
   gen_target_files("${TARGET_LOWER}" "${blink_public_GEN_TARGETS}")
 elseif (TARGET_LOWER MATCHES "mojo_public")

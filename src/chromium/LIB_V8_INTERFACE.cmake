@@ -1,4 +1,4 @@
-### --- LIB_V8_INTERFACE ---###
+﻿### --- LIB_V8_INTERFACE ---###
 
 # INTERFACE LIB
 
@@ -110,7 +110,7 @@ add_library(LIB_V8_INTERFACE INTERFACE)
 #set_property(TARGET LIB_V8_INTERFACE PROPERTY CXX_STANDARD 17)
 
 target_include_directories(LIB_V8_INTERFACE INTERFACE
-  ${CMAKE_CURRENT_SOURCE_DIR} # requires "v8/include/v8.h"
+  ${CHROMIUM_DIR} # requires "v8/include/v8.h"
   #${LIB_V8_INTERFACE_DIR}
   #${BASE_DIR}
 )

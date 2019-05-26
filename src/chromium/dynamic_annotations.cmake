@@ -1,14 +1,14 @@
-### --- dynamic_annotations ---###
+﻿### --- dynamic_annotations ---###
 
 add_library(dynamic_annotations STATIC
-  ${CMAKE_CURRENT_SOURCE_DIR}/base/third_party/dynamic_annotations/dynamic_annotations.c
+  ${CHROMIUM_DIR}/base/third_party/dynamic_annotations/dynamic_annotations.c
 )
 
 target_include_directories(dynamic_annotations PRIVATE
-  ${CMAKE_CURRENT_SOURCE_DIR}
-  ${CMAKE_CURRENT_SOURCE_DIR}/base/third_party
-  ${CMAKE_CURRENT_SOURCE_DIR}/base/third_party/dynamic_annotations
-  ${CMAKE_CURRENT_SOURCE_DIR}/base/third_party/valgrind
+  ${CHROMIUM_DIR}
+  ${CHROMIUM_DIR}/base/third_party
+  ${CHROMIUM_DIR}/base/third_party/dynamic_annotations
+  ${CHROMIUM_DIR}/base/third_party/valgrind
   ${BASE_DIR}
 )
 
@@ -19,8 +19,8 @@ set_property(TARGET dynamic_annotations PROPERTY CXX_STANDARD 17)
 # https://github.com/google/compact_enc_det
 #
 
-#add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/third_party/ced/src)
-set(ced_PATH ${CMAKE_CURRENT_SOURCE_DIR}/third_party/ced/src/)
+#add_subdirectory(${CHROMIUM_DIR}/third_party/ced/src)
+set(ced_PATH ${CHROMIUM_DIR}/third_party/ced/src/)
 if (WIN32)
   if (NOT EXISTS "${ced_PATH}compact_enc_det/compact_enc_det.h")
     message(FATAL_ERROR "\nCould not find ced source code.")
@@ -83,8 +83,8 @@ endif()
 set_property(TARGET ced PROPERTY CXX_STANDARD 11)
 
 target_include_directories(ced PRIVATE
-  ${CMAKE_CURRENT_SOURCE_DIR})
+  ${CHROMIUM_DIR})
 
 target_include_directories(ced PUBLIC
-  ${CMAKE_CURRENT_SOURCE_DIR}/third_party/ced/src
+  ${CHROMIUM_DIR}/third_party/ced/src
 )

@@ -10,7 +10,7 @@ set(GZLIB_SOURCES
   ${GZLIB_DIR}compress.c
   ${GZLIB_DIR}crc32.c
   #${GZLIB_DIR}crc32.h
-  #${GZLIB_DIR}deflate.c
+  ${GZLIB_DIR}deflate.c
   #${GZLIB_DIR}deflate.h
   ${GZLIB_DIR}gzclose.c
   #${GZLIB_DIR}gzguts.h

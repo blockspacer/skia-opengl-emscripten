@@ -14,11 +14,11 @@ set(GFX_CODEC_SOURCES
   ${GFX_CODEC_DIR}jpeg_codec.h
 )
 
-if (NOT EMSCRIPTEN)
-  find_package(PNG REQUIRED) # PNG::PNG
-  set(libpng_LIB PNG::PNG)
-  #set(libpng_LIB GLIBPNG)
-endif()
+#if (NOT EMSCRIPTEN)
+#  find_package(PNG REQUIRED) # PNG::PNG
+#  set(libpng_LIB PNG::PNG)
+#  #set(libpng_LIB GLIBPNG)
+#endif()
 
 if(USE_LIBJPEG)
   list(APPEND GFX_CODEC_SOURCES
@@ -61,6 +61,7 @@ target_link_libraries(GFX_CODEC PRIVATE
   #jpeg
   #libpng
   #zlib
+  ${libZLIB_LIB}
   base
   #
   # "//base",

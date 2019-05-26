@@ -27,7 +27,7 @@
 // high quality: anialias, e.t.c.
 #define ENABLE_SKIA_HQ 1
 
-#define ENABLE_BORINGSSL
+#define ENABLE_BORINGSSL 1
 #if defined(ENABLE_BORINGSSL) && !defined(ENABLE_BASE)
 #warning "ENABLE_BORINGSSL requires BASE"
 #undef ENABLE_BORINGSSL
@@ -1833,6 +1833,19 @@ int main(int argc, char** argv) {
 #endif // ENABLE_BLINK_PLATFORM
 
 #ifdef ENABLE_BASE
+  printf("Init CommandLine ...\n");
+
+  base::CommandLine::Init(0, nullptr);
+  base::CommandLine::ForCurrentProcess()->InitFromArgv(argc, argv);
+
+  printf("Init FontList ...\n");
+  // Use a single default font as the default font list.
+  gfx::FontList::SetDefaultFontDescription(std::string());
+
+  printf("Init logging ...\n");
+
+  logging::InitLogging(logging::LoggingSettings());
+
   printf("Init alloc ...\n");
   // see
   // https://cs.chromium.org/chromium/src/third_party/blink/renderer/controller/blink_initializer.cc?sq=package:chromium&dr=C&g=0&l=88
@@ -2071,7 +2084,7 @@ int main(int argc, char** argv) {
   {
     WTF::String test_string = "1224";
     String string_from_literal("Explicit construction syntax");
-    printf("strlen %d = %d...\n", strlen("Explicit construction syntax"), string_from_literal.length());
+    printf("strlen %zu = %d...\n", strlen("Explicit construction syntax"), string_from_literal.length());
     printf("Ascii().data() %s...\n", string_from_literal.Ascii().data());
     printf("Is8Bit %d...\n", string_from_literal.Is8Bit());
     /// TODO: FIXME ON WASM (EMSCRIPTEN)

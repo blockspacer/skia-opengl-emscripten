@@ -371,7 +371,7 @@ set_property(TARGET UI_BASE PROPERTY CXX_STANDARD 17)
 target_include_directories(UI_BASE PRIVATE
   ${UI_BASE_DIR}
   ${BASE_DIR}
-  ${GEN_BLINK_PUBLIC_DIR} # requires 'ui/strings/grit/ui_strings.h'
+  ${GEN_COMBINED_DIR} # requires 'ui/strings/grit/ui_strings.h'
 )
 
 target_compile_definitions(UI_BASE PRIVATE

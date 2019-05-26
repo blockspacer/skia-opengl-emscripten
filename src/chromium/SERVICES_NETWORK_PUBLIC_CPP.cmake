@@ -97,10 +97,10 @@ set(SERVICES_NETWORK_PUBLIC_CPP_SOURCES
 if(EMSCRIPTEN)
   ## nothing to do
   #list(APPEND SERVICES_NETWORK_PUBLIC_CPP_OS_PRIVATE_DIRS
-  #  ${CMAKE_CURRENT_SOURCE_DIR}/web_ports/libxml_wrapper/emscripten # requires "config.h"
+  #  ${CHROMIUM_DIR}/web_ports/libxml_wrapper/emscripten # requires "config.h"
   #)
   #list(APPEND SERVICES_NETWORK_PUBLIC_CPP_OS_PUBLIC_DIRS
-  #  ${CMAKE_CURRENT_SOURCE_DIR}/web_ports/libxml_wrapper/emscripten/include # requires "libxml/xmlversion.h"
+  #  ${CHROMIUM_DIR}/web_ports/libxml_wrapper/emscripten/include # requires "libxml/xmlversion.h"
   #)
 elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
   #if(CMAKE_CL_64)
@@ -154,7 +154,7 @@ set_property(TARGET SERVICES_NETWORK_PUBLIC_CPP PROPERTY CXX_STANDARD 17)
 
 target_include_directories(SERVICES_NETWORK_PUBLIC_CPP PRIVATE
   ${SERVICES_NETWORK_PUBLIC_CPP_PARENT_DIR}
-  ${CMAKE_CURRENT_SOURCE_DIR} # for services/network/public/mojom/chunked_data_pipe_getter.mojom-forward.h
+  ${CHROMIUM_DIR} # for services/network/public/mojom/chunked_data_pipe_getter.mojom-forward.h
   #${SERVICES_NETWORK_PUBLIC_CPP_DIR}
   #${SERVICES_NETWORK_PUBLIC_CPP_DIR}/src
   #${SERVICES_NETWORK_PUBLIC_CPP_OS_PRIVATE_DIRS} # linux/android/...
@@ -165,7 +165,7 @@ target_include_directories(SERVICES_NETWORK_PUBLIC_CPP PRIVATE
 target_include_directories(SERVICES_NETWORK_PUBLIC_CPP PUBLIC
   #${SERVICES_NETWORK_PUBLIC_CPP_DIR}/src/include # requires "libxml/xmlreader.h"
   #${SERVICES_NETWORK_PUBLIC_CPP_OS_PUBLIC_DIRS} # linux/android/...
-  ${GEN_SERVICES_NETWORK_PUBLIC_DIR}
+  ${GEN_COMBINED_DIR}
 )
 
 target_compile_definitions(SERVICES_NETWORK_PUBLIC_CPP PRIVATE

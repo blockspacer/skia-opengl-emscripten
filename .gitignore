@@ -82,3 +82,8 @@ thirdparty/glew/
 /src/chromium/third_party/blink/renderer/build/scripts/template_expander.pyc
 /src/chromium/third_party/blink/renderer/build/scripts/blinkbuild/__init__.pyc
 /src/chromium/third_party/blink/renderer/build/scripts/blinkbuild/name_style_converter.pyc
+*.sources_list
+*.deps_sources_list
+*.pak.info
+*.d.stamp
+/src/chromium/ui/base/mpris/buildflags/buildflags.h
