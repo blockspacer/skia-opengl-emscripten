@@ -1,4 +1,4 @@
-// Copyright (c) 2013 The Chromium Authors. All rights reserved.
+﻿// Copyright (c) 2013 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -18,10 +18,12 @@
 #include "media/base/media_switches.h"
 #include "media/base/media_util.h"
 #include "media/base/video_codecs.h"
+#ifdef __TODO__
 #include "media/formats/mp4/mp4_stream_parser.h"
 #include "media/formats/mpeg/adts_stream_parser.h"
 #include "media/formats/mpeg/mpeg1_audio_stream_parser.h"
 #include "media/formats/webm/webm_stream_parser.h"
+#endif
 #include "media/media_buildflags.h"
 
 #if defined(OS_ANDROID)
@@ -109,10 +111,12 @@ static const CodecInfo* const kVideoWebMCodecs[] = {
 static const CodecInfo* const kAudioWebMCodecs[] = {&kVorbisCodecInfo,
                                                     &kOpusCodecInfo, nullptr};
 
+#ifdef __TODO__
 static StreamParser* BuildWebMParser(const std::vector<std::string>& codecs,
                                      MediaLog* media_log) {
   return new WebMStreamParser();
 }
+#endif
 
 #if BUILDFLAG(USE_PROPRIETARY_CODECS)
 static int GetMP4AudioObjectType(const std::string& codec_id,
@@ -219,10 +223,12 @@ static const CodecInfo kMP3CodecInfo = {nullptr, CodecInfo::AUDIO, nullptr,
                                         CodecInfo::HISTOGRAM_MP3};
 static const CodecInfo* const kAudioMP3Codecs[] = {&kMP3CodecInfo, nullptr};
 
+#ifdef __TODO__
 static StreamParser* BuildMP3Parser(const std::vector<std::string>& codecs,
                                     MediaLog* media_log) {
   return new MPEG1AudioStreamParser();
 }
+#endif
 
 static const CodecInfo kMPEG4VP09CodecInfo = {
     "vp09.*", CodecInfo::VIDEO, nullptr, CodecInfo::HISTOGRAM_VP9};
@@ -277,6 +283,7 @@ static const CodecInfo* const kAudioMP4Codecs[] = {&kMPEG4FLACCodecInfo,
 #endif  // BUILDFLAG(USE_PROPRIETARY_CODECS)
                                                    nullptr};
 
+#ifdef __TODO__
 static StreamParser* BuildMP4Parser(const std::vector<std::string>& codecs,
                                     MediaLog* media_log) {
   std::set<int> audio_object_types;
@@ -324,6 +331,8 @@ static StreamParser* BuildMP4Parser(const std::vector<std::string>& codecs,
 
   return new mp4::MP4StreamParser(audio_object_types, has_sbr, has_flac);
 }
+#endif
+
 #if BUILDFLAG(USE_PROPRIETARY_CODECS)
 static const CodecInfo kADTSCodecInfo = {nullptr, CodecInfo::AUDIO, nullptr,
                                          CodecInfo::HISTOGRAM_MPEG4AAC};
@@ -372,6 +381,7 @@ static StreamParser* BuildMP2TParser(const std::vector<std::string>& codecs,
 #endif  // ENABLE_MSE_MPEG2TS_STREAM_PARSER
 #endif  // BUILDFLAG(USE_PROPRIETARY_CODECS)
 
+#ifdef __TODO__
 static const SupportedTypeInfo kSupportedTypeInfo[] = {
     {"video/webm", &BuildWebMParser, kVideoWebMCodecs},
     {"audio/webm", &BuildWebMParser, kAudioWebMCodecs},
@@ -386,6 +396,7 @@ static const SupportedTypeInfo kSupportedTypeInfo[] = {
 #endif
 #endif
 };
+#endif
 
 // Verify that |codec_info| is supported on this platform.
 //
@@ -447,6 +458,7 @@ static bool CheckTypeAndCodecs(
     std::vector<CodecInfo::HistogramTag>* audio_codecs,
     std::vector<CodecInfo::HistogramTag>* video_codecs) {
   // Search for the SupportedTypeInfo for |type|.
+#ifdef __TODO__
   for (size_t i = 0; i < base::size(kSupportedTypeInfo); ++i) {
     const SupportedTypeInfo& type_info = kSupportedTypeInfo[i];
     if (type == type_info.type) {
@@ -495,6 +507,7 @@ static bool CheckTypeAndCodecs(
       return true;
     }
   }
+#endif
 
   // |type| didn't match any of the supported types.
   return false;

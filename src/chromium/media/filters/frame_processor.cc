@@ -1,4 +1,4 @@
-// Copyright 2014 The Chromium Authors. All rights reserved.
+﻿// Copyright 2014 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -259,7 +259,7 @@ bool MseTrackBuffer::EnqueueProcessedFrame(
             SourceBufferParseWarning::kKeyframeTimeGreaterThanDependant);
       }
 
-      LIMITED_MEDIA_LOG(DEBUG, media_log_,
+      /*LIMITED_MEDIA_LOG(DEBUG, media_log_,
                         num_keyframe_time_greater_than_dependant_warnings_,
                         kMaxNumKeyframeTimeGreaterThanDependantWarnings)
           << "Warning: presentation time of most recently processed random "
@@ -269,7 +269,7 @@ bool MseTrackBuffer::EnqueueProcessedFrame(
           << frame->timestamp()
           << ") that depends on it. This type of random access point is not "
              "well supported by MSE; buffered range reporting may be less "
-             "precise.";
+             "precise.";*/
 
       // SAP-Type-2 GOPs, by definition, contain at least one non-keyframe with
       // PTS prior to the keyframe's PTS, with DTS continuous from keyframe
@@ -404,13 +404,13 @@ bool FrameProcessor::ProcessFrames(
       parse_warning_cb_.Run(SourceBufferParseWarning::kMuxedSequenceMode);
     }
 
-    LIMITED_MEDIA_LOG(DEBUG, media_log_, num_muxed_sequence_mode_warnings_,
+    /*LIMITED_MEDIA_LOG(DEBUG, media_log_, num_muxed_sequence_mode_warnings_,
                       kMaxMuxedSequenceModeWarnings)
         << "Warning: using MSE 'sequence' AppendMode for a SourceBuffer with "
            "multiple tracks may cause loss of track synchronization. In some "
            "cases, buffered range gaps and playback stalls can occur. It is "
            "recommended to instead use 'segments' mode for a multitrack "
-           "SourceBuffer.";
+           "SourceBuffer.";*/
   }
 
   // Implements the coded frame processing algorithm's outer loop for step 1.
@@ -426,11 +426,11 @@ bool FrameProcessor::ProcessFrames(
     // 0-byte text buffers because their |side_data| just might be useful, and
     // we don't feed them to FFmpeg later.
     if (!frame->data_size() && frame->type() != DemuxerStream::TEXT) {
-      LIMITED_MEDIA_LOG(DEBUG, media_log_, num_skipped_empty_frame_warnings_,
+      /*LIMITED_MEDIA_LOG(DEBUG, media_log_, num_skipped_empty_frame_warnings_,
                         kMaxSkippedEmptyFrameWarnings)
           << "Discarding empty audio or video coded frame, PTS="
           << frame->timestamp().InMicroseconds()
-          << "us, DTS=" << frame->GetDecodeTimestamp().InMicroseconds() << "us";
+          << "us, DTS=" << frame->GetDecodeTimestamp().InMicroseconds() << "us";*/
       continue;
     }
 
@@ -630,27 +630,27 @@ bool FrameProcessor::HandlePartialAppendWindowTrimming(
       buffer->SetPrerollBuffer(std::move(audio_preroll_buffer_));
       processed_buffer = true;
     } else {
-      LIMITED_MEDIA_LOG(DEBUG, media_log_, num_dropped_preroll_warnings_,
+      /*LIMITED_MEDIA_LOG(DEBUG, media_log_, num_dropped_preroll_warnings_,
                         kMaxDroppedPrerollWarnings)
           << "Partial append window trimming dropping unused audio preroll "
              "buffer with PTS "
           << audio_preroll_buffer_->timestamp().InMicroseconds()
           << "us that ends too far (" << delta
           << "us) from next buffer with PTS "
-          << buffer->timestamp().InMicroseconds() << "us";
+          << buffer->timestamp().InMicroseconds() << "us";*/
       audio_preroll_buffer_ = NULL;
     }
   }
 
   // See if a partial discard can be done around |append_window_start|.
   if (buffer->timestamp() < append_window_start) {
-    LIMITED_MEDIA_LOG(INFO, media_log_, num_partial_discard_warnings_,
+    /*LIMITED_MEDIA_LOG(INFO, media_log_, num_partial_discard_warnings_,
                       kMaxPartialDiscardWarnings)
         << "Truncating audio buffer which overlaps append window start."
         << " PTS " << buffer->timestamp().InMicroseconds()
         << "us frame_end_timestamp " << frame_end_timestamp.InMicroseconds()
         << "us append_window_start " << append_window_start.InMicroseconds()
-        << "us";
+        << "us";*/
 
     // Mark the overlapping portion of the buffer for discard.
     buffer->set_discard_padding(std::make_pair(
@@ -668,14 +668,14 @@ bool FrameProcessor::HandlePartialAppendWindowTrimming(
 
   // See if a partial discard can be done around |append_window_end|.
   if (frame_end_timestamp > append_window_end) {
-    LIMITED_MEDIA_LOG(INFO, media_log_, num_partial_discard_warnings_,
+    /*LIMITED_MEDIA_LOG(INFO, media_log_, num_partial_discard_warnings_,
                       kMaxPartialDiscardWarnings)
         << "Truncating audio buffer which overlaps append window end."
         << " PTS " << buffer->timestamp().InMicroseconds()
         << "us frame_end_timestamp " << frame_end_timestamp.InMicroseconds()
         << "us append_window_end " << append_window_end.InMicroseconds() << "us"
         << (buffer->is_duration_estimated() ? " (frame duration is estimated)"
-                                            : "");
+                                            : "");*/
 
     // Mark the overlapping portion of the buffer for discard.
     buffer->set_discard_padding(
@@ -727,13 +727,13 @@ bool FrameProcessor::ProcessFrame(scoped_refptr<StreamParserBuffer> frame,
     // bytestream may not indicate that, so we need to enforce that assumption
     // here with a warning log.
     if (frame->type() == DemuxerStream::AUDIO && !frame->is_key_frame()) {
-      LIMITED_MEDIA_LOG(DEBUG, media_log_, num_audio_non_keyframe_warnings_,
+      /*LIMITED_MEDIA_LOG(DEBUG, media_log_, num_audio_non_keyframe_warnings_,
                         kMaxAudioNonKeyframeWarnings)
           << "Bytestream with audio frame PTS "
           << presentation_timestamp.InMicroseconds() << "us and DTS "
           << decode_timestamp.InMicroseconds()
           << "us indicated the frame is not a random access point (key frame). "
-             "All audio frames are expected to be key frames.";
+             "All audio frames are expected to be key frames.";*/
       frame->set_is_key_frame(true);
     }
 
@@ -905,7 +905,7 @@ bool FrameProcessor::ProcessFrame(scoped_refptr<StreamParserBuffer> frame,
         frame_end_timestamp > append_window_end) {
       track_buffer->set_needs_random_access_point(true);
 
-      LIMITED_MEDIA_LOG(INFO, media_log_, num_dropped_frame_warnings_,
+      /*LIMITED_MEDIA_LOG(INFO, media_log_, num_dropped_frame_warnings_,
                         kMaxDroppedFrameWarnings)
           << "Dropping " << frame->GetTypeName() << " frame (DTS "
           << decode_timestamp.InMicroseconds() << "us PTS "
@@ -913,7 +913,7 @@ bool FrameProcessor::ProcessFrame(scoped_refptr<StreamParserBuffer> frame,
           << frame_end_timestamp.InMicroseconds()
           << "us) that is outside append window ["
           << append_window_start.InMicroseconds() << "us,"
-          << append_window_end.InMicroseconds() << "us).";
+          << append_window_end.InMicroseconds() << "us).";*/
       return true;
     }
 

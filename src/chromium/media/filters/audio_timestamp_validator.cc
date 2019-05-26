@@ -1,4 +1,4 @@
-// Copyright 2016 The Chromium Authors. All rights reserved.
+﻿// Copyright 2016 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -114,12 +114,12 @@ void AudioTimestampValidator::CheckForTimestampGap(
   }
 
   if (std::abs(ts_delta.InMilliseconds()) > drift_warning_threshold_msec_) {
-    LIMITED_MEDIA_LOG(WARNING, media_log_, num_timestamp_gap_warnings_,
+    /*LIMITED_MEDIA_LOG(WARNING, media_log_, num_timestamp_gap_warnings_,
                       kMaxTimestampGapWarnings)
         << " Large timestamp gap detected; may cause AV sync to drift."
         << " time:" << buffer.timestamp().InMicroseconds() << "us"
         << " expected:" << expected_ts.InMicroseconds() << "us"
-        << " delta:" << ts_delta.InMicroseconds() << "us";
+        << " delta:" << ts_delta.InMicroseconds() << "us";*/
     // Increase threshold to avoid log spam but, let us know if gap widens.
     drift_warning_threshold_msec_ = std::abs(ts_delta.InMilliseconds());
   }

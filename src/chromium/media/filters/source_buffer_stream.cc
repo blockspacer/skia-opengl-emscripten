@@ -1,4 +1,4 @@
-// Copyright (c) 2012 The Chromium Authors. All rights reserved.
+﻿// Copyright (c) 2012 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -780,12 +780,12 @@ bool SourceBufferStream::GarbageCollectIfNeeded(base::TimeDelta media_time,
   // Sanity and overflow checks
   if ((newDataSize > memory_limit_) ||
       (ranges_size + newDataSize < ranges_size)) {
-    LIMITED_MEDIA_LOG(DEBUG, media_log_, num_garbage_collect_algorithm_logs_,
+    /*LIMITED_MEDIA_LOG(DEBUG, media_log_, num_garbage_collect_algorithm_logs_,
                       kMaxGarbageCollectAlgorithmWarningLogs)
         << GetStreamTypeName() << " stream: "
         << "new append of newDataSize=" << newDataSize
         << " bytes exceeds memory_limit_=" << memory_limit_
-        << ", currently buffered ranges_size=" << ranges_size;
+        << ", currently buffered ranges_size=" << ranges_size;*/
     return false;
   }
 
@@ -1191,8 +1191,8 @@ void SourceBufferStream::TrimSpliceOverlap(const BufferQueue& new_buffers) {
                << overlap_duration.InMicroseconds()
                << "us of overlap, need at least 1000us. Multiple occurrences "
                << "may result in loss of A/V sync.";
-    LIMITED_MEDIA_LOG(DEBUG, media_log_, num_splice_logs_, kMaxAudioSpliceLogs)
-        << log_string.str();
+    /*LIMITED_MEDIA_LOG(DEBUG, media_log_, num_splice_logs_, kMaxAudioSpliceLogs)
+        << log_string.str();*/
     DVLOG(1) << __func__ << log_string.str();
     return;
   }
@@ -1220,8 +1220,8 @@ void SourceBufferStream::TrimSpliceOverlap(const BufferQueue& new_buffers) {
              << "us. Trimmed tail of overlapped buffer (PTS="
              << overlapped_buffer->timestamp().InMicroseconds() << "us) by "
              << overlap_duration.InMicroseconds() << "us.";
-  LIMITED_MEDIA_LOG(DEBUG, media_log_, num_splice_logs_, kMaxAudioSpliceLogs)
-      << log_string.str();
+  /*LIMITED_MEDIA_LOG(DEBUG, media_log_, num_splice_logs_, kMaxAudioSpliceLogs)
+      << log_string.str();*/
   DVLOG(1) << __func__ << log_string.str();
 }
 
@@ -1620,14 +1620,14 @@ void SourceBufferStream::WarnIfTrackBufferExhaustionSkipsForward(
   base::TimeDelta delta =
       next_output_buffer_timestamp - highest_output_buffer_timestamp_;
   if (delta > GetMaxInterbufferDistance()) {
-    LIMITED_MEDIA_LOG(DEBUG, media_log_, num_track_buffer_gap_warning_logs_,
+    /*LIMITED_MEDIA_LOG(DEBUG, media_log_, num_track_buffer_gap_warning_logs_,
                       kMaxTrackBufferGapWarningLogs)
         << "Media append that overlapped current playback position may cause "
            "time gap in playing "
         << GetStreamTypeName() << " stream because the next keyframe is "
         << delta.InMilliseconds()
         << "ms beyond last overlapped frame. Media may appear temporarily "
-           "frozen.";
+           "frozen.";*/
   }
 }
 

@@ -1,4 +1,4 @@
-// Copyright (c) 2012 The Chromium Authors. All rights reserved.
+﻿// Copyright (c) 2012 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -219,6 +219,10 @@ class MEDIA_EXPORT LogHelper {
   MediaLog* const media_log_;
   std::stringstream stream_;
 };
+
+// TODO
+//#define MEDIA_LOG_1(level, media_log) \
+//  LogHelper((MediaLog::MEDIALOG_##level), (media_log)).stream()
 
 // Provides a stringstream to collect a log entry to pass to the provided
 // MediaLog at the requested level.
