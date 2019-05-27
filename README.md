@@ -462,6 +462,21 @@ To run your applications, while not strictly necessary, it's recommended to host
 ## NOTE: Use latest chromium!
 
 1 parent 9178b0a commit 2d57e5b8afc6d01b344a8d95d3470d46b35845c5 deskop-pwa: Try to reinstall placeholders on startup
+Tue Apr 16 07:10:46 2019
+
+```
+TODO
+from commit 07bf855b4db90ee18e4cf3452bcbc0b4f80256e5
+05/13/2019 12:28 PM
+Worker: Clear ResourceTimingNotifier on WorkerFetchContext::Detach()
+Bug: 959508, 960626
+Change-Id: I2663e5acddec0d9f88a78842c093c594fb57acb8
+Reviewed-on: https://chromium-review.googlesource.com/c/chromium/src/+/1609024
+Commit-Queue: Hiroki Nakagawa <nhiroki@chromium.org>
+Reviewed-by: Kenichi Ishibashi <bashi@chromium.org>
+Reviewed-by: Yutaka Hirano <yhirano@chromium.org>
+Cr-Commit-Position: refs/heads/master@{#658989}
+```
 
 READ
 > https://github.com/chromium/chromium/blob/master/docs/linux_cast_build_instructions.md
@@ -478,12 +493,16 @@ git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git
 export PATH=$PATH:`pwd`/depot_tools
 mkdir ~/chromium
 cd ~/chromium
-gclient sync --with_branch_heads --with_tags
-git fetch chromium
+#git fetch chromium
+git clone https://chromium.googlesource.com/chromium/src.git
+#fetch chromium
+# You can find the latest and stable version info of Chromium from this page: https://www.chromium.org/developers/calendar
+#git fetch +refs/tags/74.0.3729.169:chromium_74.0.3729.169
+gclient sync --with_branch_heads --with_tags --jobs 12
 git fetch --tags
 # known versions can be seen with 'git show-ref --tags'
 #git checkout -b branch_$BRANCH branch-heads/$BRANCH
-git checkout -b tags/74.0.3729.131
+git checkout -b tags/74.0.3729.169
 gclient sync --with_branch_heads --with_tags
 #fetch --nohooks --no-history chromium
 #gclient sync -R --nohooks --with_branch_heads --jobs 16
