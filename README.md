@@ -59,6 +59,11 @@ https://github.com/flutter/engine/blob/master/flow/raster_cache.cc
 
 ## PATCHES
 
+TODO
+> https://nithinbekal.com/posts/git-patch/
+> https://reactnative-tricks.com/how-to-create-and-apply-patches-in-git-using-diff-and-apply-command/
+> https://github.com/search?q=git+%22patch%22+%22apply%22+%22execute_process%22+language%3ACMake&type=Code
+
 1
 #define FRIEND_TEST
 
@@ -458,8 +463,6 @@ To run your applications, while not strictly necessary, it's recommended to host
 
 1 parent 9178b0a commit 2d57e5b8afc6d01b344a8d95d3470d46b35845c5 deskop-pwa: Try to reinstall placeholders on startup
 
-AVOID OUTDATED REPO https://chromium.googlesource.com/chromium/
-
 READ
 > https://github.com/chromium/chromium/blob/master/docs/linux_cast_build_instructions.md
 > https://chromium.googlesource.com/chromium/src/+/master/docs/linux_build_instructions.md
@@ -475,8 +478,16 @@ git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git
 export PATH=$PATH:`pwd`/depot_tools
 mkdir ~/chromium
 cd ~/chromium
-fetch --nohooks --no-history chromium
-gclient sync
+gclient sync --with_branch_heads --with_tags
+git fetch chromium
+git fetch --tags
+# known versions can be seen with 'git show-ref --tags'
+#git checkout -b branch_$BRANCH branch-heads/$BRANCH
+git checkout -b tags/74.0.3729.131
+gclient sync --with_branch_heads --with_tags
+#fetch --nohooks --no-history chromium
+#gclient sync -R --nohooks --with_branch_heads --jobs 16
+#gclient sync -r 2d57e5b8afc6d01b344a8d95d3470d46b35845c5
 cd src
 build/install-build-deps.sh
 gclient runhooks

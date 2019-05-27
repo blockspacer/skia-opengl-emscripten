@@ -419,7 +419,7 @@ include(BLINK_COMMON.cmake)
 include(BLINK_RENDERER_PLATFORM.cmake)
 
 # BLINK_RENDERER_CORE
-#include(BLINK_RENDERER_CORE.cmake)
+include(BLINK_RENDERER_CORE.cmake)
 
 #install(FILES ${WTF_HEADERS} DESTINATION include/wtf)
 #install(FILES ${WTF_TEXT_HEADERS} DESTINATION include/wtf/text)

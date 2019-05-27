@@ -88,3 +88,4 @@ thirdparty/glew/
 *.d.stamp
 /src/chromium/ui/base/mpris/buildflags/buildflags.h
 *.launch
+*fuzz_corpus*

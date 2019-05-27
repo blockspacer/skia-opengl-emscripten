@@ -34,6 +34,10 @@ class WTF_EXPORT ArrayPiece {
   ArrayPiece(ArrayBuffer*);
   ArrayPiece(ArrayBufferView*);
 
+  // __TODO__
+  void InitWithArrayBuffer(ArrayBuffer*);
+  void InitWithArrayBufferView(ArrayBufferView*);
+
   bool IsNull() const;
   void* Data() const;
   unsigned char* Bytes() const;

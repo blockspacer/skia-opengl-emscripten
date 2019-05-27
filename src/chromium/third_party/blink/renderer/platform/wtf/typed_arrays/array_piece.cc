@@ -27,6 +27,24 @@ ArrayPiece::ArrayPiece(ArrayBuffer* buffer) {
   }
 }
 
+void ArrayPiece::InitWithArrayBuffer(ArrayBuffer* buffer) {
+  if (buffer) {
+    InitWithData(buffer->Data(), SafeCast<unsigned>(buffer->ByteLength()));
+    //is_neutered_ = buffer->IsNeutered();
+  } else {
+    InitNull();
+  }
+}
+
+void ArrayPiece::InitWithArrayBufferView(ArrayBufferView* buffer) {
+  if (buffer) {
+    InitWithData(buffer->BaseAddress(), buffer->ByteLength());
+    //is_neutered_ = buffer->Buffer() ? buffer->Buffer()->IsNeutered() : true;
+  } else {
+    InitNull();
+  }
+}
+
 ArrayPiece::ArrayPiece(ArrayBufferView* buffer) {
   if (buffer) {
     InitWithData(buffer->BaseAddress(), buffer->ByteLength());

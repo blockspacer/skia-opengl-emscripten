@@ -1338,6 +1338,7 @@ if(EMSCRIPTEN)
   # Top is the executable, followed by directly used libraries.
   # see https://floooh.github.io/2016/01/12/cmake-dependency-juggling.html
   target_link_libraries(${PROJECT_NAME} PUBLIC
+    BLINK_RENDERER_CORE
     BLINK_RENDERER_PLATFORM
     SERVICES_NETWORK_PUBLIC_CPP
     COMPONENTS_VIZ_CLIENT
@@ -1394,6 +1395,7 @@ else()
   # Top is the executable, followed by directly used libraries.
   # see https://floooh.github.io/2016/01/12/cmake-dependency-juggling.html
   target_link_libraries(${PROJECT_NAME} PUBLIC
+    BLINK_RENDERER_CORE
     BLINK_RENDERER_PLATFORM
     COMPONENTS_VIZ_CLIENT
     ${WTF_LIBS}

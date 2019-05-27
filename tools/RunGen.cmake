@@ -148,7 +148,9 @@ find_program_required(gn_COMMAND "gn" "gn not found in PATH, search for  https:/
 
 # see: gn ls out/Default | grep blink
 list(APPEND blink_public_GEN_TARGETS
+  #
   # blink public
+  #
   third_party/blink/public:blink
   third_party/blink/public:blink_headers
   third_party/blink/public:buildflags
@@ -162,7 +164,9 @@ list(APPEND blink_public_GEN_TARGETS
   third_party/blink/public/mojom:mojom_platform
   third_party/blink/public/mojom:web_client_hints_types_mojo_bindings
   third_party/blink/public/mojom:web_feature_mojo_bindings
+  #
   # blink bindings
+  #
   third_party/blink/renderer/bindings/core:core_global_constructors_idls
   third_party/blink/renderer/bindings/core:core_global_objects
   third_party/blink/renderer/bindings/core:core_web_idl_collection
@@ -209,7 +213,9 @@ list(APPEND blink_public_GEN_TARGETS
   #third_party/blink/renderer/controller:blink_unittests_sources
   third_party/blink/renderer/controller:controller
   #third_party/blink/renderer/controller:webkit_unit_tests
+  #
   # blink core
+  #
   third_party/blink/renderer/core:all_generators
   #third_party/blink/renderer/core:content_security_policy_fuzzer
   #third_party/blink/renderer/core:content_security_policy_fuzzer.options
@@ -390,7 +396,9 @@ list(APPEND blink_public_GEN_TARGETS
   third_party/blink/renderer/core/workers:workers
   third_party/blink/renderer/core/xml:xml
   third_party/blink/renderer/core/xmlhttprequest:xmlhttprequest
+  #
   # blink modules
+  #
   third_party/blink/renderer/devtools:supported_css_properties
   #third_party/blink/renderer/modules:accessibility_unittests_data
   third_party/blink/renderer/modules:make_modules_generated
