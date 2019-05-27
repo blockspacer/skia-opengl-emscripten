@@ -87,3 +87,4 @@ thirdparty/glew/
 *.pak.info
 *.d.stamp
 /src/chromium/ui/base/mpris/buildflags/buildflags.h
+*.launch
