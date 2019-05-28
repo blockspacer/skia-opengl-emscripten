@@ -18,7 +18,8 @@
 #include <string>
 #include <vector>
 
-#include "base/containers/hash_tables.h"
+//#include "base/containers/hash_tables.h"
+#include <map>
 #include "base/message_loop/message_loop.h"
 #include "cobalt/base/source_location.h"
 #include "cobalt/csp/content_security_policy.h"

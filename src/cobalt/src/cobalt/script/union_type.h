@@ -20,6 +20,10 @@
 #ifndef COBALT_SCRIPT_UNION_TYPE_H_
 #define COBALT_SCRIPT_UNION_TYPE_H_
 
+#if !defined(STARBOARD)
+#error "!defined(STARBOARD)"
+#endif
+
 // Implementation of IDL union types.
 // http://heycam.github.io/webidl/#idl-union
 //
@@ -47,7 +51,9 @@
 #include <iosfwd>
 #include <limits>
 
-#include "base/memory/aligned_memory.h"
+// __TODO__
+#include "src/cobalt/port/base/memory/aligned_memory.h"
+
 #include "cobalt/script/union_type_internal.h"
 
 namespace cobalt {

@@ -19,7 +19,8 @@
 #include <vector>
 
 #include "base/callback.h"
-#include "base/containers/hash_tables.h"
+//#include "base/containers/hash_tables.h"
+#include <map>
 #include "base/synchronization/lock.h"
 #include "cobalt/base/event.h"
 
@@ -48,7 +49,7 @@ class EventDispatcher {
   void RemoveEventCallback(TypeId type, const EventCallback& cb);
 
  private:
-  typedef hash_map<TypeId, std::vector<EventCallback> > CallbackMap;
+  typedef std::map<TypeId, std::vector<EventCallback> > CallbackMap;
   CallbackMap event_callbacks_;
   // Lock to protect access to the callback map.
   mutable base::Lock lock_;

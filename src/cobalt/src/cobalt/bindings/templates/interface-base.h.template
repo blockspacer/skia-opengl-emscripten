@@ -46,7 +46,8 @@
 {% endif %}
 {% block includes %}
 {# Common Cobalt includes. #}
-#include "base/containers/hash_tables.h"
+//#include "base/containers/hash_tables.h"
+#include <map>
 #include "base/lazy_instance.h"
 #include "base/memory/ref_counted.h"
 #include "base/threading/thread_checker.h"

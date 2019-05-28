@@ -19,7 +19,8 @@
 #include <string>
 #include <vector>
 
-#include "base/containers/hash_tables.h"
+//#include "base/containers/hash_tables.h"
+#include <map>
 #include "base/threading/thread.h"
 #include "base/values.h"
 #include "cobalt/base/c_val.h"

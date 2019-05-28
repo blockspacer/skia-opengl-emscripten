@@ -22,7 +22,8 @@
 #include "SkStream.h"
 #include "base/atomicops.h"
 #include "base/basictypes.h"
-#include "base/containers/hash_tables.h"
+//#include "base/containers/hash_tables.h"
+#include <map>
 #include "base/containers/small_map.h"
 #include "base/memory/ref_counted.h"
 #include "cobalt/base/c_val.h"
@@ -50,7 +51,7 @@ class SkFileMemoryChunkStreamProvider;
 typedef base::small_map<
     std::unordered_map<size_t, scoped_refptr<const SkFileMemoryChunk>>, 8>
     SkFileMemoryChunks;
-typedef base::hash_map<std::string, SkFileMemoryChunkStreamProvider*>
+typedef std::map<std::string, SkFileMemoryChunkStreamProvider*>
     SkFileMemoryChunkStreamProviderMap;
 
 class SkFileMemoryChunk : public base::RefCountedThreadSafe<SkFileMemoryChunk> {
@@ -172,13 +173,13 @@ class SkFileMemoryChunkStream : public SkStreamAsset {
 
   // Required by SkStreamRewindable
   bool rewind() override;
-  SkFileMemoryChunkStream* duplicate() const override;
+  SkFileMemoryChunkStream* duplicate() const /*override*/;
 
   // Required by SkStreamSeekable
   size_t getPosition() const override;
   bool seek(size_t position) override;
   bool move(long offset) override;
-  SkFileMemoryChunkStream* fork() const override;
+  SkFileMemoryChunkStream* fork() const /*override*/;
 
   // Required by SkStreamAsset
   size_t getLength() const override;

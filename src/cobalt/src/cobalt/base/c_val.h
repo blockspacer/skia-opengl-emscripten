@@ -25,7 +25,13 @@
 #include <vector>
 
 #include "base/compiler_specific.h"
-#include "base/containers/hash_tables.h"
+
+//#include "base/containers/hash_tables.h"
+#include <map>
+
+#include "port/base/basictypes.h"
+#include "port/starboard/configuration.h"
+
 #include "base/logging.h"
 #include "base/memory/singleton.h"
 #include "base/optional.h"
@@ -469,7 +475,7 @@ class CValManager {
   scoped_refptr<base::RefCountedThreadSafeLock> value_lock_refptr_;
 
   // The actual value registry, mapping CVal name to actual CVal object.
-  typedef base::hash_map<std::string, const CValDetail::CValBase*> NameVarMap;
+  typedef std::map<std::string, const CValDetail::CValBase*> NameVarMap;
   NameVarMap* registered_vars_;
 
 #if defined(ENABLE_DEBUG_C_VAL)

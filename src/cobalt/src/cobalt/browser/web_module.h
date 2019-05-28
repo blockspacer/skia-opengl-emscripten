@@ -20,7 +20,8 @@
 #include <vector>
 
 #include "base/callback.h"
-#include "base/containers/hash_tables.h"
+//#include "base/containers/hash_tables.h"
+#include <map>
 #include "base/files/file_path.h"
 #include "base/message_loop/message_loop.h"
 #include "base/synchronization/waitable_event.h"

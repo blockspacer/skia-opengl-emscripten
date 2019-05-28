@@ -23,7 +23,8 @@
 #include "SkFontMgr.h"
 #include "SkTArray.h"
 #include "SkTypeface.h"
-#include "base/containers/hash_tables.h"
+//#include "base/containers/hash_tables.h"
+#include <map>
 #include "base/containers/small_map.h"
 #include "cobalt/renderer/rasterizer/skia/skia/src/ports/SkFontStyleSet_cobalt.h"
 #include "cobalt/renderer/rasterizer/skia/skia/src/ports/SkFontUtil_cobalt.h"

@@ -18,7 +18,8 @@
 #include <string>
 #include <vector>
 
-#include "base/containers/hash_tables.h"
+//#include "base/containers/hash_tables.h"
+#include <map>
 #include "cobalt/base/token.h"
 #include "cobalt/dom/element.h"
 #include "cobalt/dom/node.h"

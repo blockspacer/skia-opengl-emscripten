@@ -15,7 +15,7 @@
 #include "cobalt/base/log_message_handler.h"
 
 #include "base/threading/thread_restrictions.h"
-#include "starboard/thread.h"
+/*#include "starboard/thread.h"*/
 
 namespace base {
 
@@ -25,7 +25,8 @@ namespace {
 // access, which means we cannot access our |LogMessageHandler| instance,
 // nor even call |base::MessageLoop::current|.
 bool DoesThreadAllowSingletons() {
-  return ThreadRestrictions::GetSingletonAllowed();
+  /*return ThreadRestrictions::GetSingletonAllowed();*/
+  return false;
 }
 }  // namespace
 
@@ -69,14 +70,14 @@ bool LogMessageHandler::OnLogMessage(int severity, const char* file, int line,
   }
 
   // Ignore recursive calls.
-  static SbThreadId logging_thread = kSbThreadInvalidId;
+ /* static SbThreadId logging_thread = kSbThreadInvalidId;
   if (logging_thread == SbThreadGetId()) {
     return false;
-  }
+  }*/
 
   LogMessageHandler* instance = GetInstance();
   AutoLock auto_lock(instance->lock_);
-  logging_thread = SbThreadGetId();
+  /*logging_thread = SbThreadGetId();*/
 
   bool suppress = instance->suppress_log_output_;
   for (CallbackMap::const_iterator it = instance->callbacks_.begin();
@@ -86,7 +87,7 @@ bool LogMessageHandler::OnLogMessage(int severity, const char* file, int line,
     }
   }
 
-  logging_thread = kSbThreadInvalidId;
+  /*logging_thread = kSbThreadInvalidId;*/
   return suppress;
 }
 

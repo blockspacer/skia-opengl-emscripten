@@ -17,7 +17,8 @@
 
 #include <memory>
 
-#include "base/containers/hash_tables.h"
+//#include "base/containers/hash_tables.h"
+#include <map>
 #include "base/memory/ref_counted.h"
 #include "base/timer/timer.h"
 #include "cobalt/script/callback_function.h"

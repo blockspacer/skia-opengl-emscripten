@@ -22,7 +22,8 @@
 #include <utility>
 
 #include "base/callback.h"
-#include "base/containers/hash_tables.h"
+//#include "base/containers/hash_tables.h"
+#include <map>
 #include "base/threading/thread_checker.h"
 #include "base/timer/timer.h"
 #include "cobalt/dom/font_face.h"

@@ -23,7 +23,8 @@
 #include <string>
 
 #include "base/bind.h"
-#include "base/containers/hash_tables.h"
+//#include "base/containers/hash_tables.h"
+#include <map>
 #include "base/lazy_instance.h"
 #include "base/optional.h"
 #include "base/strings/string_piece.h"

@@ -17,7 +17,8 @@
 
 #include <unordered_map>
 
-#include "base/containers/hash_tables.h"
+//#include "base/containers/hash_tables.h"
+#include <map>
 #include "base/memory/ref_counted.h"
 #include "cobalt/base/c_val.h"
 #include "cobalt/render_tree/node.h"

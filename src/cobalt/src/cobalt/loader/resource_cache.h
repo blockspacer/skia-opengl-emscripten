@@ -22,7 +22,8 @@
 #include <string>
 
 #include "base/bind.h"
-#include "base/containers/hash_tables.h"
+//#include "base/containers/hash_tables.h"
+#include <map>
 #include "base/memory/ref_counted.h"
 #include "base/optional.h"
 #include "base/strings/stringprintf.h"

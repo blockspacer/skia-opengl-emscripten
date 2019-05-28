@@ -20,10 +20,16 @@
 #include "third_party/skia/include/core/SkColorPriv.h"
 #include "third_party/skia/include/core/SkShader.h"
 #include "third_party/skia/include/core/SkString.h"
-#include "third_party/skia/include/core/SkWriteBuffer.h"
+
+// TODO
+//#include "third_party/skia/include/core/SkWriteBuffer.h"
+#include "third_party/skia/src/core/SkWriteBuffer.h"
+
 #include "third_party/skia/src/core/SkReadBuffer.h"
 #include "third_party/skia/src/gpu/GrFragmentProcessor.h"
-#include "third_party/skia/src/gpu/effects/GrYUVEffect.h"
+
+//#include "third_party/skia/src/gpu/effects/GrYUVEffect.h"
+
 #include "third_party/skia/src/shaders/SkImageShader.h"
 
 SkYUV2RGBShader::SkYUV2RGBShader(SkYUVColorSpace color_space,
@@ -47,37 +53,38 @@ SkYUV2RGBShader::SkYUV2RGBShader(SkYUVColorSpace color_space,
 }
 
 void SkYUV2RGBShader::InitializeShaders() {
-  y_shader_.reset(new SkImageShader(y_image_, SkShader::kClamp_TileMode,
-                                    SkShader::kClamp_TileMode, &y_matrix_));
+  y_shader_ = ( SkImageShader::Make(y_image_, SkTileMode::kClamp,
+                                    SkTileMode::kClamp, &y_matrix_));
   DCHECK(y_shader_);
 
-  u_shader_.reset(new SkImageShader(u_image_, SkShader::kClamp_TileMode,
-                                    SkShader::kClamp_TileMode, &u_matrix_));
+  u_shader_ = ( SkImageShader::Make(u_image_, SkTileMode::kClamp,
+                                    SkTileMode::kClamp, &u_matrix_));
   DCHECK(u_shader_);
 
-  v_shader_.reset(new SkImageShader(v_image_, SkShader::kClamp_TileMode,
-                                    SkShader::kClamp_TileMode, &v_matrix_));
+  v_shader_ = ( SkImageShader::Make(v_image_, SkTileMode::kClamp,
+                                    SkTileMode::kClamp, &v_matrix_));
   DCHECK(v_shader_);
 }
 
+/*
 sk_sp<SkFlattenable> SkYUV2RGBShader::CreateProc(SkReadBuffer& buffer) {
   SkYUVColorSpace color_space = static_cast<SkYUVColorSpace>(buffer.readInt());
 
-  sk_sp<SkImage> y_image = buffer.readBitmapAsImage();
+  sk_sp<SkImage> y_image = buffer.readImage();//readBitmapAsImage();
   if (!y_image) {
     return nullptr;
   }
   SkMatrix y_matrix;
   buffer.readMatrix(&y_matrix);
 
-  sk_sp<SkImage> u_image = buffer.readBitmapAsImage();
+  sk_sp<SkImage> u_image = buffer.readImage();//BitmapAsImage();
   if (!u_image) {
     return nullptr;
   }
   SkMatrix u_matrix;
   buffer.readMatrix(&u_matrix);
 
-  sk_sp<SkImage> v_image = buffer.readBitmapAsImage();
+  sk_sp<SkImage> v_image = buffer.readImage();//readBitmapAsImage();
   if (!v_image) {
     return nullptr;
   }
@@ -86,7 +93,7 @@ sk_sp<SkFlattenable> SkYUV2RGBShader::CreateProc(SkReadBuffer& buffer) {
 
   return sk_sp<SkFlattenable>(new SkYUV2RGBShader(
       color_space, y_image, y_matrix, u_image, u_matrix, v_image, v_matrix));
-}
+}*/
 
 void SkYUV2RGBShader::flatten(SkWriteBuffer& buffer) const {
   buffer.writeInt(color_space_);
@@ -169,7 +176,7 @@ void SkYUV2RGBShader::YUV2RGBShaderContext::shadeSpan(
     count -= count_in_chunk;
   } while (count > 0);
 }
-
+/*
 #ifndef SK_IGNORE_TO_STRING
 void SkYUV2RGBShader::toString(SkString* string_argument) const {
   string_argument->append("SkYUV2RGBShader: (");
@@ -186,6 +193,9 @@ void SkYUV2RGBShader::toString(SkString* string_argument) const {
   string_argument->append(")");
 }
 #endif  // SK_IGNORE_TO_STRING
+*/
+
+/*
 #if SK_SUPPORT_GPU
 
 sk_sp<GrFragmentProcessor> SkYUV2RGBShader::asFragmentProcessor(
@@ -193,4 +203,4 @@ sk_sp<GrFragmentProcessor> SkYUV2RGBShader::asFragmentProcessor(
   return nullptr;
 }
 
-#endif  // SK_SUPPORT_GPU
+#endif  // SK_SUPPORT_GPU*/

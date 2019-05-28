@@ -16,7 +16,15 @@
 #define COBALT_BASE_TYPE_ID_H_
 
 #include "base/basictypes.h"
-#include "base/containers/hash_tables.h"
+//#include "base/containers/hash_tables.h"
+#include <map>
+#include "starboard/configuration.h"
+
+//#include <ext/hash_map>
+//#include <ext/hash_set>
+//#include <unordered_map>
+#include <map>
+//#include <set>
 
 // This file introduces the template function GetTypeId<T>() as well as the
 // class TypeId.  GetTypeId<T>() will return a TypeId object that is unique

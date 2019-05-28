@@ -20,7 +20,8 @@
 #include <vector>
 
 #include "base/callback.h"
-#include "base/containers/hash_tables.h"
+//#include "base/containers/hash_tables.h"
+#include <map>
 #include "base/optional.h"
 #include "base/values.h"
 #include "cobalt/webdriver/protocol/response.h"

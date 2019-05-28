@@ -17,7 +17,8 @@
 
 #include <memory>
 
-#include "base/containers/hash_tables.h"
+//#include "base/containers/hash_tables.h"
+#include <map>
 #include "base/threading/thread_checker.h"
 #include "cobalt/render_tree/font.h"
 #include "cobalt/render_tree/typeface.h"

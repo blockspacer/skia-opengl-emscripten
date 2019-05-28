@@ -16,7 +16,8 @@
 #define COBALT_BASE_GENERATED_RESOURCES_TYPES_H_
 
 #include <string>
-#include "base/containers/hash_tables.h"
+//#include "base/containers/hash_tables.h"
+#include <map>
 
 struct FileContents {
   FileContents() {}

@@ -22,7 +22,10 @@
 #include <vector>
 
 #include "base/basictypes.h"
-#include "base/containers/hash_tables.h"
+
+//#include "base/containers/hash_tables.h"
+#include <map>
+
 #include "base/containers/small_map.h"
 #include "base/memory/weak_ptr.h"
 #include "cobalt/base/token.h"

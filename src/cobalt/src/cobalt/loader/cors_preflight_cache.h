@@ -24,7 +24,8 @@
 #include <unordered_map>
 #include <vector>
 
-#include "base/containers/hash_tables.h"
+//#include "base/containers/hash_tables.h"
+#include <map>
 #include "base/time/time.h"
 #include "net/http/http_request_headers.h"
 #include "net/url_request/url_fetcher.h"

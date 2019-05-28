@@ -16,7 +16,8 @@
 
 #include "cobalt/dom/mutation_reporter.h"
 
-#include "base/containers/hash_tables.h"
+//#include "base/containers/hash_tables.h"
+#include <map>
 #include "base/trace_event/trace_event.h"
 #include "cobalt/dom/mutation_observer.h"
 #include "cobalt/dom/mutation_observer_init.h"

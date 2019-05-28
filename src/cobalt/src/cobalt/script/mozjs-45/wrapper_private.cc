@@ -14,7 +14,8 @@
 
 #include "cobalt/script/mozjs-45/wrapper_private.h"
 
-#include "base/containers/hash_tables.h"
+//#include "base/containers/hash_tables.h"
+#include <map>
 #include "cobalt/script/mozjs-45/mozjs_global_environment.h"
 #include "cobalt/script/mozjs-45/proxy_handler.h"
 #include "cobalt/script/mozjs-45/referenced_object_map.h"

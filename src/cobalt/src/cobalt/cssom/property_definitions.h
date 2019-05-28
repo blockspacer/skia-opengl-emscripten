@@ -21,7 +21,9 @@
 #include <string>
 #include <vector>
 
-#include "base/containers/hash_tables.h"
+//#include "base/containers/hash_tables.h"
+#include <map>
+
 #include "base/containers/small_map.h"
 #include "base/memory/ref_counted.h"
 #include "cobalt/cssom/property_value.h"

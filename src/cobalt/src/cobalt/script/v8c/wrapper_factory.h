@@ -18,7 +18,8 @@
 #include <memory>
 
 #include "base/callback.h"
-#include "base/containers/hash_tables.h"
+//#include "base/containers/hash_tables.h"
+#include <map>
 #include "cobalt/script/wrappable.h"
 #include "v8/include/v8.h"
 

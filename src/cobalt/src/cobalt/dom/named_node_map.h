@@ -18,7 +18,8 @@
 #include <string>
 #include <vector>
 
-#include "base/containers/hash_tables.h"
+//#include "base/containers/hash_tables.h"
+#include <map>
 #include "base/memory/ref_counted.h"
 #include "base/memory/weak_ptr.h"
 #include "cobalt/script/property_enumerator.h"

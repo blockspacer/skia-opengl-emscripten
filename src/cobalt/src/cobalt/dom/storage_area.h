@@ -18,7 +18,8 @@
 #include <memory>
 #include <string>
 
-#include "base/containers/hash_tables.h"
+//#include "base/containers/hash_tables.h"
+#include <map>
 #include "base/optional.h"
 #include "base/synchronization/waitable_event.h"
 #include "cobalt/loader/origin.h"

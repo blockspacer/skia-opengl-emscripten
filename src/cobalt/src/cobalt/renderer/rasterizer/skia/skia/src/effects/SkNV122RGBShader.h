@@ -40,10 +40,10 @@ class SkNV122RGBShader : public SkShaderBase {
 
     void shadeSpan(int x, int y, SkPMColor[], int count) override;
 
-    void set3DMask(const SkMask* mask) override {
+    void set3DMask(const SkMask* mask) /*override*/ {
       // forward to our proxy
-      y_shader_context_->set3DMask(mask);
-      uv_shader_context_->set3DMask(mask);
+      /*y_shader_context_->set3DMask(mask);
+      uv_shader_context_->set3DMask(mask);*/
     }
 
    private:
@@ -55,13 +55,13 @@ class SkNV122RGBShader : public SkShaderBase {
     typedef SkShaderBase::Context INHERITED;
   };
 
-#if SK_SUPPORT_GPU
+/*#if SK_SUPPORT_GPU
   sk_sp<GrFragmentProcessor> asFragmentProcessor(
       const AsFPArgs&) const override;
-#endif
+#endif*/
 
-  SK_TO_STRING_OVERRIDE()
-  SK_DECLARE_PUBLIC_FLATTENABLE_DESERIALIZATION_PROCS(SkNV122RGBShader)
+  //SK_TO_STRING_OVERRIDE()
+  //SK_DECLARE_PUBLIC_FLATTENABLE_DESERIALIZATION_PROCS(SkNV122RGBShader)
 
  protected:
   void flatten(SkWriteBuffer&) const override;
@@ -73,11 +73,11 @@ class SkNV122RGBShader : public SkShaderBase {
 
   sk_sp<SkImage> y_image_;
   SkMatrix y_matrix_;
-  sk_sp<SkImageShader> y_shader_;
+  sk_sp<SkShader> y_shader_;
 
   sk_sp<SkImage> uv_image_;
   SkMatrix uv_matrix_;
-  sk_sp<SkImageShader> uv_shader_;
+  sk_sp<SkShader> uv_shader_;
 
   typedef SkShaderBase INHERITED;
 };

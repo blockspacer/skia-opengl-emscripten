@@ -17,7 +17,8 @@
 
 #include <string>
 
-#include "base/containers/hash_tables.h"
+//#include "base/containers/hash_tables.h"
+#include <map>
 #include "base/containers/small_map.h"
 #include "base/memory/weak_ptr.h"
 #include "base/optional.h"

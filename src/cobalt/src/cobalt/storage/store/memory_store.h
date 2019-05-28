@@ -21,7 +21,8 @@
 #include <vector>
 
 #include "base/basictypes.h"
-#include "base/containers/hash_tables.h"
+//#include "base/containers/hash_tables.h"
+#include <map>
 #include "cobalt/loader/origin.h"
 #include "net/cookies/canonical_cookie.h"
 

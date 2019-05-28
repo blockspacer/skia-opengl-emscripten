@@ -21,7 +21,8 @@
 #include <vector>
 
 #include "base/basictypes.h"
-#include "base/containers/hash_tables.h"
+//#include "base/containers/hash_tables.h"
+#include <map>
 #include "base/logging.h"
 #include "base/optional.h"
 #include "base/stl_util.h"

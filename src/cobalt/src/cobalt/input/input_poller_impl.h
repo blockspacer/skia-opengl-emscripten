@@ -19,7 +19,8 @@
 
 #include <map>
 
-#include "base/containers/hash_tables.h"
+//#include "base/containers/hash_tables.h"
+#include <map>
 #include "base/containers/small_map.h"
 #include "cobalt/input/input_poller.h"
 #include "cobalt/system_window/input_event.h"
