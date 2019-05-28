@@ -734,6 +734,7 @@ git clone https://cobalt.googlesource.com/cobalt
 
 # (choose from 'debug', 'devel', 'qa', 'gold')
 cobalt/build/gyp_cobalt -C devel linux-x64x11
+autoninja -C out/linux-x64x11_devel cobalt
 
 ## FOUND CHROMIUM BUGS
 

@@ -1108,6 +1108,58 @@ if(ENABLE_WTF)
 endif(ENABLE_WTF)
 
 #
+# COBALT
+#
+set(ENABLE_COBALT TRUE)
+if(ENABLE_COBALT)
+  set(COBALT_ROOT_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src/)
+  set(COBALT_ROOT_DIR ${COBALT_ROOT_PARENT_DIR}cobalt/)
+  set(COBALT_CORE_PARENT_DIR ${COBALT_ROOT_DIR}src/)
+  set(COBALT_CORE_DIR ${COBALT_CORE_PARENT_DIR}cobalt/)
+  set(COBALT_GEN_DIR
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/cobalt/gen/ # to ./cobalt
+  )
+  set(COBALT_COMMON_DEFINES
+    OS_STARBOARD=1
+    STARBOARD=1
+    #
+    #COBALT_ENABLE_VERSION_COMPATIBILITY_VALIDATIONS=1
+    #
+    STARBOARD_ATOMIC_INCLUDE="${COBALT_ROOT_DIR}port/linux/x64x11/atomic_public.h"
+    STARBOARD_THREAD_TYPES_INCLUDE="${COBALT_ROOT_DIR}port/linux/x64x11/thread_types_public.h"
+    STARBOARD_CONFIGURATION_INCLUDE="${COBALT_ROOT_DIR}port/linux/x64x11/configuration_public.h"
+    #
+    BASE_HASH_DEFINE_LONG_LONG_HASHES=0
+    BASE_HASH_DEFINE_STRING_HASHES=0
+    BASE_HASH_USE_HASH=0
+    BASE_HASH_MAP_INCLUDE="<unordered_map>"
+    BASE_HASH_NAMESPACE=std
+    BASE_HASH_SET_INCLUDE="<unordered_set>"
+    BASE_HASH_USE_HASH_STRUCT=1
+  )
+  #message(FATAL_ERROR ${COBALT_CORE_PARENT_DIR}cobalt/base/circular_buffer_shell.h)
+  set(COBALT_COMMON_INCLUDES
+    ${COBALT_GEN_DIR}
+    ${COBALT_GEN_DIR}bindings/browser/source # to cobalt/dom/event_init.h
+    ${COBALT_ROOT_DIR}gen # to ./cobalt
+    ${CHROMIUM_DIR}/src # to ./base/containers/
+    ${COBALT_ROOT_DIR}/port # to ./starboard/
+    ${CHROMIUM_DIR} # to ./base/
+    ${COBALT_ROOT_DIR} # to ./port/
+    ${COBALT_CORE_PARENT_DIR} # to ./cobalt
+  )
+  add_subdirectory(src/cobalt) # requires skia above
+  set(COBALT_LIBRARY_NAME COBALT_CORE)
+  #message(FATAL_ERROR ${WTF_LIBRARY_NAME})
+  #set(WTF_LIBS
+  #  ${WTF_LIBRARY_NAME}
+  #  #base
+  #  #libevent
+  #  #icu
+  #)
+endif(ENABLE_COBALT)
+
+#
 # PROJECT
 #
 set(PROJECT_SRC
@@ -1334,6 +1386,11 @@ if(EMSCRIPTEN)
   target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE
     ${SKIA_INCLUDES}
   )
+  target_include_directories(${PROJECT_NAME} PRIVATE
+    ${GEN_COMBINED_DIR}
+    ${COBALT_COMMON_INCLUDES}
+    #${CMAKE_CURRENT_SOURCE_DIR}/src # to ./cobalt
+  )
   # link order is top down:
   # Top is the executable, followed by directly used libraries.
   # see https://floooh.github.io/2016/01/12/cmake-dependency-juggling.html
@@ -1342,6 +1399,8 @@ if(EMSCRIPTEN)
     BLINK_RENDERER_PLATFORM
     SERVICES_NETWORK_PUBLIC_CPP
     COMPONENTS_VIZ_CLIENT
+    ${WTF_LIBRARY_NAME}
+    ${COBALT_LIBRARY_NAME}
     #
     SKIA
     #
@@ -1380,6 +1439,15 @@ if(EMSCRIPTEN)
     #
     ${LINK_OPTIONS}
   )
+  #
+  target_compile_definitions(${PROJECT_NAME} PRIVATE
+    #GLEW_NO_GLU
+    STATICALLY_LINKED_WITH_WTF=1 # NOTE: meaningful only if USE(EXPORT_MACROS)
+    #${OPENGLES2_DEFINITIONS}
+    # NOTE: prefer #ifndef NDEBUG, see https://stackoverflow.com/a/8594122
+    #"$<$<CONFIG:DEBUG>:DEBUG>"
+    ${COBALT_COMMON_DEFINES}
+  )
 else()
   target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE
     ${SKIA_INCLUDES}
@@ -1389,7 +1457,11 @@ else()
     ${SDL2_TTF_INCLUDE_DIR}
     ${HARFBUZZ_INCLUDE_DIRS}
     ${OPENGLES2_INCLUDE_DIRS}
+  )
+  target_include_directories(${PROJECT_NAME} PRIVATE
     ${GEN_COMBINED_DIR}
+    ${COBALT_COMMON_INCLUDES}
+    #${CMAKE_CURRENT_SOURCE_DIR}/src # to ./cobalt
   )
   # link order is top down:
   # Top is the executable, followed by directly used libraries.
@@ -1459,6 +1531,7 @@ else()
     #${BASE_LIBRARIES}
     #BLINK_WTF
     ${WTF_LIBRARY_NAME}
+    ${COBALT_LIBRARY_NAME}
     # media
     # "//services/ws/public/cpp/gpu",
     SKIA
@@ -1535,6 +1608,7 @@ else()
     ${OPENGLES2_DEFINITIONS}
     # NOTE: prefer #ifndef NDEBUG, see https://stackoverflow.com/a/8594122
     "$<$<CONFIG:DEBUG>:DEBUG>"
+    ${COBALT_COMMON_DEFINES}
   )
 endif() # EMSCRIPTEN
 

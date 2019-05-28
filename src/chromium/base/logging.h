@@ -553,7 +553,9 @@ class CheckOpResult {
 //   CHECK. This is achieved by putting opcodes that will cause a non
 //   continuable exception after the actual trap instruction.
 // - Don't cause too much binary bloat.
-#if defined(COMPILER_GCC)
+#if defined(__EMSCRIPTEN__)
+  #define TRAP_SEQUENCE() ((void)(0))
+#elif defined(COMPILER_GCC)
 
 #if defined(ARCH_CPU_X86_FAMILY) && !defined(OS_NACL)
 // int 3 will generate a SIGTRAP.

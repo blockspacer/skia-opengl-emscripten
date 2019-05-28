@@ -556,6 +556,11 @@ static sk_sp<SkImage> skImageSp;
 
 #endif // ENABLE_BLINK_PLATFORM
 
+#define ENABLE_COBALT 1
+#ifdef ENABLE_COBALT
+#include "cobalt/web_animations/animation.h"
+#endif // ENABLE_COBALT
+
 #ifdef ENABLE_HARFBUZZ
 #include <hb-ot.h>
 #endif // ENABLE_HARFBUZZ
@@ -2549,6 +2554,16 @@ int main(int argc, char** argv) {
   /// so we use MakeFromData
   const int index = 0;
   //sk_sp<SkTypeface> sktp = SkTypeface::MakeFromFile("./resources/fonts/FreeSans.ttf");
+
+#ifdef ENABLE_COBALT
+  cobalt::web_animations::Animation::Data animation;
+  animation.set_start_time(base::TimeDelta::FromSeconds(2));
+  base::Optional<base::TimeDelta> local_time =
+      animation.ComputeLocalTimeFromTimelineTime(
+          base::TimeDelta::FromMilliseconds(3000));
+  // EXPECT_EQ(1.0, local_time->InSecondsF());
+  printf("local_time->InSecondsF() %f\n", local_time->InSecondsF());
+#endif // ENABLE_COBALT
 
 #ifdef ENABLE_HARFBUZZ
   sk_sp<SkTypeface> sktp = SkTypeface::MakeFromData(data, index);
