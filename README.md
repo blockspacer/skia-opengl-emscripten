@@ -1,6 +1,6 @@
 ﻿# FAQ
 
-> WHY? - Inspired by chromium, WebAssembly, emscripten, web workers, CoherentGT, WEBGL2, flutter, hummingbird, Ultralight, Awesomium, libRocket, servo, sciter, cobalt.foo, EAWebKit, QML (Qt), CEF, HTML5 & CSS3, VUE.js & REACT.js & ANGULAR.js, electron, https://github.com/livecode/livecode/blob/develop/libgraphics/src/context.cpp, chromium-lite, blink. Let`s combine best of them all together.
+> WHY? - Inspired by chromium, WebAssembly, emscripten, web workers, CoherentGT, NoesisGUI, WEBGL2, flutter, hummingbird, Ultralight, Awesomium, libRocket, servo, sciter, cobalt.foo, EAWebKit, QML (Qt), CEF, HTML5 & CSS3, VUE.js & REACT.js & ANGULAR.js, electron, https://github.com/livecode/livecode/blob/develop/libgraphics/src/context.cpp, chromium-lite, blink. Let`s combine best of them all together.
 also see https://news.ycombinator.com/item?id=17733515
 > Can`t build? - Check readme & issues.
 
@@ -723,6 +723,17 @@ url/mojom
 � webassembly compiling can be greatly sped up in chrome by enabling the #enable-webassembly-baseline setting from chrome:flags
 � Streaming Instantiation: Combining Download and Instantiation https://pspdfkit.com/blog/2018/optimize-webassembly-startup-performance/
 � Prefer WebIDL as bindings toolchain to embind https://github.com/emscripten-core/emscripten/issues/8476
+
+## Cobalt
+
+commit: aaf5d17afa24e6fba020b52139ab9cd80aeceea8
+
+see https://cobalt.foo/development/setup-linux.html
+
+git clone https://cobalt.googlesource.com/cobalt
+
+# (choose from 'debug', 'devel', 'qa', 'gold')
+cobalt/build/gyp_cobalt -C devel linux-x64x11
 
 ## FOUND CHROMIUM BUGS
 

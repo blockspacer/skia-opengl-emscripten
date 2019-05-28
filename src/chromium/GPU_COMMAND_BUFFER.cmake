@@ -94,14 +94,6 @@ list(APPEND GPU_COMMAND_BUFFER_COMMON_SOURCES
   #${GPU_COMMAND_BUFFER_DIR}common/thread_local.h",
   #${GPU_COMMAND_BUFFER_DIR}common/time.h",
   #
-  # source_set("gles2_sources")
-  #
-  ${GPU_COMMAND_BUFFER_DIR}common/gles2_cmd_format.cc
-  ${GPU_COMMAND_BUFFER_DIR}common/gles2_cmd_format.h
-  ${GPU_COMMAND_BUFFER_DIR}common/gles2_cmd_format_autogen.h
-  ${GPU_COMMAND_BUFFER_DIR}common/gles2_cmd_ids.h
-  ${GPU_COMMAND_BUFFER_DIR}common/gles2_cmd_ids_autogen.h
-  #
   # source_set("raster_sources")
   #
   ${GPU_COMMAND_BUFFER_DIR}common/raster_cmd_format.cc
@@ -111,14 +103,32 @@ list(APPEND GPU_COMMAND_BUFFER_COMMON_SOURCES
   #${GPU_COMMAND_BUFFER_DIR}common/raster_cmd_ids_autogen.h",
   ${GPU_COMMAND_BUFFER_DIR}common/skia_utils.cc
   #${GPU_COMMAND_BUFFER_DIR}common/skia_utils.h",
-  #
-  # component("gles2_utils")
-  #
-  # TODO # ${GPU_COMMAND_BUFFER_DIR}common/gles2_cmd_utils.cc
-  ${GPU_COMMAND_BUFFER_DIR}common/gles2_cmd_utils.cc
-  #${GPU_COMMAND_BUFFER_DIR}common/gles2_cmd_utils.h",
-  #${GPU_COMMAND_BUFFER_DIR}common/gles2_utils_export.h",
 )
+
+if (EMSCRIPTEN)
+  list(APPEND GPU_COMMAND_BUFFER_COMMON_SOURCES
+    #
+    # source_set("gles2_sources")
+    #
+    ${GPU_COMMAND_BUFFER_DIR}common/gles2_cmd_format.cc
+    ${GPU_COMMAND_BUFFER_DIR}common/gles2_cmd_format.h
+    ${GPU_COMMAND_BUFFER_DIR}common/gles2_cmd_format_autogen.h
+    ${GPU_COMMAND_BUFFER_DIR}common/gles2_cmd_ids.h
+    ${GPU_COMMAND_BUFFER_DIR}common/gles2_cmd_ids_autogen.h
+    #
+    # component("gles2_utils")
+    #
+    # TODO # ${GPU_COMMAND_BUFFER_DIR}common/gles2_cmd_utils.cc
+    ${GPU_COMMAND_BUFFER_DIR}common/gles2_cmd_utils.cc
+    #${GPU_COMMAND_BUFFER_DIR}common/gles2_cmd_utils.h",
+    #${GPU_COMMAND_BUFFER_DIR}common/gles2_utils_export.h",
+    #
+  )
+elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+  #
+else()
+  message(FATAL_ERROR "unknown platform")
+endif()
 
 ### GPU_COMMAND_BUFFER_CLIENT ###
 
@@ -145,16 +155,22 @@ list(APPEND GPU_COMMAND_BUFFER_CLIENT_SOURCES
   ${GPU_COMMAND_BUFFER_DIR}client/transfer_buffer_cmd_copy_helpers.h
 )
 
-list(APPEND GPU_COMMAND_BUFFER_CLIENT_SOURCES
-  # gles2_c_lib_source_files
+if (EMSCRIPTEN)
+  list(APPEND GPU_COMMAND_BUFFER_CLIENT_SOURCES
+    # gles2_c_lib_source_files
+    #
+    ${GPU_COMMAND_BUFFER_DIR}client/gles2_c_lib.cc
+    ${GPU_COMMAND_BUFFER_DIR}client/gles2_c_lib_autogen.h
+    ${GPU_COMMAND_BUFFER_DIR}client/gles2_c_lib_export.h
+    ${GPU_COMMAND_BUFFER_DIR}client/gles2_lib.cc
+    ${GPU_COMMAND_BUFFER_DIR}client/gles2_lib.h
+    #
+  )
+elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
   #
-  ${GPU_COMMAND_BUFFER_DIR}client/gles2_c_lib.cc
-  ${GPU_COMMAND_BUFFER_DIR}client/gles2_c_lib_autogen.h
-  ${GPU_COMMAND_BUFFER_DIR}client/gles2_c_lib_export.h
-  ${GPU_COMMAND_BUFFER_DIR}client/gles2_lib.cc
-  ${GPU_COMMAND_BUFFER_DIR}client/gles2_lib.h
-  #
-)
+else()
+  message(FATAL_ERROR "unknown platform")
+endif()
 
 #configs += [ "//gpu:gpu_implementation" ]
 #
@@ -173,216 +189,222 @@ list(APPEND GPU_COMMAND_BUFFER_CLIENT_SOURCES
 
 ### GPU_COMMAND_BUFFER_ES2 ###
 #
-list(APPEND GPU_COMMAND_BUFFER_ES2_SOURCES
-  ${GPU_DIR}gles2_conform_support/egl/config.cc
-  ${GPU_DIR}gles2_conform_support/egl/config.h
-  # TODO # ${GPU_DIR}gles2_conform_support/egl/context.cc
-  # TODO # ${GPU_DIR}gles2_conform_support/egl/context.h
-  # TODO # ${GPU_DIR}gles2_conform_support/egl/display.cc
-  # TODO # ${GPU_DIR}gles2_conform_support/egl/display.h
-  # TODO # ${GPU_DIR}gles2_conform_support/egl/egl.cc
-  ${GPU_DIR}gles2_conform_support/egl/surface.cc
-  ${GPU_DIR}gles2_conform_support/egl/surface.h
-  ${GPU_DIR}gles2_conform_support/egl/test_support.cc
-  ${GPU_DIR}gles2_conform_support/egl/test_support.h
-  # TODO # ${GPU_DIR}gles2_conform_support/egl/thread_state.cc
-  # TODO # ${GPU_DIR}gles2_conform_support/egl/thread_state.h
-)
+if (EMSCRIPTEN)
+  list(APPEND GPU_COMMAND_BUFFER_ES2_SOURCES
+    ${GPU_DIR}gles2_conform_support/egl/config.cc
+    ${GPU_DIR}gles2_conform_support/egl/config.h
+    # TODO # ${GPU_DIR}gles2_conform_support/egl/context.cc
+    # TODO # ${GPU_DIR}gles2_conform_support/egl/context.h
+    # TODO # ${GPU_DIR}gles2_conform_support/egl/display.cc
+    # TODO # ${GPU_DIR}gles2_conform_support/egl/display.h
+    # TODO # ${GPU_DIR}gles2_conform_support/egl/egl.cc
+    ${GPU_DIR}gles2_conform_support/egl/surface.cc
+    ${GPU_DIR}gles2_conform_support/egl/surface.h
+    ${GPU_DIR}gles2_conform_support/egl/test_support.cc
+    ${GPU_DIR}gles2_conform_support/egl/test_support.h
+    # TODO # ${GPU_DIR}gles2_conform_support/egl/thread_state.cc
+    # TODO # ${GPU_DIR}gles2_conform_support/egl/thread_state.h
+  )
+  #  ${GPU_COMMAND_BUFFER_ES2_DIR}gles2_cmd_helper.cc
+  #  #  "gles2_cmd_helper.h",
+  #  # "gles2_cmd_helper_autogen.h",
+  #
+  # gles2_implementation_source_files
+  #
+  #  "buffer_tracker.cc",
+  #  "buffer_tracker.h",
+  #  "client_context_state.cc",
+  #  "client_context_state.h",
+  #  "client_context_state_autogen.h",
+  #  "client_context_state_impl_autogen.h",
+  #  "client_transfer_cache.cc",
+  #  "client_transfer_cache.h",
+  #  "gles2_impl_export.h",
+  #  "gles2_implementation.cc",
+  #  "gles2_implementation.h",
+  #  "gles2_implementation_autogen.h",
+  #  "gles2_implementation_impl_autogen.h",
+  #  "gles2_trace_implementation.cc",
+  #  "gles2_trace_implementation.h",
+  #  "gles2_trace_implementation_autogen.h",
+  #  "gles2_trace_implementation_impl_autogen.h",
+  #  "gpu_switches.cc",
+  #  "gpu_switches.h",
+  #  "implementation_base.cc",
+  #  "implementation_base.h",
+  #  "logging.cc",
+  #  "logging.h",
+  #  "program_info_manager.cc",
+  #  "program_info_manager.h",
+  #  "query_tracker.cc",
+  #  "query_tracker.h",
+  #  "readback_buffer_shadow_tracker.cc",
+  #  "readback_buffer_shadow_tracker.h",
+  #  "share_group.cc",
+  #  "share_group.h",
+  #  "vertex_array_object_manager.cc",
+  #  "vertex_array_object_manager.h",
+  #
+  # gles2_interface
+  #
+  # "gles2_interface.h",
+  #
+  # "raster_interface"
+  #
+  # "raster_interface.h",
+  # "raster_interface_autogen.h",
+  #
+  # "gles2_implementation"
+  #  defines = [ "GLES2_IMPL_IMPLEMENTATION" ]
+  #  if (enable_gpu_client_logging) {
+  #    defines += [ "GPU_ENABLE_CLIENT_LOGGING" ]
+  #  }
+  #  all_dependent_configs = [ "//third_party/khronos:khronos_headers" ]
+  #
+  #  deps = [
+  #    ":client",
+  #    ":gles2_cmd_helper",
+  #    ":gles2_interface",
+  #    "//base",
+  #    "//gpu/command_buffer/common",
+  #    "//gpu/command_buffer/common:gles2",
+  #    "//gpu/command_buffer/common:gles2_utils",
+  #    "//ui/gfx/geometry",
+  #  ]
+  #
+  #  if (!is_nacl) {
+  #    deps += [
+  #      "//components/viz/common:resource_format",
+  #      "//ui/gfx:color_space",
+  #      "//ui/gfx/ipc/color",
+  #    ]
+  #  }
+  #}
+  #
+  # source_set("raster_sources")
+  #
+  # client_font_manager.cc",
+  # client_font_manager.h",
+  # raster_cmd_helper.cc",
+  # raster_cmd_helper.h",
+  # raster_cmd_helper_autogen.h",
+  # raster_implementation.cc",
+  # raster_implementation.h",
+  # raster_implementation_autogen.h",
+  # raster_implementation_gles.cc",
+  # raster_implementation_gles.h",
+  # raster_implementation_impl_autogen.h",
+  #)
+  #
+  #configs += [ "//gpu:raster_implementation" ]
+  #deps = [
+  #  ":client",
+  #  ":gles2_implementation",
+  #  ":gles2_interface",
+  #  ":raster_interface",
+  #  "//base",
+  #  "//cc/paint",
+  #  "//components/viz/common:resource_format_utils",
+  #  "//gpu/command_buffer/common",
+  #  "//gpu/command_buffer/common:gles2",
+  #  "//gpu/command_buffer/common:gles2_utils",
+  #  "//gpu/command_buffer/common:raster",
+  #  "//ui/gfx:color_space",
+  #  "//ui/gfx/geometry",
+  #  "//ui/gfx/ipc/color",
+  #]
+  #
+  # "gles2_implementation_no_check"
+  # defines = [
+  #   "GLES2_IMPL_IMPLEMENTATION",
+  #   "GLES2_CONFORMANCE_TESTS=1",
+  # ]
+  # if (enable_gpu_client_logging) {
+  #   defines += [ "GPU_ENABLE_CLIENT_LOGGING" ]
+  # }
+  #
+  # deps = [
+  #   ":client",
+  #   ":gles2_cmd_helper",
+  #   ":gles2_interface",
+  #   "//base",
+  #   "//gpu/command_buffer/common",
+  #   "//gpu/command_buffer/common:gles2",
+  #   "//gpu/command_buffer/common:gles2_utils",
+  #   "//ui/gfx",
+  #   "//ui/gfx/geometry",
+  # ]
+  #
+  # if (!is_nacl) {
+  #   deps += [
+  #     "//cc/paint",
+  #     "//ui/gfx:color_space",
+  #     "//ui/gfx/ipc/color",
+  #   ]
+  # }
+  #
+  #component("gles2_c_lib") {
+  #  sources = gles2_c_lib_source_files
+  #  defines = [ "GLES2_C_LIB_IMPLEMENTATION" ]
+  #
+  #  deps = [
+  #    ":gles2_interface",
+  #    "//base",
+  #    "//base/third_party/dynamic_annotations",
+  #    "//gpu/command_buffer/common",
+  #  ]
+  #}
+  #
+  # Same as gles2_c_lib except with no parameter checking. Required for
+  # OpenGL ES 2.0 conformance tests.
+  #jumbo_component("gles2_c_lib_nocheck") {
+  #  sources = gles2_c_lib_source_files
+  #
+  #  defines = [
+  #    "GLES2_C_LIB_IMPLEMENTATION",
+  #    "GLES2_CONFORMANCE_TESTS=1",
+  #  ]
+  #  deps = [
+  #    ":gles2_interface",
+  #    "//base",
+  #    "//base/third_party/dynamic_annotations",
+  #    "//gpu/command_buffer/common",
+  #  ]
+  #}
+  #
+  #  deps = [
+  #    ":gpu",
+  #    "//base",
+  #    "//gpu/command_buffer/client:gles2_c_lib",
+  #    "//gpu/command_buffer/client:gles2_cmd_helper",
+  #    "//gpu/command_buffer/client:gles2_implementation",
+  #    "//gpu/command_buffer/service:gles2",
+  #    "//ui/gl",
+  #    "//ui/gl/init",
+  #  ]
+  #  defines = [
+  #    "COMMAND_BUFFER_GLES_LIB_SUPPORT_ONLY",
+  #    "EGLAPIENTRY=",
+  #  ]
+  #  if (is_android) {
+  #    configs -= [ "//build/config/android:hide_all_but_jni_onload" ]
+  #  }
+  #  if (current_os == "win") {
+  #    defines += [ "EGLAPI=__declspec(dllexport)" ]
+  #  } else {
+  #    defines += [ "EGLAPI=__attribute__((visibility(\"default\")))" ]
+  #  }
+elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+  #
+else()
+  message(FATAL_ERROR "unknown platform")
+endif()
 #
 # gles2_cmd_helper_sources
 #
 list(APPEND GPU_COMMAND_BUFFER_CLIENT_SOURCES
   ${GPU_COMMAND_BUFFER_DIR}client/gles2_cmd_helper.cc
 )
-#  ${GPU_COMMAND_BUFFER_ES2_DIR}gles2_cmd_helper.cc
-#  #  "gles2_cmd_helper.h",
-#  # "gles2_cmd_helper_autogen.h",
-#
-# gles2_implementation_source_files
-#
-#  "buffer_tracker.cc",
-#  "buffer_tracker.h",
-#  "client_context_state.cc",
-#  "client_context_state.h",
-#  "client_context_state_autogen.h",
-#  "client_context_state_impl_autogen.h",
-#  "client_transfer_cache.cc",
-#  "client_transfer_cache.h",
-#  "gles2_impl_export.h",
-#  "gles2_implementation.cc",
-#  "gles2_implementation.h",
-#  "gles2_implementation_autogen.h",
-#  "gles2_implementation_impl_autogen.h",
-#  "gles2_trace_implementation.cc",
-#  "gles2_trace_implementation.h",
-#  "gles2_trace_implementation_autogen.h",
-#  "gles2_trace_implementation_impl_autogen.h",
-#  "gpu_switches.cc",
-#  "gpu_switches.h",
-#  "implementation_base.cc",
-#  "implementation_base.h",
-#  "logging.cc",
-#  "logging.h",
-#  "program_info_manager.cc",
-#  "program_info_manager.h",
-#  "query_tracker.cc",
-#  "query_tracker.h",
-#  "readback_buffer_shadow_tracker.cc",
-#  "readback_buffer_shadow_tracker.h",
-#  "share_group.cc",
-#  "share_group.h",
-#  "vertex_array_object_manager.cc",
-#  "vertex_array_object_manager.h",
-#
-# gles2_interface
-#
-# "gles2_interface.h",
-#
-# "raster_interface"
-#
-# "raster_interface.h",
-# "raster_interface_autogen.h",
-#
-# "gles2_implementation"
-#  defines = [ "GLES2_IMPL_IMPLEMENTATION" ]
-#  if (enable_gpu_client_logging) {
-#    defines += [ "GPU_ENABLE_CLIENT_LOGGING" ]
-#  }
-#  all_dependent_configs = [ "//third_party/khronos:khronos_headers" ]
-#
-#  deps = [
-#    ":client",
-#    ":gles2_cmd_helper",
-#    ":gles2_interface",
-#    "//base",
-#    "//gpu/command_buffer/common",
-#    "//gpu/command_buffer/common:gles2",
-#    "//gpu/command_buffer/common:gles2_utils",
-#    "//ui/gfx/geometry",
-#  ]
-#
-#  if (!is_nacl) {
-#    deps += [
-#      "//components/viz/common:resource_format",
-#      "//ui/gfx:color_space",
-#      "//ui/gfx/ipc/color",
-#    ]
-#  }
-#}
-#
-# source_set("raster_sources")
-#
-# client_font_manager.cc",
-# client_font_manager.h",
-# raster_cmd_helper.cc",
-# raster_cmd_helper.h",
-# raster_cmd_helper_autogen.h",
-# raster_implementation.cc",
-# raster_implementation.h",
-# raster_implementation_autogen.h",
-# raster_implementation_gles.cc",
-# raster_implementation_gles.h",
-# raster_implementation_impl_autogen.h",
-#)
-#
-#configs += [ "//gpu:raster_implementation" ]
-#deps = [
-#  ":client",
-#  ":gles2_implementation",
-#  ":gles2_interface",
-#  ":raster_interface",
-#  "//base",
-#  "//cc/paint",
-#  "//components/viz/common:resource_format_utils",
-#  "//gpu/command_buffer/common",
-#  "//gpu/command_buffer/common:gles2",
-#  "//gpu/command_buffer/common:gles2_utils",
-#  "//gpu/command_buffer/common:raster",
-#  "//ui/gfx:color_space",
-#  "//ui/gfx/geometry",
-#  "//ui/gfx/ipc/color",
-#]
-#
-# "gles2_implementation_no_check"
-# defines = [
-#   "GLES2_IMPL_IMPLEMENTATION",
-#   "GLES2_CONFORMANCE_TESTS=1",
-# ]
-# if (enable_gpu_client_logging) {
-#   defines += [ "GPU_ENABLE_CLIENT_LOGGING" ]
-# }
-#
-# deps = [
-#   ":client",
-#   ":gles2_cmd_helper",
-#   ":gles2_interface",
-#   "//base",
-#   "//gpu/command_buffer/common",
-#   "//gpu/command_buffer/common:gles2",
-#   "//gpu/command_buffer/common:gles2_utils",
-#   "//ui/gfx",
-#   "//ui/gfx/geometry",
-# ]
-#
-# if (!is_nacl) {
-#   deps += [
-#     "//cc/paint",
-#     "//ui/gfx:color_space",
-#     "//ui/gfx/ipc/color",
-#   ]
-# }
-#
-#component("gles2_c_lib") {
-#  sources = gles2_c_lib_source_files
-#  defines = [ "GLES2_C_LIB_IMPLEMENTATION" ]
-#
-#  deps = [
-#    ":gles2_interface",
-#    "//base",
-#    "//base/third_party/dynamic_annotations",
-#    "//gpu/command_buffer/common",
-#  ]
-#}
-#
-# Same as gles2_c_lib except with no parameter checking. Required for
-# OpenGL ES 2.0 conformance tests.
-#jumbo_component("gles2_c_lib_nocheck") {
-#  sources = gles2_c_lib_source_files
-#
-#  defines = [
-#    "GLES2_C_LIB_IMPLEMENTATION",
-#    "GLES2_CONFORMANCE_TESTS=1",
-#  ]
-#  deps = [
-#    ":gles2_interface",
-#    "//base",
-#    "//base/third_party/dynamic_annotations",
-#    "//gpu/command_buffer/common",
-#  ]
-#}
-#
-#  deps = [
-#    ":gpu",
-#    "//base",
-#    "//gpu/command_buffer/client:gles2_c_lib",
-#    "//gpu/command_buffer/client:gles2_cmd_helper",
-#    "//gpu/command_buffer/client:gles2_implementation",
-#    "//gpu/command_buffer/service:gles2",
-#    "//ui/gl",
-#    "//ui/gl/init",
-#  ]
-#  defines = [
-#    "COMMAND_BUFFER_GLES_LIB_SUPPORT_ONLY",
-#    "EGLAPIENTRY=",
-#  ]
-#  if (is_android) {
-#    configs -= [ "//build/config/android:hide_all_but_jni_onload" ]
-#  }
-#  if (current_os == "win") {
-#    defines += [ "EGLAPI=__declspec(dllexport)" ]
-#  } else {
-#    defines += [ "EGLAPI=__attribute__((visibility(\"default\")))" ]
-#  }
 
 ### GPU_CONFIG ###
 set(GPU_CONFIG_SOURCES

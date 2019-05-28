@@ -1446,7 +1446,6 @@ else()
     #
     ${LINK_OPTIONS}
     #
-
     #${libpng_LIB}
     #GLIBPNG
     BLINK_PUBLIC_COMMON

@@ -2,7 +2,7 @@
 # portable build script based on "cmake -P"
 #
 # example:
-# cmake -DBUILD_FILE_DIR=/mnt/data/chromium/src -DTARGET=combined -DCOPY_TO_PARENT_DIR=~/workspace/skia-opengl-emscripten/src/chromium/gen/ -DCLEAN_BUILD=OFF -DCLEAN_GEN=OFF -DCLEAN_COPY=OFF -P tools/RunGen.cmake
+# cmake -DBUILD_FILE_DIR=~/chromium/src -DTARGET=combined -DCOPY_TO_PARENT_DIR=~/skia-opengl-emscripten/src/chromium/gen/ -DCLEAN_BUILD=OFF -DCLEAN_GEN=OFF -DCLEAN_COPY=OFF -P tools/RunGen.cmake
 #
 # run that file with cmake -DVAR=VALUE -DFOO=BAR -P <script-file> <arg5> <arg6> ...
 
@@ -396,6 +396,10 @@ list(APPEND blink_public_GEN_TARGETS
   third_party/blink/renderer/core/workers:workers
   third_party/blink/renderer/core/xml:xml
   third_party/blink/renderer/core/xmlhttprequest:xmlhttprequest
+  #
+  third_party/blink/renderer/core/html/parser:parser
+  third_party/blink/renderer/core/html:html
+  third_party/blink/public/mojom:mojom_mhtml_load_result
   #
   # blink modules
   #
