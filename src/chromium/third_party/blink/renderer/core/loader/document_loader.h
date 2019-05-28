@@ -41,7 +41,11 @@
 #include "third_party/blink/public/web/web_frame_load_type.h"
 #include "third_party/blink/public/web/web_navigation_params.h"
 #include "third_party/blink/public/web/web_navigation_type.h"
+
+#if defined(__TODO__)
 #include "third_party/blink/renderer/bindings/core/v8/source_location.h"
+#endif
+
 #include "third_party/blink/renderer/core/core_export.h"
 #include "third_party/blink/renderer/core/dom/weak_identifier_map.h"
 #include "third_party/blink/renderer/core/frame/dactyloscoper.h"

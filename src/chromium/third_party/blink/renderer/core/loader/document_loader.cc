@@ -1098,6 +1098,8 @@ void DocumentLoader::SetDefersLoading(bool defers) {
 void DocumentLoader::DetachFromFrame(bool flush_microtask_queue) {
   DCHECK(frame_);
   StopLoading();
+
+#if defined(__TODO__)
   if (flush_microtask_queue) {
     // Flush microtask queue so that they all run on pre-navigation context.
     // TODO(dcheng): This is a temporary hack that should be removed. This is
@@ -1112,6 +1114,8 @@ void DocumentLoader::DetachFromFrame(bool flush_microtask_queue) {
     // microtasks with a v8::Context, remove this hack.
     Microtask::PerformCheckpoint(V8PerIsolateData::MainThreadIsolate());
   }
+#endif
+
   ScriptForbiddenScope forbid_scripts;
 
   // If that load cancellation triggered another detach, leave.
