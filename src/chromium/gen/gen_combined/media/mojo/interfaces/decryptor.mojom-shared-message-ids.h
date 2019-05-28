@@ -12,24 +12,24 @@ namespace mojom {
 namespace internal {
 
 
-// The 1414730912 value is based on sha256(salt + "Decryptor1").
-constexpr uint32_t kDecryptor_Initialize_Name = 1414730912;
-// The 1742136056 value is based on sha256(salt + "Decryptor2").
-constexpr uint32_t kDecryptor_Decrypt_Name = 1742136056;
-// The 324534671 value is based on sha256(salt + "Decryptor3").
-constexpr uint32_t kDecryptor_CancelDecrypt_Name = 324534671;
-// The 487461353 value is based on sha256(salt + "Decryptor4").
-constexpr uint32_t kDecryptor_InitializeAudioDecoder_Name = 487461353;
-// The 1590869234 value is based on sha256(salt + "Decryptor5").
-constexpr uint32_t kDecryptor_InitializeVideoDecoder_Name = 1590869234;
-// The 1727920603 value is based on sha256(salt + "Decryptor6").
-constexpr uint32_t kDecryptor_DecryptAndDecodeAudio_Name = 1727920603;
-// The 346780044 value is based on sha256(salt + "Decryptor7").
-constexpr uint32_t kDecryptor_DecryptAndDecodeVideo_Name = 346780044;
-// The 1762561090 value is based on sha256(salt + "Decryptor8").
-constexpr uint32_t kDecryptor_ResetDecoder_Name = 1762561090;
-// The 2042876326 value is based on sha256(salt + "Decryptor9").
-constexpr uint32_t kDecryptor_DeinitializeDecoder_Name = 2042876326;
+// The 1563729551 value is based on sha256(salt + "Decryptor1").
+constexpr uint32_t kDecryptor_Initialize_Name = 1563729551;
+// The 1253743538 value is based on sha256(salt + "Decryptor2").
+constexpr uint32_t kDecryptor_Decrypt_Name = 1253743538;
+// The 1172447203 value is based on sha256(salt + "Decryptor3").
+constexpr uint32_t kDecryptor_CancelDecrypt_Name = 1172447203;
+// The 328891278 value is based on sha256(salt + "Decryptor4").
+constexpr uint32_t kDecryptor_InitializeAudioDecoder_Name = 328891278;
+// The 1223085643 value is based on sha256(salt + "Decryptor5").
+constexpr uint32_t kDecryptor_InitializeVideoDecoder_Name = 1223085643;
+// The 590129204 value is based on sha256(salt + "Decryptor6").
+constexpr uint32_t kDecryptor_DecryptAndDecodeAudio_Name = 590129204;
+// The 2132145640 value is based on sha256(salt + "Decryptor7").
+constexpr uint32_t kDecryptor_DecryptAndDecodeVideo_Name = 2132145640;
+// The 1535179853 value is based on sha256(salt + "Decryptor8").
+constexpr uint32_t kDecryptor_ResetDecoder_Name = 1535179853;
+// The 1313151356 value is based on sha256(salt + "Decryptor9").
+constexpr uint32_t kDecryptor_DeinitializeDecoder_Name = 1313151356;
 
 }  // namespace internal
 }  // namespace mojom

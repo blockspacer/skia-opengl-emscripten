@@ -12,10 +12,10 @@ namespace mojom {
 namespace internal {
 
 
-// The 380904094 value is based on sha256(salt + "FileSystem1").
-constexpr uint32_t kFileSystem_OpenTempDirectory_Name = 380904094;
-// The 1005314006 value is based on sha256(salt + "FileSystem2").
-constexpr uint32_t kFileSystem_OpenPersistentFileSystem_Name = 1005314006;
+// The 858064840 value is based on sha256(salt + "FileSystem1").
+constexpr uint32_t kFileSystem_OpenTempDirectory_Name = 858064840;
+// The 90258140 value is based on sha256(salt + "FileSystem2").
+constexpr uint32_t kFileSystem_OpenPersistentFileSystem_Name = 90258140;
 
 }  // namespace internal
 }  // namespace mojom

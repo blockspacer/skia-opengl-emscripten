@@ -12,10 +12,10 @@ namespace mojom {
 namespace internal {
 
 
-// The 1556067209 value is based on sha256(salt + "IdleMonitor1").
-constexpr uint32_t kIdleMonitor_Update_Name = 1556067209;
-// The 1587958310 value is based on sha256(salt + "IdleManager1").
-constexpr uint32_t kIdleManager_AddMonitor_Name = 1587958310;
+// The 1149716951 value is based on sha256(salt + "IdleMonitor1").
+constexpr uint32_t kIdleMonitor_Update_Name = 1149716951;
+// The 467010956 value is based on sha256(salt + "IdleManager1").
+constexpr uint32_t kIdleManager_AddMonitor_Name = 467010956;
 
 }  // namespace internal
 }  // namespace mojom

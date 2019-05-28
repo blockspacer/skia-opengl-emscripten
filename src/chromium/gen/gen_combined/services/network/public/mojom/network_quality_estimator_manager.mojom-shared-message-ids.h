@@ -12,10 +12,10 @@ namespace mojom {
 namespace internal {
 
 
-// The 949106185 value is based on sha256(salt + "NetworkQualityEstimatorManagerClient1").
-constexpr uint32_t kNetworkQualityEstimatorManagerClient_OnNetworkQualityChanged_Name = 949106185;
-// The 662768771 value is based on sha256(salt + "NetworkQualityEstimatorManager1").
-constexpr uint32_t kNetworkQualityEstimatorManager_RequestNotifications_Name = 662768771;
+// The 459732149 value is based on sha256(salt + "NetworkQualityEstimatorManagerClient1").
+constexpr uint32_t kNetworkQualityEstimatorManagerClient_OnNetworkQualityChanged_Name = 459732149;
+// The 2086901181 value is based on sha256(salt + "NetworkQualityEstimatorManager1").
+constexpr uint32_t kNetworkQualityEstimatorManager_RequestNotifications_Name = 2086901181;
 
 }  // namespace internal
 }  // namespace mojom

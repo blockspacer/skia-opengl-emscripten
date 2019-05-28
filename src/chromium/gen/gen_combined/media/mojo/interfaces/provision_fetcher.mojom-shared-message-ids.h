@@ -12,8 +12,8 @@ namespace mojom {
 namespace internal {
 
 
-// The 961951519 value is based on sha256(salt + "ProvisionFetcher1").
-constexpr uint32_t kProvisionFetcher_Retrieve_Name = 961951519;
+// The 549841544 value is based on sha256(salt + "ProvisionFetcher1").
+constexpr uint32_t kProvisionFetcher_Retrieve_Name = 549841544;
 
 }  // namespace internal
 }  // namespace mojom

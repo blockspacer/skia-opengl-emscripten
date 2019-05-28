@@ -12,10 +12,10 @@ namespace mojom {
 namespace internal {
 
 
-// The 1754642865 value is based on sha256(salt + "FileChooser1").
-constexpr uint32_t kFileChooser_OpenFileChooser_Name = 1754642865;
-// The 575355220 value is based on sha256(salt + "FileChooser2").
-constexpr uint32_t kFileChooser_EnumerateChosenDirectory_Name = 575355220;
+// The 1163586255 value is based on sha256(salt + "FileChooser1").
+constexpr uint32_t kFileChooser_OpenFileChooser_Name = 1163586255;
+// The 342535479 value is based on sha256(salt + "FileChooser2").
+constexpr uint32_t kFileChooser_EnumerateChosenDirectory_Name = 342535479;
 
 }  // namespace internal
 }  // namespace mojom

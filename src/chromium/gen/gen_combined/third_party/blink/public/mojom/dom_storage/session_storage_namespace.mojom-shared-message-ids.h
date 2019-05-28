@@ -12,10 +12,10 @@ namespace mojom {
 namespace internal {
 
 
-// The 375788142 value is based on sha256(salt + "SessionStorageNamespace1").
-constexpr uint32_t kSessionStorageNamespace_OpenArea_Name = 375788142;
-// The 1120015616 value is based on sha256(salt + "SessionStorageNamespace2").
-constexpr uint32_t kSessionStorageNamespace_Clone_Name = 1120015616;
+// The 1005664270 value is based on sha256(salt + "SessionStorageNamespace1").
+constexpr uint32_t kSessionStorageNamespace_OpenArea_Name = 1005664270;
+// The 1242620844 value is based on sha256(salt + "SessionStorageNamespace2").
+constexpr uint32_t kSessionStorageNamespace_Clone_Name = 1242620844;
 
 }  // namespace internal
 }  // namespace mojom

@@ -12,8 +12,8 @@ namespace mojom {
 namespace internal {
 
 
-// The 1931871722 value is based on sha256(salt + "SharedWorkerConnector1").
-constexpr uint32_t kSharedWorkerConnector_Connect_Name = 1931871722;
+// The 1688901318 value is based on sha256(salt + "SharedWorkerConnector1").
+constexpr uint32_t kSharedWorkerConnector_Connect_Name = 1688901318;
 
 }  // namespace internal
 }  // namespace mojom

@@ -12,10 +12,10 @@ namespace mojom {
 namespace internal {
 
 
-// The 671195383 value is based on sha256(salt + "TrialComparisonCertVerifierConfigClient1").
-constexpr uint32_t kTrialComparisonCertVerifierConfigClient_OnTrialConfigUpdated_Name = 671195383;
-// The 2042427620 value is based on sha256(salt + "TrialComparisonCertVerifierReportClient1").
-constexpr uint32_t kTrialComparisonCertVerifierReportClient_SendTrialReport_Name = 2042427620;
+// The 1258006251 value is based on sha256(salt + "TrialComparisonCertVerifierConfigClient1").
+constexpr uint32_t kTrialComparisonCertVerifierConfigClient_OnTrialConfigUpdated_Name = 1258006251;
+// The 737411964 value is based on sha256(salt + "TrialComparisonCertVerifierReportClient1").
+constexpr uint32_t kTrialComparisonCertVerifierReportClient_SendTrialReport_Name = 737411964;
 
 }  // namespace internal
 }  // namespace mojom

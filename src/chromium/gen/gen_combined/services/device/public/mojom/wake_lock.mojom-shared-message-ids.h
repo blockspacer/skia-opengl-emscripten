@@ -12,16 +12,16 @@ namespace mojom {
 namespace internal {
 
 
-// The 2017308072 value is based on sha256(salt + "WakeLock1").
-constexpr uint32_t kWakeLock_RequestWakeLock_Name = 2017308072;
-// The 1135940108 value is based on sha256(salt + "WakeLock2").
-constexpr uint32_t kWakeLock_CancelWakeLock_Name = 1135940108;
-// The 360144793 value is based on sha256(salt + "WakeLock3").
-constexpr uint32_t kWakeLock_AddClient_Name = 360144793;
-// The 1851030998 value is based on sha256(salt + "WakeLock4").
-constexpr uint32_t kWakeLock_ChangeType_Name = 1851030998;
-// The 184004284 value is based on sha256(salt + "WakeLock5").
-constexpr uint32_t kWakeLock_HasWakeLockForTests_Name = 184004284;
+// The 1307302290 value is based on sha256(salt + "WakeLock1").
+constexpr uint32_t kWakeLock_RequestWakeLock_Name = 1307302290;
+// The 568380260 value is based on sha256(salt + "WakeLock2").
+constexpr uint32_t kWakeLock_CancelWakeLock_Name = 568380260;
+// The 2106730064 value is based on sha256(salt + "WakeLock3").
+constexpr uint32_t kWakeLock_AddClient_Name = 2106730064;
+// The 817290248 value is based on sha256(salt + "WakeLock4").
+constexpr uint32_t kWakeLock_ChangeType_Name = 817290248;
+// The 1110926559 value is based on sha256(salt + "WakeLock5").
+constexpr uint32_t kWakeLock_HasWakeLockForTests_Name = 1110926559;
 
 }  // namespace internal
 }  // namespace mojom

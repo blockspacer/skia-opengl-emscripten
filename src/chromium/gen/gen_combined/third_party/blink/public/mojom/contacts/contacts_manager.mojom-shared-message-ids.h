@@ -12,8 +12,8 @@ namespace mojom {
 namespace internal {
 
 
-// The 1880961442 value is based on sha256(salt + "ContactsManager1").
-constexpr uint32_t kContactsManager_Select_Name = 1880961442;
+// The 1347880922 value is based on sha256(salt + "ContactsManager1").
+constexpr uint32_t kContactsManager_Select_Name = 1347880922;
 
 }  // namespace internal
 }  // namespace mojom

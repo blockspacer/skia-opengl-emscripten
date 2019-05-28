@@ -12,8 +12,8 @@ namespace mojom {
 namespace internal {
 
 
-// The 272649322 value is based on sha256(salt + "TracedProcess1").
-constexpr uint32_t kTracedProcess_ConnectToTracingService_Name = 272649322;
+// The 298868546 value is based on sha256(salt + "TracedProcess1").
+constexpr uint32_t kTracedProcess_ConnectToTracingService_Name = 298868546;
 
 }  // namespace internal
 }  // namespace mojom

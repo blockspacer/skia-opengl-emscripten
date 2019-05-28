@@ -12,12 +12,12 @@ namespace mojom {
 namespace internal {
 
 
-// The 142329108 value is based on sha256(salt + "CdmStorage1").
-constexpr uint32_t kCdmStorage_Open_Name = 142329108;
-// The 1194981230 value is based on sha256(salt + "CdmFile1").
-constexpr uint32_t kCdmFile_OpenFileForWriting_Name = 1194981230;
-// The 279369311 value is based on sha256(salt + "CdmFile2").
-constexpr uint32_t kCdmFile_CommitWrite_Name = 279369311;
+// The 1084640690 value is based on sha256(salt + "CdmStorage1").
+constexpr uint32_t kCdmStorage_Open_Name = 1084640690;
+// The 1286126947 value is based on sha256(salt + "CdmFile1").
+constexpr uint32_t kCdmFile_OpenFileForWriting_Name = 1286126947;
+// The 1147543207 value is based on sha256(salt + "CdmFile2").
+constexpr uint32_t kCdmFile_CommitWrite_Name = 1147543207;
 
 }  // namespace internal
 }  // namespace mojom

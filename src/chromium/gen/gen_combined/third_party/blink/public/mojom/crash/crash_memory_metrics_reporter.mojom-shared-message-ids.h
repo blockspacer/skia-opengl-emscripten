@@ -12,8 +12,8 @@ namespace mojom {
 namespace internal {
 
 
-// The 1530801047 value is based on sha256(salt + "CrashMemoryMetricsReporter1").
-constexpr uint32_t kCrashMemoryMetricsReporter_SetSharedMemory_Name = 1530801047;
+// The 674285290 value is based on sha256(salt + "CrashMemoryMetricsReporter1").
+constexpr uint32_t kCrashMemoryMetricsReporter_SetSharedMemory_Name = 674285290;
 
 }  // namespace internal
 }  // namespace mojom

@@ -77,7 +77,7 @@ ukm.mojom.UkmRecorderInterfaceProxy = class {
   addEntry(
       entry) {
     this.proxy.sendMessage(
-        699178147,
+        963731108,
         ukm.mojom.UkmRecorderInterface_AddEntry_ParamsSpec.$,
         null,
         [
@@ -95,7 +95,7 @@ ukm.mojom.UkmRecorderInterfaceProxy = class {
       sourceId,
       url) {
     this.proxy.sendMessage(
-        1616769892,
+        153816209,
         ukm.mojom.UkmRecorderInterface_UpdateSourceURL_ParamsSpec.$,
         null,
         [
@@ -120,12 +120,12 @@ ukm.mojom.UkmRecorderInterface = class {
     this.target_ = new mojo.internal.interfaceSupport.InterfaceTarget;
 
     this.target_.registerHandler(
-        699178147,
+        963731108,
         ukm.mojom.UkmRecorderInterface_AddEntry_ParamsSpec.$,
         null,
         impl.addEntry.bind(impl));
     this.target_.registerHandler(
-        1616769892,
+        153816209,
         ukm.mojom.UkmRecorderInterface_UpdateSourceURL_ParamsSpec.$,
         null,
         impl.updateSourceURL.bind(impl));
@@ -202,7 +202,7 @@ ukm.mojom.UkmRecorderInterfaceCallbackRouter = class {
             this.router_);
 
     this.target_.registerHandler(
-        699178147,
+        963731108,
         ukm.mojom.UkmRecorderInterface_AddEntry_ParamsSpec.$,
         null,
         this.addEntry.createTargetHandler(false /* expectsResponse */));
@@ -214,7 +214,7 @@ ukm.mojom.UkmRecorderInterfaceCallbackRouter = class {
             this.router_);
 
     this.target_.registerHandler(
-        1616769892,
+        153816209,
         ukm.mojom.UkmRecorderInterface_UpdateSourceURL_ParamsSpec.$,
         null,
         this.updateSourceURL.createTargetHandler(false /* expectsResponse */));

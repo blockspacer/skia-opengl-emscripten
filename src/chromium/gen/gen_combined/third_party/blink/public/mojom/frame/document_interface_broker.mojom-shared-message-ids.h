@@ -12,16 +12,16 @@ namespace mojom {
 namespace internal {
 
 
-// The 587194665 value is based on sha256(salt + "DocumentInterfaceBroker1").
-constexpr uint32_t kDocumentInterfaceBroker_GetAudioContextManager_Name = 587194665;
-// The 224565177 value is based on sha256(salt + "DocumentInterfaceBroker2").
-constexpr uint32_t kDocumentInterfaceBroker_GetAuthenticator_Name = 224565177;
-// The 1505258258 value is based on sha256(salt + "DocumentInterfaceBroker3").
-constexpr uint32_t kDocumentInterfaceBroker_GetCredentialManager_Name = 1505258258;
-// The 290135782 value is based on sha256(salt + "DocumentInterfaceBroker4").
-constexpr uint32_t kDocumentInterfaceBroker_GetFrameHostTestInterface_Name = 290135782;
-// The 175637116 value is based on sha256(salt + "DocumentInterfaceBroker5").
-constexpr uint32_t kDocumentInterfaceBroker_GetVirtualAuthenticatorManager_Name = 175637116;
+// The 1606399912 value is based on sha256(salt + "DocumentInterfaceBroker1").
+constexpr uint32_t kDocumentInterfaceBroker_GetAudioContextManager_Name = 1606399912;
+// The 872141364 value is based on sha256(salt + "DocumentInterfaceBroker2").
+constexpr uint32_t kDocumentInterfaceBroker_GetAuthenticator_Name = 872141364;
+// The 1572826154 value is based on sha256(salt + "DocumentInterfaceBroker3").
+constexpr uint32_t kDocumentInterfaceBroker_GetCredentialManager_Name = 1572826154;
+// The 1156449279 value is based on sha256(salt + "DocumentInterfaceBroker4").
+constexpr uint32_t kDocumentInterfaceBroker_GetFrameHostTestInterface_Name = 1156449279;
+// The 1923070218 value is based on sha256(salt + "DocumentInterfaceBroker5").
+constexpr uint32_t kDocumentInterfaceBroker_GetVirtualAuthenticatorManager_Name = 1923070218;
 
 }  // namespace internal
 }  // namespace mojom

@@ -12,10 +12,10 @@ namespace mojom {
 namespace internal {
 
 
-// The 309367246 value is based on sha256(salt + "CompositingModeWatcher1").
-constexpr uint32_t kCompositingModeWatcher_CompositingModeFallbackToSoftware_Name = 309367246;
-// The 184074394 value is based on sha256(salt + "CompositingModeReporter1").
-constexpr uint32_t kCompositingModeReporter_AddCompositingModeWatcher_Name = 184074394;
+// The 702393054 value is based on sha256(salt + "CompositingModeWatcher1").
+constexpr uint32_t kCompositingModeWatcher_CompositingModeFallbackToSoftware_Name = 702393054;
+// The 390142133 value is based on sha256(salt + "CompositingModeReporter1").
+constexpr uint32_t kCompositingModeReporter_AddCompositingModeWatcher_Name = 390142133;
 
 }  // namespace internal
 }  // namespace mojom

@@ -12,14 +12,14 @@ namespace mojom {
 namespace internal {
 
 
-// The 1084739694 value is based on sha256(salt + "AppBannerController1").
-constexpr uint32_t kAppBannerController_BannerPromptRequest_Name = 1084739694;
-// The 470725736 value is based on sha256(salt + "AppBannerEvent1").
-constexpr uint32_t kAppBannerEvent_BannerAccepted_Name = 470725736;
-// The 1819386732 value is based on sha256(salt + "AppBannerEvent2").
-constexpr uint32_t kAppBannerEvent_BannerDismissed_Name = 1819386732;
-// The 765783003 value is based on sha256(salt + "AppBannerService1").
-constexpr uint32_t kAppBannerService_DisplayAppBanner_Name = 765783003;
+// The 2131117392 value is based on sha256(salt + "AppBannerController1").
+constexpr uint32_t kAppBannerController_BannerPromptRequest_Name = 2131117392;
+// The 55638029 value is based on sha256(salt + "AppBannerEvent1").
+constexpr uint32_t kAppBannerEvent_BannerAccepted_Name = 55638029;
+// The 1987592795 value is based on sha256(salt + "AppBannerEvent2").
+constexpr uint32_t kAppBannerEvent_BannerDismissed_Name = 1987592795;
+// The 4334810 value is based on sha256(salt + "AppBannerService1").
+constexpr uint32_t kAppBannerService_DisplayAppBanner_Name = 4334810;
 
 }  // namespace internal
 }  // namespace mojom

@@ -97,8 +97,8 @@ ComputedStyleBase::ComputedStyleBase() :
     , visibility_is_inherited_(static_cast<unsigned>(true))
     , white_space_is_inherited_(static_cast<unsigned>(true))
 {
-  rare_non_inherited_usage_less_than_13_percent_data_.Init();
   box_data_.Init();
+  rare_non_inherited_usage_less_than_13_percent_data_.Init();
   surround_data_.Init();
   visual_data_.Init();
   background_data_.Init();
@@ -134,8 +134,8 @@ void ComputedStyleBase::InheritFrom(const ComputedStyleBase& other,
 
 void ComputedStyleBase::CopyNonInheritedFromCached(
     const ComputedStyleBase& other) {
-  rare_non_inherited_usage_less_than_13_percent_data_ = other.rare_non_inherited_usage_less_than_13_percent_data_;
   box_data_ = other.box_data_;
+  rare_non_inherited_usage_less_than_13_percent_data_ = other.rare_non_inherited_usage_less_than_13_percent_data_;
   surround_data_ = other.surround_data_;
   visual_data_ = other.visual_data_;
   background_data_ = other.background_data_;
@@ -337,15 +337,6 @@ bool ComputedStyleBase::UpdatePropertySpecificDifferencesTextDecorationOrColor(c
 
     }
     if (a.rare_inherited_usage_less_than_40_percent_data_.Get() != b.rare_inherited_usage_less_than_40_percent_data_.Get()) {
-      if (a.rare_inherited_usage_less_than_40_percent_data_->rare_inherited_usage_less_than_100_percent_data_.Get() != b.rare_inherited_usage_less_than_40_percent_data_->rare_inherited_usage_less_than_100_percent_data_.Get()) {
-        if (a.rare_inherited_usage_less_than_40_percent_data_->rare_inherited_usage_less_than_100_percent_data_->text_underline_position_ != b.rare_inherited_usage_less_than_40_percent_data_->rare_inherited_usage_less_than_100_percent_data_->text_underline_position_)
-          return true;
-        if (a.rare_inherited_usage_less_than_40_percent_data_->rare_inherited_usage_less_than_100_percent_data_->text_decoration_skip_ink_ != b.rare_inherited_usage_less_than_40_percent_data_->rare_inherited_usage_less_than_100_percent_data_->text_decoration_skip_ink_)
-          return true;
-        if (a.CaretColor() != b.CaretColor())
-          return true;
-
-      }
       if (a.rare_inherited_usage_less_than_40_percent_data_->rare_inherited_usage_less_than_40_percent_sub_data_.Get() != b.rare_inherited_usage_less_than_40_percent_data_->rare_inherited_usage_less_than_40_percent_sub_data_.Get()) {
         if (a.rare_inherited_usage_less_than_40_percent_data_->rare_inherited_usage_less_than_40_percent_sub_data_->text_emphasis_fill_ != b.rare_inherited_usage_less_than_40_percent_data_->rare_inherited_usage_less_than_40_percent_sub_data_->text_emphasis_fill_)
           return true;
@@ -364,6 +355,15 @@ bool ComputedStyleBase::UpdatePropertySpecificDifferencesTextDecorationOrColor(c
         if (a.VisitedLinkTextEmphasisColor() != b.VisitedLinkTextEmphasisColor())
           return true;
         if (a.VisitedLinkCaretColor() != b.VisitedLinkCaretColor())
+          return true;
+
+      }
+      if (a.rare_inherited_usage_less_than_40_percent_data_->rare_inherited_usage_less_than_100_percent_data_.Get() != b.rare_inherited_usage_less_than_40_percent_data_->rare_inherited_usage_less_than_100_percent_data_.Get()) {
+        if (a.rare_inherited_usage_less_than_40_percent_data_->rare_inherited_usage_less_than_100_percent_data_->text_underline_position_ != b.rare_inherited_usage_less_than_40_percent_data_->rare_inherited_usage_less_than_100_percent_data_->text_underline_position_)
+          return true;
+        if (a.rare_inherited_usage_less_than_40_percent_data_->rare_inherited_usage_less_than_100_percent_data_->text_decoration_skip_ink_ != b.rare_inherited_usage_less_than_40_percent_data_->rare_inherited_usage_less_than_100_percent_data_->text_decoration_skip_ink_)
+          return true;
+        if (a.CaretColor() != b.CaretColor())
           return true;
 
       }
@@ -440,7 +440,26 @@ bool ComputedStyleBase::UpdatePropertySpecificDifferencesTransform(const Compute
 }
 
 bool ComputedStyleBase::DiffNeedsFullLayout(const ComputedStyle& a, const ComputedStyle& b) {
-  if (a.rare_non_inherited_usage_less_than_13_percent_data_.Get() != b.rare_non_inherited_usage_less_than_13_percent_data_.Get()) {
+  if (a.box_data_.Get() != b.box_data_.Get()) {
+      if (a.box_data_->width_ != b.box_data_->width_)
+        return true;
+      if (a.box_data_->min_width_ != b.box_data_->min_width_)
+        return true;
+      if (a.box_data_->max_width_ != b.box_data_->max_width_)
+        return true;
+      if (a.box_data_->height_ != b.box_data_->height_)
+        return true;
+      if (a.box_data_->min_height_ != b.box_data_->min_height_)
+        return true;
+      if (a.box_data_->max_height_ != b.box_data_->max_height_)
+        return true;
+      if (a.box_data_->vertical_align_length_ != b.box_data_->vertical_align_length_)
+        return true;
+      if (a.box_data_->box_sizing_ != b.box_data_->box_sizing_)
+        return true;
+
+    }
+    if (a.rare_non_inherited_usage_less_than_13_percent_data_.Get() != b.rare_non_inherited_usage_less_than_13_percent_data_.Get()) {
       if (a.rare_non_inherited_usage_less_than_13_percent_data_->rare_non_inherited_usage_less_than_33_percent_data_.Get() != b.rare_non_inherited_usage_less_than_13_percent_data_->rare_non_inherited_usage_less_than_33_percent_data_.Get()) {
         if (a.rare_non_inherited_usage_less_than_13_percent_data_->rare_non_inherited_usage_less_than_33_percent_data_->rare_non_inherited_usage_less_than_100_percent_data_.Get() != b.rare_non_inherited_usage_less_than_13_percent_data_->rare_non_inherited_usage_less_than_33_percent_data_->rare_non_inherited_usage_less_than_100_percent_data_.Get()) {
           if (a.rare_non_inherited_usage_less_than_13_percent_data_->rare_non_inherited_usage_less_than_33_percent_data_->rare_non_inherited_usage_less_than_100_percent_data_->align_content_ != b.rare_non_inherited_usage_less_than_13_percent_data_->rare_non_inherited_usage_less_than_33_percent_data_->rare_non_inherited_usage_less_than_100_percent_data_->align_content_)
@@ -463,25 +482,6 @@ bool ComputedStyleBase::DiffNeedsFullLayout(const ComputedStyle& a, const Comput
         return true;
 
     }
-    if (a.box_data_.Get() != b.box_data_.Get()) {
-      if (a.box_data_->width_ != b.box_data_->width_)
-        return true;
-      if (a.box_data_->min_width_ != b.box_data_->min_width_)
-        return true;
-      if (a.box_data_->max_width_ != b.box_data_->max_width_)
-        return true;
-      if (a.box_data_->height_ != b.box_data_->height_)
-        return true;
-      if (a.box_data_->min_height_ != b.box_data_->min_height_)
-        return true;
-      if (a.box_data_->max_height_ != b.box_data_->max_height_)
-        return true;
-      if (a.box_data_->vertical_align_length_ != b.box_data_->vertical_align_length_)
-        return true;
-      if (a.box_data_->box_sizing_ != b.box_data_->box_sizing_)
-        return true;
-
-    }
     if (a.VerticalAlign() != b.VerticalAlign())
       return true;
     if (a.GetPosition() != b.GetPosition())
@@ -491,17 +491,17 @@ bool ComputedStyleBase::DiffNeedsFullLayout(const ComputedStyle& a, const Comput
 }
 
 bool ComputedStyleBase::UpdatePropertySpecificDifferencesZIndex(const ComputedStyle& a, const ComputedStyle& b) {
-  if (a.rare_non_inherited_usage_less_than_13_percent_data_.Get() != b.rare_non_inherited_usage_less_than_13_percent_data_.Get()) {
+  if (a.box_data_.Get() != b.box_data_.Get()) {
+      if (a.box_data_->z_index_ != b.box_data_->z_index_)
+        return true;
+
+    }
+    if (a.rare_non_inherited_usage_less_than_13_percent_data_.Get() != b.rare_non_inherited_usage_less_than_13_percent_data_.Get()) {
       if (a.rare_non_inherited_usage_less_than_13_percent_data_->rare_non_inherited_usage_less_than_13_percent_sub_data_.Get() != b.rare_non_inherited_usage_less_than_13_percent_data_->rare_non_inherited_usage_less_than_13_percent_sub_data_.Get()) {
         if (a.IsStackingContext() != b.IsStackingContext())
           return true;
 
       }
-
-    }
-    if (a.box_data_.Get() != b.box_data_.Get()) {
-      if (a.box_data_->z_index_ != b.box_data_->z_index_)
-        return true;
 
     }
 
@@ -869,23 +869,6 @@ bool ComputedStyleBase::DiffNeedsFullLayoutAndPaintInvalidation(const ComputedSt
 
     }
     if (a.rare_inherited_usage_less_than_40_percent_data_.Get() != b.rare_inherited_usage_less_than_40_percent_data_.Get()) {
-      if (a.rare_inherited_usage_less_than_40_percent_data_->rare_inherited_usage_less_than_100_percent_data_.Get() != b.rare_inherited_usage_less_than_40_percent_data_->rare_inherited_usage_less_than_100_percent_data_.Get()) {
-        if (a.rare_inherited_usage_less_than_40_percent_data_->rare_inherited_usage_less_than_100_percent_data_->text_align_last_ != b.rare_inherited_usage_less_than_40_percent_data_->rare_inherited_usage_less_than_100_percent_data_->text_align_last_)
-          return true;
-        if (a.rare_inherited_usage_less_than_40_percent_data_->rare_inherited_usage_less_than_100_percent_data_->hyphens_ != b.rare_inherited_usage_less_than_40_percent_data_->rare_inherited_usage_less_than_100_percent_data_->hyphens_)
-          return true;
-        if (a.rare_inherited_usage_less_than_40_percent_data_->rare_inherited_usage_less_than_100_percent_data_->respect_image_orientation_ != b.rare_inherited_usage_less_than_40_percent_data_->rare_inherited_usage_less_than_100_percent_data_->respect_image_orientation_)
-          return true;
-        if (a.rare_inherited_usage_less_than_40_percent_data_->rare_inherited_usage_less_than_100_percent_data_->text_justify_ != b.rare_inherited_usage_less_than_40_percent_data_->rare_inherited_usage_less_than_100_percent_data_->text_justify_)
-          return true;
-        if (a.rare_inherited_usage_less_than_40_percent_data_->rare_inherited_usage_less_than_100_percent_data_->text_orientation_ != b.rare_inherited_usage_less_than_40_percent_data_->rare_inherited_usage_less_than_100_percent_data_->text_orientation_)
-          return true;
-        if (a.rare_inherited_usage_less_than_40_percent_data_->rare_inherited_usage_less_than_100_percent_data_->text_combine_ != b.rare_inherited_usage_less_than_40_percent_data_->rare_inherited_usage_less_than_100_percent_data_->text_combine_)
-          return true;
-        if (a.rare_inherited_usage_less_than_40_percent_data_->rare_inherited_usage_less_than_100_percent_data_->tab_size_ != b.rare_inherited_usage_less_than_40_percent_data_->rare_inherited_usage_less_than_100_percent_data_->tab_size_)
-          return true;
-
-      }
       if (a.rare_inherited_usage_less_than_40_percent_data_->rare_inherited_usage_less_than_40_percent_sub_data_.Get() != b.rare_inherited_usage_less_than_40_percent_data_->rare_inherited_usage_less_than_40_percent_sub_data_.Get()) {
         if (a.rare_inherited_usage_less_than_40_percent_data_->rare_inherited_usage_less_than_40_percent_sub_data_->highlight_ != b.rare_inherited_usage_less_than_40_percent_data_->rare_inherited_usage_less_than_40_percent_sub_data_->highlight_)
           return true;
@@ -914,6 +897,23 @@ bool ComputedStyleBase::DiffNeedsFullLayoutAndPaintInvalidation(const ComputedSt
         if (a.rare_inherited_usage_less_than_40_percent_data_->rare_inherited_usage_less_than_40_percent_sub_data_->line_height_step_ != b.rare_inherited_usage_less_than_40_percent_data_->rare_inherited_usage_less_than_40_percent_sub_data_->line_height_step_)
           return true;
         if (a.rare_inherited_usage_less_than_40_percent_data_->rare_inherited_usage_less_than_40_percent_sub_data_->text_stroke_width_ != b.rare_inherited_usage_less_than_40_percent_data_->rare_inherited_usage_less_than_40_percent_sub_data_->text_stroke_width_)
+          return true;
+
+      }
+      if (a.rare_inherited_usage_less_than_40_percent_data_->rare_inherited_usage_less_than_100_percent_data_.Get() != b.rare_inherited_usage_less_than_40_percent_data_->rare_inherited_usage_less_than_100_percent_data_.Get()) {
+        if (a.rare_inherited_usage_less_than_40_percent_data_->rare_inherited_usage_less_than_100_percent_data_->text_align_last_ != b.rare_inherited_usage_less_than_40_percent_data_->rare_inherited_usage_less_than_100_percent_data_->text_align_last_)
+          return true;
+        if (a.rare_inherited_usage_less_than_40_percent_data_->rare_inherited_usage_less_than_100_percent_data_->hyphens_ != b.rare_inherited_usage_less_than_40_percent_data_->rare_inherited_usage_less_than_100_percent_data_->hyphens_)
+          return true;
+        if (a.rare_inherited_usage_less_than_40_percent_data_->rare_inherited_usage_less_than_100_percent_data_->respect_image_orientation_ != b.rare_inherited_usage_less_than_40_percent_data_->rare_inherited_usage_less_than_100_percent_data_->respect_image_orientation_)
+          return true;
+        if (a.rare_inherited_usage_less_than_40_percent_data_->rare_inherited_usage_less_than_100_percent_data_->text_justify_ != b.rare_inherited_usage_less_than_40_percent_data_->rare_inherited_usage_less_than_100_percent_data_->text_justify_)
+          return true;
+        if (a.rare_inherited_usage_less_than_40_percent_data_->rare_inherited_usage_less_than_100_percent_data_->text_orientation_ != b.rare_inherited_usage_less_than_40_percent_data_->rare_inherited_usage_less_than_100_percent_data_->text_orientation_)
+          return true;
+        if (a.rare_inherited_usage_less_than_40_percent_data_->rare_inherited_usage_less_than_100_percent_data_->text_combine_ != b.rare_inherited_usage_less_than_40_percent_data_->rare_inherited_usage_less_than_100_percent_data_->text_combine_)
+          return true;
+        if (a.rare_inherited_usage_less_than_40_percent_data_->rare_inherited_usage_less_than_100_percent_data_->tab_size_ != b.rare_inherited_usage_less_than_40_percent_data_->rare_inherited_usage_less_than_100_percent_data_->tab_size_)
           return true;
 
       }
@@ -984,6 +984,35 @@ bool ComputedStyleBase::UpdatePropertySpecificDifferencesBackdropFilter(const Co
   return false;
 }
 
+
+ComputedStyleBase::StyleBoxData::StyleBoxData() :
+      height_(Length())
+      , max_height_(Length::MaxSizeNone())
+      , max_width_(Length::MaxSizeNone())
+      , min_height_(Length())
+      , min_width_(Length())
+      , width_(Length())
+      , vertical_align_length_(Length())
+      , z_index_(0)
+      , box_decoration_break_(static_cast<unsigned>(EBoxDecorationBreak::kSlice))
+      , box_sizing_(static_cast<unsigned>(EBoxSizing::kContentBox))
+      , has_auto_z_index_(static_cast<unsigned>(true))
+  {
+  }
+
+ComputedStyleBase::StyleBoxData::StyleBoxData(const StyleBoxData& other) :
+      height_(other.height_)
+      , max_height_(other.max_height_)
+      , max_width_(other.max_width_)
+      , min_height_(other.min_height_)
+      , min_width_(other.min_width_)
+      , width_(other.width_)
+      , vertical_align_length_(other.vertical_align_length_)
+      , z_index_(other.z_index_)
+      , box_decoration_break_(other.box_decoration_break_)
+      , box_sizing_(other.box_sizing_)
+      , has_auto_z_index_(other.has_auto_z_index_)
+  {}
 
 ComputedStyleBase::StyleGridData::StyleGridData() :
       named_grid_column_lines_(NamedGridLinesMap())
@@ -1342,35 +1371,6 @@ ComputedStyleBase::StyleRareNonInheritedUsageLessThan13PercentData::StyleRareNon
       , text_overflow_(other.text_overflow_)
   {}
 
-ComputedStyleBase::StyleBoxData::StyleBoxData() :
-      height_(Length())
-      , max_height_(Length::MaxSizeNone())
-      , max_width_(Length::MaxSizeNone())
-      , min_height_(Length())
-      , min_width_(Length())
-      , width_(Length())
-      , vertical_align_length_(Length())
-      , z_index_(0)
-      , box_decoration_break_(static_cast<unsigned>(EBoxDecorationBreak::kSlice))
-      , box_sizing_(static_cast<unsigned>(EBoxSizing::kContentBox))
-      , has_auto_z_index_(static_cast<unsigned>(true))
-  {
-  }
-
-ComputedStyleBase::StyleBoxData::StyleBoxData(const StyleBoxData& other) :
-      height_(other.height_)
-      , max_height_(other.max_height_)
-      , max_width_(other.max_width_)
-      , min_height_(other.min_height_)
-      , min_width_(other.min_width_)
-      , width_(other.width_)
-      , vertical_align_length_(other.vertical_align_length_)
-      , z_index_(other.z_index_)
-      , box_decoration_break_(other.box_decoration_break_)
-      , box_sizing_(other.box_sizing_)
-      , has_auto_z_index_(other.has_auto_z_index_)
-  {}
-
 ComputedStyleBase::StyleSurroundData::StyleSurroundData() :
       border_image_(NinePieceImage())
       , border_bottom_left_radius_(LengthSize(Length::Fixed(0), Length::Fixed(0)))
@@ -1500,33 +1500,6 @@ ComputedStyleBase::StyleInheritedData::StyleInheritedData(const StyleInheritedDa
       , vertical_border_spacing_(other.vertical_border_spacing_)
   {}
 
-ComputedStyleBase::StyleRareInheritedUsageLessThan100PercentData::StyleRareInheritedUsageLessThan100PercentData() :
-      tab_size_(TabSize(8))
-      , caret_color_(Color())
-      , text_align_last_(static_cast<unsigned>(ETextAlignLast::kAuto))
-      , text_underline_position_(static_cast<unsigned>(kTextUnderlinePositionAuto))
-      , hyphens_(static_cast<unsigned>(Hyphens::kManual))
-      , text_justify_(static_cast<unsigned>(TextJustify::kAuto))
-      , text_orientation_(static_cast<unsigned>(ETextOrientation::kMixed))
-      , respect_image_orientation_(static_cast<unsigned>(false))
-      , text_combine_(static_cast<unsigned>(ETextCombine::kNone))
-      , text_decoration_skip_ink_(static_cast<unsigned>(ETextDecorationSkipInk::kAuto))
-  {
-  }
-
-ComputedStyleBase::StyleRareInheritedUsageLessThan100PercentData::StyleRareInheritedUsageLessThan100PercentData(const StyleRareInheritedUsageLessThan100PercentData& other) :
-      tab_size_(other.tab_size_)
-      , caret_color_(other.caret_color_)
-      , text_align_last_(other.text_align_last_)
-      , text_underline_position_(other.text_underline_position_)
-      , hyphens_(other.hyphens_)
-      , text_justify_(other.text_justify_)
-      , text_orientation_(other.text_orientation_)
-      , respect_image_orientation_(other.respect_image_orientation_)
-      , text_combine_(other.text_combine_)
-      , text_decoration_skip_ink_(other.text_decoration_skip_ink_)
-  {}
-
 ComputedStyleBase::StyleRareInheritedUsageLessThan40PercentSubData::StyleRareInheritedUsageLessThan40PercentSubData() :
       highlight_(g_null_atom)
       , hyphenation_string_(AtomicString())
@@ -1622,6 +1595,33 @@ ComputedStyleBase::StyleRareInheritedUsageLessThan40PercentSubData::StyleRareInh
       , visited_link_text_stroke_color_is_current_color_(other.visited_link_text_stroke_color_is_current_color_)
   {}
 
+ComputedStyleBase::StyleRareInheritedUsageLessThan100PercentData::StyleRareInheritedUsageLessThan100PercentData() :
+      tab_size_(TabSize(8))
+      , caret_color_(Color())
+      , text_align_last_(static_cast<unsigned>(ETextAlignLast::kAuto))
+      , text_underline_position_(static_cast<unsigned>(kTextUnderlinePositionAuto))
+      , hyphens_(static_cast<unsigned>(Hyphens::kManual))
+      , text_justify_(static_cast<unsigned>(TextJustify::kAuto))
+      , text_orientation_(static_cast<unsigned>(ETextOrientation::kMixed))
+      , respect_image_orientation_(static_cast<unsigned>(false))
+      , text_combine_(static_cast<unsigned>(ETextCombine::kNone))
+      , text_decoration_skip_ink_(static_cast<unsigned>(ETextDecorationSkipInk::kAuto))
+  {
+  }
+
+ComputedStyleBase::StyleRareInheritedUsageLessThan100PercentData::StyleRareInheritedUsageLessThan100PercentData(const StyleRareInheritedUsageLessThan100PercentData& other) :
+      tab_size_(other.tab_size_)
+      , caret_color_(other.caret_color_)
+      , text_align_last_(other.text_align_last_)
+      , text_underline_position_(other.text_underline_position_)
+      , hyphens_(other.hyphens_)
+      , text_justify_(other.text_justify_)
+      , text_orientation_(other.text_orientation_)
+      , respect_image_orientation_(other.respect_image_orientation_)
+      , text_combine_(other.text_combine_)
+      , text_decoration_skip_ink_(other.text_decoration_skip_ink_)
+  {}
+
 ComputedStyleBase::StyleRareInheritedUsageLessThan40PercentData::StyleRareInheritedUsageLessThan40PercentData() :
       quotes_(nullptr)
       , text_shadow_(nullptr)
@@ -1636,13 +1636,13 @@ ComputedStyleBase::StyleRareInheritedUsageLessThan40PercentData::StyleRareInheri
       , word_break_(static_cast<unsigned>(EWordBreak::kNormal))
       , overflow_wrap_(static_cast<unsigned>(EOverflowWrap::kNormal))
   {
-    rare_inherited_usage_less_than_100_percent_data_.Init();
     rare_inherited_usage_less_than_40_percent_sub_data_.Init();
+    rare_inherited_usage_less_than_100_percent_data_.Init();
   }
 
 ComputedStyleBase::StyleRareInheritedUsageLessThan40PercentData::StyleRareInheritedUsageLessThan40PercentData(const StyleRareInheritedUsageLessThan40PercentData& other) :
-      rare_inherited_usage_less_than_100_percent_data_(other.rare_inherited_usage_less_than_100_percent_data_)
-      , rare_inherited_usage_less_than_40_percent_sub_data_(other.rare_inherited_usage_less_than_40_percent_sub_data_)
+      rare_inherited_usage_less_than_40_percent_sub_data_(other.rare_inherited_usage_less_than_40_percent_sub_data_)
+      , rare_inherited_usage_less_than_100_percent_data_(other.rare_inherited_usage_less_than_100_percent_data_)
       , quotes_(MemberCopy(other.quotes_))
       , text_shadow_(MemberCopy(other.text_shadow_))
       , list_style_image_(MemberCopy(other.list_style_image_))

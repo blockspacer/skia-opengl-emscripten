@@ -12,14 +12,14 @@ namespace mojom {
 namespace internal {
 
 
-// The 784588878 value is based on sha256(salt + "CodeCacheHost1").
-constexpr uint32_t kCodeCacheHost_DidGenerateCacheableMetadata_Name = 784588878;
-// The 797117116 value is based on sha256(salt + "CodeCacheHost2").
-constexpr uint32_t kCodeCacheHost_FetchCachedCode_Name = 797117116;
-// The 1382416780 value is based on sha256(salt + "CodeCacheHost3").
-constexpr uint32_t kCodeCacheHost_ClearCodeCacheEntry_Name = 1382416780;
-// The 87547772 value is based on sha256(salt + "CodeCacheHost4").
-constexpr uint32_t kCodeCacheHost_DidGenerateCacheableMetadataInCacheStorage_Name = 87547772;
+// The 1266521516 value is based on sha256(salt + "CodeCacheHost1").
+constexpr uint32_t kCodeCacheHost_DidGenerateCacheableMetadata_Name = 1266521516;
+// The 1682745866 value is based on sha256(salt + "CodeCacheHost2").
+constexpr uint32_t kCodeCacheHost_FetchCachedCode_Name = 1682745866;
+// The 1870441415 value is based on sha256(salt + "CodeCacheHost3").
+constexpr uint32_t kCodeCacheHost_ClearCodeCacheEntry_Name = 1870441415;
+// The 1846680171 value is based on sha256(salt + "CodeCacheHost4").
+constexpr uint32_t kCodeCacheHost_DidGenerateCacheableMetadataInCacheStorage_Name = 1846680171;
 
 }  // namespace internal
 }  // namespace mojom

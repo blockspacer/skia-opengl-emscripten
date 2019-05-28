@@ -12,8 +12,8 @@ namespace mojom {
 namespace internal {
 
 
-// The 101645511 value is based on sha256(salt + "NFCProvider1").
-constexpr uint32_t kNFCProvider_GetNFCForHost_Name = 101645511;
+// The 24451324 value is based on sha256(salt + "NFCProvider1").
+constexpr uint32_t kNFCProvider_GetNFCForHost_Name = 24451324;
 
 }  // namespace internal
 }  // namespace mojom

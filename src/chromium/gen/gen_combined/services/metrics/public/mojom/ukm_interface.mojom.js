@@ -203,8 +203,8 @@
     encoder.encodeStruct(codec.Int64, val.sourceId);
     encoder.encodeStruct(codec.String, val.url);
   };
-  var kUkmRecorderInterface_AddEntry_Name = 699178147;
-  var kUkmRecorderInterface_UpdateSourceURL_Name = 1616769892;
+  var kUkmRecorderInterface_AddEntry_Name = 963731108;
+  var kUkmRecorderInterface_UpdateSourceURL_Name = 153816209;
 
   function UkmRecorderInterfacePtr(handleOrPtrInfo) {
     this.ptr = new bindings.InterfacePtrController(UkmRecorderInterface,

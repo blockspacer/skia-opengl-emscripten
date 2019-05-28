@@ -12,12 +12,12 @@ namespace mojom {
 namespace internal {
 
 
-// The 1456401791 value is based on sha256(salt + "SharedWorker1").
-constexpr uint32_t kSharedWorker_Connect_Name = 1456401791;
-// The 1718383942 value is based on sha256(salt + "SharedWorker2").
-constexpr uint32_t kSharedWorker_Terminate_Name = 1718383942;
-// The 1984787697 value is based on sha256(salt + "SharedWorker3").
-constexpr uint32_t kSharedWorker_BindDevToolsAgent_Name = 1984787697;
+// The 69552737 value is based on sha256(salt + "SharedWorker1").
+constexpr uint32_t kSharedWorker_Connect_Name = 69552737;
+// The 433823138 value is based on sha256(salt + "SharedWorker2").
+constexpr uint32_t kSharedWorker_Terminate_Name = 433823138;
+// The 660176603 value is based on sha256(salt + "SharedWorker3").
+constexpr uint32_t kSharedWorker_BindDevToolsAgent_Name = 660176603;
 
 }  // namespace internal
 }  // namespace mojom

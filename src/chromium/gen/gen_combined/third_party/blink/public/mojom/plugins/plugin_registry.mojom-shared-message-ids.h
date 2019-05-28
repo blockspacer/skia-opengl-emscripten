@@ -12,8 +12,8 @@ namespace mojom {
 namespace internal {
 
 
-// The 198156805 value is based on sha256(salt + "PluginRegistry1").
-constexpr uint32_t kPluginRegistry_GetPlugins_Name = 198156805;
+// The 1638519070 value is based on sha256(salt + "PluginRegistry1").
+constexpr uint32_t kPluginRegistry_GetPlugins_Name = 1638519070;
 
 }  // namespace internal
 }  // namespace mojom

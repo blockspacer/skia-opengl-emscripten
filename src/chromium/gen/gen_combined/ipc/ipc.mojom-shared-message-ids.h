@@ -12,12 +12,12 @@ namespace mojom {
 namespace internal {
 
 
-// The 1898779507 value is based on sha256(salt + "Channel1").
-constexpr uint32_t kChannel_SetPeerPid_Name = 1898779507;
-// The 288377360 value is based on sha256(salt + "Channel2").
-constexpr uint32_t kChannel_Receive_Name = 288377360;
-// The 1260913212 value is based on sha256(salt + "Channel3").
-constexpr uint32_t kChannel_GetAssociatedInterface_Name = 1260913212;
+// The 72287398 value is based on sha256(salt + "Channel1").
+constexpr uint32_t kChannel_SetPeerPid_Name = 72287398;
+// The 1852516507 value is based on sha256(salt + "Channel2").
+constexpr uint32_t kChannel_Receive_Name = 1852516507;
+// The 1206765191 value is based on sha256(salt + "Channel3").
+constexpr uint32_t kChannel_GetAssociatedInterface_Name = 1206765191;
 
 }  // namespace internal
 }  // namespace mojom

@@ -12,36 +12,36 @@ namespace mojom {
 namespace internal {
 
 
-// The 1096084093 value is based on sha256(salt + "EmbeddedWorkerInstanceClient1").
-constexpr uint32_t kEmbeddedWorkerInstanceClient_StartWorker_Name = 1096084093;
-// The 1046756627 value is based on sha256(salt + "EmbeddedWorkerInstanceClient2").
-constexpr uint32_t kEmbeddedWorkerInstanceClient_StopWorker_Name = 1046756627;
-// The 1894231181 value is based on sha256(salt + "EmbeddedWorkerInstanceClient3").
-constexpr uint32_t kEmbeddedWorkerInstanceClient_ResumeAfterDownload_Name = 1894231181;
-// The 1946057151 value is based on sha256(salt + "EmbeddedWorkerInstanceClient4").
-constexpr uint32_t kEmbeddedWorkerInstanceClient_AddMessageToConsole_Name = 1946057151;
-// The 1645430795 value is based on sha256(salt + "EmbeddedWorkerInstanceClient5").
-constexpr uint32_t kEmbeddedWorkerInstanceClient_BindDevToolsAgent_Name = 1645430795;
-// The 795150210 value is based on sha256(salt + "EmbeddedWorkerInstanceClient6").
-constexpr uint32_t kEmbeddedWorkerInstanceClient_UpdateSubresourceLoaderFactories_Name = 795150210;
-// The 848370757 value is based on sha256(salt + "EmbeddedWorkerInstanceHost1").
-constexpr uint32_t kEmbeddedWorkerInstanceHost_RequestTermination_Name = 848370757;
-// The 275860763 value is based on sha256(salt + "EmbeddedWorkerInstanceHost2").
-constexpr uint32_t kEmbeddedWorkerInstanceHost_CountFeature_Name = 275860763;
-// The 2056188412 value is based on sha256(salt + "EmbeddedWorkerInstanceHost3").
-constexpr uint32_t kEmbeddedWorkerInstanceHost_OnReadyForInspection_Name = 2056188412;
-// The 1137683121 value is based on sha256(salt + "EmbeddedWorkerInstanceHost4").
-constexpr uint32_t kEmbeddedWorkerInstanceHost_OnScriptLoaded_Name = 1137683121;
-// The 1456286524 value is based on sha256(salt + "EmbeddedWorkerInstanceHost5").
-constexpr uint32_t kEmbeddedWorkerInstanceHost_OnScriptEvaluationStart_Name = 1456286524;
-// The 1789117381 value is based on sha256(salt + "EmbeddedWorkerInstanceHost6").
-constexpr uint32_t kEmbeddedWorkerInstanceHost_OnStarted_Name = 1789117381;
-// The 216198827 value is based on sha256(salt + "EmbeddedWorkerInstanceHost7").
-constexpr uint32_t kEmbeddedWorkerInstanceHost_OnReportException_Name = 216198827;
-// The 913435138 value is based on sha256(salt + "EmbeddedWorkerInstanceHost8").
-constexpr uint32_t kEmbeddedWorkerInstanceHost_OnReportConsoleMessage_Name = 913435138;
-// The 189083037 value is based on sha256(salt + "EmbeddedWorkerInstanceHost9").
-constexpr uint32_t kEmbeddedWorkerInstanceHost_OnStopped_Name = 189083037;
+// The 898245378 value is based on sha256(salt + "EmbeddedWorkerInstanceClient1").
+constexpr uint32_t kEmbeddedWorkerInstanceClient_StartWorker_Name = 898245378;
+// The 850956001 value is based on sha256(salt + "EmbeddedWorkerInstanceClient2").
+constexpr uint32_t kEmbeddedWorkerInstanceClient_StopWorker_Name = 850956001;
+// The 1911205267 value is based on sha256(salt + "EmbeddedWorkerInstanceClient3").
+constexpr uint32_t kEmbeddedWorkerInstanceClient_ResumeAfterDownload_Name = 1911205267;
+// The 1164840688 value is based on sha256(salt + "EmbeddedWorkerInstanceClient4").
+constexpr uint32_t kEmbeddedWorkerInstanceClient_AddMessageToConsole_Name = 1164840688;
+// The 653337928 value is based on sha256(salt + "EmbeddedWorkerInstanceClient5").
+constexpr uint32_t kEmbeddedWorkerInstanceClient_BindDevToolsAgent_Name = 653337928;
+// The 28273801 value is based on sha256(salt + "EmbeddedWorkerInstanceClient6").
+constexpr uint32_t kEmbeddedWorkerInstanceClient_UpdateSubresourceLoaderFactories_Name = 28273801;
+// The 475482919 value is based on sha256(salt + "EmbeddedWorkerInstanceHost1").
+constexpr uint32_t kEmbeddedWorkerInstanceHost_RequestTermination_Name = 475482919;
+// The 321355636 value is based on sha256(salt + "EmbeddedWorkerInstanceHost2").
+constexpr uint32_t kEmbeddedWorkerInstanceHost_CountFeature_Name = 321355636;
+// The 1525668195 value is based on sha256(salt + "EmbeddedWorkerInstanceHost3").
+constexpr uint32_t kEmbeddedWorkerInstanceHost_OnReadyForInspection_Name = 1525668195;
+// The 2111994524 value is based on sha256(salt + "EmbeddedWorkerInstanceHost4").
+constexpr uint32_t kEmbeddedWorkerInstanceHost_OnScriptLoaded_Name = 2111994524;
+// The 1806862750 value is based on sha256(salt + "EmbeddedWorkerInstanceHost5").
+constexpr uint32_t kEmbeddedWorkerInstanceHost_OnScriptEvaluationStart_Name = 1806862750;
+// The 1765339413 value is based on sha256(salt + "EmbeddedWorkerInstanceHost6").
+constexpr uint32_t kEmbeddedWorkerInstanceHost_OnStarted_Name = 1765339413;
+// The 1201715259 value is based on sha256(salt + "EmbeddedWorkerInstanceHost7").
+constexpr uint32_t kEmbeddedWorkerInstanceHost_OnReportException_Name = 1201715259;
+// The 2114490046 value is based on sha256(salt + "EmbeddedWorkerInstanceHost8").
+constexpr uint32_t kEmbeddedWorkerInstanceHost_OnReportConsoleMessage_Name = 2114490046;
+// The 697471858 value is based on sha256(salt + "EmbeddedWorkerInstanceHost9").
+constexpr uint32_t kEmbeddedWorkerInstanceHost_OnStopped_Name = 697471858;
 
 }  // namespace internal
 }  // namespace mojom

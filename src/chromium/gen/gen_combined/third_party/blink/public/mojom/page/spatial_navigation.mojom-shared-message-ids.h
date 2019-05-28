@@ -12,8 +12,8 @@ namespace mojom {
 namespace internal {
 
 
-// The 94434062 value is based on sha256(salt + "SpatialNavigationHost1").
-constexpr uint32_t kSpatialNavigationHost_SpatialNavigationStateChanged_Name = 94434062;
+// The 1469969333 value is based on sha256(salt + "SpatialNavigationHost1").
+constexpr uint32_t kSpatialNavigationHost_SpatialNavigationStateChanged_Name = 1469969333;
 
 }  // namespace internal
 }  // namespace mojom

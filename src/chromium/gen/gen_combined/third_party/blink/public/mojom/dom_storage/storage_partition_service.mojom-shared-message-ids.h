@@ -12,10 +12,10 @@ namespace mojom {
 namespace internal {
 
 
-// The 1161873555 value is based on sha256(salt + "StoragePartitionService1").
-constexpr uint32_t kStoragePartitionService_OpenLocalStorage_Name = 1161873555;
-// The 1552923037 value is based on sha256(salt + "StoragePartitionService2").
-constexpr uint32_t kStoragePartitionService_OpenSessionStorage_Name = 1552923037;
+// The 822639175 value is based on sha256(salt + "StoragePartitionService1").
+constexpr uint32_t kStoragePartitionService_OpenLocalStorage_Name = 822639175;
+// The 684396924 value is based on sha256(salt + "StoragePartitionService2").
+constexpr uint32_t kStoragePartitionService_OpenSessionStorage_Name = 684396924;
 
 }  // namespace internal
 }  // namespace mojom

@@ -12,8 +12,8 @@ namespace mojom {
 namespace internal {
 
 
-// The 1531306266 value is based on sha256(salt + "UkmSourceIdFrameHost1").
-constexpr uint32_t kUkmSourceIdFrameHost_SetDocumentSourceId_Name = 1531306266;
+// The 1528706324 value is based on sha256(salt + "UkmSourceIdFrameHost1").
+constexpr uint32_t kUkmSourceIdFrameHost_SetDocumentSourceId_Name = 1528706324;
 
 }  // namespace internal
 }  // namespace mojom

@@ -564,12 +564,12 @@
     encoder.skip(1);
     encoder.skip(1);
   };
-  var kDocumentCoordinationUnit_SetNetworkAlmostIdle_Name = 779153566;
-  var kDocumentCoordinationUnit_SetLifecycleState_Name = 900699292;
-  var kDocumentCoordinationUnit_SetHasNonEmptyBeforeUnload_Name = 724434959;
-  var kDocumentCoordinationUnit_SetInterventionPolicy_Name = 2027613163;
-  var kDocumentCoordinationUnit_SetIsAdFrame_Name = 1397656912;
-  var kDocumentCoordinationUnit_OnNonPersistentNotificationCreated_Name = 2053608518;
+  var kDocumentCoordinationUnit_SetNetworkAlmostIdle_Name = 535717106;
+  var kDocumentCoordinationUnit_SetLifecycleState_Name = 948326248;
+  var kDocumentCoordinationUnit_SetHasNonEmptyBeforeUnload_Name = 1368109841;
+  var kDocumentCoordinationUnit_SetInterventionPolicy_Name = 1424185659;
+  var kDocumentCoordinationUnit_SetIsAdFrame_Name = 246093689;
+  var kDocumentCoordinationUnit_OnNonPersistentNotificationCreated_Name = 219257966;
 
   function DocumentCoordinationUnitPtr(handleOrPtrInfo) {
     this.ptr = new bindings.InterfacePtrController(DocumentCoordinationUnit,
@@ -790,8 +790,8 @@
   };
   DocumentCoordinationUnitStub.prototype.validator = validateDocumentCoordinationUnitRequest;
   DocumentCoordinationUnitProxy.prototype.validator = null;
-  var kProcessCoordinationUnit_SetExpectedTaskQueueingDuration_Name = 1745180896;
-  var kProcessCoordinationUnit_SetMainThreadTaskLoadIsLow_Name = 1046309033;
+  var kProcessCoordinationUnit_SetExpectedTaskQueueingDuration_Name = 75558864;
+  var kProcessCoordinationUnit_SetMainThreadTaskLoadIsLow_Name = 1974632308;
 
   function ProcessCoordinationUnitPtr(handleOrPtrInfo) {
     this.ptr = new bindings.InterfacePtrController(ProcessCoordinationUnit,

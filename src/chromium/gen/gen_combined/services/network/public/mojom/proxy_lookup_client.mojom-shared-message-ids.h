@@ -12,8 +12,8 @@ namespace mojom {
 namespace internal {
 
 
-// The 1360273327 value is based on sha256(salt + "ProxyLookupClient1").
-constexpr uint32_t kProxyLookupClient_OnProxyLookupComplete_Name = 1360273327;
+// The 2109457191 value is based on sha256(salt + "ProxyLookupClient1").
+constexpr uint32_t kProxyLookupClient_OnProxyLookupComplete_Name = 2109457191;
 
 }  // namespace internal
 }  // namespace mojom

@@ -12,8 +12,8 @@ namespace mojom {
 namespace internal {
 
 
-// The 1608788517 value is based on sha256(salt + "ImeEngineFactoryRegistry1").
-constexpr uint32_t kImeEngineFactoryRegistry_ActivateFactory_Name = 1608788517;
+// The 1486231839 value is based on sha256(salt + "ImeEngineFactoryRegistry1").
+constexpr uint32_t kImeEngineFactoryRegistry_ActivateFactory_Name = 1486231839;
 
 }  // namespace internal
 }  // namespace mojom

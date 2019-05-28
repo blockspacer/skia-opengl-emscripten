@@ -1,0 +1,650 @@
+{
+  "c++": {
+    "service_manager.mojom.InterfaceSet": {
+      "hashable": false, 
+      "force_serialize": false, 
+      "non_copyable_non_movable": false, 
+      "typename": "::service_manager::InterfaceSet", 
+      "traits_headers": [
+        "services/service_manager/public/cpp/interface_provider_spec_mojom_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "services/service_manager/public/cpp/interface_provider_spec.h"
+      ]
+    }, 
+    "mojo_base.mojom.UnsafeSharedMemoryRegion": {
+      "hashable": false, 
+      "typename": "base::UnsafeSharedMemoryRegion", 
+      "non_copyable_non_movable": false, 
+      "force_serialize": false, 
+      "traits_headers": [
+        "mojo/public/cpp/base/shared_memory_mojom_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": true, 
+      "nullable_is_same_type": true, 
+      "public_headers": [
+        "base/memory/platform_shared_memory_region.h", 
+        "base/memory/read_only_shared_memory_region.h", 
+        "base/memory/unsafe_shared_memory_region.h", 
+        "base/memory/writable_shared_memory_region.h"
+      ]
+    }, 
+    "device.mojom.GamepadVector": {
+      "hashable": false, 
+      "typename": "device::GamepadVector", 
+      "traits_headers": [
+        "device/gamepad/public/cpp/gamepad_mojom_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "force_serialize": false, 
+      "move_only": false, 
+      "nullable_is_same_type": true, 
+      "non_copyable_non_movable": false, 
+      "public_headers": [
+        "device/gamepad/public/cpp/gamepad.h"
+      ]
+    }, 
+    "mojo_base.mojom.Value": {
+      "hashable": false, 
+      "typename": "base::Value", 
+      "non_copyable_non_movable": false, 
+      "force_serialize": false, 
+      "traits_headers": [
+        "mojo/public/cpp/base/values_mojom_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": true, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "base/values.h"
+      ]
+    }, 
+    "mojo_base.mojom.ReadOnlySharedMemoryRegion": {
+      "hashable": false, 
+      "typename": "base::ReadOnlySharedMemoryRegion", 
+      "non_copyable_non_movable": false, 
+      "force_serialize": false, 
+      "traits_headers": [
+        "mojo/public/cpp/base/shared_memory_mojom_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": true, 
+      "nullable_is_same_type": true, 
+      "public_headers": [
+        "base/memory/platform_shared_memory_region.h", 
+        "base/memory/read_only_shared_memory_region.h", 
+        "base/memory/unsafe_shared_memory_region.h", 
+        "base/memory/writable_shared_memory_region.h"
+      ]
+    }, 
+    "service_manager.mojom.BindSourceInfo": {
+      "hashable": false, 
+      "force_serialize": false, 
+      "non_copyable_non_movable": false, 
+      "typename": "::service_manager::BindSourceInfo", 
+      "traits_headers": [
+        "services/service_manager/public/cpp/bind_source_info_mojom_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "services/service_manager/public/cpp/bind_source_info.h"
+      ]
+    }, 
+    "mojo_base.mojom.PlatformSharedMemoryRegion": {
+      "hashable": false, 
+      "typename": "base::subtle::PlatformSharedMemoryRegion", 
+      "non_copyable_non_movable": false, 
+      "force_serialize": false, 
+      "traits_headers": [
+        "mojo/public/cpp/base/shared_memory_mojom_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": true, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "base/memory/platform_shared_memory_region.h", 
+        "base/memory/read_only_shared_memory_region.h", 
+        "base/memory/unsafe_shared_memory_region.h", 
+        "base/memory/writable_shared_memory_region.h"
+      ]
+    }, 
+    "mojo_base.mojom.PlatformSharedMemoryHandle": {
+      "hashable": false, 
+      "typename": "base::subtle::PlatformSharedMemoryRegion::ScopedPlatformHandle", 
+      "non_copyable_non_movable": false, 
+      "force_serialize": false, 
+      "traits_headers": [
+        "mojo/public/cpp/base/shared_memory_mojom_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": true, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "base/memory/platform_shared_memory_region.h", 
+        "base/memory/read_only_shared_memory_region.h", 
+        "base/memory/unsafe_shared_memory_region.h", 
+        "base/memory/writable_shared_memory_region.h"
+      ]
+    }, 
+    "device.mojom.GamepadHapticActuator": {
+      "hashable": false, 
+      "typename": "device::GamepadHapticActuator", 
+      "traits_headers": [
+        "device/gamepad/public/cpp/gamepad_mojom_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "force_serialize": false, 
+      "move_only": false, 
+      "nullable_is_same_type": true, 
+      "non_copyable_non_movable": false, 
+      "public_headers": [
+        "device/gamepad/public/cpp/gamepad.h"
+      ]
+    }, 
+    "mojo_base.mojom.UnguessableToken": {
+      "hashable": false, 
+      "typename": "base::UnguessableToken", 
+      "non_copyable_non_movable": false, 
+      "force_serialize": false, 
+      "traits_headers": [
+        "mojo/public/cpp/base/unguessable_token_mojom_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "base/unguessable_token.h"
+      ]
+    }, 
+    "device.mojom.GamepadButton": {
+      "hashable": false, 
+      "typename": "device::GamepadButton", 
+      "traits_headers": [
+        "device/gamepad/public/cpp/gamepad_mojom_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "force_serialize": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "non_copyable_non_movable": false, 
+      "public_headers": [
+        "device/gamepad/public/cpp/gamepad.h"
+      ]
+    }, 
+    "mojo_base.mojom.BigString": {
+      "hashable": false, 
+      "typename": "std::string", 
+      "non_copyable_non_movable": false, 
+      "force_serialize": false, 
+      "traits_headers": [
+        "mojo/public/cpp/base/big_string_mojom_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "public_headers": []
+    }, 
+    "mojo_base.mojom.Time": {
+      "hashable": false, 
+      "typename": "base::Time", 
+      "non_copyable_non_movable": false, 
+      "force_serialize": false, 
+      "traits_headers": [
+        "mojo/public/cpp/base/time_mojom_traits.h"
+      ], 
+      "copyable_pass_by_value": true, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "base/time/time.h"
+      ]
+    }, 
+    "mojo_base.mojom.ThreadPriority": {
+      "hashable": false, 
+      "typename": "base::ThreadPriority", 
+      "non_copyable_non_movable": false, 
+      "force_serialize": false, 
+      "traits_headers": [
+        "mojo/public/cpp/base/thread_priority_mojom_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "base/threading/platform_thread.h"
+      ]
+    }, 
+    "mojo_base.mojom.Token": {
+      "hashable": false, 
+      "typename": "base::Token", 
+      "non_copyable_non_movable": false, 
+      "force_serialize": false, 
+      "traits_headers": [
+        "mojo/public/cpp/base/token_mojom_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "base/token.h"
+      ]
+    }, 
+    "mojo_base.mojom.TextDirection": {
+      "hashable": false, 
+      "typename": "base::i18n::TextDirection", 
+      "non_copyable_non_movable": false, 
+      "force_serialize": false, 
+      "traits_headers": [
+        "mojo/public/cpp/base/text_direction_mojom_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "base/i18n/rtl.h"
+      ]
+    }, 
+    "mojo_base.mojom.ListValue": {
+      "hashable": false, 
+      "typename": "base::Value", 
+      "non_copyable_non_movable": false, 
+      "force_serialize": false, 
+      "traits_headers": [
+        "mojo/public/cpp/base/values_mojom_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": true, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "base/values.h"
+      ]
+    }, 
+    "device.mojom.Gamepad": {
+      "hashable": false, 
+      "typename": "device::Gamepad", 
+      "traits_headers": [
+        "device/gamepad/public/cpp/gamepad_mojom_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "force_serialize": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "non_copyable_non_movable": false, 
+      "public_headers": [
+        "device/gamepad/public/cpp/gamepad.h"
+      ]
+    }, 
+    "mojo_base.mojom.MemoryAllocatorDumpCrossProcessUid": {
+      "hashable": false, 
+      "typename": "base::trace_event::MemoryAllocatorDumpGuid", 
+      "non_copyable_non_movable": false, 
+      "force_serialize": false, 
+      "traits_headers": [
+        "mojo/public/cpp/base/memory_allocator_dump_cross_process_uid_mojom_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "base/trace_event/memory_allocator_dump_guid.h"
+      ]
+    }, 
+    "device.mojom.GamepadQuaternion": {
+      "hashable": false, 
+      "typename": "device::GamepadQuaternion", 
+      "traits_headers": [
+        "device/gamepad/public/cpp/gamepad_mojom_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "force_serialize": false, 
+      "move_only": false, 
+      "nullable_is_same_type": true, 
+      "non_copyable_non_movable": false, 
+      "public_headers": [
+        "device/gamepad/public/cpp/gamepad.h"
+      ]
+    }, 
+    "mojo_base.mojom.FileError": {
+      "hashable": false, 
+      "typename": "::base::File::Error", 
+      "non_copyable_non_movable": false, 
+      "force_serialize": false, 
+      "traits_headers": [
+        "mojo/public/cpp/base/file_error_mojom_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "base/files/file.h"
+      ]
+    }, 
+    "mojo_base.mojom.WritableSharedMemoryRegion": {
+      "hashable": false, 
+      "typename": "base::WritableSharedMemoryRegion", 
+      "non_copyable_non_movable": false, 
+      "force_serialize": false, 
+      "traits_headers": [
+        "mojo/public/cpp/base/shared_memory_mojom_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": true, 
+      "nullable_is_same_type": true, 
+      "public_headers": [
+        "base/memory/platform_shared_memory_region.h", 
+        "base/memory/read_only_shared_memory_region.h", 
+        "base/memory/unsafe_shared_memory_region.h", 
+        "base/memory/writable_shared_memory_region.h"
+      ]
+    }, 
+    "mojo_base.mojom.PlatformSharedMemoryRegion.Mode": {
+      "hashable": false, 
+      "typename": "base::subtle::PlatformSharedMemoryRegion::Mode", 
+      "non_copyable_non_movable": false, 
+      "force_serialize": false, 
+      "traits_headers": [
+        "mojo/public/cpp/base/shared_memory_mojom_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "base/memory/platform_shared_memory_region.h", 
+        "base/memory/read_only_shared_memory_region.h", 
+        "base/memory/unsafe_shared_memory_region.h", 
+        "base/memory/writable_shared_memory_region.h"
+      ]
+    }, 
+    "mojo.common.mojom.RefCountedMemory": {
+      "hashable": false, 
+      "typename": "scoped_refptr<base::RefCountedMemory>", 
+      "non_copyable_non_movable": false, 
+      "force_serialize": false, 
+      "traits_headers": [
+        "mojo/public/cpp/base/ref_counted_memory_mojom_traits.h"
+      ], 
+      "copyable_pass_by_value": true, 
+      "move_only": false, 
+      "nullable_is_same_type": true, 
+      "public_headers": [
+        "base/memory/ref_counted_memory.h"
+      ]
+    }, 
+    "device.mojom.GamepadPose": {
+      "hashable": false, 
+      "typename": "device::GamepadPose", 
+      "traits_headers": [
+        "device/gamepad/public/cpp/gamepad_mojom_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "force_serialize": false, 
+      "move_only": false, 
+      "nullable_is_same_type": true, 
+      "non_copyable_non_movable": false, 
+      "public_headers": [
+        "device/gamepad/public/cpp/gamepad.h"
+      ]
+    }, 
+    "mojo_base.mojom.MemoryPressureLevel": {
+      "hashable": false, 
+      "typename": "base::MemoryPressureListener::MemoryPressureLevel", 
+      "non_copyable_non_movable": false, 
+      "force_serialize": false, 
+      "traits_headers": [
+        "mojo/public/cpp/base/memory_pressure_level_mojom_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "base/memory/memory_pressure_listener.h"
+      ]
+    }, 
+    "service_manager.mojom.ServiceFilter": {
+      "hashable": false, 
+      "force_serialize": false, 
+      "non_copyable_non_movable": false, 
+      "typename": "::service_manager::ServiceFilter", 
+      "traits_headers": [
+        "services/service_manager/public/cpp/service_filter_mojom_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "services/service_manager/public/cpp/service_filter.h"
+      ]
+    }, 
+    "mojo_base.mojom.ProcessId": {
+      "hashable": false, 
+      "typename": "base::ProcessId", 
+      "non_copyable_non_movable": false, 
+      "force_serialize": false, 
+      "traits_headers": [
+        "mojo/public/cpp/base/process_id_mojom_traits.h"
+      ], 
+      "copyable_pass_by_value": true, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "base/process/process_handle.h"
+      ]
+    }, 
+    "service_manager.mojom.Identity": {
+      "hashable": false, 
+      "force_serialize": false, 
+      "non_copyable_non_movable": false, 
+      "typename": "::service_manager::Identity", 
+      "traits_headers": [
+        "services/service_manager/public/cpp/identity_mojom_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "services/service_manager/public/cpp/identity.h"
+      ]
+    }, 
+    "service_manager.mojom.CapabilitySet": {
+      "hashable": false, 
+      "force_serialize": false, 
+      "non_copyable_non_movable": false, 
+      "typename": "::service_manager::CapabilitySet", 
+      "traits_headers": [
+        "services/service_manager/public/cpp/interface_provider_spec_mojom_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "services/service_manager/public/cpp/interface_provider_spec.h"
+      ]
+    }, 
+    "mojo_base.mojom.BigString16": {
+      "hashable": false, 
+      "typename": "base::string16", 
+      "non_copyable_non_movable": false, 
+      "force_serialize": false, 
+      "traits_headers": [
+        "mojo/public/cpp/base/string16_mojom_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "base/strings/string16.h"
+      ]
+    }, 
+    "mojo_base.mojom.TimeTicks": {
+      "hashable": false, 
+      "typename": "base::TimeTicks", 
+      "non_copyable_non_movable": false, 
+      "force_serialize": false, 
+      "traits_headers": [
+        "mojo/public/cpp/base/time_mojom_traits.h"
+      ], 
+      "copyable_pass_by_value": true, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "base/time/time.h"
+      ]
+    }, 
+    "mojo_base.mojom.File": {
+      "hashable": false, 
+      "typename": "base::File", 
+      "non_copyable_non_movable": false, 
+      "force_serialize": false, 
+      "traits_headers": [
+        "mojo/public/cpp/base/file_mojom_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": true, 
+      "nullable_is_same_type": true, 
+      "public_headers": [
+        "base/files/file.h"
+      ]
+    }, 
+    "device.mojom.GamepadHand": {
+      "hashable": false, 
+      "typename": "device::GamepadHand", 
+      "traits_headers": [
+        "device/gamepad/public/cpp/gamepad_mojom_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "force_serialize": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "non_copyable_non_movable": false, 
+      "public_headers": [
+        "device/gamepad/public/cpp/gamepad.h"
+      ]
+    }, 
+    "mojo_base.mojom.BigBuffer": {
+      "hashable": false, 
+      "typename": "mojo_base::BigBuffer", 
+      "non_copyable_non_movable": false, 
+      "force_serialize": false, 
+      "traits_headers": [
+        "mojo/public/cpp/base/big_buffer_mojom_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": true, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "mojo/public/cpp/base/big_buffer.h"
+      ]
+    }, 
+    "mojo_base.mojom.TimeDelta": {
+      "hashable": false, 
+      "typename": "base::TimeDelta", 
+      "non_copyable_non_movable": false, 
+      "force_serialize": false, 
+      "traits_headers": [
+        "mojo/public/cpp/base/time_mojom_traits.h"
+      ], 
+      "copyable_pass_by_value": true, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "base/time/time.h"
+      ]
+    }, 
+    "mojo_base.mojom.DictionaryValue": {
+      "hashable": false, 
+      "typename": "base::Value", 
+      "non_copyable_non_movable": false, 
+      "force_serialize": false, 
+      "traits_headers": [
+        "mojo/public/cpp/base/values_mojom_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": true, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "base/values.h"
+      ]
+    }, 
+    "device.mojom.GamepadHapticActuatorType": {
+      "hashable": false, 
+      "typename": "device::GamepadHapticActuatorType", 
+      "traits_headers": [
+        "device/gamepad/public/cpp/gamepad_mojom_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "force_serialize": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "non_copyable_non_movable": false, 
+      "public_headers": [
+        "device/gamepad/public/cpp/gamepad.h"
+      ]
+    }, 
+    "mojo_base.mojom.FilePath": {
+      "hashable": false, 
+      "typename": "base::FilePath", 
+      "non_copyable_non_movable": false, 
+      "force_serialize": false, 
+      "traits_headers": [
+        "mojo/public/cpp/base/file_path_mojom_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "base/files/file_path.h"
+      ]
+    }, 
+    "mojo_base.mojom.String16": {
+      "hashable": false, 
+      "typename": "base::string16", 
+      "non_copyable_non_movable": false, 
+      "force_serialize": false, 
+      "traits_headers": [
+        "mojo/public/cpp/base/string16_mojom_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "base/strings/string16.h"
+      ]
+    }, 
+    "service_manager.mojom.InterfaceProviderSpec": {
+      "hashable": false, 
+      "force_serialize": false, 
+      "non_copyable_non_movable": false, 
+      "typename": "::service_manager::InterfaceProviderSpec", 
+      "traits_headers": [
+        "services/service_manager/public/cpp/interface_provider_spec_mojom_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "services/service_manager/public/cpp/interface_provider_spec.h"
+      ]
+    }, 
+    "mojo_base.mojom.FileInfo": {
+      "hashable": false, 
+      "typename": "base::File::Info", 
+      "non_copyable_non_movable": false, 
+      "force_serialize": false, 
+      "traits_headers": [
+        "mojo/public/cpp/base/file_info_mojom_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "base/files/file.h"
+      ]
+    }
+  }
+}

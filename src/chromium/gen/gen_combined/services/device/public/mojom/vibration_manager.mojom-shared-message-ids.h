@@ -12,10 +12,10 @@ namespace mojom {
 namespace internal {
 
 
-// The 104392361 value is based on sha256(salt + "VibrationManager1").
-constexpr uint32_t kVibrationManager_Vibrate_Name = 104392361;
-// The 785637130 value is based on sha256(salt + "VibrationManager2").
-constexpr uint32_t kVibrationManager_Cancel_Name = 785637130;
+// The 216775548 value is based on sha256(salt + "VibrationManager1").
+constexpr uint32_t kVibrationManager_Vibrate_Name = 216775548;
+// The 848538449 value is based on sha256(salt + "VibrationManager2").
+constexpr uint32_t kVibrationManager_Cancel_Name = 848538449;
 
 }  // namespace internal
 }  // namespace mojom

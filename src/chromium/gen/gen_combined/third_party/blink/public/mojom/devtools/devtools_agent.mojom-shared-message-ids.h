@@ -12,20 +12,20 @@ namespace mojom {
 namespace internal {
 
 
-// The 325600445 value is based on sha256(salt + "DevToolsAgent1").
-constexpr uint32_t kDevToolsAgent_AttachDevToolsSession_Name = 325600445;
-// The 1052150033 value is based on sha256(salt + "DevToolsAgent2").
-constexpr uint32_t kDevToolsAgent_InspectElement_Name = 1052150033;
-// The 308093741 value is based on sha256(salt + "DevToolsAgent3").
-constexpr uint32_t kDevToolsAgent_ReportChildWorkers_Name = 308093741;
-// The 1874120896 value is based on sha256(salt + "DevToolsAgentHost1").
-constexpr uint32_t kDevToolsAgentHost_ChildWorkerCreated_Name = 1874120896;
-// The 669588158 value is based on sha256(salt + "DevToolsSession1").
-constexpr uint32_t kDevToolsSession_DispatchProtocolCommand_Name = 669588158;
-// The 209777570 value is based on sha256(salt + "DevToolsSessionHost1").
-constexpr uint32_t kDevToolsSessionHost_DispatchProtocolResponse_Name = 209777570;
-// The 1341723868 value is based on sha256(salt + "DevToolsSessionHost2").
-constexpr uint32_t kDevToolsSessionHost_DispatchProtocolNotification_Name = 1341723868;
+// The 934176978 value is based on sha256(salt + "DevToolsAgent1").
+constexpr uint32_t kDevToolsAgent_AttachDevToolsSession_Name = 934176978;
+// The 290367616 value is based on sha256(salt + "DevToolsAgent2").
+constexpr uint32_t kDevToolsAgent_InspectElement_Name = 290367616;
+// The 905002776 value is based on sha256(salt + "DevToolsAgent3").
+constexpr uint32_t kDevToolsAgent_ReportChildWorkers_Name = 905002776;
+// The 1945682867 value is based on sha256(salt + "DevToolsAgentHost1").
+constexpr uint32_t kDevToolsAgentHost_ChildWorkerCreated_Name = 1945682867;
+// The 747939576 value is based on sha256(salt + "DevToolsSession1").
+constexpr uint32_t kDevToolsSession_DispatchProtocolCommand_Name = 747939576;
+// The 1475297298 value is based on sha256(salt + "DevToolsSessionHost1").
+constexpr uint32_t kDevToolsSessionHost_DispatchProtocolResponse_Name = 1475297298;
+// The 755300329 value is based on sha256(salt + "DevToolsSessionHost2").
+constexpr uint32_t kDevToolsSessionHost_DispatchProtocolNotification_Name = 755300329;
 
 }  // namespace internal
 }  // namespace mojom

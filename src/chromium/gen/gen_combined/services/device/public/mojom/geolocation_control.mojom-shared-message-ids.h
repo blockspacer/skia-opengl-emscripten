@@ -12,8 +12,8 @@ namespace mojom {
 namespace internal {
 
 
-// The 866509287 value is based on sha256(salt + "GeolocationControl1").
-constexpr uint32_t kGeolocationControl_UserDidOptIntoLocationServices_Name = 866509287;
+// The 1765327015 value is based on sha256(salt + "GeolocationControl1").
+constexpr uint32_t kGeolocationControl_UserDidOptIntoLocationServices_Name = 1765327015;
 
 }  // namespace internal
 }  // namespace mojom

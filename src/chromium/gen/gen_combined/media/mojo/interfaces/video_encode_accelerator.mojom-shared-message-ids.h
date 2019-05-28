@@ -12,22 +12,22 @@ namespace mojom {
 namespace internal {
 
 
-// The 945809826 value is based on sha256(salt + "VideoEncodeAcceleratorProvider1").
-constexpr uint32_t kVideoEncodeAcceleratorProvider_CreateVideoEncodeAccelerator_Name = 945809826;
-// The 941580385 value is based on sha256(salt + "VideoEncodeAccelerator1").
-constexpr uint32_t kVideoEncodeAccelerator_Initialize_Name = 941580385;
-// The 50283164 value is based on sha256(salt + "VideoEncodeAccelerator2").
-constexpr uint32_t kVideoEncodeAccelerator_Encode_Name = 50283164;
-// The 1947212751 value is based on sha256(salt + "VideoEncodeAccelerator3").
-constexpr uint32_t kVideoEncodeAccelerator_UseOutputBitstreamBuffer_Name = 1947212751;
-// The 1298325077 value is based on sha256(salt + "VideoEncodeAccelerator4").
-constexpr uint32_t kVideoEncodeAccelerator_RequestEncodingParametersChange_Name = 1298325077;
-// The 1309999147 value is based on sha256(salt + "VideoEncodeAcceleratorClient1").
-constexpr uint32_t kVideoEncodeAcceleratorClient_RequireBitstreamBuffers_Name = 1309999147;
-// The 988853411 value is based on sha256(salt + "VideoEncodeAcceleratorClient2").
-constexpr uint32_t kVideoEncodeAcceleratorClient_BitstreamBufferReady_Name = 988853411;
-// The 1735384439 value is based on sha256(salt + "VideoEncodeAcceleratorClient3").
-constexpr uint32_t kVideoEncodeAcceleratorClient_NotifyError_Name = 1735384439;
+// The 956806547 value is based on sha256(salt + "VideoEncodeAcceleratorProvider1").
+constexpr uint32_t kVideoEncodeAcceleratorProvider_CreateVideoEncodeAccelerator_Name = 956806547;
+// The 1391885734 value is based on sha256(salt + "VideoEncodeAccelerator1").
+constexpr uint32_t kVideoEncodeAccelerator_Initialize_Name = 1391885734;
+// The 1010874456 value is based on sha256(salt + "VideoEncodeAccelerator2").
+constexpr uint32_t kVideoEncodeAccelerator_Encode_Name = 1010874456;
+// The 1927466998 value is based on sha256(salt + "VideoEncodeAccelerator3").
+constexpr uint32_t kVideoEncodeAccelerator_UseOutputBitstreamBuffer_Name = 1927466998;
+// The 758583512 value is based on sha256(salt + "VideoEncodeAccelerator4").
+constexpr uint32_t kVideoEncodeAccelerator_RequestEncodingParametersChange_Name = 758583512;
+// The 1042969952 value is based on sha256(salt + "VideoEncodeAcceleratorClient1").
+constexpr uint32_t kVideoEncodeAcceleratorClient_RequireBitstreamBuffers_Name = 1042969952;
+// The 1256945047 value is based on sha256(salt + "VideoEncodeAcceleratorClient2").
+constexpr uint32_t kVideoEncodeAcceleratorClient_BitstreamBufferReady_Name = 1256945047;
+// The 1543928174 value is based on sha256(salt + "VideoEncodeAcceleratorClient3").
+constexpr uint32_t kVideoEncodeAcceleratorClient_NotifyError_Name = 1543928174;
 
 }  // namespace internal
 }  // namespace mojom

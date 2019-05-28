@@ -12,14 +12,14 @@ namespace mojom {
 namespace internal {
 
 
-// The 513905922 value is based on sha256(salt + "RemotingEventInjector1").
-constexpr uint32_t kRemotingEventInjector_MoveCursorToLocationInPixels_Name = 513905922;
-// The 1373638295 value is based on sha256(salt + "RemotingEventInjector2").
-constexpr uint32_t kRemotingEventInjector_InjectMousePressOrRelease_Name = 1373638295;
-// The 1836629445 value is based on sha256(salt + "RemotingEventInjector3").
-constexpr uint32_t kRemotingEventInjector_InjectMouseWheelInPixels_Name = 1836629445;
-// The 822500691 value is based on sha256(salt + "RemotingEventInjector4").
-constexpr uint32_t kRemotingEventInjector_InjectKeyEvent_Name = 822500691;
+// The 485323635 value is based on sha256(salt + "RemotingEventInjector1").
+constexpr uint32_t kRemotingEventInjector_MoveCursorToLocationInPixels_Name = 485323635;
+// The 1369277126 value is based on sha256(salt + "RemotingEventInjector2").
+constexpr uint32_t kRemotingEventInjector_InjectMousePressOrRelease_Name = 1369277126;
+// The 319694528 value is based on sha256(salt + "RemotingEventInjector3").
+constexpr uint32_t kRemotingEventInjector_InjectMouseWheelInPixels_Name = 319694528;
+// The 386917056 value is based on sha256(salt + "RemotingEventInjector4").
+constexpr uint32_t kRemotingEventInjector_InjectKeyEvent_Name = 386917056;
 
 }  // namespace internal
 }  // namespace mojom

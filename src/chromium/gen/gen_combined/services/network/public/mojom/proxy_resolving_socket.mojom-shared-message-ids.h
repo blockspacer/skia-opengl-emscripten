@@ -12,10 +12,10 @@ namespace mojom {
 namespace internal {
 
 
-// The 1105166250 value is based on sha256(salt + "ProxyResolvingSocket1").
-constexpr uint32_t kProxyResolvingSocket_UpgradeToTLS_Name = 1105166250;
-// The 36894035 value is based on sha256(salt + "ProxyResolvingSocketFactory1").
-constexpr uint32_t kProxyResolvingSocketFactory_CreateProxyResolvingSocket_Name = 36894035;
+// The 311172127 value is based on sha256(salt + "ProxyResolvingSocket1").
+constexpr uint32_t kProxyResolvingSocket_UpgradeToTLS_Name = 311172127;
+// The 286569612 value is based on sha256(salt + "ProxyResolvingSocketFactory1").
+constexpr uint32_t kProxyResolvingSocketFactory_CreateProxyResolvingSocket_Name = 286569612;
 
 }  // namespace internal
 }  // namespace mojom

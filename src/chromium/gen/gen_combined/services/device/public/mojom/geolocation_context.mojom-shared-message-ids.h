@@ -12,12 +12,12 @@ namespace mojom {
 namespace internal {
 
 
-// The 38858188 value is based on sha256(salt + "GeolocationContext1").
-constexpr uint32_t kGeolocationContext_BindGeolocation_Name = 38858188;
-// The 472793490 value is based on sha256(salt + "GeolocationContext2").
-constexpr uint32_t kGeolocationContext_SetOverride_Name = 472793490;
-// The 1426572812 value is based on sha256(salt + "GeolocationContext3").
-constexpr uint32_t kGeolocationContext_ClearOverride_Name = 1426572812;
+// The 202897015 value is based on sha256(salt + "GeolocationContext1").
+constexpr uint32_t kGeolocationContext_BindGeolocation_Name = 202897015;
+// The 846944582 value is based on sha256(salt + "GeolocationContext2").
+constexpr uint32_t kGeolocationContext_SetOverride_Name = 846944582;
+// The 778528345 value is based on sha256(salt + "GeolocationContext3").
+constexpr uint32_t kGeolocationContext_ClearOverride_Name = 778528345;
 
 }  // namespace internal
 }  // namespace mojom

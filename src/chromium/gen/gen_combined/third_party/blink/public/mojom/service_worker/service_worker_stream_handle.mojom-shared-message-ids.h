@@ -12,10 +12,10 @@ namespace mojom {
 namespace internal {
 
 
-// The 750804380 value is based on sha256(salt + "ServiceWorkerStreamCallback1").
-constexpr uint32_t kServiceWorkerStreamCallback_OnCompleted_Name = 750804380;
-// The 1666897858 value is based on sha256(salt + "ServiceWorkerStreamCallback2").
-constexpr uint32_t kServiceWorkerStreamCallback_OnAborted_Name = 1666897858;
+// The 1073884083 value is based on sha256(salt + "ServiceWorkerStreamCallback1").
+constexpr uint32_t kServiceWorkerStreamCallback_OnCompleted_Name = 1073884083;
+// The 634424832 value is based on sha256(salt + "ServiceWorkerStreamCallback2").
+constexpr uint32_t kServiceWorkerStreamCallback_OnAborted_Name = 634424832;
 
 }  // namespace internal
 }  // namespace mojom

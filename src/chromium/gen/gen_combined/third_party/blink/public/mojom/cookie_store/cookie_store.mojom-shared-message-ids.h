@@ -12,10 +12,10 @@ namespace mojom {
 namespace internal {
 
 
-// The 1803543399 value is based on sha256(salt + "CookieStore1").
-constexpr uint32_t kCookieStore_AppendSubscriptions_Name = 1803543399;
-// The 869858512 value is based on sha256(salt + "CookieStore2").
-constexpr uint32_t kCookieStore_GetSubscriptions_Name = 869858512;
+// The 563244533 value is based on sha256(salt + "CookieStore1").
+constexpr uint32_t kCookieStore_AppendSubscriptions_Name = 563244533;
+// The 636724622 value is based on sha256(salt + "CookieStore2").
+constexpr uint32_t kCookieStore_GetSubscriptions_Name = 636724622;
 
 }  // namespace internal
 }  // namespace mojom

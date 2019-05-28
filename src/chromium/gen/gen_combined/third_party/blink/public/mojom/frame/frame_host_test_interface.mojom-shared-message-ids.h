@@ -12,10 +12,10 @@ namespace mojom {
 namespace internal {
 
 
-// The 259037690 value is based on sha256(salt + "FrameHostTestInterface1").
-constexpr uint32_t kFrameHostTestInterface_Ping_Name = 259037690;
-// The 1771715231 value is based on sha256(salt + "FrameHostTestInterface2").
-constexpr uint32_t kFrameHostTestInterface_GetName_Name = 1771715231;
+// The 1281194842 value is based on sha256(salt + "FrameHostTestInterface1").
+constexpr uint32_t kFrameHostTestInterface_Ping_Name = 1281194842;
+// The 1292366214 value is based on sha256(salt + "FrameHostTestInterface2").
+constexpr uint32_t kFrameHostTestInterface_GetName_Name = 1292366214;
 
 }  // namespace internal
 }  // namespace mojom

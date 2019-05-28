@@ -1,0 +1,7 @@
+sources:
+../../mojo/public/js/compile_preamble.js
+../../mojo/public/js/bindings_lite.js
+../../mojo/public/js/interface_support.js
+deps:
+gen/mojo/public/interfaces/bindings/bindings_js_library_for_compile.js_library
+externs:

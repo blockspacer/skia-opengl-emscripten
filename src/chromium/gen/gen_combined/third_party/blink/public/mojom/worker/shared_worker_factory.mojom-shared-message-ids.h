@@ -12,8 +12,8 @@ namespace mojom {
 namespace internal {
 
 
-// The 1711186404 value is based on sha256(salt + "SharedWorkerFactory1").
-constexpr uint32_t kSharedWorkerFactory_CreateSharedWorker_Name = 1711186404;
+// The 664259996 value is based on sha256(salt + "SharedWorkerFactory1").
+constexpr uint32_t kSharedWorkerFactory_CreateSharedWorker_Name = 664259996;
 
 }  // namespace internal
 }  // namespace mojom

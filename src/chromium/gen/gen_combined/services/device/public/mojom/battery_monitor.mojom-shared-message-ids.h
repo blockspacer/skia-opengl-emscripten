@@ -12,8 +12,8 @@ namespace mojom {
 namespace internal {
 
 
-// The 544045006 value is based on sha256(salt + "BatteryMonitor1").
-constexpr uint32_t kBatteryMonitor_QueryNextStatus_Name = 544045006;
+// The 914931130 value is based on sha256(salt + "BatteryMonitor1").
+constexpr uint32_t kBatteryMonitor_QueryNextStatus_Name = 914931130;
 
 }  // namespace internal
 }  // namespace mojom

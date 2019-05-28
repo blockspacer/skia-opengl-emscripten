@@ -12,8 +12,8 @@ namespace mojom {
 namespace internal {
 
 
-// The 2007481958 value is based on sha256(salt + "LeakDetector1").
-constexpr uint32_t kLeakDetector_PerformLeakDetection_Name = 2007481958;
+// The 169483995 value is based on sha256(salt + "LeakDetector1").
+constexpr uint32_t kLeakDetector_PerformLeakDetection_Name = 169483995;
 
 }  // namespace internal
 }  // namespace mojom

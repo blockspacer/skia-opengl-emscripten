@@ -12,26 +12,26 @@ namespace mojom {
 namespace internal {
 
 
-// The 284774441 value is based on sha256(salt + "ClientProcess1").
-constexpr uint32_t kClientProcess_RequestChromeMemoryDump_Name = 284774441;
-// The 418999089 value is based on sha256(salt + "ClientProcess2").
-constexpr uint32_t kClientProcess_RequestOSMemoryDump_Name = 418999089;
-// The 46401998 value is based on sha256(salt + "HeapProfiler1").
-constexpr uint32_t kHeapProfiler_DumpProcessesForTracing_Name = 46401998;
-// The 871431103 value is based on sha256(salt + "HeapProfilerHelper1").
-constexpr uint32_t kHeapProfilerHelper_GetVmRegionsForHeapProfiler_Name = 871431103;
-// The 2081116682 value is based on sha256(salt + "Coordinator1").
-constexpr uint32_t kCoordinator_RegisterClientProcess_Name = 2081116682;
-// The 226090531 value is based on sha256(salt + "Coordinator2").
-constexpr uint32_t kCoordinator_RequestGlobalMemoryDump_Name = 226090531;
-// The 1882671527 value is based on sha256(salt + "Coordinator3").
-constexpr uint32_t kCoordinator_RequestGlobalMemoryDumpForPid_Name = 1882671527;
-// The 860837762 value is based on sha256(salt + "Coordinator4").
-constexpr uint32_t kCoordinator_RequestPrivateMemoryFootprint_Name = 860837762;
-// The 603434616 value is based on sha256(salt + "Coordinator5").
-constexpr uint32_t kCoordinator_RequestGlobalMemoryDumpAndAppendToTrace_Name = 603434616;
-// The 1968783795 value is based on sha256(salt + "Coordinator6").
-constexpr uint32_t kCoordinator_RegisterHeapProfiler_Name = 1968783795;
+// The 1103987692 value is based on sha256(salt + "ClientProcess1").
+constexpr uint32_t kClientProcess_RequestChromeMemoryDump_Name = 1103987692;
+// The 709517803 value is based on sha256(salt + "ClientProcess2").
+constexpr uint32_t kClientProcess_RequestOSMemoryDump_Name = 709517803;
+// The 1159309029 value is based on sha256(salt + "HeapProfiler1").
+constexpr uint32_t kHeapProfiler_DumpProcessesForTracing_Name = 1159309029;
+// The 477720517 value is based on sha256(salt + "HeapProfilerHelper1").
+constexpr uint32_t kHeapProfilerHelper_GetVmRegionsForHeapProfiler_Name = 477720517;
+// The 1755927300 value is based on sha256(salt + "Coordinator1").
+constexpr uint32_t kCoordinator_RegisterClientProcess_Name = 1755927300;
+// The 1903602841 value is based on sha256(salt + "Coordinator2").
+constexpr uint32_t kCoordinator_RequestGlobalMemoryDump_Name = 1903602841;
+// The 1467436387 value is based on sha256(salt + "Coordinator3").
+constexpr uint32_t kCoordinator_RequestGlobalMemoryDumpForPid_Name = 1467436387;
+// The 1351796908 value is based on sha256(salt + "Coordinator4").
+constexpr uint32_t kCoordinator_RequestPrivateMemoryFootprint_Name = 1351796908;
+// The 1895760151 value is based on sha256(salt + "Coordinator5").
+constexpr uint32_t kCoordinator_RequestGlobalMemoryDumpAndAppendToTrace_Name = 1895760151;
+// The 1746776072 value is based on sha256(salt + "Coordinator6").
+constexpr uint32_t kCoordinator_RegisterHeapProfiler_Name = 1746776072;
 
 }  // namespace internal
 }  // namespace mojom

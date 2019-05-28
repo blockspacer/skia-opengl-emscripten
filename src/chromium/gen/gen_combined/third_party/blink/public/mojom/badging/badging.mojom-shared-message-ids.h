@@ -12,12 +12,12 @@ namespace mojom {
 namespace internal {
 
 
-// The 1039746108 value is based on sha256(salt + "BadgeService1").
-constexpr uint32_t kBadgeService_SetInteger_Name = 1039746108;
-// The 519102573 value is based on sha256(salt + "BadgeService2").
-constexpr uint32_t kBadgeService_SetFlag_Name = 519102573;
-// The 400307921 value is based on sha256(salt + "BadgeService3").
-constexpr uint32_t kBadgeService_ClearBadge_Name = 400307921;
+// The 69000444 value is based on sha256(salt + "BadgeService1").
+constexpr uint32_t kBadgeService_SetInteger_Name = 69000444;
+// The 722141220 value is based on sha256(salt + "BadgeService2").
+constexpr uint32_t kBadgeService_SetFlag_Name = 722141220;
+// The 797899703 value is based on sha256(salt + "BadgeService3").
+constexpr uint32_t kBadgeService_ClearBadge_Name = 797899703;
 
 }  // namespace internal
 }  // namespace mojom

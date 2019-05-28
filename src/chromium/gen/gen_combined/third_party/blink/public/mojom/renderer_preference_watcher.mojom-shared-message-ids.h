@@ -12,8 +12,8 @@ namespace mojom {
 namespace internal {
 
 
-// The 1301856256 value is based on sha256(salt + "RendererPreferenceWatcher1").
-constexpr uint32_t kRendererPreferenceWatcher_NotifyUpdate_Name = 1301856256;
+// The 991395622 value is based on sha256(salt + "RendererPreferenceWatcher1").
+constexpr uint32_t kRendererPreferenceWatcher_NotifyUpdate_Name = 991395622;
 
 }  // namespace internal
 }  // namespace mojom

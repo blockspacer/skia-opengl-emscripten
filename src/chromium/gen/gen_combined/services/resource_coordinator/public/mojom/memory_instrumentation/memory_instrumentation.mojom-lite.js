@@ -193,7 +193,7 @@ memoryInstrumentation.mojom.ClientProcessProxy = class {
   requestChromeMemoryDump(
       args) {
     return this.proxy.sendMessage(
-        284774441,
+        1103987692,
         memoryInstrumentation.mojom.ClientProcess_RequestChromeMemoryDump_ParamsSpec.$,
         memoryInstrumentation.mojom.ClientProcess_RequestChromeMemoryDump_ResponseParamsSpec.$,
         [
@@ -215,7 +215,7 @@ memoryInstrumentation.mojom.ClientProcessProxy = class {
       option,
       pids) {
     return this.proxy.sendMessage(
-        418999089,
+        709517803,
         memoryInstrumentation.mojom.ClientProcess_RequestOSMemoryDump_ParamsSpec.$,
         memoryInstrumentation.mojom.ClientProcess_RequestOSMemoryDump_ResponseParamsSpec.$,
         [
@@ -240,12 +240,12 @@ memoryInstrumentation.mojom.ClientProcess = class {
     this.target_ = new mojo.internal.interfaceSupport.InterfaceTarget;
 
     this.target_.registerHandler(
-        284774441,
+        1103987692,
         memoryInstrumentation.mojom.ClientProcess_RequestChromeMemoryDump_ParamsSpec.$,
         memoryInstrumentation.mojom.ClientProcess_RequestChromeMemoryDump_ResponseParamsSpec.$,
         impl.requestChromeMemoryDump.bind(impl));
     this.target_.registerHandler(
-        418999089,
+        709517803,
         memoryInstrumentation.mojom.ClientProcess_RequestOSMemoryDump_ParamsSpec.$,
         memoryInstrumentation.mojom.ClientProcess_RequestOSMemoryDump_ResponseParamsSpec.$,
         impl.requestOSMemoryDump.bind(impl));
@@ -322,7 +322,7 @@ memoryInstrumentation.mojom.ClientProcessCallbackRouter = class {
             this.router_);
 
     this.target_.registerHandler(
-        284774441,
+        1103987692,
         memoryInstrumentation.mojom.ClientProcess_RequestChromeMemoryDump_ParamsSpec.$,
         memoryInstrumentation.mojom.ClientProcess_RequestChromeMemoryDump_ResponseParamsSpec.$,
         this.requestChromeMemoryDump.createTargetHandler(true /* expectsResponse */));
@@ -334,7 +334,7 @@ memoryInstrumentation.mojom.ClientProcessCallbackRouter = class {
             this.router_);
 
     this.target_.registerHandler(
-        418999089,
+        709517803,
         memoryInstrumentation.mojom.ClientProcess_RequestOSMemoryDump_ParamsSpec.$,
         memoryInstrumentation.mojom.ClientProcess_RequestOSMemoryDump_ResponseParamsSpec.$,
         this.requestOSMemoryDump.createTargetHandler(true /* expectsResponse */));
@@ -433,7 +433,7 @@ memoryInstrumentation.mojom.HeapProfilerProxy = class {
   dumpProcessesForTracing(
       stripPathFromMappedFiles) {
     return this.proxy.sendMessage(
-        46401998,
+        1159309029,
         memoryInstrumentation.mojom.HeapProfiler_DumpProcessesForTracing_ParamsSpec.$,
         memoryInstrumentation.mojom.HeapProfiler_DumpProcessesForTracing_ResponseParamsSpec.$,
         [
@@ -457,7 +457,7 @@ memoryInstrumentation.mojom.HeapProfiler = class {
     this.target_ = new mojo.internal.interfaceSupport.InterfaceTarget;
 
     this.target_.registerHandler(
-        46401998,
+        1159309029,
         memoryInstrumentation.mojom.HeapProfiler_DumpProcessesForTracing_ParamsSpec.$,
         memoryInstrumentation.mojom.HeapProfiler_DumpProcessesForTracing_ResponseParamsSpec.$,
         impl.dumpProcessesForTracing.bind(impl));
@@ -534,7 +534,7 @@ memoryInstrumentation.mojom.HeapProfilerCallbackRouter = class {
             this.router_);
 
     this.target_.registerHandler(
-        46401998,
+        1159309029,
         memoryInstrumentation.mojom.HeapProfiler_DumpProcessesForTracing_ParamsSpec.$,
         memoryInstrumentation.mojom.HeapProfiler_DumpProcessesForTracing_ResponseParamsSpec.$,
         this.dumpProcessesForTracing.createTargetHandler(true /* expectsResponse */));
@@ -633,7 +633,7 @@ memoryInstrumentation.mojom.HeapProfilerHelperProxy = class {
   getVmRegionsForHeapProfiler(
       pids) {
     return this.proxy.sendMessage(
-        871431103,
+        477720517,
         memoryInstrumentation.mojom.HeapProfilerHelper_GetVmRegionsForHeapProfiler_ParamsSpec.$,
         memoryInstrumentation.mojom.HeapProfilerHelper_GetVmRegionsForHeapProfiler_ResponseParamsSpec.$,
         [
@@ -657,7 +657,7 @@ memoryInstrumentation.mojom.HeapProfilerHelper = class {
     this.target_ = new mojo.internal.interfaceSupport.InterfaceTarget;
 
     this.target_.registerHandler(
-        871431103,
+        477720517,
         memoryInstrumentation.mojom.HeapProfilerHelper_GetVmRegionsForHeapProfiler_ParamsSpec.$,
         memoryInstrumentation.mojom.HeapProfilerHelper_GetVmRegionsForHeapProfiler_ResponseParamsSpec.$,
         impl.getVmRegionsForHeapProfiler.bind(impl));
@@ -734,7 +734,7 @@ memoryInstrumentation.mojom.HeapProfilerHelperCallbackRouter = class {
             this.router_);
 
     this.target_.registerHandler(
-        871431103,
+        477720517,
         memoryInstrumentation.mojom.HeapProfilerHelper_GetVmRegionsForHeapProfiler_ParamsSpec.$,
         memoryInstrumentation.mojom.HeapProfilerHelper_GetVmRegionsForHeapProfiler_ResponseParamsSpec.$,
         this.getVmRegionsForHeapProfiler.createTargetHandler(true /* expectsResponse */));
@@ -832,7 +832,7 @@ memoryInstrumentation.mojom.CoordinatorProxy = class {
       clientProcess,
       processType) {
     this.proxy.sendMessage(
-        2081116682,
+        1755927300,
         memoryInstrumentation.mojom.Coordinator_RegisterClientProcess_ParamsSpec.$,
         null,
         [
@@ -857,7 +857,7 @@ memoryInstrumentation.mojom.CoordinatorProxy = class {
       levelOfDetail,
       allocatorDumpNames) {
     return this.proxy.sendMessage(
-        226090531,
+        1903602841,
         memoryInstrumentation.mojom.Coordinator_RequestGlobalMemoryDump_ParamsSpec.$,
         memoryInstrumentation.mojom.Coordinator_RequestGlobalMemoryDump_ResponseParamsSpec.$,
         [
@@ -881,7 +881,7 @@ memoryInstrumentation.mojom.CoordinatorProxy = class {
       pid,
       allocatorDumpNames) {
     return this.proxy.sendMessage(
-        1882671527,
+        1467436387,
         memoryInstrumentation.mojom.Coordinator_RequestGlobalMemoryDumpForPid_ParamsSpec.$,
         memoryInstrumentation.mojom.Coordinator_RequestGlobalMemoryDumpForPid_ResponseParamsSpec.$,
         [
@@ -902,7 +902,7 @@ memoryInstrumentation.mojom.CoordinatorProxy = class {
   requestPrivateMemoryFootprint(
       pid) {
     return this.proxy.sendMessage(
-        860837762,
+        1351796908,
         memoryInstrumentation.mojom.Coordinator_RequestPrivateMemoryFootprint_ParamsSpec.$,
         memoryInstrumentation.mojom.Coordinator_RequestPrivateMemoryFootprint_ResponseParamsSpec.$,
         [
@@ -924,7 +924,7 @@ memoryInstrumentation.mojom.CoordinatorProxy = class {
       dumpType,
       levelOfDetail) {
     return this.proxy.sendMessage(
-        603434616,
+        1895760151,
         memoryInstrumentation.mojom.Coordinator_RequestGlobalMemoryDumpAndAppendToTrace_ParamsSpec.$,
         memoryInstrumentation.mojom.Coordinator_RequestGlobalMemoryDumpAndAppendToTrace_ResponseParamsSpec.$,
         [
@@ -941,7 +941,7 @@ memoryInstrumentation.mojom.CoordinatorProxy = class {
   registerHeapProfiler(
       heapProfiler) {
     this.proxy.sendMessage(
-        1968783795,
+        1746776072,
         memoryInstrumentation.mojom.Coordinator_RegisterHeapProfiler_ParamsSpec.$,
         null,
         [
@@ -965,32 +965,32 @@ memoryInstrumentation.mojom.Coordinator = class {
     this.target_ = new mojo.internal.interfaceSupport.InterfaceTarget;
 
     this.target_.registerHandler(
-        2081116682,
+        1755927300,
         memoryInstrumentation.mojom.Coordinator_RegisterClientProcess_ParamsSpec.$,
         null,
         impl.registerClientProcess.bind(impl));
     this.target_.registerHandler(
-        226090531,
+        1903602841,
         memoryInstrumentation.mojom.Coordinator_RequestGlobalMemoryDump_ParamsSpec.$,
         memoryInstrumentation.mojom.Coordinator_RequestGlobalMemoryDump_ResponseParamsSpec.$,
         impl.requestGlobalMemoryDump.bind(impl));
     this.target_.registerHandler(
-        1882671527,
+        1467436387,
         memoryInstrumentation.mojom.Coordinator_RequestGlobalMemoryDumpForPid_ParamsSpec.$,
         memoryInstrumentation.mojom.Coordinator_RequestGlobalMemoryDumpForPid_ResponseParamsSpec.$,
         impl.requestGlobalMemoryDumpForPid.bind(impl));
     this.target_.registerHandler(
-        860837762,
+        1351796908,
         memoryInstrumentation.mojom.Coordinator_RequestPrivateMemoryFootprint_ParamsSpec.$,
         memoryInstrumentation.mojom.Coordinator_RequestPrivateMemoryFootprint_ResponseParamsSpec.$,
         impl.requestPrivateMemoryFootprint.bind(impl));
     this.target_.registerHandler(
-        603434616,
+        1895760151,
         memoryInstrumentation.mojom.Coordinator_RequestGlobalMemoryDumpAndAppendToTrace_ParamsSpec.$,
         memoryInstrumentation.mojom.Coordinator_RequestGlobalMemoryDumpAndAppendToTrace_ResponseParamsSpec.$,
         impl.requestGlobalMemoryDumpAndAppendToTrace.bind(impl));
     this.target_.registerHandler(
-        1968783795,
+        1746776072,
         memoryInstrumentation.mojom.Coordinator_RegisterHeapProfiler_ParamsSpec.$,
         null,
         impl.registerHeapProfiler.bind(impl));
@@ -1067,7 +1067,7 @@ memoryInstrumentation.mojom.CoordinatorCallbackRouter = class {
             this.router_);
 
     this.target_.registerHandler(
-        2081116682,
+        1755927300,
         memoryInstrumentation.mojom.Coordinator_RegisterClientProcess_ParamsSpec.$,
         null,
         this.registerClientProcess.createTargetHandler(false /* expectsResponse */));
@@ -1079,7 +1079,7 @@ memoryInstrumentation.mojom.CoordinatorCallbackRouter = class {
             this.router_);
 
     this.target_.registerHandler(
-        226090531,
+        1903602841,
         memoryInstrumentation.mojom.Coordinator_RequestGlobalMemoryDump_ParamsSpec.$,
         memoryInstrumentation.mojom.Coordinator_RequestGlobalMemoryDump_ResponseParamsSpec.$,
         this.requestGlobalMemoryDump.createTargetHandler(true /* expectsResponse */));
@@ -1091,7 +1091,7 @@ memoryInstrumentation.mojom.CoordinatorCallbackRouter = class {
             this.router_);
 
     this.target_.registerHandler(
-        1882671527,
+        1467436387,
         memoryInstrumentation.mojom.Coordinator_RequestGlobalMemoryDumpForPid_ParamsSpec.$,
         memoryInstrumentation.mojom.Coordinator_RequestGlobalMemoryDumpForPid_ResponseParamsSpec.$,
         this.requestGlobalMemoryDumpForPid.createTargetHandler(true /* expectsResponse */));
@@ -1103,7 +1103,7 @@ memoryInstrumentation.mojom.CoordinatorCallbackRouter = class {
             this.router_);
 
     this.target_.registerHandler(
-        860837762,
+        1351796908,
         memoryInstrumentation.mojom.Coordinator_RequestPrivateMemoryFootprint_ParamsSpec.$,
         memoryInstrumentation.mojom.Coordinator_RequestPrivateMemoryFootprint_ResponseParamsSpec.$,
         this.requestPrivateMemoryFootprint.createTargetHandler(true /* expectsResponse */));
@@ -1115,7 +1115,7 @@ memoryInstrumentation.mojom.CoordinatorCallbackRouter = class {
             this.router_);
 
     this.target_.registerHandler(
-        603434616,
+        1895760151,
         memoryInstrumentation.mojom.Coordinator_RequestGlobalMemoryDumpAndAppendToTrace_ParamsSpec.$,
         memoryInstrumentation.mojom.Coordinator_RequestGlobalMemoryDumpAndAppendToTrace_ResponseParamsSpec.$,
         this.requestGlobalMemoryDumpAndAppendToTrace.createTargetHandler(true /* expectsResponse */));
@@ -1127,7 +1127,7 @@ memoryInstrumentation.mojom.CoordinatorCallbackRouter = class {
             this.router_);
 
     this.target_.registerHandler(
-        1968783795,
+        1746776072,
         memoryInstrumentation.mojom.Coordinator_RegisterHeapProfiler_ParamsSpec.$,
         null,
         this.registerHeapProfiler.createTargetHandler(false /* expectsResponse */));

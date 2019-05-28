@@ -12,10 +12,10 @@ namespace mojom {
 namespace internal {
 
 
-// The 660895746 value is based on sha256(salt + "DisplayCutoutHost1").
-constexpr uint32_t kDisplayCutoutHost_NotifyViewportFitChanged_Name = 660895746;
-// The 2020767050 value is based on sha256(salt + "DisplayCutoutClient1").
-constexpr uint32_t kDisplayCutoutClient_SetSafeArea_Name = 2020767050;
+// The 1573385222 value is based on sha256(salt + "DisplayCutoutHost1").
+constexpr uint32_t kDisplayCutoutHost_NotifyViewportFitChanged_Name = 1573385222;
+// The 1759197638 value is based on sha256(salt + "DisplayCutoutClient1").
+constexpr uint32_t kDisplayCutoutClient_SetSafeArea_Name = 1759197638;
 
 }  // namespace internal
 }  // namespace mojom

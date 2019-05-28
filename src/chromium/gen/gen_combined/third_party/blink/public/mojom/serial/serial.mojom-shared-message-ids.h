@@ -12,12 +12,12 @@ namespace mojom {
 namespace internal {
 
 
-// The 769501972 value is based on sha256(salt + "SerialService1").
-constexpr uint32_t kSerialService_GetPorts_Name = 769501972;
-// The 1759950013 value is based on sha256(salt + "SerialService2").
-constexpr uint32_t kSerialService_RequestPort_Name = 1759950013;
-// The 616929216 value is based on sha256(salt + "SerialService3").
-constexpr uint32_t kSerialService_GetPort_Name = 616929216;
+// The 623771198 value is based on sha256(salt + "SerialService1").
+constexpr uint32_t kSerialService_GetPorts_Name = 623771198;
+// The 1135242142 value is based on sha256(salt + "SerialService2").
+constexpr uint32_t kSerialService_RequestPort_Name = 1135242142;
+// The 984975749 value is based on sha256(salt + "SerialService3").
+constexpr uint32_t kSerialService_GetPort_Name = 984975749;
 
 }  // namespace internal
 }  // namespace mojom

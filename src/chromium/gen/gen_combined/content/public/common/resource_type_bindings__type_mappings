@@ -1,0 +1,19 @@
+{
+  "c++": {
+    "content.mojom.ResourceType": {
+      "hashable": false, 
+      "typename": "content::ResourceType", 
+      "traits_headers": [
+        "content/public/common/resource_type_struct_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "force_serialize": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "non_copyable_non_movable": false, 
+      "public_headers": [
+        "content/public/common/resource_type.h"
+      ]
+    }
+  }
+}

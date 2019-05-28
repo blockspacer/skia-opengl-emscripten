@@ -11,8 +11,8 @@ namespace imported {
 namespace internal {
 
 
-// The 1945999719 value is based on sha256(salt + "ImportedInterface1").
-constexpr uint32_t kImportedInterface_DoSomething_Name = 1945999719;
+// The 1503730779 value is based on sha256(salt + "ImportedInterface1").
+constexpr uint32_t kImportedInterface_DoSomething_Name = 1503730779;
 
 }  // namespace internal
 }  // namespace imported

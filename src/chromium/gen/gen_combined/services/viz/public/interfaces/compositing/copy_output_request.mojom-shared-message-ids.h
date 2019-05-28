@@ -12,8 +12,8 @@ namespace mojom {
 namespace internal {
 
 
-// The 180622913 value is based on sha256(salt + "CopyOutputResultSender1").
-constexpr uint32_t kCopyOutputResultSender_SendResult_Name = 180622913;
+// The 935870687 value is based on sha256(salt + "CopyOutputResultSender1").
+constexpr uint32_t kCopyOutputResultSender_SendResult_Name = 935870687;
 
 }  // namespace internal
 }  // namespace mojom

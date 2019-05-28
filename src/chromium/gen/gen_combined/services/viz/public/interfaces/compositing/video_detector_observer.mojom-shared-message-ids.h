@@ -12,10 +12,10 @@ namespace mojom {
 namespace internal {
 
 
-// The 1888568440 value is based on sha256(salt + "VideoDetectorObserver1").
-constexpr uint32_t kVideoDetectorObserver_OnVideoActivityStarted_Name = 1888568440;
-// The 2117023196 value is based on sha256(salt + "VideoDetectorObserver2").
-constexpr uint32_t kVideoDetectorObserver_OnVideoActivityEnded_Name = 2117023196;
+// The 2006734956 value is based on sha256(salt + "VideoDetectorObserver1").
+constexpr uint32_t kVideoDetectorObserver_OnVideoActivityStarted_Name = 2006734956;
+// The 529079871 value is based on sha256(salt + "VideoDetectorObserver2").
+constexpr uint32_t kVideoDetectorObserver_OnVideoActivityEnded_Name = 529079871;
 
 }  // namespace internal
 }  // namespace mojom

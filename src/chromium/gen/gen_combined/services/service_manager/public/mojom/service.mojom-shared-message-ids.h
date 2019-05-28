@@ -12,12 +12,12 @@ namespace mojom {
 namespace internal {
 
 
-// The 727120798 value is based on sha256(salt + "Service1").
-constexpr uint32_t kService_OnStart_Name = 727120798;
-// The 2110571508 value is based on sha256(salt + "Service2").
-constexpr uint32_t kService_OnBindInterface_Name = 2110571508;
-// The 949860519 value is based on sha256(salt + "Service3").
-constexpr uint32_t kService_CreatePackagedServiceInstance_Name = 949860519;
+// The 1046223778 value is based on sha256(salt + "Service1").
+constexpr uint32_t kService_OnStart_Name = 1046223778;
+// The 903420471 value is based on sha256(salt + "Service2").
+constexpr uint32_t kService_OnBindInterface_Name = 903420471;
+// The 1652137091 value is based on sha256(salt + "Service3").
+constexpr uint32_t kService_CreatePackagedServiceInstance_Name = 1652137091;
 
 }  // namespace internal
 }  // namespace mojom

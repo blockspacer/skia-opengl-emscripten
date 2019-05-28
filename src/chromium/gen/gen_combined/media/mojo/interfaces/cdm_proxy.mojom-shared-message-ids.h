@@ -12,18 +12,18 @@ namespace mojom {
 namespace internal {
 
 
-// The 814097840 value is based on sha256(salt + "CdmProxy1").
-constexpr uint32_t kCdmProxy_Initialize_Name = 814097840;
-// The 770287185 value is based on sha256(salt + "CdmProxy2").
-constexpr uint32_t kCdmProxy_Process_Name = 770287185;
-// The 189028641 value is based on sha256(salt + "CdmProxy3").
-constexpr uint32_t kCdmProxy_CreateMediaCryptoSession_Name = 189028641;
-// The 1427246356 value is based on sha256(salt + "CdmProxy4").
-constexpr uint32_t kCdmProxy_SetKey_Name = 1427246356;
-// The 187969910 value is based on sha256(salt + "CdmProxy5").
-constexpr uint32_t kCdmProxy_RemoveKey_Name = 187969910;
-// The 650193591 value is based on sha256(salt + "CdmProxyClient1").
-constexpr uint32_t kCdmProxyClient_NotifyHardwareReset_Name = 650193591;
+// The 615811775 value is based on sha256(salt + "CdmProxy1").
+constexpr uint32_t kCdmProxy_Initialize_Name = 615811775;
+// The 1958766316 value is based on sha256(salt + "CdmProxy2").
+constexpr uint32_t kCdmProxy_Process_Name = 1958766316;
+// The 545658196 value is based on sha256(salt + "CdmProxy3").
+constexpr uint32_t kCdmProxy_CreateMediaCryptoSession_Name = 545658196;
+// The 548078991 value is based on sha256(salt + "CdmProxy4").
+constexpr uint32_t kCdmProxy_SetKey_Name = 548078991;
+// The 1217047737 value is based on sha256(salt + "CdmProxy5").
+constexpr uint32_t kCdmProxy_RemoveKey_Name = 1217047737;
+// The 180368531 value is based on sha256(salt + "CdmProxyClient1").
+constexpr uint32_t kCdmProxyClient_NotifyHardwareReset_Name = 180368531;
 
 }  // namespace internal
 }  // namespace mojom

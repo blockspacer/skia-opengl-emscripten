@@ -2596,8 +2596,8 @@
     };
 
   RawAllocatorDumpEntryValue.encodedSize = 16;
-  var kClientProcess_RequestChromeMemoryDump_Name = 284774441;
-  var kClientProcess_RequestOSMemoryDump_Name = 418999089;
+  var kClientProcess_RequestChromeMemoryDump_Name = 1103987692;
+  var kClientProcess_RequestOSMemoryDump_Name = 709517803;
 
   function ClientProcessPtr(handleOrPtrInfo) {
     this.ptr = new bindings.InterfacePtrController(ClientProcess,
@@ -2778,7 +2778,7 @@
   };
   ClientProcessStub.prototype.validator = validateClientProcessRequest;
   ClientProcessProxy.prototype.validator = validateClientProcessResponse;
-  var kHeapProfiler_DumpProcessesForTracing_Name = 46401998;
+  var kHeapProfiler_DumpProcessesForTracing_Name = 1159309029;
 
   function HeapProfilerPtr(handleOrPtrInfo) {
     this.ptr = new bindings.InterfacePtrController(HeapProfiler,
@@ -2903,7 +2903,7 @@
   };
   HeapProfilerStub.prototype.validator = validateHeapProfilerRequest;
   HeapProfilerProxy.prototype.validator = validateHeapProfilerResponse;
-  var kHeapProfilerHelper_GetVmRegionsForHeapProfiler_Name = 871431103;
+  var kHeapProfilerHelper_GetVmRegionsForHeapProfiler_Name = 477720517;
 
   function HeapProfilerHelperPtr(handleOrPtrInfo) {
     this.ptr = new bindings.InterfacePtrController(HeapProfilerHelper,
@@ -3028,12 +3028,12 @@
   };
   HeapProfilerHelperStub.prototype.validator = validateHeapProfilerHelperRequest;
   HeapProfilerHelperProxy.prototype.validator = validateHeapProfilerHelperResponse;
-  var kCoordinator_RegisterClientProcess_Name = 2081116682;
-  var kCoordinator_RequestGlobalMemoryDump_Name = 226090531;
-  var kCoordinator_RequestGlobalMemoryDumpForPid_Name = 1882671527;
-  var kCoordinator_RequestPrivateMemoryFootprint_Name = 860837762;
-  var kCoordinator_RequestGlobalMemoryDumpAndAppendToTrace_Name = 603434616;
-  var kCoordinator_RegisterHeapProfiler_Name = 1968783795;
+  var kCoordinator_RegisterClientProcess_Name = 1755927300;
+  var kCoordinator_RequestGlobalMemoryDump_Name = 1903602841;
+  var kCoordinator_RequestGlobalMemoryDumpForPid_Name = 1467436387;
+  var kCoordinator_RequestPrivateMemoryFootprint_Name = 1351796908;
+  var kCoordinator_RequestGlobalMemoryDumpAndAppendToTrace_Name = 1895760151;
+  var kCoordinator_RegisterHeapProfiler_Name = 1746776072;
 
   function CoordinatorPtr(handleOrPtrInfo) {
     this.ptr = new bindings.InterfacePtrController(Coordinator,

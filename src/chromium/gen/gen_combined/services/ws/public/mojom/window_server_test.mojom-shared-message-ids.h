@@ -12,8 +12,8 @@ namespace mojom {
 namespace internal {
 
 
-// The 2030057169 value is based on sha256(salt + "WindowServerTest1").
-constexpr uint32_t kWindowServerTest_EnsureClientHasDrawnWindow_Name = 2030057169;
+// The 783566921 value is based on sha256(salt + "WindowServerTest1").
+constexpr uint32_t kWindowServerTest_EnsureClientHasDrawnWindow_Name = 783566921;
 
 }  // namespace internal
 }  // namespace mojom

@@ -12,12 +12,12 @@ namespace mojom {
 namespace internal {
 
 
-// The 43716397 value is based on sha256(salt + "EventInjector1").
-constexpr uint32_t kEventInjector_InjectEvent_Name = 43716397;
-// The 1104531165 value is based on sha256(salt + "EventInjector2").
-constexpr uint32_t kEventInjector_InjectEventNoAck_Name = 1104531165;
-// The 750326354 value is based on sha256(salt + "EventInjector3").
-constexpr uint32_t kEventInjector_InjectEventNoAckNoRewriters_Name = 750326354;
+// The 1743070718 value is based on sha256(salt + "EventInjector1").
+constexpr uint32_t kEventInjector_InjectEvent_Name = 1743070718;
+// The 1484821528 value is based on sha256(salt + "EventInjector2").
+constexpr uint32_t kEventInjector_InjectEventNoAck_Name = 1484821528;
+// The 1007087339 value is based on sha256(salt + "EventInjector3").
+constexpr uint32_t kEventInjector_InjectEventNoAckNoRewriters_Name = 1007087339;
 
 }  // namespace internal
 }  // namespace mojom

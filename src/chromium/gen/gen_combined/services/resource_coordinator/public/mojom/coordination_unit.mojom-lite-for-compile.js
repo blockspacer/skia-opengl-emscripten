@@ -188,7 +188,7 @@ resourceCoordinator.mojom.DocumentCoordinationUnitProxy = class {
 
   setNetworkAlmostIdle() {
     this.proxy.sendMessage(
-        779153566,
+        535717106,
         resourceCoordinator.mojom.DocumentCoordinationUnit_SetNetworkAlmostIdle_ParamsSpec.$,
         null,
         [
@@ -203,7 +203,7 @@ resourceCoordinator.mojom.DocumentCoordinationUnitProxy = class {
   setLifecycleState(
       state) {
     this.proxy.sendMessage(
-        900699292,
+        948326248,
         resourceCoordinator.mojom.DocumentCoordinationUnit_SetLifecycleState_ParamsSpec.$,
         null,
         [
@@ -219,7 +219,7 @@ resourceCoordinator.mojom.DocumentCoordinationUnitProxy = class {
   setHasNonEmptyBeforeUnload(
       hasNonemptyBeforeunload) {
     this.proxy.sendMessage(
-        724434959,
+        1368109841,
         resourceCoordinator.mojom.DocumentCoordinationUnit_SetHasNonEmptyBeforeUnload_ParamsSpec.$,
         null,
         [
@@ -237,7 +237,7 @@ resourceCoordinator.mojom.DocumentCoordinationUnitProxy = class {
       intervention,
       policy) {
     this.proxy.sendMessage(
-        2027613163,
+        1424185659,
         resourceCoordinator.mojom.DocumentCoordinationUnit_SetInterventionPolicy_ParamsSpec.$,
         null,
         [
@@ -252,7 +252,7 @@ resourceCoordinator.mojom.DocumentCoordinationUnitProxy = class {
 
   setIsAdFrame() {
     this.proxy.sendMessage(
-        1397656912,
+        246093689,
         resourceCoordinator.mojom.DocumentCoordinationUnit_SetIsAdFrame_ParamsSpec.$,
         null,
         [
@@ -265,7 +265,7 @@ resourceCoordinator.mojom.DocumentCoordinationUnitProxy = class {
 
   onNonPersistentNotificationCreated() {
     this.proxy.sendMessage(
-        2053608518,
+        219257966,
         resourceCoordinator.mojom.DocumentCoordinationUnit_OnNonPersistentNotificationCreated_ParamsSpec.$,
         null,
         [
@@ -288,32 +288,32 @@ resourceCoordinator.mojom.DocumentCoordinationUnit = class {
     this.target_ = new mojo.internal.interfaceSupport.InterfaceTarget;
 
     this.target_.registerHandler(
-        779153566,
+        535717106,
         resourceCoordinator.mojom.DocumentCoordinationUnit_SetNetworkAlmostIdle_ParamsSpec.$,
         null,
         impl.setNetworkAlmostIdle.bind(impl));
     this.target_.registerHandler(
-        900699292,
+        948326248,
         resourceCoordinator.mojom.DocumentCoordinationUnit_SetLifecycleState_ParamsSpec.$,
         null,
         impl.setLifecycleState.bind(impl));
     this.target_.registerHandler(
-        724434959,
+        1368109841,
         resourceCoordinator.mojom.DocumentCoordinationUnit_SetHasNonEmptyBeforeUnload_ParamsSpec.$,
         null,
         impl.setHasNonEmptyBeforeUnload.bind(impl));
     this.target_.registerHandler(
-        2027613163,
+        1424185659,
         resourceCoordinator.mojom.DocumentCoordinationUnit_SetInterventionPolicy_ParamsSpec.$,
         null,
         impl.setInterventionPolicy.bind(impl));
     this.target_.registerHandler(
-        1397656912,
+        246093689,
         resourceCoordinator.mojom.DocumentCoordinationUnit_SetIsAdFrame_ParamsSpec.$,
         null,
         impl.setIsAdFrame.bind(impl));
     this.target_.registerHandler(
-        2053608518,
+        219257966,
         resourceCoordinator.mojom.DocumentCoordinationUnit_OnNonPersistentNotificationCreated_ParamsSpec.$,
         null,
         impl.onNonPersistentNotificationCreated.bind(impl));
@@ -390,7 +390,7 @@ resourceCoordinator.mojom.DocumentCoordinationUnitCallbackRouter = class {
             this.router_);
 
     this.target_.registerHandler(
-        779153566,
+        535717106,
         resourceCoordinator.mojom.DocumentCoordinationUnit_SetNetworkAlmostIdle_ParamsSpec.$,
         null,
         this.setNetworkAlmostIdle.createTargetHandler(false /* expectsResponse */));
@@ -402,7 +402,7 @@ resourceCoordinator.mojom.DocumentCoordinationUnitCallbackRouter = class {
             this.router_);
 
     this.target_.registerHandler(
-        900699292,
+        948326248,
         resourceCoordinator.mojom.DocumentCoordinationUnit_SetLifecycleState_ParamsSpec.$,
         null,
         this.setLifecycleState.createTargetHandler(false /* expectsResponse */));
@@ -414,7 +414,7 @@ resourceCoordinator.mojom.DocumentCoordinationUnitCallbackRouter = class {
             this.router_);
 
     this.target_.registerHandler(
-        724434959,
+        1368109841,
         resourceCoordinator.mojom.DocumentCoordinationUnit_SetHasNonEmptyBeforeUnload_ParamsSpec.$,
         null,
         this.setHasNonEmptyBeforeUnload.createTargetHandler(false /* expectsResponse */));
@@ -426,7 +426,7 @@ resourceCoordinator.mojom.DocumentCoordinationUnitCallbackRouter = class {
             this.router_);
 
     this.target_.registerHandler(
-        2027613163,
+        1424185659,
         resourceCoordinator.mojom.DocumentCoordinationUnit_SetInterventionPolicy_ParamsSpec.$,
         null,
         this.setInterventionPolicy.createTargetHandler(false /* expectsResponse */));
@@ -438,7 +438,7 @@ resourceCoordinator.mojom.DocumentCoordinationUnitCallbackRouter = class {
             this.router_);
 
     this.target_.registerHandler(
-        1397656912,
+        246093689,
         resourceCoordinator.mojom.DocumentCoordinationUnit_SetIsAdFrame_ParamsSpec.$,
         null,
         this.setIsAdFrame.createTargetHandler(false /* expectsResponse */));
@@ -450,7 +450,7 @@ resourceCoordinator.mojom.DocumentCoordinationUnitCallbackRouter = class {
             this.router_);
 
     this.target_.registerHandler(
-        2053608518,
+        219257966,
         resourceCoordinator.mojom.DocumentCoordinationUnit_OnNonPersistentNotificationCreated_ParamsSpec.$,
         null,
         this.onNonPersistentNotificationCreated.createTargetHandler(false /* expectsResponse */));
@@ -565,7 +565,7 @@ resourceCoordinator.mojom.ProcessCoordinationUnitProxy = class {
   setExpectedTaskQueueingDuration(
       duration) {
     this.proxy.sendMessage(
-        1745180896,
+        75558864,
         resourceCoordinator.mojom.ProcessCoordinationUnit_SetExpectedTaskQueueingDuration_ParamsSpec.$,
         null,
         [
@@ -581,7 +581,7 @@ resourceCoordinator.mojom.ProcessCoordinationUnitProxy = class {
   setMainThreadTaskLoadIsLow(
       mainThreadTaskLoadIsLow) {
     this.proxy.sendMessage(
-        1046309033,
+        1974632308,
         resourceCoordinator.mojom.ProcessCoordinationUnit_SetMainThreadTaskLoadIsLow_ParamsSpec.$,
         null,
         [
@@ -605,12 +605,12 @@ resourceCoordinator.mojom.ProcessCoordinationUnit = class {
     this.target_ = new mojo.internal.interfaceSupport.InterfaceTarget;
 
     this.target_.registerHandler(
-        1745180896,
+        75558864,
         resourceCoordinator.mojom.ProcessCoordinationUnit_SetExpectedTaskQueueingDuration_ParamsSpec.$,
         null,
         impl.setExpectedTaskQueueingDuration.bind(impl));
     this.target_.registerHandler(
-        1046309033,
+        1974632308,
         resourceCoordinator.mojom.ProcessCoordinationUnit_SetMainThreadTaskLoadIsLow_ParamsSpec.$,
         null,
         impl.setMainThreadTaskLoadIsLow.bind(impl));
@@ -687,7 +687,7 @@ resourceCoordinator.mojom.ProcessCoordinationUnitCallbackRouter = class {
             this.router_);
 
     this.target_.registerHandler(
-        1745180896,
+        75558864,
         resourceCoordinator.mojom.ProcessCoordinationUnit_SetExpectedTaskQueueingDuration_ParamsSpec.$,
         null,
         this.setExpectedTaskQueueingDuration.createTargetHandler(false /* expectsResponse */));
@@ -699,7 +699,7 @@ resourceCoordinator.mojom.ProcessCoordinationUnitCallbackRouter = class {
             this.router_);
 
     this.target_.registerHandler(
-        1046309033,
+        1974632308,
         resourceCoordinator.mojom.ProcessCoordinationUnit_SetMainThreadTaskLoadIsLow_ParamsSpec.$,
         null,
         this.setMainThreadTaskLoadIsLow.createTargetHandler(false /* expectsResponse */));

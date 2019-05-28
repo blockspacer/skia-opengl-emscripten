@@ -12,8 +12,8 @@ namespace mojom {
 namespace internal {
 
 
-// The 575249585 value is based on sha256(salt + "MimeRegistry1").
-constexpr uint32_t kMimeRegistry_GetMimeTypeFromExtension_Name = 575249585;
+// The 326311134 value is based on sha256(salt + "MimeRegistry1").
+constexpr uint32_t kMimeRegistry_GetMimeTypeFromExtension_Name = 326311134;
 
 }  // namespace internal
 }  // namespace mojom

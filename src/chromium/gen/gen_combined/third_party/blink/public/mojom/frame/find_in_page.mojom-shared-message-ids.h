@@ -12,24 +12,24 @@ namespace mojom {
 namespace internal {
 
 
-// The 297499597 value is based on sha256(salt + "FindInPage1").
-constexpr uint32_t kFindInPage_Find_Name = 297499597;
-// The 1732108601 value is based on sha256(salt + "FindInPage2").
-constexpr uint32_t kFindInPage_StopFinding_Name = 1732108601;
-// The 1761871915 value is based on sha256(salt + "FindInPage3").
-constexpr uint32_t kFindInPage_ClearActiveFindMatch_Name = 1761871915;
-// The 918313948 value is based on sha256(salt + "FindInPage4").
-constexpr uint32_t kFindInPage_GetNearestFindResult_Name = 918313948;
-// The 1339358422 value is based on sha256(salt + "FindInPage5").
-constexpr uint32_t kFindInPage_ActivateNearestFindResult_Name = 1339358422;
-// The 1048474476 value is based on sha256(salt + "FindInPage6").
-constexpr uint32_t kFindInPage_SetClient_Name = 1048474476;
-// The 555166427 value is based on sha256(salt + "FindInPage7").
-constexpr uint32_t kFindInPage_FindMatchRects_Name = 555166427;
-// The 1901484817 value is based on sha256(salt + "FindInPageClient1").
-constexpr uint32_t kFindInPageClient_SetNumberOfMatches_Name = 1901484817;
-// The 1148839866 value is based on sha256(salt + "FindInPageClient2").
-constexpr uint32_t kFindInPageClient_SetActiveMatch_Name = 1148839866;
+// The 2072501217 value is based on sha256(salt + "FindInPage1").
+constexpr uint32_t kFindInPage_Find_Name = 2072501217;
+// The 1469552822 value is based on sha256(salt + "FindInPage2").
+constexpr uint32_t kFindInPage_StopFinding_Name = 1469552822;
+// The 436861707 value is based on sha256(salt + "FindInPage3").
+constexpr uint32_t kFindInPage_ClearActiveFindMatch_Name = 436861707;
+// The 3824150 value is based on sha256(salt + "FindInPage4").
+constexpr uint32_t kFindInPage_GetNearestFindResult_Name = 3824150;
+// The 1254184563 value is based on sha256(salt + "FindInPage5").
+constexpr uint32_t kFindInPage_ActivateNearestFindResult_Name = 1254184563;
+// The 2062308627 value is based on sha256(salt + "FindInPage6").
+constexpr uint32_t kFindInPage_SetClient_Name = 2062308627;
+// The 637232300 value is based on sha256(salt + "FindInPage7").
+constexpr uint32_t kFindInPage_FindMatchRects_Name = 637232300;
+// The 714296613 value is based on sha256(salt + "FindInPageClient1").
+constexpr uint32_t kFindInPageClient_SetNumberOfMatches_Name = 714296613;
+// The 985820145 value is based on sha256(salt + "FindInPageClient2").
+constexpr uint32_t kFindInPageClient_SetActiveMatch_Name = 985820145;
 
 }  // namespace internal
 }  // namespace mojom

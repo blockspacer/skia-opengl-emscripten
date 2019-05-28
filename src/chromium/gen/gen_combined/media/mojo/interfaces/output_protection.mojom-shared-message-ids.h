@@ -12,10 +12,10 @@ namespace mojom {
 namespace internal {
 
 
-// The 482024852 value is based on sha256(salt + "OutputProtection1").
-constexpr uint32_t kOutputProtection_QueryStatus_Name = 482024852;
-// The 753462236 value is based on sha256(salt + "OutputProtection2").
-constexpr uint32_t kOutputProtection_EnableProtection_Name = 753462236;
+// The 967233661 value is based on sha256(salt + "OutputProtection1").
+constexpr uint32_t kOutputProtection_QueryStatus_Name = 967233661;
+// The 1738902351 value is based on sha256(salt + "OutputProtection2").
+constexpr uint32_t kOutputProtection_EnableProtection_Name = 1738902351;
 
 }  // namespace internal
 }  // namespace mojom

@@ -12,22 +12,22 @@ namespace mojom {
 namespace internal {
 
 
-// The 1707425076 value is based on sha256(salt + "ServiceWorkerRegistrationObjectHost1").
-constexpr uint32_t kServiceWorkerRegistrationObjectHost_Update_Name = 1707425076;
-// The 859830129 value is based on sha256(salt + "ServiceWorkerRegistrationObjectHost2").
-constexpr uint32_t kServiceWorkerRegistrationObjectHost_Unregister_Name = 859830129;
-// The 1230382757 value is based on sha256(salt + "ServiceWorkerRegistrationObjectHost3").
-constexpr uint32_t kServiceWorkerRegistrationObjectHost_EnableNavigationPreload_Name = 1230382757;
-// The 914027493 value is based on sha256(salt + "ServiceWorkerRegistrationObjectHost4").
-constexpr uint32_t kServiceWorkerRegistrationObjectHost_GetNavigationPreloadState_Name = 914027493;
-// The 1845512147 value is based on sha256(salt + "ServiceWorkerRegistrationObjectHost5").
-constexpr uint32_t kServiceWorkerRegistrationObjectHost_SetNavigationPreloadHeader_Name = 1845512147;
-// The 899577248 value is based on sha256(salt + "ServiceWorkerRegistrationObject1").
-constexpr uint32_t kServiceWorkerRegistrationObject_SetServiceWorkerObjects_Name = 899577248;
-// The 183199759 value is based on sha256(salt + "ServiceWorkerRegistrationObject2").
-constexpr uint32_t kServiceWorkerRegistrationObject_SetUpdateViaCache_Name = 183199759;
-// The 1999347965 value is based on sha256(salt + "ServiceWorkerRegistrationObject3").
-constexpr uint32_t kServiceWorkerRegistrationObject_UpdateFound_Name = 1999347965;
+// The 205921227 value is based on sha256(salt + "ServiceWorkerRegistrationObjectHost1").
+constexpr uint32_t kServiceWorkerRegistrationObjectHost_Update_Name = 205921227;
+// The 992426839 value is based on sha256(salt + "ServiceWorkerRegistrationObjectHost2").
+constexpr uint32_t kServiceWorkerRegistrationObjectHost_Unregister_Name = 992426839;
+// The 34874914 value is based on sha256(salt + "ServiceWorkerRegistrationObjectHost3").
+constexpr uint32_t kServiceWorkerRegistrationObjectHost_EnableNavigationPreload_Name = 34874914;
+// The 1215205942 value is based on sha256(salt + "ServiceWorkerRegistrationObjectHost4").
+constexpr uint32_t kServiceWorkerRegistrationObjectHost_GetNavigationPreloadState_Name = 1215205942;
+// The 1578465064 value is based on sha256(salt + "ServiceWorkerRegistrationObjectHost5").
+constexpr uint32_t kServiceWorkerRegistrationObjectHost_SetNavigationPreloadHeader_Name = 1578465064;
+// The 1611896611 value is based on sha256(salt + "ServiceWorkerRegistrationObject1").
+constexpr uint32_t kServiceWorkerRegistrationObject_SetServiceWorkerObjects_Name = 1611896611;
+// The 273501503 value is based on sha256(salt + "ServiceWorkerRegistrationObject2").
+constexpr uint32_t kServiceWorkerRegistrationObject_SetUpdateViaCache_Name = 273501503;
+// The 1462862369 value is based on sha256(salt + "ServiceWorkerRegistrationObject3").
+constexpr uint32_t kServiceWorkerRegistrationObject_UpdateFound_Name = 1462862369;
 
 }  // namespace internal
 }  // namespace mojom

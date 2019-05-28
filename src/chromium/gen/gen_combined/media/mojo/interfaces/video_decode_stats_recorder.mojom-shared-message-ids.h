@@ -12,10 +12,10 @@ namespace mojom {
 namespace internal {
 
 
-// The 1314827203 value is based on sha256(salt + "VideoDecodeStatsRecorder1").
-constexpr uint32_t kVideoDecodeStatsRecorder_StartNewRecord_Name = 1314827203;
-// The 1749780422 value is based on sha256(salt + "VideoDecodeStatsRecorder2").
-constexpr uint32_t kVideoDecodeStatsRecorder_UpdateRecord_Name = 1749780422;
+// The 1575308464 value is based on sha256(salt + "VideoDecodeStatsRecorder1").
+constexpr uint32_t kVideoDecodeStatsRecorder_StartNewRecord_Name = 1575308464;
+// The 493341791 value is based on sha256(salt + "VideoDecodeStatsRecorder2").
+constexpr uint32_t kVideoDecodeStatsRecorder_UpdateRecord_Name = 493341791;
 
 }  // namespace internal
 }  // namespace mojom

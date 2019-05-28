@@ -12,16 +12,16 @@ namespace mojom {
 namespace internal {
 
 
-// The 1810747618 value is based on sha256(salt + "LockRequest1").
-constexpr uint32_t kLockRequest_Granted_Name = 1810747618;
-// The 780727440 value is based on sha256(salt + "LockRequest2").
-constexpr uint32_t kLockRequest_Failed_Name = 780727440;
-// The 1628607932 value is based on sha256(salt + "LockRequest3").
-constexpr uint32_t kLockRequest_Abort_Name = 1628607932;
-// The 404375520 value is based on sha256(salt + "LockManager1").
-constexpr uint32_t kLockManager_RequestLock_Name = 404375520;
-// The 1103320341 value is based on sha256(salt + "LockManager2").
-constexpr uint32_t kLockManager_QueryState_Name = 1103320341;
+// The 489210216 value is based on sha256(salt + "LockRequest1").
+constexpr uint32_t kLockRequest_Granted_Name = 489210216;
+// The 1193068872 value is based on sha256(salt + "LockRequest2").
+constexpr uint32_t kLockRequest_Failed_Name = 1193068872;
+// The 306243247 value is based on sha256(salt + "LockRequest3").
+constexpr uint32_t kLockRequest_Abort_Name = 306243247;
+// The 431137131 value is based on sha256(salt + "LockManager1").
+constexpr uint32_t kLockManager_RequestLock_Name = 431137131;
+// The 1515675427 value is based on sha256(salt + "LockManager2").
+constexpr uint32_t kLockManager_QueryState_Name = 1515675427;
 
 }  // namespace internal
 }  // namespace mojom

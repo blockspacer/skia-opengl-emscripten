@@ -12,14 +12,14 @@ namespace mojom {
 namespace internal {
 
 
-// The 815146341 value is based on sha256(salt + "P2PTrustedSocketManagerClient1").
-constexpr uint32_t kP2PTrustedSocketManagerClient_InvalidSocketPortRangeRequested_Name = 815146341;
-// The 1657028999 value is based on sha256(salt + "P2PTrustedSocketManagerClient2").
-constexpr uint32_t kP2PTrustedSocketManagerClient_DumpPacket_Name = 1657028999;
-// The 2122307193 value is based on sha256(salt + "P2PTrustedSocketManager1").
-constexpr uint32_t kP2PTrustedSocketManager_StartRtpDump_Name = 2122307193;
-// The 1827660162 value is based on sha256(salt + "P2PTrustedSocketManager2").
-constexpr uint32_t kP2PTrustedSocketManager_StopRtpDump_Name = 1827660162;
+// The 1948049663 value is based on sha256(salt + "P2PTrustedSocketManagerClient1").
+constexpr uint32_t kP2PTrustedSocketManagerClient_InvalidSocketPortRangeRequested_Name = 1948049663;
+// The 1248490464 value is based on sha256(salt + "P2PTrustedSocketManagerClient2").
+constexpr uint32_t kP2PTrustedSocketManagerClient_DumpPacket_Name = 1248490464;
+// The 1896681314 value is based on sha256(salt + "P2PTrustedSocketManager1").
+constexpr uint32_t kP2PTrustedSocketManager_StartRtpDump_Name = 1896681314;
+// The 1858255510 value is based on sha256(salt + "P2PTrustedSocketManager2").
+constexpr uint32_t kP2PTrustedSocketManager_StopRtpDump_Name = 1858255510;
 
 }  // namespace internal
 }  // namespace mojom

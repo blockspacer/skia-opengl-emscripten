@@ -12,8 +12,8 @@ namespace mojom {
 namespace internal {
 
 
-// The 2131867959 value is based on sha256(salt + "InsecureInputService1").
-constexpr uint32_t kInsecureInputService_DidEditFieldInInsecureContext_Name = 2131867959;
+// The 1593957926 value is based on sha256(salt + "InsecureInputService1").
+constexpr uint32_t kInsecureInputService_DidEditFieldInInsecureContext_Name = 1593957926;
 
 }  // namespace internal
 }  // namespace mojom

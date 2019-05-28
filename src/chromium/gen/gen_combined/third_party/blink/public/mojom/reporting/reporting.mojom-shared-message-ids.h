@@ -12,14 +12,14 @@ namespace mojom {
 namespace internal {
 
 
-// The 1153777194 value is based on sha256(salt + "ReportingServiceProxy1").
-constexpr uint32_t kReportingServiceProxy_QueueInterventionReport_Name = 1153777194;
-// The 875034675 value is based on sha256(salt + "ReportingServiceProxy2").
-constexpr uint32_t kReportingServiceProxy_QueueDeprecationReport_Name = 875034675;
-// The 1685955867 value is based on sha256(salt + "ReportingServiceProxy3").
-constexpr uint32_t kReportingServiceProxy_QueueCspViolationReport_Name = 1685955867;
-// The 948773287 value is based on sha256(salt + "ReportingServiceProxy4").
-constexpr uint32_t kReportingServiceProxy_QueueFeaturePolicyViolationReport_Name = 948773287;
+// The 1369328857 value is based on sha256(salt + "ReportingServiceProxy1").
+constexpr uint32_t kReportingServiceProxy_QueueInterventionReport_Name = 1369328857;
+// The 872033882 value is based on sha256(salt + "ReportingServiceProxy2").
+constexpr uint32_t kReportingServiceProxy_QueueDeprecationReport_Name = 872033882;
+// The 636537312 value is based on sha256(salt + "ReportingServiceProxy3").
+constexpr uint32_t kReportingServiceProxy_QueueCspViolationReport_Name = 636537312;
+// The 1481981724 value is based on sha256(salt + "ReportingServiceProxy4").
+constexpr uint32_t kReportingServiceProxy_QueueFeaturePolicyViolationReport_Name = 1481981724;
 
 }  // namespace internal
 }  // namespace mojom

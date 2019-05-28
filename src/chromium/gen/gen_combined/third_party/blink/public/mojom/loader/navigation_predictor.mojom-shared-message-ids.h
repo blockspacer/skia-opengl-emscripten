@@ -12,10 +12,10 @@ namespace mojom {
 namespace internal {
 
 
-// The 934338084 value is based on sha256(salt + "AnchorElementMetricsHost1").
-constexpr uint32_t kAnchorElementMetricsHost_ReportAnchorElementMetricsOnClick_Name = 934338084;
-// The 1146168942 value is based on sha256(salt + "AnchorElementMetricsHost2").
-constexpr uint32_t kAnchorElementMetricsHost_ReportAnchorElementMetricsOnLoad_Name = 1146168942;
+// The 104062077 value is based on sha256(salt + "AnchorElementMetricsHost1").
+constexpr uint32_t kAnchorElementMetricsHost_ReportAnchorElementMetricsOnClick_Name = 104062077;
+// The 1316760273 value is based on sha256(salt + "AnchorElementMetricsHost2").
+constexpr uint32_t kAnchorElementMetricsHost_ReportAnchorElementMetricsOnLoad_Name = 1316760273;
 
 }  // namespace internal
 }  // namespace mojom

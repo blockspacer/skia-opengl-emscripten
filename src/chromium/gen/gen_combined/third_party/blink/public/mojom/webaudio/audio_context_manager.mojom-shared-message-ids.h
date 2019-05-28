@@ -12,10 +12,10 @@ namespace mojom {
 namespace internal {
 
 
-// The 1880050072 value is based on sha256(salt + "AudioContextManager1").
-constexpr uint32_t kAudioContextManager_AudioContextAudiblePlaybackStarted_Name = 1880050072;
-// The 1830685089 value is based on sha256(salt + "AudioContextManager2").
-constexpr uint32_t kAudioContextManager_AudioContextAudiblePlaybackStopped_Name = 1830685089;
+// The 185552297 value is based on sha256(salt + "AudioContextManager1").
+constexpr uint32_t kAudioContextManager_AudioContextAudiblePlaybackStarted_Name = 185552297;
+// The 1486109653 value is based on sha256(salt + "AudioContextManager2").
+constexpr uint32_t kAudioContextManager_AudioContextAudiblePlaybackStopped_Name = 1486109653;
 
 }  // namespace internal
 }  // namespace mojom

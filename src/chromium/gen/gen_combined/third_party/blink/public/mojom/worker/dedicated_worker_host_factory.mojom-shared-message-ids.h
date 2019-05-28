@@ -12,16 +12,16 @@ namespace mojom {
 namespace internal {
 
 
-// The 1358937465 value is based on sha256(salt + "DedicatedWorkerHostFactoryClient1").
-constexpr uint32_t kDedicatedWorkerHostFactoryClient_OnWorkerHostCreated_Name = 1358937465;
-// The 1882046388 value is based on sha256(salt + "DedicatedWorkerHostFactoryClient2").
-constexpr uint32_t kDedicatedWorkerHostFactoryClient_OnScriptLoadStarted_Name = 1882046388;
-// The 1268873498 value is based on sha256(salt + "DedicatedWorkerHostFactoryClient3").
-constexpr uint32_t kDedicatedWorkerHostFactoryClient_OnScriptLoadStartFailed_Name = 1268873498;
-// The 42267342 value is based on sha256(salt + "DedicatedWorkerHostFactory1").
-constexpr uint32_t kDedicatedWorkerHostFactory_CreateWorkerHost_Name = 42267342;
-// The 1068515061 value is based on sha256(salt + "DedicatedWorkerHostFactory2").
-constexpr uint32_t kDedicatedWorkerHostFactory_CreateWorkerHostAndStartScriptLoad_Name = 1068515061;
+// The 436490254 value is based on sha256(salt + "DedicatedWorkerHostFactoryClient1").
+constexpr uint32_t kDedicatedWorkerHostFactoryClient_OnWorkerHostCreated_Name = 436490254;
+// The 161089953 value is based on sha256(salt + "DedicatedWorkerHostFactoryClient2").
+constexpr uint32_t kDedicatedWorkerHostFactoryClient_OnScriptLoadStarted_Name = 161089953;
+// The 209213555 value is based on sha256(salt + "DedicatedWorkerHostFactoryClient3").
+constexpr uint32_t kDedicatedWorkerHostFactoryClient_OnScriptLoadStartFailed_Name = 209213555;
+// The 1634645954 value is based on sha256(salt + "DedicatedWorkerHostFactory1").
+constexpr uint32_t kDedicatedWorkerHostFactory_CreateWorkerHost_Name = 1634645954;
+// The 1629205479 value is based on sha256(salt + "DedicatedWorkerHostFactory2").
+constexpr uint32_t kDedicatedWorkerHostFactory_CreateWorkerHostAndStartScriptLoad_Name = 1629205479;
 
 }  // namespace internal
 }  // namespace mojom

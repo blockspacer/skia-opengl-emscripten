@@ -12,10 +12,10 @@ namespace mojom {
 namespace internal {
 
 
-// The 658048746 value is based on sha256(salt + "QuotaDispatcherHost1").
-constexpr uint32_t kQuotaDispatcherHost_QueryStorageUsageAndQuota_Name = 658048746;
-// The 190216912 value is based on sha256(salt + "QuotaDispatcherHost2").
-constexpr uint32_t kQuotaDispatcherHost_RequestStorageQuota_Name = 190216912;
+// The 688079203 value is based on sha256(salt + "QuotaDispatcherHost1").
+constexpr uint32_t kQuotaDispatcherHost_QueryStorageUsageAndQuota_Name = 688079203;
+// The 872411632 value is based on sha256(salt + "QuotaDispatcherHost2").
+constexpr uint32_t kQuotaDispatcherHost_RequestStorageQuota_Name = 872411632;
 
 }  // namespace internal
 }  // namespace mojom

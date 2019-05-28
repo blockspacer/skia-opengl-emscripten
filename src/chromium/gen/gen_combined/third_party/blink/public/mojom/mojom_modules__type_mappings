@@ -163,39 +163,23 @@
         "net/proxy_resolution/proxy_list.h"
       ]
     }, 
-    "media.mojom.VideoPixelFormat": {
+    "ui.mojom.FocusReason": {
       "hashable": false, 
-      "force_serialize": false, 
+      "typename": "ui::TextInputClient::FocusReason", 
       "non_copyable_non_movable": false, 
-      "typename": "media::VideoPixelFormat", 
+      "force_serialize": false, 
       "traits_headers": [
-        "media/base/ipc/media_param_traits_macros.h", 
-        "media/mojo/interfaces/video_transformation_mojom_traits.h"
+        "ui/base/ime/mojo/ime_types_struct_traits.h"
       ], 
       "copyable_pass_by_value": false, 
       "move_only": false, 
       "nullable_is_same_type": false, 
       "public_headers": [
-        "media/base/audio_codecs.h", 
-        "media/base/buffering_state.h", 
-        "media/base/channel_layout.h", 
-        "media/base/container_names.h", 
-        "media/base/decode_status.h", 
-        "media/base/decrypt_config.h", 
-        "media/base/encryption_pattern.h", 
-        "media/base/encryption_scheme.h", 
-        "media/base/hdr_metadata.h", 
-        "media/base/media_log_event.h", 
-        "media/base/media_status.h", 
-        "media/base/output_device_info.h", 
-        "media/base/pipeline_status.h", 
-        "media/base/sample_format.h", 
-        "media/base/subsample_entry.h", 
-        "media/base/video_codecs.h", 
-        "media/base/video_transformation.h", 
-        "media/base/video_types.h", 
-        "media/base/waiting.h", 
-        "media/base/watch_time_keys.h"
+        "ui/base/ime/composition_text.h", 
+        "ui/base/ime/ime_text_span.h", 
+        "ui/base/ime/text_input_client.h", 
+        "ui/base/ime/text_input_mode.h", 
+        "ui/base/ime/text_input_type.h"
       ]
     }, 
     "mojo_base.mojom.Token": {
@@ -594,6 +578,25 @@
         "third_party/blink/public/common/indexeddb/web_idb_types.h"
       ]
     }, 
+    "ui.mojom.CompositionText": {
+      "hashable": false, 
+      "typename": "ui::CompositionText", 
+      "non_copyable_non_movable": false, 
+      "force_serialize": false, 
+      "traits_headers": [
+        "ui/base/ime/mojo/ime_types_struct_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "ui/base/ime/composition_text.h", 
+        "ui/base/ime/ime_text_span.h", 
+        "ui/base/ime/text_input_client.h", 
+        "ui/base/ime/text_input_mode.h", 
+        "ui/base/ime/text_input_type.h"
+      ]
+    }, 
     "gfx.mojom.Rect": {
       "hashable": false, 
       "force_serialize": false, 
@@ -701,6 +704,41 @@
         "base/memory/writable_shared_memory_region.h"
       ]
     }, 
+    "media.mojom.VideoPixelFormat": {
+      "hashable": false, 
+      "force_serialize": false, 
+      "non_copyable_non_movable": false, 
+      "typename": "media::VideoPixelFormat", 
+      "traits_headers": [
+        "media/base/ipc/media_param_traits_macros.h", 
+        "media/mojo/interfaces/video_transformation_mojom_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "media/base/audio_codecs.h", 
+        "media/base/buffering_state.h", 
+        "media/base/channel_layout.h", 
+        "media/base/container_names.h", 
+        "media/base/decode_status.h", 
+        "media/base/decrypt_config.h", 
+        "media/base/encryption_pattern.h", 
+        "media/base/encryption_scheme.h", 
+        "media/base/hdr_metadata.h", 
+        "media/base/media_log_event.h", 
+        "media/base/media_status.h", 
+        "media/base/output_device_info.h", 
+        "media/base/pipeline_status.h", 
+        "media/base/sample_format.h", 
+        "media/base/subsample_entry.h", 
+        "media/base/video_codecs.h", 
+        "media/base/video_transformation.h", 
+        "media/base/video_types.h", 
+        "media/base/waiting.h", 
+        "media/base/watch_time_keys.h"
+      ]
+    }, 
     "media.mojom.EncryptionScheme.CipherMode": {
       "hashable": false, 
       "force_serialize": false, 
@@ -799,6 +837,22 @@
       "nullable_is_same_type": false, 
       "public_headers": [
         "services/network/public/cpp/url_loader_completion_status.h"
+      ]
+    }, 
+    "gfx.mojom.Range": {
+      "hashable": false, 
+      "force_serialize": false, 
+      "non_copyable_non_movable": false, 
+      "typename": "gfx::Range", 
+      "traits_headers": [
+        "ui/gfx/range/mojo/range_struct_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "ui/gfx/range/range.h", 
+        "ui/gfx/range/range_f.h"
       ]
     }, 
     "gfx.mojom.ScrollOffset": {
@@ -1084,6 +1138,25 @@
       "nullable_is_same_type": false, 
       "public_headers": [
         "net/nqe/effective_connection_type.h"
+      ]
+    }, 
+    "ui.mojom.TextInputMode": {
+      "hashable": false, 
+      "typename": "ui::TextInputMode", 
+      "non_copyable_non_movable": false, 
+      "force_serialize": false, 
+      "traits_headers": [
+        "ui/base/ime/mojo/ime_types_struct_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "ui/base/ime/composition_text.h", 
+        "ui/base/ime/ime_text_span.h", 
+        "ui/base/ime/text_input_client.h", 
+        "ui/base/ime/text_input_mode.h", 
+        "ui/base/ime/text_input_type.h"
       ]
     }, 
     "blink.mojom.NotificationResources": {
@@ -2195,6 +2268,22 @@
         "services/network/public/cpp/p2p_socket_type.h"
       ]
     }, 
+    "gfx.mojom.RangeF": {
+      "hashable": false, 
+      "force_serialize": false, 
+      "non_copyable_non_movable": false, 
+      "typename": "gfx::RangeF", 
+      "traits_headers": [
+        "ui/gfx/range/mojo/range_struct_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "ui/gfx/range/range.h", 
+        "ui/gfx/range/range_f.h"
+      ]
+    }, 
     "gfx.mojom.InsetsF": {
       "hashable": false, 
       "force_serialize": false, 
@@ -2880,6 +2969,21 @@
         "services/service_manager/public/cpp/interface_provider_spec.h"
       ]
     }, 
+    "ui.mojom.EventMomentumPhase": {
+      "hashable": false, 
+      "force_serialize": false, 
+      "non_copyable_non_movable": false, 
+      "typename": "ui::EventMomentumPhase", 
+      "traits_headers": [
+        "ui/events/mojo/event_struct_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "ui/events/event.h"
+      ]
+    }, 
     "mojo_base.mojom.Value": {
       "hashable": false, 
       "force_serialize": false, 
@@ -3263,6 +3367,25 @@
         "media/capture/video_capture_types.h", 
         "media/capture/video/video_capture_device_descriptor.h", 
         "media/capture/video/video_capture_device_info.h"
+      ]
+    }, 
+    "ui.mojom.ImeTextSpan": {
+      "hashable": false, 
+      "typename": "ui::ImeTextSpan", 
+      "non_copyable_non_movable": false, 
+      "force_serialize": false, 
+      "traits_headers": [
+        "ui/base/ime/mojo/ime_types_struct_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "ui/base/ime/composition_text.h", 
+        "ui/base/ime/ime_text_span.h", 
+        "ui/base/ime/text_input_client.h", 
+        "ui/base/ime/text_input_mode.h", 
+        "ui/base/ime/text_input_type.h"
       ]
     }, 
     "network.mojom.AuthCredentials": {
@@ -4217,6 +4340,25 @@
         "components/password_manager/core/common/credential_manager_types.h"
       ]
     }, 
+    "ui.mojom.ImeTextSpanThickness": {
+      "hashable": false, 
+      "typename": "ui::ImeTextSpan::Thickness", 
+      "non_copyable_non_movable": false, 
+      "force_serialize": false, 
+      "traits_headers": [
+        "ui/base/ime/mojo/ime_types_struct_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "ui/base/ime/composition_text.h", 
+        "ui/base/ime/ime_text_span.h", 
+        "ui/base/ime/text_input_client.h", 
+        "ui/base/ime/text_input_mode.h", 
+        "ui/base/ime/text_input_type.h"
+      ]
+    }, 
     "skia.mojom.Bitmap": {
       "hashable": false, 
       "typename": "SkBitmap", 
@@ -4441,6 +4583,21 @@
         "services/network/public/cpp/resource_request_body.h"
       ]
     }, 
+    "ui.mojom.ScrollEventPhase": {
+      "hashable": false, 
+      "force_serialize": false, 
+      "non_copyable_non_movable": false, 
+      "typename": "ui::ScrollEventPhase", 
+      "traits_headers": [
+        "ui/events/mojo/event_struct_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "ui/events/event.h"
+      ]
+    }, 
     "device.mojom.ScreenOrientationLockType": {
       "hashable": false, 
       "force_serialize": false, 
@@ -4632,6 +4789,21 @@
         "third_party/skia/include/core/SkBitmap.h"
       ]
     }, 
+    "ui.mojom.PointerDetails": {
+      "hashable": false, 
+      "force_serialize": false, 
+      "non_copyable_non_movable": false, 
+      "typename": "ui::PointerDetails", 
+      "traits_headers": [
+        "ui/events/mojo/event_struct_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "ui/events/event.h"
+      ]
+    }, 
     "media.mojom.WaitingReason": {
       "hashable": false, 
       "force_serialize": false, 
@@ -4745,6 +4917,25 @@
       "nullable_is_same_type": false, 
       "public_headers": [
         "components/viz/common/resources/transferable_resource.h"
+      ]
+    }, 
+    "ui.mojom.TextInputType": {
+      "hashable": false, 
+      "typename": "ui::TextInputType", 
+      "non_copyable_non_movable": false, 
+      "force_serialize": false, 
+      "traits_headers": [
+        "ui/base/ime/mojo/ime_types_struct_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "ui/base/ime/composition_text.h", 
+        "ui/base/ime/ime_text_span.h", 
+        "ui/base/ime/text_input_client.h", 
+        "ui/base/ime/text_input_mode.h", 
+        "ui/base/ime/text_input_type.h"
       ]
     }, 
     "service_manager.mojom.InterfaceProviderSpec": {
@@ -5161,6 +5352,21 @@
         "base/memory/ref_counted_memory.h"
       ]
     }, 
+    "ui.mojom.Event": {
+      "hashable": false, 
+      "force_serialize": false, 
+      "non_copyable_non_movable": false, 
+      "typename": "std::unique_ptr<ui::Event>", 
+      "traits_headers": [
+        "ui/events/mojo/event_struct_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": true, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "ui/events/event.h"
+      ]
+    }, 
     "network.mojom.HttpVersion": {
       "hashable": false, 
       "force_serialize": false, 
@@ -5287,6 +5493,21 @@
         "media/base/video_types.h", 
         "media/base/waiting.h", 
         "media/base/watch_time_keys.h"
+      ]
+    }, 
+    "ui.mojom.GestureDeviceType": {
+      "hashable": false, 
+      "force_serialize": false, 
+      "non_copyable_non_movable": false, 
+      "typename": "ui::GestureDeviceType", 
+      "traits_headers": [
+        "ui/events/mojo/event_struct_traits.h"
+      ], 
+      "copyable_pass_by_value": false, 
+      "move_only": false, 
+      "nullable_is_same_type": false, 
+      "public_headers": [
+        "ui/events/event.h"
       ]
     }, 
     "media.mojom.VideoCodec": {

@@ -12,20 +12,20 @@ namespace mojom {
 namespace internal {
 
 
-// The 57723398 value is based on sha256(salt + "ProcessMetadata1").
-constexpr uint32_t kProcessMetadata_SetPID_Name = 57723398;
-// The 601769647 value is based on sha256(salt + "Connector1").
-constexpr uint32_t kConnector_BindInterface_Name = 601769647;
-// The 1403663133 value is based on sha256(salt + "Connector2").
-constexpr uint32_t kConnector_QueryService_Name = 1403663133;
-// The 1720315807 value is based on sha256(salt + "Connector3").
-constexpr uint32_t kConnector_WarmService_Name = 1720315807;
-// The 2020967919 value is based on sha256(salt + "Connector4").
-constexpr uint32_t kConnector_RegisterServiceInstance_Name = 2020967919;
-// The 1918046950 value is based on sha256(salt + "Connector5").
-constexpr uint32_t kConnector_Clone_Name = 1918046950;
-// The 770816621 value is based on sha256(salt + "Connector6").
-constexpr uint32_t kConnector_FilterInterfaces_Name = 770816621;
+// The 309788441 value is based on sha256(salt + "ProcessMetadata1").
+constexpr uint32_t kProcessMetadata_SetPID_Name = 309788441;
+// The 204317311 value is based on sha256(salt + "Connector1").
+constexpr uint32_t kConnector_BindInterface_Name = 204317311;
+// The 885907576 value is based on sha256(salt + "Connector2").
+constexpr uint32_t kConnector_QueryService_Name = 885907576;
+// The 2111165266 value is based on sha256(salt + "Connector3").
+constexpr uint32_t kConnector_WarmService_Name = 2111165266;
+// The 414813836 value is based on sha256(salt + "Connector4").
+constexpr uint32_t kConnector_RegisterServiceInstance_Name = 414813836;
+// The 1315001585 value is based on sha256(salt + "Connector5").
+constexpr uint32_t kConnector_Clone_Name = 1315001585;
+// The 1798337794 value is based on sha256(salt + "Connector6").
+constexpr uint32_t kConnector_FilterInterfaces_Name = 1798337794;
 
 }  // namespace internal
 }  // namespace mojom

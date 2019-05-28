@@ -164,8 +164,8 @@ class ComputedStyleBase {
 
   inline bool NonInheritedEqual(const ComputedStyleBase& o) const {
     return (
-        rare_non_inherited_usage_less_than_13_percent_data_ == o.rare_non_inherited_usage_less_than_13_percent_data_
-        && box_data_ == o.box_data_
+        box_data_ == o.box_data_
+        && rare_non_inherited_usage_less_than_13_percent_data_ == o.rare_non_inherited_usage_less_than_13_percent_data_
         && surround_data_ == o.surround_data_
         && visual_data_ == o.visual_data_
         && background_data_ == o.background_data_
@@ -4951,6 +4951,49 @@ class ComputedStyleBase {
 
 
  private:
+  class StyleBoxData : public RefCounted<StyleBoxData> {
+   public:
+    static scoped_refptr<StyleBoxData> Create() {
+      return base::AdoptRef(new StyleBoxData);
+    }
+    scoped_refptr<StyleBoxData> Copy() const {
+      return base::AdoptRef(new StyleBoxData(*this));
+    }
+
+    bool operator==(const StyleBoxData& other) const {
+      return (
+        height_ == other.height_
+        && max_height_ == other.max_height_
+        && max_width_ == other.max_width_
+        && min_height_ == other.min_height_
+        && min_width_ == other.min_width_
+        && width_ == other.width_
+        && vertical_align_length_ == other.vertical_align_length_
+        && z_index_ == other.z_index_
+        && box_decoration_break_ == other.box_decoration_break_
+        && box_sizing_ == other.box_sizing_
+        && has_auto_z_index_ == other.has_auto_z_index_
+      );
+    }
+    bool operator!=(const StyleBoxData& other) const { return !(*this == other); }
+
+    Length height_;
+    Length max_height_;
+    Length max_width_;
+    Length min_height_;
+    Length min_width_;
+    Length width_;
+    Length vertical_align_length_;
+    int z_index_;
+    unsigned box_decoration_break_ : 1; // EBoxDecorationBreak
+    unsigned box_sizing_ : 1; // EBoxSizing
+    unsigned has_auto_z_index_ : 1; // bool
+
+   private:
+    StyleBoxData();
+    CORE_EXPORT StyleBoxData(const StyleBoxData&);
+  };
+
   class StyleGridData : public RefCounted<StyleGridData> {
    public:
     static scoped_refptr<StyleGridData> Create() {
@@ -5401,49 +5444,6 @@ class ComputedStyleBase {
     CORE_EXPORT StyleRareNonInheritedUsageLessThan13PercentData(const StyleRareNonInheritedUsageLessThan13PercentData&);
   };
 
-  class StyleBoxData : public RefCounted<StyleBoxData> {
-   public:
-    static scoped_refptr<StyleBoxData> Create() {
-      return base::AdoptRef(new StyleBoxData);
-    }
-    scoped_refptr<StyleBoxData> Copy() const {
-      return base::AdoptRef(new StyleBoxData(*this));
-    }
-
-    bool operator==(const StyleBoxData& other) const {
-      return (
-        height_ == other.height_
-        && max_height_ == other.max_height_
-        && max_width_ == other.max_width_
-        && min_height_ == other.min_height_
-        && min_width_ == other.min_width_
-        && width_ == other.width_
-        && vertical_align_length_ == other.vertical_align_length_
-        && z_index_ == other.z_index_
-        && box_decoration_break_ == other.box_decoration_break_
-        && box_sizing_ == other.box_sizing_
-        && has_auto_z_index_ == other.has_auto_z_index_
-      );
-    }
-    bool operator!=(const StyleBoxData& other) const { return !(*this == other); }
-
-    Length height_;
-    Length max_height_;
-    Length max_width_;
-    Length min_height_;
-    Length min_width_;
-    Length width_;
-    Length vertical_align_length_;
-    int z_index_;
-    unsigned box_decoration_break_ : 1; // EBoxDecorationBreak
-    unsigned box_sizing_ : 1; // EBoxSizing
-    unsigned has_auto_z_index_ : 1; // bool
-
-   private:
-    StyleBoxData();
-    CORE_EXPORT StyleBoxData(const StyleBoxData&);
-  };
-
   class StyleSurroundData : public RefCounted<StyleSurroundData> {
    public:
     static scoped_refptr<StyleSurroundData> Create() {
@@ -5643,47 +5643,6 @@ class ComputedStyleBase {
     CORE_EXPORT StyleInheritedData(const StyleInheritedData&);
   };
 
-  class StyleRareInheritedUsageLessThan100PercentData : public RefCounted<StyleRareInheritedUsageLessThan100PercentData> {
-   public:
-    static scoped_refptr<StyleRareInheritedUsageLessThan100PercentData> Create() {
-      return base::AdoptRef(new StyleRareInheritedUsageLessThan100PercentData);
-    }
-    scoped_refptr<StyleRareInheritedUsageLessThan100PercentData> Copy() const {
-      return base::AdoptRef(new StyleRareInheritedUsageLessThan100PercentData(*this));
-    }
-
-    bool operator==(const StyleRareInheritedUsageLessThan100PercentData& other) const {
-      return (
-        tab_size_ == other.tab_size_
-        && caret_color_ == other.caret_color_
-        && text_align_last_ == other.text_align_last_
-        && text_underline_position_ == other.text_underline_position_
-        && hyphens_ == other.hyphens_
-        && text_justify_ == other.text_justify_
-        && text_orientation_ == other.text_orientation_
-        && respect_image_orientation_ == other.respect_image_orientation_
-        && text_combine_ == other.text_combine_
-        && text_decoration_skip_ink_ == other.text_decoration_skip_ink_
-      );
-    }
-    bool operator!=(const StyleRareInheritedUsageLessThan100PercentData& other) const { return !(*this == other); }
-
-    TabSize tab_size_;
-    Color caret_color_;
-    unsigned text_align_last_ : 3; // ETextAlignLast
-    unsigned text_underline_position_ : 3; // unsigned
-    unsigned hyphens_ : 2; // Hyphens
-    unsigned text_justify_ : 2; // TextJustify
-    unsigned text_orientation_ : 2; // ETextOrientation
-    unsigned respect_image_orientation_ : 1; // bool
-    unsigned text_combine_ : 1; // ETextCombine
-    unsigned text_decoration_skip_ink_ : 1; // ETextDecorationSkipInk
-
-   private:
-    StyleRareInheritedUsageLessThan100PercentData();
-    CORE_EXPORT StyleRareInheritedUsageLessThan100PercentData(const StyleRareInheritedUsageLessThan100PercentData&);
-  };
-
   class StyleRareInheritedUsageLessThan40PercentSubData : public RefCounted<StyleRareInheritedUsageLessThan40PercentSubData> {
    public:
     static scoped_refptr<StyleRareInheritedUsageLessThan40PercentSubData> Create() {
@@ -5793,6 +5752,47 @@ class ComputedStyleBase {
     CORE_EXPORT StyleRareInheritedUsageLessThan40PercentSubData(const StyleRareInheritedUsageLessThan40PercentSubData&);
   };
 
+  class StyleRareInheritedUsageLessThan100PercentData : public RefCounted<StyleRareInheritedUsageLessThan100PercentData> {
+   public:
+    static scoped_refptr<StyleRareInheritedUsageLessThan100PercentData> Create() {
+      return base::AdoptRef(new StyleRareInheritedUsageLessThan100PercentData);
+    }
+    scoped_refptr<StyleRareInheritedUsageLessThan100PercentData> Copy() const {
+      return base::AdoptRef(new StyleRareInheritedUsageLessThan100PercentData(*this));
+    }
+
+    bool operator==(const StyleRareInheritedUsageLessThan100PercentData& other) const {
+      return (
+        tab_size_ == other.tab_size_
+        && caret_color_ == other.caret_color_
+        && text_align_last_ == other.text_align_last_
+        && text_underline_position_ == other.text_underline_position_
+        && hyphens_ == other.hyphens_
+        && text_justify_ == other.text_justify_
+        && text_orientation_ == other.text_orientation_
+        && respect_image_orientation_ == other.respect_image_orientation_
+        && text_combine_ == other.text_combine_
+        && text_decoration_skip_ink_ == other.text_decoration_skip_ink_
+      );
+    }
+    bool operator!=(const StyleRareInheritedUsageLessThan100PercentData& other) const { return !(*this == other); }
+
+    TabSize tab_size_;
+    Color caret_color_;
+    unsigned text_align_last_ : 3; // ETextAlignLast
+    unsigned text_underline_position_ : 3; // unsigned
+    unsigned hyphens_ : 2; // Hyphens
+    unsigned text_justify_ : 2; // TextJustify
+    unsigned text_orientation_ : 2; // ETextOrientation
+    unsigned respect_image_orientation_ : 1; // bool
+    unsigned text_combine_ : 1; // ETextCombine
+    unsigned text_decoration_skip_ink_ : 1; // ETextDecorationSkipInk
+
+   private:
+    StyleRareInheritedUsageLessThan100PercentData();
+    CORE_EXPORT StyleRareInheritedUsageLessThan100PercentData(const StyleRareInheritedUsageLessThan100PercentData&);
+  };
+
   class StyleRareInheritedUsageLessThan40PercentData : public RefCounted<StyleRareInheritedUsageLessThan40PercentData> {
    public:
     static scoped_refptr<StyleRareInheritedUsageLessThan40PercentData> Create() {
@@ -5804,8 +5804,8 @@ class ComputedStyleBase {
 
     bool operator==(const StyleRareInheritedUsageLessThan40PercentData& other) const {
       return (
-        rare_inherited_usage_less_than_100_percent_data_ == other.rare_inherited_usage_less_than_100_percent_data_
-        && rare_inherited_usage_less_than_40_percent_sub_data_ == other.rare_inherited_usage_less_than_40_percent_sub_data_
+        rare_inherited_usage_less_than_40_percent_sub_data_ == other.rare_inherited_usage_less_than_40_percent_sub_data_
+        && rare_inherited_usage_less_than_100_percent_data_ == other.rare_inherited_usage_less_than_100_percent_data_
         && DataEquivalent(quotes_, other.quotes_)
         && DataEquivalent(text_shadow_, other.text_shadow_)
         && DataEquivalent(list_style_image_, other.list_style_image_)
@@ -5822,8 +5822,8 @@ class ComputedStyleBase {
     }
     bool operator!=(const StyleRareInheritedUsageLessThan40PercentData& other) const { return !(*this == other); }
 
-    DataRef<StyleRareInheritedUsageLessThan100PercentData> rare_inherited_usage_less_than_100_percent_data_;
     DataRef<StyleRareInheritedUsageLessThan40PercentSubData> rare_inherited_usage_less_than_40_percent_sub_data_;
+    DataRef<StyleRareInheritedUsageLessThan100PercentData> rare_inherited_usage_less_than_100_percent_data_;
     scoped_refptr<QuotesData> quotes_;
     scoped_refptr<ShadowList> text_shadow_;
     Persistent<StyleImage> list_style_image_;
@@ -9417,8 +9417,8 @@ class ComputedStyleBase {
 
  private:
   // Storage.
-  DataRef<StyleRareNonInheritedUsageLessThan13PercentData> rare_non_inherited_usage_less_than_13_percent_data_;
   DataRef<StyleBoxData> box_data_;
+  DataRef<StyleRareNonInheritedUsageLessThan13PercentData> rare_non_inherited_usage_less_than_13_percent_data_;
   DataRef<StyleSurroundData> surround_data_;
   DataRef<StyleVisualData> visual_data_;
   DataRef<StyleBackgroundData> background_data_;
