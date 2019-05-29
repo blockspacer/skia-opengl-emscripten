@@ -39,7 +39,7 @@ HTMLImageElement::HTMLImageElement(script::EnvironmentSettings* env_settings)
                       ->window()
                       ->document()
                       .get(),
-                  base::Token(kTagName)) {}
+                  base::CobToken(kTagName)) {}
 
 void HTMLImageElement::OnSetAttribute(const std::string& name,
                                       const std::string& /* value */) {
@@ -67,7 +67,7 @@ void HTMLImageElement::OnRemoveAttribute(const std::string& name) {
 // Algorithm for UpdateTheImageData:
 //   https://www.w3.org/TR/html5/embedded-content-0.html#update-the-image-data
 void HTMLImageElement::UpdateImageData() {
-  DCHECK(base::MessageLoop::current());
+  DCHECK(base::MessageLoopCurrent::Get());
   DCHECK(node_document());
   TRACE_EVENT0("cobalt::dom", "HTMLImageElement::UpdateImageData()");
 
@@ -176,7 +176,7 @@ void HTMLImageElement::OnLoadingError() {
 }
 
 void HTMLImageElement::PreventGarbageCollectionUntilEventIsDispatched(
-    base::Token event_name) {
+    base::CobToken event_name) {
   std::unique_ptr<script::GlobalEnvironment::ScopedPreventGarbageCollection>
       prevent_gc_until_event_dispatch(
           new script::GlobalEnvironment::ScopedPreventGarbageCollection(
@@ -187,7 +187,7 @@ void HTMLImageElement::PreventGarbageCollectionUntilEventIsDispatched(
 }
 
 void HTMLImageElement::AllowGarbageCollectionAfterEventIsDispatched(
-    base::Token event_name,
+    base::CobToken event_name,
     std::unique_ptr<script::GlobalEnvironment::ScopedPreventGarbageCollection>
         scoped_prevent_gc) {
   PostToDispatchEventNameAndRunCallback(

@@ -25,7 +25,7 @@ struct MEDIA_EXPORT WebMColorMetadata {
   unsigned ChromaSitingHorz;
   unsigned ChromaSitingVert;
 
-  gfx::ColorSpace color_space;
+  gfx::CbColorSpace color_space;
 
   HDRMetadata hdr_metadata;
 

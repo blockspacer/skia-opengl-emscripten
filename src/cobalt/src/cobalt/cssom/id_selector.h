@@ -36,7 +36,7 @@ class IdSelector : public SimpleSelector {
  public:
   explicit IdSelector(const std::string& id)
       : SimpleSelector(kIdSelector, base::Tokens::id_selector_prefix(),
-                       base::Token(id)) {}
+                       base::CobToken(id)) {}
   ~IdSelector() override {}
 
   // From Selector.
@@ -49,7 +49,7 @@ class IdSelector : public SimpleSelector {
                              CombinatorType combinator) override;
 
   // Rest of public methods.
-  base::Token id() const { return text(); }
+  base::CobToken id() const { return text(); }
 
  private:
   DISALLOW_COPY_AND_ASSIGN(IdSelector);

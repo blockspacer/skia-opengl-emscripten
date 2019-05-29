@@ -23,7 +23,9 @@
 #include "base/trace_event/trace_event.h"
 #include "cobalt/dom/dom_exception.h"
 #include "cobalt/dom/global_stats.h"
+#if defined(ENABLE_XHR)
 #include "cobalt/xhr/xml_http_request_event_target.h"
+#endif
 #include "nb/memory_scope.h"
 
 namespace cobalt {
@@ -40,7 +42,7 @@ void EventTarget::AddEventListener(const std::string& type,
   std::unique_ptr<GenericEventHandlerReference> listener_reference(
       new GenericEventHandlerReference(this, listener));
 
-  AddEventListenerInternal(base::Token(type), std::move(listener_reference),
+  AddEventListenerInternal(base::CobToken(type), std::move(listener_reference),
                            use_capture, kNotAttribute);
 }
 
@@ -111,7 +113,7 @@ void EventTarget::DispatchEventAndRunCallback(
 }
 
 void EventTarget::DispatchEventNameAndRunCallback(
-    base::Token event_name, const base::Closure& dispatched_callback) {
+    base::CobToken event_name, const base::Closure& dispatched_callback) {
   DispatchEvent(base::WrapRefCounted(new Event(event_name)));
   if (!dispatched_callback.is_null()) {
     dispatched_callback.Run();
@@ -119,7 +121,7 @@ void EventTarget::DispatchEventNameAndRunCallback(
 }
 
 void EventTarget::PostToDispatchEventName(const base::Location& location,
-                                          base::Token event_name) {
+                                          base::CobToken event_name) {
   PostToDispatchEventNameAndRunCallback(location, event_name, base::Closure());
 }
 
@@ -131,22 +133,27 @@ void EventTarget::PostToDispatchEvent(const base::Location& location,
 void EventTarget::PostToDispatchEventAndRunCallback(
     const base::Location& location, const scoped_refptr<Event>& event,
     const base::Closure& callback) {
-  if (!base::MessageLoop::current()) {
+  /*if (!base::MessageLoop::current()) {
+    return;
+  }*/
+#ifndef __EMSCRIPTEN__
+  if (!base::MessageLoopCurrent::Get()) {
     return;
   }
-  base::MessageLoop::current()->task_runner()->PostTask(
+#endif
+  base::MessageLoopCurrent::Get()->task_runner()->PostTask(
       location,
       base::Bind(base::IgnoreResult(&EventTarget::DispatchEventAndRunCallback),
                  base::AsWeakPtr<EventTarget>(this), event, callback));
 }
 
 void EventTarget::PostToDispatchEventNameAndRunCallback(
-    const base::Location& location, base::Token event_name,
+    const base::Location& location, base::CobToken event_name,
     const base::Closure& callback) {
-  if (!base::MessageLoop::current()) {
+  if (!base::MessageLoopCurrent::Get()) {
     return;
   }
-  base::MessageLoop::current()->task_runner()->PostTask(
+  base::MessageLoopCurrent::Get()->task_runner()->PostTask(
       location,
       base::Bind(
           base::IgnoreResult(&EventTarget::DispatchEventNameAndRunCallback),
@@ -154,7 +161,7 @@ void EventTarget::PostToDispatchEventNameAndRunCallback(
 }
 
 void EventTarget::SetAttributeEventListener(
-    base::Token type, const EventListenerScriptValue& listener) {
+    base::CobToken type, const EventListenerScriptValue& listener) {
   DCHECK(!unpack_onerror_events_ || type != base::Tokens::error());
 
   std::unique_ptr<GenericEventHandlerReference> listener_reference(
@@ -163,7 +170,7 @@ void EventTarget::SetAttributeEventListener(
 }
 
 const EventTarget::EventListenerScriptValue*
-EventTarget::GetAttributeEventListener(base::Token type) const {
+EventTarget::GetAttributeEventListener(base::CobToken type) const {
   DCHECK(!unpack_onerror_events_ || type != base::Tokens::error());
 
   GenericEventHandlerReference* handler =
@@ -172,7 +179,7 @@ EventTarget::GetAttributeEventListener(base::Token type) const {
 }
 
 void EventTarget::SetAttributeOnErrorEventListener(
-    base::Token type, const OnErrorEventListenerScriptValue& listener) {
+    base::CobToken type, const OnErrorEventListenerScriptValue& listener) {
   DCHECK_EQ(base::Tokens::error(), type);
 
   std::unique_ptr<GenericEventHandlerReference> listener_reference(
@@ -181,7 +188,7 @@ void EventTarget::SetAttributeOnErrorEventListener(
 }
 
 const EventTarget::OnErrorEventListenerScriptValue*
-EventTarget::GetAttributeOnErrorEventListener(base::Token type) const {
+EventTarget::GetAttributeOnErrorEventListener(base::CobToken type) const {
   DCHECK_EQ(base::Tokens::error(), type);
 
   GenericEventHandlerReference* handler =
@@ -200,7 +207,7 @@ bool EventTarget::HasOneOrMoreAttributeEventListener() const {
 }
 
 void EventTarget::SetAttributeEventListenerInternal(
-    base::Token type,
+    base::CobToken type,
     std::unique_ptr<GenericEventHandlerReference> event_handler) {
   // Remove existing attribute listener of the same type.
   for (EventListenerInfos::iterator iter = event_listener_infos_.begin();
@@ -215,7 +222,7 @@ void EventTarget::SetAttributeEventListenerInternal(
 }
 
 GenericEventHandlerReference* EventTarget::GetAttributeEventListenerInternal(
-    base::Token type) const {
+    base::CobToken type) const {
   for (EventListenerInfos::const_iterator iter = event_listener_infos_.begin();
        iter != event_listener_infos_.end(); ++iter) {
     if ((*iter)->listener_type == kAttribute && (*iter)->type == type) {
@@ -273,7 +280,7 @@ void EventTarget::TraceMembers(script::Tracer* tracer) {
 }
 
 void EventTarget::AddEventListenerInternal(
-    base::Token type, std::unique_ptr<GenericEventHandlerReference> listener,
+    base::CobToken type, std::unique_ptr<GenericEventHandlerReference> listener,
     bool use_capture, Type listener_type) {
   TRACK_MEMORY_SCOPE("DOM");
 
@@ -296,7 +303,7 @@ void EventTarget::AddEventListenerInternal(
       type, std::move(listener), use_capture, listener_type));
 }
 
-bool EventTarget::HasEventListener(base::Token type) {
+bool EventTarget::HasEventListener(base::CobToken type) {
   TRACK_MEMORY_SCOPE("DOM");
 
   for (EventListenerInfos::iterator iter = event_listener_infos_.begin();
@@ -309,7 +316,7 @@ bool EventTarget::HasEventListener(base::Token type) {
 }
 
 EventTarget::EventListenerInfo::EventListenerInfo(
-    base::Token type, std::unique_ptr<GenericEventHandlerReference> listener,
+    base::CobToken type, std::unique_ptr<GenericEventHandlerReference> listener,
     bool use_capture, Type listener_type)
     : type(type),
       listener(std::move(listener)),

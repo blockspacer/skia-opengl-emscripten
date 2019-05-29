@@ -175,8 +175,10 @@ class NET_EXPORT_PRIVATE HttpTransaction {
   // unavailable.
   virtual bool GetRemoteEndpoint(IPEndPoint* endpoint) const = 0;
 
+#ifdef ENABLE_QUIC
   // Populates network error details for this transaction.
   virtual void PopulateNetErrorDetails(NetErrorDetails* details) const = 0;
+#endif // ENABLE_QUIC
 
   // Called when the priority of the parent job changes.
   virtual void SetPriority(RequestPriority priority) = 0;

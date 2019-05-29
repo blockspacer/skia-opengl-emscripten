@@ -31,7 +31,7 @@ class HTMLMetaElement : public HTMLElement {
   static const char kTagName[];
 
   explicit HTMLMetaElement(Document* document)
-      : HTMLElement(document, base::Token(kTagName)) {}
+      : HTMLElement(document, base::CobToken(kTagName)) {}
 
   // Web API: HTMLMetaElement
   //

@@ -7,12 +7,13 @@
 
 #include <type_traits>
 
+#if defined(STARBOARD)
 #include "starboard/types.h"
-
 #include "starboard/memory.h"
+#include "base/basictypes.h"
+#endif
 
 #include "base/base_export.h"
-#include "base/basictypes.h"
 #include "base/compiler_specific.h"
 #include "build/build_config.h"
 

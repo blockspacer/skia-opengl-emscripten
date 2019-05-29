@@ -90,7 +90,7 @@ class SourceList {
   bool allow_insecure_connections_to_local_network_;
   bool allow_insecure_connections_to_localhost_;
   bool allow_insecure_connections_to_private_range_;
-  base::hash_set<std::string> nonces_;
+  std::set<std::string> nonces_;
   // TODO: This is a hash_set in blink. Need to implement
   // a hash for HashValue.
   std::set<HashValue> hashes_;

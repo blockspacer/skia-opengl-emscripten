@@ -30,6 +30,13 @@ TimeNowFunction g_time_now_from_system_time_function =
 TimeTicksNowFunction g_time_ticks_now_function =
     &subtle::TimeTicksNowIgnoringOverride;
 
+#if defined(STARBOARD)
+#if SB_HAS(TIME_THREAD_NOW)
+ThreadTicksNowFunction g_thread_ticks_now_function =
+    &subtle::ThreadTicksNowIgnoringOverride;
+#endif
+#endif
+
 ThreadTicksNowFunction g_thread_ticks_now_function =
     &subtle::ThreadTicksNowIgnoringOverride;
 
@@ -405,6 +412,15 @@ std::ostream& operator<<(std::ostream& os, TimeTicks time_ticks) {
 
 // static
 ThreadTicks ThreadTicks::Now() {
+
+#if defined(STARBOARD)
+#if SB_HAS(TIME_THREAD_NOW)
+  return internal::g_thread_ticks_now_function();
+#else
+  return ThreadTicks();
+#endif
+#endif
+
   return internal::g_thread_ticks_now_function();
 }
 

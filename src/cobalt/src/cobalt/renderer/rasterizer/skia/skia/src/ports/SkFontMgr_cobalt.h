@@ -111,8 +111,8 @@ class SkFontMgr_Cobalt : public SkFontMgr {
                                      SkFontStyle style) const override;
 
  private:
-  typedef base::hash_map<std::string, SkFontStyleSet_Cobalt*> NameToStyleSetMap;
-  typedef base::small_map<base::hash_map<std::string, StyleSetArray*>>
+  typedef std::map<std::string, SkFontStyleSet_Cobalt*> NameToStyleSetMap;
+  typedef base::small_map<std::map<std::string, StyleSetArray*>>
       NameToStyleSetArrayMap;
 
   void ParseConfigAndBuildFamilies(

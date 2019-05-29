@@ -22,6 +22,12 @@ namespace base {
 
 namespace {
 
+#if defined(STARBOARD)
+#include "starboard/character.h"
+#include "starboard/string.h"
+#include "starboard/types.h"
+#endif
+
 template <typename STR, typename INT>
 struct IntToStringT {
   static STR IntToString(INT value) {
@@ -376,6 +382,16 @@ base::string16 NumberToString16(double value) {
   // iterator" variant which promotes from 8-bit to 16-bit via "=".
   return base::string16(&buffer[0], &buffer[strlen(buffer)]);
 }
+
+#if defined(STARBOARD)
+bool StringToInt32(StringPiece input, int32_t* output) {
+  return StringToIntImpl(input, output);
+}
+
+bool StringToUint32(StringPiece input, uint32_t* output) {
+  return StringToIntImpl(input, output);
+}
+#endif
 
 bool StringToInt(StringPiece input, int* output) {
   return StringToIntImpl(input, output);

@@ -48,9 +48,12 @@ class StreamSocket;
 class WebSocketEndpointLockManager;
 class QuicStreamFactory;
 class SocketTag;
+#if defined(ENABLE_SPDY)
 class SpdySessionPool;
+#endif
 class SSLCertRequestInfo;
 
+#if defined(ENABLE_SPDY)
 // Immutable socket parameters intended for shared use by all ConnectJob types.
 // Excludes priority because it can be modified over the lifetime of a
 // ConnectJob. Excludes connection timeout and NetLogWithSource because
@@ -73,6 +76,7 @@ struct NET_EXPORT_PRIVATE CommonConnectJobParams {
       NetworkQualityEstimator* network_quality_estimator,
       NetLog* net_log,
       WebSocketEndpointLockManager* websocket_endpoint_lock_manager);
+
   CommonConnectJobParams(const CommonConnectJobParams& other);
   ~CommonConnectJobParams();
 
@@ -82,7 +86,9 @@ struct NET_EXPORT_PRIVATE CommonConnectJobParams {
   HostResolver* host_resolver;
   HttpAuthCache* http_auth_cache;
   HttpAuthHandlerFactory* http_auth_handler_factory;
+#if defined(ENABLE_SPDY)
   SpdySessionPool* spdy_session_pool;
+#endif
   const quic::ParsedQuicVersionVector* quic_supported_versions;
   QuicStreamFactory* quic_stream_factory;
   ProxyDelegate* proxy_delegate;
@@ -96,6 +102,7 @@ struct NET_EXPORT_PRIVATE CommonConnectJobParams {
   // This must only be non-null for WebSockets.
   WebSocketEndpointLockManager* websocket_endpoint_lock_manager;
 };
+#endif
 
 // When a host resolution completes, OnHostResolutionCallback() is invoked. If
 // it returns |kContinue|, the ConnectJob can continue immediately. If it

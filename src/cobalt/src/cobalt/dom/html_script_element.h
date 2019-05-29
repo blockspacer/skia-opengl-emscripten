@@ -25,7 +25,11 @@
 #include "cobalt/base/source_location.h"
 #include "cobalt/dom/html_element.h"
 #include "cobalt/dom/url_utils.h"
+
+#ifdef ENABLE_LOADER
 #include "cobalt/loader/loader.h"
+#endif
+
 #include "cobalt/script/global_environment.h"
 
 namespace cobalt {
@@ -96,12 +100,18 @@ class HTMLScriptElement : public HTMLElement {
   //
   void Prepare();
 
+#ifdef ENABLE_LOADER
   void OnSyncContentProduced(const loader::Origin& last_url_origin,
                              std::unique_ptr<std::string> content);
+#endif
+
   void OnSyncLoadingComplete(const base::Optional<std::string>& error);
 
+#ifdef ENABLE_LOADER
   void OnContentProduced(const loader::Origin& last_url_origin,
                          std::unique_ptr<std::string> content);
+#endif
+
   void OnLoadingComplete(const base::Optional<std::string>& error);
 
   void ExecuteExternal();
@@ -110,7 +120,7 @@ class HTMLScriptElement : public HTMLElement {
                const base::SourceLocation& script_location, bool is_external);
 
   void PreventGarbageCollectionAndPostToDispatchEvent(
-      const base::Location& location, const base::Token& token,
+      const base::Location& location, const base::CobToken& token,
       std::unique_ptr<
           script::GlobalEnvironment::ScopedPreventGarbageCollection>*
           scoped_prevent_gc);
@@ -138,8 +148,12 @@ class HTMLScriptElement : public HTMLElement {
   base::ThreadChecker thread_checker_;
   // Weak reference to the document at the time Prepare() started.
   base::WeakPtr<Document> document_;
+
+#ifdef ENABLE_LOADER
   // The loader that is used for asynchronous loads.
   std::unique_ptr<loader::Loader> loader_;
+#endif
+
   // Whether the sync load is successful.
   bool is_sync_load_successful_;
   // Resolved URL of the script.
@@ -150,6 +164,7 @@ class HTMLScriptElement : public HTMLElement {
   // Whether or not the script should execute at all.
   bool should_execute_;
 
+#ifdef ENABLE_LOADER
   // The request mode for the fetch request.
   loader::RequestMode request_mode_;
 
@@ -159,6 +174,7 @@ class HTMLScriptElement : public HTMLElement {
   loader::Origin fetched_last_url_origin_;
 
   base::WaitableEvent* synchronous_loader_interrupt_;
+#endif
 
   std::unique_ptr<script::GlobalEnvironment::ScopedPreventGarbageCollection>
       prevent_gc_until_load_event_dispatch_;

@@ -46,7 +46,7 @@ typedef media::WebMediaPlayerClient WebMediaPlayerClient;
 //   https://www.w3.org/TR/html5/embedded-content-0.html#media-element
 class HTMLMediaElement : public HTMLElement, private WebMediaPlayerClient {
  public:
-  HTMLMediaElement(Document* document, base::Token tag_name);
+  HTMLMediaElement(Document* document, base::CobToken tag_name);
   ~HTMLMediaElement() override;
 
   // Web API: HTMLMediaElement
@@ -171,7 +171,7 @@ class HTMLMediaElement : public HTMLElement, private WebMediaPlayerClient {
 
   // Events
   void ScheduleTimeupdateEvent(bool periodic_event);
-  void ScheduleOwnEvent(base::Token event_name);
+  void ScheduleOwnEvent(base::CobToken event_name);
   void CancelPendingEventsAndCallbacks();
   bool ProcessingMediaPlayerCallback() const {
     return processing_media_player_callback_ > 0;

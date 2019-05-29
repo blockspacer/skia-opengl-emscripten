@@ -15,7 +15,9 @@
 #include "cobalt/dom/eme/media_key_status_map.h"
 
 #include "base/logging.h"
-#include "base/polymorphic_downcast.h"
+
+#include "port/cobalt/base/polymorphic_downcast.h"
+
 #include "cobalt/dom/dom_settings.h"
 #include "cobalt/script/array_buffer.h"
 #include "cobalt/script/array_buffer_view.h"

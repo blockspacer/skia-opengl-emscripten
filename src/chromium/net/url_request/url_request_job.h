@@ -140,9 +140,12 @@ class NET_EXPORT URLRequestJob : public base::PowerObserver {
   // false and leaves |endpoint| unchanged if it is unavailable.
   virtual bool GetTransactionRemoteEndpoint(IPEndPoint* endpoint) const;
 
+
+#ifdef ENABLE_QUIC
   // Populates the network error details of the most recent origin that the
   // network stack makes the request to.
   virtual void PopulateNetErrorDetails(NetErrorDetails* details) const;
+#endif // ENABLE_QUIC
 
   // Called to determine if this response is a redirect.  Only makes sense
   // for some types of requests.  This method returns true if the response

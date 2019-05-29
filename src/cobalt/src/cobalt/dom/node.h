@@ -22,7 +22,10 @@
 #include "base/memory/ref_counted.h"
 #include "base/memory/weak_ptr.h"
 #include "base/optional.h"
-#include "cobalt/base/token.h"
+
+#include "cobalt/base/cobalt_token.h"
+//#include "base/token.h"
+
 #include "cobalt/dom/event_target.h"
 #include "cobalt/dom/mutation_observer.h"
 #include "cobalt/dom/mutation_observer_init.h"
@@ -118,7 +121,7 @@ class Node : public EventTarget {
   // Web API: Node
   //
   virtual NodeType node_type() const = 0;
-  virtual base::Token node_name() const = 0;
+  virtual base::CobToken node_name() const = 0;
 
   Document* owner_document() const;
   Node* parent_node() const { return parent_; }

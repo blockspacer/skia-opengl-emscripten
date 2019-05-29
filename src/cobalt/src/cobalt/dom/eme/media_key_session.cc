@@ -17,7 +17,8 @@
 #include <memory>
 #include <type_traits>
 
-#include "base/polymorphic_downcast.h"
+#include "port/cobalt/base/polymorphic_downcast.h"
+
 #include "cobalt/dom/dom_exception.h"
 #include "cobalt/dom/dom_settings.h"
 #include "cobalt/dom/eme/eme_helpers.h"

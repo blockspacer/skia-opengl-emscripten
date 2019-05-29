@@ -55,7 +55,7 @@ void MutationObserverTaskManager::QueueMutationObserverMicrotask() {
   // 2. Set mutation observer compound microtask queued flag.
   task_posted_ = true;
   // 3. Queue a compound microtask to notify mutation observers.
-  base::MessageLoop::current()->task_runner()->PostTask(
+  base::MessageLoopCurrent::Get()->task_runner()->PostTask(
       FROM_HERE,
       base::Bind(&MutationObserverTaskManager::NotifyMutationObservers,
                  base::Unretained(this)));
@@ -70,7 +70,7 @@ void MutationObserverTaskManager::NotifyMutationObservers() {
                "MutationObserverTaskManager::NotifyMutationObservers()");
   DCHECK(thread_checker_.CalledOnValidThread());
   DCHECK(task_posted_);
-  DCHECK(base::MessageLoop::current());
+  DCHECK(base::MessageLoopCurrent::Get());
   // https://www.w3.org/TR/dom/#notify-mutation-observers
   // To notify mutation observers, run these steps:
   // 1. Unset mutation observer compound microtask queued flag.

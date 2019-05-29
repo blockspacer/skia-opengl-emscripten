@@ -20,7 +20,10 @@
 
 #include "base/memory/ref_counted.h"
 #include "base/optional.h"
-#include "cobalt/base/token.h"
+
+#include "cobalt/base/cobalt_token.h"
+//#include "base/token.h"
+
 #include "cobalt/dom/element.h"
 #include "cobalt/script/wrappable.h"
 
@@ -47,10 +50,10 @@ class DOMTokenList : public script::Wrappable {
 
   // This is a variation of Contains that should only be called in cases where
   // the token has already been validated.
-  bool ContainsValid(base::Token valid_token) const;
+  bool ContainsValid(base::CobToken valid_token) const;
 
   // Returns a reference to the contained tokens for rapid iteration.
-  const std::vector<base::Token>& GetTokens() const;
+  const std::vector<base::CobToken>& GetTokens() const;
 
   // The associated element.
   Element* element() { return element_; }
@@ -77,7 +80,7 @@ class DOMTokenList : public script::Wrappable {
   // Node generation of the element when tokens is updated.
   mutable uint32_t element_node_generation_;
   // Cached tokens.
-  mutable std::vector<base::Token> tokens_;
+  mutable std::vector<base::CobToken> tokens_;
 
   DISALLOW_COPY_AND_ASSIGN(DOMTokenList);
 };

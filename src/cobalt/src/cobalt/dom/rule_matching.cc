@@ -372,7 +372,7 @@ void GatherCandidateNodesFromSelectorNodesMap(
     cssom::SimpleSelectorType simple_selector_type,
     cssom::CombinatorType combinator_type,
     const SelectorTree::Node* parent_node,
-    const SelectorTree::SelectorTextToNodesMap* map, base::Token key,
+    const SelectorTree::SelectorTextToNodesMap* map, base::CobToken key,
     SelectorTree::NodePairs* candidate_nodes) {
   SelectorTree::SelectorTextToNodesMap::const_iterator it = map->find(key);
   if (it != map->end()) {
@@ -466,7 +466,7 @@ bool GatherMatchingNodes(const SelectorTree::Nodes& nodes,
   SelectorTree::NodePairs* candidate_node_pairs = scratchpad_node_pairs;
   candidate_node_pairs->clear();
 
-  const std::vector<base::Token>& element_class_list =
+  const std::vector<base::CobToken>& element_class_list =
       element->class_list()->GetTokens();
 
   // Don't retrieve the element's attributes until they are needed. Retrieving
@@ -487,7 +487,7 @@ bool GatherMatchingNodes(const SelectorTree::Nodes& nodes,
       if (node->HasSimpleSelector(cssom::kUniversalSelector, combinator_type)) {
         GatherCandidateNodesFromSelectorNodesMap(
             cssom::kUniversalSelector, combinator_type, node,
-            selector_nodes_map, base::Token(), candidate_node_pairs);
+            selector_nodes_map, base::CobToken(), candidate_node_pairs);
       }
 
       // Type selector.
@@ -510,7 +510,7 @@ bool GatherMatchingNodes(const SelectorTree::Nodes& nodes,
           GatherCandidateNodesFromSelectorNodesMap(
               cssom::kAttributeSelector, combinator_type, node,
               selector_nodes_map,
-              base::Token(element_attributes->Item(index)->name()),
+              base::CobToken(element_attributes->Item(index)->name()),
               candidate_node_pairs);
         }
       }
@@ -685,11 +685,11 @@ bool UpdateElementRuleMatchingState(HTMLElement* element) {
 
   // Retrieve the parent and previous sibling of the current element.
   HTMLElement* parent = element->parent_element()
-                            ? element->parent_element()->AsHTMLElement()
+                            ? element->parent_element()->AsHTMLElement().get()
                             : NULL;
   HTMLElement* previous_sibling =
       sibling_matching_active && element->previous_element_sibling()
-          ? element->previous_element_sibling()->AsHTMLElement()
+          ? element->previous_element_sibling()->AsHTMLElement().get()
           : NULL;
 
   // Retrieve the rule matching state of this element, its parent, and its
@@ -951,7 +951,7 @@ scoped_refptr<Element> QuerySelector(Node* node, const std::string& selectors,
   while (child) {
     if (child->IsElement()) {
       scoped_refptr<Element> element = child->AsElement();
-      if (MatchRuleAndElement(css_style_rule, element)) {
+      if (MatchRuleAndElement(css_style_rule.get(), element.get())) {
         return element;
       }
     }
@@ -985,7 +985,7 @@ scoped_refptr<NodeList> QuerySelectorAll(Node* node,
   while (child) {
     if (child->IsElement()) {
       scoped_refptr<Element> element = child->AsElement();
-      if (MatchRuleAndElement(css_style_rule, element)) {
+      if (MatchRuleAndElement(css_style_rule.get(), element.get())) {
         node_list->AppendNode(element);
       }
     }

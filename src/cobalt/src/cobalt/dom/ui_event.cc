@@ -15,7 +15,9 @@
 #include "cobalt/dom/ui_event.h"
 
 #include "base/compiler_specific.h"
-#include "cobalt/base/token.h"
+
+//#include "cobalt/base/token.h"
+#include "cobalt/base/cobalt_token.h"
 
 namespace cobalt {
 namespace dom {
@@ -30,7 +32,7 @@ UIEvent::UIEvent(const std::string& type, const UIEventInit& init_dict)
 UIEvent::UIEvent(UninitializedFlag uninitialized_flag)
     : Event(uninitialized_flag), detail_(0), which_(0) {}
 
-UIEvent::UIEvent(base::Token type, Bubbles bubbles, Cancelable cancelable,
+UIEvent::UIEvent(base::CobToken type, Bubbles bubbles, Cancelable cancelable,
                  const scoped_refptr<Window>& view)
     : Event(type, bubbles, cancelable), view_(view), detail_(0), which_(0) {}
 
@@ -42,8 +44,8 @@ void UIEvent::InitUIEvent(const std::string& type, bool bubbles,
   detail_ = detail;
 }
 
-UIEvent::UIEvent(base::Token type) : Event(type), detail_(0), which_(0) {}
-UIEvent::UIEvent(base::Token type, Bubbles bubbles, Cancelable cancelable,
+UIEvent::UIEvent(base::CobToken type) : Event(type), detail_(0), which_(0) {}
+UIEvent::UIEvent(base::CobToken type, Bubbles bubbles, Cancelable cancelable,
                  const scoped_refptr<Window>& view,
                  const UIEventInit& init_dict)
     : Event(type, bubbles, cancelable),

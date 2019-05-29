@@ -35,7 +35,7 @@ class Storage;
 // by the Storage node.
 class StorageArea {
  public:
-  typedef base::hash_map<std::string, std::string> StorageMap;
+  typedef std::map<std::string, std::string> StorageMap;
 
   // storage_node is the DOM node that owns this storage area.
   // db_interface is either NULL for SessionStorage, or a pointer to a

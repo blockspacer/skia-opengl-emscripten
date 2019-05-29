@@ -33,7 +33,7 @@ bool CSS::Supports(script::EnvironmentSettings* settings,
     cssom::CSSParser* css_parser =
         dom_settings->window()->html_element_context()->css_parser();
     return css_parser->ParsePropertyValue(
-        property, value, base::SourceLocation("[object CSS]", 1, 1));
+        property, value, base::SourceLocation("[object CSS]", 1, 1)).get();
   }
 
   return false;

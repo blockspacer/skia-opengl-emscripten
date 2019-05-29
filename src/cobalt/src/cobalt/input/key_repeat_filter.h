@@ -32,12 +32,12 @@ class KeyRepeatFilter : public KeyEventHandler {
   explicit KeyRepeatFilter(KeyEventHandler* filter);
 
   void HandleKeyboardEvent(
-      base::Token type, const dom::KeyboardEventInit& keyboard_event) override;
+      base::CobToken type, const dom::KeyboardEventInit& keyboard_event) override;
 
  private:
-  void HandleKeyDown(base::Token type,
+  void HandleKeyDown(base::CobToken type,
                      const dom::KeyboardEventInit& keyboard_event);
-  void HandleKeyUp(base::Token type,
+  void HandleKeyUp(base::CobToken type,
                    const dom::KeyboardEventInit& keyboard_event);
   void FireKeyRepeatEvent();
 

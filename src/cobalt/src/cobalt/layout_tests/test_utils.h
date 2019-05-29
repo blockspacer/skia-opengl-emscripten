@@ -44,7 +44,7 @@ class LogFilter {
   bool OnLogMessage(int severity, const char* file, int line,
                     size_t message_start, const std::string& str);
 
-  base::hash_set<std::string> filtered_strings_;
+  std::set<std::string> filtered_strings_;
   base::LogMessageHandler::CallbackId callback_id_;
 
   DISALLOW_COPY_AND_ASSIGN(LogFilter);

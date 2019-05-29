@@ -30,7 +30,7 @@ using media::WebMediaPlayer;
 const char HTMLVideoElement::kTagName[] = "video";
 
 HTMLVideoElement::HTMLVideoElement(Document* document)
-    : HTMLMediaElement(document, base::Token(kTagName)) {}
+    : HTMLMediaElement(document, base::CobToken(kTagName)) {}
 
 uint32 HTMLVideoElement::width() const {
   uint32 result = 0;

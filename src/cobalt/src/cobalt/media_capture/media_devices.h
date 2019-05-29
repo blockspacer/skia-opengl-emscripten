@@ -35,8 +35,11 @@
 #include "cobalt/script/script_value_factory.h"
 #include "cobalt/script/sequence.h"
 #include "cobalt/script/wrappable.h"
+
+#if defined(ENABLE_SPEECH)
 #include "cobalt/speech/microphone.h"
 #include "cobalt/speech/microphone_manager.h"
+#endif
 
 namespace cobalt {
 namespace media_capture {
@@ -74,13 +77,16 @@ class MediaDevices : public dom::EventTarget {
 
   ~MediaDevices() override = default;
 
+#if defined(ENABLE_SPEECH)
   // Stop callback used with MediaStreamAudioSource.
   void OnMicrophoneStopped();
 
   // Callbacks used with MicrophoneManager.
   void OnMicrophoneError(speech::MicrophoneManager::MicrophoneError error,
                          std::string message);
+
   void OnMicrophoneSuccess();
+#endif
 
   script::ScriptValueFactory* script_value_factory_;
   dom::DOMSettings* settings_ = nullptr;

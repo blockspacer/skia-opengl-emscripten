@@ -30,7 +30,10 @@ namespace net {
 class IOBuffer;
 class NetLogWithSource;
 struct BidirectionalStreamRequestInfo;
+
+#ifdef ENABLE_QUIC
 struct NetErrorDetails;
+#endif // ENABLE_QUIC
 
 // Exposes an interface to do HTTP/2 bidirectional streaming.
 // Note that only one ReadData or SendData should be in flight until the
@@ -159,10 +162,12 @@ class NET_EXPORT_PRIVATE BidirectionalStreamImpl {
   // and false otherwise.
   virtual bool GetLoadTimingInfo(LoadTimingInfo* load_timing_info) const = 0;
 
+#ifdef ENABLE_QUIC
   // Get the network error details this stream is encountering.
   // Fills in |details| if it is available; leaves |details| unchanged if it
   // is unavailable.
   virtual void PopulateNetErrorDetails(NetErrorDetails* details) = 0;
+#endif // ENABLE_QUIC
 
  private:
   DISALLOW_COPY_AND_ASSIGN(BidirectionalStreamImpl);

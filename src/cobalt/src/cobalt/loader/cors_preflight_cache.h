@@ -108,9 +108,9 @@ class CORSPreflightCache : public base::RefCounted<CORSPreflightCache> {
 
   // TODO: Replace scoped_refptr with std::unique_ptr when possible or replace
   // the map as a 'scoped_map'.
-  base::hash_map<
+  std::map<
       std::string,
-      base::hash_map<std::string, scoped_refptr<CORSPreflightCacheEntry> > >
+      std::map<std::string, scoped_refptr<CORSPreflightCacheEntry> > >
       content_;
 
   std::priority_queue<ExpirationHeapEntry, std::vector<ExpirationHeapEntry>,

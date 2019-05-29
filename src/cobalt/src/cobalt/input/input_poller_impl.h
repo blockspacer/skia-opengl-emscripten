@@ -46,7 +46,7 @@ class InputPollerImpl : public InputPoller {
   typedef base::small_map<std::map<SbKey, float>, 8> KeyOffsetMap;
 
   starboard::Mutex input_mutex_;
-  base::hash_set<int> pressed_keys_;
+  std::set<int> pressed_keys_;
   KeyOffsetMap key_offset_map_;
 };
 

@@ -19,6 +19,9 @@
 
 namespace base {
 
+// TODO: __EMSCRIPTEN__ remove ced, replace with "unicode/ucsdet.h"
+// https://github.com/blockspacer/cobalt-clone-28052019/blob/master/src/base/i18n/encoding_detection.cc
+
 bool DetectEncoding(const std::string& text, std::string* encoding) {
   int consumed_bytes;
   bool is_reliable;

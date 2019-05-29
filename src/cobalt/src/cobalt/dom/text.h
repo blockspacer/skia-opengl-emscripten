@@ -36,7 +36,7 @@ class Text : public CharacterData {
 
   // Web API: Node
   //
-  base::Token node_name() const override;
+  base::CobToken node_name() const override;
   NodeType node_type() const override { return Node::kTextNode; }
 
   // Custom, not in any spec: Node.

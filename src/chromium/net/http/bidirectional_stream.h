@@ -38,7 +38,9 @@ class HttpStream;
 class IOBuffer;
 class ProxyInfo;
 struct BidirectionalStreamRequestInfo;
+#ifdef ENABLE_QUIC
 struct NetErrorDetails;
+#endif // ENABLE_QUIC
 struct SSLConfig;
 
 // A class to do HTTP/2 bidirectional streaming. Note that at most one each of
@@ -178,10 +180,12 @@ class NET_EXPORT BidirectionalStream : public BidirectionalStreamImpl::Delegate,
   // Gets LoadTimingInfo of this stream.
   void GetLoadTimingInfo(LoadTimingInfo* load_timing_info) const;
 
+#ifdef ENABLE_QUIC
   // Get the network error details this stream is encountering.
   // Fills in |details| if it is available; leaves |details| unchanged if it
   // is unavailable.
   void PopulateNetErrorDetails(NetErrorDetails* details);
+#endif // ENABLE_QUIC
 
  private:
   void StartRequest(const SSLConfig& ssl_config);
@@ -206,10 +210,14 @@ class NET_EXPORT BidirectionalStream : public BidirectionalStreamImpl::Delegate,
       const SSLConfig& used_ssl_config,
       const ProxyInfo& used_proxy_info,
       std::unique_ptr<WebSocketHandshakeStreamBase> stream) override;
+
+#ifdef ENABLE_QUIC
   void OnStreamFailed(int status,
                       const NetErrorDetails& net_error_details,
                       const SSLConfig& used_ssl_config,
                       const ProxyInfo& used_proxy_info) override;
+#endif // ENABLE_QUIC
+
   void OnCertificateError(int status,
                           const SSLConfig& used_ssl_config,
                           const SSLInfo& ssl_info) override;

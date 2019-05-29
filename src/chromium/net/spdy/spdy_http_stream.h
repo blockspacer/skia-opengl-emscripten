@@ -88,7 +88,11 @@ class NET_EXPORT_PRIVATE SpdyHttpStream : public SpdyStream::Delegate,
       AlternativeService* alternative_service) const override;
   bool GetLoadTimingInfo(LoadTimingInfo* load_timing_info) const override;
   bool GetRemoteEndpoint(IPEndPoint* endpoint) override;
+
+#ifdef ENABLE_QUIC
   void PopulateNetErrorDetails(NetErrorDetails* details) override;
+#endif // ENABLE_QUIC
+
   void SetPriority(RequestPriority priority) override;
 
   // SpdyStream::Delegate implementation.

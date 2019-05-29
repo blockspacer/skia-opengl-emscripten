@@ -24,7 +24,10 @@
 #include "base/memory/weak_ptr.h"
 #include "base/optional.h"
 #include "base/strings/string_piece.h"
-#include "cobalt/base/token.h"
+
+#include "cobalt/base/cobalt_token.h"
+//#include "base/token.h"
+
 #include "cobalt/cssom/animation_set.h"
 #include "cobalt/cssom/css_computed_style_declaration.h"
 #include "cobalt/cssom/css_declared_style_declaration.h"
@@ -331,7 +334,7 @@ class HTMLElement : public Element, public cssom::MutationObserver {
   DEFINE_WRAPPABLE_TYPE(HTMLElement);
 
  protected:
-  HTMLElement(Document* document, base::Token local_name);
+  HTMLElement(Document* document, base::CobToken local_name);
   ~HTMLElement() override;
 
   void OnInsertedIntoDocument() override;

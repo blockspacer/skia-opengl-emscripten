@@ -42,7 +42,10 @@ class URLRequestFailedJob : public URLRequestJob {
   void Start() override;
   int ReadRawData(IOBuffer* buf, int buf_size) override;
   void GetResponseInfo(HttpResponseInfo* info) override;
+
+#ifdef ENABLE_QUIC
   void PopulateNetErrorDetails(NetErrorDetails* details) const override;
+#endif // ENABLE_QUIC
   int64_t GetTotalReceivedBytes() const override;
 
   // Adds the testing URLs to the URLRequestFilter.

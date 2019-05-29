@@ -33,7 +33,7 @@ class MediaListDirective : public Directive {
 
  private:
   void Parse(const base::StringPiece& str);
-  base::hash_set<std::string> plugin_types_;
+  std::set<std::string> plugin_types_;
 
   DISALLOW_COPY_AND_ASSIGN(MediaListDirective);
 };

@@ -173,12 +173,12 @@ class DrmSystem : public base::RefCounted<DrmSystem> {
     SessionUpdateRequestGeneratedCallback generated_callback;
     SessionUpdateRequestDidNotGenerateCallback did_not_generate_callback;
   };
-  typedef base::hash_map<int, SessionUpdateRequest>
+  typedef std::map<int, SessionUpdateRequest>
       TicketToSessionUpdateRequestMap;
 
-  typedef base::hash_map<std::string, Session*> IdToSessionMap;
+  typedef std::map<std::string, Session*> IdToSessionMap;
 
-  typedef base::hash_map<int, ServerCertificateUpdatedCallback>
+  typedef std::map<int, ServerCertificateUpdatedCallback>
       TicketToServerCertificateUpdatedMap;
 
   // Stores context of |Session::Update|.
@@ -186,7 +186,7 @@ class DrmSystem : public base::RefCounted<DrmSystem> {
     SessionUpdatedCallback updated_callback;
     SessionDidNotUpdateCallback did_not_update_callback;
   };
-  typedef base::hash_map<int, SessionUpdate> TicketToSessionUpdateMap;
+  typedef std::map<int, SessionUpdate> TicketToSessionUpdateMap;
 
   // Defined to work around the limitation on number of parameters of
   // base::Bind().

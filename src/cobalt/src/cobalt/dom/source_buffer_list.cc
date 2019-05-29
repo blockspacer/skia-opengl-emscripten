@@ -133,7 +133,7 @@ void SourceBufferList::TraceMembers(script::Tracer* tracer) {
   }
 }
 
-void SourceBufferList::ScheduleEvent(base::Token event_name) {
+void SourceBufferList::ScheduleEvent(base::CobToken event_name) {
   scoped_refptr<Event> event = new Event(event_name);
   event->set_target(this);
   event_queue_->Enqueue(event);

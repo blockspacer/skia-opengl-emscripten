@@ -55,7 +55,11 @@
 #include "cobalt/media_session/media_session_client.h"
 #include "cobalt/script/environment_settings.h"
 #include "cobalt/script/javascript_engine.h"
+
+#if defined(ENABLE_SPEECH)
 #include "cobalt/speech/speech_synthesis.h"
+#endif
+
 #include "starboard/file.h"
 
 using cobalt::cssom::ViewportSize;
@@ -177,7 +181,9 @@ Window::Window(
       ALLOW_THIS_IN_INITIALIZER_LIST(animation_frame_request_callback_list_(
           new AnimationFrameRequestCallbackList(this))),
       crypto_(new Crypto()),
+#if defined(ENABLE_SPEECH)
       speech_synthesis_(new speech::SpeechSynthesis(navigator_, log_tts)),
+#endif
       ALLOW_THIS_IN_INITIALIZER_LIST(local_storage_(
           new Storage(this, Storage::kLocalStorage, local_storage_database))),
       ALLOW_THIS_IN_INITIALIZER_LIST(
@@ -213,7 +219,7 @@ Window::Window(
   // Document load start is deferred from this constructor so that we can be
   // guaranteed that this Window object is fully constructed before document
   // loading begins.
-  base::MessageLoop::current()->task_runner()->PostTask(
+  base::MessageLoopCurrent::Get()->task_runner()->PostTask(
       FROM_HERE,
       base::Bind(&Window::StartDocumentLoad, base::Unretained(this),
                  fetcher_factory, url, dom_parser, load_complete_callback));
@@ -317,7 +323,7 @@ scoped_refptr<cssom::CSSStyleDeclaration> Window::GetComputedStyle(
 
   // 1. Let doc be the Document associated with the Window object on which the
   // method was invoked.
-  DCHECK_EQ(document_, elt->node_document())
+  DCHECK_EQ(document_.get(), elt->node_document())
       << "getComputedStyle not supported for elements outside of the document";
 
   scoped_refptr<HTMLElement> html_element = elt->AsHTMLElement();
@@ -460,9 +466,11 @@ const scoped_refptr<Performance>& Window::performance() const {
   return performance_;
 }
 
+#if defined(ENABLE_SPEECH)
 scoped_refptr<speech::SpeechSynthesis> Window::speech_synthesis() const {
   return speech_synthesis_;
 }
+#endif
 
 const scoped_refptr<Console>& Window::console() const { return console_; }
 
@@ -696,7 +704,9 @@ void Window::TraceMembers(script::Tracer* tracer) {
   tracer->Trace(console_);
   tracer->Trace(camera_3d_);
   tracer->Trace(crypto_);
+#if defined(ENABLE_SPEECH)
   tracer->Trace(speech_synthesis_);
+#endif
   tracer->Trace(local_storage_);
   tracer->Trace(session_storage_);
   tracer->Trace(screen_);

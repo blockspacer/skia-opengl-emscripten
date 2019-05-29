@@ -179,7 +179,7 @@ class AudioContext : public dom::EventTarget {
     base::Optional<DecodeErrorCallbackReference> error_callback;
   };
 
-  typedef base::hash_map<int, DecodeCallbackInfo*> DecodeCallbacks;
+  typedef std::map<int, DecodeCallbackInfo*> DecodeCallbacks;
 
   typedef std::set<scoped_refptr<AudioBufferSourceNode> >
       AudioBufferSourceNodeSet;

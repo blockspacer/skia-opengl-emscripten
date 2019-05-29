@@ -21,6 +21,7 @@
 #include "base/bind.h"
 #include "base/callback.h"
 #include "base/optional.h"
+#include "base/compiler_specific.h"
 #include "cobalt/csp/content_security_policy.h"
 #include "cobalt/dom/parser.h"
 #include "cobalt/loader/decoder.h"

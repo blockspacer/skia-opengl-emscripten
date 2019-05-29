@@ -20,7 +20,10 @@
 
 #include "base/memory/ref_counted.h"
 #include "base/strings/string_piece.h"
-#include "cobalt/base/token.h"
+
+#include "cobalt/base/cobalt_token.h"
+//#include "base/token.h"
+
 #include "cobalt/dom/blob.h"
 #include "cobalt/dom/event.h"
 #include "cobalt/script/array_buffer.h"
@@ -40,7 +43,7 @@ class MessageEvent : public dom::Event {
   // Keeping them in expected order will help make code faster.
   enum ResponseTypeCode { kText, kBlob, kArrayBuffer, kResponseTypeCodeMax };
 
-  MessageEvent(base::Token type, script::EnvironmentSettings* settings,
+  MessageEvent(base::CobToken type, script::EnvironmentSettings* settings,
                ResponseTypeCode response_type,
                const scoped_refptr<net::IOBufferWithSize>& data)
       : Event(type),

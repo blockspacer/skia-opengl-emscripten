@@ -79,7 +79,7 @@ class Font : public render_tree::Font {
  private:
   // Usually covers Latin-1 in a single page.
   static const int kPrimaryPageSize = 256;
-  typedef base::hash_map<render_tree::GlyphIndex, math::RectF> GlyphToBoundsMap;
+  typedef std::map<render_tree::GlyphIndex, math::RectF> GlyphToBoundsMap;
 
   // The SkiaTypeface that was used to create this font.
   scoped_refptr<SkiaTypeface> typeface_;

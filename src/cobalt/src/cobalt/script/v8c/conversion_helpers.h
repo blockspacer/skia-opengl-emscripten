@@ -27,7 +27,10 @@
 #include "base/time/time.h"
 #include "cobalt/base/compiler.h"
 #include "cobalt/base/enable_if.h"
-#include "cobalt/base/token.h"
+
+#include "cobalt/base/cobalt_token.h"
+//#include "base/token.h"
+
 #include "cobalt/script/sequence.h"
 #include "cobalt/script/v8c/algorithm_helpers.h"
 #include "cobalt/script/v8c/helpers.h"
@@ -117,7 +120,7 @@ inline void ToJSValue(v8::Isolate* isolate, const std::vector<uint8_t>& in_data,
 }
 
 // base::Token -> JSValue
-inline void ToJSValue(v8::Isolate* isolate, const base::Token& token,
+inline void ToJSValue(v8::Isolate* isolate, const base::CobToken& token,
                       v8::Local<v8::Value>* out_value) {
   ToJSValue(isolate, std::string(token.c_str()), out_value);
 }

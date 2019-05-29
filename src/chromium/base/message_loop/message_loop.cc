@@ -223,6 +223,13 @@ void MessageLoop::SetTaskRunner(
   sequence_manager_->SetTaskRunner(task_runner);
 }
 
+#if defined(STARBOARD)
+void MessageLoop::RunUntilIdleForTesting() {
+  base::RunLoop run_loop;
+  run_loop.RunUntilIdle();
+}
+#endif
+
 #if !defined(OS_NACL) && !defined(OS_EMSCRIPTEN)
 
 //------------------------------------------------------------------------------
@@ -261,6 +268,13 @@ void MessageLoopForUI::EnableWmQuit() {
   static_cast<MessagePumpForUI*>(pump_)->EnableWmQuit();
 }
 #endif  // defined(OS_WIN)
+
+#if defined(OS_STARBOARD)
+void MessageLoopForUI::Start() {
+  // No Histogram support for UI message loop as it is managed by Starboard.
+  static_cast<base::MessagePumpUIStarboard*>(pump_.get())->Start(this);
+}
+#endif
 
 #endif  // !defined(OS_NACL)
 

@@ -170,10 +170,12 @@ class NET_EXPORT_PRIVATE HttpStream {
   // draining is complete.
   virtual void Drain(HttpNetworkSession* session) = 0;
 
+#ifdef ENABLE_QUIC
   // Get the network error details this stream is encountering.
   // Fills in |details| if it is available; leaves |details| unchanged if it
   // is unavailable.
   virtual void PopulateNetErrorDetails(NetErrorDetails* details) = 0;
+#endif // ENABLE_QUIC
 
   // Called when the priority of the parent transaction changes.
   virtual void SetPriority(RequestPriority priority) = 0;

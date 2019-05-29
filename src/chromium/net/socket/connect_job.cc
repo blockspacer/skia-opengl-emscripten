@@ -24,6 +24,7 @@
 
 namespace net {
 
+#if defined(ENABLE_SPDY)
 CommonConnectJobParams::CommonConnectJobParams(
     ClientSocketFactory* client_socket_factory,
     HostResolver* host_resolver,
@@ -56,6 +57,7 @@ CommonConnectJobParams::CommonConnectJobParams(
       network_quality_estimator(network_quality_estimator),
       net_log(net_log),
       websocket_endpoint_lock_manager(websocket_endpoint_lock_manager) {}
+#endif
 
 CommonConnectJobParams::CommonConnectJobParams(
     const CommonConnectJobParams& other) = default;

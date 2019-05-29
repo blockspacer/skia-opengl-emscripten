@@ -23,9 +23,11 @@
 #include "cobalt/media_stream/media_stream.h"
 #include "cobalt/media_stream/media_track_settings.h"
 #include "cobalt/media_stream/microphone_audio_source.h"
+#if defined(ENABLE_SPEECH)
 #include "cobalt/speech/microphone.h"
 #include "cobalt/speech/microphone_fake.h"
 #include "cobalt/speech/microphone_starboard.h"
+#endif
 #include "starboard/string.h"
 
 namespace cobalt {
@@ -37,6 +39,7 @@ namespace media_capture {
 
 namespace {
 
+#if defined(ENABLE_SPEECH)
 using speech::Microphone;
 
 std::unique_ptr<Microphone> CreateMicrophone(
@@ -62,6 +65,7 @@ std::unique_ptr<Microphone> CreateMicrophone(
 
   return mic;
 }
+#endif
 
 }  // namespace.
 
@@ -79,6 +83,7 @@ MediaDevices::EnumerateDevices() {
       script_value_factory_->CreateBasicPromise<MediaInfoSequence>();
   script::Sequence<scoped_refptr<Wrappable>> output;
 
+#if defined(ENABLE_SPEECH)
   std::unique_ptr<speech::Microphone> microphone =
       CreateMicrophone(settings_->microphone_options());
   if (microphone && microphone->IsValid()) {
@@ -86,6 +91,7 @@ MediaDevices::EnumerateDevices() {
         new MediaDeviceInfo(kMediaDeviceKindAudioinput, microphone->Label()));
     output.push_back(media_device);
   }
+#endif
   promise->Resolve(output);
   return promise;
 }
@@ -154,6 +160,7 @@ script::Handle<MediaDevices::MediaStreamPromise> MediaDevices::GetUserMedia(
   return promise;
 }
 
+#if defined(ENABLE_SPEECH)
 void MediaDevices::OnMicrophoneError(
     speech::MicrophoneManager::MicrophoneError error, std::string message) {
   if (javascript_message_loop_->task_runner() !=
@@ -217,6 +224,7 @@ void MediaDevices::OnMicrophoneSuccess() {
   }
   pending_microphone_promises_.clear();
 }
+#endif
 
 }  // namespace media_capture
 }  // namespace cobalt

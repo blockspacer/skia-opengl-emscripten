@@ -111,7 +111,7 @@ class FontList : public render_tree::FontProvider,
   typedef base::small_map<
       std::map<render_tree::TypefaceId, scoped_refptr<render_tree::Font> >, 7>
       FallbackTypefaceToFontMap;
-  typedef base::hash_map<int32, scoped_refptr<render_tree::Typeface> >
+  typedef std::map<int32, scoped_refptr<render_tree::Typeface> >
       CharacterFallbackTypefaceMap;
   typedef std::vector<FontListFont> FontListFonts;
 

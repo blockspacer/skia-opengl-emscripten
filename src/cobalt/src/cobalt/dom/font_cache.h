@@ -168,7 +168,7 @@ class FontCache {
   typedef std::set<InactiveFontKey> InactiveFontSet;
 
   // Character fallback related
-  typedef base::hash_map<int32, scoped_refptr<render_tree::Typeface> >
+  typedef std::map<int32, scoped_refptr<render_tree::Typeface> >
       CharacterFallbackTypefaceMap;
   typedef std::map<CharacterFallbackKey, CharacterFallbackTypefaceMap>
       CharacterFallbackTypefaceMaps;

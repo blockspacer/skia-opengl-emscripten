@@ -49,7 +49,10 @@
 
 #include "base/memory/ref_counted.h"
 #include "base/memory/weak_ptr.h"
-#include "cobalt/base/token.h"
+
+#include "cobalt/base/cobalt_token.h"
+//#include "base/token.h"
+
 #include "cobalt/dom/audio_track.h"
 #include "cobalt/dom/event_queue.h"
 #include "cobalt/dom/event_target.h"
@@ -127,7 +130,7 @@ class MediaSource : public EventTarget {
  private:
   void SetReadyState(MediaSourceReadyState ready_state);
   bool IsUpdating() const;
-  void ScheduleEvent(base::Token event_name);
+  void ScheduleEvent(base::CobToken event_name);
 
   media::ChunkDemuxer* chunk_demuxer_;
   MediaSourceReadyState ready_state_;

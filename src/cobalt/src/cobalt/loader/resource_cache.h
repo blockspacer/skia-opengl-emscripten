@@ -510,10 +510,10 @@ class ResourceCache {
  private:
   friend class CachedResource<CacheType>;
 
-  typedef base::hash_map<std::string, CachedResourceType*> CachedResourceMap;
+  typedef std::map<std::string, CachedResourceType*> CachedResourceMap;
   typedef typename CachedResourceMap::iterator CachedResourceMapIterator;
 
-  typedef base::hash_set<std::string> ResourceSet;
+  typedef std::set<std::string> ResourceSet;
   typedef net::linked_hash_map<std::string, ResourceCallbackInfo>
       ResourceCallbackMap;
 

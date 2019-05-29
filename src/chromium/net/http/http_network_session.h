@@ -29,14 +29,18 @@
 #include "net/http/http_auth_cache.h"
 #include "net/http/http_stream_factory.h"
 #include "net/net_buildflags.h"
+
+#if defined(ENABLE_QUIC)
 #include "net/quic/quic_stream_factory.h"
+#include "net/third_party/quiche/src/spdy/core/spdy_protocol.h"
+#endif
+
 #include "net/socket/connect_job.h"
 #include "net/socket/next_proto.h"
 #include "net/socket/websocket_endpoint_lock_manager.h"
 #include "net/spdy/spdy_session_pool.h"
 #include "net/ssl/ssl_client_auth_cache.h"
 #include "net/ssl/ssl_client_session_cache.h"
-#include "net/third_party/quiche/src/spdy/core/spdy_protocol.h"
 
 namespace base {
 class Value;
@@ -45,9 +49,11 @@ class ProcessMemoryDump;
 }
 }
 
+#if defined(ENABLE_QUIC)
 namespace quic {
 class QuicClock;
 }  // namespace quic
+#endif
 
 namespace net {
 
@@ -71,7 +77,9 @@ class NetworkQualityEstimator;
 class ProxyDelegate;
 class ProxyResolutionService;
 class ProxyServer;
+#if defined(ENABLE_QUIC)
 class QuicCryptoClientStreamFactory;
+#endif
 #if BUILDFLAG(ENABLE_REPORTING)
 class ReportingService;
 #endif
@@ -130,6 +138,7 @@ class NET_EXPORT HttpNetworkSession {
     // Enables 0-RTT support.
     bool enable_early_data;
 
+#if defined(ENABLE_QUIC)
     // Enables QUIC support.
     bool enable_quic;
 
@@ -237,6 +246,7 @@ class NET_EXPORT HttpNetworkSession {
 
     // If non-empty, QUIC will only be spoken to hosts in this list.
     base::flat_set<std::string> quic_host_whitelist;
+#endif // ENABLE_QUIC
 
     // Enable HTTP/0.9 for HTTP/HTTPS on ports other than the default one for
     // each protocol.
@@ -273,12 +283,14 @@ class NET_EXPORT HttpNetworkSession {
     NetworkErrorLoggingService* network_error_logging_service;
 #endif
 
+#if defined(ENABLE_QUIC)
     // Source of time for QUIC connections.
     quic::QuicClock* quic_clock;
     // Source of entropy for QUIC connections.
     quic::QuicRandom* quic_random;
     // Optional factory to use for creating QuicCryptoClientStreams.
     QuicCryptoClientStreamFactory* quic_crypto_client_stream_factory;
+#endif
   };
 
   enum SocketPoolType {
@@ -315,7 +327,11 @@ class NET_EXPORT HttpNetworkSession {
     return &websocket_endpoint_lock_manager_;
   }
   SpdySessionPool* spdy_session_pool() { return &spdy_session_pool_; }
+
+#if defined(ENABLE_QUIC)
   QuicStreamFactory* quic_stream_factory() { return &quic_stream_factory_; }
+#endif
+
   HttpAuthHandlerFactory* http_auth_handler_factory() {
     return http_auth_handler_factory_;
   }
@@ -342,9 +358,11 @@ class NET_EXPORT HttpNetworkSession {
   // Creates a Value summary of the state of the SPDY sessions.
   std::unique_ptr<base::Value> SpdySessionPoolInfoToValue() const;
 
+#if defined(ENABLE_QUIC)
   // Creates a Value summary of the state of the QUIC sessions and
   // configuration.
   std::unique_ptr<base::Value> QuicInfoToValue() const;
+#endif
 
   void CloseAllConnections();
   void CloseIdleConnections();
@@ -372,11 +390,13 @@ class NET_EXPORT HttpNetworkSession {
   void DumpMemoryStats(base::trace_event::ProcessMemoryDump* pmd,
                        const std::string& parent_absolute_name) const;
 
+#if defined(ENABLE_QUIC)
   // Evaluates if QUIC is enabled for new streams.
   bool IsQuicEnabled() const;
 
   // Disable QUIC for new streams.
   void DisableQuic();
+#endif
 
   // Clear the SSL session cache.
   void ClearSSLSessionCache();
@@ -418,7 +438,9 @@ class NET_EXPORT HttpNetworkSession {
   std::unique_ptr<ClientSocketPoolManager> normal_socket_pool_manager_;
   std::unique_ptr<ClientSocketPoolManager> websocket_socket_pool_manager_;
   std::unique_ptr<ServerPushDelegate> push_delegate_;
+#if defined(ENABLE_QUIC)
   QuicStreamFactory quic_stream_factory_;
+#endif
   SpdySessionPool spdy_session_pool_;
   std::unique_ptr<HttpStreamFactory> http_stream_factory_;
   std::map<HttpResponseBodyDrainer*, std::unique_ptr<HttpResponseBodyDrainer>>

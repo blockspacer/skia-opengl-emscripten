@@ -325,6 +325,15 @@ BASE_EXPORT bool IsStringASCII(WStringPiece str);
 
 // Compare the lower-case form of the given string against the given
 // previously-lower-cased ASCII string (typically a constant).
+#if defined(STARBOARD)
+// TODO[johnx]: deprecate this function and use the other two instead.
+BASE_EXPORT bool LowerCaseEqualsASCII(const char* a_begin,
+                                      const char* a_end,
+                                      const char* b);
+#endif
+
+// Compare the lower-case form of the given string against the given
+// previously-lower-cased ASCII string (typically a constant).
 BASE_EXPORT bool LowerCaseEqualsASCII(StringPiece str,
                                       StringPiece lowecase_ascii);
 BASE_EXPORT bool LowerCaseEqualsASCII(StringPiece16 str,
@@ -512,7 +521,10 @@ BASE_EXPORT string16 ReplaceStringPlaceholders(const string16& format_string,
 
 }  // namespace base
 
-#if defined(OS_WIN)
+
+#if defined(STARBOARD)
+#include "base/strings/string_util_starboard.h"
+#elif defined(OS_WIN)
 #include "base/strings/string_util_win.h"
 #elif defined(OS_POSIX) || defined(OS_FUCHSIA)
 #include "base/strings/string_util_posix.h"

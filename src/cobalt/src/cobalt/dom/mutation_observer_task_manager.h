@@ -19,6 +19,7 @@
 
 //#include "base/containers/hash_tables.h"
 #include <map>
+#include <set>
 #include "base/threading/thread_checker.h"
 #include "cobalt/script/tracer.h"
 
@@ -49,7 +50,7 @@ class MutationObserverTaskManager : public script::Traceable {
   void TraceMembers(script::Tracer* tracer) override;
 
  private:
-  typedef base::hash_set<MutationObserver*> MutationObserverSet;
+  typedef std::set<MutationObserver*> MutationObserverSet;
 
   // Notify all mutation observers.
   void NotifyMutationObservers();

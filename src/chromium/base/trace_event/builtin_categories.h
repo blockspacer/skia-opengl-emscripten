@@ -20,6 +20,10 @@
 #define INTERNAL_TRACE_LIST_BUILTIN_CATEGORIES(X)                        \
   /* These entries must go first to be consistent with the               \
    * CategoryRegistry::kCategory* consts.*/                              \
+  X("cobalt::dom")                                                       \
+  X("cobalt::layout")                                                    \
+  X("cobalt::storage")                                                   \
+  X("cobalt::network")                                                   \
   X("tracing categories exhausted; must increase kMaxCategories")        \
   X("tracing already shutdown")                                          \
   X("__metadata")                                                        \

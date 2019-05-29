@@ -20,6 +20,10 @@
 #include "base/sequence_checker.h"
 #include "base/stl_util.h"
 
+#if defined(STARBOARD)
+#include "starboard/types.h"
+#endif
+
 ///////////////////////////////////////////////////////////////////////////////
 //
 // OVERVIEW:
@@ -344,5 +348,17 @@ template <class ObserverType, bool check_empty = false>
 using ReentrantObserverList = ObserverList<ObserverType, check_empty, true>;
 
 }  // namespace base
+
+#if defined(STARBOARD)
+#define FOR_EACH_OBSERVER(ObserverType, observer_list, func)          \
+  do {                                                                \
+    if ((observer_list).might_have_observers()) {                     \
+      for (base::ObserverList<ObserverType>::Iter it(&observer_list); \
+           it != base::ObserverList<ObserverType>::Iter(); it++) {    \
+        it->func;                                                     \
+      }                                                               \
+    }                                                                 \
+  } while (0)
+#endif
 
 #endif  // BASE_OBSERVER_LIST_H_

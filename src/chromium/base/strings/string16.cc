@@ -19,6 +19,52 @@
 
 namespace base {
 
+#if defined(STARBOARD)
+#include "starboard/types.h"
+#include "starboard/memory.h"
+#include "starboard/configuration.h"
+
+int c16SbMemoryCompare(const char16* s1, const char16* s2, size_t n) {
+  // We cannot call memcmp because that changes the semantics.
+  while (n-- > 0) {
+    if (*s1 != *s2) {
+      // We cannot use (*s1 - *s2) because char16 is unsigned.
+      return ((*s1 < *s2) ? -1 : 1);
+    }
+    ++s1;
+    ++s2;
+  }
+  return 0;
+}
+
+const char16* c16SbMemoryFindByte(const char16* s, char16 c, size_t n) {
+  while (n-- > 0) {
+    if (*s == c) {
+      return s;
+    }
+    ++s;
+  }
+  return nullptr;
+}
+
+char16* c16SbMemoryMove(char16* s1, const char16* s2, size_t n) {
+  return static_cast<char16*>(SbMemoryMove(s1, s2, n * sizeof(char16)));
+}
+
+char16* c16SbMemoryCopy(char16* s1, const char16* s2, size_t n) {
+  return static_cast<char16*>(SbMemoryCopy(s1, s2, n * sizeof(char16)));
+}
+
+char16* c16SbMemorySet(char16* s, char16 c, size_t n) {
+  char16 *s_orig = s;
+  while (n-- > 0) {
+    *s = c;
+    ++s;
+  }
+  return s_orig;
+}
+#endif
+
 int c16memcmp(const char16* s1, const char16* s2, size_t n) {
   // We cannot call memcmp because that changes the semantics.
   while (n-- > 0) {

@@ -79,9 +79,11 @@ namespace cobalt {
 namespace media_session {
 class MediaSession;
 }  // namespace media_session
+#if defined(ENABLE_SPEECH)
 namespace speech {
 class SpeechSynthesis;
 }  // namespace speech
+#endif
 }  // namespace cobalt
 
 namespace cobalt {
@@ -307,9 +309,11 @@ class Window : public EventTarget,
   //   https://dvcs.w3.org/hg/webperf/raw-file/tip/specs/NavigationTiming/Overview.html#sec-window.performance-attribute
   const scoped_refptr<Performance>& performance() const;
 
+#if defined(ENABLE_SPEECH)
   // Web API: SpeechSynthesisGetter (implements)
   //   https://dvcs.w3.org/hg/speech-api/raw-file/4f41ea1126bb/webspeechapi.html#tts-section
   scoped_refptr<speech::SpeechSynthesis> speech_synthesis() const;
+#endif
 
   // Custom, not in any spec.
   //
@@ -454,8 +458,9 @@ class Window : public EventTarget,
       animation_frame_request_callback_list_;
 
   scoped_refptr<Crypto> crypto_;
+#if defined(ENABLE_SPEECH)
   scoped_refptr<speech::SpeechSynthesis> speech_synthesis_;
-
+#endif
   scoped_refptr<Storage> local_storage_;
   scoped_refptr<Storage> session_storage_;
 

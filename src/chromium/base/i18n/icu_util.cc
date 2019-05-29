@@ -253,6 +253,8 @@ bool InitializeICUFromRawMemory(const uint8_t* raw_memory) {
 
 #endif  // ICU_UTIL_DATA_IMPL == ICU_UTIL_DATA_FILE
 
+//  __EMSCRIPTEN__: TODO https://github.com/blockspacer/cobalt-clone-28052019/blob/master/src/base/i18n/icu_util.cc
+
 bool InitializeICU() {
 #if DCHECK_IS_ON()
   DCHECK(!g_check_called_once || !g_called_once);

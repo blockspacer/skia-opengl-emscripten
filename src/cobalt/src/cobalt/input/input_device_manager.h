@@ -34,14 +34,14 @@ class SystemWindow;
 
 namespace input {
 
-typedef base::Callback<void(base::Token type, const dom::PointerEventInit&)>
+typedef base::Callback<void(base::CobToken type, const dom::PointerEventInit&)>
     PointerEventCallback;
 
-typedef base::Callback<void(base::Token type, const dom::WheelEventInit&)>
+typedef base::Callback<void(base::CobToken type, const dom::WheelEventInit&)>
     WheelEventCallback;
 
 #if SB_HAS(ON_SCREEN_KEYBOARD)
-typedef base::Callback<void(base::Token type, const dom::InputEventInit&)>
+typedef base::Callback<void(base::CobToken type, const dom::InputEventInit&)>
     InputEventCallback;
 #endif  // SB_HAS(ON_SCREEN_KEYBOARD)
 

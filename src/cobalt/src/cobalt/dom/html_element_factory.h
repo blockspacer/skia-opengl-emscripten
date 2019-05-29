@@ -21,7 +21,9 @@
 //#include "base/containers/hash_tables.h"
 #include <map>
 #include "base/memory/ref_counted.h"
-#include "cobalt/base/token.h"
+
+#include "cobalt/base/cobalt_token.h"
+//#include "base/token.h"
 
 namespace cobalt {
 namespace dom {
@@ -36,12 +38,12 @@ class HTMLElementFactory {
   ~HTMLElementFactory();
 
   scoped_refptr<HTMLElement> CreateHTMLElement(Document* document,
-                                               base::Token tag_name);
+                                               base::CobToken tag_name);
 
  private:
   typedef base::Callback<scoped_refptr<HTMLElement>(Document* document)>
       CreateHTMLElementTCallback;
-  typedef base::hash_map<base::Token, CreateHTMLElementTCallback>
+  typedef std::map<base::CobToken, CreateHTMLElementTCallback>
       TagNameToCreateHTMLElementTCallbackMap;
 
   // Helper function templates for adding entries to the map below.

@@ -24,7 +24,10 @@
 #include "base/memory/ref_counted.h"
 #include "base/memory/weak_ptr.h"
 #include "cobalt/base/polymorphic_downcast.h"
-#include "cobalt/base/token.h"
+
+#include "cobalt/base/cobalt_token.h"
+//#include "base/token.h"
+
 #include "cobalt/base/tokens.h"
 #include "cobalt/dom/event.h"
 #include "cobalt/dom/event_listener.h"
@@ -102,12 +105,12 @@ class EventTarget : public script::Wrappable,
   // Creates a new event with the given name and calls DispatchEvent with it,
   // and runs dispatched_callback after finish.
   void DispatchEventNameAndRunCallback(
-      base::Token event_name, const base::Closure& dispatched_callback);
+      base::CobToken event_name, const base::Closure& dispatched_callback);
 
   // Posts a task on the current message loop to dispatch event by name. It
   // does nothing if there is no current message loop.
   void PostToDispatchEventName(const base::Location& location,
-                               base::Token event_name);
+                               base::CobToken event_name);
 
   // Posts a task on the current message loop to dispatch event. It does nothing
   // if there is no current message loop.
@@ -118,7 +121,7 @@ class EventTarget : public script::Wrappable,
   // runs dispatched_callback after finish. It does nothing if there is no
   // current message loop.
   void PostToDispatchEventNameAndRunCallback(
-      const base::Location& location, base::Token event_name,
+      const base::Location& location, base::CobToken event_name,
       const base::Closure& dispatched_callback);
 
   // Posts a task on the current message loop to dispatch event, and runs
@@ -129,7 +132,7 @@ class EventTarget : public script::Wrappable,
       const base::Closure& dispatched_callback);
 
   // Check if target has event listener (atrtibute or not attribute).
-  bool HasEventListener(base::Token type);
+  bool HasEventListener(base::CobToken type);
 
   // Web API: GlobalEventHandlers (implements)
   // Many objects can have event handlers specified. These act as non-capture
@@ -444,23 +447,23 @@ class EventTarget : public script::Wrappable,
 
   // Set an event listener assigned as an attribute. Overwrite the existing one
   // if there is any.
-  void SetAttributeEventListener(base::Token type,
+  void SetAttributeEventListener(base::CobToken type,
                                  const EventListenerScriptValue& listener);
 
   // Get the event listener currently assigned to an attribute, or NULL if
   // there is none.
   const EventListenerScriptValue* GetAttributeEventListener(
-      base::Token type) const;
+      base::CobToken type) const;
 
   // Similar to SetAttributeEventListener(), but this function should only
   // be called with type == base::Tokens::error().
   void SetAttributeOnErrorEventListener(
-      base::Token type, const OnErrorEventListenerScriptValue& listener);
+      base::CobToken type, const OnErrorEventListenerScriptValue& listener);
 
   // Similar to GetAttributeEventListener(), but this function should only
   // be called with type == base::Tokens::error().
   const OnErrorEventListenerScriptValue* GetAttributeOnErrorEventListener(
-      base::Token type) const;
+      base::CobToken type) const;
 
   // Return true if one or more event listeners are registered
   bool HasOneOrMoreAttributeEventListener() const;
@@ -478,12 +481,12 @@ class EventTarget : public script::Wrappable,
 
  private:
   struct EventListenerInfo {
-    EventListenerInfo(base::Token type,
+    EventListenerInfo(base::CobToken type,
                       std::unique_ptr<GenericEventHandlerReference> listener,
                       bool use_capture, Type listener_type);
     ~EventListenerInfo();
 
-    base::Token type;
+    base::CobToken type;
     std::unique_ptr<GenericEventHandlerReference> listener;
     bool use_capture;
     Type listener_type;
@@ -491,13 +494,13 @@ class EventTarget : public script::Wrappable,
   typedef std::vector<std::unique_ptr<EventListenerInfo>> EventListenerInfos;
 
   void SetAttributeEventListenerInternal(
-      base::Token type,
+      base::CobToken type,
       std::unique_ptr<GenericEventHandlerReference> event_handler);
   GenericEventHandlerReference* GetAttributeEventListenerInternal(
-      base::Token type) const;
+      base::CobToken type) const;
 
   void AddEventListenerInternal(
-      base::Token type, std::unique_ptr<GenericEventHandlerReference> listener,
+      base::CobToken type, std::unique_ptr<GenericEventHandlerReference> listener,
       bool use_capture, Type listener_type);
 
   EventListenerInfos event_listener_infos_;

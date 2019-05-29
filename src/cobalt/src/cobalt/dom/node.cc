@@ -277,7 +277,7 @@ scoped_refptr<Node> Node::ReplaceChild(const scoped_refptr<Node>& node,
   // "HierarchyRequestError".
   Node* ancestor = this;
   while (ancestor) {
-    if (node == ancestor) {
+    if (node.get() == ancestor) {
       // TODO: Throw JS HierarchyRequestError.
       return NULL;
     }
@@ -589,7 +589,7 @@ void Node::InvalidateLayoutBoxesOfAncestors() {
 }
 
 void Node::InvalidateLayoutBoxesOfDescendants() {
-  Node* child = first_child_;
+  Node* child = first_child_.get();
   while (child) {
     child->InvalidateLayoutBoxesOfNodeAndDescendants();
     child = child->next_sibling_.get();
@@ -639,7 +639,7 @@ bool Node::EnsurePreInsertionValidity(const scoped_refptr<Node>& node,
   // "HierarchyRequestError".
   Node* ancestor = this;
   while (ancestor) {
-    if (node == ancestor) {
+    if (node.get() == ancestor) {
       // TODO: Throw JS HierarchyRequestError.
       return false;
     }
@@ -743,9 +743,9 @@ void Node::Insert(const scoped_refptr<Node>& node,
   node->previous_sibling_ = previous_sibling;
 
   if (next_sibling) {
-    next_sibling->previous_sibling_ = node;
+    next_sibling->previous_sibling_ = node.get();
   } else {
-    last_child_ = node;
+    last_child_ = node.get();
   }
   node->next_sibling_ = next_sibling;
 

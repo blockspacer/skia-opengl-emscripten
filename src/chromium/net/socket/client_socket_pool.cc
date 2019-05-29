@@ -15,8 +15,11 @@
 #include "net/socket/socks_connect_job.h"
 #include "net/socket/ssl_connect_job.h"
 #include "net/socket/stream_socket.h"
+
+#if defined(ENABLE_SPDY)
 #include "net/spdy/spdy_session.h"
 #include "net/spdy/spdy_session_pool.h"
+#endif
 
 namespace net {
 
@@ -25,6 +28,7 @@ namespace {
 // The maximum duration, in seconds, to keep used idle persistent sockets alive.
 int64_t g_used_idle_socket_timeout_s = 300;  // 5 minutes
 
+#if defined(ENABLE_SPDY)
 // Invoked by the transport socket pool after host resolution is complete
 // to allow the connection to be aborted, if a matching SPDY session can
 // be found. Returns OnHostResolutionCallbackResult::kMayBeDeletedAsync if such
@@ -45,6 +49,7 @@ OnHostResolutionCallbackResult OnHostResolution(
   return spdy_session_pool->OnHostResolutionComplete(
       spdy_session_key, is_for_websockets, addresses);
 }
+#endif
 
 }  // namespace
 
@@ -148,6 +153,7 @@ std::unique_ptr<ConnectJob> ClientSocketPool::CreateConnectJob(
     ConnectJob::Delegate* delegate) {
   bool using_ssl = group_id.socket_type() == ClientSocketPool::SocketType::kSsl;
 
+#if defined(ENABLE_SPDY)
   // If applicable, set up a callback to handle checking for H2 IP pooling
   // opportunities.
   OnHostResolutionCallback resolution_callback;
@@ -166,6 +172,7 @@ std::unique_ptr<ConnectJob> ClientSocketPool::CreateConnectJob(
                        SpdySessionKey::IsProxySession::kTrue, socket_tag),
         is_for_websockets);
   }
+#endif
 
   return ConnectJob::CreateConnectJob(
       using_ssl, group_id.destination(), proxy_server, proxy_annotation_tag,

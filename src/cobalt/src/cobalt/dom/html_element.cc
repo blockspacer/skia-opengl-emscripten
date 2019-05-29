@@ -18,7 +18,11 @@
 #include <memory>
 
 #include "base/lazy_instance.h"
-#include "base/message_loop/message_loop_task_runner.h"
+
+//message_loop_task_runner.h"
+#include "base/message_loop/message_pump.h"
+#include "base/task/sequence_manager/task_queue.h"
+
 #include "base/strings/string_number_conversions.h"
 #include "cobalt/base/tokens.h"
 #include "cobalt/base/user_log.h"
@@ -202,7 +206,7 @@ void HTMLElement::set_dir(const std::string& value) {
 }
 
 scoped_refptr<DOMStringMap> HTMLElement::dataset() {
-  scoped_refptr<DOMStringMap> dataset(dataset_);
+  scoped_refptr<DOMStringMap> dataset(dataset_.get());
   if (!dataset) {
     // Create a new instance and store a weak reference.
     dataset = new DOMStringMap(this);
@@ -222,7 +226,8 @@ int32 HTMLElement::tab_index() const {
 }
 
 void HTMLElement::set_tab_index(int32 tab_index) {
-  SetAttribute("tabindex", base::Int32ToString(tab_index));
+  //SetAttribute("tabindex", base::Int32ToString(tab_index));
+  SetAttribute("tabindex", base::NumberToString(tab_index));
 }
 
 // Algorithm for Focus:
@@ -898,7 +903,7 @@ void HTMLElement::OnUiNavScroll() {
                 Event::kBubbles, Event::kNotCancelable, window));
 }
 
-HTMLElement::HTMLElement(Document* document, base::Token local_name)
+HTMLElement::HTMLElement(Document* document, base::CobToken local_name)
     : Element(document, local_name),
       dom_stat_tracker_(document->html_element_context()->dom_stat_tracker()),
       locked_for_focus_(false),
@@ -963,7 +968,7 @@ void HTMLElement::OnRemovedFromDocument() {
   //   https://www.w3.org/TR/html5/editing.html#unfocusing-steps
   Document* document = node_document();
   DCHECK(document);
-  if (document->active_element() == this->AsElement()) {
+  if (document->active_element().get() == this->AsElement()) {
     RunUnFocusingSteps();
     document->OnFocusChange();
   }
@@ -1103,7 +1108,7 @@ void HTMLElement::RunUnFocusingSteps() {
                                Event::kNotCancelable, window, this));
 
   // 2. Unfocus the element.
-  if (document && document->active_element() == this->AsElement()) {
+  if (document && document->active_element().get() == this->AsElement()) {
     document->SetActiveElement(NULL);
   }
 
@@ -1140,7 +1145,8 @@ void HTMLElement::SetDirectionality(const std::string& value) {
 
 void HTMLElement::SetTabIndex(const std::string& value) {
   int32 tabindex;
-  if (base::StringToInt32(value, &tabindex)) {
+  //if (base::StringToInt32(value, &tabindex)) {
+  if (base::StringToInt(value, &tabindex)) {
     tabindex_ = tabindex;
   } else {
     tabindex_ = base::nullopt;
@@ -1567,17 +1573,17 @@ void HTMLElement::UpdateUiNavigationType() {
         *ui_nav_item_type,
         base::Bind(
             base::IgnoreResult(&base::SingleThreadTaskRunner::PostTask),
-            base::Unretained(base::MessageLoop::current()->task_runner().get()),
+            base::Unretained(base::MessageLoopCurrent::Get()->task_runner().get()),
             FROM_HERE,
             base::Bind(&HTMLElement::OnUiNavBlur, base::AsWeakPtr(this))),
         base::Bind(
             base::IgnoreResult(&base::SingleThreadTaskRunner::PostTask),
-            base::Unretained(base::MessageLoop::current()->task_runner().get()),
+            base::Unretained(base::MessageLoopCurrent::Get()->task_runner().get()),
             FROM_HERE,
             base::Bind(&HTMLElement::OnUiNavFocus, base::AsWeakPtr(this))),
         base::Bind(
             base::IgnoreResult(&base::SingleThreadTaskRunner::PostTask),
-            base::Unretained(base::MessageLoop::current()->task_runner().get()),
+            base::Unretained(base::MessageLoopCurrent::Get()->task_runner().get()),
             FROM_HERE,
             base::Bind(&HTMLElement::OnUiNavScroll, base::AsWeakPtr(this))));
   } else if (ui_nav_item_) {

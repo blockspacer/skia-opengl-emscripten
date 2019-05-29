@@ -55,7 +55,7 @@ class CspViolationReporter {
   // Hashes of the reports we've already sent. We don't keep track of the report
   // data, as it is large, and we don't consider the reports so important that
   // we need to resolve collisions.
-  base::hash_set<uint32> violation_reports_sent_;
+  std::set<uint32> violation_reports_sent_;
   // Callback to send POST requests containing our JSON reports.
   network_bridge::PostSender post_sender_;
   // Keep track of the message loop the object was created on.

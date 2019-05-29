@@ -19,6 +19,7 @@
 
 //#include "base/containers/hash_tables.h"
 #include <map>
+#include <set>
 
 // Can be locally set to 1 to track the call stack where a weak heap object
 // was tracked from, and then dump the call stacks of any remaining objects in
@@ -57,11 +58,11 @@ class WeakHeapObjectManager {
   // the object has been swept.
   bool MaybeSweep(WeakHeapObject* weak_object);
 
-  typedef base::hash_set<WeakHeapObject*> WeakHeapObjects;
+  typedef std::set<WeakHeapObject*> WeakHeapObjects;
   WeakHeapObjects weak_objects_;
 
 #if COBALT_TRACK_WEAK_HEAP_OBJECT_ADDED_FROM_LOCATION
-  base::hash_map<WeakHeapObject*, std::vector<void*>> added_from_;
+  std::map<WeakHeapObject*, std::vector<void*>> added_from_;
 #endif
 
   friend class WeakHeapObject;

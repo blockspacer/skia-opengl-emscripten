@@ -17,7 +17,11 @@
 
 #include <string>
 
-#include "cobalt/base/token.h"
+
+#include "cobalt/base/cobalt_token.h"
+//#include "base/token.h"
+
+
 #include "cobalt/dom/event_target.h"
 #include "cobalt/dom/ui_event.h"
 
@@ -31,7 +35,7 @@ class FocusEvent : public UIEvent {
  public:
   explicit FocusEvent(const std::string& type);
 
-  FocusEvent(base::Token type, Bubbles bubbles, Cancelable cancelable,
+  FocusEvent(base::CobToken type, Bubbles bubbles, Cancelable cancelable,
              const scoped_refptr<Window>& view,
              const scoped_refptr<EventTarget>& related_target);
 

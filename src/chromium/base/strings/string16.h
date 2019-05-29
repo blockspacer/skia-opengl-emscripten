@@ -36,6 +36,12 @@
 #include "base/base_export.h"
 #include "build/build_config.h"
 
+#if defined(STARBOARD)
+#include "starboard/types.h"
+#include "starboard/memory.h"
+#endif
+
+
 #if defined(WCHAR_T_IS_UTF16)
 
 // Define a macro for wrapping construction of char16 arrays and string16s from
@@ -62,6 +68,25 @@ typedef std::wstring string16;
 namespace base {
 
 typedef uint16_t char16;
+
+#if defined(STARBOARD)
+// char16 versions of the functions required by string16_char_traits; these
+// are based on the wide character functions of similar names ("w" or "wcs"
+// instead of "c16").
+BASE_EXPORT int c16SbMemoryCompare(const char16* s1,
+                                   const char16* s2,
+                                   size_t n);
+
+BASE_EXPORT const char16* c16SbMemoryFindByte(const char16* s,
+                                              char16 c,
+                                              size_t n);
+
+BASE_EXPORT char16* c16SbMemoryMove(char16* s1, const char16* s2, size_t n);
+
+BASE_EXPORT char16* c16SbMemoryCopy(char16* s1, const char16* s2, size_t n);
+
+BASE_EXPORT char16* c16SbMemorySet(char16* s, char16 c, size_t n);
+#endif
 
 // char16 versions of the functions required by string16_char_traits; these
 // are based on the wide character functions of similar names ("w" or "wcs"

@@ -23,7 +23,12 @@
 #include "base/files/file_path.h"
 #include "base/optional.h"
 #include "base/threading/thread_checker.h"
+
+#if defined(ENABLE_SQL)
 #include "sql/connection.h"
+#endif
+
+#include "starboard/types.h"
 
 namespace cobalt {
 namespace storage {
@@ -34,7 +39,7 @@ namespace storage {
 // internal thread.
 class Savegame {
  public:
-  typedef std::vector<uint8> ByteVector;
+  typedef std::vector<uint8_t> ByteVector;
   struct Options;
 
   typedef std::unique_ptr<Savegame> (*Factory)(const Options& options);

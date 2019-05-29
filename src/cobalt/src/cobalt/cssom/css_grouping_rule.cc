@@ -56,7 +56,7 @@ void CSSGroupingRule::set_css_rules(
     return;
   }
   if (parent_style_sheet()) {
-    css_rule_list->AttachToCSSStyleSheet(parent_style_sheet());
+    css_rule_list->AttachToCSSStyleSheet(parent_style_sheet().get());
     bool rules_possibly_added_or_changed_or_removed =
         (css_rule_list->length() > 0) ||
         (css_rule_list_ && css_rule_list_->length() > 0);

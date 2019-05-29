@@ -36,8 +36,12 @@
 #include "cobalt/dom/html_video_element.h"
 #include "cobalt/dom/media_source.h"
 #include "cobalt/dom/media_source_ready_state.h"
+
+#if defined(ENABLE_FETCHER)
 #include "cobalt/loader/fetcher_factory.h"
 #include "cobalt/media/fetcher_buffered_data_source.h"
+#endif
+
 #include "cobalt/media/web_media_player_factory.h"
 #include "cobalt/script/script_value_factory.h"
 #include "starboard/double.h"
@@ -141,7 +145,7 @@ bool OriginIsSafe(loader::RequestMode request_mode, const GURL& resource_url,
 
 }  // namespace
 
-HTMLMediaElement::HTMLMediaElement(Document* document, base::Token tag_name)
+HTMLMediaElement::HTMLMediaElement(Document* document, base::CobToken tag_name)
     : HTMLElement(document, tag_name),
       load_state_(kWaitingForSource),
       ALLOW_THIS_IN_INITIALIZER_LIST(event_queue_(this)),
@@ -882,12 +886,16 @@ void HTMLMediaElement::LoadResource(const GURL& initial_url,
         base::Unretained(node_document()->csp_delegate()), CspDelegate::kMedia);
     request_mode_ = GetRequestMode(GetAttribute("crossOrigin"));
     DCHECK(node_document()->location());
+
+#if defined(ENABLE_FETCHER)
     std::unique_ptr<BufferedDataSource> data_source(
         new media::FetcherBufferedDataSource(
-            base::MessageLoop::current()->task_runner(), url, csp_callback,
+            base::MessageLoopCurrent::Get()->task_runner(), url, csp_callback,
             html_element_context()->fetcher_factory()->network_module(),
             request_mode_, node_document()->location()->GetOriginAsObject()));
     player_->LoadProgressive(url, std::move(data_source));
+#endif
+
   }
 }
 
@@ -1055,7 +1063,7 @@ void HTMLMediaElement::ScheduleTimeupdateEvent(bool periodic_event) {
   }
 }
 
-void HTMLMediaElement::ScheduleOwnEvent(base::Token event_name) {
+void HTMLMediaElement::ScheduleOwnEvent(base::CobToken event_name) {
   LOG_IF(INFO, event_name == base::Tokens::error())
       << "onerror event fired with error " << (error_ ? error_->code() : 0);
   MLOG() << event_name;

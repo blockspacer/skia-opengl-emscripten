@@ -110,7 +110,9 @@ class NET_EXPORT_PRIVATE URLRequestHttpJob : public URLRequestJob {
   void GetLoadTimingInfo(LoadTimingInfo* load_timing_info) const override;
   bool GetTransactionRemoteEndpoint(IPEndPoint* endpoint) const override;
   int GetResponseCode() const override;
+#ifdef ENABLE_QUIC
   void PopulateNetErrorDetails(NetErrorDetails* details) const override;
+#endif // ENABLE_QUIC
   bool CopyFragmentOnRedirect(const GURL& location) const override;
   bool IsSafeRedirect(const GURL& location) override;
   bool NeedsAuth() override;

@@ -31,7 +31,12 @@ class IOBuffer;
 class SSLCertRequestInfo;
 class IPEndPoint;
 class HttpNetworkSession;
+
+
+#ifdef ENABLE_QUIC
 struct NetErrorDetails;
+#endif // ENABLE_QUIC
+
 class HttpStream;
 class HttpResponseHeaders;
 struct HttpRequestInfo;
@@ -83,7 +88,11 @@ class NET_EXPORT_PRIVATE WebSocketHttp2HandshakeStream
   bool GetRemoteEndpoint(IPEndPoint* endpoint) override;
   void Drain(HttpNetworkSession* session) override;
   void SetPriority(RequestPriority priority) override;
+
+#ifdef ENABLE_QUIC
   void PopulateNetErrorDetails(NetErrorDetails* details) override;
+#endif // ENABLE_QUIC
+
   HttpStream* RenewStreamForAuth() override;
 
   // WebSocketHandshakeStreamBase methods.

@@ -72,7 +72,11 @@ class NET_EXPORT_PRIVATE WebSocketBasicHandshakeStream final
   bool GetRemoteEndpoint(IPEndPoint* endpoint) override;
   void Drain(HttpNetworkSession* session) override;
   void SetPriority(RequestPriority priority) override;
+
+#ifdef ENABLE_QUIC
   void PopulateNetErrorDetails(NetErrorDetails* details) override;
+#endif // ENABLE_QUIC
+
   HttpStream* RenewStreamForAuth() override;
 
 

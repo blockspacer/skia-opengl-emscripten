@@ -87,6 +87,11 @@
 #include "base/win/windows_types.h"
 #endif
 
+#if defined(STARBOARD)
+#include "starboard/time.h"
+#include "starboard/types.h"
+#endif
+
 namespace base {
 
 class PlatformThreadHandle;
@@ -178,6 +183,10 @@ class BASE_EXPORT TimeDelta {
   constexpr bool is_min() const {
     return delta_ == std::numeric_limits<int64_t>::min();
   }
+
+#if defined(OS_STARBOARD)
+  SbTime ToSbTime() const;
+#endif
 
 #if defined(OS_POSIX) || defined(OS_FUCHSIA)
   struct timespec ToTimeSpec() const;
@@ -568,6 +577,11 @@ class BASE_EXPORT Time : public time_internal::TimeBase<Time> {
   static Time FromJsTime(double ms_since_epoch);
   double ToJsTime() const;
 
+#if defined(STARBOARD)
+  static Time FromSbTime(SbTime t);
+  SbTime ToSbTime() const;
+#endif
+
   // Converts to/from Java convention for times, a number of milliseconds since
   // the epoch. Because the Java format has less resolution, converting to Java
   // time is a lossy operation.
@@ -934,7 +948,15 @@ class BASE_EXPORT ThreadTicks : public time_internal::TimeBase<ThreadTicks> {
 
   // Returns true if ThreadTicks::Now() is supported on this system.
   static bool IsSupported() WARN_UNUSED_RESULT {
-#if (defined(_POSIX_THREAD_CPUTIME) && (_POSIX_THREAD_CPUTIME >= 0)) || \
+#if defined(STARBOARD)
+
+#if SB_HAS(TIME_THREAD_NOW)
+    return true;
+#else
+    return false;
+#endif
+
+#elif (defined(_POSIX_THREAD_CPUTIME) && (_POSIX_THREAD_CPUTIME >= 0)) || \
     (defined(OS_MACOSX) && !defined(OS_IOS)) || defined(OS_ANDROID) ||  \
     defined(OS_FUCHSIA)
     return true;

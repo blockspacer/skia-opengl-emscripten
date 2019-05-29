@@ -16,7 +16,9 @@
 
 #include "cobalt/dom/csp_violation_reporter.h"
 
-#include "base/hash.h"
+//#include "base/hash.h"
+#include "base/hash/hash.h"
+
 #include "base/json/json_writer.h"
 #include "base/values.h"
 #include "cobalt/dom/document.h"
@@ -114,15 +116,24 @@ void GatherSecurityPolicyViolationEventData(
 CspViolationReporter::CspViolationReporter(
     Document* document, const network_bridge::PostSender& post_sender)
     : post_sender_(post_sender),
-      message_loop_(base::MessageLoop::current()),
+      //message_loop_(base::MessageLoop::current()),
+      message_loop_(),
       document_(document) {}
 
 CspViolationReporter::~CspViolationReporter() {}
 
 // https://www.w3.org/TR/CSP2/#violation-reports
 void CspViolationReporter::Report(const csp::ViolationInfo& violation_info) {
-  DCHECK(message_loop_);
+  /*DCHECK(message_loop_);
   if (base::MessageLoop::current()->task_runner() !=
+      message_loop_->task_runner()) {
+    message_loop_->task_runner()->PostTask(
+        FROM_HERE, base::Bind(&CspViolationReporter::Report,
+                              base::Unretained(this), violation_info));
+    return;
+  }*/
+  DCHECK(message_loop_);
+  if (base::MessageLoopCurrent::Get()->task_runner() !=
       message_loop_->task_runner()) {
     message_loop_->task_runner()->PostTask(
         FROM_HERE, base::Bind(&CspViolationReporter::Report,

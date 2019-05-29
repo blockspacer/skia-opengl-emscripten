@@ -508,7 +508,7 @@ void MediaSource::SetSourceBufferActive(SourceBuffer* source_buffer,
 }
 
 HTMLMediaElement* MediaSource::GetMediaElement() const {
-  return attached_element_;
+  return attached_element_.get();
 }
 
 void MediaSource::TraceMembers(script::Tracer* tracer) {
@@ -570,7 +570,7 @@ bool MediaSource::IsUpdating() const {
   return false;
 }
 
-void MediaSource::ScheduleEvent(base::Token event_name) {
+void MediaSource::ScheduleEvent(base::CobToken event_name) {
   scoped_refptr<Event> event = new Event(event_name);
   event->set_target(this);
   event_queue_.Enqueue(event);

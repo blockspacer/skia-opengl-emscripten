@@ -27,7 +27,7 @@ namespace dom {
 //   https://www.w3.org/TR/html5/dom.html#htmlunknownelement
 class HTMLUnknownElement : public HTMLElement {
  public:
-  HTMLUnknownElement(Document* document, base::Token tag_name)
+  HTMLUnknownElement(Document* document, base::CobToken tag_name)
       : HTMLElement(document, tag_name) {}
 
   // Custom, not in any spec.

@@ -139,7 +139,7 @@ void HTMLLinkElement::Obtain() {
     return;
   }
 
-  DCHECK(base::MessageLoop::current());
+  DCHECK(base::MessageLoopCurrent::Get());
   DCHECK(!loader_);
 
   // 1. If the href attribute's value is the empty string, then abort these
@@ -224,7 +224,7 @@ void HTMLLinkElement::OnContentProduced(const loader::Origin& last_url_origin,
 
 void HTMLLinkElement::OnLoadingComplete(
     const base::Optional<std::string>& error) {
-  base::MessageLoop::current()->task_runner()->PostTask(
+  base::MessageLoopCurrent::Get()->task_runner()->PostTask(
       FROM_HERE, base::Bind(&HTMLLinkElement::ReleaseLoader, this));
 
   if (!error) return;
@@ -270,7 +270,7 @@ void HTMLLinkElement::OnStylesheetLoaded(Document* document,
       (fetched_last_url_origin_ == document->location()->GetOriginAsObject())) {
     css_style_sheet->SetOriginClean(true);
   }
-  style_sheet_ = css_style_sheet;
+  style_sheet_ = css_style_sheet.get();
   document->OnStyleSheetsModified();
 }
 

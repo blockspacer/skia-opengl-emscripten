@@ -22,6 +22,7 @@
 #include "cobalt/dom/eme/media_key_system_access.h"
 #include "cobalt/media_capture/media_devices.h"
 #include "cobalt/media_session/media_session_client.h"
+#include "cobalt/media_session/media_session.h"
 #include "cobalt/script/script_value_factory.h"
 #include "starboard/file.h"
 #include "starboard/media.h"

@@ -35,7 +35,8 @@
 // don't have StreamListenSocket.
 #include "net/dial/dial_service.h"
 #endif
-#include "net/url_request/http_user_agent_settings.h"
+//#include "net/url_request/http_user_agent_settings.h"
+#include "net/url_request/static_http_user_agent_settings.h"
 
 namespace base {
 class WaitableEvent;

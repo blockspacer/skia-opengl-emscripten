@@ -28,7 +28,7 @@ namespace dom {
 const char HTMLStyleElement::kTagName[] = "style";
 
 HTMLStyleElement::HTMLStyleElement(Document* document)
-    : HTMLElement(document, base::Token(kTagName)),
+    : HTMLElement(document, base::CobToken(kTagName)),
       is_parser_inserted_(false),
       inline_style_location_(GetSourceLocationName(), 1, 1) {}
 
@@ -87,7 +87,7 @@ void HTMLStyleElement::Process() {
             text, inline_style_location_);
     css_style_sheet->SetLocationUrl(GURL(inline_style_location_.file_path));
     css_style_sheet->SetOriginClean(true);
-    style_sheet_ = css_style_sheet;
+    style_sheet_ = css_style_sheet.get();
     document->OnStyleSheetsModified();
   } else {
     // Report a violation.

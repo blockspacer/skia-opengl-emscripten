@@ -187,7 +187,7 @@ void ComputedBorderWidthProvider::VisitLength(LengthValue* specified_length) {
     DCHECK_EQ(border_style_, KeywordValue::GetSolid().get());
     computed_border_width_ =
         ProvideAbsoluteLength(specified_length, computed_font_size_,
-                              root_computed_font_size_, viewport_size_);
+                              root_computed_font_size_, viewport_size_).get();
   }
 }
 
@@ -308,7 +308,7 @@ ComputedLineHeightProvider::ComputedLineHeightProvider(
 void ComputedLineHeightProvider::VisitLength(LengthValue* specified_length) {
   computed_line_height_ =
       ProvideAbsoluteLength(specified_length, computed_font_size_,
-                            root_computed_font_size_, viewport_size_);
+                            root_computed_font_size_, viewport_size_).get();
 }
 
 void ComputedLineHeightProvider::VisitNumber(NumberValue* specified_number) {
@@ -523,7 +523,7 @@ void ComputedMarginOrPaddingEdgeProvider::VisitLength(
     LengthValue* specified_length) {
   computed_margin_or_padding_edge_ =
       ProvideAbsoluteLength(specified_length, computed_font_size_,
-                            root_computed_font_size_, viewport_size_);
+                            root_computed_font_size_, viewport_size_).get();
 }
 
 void ComputedMarginOrPaddingEdgeProvider::VisitPercentage(
@@ -559,7 +559,7 @@ void ComputedPositionOffsetProvider::VisitLength(
     LengthValue* specified_length) {
   computed_position_offset_ =
       ProvideAbsoluteLength(specified_length, computed_font_size_,
-                            root_computed_font_size_, viewport_size_);
+                            root_computed_font_size_, viewport_size_).get();
 }
 
 void ComputedPositionOffsetProvider::VisitKeyword(KeywordValue* keyword) {
@@ -704,7 +704,7 @@ ComputedHeightProvider::ComputedHeightProvider(
 void ComputedHeightProvider::VisitLength(LengthValue* specified_length) {
   computed_height_ =
       ProvideAbsoluteLength(specified_length, computed_font_size_,
-                            root_computed_font_size_, viewport_size_);
+                            root_computed_font_size_, viewport_size_).get();
 }
 
 void ComputedHeightProvider::VisitKeyword(KeywordValue* keyword) {
@@ -844,7 +844,7 @@ ComputedMaxHeightProvider::ComputedMaxHeightProvider(
 void ComputedMaxHeightProvider::VisitLength(LengthValue* specified_length) {
   computed_max_height_ =
       ProvideAbsoluteLength(specified_length, computed_font_size_,
-                            root_computed_font_size_, viewport_size_);
+                            root_computed_font_size_, viewport_size_).get();
 }
 
 void ComputedMaxHeightProvider::VisitKeyword(KeywordValue* keyword) {
@@ -982,7 +982,7 @@ ComputedMinHeightProvider::ComputedMinHeightProvider(
 void ComputedMinHeightProvider::VisitLength(LengthValue* specified_length) {
   computed_min_height_ =
       ProvideAbsoluteLength(specified_length, computed_font_size_,
-                            root_computed_font_size_, viewport_size_);
+                            root_computed_font_size_, viewport_size_).get();
 }
 
 void ComputedMinHeightProvider::VisitKeyword(KeywordValue* keyword) {
@@ -1114,7 +1114,7 @@ ComputedWidthValueProvider::ComputedWidthValueProvider(
 void ComputedWidthValueProvider::VisitLength(LengthValue* specified_length) {
   computed_value_ =
       ProvideAbsoluteLength(specified_length, computed_font_size_,
-                            root_computed_font_size_, viewport_size_);
+                            root_computed_font_size_, viewport_size_).get();
 }
 
 void ComputedWidthValueProvider::VisitPercentage(PercentageValue* percentage) {
@@ -1347,7 +1347,7 @@ ComputedMinMaxWidthProvider::ComputedMinMaxWidthProvider(
 void ComputedMinMaxWidthProvider::VisitLength(LengthValue* specified_length) {
   computed_min_max_width_ =
       ProvideAbsoluteLength(specified_length, computed_font_size_,
-                            root_computed_font_size_, viewport_size_);
+                            root_computed_font_size_, viewport_size_).get();
 }
 
 void ComputedMinMaxWidthProvider::VisitKeyword(KeywordValue* keyword) {
@@ -1598,7 +1598,7 @@ void ComputedPositionHelper::ComputeTwoValuesPosition(
     } else {
       OriginInfo default_origin = OriginInfo(0.0f, 1, kNone);
       (*output_position_builder)[i] =
-          ProvideCalcValueFromOriginAndOffset(&default_origin, current_value);
+          ProvideCalcValueFromOriginAndOffset(&default_origin, current_value).get();
     }
   }
 }
@@ -1717,22 +1717,22 @@ void ComputedPositionHelper::FillPositionBuilderFromOriginAndOffset(
   switch (origin_info.direction) {
     case kHorizontal: {
       (*output_position_builder)[0] =
-          ProvideCalcValueFromOriginAndOffset(&origin_info, offset);
+          ProvideCalcValueFromOriginAndOffset(&origin_info, offset).get();
       break;
     }
     case kVertical: {
       (*output_position_builder)[1] =
-          ProvideCalcValueFromOriginAndOffset(&origin_info, offset);
+          ProvideCalcValueFromOriginAndOffset(&origin_info, offset).get();
       break;
     }
     case kCenter: {
       if (!(*output_position_builder)[0]) {
         (*output_position_builder)[0] =
-            ProvideCalcValueFromOriginAndOffset(&origin_info, offset);
+            ProvideCalcValueFromOriginAndOffset(&origin_info, offset).get();
       }
       if (!(*output_position_builder)[1]) {
         (*output_position_builder)[1] =
-            ProvideCalcValueFromOriginAndOffset(&origin_info, offset);
+            ProvideCalcValueFromOriginAndOffset(&origin_info, offset).get();
       }
       break;
     }
@@ -1960,7 +1960,7 @@ void ComputedBackgroundImageSingleLayerProvider::VisitRadialGradient(
 void ComputedBackgroundImageSingleLayerProvider::VisitURL(URLValue* url_value) {
   if (url_value->value().empty()) {
     // No need to convert URLValue into AbsoluteURLValue.
-    computed_background_image_ = KeywordValue::GetNone();
+    computed_background_image_ = KeywordValue::GetNone().get();
     return;
   }
 
@@ -1974,7 +1974,7 @@ void ComputedBackgroundImageSingleLayerProvider::VisitURL(URLValue* url_value) {
   if (!absolute_url.is_valid()) {
     DLOG(WARNING) << "Invalid url: " << absolute_url.spec();
     // No further process is needed if the url is invalid.
-    computed_background_image_ = KeywordValue::GetNone();
+    computed_background_image_ = KeywordValue::GetNone().get();
     return;
   }
 
@@ -2063,7 +2063,7 @@ ComputedBackgroundSizeSingleValueProvider::
 void ComputedBackgroundSizeSingleValueProvider::VisitLength(
     LengthValue* length) {
   computed_background_size_ = ProvideAbsoluteLength(
-      length, computed_font_size_, root_computed_font_size_, viewport_size_);
+      length, computed_font_size_, root_computed_font_size_, viewport_size_).get();
 }
 
 void ComputedBackgroundSizeSingleValueProvider::VisitPercentage(
@@ -2291,7 +2291,7 @@ ComputedBorderRadiusProvider::ComputedBorderRadiusProvider(
 void ComputedBorderRadiusProvider::VisitLength(LengthValue* specified_length) {
   computed_border_radius_ =
       ProvideAbsoluteLength(specified_length, computed_font_size_,
-                            root_computed_font_size_, viewport_size_);
+                            root_computed_font_size_, viewport_size_).get();
 }
 
 void ComputedBorderRadiusProvider::VisitPercentage(
@@ -2634,7 +2634,7 @@ void ComputedTransformOriginProvider::VisitPropertyList(
       (*transform_origin_builder)[2] = ProvideAbsoluteLength(
           base::polymorphic_downcast<LengthValue*>(
               property_list_value->value()[2].get()),
-          computed_font_size_, root_computed_font_size_, viewport_size_);
+          computed_font_size_, root_computed_font_size_, viewport_size_).get();
       break;
   }
 
@@ -3137,14 +3137,14 @@ void CalculateComputedStyleContext::HandleSpecifiedValue(
             GetRootFontSize(), GetViewportSizeOnePercent());
         (*value)->Accept(&font_size_provider);
         if (font_size_provider.computed_font_size()) {
-          *value = font_size_provider.computed_font_size();
+          *value = font_size_provider.computed_font_size().get();
         }
       }
     } break;
     case kFontWeightProperty: {
       ComputedFontWeightProvider font_weight_provider;
       (*value)->Accept(&font_weight_provider);
-      *value = font_weight_provider.computed_font_weight();
+      *value = font_weight_provider.computed_font_weight().get();
     } break;
     case kHeightProperty: {
       ComputedHeightProvider height_provider(
@@ -3238,7 +3238,7 @@ void CalculateComputedStyleContext::HandleSpecifiedValue(
       ComputedTextIndentProvider text_indent_provider(
           GetFontSize(), GetRootFontSize(), GetViewportSizeOnePercent());
       (*value)->Accept(&text_indent_provider);
-      *value = text_indent_provider.computed_text_indent();
+      *value = text_indent_provider.computed_text_indent().get();
     } break;
     case kTransformOriginProperty: {
       ComputedTransformOriginProvider transform_origin_provider(

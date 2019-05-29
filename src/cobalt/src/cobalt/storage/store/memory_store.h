@@ -32,7 +32,7 @@ namespace storage {
 // A store for cookies and local storage implemented in memory.
 class MemoryStore {
  public:
-  typedef base::hash_map<std::string, std::string> LocalStorageMap;
+  typedef std::map<std::string, std::string> LocalStorageMap;
   typedef const std::vector<net::CanonicalCookie*> Cookies;
 
   MemoryStore();

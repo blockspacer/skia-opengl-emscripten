@@ -118,15 +118,15 @@ class WebDriverServer : public net::HttpServer::Delegate {
 
 #if defined(COMPILER_GCC) && !defined(COMPILER_SNC)
 
-namespace BASE_HASH_NAMESPACE {
+//namespace BASE_HASH_NAMESPACE {
 template <>
-struct hash<cobalt::webdriver::WebDriverServer::HttpMethod> {
+struct std::hash<cobalt::webdriver::WebDriverServer::HttpMethod> {
   size_t operator()(
       cobalt::webdriver::WebDriverServer::HttpMethod method) const {
     return hash<size_t>()(static_cast<size_t>(method));
   }
 };
-}  // namespace BASE_HASH_NAMESPACE
+//}  // namespace BASE_HASH_NAMESPACE
 #endif  // COMPILER
 
 #endif  // COBALT_WEBDRIVER_SERVER_H_

@@ -23,7 +23,11 @@
 #include "base/message_loop/message_loop.h"
 #include "base/strings/string_util.h"
 #include "base/trace_event/trace_event.h"
-#include "cobalt/base/token.h"
+#include "base/memory/weak_ptr.h"
+
+//#include "cobalt/base/token.h"
+#include "cobalt/base/cobalt_token.h"
+
 #include "cobalt/base/tokens.h"
 #include "cobalt/cssom/css_media_rule.h"
 #include "cobalt/cssom/css_rule.h"
@@ -153,7 +157,7 @@ Document::Document(HTMLElementContext* html_element_context,
   OnInsertedIntoDocument();
 }
 
-base::Token Document::node_name() const {
+base::CobToken Document::node_name() const {
   return base::Tokens::document_name();
 }
 
@@ -202,12 +206,12 @@ scoped_refptr<HTMLCollection> Document::GetElementsByClassName(
 
 scoped_refptr<Element> Document::CreateElement(const std::string& local_name) {
   if (IsXMLDocument()) {
-    return new Element(this, base::Token(local_name));
+    return new Element(this, base::CobToken(local_name));
   } else {
     std::string lower_local_name = base::ToLowerASCII(local_name);
     DCHECK(html_element_context_->html_element_factory());
     return html_element_context_->html_element_factory()->CreateHTMLElement(
-        this, base::Token(lower_local_name));
+        this, base::CobToken(lower_local_name));
   }
 }
 
@@ -298,7 +302,7 @@ scoped_refptr<HTMLBodyElement> Document::body() const {
        child = child->next_element_sibling()) {
     HTMLElement* child_html_element = child->AsHTMLElement().get();
     if (child_html_element) {
-      HTMLBodyElement* body_element = child_html_element->AsHTMLBodyElement();
+      HTMLBodyElement* body_element = child_html_element->AsHTMLBodyElement().get();
       if (body_element) {
         return body_element;
       }
@@ -353,7 +357,7 @@ scoped_refptr<HTMLHeadElement> Document::head() const {
        child = child->next_element_sibling()) {
     HTMLElement* child_html_element = child->AsHTMLElement().get();
     if (child_html_element) {
-      HTMLHeadElement* head_element = child_html_element->AsHTMLHeadElement();
+      HTMLHeadElement* head_element = child_html_element->AsHTMLHeadElement().get();
       if (head_element) {
         return head_element;
       }
@@ -490,7 +494,7 @@ scoped_refptr<HTMLHtmlElement> Document::html() const {
   if (!root) {
     return NULL;
   }
-  HTMLElement* root_html_element = root->AsHTMLElement();
+  HTMLElement* root_html_element = root->AsHTMLElement().get();
   return root_html_element ? root_html_element->AsHTMLHtmlElement() : NULL;
 }
 
@@ -537,10 +541,14 @@ void Document::DecreaseLoadingCounterAndMaybeDispatchLoadEvent() {
   DCHECK_GT(loading_counter_, 0);
   loading_counter_--;
   if (loading_counter_ == 0 && should_dispatch_load_event_) {
-    DCHECK(base::MessageLoop::current());
+    //DCHECK(base::MessageLoop::current());
+    DCHECK(base::MessageLoopCurrent::Get());
     should_dispatch_load_event_ = false;
 
-    base::MessageLoop::current()->task_runner()->PostTask(
+    /*base::MessageLoop::current()->task_runner()->PostTask(
+        FROM_HERE, base::Bind(&Document::DispatchOnLoadEvent,
+                              base::AsWeakPtr<Document>(this)));*/
+    base::MessageLoopCurrent::Get()->task_runner()->PostTask(
         FROM_HERE, base::Bind(&Document::DispatchOnLoadEvent,
                               base::AsWeakPtr<Document>(this)));
 
@@ -783,7 +791,7 @@ bool Document::UpdateComputedStyleOnElementAndAncestor(HTMLElement* element) {
     if (!parent_element) {
       return false;
     }
-    element = parent_element->AsHTMLElement();
+    element = parent_element->AsHTMLElement().get();
     if (!element) {
       return false;
     }
@@ -852,7 +860,7 @@ void Document::SetViewport(const ViewportSize& viewport_size) {
   }
   viewport_size_ = viewport_size;
   initial_computed_style_data_ =
-      CreateInitialComputedStyle(viewport_size_->width_height());
+      CreateInitialComputedStyle(viewport_size_->width_height()).get();
   initial_computed_style_declaration_->SetData(initial_computed_style_data_);
 
   is_computed_style_dirty_ = true;

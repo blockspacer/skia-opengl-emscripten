@@ -145,6 +145,11 @@ XMLPUBFUN int XMLCALL
 XMLPUBFUN int XMLCALL
 			htmlHandleOmittedElem(int val);
 
+#if defined(COBALT)
+XMLPUBFUN void XMLCALL
+      htmlEmitImpliedRootLevelParagraph(int val);
+#endif  // defined(COBALT)
+
 #ifdef LIBXML_PUSH_ENABLED
 /**
  * Interfaces for the Push mode.

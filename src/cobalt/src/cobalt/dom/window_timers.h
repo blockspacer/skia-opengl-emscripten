@@ -70,7 +70,7 @@ class WindowTimers {
 
     friend class base::RefCounted<TimerInfo>;
   };
-  typedef base::hash_map<int, scoped_refptr<TimerInfo> > Timers;
+  typedef std::map<int, scoped_refptr<TimerInfo> > Timers;
 
   // Returns a positive interger timer handle that hasn't been assigned, or 0
   // if none can be found.

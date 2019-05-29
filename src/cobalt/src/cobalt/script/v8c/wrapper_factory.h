@@ -71,7 +71,7 @@ class WrapperFactory : public Wrappable::CachedWrapperAccessor {
   std::unique_ptr<Wrappable::WeakWrapperHandle> CreateWrapper(
       const scoped_refptr<Wrappable>& wrappable) const;
 
-  typedef base::hash_map<base::TypeId, WrappableTypeFunctions>
+  typedef std::map<base::TypeId, WrappableTypeFunctions>
       WrappableTypeFunctionsHashMap;
 
   v8::Isolate* isolate_;

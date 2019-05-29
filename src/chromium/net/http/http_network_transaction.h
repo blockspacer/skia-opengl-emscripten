@@ -79,7 +79,11 @@ class NET_EXPORT_PRIVATE HttpNetworkTransaction
   void SetQuicServerInfo(QuicServerInfo* quic_server_info) override;
   bool GetLoadTimingInfo(LoadTimingInfo* load_timing_info) const override;
   bool GetRemoteEndpoint(IPEndPoint* endpoint) const override;
+
+#ifdef ENABLE_QUIC
   void PopulateNetErrorDetails(NetErrorDetails* details) const override;
+#endif // ENABLE_QUIC
+
   void SetPriority(RequestPriority priority) override;
   void SetWebSocketHandshakeStreamCreateHelper(
       WebSocketHandshakeStreamBase::CreateHelper* create_helper) override;
@@ -104,10 +108,13 @@ class NET_EXPORT_PRIVATE HttpNetworkTransaction
       const SSLConfig& used_ssl_config,
       const ProxyInfo& used_proxy_info,
       std::unique_ptr<WebSocketHandshakeStreamBase> stream) override;
+
+#ifdef ENABLE_QUIC
   void OnStreamFailed(int status,
                       const NetErrorDetails& net_error_details,
                       const SSLConfig& used_ssl_config,
                       const ProxyInfo& used_proxy_info) override;
+#endif // ENABLE_QUIC
   void OnCertificateError(int status,
                           const SSLConfig& used_ssl_config,
                           const SSLInfo& ssl_info) override;
@@ -420,7 +427,10 @@ class NET_EXPORT_PRIVATE HttpNetworkTransaction
   ConnectionAttempts connection_attempts_;
   IPEndPoint remote_endpoint_;
   // Network error details for this transaction.
+
+#ifdef ENABLE_QUIC
   NetErrorDetails net_error_details_;
+#endif // ENABLE_QUIC
 
   // Number of retries made for network errors like ERR_SPDY_PING_FAILED,
   // ERR_SPDY_SERVER_REFUSED_STREAM, ERR_QUIC_HANDSHAKE_FAILED and

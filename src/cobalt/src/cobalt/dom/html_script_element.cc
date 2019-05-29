@@ -27,10 +27,14 @@
 #include "cobalt/dom/document.h"
 #include "cobalt/dom/global_stats.h"
 #include "cobalt/dom/html_element_context.h"
+
+#ifdef ENABLE_LOADER
 #include "cobalt/loader/decoder.h"
 #include "cobalt/loader/fetcher_factory.h"
 #include "cobalt/loader/sync_loader.h"
 #include "cobalt/loader/text_decoder.h"
+#endif
+
 #include "cobalt/script/global_environment.h"
 #include "cobalt/script/script_runner.h"
 #include "nb/memory_scope.h"
@@ -43,6 +47,7 @@ namespace {
 
 bool PermitAnyURL(const GURL&, bool) { return true; }
 
+#ifdef ENABLE_LOADER
 loader::RequestMode GetRequestMode(
     const base::Optional<std::string>& cross_origin_attribute) {
   // https://html.spec.whatwg.org/#cors-settings-attribute
@@ -59,22 +64,28 @@ loader::RequestMode GetRequestMode(
   // "no-cors" request mode.
   return loader::kNoCORSMode;
 }
+#endif
+
 }  // namespace
 
 // static
 const char HTMLScriptElement::kTagName[] = "script";
 
 HTMLScriptElement::HTMLScriptElement(Document* document)
-    : HTMLElement(document, base::Token(kTagName)),
+    : HTMLElement(document, base::CobToken(kTagName)),
       is_already_started_(false),
       is_parser_inserted_(false),
       is_ready_(false),
       load_option_(0),
       inline_script_location_(GetSourceLocationName(), 1, 1),
       is_sync_load_successful_(false),
-      should_execute_(true),
+      should_execute_(true)
+#ifdef ENABLE_LOADER
+      ,
       synchronous_loader_interrupt_(
-          document->html_element_context()->synchronous_loader_interrupt()) {
+          document->html_element_context()->synchronous_loader_interrupt())
+#endif
+          {
   DCHECK(document->html_element_context()->script_runner());
 }
 
@@ -154,8 +165,11 @@ void HTMLScriptElement::Prepare() {
   TRACK_MEMORY_SCOPE("DOM");
   // Custom, not in any spec.
   DCHECK(thread_checker_.CalledOnValidThread());
-  DCHECK(base::MessageLoop::current());
+  //DCHECK(base::MessageLoop::current());
+  DCHECK(base::MessageLoopCurrent::Get());
+#ifdef ENABLE_LOADER
   DCHECK(!loader_ || is_already_started_);
+#endif
   TRACE_EVENT0("cobalt::dom", "HTMLScriptElement::Prepare()");
 
   // If the script element is marked as having "already started", then the user
@@ -281,11 +295,13 @@ void HTMLScriptElement::Prepare() {
                    CspDelegate::kScript);
   }
 
+#ifdef ENABLE_LOADER
   // Clear fetched resource's origin before start.
   fetched_last_url_origin_ = loader::Origin();
 
   // Determine request mode from crossorigin attribute.
   request_mode_ = GetRequestMode(GetAttribute("crossOrigin"));
+#endif
 
   switch (load_option_) {
     case 2: {
@@ -302,8 +318,10 @@ void HTMLScriptElement::Prepare() {
       // failed for another reason.
       is_sync_load_successful_ = false;
 
+#ifdef ENABLE_LOADER
       loader::LoadSynchronously(
-          html_element_context()->sync_load_thread()->message_loop(),
+          //html_element_context()->sync_load_thread()->task_runner()->,
+          base::MessageLoopCurrent::Get(),
           synchronous_loader_interrupt_,
           base::Bind(
               &loader::FetcherFactory::CreateSecureFetcher,
@@ -317,6 +335,7 @@ void HTMLScriptElement::Prepare() {
                      loader::Decoder::OnCompleteFunction()),
           base::Bind(&HTMLScriptElement::OnSyncLoadingComplete,
                      base::Unretained(this)));
+#endif
 
       if (is_sync_load_successful_) {
         script::GlobalEnvironment::ScopedPreventGarbageCollection
@@ -352,6 +371,7 @@ void HTMLScriptElement::Prepare() {
       // once the resource has been fetched (defined above) has been run.
       document_->IncreaseLoadingCounter();
 
+#ifdef ENABLE_LOADER
       loader::Origin origin = document_->location()
                                   ? document_->location()->GetOriginAsObject()
                                   : loader::Origin();
@@ -362,6 +382,8 @@ void HTMLScriptElement::Prepare() {
                      base::Unretained(this)),
           base::Bind(&HTMLScriptElement::OnLoadingComplete,
                      base::Unretained(this)));
+#endif
+
     } break;
     case 5: {
       // This is an asynchronous script. Prevent garbage collection until
@@ -375,6 +397,7 @@ void HTMLScriptElement::Prepare() {
       // once the resource has been fetched (defined above) has been run.
       document_->IncreaseLoadingCounter();
 
+#ifdef ENABLE_LOADER
       // The element must be added to the set of scripts that will execute as
       // soon as possible of the Document of the script element at the time the
       // prepare a script algorithm started.
@@ -390,6 +413,8 @@ void HTMLScriptElement::Prepare() {
                      base::Unretained(this)),
           base::Bind(&HTMLScriptElement::OnLoadingComplete,
                      base::Unretained(this)));
+#endif
+
     } break;
     case 6: {
       // Otherwise.
@@ -402,7 +427,9 @@ void HTMLScriptElement::Prepare() {
           csp_delegate->AllowInline(CspDelegate::kScript,
                                     inline_script_location_,
                                     text)) {
+#ifdef ENABLE_LOADER
         fetched_last_url_origin_ = document_->location()->GetOriginAsObject();
+#endif
         ExecuteInternal();
       } else {
         PreventGarbageCollectionAndPostToDispatchEvent(
@@ -414,6 +441,7 @@ void HTMLScriptElement::Prepare() {
   }
 }
 
+#ifdef ENABLE_LOADER
 void HTMLScriptElement::OnSyncContentProduced(
     const loader::Origin& last_url_origin,
     std::unique_ptr<std::string> content) {
@@ -422,6 +450,7 @@ void HTMLScriptElement::OnSyncContentProduced(
   content_ = std::move(content);
   is_sync_load_successful_ = true;
 }
+#endif
 
 void HTMLScriptElement::OnSyncLoadingComplete(
     const base::Optional<std::string>& error) {
@@ -431,6 +460,7 @@ void HTMLScriptElement::OnSyncLoadingComplete(
   LOG(ERROR) << *error;
 }
 
+#ifdef ENABLE_LOADER
 // Algorithm for OnContentProduced:
 //   https://www.w3.org/TR/html5/scripting-1.html#prepare-a-script
 void HTMLScriptElement::OnContentProduced(
@@ -529,9 +559,11 @@ void HTMLScriptElement::OnContentProduced(
   content_.reset();
 
   // Post a task to release the loader.
-  base::MessageLoop::current()->task_runner()->PostTask(
+  //base::MessageLoop::current()->task_runner()->PostTask(
+  base::MessageLoopCurrent::Get()->task_runner()->PostTask(
       FROM_HERE, base::Bind(&HTMLScriptElement::ReleaseLoader, this));
 }
+#endif
 
 // Algorithm for OnLoadingComplete:
 //   https://www.w3.org/TR/html5/scripting-1.html#prepare-a-script
@@ -579,7 +611,8 @@ void HTMLScriptElement::OnLoadingComplete(
   document_->DecreaseLoadingCounterAndMaybeDispatchLoadEvent();
 
   // Post a task to release the loader.
-  base::MessageLoop::current()->task_runner()->PostTask(
+  //base::MessageLoop::current()->task_runner()->PostTask(
+  base::MessageLoopCurrent::Get()->task_runner()->PostTask(
       FROM_HERE, base::Bind(&HTMLScriptElement::ReleaseLoader, this));
 }
 
@@ -623,8 +656,12 @@ void HTMLScriptElement::Execute(const std::string& content,
   // the script settings object of the script element's Document's Window
   // object.
   bool mute_errors =
+#ifdef ENABLE_LOADER
       request_mode_ == loader::kNoCORSMode &&
       fetched_last_url_origin_ != document_->location()->GetOriginAsObject();
+#else
+      false;
+#endif
   html_element_context()->script_runner()->Execute(
       content, script_location, mute_errors, NULL /*out_succeeded*/);
 
@@ -655,7 +692,7 @@ void HTMLScriptElement::Execute(const std::string& content,
 }
 
 void HTMLScriptElement::PreventGarbageCollectionAndPostToDispatchEvent(
-    const base::Location& location, const base::Token& token,
+    const base::Location& location, const base::CobToken& token,
     std::unique_ptr<script::GlobalEnvironment::ScopedPreventGarbageCollection>*
         scoped_prevent_gc) {
   // Ensure that this HTMLScriptElement is not garbage collected until the event
@@ -690,9 +727,11 @@ void HTMLScriptElement::AllowGCAfterLoadComplete() {
 }
 
 void HTMLScriptElement::ReleaseLoader() {
+#ifdef ENABLE_LOADER
   DCHECK(thread_checker_.CalledOnValidThread());
   DCHECK(loader_);
   loader_.reset();
+#endif
 }
 
 }  // namespace dom

@@ -48,7 +48,7 @@ class UrlRegistry : public script::Traceable {
   }
 
  private:
-  typedef base::hash_map<std::string, scoped_refptr<ObjectType> > UrlMap;
+  typedef std::map<std::string, scoped_refptr<ObjectType> > UrlMap;
   UrlMap object_registry_;
 };
 

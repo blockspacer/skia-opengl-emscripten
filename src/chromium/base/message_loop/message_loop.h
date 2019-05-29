@@ -179,6 +179,15 @@ class BASE_EXPORT MessageLoop {
   // TODO(alexclarke): Make this const when MessageLoopImpl goes away.
   bool IsIdleForTesting();
 
+#if defined(STARBOARD)
+  // Starboard main requires the ability to force shut down.
+
+  //void Quit() override;
+
+  // For testing purpose only.
+  void RunUntilIdleForTesting();
+#endif
+
   //----------------------------------------------------------------------------
  protected:
   using MessagePumpFactoryCallback =
@@ -227,6 +236,10 @@ class BASE_EXPORT MessageLoop {
   static std::unique_ptr<MessageLoop> CreateUnbound(
       std::unique_ptr<MessagePump> pump);
 
+//#if !defined(STARBOARD)
+//  void Quit() override;
+//#endif
+
   scoped_refptr<sequence_manager::TaskQueue> CreateDefaultTaskQueue();
 
   std::unique_ptr<MessagePump> CreateMessagePump();
@@ -274,6 +287,11 @@ class BASE_EXPORT MessageLoopForUI : public MessageLoop {
   // which connects this MessageLoop to the UI thread's CFRunLoop and allows
   // PostTask() to work.
   void Attach();
+#endif
+
+#if defined(STARBOARD)
+  // Starboard needs this function to register message loop to pump.
+  void Start();
 #endif
 
 #if defined(OS_ANDROID)

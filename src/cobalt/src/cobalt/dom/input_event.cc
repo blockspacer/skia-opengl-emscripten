@@ -17,24 +17,27 @@
 #include <string>
 
 #include "base/logging.h"
-#include "cobalt/base/token.h"
+
+//#include "cobalt/base/token.h"
+#include "cobalt/base/cobalt_token.h"
+
 #include "cobalt/base/tokens.h"
 
 namespace cobalt {
 namespace dom {
 
 InputEvent::InputEvent(const std::string& type)
-    : UIEvent(base::Token(type), kBubbles, kCancelable, NULL),
+    : UIEvent(base::CobToken(type), kBubbles, kCancelable, NULL),
       data_(""),
       is_composing_(false) {}
 
 InputEvent::InputEvent(const std::string& type, const InputEventInit& init_dict)
-    : UIEvent(base::Token(type), kBubbles, kCancelable, init_dict.view(),
+    : UIEvent(base::CobToken(type), kBubbles, kCancelable, init_dict.view(),
               init_dict),
       data_(init_dict.data()),
       is_composing_(init_dict.is_composing()) {}
 
-InputEvent::InputEvent(base::Token type, const scoped_refptr<Window>& view,
+InputEvent::InputEvent(base::CobToken type, const scoped_refptr<Window>& view,
                        const InputEventInit& init_dict)
     : UIEvent(type, kBubbles, kCancelable, view, init_dict),
       data_(init_dict.data()),

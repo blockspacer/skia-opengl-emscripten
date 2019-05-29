@@ -231,7 +231,9 @@ class HttpStreamFactory::Job
 
   bool should_reconsider_proxy() const { return should_reconsider_proxy_; }
 
+#ifdef ENABLE_QUIC
   NetErrorDetails* net_error_details() { return &net_error_details_; }
+#endif // ENABLE_QUIC
 
  private:
   friend class test::HttpStreamFactoryJobPeer;
@@ -471,7 +473,9 @@ class HttpStreamFactory::Job
 
   base::OnceClosure restart_with_auth_callback_;
 
+#ifdef ENABLE_QUIC
   NetErrorDetails net_error_details_;
+#endif // ENABLE_QUIC
 
   std::unique_ptr<SpdySessionPool::SpdySessionRequest> spdy_session_request_;
 

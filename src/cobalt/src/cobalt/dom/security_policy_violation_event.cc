@@ -14,7 +14,9 @@
 
 #include "cobalt/dom/security_policy_violation_event.h"
 
-#include "cobalt/base/token.h"
+//#include "cobalt/base/token.h"
+#include "cobalt/base/cobalt_token.h"
+
 #include "cobalt/base/tokens.h"
 
 namespace cobalt {

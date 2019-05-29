@@ -14,7 +14,9 @@
 
 #include "cobalt/input/key_repeat_filter.h"
 
-#include "cobalt/base/token.h"
+//#include "cobalt/base/token.h"
+#include "cobalt/base/cobalt_token.h"
+
 #include "cobalt/base/tokens.h"
 
 namespace cobalt {

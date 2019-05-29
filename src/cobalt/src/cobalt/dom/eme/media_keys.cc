@@ -94,7 +94,8 @@ void MediaKeys::OnSessionClosed(MediaKeySession* session) {
   // Erase-remove idiom, see
   // https://en.wikipedia.org/wiki/Erase%E2%80%93remove_idiom.
   open_sessions_.erase(
-      std::remove(open_sessions_.begin(), open_sessions_.end(), session),
+      std::remove(open_sessions_.begin(), open_sessions_.end(),
+        scoped_refptr(session)),
       open_sessions_.end());
 }
 

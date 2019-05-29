@@ -155,7 +155,7 @@ class Document : public Node,
   // Web API: Node
   //
   NodeType node_type() const override { return Node::kDocumentNode; }
-  base::Token node_name() const override;
+  base::CobToken node_name() const override;
 
   // Web API: Document
   //

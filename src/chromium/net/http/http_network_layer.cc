@@ -15,7 +15,10 @@
 #include "net/http/http_stream_factory_job.h"
 #include "net/spdy/spdy_session.h"
 #include "net/spdy/spdy_session_pool.h"
+
+#if defined(ENABLE_QUIC)
 #include "net/third_party/quiche/src/spdy/core/spdy_framer.h"
+#endif
 
 namespace net {
 

@@ -18,7 +18,10 @@
 #include <string>
 
 #include "base/optional.h"
-#include "cobalt/base/token.h"
+
+#include "cobalt/base/cobalt_token.h"
+//#include "base/token.h"
+
 #include "cobalt/script/wrappable.h"
 
 namespace cobalt {
@@ -33,7 +36,7 @@ class NodeList;
 class MutationRecord : public script::Wrappable {
  public:
   // Web API: MutationRecord
-  const base::Token& type() { return type_; }
+  const base::CobToken& type() { return type_; }
   const scoped_refptr<dom::Node>& target() { return target_; }
   const scoped_refptr<dom::NodeList>& added_nodes() { return added_nodes_; }
   const scoped_refptr<dom::NodeList>& removed_nodes() { return removed_nodes_; }
@@ -72,10 +75,10 @@ class MutationRecord : public script::Wrappable {
   void TraceMembers(script::Tracer* tracer) override;
 
  private:
-  MutationRecord(const base::Token& type, const scoped_refptr<Node>& target);
+  MutationRecord(const base::CobToken& type, const scoped_refptr<Node>& target);
   ~MutationRecord();
 
-  base::Token type_;
+  base::CobToken type_;
   scoped_refptr<dom::Node> target_;
   scoped_refptr<dom::NodeList> added_nodes_;
   scoped_refptr<dom::NodeList> removed_nodes_;

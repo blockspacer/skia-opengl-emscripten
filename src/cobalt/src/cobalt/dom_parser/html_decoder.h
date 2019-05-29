@@ -53,10 +53,13 @@ class HTMLDecoder : public loader::Decoder {
 
   ~HTMLDecoder();
 
+#if defined(ENABLE_NET_FETCHER)
   // From Decoder.
   loader::LoadResponseType OnResponseStarted(
       loader::Fetcher* fetcher,
       const scoped_refptr<net::HttpResponseHeaders>& headers) override;
+#endif // ENABLE_NET_FETCHER
+
   void DecodeChunk(const char* data, size_t size) override;
   void Finish() override;
   bool Suspend() override { return false; }

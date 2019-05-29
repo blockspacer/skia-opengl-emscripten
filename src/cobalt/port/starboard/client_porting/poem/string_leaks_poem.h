@@ -36,7 +36,8 @@
 namespace std {
 
 inline size_t SbStringGetLength(const char* str) {
-  return ::SbStringGetLength(str);
+  //return ::SbStringGetLength(str);
+  return strlen(str);
 }
 
 }  // namespace std
@@ -45,9 +46,9 @@ inline size_t SbStringGetLength(const char* str) {
 // SbStringGetLength to avoid function call ambiguities when building for
 // Android.
 //
-#undef __builtin_strlen
-#define __builtin_strlen std::SbStringGetLength
-#undef strlen
-#define strlen std::SbStringGetLength
+//#undef __builtin_strlen
+//#define __builtin_strlen std::SbStringGetLength
+//#undef strlen
+//#define strlen std::SbStringGetLength
 
 #endif  // STARBOARD_CLIENT_PORTING_POEM_STRING_LEAKS_POEM_H_

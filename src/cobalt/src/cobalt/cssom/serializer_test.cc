@@ -14,7 +14,9 @@
 
 #include "cobalt/cssom/serializer.h"
 
-#include "cobalt/base/token.h"
+//#include "cobalt/base/token.h"
+#include "cobalt/base/cobalt_token.h"
+
 #include "cobalt/css_parser/parser.h"
 #include "cobalt/cssom/css_style_rule.h"
 #include "testing/gtest/include/gtest/gtest.h"

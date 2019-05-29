@@ -22,7 +22,10 @@
 #include "cobalt/dom/url_utils.h"
 #include "cobalt/media/can_play_type_handler.h"
 #include "cobalt/script/environment_settings.h"
+
+#ifdef ENABLE_SPEECH
 #include "cobalt/speech/microphone.h"
+#endif // ENABLE_SPEECH
 
 namespace cobalt {
 
@@ -47,8 +50,10 @@ class DOMSettings : public script::EnvironmentSettings {
   typedef UrlRegistry<MediaSource> MediaSourceRegistry;
   // Hold optional settings for DOMSettings.
   struct Options {
+#ifdef ENABLE_SPEECH
     // Microphone options.
     speech::Microphone::Options microphone_options;
+#endif // ENABLE_SPEECH
   };
 
   DOMSettings(const int max_dom_element_depth,
@@ -65,9 +70,11 @@ class DOMSettings : public script::EnvironmentSettings {
   ~DOMSettings() override;
 
   int max_dom_element_depth() { return max_dom_element_depth_; }
+#ifdef ENABLE_SPEECH
   const speech::Microphone::Options& microphone_options() const {
     return microphone_options_;
   }
+#endif // ENABLE_SPEECH
 
   void set_window(const scoped_refptr<Window>& window);
   scoped_refptr<Window> window() const;
@@ -105,7 +112,9 @@ class DOMSettings : public script::EnvironmentSettings {
 
  private:
   const int max_dom_element_depth_;
+#ifdef ENABLE_SPEECH
   const speech::Microphone::Options microphone_options_;
+#endif // ENABLE_SPEECH
   loader::FetcherFactory* fetcher_factory_;
   network::NetworkModule* network_module_;
   scoped_refptr<Window> window_;

@@ -5,6 +5,10 @@
 #ifndef COBALT_MATH_MATRIX3_F_H_
 #define COBALT_MATH_MATRIX3_F_H_
 
+#include "starboard/configuration.h"
+#include "starboard/time.h"
+#include "starboard/memory.h"
+
 #include "base/logging.h"
 #include "cobalt/math/point_f.h"
 #include "cobalt/math/rect_f.h"

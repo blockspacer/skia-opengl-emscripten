@@ -60,7 +60,7 @@ class WebDriverDispatcher {
     }
 
    protected:
-    typedef base::hash_map<std::string, std::string> PathVariableMapInternal;
+    typedef std::map<std::string, std::string> PathVariableMapInternal;
     explicit PathVariableMap(const PathVariableMapInternal& variable_map)
         : path_variable_map_(variable_map) {}
     const PathVariableMapInternal& path_variable_map_;
@@ -139,7 +139,7 @@ class WebDriverDispatcher {
         : path_components(components) {}
 
     std::vector<std::string> path_components;
-    typedef base::hash_map<WebDriverServer::HttpMethod, DispatchCommandCallback>
+    typedef std::map<WebDriverServer::HttpMethod, DispatchCommandCallback>
         MethodToCommandMap;
     MethodToCommandMap command_map;
   };

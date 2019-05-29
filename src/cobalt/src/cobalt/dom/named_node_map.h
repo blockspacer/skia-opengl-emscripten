@@ -77,7 +77,7 @@ class NamedNodeMap : public script::Wrappable,
 
   scoped_refptr<Attr> GetOrCreateAttr(const std::string& name) const;
 
-  typedef base::hash_map<std::string, base::WeakPtr<Attr> > NameToAttrMap;
+  typedef std::map<std::string, base::WeakPtr<Attr> > NameToAttrMap;
 
   // The element that contains the actual attributes.
   scoped_refptr<Element> element_;

@@ -4,6 +4,9 @@
 
 #include "base/memory/aligned_memory.h"
 
+
+#if defined(__TODO__)
+
 #include "base/logging.h"
 #include "build/build_config.h"
 
@@ -49,3 +52,5 @@ void* AlignedAlloc(size_t size, size_t alignment) {
 }
 
 }  // namespace base
+
+#endif

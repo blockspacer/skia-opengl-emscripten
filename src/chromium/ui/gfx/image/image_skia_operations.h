@@ -14,10 +14,15 @@
 #include "ui/gfx/shadow_value.h"
 #include "ui/gfx/skbitmap_operations.h"
 
+//#include "ui/gfx/size.h"
+#include "ui/gfx/geometry/size.h"
+
 namespace gfx {
 class ImageSkia;
 class Rect;
-class Size;
+
+//class Size;
+//using cobalt::math::Size;
 
 class GFX_EXPORT ImageSkiaOperations {
  public:

@@ -26,8 +26,11 @@
 #include "cobalt/render_tree/image.h"
 #include "cobalt/render_tree/mesh.h"
 #include "cobalt/render_tree/resource_provider.h"
+
+#if defined(ENABLE_FONTS)
 #include "third_party/ots/include/opentype-sanitiser.h"
 #include "third_party/ots/include/ots-memory-stream.h"
+#endif
 
 namespace cobalt {
 namespace render_tree {
@@ -352,6 +355,7 @@ class ResourceProviderStub : public ResourceProvider {
       return NULL;
     }
 
+#if defined(ENABLE_FONTS)
     ots::OTSContext context;
     ots::ExpandingMemoryStream sanitized_data(
         raw_data->size(), render_tree::ResourceProvider::kMaxTypefaceDataSize);
@@ -360,6 +364,7 @@ class ResourceProviderStub : public ResourceProvider {
       *error_string = "OpenType sanitizer unable to process data";
       return NULL;
     }
+#endif
     return base::WrapRefCounted(new TypefaceStub(NULL));
   }
 

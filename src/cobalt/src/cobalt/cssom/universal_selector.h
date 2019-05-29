@@ -34,7 +34,7 @@ class SelectorVisitor;
 class UniversalSelector : public SimpleSelector {
  public:
   UniversalSelector()
-      : SimpleSelector(kUniversalSelector, base::Token(), base::Token()) {}
+      : SimpleSelector(kUniversalSelector, base::CobToken(), base::CobToken()) {}
   ~UniversalSelector() override {}
 
   // From Selector.

@@ -17,7 +17,10 @@
 
 #include <string>
 
-#include "cobalt/base/token.h"
+
+#include "cobalt/base/cobalt_token.h"
+//#include "base/token.h"
+
 #include "cobalt/dom/event.h"
 
 namespace cobalt {
@@ -28,8 +31,8 @@ namespace dom {
 class ProgressEvent : public Event {
  public:
   explicit ProgressEvent(const std::string& type);
-  explicit ProgressEvent(base::Token type);
-  ProgressEvent(base::Token type, uint64 loaded, uint64 total,
+  explicit ProgressEvent(base::CobToken type);
+  ProgressEvent(base::CobToken type, uint64 loaded, uint64 total,
                 bool length_computable);
 
   bool length_computable() const { return length_computable_; }

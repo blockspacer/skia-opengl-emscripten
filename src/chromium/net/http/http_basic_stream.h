@@ -85,7 +85,9 @@ class NET_EXPORT_PRIVATE HttpBasicStream : public HttpStream {
 
   void Drain(HttpNetworkSession* session) override;
 
+#ifdef ENABLE_QUIC
   void PopulateNetErrorDetails(NetErrorDetails* details) override;
+#endif // ENABLE_QUIC
 
   void SetPriority(RequestPriority priority) override;
 

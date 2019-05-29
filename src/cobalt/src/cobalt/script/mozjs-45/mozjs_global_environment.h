@@ -118,7 +118,7 @@ class MozjsGlobalEnvironment : public GlobalEnvironment,
 
   WeakHeapObjectManager* weak_object_manager() { return &weak_object_manager_; }
 
-  base::hash_set<Traceable*>* visited_traceables() {
+  std::set<Traceable*>* visited_traceables() {
     return &visited_traceables_;
   }
 
@@ -195,7 +195,7 @@ class MozjsGlobalEnvironment : public GlobalEnvironment,
   JS::Heap<JSObject*> global_object_proxy_;
   EnvironmentSettings* environment_settings_;
   // TODO: Should be |std::unordered_set| once C++11 is enabled.
-  base::hash_set<Traceable*> visited_traceables_;
+  std::set<Traceable*> visited_traceables_;
   std::unordered_multiset<Traceable*> roots_;
 
   // Store the result of "Promise" immediately after evaluating the

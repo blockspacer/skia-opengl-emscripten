@@ -69,7 +69,7 @@ bool CSSMediaRule::EvaluateConditionValueAndReturnIfChanged(
 void CSSMediaRule::AttachToCSSStyleSheet(CSSStyleSheet* style_sheet) {
   // If the parent style sheet ever gets changed, we should call
   // OnMediaRuleMutation() on the old style sheet here.
-  DCHECK(!parent_style_sheet() || parent_style_sheet() == style_sheet);
+  DCHECK(!parent_style_sheet() || parent_style_sheet().get() == style_sheet);
 
   set_parent_style_sheet(style_sheet);
 

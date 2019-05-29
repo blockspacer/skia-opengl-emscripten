@@ -36,4 +36,33 @@ bool Base64Decode(const StringPiece& input, std::string* output) {
   return true;
 }
 
+#if defined(STARBOARD)
+// Cobalt uses different C++ types for different corresponding JavaScript types
+// and we want to have the flexibility to base64 decode string into types like
+// std::vector<uint8_t>.
+template <class Container>
+bool Base64DecodeInternal(const StringPiece& input, Container* output) {
+  Container temp;
+  temp.resize(modp_b64_decode_len(input.size()));
+
+  int input_size = static_cast<int>(input.size());
+  // When using this template for a new type, make sure its content is unsigned
+  // char or char.
+  static_assert(sizeof(typename Container::value_type) == 1,
+                "Input type should be char or equivalent.");
+  int output_size = modp_b64_decode(reinterpret_cast<char*>(&(temp[0])),
+                                    input.data(), input_size);
+  if (output_size < 0)
+    return false;
+
+  temp.resize(output_size);
+  output->swap(temp);
+  return true;
+}
+
+bool Base64Decode(const StringPiece& input, std::vector<uint8_t>* output) {
+  return Base64DecodeInternal(input, output);
+}
+#endif  // STARBOARD
+
 }  // namespace base

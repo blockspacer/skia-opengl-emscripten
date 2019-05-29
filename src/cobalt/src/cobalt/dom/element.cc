@@ -74,7 +74,7 @@ Element::Element(Document* document)
   ++(element_count_log.Get().count);
 }
 
-Element::Element(Document* document, base::Token local_name)
+Element::Element(Document* document, base::CobToken local_name)
     : Node(document),
       local_name_(local_name),
       animations_(new web_animations::AnimationSet()) {
@@ -247,7 +247,7 @@ void Element::SetAttribute(const std::string& name, const std::string& value) {
   switch (attr_name.size()) {
     case 2:
       if (attr_name == "id") {
-        id_attribute_ = base::Token(value);
+        id_attribute_ = base::CobToken(value);
       }
       break;
     case 5:
@@ -309,7 +309,7 @@ void Element::RemoveAttribute(const std::string& name) {
   switch (attr_name.size()) {
     case 2:
       if (attr_name == "id") {
-        id_attribute_ = base::Token("");
+        id_attribute_ = base::CobToken("");
       }
       break;
     case 5:
@@ -331,7 +331,7 @@ void Element::RemoveAttribute(const std::string& name) {
 
 // Algorithm for tag_name:
 //   https://www.w3.org/TR/dom/#dom-element-tagname
-base::Token Element::tag_name() const {
+base::CobToken Element::tag_name() const {
   // 1. If context object's namespace prefix is not null, let qualified name be
   // its namespace prefix, followed by a ":" (U+003A), followed by its local
   // name. Otherwise, let qualified name be its local name.
@@ -345,7 +345,7 @@ base::Token Element::tag_name() const {
   }
 
   // 3. Return qualified name.
-  return base::Token(qualified_name);
+  return base::CobToken(qualified_name);
 }
 
 // Algorithm for HasAttribute:
@@ -620,7 +620,7 @@ bool Element::IsEmpty() {
 
 bool Element::HasFocus() {
   Document* document = node_document();
-  return document ? (document->active_element() == this) : false;
+  return document ? (document->active_element().get() == this) : false;
 }
 
 base::Optional<std::string> Element::GetStyleAttribute() const {

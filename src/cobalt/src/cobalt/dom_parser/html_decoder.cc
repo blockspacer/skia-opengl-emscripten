@@ -17,7 +17,10 @@
 #include "cobalt/csp/content_security_policy.h"
 #include "cobalt/dom/csp_delegate.h"
 #include "cobalt/dom_parser/libxml_html_parser_wrapper.h"
+
+#if defined(ENABLE_NET_FETCHER)
 #include "cobalt/loader/net_fetcher.h"
+#endif // ENABLE_NET_FETCHER
 
 namespace cobalt {
 namespace dom_parser {
@@ -38,6 +41,7 @@ HTMLDecoder::HTMLDecoder(
 
 HTMLDecoder::~HTMLDecoder() {}
 
+#if defined(ENABLE_NET_FETCHER)
 loader::LoadResponseType HTMLDecoder::OnResponseStarted(
     loader::Fetcher* fetcher,
     const scoped_refptr<net::HttpResponseHeaders>& headers) {
@@ -68,6 +72,7 @@ loader::LoadResponseType HTMLDecoder::OnResponseStarted(
     return loader::kLoadResponseAbort;
   }
 }
+#endif // ENABLE_NET_FETCHER
 
 void HTMLDecoder::DecodeChunk(const char* data, size_t size) {
   DCHECK(thread_checker_.CalledOnValidThread());

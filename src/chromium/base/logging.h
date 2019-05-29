@@ -31,6 +31,12 @@
 #include <emscripten/emscripten.h>
 #endif
 
+#if defined(STARBOARD)
+#include "starboard/log.h"
+#include "starboard/system.h"
+#include "starboard/types.h"
+#endif
+
 //
 // Optional message capabilities
 // -----------------------------
@@ -188,7 +194,8 @@ enum LoggingDestination {
   // stderr.
 #if defined(OS_WIN)
   LOG_DEFAULT = LOG_TO_FILE,
-#elif defined(OS_POSIX) || defined(OS_FUCHSIA)
+#elif defined(STARBOARD) || defined(OS_FUCHSIA) \
+    || defined(OS_POSIX) || defined(OS_EMSCRIPTEN)
   LOG_DEFAULT = LOG_TO_SYSTEM_DEBUG_LOG,
 #endif
 };
@@ -626,7 +633,11 @@ class CheckOpResult {
   } while (false)
 #endif
 
-#if defined(__clang__) || defined(COMPILER_GCC)
+#if defined(STARBOARD)
+#define IMMEDIATE_CRASH() SB_CHECK(false)
+#elif defined(OS_EMSCRIPTEN)
+#define IMMEDIATE_CRASH() DCHECK(false)
+#elif defined(__clang__) || defined(COMPILER_GCC)
 #define IMMEDIATE_CRASH()    \
   ({                         \
     WRAPPED_TRAP_SEQUENCE(); \

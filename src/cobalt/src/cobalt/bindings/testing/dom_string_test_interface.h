@@ -18,7 +18,10 @@
 #include <string>
 
 #include "base/optional.h"
-#include "cobalt/base/token.h"
+
+#include "cobalt/base/cobalt_token.h"
+//#include "base/token.h"
+
 #include "cobalt/script/wrappable.h"
 #include "testing/gmock/include/gmock/gmock.h"
 
@@ -36,7 +39,7 @@ class DOMStringTestInterface : public script::Wrappable {
   MOCK_CONST_METHOD0(read_only_property, std::string());
 
   // readonly attribute DOMString readOnlyTokenProperty
-  MOCK_CONST_METHOD0(read_only_token_property, base::Token());
+  MOCK_CONST_METHOD0(read_only_token_property, base::CobToken());
 
   MOCK_CONST_METHOD0(null_is_empty_property, std::string());
   MOCK_METHOD1(set_null_is_empty_property, void(const std::string&));

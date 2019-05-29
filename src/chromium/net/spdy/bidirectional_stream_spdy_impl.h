@@ -61,7 +61,10 @@ class NET_EXPORT_PRIVATE BidirectionalStreamSpdyImpl
   int64_t GetTotalReceivedBytes() const override;
   int64_t GetTotalSentBytes() const override;
   bool GetLoadTimingInfo(LoadTimingInfo* load_timing_info) const override;
+
+#ifdef ENABLE_QUIC
   void PopulateNetErrorDetails(NetErrorDetails* details) override;
+#endif // ENABLE_QUIC
 
   // SpdyStream::Delegate implementation:
   void OnHeadersSent() override;

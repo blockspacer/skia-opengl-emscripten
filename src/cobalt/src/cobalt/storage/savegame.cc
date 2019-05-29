@@ -28,14 +28,14 @@ Savegame::Savegame(const Options& options) : options_(options) {}
 
 Savegame::~Savegame() {}
 
-bool Savegame::Read(std::vector<uint8>* bytes, size_t max_to_read) {
+bool Savegame::Read(std::vector<uint8_t>* bytes, size_t max_to_read) {
   DCHECK(thread_checker_.CalledOnValidThread());
   TRACE_EVENT0("cobalt::storage", "Savegame::Read()");
   bool ret = PlatformRead(bytes, max_to_read);
   return ret;
 }
 
-bool Savegame::Write(const std::vector<uint8>& bytes) {
+bool Savegame::Write(const std::vector<uint8_t>& bytes) {
   DCHECK(thread_checker_.CalledOnValidThread());
   TRACE_EVENT0("cobalt::storage", "Savegame::Write()");
   if (bytes == last_bytes_) {

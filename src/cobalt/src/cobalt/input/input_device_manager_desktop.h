@@ -48,7 +48,7 @@ class InputDeviceManagerDesktop : public InputDeviceManager {
   void HandleInputEvent(const system_window::InputEvent* event);
 #endif  // SB_HAS(ON_SCREEN_KEYBOARD)
 
-  void HandlePointerEvent(base::Token type,
+  void HandlePointerEvent(base::CobToken type,
                           const system_window::InputEvent* input_event);
 
   void HandleWheelEvent(const system_window::InputEvent* input_event);

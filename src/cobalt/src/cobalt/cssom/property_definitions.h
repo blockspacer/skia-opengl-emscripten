@@ -252,24 +252,26 @@ typedef std::bitset<kNumLonghandProperties> LonghandPropertiesBitset;
 
 // Make PropertyKey usable as key in base::hash_map.
 
-namespace BASE_HASH_NAMESPACE {
+//namespace BASE_HASH_NAMESPACE {
 
 //
 // GCC-flavored hash functor.
 //
 #if defined(BASE_HASH_USE_HASH_STRUCT)
 
+//#include <hash_fun.h>
+
 // Forward declaration in case <hash_fun.h> is not #include'd.
 template <>
-struct hash<cobalt::cssom::PropertyKey>;
+struct std::hash<cobalt::cssom::PropertyKey>;
 
 template <>
-struct hash<cobalt::cssom::PropertyKey> {
+struct std::hash<cobalt::cssom::PropertyKey> {
   size_t operator()(const cobalt::cssom::PropertyKey& key) const {
     return base_hash(key);
   }
 
-  hash<intptr_t> base_hash;
+  std::hash<intptr_t> base_hash;
 };
 
 //
@@ -309,6 +311,6 @@ class hash_compare<cobalt::cssom::PropertyKey, Predicate> {
 };
 
 #endif
-}  // namespace BASE_HASH_NAMESPACE
+//}  // namespace BASE_HASH_NAMESPACE
 
 #endif  // COBALT_CSSOM_PROPERTY_DEFINITIONS_H_

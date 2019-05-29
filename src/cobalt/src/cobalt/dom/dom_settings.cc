@@ -31,7 +31,9 @@ DOMSettings::DOMSettings(
     MutationObserverTaskManager* mutation_observer_task_manager,
     const Options& options)
     : max_dom_element_depth_(max_dom_element_depth),
+#ifdef ENABLE_SPEECH
       microphone_options_(options.microphone_options),
+#endif
       fetcher_factory_(fetcher_factory),
       network_module_(network_module),
       window_(window),
