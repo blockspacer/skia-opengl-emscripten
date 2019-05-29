@@ -500,7 +500,7 @@ using cc::TransformKeyframe;
 //#include "ui/views/controls/menu/submenu_view.h"
 //#include "ui/views/widget/widget.h"
 
-static std::unique_ptr<gfx::ImageSkia> gfxImageSkia;
+static ::std::unique_ptr<gfx::ImageSkia> gfxImageSkia;
 static sk_sp<SkImage> skImageSp;
 #endif // ENABLE_UI
 
@@ -555,11 +555,6 @@ static sk_sp<SkImage> skImageSp;
 #include "third_party/blink/renderer/platform/wtf/vector.h"
 
 #endif // ENABLE_BLINK_PLATFORM
-
-#define ENABLE_COBALT 1
-#ifdef ENABLE_COBALT
-#include "cobalt/web_animations/animation.h"
-#endif // ENABLE_COBALT
 
 #ifdef ENABLE_HARFBUZZ
 #include <hb-ot.h>
@@ -733,6 +728,34 @@ sk_sp<const GrGLInterface> emscripten_GrGLMakeNativeInterface() {
 }
 #endif
 
+/// \note defined by CMAKE
+//#ifndef ENABLE_COBALT
+//#define ENABLE_COBALT 1
+//#endif
+#ifdef ENABLE_COBALT
+#include "cobalt/web_animations/animation.h"
+
+#include "cobalt/src/cobalt/loader/decoder.h"
+
+#include "cobalt/dom_parser/html_decoder.h"
+#include "base/callback.h"
+////#include "base/message_loop.h"
+#include "cobalt/dom/attr.h"
+#include "cobalt/dom/document.h"
+#include "cobalt/dom/dom_stat_tracker.h"
+#include "cobalt/dom/element.h"
+#include "cobalt/dom/html_collection.h"
+#include "cobalt/dom/html_element_context.h"
+#include "cobalt/dom/named_node_map.h"
+
+//#include "cobalt/dom/testing/stub_css_parser.h"
+//#include "cobalt/dom/testing/stub_script_runner.h"
+
+#include "cobalt/dom/text.h"
+#include "cobalt/dom_parser/parser.h"
+//#include "cobalt/loader/fetcher_factory.h"
+#endif // ENABLE_COBALT
+
 #ifdef USE_LIBJPEG
 static SkString fImagePath = SkString("./resources/images/JPEG_example.jpg");
 #else
@@ -760,11 +783,11 @@ static const float FONT_SIZE_F = 22.0f;
 // see https://github.com/sam8dec/skia/blob/master/tools/using_skia_and_harfbuzz.cpp#L140
 // see https://github.com/chromium/chromium/blob/master/third_party/blink/renderer/platform/fonts/shaping/harfbuzz_face.cc#L68
 struct HBFDel { void operator()(hb_face_t* f) { hb_face_destroy(f); } };
-static std::unique_ptr<hb_face_t, HBFDel> fHarfBuzzFace;
+static ::std::unique_ptr<hb_face_t, HBFDel> fHarfBuzzFace;
 struct HBFontDel {
     void operator()(hb_font_t* f) { hb_font_destroy(f); }
 };
-static std::unique_ptr<hb_font_t, HBFontDel> fHarfBuzzFont;
+static ::std::unique_ptr<hb_font_t, HBFontDel> fHarfBuzzFont;
 static const int FONT_SIZE_SCALE = 512;
 //static SkPaint glyph_paint;
 
@@ -842,9 +865,9 @@ static bool DrawGlyphs(double current_x, double current_y,
 }*/
 #endif // ENABLE_HARFBUZZ
 
-// static std::string input    = "Input .json file.";//);
-////static std::string(writePath, w, nullptr, "Output directory.  Frames are names [0-9]{6}.png.");
-// static std::string format   = "png";//  , "Output format (png or skp)");
+// static ::std::string input    = "Input .json file.";//);
+////static ::std::string(writePath, w, nullptr, "Output directory.  Frames are names [0-9]{6}.png.");
+// static ::std::string format   = "png";//  , "Output format (png or skp)");
 // static double t0=   0;//, "Timeline start [0..1].");
 // static double t1=   1;//, "Timeline stop [0..1].");
 // static double fps= 30;//, "Decode frames per second.");
@@ -976,7 +999,7 @@ static void initSkiaSurface(int w, int h) {
     printf("create GrContext...\n");
 
     GrContextOptions options;
-    grContext = GrContext::MakeGL(std::move(sInterface), options).release();
+    grContext = GrContext::MakeGL(::std::move(sInterface), options).release();
     if (!grContext) {
       printf("failed to create grContext.\n");
     }
@@ -1140,7 +1163,7 @@ public:
 #ifdef ENABLE_HARFBUZZ
     {
       // https://github.com/chromium/chromium/blob/422f901782f0a5f274a6065fbff3983279ef3c0b/chrome/browser/vr/elements/text.cc#L424
-      std::unique_ptr<gfx::RenderText> render_text_ptr = gfx::RenderText::CreateHarfBuzzInstance();
+      ::std::unique_ptr<gfx::RenderText> render_text_ptr = gfx::RenderText::CreateHarfBuzzInstance();
       gfx::RenderText* render_text = render_text_ptr.get();
       WTF::String render_test_string = String::FromUTF8("r\xC3\xA9sum\xC3\xA9");
       render_text->SetText(render_test_string.Characters16());
@@ -1313,7 +1336,7 @@ public:
   // see https://chromium.googlesource.com/chromium/src/+/master/third_party/blink/renderer/platform/graphics/paint/README.md
   // see https://blog.csdn.net/tornmy/article/details/82593718
   // see https://github.com/chromium/chromium/blob/master/third_party/blink/renderer/platform/graphics/graphics_context_test.cc
-  auto paint_controller = std::make_unique<blink::PaintController>();
+  auto paint_controller = ::std::make_unique<blink::PaintController>();
   blink::GraphicsContext context(*paint_controller);
   //
   blink::PaintFlags flags;
@@ -1389,14 +1412,14 @@ public:
 
   base::WeakPtr<blink::WebGraphicsContext3DProviderWrapper> wptr = nullptr;
   scoped_refptr<blink::StaticBitmapImage> bitmap =
-      blink::StaticBitmapImage::Create(skImageSp, std::move(wptr));
+      blink::StaticBitmapImage::Create(skImageSp, ::std::move(wptr));
   if (!bitmap || bitmap->IsNull() || !bitmap->IsValid()) {
     printf("Invalid StaticBitmapImage\n");
   }
 
   //blink::Image* img = blink::ImageBitmap::cr;
   //  CreatePaintImageBuilder()
-  //        .set_image(std::move(image), cc::PaintImage::GetNextContentId())
+  //        .set_image(::std::move(image), cc::PaintImage::GetNextContentId())
   //blink::ImageBitmap image_bitmap_no_crop();
   //
   //blink::Image img = gfx::ImageSkia(imageSkia->GetRepresentation(10.0f));
@@ -1436,7 +1459,7 @@ static GLuint LoadShader(GLenum type, const char* shaderSrc) {
   GLint compiled;
 
   shader = glCreateShader(type);
-  GL_CHECK_WITH_MESSAGE((std::string("failed glCreateShader for") + shaderSrc).c_str());
+  GL_CHECK_WITH_MESSAGE((::std::string("failed glCreateShader for") + shaderSrc).c_str());
   if (shader == 0) {
     printf("shader == 0 \n");
     return 0;
@@ -1498,7 +1521,7 @@ static int InitGL() {
   fragmentShader = LoadShader(GL_FRAGMENT_SHADER, fShaderStr);
 
   programObject = glCreateProgram();
-  GL_CHECK_WITH_MESSAGE((std::string("failed glCreateProgram for") + vShaderStr).c_str());
+  GL_CHECK_WITH_MESSAGE((::std::string("failed glCreateProgram for") + vShaderStr).c_str());
   if (programObject == 0) {
     printf("programObject == 0 \n");
     return 0;
@@ -1664,7 +1687,7 @@ static void animate() {
   if (fAnimation) {
     const auto t = SDL_GetTicks() - fTimeBase;
     const auto d = fAnimation->duration() * 1000;
-    fAnimation->seek(std::fmod(t, d) / d);
+    fAnimation->seek(::std::fmod(t, d) / d);
   }
 #else
 #error "TODO: port SDL_GetTicks without SDL"
@@ -1845,7 +1868,7 @@ int main(int argc, char** argv) {
 
   printf("Init FontList ...\n");
   // Use a single default font as the default font list.
-  gfx::FontList::SetDefaultFontDescription(std::string());
+  gfx::FontList::SetDefaultFontDescription(::std::string());
 
   printf("Init logging ...\n");
 
@@ -1908,7 +1931,7 @@ int main(int argc, char** argv) {
     printf("thread testing started\n");
     base::OnceClosure* closure = nullptr;
     //base::OnceCallback<void()> binded = base::BindOnce(&MakeClosure, &closure);
-    //std::move(binded).Run();
+    //::std::move(binded).Run();
 
     //PlatformThread::CurrentId()
     //base::Thread::ThreadMain().
@@ -1925,11 +1948,11 @@ int main(int argc, char** argv) {
 
     auto AsyncTaskCb = [](const int x) {
       //printf("AsyncTaskCb %d\n", x);
-      std::cout << "AsyncTaskCb " << x << " " << base::Time::Now() << "\n";
+      ::std::cout << "AsyncTaskCb " << x << " " << base::Time::Now() << "\n";
     };
 
     //printf("thread testing PostDelayedTask...\n");
-    std::cout << "thread testing PostTask 0..." << base::Time::Now() << "\n";
+    ::std::cout << "thread testing PostTask 0..." << base::Time::Now() << "\n";
 
     // see https://habr.com/ru/post/256907/
     DCHECK(thread.task_runner());
@@ -1940,7 +1963,7 @@ int main(int argc, char** argv) {
                  base::Bind(AsyncTaskCb)),
       base::TimeDelta::FromSeconds(3));
 
-    // std::cout << "thread testing PostTask 1..." << base::Time::Now() << "\n";
+    // ::std::cout << "thread testing PostTask 1..." << base::Time::Now() << "\n";
 
     DCHECK(thread.task_runner());
     thread.task_runner()->PostTask(
@@ -1954,7 +1977,7 @@ int main(int argc, char** argv) {
             printf("BindOncePostTask 2\n");
           })));
 
-    //std::cout << "thread testing PostTask 2..." << base::Time::Now() << "\n";
+    //::std::cout << "thread testing PostTask 2..." << base::Time::Now() << "\n";
 
     //DCHECK(thread.task_runner());
     //thread.task_runner()->PostTask(
@@ -1964,14 +1987,14 @@ int main(int argc, char** argv) {
     //             base::Bind(AsyncTaskCb)));
     //
     ////printf("thread testing Wait...\n");
-    std::cout << "thread testing start Wait..." << base::Time::Now() << "\n";
+    ::std::cout << "thread testing start Wait..." << base::Time::Now() << "\n";
 
     event.Wait();
 
     printf("thread.Stop()...\n");
     thread.Stop();
 
-    std::cout << "thread testing ended..." << base::Time::Now() << "\n";
+    ::std::cout << "thread testing ended..." << base::Time::Now() << "\n";
     //printf("thread testing ended\n");
   }
 #endif // ENABLE_THREAD_TESTS
@@ -2147,7 +2170,7 @@ int main(int argc, char** argv) {
 
 #ifdef ENABLE_BASE
   {
-    std::string s("destroy me");
+    ::std::string s("destroy me");
     scoped_refptr<base::RefCountedMemory> mem = base::RefCountedString::TakeString(&s);
 
     //EXPECT_EQ(0U, s.size());
@@ -2164,13 +2187,13 @@ int main(int argc, char** argv) {
   }
 
   {
-      base::small_map<std::map<std::string, std::string>> foo;
-      foo.insert(std::make_pair("foo", "bar"));
-      foo.insert(std::make_pair("bar", "bar"));
-      foo.insert(std::make_pair("foo1", "bar"));
-      foo.insert(std::make_pair("bar1", "bar"));
-      foo.insert(std::make_pair("foo", "bar"));
-      foo.insert(std::make_pair("bar", "bar"));
+      base::small_map<::std::map<::std::string, ::std::string>> foo;
+      foo.insert(::std::make_pair("foo", "bar"));
+      foo.insert(::std::make_pair("bar", "bar"));
+      foo.insert(::std::make_pair("foo1", "bar"));
+      foo.insert(::std::make_pair("bar1", "bar"));
+      foo.insert(::std::make_pair("foo", "bar"));
+      foo.insert(::std::make_pair("bar", "bar"));
       auto found = foo.find("asdf");
       printf("1 Found == foo.end() %d\n", (int)(found == foo.end()));
       found = foo.find("foo");
@@ -2489,10 +2512,10 @@ int main(int argc, char** argv) {
       return 1;
     }
     DCHECK(fileData != nullptr);
-    std::unique_ptr<SkBitmap> decoded(new SkBitmap());
+    ::std::unique_ptr<SkBitmap> decoded(new SkBitmap());
     /*
   static bool Decode(const unsigned char* input, size_t input_size,
-                     ColorFormat format, std::vector<unsigned char>* output,
+                     ColorFormat format, ::std::vector<unsigned char>* output,
                      int* w, int* h);
   static bool Decode(const unsigned char* input, size_t input_size,
                      SkBitmap* bitmap);
@@ -2511,7 +2534,7 @@ int main(int argc, char** argv) {
     //fetched_bitmap.setIsOpaque(isOpaque);
     //gfx::ImageSkia imageSkia(gfx::ImageSkiaRep(*decoded, /*scale=*/1.0));
     gfx::ImageSkiaRep rep = gfx::ImageSkiaRep(*decoded, /*scale=*/1.0);
-    gfxImageSkia = std::make_unique<gfx::ImageSkia>(rep);
+    gfxImageSkia = ::std::make_unique<gfx::ImageSkia>(rep);
     if (!gfxImageSkia || gfxImageSkia->isNull()) {
       printf("can`t get gfxImageSkia\n");
       return 1;
@@ -2563,13 +2586,88 @@ int main(int argc, char** argv) {
           base::TimeDelta::FromMilliseconds(3000));
   // EXPECT_EQ(1.0, local_time->InSecondsF());
   printf("local_time->InSecondsF() %f\n", local_time->InSecondsF());
+
+  using namespace cobalt;
+  using namespace cobalt::dom_parser;
+  using namespace cobalt::loader;
+
+  const ::std::string input =
+      "<html>"
+      "<head>"
+      "<meta content='text/html; charset=gb2312' http-equiv=Content-Type>"
+      "</head>"
+      "<body>test1陈绮贞</body>"
+      "</html>";
+  std::unique_ptr<HTMLDecoder> html_decoder_;
+
+  loader::FetcherFactory fetcher_factory_
+    (NULL /* network_module */);
+  loader::LoaderFactory loader_factory_
+    (&fetcher_factory_, NULL /* ResourceProvider */,
+                      base::ThreadPriority::NORMAL);
+  std::unique_ptr<Parser> dom_parser_
+    (new Parser());
+  //dom::testing::StubCSSParser stub_css_parser_;
+  //dom::testing::StubScriptRunner stub_script_runner_;
+  std::unique_ptr<dom::DomStatTracker> dom_stat_tracker_;
+
+  dom::HTMLElementContext html_element_context_
+    (
+          //&fetcher_factory_, &loader_factory_, &stub_css_parser_,
+          &fetcher_factory_, &loader_factory_, NULL,
+          dom_parser_.get(), NULL /* can_play_type_handler */,
+          //NULL /* web_media_player_factory */, &stub_script_runner_,
+          NULL /* web_media_player_factory */, NULL,
+          NULL /* script_value_factory */, NULL, NULL, NULL, NULL, NULL, NULL,
+          NULL, dom_stat_tracker_.get(), "", base::kApplicationStateStarted,
+          NULL);
+  scoped_refptr<dom::Document> document_
+    (new dom::Document(&html_element_context_));
+  scoped_refptr<dom::Element> root_
+    (new dom::Element(document_.get(), base::CobToken("element")));
+  base::SourceLocation source_location_
+    (base::SourceLocation("[object HTMLDecoderTest]", 1, 1));
+
+  const int kDOMMaxElementDepth = 32;
+
+// typedef base::Callback<void(const base::Optional<std::string>&)>
+//     OnCompleteFunction;
+
+  Decoder::OnCompleteFunction fc = base::Bind([](const base::Optional<std::string>& a){
+    printf("Decoder::OnCompleteFunction\n");
+  });
+
+// const base::Optional<std::string>&
+  html_decoder_.reset(new HTMLDecoder(
+      document_, document_, NULL, kDOMMaxElementDepth,
+      source_location_,
+      fc,
+      true, csp::kCSPOptional));
+  html_decoder_->DecodeChunk(input.c_str(), input.length());
+  html_decoder_->Finish();
+  root_ = document_->first_element_child();
+
+  //ASSERT_TRUE(root_);
+  //EXPECT_EQ("html", root_->tag_name());
+
+  printf("root_->tag_name() %s\n", root_->tag_name().c_str());
+
+  //EXPECT_EQ(1, root_->children()->length());
+
+  dom::Element* head = root_->first_element_child();
+
+  //ASSERT_TRUE(head);
+  //EXPECT_EQ("head", head->tag_name());
+
+  printf("head->tag_name() %s\n", head->tag_name().c_str());
+
 #endif // ENABLE_COBALT
 
 #ifdef ENABLE_HARFBUZZ
   sk_sp<SkTypeface> sktp = SkTypeface::MakeFromData(data, index);
 #else
-  /// \note use std::move only if data will not be used any more
-  sk_sp<SkTypeface> sktp = SkTypeface::MakeFromData(std::move(data), index);
+  /// \note use ::std::move only if data will not be used any more
+  sk_sp<SkTypeface> sktp = SkTypeface::MakeFromData(::std::move(data), index);
 #endif
 
   //sk_sp<SkTypeface> sktp = SkTypeface::MakeFromStream(new SkMemoryStream(data), index);

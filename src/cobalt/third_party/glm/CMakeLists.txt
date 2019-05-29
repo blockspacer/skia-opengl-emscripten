@@ -157,6 +157,9 @@ endif()
 include_directories("${PROJECT_SOURCE_DIR}")
 include_directories("${PROJECT_SOURCE_DIR}/test/external")
 
+#message(FATAL_ERROR COBALT_PORT_DIR=${COBALT_PORT_DIR})
+include_directories("${COBALT_PORT_DIR}") # to starboard/types.h
+
 add_subdirectory(glm)
 add_subdirectory(test)
 

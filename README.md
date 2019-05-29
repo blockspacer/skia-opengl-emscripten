@@ -740,6 +740,7 @@ autoninja -C out/linux-x64x11_devel cobalt
 
 ### Wrong memory alignment at WTF::ThreadSpecific<blink::ThreadState*>
 
+1
 Built with SAFE_HEAP=1. SAFE_HEAP=1 adds additional memory access checks, and will give clear errors for problems like dereferencing 0 and memory alignment issues.
 
 NOTE: Generally it is best to avoid unaligned reads and writes
@@ -775,3 +776,17 @@ Thread 1 "skemgl" received signal SIGSEGV, Segmentation fault.
     at /home/denis/workspace/skia-opengl-emscripten/src/chromium/gpu/command_buffer/client/gles2_c_lib_autogen.h:287
 #1  0x000000000041924e in main (argc=1, argv=0x7fffffffd3a8) at /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:2415
 (gdb)
+
+4
+ shared:WARNING: loading from archive wait_set.cc.o, which has duplicate
+  entries (files with identical base names).  this is dangerous as only the
+  last will be taken into account, and you may see surprising undefined
+  symbols later.  you should rename source files to avoid this problem (or
+  avoid .a archives, and just link bitcode together to form libraries for
+  later linking)
+
+  shared:WARNING: duplicate: buffer.cc.o
+
+
+MISC
+https://www.ekioh.com/devblog/gpu-filling-vector-paths/

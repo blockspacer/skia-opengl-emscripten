@@ -198,6 +198,13 @@ if(USE_LIBJPEG)
   set(COMMON_FLAGS "${COMMON_FLAGS} -DUSE_LIBJPEG=1")
 endif()
 
+set(ENABLE_COBALT TRUE)
+if(ENABLE_COBALT)
+  set(COMMON_FLAGS "${COMMON_FLAGS} -DENABLE_COBALT=1")
+  # see https://github.com/blockspacer/cobalt-clone-28052019/blob/master/src/starboard/client_porting/poem/strings_poem.h
+  set(COMMON_FLAGS "${COMMON_FLAGS} -DPOEM_NO_EMULATION=1")
+endif(ENABLE_COBALT)
+
 # custom debug logger for wasm
 set(PORT_OWN_DLOG TRUE)
 if (PORT_OWN_DLOG)
@@ -1110,10 +1117,10 @@ endif(ENABLE_WTF)
 #
 # COBALT
 #
-set(ENABLE_COBALT TRUE)
 if(ENABLE_COBALT)
   set(COBALT_ROOT_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src/)
   set(COBALT_ROOT_DIR ${COBALT_ROOT_PARENT_DIR}cobalt/)
+  set(COBALT_PORT_DIR ${COBALT_ROOT_DIR}port/)
   set(COBALT_CORE_PARENT_DIR ${COBALT_ROOT_DIR}src/)
   set(COBALT_CORE_DIR ${COBALT_CORE_PARENT_DIR}cobalt/)
   set(COBALT_GEN_DIR
@@ -1122,6 +1129,9 @@ if(ENABLE_COBALT)
   set(COBALT_COMMON_DEFINES
     OS_STARBOARD=1
     STARBOARD=1
+    COBALT=1
+    COBALT_LINUX=1
+    MESA_EGL_NO_X11_HEADERS=1
     #
     #COBALT_ENABLE_VERSION_COMPATIBILITY_VALIDATIONS=1
     #
@@ -1133,9 +1143,12 @@ if(ENABLE_COBALT)
     BASE_HASH_DEFINE_STRING_HASHES=0
     BASE_HASH_USE_HASH=0
     BASE_HASH_MAP_INCLUDE="<unordered_map>"
-    BASE_HASH_NAMESPACE=std
+    #BASE_HASH_NAMESPACE=std
+    BASE_HASH_NAMESPACE=bhash # TODO
     BASE_HASH_SET_INCLUDE="<unordered_set>"
     BASE_HASH_USE_HASH_STRUCT=1
+    # https://github.com/blockspacer/cobalt-clone-28052019/blob/master/src/cobalt/dom_parser/libxml_html_parser_wrapper.cc#L119
+    #USE_SYSTEM_LIBXML=1
   )
   #message(FATAL_ERROR ${COBALT_CORE_PARENT_DIR}cobalt/base/circular_buffer_shell.h)
   set(COBALT_COMMON_INCLUDES
@@ -1622,10 +1635,33 @@ target_compile_options(${PROJECT_NAME} PRIVATE
   #-Wno-unknown-pragmas
   #-Wno-nonportable-include-path
   #-Wno-unknown-argument
+  # Warn for implicit type conversions that may change a value.
+  #-Wconversion
+  -Wno-c++11-compat
+  # This complains about "override", which we use heavily.
+  -Wno-c++11-extensions
+  # Warns on switches on enums that cover all enum values but
+  # also contain a default: branch. Chrome is full of that.
+  -Wno-covered-switch-default
+  # protobuf uses hash_map.
+  -Wno-deprecated
+  # Don't warn about the "struct foo f = {0};" initialization pattern.
+  -Wno-missing-field-initializers
+  # Do not warn for implicit sign conversions.
+  -Wno-sign-conversion
+  -Wno-unnamed-type-template-args
+  # Triggered by the COMPILE_ASSERT macro.
+  -Wno-unused-local-typedef
+  # Do not warn if a function or variable cannot be implicitly
+  # instantiated.
+  -Wno-undefined-var-template
+  # Do not warn about an implicit exception spec mismatch.
+  -Wno-implicit-exception-spec-mismatch
 )
 
 add_custom_target(copy-runtime-files ALL
   COMMAND cmake -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/resources ${CMAKE_CURRENT_BINARY_DIR}/resources
   #DEPENDS ${PROJECT_NAME}
 )
+
 add_dependencies(${PROJECT_NAME} copy-runtime-files)
