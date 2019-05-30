@@ -22,9 +22,6 @@
 [submodule "src/chromium/third_party/boringssl/src"]
 	path = src/chromium/third_party/boringssl/src
 	url = https://boringssl.googlesource.com/boringssl.git
-[submodule "src/chromium/net/third_party/quiche/src"]
-	path = src/chromium/net/third_party/quiche/src
-	url = https://quiche.googlesource.com/quiche.git
 [submodule "src/chromium/media/cdm/api"]
 	path = src/chromium/media/cdm/api
 	url = https://chromium.googlesource.com/chromium/cdm.git
@@ -52,3 +49,6 @@
 [submodule "src/chromium/third_party/emoji-segmenter/src"]
 	path = src/chromium/third_party/emoji-segmenter/src
 	url = https://chromium.googlesource.com/external/github.com/googlei18n/emoji-segmenter.git
+[submodule "src/chromium/net_todo/third_party/quiche/src"]
+	path = src/chromium/net_todo/third_party/quiche/src
+	url = https://quiche.googlesource.com/quiche.git
