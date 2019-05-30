@@ -17,6 +17,8 @@
 #include "base/sequence_checker.h"
 #include "base/single_thread_task_runner.h"
 
+#if !defined(OS_EMSCRIPTEN)
+
 namespace base {
 
 class SingleThreadTaskRunner;
@@ -129,5 +131,7 @@ class BASE_EXPORT FileDescriptorWatcher {
 };
 
 }  // namespace base
+
+#endif
 
 #endif  // BASE_FILES_FILE_DESCRIPTOR_WATCHER_POSIX_H_

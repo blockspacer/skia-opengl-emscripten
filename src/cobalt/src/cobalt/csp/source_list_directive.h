@@ -28,8 +28,10 @@ class SourceListDirective : public Directive {
  public:
   class LocalNetworkChecker : public SourceList::LocalNetworkCheckerInterface {
    public:
+#if !defined(__EMSCRIPTEN__) && defined(__TODO__)
     bool IsIPInLocalNetwork(const SbSocketAddress& destination) const override;
     bool IsIPInPrivateRange(const SbSocketAddress& destination) const override;
+#endif
   };
 
   SourceListDirective(const std::string& name, const std::string& value,

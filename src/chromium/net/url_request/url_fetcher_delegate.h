@@ -12,6 +12,10 @@
 
 #include "net/base/net_export.h"
 
+#if defined(STARBOARD)
+#include "starboard/types.h"
+#endif  // defined(STARBOARD)
+
 namespace net {
 
 class URLFetcher;
@@ -19,6 +23,13 @@ class URLFetcher;
 // A delegate interface for users of URLFetcher.
 class NET_EXPORT URLFetcherDelegate {
  public:
+
+#if defined(STARBOARD)
+  // This will be called when the response code and headers have been received.
+  virtual void OnURLFetchResponseStarted(const URLFetcher* source);
+#endif  // defined(STARBOARD)
+
+//#if defined(ENABLE_FETCHER)
   // This will be called when the URL has been fetched, successfully or not.
   // Use accessor methods on |source| to get the results.
   virtual void OnURLFetchComplete(const URLFetcher* source) = 0;
@@ -39,7 +50,7 @@ class NET_EXPORT URLFetcherDelegate {
   virtual void OnURLFetchUploadProgress(const URLFetcher* source,
                                         int64_t current,
                                         int64_t total);
-
+//#endif // ENABLE_FETCHER
  protected:
   virtual ~URLFetcherDelegate();
 };

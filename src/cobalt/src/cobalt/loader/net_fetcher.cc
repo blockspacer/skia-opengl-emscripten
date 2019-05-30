@@ -20,7 +20,11 @@
 #include "base/strings/stringprintf.h"
 #include "cobalt/base/polymorphic_downcast.h"
 #include "cobalt/loader/cors_preflight.h"
+
+#if !defined(__EMSCRIPTEN__) && defined(__TODO__)
 #include "cobalt/network/network_module.h"
+#endif
+
 #include "net/url_request/url_fetcher.h"
 #if defined(OS_STARBOARD)
 #include "starboard/configuration.h"
@@ -75,7 +79,11 @@ bool IsResponseCodeSuccess(int response_code) {
 NetFetcher::NetFetcher(const GURL& url,
                        const csp::SecurityCallback& security_callback,
                        Handler* handler,
+
+#if !defined(__EMSCRIPTEN__) && defined(__TODO__)
                        const network::NetworkModule* network_module,
+#endif
+
                        const Options& options, RequestMode request_mode,
                        const Origin& origin)
     : Fetcher(handler),
@@ -85,8 +93,12 @@ NetFetcher::NetFetcher(const GURL& url,
       request_cross_origin_(false),
       origin_(origin) {
   url_fetcher_ = net::URLFetcher::Create(url, options.request_method, this);
+
+#if !defined(__EMSCRIPTEN__) && defined(__TODO__)
   url_fetcher_->SetRequestContext(
       network_module->url_request_context_getter().get());
+#endif
+
   auto* download_data_writer = new CobaltURLFetcherStringWriter();
   url_fetcher_->SaveResponseWithWriter(
       std::unique_ptr<CobaltURLFetcherStringWriter>(download_data_writer));
@@ -98,16 +110,20 @@ NetFetcher::NetFetcher(const GURL& url,
   if ((request_cross_origin_ &&
        (request_mode == kCORSModeSameOriginCredentials)) ||
       request_mode == kCORSModeOmitCredentials) {
+
+#if !defined(__EMSCRIPTEN__) && defined(__TODO__)
     const uint32 kDisableCookiesLoadFlags =
         net::LOAD_NORMAL | net::LOAD_DO_NOT_SAVE_COOKIES |
         net::LOAD_DO_NOT_SEND_COOKIES | net::LOAD_DO_NOT_SEND_AUTH_DATA;
     url_fetcher_->SetLoadFlags(kDisableCookiesLoadFlags);
+#endif
+
   }
 
   // Delay the actual start until this function is complete. Otherwise we might
   // call handler's callbacks at an unexpected time- e.g. receiving OnError()
   // while a loader is still being constructed.
-  base::MessageLoop::current()->task_runner()->PostTask(
+  base::MessageLoopCurrent::Get()->task_runner()->PostTask(
       FROM_HERE, start_callback_.callback());
 }
 

@@ -53,16 +53,20 @@ std::unique_ptr<Loader> LoaderFactory::CreateImageLoader(
   Loader::FetcherCreator fetcher_creator =
       MakeFetcherCreator(url, url_security_callback, kNoCORSMode, origin);
 
+#if defined(__TODO__)
   std::unique_ptr<Loader> loader(new Loader(
       fetcher_creator,
       base::Bind(&image::ThreadedImageDecoderProxy::Create, resource_provider_,
-                 image_available_callback, load_thread_.message_loop()),
+      //           image_available_callback, load_thread_.message_loop()),
+                 image_available_callback, base::MessageLoopCurrent::Get()),
       load_complete_callback,
       base::Bind(&LoaderFactory::OnLoaderDestroyed, base::Unretained(this)),
       is_suspended_));
-
   OnLoaderCreated(loader.get());
   return loader;
+#else
+  return nullptr;
+#endif
 }
 
 std::unique_ptr<Loader> LoaderFactory::CreateTypefaceLoader(
@@ -177,8 +181,10 @@ void LoaderFactory::Suspend() {
     (*iter)->Suspend();
   }
 
+#if defined(__TODO__)
   // Wait for all loader thread messages to be flushed before returning.
   load_thread_.message_loop()->task_runner()->WaitForFence();
+#endif
 }
 
 void LoaderFactory::Resume(render_tree::ResourceProvider* resource_provider) {

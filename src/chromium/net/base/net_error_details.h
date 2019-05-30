@@ -7,7 +7,10 @@
 
 #include "net/base/net_export.h"
 #include "net/http/http_response_info.h"
+
+#if defined(ENABLE_QUIC)
 #include "net/third_party/quiche/src/quic/core/quic_packets.h"
+#endif
 
 namespace net {
 
@@ -16,20 +19,33 @@ namespace net {
 struct NET_EXPORT NetErrorDetails {
   NetErrorDetails()
       : quic_broken(false),
+#if defined(ENABLE_QUIC)
         quic_connection_error(quic::QUIC_NO_ERROR),
+#endif
         connection_info(HttpResponseInfo::CONNECTION_INFO_UNKNOWN),
         quic_port_migration_detected(false) {}
 
-  NetErrorDetails(bool quic_broken, quic::QuicErrorCode quic_connection_error)
+  NetErrorDetails(bool quic_broken
+#if defined(ENABLE_QUIC)
+  ,
+  quic::QuicErrorCode quic_connection_error
+#endif
+  )
       : quic_broken(quic_broken),
+
+#if defined(ENABLE_QUIC)
         quic_connection_error(quic_connection_error),
+#endif
+
         connection_info(HttpResponseInfo::CONNECTION_INFO_UNKNOWN),
         quic_port_migration_detected(false) {}
 
   // True if all QUIC alternative services are marked broken for the origin.
   bool quic_broken;
+#if defined(ENABLE_QUIC)
   // QUIC granular error info.
   quic::QuicErrorCode quic_connection_error;
+#endif
   // Early prediction of the connection type that this request attempts to use.
   // Will be discarded by upper layers if the connection type can be fetched
   // from response header from the server.

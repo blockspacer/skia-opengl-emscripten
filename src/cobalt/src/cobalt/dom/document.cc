@@ -113,13 +113,21 @@ Document::Document(HTMLElementContext* html_element_context,
   }
 
   std::unique_ptr<CspViolationReporter> violation_reporter(
-      new CspViolationReporter(this, options.post_sender));
+      new CspViolationReporter(this
+
+#if !defined(__EMSCRIPTEN__) && defined(__TODO__)
+      ,
+      options.post_sender
+#endif
+      ));
   csp_delegate_ = CspDelegateFactory::GetInstance()->Create(
       options.csp_enforcement_mode, std::move(violation_reporter), options.url,
       options.require_csp, options.csp_policy_changed_callback,
       options.csp_insecure_allowed_token);
 
+#if !defined(__EMSCRIPTEN__) && defined(__TODO__)
   cookie_jar_ = options.cookie_jar;
+#endif
 
   location_ = new Location(
       options.url, options.hashchange_callback, options.navigation_callback,
@@ -413,9 +421,13 @@ void Document::set_cookie(const std::string& cookie,
                         exception_state);
     return;
   }
+
+#if !defined(__EMSCRIPTEN__) && defined(__TODO__)
   if (cookie_jar_) {
     cookie_jar_->SetCookie(url_as_gurl(), cookie);
   }
+#endif
+
 }
 
 // https://html.spec.whatwg.org/#dom-document-cookie
@@ -431,10 +443,13 @@ std::string Document::cookie(script::ExceptionState* exception_state) const {
                         exception_state);
     return "";
   }
+#if !defined(__EMSCRIPTEN__) && defined(__TODO__)
   if (cookie_jar_) {
     return net::CanonicalCookie::BuildCookieLine(
         cookie_jar_->GetCookies(url_as_gurl()));
-  } else {
+  } else
+#endif
+  {
     DLOG(WARNING) << "Document has no cookie jar";
     return "";
   }
@@ -450,9 +465,12 @@ void Document::set_cookie(const std::string& cookie) {
     DLOG(WARNING) << "Document origin is opaque, cookie setting failed";
     return;
   }
+
+#if !defined(__EMSCRIPTEN__) && defined(__TODO__)
   if (cookie_jar_) {
     cookie_jar_->SetCookie(url_as_gurl(), cookie);
   }
+#endif
 }
 
 std::string Document::cookie() const {
@@ -465,10 +483,14 @@ std::string Document::cookie() const {
     DLOG(WARNING) << "Document origin is opaque, cookie getting failed";
     return "";
   }
+
+#if !defined(__EMSCRIPTEN__) && defined(__TODO__)
   if (cookie_jar_) {
     return net::CanonicalCookie::BuildCookieLine(
         cookie_jar_->GetCookies(url_as_gurl()));
-  } else {
+  } else
+#endif
+  {
     DLOG(WARNING) << "Document has no cookie jar";
     return "";
   }

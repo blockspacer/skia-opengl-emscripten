@@ -11,24 +11,29 @@
 #include "base/stl_util.h"
 #include "net/http/bidirectional_stream_impl.h"
 #include "net/log/net_log_event_type.h"
+#ifdef ENABLE_SPDY
 #include "net/spdy/bidirectional_stream_spdy_impl.h"
 #include "net/spdy/spdy_http_stream.h"
 #include "net/spdy/spdy_session.h"
-
+#endif
 namespace net {
 
 HttpStreamRequest::HttpStreamRequest(
     const GURL& url,
     Helper* helper,
     HttpStreamRequest::Delegate* delegate,
+#ifdef ENABLE_WS
     WebSocketHandshakeStreamBase::CreateHelper*
         websocket_handshake_stream_create_helper,
+#endif
     const NetLogWithSource& net_log,
     StreamType stream_type)
     : url_(url),
       helper_(helper),
+#ifdef ENABLE_WS
       websocket_handshake_stream_create_helper_(
           websocket_handshake_stream_create_helper),
+#endif
       net_log_(net_log),
       completed_(false),
       was_alpn_negotiated_(false),
@@ -90,9 +95,11 @@ void HttpStreamRequest::AddConnectionAttempts(
     connection_attempts_.push_back(attempt);
 }
 
+#ifdef ENABLE_WS
 WebSocketHandshakeStreamBase::CreateHelper*
 HttpStreamRequest::websocket_handshake_stream_create_helper() const {
   return websocket_handshake_stream_create_helper_;
 }
+#endif
 
 }  // namespace net

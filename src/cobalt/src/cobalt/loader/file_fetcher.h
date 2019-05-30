@@ -45,7 +45,7 @@ class FileFetcher : public Fetcher {
         : buffer_size(kDefaultBufferSize),
           start_offset(0),
           bytes_to_read(std::numeric_limits<int64>::max()),
-          message_loop_proxy(base::MessageLoop::current()->task_runner()) {}
+          message_loop_proxy(base::MessageLoopCurrent::Get()->task_runner()) {}
 
     int32 buffer_size;
     int64 start_offset;

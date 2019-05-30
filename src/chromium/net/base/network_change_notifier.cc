@@ -17,7 +17,9 @@
 #include "net/base/network_change_notifier_factory.h"
 #include "net/base/network_interfaces.h"
 #include "net/base/url_util.h"
+#if defined(ENABLE_DNS)
 #include "net/dns/dns_config.h"
+#endif
 #include "net/url_request/url_request.h"
 #include "url/gurl.h"
 
@@ -69,12 +71,16 @@ class NetworkChangeNotifier::NetworkState {
 
   void GetDnsConfig(DnsConfig* config) const {
     base::AutoLock lock(lock_);
+#if defined(ENABLE_DNS)
     *config = dns_config_;
+#endif
   }
 
   bool SetDnsConfig(const DnsConfig& dns_config) {
     base::AutoLock lock(lock_);
+#if defined(ENABLE_DNS)
     dns_config_ = dns_config;
+#endif
     bool was_set = set_;
     set_ = true;
     return was_set;
@@ -87,7 +93,9 @@ class NetworkChangeNotifier::NetworkState {
 
  private:
   mutable base::Lock lock_;
+#if defined(ENABLE_DNS)
   DnsConfig dns_config_;
+#endif
   bool set_ = false;
 };
 
@@ -371,7 +379,9 @@ NetworkChangeNotifier::GetDefaultNetwork() {
 // static
 void NetworkChangeNotifier::GetDnsConfig(DnsConfig* config) {
   if (!g_network_change_notifier) {
+#if defined(ENABLE_DNS)
     *config = DnsConfig();
+#endif
   } else {
     g_network_change_notifier->network_state_->GetDnsConfig(config);
   }

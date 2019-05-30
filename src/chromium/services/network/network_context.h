@@ -77,7 +77,9 @@ namespace network {
 class CertVerifierWithTrustAnchors;
 class CookieManager;
 class ExpectCTReporter;
+#if defined(ENABLE_DNS)
 class HostResolver;
+#endif
 class NetworkService;
 class NetworkServiceProxyDelegate;
 class MdnsResponderManager;

@@ -17,10 +17,14 @@
 #include "services/proxy_resolver/public/mojom/proxy_resolver.mojom.h"
 
 namespace net {
+#if defined(ENABLE_DNS)
 class HostResolver;
+#endif
 class NetLog;
 class NetworkDelegate;
+#if defined(ENABLE_PROXY)
 class ProxyResolutionService;
+#endif
 class URLRequestContext;
 }  // namespace net
 

@@ -325,12 +325,12 @@ BASE_EXPORT bool IsStringASCII(WStringPiece str);
 
 // Compare the lower-case form of the given string against the given
 // previously-lower-cased ASCII string (typically a constant).
-#if defined(STARBOARD)
+//#if defined(STARBOARD)
 // TODO[johnx]: deprecate this function and use the other two instead.
 BASE_EXPORT bool LowerCaseEqualsASCII(const char* a_begin,
                                       const char* a_end,
                                       const char* b);
-#endif
+//#endif
 
 // Compare the lower-case form of the given string against the given
 // previously-lower-cased ASCII string (typically a constant).

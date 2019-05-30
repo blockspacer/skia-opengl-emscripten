@@ -261,6 +261,52 @@ bool CloseFile(FILE* file) {
   return fclose(file) == 0;
 }
 
+FilePath MakeAbsoluteFilePath(const FilePath& input) {
+   // __TODO__
+
+  //AssertBlockingAllowed();
+  // Only absolute paths are supported in Starboard.
+  DCHECK(input.IsAbsolute());
+  return input;
+}
+
+
+bool GetCurrentDirectory(FilePath* dir) {
+   // __TODO__
+
+  //ScopedBlockingCall scoped_blocking_call(BlockingType::MAY_BLOCK);
+  //
+  //// Not supported on Starboard.
+  //NOTREACHED();
+  return false;
+}
+
+
+bool CreateTemporaryFile(FilePath *path) {
+   // __TODO__
+
+  //AssertBlockingAllowed();
+  DCHECK(path);
+
+  FilePath directory;
+  if (!GetTempDir(&directory)) {
+    return false;
+  }
+
+  return CreateTemporaryFileInDir(directory, path);
+}
+
+// see https://github.com/blockspacer/cobalt-clone-28052019/blob/master/src/base/files/file_util_starboard.cc
+bool CreateTemporaryFileInDir(const FilePath &dir, FilePath *temp_file) {
+  // __TODO__
+
+  //AssertBlockingAllowed();
+  DCHECK(temp_file);
+  //SbFile file = CreateAndOpenTemporaryFileSafely(dir, temp_file);
+  //return (SbFileIsValid(file) && SbFileClose(file));
+  return false;
+}
+
 #if !defined(OS_NACL_NONSFI)
 bool TruncateFile(FILE* file) {
   if (file == nullptr)

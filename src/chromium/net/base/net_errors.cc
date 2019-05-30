@@ -4,7 +4,9 @@
 
 #include "net/base/net_errors.h"
 
+#if defined(ENABLE_QUIC)
 #include "net/third_party/quiche/src/quic/core/quic_error_codes.h"
+#endif
 
 namespace net {
 
@@ -13,11 +15,14 @@ std::string ErrorToString(int error) {
 }
 
 std::string ExtendedErrorToString(int error, int extended_error_code) {
+
+#if defined(ENABLE_QUIC)
   if (error == ERR_QUIC_PROTOCOL_ERROR && extended_error_code != 0) {
     return std::string("net::ERR_QUIC_PROTOCOL_ERROR.") +
            QuicErrorCodeToString(
                static_cast<quic::QuicErrorCode>(extended_error_code));
   }
+#endif
   return ErrorToString(error);
 }
 

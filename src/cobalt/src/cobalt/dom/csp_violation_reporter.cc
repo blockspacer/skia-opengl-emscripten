@@ -24,7 +24,11 @@
 #include "cobalt/dom/document.h"
 #include "cobalt/dom/html_element_context.h"
 #include "cobalt/dom/security_policy_violation_event.h"
+
+#if !defined(__EMSCRIPTEN__) && defined(__TODO__)
 #include "cobalt/network/net_poster.h"
+#endif
+
 #include "cobalt/script/global_environment.h"
 #include "url/gurl.h"
 
@@ -114,8 +118,17 @@ void GatherSecurityPolicyViolationEventData(
 }  // namespace
 
 CspViolationReporter::CspViolationReporter(
-    Document* document, const network_bridge::PostSender& post_sender)
-    : post_sender_(post_sender),
+    Document* document
+
+#if !defined(__EMSCRIPTEN__) && defined(__TODO__)
+    , const network_bridge::PostSender& post_sender
+#endif
+
+    )
+    :
+#if !defined(__EMSCRIPTEN__) && defined(__TODO__)
+    post_sender_(post_sender),
+#endif
       //message_loop_(base::MessageLoop::current()),
       message_loop_(),
       document_(document) {}
@@ -152,7 +165,11 @@ void CspViolationReporter::Report(const csp::ViolationInfo& violation_info) {
       violation_data.source_file, violation_data.status_code,
       violation_data.line_number, violation_data.column_number));
 
-  if (violation_info.endpoints.empty() || post_sender_.is_null()) {
+  if (violation_info.endpoints.empty()
+#if !defined(__EMSCRIPTEN__) && defined(__TODO__)
+    || post_sender_.is_null()
+#endif
+  ) {
     return;
   }
 
@@ -205,7 +222,9 @@ void CspViolationReporter::SendViolationReports(
   for (std::vector<std::string>::const_iterator it = endpoints.begin();
        it != endpoints.end(); ++it) {
     GURL resolved_endpoint = origin_url.Resolve(*it);
+#if !defined(__EMSCRIPTEN__) && defined(__TODO__)
     post_sender_.Run(resolved_endpoint, kCspReportContentType, report);
+#endif
   }
 }
 

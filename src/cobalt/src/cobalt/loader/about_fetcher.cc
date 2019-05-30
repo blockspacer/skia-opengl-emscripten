@@ -17,6 +17,7 @@
 #include "base/bind.h"
 #include "base/message_loop/message_loop.h"
 
+#if defined(ENABLE_ABOUT_SCHEME)
 namespace cobalt {
 namespace loader {
 
@@ -29,6 +30,7 @@ AboutFetcher::AboutFetcher(Handler* handler)
 }
 
 void AboutFetcher::Fetch() { handler()->OnDone(this); }
+#endif
 
 }  // namespace loader
 }  // namespace cobalt

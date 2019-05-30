@@ -27,11 +27,16 @@
 #include "base/message_loop/message_loop.h"
 #include "base/threading/thread_checker.h"
 #include "cobalt/loader/cors_preflight_cache.h"
+
+#if !defined(__EMSCRIPTEN__) && defined(__TODO__)
 #include "cobalt/network/network_module.h"
+#endif
+
 #include "net/http/http_request_headers.h"
 #include "net/http/http_response_headers.h"
 #include "net/url_request/url_fetcher.h"
 #include "net/url_request/url_fetcher_delegate.h"
+
 #include "url/gurl.h"
 
 namespace cobalt {
@@ -43,7 +48,11 @@ namespace loader {
 class CORSPreflight : public net::URLFetcherDelegate {
  public:
   CORSPreflight(GURL url, net::URLFetcher::RequestType method,
+
+#if !defined(__EMSCRIPTEN__) && defined(__TODO__)
                 const network::NetworkModule* network_module,
+#endif
+
                 base::Closure success_callback, std::string origin,
                 base::Closure error_callback,
                 scoped_refptr<CORSPreflightCache> preflight_cache);
@@ -90,7 +99,11 @@ class CORSPreflight : public net::URLFetcherDelegate {
   bool force_preflight_;
   GURL url_;
   net::URLFetcher::RequestType method_;
+
+#if !defined(__EMSCRIPTEN__) && defined(__TODO__)
   const network::NetworkModule* network_module_;
+#endif
+
   std::unique_ptr<net::URLFetcher> url_fetcher_;
   base::ThreadChecker thread_checker_;
   net::HttpRequestHeaders headers_;

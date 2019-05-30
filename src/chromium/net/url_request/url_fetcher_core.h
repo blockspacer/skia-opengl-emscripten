@@ -28,6 +28,10 @@
 #include "net/url_request/url_request_status.h"
 #include "url/gurl.h"
 
+#if defined(STARBOARD)
+#include "starboard/types.h"
+#endif
+
 namespace base {
 class SequencedTaskRunner;
 class SingleThreadTaskRunner;
@@ -115,6 +119,13 @@ class URLFetcherCore : public base::RefCountedThreadSafe<URLFetcherCore>,
       scoped_refptr<base::SequencedTaskRunner> file_task_runner);
   void SaveResponseWithWriter(
       std::unique_ptr<URLFetcherResponseWriter> response_writer);
+
+#if defined(STARBOARD)
+  URLFetcherResponseWriter* GetResponseWriter() const {
+    return response_writer_.get();
+  }
+#endif
+
   HttpResponseHeaders* GetResponseHeaders() const;
   IPEndPoint GetSocketAddress() const;
   const ProxyServer& ProxyServerUsed() const;
@@ -219,6 +230,11 @@ class URLFetcherCore : public base::RefCountedThreadSafe<URLFetcherCore>,
 
   // Read response bytes from the request.
   void ReadResponse();
+
+#if defined(STARBOARD)
+  void InformDelegateResponseStarted();
+  void InformDelegateResponseStartedInDelegateThread();
+#endif  // defined(STARBOARD)
 
   // Notify Delegate about the progress of upload/download.
   void InformDelegateUploadProgress();

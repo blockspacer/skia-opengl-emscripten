@@ -24,40 +24,66 @@
 
 namespace net {
 
-#if defined(ENABLE_SPDY)
 CommonConnectJobParams::CommonConnectJobParams(
     ClientSocketFactory* client_socket_factory,
+
+#if defined(ENABLE_DNS)
     HostResolver* host_resolver,
+#endif
     HttpAuthCache* http_auth_cache,
     HttpAuthHandlerFactory* http_auth_handler_factory,
+#if defined(ENABLE_SPDY)
     SpdySessionPool* spdy_session_pool,
+#endif
+#if defined(ENABLE_QUIC)
     const quic::ParsedQuicVersionVector* quic_supported_versions,
     QuicStreamFactory* quic_stream_factory,
+#endif
     ProxyDelegate* proxy_delegate,
     const HttpUserAgentSettings* http_user_agent_settings,
     const SSLClientSocketContext& ssl_client_socket_context,
     const SSLClientSocketContext& ssl_client_socket_context_privacy_mode,
     SocketPerformanceWatcherFactory* socket_performance_watcher_factory,
+
+#if defined(ENABLE_NQE)
     NetworkQualityEstimator* network_quality_estimator,
-    NetLog* net_log,
-    WebSocketEndpointLockManager* websocket_endpoint_lock_manager)
+#endif
+
+    NetLog* net_log
+#if defined(ENABLE_QUIC)
+    ,
+    WebSocketEndpointLockManager* websocket_endpoint_lock_manager
+#endif
+    )
     : client_socket_factory(client_socket_factory),
+
+#if defined(ENABLE_DNS)
       host_resolver(host_resolver),
+#endif
       http_auth_cache(http_auth_cache),
       http_auth_handler_factory(http_auth_handler_factory),
+#if defined(ENABLE_SPDY)
       spdy_session_pool(spdy_session_pool),
       quic_supported_versions(quic_supported_versions),
       quic_stream_factory(quic_stream_factory),
+#endif
       proxy_delegate(proxy_delegate),
       http_user_agent_settings(http_user_agent_settings),
       ssl_client_socket_context(ssl_client_socket_context),
       ssl_client_socket_context_privacy_mode(
           ssl_client_socket_context_privacy_mode),
       socket_performance_watcher_factory(socket_performance_watcher_factory),
+
+#if defined(ENABLE_NQE)
       network_quality_estimator(network_quality_estimator),
-      net_log(net_log),
-      websocket_endpoint_lock_manager(websocket_endpoint_lock_manager) {}
 #endif
+
+      net_log(net_log)
+#if defined(ENABLE_QUIC)
+      ,
+      websocket_endpoint_lock_manager(websocket_endpoint_lock_manager)
+#endif
+       {}
 
 CommonConnectJobParams::CommonConnectJobParams(
     const CommonConnectJobParams& other) = default;
@@ -114,6 +140,8 @@ std::unique_ptr<ConnectJob> ConnectJob::CreateConnectJob(
     SocketTag socket_tag,
     const CommonConnectJobParams* common_connect_job_params,
     ConnectJob::Delegate* delegate) {
+
+#if defined(ENABLE_QUIC)
   scoped_refptr<HttpProxySocketParams> http_proxy_params;
   scoped_refptr<SOCKSSocketParams> socks_params;
 
@@ -182,6 +210,9 @@ std::unique_ptr<ConnectJob> ConnectJob::CreateConnectJob(
   return TransportConnectJob::CreateTransportConnectJob(
       std::move(tcp_params), request_priority, socket_tag,
       common_connect_job_params, delegate, nullptr /* net_log */);
+#else
+  return nullptr;
+#endif
 }
 
 std::unique_ptr<StreamSocket> ConnectJob::PassSocket() {
@@ -229,6 +260,7 @@ void ConnectJob::SetSocket(std::unique_ptr<StreamSocket> socket) {
 }
 
 void ConnectJob::NotifyDelegateOfCompletion(int rv) {
+#if defined(ENABLE_QUIC)
   TRACE_EVENT0(NetTracingCategory(), "ConnectJob::NotifyDelegateOfCompletion");
   // The delegate will own |this|.
   Delegate* delegate = delegate_;
@@ -236,6 +268,7 @@ void ConnectJob::NotifyDelegateOfCompletion(int rv) {
 
   LogConnectCompletion(rv);
   delegate->OnConnectJobComplete(rv, this);
+#endif
 }
 
 void ConnectJob::NotifyDelegateOfProxyAuth(

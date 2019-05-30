@@ -17,7 +17,10 @@
 #include "net/base/completion_once_callback.h"
 #include "net/base/net_export.h"
 #include "net/cookies/canonical_cookie.h"
+
+#if defined(ENABLE_PROXY)
 #include "net/proxy_resolution/proxy_retry_info.h"
+#endif
 
 class GURL;
 
@@ -44,7 +47,9 @@ namespace net {
 class CookieOptions;
 class HttpRequestHeaders;
 class HttpResponseHeaders;
+#if defined(ENABLE_PROXY)
 class ProxyInfo;
+#endif
 class URLRequest;
 
 class NET_EXPORT NetworkDelegate {
@@ -73,8 +78,11 @@ class NET_EXPORT NetworkDelegate {
                                    CompletionOnceCallback callback,
                                    HttpRequestHeaders* headers);
   void NotifyBeforeSendHeaders(URLRequest* request,
+
+#if defined(ENABLE_PROXY)
                                const ProxyInfo& proxy_info,
                                const ProxyRetryInfoMap& proxy_retry_info,
+#endif
                                HttpRequestHeaders* headers);
   void NotifyStartTransaction(URLRequest* request,
                               const HttpRequestHeaders& headers);
@@ -180,8 +188,11 @@ class NET_EXPORT NetworkDelegate {
   // before they get sent out. |headers| is valid only for the duration of the
   // call.
   virtual void OnBeforeSendHeaders(URLRequest* request,
+
+#if defined(ENABLE_PROXY)
                                    const ProxyInfo& proxy_info,
                                    const ProxyRetryInfoMap& proxy_retry_info,
+#endif
                                    HttpRequestHeaders* headers) = 0;
 
   // Called right before the HTTP request(s) are being sent to the network.

@@ -15,14 +15,24 @@
 #include "net/http/http_response_info.h"
 #include "net/log/net_log_source.h"
 #include "net/log/net_log_with_source.h"
+
+#if defined(ENABLE_PROXY)
 #include "net/proxy_resolution/proxy_info.h"
+#endif
+
 #include "net/socket/connection_attempts.h"
 #include "net/socket/next_proto.h"
+#if defined(ENABLE_SPDY)
 #include "net/spdy/spdy_session_key.h"
 #include "net/spdy/spdy_session_pool.h"
+#endif
 #include "net/ssl/ssl_config.h"
 #include "net/ssl/ssl_info.h"
+
+#if defined(ENABLE_WS)
 #include "net/websockets/websocket_handshake_stream_base.h"
+#endif
+
 #include "url/gurl.h"
 
 namespace net {
@@ -60,7 +70,11 @@ class NET_EXPORT_PRIVATE HttpStreamRequest {
     // |used_proxy_info| indicates the actual ProxyInfo used for this stream,
     // since the HttpStreamRequest performs the proxy resolution.
     virtual void OnStreamReady(const SSLConfig& used_ssl_config,
+
+#if defined(ENABLE_PROXY)
                                const ProxyInfo& used_proxy_info,
+#endif
+
                                std::unique_ptr<HttpStream> stream) = 0;
 
     // This is the success case for RequestWebSocketHandshakeStream.
@@ -71,14 +85,21 @@ class NET_EXPORT_PRIVATE HttpStreamRequest {
     // |used_proxy_info| indicates the actual ProxyInfo used for this stream,
     // since the HttpStreamRequest performs the proxy resolution.
     virtual void OnWebSocketHandshakeStreamReady(
-        const SSLConfig& used_ssl_config,
-        const ProxyInfo& used_proxy_info,
-        std::unique_ptr<WebSocketHandshakeStreamBase> stream) = 0;
+        const SSLConfig& used_ssl_config
+#if defined(ENABLE_PROXY)
+        , const ProxyInfo& used_proxy_info
+#endif
+#if defined(ENABLE_WS)
+        , std::unique_ptr<WebSocketHandshakeStreamBase> stream
+#endif
+        ) = 0;
 
     virtual void OnBidirectionalStreamImplReady(
-        const SSLConfig& used_ssl_config,
-        const ProxyInfo& used_proxy_info,
-        std::unique_ptr<BidirectionalStreamImpl> stream) = 0;
+        const SSLConfig& used_ssl_config
+#if defined(ENABLE_PROXY)
+        , const ProxyInfo& used_proxy_info
+#endif
+        , std::unique_ptr<BidirectionalStreamImpl> stream) = 0;
 
     // This is the failure to create a stream case.
     // |used_ssl_config| indicates the actual SSL configuration used for this
@@ -121,9 +142,11 @@ class NET_EXPORT_PRIVATE HttpStreamRequest {
     // stream, since the HttpStreamRequest may have modified the configuration
     // during stream processing.
     virtual void OnNeedsProxyAuth(const HttpResponseInfo& proxy_response,
-                                  const SSLConfig& used_ssl_config,
-                                  const ProxyInfo& used_proxy_info,
-                                  HttpAuthController* auth_controller) = 0;
+                                  const SSLConfig& used_ssl_config
+#if defined(ENABLE_PROXY)
+                                  , const ProxyInfo& used_proxy_info
+#endif
+                                  , HttpAuthController* auth_controller) = 0;
 
     // This is the failure for SSL Client Auth
     // Ownership of |cert_info| is retained by the HttpStreamRequest.  The
@@ -157,12 +180,14 @@ class NET_EXPORT_PRIVATE HttpStreamRequest {
 
   // Request will notify |job_controller| when it's destructed.
   // Thus |job_controller| is valid for the lifetime of the |this| Request.
-  HttpStreamRequest(const GURL& url,
-                    Helper* helper,
-                    HttpStreamRequest::Delegate* delegate,
-                    WebSocketHandshakeStreamBase::CreateHelper*
-                        websocket_handshake_stream_create_helper,
-                    const NetLogWithSource& net_log,
+  HttpStreamRequest(const GURL& url
+                    , Helper* helper
+                    , HttpStreamRequest::Delegate* delegate
+#if defined(ENABLE_WS)
+                    , WebSocketHandshakeStreamBase::CreateHelper*
+                        websocket_handshake_stream_create_helper
+#endif
+                    , const NetLogWithSource& net_log,
                     StreamType stream_type);
 
   ~HttpStreamRequest();
@@ -201,10 +226,12 @@ class NET_EXPORT_PRIVATE HttpStreamRequest {
   // Returns socket-layer connection attempts made for this stream request.
   const ConnectionAttempts& connection_attempts() const;
 
+#ifdef ENABLE_SPDY
   // Returns the WebSocketHandshakeStreamBase::CreateHelper for this stream
   // request.
   WebSocketHandshakeStreamBase::CreateHelper*
   websocket_handshake_stream_create_helper() const;
+#endif
 
   // The GURL from the HttpRequestInfo the started the Request.
   const GURL& url() const { return url_; }
@@ -220,9 +247,10 @@ class NET_EXPORT_PRIVATE HttpStreamRequest {
 
   // Unowned. The helper must outlive this request.
   Helper* helper_;
-
+#if defined(ENABLE_WS)
   WebSocketHandshakeStreamBase::CreateHelper* const
       websocket_handshake_stream_create_helper_;
+#endif
   const NetLogWithSource net_log_;
 
   bool completed_;

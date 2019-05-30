@@ -105,7 +105,7 @@ FileFetcher::FileFetcher(const base::FilePath& file_path, Handler* handler,
 FileFetcher::~FileFetcher() {
   DCHECK(thread_checker_.CalledOnValidThread());
 
-  if (task_runner_ != base::MessageLoop::current()->task_runner()) {
+  if (task_runner_ != base::MessageLoopCurrent::Get()->task_runner()) {
     // In case we are currently in the middle of a fetch (in which case it will
     // be aborted), invalidate the weak pointers to this FileFetcher object to
     // ensure that we do not process any responses from pending file I/O, which
@@ -114,7 +114,9 @@ FileFetcher::~FileFetcher() {
     weak_ptr_factory_.InvalidateWeakPtrs();
     // Then wait for any currently active file I/O to complete, after which
     // everything will be quiet and we can shutdown safely.
+#if defined(__TODO__)
     task_runner_->WaitForFence();
+#endif
   }
 }
 

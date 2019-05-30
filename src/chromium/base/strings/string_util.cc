@@ -28,6 +28,10 @@
 #include "base/third_party/icu/icu_utf.h"
 #include "build/build_config.h"
 
+#if defined(STARBOARD)
+#include "starboard/types.h"
+#endif
+
 namespace base {
 
 namespace {
@@ -546,6 +550,18 @@ static inline bool DoLowerCaseEqualsASCII(BasicStringPiece<Str> str,
   }
   return true;
 }
+
+//#if defined(STARBOARD)
+bool LowerCaseEqualsASCII(const char* a_begin,
+                          const char* a_end,
+                          const char* b) {
+  for (const char *it = a_begin; it != a_end; ++it, ++b) {
+    if (!*b || base::ToLowerASCII(*it) != *b)
+      return false;
+  }
+  return *b == 0;
+}
+//#endif
 
 bool LowerCaseEqualsASCII(StringPiece str, StringPiece lowercase_ascii) {
   return DoLowerCaseEqualsASCII<std::string>(str, lowercase_ascii);

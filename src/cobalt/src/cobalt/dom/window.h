@@ -62,8 +62,10 @@
 #include "cobalt/loader/mesh/mesh_cache.h"
 #include "cobalt/media/can_play_type_handler.h"
 #include "cobalt/media/web_media_player_factory.h"
+#if !defined(__EMSCRIPTEN__) && defined(__TODO__)
 #include "cobalt/network_bridge/cookie_jar.h"
 #include "cobalt/network_bridge/net_poster.h"
+#endif
 #include "cobalt/page_visibility/page_visibility_state.h"
 #include "cobalt/script/callback_function.h"
 #include "cobalt/script/environment_settings.h"
@@ -158,8 +160,12 @@ class Window : public EventTarget,
       const std::string& font_language_script,
       const base::Callback<void(const GURL&)> navigation_callback,
       const loader::Decoder::OnCompleteFunction& load_complete_callback,
+
+#if !defined(__EMSCRIPTEN__) && defined(__TODO__)
       network_bridge::CookieJar* cookie_jar,
       const network_bridge::PostSender& post_sender,
+#endif
+
       csp::CSPHeaderPolicy require_csp,
       dom::CspEnforcementType csp_enforcement_mode,
       const base::Closure& csp_policy_changed_callback,

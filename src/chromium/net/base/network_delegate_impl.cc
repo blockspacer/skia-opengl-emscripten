@@ -11,20 +11,31 @@ namespace net {
 int NetworkDelegateImpl::OnBeforeURLRequest(URLRequest* request,
                                             CompletionOnceCallback callback,
                                             GURL* new_url) {
+
+#if defined(ENABLE_PROXY)
   return OK;
+#else
+  return 0;
+#endif
 }
 
 int NetworkDelegateImpl::OnBeforeStartTransaction(
     URLRequest* request,
     CompletionOnceCallback callback,
     HttpRequestHeaders* headers) {
+#if defined(ENABLE_PROXY)
   return OK;
+#else
+  return 0;
+#endif
 }
 
 void NetworkDelegateImpl::OnBeforeSendHeaders(
     URLRequest* request,
+#if defined(ENABLE_PROXY)
     const ProxyInfo& proxy_info,
     const ProxyRetryInfoMap& proxy_retry_info,
+#endif
     HttpRequestHeaders* headers) {}
 
 void NetworkDelegateImpl::OnStartTransaction(
@@ -37,7 +48,11 @@ int NetworkDelegateImpl::OnHeadersReceived(
     const HttpResponseHeaders* original_response_headers,
     scoped_refptr<HttpResponseHeaders>* override_response_headers,
     GURL* allowed_unsafe_redirect_url) {
+#if defined(ENABLE_PROXY)
   return OK;
+#else
+  return 0;
+#endif
 }
 
 void NetworkDelegateImpl::OnBeforeRedirect(URLRequest* request,

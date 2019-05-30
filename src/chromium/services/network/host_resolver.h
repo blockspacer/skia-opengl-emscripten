@@ -18,7 +18,9 @@
 #include "services/network/public/mojom/host_resolver.mojom.h"
 
 namespace net {
+#if defined(ENABLE_DNS)
 class HostResolver;
+#endif
 class HostPortPair;
 class NetLog;
 }  // namespace net

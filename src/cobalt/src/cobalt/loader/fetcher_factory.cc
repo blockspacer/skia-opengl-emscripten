@@ -29,7 +29,10 @@
 #include "cobalt/loader/error_fetcher.h"
 #include "cobalt/loader/file_fetcher.h"
 #include "cobalt/loader/net_fetcher.h"
+
+#if !defined(__EMSCRIPTEN__) && defined(__TODO__)
 #include "cobalt/network/network_module.h"
+#endif
 
 namespace cobalt {
 namespace loader {
@@ -115,7 +118,11 @@ std::unique_ptr<Fetcher> FetcherFactory::CreateSecureFetcher(
       network_module_) {
     NetFetcher::Options options;
     return std::unique_ptr<Fetcher>(
-        new NetFetcher(url, url_security_callback, handler, network_module_,
+        new NetFetcher(url, url_security_callback, handler,
+
+#if !defined(__EMSCRIPTEN__) && defined(__TODO__)
+        network_module_,
+#endif
                        options, request_mode, origin));
   }
 

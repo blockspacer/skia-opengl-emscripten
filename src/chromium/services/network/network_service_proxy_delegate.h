@@ -15,7 +15,9 @@
 
 namespace net {
 class HttpRequestHeaders;
+#if defined(ENABLE_PROXY)
 class ProxyResolutionService;
+#endif
 class URLRequest;
 }  // namespace net
 

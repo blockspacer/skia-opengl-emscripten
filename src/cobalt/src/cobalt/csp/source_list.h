@@ -25,7 +25,9 @@
 #include "base/gtest_prod_util.h"
 #include "cobalt/csp/content_security_policy.h"
 #include "cobalt/csp/source.h"
+#if !defined(__EMSCRIPTEN__) && defined(__TODO__)
 #include "cobalt/network/local_network.h"
+#endif
 #include "url/gurl.h"
 
 namespace cobalt {
@@ -34,10 +36,13 @@ namespace csp {
 class SourceList {
  public:
   struct LocalNetworkCheckerInterface {
+
+#if !defined(__EMSCRIPTEN__) && defined(__TODO__)
     virtual bool IsIPInLocalNetwork(
         const SbSocketAddress& destination) const = 0;
     virtual bool IsIPInPrivateRange(
         const SbSocketAddress& destination) const = 0;
+#endif
 
     virtual ~LocalNetworkCheckerInterface() {}
   };

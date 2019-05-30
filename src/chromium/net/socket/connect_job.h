@@ -24,13 +24,16 @@
 #include "net/socket/connection_attempts.h"
 #include "net/socket/socket_tag.h"
 #include "net/socket/ssl_client_socket.h"
+#if defined(ENABLE_QUIC)
 #include "net/third_party/quiche/src/quic/core/quic_versions.h"
-
+#endif
 namespace net {
 
 class ClientSocketFactory;
 class HostPortPair;
+#if defined(ENABLE_DNS)
 class HostResolver;
+#endif
 class HttpAuthCache;
 class HttpAuthController;
 class HttpAuthHandlerFactory;
@@ -38,22 +41,25 @@ class HttpResponseInfo;
 class HttpUserAgentSettings;
 class NetLog;
 class NetLogWithSource;
+#if defined(ENABLE_NQE)
 class NetworkQualityEstimator;
+#endif
 struct NetworkTrafficAnnotationTag;
 class ProxyDelegate;
 class ProxyServer;
 class SocketPerformanceWatcherFactory;
 struct SSLConfig;
 class StreamSocket;
+#if defined(ENABLE_QUIC)
 class WebSocketEndpointLockManager;
 class QuicStreamFactory;
+#endif
 class SocketTag;
 #if defined(ENABLE_SPDY)
 class SpdySessionPool;
 #endif
 class SSLCertRequestInfo;
 
-#if defined(ENABLE_SPDY)
 // Immutable socket parameters intended for shared use by all ConnectJob types.
 // Excludes priority because it can be modified over the lifetime of a
 // ConnectJob. Excludes connection timeout and NetLogWithSource because
@@ -62,20 +68,35 @@ class SSLCertRequestInfo;
 struct NET_EXPORT_PRIVATE CommonConnectJobParams {
   CommonConnectJobParams(
       ClientSocketFactory* client_socket_factory,
+#if defined(ENABLE_DNS)
       HostResolver* host_resolver,
+#endif
       HttpAuthCache* http_auth_cache,
       HttpAuthHandlerFactory* http_auth_handler_factory,
+#if defined(ENABLE_SPDY)
       SpdySessionPool* spdy_session_pool,
+#endif
+#if defined(ENABLE_QUIC)
       const quic::ParsedQuicVersionVector* quic_supported_versions,
       QuicStreamFactory* quic_stream_factory,
+#endif
       ProxyDelegate* proxy_delegate,
       const HttpUserAgentSettings* http_user_agent_settings,
       const SSLClientSocketContext& ssl_client_socket_context,
       const SSLClientSocketContext& ssl_client_socket_context_privacy_mode,
       SocketPerformanceWatcherFactory* socket_performance_watcher_factory,
+
+#if defined(ENABLE_NQE)
       NetworkQualityEstimator* network_quality_estimator,
-      NetLog* net_log,
-      WebSocketEndpointLockManager* websocket_endpoint_lock_manager);
+#endif
+
+      NetLog* net_log
+
+#if defined(ENABLE_QUIC)
+      ,
+      WebSocketEndpointLockManager* websocket_endpoint_lock_manager
+#endif
+      );
 
   CommonConnectJobParams(const CommonConnectJobParams& other);
   ~CommonConnectJobParams();
@@ -83,26 +104,35 @@ struct NET_EXPORT_PRIVATE CommonConnectJobParams {
   CommonConnectJobParams& operator=(const CommonConnectJobParams& other);
 
   ClientSocketFactory* client_socket_factory;
+#if defined(ENABLE_DNS)
   HostResolver* host_resolver;
+#endif
   HttpAuthCache* http_auth_cache;
   HttpAuthHandlerFactory* http_auth_handler_factory;
 #if defined(ENABLE_SPDY)
   SpdySessionPool* spdy_session_pool;
 #endif
+#if defined(ENABLE_QUIC)
   const quic::ParsedQuicVersionVector* quic_supported_versions;
   QuicStreamFactory* quic_stream_factory;
+#endif
   ProxyDelegate* proxy_delegate;
   const HttpUserAgentSettings* http_user_agent_settings;
   SSLClientSocketContext ssl_client_socket_context;
   SSLClientSocketContext ssl_client_socket_context_privacy_mode;
   SocketPerformanceWatcherFactory* socket_performance_watcher_factory;
+
+#if defined(ENABLE_NQE)
   NetworkQualityEstimator* network_quality_estimator;
+#endif
+
   NetLog* net_log;
 
+#if defined(ENABLE_QUIC)
   // This must only be non-null for WebSockets.
   WebSocketEndpointLockManager* websocket_endpoint_lock_manager;
-};
 #endif
+};
 
 // When a host resolution completes, OnHostResolutionCallback() is invoked. If
 // it returns |kContinue|, the ConnectJob can continue immediately. If it
@@ -264,9 +294,11 @@ class NET_EXPORT_PRIVATE ConnectJob {
   ClientSocketFactory* client_socket_factory() {
     return common_connect_job_params_->client_socket_factory;
   }
+#if defined(ENABLE_DNS)
   HostResolver* host_resolver() {
     return common_connect_job_params_->host_resolver;
   }
+#endif
   const HttpUserAgentSettings* http_user_agent_settings() const {
     return common_connect_job_params_->http_user_agent_settings;
   }
@@ -279,12 +311,16 @@ class NET_EXPORT_PRIVATE ConnectJob {
   SocketPerformanceWatcherFactory* socket_performance_watcher_factory() {
     return common_connect_job_params_->socket_performance_watcher_factory;
   }
+#if defined(ENABLE_NQE)
   NetworkQualityEstimator* network_quality_estimator() {
     return common_connect_job_params_->network_quality_estimator;
   }
+#endif
+#if defined(ENABLE_QUIC)
   WebSocketEndpointLockManager* websocket_endpoint_lock_manager() {
     return common_connect_job_params_->websocket_endpoint_lock_manager;
   }
+#endif
   const CommonConnectJobParams* common_connect_job_params() {
     return common_connect_job_params_;
   }

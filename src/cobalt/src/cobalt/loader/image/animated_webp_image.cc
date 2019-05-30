@@ -135,9 +135,11 @@ AnimatedWebPImage::~AnimatedWebPImage() {
     base::AutoLock lock(lock_);
     is_playing = is_playing_;
   }
+#if defined(__TODO__)
   if (is_playing) {
     task_runner_->WaitForFence();
   }
+#endif
   WebPDemuxDelete(demux_);
 }
 

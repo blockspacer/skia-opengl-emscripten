@@ -2,8 +2,124 @@
 
 # TODO https://github.com/Tarnyko/chromium-lite/blob/master/03a-net/CMakeLists.txt
 
+set(GNET_DNS_uri_template_SOURCES
+  ${GNET_DIR}third_party/uri_template/uri_template.cc
+  #${GNET_DIR}third_party/uri_template/uri_template.h
+)
+
+# requires net/third_party/uri_template
+set(GNET_DNS_PUBLIC_SOURCES
+  ${GNET_DIR}/dns/public/dns_protocol.h
+  ${GNET_DIR}/dns/public/dns_query_type.cc
+  ${GNET_DIR}/dns/public/dns_query_type.h
+  ${GNET_DIR}/dns/public/util.cc
+  ${GNET_DIR}/dns/public/util.h
+)
+
+# requires net/third_party/uri_template
+set(GNET_DNS_SOURCES
+  #if (enable_built_in_dns) {
+  #  sources += [ "dns_client.cc" ]
+  #
+  #  if (is_posix || is_fuchsia) {
+  #    sources += [
+  #      "address_sorter_posix.cc
+  #      "address_sorter_posix.h
+  #    ]
+  #  }
+  #}
+  #if (enable_mdns) {
+  #  sources += [
+  #    "mdns_cache.cc",
+  #    "mdns_cache.h",
+  #    "mdns_client.cc",
+  #    "mdns_client_impl.cc",
+  #    "mdns_client_impl.h",
+  #  ]
+  #}
+  ${GNET_DIR}/dns/dns_util.cc
+  ${GNET_DIR}/dns/dns_util.h
+  ${GNET_DIR}/dns/address_sorter.h
+  ## TODO ## ${GNET_DIR}/dns/address_sorter_win.cc
+  ${GNET_DIR}/dns/context_host_resolver.cc
+  ${GNET_DIR}/dns/context_host_resolver.h
+  ${GNET_DIR}/dns/dns_config.cc
+  ${GNET_DIR}/dns/dns_config_overrides.cc
+  ${GNET_DIR}/dns/dns_config_service.cc
+  ${GNET_DIR}/dns/dns_config_service.h
+  ## TODO ## ${GNET_DIR}/dns/dns_config_service_win.cc
+  ## TODO ## ${GNET_DIR}/dns/dns_config_service_win.h
+  ## TODO ## ${GNET_DIR}/dns/dns_config_watcher_mac.cc
+  ## TODO ## ${GNET_DIR}/dns/dns_config_watcher_mac.h
+  ${GNET_DIR}/dns/dns_hosts.cc
+  ${GNET_DIR}/dns/dns_hosts.h
+  ${GNET_DIR}/dns/dns_query.cc
+  ${GNET_DIR}/dns/dns_query.h
+  ${GNET_DIR}/dns/dns_reloader.cc
+  ${GNET_DIR}/dns/dns_reloader.h
+  ${GNET_DIR}/dns/dns_response.cc
+  ${GNET_DIR}/dns/dns_session.cc
+  ${GNET_DIR}/dns/dns_session.h
+  ${GNET_DIR}/dns/dns_socket_pool.cc
+  ${GNET_DIR}/dns/dns_socket_pool.h
+  ${GNET_DIR}/dns/dns_transaction.cc
+  ${GNET_DIR}/dns/host_cache.cc
+  ${GNET_DIR}/dns/host_resolver.cc
+  ${GNET_DIR}/dns/host_resolver_manager.cc
+  ${GNET_DIR}/dns/host_resolver_mdns_listener_impl.cc
+  ${GNET_DIR}/dns/host_resolver_mdns_listener_impl.h
+  ${GNET_DIR}/dns/host_resolver_mdns_task.cc
+  ${GNET_DIR}/dns/host_resolver_mdns_task.h
+  ${GNET_DIR}/dns/host_resolver_proc.cc
+  ${GNET_DIR}/dns/host_resolver_proc.h
+  ${GNET_DIR}/dns/host_resolver_source.h
+  ${GNET_DIR}/dns/mapped_host_resolver.cc
+  ## TODO ## ${GNET_DIR}/dns/notify_watcher_mac.cc
+  ## TODO ## ${GNET_DIR}/dns/notify_watcher_mac.h
+  ${GNET_DIR}/dns/record_parsed.cc
+  ${GNET_DIR}/dns/record_rdata.cc
+  ${GNET_DIR}/dns/serial_worker.cc
+  ${GNET_DIR}/dns/serial_worker.h
+  # posix
+  ## TODO #### TODO ##${GNET_DIR}/dns/dns_config_service_posix.cc
+  ## TODO #### TODO ##${GNET_DIR}/dns/dns_config_service_posix.h
+  # source_set("host_resolver")
+  ${GNET_DIR}/dns/dns_config.h
+  ${GNET_DIR}/dns/dns_config_overrides.h
+  ${GNET_DIR}/dns/host_cache.h
+  ${GNET_DIR}/dns/host_resolver.h
+  ${GNET_DIR}/dns/mapped_host_resolver.h
+  # source_set("host_resolver_manager")
+  ${GNET_DIR}/dns/host_resolver_manager.h
+  # source_set("dns_client")
+  ${GNET_DIR}/dns/dns_client.h
+  ${GNET_DIR}/dns/dns_response.h
+  ${GNET_DIR}/dns/dns_transaction.h
+  ${GNET_DIR}/dns/dns_util.h
+  ${GNET_DIR}/dns/record_parsed.h
+  ${GNET_DIR}/dns/record_rdata.h
+)
+
 # TODO https://github.com/chromium/chromium/blob/master/third_party/blink/renderer/platform/BUILD.gn
 set(GNET_SOURCES
+  #
+  # net/extras/preload_data/
+  #
+  ${GNET_DIR}/extras/preload_data/decoder.cc
+  #
+  # https://github.com/chromium/chromium/blob/master/net/http/BUILD.gn
+  # source_set("transport_security_state_generated_files")
+  # deps = [
+  #  "//net:net_deps",
+  #  "//net:net_public_deps",
+  #  "//net/dns",
+  # ]
+  ${GNET_DIR}http/transport_security_state.cc
+  #
+  # traffic_annotation/
+  #${GNET_DIR}traffic_annotation/network_traffic_annotation_test_helper.h
+  #${GNET_DIR}traffic_annotation/network_traffic_annotation.h
+  #
   ${GNET_DIR}base/address_family.cc
   #${GNET_DIR}base/address_family.h
   ${GNET_DIR}base/address_list.cc
@@ -162,32 +278,32 @@ set(GNET_SOURCES
   ${GNET_DIR}der/tag.cc
   #${GNET_DIR}der/tag.h
   # TODO #
-  # ${GNET_DIR}http/http_auth_challenge_tokenizer.cc
+  ${GNET_DIR}http/http_auth_challenge_tokenizer.cc
   # #${GNET_DIR}http/http_auth_challenge_tokenizer.h
-  # ${GNET_DIR}http/http_auth_scheme.cc
+  ${GNET_DIR}http/http_auth_scheme.cc
   # #${GNET_DIR}http/http_auth_scheme.h
   ${GNET_DIR}http/http_byte_range.cc
   # #${GNET_DIR}http/http_byte_range.h
-  # ${GNET_DIR}http/http_log_util.cc
+  ${GNET_DIR}http/http_log_util.cc
   # #${GNET_DIR}http/http_log_util.h
-  # ${GNET_DIR}http/http_raw_request_headers.cc
+  ${GNET_DIR}http/http_raw_request_headers.cc
   # #${GNET_DIR}http/http_raw_request_headers.h
-  # ${GNET_DIR}http/http_request_headers.cc
+  ${GNET_DIR}http/http_request_headers.cc
   # #${GNET_DIR}http/http_request_headers.h
-  # ${GNET_DIR}http/http_response_headers.cc
+  ${GNET_DIR}http/http_response_headers.cc
   # #${GNET_DIR}http/http_response_headers.h
-  # ${GNET_DIR}http/http_response_info.cc
+  ${GNET_DIR}http/http_response_info.cc
   # #${GNET_DIR}http/http_response_info.h
-  # ${GNET_DIR}http/http_security_headers.cc
-  # #${GNET_DIR}http/http_security_headers.h
+  ${GNET_DIR}http/http_security_headers.cc
+  #${GNET_DIR}http/http_security_headers.h
   # #${GNET_DIR}http/http_status_code_list.h
   ${GNET_DIR}http/http_util.cc
   # #${GNET_DIR}http/http_util.h
-  # ${GNET_DIR}http/http_vary_data.cc
+  ${GNET_DIR}http/http_vary_data.cc
   # #${GNET_DIR}http/http_vary_data.h
   # #${GNET_DIR}http/transport_security_state.h
-  # ${GNET_DIR}http/transport_security_state_source.cc
-  # #${GNET_DIR}http/transport_security_state_source.h
+  ${GNET_DIR}http/transport_security_state_source.cc
+  #${GNET_DIR}http/transport_security_state_source.h
   ${GNET_DIR}log/net_log.cc
   #${GNET_DIR}log/net_log.h
   ${GNET_DIR}log/net_log_capture_mode.cc
@@ -204,25 +320,25 @@ set(GNET_SOURCES
   ${GNET_DIR}log/net_log_with_source.cc
   #${GNET_DIR}log/net_log_with_source.h
   # # TODO #
-  # ${GNET_DIR}socket/client_socket_handle.cc
+  ${GNET_DIR}socket/client_socket_handle.cc
   # #${GNET_DIR}socket/client_socket_handle.h
-  # ${GNET_DIR}socket/connect_job.cc
+  ${GNET_DIR}socket/connect_job.cc
   # #${GNET_DIR}socket/connect_job.h
   # #${GNET_DIR}socket/connection_attempts.h
-  # ${GNET_DIR}socket/next_proto.cc
-  # #${GNET_DIR}socket/next_proto.h
-  # ${GNET_DIR}socket/socket.cc
+  ${GNET_DIR}socket/next_proto.cc
+  #${GNET_DIR}socket/next_proto.h
+  ${GNET_DIR}socket/socket.cc
   # #${GNET_DIR}socket/socket.h
-  # ${GNET_DIR}socket/socket_bio_adapter.cc
-  # #${GNET_DIR}socket/socket_bio_adapter.h
+  ${GNET_DIR}socket/socket_bio_adapter.cc
+  #${GNET_DIR}socket/socket_bio_adapter.h
   # #${GNET_DIR}socket/socket_performance_watcher.h
   # #${GNET_DIR}socket/socket_performance_watcher_factory.h
-  # ${GNET_DIR}socket/ssl_client_socket.cc
+  ${GNET_DIR}socket/ssl_client_socket.cc
   # #${GNET_DIR}socket/ssl_client_socket.h
-  # ${GNET_DIR}socket/ssl_client_socket_impl.cc
-  # #${GNET_DIR}socket/ssl_client_socket_impl.h
+  ${GNET_DIR}socket/ssl_client_socket_impl.cc
+  #${GNET_DIR}socket/ssl_client_socket_impl.h
   # #${GNET_DIR}socket/ssl_socket.h
-  # ${GNET_DIR}socket/stream_socket.cc
+  ${GNET_DIR}socket/stream_socket.cc
   # #${GNET_DIR}socket/stream_socket.h
   #
   ${GNET_DIR}ssl/client_cert_identity.cc
@@ -252,444 +368,452 @@ set(GNET_SOURCES
   #${GNET_DIR}ssl/ssl_private_key.h
   ${GNET_DIR}ssl/ssl_server_config.cc
   #${GNET_DIR}ssl/ssl_server_config.h
-  ${GNET_DIR}third_party/quiche/src/quic/core/quic_error_codes.cc
+  ## TODO ## ${GNET_DIR}third_party/quiche/src/quic/core/quic_error_codes.cc
   #${GNET_DIR}third_party/quiche/src/quic/core/quic_error_codes.h
-  ${GNET_DIR}third_party/uri_template/uri_template.cc
-  #${GNET_DIR}third_party/uri_template/uri_template.h
   #
   ${GNET_DIR}base/net_errors_posix.cc # is_posix || is_fuchsia
   #
   # !is_nacl
   #
-  # "android/android_http_util.cc
-  # "android/cellular_signal_strength.cc
-  # "android/cellular_signal_strength.h
-  # "android/cert_verify_result_android.cc
-  # "android/cert_verify_result_android.h
-  # "android/gurl_utils.cc
-  # "android/http_auth_negotiate_android.cc
-  # "android/http_auth_negotiate_android.h
-  # "android/keystore.cc
-  # "android/keystore.h
-  # "android/network_change_notifier_android.cc
-  # "android/network_change_notifier_android.h
-  # "android/network_change_notifier_delegate_android.cc
-  # "android/network_change_notifier_delegate_android.h
-  # "android/network_change_notifier_factory_android.cc
-  # "android/network_change_notifier_factory_android.h
-  # "android/network_library.cc
-  # "android/network_library.h
-  # "android/traffic_stats.cc
-  # "android/traffic_stats.h
-  # "base/address_tracker_linux.cc
-  # "base/address_tracker_linux.h
-  # "base/backoff_entry.cc
-  # "base/backoff_entry.h
-  # "base/backoff_entry_serializer.cc
-  # "base/backoff_entry_serializer.h
-  # "base/cache_type.h
-  # "base/chunked_upload_data_stream.cc
-  # "base/chunked_upload_data_stream.h
-  # "base/data_url.cc
-  # "base/data_url.h
-  # "base/elements_upload_data_stream.cc
-  # "base/elements_upload_data_stream.h
-  # "base/expiring_cache.h
-  # "base/file_stream.cc
-  # "base/file_stream.h
-  # "base/file_stream_context.cc
-  # "base/file_stream_context.h
-  # "base/file_stream_context_win.cc
-  # "base/filename_util.cc
-  # "base/filename_util.h
-  # "base/filename_util_internal.cc
-  # "base/filename_util_internal.h
-  # "base/hex_utils.cc
-  # "base/hex_utils.h
-  # "base/host_mapping_rules.cc
-  # "base/host_mapping_rules.h
-  # "base/http_user_agent_settings.h
-  # "base/ip_pattern.cc
-  # "base/ip_pattern.h
-  # "base/layered_network_delegate.cc
-  # "base/layered_network_delegate.h
-  # "base/load_flags.h
-  # "base/load_flags_list.h
-  # "base/load_states.h
-  # "base/load_states_list.h
-  # "base/logging_network_change_observer.cc
-  # "base/logging_network_change_observer.h
-  #${GNET_DIR}base/mime_sniffer.cc
+  # ##"android/android_http_util.cc
+  # ##"android/cellular_signal_strength.cc
+  # ##"android/cellular_signal_strength.h
+  # ##"android/cert_verify_result_android.cc
+  # ##"android/cert_verify_result_android.h
+  # ##"android/gurl_utils.cc
+  # ##"android/http_auth_negotiate_android.cc
+  # ##"android/http_auth_negotiate_android.h
+  # ##"android/keystore.cc
+  # ##"android/keystore.h
+  # ##"android/network_change_notifier_android.cc
+  # ##"android/network_change_notifier_android.h
+  # ##"android/network_change_notifier_delegate_android.cc
+  # ##"android/network_change_notifier_delegate_android.h
+  # ##"android/network_change_notifier_factory_android.cc
+  # ##"android/network_change_notifier_factory_android.h
+  # ##"android/network_library.cc
+  # ##"android/network_library.h
+  # ##"android/traffic_stats.cc
+  # ##"android/traffic_stats.h
+  ## TODO ## ${GNET_DIR}base/address_tracker_linux.cc
+  ## TODO ## ${GNET_DIR}base/address_tracker_linux.h
+  ${GNET_DIR}base/backoff_entry.cc
+  ${GNET_DIR}base/backoff_entry.h
+  ${GNET_DIR}base/backoff_entry_serializer.cc
+  ${GNET_DIR}base/backoff_entry_serializer.h
+  ${GNET_DIR}base/cache_type.h
+  ${GNET_DIR}base/chunked_upload_data_stream.cc
+  ${GNET_DIR}base/chunked_upload_data_stream.h
+  ${GNET_DIR}base/data_url.cc
+  ${GNET_DIR}base/data_url.h
+  ${GNET_DIR}base/elements_upload_data_stream.cc
+  ${GNET_DIR}base/elements_upload_data_stream.h
+  ${GNET_DIR}base/expiring_cache.h
+  ${GNET_DIR}base/file_stream.cc
+  ${GNET_DIR}base/file_stream.h
+  ${GNET_DIR}base/file_stream_context.cc
+  ${GNET_DIR}base/file_stream_context.h
+  ## TODO ## ${GNET_DIR}base/file_stream_context_win.cc
+  ${GNET_DIR}base/filename_util.cc
+  ${GNET_DIR}base/filename_util.h
+  ${GNET_DIR}base/filename_util_internal.cc
+  ${GNET_DIR}base/filename_util_internal.h
+  ${GNET_DIR}base/hex_utils.cc
+  ${GNET_DIR}base/hex_utils.h
+  ${GNET_DIR}base/host_mapping_rules.cc
+  ${GNET_DIR}base/host_mapping_rules.h
+  ${GNET_DIR}base/http_user_agent_settings.h
+  ${GNET_DIR}base/ip_pattern.cc
+  ${GNET_DIR}base/ip_pattern.h
+  ${GNET_DIR}base/layered_network_delegate.cc
+  ${GNET_DIR}base/layered_network_delegate.h
+  ${GNET_DIR}base/load_flags.h
+  ${GNET_DIR}base/load_flags_list.h
+  ${GNET_DIR}base/load_states.h
+  ${GNET_DIR}base/load_states_list.h
+  ${GNET_DIR}base/logging_network_change_observer.cc
+  ${GNET_DIR}base/logging_network_change_observer.h
+  ${GNET_DIR}base/mime_sniffer.cc
   #${GNET_DIR}base/mime_sniffer.h
   ${GNET_DIR}base/mime_util.cc
   #${GNET_DIR}base/mime_util.h
-  # "base/net_errors_win.cc
-  # "base/net_info_source_list.h
-  # "base/network_activity_monitor.cc
-  # "base/network_activity_monitor.h
-  # "base/network_change_notifier.cc
-  # "base/network_change_notifier.h
-  # "base/network_change_notifier_factory.h
-  # "base/network_change_notifier_linux.cc
-  # "base/network_change_notifier_linux.h
-  # "base/network_change_notifier_mac.cc
-  # "base/network_change_notifier_mac.h
-  # "base/network_change_notifier_win.cc
-  # "base/network_change_notifier_win.h
-  # "base/network_config_watcher_mac.cc
-  # "base/network_config_watcher_mac.h
-  # "base/network_delegate.cc
-  # "base/network_delegate.h
-  # "base/network_delegate_impl.cc
-  # "base/network_delegate_impl.h
-  # "base/network_interfaces_linux.cc
-  # "base/network_interfaces_linux.h
-  # "base/network_interfaces_nacl.cc
-  # "base/network_interfaces_win.cc
-  # "base/network_interfaces_win.h
+  ## TODO ## ${GNET_DIR}base/net_errors_win.cc
+  ${GNET_DIR}base/net_info_source_list.h
+  ${GNET_DIR}base/network_activity_monitor.cc
+  ${GNET_DIR}base/network_activity_monitor.h
+  ${GNET_DIR}base/network_change_notifier.cc
+  ${GNET_DIR}base/network_change_notifier.h
+  ${GNET_DIR}base/network_change_notifier_factory.h
+  ## TODO ## ${GNET_DIR}base/network_change_notifier_linux.cc
+  ## TODO ## ${GNET_DIR}base/network_change_notifier_linux.h
+  # ##"base/network_change_notifier_mac.cc
+  # ##"base/network_change_notifier_mac.h
+  # ##"base/network_change_notifier_win.cc
+  # ##"base/network_change_notifier_win.h
+  # ##"base/network_config_watcher_mac.cc
+  # ##"base/network_config_watcher_mac.h
+  ${GNET_DIR}base/network_delegate.cc
+  ${GNET_DIR}base/network_delegate.h
+  ${GNET_DIR}base/network_delegate_impl.cc
+  ${GNET_DIR}base/network_delegate_impl.h
+  ## TODO ## ${GNET_DIR}base/network_interfaces_linux.cc
+  ## TODO ## ${GNET_DIR}base/network_interfaces_linux.h
+  # ##"base/network_interfaces_nacl.cc
+  # ##"base/network_interfaces_win.cc
+  # ##"base/network_interfaces_win.h
   # "base/platform_mime_util.h
-  ${GNET_DIR}base/platform_mime_util_linux.cc
-  # "base/platform_mime_util_mac.mm",
-  # "base/platform_mime_util_win.cc
-  # "base/prioritized_dispatcher.cc
-  # "base/prioritized_dispatcher.h
-  # "base/prioritized_task_runner.cc
-  # "base/prioritized_task_runner.h
-  # "base/priority_queue.h
-  # "base/proxy_delegate.h
-  # "base/proxy_server.cc
-  # "base/proxy_server.h
-  # "base/proxy_server_mac.cc
+  ## TODO ## ${GNET_DIR}base/platform_mime_util_linux.cc
+  # ##"base/platform_mime_util_mac.mm",
+  # ##"base/platform_mime_util_win.cc
+  ${GNET_DIR}base/prioritized_dispatcher.cc
+  ${GNET_DIR}base/prioritized_dispatcher.h
+  ${GNET_DIR}base/prioritized_task_runner.cc
+  ${GNET_DIR}base/prioritized_task_runner.h
+  ${GNET_DIR}base/priority_queue.h
+  ${GNET_DIR}base/proxy_delegate.h
+  ${GNET_DIR}base/proxy_server.cc
+  ${GNET_DIR}base/proxy_server.h
+  # ##"base/proxy_server_mac.cc
   ${GNET_DIR}base/request_priority.cc
-  # "base/request_priority.h
-  # "base/static_cookie_policy.cc
-  # "base/static_cookie_policy.h
-  # "base/test_data_stream.cc
-  # "base/test_data_stream.h
-  # "base/upload_bytes_element_reader.cc
-  # "base/upload_bytes_element_reader.h
-  # "base/upload_data_stream.cc
-  # "base/upload_data_stream.h
-  # "base/upload_element_reader.cc
-  # "base/upload_element_reader.h
-  # "base/upload_file_element_reader.cc
-  # "base/upload_file_element_reader.h
-  # "base/upload_progress.h
-  # "base/winsock_init.cc
-  # "base/winsock_init.h
-  # "base/winsock_util.cc
-  # "base/winsock_util.h
-  # "cert/caching_cert_verifier.cc
-  # "cert/caching_cert_verifier.h
-  # "cert/cert_database_mac.cc
-  # "cert/cert_net_fetcher.h
-  # "cert/cert_verify_proc.cc
-  # "cert/cert_verify_proc.h
-  # "cert/cert_verify_proc_android.cc
-  # "cert/cert_verify_proc_android.h
-  # "cert/cert_verify_proc_builtin.cc
-  # "cert/cert_verify_proc_builtin.h
-  # "cert/cert_verify_proc_ios.cc
-  # "cert/cert_verify_proc_ios.h
-  # "cert/cert_verify_proc_mac.cc
-  # "cert/cert_verify_proc_mac.h
-  # "cert/cert_verify_proc_nss.cc
-  # "cert/cert_verify_proc_nss.h
-  # "cert/cert_verify_proc_win.cc
-  # "cert/cert_verify_proc_win.h
-  # "cert/ct_log_response_parser.cc
-  # "cert/ct_log_response_parser.h
-  # "cert/ct_log_verifier.cc
-  # "cert/ct_log_verifier.h
-  # "cert/ct_log_verifier_util.cc
-  # "cert/ct_log_verifier_util.h
-  # "cert/ct_objects_extractor.cc
-  # "cert/ct_objects_extractor.h
-  # "cert/ct_sct_to_string.cc
-  # "cert/ct_sct_to_string.h
-  # "cert/ct_serialization.cc
-  # "cert/ct_serialization.h
-  # "cert/ct_signed_certificate_timestamp_log_param.cc
-  # "cert/ct_signed_certificate_timestamp_log_param.h
-  # "cert/ev_root_ca_metadata.cc
-  # "cert/ev_root_ca_metadata.h
-  # "cert/internal/system_trust_store.cc
-  # "cert/internal/system_trust_store.h
-  # "cert/internal/trust_store_mac.cc
-  # "cert/internal/trust_store_mac.h
-  # "cert/internal/trust_store_nss.cc
-  # "cert/internal/trust_store_nss.h
-  # "cert/jwk_serializer.cc
-  # "cert/jwk_serializer.h
-  # "cert/known_roots.cc
-  # "cert/known_roots.h
-  # "cert/known_roots_mac.cc
-  # "cert/known_roots_mac.h
-  # "cert/known_roots_nss.cc
-  # "cert/known_roots_nss.h
-  # "cert/known_roots_win.cc
-  # "cert/known_roots_win.h
-  # "cert/merkle_audit_proof.cc
-  # "cert/merkle_audit_proof.h
-  # "cert/merkle_consistency_proof.cc
-  # "cert/merkle_consistency_proof.h
-  # "cert/merkle_tree_leaf.cc
-  # "cert/merkle_tree_leaf.h
-  # "cert/multi_log_ct_verifier.cc
-  # "cert/multi_log_ct_verifier.h
-  # "cert/multi_threaded_cert_verifier.cc
-  # "cert/multi_threaded_cert_verifier.h
-  # "cert/nss_cert_database.cc
-  # "cert/nss_cert_database.h
-  # "cert/nss_cert_database_chromeos.cc
-  # "cert/nss_cert_database_chromeos.h
-  # "cert/nss_profile_filter_chromeos.cc
-  # "cert/nss_profile_filter_chromeos.h
-  # "cert/root_cert_list_generated.h
-  # "cert/test_keychain_search_list_mac.cc
-  # "cert/test_keychain_search_list_mac.h
-  # "cert/test_root_certs.cc
-  # "cert/test_root_certs.h
-  # "cert/test_root_certs_android.cc
-  # "cert/test_root_certs_mac.cc
-  # "cert/test_root_certs_nss.cc
-  # "cert/test_root_certs_win.cc
-  # "cert/x509_util_android.cc
-  # "cert/x509_util_ios.cc
-  # "cert/x509_util_ios.h
-  # "cert/x509_util_ios_and_mac.cc
-  # "cert/x509_util_ios_and_mac.h
-  # "cert/x509_util_mac.cc
-  # "cert/x509_util_mac.h
-  # "cert/x509_util_nss.cc
-  # "cert/x509_util_nss.h
-  # "cert/x509_util_win.cc
-  # "cert/x509_util_win.h
+  ${GNET_DIR}base/request_priority.h
+  ${GNET_DIR}base/static_cookie_policy.cc
+  ${GNET_DIR}base/static_cookie_policy.h
+  ${GNET_DIR}base/test_data_stream.cc
+  ${GNET_DIR}base/test_data_stream.h
+  ${GNET_DIR}base/upload_bytes_element_reader.cc
+  ${GNET_DIR}base/upload_bytes_element_reader.h
+  ${GNET_DIR}base/upload_data_stream.cc
+  ${GNET_DIR}base/upload_data_stream.h
+  ${GNET_DIR}base/upload_element_reader.cc
+  ${GNET_DIR}base/upload_element_reader.h
+  ${GNET_DIR}base/upload_file_element_reader.cc
+  ${GNET_DIR}base/upload_file_element_reader.h
+  ${GNET_DIR}base/upload_progress.h
+  ##${GNET_DIR}base/winsock_init.cc
+  ##${GNET_DIR}base/winsock_init.h
+  ##${GNET_DIR}base/winsock_util.cc
+  ##${GNET_DIR}base/winsock_util.h
+  ${GNET_DIR}cert/caching_cert_verifier.cc
+  ${GNET_DIR}cert/caching_cert_verifier.h
+  ${GNET_DIR}#"cert/cert_database_mac.cc
+  ${GNET_DIR}cert/cert_net_fetcher.h
+  ${GNET_DIR}cert/cert_verify_proc.cc
+  ${GNET_DIR}cert/cert_verify_proc.h
+  ${GNET_DIR}#"cert/cert_verify_proc_android.cc
+  ${GNET_DIR}#"cert/cert_verify_proc_android.h
+  ${GNET_DIR}cert/cert_verify_proc_builtin.cc
+  ${GNET_DIR}cert/cert_verify_proc_builtin.h
+  ${GNET_DIR}#"cert/cert_verify_proc_ios.cc
+  ${GNET_DIR}#"cert/cert_verify_proc_ios.h
+  ${GNET_DIR}#"cert/cert_verify_proc_mac.cc
+  ${GNET_DIR}#"cert/cert_verify_proc_mac.h
+  ## TODO ## ${GNET_DIR}cert/cert_verify_proc_nss.cc
+  ## TODO ## ${GNET_DIR}cert/cert_verify_proc_nss.h
+  ${GNET_DIR}#"cert/cert_verify_proc_win.cc
+  ${GNET_DIR}#"cert/cert_verify_proc_win.h
+  ${GNET_DIR}cert/ct_log_response_parser.cc
+  ${GNET_DIR}cert/ct_log_response_parser.h
+  ${GNET_DIR}cert/ct_log_verifier.cc
+  ${GNET_DIR}cert/ct_log_verifier.h
+  ${GNET_DIR}cert/ct_log_verifier_util.cc
+  ${GNET_DIR}cert/ct_log_verifier_util.h
+  ${GNET_DIR}cert/ct_objects_extractor.cc
+  ${GNET_DIR}cert/ct_objects_extractor.h
+  ${GNET_DIR}cert/ct_sct_to_string.cc
+  ${GNET_DIR}cert/ct_sct_to_string.h
+  ${GNET_DIR}cert/ct_serialization.cc
+  ${GNET_DIR}cert/ct_serialization.h
+  ${GNET_DIR}cert/ct_signed_certificate_timestamp_log_param.cc
+  ${GNET_DIR}cert/ct_signed_certificate_timestamp_log_param.h
+  ${GNET_DIR}cert/ev_root_ca_metadata.cc
+  ${GNET_DIR}cert/ev_root_ca_metadata.h
+  ${GNET_DIR}cert/internal/system_trust_store.cc
+  ${GNET_DIR}cert/internal/system_trust_store.h
+  ${GNET_DIR}#"cert/internal/trust_store_mac.cc
+  ${GNET_DIR}#"cert/internal/trust_store_mac.h
+  ## TODO ## ${GNET_DIR}cert/internal/trust_store_nss.cc
+  ## TODO ## ${GNET_DIR}cert/internal/trust_store_nss.h
+  ${GNET_DIR}cert/jwk_serializer.cc
+  ${GNET_DIR}cert/jwk_serializer.h
+  ${GNET_DIR}cert/known_roots.cc
+  ${GNET_DIR}cert/known_roots.h
+  ${GNET_DIR}#"cert/known_roots_mac.cc
+  ${GNET_DIR}#"cert/known_roots_mac.h
+  ## TODO ## ${GNET_DIR}cert/known_roots_nss.cc
+  ## TODO ## ${GNET_DIR}cert/known_roots_nss.h
+  ${GNET_DIR}#"cert/known_roots_win.cc
+  ${GNET_DIR}cert/known_roots_win.h
+  ${GNET_DIR}cert/merkle_audit_proof.cc
+  ${GNET_DIR}cert/merkle_audit_proof.h
+  ${GNET_DIR}cert/merkle_consistency_proof.cc
+  ${GNET_DIR}cert/merkle_consistency_proof.h
+  ${GNET_DIR}cert/merkle_tree_leaf.cc
+  ${GNET_DIR}cert/merkle_tree_leaf.h
+  ${GNET_DIR}cert/multi_log_ct_verifier.cc
+  ${GNET_DIR}cert/multi_log_ct_verifier.h
+  ${GNET_DIR}cert/multi_threaded_cert_verifier.cc
+  ${GNET_DIR}cert/multi_threaded_cert_verifier.h
+  ## TODO ## ${GNET_DIR}cert/nss_cert_database.cc
+  ## TODO ## ${GNET_DIR}cert/nss_cert_database.h
+  ## TODO ## ${GNET_DIR}cert/nss_cert_database_chromeos.cc
+  ## TODO ## ${GNET_DIR}cert/nss_cert_database_chromeos.h
+  ## TODO ## ${GNET_DIR}cert/nss_profile_filter_chromeos.cc
+  ## TODO ## ${GNET_DIR}cert/nss_profile_filter_chromeos.h
+  ${GNET_DIR}cert/root_cert_list_generated.h
+  # ##"cert/test_keychain_search_list_mac.cc
+  # ##"cert/test_keychain_search_list_mac.h
+  ${GNET_DIR}cert/test_root_certs.cc
+  ${GNET_DIR}cert/test_root_certs.h
+  ##${GNET_DIR}cert/test_root_certs_android.cc
+  # ##"cert/test_root_certs_mac.cc
+  ##${GNET_DIR}cert/test_root_certs_nss.cc
+  ##${GNET_DIR}cert/test_root_certs_win.cc
+  # ##"cert/x509_util_android.cc
+  # ##"cert/x509_util_ios.cc
+  # ##"cert/x509_util_ios.h
+  # ##"cert/x509_util_ios_and_mac.cc
+  # ##"cert/x509_util_ios_and_mac.h
+  # ##"cert/x509_util_mac.cc
+  # ##"cert/x509_util_mac.h
+  ##${GNET_DIR}cert/x509_util_nss.cc
+  ##${GNET_DIR}cert/x509_util_nss.h
+  ##${GNET_DIR}cert/x509_util_win.cc
+  ##${GNET_DIR}cert/x509_util_win.h
   # "cert_net/cert_net_fetcher_impl.cc
   # "cert_net/cert_net_fetcher_impl.h
   # "cert_net/nss_ocsp.cc
   # "cert_net/nss_ocsp.h
-  # "cookies/canonical_cookie.cc
-  # "cookies/canonical_cookie.h
-  # "cookies/cookie_change_dispatcher.cc
-  # "cookies/cookie_change_dispatcher.h
-  # "cookies/cookie_constants.cc
-  # "cookies/cookie_constants.h
-  # "cookies/cookie_deletion_info.cc
-  # "cookies/cookie_deletion_info.h
-  # "cookies/cookie_monster.cc
-  # "cookies/cookie_monster.h
-  # "cookies/cookie_monster_change_dispatcher.cc
-  # "cookies/cookie_monster_change_dispatcher.h
-  # "cookies/cookie_monster_netlog_params.cc
-  # "cookies/cookie_monster_netlog_params.h
-  # "cookies/cookie_options.cc
-  # "cookies/cookie_options.h
-  # "cookies/cookie_store.cc
-  # "cookies/cookie_store.h
-  # "cookies/cookie_util.cc
-  # "cookies/cookie_util.h
-  # "cookies/parsed_cookie.cc
-  # "cookies/parsed_cookie.h
-  # "disk_cache/backend_cleanup_tracker.cc
-  # "disk_cache/backend_cleanup_tracker.h
-  # "disk_cache/blockfile/addr.cc
-  # "disk_cache/blockfile/addr.h
-  # "disk_cache/blockfile/backend_impl.cc
-  # "disk_cache/blockfile/backend_impl.h
-  # "disk_cache/blockfile/bitmap.cc
-  # "disk_cache/blockfile/bitmap.h
-  # "disk_cache/blockfile/block_files.cc
-  # "disk_cache/blockfile/block_files.h
-  # "disk_cache/blockfile/disk_format.cc
-  # "disk_cache/blockfile/disk_format.h
-  # "disk_cache/blockfile/disk_format_base.h
-  # "disk_cache/blockfile/entry_impl.cc
-  # "disk_cache/blockfile/entry_impl.h
-  # "disk_cache/blockfile/errors.h
-  # "disk_cache/blockfile/eviction.cc
-  # "disk_cache/blockfile/eviction.h
-  # "disk_cache/blockfile/experiments.h
-  # "disk_cache/blockfile/file.cc
-  # "disk_cache/blockfile/file.h
-  # "disk_cache/blockfile/file_block.h
-  # "disk_cache/blockfile/file_ios.cc
-  # "disk_cache/blockfile/file_lock.cc
-  # "disk_cache/blockfile/file_lock.h
-  # "disk_cache/blockfile/file_win.cc
-  # "disk_cache/blockfile/histogram_macros.h
-  # "disk_cache/blockfile/in_flight_backend_io.cc
-  # "disk_cache/blockfile/in_flight_backend_io.h
-  # "disk_cache/blockfile/in_flight_io.cc
-  # "disk_cache/blockfile/in_flight_io.h
-  # "disk_cache/blockfile/mapped_file.cc
-  # "disk_cache/blockfile/mapped_file.h
-  # "disk_cache/blockfile/mapped_file_win.cc
-  # "disk_cache/blockfile/rankings.cc
-  # "disk_cache/blockfile/rankings.h
-  # "disk_cache/blockfile/sparse_control.cc
-  # "disk_cache/blockfile/sparse_control.h
-  # "disk_cache/blockfile/stats.cc
-  # "disk_cache/blockfile/stats.h
-  # "disk_cache/blockfile/storage_block-inl.h
-  # "disk_cache/blockfile/storage_block.h
-  # "disk_cache/blockfile/stress_support.h
-  # "disk_cache/blockfile/trace.cc
-  # "disk_cache/blockfile/trace.h
-  # "disk_cache/blockfile/webfonts_histogram.cc
-  # "disk_cache/blockfile/webfonts_histogram.h
-  # "disk_cache/cache_util.cc
-  # "disk_cache/cache_util.h
-  # "disk_cache/cache_util_win.cc
-  # "disk_cache/disk_cache.cc
-  # "disk_cache/disk_cache.h
-  # "disk_cache/memory/mem_backend_impl.cc
-  # "disk_cache/memory/mem_backend_impl.h
-  # "disk_cache/memory/mem_entry_impl.cc
-  # "disk_cache/memory/mem_entry_impl.h
-  # "disk_cache/net_log_parameters.cc
-  # "disk_cache/net_log_parameters.h
-  # "disk_cache/simple/simple_backend_impl.cc
-  # "disk_cache/simple/simple_backend_impl.h
-  # "disk_cache/simple/simple_backend_version.h
-  # "disk_cache/simple/simple_entry_format.cc
-  # "disk_cache/simple/simple_entry_format.h
-  # "disk_cache/simple/simple_entry_format_history.h
-  # "disk_cache/simple/simple_entry_impl.cc
-  # "disk_cache/simple/simple_entry_impl.h
-  # "disk_cache/simple/simple_entry_operation.cc
-  # "disk_cache/simple/simple_entry_operation.h
-  # "disk_cache/simple/simple_file_tracker.cc
-  # "disk_cache/simple/simple_file_tracker.h
-  # "disk_cache/simple/simple_histogram_macros.h
-  # "disk_cache/simple/simple_index.cc
-  # "disk_cache/simple/simple_index.h
-  # "disk_cache/simple/simple_index_delegate.h
-  # "disk_cache/simple/simple_index_file.cc
-  # "disk_cache/simple/simple_index_file.h
-  # "disk_cache/simple/simple_index_file_win.cc
-  # "disk_cache/simple/simple_net_log_parameters.cc
-  # "disk_cache/simple/simple_net_log_parameters.h
-  # "disk_cache/simple/simple_synchronous_entry.cc
-  # "disk_cache/simple/simple_synchronous_entry.h
-  # "disk_cache/simple/simple_util.cc
-  # "disk_cache/simple/simple_util.h
-  # "disk_cache/simple/simple_util_win.cc
-  # "disk_cache/simple/simple_version_upgrade.cc
-  # "disk_cache/simple/simple_version_upgrade.h
-  # "filter/filter_source_stream.cc
-  # "filter/filter_source_stream.h
-  # "filter/gzip_header.cc
-  # "filter/gzip_header.h
-  # "filter/gzip_source_stream.cc
-  # "filter/gzip_source_stream.h
-  # "filter/source_stream.cc
-  # "filter/source_stream.h
-  # "filter/source_stream_type_list.h
-  # "http/bidirectional_stream.cc
-  # "http/bidirectional_stream.h
-  # "http/bidirectional_stream_impl.cc
-  # "http/bidirectional_stream_impl.h
-  # "http/bidirectional_stream_request_info.cc
-  # "http/bidirectional_stream_request_info.h
-  # "http/broken_alternative_services.cc
-  # "http/broken_alternative_services.h
-  # "http/failing_http_transaction_factory.cc
-  # "http/failing_http_transaction_factory.h
-  # "http/http_auth.cc
-  # "http/http_auth.h
-  # "http/http_auth_cache.cc
-  # "http/http_auth_cache.h
-  # "http/http_auth_controller.cc
-  # "http/http_auth_controller.h
-  # "http/http_auth_filter.cc
-  # "http/http_auth_filter.h
-  # "http/http_auth_handler.cc
-  # "http/http_auth_handler.h
-  # "http/http_auth_handler_basic.cc
-  # "http/http_auth_handler_basic.h
-  # "http/http_auth_handler_digest.cc
-  # "http/http_auth_handler_digest.h
-  # "http/http_auth_handler_factory.cc
-  # "http/http_auth_handler_factory.h
-  # "http/http_auth_handler_negotiate.cc
-  # "http/http_auth_handler_negotiate.h
-  # "http/http_auth_handler_ntlm.cc
-  # "http/http_auth_handler_ntlm.h
-  # "http/http_auth_handler_ntlm_portable.cc
-  # "http/http_auth_handler_ntlm_win.cc
-  # "http/http_auth_multi_round_parse.cc
-  # "http/http_auth_multi_round_parse.h
-  # "http/http_auth_preferences.cc
-  # "http/http_auth_preferences.h
-  # "http/http_auth_sspi_win.cc
-  # "http/http_auth_sspi_win.h
-  # "http/http_basic_state.cc
-  # "http/http_basic_state.h
-  # "http/http_basic_stream.cc
-  # "http/http_basic_stream.h
-  # "http/http_cache.cc
-  # "http/http_cache.h
-  # "http/http_cache_lookup_manager.cc
-  # "http/http_cache_lookup_manager.h
-  # "http/http_cache_transaction.cc
-  # "http/http_cache_transaction.h
-  # "http/http_cache_writers.cc
-  # "http/http_cache_writers.h
-  # "http/http_chunked_decoder.cc
-  # "http/http_chunked_decoder.h
-  # "http/http_content_disposition.cc
-  # "http/http_content_disposition.h
-  # "http/http_negotiate_auth_system.h
-  # "http/http_network_layer.cc
-  # "http/http_network_layer.h
-  # "http/http_network_session.cc
-  # "http/http_network_session.h
-  # "http/http_network_session_peer.cc
-  # "http/http_network_session_peer.h
-  # "http/http_network_transaction.cc
-  # "http/http_network_transaction.h
-  # "http/http_proxy_client_socket.cc
-  # "http/http_proxy_client_socket.h
-  # "http/http_proxy_connect_job.cc
-  # "http/http_proxy_connect_job.h
-  # "http/http_request_info.cc
-  # "http/http_request_info.h
-  # "http/http_response_body_drainer.cc
-  # "http/http_response_body_drainer.h
-  # "http/http_server_properties.cc
-  # "http/http_server_properties.h
-  # "http/http_server_properties_impl.cc
-  # "http/http_server_properties_impl.h
-  # "http/http_server_properties_manager.cc
-  # "http/http_server_properties_manager.h
-  # "http/http_status_code.cc
-  # "http/http_status_code.h
-  # "http/http_stream.h
-  # "http/http_stream_factory.cc
-  # "http/http_stream_factory.h
-  # "http/http_stream_factory_job.cc
-  # "http/http_stream_factory_job.h
-  # "http/http_stream_factory_job_controller.cc
-  # "http/http_stream_factory_job_controller.h
-  # "http/http_stream_parser.cc
-  # "http/http_stream_parser.h
-  # "http/http_stream_request.cc
-  # "http/http_stream_request.h
-  # "http/http_transaction.h
-  # "http/http_transaction_factory.h
-  # "http/http_version.h
-  # "http/partial_data.cc
-  # "http/partial_data.h
-  # "http/proxy_client_socket.cc
-  # "http/proxy_client_socket.h
-  # "http/proxy_fallback.cc
-  # "http/proxy_fallback.h
-  # "http/transport_security_persister.cc
-  # "http/transport_security_persister.h
-  # "http/url_security_manager.cc
-  # "http/url_security_manager.h
-  # "http/url_security_manager_win.cc
+  ${GNET_DIR}cookies/canonical_cookie.cc
+  ${GNET_DIR}cookies/canonical_cookie.h
+  ${GNET_DIR}cookies/cookie_change_dispatcher.cc
+  ${GNET_DIR}cookies/cookie_change_dispatcher.h
+  ${GNET_DIR}cookies/cookie_constants.cc
+  ${GNET_DIR}cookies/cookie_constants.h
+  ${GNET_DIR}cookies/cookie_deletion_info.cc
+  ${GNET_DIR}cookies/cookie_deletion_info.h
+  ${GNET_DIR}cookies/cookie_monster.cc
+  ${GNET_DIR}cookies/cookie_monster.h
+  ${GNET_DIR}cookies/cookie_monster_change_dispatcher.cc
+  ${GNET_DIR}cookies/cookie_monster_change_dispatcher.h
+  ${GNET_DIR}cookies/cookie_monster_netlog_params.cc
+  ${GNET_DIR}cookies/cookie_monster_netlog_params.h
+  ${GNET_DIR}cookies/cookie_options.cc
+  ${GNET_DIR}cookies/cookie_options.h
+  ${GNET_DIR}cookies/cookie_store.cc
+  ${GNET_DIR}cookies/cookie_store.h
+  ${GNET_DIR}cookies/cookie_util.cc
+  ${GNET_DIR}cookies/cookie_util.h
+  ${GNET_DIR}cookies/parsed_cookie.cc
+  ${GNET_DIR}cookies/parsed_cookie.h
+  ${GNET_DIR}disk_cache/backend_cleanup_tracker.cc
+  ${GNET_DIR}disk_cache/backend_cleanup_tracker.h
+  ${GNET_DIR}disk_cache/blockfile/addr.cc
+  ${GNET_DIR}disk_cache/blockfile/addr.h
+  ${GNET_DIR}disk_cache/blockfile/backend_impl.cc
+  ${GNET_DIR}disk_cache/blockfile/backend_impl.h
+  ${GNET_DIR}disk_cache/blockfile/bitmap.cc
+  ${GNET_DIR}disk_cache/blockfile/bitmap.h
+  ${GNET_DIR}disk_cache/blockfile/block_files.cc
+  ${GNET_DIR}disk_cache/blockfile/block_files.h
+  ${GNET_DIR}disk_cache/blockfile/disk_format.cc
+  ${GNET_DIR}disk_cache/blockfile/disk_format.h
+  ${GNET_DIR}disk_cache/blockfile/disk_format_base.h
+  ${GNET_DIR}disk_cache/blockfile/entry_impl.cc
+  ${GNET_DIR}disk_cache/blockfile/entry_impl.h
+  ${GNET_DIR}disk_cache/blockfile/errors.h
+  ${GNET_DIR}disk_cache/blockfile/eviction.cc
+  ${GNET_DIR}disk_cache/blockfile/eviction.h
+  ${GNET_DIR}disk_cache/blockfile/experiments.h
+  ${GNET_DIR}disk_cache/blockfile/file.cc
+  ${GNET_DIR}disk_cache/blockfile/file.h
+  ${GNET_DIR}disk_cache/blockfile/file_block.h
+  #${GNET_DIR}disk_cache/blockfile/file_ios.cc
+  ${GNET_DIR}disk_cache/blockfile/file_lock.cc
+  ${GNET_DIR}disk_cache/blockfile/file_lock.h
+  ##${GNET_DIR}disk_cache/blockfile/file_win.cc
+  ${GNET_DIR}disk_cache/blockfile/histogram_macros.h
+  ${GNET_DIR}disk_cache/blockfile/in_flight_backend_io.cc
+  ${GNET_DIR}disk_cache/blockfile/in_flight_backend_io.h
+  ${GNET_DIR}disk_cache/blockfile/in_flight_io.cc
+  ${GNET_DIR}disk_cache/blockfile/in_flight_io.h
+  ${GNET_DIR}disk_cache/blockfile/mapped_file.cc
+  ${GNET_DIR}disk_cache/blockfile/mapped_file.h
+  ##${GNET_DIR}disk_cache/blockfile/mapped_file_win.cc
+  ${GNET_DIR}disk_cache/blockfile/rankings.cc
+  ${GNET_DIR}disk_cache/blockfile/rankings.h
+  ${GNET_DIR}disk_cache/blockfile/sparse_control.cc
+  ${GNET_DIR}disk_cache/blockfile/sparse_control.h
+  ${GNET_DIR}disk_cache/blockfile/stats.cc
+  ${GNET_DIR}disk_cache/blockfile/stats.h
+  ${GNET_DIR}disk_cache/blockfile/storage_block-inl.h
+  ${GNET_DIR}disk_cache/blockfile/storage_block.h
+  ${GNET_DIR}disk_cache/blockfile/stress_support.h
+  ${GNET_DIR}disk_cache/blockfile/trace.cc
+  ${GNET_DIR}disk_cache/blockfile/trace.h
+  ${GNET_DIR}disk_cache/blockfile/webfonts_histogram.cc
+  ${GNET_DIR}disk_cache/blockfile/webfonts_histogram.h
+  ${GNET_DIR}disk_cache/cache_util.cc
+  ${GNET_DIR}disk_cache/cache_util.h
+  ##${GNET_DIR}disk_cache/cache_util_win.cc
+  ${GNET_DIR}disk_cache/disk_cache.cc
+  ${GNET_DIR}disk_cache/disk_cache.h
+  ${GNET_DIR}disk_cache/memory/mem_backend_impl.cc
+  ${GNET_DIR}disk_cache/memory/mem_backend_impl.h
+  ${GNET_DIR}disk_cache/memory/mem_entry_impl.cc
+  ${GNET_DIR}disk_cache/memory/mem_entry_impl.h
+  ${GNET_DIR}disk_cache/net_log_parameters.cc
+  ${GNET_DIR}disk_cache/net_log_parameters.h
+  ${GNET_DIR}disk_cache/simple/simple_backend_impl.cc
+  ${GNET_DIR}disk_cache/simple/simple_backend_impl.h
+  ${GNET_DIR}disk_cache/simple/simple_backend_version.h
+  ${GNET_DIR}disk_cache/simple/simple_entry_format.cc
+  ${GNET_DIR}disk_cache/simple/simple_entry_format.h
+  ${GNET_DIR}disk_cache/simple/simple_entry_format_history.h
+  ${GNET_DIR}disk_cache/simple/simple_entry_impl.cc
+  ${GNET_DIR}disk_cache/simple/simple_entry_impl.h
+  ${GNET_DIR}disk_cache/simple/simple_entry_operation.cc
+  ${GNET_DIR}disk_cache/simple/simple_entry_operation.h
+  ${GNET_DIR}disk_cache/simple/simple_file_tracker.cc
+  ${GNET_DIR}disk_cache/simple/simple_file_tracker.h
+  ${GNET_DIR}disk_cache/simple/simple_histogram_macros.h
+  ${GNET_DIR}disk_cache/simple/simple_index.cc
+  ${GNET_DIR}disk_cache/simple/simple_index.h
+  ${GNET_DIR}disk_cache/simple/simple_index_delegate.h
+  ${GNET_DIR}disk_cache/simple/simple_index_file.cc
+  ${GNET_DIR}disk_cache/simple/simple_index_file.h
+  ##${GNET_DIR}disk_cache/simple/simple_index_file_win.cc
+  ${GNET_DIR}disk_cache/simple/simple_net_log_parameters.cc
+  ${GNET_DIR}disk_cache/simple/simple_net_log_parameters.h
+  ${GNET_DIR}disk_cache/simple/simple_synchronous_entry.cc
+  ${GNET_DIR}disk_cache/simple/simple_synchronous_entry.h
+  ${GNET_DIR}disk_cache/simple/simple_util.cc
+  ${GNET_DIR}disk_cache/simple/simple_util.h
+  ##${GNET_DIR}disk_cache/simple/simple_util_win.cc
+  ${GNET_DIR}disk_cache/simple/simple_version_upgrade.cc
+  ${GNET_DIR}disk_cache/simple/simple_version_upgrade.h
+  ${GNET_DIR}filter/filter_source_stream.cc
+  ${GNET_DIR}filter/filter_source_stream.h
+  ${GNET_DIR}filter/gzip_header.cc
+  ${GNET_DIR}filter/gzip_header.h
+  ${GNET_DIR}filter/gzip_source_stream.cc
+  ${GNET_DIR}filter/gzip_source_stream.h
+  ${GNET_DIR}filter/source_stream.cc
+  ${GNET_DIR}filter/source_stream.h
+  ${GNET_DIR}filter/source_stream_type_list.h
+  ## Brotli support.
+  #if (!disable_brotli_filter) {
+  #  sources += [
+  #    "filter/brotli_source_stream.cc",
+  #    "filter/brotli_source_stream.h",
+  #  ]
+  #} else {
+  #  sources += [ "filter/brotli_source_stream_disabled.cc" ]
+  #}
+  ${GNET_DIR}filter/brotli_source_stream_disabled.cc # see NET_DISABLE_BROTLI
+  ${GNET_DIR}http/bidirectional_stream.cc
+  ${GNET_DIR}http/bidirectional_stream.h
+  ${GNET_DIR}http/bidirectional_stream_impl.cc
+  ${GNET_DIR}http/bidirectional_stream_impl.h
+  ${GNET_DIR}http/bidirectional_stream_request_info.cc
+  ${GNET_DIR}http/bidirectional_stream_request_info.h
+  ${GNET_DIR}http/broken_alternative_services.cc
+  ${GNET_DIR}http/broken_alternative_services.h
+  ${GNET_DIR}http/failing_http_transaction_factory.cc
+  ${GNET_DIR}http/failing_http_transaction_factory.h
+  ${GNET_DIR}http/http_auth.cc
+  ${GNET_DIR}http/http_auth.h
+  ${GNET_DIR}http/http_auth_cache.cc
+  ${GNET_DIR}http/http_auth_cache.h
+  ${GNET_DIR}http/http_auth_controller.cc
+  ${GNET_DIR}http/http_auth_controller.h
+  ${GNET_DIR}http/http_auth_filter.cc
+  ${GNET_DIR}http/http_auth_filter.h
+  ${GNET_DIR}http/http_auth_handler.cc
+  ${GNET_DIR}http/http_auth_handler.h
+  ${GNET_DIR}http/http_auth_handler_basic.cc
+  ${GNET_DIR}http/http_auth_handler_basic.h
+  ${GNET_DIR}http/http_auth_handler_digest.cc
+  ${GNET_DIR}http/http_auth_handler_digest.h
+  ${GNET_DIR}http/http_auth_handler_factory.cc
+  ${GNET_DIR}http/http_auth_handler_factory.h
+  ${GNET_DIR}http/http_auth_handler_negotiate.cc
+  ${GNET_DIR}http/http_auth_handler_negotiate.h
+  ${GNET_DIR}http/http_auth_handler_ntlm.cc
+  ${GNET_DIR}http/http_auth_handler_ntlm.h
+  ${GNET_DIR}http/http_auth_handler_ntlm_portable.cc
+  ##${GNET_DIR}http/http_auth_handler_ntlm_win.cc
+  ${GNET_DIR}http/http_auth_multi_round_parse.cc
+  ${GNET_DIR}http/http_auth_multi_round_parse.h
+  ${GNET_DIR}http/http_auth_preferences.cc
+  ${GNET_DIR}http/http_auth_preferences.h
+  ##${GNET_DIR}http/http_auth_sspi_win.cc
+  ## TODO ## ${GNET_DIR}http/http_auth_sspi_win.h
+  ${GNET_DIR}http/http_basic_state.cc
+  ${GNET_DIR}http/http_basic_state.h
+  ${GNET_DIR}http/http_basic_stream.cc
+  ${GNET_DIR}http/http_basic_stream.h
+  ${GNET_DIR}http/http_cache.cc
+  ${GNET_DIR}http/http_cache.h
+  ${GNET_DIR}http/http_cache_lookup_manager.cc
+  ${GNET_DIR}http/http_cache_lookup_manager.h
+  ${GNET_DIR}http/http_cache_transaction.cc
+  ${GNET_DIR}http/http_cache_transaction.h
+  ${GNET_DIR}http/http_cache_writers.cc
+  ${GNET_DIR}http/http_cache_writers.h
+  ${GNET_DIR}http/http_chunked_decoder.cc
+  ${GNET_DIR}http/http_chunked_decoder.h
+  ${GNET_DIR}http/http_content_disposition.cc
+  ${GNET_DIR}http/http_content_disposition.h
+  ${GNET_DIR}http/http_negotiate_auth_system.h
+  ${GNET_DIR}http/http_network_layer.cc
+  ${GNET_DIR}http/http_network_layer.h
+  ${GNET_DIR}http/http_network_session.cc
+  ${GNET_DIR}http/http_network_session.h
+  ${GNET_DIR}http/http_network_session_peer.cc
+  ${GNET_DIR}http/http_network_session_peer.h
+  ${GNET_DIR}http/http_network_transaction.cc
+  ${GNET_DIR}http/http_network_transaction.h
+  ${GNET_DIR}http/http_proxy_client_socket.cc
+  ${GNET_DIR}http/http_proxy_client_socket.h
+  ${GNET_DIR}http/http_proxy_connect_job.cc
+  ${GNET_DIR}http/http_proxy_connect_job.h
+  ${GNET_DIR}http/http_request_info.cc
+  ${GNET_DIR}http/http_request_info.h
+  ${GNET_DIR}http/http_response_body_drainer.cc
+  ${GNET_DIR}http/http_response_body_drainer.h
+  ${GNET_DIR}http/http_server_properties.cc
+  ${GNET_DIR}http/http_server_properties.h
+  ${GNET_DIR}http/http_server_properties_impl.cc
+  ${GNET_DIR}http/http_server_properties_impl.h
+  ${GNET_DIR}http/http_server_properties_manager.cc
+  ${GNET_DIR}http/http_server_properties_manager.h
+  ${GNET_DIR}http/http_status_code.cc
+  ${GNET_DIR}http/http_status_code.h
+  ${GNET_DIR}http/http_stream.h
+  ${GNET_DIR}http/http_stream_factory.cc
+  ${GNET_DIR}http/http_stream_factory.h
+  ${GNET_DIR}http/http_stream_factory_job.cc
+  ${GNET_DIR}http/http_stream_factory_job.h
+  ${GNET_DIR}http/http_stream_factory_job_controller.cc
+  ${GNET_DIR}http/http_stream_factory_job_controller.h
+  ${GNET_DIR}http/http_stream_parser.cc
+  ${GNET_DIR}http/http_stream_parser.h
+  ${GNET_DIR}http/http_stream_request.cc
+  ${GNET_DIR}http/http_stream_request.h
+  ${GNET_DIR}http/http_transaction.h
+  ${GNET_DIR}http/http_transaction_factory.h
+  ${GNET_DIR}http/http_version.h
+  ${GNET_DIR}http/partial_data.cc
+  ${GNET_DIR}http/partial_data.h
+  ${GNET_DIR}http/proxy_client_socket.cc
+  ${GNET_DIR}http/proxy_client_socket.h
+  ${GNET_DIR}http/proxy_fallback.cc
+  ${GNET_DIR}http/proxy_fallback.h
+  ${GNET_DIR}http/transport_security_persister.cc
+  ${GNET_DIR}http/transport_security_persister.h
+  ${GNET_DIR}http/url_security_manager.cc
+  ${GNET_DIR}http/url_security_manager.h
+  ##${GNET_DIR}http/url_security_manager_win.cc
   # "http2/platform/impl/http2_arraysize_impl.h
   # "http2/platform/impl/http2_bug_tracker_impl.h
   # "http2/platform/impl/http2_containers_impl.h
@@ -706,47 +830,47 @@ set(GNET_SOURCES
   # "http2/platform/impl/http2_string_impl.h
   # "http2/platform/impl/http2_string_piece_impl.h
   # "http2/platform/impl/http2_string_utils_impl.h
-  # "log/file_net_log_observer.cc
-  # "log/file_net_log_observer.h
-  # "log/net_log_util.cc
-  # "log/net_log_util.h
-  # "log/trace_net_log_observer.cc
-  # "log/trace_net_log_observer.h
-  # "nqe/cached_network_quality.cc
-  # "nqe/cached_network_quality.h
-  # "nqe/effective_connection_type.cc
-  # "nqe/effective_connection_type.h
-  # "nqe/effective_connection_type_observer.h
-  # "nqe/event_creator.cc
-  # "nqe/event_creator.h
-  # "nqe/network_id.cc
-  # "nqe/network_id.h
-  # "nqe/network_qualities_prefs_manager.cc
-  # "nqe/network_qualities_prefs_manager.h
-  # "nqe/network_quality.cc
-  # "nqe/network_quality.h
-  # "nqe/network_quality_estimator.cc
-  # "nqe/network_quality_estimator.h
-  # "nqe/network_quality_estimator_params.cc
-  # "nqe/network_quality_estimator_params.h
-  # "nqe/network_quality_estimator_util.cc
-  # "nqe/network_quality_estimator_util.h
-  # "nqe/network_quality_observation.cc
-  # "nqe/network_quality_observation.h
-  # "nqe/network_quality_observation_source.cc
-  # "nqe/network_quality_observation_source.h
-  # "nqe/network_quality_store.cc
-  # "nqe/network_quality_store.h
-  # "nqe/observation_buffer.cc
-  # "nqe/observation_buffer.h
-  # "nqe/rtt_throughput_estimates_observer.h
-  # "nqe/socket_watcher.cc
-  # "nqe/socket_watcher.h
-  # "nqe/socket_watcher_factory.cc
-  # "nqe/socket_watcher_factory.h
-  # "nqe/throughput_analyzer.cc
-  # "nqe/throughput_analyzer.h
-  # "nqe/weighted_observation.h
+  ${GNET_DIR}log/file_net_log_observer.cc
+  ${GNET_DIR}log/file_net_log_observer.h
+  ${GNET_DIR}log/net_log_util.cc
+  ${GNET_DIR}log/net_log_util.h
+  ${GNET_DIR}log/trace_net_log_observer.cc
+  ${GNET_DIR}log/trace_net_log_observer.h
+  ${GNET_DIR}nqe/cached_network_quality.cc
+  ${GNET_DIR}nqe/cached_network_quality.h
+  ${GNET_DIR}nqe/effective_connection_type.cc
+  ${GNET_DIR}nqe/effective_connection_type.h
+  ${GNET_DIR}nqe/effective_connection_type_observer.h
+  ${GNET_DIR}nqe/event_creator.cc
+  ${GNET_DIR}nqe/event_creator.h
+  ${GNET_DIR}nqe/network_id.cc
+  ${GNET_DIR}nqe/network_id.h
+  ${GNET_DIR}nqe/network_qualities_prefs_manager.cc
+  ${GNET_DIR}nqe/network_qualities_prefs_manager.h
+  ${GNET_DIR}nqe/network_quality.cc
+  ${GNET_DIR}nqe/network_quality.h
+  ${GNET_DIR}nqe/network_quality_estimator.cc
+  ${GNET_DIR}nqe/network_quality_estimator.h
+  ${GNET_DIR}nqe/network_quality_estimator_params.cc
+  ${GNET_DIR}nqe/network_quality_estimator_params.h
+  ${GNET_DIR}nqe/network_quality_estimator_util.cc
+  ${GNET_DIR}nqe/network_quality_estimator_util.h
+  ${GNET_DIR}nqe/network_quality_observation.cc
+  ${GNET_DIR}nqe/network_quality_observation.h
+  ${GNET_DIR}nqe/network_quality_observation_source.cc
+  ${GNET_DIR}nqe/network_quality_observation_source.h
+  ${GNET_DIR}nqe/network_quality_store.cc
+  ${GNET_DIR}nqe/network_quality_store.h
+  ${GNET_DIR}nqe/observation_buffer.cc
+  ${GNET_DIR}nqe/observation_buffer.h
+  ${GNET_DIR}nqe/rtt_throughput_estimates_observer.h
+  ${GNET_DIR}nqe/socket_watcher.cc
+  ${GNET_DIR}nqe/socket_watcher.h
+  ${GNET_DIR}nqe/socket_watcher_factory.cc
+  ${GNET_DIR}nqe/socket_watcher_factory.h
+  ${GNET_DIR}nqe/throughput_analyzer.cc
+  ${GNET_DIR}nqe/throughput_analyzer.h
+  ${GNET_DIR}nqe/weighted_observation.h
   # "ntlm/ntlm.cc
   # "ntlm/ntlm.h
   # "ntlm/ntlm_buffer_reader.cc
@@ -757,67 +881,67 @@ set(GNET_SOURCES
   # "ntlm/ntlm_client.h
   # "ntlm/ntlm_constants.cc
   # "ntlm/ntlm_constants.h
-  # "proxy_resolution/dhcp_pac_file_adapter_fetcher_win.cc
-  # "proxy_resolution/dhcp_pac_file_adapter_fetcher_win.h
-  # "proxy_resolution/dhcp_pac_file_fetcher.cc
-  # "proxy_resolution/dhcp_pac_file_fetcher.h
-  # "proxy_resolution/dhcp_pac_file_fetcher_factory.cc
-  # "proxy_resolution/dhcp_pac_file_fetcher_factory.h
-  # "proxy_resolution/dhcp_pac_file_fetcher_win.cc
-  # "proxy_resolution/dhcp_pac_file_fetcher_win.h
-  # "proxy_resolution/dhcpcsvc_init_win.cc
-  # "proxy_resolution/dhcpcsvc_init_win.h
-  # "proxy_resolution/multi_threaded_proxy_resolver.cc
-  # "proxy_resolution/multi_threaded_proxy_resolver.h
-  # "proxy_resolution/network_delegate_error_observer.cc
-  # "proxy_resolution/network_delegate_error_observer.h
-  # "proxy_resolution/pac_file_data.cc
-  # "proxy_resolution/pac_file_data.h
-  # "proxy_resolution/pac_file_decider.cc
-  # "proxy_resolution/pac_file_decider.h
-  # "proxy_resolution/pac_file_fetcher.h
-  # "proxy_resolution/pac_file_fetcher_impl.cc
-  # "proxy_resolution/pac_file_fetcher_impl.h
-  # "proxy_resolution/pac_js_library.h
-  # "proxy_resolution/pac_library.cc
-  # "proxy_resolution/pac_library.h
-  # "proxy_resolution/polling_proxy_config_service.cc
-  # "proxy_resolution/polling_proxy_config_service.h
-  # "proxy_resolution/proxy_bypass_rules.cc
-  # "proxy_resolution/proxy_bypass_rules.h
-  # "proxy_resolution/proxy_config.cc
-  # "proxy_resolution/proxy_config.h
-  # "proxy_resolution/proxy_config_service.h
-  # "proxy_resolution/proxy_config_service_android.cc
-  # "proxy_resolution/proxy_config_service_android.h
-  # "proxy_resolution/proxy_config_service_fixed.cc
-  # "proxy_resolution/proxy_config_service_fixed.h
-  # "proxy_resolution/proxy_config_service_ios.cc
-  # "proxy_resolution/proxy_config_service_ios.h
-  # "proxy_resolution/proxy_config_service_linux.cc
-  # "proxy_resolution/proxy_config_service_linux.h
-  # "proxy_resolution/proxy_config_service_mac.cc
-  # "proxy_resolution/proxy_config_service_mac.h
-  # "proxy_resolution/proxy_config_service_win.cc
-  # "proxy_resolution/proxy_config_service_win.h
-  # "proxy_resolution/proxy_config_with_annotation.cc
-  # "proxy_resolution/proxy_config_with_annotation.h
-  # "proxy_resolution/proxy_info.cc
-  # "proxy_resolution/proxy_info.h
-  # "proxy_resolution/proxy_list.cc
-  # "proxy_resolution/proxy_list.h
-  # "proxy_resolution/proxy_resolution_service.cc
-  # "proxy_resolution/proxy_resolution_service.h
-  # "proxy_resolution/proxy_resolve_dns_operation.h
-  # "proxy_resolution/proxy_resolver.h
-  # "proxy_resolution/proxy_resolver_error_observer.h
-  # "proxy_resolution/proxy_resolver_factory.cc
-  # "proxy_resolution/proxy_resolver_factory.h
-  # "proxy_resolution/proxy_resolver_mac.cc
-  # "proxy_resolution/proxy_resolver_mac.h
-  # "proxy_resolution/proxy_resolver_winhttp.cc
-  # "proxy_resolution/proxy_resolver_winhttp.h
-  # "proxy_resolution/proxy_retry_info.h
+  ## TODO ## ${GNET_DIR}proxy_resolution/dhcp_pac_file_adapter_fetcher_win.cc
+  ## TODO ## ${GNET_DIR}proxy_resolution/dhcp_pac_file_adapter_fetcher_win.h
+  ${GNET_DIR}proxy_resolution/dhcp_pac_file_fetcher.cc
+  ${GNET_DIR}proxy_resolution/dhcp_pac_file_fetcher.h
+  ${GNET_DIR}proxy_resolution/dhcp_pac_file_fetcher_factory.cc
+  ${GNET_DIR}proxy_resolution/dhcp_pac_file_fetcher_factory.h
+  ## TODO ## ${GNET_DIR}proxy_resolution/dhcp_pac_file_fetcher_win.cc
+  ## TODO ## ${GNET_DIR}proxy_resolution/dhcp_pac_file_fetcher_win.h
+  ## TODO ## ${GNET_DIR}proxy_resolution/dhcpcsvc_init_win.cc
+  ## TODO ## ${GNET_DIR}proxy_resolution/dhcpcsvc_init_win.h
+  ${GNET_DIR}proxy_resolution/multi_threaded_proxy_resolver.cc
+  ${GNET_DIR}proxy_resolution/multi_threaded_proxy_resolver.h
+  ${GNET_DIR}proxy_resolution/network_delegate_error_observer.cc
+  ${GNET_DIR}proxy_resolution/network_delegate_error_observer.h
+  ## TODO ## ${GNET_DIR}proxy_resolution/pac_file_data.cc
+  ## TODO ## ${GNET_DIR}proxy_resolution/pac_file_data.h
+  ## TODO ## ${GNET_DIR}proxy_resolution/pac_file_decider.cc
+  ## TODO ## ${GNET_DIR}proxy_resolution/pac_file_decider.h
+  ## TODO ## ${GNET_DIR}proxy_resolution/pac_file_fetcher.h
+  ## TODO ## ${GNET_DIR}proxy_resolution/pac_file_fetcher_impl.cc
+  ## TODO ## ${GNET_DIR}proxy_resolution/pac_file_fetcher_impl.h
+  ## TODO ## ${GNET_DIR}proxy_resolution/pac_js_library.h
+  ## TODO ## ${GNET_DIR}proxy_resolution/pac_library.cc
+  ## TODO ## ${GNET_DIR}proxy_resolution/pac_library.h
+  ${GNET_DIR}proxy_resolution/polling_proxy_config_service.cc
+  ${GNET_DIR}proxy_resolution/polling_proxy_config_service.h
+  ${GNET_DIR}proxy_resolution/proxy_bypass_rules.cc
+  ${GNET_DIR}proxy_resolution/proxy_bypass_rules.h
+  ${GNET_DIR}proxy_resolution/proxy_config.cc
+  ${GNET_DIR}proxy_resolution/proxy_config.h
+  ${GNET_DIR}proxy_resolution/proxy_config_service.h
+  ## TODO ## ${GNET_DIR}proxy_resolution/proxy_config_service_android.cc
+  ## TODO ## ${GNET_DIR}proxy_resolution/proxy_config_service_android.h
+  ${GNET_DIR}proxy_resolution/proxy_config_service_fixed.cc
+  ${GNET_DIR}proxy_resolution/proxy_config_service_fixed.h
+  ## TODO ## ${GNET_DIR}proxy_resolution/proxy_config_service_ios.cc
+  ## TODO ## ${GNET_DIR}proxy_resolution/proxy_config_service_ios.h
+  ## TODO ## ${GNET_DIR}proxy_resolution/proxy_config_service_linux.cc
+  ## TODO ## ${GNET_DIR}proxy_resolution/proxy_config_service_linux.h
+  ## TODO ## ${GNET_DIR}proxy_resolution/proxy_config_service_mac.cc
+  ## TODO ## ${GNET_DIR}proxy_resolution/proxy_config_service_mac.h
+  ## TODO ## ${GNET_DIR}proxy_resolution/proxy_config_service_win.cc
+  ## TODO ## ${GNET_DIR}proxy_resolution/proxy_config_service_win.h
+  ${GNET_DIR}proxy_resolution/proxy_config_with_annotation.cc
+  ${GNET_DIR}proxy_resolution/proxy_config_with_annotation.h
+  ${GNET_DIR}proxy_resolution/proxy_info.cc
+  ${GNET_DIR}proxy_resolution/proxy_info.h
+  ${GNET_DIR}proxy_resolution/proxy_list.cc
+  ${GNET_DIR}proxy_resolution/proxy_list.h
+  ${GNET_DIR}proxy_resolution/proxy_resolution_service.cc
+  ${GNET_DIR}proxy_resolution/proxy_resolution_service.h
+  ${GNET_DIR}proxy_resolution/proxy_resolve_dns_operation.h
+  ${GNET_DIR}proxy_resolution/proxy_resolver.h
+  ${GNET_DIR}proxy_resolution/proxy_resolver_error_observer.h
+  ${GNET_DIR}proxy_resolution/proxy_resolver_factory.cc
+  ${GNET_DIR}proxy_resolution/proxy_resolver_factory.h
+  ## TODO ## ${GNET_DIR}proxy_resolution/proxy_resolver_mac.cc
+  ## TODO ## ${GNET_DIR}proxy_resolution/proxy_resolver_mac.h
+  ## TODO ## ${GNET_DIR}proxy_resolution/proxy_resolver_winhttp.cc
+  ## TODO ## ${GNET_DIR}proxy_resolution/proxy_resolver_winhttp.h
+  ${GNET_DIR}proxy_resolution/proxy_retry_info.h
   # "quic/bidirectional_stream_quic_impl.cc
   # "quic/bidirectional_stream_quic_impl.h
   # "quic/crypto/proof_source_chromium.cc
@@ -913,69 +1037,69 @@ set(GNET_SOURCES
   # "quiche/common/platform/impl/quiche_logging_impl.h
   # "quiche/common/platform/impl/quiche_ptr_util_impl.h
   # "quiche/common/platform/impl/quiche_unordered_containers_impl.h
-  # "socket/client_socket_factory.cc
-  # "socket/client_socket_factory.h
-  # "socket/client_socket_pool.cc
-  # "socket/client_socket_pool.h
-  # "socket/client_socket_pool_manager.cc
-  # "socket/client_socket_pool_manager.h
-  # "socket/client_socket_pool_manager_impl.cc
-  # "socket/client_socket_pool_manager_impl.h
-  # "socket/datagram_client_socket.h
-  # "socket/datagram_server_socket.h
-  # "socket/datagram_socket.h
-  # "socket/diff_serv_code_point.h
-  # "socket/server_socket.cc
-  # "socket/server_socket.h
-  # "socket/socket_descriptor.cc
-  # "socket/socket_descriptor.h
-  # "socket/socket_net_log_params.cc
-  # "socket/socket_net_log_params.h
-  # "socket/socket_options.cc
-  # "socket/socket_options.h
-  # "socket/socket_tag.cc
-  # "socket/socket_tag.h
-  # "socket/socks5_client_socket.cc
-  # "socket/socks5_client_socket.h
-  # "socket/socks_client_socket.cc
-  # "socket/socks_client_socket.h
-  # "socket/socks_connect_job.cc
-  # "socket/socks_connect_job.h
-  # "socket/ssl_connect_job.cc
-  # "socket/ssl_connect_job.h
-  # "socket/ssl_server_socket.h
-  # "socket/ssl_server_socket_impl.cc
-  # "socket/ssl_server_socket_impl.h
-  # "socket/tcp_client_socket.cc
-  # "socket/tcp_client_socket.h
-  # "socket/tcp_server_socket.cc
-  # "socket/tcp_server_socket.h
-  # "socket/tcp_socket.h
-  # "socket/tcp_socket_win.cc
-  # "socket/tcp_socket_win.h
-  # "socket/transport_client_socket.cc
-  # "socket/transport_client_socket.h
-  # "socket/transport_client_socket_pool.cc
-  # "socket/transport_client_socket_pool.h
-  # "socket/transport_connect_job.cc
-  # "socket/transport_connect_job.h
-  # "socket/udp_client_socket.cc
-  # "socket/udp_client_socket.h
-  # "socket/udp_net_log_parameters.cc
-  # "socket/udp_net_log_parameters.h
-  # "socket/udp_server_socket.cc
-  # "socket/udp_server_socket.h
-  # "socket/udp_socket.h
-  # "socket/udp_socket_win.cc
-  # "socket/udp_socket_win.h
-  # "socket/websocket_endpoint_lock_manager.cc
-  # "socket/websocket_endpoint_lock_manager.h
-  # "socket/websocket_transport_client_socket_pool.cc
-  # "socket/websocket_transport_client_socket_pool.h
-  # "socket/websocket_transport_connect_job.cc
-  # "socket/websocket_transport_connect_job.h
-  # "socket/websocket_transport_connect_sub_job.cc
-  # "socket/websocket_transport_connect_sub_job.h
+  ${GNET_DIR}socket/client_socket_factory.cc
+  ${GNET_DIR}socket/client_socket_factory.h
+  ${GNET_DIR}socket/client_socket_pool.cc
+  ${GNET_DIR}socket/client_socket_pool.h
+  ${GNET_DIR}socket/client_socket_pool_manager.cc
+  ${GNET_DIR}socket/client_socket_pool_manager.h
+  ${GNET_DIR}socket/client_socket_pool_manager_impl.cc
+  ${GNET_DIR}socket/client_socket_pool_manager_impl.h
+  ${GNET_DIR}socket/datagram_client_socket.h
+  ${GNET_DIR}socket/datagram_server_socket.h
+  ${GNET_DIR}socket/datagram_socket.h
+  ${GNET_DIR}socket/diff_serv_code_point.h
+  ${GNET_DIR}socket/server_socket.cc
+  ${GNET_DIR}socket/server_socket.h
+  ${GNET_DIR}socket/socket_descriptor.cc
+  ${GNET_DIR}socket/socket_descriptor.h
+  ${GNET_DIR}socket/socket_net_log_params.cc
+  ${GNET_DIR}socket/socket_net_log_params.h
+  ${GNET_DIR}socket/socket_options.cc
+  ${GNET_DIR}socket/socket_options.h
+  ${GNET_DIR}socket/socket_tag.cc
+  ${GNET_DIR}socket/socket_tag.h
+  ${GNET_DIR}socket/socks5_client_socket.cc
+  ${GNET_DIR}socket/socks5_client_socket.h
+  ${GNET_DIR}socket/socks_client_socket.cc
+  ${GNET_DIR}socket/socks_client_socket.h
+  ${GNET_DIR}socket/socks_connect_job.cc
+  ${GNET_DIR}socket/socks_connect_job.h
+  ${GNET_DIR}socket/ssl_connect_job.cc
+  ${GNET_DIR}socket/ssl_connect_job.h
+  ${GNET_DIR}socket/ssl_server_socket.h
+  ${GNET_DIR}socket/ssl_server_socket_impl.cc
+  ${GNET_DIR}socket/ssl_server_socket_impl.h
+  ${GNET_DIR}socket/tcp_client_socket.cc
+  ${GNET_DIR}socket/tcp_client_socket.h
+  ${GNET_DIR}socket/tcp_server_socket.cc
+  ${GNET_DIR}socket/tcp_server_socket.h
+  ${GNET_DIR}socket/tcp_socket.h
+  ##${GNET_DIR}socket/tcp_socket_win.cc
+  ##${GNET_DIR}socket/tcp_socket_win.h
+  ${GNET_DIR}socket/transport_client_socket.cc
+  ${GNET_DIR}socket/transport_client_socket.h
+  ${GNET_DIR}socket/transport_client_socket_pool.cc
+  ${GNET_DIR}socket/transport_client_socket_pool.h
+  ${GNET_DIR}socket/transport_connect_job.cc
+  ${GNET_DIR}socket/transport_connect_job.h
+  ${GNET_DIR}socket/udp_client_socket.cc
+  ${GNET_DIR}socket/udp_client_socket.h
+  ${GNET_DIR}socket/udp_net_log_parameters.cc
+  ${GNET_DIR}socket/udp_net_log_parameters.h
+  ${GNET_DIR}socket/udp_server_socket.cc
+  ${GNET_DIR}socket/udp_server_socket.h
+  ${GNET_DIR}socket/udp_socket.h
+  ##${GNET_DIR}socket/udp_socket_win.cc
+  ##${GNET_DIR}socket/udp_socket_win.h
+  ${GNET_DIR}socket/websocket_endpoint_lock_manager.cc
+  ${GNET_DIR}socket/websocket_endpoint_lock_manager.h
+  ${GNET_DIR}socket/websocket_transport_client_socket_pool.cc
+  ${GNET_DIR}socket/websocket_transport_client_socket_pool.h
+  ${GNET_DIR}socket/websocket_transport_connect_job.cc
+  ${GNET_DIR}socket/websocket_transport_connect_job.h
+  ${GNET_DIR}socket/websocket_transport_connect_sub_job.cc
+  ${GNET_DIR}socket/websocket_transport_connect_sub_job.h
   # "spdy/bidirectional_stream_spdy_impl.cc
   # "spdy/bidirectional_stream_spdy_impl.h
   # "spdy/buffered_spdy_framer.cc
@@ -1034,30 +1158,30 @@ set(GNET_SOURCES
   # "spdy/spdy_stream.h
   # "spdy/spdy_write_queue.cc
   # "spdy/spdy_write_queue.h
-  # "ssl/client_cert_store.h
-  # "ssl/client_cert_store_mac.cc
-  # "ssl/client_cert_store_mac.h
-  # "ssl/client_cert_store_nss.cc
-  # "ssl/client_cert_store_nss.h
-  # "ssl/client_cert_store_win.cc
-  # "ssl/client_cert_store_win.h
-  # "ssl/ssl_config_service_defaults.cc
-  # "ssl/ssl_config_service_defaults.h
-  # "ssl/ssl_key_logger_impl.cc
-  # "ssl/ssl_key_logger_impl.h
-  # "ssl/ssl_platform_key_android.cc
-  # "ssl/ssl_platform_key_android.h
-  # "ssl/ssl_platform_key_mac.cc
-  # "ssl/ssl_platform_key_mac.h
-  # "ssl/ssl_platform_key_nss.cc
-  # "ssl/ssl_platform_key_nss.h
-  # "ssl/ssl_platform_key_util.cc
-  # "ssl/ssl_platform_key_util.h
-  # "ssl/ssl_platform_key_win.cc
-  # "ssl/test_ssl_private_key.cc
-  # "ssl/test_ssl_private_key.h
-  # "ssl/threaded_ssl_private_key.cc
-  # "ssl/threaded_ssl_private_key.h
+  ${GNET_DIR}ssl/client_cert_store.h
+  ${GNET_DIR}#"ssl/client_cert_store_mac.cc
+  ${GNET_DIR}#"ssl/client_cert_store_mac.h
+  ##${GNET_DIR}ssl/client_cert_store_nss.cc
+  ##${GNET_DIR}ssl/client_cert_store_nss.h
+  ##${GNET_DIR}ssl/client_cert_store_win.cc
+  ##${GNET_DIR}ssl/client_cert_store_win.h
+  ${GNET_DIR}ssl/ssl_config_service_defaults.cc
+  ${GNET_DIR}ssl/ssl_config_service_defaults.h
+  ${GNET_DIR}ssl/ssl_key_logger_impl.cc
+  ${GNET_DIR}ssl/ssl_key_logger_impl.h
+  ##${GNET_DIR}ssl/ssl_platform_key_android.cc
+  ##${GNET_DIR}ssl/ssl_platform_key_android.h
+  ##${GNET_DIR}ssl/ssl_platform_key_mac.cc
+  ##${GNET_DIR}ssl/ssl_platform_key_mac.h
+  ##${GNET_DIR}ssl/ssl_platform_key_nss.cc
+  ##${GNET_DIR}ssl/ssl_platform_key_nss.h
+  ${GNET_DIR}ssl/ssl_platform_key_util.cc
+  ${GNET_DIR}ssl/ssl_platform_key_util.h
+  ##${GNET_DIR}ssl/ssl_platform_key_win.cc
+  ${GNET_DIR}ssl/test_ssl_private_key.cc
+  ${GNET_DIR}ssl/test_ssl_private_key.h
+  ${GNET_DIR}ssl/threaded_ssl_private_key.cc
+  ${GNET_DIR}ssl/threaded_ssl_private_key.h
   # "third_party/mozilla_security_manager/nsNSSCertificateDB.cpp",
   # "third_party/mozilla_security_manager/nsNSSCertificateDB.h
   # "third_party/mozilla_security_manager/nsPKCS12Blob.cpp",
@@ -1592,80 +1716,80 @@ set(GNET_SOURCES
   # "third_party/quiche/src/spdy/platform/api/spdy_string_piece.h
   # "third_party/quiche/src/spdy/platform/api/spdy_string_utils.h
   # "third_party/quiche/src/spdy/platform/api/spdy_unsafe_arena.h
-  # "url_request/data_protocol_handler.cc
-  # "url_request/data_protocol_handler.h
-  # "url_request/redirect_info.cc
-  # "url_request/redirect_info.h
-  # "url_request/redirect_util.cc
-  # "url_request/redirect_util.h
-  # "url_request/report_sender.cc
-  # "url_request/report_sender.h
-  # "url_request/static_http_user_agent_settings.cc
-  # "url_request/static_http_user_agent_settings.h
-  # "url_request/url_fetcher.cc
-  # "url_request/url_fetcher.h
-  # "url_request/url_fetcher_core.cc
-  # "url_request/url_fetcher_core.h
-  # "url_request/url_fetcher_delegate.cc
-  # "url_request/url_fetcher_delegate.h
-  # "url_request/url_fetcher_factory.h
-  # "url_request/url_fetcher_impl.cc
-  # "url_request/url_fetcher_impl.h
-  # "url_request/url_fetcher_response_writer.cc
-  # "url_request/url_fetcher_response_writer.h
-  # "url_request/url_range_request_job.cc
-  # "url_request/url_range_request_job.h
-  # "url_request/url_request.cc
-  # "url_request/url_request.h
-  # "url_request/url_request_context.cc
-  # "url_request/url_request_context.h
-  # "url_request/url_request_context_builder.cc
-  # "url_request/url_request_context_builder.h
-  # "url_request/url_request_context_getter.cc
-  # "url_request/url_request_context_getter.h
-  # "url_request/url_request_context_getter_observer.h
-  # "url_request/url_request_context_storage.cc
-  # "url_request/url_request_context_storage.h
-  # "url_request/url_request_data_job.cc
-  # "url_request/url_request_data_job.h
-  # "url_request/url_request_error_job.cc
-  # "url_request/url_request_error_job.h
-  # "url_request/url_request_filter.cc
-  # "url_request/url_request_filter.h
-  # "url_request/url_request_http_job.cc
-  # "url_request/url_request_http_job.h
-  # "url_request/url_request_http_job_histogram.h
-  # "url_request/url_request_intercepting_job_factory.cc
-  # "url_request/url_request_intercepting_job_factory.h
-  # "url_request/url_request_interceptor.cc
-  # "url_request/url_request_interceptor.h
-  # "url_request/url_request_job.cc
-  # "url_request/url_request_job.h
-  # "url_request/url_request_job_factory.cc
-  # "url_request/url_request_job_factory.h
-  # "url_request/url_request_job_factory_impl.cc
-  # "url_request/url_request_job_factory_impl.h
-  # "url_request/url_request_job_manager.cc
-  # "url_request/url_request_job_manager.h
-  # "url_request/url_request_netlog_params.cc
-  # "url_request/url_request_netlog_params.h
-  # "url_request/url_request_redirect_job.cc
-  # "url_request/url_request_redirect_job.h
-  # "url_request/url_request_simple_job.cc
-  # "url_request/url_request_simple_job.h
-  # "url_request/url_request_status.cc
-  # "url_request/url_request_status.h
-  # "url_request/url_request_test_job.cc
-  # "url_request/url_request_test_job.h
-  # "url_request/url_request_throttler_entry.cc
-  # "url_request/url_request_throttler_entry.h
-  # "url_request/url_request_throttler_entry_interface.h
-  # "url_request/url_request_throttler_manager.cc
-  # "url_request/url_request_throttler_manager.h
-  # "url_request/view_cache_helper.cc
-  # "url_request/view_cache_helper.h
-  # "url_request/websocket_handshake_userdata_key.cc
-  # "url_request/websocket_handshake_userdata_key.h
+  ${GNET_DIR}url_request/data_protocol_handler.cc
+  ${GNET_DIR}url_request/data_protocol_handler.h
+  ${GNET_DIR}url_request/redirect_info.cc
+  ${GNET_DIR}url_request/redirect_info.h
+  ${GNET_DIR}url_request/redirect_util.cc
+  ${GNET_DIR}url_request/redirect_util.h
+  ${GNET_DIR}url_request/report_sender.cc
+  ${GNET_DIR}url_request/report_sender.h
+  ${GNET_DIR}url_request/static_http_user_agent_settings.cc
+  ${GNET_DIR}url_request/static_http_user_agent_settings.h
+  ${GNET_DIR}url_request/url_fetcher.cc
+  ${GNET_DIR}url_request/url_fetcher.h
+  ${GNET_DIR}url_request/url_fetcher_core.cc
+  ${GNET_DIR}url_request/url_fetcher_core.h
+  ${GNET_DIR}url_request/url_fetcher_delegate.cc
+  ${GNET_DIR}url_request/url_fetcher_delegate.h
+  ${GNET_DIR}url_request/url_fetcher_factory.h
+  ${GNET_DIR}url_request/url_fetcher_impl.cc
+  ${GNET_DIR}url_request/url_fetcher_impl.h
+  ${GNET_DIR}url_request/url_fetcher_response_writer.cc
+  ${GNET_DIR}url_request/url_fetcher_response_writer.h
+  ${GNET_DIR}url_request/url_range_request_job.cc
+  ${GNET_DIR}url_request/url_range_request_job.h
+  ${GNET_DIR}url_request/url_request.cc
+  ${GNET_DIR}url_request/url_request.h
+  ${GNET_DIR}url_request/url_request_context.cc
+  ${GNET_DIR}url_request/url_request_context.h
+  ${GNET_DIR}url_request/url_request_context_builder.cc
+  ${GNET_DIR}url_request/url_request_context_builder.h
+  ${GNET_DIR}url_request/url_request_context_getter.cc
+  ${GNET_DIR}url_request/url_request_context_getter.h
+  ${GNET_DIR}url_request/url_request_context_getter_observer.h
+  ${GNET_DIR}url_request/url_request_context_storage.cc
+  ${GNET_DIR}url_request/url_request_context_storage.h
+  ${GNET_DIR}url_request/url_request_data_job.cc
+  ${GNET_DIR}url_request/url_request_data_job.h
+  ${GNET_DIR}url_request/url_request_error_job.cc
+  ${GNET_DIR}url_request/url_request_error_job.h
+  ${GNET_DIR}url_request/url_request_filter.cc
+  ${GNET_DIR}url_request/url_request_filter.h
+  ${GNET_DIR}url_request/url_request_http_job.cc
+  ${GNET_DIR}url_request/url_request_http_job.h
+  ${GNET_DIR}url_request/url_request_http_job_histogram.h
+  ${GNET_DIR}url_request/url_request_intercepting_job_factory.cc
+  ${GNET_DIR}url_request/url_request_intercepting_job_factory.h
+  ${GNET_DIR}url_request/url_request_interceptor.cc
+  ${GNET_DIR}url_request/url_request_interceptor.h
+  ${GNET_DIR}url_request/url_request_job.cc
+  ${GNET_DIR}url_request/url_request_job.h
+  ${GNET_DIR}url_request/url_request_job_factory.cc
+  ${GNET_DIR}url_request/url_request_job_factory.h
+  ${GNET_DIR}url_request/url_request_job_factory_impl.cc
+  ${GNET_DIR}url_request/url_request_job_factory_impl.h
+  ${GNET_DIR}url_request/url_request_job_manager.cc
+  ${GNET_DIR}url_request/url_request_job_manager.h
+  ${GNET_DIR}url_request/url_request_netlog_params.cc
+  ${GNET_DIR}url_request/url_request_netlog_params.h
+  ${GNET_DIR}url_request/url_request_redirect_job.cc
+  ${GNET_DIR}url_request/url_request_redirect_job.h
+  ${GNET_DIR}url_request/url_request_simple_job.cc
+  ${GNET_DIR}url_request/url_request_simple_job.h
+  ${GNET_DIR}url_request/url_request_status.cc
+  ${GNET_DIR}url_request/url_request_status.h
+  ##${GNET_DIR}url_request/url_request_test_job.cc
+  ##${GNET_DIR}url_request/url_request_test_job.h
+  ${GNET_DIR}url_request/url_request_throttler_entry.cc
+  ${GNET_DIR}url_request/url_request_throttler_entry.h
+  ${GNET_DIR}url_request/url_request_throttler_entry_interface.h
+  ${GNET_DIR}url_request/url_request_throttler_manager.cc
+  ${GNET_DIR}url_request/url_request_throttler_manager.h
+  ${GNET_DIR}url_request/view_cache_helper.cc
+  ${GNET_DIR}url_request/view_cache_helper.h
+  ${GNET_DIR}url_request/websocket_handshake_userdata_key.cc
+  ${GNET_DIR}url_request/websocket_handshake_userdata_key.h
   #
   # !use_kerberos
   #
@@ -1702,6 +1826,9 @@ set(GNET_SOURCES
 
 add_library(GNET STATIC
   ${GNET_SOURCES}
+  ${GNET_DNS_uri_template_SOURCES}
+  ${GNET_DNS_PUBLIC_SOURCES}
+  ${GNET_DNS_SOURCES}
 )
 
 target_link_libraries(GNET PUBLIC
@@ -1731,4 +1858,14 @@ target_compile_definitions(GNET PRIVATE
   #IS_NET_EXTRAS_IMPL
   #DLOPEN_KERBEROS
   #ENABLE_BUILT_IN_DNS
+  # /net/BUILD.gn
+  # buildflag # #POSIX_AVOID_MMAP=1
+  # buildflag # DISABLE_FILE_SUPPORT=1
+  # buildflag # DISABLE_FTP_SUPPORT=1
+  # buildflag # #ENABLE_MDNS=1
+  # buildflag # #ENABLE_REPORTING=$enable_reporting",
+  # buildflag # #ENABLE_WEBSOCKETS=$enable_websockets",
+  # buildflag # #INCLUDE_TRANSPORT_SECURITY_STATE_PRELOAD_LIST=$include_transport_security_state_preload_list",
+  # buildflag # #USE_KERBEROS=$use_kerberos",
+  # buildflag # #TRIAL_COMPARISON_CERT_VERIFIER_SUPPORTED=$trial_comparison_cert_verifier_supported",
 )

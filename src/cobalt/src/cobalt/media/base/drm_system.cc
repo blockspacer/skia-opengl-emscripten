@@ -107,7 +107,8 @@ DrmSystem::DrmSystem(const char* key_system)
                                             OnSessionClosedFunc
 #endif                                           // SB_HAS(DRM_SESSION_CLOSED)
                                             )),  // NOLINT(whitespace/parens)
-      message_loop_(base::MessageLoop::current()->task_runner()),
+      //message_loop_(base::MessageLoop::current()->task_runner()),
+      message_loop_(),
       ALLOW_THIS_IN_INITIALIZER_LIST(weak_ptr_factory_(this)),
       weak_this_(weak_ptr_factory_.GetWeakPtr()) {
   DCHECK_NE(kSbDrmSystemInvalid, wrapped_drm_system_);

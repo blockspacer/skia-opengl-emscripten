@@ -23,7 +23,10 @@
 #include "base/message_loop/message_loop.h"
 #include "cobalt/base/source_location.h"
 #include "cobalt/csp/content_security_policy.h"
+
+#if !defined(__EMSCRIPTEN__) && defined(__TODO__)
 #include "cobalt/network_bridge/net_poster.h"
+#endif
 
 namespace cobalt {
 namespace dom {
@@ -36,8 +39,12 @@ class Document;
 // and passed in to its constructor. Generally it should not be called directly.
 class CspViolationReporter {
  public:
-  CspViolationReporter(Document* document,
-                       const network_bridge::PostSender& post_sender);
+  CspViolationReporter(Document* document
+
+#if !defined(__EMSCRIPTEN__) && defined(__TODO__)
+                       , const network_bridge::PostSender& post_sender
+#endif
+                       );
   virtual ~CspViolationReporter();
 
   // Used as a callback from ContentSecurityPolicy to dispatch security
@@ -46,7 +53,10 @@ class CspViolationReporter {
   // to the message loop it was created on, which should be the Document's
   // message loop.
   virtual void Report(const csp::ViolationInfo& violation_info);
+
+#if !defined(__EMSCRIPTEN__) && defined(__TODO__)
   const network_bridge::PostSender& post_sender() const { return post_sender_; }
+#endif
 
  private:
   void SendViolationReports(const std::vector<std::string>& endpoints,
@@ -57,7 +67,11 @@ class CspViolationReporter {
   // we need to resolve collisions.
   std::set<uint32> violation_reports_sent_;
   // Callback to send POST requests containing our JSON reports.
+
+#if !defined(__EMSCRIPTEN__) && defined(__TODO__)
   network_bridge::PostSender post_sender_;
+#endif
+
   // Keep track of the message loop the object was created on.
   // We must send violations on the document's message loop.
   base::MessageLoop* message_loop_;

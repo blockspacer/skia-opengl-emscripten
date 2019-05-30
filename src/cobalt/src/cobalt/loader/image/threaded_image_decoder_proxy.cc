@@ -61,7 +61,8 @@ ThreadedImageDecoderProxy::ThreadedImageDecoderProxy(
       ALLOW_THIS_IN_INITIALIZER_LIST(
           weak_this_(weak_ptr_factory_.GetWeakPtr())),
       load_message_loop_(load_message_loop),
-      result_message_loop_(base::MessageLoop::current()),
+      //result_message_loop_(base::MessageLoopCurrent::Get()),
+      result_message_loop_(),
       image_decoder_(new ImageDecoder(
           resource_provider,
           base::Bind(&PostToMessageLoopChecked<ImageAvailableCallback,

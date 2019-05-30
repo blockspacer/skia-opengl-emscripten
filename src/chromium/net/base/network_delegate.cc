@@ -11,7 +11,9 @@
 #include "net/base/load_flags.h"
 #include "net/base/net_errors.h"
 #include "net/base/trace_constants.h"
+#if defined(ENABLE_PROXY)
 #include "net/proxy_resolution/proxy_info.h"
+#endif
 #include "net/url_request/url_request.h"
 
 namespace net {
@@ -47,12 +49,18 @@ int NetworkDelegate::NotifyBeforeStartTransaction(
 
 void NetworkDelegate::NotifyBeforeSendHeaders(
     URLRequest* request,
+#if defined(ENABLE_PROXY)
     const ProxyInfo& proxy_info,
     const ProxyRetryInfoMap& proxy_retry_info,
+#endif
     HttpRequestHeaders* headers) {
   DCHECK_CALLED_ON_VALID_THREAD(thread_checker_);
   DCHECK(headers);
-  OnBeforeSendHeaders(request, proxy_info, proxy_retry_info, headers);
+  OnBeforeSendHeaders(request,
+#if defined(ENABLE_PROXY)
+    proxy_info, proxy_retry_info,
+#endif
+   headers);
 }
 
 void NetworkDelegate::NotifyStartTransaction(

@@ -22,7 +22,9 @@
 #include "cobalt/loader/image/dummy_gif_image_decoder.h"
 #include "cobalt/loader/image/image_decoder_starboard.h"
 #include "cobalt/loader/image/jpeg_image_decoder.h"
+#if defined(ENABLE_PNG)
 #include "cobalt/loader/image/png_image_decoder.h"
+#endif
 #include "cobalt/loader/image/stub_image_decoder.h"
 #include "cobalt/loader/image/webp_image_decoder.h"
 #include "cobalt/loader/switches.h"
@@ -119,7 +121,8 @@ LoadResponseType ImageDecoder::OnResponseStarted(
   }
 
   bool success = headers->GetMimeType(&mime_type_);
-  if (!success || !net::IsSupportedImageMimeType(mime_type_)) {
+  //if (!success || !net::IsSupportedImageMimeType(mime_type_)) {
+  if (!success || !net::IsValidTopLevelMimeType(mime_type_)) {
     state_ = kNotApplicable;
     CacheMessage(&error_message_, "Not an image mime type.");
   }
@@ -323,9 +326,11 @@ std::unique_ptr<ImageDataDecoder> CreateImageDecoderFromImageType(
   } else if (image_type == ImageDecoder::kImageTypeJPEG) {
     return std::unique_ptr<ImageDataDecoder>(new JPEGImageDecoder(
         resource_provider, ImageDecoder::AllowDecodingToMultiPlane()));
+#if defined(ENABLE_PNG)
   } else if (image_type == ImageDecoder::kImageTypePNG) {
     return std::unique_ptr<ImageDataDecoder>(
         new PNGImageDecoder(resource_provider));
+#endif
   } else if (image_type == ImageDecoder::kImageTypeWebP) {
     return std::unique_ptr<ImageDataDecoder>(
         new WEBPImageDecoder(resource_provider));

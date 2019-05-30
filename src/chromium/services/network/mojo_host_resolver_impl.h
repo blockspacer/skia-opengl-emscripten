@@ -16,7 +16,9 @@
 #include "services/proxy_resolver/public/mojom/proxy_resolver.mojom.h"
 
 namespace net {
+#if defined(ENABLE_DNS)
 class HostResolver;
+#endif
 }  // namespace net
 
 namespace network {

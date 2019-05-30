@@ -15,7 +15,9 @@ class GURL;
 
 namespace net {
 
+#if defined(ENABLE_PROXY)
 class ProxyInfo;
+#endif
 
 class TestProxyDelegate : public ProxyDelegate {
  public:

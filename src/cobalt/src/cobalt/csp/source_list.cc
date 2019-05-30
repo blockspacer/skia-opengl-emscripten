@@ -18,7 +18,11 @@
 
 #include "base/base64.h"
 #include "base/strings/string_number_conversions.h"
+
+#if !defined(__EMSCRIPTEN__) && defined(__TODO__)
 #include "cobalt/network/socket_address_parser.h"
+#endif
+
 #include "net/base/escape.h"
 #include "starboard/socket.h"
 #include "url/url_canon_ip.h"
@@ -138,6 +142,8 @@ bool SourceList::Matches(
   }
 
   SbSocketAddress destination;
+
+#if !defined(__EMSCRIPTEN__) && defined(__TODO__)
   // Note that GetDestinationForHost will only pass if host is a numeric IP.
   if (!cobalt::network::ParseSocketAddress(valid_spec.c_str(), parsed.host,
                                            &destination)) {
@@ -153,6 +159,7 @@ bool SourceList::Matches(
       local_network_checker_->IsIPInLocalNetwork(destination)) {
     return true;
   }
+#endif
 
   return false;
 }

@@ -26,7 +26,11 @@
 #include "cobalt/csp/content_security_policy.h"
 #include "cobalt/loader/cobalt_url_fetcher_string_writer.h"
 #include "cobalt/loader/fetcher.h"
+
+#if !defined(__EMSCRIPTEN__) && defined(__TODO__)
 #include "cobalt/network/network_module.h"
+#endif
+
 #include "net/url_request/url_fetcher.h"
 #include "net/url_request/url_fetcher_delegate.h"
 #include "url/gurl.h"
@@ -44,7 +48,12 @@ class NetFetcher : public Fetcher, public net::URLFetcherDelegate {
   };
 
   NetFetcher(const GURL& url, const csp::SecurityCallback& security_callback,
-             Handler* handler, const network::NetworkModule* network_module,
+             Handler* handler,
+
+#if !defined(__EMSCRIPTEN__) && defined(__TODO__)
+             const network::NetworkModule* network_module,
+#endif
+
              const Options& options, RequestMode request_mode,
              const Origin& origin);
   ~NetFetcher() override;

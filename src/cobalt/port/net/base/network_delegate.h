@@ -43,7 +43,9 @@ namespace net {
 class CookieOptions;
 class HttpRequestHeaders;
 class HttpResponseHeaders;
+#if defined(ENABLE_PROXY)
 class ProxyInfo;
+#endif
 class URLRequest;
 
 class NET_EXPORT NetworkDelegate {
@@ -72,7 +74,9 @@ class NET_EXPORT NetworkDelegate {
                                    CompletionOnceCallback callback,
                                    HttpRequestHeaders* headers);
   void NotifyBeforeSendHeaders(URLRequest* request,
+#if defined(ENABLE_PROXY)
                                const ProxyInfo& proxy_info,
+#endif
                                const ProxyRetryInfoMap& proxy_retry_info,
                                HttpRequestHeaders* headers);
   void NotifyStartTransaction(URLRequest* request,
@@ -182,7 +186,11 @@ class NET_EXPORT NetworkDelegate {
   // before they get sent out. |headers| is valid only for the duration of the
   // call.
   virtual void OnBeforeSendHeaders(URLRequest* request,
+
+#if defined(ENABLE_PROXY)
                                    const ProxyInfo& proxy_info,
+#endif
+
                                    const ProxyRetryInfoMap& proxy_retry_info,
                                    HttpRequestHeaders* headers) = 0;
 

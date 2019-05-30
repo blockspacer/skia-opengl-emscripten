@@ -19,6 +19,10 @@
 #include "net/traffic_annotation/network_traffic_annotation.h"
 #include "net/url_request/url_request.h"
 
+#if defined(STARBOARD)
+#include "starboard/types.h"
+#endif
+
 class GURL;
 
 namespace base {
@@ -95,6 +99,11 @@ class NET_EXPORT URLFetcher {
                       // <winnt.h> defines a DELETE macro.
     PUT,
     PATCH,
+#if defined(STARBOARD)
+    // Cobalt uses net for Cross-Origin-Resource-Sharing and requires OPTIONS
+    // method.
+    OPTIONS,
+#endif
   };
 
   // Used by SetURLRequestUserData.  The callback should make a fresh
@@ -313,6 +322,12 @@ class NET_EXPORT URLFetcher {
   // specified writer to save the response. Must be called before Start().
   virtual void SaveResponseWithWriter(
       std::unique_ptr<URLFetcherResponseWriter> response_writer) = 0;
+
+#if defined(STARBOARD)
+  // The functionality to provide custom response writer was not well exploited
+  // by Chromium, we do want to use it and need a proper way to retrieve it.
+  virtual URLFetcherResponseWriter* GetResponseWriter() const = 0;
+#endif
 
   // Retrieve the response headers from the request.  Must only be called after
   // the OnURLFetchComplete callback has run.

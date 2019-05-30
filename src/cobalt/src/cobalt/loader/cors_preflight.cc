@@ -26,6 +26,8 @@
 #include "cobalt/loader/cors_preflight.h"
 #include "starboard/string.h"
 
+#include "net/http/http_util.h"
+
 namespace cobalt {
 namespace loader {
 
@@ -141,7 +143,10 @@ bool HasFieldValue(const std::vector<std::string>& field_values,
 }  // namespace
 
 CORSPreflight::CORSPreflight(GURL url, net::URLFetcher::RequestType method,
+
+#if !defined(__EMSCRIPTEN__) && defined(__TODO__)
                              const network::NetworkModule* network_module,
+#endif
                              base::Closure success_callback, std::string origin,
                              base::Closure error_callback,
                              scoped_refptr<CORSPreflightCache> preflight_cache)
@@ -149,7 +154,10 @@ CORSPreflight::CORSPreflight(GURL url, net::URLFetcher::RequestType method,
       force_preflight_(false),
       url_(url),
       method_(method),
+
+#if !defined(__EMSCRIPTEN__) && defined(__TODO__)
       network_module_(network_module),
+ #endif
       origin_(origin),
       error_callback_(error_callback),
       success_callback_(success_callback),
@@ -277,8 +285,11 @@ bool CORSPreflight::Send() {
   //    request's origin, referrer is request's referrer, and referrer
   //    policy is request's referrer policy.
   url_fetcher_ = net::URLFetcher::Create(url_, net::URLFetcher::OPTIONS, this);
+
+#if !defined(__EMSCRIPTEN__) && defined(__TODO__)
   url_fetcher_->SetRequestContext(
       network_module_->url_request_context_getter().get());
+#endif
   url_fetcher_->AddExtraRequestHeader(kOriginheadername + origin_);
   // 3. Let headers be the names of request's header list's headers,
   //    excluding CORS-safelisted request-headers and duplicates, sorted

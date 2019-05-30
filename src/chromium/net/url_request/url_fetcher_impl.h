@@ -25,6 +25,10 @@
 #include "net/traffic_annotation/network_traffic_annotation.h"
 #include "net/url_request/url_fetcher.h"
 
+#if defined(STARBOARD)
+#include "starboard/types.h"
+#endif
+
 namespace net {
 class URLFetcherCore;
 class URLFetcherDelegate;
@@ -83,6 +87,9 @@ class NET_EXPORT_PRIVATE URLFetcherImpl : public URLFetcher {
       scoped_refptr<base::SequencedTaskRunner> file_task_runner) override;
   void SaveResponseWithWriter(
       std::unique_ptr<URLFetcherResponseWriter> response_writer) override;
+#if defined(STARBOARD)
+  URLFetcherResponseWriter* GetResponseWriter() const override;
+#endif
   HttpResponseHeaders* GetResponseHeaders() const override;
   IPEndPoint GetSocketAddress() const override;
   const ProxyServer& ProxyServerUsed() const override;

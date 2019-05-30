@@ -14,7 +14,9 @@
 #include "net/base/net_export.h"
 #include "net/base/network_delegate.h"
 #include "net/cookies/canonical_cookie.h"
+#if defined(ENABLE_PROXY)
 #include "net/proxy_resolution/proxy_retry_info.h"
+#endif
 
 class GURL;
 
@@ -31,7 +33,9 @@ namespace net {
 class CookieOptions;
 class HttpRequestHeaders;
 class HttpResponseHeaders;
+#if defined(ENABLE_PROXY)
 class ProxyInfo;
+#endif
 class URLRequest;
 
 class NET_EXPORT NetworkDelegateImpl : public NetworkDelegate {
@@ -48,8 +52,11 @@ class NET_EXPORT NetworkDelegateImpl : public NetworkDelegate {
                                HttpRequestHeaders* headers) override;
 
   void OnBeforeSendHeaders(URLRequest* request,
+
+#if defined(ENABLE_PROXY)
                            const ProxyInfo& proxy_info,
                            const ProxyRetryInfoMap& proxy_retry_info,
+#endif
                            HttpRequestHeaders* headers) override;
 
   void OnStartTransaction(URLRequest* request,

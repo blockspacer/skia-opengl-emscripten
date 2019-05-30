@@ -17,6 +17,7 @@
 namespace cobalt {
 namespace csp {
 
+#if !defined(__EMSCRIPTEN__) && defined(__TODO__)
 bool SourceListDirective::LocalNetworkChecker::IsIPInLocalNetwork(
     const SbSocketAddress& destination) const {
   return ::cobalt::network::IsIPInLocalNetwork(destination);
@@ -26,6 +27,7 @@ bool SourceListDirective::LocalNetworkChecker::IsIPInPrivateRange(
     const SbSocketAddress& destination) const {
   return ::cobalt::network::IsIPInPrivateRange(destination);
 }
+#endif
 
 SourceListDirective::SourceListDirective(const std::string& name,
                                          const std::string& value,

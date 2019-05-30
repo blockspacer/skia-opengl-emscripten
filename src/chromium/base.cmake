@@ -1041,7 +1041,7 @@ list(APPEND BASE_SOURCES
    ${BASE_DIR}threading/thread_local_storage_posix.cc
    ${BASE_DIR}timer/hi_res_timer_manager_posix.cc
    # https://github.com/chromium/chromium/blob/master/base/BUILD.gn#L1185
-   # ${BASE_DIR}base_paths_posix.h
+   ${BASE_DIR}base_paths_posix.h
    # https://github.com/chromium/chromium/blob/master/base/BUILD.gn#L1633
    ${BASE_DIR}allocator/partition_allocator/address_space_randomization.cc
    ${BASE_DIR}allocator/partition_allocator/address_space_randomization.h

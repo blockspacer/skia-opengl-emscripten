@@ -20,6 +20,9 @@
 #define INTERNAL_TRACE_LIST_BUILTIN_CATEGORIES(X)                        \
   /* These entries must go first to be consistent with the               \
    * CategoryRegistry::kCategory* consts.*/                              \
+  X("cobalt::loader::image")                                             \
+  X("cobalt::loader::image_decoder")                                                    \
+  X("cobalt::loader")                                                    \
   X("cobalt::dom")                                                       \
   X("cobalt::layout")                                                    \
   X("cobalt::storage")                                                   \

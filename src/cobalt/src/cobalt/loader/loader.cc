@@ -166,7 +166,7 @@ void Loader::Start() {
     fetcher_creator_error_closure_.Reset(
         base::Bind(base::Bind(&Loader::LoadComplete, base::Unretained(this)),
                    std::string("Fetcher was not created.")));
-    base::MessageLoop::current()->task_runner()->PostTask(
+    base::MessageLoopCurrent::Get()->task_runner()->PostTask(
         FROM_HERE, fetcher_creator_error_closure_.callback());
   }
 }

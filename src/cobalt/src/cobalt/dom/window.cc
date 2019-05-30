@@ -119,8 +119,12 @@ Window::Window(
     const std::string& font_language_script,
     const base::Callback<void(const GURL&)> navigation_callback,
     const loader::Decoder::OnCompleteFunction& load_complete_callback,
+
+#if !defined(__EMSCRIPTEN__) && defined(__TODO__)
     network_bridge::CookieJar* cookie_jar,
     const network_bridge::PostSender& post_sender,
+#endif
+
     csp::CSPHeaderPolicy require_csp, CspEnforcementType csp_enforcement_mode,
     const base::Closure& csp_policy_changed_callback,
     const base::Closure& ran_animation_frame_callbacks_callback,
@@ -167,7 +171,11 @@ Window::Window(
               base::Bind(&Window::FireHashChangeEvent, base::Unretained(this)),
               performance_->timing()->GetNavigationStartClock(),
               navigation_callback, ParseUserAgentStyleSheet(css_parser),
-              view_size, cookie_jar, post_sender, require_csp,
+              view_size,
+#if !defined(__EMSCRIPTEN__) && defined(__TODO__)
+              cookie_jar, post_sender,
+#endif
+              require_csp,
               csp_enforcement_mode, csp_policy_changed_callback,
               csp_insecure_allowed_token, dom_max_element_depth)))),
       document_loader_(nullptr),

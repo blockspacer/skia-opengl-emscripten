@@ -3,7 +3,10 @@
 // found in the LICENSE file.
 
 #include "net/base/datagram_buffer.h"
+
+#if defined(ENABLE_QUIC)
 #include "net/third_party/quiche/src/quic/platform/api/quic_ptr_util.h"
+#endif
 
 namespace net {
 
@@ -17,10 +20,13 @@ void DatagramBufferPool::Enqueue(const char* buffer,
                                  DatagramBuffers* buffers) {
   DCHECK_LE(buf_len, max_buffer_size_);
   std::unique_ptr<DatagramBuffer> datagram_buffer;
+#if defined(ENABLE_QUIC)
   if (free_list_.empty()) {
     datagram_buffer = quic::QuicWrapUnique<DatagramBuffer>(
         new DatagramBuffer(max_buffer_size_));
-  } else {
+  } else
+#endif
+  {
     datagram_buffer = std::move(free_list_.front());
     free_list_.pop_front();
   }

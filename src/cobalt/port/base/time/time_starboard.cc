@@ -20,16 +20,19 @@
 
 namespace base {
 
+#ifdef __TODO__
 namespace {
 EzTimeZone GetTz(bool is_local) {
   return is_local ? kEzTimeZoneLocal : kEzTimeZoneUTC;
 }
 }  // namespace
+#endif
 
 SbTime TimeDelta::ToSbTime() const {
   return InMicroseconds();
 }
 
+#ifdef __TODO__
 void Time::Explode(bool is_local, Exploded *exploded) const {
   EzTimeValue value = EzTimeValueFromSbTime(ToSbTime());
   EzTimeExploded ez_exploded;
@@ -80,6 +83,7 @@ bool Time::FromExploded(bool is_local, const Exploded& exploded, Time* time) {
   *time = Time(0);
   return false;
 }
+#endif
 
 // static
 Time Time::FromSbTime(SbTime t) {
@@ -90,9 +94,11 @@ SbTime Time::ToSbTime() const {
   return us_;
 }
 
+#ifdef __TODO__
 // static
 bool TimeTicks::IsHighResolution() {
   return true;
 }
+#endif
 
 }  // namespace base

@@ -50,18 +50,27 @@ void LayeredNetworkDelegate::OnBeforeStartTransactionInternal(
 
 void LayeredNetworkDelegate::OnBeforeSendHeaders(
     URLRequest* request,
+
+#if defined (ENABLE_PROXY)
     const ProxyInfo& proxy_info,
     const ProxyRetryInfoMap& proxy_retry_info,
+#endif
     HttpRequestHeaders* headers) {
+
+#if defined (ENABLE_PROXY)
   OnBeforeSendHeadersInternal(request, proxy_info, proxy_retry_info, headers);
   nested_network_delegate_->NotifyBeforeSendHeaders(request, proxy_info,
                                                     proxy_retry_info, headers);
+#endif
 }
 
 void LayeredNetworkDelegate::OnBeforeSendHeadersInternal(
     URLRequest* request,
+
+#if defined (ENABLE_PROXY)
     const ProxyInfo& proxy_info,
     const ProxyRetryInfoMap& proxy_retry_info,
+#endif
     HttpRequestHeaders* headers) {}
 
 void LayeredNetworkDelegate::OnStartTransaction(

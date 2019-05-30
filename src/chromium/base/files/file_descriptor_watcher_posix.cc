@@ -18,6 +18,8 @@
 #include "base/threading/thread_local.h"
 #include "base/threading/thread_restrictions.h"
 
+#if !defined(OS_EMSCRIPTEN)
+
 namespace base {
 
 namespace {
@@ -266,6 +268,8 @@ FileDescriptorWatcher::WatchWritable(int fd, const RepeatingClosure& callback) {
 void FileDescriptorWatcher::AssertAllowed() {
   DCHECK(tls_fd_watcher.Get().Get());
 }
+#endif
+
 #endif
 
 }  // namespace base

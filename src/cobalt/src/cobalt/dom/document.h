@@ -46,8 +46,12 @@
 #include "cobalt/dom/node.h"
 #include "cobalt/dom/pointer_state.h"
 #include "cobalt/math/size.h"
+
+#if !defined(__EMSCRIPTEN__) && defined(__TODO__)
 #include "cobalt/network_bridge/cookie_jar.h"
 #include "cobalt/network_bridge/net_poster.h"
+#endif
+
 #include "cobalt/page_visibility/page_visibility_state.h"
 #include "cobalt/page_visibility/visibility_state.h"
 #include "cobalt/script/exception_state.h"
@@ -99,12 +103,18 @@ class Document : public Node,
   struct Options {
     Options()
         : window(NULL),
+
+#if !defined(__EMSCRIPTEN__) && defined(__TODO__)
           cookie_jar(NULL),
+#endif
           csp_enforcement_mode(kCspEnforcementEnable) {}
     explicit Options(const GURL& url_value)
         : url(url_value),
           window(NULL),
+
+#if !defined(__EMSCRIPTEN__) && defined(__TODO__)
           cookie_jar(NULL),
+#endif
           csp_enforcement_mode(kCspEnforcementEnable) {}
     Options(const GURL& url_value, Window* window,
             const base::Closure& hashchange_callback,
@@ -112,8 +122,11 @@ class Document : public Node,
             const base::Callback<void(const GURL&)>& navigation_callback,
             const scoped_refptr<cssom::CSSStyleSheet> user_agent_style_sheet,
             const base::Optional<cssom::ViewportSize>& viewport_size,
+
+#if !defined(__EMSCRIPTEN__) && defined(__TODO__)
             network_bridge::CookieJar* cookie_jar,
             const network_bridge::PostSender& post_sender,
+#endif
             csp::CSPHeaderPolicy require_csp,
             CspEnforcementType csp_enforcement_mode,
             const base::Closure& csp_policy_changed_callback,
@@ -125,8 +138,11 @@ class Document : public Node,
           navigation_callback(navigation_callback),
           user_agent_style_sheet(user_agent_style_sheet),
           viewport_size(viewport_size),
+
+#if !defined(__EMSCRIPTEN__) && defined(__TODO__)
           cookie_jar(cookie_jar),
           post_sender(post_sender),
+#endif
           require_csp(require_csp),
           csp_enforcement_mode(csp_enforcement_mode),
           csp_policy_changed_callback(csp_policy_changed_callback),
@@ -140,8 +156,12 @@ class Document : public Node,
     base::Callback<void(const GURL&)> navigation_callback;
     scoped_refptr<cssom::CSSStyleSheet> user_agent_style_sheet;
     base::Optional<cssom::ViewportSize> viewport_size;
+
+#if !defined(__EMSCRIPTEN__) && defined(__TODO__)
     network_bridge::CookieJar* cookie_jar;
     network_bridge::PostSender post_sender;
+#endif
+
     csp::CSPHeaderPolicy require_csp;
     CspEnforcementType csp_enforcement_mode;
     base::Closure csp_policy_changed_callback;
@@ -497,7 +517,11 @@ class Document : public Node,
   base::Optional<cssom::ViewportSize> viewport_size_;
   // Content Security Policy enforcement for this document.
   std::unique_ptr<CspDelegate> csp_delegate_;
+
+#if !defined(__EMSCRIPTEN__) && defined(__TODO__)
   network_bridge::CookieJar* cookie_jar_;
+#endif
+
   // Associated location object.
   scoped_refptr<Location> location_;
   // The font cache for this document.

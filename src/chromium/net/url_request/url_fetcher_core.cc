@@ -901,6 +901,26 @@ void URLFetcherCore::ReadResponse() {
   OnReadCompleted(request_.get(), bytes_read);
 }
 
+#if defined(STARBOARD)
+
+void URLFetcherCore::InformDelegateResponseStarted() {
+  DCHECK(network_task_runner_->BelongsToCurrentThread());
+  DCHECK(request_);
+
+  delegate_task_runner_->PostTask(
+      FROM_HERE,
+      base::Bind(&URLFetcherCore::InformDelegateResponseStartedInDelegateThread,
+                 this));
+}
+
+void URLFetcherCore::InformDelegateResponseStartedInDelegateThread() {
+  if (delegate_) {
+    delegate_->OnURLFetchResponseStarted(fetcher_);
+  }
+}
+
+#endif  // defined(STARBOARD)
+
 void URLFetcherCore::InformDelegateUploadProgress() {
   DCHECK(network_task_runner_->BelongsToCurrentThread());
   if (request_.get()) {
