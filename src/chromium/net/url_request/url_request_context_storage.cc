@@ -14,12 +14,16 @@
 #include "net/cert/ct_policy_enforcer.h"
 #include "net/cert/ct_verifier.h"
 #include "net/cookies/cookie_store.h"
+#if defined(ENABLE_DNS)
 #include "net/dns/host_resolver.h"
+#endif
 #include "net/http/http_auth_handler_factory.h"
 #include "net/http/http_server_properties.h"
 #include "net/http/http_transaction_factory.h"
 #include "net/log/net_log.h"
+#if defined(ENABLE_PROXY)
 #include "net/proxy_resolution/proxy_resolution_service.h"
+#endif
 #include "net/url_request/url_request_context.h"
 #include "net/url_request/url_request_job_factory.h"
 #include "net/url_request/url_request_throttler_manager.h"
@@ -28,6 +32,8 @@
 #include "net/network_error_logging/network_error_logging_service.h"
 #include "net/reporting/reporting_service.h"
 #endif  // BUILDFLAG(ENABLE_REPORTING)
+
+#include "net/ssl/ssl_config_service.h"
 
 namespace net {
 
@@ -43,11 +49,13 @@ void URLRequestContextStorage::set_net_log(std::unique_ptr<NetLog> net_log) {
   net_log_ = std::move(net_log);
 }
 
+#if defined(ENABLE_DNS)
 void URLRequestContextStorage::set_host_resolver(
     std::unique_ptr<HostResolver> host_resolver) {
   context_->set_host_resolver(host_resolver.get());
   host_resolver_ = std::move(host_resolver);
 }
+#endif
 
 void URLRequestContextStorage::set_cert_verifier(
     std::unique_ptr<CertVerifier> cert_verifier) {
@@ -73,11 +81,13 @@ void URLRequestContextStorage::set_network_delegate(
   network_delegate_ = std::move(network_delegate);
 }
 
+#if defined(ENABLE_PROXY)
 void URLRequestContextStorage::set_proxy_resolution_service(
     std::unique_ptr<ProxyResolutionService> proxy_resolution_service) {
   context_->set_proxy_resolution_service(proxy_resolution_service.get());
   proxy_resolution_service_ = std::move(proxy_resolution_service);
 }
+#endif
 
 void URLRequestContextStorage::set_ssl_config_service(
     std::unique_ptr<SSLConfigService> ssl_config_service) {

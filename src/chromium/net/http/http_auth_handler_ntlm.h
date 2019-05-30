@@ -18,6 +18,7 @@
 #define NTLM_PORTABLE
 #endif
 
+#if defined(ENABLE_NTLM)
 #if defined(NTLM_SSPI)
 #define SECURITY_WIN32 1
 #include <windows.h>
@@ -25,6 +26,7 @@
 #include "net/http/http_auth_sspi_win.h"
 #elif defined(NTLM_PORTABLE)
 #include "net/ntlm/ntlm_client.h"
+#endif
 #endif
 
 #include <memory>
@@ -57,7 +59,9 @@ class NET_EXPORT_PRIVATE HttpAuthHandlerNTLM : public HttpAuthHandler {
                           CreateReason reason,
                           int digest_nonce_count,
                           const NetLogWithSource& net_log,
+#if defined(ENABLE_DNS)
                           HostResolver* host_resolver,
+#endif
                           std::unique_ptr<HttpAuthHandler>* handler) override;
 #if defined(NTLM_SSPI)
     // Set the SSPILibrary to use. Typically the only callers which need to use
@@ -165,10 +169,12 @@ class NET_EXPORT_PRIVATE HttpAuthHandlerNTLM : public HttpAuthHandler {
   // Create an NTLM SPN to identify the |origin| server.
   static std::string CreateSPN(const GURL& origin);
 
+#if defined(ENABLE_NTLM)
 #if defined(NTLM_SSPI)
   HttpAuthSSPI auth_sspi_;
 #elif defined(NTLM_PORTABLE)
   ntlm::NtlmClient ntlm_client_;
+#endif
 #endif
 
 #if defined(NTLM_PORTABLE)

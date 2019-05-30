@@ -16,7 +16,11 @@
 #include "base/timer/timer.h"
 #include "net/base/host_port_pair.h"
 #include "net/base/net_export.h"
+
+#if defined(ENABLE_DNS)
 #include "net/dns/host_resolver.h"
+#endif
+
 #include "net/socket/connect_job.h"
 #include "net/socket/connection_attempts.h"
 #include "net/socket/socket_tag.h"
@@ -149,8 +153,9 @@ class NET_EXPORT_PRIVATE TransportConnectJob : public ConnectJob {
   void CopyConnectionAttemptsFromSockets();
 
   scoped_refptr<TransportSocketParams> params_;
+#if defined(ENABLE_QUIC)
   std::unique_ptr<HostResolver::ResolveHostRequest> request_;
-
+#endif
   State next_state_;
 
   std::unique_ptr<StreamSocket> transport_socket_;

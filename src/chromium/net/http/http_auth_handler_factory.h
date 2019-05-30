@@ -22,7 +22,9 @@ class GURL;
 
 namespace net {
 
+#if defined(ENABLE_DNS)
 class HostResolver;
+#endif
 class HttpAuthChallengeTokenizer;
 class HttpAuthHandler;
 class HttpAuthHandlerRegistryFactory;
@@ -98,7 +100,10 @@ class NET_EXPORT HttpAuthHandlerFactory {
                                 CreateReason create_reason,
                                 int digest_nonce_count,
                                 const NetLogWithSource& net_log,
+
+#if defined(ENABLE_DNS)
                                 HostResolver* host_resolver,
+#endif
                                 std::unique_ptr<HttpAuthHandler>* handler) = 0;
 
   // Creates an HTTP authentication handler based on the authentication
@@ -111,7 +116,9 @@ class NET_EXPORT HttpAuthHandlerFactory {
                                   const SSLInfo& ssl_info,
                                   const GURL& origin,
                                   const NetLogWithSource& net_log,
-                                  HostResolver* host_resolver,
+#if defined(ENABLE_DNS)
+                                HostResolver* host_resolver,
+#endif
                                   std::unique_ptr<HttpAuthHandler>* handler);
 
   // Creates an HTTP authentication handler based on the authentication
@@ -125,7 +132,9 @@ class NET_EXPORT HttpAuthHandlerFactory {
       const GURL& origin,
       int digest_nonce_count,
       const NetLogWithSource& net_log,
+#if defined(ENABLE_DNS)
       HostResolver* host_resolver,
+#endif
       std::unique_ptr<HttpAuthHandler>* handler);
 
   // Factory callback to create the auth system used for Negotiate
@@ -236,7 +245,9 @@ class NET_EXPORT HttpAuthHandlerRegistryFactory
                         CreateReason reason,
                         int digest_nonce_count,
                         const NetLogWithSource& net_log,
-                        HostResolver* host_resolver,
+#if defined(ENABLE_DNS)
+      HostResolver* host_resolver,
+#endif
                         std::unique_ptr<HttpAuthHandler>* handler) override;
 
  private:

@@ -20,7 +20,9 @@
 #include "base/trace_event/process_memory_dump.h"
 #include "net/base/http_user_agent_settings.h"
 #include "net/cookies/cookie_store.h"
+#if defined(ENABLE_DNS)
 #include "net/dns/host_resolver.h"
+#endif
 #include "net/http/http_cache.h"
 #include "net/http/http_transaction_factory.h"
 #include "net/socket/ssl_client_socket_impl.h"
@@ -30,10 +32,14 @@ namespace net {
 
 URLRequestContext::URLRequestContext(bool allow_copy)
     : net_log_(nullptr),
+#if defined(ENABLE_DNS)
       host_resolver_(nullptr),
+#endif
       cert_verifier_(nullptr),
       http_auth_handler_factory_(nullptr),
+#if defined(ENABLE_NQE)
       proxy_resolution_service_(nullptr),
+#endif
       proxy_delegate_(nullptr),
       ssl_config_service_(nullptr),
       network_delegate_(nullptr),
@@ -46,7 +52,9 @@ URLRequestContext::URLRequestContext(bool allow_copy)
       http_transaction_factory_(nullptr),
       job_factory_(nullptr),
       throttler_manager_(nullptr),
+#if defined(ENABLE_NQE)
       network_quality_estimator_(nullptr),
+#endif
 #if BUILDFLAG(ENABLE_REPORTING)
       reporting_service_(nullptr),
       network_error_logging_service_(nullptr),
@@ -157,10 +165,18 @@ void URLRequestContext::CopyFrom(const URLRequestContext* other) {
 
   // Copy URLRequestContext parameters.
   set_net_log(other->net_log_);
+
+#if defined(ENABLE_DNS)
   set_host_resolver(other->host_resolver_);
+#endif
+
   set_cert_verifier(other->cert_verifier_);
   set_http_auth_handler_factory(other->http_auth_handler_factory_);
+
+#if defined(ENABLE_DNS)
   set_proxy_resolution_service(other->proxy_resolution_service_);
+#endif
+
   set_proxy_delegate(other->proxy_delegate_);
   set_ssl_config_service(other->ssl_config_service_);
   set_network_delegate(other->network_delegate_);
@@ -173,7 +189,11 @@ void URLRequestContext::CopyFrom(const URLRequestContext* other) {
   set_job_factory(other->job_factory_);
   set_throttler_manager(other->throttler_manager_);
   set_http_user_agent_settings(other->http_user_agent_settings_);
+
+#if defined(ENABLE_NQE)
   set_network_quality_estimator(other->network_quality_estimator_);
+#endif
+
 #if BUILDFLAG(ENABLE_REPORTING)
   set_reporting_service(other->reporting_service_);
   set_network_error_logging_service(other->network_error_logging_service_);

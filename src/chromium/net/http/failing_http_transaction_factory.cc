@@ -60,17 +60,27 @@ class FailingHttpTransaction : public HttpTransaction {
   void DoneReading() override;
   const HttpResponseInfo* GetResponseInfo() const override;
   LoadState GetLoadState() const override;
+#ifdef ENABLE_QUIC
   void SetQuicServerInfo(QuicServerInfo* quic_server_info) override;
+#endif
   bool GetLoadTimingInfo(LoadTimingInfo* load_timing_info) const override;
   bool GetRemoteEndpoint(IPEndPoint* endpoint) const override;
+#ifdef ENABLE_QUIC
   void PopulateNetErrorDetails(NetErrorDetails* details) const override;
+#endif
   void SetPriority(RequestPriority priority) override;
+
+#ifdef ENABLE_WS
   void SetWebSocketHandshakeStreamCreateHelper(
       WebSocketHandshakeStreamBase::CreateHelper* create_helper) override;
+#endif
+
   void SetBeforeNetworkStartCallback(
       const BeforeNetworkStartCallback& callback) override;
+#ifdef ENABLE_QUIC
   void SetBeforeHeadersSentCallback(
       const BeforeHeadersSentCallback& callback) override;
+#endif
   int ResumeNetworkStart() override;
   void GetConnectionAttempts(ConnectionAttempts* out) const override;
   void SetRequestHeadersCallback(RequestHeadersCallback) override {}
@@ -149,11 +159,11 @@ const HttpResponseInfo* FailingHttpTransaction::GetResponseInfo() const  {
 LoadState FailingHttpTransaction::GetLoadState() const  {
   return LOAD_STATE_IDLE;
 }
-
+#ifdef ENABLE_QUIC
 void FailingHttpTransaction::SetQuicServerInfo(
     QuicServerInfo* quic_server_info) {
 }
-
+#endif
 bool FailingHttpTransaction::GetLoadTimingInfo(
     LoadTimingInfo* load_timing_info) const  {
   return false;
@@ -163,25 +173,29 @@ bool FailingHttpTransaction::GetRemoteEndpoint(IPEndPoint* endpoint) const {
   return false;
 }
 
+#ifdef ENABLE_QUIC
 void FailingHttpTransaction::PopulateNetErrorDetails(
     NetErrorDetails* /*details*/) const {
   return;
 }
+#endif
 
 void FailingHttpTransaction::SetPriority(RequestPriority priority)  {}
 
+#ifdef ENABLE_WS
 void FailingHttpTransaction::SetWebSocketHandshakeStreamCreateHelper(
     WebSocketHandshakeStreamBase::CreateHelper* create_helper)  {
   NOTREACHED();
 }
+#endif
 
 void FailingHttpTransaction::SetBeforeNetworkStartCallback(
     const BeforeNetworkStartCallback& callback)  {
 }
-
+#ifdef ENABLE_QUIC
 void FailingHttpTransaction::SetBeforeHeadersSentCallback(
     const BeforeHeadersSentCallback& callback) {}
-
+#endif
 int FailingHttpTransaction::ResumeNetworkStart()  {
   NOTREACHED();
   return ERR_FAILED;

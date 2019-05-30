@@ -19,7 +19,9 @@ class CertVerifier;
 class CookieStore;
 class CTPolicyEnforcer;
 class CTVerifier;
+#if defined(ENABLE_DNS)
 class HostResolver;
+#endif
 class HttpAuthHandlerFactory;
 class HttpNetworkSession;
 class HttpServerProperties;
@@ -28,7 +30,9 @@ class HttpUserAgentSettings;
 class NetLog;
 class NetworkDelegate;
 class ProxyDelegate;
+#if defined(ENABLE_PROXY)
 class ProxyResolutionService;
+#endif
 class SSLConfigService;
 class TransportSecurityState;
 class URLRequestContext;
@@ -54,14 +58,22 @@ class NET_EXPORT URLRequestContextStorage {
   // URLRequestContext object. In all cases, ownership is passed to |this|.
 
   void set_net_log(std::unique_ptr<NetLog> net_log);
+
+#if defined(ENABLE_DNS)
   void set_host_resolver(std::unique_ptr<HostResolver> host_resolver);
+#endif
+
   void set_cert_verifier(std::unique_ptr<CertVerifier> cert_verifier);
   void set_http_auth_handler_factory(
       std::unique_ptr<HttpAuthHandlerFactory> http_auth_handler_factory);
   void set_proxy_delegate(std::unique_ptr<ProxyDelegate> proxy_delegate);
   void set_network_delegate(std::unique_ptr<NetworkDelegate> network_delegate);
+
+#if defined(ENABLE_PROXY)
   void set_proxy_resolution_service(
       std::unique_ptr<ProxyResolutionService> proxy_resolution_service);
+#endif
+
   void set_ssl_config_service(
       std::unique_ptr<SSLConfigService> ssl_config_service);
   void set_http_server_properties(
@@ -104,12 +116,16 @@ class NET_EXPORT URLRequestContextStorage {
 
   // Owned members.
   std::unique_ptr<NetLog> net_log_;
+#if defined(ENABLE_DNS)
   std::unique_ptr<HostResolver> host_resolver_;
+#endif
   std::unique_ptr<CertVerifier> cert_verifier_;
   std::unique_ptr<HttpAuthHandlerFactory> http_auth_handler_factory_;
   std::unique_ptr<ProxyDelegate> proxy_delegate_;
   std::unique_ptr<NetworkDelegate> network_delegate_;
+#if defined(ENABLE_PROXY)
   std::unique_ptr<ProxyResolutionService> proxy_resolution_service_;
+#endif
   std::unique_ptr<SSLConfigService> ssl_config_service_;
   std::unique_ptr<HttpServerProperties> http_server_properties_;
   std::unique_ptr<HttpUserAgentSettings> http_user_agent_settings_;

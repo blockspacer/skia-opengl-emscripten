@@ -38,7 +38,9 @@ WebSocketTransportClientSocketPool::WebSocketTransportClientSocketPool(
       handed_out_socket_count_(0),
       flushing_(false),
       weak_factory_(this) {
+#if defined(ENABLE_QUIC)
   DCHECK(common_connect_job_params_->websocket_endpoint_lock_manager);
+#endif
 }
 
 WebSocketTransportClientSocketPool::~WebSocketTransportClientSocketPool() {
@@ -52,13 +54,19 @@ WebSocketTransportClientSocketPool::~WebSocketTransportClientSocketPool() {
 
 // static
 void WebSocketTransportClientSocketPool::UnlockEndpoint(
-    ClientSocketHandle* handle,
-    WebSocketEndpointLockManager* websocket_endpoint_lock_manager) {
+    ClientSocketHandle* handle
+#if defined(ENABLE_QUIC)
+    , WebSocketEndpointLockManager* websocket_endpoint_lock_manager
+#endif
+    ) {
+
   DCHECK(handle->is_initialized());
   DCHECK(handle->socket());
   IPEndPoint address;
+#if defined(ENABLE_QUIC)
   if (handle->socket()->GetPeerAddress(&address) == OK)
-    websocket_endpoint_lock_manager->UnlockEndpoint(address);
+    websocket_endpoint_lock_manager->UnlockEndpoint(address)
+#endif
 }
 
 int WebSocketTransportClientSocketPool::RequestSocket(

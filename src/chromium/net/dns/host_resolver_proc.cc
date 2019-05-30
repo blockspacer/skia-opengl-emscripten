@@ -198,7 +198,7 @@ int SystemHostResolverCall(const std::string& host,
                                                 base::BlockingType::WILL_BLOCK);
 
 #if defined(OS_POSIX) && !defined(OS_MACOSX) && !defined(OS_OPENBSD) && \
-    !defined(OS_ANDROID) && !defined(OS_FUCHSIA)
+    !defined(OS_ANDROID) && !defined(OS_FUCHSIA) && !defined(OS_EMSCRIPTEN)
   DnsReloaderMaybeReload();
 #endif
   int err = getaddrinfo(host.c_str(), nullptr, &hints, &ai);

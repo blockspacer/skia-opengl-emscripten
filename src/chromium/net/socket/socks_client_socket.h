@@ -19,7 +19,11 @@
 #include "net/base/host_port_pair.h"
 #include "net/base/net_errors.h"
 #include "net/base/net_export.h"
+
+#ifdef ENABLE_DNS
 #include "net/dns/host_resolver.h"
+#endif
+
 #include "net/log/net_log_with_source.h"
 #include "net/socket/stream_socket.h"
 #include "net/traffic_annotation/network_traffic_annotation.h"
@@ -33,8 +37,10 @@ class NET_EXPORT_PRIVATE SOCKSClientSocket : public StreamSocket {
   // communicate to via the socks layer. For testing the referrer is optional.
   SOCKSClientSocket(std::unique_ptr<StreamSocket> transport_socket,
                     const HostPortPair& destination,
+#ifdef ENABLE_DNS
                     RequestPriority priority,
                     HostResolver* host_resolver,
+#endif
                     const NetworkTrafficAnnotationTag& traffic_annotation);
 
   // On destruction Disconnect() is called.
@@ -134,11 +140,16 @@ class NET_EXPORT_PRIVATE SOCKSClientSocket : public StreamSocket {
   // This becomes true when the socket is used to send or receive data.
   bool was_ever_used_;
 
+#ifdef ENABLE_DNS
   // Used to resolve the hostname to which the SOCKS proxy will connect.
   HostResolver* host_resolver_;
   std::unique_ptr<HostResolver::ResolveHostRequest> resolve_host_request_;
+#endif
   const HostPortPair destination_;
+
+#ifdef ENABLE_DNS
   RequestPriority priority_;
+#endif
 
   NetLogWithSource net_log_;
 

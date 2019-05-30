@@ -390,6 +390,7 @@ class NET_EXPORT UDPSocketPosix {
   // WriteAsync batching etc. are to improve throughput of large high
   // bandwidth uploads.
 
+#if !defined(OS_EMSCRIPTEN)
   // Watcher for WriteAsync paths.
   class WriteAsyncWatcher : public base::MessagePumpForIO::FdWatcher {
    public:
@@ -412,6 +413,7 @@ class NET_EXPORT UDPSocketPosix {
 
     DISALLOW_COPY_AND_ASSIGN(WriteAsyncWatcher);
   };
+#endif
 
   void IncreaseWriteAsyncOutstanding(int increment) {
     write_async_outstanding_ += increment;
@@ -427,7 +429,10 @@ class NET_EXPORT UDPSocketPosix {
   void DidSendBuffers(SendResult buffers);
   void FlushPending();
 
+#if !defined(OS_EMSCRIPTEN)
   std::unique_ptr<WriteAsyncWatcher> write_async_watcher_;
+#endif
+
   scoped_refptr<UDPSocketPosixSender> sender_;
   std::unique_ptr<DatagramBufferPool> datagram_buffer_pool_;
   // |WriteAsync| pending writes, does not include buffers that have
@@ -439,6 +444,7 @@ class NET_EXPORT UDPSocketPosix {
     SOCKET_OPTION_MULTICAST_LOOP = 1 << 0
   };
 
+#if !defined(OS_EMSCRIPTEN)
   class ReadWatcher : public base::MessagePumpForIO::FdWatcher {
    public:
     explicit ReadWatcher(UDPSocketPosix* socket) : socket_(socket) {}
@@ -470,6 +476,7 @@ class NET_EXPORT UDPSocketPosix {
 
     DISALLOW_COPY_AND_ASSIGN(WriteWatcher);
   };
+#endif
 
   int InternalWriteAsync(CompletionOnceCallback callback,
                          const NetworkTrafficAnnotationTag& traffic_annotation);
@@ -571,6 +578,7 @@ class NET_EXPORT UDPSocketPosix {
   mutable std::unique_ptr<IPEndPoint> local_address_;
   mutable std::unique_ptr<IPEndPoint> remote_address_;
 
+#if !defined(OS_EMSCRIPTEN)
   // The socket's posix wrappers
   base::MessagePumpForIO::FdWatchController read_socket_watcher_;
   base::MessagePumpForIO::FdWatchController write_socket_watcher_;
@@ -578,6 +586,7 @@ class NET_EXPORT UDPSocketPosix {
   // The corresponding watchers for reads and writes.
   ReadWatcher read_watcher_;
   WriteWatcher write_watcher_;
+#endif
 
   // Various bits to support |WriteAsync()|.
   bool write_async_enabled_ = false;

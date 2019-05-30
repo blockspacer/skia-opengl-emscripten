@@ -14,7 +14,9 @@
 #include "base/threading/platform_thread.h"
 #include "net/base/auth.h"
 #include "net/base/url_util.h"
+#if defined(ENABLE_DNS)
 #include "net/dns/host_resolver.h"
+#endif
 #include "net/http/http_auth_handler.h"
 #include "net/http/http_auth_handler_factory.h"
 #include "net/http/http_network_session.h"
@@ -130,8 +132,12 @@ HttpAuthController::HttpAuthController(
     HttpAuth::Target target,
     const GURL& auth_url,
     HttpAuthCache* http_auth_cache,
-    HttpAuthHandlerFactory* http_auth_handler_factory,
-    HostResolver* host_resolver)
+    HttpAuthHandlerFactory* http_auth_handler_factory
+
+#if defined(ENABLE_DNS)
+    , HostResolver* host_resolver
+#endif
+    )
     : target_(target),
       auth_url_(auth_url),
       auth_origin_(auth_url.GetOrigin()),
@@ -139,8 +145,12 @@ HttpAuthController::HttpAuthController(
       embedded_identity_used_(false),
       default_credentials_used_(false),
       http_auth_cache_(http_auth_cache),
-      http_auth_handler_factory_(http_auth_handler_factory),
-      host_resolver_(host_resolver) {
+      http_auth_handler_factory_(http_auth_handler_factory)
+#if defined(ENABLE_DNS)
+      ,
+      host_resolver_(host_resolver)
+#endif
+      {
   DCHECK(target != HttpAuth::AUTH_PROXY || auth_path_ == "/");
 }
 
@@ -167,8 +177,12 @@ int HttpAuthController::MaybeGenerateAuthToken(
   DCHECK_CALLED_ON_VALID_THREAD(thread_checker_);
   DCHECK(!auth_info_);
   bool needs_auth = HaveAuth() || SelectPreemptiveAuth(caller_net_log);
+
+#if defined(ENABLE_DNS)
   if (!needs_auth)
     return OK;
+#endif
+
   net_log_.BeginEvent(NetLogEventType::AUTH_GENERATE_TOKEN,
                       caller_net_log.source().ToEventParametersCallback());
   const AuthCredentials* credentials = nullptr;
@@ -182,10 +196,12 @@ int HttpAuthController::MaybeGenerateAuthToken(
                      base::Unretained(this)),
       &auth_token_);
 
+#if defined(ENABLE_DNS)
   if (rv == ERR_IO_PENDING) {
     callback_ = std::move(callback);
     return rv;
   }
+#endif
 
   return HandleGenerateTokenResult(rv);
 }
@@ -214,13 +230,20 @@ bool HttpAuthController::SelectPreemptiveAuth(
 
   // Try to create a handler using the previous auth challenge.
   std::unique_ptr<HttpAuthHandler> handler_preemptive;
+#if defined(ENABLE_DNS)
   int rv_create =
       http_auth_handler_factory_->CreatePreemptiveAuthHandlerFromString(
           entry->auth_challenge(), target_, auth_origin_,
           entry->IncrementNonceCount(), net_log_, host_resolver_,
           &handler_preemptive);
+#else
+  int rv_create = 0;
+#endif
+
+#if defined(ENABLE_DNS)
   if (rv_create != OK)
     return false;
+#endif
 
   // Set the state
   identity_.source = HttpAuth::IDENT_SRC_PATH_LOOKUP;
@@ -311,6 +334,7 @@ int HttpAuthController::HandleAuthChallenge(
                         !do_not_send_server_auth);
 
   do {
+#if defined(ENABLE_DNS)
     if (!handler_.get() && can_send_auth) {
       // Find the best authentication challenge that we support.
       HttpAuth::ChooseBestChallenge(
@@ -319,7 +343,9 @@ int HttpAuthController::HandleAuthChallenge(
       if (handler_.get())
         HistogramAuthEvent(handler_.get(), AUTH_EVENT_START);
     }
+#endif
 
+#if defined(ENABLE_DNS)
     if (!handler_.get()) {
       if (establishing_tunnel) {
         // We are establishing a tunnel, we can't show the error page because an
@@ -335,6 +361,7 @@ int HttpAuthController::HandleAuthChallenge(
       net_log_.EndEvent(NetLogEventType::AUTH_HANDLE_CHALLENGE);
       return OK;
     }
+#endif
 
     if (handler_->NeedsIdentity()) {
       // Pick a new auth identity to try, by looking to the URL and auth cache.
@@ -367,7 +394,11 @@ int HttpAuthController::HandleAuthChallenge(
     //     <handler,identity> and iterate through that.
   } while(!handler_.get());
   net_log_.EndEvent(NetLogEventType::AUTH_HANDLE_CHALLENGE);
+#if defined(ENABLE_DNS)
   return OK;
+#else
+  return 0;
+#endif
 }
 
 void HttpAuthController::ResetAuth(const AuthCredentials& credentials) {
@@ -547,6 +578,9 @@ int HttpAuthController::HandleGenerateTokenResult(int result) {
   DCHECK_CALLED_ON_VALID_THREAD(thread_checker_);
   net_log_.EndEventWithNetErrorCode(NetLogEventType::AUTH_GENERATE_TOKEN,
                                     result);
+
+
+#if defined(ENABLE_DNS)
   switch (result) {
     // Occurs if the credential handle is found to be invalid at the point it is
     // exercised (i.e. GenerateAuthToken stage). We are going to consider this
@@ -592,6 +626,9 @@ int HttpAuthController::HandleGenerateTokenResult(int result) {
     default:
       return result;
   }
+#else
+  return 0;
+#endif
 }
 
 void HttpAuthController::OnGenerateAuthTokenDone(int result) {

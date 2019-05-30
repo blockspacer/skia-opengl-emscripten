@@ -53,6 +53,9 @@
 #include "net/cert/cert_verify_proc_win.h"
 #elif defined(OS_FUCHSIA)
 #include "net/cert/cert_verify_proc_builtin.h"
+#elif defined(OS_EMSCRIPTEN)
+//#warning "TODO: Implement certificate verification."
+  //#include // TODO
 #else
 #error Implement certificate verification.
 #endif
@@ -465,6 +468,9 @@ scoped_refptr<CertVerifyProc> CertVerifyProc::CreateDefault(
   return new CertVerifyProcWin();
 #elif defined(OS_FUCHSIA)
   return CreateCertVerifyProcBuiltin(std::move(cert_net_fetcher));
+#elif defined(OS_EMSCRIPTEN)
+//#warning "TODO: CertVerifyProc::CreateDefault"
+  return nullptr; // TODO
 #else
 #error Unsupported platform
 #endif

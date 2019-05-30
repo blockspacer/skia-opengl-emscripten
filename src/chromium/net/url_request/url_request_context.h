@@ -44,15 +44,21 @@ class CertVerifier;
 class CookieStore;
 class CTPolicyEnforcer;
 class CTVerifier;
+#if defined(ENABLE_DNS)
 class HostResolver;
+#endif
 class HttpAuthHandlerFactory;
 class HttpTransactionFactory;
 class HttpUserAgentSettings;
 class NetLog;
 class NetworkDelegate;
+#if defined(ENABLE_NQE)
 class NetworkQualityEstimator;
+#endif
 class ProxyDelegate;
+#if defined(ENABLE_PROXY)
 class ProxyResolutionService;
+#endif
 class SSLConfigService;
 class URLRequest;
 class URLRequestJobFactory;
@@ -112,6 +118,7 @@ class NET_EXPORT URLRequestContext
     net_log_ = net_log;
   }
 
+#if defined(ENABLE_DNS)
   HostResolver* host_resolver() const {
     return host_resolver_;
   }
@@ -119,6 +126,7 @@ class NET_EXPORT URLRequestContext
   void set_host_resolver(HostResolver* host_resolver) {
     host_resolver_ = host_resolver;
   }
+#endif
 
   CertVerifier* cert_verifier() const {
     return cert_verifier_;
@@ -128,6 +136,7 @@ class NET_EXPORT URLRequestContext
     cert_verifier_ = cert_verifier;
   }
 
+#if defined(ENABLE_PROXY)
   // Get the proxy service for this context.
   ProxyResolutionService* proxy_resolution_service() const {
     return proxy_resolution_service_;
@@ -136,6 +145,7 @@ class NET_EXPORT URLRequestContext
       ProxyResolutionService* proxy_resolution_service) {
     proxy_resolution_service_ = proxy_resolution_service;
   }
+#endif
 
   ProxyDelegate* proxy_delegate() const { return proxy_delegate_; }
   void set_proxy_delegate(ProxyDelegate* proxy_delegate) {
@@ -237,6 +247,7 @@ class NET_EXPORT URLRequestContext
     http_user_agent_settings_ = http_user_agent_settings;
   }
 
+#if defined(ENABLE_NQE)
   // Gets the NetworkQualityEstimator associated with this context.
   // May return nullptr.
   NetworkQualityEstimator* network_quality_estimator() const {
@@ -246,6 +257,7 @@ class NET_EXPORT URLRequestContext
       NetworkQualityEstimator* network_quality_estimator) {
     network_quality_estimator_ = network_quality_estimator;
   }
+#endif
 
 #if BUILDFLAG(ENABLE_REPORTING)
   ReportingService* reporting_service() const { return reporting_service_; }
@@ -314,10 +326,16 @@ class NET_EXPORT URLRequestContext
   // Ownership for these members are not defined here. Clients should either
   // provide storage elsewhere or have a subclass take ownership.
   NetLog* net_log_;
+
+#if defined(ENABLE_DNS)
   HostResolver* host_resolver_;
+#endif
+
   CertVerifier* cert_verifier_;
   HttpAuthHandlerFactory* http_auth_handler_factory_;
+#if defined(ENABLE_PROXY)
   ProxyResolutionService* proxy_resolution_service_;
+#endif
   ProxyDelegate* proxy_delegate_;
   SSLConfigService* ssl_config_service_;
   NetworkDelegate* network_delegate_;
@@ -330,7 +348,9 @@ class NET_EXPORT URLRequestContext
   HttpTransactionFactory* http_transaction_factory_;
   const URLRequestJobFactory* job_factory_;
   URLRequestThrottlerManager* throttler_manager_;
+#if defined(ENABLE_NQE)
   NetworkQualityEstimator* network_quality_estimator_;
+#endif
 #if BUILDFLAG(ENABLE_REPORTING)
   ReportingService* reporting_service_;
   NetworkErrorLoggingService* network_error_logging_service_;

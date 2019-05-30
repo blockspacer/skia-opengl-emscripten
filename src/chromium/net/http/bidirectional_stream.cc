@@ -24,11 +24,21 @@
 #include "net/log/net_log_capture_mode.h"
 #include "net/log/net_log_event_type.h"
 #include "net/log/net_log_source_type.h"
+
+#if defined(ENABLE_SPDY)
 #include "net/spdy/spdy_http_utils.h"
 #include "net/spdy/spdy_log_util.h"
+#endif
+
 #include "net/ssl/ssl_cert_request_info.h"
 #include "net/ssl/ssl_config.h"
+
+#if defined(ENABLE_QUIC)
 #include "net/third_party/quiche/src/spdy/core/spdy_header_block.h"
+#endif
+
+#include "net/base/io_buffer.h"
+
 #include "net/traffic_annotation/network_traffic_annotation.h"
 #include "url/gurl.h"
 
@@ -39,7 +49,10 @@ namespace {
 base::Value NetLogHeadersCallback(const spdy::SpdyHeaderBlock* headers,
                                   NetLogCaptureMode capture_mode) {
   base::DictionaryValue dict;
+
+#if defined(ENABLE_QUIC)
   dict.SetKey("headers", ElideSpdyHeaderBlockForNetLog(*headers, capture_mode));
+#endif
   return std::move(dict);
 }
 
@@ -111,9 +124,10 @@ BidirectionalStream::BidirectionalStream(
   }
 
   SSLConfig ssl_config;
+#ifdef ENABLE_QUIC
   session->ssl_config_service()->GetSSLConfig(&ssl_config);
   session->GetAlpnProtos(&ssl_config.alpn_protos);
-
+#endif
   StartRequest(ssl_config);
 }
 
@@ -138,8 +152,10 @@ int BidirectionalStream::ReadData(IOBuffer* buf, int buf_len) {
   int rv = stream_impl_->ReadData(buf, buf_len);
   if (rv > 0) {
     read_end_time_ = base::TimeTicks::Now();
+#ifdef ENABLE_QUIC
     net_log_.AddByteTransferEvent(
         NetLogEventType::BIDIRECTIONAL_STREAM_BYTES_RECEIVED, rv, buf->data());
+#endif
   } else if (rv == ERR_IO_PENDING) {
     read_buffer_ = buf;
     // Bytes will be logged in OnDataRead().
@@ -197,12 +213,13 @@ void BidirectionalStream::GetLoadTimingInfo(
   *load_timing_info = load_timing_info_;
 }
 
+#ifdef ENABLE_QUIC
 void BidirectionalStream::PopulateNetErrorDetails(NetErrorDetails* details) {
   DCHECK(details);
   if (stream_impl_)
     stream_impl_->PopulateNetErrorDetails(details);
 }
-
+#endif
 void BidirectionalStream::StartRequest(const SSLConfig& ssl_config) {
   DCHECK(!stream_request_);
   HttpRequestInfo http_request_info;
@@ -238,11 +255,13 @@ void BidirectionalStream::OnStreamReady(bool request_headers_sent) {
 void BidirectionalStream::OnHeadersReceived(
     const spdy::SpdyHeaderBlock& response_headers) {
   HttpResponseInfo response_info;
+#ifdef ENABLE_QUIC
   if (!SpdyHeadersToHttpResponse(response_headers, &response_info)) {
     DLOG(WARNING) << "Invalid headers";
     NotifyFailed(ERR_FAILED);
     return;
   }
+#endif
   if (net_log_.IsCapturing()) {
     net_log_.AddEvent(NetLogEventType::BIDIRECTIONAL_STREAM_RECV_HEADERS,
                       base::Bind(&NetLogHeadersCallback, &response_headers));
@@ -267,11 +286,13 @@ void BidirectionalStream::OnHeadersReceived(
 void BidirectionalStream::OnDataRead(int bytes_read) {
   DCHECK(read_buffer_);
 
+#ifdef ENABLE_QUIC
   if (net_log_.IsCapturing()) {
     net_log_.AddByteTransferEvent(
         NetLogEventType::BIDIRECTIONAL_STREAM_BYTES_RECEIVED, bytes_read,
         read_buffer_->data());
   }
+#endif
   read_end_time_ = base::TimeTicks::Now();
   read_buffer_ = nullptr;
   delegate_->OnDataRead(bytes_read);
@@ -288,11 +309,15 @@ void BidirectionalStream::OnDataSent() {
           NetLog::IntCallback("num_buffers_coalesced",
                               write_buffer_list_.size()));
     }
+
+#ifdef ENABLE_QUIC
     for (size_t i = 0; i < write_buffer_list_.size(); ++i) {
       net_log_.AddByteTransferEvent(
           NetLogEventType::BIDIRECTIONAL_STREAM_BYTES_SENT,
           write_buffer_len_list_[i], write_buffer_list_[i]->data());
     }
+#endif
+
     if (write_buffer_list_.size() > 1) {
       net_log_.EndEvent(
           NetLogEventType::BIDIRECTIONAL_STREAM_BYTES_SENT_COALESCED);
@@ -323,14 +348,20 @@ void BidirectionalStream::OnFailed(int status) {
 }
 
 void BidirectionalStream::OnStreamReady(const SSLConfig& used_ssl_config,
+
+#ifdef ENABLE_PROXY
                                         const ProxyInfo& used_proxy_info,
+#endif
+
                                         std::unique_ptr<HttpStream> stream) {
   NOTREACHED();
 }
 
 void BidirectionalStream::OnBidirectionalStreamImplReady(
     const SSLConfig& used_ssl_config,
+#ifdef ENABLE_PROXY
     const ProxyInfo& used_proxy_info,
+#endif
     std::unique_ptr<BidirectionalStreamImpl> stream) {
   DCHECK(!stream_impl_);
 
@@ -365,23 +396,32 @@ void BidirectionalStream::OnBidirectionalStreamImplReady(
 }
 
 void BidirectionalStream::OnWebSocketHandshakeStreamReady(
-    const SSLConfig& used_ssl_config,
-    const ProxyInfo& used_proxy_info,
-    std::unique_ptr<WebSocketHandshakeStreamBase> stream) {
+    const SSLConfig& used_ssl_config
+#ifdef ENABLE_PROXY
+    , const ProxyInfo& used_proxy_info
+    , std::unique_ptr<WebSocketHandshakeStreamBase> stream
+#endif
+    ) {
   NOTREACHED();
 }
 
+#ifdef ENABLE_QUIC
 void BidirectionalStream::OnStreamFailed(
     int result,
     const NetErrorDetails& net_error_details,
-    const SSLConfig& used_ssl_config,
-    const ProxyInfo& used_proxy_info) {
+    const SSLConfig& used_ssl_config
+#ifdef ENABLE_PROXY
+    ,
+    const ProxyInfo& used_proxy_info
+#endif
+    ) {
   DCHECK_LT(result, 0);
   DCHECK_NE(result, ERR_IO_PENDING);
   DCHECK(stream_request_);
 
   NotifyFailed(result);
 }
+#endif
 
 void BidirectionalStream::OnCertificateError(int result,
                                              const SSLConfig& used_ssl_config,
@@ -396,7 +436,10 @@ void BidirectionalStream::OnCertificateError(int result,
 void BidirectionalStream::OnNeedsProxyAuth(
     const HttpResponseInfo& proxy_response,
     const SSLConfig& used_ssl_config,
+
+#ifdef ENABLE_QUIC
     const ProxyInfo& used_proxy_info,
+#endif
     HttpAuthController* auth_controller) {
   DCHECK(stream_request_);
 

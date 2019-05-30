@@ -24,8 +24,10 @@
 #include "net/cert/ct_verifier.h"
 #include "net/cert/multi_log_ct_verifier.h"
 #include "net/cookies/cookie_monster.h"
+#if defined(ENABLE_PROXY)
 #include "net/dns/host_resolver.h"
 #include "net/dns/host_resolver_manager.h"
+#endif
 #include "net/http/http_auth_handler_factory.h"
 #include "net/http/http_cache.h"
 #include "net/http/http_network_layer.h"
@@ -35,8 +37,14 @@
 #include "net/http/transport_security_state.h"
 #include "net/log/net_log.h"
 #include "net/net_buildflags.h"
+
+#if defined(ENABLE_NQE)
 #include "net/nqe/network_quality_estimator.h"
+#endif
+
+#if defined(ENABLE_PROXY)
 #include "net/quic/quic_stream_factory.h"
+#endif
 #include "net/ssl/ssl_config_service_defaults.h"
 #include "net/url_request/data_protocol_handler.h"
 #include "net/url_request/static_http_user_agent_settings.h"
@@ -165,6 +173,7 @@ class ContainerURLRequestContext final : public URLRequestContext {
       reporting_service()->OnShutdown();
 #endif  // BUILDFLAG(ENABLE_REPORTING)
 
+#if defined(ENABLE_PROXY)
     // Shut down the ProxyResolutionService, as it may have pending URLRequests
     // using this context. Since this cancels requests, it's not safe to
     // subclass this, as some parts of the URLRequestContext may then be torn
@@ -172,6 +181,7 @@ class ContainerURLRequestContext final : public URLRequestContext {
     proxy_resolution_service()->OnShutdown();
 
     AssertNoURLRequests();
+#endif
   }
 
   URLRequestContextStorage* storage() {
@@ -205,15 +215,23 @@ URLRequestContextBuilder::~URLRequestContextBuilder() = default;
 void URLRequestContextBuilder::SetHttpNetworkSessionComponents(
     const URLRequestContext* request_context,
     HttpNetworkSession::Context* session_context) {
+
+#if defined(ENABLE_DNS)
   session_context->host_resolver = request_context->host_resolver();
+#endif
+
   session_context->cert_verifier = request_context->cert_verifier();
   session_context->transport_security_state =
       request_context->transport_security_state();
   session_context->cert_transparency_verifier =
       request_context->cert_transparency_verifier();
   session_context->ct_policy_enforcer = request_context->ct_policy_enforcer();
+
+#if defined(ENABLE_PROXY)
   session_context->proxy_resolution_service =
       request_context->proxy_resolution_service();
+#endif
+
   session_context->proxy_delegate = request_context->proxy_delegate();
   session_context->http_user_agent_settings =
       request_context->http_user_agent_settings();
@@ -223,6 +241,8 @@ void URLRequestContextBuilder::SetHttpNetworkSessionComponents(
   session_context->http_server_properties =
       request_context->http_server_properties();
   session_context->net_log = request_context->net_log();
+
+#if defined(ENABLE_NQE)
   session_context->network_quality_estimator =
       request_context->network_quality_estimator();
   if (request_context->network_quality_estimator()) {
@@ -230,6 +250,8 @@ void URLRequestContextBuilder::SetHttpNetworkSessionComponents(
         request_context->network_quality_estimator()
             ->GetSocketPerformanceWatcherFactory();
   }
+#endif
+
 #if BUILDFLAG(ENABLE_REPORTING)
   session_context->reporting_service = request_context->reporting_service();
   session_context->network_error_logging_service =
@@ -265,7 +287,10 @@ void URLRequestContextBuilder::DisableHttpCache() {
 void URLRequestContextBuilder::SetSpdyAndQuicEnabled(bool spdy_enabled,
                                                      bool quic_enabled) {
   http_network_session_params_.enable_http2 = spdy_enabled;
+
+#if defined(ENABLE_PROXY)
   http_network_session_params_.enable_quic = quic_enabled;
+#endif
 }
 
 void URLRequestContextBuilder::set_ct_verifier(
@@ -325,31 +350,44 @@ void URLRequestContextBuilder::SetProtocolHandler(
   protocol_handlers_[scheme] = std::move(protocol_handler);
 }
 
+#if defined(ENABLE_DNS)
 void URLRequestContextBuilder::set_host_resolver(
-    std::unique_ptr<HostResolver> host_resolver) {
+#if defined(ENABLE_DNS)
+    std::unique_ptr<HostResolver> host_resolver
+#endif
+    ) {
   DCHECK(!host_resolver_manager_);
   DCHECK(host_mapping_rules_.empty());
+#if defined(ENABLE_PROXY)
   DCHECK(!host_resolver_factory_);
+#endif
   host_resolver_ = std::move(host_resolver);
 }
+#endif
 
 void URLRequestContextBuilder::set_host_mapping_rules(
     std::string host_mapping_rules) {
+#if defined(ENABLE_DNS)
   DCHECK(!host_resolver_);
+#endif
   host_mapping_rules_ = std::move(host_mapping_rules);
 }
 
+#if defined(ENABLE_DNS)
 void URLRequestContextBuilder::set_host_resolver_manager(
     HostResolverManager* manager) {
   DCHECK(!host_resolver_);
   host_resolver_manager_ = manager;
 }
+#endif
 
+#if defined(ENABLE_PROXY)
 void URLRequestContextBuilder::set_host_resolver_factory(
     HostResolver::Factory* factory) {
   DCHECK(!host_resolver_);
   host_resolver_factory_ = factory;
 }
+#endif
 
 void URLRequestContextBuilder::SetCreateLayeredNetworkDelegateCallback(
     CreateLayeredNetworkDelegate create_layered_network_delegate_callback) {
@@ -398,6 +436,7 @@ std::unique_ptr<URLRequestContext> URLRequestContextBuilder::Build() {
       new ContainerURLRequestContext(allow_copy_));
   URLRequestContextStorage* storage = context->storage();
 
+#if defined(ENABLE_PROXY)
   if (!name_.empty())
     context->set_name(name_);
   context->set_enable_brotli(enable_brotli_);
@@ -696,8 +735,12 @@ std::unique_ptr<URLRequestContext> URLRequestContextBuilder::Build() {
   storage->set_job_factory(std::move(top_job_factory));
 
   return std::move(context);
+#else
+  return nullptr;
+#endif
 }
 
+#if defined(ENABLE_PROXY)
 std::unique_ptr<ProxyResolutionService>
 URLRequestContextBuilder::CreateProxyResolutionService(
     std::unique_ptr<ProxyConfigService> proxy_config_service,
@@ -708,5 +751,6 @@ URLRequestContextBuilder::CreateProxyResolutionService(
   return ProxyResolutionService::CreateUsingSystemProxyResolver(
       std::move(proxy_config_service), net_log);
 }
+#endif
 
 }  // namespace net

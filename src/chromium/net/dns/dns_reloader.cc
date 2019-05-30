@@ -5,7 +5,7 @@
 #include "net/dns/dns_reloader.h"
 
 #if defined(OS_POSIX) && !defined(OS_MACOSX) && !defined(OS_OPENBSD) && \
-    !defined(OS_ANDROID) && !defined(OS_FUCHSIA)
+    !defined(OS_ANDROID) && !defined(OS_FUCHSIA) && !defined(OS_EMSCRIPTEN)
 
 #include <resolv.h>
 

@@ -1437,8 +1437,11 @@ int ProxyResolutionService::DidFinishResolvingProxy(
   if (result_code == OK) {
     // Allow the proxy delegate to interpose on the resolution decision,
     // possibly modifying the ProxyInfo.
+
+#if defined(ENABLE_PROXY)
     if (proxy_delegate_)
       proxy_delegate_->OnResolveProxy(url, method, proxy_retry_info_, result);
+#endif
 
     net_log.AddEvent(
         NetLogEventType::PROXY_RESOLUTION_SERVICE_RESOLVED_PROXY_LIST,
@@ -1471,8 +1474,11 @@ int ProxyResolutionService::DidFinishResolvingProxy(
 
       // Allow the proxy delegate to interpose on the resolution decision,
       // possibly modifying the ProxyInfo.
+
+#if defined(ENABLE_PROXY)
       if (proxy_delegate_)
         proxy_delegate_->OnResolveProxy(url, method, proxy_retry_info_, result);
+#endif
     } else {
       result_code = ERR_MANDATORY_PROXY_CONFIGURATION_FAILED;
     }

@@ -21,6 +21,7 @@ namespace internal {
 // A unified compact representation of an IPv6 or an IPv4 address.
 typedef uint64_t IPHash;
 
+#if defined(ENABLE_DNS)
 // Returns true if the host contained in |host_port_pair| is a host in a
 // private Internet as defined by RFC 1918 or if the requests to
 // |host_port_pair| are not expected to generate useful network quality
@@ -33,7 +34,7 @@ typedef uint64_t IPHash;
 // |host_resolver| must not be null.
 NET_EXPORT_PRIVATE bool IsPrivateHost(HostResolver* host_resolver,
                                       const HostPortPair& host_port_pair);
-
+#endif
 }  // namespace internal
 
 }  // namespace nqe

@@ -33,13 +33,20 @@
 #include "net/base/net_export.h"
 #include "net/base/network_delegate.h"
 #include "net/base/proxy_delegate.h"
+
+#if defined(ENABLE_DNS)
 #include "net/dns/host_resolver.h"
+#endif
 #include "net/http/http_network_session.h"
 #include "net/net_buildflags.h"
+#if defined(ENABLE_DNS)
 #include "net/proxy_resolution/proxy_config_service.h"
 #include "net/proxy_resolution/proxy_resolution_service.h"
+#endif
 #include "net/ssl/ssl_config_service.h"
+#if defined(ENABLE_DNS)
 #include "net/third_party/quiche/src/quic/core/quic_packets.h"
+#endif
 #include "net/url_request/url_request_job_factory.h"
 
 namespace base {
@@ -58,9 +65,15 @@ class HttpAuthHandlerFactory;
 class HttpTransactionFactory;
 class HttpUserAgentSettings;
 class HttpServerProperties;
+#if defined(ENABLE_DNS)
 class HostResolverManager;
+#endif
+#if defined(ENABLE_NQE)
 class NetworkQualityEstimator;
+#endif
+#if defined(ENABLE_PROXY)
 class ProxyConfigService;
+#endif
 class URLRequestContext;
 class URLRequestInterceptor;
 
@@ -144,12 +157,14 @@ class NET_EXPORT URLRequestContextBuilder {
   // Sets whether Brotli compression is enabled.  Disabled by default;
   void set_enable_brotli(bool enable_brotli) { enable_brotli_ = enable_brotli; }
 
+#if defined(ENABLE_NQE)
   // Unlike most other setters, the builder does not take ownership of the
   // NetworkQualityEstimator.
   void set_network_quality_estimator(
       NetworkQualityEstimator* network_quality_estimator) {
     network_quality_estimator_ = network_quality_estimator;
   }
+#endif
 
   // Extracts the component pointers required to construct an HttpNetworkSession
   // and copies them into the HttpNetworkSession::Context used to create the
@@ -159,12 +174,14 @@ class NET_EXPORT URLRequestContextBuilder {
       const URLRequestContext* request_context,
       HttpNetworkSession::Context* session_context);
 
+#if defined(ENABLE_PROXY)
   // These functions are mutually exclusive.  The ProxyConfigService, if
   // set, will be used to construct a ProxyResolutionService.
   void set_proxy_config_service(
       std::unique_ptr<ProxyConfigService> proxy_config_service) {
     proxy_config_service_ = std::move(proxy_config_service);
   }
+#endif
 
   // Sets whether quick PAC checks are enabled. Defaults to true. Ignored if
   // a ProxyResolutionService is set directly.
@@ -176,11 +193,12 @@ class NET_EXPORT URLRequestContextBuilder {
   // libraries to evaluate PAC scripts, if available (And if not, skips PAC
   // resolution). Subclasses may override CreateProxyResolutionService for
   // different default behavior.
+#if defined(ENABLE_PROXY)
   void set_proxy_resolution_service(
       std::unique_ptr<ProxyResolutionService> proxy_resolution_service) {
     proxy_resolution_service_ = std::move(proxy_resolution_service);
   }
-
+#endif
   void set_ssl_config_service(
       std::unique_ptr<SSLConfigService> ssl_config_service) {
     ssl_config_service_ = std::move(ssl_config_service);
@@ -230,27 +248,33 @@ class NET_EXPORT URLRequestContextBuilder {
   // set their own NetLog::Observers instead.
   void set_net_log(NetLog* net_log) { net_log_ = net_log; }
 
+#if defined(ENABLE_DNS)
   // Sets a HostResolver instance to be used instead of default construction.
   // Should not be used if set_host_resolver_manager(),
   // set_host_mapping_rules(), or set_host_resolver_factory() are used. On
   // building the context, will call HostResolver::SetRequestContext, so
   // |host_resolver| may not already be associated with a context.
   void set_host_resolver(std::unique_ptr<HostResolver> host_resolver);
+#endif
 
   // If set to non-empty, the mapping rules will be applied to requests to the
   // created host resolver. See MappedHostResolver for details. Should not be
   // used if set_host_resolver() is used.
   void set_host_mapping_rules(std::string host_mapping_rules);
 
+#if defined(ENABLE_DNS)
   // Sets a shared HostResolverManager to be used for created HostResolvers.
   // Should not be used if set_host_resolver() is used. The consumer must ensure
   // |manager| outlives the URLRequestContext returned by the builder.
   void set_host_resolver_manager(HostResolverManager* manager);
+#endif
 
+#if defined(ENABLE_PROXY)
   // Sets the factory used for any HostResolverCreation. By default, a default
   // implementation will be used. Should not be used if set_host_resolver() is
   // used.
   void set_host_resolver_factory(HostResolver::Factory* factory);
+#endif
 
   // Uses BasicNetworkDelegate by default. Note that calling Build will unset
   // any custom delegate in builder, so this must be called each time before
@@ -370,18 +394,21 @@ class NET_EXPORT URLRequestContextBuilder {
   // ProxyResolutionService that uses the URLRequestContext itself to get PAC
   // scripts. When this method is invoked, the URLRequestContext is not yet
   // ready to service requests.
+#if defined(ENABLE_PROXY)
   virtual std::unique_ptr<ProxyResolutionService> CreateProxyResolutionService(
       std::unique_ptr<ProxyConfigService> proxy_config_service,
       URLRequestContext* url_request_context,
       HostResolver* host_resolver,
       NetworkDelegate* network_delegate,
       NetLog* net_log);
+#endif
 
  private:
   std::string name_;
   bool enable_brotli_ = false;
+#if defined(ENABLE_PROXY)
   NetworkQualityEstimator* network_quality_estimator_ = nullptr;
-
+#endif
   std::string accept_language_;
   std::string user_agent_;
   std::unique_ptr<HttpUserAgentSettings> http_user_agent_settings_;
@@ -405,13 +432,21 @@ class NET_EXPORT URLRequestContextBuilder {
   CreateHttpTransactionFactoryCallback create_http_network_transaction_factory_;
   base::FilePath transport_security_persister_path_;
   NetLog* net_log_ = nullptr;
+#if defined(ENABLE_DNS)
   std::unique_ptr<HostResolver> host_resolver_;
+#endif
   std::string host_mapping_rules_;
+#if defined(ENABLE_DNS)
   HostResolverManager* host_resolver_manager_ = nullptr;
+#endif
+#if defined(ENABLE_PROXY)
   HostResolver::Factory* host_resolver_factory_ = nullptr;
   std::unique_ptr<ProxyConfigService> proxy_config_service_;
+#endif
   bool pac_quick_check_enabled_ = true;
+#if defined(ENABLE_PROXY)
   std::unique_ptr<ProxyResolutionService> proxy_resolution_service_;
+#endif
   std::unique_ptr<SSLConfigService> ssl_config_service_;
   std::unique_ptr<NetworkDelegate> network_delegate_;
   CreateLayeredNetworkDelegate create_layered_network_delegate_callback_;

@@ -11,7 +11,10 @@
 #include "base/macros.h"
 #include "net/base/net_export.h"
 #include "net/http/http_auth.h"
+
+#if defined(ENABLE_PROXY)
 #include "net/proxy_resolution/proxy_bypass_rules.h"
+#endif
 
 class GURL;
 
@@ -41,7 +44,9 @@ class NET_EXPORT HttpAuthFilterWhitelist : public HttpAuthFilter {
   // Adds an individual URL |filter| to the list, of the specified |target|.
   bool AddFilter(const std::string& filter, HttpAuth::Target target);
 
+#if defined(ENABLE_PROXY)
   const ProxyBypassRules& rules() const { return rules_; }
+#endif
 
   // HttpAuthFilter methods:
   bool IsValid(const GURL& url, HttpAuth::Target target) const override;
@@ -51,9 +56,11 @@ class NET_EXPORT HttpAuthFilterWhitelist : public HttpAuthFilter {
   // |server_whitelist| is parsed by ProxyBypassRules.
   void SetWhitelist(const std::string& server_whitelist);
 
+#if defined(ENABLE_PROXY)
   // We are using ProxyBypassRules because they have the functionality that we
   // want, but we are not using it for proxy bypass.
   ProxyBypassRules rules_;
+#endif
 
   DISALLOW_COPY_AND_ASSIGN(HttpAuthFilterWhitelist);
 };

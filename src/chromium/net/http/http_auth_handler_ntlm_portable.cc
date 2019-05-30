@@ -8,7 +8,9 @@
 #include "base/time/time.h"
 #include "net/base/net_errors.h"
 #include "net/base/network_interfaces.h"
+#if defined(ENABLE_DNS)
 #include "net/dns/host_resolver.h"
+#endif
 #include "net/http/http_auth_preferences.h"
 
 namespace net {
@@ -39,9 +41,13 @@ HttpAuthHandlerNTLM::HostNameProc HttpAuthHandlerNTLM::get_host_name_proc_ =
 
 HttpAuthHandlerNTLM::HttpAuthHandlerNTLM(
     const HttpAuthPreferences* http_auth_preferences)
+
+#if defined(ENABLE_NTLM)
     : ntlm_client_(ntlm::NtlmFeatures(
           http_auth_preferences ? http_auth_preferences->NtlmV2Enabled()
-                                : true)) {}
+                                : true))
+#endif
+                                {}
 
 bool HttpAuthHandlerNTLM::NeedsIdentity() {
   // This gets called for each round-trip.  Only require identity on
@@ -95,10 +101,11 @@ std::vector<uint8_t> HttpAuthHandlerNTLM::GetNextToken(
   // If in_token is non-empty, then assume it contains a challenge message,
   // and generate the Authenticate message in reply. Otherwise return the
   // Negotiate message.
+#if defined(ENABLE_NTLM)
   if (in_token.empty()) {
     return ntlm_client_.GetNegotiateMessage();
   }
-
+#endif
   std::string hostname = get_host_name_proc_();
   if (hostname.empty())
     return {};
@@ -106,10 +113,14 @@ std::vector<uint8_t> HttpAuthHandlerNTLM::GetNextToken(
   generate_random_proc_(client_challenge, 8);
   uint64_t client_time = get_ms_time_proc_();
 
+#if defined(ENABLE_NTLM)
   return ntlm_client_.GenerateAuthenticateMessage(
       domain_, credentials_.username(), credentials_.password(), hostname,
       channel_bindings_, CreateSPN(origin_), client_time, client_challenge,
       in_token);
+#else
+  return std::vector<uint8_t>();
+#endif
 }
 
 int HttpAuthHandlerNTLM::Factory::CreateAuthHandler(
@@ -120,7 +131,9 @@ int HttpAuthHandlerNTLM::Factory::CreateAuthHandler(
     CreateReason reason,
     int digest_nonce_count,
     const NetLogWithSource& net_log,
+#if defined(ENABLE_DNS)
     HostResolver* host_resolver,
+#endif
     std::unique_ptr<HttpAuthHandler>* handler) {
   if (reason == CREATE_PREEMPTIVE)
     return ERR_UNSUPPORTED_AUTH_SCHEME;

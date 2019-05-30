@@ -32,7 +32,9 @@ class HttpResponseHeaders;
 class HttpResponseInfo;
 class HttpTransaction;
 class HttpUserAgentSettings;
+#if defined(ENABLE_PROXY)
 class ProxyInfo;
+#endif
 class SSLPrivateKey;
 class UploadDataStream;
 
@@ -95,9 +97,10 @@ class NET_EXPORT_PRIVATE URLRequestHttpJob : public URLRequestJob {
   void OnStartCompleted(int result);
   void OnReadCompleted(int result);
   void NotifyBeforeStartTransactionCallback(int result);
+#if defined(ENABLE_PROXY)
   void NotifyBeforeSendHeadersCallback(const ProxyInfo& proxy_info,
                                        HttpRequestHeaders* request_headers);
-
+#endif
   void RestartTransactionWithAuth(const AuthCredentials& credentials);
 
   // Overridden from URLRequestJob:

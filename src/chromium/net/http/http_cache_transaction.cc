@@ -192,7 +192,9 @@ HttpCache::Transaction::Transaction(RequestPriority priority, HttpCache* cache)
       recorded_histograms_(false),
       parallel_writing_pattern_(PARALLEL_WRITING_NONE),
       moved_network_transaction_to_writers_(false),
+#ifdef ENABLE_QUIC
       websocket_handshake_stream_base_create_helper_(nullptr),
+#endif
       in_do_loop_(false),
       weak_factory_(this) {
   TRACE_EVENT0("io", "HttpCacheTransaction::Transaction");
@@ -526,8 +528,10 @@ LoadState HttpCache::Transaction::GetLoadState() const {
   return LOAD_STATE_IDLE;
 }
 
+#if defined(ENABLE_QUIC)
 void HttpCache::Transaction::SetQuicServerInfo(
     QuicServerInfo* quic_server_info) {}
+#endif
 
 bool HttpCache::Transaction::GetLoadTimingInfo(
     LoadTimingInfo* load_timing_info) const {
@@ -567,6 +571,7 @@ bool HttpCache::Transaction::GetRemoteEndpoint(IPEndPoint* endpoint) const {
   return false;
 }
 
+#if defined(ENABLE_QUIC)
 void HttpCache::Transaction::PopulateNetErrorDetails(
     NetErrorDetails* details) const {
   const HttpTransaction* transaction = GetOwnedOrMovedNetworkTransaction();
@@ -574,6 +579,7 @@ void HttpCache::Transaction::PopulateNetErrorDetails(
     return transaction->PopulateNetErrorDetails(details);
   return;
 }
+#endif
 
 void HttpCache::Transaction::SetPriority(RequestPriority priority) {
   priority_ = priority;
@@ -587,6 +593,7 @@ void HttpCache::Transaction::SetPriority(RequestPriority priority) {
   }
 }
 
+#ifdef ENABLE_QUIC
 void HttpCache::Transaction::SetWebSocketHandshakeStreamCreateHelper(
     WebSocketHandshakeStreamBase::CreateHelper* create_helper) {
   websocket_handshake_stream_base_create_helper_ = create_helper;
@@ -597,6 +604,7 @@ void HttpCache::Transaction::SetWebSocketHandshakeStreamCreateHelper(
   if (transaction)
     transaction->SetWebSocketHandshakeStreamCreateHelper(create_helper);
 }
+#endif
 
 void HttpCache::Transaction::SetBeforeNetworkStartCallback(
     const BeforeNetworkStartCallback& callback) {
@@ -604,11 +612,13 @@ void HttpCache::Transaction::SetBeforeNetworkStartCallback(
   before_network_start_callback_ = callback;
 }
 
+#if defined(ENABLE_PROXY)
 void HttpCache::Transaction::SetBeforeHeadersSentCallback(
     const BeforeHeadersSentCallback& callback) {
   DCHECK(!network_trans_);
   before_headers_sent_callback_ = callback;
 }
+#endif
 
 void HttpCache::Transaction::SetRequestHeadersCallback(
     RequestHeadersCallback callback) {
@@ -1702,7 +1712,11 @@ int HttpCache::Transaction::DoSendRequest() {
   }
 
   network_trans_->SetBeforeNetworkStartCallback(before_network_start_callback_);
+
+#if defined(ENABLE_PROXY)
   network_trans_->SetBeforeHeadersSentCallback(before_headers_sent_callback_);
+#endif
+
   network_trans_->SetRequestHeadersCallback(request_headers_callback_);
   network_trans_->SetResponseHeadersCallback(response_headers_callback_);
 
@@ -1710,9 +1724,11 @@ int HttpCache::Transaction::DoSendRequest() {
   network_transaction_info_.old_network_trans_load_timing.reset();
   network_transaction_info_.old_remote_endpoint = IPEndPoint();
 
+#ifdef ENABLE_QUIC
   if (websocket_handshake_stream_base_create_helper_)
     network_trans_->SetWebSocketHandshakeStreamCreateHelper(
         websocket_handshake_stream_base_create_helper_);
+#endif
 
   TransitionToState(STATE_SEND_REQUEST_COMPLETE);
   rv = network_trans_->Start(request_, io_callback_, net_log_);

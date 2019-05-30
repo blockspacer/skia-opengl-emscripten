@@ -25,6 +25,8 @@
 #include <unordered_set>
 #include <utility>
 
+#include "base/strings/string_number_conversions.h"
+
 #include "base/bind.h"
 #include "base/bind_helpers.h"
 #include "base/callback.h"
@@ -2340,14 +2342,14 @@ HostResolverManager::HostResolverManager(
   EnsureWinsockInit();
 #endif
 #if (defined(OS_POSIX) && !defined(OS_MACOSX) && !defined(OS_ANDROID)) || \
-    defined(OS_FUCHSIA)
+    defined(OS_FUCHSIA) && !defined(OS_EMSCRIPTEN)
   RunLoopbackProbeJob();
 #endif
   NetworkChangeNotifier::AddIPAddressObserver(this);
   NetworkChangeNotifier::AddConnectionTypeObserver(this);
   NetworkChangeNotifier::AddDNSObserver(this);
 #if defined(OS_POSIX) && !defined(OS_MACOSX) && !defined(OS_OPENBSD) && \
-    !defined(OS_ANDROID)
+    !defined(OS_ANDROID) && !defined(OS_EMSCRIPTEN)
   EnsureDnsReloaderInit();
 #endif
 
@@ -3102,7 +3104,7 @@ void HostResolverManager::OnIPAddressChanged() {
   probe_weak_ptr_factory_.InvalidateWeakPtrs();
   InvalidateCaches();
 #if (defined(OS_POSIX) && !defined(OS_MACOSX) && !defined(OS_ANDROID)) || \
-    defined(OS_FUCHSIA)
+    defined(OS_FUCHSIA) && !defined(OS_EMSCRIPTEN)
   RunLoopbackProbeJob();
 #endif
   AbortAllInProgressJobs();

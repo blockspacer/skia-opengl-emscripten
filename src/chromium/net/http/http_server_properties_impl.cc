@@ -29,7 +29,9 @@ HttpServerPropertiesImpl::HttpServerPropertiesImpl(
                              : base::DefaultTickClock::GetInstance()),
       clock_(clock ? clock : base::DefaultClock::GetInstance()),
       broken_alternative_services_(this, tick_clock_),
+#if defined(ENABLE_SPDY)
       quic_server_info_map_(kDefaultMaxQuicServerEntries),
+#endif
       max_server_configs_stored_in_properties_(kDefaultMaxQuicServerEntries) {
   canonical_suffixes_.push_back(".ggpht.com");
   canonical_suffixes_.push_back(".c.youtube.com");
@@ -132,6 +134,7 @@ void HttpServerPropertiesImpl::SetServerNetworkStats(
   }
 }
 
+#if defined(ENABLE_QUIC)
 void HttpServerPropertiesImpl::SetQuicServerInfoMap(
     std::unique_ptr<QuicServerInfoMap> quic_server_info_map) {
   DCHECK_EQ(quic_server_info_map->max_size(), quic_server_info_map_.max_size());
@@ -160,6 +163,7 @@ const SpdyServersMap& HttpServerPropertiesImpl::spdy_servers_map() const {
   DCHECK_CALLED_ON_VALID_THREAD(thread_checker_);
   return spdy_servers_map_;
 }
+#endif
 
 void HttpServerPropertiesImpl::SetBrokenAndRecentlyBrokenAlternativeServices(
     std::unique_ptr<BrokenAlternativeServiceList>
@@ -189,9 +193,10 @@ void HttpServerPropertiesImpl::Clear(base::OnceClosure callback) {
   canonical_alt_svc_map_.clear();
   last_quic_address_ = IPAddress();
   server_network_stats_map_.Clear();
+#if defined(ENABLE_QUIC)
   quic_server_info_map_.Clear();
   canonical_server_info_map_.clear();
-
+#endif
   if (!callback.is_null()) {
     base::ThreadTaskRunnerHandle::Get()->PostTask(FROM_HERE,
                                                   std::move(callback));
@@ -308,10 +313,12 @@ HttpServerPropertiesImpl::GetAlternativeServiceInfos(
         continue;
       }
       if (alternative_service.protocol == kProtoQUIC) {
+#if defined(ENABLE_QUIC)
         valid_alternative_service_infos.push_back(
             AlternativeServiceInfo::CreateQuicAlternativeServiceInfo(
                 alternative_service, it->expiration(),
                 it->advertised_versions()));
+#endif
       } else {
         valid_alternative_service_infos.push_back(
             AlternativeServiceInfo::CreateHttp2AlternativeServiceInfo(
@@ -351,10 +358,12 @@ HttpServerPropertiesImpl::GetAlternativeServiceInfos(
       continue;
     }
     if (alternative_service.protocol == kProtoQUIC) {
+#if defined(ENABLE_QUIC)
       valid_alternative_service_infos.push_back(
           AlternativeServiceInfo::CreateQuicAlternativeServiceInfo(
               alternative_service, it->expiration(),
               it->advertised_versions()));
+#endif
     } else {
       valid_alternative_service_infos.push_back(
           AlternativeServiceInfo::CreateHttp2AlternativeServiceInfo(
@@ -381,6 +390,7 @@ bool HttpServerPropertiesImpl::SetHttp2AlternativeService(
                           alternative_service, expiration)));
 }
 
+#if defined(ENABLE_QUIC)
 bool HttpServerPropertiesImpl::SetQuicAlternativeService(
     const url::SchemeHostPort& origin,
     const AlternativeService& alternative_service,
@@ -394,6 +404,7 @@ bool HttpServerPropertiesImpl::SetQuicAlternativeService(
                   AlternativeServiceInfo::CreateQuicAlternativeServiceInfo(
                       alternative_service, expiration, advertised_versions)));
 }
+#endif
 
 bool HttpServerPropertiesImpl::SetAlternativeServices(
     const url::SchemeHostPort& origin,
@@ -432,12 +443,14 @@ bool HttpServerPropertiesImpl::SetAlternativeServices(
           changed = true;
           break;
         }
+#if defined(ENABLE_QUIC)
         // Also persist to disk if new entry has a different list of advertised
         // versions.
         if (old.advertised_versions() != new_it->advertised_versions()) {
           changed = true;
           break;
         }
+#endif
         ++new_it;
       }
     }
@@ -605,6 +618,7 @@ HttpServerPropertiesImpl::server_network_stats_map() const {
   return server_network_stats_map_;
 }
 
+#if defined(ENABLE_QUIC)
 bool HttpServerPropertiesImpl::SetQuicServerInfo(
     const quic::QuicServerId& server_id,
     const std::string& server_info) {
@@ -657,6 +671,7 @@ const QuicServerInfoMap& HttpServerPropertiesImpl::quic_server_info_map()
     const {
   return quic_server_info_map_;
 }
+#endif
 
 size_t HttpServerPropertiesImpl::max_server_configs_stored_in_properties()
     const {
@@ -673,6 +688,7 @@ void HttpServerPropertiesImpl::SetMaxServerConfigsStoredInProperties(
   max_server_configs_stored_in_properties_ =
       max_server_configs_stored_in_properties;
 
+#if defined(ENABLE_QUIC)
   // MRUCache doesn't allow the capacity of the cache to be changed. Thus create
   // a new map with the new size and add current elements and swap the new map.
   quic_server_info_map_.ShrinkToSize(max_server_configs_stored_in_properties_);
@@ -687,8 +703,10 @@ void HttpServerPropertiesImpl::SetMaxServerConfigsStoredInProperties(
   }
 
   quic_server_info_map_.Swap(temp_map);
+#endif
 }
 
+#if defined(ENABLE_QUIC)
 void HttpServerPropertiesImpl::UpdateCanonicalServerInfoMap(
     const quic::QuicServerId& server) {
   const std::string* suffix = GetCanonicalSuffix(server.host());
@@ -697,6 +715,7 @@ void HttpServerPropertiesImpl::UpdateCanonicalServerInfoMap(
     canonical_server_info_map_[canonical_pair] = server;
   }
 }
+#endif
 
 bool HttpServerPropertiesImpl::IsInitialized() const {
   // No initialization is needed.

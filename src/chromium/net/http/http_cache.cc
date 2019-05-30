@@ -48,7 +48,9 @@
 #include "net/http/http_response_info.h"
 #include "net/http/http_util.h"
 #include "net/log/net_log_with_source.h"
+#if defined(ENABLE_QUIC)
 #include "net/quic/quic_server_info.h"
+#endif
 
 #if defined(OS_POSIX)
 #include <unistd.h>
@@ -348,8 +350,10 @@ HttpCache::HttpCache(std::unique_ptr<HttpTransactionFactory> network_layer,
   if (!is_main_cache)
     return;
 
+#if defined(ENABLE_QUIC)
   session->SetServerPushDelegate(
       std::make_unique<HttpCacheLookupManager>(this));
+#endif
 }
 
 HttpCache::~HttpCache() {

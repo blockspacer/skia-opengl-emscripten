@@ -73,7 +73,10 @@ std::unique_ptr<ConnectJob> TransportConnectJob::CreateTransportConnectJob(
     const CommonConnectJobParams* common_connect_job_params,
     ConnectJob::Delegate* delegate,
     const NetLogWithSource* net_log) {
-  if (!common_connect_job_params->websocket_endpoint_lock_manager) {
+#if defined(ENABLE_WS)
+  if (!common_connect_job_params->websocket_endpoint_lock_manager)
+#endif
+  {
     return std::make_unique<TransportConnectJob>(
         priority, socket_tag, common_connect_job_params,
         transport_client_params, delegate, net_log);
@@ -104,7 +107,9 @@ TransportConnectJob::TransportConnectJob(
       resolve_result_(OK),
       weak_ptr_factory_(this) {
   // This is only set for WebSockets.
+#if defined(ENABLE_WS)
   DCHECK(!common_connect_job_params->websocket_endpoint_lock_manager);
+#endif
 }
 
 TransportConnectJob::~TransportConnectJob() {
@@ -138,7 +143,9 @@ ConnectionAttempts TransportConnectJob::GetConnectionAttempts() const {
   // Also record any attempts made on either of the sockets.
   ConnectionAttempts attempts;
   if (resolve_result_ != OK) {
+#if defined(ENABLE_WS)
     DCHECK(!request_->GetAddressResults());
+#endif
     attempts.push_back(ConnectionAttempt(IPEndPoint(), resolve_result_));
   }
   attempts.insert(attempts.begin(), connection_attempts_.begin(),
@@ -258,6 +265,7 @@ int TransportConnectJob::DoResolveHost() {
   next_state_ = STATE_RESOLVE_HOST_COMPLETE;
   connect_timing_.dns_start = base::TimeTicks::Now();
 
+#if defined(ENABLE_DNS)
   HostResolver::ResolveHostParameters parameters;
   parameters.initial_priority = priority();
   request_ = host_resolver()->CreateRequest(params_->destination(), net_log(),
@@ -265,6 +273,9 @@ int TransportConnectJob::DoResolveHost() {
 
   return request_->Start(base::BindOnce(&TransportConnectJob::OnIOComplete,
                                         base::Unretained(this)));
+#else
+  return 0;
+#endif
 }
 
 int TransportConnectJob::DoResolveHostComplete(int result) {
@@ -278,6 +289,8 @@ int TransportConnectJob::DoResolveHostComplete(int result) {
 
   if (result != OK)
     return result;
+
+#if defined(ENABLE_WS)
   DCHECK(request_->GetAddressResults());
 
   next_state_ = STATE_TRANSPORT_CONNECT;
@@ -295,7 +308,7 @@ int TransportConnectJob::DoResolveHostComplete(int result) {
       return ERR_IO_PENDING;
     }
   }
-
+#endif
   return result;
 }
 
@@ -303,6 +316,7 @@ int TransportConnectJob::DoTransportConnect() {
   next_state_ = STATE_TRANSPORT_CONNECT_COMPLETE;
   // Create a |SocketPerformanceWatcher|, and pass the ownership.
   std::unique_ptr<SocketPerformanceWatcher> socket_performance_watcher;
+#if defined(ENABLE_WS)
   if (socket_performance_watcher_factory()) {
     socket_performance_watcher =
         socket_performance_watcher_factory()->CreateSocketPerformanceWatcher(
@@ -332,9 +346,13 @@ int TransportConnectJob::DoTransportConnect() {
         this, &TransportConnectJob::DoIPv6FallbackTransportConnect);
   }
   return rv;
+#else
+  return 0;
+#endif
 }
 
 int TransportConnectJob::DoTransportConnectComplete(int result) {
+#if defined(ENABLE_WS)
   if (result == OK) {
     // Success will be returned via the main socket, so also include connection
     // attempts made on the fallback socket up to this point. (Unfortunately,
@@ -369,7 +387,7 @@ int TransportConnectJob::DoTransportConnectComplete(int result) {
   fallback_timer_.Stop();
   fallback_transport_socket_.reset();
   fallback_addresses_.reset();
-
+#endif
   return result;
 }
 
@@ -380,7 +398,7 @@ void TransportConnectJob::DoIPv6FallbackTransportConnect() {
     NOTREACHED();
     return;
   }
-
+#if defined(ENABLE_WS)
   DCHECK(!fallback_transport_socket_.get());
   DCHECK(!fallback_addresses_.get());
 
@@ -407,6 +425,7 @@ void TransportConnectJob::DoIPv6FallbackTransportConnect() {
       base::Unretained(this)));
   if (rv != ERR_IO_PENDING)
     DoIPv6FallbackTransportConnectComplete(rv);
+#endif
 }
 
 void TransportConnectJob::DoIPv6FallbackTransportConnectComplete(int result) {
@@ -457,11 +476,13 @@ int TransportConnectJob::ConnectInternal() {
 }
 
 void TransportConnectJob::ChangePriorityInternal(RequestPriority priority) {
+#if defined(ENABLE_WS)
   if (next_state_ == STATE_RESOLVE_HOST_COMPLETE) {
     DCHECK(request_);
     // Change the request priority in the host resolver.
     request_->ChangeRequestPriority(priority);
   }
+#endif
 }
 
 void TransportConnectJob::CopyConnectionAttemptsFromSockets() {

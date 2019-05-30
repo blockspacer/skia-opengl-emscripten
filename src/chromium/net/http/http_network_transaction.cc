@@ -57,9 +57,11 @@
 #include "net/socket/client_socket_factory.h"
 #include "net/socket/next_proto.h"
 #include "net/socket/transport_client_socket_pool.h"
+#if defined(ENABLE_SPDY)
 #include "net/spdy/spdy_http_stream.h"
 #include "net/spdy/spdy_session.h"
 #include "net/spdy/spdy_session_pool.h"
+#endif
 #include "net/ssl/ssl_cert_request_info.h"
 #include "net/ssl/ssl_connection_status_flags.h"
 #include "net/ssl/ssl_info.h"
@@ -91,6 +93,7 @@ const size_t kMaxRetryAttempts = 2;
 // looping forever, bound the number of restarts.
 const size_t kMaxRestarts = 32;
 
+#if defined(ENABLE_SPDY)
 void SetProxyInfoInReponse(const ProxyInfo& proxy_info,
                            HttpResponseInfo* response_info) {
   response_info->was_fetched_via_proxy = !proxy_info.is_direct();
@@ -101,6 +104,7 @@ void SetProxyInfoInReponse(const ProxyInfo& proxy_info,
   else
     response_info->proxy_server = ProxyServer();
 }
+#endif
 
 }  // namespace
 
@@ -129,8 +133,10 @@ HttpNetworkTransaction::HttpNetworkTransaction(RequestPriority priority,
       establishing_tunnel_(false),
       enable_ip_based_pooling_(true),
       enable_alternative_services_(true),
+#if defined(ENABLE_SPDY)
       websocket_handshake_stream_base_create_helper_(nullptr),
       net_error_details_(),
+#endif
       retry_attempts_(0),
       num_restarts_(0) {
 }
@@ -396,8 +402,10 @@ int HttpNetworkTransaction::Read(IOBuffer* buf,
     // also don't worry about this for an HTTPS Proxy, because the
     // communication with the proxy is secure.
     // See http://crbug.com/8473.
+#if defined(ENABLE_SPDY)
     DCHECK(proxy_info_.is_http() || proxy_info_.is_https() ||
            proxy_info_.is_quic());
+#endif
     DCHECK_EQ(headers->response_code(), HTTP_PROXY_AUTHENTICATION_REQUIRED);
     LOG(WARNING) << "Blocked proxy response with status "
                  << headers->response_code() << " to CONNECT request for "
@@ -467,19 +475,23 @@ LoadState HttpNetworkTransaction::GetLoadState() const {
   }
 }
 
+#if defined(ENABLE_QUIC)
 void HttpNetworkTransaction::SetQuicServerInfo(
     QuicServerInfo* quic_server_info) {}
+#endif
 
 bool HttpNetworkTransaction::GetLoadTimingInfo(
     LoadTimingInfo* load_timing_info) const {
   if (!stream_ || !stream_->GetLoadTimingInfo(load_timing_info))
     return false;
 
+#if defined(ENABLE_SPDY)
   load_timing_info->proxy_resolve_start =
       proxy_info_.proxy_resolve_start_time();
   load_timing_info->proxy_resolve_end = proxy_info_.proxy_resolve_end_time();
   load_timing_info->send_start = send_start_time_;
   load_timing_info->send_end = send_end_time_;
+#endif
   return true;
 }
 
@@ -491,12 +503,14 @@ bool HttpNetworkTransaction::GetRemoteEndpoint(IPEndPoint* endpoint) const {
   return true;
 }
 
+#if defined(ENABLE_SPDY)
 void HttpNetworkTransaction::PopulateNetErrorDetails(
     NetErrorDetails* details) const {
   *details = net_error_details_;
   if (stream_)
     stream_->PopulateNetErrorDetails(details);
 }
+#endif
 
 void HttpNetworkTransaction::SetPriority(RequestPriority priority) {
   priority_ = priority;
@@ -509,20 +523,24 @@ void HttpNetworkTransaction::SetPriority(RequestPriority priority) {
   // The above call may have resulted in deleting |*this|.
 }
 
+#if defined(ENABLE_SPDY)
 void HttpNetworkTransaction::SetWebSocketHandshakeStreamCreateHelper(
     WebSocketHandshakeStreamBase::CreateHelper* create_helper) {
   websocket_handshake_stream_base_create_helper_ = create_helper;
 }
+#endif
 
 void HttpNetworkTransaction::SetBeforeNetworkStartCallback(
     const BeforeNetworkStartCallback& callback) {
   before_network_start_callback_ = callback;
 }
 
+#if defined(ENABLE_PROXY)
 void HttpNetworkTransaction::SetBeforeHeadersSentCallback(
     const BeforeHeadersSentCallback& callback) {
   before_headers_sent_callback_ = callback;
 }
+#endif
 
 void HttpNetworkTransaction::SetRequestHeadersCallback(
     RequestHeadersCallback callback) {
@@ -541,6 +559,7 @@ int HttpNetworkTransaction::ResumeNetworkStart() {
   return DoLoop(OK);
 }
 
+#if defined(ENABLE_SPDY)
 void HttpNetworkTransaction::OnStreamReady(const SSLConfig& used_ssl_config,
                                            const ProxyInfo& used_proxy_info,
                                            std::unique_ptr<HttpStream> stream) {
@@ -593,6 +612,7 @@ void HttpNetworkTransaction::OnStreamFailed(
 
   OnIOComplete(result);
 }
+#endif
 
 void HttpNetworkTransaction::OnCertificateError(
     int result,
@@ -615,6 +635,7 @@ void HttpNetworkTransaction::OnCertificateError(
   OnIOComplete(result);
 }
 
+#if defined(ENABLE_SPDY)
 void HttpNetworkTransaction::OnNeedsProxyAuth(
     const HttpResponseInfo& proxy_response,
     const SSLConfig& used_ssl_config,
@@ -642,6 +663,7 @@ void HttpNetworkTransaction::OnNeedsProxyAuth(
 
   DoCallback(OK);
 }
+#endif
 
 void HttpNetworkTransaction::OnNeedsClientAuth(
     const SSLConfig& used_ssl_config,
@@ -654,7 +676,9 @@ void HttpNetworkTransaction::OnNeedsClientAuth(
 }
 
 void HttpNetworkTransaction::OnQuicBroken() {
+#if defined(ENABLE_SPDY)
   net_error_details_.quic_broken = true;
+#endif
 }
 
 void HttpNetworkTransaction::GetConnectionAttempts(
@@ -667,9 +691,14 @@ bool HttpNetworkTransaction::IsSecureRequest() const {
 }
 
 bool HttpNetworkTransaction::UsingHttpProxyWithoutTunnel() const {
+
+#if defined(ENABLE_SPDY)
   return (proxy_info_.is_http() || proxy_info_.is_https() ||
           proxy_info_.is_quic()) &&
          !(request_->url.SchemeIs("https") || request_->url.SchemeIsWSOrWSS());
+#else
+  return false;
+#endif
 }
 
 void HttpNetworkTransaction::DoCallback(int rv) {
@@ -821,11 +850,14 @@ int HttpNetworkTransaction::DoCreateStream() {
   if (!enable_ip_based_pooling_)
     DCHECK(!enable_alternative_services_);
   if (ForWebSocketHandshake()) {
+
+#if defined(ENABLE_SPDY)
     stream_request_ =
         session_->http_stream_factory()->RequestWebSocketHandshakeStream(
             *request_, priority_, server_ssl_config_, proxy_ssl_config_, this,
             websocket_handshake_stream_base_create_helper_,
             enable_ip_based_pooling_, enable_alternative_services_, net_log_);
+#endif
   } else {
     stream_request_ = session_->http_stream_factory()->RequestStream(
         *request_, priority_, server_ssl_config_, proxy_ssl_config_, this,
@@ -892,7 +924,12 @@ int HttpNetworkTransaction::DoGenerateProxyAuthToken() {
   if (!auth_controllers_[target].get())
     auth_controllers_[target] = new HttpAuthController(
         target, AuthURL(target), session_->http_auth_cache(),
-        session_->http_auth_handler_factory(), session_->host_resolver());
+        session_->http_auth_handler_factory()
+#if defined(ENABLE_DNS)
+        ,
+        session_->host_resolver()
+#endif
+        );
   return auth_controllers_[target]->MaybeGenerateAuthToken(request_,
                                                            io_callback_,
                                                            net_log_);
@@ -908,6 +945,8 @@ int HttpNetworkTransaction::DoGenerateProxyAuthTokenComplete(int rv) {
 int HttpNetworkTransaction::DoGenerateServerAuthToken() {
   next_state_ = STATE_GENERATE_SERVER_AUTH_TOKEN_COMPLETE;
   HttpAuth::Target target = HttpAuth::AUTH_SERVER;
+
+#if defined(ENABLE_DNS)
   if (!auth_controllers_[target].get()) {
     auth_controllers_[target] = new HttpAuthController(
         target, AuthURL(target), session_->http_auth_cache(),
@@ -915,6 +954,8 @@ int HttpNetworkTransaction::DoGenerateServerAuthToken() {
     if (request_->load_flags & LOAD_DO_NOT_USE_EMBEDDED_IDENTITY)
       auth_controllers_[target]->DisableEmbeddedIdentity();
   }
+#endif
+
   if (!ShouldApplyServerAuth())
     return OK;
   return auth_controllers_[target]->MaybeGenerateAuthToken(request_,
@@ -979,8 +1020,10 @@ int HttpNetworkTransaction::BuildRequestHeaders(
 
   request_headers_.MergeFrom(request_->extra_headers);
 
+#if defined(ENABLE_SPDY)
   if (!before_headers_sent_callback_.is_null())
     before_headers_sent_callback_.Run(proxy_info_, &request_headers_);
+#endif
 
   response_.did_use_http_auth =
       request_headers_.HasHeader(HttpRequestHeaders::kAuthorization) ||
@@ -1549,6 +1592,8 @@ int HttpNetworkTransaction::HandleSSLClientAuthError(int error) {
   //
   // See https://crbug.com/828965.
   bool is_server;
+
+#if defined(ENABLE_SPDY)
   SSLConfig* ssl_config;
   HostPortPair host_port_pair;
   if (UsingHttpProxyWithoutTunnel()) {
@@ -1585,6 +1630,7 @@ int HttpNetworkTransaction::HandleSSLClientAuthError(int error) {
       return OK;
     }
   }
+#endif
   return error;
 }
 
@@ -1601,6 +1647,7 @@ int HttpNetworkTransaction::HandleIOError(int error) {
   GenerateNetworkErrorLoggingReportIfError(error);
 #endif  // BUILDFLAG(ENABLE_REPORTING)
 
+#if defined(ENABLE_SPDY)
   switch (error) {
     // If we try to reuse a connection that the server is in the process of
     // closing, we may end up successfully writing out our request (or a
@@ -1685,6 +1732,7 @@ int HttpNetworkTransaction::HandleIOError(int error) {
       }
       break;
   }
+#endif
   return error;
 }
 
@@ -1709,17 +1757,24 @@ void HttpNetworkTransaction::ResetStateForAuthRestart() {
   response_ = HttpResponseInfo();
   establishing_tunnel_ = false;
   remote_endpoint_ = IPEndPoint();
+
+#if defined(ENABLE_SPDY)
   net_error_details_.quic_broken = false;
   net_error_details_.quic_connection_error = quic::QUIC_NO_ERROR;
 #if BUILDFLAG(ENABLE_REPORTING)
   network_error_logging_report_generated_ = false;
   start_timeticks_ = base::TimeTicks::Now();
 #endif  // BUILDFLAG(ENABLE_REPORTING)
+#endif
 }
 
 void HttpNetworkTransaction::CacheNetErrorDetailsAndResetStream() {
+
+#if defined(ENABLE_SPDY)
   if (stream_)
     stream_->PopulateNetErrorDetails(&net_error_details_);
+#endif
+
   stream_.reset();
 }
 
@@ -1787,9 +1842,11 @@ int HttpNetworkTransaction::HandleAuthChallenge() {
     return OK;
   HttpAuth::Target target = status == HTTP_PROXY_AUTHENTICATION_REQUIRED ?
                             HttpAuth::AUTH_PROXY : HttpAuth::AUTH_SERVER;
+
+#if defined(ENABLE_SPDY)
   if (target == HttpAuth::AUTH_PROXY && proxy_info_.is_direct())
     return ERR_UNEXPECTED_PROXY_AUTH;
-
+#endif
   // This case can trigger when an HTTPS server responds with a "Proxy
   // authentication required" status code through a non-authenticating
   // proxy.
@@ -1814,6 +1871,8 @@ bool HttpNetworkTransaction::HaveAuth(HttpAuth::Target target) const {
 }
 
 GURL HttpNetworkTransaction::AuthURL(HttpAuth::Target target) const {
+
+#if defined(ENABLE_SPDY)
   switch (target) {
     case HttpAuth::AUTH_PROXY: {
       if (!proxy_info_.proxy_server().is_valid() ||
@@ -1832,11 +1891,19 @@ GURL HttpNetworkTransaction::AuthURL(HttpAuth::Target target) const {
     default:
      return GURL();
   }
+#else
+  return GURL();
+#endif
+
 }
 
 bool HttpNetworkTransaction::ForWebSocketHandshake() const {
+#if defined(ENABLE_SPDY)
   return websocket_handshake_stream_base_create_helper_ &&
          request_->url.SchemeIsWSOrWSS();
+#else
+  return  false;
+#endif
 }
 
 void HttpNetworkTransaction::CopyConnectionAttemptsFromStreamRequest() {

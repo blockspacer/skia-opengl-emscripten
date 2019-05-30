@@ -37,8 +37,12 @@
 
 #include "net/socket/connect_job.h"
 #include "net/socket/next_proto.h"
+#if defined(ENABLE_WS)
 #include "net/socket/websocket_endpoint_lock_manager.h"
+#endif
+#if defined(ENABLE_SPDY)
 #include "net/spdy/spdy_session_pool.h"
+#endif
 #include "net/ssl/ssl_client_auth_cache.h"
 #include "net/ssl/ssl_client_session_cache.h"
 
@@ -63,7 +67,9 @@ class ClientSocketFactory;
 class ClientSocketPool;
 class ClientSocketPoolManager;
 class CTVerifier;
+#if defined(ENABLE_DNS)
 class HostResolver;
+#endif
 class HttpAuthHandlerFactory;
 class HttpNetworkSessionPeer;
 class HttpResponseBodyDrainer;
@@ -73,9 +79,13 @@ class NetLog;
 #if BUILDFLAG(ENABLE_REPORTING)
 class NetworkErrorLoggingService;
 #endif
+#if defined(ENABLE_NQE)
 class NetworkQualityEstimator;
+#endif
 class ProxyDelegate;
+#if defined(ENABLE_PROXY)
 class ProxyResolutionService;
+#endif
 class ProxyServer;
 #if defined(ENABLE_QUIC)
 class QuicCryptoClientStreamFactory;
@@ -114,6 +124,8 @@ class NET_EXPORT HttpNetworkSession {
     bool enable_spdy_ping_based_connection_checking;
     bool enable_http2;
     size_t spdy_session_max_recv_window_size;
+
+#if defined(ENABLE_SPDY)
     // HTTP/2 connection settings.
     // Unknown settings will still be sent to the server.
     // Might contain unknown setting identifiers from a predefined set that
@@ -134,7 +146,7 @@ class NET_EXPORT HttpNetworkSession {
     bool enable_http2_alternative_service;
     // Whether to enable Websocket over HTTP/2.
     bool enable_websocket_over_http2;
-
+#endif
     // Enables 0-RTT support.
     bool enable_early_data;
 
@@ -264,12 +276,17 @@ class NET_EXPORT HttpNetworkSession {
     ~Context();
 
     ClientSocketFactory* client_socket_factory;
+
+#if defined(ENABLE_DNS)
     HostResolver* host_resolver;
+#endif
     CertVerifier* cert_verifier;
     TransportSecurityState* transport_security_state;
     CTVerifier* cert_transparency_verifier;
     CTPolicyEnforcer* ct_policy_enforcer;
+#if defined(ENABLE_PROXY)
     ProxyResolutionService* proxy_resolution_service;
+#endif
     ProxyDelegate* proxy_delegate;
     const HttpUserAgentSettings* http_user_agent_settings;
     SSLConfigService* ssl_config_service;
@@ -277,7 +294,11 @@ class NET_EXPORT HttpNetworkSession {
     HttpServerProperties* http_server_properties;
     NetLog* net_log;
     SocketPerformanceWatcherFactory* socket_performance_watcher_factory;
+
+#if defined(ENABLE_NQE)
     NetworkQualityEstimator* network_quality_estimator;
+#endif
+
 #if BUILDFLAG(ENABLE_REPORTING)
     ReportingService* reporting_service;
     NetworkErrorLoggingService* network_error_logging_service;
@@ -319,14 +340,25 @@ class NET_EXPORT HttpNetworkSession {
                                   const ProxyServer& proxy_server);
 
   CertVerifier* cert_verifier() { return cert_verifier_; }
+
+#if defined(ENABLE_PROXY)
   ProxyResolutionService* proxy_resolution_service() {
       return proxy_resolution_service_;
   }
+#endif
+
   SSLConfigService* ssl_config_service() { return ssl_config_service_; }
+
+
+#if defined(ENABLE_WS)
   WebSocketEndpointLockManager* websocket_endpoint_lock_manager() {
     return &websocket_endpoint_lock_manager_;
   }
+#endif
+
+#if defined(ENABLE_SPDY)
   SpdySessionPool* spdy_session_pool() { return &spdy_session_pool_; }
+#endif
 
 #if defined(ENABLE_QUIC)
   QuicStreamFactory* quic_stream_factory() { return &quic_stream_factory_; }
@@ -344,7 +376,9 @@ class NET_EXPORT HttpNetworkSession {
   NetLog* net_log() {
     return net_log_;
   }
+#if defined(ENABLE_DNS)
   HostResolver* host_resolver() { return host_resolver_; }
+#endif
 #if BUILDFLAG(ENABLE_REPORTING)
   ReportingService* reporting_service() const { return reporting_service_; }
   NetworkErrorLoggingService* network_error_logging_service() const {
@@ -374,7 +408,9 @@ class NET_EXPORT HttpNetworkSession {
 
   bool IsProtocolEnabled(NextProto protocol) const;
 
+#if defined(ENABLE_SPDY)
   void SetServerPushDelegate(std::unique_ptr<ServerPushDelegate> push_delegate);
+#endif
 
   // Populates |*alpn_protos| with protocols to be used with ALPN.
   void GetAlpnProtos(NextProtoVector* alpn_protos) const;
@@ -421,27 +457,42 @@ class NET_EXPORT HttpNetworkSession {
   HttpServerProperties* const http_server_properties_;
   CertVerifier* const cert_verifier_;
   HttpAuthHandlerFactory* const http_auth_handler_factory_;
+
+#if defined(ENABLE_DNS)
   HostResolver* const host_resolver_;
+#endif
 
 #if BUILDFLAG(ENABLE_REPORTING)
   ReportingService* const reporting_service_;
   NetworkErrorLoggingService* const network_error_logging_service_;
 #endif
+#if defined(ENABLE_PROXY)
   ProxyResolutionService* const proxy_resolution_service_;
+#endif
   SSLConfigService* const ssl_config_service_;
 
   HttpAuthCache http_auth_cache_;
   SSLClientAuthCache ssl_client_auth_cache_;
   SSLClientSessionCache ssl_client_session_cache_;
   SSLClientSessionCache ssl_client_session_cache_privacy_mode_;
+#if defined(ENABLE_WS)
   WebSocketEndpointLockManager websocket_endpoint_lock_manager_;
+#endif
   std::unique_ptr<ClientSocketPoolManager> normal_socket_pool_manager_;
   std::unique_ptr<ClientSocketPoolManager> websocket_socket_pool_manager_;
+
+#if defined(ENABLE_SPDY)
   std::unique_ptr<ServerPushDelegate> push_delegate_;
+#endif
+
 #if defined(ENABLE_QUIC)
   QuicStreamFactory quic_stream_factory_;
 #endif
+
+#if defined(ENABLE_SPDY)
   SpdySessionPool spdy_session_pool_;
+#endif
+
   std::unique_ptr<HttpStreamFactory> http_stream_factory_;
   std::map<HttpResponseBodyDrainer*, std::unique_ptr<HttpResponseBodyDrainer>>
       response_drainers_;

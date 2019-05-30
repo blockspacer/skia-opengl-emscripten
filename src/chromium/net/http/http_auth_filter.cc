@@ -31,7 +31,11 @@ bool HttpAuthFilterWhitelist::AddFilter(const std::string& filter,
   // All proxies pass
   if (target == HttpAuth::AUTH_PROXY)
     return true;
+
+#if defined(ENABLE_PROXY)
   rules_.AddRuleFromString(filter);
+#endif
+
   return true;
 }
 
@@ -42,7 +46,11 @@ bool HttpAuthFilterWhitelist::IsValid(const GURL& url,
   // All proxies pass
   if (target == HttpAuth::AUTH_PROXY)
     return true;
+#if defined(ENABLE_PROXY)
   return rules_.Matches(url);
+#else
+  return false;
+#endif
 }
 
 void HttpAuthFilterWhitelist::SetWhitelist(
@@ -51,8 +59,11 @@ void HttpAuthFilterWhitelist::SetWhitelist(
   // HttpAuthFilterWhitelist is trying to use ProxyBypassRules as a generic
   // URL filter. However internally it has some implicit rules for localhost
   // and linklocal addresses.
+
+#if defined(ENABLE_PROXY)
   rules_.ParseFromString(ProxyBypassRules::GetRulesToSubtractImplicit() + ";" +
                          server_whitelist);
+#endif
 }
 
 }  // namespace net

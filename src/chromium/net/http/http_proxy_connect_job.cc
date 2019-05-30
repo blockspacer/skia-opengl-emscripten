@@ -23,20 +23,30 @@
 #include "net/base/net_errors.h"
 #include "net/log/net_log_source_type.h"
 #include "net/log/net_log_with_source.h"
+
+#if defined(ENABLE_QUIC)
 #include "net/nqe/network_quality_estimator.h"
 #include "net/quic/quic_http_utils.h"
 #include "net/quic/quic_proxy_client_socket.h"
 #include "net/quic/quic_stream_factory.h"
+#endif
+#include "net/http/http_auth_controller.h"
+#include "net/http/http_auth_controller.h"
+
 #include "net/socket/client_socket_factory.h"
 #include "net/socket/client_socket_handle.h"
 #include "net/socket/ssl_client_socket.h"
 #include "net/socket/ssl_connect_job.h"
 #include "net/socket/transport_client_socket_pool.h"
 #include "net/socket/transport_connect_job.h"
+
+#if defined(ENABLE_QUIC)
 #include "net/spdy/spdy_proxy_client_socket.h"
 #include "net/spdy/spdy_session.h"
 #include "net/spdy/spdy_session_pool.h"
 #include "net/spdy/spdy_stream.h"
+#endif
+
 #include "net/ssl/ssl_cert_request_info.h"
 #include "url/gurl.h"
 
@@ -184,8 +194,12 @@ HttpProxyConnectJob::HttpProxyConnectJob(
                     GURL((params_->ssl_params() ? "https://" : "http://") +
                          GetDestination().ToString()),
                     common_connect_job_params->http_auth_cache,
-                    common_connect_job_params->http_auth_handler_factory,
-                    host_resolver())
+                    common_connect_job_params->http_auth_handler_factory
+#if defined(ENABLE_DNS)
+                    ,
+                    host_resolver()
+#endif
+                    )
               : nullptr),
       weak_ptr_factory_(this) {}
 
@@ -261,6 +275,7 @@ void HttpProxyConnectJob::OnNeedsProxyAuth(
   NOTREACHED();
 }
 
+#if defined(ENABLE_NQE)
 base::TimeDelta HttpProxyConnectJob::AlternateNestedConnectionTimeout(
     const HttpProxySocketParams& params,
     const NetworkQualityEstimator* network_quality_estimator) {
@@ -295,6 +310,7 @@ base::TimeDelta HttpProxyConnectJob::AlternateNestedConnectionTimeout(
       timeout, GetProxyTimeoutExperiments()->min_proxy_connection_timeout(),
       GetProxyTimeoutExperiments()->max_proxy_connection_timeout());
 }
+#endif
 
 base::TimeDelta HttpProxyConnectJob::TunnelTimeoutForTesting() {
   return kHttpProxyConnectJobTunnelTimeout;
@@ -313,6 +329,7 @@ int HttpProxyConnectJob::ConnectInternal() {
   return result;
 }
 
+#if defined(ENABLE_QUIC)
 ProxyServer::Scheme HttpProxyConnectJob::GetProxyServerScheme() const {
   if (params_->is_quic())
     return ProxyServer::SCHEME_QUIC;
@@ -322,6 +339,7 @@ ProxyServer::Scheme HttpProxyConnectJob::GetProxyServerScheme() const {
 
   return ProxyServer::SCHEME_HTTPS;
 }
+#endif
 
 void HttpProxyConnectJob::OnIOComplete(int result) {
   int rv = DoLoop(result);
@@ -413,6 +431,8 @@ int HttpProxyConnectJob::DoLoop(int result) {
 
 int HttpProxyConnectJob::DoBeginConnect() {
   connect_start_time_ = base::TimeTicks::Now();
+
+#if defined(ENABLE_QUIC)
   ResetTimer(
       AlternateNestedConnectionTimeout(*params_, network_quality_estimator()));
   switch (GetProxyServerScheme()) {
@@ -433,6 +453,7 @@ int HttpProxyConnectJob::DoBeginConnect() {
     default:
       NOTREACHED();
   }
+#endif
   return OK;
 }
 
@@ -458,6 +479,7 @@ int HttpProxyConnectJob::DoTransportConnectComplete(int result) {
 }
 
 int HttpProxyConnectJob::DoSSLConnect() {
+#if defined(ENABLE_QUIC)
   DCHECK(params_->ssl_params());
   if (params_->tunnel()) {
     SpdySessionKey key(
@@ -472,6 +494,7 @@ int HttpProxyConnectJob::DoSSLConnect() {
       return OK;
     }
   }
+#endif
   next_state_ = STATE_SSL_CONNECT_COMPLETE;
   nested_connect_job_ = std::make_unique<SSLConnectJob>(
       priority(), socket_tag(), common_connect_job_params(),
@@ -543,6 +566,7 @@ int HttpProxyConnectJob::DoHttpProxyConnect() {
                                base::TimeTicks::Now() - connect_start_time_);
   }
 
+#if defined(ENABLE_QUIC)
   // Add a HttpProxy connection on top of the tcp socket.
   transport_socket_ = client_socket_factory()->CreateProxyClientSocket(
       nested_connect_job_->PassSocket(), GetUserAgent(), params_->endpoint(),
@@ -553,6 +577,9 @@ int HttpProxyConnectJob::DoHttpProxyConnect() {
   nested_connect_job_.reset();
   return transport_socket_->Connect(base::BindOnce(
       &HttpProxyConnectJob::OnIOComplete, base::Unretained(this)));
+#else
+  return 0;
+#endif
 }
 
 int HttpProxyConnectJob::DoHttpProxyConnectComplete(int result) {
@@ -587,6 +614,7 @@ int HttpProxyConnectJob::DoSpdyProxyCreateStream() {
   // longer to timeout than it should.
   ResetTimer(kHttpProxyConnectJobTunnelTimeout);
 
+#if defined(ENABLE_QUIC)
   SpdySessionKey key(
       params_->ssl_params()->GetDirectConnectionParams()->destination(),
       ProxyServer::Direct(), PRIVACY_MODE_DISABLED,
@@ -619,9 +647,14 @@ int HttpProxyConnectJob::DoSpdyProxyCreateStream() {
       base::BindOnce(&HttpProxyConnectJob::OnIOComplete,
                      base::Unretained(this)),
       params_->traffic_annotation());
+#else
+  return 0;
+#endif
 }
 
 int HttpProxyConnectJob::DoSpdyProxyCreateStreamComplete(int result) {
+
+#if defined(ENABLE_QUIC)
   if (result < 0) {
     // See the comment in DoHttpProxyConnectComplete(). HTTP/2 proxies will
     // typically also fail here, as a result of SpdyProxyClientSocket::Connect()
@@ -644,12 +677,17 @@ int HttpProxyConnectJob::DoSpdyProxyCreateStreamComplete(int result) {
       http_auth_controller_.get());
   return transport_socket_->Connect(base::BindOnce(
       &HttpProxyConnectJob::OnIOComplete, base::Unretained(this)));
+#else
+  return 0;
+#endif
 }
 
 int HttpProxyConnectJob::DoQuicProxyCreateSession() {
   SSLSocketParams* ssl_params = params_->ssl_params().get();
   DCHECK(ssl_params);
   DCHECK(params_->tunnel());
+
+#if defined(ENABLE_QUIC)
   DCHECK(!common_connect_job_params()->quic_supported_versions->empty());
 
   // Reset the timer to just the length of time allowed for HttpProxy handshake
@@ -675,9 +713,14 @@ int HttpProxyConnectJob::DoQuicProxyCreateSession() {
       /*failed_on_default_network_callback=*/CompletionOnceCallback(),
       base::BindOnce(&HttpProxyConnectJob::OnIOComplete,
                      base::Unretained(this)));
+#else
+  return 0;
+#endif
 }
 
 int HttpProxyConnectJob::DoQuicProxyCreateStream(int result) {
+
+#if defined(ENABLE_QUIC)
   if (result < 0) {
     quic_stream_request_.reset();
     return result;
@@ -692,6 +735,9 @@ int HttpProxyConnectJob::DoQuicProxyCreateStream(int result) {
       base::BindOnce(&HttpProxyConnectJob::OnIOComplete,
                      base::Unretained(this)),
       params_->traffic_annotation());
+#else
+  return 0;
+#endif
 }
 
 int HttpProxyConnectJob::DoQuicProxyCreateStreamComplete(int result) {
@@ -699,6 +745,8 @@ int HttpProxyConnectJob::DoQuicProxyCreateStreamComplete(int result) {
     return result;
 
   next_state_ = STATE_HTTP_PROXY_CONNECT_COMPLETE;
+
+#if defined(ENABLE_QUIC)
   std::unique_ptr<QuicChromiumClientStream::Handle> quic_stream =
       quic_session_->ReleaseStream();
 
@@ -711,6 +759,9 @@ int HttpProxyConnectJob::DoQuicProxyCreateStreamComplete(int result) {
       params_->endpoint(), net_log(), http_auth_controller_.get());
   return transport_socket_->Connect(base::BindOnce(
       &HttpProxyConnectJob::OnIOComplete, base::Unretained(this)));
+#else
+  return 0;
+#endif
 }
 
 int HttpProxyConnectJob::DoRestartWithAuth() {

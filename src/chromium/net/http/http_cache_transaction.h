@@ -33,8 +33,9 @@
 #include "net/http/partial_data.h"
 #include "net/log/net_log_with_source.h"
 #include "net/socket/connection_attempts.h"
+#ifdef ENABLE_QUIC
 #include "net/websockets/websocket_handshake_stream_base.h"
-
+#endif
 namespace net {
 
 class PartialData;
@@ -156,7 +157,9 @@ class NET_EXPORT_PRIVATE HttpCache::Transaction : public HttpTransaction {
   void DoneReading() override;
   const HttpResponseInfo* GetResponseInfo() const override;
   LoadState GetLoadState() const override;
+#if defined(ENABLE_QUIC)
   void SetQuicServerInfo(QuicServerInfo* quic_server_info) override;
+#endif
   bool GetLoadTimingInfo(LoadTimingInfo* load_timing_info) const override;
   bool GetRemoteEndpoint(IPEndPoint* endpoint) const override;
 
@@ -165,12 +168,18 @@ class NET_EXPORT_PRIVATE HttpCache::Transaction : public HttpTransaction {
 #endif // ENABLE_QUIC
 
   void SetPriority(RequestPriority priority) override;
+
+#ifdef ENABLE_QUIC
   void SetWebSocketHandshakeStreamCreateHelper(
       WebSocketHandshakeStreamBase::CreateHelper* create_helper) override;
+#endif // ENABLE_QUIC
+
   void SetBeforeNetworkStartCallback(
       const BeforeNetworkStartCallback& callback) override;
+#if defined(ENABLE_PROXY)
   void SetBeforeHeadersSentCallback(
       const BeforeHeadersSentCallback& callback) override;
+#endif
   void SetRequestHeadersCallback(RequestHeadersCallback callback) override;
   void SetResponseHeadersCallback(ResponseHeadersCallback callback) override;
   int ResumeNetworkStart() override;
@@ -663,16 +672,18 @@ class NET_EXPORT_PRIVATE HttpCache::Transaction : public HttpTransaction {
   // other writer transactions, no transaction then accounts for those
   // statistics.
   bool moved_network_transaction_to_writers_;
-
+#ifdef ENABLE_QUIC
   // The helper object to use to create WebSocketHandshakeStreamBase
   // objects. Only relevant when establishing a WebSocket connection.
   // This is passed to the underlying network transaction. It is stored here in
   // case the transaction does not exist yet.
   WebSocketHandshakeStreamBase::CreateHelper*
       websocket_handshake_stream_base_create_helper_;
-
+#endif
   BeforeNetworkStartCallback before_network_start_callback_;
+#if defined(ENABLE_PROXY)
   BeforeHeadersSentCallback before_headers_sent_callback_;
+#endif
   RequestHeadersCallback request_headers_callback_;
   ResponseHeadersCallback response_headers_callback_;
 

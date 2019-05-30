@@ -11,7 +11,9 @@
 #include "base/strings/string_util.h"
 #include "build/build_config.h"
 #include "net/base/net_errors.h"
+#if defined(ENABLE_DNS)
 #include "net/dns/host_resolver.h"
+#endif
 #include "net/http/http_auth_challenge_tokenizer.h"
 #include "net/http/http_auth_filter.h"
 #include "net/http/http_auth_handler_basic.h"
@@ -34,11 +36,18 @@ int HttpAuthHandlerFactory::CreateAuthHandlerFromString(
     const SSLInfo& ssl_info,
     const GURL& origin,
     const NetLogWithSource& net_log,
+#if defined(ENABLE_DNS)
     HostResolver* host_resolver,
+#endif
     std::unique_ptr<HttpAuthHandler>* handler) {
   HttpAuthChallengeTokenizer props(challenge.begin(), challenge.end());
+
+#if defined(ENABLE_DNS)
   return CreateAuthHandler(&props, target, ssl_info, origin, CREATE_CHALLENGE,
                            1, net_log, host_resolver, handler);
+#else
+  return 0;
+#endif
 }
 
 int HttpAuthHandlerFactory::CreatePreemptiveAuthHandlerFromString(
@@ -47,13 +56,19 @@ int HttpAuthHandlerFactory::CreatePreemptiveAuthHandlerFromString(
     const GURL& origin,
     int digest_nonce_count,
     const NetLogWithSource& net_log,
-    HostResolver* host_resolver,
+#if defined(ENABLE_DNS)
+      HostResolver* host_resolver,
+#endif
     std::unique_ptr<HttpAuthHandler>* handler) {
   HttpAuthChallengeTokenizer props(challenge.begin(), challenge.end());
   SSLInfo null_ssl_info;
+#if defined(ENABLE_DNS)
   return CreateAuthHandler(&props, target, null_ssl_info, origin,
                            CREATE_PREEMPTIVE, digest_nonce_count, net_log,
                            host_resolver, handler);
+#else
+  return 0;
+#endif
 }
 
 namespace {
@@ -209,7 +224,9 @@ int HttpAuthHandlerRegistryFactory::CreateAuthHandler(
     CreateReason reason,
     int digest_nonce_count,
     const NetLogWithSource& net_log,
+#if defined(ENABLE_DNS)
     HostResolver* host_resolver,
+#endif
     std::unique_ptr<HttpAuthHandler>* handler) {
   std::string scheme = challenge->scheme();
   if (scheme.empty()) {
@@ -223,9 +240,13 @@ int HttpAuthHandlerRegistryFactory::CreateAuthHandler(
     return ERR_UNSUPPORTED_AUTH_SCHEME;
   }
   DCHECK(it->second);
+#if defined(ENABLE_DNS)
   return it->second->CreateAuthHandler(challenge, target, ssl_info, origin,
                                        reason, digest_nonce_count, net_log,
                                        host_resolver, handler);
+#else
+  return 0;
+#endif
 }
 
 }  // namespace net

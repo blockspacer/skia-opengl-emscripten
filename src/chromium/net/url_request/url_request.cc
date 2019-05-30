@@ -403,11 +403,13 @@ void URLRequest::GetLoadTimingInfo(LoadTimingInfo* load_timing_info) const {
   *load_timing_info = load_timing_info_;
 }
 
+#ifdef ENABLE_QUIC
 void URLRequest::PopulateNetErrorDetails(NetErrorDetails* details) const {
   if (!job_)
     return;
   return job_->PopulateNetErrorDetails(details);
 }
+#endif
 
 bool URLRequest::GetTransactionRemoteEndpoint(IPEndPoint* endpoint) const {
   if (!job_)

@@ -28,12 +28,22 @@
 #include "net/http/http_stream_factory_job.h"
 #include "net/http/http_stream_factory_job_controller.h"
 #include "net/http/transport_security_state.h"
+
+#if defined(ENABLE_QUIC)
 #include "net/quic/quic_http_utils.h"
+#endif
+
+#if defined(ENABLE_SPDY)
 #include "net/spdy/bidirectional_stream_spdy_impl.h"
 #include "net/spdy/spdy_http_stream.h"
+#endif
+
+#if defined(ENABLE_QUIC)
 #include "net/third_party/quiche/src/quic/core/quic_packets.h"
 #include "net/third_party/quiche/src/quic/core/quic_server_id.h"
 #include "net/third_party/quiche/src/spdy/core/spdy_alt_svc_wire_format.h"
+#endif
+
 #include "url/gurl.h"
 #include "url/scheme_host_port.h"
 #include "url/url_constants.h"
@@ -49,6 +59,8 @@ void HttpStreamFactory::ProcessAlternativeServices(
     HttpNetworkSession* session,
     const HttpResponseHeaders* headers,
     const url::SchemeHostPort& http_server) {
+
+#if defined(ENABLE_QUIC)
   if (!headers->HasHeader(kAlternativeServiceHeader))
     return;
 
@@ -104,6 +116,8 @@ void HttpStreamFactory::ProcessAlternativeServices(
 
   session->http_server_properties()->SetAlternativeServices(
       RewriteHost(http_server), alternative_service_info_vector);
+#endif
+
 }
 
 url::SchemeHostPort HttpStreamFactory::RewriteHost(
@@ -125,10 +139,15 @@ std::unique_ptr<HttpStreamRequest> HttpStreamFactory::RequestStream(
     bool enable_ip_based_pooling,
     bool enable_alternative_services,
     const NetLogWithSource& net_log) {
+
+#if defined(ENABLE_QUIC)
   return RequestStreamInternal(
       request_info, priority, server_ssl_config, proxy_ssl_config, delegate,
       nullptr, HttpStreamRequest::HTTP_STREAM, false /* is_websocket */,
       enable_ip_based_pooling, enable_alternative_services, net_log);
+#else
+  return nullptr;
+#endif
 }
 
 std::unique_ptr<HttpStreamRequest>
@@ -138,15 +157,24 @@ HttpStreamFactory::RequestWebSocketHandshakeStream(
     const SSLConfig& server_ssl_config,
     const SSLConfig& proxy_ssl_config,
     HttpStreamRequest::Delegate* delegate,
+
+#if defined(ENABLE_WS)
     WebSocketHandshakeStreamBase::CreateHelper* create_helper,
+#endif
     bool enable_ip_based_pooling,
     bool enable_alternative_services,
     const NetLogWithSource& net_log) {
+
+#if defined(ENABLE_WS)
   DCHECK(create_helper);
   return RequestStreamInternal(
       request_info, priority, server_ssl_config, proxy_ssl_config, delegate,
       create_helper, HttpStreamRequest::HTTP_STREAM, true /* is_websocket */,
       enable_ip_based_pooling, enable_alternative_services, net_log);
+#else
+  return nullptr;
+#endif
+
 }
 
 std::unique_ptr<HttpStreamRequest>
@@ -161,11 +189,16 @@ HttpStreamFactory::RequestBidirectionalStreamImpl(
     const NetLogWithSource& net_log) {
   DCHECK(request_info.url.SchemeIs(url::kHttpsScheme));
 
+#if defined(ENABLE_WS)
   return RequestStreamInternal(
       request_info, priority, server_ssl_config, proxy_ssl_config, delegate,
       nullptr, HttpStreamRequest::BIDIRECTIONAL_STREAM,
       false /* is_websocket */, enable_ip_based_pooling,
       enable_alternative_services, net_log);
+#else
+  return nullptr;
+#endif
+
 }
 
 std::unique_ptr<HttpStreamRequest> HttpStreamFactory::RequestStreamInternal(
@@ -174,8 +207,10 @@ std::unique_ptr<HttpStreamRequest> HttpStreamFactory::RequestStreamInternal(
     const SSLConfig& server_ssl_config,
     const SSLConfig& proxy_ssl_config,
     HttpStreamRequest::Delegate* delegate,
+#if defined(ENABLE_WS)
     WebSocketHandshakeStreamBase::CreateHelper*
         websocket_handshake_stream_create_helper,
+#endif
     HttpStreamRequest::StreamType stream_type,
     bool is_websocket,
     bool enable_ip_based_pooling,
@@ -187,9 +222,14 @@ std::unique_ptr<HttpStreamRequest> HttpStreamFactory::RequestStreamInternal(
       enable_alternative_services, server_ssl_config, proxy_ssl_config);
   JobController* job_controller_raw_ptr = job_controller.get();
   job_controller_set_.insert(std::move(job_controller));
+
+#if defined(ENABLE_WS)
   return job_controller_raw_ptr->Start(delegate,
                                        websocket_handshake_stream_create_helper,
                                        net_log, stream_type, priority);
+#else
+  return nullptr;
+#endif
 }
 
 void HttpStreamFactory::PreconnectStreams(int num_streams,
@@ -209,7 +249,10 @@ void HttpStreamFactory::PreconnectStreams(int num_streams,
       proxy_ssl_config);
   JobController* job_controller_raw_ptr = job_controller.get();
   job_controller_set_.insert(std::move(job_controller));
+
+#if defined(ENABLE_WS)
   job_controller_raw_ptr->Preconnect(num_streams);
+#endif
 }
 
 const HostMappingRules* HttpStreamFactory::GetHostMappingRules() const {
@@ -243,8 +286,13 @@ bool HttpStreamFactory::PreconnectingProxyServer::operator==(
 }
 
 bool HttpStreamFactory::OnInitConnection(const JobController& controller,
+
+#if defined(ENABLE_PROXY)
                                          const ProxyInfo& proxy_info,
+#endif
                                          PrivacyMode privacy_mode) {
+
+#if defined(ENABLE_PROXY)
   if (!controller.is_preconnect()) {
     // Connection initialization can be skipped only for the preconnect jobs.
     return false;
@@ -275,10 +323,12 @@ bool HttpStreamFactory::OnInitConnection(const JobController& controller,
 
   preconnecting_proxy_servers_.insert(preconnecting_proxy_server);
   DCHECK_GE(kMaxPreconnectingServerSize, preconnecting_proxy_servers_.size());
+#endif
   // The first preconnect should be allowed.
   return false;
 }
 
+#if defined(ENABLE_SPDY)
 void HttpStreamFactory::OnStreamReady(const ProxyInfo& proxy_info,
                                       PrivacyMode privacy_mode) {
   if (proxy_info.is_empty())
@@ -286,9 +336,15 @@ void HttpStreamFactory::OnStreamReady(const ProxyInfo& proxy_info,
   preconnecting_proxy_servers_.erase(
       PreconnectingProxyServer(proxy_info.proxy_server(), privacy_mode));
 }
+#endif
 
 bool HttpStreamFactory::ProxyServerSupportsPriorities(
-    const ProxyInfo& proxy_info) const {
+#if defined(ENABLE_PROXY)
+    const ProxyInfo& proxy_info
+#endif
+    ) const {
+
+#if defined(ENABLE_PROXY)
   if (proxy_info.is_empty() || !proxy_info.proxy_server().is_valid())
     return false;
 
@@ -303,6 +359,9 @@ bool HttpStreamFactory::ProxyServerSupportsPriorities(
 
   return session_->http_server_properties()->SupportsRequestPriority(
       scheme_host_port);
+#else
+  return false;
+#endif
 }
 
 void HttpStreamFactory::DumpMemoryStats(
@@ -317,6 +376,8 @@ void HttpStreamFactory::DumpMemoryStats(
   size_t alt_job_count = 0;
   size_t main_job_count = 0;
   size_t num_controllers_for_preconnect = 0;
+
+#if defined(ENABLE_PROXY)
   for (const auto& it : job_controller_set_) {
     // For a preconnect controller, it should have exactly the main job.
     if (it->is_preconnect()) {
@@ -349,5 +410,6 @@ void HttpStreamFactory::DumpMemoryStats(
   factory_dump->AddScalar("preconnect_count",
                           base::trace_event::MemoryAllocatorDump::kUnitsObjects,
                           num_controllers_for_preconnect);
+#endif
 }
 }  // namespace net

@@ -27,7 +27,25 @@
 #include "net/log/net_log_capture_mode.h"
 #include "net/log/net_log_event_type.h"
 #include "net/log/net_log_with_source.h"
+
+
+#if defined(ENABLE_NQE)
 #include "net/nqe/network_quality_estimator.h"
+#endif
+#include "base/compiler_specific.h"
+#include "base/gtest_prod_util.h"
+#include "base/macros.h"
+#include "base/memory/ref_counted.h"
+#include "base/memory/weak_ptr.h"
+#include "base/observer_list.h"
+#include "base/optional.h"
+#include "base/sequence_checker.h"
+#include "base/time/time.h"
+#include "build/build_config.h"
+#include "net/base/net_export.h"
+#include "net/base/network_change_notifier.h"
+#include "net/log/net_log_with_source.h"
+
 #include "net/url_request/redirect_util.h"
 #include "net/url_request/url_request_context.h"
 
@@ -177,9 +195,11 @@ bool URLRequestJob::GetTransactionRemoteEndpoint(IPEndPoint* endpoint) const {
   return false;
 }
 
+#if defined(ENABLE_NQE)
 void URLRequestJob::PopulateNetErrorDetails(NetErrorDetails* details) const {
   return;
 }
+#endif
 
 bool URLRequestJob::IsRedirectResponse(GURL* location,
                                        int* http_status_code,
@@ -725,6 +745,7 @@ void URLRequestJob::RecordBytesRead(int bytes_read) {
   DCHECK_GT(bytes_read, 0);
   prefilter_bytes_read_ += base::checked_cast<size_t>(bytes_read);
 
+#if defined(ENABLE_NQE)
   // On first read, notify NetworkQualityEstimator that response headers have
   // been received.
   // TODO(tbansal): Move this to url_request_http_job.cc. This may catch
@@ -741,6 +762,7 @@ void URLRequestJob::RecordBytesRead(int bytes_read) {
           *request_);
     }
   }
+#endif
 
   DVLOG(2) << __FUNCTION__ << "() "
            << "\"" << request_->url().spec() << "\""

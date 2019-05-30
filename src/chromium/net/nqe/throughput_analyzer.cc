@@ -356,12 +356,15 @@ size_t ThroughputAnalyzer::CountInFlightRequests() const {
 
 bool ThroughputAnalyzer::DegradesAccuracy(const URLRequest& request) const {
   DCHECK_CALLED_ON_VALID_SEQUENCE(sequence_checker_);
-
+#if defined(ENABLE_DNS)
   bool private_network_request = nqe::internal::IsPrivateHost(
       request.context()->host_resolver(), HostPortPair::FromURL(request.url()));
 
   return !(use_localhost_requests_for_tests_ || !private_network_request) ||
          request.creation_time() < last_connection_change_;
+#else
+  return true;
+#endif
 }
 
 void ThroughputAnalyzer::BoundRequestsSize() {

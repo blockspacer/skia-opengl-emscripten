@@ -41,7 +41,9 @@
 #include "net/cookies/canonical_cookie.h"
 #include "net/cookies/cookie_store.h"
 #include "net/cookies/cookie_util.h"
+#if defined(ENABLE_BROTLI) && defined(__TODO__)
 #include "net/filter/brotli_source_stream.h"
+#endif
 #include "net/filter/filter_source_stream.h"
 #include "net/filter/gzip_source_stream.h"
 #include "net/filter/source_stream.h"
@@ -57,10 +59,14 @@
 #include "net/log/net_log.h"
 #include "net/log/net_log_event_type.h"
 #include "net/log/net_log_with_source.h"
+#if defined(ENABLE_NQE)
 #include "net/nqe/network_quality_estimator.h"
+#endif
+#if defined(ENABLE_PROXY)
 #include "net/proxy_resolution/proxy_info.h"
 #include "net/proxy_resolution/proxy_resolution_service.h"
 #include "net/proxy_resolution/proxy_retry_info.h"
+#endif
 #include "net/ssl/ssl_cert_request_info.h"
 #include "net/ssl/ssl_config_service.h"
 #include "net/url_request/url_request.h"
@@ -378,6 +384,7 @@ void URLRequestHttpJob::GetConnectionAttempts(ConnectionAttempts* out) const {
     out->clear();
 }
 
+#if defined(ENABLE_NQE)
 void URLRequestHttpJob::NotifyBeforeSendHeadersCallback(
     const ProxyInfo& proxy_info,
     HttpRequestHeaders* request_headers) {
@@ -395,6 +402,7 @@ void URLRequestHttpJob::NotifyBeforeSendHeadersCallback(
         request_headers);
   }
 }
+#endif
 
 void URLRequestHttpJob::NotifyHeadersComplete() {
   DCHECK(!response_info_);
@@ -506,6 +514,7 @@ void URLRequestHttpJob::StartTransactionInternal() {
 
   int rv;
 
+#if defined(ENABLE_NQE)
   // Notify NetworkQualityEstimator.
   NetworkQualityEstimator* network_quality_estimator =
       request()->context()->network_quality_estimator();
@@ -568,6 +577,7 @@ void URLRequestHttpJob::StartTransactionInternal() {
   base::ThreadTaskRunnerHandle::Get()->PostTask(
       FROM_HERE, base::BindOnce(&URLRequestHttpJob::OnStartCompleted,
                                 weak_factory_.GetWeakPtr(), rv));
+#endif
 }
 
 void URLRequestHttpJob::AddExtraHeaders() {
@@ -1009,12 +1019,14 @@ int URLRequestHttpJob::GetResponseCode() const {
   return GetResponseHeaders()->response_code();
 }
 
+#if defined(ENABLE_NQE)
 void URLRequestHttpJob::PopulateNetErrorDetails(
     NetErrorDetails* details) const {
   if (!transaction_)
     return;
   return transaction_->PopulateNetErrorDetails(details);
 }
+#endif
 
 std::unique_ptr<SourceStream> URLRequestHttpJob::SetUpSourceStream() {
   DCHECK(transaction_.get());
@@ -1060,9 +1072,11 @@ std::unique_ptr<SourceStream> URLRequestHttpJob::SetUpSourceStream() {
     std::unique_ptr<FilterSourceStream> downstream;
     SourceStream::SourceType type = *r_iter;
     switch (type) {
+#if defined(ENABLE_BROTLI) && defined(__TODO__)
       case SourceStream::TYPE_BROTLI:
         downstream = CreateBrotliSourceStream(std::move(upstream));
         break;
+#endif
       case SourceStream::TYPE_GZIP:
       case SourceStream::TYPE_DEFLATE:
         downstream = GzipSourceStream::Create(std::move(upstream), type);
@@ -1346,6 +1360,8 @@ IPEndPoint URLRequestHttpJob::GetResponseRemoteEndpoint() const {
 }
 
 void URLRequestHttpJob::RecordTimer() {
+
+#if defined(ENABLE_NQE)
   if (request_creation_time_.is_null()) {
     NOTREACHED()
         << "The same transaction shouldn't start twice without new timing.";
@@ -1360,6 +1376,7 @@ void URLRequestHttpJob::RecordTimer() {
       request_info_.upload_data_stream->size() > 1024 * 1024) {
     UMA_HISTOGRAM_MEDIUM_TIMES("Net.HttpTimeToFirstByte.LargeUpload", to_start);
   }
+#endif
 }
 
 void URLRequestHttpJob::ResetTimer() {
@@ -1468,6 +1485,7 @@ void URLRequestHttpJob::DoneWithRequest(CompletionCause reason) {
     return;
   done_ = true;
 
+#if defined(ENABLE_NQE)
   // Notify NetworkQualityEstimator.
   NetworkQualityEstimator* network_quality_estimator =
       request()->context()->network_quality_estimator();
@@ -1478,6 +1496,7 @@ void URLRequestHttpJob::DoneWithRequest(CompletionCause reason) {
 
   RecordPerfHistograms(reason);
   request()->set_received_response_content_length(prefilter_bytes_read());
+#endif
 }
 
 HttpResponseHeaders* URLRequestHttpJob::GetResponseHeaders() const {
@@ -1491,11 +1510,14 @@ HttpResponseHeaders* URLRequestHttpJob::GetResponseHeaders() const {
 void URLRequestHttpJob::NotifyURLRequestDestroyed() {
   awaiting_callback_ = false;
 
+#if defined(ENABLE_NQE)
+
   // Notify NetworkQualityEstimator.
   NetworkQualityEstimator* network_quality_estimator =
       request()->context()->network_quality_estimator();
   if (network_quality_estimator)
     network_quality_estimator->NotifyURLRequestDestroyed(*request());
+#endif
 }
 
 }  // namespace net

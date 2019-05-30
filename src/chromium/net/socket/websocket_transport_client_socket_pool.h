@@ -55,8 +55,12 @@ class NET_EXPORT_PRIVATE WebSocketTransportClientSocketPool
   // need to explicitly check for this. Instead, ensure that dead sockets are
   // returned to ReleaseSocket() in a timely fashion.
   static void UnlockEndpoint(
-      ClientSocketHandle* handle,
-      WebSocketEndpointLockManager* websocket_endpoint_lock_manager);
+      ClientSocketHandle* handle
+#if defined(ENABLE_QUIC)
+,
+      WebSocketEndpointLockManager* websocket_endpoint_lock_manager
+#endif
+      );
 
   // ClientSocketPool implementation.
   int RequestSocket(

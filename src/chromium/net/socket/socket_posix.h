@@ -22,6 +22,7 @@ namespace net {
 class IOBuffer;
 struct SockaddrStorage;
 
+#if !defined(OS_EMSCRIPTEN)
 // Socket class to provide asynchronous read/write operations on top of the
 // posix socket api. It supports AF_INET, AF_INET6, and AF_UNIX addresses.
 class NET_EXPORT_PRIVATE SocketPosix
@@ -123,11 +124,16 @@ class NET_EXPORT_PRIVATE SocketPosix
 
   SocketDescriptor socket_fd_;
 
+#if !defined(OS_EMSCRIPTEN)
   base::MessagePumpForIO::FdWatchController accept_socket_watcher_;
+#endif
+
   std::unique_ptr<SocketPosix>* accept_socket_;
   CompletionOnceCallback accept_callback_;
 
+#if !defined(OS_EMSCRIPTEN)
   base::MessagePumpForIO::FdWatchController read_socket_watcher_;
+#endif
 
   // Non-null when a Read() is in progress.
   scoped_refptr<IOBuffer> read_buf_;
@@ -137,7 +143,10 @@ class NET_EXPORT_PRIVATE SocketPosix
   // Non-null when a ReadIfReady() is in progress.
   CompletionOnceCallback read_if_ready_callback_;
 
+#if !defined(OS_EMSCRIPTEN)
   base::MessagePumpForIO::FdWatchController write_socket_watcher_;
+#endif
+
   scoped_refptr<IOBuffer> write_buf_;
   int write_buf_len_;
   // External callback; called when write or connect is complete.
@@ -153,6 +162,7 @@ class NET_EXPORT_PRIVATE SocketPosix
 
   DISALLOW_COPY_AND_ASSIGN(SocketPosix);
 };
+#endif
 
 }  // namespace net
 

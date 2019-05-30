@@ -33,7 +33,9 @@
 #include "net/cert/symantec_certs.h"
 #include "net/cert/x509_cert_types.h"
 #include "net/cert/x509_certificate.h"
+#if defined(ENABLE_DNS)
 #include "net/dns/dns_util.h"
+#endif
 #include "net/extras/preload_data/decoder.h"
 #include "net/http/http_security_headers.h"
 #include "net/net_buildflags.h"
@@ -239,11 +241,13 @@ std::string CanonicalizeHost(const std::string& host) {
   // has already undergone IDN processing before it reached us. Thus, we check
   // that there are no invalid characters in the host and lowercase the result.
   std::string new_host;
+#if defined(ENABLE_DNS)
   if (!DNSDomainFromDot(host, &new_host)) {
     // DNSDomainFromDot can fail if any label is > 63 bytes or if the whole
     // name is >255 bytes. However, search terms can have those properties.
     return std::string();
   }
+#endif
 
   for (size_t i = 0; new_host[i]; i += new_host[i] + 1) {
     const unsigned label_length = static_cast<unsigned>(new_host[i]);
@@ -1217,6 +1221,7 @@ bool TransportSecurityState::GetDynamicSTSState(const std::string& host,
       continue;
     }
 
+#if defined(ENABLE_DNS)
     // If this is the most specific STS match, add it to the result. Note: a STS
     // entry at a more specific domain overrides a less specific domain whether
     // or not |include_subdomains| is set.
@@ -1229,6 +1234,7 @@ bool TransportSecurityState::GetDynamicSTSState(const std::string& host,
 
       break;
     }
+#endif
   }
 
   return false;
@@ -1258,6 +1264,7 @@ bool TransportSecurityState::GetDynamicPKPState(const std::string& host,
       continue;
     }
 
+#if defined(ENABLE_DNS)
     // If this is the most specific PKP match, add it to the result. Note: a PKP
     // entry at a more specific domain overrides a less specific domain whether
     // or not |include_subdomains| is set.
@@ -1270,6 +1277,8 @@ bool TransportSecurityState::GetDynamicPKPState(const std::string& host,
 
       break;
     }
+#endif
+
   }
 
   return false;

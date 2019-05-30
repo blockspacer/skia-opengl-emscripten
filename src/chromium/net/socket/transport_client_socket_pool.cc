@@ -63,8 +63,10 @@ class TransportClientSocketPool::ConnectJobFactoryImpl
         common_connect_job_params_(common_connect_job_params) {
     // This class should not be used with WebSockets. Note that
     // |common_connect_job_params| may be nullptr in tests.
+#if defined(ENABLE_WS)
     DCHECK(!common_connect_job_params ||
            !common_connect_job_params->websocket_endpoint_lock_manager);
+#endif
   }
 
   ~ConnectJobFactoryImpl() override = default;

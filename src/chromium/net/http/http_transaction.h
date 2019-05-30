@@ -16,7 +16,10 @@
 #include "net/http/http_raw_request_headers.h"
 #include "net/http/http_response_headers.h"
 #include "net/socket/connection_attempts.h"
+
+#ifdef ENABLE_WS
 #include "net/websockets/websocket_handshake_stream_base.h"
+#endif
 
 namespace net {
 
@@ -27,8 +30,15 @@ class HttpResponseInfo;
 class IOBuffer;
 struct LoadTimingInfo;
 class NetLogWithSource;
+
+#if defined(ENABLE_PROXY)
 class ProxyInfo;
+#endif
+
+#if defined(ENABLE_QUIC)
 class QuicServerInfo;
+#endif
+
 class SSLPrivateKey;
 class X509Certificate;
 
@@ -45,9 +55,12 @@ class NET_EXPORT_PRIVATE HttpTransaction {
   // a connection is established and before the request headers are sent.
   // |proxy_info| contains information about any proxies being used, and
   // additional headers may be added to |request_headers|.
+
+#if defined(ENABLE_PROXY)
   typedef base::Callback<void(const ProxyInfo& proxy_info,
                               HttpRequestHeaders* request_headers)>
       BeforeHeadersSentCallback;
+#endif
 
   // Stops any pending IO and destroys the transaction object.
   virtual ~HttpTransaction() {}
@@ -158,9 +171,11 @@ class NET_EXPORT_PRIVATE HttpTransaction {
   // Returns the load state for this transaction.
   virtual LoadState GetLoadState() const = 0;
 
+#if defined(ENABLE_QUIC)
   // SetQuicServerInfo sets a object which reads and writes public information
   // about a QUIC server.
   virtual void SetQuicServerInfo(QuicServerInfo* quic_server_info) = 0;
+#endif
 
   // Populates all of load timing, except for request start times and receive
   // headers time.
@@ -183,20 +198,24 @@ class NET_EXPORT_PRIVATE HttpTransaction {
   // Called when the priority of the parent job changes.
   virtual void SetPriority(RequestPriority priority) = 0;
 
+#ifdef ENABLE_WS
   // Set the WebSocketHandshakeStreamBase::CreateHelper to be used for the
   // request.  Only relevant to WebSocket transactions. Must be called before
   // Start(). Ownership of |create_helper| remains with the caller.
   virtual void SetWebSocketHandshakeStreamCreateHelper(
       WebSocketHandshakeStreamBase::CreateHelper* create_helper) = 0;
+#endif
 
   // Sets the callback to receive notification just before network use.
   virtual void SetBeforeNetworkStartCallback(
       const BeforeNetworkStartCallback& callback) = 0;
 
+#if defined(ENABLE_PROXY)
   // Sets the callback to receive notification just before request headers
   // are to be sent.
   virtual void SetBeforeHeadersSentCallback(
       const BeforeHeadersSentCallback& callback) = 0;
+#endif
 
   virtual void SetRequestHeadersCallback(RequestHeadersCallback callback) = 0;
   virtual void SetResponseHeadersCallback(ResponseHeadersCallback callback) = 0;

@@ -12,10 +12,17 @@
 #include "build/build_config.h"
 #include "net/base/completion_once_callback.h"
 #include "net/base/net_export.h"
+
+#if defined(ENABLE_QUIC)
 #include "net/dns/host_resolver.h"
+#endif
+
 #include "net/http/http_auth_handler.h"
 #include "net/http/http_auth_handler_factory.h"
 #include "net/http/http_negotiate_auth_system.h"
+
+
+#if !defined(__EMSCRIPTEN__) && defined(__TODO__)
 
 #if defined(OS_ANDROID)
 #include "net/android/http_auth_negotiate_android.h"
@@ -23,6 +30,8 @@
 #include "net/http/http_auth_sspi_win.h"
 #elif defined(OS_POSIX)
 #include "net/http/http_auth_gssapi_posix.h"
+#endif
+
 #endif
 
 namespace net {
@@ -38,7 +47,7 @@ class NET_EXPORT_PRIVATE HttpAuthHandlerNegotiate : public HttpAuthHandler {
  public:
 #if defined(OS_WIN)
   typedef SSPILibrary AuthLibrary;
-#elif defined(OS_POSIX) && !defined(OS_ANDROID)
+#elif defined(OS_POSIX) && !defined(OS_ANDROID) && defined(__TODO__)
   typedef GSSAPILibrary AuthLibrary;
 #endif
 
@@ -47,14 +56,14 @@ class NET_EXPORT_PRIVATE HttpAuthHandlerNegotiate : public HttpAuthHandler {
     explicit Factory(NegotiateAuthSystemFactory negotiate_auth_system_factory);
     ~Factory() override;
 
-#if !defined(OS_ANDROID)
+#if !defined(OS_ANDROID) && defined(__TODO__)
     // Sets the system library to use, thereby assuming ownership of
     // |auth_library|.
     void set_library(std::unique_ptr<AuthLibrary> auth_provider) {
       auth_library_ = std::move(auth_provider);
     }
 
-#if defined(OS_POSIX)
+#if defined(OS_POSIX) && defined(__TODO__)
     const std::string& GetLibraryNameForTesting() const;
 
     void set_allow_gssapi_library_load(bool allow_gssapi_library_load) {
@@ -74,7 +83,9 @@ class NET_EXPORT_PRIVATE HttpAuthHandlerNegotiate : public HttpAuthHandler {
                           CreateReason reason,
                           int digest_nonce_count,
                           const NetLogWithSource& net_log,
+#if defined(ENABLE_DNS)
                           HostResolver* host_resolver,
+#endif
                           std::unique_ptr<HttpAuthHandler>* handler) override;
 
    private:
@@ -83,7 +94,7 @@ class NET_EXPORT_PRIVATE HttpAuthHandlerNegotiate : public HttpAuthHandler {
     ULONG max_token_length_ = 0;
 #endif
     bool is_unsupported_ = false;
-#if !defined(OS_ANDROID)
+#if !defined(OS_ANDROID) && defined(__TODO__)
     std::unique_ptr<AuthLibrary> auth_library_;
 #if defined(OS_POSIX)
     bool allow_gssapi_library_load_ = true;
@@ -92,8 +103,12 @@ class NET_EXPORT_PRIVATE HttpAuthHandlerNegotiate : public HttpAuthHandler {
   };
 
   HttpAuthHandlerNegotiate(std::unique_ptr<HttpNegotiateAuthSystem> auth_system,
-                           const HttpAuthPreferences* prefs,
-                           HostResolver* host_resolver);
+                           const HttpAuthPreferences* prefs
+#if defined(ENABLE_DNS)
+                           ,
+                           HostResolver* host_resolver
+#endif
+                           );
 
   ~HttpAuthHandlerNegotiate() override;
 
@@ -137,10 +152,15 @@ class NET_EXPORT_PRIVATE HttpAuthHandlerNegotiate : public HttpAuthHandler {
   HttpAuth::DelegationType GetDelegationType() const;
 
   std::unique_ptr<HttpNegotiateAuthSystem> auth_system_;
-  HostResolver* const resolver_;
 
+#if defined(ENABLE_DNS)
+  HostResolver* const resolver_;
+#endif
+
+#if defined(ENABLE_QUIC)
   // Members which are needed for DNS lookup + SPN.
   std::unique_ptr<HostResolver::ResolveHostRequest> resolve_host_request_;
+#endif
 
   // Things which should be consistent after first call to GenerateAuthToken.
   bool already_called_;

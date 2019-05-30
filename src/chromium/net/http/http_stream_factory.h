@@ -30,11 +30,22 @@
 #include "net/http/http_stream_request.h"
 #include "net/log/net_log_source.h"
 #include "net/log/net_log_with_source.h"
+
+#if defined(ENABLE_PROXY)
 #include "net/proxy_resolution/proxy_info.h"
+#endif
+
 #include "net/socket/ssl_client_socket.h"
+
+#if defined(ENABLE_SPDY)
 #include "net/spdy/spdy_session_key.h"
+#endif
+
 #include "net/ssl/ssl_config.h"
+
+#if defined(ENABLE_WS)
 #include "net/websockets/websocket_handshake_stream_base.h"
+#endif
 
 namespace base {
 namespace trace_event {
@@ -88,7 +99,9 @@ class NET_EXPORT HttpStreamFactory {
       const SSLConfig& server_ssl_config,
       const SSLConfig& proxy_ssl_config,
       HttpStreamRequest::Delegate* delegate,
+#if defined(ENABLE_WS)
       WebSocketHandshakeStreamBase::CreateHelper* create_helper,
+#endif
       bool enable_ip_based_pooling,
       bool enable_alternative_services,
       const NetLogWithSource& net_log);
@@ -159,7 +172,9 @@ class NET_EXPORT HttpStreamFactory {
       const SSLConfig& server_ssl_config,
       const SSLConfig& proxy_ssl_config,
       HttpStreamRequest::Delegate* delegate,
+#if defined(ENABLE_WS)
       WebSocketHandshakeStreamBase::CreateHelper* create_helper,
+#endif
       HttpStreamRequest::StreamType stream_type,
       bool is_websocket,
       bool enable_ip_based_pooling,
@@ -182,16 +197,26 @@ class NET_EXPORT HttpStreamFactory {
   // that has privacy mode |privacy_mode| can be skipped by a job controlled by
   // |controller|.
   bool OnInitConnection(const JobController& controller,
+#if defined(ENABLE_PROXY)
                         const ProxyInfo& proxy_info,
+#endif
                         PrivacyMode privacy_mode);
 
   // Notifies |this| that a stream to the proxy server contained in |proxy_info|
   // with privacy mode |privacy_mode| is ready.
-  void OnStreamReady(const ProxyInfo& proxy_info, PrivacyMode privacy_mode);
+  void OnStreamReady(
+#if defined(ENABLE_PROXY)
+    const ProxyInfo& proxy_info,
+#endif
+    PrivacyMode privacy_mode);
 
   // Returns true if |proxy_info| contains a proxy server that supports request
   // priorities.
-  bool ProxyServerSupportsPriorities(const ProxyInfo& proxy_info) const;
+  bool ProxyServerSupportsPriorities(
+#if defined(ENABLE_PROXY)
+    const ProxyInfo& proxy_info
+#endif
+    ) const;
 
   HttpNetworkSession* const session_;
 

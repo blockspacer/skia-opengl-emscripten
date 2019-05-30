@@ -102,11 +102,15 @@ class NET_EXPORT HttpServerPropertiesManager : public HttpServerProperties {
   bool SetHttp2AlternativeService(const url::SchemeHostPort& origin,
                                   const AlternativeService& alternative_service,
                                   base::Time expiration) override;
+
+#if defined(ENABLE_QUIC)
   bool SetQuicAlternativeService(
       const url::SchemeHostPort& origin,
       const AlternativeService& alternative_service,
       base::Time expiration,
       const quic::ParsedQuicVersionVector& advertised_versions) override;
+#endif
+
   bool SetAlternativeServices(const url::SchemeHostPort& origin,
                               const AlternativeServiceInfoVector&
                                   alternative_service_info_vector) override;
@@ -134,11 +138,17 @@ class NET_EXPORT HttpServerPropertiesManager : public HttpServerProperties {
   const ServerNetworkStats* GetServerNetworkStats(
       const url::SchemeHostPort& server) override;
   const ServerNetworkStatsMap& server_network_stats_map() const override;
+
+
+#if defined(ENABLE_QUIC)
   bool SetQuicServerInfo(const quic::QuicServerId& server_id,
                          const std::string& server_info) override;
+
   const std::string* GetQuicServerInfo(
       const quic::QuicServerId& server_id) override;
   const QuicServerInfoMap& quic_server_info_map() const override;
+#endif
+
   size_t max_server_configs_stored_in_properties() const override;
   void SetMaxServerConfigsStoredInProperties(
       size_t max_server_configs_stored_in_properties) override;
@@ -239,8 +249,12 @@ class NET_EXPORT HttpServerPropertiesManager : public HttpServerProperties {
   bool AddToNetworkStatsMap(const url::SchemeHostPort& server,
                             const base::DictionaryValue& server_dict,
                             ServerNetworkStatsMap* network_stats_map);
+
+#if defined(ENABLE_QUIC)
   bool AddToQuicServerInfoMap(const base::DictionaryValue& server_dict,
                               QuicServerInfoMap* quic_server_info_map);
+#endif
+
   bool AddToBrokenAlternativeServices(
       const base::DictionaryValue& broken_alt_svc_entry_dict,
       BrokenAlternativeServiceList* broken_alternative_service_list,
@@ -255,9 +269,11 @@ class NET_EXPORT HttpServerPropertiesManager : public HttpServerProperties {
   void SaveNetworkStatsToServerPrefs(
       const ServerNetworkStats& server_network_stats,
       base::DictionaryValue* server_pref_dict);
+#if defined(ENABLE_QUIC)
   void SaveQuicServerInfoMapToServerPrefs(
       const QuicServerInfoMap& quic_server_info_map,
       base::DictionaryValue* http_server_properties_dict);
+#endif
   void SaveBrokenAlternativeServicesToPrefs(
       const BrokenAlternativeServiceList& broken_alternative_service_list,
       size_t max_broken_alternative_services,

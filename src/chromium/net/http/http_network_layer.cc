@@ -13,8 +13,10 @@
 #include "net/http/http_network_transaction.h"
 #include "net/http/http_server_properties_impl.h"
 #include "net/http/http_stream_factory_job.h"
+#if defined(ENABLE_QUIC)
 #include "net/spdy/spdy_session.h"
 #include "net/spdy/spdy_session_pool.h"
+#endif
 
 #if defined(ENABLE_QUIC)
 #include "net/third_party/quiche/src/spdy/core/spdy_framer.h"
@@ -48,7 +50,9 @@ int HttpNetworkLayer::CreateTransaction(
   if (suspended_)
     return ERR_NETWORK_IO_SUSPENDED;
 
+#if defined(ENABLE_QUIC)
   trans->reset(new HttpNetworkTransaction(priority, GetSession()));
+#endif
   return OK;
 }
 

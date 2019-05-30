@@ -10,7 +10,9 @@
 #include "base/strings/string_tokenizer.h"
 #include "base/strings/string_util.h"
 #include "net/base/net_errors.h"
+#if defined(ENABLE_DNS)
 #include "net/dns/host_resolver.h"
+#endif
 #include "net/http/http_auth_challenge_tokenizer.h"
 #include "net/http/http_auth_handler.h"
 #include "net/http/http_auth_handler_factory.h"
@@ -32,7 +34,9 @@ void HttpAuth::ChooseBestChallenge(
     const GURL& origin,
     const std::set<Scheme>& disabled_schemes,
     const NetLogWithSource& net_log,
-    HostResolver* host_resolver,
+#if defined(ENABLE_DNS)
+      HostResolver* host_resolver,
+#endif
     std::unique_ptr<HttpAuthHandler>* handler) {
   DCHECK(http_auth_handler_factory);
   DCHECK(handler->get() == nullptr);
@@ -42,6 +46,7 @@ void HttpAuth::ChooseBestChallenge(
   const std::string header_name = GetChallengeHeaderName(target);
   std::string cur_challenge;
   size_t iter = 0;
+#if defined(ENABLE_DNS)
   while (response_headers.EnumerateHeader(&iter, header_name, &cur_challenge)) {
     std::unique_ptr<HttpAuthHandler> cur;
     int rv = http_auth_handler_factory->CreateAuthHandlerFromString(
@@ -56,6 +61,7 @@ void HttpAuth::ChooseBestChallenge(
       best.swap(cur);
   }
   handler->swap(best);
+#endif
 }
 
 // static

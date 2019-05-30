@@ -12,7 +12,9 @@
 #include "base/stl_util.h"
 #include "base/sys_byteorder.h"
 #include "net/base/io_buffer.h"
+#ifdef ENABLE_DNS
 #include "net/dns/public/dns_query_type.h"
+#endif
 #include "net/log/net_log.h"
 #include "net/log/net_log_event_type.h"
 #include "net/traffic_annotation/network_traffic_annotation.h"
@@ -62,8 +64,10 @@ static_assert(sizeof(SOCKS4ServerResponse) == kReadHeaderSize,
 SOCKSClientSocket::SOCKSClientSocket(
     std::unique_ptr<StreamSocket> transport_socket,
     const HostPortPair& destination,
+#ifdef ENABLE_DNS
     RequestPriority priority,
     HostResolver* host_resolver,
+#endif
     const NetworkTrafficAnnotationTag& traffic_annotation)
     : transport_socket_(std::move(transport_socket)),
       next_state_(STATE_NONE),
@@ -71,9 +75,11 @@ SOCKSClientSocket::SOCKSClientSocket(
       bytes_sent_(0),
       bytes_received_(0),
       was_ever_used_(false),
+#ifdef ENABLE_DNS
       host_resolver_(host_resolver),
-      destination_(destination),
       priority_(priority),
+#endif
+      destination_(destination),
       net_log_(transport_socket_->NetLog()),
       traffic_annotation_(traffic_annotation) {}
 
@@ -105,7 +111,9 @@ int SOCKSClientSocket::Connect(CompletionOnceCallback callback) {
 
 void SOCKSClientSocket::Disconnect() {
   completed_handshake_ = false;
+#ifdef ENABLE_DNS
   resolve_host_request_.reset();
+#endif
   transport_socket_->Disconnect();
 
   // Reset other states to make sure they aren't mistakenly used later.
@@ -300,6 +308,7 @@ int SOCKSClientSocket::DoLoop(int last_io_result) {
 
 int SOCKSClientSocket::DoResolveHost() {
   next_state_ = STATE_RESOLVE_HOST_COMPLETE;
+#ifdef ENABLE_DNS
   // SOCKS4 only supports IPv4 addresses, so only try getting the IPv4
   // addresses for the target host.
   HostResolver::ResolveHostParameters parameters;
@@ -310,6 +319,9 @@ int SOCKSClientSocket::DoResolveHost() {
 
   return resolve_host_request_->Start(
       base::BindOnce(&SOCKSClientSocket::OnIOComplete, base::Unretained(this)));
+#else
+  return 0;
+#endif
 }
 
 int SOCKSClientSocket::DoResolveHostComplete(int result) {
@@ -331,6 +343,7 @@ const std::string SOCKSClientSocket::BuildHandshakeWriteBuffer() const {
   request.command = kSOCKSStreamRequest;
   request.nw_port = base::HostToNet16(destination_.port());
 
+#ifdef ENABLE_DNS
   DCHECK(resolve_host_request_->GetAddressResults() &&
          !resolve_host_request_->GetAddressResults().value().empty());
   const IPEndPoint& endpoint =
@@ -347,6 +360,7 @@ const std::string SOCKSClientSocket::BuildHandshakeWriteBuffer() const {
          endpoint.address().size());
 
   DVLOG(1) << "Resolved Host is : " << endpoint.ToStringWithoutPort();
+#endif
 
   std::string handshake_data(reinterpret_cast<char*>(&request),
                              sizeof(request));

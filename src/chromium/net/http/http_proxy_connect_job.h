@@ -16,7 +16,9 @@
 #include "net/base/net_export.h"
 #include "net/base/request_priority.h"
 #include "net/http/http_auth.h"
+#if defined(ENABLE_QUIC)
 #include "net/quic/quic_chromium_client_session.h"
+#endif
 #include "net/socket/connect_job.h"
 #include "net/socket/ssl_client_socket.h"
 #include "net/ssl/ssl_cert_request_info.h"
@@ -26,13 +28,21 @@ namespace net {
 
 class HttpAuthController;
 class HttpResponseInfo;
+
+#if defined(ENABLE_NQE)
 class NetworkQualityEstimator;
+#endif
+
 class SocketTag;
 class ProxyClientSocket;
+#if defined(ENABLE_SPDY)
 class SpdyStreamRequest;
+#endif
 class SSLSocketParams;
 class TransportSocketParams;
+#if defined(ENABLE_QUIC)
 class QuicStreamRequest;
+#endif
 
 // HttpProxySocketParams only needs the socket params for one of the proxy
 // types.  The other param must be NULL.  When using an HTTP proxy,
@@ -119,8 +129,12 @@ class NET_EXPORT_PRIVATE HttpProxyConnectJob : public ConnectJob,
   // with the specified parameters, given current network conditions. Otherwise,
   // returns base::TimeDelta().
   static base::TimeDelta AlternateNestedConnectionTimeout(
-      const HttpProxySocketParams& params,
-      const NetworkQualityEstimator* network_quality_estimator);
+      const HttpProxySocketParams& params
+#if defined(ENABLE_NQE)
+      ,
+      const NetworkQualityEstimator* network_quality_estimator
+#endif
+      );
 
   // Returns the timeout for establishing a tunnel after a connection has been
   // established.
@@ -157,7 +171,9 @@ class NET_EXPORT_PRIVATE HttpProxyConnectJob : public ConnectJob,
   // a standard net error code will be returned.
   int ConnectInternal() override;
 
+#if defined(ENABLE_QUIC)
   ProxyServer::Scheme GetProxyServerScheme() const;
+#endif
 
   void OnIOComplete(int result);
 
@@ -218,15 +234,19 @@ class NET_EXPORT_PRIVATE HttpProxyConnectJob : public ConnectJob,
   std::unique_ptr<ConnectJob> nested_connect_job_;
   std::unique_ptr<ProxyClientSocket> transport_socket_;
 
+#if defined(ENABLE_QUIC)
   std::unique_ptr<SpdyStreamRequest> spdy_stream_request_;
 
   std::unique_ptr<QuicStreamRequest> quic_stream_request_;
+
   std::unique_ptr<QuicChromiumClientSession::Handle> quic_session_;
+#endif
 
   scoped_refptr<HttpAuthController> http_auth_controller_;
 
+#if defined(ENABLE_QUIC)
   NetErrorDetails quic_net_error_details_;
-
+#endif
   // Time when the connection to the proxy was started.
   base::TimeTicks connect_start_time_;
 

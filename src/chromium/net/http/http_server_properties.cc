@@ -85,10 +85,17 @@ AlternativeServiceInfo::CreateHttp2AlternativeServiceInfo(
     const AlternativeService& alternative_service,
     base::Time expiration) {
   DCHECK_EQ(alternative_service.protocol, kProtoHTTP2);
-  return AlternativeServiceInfo(alternative_service, expiration,
-                                quic::ParsedQuicVersionVector());
+  return AlternativeServiceInfo(alternative_service, expiration
+
+
+#if defined(ENABLE_QUIC)
+,
+                                quic::ParsedQuicVersionVector()
+#endif
+                                );
 }
 
+#if defined(ENABLE_QUIC)
 // static
 AlternativeServiceInfo AlternativeServiceInfo::CreateQuicAlternativeServiceInfo(
     const AlternativeService& alternative_service,
@@ -98,6 +105,7 @@ AlternativeServiceInfo AlternativeServiceInfo::CreateQuicAlternativeServiceInfo(
   return AlternativeServiceInfo(alternative_service, expiration,
                                 advertised_versions);
 }
+#endif
 
 AlternativeServiceInfo::AlternativeServiceInfo() : alternative_service_() {}
 
@@ -105,14 +113,19 @@ AlternativeServiceInfo::~AlternativeServiceInfo() = default;
 
 AlternativeServiceInfo::AlternativeServiceInfo(
     const AlternativeService& alternative_service,
-    base::Time expiration,
-    const quic::ParsedQuicVersionVector& advertised_versions)
-    : alternative_service_(alternative_service), expiration_(expiration) {
+    base::Time expiration
+#if defined(ENABLE_QUIC)
+   , const quic::ParsedQuicVersionVector& advertised_versions
+#endif
+    ) : alternative_service_(alternative_service), expiration_(expiration) {
+
+#if defined(ENABLE_QUIC)
   if (alternative_service_.protocol == kProtoQUIC) {
     advertised_versions_ = advertised_versions;
     std::sort(advertised_versions_.begin(), advertised_versions_.end(),
               TransportVersionLessThan);
   }
+#endif
 }
 
 AlternativeServiceInfo::AlternativeServiceInfo(
@@ -135,12 +148,14 @@ std::string AlternativeServiceInfo::ToString() const {
       exploded.day_of_month, exploded.hour, exploded.minute, exploded.second);
 }
 
+#if defined(ENABLE_QUIC)
 // static
 bool AlternativeServiceInfo::TransportVersionLessThan(
     const quic::ParsedQuicVersion& lhs,
     const quic::ParsedQuicVersion& rhs) {
   return lhs.transport_version < rhs.transport_version;
 }
+#endif
 
 std::ostream& operator<<(std::ostream& os,
                          const AlternativeService& alternative_service) {

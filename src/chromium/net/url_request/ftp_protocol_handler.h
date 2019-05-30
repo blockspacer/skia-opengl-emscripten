@@ -16,7 +16,9 @@ namespace net {
 
 class FtpAuthCache;
 class FtpTransactionFactory;
+#if defined(ENABLE_DNS)
 class HostResolver;
+#endif
 class NetworkDelegate;
 class URLRequestJob;
 
@@ -29,7 +31,10 @@ class NET_EXPORT FtpProtocolHandler :
   // Creates an FtpProtocolHandler using an FtpTransactionFactoryImpl and the
   // specified HostResolver.
   static std::unique_ptr<FtpProtocolHandler> Create(
-      HostResolver* host_resolver);
+#if defined(ENABLE_DNS)
+      HostResolver* host_resolver
+#endif
+      );
 
   // Creates an FtpProtocolHandler using the specified FtpTransactionFactory, to
   // allow a mock to be used for testing.

@@ -163,9 +163,15 @@ int SOCKSConnectJob::DoSOCKSConnect() {
                                          socks_params_->destination(),
                                          socks_params_->traffic_annotation()));
   } else {
+#if defined (__TODO__)
     socket_.reset(new SOCKSClientSocket(
         transport_connect_job_->PassSocket(), socks_params_->destination(),
-        priority(), host_resolver(), socks_params_->traffic_annotation()));
+        priority(),
+#if defined(ENABLE_DNS)
+        host_resolver(),
+#endif
+        socks_params_->traffic_annotation()));
+#endif
   }
   transport_connect_job_.reset();
   return socket_->Connect(

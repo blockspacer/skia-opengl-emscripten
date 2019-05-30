@@ -20,7 +20,10 @@ namespace net {
 class HttpAuthHandler;
 class HttpAuthHandlerFactory;
 class HttpResponseHeaders;
+
+#if defined(ENABLE_DNS)
 class HostResolver;
+#endif
 class NetLogWithSource;
 class SSLInfo;
 
@@ -160,7 +163,10 @@ class NET_EXPORT_PRIVATE HttpAuth {
       const GURL& origin,
       const std::set<Scheme>& disabled_schemes,
       const NetLogWithSource& net_log,
+
+#if defined(ENABLE_DNS)
       HostResolver* host_resolver,
+#endif
       std::unique_ptr<HttpAuthHandler>* handler);
 
   // Handle a 401/407 response from a server/proxy after a previous

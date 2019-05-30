@@ -20,6 +20,7 @@
 #include "net/spdy/spdy_session.h"
 #include "net/spdy/spdy_session_pool.h"
 #endif
+#include "base/values.h"
 
 namespace net {
 
@@ -172,7 +173,6 @@ std::unique_ptr<ConnectJob> ClientSocketPool::CreateConnectJob(
                        SpdySessionKey::IsProxySession::kTrue, socket_tag),
         is_for_websockets);
   }
-#endif
 
   return ConnectJob::CreateConnectJob(
       using_ssl, group_id.destination(), proxy_server, proxy_annotation_tag,
@@ -180,6 +180,9 @@ std::unique_ptr<ConnectJob> ClientSocketPool::CreateConnectJob(
       socket_params->ssl_config_for_proxy(), is_for_websockets,
       group_id.privacy_mode(), resolution_callback, request_priority,
       socket_tag, common_connect_job_params, delegate);
+#else
+  return nullptr;
+#endif
 }
 
 }  // namespace net

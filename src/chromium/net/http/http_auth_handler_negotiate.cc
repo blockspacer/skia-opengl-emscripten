@@ -18,7 +18,9 @@
 #include "net/base/host_port_pair.h"
 #include "net/base/net_errors.h"
 #include "net/cert/x509_util.h"
+#if defined(ENABLE_QUIC)
 #include "net/dns/host_resolver.h"
+#endif
 #include "net/http/http_auth_filter.h"
 #include "net/http/http_auth_preferences.h"
 #include "net/log/net_log_capture_mode.h"
@@ -32,6 +34,7 @@ using DelegationType = HttpAuth::DelegationType;
 
 namespace {
 
+#if defined(ENABLE_QUIC)
 base::Value NetLogParameterChannelBindings(
     const std::string& channel_binding_token,
     NetLogCaptureMode capture_mode) {
@@ -44,11 +47,12 @@ base::Value NetLogParameterChannelBindings(
                                           channel_binding_token.size()));
   return std::move(dict);
 }
+#endif
 
 // Uses |negotiate_auth_system_factory| to create the auth system, otherwise
 // creates the default auth system for each platform.
 std::unique_ptr<HttpNegotiateAuthSystem> CreateAuthSystem(
-#if !defined(OS_ANDROID)
+#if !defined(OS_ANDROID) && defined(__TODO__)
     HttpAuthHandlerNegotiate::AuthLibrary* auth_library,
 #endif
 #if defined(OS_WIN)
@@ -64,10 +68,12 @@ std::unique_ptr<HttpNegotiateAuthSystem> CreateAuthSystem(
 #elif defined(OS_WIN)
   return std::make_unique<HttpAuthSSPI>(auth_library, "Negotiate", NEGOSSP_NAME,
                                         max_token_length);
-#elif defined(OS_POSIX)
+#elif defined(OS_POSIX) && defined(__TODO__)
   return std::make_unique<HttpAuthGSSAPI>(auth_library, "Negotiate",
                                           CHROME_GSS_SPNEGO_MECH_OID_DESC);
 #endif
+
+  return nullptr;
 }
 
 }  // namespace
@@ -78,7 +84,7 @@ HttpAuthHandlerNegotiate::Factory::Factory(
 
 HttpAuthHandlerNegotiate::Factory::~Factory() = default;
 
-#if !defined(OS_ANDROID) && defined(OS_POSIX)
+#if !defined(OS_ANDROID) && defined(OS_POSIX) && defined(__TODO__)
 const std::string& HttpAuthHandlerNegotiate::Factory::GetLibraryNameForTesting()
     const {
   return auth_library_->GetLibraryNameForTesting();
@@ -93,8 +99,13 @@ int HttpAuthHandlerNegotiate::Factory::CreateAuthHandler(
     CreateReason reason,
     int digest_nonce_count,
     const NetLogWithSource& net_log,
+#if defined(ENABLE_DNS)
     HostResolver* host_resolver,
+#endif
     std::unique_ptr<HttpAuthHandler>* handler) {
+
+#if defined(ENABLE_QUIC)
+
 #if defined(OS_WIN)
   if (is_unsupported_ || reason == CREATE_PREEMPTIVE)
     return ERR_UNSUPPORTED_AUTH_SCHEME;
@@ -141,14 +152,24 @@ int HttpAuthHandlerNegotiate::Factory::CreateAuthHandler(
     return ERR_INVALID_RESPONSE;
   handler->swap(tmp_handler);
   return OK;
+
+#else
+  return 0;
+#endif
 }
 
 HttpAuthHandlerNegotiate::HttpAuthHandlerNegotiate(
     std::unique_ptr<HttpNegotiateAuthSystem> auth_system,
-    const HttpAuthPreferences* prefs,
-    HostResolver* resolver)
+    const HttpAuthPreferences* prefs
+#if defined(ENABLE_DNS)
+    , HostResolver* resolver
+#endif
+    )
     : auth_system_(std::move(auth_system)),
+
+#if defined(ENABLE_DNS)
       resolver_(resolver),
+#endif
       already_called_(false),
       has_credentials_(false),
       auth_token_(nullptr),
@@ -205,6 +226,7 @@ bool HttpAuthHandlerNegotiate::Init(HttpAuthChallengeTokenizer* challenge,
   if (auth_result != HttpAuth::AUTHORIZATION_RESULT_ACCEPT)
     return false;
 
+#if defined(ENABLE_QUIC)
   // Try to extract channel bindings.
   if (ssl_info.is_valid())
     x509_util::GetTLSServerEndPointChannelBinding(*ssl_info.cert,
@@ -213,6 +235,7 @@ bool HttpAuthHandlerNegotiate::Init(HttpAuthChallengeTokenizer* challenge,
     net_log().AddEvent(
         NetLogEventType::AUTH_CHANNEL_BINDINGS,
         base::Bind(&NetLogParameterChannelBindings, channel_bindings_));
+#endif
   return true;
 }
 
@@ -335,11 +358,15 @@ int HttpAuthHandlerNegotiate::DoLoop(int result) {
 
 int HttpAuthHandlerNegotiate::DoResolveCanonicalName() {
   next_state_ = STATE_RESOLVE_CANONICAL_NAME_COMPLETE;
+
+#if defined(ENABLE_DNS)
   if ((http_auth_preferences_ &&
        http_auth_preferences_->NegotiateDisableCnameLookup()) ||
       !resolver_)
     return OK;
+#endif
 
+#if defined(ENABLE_QUIC)
   // TODO(cbentzel): Add reverse DNS lookup for numeric addresses.
   HostResolver::ResolveHostParameters parameters;
   parameters.include_canonical_name = true;
@@ -347,11 +374,16 @@ int HttpAuthHandlerNegotiate::DoResolveCanonicalName() {
       HostPortPair(origin_.host(), 0), net_log(), parameters);
   return resolve_host_request_->Start(base::BindOnce(
       &HttpAuthHandlerNegotiate::OnIOComplete, base::Unretained(this)));
+#else
+  return 0;
+#endif
 }
 
 int HttpAuthHandlerNegotiate::DoResolveCanonicalNameComplete(int rv) {
   DCHECK_NE(ERR_IO_PENDING, rv);
   std::string server = origin_.host();
+
+#if defined(ENABLE_QUIC)
   if (resolve_host_request_) {
     if (rv == OK) {
       DCHECK(resolve_host_request_->GetAddressResults());
@@ -372,6 +404,9 @@ int HttpAuthHandlerNegotiate::DoResolveCanonicalNameComplete(int rv) {
   spn_ = CreateSPN(server, origin_);
   resolve_host_request_ = nullptr;
   return rv;
+#else
+  return 0;
+#endif
 }
 
 int HttpAuthHandlerNegotiate::DoGenerateAuthToken() {

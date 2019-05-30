@@ -29,7 +29,9 @@ namespace net {
 class ClientSocketHandle;
 class HostPortPair;
 class NetLogWithSource;
+#if defined(ENABLE_PROXY)
 class ProxyInfo;
+#endif
 class ProxyServer;
 
 struct SSLConfig;
@@ -102,7 +104,9 @@ int InitSocketHandleForHttpRequest(
     int request_load_flags,
     RequestPriority request_priority,
     HttpNetworkSession* session,
+#if defined(ENABLE_PROXY)
     const ProxyInfo& proxy_info,
+#endif
     const SSLConfig& ssl_config_for_origin,
     const SSLConfig& ssl_config_for_proxy,
     PrivacyMode privacy_mode,
@@ -127,7 +131,9 @@ int InitSocketHandleForWebSocketRequest(
     int request_load_flags,
     RequestPriority request_priority,
     HttpNetworkSession* session,
+#if defined(ENABLE_PROXY)
     const ProxyInfo& proxy_info,
+#endif
     const SSLConfig& ssl_config_for_origin,
     const SSLConfig& ssl_config_for_proxy,
     PrivacyMode privacy_mode,
@@ -144,7 +150,9 @@ int PreconnectSocketsForHttpRequest(
     int request_load_flags,
     RequestPriority request_priority,
     HttpNetworkSession* session,
+#if defined(ENABLE_PROXY)
     const ProxyInfo& proxy_info,
+#endif
     const SSLConfig& ssl_config_for_origin,
     const SSLConfig& ssl_config_for_proxy,
     PrivacyMode privacy_mode,

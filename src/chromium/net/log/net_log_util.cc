@@ -21,8 +21,10 @@
 #include "net/base/load_states.h"
 #include "net/base/net_errors.h"
 #include "net/disk_cache/disk_cache.h"
+#if defined(ENABLE_DNS)
 #include "net/dns/host_cache.h"
 #include "net/dns/host_resolver.h"
+#endif
 #include "net/http/http_cache.h"
 #include "net/http/http_network_session.h"
 #include "net/http/http_server_properties.h"
@@ -33,12 +35,18 @@
 #include "net/log/net_log_event_type.h"
 #include "net/log/net_log_parameters_callback.h"
 #include "net/log/net_log_with_source.h"
+#if defined(ENABLE_DNS)
 #include "net/proxy_resolution/proxy_config.h"
 #include "net/proxy_resolution/proxy_resolution_service.h"
 #include "net/proxy_resolution/proxy_retry_info.h"
+#endif
 #include "net/socket/ssl_client_socket.h"
+
+#if defined(ENABLE_DNS)
 #include "net/third_party/quiche/src/quic/core/quic_error_codes.h"
 #include "net/third_party/quiche/src/quic/core/quic_packets.h"
+#endif
+
 #include "net/url_request/url_request.h"
 #include "net/url_request/url_request_context.h"
 
@@ -206,11 +214,13 @@ std::unique_ptr<base::DictionaryValue> GetNetConstants() {
   {
     std::unique_ptr<base::DictionaryValue> dict(new base::DictionaryValue());
 
+#if defined(ENABLE_DNS)
     for (quic::QuicErrorCode error = quic::QUIC_NO_ERROR;
          error < quic::QUIC_LAST_ERROR;
          error = static_cast<quic::QuicErrorCode>(error + 1)) {
       dict->SetInteger(QuicErrorCodeToString(error), static_cast<int>(error));
     }
+#endif
 
     constants_dict->Set("quicError", std::move(dict));
   }
@@ -220,13 +230,14 @@ std::unique_ptr<base::DictionaryValue> GetNetConstants() {
   {
     std::unique_ptr<base::DictionaryValue> dict(new base::DictionaryValue());
 
+#if defined(ENABLE_DNS)
     for (quic::QuicRstStreamErrorCode error = quic::QUIC_STREAM_NO_ERROR;
          error < quic::QUIC_STREAM_LAST_ERROR;
          error = static_cast<quic::QuicRstStreamErrorCode>(error + 1)) {
       dict->SetInteger(QuicRstStreamErrorCodeToString(error),
                        static_cast<int>(error));
     }
-
+#endif
     constants_dict->Set("quicRstStreamError", std::move(dict));
   }
 
@@ -316,6 +327,7 @@ NET_EXPORT std::unique_ptr<base::DictionaryValue> GetNetInfo(
   std::unique_ptr<base::DictionaryValue> net_info_dict(
       new base::DictionaryValue());
 
+#if defined(ENABLE_DNS)
   // TODO(mmenke):  The code for most of these sources should probably be moved
   // into the sources themselves.
   if (info_sources & NET_INFO_PROXY_SETTINGS) {
@@ -383,7 +395,7 @@ NET_EXPORT std::unique_ptr<base::DictionaryValue> GetNetInfo(
                          std::move(dict));
     }
   }
-
+#endif
   HttpNetworkSession* http_network_session =
       context->http_transaction_factory()->GetSession();
 
@@ -427,11 +439,12 @@ NET_EXPORT std::unique_ptr<base::DictionaryValue> GetNetInfo(
         http_server_properties.GetAlternativeServiceInfoAsValue());
   }
 
+#if defined(ENABLE_DNS)
   if (info_sources & NET_INFO_QUIC) {
     net_info_dict->Set(NetInfoSourceToString(NET_INFO_QUIC),
                        http_network_session->QuicInfoToValue());
   }
-
+#endif
   if (info_sources & NET_INFO_HTTP_CACHE) {
     auto info_dict = std::make_unique<base::DictionaryValue>();
     auto stats_dict = std::make_unique<base::DictionaryValue>();

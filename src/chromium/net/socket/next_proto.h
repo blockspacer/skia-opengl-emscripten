@@ -18,7 +18,10 @@ enum NextProto {
   kProtoUnknown = 0,
   kProtoHTTP11 = 1,
   kProtoHTTP2 = 2,
+
+//#if defined(ENABLE_QUIC)
   kProtoQUIC = 3,
+//#endif
   kProtoLast = kProtoQUIC
 };
 

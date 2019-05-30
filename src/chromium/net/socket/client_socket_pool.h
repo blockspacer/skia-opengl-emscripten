@@ -17,7 +17,13 @@
 #include "net/base/net_export.h"
 #include "net/base/privacy_mode.h"
 #include "net/base/request_priority.h"
+
+#if defined(ENABLE_DNS)
 #include "net/dns/host_resolver.h"
+#endif
+
+#include "net/base/host_port_pair.h"
+
 #include "net/http/http_request_info.h"
 #include "net/log/net_log_capture_mode.h"
 #include "net/socket/connect_job.h"

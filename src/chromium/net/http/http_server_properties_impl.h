@@ -62,10 +62,12 @@ class NET_EXPORT HttpServerPropertiesImpl
   void SetServerNetworkStats(
       std::unique_ptr<ServerNetworkStatsMap> server_network_stats_map);
 
+#if defined(ENABLE_QUIC)
   void SetQuicServerInfoMap(
       std::unique_ptr<QuicServerInfoMap> quic_server_info_map);
-
   const SpdyServersMap& spdy_servers_map() const;
+#endif
+
 
   void SetBrokenAndRecentlyBrokenAlternativeServices(
       std::unique_ptr<BrokenAlternativeServiceList>
@@ -104,11 +106,15 @@ class NET_EXPORT HttpServerPropertiesImpl
   bool SetHttp2AlternativeService(const url::SchemeHostPort& origin,
                                   const AlternativeService& alternative_service,
                                   base::Time expiration) override;
+
+#if defined(ENABLE_QUIC)
   bool SetQuicAlternativeService(
       const url::SchemeHostPort& origin,
       const AlternativeService& alternative_service,
       base::Time expiration,
       const quic::ParsedQuicVersionVector& advertised_versions) override;
+#endif
+
   bool SetAlternativeServices(const url::SchemeHostPort& origin,
                               const AlternativeServiceInfoVector&
                                   alternative_service_info_vector) override;
@@ -136,11 +142,15 @@ class NET_EXPORT HttpServerPropertiesImpl
   const ServerNetworkStats* GetServerNetworkStats(
       const url::SchemeHostPort& server) override;
   const ServerNetworkStatsMap& server_network_stats_map() const override;
+
+#if defined(ENABLE_QUIC)
   bool SetQuicServerInfo(const quic::QuicServerId& server_id,
                          const std::string& server_info) override;
   const std::string* GetQuicServerInfo(
       const quic::QuicServerId& server_id) override;
   const QuicServerInfoMap& quic_server_info_map() const override;
+#endif
+
   size_t max_server_configs_stored_in_properties() const override;
   void SetMaxServerConfigsStoredInProperties(
       size_t max_server_configs_stored_in_properties) override;
@@ -157,8 +167,12 @@ class NET_EXPORT HttpServerPropertiesImpl
 
   typedef base::flat_map<url::SchemeHostPort, url::SchemeHostPort>
       CanonicalAltSvcMap;
+
+#if defined(ENABLE_QUIC)
   typedef base::flat_map<HostPortPair, quic::QuicServerId>
       CanonicalServerInfoMap;
+#endif
+
   typedef std::vector<std::string> CanonicalSufficList;
   typedef std::set<HostPortPair> Http11ServerHostPortSet;
 
@@ -170,20 +184,24 @@ class NET_EXPORT HttpServerPropertiesImpl
   CanonicalAltSvcMap::const_iterator GetCanonicalAltSvcHost(
       const url::SchemeHostPort& server) const;
 
+#if defined(ENABLE_QUIC)
   // Return the canonical host with the same canonical suffix as |server|.
   // The returned canonical host can be used to search for server info in
   // |quic_server_info_map_|. Return 'end' the host doesn't exist.
   CanonicalServerInfoMap::const_iterator GetCanonicalServerInfoHost(
       const quic::QuicServerId& server) const;
+#endif
 
   // Remove the canonical alt-svc host for |server|.
   void RemoveAltSvcCanonicalHost(const url::SchemeHostPort& server);
 
+#if defined(ENABLE_QUIC)
   // Update |canonical_server_info_map_| with the new canonical host.
   // The |server| should have the corresponding server info associated with it
   // in |quic_server_info_map_|. If |canonical_server_info_map_| doesn't
   // have an entry associated with |server|, the method will add one.
   void UpdateCanonicalServerInfoMap(const quic::QuicServerId& server);
+#endif
 
   const base::TickClock* tick_clock_;  // Unowned
   base::Clock* clock_;                 // Unowned
@@ -206,6 +224,7 @@ class NET_EXPORT HttpServerPropertiesImpl
   // ".googlevideo.com", ".googleusercontent.com") of canonical hostnames.
   CanonicalSufficList canonical_suffixes_;
 
+#if defined(ENABLE_QUIC)
   QuicServerInfoMap quic_server_info_map_;
 
   // Maps canonical suffixes to host names that have the same canonical suffix
@@ -216,6 +235,7 @@ class NET_EXPORT HttpServerPropertiesImpl
   // derived data that can be recalculated by traversing
   // |quic_server_info_map_|.
   CanonicalServerInfoMap canonical_server_info_map_;
+#endif
 
   size_t max_server_configs_stored_in_properties_;
 

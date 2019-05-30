@@ -168,12 +168,14 @@ void HttpBasicStream::Drain(HttpNetworkSession* session) {
   // |drainer| will delete itself.
 }
 
+#ifdef ENABLE_QUIC
 void HttpBasicStream::PopulateNetErrorDetails(NetErrorDetails* details) {
   // TODO(mmenke):  Consumers don't actually care about HTTP version, but seems
   // like the right version should be reported, if headers were received.
   details->connection_info = HttpResponseInfo::CONNECTION_INFO_HTTP1_1;
   return;
 }
+#endif
 
 void HttpBasicStream::SetPriority(RequestPriority priority) {
   // TODO(akalin): Plumb this through to |connection_|.

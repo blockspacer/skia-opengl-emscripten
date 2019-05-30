@@ -31,11 +31,12 @@ ClientSocketPoolManagerImpl::ClientSocketPoolManagerImpl(
       websocket_common_connect_job_params_(websocket_common_connect_job_params),
       ssl_config_service_(ssl_config_service),
       pool_type_(pool_type) {
+#if defined(ENABLE_WS)
   // |websocket_endpoint_lock_manager| must only be set for websocket
   // connections.
   DCHECK(!common_connect_job_params_.websocket_endpoint_lock_manager);
   DCHECK(websocket_common_connect_job_params.websocket_endpoint_lock_manager);
-
+#endif
   CertDatabase::GetInstance()->AddObserver(this);
 }
 

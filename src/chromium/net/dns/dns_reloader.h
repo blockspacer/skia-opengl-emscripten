@@ -7,7 +7,7 @@
 
 #include "build/build_config.h"
 
-#if defined(OS_POSIX) && !defined(OS_MACOSX) && !defined(OS_OPENBSD)
+#if defined(OS_POSIX) && !defined(OS_MACOSX) && !defined(OS_OPENBSD) && !defined(OS_EMSCRIPTEN)
 namespace net {
 
 // Call on the network thread before calling DnsReloaderMaybeReload() anywhere.

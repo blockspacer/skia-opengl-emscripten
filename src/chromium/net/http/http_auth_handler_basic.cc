@@ -11,7 +11,9 @@
 #include "base/strings/utf_string_conversions.h"
 #include "net/base/net_errors.h"
 #include "net/base/net_string_util.h"
+#if defined(ENABLE_QUIC)
 #include "net/dns/host_resolver.h"
+#endif
 #include "net/http/http_auth.h"
 #include "net/http/http_auth_challenge_tokenizer.h"
 #include "net/http/http_auth_scheme.h"
@@ -117,7 +119,9 @@ int HttpAuthHandlerBasic::Factory::CreateAuthHandler(
     CreateReason reason,
     int digest_nonce_count,
     const NetLogWithSource& net_log,
+#if defined(ENABLE_DNS)
     HostResolver* host_resolver,
+#endif
     std::unique_ptr<HttpAuthHandler>* handler) {
   // TODO(cbentzel): Move towards model of parsing in the factory
   //                 method and only constructing when valid.

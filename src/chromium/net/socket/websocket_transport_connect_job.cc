@@ -43,7 +43,9 @@ WebSocketTransportConnectJob::WebSocketTransportConnectJob(
       had_ipv4_(false),
       had_ipv6_(false),
       weak_ptr_factory_(this) {
+#if defined(ENABLE_WS)
   DCHECK(common_connect_job_params->websocket_endpoint_lock_manager);
+#endif
 }
 
 WebSocketTransportConnectJob::~WebSocketTransportConnectJob() = default;
@@ -108,6 +110,7 @@ int WebSocketTransportConnectJob::DoResolveHost() {
   next_state_ = STATE_RESOLVE_HOST_COMPLETE;
   connect_timing_.dns_start = base::TimeTicks::Now();
 
+#if defined(ENABLE_DNS)
   HostResolver::ResolveHostParameters parameters;
   parameters.initial_priority = priority();
   request_ = host_resolver()->CreateRequest(params_->destination(), net_log(),
@@ -115,9 +118,14 @@ int WebSocketTransportConnectJob::DoResolveHost() {
 
   return request_->Start(base::BindOnce(
       &WebSocketTransportConnectJob::OnIOComplete, base::Unretained(this)));
+#else
+  return 0;
+#endif
 }
 
 int WebSocketTransportConnectJob::DoResolveHostComplete(int result) {
+
+#if defined(ENABLE_WS)
   TRACE_EVENT0(NetTracingCategory(),
                "WebSocketTransportConnectJob::DoResolveHostComplete");
   connect_timing_.dns_end = base::TimeTicks::Now();
@@ -146,9 +154,14 @@ int WebSocketTransportConnectJob::DoResolveHostComplete(int result) {
   }
 
   return result;
+#else
+  return 0;
+#endif
 }
 
 int WebSocketTransportConnectJob::DoTransportConnect() {
+
+#if defined(ENABLE_WS)
   DCHECK(request_->GetAddressResults());
 
   AddressList ipv4_addresses;
@@ -221,6 +234,9 @@ int WebSocketTransportConnectJob::DoTransportConnect() {
   }
 
   return result;
+#else
+  return 0;
+#endif
 }
 
 int WebSocketTransportConnectJob::DoTransportConnectComplete(int result) {

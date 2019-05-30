@@ -15,7 +15,9 @@
 #include "base/time/time.h"
 #include "base/timer/timer.h"
 #include "net/base/net_export.h"
+#if defined(ENABLE_DNS)
 #include "net/dns/host_resolver.h"
+#endif
 #include "net/log/net_log_with_source.h"
 #include "net/socket/transport_connect_job.h"
 
@@ -89,8 +91,9 @@ class NET_EXPORT_PRIVATE WebSocketTransportConnectJob : public ConnectJob {
   void ChangePriorityInternal(RequestPriority priority) override;
 
   scoped_refptr<TransportSocketParams> params_;
+#if defined(ENABLE_QUIC)
   std::unique_ptr<HostResolver::ResolveHostRequest> request_;
-
+#endif
   State next_state_;
 
   // The addresses are divided into IPv4 and IPv6, which are performed partially

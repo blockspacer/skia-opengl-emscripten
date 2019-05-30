@@ -14,7 +14,9 @@
 #include "net/base/features.h"
 #include "net/base/load_flags.h"
 #include "net/http/http_stream_factory.h"
+#if defined(ENABLE_PROXY)
 #include "net/proxy_resolution/proxy_info.h"
+#endif
 #include "net/socket/client_socket_handle.h"
 #include "net/socket/client_socket_pool.h"
 #include "net/socket/connect_job.h"
@@ -66,7 +68,9 @@ static_assert(base::size(g_max_sockets_per_proxy_server) ==
 ClientSocketPool::GroupId CreateGroupId(
     ClientSocketPoolManager::SocketGroupType group_type,
     const HostPortPair& endpoint,
+#if defined(ENABLE_PROXY)
     const ProxyInfo& proxy_info,
+#endif
     PrivacyMode privacy_mode) {
   // Build the string used to uniquely identify connections of this type.
   // Determine the host and port to connect to.
@@ -105,7 +109,9 @@ int InitSocketPoolHelper(
     int request_load_flags,
     RequestPriority request_priority,
     HttpNetworkSession* session,
+#if defined(ENABLE_PROXY)
     const ProxyInfo& proxy_info,
+#endif
     const SSLConfig& ssl_config_for_origin,
     const SSLConfig& ssl_config_for_proxy,
     bool is_for_websockets,
@@ -126,6 +132,7 @@ int InitSocketPoolHelper(
     origin_host_port.set_port(session->params().testing_fixed_https_port);
   }
 
+#if defined(ENABLE_PROXY)
   ClientSocketPool::GroupId connection_group =
       CreateGroupId(group_type, origin_host_port, proxy_info, privacy_mode);
   scoped_refptr<ClientSocketPool::SocketParams> socket_params =
@@ -153,6 +160,9 @@ int InitSocketPoolHelper(
                              proxy_annotation, request_priority, socket_tag,
                              respect_limits, std::move(callback),
                              proxy_auth_callback, pool, net_log);
+#else
+  return OK;
+#endif
 }
 
 }  // namespace
@@ -236,7 +246,9 @@ int InitSocketHandleForHttpRequest(
     int request_load_flags,
     RequestPriority request_priority,
     HttpNetworkSession* session,
+#if defined(ENABLE_PROXY)
     const ProxyInfo& proxy_info,
+#endif
     const SSLConfig& ssl_config_for_origin,
     const SSLConfig& ssl_config_for_proxy,
     PrivacyMode privacy_mode,
@@ -248,7 +260,11 @@ int InitSocketHandleForHttpRequest(
   DCHECK(socket_handle);
   return InitSocketPoolHelper(
       group_type, endpoint, request_load_flags, request_priority, session,
-      proxy_info, ssl_config_for_origin, ssl_config_for_proxy,
+
+#if defined(ENABLE_PROXY)
+      proxy_info,
+#endif
+      ssl_config_for_origin, ssl_config_for_proxy,
       false /* is_for_websockets */, privacy_mode, socket_tag, net_log, 0,
       socket_handle, HttpNetworkSession::NORMAL_SOCKET_POOL,
       std::move(callback), proxy_auth_callback);
@@ -260,7 +276,9 @@ int InitSocketHandleForWebSocketRequest(
     int request_load_flags,
     RequestPriority request_priority,
     HttpNetworkSession* session,
+#if defined(ENABLE_PROXY)
     const ProxyInfo& proxy_info,
+#endif
     const SSLConfig& ssl_config_for_origin,
     const SSLConfig& ssl_config_for_proxy,
     PrivacyMode privacy_mode,
@@ -270,12 +288,18 @@ int InitSocketHandleForWebSocketRequest(
     const ClientSocketPool::ProxyAuthCallback& proxy_auth_callback) {
   DCHECK(socket_handle);
 
+#if defined(ENABLE_PROXY)
   // QUIC proxies are currently not supported through this method.
   DCHECK(!proxy_info.is_quic());
+#endif
 
   return InitSocketPoolHelper(
       group_type, endpoint, request_load_flags, request_priority, session,
-      proxy_info, ssl_config_for_origin, ssl_config_for_proxy,
+
+#if defined(ENABLE_PROXY)
+      proxy_info,
+#endif
+      ssl_config_for_origin, ssl_config_for_proxy,
       true /* is_for_websockets */, privacy_mode, SocketTag(), net_log, 0,
       socket_handle, HttpNetworkSession::WEBSOCKET_SOCKET_POOL,
       std::move(callback), proxy_auth_callback);
@@ -287,18 +311,27 @@ int PreconnectSocketsForHttpRequest(
     int request_load_flags,
     RequestPriority request_priority,
     HttpNetworkSession* session,
+#if defined(ENABLE_PROXY)
     const ProxyInfo& proxy_info,
+#endif
     const SSLConfig& ssl_config_for_origin,
     const SSLConfig& ssl_config_for_proxy,
     PrivacyMode privacy_mode,
     const NetLogWithSource& net_log,
     int num_preconnect_streams) {
   // QUIC proxies are currently not supported through this method.
+
+#if defined(ENABLE_PROXY)
   DCHECK(!proxy_info.is_quic());
+#endif
 
   return InitSocketPoolHelper(
       group_type, endpoint, request_load_flags, request_priority, session,
-      proxy_info, ssl_config_for_origin, ssl_config_for_proxy,
+
+#if defined(ENABLE_PROXY)
+      proxy_info,
+#endif
+      ssl_config_for_origin, ssl_config_for_proxy,
       false /* force_tunnel */, privacy_mode, SocketTag(), net_log,
       num_preconnect_streams, nullptr, HttpNetworkSession::NORMAL_SOCKET_POOL,
       CompletionOnceCallback(), ClientSocketPool::ProxyAuthCallback());

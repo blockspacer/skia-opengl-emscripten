@@ -23,8 +23,12 @@
 #include "net/log/net_log_event_type.h"
 #include "net/log/net_log_source.h"
 #include "net/log/net_log_with_source.h"
+#if defined(ENABLE_QUIC)
 #include "net/spdy/spdy_session.h"
+#endif
 #include "url/url_constants.h"
+
+#include "net/http/http_stream.h"
 
 namespace net {
 
@@ -96,7 +100,9 @@ HttpStreamFactory::JobController::JobController(
       bound_job_(nullptr),
       can_start_alternative_proxy_job_(true),
       next_state_(STATE_RESOLVE_PROXY),
+#if defined(ENABLE_QUIC)
       proxy_resolve_request_(nullptr),
+#endif
       request_info_(request_info),
       server_ssl_config_(server_ssl_config),
       proxy_ssl_config_(proxy_ssl_config),
@@ -116,17 +122,24 @@ HttpStreamFactory::JobController::~JobController() {
   main_job_.reset();
   alternative_job_.reset();
   bound_job_ = nullptr;
+#if defined(ENABLE_QUIC)
   if (proxy_resolve_request_) {
     DCHECK_EQ(STATE_RESOLVE_PROXY_COMPLETE, next_state_);
     proxy_resolve_request_.reset();
   }
+#endif
   net_log_.EndEvent(NetLogEventType::HTTP_STREAM_JOB_CONTROLLER);
 }
 
+#if defined(ENABLE_SPDY)
 std::unique_ptr<HttpStreamRequest> HttpStreamFactory::JobController::Start(
     HttpStreamRequest::Delegate* delegate,
+
+#if defined(ENABLE_QUIC)
     WebSocketHandshakeStreamBase::CreateHelper*
         websocket_handshake_stream_create_helper,
+#endif
+
     const NetLogWithSource& source_net_log,
     HttpStreamRequest::StreamType stream_type,
     RequestPriority priority) {
@@ -136,6 +149,7 @@ std::unique_ptr<HttpStreamRequest> HttpStreamFactory::JobController::Start(
   stream_type_ = stream_type;
   priority_ = priority;
 
+#if defined(ENABLE_QUIC)
   auto request = std::make_unique<HttpStreamRequest>(
       request_info_.url, this, delegate,
       websocket_handshake_stream_create_helper, source_net_log, stream_type);
@@ -150,7 +164,11 @@ std::unique_ptr<HttpStreamRequest> HttpStreamFactory::JobController::Start(
 
   RunLoop(OK);
   return request;
+#else
+  return nullptr;
+#endif
 }
+#endif
 
 void HttpStreamFactory::JobController::Preconnect(int num_streams) {
   DCHECK(!main_job_);
@@ -165,8 +183,10 @@ void HttpStreamFactory::JobController::Preconnect(int num_streams) {
 
 LoadState HttpStreamFactory::JobController::GetLoadState() const {
   DCHECK(request_);
+#if defined(ENABLE_QUIC)
   if (next_state_ == STATE_RESOLVE_PROXY_COMPLETE)
     return proxy_resolve_request_->GetLoadState();
+#endif
   if (bound_job_)
     return bound_job_->GetLoadState();
   if (main_job_)
@@ -214,7 +234,9 @@ void HttpStreamFactory::JobController::OnStreamReady(
     const SSLConfig& used_ssl_config) {
   DCHECK(job);
 
+#if defined(ENABLE_SPDY)
   factory_->OnStreamReady(job->proxy_info(), request_info_.privacy_mode);
+#endif
 
   if (IsJobOrphaned(job)) {
     // We have bound a job to the associated HttpStreamRequest, |job| has been
@@ -238,14 +260,21 @@ void HttpStreamFactory::JobController::OnStreamReady(
   CHECK(request_);
 
   DCHECK(request_->completed());
+#if defined(ENABLE_SPDY)
   delegate_->OnStreamReady(used_ssl_config, job->proxy_info(),
                            std::move(stream));
+#endif
 }
 
 void HttpStreamFactory::JobController::OnBidirectionalStreamImplReady(
     Job* job,
-    const SSLConfig& used_ssl_config,
-    const ProxyInfo& used_proxy_info) {
+    const SSLConfig& used_ssl_config
+
+#if defined(ENABLE_PROXY)
+    ,
+    const ProxyInfo& used_proxy_info
+#endif
+    ) {
   DCHECK(job);
 
   if (IsJobOrphaned(job)) {
@@ -268,10 +297,13 @@ void HttpStreamFactory::JobController::OnBidirectionalStreamImplReady(
 
   OnJobSucceeded(job);
   DCHECK(request_->completed());
+#if defined(ENABLE_SPDY)
   delegate_->OnBidirectionalStreamImplReady(used_ssl_config, used_proxy_info,
                                             std::move(stream));
+#endif
 }
 
+#if defined(ENABLE_SPDY)
 void HttpStreamFactory::JobController::OnWebSocketHandshakeStreamReady(
     Job* job,
     const SSLConfig& used_ssl_config,
@@ -292,6 +324,7 @@ void HttpStreamFactory::JobController::OnWebSocketHandshakeStreamReady(
   delegate_->OnWebSocketHandshakeStreamReady(used_ssl_config, used_proxy_info,
                                              std::move(stream));
 }
+#endif
 
 void HttpStreamFactory::JobController::OnStreamFailed(
     Job* job,
@@ -347,8 +380,10 @@ void HttpStreamFactory::JobController::OnStreamFailed(
     RunLoop(status);
     return;
   }
+#if defined(ENABLE_SPDY)
   delegate_->OnStreamFailed(status, *job->net_error_details(), used_ssl_config,
                             job->proxy_info());
+#endif
 }
 
 void HttpStreamFactory::JobController::OnFailedOnDefaultNetwork(Job* job) {
@@ -403,7 +438,10 @@ void HttpStreamFactory::JobController::OnNeedsProxyAuth(
     Job* job,
     const HttpResponseInfo& proxy_response,
     const SSLConfig& used_ssl_config,
+
+#if defined(ENABLE_PROXY)
     const ProxyInfo& used_proxy_info,
+#endif
     HttpAuthController* auth_controller) {
   MaybeResumeMainJob(job, base::TimeDelta());
 
@@ -418,14 +456,24 @@ void HttpStreamFactory::JobController::OnNeedsProxyAuth(
     return;
   if (!bound_job_)
     BindJob(job);
+#if defined(ENABLE_SPDY)
   delegate_->OnNeedsProxyAuth(proxy_response, used_ssl_config, used_proxy_info,
                               auth_controller);
+#endif
 }
 
 bool HttpStreamFactory::JobController::OnInitConnection(
-    const ProxyInfo& proxy_info) {
+
+#if defined(ENABLE_PROXY)
+    const ProxyInfo& proxy_info
+#endif
+    ) {
+#if defined(ENABLE_SPDY)
   return factory_->OnInitConnection(*this, proxy_info,
                                     request_info_.privacy_mode);
+#else
+  return false;
+#endif
 }
 
 void HttpStreamFactory::JobController::OnPreconnectsComplete(Job* job) {
@@ -563,11 +611,13 @@ size_t HttpStreamFactory::JobController::EstimateMemoryUsage() const {
          base::trace_event::EstimateMemoryUsage(alternative_job_);
 }
 
+#if defined(ENABLE_SPDY)
 WebSocketHandshakeStreamBase::CreateHelper*
 HttpStreamFactory::JobController::websocket_handshake_stream_create_helper() {
   DCHECK(request_);
   return request_->websocket_handshake_stream_create_helper();
 }
+#endif
 
 void HttpStreamFactory::JobController::OnIOComplete(int result) {
   RunLoop(result);
@@ -616,15 +666,19 @@ int HttpStreamFactory::JobController::DoLoop(int rv) {
 }
 
 int HttpStreamFactory::JobController::DoResolveProxy() {
+#if defined(ENABLE_SPDY)
   DCHECK(!proxy_resolve_request_);
   DCHECK(session_);
+#endif
 
   next_state_ = STATE_RESOLVE_PROXY_COMPLETE;
 
+#if defined(ENABLE_SPDY)
   if (request_info_.load_flags & LOAD_BYPASS_PROXY) {
     proxy_info_.UseDirect();
     return OK;
   }
+
 
   HostPortPair destination(HostPortPair::FromURL(request_info_.url));
   GURL origin_url = ApplyHostMappingRules(request_info_.url, &destination);
@@ -634,11 +688,15 @@ int HttpStreamFactory::JobController::DoResolveProxy() {
   return session_->proxy_resolution_service()->ResolveProxy(
       origin_url, request_info_.method, &proxy_info_, std::move(io_callback),
       &proxy_resolve_request_, net_log_);
+#else
+  return 0;
+#endif
 }
 
 int HttpStreamFactory::JobController::DoResolveProxyComplete(int rv) {
   DCHECK_NE(ERR_IO_PENDING, rv);
 
+#if defined(ENABLE_SPDY)
   proxy_resolve_request_ = nullptr;
   net_log_.AddEvent(
       NetLogEventType::HTTP_STREAM_JOB_CONTROLLER_PROXY_SERVER_RESOLVED,
@@ -662,7 +720,7 @@ int HttpStreamFactory::JobController::DoResolveProxyComplete(int rv) {
     // No proxies/direct to choose from.
     return ERR_NO_SUPPORTED_PROXIES;
   }
-
+#endif
   next_state_ = STATE_CREATE_JOBS;
   return rv;
 }
@@ -674,6 +732,7 @@ int HttpStreamFactory::JobController::DoCreateJobs() {
   HostPortPair destination(HostPortPair::FromURL(request_info_.url));
   GURL origin_url = ApplyHostMappingRules(request_info_.url, &destination);
 
+#if defined(ENABLE_SPDY)
   // Create an alternative job if alternative service is set up for this domain,
   // but only if we'll be speaking directly to the server, since QUIC through
   // proxies is not supported.
@@ -758,6 +817,8 @@ int HttpStreamFactory::JobController::DoCreateJobs() {
   // the request yet, since we defer that to the next iteration of the
   // MessageLoop, so starting |main_job_| is always safe.
   main_job_->Start(request_->stream_type());
+#endif
+
   return OK;
 }
 
@@ -850,6 +911,7 @@ void HttpStreamFactory::JobController::OnAlternativeServiceJobFailed(
 
 void HttpStreamFactory::JobController::OnAlternativeProxyJobFailed(
     int net_error) {
+#if defined(ENABLE_SPDY)
   DCHECK_EQ(alternative_job_->job_type(), ALTERNATIVE);
   DCHECK_NE(OK, net_error);
   DCHECK(alternative_job_->alternative_proxy_server().is_valid());
@@ -866,6 +928,7 @@ void HttpStreamFactory::JobController::OnAlternativeProxyJobFailed(
     session_->proxy_resolution_service()->MarkProxiesAsBadUntil(
         alternative_job_->proxy_info(), base::TimeDelta::Max(), {}, net_log_);
   }
+#endif
 }
 
 void HttpStreamFactory::JobController::MaybeReportBrokenAlternativeService() {
@@ -930,8 +993,10 @@ void HttpStreamFactory::JobController::MaybeNotifyFactoryOfCompletion() {
 void HttpStreamFactory::JobController::NotifyRequestFailed(int rv) {
   if (!request_)
     return;
+#if defined(ENABLE_SPDY)
   delegate_->OnStreamFailed(rv, NetErrorDetails(), server_ssl_config_,
                             ProxyInfo());
+#endif
 }
 
 GURL HttpStreamFactory::JobController::ApplyHostMappingRules(
@@ -1005,6 +1070,8 @@ HttpStreamFactory::JobController::GetAlternativeServiceInfoInternal(
   // First alternative service that is not marked as broken.
   AlternativeServiceInfo first_alternative_service_info;
 
+
+#if defined(ENABLE_SPDY)
   for (const AlternativeServiceInfo& alternative_service_info :
        alternative_service_info_vector) {
     DCHECK(IsAlternateProtocolValid(alternative_service_info.protocol()));
@@ -1091,10 +1158,12 @@ HttpStreamFactory::JobController::GetAlternativeServiceInfoInternal(
   // Ask delegate to mark QUIC as broken for the origin.
   if (quic_advertised && quic_all_broken && delegate != nullptr)
     delegate->OnQuicBroken();
+#endif
 
   return first_alternative_service_info;
 }
 
+#if defined(ENABLE_SPDY)
 quic::ParsedQuicVersion HttpStreamFactory::JobController::SelectQuicVersion(
     const quic::ParsedQuicVersionVector& advertised_versions) {
   const quic::ParsedQuicVersionVector& supported_versions =
@@ -1113,11 +1182,21 @@ quic::ParsedQuicVersion HttpStreamFactory::JobController::SelectQuicVersion(
 
   return quic::UnsupportedQuicVersion();
 }
+#endif
 
 bool HttpStreamFactory::JobController::ShouldCreateAlternativeProxyServerJob(
+
+#if defined(ENABLE_PROXY)
     const ProxyInfo& proxy_info,
-    const GURL& url,
-    ProxyInfo* alternative_proxy_info) const {
+#endif
+    const GURL& url
+
+#if defined(ENABLE_PROXY)
+    ,
+    ProxyInfo* alternative_proxy_info
+#endif
+    ) const {
+#if defined(ENABLE_SPDY)
   DCHECK(alternative_proxy_info->is_empty());
 
   if (!enable_alternative_services_)
@@ -1159,7 +1238,7 @@ bool HttpStreamFactory::JobController::ShouldCreateAlternativeProxyServerJob(
     if (!session_->IsQuicEnabled())
       return false;
   }
-
+#endif
   return true;
 }
 
@@ -1193,6 +1272,8 @@ bool HttpStreamFactory::JobController::IsJobOrphaned(Job* job) const {
 
 int HttpStreamFactory::JobController::ReconsiderProxyAfterError(Job* job,
                                                                 int error) {
+
+#if defined(ENABLE_SPDY)
   // ReconsiderProxyAfterError() should only be called when the last job fails.
   DCHECK(!(alternative_job_ && main_job_));
   DCHECK(!proxy_resolve_request_);
@@ -1229,13 +1310,14 @@ int HttpStreamFactory::JobController::ReconsiderProxyAfterError(Job* job,
   resume_main_job_callback_.Cancel();
   main_job_is_resumed_ = false;
   main_job_is_blocked_ = false;
-
+#endif
   next_state_ = STATE_RESOLVE_PROXY_COMPLETE;
   return OK;
 }
 
 bool HttpStreamFactory::JobController::IsQuicWhitelistedForHost(
     const std::string& host) {
+#if defined(ENABLE_SPDY)
   const base::flat_set<std::string>& host_whitelist =
       session_->params().quic_host_whitelist;
   if (host_whitelist.empty())
@@ -1243,6 +1325,9 @@ bool HttpStreamFactory::JobController::IsQuicWhitelistedForHost(
 
   std::string lowered_host = base::ToLowerASCII(host);
   return base::ContainsKey(host_whitelist, lowered_host);
+#else
+  return false;
+#endif
 }
 
 }  // namespace net

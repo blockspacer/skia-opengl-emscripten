@@ -14,7 +14,9 @@
 #include "net/http/http_stream_factory_job.h"
 #include "net/http/http_stream_request.h"
 #include "net/socket/next_proto.h"
+#if defined(ENABLE_SPDY)
 #include "net/spdy/spdy_session_pool.h"
+#endif
 
 namespace net {
 
@@ -49,6 +51,7 @@ class HttpStreamFactory::JobController
 
   GURL ApplyHostMappingRules(const GURL& url, HostPortPair* endpoint);
 
+#if defined(ENABLE_SPDY)
   // Methods below are called by HttpStreamFactory only.
   // Creates request and hands out to HttpStreamFactory, this will also create
   // Job(s) and start serving the created request.
@@ -59,6 +62,7 @@ class HttpStreamFactory::JobController
       const NetLogWithSource& source_net_log,
       HttpStreamRequest::StreamType stream_type,
       RequestPriority priority);
+#endif
 
   void Preconnect(int num_streams);
 
@@ -85,15 +89,21 @@ class HttpStreamFactory::JobController
   // Invoked when |job| has a BidirectionalStream ready.
   void OnBidirectionalStreamImplReady(
       Job* job,
-      const SSLConfig& used_ssl_config,
-      const ProxyInfo& used_proxy_info) override;
+      const SSLConfig& used_ssl_config
+#if defined(ENABLE_PROXY)
+,
+      const ProxyInfo& used_proxy_info
+#endif
+      ) override;
 
+#if defined(ENABLE_SPDY)
   // Invoked when |job| has a WebSocketHandshakeStream ready.
   void OnWebSocketHandshakeStreamReady(
       Job* job,
       const SSLConfig& used_ssl_config,
       const ProxyInfo& used_proxy_info,
       std::unique_ptr<WebSocketHandshakeStreamBase> stream) override;
+#endif
 
   // Invoked when |job| fails to create a stream.
   void OnStreamFailed(Job* job,
@@ -118,10 +128,18 @@ class HttpStreamFactory::JobController
   void OnNeedsProxyAuth(Job* job,
                         const HttpResponseInfo& proxy_response,
                         const SSLConfig& used_ssl_config,
+
+#if defined(ENABLE_PROXY)
                         const ProxyInfo& used_proxy_info,
+#endif
                         HttpAuthController* auth_controller) override;
 
-  bool OnInitConnection(const ProxyInfo& proxy_info) override;
+  bool OnInitConnection(
+
+#if defined(ENABLE_PROXY)
+  const ProxyInfo& proxy_info
+#endif
+  ) override;
 
   // Invoked when the |job| finishes pre-connecting sockets.
   void OnPreconnectsComplete(Job* job) override;
@@ -144,8 +162,10 @@ class HttpStreamFactory::JobController
 
   void MaybeSetWaitTimeForMainJob(const base::TimeDelta& delay) override;
 
+#if defined(ENABLE_SPDY)
   WebSocketHandshakeStreamBase::CreateHelper*
   websocket_handshake_stream_create_helper() override;
+#endif
 
   bool is_preconnect() const { return is_preconnect_; }
 
@@ -250,6 +270,7 @@ class HttpStreamFactory::JobController
       HttpStreamRequest::Delegate* delegate,
       HttpStreamRequest::StreamType stream_type);
 
+#if defined(ENABLE_SPDY)
   // Returns a quic::ParsedQuicVersion that has been advertised in
   // |advertised_versions| and is supported.  If more than one
   // ParsedQuicVersions are supported, the first matched in the supported
@@ -257,15 +278,24 @@ class HttpStreamFactory::JobController
   // QUIC_VERSION_UNSUPPORTED_VERSION will be returned.
   quic::ParsedQuicVersion SelectQuicVersion(
       const quic::ParsedQuicVersionVector& advertised_versions);
+#endif
 
   // Returns true if the |request_| can be fetched via an alternative
   // proxy server, and sets |alternative_proxy_info| to the alternative proxy
   // server configuration. |alternative_proxy_info| should not be null,
   // and is owned by the caller.
   bool ShouldCreateAlternativeProxyServerJob(
+
+#if defined(ENABLE_PROXY)
       const ProxyInfo& proxy_info_,
-      const GURL& url,
-      ProxyInfo* alternative_proxy_info) const;
+#endif
+      const GURL& url
+
+#if defined(ENABLE_PROXY)
+      ,
+      ProxyInfo* alternative_proxy_info
+#endif
+      ) const;
 
   // Records histogram metrics for the usage of alternative protocol. Must be
   // called when |job| has succeeded and the other job will be orphaned.
@@ -350,9 +380,17 @@ class HttpStreamFactory::JobController
   bool can_start_alternative_proxy_job_;
 
   State next_state_;
+
+#if defined(ENABLE_SPDY)
   std::unique_ptr<ProxyResolutionService::Request> proxy_resolve_request_;
+#endif
+
   const HttpRequestInfo request_info_;
+
+#if defined(ENABLE_SPDY)
   ProxyInfo proxy_info_;
+#endif
+
   const SSLConfig server_ssl_config_;
   const SSLConfig proxy_ssl_config_;
   int num_streams_;

@@ -8,8 +8,9 @@
 
 #include "base/base64.h"
 #include "base/strings/string_number_conversions.h"
+#if defined(ENABLE_PROTOBUF)
 #include "net/nqe/proto/network_id_proto.pb.h"
-
+#endif
 namespace net {
 namespace nqe {
 namespace internal {
@@ -22,15 +23,19 @@ NetworkID NetworkID::FromString(const std::string& network_id) {
                      INT32_MIN);
   }
 
+#if defined(ENABLE_PROTOBUF)
   NetworkIDProto network_id_proto;
   if (!network_id_proto.ParseFromString(base64_decoded)) {
     return NetworkID(NetworkChangeNotifier::CONNECTION_UNKNOWN, std::string(),
                      INT32_MIN);
   }
-
   return NetworkID(static_cast<NetworkChangeNotifier::ConnectionType>(
                        network_id_proto.connection_type()),
                    network_id_proto.id(), network_id_proto.signal_strength());
+#else
+  return NetworkID(NetworkChangeNotifier::ConnectionType::CONNECTION_NONE,
+                   "network_id_proto.id()", 0);
+#endif
 }
 
 NetworkID::NetworkID(NetworkChangeNotifier::ConnectionType type,
@@ -65,6 +70,7 @@ bool NetworkID::operator<(const NetworkID& other) const {
 }
 
 std::string NetworkID::ToString() const {
+#if defined(ENABLE_PROTOBUF)
   NetworkIDProto network_id_proto;
   network_id_proto.set_connection_type(static_cast<int>(type));
   network_id_proto.set_id(id);
@@ -78,6 +84,9 @@ std::string NetworkID::ToString() const {
   base::Base64Encode(serialized_network_id, &base64_encoded);
 
   return base64_encoded;
+#else
+  return "NetworkID::ToString()";
+#endif
 }
 
 }  // namespace internal

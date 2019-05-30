@@ -8,22 +8,33 @@
 #include "net/base/net_export.h"
 #include "net/http/http_cache.h"
 #include "net/http/http_cache_transaction.h"
+#if defined(ENABLE_SPDY)
 #include "net/spdy/server_push_delegate.h"
+#endif
 
 namespace net {
 
 // An implementation of ServerPushDelegate that issues an HttpCache::Transaction
 // to lookup whether the response to the pushed URL is cached and cancel the
 // push in that case.
-class NET_EXPORT_PRIVATE HttpCacheLookupManager : public ServerPushDelegate {
+class NET_EXPORT_PRIVATE HttpCacheLookupManager
+#if defined(ENABLE_SPDY)
+: public ServerPushDelegate
+#endif
+{
  public:
   // |http_cache| MUST outlive the HttpCacheLookupManager.
   explicit HttpCacheLookupManager(HttpCache* http_cache);
-  ~HttpCacheLookupManager() override;
-
+  ~HttpCacheLookupManager()
+  #if defined(ENABLE_SPDY)
+  override
+  #endif
+  ;
+#if defined(ENABLE_SPDY)
   // ServerPushDelegate implementation.
   void OnPush(std::unique_ptr<ServerPushHelper> push_helper,
               const NetLogWithSource& session_net_log) override;
+#endif
 
   // Invoked when the HttpCache::Transaction for |url| finishes to cancel the
   // server push if the response to the server push is found cached.
@@ -35,7 +46,10 @@ class NET_EXPORT_PRIVATE HttpCacheLookupManager : public ServerPushDelegate {
   // push.
   class LookupTransaction {
    public:
-    LookupTransaction(std::unique_ptr<ServerPushHelper> push_helper,
+    LookupTransaction(
+#if defined(ENABLE_SPDY)
+    std::unique_ptr<ServerPushHelper> push_helper,
+#endif
                       NetLog* net_log);
     ~LookupTransaction();
 
@@ -48,7 +62,9 @@ class NET_EXPORT_PRIVATE HttpCacheLookupManager : public ServerPushDelegate {
     void OnLookupComplete(int result);
 
    private:
+#if defined(ENABLE_SPDY)
     std::unique_ptr<ServerPushHelper> push_helper_;
+#endif
     std::unique_ptr<HttpRequestInfo> request_;
     std::unique_ptr<HttpTransaction> transaction_;
     const NetLogWithSource net_log_;

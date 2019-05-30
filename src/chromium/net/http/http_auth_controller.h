@@ -26,7 +26,9 @@ class HttpAuthHandler;
 class HttpAuthHandlerFactory;
 class HttpAuthCache;
 class HttpRequestHeaders;
+#if defined(ENABLE_DNS)
 class HostResolver;
+#endif
 class NetLogWithSource;
 struct HttpRequestInfo;
 class SSLInfo;
@@ -77,8 +79,11 @@ class NET_EXPORT_PRIVATE HttpAuthController
   HttpAuthController(HttpAuth::Target target,
                      const GURL& auth_url,
                      HttpAuthCache* http_auth_cache,
-                     HttpAuthHandlerFactory* http_auth_handler_factory,
-                     HostResolver* host_resolver);
+                     HttpAuthHandlerFactory* http_auth_handler_factory
+#if defined(ENABLE_DNS)
+                     , HostResolver* host_resolver
+#endif
+                     );
 
   // Generate an authentication token for |target| if necessary. The return
   // value is a net error code. |OK| will be returned both in the case that
@@ -222,8 +227,9 @@ class NET_EXPORT_PRIVATE HttpAuthController
   // for the lifetime of this object.
   HttpAuthCache* const http_auth_cache_;
   HttpAuthHandlerFactory* const http_auth_handler_factory_;
+#if defined(ENABLE_DNS)
   HostResolver* const host_resolver_;
-
+#endif
   std::set<HttpAuth::Scheme> disabled_schemes_;
 
   CompletionOnceCallback callback_;

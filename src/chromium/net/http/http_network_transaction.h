@@ -29,10 +29,15 @@
 #include "net/http/http_transaction.h"
 #include "net/log/net_log_with_source.h"
 #include "net/net_buildflags.h"
+#if defined(ENABLE_PROXY)
 #include "net/proxy_resolution/proxy_resolution_service.h"
+#endif
 #include "net/socket/connection_attempts.h"
 #include "net/ssl/ssl_config_service.h"
+
+#if defined(ENABLE_PROXY)
 #include "net/websockets/websocket_handshake_stream_base.h"
+#endif
 
 namespace net {
 
@@ -41,7 +46,9 @@ class HttpAuthController;
 class HttpNetworkSession;
 class HttpStream;
 class IOBuffer;
+#if defined(ENABLE_PROXY)
 class ProxyInfo;
+#endif
 class SSLPrivateKey;
 struct HttpRequestInfo;
 
@@ -76,7 +83,9 @@ class NET_EXPORT_PRIVATE HttpNetworkTransaction
   void DoneReading() override;
   const HttpResponseInfo* GetResponseInfo() const override;
   LoadState GetLoadState() const override;
+#if defined(ENABLE_QUIC)
   void SetQuicServerInfo(QuicServerInfo* quic_server_info) override;
+#endif
   bool GetLoadTimingInfo(LoadTimingInfo* load_timing_info) const override;
   bool GetRemoteEndpoint(IPEndPoint* endpoint) const override;
 
@@ -85,17 +94,22 @@ class NET_EXPORT_PRIVATE HttpNetworkTransaction
 #endif // ENABLE_QUIC
 
   void SetPriority(RequestPriority priority) override;
+#if defined(ENABLE_PROXY)
   void SetWebSocketHandshakeStreamCreateHelper(
       WebSocketHandshakeStreamBase::CreateHelper* create_helper) override;
+#endif
   void SetBeforeNetworkStartCallback(
       const BeforeNetworkStartCallback& callback) override;
+#if defined(ENABLE_PROXY)
   void SetBeforeHeadersSentCallback(
       const BeforeHeadersSentCallback& callback) override;
+#endif
   void SetRequestHeadersCallback(RequestHeadersCallback callback) override;
   void SetResponseHeadersCallback(ResponseHeadersCallback callback) override;
 
   int ResumeNetworkStart() override;
 
+#if defined(ENABLE_PROXY)
   // HttpStreamRequest::Delegate methods:
   void OnStreamReady(const SSLConfig& used_ssl_config,
                      const ProxyInfo& used_proxy_info,
@@ -108,6 +122,7 @@ class NET_EXPORT_PRIVATE HttpNetworkTransaction
       const SSLConfig& used_ssl_config,
       const ProxyInfo& used_proxy_info,
       std::unique_ptr<WebSocketHandshakeStreamBase> stream) override;
+#endif
 
 #ifdef ENABLE_QUIC
   void OnStreamFailed(int status,
@@ -118,10 +133,14 @@ class NET_EXPORT_PRIVATE HttpNetworkTransaction
   void OnCertificateError(int status,
                           const SSLConfig& used_ssl_config,
                           const SSLInfo& ssl_info) override;
+
+#if defined(ENABLE_PROXY)
   void OnNeedsProxyAuth(const HttpResponseInfo& response_info,
                         const SSLConfig& used_ssl_config,
                         const ProxyInfo& used_proxy_info,
                         HttpAuthController* auth_controller) override;
+#endif
+
   void OnNeedsClientAuth(const SSLConfig& used_ssl_config,
                          SSLCertRequestInfo* cert_info) override;
 
@@ -334,8 +353,10 @@ class NET_EXPORT_PRIVATE HttpNetworkTransaction
   RequestPriority priority_;
   HttpResponseInfo response_;
 
+#if defined(ENABLE_PROXY)
   // |proxy_info_| is the ProxyInfo used by the HttpStreamRequest.
   ProxyInfo proxy_info_;
+#endif
 
   std::unique_ptr<HttpStreamRequest> stream_request_;
   std::unique_ptr<HttpStream> stream_;
@@ -414,13 +435,17 @@ class NET_EXPORT_PRIVATE HttpNetworkTransaction
   // this will store the alternative service used.
   AlternativeService retried_alternative_service_;
 
+#if defined(ENABLE_PROXY)
   // The helper object to use to create WebSocketHandshakeStreamBase
   // objects. Only relevant when establishing a WebSocket connection.
   WebSocketHandshakeStreamBase::CreateHelper*
       websocket_handshake_stream_base_create_helper_;
+#endif
 
   BeforeNetworkStartCallback before_network_start_callback_;
+#if defined(ENABLE_PROXY)
   BeforeHeadersSentCallback before_headers_sent_callback_;
+#endif
   RequestHeadersCallback request_headers_callback_;
   ResponseHeadersCallback response_headers_callback_;
 

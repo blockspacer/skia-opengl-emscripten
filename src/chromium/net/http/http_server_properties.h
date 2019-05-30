@@ -20,11 +20,13 @@
 #include "net/base/host_port_pair.h"
 #include "net/base/net_export.h"
 #include "net/socket/next_proto.h"
+#if defined(ENABLE_QUIC)
 #include "net/third_party/quiche/src/quic/core/quic_bandwidth.h"
 #include "net/third_party/quiche/src/quic/core/quic_server_id.h"
 #include "net/third_party/quiche/src/quic/core/quic_versions.h"
 #include "net/third_party/quiche/src/spdy/core/spdy_framer.h"  // TODO(willchan): Reconsider this.
 #include "net/third_party/quiche/src/spdy/core/spdy_protocol.h"
+#endif
 #include "url/scheme_host_port.h"
 
 namespace base {
@@ -130,10 +132,12 @@ class NET_EXPORT_PRIVATE AlternativeServiceInfo {
       const AlternativeService& alternative_service,
       base::Time expiration);
 
+#if defined(ENABLE_QUIC)
   static AlternativeServiceInfo CreateQuicAlternativeServiceInfo(
       const AlternativeService& alternative_service,
       base::Time expiration,
       const quic::ParsedQuicVersionVector& advertised_versions);
+#endif
 
   AlternativeServiceInfo();
   ~AlternativeServiceInfo();
@@ -145,9 +149,14 @@ class NET_EXPORT_PRIVATE AlternativeServiceInfo {
       const AlternativeServiceInfo& alternative_service_info);
 
   bool operator==(const AlternativeServiceInfo& other) const {
+
+#if defined(ENABLE_QUIC)
     return alternative_service_ == other.alternative_service() &&
            expiration_ == other.expiration() &&
            advertised_versions_ == other.advertised_versions();
+#else
+  return false;
+#endif
   }
 
   bool operator!=(const AlternativeServiceInfo& other) const {
@@ -172,6 +181,7 @@ class NET_EXPORT_PRIVATE AlternativeServiceInfo {
     expiration_ = expiration;
   }
 
+#if defined(ENABLE_QUIC)
   void set_advertised_versions(
       const quic::ParsedQuicVersionVector& advertised_versions) {
     if (alternative_service_.protocol != kProtoQUIC)
@@ -181,6 +191,7 @@ class NET_EXPORT_PRIVATE AlternativeServiceInfo {
     std::sort(advertised_versions_.begin(), advertised_versions_.end(),
               TransportVersionLessThan);
   }
+#endif
 
   const AlternativeService& alternative_service() const {
     return alternative_service_;
@@ -194,18 +205,26 @@ class NET_EXPORT_PRIVATE AlternativeServiceInfo {
 
   base::Time expiration() const { return expiration_; }
 
+#if defined(ENABLE_QUIC)
   const quic::ParsedQuicVersionVector& advertised_versions() const {
     return advertised_versions_;
   }
+#endif
 
  private:
+
   AlternativeServiceInfo(
       const AlternativeService& alternative_service,
-      base::Time expiration,
-      const quic::ParsedQuicVersionVector& advertised_versions);
+      base::Time expiration
+#if defined(ENABLE_QUIC)
+      , const quic::ParsedQuicVersionVector& advertised_versions
+#endif
+      );
 
+#if defined(ENABLE_QUIC)
   static bool TransportVersionLessThan(const quic::ParsedQuicVersion& lhs,
                                        const quic::ParsedQuicVersion& rhs);
+#endif
 
   AlternativeService alternative_service_;
   base::Time expiration_;
@@ -214,7 +233,9 @@ class NET_EXPORT_PRIVATE AlternativeServiceInfo {
   // by Chrome. If empty, defaults to versions used by the current instance of
   // the netstack.
   // This list MUST be sorted in ascending order.
+#if defined(ENABLE_QUIC)
   quic::ParsedQuicVersionVector advertised_versions_;
+#endif
 };
 
 struct NET_EXPORT SupportsQuic {
@@ -232,10 +253,19 @@ struct NET_EXPORT SupportsQuic {
 };
 
 struct NET_EXPORT ServerNetworkStats {
-  ServerNetworkStats() : bandwidth_estimate(quic::QuicBandwidth::Zero()) {}
+  ServerNetworkStats()
+#if defined(ENABLE_QUIC)
+  : bandwidth_estimate(quic::QuicBandwidth::Zero())
+#endif
+  {}
 
   bool operator==(const ServerNetworkStats& other) const {
+
+#if defined(ENABLE_QUIC)
     return srtt == other.srtt && bandwidth_estimate == other.bandwidth_estimate;
+#else
+  return false;
+#endif
   }
 
   bool operator!=(const ServerNetworkStats& other) const {
@@ -243,7 +273,9 @@ struct NET_EXPORT ServerNetworkStats {
   }
 
   base::TimeDelta srtt;
+#if defined(ENABLE_QUIC)
   quic::QuicBandwidth bandwidth_estimate;
+#endif
 };
 
 typedef std::vector<AlternativeService> AlternativeServiceVector;
@@ -301,10 +333,11 @@ class RecentlyBrokenAlternativeServices
             kMaxRecentlyBrokenAlternativeServiceEntries) {}
 };
 
+#if defined(ENABLE_QUIC)
 // Max number of quic servers to store is not hardcoded and can be set.
 // Because of this, QuicServerInfoMap will not be a subclass of MRUCache.
 typedef base::MRUCache<quic::QuicServerId, std::string> QuicServerInfoMap;
-
+#endif
 extern const char kAlternativeServiceHeader[];
 
 // The interface for setting/retrieving the HTTP server properties.
@@ -373,11 +406,14 @@ class NET_EXPORT HttpServerProperties {
   // |alternative_service.host| may be empty.
   // Return true if |alternative_service_map_| has changed significantly enough
   // that it should be persisted to disk.
+
+#if defined(ENABLE_QUIC)
   virtual bool SetQuicAlternativeService(
       const url::SchemeHostPort& origin,
       const AlternativeService& alternative_service,
       base::Time expiration,
       const quic::ParsedQuicVersionVector& advertised_versions) = 0;
+#endif
 
   // Set alternative services for |origin|.  Previous alternative services for
   // |origin| are discarded.
@@ -453,6 +489,8 @@ class NET_EXPORT HttpServerProperties {
 
   virtual const ServerNetworkStatsMap& server_network_stats_map() const = 0;
 
+
+#if defined(ENABLE_QUIC)
   // Save QuicServerInfo (in std::string form) for the given |server_id|.
   // Returns true if the value has changed otherwise it returns false.
   virtual bool SetQuicServerInfo(const quic::QuicServerId& server_id,
@@ -464,7 +502,7 @@ class NET_EXPORT HttpServerProperties {
 
   // Returns all persistent QuicServerInfo objects.
   virtual const QuicServerInfoMap& quic_server_info_map() const = 0;
-
+#endif
   // Returns the number of server configs (QuicServerInfo objects) persisted.
   virtual size_t max_server_configs_stored_in_properties() const = 0;
 

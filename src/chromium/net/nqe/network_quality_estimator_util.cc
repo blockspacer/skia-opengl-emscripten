@@ -12,8 +12,10 @@
 #include "net/base/ip_address.h"
 #include "net/base/ip_endpoint.h"
 #include "net/base/net_errors.h"
+#if defined(ENABLE_DNS)
 #include "net/dns/host_resolver.h"
 #include "net/dns/host_resolver_source.h"
+#endif
 #include "net/log/net_log_with_source.h"
 
 namespace net {
@@ -22,6 +24,7 @@ namespace nqe {
 
 namespace internal {
 
+#if defined(ENABLE_DNS)
 bool IsPrivateHost(HostResolver* host_resolver,
                    const HostPortPair& host_port_pair) {
   // Try resolving |host_port_pair.host()| synchronously.
@@ -45,7 +48,7 @@ bool IsPrivateHost(HostResolver* host_resolver,
 
   return false;
 }
-
+#endif
 }  // namespace internal
 
 }  // namespace nqe

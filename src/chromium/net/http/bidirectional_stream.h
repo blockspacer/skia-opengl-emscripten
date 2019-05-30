@@ -36,7 +36,11 @@ class HttpAuthController;
 class HttpNetworkSession;
 class HttpStream;
 class IOBuffer;
+
+#if defined(ENABLE_PROXY)
 class ProxyInfo;
+#endif
+
 struct BidirectionalStreamRequestInfo;
 #ifdef ENABLE_QUIC
 struct NetErrorDetails;
@@ -200,16 +204,27 @@ class NET_EXPORT BidirectionalStream : public BidirectionalStreamImpl::Delegate,
 
   // HttpStreamRequest::Delegate implementation:
   void OnStreamReady(const SSLConfig& used_ssl_config,
+
+#if defined(ENABLE_PROXY)
                      const ProxyInfo& used_proxy_info,
+#endif
                      std::unique_ptr<HttpStream> stream) override;
   void OnBidirectionalStreamImplReady(
       const SSLConfig& used_ssl_config,
+
+#if defined(ENABLE_PROXY)
       const ProxyInfo& used_proxy_info,
+#endif
       std::unique_ptr<BidirectionalStreamImpl> stream) override;
   void OnWebSocketHandshakeStreamReady(
-      const SSLConfig& used_ssl_config,
-      const ProxyInfo& used_proxy_info,
-      std::unique_ptr<WebSocketHandshakeStreamBase> stream) override;
+      const SSLConfig& used_ssl_config
+#if defined(ENABLE_PROXY)
+      , const ProxyInfo& used_proxy_info
+#endif
+#if defined(ENABLE_WS)
+      , std::unique_ptr<WebSocketHandshakeStreamBase> stream
+#endif
+      ) override;
 
 #ifdef ENABLE_QUIC
   void OnStreamFailed(int status,
@@ -223,7 +238,9 @@ class NET_EXPORT BidirectionalStream : public BidirectionalStreamImpl::Delegate,
                           const SSLInfo& ssl_info) override;
   void OnNeedsProxyAuth(const HttpResponseInfo& response_info,
                         const SSLConfig& used_ssl_config,
+#if defined(ENABLE_PROXY)
                         const ProxyInfo& used_proxy_info,
+#endif
                         HttpAuthController* auth_controller) override;
   void OnNeedsClientAuth(const SSLConfig& used_ssl_config,
                          SSLCertRequestInfo* cert_info) override;
