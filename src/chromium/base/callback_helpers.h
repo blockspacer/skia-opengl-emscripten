@@ -22,6 +22,39 @@
 
 namespace base {
 
+#ifdef STARBOARD
+// Prefer std::move() over ResetAndReturn().
+template <typename CallbackType>
+CallbackType ResetAndReturn(CallbackType* cb) {
+  CallbackType ret(std::move(*cb));
+  DCHECK(!*cb);
+  return ret;
+}
+
+template <typename CallbackType>
+bool ResetAndRunIfNotNull(CallbackType* cb) {
+  if (cb->is_null()) {
+    return false;
+  }
+  CallbackType ret(std::move(*cb));
+  DCHECK(!*cb);
+  ret.Run();
+  return true;
+}
+
+template <typename Sig, typename... ParamTypes>
+bool ResetAndRunIfNotNull(base::Callback<Sig>* cb,
+                          const ParamTypes&... params) {
+  if (cb->is_null()) {
+    return false;
+  }
+  base::Callback<Sig> ret(std::move(*cb));
+  DCHECK(!*cb);
+  ret.Run(params...);
+  return true;
+}
+#endif
+
 namespace internal {
 
 template <typename T>

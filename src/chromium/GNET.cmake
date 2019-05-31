@@ -1868,4 +1868,22 @@ target_compile_definitions(GNET PRIVATE
   # buildflag # #INCLUDE_TRANSPORT_SECURITY_STATE_PRELOAD_LIST=$include_transport_security_state_preload_list",
   # buildflag # #USE_KERBEROS=$use_kerberos",
   # buildflag # #TRIAL_COMPARISON_CERT_VERIFIER_SUPPORTED=$trial_comparison_cert_verifier_supported",
+  #
+  # net from STARBOARD
+  # https://github.com/blockspacer/cobalt-clone-28052019/blob/master/src/net/net.gyp
+  #
+  NET_IMPLEMENTATION=1
+  #ENABLE_BUILT_IN_DNS=1
+  # To be removed in the future when want to enable HTTP cache.
+  HTTP_CACHE_DISABLED_FOR_STARBOARD=1
+  # To be removed in the future when we want to enable QUIC.
+  QUIC_DISABLED_FOR_STARBOARD=1
+  # TODO[johnx]: find out how we can verify local cert issuer and
+  # re-enable this test. Consider adding a binary cert for local issuer
+  # for debug builds.
+  STARBOARD_NO_LOCAL_ISSUER=1
+  HTTP_CACHE_DISABLED_FOR_STARBOARD=1
+  ENABLE_BUILT_IN_DNS=1
+  QUIC_DISABLED_FOR_STARBOARD=1
+  STARBOARD_NO_LOCAL_ISSUER=1
 )

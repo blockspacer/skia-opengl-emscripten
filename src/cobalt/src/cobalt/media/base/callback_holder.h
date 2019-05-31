@@ -43,19 +43,19 @@ class CallbackHolder {
   void RunOrHold() {
     DCHECK(held_cb_.is_null());
     if (hold_)
-      held_cb_ = base::ResetAndReturn(&original_cb_);
+      held_cb_ = std::move(original_cb_);
     else
-      base::ResetAndReturn(&original_cb_).Run();
+      std::move(original_cb_).Run();
   }
 
   template <typename A1>
   void RunOrHold(A1 a1) {
     DCHECK(held_cb_.is_null());
     if (hold_) {
-      held_cb_ = base::Bind(base::ResetAndReturn(&original_cb_),
+      held_cb_ = base::Bind(std::move(original_cb_),
                             internal::TrampolineForward(a1));
     } else {
-      base::ResetAndReturn(&original_cb_).Run(a1);
+      std::move(original_cb_).Run(a1);
     }
   }
 
@@ -63,11 +63,11 @@ class CallbackHolder {
   void RunOrHold(A1 a1, A2 a2) {
     DCHECK(held_cb_.is_null());
     if (hold_) {
-      held_cb_ = base::Bind(base::ResetAndReturn(&original_cb_),
+      held_cb_ = base::Bind(std::move(original_cb_),
                             internal::TrampolineForward(a1),
                             internal::TrampolineForward(a2));
     } else {
-      base::ResetAndReturn(&original_cb_).Run(a1, a2);
+      std::move(original_cb_).Run(a1, a2);
     }
   }
 
@@ -76,7 +76,7 @@ class CallbackHolder {
     DCHECK(hold_);
     DCHECK(!held_cb_.is_null());
     hold_ = false;
-    base::ResetAndReturn(&held_cb_).Run();
+    std::move(held_cb_).Run();
   }
 
  private:

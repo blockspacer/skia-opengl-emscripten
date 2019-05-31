@@ -55,7 +55,7 @@ void ChunkDemuxerStream::AbortReads() {
   DVLOG(1) << "ChunkDemuxerStream::AbortReads()";
   base::AutoLock auto_lock(lock_);
   ChangeState_Locked(RETURNING_ABORT_FOR_READS);
-  if (!read_cb_.is_null()) base::ResetAndReturn(&read_cb_).Run(kAborted, NULL);
+  if (!read_cb_.is_null()) std::move(read_cb_).Run(kAborted, NULL);
 }
 
 void ChunkDemuxerStream::CompletePendingReadIfPossible() {
@@ -73,7 +73,7 @@ void ChunkDemuxerStream::Shutdown() {
   // Pass an end of stream buffer to the pending callback to signal that no more
   // data will be sent.
   if (!read_cb_.is_null()) {
-    base::ResetAndReturn(&read_cb_).Run(DemuxerStream::kOk,
+    std::move(read_cb_).Run(DemuxerStream::kOk,
                                         StreamParserBuffer::CreateEOSBuffer());
   }
 }
@@ -254,7 +254,7 @@ void ChunkDemuxerStream::Read(const ReadCB& read_cb) {
 
   if (!is_enabled_) {
     DVLOG(1) << "Read from disabled stream, returning EOS";
-    base::ResetAndReturn(&read_cb_).Run(kOk,
+    std::move(read_cb_).Run(kOk,
                                         StreamParserBuffer::CreateEOSBuffer());
     return;
   }
@@ -301,7 +301,7 @@ void ChunkDemuxerStream::set_enabled(bool enabled, base::TimeDelta timestamp) {
     stream_->Seek(timestamp);
   } else if (!read_cb_.is_null()) {
     DVLOG(1) << "Read from disabled stream, returning EOS";
-    base::ResetAndReturn(&read_cb_).Run(kOk,
+    std::move(read_cb_).Run(kOk,
                                         StreamParserBuffer::CreateEOSBuffer());
   }
   if (!stream_status_change_cb_.is_null())
@@ -392,7 +392,7 @@ void ChunkDemuxerStream::CompletePendingReadIfPossible_Locked() {
       break;
   }
 
-  base::ResetAndReturn(&read_cb_).Run(status, buffer);
+  std::move(read_cb_).Run(status, buffer);
 }
 
 ChunkDemuxer::ChunkDemuxer(
@@ -447,7 +447,7 @@ void ChunkDemuxer::Initialize(DemuxerHost* host,
 
   ChangeState_Locked(INITIALIZING);
 
-  base::ResetAndReturn(&open_cb_).Run();
+  std::move(open_cb_).Run();
 }
 
 void ChunkDemuxer::Stop() {
@@ -464,13 +464,13 @@ void ChunkDemuxer::Seek(TimeDelta time, const PipelineStatusCB& cb) {
 
   seek_cb_ = BindToCurrentLoop(cb);
   if (state_ != INITIALIZED && state_ != ENDED) {
-    base::ResetAndReturn(&seek_cb_).Run(PIPELINE_ERROR_INVALID_STATE);
+    std::move(seek_cb_).Run(PIPELINE_ERROR_INVALID_STATE);
     return;
   }
 
   if (cancel_next_seek_) {
     cancel_next_seek_ = false;
-    base::ResetAndReturn(&seek_cb_).Run(PIPELINE_OK);
+    std::move(seek_cb_).Run(PIPELINE_OK);
     return;
   }
 
@@ -517,7 +517,7 @@ void ChunkDemuxer::Seek(TimeDelta time, const PipelineStatusCB& cb) {
     StartReturningData();
   }
 
-  base::ResetAndReturn(&seek_cb_).Run(PIPELINE_OK);
+  std::move(seek_cb_).Run(PIPELINE_OK);
 }
 
 // Demuxer implementation.
@@ -603,7 +603,7 @@ void ChunkDemuxer::CancelPendingSeek(TimeDelta seek_time) {
     return;
   }
 
-  base::ResetAndReturn(&seek_cb_).Run(PIPELINE_OK);
+  std::move(seek_cb_).Run(PIPELINE_OK);
 }
 
 ChunkDemuxer::Status ChunkDemuxer::AddId(const std::string& id,
@@ -849,7 +849,7 @@ bool ChunkDemuxer::AppendData(const std::string& id, const uint8_t* data,
       AdjustSeekOnAudioSource();
       StartReturningData();
 #endif  // SB_HAS_QUIRK(SEEK_TO_KEYFRAME)
-      base::ResetAndReturn(&seek_cb_).Run(PIPELINE_OK);
+      std::move(seek_cb_).Run(PIPELINE_OK);
     }
 
     ranges = GetBufferedRanges_Locked();
@@ -874,7 +874,7 @@ void ChunkDemuxer::ResetParserState(const std::string& id,
   // Need to check whether seeking can be completed.
   if (old_waiting_for_data && !IsSeekWaitingForData_Locked() &&
       !seek_cb_.is_null()) {
-    base::ResetAndReturn(&seek_cb_).Run(PIPELINE_OK);
+    std::move(seek_cb_).Run(PIPELINE_OK);
   }
 }
 
@@ -1023,7 +1023,7 @@ void ChunkDemuxer::MarkEndOfStream(PipelineStatus status) {
 
   if (old_waiting_for_data && !IsSeekWaitingForData_Locked() &&
       !seek_cb_.is_null()) {
-    base::ResetAndReturn(&seek_cb_).Run(PIPELINE_OK);
+    std::move(seek_cb_).Run(PIPELINE_OK);
   }
 }
 
@@ -1056,7 +1056,7 @@ void ChunkDemuxer::Shutdown() {
   ChangeState_Locked(SHUTDOWN);
 
   if (!seek_cb_.is_null())
-    base::ResetAndReturn(&seek_cb_).Run(PIPELINE_ERROR_ABORT);
+    std::move(seek_cb_).Run(PIPELINE_ERROR_ABORT);
 }
 
 void ChunkDemuxer::SetMemoryLimitsForTest(DemuxerStream::Type type,
@@ -1185,7 +1185,7 @@ void ChunkDemuxer::OnSourceInitDone(
 
   // The demuxer is now initialized after the |start_timestamp_| was set.
   ChangeState_Locked(INITIALIZED);
-  base::ResetAndReturn(&init_cb_).Run(PIPELINE_OK);
+  std::move(init_cb_).Run(PIPELINE_OK);
 }
 
 // static
