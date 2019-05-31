@@ -2549,36 +2549,9 @@ int main(int argc, char** argv) {
   }
 #endif // ENABLE_UI
 
-#ifdef ENABLE_CUSTOM_FONTS
-  printf("Reading fonts...\n");
-
-  const char* fontPath = "./resources/fonts/FreeSans.ttf";
-
-  /*char* fileData1 = nullptr;
-  long int fsize1;
-  int readRes = read_file(fontPath, fileData1, fsize1, true);
-  if (readRes != 0) {
-    printf("can`t read font %s\n", fontPath);
-  }*/
-
-  printf("Initializing fonts...\n");
-
-  /// \note SkData::MakeFromFileName don`t support wasm pthreads,
-  /// so we use MakeFromMalloc
-  //sk_sp<SkData> data = SkData::MakeFromMalloc(fileData1, fsize1);
-  sk_sp<SkData> data = SkData::MakeFromFileName(fontPath);
-  if (!data) {
-    printf("failed SkData::MakeFromMalloc for font %s\n", fontPath);
-  }
-
-  printf("Initializing font data...\n");
-
-  /// \note SkTypeface::MakeFromFile don`t support wasm pthreads,
-  /// so we use MakeFromData
-  const int index = 0;
-  //sk_sp<SkTypeface> sktp = SkTypeface::MakeFromFile("./resources/fonts/FreeSans.ttf");
-
 #ifdef ENABLE_COBALT
+  printf("Initializing COBALT...\n");
+
   cobalt::web_animations::Animation::Data animation;
   animation.set_start_time(base::TimeDelta::FromSeconds(2));
   base::Optional<base::TimeDelta> local_time =
@@ -2662,6 +2635,35 @@ int main(int argc, char** argv) {
   printf("head->tag_name() %s\n", head->tag_name().c_str());
 
 #endif // ENABLE_COBALT
+
+#ifdef ENABLE_CUSTOM_FONTS
+  printf("Reading fonts...\n");
+
+  const char* fontPath = "./resources/fonts/FreeSans.ttf";
+
+  /*char* fileData1 = nullptr;
+  long int fsize1;
+  int readRes = read_file(fontPath, fileData1, fsize1, true);
+  if (readRes != 0) {
+    printf("can`t read font %s\n", fontPath);
+  }*/
+
+  printf("Initializing fonts...\n");
+
+  /// \note SkData::MakeFromFileName don`t support wasm pthreads,
+  /// so we use MakeFromMalloc
+  //sk_sp<SkData> data = SkData::MakeFromMalloc(fileData1, fsize1);
+  sk_sp<SkData> data = SkData::MakeFromFileName(fontPath);
+  if (!data) {
+    printf("failed SkData::MakeFromMalloc for font %s\n", fontPath);
+  }
+
+  printf("Initializing font data...\n");
+
+  /// \note SkTypeface::MakeFromFile don`t support wasm pthreads,
+  /// so we use MakeFromData
+  const int index = 0;
+  //sk_sp<SkTypeface> sktp = SkTypeface::MakeFromFile("./resources/fonts/FreeSans.ttf");
 
 #ifdef ENABLE_HARFBUZZ
   sk_sp<SkTypeface> sktp = SkTypeface::MakeFromData(data, index);

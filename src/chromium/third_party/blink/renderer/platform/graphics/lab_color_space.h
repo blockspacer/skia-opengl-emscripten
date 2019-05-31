@@ -72,7 +72,11 @@ class sRGBColorSpace {
                   ? clamp(12.92 * u, .0, 1.0)
                   : clamp(1.055 * std::pow(u, 1.0 / 2.4) - 0.055, .0, 1.0));
     };
-    return {OETF(v.X()), OETF(v.Y()), OETF(v.Z())};
+    return {
+      static_cast<float>(OETF(v.X())),
+      static_cast<float>(OETF(v.Y())),
+      static_cast<float>(OETF(v.Z()))
+      };
   }
 
   // See https://en.wikipedia.org/wiki/SRGB#The_reverse_transformation.
@@ -139,9 +143,10 @@ class LABColorSpace {
                       clamp(lab.Z(), -128.0f, 128.0f)};
 
     return {
-        invf((v.X() + 16.0f) / 116.0f + (v.Y() * 0.002f)) * kIlluminantD50.X(),
-        invf((v.X() + 16.0f) / 116.0f) * kIlluminantD50.Y(),
-        invf((v.X() + 16.0f) / 116.0f - (v.Z() * 0.005f)) * kIlluminantD50.Z()};
+        static_cast<float>(invf((v.X() + 16.0f) / 116.0f + (v.Y() * 0.002f)) * kIlluminantD50.X()),
+        static_cast<float>(invf((v.X() + 16.0f) / 116.0f) * kIlluminantD50.Y()),
+        static_cast<float>(invf((v.X() + 16.0f) / 116.0f - (v.Z() * 0.005f)) * kIlluminantD50.Z())
+        };
   }
 
  private:

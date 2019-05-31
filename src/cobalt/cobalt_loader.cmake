@@ -117,7 +117,6 @@ set(cobalt_loader_SOURCES
   ${COBALT_CORE_DIR}loader/loader_factory.h
   ${COBALT_CORE_DIR}loader/loader_types.h
   ${COBALT_CORE_DIR}loader/loader.cc
-  #/home/avakimov_am/skia-opengl-emscripten/src/cobalt/src/cobalt/loader/loader.cc
   ${COBALT_CORE_DIR}loader/loader.h
   ${COBALT_CORE_DIR}loader/mesh/mesh_cache.h
   ${COBALT_CORE_DIR}loader/mesh/mesh_decoder.cc

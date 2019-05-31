@@ -1364,6 +1364,8 @@ set(BASE_DEFINES
 # #include <base/stringprintf.h>
 target_include_directories(base PUBLIC
   ${CHROMIUM_DIR}
+  # TODO
+  ${COBALT_COMMON_INCLUDES}
 )
 
 #message(FATAL_ERROR ${CHROMIUM_DIR}/../../thirdparty/ced/src/)
@@ -1395,4 +1397,10 @@ target_compile_definitions(base PUBLIC
   BASE_IMPLEMENTATION=1
   BASE_I18N_IMPLEMENTATION=1
   ${EXTRA_DEFINITIONS}
+  # TODO
+  ${COBALT_COMMON_DEFINES}
+)
+
+target_compile_options(base PUBLIC
+  -Wno-c++11-narrowing
 )

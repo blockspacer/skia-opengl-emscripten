@@ -50,6 +50,7 @@ add_library(starboard_core STATIC
 )
 
 target_link_libraries(starboard_core PUBLIC
+  base # TODO
   #starboard
   #starboard_common
   modp_b64

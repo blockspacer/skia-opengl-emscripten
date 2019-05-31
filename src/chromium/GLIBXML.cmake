@@ -204,4 +204,6 @@ target_compile_definitions(GLIBXML PRIVATE
   # defines GLIBXML_STATIC, otherwise we get the macro redefined warning from
   # GCC. ("defines" does "-DFOO" which defines the macro FOO as 1.)
   GLIBXML_STATIC=""
+  # TODO
+  ${COBALT_COMMON_DEFINES}
 )

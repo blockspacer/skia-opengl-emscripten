@@ -201,8 +201,121 @@ endif()
 set(ENABLE_COBALT TRUE)
 if(ENABLE_COBALT)
   set(COMMON_FLAGS "${COMMON_FLAGS} -DENABLE_COBALT=1")
+  set(COMMON_FLAGS "${COMMON_FLAGS} -DCOBALT=1") # see htmlEmitImpliedRootLevelParagraph
+  set(COMMON_FLAGS "${COMMON_FLAGS} -DSTARBOARD=1")
   # see https://github.com/blockspacer/cobalt-clone-28052019/blob/master/src/starboard/client_porting/poem/strings_poem.h
   set(COMMON_FLAGS "${COMMON_FLAGS} -DPOEM_NO_EMULATION=1")
+  set(COBALT_ROOT_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src/)
+  set(COBALT_ROOT_DIR ${COBALT_ROOT_PARENT_DIR}cobalt/)
+  set(COBALT_PORT_DIR ${COBALT_ROOT_DIR}port/)
+  set(COBALT_CORE_PARENT_DIR ${COBALT_ROOT_DIR}src/)
+  set(COBALT_CORE_DIR ${COBALT_CORE_PARENT_DIR}cobalt/)
+  set(COBALT_GEN_DIR
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/cobalt/gen/ # to ./cobalt
+  )
+  set(COBALT_COMMON_DEFINES
+    OS_STARBOARD=1
+    STARBOARD=1
+    COBALT=1
+    COBALT_LINUX=1
+    MESA_EGL_NO_X11_HEADERS=1
+    #
+    #COBALT_ENABLE_VERSION_COMPATIBILITY_VALIDATIONS=1
+    #
+    STARBOARD_ATOMIC_INCLUDE="${COBALT_ROOT_DIR}port/linux/x64x11/atomic_public.h"
+    STARBOARD_THREAD_TYPES_INCLUDE="${COBALT_ROOT_DIR}port/linux/x64x11/thread_types_public.h"
+    STARBOARD_CONFIGURATION_INCLUDE="${COBALT_ROOT_DIR}port/linux/x64x11/configuration_public.h"
+    #
+    BASE_HASH_DEFINE_LONG_LONG_HASHES=0
+    BASE_HASH_DEFINE_STRING_HASHES=0
+    BASE_HASH_USE_HASH=0
+    BASE_HASH_MAP_INCLUDE="<unordered_map>"
+    #BASE_HASH_NAMESPACE=std
+    BASE_HASH_NAMESPACE=bhash # TODO
+    BASE_HASH_SET_INCLUDE="<unordered_set>"
+    BASE_HASH_USE_HASH_STRUCT=1
+    # https://github.com/blockspacer/cobalt-clone-28052019/blob/master/src/cobalt/dom_parser/libxml_html_parser_wrapper.cc#L119
+    #USE_SYSTEM_LIBXML=1
+    #
+    # see https://github.com/blockspacer/cobalt-clone-28052019/blob/master/src/out/qtcreator_projects/linux-x64x11_devel_cobalt.config
+    #
+    COBALT_MEDIA_BUFFER_STORAGE_TYPE_MEMORY=1
+    LIBXML_STATIC=1
+    #OPENSSL_NO_EC_NISTP_64_GCC_128=1
+    #OPENSSL_NO_HEARTBEATS=1
+    UCONFIG_NO_REGULAR_EXPRESSIONS=1
+    COBALT_MAX_CPU_USAGE_IN_BYTES=-1
+    #OPENSSL_NO_DYNAMIC_ENGINE=1
+    #OPENSSL_NO_OCSP=1
+    #OPENSSL_NO_UI=1
+    #OPENSSL_NO_SSL3=1
+    #OPENSSL_NO_CAMELLIA=1
+    #OPENSSL_NO_CAST=1
+    COBALT_OFFSCREEN_TARGET_CACHE_SIZE_IN_BYTES=-1
+    #OPENSSL_NO_POSIX_IO=1
+    #HAVE_ICU_BUILTIN=1
+    #OPENSSL_NO_GOST=1
+    #OPENSSL_NO_MDC2=1
+    #OPENSSL_NO_SRP=1
+    #OPENSSL_NO_STORE=1
+    #OPENSSL_NO_COMP=1
+    STARBOARD_NO_LOCAL_ISSUER=1
+    #THREADSAFE=1
+    ENABLE_PARTIAL_LAYOUT_CONTROL=1
+    #OPENSSL_NO_MD4=1
+    NO_WINDOWS_BRAINDEATH=1
+    COBALT_MEDIA_BUFFER_ALIGNMENT=1
+    #OPENSSL_NO_JPAKE=1
+    #OPENSSL_NO_DGRAM=1
+    #OPENSSL_NO_BUF_FREELISTS=1
+    #OPENSSL_NO_OCB=1
+    #OPENSSL_NO_KRB5=1
+    #COBALT_FORCE_DIRECT_GLES_RASTERIZER=1
+    #OPENSSL_NO_ENGINE=1
+    #OPENSSL_NO_RC4=1
+    #OPENSSL_NO_RC5=1
+    COBALT_MAX_GPU_USAGE_IN_BYTES=-1
+    #OPENSSL_NO_RC2=1
+    # TODO # ENABLE_WEBDRIVER=1
+    #STARBOARD_OLD_ICU=1
+    USE_OPENSSL=1
+    #OPENSSL_NO_BF=1
+    QUIC_DISABLED_FOR_STARBOARD=1
+    #OPENSSL_NO_CAPIENG=1
+    #OPENSSL_NO_RIPEMD=1
+    #ENABLE_BUILT_IN_DNS=1
+    #OPENSSL_NO_CMS=1
+    #OPENSSL_NO_RFC3779=1
+    #OPENSSL_NO_GMP=1
+    FLAC__NO_DLL=1
+    #OPENSSL_NO_SSL2=1
+    HB_NO_MT=1
+    ENABLE_IGNORE_CERTIFICATE_ERRORS=1 # TODO
+    LIBGLESV2_IMPLEMENTATION=1
+    HTTP_CACHE_DISABLED_FOR_STARBOARD=1
+    #OPENSSL_NO_STATIC_ENGINE=1
+    #OPENSSL_NO_HW=1
+    #OPENSSL_NO_IDEA=1
+    #OPENSSL_NO_THREADS=1
+    #OPENSSL_NO_EC2M=1
+    #OPENSSL_NO_SOCK=1
+    #OPENSSL_NO_SEED=1
+    #OPENSSL_NO_SCTP=1
+    #OPENSSL_NO_MD2=1
+    COBALT_SCRATCH_SURFACE_CACHE_SIZE_IN_BYTES=0
+  )
+  #message(FATAL_ERROR ${COBALT_CORE_PARENT_DIR}cobalt/base/circular_buffer_shell.h)
+  set(COBALT_COMMON_INCLUDES
+    ${COBALT_GEN_DIR}
+    ${COBALT_GEN_DIR}bindings/browser/source # to cobalt/dom/event_init.h
+    ${COBALT_ROOT_DIR}gen # to ./cobalt
+    ${CHROMIUM_DIR}/src # to ./base/containers/
+    ${COBALT_ROOT_DIR}/port # to ./starboard/
+    ${CHROMIUM_DIR} # to ./base/
+    ${COBALT_ROOT_DIR} # to ./port/
+    ${COBALT_CORE_PARENT_DIR} # to ./cobalt
+  )
+  set(COBALT_LIBRARY_NAME COBALT_CORE)
 endif(ENABLE_COBALT)
 
 # custom debug logger for wasm
@@ -1118,118 +1231,7 @@ endif(ENABLE_WTF)
 # COBALT
 #
 if(ENABLE_COBALT)
-  set(COBALT_ROOT_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src/)
-  set(COBALT_ROOT_DIR ${COBALT_ROOT_PARENT_DIR}cobalt/)
-  set(COBALT_PORT_DIR ${COBALT_ROOT_DIR}port/)
-  set(COBALT_CORE_PARENT_DIR ${COBALT_ROOT_DIR}src/)
-  set(COBALT_CORE_DIR ${COBALT_CORE_PARENT_DIR}cobalt/)
-  set(COBALT_GEN_DIR
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/cobalt/gen/ # to ./cobalt
-  )
-  set(COBALT_COMMON_DEFINES
-    OS_STARBOARD=1
-    STARBOARD=1
-    COBALT=1
-    COBALT_LINUX=1
-    MESA_EGL_NO_X11_HEADERS=1
-    #
-    #COBALT_ENABLE_VERSION_COMPATIBILITY_VALIDATIONS=1
-    #
-    STARBOARD_ATOMIC_INCLUDE="${COBALT_ROOT_DIR}port/linux/x64x11/atomic_public.h"
-    STARBOARD_THREAD_TYPES_INCLUDE="${COBALT_ROOT_DIR}port/linux/x64x11/thread_types_public.h"
-    STARBOARD_CONFIGURATION_INCLUDE="${COBALT_ROOT_DIR}port/linux/x64x11/configuration_public.h"
-    #
-    BASE_HASH_DEFINE_LONG_LONG_HASHES=0
-    BASE_HASH_DEFINE_STRING_HASHES=0
-    BASE_HASH_USE_HASH=0
-    BASE_HASH_MAP_INCLUDE="<unordered_map>"
-    #BASE_HASH_NAMESPACE=std
-    BASE_HASH_NAMESPACE=bhash # TODO
-    BASE_HASH_SET_INCLUDE="<unordered_set>"
-    BASE_HASH_USE_HASH_STRUCT=1
-    # https://github.com/blockspacer/cobalt-clone-28052019/blob/master/src/cobalt/dom_parser/libxml_html_parser_wrapper.cc#L119
-    #USE_SYSTEM_LIBXML=1
-    #
-    # see https://github.com/blockspacer/cobalt-clone-28052019/blob/master/src/out/qtcreator_projects/linux-x64x11_devel_cobalt.config
-    #
-    COBALT_MEDIA_BUFFER_STORAGE_TYPE_MEMORY=1
-    LIBXML_STATIC=1
-    #OPENSSL_NO_EC_NISTP_64_GCC_128=1
-    #OPENSSL_NO_HEARTBEATS=1
-    UCONFIG_NO_REGULAR_EXPRESSIONS=1
-    COBALT_MAX_CPU_USAGE_IN_BYTES=-1
-    #OPENSSL_NO_DYNAMIC_ENGINE=1
-    #OPENSSL_NO_OCSP=1
-    #OPENSSL_NO_UI=1
-    #OPENSSL_NO_SSL3=1
-    #OPENSSL_NO_CAMELLIA=1
-    #OPENSSL_NO_CAST=1
-    COBALT_OFFSCREEN_TARGET_CACHE_SIZE_IN_BYTES=-1
-    #OPENSSL_NO_POSIX_IO=1
-    #HAVE_ICU_BUILTIN=1
-    #OPENSSL_NO_GOST=1
-    #OPENSSL_NO_MDC2=1
-    #OPENSSL_NO_SRP=1
-    #OPENSSL_NO_STORE=1
-    #OPENSSL_NO_COMP=1
-    STARBOARD_NO_LOCAL_ISSUER=1
-    #THREADSAFE=1
-    ENABLE_PARTIAL_LAYOUT_CONTROL=1
-    #OPENSSL_NO_MD4=1
-    NO_WINDOWS_BRAINDEATH=1
-    COBALT_MEDIA_BUFFER_ALIGNMENT=1
-    #OPENSSL_NO_JPAKE=1
-    #OPENSSL_NO_DGRAM=1
-    #OPENSSL_NO_BUF_FREELISTS=1
-    #OPENSSL_NO_OCB=1
-    #OPENSSL_NO_KRB5=1
-    #COBALT_FORCE_DIRECT_GLES_RASTERIZER=1
-    #OPENSSL_NO_ENGINE=1
-    #OPENSSL_NO_RC4=1
-    #OPENSSL_NO_RC5=1
-    COBALT_MAX_GPU_USAGE_IN_BYTES=-1
-    #OPENSSL_NO_RC2=1
-    ENABLE_WEBDRIVER=1
-    #STARBOARD_OLD_ICU=1
-    USE_OPENSSL=1
-    #OPENSSL_NO_BF=1
-    QUIC_DISABLED_FOR_STARBOARD=1
-    #OPENSSL_NO_CAPIENG=1
-    #OPENSSL_NO_RIPEMD=1
-    #ENABLE_BUILT_IN_DNS=1
-    #OPENSSL_NO_CMS=1
-    #OPENSSL_NO_RFC3779=1
-    #OPENSSL_NO_GMP=1
-    FLAC__NO_DLL=1
-    #OPENSSL_NO_SSL2=1
-    HB_NO_MT=1
-    ENABLE_IGNORE_CERTIFICATE_ERRORS=1 # TODO
-    LIBGLESV2_IMPLEMENTATION=1
-    HTTP_CACHE_DISABLED_FOR_STARBOARD=1
-    #OPENSSL_NO_STATIC_ENGINE=1
-    #OPENSSL_NO_HW=1
-    #OPENSSL_NO_IDEA=1
-    #OPENSSL_NO_THREADS=1
-    #OPENSSL_NO_EC2M=1
-    #OPENSSL_NO_SOCK=1
-    #OPENSSL_NO_SEED=1
-    #OPENSSL_NO_SCTP=1
-    #OPENSSL_NO_MD2=1
-    COBALT_SCRATCH_SURFACE_CACHE_SIZE_IN_BYTES=0
-  )
-  #message(FATAL_ERROR ${COBALT_CORE_PARENT_DIR}cobalt/base/circular_buffer_shell.h)
-  set(COBALT_COMMON_INCLUDES
-    ${COBALT_GEN_DIR}
-    ${COBALT_GEN_DIR}bindings/browser/source # to cobalt/dom/event_init.h
-    ${COBALT_ROOT_DIR}gen # to ./cobalt
-    ${CHROMIUM_DIR}/src # to ./base/containers/
-    ${COBALT_ROOT_DIR}/port # to ./starboard/
-    ${CHROMIUM_DIR} # to ./base/
-    ${COBALT_ROOT_DIR} # to ./port/
-    ${COBALT_CORE_PARENT_DIR} # to ./cobalt
-  )
   add_subdirectory(src/cobalt) # requires skia above
-  set(COBALT_LIBRARY_NAME COBALT_CORE)
   #message(FATAL_ERROR ${WTF_LIBRARY_NAME})
   #set(WTF_LIBS
   #  ${WTF_LIBRARY_NAME}
@@ -1475,6 +1477,7 @@ if(EMSCRIPTEN)
   # Top is the executable, followed by directly used libraries.
   # see https://floooh.github.io/2016/01/12/cmake-dependency-juggling.html
   target_link_libraries(${PROJECT_NAME} PUBLIC
+    base # TODO
     BLINK_RENDERER_CORE
     BLINK_RENDERER_PLATFORM
     SERVICES_NETWORK_PUBLIC_CPP
@@ -1547,6 +1550,7 @@ else()
   # Top is the executable, followed by directly used libraries.
   # see https://floooh.github.io/2016/01/12/cmake-dependency-juggling.html
   target_link_libraries(${PROJECT_NAME} PUBLIC
+    #cobalt_
     BLINK_RENDERER_CORE
     BLINK_RENDERER_PLATFORM
     COMPONENTS_VIZ_CLIENT

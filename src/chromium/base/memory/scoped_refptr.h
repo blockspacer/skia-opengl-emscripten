@@ -219,11 +219,12 @@ class scoped_refptr {
 
   T* get() const { return ptr_; }
 
-#if defined(STARBOARD)
-  // TODO[johnx]: remove this implicit convertor and replace all occurances of
-  // necessary implicit conversion with scoped_refptr.get().
-  operator T*() const { return ptr_; }
-#endif
+// TODO
+//#if defined(STARBOARD)
+//  // TODO[johnx]: remove this implicit convertor and replace all occurances of
+//  // necessary implicit conversion with scoped_refptr.get().
+//  operator T*() const { return ptr_; }
+//#endif
 
   T& operator*() const {
     DCHECK(ptr_);
@@ -259,12 +260,13 @@ class scoped_refptr {
     return ptr_ == rhs.get();
   }
 
-#if defined(STARBOARD)
-  template <typename U>
-  bool operator!=(U* rhs) const {
-    return ptr_ != rhs;
-  }
-#endif
+// TODO
+//#if defined(STARBOARD)
+//  template <typename U>
+//  bool operator!=(U* rhs) const {
+//    return ptr_ != rhs;
+//  }
+//#endif
 
   template <typename U>
   bool operator!=(const scoped_refptr<U>& rhs) const {

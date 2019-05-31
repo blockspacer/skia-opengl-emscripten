@@ -57,6 +57,7 @@ add_library(cobalt_nanobase STATIC
 )
 
 target_link_libraries(cobalt_nanobase PUBLIC
+  base # TODO
   modp_b64
   #GFX_GEOMETRY
   #${BASE_LIBRARIES}
