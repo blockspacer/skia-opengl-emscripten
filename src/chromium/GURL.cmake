@@ -51,6 +51,7 @@ add_library(GURL STATIC
 )
 
 target_link_libraries(GURL PUBLIC
+  base # TODO
   ${BASE_LIBRARIES}
   icu
   #GIPC
@@ -63,7 +64,11 @@ target_include_directories(GURL PRIVATE
   ${GURL_DIR}
   #${BASE_LIBRARIES}
   base
+  # TODO
+  ${COBALT_COMMON_INCLUDES}
 )
 target_compile_definitions(GURL PRIVATE
   IS_URL_IMPL=1
+  # TODO
+  ${COBALT_COMMON_DEFINES}
 )

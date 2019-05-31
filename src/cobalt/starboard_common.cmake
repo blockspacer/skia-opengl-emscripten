@@ -42,6 +42,7 @@ add_library(starboard_common STATIC
 )
 
 target_link_libraries(starboard_common PUBLIC
+  base # TODO
   starboard_eztime
   starboard_stub
   #starboard

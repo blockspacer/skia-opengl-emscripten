@@ -70,12 +70,14 @@ class TypeId {
   intptr_t value_;
   template <typename T>
   friend TypeId GetTypeId();
-/*#if defined(BASE_HASH_USE_HASH_STRUCT)
-  friend struct BASE_HASH_NAMESPACE::hash<TypeId>;
+/*
+#if defined(BASE_HASH_USE_HASH_STRUCT)
+  friend struct hash<TypeId>;
 #else
   template <typename T, typename Predicate>
-  friend class BASE_HASH_NAMESPACE::hash_compare;
-#endif*/
+  friend class hash_compare;
+#endif
+*/
 
   friend struct std::hash<TypeId>;
 };
@@ -92,7 +94,7 @@ TypeId GetTypeId() {
 }  // namespace base
 
 // Make TypeId usable as key in base::hash_map.
-
+/*
 //namespace BASE_HASH_NAMESPACE {
 
 //
@@ -153,5 +155,6 @@ class hash_compare<base::TypeId, Predicate> {
 
 #endif
 //}  // namespace BASE_HASH_NAMESPACE
+*/
 
 #endif  // COBALT_BASE_TYPE_ID_H_

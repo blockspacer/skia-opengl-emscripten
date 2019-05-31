@@ -15,6 +15,7 @@ add_library(starboard_icu_init STATIC
 )
 
 target_link_libraries(starboard_icu_init PUBLIC
+  base # TODO
   #starboard_common
   #starboard_icu_init
   #starboard_core

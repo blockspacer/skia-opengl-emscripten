@@ -19,7 +19,7 @@
 #include <string>
 
 #include "base/basictypes.h"
-//#include "base/containers/hash_tables.h"
+#include "base/containers/hash_tables.h"
 #include <map>
 #include "base/logging.h"
 #include "starboard/string.h"
@@ -122,7 +122,7 @@ inline std::ostream& operator<<(std::ostream& os, base::CobToken token) {
 }  // namespace base
 
 //namespace BASE_HASH_NAMESPACE {
-#if defined(BASE_HASH_USE_HASH_STRUCT)
+//#if defined(BASE_HASH_USE_HASH_STRUCT)
 
 template <>
 struct std::hash<base::CobToken> {
@@ -131,14 +131,14 @@ struct std::hash<base::CobToken> {
   }
 };
 
-#else
+/*#else
 
 template <>
 inline size_t hash_value<base::CobToken>(const base::CobToken& token) {
   return reinterpret_cast<size_t>(token.c_str());
 }
 
-#endif  // BASE_HASH_USE_STRUCT
+#endif  // BASE_HASH_USE_STRUCT*/
 //}  // namespace BASE_HASH_NAMESPACE
 
 #endif  // COBALT_BASE_TOKEN_H_

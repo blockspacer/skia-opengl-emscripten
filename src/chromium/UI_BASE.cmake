@@ -308,6 +308,7 @@ add_library(UI_BASE STATIC
 )
 
 target_link_libraries(UI_BASE PUBLIC
+  base # TODO
   #public_deps = [
   #  ":buildflags",
   #  ":features",

@@ -197,9 +197,19 @@ install(
 
 if (NOT CMAKE_VERSION VERSION_LESS "3.0")
     add_library(glm INTERFACE)
+    #target_compile_definitions(glm INTERFACE
+    #    ${COBALT_COMMON_DEFINES}
+    #)
+    #set_property(TARGET glm
+    #  APPEND PROPERTY INTERFACE_COMPILE_DEFINITIONS
+    #  ${COBALT_COMMON_DEFINES}
+    #)
     target_include_directories(glm INTERFACE
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+        # TODO
+        #$<BUILD_INTERFACE:${COBALT_ROOT_DIR}/port> # to ./starboard/
+        #$<BUILD_INTERFACE:${COBALT_COMMON_INCLUDES}>
     )
     install(TARGETS glm EXPORT glmTargets)
 

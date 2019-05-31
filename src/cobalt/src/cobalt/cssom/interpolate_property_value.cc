@@ -426,7 +426,7 @@ void InterpolateVisitor::VisitKeyword(KeywordValue* start_keyword_value) {
     if (end_value_->GetTypeId() ==
         base::GetTypeId<TransformFunctionListValue>()) {
       interpolated_value_ =
-          AnimateTransform(start_keyword_value, end_value_, progress_);
+          AnimateTransform(start_keyword_value, end_value_.get(), progress_);
     }
   } else {
     NOTREACHED();
@@ -547,7 +547,7 @@ void InterpolateVisitor::VisitTransformPropertyValue(
       // Try to interpolate each transform function in the transform function
       // list. This can only be done if the function types match.
       interpolated_value_ = AnimateTransform(start_transform_property_value,
-          end_value_, progress_);
+          end_value_.get(), progress_);
     }
   } else if (end_value_->Equals(*KeywordValue::GetNone())) {
     // Interpolate to identity matrix.

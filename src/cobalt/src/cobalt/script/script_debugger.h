@@ -24,10 +24,12 @@
 #include "cobalt/script/call_frame.h"
 #include "cobalt/script/source_provider.h"
 
+#include "cobalt/script/global_environment.h"
+
 namespace cobalt {
 namespace script {
 
-class GlobalEnvironment;
+//class GlobalEnvironment;
 
 // Engine-independent pure virtual interface to a JavaScript debugger.
 // Used as an opaque interface to the specific debugger implementation,

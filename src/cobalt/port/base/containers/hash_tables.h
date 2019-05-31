@@ -18,9 +18,9 @@
 
 // Chromium has moved away from compiler specific hash methods and instead uses
 // std::hashes unconditionally. Starboard sadly does not guarantee std::hash.
-#if defined(OS_STARBOARD)
+#if defined(OS_STARBOARD) || defined(OS_EMSCRIPTEN)
 #include "starboard/configuration.h"
-#if SB_HAS(STD_UNORDERED_HASH)
+//#if SB_HAS(STD_UNORDERED_HASH)
 #define BASE_HASH_DEFINE_LONG_LONG_HASHES 0
 #define BASE_HASH_DEFINE_STRING_HASHES 0
 #define BASE_HASH_USE_HASH 0
@@ -29,7 +29,7 @@
 #define BASE_HASH_SET_INCLUDE <unordered_set>
 #define BASE_HASH_USE_HASH_STRUCT
 
-#else  // SB_HAS(STD_UNORDERED_HASH)
+/*#else  // SB_HAS(STD_UNORDERED_HASH)
 #define BASE_HASH_DEFINE_LONG_LONG_HASHES !SB_HAS(LONG_LONG_HASH)
 #define BASE_HASH_DEFINE_STRING_HASHES !SB_HAS(STRING_HASH)
 #define BASE_HASH_USE_HASH !SB_HAS(HASH_USING)
@@ -38,8 +38,9 @@
 #define BASE_HASH_SET_INCLUDE SB_HASH_SET_INCLUDE
 #if !SB_HAS(HASH_VALUE)
 #define BASE_HASH_USE_HASH_STRUCT
-#endif
-#endif // SB_HAS(STD_UNORDERED_HASH)
+#endif*/
+//#endif // SB_HAS(STD_UNORDERED_HASH)
+
 #elif defined(COMPILER_GCC)
 #if defined(OS_ANDROID) || (defined(__LB_SHELL__) && !defined(__LB_LINUX__))
 #define BASE_HASH_DEFINE_LONG_LONG_HASHES 0
@@ -146,10 +147,10 @@ struct hash<std::pair<Type1, Type2>> {
 #endif  // BASE_HASH_DEFINE_STRING_HASHES
 
 namespace base {
-#if BASE_HASH_USE_HASH
+/*#if BASE_HASH_USE_HASH
 using BASE_HASH_NAMESPACE::hash;
-#endif
-#if SB_HAS(STD_UNORDERED_HASH)
+#endif*/
+//#if SB_HAS(STD_UNORDERED_HASH)
 template <class K,
           class V,
           class Hash = std::hash<K>,
@@ -164,12 +165,12 @@ template <class K, class Hash = std::hash<K>, class KeyEqual = std::equal_to<K>>
 using hash_multiset = std::unordered_multiset<K, Hash, KeyEqual>;
 template <class K, class Hash = std::hash<K>, class KeyEqual = std::equal_to<K>>
 using hash_set = std::unordered_set<K, Hash, KeyEqual>;
-#else   // SB_HAS(STD_UNORDERED_HASH)
+/*#else   // SB_HAS(STD_UNORDERED_HASH)
 using BASE_HASH_NAMESPACE::hash_map;
 using BASE_HASH_NAMESPACE::hash_multimap;
 using BASE_HASH_NAMESPACE::hash_multiset;
 using BASE_HASH_NAMESPACE::hash_set;
-#endif  // SB_HAS(STD_UNORDERED_HASH)
+#endif  // SB_HAS(STD_UNORDERED_HASH)*/
 }
 
 #undef BASE_HASH_DEFINE_LONG_LONG_HASHES

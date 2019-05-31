@@ -155,6 +155,7 @@ add_library(UI_GL STATIC
 )
 
 target_link_libraries(UI_GL PUBLIC
+  base # TODO
   #dynamic_annotations
   #${BASE_LIBRARIES}
   # khronos

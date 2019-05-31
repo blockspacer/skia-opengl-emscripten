@@ -1850,9 +1850,14 @@ target_include_directories(GNET PRIVATE
   ${GNET_DIR}
   ${BASE_DIR}
   ${GEN_COMBINED_DIR} # requires net/base/registry_controlled_domains/effective_tld_names-inc.cc
+  # TODO
+  ${COBALT_COMMON_INCLUDES}
 )
 
 target_compile_definitions(GNET PRIVATE
+  # TODO
+  ${COBALT_COMMON_DEFINES}
+  #
   NET_DISABLE_BROTLI=1
   NET_IMPLEMENTATION=1
   #IS_NET_EXTRAS_IMPL

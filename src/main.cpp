@@ -733,9 +733,25 @@ sk_sp<const GrGLInterface> emscripten_GrGLMakeNativeInterface() {
 //#define ENABLE_COBALT 1
 //#endif
 #ifdef ENABLE_COBALT
+
+/*#include "cobalt/cssom/selector_tree.h"
+
+#include "cobalt/base/version_compatibility.h"
+#include "cobalt/css_parser/parser.h"
+#include "cobalt/cssom/css_style_rule.h"
+#include "cobalt/cssom/specificity.h"
+
+#include "cobalt/cssom/css_rule_list.h"
+
+#include "cobalt/cssom/css_font_face_rule.h"
+#include "cobalt/cssom/css_media_rule.h"
+#include "cobalt/cssom/css_rule_style_declaration.h"
+#include "cobalt/cssom/css_style_rule.h"
+#include "cobalt/cssom/media_list.h"*/
+
 #include "cobalt/web_animations/animation.h"
 
-#include "cobalt/src/cobalt/loader/decoder.h"
+/*#include "cobalt/src/cobalt/loader/decoder.h"
 
 #include "cobalt/dom_parser/html_decoder.h"
 #include "base/callback.h"
@@ -753,7 +769,7 @@ sk_sp<const GrGLInterface> emscripten_GrGLMakeNativeInterface() {
 
 #include "cobalt/dom/text.h"
 #include "cobalt/dom_parser/parser.h"
-//#include "cobalt/loader/fetcher_factory.h"
+//#include "cobalt/loader/fetcher_factory.h"*/
 #endif // ENABLE_COBALT
 
 #ifdef USE_LIBJPEG
@@ -2550,7 +2566,64 @@ int main(int argc, char** argv) {
 #endif // ENABLE_UI
 
 #ifdef ENABLE_COBALT
-  printf("Initializing COBALT...\n");
+  /*printf("Testing COBALT cssom...\n");
+
+  scoped_refptr<cobalt::cssom::CSSRuleList> rule_list
+    = new cobalt::cssom::CSSRuleList();
+  scoped_refptr<cobalt::cssom::CSSMediaRule> rule =
+      new cobalt::cssom::CSSMediaRule(
+        new cobalt::cssom::MediaList(),
+        new cobalt::cssom::CSSRuleList()
+      );
+  rule_list->AppendCSSRule(rule);
+
+  printf("1 = rule_list->length() = %d\n", rule_list->length());
+  printf("CSSRule::kMediaRule = %b\n", cobalt::cssom::CSSRule::kMediaRule == rule_list->Item(0)->type());
+*/
+
+/*  printf("Testing COBALT selectors...\n");
+  cobalt::cssom::SelectorTree selector_tree;
+
+  //// Selector Tree:
+  //// root
+  ////   kDescendantCombinator -> node_1("div")
+  //std::unique_ptr<cobalt::cssom::css_parser::Parser> css_parser =
+  //  cobalt::cssom::css_parser::Parser::Create();
+  //scoped_refptr<cobalt::cssom::CSSStyleRule> css_style_rule_1 =
+  //    cobalt::cssom::css_parser->ParseRule("div {}",
+  //    base::SourceLocation("[object SelectorTreeTest]", 1, 1))
+  //        ->AsCSSStyleRule();
+  //selector_tree.AppendRule(css_style_rule_1);
+  //
+  //// Verify that ValidateVersionCompatibility does not report a usage error
+  //// when the minimum compatibility version is 1.
+  //base::VersionCompatibility::GetInstance()->SetMinimumVersion(1);
+  //EXPECT_TRUE(selector_tree.ValidateVersionCompatibility());
+  //
+  //ASSERT_EQ(0,
+  //          selector_tree.children(selector_tree.root_node(), cobalt::cssom::kChildCombinator)
+  //              .size());
+  //ASSERT_EQ(1, selector_tree
+  //                 .children(selector_tree.root_node(), cobalt::cssom::kDescendantCombinator)
+  //                 .size());
+  //ASSERT_EQ(0, selector_tree
+  //                 .children(selector_tree.root_node(), cobalt::cssom::kNextSiblingCombinator)
+  //                 .size());
+  //ASSERT_EQ(
+  //    0, selector_tree
+  //           .children(selector_tree.root_node(), cobalt::cssom::kFollowingSiblingCombinator)
+  //           .size());
+  //
+  //const cobalt::cssom::SelectorTree::Node* node_1 =
+  //    selector_tree.children(selector_tree.root_node(), cobalt::cssom::kDescendantCombinator)
+  //        .begin()
+  //        ->second;
+  //ASSERT_EQ(1, node_1->rules().size());
+  //EXPECT_EQ(css_style_rule_1, node_1->rules()[0]);
+  //EXPECT_EQ(cobalt::cssom::Specificity(0, 0, 1), node_1->cumulative_specificity());
+*/
+
+  printf("Testing COBALT web_animations...\n");
 
   cobalt::web_animations::Animation::Data animation;
   animation.set_start_time(base::TimeDelta::FromSeconds(2));
@@ -2559,6 +2632,8 @@ int main(int argc, char** argv) {
           base::TimeDelta::FromMilliseconds(3000));
   // EXPECT_EQ(1.0, local_time->InSecondsF());
   printf("local_time->InSecondsF() %f\n", local_time->InSecondsF());
+/*
+  printf("Testing COBALT dom...\n");
 
   using namespace cobalt;
   using namespace cobalt::dom_parser;
@@ -2574,9 +2649,9 @@ int main(int argc, char** argv) {
   std::unique_ptr<HTMLDecoder> html_decoder_;
 
   loader::FetcherFactory fetcher_factory_
-    (NULL /* network_module */);
+    (NULL );
   loader::LoaderFactory loader_factory_
-    (&fetcher_factory_, NULL /* ResourceProvider */,
+    (&fetcher_factory_, NULL ,
                       base::ThreadPriority::NORMAL);
   std::unique_ptr<Parser> dom_parser_
     (new Parser());
@@ -2588,10 +2663,10 @@ int main(int argc, char** argv) {
     (
           //&fetcher_factory_, &loader_factory_, &stub_css_parser_,
           &fetcher_factory_, &loader_factory_, NULL,
-          dom_parser_.get(), NULL /* can_play_type_handler */,
-          //NULL /* web_media_player_factory */, &stub_script_runner_,
-          NULL /* web_media_player_factory */, NULL,
-          NULL /* script_value_factory */, NULL, NULL, NULL, NULL, NULL, NULL,
+          dom_parser_.get(), NULL ,
+          //NULL , &stub_script_runner_,
+          NULL , NULL,
+          NULL , NULL, NULL, NULL, NULL, NULL, NULL,
           NULL, dom_stat_tracker_.get(), "", base::kApplicationStateStarted,
           NULL);
   scoped_refptr<dom::Document> document_
@@ -2633,7 +2708,7 @@ int main(int argc, char** argv) {
   //EXPECT_EQ("head", head->tag_name());
 
   printf("head->tag_name() %s\n", head->tag_name().c_str());
-
+*/
 #endif // ENABLE_COBALT
 
 #ifdef ENABLE_CUSTOM_FONTS

@@ -337,6 +337,7 @@ add_library(starboard_platform STATIC
 )
 
 target_link_libraries(starboard_platform PUBLIC
+  base # TODO
   starboard_common # TODO
   starboard_stub
   modp_b64

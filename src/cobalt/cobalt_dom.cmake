@@ -369,6 +369,7 @@ add_library(cobalt_dom STATIC
 #  '<(DEPTH)/url/url.gyp:url',
 #],
 target_link_libraries(cobalt_dom PUBLIC
+  base # TODO
   cobalt_base
   cobalt_nanobase
   cobalt_csp

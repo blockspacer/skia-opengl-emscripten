@@ -201,8 +201,8 @@ endif()
 set(ENABLE_COBALT TRUE)
 if(ENABLE_COBALT)
   set(COMMON_FLAGS "${COMMON_FLAGS} -DENABLE_COBALT=1")
-  set(COMMON_FLAGS "${COMMON_FLAGS} -DCOBALT=1") # see htmlEmitImpliedRootLevelParagraph
-  set(COMMON_FLAGS "${COMMON_FLAGS} -DSTARBOARD=1")
+  #set(COMMON_FLAGS "${COMMON_FLAGS} -DCOBALT=1") # see htmlEmitImpliedRootLevelParagraph
+  #set(COMMON_FLAGS "${COMMON_FLAGS} -DSTARBOARD=1")
   # see https://github.com/blockspacer/cobalt-clone-28052019/blob/master/src/starboard/client_porting/poem/strings_poem.h
   set(COMMON_FLAGS "${COMMON_FLAGS} -DPOEM_NO_EMULATION=1")
   set(COBALT_ROOT_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src/)
@@ -212,6 +212,9 @@ if(ENABLE_COBALT)
   set(COBALT_CORE_DIR ${COBALT_CORE_PARENT_DIR}cobalt/)
   set(COBALT_GEN_DIR
     ${CMAKE_CURRENT_SOURCE_DIR}/src/cobalt/gen/ # to ./cobalt
+  )
+  set(COBALT_GEN_CSS_PARSER_PARENT_DIR
+    ${COBALT_GEN_DIR}cobalt/ # to css_parser/grammar_impl_generated.h
   )
   set(COBALT_COMMON_DEFINES
     OS_STARBOARD=1
@@ -226,14 +229,14 @@ if(ENABLE_COBALT)
     STARBOARD_THREAD_TYPES_INCLUDE="${COBALT_ROOT_DIR}port/linux/x64x11/thread_types_public.h"
     STARBOARD_CONFIGURATION_INCLUDE="${COBALT_ROOT_DIR}port/linux/x64x11/configuration_public.h"
     #
-    BASE_HASH_DEFINE_LONG_LONG_HASHES=0
-    BASE_HASH_DEFINE_STRING_HASHES=0
-    BASE_HASH_USE_HASH=0
-    BASE_HASH_MAP_INCLUDE="<unordered_map>"
-    #BASE_HASH_NAMESPACE=std
-    BASE_HASH_NAMESPACE=bhash # TODO
-    BASE_HASH_SET_INCLUDE="<unordered_set>"
-    BASE_HASH_USE_HASH_STRUCT=1
+    #BASE_HASH_DEFINE_LONG_LONG_HASHES=0
+    #BASE_HASH_DEFINE_STRING_HASHES=0
+    #BASE_HASH_USE_HASH=0
+    #BASE_HASH_MAP_INCLUDE="<unordered_map>"
+    # TODO #BASE_HASH_NAMESPACE=std  # TODO
+    # TODO #BASE_HASH_NAMESPACE=bhash # TODO
+    #BASE_HASH_SET_INCLUDE="<unordered_set>"
+    #BASE_HASH_USE_HASH_STRUCT=1
     # https://github.com/blockspacer/cobalt-clone-28052019/blob/master/src/cobalt/dom_parser/libxml_html_parser_wrapper.cc#L119
     #USE_SYSTEM_LIBXML=1
     #
@@ -1477,6 +1480,7 @@ if(EMSCRIPTEN)
   # Top is the executable, followed by directly used libraries.
   # see https://floooh.github.io/2016/01/12/cmake-dependency-juggling.html
   target_link_libraries(${PROJECT_NAME} PUBLIC
+    cobalt_web_animations
     base # TODO
     BLINK_RENDERER_CORE
     BLINK_RENDERER_PLATFORM
@@ -1551,6 +1555,7 @@ else()
   # see https://floooh.github.io/2016/01/12/cmake-dependency-juggling.html
   target_link_libraries(${PROJECT_NAME} PUBLIC
     #cobalt_
+    cobalt_web_animations
     BLINK_RENDERER_CORE
     BLINK_RENDERER_PLATFORM
     COMPONENTS_VIZ_CLIENT

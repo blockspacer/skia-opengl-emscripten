@@ -23,6 +23,8 @@
 #include "cobalt/media/can_play_type_handler.h"
 #include "cobalt/script/environment_settings.h"
 
+#include "cobalt/script/global_environment.h"
+
 #ifdef ENABLE_SPEECH
 #include "cobalt/speech/microphone.h"
 #endif // ENABLE_SPEECH
@@ -36,7 +38,7 @@ namespace network {
 class NetworkModule;
 }
 namespace script {
-class GlobalEnvironment;
+//class GlobalEnvironment;
 class JavaScriptEngine;
 }
 namespace dom {

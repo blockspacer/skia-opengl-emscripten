@@ -251,7 +251,7 @@ typedef std::bitset<kNumLonghandProperties> LonghandPropertiesBitset;
 }  // namespace cobalt
 
 // Make PropertyKey usable as key in base::hash_map.
-
+/*
 //namespace BASE_HASH_NAMESPACE {
 
 //
@@ -312,5 +312,5 @@ class hash_compare<cobalt::cssom::PropertyKey, Predicate> {
 
 #endif
 //}  // namespace BASE_HASH_NAMESPACE
-
+*/
 #endif  // COBALT_CSSOM_PROPERTY_DEFINITIONS_H_

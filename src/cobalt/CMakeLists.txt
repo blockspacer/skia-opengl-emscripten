@@ -42,6 +42,6 @@ include(cobalt_cssom.cmake)
 
 include(cobalt_web_animations.cmake)
 
-include(cobalt_dom.cmake)
+#include(cobalt_dom.cmake)
 
 include(COBALT.cmake)

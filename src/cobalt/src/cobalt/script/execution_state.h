@@ -20,10 +20,12 @@
 
 #include "base/memory/ref_counted.h"
 
+#include "cobalt/script/global_environment.h"
+
 namespace cobalt {
 namespace script {
 
-class GlobalEnvironment;
+//class GlobalEnvironment;
 
 // Provides access to the state of JavaScript execution.
 class ExecutionState {

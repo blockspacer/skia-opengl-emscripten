@@ -444,7 +444,7 @@ void MediaSource::OnAudioTrackChanged(AudioTrack* audio_track) {
 
   bool is_active = (source_buffer->video_tracks()->selected_index() != -1) ||
                    source_buffer->audio_tracks()->HasEnabledTrack();
-  SetSourceBufferActive(source_buffer, is_active);
+  SetSourceBufferActive(source_buffer.get(), is_active);
 }
 
 void MediaSource::OnVideoTrackChanged(VideoTrack* video_track) {
@@ -463,7 +463,7 @@ void MediaSource::OnVideoTrackChanged(VideoTrack* video_track) {
   bool is_active = source_buffer->video_tracks()->selected_index() != -1 ||
                    source_buffer->audio_tracks()->HasEnabledTrack();
 
-  SetSourceBufferActive(source_buffer, is_active);
+  SetSourceBufferActive(source_buffer.get(), is_active);
 }
 
 void MediaSource::OpenIfInEndedState() {

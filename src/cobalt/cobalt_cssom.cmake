@@ -242,6 +242,7 @@ add_library(cobalt_cssom STATIC
 )
 
 target_link_libraries(cobalt_cssom PUBLIC
+  base # TODO
   # cobalt_network # TODO
   # cobalt_browser # TODO
   cobalt_dom_exception

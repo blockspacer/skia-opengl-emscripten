@@ -14,6 +14,7 @@ add_library(cobalt_page_visibility STATIC
 )
 
 target_link_libraries(cobalt_page_visibility PUBLIC
+  base # TODO
   cobalt_base
   #cobalt_browser ## TODO ##
   #cobalt_nanobase

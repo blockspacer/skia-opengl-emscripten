@@ -16,6 +16,7 @@ add_library(starboard_eztime STATIC
 )
 
 target_link_libraries(starboard_eztime PUBLIC
+  base # TODO
   #starboard_common
   starboard_icu_init
   starboard_core

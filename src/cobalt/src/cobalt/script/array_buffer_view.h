@@ -17,6 +17,7 @@
 
 #include "cobalt/script/array_buffer.h"
 #include "cobalt/script/script_value.h"
+#include "cobalt/script/global_environment.h"
 
 namespace cobalt {
 namespace script {
