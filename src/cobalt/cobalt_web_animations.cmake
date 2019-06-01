@@ -34,6 +34,7 @@ target_link_libraries(cobalt_web_animations PUBLIC
   cobalt_cssom
   #cobalt_nanobase
   #cobalt_script
+  #v8_stub
   #modp_b64
   #GFX_GEOMETRY
   #${BASE_LIBRARIES}

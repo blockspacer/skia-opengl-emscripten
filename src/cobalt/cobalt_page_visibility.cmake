@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+﻿cmake_minimum_required(VERSION 2.8)
 
 #'dependencies': [
 #  '<(DEPTH)/cobalt/base/base.gyp:base',
@@ -19,6 +19,7 @@ target_link_libraries(cobalt_page_visibility PUBLIC
   #cobalt_browser ## TODO ##
   #cobalt_nanobase
   #cobalt_script
+  #v8_stub
   base # TODO
   modp_b64
   #GFX_GEOMETRY

@@ -1489,6 +1489,7 @@ if(EMSCRIPTEN)
     cobalt_nanobase
     cobalt_csp
     cobalt_script
+    v8_stub
     cobalt_dom_exception
     cobalt_ui_navigation
     cobalt_math

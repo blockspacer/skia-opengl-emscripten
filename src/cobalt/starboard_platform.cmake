@@ -427,6 +427,7 @@ target_link_libraries(starboard_platform PUBLIC
   #base # TODO
   #cobalt_base
   #cobalt_script
+  #v8_stub
   ## starboard_common # TODO
   #starboard_eztime
   #starboard_stub

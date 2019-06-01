@@ -1,23 +1,18 @@
 ﻿cmake_minimum_required(VERSION 2.8)
 
-# 'dependencies': [
-#   '<(DEPTH)/cobalt/script/script.gyp:script',
-# ],
-set(COBALT_dom_exception_SOURCES
-  ${COBALT_CORE_DIR}dom/dom_exception.cc
-  #${COBALT_CORE_DIR}dom/dom_exception.h
+set(v8_stub_SOURCES
+  ${COBALT_PORT_DIR}v8_stub/v8c_array_buffer.cc
 )
 
-add_library(cobalt_dom_exception STATIC
-  ${COBALT_dom_exception_SOURCES}
+add_library(v8_stub STATIC
+  ${v8_stub_SOURCES}
 )
 
-target_link_libraries(cobalt_dom_exception PUBLIC
-  #cobalt_base
-  #cobalt_nanobase
+target_link_libraries(v8_stub PUBLIC
+  cobalt_base
+  cobalt_nanobase
   cobalt_script
-  v8_stub
-  #base # TODO
+  base # TODO
   #modp_b64
   #GFX_GEOMETRY
   #${BASE_LIBRARIES}
@@ -73,9 +68,9 @@ target_link_libraries(cobalt_dom_exception PUBLIC
   #GFX_CODEC
 )
 
-set_property(TARGET cobalt_dom_exception PROPERTY CXX_STANDARD 17)
+set_property(TARGET v8_stub PROPERTY CXX_STANDARD 17)
 
-target_include_directories(cobalt_dom_exception PRIVATE
+target_include_directories(v8_stub PRIVATE
   #${UI_PARENT_DIR}
   ${COBALT_CORE_DIR}
   ${COBALT_CORE_PARENT_DIR}
@@ -83,7 +78,7 @@ target_include_directories(cobalt_dom_exception PRIVATE
   ${CHROMIUM_DIR} # to third_party/skia/include/core/SkWriteBuffer.h
 )
 
-target_compile_definitions(cobalt_dom_exception PRIVATE
+target_compile_definitions(v8_stub PRIVATE
   # starboard/linux/shared/BUILD.gn
   #STARBOARD_IMPLEMENTATION=1
   #

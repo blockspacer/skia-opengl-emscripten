@@ -226,6 +226,7 @@ target_link_libraries(cobalt_media PUBLIC
   cobalt_base
   cobalt_nanobase
   #cobalt_script
+  #v8_stub
   cobalt_loader ## TODO
   cobalt_csp
   starboard_icu_init

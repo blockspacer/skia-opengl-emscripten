@@ -26,6 +26,8 @@ include(cobalt_csp.cmake)
 
 include(cobalt_script.cmake)
 
+include(v8_stub.cmake)
+
 include(cobalt_dom_exception.cmake)
 
 include(cobalt_ui_navigation.cmake)

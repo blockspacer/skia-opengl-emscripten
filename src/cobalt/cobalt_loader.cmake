@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+﻿cmake_minimum_required(VERSION 2.8)
 
 # loader/origin.gyp
 # no deps
@@ -146,6 +146,7 @@ target_link_libraries(cobalt_loader PUBLIC
   cobalt_base
   #cobalt_nanobase
   #cobalt_script
+  #v8_stub
   cobalt_csp
   base # TODO
   modp_b64
