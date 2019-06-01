@@ -1,4 +1,4 @@
-// Copyright (c) 2012 The Chromium Authors. All rights reserved.
+﻿// Copyright (c) 2012 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -23,6 +23,20 @@
 #include "build/build_config.h"
 
 namespace base {
+
+#if defined(OS_EMSCRIPTEN)
+bool GetTempDir(FilePath* path) {
+    return false; // TODO
+}
+
+FilePath GetHomeDir() {
+    return FilePath("/");
+}
+
+bool DeleteFile(const FilePath& path, bool recursive) {
+    return false;
+}
+#endif
 
 #if !defined(OS_NACL_NONSFI)
 namespace {

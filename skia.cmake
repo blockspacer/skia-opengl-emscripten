@@ -553,11 +553,11 @@ if(NOT TARGET SKIA)
 endif()
 set(SKIA_LIBRARY "${SKIA_BUILD_DIR}/${SKIA_LIBRARY_PREFIX}skia${SKIA_LIBRARY_SUFFIX}")
 #
-add_library(pathkit ${SK_LIBRARY_TYPE} IMPORTED GLOBAL)
-if(NOT TARGET pathkit)
-  message(FATAL_ERROR "SKIA LIB NOT FOUND")
-endif()
-set(PATHKIT_LIBRARY "${SKIA_BUILD_DIR}/${SKIA_LIBRARY_PREFIX}pathkit${SKIA_LIBRARY_SUFFIX}")
+#add_library(pathkit ${SK_LIBRARY_TYPE} IMPORTED GLOBAL)
+#if(NOT TARGET pathkit)
+#  message(FATAL_ERROR "SKIA LIB NOT FOUND")
+#endif()
+#set(PATHKIT_LIBRARY "${SKIA_BUILD_DIR}/${SKIA_LIBRARY_PREFIX}pathkit${SKIA_LIBRARY_SUFFIX}")
 #
 add_library(sksg ${SK_LIBRARY_TYPE} IMPORTED GLOBAL)
 if(NOT TARGET sksg)
@@ -626,17 +626,17 @@ add_dependencies(SKIA SKIA_build wuffs jpeg)
 target_link_libraries(SKIA INTERFACE
   wuffs jpeg)
 #
-set_target_properties(pathkit PROPERTIES
-  IMPORTED_LOCATION "${PATHKIT_LIBRARY}"
-  INTERFACE_INCLUDE_DIRECTORIES "${SKIA_HEADERS}"
-  INTERFACE_COMPILE_DEFINITIONS "${SKIA_DEFINES}"
-  # https://stackoverflow.com/a/28102243/10904212
-  IMPORTED_LINK_INTERFACE_LIBRARIES "${SKIA_LIBRARY};${SKIA_DEPENDENCIES}"
-)
-add_dependencies(pathkit SKIA)
-# https://stackoverflow.com/a/53945809
-target_link_libraries(pathkit INTERFACE
-  SKIA)
+#set_target_properties(pathkit PROPERTIES
+#  IMPORTED_LOCATION "${PATHKIT_LIBRARY}"
+#  INTERFACE_INCLUDE_DIRECTORIES "${SKIA_HEADERS}"
+#  INTERFACE_COMPILE_DEFINITIONS "${SKIA_DEFINES}"
+#  # https://stackoverflow.com/a/28102243/10904212
+#  IMPORTED_LINK_INTERFACE_LIBRARIES "${SKIA_LIBRARY};${SKIA_DEPENDENCIES}"
+#)
+#add_dependencies(pathkit SKIA)
+## https://stackoverflow.com/a/53945809
+#target_link_libraries(pathkit INTERFACE
+#  SKIA)
 #
 set_target_properties(skshaper PROPERTIES
   IMPORTED_LOCATION "${skshaper_LIBRARY}"

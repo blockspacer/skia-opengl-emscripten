@@ -1255,6 +1255,28 @@ endif()
 
 list(APPEND BASE_SOURCES
   ${BASE_DIR}debug/stack_trace_posix.cc
+  #if (!is_nacl) {
+  #  sources += [
+  #    "base_paths.cc",
+  #    "base_paths.h",
+  #    "base_paths_android.cc",
+  #    "base_paths_android.h",
+  #    "base_paths_mac.h",
+  #    "base_paths_mac.mm",
+  #    "base_paths_posix.h",
+  #    "base_paths_win.cc",
+  #    "base_paths_win.h",
+  #    "metrics/persistent_histogram_storage.cc",
+  #    "metrics/persistent_histogram_storage.h",
+  #  ]
+  ${BASE_DIR}base_paths.cc
+  #if (is_linux) {
+  #  sources += [
+  #    "base_paths_posix.cc",
+  #    "debug/elf_reader_linux.cc",
+  #    "debug/elf_reader_linux.h",
+  #  ]
+  #}
   ${BASE_DIR}base_paths_posix.cc
   ${BASE_DIR}files/file_util_posix.cc
 )

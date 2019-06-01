@@ -451,7 +451,7 @@ if(EMSCRIPTEN)
   if(RELEASE_BUILD)
     # remove duplicate functions, which C++ templates often create.
     # NOTE: done by default for wasm, in -O1 and above
-    # set(EMCC_COMMON "${EMCC_COMMON} -s ELIMINATE_DUPLICATE_FUNCTIONS=1")
+    set(EMCC_COMMON "${EMCC_COMMON} -s ELIMINATE_DUPLICATE_FUNCTIONS=1")
     #
     # EVAL_CTORS evaluates global data initializer constructors at link time,
     # which would improve startup time and reduce code size of these ctors.
@@ -1378,7 +1378,7 @@ add_executable(${PROJECT_NAME}
 add_dependencies(${PROJECT_NAME}
   wuffs
   jpeg
-  pathkit
+  #pathkit
   SKIA
   sksg
   skshaper
@@ -1467,7 +1467,9 @@ if(EMSCRIPTEN)
   add_dependencies(GFX_SWITCHES SKIA_build sksg skshaper SKIA)
   add_dependencies(GFX_RANGE SKIA_build sksg skshaper SKIA)
 
+  set(EM_TARGET_NAME ${PROJECT_NAME})
   set(EM_TARGET_JS ${PROJECT_NAME}.js)
+  set(EM_TARGET_WASM ${PROJECT_NAME}.wasm)
   configure_file(${HTML_TEMPLATE} index.html @ONLY)
   target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE
     ${SKIA_INCLUDES}
@@ -1508,7 +1510,7 @@ if(EMSCRIPTEN)
     #
     modp_b64
     base # TODO
-    BLINK_RENDERER_CORE
+    #BLINK_RENDERER_CORE
     BLINK_RENDERER_PLATFORM
     SERVICES_NETWORK_PUBLIC_CPP
     COMPONENTS_VIZ_CLIENT
@@ -1520,7 +1522,7 @@ if(EMSCRIPTEN)
     sksg
     skshaper
     particles
-    pathkit
+    #pathkit
     wuffs
     jpeg
     #
@@ -1547,7 +1549,7 @@ if(EMSCRIPTEN)
     #GNET
     #GURL
     #GCRYPTO
-    BORINGSSL
+    #BORINGSSL
     #
     ${LINK_OPTIONS}
   )
@@ -1582,11 +1584,11 @@ else()
     #cobalt_
     #cobalt_web_animations
     ${COBALT_LIBRARY_NAME}
-    BLINK_RENDERER_CORE
+    #BLINK_RENDERER_CORE
     BLINK_RENDERER_PLATFORM
     COMPONENTS_VIZ_CLIENT
     ${WTF_LIBS}
-    BORINGSSL
+    #BORINGSSL
     GCRYPTO
     GURL
     GNET
@@ -1615,7 +1617,7 @@ else()
     sksg
     skshaper
     particles
-    pathkit
+    #pathkit
     wuffs
     jpeg
     #

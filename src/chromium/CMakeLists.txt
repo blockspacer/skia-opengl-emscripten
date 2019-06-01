@@ -302,7 +302,7 @@ include(GFX_CODEC.cmake)
 add_dependencies(GFX_CODEC
   GFX_GEOMETRY_SKIA
   GFX_GEOMETRY
-  pathkit
+  #pathkit
   SKIA
   sksg
   skshaper

@@ -56,7 +56,7 @@ target_link_libraries(GFX_CODEC PRIVATE
   sksg
   skshaper
   particles
-  pathkit
+  #pathkit
   wuffs
   #jpeg
   #libpng

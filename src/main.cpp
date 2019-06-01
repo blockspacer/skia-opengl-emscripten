@@ -27,7 +27,7 @@
 // high quality: anialias, e.t.c.
 #define ENABLE_SKIA_HQ 1
 
-//#define ENABLE_BORINGSSL 1
+#define ENABLE_BORINGSSL 1
 #if defined(ENABLE_BORINGSSL) && !defined(ENABLE_BASE)
 #warning "ENABLE_BORINGSSL requires BASE"
 #undef ENABLE_BORINGSSL
@@ -504,7 +504,7 @@ static ::std::unique_ptr<gfx::ImageSkia> gfxImageSkia;
 static sk_sp<SkImage> skImageSp;
 #endif // ENABLE_UI
 
-//#define ENABLE_BLINK_PLATFORM 1
+#define ENABLE_BLINK_PLATFORM 1
 #ifdef ENABLE_BLINK_PLATFORM
 
 #include <third_party/blink/renderer/platform/runtime_enabled_features.h>

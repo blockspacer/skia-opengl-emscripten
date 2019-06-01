@@ -93,7 +93,7 @@ target_link_libraries(SKIA_EXT PUBLIC
   sksg
   skshaper
   particles
-  pathkit
+  #pathkit
   wuffs
   jpeg
   #${BASE_LIBRARIES}

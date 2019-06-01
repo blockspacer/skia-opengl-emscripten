@@ -1,4 +1,4 @@
-// Copyright (c) 2012 The Chromium Authors. All rights reserved.
+﻿// Copyright (c) 2012 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -75,7 +75,7 @@ int CallStat(const char* path, stat_wrapper_t* sb) {
   ScopedBlockingCall scoped_blocking_call(FROM_HERE, BlockingType::MAY_BLOCK);
   return stat(path, sb);
 }
-#if !defined(OS_NACL_NONSFI) || defined(OS_EMSCRIPTEN)
+#if !defined(OS_NACL_NONSFI) && !defined(OS_EMSCRIPTEN)
 int CallLstat(const char* path, stat_wrapper_t* sb) {
   ScopedBlockingCall scoped_blocking_call(FROM_HERE, BlockingType::MAY_BLOCK);
   return lstat(path, sb);
@@ -92,11 +92,14 @@ int CallLstat(const char* path, stat_wrapper_t* sb) {
 }
 #endif
 
-#if !defined(OS_NACL_NONSFI) && !defined(OS_EMSCRIPTEN)
+#if !defined(OS_NACL_NONSFI) //&& !defined(OS_EMSCRIPTEN)
 // Helper for VerifyPathControlledByUser.
 bool VerifySpecificPathControlledByUser(const FilePath& path,
                                         uid_t owner_uid,
                                         const std::set<gid_t>& group_gids) {
+#if defined(OS_EMSCRIPTEN)
+    return true;
+#else
   stat_wrapper_t stat_info;
   if (CallLstat(path.value().c_str(), &stat_info) != 0) {
     DPLOG(ERROR) << "Failed to get information on path "
@@ -127,6 +130,7 @@ bool VerifySpecificPathControlledByUser(const FilePath& path,
   }
 
   return true;
+#endif
 }
 
 std::string TempFileName() {
@@ -338,11 +342,15 @@ std::string AppendModeCharacter(StringPiece mode, char mode_char) {
 
 #if !defined(OS_NACL_NONSFI) && !defined(OS_EMSCRIPTEN)
 FilePath MakeAbsoluteFilePath(const FilePath& input) {
+#if defined(OS_EMSCRIPTEN)
+    return FilePath(input.value().c_str());
+#else
   ScopedBlockingCall scoped_blocking_call(FROM_HERE, BlockingType::MAY_BLOCK);
   char full_path[PATH_MAX];
   if (realpath(input.value().c_str(), full_path) == nullptr)
     return FilePath();
   return FilePath(full_path);
+#endif
 }
 
 // TODO(erikkay): The Windows version of this accepts paths like "foo/bar/*"
@@ -350,6 +358,9 @@ FilePath MakeAbsoluteFilePath(const FilePath& input) {
 // that functionality. If not, remove from file_util_win.cc, otherwise add it
 // here.
 bool DeleteFile(const FilePath& path, bool recursive) {
+#if defined(OS_EMSCRIPTEN)
+    return false;
+#else
   ScopedBlockingCall scoped_blocking_call(FROM_HERE, BlockingType::MAY_BLOCK);
   const char* path_str = path.value().c_str();
   stat_wrapper_t file_info;
@@ -382,6 +393,7 @@ bool DeleteFile(const FilePath& path, bool recursive) {
     success &= (rmdir(dir.value().c_str()) == 0);
   }
   return success;
+#endif
 }
 
 bool ReplaceFile(const FilePath& from_path,
@@ -478,10 +490,14 @@ bool PathExists(const FilePath& path) {
   return access(path.value().c_str(), F_OK) == 0;
 }
 
-#if !defined(OS_NACL_NONSFI) && !defined(OS_EMSCRIPTEN)
+#if !defined(OS_NACL_NONSFI)// && !defined(OS_EMSCRIPTEN)
 bool PathIsWritable(const FilePath& path) {
+#if defined(OS_EMSCRIPTEN)
+    return true;
+#else
   ScopedBlockingCall scoped_blocking_call(FROM_HERE, BlockingType::MAY_BLOCK);
   return access(path.value().c_str(), W_OK) == 0;
+#endif
 }
 #endif  // !defined(OS_NACL_NONSFI)
 
@@ -509,6 +525,9 @@ bool ReadFromFD(int fd, char* buffer, size_t bytes) {
 
 int CreateAndOpenFdForTemporaryFileInDir(const FilePath& directory,
                                          FilePath* path) {
+#if defined(OS_EMSCRIPTEN)
+    return 0; // TODO
+#else
   ScopedBlockingCall scoped_blocking_call(
       FROM_HERE,
       BlockingType::MAY_BLOCK);  // For call to mkstemp().
@@ -518,18 +537,26 @@ int CreateAndOpenFdForTemporaryFileInDir(const FilePath& directory,
   char* buffer = const_cast<char*>(tmpdir_string.c_str());
 
   return HANDLE_EINTR(mkstemp(buffer));
+#endif
 }
 
 #if !defined(OS_FUCHSIA)
 bool CreateSymbolicLink(const FilePath& target_path,
                         const FilePath& symlink_path) {
+#if defined(OS_EMSCRIPTEN)
+    return false; // TODO
+#else
   DCHECK(!symlink_path.empty());
   DCHECK(!target_path.empty());
   return ::symlink(target_path.value().c_str(),
                    symlink_path.value().c_str()) != -1;
+#endif
 }
 
 bool ReadSymbolicLink(const FilePath& symlink_path, FilePath* target_path) {
+#if defined(OS_EMSCRIPTEN)
+    return false; // TODO
+#else
   DCHECK(!symlink_path.empty());
   DCHECK(target_path);
   char buf[PATH_MAX];
@@ -543,9 +570,13 @@ bool ReadSymbolicLink(const FilePath& symlink_path, FilePath* target_path) {
 
   *target_path = FilePath(FilePath::StringType(buf, count));
   return true;
+#endif
 }
 
 bool GetPosixFilePermissions(const FilePath& path, int* mode) {
+#if defined(OS_EMSCRIPTEN)
+    return false; // TODO
+#else
   ScopedBlockingCall scoped_blocking_call(FROM_HERE, BlockingType::MAY_BLOCK);
   DCHECK(mode);
 
@@ -557,10 +588,14 @@ bool GetPosixFilePermissions(const FilePath& path, int* mode) {
 
   *mode = file_info.st_mode & FILE_PERMISSION_MASK;
   return true;
+#endif
 }
 
 bool SetPosixFilePermissions(const FilePath& path,
                              int mode) {
+#if defined(OS_EMSCRIPTEN)
+    return false; // TODO
+#else
   ScopedBlockingCall scoped_blocking_call(FROM_HERE, BlockingType::MAY_BLOCK);
   DCHECK_EQ(mode & ~FILE_PERMISSION_MASK, 0);
 
@@ -577,10 +612,14 @@ bool SetPosixFilePermissions(const FilePath& path,
     return false;
 
   return true;
+#endif
 }
 
 bool ExecutableExistsInPath(Environment* env,
                             const FilePath::StringType& executable) {
+#if defined(OS_EMSCRIPTEN)
+    return false; // TODO
+#else
   std::string path;
   if (!env->GetVar("PATH", &path)) {
     LOG(ERROR) << "No $PATH variable. Assuming no " << executable << ".";
@@ -596,6 +635,7 @@ bool ExecutableExistsInPath(Environment* env,
       return true;
   }
   return false;
+#endif
 }
 
 #endif  // !OS_FUCHSIA
@@ -603,6 +643,9 @@ bool ExecutableExistsInPath(Environment* env,
 #if !defined(OS_MACOSX)
 // This is implemented in file_util_mac.mm for Mac.
 bool GetTempDir(FilePath* path) {
+#if defined(OS_EMSCRIPTEN)
+    return false; // TODO
+#else
   const char* tmp = getenv("TMPDIR");
   if (tmp) {
     *path = FilePath(tmp);
@@ -615,11 +658,15 @@ bool GetTempDir(FilePath* path) {
   *path = FilePath("/tmp");
   return true;
 #endif
+#endif // OS_EMSCRIPTEN
 }
 #endif  // !defined(OS_MACOSX)
 
 #if !defined(OS_MACOSX)  // Mac implementation is in file_util_mac.mm.
 FilePath GetHomeDir() {
+#if defined(OS_EMSCRIPTEN)
+    return FilePath("/");
+#else
 #if defined(OS_CHROMEOS)
   if (SysInfo::IsRunningOnChromeOS()) {
     // On Chrome OS chrome::DIR_USER_DATA is overridden with a primary user
@@ -642,6 +689,7 @@ FilePath GetHomeDir() {
 
   // Last resort.
   return FilePath("/tmp");
+#endif // OS_EMSCRIPTEN
 }
 #endif  // !defined(OS_MACOSX)
 
@@ -767,12 +815,16 @@ bool NormalizeFilePath(const FilePath& path, FilePath* normalized_path) {
 // TODO(rkc): Refactor GetFileInfo and FileEnumerator to handle symlinks
 // correctly. http://code.google.com/p/chromium-os/issues/detail?id=15948
 bool IsLink(const FilePath& file_path) {
+#if defined(OS_EMSCRIPTEN)
+    return false;
+#else
   stat_wrapper_t st;
   // If we can't lstat the file, it's safe to assume that the file won't at
   // least be a 'followable' link.
   if (CallLstat(file_path.value().c_str(), &st) != 0)
     return false;
   return S_ISLNK(st.st_mode);
+#endif
 }
 
 bool GetFileInfo(const FilePath& file_path, File::Info* results) {
