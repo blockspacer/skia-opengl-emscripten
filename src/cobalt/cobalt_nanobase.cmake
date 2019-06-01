@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+﻿cmake_minimum_required(VERSION 2.8)
 
 #'dependencies': [
 #  '<(DEPTH)/starboard/starboard_headers_only.gyp:starboard_headers_only',
@@ -57,39 +57,42 @@ add_library(cobalt_nanobase STATIC
 )
 
 target_link_libraries(cobalt_nanobase PUBLIC
-  base # TODO
-  modp_b64
+  #starboard_core
+  #
+  #base # TODO
+  #
+  #modp_b64
   #GFX_GEOMETRY
   #${BASE_LIBRARIES}
   #base
   #SKIA
-  dynamic_annotations
+  #dynamic_annotations
   #UI_GFX
   ##BLINK_RENDERER_CORE
   #BLINK_PUBLIC_COMMON
   #BLINK_PUBLIC_MOJOM
   ##BLINK_RENDERER_NETWORK
   #BLINK_RENDERER_PLATFORM
-  GURL
-  GNET
-  GCRYPTO
+  #GURL
+  #GNET
+  #GCRYPTO
   #GFX_GEOMETRY
   #UI_GFX
   ## mojo
   ## services/service_manager
   ## services/ws/public/cpp/gpu
   ##${BASE_LIBRARIES}
-  base
-  GLIBXML
+  #base
+  #GLIBXML
   #SKIA
   ##skcms
   #ced
   ## emoji-segmenter
   ## webrtc
   ## zlib
-  icu
-  ced
-  glm
+  #icu
+  #ced
+  #glm
   #CC
   ##G_GPU
   #ANIMATION_CC
@@ -108,10 +111,10 @@ target_link_libraries(cobalt_nanobase PUBLIC
   #LIB_V8_INTERFACE
   #COMPONENTS_SCHEDULING_METRICS
   #${HARFBUZZ_LIBRARIES}
-  GMEDIA
-  GZLIB_EXT
-  #SERVICES_SERVICE_MANAGER_PUBLIC_CPP
-  GFX_CODEC
+  #GMEDIA
+  #GZLIB_EXT
+  ##SERVICES_SERVICE_MANAGER_PUBLIC_CPP
+  #GFX_CODEC
 )
 
 set_property(TARGET cobalt_nanobase PROPERTY CXX_STANDARD 17)

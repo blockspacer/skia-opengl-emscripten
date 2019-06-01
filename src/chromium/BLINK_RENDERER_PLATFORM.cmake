@@ -1237,6 +1237,244 @@ list(APPEND BLINK_RENDERER_PLATFORM_SPEECH_SOURCES
   ## TODO ##   #   "geometry/cg/int_size_cg.cc
 )
 
+if(ENABLE_HARFBUZZ)
+  list(APPEND BLINK_RENDERER_PLATFORM_FONTS_SOURCES
+      #${BLINK_RENDERER_PLATFORM_DIR}fonts/alternate_font_family.h
+  #  ## TODO ##${BLINK_RENDERER_PLATFORM_DIR}fonts/android/font_cache_android.cc
+  #  ## TODO ##${BLINK_RENDERER_PLATFORM_DIR}fonts/android/font_unique_name_lookup_android.cc
+  #  ## TODO ##${BLINK_RENDERER_PLATFORM_DIR}fonts/android/font_unique_name_lookup_android.h
+    ${BLINK_RENDERER_PLATFORM_DIR}fonts/bitmap_glyphs_block_list.cc
+    #${BLINK_RENDERER_PLATFORM_DIR}fonts/bitmap_glyphs_block_list.h
+    #${BLINK_RENDERER_PLATFORM_DIR}fonts/canvas_rotation_in_vertical.h
+    #${BLINK_RENDERER_PLATFORM_DIR}fonts/character_range.h
+    #${BLINK_RENDERER_PLATFORM_DIR}fonts/custom_font_data.h
+    #${BLINK_RENDERER_PLATFORM_DIR}fonts/fallback_list_composite_key.h
+    ${BLINK_RENDERER_PLATFORM_DIR}fonts/font.cc
+    #${BLINK_RENDERER_PLATFORM_DIR}fonts/font.h
+    #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_baseline.h
+    ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_cache.cc
+    #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_cache.h
+    #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_cache_client.h
+    #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_cache_key.h
+    ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_cache_memory_dump_provider.cc
+    #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_cache_memory_dump_provider.h
+    ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_custom_platform_data.cc
+    #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_custom_platform_data.h
+    ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_data.cc
+    #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_data.h
+    ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_data_cache.cc
+    #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_data_cache.h
+    ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_data_for_range_set.cc
+    #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_data_for_range_set.h
+    ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_description.cc
+    #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_description.h
+    #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_face_creation_params.h
+    ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_fallback_iterator.cc
+    #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_fallback_iterator.h
+    ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_fallback_list.cc
+    #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_fallback_list.h
+    ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_fallback_priority.cc
+    #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_fallback_priority.h
+    ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_family.cc
+    #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_family.h
+    ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_global_context.cc
+    #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_global_context.h
+    ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_metrics.cc
+    #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_metrics.h
+    ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_orientation.cc
+    #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_orientation.h
+    ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_platform_data.cc
+    #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_platform_data.h
+    ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_selection_algorithm.cc
+    #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_selection_algorithm.h
+    ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_selection_types.cc
+    #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_selection_types.h
+    ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_selector.cc
+    #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_selector.h
+    #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_selector_client.h
+    ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_smoothing_mode.cc
+    #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_smoothing_mode.h
+    ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_unique_name_lookup.cc
+    #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_unique_name_lookup.h
+    ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_variant_east_asian.cc
+    #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_variant_east_asian.h
+    ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_variant_numeric.cc
+    #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_variant_numeric.h
+    #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_vertical_position_type.h
+    ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_width_variant.cc
+    #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_width_variant.h
+    ${BLINK_RENDERER_PLATFORM_DIR}fonts/generic_font_family_settings.cc
+    #${BLINK_RENDERER_PLATFORM_DIR}fonts/generic_font_family_settings.h
+    #${BLINK_RENDERER_PLATFORM_DIR}fonts/glyph_metrics_map.h
+    ${BLINK_RENDERER_PLATFORM_DIR}fonts/linux/font_cache_linux.cc
+    ${BLINK_RENDERER_PLATFORM_DIR}fonts/linux/font_unique_name_lookup_linux.cc
+    #${BLINK_RENDERER_PLATFORM_DIR}fonts/linux/font_unique_name_lookup_linux.h
+    # TODO #${BLINK_RENDERER_PLATFORM_DIR}fonts/mac/core_text_font_format_support.cc
+    #${BLINK_RENDERER_PLATFORM_DIR}fonts/mac/core_text_font_format_support.h
+    # TODO #${BLINK_RENDERER_PLATFORM_DIR}fonts/mac/font_cache_mac.mm",
+    #${BLINK_RENDERER_PLATFORM_DIR}fonts/mac/font_matcher_mac.h
+    # TODO # ${BLINK_RENDERER_PLATFORM_DIR}fonts/mac/font_matcher_mac.mm",
+    #${BLINK_RENDERER_PLATFORM_DIR}fonts/mac/font_platform_data_mac.h
+    # TODO #${BLINK_RENDERER_PLATFORM_DIR}fonts/mac/font_platform_data_mac.mm",
+    #${BLINK_RENDERER_PLATFORM_DIR}fonts/ng_text_fragment_paint_info.h
+    # TODO #${BLINK_RENDERER_PLATFORM_DIR}fonts/opentype/font_format_check.cc
+    # TODO ##${BLINK_RENDERER_PLATFORM_DIR}fonts/opentype/font_format_check.h
+    # TODO #${BLINK_RENDERER_PLATFORM_DIR}fonts/opentype/font_settings.cc
+    # TODO ##${BLINK_RENDERER_PLATFORM_DIR}fonts/opentype/font_settings.h
+    # TODO #${BLINK_RENDERER_PLATFORM_DIR}fonts/opentype/open_type_caps_support.cc
+    # TODO ##${BLINK_RENDERER_PLATFORM_DIR}fonts/opentype/open_type_caps_support.h
+    # TODO #${BLINK_RENDERER_PLATFORM_DIR}fonts/opentype/open_type_caps_support_mpl.cc
+    # TODO ##${BLINK_RENDERER_PLATFORM_DIR}fonts/opentype/open_type_types.h
+    # TODO #${BLINK_RENDERER_PLATFORM_DIR}fonts/opentype/open_type_vertical_data.cc
+    # TODO ##${BLINK_RENDERER_PLATFORM_DIR}fonts/opentype/open_type_vertical_data.h
+    ${BLINK_RENDERER_PLATFORM_DIR}fonts/orientation_iterator.cc
+    #${BLINK_RENDERER_PLATFORM_DIR}fonts/orientation_iterator.h
+    ${BLINK_RENDERER_PLATFORM_DIR}fonts/script_run_iterator.cc
+    #${BLINK_RENDERER_PLATFORM_DIR}fonts/script_run_iterator.h
+    ${BLINK_RENDERER_PLATFORM_DIR}fonts/segmented_font_data.cc
+    #${BLINK_RENDERER_PLATFORM_DIR}fonts/segmented_font_data.h
+    ${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/caching_word_shape_iterator.cc
+    #${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/caching_word_shape_iterator.h
+    ${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/caching_word_shaper.cc
+    #${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/caching_word_shaper.h
+    ${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/case_mapping_harfbuzz_buffer_filler.cc
+    #${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/case_mapping_harfbuzz_buffer_filler.h
+    #${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/glyph_bounds_accumulator.h
+    ${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/harfbuzz_face.cc
+    #${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/harfbuzz_face.h
+    ${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/harfbuzz_font_cache.cc
+    #${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/harfbuzz_font_cache.h
+    #${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/harfbuzz_font_data.h
+    ${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/harfbuzz_shaper.cc
+    #${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/harfbuzz_shaper.h
+    ${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/run_segmenter.cc
+    #${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/run_segmenter.h
+    ${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/shape_cache.cc
+    #${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/shape_cache.h
+    ${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/shape_result.cc
+    #${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/shape_result.h
+    ${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/shape_result_bloberizer.cc
+    #${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/shape_result_bloberizer.h
+    ${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/shape_result_buffer.cc
+    #${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/shape_result_buffer.h
+    #${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/shape_result_inline_headers.h
+    ${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/shape_result_spacing.cc
+    #${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/shape_result_spacing.h
+    ${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/shape_result_test_info.cc
+    #${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/shape_result_test_info.h
+    ${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/shape_result_view.cc
+    #${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/shape_result_view.h
+    ${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/shaping_line_breaker.cc
+    #${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/shaping_line_breaker.h
+    ${BLINK_RENDERER_PLATFORM_DIR}fonts/simple_font_data.cc
+    #${BLINK_RENDERER_PLATFORM_DIR}fonts/simple_font_data.h
+    ${BLINK_RENDERER_PLATFORM_DIR}fonts/skia/font_cache_skia.cc
+    ${BLINK_RENDERER_PLATFORM_DIR}fonts/skia/skia_text_metrics.cc
+    #${BLINK_RENDERER_PLATFORM_DIR}fonts/skia/skia_text_metrics.h
+    ${BLINK_RENDERER_PLATFORM_DIR}fonts/skia/sktypeface_factory.cc
+    #${BLINK_RENDERER_PLATFORM_DIR}fonts/skia/sktypeface_factory.h
+    ${BLINK_RENDERER_PLATFORM_DIR}fonts/small_caps_iterator.cc
+    #${BLINK_RENDERER_PLATFORM_DIR}fonts/small_caps_iterator.h
+    ${BLINK_RENDERER_PLATFORM_DIR}fonts/string_truncator.cc
+    #${BLINK_RENDERER_PLATFORM_DIR}fonts/string_truncator.h
+    # requires "third_party/emoji-segmenter/src/emoji_presentation_scanner.c"
+    ${BLINK_RENDERER_PLATFORM_DIR}fonts/symbols_iterator.cc
+    #${BLINK_RENDERER_PLATFORM_DIR}fonts/symbols_iterator.h
+    ${BLINK_RENDERER_PLATFORM_DIR}fonts/text_rendering_mode.cc
+    #${BLINK_RENDERER_PLATFORM_DIR}fonts/text_rendering_mode.h
+    #${BLINK_RENDERER_PLATFORM_DIR}fonts/text_run_paint_info.h
+    ${BLINK_RENDERER_PLATFORM_DIR}fonts/typesetting_features.cc
+    #${BLINK_RENDERER_PLATFORM_DIR}fonts/typesetting_features.h
+    ${BLINK_RENDERER_PLATFORM_DIR}fonts/unicode_range_set.cc
+    #${BLINK_RENDERER_PLATFORM_DIR}fonts/unicode_range_set.h
+    ${BLINK_RENDERER_PLATFORM_DIR}fonts/utf16_ragel_iterator.cc
+    #${BLINK_RENDERER_PLATFORM_DIR}fonts/utf16_ragel_iterator.h
+    ${BLINK_RENDERER_PLATFORM_DIR}fonts/utf16_text_iterator.cc
+    #${BLINK_RENDERER_PLATFORM_DIR}fonts/utf16_text_iterator.h
+    ${BLINK_RENDERER_PLATFORM_DIR}fonts/vdmx_parser.cc
+    #${BLINK_RENDERER_PLATFORM_DIR}fonts/vdmx_parser.h
+    ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/web_font_decoder.cc
+    #${BLINK_RENDERER_PLATFORM_DIR}fonts/web_font_decoder.h
+    ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/web_font_render_style.cc
+    ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/web_font_typeface_factory.cc
+    #${BLINK_RENDERER_PLATFORM_DIR}fonts/web_font_typeface_factory.h
+    ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/win/dwrite_font_format_support.cc
+    ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/win/dwrite_font_format_support.h
+    ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/win/font_cache_skia_win.cc
+    ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/win/font_fallback_win.cc
+    ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/win/font_fallback_win.h
+    ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/win/font_platform_data_win.cc
+    ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/win/font_unique_name_lookup_win.cc
+    ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/win/font_unique_name_lookup_win.h
+  )
+  list(APPEND BLINK_RENDERER_PLATFORM_TEXT_SOURCES
+    #${BLINK_RENDERER_PLATFORM_DIR}text/bidi_character_run.h
+    ${BLINK_RENDERER_PLATFORM_DIR}text/bidi_context.cc
+    #${BLINK_RENDERER_PLATFORM_DIR}text/bidi_context.h
+    #${BLINK_RENDERER_PLATFORM_DIR}text/bidi_resolver.h
+    #${BLINK_RENDERER_PLATFORM_DIR}text/bidi_run_list.h
+    ${BLINK_RENDERER_PLATFORM_DIR}text/bidi_text_run.cc
+    #${BLINK_RENDERER_PLATFORM_DIR}text/bidi_text_run.h
+    ${BLINK_RENDERER_PLATFORM_DIR}text/capitalize.cc
+    #${BLINK_RENDERER_PLATFORM_DIR}text/capitalize.h
+    ${BLINK_RENDERER_PLATFORM_DIR}text/character.cc
+    #${BLINK_RENDERER_PLATFORM_DIR}text/character.h
+    ${BLINK_RENDERER_PLATFORM_DIR}text/character_emoji.cc
+    #${BLINK_RENDERER_PLATFORM_DIR}text/character_property.h
+    #${BLINK_RENDERER_PLATFORM_DIR}text/character_property_data.h
+    ${BLINK_RENDERER_PLATFORM_DIR}text/date_time_format.cc
+    #${BLINK_RENDERER_PLATFORM_DIR}text/date_time_format.h
+    #${BLINK_RENDERER_PLATFORM_DIR}text/decode_escape_sequences.h
+    ${BLINK_RENDERER_PLATFORM_DIR}text/hyphenation.cc
+    #${BLINK_RENDERER_PLATFORM_DIR}text/hyphenation.h
+    ${BLINK_RENDERER_PLATFORM_DIR}text/icu_error.cc
+    #${BLINK_RENDERER_PLATFORM_DIR}text/icu_error.h
+    ${BLINK_RENDERER_PLATFORM_DIR}text/layout_locale.cc
+    #${BLINK_RENDERER_PLATFORM_DIR}text/layout_locale.h
+    ${BLINK_RENDERER_PLATFORM_DIR}text/linux/hyphenation_linux.cc
+    ${BLINK_RENDERER_PLATFORM_DIR}text/locale_icu.cc
+    #${BLINK_RENDERER_PLATFORM_DIR}text/locale_icu.h
+    #${BLINK_RENDERER_PLATFORM_DIR}text/locale_mac.h
+    # TODO #${BLINK_RENDERER_PLATFORM_DIR}text/locale_mac.mm",
+    ${BLINK_RENDERER_PLATFORM_DIR}text/locale_to_script_mapping.cc
+    #${BLINK_RENDERER_PLATFORM_DIR}text/locale_to_script_mapping.h
+    ## TODO ##${BLINK_RENDERER_PLATFORM_DIR}text/locale_win.cc
+    #${BLINK_RENDERER_PLATFORM_DIR}text/locale_win.h
+    ## TODO ##${BLINK_RENDERER_PLATFORM_DIR}text/mac/hyphenation_mac.cc
+    ${BLINK_RENDERER_PLATFORM_DIR}text/platform_locale.cc
+    #${BLINK_RENDERER_PLATFORM_DIR}text/platform_locale.h
+    ${BLINK_RENDERER_PLATFORM_DIR}text/segmented_string.cc
+    #${BLINK_RENDERER_PLATFORM_DIR}text/segmented_string.h
+    #${BLINK_RENDERER_PLATFORM_DIR}text/suffix_tree.h
+    ${BLINK_RENDERER_PLATFORM_DIR}text/text_boundaries.cc
+    #${BLINK_RENDERER_PLATFORM_DIR}text/text_boundaries.h
+    ${BLINK_RENDERER_PLATFORM_DIR}text/text_break_iterator.cc
+    #${BLINK_RENDERER_PLATFORM_DIR}text/text_break_iterator.h
+    ${BLINK_RENDERER_PLATFORM_DIR}text/text_break_iterator_icu.cc
+    ${BLINK_RENDERER_PLATFORM_DIR}text/text_break_iterator_internal_icu.cc
+    #${BLINK_RENDERER_PLATFORM_DIR}text/text_break_iterator_internal_icu.h
+    ${BLINK_RENDERER_PLATFORM_DIR}text/text_direction.cc
+    #${BLINK_RENDERER_PLATFORM_DIR}text/text_direction.h
+    ${BLINK_RENDERER_PLATFORM_DIR}text/text_encoding_detector.cc
+    #${BLINK_RENDERER_PLATFORM_DIR}text/text_encoding_detector.h
+    #${BLINK_RENDERER_PLATFORM_DIR}text/text_justify.h
+    ${BLINK_RENDERER_PLATFORM_DIR}text/text_run.cc
+    #${BLINK_RENDERER_PLATFORM_DIR}text/text_run.h
+    #${BLINK_RENDERER_PLATFORM_DIR}text/text_run_iterator.h
+    #${BLINK_RENDERER_PLATFORM_DIR}text/truncation.h
+    #${BLINK_RENDERER_PLATFORM_DIR}text/unicode_bidi.h
+    ${BLINK_RENDERER_PLATFORM_DIR}text/unicode_range.cc
+    #${BLINK_RENDERER_PLATFORM_DIR}text/unicode_range.h
+    ${BLINK_RENDERER_PLATFORM_DIR}text/unicode_utilities.cc
+    #${BLINK_RENDERER_PLATFORM_DIR}text/unicode_utilities.h
+    ${BLINK_RENDERER_PLATFORM_DIR}text/web_entities.cc
+    #${BLINK_RENDERER_PLATFORM_DIR}text/web_entities.h
+    ## TODO ##${BLINK_RENDERER_PLATFORM_DIR}text/win/hyphenation_win.cc
+    #${BLINK_RENDERER_PLATFORM_DIR}text/writing_mode.h
+    #${BLINK_RENDERER_PLATFORM_DIR}text/writing_mode_utils.h
+  )
+endif(ENABLE_HARFBUZZ)
+
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
   list(APPEND BLINK_RENDERER_PLATFORM_INSTRUMENTATION_SOURCES
     #
@@ -1440,243 +1678,6 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
     ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}bindings/v8_value_cache.h
     ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}bindings/v8_value_or_script_wrappable_adapter.cc
     ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}bindings/v8_value_or_script_wrappable_adapter.h
-  )
-
-  list(APPEND BLINK_RENDERER_PLATFORM_FONTS_SOURCES
-      #${BLINK_RENDERER_PLATFORM_DIR}fonts/alternate_font_family.h
-  #  ## TODO ##${BLINK_RENDERER_PLATFORM_DIR}fonts/android/font_cache_android.cc
-  #  ## TODO ##${BLINK_RENDERER_PLATFORM_DIR}fonts/android/font_unique_name_lookup_android.cc
-  #  ## TODO ##${BLINK_RENDERER_PLATFORM_DIR}fonts/android/font_unique_name_lookup_android.h
-    ${BLINK_RENDERER_PLATFORM_DIR}fonts/bitmap_glyphs_block_list.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}fonts/bitmap_glyphs_block_list.h
-    #${BLINK_RENDERER_PLATFORM_DIR}fonts/canvas_rotation_in_vertical.h
-    #${BLINK_RENDERER_PLATFORM_DIR}fonts/character_range.h
-    #${BLINK_RENDERER_PLATFORM_DIR}fonts/custom_font_data.h
-    #${BLINK_RENDERER_PLATFORM_DIR}fonts/fallback_list_composite_key.h
-    ${BLINK_RENDERER_PLATFORM_DIR}fonts/font.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}fonts/font.h
-    #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_baseline.h
-    ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_cache.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_cache.h
-    #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_cache_client.h
-    #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_cache_key.h
-    ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_cache_memory_dump_provider.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_cache_memory_dump_provider.h
-    ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_custom_platform_data.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_custom_platform_data.h
-    ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_data.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_data.h
-    ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_data_cache.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_data_cache.h
-    ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_data_for_range_set.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_data_for_range_set.h
-    ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_description.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_description.h
-    #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_face_creation_params.h
-    ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_fallback_iterator.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_fallback_iterator.h
-    ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_fallback_list.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_fallback_list.h
-    ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_fallback_priority.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_fallback_priority.h
-    ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_family.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_family.h
-    ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_global_context.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_global_context.h
-    ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_metrics.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_metrics.h
-    ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_orientation.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_orientation.h
-    ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_platform_data.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_platform_data.h
-    ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_selection_algorithm.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_selection_algorithm.h
-    ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_selection_types.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_selection_types.h
-    ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_selector.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_selector.h
-    #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_selector_client.h
-    ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_smoothing_mode.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_smoothing_mode.h
-    ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_unique_name_lookup.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_unique_name_lookup.h
-    ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_variant_east_asian.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_variant_east_asian.h
-    ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_variant_numeric.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_variant_numeric.h
-    #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_vertical_position_type.h
-    ${BLINK_RENDERER_PLATFORM_DIR}fonts/font_width_variant.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}fonts/font_width_variant.h
-    ${BLINK_RENDERER_PLATFORM_DIR}fonts/generic_font_family_settings.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}fonts/generic_font_family_settings.h
-    #${BLINK_RENDERER_PLATFORM_DIR}fonts/glyph_metrics_map.h
-    ${BLINK_RENDERER_PLATFORM_DIR}fonts/linux/font_cache_linux.cc
-    ${BLINK_RENDERER_PLATFORM_DIR}fonts/linux/font_unique_name_lookup_linux.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}fonts/linux/font_unique_name_lookup_linux.h
-    # TODO #${BLINK_RENDERER_PLATFORM_DIR}fonts/mac/core_text_font_format_support.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}fonts/mac/core_text_font_format_support.h
-    # TODO #${BLINK_RENDERER_PLATFORM_DIR}fonts/mac/font_cache_mac.mm",
-    #${BLINK_RENDERER_PLATFORM_DIR}fonts/mac/font_matcher_mac.h
-    # TODO # ${BLINK_RENDERER_PLATFORM_DIR}fonts/mac/font_matcher_mac.mm",
-    #${BLINK_RENDERER_PLATFORM_DIR}fonts/mac/font_platform_data_mac.h
-    # TODO #${BLINK_RENDERER_PLATFORM_DIR}fonts/mac/font_platform_data_mac.mm",
-    #${BLINK_RENDERER_PLATFORM_DIR}fonts/ng_text_fragment_paint_info.h
-    # TODO #${BLINK_RENDERER_PLATFORM_DIR}fonts/opentype/font_format_check.cc
-    # TODO ##${BLINK_RENDERER_PLATFORM_DIR}fonts/opentype/font_format_check.h
-    # TODO #${BLINK_RENDERER_PLATFORM_DIR}fonts/opentype/font_settings.cc
-    # TODO ##${BLINK_RENDERER_PLATFORM_DIR}fonts/opentype/font_settings.h
-    # TODO #${BLINK_RENDERER_PLATFORM_DIR}fonts/opentype/open_type_caps_support.cc
-    # TODO ##${BLINK_RENDERER_PLATFORM_DIR}fonts/opentype/open_type_caps_support.h
-    # TODO #${BLINK_RENDERER_PLATFORM_DIR}fonts/opentype/open_type_caps_support_mpl.cc
-    # TODO ##${BLINK_RENDERER_PLATFORM_DIR}fonts/opentype/open_type_types.h
-    # TODO #${BLINK_RENDERER_PLATFORM_DIR}fonts/opentype/open_type_vertical_data.cc
-    # TODO ##${BLINK_RENDERER_PLATFORM_DIR}fonts/opentype/open_type_vertical_data.h
-    ${BLINK_RENDERER_PLATFORM_DIR}fonts/orientation_iterator.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}fonts/orientation_iterator.h
-    ${BLINK_RENDERER_PLATFORM_DIR}fonts/script_run_iterator.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}fonts/script_run_iterator.h
-    ${BLINK_RENDERER_PLATFORM_DIR}fonts/segmented_font_data.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}fonts/segmented_font_data.h
-    ${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/caching_word_shape_iterator.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/caching_word_shape_iterator.h
-    ${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/caching_word_shaper.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/caching_word_shaper.h
-    ${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/case_mapping_harfbuzz_buffer_filler.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/case_mapping_harfbuzz_buffer_filler.h
-    #${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/glyph_bounds_accumulator.h
-    ${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/harfbuzz_face.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/harfbuzz_face.h
-    ${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/harfbuzz_font_cache.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/harfbuzz_font_cache.h
-    #${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/harfbuzz_font_data.h
-    ${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/harfbuzz_shaper.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/harfbuzz_shaper.h
-    ${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/run_segmenter.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/run_segmenter.h
-    ${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/shape_cache.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/shape_cache.h
-    ${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/shape_result.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/shape_result.h
-    ${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/shape_result_bloberizer.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/shape_result_bloberizer.h
-    ${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/shape_result_buffer.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/shape_result_buffer.h
-    #${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/shape_result_inline_headers.h
-    ${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/shape_result_spacing.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/shape_result_spacing.h
-    ${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/shape_result_test_info.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/shape_result_test_info.h
-    ${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/shape_result_view.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/shape_result_view.h
-    ${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/shaping_line_breaker.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}fonts/shaping/shaping_line_breaker.h
-    ${BLINK_RENDERER_PLATFORM_DIR}fonts/simple_font_data.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}fonts/simple_font_data.h
-    ${BLINK_RENDERER_PLATFORM_DIR}fonts/skia/font_cache_skia.cc
-    ${BLINK_RENDERER_PLATFORM_DIR}fonts/skia/skia_text_metrics.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}fonts/skia/skia_text_metrics.h
-    ${BLINK_RENDERER_PLATFORM_DIR}fonts/skia/sktypeface_factory.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}fonts/skia/sktypeface_factory.h
-    ${BLINK_RENDERER_PLATFORM_DIR}fonts/small_caps_iterator.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}fonts/small_caps_iterator.h
-    ${BLINK_RENDERER_PLATFORM_DIR}fonts/string_truncator.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}fonts/string_truncator.h
-    # requires "third_party/emoji-segmenter/src/emoji_presentation_scanner.c"
-    ${BLINK_RENDERER_PLATFORM_DIR}fonts/symbols_iterator.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}fonts/symbols_iterator.h
-    ${BLINK_RENDERER_PLATFORM_DIR}fonts/text_rendering_mode.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}fonts/text_rendering_mode.h
-    #${BLINK_RENDERER_PLATFORM_DIR}fonts/text_run_paint_info.h
-    ${BLINK_RENDERER_PLATFORM_DIR}fonts/typesetting_features.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}fonts/typesetting_features.h
-    ${BLINK_RENDERER_PLATFORM_DIR}fonts/unicode_range_set.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}fonts/unicode_range_set.h
-    ${BLINK_RENDERER_PLATFORM_DIR}fonts/utf16_ragel_iterator.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}fonts/utf16_ragel_iterator.h
-    ${BLINK_RENDERER_PLATFORM_DIR}fonts/utf16_text_iterator.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}fonts/utf16_text_iterator.h
-    ${BLINK_RENDERER_PLATFORM_DIR}fonts/vdmx_parser.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}fonts/vdmx_parser.h
-    ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/web_font_decoder.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}fonts/web_font_decoder.h
-    ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/web_font_render_style.cc
-    ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/web_font_typeface_factory.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}fonts/web_font_typeface_factory.h
-    ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/win/dwrite_font_format_support.cc
-    ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/win/dwrite_font_format_support.h
-    ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/win/font_cache_skia_win.cc
-    ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/win/font_fallback_win.cc
-    ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/win/font_fallback_win.h
-    ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/win/font_platform_data_win.cc
-    ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}fonts/win/font_unique_name_lookup_win.cc
-    ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}fonts/win/font_unique_name_lookup_win.h
-  )
-
-  list(APPEND BLINK_RENDERER_PLATFORM_TEXT_SOURCES
-    #${BLINK_RENDERER_PLATFORM_DIR}text/bidi_character_run.h
-    ${BLINK_RENDERER_PLATFORM_DIR}text/bidi_context.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}text/bidi_context.h
-    #${BLINK_RENDERER_PLATFORM_DIR}text/bidi_resolver.h
-    #${BLINK_RENDERER_PLATFORM_DIR}text/bidi_run_list.h
-    ${BLINK_RENDERER_PLATFORM_DIR}text/bidi_text_run.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}text/bidi_text_run.h
-    ${BLINK_RENDERER_PLATFORM_DIR}text/capitalize.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}text/capitalize.h
-    ${BLINK_RENDERER_PLATFORM_DIR}text/character.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}text/character.h
-    ${BLINK_RENDERER_PLATFORM_DIR}text/character_emoji.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}text/character_property.h
-    #${BLINK_RENDERER_PLATFORM_DIR}text/character_property_data.h
-    ${BLINK_RENDERER_PLATFORM_DIR}text/date_time_format.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}text/date_time_format.h
-    #${BLINK_RENDERER_PLATFORM_DIR}text/decode_escape_sequences.h
-    ${BLINK_RENDERER_PLATFORM_DIR}text/hyphenation.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}text/hyphenation.h
-    ${BLINK_RENDERER_PLATFORM_DIR}text/icu_error.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}text/icu_error.h
-    ${BLINK_RENDERER_PLATFORM_DIR}text/layout_locale.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}text/layout_locale.h
-    ${BLINK_RENDERER_PLATFORM_DIR}text/linux/hyphenation_linux.cc
-    ${BLINK_RENDERER_PLATFORM_DIR}text/locale_icu.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}text/locale_icu.h
-    #${BLINK_RENDERER_PLATFORM_DIR}text/locale_mac.h
-    # TODO #${BLINK_RENDERER_PLATFORM_DIR}text/locale_mac.mm",
-    ${BLINK_RENDERER_PLATFORM_DIR}text/locale_to_script_mapping.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}text/locale_to_script_mapping.h
-    ## TODO ##${BLINK_RENDERER_PLATFORM_DIR}text/locale_win.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}text/locale_win.h
-    ## TODO ##${BLINK_RENDERER_PLATFORM_DIR}text/mac/hyphenation_mac.cc
-    ${BLINK_RENDERER_PLATFORM_DIR}text/platform_locale.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}text/platform_locale.h
-    ${BLINK_RENDERER_PLATFORM_DIR}text/segmented_string.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}text/segmented_string.h
-    #${BLINK_RENDERER_PLATFORM_DIR}text/suffix_tree.h
-    ${BLINK_RENDERER_PLATFORM_DIR}text/text_boundaries.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}text/text_boundaries.h
-    ${BLINK_RENDERER_PLATFORM_DIR}text/text_break_iterator.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}text/text_break_iterator.h
-    ${BLINK_RENDERER_PLATFORM_DIR}text/text_break_iterator_icu.cc
-    ${BLINK_RENDERER_PLATFORM_DIR}text/text_break_iterator_internal_icu.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}text/text_break_iterator_internal_icu.h
-    ${BLINK_RENDERER_PLATFORM_DIR}text/text_direction.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}text/text_direction.h
-    ${BLINK_RENDERER_PLATFORM_DIR}text/text_encoding_detector.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}text/text_encoding_detector.h
-    #${BLINK_RENDERER_PLATFORM_DIR}text/text_justify.h
-    ${BLINK_RENDERER_PLATFORM_DIR}text/text_run.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}text/text_run.h
-    #${BLINK_RENDERER_PLATFORM_DIR}text/text_run_iterator.h
-    #${BLINK_RENDERER_PLATFORM_DIR}text/truncation.h
-    #${BLINK_RENDERER_PLATFORM_DIR}text/unicode_bidi.h
-    ${BLINK_RENDERER_PLATFORM_DIR}text/unicode_range.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}text/unicode_range.h
-    ${BLINK_RENDERER_PLATFORM_DIR}text/unicode_utilities.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}text/unicode_utilities.h
-    ${BLINK_RENDERER_PLATFORM_DIR}text/web_entities.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}text/web_entities.h
-    ## TODO ##${BLINK_RENDERER_PLATFORM_DIR}text/win/hyphenation_win.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}text/writing_mode.h
-    #${BLINK_RENDERER_PLATFORM_DIR}text/writing_mode_utils.h
   )
 endif() # ${CMAKE_SYSTEM_NAME}
 

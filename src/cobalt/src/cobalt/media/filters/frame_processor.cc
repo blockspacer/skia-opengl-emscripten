@@ -1,4 +1,4 @@
-// Copyright 2014 The Chromium Authors. All rights reserved.
+﻿// Copyright 2014 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -403,14 +403,14 @@ bool FrameProcessor::HandlePartialAppendWindowTrimming(
       buffer->SetPrerollBuffer(audio_preroll_buffer_);
       processed_buffer = true;
     } else {
-      LIMITED_MEDIA_LOG(DEBUG, media_log_, num_dropped_preroll_warnings_,
+      /*LIMITED_MEDIA_LOG(DEBUG, media_log_, num_dropped_preroll_warnings_,
                         kMaxDroppedPrerollWarnings)
           << "Partial append window trimming dropping unused audio preroll "
              "buffer with PTS "
           << audio_preroll_buffer_->timestamp().InMicroseconds()
           << "us that ends too far (" << delta
           << "us) from next buffer with PTS "
-          << buffer->timestamp().InMicroseconds() << "us";
+          << buffer->timestamp().InMicroseconds() << "us";*/
     }
     audio_preroll_buffer_ = NULL;
   }
@@ -501,12 +501,12 @@ bool FrameProcessor::ProcessFrame(
     if (decode_timestamp.ToPresentationTime() > presentation_timestamp) {
       // TODO(wolenetz): Determine whether DTS>PTS should really be allowed. See
       // http://crbug.com/354518.
-      LIMITED_MEDIA_LOG(DEBUG, media_log_, num_dts_beyond_pts_warnings_,
+      /*LIMITED_MEDIA_LOG(DEBUG, media_log_, num_dts_beyond_pts_warnings_,
                         kMaxDtsBeyondPtsWarnings)
           << "Parsed " << frame->GetTypeName() << " frame has DTS "
           << decode_timestamp.InMicroseconds()
           << "us, which is after the frame's PTS "
-          << presentation_timestamp.InMicroseconds() << "us";
+          << presentation_timestamp.InMicroseconds() << "us";*/
       DVLOG(2) << __func__ << ": WARNING: Frame DTS("
                << decode_timestamp.InSecondsF() << ") > PTS("
                << presentation_timestamp.InSecondsF()

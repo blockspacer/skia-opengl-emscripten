@@ -1,12 +1,12 @@
-cmake_minimum_required(VERSION 2.8)
+﻿cmake_minimum_required(VERSION 2.8)
 
 project(COBALT)
 
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/third_party/glm)
 
-include(starboard_core_headers.cmake) # just headers
+#include(starboard_core_headers.cmake) # just headers
 
-include(starboard_stub.cmake)
+#include(starboard_stub.cmake)
 
 include(starboard_icu_init.cmake)
 
@@ -42,6 +42,6 @@ include(cobalt_cssom.cmake)
 
 include(cobalt_web_animations.cmake)
 
-#include(cobalt_dom.cmake)
+include(cobalt_dom.cmake)
 
 include(COBALT.cmake)

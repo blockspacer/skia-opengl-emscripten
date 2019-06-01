@@ -1,4 +1,4 @@
-// Copyright 2018 The Chromium Authors. All rights reserved.
+﻿// Copyright 2018 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -269,12 +269,13 @@ void MessageLoopForUI::EnableWmQuit() {
 }
 #endif  // defined(OS_WIN)
 
-#if defined(OS_STARBOARD)
+/*#if defined(OS_STARBOARD)
 void MessageLoopForUI::Start() {
   // No Histogram support for UI message loop as it is managed by Starboard.
-  static_cast<base::MessagePumpUIStarboard*>(pump_.get())->Start(this);
+  //static_cast<base::MessagePumpUIStarboard*>(pump_.get())->Start(this);
+  static_cast<base::MessagePumpForUI*>(pump_)->Run(this);
 }
-#endif
+#endif*/
 
 #endif  // !defined(OS_NACL)
 

@@ -1,4 +1,4 @@
-// Copyright 2013 The Chromium Authors. All rights reserved.
+﻿// Copyright 2013 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -289,10 +289,10 @@ class BASE_EXPORT MessageLoopForUI : public MessageLoop {
   void Attach();
 #endif
 
-#if defined(STARBOARD)
+/*#if defined(STARBOARD)
   // Starboard needs this function to register message loop to pump.
   void Start();
-#endif
+#endif*/
 
 #if defined(OS_ANDROID)
   // On Android there are cases where we want to abort immediately without

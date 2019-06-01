@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+﻿cmake_minimum_required(VERSION 2.8)
 
 #'dependencies': [
 #  '<(DEPTH)/cobalt/base/base.gyp:base',
@@ -29,17 +29,17 @@ add_library(cobalt_web_animations STATIC
 )
 
 target_link_libraries(cobalt_web_animations PUBLIC
+  #base # TODO
   cobalt_base
   cobalt_cssom
   #cobalt_nanobase
-  cobalt_script
-  base # TODO
-  modp_b64
+  #cobalt_script
+  #modp_b64
   #GFX_GEOMETRY
   #${BASE_LIBRARIES}
   #base
   #SKIA
-  dynamic_annotations
+  #dynamic_annotations
   #UI_GFX
   ##BLINK_RENDERER_CORE
   #BLINK_PUBLIC_COMMON
@@ -55,16 +55,16 @@ target_link_libraries(cobalt_web_animations PUBLIC
   ## services/service_manager
   ## services/ws/public/cpp/gpu
   ##${BASE_LIBRARIES}
-  GLIBXML
+  #GLIBXML
   #SKIA
   ##skcms
   #ced
   ## emoji-segmenter
   ## webrtc
   ## zlib
-  icu
-  ced
-  glm
+  #icu
+  #ced
+  #glm
   #CC
   ##G_GPU
   #ANIMATION_CC

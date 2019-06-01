@@ -1,4 +1,4 @@
-// Copyright (c) 2012 The Chromium Authors. All rights reserved.
+﻿// Copyright (c) 2012 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -56,6 +56,8 @@
 #elif defined(OS_EMSCRIPTEN)
 //#warning "TODO: Implement certificate verification."
   //#include // TODO
+#elif defined(OS_LINUX)
+#include "net/cert/cert_verify_proc_builtin.h"
 #else
 #error Implement certificate verification.
 #endif
@@ -471,6 +473,8 @@ scoped_refptr<CertVerifyProc> CertVerifyProc::CreateDefault(
 #elif defined(OS_EMSCRIPTEN)
 //#warning "TODO: CertVerifyProc::CreateDefault"
   return nullptr; // TODO
+#elif defined(OS_LINUX)
+    return CreateCertVerifyProcBuiltin(std::move(cert_net_fetcher));
 #else
 #error Unsupported platform
 #endif

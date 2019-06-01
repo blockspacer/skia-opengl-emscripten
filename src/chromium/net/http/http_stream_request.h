@@ -1,4 +1,4 @@
-// Copyright (c) 2012 The Chromium Authors. All rights reserved.
+﻿// Copyright (c) 2012 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -33,13 +33,15 @@
 #include "net/websockets/websocket_handshake_stream_base.h"
 #endif
 
+#include "net/http/http_stream.h"
+
 #include "url/gurl.h"
 
 namespace net {
 
 class BidirectionalStreamImpl;
 class HttpAuthController;
-class HttpStream;
+//class HttpStream;
 class SSLCertRequestInfo;
 
 // The HttpStreamRequest is the client's handle to the worker object which

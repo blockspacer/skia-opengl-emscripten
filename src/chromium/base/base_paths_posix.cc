@@ -1,4 +1,4 @@
-// Copyright (c) 2012 The Chromium Authors. All rights reserved.
+﻿// Copyright (c) 2012 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -107,13 +107,21 @@ bool PathProviderPosix(int key, FilePath* result) {
       return false;
     }
     case DIR_USER_DESKTOP:
+#if defined(OS_EMSCRIPTEN)
+      *result = FilePath("/"); // TODO
+#else
       *result = nix::GetXDGUserDirectory("DESKTOP", "Desktop");
+#endif
       return true;
     case DIR_CACHE: {
-      std::unique_ptr<Environment> env(Environment::Create());
-      FilePath cache_dir(
-          nix::GetXDGDirectory(env.get(), "XDG_CACHE_HOME", ".cache"));
-      *result = cache_dir;
+#if defined(OS_EMSCRIPTEN)
+        *result = FilePath("/"); // TODO
+#else
+        std::unique_ptr<Environment> env(Environment::Create());
+        FilePath cache_dir(
+            nix::GetXDGDirectory(env.get(), "XDG_CACHE_HOME", ".cache"));
+        *result = cache_dir;
+#endif
       return true;
     }
   }

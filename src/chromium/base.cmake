@@ -1013,7 +1013,7 @@ list(APPEND BASE_SOURCES
    # posix
    ${BASE_DIR}file_descriptor_posix.h
    ${BASE_DIR}files/dir_reader_posix.h
-   ${BASE_DIR}files/file_util_posix.cc
+   ##${BASE_DIR}files/file_util_posix.cc
    ${BASE_DIR}files/memory_mapped_file_posix.cc
    ${BASE_DIR}memory/protected_memory_posix.cc
    ${BASE_DIR}message_loop/watchable_io_message_pump_posix.cc
@@ -1206,7 +1206,8 @@ elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
     #
     ${BASE_DIR}debug/debugger_posix.cc
     # requires mojo::StructTraits<mojo_base::mojom::ProcessIdDataView,
-    #${BASE_DIR}debug/stack_trace_posix.cc
+    #
+    ##${BASE_DIR}debug/stack_trace_posix.cc
     ${BASE_DIR}files/file_enumerator_posix.cc
     ${BASE_DIR}files/file_posix.cc
     ${BASE_DIR}posix/eintr_wrapper.h
@@ -1252,12 +1253,17 @@ else()
   message(FATAL_ERROR "TODO: port base")
 endif()
 
+list(APPEND BASE_SOURCES
+  ${BASE_DIR}debug/stack_trace_posix.cc
+  ${BASE_DIR}base_paths_posix.cc
+  ${BASE_DIR}files/file_util_posix.cc
+)
 
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
   list(APPEND BASE_SOURCES
     ##${BASE_DIR}process/process_metrics_posix.cc
     ## TODO ##
-    ${BASE_DIR}debug/stack_trace_posix.cc
+    ##${BASE_DIR}debug/stack_trace_posix.cc
     #requires third_party/xdg_mime
     ## TODO ##
     ${BASE_DIR}nix/mime_util_xdg.cc
@@ -1269,7 +1275,6 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
     ${BASE_DIR}linux_util.cc # if (!is_android)
     #${BASE_DIR}linux_util.h # if (!is_android)
     #
-    ${BASE_DIR}base_paths_posix.cc
     ${BASE_DIR}debug/elf_reader.cc
     ${BASE_DIR}debug/elf_reader.h
     #
@@ -1314,8 +1319,36 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
   )
 endif()
 
+set(COBALT_port_base_SOURCES
+  ##${COBALT_PORT_DIR}base/memory/aligned_memory.cc
+  #
+  #${COBALT_PORT_DIR}base/base_paths_starboard.cc
+  #${COBALT_PORT_DIR}base/debug/debugger_starboard.cc
+  #${COBALT_PORT_DIR}base/debug/stack_trace_starboard.cc
+  #${COBALT_PORT_DIR}base/files/file_enumerator_starboard.cc
+  #${COBALT_PORT_DIR}base/files/file_starboard.cc
+  #${COBALT_PORT_DIR}base/files/file_util_starboard.cc
+  #${COBALT_PORT_DIR}base/message_loop/message_pump_io_starboard.cc
+  #${COBALT_PORT_DIR}base/message_loop/message_pump_ui_starboard.cc
+  #${COBALT_PORT_DIR}base/process/memory_starboard.cc
+  #${COBALT_PORT_DIR}base/process/process_starboard.cc
+  #${COBALT_PORT_DIR}base/profiler/native_stack_sampler_starboard.cc
+  #${COBALT_PORT_DIR}base/rand_util_starboard.cc
+  #${COBALT_PORT_DIR}base/sampling_heap_profiler/module_cache_starboard.cc
+  #${COBALT_PORT_DIR}base/strings/sys_string_conversions_starboard.cc
+  #${COBALT_PORT_DIR}base/synchronization/condition_variable_starboard.cc
+  #${COBALT_PORT_DIR}base/synchronization/lock_impl_starboard.cc
+  #${COBALT_PORT_DIR}base/synchronization/waitable_event_starboard.cc
+  #${COBALT_PORT_DIR}base/sys_info_starboard.cc
+  #${COBALT_PORT_DIR}base/threading/platform_thread_starboard.cc
+  #${COBALT_PORT_DIR}base/threading/thread_local_storage_starboard.cc
+  #${COBALT_PORT_DIR}base/time/time_now_starboard.cc
+  ${COBALT_PORT_DIR}base/time/time_starboard.cc
+)
+
 add_library(base STATIC
   ${BASE_SOURCES}
+  ${COBALT_port_base_SOURCES}
 )
 
 if(EMSCRIPTEN)
@@ -1347,7 +1380,23 @@ else()
   message(FATAL_ERROR "platform not supported")
 endif()
 
+#'dependencies': [
+#  '<(DEPTH)/nb/nb.gyp:nb',
+#  '<(DEPTH)/starboard/client_porting/eztime/eztime.gyp:eztime',
+#  '<(DEPTH)/starboard/starboard.gyp:starboard',
+#  '<(DEPTH)/testing/gtest.gyp:gtest_prod',
+#  '<(DEPTH)/third_party/modp_b64/modp_b64.gyp:modp_b64',
+#  'base_static',
+#  'third_party/dynamic_annotations/dynamic_annotations.gyp:dynamic_annotations',
+#],
 target_link_libraries(base PUBLIC
+  cobalt_nanobase
+  starboard_platform
+  #starboard_core
+  starboard_eztime
+  starboard_common
+  modp_b64
+  #
   dynamic_annotations
   xdg_mime
   ${BASE_LIBRARIES}
@@ -1365,7 +1414,7 @@ set(BASE_DEFINES
 target_include_directories(base PUBLIC
   ${CHROMIUM_DIR}
   # TODO
-  ${COBALT_COMMON_INCLUDES}
+  #${COBALT_COMMON_INCLUDES}
 )
 
 #message(FATAL_ERROR ${CHROMIUM_DIR}/../../thirdparty/ced/src/)
@@ -1378,6 +1427,7 @@ target_include_directories(base PRIVATE
   third_party/tcmalloc/chromium/src
   third_party/tcmalloc/chromium/src/gperftools
   ${BASE_DIR}
+  ${COBALT_COMMON_INCLUDES}
 )
 
 target_compile_definitions(base PUBLIC
@@ -1393,12 +1443,17 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
   )
 endif()
 
+target_compile_definitions(base PRIVATE
+  # TODO
+  ${COBALT_COMMON_DEFINES}
+)
+
 target_compile_definitions(base PUBLIC
   BASE_IMPLEMENTATION=1
   BASE_I18N_IMPLEMENTATION=1
   ${EXTRA_DEFINITIONS}
   # TODO
-  ${COBALT_COMMON_DEFINES}
+  #${COBALT_COMMON_DEFINES}
 )
 
 target_compile_options(base PUBLIC

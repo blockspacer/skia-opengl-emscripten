@@ -1,4 +1,4 @@
-// Copyright 2016 The Chromium Authors. All rights reserved.
+﻿// Copyright 2016 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -870,25 +870,25 @@ void SourceBufferState::OnEndOfMediaSegment() {
   for (DemuxerStreamMap::iterator it = audio_streams_.begin();
        it != audio_streams_.end(); ++it) {
     if (!media_segment_has_data_for_track_[it->first]) {
-      LIMITED_MEDIA_LOG(DEBUG, media_log_, num_missing_track_logs_,
+      /*LIMITED_MEDIA_LOG(DEBUG, media_log_, num_missing_track_logs_,
                         kMaxMissingTrackInSegmentLogs)
           << "Media segment did not contain any coded frames for track "
           << it->first
           << ", mismatching initialization segment. Therefore, MSE"
              " coded frame processing may not interoperably detect"
-             " discontinuities in appended media.";
+             " discontinuities in appended media.";*/
     }
   }
   for (DemuxerStreamMap::iterator it = video_streams_.begin();
        it != video_streams_.end(); ++it) {
     if (!media_segment_has_data_for_track_[it->first]) {
-      LIMITED_MEDIA_LOG(DEBUG, media_log_, num_missing_track_logs_,
+      /*LIMITED_MEDIA_LOG(DEBUG, media_log_, num_missing_track_logs_,
                         kMaxMissingTrackInSegmentLogs)
           << "Media segment did not contain any coded frames for track "
           << it->first
           << ", mismatching initialization segment. Therefore, MSE"
              " coded frame processing may not interoperably detect"
-             " discontinuities in appended media.";
+             " discontinuities in appended media.";*/
     }
   }
 }

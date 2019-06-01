@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+﻿cmake_minimum_required(VERSION 2.8)
 
 #'defines': [
 #  'MEDIA_IMPLEMENTATION',
@@ -228,13 +228,12 @@ target_link_libraries(cobalt_media PUBLIC
   #cobalt_script
   cobalt_loader ## TODO
   cobalt_csp
-  #starboard_icu_init
+  starboard_icu_init
   starboard_eztime  # requires starboard_icu_init
   #starboard_stub
   starboard_platform # requires starboard_stub
   starboard_common
-  starboard_core
-  base # TODO
+  #starboard_core
   modp_b64
   #GFX_GEOMETRY
   #${BASE_LIBRARIES}

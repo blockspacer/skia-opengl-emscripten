@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+﻿cmake_minimum_required(VERSION 2.8)
 
 # https://github.com/blockspacer/cobalt-clone-28052019/blob/master/src/starboard/stub/stub_sources.gypi
 set(starboard_stub_SOURCES
@@ -290,7 +290,8 @@ add_library(starboard_stub STATIC
 )
 
 target_link_libraries(starboard_stub PUBLIC
-  base # TODO
+  #base # TODO
+  #cobalt_base
   starboard_core # just headers
   modp_b64
   #GFX_GEOMETRY
@@ -313,7 +314,7 @@ target_link_libraries(starboard_stub PUBLIC
   ## services/service_manager
   ## services/ws/public/cpp/gpu
   ##${BASE_LIBRARIES}
-  base
+  #base
   GLIBXML
   #SKIA
   ##skcms

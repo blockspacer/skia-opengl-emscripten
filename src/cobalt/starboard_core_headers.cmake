@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+﻿cmake_minimum_required(VERSION 2.8)
 
 # see https://github.com/blockspacer/cobalt-clone-28052019/blob/master/src/starboard/BUILD.gn
 #deps = [
@@ -50,15 +50,16 @@ add_library(starboard_core STATIC
 )
 
 target_link_libraries(starboard_core PUBLIC
-  base # TODO
+  #base # TODO
+  #cobalt_base
   #starboard
-  #starboard_common
-  modp_b64
+  starboard_common # TODO: circular deps
+  #modp_b64
   #GFX_GEOMETRY
   #${BASE_LIBRARIES}
   #base
   #SKIA
-  dynamic_annotations
+  #dynamic_annotations
   #UI_GFX
   ##BLINK_RENDERER_CORE
   #BLINK_PUBLIC_COMMON
@@ -82,9 +83,9 @@ target_link_libraries(starboard_core PUBLIC
   ## emoji-segmenter
   ## webrtc
   ## zlib
-  icu
-  ced
-  glm
+  #icu
+  #ced
+  #glm
   #CC
   ##G_GPU
   #ANIMATION_CC

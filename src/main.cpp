@@ -27,7 +27,7 @@
 // high quality: anialias, e.t.c.
 #define ENABLE_SKIA_HQ 1
 
-#define ENABLE_BORINGSSL 1
+//#define ENABLE_BORINGSSL 1
 #if defined(ENABLE_BORINGSSL) && !defined(ENABLE_BASE)
 #warning "ENABLE_BORINGSSL requires BASE"
 #undef ENABLE_BORINGSSL
@@ -504,7 +504,7 @@ static ::std::unique_ptr<gfx::ImageSkia> gfxImageSkia;
 static sk_sp<SkImage> skImageSp;
 #endif // ENABLE_UI
 
-#define ENABLE_BLINK_PLATFORM 1
+//#define ENABLE_BLINK_PLATFORM 1
 #ifdef ENABLE_BLINK_PLATFORM
 
 #include <third_party/blink/renderer/platform/runtime_enabled_features.h>
@@ -732,9 +732,12 @@ sk_sp<const GrGLInterface> emscripten_GrGLMakeNativeInterface() {
 //#ifndef ENABLE_COBALT
 //#define ENABLE_COBALT 1
 //#endif
+//#undef ENABLE_COBALT
 #ifdef ENABLE_COBALT
 
-/*#include "cobalt/cssom/selector_tree.h"
+#include "cobalt/web_animations/animation.h"
+
+#include "cobalt/cssom/selector_tree.h"
 
 #include "cobalt/base/version_compatibility.h"
 #include "cobalt/css_parser/parser.h"
@@ -747,11 +750,9 @@ sk_sp<const GrGLInterface> emscripten_GrGLMakeNativeInterface() {
 #include "cobalt/cssom/css_media_rule.h"
 #include "cobalt/cssom/css_rule_style_declaration.h"
 #include "cobalt/cssom/css_style_rule.h"
-#include "cobalt/cssom/media_list.h"*/
+#include "cobalt/cssom/media_list.h"
 
-#include "cobalt/web_animations/animation.h"
-
-/*#include "cobalt/src/cobalt/loader/decoder.h"
+#include "cobalt/src/cobalt/loader/decoder.h"
 
 #include "cobalt/dom_parser/html_decoder.h"
 #include "base/callback.h"
@@ -769,7 +770,7 @@ sk_sp<const GrGLInterface> emscripten_GrGLMakeNativeInterface() {
 
 #include "cobalt/dom/text.h"
 #include "cobalt/dom_parser/parser.h"
-//#include "cobalt/loader/fetcher_factory.h"*/
+//#include "cobalt/loader/fetcher_factory.h"
 #endif // ENABLE_COBALT
 
 #ifdef USE_LIBJPEG
@@ -1841,6 +1842,7 @@ static void SomeHardcoreAsyncTask(
 #endif
 
 int main(int argc, char** argv) {
+    printf("main ...\n");
 #ifdef ENABLE_BORINGSSL
     // see https://boringssl.googlesource.com/boringssl/+/version_for_cocoapods_1.0/ssl/ssl_test.cc
     CRYPTO_library_init();
@@ -2566,7 +2568,18 @@ int main(int argc, char** argv) {
 #endif // ENABLE_UI
 
 #ifdef ENABLE_COBALT
-  /*printf("Testing COBALT cssom...\n");
+
+  printf("Testing COBALT web_animations...\n");
+
+  cobalt::web_animations::Animation::Data animation;
+  animation.set_start_time(base::TimeDelta::FromSeconds(2));
+  base::Optional<base::TimeDelta> local_time =
+      animation.ComputeLocalTimeFromTimelineTime(
+          base::TimeDelta::FromMilliseconds(3000));
+  // EXPECT_EQ(1.0, local_time->InSecondsF());
+  printf("local_time->InSecondsF() %f\n", local_time->InSecondsF());
+
+  printf("Testing COBALT cssom...\n");
 
   scoped_refptr<cobalt::cssom::CSSRuleList> rule_list
     = new cobalt::cssom::CSSRuleList();
@@ -2579,9 +2592,9 @@ int main(int argc, char** argv) {
 
   printf("1 = rule_list->length() = %d\n", rule_list->length());
   printf("CSSRule::kMediaRule = %b\n", cobalt::cssom::CSSRule::kMediaRule == rule_list->Item(0)->type());
-*/
 
-/*  printf("Testing COBALT selectors...\n");
+
+  printf("Testing COBALT selectors...\n");
   cobalt::cssom::SelectorTree selector_tree;
 
   //// Selector Tree:
@@ -2621,18 +2634,7 @@ int main(int argc, char** argv) {
   //ASSERT_EQ(1, node_1->rules().size());
   //EXPECT_EQ(css_style_rule_1, node_1->rules()[0]);
   //EXPECT_EQ(cobalt::cssom::Specificity(0, 0, 1), node_1->cumulative_specificity());
-*/
 
-  printf("Testing COBALT web_animations...\n");
-
-  cobalt::web_animations::Animation::Data animation;
-  animation.set_start_time(base::TimeDelta::FromSeconds(2));
-  base::Optional<base::TimeDelta> local_time =
-      animation.ComputeLocalTimeFromTimelineTime(
-          base::TimeDelta::FromMilliseconds(3000));
-  // EXPECT_EQ(1.0, local_time->InSecondsF());
-  printf("local_time->InSecondsF() %f\n", local_time->InSecondsF());
-/*
   printf("Testing COBALT dom...\n");
 
   using namespace cobalt;
@@ -2708,7 +2710,7 @@ int main(int argc, char** argv) {
   //EXPECT_EQ("head", head->tag_name());
 
   printf("head->tag_name() %s\n", head->tag_name().c_str());
-*/
+
 #endif // ENABLE_COBALT
 
 #ifdef ENABLE_CUSTOM_FONTS

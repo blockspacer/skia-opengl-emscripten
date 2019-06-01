@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+﻿cmake_minimum_required(VERSION 2.8)
 
 #'dependencies': [
 # '<(DEPTH)/starboard/starboard_headers_only.gyp:starboard_headers_only',
@@ -15,16 +15,17 @@ add_library(starboard_icu_init STATIC
 )
 
 target_link_libraries(starboard_icu_init PUBLIC
-  base # TODO
+  #base # TODO
+  #cobalt_base
   #starboard_common
   #starboard_icu_init
   #starboard_core
-  modp_b64
+  #modp_b64
   #GFX_GEOMETRY
   #${BASE_LIBRARIES}
   #base
   #SKIA
-  dynamic_annotations
+  #dynamic_annotations
   #UI_GFX
   ##BLINK_RENDERER_CORE
   #BLINK_PUBLIC_COMMON

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+﻿cmake_minimum_required(VERSION 2.8)
 
 # '<(DEPTH)/cobalt/browser/browser_bindings_gen.gyp:generated_types',
 #'dependencies': [
@@ -380,7 +380,6 @@ target_link_libraries(cobalt_dom PUBLIC
   cobalt_ui_navigation
   cobalt_web_animations
   #cobalt_browser ## TODO ##
-  base # TODO
   modp_b64
   #GFX_GEOMETRY
   #${BASE_LIBRARIES}

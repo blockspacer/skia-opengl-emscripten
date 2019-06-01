@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+﻿cmake_minimum_required(VERSION 2.8)
 
 #'dependencies': [
 #  '<(DEPTH)/base/base.gyp:base',
@@ -10,33 +10,6 @@ cmake_minimum_required(VERSION 2.8)
 #  '<(DEPTH)/third_party/libxml/src/include',
 #],
 # https://github.com/blockspacer/cobalt-clone-28052019/blob/master/src/cobalt/base/base.gyp
-set(COBALT_port_base_SOURCES
-  ${COBALT_PORT_DIR}base/memory/aligned_memory.cc
-  #
-  #${COBALT_PORT_DIR}base/base_paths_starboard.cc
-  #${COBALT_PORT_DIR}base/debug/debugger_starboard.cc
-  #${COBALT_PORT_DIR}base/debug/stack_trace_starboard.cc
-  #${COBALT_PORT_DIR}base/files/file_enumerator_starboard.cc
-  #${COBALT_PORT_DIR}base/files/file_starboard.cc
-  #${COBALT_PORT_DIR}base/files/file_util_starboard.cc
-  #${COBALT_PORT_DIR}base/message_loop/message_pump_io_starboard.cc
-  #${COBALT_PORT_DIR}base/message_loop/message_pump_ui_starboard.cc
-  #${COBALT_PORT_DIR}base/process/memory_starboard.cc
-  #${COBALT_PORT_DIR}base/process/process_starboard.cc
-  #${COBALT_PORT_DIR}base/profiler/native_stack_sampler_starboard.cc
-  #${COBALT_PORT_DIR}base/rand_util_starboard.cc
-  #${COBALT_PORT_DIR}base/sampling_heap_profiler/module_cache_starboard.cc
-  #${COBALT_PORT_DIR}base/strings/sys_string_conversions_starboard.cc
-  #${COBALT_PORT_DIR}base/synchronization/condition_variable_starboard.cc
-  #${COBALT_PORT_DIR}base/synchronization/lock_impl_starboard.cc
-  #${COBALT_PORT_DIR}base/synchronization/waitable_event_starboard.cc
-  #${COBALT_PORT_DIR}base/sys_info_starboard.cc
-  #${COBALT_PORT_DIR}base/threading/platform_thread_starboard.cc
-  #${COBALT_PORT_DIR}base/threading/thread_local_storage_starboard.cc
-  #${COBALT_PORT_DIR}base/time/time_now_starboard.cc
-  ${COBALT_PORT_DIR}base/time/time_starboard.cc
-)
-
 set(COBALT_base_SOURCES
   ##${COBALT_CORE_DIR}/base/accessibility_changed_event.h
   #${COBALT_CORE_DIR}/base/address_sanitizer.h
@@ -110,6 +83,10 @@ add_library(cobalt_base STATIC
 
 target_link_libraries(cobalt_base PUBLIC
   base # TODO
+  starboard_platform
+  #starboard_core
+  starboard_eztime
+  starboard_common
   modp_b64
   #GFX_GEOMETRY
   #${BASE_LIBRARIES}

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+﻿cmake_minimum_required(VERSION 2.8)
 
 #'export_dependent_settings': [
 #  # Additionally, ensure that the include directories for generated
@@ -252,12 +252,12 @@ target_link_libraries(cobalt_cssom PUBLIC
   cobalt_nanobase
   #cobalt_script
   cobalt_csp
-  #starboard_icu_init
+  starboard_icu_init
   starboard_eztime  # requires starboard_icu_init
   #starboard_stub
   starboard_platform # requires starboard_stub
   starboard_common
-  starboard_core
+  #starboard_core
   base # TODO
   modp_b64
   #GFX_GEOMETRY

@@ -1,4 +1,4 @@
-// Copyright 2018 The Chromium Authors. All rights reserved.
+﻿// Copyright 2018 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -20,9 +20,14 @@
 #define INTERNAL_TRACE_LIST_BUILTIN_CATEGORIES(X)                        \
   /* These entries must go first to be consistent with the               \
    * CategoryRegistry::kCategory* consts.*/                              \
-  X("cobalt::media")                                                    \
+  X("media_stream")                                                     \
+  X("cobalt::cssom")                                                     \
+  X("cobalt::page_visibility")                                           \
+  X("cobalt::browser")                                                   \
+  X("cobalt::script")                                                    \
+  X("cobalt::media")                                                     \
   X("cobalt::loader::image")                                             \
-  X("cobalt::loader::image_decoder")                                                    \
+  X("cobalt::loader::image_decoder")                                     \
   X("cobalt::loader")                                                    \
   X("cobalt::dom")                                                       \
   X("cobalt::layout")                                                    \

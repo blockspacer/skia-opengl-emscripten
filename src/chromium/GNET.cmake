@@ -1834,6 +1834,13 @@ add_library(GNET STATIC
 target_link_libraries(GNET PUBLIC
   #${BASE_LIBRARIES}
   base
+  #cobalt_base
+  #cobalt_nanobase
+  starboard_platform
+  #starboard_core
+  starboard_eztime
+  starboard_common
+  modp_b64
   GCRYPTO
   GURL
   # sql
@@ -1851,12 +1858,20 @@ target_include_directories(GNET PRIVATE
   ${BASE_DIR}
   ${GEN_COMBINED_DIR} # requires net/base/registry_controlled_domains/effective_tld_names-inc.cc
   # TODO
-  ${COBALT_COMMON_INCLUDES}
+  #${COBALT_COMMON_INCLUDES}
 )
+
+#target_include_directories(GNET PUBLIC
+#  ${COBALT_COMMON_INCLUDES}
+#)
+#
+#target_compile_definitions(GNET PUBLIC
+#  ${COBALT_COMMON_DEFINES}
+#)
 
 target_compile_definitions(GNET PRIVATE
   # TODO
-  ${COBALT_COMMON_DEFINES}
+  #${COBALT_COMMON_DEFINES}
   #
   NET_DISABLE_BROTLI=1
   NET_IMPLEMENTATION=1

@@ -1,4 +1,4 @@
-// Copyright (c) 2012 The Chromium Authors. All rights reserved.
+﻿// Copyright (c) 2012 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -100,6 +100,9 @@ static void emscripten_yield_call(std::function<void()> f, const int ms = 500) {
 #endif
 
 #endif
+
+//#if defined(STARBOARD)
+//#define OS_STARBOARD 1
 
 // A set of macros to use for platform detection.
 #if defined(__native_client__)

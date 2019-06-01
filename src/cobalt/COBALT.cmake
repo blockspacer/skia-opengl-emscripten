@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+﻿cmake_minimum_required(VERSION 2.8)
 
 # cobalt/system_window/system_window.gyp
 # cobalt/storage/store_upgrade/upgrade_tool.gyp
@@ -423,25 +423,25 @@ add_library(COBALT_CORE STATIC
 target_link_libraries(COBALT_CORE PUBLIC
   base # TODO
   modp_b64
-  #cobalt_base
-  #cobalt_nanobase
-  #cobalt_csp
-  #cobalt_script
-  #cobalt_dom_exception
-  #cobalt_ui_navigation
-  #cobalt_math
-  #cobalt_media
-  #cobalt_loader
-  #cobalt_page_visibility
-  #cobalt_cssom
+  cobalt_base
+  cobalt_nanobase
+  cobalt_csp
+  cobalt_script
+  cobalt_dom_exception
+  cobalt_ui_navigation
+  cobalt_math
+  cobalt_media
+  cobalt_loader
+  cobalt_page_visibility
+  cobalt_cssom
   cobalt_web_animations
-  #cobalt_dom
-  #starboard_icu_init
+  cobalt_dom
+  starboard_icu_init
   starboard_eztime  # requires starboard_icu_init
   #starboard_stub
   starboard_platform # requires starboard_stub
   starboard_common
-  starboard_core
+  #starboard_core
   ## TODO ## starboard_platform
   #GFX_GEOMETRY
   #${BASE_LIBRARIES}

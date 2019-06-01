@@ -1,4 +1,4 @@
-## --- GURL ---###
+﻿## --- GURL ---###
 
 # TODO https://github.com/chromium/chromium/blob/master/third_party/blink/renderer/platform/BUILD.gn
 set(GURL_SOURCES
@@ -51,7 +51,14 @@ add_library(GURL STATIC
 )
 
 target_link_libraries(GURL PUBLIC
-  base # TODO
+  #base # TODO
+  #cobalt_base
+  #cobalt_nanobase
+  starboard_platform
+  #starboard_core
+  starboard_eztime
+  starboard_common
+  modp_b64
   ${BASE_LIBRARIES}
   icu
   #GIPC
@@ -60,15 +67,23 @@ target_link_libraries(GURL PUBLIC
 
 set_property(TARGET GURL PROPERTY CXX_STANDARD 17)
 
-target_include_directories(GURL PRIVATE
-  ${GURL_DIR}
-  #${BASE_LIBRARIES}
-  base
-  # TODO
-  ${COBALT_COMMON_INCLUDES}
-)
+#target_include_directories(GURL PRIVATE
+#  ${GURL_DIR}
+#  #${BASE_LIBRARIES}
+#  # TODO
+#  ${COBALT_COMMON_INCLUDES}
+#)
+#
+#target_include_directories(GURL PUBLIC
+#  ${COBALT_COMMON_INCLUDES}
+#)
+
+#target_compile_definitions(GURL PUBLIC
+#  ${COBALT_COMMON_DEFINES}
+#)
+
 target_compile_definitions(GURL PRIVATE
   IS_URL_IMPL=1
   # TODO
-  ${COBALT_COMMON_DEFINES}
+  #${COBALT_COMMON_DEFINES}
 )

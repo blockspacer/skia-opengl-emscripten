@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+﻿cmake_minimum_required(VERSION 2.8)
 
 # 'dependencies': [
 #   '<(DEPTH)/cobalt/base/base.gyp:base',
@@ -17,12 +17,12 @@ add_library(cobalt_ui_navigation STATIC
 target_link_libraries(cobalt_ui_navigation PUBLIC
   cobalt_base
   base # TODO
-  modp_b64
+  #modp_b64
   #GFX_GEOMETRY
   #${BASE_LIBRARIES}
   #base
   #SKIA
-  dynamic_annotations
+  #dynamic_annotations
   #UI_GFX
   ##BLINK_RENDERER_CORE
   #BLINK_PUBLIC_COMMON
@@ -45,9 +45,9 @@ target_link_libraries(cobalt_ui_navigation PUBLIC
   ## emoji-segmenter
   ## webrtc
   ## zlib
-  icu
-  ced
-  glm
+  #icu
+  #ced
+  #glm
   #CC
   ##G_GPU
   #ANIMATION_CC

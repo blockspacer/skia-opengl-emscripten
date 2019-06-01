@@ -221,7 +221,7 @@ if(ENABLE_COBALT)
     STARBOARD=1
     COBALT=1
     COBALT_LINUX=1
-    MESA_EGL_NO_X11_HEADERS=1
+    #MESA_EGL_NO_X11_HEADERS=1
     #
     #COBALT_ENABLE_VERSION_COMPATIBILITY_VALIDATIONS=1
     #
@@ -243,10 +243,10 @@ if(ENABLE_COBALT)
     # see https://github.com/blockspacer/cobalt-clone-28052019/blob/master/src/out/qtcreator_projects/linux-x64x11_devel_cobalt.config
     #
     COBALT_MEDIA_BUFFER_STORAGE_TYPE_MEMORY=1
-    LIBXML_STATIC=1
+    #LIBXML_STATIC=1
     #OPENSSL_NO_EC_NISTP_64_GCC_128=1
     #OPENSSL_NO_HEARTBEATS=1
-    UCONFIG_NO_REGULAR_EXPRESSIONS=1
+    #UCONFIG_NO_REGULAR_EXPRESSIONS=1
     COBALT_MAX_CPU_USAGE_IN_BYTES=-1
     #OPENSSL_NO_DYNAMIC_ENGINE=1
     #OPENSSL_NO_OCSP=1
@@ -264,9 +264,9 @@ if(ENABLE_COBALT)
     #OPENSSL_NO_COMP=1
     STARBOARD_NO_LOCAL_ISSUER=1
     #THREADSAFE=1
-    ENABLE_PARTIAL_LAYOUT_CONTROL=1
+    #ENABLE_PARTIAL_LAYOUT_CONTROL=1
     #OPENSSL_NO_MD4=1
-    NO_WINDOWS_BRAINDEATH=1
+    #NO_WINDOWS_BRAINDEATH=1
     COBALT_MEDIA_BUFFER_ALIGNMENT=1
     #OPENSSL_NO_JPAKE=1
     #OPENSSL_NO_DGRAM=1
@@ -281,7 +281,7 @@ if(ENABLE_COBALT)
     #OPENSSL_NO_RC2=1
     # TODO # ENABLE_WEBDRIVER=1
     #STARBOARD_OLD_ICU=1
-    USE_OPENSSL=1
+    #USE_OPENSSL=1
     #OPENSSL_NO_BF=1
     QUIC_DISABLED_FOR_STARBOARD=1
     #OPENSSL_NO_CAPIENG=1
@@ -290,11 +290,11 @@ if(ENABLE_COBALT)
     #OPENSSL_NO_CMS=1
     #OPENSSL_NO_RFC3779=1
     #OPENSSL_NO_GMP=1
-    FLAC__NO_DLL=1
+    #FLAC__NO_DLL=1
     #OPENSSL_NO_SSL2=1
-    HB_NO_MT=1
-    ENABLE_IGNORE_CERTIFICATE_ERRORS=1 # TODO
-    LIBGLESV2_IMPLEMENTATION=1
+    #HB_NO_MT=1
+    #ENABLE_IGNORE_CERTIFICATE_ERRORS=1 # TODO
+    #LIBGLESV2_IMPLEMENTATION=1
     HTTP_CACHE_DISABLED_FOR_STARBOARD=1
     #OPENSSL_NO_STATIC_ENGINE=1
     #OPENSSL_NO_HW=1
@@ -1031,7 +1031,7 @@ else(EMSCRIPTEN)
     # Debugging CFLAGS. Turn optimizations off; turn debugging symbols on.
     # see https://github.com/mmatyas/supermariowar/blob/master/CMakeLists.txt#L165
     # see http://www.brendangregg.com/blog/2016-08-09/gdb-example-ncurses.html
-    add_definitions(-DDEBUG -D_DEBUG)
+    #add_definitions(-DDEBUG -D_DEBUG)
     if(NOT DEBUG_LEVEL)
       set(DEBUG_LEVEL "${DEBUG_LEVEL} -g")
     endif(NOT DEBUG_LEVEL)
@@ -1235,6 +1235,7 @@ endif(ENABLE_WTF)
 #
 if(ENABLE_COBALT)
   add_subdirectory(src/cobalt) # requires skia above
+  #
   #message(FATAL_ERROR ${WTF_LIBRARY_NAME})
   #set(WTF_LIBS
   #  ${WTF_LIBRARY_NAME}
@@ -1480,14 +1481,37 @@ if(EMSCRIPTEN)
   # Top is the executable, followed by directly used libraries.
   # see https://floooh.github.io/2016/01/12/cmake-dependency-juggling.html
   target_link_libraries(${PROJECT_NAME} PUBLIC
+    ${COBALT_LIBRARY_NAME}
+    #
+    base # TODO
+    modp_b64
+    cobalt_base
+    cobalt_nanobase
+    cobalt_csp
+    cobalt_script
+    cobalt_dom_exception
+    cobalt_ui_navigation
+    cobalt_math
+    cobalt_media
+    cobalt_loader
+    cobalt_page_visibility
+    cobalt_cssom
     cobalt_web_animations
+    #cobalt_dom
+    starboard_icu_init
+    starboard_eztime  # requires starboard_icu_init
+    #starboard_stub
+    starboard_platform # requires starboard_stub
+    starboard_common
+    #starboard_core
+    #
+    modp_b64
     base # TODO
     BLINK_RENDERER_CORE
     BLINK_RENDERER_PLATFORM
     SERVICES_NETWORK_PUBLIC_CPP
     COMPONENTS_VIZ_CLIENT
     ${WTF_LIBRARY_NAME}
-    ${COBALT_LIBRARY_NAME}
     #
     SKIA
     #
@@ -1555,7 +1579,8 @@ else()
   # see https://floooh.github.io/2016/01/12/cmake-dependency-juggling.html
   target_link_libraries(${PROJECT_NAME} PUBLIC
     #cobalt_
-    cobalt_web_animations
+    #cobalt_web_animations
+    ${COBALT_LIBRARY_NAME}
     BLINK_RENDERER_CORE
     BLINK_RENDERER_PLATFORM
     COMPONENTS_VIZ_CLIENT
@@ -1620,7 +1645,6 @@ else()
     #${BASE_LIBRARIES}
     #BLINK_WTF
     ${WTF_LIBRARY_NAME}
-    ${COBALT_LIBRARY_NAME}
     # media
     # "//services/ws/public/cpp/gpu",
     SKIA

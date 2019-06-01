@@ -1,4 +1,4 @@
-// Copyright 2017 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2017 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -189,6 +189,9 @@ static void emscripten_yield_call(std::function<void()> f, const int ms = 500) {
 #endif
 
 #endif
+
+//#if defined(STARBOARD)
+//#define OS_STARBOARD 1
 
 // A set of macros to use for platform detection.
 #if defined(__native_client__)

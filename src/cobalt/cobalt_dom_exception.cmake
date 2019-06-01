@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+﻿cmake_minimum_required(VERSION 2.8)
 
 # 'dependencies': [
 #   '<(DEPTH)/cobalt/script/script.gyp:script',
@@ -16,13 +16,13 @@ target_link_libraries(cobalt_dom_exception PUBLIC
   #cobalt_base
   #cobalt_nanobase
   cobalt_script
-  base # TODO
-  modp_b64
+  #base # TODO
+  #modp_b64
   #GFX_GEOMETRY
   #${BASE_LIBRARIES}
   #base
   #SKIA
-  dynamic_annotations
+  #dynamic_annotations
   #UI_GFX
   ##BLINK_RENDERER_CORE
   #BLINK_PUBLIC_COMMON
@@ -38,16 +38,16 @@ target_link_libraries(cobalt_dom_exception PUBLIC
   ## services/service_manager
   ## services/ws/public/cpp/gpu
   ##${BASE_LIBRARIES}
-  GLIBXML
+  #GLIBXML
   #SKIA
   ##skcms
   #ced
   ## emoji-segmenter
   ## webrtc
   ## zlib
-  icu
-  ced
-  glm
+  #icu
+  #ced
+  #glm
   #CC
   ##G_GPU
   #ANIMATION_CC

@@ -1,8 +1,15 @@
-cmake_minimum_required(VERSION 2.8)
+﻿cmake_minimum_required(VERSION 2.8)
 
 #'includes': [
 #  'stub_sources.gypi'
 #],
+#deps = [
+#  "//starboard/common",
+#  ":starboard_base_symbolize",
+#  "//third_party/dlmalloc",
+#  "//third_party/libevent",
+#  "//third_party/libvpx",
+#]
 # see https://github.com/blockspacer/cobalt-clone-28052019/blob/master/src/starboard/linux/shared/BUILD.gn
 set(starboard_platform_SOURCES
   ${COBALT_PORT_DIR}/starboard/linux/shared/atomic_public.h
@@ -16,6 +23,7 @@ set(starboard_platform_SOURCES
   ${COBALT_PORT_DIR}/starboard/linux/shared/system_get_connection_type.cc
   ${COBALT_PORT_DIR}/starboard/linux/shared/system_get_device_type.cc
   ## TODO ## ${COBALT_PORT_DIR}/starboard/linux/shared/system_get_path.cc
+  ${COBALT_PORT_DIR}/starboard/shared/stub/system_get_path.cc
   ${COBALT_PORT_DIR}/starboard/linux/shared/system_has_capability.cc
   ## TODO ## ${COBALT_PORT_DIR}/starboard/shared/alsa/alsa_audio_sink_type.cc
   ## TODO ## ${COBALT_PORT_DIR}/starboard/shared/alsa/alsa_audio_sink_type.h
@@ -84,12 +92,17 @@ set(starboard_platform_SOURCES
   ## TODO ## ${COBALT_PORT_DIR}/starboard/shared/linux/socket_get_interface_address.cc
   ${COBALT_PORT_DIR}/starboard/shared/linux/system_get_random_data.cc
   ## TODO ## ${COBALT_PORT_DIR}/starboard/shared/linux/system_get_stack.cc
+  ${COBALT_PORT_DIR}/starboard/shared/stub/system_get_stack.cc
   ${COBALT_PORT_DIR}/starboard/shared/linux/system_get_total_cpu_memory.cc
   ${COBALT_PORT_DIR}/starboard/shared/linux/system_is_debugger_attached.cc
-  ${COBALT_PORT_DIR}/starboard/shared/linux/system_symbolize.cc
+  ## TODO ## ${COBALT_PORT_DIR}/starboard/shared/linux/system_symbolize.cc
+  ${COBALT_PORT_DIR}/starboard/shared/stub/system_symbolize.cc
   ## TODO ## ${COBALT_PORT_DIR}/starboard/shared/linux/thread_get_id.cc
+  ${COBALT_PORT_DIR}/starboard/shared/stub/thread_get_id.cc
   ## TODO ## ${COBALT_PORT_DIR}/starboard/shared/linux/thread_get_name.cc
+  ${COBALT_PORT_DIR}/starboard/shared/stub/thread_get_local_value.cc
   ## TODO ## ${COBALT_PORT_DIR}/starboard/shared/linux/thread_set_name.cc
+  ${COBALT_PORT_DIR}/starboard/shared/stub/thread_get_name.cc
   ${COBALT_PORT_DIR}/starboard/shared/nouser/user_get_current.cc
   ${COBALT_PORT_DIR}/starboard/shared/nouser/user_get_property.cc
   ${COBALT_PORT_DIR}/starboard/shared/nouser/user_get_signed_in.cc
@@ -227,6 +240,28 @@ set(starboard_platform_SOURCES
   ## TODO ## ${COBALT_PORT_DIR}/starboard/shared/starboard/media/media_util.h
   ## TODO ## ${COBALT_PORT_DIR}/starboard/shared/starboard/media/mime_type.cc
   ## TODO ## ${COBALT_PORT_DIR}/starboard/shared/starboard/media/mime_type.h
+  ${COBALT_PORT_DIR}/starboard/shared/stub/media_can_play_mime_and_key_system.cc
+  ${COBALT_PORT_DIR}/starboard/shared/stub/media_get_audio_buffer_budget.cc
+  ${COBALT_PORT_DIR}/starboard/shared/stub/media_get_audio_configuration.cc
+  ${COBALT_PORT_DIR}/starboard/shared/stub/media_get_audio_output_count.cc
+  ${COBALT_PORT_DIR}/starboard/shared/stub/media_get_buffer_alignment.cc
+  ${COBALT_PORT_DIR}/starboard/shared/stub/media_get_buffer_allocation_unit.cc
+  ${COBALT_PORT_DIR}/starboard/shared/stub/media_get_buffer_garbage_collection_duration_threshold.cc
+  ${COBALT_PORT_DIR}/starboard/shared/stub/media_get_buffer_padding.cc
+  ${COBALT_PORT_DIR}/starboard/shared/stub/media_get_buffer_storage_type.cc
+  ${COBALT_PORT_DIR}/starboard/shared/stub/media_get_initial_buffer_capacity.cc
+  ${COBALT_PORT_DIR}/starboard/shared/stub/media_get_max_buffer_capacity.cc
+  ${COBALT_PORT_DIR}/starboard/shared/stub/media_get_progressive_buffer_budget.cc
+  ${COBALT_PORT_DIR}/starboard/shared/stub/media_get_video_buffer_budget.cc
+  ${COBALT_PORT_DIR}/starboard/shared/stub/media_is_audio_supported.cc
+  ${COBALT_PORT_DIR}/starboard/shared/stub/media_is_buffer_pool_allocate_on_demand.cc
+  ${COBALT_PORT_DIR}/starboard/shared/stub/media_is_buffer_using_memory_pool.cc
+  ${COBALT_PORT_DIR}/starboard/shared/stub/media_is_output_protected.cc
+  ${COBALT_PORT_DIR}/starboard/shared/stub/media_is_supported.cc
+  ${COBALT_PORT_DIR}/starboard/shared/stub/media_is_transfer_characteristics_supported.cc
+  ${COBALT_PORT_DIR}/starboard/shared/stub/media_is_video_supported.cc
+  ${COBALT_PORT_DIR}/starboard/shared/stub/media_set_audio_write_duration.cc
+  ${COBALT_PORT_DIR}/starboard/shared/stub/media_set_output_protection.cc
   ${COBALT_PORT_DIR}/starboard/shared/starboard/new.cc
   ## TODO ## ${COBALT_PORT_DIR}/starboard/shared/starboard/player/decoded_audio_internal.cc
   ## TODO ## ${COBALT_PORT_DIR}/starboard/shared/starboard/player/decoded_audio_internal.h
@@ -292,30 +327,56 @@ set(starboard_platform_SOURCES
   ${COBALT_PORT_DIR}/starboard/shared/starboard/system_supports_resume.cc
   ${COBALT_PORT_DIR}/starboard/shared/starboard/window_set_default_options.cc
   # TODO
-  # ${COBALT_PORT_DIR}/starboard/shared/stub/accessibility_get_display_settings.cc
-  # ${COBALT_PORT_DIR}/starboard/shared/stub/accessibility_get_text_to_speech_settings.cc
-  # ${COBALT_PORT_DIR}/starboard/shared/stub/cryptography_create_transformer.cc
-  # ${COBALT_PORT_DIR}/starboard/shared/stub/cryptography_destroy_transformer.cc
-  # ${COBALT_PORT_DIR}/starboard/shared/stub/cryptography_get_tag.cc
-  # ${COBALT_PORT_DIR}/starboard/shared/stub/cryptography_set_authenticated_data.cc
-  # ${COBALT_PORT_DIR}/starboard/shared/stub/cryptography_set_initialization_vector.cc
-  # ${COBALT_PORT_DIR}/starboard/shared/stub/cryptography_transform.cc
+  ${COBALT_PORT_DIR}/starboard/shared/stub/accessibility_get_display_settings.cc
+  ${COBALT_PORT_DIR}/starboard/shared/stub/accessibility_get_text_to_speech_settings.cc
+  ${COBALT_PORT_DIR}/starboard/shared/stub/cryptography_create_transformer.cc
+  ${COBALT_PORT_DIR}/starboard/shared/stub/cryptography_destroy_transformer.cc
+  ${COBALT_PORT_DIR}/starboard/shared/stub/cryptography_get_tag.cc
+  ${COBALT_PORT_DIR}/starboard/shared/stub/cryptography_set_authenticated_data.cc
+  ${COBALT_PORT_DIR}/starboard/shared/stub/cryptography_set_initialization_vector.cc
+  ${COBALT_PORT_DIR}/starboard/shared/stub/cryptography_transform.cc
+  ${COBALT_PORT_DIR}/starboard/shared/stub/system_get_extensions.cc
+  ${COBALT_PORT_DIR}/starboard/shared/stub/image_decode.cc
+  ${COBALT_PORT_DIR}/starboard/shared/stub/image_is_decode_supported.cc
+  ${COBALT_PORT_DIR}/starboard/shared/stub/media_set_audio_write_duration.cc
+  ${COBALT_PORT_DIR}/starboard/shared/stub/microphone_close.cc
+  ${COBALT_PORT_DIR}/starboard/shared/stub/microphone_create.cc
+  ${COBALT_PORT_DIR}/starboard/shared/stub/microphone_destroy.cc
+  ${COBALT_PORT_DIR}/starboard/shared/stub/microphone_get_available.cc
+  ${COBALT_PORT_DIR}/starboard/shared/stub/microphone_is_sample_rate_supported.cc
+  ${COBALT_PORT_DIR}/starboard/shared/stub/microphone_open.cc
+  ${COBALT_PORT_DIR}/starboard/shared/stub/microphone_read.cc
+  ${COBALT_PORT_DIR}/starboard/shared/stub/system_get_total_gpu_memory.cc
+  ${COBALT_PORT_DIR}/starboard/shared/stub/system_get_used_gpu_memory.cc
+  ${COBALT_PORT_DIR}/starboard/shared/stub/system_hide_splash_screen.cc
+  ${COBALT_PORT_DIR}/starboard/shared/stub/system_raise_platform_error.cc
+  ${COBALT_PORT_DIR}/starboard/shared/stub/ui_nav_get_interface.cc
+  ${COBALT_PORT_DIR}/starboard/shared/stub/window_get_diagonal_size_in_inches.cc
+  # TODO
   # ## TODO ##
-  # ${COBALT_PORT_DIR}/starboard/shared/stub/drm_close_session.cc
+  #
+  ${COBALT_PORT_DIR}/starboard/shared/stub/drm_close_session.cc
   # ## TODO ##
-  # ${COBALT_PORT_DIR}/starboard/shared/stub/drm_create_system.cc
+  #
+  ${COBALT_PORT_DIR}/starboard/shared/stub/drm_create_system.cc
   # ## TODO ##
-  # ${COBALT_PORT_DIR}/starboard/shared/stub/drm_destroy_system.cc
+  #
+  ${COBALT_PORT_DIR}/starboard/shared/stub/drm_destroy_system.cc
   # ## TODO ##
-  # ${COBALT_PORT_DIR}/starboard/shared/stub/drm_generate_session_update_request.cc
+  #
+  ${COBALT_PORT_DIR}/starboard/shared/stub/drm_generate_session_update_request.cc
   # ## TODO ##
-  # ${COBALT_PORT_DIR}/starboard/shared/stub/drm_is_server_certificate_updatable.cc
+  #
+  ${COBALT_PORT_DIR}/starboard/shared/stub/drm_is_server_certificate_updatable.cc
   # ## TODO ##
-  # #${COBALT_PORT_DIR}/starboard/shared/stub/drm_system_internal.h
+  # #
+  # ${COBALT_PORT_DIR}/starboard/shared/stub/drm_system_internal.h
   # ## TODO ##
-  # ${COBALT_PORT_DIR}/starboard/shared/stub/drm_update_server_certificate.cc
+  #
+  ${COBALT_PORT_DIR}/starboard/shared/stub/drm_update_server_certificate.cc
   # ## TODO ##
-  # ${COBALT_PORT_DIR}/starboard/shared/stub/drm_update_session.cc
+  #
+  ${COBALT_PORT_DIR}/starboard/shared/stub/drm_update_session.cc
   # ${COBALT_PORT_DIR}/starboard/shared/stub/image_decode.cc
   # ${COBALT_PORT_DIR}/starboard/shared/stub/image_is_decode_supported.cc
   # ${COBALT_PORT_DIR}/starboard/shared/stub/media_is_supported.cc
@@ -330,6 +391,32 @@ set(starboard_platform_SOURCES
   # ${COBALT_PORT_DIR}/starboard/shared/stub/system_get_used_gpu_memory.cc
   # ${COBALT_PORT_DIR}/starboard/shared/stub/system_hide_splash_screen.cc
   # ${COBALT_PORT_DIR}/starboard/shared/stub/system_raise_platform_error.cc
+  #if (use_dlmalloc_allocator) {
+  #  sources += [
+  #    "//starboard/shared/dlmalloc/memory_allocate_aligned_unchecked.cc",
+  #    "//starboard/shared/dlmalloc/memory_allocate_unchecked.cc",
+  #    "//starboard/shared/dlmalloc/memory_free.cc",
+  #    "//starboard/shared/dlmalloc/memory_free_aligned.cc",
+  #    "//starboard/shared/dlmalloc/memory_reallocate_unchecked.cc",
+  #    "//starboard/shared/dlmalloc/system_get_used_cpu_memory.cc",
+  #  ]
+  #} else {
+  #  sources += [
+  #    "//starboard/shared/iso/memory_allocate_unchecked.cc",
+  #    "//starboard/shared/iso/memory_free.cc",
+  #    "//starboard/shared/iso/memory_reallocate_unchecked.cc",
+  #    "//starboard/shared/linux/system_get_used_cpu_memory.cc",
+  #    "//starboard/shared/posix/memory_allocate_aligned_unchecked.cc",
+  #    "//starboard/shared/posix/memory_free_aligned.cc",
+  #  ]
+  #}
+  ${COBALT_PORT_DIR}/starboard/shared/iso/memory_allocate_unchecked.cc
+  ${COBALT_PORT_DIR}/starboard/shared/iso/memory_free.cc
+  ${COBALT_PORT_DIR}/starboard/shared/iso/memory_reallocate_unchecked.cc
+  ${COBALT_PORT_DIR}/starboard/shared/linux/system_get_used_cpu_memory.cc
+  ${COBALT_PORT_DIR}/starboard/shared/posix/memory_allocate_aligned_unchecked.cc
+  ${COBALT_PORT_DIR}/starboard/shared/posix/memory_free_aligned.cc
+  # TODO
 )
 
 add_library(starboard_platform STATIC
@@ -337,41 +424,43 @@ add_library(starboard_platform STATIC
 )
 
 target_link_libraries(starboard_platform PUBLIC
-  base # TODO
-  starboard_common # TODO
-  starboard_stub
-  modp_b64
+  #base # TODO
+  #cobalt_base
+  #cobalt_script
+  ## starboard_common # TODO
+  #starboard_eztime
+  #starboard_stub
+  #modp_b64
   #GFX_GEOMETRY
   #${BASE_LIBRARIES}
   #base
   #SKIA
-  dynamic_annotations
+  #dynamic_annotations
   #UI_GFX
   ##BLINK_RENDERER_CORE
   #BLINK_PUBLIC_COMMON
   #BLINK_PUBLIC_MOJOM
   ##BLINK_RENDERER_NETWORK
   #BLINK_RENDERER_PLATFORM
-  GURL
-  GNET
-  GCRYPTO
+  #GURL
+  #GNET
+  #GCRYPTO
   #GFX_GEOMETRY
   #UI_GFX
   ## mojo
   ## services/service_manager
   ## services/ws/public/cpp/gpu
   ##${BASE_LIBRARIES}
-  base
-  GLIBXML
+  #GLIBXML
   #SKIA
   ##skcms
   #ced
   ## emoji-segmenter
   ## webrtc
   ## zlib
-  icu
-  ced
-  glm
+  #icu
+  #ced
+  #glm
   #CC
   ##G_GPU
   #ANIMATION_CC
@@ -390,10 +479,10 @@ target_link_libraries(starboard_platform PUBLIC
   #LIB_V8_INTERFACE
   #COMPONENTS_SCHEDULING_METRICS
   #${HARFBUZZ_LIBRARIES}
-  GMEDIA
-  GZLIB_EXT
-  #SERVICES_SERVICE_MANAGER_PUBLIC_CPP
-  GFX_CODEC
+  #GMEDIA
+  #GZLIB_EXT
+  ##SERVICES_SERVICE_MANAGER_PUBLIC_CPP
+  #GFX_CODEC
 )
 
 set_property(TARGET starboard_platform PROPERTY CXX_STANDARD 17)

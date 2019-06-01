@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+﻿cmake_minimum_required(VERSION 2.8)
 
 # requires EzTimeValueGetNow = starboard_eztime
  # requires SbThreadGetId = starboard_stub
@@ -42,16 +42,20 @@ add_library(starboard_common STATIC
 )
 
 target_link_libraries(starboard_common PUBLIC
-  base # TODO
+  #base # TODO
+  #cobalt_base
   starboard_eztime
-  starboard_stub
+  starboard_icu_init
+  #starboard_stub
+  ##
+  starboard_platform
   #starboard
-  modp_b64
+  #modp_b64
   #GFX_GEOMETRY
   #${BASE_LIBRARIES}
   #base
   #SKIA
-  dynamic_annotations
+  #dynamic_annotations
   #UI_GFX
   ##BLINK_RENDERER_CORE
   #BLINK_PUBLIC_COMMON
@@ -75,9 +79,9 @@ target_link_libraries(starboard_common PUBLIC
   ## emoji-segmenter
   ## webrtc
   ## zlib
-  icu
-  ced
-  glm
+  #icu
+  #ced
+  #glm
   #CC
   ##G_GPU
   #ANIMATION_CC
