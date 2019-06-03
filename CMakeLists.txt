@@ -1382,7 +1382,7 @@ add_dependencies(${PROJECT_NAME}
   SKIA
   sksg
   skshaper
-  particles
+  #particles
   skottie
 )
 
@@ -1452,20 +1452,20 @@ if(EMSCRIPTEN)
 
   #set(TEMPLATE_OPTION "--shell-file ${HTML_TEMPLATE}")
 
-  add_dependencies(SKIA_EXT SKIA_build sksg skshaper SKIA)
-  add_dependencies(UI_GFX SKIA_build sksg skshaper SKIA)
-  add_dependencies(CC SKIA_build sksg skshaper SKIA)
-  add_dependencies(ANIMATION_CC SKIA_build sksg skshaper SKIA)
-  add_dependencies(PAINT_CC SKIA_build sksg skshaper SKIA)
-  add_dependencies(DEBUG_CC SKIA_build sksg skshaper SKIA)
-  add_dependencies(BASE_CC SKIA_build sksg skshaper SKIA)
-  add_dependencies(GPU_COMMAND_BUFFER SKIA_build sksg skshaper SKIA)
-  add_dependencies(GFX_CODEC SKIA_build sksg skshaper SKIA)
-  add_dependencies(GFX_GEOMETRY SKIA_build sksg skshaper SKIA)
-  add_dependencies(GFX_GEOMETRY_SKIA SKIA_build sksg skshaper SKIA)
-  add_dependencies(GFX_COLOR_SPACE SKIA_build sksg skshaper SKIA)
-  add_dependencies(GFX_SWITCHES SKIA_build sksg skshaper SKIA)
-  add_dependencies(GFX_RANGE SKIA_build sksg skshaper SKIA)
+  add_dependencies(SKIA_EXT SKIA_build sksg SKIA skshaper)
+  add_dependencies(UI_GFX SKIA_build sksg SKIA skshaper)
+  add_dependencies(CC SKIA_build sksg SKIA skshaper)
+  add_dependencies(ANIMATION_CC SKIA_build sksg SKIA skshaper)
+  add_dependencies(PAINT_CC SKIA_build sksg SKIA skshaper)
+  add_dependencies(DEBUG_CC SKIA_build sksg SKIA skshaper)
+  add_dependencies(BASE_CC SKIA_build sksg SKIA skshaper)
+  add_dependencies(GPU_COMMAND_BUFFER SKIA_build sksg SKIA skshaper)
+  add_dependencies(GFX_CODEC SKIA_build sksg SKIA skshaper)
+  add_dependencies(GFX_GEOMETRY SKIA_build sksg SKIA skshaper)
+  add_dependencies(GFX_GEOMETRY_SKIA SKIA_build sksg SKIA skshaper)
+  add_dependencies(GFX_COLOR_SPACE SKIA_build sksg SKIA skshaper)
+  add_dependencies(GFX_SWITCHES SKIA_build sksg SKIA skshaper)
+  add_dependencies(GFX_RANGE SKIA_build sksg SKIA skshaper)
 
   set(EM_TARGET_NAME ${PROJECT_NAME})
   set(EM_TARGET_JS ${PROJECT_NAME}.js)
@@ -1521,7 +1521,7 @@ if(EMSCRIPTEN)
     skottie
     sksg
     skshaper
-    particles
+    #particles
     #pathkit
     wuffs
     jpeg
@@ -1616,7 +1616,7 @@ else()
     skottie
     sksg
     skshaper
-    particles
+    #particles
     #pathkit
     wuffs
     jpeg

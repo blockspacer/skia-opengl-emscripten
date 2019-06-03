@@ -306,7 +306,7 @@ add_dependencies(GFX_CODEC
   SKIA
   sksg
   skshaper
-  particles
+  #particles
   skottie
   #dynamic_annotations
   #${BASE_LIBRARIES}

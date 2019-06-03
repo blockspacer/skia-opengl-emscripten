@@ -55,7 +55,7 @@ target_link_libraries(GFX_CODEC PRIVATE
   skottie
   sksg
   skshaper
-  particles
+  #particles
   #pathkit
   wuffs
   #jpeg

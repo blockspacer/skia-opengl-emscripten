@@ -577,11 +577,11 @@ if(NOT TARGET skottie)
 endif()
 set(skottie_LIBRARY "${SKIA_BUILD_DIR}/${SKIA_LIBRARY_PREFIX}skottie${SKIA_LIBRARY_SUFFIX}")
 #
-add_library(particles ${SK_LIBRARY_TYPE} IMPORTED GLOBAL)
-if(NOT TARGET particles)
-  message(FATAL_ERROR "SKIA LIB NOT FOUND")
-endif()
-set(particles_LIBRARY "${SKIA_BUILD_DIR}/${SKIA_LIBRARY_PREFIX}particles${SKIA_LIBRARY_SUFFIX}")
+#add_library(particles ${SK_LIBRARY_TYPE} IMPORTED GLOBAL)
+#if(NOT TARGET particles)
+#  message(FATAL_ERROR "SKIA LIB NOT FOUND")
+#endif()
+#set(particles_LIBRARY "${SKIA_BUILD_DIR}/${SKIA_LIBRARY_PREFIX}particles${SKIA_LIBRARY_SUFFIX}")
 #
 add_library(wuffs ${SK_LIBRARY_TYPE} IMPORTED GLOBAL)
 if(NOT TARGET wuffs)
@@ -679,15 +679,15 @@ target_link_libraries(skottie INTERFACE
   SKIA sksg skshaper)
 add_dependencies(skottie SKIA sksg skshaper)
 #
-set_target_properties(particles PROPERTIES
-  IMPORTED_LOCATION "${particles_LIBRARY}"
-  INTERFACE_INCLUDE_DIRECTORIES "${SKIA_HEADERS}"
-  INTERFACE_COMPILE_DEFINITIONS "${SKIA_DEFINES}"
-  # https://stackoverflow.com/a/28102243/10904212
-  #IMPORTED_LINK_INTERFACE_LIBRARIES "${SKIA_DEPENDENCIES}"
-  IMPORTED_LINK_INTERFACE_LIBRARIES "${SKIA_LIBRARY};${SKIA_DEPENDENCIES}"
-)
-# https://stackoverflow.com/a/53945809
-target_link_libraries(particles INTERFACE
-  SKIA)
-add_dependencies(particles SKIA)
+#set_target_properties(particles PROPERTIES
+#  IMPORTED_LOCATION "${particles_LIBRARY}"
+#  INTERFACE_INCLUDE_DIRECTORIES "${SKIA_HEADERS}"
+#  INTERFACE_COMPILE_DEFINITIONS "${SKIA_DEFINES}"
+#  # https://stackoverflow.com/a/28102243/10904212
+#  #IMPORTED_LINK_INTERFACE_LIBRARIES "${SKIA_DEPENDENCIES}"
+#  IMPORTED_LINK_INTERFACE_LIBRARIES "${SKIA_LIBRARY};${SKIA_DEPENDENCIES}"
+#)
+## https://stackoverflow.com/a/53945809
+#target_link_libraries(particles INTERFACE
+#  SKIA)
+#add_dependencies(particles SKIA)

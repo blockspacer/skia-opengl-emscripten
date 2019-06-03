@@ -789,4 +789,9 @@ Thread 1 "skemgl" received signal SIGSEGV, Segmentation fault.
 
 
 MISC
-https://www.ekioh.com/devblog/gpu-filling-vector-paths/
+> https://www.ekioh.com/devblog/gpu-filling-vector-paths/
+> wasm instantiation failed! CompileError: WebAssembly.compile(): functions count of 1144080 exceeds internal limit of 1000000 @+20832
+  CompileError: wasm validation error: at offset 21646: too many functions
+  http://qtandeverything.blogspot.com/2017/11/qt-for-webassembly-update.html
+  https://github.com/AvaloniaUI/Avalonia/issues/1387#issuecomment-389758464
+  WebAssembly.instantiateStreaming https://hacks.mozilla.org/2018/01/making-webassembly-even-faster-firefoxs-new-streaming-and-tiering-compiler/
