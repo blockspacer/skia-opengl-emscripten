@@ -195,8 +195,10 @@ void MessageLoop::BindToCurrentThread() {
   std::unique_ptr<MessagePump> pump = CreateMessagePump();
   pump_ = pump.get();
 
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   DCHECK(!MessageLoopCurrent::IsSet())
       << "should only have one message loop per thread";
+#endif
 
   sequence_manager_->BindToCurrentThread(std::move(pump));
 }

@@ -59,9 +59,13 @@ void CompleteLazyInstance(subtle::AtomicWord* state,
   // readers. Pairing Acquire_Load is in NeedsLazyInstance().
   subtle::Release_Store(state, new_instance);
 
+  // TODO
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   // Make sure that the lazily instantiated object will get destroyed at exit.
   if (new_instance && destructor)
     AtExitManager::RegisterCallback(destructor, destructor_arg);
+#endif
+
 }
 
 }  // namespace internal

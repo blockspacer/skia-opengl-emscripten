@@ -110,8 +110,10 @@ set(PAINT_CC_DIR ${PAINT_CC_PARENT_DIR}paint/)
 set(ANIMATION_CC_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/cc/)
 set(ANIMATION_CC_DIR ${ANIMATION_CC_PARENT_DIR}animation/)
 
-set(BORINGSSL_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/third_party/)
-set(BORINGSSL_DIR ${BORINGSSL_PARENT_DIR}boringssl/)
+if(ENABLE_BORINGSSL)
+  set(BORINGSSL_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/third_party/)
+  set(BORINGSSL_DIR ${BORINGSSL_PARENT_DIR}boringssl/)
+endif(ENABLE_BORINGSSL)
 
 set(GCRYPTO_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/)
 set(GCRYPTO_DIR ${GCRYPTO_PARENT_DIR}crypto/)
@@ -224,8 +226,10 @@ else()
   message(FATAL_ERROR "platform not supported")
 endif()
 
-# BORINGSSL
-include(BORINGSSL.cmake)
+if(ENABLE_BORINGSSL)
+  # BORINGSSL
+  include(BORINGSSL.cmake)
+endif(ENABLE_BORINGSSL)
 
 # icu
 include(icu.cmake)
@@ -282,144 +286,157 @@ include(MOJO.cmake)
 # Depends on : base, mojo
 include(GIPC.cmake)
 
-# GFX_GEOMETRY
-include(GFX_GEOMETRY.cmake)
+if(ENABLE_SKIA)
+  # GFX_GEOMETRY
+  include(GFX_GEOMETRY.cmake)
 
-# GFX_RANGE
-include(GFX_RANGE.cmake)
+  # GFX_RANGE
+  include(GFX_RANGE.cmake)
 
-# GFX_GEOMETRY_SKIA
-include(GFX_GEOMETRY_SKIA.cmake)
+  # GFX_GEOMETRY_SKIA
+  include(GFX_GEOMETRY_SKIA.cmake)
 
-# GFX_COLOR_SPACE
-include(GFX_COLOR_SPACE.cmake)
+  # GFX_COLOR_SPACE
+  include(GFX_COLOR_SPACE.cmake)
 
-# GFX_ANIMATION
-include(GFX_ANIMATION.cmake)
+  # GFX_ANIMATION
+  include(GFX_ANIMATION.cmake)
+endif(ENABLE_SKIA)
 
-# GFX_CODEC
-include(GFX_CODEC.cmake)
-add_dependencies(GFX_CODEC
-  GFX_GEOMETRY_SKIA
-  GFX_GEOMETRY
-  #pathkit
-  SKIA
-  sksg
-  skshaper
-  #particles
-  skottie
-  #dynamic_annotations
-  #${BASE_LIBRARIES}
-  #libjpeg
-  #libpng
-  #zlib
-  base
-  wuffs
-  jpeg
-)
+if(ENABLE_SKIA AND ENABLE_BLINK)
+  # GFX_CODEC
+  include(GFX_CODEC.cmake)
+  add_dependencies(GFX_CODEC
+    GFX_GEOMETRY_SKIA
+    GFX_GEOMETRY
+    #pathkit
+    ${SKIA_LIBS}
+    #SKIA
+    #sksg
+    #skshaper
+    #particles
+    #skottie
+    #dynamic_annotations
+    #${BASE_LIBRARIES}
+    #libjpeg
+    #libpng
+    #zlib
+    base
+    #wuffs
+    #jpeg
+  )
 
-# GFX_SWITCHES
-include(GFX_SWITCHES.cmake)
+  # GFX_SWITCHES
+  include(GFX_SWITCHES.cmake)
+endif(ENABLE_SKIA AND ENABLE_BLINK)
 
-# SKIA_EXT
-include(SKIA_EXT.cmake)
+if(ENABLE_SKIA)
+  # SKIA_EXT
+  include(SKIA_EXT.cmake)
+endif(ENABLE_SKIA)
 
-# UI_GFX
-include(UI_GFX.cmake)
+if(ENABLE_SKIA AND ENABLE_BLINK)
+  # UI_GFX
+  include(UI_GFX.cmake)
 
-# UI_EVENTS
-# Handles : hardware detection, keyboard events, motion and gesture
-#           detection. Basically, this library uses platform-specific
-#           APIs (XInput under X11, UDev under Ozone/Wayland) to
-#           handle keyboard, mouse, touch... events.
-# Notes : the Ozone implementation may also support "evdev", but this
-#         seems to be required only by the higher-level Ozone DRM
-#         backend, which we do not build (see above).
-# Depends on :
-# * base, skia, ipc, ui_gfx, xkbcommon
-# * python, libudev (wayland) / x11, xi, xproto, libevent (x11)
-include(UI_EVENTS.cmake)
+  # UI_EVENTS
+  # Handles : hardware detection, keyboard events, motion and gesture
+  #           detection. Basically, this library uses platform-specific
+  #           APIs (XInput under X11, UDev under Ozone/Wayland) to
+  #           handle keyboard, mouse, touch... events.
+  # Notes : the Ozone implementation may also support "evdev", but this
+  #         seems to be required only by the higher-level Ozone DRM
+  #         backend, which we do not build (see above).
+  # Depends on :
+  # * base, skia, ipc, ui_gfx, xkbcommon
+  # * python, libudev (wayland) / x11, xi, xproto, libevent (x11)
+  include(UI_EVENTS.cmake)
 
-# UI_BASE
-# Depends on :
-# * base, url, net, skia, ui_gfx, ui_events,
-# * ui_strings, ui_resources
-# * x11, xcursor, xext, xfixes, xrender, xscrnsaver (x11)
-include(UI_BASE.cmake)
+  # UI_BASE
+  # Depends on :
+  # * base, url, net, skia, ui_gfx, ui_events,
+  # * ui_strings, ui_resources
+  # * x11, xcursor, xext, xfixes, xrender, xscrnsaver (x11)
+  include(UI_BASE.cmake)
 
-# UI_GL
-# Depends on :
-# * base, gpu_command_buffer, skia, ui_gfx, ui_base, glesv2
-# * ozone (wayland) / x11, xcomposite, xext (x11)
-include(UI_GL.cmake)
+  # UI_GL
+  # Depends on :
+  # * base, gpu_command_buffer, skia, ui_gfx, ui_base, glesv2
+  # * ozone (wayland) / x11, xcomposite, xext (x11)
+  include(UI_GL.cmake)
 
-# "+ui/events",
-# "+ui/base/x",
-# "+ui/gfx",
-#+gpu/GLES2",
-#+gpu/command_buffer/client",
-#+gpu/command_buffer/common",
-#+gpu/command_buffer/service",
-#+gpu/ipc/common",
+  # "+ui/events",
+  # "+ui/base/x",
+  # "+ui/gfx",
+  #+gpu/GLES2",
+  #+gpu/command_buffer/client",
+  #+gpu/command_buffer/common",
+  #+gpu/command_buffer/service",
+  #+gpu/ipc/common",
 
-# COMPONENTS_VIZ_COMMON
-include(COMPONENTS_VIZ_COMMON.cmake)
+  # COMPONENTS_VIZ_COMMON
+  include(COMPONENTS_VIZ_COMMON.cmake)
 
-# COMPONENTS_VIZ_CLIENT
-include(COMPONENTS_VIZ_CLIENT.cmake)
+  # COMPONENTS_VIZ_CLIENT
+  include(COMPONENTS_VIZ_CLIENT.cmake)
 
-# GPU_GLES2
-#include(GPU_GLES2.cmake)
+  # GPU_GLES2
+  #include(GPU_GLES2.cmake)
 
-# ui/gl
+  # ui/gl
 
-# GPU_COMMAND_BUFFER: GPU command helper library.
-# see https://www.chromium.org/developers/design-documents/gpu-command-buffer
-# Depends on : base, (ui/gfx), (GPU_GLES2)
-include(GPU_COMMAND_BUFFER.cmake)
+  # GPU_COMMAND_BUFFER: GPU command helper library.
+  # see https://www.chromium.org/developers/design-documents/gpu-command-buffer
+  # Depends on : base, (ui/gfx), (GPU_GLES2)
+  include(GPU_COMMAND_BUFFER.cmake)
 
-# CC
-include(BASE_CC.cmake)
-include(DEBUG_CC.cmake)
-include(PAINT_CC.cmake)
-include(ANIMATION_CC.cmake)
-include(CC.cmake)
+  # CC
+  include(BASE_CC.cmake)
+  include(DEBUG_CC.cmake)
+  include(PAINT_CC.cmake)
+  include(ANIMATION_CC.cmake)
+  include(CC.cmake)
+endif(ENABLE_SKIA AND ENABLE_BLINK)
 
-# SERVICES_NETWORK_PUBLIC_CPP
-include(COMPONENTS_CONTENT_SETTINGS_CORE_COMMON.cmake)
+if(ENABLE_BLINK)
+  # SERVICES_NETWORK_PUBLIC_CPP
+  include(COMPONENTS_CONTENT_SETTINGS_CORE_COMMON.cmake)
 
-# SERVICES_NETWORK_PUBLIC_CPP
-include(SERVICES_NETWORK_PUBLIC_CPP.cmake)
+  # SERVICES_NETWORK_PUBLIC_CPP
+  include(SERVICES_NETWORK_PUBLIC_CPP.cmake)
 
-# SERVICES_SERVICE_MANAGER_PUBLIC_CPP
-include(SERVICES_SERVICE_MANAGER_PUBLIC_CPP.cmake)
+  # SERVICES_SERVICE_MANAGER_PUBLIC_CPP
+  include(SERVICES_SERVICE_MANAGER_PUBLIC_CPP.cmake)
 
-# LIB_V8_INTERFACE
-include(LIB_V8_INTERFACE.cmake)
+  # LIB_V8_INTERFACE
+  include(LIB_V8_INTERFACE.cmake)
 
-# COMPONENTS_SCHEDULING_METRICS
-include(COMPONENTS_SCHEDULING_METRICS.cmake)
+  # COMPONENTS_SCHEDULING_METRICS
+  include(COMPONENTS_SCHEDULING_METRICS.cmake)
+endif(ENABLE_BLINK)
 
-# BLINK_PUBLIC_MOJOM
-include(BLINK_PUBLIC_MOJOM.cmake)
+if(ENABLE_SKIA AND ENABLE_BLINK)
+  # BLINK_PUBLIC_MOJOM
+  include(BLINK_PUBLIC_MOJOM.cmake)
 
-# BLINK_PUBLIC_COMMON
-include(BLINK_PUBLIC_COMMON.cmake)
+  # BLINK_PUBLIC_COMMON
+  include(BLINK_PUBLIC_COMMON.cmake)
 
-# BLINK_RENDERER_NETWORK
-#include(BLINK_RENDERER_NETWORK.cmake)
+  # BLINK_RENDERER_NETWORK
+  #include(BLINK_RENDERER_NETWORK.cmake)
 
-# GMEDIA
-include(GMEDIA.cmake)
+  # GMEDIA
+  include(GMEDIA.cmake)
 
-# BLINK_COMMON
-include(BLINK_COMMON.cmake)
+  # BLINK_COMMON
+  include(BLINK_COMMON.cmake)
 
-# BLINK_RENDERER_PLATFORM
-include(BLINK_RENDERER_PLATFORM.cmake)
+  # BLINK_RENDERER_PLATFORM
+  include(BLINK_RENDERER_PLATFORM.cmake)
 
-# BLINK_RENDERER_CORE
-include(BLINK_RENDERER_CORE.cmake)
+  # BLINK_RENDERER_CORE
+  include(BLINK_RENDERER_CORE.cmake)
+endif(ENABLE_SKIA AND ENABLE_BLINK)
 
 #install(FILES ${WTF_HEADERS} DESTINATION include/wtf)
 #install(FILES ${WTF_TEXT_HEADERS} DESTINATION include/wtf/text)

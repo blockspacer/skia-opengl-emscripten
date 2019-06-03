@@ -39,6 +39,7 @@ base::ThreadLocalPointer<internal::SequenceManagerImpl>*
 GetTLSSequenceManagerImpl() {
   static NoDestructor<ThreadLocalPointer<internal::SequenceManagerImpl>>
       lazy_tls_ptr;
+  //DCHECK(lazy_tls_ptr.get()); // TODO
   return lazy_tls_ptr.get();
 }
 
@@ -286,8 +287,10 @@ void SequenceManagerImpl::CompleteInitializationOnBoundThread() {
   controller_->AddNestingObserver(this);
   main_thread_only().nesting_observer_registered_ = true;
   if (GetMessagePump()) {
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
     DCHECK(!GetTLSSequenceManagerImpl()->Get())
         << "Can't register a second SequenceManagerImpl on the same thread.";
+#endif
     GetTLSSequenceManagerImpl()->Set(this);
   }
 }

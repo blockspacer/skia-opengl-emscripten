@@ -88,14 +88,15 @@ add_library(SKIA_EXT STATIC
 )
 
 target_link_libraries(SKIA_EXT PUBLIC
-  SKIA
-  skottie
-  sksg
-  skshaper
+  ${SKIA_LIBS}
+  #SKIA
+  #skottie
+  #sksg
+  #skshaper
   #particles
   #pathkit
-  wuffs
-  jpeg
+  #wuffs
+  #jpeg
   #${BASE_LIBRARIES}
   base
 )

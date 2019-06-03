@@ -22,12 +22,16 @@
 
 //#define PRINT_GL_EXT 1
 
-#define ENABLE_SKIA 1
+/// \note defined by CMAKE
+//#define ENABLE_SKIA 1
 
+#if defined(ENABLE_SKIA)
 // high quality: anialias, e.t.c.
 #define ENABLE_SKIA_HQ 1
+#endif
 
-#define ENABLE_BORINGSSL 1
+/// \note defined by CMAKE
+//#define ENABLE_BORINGSSL 1
 #if defined(ENABLE_BORINGSSL) && !defined(ENABLE_BASE)
 #warning "ENABLE_BORINGSSL requires BASE"
 #undef ENABLE_BORINGSSL
@@ -44,7 +48,10 @@
 #error "requires BASE"
 #endif
 
+#if defined(ENABLE_SKIA)
 #define ENABLE_GFX_GEOMETRY 1
+#endif
+
 #if defined(ENABLE_GFX_GEOMETRY) && !defined(ENABLE_BASE)
 #warning "ENABLE_GFX_GEOMETRY requires BASE"
 #undef ENABLE_GFX_GEOMETRY
@@ -327,6 +334,13 @@
 
 #ifdef ENABLE_BASE
 
+#include "base/task/sequence_manager/thread_controller_with_message_pump_impl.h"
+#include "base/bind.h"
+#include "base/bind_helpers.h"
+#include "base/memory/scoped_refptr.h"
+#include "base/single_thread_task_runner.h"
+#include "base/threading/thread_task_runner_handle.h"
+
 #include "base/numerics/checked_math.h"
 #include "base/numerics/clamped_math.h"
 #include "base/numerics/safe_conversions.h"
@@ -350,6 +364,8 @@
 #include "base/threading/thread.h"
 
 #include "base/synchronization/waitable_event.h"
+
+#include "base/task/sequence_manager/sequence_manager.h"
 #endif
 
 #ifdef ENABLE_WTF
@@ -381,7 +397,10 @@
 
 #endif // ENABLE_WTF
 
+#if defined(ENABLE_SKIA)
 #define ENABLE_UI 1
+#endif
+
 #ifdef ENABLE_UI
 #include "base/stl_util.h"
 #include "base/strings/utf_string_conversions.h"
@@ -504,7 +523,10 @@ static ::std::unique_ptr<gfx::ImageSkia> gfxImageSkia;
 static sk_sp<SkImage> skImageSp;
 #endif // ENABLE_UI
 
-#define ENABLE_BLINK_PLATFORM 1
+//#if defined(ENABLE_SKIA)
+//#define ENABLE_BLINK_PLATFORM 1
+//#endif
+
 #ifdef ENABLE_BLINK_PLATFORM
 
 #include <third_party/blink/renderer/platform/runtime_enabled_features.h>
@@ -734,6 +756,7 @@ sk_sp<const GrGLInterface> emscripten_GrGLMakeNativeInterface() {
 //#endif
 //#undef ENABLE_COBALT
 #ifdef ENABLE_COBALT
+#include "cobalt/base/init_cobalt.h"
 
 #include "cobalt/web_animations/animation.h"
 
@@ -773,9 +796,9 @@ sk_sp<const GrGLInterface> emscripten_GrGLMakeNativeInterface() {
 //#include "cobalt/loader/fetcher_factory.h"
 #endif // ENABLE_COBALT
 
-#ifdef USE_LIBJPEG
+#if defined(ENABLE_SKIA) && defined(USE_LIBJPEG)
 static SkString fImagePath = SkString("./resources/images/JPEG_example.jpg");
-#else
+#elif defined(ENABLE_SKIA)
 static SkString fImagePath = SkString("./resources/images/image.png");
 #endif
 
@@ -1828,6 +1851,172 @@ static int SomeHardcoreTask(int max_num) {
     return x;
 }
 
+#ifdef ENABLE_COBALT
+class CobaltTester {
+  public:
+    CobaltTester();
+    void run();
+
+  private:
+    cobalt::web_animations::Animation::Data animation;
+    base::Optional<base::TimeDelta> local_time;
+    scoped_refptr<cobalt::cssom::CSSRuleList> rule_list;
+    scoped_refptr<cobalt::cssom::CSSMediaRule> rule;
+    cobalt::cssom::SelectorTree selector_tree;
+    const ::std::string input =
+        "<html>"
+        "<head>"
+        "<meta content='text/html; charset=gb2312' http-equiv=Content-Type>"
+        "</head>"
+        "<body>test1陈绮贞</body>"
+        "</html>";
+  std::unique_ptr<cobalt::dom_parser::HTMLDecoder> html_decoder_;
+
+  cobalt::loader::FetcherFactory fetcher_factory_;
+  cobalt::loader::LoaderFactory loader_factory_;
+
+  std::unique_ptr<cobalt::dom_parser::Parser> dom_parser_;
+  //dom::testing::StubCSSParser stub_css_parser_;
+  //dom::testing::StubScriptRunner stub_script_runner_;
+  std::unique_ptr<cobalt::dom::DomStatTracker> dom_stat_tracker_;
+
+  cobalt::dom::HTMLElementContext html_element_context_;
+  scoped_refptr<cobalt::dom::Document> document_;
+  scoped_refptr<cobalt::dom::Element> root_;
+  base::SourceLocation source_location_;
+};
+
+CobaltTester::CobaltTester()
+  : fetcher_factory_ (NULL ),
+  loader_factory_
+    (&fetcher_factory_, NULL ,
+                      base::ThreadPriority::NORMAL),
+  dom_parser_ (new cobalt::dom_parser::Parser()),
+  html_element_context_(
+          //&fetcher_factory_, &loader_factory_, &stub_css_parser_,
+          &fetcher_factory_, &loader_factory_, NULL,
+          dom_parser_.get(), NULL ,
+          //NULL , &stub_script_runner_,
+          NULL , NULL,
+          NULL , NULL, NULL, NULL, NULL, NULL, NULL,
+          NULL, dom_stat_tracker_.get(), "",
+          base::kApplicationStateStarted,
+          NULL),
+  document_(new cobalt::dom::Document(&html_element_context_)),
+  root_(new cobalt::dom::Element(document_.get(),
+    base::CobToken("element"))),
+  source_location_(base::SourceLocation("[object HTMLDecoderTest]", 1, 1))
+{
+}
+
+void CobaltTester::run() {
+  printf("Testing COBALT web_animations...\n");
+
+  animation.set_start_time(base::TimeDelta::FromSeconds(2));
+  local_time =
+      animation.ComputeLocalTimeFromTimelineTime(
+          base::TimeDelta::FromMilliseconds(3000));
+  // EXPECT_EQ(1.0, local_time->InSecondsF());
+  printf("local_time->InSecondsF() %f\n", local_time->InSecondsF());
+
+  printf("Testing COBALT cssom...\n");
+
+  rule_list = new cobalt::cssom::CSSRuleList();
+  rule =
+      new cobalt::cssom::CSSMediaRule(
+        new cobalt::cssom::MediaList(),
+        new cobalt::cssom::CSSRuleList()
+      );
+  rule_list->AppendCSSRule(rule);
+
+  printf("1 = rule_list->length() = %d\n", rule_list->length());
+  printf("CSSRule::kMediaRule = %b\n", cobalt::cssom::CSSRule::kMediaRule == rule_list->Item(0)->type());
+
+  printf("Testing COBALT selectors...\n");
+
+  //// Selector Tree:
+  //// root
+  ////   kDescendantCombinator -> node_1("div")
+  //std::unique_ptr<cobalt::cssom::css_parser::Parser> css_parser =
+  //  cobalt::cssom::css_parser::Parser::Create();
+  //scoped_refptr<cobalt::cssom::CSSStyleRule> css_style_rule_1 =
+  //    cobalt::cssom::css_parser->ParseRule("div {}",
+  //    base::SourceLocation("[object SelectorTreeTest]", 1, 1))
+  //        ->AsCSSStyleRule();
+  //selector_tree.AppendRule(css_style_rule_1);
+  //
+  //// Verify that ValidateVersionCompatibility does not report a usage error
+  //// when the minimum compatibility version is 1.
+  //base::VersionCompatibility::GetInstance()->SetMinimumVersion(1);
+  //EXPECT_TRUE(selector_tree.ValidateVersionCompatibility());
+  //
+  //ASSERT_EQ(0,
+  //          selector_tree.children(selector_tree.root_node(), cobalt::cssom::kChildCombinator)
+  //              .size());
+  //ASSERT_EQ(1, selector_tree
+  //                 .children(selector_tree.root_node(), cobalt::cssom::kDescendantCombinator)
+  //                 .size());
+  //ASSERT_EQ(0, selector_tree
+  //                 .children(selector_tree.root_node(), cobalt::cssom::kNextSiblingCombinator)
+  //                 .size());
+  //ASSERT_EQ(
+  //    0, selector_tree
+  //           .children(selector_tree.root_node(), cobalt::cssom::kFollowingSiblingCombinator)
+  //           .size());
+  //
+  //const cobalt::cssom::SelectorTree::Node* node_1 =
+  //    selector_tree.children(selector_tree.root_node(), cobalt::cssom::kDescendantCombinator)
+  //        .begin()
+  //        ->second;
+  //ASSERT_EQ(1, node_1->rules().size());
+  //EXPECT_EQ(css_style_rule_1, node_1->rules()[0]);
+  //EXPECT_EQ(cobalt::cssom::Specificity(0, 0, 1), node_1->cumulative_specificity());
+
+  printf("Testing COBALT dom...\n");
+
+  using namespace cobalt;
+  using namespace cobalt::dom_parser;
+  using namespace cobalt::loader;
+
+  const int kDOMMaxElementDepth = 32;
+
+// typedef base::Callback<void(const base::Optional<std::string>&)>
+//     OnCompleteFunction;
+
+  /*Decoder::OnCompleteFunction fc = base::Bind([](const base::Optional<std::string>& a){
+    printf("Decoder::OnCompleteFunction\n");
+  });*/
+
+// const base::Optional<std::string>&
+  html_decoder_.reset(new HTMLDecoder(
+      document_, document_, NULL, kDOMMaxElementDepth,
+      source_location_,
+      base::Bind([](const base::Optional<std::string>& a){
+        printf("Decoder::OnCompleteFunction\n");
+      }),
+      true, csp::kCSPOptional));
+  html_decoder_->DecodeChunk(input.c_str(), input.length());
+  html_decoder_->Finish();
+  root_ = document_->first_element_child();
+
+  //ASSERT_TRUE(root_);
+  //EXPECT_EQ("html", root_->tag_name());
+
+  printf("root_->tag_name() %s\n", root_->tag_name().c_str());
+
+  //EXPECT_EQ(1, root_->children()->length());
+
+  dom::Element* head = root_->first_element_child();
+
+  //ASSERT_TRUE(head);
+  //EXPECT_EQ("head", head->tag_name());
+
+  printf("head->tag_name() %s\n", head->tag_name().c_str());
+}
+
+static std::unique_ptr<CobaltTester> g_cobaltTester;
+#endif // ENABLE_COBALT
+
 static void SomeHardcoreAsyncTask(
     base::WaitableEvent* event,
     const base::Callback<void(int)>& out_cb) {
@@ -1840,6 +2029,27 @@ static void SomeHardcoreAsyncTask(
     event->Signal();
 }
 #endif
+
+class ThreadControllerNoMT
+    : public base::sequence_manager::internal::ThreadControllerWithMessagePumpImpl {
+ public:
+  ThreadControllerNoMT(std::unique_ptr<base::MessagePump> pump,
+                          base::sequence_manager::SequenceManager::Settings& settings)
+      : ThreadControllerWithMessagePumpImpl(std::move(pump), settings) {}
+
+  using ThreadControllerWithMessagePumpImpl::DoDelayedWork;
+  using ThreadControllerWithMessagePumpImpl::DoIdleWork;
+  using ThreadControllerWithMessagePumpImpl::DoWork;
+  using ThreadControllerWithMessagePumpImpl::EnsureWorkScheduled;
+  using ThreadControllerWithMessagePumpImpl::Quit;
+  using ThreadControllerWithMessagePumpImpl::Run;
+};
+
+/*static std::unique_ptr<base::MessagePump> g_main_pump;
+static std::unique_ptr<ThreadControllerNoMT> g_thread_controller;*/
+
+static std::unique_ptr<base::Thread> main_thread;
+std::unique_ptr<base::sequence_manager::SequenceManager> sequence_manager;
 
 int main(int argc, char** argv) {
     printf("main ...\n");
@@ -1884,9 +2094,48 @@ int main(int argc, char** argv) {
   base::CommandLine::Init(0, nullptr);
   base::CommandLine::ForCurrentProcess()->InitFromArgv(argc, argv);
 
+ /* printf("Init ThreadControllerNoMT ...\n");
+  if(!g_thread_controller.get()) {
+
+  base::sequence_manager::SequenceManager::Settings
+   sqm_settings =
+    base::sequence_manager::SequenceManager::Settings::Builder()
+                      .SetMessageLoopType(base::MessageLoop::Type::TYPE_DEFAULT)
+                      .Build();
+
+    g_main_pump = std::make_unique<base::MessagePump>();
+    g_thread_controller = std::make_unique<ThreadControllerNoMT>(
+      std::move(g_main_pump), sqm_settings);
+    // calls RunLoop::RegisterDelegateForCurrentThread(this);
+    //g_thread_controller->BindToCurrentThread(std::move(g_main_pump));
+  }*/
+
+  /*printf("Init PlatformThread ...\n");
+  main_thread = std::make_unique<base::Thread>("BrowserThreadMain");
+  base::PlatformThread::SetName("BrowserMain");
+  printf("CreateSequenceManagerOnCurrentThread ...\n");
+  base::sequence_manager::SequenceManager::Settings
+   sequence_manager_settings =
+    base::sequence_manager::SequenceManager::Settings::Builder()
+                      .SetMessageLoopType(base::MessageLoop::Type::TYPE_DEFAULT)
+                      .Build();
+  sequence_manager =
+        CreateSequenceManagerOnCurrentThread(
+          std::move(sequence_manager_settings));
+          //base::sequence_manager::SequenceManager::Settings());
+  printf("SetDefaultTaskRunner ...\n");
+  main_thread->Start();
+  DCHECK(main_thread->task_runner().get());
+  //sequence_manager->SetDefaultTaskRunner(main_thread->task_runner());
+  //printf("Init MessageLoopCurrent ...\n");
+  //base::MessageLoopCurrent::Get()->SetTaskRunner(main_thread->task_runner());
+  */
+
+#if defined(ENABLE_SKIA)
   printf("Init FontList ...\n");
   // Use a single default font as the default font list.
   gfx::FontList::SetDefaultFontDescription(::std::string());
+#endif
 
   printf("Init logging ...\n");
 
@@ -2507,6 +2756,16 @@ int main(int argc, char** argv) {
 
   InitGL();
 
+#ifdef ENABLE_COBALT
+  printf("Initializing COBALT tests...\n");
+  base::AtExitManager at_exit;
+  /// \see https://github.com/blockspacer/cobalt-clone-28052019/blob/master/src/cobalt/base/init_cobalt.cc
+  cobalt::InitCobalt(argc, argv, NULL);
+  printf("Starting COBALT tests...\n");
+  g_cobaltTester = std::make_unique<CobaltTester>();
+  g_cobaltTester->run();
+#endif // ENABLE_COBALT
+
 #if defined(ENABLE_SKIA)
 
 #if defined(ENABLE_UI)
@@ -2566,152 +2825,6 @@ int main(int argc, char** argv) {
     }
   }
 #endif // ENABLE_UI
-
-#ifdef ENABLE_COBALT
-
-  printf("Testing COBALT web_animations...\n");
-
-  cobalt::web_animations::Animation::Data animation;
-  animation.set_start_time(base::TimeDelta::FromSeconds(2));
-  base::Optional<base::TimeDelta> local_time =
-      animation.ComputeLocalTimeFromTimelineTime(
-          base::TimeDelta::FromMilliseconds(3000));
-  // EXPECT_EQ(1.0, local_time->InSecondsF());
-  printf("local_time->InSecondsF() %f\n", local_time->InSecondsF());
-
-  printf("Testing COBALT cssom...\n");
-
-  scoped_refptr<cobalt::cssom::CSSRuleList> rule_list
-    = new cobalt::cssom::CSSRuleList();
-  scoped_refptr<cobalt::cssom::CSSMediaRule> rule =
-      new cobalt::cssom::CSSMediaRule(
-        new cobalt::cssom::MediaList(),
-        new cobalt::cssom::CSSRuleList()
-      );
-  rule_list->AppendCSSRule(rule);
-
-  printf("1 = rule_list->length() = %d\n", rule_list->length());
-  printf("CSSRule::kMediaRule = %b\n", cobalt::cssom::CSSRule::kMediaRule == rule_list->Item(0)->type());
-
-
-  printf("Testing COBALT selectors...\n");
-  cobalt::cssom::SelectorTree selector_tree;
-
-  //// Selector Tree:
-  //// root
-  ////   kDescendantCombinator -> node_1("div")
-  //std::unique_ptr<cobalt::cssom::css_parser::Parser> css_parser =
-  //  cobalt::cssom::css_parser::Parser::Create();
-  //scoped_refptr<cobalt::cssom::CSSStyleRule> css_style_rule_1 =
-  //    cobalt::cssom::css_parser->ParseRule("div {}",
-  //    base::SourceLocation("[object SelectorTreeTest]", 1, 1))
-  //        ->AsCSSStyleRule();
-  //selector_tree.AppendRule(css_style_rule_1);
-  //
-  //// Verify that ValidateVersionCompatibility does not report a usage error
-  //// when the minimum compatibility version is 1.
-  //base::VersionCompatibility::GetInstance()->SetMinimumVersion(1);
-  //EXPECT_TRUE(selector_tree.ValidateVersionCompatibility());
-  //
-  //ASSERT_EQ(0,
-  //          selector_tree.children(selector_tree.root_node(), cobalt::cssom::kChildCombinator)
-  //              .size());
-  //ASSERT_EQ(1, selector_tree
-  //                 .children(selector_tree.root_node(), cobalt::cssom::kDescendantCombinator)
-  //                 .size());
-  //ASSERT_EQ(0, selector_tree
-  //                 .children(selector_tree.root_node(), cobalt::cssom::kNextSiblingCombinator)
-  //                 .size());
-  //ASSERT_EQ(
-  //    0, selector_tree
-  //           .children(selector_tree.root_node(), cobalt::cssom::kFollowingSiblingCombinator)
-  //           .size());
-  //
-  //const cobalt::cssom::SelectorTree::Node* node_1 =
-  //    selector_tree.children(selector_tree.root_node(), cobalt::cssom::kDescendantCombinator)
-  //        .begin()
-  //        ->second;
-  //ASSERT_EQ(1, node_1->rules().size());
-  //EXPECT_EQ(css_style_rule_1, node_1->rules()[0]);
-  //EXPECT_EQ(cobalt::cssom::Specificity(0, 0, 1), node_1->cumulative_specificity());
-
-  printf("Testing COBALT dom...\n");
-
-  using namespace cobalt;
-  using namespace cobalt::dom_parser;
-  using namespace cobalt::loader;
-
-  const ::std::string input =
-      "<html>"
-      "<head>"
-      "<meta content='text/html; charset=gb2312' http-equiv=Content-Type>"
-      "</head>"
-      "<body>test1陈绮贞</body>"
-      "</html>";
-  std::unique_ptr<HTMLDecoder> html_decoder_;
-
-  loader::FetcherFactory fetcher_factory_
-    (NULL );
-  loader::LoaderFactory loader_factory_
-    (&fetcher_factory_, NULL ,
-                      base::ThreadPriority::NORMAL);
-  std::unique_ptr<Parser> dom_parser_
-    (new Parser());
-  //dom::testing::StubCSSParser stub_css_parser_;
-  //dom::testing::StubScriptRunner stub_script_runner_;
-  std::unique_ptr<dom::DomStatTracker> dom_stat_tracker_;
-
-  dom::HTMLElementContext html_element_context_
-    (
-          //&fetcher_factory_, &loader_factory_, &stub_css_parser_,
-          &fetcher_factory_, &loader_factory_, NULL,
-          dom_parser_.get(), NULL ,
-          //NULL , &stub_script_runner_,
-          NULL , NULL,
-          NULL , NULL, NULL, NULL, NULL, NULL, NULL,
-          NULL, dom_stat_tracker_.get(), "", base::kApplicationStateStarted,
-          NULL);
-  scoped_refptr<dom::Document> document_
-    (new dom::Document(&html_element_context_));
-  scoped_refptr<dom::Element> root_
-    (new dom::Element(document_.get(), base::CobToken("element")));
-  base::SourceLocation source_location_
-    (base::SourceLocation("[object HTMLDecoderTest]", 1, 1));
-
-  const int kDOMMaxElementDepth = 32;
-
-// typedef base::Callback<void(const base::Optional<std::string>&)>
-//     OnCompleteFunction;
-
-  Decoder::OnCompleteFunction fc = base::Bind([](const base::Optional<std::string>& a){
-    printf("Decoder::OnCompleteFunction\n");
-  });
-
-// const base::Optional<std::string>&
-  html_decoder_.reset(new HTMLDecoder(
-      document_, document_, NULL, kDOMMaxElementDepth,
-      source_location_,
-      fc,
-      true, csp::kCSPOptional));
-  html_decoder_->DecodeChunk(input.c_str(), input.length());
-  html_decoder_->Finish();
-  root_ = document_->first_element_child();
-
-  //ASSERT_TRUE(root_);
-  //EXPECT_EQ("html", root_->tag_name());
-
-  printf("root_->tag_name() %s\n", root_->tag_name().c_str());
-
-  //EXPECT_EQ(1, root_->children()->length());
-
-  dom::Element* head = root_->first_element_child();
-
-  //ASSERT_TRUE(head);
-  //EXPECT_EQ("head", head->tag_name());
-
-  printf("head->tag_name() %s\n", head->tag_name().c_str());
-
-#endif // ENABLE_COBALT
 
 #ifdef ENABLE_CUSTOM_FONTS
   printf("Reading fonts...\n");
@@ -2894,6 +3007,9 @@ int main(int argc, char** argv) {
   }
 #endif
 
+/// \note emscripten_set_main_loop async, so
+/// don`t declare vars above it (or them will be lost)!
+/// Use member/static variables!
 #ifdef __EMSCRIPTEN__
   printf("running with __EMSCRIPTEN__\n");
   // If using own main loop, must use explicit context swapping (explicitSwapControl and OFFSCREENCANVAS_SUPPORT)

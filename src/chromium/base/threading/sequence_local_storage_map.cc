@@ -25,7 +25,11 @@ SequenceLocalStorageMap::~SequenceLocalStorageMap() = default;
 ScopedSetSequenceLocalStorageMapForCurrentThread::
     ScopedSetSequenceLocalStorageMapForCurrentThread(
         SequenceLocalStorageMap* sequence_local_storage) {
+
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   DCHECK(!tls_current_sequence_local_storage.Get().Get());
+#endif
+
   tls_current_sequence_local_storage.Get().Set(sequence_local_storage);
 }
 

@@ -207,7 +207,10 @@ class BASE_EXPORT RunLoop {
     // have more than a few entries.
     using RunLoopStack = stack<RunLoop*, std::vector<RunLoop*>>;
 
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
     RunLoopStack active_run_loops_;
+#endif
+
     ObserverList<RunLoop::NestingObserver>::Unchecked nesting_observers_;
 
 #if DCHECK_IS_ON() && !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))

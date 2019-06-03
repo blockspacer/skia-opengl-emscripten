@@ -88,14 +88,18 @@ ThreadTaskRunnerHandle::ThreadTaskRunnerHandle(
       sequenced_task_runner_handle_(task_runner_) {
   DCHECK(task_runner_);
   DCHECK(task_runner_->BelongsToCurrentThread());
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   DCHECK(!thread_task_runner_tls.Pointer()->Get());
+#endif
   thread_task_runner_tls.Pointer()->Set(this);
 }
 
 ThreadTaskRunnerHandle::~ThreadTaskRunnerHandle() {
   DCHECK(task_runner_);
   DCHECK(task_runner_->BelongsToCurrentThread());
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   DCHECK_EQ(thread_task_runner_tls.Pointer()->Get(), this);
+#endif
   thread_task_runner_tls.Pointer()->Set(nullptr);
 }
 

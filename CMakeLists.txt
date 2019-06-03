@@ -82,14 +82,6 @@ set(GEN_COMPONENTS_CONTENT_SETTINGS_CORE_COMMON_DIR ${GN_GEN_DIR}gen_components_
 # autoninja -C out/Default/ third_party/blink/renderer/core/mojo
 #set(GEN_BLINK_RENDERER_CORE_DIR ${GN_GEN_DIR}gen_blink_renderer_core/)
 
-set(SKIA_PARENT_DIR "${CHROMIUM_DIR}/third_party/")
-set(SKIA_DIR "${SKIA_PARENT_DIR}skia/")
-
-#set(SKIA_EXT_PARENT_DIR ${CHROMIUM_DIR})
-#set(SKIA_EXT_DIR ${SKIA_EXT_PARENT_DIR}skia/)
-set(SKIA_EXT_PARENT_DIR ${SKIA_PARENT_DIR})
-set(SKIA_EXT_DIR ${SKIA_EXT_PARENT_DIR}skia/)
-
 set(USE_LIBJPEG TRUE)
 
 # NOTE: SOURCE_MAP requires -g4 and --source-map-base
@@ -124,6 +116,87 @@ else()
 endif(NOT PYTHON_FOUND)
 
 option(ENABLE_HARFBUZZ "ENABLE_HARFBUZZ" OFF)
+if(ENABLE_HARFBUZZ)
+  # harfbuzz
+  set(EMCC_COMMON "${EMCC_COMMON} -s USE_HARFBUZZ=1")
+  # custom flags
+  set(COMMON_FLAGS "${COMMON_FLAGS} -DENABLE_HARFBUZZ=1")
+  # https://github.com/klzgrad/naiveproxy/blob/master/src/third_party/skia/modules/skshaper/BUILD.gn#L11
+  # SK_SHAPER_HARFBUZZ_AVAILABLE # < TODO if skia_use_icu
+endif(ENABLE_HARFBUZZ)
+
+set(ENABLE_BORINGSSL TRUE)
+if(ENABLE_BORINGSSL)
+  set(COMMON_FLAGS "${COMMON_FLAGS} -DENABLE_BORINGSSL=1")
+  set(BORINGSSL_LIBS
+    BORINGSSL
+  )
+endif(ENABLE_BORINGSSL)
+
+set(ENABLE_SKIA FALSE)
+if (ENABLE_SKIA)
+  set(COMMON_FLAGS "${COMMON_FLAGS} -DENABLE_SKIA=1")
+  set(SKIA_LIBS
+    SKIA
+    sksg
+    skshaper
+    #particles
+    skottie
+    wuffs
+    jpeg
+    #pathkit
+  )
+  set(SKIA_PARENT_DIR "${CHROMIUM_DIR}/third_party/")
+  set(SKIA_DIR "${SKIA_PARENT_DIR}skia/")
+
+  #set(SKIA_EXT_PARENT_DIR ${CHROMIUM_DIR})
+  #set(SKIA_EXT_DIR ${SKIA_EXT_PARENT_DIR}skia/)
+  set(SKIA_EXT_PARENT_DIR ${SKIA_PARENT_DIR})
+  set(SKIA_EXT_DIR ${SKIA_EXT_PARENT_DIR}skia/)
+endif(ENABLE_SKIA)
+
+set(ENABLE_BLINK TRUE)
+if(ENABLE_SKIA AND ENABLE_BLINK)
+  set(COMMON_FLAGS "${COMMON_FLAGS} -DENABLE_BLINK_PLATFORM=1")
+  #
+  set(BLINK_GFX_LIBS
+    #BLINK_RENDERER_CORE
+    BLINK_RENDERER_PLATFORM
+    COMPONENTS_VIZ_CLIENT
+    CC
+    BASE_CC
+    DEBUG_CC
+    PAINT_CC
+    ANIMATION_CC
+    GPU_COMMAND_BUFFER
+    GFX_CODEC
+    GFX_GEOMETRY
+    GFX_GEOMETRY_SKIA
+    GFX_COLOR_SPACE
+    GFX_SWITCHES
+    GFX_RANGE
+    SKIA_EXT
+    UI_GFX
+    BLINK_PUBLIC_COMMON
+    COMPONENTS_VIZ_CLIENT
+    COMPONENTS_VIZ_COMMON
+    CC
+    #G_GPU
+    UI_GFX
+    GFX_GEOMETRY
+    ANIMATION_CC
+    BASE_CC
+    PAINT_CC
+    CC
+  )
+  set(BLINK_LIBS
+    ${BLINK_GFX_LIBS}
+    COMPONENTS_SCHEDULING_METRICS
+    SERVICES_NETWORK_PUBLIC_CPP
+    COMPONENTS_CONTENT_SETTINGS_CORE_COMMON
+    SERVICES_SERVICE_MANAGER_PUBLIC_CPP
+  )
+endif(ENABLE_SKIA)
 
 message("CMAKE_SYSTEM_NAME = ${CMAKE_SYSTEM_NAME}")
 if(EMSCRIPTEN)
@@ -627,15 +700,6 @@ endif(HAS_ASYNCIFY OR HAS_EMTERPRETIFY)
 
   set(EMCC_COMMON "${EMCC_COMMON} -s USE_ZLIB=1")
   #set(EMCC_COMMON "${EMCC_COMMON} -s USE_BZIP2=1")
-
-  if(ENABLE_HARFBUZZ)
-    # harfbuzz
-    set(EMCC_COMMON "${EMCC_COMMON} -s USE_HARFBUZZ=1")
-    # custom flags
-    set(COMMON_FLAGS "${COMMON_FLAGS} -DENABLE_HARFBUZZ=1")
-    # https://github.com/klzgrad/naiveproxy/blob/master/src/third_party/skia/modules/skshaper/BUILD.gn#L11
-    # SK_SHAPER_HARFBUZZ_AVAILABLE # < TODO if skia_use_icu
-  endif(ENABLE_HARFBUZZ)
 
   set(EMCC_COMMON "${EMCC_COMMON} -s USE_ICU=1")
   set(EMCC_COMMON "${EMCC_COMMON} -s USE_LIBPNG=1")
@@ -1210,10 +1274,12 @@ include(${CHROMIUM_DIR}iccjpeg.cmake)
 # libwebp: requires libpng, zlib
 include(${CHROMIUM_DIR}libwebp.cmake)
 
-#
-# skia
-#
-include(skia.cmake)
+if (ENABLE_SKIA)
+  #
+  # skia
+  #
+  include(skia.cmake)
+endif()
 
 #
 # WTF
@@ -1250,13 +1316,45 @@ endif(ENABLE_COBALT)
 #
 set(PROJECT_SRC
   src/main.cpp
-  # skottie
-  # https://github.com/klzgrad/naiveproxy/blob/master/src/third_party/skia/modules/skottie/BUILD.gn#L45
-  ${SKIA_DIR}/modules/skottie/utils/SkottieUtils.cpp
 )
 
+if (ENABLE_SKIA)
+  set(SKIA_INCLUDES
+      ${SKIA_HEADERS}
+      ${SKIA_EXT_DIR}
+      ${SKIA_EXT_PARENT_DIR}
+      ${SKIA_PARENT_DIR}
+      ${SKIA_DIR}
+      ${SKIA_DIR}/include
+      ${SKIA_DIR}/include/c
+      ${SKIA_DIR}/include/core
+      ${SKIA_DIR}/third_party
+      ${SKIA_DIR}/third_party/skcms
+  )
+  list(APPEND PROJECT_SRC
+    # skottie
+    # https://github.com/klzgrad/naiveproxy/blob/master/src/third_party/skia/modules/skottie/BUILD.gn#L45
+    ${SKIA_DIR}/modules/skottie/utils/SkottieUtils.cpp
+  )
+
+  add_dependencies(SKIA_EXT SKIA_build sksg SKIA skshaper)
+  add_dependencies(UI_GFX SKIA_build sksg SKIA skshaper)
+  add_dependencies(CC SKIA_build sksg SKIA skshaper)
+  add_dependencies(ANIMATION_CC SKIA_build sksg SKIA skshaper)
+  add_dependencies(PAINT_CC SKIA_build sksg SKIA skshaper)
+  add_dependencies(DEBUG_CC SKIA_build sksg SKIA skshaper)
+  add_dependencies(BASE_CC SKIA_build sksg SKIA skshaper)
+  add_dependencies(GPU_COMMAND_BUFFER SKIA_build sksg SKIA skshaper)
+  add_dependencies(GFX_CODEC SKIA_build sksg SKIA skshaper)
+  add_dependencies(GFX_GEOMETRY SKIA_build sksg SKIA skshaper)
+  add_dependencies(GFX_GEOMETRY_SKIA SKIA_build sksg SKIA skshaper)
+  add_dependencies(GFX_COLOR_SPACE SKIA_build sksg SKIA skshaper)
+  add_dependencies(GFX_SWITCHES SKIA_build sksg SKIA skshaper)
+  add_dependencies(GFX_RANGE SKIA_build sksg SKIA skshaper)
+endif(ENABLE_SKIA)
+
 # TODO
-if (EMSCRIPTEN)
+if (EMSCRIPTEN AND ENABLE_SKIA)
   list(APPEND PROJECT_SRC
     # skia effects
     #${SKIA_DIR}/src/c/sk_effects.cpp
@@ -1356,7 +1454,7 @@ if (EMSCRIPTEN)
     #${SKIA_DIR}/src/effects/imagefilters/SkTileImageFilter.cpp
     #${SKIA_DIR}/src/effects/imagefilters/SkXfermodeImageFilter.cpp
   )
-endif(EMSCRIPTEN)
+endif()
 
 # NOTE: -s LINKABLE=1 is not supported with -s USE_PTHREADS>0
 # https://www.mail-archive.com/emscripten-discuss@googlegroups.com/msg07864.html
@@ -1375,16 +1473,11 @@ add_executable(${PROJECT_NAME}
   #DEPENDS SKIA
 )
 
-add_dependencies(${PROJECT_NAME}
-  wuffs
-  jpeg
-  #pathkit
-  SKIA
-  sksg
-  skshaper
-  #particles
-  skottie
-)
+if(ENABLE_SKIA)
+  add_dependencies(${PROJECT_NAME}
+    ${SKIA_LIBS}
+  )
+endif(ENABLE_SKIA)
 
 # https://www.mail-archive.com/emscripten-discuss@googlegroups.com/msg07864.html
 #set_target_properties(
@@ -1406,19 +1499,6 @@ if(EMSCRIPTEN)
   #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --preload-file resources/fonts/FreeSans.ttf")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --preload-file resources")
 endif() # EMSCRIPTEN
-
-set(SKIA_INCLUDES
-    ${SKIA_HEADERS}
-    ${SKIA_EXT_DIR}
-    ${SKIA_EXT_PARENT_DIR}
-    ${SKIA_PARENT_DIR}
-    ${SKIA_DIR}
-    ${SKIA_DIR}/include
-    ${SKIA_DIR}/include/c
-    ${SKIA_DIR}/include/core
-    ${SKIA_DIR}/third_party
-    ${SKIA_DIR}/third_party/skcms
-)
 
 if(EMSCRIPTEN)
   # It is recommended to use target_link_libraries() for linker flags,
@@ -1451,21 +1531,6 @@ if(EMSCRIPTEN)
   #message("using template " ${HTML_TEMPLATE})
 
   #set(TEMPLATE_OPTION "--shell-file ${HTML_TEMPLATE}")
-
-  add_dependencies(SKIA_EXT SKIA_build sksg SKIA skshaper)
-  add_dependencies(UI_GFX SKIA_build sksg SKIA skshaper)
-  add_dependencies(CC SKIA_build sksg SKIA skshaper)
-  add_dependencies(ANIMATION_CC SKIA_build sksg SKIA skshaper)
-  add_dependencies(PAINT_CC SKIA_build sksg SKIA skshaper)
-  add_dependencies(DEBUG_CC SKIA_build sksg SKIA skshaper)
-  add_dependencies(BASE_CC SKIA_build sksg SKIA skshaper)
-  add_dependencies(GPU_COMMAND_BUFFER SKIA_build sksg SKIA skshaper)
-  add_dependencies(GFX_CODEC SKIA_build sksg SKIA skshaper)
-  add_dependencies(GFX_GEOMETRY SKIA_build sksg SKIA skshaper)
-  add_dependencies(GFX_GEOMETRY_SKIA SKIA_build sksg SKIA skshaper)
-  add_dependencies(GFX_COLOR_SPACE SKIA_build sksg SKIA skshaper)
-  add_dependencies(GFX_SWITCHES SKIA_build sksg SKIA skshaper)
-  add_dependencies(GFX_RANGE SKIA_build sksg SKIA skshaper)
 
   set(EM_TARGET_NAME ${PROJECT_NAME})
   set(EM_TARGET_JS ${PROJECT_NAME}.js)
@@ -1511,38 +1576,39 @@ if(EMSCRIPTEN)
     modp_b64
     base # TODO
     #BLINK_RENDERER_CORE
-    BLINK_RENDERER_PLATFORM
-    SERVICES_NETWORK_PUBLIC_CPP
-    COMPONENTS_VIZ_CLIENT
+    #SERVICES_NETWORK_PUBLIC_CPP
+    #COMPONENTS_VIZ_CLIENT
+    #BLINK_RENDERER_PLATFORM
     ${WTF_LIBRARY_NAME}
     #
-    SKIA
+    ${SKIA_LIBS}
     #
-    skottie
-    sksg
-    skshaper
+    #skottie
+    #sksg
+    #skshaper
     #particles
     #pathkit
-    wuffs
-    jpeg
+    #wuffs
+    #jpeg
     #
     ${WTF_LIBS}
     # tcmalloc only for posix/linux/e.t.c.
     #tcmalloc
     #
-    UI_GFX
-    CC
+    #UI_GFX
+    #CC
     #ANIMATION_CC
     #PAINT_CC
     #DEBUG_CC
     #BASE_CC
-    GPU_COMMAND_BUFFER
+    #GPU_COMMAND_BUFFER
     #GFX_CODEC
     #GFX_GEOMETRY
     #GFX_GEOMETRY_SKIA
     #GFX_COLOR_SPACE
     #GFX_SWITCHES
     #GFX_RANGE
+    ${BLINK_LIBS}
     ##
     #SKIA_EXT
     ##
@@ -1584,42 +1650,26 @@ else()
     #cobalt_
     #cobalt_web_animations
     ${COBALT_LIBRARY_NAME}
-    #BLINK_RENDERER_CORE
-    BLINK_RENDERER_PLATFORM
-    COMPONENTS_VIZ_CLIENT
     ${WTF_LIBS}
     #BORINGSSL
     GCRYPTO
     GURL
     GNET
-    CC
-    BASE_CC
-    DEBUG_CC
-    PAINT_CC
-    ANIMATION_CC
-    GPU_COMMAND_BUFFER
-    GFX_CODEC
-    GFX_GEOMETRY
-    GFX_GEOMETRY_SKIA
-    GFX_COLOR_SPACE
-    GFX_SWITCHES
-    GFX_RANGE
-    SKIA_EXT
-    UI_GFX
     # tcmalloc only for posix/linux/e.t.c.
     tcmalloc
     # libevent only for posix/linux/e.t.c.
     libevent
     #
-    SKIA
+    ${SKIA_LIBS}
+    #SKIA
     ${libpng_LIB}
-    skottie
-    sksg
-    skshaper
+    #skottie
+    #sksg
+    #skshaper
     #particles
     #pathkit
-    wuffs
-    jpeg
+    #wuffs
+    #jpeg
     #
     ${libZLIB_LIB}
     #
@@ -1637,12 +1687,9 @@ else()
     #
     #${libpng_LIB}
     #GLIBPNG
-    BLINK_PUBLIC_COMMON
     GURL
     GNET
     GCRYPTO
-    COMPONENTS_VIZ_CLIENT
-    COMPONENTS_VIZ_COMMON
     # services/service_manager
     # services/ws/public/cpp/gpu
     #${BASE_LIBRARIES}
@@ -1650,7 +1697,7 @@ else()
     ${WTF_LIBRARY_NAME}
     # media
     # "//services/ws/public/cpp/gpu",
-    SKIA
+    #SKIA
     #skcms
     # "//third_party:freetype_harfbuzz",
     #  "//third_party/blink/public/common",
@@ -1661,10 +1708,6 @@ else()
     ${libZLIB_LIB}
     # webrtc
     base
-    CC
-    #G_GPU
-    UI_GFX
-    GFX_GEOMETRY
     #public_deps = [
     #  ":bindings_buildflags",
     #  ":make_platform_generated",
@@ -1701,11 +1744,36 @@ else()
     #  "//url",
     #  "//v8",
     #]
-    ANIMATION_CC
-    BASE_CC
-    PAINT_CC
-    CC
-    SERVICES_NETWORK_PUBLIC_CPP
+    ${BLINK_LIBS}
+    ##BLINK_RENDERER_CORE
+    #BLINK_RENDERER_PLATFORM
+    #COMPONENTS_VIZ_CLIENT
+    #CC
+    #BASE_CC
+    #DEBUG_CC
+    #PAINT_CC
+    #ANIMATION_CC
+    #GPU_COMMAND_BUFFER
+    #GFX_CODEC
+    #GFX_GEOMETRY
+    #GFX_GEOMETRY_SKIA
+    #GFX_COLOR_SPACE
+    #GFX_SWITCHES
+    #GFX_RANGE
+    #SKIA_EXT
+    #UI_GFX
+    #BLINK_PUBLIC_COMMON
+    #COMPONENTS_VIZ_CLIENT
+    #COMPONENTS_VIZ_COMMON
+    #CC
+    ##G_GPU
+    #UI_GFX
+    #GFX_GEOMETRY
+    #ANIMATION_CC
+    #BASE_CC
+    #PAINT_CC
+    #CC
+    #SERVICES_NETWORK_PUBLIC_CPP
     libwebp # requires libpng
     ${libjpeg_LIB}
     ${libjpeg_TURBO_LIB}
@@ -1715,7 +1783,7 @@ else()
     # khronos
     ${khronos_LIB}
     LIB_V8_INTERFACE
-    COMPONENTS_SCHEDULING_METRICS
+    #COMPONENTS_SCHEDULING_METRICS
     ${HARFBUZZ_LIBRARIES}
   )
   target_compile_definitions(${PROJECT_NAME} PRIVATE

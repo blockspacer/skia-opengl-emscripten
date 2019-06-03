@@ -50,14 +50,15 @@ target_link_libraries(GFX_CODEC PRIVATE
   GFX_GEOMETRY_SKIA
   GFX_GEOMETRY
   #libjpeg
-  SKIA
+  ${SKIA_LIBS}
+  #SKIA
   #
-  skottie
-  sksg
-  skshaper
+  #skottie
+  #sksg
+  #skshaper
   #particles
   #pathkit
-  wuffs
+  #wuffs
   #jpeg
   #libpng
   #zlib

@@ -36,6 +36,11 @@ FilePath GetHomeDir() {
 bool DeleteFile(const FilePath& path, bool recursive) {
     return false;
 }
+
+bool CreateDirectoryAndGetError(const FilePath& full_path,
+                                File::Error* error) {
+  return false;
+}
 #endif
 
 #if !defined(OS_NACL_NONSFI)

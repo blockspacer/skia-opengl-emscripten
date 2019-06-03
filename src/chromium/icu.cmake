@@ -864,7 +864,8 @@ elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
     # todo
     set(EXTRA_ICU_DEFINITIONS
       USING_SYSTEM_ICU=1
-      ICU_UTIL_DATA_IMPL=ICU_UTIL_DATA_FILE
+      #ICU_UTIL_DATA_IMPL=ICU_UTIL_DATA_FILE
+      ICU_UTIL_DATA_IMPL=ICU_UTIL_DATA_STATIC
       U_ICUDATAENTRY_IN_COMMON # if 'OS == "win" or icu_use_data_file_flag==1'
       UCHAR_TYPE=uint16_t
     )
@@ -895,7 +896,8 @@ if(USE_OWN_ICU)
   # http://userguide.icu-project.org/howtouseicu#TOC-C-With-Your-Own-Build-System
   set(ICU_PUBLIC_DEFINES
     U_ENABLE_DYLOAD=0
-    ICU_UTIL_DATA_IMPL=ICU_UTIL_DATA_FILE
+    #ICU_UTIL_DATA_IMPL=ICU_UTIL_DATA_FILE
+    ICU_UTIL_DATA_IMPL=ICU_UTIL_DATA_STATIC
   )
 
   set(ICU_PRIVATE_DEFINES

@@ -64,6 +64,16 @@ class ThreadLocalPointer {
   ThreadLocalPointer() = default;
   ~ThreadLocalPointer() = default;
 
+#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+  T* Get() const { return slot_; }
+
+  void Set(T* ptr) {
+    slot_ = ptr;
+  }
+
+ private:
+  T* slot_;
+#else
   T* Get() const { return static_cast<T*>(slot_.Get()); }
 
   void Set(T* ptr) {
@@ -72,7 +82,7 @@ class ThreadLocalPointer {
 
  private:
   ThreadLocalStorage::Slot slot_;
-
+#endif
   DISALLOW_COPY_AND_ASSIGN(ThreadLocalPointer<T>);
 };
 

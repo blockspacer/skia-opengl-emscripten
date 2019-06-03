@@ -115,6 +115,9 @@ bool Thread::StartWithOptions(const Options& options) {
         MessageLoop::CreateUnbound(options.message_loop_type));
   }
 
+/*#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+  return false;
+#else*/
   start_event_.Reset();
 
   // Hold |thread_lock_| while starting the new thread to synchronize with
@@ -137,6 +140,7 @@ bool Thread::StartWithOptions(const Options& options) {
   joinable_ = options.joinable;
 
   return true;
+//#endif
 }
 
 bool Thread::StartAndWaitForTesting() {
@@ -235,8 +239,11 @@ void Thread::StopSoon() {
   }
   DCHECK(task_runner());
 #endif
+
+//#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   task_runner()->PostTask(
       FROM_HERE, base::BindOnce(&Thread::ThreadQuitHelper, Unretained(this)));
+//#endif
 }
 
 void Thread::DetachFromSequence() {
@@ -387,8 +394,10 @@ void Thread::ThreadMain() {
 }
 
 void Thread::ThreadQuitHelper() {
+#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   DCHECK(run_loop_);
   run_loop_->QuitWhenIdle();
+#endif
   SetThreadWasQuitProperly(true);
 }
 

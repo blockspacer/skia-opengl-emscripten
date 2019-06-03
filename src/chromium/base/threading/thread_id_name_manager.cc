@@ -47,10 +47,12 @@ const char* ThreadIdNameManager::GetDefaultInternedString() {
 
 void ThreadIdNameManager::RegisterThread(PlatformThreadHandle::Handle handle,
                                          PlatformThreadId id) {
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   AutoLock locked(lock_);
   thread_id_to_handle_[id] = handle;
   thread_handle_to_interned_name_[handle] =
       name_to_interned_name_[kDefaultName];
+#endif // !defined(__EMSCRIPTEN__)
 }
 
 void ThreadIdNameManager::InstallSetNameCallback(SetNameCallback callback) {
@@ -59,6 +61,7 @@ void ThreadIdNameManager::InstallSetNameCallback(SetNameCallback callback) {
 }
 
 void ThreadIdNameManager::SetName(const std::string& name) {
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   PlatformThreadId id = PlatformThread::CurrentId();
   std::string* leaked_str = nullptr;
   {
@@ -95,9 +98,11 @@ void ThreadIdNameManager::SetName(const std::string& name) {
   // ThreadIdNameManager itself when holding the lock.
   trace_event::AllocationContextTracker::SetCurrentThreadName(
       leaked_str->c_str());
+#endif // !defined(__EMSCRIPTEN__)
 }
 
 const char* ThreadIdNameManager::GetName(PlatformThreadId id) {
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   AutoLock locked(lock_);
 
   if (id == main_process_id_)
@@ -110,15 +115,23 @@ const char* ThreadIdNameManager::GetName(PlatformThreadId id) {
   auto handle_to_name_iter =
       thread_handle_to_interned_name_.find(id_to_handle_iter->second);
   return handle_to_name_iter->second->c_str();
+#else
+  return name_to_interned_name_[kDefaultName]->c_str();
+#endif // !defined(__EMSCRIPTEN__)
 }
 
 const char* ThreadIdNameManager::GetNameForCurrentThread() {
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   const char* name = reinterpret_cast<const char*>(GetThreadNameTLS().Get());
   return name ? name : kDefaultName;
+#else
+  return kDefaultName;
+#endif // !defined(__EMSCRIPTEN__)
 }
 
 void ThreadIdNameManager::RemoveName(PlatformThreadHandle::Handle handle,
                                      PlatformThreadId id) {
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   AutoLock locked(lock_);
   auto handle_to_name_iter = thread_handle_to_interned_name_.find(handle);
 
@@ -133,6 +146,7 @@ void ThreadIdNameManager::RemoveName(PlatformThreadHandle::Handle handle,
     return;
 
   thread_id_to_handle_.erase(id_to_handle_iter);
+#endif // !defined(__EMSCRIPTEN__)
 }
 
 }  // namespace base
