@@ -28,9 +28,8 @@
 #include "base/threading/thread_checker.h"
 #include "cobalt/loader/cors_preflight_cache.h"
 
-#if !defined(__EMSCRIPTEN__) && defined(__TODO__)
+#if defined(ENABLE_GNET)
 #include "cobalt/network/network_module.h"
-#endif
 
 #include "net/http/http_request_headers.h"
 #include "net/http/http_response_headers.h"
@@ -115,5 +114,6 @@ class CORSPreflight : public net::URLFetcherDelegate {
 
 }  // namespace loader
 }  // namespace cobalt
+#endif
 
 #endif  // COBALT_LOADER_CORS_PREFLIGHT_H_

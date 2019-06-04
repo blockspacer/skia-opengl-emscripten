@@ -1994,7 +1994,11 @@ void CobaltTester::run() {
       base::Bind([](const base::Optional<std::string>& a){
         printf("Decoder::OnCompleteFunction\n");
       }),
-      true, csp::kCSPOptional));
+      true
+#if defined(ENABLE_COBALT_CSP)
+      , csp::kCSPOptional
+#endif
+      ));
   html_decoder_->DecodeChunk(input.c_str(), input.length());
   html_decoder_->Finish();
   root_ = document_->first_element_child();

@@ -15,7 +15,9 @@
 #include "base/macros.h"
 #include "build/build_config.h"
 #include "crypto/crypto_export.h"
+#if defined(ENABLE_BORINGSSL)
 #include "third_party/boringssl/src/include/openssl/base.h"
+#endif
 
 namespace crypto {
 
@@ -52,7 +54,9 @@ class CRYPTO_EXPORT ECPrivateKey {
   // Returns a copy of the object.
   std::unique_ptr<ECPrivateKey> Copy() const;
 
+#if defined(ENABLE_BORINGSSL)
   EVP_PKEY* key() { return key_.get(); }
+#endif
 
   // Exports the private key to a PKCS #8 PrivateKeyInfo block.
   bool ExportPrivateKey(std::vector<uint8_t>* output) const;
@@ -75,7 +79,9 @@ class CRYPTO_EXPORT ECPrivateKey {
   // Constructor is private. Use one of the Create*() methods above instead.
   ECPrivateKey();
 
+#if defined(ENABLE_BORINGSSL)
   bssl::UniquePtr<EVP_PKEY> key_;
+#endif
 
   DISALLOW_COPY_AND_ASSIGN(ECPrivateKey);
 };

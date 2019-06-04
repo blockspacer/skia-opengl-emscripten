@@ -48,8 +48,12 @@ class HTMLDecoder : public loader::Decoder {
               const int dom_max_element_depth,
               const base::SourceLocation& input_location,
               const loader::Decoder::OnCompleteFunction& load_complete_callback,
-              const bool should_run_scripts,
-              const csp::CSPHeaderPolicy require_csp);
+              const bool should_run_scripts
+#if defined(ENABLE_COBALT_CSP)
+              ,
+              const csp::CSPHeaderPolicy require_csp
+#endif
+              );
 
   ~HTMLDecoder();
 
@@ -76,7 +80,9 @@ class HTMLDecoder : public loader::Decoder {
   base::ThreadChecker thread_checker_;
 
   // If Cobalt user forbids rendering Cobalt without csp headers.
+#if defined(ENABLE_COBALT_CSP)
   const csp::CSPHeaderPolicy require_csp_;
+#endif
 
   const loader::Decoder::OnCompleteFunction load_complete_callback_;
 

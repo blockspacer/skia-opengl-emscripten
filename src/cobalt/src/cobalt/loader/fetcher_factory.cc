@@ -98,12 +98,19 @@ FetcherFactory::FetcherFactory(
 
 std::unique_ptr<Fetcher> FetcherFactory::CreateFetcher(
     const GURL& url, Fetcher::Handler* handler) {
-  return CreateSecureFetcher(url, csp::SecurityCallback(), kNoCORSMode,
+  return CreateSecureFetcher(url,
+#if defined(ENABLE_COBALT_CSP)
+                              csp::SecurityCallback(),
+#endif
+                              kNoCORSMode,
                              Origin(), handler);
 }
 
 std::unique_ptr<Fetcher> FetcherFactory::CreateSecureFetcher(
-    const GURL& url, const csp::SecurityCallback& url_security_callback,
+    const GURL& url,
+#if defined(ENABLE_COBALT_CSP)
+    const csp::SecurityCallback& url_security_callback,
+#endif
     RequestMode request_mode, const Origin& origin, Fetcher::Handler* handler) {
   DLOG(INFO) << "Fetching: " << ClipUrl(url, 80);
 
@@ -116,6 +123,8 @@ std::unique_ptr<Fetcher> FetcherFactory::CreateSecureFetcher(
 
   if ((url.SchemeIs("https") || url.SchemeIs("http") || url.SchemeIs("data")) &&
       network_module_) {
+
+#if defined(ENABLE_GNET)
     NetFetcher::Options options;
     return std::unique_ptr<Fetcher>(
         new NetFetcher(url, url_security_callback, handler,
@@ -124,6 +133,8 @@ std::unique_ptr<Fetcher> FetcherFactory::CreateSecureFetcher(
         network_module_,
 #endif
                        options, request_mode, origin));
+#endif
+
   }
 
   if (url.SchemeIs("blob") && !blob_resolver_.is_null()) {
@@ -134,14 +145,22 @@ std::unique_ptr<Fetcher> FetcherFactory::CreateSecureFetcher(
   if (url.SchemeIs(kEmbeddedScheme)) {
     EmbeddedFetcher::Options options;
     return std::unique_ptr<Fetcher>(
-        new EmbeddedFetcher(url, url_security_callback, handler, options));
+        new EmbeddedFetcher(url,
+#if defined(ENABLE_COBALT_CSP)
+        url_security_callback,
+#endif
+        handler, options));
   }
 
   // h5vcc-cache: scheme requires read_cache_callback_ which is not available
   // in the main WebModule.
   if (url.SchemeIs(kCacheScheme) && !read_cache_callback_.is_null()) {
     return std::unique_ptr<Fetcher>(new CacheFetcher(
-        url, url_security_callback, handler, read_cache_callback_));
+        url,
+#if defined(ENABLE_COBALT_CSP)
+        url_security_callback,
+#endif
+        handler, read_cache_callback_));
   }
 
   if (url.SchemeIsFile()) {

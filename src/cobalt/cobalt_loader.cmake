@@ -147,7 +147,7 @@ target_link_libraries(cobalt_loader PUBLIC
   #cobalt_nanobase
   #cobalt_script
   #v8_stub
-  cobalt_csp
+  ${COBALT_CSP_LIB_NAME}
   base # TODO
   modp_b64
   #GFX_GEOMETRY
@@ -162,7 +162,7 @@ target_link_libraries(cobalt_loader PUBLIC
   ##BLINK_RENDERER_NETWORK
   #BLINK_RENDERER_PLATFORM
   GURL
-  GNET
+  ${GNET_LIBS}
   #GCRYPTO
   #GFX_GEOMETRY
   #UI_GFX

@@ -125,13 +125,23 @@ if(ENABLE_HARFBUZZ)
   # SK_SHAPER_HARFBUZZ_AVAILABLE # < TODO if skia_use_icu
 endif(ENABLE_HARFBUZZ)
 
-set(ENABLE_BORINGSSL TRUE)
+set(ENABLE_BORINGSSL FALSE)
 if(ENABLE_BORINGSSL)
   set(COMMON_FLAGS "${COMMON_FLAGS} -DENABLE_BORINGSSL=1")
   set(BORINGSSL_LIBS
     BORINGSSL
   )
 endif(ENABLE_BORINGSSL)
+
+set(ENABLE_GNET FALSE)
+if(ENABLE_GNET)
+  set(COMMON_FLAGS "${COMMON_FLAGS} -DENABLE_GNET=1")
+  #set(COMMON_FLAGS "${COMMON_FLAGS} -DENABLE_NET=1")
+  set(COMMON_FLAGS "${COMMON_FLAGS} -DENABLE_NETWORK=1")
+  set(GNET_LIBS
+    GNET
+  )
+endif(ENABLE_GNET)
 
 set(ENABLE_SKIA FALSE)
 if (ENABLE_SKIA)
@@ -189,13 +199,17 @@ if(ENABLE_SKIA AND ENABLE_BLINK)
     PAINT_CC
     CC
   )
-  set(BLINK_LIBS
+  list(APPEND BLINK_LIBS
     ${BLINK_GFX_LIBS}
     COMPONENTS_SCHEDULING_METRICS
-    SERVICES_NETWORK_PUBLIC_CPP
-    COMPONENTS_CONTENT_SETTINGS_CORE_COMMON
-    SERVICES_SERVICE_MANAGER_PUBLIC_CPP
   )
+  if(ENABLE_GNET)
+    list(APPEND BLINK_LIBS
+      COMPONENTS_CONTENT_SETTINGS_CORE_COMMON
+      SERVICES_NETWORK_PUBLIC_CPP
+      SERVICES_SERVICE_MANAGER_PUBLIC_CPP
+    )
+  endif(ENABLE_GNET)
 endif(ENABLE_SKIA)
 
 message("CMAKE_SYSTEM_NAME = ${CMAKE_SYSTEM_NAME}")
@@ -392,6 +406,45 @@ if(ENABLE_COBALT)
     ${COBALT_CORE_PARENT_DIR} # to ./cobalt
   )
   set(COBALT_LIBRARY_NAME COBALT_CORE)
+
+  list(APPEND COBALT_LIBS
+    ${COBALT_LIBRARY_NAME}
+    cobalt_base
+    cobalt_nanobase
+    #${COBALT_CSP_LIB_NAME}
+    cobalt_script
+    v8_stub
+    cobalt_dom_exception
+    cobalt_ui_navigation
+    cobalt_math
+    cobalt_media
+    #cobalt_loader
+    cobalt_page_visibility
+    cobalt_cssom
+    cobalt_web_animations
+    cobalt_dom
+  )
+
+  #if(ENABLE_GNET)
+  set(COBALT_LOADER_LIB_NAME
+    cobalt_loader
+  )
+  list(APPEND COBALT_LIBS
+    ${COBALT_LOADER_LIB_NAME}
+  )
+  #endif()
+
+  #cobalt_csp
+  set(ENABLE_COBALT_CSP FALSE)
+  if(ENABLE_COBALT_CSP)
+    set(COMMON_FLAGS "${COMMON_FLAGS} -DENABLE_COBALT_CSP=1")
+    set(COBALT_CSP_LIB_NAME
+      cobalt_csp
+    )
+    list(APPEND COBALT_LIBS
+      ${COBALT_CSP_LIB_NAME}
+    )
+  endif(ENABLE_COBALT_CSP)
 endif(ENABLE_COBALT)
 
 # custom debug logger for wasm
@@ -1548,24 +1601,25 @@ if(EMSCRIPTEN)
   # Top is the executable, followed by directly used libraries.
   # see https://floooh.github.io/2016/01/12/cmake-dependency-juggling.html
   target_link_libraries(${PROJECT_NAME} PUBLIC
-    ${COBALT_LIBRARY_NAME}
+    ${COBALT_LIBS}
     #
     base # TODO
     modp_b64
-    cobalt_base
-    cobalt_nanobase
-    cobalt_csp
-    cobalt_script
-    v8_stub
-    cobalt_dom_exception
-    cobalt_ui_navigation
-    cobalt_math
-    cobalt_media
-    cobalt_loader
-    cobalt_page_visibility
-    cobalt_cssom
-    cobalt_web_animations
-    #cobalt_dom
+    #${COBALT_LIBRARY_NAME}
+    #cobalt_base
+    #cobalt_nanobase
+    #${COBALT_CSP_LIB_NAME}
+    #cobalt_script
+    #v8_stub
+    #cobalt_dom_exception
+    #cobalt_ui_navigation
+    #cobalt_math
+    #cobalt_media
+    #cobalt_loader
+    #cobalt_page_visibility
+    #cobalt_cssom
+    #cobalt_web_animations
+    ##cobalt_dom
     starboard_icu_init
     starboard_eztime  # requires starboard_icu_init
     #starboard_stub
@@ -1647,9 +1701,10 @@ else()
   # Top is the executable, followed by directly used libraries.
   # see https://floooh.github.io/2016/01/12/cmake-dependency-juggling.html
   target_link_libraries(${PROJECT_NAME} PUBLIC
+    ${COBALT_LIBS}
     #cobalt_
     #cobalt_web_animations
-    ${COBALT_LIBRARY_NAME}
+    #${COBALT_LIBRARY_NAME}
     ${WTF_LIBS}
     #BORINGSSL
     GCRYPTO

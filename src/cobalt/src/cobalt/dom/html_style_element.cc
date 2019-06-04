@@ -72,16 +72,21 @@ void HTMLStyleElement::Process() {
     return;
   }
 
+#if defined(ENABLE_COBALT_CSP)
   CspDelegate* csp_delegate = document->csp_delegate();
   // If the style element has a valid nonce, we always permit it.
   const bool bypass_csp = csp_delegate->IsValidNonce(
       CspDelegate::kStyle, GetAttribute("nonce").value_or(""));
+#endif
 
   base::Optional<std::string> content = text_content();
   const std::string& text = content.value_or(base::EmptyString());
+#if defined(ENABLE_COBALT_CSP)
   if (bypass_csp || text.empty() ||
       csp_delegate->AllowInline(CspDelegate::kStyle, inline_style_location_,
-                                text)) {
+                                text))
+#endif
+                                {
     scoped_refptr<cssom::CSSStyleSheet> css_style_sheet =
         document->html_element_context()->css_parser()->ParseStyleSheet(
             text, inline_style_location_);
@@ -89,10 +94,13 @@ void HTMLStyleElement::Process() {
     css_style_sheet->SetOriginClean(true);
     style_sheet_ = css_style_sheet.get();
     document->OnStyleSheetsModified();
-  } else {
+  }
+#if defined(ENABLE_COBALT_CSP)
+  else {
     // Report a violation.
     PostToDispatchEventName(FROM_HERE, base::Tokens::error());
   }
+#endif
 }
 
 void HTMLStyleElement::CollectStyleSheet(

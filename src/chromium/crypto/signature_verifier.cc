@@ -6,16 +6,21 @@
 
 #include "base/logging.h"
 #include "crypto/openssl_util.h"
+
+#if defined(ENABLE_BORINGSSL)
 #include "third_party/boringssl/src/include/openssl/bytestring.h"
 #include "third_party/boringssl/src/include/openssl/digest.h"
 #include "third_party/boringssl/src/include/openssl/evp.h"
 #include "third_party/boringssl/src/include/openssl/rsa.h"
+#endif
 
 namespace crypto {
 
+#if defined(ENABLE_BORINGSSL)
 struct SignatureVerifier::VerifyContext {
   bssl::ScopedEVP_MD_CTX ctx;
 };
+#endif
 
 SignatureVerifier::SignatureVerifier() = default;
 
@@ -24,6 +29,7 @@ SignatureVerifier::~SignatureVerifier() = default;
 bool SignatureVerifier::VerifyInit(SignatureAlgorithm signature_algorithm,
                                    base::span<const uint8_t> signature,
                                    base::span<const uint8_t> public_key_info) {
+#if defined(ENABLE_BORINGSSL)
   OpenSSLErrStackTracer err_tracer(FROM_HERE);
 
   int pkey_type = EVP_PKEY_NONE;
@@ -74,19 +80,22 @@ bool SignatureVerifier::VerifyInit(SignatureAlgorithm signature_algorithm,
       return false;
     }
   }
-
+#endif
   return true;
 }
 
 void SignatureVerifier::VerifyUpdate(base::span<const uint8_t> data_part) {
+#if defined(ENABLE_BORINGSSL)
   DCHECK(verify_context_);
   OpenSSLErrStackTracer err_tracer(FROM_HERE);
   int rv = EVP_DigestVerifyUpdate(verify_context_->ctx.get(), data_part.data(),
                                   data_part.size());
   DCHECK_EQ(rv, 1);
+#endif
 }
 
 bool SignatureVerifier::VerifyFinal() {
+#if defined(ENABLE_BORINGSSL)
   DCHECK(verify_context_);
   OpenSSLErrStackTracer err_tracer(FROM_HERE);
   int rv = EVP_DigestVerifyFinal(verify_context_->ctx.get(), signature_.data(),
@@ -94,11 +103,16 @@ bool SignatureVerifier::VerifyFinal() {
   DCHECK_EQ(static_cast<int>(!!rv), rv);
   Reset();
   return rv == 1;
+#else
+  return false;
+#endif
 }
 
 void SignatureVerifier::Reset() {
+#if defined(ENABLE_BORINGSSL)
   verify_context_.reset();
   signature_.clear();
+#endif
 }
 
 }  // namespace crypto

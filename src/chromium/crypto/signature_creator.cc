@@ -10,11 +10,14 @@
 #include "base/logging.h"
 #include "crypto/openssl_util.h"
 #include "crypto/rsa_private_key.h"
+#if defined(ENABLE_BORINGSSL)
 #include "third_party/boringssl/src/include/openssl/evp.h"
 #include "third_party/boringssl/src/include/openssl/rsa.h"
+#endif
 
 namespace crypto {
 
+#if defined(ENABLE_BORINGSSL)
 namespace {
 
 const EVP_MD* ToOpenSSLDigest(SignatureCreator::HashAlgorithm hash_alg) {
@@ -38,9 +41,12 @@ int ToOpenSSLDigestType(SignatureCreator::HashAlgorithm hash_alg) {
 }
 
 }  // namespace
+#endif
 
 SignatureCreator::~SignatureCreator() {
+#if defined(ENABLE_BORINGSSL)
   EVP_MD_CTX_destroy(sign_context_);
+#endif
 }
 
 // static
@@ -49,6 +55,7 @@ std::unique_ptr<SignatureCreator> SignatureCreator::Create(
     HashAlgorithm hash_alg) {
   OpenSSLErrStackTracer err_tracer(FROM_HERE);
   std::unique_ptr<SignatureCreator> result(new SignatureCreator);
+#if defined(ENABLE_BORINGSSL)
   const EVP_MD* const digest = ToOpenSSLDigest(hash_alg);
   DCHECK(digest);
   if (!digest) {
@@ -59,8 +66,12 @@ std::unique_ptr<SignatureCreator> SignatureCreator::Create(
     return nullptr;
   }
   return result;
+#else
+  return nullptr;
+#endif
 }
 
+#if defined(ENABLE_BORINGSSL)
 // static
 bool SignatureCreator::Sign(RSAPrivateKey* key,
                             HashAlgorithm hash_alg,
@@ -108,5 +119,6 @@ bool SignatureCreator::Final(std::vector<uint8_t>* signature) {
 }
 
 SignatureCreator::SignatureCreator() : sign_context_(EVP_MD_CTX_create()) {}
+#endif
 
 }  // namespace crypto

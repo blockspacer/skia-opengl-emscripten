@@ -22,7 +22,11 @@
 #include "cobalt/dom/url_utils.h"
 #include "cobalt/loader/loader_types.h"
 #include "cobalt/render_tree/resource_provider.h"
+
+#if defined(ENABLE_GNET)
 #include "net/http/http_response_headers.h"
+#endif
+
 #include "url/gurl.h"
 
 namespace cobalt {
@@ -41,8 +45,12 @@ class Decoder {
   // A loader may want to signal the beginning of a decode and can send
   // the HTTP headers, if this was a network request.
   virtual LoadResponseType OnResponseStarted(
-      Fetcher* /*fetcher*/,
-      const scoped_refptr<net::HttpResponseHeaders>& /*headers*/)
+      Fetcher* /*fetcher*/
+#if defined(ENABLE_GNET)
+      ,
+      const scoped_refptr<net::HttpResponseHeaders>& /*headers*/
+#endif
+      )
       WARN_UNUSED_RESULT {
     return kLoadResponseContinue;
   }

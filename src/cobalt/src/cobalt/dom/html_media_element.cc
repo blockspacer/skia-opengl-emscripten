@@ -834,6 +834,8 @@ void HTMLMediaElement::LoadResource(const GURL& initial_url,
 
   DCHECK(!media_source_);
   if (url.SchemeIs(kMediaSourceUrlProtocol)) {
+
+#if defined(ENABLE_COBALT_CSP)
     // Check whether url is allowed by security policy.
     if (!node_document()->csp_delegate()->CanLoad(CspDelegate::kMedia, url,
                                                   false)) {
@@ -841,6 +843,7 @@ void HTMLMediaElement::LoadResource(const GURL& initial_url,
       NoneSupported("URL is rejected by security policy.");
       return;
     }
+#endif
 
     media_source_ =
         html_element_context()->media_source_registry()->Retrieve(url.spec());
@@ -881,9 +884,11 @@ void HTMLMediaElement::LoadResource(const GURL& initial_url,
   if (url.spec() == SourceURL()) {
     player_->LoadMediaSource();
   } else {
+#if defined(ENABLE_COBALT_CSP)
     csp::SecurityCallback csp_callback = base::Bind(
         &CspDelegate::CanLoad,
         base::Unretained(node_document()->csp_delegate()), CspDelegate::kMedia);
+#endif
     request_mode_ = GetRequestMode(GetAttribute("crossOrigin"));
     DCHECK(node_document()->location());
 

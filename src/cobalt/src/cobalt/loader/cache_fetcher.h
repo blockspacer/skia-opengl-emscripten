@@ -22,7 +22,9 @@
 
 #include "base/callback.h"
 #include "base/memory/weak_ptr.h"
+#if defined(ENABLE_COBALT_CSP)
 #include "cobalt/csp/content_security_policy.h"
+#endif
 #include "cobalt/loader/fetcher.h"
 
 namespace cobalt {
@@ -38,7 +40,10 @@ extern const char kCacheScheme[];
 class CacheFetcher : public Fetcher {
  public:
   CacheFetcher(
-      const GURL& url, const csp::SecurityCallback& security_callback,
+      const GURL& url,
+#if defined(ENABLE_COBALT_CSP)
+      const csp::SecurityCallback& security_callback,
+#endif
       Handler* handler,
       const base::Callback<int(const std::string&,
                                std::unique_ptr<char[]>*)>& read_cache_callback =
@@ -52,7 +57,9 @@ class CacheFetcher : public Fetcher {
   bool IsAllowedByCsp();
 
   GURL url_;
+#if defined(ENABLE_COBALT_CSP)
   csp::SecurityCallback security_callback_;
+#endif
   base::WeakPtrFactory<CacheFetcher> weak_ptr_factory_;
   base::Callback<int(const std::string&, std::unique_ptr<char[]>*)>
       read_cache_callback_;

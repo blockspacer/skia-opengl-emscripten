@@ -11,8 +11,11 @@
 
 #include "base/logging.h"
 #include "base/strings/string_piece.h"
+
+#if defined(ENABLE_BORINGSSL)
 #include "third_party/boringssl/src/include/openssl/crypto.h"
 #include "third_party/boringssl/src/include/openssl/err.h"
+#endif
 
 namespace crypto {
 
@@ -35,11 +38,14 @@ int OpenSSLErrorCallback(const char* str, size_t len, void* context) {
 }  // namespace
 
 void EnsureOpenSSLInit() {
+#if defined(ENABLE_BORINGSSL)
   // CRYPTO_library_init may be safely called concurrently.
   CRYPTO_library_init();
+#endif
 }
 
 void ClearOpenSSLERRStack(const base::Location& location) {
+#if defined(ENABLE_BORINGSSL)
   if (DCHECK_IS_ON() && VLOG_IS_ON(1)) {
     uint32_t error_num = ERR_peek_error();
     if (error_num == 0)
@@ -50,6 +56,7 @@ void ClearOpenSSLERRStack(const base::Location& location) {
   } else {
     ERR_clear_error();
   }
+#endif
 }
 
 }  // namespace crypto

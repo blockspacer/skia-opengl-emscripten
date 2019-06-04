@@ -25,6 +25,7 @@
 namespace cobalt {
 namespace dom {
 
+#if defined(ENABLE_COBALT_CSP)
 namespace {
 #if !defined(COBALT_FORCE_CSP)
 // 32-bit random number.
@@ -105,6 +106,7 @@ void CspDelegateFactory::OverrideCreator(CspEnforcementType type,
   method_[type] = creator;
 }
 #endif  // !defined(COBALT_FORCE_CSP)
+#endif // ENABLE_COBALT_CSP
 
 }  // namespace dom
 }  // namespace cobalt

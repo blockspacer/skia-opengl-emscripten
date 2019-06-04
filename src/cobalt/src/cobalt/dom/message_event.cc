@@ -57,11 +57,12 @@ MessageEvent::ResponseTypeCode MessageEvent::GetResponseTypeCode(
 MessageEvent::ResponseType MessageEvent::data() const {
   const char* data_pointer = NULL;
   int data_length = 0;
+#if defined(ENABLE_GNET)
   if (data_) {
     data_pointer = data_->data();
     data_length = data_->size();
   }
-
+#endif
   auto* global_environment =
       base::polymorphic_downcast<DOMSettings*>(settings_)->global_environment();
   script::Handle<script::ArrayBuffer> response_buffer;

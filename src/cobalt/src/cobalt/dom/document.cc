@@ -112,6 +112,7 @@ Document::Document(HTMLElementContext* html_element_context,
     SetViewport(*options.viewport_size);
   }
 
+#if defined(ENABLE_COBALT_CSP)
   std::unique_ptr<CspViolationReporter> violation_reporter(
       new CspViolationReporter(this
 
@@ -124,15 +125,20 @@ Document::Document(HTMLElementContext* html_element_context,
       options.csp_enforcement_mode, std::move(violation_reporter), options.url,
       options.require_csp, options.csp_policy_changed_callback,
       options.csp_insecure_allowed_token);
+#endif
 
 #if !defined(__EMSCRIPTEN__) && defined(__TODO__)
   cookie_jar_ = options.cookie_jar;
 #endif
 
   location_ = new Location(
-      options.url, options.hashchange_callback, options.navigation_callback,
+      options.url, options.hashchange_callback, options.navigation_callback
+#if defined(ENABLE_COBALT_CSP)
+      ,
       base::Bind(&CspDelegate::CanLoad, base::Unretained(csp_delegate_.get()),
-                 CspDelegate::kLocation));
+                 CspDelegate::kLocation)
+#endif
+                 );
 
   font_cache_.reset(new FontCache(
       html_element_context_->resource_provider(),
@@ -142,16 +148,20 @@ Document::Document(HTMLElementContext* html_element_context,
 
   if (HasBrowsingContext()) {
     if (html_element_context_->remote_typeface_cache()) {
+#if defined(ENABLE_COBALT_CSP)
       html_element_context_->remote_typeface_cache()->set_security_callback(
           base::Bind(&CspDelegate::CanLoad,
                      base::Unretained(csp_delegate_.get()),
                      CspDelegate::kFont));
+#endif
     }
 
     if (html_element_context_->image_cache()) {
+#if defined(ENABLE_COBALT_CSP)
       html_element_context_->image_cache()->set_security_callback(base::Bind(
           &CspDelegate::CanLoad, base::Unretained(csp_delegate_.get()),
           CspDelegate::kImage));
+#endif
     }
 
     ready_state_ = kDocumentReadyStateLoading;
@@ -630,7 +640,9 @@ Document::DoSynchronousLayoutAndGetRenderTree() {
 
 void Document::NotifyUrlChanged(const GURL& url) {
   location_->set_url(url);
+#if defined(ENABLE_COBALT_CSP)
   csp_delegate_->NotifyUrlChanged(url);
+#endif
 }
 
 void Document::OnFocusChange() {

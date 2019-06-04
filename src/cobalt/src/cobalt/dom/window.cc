@@ -125,7 +125,10 @@ Window::Window(
     const network_bridge::PostSender& post_sender,
 #endif
 
-    csp::CSPHeaderPolicy require_csp, CspEnforcementType csp_enforcement_mode,
+#if defined(ENABLE_COBALT_CSP)
+    csp::CSPHeaderPolicy require_csp,
+#endif
+    CspEnforcementType csp_enforcement_mode,
     const base::Closure& csp_policy_changed_callback,
     const base::Closure& ran_animation_frame_callbacks_callback,
     const CloseCallback& window_close_callback,
@@ -175,8 +178,11 @@ Window::Window(
 #if !defined(__EMSCRIPTEN__) && defined(__TODO__)
               cookie_jar, post_sender,
 #endif
+#if defined(ENABLE_COBALT_CSP)
               require_csp,
-              csp_enforcement_mode, csp_policy_changed_callback,
+#endif
+              csp_enforcement_mode,
+              csp_policy_changed_callback,
               csp_insecure_allowed_token, dom_max_element_depth)))),
       document_loader_(nullptr),
       history_(new History()),
@@ -197,7 +203,9 @@ Window::Window(
       ALLOW_THIS_IN_INITIALIZER_LIST(
           session_storage_(new Storage(this, Storage::kSessionStorage, NULL))),
       screen_(new Screen(view_size)),
+#if defined(ENABLE_GNET)
       preflight_cache_(new loader::CORSPreflightCache()),
+#endif
       ran_animation_frame_callbacks_callback_(
           ran_animation_frame_callbacks_callback),
       window_close_callback_(window_close_callback),

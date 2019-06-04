@@ -28,8 +28,12 @@
 #include "cobalt/loader/image/stub_image_decoder.h"
 #include "cobalt/loader/image/webp_image_decoder.h"
 #include "cobalt/loader/switches.h"
+
+#if defined(ENABLE_GNET)
 #include "net/base/mime_util.h"
 #include "net/http/http_status_code.h"
+#endif
+
 #include "starboard/configuration.h"
 #include "starboard/image.h"
 
@@ -96,7 +100,11 @@ ImageDecoder::ImageDecoder(
 }
 
 LoadResponseType ImageDecoder::OnResponseStarted(
-    Fetcher* fetcher, const scoped_refptr<net::HttpResponseHeaders>& headers) {
+    Fetcher* fetcher
+#if defined(ENABLE_GNET)
+    , const scoped_refptr<net::HttpResponseHeaders>& headers
+#endif
+    ) {
   SB_UNREFERENCED_PARAMETER(fetcher);
   TRACE_EVENT0("cobalt::loader::image", "ImageDecoder::OnResponseStarted()");
 
@@ -105,6 +113,7 @@ LoadResponseType ImageDecoder::OnResponseStarted(
     return kLoadResponseContinue;
   }
 
+#if defined(ENABLE_GNET)
   if (headers->response_code() == net::HTTP_OK &&
       headers->GetContentLength() == 0) {
     // The server successfully processed the request and expected some contents,
@@ -126,6 +135,7 @@ LoadResponseType ImageDecoder::OnResponseStarted(
     state_ = kNotApplicable;
     CacheMessage(&error_message_, "Not an image mime type.");
   }
+#endif
 
   return kLoadResponseContinue;
 }

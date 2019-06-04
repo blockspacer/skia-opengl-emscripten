@@ -22,6 +22,7 @@
 namespace cobalt {
 namespace dom {
 
+#if defined(ENABLE_COBALT_CSP)
 CspDelegate::CspDelegate() {}
 CspDelegate::~CspDelegate() {}
 
@@ -179,6 +180,7 @@ void CspDelegateSecure::OnReceiveHeader(const std::string& header,
     }
   }
 }
+#endif
 
 }  // namespace dom
 }  // namespace cobalt

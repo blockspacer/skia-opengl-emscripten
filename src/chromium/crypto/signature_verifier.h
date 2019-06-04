@@ -63,8 +63,10 @@ class CRYPTO_EXPORT SignatureVerifier {
 
   std::vector<uint8_t> signature_;
 
+#if defined(ENABLE_BORINGSSL)
   struct VerifyContext;
   std::unique_ptr<VerifyContext> verify_context_;
+#endif
 };
 
 }  // namespace crypto

@@ -13,8 +13,11 @@
 #include "base/logging.h"
 #include "base/strings/string_util.h"
 #include "crypto/openssl_util.h"
+
+#if defined(ENABLE_BORINGSSL)
 #include "third_party/boringssl/src/include/openssl/evp.h"
 #include "third_party/boringssl/src/include/openssl/rand.h"
+#endif
 
 namespace crypto {
 
@@ -46,6 +49,7 @@ SymmetricKey::~SymmetricKey() {
 std::unique_ptr<SymmetricKey> SymmetricKey::GenerateRandomKey(
     Algorithm algorithm,
     size_t key_size_in_bits) {
+#if defined(ENABLE_BORINGSSL)
   DCHECK_EQ(AES, algorithm);
 
   // Whitelist supported key sizes to avoid accidentaly relying on
@@ -67,6 +71,9 @@ std::unique_ptr<SymmetricKey> SymmetricKey::GenerateRandomKey(
 
   int rv = RAND_bytes(key_data, static_cast<int>(key_size_in_bytes));
   return rv == 1 ? std::move(key) : nullptr;
+#else
+  return nullptr;
+#endif
 }
 
 // static
@@ -76,6 +83,7 @@ std::unique_ptr<SymmetricKey> SymmetricKey::DeriveKeyFromPasswordUsingPbkdf2(
     const std::string& salt,
     size_t iterations,
     size_t key_size_in_bits) {
+#if defined(ENABLE_BORINGSSL)
   if (!CheckDerivationParameters(algorithm, key_size_in_bits))
     return nullptr;
 
@@ -92,6 +100,9 @@ std::unique_ptr<SymmetricKey> SymmetricKey::DeriveKeyFromPasswordUsingPbkdf2(
       static_cast<unsigned>(iterations),
       key_size_in_bytes, key_data);
   return rv == 1 ? std::move(key) : nullptr;
+#else
+  return nullptr;
+#endif
 }
 
 // static
@@ -104,6 +115,7 @@ std::unique_ptr<SymmetricKey> SymmetricKey::DeriveKeyFromPasswordUsingScrypt(
     size_t parallelization_parameter,
     size_t max_memory_bytes,
     size_t key_size_in_bits) {
+#if defined(ENABLE_BORINGSSL)
   if (!CheckDerivationParameters(algorithm, key_size_in_bits))
     return nullptr;
 
@@ -120,6 +132,9 @@ std::unique_ptr<SymmetricKey> SymmetricKey::DeriveKeyFromPasswordUsingScrypt(
                           parallelization_parameter, max_memory_bytes, key_data,
                           key_size_in_bytes);
   return rv == 1 ? std::move(key) : nullptr;
+#else
+  return nullptr;
+#endif
 }
 
 // static

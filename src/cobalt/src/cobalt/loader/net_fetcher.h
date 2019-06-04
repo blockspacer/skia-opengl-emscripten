@@ -23,13 +23,16 @@
 #include "base/memory/weak_ptr.h"
 #include "base/message_loop/message_loop.h"
 #include "base/threading/thread_checker.h"
+
+#if defined(ENABLE_COBALT_CSP)
 #include "cobalt/csp/content_security_policy.h"
+#endif
+
 #include "cobalt/loader/cobalt_url_fetcher_string_writer.h"
 #include "cobalt/loader/fetcher.h"
 
-#if !defined(__EMSCRIPTEN__) && defined(__TODO__)
+#if defined(ENABLE_GNET)
 #include "cobalt/network/network_module.h"
-#endif
 
 #include "net/url_request/url_fetcher.h"
 #include "net/url_request/url_fetcher_delegate.h"
@@ -108,5 +111,6 @@ class NetFetcher : public Fetcher, public net::URLFetcherDelegate {
 
 }  // namespace loader
 }  // namespace cobalt
+#endif
 
 #endif  // COBALT_LOADER_NET_FETCHER_H_

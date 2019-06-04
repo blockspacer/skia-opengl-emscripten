@@ -56,8 +56,12 @@ class ThreadedImageDecoderProxy : public Decoder {
 
   // From the Decoder interface.
   LoadResponseType OnResponseStarted(
-      Fetcher* fetcher,
-      const scoped_refptr<net::HttpResponseHeaders>& headers) override;
+      Fetcher* fetcher
+#if defined(ENABLE_GNET)
+      ,
+      const scoped_refptr<net::HttpResponseHeaders>& headers
+#endif
+      ) override;
   void DecodeChunk(const char* data, size_t size) override;
   void DecodeChunkPassed(std::unique_ptr<std::string> data) override;
   void Finish() override;

@@ -22,7 +22,9 @@
 #include "base/callback.h"
 #include "base/optional.h"
 #include "base/compiler_specific.h"
+#if defined(ENABLE_COBALT_CSP)
 #include "cobalt/csp/content_security_policy.h"
+#endif
 #include "cobalt/dom/parser.h"
 #include "cobalt/loader/decoder.h"
 
@@ -34,19 +36,35 @@ class Parser : public dom::Parser {
   Parser()
       : dom_max_element_depth_(kDefaultDOMMaxElementDepth),
         ALLOW_THIS_IN_INITIALIZER_LIST(load_complete_callback_(
-            base::Bind(&Parser::LoadCompleteCallback, base::Unretained(this)))),
-        require_csp_(csp::kCSPRequired) {}
+            base::Bind(&Parser::LoadCompleteCallback,
+            base::Unretained(this))))
+#if defined(ENABLE_COBALT_CSP)
+        , require_csp_(csp::kCSPRequired)
+#endif
+        {}
   explicit Parser(
       const loader::Decoder::OnCompleteFunction& load_complete_callback)
       : dom_max_element_depth_(kDefaultDOMMaxElementDepth),
-        load_complete_callback_(load_complete_callback),
-        require_csp_(csp::kCSPRequired) {}
+        load_complete_callback_(load_complete_callback)
+#if defined(ENABLE_COBALT_CSP)
+        ,
+        require_csp_(csp::kCSPRequired)
+#endif
+        {}
   Parser(const int dom_max_element_depth,
-         const loader::Decoder::OnCompleteFunction& load_complete_callback,
-         csp::CSPHeaderPolicy require_csp)
+         const loader::Decoder::OnCompleteFunction& load_complete_callback
+#if defined(ENABLE_COBALT_CSP)
+         ,
+         csp::CSPHeaderPolicy require_csp
+#endif
+         )
       : dom_max_element_depth_(dom_max_element_depth),
-        load_complete_callback_(load_complete_callback),
-        require_csp_(require_csp) {}
+        load_complete_callback_(load_complete_callback)
+#if defined(ENABLE_COBALT_CSP)
+        ,
+        require_csp_(require_csp)
+#endif
+        {}
   ~Parser() override {}
 
   // From dom::Parser.
@@ -92,7 +110,9 @@ class Parser : public dom::Parser {
 
   // Cobalt user can specify if they want to forbid Cobalt rendering without csp
   // headers.
+#if defined(ENABLE_COBALT_CSP)
   csp::CSPHeaderPolicy require_csp_;
+#endif
 
   DISALLOW_COPY_AND_ASSIGN(Parser);
 };

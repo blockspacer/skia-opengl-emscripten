@@ -20,6 +20,7 @@
 #include "base/strings/string_util.h"
 #include "cobalt/loader/cors_preflight_cache.h"
 
+#if defined(ENABLE_GNET)
 namespace {
 bool MethodNameToRequestType(const std::string& method,
                              net::URLFetcher::RequestType* request_type) {
@@ -168,3 +169,4 @@ void CORSPreflightCache::ClearObsoleteEntries() {
 
 }  // namespace loader
 }  // namespace cobalt
+#endif

@@ -27,8 +27,11 @@
 //#include "base/containers/hash_tables.h"
 #include <map>
 #include "base/time/time.h"
+#include "base/bind.h"
+#if defined(ENABLE_GNET)
 #include "net/http/http_request_headers.h"
 #include "net/url_request/url_fetcher.h"
+
 #include "starboard/string.h"
 #include "url/gurl.h"
 
@@ -121,4 +124,6 @@ class CORSPreflightCache : public base::RefCounted<CORSPreflightCache> {
 
 }  // namespace loader
 }  // namespace cobalt
+#endif
+
 #endif  // COBALT_LOADER_CORS_PREFLIGHT_CACHE_H_

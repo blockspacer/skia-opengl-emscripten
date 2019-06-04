@@ -19,7 +19,9 @@
 #include <set>
 
 #include "base/threading/thread.h"
+#if defined(ENABLE_COBALT_CSP)
 #include "cobalt/csp/content_security_policy.h"
+#endif
 #include "cobalt/loader/fetcher.h"
 #include "cobalt/loader/fetcher_factory.h"
 #include "cobalt/loader/font/typeface_decoder.h"
@@ -45,7 +47,9 @@ class LoaderFactory {
   // Creates a loader that fetches and decodes an image.
   std::unique_ptr<Loader> CreateImageLoader(
       const GURL& url, const Origin& origin,
+#if defined(ENABLE_COBALT_CSP)
       const csp::SecurityCallback& url_security_callback,
+#endif
       const image::ImageDecoder::ImageAvailableCallback&
           image_available_callback,
       const Loader::OnCompleteFunction& load_complete_callback);
@@ -53,7 +57,9 @@ class LoaderFactory {
   // Creates a loader that fetches and decodes a render_tree::Typeface.
   std::unique_ptr<Loader> CreateTypefaceLoader(
       const GURL& url, const Origin& orgin,
+#if defined(ENABLE_COBALT_CSP)
       const csp::SecurityCallback& url_security_callback,
+#endif
       const font::TypefaceDecoder::TypefaceAvailableCallback&
           typeface_available_callback,
       const Loader::OnCompleteFunction& load_complete_callback);
@@ -61,21 +67,27 @@ class LoaderFactory {
   // Creates a loader that fetches and decodes a Mesh.
   std::unique_ptr<Loader> CreateMeshLoader(
       const GURL& url, const Origin& origin,
+#if defined(ENABLE_COBALT_CSP)
       const csp::SecurityCallback& url_security_callback,
+#endif
       const mesh::MeshDecoder::MeshAvailableCallback& mesh_available_callback,
       const Loader::OnCompleteFunction& load_complete_callback);
 
   // Creates a loader that fetches and decodes a Javascript resource.
   std::unique_ptr<Loader> CreateScriptLoader(
       const GURL& url, const Origin& origin,
+#if defined(ENABLE_COBALT_CSP)
       const csp::SecurityCallback& url_security_callback,
+#endif
       const TextDecoder::TextAvailableCallback& script_available_callback,
       const Loader::OnCompleteFunction& load_complete_callback);
 
   // Creates a loader that fetches and decodes a link resources.
   std::unique_ptr<Loader> CreateLinkLoader(
       const GURL& url, const Origin& origin,
+#if defined(ENABLE_COBALT_CSP)
       const csp::SecurityCallback& url_security_callback,
+#endif
       const loader::RequestMode cors_mode,
       const TextDecoder::TextAvailableCallback& link_available_callback,
       const Loader::OnCompleteFunction& load_complete_callback);
@@ -93,7 +105,10 @@ class LoaderFactory {
   void OnLoaderDestroyed(Loader* loader);
 
   Loader::FetcherCreator MakeFetcherCreator(
-      const GURL& url, const csp::SecurityCallback& url_security_callback,
+      const GURL& url,
+#if defined(ENABLE_COBALT_CSP)
+      const csp::SecurityCallback& url_security_callback,
+#endif
       RequestMode request_mode, const Origin& origin);
 
   // Ensures that the LoaderFactory methods are only called from the same

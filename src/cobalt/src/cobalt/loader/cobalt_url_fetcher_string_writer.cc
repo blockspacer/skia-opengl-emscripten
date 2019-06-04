@@ -13,6 +13,8 @@
 // limitations under the License.
 
 #include "cobalt/loader/cobalt_url_fetcher_string_writer.h"
+
+#if defined(ENABLE_GNET)
 #include "net/base/net_errors.h"
 
 namespace cobalt {
@@ -59,3 +61,4 @@ int CobaltURLFetcherStringWriter::Finish(
 }
 
 }  // namespace cobalt
+#endif

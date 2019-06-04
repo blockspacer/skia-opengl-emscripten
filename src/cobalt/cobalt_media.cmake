@@ -227,8 +227,8 @@ target_link_libraries(cobalt_media PUBLIC
   cobalt_nanobase
   #cobalt_script
   #v8_stub
-  cobalt_loader ## TODO
-  cobalt_csp
+  ${COBALT_LOADER_LIB_NAME} ## TODO
+  ${COBALT_CSP_LIB_NAME}
   starboard_icu_init
   starboard_eztime  # requires starboard_icu_init
   #starboard_stub
@@ -248,7 +248,7 @@ target_link_libraries(cobalt_media PUBLIC
   ##BLINK_RENDERER_NETWORK
   #BLINK_RENDERER_PLATFORM
   GURL
-  GNET
+  ${GNET_LIBS}
   #GCRYPTO
   #GFX_GEOMETRY
   #UI_GFX

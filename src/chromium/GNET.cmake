@@ -100,8 +100,264 @@ set(GNET_DNS_SOURCES
   ${GNET_DIR}/dns/record_rdata.h
 )
 
+if(ENABLE_BORINGSSL)
+  list(APPEND GNET_SOURCES
+    ${GNET_DIR}cert/asn1_util.cc
+    #${GNET_DIR}cert/asn1_util.h
+    ${GNET_DIR}cert/cert_database.cc
+    #${GNET_DIR}cert/cert_database.h
+    ${GNET_DIR}cert/cert_status_flags.cc
+    #${GNET_DIR}cert/cert_status_flags.h
+    #${GNET_DIR}cert/cert_status_flags_list.h
+    ${GNET_DIR}cert/cert_verifier.cc
+    #${GNET_DIR}cert/cert_verifier.h
+    ${GNET_DIR}cert/cert_verify_result.cc
+    #${GNET_DIR}cert/cert_verify_result.h
+    #${GNET_DIR}cert/client_cert_verifier.h
+    ${GNET_DIR}cert/crl_set.cc
+    #${GNET_DIR}cert/crl_set.h
+    ${GNET_DIR}cert/ct_policy_enforcer.cc
+    #${GNET_DIR}cert/ct_policy_enforcer.h
+    #${GNET_DIR}cert/ct_policy_status.h
+    #${GNET_DIR}cert/ct_verifier.h
+    ${GNET_DIR}cert/ct_verify_result.cc
+    #${GNET_DIR}cert/ct_verify_result.h
+    ${GNET_DIR}cert/do_nothing_ct_verifier.cc
+    #${GNET_DIR}cert/do_nothing_ct_verifier.h
+    ${GNET_DIR}cert/internal/cert_error_id.cc
+    #${GNET_DIR}cert/internal/cert_error_id.h
+    ${GNET_DIR}cert/internal/cert_error_params.cc
+    #${GNET_DIR}cert/internal/cert_error_params.h
+    ${GNET_DIR}cert/internal/cert_errors.cc
+    #${GNET_DIR}cert/internal/cert_errors.h
+    #${GNET_DIR}cert/internal/cert_issuer_source.h
+    ${GNET_DIR}cert/internal/cert_issuer_source_aia.cc
+    #${GNET_DIR}cert/internal/cert_issuer_source_aia.h
+    ${GNET_DIR}cert/internal/cert_issuer_source_static.cc
+    #${GNET_DIR}cert/internal/cert_issuer_source_static.h
+    ${GNET_DIR}cert/internal/certificate_policies.cc
+    #${GNET_DIR}cert/internal/certificate_policies.h
+    ${GNET_DIR}cert/internal/common_cert_errors.cc
+    #${GNET_DIR}cert/internal/common_cert_errors.h
+    ${GNET_DIR}cert/internal/extended_key_usage.cc
+    #${GNET_DIR}cert/internal/extended_key_usage.h
+    ${GNET_DIR}cert/internal/general_names.cc
+    #${GNET_DIR}cert/internal/general_names.h
+    ${GNET_DIR}cert/internal/name_constraints.cc
+    #${GNET_DIR}cert/internal/name_constraints.h
+    ${GNET_DIR}cert/internal/ocsp.cc
+    #${GNET_DIR}cert/internal/ocsp.h
+    ${GNET_DIR}cert/internal/parse_certificate.cc
+    #${GNET_DIR}cert/internal/parse_certificate.h
+    ${GNET_DIR}cert/internal/parse_name.cc
+    #${GNET_DIR}cert/internal/parse_name.h
+    ${GNET_DIR}cert/internal/parsed_certificate.cc
+    #${GNET_DIR}cert/internal/parsed_certificate.h
+    ${GNET_DIR}cert/internal/path_builder.cc
+    #${GNET_DIR}cert/internal/path_builder.h
+    ${GNET_DIR}cert/internal/revocation_checker.cc
+    #${GNET_DIR}cert/internal/revocation_checker.h
+    ${GNET_DIR}cert/internal/signature_algorithm.cc
+    #${GNET_DIR}cert/internal/signature_algorithm.h
+    ${GNET_DIR}cert/internal/simple_path_builder_delegate.cc
+    #${GNET_DIR}cert/internal/simple_path_builder_delegate.h
+    ${GNET_DIR}cert/internal/trust_store.cc
+    #${GNET_DIR}cert/internal/trust_store.h
+    ${GNET_DIR}cert/internal/trust_store_collection.cc
+    #${GNET_DIR}cert/internal/trust_store_collection.h
+    ${GNET_DIR}cert/internal/trust_store_in_memory.cc
+    #${GNET_DIR}cert/internal/trust_store_in_memory.h
+    ${GNET_DIR}cert/internal/verify_certificate_chain.cc
+    #${GNET_DIR}cert/internal/verify_certificate_chain.h
+    ${GNET_DIR}cert/internal/verify_name_match.cc
+    #${GNET_DIR}cert/internal/verify_name_match.h
+    ${GNET_DIR}cert/internal/verify_signed_data.cc
+    #${GNET_DIR}cert/internal/verify_signed_data.h
+    #${GNET_DIR}cert/ocsp_revocation_status.h
+    ${GNET_DIR}cert/ocsp_verify_result.cc
+    #${GNET_DIR}cert/ocsp_verify_result.h
+    ${GNET_DIR}cert/pem_tokenizer.cc
+    #${GNET_DIR}cert/pem_tokenizer.h
+    ${GNET_DIR}cert/sct_status_flags.cc
+    #${GNET_DIR}cert/sct_status_flags.h
+    ${GNET_DIR}cert/signed_certificate_timestamp.cc
+    #${GNET_DIR}cert/signed_certificate_timestamp.h
+    ${GNET_DIR}cert/signed_certificate_timestamp_and_status.cc
+    #${GNET_DIR}cert/signed_certificate_timestamp_and_status.h
+    ${GNET_DIR}cert/signed_tree_head.cc
+    #${GNET_DIR}cert/signed_tree_head.h
+    ${GNET_DIR}cert/symantec_certs.cc
+    #${GNET_DIR}cert/symantec_certs.h
+    ${GNET_DIR}cert/x509_cert_types.cc
+    #${GNET_DIR}cert/x509_cert_types.h
+    ${GNET_DIR}cert/x509_certificate.cc
+    #${GNET_DIR}cert/x509_certificate.h
+    ${GNET_DIR}cert/x509_certificate_net_log_param.cc
+    #${GNET_DIR}cert/x509_certificate_net_log_param.h
+    ${GNET_DIR}cert/x509_util.cc
+    #${GNET_DIR}cert/x509_util.h
+    #
+    ${GNET_DIR}cert/caching_cert_verifier.cc
+    ${GNET_DIR}cert/caching_cert_verifier.h
+    ${GNET_DIR}#"cert/cert_database_mac.cc
+    ${GNET_DIR}cert/cert_net_fetcher.h
+    ${GNET_DIR}cert/cert_verify_proc.cc
+    ${GNET_DIR}cert/cert_verify_proc.h
+    ${GNET_DIR}#"cert/cert_verify_proc_android.cc
+    ${GNET_DIR}#"cert/cert_verify_proc_android.h
+    ${GNET_DIR}cert/cert_verify_proc_builtin.cc
+    ${GNET_DIR}cert/cert_verify_proc_builtin.h
+    ${GNET_DIR}#"cert/cert_verify_proc_ios.cc
+    ${GNET_DIR}#"cert/cert_verify_proc_ios.h
+    ${GNET_DIR}#"cert/cert_verify_proc_mac.cc
+    ${GNET_DIR}#"cert/cert_verify_proc_mac.h
+    ## TODO ## ${GNET_DIR}cert/cert_verify_proc_nss.cc
+    ## TODO ## ${GNET_DIR}cert/cert_verify_proc_nss.h
+    ${GNET_DIR}#"cert/cert_verify_proc_win.cc
+    ${GNET_DIR}#"cert/cert_verify_proc_win.h
+    ${GNET_DIR}cert/ct_log_response_parser.cc
+    ${GNET_DIR}cert/ct_log_response_parser.h
+    ${GNET_DIR}cert/ct_log_verifier.cc
+    ${GNET_DIR}cert/ct_log_verifier.h
+    ${GNET_DIR}cert/ct_log_verifier_util.cc
+    ${GNET_DIR}cert/ct_log_verifier_util.h
+    ${GNET_DIR}cert/ct_objects_extractor.cc
+    ${GNET_DIR}cert/ct_objects_extractor.h
+    ${GNET_DIR}cert/ct_sct_to_string.cc
+    ${GNET_DIR}cert/ct_sct_to_string.h
+    ${GNET_DIR}cert/ct_serialization.cc
+    ${GNET_DIR}cert/ct_serialization.h
+    ${GNET_DIR}cert/ct_signed_certificate_timestamp_log_param.cc
+    ${GNET_DIR}cert/ct_signed_certificate_timestamp_log_param.h
+    ${GNET_DIR}cert/ev_root_ca_metadata.cc
+    ${GNET_DIR}cert/ev_root_ca_metadata.h
+    ${GNET_DIR}cert/internal/system_trust_store.cc
+    ${GNET_DIR}cert/internal/system_trust_store.h
+    ${GNET_DIR}#"cert/internal/trust_store_mac.cc
+    ${GNET_DIR}#"cert/internal/trust_store_mac.h
+    ## TODO ## ${GNET_DIR}cert/internal/trust_store_nss.cc
+    ## TODO ## ${GNET_DIR}cert/internal/trust_store_nss.h
+    ${GNET_DIR}cert/jwk_serializer.cc
+    ${GNET_DIR}cert/jwk_serializer.h
+    ${GNET_DIR}cert/known_roots.cc
+    ${GNET_DIR}cert/known_roots.h
+    ${GNET_DIR}#"cert/known_roots_mac.cc
+    ${GNET_DIR}#"cert/known_roots_mac.h
+    ## TODO ## ${GNET_DIR}cert/known_roots_nss.cc
+    ## TODO ## ${GNET_DIR}cert/known_roots_nss.h
+    ${GNET_DIR}#"cert/known_roots_win.cc
+    ${GNET_DIR}cert/known_roots_win.h
+    ${GNET_DIR}cert/merkle_audit_proof.cc
+    ${GNET_DIR}cert/merkle_audit_proof.h
+    ${GNET_DIR}cert/merkle_consistency_proof.cc
+    ${GNET_DIR}cert/merkle_consistency_proof.h
+    ${GNET_DIR}cert/merkle_tree_leaf.cc
+    ${GNET_DIR}cert/merkle_tree_leaf.h
+    ${GNET_DIR}cert/multi_log_ct_verifier.cc
+    ${GNET_DIR}cert/multi_log_ct_verifier.h
+    ${GNET_DIR}cert/multi_threaded_cert_verifier.cc
+    ${GNET_DIR}cert/multi_threaded_cert_verifier.h
+    ## TODO ## ${GNET_DIR}cert/nss_cert_database.cc
+    ## TODO ## ${GNET_DIR}cert/nss_cert_database.h
+    ## TODO ## ${GNET_DIR}cert/nss_cert_database_chromeos.cc
+    ## TODO ## ${GNET_DIR}cert/nss_cert_database_chromeos.h
+    ## TODO ## ${GNET_DIR}cert/nss_profile_filter_chromeos.cc
+    ## TODO ## ${GNET_DIR}cert/nss_profile_filter_chromeos.h
+    ${GNET_DIR}cert/root_cert_list_generated.h
+    # ##"cert/test_keychain_search_list_mac.cc
+    # ##"cert/test_keychain_search_list_mac.h
+    ${GNET_DIR}cert/test_root_certs.cc
+    ${GNET_DIR}cert/test_root_certs.h
+    ##${GNET_DIR}cert/test_root_certs_android.cc
+    # ##"cert/test_root_certs_mac.cc
+    ##${GNET_DIR}cert/test_root_certs_nss.cc
+    ##${GNET_DIR}cert/test_root_certs_win.cc
+    # ##"cert/x509_util_android.cc
+    # ##"cert/x509_util_ios.cc
+    # ##"cert/x509_util_ios.h
+    # ##"cert/x509_util_ios_and_mac.cc
+    # ##"cert/x509_util_ios_and_mac.h
+    # ##"cert/x509_util_mac.cc
+    # ##"cert/x509_util_mac.h
+    ##${GNET_DIR}cert/x509_util_nss.cc
+    ##${GNET_DIR}cert/x509_util_nss.h
+    ##${GNET_DIR}cert/x509_util_win.cc
+    ##${GNET_DIR}cert/x509_util_win.h
+    # "cert_net/cert_net_fetcher_impl.cc
+    # "cert_net/cert_net_fetcher_impl.h
+    # "cert_net/nss_ocsp.cc
+    # "cert_net/nss_ocsp.h
+    #
+    ${GNET_DIR}http/transport_security_state.cc
+    #
+    ${GNET_DIR}der/encode_values.cc
+    #${GNET_DIR}der/encode_values.h
+    ${GNET_DIR}der/input.cc
+    #${GNET_DIR}der/input.h
+    ${GNET_DIR}der/parse_values.cc
+    #${GNET_DIR}der/parse_values.h
+    ${GNET_DIR}der/parser.cc
+    #${GNET_DIR}der/parser.h
+    ${GNET_DIR}der/tag.cc
+    #${GNET_DIR}der/tag.h
+    #
+    ${GNET_DIR}ssl/client_cert_identity.cc
+    #${GNET_DIR}ssl/client_cert_identity.h
+    # TODO # ${GNET_DIR}ssl/client_cert_identity_mac.cc
+    #${GNET_DIR}ssl/client_cert_identity_mac.h
+    ${GNET_DIR}ssl/openssl_ssl_util.cc
+    #${GNET_DIR}ssl/openssl_ssl_util.h
+    ${GNET_DIR}ssl/ssl_cert_request_info.cc
+    #${GNET_DIR}ssl/ssl_cert_request_info.h
+    ${GNET_DIR}ssl/ssl_cipher_suite_names.cc
+    #${GNET_DIR}ssl/ssl_cipher_suite_names.h
+    ${GNET_DIR}ssl/ssl_client_auth_cache.cc
+    #${GNET_DIR}ssl/ssl_client_auth_cache.h
+    #${GNET_DIR}ssl/ssl_client_cert_type.h
+    ${GNET_DIR}ssl/ssl_client_session_cache.cc
+    #${GNET_DIR}ssl/ssl_client_session_cache.h
+    ${GNET_DIR}ssl/ssl_config.cc
+    #${GNET_DIR}ssl/ssl_config.h
+    ${GNET_DIR}ssl/ssl_config_service.cc
+    #${GNET_DIR}ssl/ssl_config_service.h
+    #${GNET_DIR}ssl/ssl_connection_status_flags.h
+    ${GNET_DIR}ssl/ssl_info.cc
+    #${GNET_DIR}ssl/ssl_info.h
+    #${GNET_DIR}ssl/ssl_key_logger.h
+    ${GNET_DIR}ssl/ssl_private_key.cc
+    #${GNET_DIR}ssl/ssl_private_key.h
+    ${GNET_DIR}ssl/ssl_server_config.cc
+    #${GNET_DIR}ssl/ssl_server_config.h
+    #
+    ${GNET_DIR}ssl/client_cert_store.h
+    ${GNET_DIR}#"ssl/client_cert_store_mac.cc
+    ${GNET_DIR}#"ssl/client_cert_store_mac.h
+    ##${GNET_DIR}ssl/client_cert_store_nss.cc
+    ##${GNET_DIR}ssl/client_cert_store_nss.h
+    ##${GNET_DIR}ssl/client_cert_store_win.cc
+    ##${GNET_DIR}ssl/client_cert_store_win.h
+    ${GNET_DIR}ssl/ssl_config_service_defaults.cc
+    ${GNET_DIR}ssl/ssl_config_service_defaults.h
+    ${GNET_DIR}ssl/ssl_key_logger_impl.cc
+    ${GNET_DIR}ssl/ssl_key_logger_impl.h
+    ##${GNET_DIR}ssl/ssl_platform_key_android.cc
+    ##${GNET_DIR}ssl/ssl_platform_key_android.h
+    ##${GNET_DIR}ssl/ssl_platform_key_mac.cc
+    ##${GNET_DIR}ssl/ssl_platform_key_mac.h
+    ##${GNET_DIR}ssl/ssl_platform_key_nss.cc
+    ##${GNET_DIR}ssl/ssl_platform_key_nss.h
+    ${GNET_DIR}ssl/ssl_platform_key_util.cc
+    ${GNET_DIR}ssl/ssl_platform_key_util.h
+    ##${GNET_DIR}ssl/ssl_platform_key_win.cc
+    ${GNET_DIR}ssl/test_ssl_private_key.cc
+    ${GNET_DIR}ssl/test_ssl_private_key.h
+    ${GNET_DIR}ssl/threaded_ssl_private_key.cc
+    ${GNET_DIR}ssl/threaded_ssl_private_key.h
+  )
+endif(ENABLE_BORINGSSL)
+
 # TODO https://github.com/chromium/chromium/blob/master/third_party/blink/renderer/platform/BUILD.gn
-set(GNET_SOURCES
+list(APPEND GNET_SOURCES
   #
   # net/extras/preload_data/
   #
@@ -114,7 +370,6 @@ set(GNET_SOURCES
   #  "//net:net_public_deps",
   #  "//net/dns",
   # ]
-  ${GNET_DIR}http/transport_security_state.cc
   #
   # traffic_annotation/
   #${GNET_DIR}traffic_annotation/network_traffic_annotation_test_helper.h
@@ -173,110 +428,6 @@ set(GNET_SOURCES
   #${GNET_DIR}base/sys_addrinfo.h
   ${GNET_DIR}base/url_util.cc
   #${GNET_DIR}base/url_util.h
-  ${GNET_DIR}cert/asn1_util.cc
-  #${GNET_DIR}cert/asn1_util.h
-  ${GNET_DIR}cert/cert_database.cc
-  #${GNET_DIR}cert/cert_database.h
-  ${GNET_DIR}cert/cert_status_flags.cc
-  #${GNET_DIR}cert/cert_status_flags.h
-  #${GNET_DIR}cert/cert_status_flags_list.h
-  ${GNET_DIR}cert/cert_verifier.cc
-  #${GNET_DIR}cert/cert_verifier.h
-  ${GNET_DIR}cert/cert_verify_result.cc
-  #${GNET_DIR}cert/cert_verify_result.h
-  #${GNET_DIR}cert/client_cert_verifier.h
-  ${GNET_DIR}cert/crl_set.cc
-  #${GNET_DIR}cert/crl_set.h
-  ${GNET_DIR}cert/ct_policy_enforcer.cc
-  #${GNET_DIR}cert/ct_policy_enforcer.h
-  #${GNET_DIR}cert/ct_policy_status.h
-  #${GNET_DIR}cert/ct_verifier.h
-  ${GNET_DIR}cert/ct_verify_result.cc
-  #${GNET_DIR}cert/ct_verify_result.h
-  ${GNET_DIR}cert/do_nothing_ct_verifier.cc
-  #${GNET_DIR}cert/do_nothing_ct_verifier.h
-  ${GNET_DIR}cert/internal/cert_error_id.cc
-  #${GNET_DIR}cert/internal/cert_error_id.h
-  ${GNET_DIR}cert/internal/cert_error_params.cc
-  #${GNET_DIR}cert/internal/cert_error_params.h
-  ${GNET_DIR}cert/internal/cert_errors.cc
-  #${GNET_DIR}cert/internal/cert_errors.h
-  #${GNET_DIR}cert/internal/cert_issuer_source.h
-  ${GNET_DIR}cert/internal/cert_issuer_source_aia.cc
-  #${GNET_DIR}cert/internal/cert_issuer_source_aia.h
-  ${GNET_DIR}cert/internal/cert_issuer_source_static.cc
-  #${GNET_DIR}cert/internal/cert_issuer_source_static.h
-  ${GNET_DIR}cert/internal/certificate_policies.cc
-  #${GNET_DIR}cert/internal/certificate_policies.h
-  ${GNET_DIR}cert/internal/common_cert_errors.cc
-  #${GNET_DIR}cert/internal/common_cert_errors.h
-  ${GNET_DIR}cert/internal/extended_key_usage.cc
-  #${GNET_DIR}cert/internal/extended_key_usage.h
-  ${GNET_DIR}cert/internal/general_names.cc
-  #${GNET_DIR}cert/internal/general_names.h
-  ${GNET_DIR}cert/internal/name_constraints.cc
-  #${GNET_DIR}cert/internal/name_constraints.h
-  ${GNET_DIR}cert/internal/ocsp.cc
-  #${GNET_DIR}cert/internal/ocsp.h
-  ${GNET_DIR}cert/internal/parse_certificate.cc
-  #${GNET_DIR}cert/internal/parse_certificate.h
-  ${GNET_DIR}cert/internal/parse_name.cc
-  #${GNET_DIR}cert/internal/parse_name.h
-  ${GNET_DIR}cert/internal/parsed_certificate.cc
-  #${GNET_DIR}cert/internal/parsed_certificate.h
-  ${GNET_DIR}cert/internal/path_builder.cc
-  #${GNET_DIR}cert/internal/path_builder.h
-  ${GNET_DIR}cert/internal/revocation_checker.cc
-  #${GNET_DIR}cert/internal/revocation_checker.h
-  ${GNET_DIR}cert/internal/signature_algorithm.cc
-  #${GNET_DIR}cert/internal/signature_algorithm.h
-  ${GNET_DIR}cert/internal/simple_path_builder_delegate.cc
-  #${GNET_DIR}cert/internal/simple_path_builder_delegate.h
-  ${GNET_DIR}cert/internal/trust_store.cc
-  #${GNET_DIR}cert/internal/trust_store.h
-  ${GNET_DIR}cert/internal/trust_store_collection.cc
-  #${GNET_DIR}cert/internal/trust_store_collection.h
-  ${GNET_DIR}cert/internal/trust_store_in_memory.cc
-  #${GNET_DIR}cert/internal/trust_store_in_memory.h
-  ${GNET_DIR}cert/internal/verify_certificate_chain.cc
-  #${GNET_DIR}cert/internal/verify_certificate_chain.h
-  ${GNET_DIR}cert/internal/verify_name_match.cc
-  #${GNET_DIR}cert/internal/verify_name_match.h
-  ${GNET_DIR}cert/internal/verify_signed_data.cc
-  #${GNET_DIR}cert/internal/verify_signed_data.h
-  #${GNET_DIR}cert/ocsp_revocation_status.h
-  ${GNET_DIR}cert/ocsp_verify_result.cc
-  #${GNET_DIR}cert/ocsp_verify_result.h
-  ${GNET_DIR}cert/pem_tokenizer.cc
-  #${GNET_DIR}cert/pem_tokenizer.h
-  ${GNET_DIR}cert/sct_status_flags.cc
-  #${GNET_DIR}cert/sct_status_flags.h
-  ${GNET_DIR}cert/signed_certificate_timestamp.cc
-  #${GNET_DIR}cert/signed_certificate_timestamp.h
-  ${GNET_DIR}cert/signed_certificate_timestamp_and_status.cc
-  #${GNET_DIR}cert/signed_certificate_timestamp_and_status.h
-  ${GNET_DIR}cert/signed_tree_head.cc
-  #${GNET_DIR}cert/signed_tree_head.h
-  ${GNET_DIR}cert/symantec_certs.cc
-  #${GNET_DIR}cert/symantec_certs.h
-  ${GNET_DIR}cert/x509_cert_types.cc
-  #${GNET_DIR}cert/x509_cert_types.h
-  ${GNET_DIR}cert/x509_certificate.cc
-  #${GNET_DIR}cert/x509_certificate.h
-  ${GNET_DIR}cert/x509_certificate_net_log_param.cc
-  #${GNET_DIR}cert/x509_certificate_net_log_param.h
-  ${GNET_DIR}cert/x509_util.cc
-  #${GNET_DIR}cert/x509_util.h
-  ${GNET_DIR}der/encode_values.cc
-  #${GNET_DIR}der/encode_values.h
-  ${GNET_DIR}der/input.cc
-  #${GNET_DIR}der/input.h
-  ${GNET_DIR}der/parse_values.cc
-  #${GNET_DIR}der/parse_values.h
-  ${GNET_DIR}der/parser.cc
-  #${GNET_DIR}der/parser.h
-  ${GNET_DIR}der/tag.cc
-  #${GNET_DIR}der/tag.h
   # TODO #
   ${GNET_DIR}http/http_auth_challenge_tokenizer.cc
   # #${GNET_DIR}http/http_auth_challenge_tokenizer.h
@@ -340,34 +491,6 @@ set(GNET_SOURCES
   # #${GNET_DIR}socket/ssl_socket.h
   ${GNET_DIR}socket/stream_socket.cc
   # #${GNET_DIR}socket/stream_socket.h
-  #
-  ${GNET_DIR}ssl/client_cert_identity.cc
-  #${GNET_DIR}ssl/client_cert_identity.h
-  # TODO # ${GNET_DIR}ssl/client_cert_identity_mac.cc
-  #${GNET_DIR}ssl/client_cert_identity_mac.h
-  ${GNET_DIR}ssl/openssl_ssl_util.cc
-  #${GNET_DIR}ssl/openssl_ssl_util.h
-  ${GNET_DIR}ssl/ssl_cert_request_info.cc
-  #${GNET_DIR}ssl/ssl_cert_request_info.h
-  ${GNET_DIR}ssl/ssl_cipher_suite_names.cc
-  #${GNET_DIR}ssl/ssl_cipher_suite_names.h
-  ${GNET_DIR}ssl/ssl_client_auth_cache.cc
-  #${GNET_DIR}ssl/ssl_client_auth_cache.h
-  #${GNET_DIR}ssl/ssl_client_cert_type.h
-  ${GNET_DIR}ssl/ssl_client_session_cache.cc
-  #${GNET_DIR}ssl/ssl_client_session_cache.h
-  ${GNET_DIR}ssl/ssl_config.cc
-  #${GNET_DIR}ssl/ssl_config.h
-  ${GNET_DIR}ssl/ssl_config_service.cc
-  #${GNET_DIR}ssl/ssl_config_service.h
-  #${GNET_DIR}ssl/ssl_connection_status_flags.h
-  ${GNET_DIR}ssl/ssl_info.cc
-  #${GNET_DIR}ssl/ssl_info.h
-  #${GNET_DIR}ssl/ssl_key_logger.h
-  ${GNET_DIR}ssl/ssl_private_key.cc
-  #${GNET_DIR}ssl/ssl_private_key.h
-  ${GNET_DIR}ssl/ssl_server_config.cc
-  #${GNET_DIR}ssl/ssl_server_config.h
   ## TODO ## ${GNET_DIR}third_party/quiche/src/quic/core/quic_error_codes.cc
   #${GNET_DIR}third_party/quiche/src/quic/core/quic_error_codes.h
   #
@@ -493,96 +616,6 @@ set(GNET_SOURCES
   ##${GNET_DIR}base/winsock_init.h
   ##${GNET_DIR}base/winsock_util.cc
   ##${GNET_DIR}base/winsock_util.h
-  ${GNET_DIR}cert/caching_cert_verifier.cc
-  ${GNET_DIR}cert/caching_cert_verifier.h
-  ${GNET_DIR}#"cert/cert_database_mac.cc
-  ${GNET_DIR}cert/cert_net_fetcher.h
-  ${GNET_DIR}cert/cert_verify_proc.cc
-  ${GNET_DIR}cert/cert_verify_proc.h
-  ${GNET_DIR}#"cert/cert_verify_proc_android.cc
-  ${GNET_DIR}#"cert/cert_verify_proc_android.h
-  ${GNET_DIR}cert/cert_verify_proc_builtin.cc
-  ${GNET_DIR}cert/cert_verify_proc_builtin.h
-  ${GNET_DIR}#"cert/cert_verify_proc_ios.cc
-  ${GNET_DIR}#"cert/cert_verify_proc_ios.h
-  ${GNET_DIR}#"cert/cert_verify_proc_mac.cc
-  ${GNET_DIR}#"cert/cert_verify_proc_mac.h
-  ## TODO ## ${GNET_DIR}cert/cert_verify_proc_nss.cc
-  ## TODO ## ${GNET_DIR}cert/cert_verify_proc_nss.h
-  ${GNET_DIR}#"cert/cert_verify_proc_win.cc
-  ${GNET_DIR}#"cert/cert_verify_proc_win.h
-  ${GNET_DIR}cert/ct_log_response_parser.cc
-  ${GNET_DIR}cert/ct_log_response_parser.h
-  ${GNET_DIR}cert/ct_log_verifier.cc
-  ${GNET_DIR}cert/ct_log_verifier.h
-  ${GNET_DIR}cert/ct_log_verifier_util.cc
-  ${GNET_DIR}cert/ct_log_verifier_util.h
-  ${GNET_DIR}cert/ct_objects_extractor.cc
-  ${GNET_DIR}cert/ct_objects_extractor.h
-  ${GNET_DIR}cert/ct_sct_to_string.cc
-  ${GNET_DIR}cert/ct_sct_to_string.h
-  ${GNET_DIR}cert/ct_serialization.cc
-  ${GNET_DIR}cert/ct_serialization.h
-  ${GNET_DIR}cert/ct_signed_certificate_timestamp_log_param.cc
-  ${GNET_DIR}cert/ct_signed_certificate_timestamp_log_param.h
-  ${GNET_DIR}cert/ev_root_ca_metadata.cc
-  ${GNET_DIR}cert/ev_root_ca_metadata.h
-  ${GNET_DIR}cert/internal/system_trust_store.cc
-  ${GNET_DIR}cert/internal/system_trust_store.h
-  ${GNET_DIR}#"cert/internal/trust_store_mac.cc
-  ${GNET_DIR}#"cert/internal/trust_store_mac.h
-  ## TODO ## ${GNET_DIR}cert/internal/trust_store_nss.cc
-  ## TODO ## ${GNET_DIR}cert/internal/trust_store_nss.h
-  ${GNET_DIR}cert/jwk_serializer.cc
-  ${GNET_DIR}cert/jwk_serializer.h
-  ${GNET_DIR}cert/known_roots.cc
-  ${GNET_DIR}cert/known_roots.h
-  ${GNET_DIR}#"cert/known_roots_mac.cc
-  ${GNET_DIR}#"cert/known_roots_mac.h
-  ## TODO ## ${GNET_DIR}cert/known_roots_nss.cc
-  ## TODO ## ${GNET_DIR}cert/known_roots_nss.h
-  ${GNET_DIR}#"cert/known_roots_win.cc
-  ${GNET_DIR}cert/known_roots_win.h
-  ${GNET_DIR}cert/merkle_audit_proof.cc
-  ${GNET_DIR}cert/merkle_audit_proof.h
-  ${GNET_DIR}cert/merkle_consistency_proof.cc
-  ${GNET_DIR}cert/merkle_consistency_proof.h
-  ${GNET_DIR}cert/merkle_tree_leaf.cc
-  ${GNET_DIR}cert/merkle_tree_leaf.h
-  ${GNET_DIR}cert/multi_log_ct_verifier.cc
-  ${GNET_DIR}cert/multi_log_ct_verifier.h
-  ${GNET_DIR}cert/multi_threaded_cert_verifier.cc
-  ${GNET_DIR}cert/multi_threaded_cert_verifier.h
-  ## TODO ## ${GNET_DIR}cert/nss_cert_database.cc
-  ## TODO ## ${GNET_DIR}cert/nss_cert_database.h
-  ## TODO ## ${GNET_DIR}cert/nss_cert_database_chromeos.cc
-  ## TODO ## ${GNET_DIR}cert/nss_cert_database_chromeos.h
-  ## TODO ## ${GNET_DIR}cert/nss_profile_filter_chromeos.cc
-  ## TODO ## ${GNET_DIR}cert/nss_profile_filter_chromeos.h
-  ${GNET_DIR}cert/root_cert_list_generated.h
-  # ##"cert/test_keychain_search_list_mac.cc
-  # ##"cert/test_keychain_search_list_mac.h
-  ${GNET_DIR}cert/test_root_certs.cc
-  ${GNET_DIR}cert/test_root_certs.h
-  ##${GNET_DIR}cert/test_root_certs_android.cc
-  # ##"cert/test_root_certs_mac.cc
-  ##${GNET_DIR}cert/test_root_certs_nss.cc
-  ##${GNET_DIR}cert/test_root_certs_win.cc
-  # ##"cert/x509_util_android.cc
-  # ##"cert/x509_util_ios.cc
-  # ##"cert/x509_util_ios.h
-  # ##"cert/x509_util_ios_and_mac.cc
-  # ##"cert/x509_util_ios_and_mac.h
-  # ##"cert/x509_util_mac.cc
-  # ##"cert/x509_util_mac.h
-  ##${GNET_DIR}cert/x509_util_nss.cc
-  ##${GNET_DIR}cert/x509_util_nss.h
-  ##${GNET_DIR}cert/x509_util_win.cc
-  ##${GNET_DIR}cert/x509_util_win.h
-  # "cert_net/cert_net_fetcher_impl.cc
-  # "cert_net/cert_net_fetcher_impl.h
-  # "cert_net/nss_ocsp.cc
-  # "cert_net/nss_ocsp.h
   ${GNET_DIR}cookies/canonical_cookie.cc
   ${GNET_DIR}cookies/canonical_cookie.h
   ${GNET_DIR}cookies/cookie_change_dispatcher.cc
@@ -1158,30 +1191,6 @@ set(GNET_SOURCES
   # "spdy/spdy_stream.h
   # "spdy/spdy_write_queue.cc
   # "spdy/spdy_write_queue.h
-  ${GNET_DIR}ssl/client_cert_store.h
-  ${GNET_DIR}#"ssl/client_cert_store_mac.cc
-  ${GNET_DIR}#"ssl/client_cert_store_mac.h
-  ##${GNET_DIR}ssl/client_cert_store_nss.cc
-  ##${GNET_DIR}ssl/client_cert_store_nss.h
-  ##${GNET_DIR}ssl/client_cert_store_win.cc
-  ##${GNET_DIR}ssl/client_cert_store_win.h
-  ${GNET_DIR}ssl/ssl_config_service_defaults.cc
-  ${GNET_DIR}ssl/ssl_config_service_defaults.h
-  ${GNET_DIR}ssl/ssl_key_logger_impl.cc
-  ${GNET_DIR}ssl/ssl_key_logger_impl.h
-  ##${GNET_DIR}ssl/ssl_platform_key_android.cc
-  ##${GNET_DIR}ssl/ssl_platform_key_android.h
-  ##${GNET_DIR}ssl/ssl_platform_key_mac.cc
-  ##${GNET_DIR}ssl/ssl_platform_key_mac.h
-  ##${GNET_DIR}ssl/ssl_platform_key_nss.cc
-  ##${GNET_DIR}ssl/ssl_platform_key_nss.h
-  ${GNET_DIR}ssl/ssl_platform_key_util.cc
-  ${GNET_DIR}ssl/ssl_platform_key_util.h
-  ##${GNET_DIR}ssl/ssl_platform_key_win.cc
-  ${GNET_DIR}ssl/test_ssl_private_key.cc
-  ${GNET_DIR}ssl/test_ssl_private_key.h
-  ${GNET_DIR}ssl/threaded_ssl_private_key.cc
-  ${GNET_DIR}ssl/threaded_ssl_private_key.h
   # "third_party/mozilla_security_manager/nsNSSCertificateDB.cpp",
   # "third_party/mozilla_security_manager/nsNSSCertificateDB.h
   # "third_party/mozilla_security_manager/nsPKCS12Blob.cpp",

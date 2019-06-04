@@ -21,7 +21,9 @@
 #include "base/callback.h"
 #include "cobalt/dom/url_utils.h"
 #include "cobalt/loader/loader_types.h"
+#if defined(ENABLE_GNET)
 #include "net/http/http_response_headers.h"
+#endif
 #include "url/gurl.h"
 
 namespace cobalt {
@@ -45,11 +47,17 @@ class Fetcher {
     // The function will be called by supported Fetcher (like NetFetcher) before
     // any OnReceived() is called so the Handler can preview the response.
     virtual LoadResponseType OnResponseStarted(
-        Fetcher* fetcher,
-        const scoped_refptr<net::HttpResponseHeaders>& headers)
+        Fetcher* fetcher
+#if defined(ENABLE_GNET)
+        ,
+        const scoped_refptr<net::HttpResponseHeaders>& headers
+#endif
+        )
         WARN_UNUSED_RESULT {
       SB_UNREFERENCED_PARAMETER(fetcher);
+#if defined(ENABLE_GNET)
       SB_UNREFERENCED_PARAMETER(headers);
+#endif
       return kLoadResponseContinue;
     }
     virtual void OnReceived(Fetcher* fetcher, const char* data,

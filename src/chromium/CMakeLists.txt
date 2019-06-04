@@ -121,8 +121,10 @@ set(GCRYPTO_DIR ${GCRYPTO_PARENT_DIR}crypto/)
 set(xdg_mime_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/base/third_party/)
 set(xdg_mime_DIR ${xdg_mime_PARENT_DIR}xdg_mime/)
 
-set(GNET_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/)
-set(GNET_DIR ${GNET_PARENT_DIR}net/)
+if(ENABLE_GNET)
+  set(GNET_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/)
+  set(GNET_DIR ${GNET_PARENT_DIR}net/)
+endif(ENABLE_GNET)
 
 set(GURL_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/)
 set(GURL_DIR ${GURL_PARENT_DIR}url/)
@@ -271,12 +273,14 @@ include(base.cmake)
 # WTF
 include(BLINK_WTF.cmake)
 
-# GNET: Net helper library.
-# Depends on : base, url, crypto, sql,
-# protobuf, libnss, libnspr, open-vcdiff
-# NOTE: uses protobuf-compiler
-# NOTE: "third_party/nss". https://github.com/Tarnyko/chromium-lite/blob/master/README#L136
-include(GNET.cmake)
+if(ENABLE_GNET)
+  # GNET: Net helper library.
+  # Depends on : base, url, crypto, sql,
+  # protobuf, libnss, libnspr, open-vcdiff
+  # NOTE: uses protobuf-compiler
+  # NOTE: "third_party/nss". https://github.com/Tarnyko/chromium-lite/blob/master/README#L136
+  include(GNET.cmake)
+endif(ENABLE_GNET)
 
 # GIPC:  Mojo IPC and bindings library.
 # Depends on : base, url, crypto, gin, net
@@ -399,6 +403,8 @@ if(ENABLE_SKIA AND ENABLE_BLINK)
 endif(ENABLE_SKIA AND ENABLE_BLINK)
 
 if(ENABLE_BLINK)
+
+if(ENABLE_GNET)
   # SERVICES_NETWORK_PUBLIC_CPP
   include(COMPONENTS_CONTENT_SETTINGS_CORE_COMMON.cmake)
 
@@ -407,6 +413,7 @@ if(ENABLE_BLINK)
 
   # SERVICES_SERVICE_MANAGER_PUBLIC_CPP
   include(SERVICES_SERVICE_MANAGER_PUBLIC_CPP.cmake)
+endif(ENABLE_GNET)
 
   # LIB_V8_INTERFACE
   include(LIB_V8_INTERFACE.cmake)

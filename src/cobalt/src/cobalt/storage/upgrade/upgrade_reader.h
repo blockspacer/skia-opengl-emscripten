@@ -20,7 +20,9 @@
 
 #include "base/logging.h"
 #include "base/values.h"
+#if defined(ENABLE_GNET)
 #include "net/cookies/canonical_cookie.h"
+#endif
 
 namespace cobalt {
 namespace storage {
@@ -52,7 +54,9 @@ class UpgradeReader {
   // Get one of the cookies found in the parsed data, specified by |index|
   // between 0 and |GetNumCookies| - 1. If the cookie doesn't exist, return
   // NULL.
+#if defined(ENABLE_GNET)
   const net::CanonicalCookie* GetCookie(int index) const;
+#endif
 
   // Get one of the local storage entries found in the parsed data, specified
   // by |index| between 0 and |GetNumLocalStorageEntries| - 1. If the local
@@ -66,8 +70,10 @@ class UpgradeReader {
   // |local_storage_entries_|.
   void ProcessValues(const base::DictionaryValue* dictionary);
 
+#if defined(ENABLE_GNET)
   // Add an entry to |cookies_| if |cookie| encodes a valid cookie.
   void AddCookieIfValid(const base::DictionaryValue* cookie);
+#endif
 
   // Add an entry to |local_storage_entries_| if |local_storage_entry| encodes a
   // valid local storage entry.
@@ -79,8 +85,9 @@ class UpgradeReader {
     NOTREACHED() << "Cookies must have a specified expiration, "
                     "as there is no reasonable default.";
   }
-
+#if defined(ENABLE_GNET)
   std::vector<net::CanonicalCookie> cookies_;
+#endif
   std::vector<LocalStorageEntry> local_storage_entries_;
 };
 

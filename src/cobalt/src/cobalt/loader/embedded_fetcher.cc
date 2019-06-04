@@ -43,11 +43,15 @@ bool EmbeddedURLToKey(const GURL& url, std::string* key) {
 const char kEmbeddedScheme[] = "h5vcc-embedded";
 
 EmbeddedFetcher::EmbeddedFetcher(const GURL& url,
+#if defined(ENABLE_COBALT_CSP)
                                  const csp::SecurityCallback& security_callback,
+#endif
                                  Handler* handler, const Options& options)
     : Fetcher(handler),
       url_(url),
+#if defined(ENABLE_COBALT_CSP)
       security_callback_(security_callback),
+#endif
       ALLOW_THIS_IN_INITIALIZER_LIST(weak_ptr_factory_(this)) {
   // Embedded assets are available in-memory and can be loaded synchronously.
   Fetch(options);
@@ -75,7 +79,7 @@ void EmbeddedFetcher::Fetch(const Options& options) {
 }
 
 void EmbeddedFetcher::GetEmbeddedData(const std::string& key,
-                                      int64 start_offset, int64 bytes_to_read) {
+                                      int64_t start_offset, int64_t bytes_to_read) {
   const char kDataNotFoundError[] = "Embedded data not found.";
 
   GeneratedResourceMap resource_map;
@@ -108,12 +112,16 @@ void EmbeddedFetcher::GetEmbeddedData(const std::string& key,
 
 bool EmbeddedFetcher::IsAllowedByCsp() {
   bool did_redirect = false;
+#if defined(ENABLE_COBALT_CSP)
   if (security_callback_.is_null() ||
       security_callback_.Run(url_, did_redirect)) {
     return true;
   } else {
     return false;
   }
+#else
+  return true;
+#endif
 }
 
 void EmbeddedFetcher::LocalizeFileData(std::string* output_file) {

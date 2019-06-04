@@ -19,12 +19,15 @@
 #include <string>
 
 #include "cobalt/base/source_location.h"
+#if defined(ENABLE_COBALT_CSP)
 #include "cobalt/csp/content_security_policy.h"
+#endif
 #include "cobalt/dom/csp_violation_reporter.h"
 
 namespace cobalt {
 namespace dom {
 
+#if defined(ENABLE_COBALT_CSP)
 // Object that represents a Content Security Policy for a particular document.
 // Owned by the Document. Objects wishing to enforce CSP need to query the
 // delegate to decide if they are permitted to load a resource.
@@ -160,6 +163,7 @@ class CspDelegateSecure : public CspDelegate {
  private:
   DISALLOW_COPY_AND_ASSIGN(CspDelegateSecure);
 };
+#endif
 
 }  // namespace dom
 }  // namespace cobalt

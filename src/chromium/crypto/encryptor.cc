@@ -12,11 +12,14 @@
 #include "base/sys_byteorder.h"
 #include "crypto/openssl_util.h"
 #include "crypto/symmetric_key.h"
+#if defined(ENABLE_BORINGSSL)
 #include "third_party/boringssl/src/include/openssl/aes.h"
 #include "third_party/boringssl/src/include/openssl/evp.h"
+#endif
 
 namespace crypto {
 
+#if defined(ENABLE_BORINGSSL)
 namespace {
 
 const EVP_CIPHER* GetCipherForKey(const SymmetricKey* key) {
@@ -46,6 +49,7 @@ class ScopedCipherCTX {
 };
 
 }  // namespace
+#endif
 
 /////////////////////////////////////////////////////////////////////////////
 // Encyptor::Counter Implementation.
@@ -89,6 +93,7 @@ Encryptor::Encryptor() : key_(nullptr), mode_(CBC) {}
 Encryptor::~Encryptor() = default;
 
 bool Encryptor::Init(const SymmetricKey* key, Mode mode, base::StringPiece iv) {
+#if defined(ENABLE_BORINGSSL)
   DCHECK(key);
   DCHECK(mode == CBC || mode == CTR);
 
@@ -103,6 +108,9 @@ bool Encryptor::Init(const SymmetricKey* key, Mode mode, base::StringPiece iv) {
   mode_ = mode;
   iv.CopyToString(&iv_);
   return true;
+#else
+  return false;
+#endif
 }
 
 bool Encryptor::Encrypt(base::StringPiece plaintext, std::string* ciphertext) {
@@ -132,6 +140,7 @@ bool Encryptor::SetCounter(base::StringPiece counter) {
 bool Encryptor::Crypt(bool do_encrypt,
                       base::StringPiece input,
                       std::string* output) {
+#if defined(ENABLE_BORINGSSL)
   DCHECK(key_);  // Must call Init() before En/De-crypt.
   // Work on the result in a local variable, and then only transfer it to
   // |output| on success to ensure no partial data is returned.
@@ -176,11 +185,15 @@ bool Encryptor::Crypt(bool do_encrypt,
 
   output->swap(result);
   return true;
+#else
+  return false;
+#endif
 }
 
 bool Encryptor::CryptCTR(bool do_encrypt,
                          base::StringPiece input,
                          std::string* output) {
+#if defined(ENABLE_BORINGSSL)
   if (!counter_.get()) {
     LOG(ERROR) << "Counter value not set in CTR mode.";
     return false;
@@ -215,6 +228,9 @@ bool Encryptor::CryptCTR(bool do_encrypt,
 
   output->swap(result);
   return true;
+#else
+  return false;
+#endif
 }
 
 }  // namespace crypto

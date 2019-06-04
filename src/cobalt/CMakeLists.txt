@@ -22,7 +22,9 @@ include(cobalt_nanobase.cmake)
 
 include(cobalt_base.cmake)
 
-include(cobalt_csp.cmake)
+if(ENABLE_COBALT_CSP)
+  include(cobalt_csp.cmake)
+endif(ENABLE_COBALT_CSP)
 
 include(cobalt_script.cmake)
 
@@ -34,7 +36,9 @@ include(cobalt_ui_navigation.cmake)
 
 include(cobalt_math.cmake)
 
+#if(ENABLE_GNET)
 include(cobalt_loader.cmake)
+#endif()
 
 include(cobalt_media.cmake)
 

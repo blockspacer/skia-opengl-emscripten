@@ -16,7 +16,9 @@
 
 #include "base/memory/ref_counted.h"
 #include "base/strings/string_util.h"
+#if defined(ENABLE_COBALT_CSP)
 #include "cobalt/csp/content_security_policy.h"
+#endif
 #include "cobalt/dom/csp_delegate.h"
 #include "cobalt/dom/document.h"
 #include "cobalt/dom/html_head_element.h"
@@ -38,12 +40,14 @@ void HTMLMetaElement::OnInsertedIntoDocument() {
   if (base::LowerCaseEqualsASCII(http_equiv_attribute,
                                  kContentSecurityPolicy)) {
     std::string csp_text = GetAttribute("content").value_or("");
+#if defined(ENABLE_COBALT_CSP)
     csp::HeaderSource header_source = IsDescendantOfHeadElement()
                                           ? csp::kHeaderSourceMeta
                                           : csp::kHeaderSourceMetaOutsideHead;
 
     node_document()->csp_delegate()->OnReceiveHeader(
         csp_text, csp::kHeaderTypeEnforce, header_source);
+#endif
   }
 
   std::string cobalt_jit_attribute = GetAttribute("cobalt-jit").value_or("");

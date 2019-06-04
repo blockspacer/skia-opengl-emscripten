@@ -46,7 +46,7 @@ target_link_libraries(cobalt_csp PUBLIC
   ##BLINK_RENDERER_NETWORK
   #BLINK_RENDERER_PLATFORM
   GURL
-  GNET
+  ${GNET_LIBS}
   #GCRYPTO
   #GFX_GEOMETRY
   #UI_GFX

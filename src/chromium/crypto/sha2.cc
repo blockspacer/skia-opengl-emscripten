@@ -13,6 +13,7 @@
 
 namespace crypto {
 
+#if defined(ENABLE_BORINGSSL)
 void SHA256HashString(base::StringPiece str, void* output, size_t len) {
   std::unique_ptr<SecureHash> ctx(SecureHash::Create(SecureHash::SHA256));
   ctx->Update(str.data(), str.length());
@@ -24,5 +25,6 @@ std::string SHA256HashString(base::StringPiece str) {
   SHA256HashString(str, base::data(output), output.size());
   return output;
 }
+#endif
 
 }  // namespace crypto

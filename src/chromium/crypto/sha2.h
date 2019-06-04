@@ -20,6 +20,7 @@ namespace crypto {
 
 static const size_t kSHA256Length = 32;  // Length in bytes of a SHA-256 hash.
 
+#if defined(ENABLE_BORINGSSL)
 // Computes the SHA-256 hash of the input string 'str' and stores the first
 // 'len' bytes of the hash in the output buffer 'output'.  If 'len' > 32,
 // only 32 bytes (the full hash) are stored in the 'output' buffer.
@@ -30,6 +31,7 @@ CRYPTO_EXPORT void SHA256HashString(base::StringPiece str,
 // Convenience version of the above that returns the result in a 32-byte
 // string.
 CRYPTO_EXPORT std::string SHA256HashString(base::StringPiece str);
+#endif
 
 }  // namespace crypto
 

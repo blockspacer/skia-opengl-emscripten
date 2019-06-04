@@ -51,11 +51,13 @@ class MemoryStore::Impl {
   bool Serialize(std::vector<uint8>* out) const;
 
   // Cookies
+#if defined(ENABLE_GNET)
   void GetAllCookies(
       std::vector<std::unique_ptr<net::CanonicalCookie>>* cookies) const;
   void AddCookie(const net::CanonicalCookie& cc, int64 expiration_time_us);
   void UpdateCookieAccessTime(const net::CanonicalCookie& cc, int64 time_us);
   void DeleteCookie(const net::CanonicalCookie& cc);
+#endif
 
   // Local Storage
   void ReadAllLocalStorage(const loader::Origin& origin,

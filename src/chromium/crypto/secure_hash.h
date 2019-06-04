@@ -26,9 +26,11 @@ class CRYPTO_EXPORT SecureHash {
 
   static std::unique_ptr<SecureHash> Create(Algorithm type);
 
+#if defined(ENABLE_BORINGSSL)
   virtual void Update(const void* input, size_t len) = 0;
   virtual void Finish(void* output, size_t len) = 0;
   virtual size_t GetHashLength() const = 0;
+#endif
 
   // Create a clone of this SecureHash. The returned clone and this both
   // represent the same hash state. But from this point on, calling

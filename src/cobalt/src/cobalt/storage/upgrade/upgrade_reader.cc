@@ -142,6 +142,7 @@ int UpgradeReader::GetNumLocalStorageEntries() const {
   return static_cast<int>(local_storage_entries_.size());
 }
 
+#if defined(ENABLE_GNET)
 const net::CanonicalCookie* UpgradeReader::GetCookie(int index) const {
   if (index >= 0 && index < static_cast<int>(cookies_.size())) {
     return &cookies_[static_cast<size_t>(index)];
@@ -149,7 +150,9 @@ const net::CanonicalCookie* UpgradeReader::GetCookie(int index) const {
     return static_cast<const net::CanonicalCookie*>(NULL);
   }
 }
+#endif
 
+#if defined(ENABLE_GNET)
 void UpgradeReader::AddCookieIfValid(const base::DictionaryValue* cookie) {
   DCHECK(cookie);
 
@@ -197,6 +200,7 @@ void UpgradeReader::AddCookieIfValid(const base::DictionaryValue* cookie) {
       name, value, domain, path, creation, expiration, last_access, secure,
       http_only, net::CookieSameSite(), net::COOKIE_PRIORITY_DEFAULT));
 }
+#endif
 
 const UpgradeReader::LocalStorageEntry* UpgradeReader::GetLocalStorageEntry(
     int index) const {

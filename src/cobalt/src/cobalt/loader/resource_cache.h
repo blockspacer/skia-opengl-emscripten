@@ -30,7 +30,9 @@
 #include "base/threading/thread_checker.h"
 #include "base/timer/timer.h"
 #include "cobalt/base/c_val.h"
+#if defined(ENABLE_COBALT_CSP)
 #include "cobalt/csp/content_security_policy.h"
+#endif
 #include "cobalt/loader/decoder.h"
 #include "cobalt/loader/fetcher_factory.h"
 #include "cobalt/loader/loader.h"
@@ -69,7 +71,10 @@ class CachedResource
   typedef typename CacheType::ResourceType ResourceType;
 
   typedef base::Callback<std::unique_ptr<Loader>(
-      const GURL&, const Origin&, const csp::SecurityCallback&,
+      const GURL&, const Origin&,
+#if defined(ENABLE_COBALT_CSP)
+      const csp::SecurityCallback&,
+#endif
       const base::Callback<void(const scoped_refptr<ResourceType>&)>&,
       const base::Callback<void(const base::Optional<std::string>&)>&)>
       CreateLoaderFunction;
@@ -486,7 +491,7 @@ class ResourceCache {
   // CachedResource or wrap the resource if necessary.
   scoped_refptr<CachedResourceType> CreateCachedResource(const GURL& url,
                                                          const Origin& origin);
-
+#if defined(ENABLE_COBALT_CSP)
   // Set a callback that the loader will query to determine if the URL is safe
   // according to our document's security policy.
   void set_security_callback(const csp::SecurityCallback& security_callback) {
@@ -495,6 +500,7 @@ class ResourceCache {
   const csp::SecurityCallback& security_callback() const {
     return security_callback_;
   }
+#endif
 
   uint32 capacity() const { return cache_capacity_; }
   void SetCapacity(uint32 capacity);
@@ -566,7 +572,9 @@ class ResourceCache {
 
   CreateLoaderFunction create_loader_function_;
 
+#if defined(ENABLE_COBALT_CSP)
   csp::SecurityCallback security_callback_;
+#endif
 
   // The resource cache attempts to batch callbacks as much as possible to try
   // to ensure that events triggered by the callbacks occur together. It
@@ -787,7 +795,11 @@ std::unique_ptr<Loader> ResourceCache<CacheType>::StartLoadingResource(
   ++count_resources_loading_;
 
   return create_loader_function_.Run(
-      cached_resource->url(), cached_resource->origin(), security_callback_,
+      cached_resource->url(), cached_resource->origin()
+#if defined(ENABLE_COBALT_CSP)
+      , security_callback_
+#endif
+      ,
       base::Bind(&CachedResourceType::OnContentProduced,
                  base::Unretained(cached_resource)),
       base::Bind(&CachedResourceType::OnLoadingComplete,

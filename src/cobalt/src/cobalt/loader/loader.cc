@@ -38,11 +38,19 @@ class Loader::FetcherToDecoderAdapter : public Fetcher::Handler {
 
   // From Fetcher::Handler.
   LoadResponseType OnResponseStarted(
-      Fetcher* fetcher,
-      const scoped_refptr<net::HttpResponseHeaders>& headers) override {
+      Fetcher* fetcher
+#if defined(ENABLE_GNET)
+      ,
+      const scoped_refptr<net::HttpResponseHeaders>& headers
+#endif
+      ) override {
+
+#if defined(ENABLE_GNET)
     if (headers) {
       return decoder_->OnResponseStarted(fetcher, headers);
-    } else {
+    } else
+#endif
+    {
       return kLoadResponseContinue;
     }
   }

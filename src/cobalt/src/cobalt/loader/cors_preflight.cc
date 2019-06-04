@@ -26,6 +26,7 @@
 #include "cobalt/loader/cors_preflight.h"
 #include "starboard/string.h"
 
+#if defined(ENABLE_GNET)
 #include "net/http/http_util.h"
 
 namespace cobalt {
@@ -476,3 +477,4 @@ bool CORSPreflight::CORSCheck(const net::HttpResponseHeaders& response_headers,
 
 }  // namespace loader
 }  // namespace cobalt
+#endif

@@ -106,6 +106,7 @@ bool CheckDigest(const std::string& source, uint8 hash_algorithms_used,
 
 }  // namespace
 
+#if defined(ENABLE_GNET)
 ResponseHeaders::ResponseHeaders(
     const scoped_refptr<net::HttpResponseHeaders>& response) {
   response->GetNormalizedHeader("Content-Security-Policy",
@@ -113,6 +114,7 @@ ResponseHeaders::ResponseHeaders(
   response->GetNormalizedHeader("Content-Security-Policy-Report-Only",
                                 &content_security_policy_report_only_);
 }
+#endif
 
 // CSP Level 1 Directives
 const char ContentSecurityPolicy::kConnectSrc[] = "connect-src";

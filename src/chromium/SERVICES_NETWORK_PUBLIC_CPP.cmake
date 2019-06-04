@@ -131,13 +131,13 @@ add_library(SERVICES_NETWORK_PUBLIC_CPP STATIC
 
 if (EMSCRIPTEN)
   target_link_libraries(SERVICES_NETWORK_PUBLIC_CPP PUBLIC
-    GNET
+    ${GNET_LIBS}
     GURL
     #icu # icuuc
   )
 else()
   target_link_libraries(SERVICES_NETWORK_PUBLIC_CPP PUBLIC
-    GNET
+    ${GNET_LIBS}
     GURL
     MOJO
     #${BASE_LIBRARIES}

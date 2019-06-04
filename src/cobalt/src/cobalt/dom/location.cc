@@ -22,13 +22,21 @@ namespace cobalt {
 namespace dom {
 
 Location::Location(const GURL& url, const base::Closure& hashchange_callback,
-                   const base::Callback<void(const GURL&)>& navigation_callback,
-                   const csp::SecurityCallback& security_callback)
+                   const base::Callback<void(const GURL&)>& navigation_callback
+#if defined(ENABLE_COBALT_CSP)
+                   ,
+                   const csp::SecurityCallback& security_callback
+#endif
+                   )
     : ALLOW_THIS_IN_INITIALIZER_LIST(url_utils_(
           url, base::Bind(&Location::Replace, base::Unretained(this)))),
       hashchange_callback_(hashchange_callback),
-      navigation_callback_(navigation_callback),
-      security_callback_(security_callback) {}
+      navigation_callback_(navigation_callback)
+#if defined(ENABLE_COBALT_CSP)
+      ,
+      security_callback_(security_callback)
+#endif
+      {}
 
 // Algorithm for Replace:
 //   https://www.w3.org/TR/html5/browsers.html#dom-location-replace
@@ -56,6 +64,7 @@ void Location::Replace(const std::string& url) {
     return;
   }
 
+#if defined(ENABLE_COBALT_CSP)
   // Check new URL against security policy.
   if (!security_callback_.is_null() &&
       !security_callback_.Run(new_url, false /* did redirect */)) {
@@ -63,6 +72,7 @@ void Location::Replace(const std::string& url) {
                   << " is rejected by policy, aborting the navigation.";
     return;
   }
+#endif
 
   // Call either hashchange callback or navigation callback.
   GURL::Replacements replacements;

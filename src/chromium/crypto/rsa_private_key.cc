@@ -11,16 +11,19 @@
 
 #include "base/logging.h"
 #include "crypto/openssl_util.h"
+#if defined(ENABLE_BORINGSSL)
 #include "third_party/boringssl/src/include/openssl/bn.h"
 #include "third_party/boringssl/src/include/openssl/bytestring.h"
 #include "third_party/boringssl/src/include/openssl/evp.h"
 #include "third_party/boringssl/src/include/openssl/mem.h"
 #include "third_party/boringssl/src/include/openssl/rsa.h"
+#endif
 
 namespace crypto {
 
 // static
 std::unique_ptr<RSAPrivateKey> RSAPrivateKey::Create(uint16_t num_bits) {
+#if defined(ENABLE_BORINGSSL)
   OpenSSLErrStackTracer err_tracer(FROM_HERE);
 
   bssl::UniquePtr<RSA> rsa_key(RSA_new());
@@ -37,11 +40,16 @@ std::unique_ptr<RSAPrivateKey> RSAPrivateKey::Create(uint16_t num_bits) {
     return nullptr;
 
   return result;
+#else
+  return nullptr;
+#endif
 }
 
 // static
 std::unique_ptr<RSAPrivateKey> RSAPrivateKey::CreateFromPrivateKeyInfo(
     const std::vector<uint8_t>& input) {
+
+#if defined(ENABLE_BORINGSSL)
   OpenSSLErrStackTracer err_tracer(FROM_HERE);
 
   CBS cbs;
@@ -53,8 +61,12 @@ std::unique_ptr<RSAPrivateKey> RSAPrivateKey::CreateFromPrivateKeyInfo(
   std::unique_ptr<RSAPrivateKey> result(new RSAPrivateKey);
   result->key_ = std::move(pkey);
   return result;
+#else
+  return nullptr;
+#endif
 }
 
+#if defined(ENABLE_BORINGSSL)
 // static
 std::unique_ptr<RSAPrivateKey> RSAPrivateKey::CreateFromKey(EVP_PKEY* key) {
   DCHECK(key);
@@ -64,12 +76,14 @@ std::unique_ptr<RSAPrivateKey> RSAPrivateKey::CreateFromKey(EVP_PKEY* key) {
   copy->key_ = bssl::UpRef(key);
   return copy;
 }
+#endif
 
 RSAPrivateKey::RSAPrivateKey() = default;
 
 RSAPrivateKey::~RSAPrivateKey() = default;
 
 std::unique_ptr<RSAPrivateKey> RSAPrivateKey::Copy() const {
+#if defined(ENABLE_BORINGSSL)
   std::unique_ptr<RSAPrivateKey> copy(new RSAPrivateKey);
   bssl::UniquePtr<RSA> rsa(EVP_PKEY_get1_RSA(key_.get()));
   if (!rsa)
@@ -78,9 +92,13 @@ std::unique_ptr<RSAPrivateKey> RSAPrivateKey::Copy() const {
   if (!EVP_PKEY_set1_RSA(copy->key_.get(), rsa.get()))
     return nullptr;
   return copy;
+#else
+  return nullptr;
+#endif
 }
 
 bool RSAPrivateKey::ExportPrivateKey(std::vector<uint8_t>* output) const {
+#if defined(ENABLE_BORINGSSL)
   OpenSSLErrStackTracer err_tracer(FROM_HERE);
   uint8_t *der;
   size_t der_len;
@@ -92,10 +110,12 @@ bool RSAPrivateKey::ExportPrivateKey(std::vector<uint8_t>* output) const {
   }
   output->assign(der, der + der_len);
   OPENSSL_free(der);
+#endif
   return true;
 }
 
 bool RSAPrivateKey::ExportPublicKey(std::vector<uint8_t>* output) const {
+#if defined(ENABLE_BORINGSSL)
   OpenSSLErrStackTracer err_tracer(FROM_HERE);
   uint8_t *der;
   size_t der_len;
@@ -107,6 +127,7 @@ bool RSAPrivateKey::ExportPublicKey(std::vector<uint8_t>* output) const {
   }
   output->assign(der, der + der_len);
   OPENSSL_free(der);
+#endif
   return true;
 }
 

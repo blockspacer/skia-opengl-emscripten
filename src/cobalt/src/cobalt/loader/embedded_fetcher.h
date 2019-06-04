@@ -19,7 +19,9 @@
 #include <string>
 
 #include "base/memory/weak_ptr.h"
+#if defined(ENABLE_COBALT_CSP)
 #include "cobalt/csp/content_security_policy.h"
+#endif
 #include "cobalt/loader/fetcher.h"
 
 namespace cobalt {
@@ -36,28 +38,32 @@ class EmbeddedFetcher : public Fetcher {
   struct Options {
    public:
     Options()
-        : start_offset(0), bytes_to_read(std::numeric_limits<int64>::max()) {}
+        : start_offset(0), bytes_to_read(std::numeric_limits<int64_t>::max()) {}
 
-    int64 start_offset;
-    int64 bytes_to_read;
+    int64_t start_offset;
+    int64_t bytes_to_read;
   };
 
   EmbeddedFetcher(const GURL& url,
+#if defined(ENABLE_COBALT_CSP)
                   const csp::SecurityCallback& security_callback,
+#endif
                   Handler* handler, const Options& options);
 
   ~EmbeddedFetcher() override;
 
  private:
   void Fetch(const Options& options);
-  void GetEmbeddedData(const std::string& key, int64 start_offset,
-                       int64 bytes_to_read);
+  void GetEmbeddedData(const std::string& key, int64_t start_offset,
+                       int64_t bytes_to_read);
   bool IsAllowedByCsp();
 
   void LocalizeFileData(std::string* output_file);
 
   GURL url_;
+#if defined(ENABLE_COBALT_CSP)
   csp::SecurityCallback security_callback_;
+#endif
   base::WeakPtrFactory<EmbeddedFetcher> weak_ptr_factory_;
 };
 

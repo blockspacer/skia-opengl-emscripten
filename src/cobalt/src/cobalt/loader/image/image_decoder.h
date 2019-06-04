@@ -60,8 +60,12 @@ class ImageDecoder : public Decoder {
 
   // From Decoder.
   LoadResponseType OnResponseStarted(
-      Fetcher* fetcher,
-      const scoped_refptr<net::HttpResponseHeaders>& headers) override;
+      Fetcher* fetcher
+#if defined(ENABLE_GNET)
+      ,
+      const scoped_refptr<net::HttpResponseHeaders>& headers
+#endif
+      ) override;
   void DecodeChunk(const char* data, size_t size) override;
   void Finish() override;
   bool Suspend() override;

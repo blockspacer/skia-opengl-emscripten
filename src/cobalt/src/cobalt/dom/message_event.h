@@ -29,7 +29,9 @@
 #include "cobalt/script/array_buffer.h"
 #include "cobalt/script/union_type.h"
 #include "cobalt/script/wrappable.h"
+#if defined(ENABLE_GNET)
 #include "net/base/io_buffer.h"
+#endif
 
 namespace cobalt {
 namespace dom {
@@ -44,12 +46,20 @@ class MessageEvent : public dom::Event {
   enum ResponseTypeCode { kText, kBlob, kArrayBuffer, kResponseTypeCodeMax };
 
   MessageEvent(base::CobToken type, script::EnvironmentSettings* settings,
-               ResponseTypeCode response_type,
-               const scoped_refptr<net::IOBufferWithSize>& data)
+               ResponseTypeCode response_type
+#if defined(ENABLE_GNET)
+               ,
+               const scoped_refptr<net::IOBufferWithSize>& data
+#endif
+               )
       : Event(type),
         settings_(settings),
-        response_type_(response_type),
-        data_(data) {}
+        response_type_(response_type)
+#if defined(ENABLE_GNET)
+        ,
+        data_(data)
+#endif
+        {}
 
   // Creates an event with its "initialized flag" unset.
   explicit MessageEvent(UninitializedFlag uninitialized_flag)
@@ -67,7 +77,8 @@ class MessageEvent : public dom::Event {
  private:
   script::EnvironmentSettings* settings_;
   ResponseTypeCode response_type_;
-  scoped_refptr<net::IOBufferWithSize> data_;
+#if defined(ENABLE_GNET)
+#endif
 };
 
 }  // namespace dom

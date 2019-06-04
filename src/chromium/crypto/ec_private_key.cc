@@ -11,6 +11,8 @@
 
 #include "base/logging.h"
 #include "crypto/openssl_util.h"
+
+#if defined(ENABLE_BORINGSSL)
 #include "third_party/boringssl/src/include/openssl/bn.h"
 #include "third_party/boringssl/src/include/openssl/bytestring.h"
 #include "third_party/boringssl/src/include/openssl/ec.h"
@@ -18,6 +20,7 @@
 #include "third_party/boringssl/src/include/openssl/evp.h"
 #include "third_party/boringssl/src/include/openssl/mem.h"
 #include "third_party/boringssl/src/include/openssl/pkcs8.h"
+#endif
 
 namespace crypto {
 
@@ -25,6 +28,7 @@ ECPrivateKey::~ECPrivateKey() = default;
 
 // static
 std::unique_ptr<ECPrivateKey> ECPrivateKey::Create() {
+#if defined(ENABLE_BORINGSSL)
   OpenSSLErrStackTracer err_tracer(FROM_HERE);
 
   bssl::UniquePtr<EC_KEY> ec_key(
@@ -39,6 +43,9 @@ std::unique_ptr<ECPrivateKey> ECPrivateKey::Create() {
 
   CHECK_EQ(EVP_PKEY_EC, EVP_PKEY_id(result->key_.get()));
   return result;
+#else
+  return nullptr;
+#endif
 }
 
 // static
@@ -46,6 +53,7 @@ std::unique_ptr<ECPrivateKey> ECPrivateKey::CreateFromPrivateKeyInfo(
     const std::vector<uint8_t>& input) {
   OpenSSLErrStackTracer err_tracer(FROM_HERE);
 
+#if defined(ENABLE_BORINGSSL)
   CBS cbs;
   CBS_init(&cbs, input.data(), input.size());
   bssl::UniquePtr<EVP_PKEY> pkey(EVP_parse_private_key(&cbs));
@@ -55,6 +63,9 @@ std::unique_ptr<ECPrivateKey> ECPrivateKey::CreateFromPrivateKeyInfo(
   std::unique_ptr<ECPrivateKey> result(new ECPrivateKey());
   result->key_ = std::move(pkey);
   return result;
+#else
+  return nullptr;
+#endif
 }
 
 // static
@@ -62,6 +73,7 @@ std::unique_ptr<ECPrivateKey> ECPrivateKey::CreateFromEncryptedPrivateKeyInfo(
     const std::vector<uint8_t>& encrypted_private_key_info) {
   OpenSSLErrStackTracer err_tracer(FROM_HERE);
 
+#if defined(ENABLE_BORINGSSL)
   CBS cbs;
   CBS_init(&cbs, encrypted_private_key_info.data(),
            encrypted_private_key_info.size());
@@ -85,15 +97,23 @@ std::unique_ptr<ECPrivateKey> ECPrivateKey::CreateFromEncryptedPrivateKeyInfo(
   std::unique_ptr<ECPrivateKey> result(new ECPrivateKey());
   result->key_ = std::move(pkey);
   return result;
+#else
+  return nullptr;
+#endif
 }
 
 std::unique_ptr<ECPrivateKey> ECPrivateKey::Copy() const {
   std::unique_ptr<ECPrivateKey> copy(new ECPrivateKey());
+#if defined(ENABLE_BORINGSSL)
   copy->key_ = bssl::UpRef(key_);
   return copy;
+#else
+  return nullptr;
+#endif
 }
 
 bool ECPrivateKey::ExportPrivateKey(std::vector<uint8_t>* output) const {
+#if defined(ENABLE_BORINGSSL)
   OpenSSLErrStackTracer err_tracer(FROM_HERE);
   uint8_t* der;
   size_t der_len;
@@ -106,10 +126,14 @@ bool ECPrivateKey::ExportPrivateKey(std::vector<uint8_t>* output) const {
   output->assign(der, der + der_len);
   OPENSSL_free(der);
   return true;
+#else
+  return false;
+#endif
 }
 
 bool ECPrivateKey::ExportEncryptedPrivateKey(
     std::vector<uint8_t>* output) const {
+#if defined(ENABLE_BORINGSSL)
   OpenSSLErrStackTracer err_tracer(FROM_HERE);
 
   // Encrypt the object.
@@ -131,9 +155,13 @@ bool ECPrivateKey::ExportEncryptedPrivateKey(
   output->assign(der, der + der_len);
   OPENSSL_free(der);
   return true;
+#else
+  return false;
+#endif
 }
 
 bool ECPrivateKey::ExportPublicKey(std::vector<uint8_t>* output) const {
+#if defined(ENABLE_BORINGSSL)
   OpenSSLErrStackTracer err_tracer(FROM_HERE);
   uint8_t *der;
   size_t der_len;
@@ -146,9 +174,13 @@ bool ECPrivateKey::ExportPublicKey(std::vector<uint8_t>* output) const {
   output->assign(der, der + der_len);
   OPENSSL_free(der);
   return true;
+#else
+  return false;
+#endif
 }
 
 bool ECPrivateKey::ExportRawPublicKey(std::string* output) const {
+#if defined(ENABLE_BORINGSSL)
   OpenSSLErrStackTracer err_tracer(FROM_HERE);
 
   // Export the x and y field elements as 32-byte, big-endian numbers. (This is
@@ -168,6 +200,9 @@ bool ECPrivateKey::ExportRawPublicKey(std::string* output) const {
 
   output->assign(reinterpret_cast<const char*>(buf), sizeof(buf));
   return true;
+#else
+  return false;
+#endif
 }
 
 ECPrivateKey::ECPrivateKey() = default;

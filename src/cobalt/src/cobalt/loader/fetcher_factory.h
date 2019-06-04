@@ -21,7 +21,9 @@
 #include "base/callback.h"
 #include "base/files/file_path.h"
 #include "base/threading/thread.h"
+#if defined(ENABLE_COBALT_CSP)
 #include "cobalt/csp/content_security_policy.h"
+#endif
 #include "cobalt/loader/blob_fetcher.h"
 #include "cobalt/loader/fetcher.h"
 #include "url/gurl.h"
@@ -51,7 +53,10 @@ class FetcherFactory {
                                          Fetcher::Handler* handler);
 
   std::unique_ptr<Fetcher> CreateSecureFetcher(
-      const GURL& url, const csp::SecurityCallback& url_security_callback,
+      const GURL& url,
+#if defined(ENABLE_COBALT_CSP)
+      const csp::SecurityCallback& url_security_callback,
+#endif
       RequestMode request_mode, const Origin& origin,
       Fetcher::Handler* handler);
 

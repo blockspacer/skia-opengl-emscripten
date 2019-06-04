@@ -109,9 +109,11 @@ P224EncryptedKeyExchange::P224EncryptedKeyExchange(PeerType peer_type,
   // x_ is a random scalar.
   RandBytes(x_, sizeof(x_));
 
+#if defined(ENABLE_BORINGSSL)
   // Calculate |password| hash to get SPAKE password value.
   SHA256HashString(std::string(password.data(), password.length()),
                    pw_, sizeof(pw_));
+#endif
 
   Init();
 }
@@ -241,7 +243,9 @@ void P224EncryptedKeyExchange::CalculateHash(
       std::string(reinterpret_cast<const char *>(pw_), sizeof(pw_));
   hash_contents += k;
 
+#if defined(ENABLE_BORINGSSL)
   SHA256HashString(hash_contents, out_digest, kSHA256Length);
+#endif
 }
 
 const std::string& P224EncryptedKeyExchange::error() const {

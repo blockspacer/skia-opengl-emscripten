@@ -45,13 +45,20 @@ LoaderFactory::LoaderFactory(FetcherFactory* fetcher_factory,
 
 std::unique_ptr<Loader> LoaderFactory::CreateImageLoader(
     const GURL& url, const Origin& origin,
+#if defined(ENABLE_COBALT_CSP)
     const csp::SecurityCallback& url_security_callback,
+#endif
     const image::ImageDecoder::ImageAvailableCallback& image_available_callback,
     const Loader::OnCompleteFunction& load_complete_callback) {
   DCHECK(thread_checker_.CalledOnValidThread());
 
   Loader::FetcherCreator fetcher_creator =
-      MakeFetcherCreator(url, url_security_callback, kNoCORSMode, origin);
+      MakeFetcherCreator(url
+#if defined(ENABLE_COBALT_CSP)
+      , url_security_callback
+#endif
+      ,
+      kNoCORSMode, origin);
 
 #if defined(__TODO__)
   std::unique_ptr<Loader> loader(new Loader(
@@ -71,14 +78,20 @@ std::unique_ptr<Loader> LoaderFactory::CreateImageLoader(
 
 std::unique_ptr<Loader> LoaderFactory::CreateTypefaceLoader(
     const GURL& url, const Origin& origin,
+#if defined(ENABLE_COBALT_CSP)
     const csp::SecurityCallback& url_security_callback,
+#endif
     const font::TypefaceDecoder::TypefaceAvailableCallback&
         typeface_available_callback,
     const Loader::OnCompleteFunction& load_complete_callback) {
   DCHECK(thread_checker_.CalledOnValidThread());
 
   Loader::FetcherCreator fetcher_creator = MakeFetcherCreator(
-      url, url_security_callback, kCORSModeSameOriginCredentials, origin);
+      url,
+#if defined(ENABLE_COBALT_CSP)
+      url_security_callback,
+#endif
+      kCORSModeSameOriginCredentials, origin);
 
   std::unique_ptr<Loader> loader(new Loader(
       fetcher_creator,
@@ -95,13 +108,19 @@ std::unique_ptr<Loader> LoaderFactory::CreateTypefaceLoader(
 // Creates a loader that fetches and decodes a Mesh.
 std::unique_ptr<Loader> LoaderFactory::CreateMeshLoader(
     const GURL& url, const Origin& origin,
+#if defined(ENABLE_COBALT_CSP)
     const csp::SecurityCallback& url_security_callback,
+#endif
     const mesh::MeshDecoder::MeshAvailableCallback& mesh_available_callback,
     const Loader::OnCompleteFunction& load_complete_callback) {
   DCHECK(thread_checker_.CalledOnValidThread());
 
   Loader::FetcherCreator fetcher_creator =
-      MakeFetcherCreator(url, url_security_callback, kNoCORSMode, origin);
+      MakeFetcherCreator(url,
+#if defined(ENABLE_COBALT_CSP)
+      url_security_callback,
+#endif
+      kNoCORSMode, origin);
 
   std::unique_ptr<Loader> loader(new Loader(
       fetcher_creator,
@@ -117,14 +136,20 @@ std::unique_ptr<Loader> LoaderFactory::CreateMeshLoader(
 
 std::unique_ptr<Loader> LoaderFactory::CreateLinkLoader(
     const GURL& url, const Origin& origin,
+#if defined(ENABLE_COBALT_CSP)
     const csp::SecurityCallback& url_security_callback,
+#endif
     const loader::RequestMode cors_mode,
     const TextDecoder::TextAvailableCallback& link_available_callback,
     const Loader::OnCompleteFunction& load_complete_callback) {
   DCHECK(thread_checker_.CalledOnValidThread());
 
   Loader::FetcherCreator fetcher_creator =
-      MakeFetcherCreator(url, url_security_callback, cors_mode, origin);
+      MakeFetcherCreator(url,
+#if defined(ENABLE_COBALT_CSP)
+      url_security_callback,
+#endif
+      cors_mode, origin);
 
   std::unique_ptr<Loader> loader(new Loader(
       fetcher_creator,
@@ -139,13 +164,19 @@ std::unique_ptr<Loader> LoaderFactory::CreateLinkLoader(
 
 std::unique_ptr<Loader> LoaderFactory::CreateScriptLoader(
     const GURL& url, const Origin& origin,
+#if defined(ENABLE_COBALT_CSP)
     const csp::SecurityCallback& url_security_callback,
+#endif
     const TextDecoder::TextAvailableCallback& script_available_callback,
     const Loader::OnCompleteFunction& load_complete_callback) {
   DCHECK(thread_checker_.CalledOnValidThread());
 
   Loader::FetcherCreator fetcher_creator =
-      MakeFetcherCreator(url, url_security_callback, kNoCORSMode, origin);
+      MakeFetcherCreator(url,
+#if defined(ENABLE_COBALT_CSP)
+      url_security_callback,
+#endif
+      kNoCORSMode, origin);
 
   std::unique_ptr<Loader> loader(new Loader(
       fetcher_creator,
@@ -159,13 +190,19 @@ std::unique_ptr<Loader> LoaderFactory::CreateScriptLoader(
 }
 
 Loader::FetcherCreator LoaderFactory::MakeFetcherCreator(
-    const GURL& url, const csp::SecurityCallback& url_security_callback,
+    const GURL& url,
+#if defined(ENABLE_COBALT_CSP)
+    const csp::SecurityCallback& url_security_callback,
+#endif
     RequestMode request_mode, const Origin& origin) {
   DCHECK(thread_checker_.CalledOnValidThread());
 
   return base::Bind(&FetcherFactory::CreateSecureFetcher,
                     base::Unretained(fetcher_factory_), url,
-                    url_security_callback, request_mode, origin);
+#if defined(ENABLE_COBALT_CSP)
+                    url_security_callback,
+#endif
+                    request_mode, origin);
 }
 
 void LoaderFactory::Suspend() {

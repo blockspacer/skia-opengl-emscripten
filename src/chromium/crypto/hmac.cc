@@ -14,7 +14,10 @@
 #include "crypto/openssl_util.h"
 #include "crypto/secure_util.h"
 #include "crypto/symmetric_key.h"
+
+#if defined(ENABLE_BORINGSSL)
 #include "third_party/boringssl/src/include/openssl/hmac.h"
+#endif
 
 namespace crypto {
 
@@ -56,6 +59,7 @@ bool HMAC::Init(const SymmetricKey* key) {
 bool HMAC::Sign(base::StringPiece data,
                 unsigned char* digest,
                 size_t digest_length) const {
+#if defined(ENABLE_BORINGSSL)
   DCHECK(initialized_);
 
   ScopedOpenSSLSafeSizeBuffer<EVP_MAX_MD_SIZE> result(digest, digest_length);
@@ -63,6 +67,9 @@ bool HMAC::Sign(base::StringPiece data,
                   key_.size(),
                   reinterpret_cast<const unsigned char*>(data.data()),
                   data.size(), result.safe_buffer(), nullptr);
+#else
+  return false;
+#endif
 }
 
 bool HMAC::Verify(base::StringPiece data, base::StringPiece digest) const {

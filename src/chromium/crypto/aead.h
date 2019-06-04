@@ -12,7 +12,9 @@
 #include "base/strings/string_piece.h"
 #include "crypto/crypto_export.h"
 
+#if defined(ENABLE_BORINGSSL)
 struct evp_aead_st;
+#endif
 
 namespace crypto {
 
@@ -43,7 +45,9 @@ class CRYPTO_EXPORT Aead {
 
  private:
   const std::string* key_;
+#if defined(ENABLE_BORINGSSL)
   const evp_aead_st* aead_;
+#endif
 };
 
 }  // namespace crypto

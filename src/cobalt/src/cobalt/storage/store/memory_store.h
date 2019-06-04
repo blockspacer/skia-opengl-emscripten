@@ -24,7 +24,9 @@
 //#include "base/containers/hash_tables.h"
 #include <map>
 #include "cobalt/loader/origin.h"
+#if defined(ENABLE_GNET)
 #include "net/cookies/canonical_cookie.h"
+#endif
 
 namespace cobalt {
 namespace storage {
@@ -33,8 +35,9 @@ namespace storage {
 class MemoryStore {
  public:
   typedef std::map<std::string, std::string> LocalStorageMap;
+#if defined(ENABLE_GNET)
   typedef const std::vector<net::CanonicalCookie*> Cookies;
-
+#endif
   MemoryStore();
   bool Initialize(const std::vector<uint8>& in);
 
@@ -42,12 +45,13 @@ class MemoryStore {
   bool Serialize(std::vector<uint8>* out) const;
 
   // Cookies
+#if defined(ENABLE_GNET)
   void GetAllCookies(
       std::vector<std::unique_ptr<net::CanonicalCookie>>* cookies) const;
   void AddCookie(const net::CanonicalCookie& cc, int64 expiration_time_us);
   void UpdateCookieAccessTime(const net::CanonicalCookie& cc, int64 time_us);
   void DeleteCookie(const net::CanonicalCookie& cc);
-
+#endif
 
   // Local Storage
   void ReadAllLocalStorage(const loader::Origin& origin,

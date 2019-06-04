@@ -40,13 +40,18 @@ bool CacheURLToKey(const GURL& url, std::string* key) {
 const char kCacheScheme[] = "h5vcc-cache";
 
 CacheFetcher::CacheFetcher(
-    const GURL& url, const csp::SecurityCallback& security_callback,
+    const GURL& url,
+#if defined(ENABLE_COBALT_CSP)
+    const csp::SecurityCallback& security_callback,
+#endif
     Handler* handler,
     const base::Callback<int(const std::string&, std::unique_ptr<char[]>*)>&
         read_cache_callback)
     : Fetcher(handler),
       url_(url),
+#if defined(ENABLE_COBALT_CSP)
       security_callback_(security_callback),
+#endif
       ALLOW_THIS_IN_INITIALIZER_LIST(weak_ptr_factory_(this)),
       read_cache_callback_(read_cache_callback) {
   TRACE_EVENT0("cobalt::loader", "CacheFetcher::CacheFetcher");
@@ -93,12 +98,16 @@ void CacheFetcher::GetCacheData(const std::string& key) {
 
 bool CacheFetcher::IsAllowedByCsp() {
   bool did_redirect = false;
+#if defined(ENABLE_COBALT_CSP)
   if (security_callback_.is_null() ||
       security_callback_.Run(url_, did_redirect)) {
     return true;
   } else {
     return false;
   }
+#else
+  return true;
+#endif
 }
 
 }  // namespace loader

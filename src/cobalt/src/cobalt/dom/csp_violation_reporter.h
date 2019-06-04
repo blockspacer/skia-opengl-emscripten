@@ -22,7 +22,9 @@
 #include <map>
 #include "base/message_loop/message_loop.h"
 #include "cobalt/base/source_location.h"
+#if defined(ENABLE_COBALT_CSP)
 #include "cobalt/csp/content_security_policy.h"
+#endif
 
 #if !defined(__EMSCRIPTEN__) && defined(__TODO__)
 #include "cobalt/network_bridge/net_poster.h"
@@ -33,6 +35,7 @@ namespace dom {
 
 class Document;
 
+#if defined(ENABLE_COBALT_CSP)
 // Responsible for reporting CSP violations, i.e. posting JSON
 // reports to any reporting endpoints described by the policy.
 // This object should be created by the Document that owns a CspDelegate,
@@ -80,6 +83,7 @@ class CspViolationReporter {
 
   DISALLOW_COPY_AND_ASSIGN(CspViolationReporter);
 };
+#endif
 
 }  // namespace dom
 }  // namespace cobalt

@@ -34,6 +34,7 @@ namespace cobalt {
 namespace dom {
 namespace {
 
+#if defined(ENABLE_COBALT_CSP)
 CspDelegate::ResourceType GetCspResourceTypeForRel(const std::string& rel) {
   if (rel == "stylesheet") {
     return CspDelegate::kStyle;
@@ -44,6 +45,7 @@ CspDelegate::ResourceType GetCspResourceTypeForRel(const std::string& rel) {
     return CspDelegate::kImage;
   }
 }
+#endif
 
 bool IsRelContentCriticalResource(const std::string& rel) {
   return rel == "stylesheet";
@@ -160,9 +162,11 @@ void HTMLLinkElement::Obtain() {
   // the mode being the current state of the element's crossorigin content
   // attribute, the origin being the origin of the link element's Document, and
   // the default origin behaviour set to taint.
+#if defined(ENABLE_COBALT_CSP)
   csp::SecurityCallback csp_callback = base::Bind(
       &CspDelegate::CanLoad, base::Unretained(document->csp_delegate()),
       GetCspResourceTypeForRel(rel()));
+#endif
 
   fetched_last_url_origin_ = loader::Origin();
 
@@ -181,7 +185,11 @@ void HTMLLinkElement::Obtain() {
                               : loader::Origin();
 
   loader_ = html_element_context()->loader_factory()->CreateLinkLoader(
-      absolute_url_, origin, csp_callback, request_mode_,
+      absolute_url_, origin
+#if defined(ENABLE_COBALT_CSP)
+      , csp_callback
+#endif
+      , request_mode_,
       base::Bind(&HTMLLinkElement::OnContentProduced, base::Unretained(this)),
       base::Bind(&HTMLLinkElement::OnLoadingComplete, base::Unretained(this)));
 }

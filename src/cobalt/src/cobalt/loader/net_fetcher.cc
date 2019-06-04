@@ -21,9 +21,8 @@
 #include "cobalt/base/polymorphic_downcast.h"
 #include "cobalt/loader/cors_preflight.h"
 
-#if !defined(__EMSCRIPTEN__) && defined(__TODO__)
+#if defined(ENABLE_GNET)
 #include "cobalt/network/network_module.h"
-#endif
 
 #include "net/url_request/url_fetcher.h"
 #if defined(OS_STARBOARD)
@@ -249,3 +248,4 @@ NetFetcher::ReturnWrapper NetFetcher::HandleError(const std::string& message) {
 
 }  // namespace loader
 }  // namespace cobalt
+#endif

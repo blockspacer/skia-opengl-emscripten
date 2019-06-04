@@ -35,6 +35,7 @@
 namespace cobalt {
 namespace dom {
 
+#if defined(ENABLE_COBALT_CSP)
 namespace {
 
 // Fields in the JSON violation report.
@@ -227,6 +228,7 @@ void CspViolationReporter::SendViolationReports(
 #endif
   }
 }
+#endif // ENABLE_COBALT_CSP
 
 }  // namespace dom
 }  // namespace cobalt

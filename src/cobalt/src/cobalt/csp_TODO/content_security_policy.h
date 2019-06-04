@@ -22,7 +22,9 @@
 #include "base/callback.h"
 #include "base/containers/hash_tables.h"
 #include "cobalt/csp/parsers.h"
+#if defined(ENABLE_GNET)
 #include "net/http/http_response_headers.h"
+#endif
 #include "url/gurl.h"
 
 namespace cobalt {
@@ -59,8 +61,12 @@ typedef base::Callback<void(const ViolationInfo&)> ViolationCallback;
 class ResponseHeaders {
  public:
   ResponseHeaders() {}
+
+#if defined(ENABLE_GNET)
   explicit ResponseHeaders(
-      const scoped_refptr<net::HttpResponseHeaders>& response);
+      const scoped_refptr<net::HttpResponseHeaders>& response
+      );
+#endif
 
   const std::string& content_security_policy() const {
     return content_security_policy_;

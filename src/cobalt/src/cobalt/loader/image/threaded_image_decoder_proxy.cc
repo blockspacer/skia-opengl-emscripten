@@ -91,9 +91,18 @@ ThreadedImageDecoderProxy::~ThreadedImageDecoderProxy() {
 }
 
 LoadResponseType ThreadedImageDecoderProxy::OnResponseStarted(
-    Fetcher* fetcher, const scoped_refptr<net::HttpResponseHeaders>& headers) {
+    Fetcher* fetcher
+#if defined(ENABLE_GNET)
+    ,
+    const scoped_refptr<net::HttpResponseHeaders>& headers
+#endif
+    ) {
   SB_UNREFERENCED_PARAMETER(fetcher);
-  return image_decoder_->OnResponseStarted(fetcher, headers);
+  return image_decoder_->OnResponseStarted(fetcher
+#if defined(ENABLE_GNET)
+  , headers
+#endif
+  );
 }
 
 void ThreadedImageDecoderProxy::DecodeChunk(const char* data, size_t size) {

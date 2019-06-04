@@ -62,7 +62,9 @@ namespace cobalt {
 namespace dom {
 
 class Comment;
+#if defined(ENABLE_COBALT_CSP)
 class CspDelegate;
+#endif
 class DOMImplementation;
 class Element;
 class FontCache;
@@ -127,7 +129,9 @@ class Document : public Node,
             network_bridge::CookieJar* cookie_jar,
             const network_bridge::PostSender& post_sender,
 #endif
+#if defined(ENABLE_COBALT_CSP)
             csp::CSPHeaderPolicy require_csp,
+#endif
             CspEnforcementType csp_enforcement_mode,
             const base::Closure& csp_policy_changed_callback,
             int csp_insecure_allowed_token = 0, int dom_max_element_depth = 0)
@@ -143,7 +147,9 @@ class Document : public Node,
           cookie_jar(cookie_jar),
           post_sender(post_sender),
 #endif
+#if defined(ENABLE_COBALT_CSP)
           require_csp(require_csp),
+#endif
           csp_enforcement_mode(csp_enforcement_mode),
           csp_policy_changed_callback(csp_policy_changed_callback),
           csp_insecure_allowed_token(csp_insecure_allowed_token),
@@ -162,7 +168,9 @@ class Document : public Node,
     network_bridge::PostSender post_sender;
 #endif
 
+#if defined(ENABLE_COBALT_CSP)
     csp::CSPHeaderPolicy require_csp;
+#endif
     CspEnforcementType csp_enforcement_mode;
     base::Closure csp_policy_changed_callback;
     int csp_insecure_allowed_token;
@@ -367,7 +375,9 @@ class Document : public Node,
     return navigation_start_clock_;
   }
 
+#if defined(ENABLE_COBALT_CSP)
   CspDelegate* csp_delegate() const { return csp_delegate_.get(); }
+#endif
 
 #if defined(ENABLE_PARTIAL_LAYOUT_CONTROL)
   bool partial_layout_is_enabled() { return partial_layout_is_enabled_; }
@@ -516,7 +526,9 @@ class Document : public Node,
   // Viewport size.
   base::Optional<cssom::ViewportSize> viewport_size_;
   // Content Security Policy enforcement for this document.
+#if defined(ENABLE_COBALT_CSP)
   std::unique_ptr<CspDelegate> csp_delegate_;
+#endif
 
 #if !defined(__EMSCRIPTEN__) && defined(__TODO__)
   network_bridge::CookieJar* cookie_jar_;

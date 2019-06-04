@@ -18,7 +18,9 @@
 #include <string>
 
 #include "base/callback.h"
+#if defined(ENABLE_COBALT_CSP)
 #include "cobalt/csp/content_security_policy.h"
+#endif
 #include "cobalt/dom/url_utils.h"
 #include "cobalt/script/wrappable.h"
 #include "url/gurl.h"
@@ -36,8 +38,12 @@ class Location : public script::Wrappable {
   // If any navigation is triggered, all these callbacks should be provided,
   // otherwise they can be empty.
   Location(const GURL& url, const base::Closure& hashchange_callback,
-           const base::Callback<void(const GURL&)>& navigation_callback,
-           const csp::SecurityCallback& security_callback);
+           const base::Callback<void(const GURL&)>& navigation_callback
+#if defined(ENABLE_COBALT_CSP)
+           ,
+           const csp::SecurityCallback& security_callback
+#endif
+           );
 
   // Web API: Location
   //
@@ -101,7 +107,9 @@ class Location : public script::Wrappable {
   URLUtils url_utils_;
   base::Closure hashchange_callback_;
   base::Callback<void(const GURL&)> navigation_callback_;
+#if defined(ENABLE_COBALT_CSP)
   csp::SecurityCallback security_callback_;
+#endif
 
   DISALLOW_COPY_AND_ASSIGN(Location);
 };

@@ -280,6 +280,7 @@ void HTMLScriptElement::Prepare() {
 
   // https://www.w3.org/TR/CSP2/#directive-script-src
 
+#if defined(ENABLE_COBALT_CSP)
   CspDelegate* csp_delegate = document_->csp_delegate();
   // If the script element has a valid nonce, we always permit it, regardless
   // of its URL or inline nature.
@@ -294,6 +295,7 @@ void HTMLScriptElement::Prepare() {
         base::Bind(&CspDelegate::CanLoad, base::Unretained(csp_delegate),
                    CspDelegate::kScript);
   }
+#endif
 
 #ifdef ENABLE_LOADER
   // Clear fetched resource's origin before start.
@@ -423,19 +425,25 @@ void HTMLScriptElement::Prepare() {
       // scripts are already executing.
       base::Optional<std::string> content = text_content();
       const std::string& text = content.value_or(base::EmptyString());
+#if defined(ENABLE_COBALT_CSP)
       if (bypass_csp || text.empty() ||
           csp_delegate->AllowInline(CspDelegate::kScript,
                                     inline_script_location_,
-                                    text)) {
+                                    text))
+#endif
+                                    {
 #ifdef ENABLE_LOADER
         fetched_last_url_origin_ = document_->location()->GetOriginAsObject();
 #endif
         ExecuteInternal();
-      } else {
+      }
+#if defined(ENABLE_COBALT_CSP)
+      else {
         PreventGarbageCollectionAndPostToDispatchEvent(
             FROM_HERE, base::Tokens::error(),
             &prevent_gc_until_error_event_dispatch_);
       }
+#endif
     } break;
     default: { NOTREACHED(); }
   }

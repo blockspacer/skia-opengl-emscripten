@@ -551,17 +551,24 @@ base::Optional<std::string> HTMLElement::GetStyleAttribute() const {
 
 void HTMLElement::SetStyleAttribute(const std::string& value) {
   Document* document = node_document();
+
+#if defined(ENABLE_COBALT_CSP)
   CspDelegate* csp_delegate = document->csp_delegate();
   if (value.empty() ||
       csp_delegate->AllowInline(
           CspDelegate::kStyle,
-          base::SourceLocation(GetSourceLocationName(), 1, 1), value)) {
+          base::SourceLocation(GetSourceLocationName(), 1, 1), value))
+#endif
+  {
     style_->set_css_text(value, NULL);
     Element::SetStyleAttribute(value);
-  } else {
+  }
+#if defined(ENABLE_COBALT_CSP)
+  else {
     // Report a violation.
     PostToDispatchEventName(FROM_HERE, base::Tokens::error());
   }
+#endif
 }
 
 void HTMLElement::RemoveStyleAttribute() {

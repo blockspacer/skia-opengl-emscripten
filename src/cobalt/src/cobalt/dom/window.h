@@ -166,7 +166,9 @@ class Window : public EventTarget,
       const network_bridge::PostSender& post_sender,
 #endif
 
+#if defined(ENABLE_COBALT_CSP)
       csp::CSPHeaderPolicy require_csp,
+#endif
       dom::CspEnforcementType csp_enforcement_mode,
       const base::Closure& csp_policy_changed_callback,
       const base::Closure& ran_animation_frame_callbacks_callback,
@@ -388,9 +390,11 @@ class Window : public EventTarget,
   // Cache the passed in splash screen content for the window.location URL.
   void CacheSplashScreen(const std::string& content);
 
+#if defined(ENABLE_GNET)
   const scoped_refptr<loader::CORSPreflightCache> get_preflight_cache() {
     return preflight_cache_;
   }
+#endif
 
   // Custom on screen keyboard.
   const scoped_refptr<OnScreenKeyboard>& on_screen_keyboard() const;
@@ -472,8 +476,10 @@ class Window : public EventTarget,
 
   scoped_refptr<Screen> screen_;
 
+#if defined(ENABLE_GNET)
   // Global preflight cache.
   scoped_refptr<loader::CORSPreflightCache> preflight_cache_;
+#endif
 
   const base::Closure ran_animation_frame_callbacks_callback_;
   const CloseCallback window_close_callback_;

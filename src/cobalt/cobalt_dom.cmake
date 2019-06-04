@@ -372,8 +372,8 @@ target_link_libraries(cobalt_dom PUBLIC
   base # TODO
   cobalt_base
   cobalt_nanobase
-  cobalt_csp
-  cobalt_loader
+  ${COBALT_CSP_LIB_NAME}
+  ${COBALT_LOADER_LIB_NAME}
   cobalt_media
   cobalt_page_visibility
   cobalt_script
@@ -394,7 +394,7 @@ target_link_libraries(cobalt_dom PUBLIC
   ##BLINK_RENDERER_NETWORK
   #BLINK_RENDERER_PLATFORM
   GURL
-  GNET
+  ${GNET_LIBS}
   #GCRYPTO
   #GFX_GEOMETRY
   #UI_GFX

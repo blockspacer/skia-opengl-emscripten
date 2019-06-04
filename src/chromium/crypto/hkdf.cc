@@ -11,8 +11,10 @@
 
 #include "base/logging.h"
 #include "crypto/hmac.h"
+#if defined(ENABLE_BORINGSSL)
 #include "third_party/boringssl/src/include/openssl/digest.h"
 #include "third_party/boringssl/src/include/openssl/hkdf.h"
+#endif
 
 namespace crypto {
 
@@ -21,6 +23,7 @@ std::string HkdfSha256(base::StringPiece secret,
                        base::StringPiece info,
                        size_t derived_key_size) {
   std::string key;
+#if defined(ENABLE_BORINGSSL)
   key.resize(derived_key_size);
   int result = ::HKDF(
       reinterpret_cast<uint8_t*>(&key[0]), derived_key_size, EVP_sha256(),
@@ -28,6 +31,7 @@ std::string HkdfSha256(base::StringPiece secret,
       reinterpret_cast<const uint8_t*>(salt.data()), salt.size(),
       reinterpret_cast<const uint8_t*>(info.data()), info.size());
   DCHECK(result);
+#endif
   return key;
 }
 

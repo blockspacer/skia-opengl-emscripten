@@ -10,12 +10,15 @@
 
 #include "base/strings/string_util.h"
 #include "crypto/openssl_util.h"
+#if defined(ENABLE_BORINGSSL)
 #include "third_party/boringssl/src/include/openssl/aes.h"
 #include "third_party/boringssl/src/include/openssl/evp.h"
+#endif
 
 namespace crypto {
 
 Aead::Aead(AeadAlgorithm algorithm) : key_(nullptr) {
+#if defined(ENABLE_BORINGSSL)
   EnsureOpenSSLInit();
   switch (algorithm) {
     case AES_128_CTR_HMAC_SHA256:
@@ -28,6 +31,7 @@ Aead::Aead(AeadAlgorithm algorithm) : key_(nullptr) {
       aead_ = EVP_aead_aes_256_gcm_siv();
       break;
   }
+#endif
 }
 
 Aead::~Aead() = default;
@@ -42,6 +46,7 @@ bool Aead::Seal(base::StringPiece plaintext,
                 base::StringPiece nonce,
                 base::StringPiece additional_data,
                 std::string* ciphertext) const {
+#if defined(ENABLE_BORINGSSL)
   DCHECK(key_);
   DCHECK_EQ(NonceLength(), nonce.size());
   EVP_AEAD_CTX ctx;
@@ -74,7 +79,7 @@ bool Aead::Seal(base::StringPiece plaintext,
 
   ciphertext->swap(result);
   EVP_AEAD_CTX_cleanup(&ctx);
-
+#endif
   return true;
 }
 
@@ -82,6 +87,7 @@ bool Aead::Open(base::StringPiece ciphertext,
                 base::StringPiece nonce,
                 base::StringPiece additional_data,
                 std::string* plaintext) const {
+#if defined(ENABLE_BORINGSSL)
   DCHECK(key_);
   EVP_AEAD_CTX ctx;
 
@@ -113,16 +119,24 @@ bool Aead::Open(base::StringPiece ciphertext,
 
   plaintext->swap(result);
   EVP_AEAD_CTX_cleanup(&ctx);
-
+#endif
   return true;
 }
 
 size_t Aead::KeyLength() const {
+#if defined(ENABLE_BORINGSSL)
   return EVP_AEAD_key_length(aead_);
+#else
+  return 0;
+#endif
 }
 
 size_t Aead::NonceLength() const {
+#if defined(ENABLE_BORINGSSL)
   return EVP_AEAD_nonce_length(aead_);
+#else
+  return 0;
+#endif
 }
 
 }  // namespace crypto

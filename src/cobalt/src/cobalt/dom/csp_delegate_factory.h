@@ -21,7 +21,9 @@
 #include "base/callback_forward.h"
 #include "base/gtest_prod_util.h"
 #include "base/memory/singleton.h"
+#if defined(ENABLE_COBALT_CSP)
 #include "cobalt/csp/content_security_policy.h"
+#endif
 #include "cobalt/dom/csp_delegate_type.h"
 #include "url/gurl.h"
 
@@ -35,6 +37,7 @@ class SplashScreen;
 
 namespace dom {
 
+#if defined(ENABLE_COBALT_CSP)
 class CspDelegate;
 class CspViolationReporter;
 
@@ -82,6 +85,7 @@ class CspDelegateFactory {
   friend struct base::DefaultSingletonTraits<CspDelegateFactory>;
   DISALLOW_COPY_AND_ASSIGN(CspDelegateFactory);
 };
+#endif
 
 }  // namespace dom
 }  // namespace cobalt

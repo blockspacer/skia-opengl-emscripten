@@ -10,11 +10,14 @@
 #include "base/logging.h"
 #include "crypto/ec_private_key.h"
 #include "crypto/openssl_util.h"
+
+#if defined(ENABLE_BORINGSSL)
 #include "third_party/boringssl/src/include/openssl/bn.h"
 #include "third_party/boringssl/src/include/openssl/ec.h"
 #include "third_party/boringssl/src/include/openssl/ecdsa.h"
 #include "third_party/boringssl/src/include/openssl/evp.h"
 #include "third_party/boringssl/src/include/openssl/sha.h"
+#endif
 
 namespace crypto {
 
@@ -28,6 +31,7 @@ ECSignatureCreatorImpl::~ECSignatureCreatorImpl() = default;
 bool ECSignatureCreatorImpl::Sign(const uint8_t* data,
                                   int data_len,
                                   std::vector<uint8_t>* signature) {
+#if defined(ENABLE_BORINGSSL)
   OpenSSLErrStackTracer err_tracer(FROM_HERE);
   bssl::ScopedEVP_MD_CTX ctx;
   size_t sig_len = 0;
@@ -48,11 +52,15 @@ bool ECSignatureCreatorImpl::Sign(const uint8_t* data,
   // returns the real one, which may be smaller.
   signature->resize(sig_len);
   return true;
+#else
+  return false;
+#endif
 }
 
 bool ECSignatureCreatorImpl::DecodeSignature(
     const std::vector<uint8_t>& der_sig,
     std::vector<uint8_t>* out_raw_sig) {
+#if defined(ENABLE_BORINGSSL)
   OpenSSLErrStackTracer err_tracer(FROM_HERE);
   // Create ECDSA_SIG object from DER-encoded data.
   bssl::UniquePtr<ECDSA_SIG> ecdsa_sig(
@@ -71,6 +79,9 @@ bool ECSignatureCreatorImpl::DecodeSignature(
   }
   out_raw_sig->swap(result);
   return true;
+#else
+  return false;
+#endif
 }
 
 }  // namespace crypto

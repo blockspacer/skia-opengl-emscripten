@@ -14,7 +14,10 @@
 #include "base/macros.h"
 #include "build/build_config.h"
 #include "crypto/crypto_export.h"
+
+#if defined(ENABLE_BORINGSSL)
 #include "third_party/boringssl/src/include/openssl/base.h"
+#endif
 
 namespace crypto {
 
@@ -34,12 +37,14 @@ class CRYPTO_EXPORT RSAPrivateKey {
   static std::unique_ptr<RSAPrivateKey> CreateFromPrivateKeyInfo(
       const std::vector<uint8_t>& input);
 
+#if defined(ENABLE_BORINGSSL)
   // Create a new instance from an existing EVP_PKEY, taking a
   // reference to it. |key| must be an RSA key. Returns NULL on
   // failure.
   static std::unique_ptr<RSAPrivateKey> CreateFromKey(EVP_PKEY* key);
 
   EVP_PKEY* key() { return key_.get(); }
+#endif
 
   // Creates a copy of the object.
   std::unique_ptr<RSAPrivateKey> Copy() const;
@@ -54,7 +59,9 @@ class CRYPTO_EXPORT RSAPrivateKey {
   // Constructor is private. Use one of the Create*() methods above instead.
   RSAPrivateKey();
 
+#if defined(ENABLE_BORINGSSL)
   bssl::UniquePtr<EVP_PKEY> key_;
+#endif
 
   DISALLOW_COPY_AND_ASSIGN(RSAPrivateKey);
 };
