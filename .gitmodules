@@ -28,12 +28,6 @@
 [submodule "src/chromium/third_party/libsync/src"]
 	path = src/chromium/third_party/libsync/src
 	url = https://chromium.googlesource.com/aosp/platform/system/core/libsync.git
-[submodule "thirdparty/skia"]
-	path = thirdparty/skia
-	url = https://skia.googlesource.com/skia.git
-[submodule "src/net/third_party/quiche/src"]
-	path = src/net/third_party/quiche/src
-	url = https://quiche.googlesource.com/quiche.git
 [submodule "src/chromium/third_party/libjpeg_turbo"]
 	path = src/chromium/third_party/libjpeg_turbo
 	url = https://chromium.googlesource.com/chromium/deps/libjpeg_turbo.git
@@ -51,7 +45,4 @@
 	url = https://chromium.googlesource.com/external/github.com/googlei18n/emoji-segmenter.git
 [submodule "src/chromium/net_todo/third_party/quiche/src"]
 	path = src/chromium/net_todo/third_party/quiche/src
-	url = https://quiche.googlesource.com/quiche.git
-[submodule "src/chromium/net/third_party/quiche/src"]
-	path = src/chromium/net/third_party/quiche/src
 	url = https://quiche.googlesource.com/quiche.git
