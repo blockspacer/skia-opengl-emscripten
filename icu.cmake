@@ -399,27 +399,7 @@
 # ${ICU_FULL_DIR}ztrans.cpp
 #)
 
-set(ICU_PARENT_FULL_DIR
-  #third_party/icu/
-  #../../thirdparty/skia/third_party/externals/icu/
-  ../../thirdparty/icu_wrapper/
-)
-
-set(ICU_FULL_DIR
-  #third_party/icu/
-  #../../thirdparty/skia/third_party/externals/icu/
-  ../../thirdparty/icu_wrapper/third_party/icu/
-)
-
 message(WARNING "TODO: add icu data file, see stubdata.cpp, ICU_UTIL_DATA_IMPL=ICU_UTIL_DATA_FILE, U_ICUDATAENTRY_IN_COMMON, icu_use_data_file_flag")
-
-set(OWN_ICU_INCLUDE_DIRS
-  ${ICU_PARENT_FULL_DIR}
-  ${ICU_FULL_DIR}
-  ${ICU_FULL_DIR}source/common/unicode
-  ${ICU_FULL_DIR}source/common
-  ${ICU_FULL_DIR}source/i18n
-)
 
 # find source/i18n -maxdepth 1 ! -type d | egrep '\.(c|cpp)$' |  sort | sed "s/^\(.*\)$/ '\1',/"
 # find source/common -maxdepth 1 ! -type d | egrep '\.(c|cpp)$' |  sort | sed "s/^\(.*\)$/ '\1',/"
@@ -856,25 +836,25 @@ set(ICU_SOURCES
   # COMMON_SRC_END
 )
 
-if(EMSCRIPTEN)
-  set(USE_OWN_ICU TRUE)
-elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
-  set(USE_OWN_ICU TRUE)
-  if (NOT USE_OWN_ICU)
-    # todo
-    set(EXTRA_ICU_DEFINITIONS
-      USING_SYSTEM_ICU=1
-      #ICU_UTIL_DATA_IMPL=ICU_UTIL_DATA_FILE
-      ICU_UTIL_DATA_IMPL=ICU_UTIL_DATA_STATIC
-      U_ICUDATAENTRY_IN_COMMON # if 'OS == "win" or icu_use_data_file_flag==1'
-      UCHAR_TYPE=uint16_t
-    )
-  endif(NOT USE_OWN_ICU)
-else()
-  message(FATAL_ERROR "icu platform not supported")
-endif()
+#if(EMSCRIPTEN)
+#  set(USE_OWN_ICU TRUE)
+#elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+#  set(USE_OWN_ICU TRUE)
+#  if (NOT USE_OWN_ICU)
+#    # todo
+#    set(EXTRA_ICU_DEFINITIONS
+#      USING_SYSTEM_ICU=1
+#      #ICU_UTIL_DATA_IMPL=ICU_UTIL_DATA_FILE
+#      ICU_UTIL_DATA_IMPL=ICU_UTIL_DATA_STATIC
+#      U_ICUDATAENTRY_IN_COMMON # if 'OS == "win" or icu_use_data_file_flag==1'
+#      UCHAR_TYPE=uint16_t
+#    )
+#  endif(NOT USE_OWN_ICU)
+#else()
+#  message(FATAL_ERROR "icu platform not supported")
+#endif()
 
-if(USE_OWN_ICU)
+#if(USE_OWN_ICU)
   add_library(icu STATIC
     ${ICU_SOURCES}
   )
@@ -987,7 +967,7 @@ if(USE_OWN_ICU)
   target_compile_options(icu PRIVATE
     -Wno-error
   )
-endif()
+#endif(USE_OWN_ICU)
 
 #if(EMSCRIPTEN)
 #  # Tell ICU that we are a 32 bit platform, otherwise,
