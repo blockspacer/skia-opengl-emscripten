@@ -55,11 +55,12 @@ list(APPEND SKIA_EXT_COMMON_SOURCES
   # TODO # ${SKIA_EXT_DIR}ext/fontmgr_default_android.cc
 )
 
-if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+#if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+if(ENABLE_HARFBUZZ)
   list(APPEND SKIA_EXT_COMMON_SOURCES
     ${SKIA_EXT_DIR}ext/fontmgr_default_linux.cc
   )
-endif()
+endif(ENABLE_HARFBUZZ)
 
 list(APPEND SKIA_EXT_COMMON_SOURCES
   # TODO # ${SKIA_EXT_DIR}ext/fontmgr_default_win.cc

@@ -27,11 +27,13 @@ set(UI_GFX_SOURCES
   #${UI_GFX_DIR}font_fallback.h",
 )
 
-if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+#if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux" AND ENABLE_HARFBUZZ)
+if(ENABLE_HARFBUZZ AND ${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
   list(APPEND UI_GFX_SOURCES
-    ${UI_GFX_DIR}font_fallback_linux.cc
+    ${UI_GFX_DIR}font_render_params_linux.cc # requires fontconfig
+    ${UI_GFX_DIR}font_fallback_linux.cc # requires fontconfig
   )
-endif()
+endif(ENABLE_HARFBUZZ AND ${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
 
 list(APPEND UI_GFX_SOURCES
   #${UI_GFX_DIR}font_fallback_linux.h",
@@ -83,9 +85,8 @@ list(APPEND UI_GFX_SOURCES
   #${UI_GFX_DIR}font_render_params.h",
 )
 
-if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+if(ENABLE_HARFBUZZ)
   list(APPEND UI_GFX_SOURCES
-    ${UI_GFX_DIR}font_render_params_linux.cc
     #if (is_linux || is_android || is_fuchsia)
     ${UI_GFX_DIR}platform_font_skia.cc
     #${UI_GFX_DIR}platform_font_skia.h
@@ -109,7 +110,7 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
     #  deps += [ "//build/config/linux/libdrm" ]
     #}
   )
-endif()
+endif(ENABLE_HARFBUZZ)
 
 list(APPEND UI_GFX_SOURCES
   # TODO # ${UI_GFX_DIR}font_render_params_mac.cc
@@ -288,11 +289,12 @@ add_library(UI_GFX STATIC
   ${UI_GFX_SOURCES}
 )
 
-if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+#if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+if(ENABLE_HARFBUZZ AND ${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
   list(APPEND EXTRA_DEPS
     fontconfig
   )
-endif()
+endif(ENABLE_HARFBUZZ AND ${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
 
 target_link_libraries(UI_GFX PUBLIC
   #${BASE_LIBRARIES}

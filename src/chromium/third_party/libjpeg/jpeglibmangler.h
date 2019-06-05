@@ -7,7 +7,7 @@
 
 // Mangle all externally visible function names so we can build our own libjpeg
 // without system libraries trying to use it.
-
+#ifdef __TODO__
 #define jcopy_block_row chromium_ijg_jcopy_block_row
 #define jcopy_sample_rows chromium_ijg_jcopy_sample_rows
 #define jdiv_round_up chromium_ijg_jdiv_round_up
@@ -111,5 +111,6 @@
 #define jpeg_write_tables chromium_ijg_jpeg_write_tables
 #define jround_up chromium_ijg_jround_up
 #define jzero_far chromium_ijg_jzero_far
+#endif // __TODO__
 
 #endif  // THIRD_PARTY_LIBJPEG_JPEGLIBMANGLER_H_

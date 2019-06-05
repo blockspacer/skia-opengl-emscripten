@@ -1378,7 +1378,8 @@ add_library(base STATIC
 if(EMSCRIPTEN)
   list(APPEND BASE_LIBRARIES
     ced
-    icu
+    ${CUSTOM_ICU_LIB}
+    ${HARFBUZZ_LIBRARIES}
   )
   add_dependencies(base
     ${BASE_LIBRARIES}
@@ -1388,7 +1389,8 @@ elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
     tcmalloc
     atomic
     ced
-    icu
+    ${CUSTOM_ICU_LIB}
+    ${HARFBUZZ_LIBRARIES}
     # libevent only for posix/linux/e.t.c.
     libevent
     modp_b64
@@ -1397,7 +1399,8 @@ elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
     tcmalloc
     #atomic # from system, no dep
     ced
-    icu
+    ${CUSTOM_ICU_LIB}
+    ${HARFBUZZ_LIBRARIES}
     modp_b64
   )
 else()

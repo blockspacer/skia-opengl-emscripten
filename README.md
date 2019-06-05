@@ -796,3 +796,4 @@ MISC
   https://github.com/AvaloniaUI/Avalonia/issues/1387#issuecomment-389758464
   WebAssembly.instantiateStreaming https://hacks.mozilla.org/2018/01/making-webassembly-even-faster-firefoxs-new-streaming-and-tiering-compiler/
 > https://github.com/v8/v8/blob/master/src/wasm/wasm-limits.h
+> bin/gn gen out/config --ide=json --json-ide-script=../../gn/gn_to_cmake.py

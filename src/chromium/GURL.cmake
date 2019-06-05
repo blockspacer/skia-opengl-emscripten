@@ -60,7 +60,8 @@ target_link_libraries(GURL PUBLIC
   ${STARBOARD_COMMON_LIB}
   modp_b64
   ${BASE_LIBRARIES}
-  icu
+  ${CUSTOM_ICU_LIB}
+  ${HARFBUZZ_LIBRARIES}
   #GIPC
   #dynamic_annotations
 )

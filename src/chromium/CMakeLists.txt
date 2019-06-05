@@ -222,19 +222,19 @@ elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
   include(GZLIB.cmake)
   # zlib
   include(GZLIB_EXT.cmake)
-  # fontconfig
-  include(fontconfig.cmake)
 else()
   message(FATAL_ERROR "platform not supported")
 endif()
+
+if(ENABLE_HARFBUZZ AND ${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+  # fontconfig
+  include(fontconfig.cmake)
+endif(ENABLE_HARFBUZZ AND ${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
 
 if(ENABLE_BORINGSSL)
   # BORINGSSL
   include(BORINGSSL.cmake)
 endif(ENABLE_BORINGSSL)
-
-# icu
-include(icu.cmake)
 
 # xdg_mime
 include(xdg_mime.cmake)
@@ -282,15 +282,17 @@ if(ENABLE_GNET)
   include(GNET.cmake)
 endif(ENABLE_GNET)
 
-# GIPC:  Mojo IPC and bindings library.
-# Depends on : base, url, crypto, gin, net
-include(MOJO.cmake)
+if(ENABLE_BLINK)
+  # GIPC:  Mojo IPC and bindings library.
+  # Depends on : base, url, crypto, gin, net
+  include(MOJO.cmake)
 
-# GIPC:  IPC helper library.
-# Depends on : base, mojo
-include(GIPC.cmake)
+  # GIPC:  IPC helper library.
+  # Depends on : base, mojo
+  include(GIPC.cmake)
+endif(ENABLE_BLINK)
 
-if(ENABLE_SKIA)
+if(ENABLE_SKIA AND ENABLE_BLINK)
   # GFX_GEOMETRY
   include(GFX_GEOMETRY.cmake)
 
@@ -305,7 +307,7 @@ if(ENABLE_SKIA)
 
   # GFX_ANIMATION
   include(GFX_ANIMATION.cmake)
-endif(ENABLE_SKIA)
+endif(ENABLE_SKIA AND ENABLE_BLINK)
 
 if(ENABLE_SKIA AND ENABLE_BLINK)
   # GFX_CODEC
@@ -334,10 +336,10 @@ if(ENABLE_SKIA AND ENABLE_BLINK)
   include(GFX_SWITCHES.cmake)
 endif(ENABLE_SKIA AND ENABLE_BLINK)
 
-if(ENABLE_SKIA)
+if(ENABLE_SKIA AND ENABLE_BLINK)
   # SKIA_EXT
   include(SKIA_EXT.cmake)
-endif(ENABLE_SKIA)
+endif(ENABLE_SKIA AND ENABLE_BLINK)
 
 if(ENABLE_SKIA AND ENABLE_BLINK)
   # UI_GFX
@@ -402,9 +404,7 @@ if(ENABLE_SKIA AND ENABLE_BLINK)
   include(CC.cmake)
 endif(ENABLE_SKIA AND ENABLE_BLINK)
 
-if(ENABLE_BLINK)
-
-if(ENABLE_GNET)
+if(ENABLE_GNET AND ENABLE_BLINK)
   # SERVICES_NETWORK_PUBLIC_CPP
   include(COMPONENTS_CONTENT_SETTINGS_CORE_COMMON.cmake)
 
@@ -413,8 +413,9 @@ if(ENABLE_GNET)
 
   # SERVICES_SERVICE_MANAGER_PUBLIC_CPP
   include(SERVICES_SERVICE_MANAGER_PUBLIC_CPP.cmake)
-endif(ENABLE_GNET)
+endif(ENABLE_GNET AND ENABLE_BLINK)
 
+if(ENABLE_BLINK)
   # LIB_V8_INTERFACE
   include(LIB_V8_INTERFACE.cmake)
 

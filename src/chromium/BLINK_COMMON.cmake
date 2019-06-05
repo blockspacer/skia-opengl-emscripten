@@ -86,7 +86,8 @@ target_link_libraries(BLINK_COMMON PUBLIC
   GNET
   MOJO
   SERVICES_NETWORK_PUBLIC_CPP
-  icu
+  ${CUSTOM_ICU_LIB}
+  ${HARFBUZZ_LIBRARIES}
   UI_GFX
   #media
 )

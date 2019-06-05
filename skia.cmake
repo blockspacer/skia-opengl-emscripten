@@ -6,6 +6,8 @@
 # you will see dramatically worse performance
 # NOTE: set clang-cl,
 # see https://github.com/google/skia/blob/master/site/user/build.md#highly-recommended-build-with-clang-cl
+# NOTE: to modify skia build flags/include dirs provide args to c_flags,
+# cause SKIA_CMAKE_ONLY_HEADERS don`t affect skia gn build!
 #
 
 # case-insensitive match TODO: is debug, Debug, DEBUG all valid?
@@ -24,8 +26,6 @@ endif(RELEASE_BUILD)
 
 # I wanted to expose (almost) all Skia options as CMake options but sadly
 # GN is a really bad tool - It produces non-overridable configure errors like:
-#
-# The variable "skia_use_system_libjpeg_turbo" was set as a build argument but never appeared in a declare_args() block in any buildfile.
 #
 # ... even though the option exists (this one in skia/third_party/libjpeg-turbo/BUILD.gb)
 # and it's listed in gn args --list.
@@ -174,12 +174,64 @@ else(ENABLE_WUFFS)
   set(SK_IS_wuffs "false")
 endif(ENABLE_WUFFS)
 
+if(USE_LIBJPEG_TURBO)
+  set(SK_IS_libjpeg_turbo "true")
+  if(USE_CUSTOM_LIBJPEG_TURBO)
+    #
+    set(SK_system_libjpeg_turbo
+      "skia_use_system_libjpeg_turbo=true"
+    )
+    #
+    if(NOT USE_CUSTOM_LIBJPEG)
+      message(FATAL_ERROR "Custom LIBJPEG_TURBO requires custom LIBJPEG")
+    endif(NOT USE_CUSTOM_LIBJPEG)
+  endif(USE_CUSTOM_LIBJPEG_TURBO)
+endif(USE_LIBJPEG_TURBO)
+
+# NOTE: in skia HARFBUZZ requires icui18n (unicode/uscript.h)
+if(ENABLE_HARFBUZZ)
+  set(SK_IS_harfbuzz "true")
+  #
+  set(SK_system_harfbuzz
+    "skia_use_system_harfbuzz=true"
+  )
+  #
+  set(SK_IS_icu "true")
+  #
+  set(SK_system_icu
+    "skia_use_system_icu=true"
+  )
+  #
+  if (USE_CUSTOM_ICU)
+    list(APPEND SKIA_CMAKE_ONLY_HEADERS
+      ${OWN_ICU_INCLUDE_DIRS}
+    )
+    #
+    set(SKIA_EXTRA_CFLAGS
+" \
+\"-I${ICU_FULL_DIR}source/common\", \
+\"-I${GLIBJPEG_TURBO_DIR}\" \
+"
+#
+#     "\"-I${ICU_FULL_DIR}source/common\"" # to unicode/uscript.h
+#     # LIBJPEG (jpeglib.h) CONFLICTS WITH LIBJPEG_TURBO (jpeglib.h) # "\"-I${GLIBJPEG_DIR}\"" # to libjpeg/jpeglib.h
+#     "\"-I${GLIBJPEG_TURBO_DIR}\"" # to libjpeg_turbo/jpeglib.h
+    )
+  endif(USE_CUSTOM_ICU)
+else(ENABLE_HARFBUZZ)
+  set(SK_IS_harfbuzz "false")
+  set(SK_IS_icu "false")
+endif(ENABLE_HARFBUZZ)
+
 # NOTE: modifying skia src requires full rebuild!
+# NOTE: You can use `extra_cflags` and `extra_ldflags` to add include
+# or library paths if needed.
 set(GN_ARGS "${SK_TARGET_CPU} \
 ${SK_GL_STANDARD} \
 ar=\"${CMAKE_AR}\" \
 cc=\"${CMAKE_C_COMPILER}\" \
 cxx=\"${CMAKE_CXX_COMPILER}\" \
+extra_cflags=[${SKIA_EXTRA_CFLAGS}] \
 extra_cflags_c=[${SKIA_C_FLAGS}] \
 extra_cflags_cc=[${SKIA_CXX_FLAGS}] \
 extra_ldflags=[${SKIA_LDFLAGS}] \
@@ -191,13 +243,16 @@ skia_use_egl=${SK_IS_EGL} \
 skia_use_vulkan=false \
 skia_enable_vulkan_debug_layers=false \
 skia_enable_spirv_validation=false \
-skia_use_icu=false \
+skia_use_harfbuzz=${SK_IS_harfbuzz} \
+${SK_system_harfbuzz} \
+skia_use_icu=${SK_IS_icu} \
+${SK_system_icu} \
 skia_enable_ccpr=${SK_IS_ccpr} \
 skia_enable_nvpr=false \
 skia_use_expat=false \
 skia_enable_skottie=true \
-skia_use_libjpeg_turbo=true \
-skia_use_system_libjpeg_turbo=false \
+skia_use_libjpeg_turbo=${SK_IS_libjpeg_turbo} \
+${SK_system_libjpeg_turbo} \
 skia_use_libpng=true \
 skia_use_system_libpng=true \
 skia_use_zlib=true \
@@ -223,13 +278,11 @@ skia_enable_skshaper=true \
 skia_use_x11=${SK_IS_x11} \
 skia_lex=false \
 skia_compile_processors=${SK_IS_processors} \
-skia_generate_workarounds=${SK_IS_workarounds} \
-skia_use_harfbuzz=true"
+skia_generate_workarounds=${SK_IS_workarounds}"
+)
 
 # \
 #modules/skottie/utils/SkottieUtils.cpp
-
-)
 
 message(STATUS "GN_ARGS=${GN_ARGS}")
 set(CONFIGURE_COMMAND "${SKIA_SRC_DIR}/bin/gn;gen;--root=${SKIA_SRC_DIR};${SKIA_BUILD_DIR};--args=${GN_ARGS}")
@@ -254,7 +307,7 @@ if (EXT_SKIA_ALWAYS_BUILD)
 endif ()
 #message(FATAL_ERROR ${SKIA_EXT_PARENT_DIR}/skia/config/sk_ref_cnt_ext_release.h)
 # taken from BUILD.gn (skia_public_includes, minus things that are obviously useless for us)
-list(APPEND SKIA_HEADERS
+list(APPEND SKIA_CMAKE_ONLY_HEADERS
   #src/chromium/third_party/
   ${SKIA_EXT_PARENT_DIR}
   ${SKIA_EXT_DIR}
@@ -294,12 +347,12 @@ list(APPEND SKIA_HEADERS
 #  ${SKIA_SRC_DIR}/third_party/externals
   ${SKIA_SRC_DIR}/third_party/freetype2
 #  ${SKIA_SRC_DIR}/third_party/gif
-  ${SKIA_SRC_DIR}/third_party/harfbuzz
-  ${SKIA_SRC_DIR}/third_party/icu
+#  ${SKIA_SRC_DIR}/third_party/harfbuzz
+#  ${SKIA_SRC_DIR}/third_party/icu # see USE_CUSTOM_ICU
 #  ${SKIA_SRC_DIR}/third_party/imgui
-  ${SKIA_SRC_DIR}/third_party/libjpeg-turbo
+#  ${SKIA_SRC_DIR}/third_party/libjpeg-turbo
 #  ${SKIA_SRC_DIR}/third_party/libmicrohttpd
-  ${SKIA_SRC_DIR}/third_party/libpng
+#  ${SKIA_SRC_DIR}/third_party/libpng
 #  ${SKIA_SRC_DIR}/third_party/libsdl
 #  ${SKIA_SRC_DIR}/third_party/libwebp
 #  ${SKIA_SRC_DIR}/third_party/lua
@@ -316,7 +369,7 @@ list(APPEND SKIA_HEADERS
 )
 
 if(ENABLE_WUFFS)
-  list(APPEND SKIA_HEADERS
+  list(APPEND SKIA_CMAKE_ONLY_HEADERS
     ${SKIA_SRC_DIR}/third_party/wuffs
   )
 endif(ENABLE_WUFFS)
@@ -454,6 +507,14 @@ if (SK_CONF_SHARED)
   list(APPEND SKIA_DEFINES SKIA_DLL=1)
 endif ()
 
+## TODO
+#list(APPEND SKIA_DEFINES LIB_ICU_I18N_STATIC=1)
+#list(APPEND SKIA_DEFINES U_CHARSET_IS_UTF8=1)
+#list(APPEND SKIA_DEFINES U_NO_DEFAULT_INCLUDE_UTF_HEADERS=0)
+#
+## TODO
+#list(APPEND SKIA_DEFINES NEED_SHORT_EXTERNAL_NAMES=1)
+
 # GN doesn't seem to do any fancy stuff with library dependencies - it just
 # asks the compiler to link to them w/o any fany search strategies. This
 # also means that whatever is found here is not guaranteed to be the same as
@@ -491,9 +552,10 @@ if (NOT EXT_SKIA_SHARED)
   message("CMAKE_THREAD_LIBS_INIT=${CMAKE_THREAD_LIBS_INIT}")
   set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};Threads::Threads" PARENT_SCOPE)
 
-  if(ENABLE_HARFBUZZ)
-    ADD_SKIA_LIBRARY_DEPENDENCY("harfbuzz")
-  endif(ENABLE_HARFBUZZ)
+  # see HARFBUZZ_LIBRARIES
+  #if(ENABLE_HARFBUZZ)
+  #  ADD_SKIA_LIBRARY_DEPENDENCY("harfbuzz")
+  #endif(ENABLE_HARFBUZZ)
 
   # when skia_enable_gpu:
   #
@@ -531,6 +593,12 @@ endif() # SK_IS_EGL
   find_package(ZLIB REQUIRED)
   set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${libZLIB_LIB}" PARENT_SCOPE)
 
+  # NOTE: libjpeg_turbo requires libjpeg
+  #set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${libjpeg_LIB}" PARENT_SCOPE)
+
+  # NOTE: libjpeg_turbo requires libjpeg
+  set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${libjpeg_TURBO_LIB}" PARENT_SCOPE)
+
   #ADD_SKIA_LIBRARY_DEPENDENCY("png") # skia_use_system_libpng
   #find_package(PNG REQUIRED)
   # none of the above will be defined unless ZLib can be found!
@@ -540,9 +608,16 @@ endif() # SK_IS_EGL
   #PNG_FOUND, If false, do not try to use PNG.
   #PNG_VERSION_STRING - the version of the PNG library found (since CMake 2.8.8)
   #set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};PNG::PNG" PARENT_SCOPE)
-  set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${libpng_LIB}" PARENT_SCOPE)
+  #
+  # TODO: Linking globals named 'png_sRGB_table': symbol multiply defined!
+  #set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${libpng_LIB}" PARENT_SCOPE)
 
-  list(APPEND SKIA_DEFINES ${PNG_DEFINITIONS})
+  if(USE_CUSTOM_ICU)
+    set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${CUSTOM_ICU_LIB};${HARFBUZZ_LIBRARIES}" PARENT_SCOPE)
+  endif(USE_CUSTOM_ICU)
+
+  # TODO: Linking globals named 'png_sRGB_table': symbol multiply defined!
+  #list(APPEND SKIA_DEFINES ${PNG_DEFINITIONS})
   #message("SKIA_DEFINES=${SKIA_DEFINES}")
 
   # webp integration doesn't expose the system option...
@@ -552,12 +627,12 @@ endif() # SK_IS_EGL
   ADD_SKIA_LIBRARY_DEPENDENCY(${EXT_SKIA_USE_FREETYPE2} "freetype") # skia_use_system_freetype2
 endif (NOT EXT_SKIA_SHARED)
 
-set(SKIA_HEADERS "${SKIA_HEADERS};${HARFBUZZ_INCLUDE_DIRS};${OPENGL_INCLUDE_DIR};${OPENGL_EGL_INCLUDE_DIRS}")
+set(SKIA_CMAKE_ONLY_HEADERS "${SKIA_CMAKE_ONLY_HEADERS};${HARFBUZZ_INCLUDE_DIRS};${OPENGL_INCLUDE_DIR};${OPENGL_EGL_INCLUDE_DIRS}")
 set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${HARFBUZZ_LIBRARIES};${OPENGL_LIBRARIES}")
 
 endif() # EMSCRIPTEN
 
-message(STATUS "SKIA_HEADERS=${SKIA_HEADERS}")
+message(STATUS "SKIA_CMAKE_ONLY_HEADERS=${SKIA_CMAKE_ONLY_HEADERS}")
 message(STATUS "SKIA_DEPENDENCIES=${SKIA_DEPENDENCIES}")
 
 if (EXT_SKIA_SHARED)
@@ -621,48 +696,48 @@ if(ENABLE_WUFFS)
   set(wuffs_LIBRARY "${SKIA_BUILD_DIR}/${SKIA_LIBRARY_PREFIX}wuffs${SKIA_LIBRARY_SUFFIX}")
 endif(ENABLE_WUFFS)
 #
-add_library(jpeg ${SK_LIBRARY_TYPE} IMPORTED GLOBAL)
-if(NOT TARGET jpeg)
-  message(FATAL_ERROR "SKIA LIB NOT FOUND")
-endif()
-set(jpeg_LIBRARY "${SKIA_BUILD_DIR}/${SKIA_LIBRARY_PREFIX}jpeg${SKIA_LIBRARY_SUFFIX}")
+#add_library(jpeg ${SK_LIBRARY_TYPE} IMPORTED GLOBAL)
+#if(NOT TARGET jpeg)
+#  message(FATAL_ERROR "SKIA LIB NOT FOUND")
+#endif()
+#set(jpeg_LIBRARY "${SKIA_BUILD_DIR}/${SKIA_LIBRARY_PREFIX}jpeg${SKIA_LIBRARY_SUFFIX}")
 
 #
 #message(FATAL_ERROR "${skottie_LIBRARY}")
 if(ENABLE_WUFFS)
   set_target_properties(wuffs PROPERTIES
     IMPORTED_LOCATION "${wuffs_LIBRARY}"
-    INTERFACE_INCLUDE_DIRECTORIES "${SKIA_HEADERS}"
+    INTERFACE_INCLUDE_DIRECTORIES "${SKIA_CMAKE_ONLY_HEADERS}"
     INTERFACE_COMPILE_DEFINITIONS "${SKIA_DEFINES}"
     IMPORTED_LINK_INTERFACE_LIBRARIES "${SKIA_DEPENDENCIES}"
   )
   add_dependencies(wuffs SKIA_build)
 endif(ENABLE_WUFFS)
 #
-set_target_properties(jpeg PROPERTIES
-  IMPORTED_LOCATION "${jpeg_LIBRARY}"
-  INTERFACE_INCLUDE_DIRECTORIES "${SKIA_HEADERS}"
-  INTERFACE_COMPILE_DEFINITIONS "${SKIA_DEFINES}"
-  IMPORTED_LINK_INTERFACE_LIBRARIES "${SKIA_DEPENDENCIES}"
-)
-add_dependencies(jpeg SKIA_build)
+#set_target_properties(jpeg PROPERTIES
+#  IMPORTED_LOCATION "${jpeg_LIBRARY}"
+#  INTERFACE_INCLUDE_DIRECTORIES "${SKIA_CMAKE_ONLY_HEADERS}"
+#  INTERFACE_COMPILE_DEFINITIONS "${SKIA_DEFINES}"
+#  IMPORTED_LINK_INTERFACE_LIBRARIES "${SKIA_DEPENDENCIES}"
+#)
+#add_dependencies(jpeg SKIA_build)
 #
 set_target_properties(SKIA PROPERTIES
   IMPORTED_LOCATION "${SKIA_LIBRARY}"
-  INTERFACE_INCLUDE_DIRECTORIES "${SKIA_HEADERS}"
+  INTERFACE_INCLUDE_DIRECTORIES "${SKIA_CMAKE_ONLY_HEADERS}"
   INTERFACE_COMPILE_DEFINITIONS "${SKIA_DEFINES}"
   # https://stackoverflow.com/a/28102243/10904212
   #IMPORTED_LINK_INTERFACE_LIBRARIES "${SKIA_DEPENDENCIES}"
   IMPORTED_LINK_INTERFACE_LIBRARIES "${wuffs_LIBRARY};${jpeg_LIBRARY};${SKIA_DEPENDENCIES}"
 )
-add_dependencies(SKIA SKIA_build ${WUFFS_LIB_NAME} jpeg)
+add_dependencies(SKIA SKIA_build ${CUSTOM_ICU_LIB} ${WUFFS_LIB_NAME} ${CUSTOM_ICU_LIB} ${HARFBUZZ_LIBRARIES} ${jpeg_LIBRARY})# jpeg)
 # https://stackoverflow.com/a/53945809
 target_link_libraries(SKIA INTERFACE
-  ${WUFFS_LIB_NAME} jpeg)
+  ${CUSTOM_ICU_LIB} ${WUFFS_LIB_NAME} ${CUSTOM_ICU_LIB} ${HARFBUZZ_LIBRARIES} ${libjpeg_TURBO_LIB} ${jpeg_LIBRARY})# jpeg)
 #
 #set_target_properties(pathkit PROPERTIES
 #  IMPORTED_LOCATION "${PATHKIT_LIBRARY}"
-#  INTERFACE_INCLUDE_DIRECTORIES "${SKIA_HEADERS}"
+#  INTERFACE_INCLUDE_DIRECTORIES "${SKIA_CMAKE_ONLY_HEADERS}"
 #  INTERFACE_COMPILE_DEFINITIONS "${SKIA_DEFINES}"
 #  # https://stackoverflow.com/a/28102243/10904212
 #  IMPORTED_LINK_INTERFACE_LIBRARIES "${SKIA_LIBRARY};${SKIA_DEPENDENCIES}"
@@ -674,7 +749,7 @@ target_link_libraries(SKIA INTERFACE
 #
 set_target_properties(skshaper PROPERTIES
   IMPORTED_LOCATION "${skshaper_LIBRARY}"
-  INTERFACE_INCLUDE_DIRECTORIES "${SKIA_HEADERS}"
+  INTERFACE_INCLUDE_DIRECTORIES "${SKIA_CMAKE_ONLY_HEADERS}"
   INTERFACE_COMPILE_DEFINITIONS "${SKIA_DEFINES}"
   # https://stackoverflow.com/a/28102243/10904212
   #IMPORTED_LINK_INTERFACE_LIBRARIES "${SKIA_DEPENDENCIES}"
@@ -687,7 +762,7 @@ target_link_libraries(skshaper INTERFACE
 #
 set_target_properties(sksg PROPERTIES
   IMPORTED_LOCATION "${sksg_LIBRARY}"
-  INTERFACE_INCLUDE_DIRECTORIES "${SKIA_HEADERS}"
+  INTERFACE_INCLUDE_DIRECTORIES "${SKIA_CMAKE_ONLY_HEADERS}"
   INTERFACE_COMPILE_DEFINITIONS "${SKIA_DEFINES}"
   # https://stackoverflow.com/a/28102243/10904212
   #IMPORTED_LINK_INTERFACE_LIBRARIES "${SKIA_DEPENDENCIES}"
@@ -702,7 +777,7 @@ target_link_libraries(sksg INTERFACE
 #message(FATAL_ERROR "${SKIA_LIBRARY};${SKIA_DEPENDENCIES}")
 set_target_properties(skottie PROPERTIES
   IMPORTED_LOCATION "${skottie_LIBRARY}"
-  INTERFACE_INCLUDE_DIRECTORIES "${SKIA_HEADERS}"
+  INTERFACE_INCLUDE_DIRECTORIES "${SKIA_CMAKE_ONLY_HEADERS}"
   INTERFACE_COMPILE_DEFINITIONS "${SKIA_DEFINES}"
   # https://stackoverflow.com/a/28102243/10904212
   #IMPORTED_LINK_INTERFACE_LIBRARIES "${SKIA_DEPENDENCIES}"
@@ -715,7 +790,7 @@ add_dependencies(skottie SKIA sksg skshaper)
 #
 #set_target_properties(particles PROPERTIES
 #  IMPORTED_LOCATION "${particles_LIBRARY}"
-#  INTERFACE_INCLUDE_DIRECTORIES "${SKIA_HEADERS}"
+#  INTERFACE_INCLUDE_DIRECTORIES "${SKIA_CMAKE_ONLY_HEADERS}"
 #  INTERFACE_COMPILE_DEFINITIONS "${SKIA_DEFINES}"
 #  # https://stackoverflow.com/a/28102243/10904212
 #  #IMPORTED_LINK_INTERFACE_LIBRARIES "${SKIA_DEPENDENCIES}"

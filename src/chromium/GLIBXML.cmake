@@ -170,7 +170,7 @@ add_library(GLIBXML STATIC
 
 if (EMSCRIPTEN)
   target_link_libraries(GLIBXML PUBLIC
-    icu # icuuc
+    ${CUSTOM_ICU_LIB} # icuuc
   )
 else()
   target_link_libraries(GLIBXML PUBLIC
@@ -179,7 +179,7 @@ else()
     #${ZLIB_LIBRARIES}
     #zlib
     ${libZLIB_LIB}
-    icu # icuuc
+    ${CUSTOM_ICU_LIB} # icuuc
   )
 endif()
 

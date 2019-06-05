@@ -892,6 +892,9 @@ const HostPortPair& HttpProxyConnectJob::GetDestination() {
   } else {
     return params_->ssl_params()->GetDirectConnectionParams()->destination();
   }
+#else
+  DCHECK(params_->transport_params());
+  return params_->transport_params()->destination();
 #endif // ENABLE_BORINGSSL
 }
 

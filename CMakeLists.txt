@@ -82,7 +82,47 @@ set(GEN_COMPONENTS_CONTENT_SETTINGS_CORE_COMMON_DIR ${GN_GEN_DIR}gen_components_
 # autoninja -C out/Default/ third_party/blink/renderer/core/mojo
 #set(GEN_BLINK_RENDERER_CORE_DIR ${GN_GEN_DIR}gen_blink_renderer_core/)
 
-set(USE_LIBJPEG TRUE)
+set(USE_CUSTOM_ICU TRUE)
+if(USE_CUSTOM_ICU)
+  #set(COMMON_FLAGS "${COMMON_FLAGS} -DSK_USING_THIRD_PARTY_ICU=1")
+  # https://github.com/google/skia/blob/master/third_party/icu/BUILD.gn#L15
+  #set(COMMON_FLAGS "${COMMON_FLAGS} -DU_USING_ICU_NAMESPACE=0")
+  #
+  set(ICU_PARENT_FULL_DIR
+    #third_party/icu/
+    #../../thirdparty/skia/third_party/externals/icu/
+    ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/icu_wrapper/
+  )
+
+  set(ICU_FULL_DIR
+    #third_party/icu/
+    #../../thirdparty/skia/third_party/externals/icu/
+    ${ICU_PARENT_FULL_DIR}third_party/icu/
+  )
+
+  set(OWN_ICU_INCLUDE_DIRS
+    ${ICU_PARENT_FULL_DIR}
+    ${ICU_FULL_DIR}
+    ${ICU_FULL_DIR}source/common/unicode
+    ${ICU_FULL_DIR}source/common
+    ${ICU_FULL_DIR}source/i18n
+  )
+  set(CUSTOM_ICU_LIB icu) # see icu.cmake
+else(USE_CUSTOM_ICU)
+  set(CUSTOM_ICU_LIB icu) # platform specific
+endif(USE_CUSTOM_ICU)
+
+set(USE_CUSTOM_LIBPNG TRUE)
+if(USE_CUSTOM_LIBPNG)
+  set(USE_SYSTEM_PNG TRUE)
+  set(libpng_LIB GLIBPNG)
+else(USE_CUSTOM_LIBPNG)
+  if(EMSCRIPTEN)
+    set(EMCC_COMMON "${EMCC_COMMON} -s USE_LIBPNG=1")
+    message(FATAL_ERROR "wasm: only custom LIBPNG is supported for now")
+  endif(EMSCRIPTEN)
+  set(USE_SYSTEM_PNG FALSE)
+endif(USE_CUSTOM_LIBPNG)
 
 set(USE_SK_GPU TRUE)
 
@@ -117,14 +157,28 @@ else()
   message(STATUS "\"python\" found...")
 endif(NOT PYTHON_FOUND)
 
-option(ENABLE_HARFBUZZ "ENABLE_HARFBUZZ" OFF)
+# harfbuzz
+option(ENABLE_HARFBUZZ "ENABLE_HARFBUZZ" ON)
+set(USE_CUSTOM_HARFBUZZ TRUE)
 if(ENABLE_HARFBUZZ)
-  # harfbuzz
-  set(EMCC_COMMON "${EMCC_COMMON} -s USE_HARFBUZZ=1")
+  #
   # custom flags
   set(COMMON_FLAGS "${COMMON_FLAGS} -DENABLE_HARFBUZZ=1")
   # https://github.com/klzgrad/naiveproxy/blob/master/src/third_party/skia/modules/skshaper/BUILD.gn#L11
   # SK_SHAPER_HARFBUZZ_AVAILABLE # < TODO if skia_use_icu
+  #
+  set(harfbuzz_FULL_DIR
+    ${CHROMIUM_DIR}third_party/skia/third_party/externals/harfbuzz/
+  )
+  #
+  if(USE_CUSTOM_HARFBUZZ)
+    #
+    set(HARFBUZZ_LIBRARIES harfbuzz)
+    set(HARFBUZZ_INCLUDE_DIRS ${harfbuzz_FULL_DIR}/src)
+  else(USE_CUSTOM_HARFBUZZ)
+    set(EMCC_COMMON "${EMCC_COMMON} -s USE_HARFBUZZ=1")
+    # see find_package below for linux
+  endif(USE_CUSTOM_HARFBUZZ)
 endif(ENABLE_HARFBUZZ)
 
 set(ENABLE_BORINGSSL FALSE)
@@ -161,10 +215,10 @@ if (ENABLE_SKIA)
     #particles
     skottie
     ${WUFFS_LIB_NAME}
-    jpeg
+    #jpeg # TODO
     #pathkit
   )
-  set(SKIA_PARENT_DIR "${CHROMIUM_DIR}/third_party/")
+  set(SKIA_PARENT_DIR "${CHROMIUM_DIR}third_party/")
   set(SKIA_DIR "${SKIA_PARENT_DIR}skia/")
 
   #set(SKIA_EXT_PARENT_DIR ${CHROMIUM_DIR})
@@ -173,9 +227,10 @@ if (ENABLE_SKIA)
   set(SKIA_EXT_DIR ${SKIA_EXT_PARENT_DIR}skia/)
 endif(ENABLE_SKIA)
 
-set(ENABLE_BLINK TRUE)
+set(ENABLE_BLINK FALSE)
 if(ENABLE_SKIA AND ENABLE_BLINK)
   set(COMMON_FLAGS "${COMMON_FLAGS} -DENABLE_BLINK_PLATFORM=1")
+  set(COMMON_FLAGS "${COMMON_FLAGS} -DENABLE_BLINK=1")
   #
   set(BLINK_GFX_LIBS
     #BLINK_RENDERER_CORE
@@ -218,7 +273,7 @@ if(ENABLE_SKIA AND ENABLE_BLINK)
       SERVICES_SERVICE_MANAGER_PUBLIC_CPP
     )
   endif(ENABLE_GNET)
-endif(ENABLE_SKIA)
+endif(ENABLE_SKIA AND ENABLE_BLINK)
 
 message("CMAKE_SYSTEM_NAME = ${CMAKE_SYSTEM_NAME}")
 if(EMSCRIPTEN)
@@ -267,6 +322,16 @@ endif(RELEASE_BUILD)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR})
 
+# TODO
+set(COMMON_CXX_FLAGS "-DLIB_ICU_I18N_STATIC=1")
+set(COMMON_CXX_FLAGS "-DU_CHARSET_IS_UTF8=1")
+set(COMMON_CXX_FLAGS "-DU_NO_DEFAULT_INCLUDE_UTF_HEADERS=0")
+set(COMMON_CXX_FLAGS "-DU_ENABLE_DYLOAD=0")
+set(COMMON_CXX_FLAGS "-DICU_UTIL_DATA_IMPL=ICU_UTIL_DATA_STATIC")
+
+# TODO
+set(COMMON_CXX_FLAGS "-DNEED_SHORT_EXTERNAL_NAMES=1")
+
 # -fno-exceptions
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
 set(COMMON_CXX_FLAGS "${COMMON_CXX_FLAGS} -std=c++17") # use target options
@@ -289,9 +354,55 @@ else()
   message(FATAL_ERROR "platform not supported")
 endif()
 
+set(USE_LIBJPEG TRUE)
 if(USE_LIBJPEG)
+  set(GLIBJPEG_TURBO_DIR
+    ${CHROMIUM_DIR}third_party/libjpeg_turbo/
+  )
+  #
   set(COMMON_FLAGS "${COMMON_FLAGS} -DUSE_LIBJPEG=1")
-endif()
+  #
+  set(USE_CUSTOM_LIBJPEG TRUE)
+  if(USE_CUSTOM_LIBJPEG)
+    set(USE_EMCC_LIBJPEG_PORT FALSE)
+  else(USE_CUSTOM_LIBJPEG)
+    set(USE_EMCC_LIBJPEG_PORT TRUE) # TODO
+    if(EMSCRIPTEN)
+      message(FATAL_ERROR "wasm: only custom LIBJPEG is supported for now")
+    endif(EMSCRIPTEN)
+  endif(USE_CUSTOM_LIBJPEG)
+  #
+  if(EMSCRIPTEN)
+    set(libjpeg_LIB GLIBJPEG)
+  elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+    set(libjpeg_LIB GLIBJPEG)
+  else()
+    message(FATAL_ERROR "platform not supported")
+  endif()
+endif(USE_LIBJPEG)
+
+set(USE_LIBJPEG_TURBO TRUE)
+if(USE_LIBJPEG_TURBO)
+  set(COMMON_FLAGS "${COMMON_FLAGS} -DUSE_LIBJPEG_TURBO=1")
+  #
+  set(USE_CUSTOM_LIBJPEG_TURBO TRUE)
+  if(USE_CUSTOM_LIBJPEG_TURBO)
+    set(USE_EMCC_LIBJPEG_PORT FALSE)
+  else(USE_CUSTOM_LIBJPEG_TURBO)
+    set(USE_EMCC_LIBJPEG_TURBO_PORT TRUE) # TODO
+    if(EMSCRIPTEN)
+      message(FATAL_ERROR "wasm: only custom LIBJPEG_TURBO is supported for now")
+    endif(EMSCRIPTEN)
+  endif(USE_CUSTOM_LIBJPEG_TURBO)
+  #
+  if(EMSCRIPTEN)
+    set(libjpeg_TURBO_LIB GLIBJPEG_TURBO)
+  elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+    set(libjpeg_TURBO_LIB GLIBJPEG_TURBO)
+  else()
+    message(FATAL_ERROR "platform not supported")
+  endif()
+endif(USE_LIBJPEG_TURBO)
 
 set(ENABLE_COBALT FALSE)
 if(ENABLE_COBALT)
@@ -407,8 +518,8 @@ if(ENABLE_COBALT)
     ${COBALT_GEN_DIR}
     ${COBALT_GEN_DIR}bindings/browser/source # to cobalt/dom/event_init.h
     ${COBALT_ROOT_DIR}gen # to ./cobalt
-    ${CHROMIUM_DIR}/src # to ./base/containers/
-    ${COBALT_ROOT_DIR}/port # to ./starboard/
+    ${CHROMIUM_DIR}src # to ./base/containers/
+    ${COBALT_ROOT_DIR}port # to ./starboard/
     ${CHROMIUM_DIR} # to ./base/
     ${COBALT_ROOT_DIR} # to ./port/
     ${COBALT_CORE_PARENT_DIR} # to ./cobalt
@@ -572,12 +683,15 @@ if(EMSCRIPTEN)
   #
   #set(EMCC_COMMON "${EMCC_COMMON} -DEMSCRIPTEN_HAS_UNBOUND_TYPE_NAMES=0")
   set(EMCC_COMMON "${EMCC_COMMON} -s USE_FREETYPE=1")
-  set(EMCC_COMMON "${EMCC_COMMON} -s USE_LIBPNG=1")
+  #set(EMCC_COMMON "${EMCC_COMMON} -s USE_LIBPNG=1")
   #set(EMCC_COMMON "${EMCC_COMMON} -D__EMSCRIPTEN__=1")
 
   # see https://github.com/endlessm/chromium-browser/blob/master/third_party/skia/third_party/skcms/skcms.cc#L1813
   #set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSKCMS_PORTABLE=1")
   # NOTE: SKCMS_PORTABLE <=> __EMSCRIPTEN_major__
+
+  # see https://github.com/google/skia/blob/e847af7e0d034cb67675ad8d605d5133b6189640/infra/bots/recipe_modules/build/default.py#L174
+  # DGR_EGL_TRY_GLES3_THEN_GLES2
 
   # Tell ICU that we are a 32 bit platform, otherwise,
   # double-conversion-utils.h doesn't know how to operate.
@@ -782,9 +896,11 @@ endif(HAS_ASYNCIFY OR HAS_EMTERPRETIFY)
   set(EMCC_COMMON "${EMCC_COMMON} -s USE_ZLIB=1")
   #set(EMCC_COMMON "${EMCC_COMMON} -s USE_BZIP2=1")
 
-  set(EMCC_COMMON "${EMCC_COMMON} -s USE_ICU=1")
+  if(NOT USE_CUSTOM_ICU)
+    set(EMCC_COMMON "${EMCC_COMMON} -s USE_ICU=1")
+  endif(NOT USE_CUSTOM_ICU)
   set(EMCC_COMMON "${EMCC_COMMON} -s USE_LIBPNG=1")
-  if(USE_LIBJPEG)
+  if(USE_EMCC_LIBJPEG_PORT)
     if ("${EMSCRIPTEN_VERSION}" VERSION_GREATER 1.38.32)
       message(STATUS "using LIBJPEG port, Emscripten version is ${EMSCRIPTEN_VERSION}")
     else()
@@ -1258,22 +1374,21 @@ else(EMSCRIPTEN)
 
   find_package(Freetype)
 
-  if(ENABLE_HARFBUZZ)
+  if(ENABLE_HARFBUZZ AND NOT USE_CUSTOM_HARFBUZZ)
     # harfbuzz
     set(USE_SHARED_HARFBUZZ "true")
     if(USE_SHARED_HARFBUZZ)
       find_package(HarfBuzz REQUIRED)
     else()
       set(HARFBUZZ_LIBRARIES harfbuzz)
-      set(HARFBUZZ_INCLUDE_DIRS ${HARFBUZZ_DIR}/src)
+      set(HARFBUZZ_INCLUDE_DIRS ${harfbuzz_FULL_DIR}/src)
     endif()
     message(STATUS "HARFBUZZ_LIBRARIES=${HARFBUZZ_LIBRARIES}")
     message(STATUS "HARFBUZZ_INCLUDE_DIRS=${HARFBUZZ_INCLUDE_DIRS}")
     # custom flags
     set(COMMON_FLAGS "${COMMON_FLAGS} -DENABLE_HARFBUZZ=1")
-  endif(ENABLE_HARFBUZZ)
+  endif(ENABLE_HARFBUZZ AND NOT USE_CUSTOM_HARFBUZZ)
 
-  set(USE_SYSTEM_PNG OFF)
   if(USE_SYSTEM_PNG)
     #message(FATAL_ERROR "NOT SUPPORTED")
     find_package(PNG REQUIRED) # PNG::PNG
@@ -1335,7 +1450,7 @@ set(GLIBXML_DIR
 )
 include(${CHROMIUM_DIR}GLIBXML.cmake)
 
-if (NOT EMSCRIPTEN)
+if (USE_CUSTOM_LIBPNG)
   # GLIBPNG
   include(${CHROMIUM_DIR}GLIBPNG.cmake)
 endif()
@@ -1363,6 +1478,20 @@ if (ENABLE_SKIA)
   #
   include(skia.cmake)
 endif()
+
+#
+# ICU
+#
+if(USE_CUSTOM_ICU)
+  include(icu.cmake)
+endif(USE_CUSTOM_ICU)
+
+#
+# HARFBUZZ
+#
+if(USE_CUSTOM_HARFBUZZ)
+  include(harfbuzz.cmake)
+endif(USE_CUSTOM_HARFBUZZ)
 
 #
 # WTF
@@ -1420,20 +1549,22 @@ if (ENABLE_SKIA)
     ${SKIA_DIR}/modules/skottie/utils/SkottieUtils.cpp
   )
 
-  add_dependencies(SKIA_EXT SKIA_build sksg SKIA skshaper)
-  add_dependencies(UI_GFX SKIA_build sksg SKIA skshaper)
-  add_dependencies(CC SKIA_build sksg SKIA skshaper)
-  add_dependencies(ANIMATION_CC SKIA_build sksg SKIA skshaper)
-  add_dependencies(PAINT_CC SKIA_build sksg SKIA skshaper)
-  add_dependencies(DEBUG_CC SKIA_build sksg SKIA skshaper)
-  add_dependencies(BASE_CC SKIA_build sksg SKIA skshaper)
-  add_dependencies(GPU_COMMAND_BUFFER SKIA_build sksg SKIA skshaper)
-  add_dependencies(GFX_CODEC SKIA_build sksg SKIA skshaper)
-  add_dependencies(GFX_GEOMETRY SKIA_build sksg SKIA skshaper)
-  add_dependencies(GFX_GEOMETRY_SKIA SKIA_build sksg SKIA skshaper)
-  add_dependencies(GFX_COLOR_SPACE SKIA_build sksg SKIA skshaper)
-  add_dependencies(GFX_SWITCHES SKIA_build sksg SKIA skshaper)
-  add_dependencies(GFX_RANGE SKIA_build sksg SKIA skshaper)
+  if (ENABLE_BLINK)
+    add_dependencies(SKIA_EXT SKIA_build sksg SKIA skshaper)
+    add_dependencies(UI_GFX SKIA_build sksg SKIA skshaper)
+    add_dependencies(CC SKIA_build sksg SKIA skshaper)
+    add_dependencies(ANIMATION_CC SKIA_build sksg SKIA skshaper)
+    add_dependencies(PAINT_CC SKIA_build sksg SKIA skshaper)
+    add_dependencies(DEBUG_CC SKIA_build sksg SKIA skshaper)
+    add_dependencies(BASE_CC SKIA_build sksg SKIA skshaper)
+    add_dependencies(GPU_COMMAND_BUFFER SKIA_build sksg SKIA skshaper)
+    add_dependencies(GFX_CODEC SKIA_build sksg SKIA skshaper)
+    add_dependencies(GFX_GEOMETRY SKIA_build sksg SKIA skshaper)
+    add_dependencies(GFX_GEOMETRY_SKIA SKIA_build sksg SKIA skshaper)
+    add_dependencies(GFX_COLOR_SPACE SKIA_build sksg SKIA skshaper)
+    add_dependencies(GFX_SWITCHES SKIA_build sksg SKIA skshaper)
+    add_dependencies(GFX_RANGE SKIA_build sksg SKIA skshaper)
+  endif(ENABLE_BLINK)
 endif(ENABLE_SKIA)
 
 # TODO
@@ -1634,6 +1765,9 @@ if(EMSCRIPTEN)
     ${COBALT_LIBRARY_NAME}
     ${COBALT_LIBS}
     #
+    ${HARFBUZZ_LIBRARIES}
+    ${CUSTOM_ICU_LIB}
+    #
     base # TODO
     modp_b64
     #${COBALT_LIBRARY_NAME}
@@ -1791,7 +1925,8 @@ else()
     MOJO
     ced
     # emoji-segmenter
-    icu
+    ${HARFBUZZ_LIBRARIES}
+    ${CUSTOM_ICU_LIB}
     ${libZLIB_LIB}
     # webrtc
     base

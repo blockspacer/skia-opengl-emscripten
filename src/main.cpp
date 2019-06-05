@@ -48,7 +48,7 @@
 #error "requires BASE"
 #endif
 
-#if defined(ENABLE_SKIA)
+#if defined(ENABLE_SKIA) && defined(ENABLE_BLINK)
 #define ENABLE_GFX_GEOMETRY 1
 #endif
 
@@ -397,7 +397,7 @@
 
 #endif // ENABLE_WTF
 
-#if defined(ENABLE_SKIA)
+#if defined(ENABLE_SKIA) && defined(ENABLE_BLINK)
 #define ENABLE_UI 1
 #endif
 
@@ -2079,7 +2079,7 @@ int main(int argc, char** argv) {
       });
 #endif
 
-#ifdef ENABLE_GFX_GEOMETRY
+#if defined(ENABLE_GFX_GEOMETRY)
     printf("test GFX_GEOMETRY ...\n");
     gfx::Rect gfxRect(100, 200);
     printf("gfxRect top_right = %s ...\n", gfxRect.top_right().ToString().c_str());
@@ -2136,7 +2136,7 @@ int main(int argc, char** argv) {
   //base::MessageLoopCurrent::Get()->SetTaskRunner(main_thread->task_runner());
   */
 
-#if defined(ENABLE_SKIA)
+#if defined(ENABLE_UI) && defined(ENABLE_SKIA) && defined(ENABLE_BLINK)
   printf("Init FontList ...\n");
   // Use a single default font as the default font list.
   gfx::FontList::SetDefaultFontDescription(::std::string());

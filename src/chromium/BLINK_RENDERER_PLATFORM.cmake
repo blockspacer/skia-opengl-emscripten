@@ -1699,7 +1699,8 @@ add_library(BLINK_RENDERER_PLATFORM STATIC
   ${BLINK_RENDERER_PLATFORM_AUDIO_SOURCES}
   ${BLINK_RENDERER_PLATFORM_BINDINGS_SOURCES}
   ${BLINK_RENDERER_PLATFORM_TEXT_SOURCES}
-  #${BLINK_RENDERER_PLATFORM_FONTS_SOURCES}
+  # TODO font_cache_linux.cc error: no type named 'PlatformFallbackFont' in 'blink::FontCache'
+  # ${BLINK_RENDERER_PLATFORM_FONTS_SOURCES} # TODO
   ${BLINK_RENDERER_PLATFORM_SCHEDULER_SOURCES}
   ${BLINK_RENDERER_PLATFORM_NETWORK_SOURCES}
   #${BLINK_RENDERER_PLATFORM_MEDIASTREAM_SOURCES}
@@ -1713,12 +1714,12 @@ add_library(BLINK_RENDERER_PLATFORM STATIC
 
 if(USE_LIBJPEG)
   if(EMSCRIPTEN)
-    set(libjpeg_LIB GLIBJPEG)
-    set(libjpeg_TURBO_LIB GLIBJPEG_TURBO)
+    #set(libjpeg_LIB GLIBJPEG)
+    #set(libjpeg_TURBO_LIB GLIBJPEG_TURBO)
     set(iccjpeg_LIB iccjpeg)
   elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
-    set(libjpeg_LIB GLIBJPEG)
-    set(libjpeg_TURBO_LIB GLIBJPEG_TURBO)
+    #set(libjpeg_LIB GLIBJPEG)
+    #set(libjpeg_TURBO_LIB GLIBJPEG_TURBO)
     set(iccjpeg_LIB iccjpeg)
   else()
     message(FATAL_ERROR "platform not supported")
@@ -1795,7 +1796,8 @@ target_link_libraries(BLINK_RENDERER_PLATFORM PRIVATE
   MOJO
   ced
   # emoji-segmenter
-  icu
+  ${CUSTOM_ICU_LIB}
+  ${HARFBUZZ_LIBRARIES}
   ${libZLIB_LIB}
   # webrtc
   base

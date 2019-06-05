@@ -1,9 +1,5 @@
 ﻿### --- GLIBJPEG_TURBO ---###
 
-set(GLIBJPEG_TURBO_DIR
-  ${CHROMIUM_DIR}third_party/libjpeg_turbo/
-)
-
 set(GLIBJPEG_TURBO_SOURCES
   ${GLIBJPEG_TURBO_DIR}jcapimin.c
   ${GLIBJPEG_TURBO_DIR}jcapistd.c

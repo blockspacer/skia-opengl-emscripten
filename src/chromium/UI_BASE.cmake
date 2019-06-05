@@ -340,7 +340,8 @@ target_link_libraries(UI_BASE PUBLIC
   UI_GFX
   GFX_GEOMETRY
   GNET
-  icu
+  ${CUSTOM_ICU_LIB}
+  ${HARFBUZZ_LIBRARIES}
   #
   #dynamic_annotations
   #base

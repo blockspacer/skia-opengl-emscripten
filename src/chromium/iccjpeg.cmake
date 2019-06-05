@@ -12,19 +12,6 @@ add_library(iccjpeg STATIC
   ${iccjpeg_SOURCES}
 )
 
-
-if(USE_LIBJPEG)
-  if(EMSCRIPTEN)
-    set(libjpeg_LIB GLIBJPEG)
-    #set(libjpeg_TURBO_LIB GLIBJPEG_TURBO)
-  elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
-    set(libjpeg_LIB GLIBJPEG)
-    #set(libjpeg_TURBO_LIB GLIBJPEG_TURBO)
-  else()
-    message(FATAL_ERROR "platform not supported")
-  endif()
-endif()
-
 target_link_libraries(iccjpeg PUBLIC
   ${libjpeg_LIB}
 )
