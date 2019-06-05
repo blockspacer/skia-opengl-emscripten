@@ -12,7 +12,9 @@
 #include "third_party/blink/renderer/platform/wtf/text/string_hasher.h"
 #include "third_party/blink/renderer/platform/wtf/text/wtf_string.h"
 #include "third_party/blink/renderer/platform/wtf/vector.h"
+#if defined(ENABLE_BORINGSSL)
 #include "third_party/boringssl/src/include/openssl/digest.h"
+#endif // ENABLE_BORINGSSL
 
 namespace blink {
 
@@ -46,7 +48,9 @@ class PLATFORM_EXPORT Digestor {
   bool Finish(DigestValue&);
 
  private:
+#if defined(ENABLE_BORINGSSL)
   bssl::ScopedEVP_MD_CTX digest_context_;
+#endif
   bool has_failed_ = false;
 };
 

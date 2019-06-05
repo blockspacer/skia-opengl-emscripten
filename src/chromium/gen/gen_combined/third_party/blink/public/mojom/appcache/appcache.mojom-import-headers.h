@@ -10,7 +10,8 @@
 #include "third_party/blink/public/mojom/devtools/console_message.mojom-import-headers.h"
 #include "url/mojom/url.mojom.h"
 #include "url/mojom/url.mojom-import-headers.h"
+#if defined(ENABLE_GNET)
 #include "services/network/public/mojom/url_loader_factory.mojom.h"
 #include "services/network/public/mojom/url_loader_factory.mojom-import-headers.h"
-
+#endif
 #endif  // THIRD_PARTY_BLINK_PUBLIC_MOJOM_APPCACHE_APPCACHE_MOJOM_IMPORT_HEADERS_H_

@@ -110,6 +110,16 @@ else ()
 endif ()
 
 if (EMSCRIPTEN)
+  set(SK_IS_x11 "true")
+
+  if(USE_SK_GPU)
+    set(SK_IS_GPU "true")
+  else(USE_SK_GPU)
+    set(SK_IS_GPU "false")
+  endif(USE_SK_GPU)
+
+  set(SK_IS_EGL "true")
+
   # todo
   #set(SK_CONF_IS_OFFICIAL_BUILD "true")
 
@@ -119,7 +129,6 @@ if (EMSCRIPTEN)
   set(SK_IS_workarounds "false") # TODO
   set(SK_IS_ccpr "false")
 
-  set(SK_IS_EGL "true")
   # https://github.com/Zubnix/skia-wasm-port/blob/master/build_skia_wasm_bitcode.sh#L16
   # TODO: PATCH https://github.com/Zubnix/skia-wasm-port/blob/master/wasm_compatible_build.patch
   set(SK_TARGET_CPU "target_cpu=\"wasm\"")
@@ -128,12 +137,15 @@ if (EMSCRIPTEN)
   set(SK_GL_STANDARD "skia_gl_standard=\"webgl\"") # SK_ASSUME_WEBGL
   #set(SK_GL_STANDARD "skia_gl_standard=\"gles\"") # SK_ASSUME_GL_ES
   #set(SK_GL_STANDARD "skia_gl_standard=\"gl\"") # SK_ASSUME_GL
-else (EMSCRIPTEN)
+else(EMSCRIPTEN)
+  set(SK_IS_x11 "true")
+  set(SK_IS_GPU "true") # TODO
+  set(SK_IS_EGL "false")
+
   set(SK_IS_processors "false") # see SKSL_STANDALONE
   set(SK_IS_workarounds "false")
   set(SK_IS_ccpr "true")
 
-  set(SK_IS_EGL "false")
   set(SK_TARGET_CPU "")
   set(SK_GL_STANDARD "") # default
 endif (EMSCRIPTEN)
@@ -155,6 +167,13 @@ endif (EMSCRIPTEN)
   # but then the args can't be indented because GN is written by somone with overly strong opinions:
   # "You got a tab character in here. Tabs are evil. Convert to spaces."
 
+#${WUFFS_LIB_NAME}
+if(ENABLE_WUFFS)
+  set(SK_IS_wuffs "true")
+else(ENABLE_WUFFS)
+  set(SK_IS_wuffs "false")
+endif(ENABLE_WUFFS)
+
 # NOTE: modifying skia src requires full rebuild!
 set(GN_ARGS "${SK_TARGET_CPU} \
 ${SK_GL_STANDARD} \
@@ -167,7 +186,7 @@ extra_ldflags=[${SKIA_LDFLAGS}] \
 is_official_build=${SK_CONF_IS_OFFICIAL_BUILD} \
 is_component_build=${SK_CONF_SHARED} \
 is_debug=${SK_CONF_DEBUG} \
-skia_enable_gpu=true \
+skia_enable_gpu=${SK_IS_GPU} \
 skia_use_egl=${SK_IS_EGL} \
 skia_use_vulkan=false \
 skia_enable_vulkan_debug_layers=false \
@@ -182,7 +201,7 @@ skia_use_system_libjpeg_turbo=false \
 skia_use_libpng=true \
 skia_use_system_libpng=true \
 skia_use_zlib=true \
-skia_use_wuffs=true \
+skia_use_wuffs=${SK_IS_wuffs} \
 skia_use_libwebp=false \
 skia_enable_pdf=false \
 skia_use_sfntly=false \
@@ -201,7 +220,7 @@ skia_enable_fontmgr_custom=true \
 skia_use_libheif=false \
 skia_enable_skpicture=true \
 skia_enable_skshaper=true \
-skia_use_x11=true \
+skia_use_x11=${SK_IS_x11} \
 skia_lex=false \
 skia_compile_processors=${SK_IS_processors} \
 skia_generate_workarounds=${SK_IS_workarounds} \
@@ -235,7 +254,7 @@ if (EXT_SKIA_ALWAYS_BUILD)
 endif ()
 #message(FATAL_ERROR ${SKIA_EXT_PARENT_DIR}/skia/config/sk_ref_cnt_ext_release.h)
 # taken from BUILD.gn (skia_public_includes, minus things that are obviously useless for us)
-set(SKIA_HEADERS
+list(APPEND SKIA_HEADERS
   #src/chromium/third_party/
   ${SKIA_EXT_PARENT_DIR}
   ${SKIA_EXT_DIR}
@@ -293,9 +312,14 @@ set(SKIA_HEADERS
 #  ${SKIA_SRC_DIR}/third_party/spirv-headers
 #  ${SKIA_SRC_DIR}/third_party/spirv-tools
 #  ${SKIA_SRC_DIR}/third_party/vulkanmemoryallocator
-  ${SKIA_SRC_DIR}/third_party/wuffs
   ${SKIA_SRC_DIR}/third_party/zlib
 )
+
+if(ENABLE_WUFFS)
+  list(APPEND SKIA_HEADERS
+    ${SKIA_SRC_DIR}/third_party/wuffs
+  )
+endif(ENABLE_WUFFS)
 
 #include_directories(
 #  src/chromium/third_party
@@ -345,14 +369,20 @@ set(SKIA_HEADERS
   #GL_GLEXT_PROTOTYPES
   #EGL_EGLEXT_PROTOTYPES
   #LIBEGL_IMPLEMENTATION
-set(SKIA_DEFINES
+
+if(USE_SK_GPU)
+  list(APPEND SKIA_DEFINES
+    SK_SUPPORT_GPU=1 # skia_enable_gpu
+    SK_SUPPORT_GPU
+  )
+endif(USE_SK_GPU)
+
+list(APPEND SKIA_DEFINES
   SKIA_IMPLEMENTATION
   SK_SUPPORT_OPENCL=0
   SK_SAMPLES_FOR_X=1 # always set for linux, even if there's no X used
   SK_SAMPLES_FOR_X
   # see https://skia.org/user/api/skcanvas_creation
-  SK_SUPPORT_GPU=1 # skia_enable_gpu
-  SK_SUPPORT_GPU
   SK_HAS_PNG_LIBRARY=1 # skia_use_libpng
   SK_HAS_PNG_LIBRARY
   SK_HAS_JPEG_LIBRARY=1 # skia_use_libjpeg_turbo
@@ -583,11 +613,13 @@ set(skottie_LIBRARY "${SKIA_BUILD_DIR}/${SKIA_LIBRARY_PREFIX}skottie${SKIA_LIBRA
 #endif()
 #set(particles_LIBRARY "${SKIA_BUILD_DIR}/${SKIA_LIBRARY_PREFIX}particles${SKIA_LIBRARY_SUFFIX}")
 #
-add_library(wuffs ${SK_LIBRARY_TYPE} IMPORTED GLOBAL)
-if(NOT TARGET wuffs)
-  message(FATAL_ERROR "SKIA LIB NOT FOUND")
-endif()
-set(wuffs_LIBRARY "${SKIA_BUILD_DIR}/${SKIA_LIBRARY_PREFIX}wuffs${SKIA_LIBRARY_SUFFIX}")
+if(ENABLE_WUFFS)
+  add_library(wuffs ${SK_LIBRARY_TYPE} IMPORTED GLOBAL)
+  if(NOT TARGET wuffs)
+    message(FATAL_ERROR "SKIA LIB NOT FOUND")
+  endif()
+  set(wuffs_LIBRARY "${SKIA_BUILD_DIR}/${SKIA_LIBRARY_PREFIX}wuffs${SKIA_LIBRARY_SUFFIX}")
+endif(ENABLE_WUFFS)
 #
 add_library(jpeg ${SK_LIBRARY_TYPE} IMPORTED GLOBAL)
 if(NOT TARGET jpeg)
@@ -597,13 +629,15 @@ set(jpeg_LIBRARY "${SKIA_BUILD_DIR}/${SKIA_LIBRARY_PREFIX}jpeg${SKIA_LIBRARY_SUF
 
 #
 #message(FATAL_ERROR "${skottie_LIBRARY}")
-set_target_properties(wuffs PROPERTIES
-  IMPORTED_LOCATION "${wuffs_LIBRARY}"
-  INTERFACE_INCLUDE_DIRECTORIES "${SKIA_HEADERS}"
-  INTERFACE_COMPILE_DEFINITIONS "${SKIA_DEFINES}"
-  IMPORTED_LINK_INTERFACE_LIBRARIES "${SKIA_DEPENDENCIES}"
-)
-add_dependencies(wuffs SKIA_build)
+if(ENABLE_WUFFS)
+  set_target_properties(wuffs PROPERTIES
+    IMPORTED_LOCATION "${wuffs_LIBRARY}"
+    INTERFACE_INCLUDE_DIRECTORIES "${SKIA_HEADERS}"
+    INTERFACE_COMPILE_DEFINITIONS "${SKIA_DEFINES}"
+    IMPORTED_LINK_INTERFACE_LIBRARIES "${SKIA_DEPENDENCIES}"
+  )
+  add_dependencies(wuffs SKIA_build)
+endif(ENABLE_WUFFS)
 #
 set_target_properties(jpeg PROPERTIES
   IMPORTED_LOCATION "${jpeg_LIBRARY}"
@@ -621,10 +655,10 @@ set_target_properties(SKIA PROPERTIES
   #IMPORTED_LINK_INTERFACE_LIBRARIES "${SKIA_DEPENDENCIES}"
   IMPORTED_LINK_INTERFACE_LIBRARIES "${wuffs_LIBRARY};${jpeg_LIBRARY};${SKIA_DEPENDENCIES}"
 )
-add_dependencies(SKIA SKIA_build wuffs jpeg)
+add_dependencies(SKIA SKIA_build ${WUFFS_LIB_NAME} jpeg)
 # https://stackoverflow.com/a/53945809
 target_link_libraries(SKIA INTERFACE
-  wuffs jpeg)
+  ${WUFFS_LIB_NAME} jpeg)
 #
 #set_target_properties(pathkit PROPERTIES
 #  IMPORTED_LOCATION "${PATHKIT_LIBRARY}"

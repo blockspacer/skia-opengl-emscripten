@@ -19,7 +19,9 @@
 
 namespace net {
 class ClientSocketFactory;
+#if defined(ENABLE_BORINGSSL)
 class SSLConfigService;
+#endif // ENABLE_BORINGSSL
 class StreamSocket;
 }  // namespace net
 

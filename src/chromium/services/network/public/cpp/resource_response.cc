@@ -51,8 +51,10 @@ scoped_refptr<ResourceResponse> ResourceResponse::DeepCopy() const {
   new_response->head.is_in_cache_storage = head.is_in_cache_storage;
   new_response->head.cache_storage_cache_name = head.cache_storage_cache_name;
   new_response->head.effective_connection_type = head.effective_connection_type;
+#if defined(ENABLE_BORINGSSL)
   new_response->head.cert_status = head.cert_status;
   new_response->head.ssl_info = head.ssl_info;
+#endif // ENABLE_BORINGSSL
   new_response->head.cors_exposed_header_names = head.cors_exposed_header_names;
   new_response->head.did_service_worker_navigation_preload =
       head.did_service_worker_navigation_preload;

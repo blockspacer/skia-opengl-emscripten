@@ -127,7 +127,11 @@ std::unique_ptr<Fetcher> FetcherFactory::CreateSecureFetcher(
 #if defined(ENABLE_GNET)
     NetFetcher::Options options;
     return std::unique_ptr<Fetcher>(
-        new NetFetcher(url, url_security_callback, handler,
+        new NetFetcher(url,
+#if defined(ENABLE_COBALT_CSP)
+        url_security_callback,
+#endif
+        handler,
 
 #if !defined(__EMSCRIPTEN__) && defined(__TODO__)
         network_module_,

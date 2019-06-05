@@ -27,7 +27,9 @@ class GURL;
 namespace net {
 class URLRequestContext;
 class WebSocketChannel;
+#if defined(ENABLE_BORINGSSL)
 class SSLInfo;
+#endif // ENABLE_BORINGSSL
 }  // namespace net
 
 namespace network {

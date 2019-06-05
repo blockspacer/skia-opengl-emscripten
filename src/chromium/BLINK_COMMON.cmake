@@ -22,13 +22,22 @@ list(APPEND BLINK_COMMON_GEN_SOURCES
   ${CUR_SRC_DIR}/frame/frame_policy.cc
   ${CUR_SRC_DIR}/frame/from_ad_state.cc
   ${CUR_SRC_DIR}/frame/user_activation_state.cc
-  ${CUR_SRC_DIR}/indexeddb/indexed_db_default_mojom_traits.cc
-  ${CUR_SRC_DIR}/indexeddb/indexeddb_key.cc
-  ${CUR_SRC_DIR}/indexeddb/indexeddb_key_path.cc
-  ${CUR_SRC_DIR}/indexeddb/indexeddb_key_range.cc
-  ${CUR_SRC_DIR}/indexeddb/indexeddb_metadata.cc
-  ${CUR_SRC_DIR}/loader/url_loader_factory_bundle.cc
-  ${CUR_SRC_DIR}/loader/url_loader_factory_bundle_mojom_traits.cc
+  # TODO
+  #${CUR_SRC_DIR}/indexeddb/indexed_db_default_mojom_traits.cc
+  #${CUR_SRC_DIR}/indexeddb/indexeddb_key.cc
+  #${CUR_SRC_DIR}/indexeddb/indexeddb_key_path.cc
+  #${CUR_SRC_DIR}/indexeddb/indexeddb_key_range.cc
+  #${CUR_SRC_DIR}/indexeddb/indexeddb_metadata.cc
+)
+
+if(ENABLE_GNET)
+  list(APPEND BLINK_COMMON_GEN_SOURCES
+    ${CUR_SRC_DIR}/loader/url_loader_factory_bundle.cc
+    ${CUR_SRC_DIR}/loader/url_loader_factory_bundle_mojom_traits.cc
+  )
+endif(ENABLE_GNET)
+
+list(APPEND BLINK_COMMON_GEN_SOURCES
   ${CUR_SRC_DIR}/logging/logging_utils.cc
   ${CUR_SRC_DIR}/manifest/manifest.cc
   ${CUR_SRC_DIR}/manifest/manifest_icon_selector.cc

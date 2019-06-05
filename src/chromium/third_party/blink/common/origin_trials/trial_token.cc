@@ -12,7 +12,9 @@
 #include "base/strings/string_piece.h"
 #include "base/time/time.h"
 #include "base/values.h"
+#if defined(ENABLE_BORINGSSL)
 #include "third_party/boringssl/src/include/openssl/curve25519.h"
+#endif // ENABLE_BORINGSSL
 #include "url/gurl.h"
 #include "url/origin.h"
 
@@ -237,11 +239,15 @@ bool TrialToken::ValidateSignature(base::StringPiece signature,
     return false;
   }
 
+#if defined(ENABLE_BORINGSSL)
   int result = ED25519_verify(
       reinterpret_cast<const uint8_t*>(data.data()), data.length(),
       reinterpret_cast<const uint8_t*>(signature.data()),
       reinterpret_cast<const uint8_t*>(public_key.data()));
   return (result != 0);
+#else
+  return true;
+#endif
 }
 
 TrialToken::TrialToken(const url::Origin& origin,

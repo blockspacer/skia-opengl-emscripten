@@ -50,7 +50,10 @@ class NetFetcher : public Fetcher, public net::URLFetcherDelegate {
     net::URLFetcher::RequestType request_method;
   };
 
-  NetFetcher(const GURL& url, const csp::SecurityCallback& security_callback,
+  NetFetcher(const GURL& url,
+#if defined(ENABLE_COBALT_CSP)
+  const csp::SecurityCallback& security_callback,
+#endif
              Handler* handler,
 
 #if !defined(__EMSCRIPTEN__) && defined(__TODO__)
@@ -95,7 +98,10 @@ class NetFetcher : public Fetcher, public net::URLFetcherDelegate {
   // thread that it is created in.
   base::ThreadChecker thread_checker_;
   std::unique_ptr<net::URLFetcher> url_fetcher_;
+#if defined(ENABLE_COBALT_CSP)
   csp::SecurityCallback security_callback_;
+#endif
+
   // Ensure we can cancel any in-flight Start() task if we are destroyed
   // after being constructed, but before Start() runs.
   base::CancelableClosure start_callback_;

@@ -111,6 +111,7 @@ using URLLoaderClientAssociatedRequest =
 }  // namespace mojom
 }  // namespace network
 #include "base/memory/scoped_refptr.h"
+#if defined(ENABLE_GNET)
 #include "net/url_request/redirect_info.h"
 #include "services/network/public/cpp/cors/cors_error_status.h"
 #include "services/network/public/cpp/data_element.h"
@@ -118,5 +119,6 @@ using URLLoaderClientAssociatedRequest =
 #include "services/network/public/cpp/resource_request_body.h"
 #include "services/network/public/cpp/resource_response.h"
 #include "services/network/public/cpp/url_loader_completion_status.h"
+#endif
 
 #endif  // SERVICES_NETWORK_PUBLIC_MOJOM_URL_LOADER_MOJOM_FORWARD_H_

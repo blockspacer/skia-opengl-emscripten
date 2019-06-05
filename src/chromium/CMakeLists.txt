@@ -326,7 +326,7 @@ if(ENABLE_SKIA AND ENABLE_BLINK)
     #libpng
     #zlib
     base
-    #wuffs
+    #${WUFFS_LIB_NAME}
     #jpeg
   )
 

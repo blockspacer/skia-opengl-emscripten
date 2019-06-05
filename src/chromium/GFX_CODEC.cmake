@@ -58,7 +58,7 @@ target_link_libraries(GFX_CODEC PRIVATE
   #skshaper
   #particles
   #pathkit
-  #wuffs
+  #${WUFFS_LIB_NAME}
   #jpeg
   #libpng
   #zlib

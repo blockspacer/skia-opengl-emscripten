@@ -82,7 +82,17 @@ class  URLLoaderFactory
   virtual ~URLLoaderFactory() {}
 
   
-  virtual void CreateLoaderAndStart(::network::mojom::URLLoaderRequest loader, int32_t routing_id, int32_t request_id, uint32_t options, const network::ResourceRequest& request, ::network::mojom::URLLoaderClientPtr client, const net::MutableNetworkTrafficAnnotationTag& traffic_annotation) = 0;
+  virtual void CreateLoaderAndStart(::network::mojom::URLLoaderRequest loader, int32_t routing_id, int32_t request_id, uint32_t options
+#if defined(ENABLE_GNET)
+  , const network::ResourceRequest& request
+#endif
+  ,
+  ::network::mojom::URLLoaderClientPtr client
+#if defined(ENABLE_GNET)
+  ,
+  const net::MutableNetworkTrafficAnnotationTag& traffic_annotation
+#endif
+  ) = 0;
 
   
   virtual void Clone(URLLoaderFactoryRequest factory) = 0;
@@ -94,7 +104,18 @@ class  URLLoaderFactoryProxy
   using InterfaceType = URLLoaderFactory;
 
   explicit URLLoaderFactoryProxy(mojo::MessageReceiverWithResponder* receiver);
-  void CreateLoaderAndStart(::network::mojom::URLLoaderRequest loader, int32_t routing_id, int32_t request_id, uint32_t options, const network::ResourceRequest& request, ::network::mojom::URLLoaderClientPtr client, const net::MutableNetworkTrafficAnnotationTag& traffic_annotation) final;
+  void CreateLoaderAndStart(::network::mojom::URLLoaderRequest loader, int32_t routing_id, int32_t request_id, uint32_t options
+#if defined(ENABLE_GNET)
+  ,
+  const network::ResourceRequest& request
+#endif
+  ,
+  ::network::mojom::URLLoaderClientPtr client
+#if defined(ENABLE_GNET)
+  ,
+  const net::MutableNetworkTrafficAnnotationTag& traffic_annotation
+#endif
+  ) final;
   void Clone(URLLoaderFactoryRequest factory) final;
 
  private:

@@ -84,6 +84,8 @@ set(GEN_COMPONENTS_CONTENT_SETTINGS_CORE_COMMON_DIR ${GN_GEN_DIR}gen_components_
 
 set(USE_LIBJPEG TRUE)
 
+set(USE_SK_GPU TRUE)
+
 # NOTE: SOURCE_MAP requires -g4 and --source-map-base
 # see http://webassemblycode.com/using-browsers-debug-webassembly/
 set(EMSCRIPTEN_USE_SOURCE_MAP TRUE)
@@ -133,7 +135,7 @@ if(ENABLE_BORINGSSL)
   )
 endif(ENABLE_BORINGSSL)
 
-set(ENABLE_GNET FALSE)
+set(ENABLE_GNET TRUE)
 if(ENABLE_GNET)
   set(COMMON_FLAGS "${COMMON_FLAGS} -DENABLE_GNET=1")
   #set(COMMON_FLAGS "${COMMON_FLAGS} -DENABLE_NET=1")
@@ -143,8 +145,14 @@ if(ENABLE_GNET)
   )
 endif(ENABLE_GNET)
 
-set(ENABLE_SKIA FALSE)
+set(ENABLE_SKIA TRUE)
 if (ENABLE_SKIA)
+  set(ENABLE_WUFFS FALSE)
+  if(ENABLE_WUFFS)
+    set(WUFFS_LIB_NAME
+      wuffs
+    )
+  endif()
   set(COMMON_FLAGS "${COMMON_FLAGS} -DENABLE_SKIA=1")
   set(SKIA_LIBS
     SKIA
@@ -152,7 +160,7 @@ if (ENABLE_SKIA)
     skshaper
     #particles
     skottie
-    wuffs
+    ${WUFFS_LIB_NAME}
     jpeg
     #pathkit
   )
@@ -285,7 +293,7 @@ if(USE_LIBJPEG)
   set(COMMON_FLAGS "${COMMON_FLAGS} -DUSE_LIBJPEG=1")
 endif()
 
-set(ENABLE_COBALT TRUE)
+set(ENABLE_COBALT FALSE)
 if(ENABLE_COBALT)
   set(COMMON_FLAGS "${COMMON_FLAGS} -DENABLE_COBALT=1")
   #set(COMMON_FLAGS "${COMMON_FLAGS} -DCOBALT=1") # see htmlEmitImpliedRootLevelParagraph
@@ -406,23 +414,40 @@ if(ENABLE_COBALT)
     ${COBALT_CORE_PARENT_DIR} # to ./cobalt
   )
   set(COBALT_LIBRARY_NAME COBALT_CORE)
-
+  #
+  set(COBALT_BASE_LIB cobalt_base)
+  set(COBALT_NANOBASE_LIB cobalt_nanobase)
+  set(COBALT_SCRIPT_LIB cobalt_script)
+  set(COBALT_V8_STUB_LIB v8_stub)
+  set(COBALT_DOM_EXCEPTION_LIB cobalt_dom_exception)
+  set(COBALT_UI_NAVIGATION_LIB cobalt_ui_navigation)
+  set(COBALT_MATH_LIB cobalt_math)
+  set(COBALT_MEDIA_LIB cobalt_media)
+  set(COBALT_PAGE_VISIBILITY_LIB cobalt_page_visibility)
+  set(COBALT_CSSOM_LIB cobalt_cssom)
+  set(COBALT_WEB_ANIMATIONS_LIB cobalt_web_animations)
+  set(COBALT_DOM_LIB cobalt_dom)
+  #
+  set(STARBOARD_PLATFORM_LIB starboard_platform)
+  set(STARBOARD_ICU_INIT_LIB starboard_icu_init)
+  set(STARBOARD_EZTIME_LIB starboard_eztime)
+  set(STARBOARD_COMMON_LIB starboard_common)
+  #
   list(APPEND COBALT_LIBS
-    ${COBALT_LIBRARY_NAME}
-    cobalt_base
-    cobalt_nanobase
-    #${COBALT_CSP_LIB_NAME}
-    cobalt_script
-    v8_stub
-    cobalt_dom_exception
-    cobalt_ui_navigation
-    cobalt_math
-    cobalt_media
-    #cobalt_loader
-    cobalt_page_visibility
-    cobalt_cssom
-    cobalt_web_animations
-    cobalt_dom
+    ${COBALT_BASE_LIB}
+    ${COBALT_NANOBASE_LIB}
+    ${COBALT_SCRIPT_LIB}
+    ${COBALT_V8_STUB_LIB}
+    ${COBALT_DOM_EXCEPTION_LIB}
+    ${COBALT_V8_STUB_LIB}
+    ${COBALT_DOM_EXCEPTION_LIB}
+    ${COBALT_UI_NAVIGATION_LIB}
+    ${COBALT_MATH_LIB}
+    ${COBALT_MEDIA_LIB}
+    ${COBALT_PAGE_VISIBILITY_LIB}
+    ${COBALT_CSSOM_LIB}
+    ${COBALT_WEB_ANIMATIONS_LIB}
+    ${COBALT_DOM_LIB}
   )
 
   #if(ENABLE_GNET)
@@ -480,8 +505,11 @@ endif()
 # NVALGRIND used in tcmalloc and third_party/valgrind.h
 set(COMMON_FLAGS "${COMMON_FLAGS} -DNVALGRIND=1")
 
-set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_SUPPORT_GPU=1") # skia_enable_gpu
-set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_SUPPORT_GPU") # skia_enable_gpu
+if(USE_SK_GPU)
+  set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_SUPPORT_GPU=1") # skia_enable_gpu
+  set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_SUPPORT_GPU") # skia_enable_gpu
+endif(USE_SK_GPU)
+
 set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_DISABLE_READBUFFER=1")
 #set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DLIBANGLE_IMPLEMENTATION=1")
 #set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DLIBGLESV2_IMPLEMENTATION=1")
@@ -891,7 +919,9 @@ endif(NOT RELEASE_BUILD)
   # https://github.com/Rusino/skia/blob/master/BUILD.gn#L1688
   # NOTE: on wasm  by default skia don`t use harfbuzz skshaper
   set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_USING_SKSHAPER=1") # skia_enable_skshaper
-  set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_HAS_WUFFS_LIBRARY=1") # skia_use_wuffs
+  if(ENABLE_WUFFS)
+    set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_HAS_WUFFS_LIBRARY=1") # skia_use_wuffs
+  endif(ENABLE_WUFFS)
   # SK_HAS_WEBP_LIBRARY # skia_use_libwebp
   # SK_XML # skia_use_expat
   # https://github.com/Rusino/skia/blob/master/BUILD.gn#L191
@@ -1601,6 +1631,7 @@ if(EMSCRIPTEN)
   # Top is the executable, followed by directly used libraries.
   # see https://floooh.github.io/2016/01/12/cmake-dependency-juggling.html
   target_link_libraries(${PROJECT_NAME} PUBLIC
+    ${COBALT_LIBRARY_NAME}
     ${COBALT_LIBS}
     #
     base # TODO
@@ -1620,11 +1651,11 @@ if(EMSCRIPTEN)
     #cobalt_cssom
     #cobalt_web_animations
     ##cobalt_dom
-    starboard_icu_init
-    starboard_eztime  # requires starboard_icu_init
-    #starboard_stub
-    starboard_platform # requires starboard_stub
-    starboard_common
+    #starboard_icu_init
+    #starboard_eztime  # requires starboard_icu_init
+    ##starboard_stub
+    #starboard_platform # requires starboard_stub
+    #starboard_common
     #starboard_core
     #
     modp_b64
@@ -1642,7 +1673,7 @@ if(EMSCRIPTEN)
     #skshaper
     #particles
     #pathkit
-    #wuffs
+    #${WUFFS_LIB_NAME}
     #jpeg
     #
     ${WTF_LIBS}
@@ -1701,6 +1732,7 @@ else()
   # Top is the executable, followed by directly used libraries.
   # see https://floooh.github.io/2016/01/12/cmake-dependency-juggling.html
   target_link_libraries(${PROJECT_NAME} PUBLIC
+    ${COBALT_LIBRARY_NAME}
     ${COBALT_LIBS}
     #cobalt_
     #cobalt_web_animations
@@ -1723,7 +1755,7 @@ else()
     #skshaper
     #particles
     #pathkit
-    #wuffs
+    #${WUFFS_LIB_NAME}
     #jpeg
     #
     ${libZLIB_LIB}

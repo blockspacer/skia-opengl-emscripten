@@ -64,8 +64,10 @@ struct COMPONENT_EXPORT(NETWORK_CPP_BASE) URLLoaderCompletionStatus {
   // Optional CORS error details.
   base::Optional<CorsErrorStatus> cors_error_status;
 
+#if defined(ENABLE_BORINGSSL)
   // Optional SSL certificate info.
   base::Optional<net::SSLInfo> ssl_info;
+#endif // ENABLE_BORINGSSL
 
   // Set when response blocked by CORB needs to be reported to the DevTools
   // console.

@@ -10,7 +10,10 @@
 #include <stdint.h>
 
 #include "base/stl_util.h"
+
+#if defined(ENABLE_GNET)
 #include "net/http/transport_security_state_source.h"
+#endif
 
 // These are SubjectPublicKeyInfo hashes for public key pinning. The
 // hashes are SHA256 digests.
@@ -505,6 +508,7 @@ static const char* const kYahooAcceptableCerts[] = {
 };
 static const char kYahooReportURI[] = "http://csp.yahoo.com/beacon/csp?src=yahoocom-hpkp-report-only";
 
+#if defined(ENABLE_GNET)
 static const net::TransportSecurityStateSource::Pinset kPinsets[] = {
     {kDropboxAcceptableCerts, kNoRejectedPublicKeys, kDropboxReportURI},
     {kFacebookAcceptableCerts, kNoRejectedPublicKeys, kNoReportURI},
@@ -518,6 +522,7 @@ static const net::TransportSecurityStateSource::Pinset kPinsets[] = {
     {kTwitterComAcceptableCerts, kNoRejectedPublicKeys, kTwitterComReportURI},
     {kYahooAcceptableCerts, kNoRejectedPublicKeys, kYahooReportURI},
 };
+#endif
 
 // kHSTSHuffmanTree describes a Huffman tree. The nodes of the tree are pairs
 // of uint8s. The last node in the array is the root of the tree. Each pair is

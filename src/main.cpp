@@ -334,7 +334,7 @@
 
 #ifdef ENABLE_BASE
 
-#include "base/task/sequence_manager/thread_controller_with_message_pump_impl.h"
+//#include "base/task/sequence_manager/thread_controller_with_message_pump_impl.h"
 #include "base/bind.h"
 #include "base/bind_helpers.h"
 #include "base/memory/scoped_refptr.h"
@@ -365,7 +365,7 @@
 
 #include "base/synchronization/waitable_event.h"
 
-#include "base/task/sequence_manager/sequence_manager.h"
+//#include "base/task/sequence_manager/sequence_manager.h"
 #endif
 
 #ifdef ENABLE_WTF
@@ -2034,7 +2034,7 @@ static void SomeHardcoreAsyncTask(
 }
 #endif
 
-class ThreadControllerNoMT
+/*class ThreadControllerNoMT
     : public base::sequence_manager::internal::ThreadControllerWithMessagePumpImpl {
  public:
   ThreadControllerNoMT(std::unique_ptr<base::MessagePump> pump,
@@ -2049,11 +2049,12 @@ class ThreadControllerNoMT
   using ThreadControllerWithMessagePumpImpl::Run;
 };
 
-/*static std::unique_ptr<base::MessagePump> g_main_pump;
-static std::unique_ptr<ThreadControllerNoMT> g_thread_controller;*/
+static std::unique_ptr<base::MessagePump> g_main_pump;
+static std::unique_ptr<ThreadControllerNoMT> g_thread_controller;
 
 static std::unique_ptr<base::Thread> main_thread;
 std::unique_ptr<base::sequence_manager::SequenceManager> sequence_manager;
+*/
 
 int main(int argc, char** argv) {
     printf("main ...\n");

@@ -160,6 +160,8 @@ struct COMPONENT_EXPORT(NETWORK_CPP_BASE) ResourceResponseInfo {
   // only for responses that correspond to main frame requests.
   net::EffectiveConnectionType effective_connection_type;
 
+
+#if defined(ENABLE_BORINGSSL)
   // Bitmask of status info of the SSL certificate. See cert_status_flags.h for
   // values.
   net::CertStatus cert_status;
@@ -171,6 +173,7 @@ struct COMPONENT_EXPORT(NETWORK_CPP_BASE) ResourceResponseInfo {
   // and may only contain certain fields of interest (namely, connection
   // parameters and certificate information).
   base::Optional<net::SSLInfo> ssl_info;
+#endif // ENABLE_BORINGSSL
 
   // In case this is a CORS response fetched by a ServiceWorker, this is the
   // set of headers that should be exposed.

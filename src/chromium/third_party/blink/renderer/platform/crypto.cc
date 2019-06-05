@@ -12,8 +12,8 @@ namespace blink {
 
 Digestor::Digestor(HashAlgorithm algorithm) {
   crypto::EnsureOpenSSLInit();
+#if defined(ENABLE_BORINGSSL)
   crypto::OpenSSLErrStackTracer err_tracer(FROM_HERE);
-
   const EVP_MD* evp_md = nullptr;
   switch (algorithm) {
     case kHashAlgorithmSha1:
@@ -32,6 +32,7 @@ Digestor::Digestor(HashAlgorithm algorithm) {
 
   has_failed_ =
       !evp_md || !EVP_DigestInit_ex(digest_context_.get(), evp_md, nullptr);
+#endif
 }
 
 Digestor::~Digestor() = default;
@@ -40,10 +41,14 @@ bool Digestor::Update(base::span<const uint8_t> data) {
   if (has_failed_)
     return false;
 
+#if defined(ENABLE_BORINGSSL)
   crypto::OpenSSLErrStackTracer err_tracer(FROM_HERE);
   has_failed_ =
       !EVP_DigestUpdate(digest_context_.get(), data.data(), data.size());
   return !has_failed_;
+#else
+  return false;
+#endif
 }
 
 bool Digestor::UpdateUtf8(const String& string, WTF::UTF8ConversionMode mode) {
@@ -54,7 +59,7 @@ bool Digestor::UpdateUtf8(const String& string, WTF::UTF8ConversionMode mode) {
 bool Digestor::Finish(DigestValue& digest_result) {
   if (has_failed_)
     return false;
-
+#if defined(ENABLE_BORINGSSL)
   crypto::OpenSSLErrStackTracer err_tracer(FROM_HERE);
   const size_t expected_size = EVP_MD_CTX_size(digest_context_.get());
   DCHECK_LE(expected_size, static_cast<size_t>(EVP_MAX_MD_SIZE));
@@ -65,6 +70,9 @@ bool Digestor::Finish(DigestValue& digest_result) {
                                     &result_size) ||
                 result_size != expected_size;
   return !has_failed_;
+#else
+  return true;
+#endif
 }
 
 bool ComputeDigest(HashAlgorithm algorithm,

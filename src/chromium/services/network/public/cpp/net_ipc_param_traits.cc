@@ -58,6 +58,7 @@ void ParamTraits<net::AuthCredentials>::Log(const param_type& p,
   l->append("<AuthCredentials>");
 }
 
+#if defined(ENABLE_BORINGSSL)
 void ParamTraits<net::CertVerifyResult>::Write(base::Pickle* m,
                                                const param_type& p) {
   WriteParam(m, p.verified_cert);
@@ -111,6 +112,7 @@ void ParamTraits<net::ct::CTVerifyResult>::Log(const param_type& p,
                                                std::string* l) {
   l->append("<CTVerifyResult>");
 }
+#endif // ENABLE_BORINGSSL
 
 void ParamTraits<net::HashValue>::Write(base::Pickle* m, const param_type& p) {
   WriteParam(m, p.ToString());
@@ -311,6 +313,7 @@ void ParamTraits<net::OCSPVerifyResult>::Log(const param_type& p,
   l->append("<OCSPVerifyResult>");
 }
 
+#if defined(ENABLE_BORINGSSL)
 void ParamTraits<scoped_refptr<net::SSLCertRequestInfo>>::Write(
     base::Pickle* m,
     const param_type& p) {
@@ -389,6 +392,7 @@ bool ParamTraits<net::SSLInfo>::Read(const base::Pickle* m,
 void ParamTraits<net::SSLInfo>::Log(const param_type& p, std::string* l) {
   l->append("<SSLInfo>");
 }
+#endif // ENABLE_BORINGSSL
 
 void ParamTraits<scoped_refptr<net::ct::SignedCertificateTimestamp>>::Write(
     base::Pickle* m,
@@ -416,6 +420,7 @@ void ParamTraits<scoped_refptr<net::ct::SignedCertificateTimestamp>>::Log(
   l->append("<SignedCertificateTimestamp>");
 }
 
+#if defined(ENABLE_BORINGSSL)
 void ParamTraits<scoped_refptr<net::X509Certificate>>::Write(
     base::Pickle* m,
     const param_type& p) {
@@ -448,6 +453,7 @@ void ParamTraits<scoped_refptr<net::X509Certificate>>::Log(const param_type& p,
                                                            std::string* l) {
   l->append("<X509Certificate>");
 }
+#endif // ENABLE_BORINGSSL
 
 void ParamTraits<net::LoadTimingInfo>::Write(base::Pickle* m,
                                              const param_type& p) {

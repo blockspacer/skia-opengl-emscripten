@@ -42,8 +42,9 @@
 
 #include "mojo/public/cpp/bindings/lib/native_enum_serialization.h"
 #include "mojo/public/cpp/bindings/lib/native_struct_serialization.h"
+#if defined(ENABLE_GNET)
 #include "net/traffic_annotation/network_traffic_annotation.h"
-
+#endif
 
 
 

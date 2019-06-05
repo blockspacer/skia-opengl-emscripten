@@ -76,7 +76,9 @@ bool IsResponseCodeSuccess(int response_code) {
 }  // namespace
 
 NetFetcher::NetFetcher(const GURL& url,
+#if defined(ENABLE_COBALT_CSP)
                        const csp::SecurityCallback& security_callback,
+#endif
                        Handler* handler,
 
 #if !defined(__EMSCRIPTEN__) && defined(__TODO__)
@@ -86,7 +88,9 @@ NetFetcher::NetFetcher(const GURL& url,
                        const Options& options, RequestMode request_mode,
                        const Origin& origin)
     : Fetcher(handler),
+#if defined(ENABLE_COBALT_CSP)
       security_callback_(security_callback),
+#endif
       ALLOW_THIS_IN_INITIALIZER_LIST(start_callback_(
           base::Bind(&NetFetcher::Start, base::Unretained(this)))),
       request_cross_origin_(false),
@@ -129,20 +133,26 @@ NetFetcher::NetFetcher(const GURL& url,
 void NetFetcher::Start() {
   DCHECK(thread_checker_.CalledOnValidThread());
   const GURL& original_url = url_fetcher_->GetOriginalURL();
+#if defined(ENABLE_COBALT_CSP)
   if (security_callback_.is_null() ||
       security_callback_.Run(original_url, false /* did not redirect */)) {
     url_fetcher_->Start();
-  } else {
+  }
+  else {
     std::string msg(base::StringPrintf("URL %s rejected by security policy.",
                                        original_url.spec().c_str()));
     return HandleError(msg).InvalidateThis();
   }
+#else
+  url_fetcher_->Start();
+#endif
 }
 
 void NetFetcher::OnURLFetchResponseStarted(const net::URLFetcher* source) {
   DCHECK(thread_checker_.CalledOnValidThread());
   if (source->GetURL() != source->GetOriginalURL()) {
     // A redirect occured. Re-check the security policy.
+#if defined(ENABLE_COBALT_CSP)
     if (!security_callback_.is_null() &&
         !security_callback_.Run(source->GetURL(), true /* did redirect */)) {
       std::string msg(base::StringPrintf(
@@ -151,6 +161,7 @@ void NetFetcher::OnURLFetchResponseStarted(const net::URLFetcher* source) {
           source->GetOriginalURL().spec().c_str()));
       return HandleError(msg).InvalidateThis();
     }
+#endif
   }
 
   if (IsResponseCodeSuccess(source->GetResponseCode())) {

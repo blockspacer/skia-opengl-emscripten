@@ -24,7 +24,9 @@ ResourceResponseInfo::ResourceResponseInfo()
       was_fallback_required_by_service_worker(false),
       response_type(mojom::FetchResponseType::kDefault),
       effective_connection_type(net::EFFECTIVE_CONNECTION_TYPE_UNKNOWN),
+#if defined(ENABLE_BORINGSSL)
       cert_status(0),
+#endif // ENABLE_BORINGSSL
       did_service_worker_navigation_preload(false),
       should_report_corb_blocking(false),
       async_revalidation_requested(false),

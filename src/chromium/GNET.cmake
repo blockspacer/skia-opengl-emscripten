@@ -1845,10 +1845,10 @@ target_link_libraries(GNET PUBLIC
   base
   #cobalt_base
   #cobalt_nanobase
-  starboard_platform
+  ${STARBOARD_PLATFORM_LIB}
   #starboard_core
-  starboard_eztime
-  starboard_common
+  ${STARBOARD_EZTIME_LIB}
+  ${STARBOARD_COMMON_LIB}
   modp_b64
   GCRYPTO
   GURL

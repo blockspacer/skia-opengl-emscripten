@@ -134,7 +134,10 @@ IPC_STRUCT_TRAITS_BEGIN(network::URLLoaderCompletionStatus)
   IPC_STRUCT_TRAITS_MEMBER(encoded_body_length)
   IPC_STRUCT_TRAITS_MEMBER(decoded_body_length)
   IPC_STRUCT_TRAITS_MEMBER(cors_error_status)
+
+#if defined(ENABLE_BORINGSSL)
   IPC_STRUCT_TRAITS_MEMBER(ssl_info)
+#endif // ENABLE_BORINGSSL
   IPC_STRUCT_TRAITS_MEMBER(should_report_corb_blocking)
   IPC_STRUCT_TRAITS_MEMBER(proxy_server)
 IPC_STRUCT_TRAITS_END()
@@ -172,8 +175,11 @@ IPC_STRUCT_TRAITS_BEGIN(network::ResourceResponseInfo)
   IPC_STRUCT_TRAITS_MEMBER(cache_storage_cache_name)
   IPC_STRUCT_TRAITS_MEMBER(did_service_worker_navigation_preload)
   IPC_STRUCT_TRAITS_MEMBER(effective_connection_type)
+
+#if defined(ENABLE_BORINGSSL)
   IPC_STRUCT_TRAITS_MEMBER(cert_status)
   IPC_STRUCT_TRAITS_MEMBER(ssl_info)
+#endif // ENABLE_BORINGSSL
   IPC_STRUCT_TRAITS_MEMBER(cors_exposed_header_names)
   IPC_STRUCT_TRAITS_MEMBER(async_revalidation_requested)
   IPC_STRUCT_TRAITS_MEMBER(did_mime_sniff)

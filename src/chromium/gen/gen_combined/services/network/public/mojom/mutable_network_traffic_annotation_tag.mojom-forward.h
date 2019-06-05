@@ -29,6 +29,7 @@ using MutableNetworkTrafficAnnotationTagPtr = mojo::InlinedStructPtr<MutableNetw
 
 }  // namespace mojom
 }  // namespace network
+#if defined(ENABLE_GNET)
 #include "net/traffic_annotation/network_traffic_annotation.h"
-
+#endif
 #endif  // SERVICES_NETWORK_PUBLIC_MOJOM_MUTABLE_NETWORK_TRAFFIC_ANNOTATION_TAG_MOJOM_FORWARD_H_

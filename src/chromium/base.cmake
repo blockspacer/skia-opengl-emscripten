@@ -1341,32 +1341,34 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
   )
 endif()
 
-set(COBALT_port_base_SOURCES
-  ##${COBALT_PORT_DIR}base/memory/aligned_memory.cc
-  #
-  #${COBALT_PORT_DIR}base/base_paths_starboard.cc
-  #${COBALT_PORT_DIR}base/debug/debugger_starboard.cc
-  #${COBALT_PORT_DIR}base/debug/stack_trace_starboard.cc
-  #${COBALT_PORT_DIR}base/files/file_enumerator_starboard.cc
-  #${COBALT_PORT_DIR}base/files/file_starboard.cc
-  #${COBALT_PORT_DIR}base/files/file_util_starboard.cc
-  #${COBALT_PORT_DIR}base/message_loop/message_pump_io_starboard.cc
-  #${COBALT_PORT_DIR}base/message_loop/message_pump_ui_starboard.cc
-  #${COBALT_PORT_DIR}base/process/memory_starboard.cc
-  #${COBALT_PORT_DIR}base/process/process_starboard.cc
-  #${COBALT_PORT_DIR}base/profiler/native_stack_sampler_starboard.cc
-  #${COBALT_PORT_DIR}base/rand_util_starboard.cc
-  #${COBALT_PORT_DIR}base/sampling_heap_profiler/module_cache_starboard.cc
-  #${COBALT_PORT_DIR}base/strings/sys_string_conversions_starboard.cc
-  #${COBALT_PORT_DIR}base/synchronization/condition_variable_starboard.cc
-  #${COBALT_PORT_DIR}base/synchronization/lock_impl_starboard.cc
-  #${COBALT_PORT_DIR}base/synchronization/waitable_event_starboard.cc
-  #${COBALT_PORT_DIR}base/sys_info_starboard.cc
-  #${COBALT_PORT_DIR}base/threading/platform_thread_starboard.cc
-  #${COBALT_PORT_DIR}base/threading/thread_local_storage_starboard.cc
-  #${COBALT_PORT_DIR}base/time/time_now_starboard.cc
-  ${COBALT_PORT_DIR}base/time/time_starboard.cc
-)
+if(ENABLE_COBALT)
+  set(COBALT_port_base_SOURCES
+    ##${COBALT_PORT_DIR}base/memory/aligned_memory.cc
+    #
+    #${COBALT_PORT_DIR}base/base_paths_starboard.cc
+    #${COBALT_PORT_DIR}base/debug/debugger_starboard.cc
+    #${COBALT_PORT_DIR}base/debug/stack_trace_starboard.cc
+    #${COBALT_PORT_DIR}base/files/file_enumerator_starboard.cc
+    #${COBALT_PORT_DIR}base/files/file_starboard.cc
+    #${COBALT_PORT_DIR}base/files/file_util_starboard.cc
+    #${COBALT_PORT_DIR}base/message_loop/message_pump_io_starboard.cc
+    #${COBALT_PORT_DIR}base/message_loop/message_pump_ui_starboard.cc
+    #${COBALT_PORT_DIR}base/process/memory_starboard.cc
+    #${COBALT_PORT_DIR}base/process/process_starboard.cc
+    #${COBALT_PORT_DIR}base/profiler/native_stack_sampler_starboard.cc
+    #${COBALT_PORT_DIR}base/rand_util_starboard.cc
+    #${COBALT_PORT_DIR}base/sampling_heap_profiler/module_cache_starboard.cc
+    #${COBALT_PORT_DIR}base/strings/sys_string_conversions_starboard.cc
+    #${COBALT_PORT_DIR}base/synchronization/condition_variable_starboard.cc
+    #${COBALT_PORT_DIR}base/synchronization/lock_impl_starboard.cc
+    #${COBALT_PORT_DIR}base/synchronization/waitable_event_starboard.cc
+    #${COBALT_PORT_DIR}base/sys_info_starboard.cc
+    #${COBALT_PORT_DIR}base/threading/platform_thread_starboard.cc
+    #${COBALT_PORT_DIR}base/threading/thread_local_storage_starboard.cc
+    #${COBALT_PORT_DIR}base/time/time_now_starboard.cc
+    ${COBALT_PORT_DIR}base/time/time_starboard.cc
+  )
+endif(ENABLE_COBALT)
 
 add_library(base STATIC
   ${BASE_SOURCES}
@@ -1412,11 +1414,11 @@ endif()
 #  'third_party/dynamic_annotations/dynamic_annotations.gyp:dynamic_annotations',
 #],
 target_link_libraries(base PUBLIC
-  cobalt_nanobase
-  starboard_platform
+  ${COBALT_NANOBASE_LIB}
+  ${STARBOARD_PLATFORM_LIB}
   #starboard_core
-  starboard_eztime
-  starboard_common
+  ${STARBOARD_EZTIME_LIB}
+  ${STARBOARD_COMMON_LIB}
   modp_b64
   #
   dynamic_annotations

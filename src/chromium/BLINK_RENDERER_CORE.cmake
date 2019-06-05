@@ -1888,6 +1888,11 @@ list(APPEND BLINK_RENDERER_CORE_LAYOUT_SOURCES
   #}
 )
 
+#if(ENABLE_GNET)
+#  list(APPEND BLINK_RENDERER_CORE_LOADER_SOURCES
+#  )
+#endif(ENABLE_GNET)
+
 list(APPEND BLINK_RENDERER_CORE_LOADER_SOURCES
   ${CUR_SRC_DIR}loader/alternate_signed_exchange_resource_info.cc
   #${CUR_SRC_DIR}loader/alternate_signed_exchange_resource_info.h

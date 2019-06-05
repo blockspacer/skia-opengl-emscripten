@@ -78,6 +78,7 @@ class MessageEvent : public dom::Event {
   script::EnvironmentSettings* settings_;
   ResponseTypeCode response_type_;
 #if defined(ENABLE_GNET)
+  scoped_refptr<net::IOBufferWithSize> data_;
 #endif
 };
 

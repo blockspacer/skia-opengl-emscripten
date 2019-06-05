@@ -64,6 +64,8 @@ struct COMPONENT_EXPORT(NETWORK_CPP_BASE) ParamTraits<net::AuthCredentials> {
   static void Log(const param_type& p, std::string* l);
 };
 
+
+#if defined(ENABLE_BORINGSSL)
 template <>
 struct COMPONENT_EXPORT(NETWORK_CPP_BASE) ParamTraits<net::CertVerifyResult> {
   typedef net::CertVerifyResult param_type;
@@ -73,6 +75,7 @@ struct COMPONENT_EXPORT(NETWORK_CPP_BASE) ParamTraits<net::CertVerifyResult> {
                    param_type* r);
   static void Log(const param_type& p, std::string* l);
 };
+#endif // ENABLE_BORINGSSL
 
 template <>
 struct COMPONENT_EXPORT(NETWORK_CPP_BASE) ParamTraits<net::ct::CTVerifyResult> {
@@ -154,6 +157,8 @@ struct COMPONENT_EXPORT(NETWORK_CPP_BASE) ParamTraits<net::OCSPVerifyResult> {
   static void Log(const param_type& p, std::string* l);
 };
 
+
+#if defined(ENABLE_BORINGSSL)
 template <>
 struct COMPONENT_EXPORT(NETWORK_CPP_BASE)
     ParamTraits<scoped_refptr<net::SSLCertRequestInfo>> {
@@ -164,7 +169,10 @@ struct COMPONENT_EXPORT(NETWORK_CPP_BASE)
                    param_type* r);
   static void Log(const param_type& p, std::string* l);
 };
+#endif // ENABLE_BORINGSSL
 
+
+#if defined(ENABLE_BORINGSSL)
 template <>
 struct COMPONENT_EXPORT(NETWORK_CPP_BASE) ParamTraits<net::SSLInfo> {
   typedef net::SSLInfo param_type;
@@ -174,6 +182,7 @@ struct COMPONENT_EXPORT(NETWORK_CPP_BASE) ParamTraits<net::SSLInfo> {
                    param_type* r);
   static void Log(const param_type& p, std::string* l);
 };
+#endif // ENABLE_BORINGSSL
 
 template <>
 struct COMPONENT_EXPORT(NETWORK_CPP_BASE)
@@ -197,6 +206,8 @@ struct COMPONENT_EXPORT(NETWORK_CPP_BASE)
   static void Log(const param_type& p, std::string* l);
 };
 
+
+#if defined(ENABLE_BORINGSSL)
 template <>
 struct COMPONENT_EXPORT(NETWORK_CPP_BASE)
     ParamTraits<scoped_refptr<net::X509Certificate>> {
@@ -207,6 +218,7 @@ struct COMPONENT_EXPORT(NETWORK_CPP_BASE)
                    param_type* r);
   static void Log(const param_type& p, std::string* l);
 };
+#endif // ENABLE_BORINGSSL
 
 template <>
 struct COMPONENT_EXPORT(NETWORK_CPP_BASE) ParamTraits<net::LoadTimingInfo> {
@@ -246,11 +258,14 @@ IPC_ENUM_TRAITS_MAX_VALUE(net::OCSPRevocationStatus,
 IPC_ENUM_TRAITS_MAX_VALUE(net::ct::SCTVerifyStatus, net::ct::SCT_STATUS_MAX)
 IPC_ENUM_TRAITS_MAX_VALUE(net::RequestPriority, net::MAXIMUM_PRIORITY)
 
+
+#if defined(ENABLE_BORINGSSL)
 IPC_ENUM_TRAITS_MAX_VALUE(net::SSLClientCertType,
                           net::SSLClientCertType::CLIENT_CERT_INVALID_TYPE)
 
 IPC_ENUM_TRAITS_MAX_VALUE(net::SSLInfo::HandshakeType,
                           net::SSLInfo::HANDSHAKE_FULL)
+#endif // ENABLE_BORINGSSL
 
 IPC_ENUM_TRAITS_MAX_VALUE(net::URLRequest::ReferrerPolicy,
                           net::URLRequest::MAX_REFERRER_POLICY)
