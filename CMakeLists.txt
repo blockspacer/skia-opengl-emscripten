@@ -4,6 +4,7 @@
 set(PROJECT_NAME "skemgl")
 project(${PROJECT_NAME} CXX C)
 
+# NOTE: always FALSE here (change below)
 set(TARGET_EMSCRIPTEN FALSE)
 set(TARGET_LINUX FALSE)
 if(EMSCRIPTEN)
@@ -93,39 +94,43 @@ set(GEN_COMPONENTS_CONTENT_SETTINGS_CORE_COMMON_DIR ${GN_GEN_DIR}gen_components_
 # autoninja -C out/Default/ third_party/blink/renderer/core/mojo
 #set(GEN_BLINK_RENDERER_CORE_DIR ${GN_GEN_DIR}gen_blink_renderer_core/)
 
-set(USE_CUSTOM_ICU TRUE)
-if(USE_CUSTOM_ICU)
-  #set(COMMON_FLAGS "${COMMON_FLAGS} -DSK_USING_THIRD_PARTY_ICU=1")
-  # https://github.com/google/skia/blob/master/third_party/icu/BUILD.gn#L15
-  #set(COMMON_FLAGS "${COMMON_FLAGS} -DU_USING_ICU_NAMESPACE=0")
-  #
-  set(ICU_PARENT_FULL_DIR
-    #third_party/icu/
-    #../../thirdparty/skia/third_party/externals/icu/
-    ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/icu_wrapper/
-  )
+set(USE_ICU TRUE)
+if(USE_ICU)
+  set(COMMON_FLAGS "${COMMON_FLAGS} -DHAS_ICU=1")
+  set(USE_CUSTOM_ICU TRUE)
+  if(USE_CUSTOM_ICU)
+    #set(COMMON_FLAGS "${COMMON_FLAGS} -DSK_USING_THIRD_PARTY_ICU=1")
+    # https://github.com/google/skia/blob/master/third_party/icu/BUILD.gn#L15
+    #set(COMMON_FLAGS "${COMMON_FLAGS} -DU_USING_ICU_NAMESPACE=0")
+    #
+    set(ICU_PARENT_FULL_DIR
+      #third_party/icu/
+      #../../thirdparty/skia/third_party/externals/icu/
+      ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/icu_wrapper/
+    )
 
-  set(ICU_FULL_DIR
-    #third_party/icu/
-    #../../thirdparty/skia/third_party/externals/icu/
-    ${ICU_PARENT_FULL_DIR}third_party/icu/
-  )
+    set(ICU_FULL_DIR
+      #third_party/icu/
+      #../../thirdparty/skia/third_party/externals/icu/
+      ${ICU_PARENT_FULL_DIR}third_party/icu/
+    )
 
-  set(OWN_ICU_INCLUDE_DIRS
-    ${ICU_PARENT_FULL_DIR}
-    ${ICU_FULL_DIR}
-    ${ICU_FULL_DIR}source/common/unicode
-    ${ICU_FULL_DIR}source/common
-    ${ICU_FULL_DIR}source/i18n
-  )
-  set(CUSTOM_ICU_LIB icu) # see icu.cmake
-else(USE_CUSTOM_ICU)
-  set(CUSTOM_ICU_LIB icu) # platform specific
-endif(USE_CUSTOM_ICU)
+    set(OWN_ICU_INCLUDE_DIRS
+      ${ICU_PARENT_FULL_DIR}
+      ${ICU_FULL_DIR}
+      ${ICU_FULL_DIR}source/common/unicode
+      ${ICU_FULL_DIR}source/common
+      ${ICU_FULL_DIR}source/i18n
+    )
+    set(CUSTOM_ICU_LIB icu) # see icu.cmake
+  else(USE_CUSTOM_ICU)
+    set(CUSTOM_ICU_LIB icu) # platform specific
+  endif(USE_CUSTOM_ICU)
+endif(USE_ICU)
 
 set(USE_LIBPNG FALSE)
 if(USE_LIBPNG)
-  set(EMCC_COMMON "${EMCC_COMMON} -DHAS_LIBPNG=1")
+  set(COMMON_FLAGS "${COMMON_FLAGS} -DHAS_LIBPNG=1")
   #
   set(USE_CUSTOM_LIBPNG TRUE)
   if(USE_CUSTOM_LIBPNG)
@@ -174,9 +179,10 @@ else()
 endif(NOT PYTHON_FOUND)
 
 # harfbuzz
-option(ENABLE_HARFBUZZ "ENABLE_HARFBUZZ" ON)
+option(ENABLE_HARFBUZZ "ENABLE_HARFBUZZ" OFF)
 set(USE_CUSTOM_HARFBUZZ TRUE)
 if(ENABLE_HARFBUZZ)
+  set(FORCE_USE_SKIA_HARFBUZZ TRUE)
   #
   # custom flags
   set(COMMON_FLAGS "${COMMON_FLAGS} -DENABLE_HARFBUZZ=1")
@@ -224,16 +230,6 @@ if (ENABLE_SKIA)
     )
   endif()
   set(COMMON_FLAGS "${COMMON_FLAGS} -DENABLE_SKIA=1")
-  set(SKIA_LIBS
-    SKIA
-    sksg
-    skshaper
-    #particles
-    skottie
-    ${WUFFS_LIB_NAME}
-    #jpeg # TODO
-    #pathkit
-  )
   set(SKIA_PARENT_DIR "${CHROMIUM_DIR}third_party/")
   set(SKIA_DIR "${SKIA_PARENT_DIR}skia/")
 
@@ -243,7 +239,49 @@ if (ENABLE_SKIA)
   set(SKIA_EXT_DIR ${SKIA_EXT_PARENT_DIR}skia/)
 endif(ENABLE_SKIA)
 
-set(ENABLE_BLINK TRUE)
+set(ENABLE_SKSG TRUE)
+if(ENABLE_SKSG)
+  set(sksg_LIB sksg)
+  set(COMMON_FLAGS "${COMMON_FLAGS} -DENABLE_SKSG=1")
+endif(ENABLE_SKSG)
+
+# NOTE: always FALSE here (change below)
+set(ENABLE_SKIA_UTILS FALSE) # required by skottie
+
+set(ENABLE_SKOTTIE TRUE) # requires sksg
+if(ENABLE_SKOTTIE)
+  set(skottie_LIB skottie)
+  set(COMMON_FLAGS "${COMMON_FLAGS} -DENABLE_SKOTTIE=1")
+  set(ENABLE_SKIA_UTILS TRUE)
+endif(ENABLE_SKOTTIE)
+
+# see https://github.com/google/skia/blob/81abc43e6f0b1a789e1bf116820c8ede68d778ab/modules/skshaper/BUILD.gn#L23
+set(ENABLE_SKSHAPER TRUE)
+if (ENABLE_SKSHAPER)
+  # SkShaper
+  # Shapes text using HarfBuzz
+  # and places the shaped text into a TextBlob.
+  # If compiled without HarfBuzz,
+  # fall back on SkPaint::textToGlyphs.
+  set(skshaper_LIB skshaper)
+  set(COMMON_FLAGS "${COMMON_FLAGS} -DENABLE_SKSHAPER=1")
+endif(ENABLE_SKSHAPER)
+
+# NOTE: Place after all skia libs
+if (ENABLE_SKIA)
+  set(SKIA_LIBS
+    SKIA
+    ${sksg_LIB}
+    ${skshaper_LIB}
+    #particles
+    ${skottie_LIB}
+    ${WUFFS_LIB_NAME}
+    #jpeg # TODO
+    #pathkit
+  )
+endif(ENABLE_SKIA)
+
+set(ENABLE_BLINK FALSE)
 if(ENABLE_SKIA AND ENABLE_BLINK)
   set(COMMON_FLAGS "${COMMON_FLAGS} -DENABLE_BLINK_PLATFORM=1")
   set(COMMON_FLAGS "${COMMON_FLAGS} -DENABLE_BLINK=1")
@@ -316,8 +354,8 @@ set(ENABLE_WASM TRUE)
 set(ENABLE_SIMD FALSE)
 
 # PTHREADS
-#set(ENABLE_WEB_PTHREADS TRUE)
-set(ENABLE_WEB_PTHREADS FALSE)
+set(ENABLE_WEB_PTHREADS TRUE)
+#set(ENABLE_WEB_PTHREADS FALSE)
 
 set(ENABLE_UKM FALSE)
 if(ENABLE_UKM)
@@ -672,7 +710,9 @@ set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_DISABLE_READBUFFER=1")
 #set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DLIBGLESV2_IMPLEMENTATION=1")
 set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DLIBEGL_IMPLEMENTATION=1")
 # see modules/skottie/utils/SkottieUtils.cpp
-set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_INCLUDE_MANAGED_SKOTTIE=1")
+if(ENABLE_SKOTTIE)
+  set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_INCLUDE_MANAGED_SKOTTIE=1")
+endif(ENABLE_SKOTTIE)
 
 #set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DANGLE_ENABLE_ESSL=1")
 #set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DANGLE_ENABLE_GLSL=1")
@@ -681,7 +721,9 @@ set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_INCLUDE_MANAGED_SKOTTIE=1")
 set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DEGL_EGLEXT_PROTOTYPES=1")
 #set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DGL_GLEXT_PROTOTYPES=1")
 # https://github.com/klzgrad/naiveproxy/blob/master/src/third_party/skia/modules/skottie/BUILD.gn#L14
-set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_ENABLE_SKOTTIE=1")
+if(ENABLE_SKOTTIE)
+  set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_ENABLE_SKOTTIE=1")
+endif(ENABLE_SKOTTIE)
 
 # TODO https://github.com/mbbill/JSC.js
 # # http://userguide.icu-project.org/howtouseicu
@@ -1060,7 +1102,9 @@ endif(NOT RELEASE_BUILD)
   #set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_ASSUME_GL=1") # see skia_gl_standard
   set(EMCC_COMMON "${EMCC_COMMON} -DIS_WEBGL=1")
   # see https://github.com/xzwang2005/Prelude/blob/master/third_party/skia/src/pathops/SkPathOpsTypes.cpp#L106
-  #set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSKOTTIE_HACK")
+  #if(ENABLE_SKOTTIE)
+    #set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSKOTTIE_HACK")
+  #endif(ENABLE_SKOTTIE)
   # https://github.com/qinjidong/qt5.13/blob/master/src/qtwebengine/src/3rdparty/${CHROMIUM_DIR}third_party/skia/experimental/canvaskit/compile.sh
   if(NOT ENABLE_SIMD)
     set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSKNX_NO_SIMD") # see "-s SIMD=1" and -msimd128
@@ -1080,7 +1124,9 @@ endif(NOT RELEASE_BUILD)
 
   # https://github.com/Rusino/skia/blob/master/BUILD.gn#L1688
   # NOTE: on wasm  by default skia don`t use harfbuzz skshaper
-  set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_USING_SKSHAPER=1") # skia_enable_skshaper
+  if(ENABLE_SKSHAPER)
+    set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_USING_SKSHAPER=1") # skia_enable_skshaper
+  endif(ENABLE_SKSHAPER)
   if(ENABLE_WUFFS)
     set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_HAS_WUFFS_LIBRARY=1") # skia_use_wuffs
   endif(ENABLE_WUFFS)
@@ -1165,10 +1211,10 @@ endif(NOT RELEASE_BUILD)
   else(RELEASE_BUILD)
     # set(EMCC_COMMON "${EMCC_COMMON} -O0")
     # NOTE Catching C++ exceptions is turned off by default in -O1 (and above).
-    if(NOT OPTIMIZE_LEVEL)
+    if(NOT OPTIMIZE_LEVEL) # TODO
       set(OPTIMIZE_LEVEL "${OPTIMIZE_LEVEL} -O1")
+      #set(OPTIMIZE_LEVEL "${OPTIMIZE_LEVEL} -O2")
     endif(NOT OPTIMIZE_LEVEL)
-    #set(EMCC_COMMON "${EMCC_COMMON} -O2")
     #
     if(EMSCRIPTEN_USE_SOURCE_MAP AND EMSCRIPTEN_USE_PROFILING)
       message(WARNING "--profiling may break SOURCE_MAP, see https://github.com/emscripten-core/emscripten/issues/8584#issuecomment-495344200")
@@ -1181,7 +1227,9 @@ endif(NOT RELEASE_BUILD)
       #
       ## see https://emscripten.org/docs/tools_reference/emcc.html#emcc-compiler-optimization-options
       set(EMCC_COMMON "${EMCC_COMMON} --profiling-funcs")
-    endif()
+    endif(RELEASE_BUILD)
+    #
+    message(STATUS "OPTIMIZE_LEVEL=${OPTIMIZE_LEVEL}")
     #
     ## see https://emscripten.org/docs/tools_reference/emcc.html#emcc-compiler-optimization-options
     #set(EMCC_COMMON "${EMCC_COMMON} --tracing")
@@ -1598,32 +1646,34 @@ if (ENABLE_SKIA)
       ${SKIA_DIR}/third_party
       ${SKIA_DIR}/third_party/skcms
   )
-  list(APPEND PROJECT_SRC
-    # skottie
-    # https://github.com/klzgrad/naiveproxy/blob/master/src/third_party/skia/modules/skottie/BUILD.gn#L45
-    ${SKIA_DIR}/modules/skottie/utils/SkottieUtils.cpp
-  )
+  if(ENABLE_SKOTTIE)
+    list(APPEND PROJECT_SRC
+      # skottie
+      # https://github.com/klzgrad/naiveproxy/blob/master/src/third_party/skia/modules/skottie/BUILD.gn#L45
+      ${SKIA_DIR}/modules/skottie/utils/SkottieUtils.cpp
+    )
+  endif(ENABLE_SKOTTIE)
 
   if (ENABLE_BLINK)
-    add_dependencies(SKIA_EXT SKIA_build sksg SKIA skshaper)
-    add_dependencies(UI_GFX SKIA_build sksg SKIA skshaper)
-    add_dependencies(CC SKIA_build sksg SKIA skshaper)
-    add_dependencies(ANIMATION_CC SKIA_build sksg SKIA skshaper)
-    add_dependencies(PAINT_CC SKIA_build sksg SKIA skshaper)
-    add_dependencies(DEBUG_CC SKIA_build sksg SKIA skshaper)
-    add_dependencies(BASE_CC SKIA_build sksg SKIA skshaper)
-    add_dependencies(GPU_COMMAND_BUFFER SKIA_build sksg SKIA skshaper)
-    add_dependencies(GFX_CODEC SKIA_build sksg SKIA skshaper)
-    add_dependencies(GFX_GEOMETRY SKIA_build sksg SKIA skshaper)
-    add_dependencies(GFX_GEOMETRY_SKIA SKIA_build sksg SKIA skshaper)
-    add_dependencies(GFX_COLOR_SPACE SKIA_build sksg SKIA skshaper)
-    add_dependencies(GFX_SWITCHES SKIA_build sksg SKIA skshaper)
-    add_dependencies(GFX_RANGE SKIA_build sksg SKIA skshaper)
+    add_dependencies(SKIA_EXT SKIA_build ${sksg_LIB} SKIA ${skshaper_LIB})
+    add_dependencies(UI_GFX SKIA_build ${sksg_LIB} SKIA ${skshaper_LIB})
+    add_dependencies(CC SKIA_build ${sksg_LIB} SKIA ${skshaper_LIB})
+    add_dependencies(ANIMATION_CC SKIA_build ${sksg_LIB} SKIA ${skshaper_LIB})
+    add_dependencies(PAINT_CC SKIA_build ${sksg_LIB} SKIA ${skshaper_LIB})
+    add_dependencies(DEBUG_CC SKIA_build ${sksg_LIB} SKIA ${skshaper_LIB})
+    add_dependencies(BASE_CC SKIA_build ${sksg_LIB} SKIA ${skshaper_LIB})
+    add_dependencies(GPU_COMMAND_BUFFER SKIA_build ${sksg_LIB} SKIA ${skshaper_LIB})
+    add_dependencies(GFX_CODEC SKIA_build ${sksg_LIB} SKIA ${skshaper_LIB})
+    add_dependencies(GFX_GEOMETRY SKIA_build ${sksg_LIB} SKIA ${skshaper_LIB})
+    add_dependencies(GFX_GEOMETRY_SKIA SKIA_build ${sksg_LIB} SKIA ${skshaper_LIB})
+    add_dependencies(GFX_COLOR_SPACE SKIA_build ${sksg_LIB} SKIA ${skshaper_LIB})
+    add_dependencies(GFX_SWITCHES SKIA_build ${sksg_LIB} SKIA ${skshaper_LIB})
+    add_dependencies(GFX_RANGE SKIA_build ${sksg_LIB} SKIA ${skshaper_LIB})
   endif(ENABLE_BLINK)
 endif(ENABLE_SKIA)
 
-# TODO
-if (EMSCRIPTEN AND ENABLE_SKIA)
+# TODO - not only EMSCRIPTEN
+if(EMSCRIPTEN AND ENABLE_SKIA AND ENABLE_SKIA_UTILS)
   list(APPEND PROJECT_SRC
     # skia effects
     #${SKIA_DIR}/src/c/sk_effects.cpp
@@ -1723,7 +1773,7 @@ if (EMSCRIPTEN AND ENABLE_SKIA)
     #${SKIA_DIR}/src/effects/imagefilters/SkTileImageFilter.cpp
     #${SKIA_DIR}/src/effects/imagefilters/SkXfermodeImageFilter.cpp
   )
-endif()
+endif(ENABLE_SKIA_UTILS)
 
 # NOTE: -s LINKABLE=1 is not supported with -s USE_PTHREADS>0
 # https://www.mail-archive.com/emscripten-discuss@googlegroups.com/msg07864.html
@@ -1858,8 +1908,8 @@ if(TARGET_EMSCRIPTEN)
     ${SKIA_LIBS}
     #
     #skottie
-    #sksg
-    #skshaper
+    #${sksg_LIB}
+    #${skshaper_LIB}
     #particles
     #pathkit
     #${WUFFS_LIB_NAME}
@@ -1940,8 +1990,8 @@ else()
     #SKIA
     #${libpng_LIB}
     #skottie
-    #sksg
-    #skshaper
+    #${sksg_LIB}
+    #${skshaper_LIB}
     #particles
     #pathkit
     #${WUFFS_LIB_NAME}

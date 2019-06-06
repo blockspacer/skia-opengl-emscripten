@@ -69,9 +69,11 @@ double SkiaVectorAnimation::TimerControl::GetNormalizedEndOffset() const {
   return end_offset_.InMillisecondsF() * progress_per_millisecond_;
 }
 
+#if defined(ENABLE_SKOTTIE)
 SkiaVectorAnimation::SkiaVectorAnimation(
     scoped_refptr<cc::SkottieWrapper> skottie)
     : skottie_(skottie) {}
+#endif
 
 SkiaVectorAnimation::~SkiaVectorAnimation() {}
 
@@ -82,11 +84,16 @@ void SkiaVectorAnimation::SetAnimationObserver(
 }
 
 base::TimeDelta SkiaVectorAnimation::GetAnimationDuration() const {
+#if defined(ENABLE_SKOTTIE)
   return base::TimeDelta::FromMilliseconds(
       std::floor(SkScalarToFloat(skottie_->duration()) * 1000.f));
+#else
+  return base::TimeDelta::FromMilliseconds(100);
+#endif // ENABLE_SKOTTIE
 }
 
 gfx::Size SkiaVectorAnimation::GetOriginalSize() const {
+#if defined(ENABLE_SKOTTIE)
 #if DCHECK_IS_ON()
   // The size should have no fractional component.
   gfx::SizeF float_size = gfx::SkSizeToSizeF(skottie_->size());
@@ -99,6 +106,9 @@ gfx::Size SkiaVectorAnimation::GetOriginalSize() const {
   DCHECK_LE(width_diff, std::numeric_limits<float>::epsilon());
 #endif
   return gfx::ToRoundedSize(gfx::SkSizeToSizeF(skottie_->size()));
+#else
+  return gfx::Size(100, 100);
+#endif // ENABLE_SKOTTIE
 }
 
 void SkiaVectorAnimation::Start(Style style) {
@@ -153,7 +163,11 @@ float SkiaVectorAnimation::GetCurrentProgress() const {
       } else {
         // It may be that the timer hasn't been initialized which may happen if
         // the animation was paused while it was in |kScheculePlay| state.
+#if defined(ENABLE_SKOTTIE)
         return scheduled_start_offset_.InMillisecondsF() / skottie_->duration();
+#else
+        return scheduled_start_offset_.InMillisecondsF();
+#endif
       }
     case PlayState::kSchedulePlay:
     case PlayState::kPlaying:
@@ -206,7 +220,9 @@ void SkiaVectorAnimation::PaintFrame(gfx::Canvas* canvas,
                                      const gfx::Size& size) {
   DCHECK_GE(t, 0.f);
   DCHECK_LE(t, 1.f);
+#if defined(ENABLE_SKOTTIE)
   canvas->DrawSkottie(skottie(), gfx::Rect(size), t);
+#endif
 }
 
 void SkiaVectorAnimation::InitTimer(const base::TimeTicks& timestamp) {

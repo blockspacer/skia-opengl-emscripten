@@ -1,7 +1,7 @@
 ### --- PAINT_CC ---###
 
 # TODO https://github.com/chromium/chromium/blob/master/third_party/blink/renderer/platform/BUILD.gn
-set(PAINT_CC_SOURCES
+list(APPEND PAINT_CC_SOURCES
   ${PAINT_CC_DIR}decode_stashing_image_provider.cc
   #${PAINT_CC_DIR}decode_stashing_image_provider.h",
   ${PAINT_CC_DIR}decoded_draw_image.cc
@@ -69,7 +69,15 @@ set(PAINT_CC_SOURCES
   #${PAINT_CC_DIR}skia_paint_canvas.h",
   ${PAINT_CC_DIR}skia_paint_image_generator.cc
   #${PAINT_CC_DIR}skia_paint_image_generator.h",
-  ${PAINT_CC_DIR}skottie_wrapper.cc
+)
+
+if(ENABLE_SKOTTIE)
+  list(APPEND PAINT_CC_SOURCES
+    ${PAINT_CC_DIR}skottie_wrapper.cc
+  )
+endif(ENABLE_SKOTTIE)
+
+list(APPEND PAINT_CC_SOURCES
   #${PAINT_CC_DIR}skottie_wrapper.h",
   ${PAINT_CC_DIR}solid_color_analyzer.cc
   #${PAINT_CC_DIR}solid_color_analyzer.h",

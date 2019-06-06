@@ -17,7 +17,9 @@
 #include "ui/gfx/gfx_export.h"
 
 namespace cc {
+#if defined(ENABLE_SKOTTIE)
 class SkottieWrapper;
+#endif
 }  // namespace cc
 
 namespace gfx {
@@ -84,7 +86,9 @@ class GFX_EXPORT SkiaVectorAnimation {
     kLoop         // Same as LINEAR, except the animation repeats after it ends.
   };
 
+#if defined(ENABLE_SKOTTIE)
   explicit SkiaVectorAnimation(scoped_refptr<cc::SkottieWrapper> skottie);
+#endif
   ~SkiaVectorAnimation();
 
   void SetAnimationObserver(SkiaVectorAnimationObserver* Observer);
@@ -140,8 +144,10 @@ class GFX_EXPORT SkiaVectorAnimation {
   // paint.
   void PaintFrame(gfx::Canvas* canvas, float t, const gfx::Size& size);
 
+#if defined(ENABLE_SKOTTIE)
   // Returns the skottie object that contins the animation data.
   scoped_refptr<cc::SkottieWrapper> skottie() const { return skottie_; }
+#endif
 
  private:
   friend class SkiaVectorAnimationTest;
@@ -234,7 +240,9 @@ class GFX_EXPORT SkiaVectorAnimation {
 
   SkiaVectorAnimationObserver* observer_ = nullptr;
 
+#if defined(ENABLE_SKOTTIE)
   scoped_refptr<cc::SkottieWrapper> skottie_;
+#endif
 
   DISALLOW_COPY_AND_ASSIGN(SkiaVectorAnimation);
 };

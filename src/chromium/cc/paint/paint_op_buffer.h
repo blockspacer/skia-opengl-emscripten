@@ -708,25 +708,35 @@ class CC_PAINT_EXPORT DrawRRectOp final : public PaintOpWithFlags {
 };
 
 class CC_PAINT_EXPORT DrawSkottieOp final : public PaintOp {
- public:
+public:
   static constexpr PaintOpType kType = PaintOpType::DrawSkottie;
   static constexpr bool kIsDrawOp = true;
+#if defined(ENABLE_SKOTTIE)
   DrawSkottieOp(scoped_refptr<SkottieWrapper> skottie, SkRect dst, float t);
+#else
+  DrawSkottieOp(SkRect dst, float t);
+#endif
   ~DrawSkottieOp();
   static void Raster(const DrawSkottieOp* op,
                      SkCanvas* canvas,
                      const PlaybackParams& params);
   bool IsValid() const {
+#if defined(ENABLE_SKOTTIE)
     return !!skottie && !dst.isEmpty() && t >= 0 && t <= 1.f;
+#else
+    return false;
+#endif
   }
   static bool AreEqual(const PaintOp* left, const PaintOp* right);
   HAS_SERIALIZATION_FUNCTIONS();
 
+#if defined(ENABLE_SKOTTIE)
   scoped_refptr<SkottieWrapper> skottie;
+#endif
   SkRect dst;
   float t;
 
- private:
+private:
   DrawSkottieOp();
 };
 

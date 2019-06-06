@@ -54,7 +54,7 @@ target_link_libraries(GFX_CODEC PRIVATE
   #SKIA
   #
   #skottie
-  #sksg
+  #${sksg_LIB}
   #skshaper
   #particles
   #pathkit

@@ -26,7 +26,9 @@ class Size;
 namespace cc {
 class DisplayItemList;
 class PaintWorkletInput;
+#if defined(ENABLE_SKOTTIE)
 class SkottieWrapper;
+#endif
 
 void DrawDisplayList(unsigned char* buffer,
                      const gfx::Rect& layer_rect,
@@ -68,8 +70,10 @@ PaintImage CreateAnimatedImage(
 PaintImage CreateBitmapImage(const gfx::Size& size,
                              SkColorType color_type = kN32_SkColorType);
 
+#if defined(ENABLE_SKOTTIE)
 scoped_refptr<SkottieWrapper> CreateSkottie(const gfx::Size& size,
                                             int duration_secs);
+#endif
 
 PaintImage CreateNonDiscardablePaintImage(const gfx::Size& size);
 

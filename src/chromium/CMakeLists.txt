@@ -321,7 +321,7 @@ if(ENABLE_SKIA AND ENABLE_BLINK)
     #pathkit
     ${SKIA_LIBS}
     #SKIA
-    #sksg
+    #${sksg_LIB}
     #skshaper
     #particles
     #skottie

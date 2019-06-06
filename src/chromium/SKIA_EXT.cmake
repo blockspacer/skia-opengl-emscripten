@@ -92,7 +92,7 @@ target_link_libraries(SKIA_EXT PUBLIC
   ${SKIA_LIBS}
   #SKIA
   #skottie
-  #sksg
+  #${sksg_LIB}
   #skshaper
   #particles
   #pathkit

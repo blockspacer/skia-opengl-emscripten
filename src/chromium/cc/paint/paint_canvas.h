@@ -18,7 +18,9 @@ class MetafileSkia;
 }  // namespace printing
 
 namespace cc {
+#if defined(ENABLE_SKOTTIE)
 class SkottieWrapper;
+#endif
 class PaintFlags;
 class PaintOpBuffer;
 
@@ -153,9 +155,11 @@ class CC_PAINT_EXPORT PaintCanvas {
   // Draws the frame of the |skottie| animation specified by the normalized time
   // t [0->first frame..1->last frame] at the destination bounds given by |dst|
   // onto the canvas.
+#if defined(ENABLE_SKOTTIE)
   virtual void drawSkottie(scoped_refptr<SkottieWrapper> skottie,
                            const SkRect& dst,
                            float t) = 0;
+#endif
 
   virtual void drawTextBlob(sk_sp<SkTextBlob> blob,
                             SkScalar x,

@@ -23,7 +23,9 @@
 #include "ui/gfx/text_constants.h"
 
 namespace cc {
+#if defined(ENABLE_SKOTTIE)
 class SkottieWrapper;
+#endif
 }  // namespace cc
 
 namespace gfx {
@@ -366,12 +368,14 @@ class GFX_EXPORT Canvas {
                        const SkPath& path,
                        const cc::PaintFlags& flags);
 
+#if defined(ENABLE_SKOTTIE)
   // Draws the frame of the |skottie| animation specified by the normalized time
   // instant t [0->first frame .. 1->last frame] onto the region corresponded by
   // |dst| in the canvas.
   void DrawSkottie(scoped_refptr<cc::SkottieWrapper> skottie,
                    const Rect& dst,
                    float t);
+#endif
 
   // Draws text with the specified color, fonts and location. The text is
   // aligned to the left, vertically centered, clipped to the region. If the

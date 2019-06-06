@@ -434,11 +434,13 @@ void Canvas::DrawImageInPath(const ImageSkia& image,
   canvas_->drawPath(path, flags);
 }
 
+#if defined(ENABLE_SKOTTIE)
 void Canvas::DrawSkottie(scoped_refptr<cc::SkottieWrapper> skottie,
                          const Rect& dst,
                          float t) {
   canvas_->drawSkottie(std::move(skottie), RectToSkRect(dst), t);
 }
+#endif
 
 void Canvas::DrawStringRect(const base::string16& text,
                             const FontList& font_list,

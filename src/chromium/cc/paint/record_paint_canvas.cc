@@ -258,11 +258,13 @@ void RecordPaintCanvas::drawImageRect(const PaintImage& image,
   list_->push<DrawImageRectOp>(image, src, dst, flags, constraint);
 }
 
+#if defined(ENABLE_SKOTTIE)
 void RecordPaintCanvas::drawSkottie(scoped_refptr<SkottieWrapper> skottie,
                                     const SkRect& dst,
                                     float t) {
   list_->push<DrawSkottieOp>(std::move(skottie), dst, t);
 }
+#endif
 
 void RecordPaintCanvas::drawTextBlob(sk_sp<SkTextBlob> blob,
                                      SkScalar x,

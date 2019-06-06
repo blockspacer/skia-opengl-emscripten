@@ -174,6 +174,12 @@ else(ENABLE_WUFFS)
   set(SK_IS_wuffs "false")
 endif(ENABLE_WUFFS)
 
+if(ENABLE_SKSHAPER)
+  set(SK_IS_skshaper "true")
+else(ENABLE_SKSHAPER)
+  set(SK_IS_skshaper "false")
+endif(ENABLE_SKSHAPER)
+
 if(USE_LIBJPEG_TURBO)
   set(SK_IS_libjpeg_turbo "true")
   if(USE_CUSTOM_LIBJPEG_TURBO)
@@ -189,39 +195,54 @@ if(USE_LIBJPEG_TURBO)
 endif(USE_LIBJPEG_TURBO)
 
 # NOTE: in skia HARFBUZZ requires icui18n (unicode/uscript.h)
-if(ENABLE_HARFBUZZ)
-  set(SK_IS_harfbuzz "true")
-  #
-  set(SK_system_harfbuzz
-    "skia_use_system_harfbuzz=true"
-  )
-  #
-  set(SK_IS_icu "true")
-  #
-  set(SK_system_icu
-    "skia_use_system_icu=true"
-  )
+if(FORCE_USE_SKIA_HARFBUZZ)
+  if(ENABLE_SKSHAPER) # harfbuzz used only by skshaper
+    set(SK_IS_harfbuzz "true")
+    #
+    set(SK_system_harfbuzz
+      "skia_use_system_harfbuzz=true"
+    )
+    #
+    set(SK_IS_icu "true")
+    #
+    set(SK_system_icu
+      "skia_use_system_icu=true"
+    )
+  else(ENABLE_SKSHAPER)
+    set(SK_IS_harfbuzz "false")
+    set(SK_IS_icu "false")
+  endif(ENABLE_SKSHAPER)
   #
   if (USE_CUSTOM_ICU)
     list(APPEND SKIA_CMAKE_ONLY_HEADERS
       ${OWN_ICU_INCLUDE_DIRS}
     )
     #
+    # NOTE: WITH trailing comma
     set(SKIA_EXTRA_CFLAGS
-" \
-\"-I${ICU_FULL_DIR}source/common\", \
-\"-I${GLIBJPEG_TURBO_DIR}\" \
-"
+      "${SKIA_EXTRA_CFLAGS}\"-I${ICU_FULL_DIR}source/common\", "
+    )
+  endif(USE_CUSTOM_ICU)
+else(FORCE_USE_SKIA_HARFBUZZ)
+  set(SK_IS_harfbuzz "false")
+  set(SK_IS_icu "false")
+endif(FORCE_USE_SKIA_HARFBUZZ)
+
 #
 #     "\"-I${ICU_FULL_DIR}source/common\"" # to unicode/uscript.h
 #     # LIBJPEG (jpeglib.h) CONFLICTS WITH LIBJPEG_TURBO (jpeglib.h) # "\"-I${GLIBJPEG_DIR}\"" # to libjpeg/jpeglib.h
 #     "\"-I${GLIBJPEG_TURBO_DIR}\"" # to libjpeg_turbo/jpeglib.h
-    )
-  endif(USE_CUSTOM_ICU)
-else(ENABLE_HARFBUZZ)
-  set(SK_IS_harfbuzz "false")
-  set(SK_IS_icu "false")
-endif(ENABLE_HARFBUZZ)
+#
+# NOTE: WITHOUT trailing comma
+set(SKIA_EXTRA_CFLAGS
+  "${SKIA_EXTRA_CFLAGS}\"-I${GLIBJPEG_TURBO_DIR}\""
+)
+
+if(ENABLE_SKOTTIE)
+  set(SK_IS_skottie "true")
+else(ENABLE_SKOTTIE)
+  set(SK_IS_skottie "false")
+endif(ENABLE_SKOTTIE)
 
 # NOTE: modifying skia src requires full rebuild!
 # NOTE: You can use `extra_cflags` and `extra_ldflags` to add include
@@ -250,7 +271,7 @@ ${SK_system_icu} \
 skia_enable_ccpr=${SK_IS_ccpr} \
 skia_enable_nvpr=false \
 skia_use_expat=false \
-skia_enable_skottie=true \
+skia_enable_skottie=${SK_IS_skottie} \
 skia_use_libjpeg_turbo=${SK_IS_libjpeg_turbo} \
 ${SK_system_libjpeg_turbo} \
 skia_use_libpng=true \
@@ -274,7 +295,7 @@ skia_enable_fontmgr_empty=false \
 skia_enable_fontmgr_custom=true \
 skia_use_libheif=false \
 skia_enable_skpicture=true \
-skia_enable_skshaper=true \
+skia_enable_skshaper=${SK_IS_skshaper} \
 skia_use_x11=${SK_IS_x11} \
 skia_lex=false \
 skia_compile_processors=${SK_IS_processors} \
@@ -307,16 +328,32 @@ if (EXT_SKIA_ALWAYS_BUILD)
 endif ()
 #message(FATAL_ERROR ${SKIA_EXT_PARENT_DIR}/skia/config/sk_ref_cnt_ext_release.h)
 # taken from BUILD.gn (skia_public_includes, minus things that are obviously useless for us)
+
+if(ENABLE_SKOTTIE)
+  list(APPEND SKIA_CMAKE_ONLY_HEADERS
+    ${SKIA_SRC_DIR}/modules/skottie/include
+  )
+endif(ENABLE_SKOTTIE)
+
+if(ENABLE_SKSG)
+  list(APPEND SKIA_CMAKE_ONLY_HEADERS
+    ${SKIA_SRC_DIR}/modules/sksg/include
+  )
+endif(ENABLE_SKSG)
+
+if(ENABLE_SKSHAPER)
+  list(APPEND SKIA_CMAKE_ONLY_HEADERS
+  ${SKIA_SRC_DIR}/modules/skshaper/include
+  )
+endif(ENABLE_SKSHAPER)
+
 list(APPEND SKIA_CMAKE_ONLY_HEADERS
   #src/chromium/third_party/
   ${SKIA_EXT_PARENT_DIR}
   ${SKIA_EXT_DIR}
   ${SKIA_SRC_DIR}
   ${SKIA_SRC_DIR}/tools
-  ${SKIA_SRC_DIR}/modules/skottie/include
   ${SKIA_SRC_DIR}/modules/pathkit
-  ${SKIA_SRC_DIR}/modules/sksg/include
-  ${SKIA_SRC_DIR}/modules/skshaper/include
 #  ${SKIA_SRC_DIR}/tools/timer
   ${SKIA_SRC_DIR}/src/gpu
   ${SKIA_SRC_DIR}/src/sksl
@@ -440,9 +477,14 @@ list(APPEND SKIA_DEFINES
   SK_HAS_PNG_LIBRARY
   SK_HAS_JPEG_LIBRARY=1 # skia_use_libjpeg_turbo
   SK_HAS_JPEG_LIBRARY
-  SK_INCLUDE_MANAGED_SKOTTIE=1
-  SK_INCLUDE_MANAGED_SKOTTIE
 )
+
+if(ENABLE_SKOTTIE)
+  list(APPEND SKIA_DEFINES
+    SK_INCLUDE_MANAGED_SKOTTIE=1
+    SK_INCLUDE_MANAGED_SKOTTIE
+  )
+endif(ENABLE_SKOTTIE)
 
 if(SUPPORTS_JPEG)
   list(APPEND SKIA_DEFINES
@@ -595,9 +637,9 @@ elseif(TARGET_LINUX)
     ADD_SKIA_LIBRARY_DEPENDENCY(${EXT_SKIA_USE_FREETYPE2} "freetype") # skia_use_system_freetype2
 
     # see HARFBUZZ_LIBRARIES
-    #if(ENABLE_HARFBUZZ)
+    #if(FORCE_USE_SKIA_HARFBUZZ)
     #  ADD_SKIA_LIBRARY_DEPENDENCY("harfbuzz")
-    #endif(ENABLE_HARFBUZZ)
+    #endif(FORCE_USE_SKIA_HARFBUZZ)
 
     #ADD_SKIA_LIBRARY_DEPENDENCY("jpeg") # skia_use_system_libjpeg_turbo
 
@@ -675,23 +717,29 @@ set(SKIA_LIBRARY "${SKIA_BUILD_DIR}/${SKIA_LIBRARY_PREFIX}skia${SKIA_LIBRARY_SUF
 #endif()
 #set(PATHKIT_LIBRARY "${SKIA_BUILD_DIR}/${SKIA_LIBRARY_PREFIX}pathkit${SKIA_LIBRARY_SUFFIX}")
 #
-add_library(sksg ${SK_LIBRARY_TYPE} IMPORTED GLOBAL)
-if(NOT TARGET sksg)
-  message(FATAL_ERROR "SKIA LIB NOT FOUND")
-endif()
-set(sksg_LIBRARY "${SKIA_BUILD_DIR}/${SKIA_LIBRARY_PREFIX}sksg${SKIA_LIBRARY_SUFFIX}")
+if(ENABLE_SKSG)
+  add_library(${sksg_LIB} ${SK_LIBRARY_TYPE} IMPORTED GLOBAL)
+  if(NOT TARGET ${sksg_LIB})
+    message(FATAL_ERROR "SKIA SKSG LIB NOT FOUND")
+  endif()
+  set(sksg_LIBRARY "${SKIA_BUILD_DIR}/${SKIA_LIBRARY_PREFIX}${sksg_LIB}${SKIA_LIBRARY_SUFFIX}")
+endif(ENABLE_SKSG)
 #
-add_library(skshaper ${SK_LIBRARY_TYPE} IMPORTED GLOBAL)
-if(NOT TARGET skshaper)
-  message(FATAL_ERROR "SKIA LIB NOT FOUND")
-endif()
-set(skshaper_LIBRARY "${SKIA_BUILD_DIR}/${SKIA_LIBRARY_PREFIX}skshaper${SKIA_LIBRARY_SUFFIX}")
+if(ENABLE_SKSHAPER)
+  add_library(${skshaper_LIB} ${SK_LIBRARY_TYPE} IMPORTED GLOBAL)
+  if(NOT TARGET ${skshaper_LIB})
+    message(FATAL_ERROR "SKIA SKSHAPER LIB NOT FOUND")
+  endif()
+  set(skshaper_LIBRARY "${SKIA_BUILD_DIR}/${SKIA_LIBRARY_PREFIX}${skshaper_LIB}${SKIA_LIBRARY_SUFFIX}")
+endif(ENABLE_SKSHAPER)
 #
-add_library(skottie ${SK_LIBRARY_TYPE} IMPORTED GLOBAL)
-if(NOT TARGET skottie)
-  message(FATAL_ERROR "SKIA LIB NOT FOUND")
-endif()
-set(skottie_LIBRARY "${SKIA_BUILD_DIR}/${SKIA_LIBRARY_PREFIX}skottie${SKIA_LIBRARY_SUFFIX}")
+if(ENABLE_SKOTTIE)
+  add_library(skottie ${SK_LIBRARY_TYPE} IMPORTED GLOBAL)
+  if(NOT TARGET skottie)
+    message(FATAL_ERROR "SKIA SKOTTIE LIB NOT FOUND")
+  endif()
+  set(skottie_LIBRARY "${SKIA_BUILD_DIR}/${SKIA_LIBRARY_PREFIX}skottie${SKIA_LIBRARY_SUFFIX}")
+endif(ENABLE_SKOTTIE)
 #
 #add_library(particles ${SK_LIBRARY_TYPE} IMPORTED GLOBAL)
 #if(NOT TARGET particles)
@@ -702,7 +750,7 @@ set(skottie_LIBRARY "${SKIA_BUILD_DIR}/${SKIA_LIBRARY_PREFIX}skottie${SKIA_LIBRA
 if(ENABLE_WUFFS)
   add_library(wuffs ${SK_LIBRARY_TYPE} IMPORTED GLOBAL)
   if(NOT TARGET wuffs)
-    message(FATAL_ERROR "SKIA LIB NOT FOUND")
+    message(FATAL_ERROR "SKIA WUFFS LIB NOT FOUND")
   endif()
   set(wuffs_LIBRARY "${SKIA_BUILD_DIR}/${SKIA_LIBRARY_PREFIX}wuffs${SKIA_LIBRARY_SUFFIX}")
 endif(ENABLE_WUFFS)
@@ -758,46 +806,52 @@ target_link_libraries(SKIA INTERFACE
 #target_link_libraries(pathkit INTERFACE
 #  SKIA)
 #
-set_target_properties(skshaper PROPERTIES
-  IMPORTED_LOCATION "${skshaper_LIBRARY}"
-  INTERFACE_INCLUDE_DIRECTORIES "${SKIA_CMAKE_ONLY_HEADERS}"
-  INTERFACE_COMPILE_DEFINITIONS "${SKIA_DEFINES}"
-  # https://stackoverflow.com/a/28102243/10904212
-  #IMPORTED_LINK_INTERFACE_LIBRARIES "${SKIA_DEPENDENCIES}"
-  IMPORTED_LINK_INTERFACE_LIBRARIES "${SKIA_LIBRARY};${SKIA_DEPENDENCIES}"
-)
-add_dependencies(skshaper SKIA)# https://stackoverflow.com/a/53945809
-# https://stackoverflow.com/a/53945809
-target_link_libraries(skshaper INTERFACE
-  SKIA)
+if(ENABLE_SKSHAPER)
+  set_target_properties(${skshaper_LIB} PROPERTIES
+    IMPORTED_LOCATION "${skshaper_LIBRARY}"
+    INTERFACE_INCLUDE_DIRECTORIES "${SKIA_CMAKE_ONLY_HEADERS}"
+    INTERFACE_COMPILE_DEFINITIONS "${SKIA_DEFINES}"
+    # https://stackoverflow.com/a/28102243/10904212
+    #IMPORTED_LINK_INTERFACE_LIBRARIES "${SKIA_DEPENDENCIES}"
+    IMPORTED_LINK_INTERFACE_LIBRARIES "${SKIA_LIBRARY};${SKIA_DEPENDENCIES}"
+  )
+  add_dependencies(${skshaper_LIB} SKIA)# https://stackoverflow.com/a/53945809
+  # https://stackoverflow.com/a/53945809
+  target_link_libraries(${skshaper_LIB} INTERFACE
+    SKIA)
+endif(ENABLE_SKSHAPER)
 #
-set_target_properties(sksg PROPERTIES
-  IMPORTED_LOCATION "${sksg_LIBRARY}"
-  INTERFACE_INCLUDE_DIRECTORIES "${SKIA_CMAKE_ONLY_HEADERS}"
-  INTERFACE_COMPILE_DEFINITIONS "${SKIA_DEFINES}"
-  # https://stackoverflow.com/a/28102243/10904212
-  #IMPORTED_LINK_INTERFACE_LIBRARIES "${SKIA_DEPENDENCIES}"
-  IMPORTED_LINK_INTERFACE_LIBRARIES "${SKIA_LIBRARY};${skshaper_LIBRARY};${SKIA_DEPENDENCIES}"
-)
-add_dependencies(sksg SKIA skshaper)
-# https://stackoverflow.com/a/53945809
-target_link_libraries(sksg INTERFACE
-  SKIA skshaper)
+if(ENABLE_SKSG)
+  set_target_properties(${sksg_LIB} PROPERTIES
+    IMPORTED_LOCATION "${sksg_LIBRARY}"
+    INTERFACE_INCLUDE_DIRECTORIES "${SKIA_CMAKE_ONLY_HEADERS}"
+    INTERFACE_COMPILE_DEFINITIONS "${SKIA_DEFINES}"
+    # https://stackoverflow.com/a/28102243/10904212
+    #IMPORTED_LINK_INTERFACE_LIBRARIES "${SKIA_DEPENDENCIES}"
+    IMPORTED_LINK_INTERFACE_LIBRARIES "${SKIA_LIBRARY};${skshaper_LIBRARY};${SKIA_DEPENDENCIES}"
+  )
+  add_dependencies(${sksg_LIB} SKIA ${skshaper_LIB})
+  # https://stackoverflow.com/a/53945809
+  target_link_libraries(${sksg_LIB} INTERFACE
+    SKIA ${skshaper_LIB})
+endif(ENABLE_SKSG)
 #
-#message(FATAL_ERROR "${skottie_LIBRARY}")
-#message(FATAL_ERROR "${SKIA_LIBRARY};${SKIA_DEPENDENCIES}")
-set_target_properties(skottie PROPERTIES
-  IMPORTED_LOCATION "${skottie_LIBRARY}"
-  INTERFACE_INCLUDE_DIRECTORIES "${SKIA_CMAKE_ONLY_HEADERS}"
-  INTERFACE_COMPILE_DEFINITIONS "${SKIA_DEFINES}"
-  # https://stackoverflow.com/a/28102243/10904212
-  #IMPORTED_LINK_INTERFACE_LIBRARIES "${SKIA_DEPENDENCIES}"
-  IMPORTED_LINK_INTERFACE_LIBRARIES "${SKIA_LIBRARY};${sksg_LIBRARY};${skshaper_LIBRARY};${SKIA_DEPENDENCIES}"
-)
-# https://stackoverflow.com/a/53945809
-target_link_libraries(skottie INTERFACE
-  SKIA sksg skshaper)
-add_dependencies(skottie SKIA sksg skshaper)
+if(ENABLE_SKOTTIE)
+  #message(FATAL_ERROR "${skottie_LIBRARY}")
+  #message(FATAL_ERROR "${SKIA_LIBRARY};${SKIA_DEPENDENCIES}")
+  set_target_properties(skottie PROPERTIES
+    IMPORTED_LOCATION "${skottie_LIBRARY}"
+    INTERFACE_INCLUDE_DIRECTORIES "${SKIA_CMAKE_ONLY_HEADERS}"
+    INTERFACE_COMPILE_DEFINITIONS "${SKIA_DEFINES}"
+    # https://stackoverflow.com/a/28102243/10904212
+    #IMPORTED_LINK_INTERFACE_LIBRARIES "${SKIA_DEPENDENCIES}"
+    IMPORTED_LINK_INTERFACE_LIBRARIES "${SKIA_LIBRARY};${sksg_LIBRARY};${skshaper_LIBRARY};${SKIA_DEPENDENCIES}"
+  )
+  # https://stackoverflow.com/a/53945809
+  target_link_libraries(skottie INTERFACE
+    SKIA ${sksg_LIB} ${skshaper_LIB})
+  add_dependencies(skottie SKIA ${sksg_LIB} ${skshaper_LIB})
+endif(ENABLE_SKOTTIE)
 #
 #set_target_properties(particles PROPERTIES
 #  IMPORTED_LOCATION "${particles_LIBRARY}"

@@ -11,8 +11,8 @@
 #include "base/synchronization/lock.h"
 #include "cc/paint/paint_export.h"
 #include "third_party/skia/include/core/SkRect.h"
+#if defined(ENABLE_SKOTTIE)
 #include "third_party/skia/modules/skottie/include/Skottie.h"
-
 class SkCanvas;
 class SkMemoryStream;
 
@@ -52,4 +52,5 @@ class CC_PAINT_EXPORT SkottieWrapper
 
 }  // namespace cc
 
+#endif
 #endif  // CC_PAINT_SKOTTIE_WRAPPER_H_

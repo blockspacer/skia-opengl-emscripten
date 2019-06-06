@@ -278,11 +278,13 @@ void SkiaPaintCanvas::drawImageRect(const PaintImage& image,
   FlushAfterDrawIfNeeded();
 }
 
+#if defined(ENABLE_SKOTTIE)
 void SkiaPaintCanvas::drawSkottie(scoped_refptr<SkottieWrapper> skottie,
                                   const SkRect& dst,
                                   float t) {
   skottie->Draw(canvas_, t, dst);
 }
+#endif
 
 void SkiaPaintCanvas::drawTextBlob(sk_sp<SkTextBlob> blob,
                                    SkScalar x,

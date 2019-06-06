@@ -80,14 +80,15 @@
 // see https://github.com/emscripten-core/emscripten/pull/8430#issuecomment-486635898
 // #define SKIA_GR_CONTEXT 1
 
-#define ENABLE_SKOTTIE_ANIMATIONS 1
-#if defined(ENABLE_SKOTTIE_ANIMATIONS) && !defined(ENABLE_SKIA)
-#warning "ENABLE_SKOTTIE_ANIMATIONS requires SKIA"
-#undef ENABLE_SKOTTIE_ANIMATIONS
+/// \note defined by CMAKE
+// #define ENABLE_SKOTTIE 1
+#if defined(ENABLE_SKOTTIE) && !defined(ENABLE_SKIA)
+#warning "ENABLE_SKOTTIE requires SKIA"
+#undef ENABLE_SKOTTIE
 #endif
 //
 #if defined(__EMSCRIPTEN__) && defined(__EMSCRIPTEN_PTHREADS__) \
-  && defined(ENABLE_SKOTTIE_ANIMATIONS)
+  && defined(ENABLE_SKOTTIE)
 #warning "TODO: PORT SKOTTIE & PTHREADS"
 #endif
 
@@ -804,7 +805,7 @@ sk_sp<const GrGLInterface> emscripten_GrGLMakeNativeInterface() {
 
 static SkString fImagePath = SkString("./resources/images/image.png");
 
-#if defined(ENABLE_SKIA) && defined(ENABLE_SKOTTIE_ANIMATIONS)
+#if defined(ENABLE_SKIA) && defined(ENABLE_SKOTTIE)
 static SkString fAnimPath = SkString("./resources/animations/data.json");
 // static SkString                           fPath = SkString("./resources/fonts/FreeSans.ttf");
 static sk_sp<skottie::Animation> fAnimation;
@@ -813,7 +814,7 @@ static SkSize fWinSize = SkSize::Make(512, 512);
 static SkMSec fTimeBase = 0;
 static bool fShowAnimationInval = false;
 static bool fShowAnimationStats = false;
-#endif // ENABLE_SKOTTIE_ANIMATIONS
+#endif // ENABLE_SKOTTIE
 
 #if defined(ENABLE_SKIA) && defined(ENABLE_CUSTOM_FONTS)
 static SkFont* skFont1 = nullptr;
@@ -1350,7 +1351,7 @@ public:
 
       //printf("onDraw() 5\n");
 
-#ifdef ENABLE_SKOTTIE_ANIMATIONS
+#ifdef ENABLE_SKOTTIE
       //printf("onDraw() 6\n");
 
     if (fAnimation) {
@@ -1372,7 +1373,7 @@ public:
           draw_stats_box(canvas, fAnimationStats);
       }*/
     }
-#endif // ENABLE_SKOTTIE_ANIMATIONS
+#endif // ENABLE_SKOTTIE
 
 #ifdef ENABLE_BLINK_PLATFORM
   // see https://chromium.googlesource.com/chromium/src/+/master/third_party/blink/renderer/platform/graphics/paint/README.md
@@ -1719,7 +1720,7 @@ static void animate() {
     redClrTintAnim = 0.0f;
   }
 
-#if defined(ENABLE_SKIA) && defined(ENABLE_SKOTTIE_ANIMATIONS)
+#if defined(ENABLE_SKIA) && defined(ENABLE_SKOTTIE)
 
 #if defined(ENABLE_HTML5_SDL) || !defined(__EMSCRIPTEN__)
   if (fTimeBase == 0) {
@@ -1735,7 +1736,7 @@ static void animate() {
 #error "TODO: port SDL_GetTicks without SDL"
 #endif
 
-#endif // ENABLE_SKOTTIE_ANIMATIONS
+#endif // ENABLE_SKOTTIE
 }
 
 static void mainLoop() {
@@ -2930,7 +2931,7 @@ int main(int argc, char** argv) {
 
   myView = new SkPainter(SK_ColorRED, 200);
 
-#ifdef ENABLE_SKOTTIE_ANIMATIONS
+#ifdef ENABLE_SKOTTIE
   {
     printf("Initializing skottie animations...\n");
 
@@ -2999,7 +3000,7 @@ int main(int argc, char** argv) {
     delete[] fileString; // TODO
     printf("skottie animations are ready...\n");
   }
-#endif // ENABLE_SKOTTIE_ANIMATIONS
+#endif // ENABLE_SKOTTIE
 
 #endif // ENABLE_SKIA
 
@@ -3064,7 +3065,7 @@ int main(int argc, char** argv) {
     ttfFont = nullptr;
   }*/
 
-#if defined(ENABLE_SKIA) && defined(ENABLE_SKOTTIE_ANIMATIONS)
+#if defined(ENABLE_SKIA) && defined(ENABLE_SKOTTIE)
   fAnimation.reset();
 #endif
 

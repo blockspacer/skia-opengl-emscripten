@@ -1372,7 +1372,9 @@ void DrawRRectOp::RasterWithFlags(const DrawRRectOp* op,
 void DrawSkottieOp::Raster(const DrawSkottieOp* op,
                            SkCanvas* canvas,
                            const PlaybackParams& params) {
+#if defined(ENABLE_SKOTTIE)
   op->skottie->Draw(canvas, op->t, op->dst);
+#endif // ENABLE_SKOTTIE
 }
 
 void DrawTextBlobOp::RasterWithFlags(const DrawTextBlobOp* op,
@@ -2190,10 +2192,17 @@ size_t DrawRecordOp::AdditionalOpCount() const {
   return record->total_op_count();
 }
 
-DrawSkottieOp::DrawSkottieOp(scoped_refptr<SkottieWrapper> skottie,
+DrawSkottieOp::DrawSkottieOp(
+#if defined(ENABLE_SKOTTIE)
+scoped_refptr<SkottieWrapper> skottie,
+#endif
                              SkRect dst,
                              float t)
-    : PaintOp(kType), skottie(std::move(skottie)), dst(dst), t(t) {}
+    : PaintOp(kType),
+#if defined(ENABLE_SKOTTIE)
+    skottie(std::move(skottie)),
+#endif
+    dst(dst), t(t) {}
 
 DrawSkottieOp::DrawSkottieOp() : PaintOp(kType) {}
 
