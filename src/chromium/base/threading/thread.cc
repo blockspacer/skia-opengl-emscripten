@@ -232,7 +232,7 @@ void Thread::StopSoon() {
 
   stopping_ = true;
 
-#if defined(OS_EMSCRIPTEN)
+#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   if (!task_runner()){
       P_LOG("invalid task_runner\n");
       return;
@@ -394,7 +394,7 @@ void Thread::ThreadMain() {
 }
 
 void Thread::ThreadQuitHelper() {
-#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   DCHECK(run_loop_);
   run_loop_->QuitWhenIdle();
 #endif

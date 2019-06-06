@@ -1,4 +1,4 @@
-// Copyright (c) 2012 The Chromium Authors. All rights reserved.
+﻿// Copyright (c) 2012 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -53,7 +53,7 @@ ScopedRunTimeoutForTestTLS() {
 }
 
 void OnRunTimeout(RunLoop* run_loop, OnceClosure on_timeout) {
-#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   run_loop->Quit();
   std::move(on_timeout).Run();
 #endif

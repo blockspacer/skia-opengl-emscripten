@@ -1,4 +1,4 @@
-// Copyright (c) 2013 The Chromium Authors. All rights reserved.
+﻿// Copyright (c) 2013 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -37,7 +37,7 @@ DeferredSequencedTaskRunner::DeferredSequencedTaskRunner()
 bool DeferredSequencedTaskRunner::PostDelayedTask(const Location& from_here,
                                                   OnceClosure task,
                                                   TimeDelta delay) {
-#if defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS)
+#if(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   std::move(task).Run();
   // Returns true if the task may be run
   return false;
