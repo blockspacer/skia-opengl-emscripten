@@ -1,4 +1,4 @@
-// Copyright (c) 2012 The Chromium Authors. All rights reserved.
+﻿// Copyright (c) 2012 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -81,7 +81,7 @@ class HttpStreamFactory::Job
     // Invoked when |job| has an HttpStream ready.
     virtual void OnStreamReady(Job* job
 #if defined(ENABLE_BORINGSSL)
-     const SSLConfig& used_ssl_config
+     , const SSLConfig& used_ssl_config
 #endif // ENABLE_BORINGSSL
      ) = 0;
 

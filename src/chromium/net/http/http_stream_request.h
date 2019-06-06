@@ -95,13 +95,13 @@ class NET_EXPORT_PRIVATE HttpStreamRequest {
     virtual void OnWebSocketHandshakeStreamReady(
 
 #if defined(ENABLE_BORINGSSL)
-      const SSLConfig& used_ssl_config ,
+      const SSLConfig& used_ssl_config
 #endif // ENABLE_BORINGSSL
 #if defined(ENABLE_PROXY)
-        const ProxyInfo& used_proxy_info ,
+        , const ProxyInfo& used_proxy_info
 #endif
 #if defined(ENABLE_WS)
-        std::unique_ptr<WebSocketHandshakeStreamBase> stream
+       ,  std::unique_ptr<WebSocketHandshakeStreamBase> stream
 #endif
         ) = 0;
 
