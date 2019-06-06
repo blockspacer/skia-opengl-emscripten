@@ -13,7 +13,8 @@ add_library(iccjpeg STATIC
 )
 
 target_link_libraries(iccjpeg PUBLIC
-  ${libjpeg_LIB}
+  #${libjpeg_LIB}
+  ${libjpeg_TURBO_LIB}
 )
 
 set_property(TARGET iccjpeg PROPERTY CXX_STANDARD 17)

@@ -20,7 +20,7 @@ set(GFX_CODEC_SOURCES
 #  #set(libpng_LIB GLIBPNG)
 #endif()
 
-if(USE_LIBJPEG)
+if(SUPPORTS_JPEG)
   list(APPEND GFX_CODEC_SOURCES
     ${GFX_CODEC_DIR}jpeg_codec.cc
     ${GFX_CODEC_DIR}jpeg_codec.h
@@ -35,16 +35,16 @@ if(USE_LIBJPEG)
   #else()
   #  message(FATAL_ERROR "platform not supported")
   #endif()
-endif()
+endif(SUPPORTS_JPEG)
 
 add_library(GFX_CODEC STATIC
   ${GFX_CODEC_SOURCES}
 )
 
 target_link_libraries(GFX_CODEC PRIVATE
-  ${libjpeg_LIB}
+  #${libjpeg_LIB}
   ${libjpeg_TURBO_LIB}
-  ${libpng_LIB}
+  #${libpng_LIB}
   dynamic_annotations
   ${BASE_LIBRARIES}
   GFX_GEOMETRY_SKIA

@@ -1712,7 +1712,7 @@ add_library(BLINK_RENDERER_PLATFORM STATIC
   #${BLINK_RENDERER_PLATFORM_SPEECH_SOURCES}
 )
 
-if(USE_LIBJPEG)
+if(SUPPORTS_JPEG)
   if(EMSCRIPTEN)
     #set(libjpeg_LIB GLIBJPEG)
     #set(libjpeg_TURBO_LIB GLIBJPEG_TURBO)
@@ -1724,7 +1724,7 @@ if(USE_LIBJPEG)
   else()
     message(FATAL_ERROR "platform not supported")
   endif()
-endif()
+endif(SUPPORTS_JPEG)
 
 #if (NOT EMSCRIPTEN)
 #  find_package(PNG REQUIRED) # PNG::PNG
@@ -1848,9 +1848,9 @@ target_link_libraries(BLINK_RENDERER_PLATFORM PRIVATE
   SERVICES_NETWORK_PUBLIC_CPP
   SERVICES_SERVICE_MANAGER_PUBLIC_CPP
   libwebp # requires libpng
-  ${libjpeg_LIB}
+  #${libjpeg_LIB}
   ${libjpeg_TURBO_LIB}
-  ${libpng_LIB}
+  #${libpng_LIB}
   ${iccjpeg_LIB}
   #
   # khronos

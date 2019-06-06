@@ -1,10 +1,13 @@
-// Copyright (c) 2012 The Chromium Authors. All rights reserved.
+﻿// Copyright (c) 2012 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 #include "ui/gfx/font_render_params.h"
 
+#if !defined(OS_EMSCRIPTEN)
 #include <fontconfig/fontconfig.h>
+#endif
+
 #include <stddef.h>
 #include <stdint.h>
 
@@ -31,6 +34,7 @@ namespace {
 
 int FontWeightToFCWeight(Font::Weight weight) {
   const int weight_number = static_cast<int>(weight);
+#if !defined(OS_EMSCRIPTEN)
   if (weight_number <= (static_cast<int>(Font::Weight::THIN) +
                         static_cast<int>(Font::Weight::EXTRA_LIGHT)) /
                            2)
@@ -65,6 +69,9 @@ int FontWeightToFCWeight(Font::Weight weight) {
     return FC_WEIGHT_ULTRABOLD;
   else
     return FC_WEIGHT_BLACK;
+#else
+  return 22;
+#endif
 }
 
 // A device scale factor used to determine if subpixel positioning
@@ -105,16 +112,21 @@ base::LazyInstance<SynchronizedCache>::Leaky g_synchronized_cache =
 
 // Converts Fontconfig FC_HINT_STYLE to FontRenderParams::Hinting.
 FontRenderParams::Hinting ConvertFontconfigHintStyle(int hint_style) {
+#if !defined(OS_EMSCRIPTEN)
   switch (hint_style) {
     case FC_HINT_SLIGHT: return FontRenderParams::HINTING_SLIGHT;
     case FC_HINT_MEDIUM: return FontRenderParams::HINTING_MEDIUM;
     case FC_HINT_FULL:   return FontRenderParams::HINTING_FULL;
     default:             return FontRenderParams::HINTING_NONE;
   }
+#else
+    return FontRenderParams::HINTING_NONE;
+#endif
 }
 
 // Converts Fontconfig FC_RGBA to FontRenderParams::SubpixelRendering.
 FontRenderParams::SubpixelRendering ConvertFontconfigRgba(int rgba) {
+#if !defined(OS_EMSCRIPTEN)
   switch (rgba) {
     case FC_RGBA_RGB:  return FontRenderParams::SUBPIXEL_RENDERING_RGB;
     case FC_RGBA_BGR:  return FontRenderParams::SUBPIXEL_RENDERING_BGR;
@@ -122,6 +134,9 @@ FontRenderParams::SubpixelRendering ConvertFontconfigRgba(int rgba) {
     case FC_RGBA_VBGR: return FontRenderParams::SUBPIXEL_RENDERING_VBGR;
     default:           return FontRenderParams::SUBPIXEL_RENDERING_NONE;
   }
+#else
+  return FontRenderParams::SUBPIXEL_RENDERING_RGB;
+#endif
 }
 
 // Queries Fontconfig for rendering settings and updates |params_out| and
@@ -129,6 +144,7 @@ FontRenderParams::SubpixelRendering ConvertFontconfigRgba(int rgba) {
 bool QueryFontconfig(const FontRenderParamsQuery& query,
                      FontRenderParams* params_out,
                      std::string* family_out) {
+#if !defined(OS_EMSCRIPTEN)
   TRACE_EVENT0("fonts", "gfx::QueryFontconfig");
 
   struct FcPatternDeleter {
@@ -228,6 +244,10 @@ bool QueryFontconfig(const FontRenderParamsQuery& query,
   }
 
   return true;
+
+#else
+    return false;
+#endif
 }
 
 // Serialize |query| into a string and hash it to a value suitable for use as a

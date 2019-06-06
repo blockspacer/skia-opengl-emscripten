@@ -796,11 +796,13 @@ sk_sp<const GrGLInterface> emscripten_GrGLMakeNativeInterface() {
 //#include "cobalt/loader/fetcher_factory.h"
 #endif // ENABLE_COBALT
 
-#if defined(ENABLE_SKIA) && defined(USE_LIBJPEG)
-static SkString fImagePath = SkString("./resources/images/JPEG_example.jpg");
-#elif defined(ENABLE_SKIA)
+//#if defined(ENABLE_SKIA) && (defined(USE_LIBJPEG) || defined(USE_LIBJPEG_TURBO))
+//static SkString fImagePath = SkString("./resources/images/JPEG_example.jpg");
+//#elif defined(ENABLE_SKIA)
+//static SkString fImagePath = SkString("./resources/images/image.png");
+//#endif
+
 static SkString fImagePath = SkString("./resources/images/image.png");
-#endif
 
 #if defined(ENABLE_SKIA) && defined(ENABLE_SKOTTIE_ANIMATIONS)
 static SkString fAnimPath = SkString("./resources/animations/data.json");

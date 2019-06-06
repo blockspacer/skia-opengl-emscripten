@@ -182,9 +182,9 @@ if(USE_LIBJPEG_TURBO)
       "skia_use_system_libjpeg_turbo=true"
     )
     #
-    if(NOT USE_CUSTOM_LIBJPEG)
-      message(FATAL_ERROR "Custom LIBJPEG_TURBO requires custom LIBJPEG")
-    endif(NOT USE_CUSTOM_LIBJPEG)
+    #if(NOT USE_CUSTOM_LIBJPEG)
+    #  message(FATAL_ERROR "Custom LIBJPEG_TURBO requires custom LIBJPEG")
+    #endif(NOT USE_CUSTOM_LIBJPEG)
   endif(USE_CUSTOM_LIBJPEG_TURBO)
 endif(USE_LIBJPEG_TURBO)
 
@@ -443,6 +443,13 @@ list(APPEND SKIA_DEFINES
   SK_INCLUDE_MANAGED_SKOTTIE=1
   SK_INCLUDE_MANAGED_SKOTTIE
 )
+
+if(SUPPORTS_JPEG)
+  list(APPEND SKIA_DEFINES
+    SK_HAS_JPEG_LIBRARY=1 # skia_use_libjpeg_turbo
+    SK_HAS_JPEG_LIBRARY
+  )
+endif(SUPPORTS_JPEG)
 
 #<listOptionValue builtIn="false" value="SK_DEFAULT_FONT_CACHE_LIMIT=20971520"/>
 #<listOptionValue builtIn="false" value="SK_GAMMA_CONTRAST=0.2"/>

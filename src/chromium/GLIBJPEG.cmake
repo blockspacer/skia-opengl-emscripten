@@ -1,9 +1,5 @@
 ﻿### --- GLIBJPEG ---###
 
-set(GLIBJPEG_DIR
-  ${CHROMIUM_DIR}third_party/libjpeg/
-)
-
 set(GLIBJPEG_SOURCES
   ${GLIBJPEG_DIR}jcapimin.c
   ${GLIBJPEG_DIR}jcapistd.c

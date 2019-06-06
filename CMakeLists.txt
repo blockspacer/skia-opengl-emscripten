@@ -112,17 +112,22 @@ else(USE_CUSTOM_ICU)
   set(CUSTOM_ICU_LIB icu) # platform specific
 endif(USE_CUSTOM_ICU)
 
-set(USE_CUSTOM_LIBPNG TRUE)
-if(USE_CUSTOM_LIBPNG)
-  set(USE_SYSTEM_PNG TRUE)
-  set(libpng_LIB GLIBPNG)
-else(USE_CUSTOM_LIBPNG)
-  if(EMSCRIPTEN)
-    set(EMCC_COMMON "${EMCC_COMMON} -s USE_LIBPNG=1")
-    message(FATAL_ERROR "wasm: only custom LIBPNG is supported for now")
-  endif(EMSCRIPTEN)
-  set(USE_SYSTEM_PNG FALSE)
-endif(USE_CUSTOM_LIBPNG)
+set(USE_LIBPNG FALSE)
+if(USE_LIBPNG)
+  set(EMCC_COMMON "${EMCC_COMMON} -DHAS_LIBPNG=1")
+  #
+  set(USE_CUSTOM_LIBPNG TRUE)
+  if(USE_CUSTOM_LIBPNG)
+    set(USE_SYSTEM_PNG TRUE)
+    set(libpng_LIB GLIBPNG)
+  else(USE_CUSTOM_LIBPNG)
+    if(EMSCRIPTEN)
+      set(EMCC_COMMON "${EMCC_COMMON} -s USE_LIBPNG=1")
+      message(FATAL_ERROR "wasm: only custom LIBPNG is supported for now")
+    endif(EMSCRIPTEN)
+    set(USE_SYSTEM_PNG FALSE)
+  endif(USE_CUSTOM_LIBPNG)
+endif(USE_LIBPNG)
 
 set(USE_SK_GPU TRUE)
 
@@ -227,7 +232,7 @@ if (ENABLE_SKIA)
   set(SKIA_EXT_DIR ${SKIA_EXT_PARENT_DIR}skia/)
 endif(ENABLE_SKIA)
 
-set(ENABLE_BLINK FALSE)
+set(ENABLE_BLINK TRUE)
 if(ENABLE_SKIA AND ENABLE_BLINK)
   set(COMMON_FLAGS "${COMMON_FLAGS} -DENABLE_BLINK_PLATFORM=1")
   set(COMMON_FLAGS "${COMMON_FLAGS} -DENABLE_BLINK=1")
@@ -354,12 +359,16 @@ else()
   message(FATAL_ERROR "platform not supported")
 endif()
 
-set(USE_LIBJPEG TRUE)
+set(USE_LIBJPEG FALSE)
 if(USE_LIBJPEG)
-  set(GLIBJPEG_TURBO_DIR
-    ${CHROMIUM_DIR}third_party/libjpeg_turbo/
+  set(GLIBJPEG_DIR
+    ${CHROMIUM_DIR}third_party/libjpeg/
   )
   #
+  set(SUPPORTS_JPEG TRUE)
+  #
+  set(COMMON_FLAGS "${COMMON_FLAGS} -DHAS_LIBJPEG=1")
+  # see ui/gfx/codec/jpeg_codec.cc
   set(COMMON_FLAGS "${COMMON_FLAGS} -DUSE_LIBJPEG=1")
   #
   set(USE_CUSTOM_LIBJPEG TRUE)
@@ -383,6 +392,14 @@ endif(USE_LIBJPEG)
 
 set(USE_LIBJPEG_TURBO TRUE)
 if(USE_LIBJPEG_TURBO)
+  #
+  set(GLIBJPEG_TURBO_DIR
+    ${CHROMIUM_DIR}third_party/libjpeg_turbo/
+  )
+  #
+  set(SUPPORTS_JPEG TRUE)
+  set(COMMON_FLAGS "${COMMON_FLAGS} -DHAS_LIBJPEG_TURBO=1")
+  # see ui/gfx/codec/jpeg_codec.cc
   set(COMMON_FLAGS "${COMMON_FLAGS} -DUSE_LIBJPEG_TURBO=1")
   #
   set(USE_CUSTOM_LIBJPEG_TURBO TRUE)
@@ -1450,16 +1467,20 @@ set(GLIBXML_DIR
 )
 include(${CHROMIUM_DIR}GLIBXML.cmake)
 
-if (USE_CUSTOM_LIBPNG)
+if (USE_LIBPNG AND USE_CUSTOM_LIBPNG)
   # GLIBPNG
   include(${CHROMIUM_DIR}GLIBPNG.cmake)
 endif()
 
-# libjpeg: requires LIBXML
-include(${CHROMIUM_DIR}GLIBJPEG.cmake)
+if(USE_LIBJPEG AND USE_CUSTOM_LIBJPEG)
+  # libjpeg: requires LIBXML
+  include(${CHROMIUM_DIR}GLIBJPEG.cmake)
+endif(USE_LIBJPEG)
 
-# GLIBJPEG_TURBO: requires LIBJPEG
-include(${CHROMIUM_DIR}GLIBJPEG_TURBO.cmake)
+if(USE_LIBJPEG_TURBO AND USE_CUSTOM_LIBJPEG_TURBO)
+  # GLIBJPEG_TURBO: requires LIBJPEG
+  include(${CHROMIUM_DIR}GLIBJPEG_TURBO.cmake)
+endif(USE_LIBJPEG_TURBO)
 
 set(libyuv_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/${CHROMIUM_DIR}third_party/)
 set(libyuv_DIR ${libyuv_PARENT_DIR}libyuv/)
@@ -1883,7 +1904,7 @@ else()
     #
     ${SKIA_LIBS}
     #SKIA
-    ${libpng_LIB}
+    #${libpng_LIB}
     #skottie
     #sksg
     #skshaper
@@ -1999,7 +2020,7 @@ else()
     libwebp # requires libpng
     ${libjpeg_LIB}
     ${libjpeg_TURBO_LIB}
-    ${libpng_LIB}
+    #${libpng_LIB}
     ${iccjpeg_LIB}
     #
     # khronos

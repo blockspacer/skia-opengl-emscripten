@@ -212,7 +212,7 @@ add_library(libwebp STATIC
 #endif()
 
 target_link_libraries(libwebp PRIVATE
-  ${libpng_LIB}
+  #${libpng_LIB}
   # zlib
   ${libZLIB_LIB}
 )

@@ -196,7 +196,7 @@ endif()
 
 set_property(TARGET GLIBJPEG_TURBO PROPERTY CXX_STANDARD 17)
 
-target_include_directories(GLIBJPEG_TURBO PRIVATE
+target_include_directories(GLIBJPEG_TURBO PUBLIC
   ${GLIBJPEG_TURBO_DIR}
   #${GLIBJPEG_TURBO_DIR}/include
   #${GLIBJPEG_TURBO_DIR}/src

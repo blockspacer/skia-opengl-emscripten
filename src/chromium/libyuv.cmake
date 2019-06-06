@@ -53,7 +53,7 @@ add_library(libyuv STATIC
   ${libyuv_SOURCES}
 )
 
-if(USE_LIBJPEG)
+#if(SUPPORTS_JPEG)
   #list(APPEND libyuv_SOURCES
   # #
   #)
@@ -67,10 +67,10 @@ if(USE_LIBJPEG)
   #else()
   #  message(FATAL_ERROR "platform not supported")
   #endif()
-endif()
+#endif(SUPPORTS_JPEG)
 
 target_link_libraries(libyuv PUBLIC
-  ${libjpeg_LIB}
+  #${libjpeg_LIB}
   ${libjpeg_TURBO_LIB}
   ${libZLIB_LIB}
   #JPEG

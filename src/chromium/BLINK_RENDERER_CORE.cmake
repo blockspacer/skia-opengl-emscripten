@@ -1,4 +1,4 @@
-### --- BLINK_RENDERER_CORE ---###
+﻿### --- BLINK_RENDERER_CORE ---###
 
 set(CUR_SRC_DIR ${BLINK_RENDERER_CORE_DIR})
 
@@ -5545,9 +5545,9 @@ target_link_libraries(BLINK_RENDERER_CORE PUBLIC
   PAINT_CC
   SERVICES_NETWORK_PUBLIC_CPP
   libwebp # requires libpng
-  ${libjpeg_LIB}
+  #${libjpeg_LIB}
   ${libjpeg_TURBO_LIB}
-  ${libpng_LIB}
+  #${libpng_LIB}
   ${iccjpeg_LIB}
   MOJO
   #

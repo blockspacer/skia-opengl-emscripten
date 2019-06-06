@@ -1,10 +1,12 @@
-// Copyright 2014 The Chromium Authors. All rights reserved.
+﻿// Copyright 2014 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 #include "ui/gfx/font_fallback_linux.h"
 
+#if !defined(OS_EMSCRIPTEN)
 #include <fontconfig/fontconfig.h>
+#endif
 
 #include <map>
 #include <memory>
@@ -27,6 +29,7 @@ typedef std::map<std::string, std::vector<Font> > FallbackCache;
 base::LazyInstance<FallbackCache>::Leaky g_fallback_cache =
     LAZY_INSTANCE_INITIALIZER;
 
+#if !defined(OS_EMSCRIPTEN)
 std::string GetFilenameFromFcPattern(FcPattern* pattern) {
   const char* c_filename = nullptr;
   if (FcPatternGetString(pattern, FC_FILE, 0,
@@ -38,6 +41,7 @@ std::string GetFilenameFromFcPattern(FcPattern* pattern) {
       reinterpret_cast<const char*>(FcConfigGetSysRoot(nullptr));
   return std::string(sysroot ? sysroot : "") + c_filename;
 }
+#endif
 
 }  // namespace
 
@@ -50,6 +54,7 @@ std::vector<Font> GetFallbackFonts(const Font& font) {
   if (!fallback_fonts->empty())
     return *fallback_fonts;
 
+#if !defined(OS_EMSCRIPTEN)
   FcPattern* pattern = FcPatternCreate();
   FcValue family;
   family.type = FcTypeString;
@@ -78,10 +83,12 @@ std::vector<Font> GetFallbackFonts(const Font& font) {
 
   if (fallback_fonts->empty())
     fallback_fonts->push_back(Font(font_family, 13));
+#endif
 
   return *fallback_fonts;
 }
 
+#if !defined(OS_EMSCRIPTEN)
 namespace {
 
 class CachedFont {
@@ -261,12 +268,17 @@ base::LazyInstance<FontSetCache>::Leaky g_font_sets_by_locale =
     LAZY_INSTANCE_INITIALIZER;
 
 }  // namespace
+#endif // OS_EMSCRIPTEN
 
 FallbackFontData GetFallbackFontForChar(UChar32 c, const std::string& locale) {
+#if !defined(OS_EMSCRIPTEN)
   auto& cached_font_set = g_font_sets_by_locale.Get()[locale];
   if (!cached_font_set)
     cached_font_set = CachedFontSet::CreateForLocale(locale);
   return cached_font_set->GetFallbackFontForChar(c);
+#else
+    return FallbackFontData();
+#endif
 }
 
 }  // namespace gfx

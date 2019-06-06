@@ -28,12 +28,12 @@ set(UI_GFX_SOURCES
 )
 
 #if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux" AND ENABLE_HARFBUZZ)
-if(ENABLE_HARFBUZZ AND ${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+if(ENABLE_HARFBUZZ)# AND ${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
   list(APPEND UI_GFX_SOURCES
     ${UI_GFX_DIR}font_render_params_linux.cc # requires fontconfig
     ${UI_GFX_DIR}font_fallback_linux.cc # requires fontconfig
   )
-endif(ENABLE_HARFBUZZ AND ${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+endif(ENABLE_HARFBUZZ)# AND ${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
 
 list(APPEND UI_GFX_SOURCES
   #${UI_GFX_DIR}font_fallback_linux.h",
