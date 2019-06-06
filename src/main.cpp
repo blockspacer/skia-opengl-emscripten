@@ -1866,12 +1866,19 @@ class CobaltTester {
     scoped_refptr<cobalt::cssom::CSSRuleList> rule_list;
     scoped_refptr<cobalt::cssom::CSSMediaRule> rule;
     cobalt::cssom::SelectorTree selector_tree;
+    // TODO: UTF8
+    // set
+    // "<meta content='text/html; charset=gb2312' http-equiv=Content-Type>"
+    // and
+    // "<body>test1陈绮贞</body>"
+    // htmlCheckEncoding: unknown encoding gb2312
+    // see https://github.com/rchipka/node-osmosis/issues/19
     const ::std::string input =
         "<html>"
         "<head>"
-        "<meta content='text/html; charset=gb2312' http-equiv=Content-Type>"
+        "<meta content='text/html; charset=iso-8859-1' http-equiv=Content-Type>"
         "</head>"
-        "<body>test1陈绮贞</body>"
+        "<body>123test456</body>"
         "</html>";
   std::unique_ptr<cobalt::dom_parser::HTMLDecoder> html_decoder_;
 
@@ -1909,8 +1916,8 @@ CobaltTester::CobaltTester()
   root_(new cobalt::dom::Element(document_.get(),
     base::CobToken("element"))),
   source_location_(base::SourceLocation("[object HTMLDecoderTest]", 1, 1))
-{
-}
+  {
+  }
 
 void CobaltTester::run() {
   printf("Testing COBALT web_animations...\n");
@@ -2010,6 +2017,7 @@ void CobaltTester::run() {
   //EXPECT_EQ("html", root_->tag_name());
 
   printf("root_->tag_name() %s\n", root_->tag_name().c_str());
+  printf("root_->text_content() %s\n", root_->text_content().value_or("empty root_").c_str());
 
   //EXPECT_EQ(1, root_->children()->length());
 
@@ -2019,6 +2027,7 @@ void CobaltTester::run() {
   //EXPECT_EQ("head", head->tag_name());
 
   printf("head->tag_name() %s\n", head->tag_name().c_str());
+  printf("head->text_content() %s\n", head->text_content().value_or("empty head").c_str());
 }
 
 static std::unique_ptr<CobaltTester> g_cobaltTester;
