@@ -28,7 +28,9 @@
 #include "third_party/blink/public/mojom/fetch/fetch_api_response.mojom-shared.h"
 #include "third_party/blink/public/mojom/fetch/fetch_api_response.mojom-blink-forward.h"
 #include "mojo/public/mojom/base/time.mojom-blink.h"
+#if defined(ENABLE_GNET)
 #include "services/network/public/mojom/fetch_api.mojom-blink.h"
+#endif // ENABLE_GNET
 #include "third_party/blink/public/mojom/blob/serialized_blob.mojom-blink.h"
 #include "third_party/blink/public/mojom/service_worker/service_worker_error_type.mojom-blink.h"
 #include "url/mojom/url.mojom-blink.h"

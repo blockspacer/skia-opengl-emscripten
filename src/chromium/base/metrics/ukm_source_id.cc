@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#if defined(ENABLE_UKM)
 #include "base/metrics/ukm_source_id.h"
 
 #include "base/atomic_sequence_num.h"
@@ -48,3 +49,4 @@ UkmSourceId::Type UkmSourceId::GetType() const {
 }
 
 }  // namespace base
+#endif // ENABLE_UKM

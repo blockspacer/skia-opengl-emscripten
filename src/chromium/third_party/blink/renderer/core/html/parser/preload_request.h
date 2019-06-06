@@ -8,7 +8,9 @@
 #include <memory>
 
 #include "base/memory/ptr_util.h"
+#if defined(ENABLE_GNET)
 #include "third_party/blink/public/mojom/fetch/fetch_api_request.mojom-shared.h"
+#endif // ENABLE_GNET
 #include "third_party/blink/public/mojom/script/script_type.mojom-blink.h"
 #include "third_party/blink/renderer/core/core_export.h"
 #include "third_party/blink/renderer/core/script/script.h"

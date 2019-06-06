@@ -568,7 +568,7 @@ FrameSchedulerImpl::CreateResourceLoadingTaskRunnerHandleImpl() {
   return ResourceLoadingTaskRunnerHandleImpl::WrapTaskRunner(
       frame_task_queue_controller_->LoadingTaskQueue());
 }
-
+#if defined(ENABLE_GNET)
 void FrameSchedulerImpl::DidChangeResourceLoadingPriority(
     scoped_refptr<MainThreadTaskQueue> task_queue,
     net::RequestPriority priority) {
@@ -578,15 +578,19 @@ void FrameSchedulerImpl::DidChangeResourceLoadingPriority(
   // priorities.
   auto queue_priority_pair =
       resource_loading_task_queue_priorities_.find(task_queue);
+
   if (queue_priority_pair != resource_loading_task_queue_priorities_.end()) {
+#if defined(ENABLE_GNET)
     task_queue->SetNetRequestPriority(priority);
     queue_priority_pair->value = main_thread_scheduler_->scheduling_settings()
                                      .net_to_blink_priority[priority];
+#endif // ENABLE_GNET
     auto* voter =
         frame_task_queue_controller_->GetQueueEnabledVoter(task_queue);
     UpdateQueuePolicy(task_queue.get(), voter);
   }
 }
+#endif // ENABLE_GNET
 
 void FrameSchedulerImpl::OnShutdownResourceLoadingTaskQueue(
     scoped_refptr<MainThreadTaskQueue> task_queue) {
@@ -1038,6 +1042,7 @@ void FrameSchedulerImpl::RemovePauseSubresourceLoadingHandle() {
   }
 }
 
+#if defined(ENABLE_UKM)
 ukm::UkmRecorder* FrameSchedulerImpl::GetUkmRecorder() {
   if (!delegate_)
     return nullptr;
@@ -1049,6 +1054,7 @@ ukm::SourceId FrameSchedulerImpl::GetUkmSourceId() {
     return ukm::kInvalidSourceId;
   return delegate_->GetUkmSourceId();
 }
+#endif // ENABLE_UKM
 
 void FrameSchedulerImpl::OnTaskQueueCreated(
     MainThreadTaskQueue* task_queue,

@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#if defined(ENABLE_GIPC)
 #include "url/ipc/url_param_traits.h"
 
 #include "url/gurl.h"
@@ -50,3 +51,4 @@ void ParamTraits<GURL>::Log(const GURL& p, std::string* l) {
 }
 
 }  // namespace IPC
+#endif // ENABLE_GIPC

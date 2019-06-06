@@ -9,8 +9,10 @@
 
 #include "base/component_export.h"
 #include "base/memory/scoped_refptr.h"
+#if defined(ENABLE_GNET)
 #include "net/http/http_response_headers.h"
 #include "net/http/http_response_info.h"
+#endif // ENABLE_GNET
 #include "services/network/public/mojom/cors.mojom-shared.h"
 
 namespace network {
@@ -28,8 +30,10 @@ struct COMPONENT_EXPORT(NETWORK_CPP_BASE) PreflightTimingInfo {
   base::TimeTicks start_time;
   base::TimeTicks response_end;
   std::string alpn_negotiated_protocol;
+#if defined(ENABLE_GNET)
   net::HttpResponseInfo::ConnectionInfo connection_info =
       net::HttpResponseInfo::CONNECTION_INFO_UNKNOWN;
+#endif // ENABLE_GNET
   std::string timing_allow_origin;
   uint64_t transfer_size = 0;
 

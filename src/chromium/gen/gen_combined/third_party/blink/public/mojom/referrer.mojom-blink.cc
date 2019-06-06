@@ -45,14 +45,26 @@ namespace blink {
 namespace mojom {
 namespace blink {
 Referrer::Referrer()
-    : url(),
-      policy() {}
+    : url()
+#if defined(ENABLE_GNET)
+    ,
+      policy()
+#endif // ENABLE_GNET
+      {}
 
 Referrer::Referrer(
-    const ::blink::KURL& url_in,
-    ::network::mojom::blink::ReferrerPolicy policy_in)
-    : url(std::move(url_in)),
-      policy(std::move(policy_in)) {}
+    const ::blink::KURL& url_in
+#if defined(ENABLE_GNET)
+  ,
+  ::network::mojom::blink::ReferrerPolicy policy_in
+#endif // ENABLE_GNET
+    )
+    : url(std::move(url_in))
+#if defined(ENABLE_GNET)
+    ,
+      policy(std::move(policy_in)
+#endif // ENABLE_GNET
+      ) {}
 
 Referrer::~Referrer() = default;
 
@@ -77,8 +89,10 @@ bool StructTraits<::blink::mojom::blink::Referrer::DataView, ::blink::mojom::bli
   
       if (!input.ReadUrl(&result->url))
         success = false;
+#if defined(ENABLE_GNET)
       if (!input.ReadPolicy(&result->policy))
         success = false;
+#endif // ENABLE_GNET
   *output = std::move(result);
   return success;
 }

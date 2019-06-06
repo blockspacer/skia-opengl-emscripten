@@ -10,8 +10,10 @@
 #include "mojo/public/cpp/bindings/lib/map_data_internal.h"
 #include "mojo/public/cpp/bindings/lib/buffer.h"
 #include "mojo/public/mojom/base/big_buffer.mojom-shared-internal.h"
+#if defined(ENABLE_GNET)
 #include "services/network/public/mojom/data_pipe_getter.mojom-shared-internal.h"
 #include "services/network/public/mojom/http_request_headers.mojom-shared-internal.h"
+#endif // ENABLE_GNET
 #include "mojo/public/cpp/bindings/lib/native_enum_data.h"
 #include "mojo/public/interfaces/bindings/native_struct.mojom-shared-internal.h"
 #include "base/component_export.h"

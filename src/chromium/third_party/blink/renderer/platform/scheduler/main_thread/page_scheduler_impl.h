@@ -120,7 +120,9 @@ class PLATFORM_EXPORT PageSchedulerImpl : public PageScheduler {
   // any frame here.
   // Note that selecting main frame doesn't work for OOPIFs where the main
   // frame it not a local one.
+#if defined(ENABLE_UKM)
   FrameSchedulerImpl* SelectFrameForUkmAttribution();
+#endif // ENABLE_UKM
 
   void AsValueInto(base::trace_event::TracedValue* state) const;
 

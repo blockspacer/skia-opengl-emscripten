@@ -10,7 +10,9 @@
 #include "mojo/public/cpp/bindings/lib/map_data_internal.h"
 #include "mojo/public/cpp/bindings/lib/buffer.h"
 #include "mojo/public/mojom/base/unguessable_token.mojom-shared-internal.h"
+#if defined(ENABLE_GNET)
 #include "services/network/public/mojom/url_loader_factory.mojom-shared-internal.h"
+#endif // ENABLE_GNET
 #include "services/service_manager/public/mojom/interface_provider.mojom-shared-internal.h"
 #include "third_party/blink/public/mojom/loader/url_loader_factory_bundle.mojom-shared-internal.h"
 #include "third_party/blink/public/mojom/renderer_preference_watcher.mojom-shared-internal.h"

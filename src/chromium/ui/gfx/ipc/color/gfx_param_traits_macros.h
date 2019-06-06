@@ -5,6 +5,7 @@
 #ifndef UI_GFX_IPC_COLOR_GFX_PARAM_TRAITS_MACROS_H_
 #define UI_GFX_IPC_COLOR_GFX_PARAM_TRAITS_MACROS_H_
 
+#if defined(ENABLE_GIPC)
 #include "ipc/ipc_message_utils.h"
 #include "ipc/param_traits_macros.h"
 #include "ipc/ipc_message_macros.h"
@@ -26,5 +27,6 @@ IPC_ENUM_TRAITS_MAX_VALUE(gfx::ColorSpace::RangeID,
 
 #undef IPC_MESSAGE_EXPORT
 #define IPC_MESSAGE_EXPORT
+#endif // ENABLE_GIPC
 
 #endif  // UI_GFX_IPC_COLOR_GFX_PARAM_TRAITS_MACROS_H_

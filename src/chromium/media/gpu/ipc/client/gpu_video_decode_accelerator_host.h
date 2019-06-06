@@ -14,6 +14,7 @@
 #include "base/sequence_checker.h"
 #include "base/single_thread_task_runner.h"
 #include "gpu/ipc/client/command_buffer_proxy_impl.h"
+#if defined(ENABLE_GIPC)
 #include "ipc/ipc_listener.h"
 #include "media/video/video_decode_accelerator.h"
 #include "ui/gfx/geometry/size.h"
@@ -113,5 +114,6 @@ class GpuVideoDecodeAcceleratorHost
 };
 
 }  // namespace media
+#endif // ENABLE_GIPC
 
 #endif  // MEDIA_GPU_IPC_CLIENT_GPU_VIDEO_DECODE_ACCELERATOR_HOST_H_

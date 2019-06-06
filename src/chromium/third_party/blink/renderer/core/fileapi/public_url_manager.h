@@ -26,7 +26,9 @@
 #ifndef THIRD_PARTY_BLINK_RENDERER_CORE_FILEAPI_PUBLIC_URL_MANAGER_H_
 #define THIRD_PARTY_BLINK_RENDERER_CORE_FILEAPI_PUBLIC_URL_MANAGER_H_
 
+#if defined(ENABLE_GNET)
 #include "services/network/public/mojom/url_loader_factory.mojom-blink.h"
+#endif // ENABLE_GNET
 #include "third_party/blink/public/mojom/blob/blob_url_store.mojom-blink.h"
 #include "third_party/blink/renderer/core/core_export.h"
 #include "third_party/blink/renderer/core/execution_context/context_lifecycle_observer.h"
@@ -58,7 +60,9 @@ class CORE_EXPORT PublicURLManager final
   void Revoke(const KURL&);
   // When mojo Blob URLs are enabled this resolves the provided URL to a
   // factory capable of creating loaders for the specific URL.
+#if defined(ENABLE_GNET)
   void Resolve(const KURL&, network::mojom::blink::URLLoaderFactoryRequest);
+#endif // ENABLE_GNET
   // When mojo Blob URLs are enabled this resolves the provided URL to a mojom
   // BlobURLToken. This token can be used by the browser process to securely
   // lookup what blob a URL used to refer to, even after the URL is revoked.

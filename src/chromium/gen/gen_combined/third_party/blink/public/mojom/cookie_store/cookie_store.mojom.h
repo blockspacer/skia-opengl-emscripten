@@ -27,7 +27,9 @@
 #include "mojo/public/cpp/bindings/union_traits.h"
 #include "third_party/blink/public/mojom/cookie_store/cookie_store.mojom-shared.h"
 #include "third_party/blink/public/mojom/cookie_store/cookie_store.mojom-forward.h"
+#if defined(ENABLE_GNET)
 #include "services/network/public/mojom/restricted_cookie_manager.mojom.h"
+#endif // ENABLE_GNET
 #include "url/mojom/url.mojom.h"
 #include <string>
 #include <vector>

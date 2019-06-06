@@ -28,7 +28,9 @@
 #include "third_party/blink/public/mojom/service_worker/service_worker_client.mojom-shared.h"
 #include "third_party/blink/public/mojom/service_worker/service_worker_client.mojom-forward.h"
 #include "mojo/public/mojom/base/time.mojom.h"
+#if defined(ENABLE_GNET)
 #include "services/network/public/mojom/request_context_frame_type.mojom.h"
+#endif // ENABLE_GNET
 #include "url/mojom/url.mojom.h"
 #include <string>
 #include <vector>

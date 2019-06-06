@@ -58,7 +58,9 @@ class CC_EXPORT ProxyImpl : public LayerTreeHostImplClient,
                                  LayerTreeHost* layer_tree_host,
                                  base::TimeTicks main_thread_start_time,
                                  bool hold_commit_for_activation);
+#if defined(ENABLE_UKM)
   void SetSourceURL(ukm::SourceId source_id, const GURL& url);
+#endif // ENABLE_UKM
   void ClearHistory();
   void SetRenderFrameObserver(
       std::unique_ptr<RenderFrameMetadataObserver> observer);

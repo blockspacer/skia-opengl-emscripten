@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#if defined(ENABLE_GNET)
 #include "third_party/blink/public/platform/modules/service_worker/web_service_worker_request.h"
 
 #include "base/unguessable_token.h"
@@ -115,6 +116,7 @@ const HTTPHeaderMap& WebServiceWorkerRequest::Headers() const {
   return private_->headers_;
 }
 
+#if defined(ENABLE_GNET)
 void WebServiceWorkerRequest::SetBody(const WebHTTPBody& body) {
   private_->http_body = body;
 }
@@ -122,6 +124,7 @@ void WebServiceWorkerRequest::SetBody(const WebHTTPBody& body) {
 WebHTTPBody WebServiceWorkerRequest::Body() const {
   return private_->http_body;
 }
+#endif // ENABLE_GNET
 
 void WebServiceWorkerRequest::SetReferrer(
     const WebString& web_referrer,
@@ -256,3 +259,4 @@ const base::UnguessableToken& WebServiceWorkerRequest::GetWindowId() const {
 }
 
 }  // namespace blink
+#endif // ENABLE_GNET

@@ -13,6 +13,7 @@
 namespace mojo {
 namespace internal {
 
+//#if defined(ENABLE_GIPC)
 template <typename T>
 struct Serializer<ScopedHandleBase<T>, ScopedHandleBase<T>> {
   static void Serialize(ScopedHandleBase<T>& input,
@@ -31,5 +32,6 @@ struct Serializer<ScopedHandleBase<T>, ScopedHandleBase<T>> {
 
 }  // namespace internal
 }  // namespace mojo
+//#endif // ENABLE_GIPC
 
 #endif  // MOJO_PUBLIC_CPP_BINDINGS_LIB_HANDLE_SERIALIZATION_H_

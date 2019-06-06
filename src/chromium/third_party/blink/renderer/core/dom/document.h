@@ -36,7 +36,9 @@
 
 #include "base/memory/scoped_refptr.h"
 #include "mojo/public/cpp/bindings/binding_set.h"
+#if defined(ENABLE_UKM)
 #include "services/metrics/public/cpp/ukm_source_id.h"
+#endif // ENABLE_UKM
 #include "third_party/blink/public/mojom/feature_policy/feature_policy.mojom-blink.h"
 #include "third_party/blink/public/mojom/frame/navigation_initiator.mojom-blink.h"
 #include "third_party/blink/public/platform/web_focus_type.h"
@@ -78,9 +80,11 @@ namespace base {
 class SingleThreadTaskRunner;
 }
 
+#if defined(ENABLE_UKM)
 namespace ukm {
 class UkmRecorder;
 }  // namespace ukm
+#endif // ENABLE_UKM
 
 namespace blink {
 
@@ -154,7 +158,9 @@ class MediaQueryListListener;
 class MediaQueryMatcher;
 class NodeIterator;
 class NthIndexCache;
+#if defined(ENABLE_GNET)
 class OriginAccessEntry;
+#endif // ENABLE_GNET
 class Page;
 class PendingAnimations;
 class ProcessingInstruction;
@@ -1382,7 +1388,9 @@ class CORE_EXPORT Document : public ContainerNode,
   void MaybeQueueSendDidEditFieldInInsecureContext();
 
   CoreProbeSink* GetProbeSink() final;
+#if defined(ENABLE_GNET)
   service_manager::InterfaceProvider* GetInterfaceProvider() final;
+#endif // ENABLE_GNET
   mojom::blink::DocumentInterfaceBroker* GetDocumentInterfaceBroker() final;
 
   // May return nullptr when PerformanceManager instrumentation is disabled.
@@ -1414,15 +1422,19 @@ class CORE_EXPORT Document : public ContainerNode,
   void captureEvents() {}
   void releaseEvents() {}
 
+#if defined(ENABLE_UKM)
   ukm::UkmRecorder* UkmRecorder();
   ukm::SourceId UkmSourceID() const;
+#endif // ENABLE_UKM
 
   // May return nullptr.
   FrameOrWorkerScheduler* GetScheduler() override;
 
   scoped_refptr<base::SingleThreadTaskRunner> GetTaskRunner(TaskType) override;
 
+#if defined(ENABLE_UKM)
   void RecordUkmOutliveTimeAfterShutdown(int outlive_time_count);
+#endif // ENABLE_UKM
 
   bool CurrentFrameHadRAF() const;
   bool NextFrameHasPendingRAF() const;
@@ -1661,7 +1673,9 @@ class CORE_EXPORT Document : public ContainerNode,
     nth_index_cache_ = nth_index_cache;
   }
 
+#if defined(ENABLE_GNET)
   const OriginAccessEntry& AccessEntryFromURL();
+#endif // ENABLE_GNET
 
   void SendDidEditFieldInInsecureContext();
 
@@ -1732,7 +1746,9 @@ class CORE_EXPORT Document : public ContainerNode,
                             // over base_url_ (but not base_element_url_).
   KURL base_element_url_;   // The URL set by the <base> element.
   KURL cookie_url_;         // The URL to use for cookie access.
+#if defined(ENABLE_GNET)
   std::unique_ptr<OriginAccessEntry> access_entry_from_url_;
+#endif // ENABLE_GNET
 
   AtomicString base_target_;
 
@@ -1963,7 +1979,9 @@ class CORE_EXPORT Document : public ContainerNode,
 
   // |ukm_recorder_| and |source_id_| will allow objects that are part of
   // the document to recorde UKM.
+#if defined(ENABLE_UKM)
   std::unique_ptr<ukm::UkmRecorder> ukm_recorder_;
+#endif // ENABLE_UKM
   int64_t ukm_source_id_;
   bool needs_to_record_ukm_outlive_time_;
 

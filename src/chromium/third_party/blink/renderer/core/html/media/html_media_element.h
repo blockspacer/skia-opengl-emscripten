@@ -41,7 +41,9 @@
 #include "third_party/blink/renderer/core/intersection_observer/intersection_observer.h"
 #include "third_party/blink/renderer/platform/audio/audio_source_provider.h"
 #include "third_party/blink/renderer/platform/bindings/exception_state.h"
+#if defined(ENABLE_GNET)
 #include "third_party/blink/renderer/platform/network/mime/mime_type_registry.h"
+#endif // ENABLE_GNET
 #include "third_party/blink/renderer/platform/scheduler/public/post_cancellable_task.h"
 #include "third_party/blink/renderer/platform/supplementable.h"
 #include "third_party/blink/renderer/platform/timer.h"
@@ -96,8 +98,9 @@ class CORE_EXPORT HTMLMediaElement
   const AttrNameToTrustedType& GetCheckedAttributeTypes() const override;
 
   bool IsMediaElement() const override { return true; }
-
+#if defined(ENABLE_GNET)
   static MIMETypeRegistry::SupportsType GetSupportsType(const ContentType&);
+#endif // ENABLE_GNET
 
   enum class RecordMetricsBehavior { kDoNotRecord, kDoRecord };
 

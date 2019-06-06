@@ -22,7 +22,9 @@
 #include "mojo/public/cpp/bindings/map_data_view.h"
 #include "mojo/public/cpp/bindings/string_data_view.h"
 #include "third_party/blink/public/mojom/cookie_store/cookie_store.mojom-shared-internal.h"
+#if defined(ENABLE_GNET)
 #include "services/network/public/mojom/restricted_cookie_manager.mojom-shared.h"
+#endif // ENABLE_GNET
 #include "url/mojom/url.mojom-shared.h"
 
 #include "mojo/public/cpp/bindings/lib/interface_serialization.h"
@@ -90,6 +92,7 @@ class CookieChangeSubscriptionDataView {
     return mojo::internal::Deserialize<::url::mojom::UrlDataView>(
         pointer, output, context_);
   }
+#if defined(ENABLE_GNET)
   template <typename UserType>
   WARN_UNUSED_RESULT bool ReadMatchType(UserType* output) const {
     auto data_value = data_->match_type;
@@ -100,6 +103,7 @@ class CookieChangeSubscriptionDataView {
   ::network::mojom::CookieMatchType match_type() const {
     return static_cast<::network::mojom::CookieMatchType>(data_->match_type);
   }
+#endif // ENABLE_GNET
   inline void GetNameDataView(
       mojo::StringDataView* output);
 
@@ -151,8 +155,10 @@ struct Serializer<::blink::mojom::CookieChangeSubscriptionDataView, MaybeConstUs
         (*output)->url.is_null(),
         mojo::internal::VALIDATION_ERROR_UNEXPECTED_NULL_POINTER,
         "null url in CookieChangeSubscription struct");
+#if defined(ENABLE_GNET)
     mojo::internal::Serialize<::network::mojom::CookieMatchType>(
         Traits::match_type(input), &(*output)->match_type);
+#endif // ENABLE_GNET
     decltype(Traits::name(input)) in_name = Traits::name(input);
     typename decltype((*output)->name)::BaseType::BufferWriter
         name_writer;

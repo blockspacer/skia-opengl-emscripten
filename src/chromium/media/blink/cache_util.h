@@ -12,9 +12,11 @@
 #include "base/time/time.h"
 #include "media/blink/media_blink_export.h"
 
+#if defined(ENABLE_GNET)
 namespace blink {
 class WebURLResponse;
 }
+#endif // ENABLE_GNET
 
 namespace media {
 

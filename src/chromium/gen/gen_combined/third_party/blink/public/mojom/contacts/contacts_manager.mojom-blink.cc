@@ -227,9 +227,11 @@ void ContactsManager_Select_ProxyToResponder::Run(
       contacts_writer;
   const mojo::internal::ContainerValidateParams contacts_validate_params(
       0, false, nullptr);
+#if defined(ENABLE_GIPC)
   mojo::internal::Serialize<mojo::ArrayDataView<::blink::mojom::ContactInfoDataView>>(
       in_contacts, buffer, &contacts_writer, &contacts_validate_params,
       &serialization_context);
+#endif // ENABLE_GIPC
   params->contacts.Set(
       contacts_writer.is_null() ? nullptr : contacts_writer.data());
   message.AttachHandlesFromSerializationContext(

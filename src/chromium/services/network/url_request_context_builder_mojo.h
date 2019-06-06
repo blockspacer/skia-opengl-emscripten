@@ -15,7 +15,7 @@
 #include "services/network/public/mojom/network_service.mojom.h"
 #include "services/network/url_request_context_owner.h"
 #include "services/proxy_resolver/public/mojom/proxy_resolver.mojom.h"
-
+#if defined(ENABLE_GNET)
 namespace net {
 #if defined(ENABLE_DNS)
 class HostResolver;
@@ -27,6 +27,7 @@ class ProxyResolutionService;
 #endif
 class URLRequestContext;
 }  // namespace net
+#endif // ENABLE_GNET
 
 namespace network {
 

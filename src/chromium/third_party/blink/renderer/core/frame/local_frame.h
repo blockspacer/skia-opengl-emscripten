@@ -452,8 +452,10 @@ class CORE_EXPORT LocalFrame final : public Frame,
                    float maximum_shrink_ratio);
 
   // FrameScheduler::Delegate overrides:
+#if defined(ENABLE_UKM)
   ukm::UkmRecorder* GetUkmRecorder() override;
   ukm::SourceId GetUkmSourceId() override;
+#endif // ENABLE_UKM
   void UpdateTaskTime(base::TimeDelta time) override;
   void UpdateActiveSchedulerTrackedFeatures(uint64_t features_mask) override;
 

@@ -26,7 +26,10 @@
 
 #include "third_party/blink/renderer/platform/weborigin/known_ports.h"
 
+#if defined(ENABLE_GNET)
 #include "net/base/port_util.h"
+#endif // ENABLE_GNET
+
 #include "third_party/blink/renderer/platform/weborigin/kurl.h"
 #include "third_party/blink/renderer/platform/wtf/text/string_utf8_adaptor.h"
 #include "third_party/blink/renderer/platform/wtf/text/wtf_string.h"
@@ -79,7 +82,11 @@ bool IsPortAllowedForScheme(const KURL& url) {
   if (!effective_port)
     effective_port = DefaultPortForProtocol(protocol);
   StringUTF8Adaptor utf8(protocol);
+#if defined(ENABLE_GNET)
   return net::IsPortAllowedForScheme(effective_port, utf8.AsStringPiece());
+#else
+  return true;
+#endif // ENABLE_GNET
 }
 
 }  // namespace blink

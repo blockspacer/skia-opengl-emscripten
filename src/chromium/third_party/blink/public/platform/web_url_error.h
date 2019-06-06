@@ -33,9 +33,12 @@
 
 #include "base/logging.h"
 #include "base/optional.h"
+#if defined(ENABLE_GNET)
 #include "services/network/public/cpp/cors/cors_error_status.h"
+#endif // ENABLE_GNET
 #include "third_party/blink/public/platform/web_url.h"
 
+#if defined(ENABLE_GNET)
 namespace blink {
 
 // TODO(yhirano): Change this to a class.
@@ -59,18 +62,22 @@ struct WebURLError {
                                     HasCopyInCache,
                                     IsWebSecurityViolation,
                                     const WebURL&);
+#if defined(ENABLE_GNET)
   BLINK_PLATFORM_EXPORT WebURLError(const network::CorsErrorStatus&,
                                     HasCopyInCache,
                                     const WebURL&);
+#endif // ENABLE_GNET
 
   int reason() const { return reason_; }
   int extended_reason() const { return extended_reason_; }
   bool has_copy_in_cache() const { return has_copy_in_cache_; }
   bool is_web_security_violation() const { return is_web_security_violation_; }
   const WebURL& url() const { return url_; }
+#if defined(ENABLE_GNET)
   const base::Optional<network::CorsErrorStatus> cors_error_status() const {
     return cors_error_status_;
   }
+#endif // ENABLE_GNET
 
  private:
   // A numeric error code detailing the reason for this error. The value must
@@ -91,9 +98,12 @@ struct WebURLError {
   WebURL url_;
 
   // Optional CORS error details.
+#if defined(ENABLE_GNET)
   base::Optional<network::CorsErrorStatus> cors_error_status_;
+#endif // ENABLE_GNET
 };
 
 }  // namespace blink
+#endif // ENABLE_GNET
 
 #endif

@@ -1,5 +1,12 @@
 ﻿### --- base ---###
 
+if(ENABLE_UKM)
+  list(APPEND BASE_SOURCES
+     ${BASE_DIR}metrics/ukm_source_id.cc
+     ${BASE_DIR}metrics/ukm_source_id.h
+  )
+endif(ENABLE_UKM)
+
 list(APPEND BASE_SOURCES
    # sources = [
    ${BASE_DIR}i18n/base_i18n_export.h
@@ -434,8 +441,6 @@ list(APPEND BASE_SOURCES
    ${BASE_DIR}metrics/sparse_histogram.h
    ${BASE_DIR}metrics/statistics_recorder.cc
    ${BASE_DIR}metrics/statistics_recorder.h
-   ${BASE_DIR}metrics/ukm_source_id.cc
-   ${BASE_DIR}metrics/ukm_source_id.h
    ${BASE_DIR}metrics/user_metrics.cc
    ${BASE_DIR}metrics/user_metrics.h
    ${BASE_DIR}metrics/user_metrics_action.h

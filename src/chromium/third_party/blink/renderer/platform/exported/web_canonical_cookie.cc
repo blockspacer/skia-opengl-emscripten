@@ -6,13 +6,14 @@
 
 #include <memory>
 #include <vector>
-
+#if defined(ENABLE_GNET)
 #include "net/cookies/canonical_cookie.h"
 #include "net/cookies/cookie_constants.h"
+#endif // ENABLE_GNET
 #include "third_party/blink/renderer/platform/wtf/text/wtf_string.h"
 #include "third_party/blink/renderer/platform/wtf/vector.h"
 #include "url/gurl.h"
-
+#if defined(ENABLE_GNET)
 // Assumptions made by static_casts used in this file.
 STATIC_ASSERT_ENUM(net::CookieSameSite::UNSPECIFIED,
                    network::mojom::CookieSameSite::UNSPECIFIED);
@@ -33,9 +34,10 @@ STATIC_ASSERT_ENUM(net::CookiePriority::COOKIE_PRIORITY_HIGH,
                    network::mojom::CookiePriority::HIGH);
 STATIC_ASSERT_ENUM(net::CookiePriority::COOKIE_PRIORITY_DEFAULT,
                    blink::WebCanonicalCookie::kDefaultPriority);
+#endif // ENABLE_GNET
 
 namespace blink {
-
+#if defined(ENABLE_GNET)
 namespace {
 
 net::CanonicalCookie ToNetCanonicalCookie(const WebCanonicalCookie& cookie) {
@@ -50,6 +52,7 @@ net::CanonicalCookie ToNetCanonicalCookie(const WebCanonicalCookie& cookie) {
 }
 
 }  // namespace
+#endif // ENABLE_GNET
 
 WebCanonicalCookie::WebCanonicalCookie() = default;
 
@@ -75,7 +78,9 @@ WebCanonicalCookie::WebCanonicalCookie(WebString name,
       is_http_only_(is_http_only),
       same_site_(same_site),
       priority_(priority) {
+#if defined(ENABLE_GNET)
   DCHECK(ToNetCanonicalCookie(*this).IsCanonical());
+#endif // ENABLE_GNET
 }
 
 WebCanonicalCookie::WebCanonicalCookie(const WebCanonicalCookie& other) =
@@ -103,6 +108,7 @@ base::Optional<WebCanonicalCookie> WebCanonicalCookie::Create(
     const WebURL& url,
     const WebString& cookie_line,
     base::Time creation_time) {
+#if defined(ENABLE_GNET)
   net::CookieOptions options;
   std::unique_ptr<net::CanonicalCookie> cookie = net::CanonicalCookie::Create(
       ToGURL(url), cookie_line.Utf8(), creation_time, options);
@@ -116,6 +122,9 @@ base::Optional<WebCanonicalCookie> WebCanonicalCookie::Create(
       cookie->IsHttpOnly(),
       static_cast<network::mojom::CookieSameSite>(cookie->SameSite()),
       static_cast<network::mojom::CookiePriority>(cookie->Priority()));
+#else
+ return base::nullopt;
+#endif // ENABLE_GNET
 }
 
 // static
@@ -131,6 +140,7 @@ base::Optional<WebCanonicalCookie> WebCanonicalCookie::Create(
     bool is_http_only,
     network::mojom::CookieSameSite same_site,
     network::mojom::CookiePriority priority) {
+#if defined(ENABLE_GNET)
   net::CanonicalCookie net_cookie(name.Utf8(), value.Utf8(), domain.Utf8(),
                                   path.Utf8(), creation, expiration,
                                   last_access, is_secure, is_http_only,
@@ -143,6 +153,9 @@ base::Optional<WebCanonicalCookie> WebCanonicalCookie::Create(
                             std::move(domain), std::move(path), creation,
                             expiration, last_access, is_secure, is_http_only,
                             same_site, priority);
+#else
+  return base::nullopt;
+#endif // ENABLE_GNET
 }
 
 constexpr const network::mojom::CookiePriority

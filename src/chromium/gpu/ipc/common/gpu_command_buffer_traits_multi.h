@@ -10,8 +10,10 @@
 #include "gpu/command_buffer/common/constants.h"
 #include "gpu/command_buffer/common/context_creation_attribs.h"
 #include "gpu/gpu_export.h"
+#if defined(ENABLE_GIPC)
 #include "ipc/ipc_message_utils.h"
 #include "ipc/param_traits_macros.h"
+#endif // ENABLE_GIPC
 #include "ui/gfx/ipc/buffer_types/gfx_param_traits.h"
 #include "ui/gfx/ipc/geometry/gfx_param_traits.h"
 #include "ui/gl/gpu_preference.h"

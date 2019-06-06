@@ -47,15 +47,25 @@ list(APPEND BLINK_COMMON_GEN_SOURCES
   ${CUR_SRC_DIR}/mediastream/media_stream_controls.cc
   # requires media/base/ipc/media_param_traits.h
   ## TODO ## ${CUR_SRC_DIR}/mediastream/media_stream_mojom_traits.cc
+)
+
+if(ENABLE_GNET)
+  list(APPEND BLINK_COMMON_GEN_SOURCES
+    ${CUR_SRC_DIR}/messaging/cloneable_message.cc
+    ${CUR_SRC_DIR}/messaging/cloneable_message_struct_traits.cc
+    ${CUR_SRC_DIR}/messaging/message_port_channel.cc
+    ${CUR_SRC_DIR}/messaging/string_message_codec.cc
+    ${CUR_SRC_DIR}/messaging/transferable_message.cc
+    ${CUR_SRC_DIR}/origin_trials/trial_token.cc
+    ${CUR_SRC_DIR}/origin_trials/trial_token_validator.cc
+    ## TODO ## ${CUR_SRC_DIR}/messaging/transferable_message_struct_traits.cc
+    ${CUR_SRC_DIR}/mime_util/mime_util.cc
+  )
+endif(ENABLE_GNET)
+
+list(APPEND BLINK_COMMON_GEN_SOURCES
   ${CUR_SRC_DIR}/mediastream/media_stream_request.cc
-  ${CUR_SRC_DIR}/messaging/cloneable_message.cc
-  ${CUR_SRC_DIR}/messaging/cloneable_message_struct_traits.cc
-  ${CUR_SRC_DIR}/messaging/message_port_channel.cc
-  ${CUR_SRC_DIR}/messaging/string_message_codec.cc
-  ${CUR_SRC_DIR}/messaging/transferable_message.cc
   # requires skia/public/interfaces/bitmap_skbitmap_struct_traits.h
-  ## TODO ## ${CUR_SRC_DIR}/messaging/transferable_message_struct_traits.cc
-  ${CUR_SRC_DIR}/mime_util/mime_util.cc
   ${CUR_SRC_DIR}/notifications/notification_resources.cc
   # requires skia/public/interfaces/bitmap_skbitmap_struct_traits.h
   ## TODO ## ${CUR_SRC_DIR}/notifications/notification_struct_traits.cc
@@ -63,8 +73,6 @@ list(APPEND BLINK_COMMON_GEN_SOURCES
   ${CUR_SRC_DIR}/origin_policy/origin_policy.cc
   ${CUR_SRC_DIR}/origin_policy/origin_policy_parser.cc
   #$CUR_SRC_DIRR}/origin_policy/origin_policy_parser.h
-  ${CUR_SRC_DIR}/origin_trials/trial_token.cc
-  ${CUR_SRC_DIR}/origin_trials/trial_token_validator.cc
   ${CUR_SRC_DIR}/privacy_preferences.cc
   ${CUR_SRC_DIR}/service_worker/service_worker_status_code.cc
   ${CUR_SRC_DIR}/service_worker/service_worker_type_converters.cc
@@ -83,9 +91,9 @@ add_library(BLINK_COMMON STATIC
 
 target_link_libraries(BLINK_COMMON PUBLIC
   base
-  GNET
+  ${GNET_LIBS}
   MOJO
-  SERVICES_NETWORK_PUBLIC_CPP
+  ${SERVICES_NETWORK_PUBLIC_CPP_LIB}
   ${CUSTOM_ICU_LIB}
   ${HARFBUZZ_LIBRARIES}
   UI_GFX

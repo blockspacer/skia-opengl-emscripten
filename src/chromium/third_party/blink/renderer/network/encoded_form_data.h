@@ -38,11 +38,13 @@
 #include "third_party/blink/renderer/platform/wtf/text/wtf_string.h"
 #include "third_party/blink/renderer/platform/wtf/vector.h"
 
+#if defined(ENABLE_GNET)
 namespace network {
 namespace mojom {
 class URLRequestBodyDataView;
 }  // namespace mojom
 }  // namespace network
+#endif // ENABLE_GNET
 
 namespace blink {
 

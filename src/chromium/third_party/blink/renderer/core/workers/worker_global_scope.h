@@ -28,9 +28,13 @@
 #define THIRD_PARTY_BLINK_RENDERER_CORE_WORKERS_WORKER_GLOBAL_SCOPE_H_
 
 #include <memory>
+#if defined(ENABLE_GNET)
 #include "services/network/public/mojom/fetch_api.mojom-shared.h"
+#endif // ENABLE_GNET
+#if defined(ENABLE_GNET)
 #include "services/service_manager/public/cpp/interface_provider.h"
 #include "services/service_manager/public/mojom/interface_provider.mojom-blink.h"
+#endif // ENABLE_GNET
 #include "third_party/blink/public/mojom/net/ip_address_space.mojom-blink.h"
 #include "third_party/blink/public/mojom/script/script_type.mojom-blink.h"
 #include "third_party/blink/renderer/bindings/core/v8/active_script_wrappable.h"
@@ -49,9 +53,11 @@
 #include "third_party/blink/renderer/platform/loader/fetch/cached_metadata_handler.h"
 #include "third_party/blink/renderer/platform/wtf/casting.h"
 
+#if defined(ENABLE_GNET)
 namespace service_manager {
 class InterfaceProvider;
 }
+#endif // ENABLE_GNET
 
 namespace blink {
 

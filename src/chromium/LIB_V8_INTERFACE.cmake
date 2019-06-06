@@ -79,34 +79,6 @@
 
 add_library(LIB_V8_INTERFACE INTERFACE)
 
-#target_link_libraries(LIB_V8_INTERFACE PUBLIC
-#
-#  #public_deps = [
-#  #  "//services/network/public/cpp:cpp",
-#  #  "//skia",
-#  #  "//third_party/blink/public/mojom:mojom_modules_headers",
-#  #]
-#  SKIA
-#  SERVICES_NETWORK_PUBLIC_CPP
-#  MOJO
-#  #deps = [
-#  #  "//base",
-#  #  "//mojo/public/cpp/bindings",
-#  #  "//mojo/public/cpp/system",
-#  #  "//mojo/public/mojom/base",
-#  #  "//net",
-#  #]
-#  GNET
-#  ## iOS doesn't use and must not depend on //media
-#  #if (!is_ios) {
-#  #  deps += [
-#  #    "//media",
-#  #    "//media/capture:capture_base",
-#  #    "//media/capture:capture_lib",
-#  #  ]
-#  #}
-#)
-
 #set_property(TARGET LIB_V8_INTERFACE PROPERTY CXX_STANDARD 17)
 
 target_include_directories(LIB_V8_INTERFACE INTERFACE

@@ -4,7 +4,9 @@
 
 #include "third_party/blink/public/platform/web_url_error.h"
 
+#if defined(ENABLE_GNET)
 #include "net/base/net_errors.h"
+#endif // ENABLE_GNET
 
 namespace blink {
 
@@ -30,7 +32,10 @@ WebURLError::WebURLError(int reason,
 WebURLError::WebURLError(const network::CorsErrorStatus& cors_error_status,
                          HasCopyInCache has_copy_in_cache,
                          const WebURL& url)
-    : reason_(net::ERR_FAILED),
+    :
+#if defined(ENABLE_GNET)
+      reason_(net::ERR_FAILED),
+#endif // ENABLE_GNET
       has_copy_in_cache_(has_copy_in_cache == HasCopyInCache::kTrue),
       is_web_security_violation_(true),
       url_(url),

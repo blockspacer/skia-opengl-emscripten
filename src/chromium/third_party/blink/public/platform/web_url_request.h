@@ -35,11 +35,14 @@
 #include "base/optional.h"
 #include "base/time/time.h"
 #include "base/unguessable_token.h"
+#if defined(ENABLE_GNET)
 #include "services/network/public/mojom/referrer_policy.mojom-shared.h"
 #include "third_party/blink/public/mojom/fetch/fetch_api_request.mojom-shared.h"
+#endif // ENABLE_GNET
 #include "third_party/blink/public/platform/web_common.h"
 #include "ui/base/page_transition_types.h"
 
+#if defined(ENABLE_GNET)
 namespace network {
 namespace mojom {
 enum class CorsPreflightPolicy : int32_t;
@@ -49,7 +52,9 @@ enum class FetchRequestMode : int32_t;
 enum class RequestContextFrameType : int32_t;
 }  // namespace mojom
 }  // namespace network
+#endif // ENABLE_GNET
 
+#if defined(ENABLE_GNET)
 namespace blink {
 
 namespace mojom {
@@ -57,7 +62,9 @@ enum class FetchCacheMode : int32_t;
 }  // namespace mojom
 
 class ResourceRequest;
+#if defined(ENABLE_GNET)
 class WebHTTPBody;
+#endif // ENABLE_GNET
 class WebHTTPHeaderVisitor;
 class WebSecurityOrigin;
 class WebString;
@@ -211,6 +218,7 @@ class WebURLRequest {
   // SetHttpReferrer instead.
   BLINK_PLATFORM_EXPORT void SetHttpHeaderField(const WebString& name,
                                                 const WebString& value);
+
   BLINK_PLATFORM_EXPORT void SetHttpReferrer(const WebString& referrer,
                                              network::mojom::ReferrerPolicy);
   BLINK_PLATFORM_EXPORT void AddHttpHeaderField(const WebString& name,
@@ -406,5 +414,6 @@ class WebURLRequest {
 };
 
 }  // namespace blink
+#endif // ENABLE_GNET
 
 #endif

@@ -389,8 +389,10 @@ class KEYBOARD_EXPORT KeyboardController : public ui::InputMethodObserver,
 
   void SetContainerBehaviorInternal(mojom::ContainerType type);
 
+#if defined(ENABLE_UKM)
   // Records that keyboard was shown on the currently focused UKM source.
   void RecordUkmKeyboardShown();
+#endif // ENABLE_UKM
 
   // Gets the currently focused text input client.
   ui::TextInputClient* GetTextInputClient();

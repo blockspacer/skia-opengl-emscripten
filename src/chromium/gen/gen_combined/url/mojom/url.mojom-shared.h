@@ -95,6 +95,7 @@ namespace mojo {
 
 namespace internal {
 
+#if defined(ENABLE_GIPC)
 template <typename MaybeConstUserType>
 struct Serializer<::url::mojom::UrlDataView, MaybeConstUserType> {
   using UserType = typename std::remove_const<MaybeConstUserType>::type;
@@ -130,6 +131,7 @@ struct Serializer<::url::mojom::UrlDataView, MaybeConstUserType> {
     return Traits::Read(data_view, output);
   }
 };
+#endif // ENABLE_GIPC
 
 }  // namespace internal
 

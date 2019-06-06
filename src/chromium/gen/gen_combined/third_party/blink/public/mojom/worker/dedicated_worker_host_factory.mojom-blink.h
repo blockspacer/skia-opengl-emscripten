@@ -133,11 +133,12 @@ class CORE_EXPORT DedicatedWorkerHostFactory
   };
   virtual ~DedicatedWorkerHostFactory() {}
 
-  
+#if defined(ENABLE_GNET)
   virtual void CreateWorkerHost(const scoped_refptr<const ::blink::SecurityOrigin>& origin, ::service_manager::mojom::blink::InterfaceProviderRequest worker_interface_provider) = 0;
 
   
   virtual void CreateWorkerHostAndStartScriptLoad(const ::blink::KURL& script_url, const scoped_refptr<const ::blink::SecurityOrigin>& origin, ::blink::mojom::blink::BlobURLTokenPtr blob_url_token, DedicatedWorkerHostFactoryClientPtr client) = 0;
+#endif // ENABLE_GNET
 };
 
 class CORE_EXPORT DedicatedWorkerHostFactoryClientProxy
@@ -160,8 +161,10 @@ class CORE_EXPORT DedicatedWorkerHostFactoryProxy
   using InterfaceType = DedicatedWorkerHostFactory;
 
   explicit DedicatedWorkerHostFactoryProxy(mojo::MessageReceiverWithResponder* receiver);
+#if defined(ENABLE_GNET)
   void CreateWorkerHost(const scoped_refptr<const ::blink::SecurityOrigin>& origin, ::service_manager::mojom::blink::InterfaceProviderRequest worker_interface_provider) final;
   void CreateWorkerHostAndStartScriptLoad(const ::blink::KURL& script_url, const scoped_refptr<const ::blink::SecurityOrigin>& origin, ::blink::mojom::blink::BlobURLTokenPtr blob_url_token, DedicatedWorkerHostFactoryClientPtr client) final;
+#endif // ENABLE_GNET
 
  private:
   mojo::MessageReceiverWithResponder* receiver_;

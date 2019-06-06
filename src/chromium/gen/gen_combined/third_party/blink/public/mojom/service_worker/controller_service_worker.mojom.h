@@ -29,7 +29,9 @@
 #include "third_party/blink/public/mojom/service_worker/controller_service_worker.mojom-forward.h"
 #include "mojo/public/mojom/base/time.mojom.h"
 #include "mojo/public/mojom/base/unguessable_token.mojom.h"
+#if defined(ENABLE_GNET)
 #include "services/network/public/mojom/url_loader.mojom.h"
+#endif // ENABLE_GNET
 #include "third_party/blink/public/mojom/service_worker/controller_service_worker_mode.mojom.h"
 #include "third_party/blink/public/mojom/service_worker/dispatch_fetch_event_params.mojom.h"
 #include "third_party/blink/public/mojom/service_worker/service_worker_event_status.mojom.h"

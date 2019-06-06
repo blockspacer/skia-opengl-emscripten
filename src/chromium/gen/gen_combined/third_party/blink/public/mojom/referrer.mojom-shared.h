@@ -23,7 +23,9 @@
 #include "mojo/public/cpp/bindings/string_data_view.h"
 #include "third_party/blink/public/mojom/referrer.mojom-shared-internal.h"
 #include "url/mojom/url.mojom-shared.h"
+#if defined(ENABLE_GNET)
 #include "services/network/public/mojom/referrer_policy.mojom-shared.h"
+#endif // ENABLE_GNET
 
 #include "mojo/public/cpp/bindings/lib/interface_serialization.h"
 
@@ -79,6 +81,7 @@ class ReferrerDataView {
     return mojo::internal::Deserialize<::url::mojom::UrlDataView>(
         pointer, output, context_);
   }
+#if defined(ENABLE_GNET)
   template <typename UserType>
   WARN_UNUSED_RESULT bool ReadPolicy(UserType* output) const {
     auto data_value = data_->policy;
@@ -89,6 +92,7 @@ class ReferrerDataView {
   ::network::mojom::ReferrerPolicy policy() const {
     return static_cast<::network::mojom::ReferrerPolicy>(data_->policy);
   }
+#endif // ENABLE_GNET
  private:
   internal::Referrer_Data* data_ = nullptr;
   mojo::internal::SerializationContext* context_ = nullptr;
@@ -131,8 +135,10 @@ struct Serializer<::blink::mojom::ReferrerDataView, MaybeConstUserType> {
         (*output)->url.is_null(),
         mojo::internal::VALIDATION_ERROR_UNEXPECTED_NULL_POINTER,
         "null url in Referrer struct");
+#if defined(ENABLE_GNET)
     mojo::internal::Serialize<::network::mojom::ReferrerPolicy>(
         Traits::policy(input), &(*output)->policy);
+#endif // ENABLE_GNET
   }
 
   static bool Deserialize(::blink::mojom::internal::Referrer_Data* input,

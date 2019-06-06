@@ -26,6 +26,7 @@ enum class MainThreadTaskLoadState;
 class MainThreadTaskQueue;
 class MainThreadSchedulerImpl;
 
+#if defined(ENABLE_UKM)
 enum class UkmRecordingStatus {
   kSuccess = 0,
   kErrorMissingFrame = 1,
@@ -34,6 +35,7 @@ enum class UkmRecordingStatus {
 
   kCount = 4,
 };
+#endif // ENABLE_UKM
 
 // Helper class to take care of metrics on behalf of MainThreadScheduler.
 // This class should be used only on the main thread.

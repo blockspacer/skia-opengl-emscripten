@@ -6,6 +6,7 @@
 #define MEDIA_BASE_IPC_MEDIA_PARAM_TRAITS_MACROS_H_
 
 #include "build/build_config.h"
+#if defined(ENABLE_GIPC)
 #include "ipc/ipc_message_macros.h"
 #include "media/base/audio_codecs.h"
 #include "media/base/audio_parameters.h"
@@ -215,5 +216,6 @@ IPC_STRUCT_TRAITS_BEGIN(media::OverlayInfo)
   IPC_STRUCT_TRAITS_MEMBER(is_fullscreen)
   IPC_STRUCT_TRAITS_MEMBER(is_persistent_video)
 IPC_STRUCT_TRAITS_END()
+#endif // ENABLE_GIPC
 
 #endif  // MEDIA_BASE_IPC_MEDIA_PARAM_TRAITS_MACROS_H_

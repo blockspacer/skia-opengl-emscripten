@@ -34,24 +34,33 @@
 #include "base/optional.h"
 #include "base/time/time.h"
 #include "base/unguessable_token.h"
+
+#if defined(ENABLE_UKM)
 #include "services/metrics/public/cpp/ukm_source_id.h"
+#endif // ENABLE_UKM
+
+#if defined(ENABLE_GNET)
 #include "services/network/public/mojom/cors.mojom-blink.h"
 #include "services/network/public/mojom/fetch_api.mojom-blink.h"
 #include "services/network/public/mojom/request_context_frame_type.mojom-shared.h"
 #include "third_party/blink/public/mojom/fetch/fetch_api_request.mojom-shared.h"
 #include "third_party/blink/public/mojom/net/ip_address_space.mojom-blink.h"
+#endif // ENABLE_GNET
 #include "third_party/blink/public/platform/resource_request_blocked_reason.h"
 #include "third_party/blink/public/platform/web_url_request.h"
+#if defined(ENABLE_GNET)
 #include "third_party/blink/renderer/platform/loader/fetch/resource_load_priority.h"
 #include "third_party/blink/renderer/platform/network/http_header_map.h"
 #include "third_party/blink/renderer/platform/network/http_names.h"
 #include "third_party/blink/renderer/platform/network/http_parsers.h"
+#endif // ENABLE_GNET
 #include "third_party/blink/renderer/platform/weborigin/kurl.h"
 #include "third_party/blink/renderer/platform/weborigin/referrer.h"
 #include "third_party/blink/renderer/platform/weborigin/security_origin.h"
 #include "third_party/blink/renderer/platform/wtf/ref_counted.h"
 #include "third_party/blink/renderer/platform/wtf/time.h"
 
+#if defined(ENABLE_GNET)
 namespace blink {
 
 class EncodedFormData;
@@ -405,10 +414,12 @@ class PLATFORM_EXPORT ResourceRequest final {
   void SetPurposeHeader(const String& value) { purpose_header_ = value; }
   const String& GetPurposeHeader() const { return purpose_header_; }
 
+#if defined(ENABLE_UKM)
   void SetUkmSourceId(ukm::SourceId ukm_source_id) {
     ukm_source_id_ = ukm_source_id;
   }
   ukm::SourceId GetUkmSourceId() const { return ukm_source_id_; }
+#endif // ENABLE_UKM
 
   // https://fetch.spec.whatwg.org/#concept-request-window
   // See network::ResourceRequest::fetch_window_id for details.
@@ -497,7 +508,9 @@ class PLATFORM_EXPORT ResourceRequest final {
   String client_data_header_;
   String purpose_header_;
 
+#if defined(ENABLE_UKM)
   ukm::SourceId ukm_source_id_ = ukm::kInvalidSourceId;
+#endif // ENABLE_UKM
 
   base::UnguessableToken fetch_window_id_;
 
@@ -505,5 +518,6 @@ class PLATFORM_EXPORT ResourceRequest final {
 };
 
 }  // namespace blink
+#endif // ENABLE_GNET
 
 #endif  // THIRD_PARTY_BLINK_RENDERER_PLATFORM_LOADER_FETCH_RESOURCE_REQUEST_H_

@@ -5,7 +5,9 @@
 #ifndef THIRD_PARTY_BLINK_RENDERER_CORE_SCRIPT_FETCH_CLIENT_SETTINGS_OBJECT_IMPL_H_
 #define THIRD_PARTY_BLINK_RENDERER_CORE_SCRIPT_FETCH_CLIENT_SETTINGS_OBJECT_IMPL_H_
 
+#if defined(ENABLE_GNET)
 #include "services/network/public/mojom/referrer_policy.mojom-shared.h"
+#endif // ENABLE_GNET
 #include "third_party/blink/renderer/core/core_export.h"
 #include "third_party/blink/renderer/platform/cross_thread_copier.h"
 #include "third_party/blink/renderer/platform/heap/member.h"

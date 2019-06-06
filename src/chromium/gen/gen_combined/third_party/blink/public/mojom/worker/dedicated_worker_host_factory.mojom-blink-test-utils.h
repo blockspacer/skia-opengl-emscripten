@@ -34,8 +34,10 @@ class CORE_EXPORT DedicatedWorkerHostFactoryClientAsyncWaiter {
 
 class CORE_EXPORT DedicatedWorkerHostFactoryInterceptorForTesting : public DedicatedWorkerHostFactory {
   virtual DedicatedWorkerHostFactory* GetForwardingInterface() = 0;
+#if defined(ENABLE_GNET)
   void CreateWorkerHost(const scoped_refptr<const ::blink::SecurityOrigin>& origin, ::service_manager::mojom::blink::InterfaceProviderRequest worker_interface_provider) override;
   void CreateWorkerHostAndStartScriptLoad(const ::blink::KURL& script_url, const scoped_refptr<const ::blink::SecurityOrigin>& origin, ::blink::mojom::blink::BlobURLTokenPtr blob_url_token, DedicatedWorkerHostFactoryClientPtr client) override;
+#endif // ENABLE_GNET
 };
 class CORE_EXPORT DedicatedWorkerHostFactoryAsyncWaiter {
  public:

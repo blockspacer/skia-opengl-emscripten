@@ -34,7 +34,9 @@
 #include <memory>
 
 #include "base/time/time.h"
+#if defined(ENABLE_GNET)
 #include "services/network/public/mojom/referrer_policy.mojom-shared.h"
+#endif // ENABLE_GNET
 #include "third_party/blink/public/platform/web_archive_info.h"
 #include "third_party/blink/public/platform/web_common.h"
 #include "third_party/blink/public/platform/web_source_location.h"

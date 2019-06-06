@@ -62,7 +62,6 @@ target_link_libraries(GURL PUBLIC
   ${BASE_LIBRARIES}
   ${CUSTOM_ICU_LIB}
   ${HARFBUZZ_LIBRARIES}
-  #GIPC
   #dynamic_annotations
 )
 

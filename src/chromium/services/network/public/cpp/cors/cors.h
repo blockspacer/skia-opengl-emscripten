@@ -10,7 +10,9 @@
 
 #include "base/component_export.h"
 #include "base/optional.h"
+#if defined(ENABLE_GNET)
 #include "net/http/http_request_headers.h"
+#endif // ENABLE_GNET
 #include "services/network/public/cpp/cors/cors_error_status.h"
 #include "services/network/public/mojom/cors.mojom-shared.h"
 #include "services/network/public/mojom/fetch_api.mojom-shared.h"
@@ -118,9 +120,11 @@ bool IsNoCorsSafelistedHeader(const std::string& name,
 // |headers| must not contain multiple headers for the same name.
 // The returned list is NOT sorted.
 // The returned list consists of lower-cased names.
+#if defined(ENABLE_GNET)
 COMPONENT_EXPORT(NETWORK_CPP)
 std::vector<std::string> CorsUnsafeRequestHeaderNames(
     const net::HttpRequestHeaders::HeaderVector& headers);
+#endif // ENABLE_GNET
 
 // https://fetch.spec.whatwg.org/#cors-unsafe-request-header-names
 // Returns header names which are not CORS-safelisted AND not forbidden.
@@ -129,10 +133,12 @@ std::vector<std::string> CorsUnsafeRequestHeaderNames(
 // "cache-control" are also exempted.
 // The returned list is NOT sorted.
 // The returned list consists of lower-cased names.
+#if defined(ENABLE_GNET)
 COMPONENT_EXPORT(NETWORK_CPP)
 std::vector<std::string> CorsUnsafeNotForbiddenRequestHeaderNames(
     const net::HttpRequestHeaders::HeaderVector& headers,
     bool is_revalidating);
+#endif // ENABLE_GNET
 
 // Checks forbidden method in the fetch spec.
 // See https://fetch.spec.whatwg.org/#forbidden-method.

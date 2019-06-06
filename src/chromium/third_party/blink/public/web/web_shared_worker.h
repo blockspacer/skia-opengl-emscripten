@@ -46,9 +46,11 @@ namespace base {
 class SingleThreadTaskRunner;
 }
 
+#if defined(ENABLE_GNET)
 namespace network {
 class SharedURLLoaderFactory;
 }
+#endif // ENABLE_GNET
 
 namespace blink {
 

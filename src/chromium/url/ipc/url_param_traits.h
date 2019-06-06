@@ -5,10 +5,17 @@
 #ifndef URL_IPC_URL_PARAM_TRAITS_H_
 #define URL_IPC_URL_PARAM_TRAITS_H_
 
+#if defined(ENABLE_GIPC)
 #include "ipc/ipc_message_utils.h"
-#include "url/gurl.h"
-#include "url/ipc/url_ipc_export.h"
+#endif // ENABLE_GIPC
 
+#include "url/gurl.h"
+
+#if defined(ENABLE_GIPC)
+#include "url/ipc/url_ipc_export.h"
+#endif // ENABLE_GIPC
+
+#if defined(ENABLE_GIPC)
 namespace IPC {
 
 template <>
@@ -22,5 +29,6 @@ struct URL_IPC_EXPORT ParamTraits<GURL> {
 };
 
 }  // namespace IPC
+#endif // ENABLE_GIPC
 
 #endif  // URL_IPC_URL_PARAM_TRAITS_H_

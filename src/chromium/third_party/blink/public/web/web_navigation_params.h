@@ -12,8 +12,12 @@
 #include "base/time/time.h"
 #include "base/unguessable_token.h"
 #include "mojo/public/cpp/system/message_pipe.h"
+#if defined(ENABLE_GNET)
 #include "services/network/public/mojom/referrer_policy.mojom-shared.h"
+#endif // ENABLE_GNET
+#if defined(ENABLE_GNET)
 #include "third_party/blink/public/mojom/fetch/fetch_api_request.mojom-shared.h"
+#endif // ENABLE_GNET
 #include "third_party/blink/public/platform/modules/service_worker/web_service_worker_network_provider.h"
 #include "third_party/blink/public/platform/web_common.h"
 #include "third_party/blink/public/platform/web_content_security_policy.h"
@@ -198,7 +202,9 @@ struct BLINK_EXPORT WebNavigationParams {
   network::mojom::ReferrerPolicy referrer_policy =
       network::mojom::ReferrerPolicy::kDefault;
   // The http body of the request used to load the main resource, if any.
+#if defined(ENABLE_GNET)
   WebHTTPBody http_body;
+#endif // ENABLE_GNET
   // The http content type of the request used to load the main resource, if
   // any.
   WebString http_content_type;

@@ -34,15 +34,20 @@
 #include <memory>
 
 #include "base/time/time.h"
+#if defined(ENABLE_GNET)
 #include "net/cert/ct_policy_status.h"
 #include "net/http/http_response_info.h"
+#endif // ENABLE_GNET
+#if defined(ENABLE_GNET)
 #include "services/network/public/mojom/fetch_api.mojom-shared.h"
 #include "third_party/blink/public/mojom/fetch/fetch_api_request.mojom-shared.h"
+#endif // ENABLE_GNET
 #include "third_party/blink/public/platform/web_common.h"
 #include "third_party/blink/public/platform/web_security_style.h"
 #include "third_party/blink/public/platform/web_string.h"
 #include "third_party/blink/public/platform/web_vector.h"
 
+#if defined(ENABLE_GNET)
 namespace blink {
 
 class ResourceResponse;
@@ -209,7 +214,9 @@ class WebURLResponse {
   BLINK_PLATFORM_EXPORT void SetAppCacheManifestURL(const WebURL&);
 
   BLINK_PLATFORM_EXPORT void SetHasMajorCertificateErrors(bool);
+#if defined(ENABLE_GNET)
   BLINK_PLATFORM_EXPORT void SetCTPolicyCompliance(net::ct::CTPolicyCompliance);
+#endif // ENABLE_GNET
   BLINK_PLATFORM_EXPORT void SetIsLegacyTLSVersion(bool);
 
   BLINK_PLATFORM_EXPORT void SetSecurityStyle(WebSecurityStyle);
@@ -276,12 +283,13 @@ class WebURLResponse {
   // ALPN negotiated protocol of the socket which fetched this resource.
   BLINK_PLATFORM_EXPORT WebString AlpnNegotiatedProtocol() const;
   BLINK_PLATFORM_EXPORT void SetAlpnNegotiatedProtocol(const WebString&);
-
+#if defined(ENABLE_GNET)
   // Information about the type of connection used to fetch this resource.
   BLINK_PLATFORM_EXPORT net::HttpResponseInfo::ConnectionInfo ConnectionInfo()
       const;
   BLINK_PLATFORM_EXPORT void SetConnectionInfo(
       net::HttpResponseInfo::ConnectionInfo);
+#endif // ENABLE_GNET
 
   // Original size of the response before decompression.
   BLINK_PLATFORM_EXPORT void SetEncodedDataLength(int64_t);
@@ -306,5 +314,6 @@ class WebURLResponse {
 };
 
 }  // namespace blink
+#endif // ENABLE_GNET
 
 #endif

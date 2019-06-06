@@ -29,39 +29,54 @@
  */
 
 #include "third_party/blink/public/platform/web_network_state_notifier.h"
-
+#if defined(ENABLE_GNET)
 #include "third_party/blink/renderer/platform/network/network_state_notifier.h"
+#endif // ENABLE_GNET
 
 namespace blink {
 
 void WebNetworkStateNotifier::SetOnLine(bool on_line) {
+#if defined(ENABLE_GNET)
   GetNetworkStateNotifier().SetOnLine(on_line);
+#endif // ENABLE_GNET
 }
 
 void WebNetworkStateNotifier::SetWebConnection(WebConnectionType type,
                                                double max_bandwidth_mbps) {
+#if defined(ENABLE_GNET)
   GetNetworkStateNotifier().SetWebConnection(type, max_bandwidth_mbps);
+#endif // ENABLE_GNET
 }
 
 void WebNetworkStateNotifier::SetNetworkQuality(WebEffectiveConnectionType type,
-                                                TimeDelta http_rtt,
-                                                TimeDelta transport_rtt,
+                                                base::TimeDelta http_rtt,
+                                                base::TimeDelta transport_rtt,
                                                 int downlink_throughput_kbps) {
+#if defined(ENABLE_GNET)
   GetNetworkStateNotifier().SetNetworkQuality(type, http_rtt, transport_rtt,
                                               downlink_throughput_kbps);
+#endif // ENABLE_GNET
 }
 
 void WebNetworkStateNotifier::SetNetworkQualityWebHoldback(
     WebEffectiveConnectionType type) {
+#if defined(ENABLE_GNET)
   GetNetworkStateNotifier().SetNetworkQualityWebHoldback(type);
+#endif // ENABLE_GNET
 }
 
 void WebNetworkStateNotifier::SetSaveDataEnabled(bool enabled) {
+#if defined(ENABLE_GNET)
   GetNetworkStateNotifier().SetSaveDataEnabled(enabled);
+#endif // ENABLE_GNET
 }
 
 bool WebNetworkStateNotifier::SaveDataEnabled() {
+#if defined(ENABLE_GNET)
   return GetNetworkStateNotifier().SaveDataEnabled();
+#else
+  return false;
+#endif // ENABLE_GNET
 }
 
 }  // namespace blink

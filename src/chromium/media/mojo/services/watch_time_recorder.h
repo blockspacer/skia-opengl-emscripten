@@ -16,7 +16,9 @@
 #include "media/base/video_codecs.h"
 #include "media/mojo/interfaces/watch_time_recorder.mojom.h"
 #include "media/mojo/services/media_mojo_export.h"
+#if defined(ENABLE_UKM)
 #include "services/metrics/public/cpp/ukm_source_id.h"
+#endif defined(ENABLE_UKM)
 
 namespace media {
 

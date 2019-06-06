@@ -5,7 +5,10 @@
 #ifndef UI_DISPLAY_MOJO_DISPLAY_SNAPSHOT_MOJO_STRUCT_TRAITS_H_
 #define UI_DISPLAY_MOJO_DISPLAY_SNAPSHOT_MOJO_STRUCT_TRAITS_H_
 
+
+#if defined(ENABLE_GIPC)
 #include "ipc/ipc_message_utils.h"
+#endif // ENABLE_GIPC
 #include "ui/display/mojo/display_constants_struct_traits.h"
 #include "ui/display/mojo/display_mode_struct_traits.h"
 #include "ui/display/mojo/display_snapshot.mojom.h"

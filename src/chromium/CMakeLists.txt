@@ -129,9 +129,6 @@ endif(ENABLE_GNET)
 set(GURL_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/)
 set(GURL_DIR ${GURL_PARENT_DIR}url/)
 
-set(GIPC_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/)
-set(GIPC_DIR ${GIPC_PARENT_DIR}ipc/)
-
 set(GPU_DIR ${CMAKE_CURRENT_SOURCE_DIR}/gpu/)
 
 set(GPU_GLES2_DIR_PARENT_DIR ${GPU_DIR}/)
@@ -287,9 +284,15 @@ if(ENABLE_BLINK)
   # Depends on : base, url, crypto, gin, net
   include(MOJO.cmake)
 
-  # GIPC:  IPC helper library.
-  # Depends on : base, mojo
-  include(GIPC.cmake)
+  if(ENABLE_GIPC)
+    set(GIPC_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/)
+    set(GIPC_DIR ${GIPC_PARENT_DIR}ipc/)
+    #
+    # GIPC:  IPC helper library.
+    # Depends on : base, mojo
+    include(GIPC.cmake)
+  endif(ENABLE_GIPC)
+
 endif(ENABLE_BLINK)
 
 if(ENABLE_SKIA AND ENABLE_BLINK)

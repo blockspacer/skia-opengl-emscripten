@@ -30,6 +30,7 @@
 
 #include "third_party/blink/public/platform/web_mixed_content.h"
 
+#if defined(ENABLE_GNET)
 namespace blink {
 
 // static
@@ -94,3 +95,4 @@ WebMixedContentContextType WebMixedContent::ContextTypeFromRequestContext(
 }
 
 }  // namespace blink
+#endif // ENABLE_GNET

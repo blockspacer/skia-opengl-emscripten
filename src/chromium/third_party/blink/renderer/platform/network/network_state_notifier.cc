@@ -26,8 +26,10 @@
 #include "third_party/blink/renderer/platform/network/network_state_notifier.h"
 
 #include <memory>
+#if defined(ENABLE_GNET)
 #include "net/nqe/effective_connection_type.h"
 #include "net/nqe/network_quality_estimator_params.h"
+#endif // ENABLE_GNET
 #include "third_party/blink/public/common/client_hints/client_hints.h"
 #include "third_party/blink/renderer/platform/cross_thread_functional.h"
 #include "third_party/blink/renderer/platform/scheduler/public/post_cross_thread_task.h"

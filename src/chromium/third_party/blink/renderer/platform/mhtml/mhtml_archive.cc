@@ -37,7 +37,9 @@
 #include "third_party/blink/renderer/platform/mhtml/archive_resource.h"
 #include "third_party/blink/renderer/platform/mhtml/mhtml_parser.h"
 #include "third_party/blink/renderer/platform/mhtml/serialized_resource.h"
+#if defined(ENABLE_GNET)
 #include "third_party/blink/renderer/platform/network/mime/mime_type_registry.h"
+#endif // ENABLE_GNET
 #include "third_party/blink/renderer/platform/shared_buffer.h"
 #include "third_party/blink/renderer/platform/weborigin/scheme_registry.h"
 #include "third_party/blink/renderer/platform/wtf/assertions.h"
@@ -251,8 +253,8 @@ MHTMLArchive* MHTMLArchive::CreateArchive(
       archive->AddSubresource(resource);
       continue;
     }
-
     const AtomicString& mime_type = resource->MimeType();
+#if defined(ENABLE_GNET)
     bool is_mime_type_suitable_for_main_resource =
         MIMETypeRegistry::IsSupportedNonImageMIMEType(mime_type);
     // Want to allow image-only MHTML archives, but retain behavior for other
@@ -266,6 +268,9 @@ MHTMLArchive* MHTMLArchive::CreateArchive(
     if (MIMETypeRegistry::IsSupportedJavaScriptMIMEType(mime_type) ||
         MIMETypeRegistry::IsSupportedStyleSheetMIMEType(mime_type))
       is_mime_type_suitable_for_main_resource = false;
+#else
+    bool is_mime_type_suitable_for_main_resource = true;
+#endif // ENABLE_GNET
 
     if (is_mime_type_suitable_for_main_resource)
       archive->SetMainResource(resource);
@@ -362,10 +367,12 @@ void MHTMLArchive::GenerateMHTMLPart(const String& boundary,
   const char* content_encoding = nullptr;
   if (encoding_policy == kUseBinaryEncoding)
     content_encoding = kBinary;
+#if defined(ENABLE_GNET)
   else if (MIMETypeRegistry::IsSupportedJavaScriptMIMEType(
                resource.mime_type) ||
            MIMETypeRegistry::IsSupportedNonImageMIMEType(resource.mime_type))
     content_encoding = kQuotedPrintable;
+#endif // ENABLE_GNET
   else
     content_encoding = kBase64;
 

@@ -4,6 +4,7 @@
 
 #include "third_party/blink/renderer/platform/network/network_utils.h"
 
+#if defined(ENABLE_GNET)
 #include "net/base/data_url.h"
 #include "net/base/ip_address.h"
 #include "net/base/net_errors.h"
@@ -12,6 +13,7 @@
 #include "net/http/http_response_headers.h"
 #include "net/http/http_util.h"
 #include "net/url_request/url_request_data_job.h"
+#endif // ENABLE_GNET
 #include "third_party/blink/public/common/mime_util/mime_util.h"
 #include "third_party/blink/public/platform/web_string.h"
 #include "third_party/blink/renderer/platform/loader/fetch/resource_response.h"

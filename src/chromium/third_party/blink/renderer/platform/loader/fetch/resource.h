@@ -167,26 +167,34 @@ class PLATFORM_EXPORT Resource : public GarbageCollectedFinalized<Resource>,
     return *error_;
   }
 
+#if defined(ENABLE_GNET)
   uint64_t InspectorId() const { return LastResourceRequest().InspectorId(); }
+#endif // ENABLE_GNET
 
   virtual bool ShouldIgnoreHTTPStatusCodeErrors() const { return false; }
-
+#if defined(ENABLE_GNET)
   const ResourceRequest& GetResourceRequest() const {
     return resource_request_;
   }
   const ResourceRequest& LastResourceRequest() const;
+#endif // ENABLE_GNET
   const ResourceResponse* LastResourceResponse() const;
 
+#if defined(ENABLE_GNET)
   virtual void SetRevalidatingRequest(const ResourceRequest&);
+#endif // ENABLE_GNET
 
   // This url can have a fragment, but it can match resources that differ by the
   // fragment only.
+#if defined(ENABLE_GNET)
   const KURL& Url() const { return GetResourceRequest().Url(); }
+#endif // ENABLE_GNET
   ResourceType GetType() const { return static_cast<ResourceType>(type_); }
   const ResourceLoaderOptions& Options() const { return options_; }
   ResourceLoaderOptions& MutableOptions() { return options_; }
-
+#if defined(ENABLE_GNET)
   void DidChangePriority(ResourceLoadPriority, int intra_priority_value);
+#endif // ENABLE_GNET
   virtual ResourcePriority PriorityFromObservers() {
     return ResourcePriority();
   }
@@ -257,8 +265,10 @@ class PLATFORM_EXPORT Resource : public GarbageCollectedFinalized<Resource>,
   }
   void SetResourceBuffer(scoped_refptr<SharedBuffer>);
 
+#if defined(ENABLE_GNET)
   virtual bool WillFollowRedirect(const ResourceRequest&,
                                   const ResourceResponse&);
+#endif // ENABLE_GNET
 
   // Called when a redirect response was received but a decision has already
   // been made to not follow it.
@@ -303,7 +313,9 @@ class PLATFORM_EXPORT Resource : public GarbageCollectedFinalized<Resource>,
   virtual bool CanUseCacheValidator() const;
   bool IsCacheValidator() const { return is_revalidating_; }
   bool HasCacheControlNoStoreHeader() const;
+#if defined(ENABLE_GNET)
   bool MustReloadDueToVaryHeader(const ResourceRequest& new_request) const;
+#endif // ENABLE_GNET
 
   // Returns true if any response returned from the upstream in the redirect
   // chain is stale and requires triggering async stale revalidation. Once
@@ -361,11 +373,12 @@ class PLATFORM_EXPORT Resource : public GarbageCollectedFinalized<Resource>,
 
   // Returns |kOk| when |this| can be resused for the given arguments.
   virtual MatchStatus CanReuse(const FetchParameters& params) const;
-
+#if defined(ENABLE_GNET)
   // TODO(yhirano): Remove this once out-of-blink CORS is fully enabled.
   void SetResponseType(network::mojom::FetchResponseType response_type) {
     response_.SetType(response_type);
   }
+#endif // ENABLE_GNET
 
   // If cache-aware loading is activated, this callback is called when the first
   // disk-cache-only request failed due to cache miss. After this callback,
@@ -376,9 +389,11 @@ class PLATFORM_EXPORT Resource : public GarbageCollectedFinalized<Resource>,
   // TODO(shaochuan): This is for saving back the actual ResourceRequest sent
   // in ResourceFetcher::StartLoad() for retry in cache-aware loading, remove
   // once ResourceRequest is not modified in StartLoad(). crbug.com/632580
+#if defined(ENABLE_GNET)
   void SetResourceRequest(const ResourceRequest& resource_request) {
     resource_request_ = resource_request;
   }
+#endif // ENABLE_GNET
 
   // Used by the MemoryCache to reduce the memory consumption of the entry.
   void Prune();
@@ -423,7 +438,11 @@ class PLATFORM_EXPORT Resource : public GarbageCollectedFinalized<Resource>,
   }
 
  protected:
-  Resource(const ResourceRequest&, ResourceType, const ResourceLoaderOptions&);
+  Resource(
+#if defined(ENABLE_GNET)
+  const ResourceRequest&,
+#endif // ENABLE_GNET
+  ResourceType, const ResourceLoaderOptions&);
 
   // Returns true if the resource has finished any processing it wanted to do
   // after loading. Should only be used to decide whether to call
@@ -465,6 +484,7 @@ class PLATFORM_EXPORT Resource : public GarbageCollectedFinalized<Resource>,
            finished_clients_.Contains(client);
   }
 
+#if defined(ENABLE_GNET)
   struct RedirectPair {
     DISALLOW_NEW();
 
@@ -477,6 +497,7 @@ class PLATFORM_EXPORT Resource : public GarbageCollectedFinalized<Resource>,
     ResourceResponse redirect_response_;
   };
   const Vector<RedirectPair>& RedirectChain() const { return redirect_chain_; }
+#endif // ENABLE_GNET
 
   virtual void DestroyDecodedDataIfPossible() {}
 
@@ -488,7 +509,9 @@ class PLATFORM_EXPORT Resource : public GarbageCollectedFinalized<Resource>,
   }
 
   void SetCachePolicyBypassingCache();
+#if defined(ENABLE_GNET)
   void SetPreviewsState(WebURLRequest::PreviewsState);
+#endif // ENABLE_GNET
   void ClearRangeRequestHeader();
 
   SharedBuffer* Data() const { return data_.get(); }
@@ -550,8 +573,10 @@ class PLATFORM_EXPORT Resource : public GarbageCollectedFinalized<Resource>,
   ResourceIntegrityDisposition integrity_disposition_;
   SubresourceIntegrity::ReportInfo integrity_report_info_;
 
+#if defined(ENABLE_GNET)
   // Ordered list of all redirects followed while fetching this resource.
   Vector<RedirectPair> redirect_chain_;
+#endif // ENABLE_GNET
 
   HeapHashCountedSet<WeakMember<ResourceClient>> clients_;
   HeapHashCountedSet<WeakMember<ResourceClient>> clients_awaiting_callback_;
@@ -563,8 +588,9 @@ class PLATFORM_EXPORT Resource : public GarbageCollectedFinalized<Resource>,
   double response_timestamp_;
 
   TaskHandle async_finish_pending_clients_task_;
-
+#if defined(ENABLE_GNET)
   ResourceRequest resource_request_;
+#endif // ENABLE_GNET
 
   // Resource::CalculateOverheadSize() is affected by changes in
   // |m_resourceRequest.url()|, but |m_overheadSize| is not updated after
@@ -586,9 +612,11 @@ class ResourceFactory {
   STACK_ALLOCATED();
 
  public:
+#if defined(ENABLE_GNET)
   virtual Resource* Create(const ResourceRequest&,
                            const ResourceLoaderOptions&,
                            const TextResourceDecoderOptions&) const = 0;
+#endif // ENABLE_GNET
 
   ResourceType GetType() const { return type_; }
   TextResourceDecoderOptions::ContentType ContentType() const {
@@ -608,7 +636,7 @@ class NonTextResourceFactory : public ResourceFactory {
  protected:
   explicit NonTextResourceFactory(ResourceType type)
       : ResourceFactory(type, TextResourceDecoderOptions::kPlainTextContent) {}
-
+#if defined(ENABLE_GNET)
   virtual Resource* Create(const ResourceRequest&,
                            const ResourceLoaderOptions&) const = 0;
 
@@ -617,6 +645,7 @@ class NonTextResourceFactory : public ResourceFactory {
                    const TextResourceDecoderOptions&) const final {
     return Create(request, options);
   }
+#endif // ENABLE_GNET
 };
 
 #define DEFINE_RESOURCE_TYPE_CASTS(typeName)                          \

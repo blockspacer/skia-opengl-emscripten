@@ -30,7 +30,9 @@
 #include "mojo/public/mojom/base/string16.mojom.h"
 #include "mojo/public/mojom/base/time.mojom.h"
 #include "mojo/public/mojom/base/unguessable_token.mojom.h"
+#if defined(ENABLE_GNET)
 #include "services/network/public/mojom/url_loader_factory.mojom.h"
+#endif // ENABLE_GNET
 #include "third_party/blink/public/mojom/devtools/console_message.mojom.h"
 #include "third_party/blink/public/mojom/devtools/devtools_agent.mojom.h"
 #include "third_party/blink/public/mojom/loader/url_loader_factory_bundle.mojom.h"

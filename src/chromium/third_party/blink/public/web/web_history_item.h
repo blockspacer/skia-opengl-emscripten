@@ -31,7 +31,9 @@
 #ifndef THIRD_PARTY_BLINK_PUBLIC_WEB_WEB_HISTORY_ITEM_H_
 #define THIRD_PARTY_BLINK_PUBLIC_WEB_WEB_HISTORY_ITEM_H_
 
+#if defined(ENABLE_GNET)
 #include "services/network/public/mojom/referrer_policy.mojom-shared.h"
+#endif // ENABLE_GNET
 #include "third_party/blink/public/platform/web_common.h"
 #include "third_party/blink/public/platform/web_history_scroll_restoration_type.h"
 #include "third_party/blink/public/platform/web_private_ptr.h"
@@ -41,7 +43,9 @@
 namespace blink {
 
 class HistoryItem;
+#if defined(ENABLE_GNET)
 class WebHTTPBody;
+#endif // ENABLE_GNET
 class WebString;
 class WebSerializedScriptValue;
 struct WebFloatPoint;
@@ -108,9 +112,10 @@ class WebHistoryItem {
 
   BLINK_EXPORT WebString HttpContentType() const;
   BLINK_EXPORT void SetHTTPContentType(const WebString&);
-
+#if defined(ENABLE_GNET)
   BLINK_EXPORT WebHTTPBody HttpBody() const;
   BLINK_EXPORT void SetHttpBody(const WebHTTPBody&);
+#endif // ENABLE_GNET
 
   BLINK_EXPORT WebVector<WebString> GetReferencedFilePaths() const;
 

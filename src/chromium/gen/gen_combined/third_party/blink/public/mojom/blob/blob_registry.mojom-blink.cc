@@ -579,7 +579,7 @@ void BlobRegistryProxy::GetBlobFromUUID(
           std::move(callback)));
   ignore_result(receiver_->AcceptWithResponder(&message, std::move(responder)));
 }
-
+#if defined(ENABLE_GNET)
 void BlobRegistryProxy::URLStoreForOrigin(
     const scoped_refptr<const ::blink::SecurityOrigin>& in_origin, ::blink::mojom::blink::BlobURLStoreAssociatedRequest in_url_store) {
 #if BUILDFLAG(MOJO_TRACE_ENABLED)
@@ -626,6 +626,7 @@ void BlobRegistryProxy::URLStoreForOrigin(
   // encountered an error, which will be visible through other means.
   ignore_result(receiver_->Accept(&message));
 }
+#endif // ENABLE_GNET
 class BlobRegistry_Register_ProxyToResponder {
  public:
   static BlobRegistry::RegisterCallback CreateCallback(

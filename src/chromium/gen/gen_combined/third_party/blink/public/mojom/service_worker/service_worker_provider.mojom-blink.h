@@ -27,7 +27,9 @@
 #include "mojo/public/cpp/bindings/union_traits.h"
 #include "third_party/blink/public/mojom/service_worker/service_worker_provider.mojom-shared.h"
 #include "third_party/blink/public/mojom/service_worker/service_worker_provider.mojom-blink-forward.h"
+#if defined(ENABLE_GNET)
 #include "services/network/public/mojom/url_loader_factory.mojom-blink-forward.h"
+#endif // ENABLE_GNET
 #include "services/service_manager/public/mojom/interface_provider.mojom-blink-forward.h"
 #include "third_party/blink/public/mojom/cache_storage/cache_storage.mojom-blink-forward.h"
 #include "third_party/blink/public/mojom/service_worker/controller_service_worker_mode.mojom-blink-forward.h"

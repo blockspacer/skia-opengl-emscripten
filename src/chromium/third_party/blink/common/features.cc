@@ -5,7 +5,9 @@
 #include "third_party/blink/public/common/features.h"
 
 #include "build/build_config.h"
+#if defined(ENABLE_GNET)
 #include "services/network/public/cpp/features.h"
+#endif // ENABLE_GNET
 
 namespace blink {
 namespace features {
@@ -271,6 +273,7 @@ const base::Feature kBlockingFocusWithoutUserActivation{
 bool IsOffMainThreadSharedWorkerScriptFetchEnabled() {
   // Off-the-main-thread shared worker script fetch depends on PlzSharedWorker
   // (NetworkService).
+#if defined(ENABLE_GNET)
   DCHECK(!base::FeatureList::IsEnabled(
              features::kOffMainThreadSharedWorkerScriptFetch) ||
          base::FeatureList::IsEnabled(network::features::kNetworkService))
@@ -279,9 +282,13 @@ bool IsOffMainThreadSharedWorkerScriptFetchEnabled() {
   return base::FeatureList::IsEnabled(network::features::kNetworkService) &&
          base::FeatureList::IsEnabled(
              features::kOffMainThreadSharedWorkerScriptFetch);
+#else
+  return false;
+#endif // ENABLE_GNET
 }
 
 bool IsPlzDedicatedWorkerEnabled() {
+#if defined(ENABLE_GNET)
   // PlzDedicatedWorker depends on off-the-main-thread dedicated worker script
   // fetch and NetworkService.
 #if DCHECK_IS_ON()
@@ -300,6 +307,9 @@ bool IsPlzDedicatedWorkerEnabled() {
              features::kOffMainThreadDedicatedWorkerScriptFetch) &&
          base::FeatureList::IsEnabled(network::features::kNetworkService) &&
          base::FeatureList::IsEnabled(features::kPlzDedicatedWorker);
+#else
+  return false;
+#endif // ENABLE_GNET
 }
 
 }  // namespace features

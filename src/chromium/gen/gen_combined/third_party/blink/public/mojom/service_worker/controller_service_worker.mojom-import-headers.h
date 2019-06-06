@@ -8,8 +8,10 @@
 #include "mojo/public/mojom/base/time.mojom-import-headers.h"
 #include "mojo/public/mojom/base/unguessable_token.mojom.h"
 #include "mojo/public/mojom/base/unguessable_token.mojom-import-headers.h"
+#if defined(ENABLE_GNET)
 #include "services/network/public/mojom/url_loader.mojom.h"
 #include "services/network/public/mojom/url_loader.mojom-import-headers.h"
+#endif // ENABLE_GNET
 #include "third_party/blink/public/mojom/service_worker/controller_service_worker_mode.mojom.h"
 #include "third_party/blink/public/mojom/service_worker/controller_service_worker_mode.mojom-import-headers.h"
 #include "third_party/blink/public/mojom/service_worker/dispatch_fetch_event_params.mojom.h"

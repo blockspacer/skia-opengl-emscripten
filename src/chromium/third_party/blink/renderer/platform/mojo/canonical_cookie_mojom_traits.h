@@ -7,7 +7,9 @@
 
 #include "base/time/time.h"
 #include "mojo/public/cpp/bindings/struct_traits.h"
+#if defined(ENABLE_GNET)
 #include "services/network/public/mojom/restricted_cookie_manager.mojom-blink.h"
+#endif // ENABLE_GNET
 #include "third_party/blink/public/platform/web_canonical_cookie.h"
 #include "third_party/blink/public/platform/web_string.h"
 

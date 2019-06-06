@@ -493,8 +493,6 @@ list(APPEND BLINK_RENDERER_PLATFORM_EXPORTED_SOURCES
   ${BLINK_RENDERER_PLATFORM_DIR}exported/web_audio_bus.cc
   ${BLINK_RENDERER_PLATFORM_DIR}exported/web_audio_device.cc
   ${BLINK_RENDERER_PLATFORM_DIR}exported/web_blob_info.cc
-  ${BLINK_RENDERER_PLATFORM_DIR}exported/web_cache.cc
-  ${BLINK_RENDERER_PLATFORM_DIR}exported/web_canonical_cookie.cc
   ${BLINK_RENDERER_PLATFORM_DIR}exported/web_coalesced_input_event.cc
   ${BLINK_RENDERER_PLATFORM_DIR}exported/web_content_decryption_module.cc
   ${BLINK_RENDERER_PLATFORM_DIR}exported/web_content_decryption_module_access.cc
@@ -511,9 +509,6 @@ list(APPEND BLINK_RENDERER_PLATFORM_EXPORTED_SOURCES
   ${BLINK_RENDERER_PLATFORM_DIR}exported/web_encrypted_media_request.cc
   ${BLINK_RENDERER_PLATFORM_DIR}exported/web_font.cc
   ${BLINK_RENDERER_PLATFORM_DIR}exported/web_font_description.cc
-  ${BLINK_RENDERER_PLATFORM_DIR}exported/web_http_body.cc
-  ${BLINK_RENDERER_PLATFORM_DIR}exported/web_http_header_map.cc
-  ${BLINK_RENDERER_PLATFORM_DIR}exported/web_http_load_info.cc
   ${BLINK_RENDERER_PLATFORM_DIR}exported/web_image.cc
   ${BLINK_RENDERER_PLATFORM_DIR}exported/web_image_generator.cc
   ${BLINK_RENDERER_PLATFORM_DIR}exported/web_input_event.cc
@@ -539,7 +534,6 @@ list(APPEND BLINK_RENDERER_PLATFORM_EXPORTED_SOURCES
   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_rtc_stats_response.cc
   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}exported/web_rtc_void_request.cc
   ${BLINK_RENDERER_PLATFORM_DIR}exported/web_runtime_features.cc
-  ${BLINK_RENDERER_PLATFORM_DIR}exported/web_security_origin.cc
   ${BLINK_RENDERER_PLATFORM_DIR}exported/web_service_worker_request.cc
   ${BLINK_RENDERER_PLATFORM_DIR}exported/web_service_worker_response.cc
   ${BLINK_RENDERER_PLATFORM_DIR}exported/web_service_worker_stream_handle.cc
@@ -551,17 +545,28 @@ list(APPEND BLINK_RENDERER_PLATFORM_EXPORTED_SOURCES
   ${BLINK_RENDERER_PLATFORM_DIR}exported/web_surface_layer_bridge.cc
   ${BLINK_RENDERER_PLATFORM_DIR}exported/web_text_run.cc
   ${BLINK_RENDERER_PLATFORM_DIR}exported/web_thread_safe_data.cc
-  ${BLINK_RENDERER_PLATFORM_DIR}exported/web_url.cc
-  ${BLINK_RENDERER_PLATFORM_DIR}exported/web_url_error.cc
-  ${BLINK_RENDERER_PLATFORM_DIR}exported/web_url_load_timing.cc
-  ${BLINK_RENDERER_PLATFORM_DIR}exported/web_url_loader_client.cc
-  ${BLINK_RENDERER_PLATFORM_DIR}exported/web_url_loader_test_delegate.cc
-  ${BLINK_RENDERER_PLATFORM_DIR}exported/web_url_request.cc
-  ${BLINK_RENDERER_PLATFORM_DIR}exported/web_url_response.cc
   ${BLINK_RENDERER_PLATFORM_DIR}exported/web_video_frame_submitter.cc
   #${BLINK_RENDERER_PLATFORM_DIR}exported/wrapped_resource_request.h
   #${BLINK_RENDERER_PLATFORM_DIR}exported/wrapped_resource_response.h
 )
+
+if(ENABLE_GNET)
+  list(APPEND BLINK_RENDERER_PLATFORM_EXPORTED_SOURCES
+    ${BLINK_RENDERER_PLATFORM_DIR}exported/web_http_body.cc
+    ${BLINK_RENDERER_PLATFORM_DIR}exported/web_http_header_map.cc
+    ${BLINK_RENDERER_PLATFORM_DIR}exported/web_http_load_info.cc
+    ${BLINK_RENDERER_PLATFORM_DIR}exported/web_cache.cc
+    ${BLINK_RENDERER_PLATFORM_DIR}exported/web_canonical_cookie.cc
+    ${BLINK_RENDERER_PLATFORM_DIR}exported/web_url.cc
+    ${BLINK_RENDERER_PLATFORM_DIR}exported/web_url_error.cc
+    ${BLINK_RENDERER_PLATFORM_DIR}exported/web_url_load_timing.cc
+    ${BLINK_RENDERER_PLATFORM_DIR}exported/web_url_loader_client.cc
+    ${BLINK_RENDERER_PLATFORM_DIR}exported/web_url_loader_test_delegate.cc
+    ${BLINK_RENDERER_PLATFORM_DIR}exported/web_url_request.cc
+    ${BLINK_RENDERER_PLATFORM_DIR}exported/web_url_response.cc
+    ${BLINK_RENDERER_PLATFORM_DIR}exported/web_security_origin.cc
+  )
+endif(ENABLE_GNET)
 
 if(TARGET_LINUX)
   list(APPEND BLINK_RENDERER_PLATFORM_EXPORTED_SOURCES
@@ -651,8 +656,16 @@ list(APPEND BLINK_RENDERER_PLATFORM_SCHEDULER_SOURCES
    #${CUR_SRC_DIR}scheduler/common/throttling/wake_up_budget_pool.h
    ${CUR_SRC_DIR}scheduler/common/tracing_helper.cc
    #${CUR_SRC_DIR}scheduler/common/tracing_helper.h
-   ${CUR_SRC_DIR}scheduler/common/ukm_task_sampler.cc
-   #${CUR_SRC_DIR}scheduler/common/ukm_task_sampler.h
+)
+
+if(ENABLE_UKM)
+  list(APPEND BLINK_RENDERER_PLATFORM_SCHEDULER_SOURCES
+     ${CUR_SRC_DIR}scheduler/common/ukm_task_sampler.cc
+     #${CUR_SRC_DIR}scheduler/common/ukm_task_sampler.h
+  )
+endif(ENABLE_UKM)
+
+list(APPEND BLINK_RENDERER_PLATFORM_SCHEDULER_SOURCES
    ${CUR_SRC_DIR}scheduler/common/unprioritized_resource_loading_task_runner_handle.cc
    #${CUR_SRC_DIR}scheduler/common/unprioritized_resource_loading_task_runner_handle.h
    ${CUR_SRC_DIR}scheduler/common/web_resource_loading_task_runner_handle.cc
@@ -765,52 +778,64 @@ if(TARGET_LINUX)
   )
 endif() # CMAKE_SYSTEM_NAME
 
+if(ENABLE_GNET)
+  list(APPEND BLINK_RENDERER_PLATFORM_NETWORK_SOURCES
+    # blink_platform_sources("network")
+    # deps = [ "//media", ]
+    # TODO: gen/gen_blink_public/third_party/blink/renderer/platform/network/http_names.cc
+    # see make_names("http_names")
+    ${GEN_COMBINED_DIR}/third_party/blink/renderer/platform/network/http_names.cc
+    #
+    ${CUR_SRC_DIR}network/content_security_policy_parsers.cc
+    #${CUR_SRC_DIR}network/content_security_policy_parsers.h
+    ${CUR_SRC_DIR}network/content_security_policy_response_headers.cc
+    #${CUR_SRC_DIR}network/content_security_policy_response_headers.h
+    ${CUR_SRC_DIR}network/encoded_form_data.cc
+    #${CUR_SRC_DIR}network/encoded_form_data.h
+    ${CUR_SRC_DIR}network/encoded_form_data_mojom_traits.cc
+    #${CUR_SRC_DIR}network/encoded_form_data_mojom_traits.h
+    ${CUR_SRC_DIR}network/form_data_encoder.cc
+    #${CUR_SRC_DIR}network/form_data_encoder.h
+    ${CUR_SRC_DIR}network/header_field_tokenizer.cc
+    #${CUR_SRC_DIR}network/header_field_tokenizer.h
+    ${CUR_SRC_DIR}network/http_header_map.cc
+    #${CUR_SRC_DIR}network/http_header_map.h
+    ${CUR_SRC_DIR}network/http_parsers.cc
+    #${CUR_SRC_DIR}network/http_parsers.h
+  )
+endif(ENABLE_GNET)
+
+if(ENABLE_GNET)
+  list(APPEND BLINK_RENDERER_PLATFORM_NETWORK_SOURCES
+    ${CUR_SRC_DIR}network/http_request_headers_mojom_traits.cc
+    #${CUR_SRC_DIR}network/http_request_headers_mojom_traits.h
+  )
+endif(ENABLE_GNET)
+
+if(ENABLE_GNET)
 list(APPEND BLINK_RENDERER_PLATFORM_NETWORK_SOURCES
-  # blink_platform_sources("network")
-  # deps = [ "//media", ]
-  # TODO: gen/gen_blink_public/third_party/blink/renderer/platform/network/http_names.cc
-  # see make_names("http_names")
-  ${GEN_COMBINED_DIR}/third_party/blink/renderer/platform/network/http_names.cc
-  #
-  ${CUR_SRC_DIR}network/content_security_policy_parsers.cc
-  #${CUR_SRC_DIR}network/content_security_policy_parsers.h
-  ${CUR_SRC_DIR}network/content_security_policy_response_headers.cc
-  #${CUR_SRC_DIR}network/content_security_policy_response_headers.h
-  ${CUR_SRC_DIR}network/encoded_form_data.cc
-  #${CUR_SRC_DIR}network/encoded_form_data.h
-  ${CUR_SRC_DIR}network/encoded_form_data_mojom_traits.cc
-  #${CUR_SRC_DIR}network/encoded_form_data_mojom_traits.h
-  ${CUR_SRC_DIR}network/form_data_encoder.cc
-  #${CUR_SRC_DIR}network/form_data_encoder.h
-  ${CUR_SRC_DIR}network/header_field_tokenizer.cc
-  #${CUR_SRC_DIR}network/header_field_tokenizer.h
-  ${CUR_SRC_DIR}network/http_header_map.cc
-  #${CUR_SRC_DIR}network/http_header_map.h
-  ${CUR_SRC_DIR}network/http_parsers.cc
-  #${CUR_SRC_DIR}network/http_parsers.h
-  ${CUR_SRC_DIR}network/http_request_headers_mojom_traits.cc
-  #${CUR_SRC_DIR}network/http_request_headers_mojom_traits.h
-  ${CUR_SRC_DIR}network/mime/content_type.cc
-  #${CUR_SRC_DIR}network/mime/content_type.h
-  ${CUR_SRC_DIR}network/mime/mime_type_from_url.cc
-  #${CUR_SRC_DIR}network/mime/mime_type_from_url.h
-  ${CUR_SRC_DIR}network/mime/mime_type_registry.cc
-  #${CUR_SRC_DIR}network/mime/mime_type_registry.h
-  #${CUR_SRC_DIR}network/network_log.h
-  ${CUR_SRC_DIR}network/network_state_notifier.cc
-  #${CUR_SRC_DIR}network/network_state_notifier.h
-  ${CUR_SRC_DIR}network/network_utils.cc
-  #${CUR_SRC_DIR}network/network_utils.h
-  ${CUR_SRC_DIR}network/parsed_content_disposition.cc
-  #${CUR_SRC_DIR}network/parsed_content_disposition.h
-  ${CUR_SRC_DIR}network/parsed_content_header_field_parameters.cc
-  #${CUR_SRC_DIR}network/parsed_content_header_field_parameters.h
-  ${CUR_SRC_DIR}network/parsed_content_type.cc
-  #${CUR_SRC_DIR}network/parsed_content_type.h
-  ${CUR_SRC_DIR}network/server_timing_header.cc
-  #${CUR_SRC_DIR}network/server_timing_header.h
-  #${CUR_SRC_DIR}network/wrapped_data_pipe_getter.h
-)
+    ${CUR_SRC_DIR}network/mime/content_type.cc
+    #${CUR_SRC_DIR}network/mime/content_type.h
+    ${CUR_SRC_DIR}network/mime/mime_type_from_url.cc
+    #${CUR_SRC_DIR}network/mime/mime_type_from_url.h
+    ${CUR_SRC_DIR}network/mime/mime_type_registry.cc
+    #${CUR_SRC_DIR}network/mime/mime_type_registry.h
+    #${CUR_SRC_DIR}network/network_log.h
+    ${CUR_SRC_DIR}network/network_state_notifier.cc
+    #${CUR_SRC_DIR}network/network_state_notifier.h
+    ${CUR_SRC_DIR}network/network_utils.cc
+    #${CUR_SRC_DIR}network/network_utils.h
+    ${CUR_SRC_DIR}network/parsed_content_disposition.cc
+    #${CUR_SRC_DIR}network/parsed_content_disposition.h
+    ${CUR_SRC_DIR}network/parsed_content_header_field_parameters.cc
+    #${CUR_SRC_DIR}network/parsed_content_header_field_parameters.h
+    ${CUR_SRC_DIR}network/parsed_content_type.cc
+    #${CUR_SRC_DIR}network/parsed_content_type.h
+    ${CUR_SRC_DIR}network/server_timing_header.cc
+    #${CUR_SRC_DIR}network/server_timing_header.h
+    #${CUR_SRC_DIR}network/wrapped_data_pipe_getter.h
+  )
+endif(ENABLE_GNET)
 
 list(APPEND BLINK_RENDERER_HEAP_SOURCES
   # blink_platform_sources("heap")
@@ -935,12 +960,17 @@ list(APPEND BLINK_RENDERER_PLATFORM_MHTML_SOURCES
   #${BLINK_RENDERER_PLATFORM_DIR}mhtml/shared_buffer_chunk_reader.h
 )
 
+if(ENABLE_GNET)
+  list(APPEND BLINK_RENDERER_PLATFORM_MOJO_SOURCES
+  ${BLINK_RENDERER_PLATFORM_DIR}mojo/canonical_cookie_mojom_traits.cc
+  #${BLINK_RENDERER_PLATFORM_DIR}mojo/canonical_cookie_mojom_traits.h
+  )
+endif(ENABLE_GNET)
+
 list(APPEND BLINK_RENDERER_PLATFORM_MOJO_SOURCES
   #${BLINK_RENDERER_PLATFORM_DIR}mojo/big_string_mojom_traits.h
   ${BLINK_RENDERER_PLATFORM_DIR}mojo/bluetooth_struct_traits.cc
   #${BLINK_RENDERER_PLATFORM_DIR}mojo/bluetooth_struct_traits.h
-  ${BLINK_RENDERER_PLATFORM_DIR}mojo/canonical_cookie_mojom_traits.cc
-  #${BLINK_RENDERER_PLATFORM_DIR}mojo/canonical_cookie_mojom_traits.h
   #${BLINK_RENDERER_PLATFORM_DIR}mojo/fetch_api_request_headers_mojom_traits.h
   ${BLINK_RENDERER_PLATFORM_DIR}mojo/interface_invalidator.cc
   #${BLINK_RENDERER_PLATFORM_DIR}mojo/interface_invalidator.h
@@ -1776,7 +1806,7 @@ target_link_libraries(BLINK_RENDERER_PLATFORM PRIVATE
   #GLIBPNG
   BLINK_PUBLIC_COMMON
   GURL
-  GNET
+  ${GNET_LIBS}
   GCRYPTO
   COMPONENTS_VIZ_CLIENT
   COMPONENTS_VIZ_COMMON
@@ -1845,8 +1875,8 @@ target_link_libraries(BLINK_RENDERER_PLATFORM PRIVATE
   BASE_CC
   PAINT_CC
   CC
-  SERVICES_NETWORK_PUBLIC_CPP
-  SERVICES_SERVICE_MANAGER_PUBLIC_CPP
+  ${SERVICES_NETWORK_PUBLIC_CPP_LIB}
+  ${SERVICES_SERVICE_MANAGER_PUBLIC_CPP_LIB}
   libwebp # requires libpng
   #${libjpeg_LIB}
   ${libjpeg_TURBO_LIB}

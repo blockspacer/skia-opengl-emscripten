@@ -5,7 +5,9 @@
 #ifndef THIRD_PARTY_BLINK_RENDERER_CORE_FETCH_RESPONSE_H_
 #define THIRD_PARTY_BLINK_RENDERER_CORE_FETCH_RESPONSE_H_
 
+#if defined(ENABLE_GNET)
 #include "third_party/blink/public/mojom/fetch/fetch_api_response.mojom-blink.h"
+#endif // ENABLE_GNET
 #include "third_party/blink/renderer/bindings/core/v8/dictionary.h"
 #include "third_party/blink/renderer/bindings/core/v8/script_value.h"
 #include "third_party/blink/renderer/core/core_export.h"

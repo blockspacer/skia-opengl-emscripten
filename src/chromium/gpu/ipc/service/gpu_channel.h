@@ -26,9 +26,11 @@
 #include "gpu/ipc/service/command_buffer_stub.h"
 #include "gpu/ipc/service/gpu_ipc_service_export.h"
 #include "gpu/ipc/service/shared_image_stub.h"
+#if defined(ENABLE_GIPC)
 #include "ipc/ipc_sender.h"
 #include "ipc/ipc_sync_channel.h"
 #include "ipc/message_router.h"
+#endif // ENABLE_GIPC
 #include "ui/gfx/geometry/size.h"
 #include "ui/gfx/native_widget_types.h"
 #include "ui/gl/gl_share_group.h"

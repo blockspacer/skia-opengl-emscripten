@@ -6,8 +6,10 @@
 #define THIRD_PARTY_BLINK_PUBLIC_MOJOM_WORKER_SHARED_WORKER_FACTORY_MOJOM_BLINK_IMPORT_HEADERS_H_
 #include "mojo/public/mojom/base/unguessable_token.mojom-blink.h"
 #include "mojo/public/mojom/base/unguessable_token.mojom-blink-import-headers.h"
+#if defined(ENABLE_GNET)
 #include "services/network/public/mojom/url_loader_factory.mojom-blink.h"
 #include "services/network/public/mojom/url_loader_factory.mojom-blink-import-headers.h"
+#endif // ENABLE_GNET
 #include "services/service_manager/public/mojom/interface_provider.mojom-blink.h"
 #include "services/service_manager/public/mojom/interface_provider.mojom-blink-import-headers.h"
 #include "third_party/blink/public/mojom/loader/url_loader_factory_bundle.mojom-blink.h"

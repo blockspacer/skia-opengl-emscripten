@@ -41,7 +41,9 @@ namespace blink {
 
 class WebString;
 class WebURL;
+#if defined(ENABLE_GNET)
 class WebURLResponse;
+#endif // ENABLE_GNET
 
 // This interface is used by webkit to call out to the embedder. Webkit uses
 // the WebLocalFrameClient::CreateApplicationCacheHost method to create

@@ -5,7 +5,9 @@
 #ifndef THIRD_PARTY_BLINK_RENDERER_PLATFORM_NETWORK_HTTP_REQUEST_HEADERS_MOJOM_TRAITS_H_
 #define THIRD_PARTY_BLINK_RENDERER_PLATFORM_NETWORK_HTTP_REQUEST_HEADERS_MOJOM_TRAITS_H_
 
+#if defined(ENABLE_GNET)
 #include "services/network/public/mojom/http_request_headers.mojom-blink.h"
+#endif // ENABLE_GNET
 #include "third_party/blink/renderer/platform/network/http_header_map.h"
 
 namespace mojo {

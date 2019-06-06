@@ -42,6 +42,7 @@
 #include "third_party/blink/renderer/platform/loader/fetch/resource_load_priority.h"
 #include "third_party/blink/renderer/platform/wtf/text/wtf_string.h"
 
+#if defined(ENABLE_GNET)
 namespace network {
 namespace mojom {
 namespace blink {
@@ -50,7 +51,9 @@ class WebSocketHandshakeRequest;
 }  // namespace blink
 }  // namespace mojom
 }  // namespace network
+#endif // ENABLE_GNET
 
+#if defined(ENABLE_GNET)
 namespace blink {
 
 class BlobDataHandle;
@@ -294,5 +297,6 @@ class CORE_EXPORT InspectorNetworkAgent final
 };
 
 }  // namespace blink
+#endif // ENABLE_GNET
 
 #endif  // THIRD_PARTY_BLINK_RENDERER_CORE_INSPECTOR_INSPECTOR_NETWORK_AGENT_H_

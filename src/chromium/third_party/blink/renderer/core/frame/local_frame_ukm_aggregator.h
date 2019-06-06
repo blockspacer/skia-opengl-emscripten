@@ -11,6 +11,7 @@
 #include "third_party/blink/renderer/platform/wtf/text/wtf_string.h"
 #include "third_party/blink/renderer/platform/wtf/time.h"
 
+#if defined(ENABLE_UKM)
 namespace ukm {
 class UkmRecorder;
 }
@@ -285,5 +286,6 @@ class CORE_EXPORT LocalFrameUkmAggregator
 };
 
 }  // namespace blink
+#endif // ENABLE_UKM
 
 #endif  // THIRD_PARTY_BLINK_RENDERER_CORE_FRAME_LOCAL_FRAME_UKM_AGGREGATOR_H_

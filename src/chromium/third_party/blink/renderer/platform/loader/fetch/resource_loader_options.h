@@ -32,7 +32,9 @@
 #define THIRD_PARTY_BLINK_RENDERER_PLATFORM_LOADER_FETCH_RESOURCE_LOADER_OPTIONS_H_
 
 #include "base/memory/scoped_refptr.h"
+#if defined(ENABLE_GNET)
 #include "services/network/public/mojom/url_loader_factory.mojom-blink.h"
+#endif // ENABLE_GNET
 #include "third_party/blink/renderer/platform/loader/fetch/fetch_initiator_info.h"
 #include "third_party/blink/renderer/platform/loader/fetch/integrity_metadata.h"
 #include "third_party/blink/renderer/platform/wtf/allocator.h"
@@ -109,12 +111,14 @@ struct ResourceLoaderOptions {
   ParserDisposition parser_disposition;
   CacheAwareLoadingEnabled cache_aware_loading_enabled;
 
+#if defined(ENABLE_GNET)
   // If not null, this URLLoaderFactory should be used to load this resource
   // rather than whatever factory the system might otherwise use.
   // Used for example for loading blob: URLs and for prefetch loading.
   scoped_refptr<
       base::RefCountedData<network::mojom::blink::URLLoaderFactoryPtr>>
       url_loader_factory;
+#endif // ENABLE_GNET
 };
 
 }  // namespace blink

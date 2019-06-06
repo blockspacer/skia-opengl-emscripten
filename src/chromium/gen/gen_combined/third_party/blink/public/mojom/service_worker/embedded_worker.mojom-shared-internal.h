@@ -12,7 +12,9 @@
 #include "mojo/public/mojom/base/string16.mojom-shared-internal.h"
 #include "mojo/public/mojom/base/time.mojom-shared-internal.h"
 #include "mojo/public/mojom/base/unguessable_token.mojom-shared-internal.h"
+#if defined(ENABLE_GNET)
 #include "services/network/public/mojom/url_loader_factory.mojom-shared-internal.h"
+#endif // ENABLE_GNET
 #include "third_party/blink/public/mojom/devtools/console_message.mojom-shared-internal.h"
 #include "third_party/blink/public/mojom/devtools/devtools_agent.mojom-shared-internal.h"
 #include "third_party/blink/public/mojom/loader/url_loader_factory_bundle.mojom-shared-internal.h"

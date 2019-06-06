@@ -28,8 +28,10 @@
 #include "third_party/blink/public/mojom/blob/blob.mojom-shared.h"
 #include "third_party/blink/public/mojom/blob/blob.mojom-blink-forward.h"
 #include "mojo/public/mojom/base/big_buffer.mojom-blink-forward.h"
+#if defined(ENABLE_GNET)
 #include "services/network/public/mojom/data_pipe_getter.mojom-blink-forward.h"
 #include "services/network/public/mojom/http_request_headers.mojom-blink-forward.h"
+#endif // ENABLE_GNET
 
 #include "mojo/public/cpp/bindings/lib/wtf_clone_equals_util.h"
 #include "mojo/public/cpp/bindings/lib/wtf_hash_util.h"
@@ -132,8 +134,9 @@ class PLATFORM_EXPORT Blob
   
   virtual void Clone(BlobRequest blob) = 0;
 
-  
+#if defined(ENABLE_GNET)
   virtual void AsDataPipeGetter(::network::mojom::blink::DataPipeGetterRequest data_pipe_getter) = 0;
+#endif // ENABLE_GNET
 
   
   virtual void ReadAll(mojo::ScopedDataPipeProducerHandle pipe, BlobReaderClientPtr client) = 0;
@@ -172,7 +175,9 @@ class PLATFORM_EXPORT BlobProxy
 
   explicit BlobProxy(mojo::MessageReceiverWithResponder* receiver);
   void Clone(BlobRequest blob) final;
+#if defined(ENABLE_GNET)
   void AsDataPipeGetter(::network::mojom::blink::DataPipeGetterRequest data_pipe_getter) final;
+#endif // ENABLE_GNET
   void ReadAll(mojo::ScopedDataPipeProducerHandle pipe, BlobReaderClientPtr client) final;
   void ReadRange(uint64_t offset, uint64_t length, mojo::ScopedDataPipeProducerHandle pipe, BlobReaderClientPtr client) final;
   void ReadSideData(ReadSideDataCallback callback) final;

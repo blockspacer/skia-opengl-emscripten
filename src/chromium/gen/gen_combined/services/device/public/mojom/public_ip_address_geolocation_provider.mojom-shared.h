@@ -22,7 +22,9 @@
 #include "mojo/public/cpp/bindings/map_data_view.h"
 #include "mojo/public/cpp/bindings/string_data_view.h"
 #include "services/device/public/mojom/public_ip_address_geolocation_provider.mojom-shared-internal.h"
+#if defined(ENABLE_GNET)
 #include "services/network/public/mojom/mutable_partial_network_traffic_annotation_tag.mojom-shared.h"
+#endif // ENABLE_GNET
 #include "services/device/public/mojom/geolocation.mojom-shared.h"
 
 #include "mojo/public/cpp/bindings/lib/interface_serialization.h"

@@ -31,8 +31,12 @@
 #ifndef THIRD_PARTY_BLINK_PUBLIC_WEB_WEB_DOCUMENT_H_
 #define THIRD_PARTY_BLINK_PUBLIC_WEB_WEB_DOCUMENT_H_
 
+#if defined(ENABLE_UKM)
 #include "services/metrics/public/cpp/ukm_source_id.h"
+#endif // ENABLE_UKM
+#if defined(ENABLE_GNET)
 #include "services/network/public/mojom/referrer_policy.mojom-shared.h"
+#endif // ENABLE_GNET
 #include "third_party/blink/public/platform/web_security_origin.h"
 #include "third_party/blink/public/platform/web_vector.h"
 #include "third_party/blink/public/web/web_draggable_region.h"
@@ -86,7 +90,9 @@ class WebDocument : public WebNode {
   BLINK_EXPORT bool IsXHTMLDocument() const;
   BLINK_EXPORT bool IsPluginDocument() const;
   BLINK_EXPORT WebURL BaseURL() const;
+#if defined(ENABLE_UKM)
   BLINK_EXPORT ukm::SourceId GetUkmSourceId() const;
+#endif // ENABLE_UKM
 
   // The firstPartyForCookies is used to compute whether this document
   // appears in a "third-party" context for the purpose of third-party

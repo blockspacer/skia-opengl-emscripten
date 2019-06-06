@@ -10,9 +10,11 @@
 #include "third_party/blink/renderer/platform/platform_export.h"
 #include "third_party/blink/renderer/platform/wtf/allocator.h"
 
+#if defined(ENABLE_GNET)
 namespace service_manager {
 class Connector;
 }  // namespace service_manager
+#endif // ENABLE_GNET
 
 namespace blink {
 
@@ -38,7 +40,9 @@ class PLATFORM_EXPORT RendererResourceCoordinator {
   RendererResourceCoordinator();
 
  private:
+#if defined(ENABLE_GNET)
   RendererResourceCoordinator(service_manager::Connector*, const std::string&);
+#endif // ENABLE_GNET
 
   resource_coordinator::mojom::blink::ProcessCoordinationUnitPtr service_;
 

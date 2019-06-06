@@ -62,7 +62,9 @@ namespace scheduler {
 namespace main_thread_scheduler_impl_unittest {
 class MainThreadSchedulerImplForTest;
 class MainThreadSchedulerImplTest;
+#if defined(ENABLE_UKM)
 FORWARD_DECLARE_TEST(MainThreadSchedulerImplTest, ShouldIgnoreTaskForUkm);
+#endif // ENABLE_UKM
 FORWARD_DECLARE_TEST(MainThreadSchedulerImplTest, Tracing);
 }  // namespace main_thread_scheduler_impl_unittest
 class PageSchedulerImpl;
@@ -125,9 +127,11 @@ class PLATFORM_EXPORT MainThreadSchedulerImpl
 
     // Contains a mapping from net::RequestPriority to TaskQueue::QueuePriority
     // when use_resource_fetch_priority is enabled.
+#if defined(ENABLE_GNET)
     std::array<base::sequence_manager::TaskQueue::QueuePriority,
                net::RequestPrioritySize::NUM_PRIORITIES>
         net_to_blink_priority;
+#endif // ENABLE_GNET
 
     using FrameTaskTypeToQueueTraitsArray =
         std::array<base::Optional<MainThreadTaskQueue::QueueTraits>,
@@ -431,9 +435,11 @@ class PLATFORM_EXPORT MainThreadSchedulerImpl
       MainThreadSchedulerImplForTest;
   friend class main_thread_scheduler_impl_unittest::MainThreadSchedulerImplTest;
 
+#if defined(ENABLE_UKM)
   FRIEND_TEST_ALL_PREFIXES(
       main_thread_scheduler_impl_unittest::MainThreadSchedulerImplTest,
       ShouldIgnoreTaskForUkm);
+#endif // ENABLE_UKM
   FRIEND_TEST_ALL_PREFIXES(
       main_thread_scheduler_impl_unittest::MainThreadSchedulerImplTest,
       Tracing);
@@ -705,6 +711,7 @@ class PLATFORM_EXPORT MainThreadSchedulerImpl
 
   static void RunIdleTask(Thread::IdleTask, base::TimeTicks deadline);
 
+#if defined(ENABLE_UKM)
   // Probabilistically record all task metadata for the current task.
   // If task belongs to a per-frame queue, this task is attributed to
   // a particular Page, otherwise it's attributed to all Pages in the process.
@@ -712,15 +719,17 @@ class PLATFORM_EXPORT MainThreadSchedulerImpl
       MainThreadTaskQueue* queue,
       const base::sequence_manager::Task& task,
       const base::sequence_manager::TaskQueue::TaskTiming& task_timing);
+#endif // ENABLE_UKM
 
-#ifdef __TODO__
+
+#if defined(ENABLE_UKM)
   UkmRecordingStatus RecordTaskUkmImpl(
       MainThreadTaskQueue* queue,
       const base::sequence_manager::Task& task,
       const base::sequence_manager::TaskQueue::TaskTiming& task_timing,
       FrameSchedulerImpl* frame_scheduler,
       bool precise_attribution);
-#endif
+#endif // ENABLE_UKM
 
   void InitWakeUpBudgetPoolIfNeeded();
 

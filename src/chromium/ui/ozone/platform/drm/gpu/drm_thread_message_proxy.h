@@ -9,7 +9,9 @@
 
 #include "base/macros.h"
 #include "base/memory/weak_ptr.h"
+#if defined(ENABLE_GIPC)
 #include "ipc/message_filter.h"
+#endif // ENABLE_GIPC
 #include "ui/display/types/display_constants.h"
 #include "ui/display/types/gamma_ramp_rgb_entry.h"
 #include "ui/gfx/native_widget_types.h"
@@ -32,7 +34,10 @@ class DrmThread;
 struct DisplayMode_Params;
 struct OverlayCheck_Params;
 
-class DrmThreadMessageProxy : public IPC::MessageFilter,
+class DrmThreadMessageProxy :
+#if defined(ENABLE_GIPC)
+                              public IPC::MessageFilter,
+#endif // ENABLE_GIPC
                               public InterThreadMessagingProxy {
  public:
   DrmThreadMessageProxy();
@@ -40,9 +45,11 @@ class DrmThreadMessageProxy : public IPC::MessageFilter,
   // InterThreadMessagingProxy.
   void SetDrmThread(DrmThread* thread) override;
 
+#if defined(ENABLE_GIPC)
   // IPC::MessageFilter:
   void OnFilterAdded(IPC::Channel* channel) override;
   bool OnMessageReceived(const IPC::Message& message) override;
+#endif // ENABLE_GIPC
 
  private:
   ~DrmThreadMessageProxy() override;
@@ -96,7 +103,9 @@ class DrmThreadMessageProxy : public IPC::MessageFilter,
 
   DrmThread* drm_thread_ = nullptr;
 
+#if defined(ENABLE_GIPC)
   IPC::Sender* sender_ = nullptr;
+#endif // ENABLE_GIPC
 
   base::WeakPtrFactory<DrmThreadMessageProxy> weak_ptr_factory_;
 

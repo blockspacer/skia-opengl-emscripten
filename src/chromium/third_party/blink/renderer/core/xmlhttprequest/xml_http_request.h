@@ -26,7 +26,9 @@
 #include <memory>
 
 #include "base/memory/scoped_refptr.h"
+#if defined(ENABLE_GNET)
 #include "services/network/public/mojom/url_loader_factory.mojom-blink.h"
+#endif // ENABLE_GNET
 #include "third_party/blink/renderer/bindings/core/v8/active_script_wrappable.h"
 #include "third_party/blink/renderer/core/dom/document_parser_client.h"
 #include "third_party/blink/renderer/core/execution_context/context_lifecycle_observer.h"

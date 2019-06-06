@@ -45,7 +45,9 @@
 
 #include "mojo/public/cpp/bindings/lib/native_enum_serialization.h"
 #include "mojo/public/cpp/bindings/lib/native_struct_serialization.h"
+#if defined(ENABLE_GIPC)
 #include "ipc/ipc_message_utils.h"
+#endif // ENABLE_GIPC
 #include "net/cookies/canonical_cookie.h"
 #include "net/cookies/cookie_constants.h"
 #include "net/cookies/cookie_options.h"

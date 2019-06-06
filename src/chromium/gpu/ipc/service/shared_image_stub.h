@@ -14,7 +14,9 @@
 #include "gpu/command_buffer/service/sync_point_manager.h"
 #include "gpu/ipc/common/gpu_messages.h"
 #include "gpu/ipc/service/gpu_ipc_service_export.h"
+#if defined(ENABLE_GIPC)
 #include "ipc/ipc_listener.h"
+#endif // ENABLE_GIPC
 
 namespace gpu {
 class SharedContextState;

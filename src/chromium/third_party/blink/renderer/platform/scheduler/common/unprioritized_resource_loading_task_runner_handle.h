@@ -24,8 +24,9 @@ class PLATFORM_EXPORT UnprioritizedResourceLoadingTaskRunnerHandle
   WrapTaskRunner(scoped_refptr<base::SingleThreadTaskRunner> task_runner);
 
   scoped_refptr<base::SingleThreadTaskRunner> GetTaskRunner() const override;
-
+#if defined(ENABLE_GNET)
   void DidChangeRequestPriority(net::RequestPriority priority) override;
+#endif // ENABLE_GNET
 
   ~UnprioritizedResourceLoadingTaskRunnerHandle() override = default;
 

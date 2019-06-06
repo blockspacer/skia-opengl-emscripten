@@ -9,7 +9,9 @@
 
 #include "base/component_export.h"
 #include "base/memory/scoped_refptr.h"
+#if defined(ENABLE_GNET)
 #include "net/http/http_response_headers.h"
+#endif // ENABLE_GNET
 #include "services/network/public/mojom/cors.mojom-shared.h"
 
 namespace network {

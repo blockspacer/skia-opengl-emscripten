@@ -20,10 +20,11 @@ namespace base {
 class TimeTicks;
 class WaitableEvent;
 }  // namespace base
-
+#if defined(ENABLE_GNET)
 namespace net {
 class IPEndPoint;
 }  // namespace net
+#endif // ENABLE_GNET
 
 namespace media {
 

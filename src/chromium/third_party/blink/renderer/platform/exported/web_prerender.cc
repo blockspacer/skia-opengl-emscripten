@@ -90,9 +90,11 @@ WebString WebPrerender::GetReferrer() const {
   return private_->GetReferrer();
 }
 
+#if defined(ENABLE_GNET)
 network::mojom::ReferrerPolicy WebPrerender::GetReferrerPolicy() const {
   return private_->GetReferrerPolicy();
 }
+#endif // ENABLE_GNET
 
 void WebPrerender::SetExtraData(WebPrerender::ExtraData* extra_data) {
   private_->SetExtraData(PrerenderExtraDataContainer::Create(extra_data));

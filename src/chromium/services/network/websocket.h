@@ -16,14 +16,16 @@
 #include "base/memory/weak_ptr.h"
 #include "base/time/time.h"
 #include "mojo/public/cpp/bindings/binding.h"
+#if defined(ENABLE_GNET)
 #include "net/websockets/websocket_event_interface.h"
+#endif // ENABLE_GNET
 #include "services/network/public/mojom/network_context.mojom.h"
 #include "services/network/public/mojom/websocket.mojom.h"
 #include "services/network/websocket_throttler.h"
 #include "url/origin.h"
 
 class GURL;
-
+#if defined(ENABLE_GNET)
 namespace net {
 class URLRequestContext;
 class WebSocketChannel;
@@ -31,6 +33,7 @@ class WebSocketChannel;
 class SSLInfo;
 #endif // ENABLE_BORINGSSL
 }  // namespace net
+#endif // ENABLE_GNET
 
 namespace network {
 

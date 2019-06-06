@@ -35,9 +35,11 @@ WebEncryptedMediaRequest::SupportedConfigurations() const {
   return private_->SupportedConfigurations();
 }
 
+#if defined(ENABLE_GNET)
 WebSecurityOrigin WebEncryptedMediaRequest::GetSecurityOrigin() const {
   return WebSecurityOrigin(private_->GetSecurityOrigin());
 }
+#endif // ENABLE_GNET
 
 void WebEncryptedMediaRequest::RequestSucceeded(
     std::unique_ptr<WebContentDecryptionModuleAccess> access) {

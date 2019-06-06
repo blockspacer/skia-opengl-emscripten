@@ -28,8 +28,10 @@
 #include "gpu/ipc/common/gpu_command_buffer_traits.h"
 #include "gpu/ipc/common/gpu_param_traits.h"
 #include "gpu/ipc/common/surface_handle.h"
+#if defined(ENABLE_GIPC)
 #include "ipc/ipc_channel_handle.h"
 #include "ipc/ipc_message_macros.h"
+#endif // ENABLE_GIPC
 #include "ui/gfx/color_space.h"
 #include "ui/gfx/geometry/size.h"
 #include "ui/gfx/gpu_fence_handle.h"

@@ -10,8 +10,10 @@
 #include "mojo/public/mojom/base/time.mojom-import-headers.h"
 #include "mojo/public/mojom/base/unguessable_token.mojom.h"
 #include "mojo/public/mojom/base/unguessable_token.mojom-import-headers.h"
+#if defined(ENABLE_GNET)
 #include "services/network/public/mojom/url_loader_factory.mojom.h"
 #include "services/network/public/mojom/url_loader_factory.mojom-import-headers.h"
+#endif // ENABLE_GNET
 #include "third_party/blink/public/mojom/devtools/console_message.mojom.h"
 #include "third_party/blink/public/mojom/devtools/console_message.mojom-import-headers.h"
 #include "third_party/blink/public/mojom/devtools/devtools_agent.mojom.h"

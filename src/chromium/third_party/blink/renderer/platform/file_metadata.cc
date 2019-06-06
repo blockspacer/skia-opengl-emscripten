@@ -31,7 +31,9 @@
 #include "third_party/blink/renderer/platform/file_metadata.h"
 
 #include "base/optional.h"
+#if defined(ENABLE_GNET)
 #include "net/base/filename_util.h"
+#endif // ENABLE_GNET
 #include "third_party/blink/public/mojom/file/file_utilities.mojom-blink.h"
 #include "third_party/blink/public/platform/file_path_conversion.h"
 #include "third_party/blink/public/platform/interface_provider.h"
@@ -84,8 +86,12 @@ bool GetFileMetadata(const String& path, FileMetadata& metadata) {
   }
 
   base::Optional<base::File::Info> file_info;
+#if defined(ENABLE_GNET)
   if (!host->GetFileInfo(WebStringToFilePath(path), &file_info) || !file_info)
     return false;
+#else
+  return false;
+#endif // ENABLE_GNET
 
   // Blink now expects NaN as uninitialized/null Date.
   metadata.modification_time = file_info->last_modified.is_null()
@@ -98,10 +104,14 @@ bool GetFileMetadata(const String& path, FileMetadata& metadata) {
 }
 
 KURL FilePathToURL(const String& path) {
+#if defined(ENABLE_GNET)
   GURL gurl = net::FilePathToFileURL(WebStringToFilePath(path));
   const std::string& url_spec = gurl.possibly_invalid_spec();
   return KURL(AtomicString::FromUTF8(url_spec.data(), url_spec.length()),
               gurl.parsed_for_possibly_invalid_spec(), gurl.is_valid());
+#else
+  return KURL(path);
+#endif // ENABLE_GNET
 }
 
 }  // namespace blink

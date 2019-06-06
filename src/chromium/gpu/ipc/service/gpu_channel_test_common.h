@@ -10,7 +10,9 @@
 
 #include "base/memory/ref_counted.h"
 #include "base/memory/unsafe_shared_memory_region.h"
+#if defined(ENABLE_GIPC)
 #include "ipc/ipc_test_sink.h"
+#endif // ENABLE_GIPC
 #include "testing/gtest/include/gtest/gtest.h"
 
 namespace base {

@@ -7,6 +7,7 @@
 
 #include <string>
 
+#if defined(ENABLE_GIPC)
 #include "ipc/ipc_message_utils.h"
 #include "ipc/param_traits_macros.h"
 #include "ui/gfx/ipc/buffer_types/gfx_ipc_export.h"
@@ -25,5 +26,6 @@ struct GFX_IPC_BUFFER_TYPES_EXPORT ParamTraits<gfx::BufferUsageAndFormat> {
 };
 
 }  // namespace IPC
+#endif // ENABLE_GIPC
 
 #endif  // UI_GFX_IPC_BUFFER_TYPES_GFX_PARAM_TRAITS_H_

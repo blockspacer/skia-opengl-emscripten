@@ -40,6 +40,7 @@
 #include "base/memory/scoped_refptr.h"
 #endif
 
+#if defined(ENABLE_GNET)
 namespace blink {
 
 class EncodedFormData;
@@ -132,5 +133,6 @@ class WebHTTPBody {
 };
 
 }  // namespace blink
+#endif // ENABLE_GNET
 
 #endif

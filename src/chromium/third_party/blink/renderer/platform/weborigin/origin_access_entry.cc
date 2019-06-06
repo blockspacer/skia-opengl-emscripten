@@ -30,9 +30,11 @@
 
 #include "third_party/blink/renderer/platform/weborigin/origin_access_entry.h"
 
+#if defined(ENABLE_GNET)
 #include "services/network/public/mojom/cors.mojom-shared.h"
+#endif // ENABLE_GNET
 #include "third_party/blink/renderer/platform/weborigin/security_origin.h"
-
+#if defined(ENABLE_GNET)
 namespace blink {
 
 OriginAccessEntry::OriginAccessEntry(
@@ -66,3 +68,4 @@ String OriginAccessEntry::registrable_domain() const {
 }
 
 }  // namespace blink
+#endif // ENABLE_GNET

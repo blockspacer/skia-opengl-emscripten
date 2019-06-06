@@ -18,7 +18,9 @@ class BLINK_COMMON_EXPORT BlobURLStoreInterceptorForTesting : public BlobURLStor
   void Register(::blink::mojom::BlobPtr blob, const GURL& url, RegisterCallback callback) override;
   void Revoke(const GURL& url) override;
   void Resolve(const GURL& url, ResolveCallback callback) override;
+#if defined(ENABLE_GNET)
   void ResolveAsURLLoaderFactory(const GURL& url, ::network::mojom::URLLoaderFactoryRequest factory) override;
+#endif // ENABLE_GNET
   void ResolveForNavigation(const GURL& url, BlobURLTokenRequest token) override;
 };
 class BLINK_COMMON_EXPORT BlobURLStoreAsyncWaiter {

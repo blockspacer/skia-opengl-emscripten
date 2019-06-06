@@ -9,6 +9,7 @@
 
 namespace keyboard {
 
+#if defined(ENABLE_UKM)
 void RecordUkmKeyboardShown(ukm::SourceId source,
                             const ui::TextInputType& input_type) {
   if (source == ukm::kInvalidSourceId)
@@ -18,5 +19,6 @@ void RecordUkmKeyboardShown(ukm::SourceId source,
       .SetTextInputType(input_type)
       .Record(ukm::UkmRecorder::Get());
 }
+#endif // ENABLE_UKM
 
 }  // namespace keyboard

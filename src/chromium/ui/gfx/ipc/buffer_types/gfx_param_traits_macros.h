@@ -9,6 +9,7 @@
 #define UI_GFX_IPC_GFX_BUFFER_TYPES_PARAM_TRAITS_MACROS_H_
 
 #include "build/build_config.h"
+#if defined(ENABLE_GIPC)
 #include "ipc/ipc_message_macros.h"
 #include "ui/gfx/buffer_types.h"
 
@@ -21,5 +22,6 @@ IPC_ENUM_TRAITS_MAX_VALUE(gfx::BufferUsage, gfx::BufferUsage::LAST)
 
 #undef IPC_MESSAGE_EXPORT
 #define IPC_MESSAGE_EXPORT
+#endif // ENABLE_GIPC
 
 #endif  // UI_GFX_IPC_GFX_BUFFER_TYPES_PARAM_TRAITS_MACROS_H_

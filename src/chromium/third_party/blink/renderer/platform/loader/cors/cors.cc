@@ -51,7 +51,7 @@ base::Optional<std::string> GetOptionalHeaderValue(
 
   return std::string(result.Ascii().data());
 }
-
+#if defined(ENABLE_GNET)
 std::unique_ptr<net::HttpRequestHeaders> CreateNetHttpRequestHeaders(
     const HTTPHeaderMap& header_map) {
   std::unique_ptr<net::HttpRequestHeaders> request_headers =
@@ -66,6 +66,7 @@ std::unique_ptr<net::HttpRequestHeaders> CreateNetHttpRequestHeaders(
   }
   return request_headers;
 }
+#endif // ENABLE_GNET
 
 url::Origin AsUrlOrigin(const SecurityOrigin& origin) {
   // "file:" origin is treated like an opaque unique origin when
@@ -140,6 +141,7 @@ class HTTPHeaderNameListParser {
 
   // Consumes zero or more tchars from value_.
   void ConsumeTokenChars() {
+#if defined(ENABLE_GNET)
     while (true) {
       if (pos_ == value_.length())
         return;
@@ -149,6 +151,7 @@ class HTTPHeaderNameListParser {
         return;
       ++pos_;
     }
+#endif // ENABLE_GNET
   }
 
   const String value_;
@@ -346,7 +349,7 @@ bool IsNoCorsSafelistedHeader(const String& name, const String& value) {
   return network::cors::IsNoCorsSafelistedHeader(WebString(name).Latin1(),
                                                  WebString(value).Latin1());
 }
-
+#if defined(ENABLE_GNET)
 Vector<String> CorsUnsafeRequestHeaderNames(const HTTPHeaderMap& headers) {
   net::HttpRequestHeaders::HeaderVector in;
   for (const auto& entry : headers) {
@@ -359,6 +362,7 @@ Vector<String> CorsUnsafeRequestHeaderNames(const HTTPHeaderMap& headers) {
     header_names.push_back(WebString::FromLatin1(name));
   return header_names;
 }
+#endif // ENABLE_GNET
 
 bool IsForbiddenHeaderName(const String& name) {
   return network::cors::IsForbiddenHeader(WebString(name).Latin1());

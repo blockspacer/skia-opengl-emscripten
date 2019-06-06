@@ -34,7 +34,9 @@
 #include "gpu/command_buffer/common/scheduling_priority.h"
 #include "gpu/gpu_export.h"
 #include "gpu/ipc/common/surface_handle.h"
+#if defined(ENABLE_GIPC)
 #include "ipc/ipc_listener.h"
+#endif // ENABLE_GIPC
 #include "ui/gfx/swap_result.h"
 #include "ui/gl/gpu_preference.h"
 

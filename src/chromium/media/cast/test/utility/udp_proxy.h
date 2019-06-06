@@ -18,10 +18,11 @@
 #include "base/single_thread_task_runner.h"
 #include "media/cast/net/cast_transport_config.h"
 #include "net/base/ip_endpoint.h"
-
+#if defined(ENABLE_GNET)
 namespace net {
 class NetLog;
 }
+#endif // ENABLE_GNET
 
 namespace base {
 class TickClock;

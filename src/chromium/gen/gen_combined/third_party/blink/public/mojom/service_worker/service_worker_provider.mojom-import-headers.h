@@ -4,8 +4,10 @@
 
 #ifndef THIRD_PARTY_BLINK_PUBLIC_MOJOM_SERVICE_WORKER_SERVICE_WORKER_PROVIDER_MOJOM_IMPORT_HEADERS_H_
 #define THIRD_PARTY_BLINK_PUBLIC_MOJOM_SERVICE_WORKER_SERVICE_WORKER_PROVIDER_MOJOM_IMPORT_HEADERS_H_
+#if defined(ENABLE_GNET)
 #include "services/network/public/mojom/url_loader_factory.mojom.h"
 #include "services/network/public/mojom/url_loader_factory.mojom-import-headers.h"
+#endif // ENABLE_GNET
 #include "services/service_manager/public/mojom/interface_provider.mojom.h"
 #include "services/service_manager/public/mojom/interface_provider.mojom-import-headers.h"
 #include "third_party/blink/public/mojom/cache_storage/cache_storage.mojom.h"

@@ -390,8 +390,16 @@ list(APPEND BLINK_RENDERER_CORE_FRAME_SOURCES
   ${CUR_SRC_DIR}frame/local_frame.cc
   #${CUR_SRC_DIR}frame/local_frame.h
   #${CUR_SRC_DIR}frame/local_frame_client.h
-  ${CUR_SRC_DIR}frame/local_frame_ukm_aggregator.cc
-  #${CUR_SRC_DIR}frame/local_frame_ukm_aggregator.h
+)
+
+if(ENABLE_UKM)
+  list(APPEND BLINK_RENDERER_CORE_FRAME_SOURCES
+    ${CUR_SRC_DIR}frame/local_frame_ukm_aggregator.cc
+    #${CUR_SRC_DIR}frame/local_frame_ukm_aggregator.h
+  )
+endif(ENABLE_UKM)
+
+list(APPEND BLINK_RENDERER_CORE_FRAME_SOURCES
   ${CUR_SRC_DIR}frame/local_frame_view.cc
   #${CUR_SRC_DIR}frame/local_frame_view.h
   ${CUR_SRC_DIR}frame/location.cc
@@ -1893,7 +1901,17 @@ list(APPEND BLINK_RENDERER_CORE_LAYOUT_SOURCES
 #  )
 #endif(ENABLE_GNET)
 
+#if(ENABLE_GNET)
+#  list(APPEND BLINK_RENDERER_CORE_LOADER_SOURCES
+#  )
+#endif(ENABLE_GNET)
+
 list(APPEND BLINK_RENDERER_CORE_LOADER_SOURCES
+  #${CUR_SRC_DIR}loader/alternate_signed_exchange_resource_info.h
+  ${CUR_SRC_DIR}loader/appcache/application_cache.cc
+  #${CUR_SRC_DIR}loader/appcache/application_cache.h
+  ${CUR_SRC_DIR}loader/appcache/application_cache_host.cc
+  ${CUR_SRC_DIR}loader/alternate_signed_exchange_resource_info.cc
   ${CUR_SRC_DIR}loader/alternate_signed_exchange_resource_info.cc
   #${CUR_SRC_DIR}loader/alternate_signed_exchange_resource_info.h
   ${CUR_SRC_DIR}loader/appcache/application_cache.cc
@@ -5522,7 +5540,7 @@ target_link_libraries(BLINK_RENDERER_CORE PUBLIC
   #BLINK_RENDERER_NETWORK
   BLINK_RENDERER_PLATFORM
   GURL
-  GNET
+  ${GNET_LIBS}
   GCRYPTO
   GFX_GEOMETRY
   UI_GFX
@@ -5543,7 +5561,7 @@ target_link_libraries(BLINK_RENDERER_CORE PUBLIC
   ANIMATION_CC
   BASE_CC
   PAINT_CC
-  SERVICES_NETWORK_PUBLIC_CPP
+  ${SERVICES_NETWORK_PUBLIC_CPP_LIB}
   libwebp # requires libpng
   #${libjpeg_LIB}
   ${libjpeg_TURBO_LIB}
@@ -5558,7 +5576,7 @@ target_link_libraries(BLINK_RENDERER_CORE PUBLIC
   ${HARFBUZZ_LIBRARIES}
   GMEDIA
   GZLIB_EXT
-  SERVICES_SERVICE_MANAGER_PUBLIC_CPP
+  ${SERVICES_SERVICE_MANAGER_PUBLIC_CPP_LIB}
   GFX_CODEC
 )
 

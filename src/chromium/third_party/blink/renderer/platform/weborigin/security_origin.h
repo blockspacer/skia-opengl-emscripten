@@ -44,6 +44,7 @@ namespace mojo {
 struct UrlOriginAdapter;
 }  // namespace mojo
 
+#if defined(ENABLE_GNET)
 namespace blink {
 
 class KURL;
@@ -365,5 +366,6 @@ class PLATFORM_EXPORT SecurityOrigin : public RefCounted<SecurityOrigin> {
 };
 
 }  // namespace blink
+#endif // ENABLE_GNET
 
 #endif  // THIRD_PARTY_BLINK_RENDERER_PLATFORM_WEBORIGIN_SECURITY_ORIGIN_H_

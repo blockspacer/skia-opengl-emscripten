@@ -23,9 +23,11 @@
 #include "mojo/public/cpp/bindings/string_data_view.h"
 #include "third_party/blink/public/mojom/fetch/fetch_api_request.mojom-shared-internal.h"
 #include "mojo/public/mojom/base/unguessable_token.mojom-shared.h"
+#if defined(ENABLE_GNET)
 #include "services/network/public/mojom/fetch_api.mojom-shared.h"
 #include "services/network/public/mojom/request_context_frame_type.mojom-shared.h"
 #include "services/network/public/mojom/url_loader.mojom-shared.h"
+#endif // ENABLE_GNET
 #include "third_party/blink/public/mojom/blob/serialized_blob.mojom-shared.h"
 #include "third_party/blink/public/mojom/referrer.mojom-shared.h"
 #include "url/mojom/url.mojom-shared.h"

@@ -73,7 +73,11 @@ class VIEWS_EXPORT PrefixSelector : public ui::TextInputClient {
 
   bool IsTextEditCommandEnabled(ui::TextEditCommand command) const override;
   void SetTextEditCommandForNextKeyEvent(ui::TextEditCommand command) override;
+
+#if defined(ENABLE_UKM)
   ukm::SourceId GetClientSourceForMetrics() const override;
+#endif // ENABLE_UKM
+
   bool ShouldDoLearning() override;
 
 #if defined(OS_WIN) || defined(OS_CHROMEOS)

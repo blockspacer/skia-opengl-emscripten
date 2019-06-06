@@ -41,8 +41,9 @@
 #endif
 
 namespace blink {
-
+#if defined(ENABLE_GNET)
 class SecurityOrigin;
+#endif // ENABLE_GNET
 class WebURL;
 
 class WebSecurityOrigin {
@@ -66,7 +67,13 @@ class WebSecurityOrigin {
   BLINK_PLATFORM_EXPORT void Reset();
   BLINK_PLATFORM_EXPORT void Assign(const WebSecurityOrigin&);
 
-  bool IsNull() const { return private_.IsNull(); }
+  bool IsNull() const {
+#if defined(ENABLE_GNET)
+    return private_.IsNull();
+#else
+    return true;
+#endif // ENABLE_GNET
+  }
 
   BLINK_PLATFORM_EXPORT WebString Protocol() const;
   BLINK_PLATFORM_EXPORT WebString Host() const;
@@ -109,11 +116,13 @@ class WebSecurityOrigin {
   BLINK_PLATFORM_EXPORT bool CanAccessPasswordManager() const;
 
 #if INSIDE_BLINK
+#if defined(ENABLE_GNET)
   BLINK_PLATFORM_EXPORT WebSecurityOrigin(scoped_refptr<const SecurityOrigin>);
   BLINK_PLATFORM_EXPORT WebSecurityOrigin& operator=(
       scoped_refptr<const SecurityOrigin>);
   BLINK_PLATFORM_EXPORT operator scoped_refptr<const SecurityOrigin>() const;
   BLINK_PLATFORM_EXPORT const SecurityOrigin* Get() const;
+#endif // ENABLE_GNET
 #endif
   // TODO(mkwst): A number of properties don't survive a round-trip
   // ('document.domain', for instance).  We'll need to fix that for OOPI-enabled
@@ -126,7 +135,9 @@ class WebSecurityOrigin {
 #endif
 
  private:
+#if defined(ENABLE_GNET)
   WebPrivatePtr<const SecurityOrigin> private_;
+#endif // ENABLE_GNET
 };
 
 }  // namespace blink

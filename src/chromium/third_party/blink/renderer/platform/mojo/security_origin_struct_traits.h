@@ -10,6 +10,7 @@
 #include "url/mojom/origin.mojom-blink.h"
 #include "url/scheme_host_port.h"
 
+#if defined(ENABLE_GNET)
 namespace mojo {
 
 struct UrlOriginAdapter {
@@ -105,5 +106,6 @@ struct StructTraits<url::mojom::blink::Origin::DataView,
 };
 
 }  // namespace mojo
+#endif // ENABLE_GNET
 
 #endif  // THIRD_PARTY_BLINK_RENDERER_PLATFORM_MOJO_SECURITY_ORIGIN_STRUCT_TRAITS_H_

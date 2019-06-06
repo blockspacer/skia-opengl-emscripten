@@ -29,7 +29,9 @@
 
 #include <iosfwd>
 #include "base/optional.h"
+#if defined(ENABLE_GNET)
 #include "services/network/public/cpp/cors/cors_error_status.h"
+#endif // ENABLE_GNET
 #include "third_party/blink/public/platform/web_url_error.h"
 #include "third_party/blink/renderer/platform/platform_export.h"
 #include "third_party/blink/renderer/platform/weborigin/kurl.h"
@@ -61,12 +63,14 @@ class PLATFORM_EXPORT ResourceError final {
 
   ResourceError() = delete;
   // |error_code| must not be 0.
+#if defined(ENABLE_GNET)
   ResourceError(int error_code,
                 const KURL& failing_url,
                 base::Optional<network::CorsErrorStatus>);
   ResourceError(const KURL& failing_url,
                 const network::CorsErrorStatus& status);
   ResourceError(const WebURLError&);
+#endif // ENABLE_GNET
 
   // Makes a deep copy. Useful for when you need to use a ResourceError on
   // another thread.
@@ -85,12 +89,13 @@ class PLATFORM_EXPORT ResourceError final {
   bool ShouldCollapseInitiator() const;
   base::Optional<ResourceRequestBlockedReason> GetResourceRequestBlockedReason()
       const;
-
+#if defined(ENABLE_GNET)
   base::Optional<network::CorsErrorStatus> CorsErrorStatus() const {
     return cors_error_status_;
   }
 
   operator WebURLError() const;
+#endif // ENABLE_GNET
 
   static bool Compare(const ResourceError&, const ResourceError&);
 
@@ -107,7 +112,9 @@ class PLATFORM_EXPORT ResourceError final {
   bool is_access_check_ = false;
   bool has_copy_in_cache_ = false;
   bool blocked_by_subresource_filter_ = false;
+#if defined(ENABLE_GNET)
   base::Optional<network::CorsErrorStatus> cors_error_status_;
+#endif // ENABLE_GNET
 };
 
 inline bool operator==(const ResourceError& a, const ResourceError& b) {

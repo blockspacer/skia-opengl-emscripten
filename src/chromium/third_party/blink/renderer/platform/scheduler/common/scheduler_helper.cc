@@ -11,7 +11,10 @@
 #include "base/time/default_tick_clock.h"
 #include "base/trace_event/trace_event.h"
 #include "base/trace_event/traced_value.h"
+
+#if defined(ENABLE_UKM)
 #include "third_party/blink/renderer/platform/scheduler/common/ukm_task_sampler.h"
+#endif // ENABLE_UKM
 
 namespace blink {
 namespace scheduler {
@@ -23,9 +26,14 @@ using base::sequence_manager::TimeDomain;
 
 SchedulerHelper::SchedulerHelper(SequenceManager* sequence_manager)
     : sequence_manager_(sequence_manager),
-      observer_(nullptr),
+      observer_(nullptr)
+
+#if defined(ENABLE_UKM)
+      ,
       ukm_task_sampler_(sequence_manager_->GetMetricRecordingSettings()
-                            .task_sampling_rate_for_recording_cpu_time) {
+                            .task_sampling_rate_for_recording_cpu_time)
+#endif // ENABLE_UKM
+  {
   sequence_manager_->SetWorkBatchSize(4);
 }
 

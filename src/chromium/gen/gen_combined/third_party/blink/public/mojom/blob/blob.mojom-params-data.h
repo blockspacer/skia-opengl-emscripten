@@ -491,10 +491,12 @@ class Blob_AsDataPipeGetter_ParamsDataView {
   template <typename UserType>
   UserType TakeDataPipeGetter() {
     UserType result;
+#if defined(ENABLE_GNET)
     bool ret =
         mojo::internal::Deserialize<::network::mojom::DataPipeGetterRequestDataView>(
             &data_->data_pipe_getter, &result, context_);
     DCHECK(ret);
+#endif // ENABLE_GNET
     return result;
   }
  private:

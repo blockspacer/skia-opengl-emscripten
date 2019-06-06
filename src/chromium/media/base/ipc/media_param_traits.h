@@ -5,8 +5,10 @@
 #ifndef MEDIA_BASE_IPC_MEDIA_PARAM_TRAITS_H_
 #define MEDIA_BASE_IPC_MEDIA_PARAM_TRAITS_H_
 
+#if defined(ENABLE_GIPC)
 #include "ipc/ipc_message.h"
 #include "ipc/ipc_param_traits.h"
+#endif // ENABLE_GIPC
 #include "media/base/ipc/media_param_traits_macros.h"
 
 namespace media {
@@ -14,6 +16,7 @@ class AudioParameters;
 class EncryptionScheme;
 }
 
+#if defined(ENABLE_GIPC)
 namespace IPC {
 
 template <>
@@ -47,5 +50,6 @@ struct ParamTraits<media::EncryptionScheme> {
 };
 
 }  // namespace IPC
+#endif // ENABLE_GIPC
 
 #endif  // MEDIA_BASE_IPC_MEDIA_PARAM_TRAITS_H_

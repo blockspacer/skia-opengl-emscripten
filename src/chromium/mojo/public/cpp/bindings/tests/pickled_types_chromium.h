@@ -10,8 +10,10 @@
 #include <string>
 
 #include "base/macros.h"
+#if defined(ENABLE_GIPC)
 #include "ipc/ipc_message_macros.h"
 #include "ipc/ipc_param_traits.h"
+#endif // ENABLE_GIPC
 
 namespace base {
 class Pickle;
@@ -58,6 +60,7 @@ bool operator==(const PickledStructChromium& a, const PickledStructChromium& b);
 }  // namespace test
 }  // namespace mojo
 
+#if defined(ENABLE_GIPC)
 namespace IPC {
 
 template <>
@@ -75,5 +78,6 @@ struct ParamTraits<mojo::test::PickledStructChromium> {
 
 IPC_ENUM_TRAITS_MAX_VALUE(mojo::test::PickledEnumChromium,
                           mojo::test::PickledEnumChromium::VALUE_2)
+#endif // ENABLE_GIPC
 
 #endif  // MOJO_PUBLIC_CPP_BINDINGS_TESTS_PICKLED_TYPES_CHROMIUM_H_

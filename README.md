@@ -10,6 +10,8 @@ todos
 > https://cobalt.googlesource.com/cobalt
 > license If this is based off of Chromium it may be required to be Open-Source. Unless the LGPL parts are dynamically linked, you must share the statically linked source just like with the GPL.
 > support godot, android, win e.t.c.
+> https://www.chromium.org/developers/design-documents/chromeviews
+  https://github.com/chromium/chromium/blob/master/ui/views/examples/scroll_view_example.cc
 
 needs
 > https://bugs.chromium.org/p/skia/issues/detail?id=9052&q=&sort=-modified&colspec=ID%20Type%20Status%20Priority%20M%20Area%20Owner%20Summary%20Modified
@@ -34,8 +36,10 @@ notes
 > unicode fonts & harfbuzz
 > uses SDL2 to create window
 > uses CMake
+> supports WASM with/without threads
 > supports WebGL 2 / GLSL 300 es as there really isn`t a reason to support WebGL 1 at this point
 > supports WASM as there really isn`t a reason to support ASM.js at this point
+> supports cobalt.foo HTML/CSS parser
 
 ## TODO
 https://github.com/emscripten-core/emscripten/issues/5033
@@ -52,7 +56,8 @@ emscripten_logging_sink
 https://github.com/google/xrtl/blob/master/xrtl/port/emscripten/base/emscripten_logging_sink.cc
 https://webassemblycode.com/how-to-debug-webassemly/
 
-libwehttps://github.com/HumbleNet/HumbleNet/blob/master/src/humblenet/src/libwebrtc_asmjs.cppbrtc_asmjs.cpp
+libwebrtc.js
+https://github.com/HumbleNet/HumbleNet/blob/master/src/humblenet/src/libwebrtc_asmjs.cppbrtc_asmjs.cpp
 
 RasterCache
 https://github.com/flutter/engine/blob/master/flow/raster_cache.cc
@@ -798,75 +803,3 @@ MISC
 > https://github.com/v8/v8/blob/master/src/wasm/wasm-limits.h
 > bin/gn gen out/config --ide=json --json-ide-script=../../gn/gn_to_cmake.py
 > WASM tests https://chromium.googlesource.com/external/github.com/WebAssembly/waterfall/
-
-TODO
-Bad exit status 2
-/home/denis/workspace/skia-opengl-emscripten/src/chromium/net/http/http_network_session.cc:490:11:
-warning: enumeration value 'kProtoQUIC' not handled in switch [-Wswitch]
-
-  switch (protocol) {
-          ^
-
-1 warning generated.
-
-
-/home/denis/workspace/skia-opengl-emscripten/src/chromium/net/url_request/url_request_http_job.cc:1096:13:
-warning: enumeration value 'TYPE_BROTLI' not handled in switch [-Wswitch]
-
-    switch (type) {
-            ^
-
-1 warning generated.
-
-/usr/bin/ld: src/chromium/libbase.a(file_util.cc.o): in function
-`base::CreateTemporaryFile(base::FilePath*)':
-
-
-/home/denis/workspace/skia-opengl-emscripten/src/chromium/base/files/file_util.cc:304:
-multiple definition of `base::CreateTemporaryFile(base::FilePath*)';
-src/chromium/libbase.a(file_util_posix.cc.o):/home/denis/workspace/skia-opengl-emscripten/src/chromium/base/files/file_util_posix.cc:696:
-first defined here
-
-/usr/bin/ld: src/chromium/libbase.a(file_util.cc.o): in function
-`base::GetCurrentDirectory(base::FilePath*)':
-
-
-/home/denis/workspace/skia-opengl-emscripten/src/chromium/base/files/file_util.cc:293:
-multiple definition of `base::GetCurrentDirectory(base::FilePath*)';
-src/chromium/libbase.a(file_util_posix.cc.o):/home/denis/workspace/skia-opengl-emscripten/src/chromium/base/files/file_util_posix.cc:1024:
-first defined here
-
-/usr/bin/ld: src/chromium/libbase.a(file_util.cc.o): in function
-`base::MakeAbsoluteFilePath(base::FilePath const&)':
-
-
-/home/denis/workspace/skia-opengl-emscripten/src/chromium/base/files/file_util.cc:283:
-multiple definition of `base::MakeAbsoluteFilePath(base::FilePath const&)';
-src/chromium/libbase.a(file_util_posix.cc.o):/home/denis/workspace/skia-opengl-emscripten/src/chromium/base/files/file_util_posix.cc:344:
-first defined here
-
-/usr/bin/ld: src/chromium/libbase.a(file_util.cc.o): in function
-`base::CreateTemporaryFileInDir(base::FilePath const&, base::FilePath*)':
-
-
-/home/denis/workspace/skia-opengl-emscripten/src/chromium/base/files/file_util.cc:319:
-multiple definition of `base::CreateTemporaryFileInDir(base::FilePath
-const&, base::FilePath*)';
-src/chromium/libbase.a(file_util_posix.cc.o):/home/denis/workspace/skia-opengl-emscripten/src/chromium/base/files/file_util_posix.cc:720:
-first defined here
-
-/usr/bin/ld: skia/libskia.a(typeface_freetype.SkFontHost_FreeType.o):
-undefined reference to symbol 'dlclose@@GLIBC_2.2.5'
-
-/usr/bin/ld: //lib/x86_64-linux-gnu/libdl.so.2: error adding symbols: DSO
-missing from command line
-
-clang: error: linker command failed with exit code 1 (use -v to see
-invocation)
-
-make[2]: *** [CMakeFiles/skemgl.dir/build.make:219: skemgl] Error 1
-
-make[1]: *** [CMakeFiles/Makefile2:467: CMakeFiles/skemgl.dir/all] Error 2
-
-make: *** [Makefile:84: all] Error 2
-

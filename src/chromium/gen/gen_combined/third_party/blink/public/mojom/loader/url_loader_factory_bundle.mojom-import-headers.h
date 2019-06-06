@@ -4,8 +4,10 @@
 
 #ifndef THIRD_PARTY_BLINK_PUBLIC_MOJOM_LOADER_URL_LOADER_FACTORY_BUNDLE_MOJOM_IMPORT_HEADERS_H_
 #define THIRD_PARTY_BLINK_PUBLIC_MOJOM_LOADER_URL_LOADER_FACTORY_BUNDLE_MOJOM_IMPORT_HEADERS_H_
+#if defined(ENABLE_GNET)
 #include "services/network/public/mojom/url_loader_factory.mojom.h"
 #include "services/network/public/mojom/url_loader_factory.mojom-import-headers.h"
+#endif // ENABLE_GNET
 #include "url/mojom/origin.mojom.h"
 #include "url/mojom/origin.mojom-import-headers.h"
 

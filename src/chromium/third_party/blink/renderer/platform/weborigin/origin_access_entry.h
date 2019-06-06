@@ -31,11 +31,13 @@
 #ifndef THIRD_PARTY_BLINK_RENDERER_PLATFORM_WEBORIGIN_ORIGIN_ACCESS_ENTRY_H_
 #define THIRD_PARTY_BLINK_RENDERER_PLATFORM_WEBORIGIN_ORIGIN_ACCESS_ENTRY_H_
 
+#if defined(ENABLE_GNET)
 #include "services/network/public/cpp/cors/origin_access_entry.h"
+#endif // ENABLE_GNET
 #include "third_party/blink/renderer/platform/platform_export.h"
 #include "third_party/blink/renderer/platform/wtf/allocator.h"
 #include "third_party/blink/renderer/platform/wtf/text/wtf_string.h"
-
+#if defined(ENABLE_GNET)
 namespace blink {
 
 class SecurityOrigin;
@@ -77,5 +79,6 @@ class PLATFORM_EXPORT OriginAccessEntry {
 };
 
 }  // namespace blink
+#endif // ENABLE_GNET
 
 #endif  // THIRD_PARTY_BLINK_RENDERER_PLATFORM_WEBORIGIN_ORIGIN_ACCESS_ENTRY_H_

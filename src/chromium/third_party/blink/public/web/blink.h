@@ -31,7 +31,9 @@
 #ifndef THIRD_PARTY_BLINK_PUBLIC_WEB_BLINK_H_
 #define THIRD_PARTY_BLINK_PUBLIC_WEB_BLINK_H_
 
+#if defined(ENABLE_GNET)
 #include "services/service_manager/public/cpp/binder_registry.h"
+#endif // ENABLE_GNET
 #include "third_party/blink/public/platform/platform.h"
 #include "v8/include/v8.h"
 
@@ -45,7 +47,9 @@ namespace blink {
 // must remain valid until the current thread calls shutdown.
 BLINK_EXPORT void Initialize(
     Platform*,
+#if defined(ENABLE_GNET)
     service_manager::BinderRegistry*,
+#endif // ENABLE_GNET
     scheduler::WebThreadScheduler* main_thread_scheduler);
 
 // The same as above, but this only supports simple single-threaded execution
@@ -57,8 +61,12 @@ BLINK_EXPORT void Initialize(
 // a certain convention on CurrentThread(); see the comments at
 // Platform::CreateMainThreadAndInitialize().
 BLINK_EXPORT void CreateMainThreadAndInitialize(
-    Platform*,
-    service_manager::BinderRegistry*);
+    Platform*
+#if defined(ENABLE_GNET)
+    ,
+    service_manager::BinderRegistry*
+#endif // ENABLE_GNET
+    );
 
 // Get the V8 Isolate for the main thread.
 // initialize must have been called first.

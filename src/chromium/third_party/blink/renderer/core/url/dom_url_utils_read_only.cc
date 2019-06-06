@@ -45,9 +45,13 @@ void DOMURLUtilsReadOnly::href(USVStringOrTrustedURL& result) {
 }
 
 String DOMURLUtilsReadOnly::origin(const KURL& kurl) {
+#if defined(ENABLE_GNET)
   if (kurl.IsNull())
     return "";
   return SecurityOrigin::Create(kurl)->ToString();
+#else
+  return "";
+#endif // ENABLE_GNET
 }
 
 String DOMURLUtilsReadOnly::host(const KURL& kurl) {

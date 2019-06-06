@@ -25,7 +25,9 @@
 #include "mojo/public/mojom/base/string16.mojom-shared.h"
 #include "mojo/public/mojom/base/time.mojom-shared.h"
 #include "mojo/public/mojom/base/unguessable_token.mojom-shared.h"
+#if defined(ENABLE_GNET)
 #include "services/network/public/mojom/url_loader_factory.mojom-shared.h"
+#endif // ENABLE_GNET
 #include "third_party/blink/public/mojom/devtools/console_message.mojom-shared.h"
 #include "third_party/blink/public/mojom/devtools/devtools_agent.mojom-shared.h"
 #include "third_party/blink/public/mojom/loader/url_loader_factory_bundle.mojom-shared.h"

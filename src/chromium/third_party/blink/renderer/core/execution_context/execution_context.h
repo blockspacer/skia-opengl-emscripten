@@ -54,11 +54,13 @@ namespace service_manager {
 class InterfaceProvider;
 }
 
+#if defined(ENABLE_GNET)
 namespace network {
 namespace mojom {
 enum class ReferrerPolicy : int32_t;
 }  // namespace mojom
 }  // namespace network
+#endif // ENABLE_GNET
 
 namespace blink {
 
@@ -272,10 +274,12 @@ class CORE_EXPORT ExecutionContext : public ContextLifecycleNotifier,
   // parsed as valid policies.
   void ParseAndSetReferrerPolicy(const String& policies,
                                  bool support_legacy_keywords = false);
+#if defined(ENABLE_GNET)
   void SetReferrerPolicy(network::mojom::ReferrerPolicy);
   virtual network::mojom::ReferrerPolicy GetReferrerPolicy() const {
     return referrer_policy_;
   }
+#endif // ENABLE_GNET
 
   virtual CoreProbeSink* GetProbeSink() { return nullptr; }
 
@@ -332,8 +336,9 @@ class CORE_EXPORT ExecutionContext : public ContextLifecycleNotifier,
   // |allowWindowInteraction()| and |consumeWindowInteraction()| in order to
   // increment and decrement the counter.
   int window_interaction_tokens_;
-
+#if defined(ENABLE_GNET)
   network::mojom::ReferrerPolicy referrer_policy_;
+#endif // ENABLE_GNET
 
   std::unique_ptr<InterfaceInvalidator> invalidator_;
 

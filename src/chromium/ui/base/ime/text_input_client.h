@@ -16,7 +16,9 @@
 #include "base/i18n/rtl.h"
 #include "base/strings/string16.h"
 #include "build/build_config.h"
+#if defined(ENABLE_UKM)
 #include "services/metrics/public/cpp/ukm_source_id.h"
+#endif // ENABLE_UKM
 #include "ui/base/ime/composition_text.h"
 #include "ui/base/ime/text_input_mode.h"
 #include "ui/base/ime/text_input_type.h"
@@ -195,9 +197,12 @@ class COMPONENT_EXPORT(UI_BASE_IME) TextInputClient {
   // or user-specified, keybindings that may be set up.
   virtual void SetTextEditCommandForNextKeyEvent(TextEditCommand command) = 0;
 
+
+#if defined(ENABLE_UKM)
   // Returns a UKM source for identifying the input client (e.g. for web input
   // clients, the source represents the URL of the page).
   virtual ukm::SourceId GetClientSourceForMetrics() const = 0;
+#endif // ENABLE_UKM
 
   // Returns whether text entered into this text client should be used to
   // improve typing suggestions for the user. This should return false for text

@@ -28,7 +28,9 @@
 #include "third_party/blink/public/mojom/worker/shared_worker_factory.mojom-shared.h"
 #include "third_party/blink/public/mojom/worker/shared_worker_factory.mojom-forward.h"
 #include "mojo/public/mojom/base/unguessable_token.mojom-forward.h"
+#if defined(ENABLE_GNET)
 #include "services/network/public/mojom/url_loader_factory.mojom-forward.h"
+#endif // ENABLE_GNET
 #include "services/service_manager/public/mojom/interface_provider.mojom-forward.h"
 #include "third_party/blink/public/mojom/loader/url_loader_factory_bundle.mojom-forward.h"
 #include "third_party/blink/public/mojom/renderer_preference_watcher.mojom-forward.h"

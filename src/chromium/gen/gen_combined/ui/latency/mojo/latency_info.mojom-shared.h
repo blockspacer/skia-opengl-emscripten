@@ -239,6 +239,7 @@ struct EnumTraits<::ui::mojom::LatencyComponentType, ::ui::mojom::LatencyCompone
   }
 };
 
+#if defined(ENABLE_GIPC)
 namespace internal {
 
 template <typename MaybeConstUserType>
@@ -348,6 +349,7 @@ struct Serializer<::ui::mojom::LatencyInfoDataView, MaybeConstUserType> {
 };
 
 }  // namespace internal
+#endif // ENABLE_GIPC
 
 }  // namespace mojo
 

@@ -26,7 +26,9 @@
 #include "mojo/public/cpp/bindings/binding.h"
 #include "mojo/public/cpp/bindings/pending_receiver.h"
 #include "mojo/public/cpp/system/message_pipe.h"
+#if defined(ENABLE_GNET)
 #include "services/service_manager/public/mojom/service.mojom.h"
+#endif // ENABLE_GNET
 #include "services/viz/privileged/interfaces/compositing/frame_sink_manager.mojom.h"
 #include "services/viz/privileged/interfaces/gl/gpu_host.mojom.h"
 #include "services/viz/privileged/interfaces/gl/gpu_service.mojom.h"

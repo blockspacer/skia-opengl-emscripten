@@ -9,7 +9,10 @@
 
 #include "base/memory/scoped_refptr.h"
 #include "base/single_thread_task_runner.h"
+
+#if defined(ENABLE_UKM)
 #include "services/metrics/public/cpp/ukm_source_id.h"
+#endif // ENABLE_UKM
 #include "third_party/blink/public/mojom/loader/pause_subresource_loading_handle.mojom-blink.h"
 #include "third_party/blink/public/platform/scheduler/web_resource_loading_task_runner_handle.h"
 #include "third_party/blink/public/platform/scheduler/web_scoped_virtual_time_pauser.h"
@@ -19,9 +22,11 @@
 #include "third_party/blink/renderer/platform/wtf/hash_set.h"
 #include "third_party/blink/renderer/platform/wtf/text/wtf_string.h"
 
+#if defined(ENABLE_UKM)
 namespace ukm {
 class UkmRecorder;
 }
+#endif // ENABLE_UKM
 
 namespace blink {
 
@@ -33,8 +38,10 @@ class FrameScheduler : public FrameOrWorkerScheduler {
    public:
     virtual ~Delegate() = default;
 
+#if defined(ENABLE_UKM)
     virtual ukm::UkmRecorder* GetUkmRecorder() = 0;
     virtual ukm::SourceId GetUkmSourceId() = 0;
+#endif // ENABLE_UKM
 
     // Called when a frame has exceeded a total task time threshold (100ms).
     virtual void UpdateTaskTime(base::TimeDelta time) = 0;
@@ -145,8 +152,10 @@ class FrameScheduler : public FrameOrWorkerScheduler {
   // of the page.
   virtual bool IsExemptFromBudgetBasedThrottling() const = 0;
 
+#if defined(ENABLE_UKM)
   // Returns UKM source id for recording metrics associated with this frame.
   virtual ukm::SourceId GetUkmSourceId() = 0;
+#endif // ENABLE_UKM
 
   FrameScheduler* ToFrameScheduler() override { return this; }
 

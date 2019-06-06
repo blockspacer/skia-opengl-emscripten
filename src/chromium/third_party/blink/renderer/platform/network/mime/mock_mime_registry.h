@@ -5,7 +5,9 @@
 #ifndef THIRD_PARTY_BLINK_RENDERER_PLATFORM_NETWORK_MIME_MOCK_MIME_REGISTRY_H_
 #define THIRD_PARTY_BLINK_RENDERER_PLATFORM_NETWORK_MIME_MOCK_MIME_REGISTRY_H_
 
+#if defined(ENABLE_GNET)
 #include "net/base/mime_util.h"
+#endif // ENABLE_GNET
 #include "third_party/blink/public/mojom/mime/mime_registry.mojom-blink.h"
 #include "third_party/blink/public/platform/file_path_conversion.h"
 

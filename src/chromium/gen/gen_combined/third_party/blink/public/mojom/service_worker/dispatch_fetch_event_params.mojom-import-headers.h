@@ -4,8 +4,10 @@
 
 #ifndef THIRD_PARTY_BLINK_PUBLIC_MOJOM_SERVICE_WORKER_DISPATCH_FETCH_EVENT_PARAMS_MOJOM_IMPORT_HEADERS_H_
 #define THIRD_PARTY_BLINK_PUBLIC_MOJOM_SERVICE_WORKER_DISPATCH_FETCH_EVENT_PARAMS_MOJOM_IMPORT_HEADERS_H_
+#if defined(ENABLE_GNET)
 #include "services/network/public/mojom/url_loader.mojom.h"
 #include "services/network/public/mojom/url_loader.mojom-import-headers.h"
+#endif // ENABLE_GNET
 #include "third_party/blink/public/mojom/blob/blob.mojom.h"
 #include "third_party/blink/public/mojom/blob/blob.mojom-import-headers.h"
 #include "third_party/blink/public/mojom/fetch/fetch_api_request.mojom.h"

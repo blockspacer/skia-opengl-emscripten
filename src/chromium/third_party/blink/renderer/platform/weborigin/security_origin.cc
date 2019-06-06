@@ -34,7 +34,9 @@
 #include <string>
 #include <utility>
 
+#if defined(ENABLE_GNET)
 #include "net/base/url_util.h"
+#endif // ENABLE_GNET
 #include "third_party/blink/renderer/platform/runtime_enabled_features.h"
 #include "third_party/blink/renderer/platform/weborigin/known_ports.h"
 #include "third_party/blink/renderer/platform/weborigin/kurl.h"
@@ -51,6 +53,7 @@
 #include "url/url_canon_ip.h"
 #include "url/url_util.h"
 
+#if defined(ENABLE_GNET)
 namespace blink {
 
 namespace {
@@ -502,7 +505,11 @@ bool SecurityOrigin::IsLocalhost() const {
   // We special-case "[::1]" here because `net::HostStringIsLocalhost` expects a
   // canonicalization that excludes the braces; a simple string comparison is
   // simpler than trying to adjust Blink's canonicalization.
+#if defined(ENABLE_GNET)
   return host_ == "[::1]" || net::HostStringIsLocalhost(host_.Ascii().data());
+#else
+  return true;
+#endif // ENABLE_GNET
 }
 
 String SecurityOrigin::ToString() const {
@@ -661,3 +668,4 @@ String SecurityOrigin::CanonicalizeHost(const String& host, bool* success) {
 }
 
 }  // namespace blink
+#endif // ENABLE_GNET

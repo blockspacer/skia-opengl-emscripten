@@ -27,7 +27,9 @@
 #include "mojo/public/cpp/bindings/union_traits.h"
 #include "third_party/blink/public/mojom/loader/url_loader_factory_bundle.mojom-shared.h"
 #include "third_party/blink/public/mojom/loader/url_loader_factory_bundle.mojom-blink-forward.h"
+#if defined(ENABLE_GNET)
 #include "services/network/public/mojom/url_loader_factory.mojom-blink.h"
+#endif // ENABLE_GNET
 #include "url/mojom/origin.mojom-blink.h"
 
 #include "mojo/public/cpp/bindings/lib/wtf_clone_equals_util.h"

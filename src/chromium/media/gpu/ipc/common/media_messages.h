@@ -10,6 +10,7 @@
 #include "base/unguessable_token.h"
 #include "gpu/config/gpu_info.h"
 #include "gpu/ipc/common/gpu_param_traits_macros.h"
+#if defined(ENABLE_GIPC)
 #include "ipc/ipc_message_macros.h"
 #include "ipc/param_traits_macros.h"
 #include "media/base/overlay_info.h"
@@ -120,3 +121,4 @@ IPC_MESSAGE_ROUTED0(AcceleratedVideoDecoderHostMsg_ResetDone)
 // Video decoder has encountered an error.
 IPC_MESSAGE_ROUTED1(AcceleratedVideoDecoderHostMsg_ErrorNotification,
                     uint32_t /* Error ID */)
+#endif // ENABLE_GIPC

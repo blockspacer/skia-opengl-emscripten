@@ -8,7 +8,9 @@
 #include "base/strings/string_util.h"
 #include "media/base/mime_util.h"
 #include "media/filters/stream_parser_factory.h"
+#if defined(ENABLE_GNET)
 #include "net/base/mime_util.h"
+#endif // ENABLE_GNET
 #include "third_party/blink/public/common/mime_util/mime_util.h"
 #include "third_party/blink/public/mojom/mime/mime_registry.mojom-blink.h"
 #include "third_party/blink/public/platform/file_path_conversion.h"

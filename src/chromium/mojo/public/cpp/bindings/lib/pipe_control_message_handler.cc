@@ -66,8 +66,10 @@ bool PipeControlMessageHandler::RunOrClosePipe(Message* message) {
           pipe_control::internal::RunOrClosePipeMessageParams_Data*>(
           message->mutable_payload());
   pipe_control::RunOrClosePipeMessageParamsPtr params_ptr;
+#if defined(ENABLE_GIPC)
   internal::Deserialize<pipe_control::RunOrClosePipeMessageParamsDataView>(
       params, &params_ptr, &context);
+#endif // ENABLE_GIPC
 
   if (params_ptr->input->is_peer_associated_endpoint_closed_event()) {
     const auto& event =

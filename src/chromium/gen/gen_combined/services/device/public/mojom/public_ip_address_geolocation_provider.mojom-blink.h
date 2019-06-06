@@ -27,7 +27,9 @@
 #include "mojo/public/cpp/bindings/union_traits.h"
 #include "services/device/public/mojom/public_ip_address_geolocation_provider.mojom-shared.h"
 #include "services/device/public/mojom/public_ip_address_geolocation_provider.mojom-blink-forward.h"
+#if defined(ENABLE_GNET)
 #include "services/network/public/mojom/mutable_partial_network_traffic_annotation_tag.mojom-blink-forward.h"
+#endif // ENABLE_GNET
 #include "services/device/public/mojom/geolocation.mojom-blink-forward.h"
 
 #include "mojo/public/cpp/bindings/lib/wtf_clone_equals_util.h"

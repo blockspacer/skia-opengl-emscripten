@@ -50,6 +50,7 @@
 #include "third_party/blink/renderer/platform/wtf/thread_safe_ref_counted.h"
 #include "third_party/blink/renderer/platform/wtf/threading_primitives.h"
 
+#if defined(ENABLE_GNET)
 namespace network {
 namespace mojom {
 namespace blink {
@@ -58,6 +59,7 @@ using DataPipeGetterPtr = mojo::InterfacePtr<DataPipeGetter>;
 }  // namespace blink
 }  // namespace mojom
 }  // namespace network
+#endif // ENABLE_GNET
 
 namespace blink {
 namespace mojom {
@@ -210,7 +212,9 @@ class PLATFORM_EXPORT BlobDataHandle
   ~BlobDataHandle();
 
   mojom::blink::BlobPtr CloneBlobPtr();
+#if defined(ENABLE_GNET)
   network::mojom::blink::DataPipeGetterPtr AsDataPipeGetter();
+#endif // ENABLE_GNET
 
   void ReadAll(mojo::ScopedDataPipeProducerHandle,
                mojom::blink::BlobReaderClientPtr);

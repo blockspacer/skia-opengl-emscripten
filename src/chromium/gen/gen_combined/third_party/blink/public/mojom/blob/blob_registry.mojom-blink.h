@@ -148,8 +148,9 @@ class PLATFORM_EXPORT BlobRegistry
   
   virtual void GetBlobFromUUID(::blink::mojom::blink::BlobRequest blob, const WTF::String& uuid, GetBlobFromUUIDCallback callback) = 0;
 
-  
+#if defined(ENABLE_GNET)
   virtual void URLStoreForOrigin(const scoped_refptr<const ::blink::SecurityOrigin>& origin, ::blink::mojom::blink::BlobURLStoreAssociatedRequest url_store) = 0;
+#endif // ENABLE_GNET
 };
 
 class PLATFORM_EXPORT ProgressClientProxy
@@ -175,7 +176,9 @@ class PLATFORM_EXPORT BlobRegistryProxy
   void RegisterFromStream(const WTF::String& content_type, const WTF::String& content_disposition, uint64_t length_hint, mojo::ScopedDataPipeConsumerHandle data, ProgressClientAssociatedPtrInfo progress_client, RegisterFromStreamCallback callback) final;
   bool GetBlobFromUUID(::blink::mojom::blink::BlobRequest blob, const WTF::String& uuid) final;
   void GetBlobFromUUID(::blink::mojom::blink::BlobRequest blob, const WTF::String& uuid, GetBlobFromUUIDCallback callback) final;
+#if defined(ENABLE_GNET)
   void URLStoreForOrigin(const scoped_refptr<const ::blink::SecurityOrigin>& origin, ::blink::mojom::blink::BlobURLStoreAssociatedRequest url_store) final;
+#endif // ENABLE_GNET
 
  private:
   mojo::MessageReceiverWithResponder* receiver_;

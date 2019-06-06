@@ -35,7 +35,9 @@
 #include "base/gtest_prod_util.h"
 #include "base/single_thread_task_runner.h"
 #include "mojo/public/cpp/bindings/associated_binding.h"
+#if defined(ENABLE_GNET)
 #include "services/network/public/mojom/fetch_api.mojom-shared.h"
+#endif // ENABLE_GNET
 #include "third_party/blink/public/mojom/blob/blob_registry.mojom-blink.h"
 #include "third_party/blink/public/platform/web_url_loader.h"
 #include "third_party/blink/public/platform/web_url_loader_client.h"

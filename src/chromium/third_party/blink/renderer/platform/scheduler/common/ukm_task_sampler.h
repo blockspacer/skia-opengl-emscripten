@@ -10,6 +10,7 @@
 #include "base/gtest_prod_util.h"
 #include "third_party/blink/renderer/platform/platform_export.h"
 
+#if defined(ENABLE_UKM)
 namespace blink {
 namespace scheduler {
 
@@ -52,5 +53,6 @@ class PLATFORM_EXPORT UkmTaskSampler {
 
 }  // namespace scheduler
 }  // namespace blink
+#endif // ENABLE_UKM
 
 #endif  // THIRD_PARTY_BLINK_RENDERER_PLATFORM_SCHEDULER_COMMON_UKM_TASK_SAMPLER_H_

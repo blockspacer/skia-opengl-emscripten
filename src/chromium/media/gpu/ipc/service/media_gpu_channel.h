@@ -8,6 +8,7 @@
 #include <memory>
 
 #include "base/unguessable_token.h"
+#if defined(ENABLE_GIPC)
 #include "ipc/ipc_listener.h"
 #include "ipc/ipc_sender.h"
 #include "media/base/android_overlay_mojo_factory.h"
@@ -59,5 +60,6 @@ class MediaGpuChannel : public IPC::Listener, public IPC::Sender {
 };
 
 }  // namespace media
+#endif // ENABLE_GIPC
 
 #endif  // MEDIA_GPU_IPC_SERVICE_MEDIA_GPU_CHANNEL_H_

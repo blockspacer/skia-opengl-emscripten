@@ -5,6 +5,7 @@
 #ifndef CC_TEST_TEST_UKM_RECORDER_FACTORY_H_
 #define CC_TEST_TEST_UKM_RECORDER_FACTORY_H_
 
+#if defined(ENABLE_UKM)
 #include "cc/trees/ukm_manager.h"
 
 namespace cc {
@@ -17,5 +18,6 @@ class TestUkmRecorderFactory : public UkmRecorderFactory {
 };
 
 }  // namespace cc
+#endif // ENABLE_UKM
 
 #endif  // CC_TEST_TEST_UKM_RECORDER_FACTORY_H_

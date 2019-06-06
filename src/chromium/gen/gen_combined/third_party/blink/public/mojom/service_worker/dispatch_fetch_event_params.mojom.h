@@ -27,7 +27,9 @@
 #include "mojo/public/cpp/bindings/union_traits.h"
 #include "third_party/blink/public/mojom/service_worker/dispatch_fetch_event_params.mojom-shared.h"
 #include "third_party/blink/public/mojom/service_worker/dispatch_fetch_event_params.mojom-forward.h"
+#if defined(ENABLE_GNET)
 #include "services/network/public/mojom/url_loader.mojom.h"
+#endif // ENABLE_GNET
 #include "third_party/blink/public/mojom/blob/blob.mojom.h"
 #include "third_party/blink/public/mojom/fetch/fetch_api_request.mojom.h"
 #include <string>

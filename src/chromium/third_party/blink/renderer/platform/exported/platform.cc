@@ -37,10 +37,10 @@
 #include "base/trace_event/memory_dump_manager.h"
 #include "build/build_config.h"
 
-//#if !defined(__EMSCRIPTEN__) && defined(__TODO__)
+#if defined(ENABLE_GNET)
 #include "services/service_manager/public/cpp/connector.h"
 #include "services/service_manager/public/cpp/interface_provider.h"
-//#endif // __EMSCRIPTEN__
+#endif // ENABLE_GNET
 
 #include "third_party/blink/public/platform/interface_provider.h"
 #include "third_party/blink/public/platform/scheduler/web_thread_scheduler.h"
@@ -98,14 +98,19 @@ class DefaultConnector {
 
  public:
   DefaultConnector() {
+#if defined(ENABLE_GNET)
     service_manager::mojom::ConnectorRequest request;
     connector_ = service_manager::Connector::Create(&request);
+#endif // ENABLE_GNET
   }
-
+#if defined(ENABLE_GNET)
   service_manager::Connector* Get() { return connector_.get(); }
+#endif // ENABLE_GNET
 
  private:
+#if defined(ENABLE_GNET)
   std::unique_ptr<service_manager::Connector> connector_;
+#endif // ENABLE_GNET
 };
 //#endif // __EMSCRIPTEN__
 
@@ -282,12 +287,12 @@ Platform* Platform::Current() {
   return g_platform;
 }
 
-//#if !defined(__EMSCRIPTEN__) && defined(__TODO__)
+#if defined(ENABLE_GNET)
 service_manager::Connector* Platform::GetConnector() {
   DEFINE_STATIC_LOCAL(DefaultConnector, connector, ());
   return connector.Get();
 }
-//#endif //__EMSCRIPTEN__
+#endif // ENABLE_GNET
 
 InterfaceProvider* Platform::GetInterfaceProvider() {
   return InterfaceProvider::GetEmptyInterfaceProvider();

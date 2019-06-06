@@ -45,7 +45,9 @@
 #include "mojo/public/cpp/system/message_pipe.h"
 
 //#if !defined(OS_EMSCRIPTEN) && defined(ENABLE_NETWORK)
+#if defined(ENABLE_GNET)
 #include "services/network/public/cpp/shared_url_loader_factory.h"
+#endif // ENABLE_GNET
 //#endif // OS_EMSCRIPTEN
 
 //#if !defined(OS_EMSCRIPTEN) && defined(ENABLE_MOJOM)
@@ -100,10 +102,12 @@ class Thread;
 }
 #endif
 
+#if defined(ENABLE_GNET)
 namespace service_manager {
 class Connector;
 class InterfaceProvider;
 }
+#endif // ENABLE_GNET
 
 namespace v8 {
 class Context;
@@ -152,9 +156,11 @@ class WebSpeechSynthesizerClient;
 class WebStorageNamespace;
 class WebThemeEngine;
 class WebTransmissionEncodingInfoHandler;
+#if defined(ENABLE_GNET)
 class WebURLLoaderMockFactory;
 class WebURLResponse;
 class WebURLResponse;
+#endif // ENABLE_GNET
 
 namespace scheduler {
 class WebThreadScheduler;
@@ -350,9 +356,11 @@ class BLINK_PLATFORM_EXPORT Platform {
   // using both the bundle and this default.
   //
   // TODO(kinuko): https://crbug.com/891872: See if we can deprecate this too.
+#if defined(ENABLE_GNET)
   virtual std::unique_ptr<WebURLLoaderFactory> CreateDefaultURLLoaderFactory() {
     return nullptr;
   }
+#endif // ENABLE_GNET
 
   // Returns the CodeCacheLoader that is used to fetch data from code caches.
   // It is OK to return a nullptr. When a nullptr is returned, data would not
@@ -361,6 +369,7 @@ class BLINK_PLATFORM_EXPORT Platform {
     return nullptr;
   }
 
+#if defined(ENABLE_GNET)
   // Returns a new WebURLLoaderFactory that wraps the given
   // network::mojom::URLLoaderFactory.
   virtual std::unique_ptr<WebURLLoaderFactory> WrapURLLoaderFactory(
@@ -375,6 +384,7 @@ class BLINK_PLATFORM_EXPORT Platform {
       scoped_refptr<network::SharedURLLoaderFactory> factory) {
     return nullptr;
   }
+#endif // ENABLE_GNET
 
   // May return null.
   virtual WebPrescientNetworking* PrescientNetworking() { return nullptr; }
@@ -515,7 +525,9 @@ class BLINK_PLATFORM_EXPORT Platform {
   // Gets a pointer to URLLoaderMockFactory for testing. Will not be available
   // in production builds.
   // TODO(kinuko,toyoshim): Deprecate this one. (crbug.com/751425)
+#if defined(ENABLE_GNET)
   virtual WebURLLoaderMockFactory* GetURLLoaderMockFactory() { return nullptr; }
+#endif // ENABLE_GNET
 
   // Record to a RAPPOR privacy-preserving metric, see:
   // https://www.chromium.org/developers/design-documents/rappor.
@@ -682,12 +694,13 @@ class BLINK_PLATFORM_EXPORT Platform {
 #endif
 
   // WebWorker ----------------------------------------------------------
-
+#if defined(ENABLE_GNET)
   virtual std::unique_ptr<WebDedicatedWorkerHostFactoryClient>
   CreateDedicatedWorkerHostFactoryClient(WebDedicatedWorker*,
                                          service_manager::InterfaceProvider*) {
     return nullptr;
   }
+#endif // ENABLE_GNET
   virtual void DidStartWorkerThread() {}
   virtual void WillStopWorkerThread() {}
   virtual void WorkerContextCreated(const v8::Local<v8::Context>& worker) {}
@@ -701,8 +714,9 @@ class BLINK_PLATFORM_EXPORT Platform {
   virtual WebCrypto* Crypto() { return nullptr; }
 
   // Mojo ---------------------------------------------------------------
-
+#if defined(ENABLE_GNET)
   virtual service_manager::Connector* GetConnector();
+#endif // ENABLE_GNET
 
   virtual InterfaceProvider* GetInterfaceProvider();
 

@@ -12,7 +12,9 @@
 #include "gpu/command_buffer/common/swap_buffers_complete_params.h"
 #include "gpu/gpu_export.h"
 #include "gpu/ipc/common/gpu_command_buffer_traits.h"
+#if defined(ENABLE_GIPC)
 #include "ipc/ipc_message_macros.h"
+#endif // ENABLE_GIPC
 #include "ui/gfx/ipc/gfx_param_traits.h"
 #include "url/ipc/url_param_traits.h"
 

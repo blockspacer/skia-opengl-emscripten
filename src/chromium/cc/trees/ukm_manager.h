@@ -6,13 +6,18 @@
 #define CC_TREES_UKM_MANAGER_H_
 
 #include "cc/cc_export.h"
+#if defined(ENABLE_UKM)
 #include "services/metrics/public/cpp/ukm_source_id.h"
+#endif defined(ENABLE_UKM)
 #include "url/gurl.h"
 
+#if defined(ENABLE_UKM)
 namespace ukm {
 class UkmRecorder;
 }  // namespace ukm
+#endif // ENABLE_UKM
 
+#if defined(ENABLE_UKM)
 namespace cc {
 
 class CC_EXPORT UkmRecorderFactory {
@@ -58,5 +63,6 @@ class CC_EXPORT UkmManager {
 };
 
 }  // namespace cc
+#endif // ENABLE_UKM
 
 #endif  // CC_TREES_UKM_MANAGER_H_

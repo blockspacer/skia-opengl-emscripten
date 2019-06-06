@@ -7,7 +7,9 @@
 
 #include "third_party/blink/renderer/platform/platform_export.h"
 
+#if defined(ENABLE_GNET)
 #include "services/network/public/mojom/data_pipe_getter.mojom-blink.h"
+#endif // ENABLE_GNET
 
 namespace blink {
 

@@ -5,7 +5,9 @@
 #include "third_party/blink/renderer/platform/image-encoders/image_encoder_utils.h"
 
 #include "third_party/blink/renderer/platform/histogram.h"
+#if defined(ENABLE_GNET)
 #include "third_party/blink/renderer/platform/network/mime/mime_type_registry.h"
+#endif // ENABLE_GNET
 #include "third_party/blink/renderer/platform/wtf/threading.h"
 
 namespace blink {
@@ -75,9 +77,11 @@ ImageEncodingMimeType ImageEncoderUtils::ToEncodingMimeType(
   ImageEncodingMimeType encoding_mime_type = kDefaultEncodingMimeType;
   // FIXME: Make isSupportedImageMIMETypeForEncoding threadsafe (to allow this
   // method to be used on a worker thread).
+#if defined(ENABLE_GNET)
   if (MIMETypeRegistry::IsSupportedImageMIMETypeForEncoding(
           lowercase_mime_type))
     ParseImageEncodingMimeType(lowercase_mime_type, encoding_mime_type);
+#endif // ENABLE_GNET
   return encoding_mime_type;
 }
 

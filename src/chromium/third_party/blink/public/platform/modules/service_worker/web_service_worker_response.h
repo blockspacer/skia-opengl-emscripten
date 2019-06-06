@@ -7,8 +7,10 @@
 
 #include "base/time/time.h"
 #include "mojo/public/cpp/system/message_pipe.h"
+#if defined(ENABLE_GNET)
 #include "services/network/public/mojom/fetch_api.mojom-shared.h"
 #include "third_party/blink/public/mojom/fetch/fetch_api_request.mojom-shared.h"
+#endif // ENABLE_GNET
 #include "third_party/blink/public/mojom/service_worker/service_worker_error_type.mojom-shared.h"
 #include "third_party/blink/public/platform/web_common.h"
 #include "third_party/blink/public/platform/web_private_ptr.h"
@@ -22,6 +24,7 @@
 #include "third_party/blink/renderer/platform/wtf/text/string_hash.h"  // nogncheck
 #endif
 
+#if defined(ENABLE_GNET)
 namespace blink {
 
 class BlobDataHandle;
@@ -111,5 +114,6 @@ class BLINK_PLATFORM_EXPORT WebServiceWorkerResponse {
 };
 
 }  // namespace blink
+#endif // ENABLE_GNET
 
 #endif  // THIRD_PARTY_BLINK_PUBLIC_PLATFORM_MODULES_SERVICE_WORKER_WEB_SERVICE_WORKER_RESPONSE_H_

@@ -65,17 +65,23 @@ bool PolicyValue::Validate(
 }
 ParsedFeaturePolicyDeclaration::ParsedFeaturePolicyDeclaration()
     : feature(),
+#if defined(ENABLE_GNET)
       values(),
+#endif // ENABLE_GNET
       fallback_value(),
       opaque_value() {}
 
 ParsedFeaturePolicyDeclaration::ParsedFeaturePolicyDeclaration(
     FeaturePolicyFeature feature_in,
+#if defined(ENABLE_GNET)
     WTF::HashMap<scoped_refptr<const ::blink::SecurityOrigin>, PolicyValuePtr> values_in,
+#endif // ENABLE_GNET
     PolicyValuePtr fallback_value_in,
     PolicyValuePtr opaque_value_in)
     : feature(std::move(feature_in)),
+#if defined(ENABLE_GNET)
       values(std::move(values_in)),
+#endif // ENABLE_GNET
       fallback_value(std::move(fallback_value_in)),
       opaque_value(std::move(opaque_value_in)) {}
 
@@ -185,8 +191,10 @@ bool StructTraits<::blink::mojom::blink::ParsedFeaturePolicyDeclaration::DataVie
   
       if (!input.ReadFeature(&result->feature))
         success = false;
+#if defined(ENABLE_GNET)
       if (!input.ReadValues(&result->values))
         success = false;
+#endif // ENABLE_GNET
       if (!input.ReadFallbackValue(&result->fallback_value))
         success = false;
       if (!input.ReadOpaqueValue(&result->opaque_value))

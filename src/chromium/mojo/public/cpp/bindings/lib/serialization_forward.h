@@ -22,8 +22,10 @@
 namespace mojo {
 namespace internal {
 
+//#if defined(ENABLE_GIPC)
 template <typename MojomType, typename MaybeConstUserType>
 struct Serializer;
+//#endif // ENABLE_GIPC
 
 template <typename T>
 struct IsOptionalWrapper {
@@ -33,6 +35,7 @@ struct IsOptionalWrapper {
           typename std::remove_reference<T>::type>::type>::value;
 };
 
+#if defined(ENABLE_GIPC)
 template <typename MojomType,
           typename InputUserType,
           typename... Args,
@@ -43,7 +46,9 @@ void Serialize(InputUserType&& input, Args&&... args) {
       Serialize(std::forward<InputUserType>(input),
                 std::forward<Args>(args)...);
 }
+#endif // ENABLE_GIPC
 
+#if defined(ENABLE_GIPC)
 template <typename MojomType,
           typename DataType,
           typename InputUserType,
@@ -54,7 +59,9 @@ bool Deserialize(DataType&& input, InputUserType* output, Args&&... args) {
   return Serializer<MojomType, InputUserType>::Deserialize(
       std::forward<DataType>(input), output, std::forward<Args>(args)...);
 }
+#endif // ENABLE_GIPC
 
+#if defined(ENABLE_GIPC)
 template <typename MojomType,
           typename InputUserType,
           typename BufferWriterType,
@@ -69,7 +76,9 @@ void Serialize(InputUserType&& input,
     return;
   Serialize<MojomType>(*input, buffer, writer, std::forward<Args>(args)...);
 }
+#endif // ENABLE_GIPC
 
+#if defined(ENABLE_GIPC)
 template <typename MojomType,
           typename DataType,
           typename InputUserType,
@@ -86,6 +95,7 @@ bool Deserialize(DataType&& input, InputUserType* output, Args&&... args) {
   return Deserialize<MojomType>(std::forward<DataType>(input), &output->value(),
                                 std::forward<Args>(args)...);
 }
+#endif // ENABLE_GIPC
 
 }  // namespace internal
 }  // namespace mojo

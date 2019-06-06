@@ -16,6 +16,8 @@
 #include "base/optional.h"
 
 #include "mojo/public/cpp/bindings/mojo_buildflags.h"
+
+
 #if BUILDFLAG(MOJO_TRACE_ENABLED)
 #include "base/trace_event/trace_event.h"
 #endif
@@ -25,8 +27,10 @@
 #include "mojo/public/cpp/bindings/struct_ptr.h"
 #include "mojo/public/cpp/bindings/struct_traits.h"
 #include "mojo/public/cpp/bindings/union_traits.h"
+#if defined(ENABLE_GIPC)
 #include "ipc/ipc.mojom-shared.h"
 #include "ipc/ipc.mojom-forward.h"
+#endif // ENABLE_GIPC
 #include "mojo/public/mojom/base/big_buffer.mojom.h"
 #include "mojo/public/interfaces/bindings/native_struct.mojom.h"
 #include <string>
@@ -44,6 +48,9 @@
 
 #include "mojo/public/cpp/bindings/lib/native_enum_serialization.h"
 #include "mojo/public/cpp/bindings/lib/native_struct_serialization.h"
+
+
+#if defined(ENABLE_GIPC)
 #include "ipc/message_view.h"
 #include "base/component_export.h"
 
@@ -485,5 +492,6 @@ struct COMPONENT_EXPORT(IPC_MOJOM) StructTraits<::IPC::mojom::Message::DataView,
 };
 
 }  // namespace mojo
+#endif // ENABLE_GIPC
 
 #endif  // IPC_IPC_MOJOM_H_

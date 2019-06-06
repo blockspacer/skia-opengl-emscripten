@@ -47,7 +47,9 @@
 #include "cc/trees/viewport_layers.h"
 #include "components/viz/common/resources/resource_format.h"
 #include "components/viz/common/surfaces/local_surface_id_allocation.h"
+#if defined(ENABLE_UKM)
 #include "services/metrics/public/cpp/ukm_source_id.h"
+#endif // ENABLE_UKM
 #include "third_party/skia/include/core/SkColor.h"
 #include "ui/gfx/geometry/rect.h"
 
@@ -73,7 +75,9 @@ class RenderingStatsInstrumentation;
 struct OverscrollBehavior;
 class TaskGraphRunner;
 class UIResourceManager;
+#if defined(ENABLE_UKM)
 class UkmRecorderFactory;
+#endif // ENABLE_UKM
 struct RenderingStats;
 struct ScrollAndScaleSet;
 
@@ -108,7 +112,9 @@ class CC_EXPORT LayerTreeHost : public MutatorHostClient {
     // raster worker threads.
     scoped_refptr<base::SequencedTaskRunner> image_worker_task_runner;
 
+#if defined(ENABLE_UKM)
     std::unique_ptr<UkmRecorderFactory> ukm_recorder_factory;
+#endif // ENABLE_UKM
   };
 
   // Constructs a LayerTreeHost with a compositor thread where scrolling and
@@ -685,7 +691,9 @@ class CC_EXPORT LayerTreeHost : public MutatorHostClient {
 
   float recording_scale_factor() const { return recording_scale_factor_; }
 
+#if defined(ENABLE_UKM)
   void SetSourceURL(ukm::SourceId source_id, const GURL& url);
+#endif // ENABLE_UKM
 
   void SetRenderFrameObserver(
       std::unique_ptr<RenderFrameMetadataObserver> observer);
@@ -726,7 +734,9 @@ class CC_EXPORT LayerTreeHost : public MutatorHostClient {
   base::WeakPtr<InputHandler> input_handler_weak_ptr_;
 
   scoped_refptr<base::SequencedTaskRunner> image_worker_task_runner_;
+#if defined(ENABLE_UKM)
   std::unique_ptr<UkmRecorderFactory> ukm_recorder_factory_;
+#endif // ENABLE_UKM
 
  private:
   friend class LayerTreeHostSerializationTest;

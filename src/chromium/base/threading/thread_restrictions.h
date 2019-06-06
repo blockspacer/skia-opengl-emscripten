@@ -210,6 +210,7 @@ class CommandBufferLocal;
 class GpuState;
 class MaterialDesignController;
 }
+#if defined(ENABLE_GNET)
 namespace net {
 class MultiThreadedCertVerifierScopedAllowBaseSyncPrimitives;
 class MultiThreadedProxyResolverScopedAllowJoinOnIO;
@@ -220,6 +221,7 @@ namespace internal {
 class AddressTrackerLinux;
 }
 }
+#endif // ENABLE_GNET
 
 namespace remoting {
 class AutoThread;
@@ -231,10 +233,11 @@ class ScopedAllowThreadJoinForWebRtcTransport;
 namespace resource_coordinator {
 class TabManagerDelegate;
 }
-
+#if defined(ENABLE_GNET)
 namespace service_manager {
 class ServiceProcessLauncher;
 }
+#endif // ENABLE_GNET
 
 namespace shell_integration_linux {
 class LaunchXdgUtilityScopedAllowBaseSyncPrimitives;
@@ -409,7 +412,9 @@ class BASE_EXPORT ScopedAllowBaseSyncPrimitives {
   friend class leveldb_env::DBTracker;
   friend class media::BlockingUrlProtocol;
   friend class mojo::core::ScopedIPCSupport;
+#if defined(ENABLE_GNET)
   friend class net::MultiThreadedCertVerifierScopedAllowBaseSyncPrimitives;
+#endif // ENABLE_GNET
   friend class rlz_lib::FinancialPing;
   friend class shell_integration_linux::
       LaunchXdgUtilityScopedAllowBaseSyncPrimitives;
@@ -472,7 +477,9 @@ class BASE_EXPORT ScopedAllowBaseSyncPrimitivesOutsideBlockingScope {
   friend class media::AudioInputDevice;
   friend class media::AudioOutputDevice;
   friend class mojo::SyncCallRestrictions;
+#if defined(ENABLE_GNET)
   friend class net::NetworkConfigWatcherMacThread;
+#endif // ENABLE_GNET
   friend class viz::HostGpuMemoryBufferManager;
   friend class vr::VrShell;
 
@@ -491,16 +498,20 @@ class BASE_EXPORT ScopedAllowBaseSyncPrimitivesOutsideBlockingScope {
   friend class remoting::protocol::
       ScopedAllowThreadJoinForWebRtcTransport;      // http://crbug.com/660081
   friend class midi::TaskService;                   // https://crbug.com/796830
+#if defined(ENABLE_GNET)
   friend class net::internal::AddressTrackerLinux;  // http://crbug.com/125097
   friend class net::
       MultiThreadedProxyResolverScopedAllowJoinOnIO;  // http://crbug.com/69710
   friend class net::NetworkChangeNotifierMac;         // http://crbug.com/125097
   friend class net::
       ScopedAllowThreadJoinForProxyResolverV8Tracing;  // http://crbug.com/69710
+#endif // ENABLE_GNET
   friend class printing::PrinterQuery;                 // http://crbug.com/66082
   friend class remoting::AutoThread;  // https://crbug.com/944316
   // Not used in production yet, https://crbug.com/844078.
+#if defined(ENABLE_GNET)
   friend class service_manager::ServiceProcessLauncher;
+#endif // ENABLE_GNET
   friend class ui::WindowResizeHelperMac;  // http://crbug.com/902829
 
   ScopedAllowBaseSyncPrimitivesOutsideBlockingScope()

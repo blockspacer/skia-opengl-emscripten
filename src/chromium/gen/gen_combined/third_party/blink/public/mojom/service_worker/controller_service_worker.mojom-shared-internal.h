@@ -11,7 +11,9 @@
 #include "mojo/public/cpp/bindings/lib/buffer.h"
 #include "mojo/public/mojom/base/time.mojom-shared-internal.h"
 #include "mojo/public/mojom/base/unguessable_token.mojom-shared-internal.h"
+#if defined(ENABLE_GNET)
 #include "services/network/public/mojom/url_loader.mojom-shared-internal.h"
+#endif // ENABLE_GNET
 #include "third_party/blink/public/mojom/service_worker/controller_service_worker_mode.mojom-shared-internal.h"
 #include "third_party/blink/public/mojom/service_worker/dispatch_fetch_event_params.mojom-shared-internal.h"
 #include "third_party/blink/public/mojom/service_worker/service_worker_event_status.mojom-shared-internal.h"

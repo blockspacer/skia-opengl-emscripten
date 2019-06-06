@@ -165,6 +165,7 @@ struct ArraySerializer<
   }
 };
 
+//#if defined(ENABLE_GIPC)
 // Handles serialization and deserialization of arrays of enum types.
 template <typename MojomType,
           typename MaybeConstUserType,
@@ -197,8 +198,10 @@ struct ArraySerializer<
 
     Data* output = writer->data();
     size_t size = input->GetSize();
+#if defined(ENABLE_GIPC)
     for (size_t i = 0; i < size; ++i)
       Serialize<Element>(input->GetNext(), output->storage() + i);
+#endif // ENABLE_GIPC
   }
 
   static bool DeserializeElements(Data* input,
@@ -208,12 +211,15 @@ struct ArraySerializer<
       return false;
     ArrayIterator<Traits, UserType> iterator(*output);
     for (size_t i = 0; i < input->size(); ++i) {
+#if defined(ENABLE_GIPC)
       if (!Deserialize<Element>(input->at(i), &iterator.GetNext()))
         return false;
+#endif // ENABLE_GIPC
     }
     return true;
   }
 };
+//#endif // ENABLE_GIPC
 
 // Serializes and deserializes arrays of bools.
 template <typename MojomType,
@@ -292,7 +298,10 @@ struct ArraySerializer<
     size_t size = input->GetSize();
     for (size_t i = 0; i < size; ++i) {
       typename UserTypeIterator::GetNextResult next = input->GetNext();
+
+#if defined(ENABLE_GIPC)
       Serialize<Element>(next, &output->at(i), context);
+#endif // ENABLE_GIPC
 
       static const ValidationError kError =
           BelongsTo<Element,
@@ -316,9 +325,12 @@ struct ArraySerializer<
       return false;
     ArrayIterator<Traits, UserType> iterator(*output);
     for (size_t i = 0; i < input->size(); ++i) {
+
+#if defined(ENABLE_GIPC)
       bool result =
           Deserialize<Element>(&input->at(i), &iterator.GetNext(), context);
       DCHECK(result);
+#endif // ENABLE_GIPC
     }
     return true;
   }
@@ -437,7 +449,11 @@ struct ArraySerializer<
       ElementWriter result;
       result.AllocateInline(buf, writer->data()->storage() + i);
       typename UserTypeIterator::GetNextResult next = input->GetNext();
+
+#if defined(ENABLE_GIPC)
       Serialize<Element>(next, buf, &result, true, context);
+#endif // ENABLE_GIPC
+
       MOJO_INTERNAL_DLOG_SERIALIZATION_WARNING(
           !validate_params->element_is_nullable &&
               writer->data()->at(i).is_null(),
@@ -454,13 +470,16 @@ struct ArraySerializer<
       return false;
     ArrayIterator<Traits, UserType> iterator(*output);
     for (size_t i = 0; i < input->size(); ++i) {
+#if defined(ENABLE_GIPC)
       if (!Deserialize<Element>(&input->at(i), &iterator.GetNext(), context))
         return false;
+#endif // ENABLE_GIPC
     }
     return true;
   }
 };
 
+//#if defined(ENABLE_GIPC)
 template <typename Element, typename MaybeConstUserType>
 struct Serializer<ArrayDataView<Element>, MaybeConstUserType> {
   using UserType = typename std::remove_const<MaybeConstUserType>::type;
@@ -500,6 +519,7 @@ struct Serializer<ArrayDataView<Element>, MaybeConstUserType> {
     return Impl::DeserializeElements(input, output, context);
   }
 };
+//#endif // ENABLE_GIPC
 
 }  // namespace internal
 }  // namespace mojo

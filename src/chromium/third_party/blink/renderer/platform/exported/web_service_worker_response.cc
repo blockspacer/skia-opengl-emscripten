@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#if defined(ENABLE_GNET)
 #include "third_party/blink/public/platform/modules/service_worker/web_service_worker_response.h"
 
 #include "third_party/blink/public/mojom/blob/blob.mojom-blink.h"
@@ -236,3 +237,4 @@ mojo::ScopedMessagePipeHandle WebServiceWorkerResponse::CloneSideDataBlobPtr()
 }
 
 }  // namespace blink
+#endif // ENABLE_GNET

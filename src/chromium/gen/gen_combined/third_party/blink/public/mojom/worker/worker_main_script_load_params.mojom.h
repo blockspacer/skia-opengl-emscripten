@@ -27,7 +27,9 @@
 #include "mojo/public/cpp/bindings/union_traits.h"
 #include "third_party/blink/public/mojom/worker/worker_main_script_load_params.mojom-shared.h"
 #include "third_party/blink/public/mojom/worker/worker_main_script_load_params.mojom-forward.h"
+#if defined(ENABLE_GNET)
 #include "services/network/public/mojom/url_loader.mojom.h"
+#endif // ENABLE_GNET
 #include <string>
 #include <vector>
 

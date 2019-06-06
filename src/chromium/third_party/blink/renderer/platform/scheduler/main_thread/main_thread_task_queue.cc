@@ -205,6 +205,7 @@ void MainThreadTaskQueue::SetFrameSchedulerForTest(
   frame_scheduler_ = frame_scheduler;
 }
 
+#if defined(ENABLE_GNET)
 void MainThreadTaskQueue::SetNetRequestPriority(
     net::RequestPriority net_request_priority) {
   net_request_priority_ = net_request_priority;
@@ -214,6 +215,7 @@ base::Optional<net::RequestPriority> MainThreadTaskQueue::net_request_priority()
     const {
   return net_request_priority_;
 }
+#endif // ENABLE_GNET
 
 }  // namespace scheduler
 }  // namespace blink

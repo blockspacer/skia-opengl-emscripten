@@ -7,7 +7,9 @@
 
 #include <string>
 
+#if defined(ENABLE_GNET)
 #include "services/network/public/mojom/url_loader.mojom-blink.h"
+#endif // ENABLE_GNET
 #include "third_party/blink/renderer/platform/network/encoded_form_data.h"
 
 namespace mojo {

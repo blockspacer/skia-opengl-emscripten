@@ -5,7 +5,9 @@
 #ifndef IPC_IPC_MOJOM_TEST_UTILS_H_
 #define IPC_IPC_MOJOM_TEST_UTILS_H_
 
+#if defined(ENABLE_GIPC)
 #include "ipc/ipc.mojom.h"
+#endif // ENABLE_GIPC
 #include "base/component_export.h"
 
 

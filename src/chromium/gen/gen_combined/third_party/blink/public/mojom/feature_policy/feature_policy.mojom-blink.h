@@ -469,7 +469,9 @@ class PLATFORM_EXPORT ParsedFeaturePolicyDeclaration {
 
   ParsedFeaturePolicyDeclaration(
       FeaturePolicyFeature feature,
+#if defined(ENABLE_GNET)
       WTF::HashMap<scoped_refptr<const ::blink::SecurityOrigin>, PolicyValuePtr> values,
+#endif // ENABLE_GNET
       PolicyValuePtr fallback_value,
       PolicyValuePtr opaque_value);
 
@@ -545,8 +547,9 @@ class PLATFORM_EXPORT ParsedFeaturePolicyDeclaration {
 
   
   FeaturePolicyFeature feature;
-  
+#if defined(ENABLE_GNET)
   WTF::HashMap<scoped_refptr<const ::blink::SecurityOrigin>, PolicyValuePtr> values;
+#endif // ENABLE_GNET
   
   PolicyValuePtr fallback_value;
   
@@ -668,11 +671,12 @@ struct PLATFORM_EXPORT StructTraits<::blink::mojom::blink::ParsedFeaturePolicyDe
       const ::blink::mojom::blink::ParsedFeaturePolicyDeclarationPtr& input) {
     return input->feature;
   }
-
+#if defined(ENABLE_GNET)
   static const decltype(::blink::mojom::blink::ParsedFeaturePolicyDeclaration::values)& values(
       const ::blink::mojom::blink::ParsedFeaturePolicyDeclarationPtr& input) {
     return input->values;
   }
+#endif // ENABLE_GNET
 
   static const decltype(::blink::mojom::blink::ParsedFeaturePolicyDeclaration::fallback_value)& fallback_value(
       const ::blink::mojom::blink::ParsedFeaturePolicyDeclarationPtr& input) {

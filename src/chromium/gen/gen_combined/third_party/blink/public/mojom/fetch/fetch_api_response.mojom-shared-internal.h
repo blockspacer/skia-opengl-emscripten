@@ -10,7 +10,9 @@
 #include "mojo/public/cpp/bindings/lib/map_data_internal.h"
 #include "mojo/public/cpp/bindings/lib/buffer.h"
 #include "mojo/public/mojom/base/time.mojom-shared-internal.h"
+#if defined(ENABLE_GNET)
 #include "services/network/public/mojom/fetch_api.mojom-shared-internal.h"
+#endif // ENABLE_GNET
 #include "third_party/blink/public/mojom/blob/serialized_blob.mojom-shared-internal.h"
 #include "third_party/blink/public/mojom/service_worker/service_worker_error_type.mojom-shared-internal.h"
 #include "url/mojom/url.mojom-shared-internal.h"

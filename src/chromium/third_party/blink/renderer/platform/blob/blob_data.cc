@@ -37,7 +37,9 @@
 #include "base/memory/scoped_refptr.h"
 #include "base/single_thread_task_runner.h"
 #include "mojo/public/cpp/bindings/strong_binding.h"
+#if defined(ENABLE_GNET)
 #include "services/network/public/mojom/data_pipe_getter.mojom-blink.h"
+#endif // ENABLE_GNET
 #include "third_party/blink/public/mojom/blob/blob.mojom-blink.h"
 #include "third_party/blink/public/mojom/blob/blob_registry.mojom-blink.h"
 #include "third_party/blink/public/mojom/blob/data_element.mojom-blink.h"
@@ -379,6 +381,7 @@ BlobPtr BlobDataHandle::CloneBlobPtr() {
   return blob_clone;
 }
 
+#if defined(ENABLE_GNET)
 network::mojom::blink::DataPipeGetterPtr BlobDataHandle::AsDataPipeGetter() {
   MutexLocker locker(blob_info_mutex_);
   if (!blob_info_.is_valid())
@@ -390,6 +393,7 @@ network::mojom::blink::DataPipeGetterPtr BlobDataHandle::AsDataPipeGetter() {
   blob_info_ = blob.PassInterface();
   return result;
 }
+#endif // ENABLE_GNET
 
 void BlobDataHandle::ReadAll(mojo::ScopedDataPipeProducerHandle pipe,
                              mojom::blink::BlobReaderClientPtr client) {

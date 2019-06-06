@@ -21,7 +21,9 @@
 #include "mojo/public/cpp/bindings/lib/serialization.h"
 #include "mojo/public/cpp/bindings/map_data_view.h"
 #include "mojo/public/cpp/bindings/string_data_view.h"
+#if defined(ENABLE_GIPC)
 #include "ipc/ipc.mojom-shared-internal.h"
+#endif // ENABLE_GIPC
 #include "mojo/public/mojom/base/big_buffer.mojom-shared.h"
 #include "mojo/public/interfaces/bindings/native_struct.mojom-shared.h"
 
@@ -34,6 +36,7 @@
 
 
 
+#if defined(ENABLE_GIPC)
 
 namespace IPC {
 namespace mojom {
@@ -205,5 +208,6 @@ inline void MessageDataView::GetHandlesDataView(
 
 }  // namespace mojom
 }  // namespace IPC
+#endif // ENABLE_GIPC
 
 #endif  // IPC_IPC_MOJOM_SHARED_H_

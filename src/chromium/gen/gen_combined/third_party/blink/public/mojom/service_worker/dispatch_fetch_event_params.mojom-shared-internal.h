@@ -9,7 +9,9 @@
 #include "mojo/public/cpp/bindings/lib/bindings_internal.h"
 #include "mojo/public/cpp/bindings/lib/map_data_internal.h"
 #include "mojo/public/cpp/bindings/lib/buffer.h"
+#if defined(ENABLE_GNET)
 #include "services/network/public/mojom/url_loader.mojom-shared-internal.h"
+#endif // ENABLE_GNET
 #include "third_party/blink/public/mojom/blob/blob.mojom-shared-internal.h"
 #include "third_party/blink/public/mojom/fetch/fetch_api_request.mojom-shared-internal.h"
 #include "mojo/public/cpp/bindings/lib/native_enum_data.h"

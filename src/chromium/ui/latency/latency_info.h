@@ -15,11 +15,15 @@
 
 #include "base/containers/flat_map.h"
 #include "base/time/time.h"
+#if defined(ENABLE_UKM)
 #include "services/metrics/public/cpp/ukm_source_id.h"
+#endif // ENABLE_UKM
 #include "ui/gfx/geometry/point_f.h"
 
 #if !defined(OS_IOS)
+#if defined(ENABLE_GIPC)
 #include "ipc/ipc_param_traits.h"  // nogncheck
+#endif // ENABLE_GIPC
 #include "mojo/public/cpp/bindings/struct_traits.h"  // nogncheck
 #endif
 
@@ -193,8 +197,10 @@ class LatencyInfo {
   bool coalesced() const { return coalesced_; }
   int64_t trace_id() const { return trace_id_; }
   void set_trace_id(int64_t trace_id) { trace_id_ = trace_id; }
+#if defined(ENABLE_UKM)
   ukm::SourceId ukm_source_id() const { return ukm_source_id_; }
   void set_ukm_source_id(ukm::SourceId id) { ukm_source_id_ = id; }
+#endif // ENABLE_UKM
   const std::string& trace_name() const { return trace_name_; }
   void set_scroll_update_delta(float delta) { scroll_update_delta_ = delta; }
   float scroll_update_delta() const { return scroll_update_delta_; }
@@ -225,7 +231,9 @@ class LatencyInfo {
   int64_t trace_id_;
   // UKM Source id to be used for recording UKM metrics associated with this
   // event.
+#if defined(ENABLE_UKM)
   ukm::SourceId ukm_source_id_;
+#endif // ENABLE_UKM
   // Whether this event has been coalesced into another event.
   bool coalesced_;
   // Whether a begin component has been added.
@@ -239,7 +247,11 @@ class LatencyInfo {
   float predicted_scroll_update_delta_;
 
 #if !defined(OS_IOS)
+
+#if defined(ENABLE_GIPC)
   friend struct IPC::ParamTraits<ui::LatencyInfo>;
+#endif // ENABLE_GIPC
+
   friend struct mojo::StructTraits<ui::mojom::LatencyInfoDataView,
                                    ui::LatencyInfo>;
 #endif

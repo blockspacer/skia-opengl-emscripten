@@ -6,8 +6,10 @@
 
 #include <memory>
 #include <string>
+#if defined(ENABLE_GNET)
 #include "net/http/http_request_headers.h"
 #include "net/http/http_response_headers.h"
+#endif // ENABLE_GNET
 #include "third_party/blink/public/platform/web_string.h"
 #include "third_party/blink/renderer/platform/network/http_header_map.h"
 #include "third_party/blink/renderer/platform/wtf/allocator.h"
@@ -20,7 +22,7 @@ class WebHTTPHeaderMap::WebHTTPHeaderMapImpl {
 
  public:
   explicit WebHTTPHeaderMapImpl(const HTTPHeaderMap& map) : map_(map) {}
-
+#if defined(ENABLE_GNET)
   explicit WebHTTPHeaderMapImpl(const net::HttpRequestHeaders* headers) {
     for (net::HttpRequestHeaders::Iterator it(*headers); it.GetNext();) {
       map_.Add(
@@ -46,6 +48,7 @@ class WebHTTPHeaderMap::WebHTTPHeaderMapImpl {
         map_.Add(atomic_name, atomic_value);
     }
   }
+#endif // ENABLE_GNET
 
   const HTTPHeaderMap& map() const { return map_; }
 
@@ -58,7 +61,7 @@ WebHTTPHeaderMap::~WebHTTPHeaderMap() = default;
 WebHTTPHeaderMap::WebHTTPHeaderMap(const HTTPHeaderMap& map) {
   implementation_ = std::make_unique<WebHTTPHeaderMapImpl>(map);
 }
-
+#if defined(ENABLE_GNET)
 WebHTTPHeaderMap::WebHTTPHeaderMap(const net::HttpResponseHeaders* headers) {
   implementation_ = std::make_unique<WebHTTPHeaderMapImpl>(headers);
 }
@@ -66,6 +69,7 @@ WebHTTPHeaderMap::WebHTTPHeaderMap(const net::HttpResponseHeaders* headers) {
 WebHTTPHeaderMap::WebHTTPHeaderMap(const net::HttpRequestHeaders* headers) {
   implementation_ = std::make_unique<WebHTTPHeaderMapImpl>(headers);
 }
+#endif // ENABLE_GNET
 
 const HTTPHeaderMap& WebHTTPHeaderMap::GetHTTPHeaderMap() const {
   return implementation_->map();

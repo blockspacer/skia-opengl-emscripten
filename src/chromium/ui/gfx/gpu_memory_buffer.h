@@ -21,7 +21,9 @@
 #elif defined(OS_MACOSX) && !defined(OS_IOS)
 #include "ui/gfx/mac/io_surface.h"
 #elif defined(OS_WIN)
+#if defined(ENABLE_GIPC)
 #include "ipc/ipc_platform_file.h"  // nogncheck
+#endif // ENABLE_GIPC
 #elif defined(OS_ANDROID)
 #include "base/android/scoped_hardware_buffer_handle.h"
 #endif
@@ -71,7 +73,9 @@ struct GFX_EXPORT GpuMemoryBufferHandle {
   ScopedRefCountedIOSurfaceMachPort mach_port;
 #elif defined(OS_WIN)
   // TODO(crbug.com/863011): convert this to a scoped handle.
+#if defined(ENABLE_GIPC)
   IPC::PlatformFileForTransit dxgi_handle;
+#endif // ENABLE_GIPC
 #elif defined(OS_ANDROID)
   base::android::ScopedHardwareBufferHandle android_hardware_buffer;
 #endif

@@ -9,8 +9,10 @@
 
 #include "base/memory/ref_counted.h"
 #include "base/single_thread_task_runner.h"
+#if defined(ENABLE_GIPC)
 #include "ipc/ipc_listener.h"
 #include "ipc/ipc_sender.h"
+#endif // ENABLE_GIPC
 #include "mojo/public/cpp/bindings/binding.h"
 #include "ui/ozone/ozone_base_export.h"
 
@@ -36,6 +38,7 @@ class OZONE_BASE_EXPORT GpuPlatformSupportHost {
   GpuPlatformSupportHost();
   virtual ~GpuPlatformSupportHost();
 
+#if defined(ENABLE_GIPC)
   // Called when the GPU process is spun up.
   // This is called from browser IO thread.
   virtual void OnGpuProcessLaunched(
@@ -43,6 +46,7 @@ class OZONE_BASE_EXPORT GpuPlatformSupportHost {
       scoped_refptr<base::SingleThreadTaskRunner> ui_runner,
       scoped_refptr<base::SingleThreadTaskRunner> send_runner,
       const base::Callback<void(IPC::Message*)>& sender) = 0;
+#endif // ENABLE_GIPC
 
   // Called when the GPU process is destroyed.
   // This is called from browser UI thread.
@@ -50,7 +54,9 @@ class OZONE_BASE_EXPORT GpuPlatformSupportHost {
 
   // Called to handle an IPC message. Note that this can be called from any
   // thread.
+#if defined(ENABLE_GIPC)
   virtual void OnMessageReceived(const IPC::Message& message) = 0;
+#endif // ENABLE_GIPC
 
   // Called when the GPU service is launched.
   // Called from the browser IO thread.

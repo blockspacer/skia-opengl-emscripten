@@ -9,10 +9,12 @@
 #include <string>
 
 #include "base/macros.h"
+#if defined(ENABLE_GNET)
 #include "net/filter/filter_source_stream.h"
+#endif // ENABLE_GNET
 #include "ui/base/template_expressions.h"
 #include "ui/base/ui_base_export.h"
-
+#if defined(ENABLE_GNET)
 namespace ui {
 
 class UI_BASE_EXPORT I18nSourceStream : public net::FilterSourceStream {
@@ -57,5 +59,6 @@ class UI_BASE_EXPORT I18nSourceStream : public net::FilterSourceStream {
 };
 
 }  // namespace ui
+#endif // ENABLE_GNET
 
 #endif  // UI_BASE_WEBUI_I18N_SOURCE_STREAM_H_

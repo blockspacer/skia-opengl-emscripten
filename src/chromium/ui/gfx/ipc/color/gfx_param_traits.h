@@ -5,6 +5,7 @@
 #ifndef UI_GFX_IPC_COLOR_GFX_PARAM_TRAITS_H_
 #define UI_GFX_IPC_COLOR_GFX_PARAM_TRAITS_H_
 
+#if defined(ENABLE_GIPC)
 #include "ipc/ipc_message_utils.h"
 #include "ipc/param_traits_macros.h"
 #include "ipc/ipc_message_macros.h"
@@ -29,5 +30,6 @@ struct GFX_IPC_COLOR_EXPORT ParamTraits<gfx::ColorSpace> {
 };
 
 }  // namespace IPC
+#endif // ENABLE_GIPC
 
 #endif  // UI_GFX_IPC_COLOR_GFX_PARAM_TRAITS_H_

@@ -4,9 +4,11 @@
 
 #include "mojo/public/cpp/bindings/lib/native_struct_serialization.h"
 
+#if defined(ENABLE_GIPC)
 #include "ipc/ipc_message_attachment.h"
 #include "ipc/ipc_message_attachment_set.h"
 #include "ipc/native_handle_type_converters.h"
+#endif // ENABLE_GIPC
 #include "mojo/public/cpp/bindings/lib/serialization.h"
 #include "mojo/public/cpp/bindings/lib/serialization_forward.h"
 
@@ -27,18 +29,23 @@ void UnmappedNativeStructSerializerImpl::Serialize(
   Array_Data<uint8_t>::BufferWriter data_writer;
   const mojo::internal::ContainerValidateParams data_validate_params(0, false,
                                                                      nullptr);
+
+#if defined(ENABLE_GIPC)
   mojo::internal::Serialize<ArrayDataView<uint8_t>>(
       input->data, buffer, &data_writer, &data_validate_params, context);
+#endif // ENABLE_GIPC
   writer->data()->data.Set(data_writer.data());
 
   mojo::internal::Array_Data<mojo::internal::Pointer<
       native::internal::SerializedHandle_Data>>::BufferWriter handles_writer;
   const mojo::internal::ContainerValidateParams handles_validate_params(
       0, false, nullptr);
+#if defined(ENABLE_GIPC)
   mojo::internal::Serialize<
       mojo::ArrayDataView<::mojo::native::SerializedHandleDataView>>(
       input->handles, buffer, &handles_writer, &handles_validate_params,
       context);
+#endif // ENABLE_GIPC
   writer->data()->handles.Set(handles_writer.is_null() ? nullptr
                                                        : handles_writer.data());
 }
@@ -59,6 +66,7 @@ bool UnmappedNativeStructSerializerImpl::Deserialize(
 }
 
 // static
+#if defined(ENABLE_GIPC)
 void UnmappedNativeStructSerializerImpl::SerializeMessageContents(
     IPC::Message* message,
     Buffer* buffer,
@@ -120,6 +128,7 @@ bool UnmappedNativeStructSerializerImpl::DeserializeMessageAttachments(
   }
   return true;
 }
+#endif // ENABLE_GIPC
 
 }  // namespace internal
 }  // namespace mojo

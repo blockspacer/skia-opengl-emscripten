@@ -12,9 +12,11 @@
 #include "third_party/blink/renderer/platform/platform_export.h"
 #include "third_party/blink/renderer/platform/wtf/allocator.h"
 
+#if defined(ENABLE_GNET)
 namespace service_manager {
 class InterfaceProvider;
 }  // namespace service_manager
+#endif // ENABLE_GNET
 
 namespace blink {
 
@@ -22,9 +24,11 @@ class PLATFORM_EXPORT DocumentResourceCoordinator final {
   USING_FAST_MALLOC(DocumentResourceCoordinator);
 
  public:
+#if defined(ENABLE_GNET)
   // Returns nullptr if instrumentation is not enabled.
   static std::unique_ptr<DocumentResourceCoordinator> MaybeCreate(
       service_manager::InterfaceProvider*);
+#endif // ENABLE_GNET
   ~DocumentResourceCoordinator();
 
   void SetNetworkAlmostIdle();
@@ -38,7 +42,9 @@ class PLATFORM_EXPORT DocumentResourceCoordinator final {
   void OnNonPersistentNotificationCreated();
 
  private:
+#if defined(ENABLE_GNET)
   explicit DocumentResourceCoordinator(service_manager::InterfaceProvider*);
+#endif // ENABLE_GNET
 
   resource_coordinator::mojom::blink::DocumentCoordinationUnitPtr service_;
 

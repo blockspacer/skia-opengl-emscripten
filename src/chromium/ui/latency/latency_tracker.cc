@@ -10,8 +10,10 @@
 #include "base/no_destructor.h"
 #include "base/rand_util.h"
 #include "base/trace_event/trace_event.h"
+#if defined(ENABLE_UKM)
 #include "services/metrics/public/cpp/ukm_entry_builder.h"
 #include "services/metrics/public/cpp/ukm_recorder.h"
+#endif // ENABLE_UKM
 #include "ui/latency/latency_histogram_macros.h"
 
 // Impose some restrictions for tests etc, but also be lenient since some of the
@@ -118,6 +120,7 @@ void LatencyTracker::OnGpuSwapBuffersCompleted(const LatencyInfo& latency) {
   }
 }
 
+#if defined(ENABLE_UKM)
 void LatencyTracker::ReportUkmScrollLatency(
     const InputMetricEvent& metric_event,
     base::TimeTicks start_timestamp,
@@ -162,6 +165,7 @@ void LatencyTracker::ReportUkmScrollLatency(
   builder.SetMetric("IsMainThread", is_main_thread);
   builder.Record(ukm_recorder);
 }
+#endif // ENABLE_UKM
 
 void LatencyTracker::ComputeEndToEndLatencyHistograms(
     base::TimeTicks gpu_swap_begin_timestamp,
@@ -292,10 +296,13 @@ void LatencyTracker::ComputeEndToEndLatencyHistograms(
                                ? InputMetricEvent::SCROLL_UPDATE_TOUCH
                                : InputMetricEvent::SCROLL_UPDATE_WHEEL;
     }
+
+#if defined(ENABLE_UKM)
     ReportUkmScrollLatency(
         input_metric_event, original_timestamp, gpu_swap_begin_timestamp,
         rendering_scheduled_timestamp, rendering_scheduled_on_main,
         latency.ukm_source_id());
+#endif // ENABLE_UKM
   }
 
   const std::string thread_name = rendering_scheduled_on_main ? "Main" : "Impl";

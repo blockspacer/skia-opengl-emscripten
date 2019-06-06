@@ -34,7 +34,9 @@
 #define THIRD_PARTY_BLINK_RENDERER_CORE_LOADER_FRAME_LOADER_H_
 
 #include "base/macros.h"
+#if defined(ENABLE_GNET)
 #include "services/network/public/mojom/request_context_frame_type.mojom-shared.h"
+#endif // ENABLE_GNET
 #include "third_party/blink/public/common/user_agent/user_agent_metadata.h"
 #include "third_party/blink/public/platform/scheduler/web_scoped_virtual_time_pauser.h"
 #include "third_party/blink/public/web/web_document_loader.h"

@@ -28,9 +28,11 @@
 #include "third_party/blink/public/mojom/fetch/fetch_api_request.mojom-shared.h"
 #include "third_party/blink/public/mojom/fetch/fetch_api_request.mojom-forward.h"
 #include "mojo/public/mojom/base/unguessable_token.mojom.h"
+#if defined(ENABLE_GNET)
 #include "services/network/public/mojom/fetch_api.mojom.h"
 #include "services/network/public/mojom/request_context_frame_type.mojom.h"
 #include "services/network/public/mojom/url_loader.mojom.h"
+#endif // ENABLE_GNET
 #include "third_party/blink/public/mojom/blob/serialized_blob.mojom.h"
 #include "third_party/blink/public/mojom/referrer.mojom.h"
 #include "url/mojom/url.mojom.h"

@@ -759,6 +759,7 @@ PageSchedulerImpl::PageLifecycleStateTracker::
   }
 }
 
+#if defined(ENABLE_UKM)
 FrameSchedulerImpl* PageSchedulerImpl::SelectFrameForUkmAttribution() {
   for (FrameSchedulerImpl* frame_scheduler : frame_schedulers_) {
     if (frame_scheduler->GetUkmRecorder())
@@ -766,6 +767,7 @@ FrameSchedulerImpl* PageSchedulerImpl::SelectFrameForUkmAttribution() {
   }
   return nullptr;
 }
+#endif // ENABLE_UKM
 
 // static
 const char PageSchedulerImpl::kHistogramPageLifecycleStateTransition[] =

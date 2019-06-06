@@ -35,7 +35,9 @@
 #include "base/synchronization/waitable_event.h"
 #include "base/thread_annotations.h"
 #include "base/unguessable_token.h"
+#if defined(ENABLE_GNET)
 #include "services/network/public/mojom/fetch_api.mojom-shared.h"
+#endif // ENABLE_GNET
 #include "third_party/blink/public/platform/web_thread_type.h"
 #include "third_party/blink/renderer/core/core_export.h"
 #include "third_party/blink/renderer/core/workers/parent_execution_context_task_runners.h"

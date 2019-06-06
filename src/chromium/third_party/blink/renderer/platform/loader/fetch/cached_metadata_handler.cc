@@ -126,6 +126,7 @@ std::unique_ptr<CachedMetadataSender> CachedMetadataSender::Create(
   return std::make_unique<CachedMetadataSenderImpl>(response, code_cache_type);
 }
 
+#if defined(ENABLE_GNET)
 bool ShouldUseIsolatedCodeCache(mojom::RequestContextType request_context,
                                 const ResourceResponse& response) {
   if (!RuntimeEnabledFeatures::IsolatedCodeCacheEnabled())
@@ -148,5 +149,6 @@ bool ShouldUseIsolatedCodeCache(mojom::RequestContextType request_context,
   return !response.WasFetchedViaServiceWorker() ||
          response.IsServiceWorkerPassThrough();
 }
+#endif // ENABLE_GNET
 
 }  // namespace blink

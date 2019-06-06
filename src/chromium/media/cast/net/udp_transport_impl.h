@@ -19,14 +19,15 @@
 #include "media/cast/net/cast_transport_config.h"
 #include "media/cast/net/pacing/paced_sender.h"
 #include "media/cast/net/udp_transport_interface.h"
+#if defined(ENABLE_GNET)
 #include "net/base/io_buffer.h"
 #include "net/base/ip_endpoint.h"
 #include "net/socket/diff_serv_code_point.h"
 #include "net/socket/udp_socket.h"
-
 namespace net {
 class NetLog;
 }  // namespace net
+#endif // ENABLE_GNET
 
 namespace media {
 namespace cast {

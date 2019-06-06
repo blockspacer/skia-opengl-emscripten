@@ -10,8 +10,9 @@
 #include "third_party/blink/renderer/platform/heap/handle.h"
 
 namespace blink {
-
+#if defined(ENABLE_GNET)
 class SecurityOrigin;
+#endif // ENABLE_GNET
 class WebContentDecryptionModuleAccess;
 struct WebMediaKeySystemConfiguration;
 class WebString;
@@ -26,8 +27,9 @@ class EncryptedMediaRequest
   virtual WebString KeySystem() const = 0;
   virtual const WebVector<WebMediaKeySystemConfiguration>&
   SupportedConfigurations() const = 0;
-
+#if defined(ENABLE_GNET)
   virtual const SecurityOrigin* GetSecurityOrigin() const = 0;
+#endif // ENABLE_GNET
 
   virtual void RequestSucceeded(
       std::unique_ptr<WebContentDecryptionModuleAccess>) = 0;

@@ -4,7 +4,9 @@
 
 #include "services/network/public/cpp/resource_request.h"
 
+#if defined(ENABLE_GNET)
 #include "net/base/load_flags.h"
+#endif // ENABLE_GNET
 
 namespace network {
 
@@ -21,16 +23,22 @@ bool ResourceRequest::EqualsForTesting(const ResourceRequest& request) const {
              request.update_first_party_url_on_redirect &&
          request_initiator == request.request_initiator &&
          referrer == request.referrer &&
+#if defined(ENABLE_GNET)
          referrer_policy == request.referrer_policy &&
+#endif // ENABLE_GNET
          is_prerendering == request.is_prerendering &&
+#if defined(ENABLE_GNET)
          headers.ToString() == request.headers.ToString() &&
          cors_exempt_headers.ToString() ==
              request.cors_exempt_headers.ToString() &&
+#endif // ENABLE_GNET
          load_flags == request.load_flags &&
          allow_credentials == request.allow_credentials &&
          plugin_child_id == request.plugin_child_id &&
          resource_type == request.resource_type &&
+#if defined(ENABLE_GNET)
          priority == request.priority &&
+#endif // ENABLE_GNET
          appcache_host_id == request.appcache_host_id &&
          should_reset_appcache == request.should_reset_appcache &&
          is_external_request == request.is_external_request &&
@@ -61,12 +69,14 @@ bool ResourceRequest::EqualsForTesting(const ResourceRequest& request) const {
          upgrade_if_insecure == request.upgrade_if_insecure &&
          is_revalidating == request.is_revalidating &&
          throttling_profile_id == request.throttling_profile_id &&
+#if defined(ENABLE_GNET)
          custom_proxy_pre_cache_headers.ToString() ==
              request.custom_proxy_pre_cache_headers.ToString() &&
          custom_proxy_post_cache_headers.ToString() ==
              request.custom_proxy_post_cache_headers.ToString() &&
          custom_proxy_use_alternate_proxy_list ==
              request.custom_proxy_use_alternate_proxy_list &&
+#endif // ENABLE_GNET
          fetch_window_id == request.fetch_window_id &&
          devtools_request_id == request.devtools_request_id;
 }

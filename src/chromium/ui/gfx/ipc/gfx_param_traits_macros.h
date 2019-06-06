@@ -9,6 +9,7 @@
 #define UI_GFX_IPC_GFX_PARAM_TRAITS_MACROS_H_
 
 #include "build/build_config.h"
+#if defined(ENABLE_GIPC)
 #include "ipc/ipc_message_macros.h"
 #include "ui/gfx/ca_layer_params.h"
 #include "ui/gfx/gpu_fence_handle.h"
@@ -110,5 +111,6 @@ IPC_STRUCT_TRAITS_END()
 
 #undef IPC_MESSAGE_EXPORT
 #define IPC_MESSAGE_EXPORT
+#endif // ENABLE_GIPC
 
 #endif  // UI_GFX_IPC_GFX_PARAM_TRAITS_MACROS_H_

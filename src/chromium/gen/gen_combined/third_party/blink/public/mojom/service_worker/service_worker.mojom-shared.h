@@ -24,7 +24,9 @@
 #include "third_party/blink/public/mojom/service_worker/service_worker.mojom-shared-internal.h"
 #include "mojo/public/mojom/base/string16.mojom-shared.h"
 #include "mojo/public/mojom/base/time.mojom-shared.h"
+#if defined(ENABLE_GNET)
 #include "services/network/public/mojom/cookie_manager.mojom-shared.h"
+#endif // ENABLE_GNET
 #include "third_party/blink/public/mojom/background_fetch/background_fetch.mojom-shared.h"
 #include "third_party/blink/public/mojom/fetch/fetch_api_response.mojom-shared.h"
 #include "third_party/blink/public/mojom/messaging/transferable_message.mojom-shared.h"

@@ -17,7 +17,9 @@
 #include "third_party/blink/renderer/bindings/core/v8/v8_binding_for_core.h"
 #include "third_party/blink/renderer/bindings/core/v8/v8_event_target.h"
 #include "third_party/blink/renderer/core/core_export.h"
+#if defined(ENABLE_GNET)
 #include "third_party/blink/renderer/core/loader/appcache/application_cache.h"
+#endif // ENABLE_GNET
 #include "third_party/blink/renderer/platform/bindings/script_wrappable.h"
 #include "third_party/blink/renderer/platform/bindings/v8_dom_wrapper.h"
 #include "third_party/blink/renderer/platform/bindings/wrapper_type_info.h"

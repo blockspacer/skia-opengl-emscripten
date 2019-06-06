@@ -23,7 +23,9 @@
 #include "mojo/public/cpp/bindings/string_data_view.h"
 #include "third_party/blink/public/mojom/service_worker/service_worker_client.mojom-shared-internal.h"
 #include "mojo/public/mojom/base/time.mojom-shared.h"
+#if defined(ENABLE_GNET)
 #include "services/network/public/mojom/request_context_frame_type.mojom-shared.h"
+#endif // ENABLE_GNET
 #include "url/mojom/url.mojom-shared.h"
 
 #include "mojo/public/cpp/bindings/lib/interface_serialization.h"

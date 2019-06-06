@@ -9,8 +9,9 @@
 #include "third_party/blink/renderer/platform/platform_export.h"
 
 namespace blink {
-
+#if defined(ENABLE_GNET)
 class SecurityOrigin;
+#endif // ENABLE_GNET
 
 // https://fetch.spec.whatwg.org/#concept-https-state-value
 enum class HttpsState {
@@ -19,6 +20,7 @@ enum class HttpsState {
   kModern
 };
 
+#if defined(ENABLE_GNET)
 // According to the Fetch spec, HTTPS state is set during fetch, e.g. to
 // modern for https: or to request's client's HTTPS state for data:.
 // In the Blink implementation however, HTTPS state is calculated from
@@ -29,6 +31,7 @@ enum class HttpsState {
 PLATFORM_EXPORT HttpsState CalculateHttpsState(
     const SecurityOrigin*,
     base::Optional<HttpsState> parent_https_state = base::nullopt);
+#endif // ENABLE_GNET
 
 }  // namespace blink
 

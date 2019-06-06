@@ -6,7 +6,9 @@
 #define THIRD_PARTY_BLINK_RENDERER_PLATFORM_LOADER_FETCH_CACHED_METADATA_HANDLER_H_
 
 #include <stdint.h>
+#if defined(ENABLE_GNET)
 #include "third_party/blink/public/mojom/fetch/fetch_api_request.mojom-shared.h"
+#endif // ENABLE_GNET
 #include "third_party/blink/public/mojom/loader/code_cache.mojom-shared.h"
 #include "third_party/blink/renderer/platform/heap/handle.h"
 #include "third_party/blink/renderer/platform/platform_export.h"
@@ -28,8 +30,12 @@ class PLATFORM_EXPORT CachedMetadataSender {
  public:
   static std::unique_ptr<CachedMetadataSender> Create(
       const ResourceResponse&,
-      blink::mojom::CodeCacheType,
-      scoped_refptr<const SecurityOrigin> requestor_origin);
+      blink::mojom::CodeCacheType
+#if defined(ENABLE_GNET)
+      ,
+      scoped_refptr<const SecurityOrigin> requestor_origin
+#endif // ENABLE_GNET
+      );
 
   virtual ~CachedMetadataSender() = default;
   virtual void Send(const uint8_t*, size_t) = 0;
@@ -39,9 +45,11 @@ class PLATFORM_EXPORT CachedMetadataSender {
   virtual bool IsServedFromCacheStorage() = 0;
 };
 
+#if defined(ENABLE_GNET)
 // Returns whether we should use isolated code cache for a particular response.
 PLATFORM_EXPORT bool ShouldUseIsolatedCodeCache(mojom::RequestContextType,
                                                 const ResourceResponse&);
+#endif // ENABLE_GNET
 
 // Handler class for caching operations.
 class CachedMetadataHandler

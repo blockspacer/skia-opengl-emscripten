@@ -32,7 +32,9 @@
 #include "third_party/blink/renderer/platform/image-decoders/png/png_image_decoder.h"
 #include "third_party/blink/renderer/platform/image-decoders/webp/webp_image_decoder.h"
 #include "third_party/blink/renderer/platform/instrumentation/tracing/trace_event.h"
+#if defined(ENABLE_GNET)
 #include "third_party/blink/renderer/platform/network/mime/mime_type_registry.h"
+#endif // ENABLE_GNET
 
 namespace blink {
 
@@ -225,10 +227,12 @@ ImageDecoder::CompressionFormat ImageDecoder::GetCompressionFormat(
     }
   }
 
+#if defined(ENABLE_GNET)
   if (MIMETypeRegistry::IsLossyImageMIMEType(mime_type))
     return kLossyFormat;
   if (MIMETypeRegistry::IsLosslessImageMIMEType(mime_type))
     return kLosslessFormat;
+#endif // ENABLE_GNET
 
   return kUndefinedFormat;
 }

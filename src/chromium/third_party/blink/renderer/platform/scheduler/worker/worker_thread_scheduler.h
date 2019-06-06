@@ -26,15 +26,17 @@ class SequenceManager;
 }
 }  // namespace base
 
+#if defined(ENABLE_GNET)
 namespace service_manager {
 class Connector;
 }
+#endif // ENABLE_GNET
 
-#ifdef __TODO__
+#if defined(ENABLE_UKM)
 namespace ukm {
 class UkmRecorder;
 }
-#endif
+#endif // ENABLE_UKM
 
 namespace blink {
 namespace scheduler {
@@ -141,21 +143,23 @@ class PLATFORM_EXPORT WorkerThreadScheduler
 
   std::unordered_set<WorkerScheduler*>& GetWorkerSchedulersForTesting();
 
+#if defined(ENABLE_UKM)
   void SetUkmTaskSamplingRateForTest(double rate);
 
-#ifdef __TODO__
   void SetUkmRecorderForTest(std::unique_ptr<ukm::UkmRecorder> ukm_recorder);
-#endif
+#endif // ENABLE_UKM
 
   virtual void PerformMicrotaskCheckpoint();
 
  private:
   void MaybeStartLongIdlePeriod();
 
+#if defined(ENABLE_UKM)
   void RecordTaskUkm(
       NonMainThreadTaskQueue* worker_task_queue,
       const base::sequence_manager::Task& task,
       const base::sequence_manager::TaskQueue::TaskTiming& task_timing);
+#endif // ENABLE_UKM
 
   const WebThreadType thread_type_;
   IdleHelper idle_helper_;
@@ -186,8 +190,13 @@ class PLATFORM_EXPORT WorkerThreadScheduler
   // The status of the parent frame when the worker was created.
   const FrameStatus initial_frame_status_;
 
+#if defined(ENABLE_UKM)
   const ukm::SourceId ukm_source_id_;
+#endif // ENABLE_UKM
+
+#if defined(ENABLE_GNET)
   std::unique_ptr<service_manager::Connector> connector_;
+#endif // ENABLE_GNET
 #ifdef __TODO__
   std::unique_ptr<ukm::UkmRecorder> ukm_recorder_;
 #endif

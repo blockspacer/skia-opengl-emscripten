@@ -28,7 +28,9 @@
 #include "third_party/blink/public/mojom/referrer.mojom-shared.h"
 #include "third_party/blink/public/mojom/referrer.mojom-forward.h"
 #include "url/mojom/url.mojom.h"
+#if defined(ENABLE_GNET)
 #include "services/network/public/mojom/referrer_policy.mojom.h"
+#endif // ENABLE_GNET
 #include <string>
 #include <vector>
 

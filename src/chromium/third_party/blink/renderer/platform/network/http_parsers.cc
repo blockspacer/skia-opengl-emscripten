@@ -33,9 +33,11 @@
 #include "third_party/blink/renderer/platform/network/http_parsers.h"
 
 #include <memory>
+#if defined(ENABLE_GNET)
 #include "net/http/http_content_disposition.h"
 #include "net/http/http_response_headers.h"
 #include "net/http/http_util.h"
+#endif // ENABLE_GNET
 #include "third_party/blink/public/platform/web_string.h"
 #include "third_party/blink/renderer/platform/loader/fetch/resource_response.h"
 #include "third_party/blink/renderer/platform/network/header_field_tokenizer.h"

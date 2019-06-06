@@ -34,6 +34,7 @@
 #include "third_party/blink/public/platform/web_mixed_content_context_type.h"
 #include "third_party/blink/public/platform/web_url_request.h"
 
+#if defined(ENABLE_GNET)
 namespace blink {
 
 // Helper functions related to mixed content checks.
@@ -45,5 +46,6 @@ class WebMixedContent {
 };
 
 }  // namespace blink
+#endif // ENABLE_GNET
 
 #endif  // THIRD_PARTY_BLINK_PUBLIC_PLATFORM_WEB_MIXED_CONTENT_H_

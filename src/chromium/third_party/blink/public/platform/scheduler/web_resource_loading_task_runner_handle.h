@@ -7,7 +7,9 @@
 
 #include "base/memory/scoped_refptr.h"
 #include "base/single_thread_task_runner.h"
+#if defined(ENABLE_GNET)
 #include "net/base/request_priority.h"
+#endif // ENABLE_GNET
 #include "third_party/blink/public/platform/web_common.h"
 
 namespace blink {
@@ -30,7 +32,9 @@ class BLINK_PLATFORM_EXPORT WebResourceLoadingTaskRunnerHandle {
 
   virtual scoped_refptr<base::SingleThreadTaskRunner> GetTaskRunner() const = 0;
 
+#if defined(ENABLE_GNET)
   virtual void DidChangeRequestPriority(net::RequestPriority priority) = 0;
+#endif // ENABLE_GNET
 
   virtual ~WebResourceLoadingTaskRunnerHandle() = default;
 };

@@ -39,6 +39,7 @@ class LatencyTracker {
     INPUT_METRIC_EVENT_MAX = SCROLL_UPDATE_WHEEL
   };
 
+#if defined(ENABLE_UKM)
   void ReportUkmScrollLatency(
       const InputMetricEvent& metric_event,
       base::TimeTicks start_timestamp,
@@ -46,6 +47,7 @@ class LatencyTracker {
       base::TimeTicks time_to_handled_timestamp,
       bool is_main_thread,
       const ukm::SourceId ukm_source_id);
+#endif // ENABLE_UKM
 
   void ComputeEndToEndLatencyHistograms(
       base::TimeTicks gpu_swap_begin_timestamp,

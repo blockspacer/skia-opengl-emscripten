@@ -12,9 +12,11 @@
 #include "base/memory/ref_counted.h"
 #include "base/optional.h"
 #include "base/unguessable_token.h"
+#if defined(ENABLE_GNET)
 #include "net/base/request_priority.h"
 #include "net/http/http_request_headers.h"
 #include "net/url_request/url_request.h"
+#endif // ENABLE_GNET
 #include "services/network/public/cpp/resource_request_body.h"
 #include "services/network/public/mojom/cors.mojom-shared.h"
 #include "services/network/public/mojom/fetch_api.mojom-shared.h"
@@ -44,16 +46,22 @@ struct COMPONENT_EXPORT(NETWORK_CPP_BASE) ResourceRequest {
   bool update_first_party_url_on_redirect = false;
   base::Optional<url::Origin> request_initiator;
   GURL referrer;
+#if defined(ENABLE_GNET)
   net::URLRequest::ReferrerPolicy referrer_policy =
       net::URLRequest::NEVER_CLEAR_REFERRER;
+#endif // ENABLE_GNET
   bool is_prerendering = false;
+#if defined(ENABLE_GNET)
   net::HttpRequestHeaders headers;
   net::HttpRequestHeaders cors_exempt_headers;
+#endif // ENABLE_GNET
   int load_flags = 0;
   bool allow_credentials = true;
   int plugin_child_id = -1;
   int resource_type = 0;
+#if defined(ENABLE_GNET)
   net::RequestPriority priority = net::IDLE;
+#endif // ENABLE_GNET
   int appcache_host_id = 0;
   bool should_reset_appcache = false;
   bool is_external_request = false;
@@ -86,8 +94,10 @@ struct COMPONENT_EXPORT(NETWORK_CPP_BASE) ResourceRequest {
   bool upgrade_if_insecure = false;
   bool is_revalidating = false;
   base::Optional<base::UnguessableToken> throttling_profile_id;
+#if defined(ENABLE_GNET)
   net::HttpRequestHeaders custom_proxy_pre_cache_headers;
   net::HttpRequestHeaders custom_proxy_post_cache_headers;
+#endif // ENABLE_GNET
   bool custom_proxy_use_alternate_proxy_list = false;
   base::Optional<base::UnguessableToken> fetch_window_id;
   base::Optional<std::string> devtools_request_id;

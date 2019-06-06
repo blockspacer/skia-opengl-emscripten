@@ -28,7 +28,9 @@
 #include "third_party/blink/public/mojom/referrer.mojom-shared.h"
 #include "third_party/blink/public/mojom/referrer.mojom-blink-forward.h"
 #include "url/mojom/url.mojom-blink.h"
+#if defined(ENABLE_GNET)
 #include "services/network/public/mojom/referrer_policy.mojom-blink.h"
+#endif // ENABLE_GNET
 
 #include "mojo/public/cpp/bindings/lib/wtf_clone_equals_util.h"
 #include "mojo/public/cpp/bindings/lib/wtf_hash_util.h"
@@ -88,8 +90,12 @@ class PLATFORM_EXPORT Referrer {
   Referrer();
 
   Referrer(
-      const ::blink::KURL& url,
-      ::network::mojom::blink::ReferrerPolicy policy);
+      const ::blink::KURL& url
+#if defined(ENABLE_GNET)
+      ,
+      ::network::mojom::blink::ReferrerPolicy policy
+#endif // ENABLE_GNET
+      );
 
   ~Referrer();
 
@@ -163,8 +169,9 @@ class PLATFORM_EXPORT Referrer {
 
   
   ::blink::KURL url;
-  
+#if defined(ENABLE_GNET)
   ::network::mojom::blink::ReferrerPolicy policy;
+#endif // ENABLE_GNET
 
  private:
   static bool Validate(const void* data,

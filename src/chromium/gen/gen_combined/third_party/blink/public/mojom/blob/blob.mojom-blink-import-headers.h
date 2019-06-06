@@ -6,9 +6,11 @@
 #define THIRD_PARTY_BLINK_PUBLIC_MOJOM_BLOB_BLOB_MOJOM_BLINK_IMPORT_HEADERS_H_
 #include "mojo/public/mojom/base/big_buffer.mojom-blink.h"
 #include "mojo/public/mojom/base/big_buffer.mojom-blink-import-headers.h"
+#if defined(ENABLE_GNET)
 #include "services/network/public/mojom/data_pipe_getter.mojom-blink.h"
 #include "services/network/public/mojom/data_pipe_getter.mojom-blink-import-headers.h"
 #include "services/network/public/mojom/http_request_headers.mojom-blink.h"
 #include "services/network/public/mojom/http_request_headers.mojom-blink-import-headers.h"
+#endif // ENABLE_GNET
 
 #endif  // THIRD_PARTY_BLINK_PUBLIC_MOJOM_BLOB_BLOB_MOJOM_BLINK_IMPORT_HEADERS_H_

@@ -5,7 +5,9 @@
 #ifndef THIRD_PARTY_BLINK_PUBLIC_PLATFORM_MODULES_SERVICE_WORKER_WEB_SERVICE_WORKER_CLIENTS_INFO_H_
 #define THIRD_PARTY_BLINK_PUBLIC_PLATFORM_MODULES_SERVICE_WORKER_WEB_SERVICE_WORKER_CLIENTS_INFO_H_
 
+#if defined(ENABLE_GNET)
 #include "services/network/public/mojom/request_context_frame_type.mojom-shared.h"
+#endif // ENABLE_GNET
 #include "third_party/blink/public/mojom/service_worker/service_worker_client.mojom-shared.h"
 #include "third_party/blink/public/platform/web_string.h"
 #include "third_party/blink/public/platform/web_url.h"

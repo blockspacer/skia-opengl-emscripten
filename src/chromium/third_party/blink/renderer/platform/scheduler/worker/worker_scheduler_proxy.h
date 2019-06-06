@@ -11,8 +11,13 @@
 #include "base/optional.h"
 #include "base/single_thread_task_runner.h"
 #include "base/threading/thread_checker.h"
+#if defined(ENABLE_UKM)
 #include "services/metrics/public/cpp/ukm_source_id.h"
+#endif // ENABLE_UKM
+
+#if defined(ENABLE_GNET)
 #include "services/service_manager/public/cpp/connector.h"
+#endif // ENABLE_GNET
 #include "third_party/blink/renderer/platform/platform_export.h"
 #include "third_party/blink/renderer/platform/scheduler/main_thread/frame_origin_type.h"
 #include "third_party/blink/renderer/platform/scheduler/public/frame_or_worker_scheduler.h"
@@ -55,12 +60,15 @@ class PLATFORM_EXPORT WorkerSchedulerProxy
     return parent_frame_type_;
   }
 
+#if defined(ENABLE_UKM)
   // Accessed only during init.
   ukm::SourceId ukm_source_id() const {
     DCHECK(!initialized_);
     return ukm_source_id_;
   }
+#endif // ENABLE_UKM
 
+#if defined(ENABLE_GNET)
   // Accessed only during init.
   std::unique_ptr<service_manager::Connector> TakeConnector() {
     DCHECK(!initialized_);
@@ -70,6 +78,7 @@ class PLATFORM_EXPORT WorkerSchedulerProxy
 #endif
     return std::move(connector_);
   }
+#endif // ENABLE_GNET
 
   // Accessed only during init.
   FrameStatus initial_frame_status() const {
@@ -93,8 +102,14 @@ class PLATFORM_EXPORT WorkerSchedulerProxy
   bool initialized_ = false;
   base::Optional<FrameOriginType> parent_frame_type_;
   FrameStatus initial_frame_status_ = FrameStatus::kNone;
+
+#if defined(ENABLE_UKM)
   ukm::SourceId ukm_source_id_ = ukm::kInvalidSourceId;
+#endif // ENABLE_UKM
+
+#if defined(ENABLE_GNET)
   std::unique_ptr<service_manager::Connector> connector_;
+#endif // ENABLE_GNET
 
 #if DCHECK_IS_ON()
   bool connector_taken_ = false;

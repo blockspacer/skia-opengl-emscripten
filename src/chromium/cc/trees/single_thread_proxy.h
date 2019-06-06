@@ -63,11 +63,13 @@ class CC_EXPORT SingleThreadProxy : public Proxy,
       std::unique_ptr<PaintWorkletLayerPainter> painter) override;
   bool SupportsImplScrolling() const override;
   bool MainFrameWillHappenForTesting() override;
+#if defined(ENABLE_UKM)
   void SetSourceURL(ukm::SourceId source_id, const GURL& url) override {
     // Single-threaded mode is only for browser compositing and for renderers in
     // layout tests. This will still get called in the latter case, but we don't
     // need to record UKM in that case.
   }
+#endif // ENABLE_UKM
   void ClearHistory() override;
   void SetRenderFrameObserver(
       std::unique_ptr<RenderFrameMetadataObserver> observer) override;

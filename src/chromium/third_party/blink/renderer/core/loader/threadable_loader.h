@@ -35,7 +35,9 @@
 #include <memory>
 
 #include "base/macros.h"
+#if defined(ENABLE_GNET)
 #include "services/network/public/mojom/fetch_api.mojom-blink.h"
+#endif // ENABLE_GNET
 #include "third_party/blink/renderer/core/core_export.h"
 #include "third_party/blink/renderer/platform/cross_thread_copier.h"
 #include "third_party/blink/renderer/platform/heap/handle.h"

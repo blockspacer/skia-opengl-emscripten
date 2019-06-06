@@ -15,6 +15,7 @@
 #include "base/macros.h"
 #include "base/optional.h"
 
+#if defined(ENABLE_GIPC)
 #include "mojo/public/cpp/bindings/mojo_buildflags.h"
 #if BUILDFLAG(MOJO_TRACE_ENABLED)
 #include "base/trace_event/trace_event.h"
@@ -59,5 +60,6 @@ namespace mojom {
 namespace mojo {
 
 }  // namespace mojo
+#endif // ENABLE_GIPC
 
 #endif  // IPC_CONSTANTS_MOJOM_H_

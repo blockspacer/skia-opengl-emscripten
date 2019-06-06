@@ -26,8 +26,7 @@
 #include "base/component_export.h"
 
 
-
-
+#if defined(ENABLE_GIPC)
 namespace IPC {
 namespace mojom {
 class MessageDataView;
@@ -86,5 +85,6 @@ using ChannelBootstrapAssociatedRequest =
 }  // namespace mojom
 }  // namespace IPC
 #include "ipc/message_view.h"
+#endif // ENABLE_GIPC
 
 #endif  // IPC_IPC_MOJOM_FORWARD_H_

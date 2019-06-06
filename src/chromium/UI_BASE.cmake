@@ -339,7 +339,7 @@ target_link_libraries(UI_BASE PUBLIC
   SKIA
   UI_GFX
   GFX_GEOMETRY
-  GNET
+  ${GNET_LIBS}
   ${CUSTOM_ICU_LIB}
   ${HARFBUZZ_LIBRARIES}
   #

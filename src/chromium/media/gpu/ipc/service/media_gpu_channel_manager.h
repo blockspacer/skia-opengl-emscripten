@@ -13,8 +13,10 @@
 #include "base/macros.h"
 #include "base/memory/weak_ptr.h"
 #include "base/unguessable_token.h"
+#if defined(ENABLE_GIPC)
 #include "ipc/ipc_listener.h"
 #include "ipc/ipc_sender.h"
+#endif // ENABLE_GIPC
 #include "media/base/android_overlay_mojo_factory.h"
 #include "media/video/video_decode_accelerator.h"
 

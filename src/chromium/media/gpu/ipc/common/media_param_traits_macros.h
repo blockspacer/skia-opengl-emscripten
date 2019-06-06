@@ -6,6 +6,7 @@
 #define MEDIA_GPU_IPC_COMMON_MEDIA_PARAM_TRAITS_MACROS_H_
 
 #include "gpu/config/gpu_info.h"
+#if defined(ENABLE_GIPC)
 #include "ipc/ipc_message_macros.h"
 #include "media/base/ipc/media_param_traits.h"
 #include "media/gpu/ipc/common/create_video_encoder_params.h"
@@ -39,5 +40,6 @@ IPC_STRUCT_TRAITS_BEGIN(media::CreateVideoEncoderParams)
   IPC_STRUCT_TRAITS_MEMBER(initial_bitrate)
   IPC_STRUCT_TRAITS_MEMBER(encoder_route_id)
 IPC_STRUCT_TRAITS_END()
+#endif // ENABLE_GIPC
 
 #endif  // MEDIA_GPU_IPC_COMMON_MEDIA_PARAM_TRAITS_MACROS_H_

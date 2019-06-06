@@ -26,9 +26,11 @@
 #ifndef THIRD_PARTY_BLINK_RENDERER_PLATFORM_LOADER_FETCH_RESOURCE_LOAD_INFO_H_
 #define THIRD_PARTY_BLINK_RENDERER_PLATFORM_LOADER_FETCH_RESOURCE_LOAD_INFO_H_
 
+#if defined(ENABLE_GNET)
 #include "third_party/blink/renderer/platform/network/http_header_map.h"
+#endif // ENABLE_GNET
 #include "third_party/blink/renderer/platform/wtf/ref_counted.h"
-
+#if defined(ENABLE_GNET)
 namespace blink {
 
 struct ResourceLoadInfo : RefCounted<ResourceLoadInfo> {
@@ -43,5 +45,6 @@ struct ResourceLoadInfo : RefCounted<ResourceLoadInfo> {
 };
 
 }  // namespace blink
+#endif // ENABLE_GNET
 
 #endif

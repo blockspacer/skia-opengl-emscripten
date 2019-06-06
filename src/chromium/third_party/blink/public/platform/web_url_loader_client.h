@@ -35,11 +35,14 @@
 #include "base/callback.h"
 #include "base/time/time.h"
 #include "mojo/public/cpp/system/data_pipe.h"
+#if defined(ENABLE_GNET)
 #include "services/network/public/cpp/cors/preflight_timing_info.h"
 #include "services/network/public/mojom/referrer_policy.mojom-shared.h"
+#endif // ENABLE_GNET
 #include "third_party/blink/public/platform/web_common.h"
 #include "third_party/blink/public/platform/web_url_request.h"
 
+#if defined(ENABLE_GNET)
 namespace blink {
 
 class WebString;
@@ -126,5 +129,6 @@ class BLINK_PLATFORM_EXPORT WebURLLoaderClient {
 };
 
 }  // namespace blink
+#endif // ENABLE_GNET
 
 #endif

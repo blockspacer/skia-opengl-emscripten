@@ -31,7 +31,9 @@
 #include <utility>
 
 #include "base/single_thread_task_runner.h"
+#if defined(ENABLE_GNET)
 #include "services/network/public/cpp/cors/preflight_timing_info.h"
+#endif // ENABLE_GNET
 #include "third_party/blink/public/mojom/blob/blob_registry.mojom-blink.h"
 #include "third_party/blink/public/mojom/service_worker/controller_service_worker_mode.mojom-blink.h"
 #include "third_party/blink/renderer/platform/heap/persistent.h"

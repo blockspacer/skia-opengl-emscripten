@@ -23,7 +23,9 @@
 #include "mojo/public/cpp/bindings/string_data_view.h"
 #include "third_party/blink/public/mojom/worker/shared_worker_factory.mojom-shared-internal.h"
 #include "mojo/public/mojom/base/unguessable_token.mojom-shared.h"
+#if defined(ENABLE_GNET)
 #include "services/network/public/mojom/url_loader_factory.mojom-shared.h"
+#endif // ENABLE_GNET
 #include "services/service_manager/public/mojom/interface_provider.mojom-shared.h"
 #include "third_party/blink/public/mojom/loader/url_loader_factory_bundle.mojom-shared.h"
 #include "third_party/blink/public/mojom/renderer_preference_watcher.mojom-shared.h"

@@ -27,9 +27,11 @@
 #include "gpu/gpu_export.h"
 #include "gpu/ipc/client/image_decode_accelerator_proxy.h"
 #include "gpu/ipc/client/shared_image_interface_proxy.h"
+#if defined(ENABLE_GIPC)
 #include "ipc/ipc_channel_handle.h"
 #include "ipc/message_filter.h"
 #include "ipc/message_router.h"
+#endif // ENABLE_GIPC
 #include "ui/gfx/gpu_memory_buffer.h"
 
 namespace IPC {

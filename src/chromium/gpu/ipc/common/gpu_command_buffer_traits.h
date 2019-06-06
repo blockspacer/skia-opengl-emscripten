@@ -7,8 +7,10 @@
 
 #include "gpu/gpu_export.h"
 #include "gpu/ipc/common/gpu_command_buffer_traits_multi.h"
+#if defined(ENABLE_GIPC)
 #include "ipc/ipc_message_utils.h"
 #include "ipc/ipc_param_traits.h"
+#endif // ENABLE_GIPC
 
 namespace gpu {
 struct Mailbox;

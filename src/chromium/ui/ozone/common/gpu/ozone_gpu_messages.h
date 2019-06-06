@@ -11,7 +11,9 @@
 #include <vector>
 
 #include "base/file_descriptor_posix.h"
+#if defined(ENABLE_GIPC)
 #include "ipc/ipc_message_macros.h"
+#endif // ENABLE_GIPC
 #include "third_party/skia/include/core/SkBitmap.h"
 #include "ui/display/types/display_constants.h"
 #include "ui/display/types/gamma_ramp_rgb_entry.h"

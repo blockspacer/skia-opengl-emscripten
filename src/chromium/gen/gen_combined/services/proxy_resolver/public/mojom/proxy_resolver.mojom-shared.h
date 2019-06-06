@@ -22,7 +22,9 @@
 #include "mojo/public/cpp/bindings/map_data_view.h"
 #include "mojo/public/cpp/bindings/string_data_view.h"
 #include "services/proxy_resolver/public/mojom/proxy_resolver.mojom-shared-internal.h"
+#if defined(ENABLE_GNET)
 #include "services/network/public/mojom/ip_address.mojom-shared.h"
+#endif // ENABLE_GNET
 #include "url/mojom/url.mojom-shared.h"
 
 #include "mojo/public/cpp/bindings/lib/interface_serialization.h"

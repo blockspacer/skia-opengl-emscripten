@@ -22,9 +22,10 @@ scoped_refptr<base::SingleThreadTaskRunner>
 UnprioritizedResourceLoadingTaskRunnerHandle::GetTaskRunner() const {
   return task_runner_;
 }
-
+#if defined(ENABLE_GNET)
 void UnprioritizedResourceLoadingTaskRunnerHandle::DidChangeRequestPriority(
     net::RequestPriority priority) {}
+#endif // ENABLE_GNET
 
 }  // namespace scheduler
 }  // namespace blink

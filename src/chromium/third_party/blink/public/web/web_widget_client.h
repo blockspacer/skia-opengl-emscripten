@@ -35,7 +35,9 @@
 
 #include "cc/input/layer_selection_bound.h"
 #include "cc/input/overscroll_behavior.h"
+#if defined(ENABLE_GNET)
 #include "services/network/public/mojom/referrer_policy.mojom-shared.h"
+#endif // ENABLE_GNET
 #include "third_party/blink/public/platform/web_common.h"
 #include "third_party/blink/public/platform/web_drag_operation.h"
 #include "third_party/blink/public/platform/web_gesture_event.h"

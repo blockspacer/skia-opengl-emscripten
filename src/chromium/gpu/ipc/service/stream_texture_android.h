@@ -15,7 +15,9 @@
 #include "gpu/command_buffer/service/gl_stream_texture_image.h"
 #include "gpu/ipc/common/android/surface_owner_android.h"
 #include "gpu/ipc/service/command_buffer_stub.h"
+#if defined(ENABLE_GIPC)
 #include "ipc/ipc_listener.h"
+#endif // ENABLE_GIPC
 #include "ui/gl/android/surface_texture.h"
 #include "ui/gl/gl_image.h"
 

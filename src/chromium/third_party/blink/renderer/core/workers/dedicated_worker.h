@@ -150,8 +150,9 @@ class CORE_EXPORT DedicatedWorker final
 
   // Used for tracking cross-debugger calls.
   const v8_inspector::V8StackTraceId v8_stack_trace_id_;
-
+#if defined(ENABLE_GNET)
   service_manager::mojom::blink::InterfaceProviderPtrInfo interface_provider_;
+#endif // ENABLE_GNET
 };
 
 }  // namespace blink

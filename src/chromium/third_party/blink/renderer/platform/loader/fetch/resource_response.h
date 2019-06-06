@@ -32,14 +32,18 @@
 
 #include "base/memory/scoped_refptr.h"
 #include "base/time/time.h"
+#if defined(ENABLE_GNET)
 #include "services/network/public/cpp/cors/cors.h"
 #include "services/network/public/mojom/fetch_api.mojom-blink.h"
+#endif // ENABLE_GNET
 #include "third_party/blink/public/platform/web_url_response.h"
 #include "third_party/blink/renderer/platform/blob/blob_data.h"
 #include "third_party/blink/renderer/platform/loader/fetch/resource_load_info.h"
 #include "third_party/blink/renderer/platform/loader/fetch/resource_load_timing.h"
+#if defined(ENABLE_GNET)
 #include "third_party/blink/renderer/platform/network/http_header_map.h"
 #include "third_party/blink/renderer/platform/network/http_parsers.h"
+#endif // ENABLE_GNET
 #include "third_party/blink/renderer/platform/platform_export.h"
 #include "third_party/blink/renderer/platform/weborigin/kurl.h"
 #include "third_party/blink/renderer/platform/wtf/allocator.h"
@@ -100,8 +104,10 @@ class PLATFORM_EXPORT ResourceResponse final {
           hash_algorithm_(hash_algorithm),
           signature_algorithm_(signature_algorithm),
           signature_data_(signature_data) {}
+#if defined(ENABLE_GNET)
     explicit SignedCertificateTimestamp(
         const struct blink::WebURLResponse::SignedCertificateTimestamp&);
+#endif // ENABLE_GNET
     SignedCertificateTimestamp IsolatedCopy() const;
 
     String status_;
@@ -208,7 +214,9 @@ class PLATFORM_EXPORT ResourceResponse final {
   void SetHttpHeaderField(const AtomicString& name, const AtomicString& value);
   void AddHttpHeaderField(const AtomicString& name, const AtomicString& value);
   void ClearHttpHeaderField(const AtomicString& name);
+#if defined(ENABLE_GNET)
   const HTTPHeaderMap& HttpHeaderFields() const;
+#endif // ENABLE_GNET
 
   bool IsAttachment() const;
 
@@ -240,8 +248,10 @@ class PLATFORM_EXPORT ResourceResponse final {
   ResourceLoadTiming* GetResourceLoadTiming() const;
   void SetResourceLoadTiming(scoped_refptr<ResourceLoadTiming>);
 
+#if defined(ENABLE_GNET)
   scoped_refptr<ResourceLoadInfo> GetResourceLoadInfo() const;
   void SetResourceLoadInfo(scoped_refptr<ResourceLoadInfo>);
+#endif // ENABLE_GNET
 
   HTTPVersion HttpVersion() const { return http_version_; }
   void SetHttpVersion(HTTPVersion version) { http_version_ = version; }
@@ -311,7 +321,7 @@ class PLATFORM_EXPORT ResourceResponse final {
   void SetWasFallbackRequiredByServiceWorker(bool value) {
     was_fallback_required_by_service_worker_ = value;
   }
-
+#if defined(ENABLE_GNET)
   network::mojom::FetchResponseType GetType() const { return response_type_; }
   void SetType(network::mojom::FetchResponseType value) {
     response_type_ = value;
@@ -324,6 +334,7 @@ class PLATFORM_EXPORT ResourceResponse final {
   bool IsCorsCrossOrigin() const {
     return network::cors::IsCorsCrossOriginResponseType(response_type_);
   }
+#endif // ENABLE_GNET
 
   // See network::ResourceResponseInfo::url_list_via_service_worker.
   const Vector<KURL>& UrlListViaServiceWorker() const {
@@ -371,13 +382,14 @@ class PLATFORM_EXPORT ResourceResponse final {
   void SetAlpnNegotiatedProtocol(const AtomicString& value) {
     alpn_negotiated_protocol_ = value;
   }
-
+#if defined(ENABLE_GNET)
   net::HttpResponseInfo::ConnectionInfo ConnectionInfo() const {
     return connection_info_;
   }
   void SetConnectionInfo(net::HttpResponseInfo::ConnectionInfo value) {
     connection_info_ = value;
   }
+#endif // ENABLE_GNET
 
   AtomicString ConnectionInfoString() const;
 
@@ -429,7 +441,9 @@ class PLATFORM_EXPORT ResourceResponse final {
   unsigned connection_id_ = 0;
   int http_status_code_ = 0;
   AtomicString http_status_text_;
+#if defined(ENABLE_GNET)
   HTTPHeaderMap http_header_fields_;
+#endif // ENABLE_GNET
 
   // Remote IP address of the socket which fetched this resource.
   AtomicString remote_ip_address_;
@@ -484,10 +498,11 @@ class PLATFORM_EXPORT ResourceResponse final {
 
   // True if this resource was loaded from the network.
   bool network_accessed_ = false;
-
+#if defined(ENABLE_GNET)
   // https://fetch.spec.whatwg.org/#concept-response-type
   network::mojom::FetchResponseType response_type_ =
       network::mojom::FetchResponseType::kDefault;
+#endif // ENABLE_GNET
 
   // HTTP version used in the response, if known.
   HTTPVersion http_version_ = kHTTPVersionUnknown;
@@ -506,9 +521,11 @@ class PLATFORM_EXPORT ResourceResponse final {
   SecurityDetails security_details_;
 
   scoped_refptr<ResourceLoadTiming> resource_load_timing_;
+#if defined(ENABLE_GNET)
   scoped_refptr<ResourceLoadInfo> resource_load_info_;
 
   mutable CacheControlHeader cache_control_header_;
+#endif // ENABLE_GNET
 
   mutable double age_ = 0.0;
   mutable double date_ = 0.0;
@@ -541,10 +558,11 @@ class PLATFORM_EXPORT ResourceResponse final {
 
   // ALPN negotiated protocol of the socket which fetched this resource.
   AtomicString alpn_negotiated_protocol_;
-
+#if defined(ENABLE_GNET)
   // Information about the type of connection used to fetch this resource.
   net::HttpResponseInfo::ConnectionInfo connection_info_ =
       net::HttpResponseInfo::ConnectionInfo::CONNECTION_INFO_UNKNOWN;
+#endif // ENABLE_GNET
 
   // Size of the response in bytes prior to decompression.
   int64_t encoded_data_length_ = 0;

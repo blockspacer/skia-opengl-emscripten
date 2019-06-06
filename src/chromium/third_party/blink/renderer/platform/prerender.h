@@ -69,9 +69,11 @@ class PLATFORM_EXPORT Prerender final
   const KURL& Url() const { return url_; }
   unsigned RelTypes() const { return rel_types_; }
   const String& GetReferrer() const { return referrer_.referrer; }
+#if defined(ENABLE_GNET)
   network::mojom::ReferrerPolicy GetReferrerPolicy() const {
     return referrer_.referrer_policy;
   }
+#endif // ENABLE_GNET
 
   void SetExtraData(scoped_refptr<ExtraData> extra_data) {
     extra_data_ = std::move(extra_data);

@@ -10,10 +10,11 @@
 #include "base/component_export.h"
 
 class PrefService;
-
+#if defined(ENABLE_GNET)
 namespace net {
 class URLRequestContext;
 }
+#endif // ENABLE_GNET
 
 namespace network {
 

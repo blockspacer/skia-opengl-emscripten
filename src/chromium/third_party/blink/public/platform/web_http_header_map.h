@@ -6,8 +6,10 @@
 #define THIRD_PARTY_BLINK_PUBLIC_PLATFORM_WEB_HTTP_HEADER_MAP_H_
 
 #include <memory>
+#if defined(ENABLE_GNET)
 #include "net/http/http_request_headers.h"
 #include "net/http/http_response_headers.h"
+#endif // ENABLE_GNET
 #include "third_party/blink/public/platform/web_string.h"
 
 #if INSIDE_BLINK
@@ -24,9 +26,10 @@ class BLINK_PLATFORM_EXPORT WebHTTPHeaderMap {
   ~WebHTTPHeaderMap();
 
   WebString Get(const WebString& name) const;
-
+#if defined(ENABLE_GNET)
   explicit WebHTTPHeaderMap(const net::HttpRequestHeaders*);
   explicit WebHTTPHeaderMap(const net::HttpResponseHeaders*);
+#endif // ENABLE_GNET
 
 #if INSIDE_BLINK
   WebHTTPHeaderMap(const HTTPHeaderMap&);

@@ -17,7 +17,9 @@ class BlobUtils {
  public:
   // Whether the new Blob URL glue for NetworkService is enabled (i.e.,
   // the NetworkService or MojoBlobURLs feature is enabled).
+#if defined(ENABLE_GNET)
   static bool BLINK_COMMON_EXPORT MojoBlobURLsEnabled();
+#endif // ENABLE_GNET
 
   // Get the preferred capacity a mojo::DataPipe being used to read a blob.
   static uint32_t BLINK_COMMON_EXPORT

@@ -37,6 +37,7 @@
 #include "third_party/blink/public/platform/web_common.h"
 #include "third_party/blink/public/platform/web_url_request.h"
 
+#if defined(ENABLE_GNET)
 namespace blink {
 
 class WebData;
@@ -89,5 +90,6 @@ class WebURLLoader {
 };
 
 }  // namespace blink
+#endif // ENABLE_GNET
 
 #endif

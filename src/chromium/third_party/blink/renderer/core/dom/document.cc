@@ -36,10 +36,12 @@
 #include "base/optional.h"
 #include "cc/input/overscroll_behavior.h"
 #include "cc/input/scroll_snap_data.h"
+#if defined(ENABLE_UKM)
 #include "services/metrics/public/cpp/mojo_ukm_recorder.h"
 #include "services/metrics/public/cpp/ukm_builders.h"
 #include "services/metrics/public/cpp/ukm_source_id.h"
 #include "services/metrics/public/mojom/ukm_interface.mojom-shared.h"
+#endif // ENABLE_UKM
 #include "services/resource_coordinator/public/mojom/coordination_unit.mojom-blink.h"
 #include "services/service_manager/public/cpp/interface_provider.h"
 #include "third_party/blink/public/common/associated_interfaces/associated_interface_provider.h"
@@ -47,7 +49,9 @@
 #include "third_party/blink/public/mojom/frame/document_interface_broker.mojom-blink.h"
 #include "third_party/blink/public/mojom/insecure_input/insecure_input_service.mojom-blink.h"
 #include "third_party/blink/public/mojom/net/ip_address_space.mojom-blink.h"
+#if defined(ENABLE_UKM)
 #include "third_party/blink/public/mojom/ukm/ukm.mojom-blink.h"
+#endif // ENABLE_UKM
 #include "third_party/blink/public/platform/interface_provider.h"
 #include "third_party/blink/public/platform/platform.h"
 #include "third_party/blink/public/platform/task_type.h"
@@ -363,10 +367,12 @@ class DocumentOutliveTimeReporter : public BlinkGCObserver {
         NOTREACHED();
     }
 
+#if defined(ENABLE_UKM)
     if (outlive_time_count == 5 || outlive_time_count == 10 ||
         outlive_time_count == 20 || outlive_time_count == 50) {
       document_->RecordUkmOutliveTimeAfterShutdown(outlive_time_count);
     }
+#endif // ENABLE_UKM
   }
 
  private:
@@ -696,8 +702,10 @@ Document::Document(const DocumentInit& initializer,
       node_count_(0),
       logged_field_edit_(false),
       secure_context_state_(SecureContextState::kUnknown),
+#if defined(ENABLE_UKM)
       ukm_source_id_(ukm::UkmRecorder::GetNewSourceID()),
       needs_to_record_ukm_outlive_time_(false),
+#endif // ENABLE_UKM
       viewport_data_(MakeGarbageCollected<ViewportData>(*this)),
       agent_cluster_id_(base::UnguessableToken::Create()),
       isolated_world_csp_map_(
@@ -2852,11 +2860,13 @@ void Document::Shutdown() {
   // TODO(crbug.com/729196): Trace why LocalFrameView::DetachFromLayout crashes.
   CHECK(!View()->IsAttached());
 
+#if defined(ENABLE_UKM)
   needs_to_record_ukm_outlive_time_ = IsInMainFrame();
   if (needs_to_record_ukm_outlive_time_) {
     // Ensure |ukm_recorder_| and |ukm_source_id_|.
     UkmRecorder();
   }
+#endif // ENABLE_UKM
 
   mime_handler_view_before_unload_event_listener_ = nullptr;
 
@@ -3545,6 +3555,7 @@ bool Document::CheckCompletedInternal() {
     if (!frame_)
       return false;
 
+#if defined(ENABLE_UKM)
     // Send the source ID of the document to the browser.
     if (frame_->Client()->GetRemoteNavigationAssociatedInterfaces()) {
       mojom::blink::UkmSourceIdFrameHostAssociatedPtr ukm_binding;
@@ -3553,6 +3564,7 @@ bool Document::CheckCompletedInternal() {
       DCHECK(ukm_binding.is_bound());
       ukm_binding->SetDocumentSourceId(ukm_source_id_);
     }
+#endif // ENABLE_UKM
 
     frame_->GetFrameScheduler()->RegisterStickyFeature(
         SchedulingPolicy::Feature::kDocumentLoaded,
@@ -3563,11 +3575,13 @@ bool Document::CheckCompletedInternal() {
     // If this is a document associated with a resource loading hints based
     // preview, then record the resource loading hints UKM now that the load is
     // finished.
+#if defined(ENABLE_UKM)
     PreviewsResourceLoadingHints* hints =
         Loader()->GetPreviewsResourceLoadingHints();
     if (hints) {
       hints->RecordUKM(UkmRecorder());
     }
+#endif // ENABLE_UKM
   }
 
   return true;
@@ -3971,8 +3985,10 @@ void Document::SetURL(const KURL& url) {
 
   // TODO(crbug/795354): Move handling of URL recording out of the renderer.
   // URL must only be recorded from the main frame.
+#if defined(ENABLE_UKM)
   if (ukm_recorder_ && IsInMainFrame())
     ukm_recorder_->UpdateSourceURL(ukm_source_id_, url_);
+#endif // ENABLE_UKM
 }
 
 KURL Document::ValidBaseElementURL() const {
@@ -6352,6 +6368,7 @@ bool Document::AllowedToUseDynamicMarkUpInsertion(
   return false;
 }
 
+#if defined(ENABLE_UKM)
 ukm::UkmRecorder* Document::UkmRecorder() {
   if (ukm_recorder_)
     return ukm_recorder_.get();
@@ -6369,6 +6386,7 @@ ukm::UkmRecorder* Document::UkmRecorder() {
 ukm::SourceId Document::UkmSourceID() const {
   return ukm_source_id_;
 }
+#endif // ENABLE_UKM
 
 void Document::InitSecurityContext(const DocumentInit& initializer) {
   DCHECK(!GetSecurityOrigin());
@@ -7713,6 +7731,7 @@ void Document::Trace(Visitor* visitor) {
   SynchronousMutationNotifier::Trace(visitor);
 }
 
+#if defined(ENABLE_UKM)
 void Document::RecordUkmOutliveTimeAfterShutdown(int outlive_time_count) {
   if (!needs_to_record_ukm_outlive_time_)
     return;
@@ -7724,6 +7743,7 @@ void Document::RecordUkmOutliveTimeAfterShutdown(int outlive_time_count) {
       .SetGCCount(outlive_time_count)
       .Record(ukm_recorder_.get());
 }
+#endif // ENABLE_UKM
 
 bool Document::CurrentFrameHadRAF() const {
   return scripted_animation_controller_ &&

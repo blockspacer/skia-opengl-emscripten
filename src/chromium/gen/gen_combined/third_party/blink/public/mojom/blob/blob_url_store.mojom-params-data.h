@@ -550,10 +550,12 @@ class BlobURLStore_ResolveAsURLLoaderFactory_ParamsDataView {
   template <typename UserType>
   UserType TakeFactory() {
     UserType result;
+#if defined(ENABLE_GNET)
     bool ret =
         mojo::internal::Deserialize<::network::mojom::URLLoaderFactoryRequestDataView>(
             &data_->factory, &result, context_);
     DCHECK(ret);
+#endif // ENABLE_GNET
     return result;
   }
  private:

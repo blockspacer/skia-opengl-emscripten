@@ -34,8 +34,10 @@
 
 #include "third_party/blink/renderer/platform/heap/heap.h"
 #include "third_party/blink/renderer/platform/mhtml/archive_resource.h"
+#if defined(ENABLE_GNET)
 #include "third_party/blink/renderer/platform/network/http_parsers.h"
 #include "third_party/blink/renderer/platform/network/parsed_content_type.h"
+#endif // ENABLE_GNET
 #include "third_party/blink/renderer/platform/wtf/hash_map.h"
 #include "third_party/blink/renderer/platform/wtf/text/ascii_ctype.h"
 #include "third_party/blink/renderer/platform/wtf/text/base64.h"
@@ -184,6 +186,7 @@ MIMEHeader* MIMEHeader::ParseHeader(SharedBufferChunkReader* buffer) {
   KeyValueMap::iterator mime_parameters_iterator =
       key_value_pairs.find("content-type");
   if (mime_parameters_iterator != key_value_pairs.end()) {
+#if defined(ENABLE_GNET)
     ParsedContentType parsed_content_type(mime_parameters_iterator->value,
                                           ParsedContentType::Mode::kRelaxed);
     mime_header->content_type_ = parsed_content_type.MimeType();
@@ -203,6 +206,7 @@ MIMEHeader* MIMEHeader::ParseHeader(SharedBufferChunkReader* buffer) {
       mime_header->end_of_document_boundary_ =
           mime_header->end_of_document_boundary_ + "--";
     }
+#endif // ENABLE_GNET
   }
 
   mime_parameters_iterator = key_value_pairs.find("content-transfer-encoding");

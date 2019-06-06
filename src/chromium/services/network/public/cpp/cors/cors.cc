@@ -44,10 +44,12 @@ std::string ExtractMIMETypeFromMediaType(const std::string& media_type) {
   std::string::size_type semicolon = media_type.find(';');
   std::string top_level_type;
   std::string subtype;
+#if defined(ENABLE_GNET)
   if (net::ParseMimeTypeWithoutParameter(media_type.substr(0, semicolon),
                                          &top_level_type, &subtype)) {
     return top_level_type + "/" + subtype;
   }
+#endif // ENABLE_GNET
   return std::string();
 }
 
@@ -330,8 +332,12 @@ bool IsCorsSafelistedMethod(const std::string& method) {
   // https://fetch.spec.whatwg.org/#cors-safelisted-method
   // "A CORS-safelisted method is a method that is `GET`, `HEAD`, or `POST`."
   std::string method_upper = base::ToUpperASCII(method);
+#if defined(ENABLE_GNET)
   return method_upper == net::HttpRequestHeaders::kGetMethod ||
          method_upper == kHeadMethod || method_upper == kPostMethod;
+#else
+  return true;
+#endif // ENABLE_GNET
 }
 
 bool IsCorsSafelistedContentType(const std::string& media_type) {
@@ -443,7 +449,7 @@ bool IsNoCorsSafelistedHeader(const std::string& name,
     return false;
   return IsCorsSafelistedHeader(lower_name, value);
 }
-
+#if defined(ENABLE_GNET)
 std::vector<std::string> CorsUnsafeRequestHeaderNames(
     const net::HttpRequestHeaders::HeaderVector& headers) {
   std::vector<std::string> potentially_unsafe_names;
@@ -501,6 +507,7 @@ std::vector<std::string> CorsUnsafeNotForbiddenRequestHeaderNames(
   }
   return header_names;
 }
+#endif // ENABLE_GNET
 
 bool IsForbiddenMethod(const std::string& method) {
   const std::string lower_method = base::ToLowerASCII(method);

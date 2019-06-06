@@ -22,7 +22,9 @@
 #include "mojo/public/cpp/bindings/map_data_view.h"
 #include "mojo/public/cpp/bindings/string_data_view.h"
 #include "third_party/blink/public/mojom/service_worker/service_worker_provider.mojom-shared-internal.h"
+#if defined(ENABLE_GNET)
 #include "services/network/public/mojom/url_loader_factory.mojom-shared.h"
+#endif // ENABLE_GNET
 #include "services/service_manager/public/mojom/interface_provider.mojom-shared.h"
 #include "third_party/blink/public/mojom/cache_storage/cache_storage.mojom-shared.h"
 #include "third_party/blink/public/mojom/service_worker/controller_service_worker_mode.mojom-shared.h"

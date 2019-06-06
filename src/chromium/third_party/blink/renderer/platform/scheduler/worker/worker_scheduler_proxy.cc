@@ -20,13 +20,19 @@ WorkerSchedulerProxy::WorkerSchedulerProxy(FrameOrWorkerScheduler* scheduler) {
   if (FrameScheduler* frame_scheduler = scheduler->ToFrameScheduler()) {
     parent_frame_type_ = GetFrameOriginType(frame_scheduler);
     initial_frame_status_ = GetFrameStatus(frame_scheduler);
+
+#if defined(ENABLE_UKM)
     ukm_source_id_ = frame_scheduler->GetUkmSourceId();
+#endif // ENABLE_UKM
+
+#if defined(ENABLE_GNET) && defined(ENABLE_UKM)
     if (ukm_source_id_ != ukm::kInvalidSourceId) {
       // The connector must be cloned because it belongs to the main thread,
       // but we intend to acquire and use it from the worker thread. (It must
       // be cloned on the original owning thread, not the destination thread.)
       connector_ = Platform::Current()->GetConnector()->Clone();
     }
+#endif // ENABLE_GNET
   }
 }
 

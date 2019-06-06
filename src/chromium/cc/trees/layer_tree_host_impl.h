@@ -45,7 +45,9 @@
 #include "cc/trees/mutator_host_client.h"
 #include "cc/trees/render_frame_metadata.h"
 #include "cc/trees/task_runner_provider.h"
+#if defined(ENABLE_UKM)
 #include "cc/trees/ukm_manager.h"
+#endif // ENABLE_UKM
 #include "components/viz/client/client_resource_provider.h"
 #include "components/viz/common/frame_sinks/begin_frame_args.h"
 #include "components/viz/common/gpu/context_cache_controller.h"
@@ -740,15 +742,19 @@ class CC_EXPORT LayerTreeHostImpl
       base::flat_map<PaintImage::Id, PaintImage::DecodingMode>
           decoding_mode_map);
 
+#if defined(ENABLE_UKM)
   void InitializeUkm(std::unique_ptr<ukm::UkmRecorder> recorder);
   UkmManager* ukm_manager() { return ukm_manager_.get(); }
+#endif // ENABLE_UKM
 
   void RenewTreePriorityForTesting() { client_->RenewTreePriority(); }
 
   void SetRenderFrameObserver(
       std::unique_ptr<RenderFrameMetadataObserver> observer);
 
+#if defined(ENABLE_UKM)
   void SetActiveURL(const GURL& url, ukm::SourceId source_id);
+#endif // ENABLE_UKM
 
   // Called when LayerTreeImpl's LocalSurfaceIdAllocation changes.
   void OnLayerTreeLocalSurfaceIdAllocationChanged();
@@ -1149,7 +1155,9 @@ class CC_EXPORT LayerTreeHostImpl
 
   ImageAnimationController image_animation_controller_;
 
+#if defined(ENABLE_UKM)
   std::unique_ptr<UkmManager> ukm_manager_;
+#endif // ENABLE_UKM
 
   // Provides RenderFrameMetadata to the Browser process upon the submission of
   // each CompositorFrame.

@@ -33,14 +33,18 @@
 #include <memory>
 
 #include "base/time/time.h"
+#if defined(ENABLE_GNET)
 #include "net/base/load_flags.h"
 #include "third_party/blink/public/mojom/fetch/fetch_api_request.mojom-shared.h"
+#endif // ENABLE_GNET
 #include "third_party/blink/public/platform/web_http_body.h"
 #include "third_party/blink/public/platform/web_http_header_visitor.h"
 #include "third_party/blink/public/platform/web_security_origin.h"
 #include "third_party/blink/public/platform/web_url.h"
 #include "third_party/blink/renderer/platform/loader/fetch/resource_request.h"
+#if defined(ENABLE_GNET)
 #include "third_party/blink/renderer/platform/network/encoded_form_data.h"
+#endif // ENABLE_GNET
 #include "third_party/blink/renderer/platform/weborigin/security_origin.h"
 #include "third_party/blink/renderer/platform/wtf/allocator.h"
 
@@ -432,6 +436,7 @@ void WebURLRequest::SetFetchWindowId(const base::UnguessableToken& id) {
   resource_request_->SetFetchWindowId(id);
 }
 
+#if defined(ENABLE_GNET)
 int WebURLRequest::GetLoadFlagsForWebUrlRequest() const {
   int load_flags = net::LOAD_NORMAL;
 
@@ -480,6 +485,7 @@ int WebURLRequest::GetLoadFlagsForWebUrlRequest() const {
 
   return load_flags;
 }
+#endif // ENABLE_GNET
 
 const ResourceRequest& WebURLRequest::ToResourceRequest() const {
   DCHECK(resource_request_);

@@ -28,7 +28,9 @@
 #include "third_party/blink/public/mojom/service_worker/service_worker_client.mojom-shared.h"
 #include "third_party/blink/public/mojom/service_worker/service_worker_client.mojom-blink-forward.h"
 #include "mojo/public/mojom/base/time.mojom-blink.h"
+#if defined(ENABLE_GNET)
 #include "services/network/public/mojom/request_context_frame_type.mojom-blink.h"
+#endif // ENABLE_GNET
 #include "url/mojom/url.mojom-blink.h"
 
 #include "mojo/public/cpp/bindings/lib/wtf_clone_equals_util.h"

@@ -39,10 +39,12 @@ namespace blink {
 
 const char BlobURL::kBlobProtocol[] = "blob";
 
+#if defined(ENABLE_GNET)
 KURL BlobURL::CreatePublicURL(const SecurityOrigin* security_origin) {
   DCHECK(security_origin);
   return CreateBlobURL(security_origin->ToString());
 }
+#endif // ENABLE_GNET
 
 String BlobURL::GetOrigin(const KURL& url) {
   DCHECK(url.ProtocolIs(kBlobProtocol));

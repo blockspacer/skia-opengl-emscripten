@@ -22,7 +22,7 @@
 #include "build/build_config.h"
 #include "components/viz/common/frame_sinks/begin_frame_args.h"
 
-#ifdef __TODO__
+#if defined(ENABLE_UKM)
 #include "services/metrics/public/cpp/ukm_builders.h"
 #include "third_party/blink/renderer/platform/instrumentation/resource_coordinator/renderer_resource_coordinator.h"
 #endif
@@ -2427,7 +2427,9 @@ void MainThreadSchedulerImpl::OnTaskCompleted(
     // Unset the state of |task_priority_for_tracing|.
     main_thread_only().task_priority_for_tracing = base::nullopt;
 
+#if defined(ENABLE_UKM)
     RecordTaskUkm(queue, task, task_timing);
+#endif // ENABLE_UKM
 }
 
 /*
@@ -2477,13 +2479,13 @@ void MainThreadSchedulerImpl::OnTaskCompleted(
   RecordTaskUkm(queue.get(), task, *task_timing);
 }*/
 
+#if defined(ENABLE_UKM)
 void MainThreadSchedulerImpl::RecordTaskUkm(
     MainThreadTaskQueue* queue,
     const base::sequence_manager::Task& task,
     const TaskQueue::TaskTiming& task_timing) {
   if (!helper_.ShouldRecordTaskUkm(task_timing.has_thread_time()))
     return;
-#ifdef __TODO__
   if (queue && queue->GetFrameScheduler()) {
     auto status = RecordTaskUkmImpl(queue, task, task_timing,
                                     queue->GetFrameScheduler(), true);
@@ -2492,8 +2494,6 @@ void MainThreadSchedulerImpl::RecordTaskUkm(
         UkmRecordingStatus::kCount);
     return;
   }
-#endif
-#ifdef __TODO__
   for (PageSchedulerImpl* page_scheduler : main_thread_only().page_schedulers) {
     auto status = RecordTaskUkmImpl(
         queue, task, task_timing,
@@ -2502,10 +2502,8 @@ void MainThreadSchedulerImpl::RecordTaskUkm(
         "Scheduler.Experimental.Renderer.UkmRecordingStatus", status,
         UkmRecordingStatus::kCount);
   }
-#endif
 }
 
-#ifdef __TODO__
 UkmRecordingStatus MainThreadSchedulerImpl::RecordTaskUkmImpl(
     MainThreadTaskQueue* queue,
     const base::sequence_manager::Task& task,
@@ -2568,7 +2566,7 @@ UkmRecordingStatus MainThreadSchedulerImpl::RecordTaskUkmImpl(
 
   return UkmRecordingStatus::kSuccess;
 }
-#endif
+#endif // ENABLE_UKM
 
 TaskQueue::QueuePriority MainThreadSchedulerImpl::ComputePriority(
     MainThreadTaskQueue* task_queue) const {

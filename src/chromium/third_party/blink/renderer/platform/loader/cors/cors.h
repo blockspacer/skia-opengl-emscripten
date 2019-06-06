@@ -6,10 +6,12 @@
 #define THIRD_PARTY_BLINK_RENDERER_PLATFORM_LOADER_CORS_CORS_H_
 
 #include "base/optional.h"
+#if defined(ENABLE_GNET)
 #include "services/network/public/cpp/cors/cors_error_status.h"
 #include "services/network/public/mojom/cors.mojom-shared.h"
 #include "services/network/public/mojom/fetch_api.mojom-shared.h"
 #include "third_party/blink/public/mojom/fetch/fetch_api_request.mojom-shared.h"
+#endif // ENABLE_GNET
 #include "third_party/blink/public/platform/web_http_header_set.h"
 #include "third_party/blink/renderer/platform/platform_export.h"
 #include "third_party/blink/renderer/platform/wtf/text/wtf_string.h"
@@ -27,8 +29,10 @@ enum class CorsFlag : uint8_t {
   Set,
 };
 
+#if defined(ENABLE_GNET)
 // CORS related utility functions.
 namespace cors {
+
 
 // Thin wrapper functions below are for calling ::network::cors functions from
 // Blink core. Once Out-of-renderer CORS is enabled, following functions will
@@ -132,6 +136,7 @@ PLATFORM_EXPORT bool IsCorsSafelistedResponseHeader(const String&);
 PLATFORM_EXPORT bool IsNoCorsAllowedContext(mojom::RequestContextType);
 
 }  // namespace cors
+#endif // ENABLE_GNET
 
 }  // namespace blink
 

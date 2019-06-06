@@ -26,7 +26,9 @@
 #ifndef THIRD_PARTY_BLINK_RENDERER_CORE_LOADER_FRAME_LOAD_REQUEST_H_
 #define THIRD_PARTY_BLINK_RENDERER_CORE_LOADER_FRAME_LOAD_REQUEST_H_
 
+#if defined(ENABLE_GNET)
 #include "services/network/public/mojom/request_context_frame_type.mojom-shared.h"
+#endif // ENABLE_GNET
 #include "third_party/blink/public/mojom/blob/blob_url_store.mojom-blink.h"
 #include "third_party/blink/public/web/web_triggering_event_info.h"
 #include "third_party/blink/public/web/web_window_features.h"

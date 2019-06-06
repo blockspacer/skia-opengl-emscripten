@@ -80,6 +80,7 @@ class MapValueReader : public MapReaderBase<MaybeConstUserType> {
   }
 };
 
+//#if defined(ENABLE_GIPC)
 template <typename Key, typename Value, typename MaybeConstUserType>
 struct Serializer<MapDataView<Key, Value>, MaybeConstUserType> {
   using UserType = typename std::remove_const<MaybeConstUserType>::type;
@@ -152,6 +153,7 @@ struct Serializer<MapDataView<Key, Value>, MaybeConstUserType> {
     return true;
   }
 };
+//#endif // ENABLE_GIPC
 
 }  // namespace internal
 }  // namespace mojo

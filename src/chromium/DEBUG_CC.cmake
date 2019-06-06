@@ -21,7 +21,7 @@ add_library(DEBUG_CC STATIC
 
 target_link_libraries(DEBUG_CC PUBLIC
   #GURL
-  #GNET
+  #${GNET_LIBS}
   #${BASE_LIBRARIES}
   base
   SKIA

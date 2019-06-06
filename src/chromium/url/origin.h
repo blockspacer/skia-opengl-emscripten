@@ -16,7 +16,9 @@
 #include "base/strings/string_piece.h"
 #include "base/strings/string_util.h"
 #include "base/unguessable_token.h"
+#if defined(ENABLE_GIPC)
 #include "ipc/ipc_param_traits.h"
+#endif // ENABLE_GIPC
 #include "url/scheme_host_port.h"
 #include "url/third_party/mozilla/url_parse.h"
 #include "url/url_canon.h"
@@ -24,14 +26,18 @@
 
 class GURL;
 
+#if defined(ENABLE_GNET)
 namespace blink {
 class SecurityOrigin;
 }  // namespace blink
+#endif // ENABLE_GNET
 
+#if defined(ENABLE_GIPC)
 namespace ipc_fuzzer {
 template <class T>
 struct FuzzTraits;
 }  // namespace ipc_fuzzer
+#endif // ENABLE_GIPC
 
 namespace mojo {
 template <typename DataViewType, typename T>
@@ -267,12 +273,18 @@ class COMPONENT_EXPORT(URL) Origin {
   std::string GetDebugString() const;
 
  private:
+#if defined(ENABLE_GNET)
   friend class blink::SecurityOrigin;
+#endif // ENABLE_GNET
   friend class OriginTest;
   friend struct mojo::UrlOriginAdapter;
+#if defined(ENABLE_GIPC)
   friend struct ipc_fuzzer::FuzzTraits<Origin>;
+#endif // ENABLE_GIPC
   friend struct mojo::StructTraits<url::mojom::OriginDataView, url::Origin>;
+#if defined(ENABLE_GIPC)
   friend IPC::ParamTraits<url::Origin>;
+#endif // ENABLE_GIPC
   friend COMPONENT_EXPORT(URL) std::ostream& operator<<(std::ostream& out,
                                                         const Origin& origin);
 

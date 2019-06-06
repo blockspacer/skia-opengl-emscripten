@@ -31,7 +31,9 @@
 #ifndef THIRD_PARTY_BLINK_PUBLIC_PLATFORM_WEB_PRERENDER_H_
 #define THIRD_PARTY_BLINK_PUBLIC_PLATFORM_WEB_PRERENDER_H_
 
+#if defined(ENABLE_GNET)
 #include "services/network/public/mojom/referrer_policy.mojom-shared.h"
+#endif // ENABLE_GNET
 #include "third_party/blink/public/platform/web_common.h"
 #include "third_party/blink/public/platform/web_private_ptr.h"
 #include "third_party/blink/public/platform/web_string.h"
@@ -69,8 +71,10 @@ class WebPrerender {
   BLINK_PLATFORM_EXPORT WebURL Url() const;
   BLINK_PLATFORM_EXPORT WebString GetReferrer() const;
   BLINK_PLATFORM_EXPORT unsigned RelTypes() const;
+#if defined(ENABLE_GNET)
   BLINK_PLATFORM_EXPORT network::mojom::ReferrerPolicy GetReferrerPolicy()
       const;
+#endif // ENABLE_GNET
 
   BLINK_PLATFORM_EXPORT void SetExtraData(ExtraData*);
   BLINK_PLATFORM_EXPORT const ExtraData* GetExtraData() const;

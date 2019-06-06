@@ -18,8 +18,12 @@
 #include "base/single_thread_task_runner.h"
 #include "base/task/sequence_manager/task_queue.h"
 #include "base/trace_event/trace_event.h"
+#if defined(ENABLE_GNET)
 #include "net/base/request_priority.h"
+#endif // ENABLE_GNET
+#if defined(ENABLE_UKM)
 #include "services/metrics/public/cpp/ukm_source_id.h"
+#endif // ENABLE_UKM
 #include "third_party/blink/public/platform/task_type.h"
 #include "third_party/blink/renderer/platform/platform_export.h"
 #include "third_party/blink/renderer/platform/scheduler/common/tracing_helper.h"
@@ -41,9 +45,11 @@ class TracedValue;
 }  // namespace trace_event
 }  // namespace base
 
+#if defined(ENABLE_UKM)
 namespace ukm {
 class UkmRecorder;
 }
+#endif // ENABLE_UKM
 
 namespace blink {
 
@@ -145,8 +151,10 @@ class PLATFORM_EXPORT FrameSchedulerImpl : public FrameScheduler,
   base::sequence_manager::TaskQueue::QueuePriority ComputePriority(
       MainThreadTaskQueue* task_queue) const;
 
+#if defined(ENABLE_UKM)
   ukm::SourceId GetUkmSourceId() override;
   ukm::UkmRecorder* GetUkmRecorder();
+#endif // ENABLE_UKM
 
   // FrameTaskQueueController::Delegate implementation.
   void OnTaskQueueCreated(
@@ -190,10 +198,11 @@ class PLATFORM_EXPORT FrameSchedulerImpl : public FrameScheduler,
 
   void OnShutdownResourceLoadingTaskQueue(
       scoped_refptr<MainThreadTaskQueue> task_queue);
-
+#if defined(ENABLE_GNET)
   void DidChangeResourceLoadingPriority(
       scoped_refptr<MainThreadTaskQueue> task_queue,
       net::RequestPriority priority);
+#endif // ENABLE_GNET
 
   scoped_refptr<MainThreadTaskQueue> GetTaskQueue(TaskType);
 

@@ -27,7 +27,9 @@
 #include "mojo/public/cpp/bindings/union_traits.h"
 #include "services/proxy_resolver/public/mojom/proxy_resolver.mojom-shared.h"
 #include "services/proxy_resolver/public/mojom/proxy_resolver.mojom-forward.h"
+#if defined(ENABLE_GNET)
 #include "services/network/public/mojom/ip_address.mojom.h"
+#endif // ENABLE_GNET
 #include "url/mojom/url.mojom.h"
 #include <string>
 #include <vector>

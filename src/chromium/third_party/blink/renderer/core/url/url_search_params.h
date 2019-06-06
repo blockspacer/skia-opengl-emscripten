@@ -11,7 +11,9 @@
 #include "third_party/blink/renderer/bindings/core/v8/usv_string_sequence_sequence_or_usv_string_usv_string_record_or_usv_string.h"
 #include "third_party/blink/renderer/platform/bindings/script_wrappable.h"
 #include "third_party/blink/renderer/platform/heap/handle.h"
+#if defined(ENABLE_GNET)
 #include "third_party/blink/renderer/platform/network/encoded_form_data.h"
+#endif // ENABLE_GNET
 #include "third_party/blink/renderer/platform/wtf/forward.h"
 #include "third_party/blink/renderer/platform/wtf/text/wtf_string.h"
 
@@ -54,7 +56,9 @@ class CORE_EXPORT URLSearchParams final : public ScriptWrappable,
   void SetInputWithoutUpdate(const String&);
 
   // Internal helpers
+#if defined(ENABLE_GNET)
   scoped_refptr<EncodedFormData> ToEncodedFormData() const;
+#endif // ENABLE_GNET
   const Vector<std::pair<String, String>>& Params() const { return params_; }
 
 #if DCHECK_IS_ON()
@@ -68,7 +72,9 @@ class CORE_EXPORT URLSearchParams final : public ScriptWrappable,
 
   void RunUpdateSteps();
   IterationSource* StartIteration(ScriptState*, ExceptionState&) override;
+#if defined(ENABLE_GNET)
   void EncodeAsFormData(Vector<char>&) const;
+#endif // ENABLE_GNET
 
   void AppendWithoutUpdate(const String& name, const String& value);
 

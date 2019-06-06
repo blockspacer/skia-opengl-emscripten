@@ -10,6 +10,7 @@
 #include "base/memory/scoped_refptr.h"
 #include "third_party/blink/public/platform/scheduler/web_resource_loading_task_runner_handle.h"
 
+#if defined(ENABLE_GNET)
 namespace blink {
 
 class WebURLLoader;
@@ -29,5 +30,6 @@ class WebURLLoaderFactory {
 };
 
 }  // namespace blink
+#endif // ENABLE_GNET
 
 #endif  // THIRD_PARTY_BLINK_PUBLIC_PLATFORM_WEB_URL_LOADER_FACTORY_H_

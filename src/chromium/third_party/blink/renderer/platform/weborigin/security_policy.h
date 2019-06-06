@@ -29,13 +29,16 @@
 #ifndef THIRD_PARTY_BLINK_RENDERER_PLATFORM_WEBORIGIN_SECURITY_POLICY_H_
 #define THIRD_PARTY_BLINK_RENDERER_PLATFORM_WEBORIGIN_SECURITY_POLICY_H_
 
+#if defined(ENABLE_GNET)
 #include "services/network/public/mojom/cors_origin_pattern.mojom-shared.h"
 #include "services/network/public/mojom/referrer_policy.mojom-shared.h"
+#endif // ENABLE_GNET
 #include "third_party/blink/renderer/platform/platform_export.h"
 #include "third_party/blink/renderer/platform/weborigin/referrer.h"
 #include "third_party/blink/renderer/platform/wtf/allocator.h"
 #include "third_party/blink/renderer/platform/wtf/text/wtf_string.h"
 
+#if defined(ENABLE_GNET)
 namespace blink {
 
 class KURL;
@@ -59,6 +62,7 @@ class PLATFORM_EXPORT SecurityPolicy {
   // referrer header, you should use generateReferrer instead.
   static bool ShouldHideReferrer(const KURL&, const KURL& referrer);
 
+#if defined(ENABLE_GNET)
   // Returns the referrer modified according to the referrer policy for a
   // navigation to a given URL. If the referrer returned is empty, the
   // referrer header should be omitted.
@@ -99,8 +103,10 @@ class PLATFORM_EXPORT SecurityPolicy {
       const String& header_value,
       ReferrerPolicyLegacyKeywordsSupport,
       network::mojom::ReferrerPolicy* result);
+#endif // ENABLE_GNET
 };
 
 }  // namespace blink
+#endif // ENABLE_GNET
 
 #endif  // THIRD_PARTY_BLINK_RENDERER_PLATFORM_WEBORIGIN_SECURITY_POLICY_H_

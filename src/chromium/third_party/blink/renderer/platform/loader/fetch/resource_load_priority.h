@@ -29,8 +29,9 @@
 #include "third_party/blink/public/platform/web_url_request.h"
 
 namespace blink {
-
+#if defined(ENABLE_GNET)
 using ResourceLoadPriority = WebURLRequest::Priority;
+#endif // ENABLE_GNET
 
 }  // namespace blink
 

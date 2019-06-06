@@ -9,8 +9,11 @@
 
 #include "base/logging.h"
 #include "base/strings/string_piece.h"
+#if defined(ENABLE_GNET)
 #include "net/base/io_buffer.h"
+#endif // ENABLE_GNET
 
+#if defined(ENABLE_GNET)
 namespace ui {
 
 I18nSourceStream::~I18nSourceStream() {}
@@ -69,3 +72,4 @@ int I18nSourceStream::FilterData(net::IOBuffer* output_buffer,
 }
 
 }  // namespace ui
+#endif // ENABLE_GNET

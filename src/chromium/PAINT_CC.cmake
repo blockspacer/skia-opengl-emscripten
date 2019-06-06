@@ -87,7 +87,7 @@ add_library(PAINT_CC STATIC
 
 target_link_libraries(PAINT_CC PUBLIC
   #GURL
-  #GNET
+  #${GNET_LIBS}
   #${BASE_LIBRARIES}
   BASE_CC
   DEBUG_CC

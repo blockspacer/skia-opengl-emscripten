@@ -117,6 +117,7 @@ namespace mojo {
 
 namespace internal {
 
+#if defined(ENABLE_GIPC)
 template <typename MaybeConstUserType>
 struct Serializer<::url::mojom::OriginDataView, MaybeConstUserType> {
   using UserType = typename std::remove_const<MaybeConstUserType>::type;
@@ -171,6 +172,7 @@ struct Serializer<::url::mojom::OriginDataView, MaybeConstUserType> {
     return Traits::Read(data_view, output);
   }
 };
+#endif // ENABLE_GIPC
 
 }  // namespace internal
 
@@ -190,6 +192,7 @@ inline void OriginDataView::GetHostDataView(
   auto pointer = data_->host.Get();
   *output = mojo::StringDataView(pointer, context_);
 }
+
 inline void OriginDataView::GetNonceIfOpaqueDataView(
     ::mojo_base::mojom::UnguessableTokenDataView* output) {
   auto pointer = data_->nonce_if_opaque.Get();

@@ -9,6 +9,7 @@
 
 #include "base/base_export.h"
 
+#if defined(ENABLE_UKM)
 namespace base {
 
 // An ID used to identify a Source to UKM, for recording information about it.
@@ -72,5 +73,6 @@ class BASE_EXPORT UkmSourceId {
 constexpr UkmSourceId kInvalidUkmSourceId = UkmSourceId();
 
 }  // namespace base
+#endif // ENABLE_UKM
 
 #endif  // BASE_METRICS_UKM_SOURCE_ID_H_

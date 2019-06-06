@@ -92,7 +92,9 @@ class ScrollingCoordinator;
 class ScrollingCoordinatorContext;
 class TracedValue;
 class TransformState;
+#if defined(ENABLE_UKM)
 class LocalFrameUkmAggregator;
+#endif // ENABLE_UKM
 class WebPluginContainerImpl;
 struct AnnotatedRegionValue;
 struct IntrinsicSizingInfo;
@@ -674,8 +676,10 @@ class CORE_EXPORT LocalFrameView final
     return *paint_timing_detector_;
   }
 
+#if defined(ENABLE_UKM)
   // Return the UKM aggregator for this frame, creating it if necessary.
   LocalFrameUkmAggregator& EnsureUkmAggregator();
+#endif // ENABLE_UKM
 
 #if DCHECK_IS_ON()
   void SetIsUpdatingDescendantDependentFlags(bool val) {
@@ -960,7 +964,9 @@ class CORE_EXPORT LocalFrameView final
 
   MainThreadScrollingReasons main_thread_scrolling_reasons_;
 
+#if defined(ENABLE_UKM)
   scoped_refptr<LocalFrameUkmAggregator> ukm_aggregator_;
+#endif // ENABLE_UKM
   unsigned forced_layout_stack_depth_;
   TimeTicks forced_layout_start_time_;
 

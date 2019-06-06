@@ -25,7 +25,9 @@
 #include "third_party/blink/public/mojom/appcache/appcache_info.mojom-shared.h"
 #include "third_party/blink/public/mojom/devtools/console_message.mojom-shared.h"
 #include "url/mojom/url.mojom-shared.h"
+#if defined(ENABLE_GNET)
 #include "services/network/public/mojom/url_loader_factory.mojom-shared.h"
+#endif // ENABLE_GNET
 
 #include "mojo/public/cpp/bindings/lib/interface_serialization.h"
 

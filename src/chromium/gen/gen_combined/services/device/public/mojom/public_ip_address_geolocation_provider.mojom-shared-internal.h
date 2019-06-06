@@ -9,7 +9,9 @@
 #include "mojo/public/cpp/bindings/lib/bindings_internal.h"
 #include "mojo/public/cpp/bindings/lib/map_data_internal.h"
 #include "mojo/public/cpp/bindings/lib/buffer.h"
+#if defined(ENABLE_GNET)
 #include "services/network/public/mojom/mutable_partial_network_traffic_annotation_tag.mojom-shared-internal.h"
+#endif // ENABLE_GNET
 #include "services/device/public/mojom/geolocation.mojom-shared-internal.h"
 #include "mojo/public/cpp/bindings/lib/native_enum_data.h"
 #include "mojo/public/interfaces/bindings/native_struct.mojom-shared-internal.h"

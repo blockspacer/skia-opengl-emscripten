@@ -8,7 +8,9 @@
 
 #include "base/feature_list.h"
 #include "base/metrics/field_trial_params.h"
+#if defined(ENABLE_GNET)
 #include "services/network/public/cpp/features.h"
+#endif // ENABLE_GNET
 #include "third_party/blink/public/common/features.h"
 
 namespace blink {
@@ -16,10 +18,12 @@ namespace blink {
 constexpr uint64_t BlobUtils::kUnknownSize;
 
 // static
+#if defined(ENABLE_GNET)
 bool BlobUtils::MojoBlobURLsEnabled() {
   return base::FeatureList::IsEnabled(network::features::kNetworkService) ||
          base::FeatureList::IsEnabled(blink::features::kMojoBlobURLs);
 }
+#endif // ENABLE_GNET
 
 namespace {
 

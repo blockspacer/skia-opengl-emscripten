@@ -213,6 +213,7 @@ void WebURLResponse::SetHasMajorCertificateErrors(bool value) {
   resource_response_->SetHasMajorCertificateErrors(value);
 }
 
+#if defined(ENABLE_GNET)
 void WebURLResponse::SetCTPolicyCompliance(
     net::ct::CTPolicyCompliance compliance) {
   switch (compliance) {
@@ -238,6 +239,7 @@ void WebURLResponse::SetCTPolicyCompliance(
       break;
   };
 }
+#endif // ENABLE_GNET
 
 void WebURLResponse::SetIsLegacyTLSVersion(bool value) {
   resource_response_->SetIsLegacyTLSVersion(value);
@@ -394,14 +396,18 @@ void WebURLResponse::SetAlpnNegotiatedProtocol(
   resource_response_->SetAlpnNegotiatedProtocol(alpn_negotiated_protocol);
 }
 
+#if defined(ENABLE_GNET)
 net::HttpResponseInfo::ConnectionInfo WebURLResponse::ConnectionInfo() const {
   return resource_response_->ConnectionInfo();
 }
+#endif // ENABLE_GNET
 
+#if defined(ENABLE_GNET)
 void WebURLResponse::SetConnectionInfo(
     net::HttpResponseInfo::ConnectionInfo connection_info) {
   resource_response_->SetConnectionInfo(connection_info);
 }
+#endif // ENABLE_GNET
 
 void WebURLResponse::SetAsyncRevalidationRequested(bool requested) {
   resource_response_->SetAsyncRevalidationRequested(requested);

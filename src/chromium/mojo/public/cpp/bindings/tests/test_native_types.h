@@ -8,8 +8,10 @@
 #include <string>
 
 #include "base/macros.h"
+#if defined(ENABLE_GIPC)
 #include "ipc/ipc_message.h"
 #include "ipc/ipc_param_traits.h"
+#endif // ENABLE_GIPC
 #include "mojo/public/cpp/system/message_pipe.h"
 
 namespace mojo {
@@ -62,6 +64,7 @@ class TestNativeStructWithAttachments {
 }  // namespace test
 }  // namespace mojo
 
+#if defined(ENABLE_GIPC)
 namespace IPC {
 
 template <>
@@ -85,5 +88,6 @@ struct ParamTraits<mojo::test::TestNativeStructWithAttachments> {
 };
 
 }  // namespace IPC
+#endif // ENABLE_GIPC
 
 #endif  // MOJO_PUBLIC_CPP_BINDINGS_TESTS_BINDINGS_TEST_NATIVE_TYPES_H_

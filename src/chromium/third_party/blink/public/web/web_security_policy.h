@@ -31,8 +31,10 @@
 #ifndef THIRD_PARTY_BLINK_PUBLIC_WEB_WEB_SECURITY_POLICY_H_
 #define THIRD_PARTY_BLINK_PUBLIC_WEB_WEB_SECURITY_POLICY_H_
 
+#if defined(ENABLE_GNET)
 #include "services/network/public/mojom/cors_origin_pattern.mojom-shared.h"
 #include "services/network/public/mojom/referrer_policy.mojom-shared.h"
+#endif // ENABLE_GNET
 #include "third_party/blink/public/platform/web_common.h"
 
 namespace blink {

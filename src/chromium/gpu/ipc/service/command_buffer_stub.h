@@ -29,8 +29,10 @@
 #include "gpu/ipc/common/surface_handle.h"
 #include "gpu/ipc/service/context_url.h"
 #include "gpu/ipc/service/gpu_ipc_service_export.h"
+#if defined(ENABLE_GIPC)
 #include "ipc/ipc_listener.h"
 #include "ipc/ipc_sender.h"
+#endif // ENABLE_GIPC
 #include "ui/gfx/geometry/size.h"
 #include "ui/gfx/gpu_memory_buffer.h"
 #include "ui/gfx/swap_result.h"

@@ -30,7 +30,9 @@
 #include "third_party/blink/public/mojom/appcache/appcache_info.mojom-blink.h"
 #include "third_party/blink/public/mojom/devtools/console_message.mojom-blink.h"
 #include "url/mojom/url.mojom-blink.h"
+#if defined(ENABLE_GNET)
 #include "services/network/public/mojom/url_loader_factory.mojom-blink.h"
+#endif // ENABLE_GNET
 
 #include "mojo/public/cpp/bindings/lib/wtf_clone_equals_util.h"
 #include "mojo/public/cpp/bindings/lib/wtf_hash_util.h"
@@ -292,8 +294,9 @@ class PLATFORM_EXPORT AppCacheFrontend
   
   virtual void LogMessage(::blink::mojom::blink::ConsoleMessageLevel log_level, const WTF::String& message) = 0;
 
-  
+#if defined(ENABLE_GNET)
   virtual void SetSubresourceFactory(::network::mojom::blink::URLLoaderFactoryPtr url_loader_factory) = 0;
+#endif // ENABLE_GNET
 };
 
 class PLATFORM_EXPORT AppCacheBackendProxy
@@ -342,7 +345,9 @@ class PLATFORM_EXPORT AppCacheFrontendProxy
   void ProgressEventRaised(const ::blink::KURL& url, int32_t total, int32_t complete) final;
   void ErrorEventRaised(AppCacheErrorDetailsPtr error_details) final;
   void LogMessage(::blink::mojom::blink::ConsoleMessageLevel log_level, const WTF::String& message) final;
+#if defined(ENABLE_GNET)
   void SetSubresourceFactory(::network::mojom::blink::URLLoaderFactoryPtr url_loader_factory) final;
+#endif // ENABLE_GNET
 
  private:
   mojo::MessageReceiverWithResponder* receiver_;

@@ -27,7 +27,9 @@
 #include "mojo/public/cpp/bindings/union_traits.h"
 #include "third_party/blink/public/mojom/cookie_store/cookie_store.mojom-shared.h"
 #include "third_party/blink/public/mojom/cookie_store/cookie_store.mojom-blink-forward.h"
+#if defined(ENABLE_GNET)
 #include "services/network/public/mojom/restricted_cookie_manager.mojom-blink.h"
+#endif // ENABLE_GNET
 #include "url/mojom/url.mojom-blink.h"
 
 #include "mojo/public/cpp/bindings/lib/wtf_clone_equals_util.h"
@@ -190,10 +192,11 @@ class PLATFORM_EXPORT CookieChangeSubscription {
 
 
   CookieChangeSubscription();
-
   CookieChangeSubscription(
       const ::blink::KURL& url,
+#if defined(ENABLE_GNET)
       ::network::mojom::blink::CookieMatchType match_type,
+#endif // ENABLE_GNET
       const WTF::String& name);
 
   ~CookieChangeSubscription();
@@ -268,8 +271,9 @@ class PLATFORM_EXPORT CookieChangeSubscription {
 
   
   ::blink::KURL url;
-  
+#if defined(ENABLE_GNET)
   ::network::mojom::blink::CookieMatchType match_type;
+#endif // ENABLE_GNET
   
   WTF::String name;
 

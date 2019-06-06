@@ -5,7 +5,9 @@
 #ifndef THIRD_PARTY_BLINK_RENDERER_CORE_EXPORTED_WORKER_SHADOW_PAGE_H_
 #define THIRD_PARTY_BLINK_RENDERER_CORE_EXPORTED_WORKER_SHADOW_PAGE_H_
 
+#if defined(ENABLE_GNET)
 #include "services/network/public/cpp/shared_url_loader_factory.h"
+#endif // ENABLE_GNET
 #include "third_party/blink/public/common/privacy_preferences.h"
 #include "third_party/blink/public/web/web_document_loader.h"
 #include "third_party/blink/public/web/web_local_frame_client.h"
@@ -13,9 +15,11 @@
 #include "third_party/blink/renderer/core/exported/web_dev_tools_agent_impl.h"
 #include "third_party/blink/renderer/core/frame/web_local_frame_impl.h"
 
+#if defined(ENABLE_GNET)
 namespace network {
 class SharedURLLoaderFactory;
 }
+#endif // ENABLE_GNET
 
 namespace blink {
 

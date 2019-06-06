@@ -32,11 +32,12 @@
 #include "services/network/resource_scheduler.h"
 #include "services/network/resource_scheduler_client.h"
 #include "services/network/upload_progress_tracker.h"
-
+#if defined(ENABLE_GNET)
 namespace net {
 class HttpResponseHeaders;
 class URLRequestContext;
 }
+#endif // ENABLE_GNET
 
 namespace network {
 

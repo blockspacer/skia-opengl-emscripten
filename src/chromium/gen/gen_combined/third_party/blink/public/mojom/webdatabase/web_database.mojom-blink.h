@@ -87,11 +87,12 @@ class PLATFORM_EXPORT WebDatabase
   };
   virtual ~WebDatabase() {}
 
-  
+#if defined(ENABLE_GNET)
   virtual void UpdateSize(const scoped_refptr<const ::blink::SecurityOrigin>& origin, const WTF::String& name, int64_t size) = 0;
 
   
   virtual void CloseImmediately(const scoped_refptr<const ::blink::SecurityOrigin>& origin, const WTF::String& name) = 0;
+#endif // ENABLE_GNET
 };
 
 class WebDatabaseHostProxy;
@@ -180,11 +181,12 @@ class PLATFORM_EXPORT WebDatabaseHost
 
   // Sync method. This signature is used by the client side; the service side
   // should implement the signature with callback below.
-  
+#if defined(ENABLE_GNET)
   virtual bool GetSpaceAvailable(const scoped_refptr<const ::blink::SecurityOrigin>& origin, int64_t* out_space_available);
+#endif // ENABLE_GNET
 
   using GetSpaceAvailableCallback = base::OnceCallback<void(int64_t)>;
-  
+#if defined(ENABLE_GNET)
   virtual void GetSpaceAvailable(const scoped_refptr<const ::blink::SecurityOrigin>& origin, GetSpaceAvailableCallback callback) = 0;
 
   
@@ -198,6 +200,7 @@ class PLATFORM_EXPORT WebDatabaseHost
 
   
   virtual void HandleSqliteError(const scoped_refptr<const ::blink::SecurityOrigin>& origin, const WTF::String& database_name, int32_t error) = 0;
+#endif // ENABLE_GNET
 };
 
 class PLATFORM_EXPORT WebDatabaseProxy
@@ -206,8 +209,10 @@ class PLATFORM_EXPORT WebDatabaseProxy
   using InterfaceType = WebDatabase;
 
   explicit WebDatabaseProxy(mojo::MessageReceiverWithResponder* receiver);
+#if defined(ENABLE_GNET)
   void UpdateSize(const scoped_refptr<const ::blink::SecurityOrigin>& origin, const WTF::String& name, int64_t size) final;
   void CloseImmediately(const scoped_refptr<const ::blink::SecurityOrigin>& origin, const WTF::String& name) final;
+#endif // ENABLE_GNET
 
  private:
   mojo::MessageReceiverWithResponder* receiver_;
@@ -229,12 +234,14 @@ class PLATFORM_EXPORT WebDatabaseHostProxy
   void GetFileSize(const WTF::String& vfs_file_name, GetFileSizeCallback callback) final;
   bool SetFileSize(const WTF::String& vfs_file_name, int64_t expected_size, bool* out_success) final;
   void SetFileSize(const WTF::String& vfs_file_name, int64_t expected_size, SetFileSizeCallback callback) final;
+#if defined(ENABLE_GNET)
   bool GetSpaceAvailable(const scoped_refptr<const ::blink::SecurityOrigin>& origin, int64_t* out_space_available) final;
   void GetSpaceAvailable(const scoped_refptr<const ::blink::SecurityOrigin>& origin, GetSpaceAvailableCallback callback) final;
   void Opened(const scoped_refptr<const ::blink::SecurityOrigin>& origin, const WTF::String& database_name, const WTF::String& database_description, int64_t estimated_size) final;
   void Modified(const scoped_refptr<const ::blink::SecurityOrigin>& origin, const WTF::String& database_name) final;
   void Closed(const scoped_refptr<const ::blink::SecurityOrigin>& origin, const WTF::String& database_name) final;
   void HandleSqliteError(const scoped_refptr<const ::blink::SecurityOrigin>& origin, const WTF::String& database_name, int32_t error) final;
+#endif // ENABLE_GNET
 
  private:
   mojo::MessageReceiverWithResponder* receiver_;

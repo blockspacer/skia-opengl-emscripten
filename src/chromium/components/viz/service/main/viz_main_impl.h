@@ -35,9 +35,11 @@ namespace service_manager {
 class Connector;
 }
 
+#if defined(ENABLE_UKM)
 namespace ukm {
 class MojoUkmRecorder;
 }
+#endif // ENABLE_UKM
 
 namespace viz {
 class GpuServiceImpl;
@@ -129,8 +131,10 @@ class VizMainImpl : public mojom::VizMain {
   void ExitProcess();
 
  private:
+#if defined(ENABLE_UKM)
   // Initializes GPU's UkmRecorder if GPU is running in it's own process.
   void CreateUkmRecorderIfNeeded(service_manager::Connector* connector);
+#endif // ENABLE_UKM
 
   void CreateFrameSinkManagerInternal(mojom::FrameSinkManagerParamsPtr params);
 
@@ -167,7 +171,9 @@ class VizMainImpl : public mojom::VizMain {
 
   const scoped_refptr<base::SingleThreadTaskRunner> gpu_thread_task_runner_;
 
+#if defined(ENABLE_UKM)
   std::unique_ptr<ukm::MojoUkmRecorder> ukm_recorder_;
+#endif // ENABLE_UKM
   std::unique_ptr<base::PowerMonitor> power_monitor_;
   mojo::Binding<mojom::VizMain> binding_;
   mojo::AssociatedBinding<mojom::VizMain> associated_binding_;

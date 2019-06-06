@@ -28,7 +28,9 @@
 #include "third_party/blink/public/mojom/blob/blob_url_store.mojom-shared.h"
 #include "third_party/blink/public/mojom/blob/blob_url_store.mojom-forward.h"
 #include "mojo/public/mojom/base/unguessable_token.mojom-forward.h"
+#if defined(ENABLE_GNET)
 #include "services/network/public/mojom/url_loader_factory.mojom-forward.h"
+#endif // ENABLE_GNET
 #include "third_party/blink/public/mojom/blob/blob.mojom-forward.h"
 #include "url/mojom/url.mojom-forward.h"
 #include <string>
@@ -105,8 +107,9 @@ class BLINK_COMMON_EXPORT BlobURLStore
   
   virtual void Resolve(const GURL& url, ResolveCallback callback) = 0;
 
-  
+#if defined(ENABLE_GNET)
   virtual void ResolveAsURLLoaderFactory(const GURL& url, ::network::mojom::URLLoaderFactoryRequest factory) = 0;
+#endif // ENABLE_GNET
 
   
   virtual void ResolveForNavigation(const GURL& url, BlobURLTokenRequest token) = 0;
@@ -162,7 +165,9 @@ class BLINK_COMMON_EXPORT BlobURLStoreProxy
   void Register(::blink::mojom::BlobPtr blob, const GURL& url, RegisterCallback callback) final;
   void Revoke(const GURL& url) final;
   void Resolve(const GURL& url, ResolveCallback callback) final;
+#if defined(ENABLE_GNET)
   void ResolveAsURLLoaderFactory(const GURL& url, ::network::mojom::URLLoaderFactoryRequest factory) final;
+#endif // ENABLE_GNET
   void ResolveForNavigation(const GURL& url, BlobURLTokenRequest token) final;
 
  private:

@@ -5,7 +5,9 @@
 #ifndef UI_LATENCY_IPC_LATENCY_INFO_PARAM_TRAITS_MACROS_H_
 #define UI_LATENCY_IPC_LATENCY_INFO_PARAM_TRAITS_MACROS_H_
 
+#if defined(ENABLE_GIPC)
 #include "ipc/ipc_message_macros.h"
+#endif // ENABLE_GIPC
 #include "ui/latency/latency_info.h"
 
 IPC_ENUM_TRAITS_MAX_VALUE(ui::LatencyComponentType,

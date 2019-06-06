@@ -8,8 +8,10 @@
 #include "mojo/public/mojom/base/string16.mojom-blink-import-headers.h"
 #include "mojo/public/mojom/base/time.mojom-blink.h"
 #include "mojo/public/mojom/base/time.mojom-blink-import-headers.h"
+#if defined(ENABLE_GNET)
 #include "services/network/public/mojom/cookie_manager.mojom-blink.h"
 #include "services/network/public/mojom/cookie_manager.mojom-blink-import-headers.h"
+#endif // ENABLE_GNET
 #include "third_party/blink/public/mojom/background_fetch/background_fetch.mojom-blink.h"
 #include "third_party/blink/public/mojom/background_fetch/background_fetch.mojom-blink-import-headers.h"
 #include "third_party/blink/public/mojom/fetch/fetch_api_response.mojom-blink.h"

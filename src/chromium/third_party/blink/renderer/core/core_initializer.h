@@ -32,7 +32,9 @@
 #define THIRD_PARTY_BLINK_RENDERER_CORE_CORE_INITIALIZER_H_
 
 #include "base/macros.h"
+#if defined(ENABLE_GNET)
 #include "services/service_manager/public/cpp/binder_registry.h"
+#endif // ENABLE_GNET
 #include "third_party/blink/public/common/dom_storage/session_storage_namespace_id.h"
 #include "third_party/blink/renderer/core/core_export.h"
 #include "third_party/blink/renderer/platform/wtf/allocator.h"

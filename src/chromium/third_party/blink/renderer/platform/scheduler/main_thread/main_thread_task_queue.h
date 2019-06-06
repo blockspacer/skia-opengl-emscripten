@@ -8,7 +8,9 @@
 #include "base/memory/weak_ptr.h"
 #include "base/task/sequence_manager/task_queue.h"
 #include "base/task/sequence_manager/task_queue_impl.h"
+#if defined(ENABLE_GNET)
 #include "net/base/request_priority.h"
+#endif // ENABLE_GNET
 #include "third_party/blink/renderer/platform/scheduler/public/frame_scheduler.h"
 
 namespace base {
@@ -319,8 +321,10 @@ class PLATFORM_EXPORT MainThreadTaskQueue
     return TaskQueue::CreateTaskRunner(static_cast<int>(task_type));
   }
 
+#if defined(ENABLE_GNET)
   void SetNetRequestPriority(net::RequestPriority net_request_priority);
   base::Optional<net::RequestPriority> net_request_priority() const;
+#endif // ENABLE_GNET
 
  protected:
   void SetFrameSchedulerForTest(FrameSchedulerImpl* frame_scheduler);
@@ -354,7 +358,9 @@ class PLATFORM_EXPORT MainThreadTaskQueue
   // to the queue, if one exists.
   //
   // Used to track UMA metrics for resource loading tasks split by net priority.
+#if defined(ENABLE_GNET)
   base::Optional<net::RequestPriority> net_request_priority_;
+#endif // ENABLE_GNET
 
   // Needed to notify renderer scheduler about completed tasks.
   MainThreadSchedulerImpl* main_thread_scheduler_;  // NOT OWNED

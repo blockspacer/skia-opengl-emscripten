@@ -7,6 +7,7 @@
 
 #include <string>
 
+#if defined(ENABLE_GIPC)
 #include "ipc/ipc_message_utils.h"
 #include "ipc/param_traits_macros.h"
 #include "ui/gfx/ipc/geometry/gfx_ipc_geometry_export.h"
@@ -127,5 +128,6 @@ struct GFX_IPC_GEOMETRY_EXPORT ParamTraits<gfx::ScrollOffset> {
 };
 
 }  // namespace IPC
+#endif // ENABLE_GIPC
 
 #endif  // UI_GFX_IPC_GEOMETRY_GFX_PARAM_TRAITS_H_

@@ -2179,6 +2179,7 @@ void AppCacheFrontendProxy::LogMessage(
   ignore_result(receiver_->Accept(&message));
 }
 
+#if defined(ENABLE_GNET)
 void AppCacheFrontendProxy::SetSubresourceFactory(
     ::network::mojom::URLLoaderFactoryPtr in_url_loader_factory) {
 #if BUILDFLAG(MOJO_TRACE_ENABLED)
@@ -2215,6 +2216,7 @@ void AppCacheFrontendProxy::SetSubresourceFactory(
   // encountered an error, which will be visible through other means.
   ignore_result(receiver_->Accept(&message));
 }
+#endif // ENABLE_GNET
 
 // static
 bool AppCacheFrontendStubDispatch::Accept(
@@ -2448,9 +2450,11 @@ std::move(p_message));
         return false;
       }
       // A null |impl| means no implementation was bound.
+#if defined(ENABLE_GNET)
       DCHECK(impl);
       impl->SetSubresourceFactory(
 std::move(p_url_loader_factory));
+#endif // ENABLE_GNET
       return true;
     }
   }

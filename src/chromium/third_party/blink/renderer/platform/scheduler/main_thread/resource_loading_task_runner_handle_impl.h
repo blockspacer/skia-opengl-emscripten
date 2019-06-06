@@ -24,8 +24,9 @@ class PLATFORM_EXPORT ResourceLoadingTaskRunnerHandleImpl
       scoped_refptr<MainThreadTaskQueue> task_runner);
 
   scoped_refptr<base::SingleThreadTaskRunner> GetTaskRunner() const override;
-
+#if defined(ENABLE_GNET)
   void DidChangeRequestPriority(net::RequestPriority priority) override;
+#endif // ENABLE_GNET
 
   const scoped_refptr<MainThreadTaskQueue>& task_queue();
 

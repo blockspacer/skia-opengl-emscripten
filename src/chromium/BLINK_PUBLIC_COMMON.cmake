@@ -79,35 +79,6 @@
 
 add_library(BLINK_PUBLIC_COMMON INTERFACE)
 
-
-#target_link_libraries(BLINK_PUBLIC_COMMON PUBLIC
-#
-#  #public_deps = [
-#  #  "//services/network/public/cpp:cpp",
-#  #  "//skia",
-#  #  "//third_party/blink/public/mojom:mojom_modules_headers",
-#  #]
-#  SKIA
-#  SERVICES_NETWORK_PUBLIC_CPP
-#  MOJO
-#  #deps = [
-#  #  "//base",
-#  #  "//mojo/public/cpp/bindings",
-#  #  "//mojo/public/cpp/system",
-#  #  "//mojo/public/mojom/base",
-#  #  "//net",
-#  #]
-#  GNET
-#  ## iOS doesn't use and must not depend on //media
-#  #if (!is_ios) {
-#  #  deps += [
-#  #    "//media",
-#  #    "//media/capture:capture_base",
-#  #    "//media/capture:capture_lib",
-#  #  ]
-#  #}
-#)
-
 #set_property(TARGET BLINK_PUBLIC_COMMON PROPERTY CXX_STANDARD 17)
 
 target_include_directories(BLINK_PUBLIC_COMMON INTERFACE

@@ -31,7 +31,9 @@
 #ifndef THIRD_PARTY_BLINK_PUBLIC_WEB_WEB_ASSOCIATED_URL_LOADER_OPTIONS_H_
 #define THIRD_PARTY_BLINK_PUBLIC_WEB_WEB_ASSOCIATED_URL_LOADER_OPTIONS_H_
 
+#if defined(ENABLE_GNET)
 #include "services/network/public/mojom/cors.mojom-shared.h"
+#endif // ENABLE_GNET
 
 namespace blink {
 

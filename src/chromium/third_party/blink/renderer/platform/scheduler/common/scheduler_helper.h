@@ -14,7 +14,10 @@
 #include "base/time/tick_clock.h"
 #include "third_party/blink/public/platform/task_type.h"
 #include "third_party/blink/renderer/platform/platform_export.h"
+
+#if defined(ENABLE_UKM)
 #include "third_party/blink/renderer/platform/scheduler/common/ukm_task_sampler.h"
+#endif // ENABLE_UKM
 
 namespace blink {
 namespace scheduler {
@@ -102,15 +105,20 @@ class PLATFORM_EXPORT SchedulerHelper
   double GetSamplingRateForRecordingCPUTime() const;
   bool HasCPUTimingForEachTask() const;
 
+#if defined(ENABLE_UKM)
   bool ShouldRecordTaskUkm(bool task_has_thread_time) {
     return ukm_task_sampler_.ShouldRecordTaskUkm(task_has_thread_time);
   }
+#endif // ENABLE_UKM
 
   // Test helpers.
   void SetWorkBatchSizeForTesting(int work_batch_size);
+
+#if defined(ENABLE_UKM)
   void SetUkmTaskSamplingRateForTest(double rate) {
     ukm_task_sampler_.SetUkmTaskSamplingRate(rate);
   }
+#endif // ENABLE_UKM
 
  protected:
   void InitDefaultQueues(
@@ -130,7 +138,9 @@ class PLATFORM_EXPORT SchedulerHelper
 
   Observer* observer_;  // NOT OWNED
 
+#if defined(ENABLE_UKM)
   UkmTaskSampler ukm_task_sampler_;
+#endif // ENABLE_UKM
 
   DISALLOW_COPY_AND_ASSIGN(SchedulerHelper);
 };

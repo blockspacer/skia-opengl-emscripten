@@ -533,25 +533,25 @@ endif ()
 # to be added explicitly.
 
 if(TARGET_EMSCRIPTEN)
-  # message(FATAL_ERROR "${TODO}")
-else()
+  message(INFO "building skia for EMSCRIPTEN")
+elseif(TARGET_LINUX)
+  message(INFO "building skia for LINUX")
 
-if (NOT EXT_SKIA_SHARED)
-  function(ADD_SKIA_LIBRARY_DEPENDENCY LIB_NAME_LIST)
-    foreach(LIB_NAME ${LIB_NAME_LIST})
-      message(STATUS "Searching for ${LIB_NAME}...")
-      find_library(LIB${LIB_NAME} ${LIB_NAME})
-      if (NOT LIB${LIB_NAME})
-        message(FATAL_ERROR "Can't find required library ${LIB_NAME}.")
-      else()
-        message(STATUS "Found library ${LIB_NAME} = ${LIB${LIB_NAME}}")
-      endif ()
-      set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${LIB${LIB_NAME}}" PARENT_SCOPE)
-    endforeach()
-  endfunction()
+  if (NOT EXT_SKIA_SHARED)
+    function(ADD_SKIA_LIBRARY_DEPENDENCY LIB_NAME_LIST)
+      foreach(LIB_NAME ${LIB_NAME_LIST})
+        message(STATUS "Searching for ${LIB_NAME}...")
+        find_library(LIB${LIB_NAME} ${LIB_NAME})
+        if (NOT LIB${LIB_NAME})
+          message(FATAL_ERROR "Can't find required library ${LIB_NAME}.")
+        else()
+          message(STATUS "Found library ${LIB_NAME} = ${LIB${LIB_NAME}}")
+        endif ()
+        set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${LIB${LIB_NAME}}" PARENT_SCOPE)
+      endforeach()
+    endfunction()
 
-  # seem to be always required...
-  if(TARGET_LINUX)
+    # seem to be always required...
     #ADD_SKIA_LIBRARY_DEPENDENCY("dl")
     set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${libDL_LIB}" PARENT_SCOPE)
 
@@ -594,54 +594,53 @@ if (NOT EXT_SKIA_SHARED)
     ADD_SKIA_LIBRARY_DEPENDENCY(${EXT_SKIA_USE_FONTCONFIG} "fontconfig") # skia_use_fontconfig
     ADD_SKIA_LIBRARY_DEPENDENCY(${EXT_SKIA_USE_FREETYPE2} "freetype") # skia_use_system_freetype2
 
-  endif(TARGET_LINUX)
+    # see HARFBUZZ_LIBRARIES
+    #if(ENABLE_HARFBUZZ)
+    #  ADD_SKIA_LIBRARY_DEPENDENCY("harfbuzz")
+    #endif(ENABLE_HARFBUZZ)
 
-  # see HARFBUZZ_LIBRARIES
-  #if(ENABLE_HARFBUZZ)
-  #  ADD_SKIA_LIBRARY_DEPENDENCY("harfbuzz")
-  #endif(ENABLE_HARFBUZZ)
+    #ADD_SKIA_LIBRARY_DEPENDENCY("jpeg") # skia_use_system_libjpeg_turbo
 
-  #ADD_SKIA_LIBRARY_DEPENDENCY("jpeg") # skia_use_system_libjpeg_turbo
+    #ADD_SKIA_LIBRARY_DEPENDENCY(${EXT_SKIA_USE_SYSTEM_ZLIB} "z") # skia_use_system_zlib
+    find_package(ZLIB REQUIRED)
+    set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${libZLIB_LIB}" PARENT_SCOPE)
 
-  #ADD_SKIA_LIBRARY_DEPENDENCY(${EXT_SKIA_USE_SYSTEM_ZLIB} "z") # skia_use_system_zlib
-  find_package(ZLIB REQUIRED)
-  set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${libZLIB_LIB}" PARENT_SCOPE)
+    # NOTE: libjpeg_turbo requires libjpeg
+    #set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${libjpeg_LIB}" PARENT_SCOPE)
 
-  # NOTE: libjpeg_turbo requires libjpeg
-  #set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${libjpeg_LIB}" PARENT_SCOPE)
+    # NOTE: libjpeg_turbo requires libjpeg
+    set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${libjpeg_TURBO_LIB}" PARENT_SCOPE)
 
-  # NOTE: libjpeg_turbo requires libjpeg
-  set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${libjpeg_TURBO_LIB}" PARENT_SCOPE)
+    #ADD_SKIA_LIBRARY_DEPENDENCY("png") # skia_use_system_libpng
+    #find_package(PNG REQUIRED)
+    # none of the above will be defined unless ZLib can be found!
+    #PNG_INCLUDE_DIRS, where to find png.h, etc.
+    #PNG_LIBRARIES, the libraries to link against to use PNG.
+    #PNG_DEFINITIONS - You should add_definitons(${PNG_DEFINITIONS}) before compiling code that includes png library files.
+    #PNG_FOUND, If false, do not try to use PNG.
+    #PNG_VERSION_STRING - the version of the PNG library found (since CMake 2.8.8)
+    #set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};PNG::PNG" PARENT_SCOPE)
+    #
+    # TODO: Linking globals named 'png_sRGB_table': symbol multiply defined!
+    #set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${libpng_LIB}" PARENT_SCOPE)
 
-  #ADD_SKIA_LIBRARY_DEPENDENCY("png") # skia_use_system_libpng
-  #find_package(PNG REQUIRED)
-  # none of the above will be defined unless ZLib can be found!
-  #PNG_INCLUDE_DIRS, where to find png.h, etc.
-  #PNG_LIBRARIES, the libraries to link against to use PNG.
-  #PNG_DEFINITIONS - You should add_definitons(${PNG_DEFINITIONS}) before compiling code that includes png library files.
-  #PNG_FOUND, If false, do not try to use PNG.
-  #PNG_VERSION_STRING - the version of the PNG library found (since CMake 2.8.8)
-  #set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};PNG::PNG" PARENT_SCOPE)
-  #
-  # TODO: Linking globals named 'png_sRGB_table': symbol multiply defined!
-  #set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${libpng_LIB}" PARENT_SCOPE)
+    if(USE_CUSTOM_ICU)
+      set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${CUSTOM_ICU_LIB};${HARFBUZZ_LIBRARIES}" PARENT_SCOPE)
+    endif(USE_CUSTOM_ICU)
 
-  if(USE_CUSTOM_ICU)
-    set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${CUSTOM_ICU_LIB};${HARFBUZZ_LIBRARIES}" PARENT_SCOPE)
-  endif(USE_CUSTOM_ICU)
+    # TODO: Linking globals named 'png_sRGB_table': symbol multiply defined!
+    #list(APPEND SKIA_DEFINES ${PNG_DEFINITIONS})
+    #message("SKIA_DEFINES=${SKIA_DEFINES}")
 
-  # TODO: Linking globals named 'png_sRGB_table': symbol multiply defined!
-  #list(APPEND SKIA_DEFINES ${PNG_DEFINITIONS})
-  #message("SKIA_DEFINES=${SKIA_DEFINES}")
+    # webp integration doesn't expose the system option...
+    #ADD_SKIA_LIBRARY_DEPENDENCY("webp") # SK_CONF_IS_OFFICIAL_BUILD && skia_use_libwebp
 
-  # webp integration doesn't expose the system option...
-  #ADD_SKIA_LIBRARY_DEPENDENCY("webp") # SK_CONF_IS_OFFICIAL_BUILD && skia_use_libwebp
+  endif (NOT EXT_SKIA_SHARED)
 
-endif (NOT EXT_SKIA_SHARED)
-
-set(SKIA_CMAKE_ONLY_HEADERS "${SKIA_CMAKE_ONLY_HEADERS};${HARFBUZZ_INCLUDE_DIRS};${OPENGL_INCLUDE_DIR};${OPENGL_EGL_INCLUDE_DIRS}")
-set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${HARFBUZZ_LIBRARIES};${OPENGL_LIBRARIES}")
-
+  set(SKIA_CMAKE_ONLY_HEADERS "${SKIA_CMAKE_ONLY_HEADERS};${HARFBUZZ_INCLUDE_DIRS};${OPENGL_INCLUDE_DIR};${OPENGL_EGL_INCLUDE_DIRS}")
+  set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${HARFBUZZ_LIBRARIES};${OPENGL_LIBRARIES}")
+else()
+  message(FATAL_ERROR "unknown platform")
 endif() # EMSCRIPTEN
 
 message(STATUS "SKIA_CMAKE_ONLY_HEADERS=${SKIA_CMAKE_ONLY_HEADERS}")

@@ -64,6 +64,7 @@ static_assert(sizeof(DownloadStreamClient_OnStreamCompleted_Params_Data) == 16,
               "Bad sizeof(DownloadStreamClient_OnStreamCompleted_Params_Data)");
 
 }  // namespace internal
+#if defined(ENABLE_GNET)
 class DownloadStreamClient_OnStreamCompleted_ParamsDataView {
  public:
   DownloadStreamClient_OnStreamCompleted_ParamsDataView() {}
@@ -74,6 +75,7 @@ class DownloadStreamClient_OnStreamCompleted_ParamsDataView {
       : data_(data) {}
 
   bool is_null() const { return !data_; }
+#if defined(ENABLE_GNET)
   template <typename UserType>
   WARN_UNUSED_RESULT bool ReadStatus(UserType* output) const {
     auto data_value = data_->status;
@@ -84,9 +86,11 @@ class DownloadStreamClient_OnStreamCompleted_ParamsDataView {
   NetworkRequestStatus status() const {
     return static_cast<NetworkRequestStatus>(data_->status);
   }
+#endif // ENABLE_GNET
  private:
   internal::DownloadStreamClient_OnStreamCompleted_Params_Data* data_ = nullptr;
 };
+#endif // ENABLE_GNET
 
 
 

@@ -12,8 +12,8 @@
 #include "mojo/public/cpp/bindings/lib/serialization_context.h"
 #include "mojo/public/cpp/bindings/lib/serialization_forward.h"
 
+//#if defined(ENABLE_GIPC)
 namespace mojo {
-
 template <typename K, typename V>
 class MapDataView {
  public:
@@ -40,8 +40,12 @@ class MapDataView {
 
   template <typename U>
   bool ReadKeys(U* output) {
+#if defined(ENABLE_GIPC)
     return internal::Deserialize<ArrayDataView<K>>(keys_.data_, output,
                                                    keys_.context_);
+#else
+  return false;
+#endif // ENABLE_GIPC
   }
 
   ArrayDataView<V>& values() { return values_; }
@@ -49,8 +53,12 @@ class MapDataView {
 
   template <typename U>
   bool ReadValues(U* output) {
+#if defined(ENABLE_GIPC)
     return internal::Deserialize<ArrayDataView<V>>(values_.data_, output,
                                                    values_.context_);
+#else
+  return false;
+#endif // ENABLE_GIPC
   }
 
  private:
@@ -59,5 +67,6 @@ class MapDataView {
 };
 
 }  // namespace mojo
+//#endif // ENABLE_GIPC
 
 #endif  // MOJO_PUBLIC_CPP_BINDINGS_MAP_DATA_VIEW_H_

@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#if defined(ENABLE_UKM)
 #include "third_party/blink/renderer/platform/scheduler/common/ukm_task_sampler.h"
 
 #include "third_party/blink/renderer/platform/wtf/math_extras.h"
@@ -52,3 +53,4 @@ void UkmTaskSampler::SetUkmTaskSamplingRate(double rate) {
 
 }  // namespace scheduler
 }  // namespace blink
+#endif // ENABLE_UKM

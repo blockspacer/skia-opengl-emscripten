@@ -11,14 +11,18 @@
 #include <utility>
 
 #include "base/macros.h"
+#if defined(ENABLE_GNET)
 #include "services/network/public/cpp/shared_url_loader_factory.h"
 #include "services/network/public/mojom/url_loader_factory.mojom.h"
+#endif // ENABLE_GNET
 #include "third_party/blink/public/common/common_export.h"
 #include "url/origin.h"
 
+#if defined(ENABLE_GNET)
 namespace network {
 struct ResourceRequest;
 }
+#endif // ENABLE_GNET
 
 namespace blink {
 

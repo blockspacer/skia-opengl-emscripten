@@ -20,7 +20,9 @@
 #include "media/mojo/interfaces/video_decode_perf_history.mojom.h"
 #include "media/mojo/services/media_mojo_export.h"
 #include "mojo/public/cpp/bindings/binding_set.h"
+#if defined(ENABLE_UKM)
 #include "services/metrics/public/cpp/ukm_source_id.h"
+#endif defined(ENABLE_UKM)
 #include "ui/gfx/geometry/size.h"
 
 namespace media {

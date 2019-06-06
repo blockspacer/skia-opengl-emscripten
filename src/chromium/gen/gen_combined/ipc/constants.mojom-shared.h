@@ -14,6 +14,7 @@
 
 #include "base/compiler_specific.h"
 #include "base/containers/flat_map.h"
+
 #include "mojo/public/cpp/bindings/array_data_view.h"
 #include "mojo/public/cpp/bindings/enum_traits.h"
 #include "mojo/public/cpp/bindings/interface_data_view.h"
@@ -21,6 +22,7 @@
 #include "mojo/public/cpp/bindings/lib/serialization.h"
 #include "mojo/public/cpp/bindings/map_data_view.h"
 #include "mojo/public/cpp/bindings/string_data_view.h"
+#if defined(ENABLE_GIPC)
 #include "ipc/constants.mojom-shared-internal.h"
 
 #include "mojo/public/cpp/bindings/lib/interface_serialization.h"
@@ -68,5 +70,6 @@ namespace mojom {
 
 }  // namespace mojom
 }  // namespace IPC
+#endif // ENABLE_GIPC
 
 #endif  // IPC_CONSTANTS_MOJOM_SHARED_H_

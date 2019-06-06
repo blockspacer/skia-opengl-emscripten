@@ -4,7 +4,9 @@
 
 #ifndef THIRD_PARTY_BLINK_PUBLIC_MOJOM_WORKER_WORKER_MAIN_SCRIPT_LOAD_PARAMS_MOJOM_BLINK_IMPORT_HEADERS_H_
 #define THIRD_PARTY_BLINK_PUBLIC_MOJOM_WORKER_WORKER_MAIN_SCRIPT_LOAD_PARAMS_MOJOM_BLINK_IMPORT_HEADERS_H_
+#if defined(ENABLE_GNET)
 #include "services/network/public/mojom/url_loader.mojom-blink.h"
 #include "services/network/public/mojom/url_loader.mojom-blink-import-headers.h"
+#endif // ENABLE_GNET
 
 #endif  // THIRD_PARTY_BLINK_PUBLIC_MOJOM_WORKER_WORKER_MAIN_SCRIPT_LOAD_PARAMS_MOJOM_BLINK_IMPORT_HEADERS_H_

@@ -10,8 +10,10 @@
 #include "base/macros.h"
 #include "base/memory/scoped_refptr.h"
 #include "build/build_config.h"
+#if defined(ENABLE_GNET)
 #include "services/network/public/mojom/tcp_socket.mojom.h"
 #include "services/viz/privileged/interfaces/viz_main.mojom.h"
+#endif // ENABLE_GNET
 
 #if defined(OS_ANDROID)
 #include "base/android/java_handler_thread.h"

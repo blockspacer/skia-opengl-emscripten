@@ -31,8 +31,10 @@
 #include <memory>
 
 #include "base/strings/pattern.h"
+#if defined(ENABLE_GNET)
 #include "services/network/public/cpp/cors/origin_access_list.h"
 #include "services/network/public/mojom/referrer_policy.mojom-blink.h"
+#endif // ENABLE_GNET
 #include "third_party/blink/public/platform/web_string.h"
 #include "third_party/blink/renderer/platform/runtime_enabled_features.h"
 #include "third_party/blink/renderer/platform/weborigin/kurl.h"
@@ -48,6 +50,7 @@
 #include "third_party/blink/renderer/platform/wtf/wtf.h"
 #include "url/gurl.h"
 
+#if defined(ENABLE_GNET)
 namespace blink {
 
 static Mutex& GetMutex() {
@@ -383,3 +386,4 @@ bool SecurityPolicy::ReferrerPolicyFromHeaderValue(
 }
 
 }  // namespace blink
+#endif // ENABLE_GNET

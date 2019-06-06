@@ -40,7 +40,9 @@
 
 namespace blink {
 
+#if defined(ENABLE_GNET)
 class WebURLRequest;
+#endif // ENABLE_GNET
 
 // This interface allows the Blink embedder to implement loading functionality
 // related to service workers. It is consulted whenever a DocumentLoader makes a

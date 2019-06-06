@@ -9,7 +9,9 @@
 #include "cc/trees/layer_tree_host.h"
 #include "cc/trees/proxy.h"
 #include "cc/trees/render_frame_metadata_observer.h"
+#if defined(ENABLE_UKM)
 #include "services/metrics/public/cpp/ukm_recorder.h"
+#endif // ENABLE_UKM
 
 namespace cc {
 class PaintWorkletLayerPainter;
@@ -46,7 +48,9 @@ class FakeProxy : public Proxy {
                                   BrowserControlsState current,
                                   bool animate) override {}
   void RequestBeginMainFrameNotExpected(bool new_state) override {}
+#if defined(ENABLE_UKM)
   void SetSourceURL(ukm::SourceId source_id, const GURL& url) override {}
+#endif // ENABLE_UKM
   void ClearHistory() override {}
   void SetRenderFrameObserver(
       std::unique_ptr<RenderFrameMetadataObserver> observer) override {}

@@ -9,7 +9,9 @@
 #include "base/logging.h"
 #include "base/stl_util.h"
 #include "base/values.h"
+#if defined(ENABLE_GNET)
 #include "net/base/escape.h"
+#endif // ENABLE_GNET
 
 namespace {
 const char kLeader[] = "$i18n";
@@ -101,7 +103,9 @@ std::string ReplaceTemplateExpressions(
     std::string replacement = value->second;
     if (context.empty()) {
       // Make the replacement HTML safe.
+#if defined(ENABLE_GNET)
       replacement = net::EscapeForHTML(replacement);
+#endif // ENABLE_GNET
     } else if (context == "Raw") {
       // Pass the replacement through unchanged.
     } else if (context == "Polymer") {

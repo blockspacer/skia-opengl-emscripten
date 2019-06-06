@@ -19,6 +19,7 @@
 #include "gpu/command_buffer/service/texture_manager.h"
 #include "gpu/config/gpu_info.h"
 #include "gpu/ipc/service/command_buffer_stub.h"
+#if defined(ENABLE_GIPC)
 #include "ipc/ipc_listener.h"
 #include "ipc/ipc_sender.h"
 #include "media/base/android_overlay_mojo_factory.h"
@@ -179,5 +180,6 @@ class GpuVideoDecodeAccelerator
 };
 
 }  // namespace media
+#endif // ENABLE_GIPC
 
 #endif  // MEDIA_GPU_IPC_SERVICE_GPU_VIDEO_DECODE_ACCELERATOR_H_

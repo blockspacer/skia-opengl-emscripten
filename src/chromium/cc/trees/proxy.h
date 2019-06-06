@@ -19,7 +19,9 @@
 #include "cc/input/browser_controls_state.h"
 #include "cc/trees/task_runner_provider.h"
 #include "components/viz/common/frame_sinks/begin_frame_source.h"
+#if defined(ENABLE_UKM)
 #include "services/metrics/public/cpp/ukm_source_id.h"
+#endif // ENABLE_UKM
 #include "url/gurl.h"
 
 namespace gfx {
@@ -99,7 +101,9 @@ class CC_EXPORT Proxy {
   // Testing hooks
   virtual bool MainFrameWillHappenForTesting() = 0;
 
+#if defined(ENABLE_UKM)
   virtual void SetSourceURL(ukm::SourceId source_id, const GURL& url) = 0;
+#endif // ENABLE_UKM
 
   virtual void ClearHistory() = 0;
 

@@ -9,7 +9,9 @@
 
 #include "third_party/blink/renderer/core/url/dom_url.h"
 #include "third_party/blink/renderer/platform/bindings/exception_messages.h"
+#if defined(ENABLE_GNET)
 #include "third_party/blink/renderer/platform/network/form_data_encoder.h"
+#endif // ENABLE_GNET
 #include "third_party/blink/renderer/platform/weborigin/kurl.h"
 #include "third_party/blink/renderer/platform/wtf/text/text_encoding.h"
 
@@ -61,6 +63,7 @@ URLSearchParams* URLSearchParams::Create(const URLSearchParamsInit& init,
       return MakeGarbageCollected<URLSearchParams>(query_string.Substring(1));
     return MakeGarbageCollected<URLSearchParams>(query_string);
   }
+#if defined(ENABLE_GNET)
   if (init.IsUSVStringUSVStringRecord()) {
     return URLSearchParams::Create(init.GetAsUSVStringUSVStringRecord(),
                                    exception_state);
@@ -69,6 +72,7 @@ URLSearchParams* URLSearchParams::Create(const URLSearchParamsInit& init,
     return URLSearchParams::Create(init.GetAsUSVStringSequenceSequence(),
                                    exception_state);
   }
+#endif // ENABLE_GNET
 
   DCHECK(init.IsNull());
   return MakeGarbageCollected<URLSearchParams>(String());
@@ -167,7 +171,9 @@ void URLSearchParams::SetInputWithoutUpdate(const String& query_string) {
 
 String URLSearchParams::toString() const {
   Vector<char> encoded_data;
+#if defined(ENABLE_GNET)
   EncodeAsFormData(encoded_data);
+#endif // ENABLE_GNET
   return String(encoded_data.data(), encoded_data.size());
 }
 
@@ -245,6 +251,7 @@ void URLSearchParams::sort() {
   RunUpdateSteps();
 }
 
+#if defined(ENABLE_GNET)
 void URLSearchParams::EncodeAsFormData(Vector<char>& encoded_data) const {
   for (const auto& param : params_)
     FormDataEncoder::AddKeyValuePairAsFormData(
@@ -257,6 +264,7 @@ scoped_refptr<EncodedFormData> URLSearchParams::ToEncodedFormData() const {
   EncodeAsFormData(encoded_data);
   return EncodedFormData::Create(encoded_data.data(), encoded_data.size());
 }
+#endif // ENABLE_GNET
 
 PairIterable<String, String>::IterationSource* URLSearchParams::StartIteration(
     ScriptState*,

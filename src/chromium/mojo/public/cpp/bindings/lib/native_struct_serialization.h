@@ -13,8 +13,10 @@
 #include "base/component_export.h"
 #include "base/logging.h"
 #include "base/pickle.h"
+#if defined(ENABLE_GIPC)
 #include "ipc/ipc_message.h"
 #include "ipc/ipc_param_traits.h"
+#endif // ENABLE_GIPC
 #include "mojo/public/cpp/bindings/lib/array_internal.h"
 #include "mojo/public/cpp/bindings/lib/bindings_internal.h"
 #include "mojo/public/cpp/bindings/lib/serialization_forward.h"
@@ -40,6 +42,7 @@ struct COMPONENT_EXPORT(MOJO_CPP_BINDINGS) UnmappedNativeStructSerializerImpl {
                           native::NativeStructPtr* output,
                           SerializationContext* context);
 
+#if defined(ENABLE_GIPC)
   static void SerializeMessageContents(
       IPC::Message* message,
       Buffer* buffer,
@@ -50,8 +53,10 @@ struct COMPONENT_EXPORT(MOJO_CPP_BINDINGS) UnmappedNativeStructSerializerImpl {
       native::internal::NativeStruct_Data* data,
       SerializationContext* context,
       IPC::Message* message);
+#endif // ENABLE_GIPC
 };
 
+#if defined(ENABLE_GIPC)
 template <typename MaybeConstUserType>
 struct NativeStructSerializerImpl {
   using UserType = typename std::remove_const<MaybeConstUserType>::type;
@@ -112,7 +117,9 @@ struct NativeStructSerializerImpl {
     return true;
   }
 };
+#endif // ENABLE_GIPC
 
+#if defined(ENABLE_GIPC)
 template <>
 struct NativeStructSerializerImpl<native::NativeStructPtr>
     : public UnmappedNativeStructSerializerImpl {};
@@ -124,6 +131,7 @@ struct NativeStructSerializerImpl<const native::NativeStructPtr>
 template <typename MaybeConstUserType>
 struct Serializer<native::NativeStructDataView, MaybeConstUserType>
     : public NativeStructSerializerImpl<MaybeConstUserType> {};
+#endif // ENABLE_GIPC
 
 }  // namespace internal
 }  // namespace mojo

@@ -26,6 +26,7 @@
 namespace mojo {
 namespace internal {
 
+//#if defined(ENABLE_GIPC)
 template <typename Base, typename T>
 struct Serializer<AssociatedInterfacePtrInfoDataView<Base>,
                   AssociatedInterfacePtrInfo<T>> {
@@ -226,6 +227,7 @@ struct Serializer<InterfaceRequestDataView<Base>, PendingReceiver<T>> {
     return true;
   }
 };
+//#endif // ENABLE_GIPC
 
 }  // namespace internal
 }  // namespace mojo

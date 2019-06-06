@@ -30,7 +30,9 @@
 
 #include <memory>
 #include "base/memory/scoped_refptr.h"
+#if defined(ENABLE_GNET)
 #include "services/network/public/mojom/fetch_api.mojom-blink.h"
+#endif // ENABLE_GNET
 #include "third_party/blink/public/mojom/net/ip_address_space.mojom-blink.h"
 #include "third_party/blink/public/platform/web_url_request.h"
 #include "third_party/blink/renderer/core/core_export.h"

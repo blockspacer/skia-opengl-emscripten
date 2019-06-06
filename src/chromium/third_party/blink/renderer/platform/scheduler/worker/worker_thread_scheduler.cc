@@ -11,10 +11,10 @@
 #include "base/metrics/field_trial_params.h"
 #include "base/metrics/histogram_macros.h"
 
-#ifdef __TODO__
+#if defined(ENABLE_UKM)
 #include "services/metrics/public/cpp/mojo_ukm_recorder.h"
 #include "services/metrics/public/cpp/ukm_builders.h"
-#endif
+#endif // ENABLE_UKM
 
 #include "base/strings/string_number_conversions.h"
 #include "base/task/sequence_manager/sequence_manager.h"
@@ -120,18 +120,23 @@ WorkerThreadScheduler::WorkerThreadScheduler(
                     kUnspecifiedWorkerThreadLoadTrackerReportingInterval),
       lifecycle_state_(proxy ? proxy->lifecycle_state()
                              : SchedulingLifecycleState::kNotThrottled),
-#ifdef __TODO__
+#if defined(ENABLE_UKM)
       worker_metrics_helper_(thread_type, helper()->HasCPUTimingForEachTask()),
 #endif
       initial_frame_status_(proxy ? proxy->initial_frame_status()
-                                  : FrameStatus::kNone),
-      ukm_source_id_(proxy ? proxy->ukm_source_id() : ukm::kInvalidSourceId),
-      connector_(proxy ? proxy->TakeConnector() : nullptr) {
+                                  : FrameStatus::kNone)
+#if defined(ENABLE_UKM)
+      , ukm_source_id_(proxy ? proxy->ukm_source_id() : ukm::kInvalidSourceId)
+#endif // ENABLE_UKM
+#if defined(ENABLE_GNET)
+      , connector_(proxy ? proxy->TakeConnector() : nullptr)
+#endif // ENABLE_GNET
+  {
+#if defined(ENABLE_UKM)
   if (connector_) {
-#ifdef __TODO__
     ukm_recorder_ = ukm::MojoUkmRecorder::Create(connector_.get());
-#endif
   }
+#endif // ENABLE_UKM
   thread_start_time_ = helper()->NowTicks();
   load_tracker_.Resume(thread_start_time_);
   helper()->AddTaskTimeObserver(this);
@@ -253,7 +258,9 @@ void WorkerThreadScheduler::OnTaskCompleted(
             task_queue, task_timing.start_time(), task_timing.end_time());
     }
 
+#if defined(ENABLE_UKM)
     RecordTaskUkm(task_queue, task, task_timing);
+#endif // ENABLE_UKM
 }
 
 /*
@@ -342,6 +349,8 @@ void WorkerThreadScheduler::CreateTaskQueueThrottler() {
   cpu_time_budget_pool_->SetMaxThrottlingDelay(now, GetMaxThrottlingDelay());
 }
 
+
+#if defined(ENABLE_UKM)
 void WorkerThreadScheduler::RecordTaskUkm(
     NonMainThreadTaskQueue* worker_task_queue,
     const base::sequence_manager::Task& task,
@@ -349,8 +358,6 @@ void WorkerThreadScheduler::RecordTaskUkm(
   if (!helper()->ShouldRecordTaskUkm(task_timing.has_thread_time()))
     return;
 
-
-#ifdef __TODO__
   ukm::builders::RendererSchedulerTask builder(ukm_source_id_);
 
   builder.SetVersion(kUkmMetricVersion);
@@ -366,19 +373,21 @@ void WorkerThreadScheduler::RecordTaskUkm(
     builder.SetTaskCPUDuration(task_timing.thread_duration().InMicroseconds());
 
   builder.Record(ukm_recorder_.get());
-#endif
 }
+#endif // ENABLE_UKM
 
-#ifdef __TODO__
+#if defined(ENABLE_UKM)
 void WorkerThreadScheduler::SetUkmRecorderForTest(
     std::unique_ptr<ukm::UkmRecorder> ukm_recorder) {
   ukm_recorder_ = std::move(ukm_recorder);
 }
-#endif
+#endif // ENABLE_UKM
 
+#if defined(ENABLE_UKM)
 void WorkerThreadScheduler::SetUkmTaskSamplingRateForTest(double rate) {
   helper()->SetUkmTaskSamplingRateForTest(rate);
 }
+#endif // ENABLE_UKM
 
 void WorkerThreadScheduler::SetCPUTimeBudgetPoolForTesting(
     CPUTimeBudgetPool* cpu_time_budget_pool) {

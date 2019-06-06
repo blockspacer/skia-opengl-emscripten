@@ -4,8 +4,10 @@
 
 #ifndef THIRD_PARTY_BLINK_PUBLIC_MOJOM_COOKIE_STORE_COOKIE_STORE_MOJOM_IMPORT_HEADERS_H_
 #define THIRD_PARTY_BLINK_PUBLIC_MOJOM_COOKIE_STORE_COOKIE_STORE_MOJOM_IMPORT_HEADERS_H_
+#if defined(ENABLE_GNET)
 #include "services/network/public/mojom/restricted_cookie_manager.mojom.h"
 #include "services/network/public/mojom/restricted_cookie_manager.mojom-import-headers.h"
+#endif // ENABLE_GNET
 #include "url/mojom/url.mojom.h"
 #include "url/mojom/url.mojom-import-headers.h"
 

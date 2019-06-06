@@ -423,69 +423,6 @@ add_library(starboard_platform STATIC
   ${starboard_platform_SOURCES}
 )
 
-target_link_libraries(starboard_platform PUBLIC
-  #base # TODO
-  #cobalt_base
-  #cobalt_script
-  #v8_stub
-  ## starboard_common # TODO
-  #starboard_eztime
-  #starboard_stub
-  #modp_b64
-  #GFX_GEOMETRY
-  #${BASE_LIBRARIES}
-  #base
-  #SKIA
-  #dynamic_annotations
-  #UI_GFX
-  ##BLINK_RENDERER_CORE
-  #BLINK_PUBLIC_COMMON
-  #BLINK_PUBLIC_MOJOM
-  ##BLINK_RENDERER_NETWORK
-  #BLINK_RENDERER_PLATFORM
-  #GURL
-  #GNET
-  #GCRYPTO
-  #GFX_GEOMETRY
-  #UI_GFX
-  ## mojo
-  ## services/service_manager
-  ## services/ws/public/cpp/gpu
-  ##${BASE_LIBRARIES}
-  #GLIBXML
-  #SKIA
-  ##skcms
-  #ced
-  ## emoji-segmenter
-  ## webrtc
-  ## zlib
-  #icu
-  #ced
-  #glm
-  #CC
-  ##G_GPU
-  #ANIMATION_CC
-  #BASE_CC
-  #PAINT_CC
-  #SERVICES_NETWORK_PUBLIC_CPP
-  #libwebp # requires libpng
-  #${libjpeg_LIB}
-  #${libjpeg_TURBO_LIB}
-  #${libpng_LIB}
-  #${iccjpeg_LIB}
-  #MOJO
-  ##
-  ## khronos
-  #${khronos_LIB}
-  #LIB_V8_INTERFACE
-  #COMPONENTS_SCHEDULING_METRICS
-  #${HARFBUZZ_LIBRARIES}
-  #GMEDIA
-  #GZLIB_EXT
-  ##SERVICES_SERVICE_MANAGER_PUBLIC_CPP
-  #GFX_CODEC
-)
-
 set_property(TARGET starboard_platform PROPERTY CXX_STANDARD 17)
 
 target_include_directories(starboard_platform PRIVATE

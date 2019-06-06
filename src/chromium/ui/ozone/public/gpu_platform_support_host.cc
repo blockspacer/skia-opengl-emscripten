@@ -14,15 +14,19 @@ namespace {
 // No-op implementations of GpuPlatformSupportHost.
 class StubGpuPlatformSupportHost : public GpuPlatformSupportHost {
  public:
+#if defined(ENABLE_GIPC)
   // GpuPlatformSupportHost:
   void OnGpuProcessLaunched(
       int host_id,
       scoped_refptr<base::SingleThreadTaskRunner> ui_runner,
       scoped_refptr<base::SingleThreadTaskRunner> send_runner,
       const base::Callback<void(IPC::Message*)>& send_callback) override {}
+#endif // ENABLE_GIPC
 
   void OnChannelDestroyed(int host_id) override {}
+#if defined(ENABLE_GIPC)
   void OnMessageReceived(const IPC::Message&) override {}
+#endif // ENABLE_GIPC
   void OnGpuServiceLaunched(
       scoped_refptr<base::SingleThreadTaskRunner> ui_runner,
       scoped_refptr<base::SingleThreadTaskRunner> io_runner,

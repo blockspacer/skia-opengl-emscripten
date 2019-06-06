@@ -30,7 +30,9 @@
 #include "third_party/blink/public/mojom/appcache/appcache_info.mojom.h"
 #include "third_party/blink/public/mojom/devtools/console_message.mojom.h"
 #include "url/mojom/url.mojom.h"
+#if defined(ENABLE_GNET)
 #include "services/network/public/mojom/url_loader_factory.mojom.h"
+#endif // ENABLE_GNET
 #include <string>
 #include <vector>
 
@@ -222,8 +224,9 @@ class BLINK_COMMON_EXPORT AppCacheFrontend
   
   virtual void LogMessage(::blink::mojom::ConsoleMessageLevel log_level, const std::string& message) = 0;
 
-  
+#if defined(ENABLE_GNET)
   virtual void SetSubresourceFactory(::network::mojom::URLLoaderFactoryPtr url_loader_factory) = 0;
+#endif // ENABLE_GNET
 };
 
 class BLINK_COMMON_EXPORT AppCacheBackendProxy
@@ -272,7 +275,9 @@ class BLINK_COMMON_EXPORT AppCacheFrontendProxy
   void ProgressEventRaised(const GURL& url, int32_t total, int32_t complete) final;
   void ErrorEventRaised(AppCacheErrorDetailsPtr error_details) final;
   void LogMessage(::blink::mojom::ConsoleMessageLevel log_level, const std::string& message) final;
+#if defined(ENABLE_GNET)
   void SetSubresourceFactory(::network::mojom::URLLoaderFactoryPtr url_loader_factory) final;
+#endif // ENABLE_GNET
 
  private:
   mojo::MessageReceiverWithResponder* receiver_;

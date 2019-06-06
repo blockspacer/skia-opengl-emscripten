@@ -5,10 +5,13 @@
 #ifndef THIRD_PARTY_BLINK_PUBLIC_PLATFORM_MODULES_SERVICE_WORKER_WEB_SERVICE_WORKER_REQUEST_H_
 #define THIRD_PARTY_BLINK_PUBLIC_PLATFORM_MODULES_SERVICE_WORKER_WEB_SERVICE_WORKER_REQUEST_H_
 
+#if defined(ENABLE_GNET)
 #include "mojo/public/cpp/system/message_pipe.h"
+#if defined(ENABLE_GNET)
 #include "services/network/public/mojom/referrer_policy.mojom-shared.h"
 #include "services/network/public/mojom/request_context_frame_type.mojom-shared.h"
 #include "third_party/blink/public/mojom/fetch/fetch_api_request.mojom-shared.h"
+#endif // ENABLE_GNET
 #include "third_party/blink/public/platform/web_common.h"
 #include "third_party/blink/public/platform/web_private_ptr.h"
 #include "third_party/blink/public/platform/web_string.h"
@@ -66,9 +69,10 @@ class BLINK_PLATFORM_EXPORT WebServiceWorkerRequest {
   void AppendHeader(const WebString& key, const WebString& value);
 
   void VisitHttpHeaderFields(WebHTTPHeaderVisitor*) const;
-
+#if defined(ENABLE_GNET)
   void SetBody(const WebHTTPBody&);
   WebHTTPBody Body() const;
+#endif // ENABLE_GNET
 
   void SetReferrer(const WebString&, network::mojom::ReferrerPolicy);
   WebURL ReferrerUrl() const;
@@ -126,5 +130,6 @@ class BLINK_PLATFORM_EXPORT WebServiceWorkerRequest {
 };
 
 }  // namespace blink
+#endif // ENABLE_GNET
 
 #endif  // THIRD_PARTY_BLINK_PUBLIC_PLATFORM_MODULES_SERVICE_WORKER_WEB_SERVICE_WORKER_REQUEST_H_
