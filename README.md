@@ -803,3 +803,12 @@ MISC
 > https://github.com/v8/v8/blob/master/src/wasm/wasm-limits.h
 > bin/gn gen out/config --ide=json --json-ide-script=../../gn/gn_to_cmake.py
 > WASM tests https://chromium.googlesource.com/external/github.com/WebAssembly/waterfall/
+
+TODO
+> Chrome only:
+Init WTF ...
+RangeError: Array buffer allocation failed
+
+Array buffer allocation failed usually happens due to memory exhausted. https://github.com/webtorrent/webtorrent/issues/895
+https://answers.unity.com/questions/1203559/memory-settings-for-webgl-content-array-buffer-all.html
+https://www.reddit.com/r/Unity3D/comments/4ochm9/memory_settings_for_webgl_content_array_buffer/
