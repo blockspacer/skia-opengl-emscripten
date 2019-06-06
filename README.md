@@ -797,3 +797,75 @@ MISC
   WebAssembly.instantiateStreaming https://hacks.mozilla.org/2018/01/making-webassembly-even-faster-firefoxs-new-streaming-and-tiering-compiler/
 > https://github.com/v8/v8/blob/master/src/wasm/wasm-limits.h
 > bin/gn gen out/config --ide=json --json-ide-script=../../gn/gn_to_cmake.py
+
+TODO
+Bad exit status 2
+/home/denis/workspace/skia-opengl-emscripten/src/chromium/net/http/http_network_session.cc:490:11:
+warning: enumeration value 'kProtoQUIC' not handled in switch [-Wswitch]
+
+  switch (protocol) {
+          ^
+
+1 warning generated.
+
+
+/home/denis/workspace/skia-opengl-emscripten/src/chromium/net/url_request/url_request_http_job.cc:1096:13:
+warning: enumeration value 'TYPE_BROTLI' not handled in switch [-Wswitch]
+
+    switch (type) {
+            ^
+
+1 warning generated.
+
+/usr/bin/ld: src/chromium/libbase.a(file_util.cc.o): in function
+`base::CreateTemporaryFile(base::FilePath*)':
+
+
+/home/denis/workspace/skia-opengl-emscripten/src/chromium/base/files/file_util.cc:304:
+multiple definition of `base::CreateTemporaryFile(base::FilePath*)';
+src/chromium/libbase.a(file_util_posix.cc.o):/home/denis/workspace/skia-opengl-emscripten/src/chromium/base/files/file_util_posix.cc:696:
+first defined here
+
+/usr/bin/ld: src/chromium/libbase.a(file_util.cc.o): in function
+`base::GetCurrentDirectory(base::FilePath*)':
+
+
+/home/denis/workspace/skia-opengl-emscripten/src/chromium/base/files/file_util.cc:293:
+multiple definition of `base::GetCurrentDirectory(base::FilePath*)';
+src/chromium/libbase.a(file_util_posix.cc.o):/home/denis/workspace/skia-opengl-emscripten/src/chromium/base/files/file_util_posix.cc:1024:
+first defined here
+
+/usr/bin/ld: src/chromium/libbase.a(file_util.cc.o): in function
+`base::MakeAbsoluteFilePath(base::FilePath const&)':
+
+
+/home/denis/workspace/skia-opengl-emscripten/src/chromium/base/files/file_util.cc:283:
+multiple definition of `base::MakeAbsoluteFilePath(base::FilePath const&)';
+src/chromium/libbase.a(file_util_posix.cc.o):/home/denis/workspace/skia-opengl-emscripten/src/chromium/base/files/file_util_posix.cc:344:
+first defined here
+
+/usr/bin/ld: src/chromium/libbase.a(file_util.cc.o): in function
+`base::CreateTemporaryFileInDir(base::FilePath const&, base::FilePath*)':
+
+
+/home/denis/workspace/skia-opengl-emscripten/src/chromium/base/files/file_util.cc:319:
+multiple definition of `base::CreateTemporaryFileInDir(base::FilePath
+const&, base::FilePath*)';
+src/chromium/libbase.a(file_util_posix.cc.o):/home/denis/workspace/skia-opengl-emscripten/src/chromium/base/files/file_util_posix.cc:720:
+first defined here
+
+/usr/bin/ld: skia/libskia.a(typeface_freetype.SkFontHost_FreeType.o):
+undefined reference to symbol 'dlclose@@GLIBC_2.2.5'
+
+/usr/bin/ld: //lib/x86_64-linux-gnu/libdl.so.2: error adding symbols: DSO
+missing from command line
+
+clang: error: linker command failed with exit code 1 (use -v to see
+invocation)
+
+make[2]: *** [CMakeFiles/skemgl.dir/build.make:219: skemgl] Error 1
+
+make[1]: *** [CMakeFiles/Makefile2:467: CMakeFiles/skemgl.dir/all] Error 2
+
+make: *** [Makefile:84: all] Error 2
+
