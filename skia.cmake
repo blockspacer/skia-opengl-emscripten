@@ -574,58 +574,28 @@ endif ()
 # This is needed only for static library build where the dependencies have
 # to be added explicitly.
 
+if (NOT EXT_SKIA_SHARED)
+  function(ADD_SKIA_LIBRARY_DEPENDENCY LIB_NAME_LIST)
+    foreach(LIB_NAME ${LIB_NAME_LIST})
+      message(STATUS "Searching for ${LIB_NAME}...")
+      find_library(LIB${LIB_NAME} ${LIB_NAME})
+      if (NOT LIB${LIB_NAME})
+        message(FATAL_ERROR "Can't find required library ${LIB_NAME}.")
+      else()
+        message(STATUS "Found library ${LIB_NAME} = ${LIB${LIB_NAME}}")
+      endif ()
+      set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${LIB${LIB_NAME}}" PARENT_SCOPE)
+    endforeach()
+  endfunction()
+
 if(TARGET_EMSCRIPTEN)
   message(INFO "building skia for EMSCRIPTEN")
 elseif(TARGET_LINUX)
   message(INFO "building skia for LINUX")
 
-  if (NOT EXT_SKIA_SHARED)
-    function(ADD_SKIA_LIBRARY_DEPENDENCY LIB_NAME_LIST)
-      foreach(LIB_NAME ${LIB_NAME_LIST})
-        message(STATUS "Searching for ${LIB_NAME}...")
-        find_library(LIB${LIB_NAME} ${LIB_NAME})
-        if (NOT LIB${LIB_NAME})
-          message(FATAL_ERROR "Can't find required library ${LIB_NAME}.")
-        else()
-          message(STATUS "Found library ${LIB_NAME} = ${LIB${LIB_NAME}}")
-        endif ()
-        set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${LIB${LIB_NAME}}" PARENT_SCOPE)
-      endforeach()
-    endfunction()
-
     # seem to be always required...
     #ADD_SKIA_LIBRARY_DEPENDENCY("dl")
     set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${libDL_LIB}" PARENT_SCOPE)
-
-    #ADD_SKIA_LIBRARY_DEPENDENCY("pthread")
-    find_package(Threads REQUIRED)
-    #target_link_libraries(SKIA Threads::Threads)
-    message("CMAKE_THREAD_LIBS_INIT=${CMAKE_THREAD_LIBS_INIT}")
-    set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};Threads::Threads" PARENT_SCOPE)
-
-    # when skia_enable_gpu:
-    #
-    # OpenGL::GL
-    #   Defined to the platform-specific OpenGL libraries if the system has OpenGL.
-    # OpenGL::OpenGL
-    #   Defined to libOpenGL if the system is GLVND-based.
-    # OpenGL::GLU
-    #   Defined if the system has GLU.
-    # OpenGL::GLX
-    #   Defined if the system has GLX.
-    # OpenGL::EGL
-    #   Defined if the system has EGL.
-    find_package(OpenGL REQUIRED) # see OPENGL_LIBRARIES
-    #
-    if(SK_IS_EGL)
-      #ADD_SKIA_LIBRARY_DEPENDENCY("EGL") # skia_use_egl
-      set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};OpenGL::EGL" PARENT_SCOPE)
-      #see OPENGL_EGL_INCLUDE_DIRS
-    else()
-      #ADD_SKIA_LIBRARY_DEPENDENCY("GL") # !skia_use_egl # TODO: GLU?
-      set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};OpenGL::GL" PARENT_SCOPE)
-      #see OPENGL_INCLUDE_DIR
-    endif() # SK_IS_EGL
 
     #ADD_SKIA_LIBRARY_DEPENDENCY("icuuc") # skia_use_system_icu
 
@@ -681,6 +651,36 @@ elseif(TARGET_LINUX)
 
   set(SKIA_CMAKE_ONLY_HEADERS "${SKIA_CMAKE_ONLY_HEADERS};${HARFBUZZ_INCLUDE_DIRS};${OPENGL_INCLUDE_DIR};${OPENGL_EGL_INCLUDE_DIRS}")
   set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${HARFBUZZ_LIBRARIES};${OPENGL_LIBRARIES}")
+
+  #ADD_SKIA_LIBRARY_DEPENDENCY("pthread")
+  find_package(Threads REQUIRED)
+  #target_link_libraries(SKIA Threads::Threads)
+  message("CMAKE_THREAD_LIBS_INIT=${CMAKE_THREAD_LIBS_INIT}")
+  set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};Threads::Threads" PARENT_SCOPE)
+
+  # when skia_enable_gpu:
+  #
+  # OpenGL::GL
+  #   Defined to the platform-specific OpenGL libraries if the system has OpenGL.
+  # OpenGL::OpenGL
+  #   Defined to libOpenGL if the system is GLVND-based.
+  # OpenGL::GLU
+  #   Defined if the system has GLU.
+  # OpenGL::GLX
+  #   Defined if the system has GLX.
+  # OpenGL::EGL
+  #   Defined if the system has EGL.
+  find_package(OpenGL REQUIRED) # see OPENGL_LIBRARIES
+  #
+  if(SK_IS_EGL)
+    #ADD_SKIA_LIBRARY_DEPENDENCY("EGL") # skia_use_egl
+    set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};OpenGL::EGL" PARENT_SCOPE)
+    #see OPENGL_EGL_INCLUDE_DIRS
+  else()
+    #ADD_SKIA_LIBRARY_DEPENDENCY("GL") # !skia_use_egl # TODO: GLU?
+    set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};OpenGL::GL" PARENT_SCOPE)
+    #see OPENGL_INCLUDE_DIR
+  endif() # SK_IS_EGL
 else()
   message(FATAL_ERROR "unknown platform")
 endif() # EMSCRIPTEN
