@@ -57,11 +57,11 @@ set(GLIBJPEG_TURBO_SOURCES
   ${GLIBJPEG_TURBO_DIR}jversion.h
 )
 
-if(EMSCRIPTEN)
+if(TARGET_EMSCRIPTEN)
   list(APPEND GLIBJPEG_TURBO_SOURCES # static_library("simd")
     ${GLIBJPEG_TURBO_DIR}jsimd_none.c
   )
-elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+elseif(TARGET_LINUX)
   #
   # if (is_linux || is_android || is_fuchsia)
   #
@@ -173,7 +173,7 @@ add_library(GLIBJPEG_TURBO STATIC
   ${GLIBJPEG_TURBO_SOURCES}
 )
 
-#if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+#if(TARGET_LINUX)
 #  find_package(ZLIB)
 #endif()
 

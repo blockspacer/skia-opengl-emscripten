@@ -166,7 +166,7 @@ set(WTF_COMMON_DEFINITIONS
   # USE_NEW_TCMALLOC=1
 )
 
-if(EMSCRIPTEN)
+if(TARGET_EMSCRIPTEN)
   list(APPEND WTF_COMMON_DEFINITIONS
     # see src/chromium/build/build_config.h
     NO_TCMALLOC=1
@@ -206,7 +206,7 @@ if (EMSCRIPTEN)
   #include(GLIBXML.cmake)
   # zlib
   include(GZLIB_EXT.cmake)
-elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+elseif(TARGET_LINUX)
   # khronos
   set(khronos_LIB
     khronos
@@ -226,10 +226,10 @@ else()
   message(FATAL_ERROR "platform not supported")
 endif()
 
-if(ENABLE_HARFBUZZ AND ${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+if(ENABLE_HARFBUZZ AND TARGET_LINUX)
   # fontconfig
   include(fontconfig.cmake)
-endif(ENABLE_HARFBUZZ AND ${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+endif(ENABLE_HARFBUZZ AND TARGET_LINUX)
 
 if(ENABLE_BORINGSSL)
   # BORINGSSL

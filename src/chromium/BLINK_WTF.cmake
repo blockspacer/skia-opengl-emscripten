@@ -178,9 +178,9 @@
   # #${BLINK_WTF_DIR}wtf_size_t.h
 )
 
-if(EMSCRIPTEN)
+if(TARGET_EMSCRIPTEN)
   # TODO
-elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+elseif(TARGET_LINUX)
   list(APPEND WTF_SOURCES
     # TODO
     # ${BLINK_WTF_DIR}wtf.cc
@@ -397,12 +397,12 @@ set(WTF_LIBRARIES
   base
 )
 
-if(EMSCRIPTEN)
+if(TARGET_EMSCRIPTEN)
   #set(ICU_LIBRARIES icu)
   #list(APPEND WTF_LIBRARIES
   #  ${ICU_LIBRARIES}
   #)
-elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+elseif(TARGET_LINUX)
   list(APPEND WTF_LIBRARIES
     libevent
   )
@@ -421,12 +421,12 @@ else()
   message(FATAL_ERROR "icu platform not supported")
 endif()
 
-#if(EMSCRIPTEN)
+#if(TARGET_EMSCRIPTEN)
 #else()
 #  list(APPEND WTF_LIBRARIES
 #    tcmalloc
 #  )
-#endif(EMSCRIPTEN)
+#endif(TARGET_EMSCRIPTEN)
 
 target_include_directories(${WTF_LIBRARY_NAME} PRIVATE
   #${LIBEVENT_INCLUDE_DIRS}

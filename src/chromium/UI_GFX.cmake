@@ -27,13 +27,13 @@ set(UI_GFX_SOURCES
   #${UI_GFX_DIR}font_fallback.h",
 )
 
-#if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux" AND ENABLE_HARFBUZZ)
-if(ENABLE_HARFBUZZ)# AND ${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+#if(TARGET_LINUX AND ENABLE_HARFBUZZ)
+if(ENABLE_HARFBUZZ)# AND TARGET_LINUX)
   list(APPEND UI_GFX_SOURCES
     ${UI_GFX_DIR}font_render_params_linux.cc # requires fontconfig
     ${UI_GFX_DIR}font_fallback_linux.cc # requires fontconfig
   )
-endif(ENABLE_HARFBUZZ)# AND ${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+endif(ENABLE_HARFBUZZ)# AND TARGET_LINUX)
 
 list(APPEND UI_GFX_SOURCES
   #${UI_GFX_DIR}font_fallback_linux.h",
@@ -289,12 +289,12 @@ add_library(UI_GFX STATIC
   ${UI_GFX_SOURCES}
 )
 
-#if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
-if(ENABLE_HARFBUZZ AND ${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+#if(TARGET_LINUX)
+if(ENABLE_HARFBUZZ AND TARGET_LINUX)
   list(APPEND EXTRA_DEPS
     fontconfig
   )
-endif(ENABLE_HARFBUZZ AND ${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+endif(ENABLE_HARFBUZZ AND TARGET_LINUX)
 
 target_link_libraries(UI_GFX PUBLIC
   #${BASE_LIBRARIES}

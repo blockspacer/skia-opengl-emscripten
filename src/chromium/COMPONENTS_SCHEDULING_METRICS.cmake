@@ -13,11 +13,11 @@ set(COMPONENTS_SCHEDULING_METRICS_SOURCES
     #"total_duration_metric_reporter.h",
 )
 
-#if(EMSCRIPTEN)
+#if(TARGET_EMSCRIPTEN)
 #  list(APPEND COMPONENTS_SCHEDULING_METRICS_SOURCES # static_library("simd")
 #    ${COMPONENTS_SCHEDULING_METRICS_DIR}jsimd_none.c
 #  )
-#elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+#elseif(TARGET_LINUX)
 #  #
 #  # if (is_linux || is_android || is_fuchsia)
 #  #
@@ -129,7 +129,7 @@ add_library(COMPONENTS_SCHEDULING_METRICS STATIC
   ${COMPONENTS_SCHEDULING_METRICS_SOURCES}
 )
 
-#if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+#if(TARGET_LINUX)
 #  find_package(ZLIB)
 #endif()
 

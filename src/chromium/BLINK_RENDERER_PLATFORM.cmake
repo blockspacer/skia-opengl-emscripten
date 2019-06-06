@@ -20,7 +20,7 @@ list(APPEND BLINK_RENDERER_PLATFORM_GEN_SOURCES
   ${CUR_OUT_DIR}color_data.cc
 )
 
-if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+if(TARGET_LINUX)
   if(ENABLE_BLINK_INSTRUMENTATION)
     list(APPEND BLINK_RENDERER_PLATFORM_GEN_SOURCES
         #action("instrumentation_probes")
@@ -563,7 +563,7 @@ list(APPEND BLINK_RENDERER_PLATFORM_EXPORTED_SOURCES
   #${BLINK_RENDERER_PLATFORM_DIR}exported/wrapped_resource_response.h
 )
 
-if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+if(TARGET_LINUX)
   list(APPEND BLINK_RENDERER_PLATFORM_EXPORTED_SOURCES
     #${BLINK_RENDERER_PLATFORM_DIR}exported/mediastream/media_stream_audio_processor_options.cc
     #${BLINK_RENDERER_PLATFORM_DIR}exported/mediastream/media_stream_audio_source.cc
@@ -678,7 +678,7 @@ list(APPEND BLINK_RENDERER_PLATFORM_SCHEDULER_SOURCES
 )
 
 
-if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+if(TARGET_LINUX)
   list(APPEND BLINK_RENDERER_PLATFORM_SCHEDULER_SOURCES
     ## TODO ## error: no member named 'state' in 'base::sequence_manager::TaskQueue::TaskTiming'
     ## TODO ## ${CUR_SRC_DIR}scheduler/main_thread/main_thread_metrics_helper.cc
@@ -1475,7 +1475,7 @@ if(ENABLE_HARFBUZZ)
   )
 endif(ENABLE_HARFBUZZ)
 
-if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+if(TARGET_LINUX)
   list(APPEND BLINK_RENDERER_PLATFORM_INSTRUMENTATION_SOURCES
     #
     #blink_platform_sources("instrumentation")
@@ -1713,11 +1713,11 @@ add_library(BLINK_RENDERER_PLATFORM STATIC
 )
 
 if(SUPPORTS_JPEG)
-  if(EMSCRIPTEN)
+  if(TARGET_EMSCRIPTEN)
     #set(libjpeg_LIB GLIBJPEG)
     #set(libjpeg_TURBO_LIB GLIBJPEG_TURBO)
     set(iccjpeg_LIB iccjpeg)
-  elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+  elseif(TARGET_LINUX)
     #set(libjpeg_LIB GLIBJPEG)
     #set(libjpeg_TURBO_LIB GLIBJPEG_TURBO)
     set(iccjpeg_LIB iccjpeg)

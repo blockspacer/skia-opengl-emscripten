@@ -1,4 +1,4 @@
-if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+if(TARGET_LINUX)
   # nothing
 else()
   message(FATAL_ERROR "platform not supported")

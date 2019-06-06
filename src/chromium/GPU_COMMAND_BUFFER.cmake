@@ -124,7 +124,7 @@ if (EMSCRIPTEN)
     #${GPU_COMMAND_BUFFER_DIR}common/gles2_utils_export.h",
     #
   )
-elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+elseif(TARGET_LINUX)
   #
 else()
   message(FATAL_ERROR "unknown platform")
@@ -166,7 +166,7 @@ if (EMSCRIPTEN)
     ${GPU_COMMAND_BUFFER_DIR}client/gles2_lib.h
     #
   )
-elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+elseif(TARGET_LINUX)
   #
 else()
   message(FATAL_ERROR "unknown platform")
@@ -394,7 +394,7 @@ if (EMSCRIPTEN)
   #  } else {
   #    defines += [ "EGLAPI=__attribute__((visibility(\"default\")))" ]
   #  }
-elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+elseif(TARGET_LINUX)
   #
 else()
   message(FATAL_ERROR "unknown platform")

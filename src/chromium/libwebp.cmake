@@ -106,7 +106,7 @@ list(APPEND libwebp_SOURCES
   #
 )
 
-if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+if(TARGET_LINUX)
   list(APPEND libwebp_SOURCES
     # static_library("libwebp_dsp_sse2")
     #
@@ -237,7 +237,7 @@ target_include_directories(libwebp PUBLIC
 #  -Wno-implicit-function-declaration)
 
 
-if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+if(TARGET_LINUX)
   list(APPEND EXTRA_DEFINES
     WEBP_HAVE_SSE2=1
   )

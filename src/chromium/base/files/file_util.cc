@@ -280,6 +280,7 @@ bool CloseFile(FILE* file) {
   return fclose(file) == 0;
 }
 
+#if defined(OS_EMSCRIPTEN)
 FilePath MakeAbsoluteFilePath(const FilePath& input) {
    // __TODO__
 
@@ -288,7 +289,6 @@ FilePath MakeAbsoluteFilePath(const FilePath& input) {
   DCHECK(input.IsAbsolute());
   return input;
 }
-
 
 bool GetCurrentDirectory(FilePath* dir) {
    // __TODO__
@@ -299,7 +299,6 @@ bool GetCurrentDirectory(FilePath* dir) {
   //NOTREACHED();
   return false;
 }
-
 
 bool CreateTemporaryFile(FilePath *path) {
    // __TODO__
@@ -325,6 +324,7 @@ bool CreateTemporaryFileInDir(const FilePath &dir, FilePath *temp_file) {
   //return (SbFileIsValid(file) && SbFileClose(file));
   return false;
 }
+#endif // OS_EMSCRIPTEN
 
 #if !defined(OS_NACL_NONSFI)
 bool TruncateFile(FILE* file) {

@@ -26,10 +26,10 @@ if(SUPPORTS_JPEG)
     ${GFX_CODEC_DIR}jpeg_codec.h
   )
   #
-  #if(EMSCRIPTEN)
+  #if(TARGET_EMSCRIPTEN)
   #  #set(libjpeg_LIB GLIBJPEG)
   #  #set(libjpeg_TURBO_LIB GLIBJPEG_TURBO)
-  #elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+  #elseif(TARGET_LINUX)
   #  #set(libjpeg_LIB GLIBJPEG)
   #  #set(libjpeg_TURBO_LIB GLIBJPEG_TURBO)
   #else()

@@ -52,7 +52,7 @@ set(LIBEVENT_DEFINES
   HAVE_CONFIG_H
 )
 
-if(EMSCRIPTEN)
+if(TARGET_EMSCRIPTEN)
   list(APPEND LIBEVENT_INCLUDE_DIRS
     ${LIBEVENT_DIR}emscripten
   )
@@ -60,7 +60,7 @@ if(EMSCRIPTEN)
   ${LIBEVENT_DIR}emscripten/config.h
   ${LIBEVENT_DIR}emscripten/event-config.h
   )
-elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+elseif(TARGET_LINUX)
   list(APPEND LIBEVENT_INCLUDE_DIRS
     ${LIBEVENT_DIR}linux
   )

@@ -1094,7 +1094,7 @@ list(APPEND BASE_SOURCES
    build/build_config.h
 )
 
-if(EMSCRIPTEN)
+if(TARGET_EMSCRIPTEN)
   list(APPEND BASE_SOURCES
     #${BASE_DIR}atomicops_internals_portable.h
     #${BASE_DIR}critical_closure_internal_ios.mm
@@ -1160,7 +1160,7 @@ if(EMSCRIPTEN)
     ###${BASE_DIR}posix/unix_domain_socket_unittest.cc
     ###${BASE_DIR}task/thread_pool/task_tracker_posix_unittest.cc
   )
-elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+elseif(TARGET_LINUX)
   list(APPEND BASE_SOURCES
     #${BASE_DIR}critical_closure_internal_ios.mm
     ${BASE_DIR}debug/activity_analyzer.cc
@@ -1233,9 +1233,9 @@ elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
     ###${BASE_DIR}task/thread_pool/task_tracker_posix_unittest.cc
   )
 
-  if(EMSCRIPTEN)
+  if(TARGET_EMSCRIPTEN)
     # nothing
-  elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+  elseif(TARGET_LINUX)
     list(APPEND BASE_SOURCES
      # https://github.com/chromium/chromium/blob/master/base/BUILD.gn#L1894
      ${BASE_DIR}message_loop/message_pump_libevent.cc
@@ -1281,7 +1281,7 @@ list(APPEND BASE_SOURCES
   ${BASE_DIR}files/file_util_posix.cc
 )
 
-if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+if(TARGET_LINUX)
   list(APPEND BASE_SOURCES
     ##${BASE_DIR}process/process_metrics_posix.cc
     ## TODO ##
@@ -1375,7 +1375,7 @@ add_library(base STATIC
   ${COBALT_port_base_SOURCES}
 )
 
-if(EMSCRIPTEN)
+if(TARGET_EMSCRIPTEN)
   list(APPEND BASE_LIBRARIES
     ced
     ${CUSTOM_ICU_LIB}
@@ -1384,7 +1384,7 @@ if(EMSCRIPTEN)
   add_dependencies(base
     ${BASE_LIBRARIES}
   )
-elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+elseif(TARGET_LINUX)
   list(APPEND BASE_LIBRARIES
     tcmalloc
     atomic
@@ -1464,7 +1464,7 @@ target_compile_definitions(base PUBLIC
   ${EXTRA_DEFINES}
 )
 
-if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+if(TARGET_LINUX)
   list(APPEND EXTRA_DEFINITIONS
     HAVE_MMAP=1
   )

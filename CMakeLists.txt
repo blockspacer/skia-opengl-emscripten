@@ -4,6 +4,17 @@
 set(PROJECT_NAME "skemgl")
 project(${PROJECT_NAME} CXX C)
 
+set(TARGET_EMSCRIPTEN FALSE)
+set(TARGET_LINUX FALSE)
+if(EMSCRIPTEN)
+  set(TARGET_EMSCRIPTEN TRUE)
+elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+  set(TARGET_LINUX TRUE)
+else()
+  set(TARGET_UNKNOWN TRUE)
+  message(FATAL_ERROR "platform not supported")
+endif()
+
 macro(add_mojo_prefixes_3 ARG_BASE_PATH ARG_WHERE_COLLECT)
   set(CUR_MOJO_TO_PREFIXES
     ${ARG_BASE_PATH}.mojom.cc
@@ -121,10 +132,10 @@ if(USE_LIBPNG)
     set(USE_SYSTEM_PNG TRUE)
     set(libpng_LIB GLIBPNG)
   else(USE_CUSTOM_LIBPNG)
-    if(EMSCRIPTEN)
+    if(TARGET_EMSCRIPTEN)
       set(EMCC_COMMON "${EMCC_COMMON} -s USE_LIBPNG=1")
       message(FATAL_ERROR "wasm: only custom LIBPNG is supported for now")
-    endif(EMSCRIPTEN)
+    endif(TARGET_EMSCRIPTEN)
     set(USE_SYSTEM_PNG FALSE)
   endif(USE_CUSTOM_LIBPNG)
 endif(USE_LIBPNG)
@@ -281,14 +292,14 @@ if(ENABLE_SKIA AND ENABLE_BLINK)
 endif(ENABLE_SKIA AND ENABLE_BLINK)
 
 message("CMAKE_SYSTEM_NAME = ${CMAKE_SYSTEM_NAME}")
-if(EMSCRIPTEN)
+if(TARGET_EMSCRIPTEN)
   message("DETECTED EMSCRIPTEN")
   if ("${EMSCRIPTEN_VERSION}" VERSION_GREATER 1.38.20)
     message(STATUS "Emscripten version is ${EMSCRIPTEN_VERSION}")
   else()
     message(FATAL_ERROR "EMSCRIPTEN_VERSION is not present, or is older than 1.38.6: '${EMSCRIPTEN_VERSION}'")
   endif()
-endif(EMSCRIPTEN)
+endif(TARGET_EMSCRIPTEN)
 
 # WebAssembly
 set(ENABLE_WASM TRUE)
@@ -308,19 +319,19 @@ endif(NOT ENABLE_WASM)
 
 if(RELEASE_BUILD)
   if(NOT CMAKE_BUILD_TYPE MATCHES Release)
-    if(EMSCRIPTEN)
+    if(TARGET_EMSCRIPTEN)
       message(WARNING "build with -DCMAKE_BUILD_TYPE=Release")
     else(EMSCRIPTEN)
       message(FATAL_ERROR "build with -DCMAKE_BUILD_TYPE=Release")
-    endif(EMSCRIPTEN)
+    endif(TARGET_EMSCRIPTEN)
   endif(NOT CMAKE_BUILD_TYPE MATCHES Release)
 else()
   if(NOT CMAKE_BUILD_TYPE MATCHES Debug)
-    if(EMSCRIPTEN)
+    if(TARGET_EMSCRIPTEN)
       message(WARNING "build with -DCMAKE_BUILD_TYPE=Debug")
     else(EMSCRIPTEN)
       message(FATAL_ERROR "build with -DCMAKE_BUILD_TYPE=Debug")
-    endif(EMSCRIPTEN)
+    endif(TARGET_EMSCRIPTEN)
   endif(NOT CMAKE_BUILD_TYPE MATCHES Debug)
 endif(RELEASE_BUILD)
 
@@ -351,7 +362,7 @@ if (EMSCRIPTEN)
   #set(COMMON_FLAGS "${COMMON_FLAGS} -DUSE_X11=0")
   # custom define
   set(COMMON_FLAGS "${COMMON_FLAGS} -DNO_CHROMIUM_WINDOW=1")
-elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+elseif(TARGET_LINUX)
   set(COMMON_FLAGS "${COMMON_FLAGS} -DUSE_X11=1")
   # custom define
   set(COMMON_FLAGS "${COMMON_FLAGS} -DNO_CHROMIUM_WINDOW=1")
@@ -376,14 +387,14 @@ if(USE_LIBJPEG)
     set(USE_EMCC_LIBJPEG_PORT FALSE)
   else(USE_CUSTOM_LIBJPEG)
     set(USE_EMCC_LIBJPEG_PORT TRUE) # TODO
-    if(EMSCRIPTEN)
+    if(TARGET_EMSCRIPTEN)
       message(FATAL_ERROR "wasm: only custom LIBJPEG is supported for now")
-    endif(EMSCRIPTEN)
+    endif(TARGET_EMSCRIPTEN)
   endif(USE_CUSTOM_LIBJPEG)
   #
-  if(EMSCRIPTEN)
+  if(TARGET_EMSCRIPTEN)
     set(libjpeg_LIB GLIBJPEG)
-  elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+  elseif(TARGET_LINUX)
     set(libjpeg_LIB GLIBJPEG)
   else()
     message(FATAL_ERROR "platform not supported")
@@ -407,14 +418,14 @@ if(USE_LIBJPEG_TURBO)
     set(USE_EMCC_LIBJPEG_PORT FALSE)
   else(USE_CUSTOM_LIBJPEG_TURBO)
     set(USE_EMCC_LIBJPEG_TURBO_PORT TRUE) # TODO
-    if(EMSCRIPTEN)
+    if(TARGET_EMSCRIPTEN)
       message(FATAL_ERROR "wasm: only custom LIBJPEG_TURBO is supported for now")
-    endif(EMSCRIPTEN)
+    endif(TARGET_EMSCRIPTEN)
   endif(USE_CUSTOM_LIBJPEG_TURBO)
   #
-  if(EMSCRIPTEN)
+  if(TARGET_EMSCRIPTEN)
     set(libjpeg_TURBO_LIB GLIBJPEG_TURBO)
-  elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+  elseif(TARGET_LINUX)
     set(libjpeg_TURBO_LIB GLIBJPEG_TURBO)
   else()
     message(FATAL_ERROR "platform not supported")
@@ -605,7 +616,7 @@ set(PORT_OWN_DLOG TRUE)
 if (PORT_OWN_DLOG)
   if (EMSCRIPTEN)
     set(EMCC_COMMON "${EMCC_COMMON} -DPORT_OWN_DLOG=1")
-  elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+  elseif(TARGET_LINUX)
     set(COMMON_FLAGS "${COMMON_FLAGS} -DPORT_OWN_DLOG=1")
   else()
     message(FATAL_ERROR "platform not supported")
@@ -617,9 +628,9 @@ endif(PORT_OWN_DLOG)
 # TODO
 set(COMMON_FLAGS "${COMMON_FLAGS} -D_FILE_OFFSET_BITS=64")
 set(COMMON_FLAGS "${COMMON_FLAGS} -D_LARGEFILE_SOURCE=1")
-if(EMSCRIPTEN)
+if(TARGET_EMSCRIPTEN)
   # todo
-elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+elseif(TARGET_LINUX)
   set(COMMON_FLAGS "${COMMON_FLAGS} -D_LARGEFILE64_SOURCE=1")
   set(COMMON_FLAGS "${COMMON_FLAGS} -DHAVE_PTHREAD=1")
   # Annotations useful when implementing condition variables such as CondVar,
@@ -662,7 +673,7 @@ set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_ENABLE_SKOTTIE=1")
 # set(ICU_DEFINES "${ICU_DEFINES} -DU_ENABLE_DYLOAD=0")
 # set(ICU_DEFINES "${ICU_DEFINES} -DHAVE_DLFCN_H=0")
 # set(ICU_DEFINES "${ICU_DEFINES} -DHAVE_DLOPEN=0")
-# if(EMSCRIPTEN)
+# if(TARGET_EMSCRIPTEN)
 #   # Tell ICU that we are a 32 bit platform, otherwise,
 #   # double-conversion-utils.h doesn't know how to operate.
 #   set(ICU_DEFINES "${ICU_DEFINES} -D__i386__=1")
@@ -673,7 +684,7 @@ set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_ENABLE_SKOTTIE=1")
 # # undefines U_NO_DEFAULT_INCLUDE_UTF_HEADERS
 # #set(ICU_DEFINES "${ICU_DEFINES} -UU_NO_DEFAULT_INCLUDE_UTF_HEADERS")
 
-if(EMSCRIPTEN)
+if(TARGET_EMSCRIPTEN)
   # https://github.com/emscripten-core/emscripten/pull/7977
   # https://github.com/emscripten-ports/SDL2/pull/75
   # (new since 1.38.27) — leads to minor code size savings
@@ -1303,6 +1314,11 @@ endif(NOT RELEASE_BUILD)
 
 else(EMSCRIPTEN)
 
+  if(TARGET_LINUX)
+    find_package(LibDL REQUIRED)
+    set(libDL_LIB LIBDL::LIBDL)
+  endif()
+
   set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_ASSUME_GL=1")
 
   # set -DCMAKE_BUILD_TYPE=Debug
@@ -1415,7 +1431,7 @@ else(EMSCRIPTEN)
     set(libpng_LIB GLIBPNG)
   endif()
 
-endif(EMSCRIPTEN)
+endif(TARGET_EMSCRIPTEN)
 
 set(ENABLE_WTF TRUE)
 #set(ENABLE_WTF FALSE)
@@ -1446,10 +1462,10 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${SK_COMMON_FLAGS}")
 # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${ICU_DEFINES}")
 # set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${ICU_DEFINES}")
 #
-if(EMSCRIPTEN)
+if(TARGET_EMSCRIPTEN)
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${EMCC_COMMON}")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${EMCC_COMMON}")
-endif(EMSCRIPTEN)
+endif(TARGET_EMSCRIPTEN)
 
 include(ExternalProject)
 
@@ -1727,7 +1743,7 @@ endif(ENABLE_SKIA)
 
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 17)
 
-if(EMSCRIPTEN)
+if(TARGET_EMSCRIPTEN)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --emrun")
   # https://emscripten.org/docs/getting_started/Tutorial.html#generating-html
   #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -o hello.html")
@@ -1735,7 +1751,7 @@ if(EMSCRIPTEN)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --preload-file resources")
 endif() # EMSCRIPTEN
 
-if(EMSCRIPTEN)
+if(TARGET_EMSCRIPTEN)
   # It is recommended to use target_link_libraries() for linker flags,
   # not set_target_properties (!!!)
   # see https://stackoverflow.com/a/45905060/10904212
@@ -2021,6 +2037,7 @@ else()
     ${libjpeg_LIB}
     ${libjpeg_TURBO_LIB}
     #${libpng_LIB}
+    ${libDL_LIB}
     ${iccjpeg_LIB}
     #
     # khronos

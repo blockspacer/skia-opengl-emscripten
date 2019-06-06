@@ -21,7 +21,7 @@ set(GZLIB_EXT_SOURCES
 )
 
 # if (current_cpu == "x86" || current_cpu == "x64")
-if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+if(TARGET_LINUX)
   #list(APPEND zlib_SOURCES
   #  ${GZLIB_EXT_DIR}intel/filter_sse2_intrinsics.c
   #  ${GZLIB_EXT_DIR}intel/intel_init.c

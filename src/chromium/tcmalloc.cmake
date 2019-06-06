@@ -21,7 +21,7 @@
 #    set(${OUT} ${ABS_FILE} PARENT_SCOPE)
 #endfunction()
 
-#if(EMSCRIPTEN)
+#if(TARGET_EMSCRIPTEN)
 #else()
 #  # You should install Google Perftools.
 #  # Example: sudo apt-get install libgoogle-perftools-dev # or libevent2-devel
@@ -30,9 +30,9 @@
 #  target_link_libraries(base PUBLIC
 #    ${TCMALLOC_LIB}
 #  )
-#endif(EMSCRIPTEN)
+#endif(TARGET_EMSCRIPTEN)
 
-if(EMSCRIPTEN)
+if(TARGET_EMSCRIPTEN)
 else()
   # see https://github.com/chromium/chromium/blob/master/base/allocator/BUILD.gn#L77
   set(TCMALLOC_DIR "tcmalloc_wrapper/third_party/tcmalloc/chromium/")
@@ -195,4 +195,4 @@ else()
 #    -Wl,-u_Z21InitialMallocHook_NewPKvm,-u_Z22InitialMallocHook_MMapPKvS0_miiil,-u_Z22InitialMallocHook_SbrkPKvl
 #    -Wl,-u_ZN15HeapLeakChecker12IgnoreObjectEPKv,-u_ZN15HeapLeakChecker14UnIgnoreObjectEPKv
 #  )
-endif(EMSCRIPTEN)
+endif(TARGET_EMSCRIPTEN)

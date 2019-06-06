@@ -94,7 +94,7 @@ set(SERVICES_NETWORK_PUBLIC_CPP_SOURCES
 )
 
 # if (current_cpu == "x86" || current_cpu == "x64")
-if(EMSCRIPTEN)
+if(TARGET_EMSCRIPTEN)
   ## nothing to do
   #list(APPEND SERVICES_NETWORK_PUBLIC_CPP_OS_PRIVATE_DIRS
   #  ${CHROMIUM_DIR}/web_ports/libxml_wrapper/emscripten # requires "config.h"
@@ -102,7 +102,7 @@ if(EMSCRIPTEN)
   #list(APPEND SERVICES_NETWORK_PUBLIC_CPP_OS_PUBLIC_DIRS
   #  ${CHROMIUM_DIR}/web_ports/libxml_wrapper/emscripten/include # requires "libxml/xmlversion.h"
   #)
-elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+elseif(TARGET_LINUX)
   #if(CMAKE_CL_64)
   #  #
   #else(CMAKE_CL_64)

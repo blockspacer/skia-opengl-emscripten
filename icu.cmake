@@ -836,9 +836,9 @@ set(ICU_SOURCES
   # COMMON_SRC_END
 )
 
-#if(EMSCRIPTEN)
+#if(TARGET_EMSCRIPTEN)
 #  set(USE_OWN_ICU TRUE)
-#elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+#elseif(TARGET_LINUX)
 #  set(USE_OWN_ICU TRUE)
 #  if (NOT USE_OWN_ICU)
 #    # todo
@@ -892,7 +892,7 @@ set(ICU_SOURCES
     list(APPEND ICU_PUBLIC_DEFINES
       UCHAR_TYPE=wchar_t
     )
-  elseif(EMSCRIPTEN)
+  elseif(TARGET_EMSCRIPTEN)
     list(APPEND ICU_PUBLIC_DEFINES
       UCHAR_TYPE=uint16_t
     )
@@ -969,7 +969,7 @@ set(ICU_SOURCES
   )
 #endif(USE_OWN_ICU)
 
-#if(EMSCRIPTEN)
+#if(TARGET_EMSCRIPTEN)
 #  # Tell ICU that we are a 32 bit platform, otherwise,
 #  # double-conversion-utils.h doesn't know how to operate.
 #  set(ICU_DEFINES "${ICU_DEFINES} -D__i386__=1")

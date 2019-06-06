@@ -797,6 +797,7 @@ MISC
   WebAssembly.instantiateStreaming https://hacks.mozilla.org/2018/01/making-webassembly-even-faster-firefoxs-new-streaming-and-tiering-compiler/
 > https://github.com/v8/v8/blob/master/src/wasm/wasm-limits.h
 > bin/gn gen out/config --ide=json --json-ide-script=../../gn/gn_to_cmake.py
+> WASM tests https://chromium.googlesource.com/external/github.com/WebAssembly/waterfall/
 
 TODO
 Bad exit status 2

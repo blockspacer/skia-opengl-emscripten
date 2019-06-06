@@ -25,7 +25,7 @@ set(SKIA_EXT_COMMON_SOURCES
   #${SKIA_EXT_DIR}ext/recursive_gaussian_convolution.h",
 )
 
-if(EMSCRIPTEN)
+if(TARGET_EMSCRIPTEN)
   # TODO #
 else()
   list(APPEND SKIA_EXT_COMMON_SOURCES
@@ -55,7 +55,7 @@ list(APPEND SKIA_EXT_COMMON_SOURCES
   # TODO # ${SKIA_EXT_DIR}ext/fontmgr_default_android.cc
 )
 
-#if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+#if(TARGET_LINUX)
 if(ENABLE_HARFBUZZ)
   list(APPEND SKIA_EXT_COMMON_SOURCES
     ${SKIA_EXT_DIR}ext/fontmgr_default_linux.cc
@@ -74,8 +74,8 @@ list(APPEND SKIA_EXT_COMMON_SOURCES
 #
 # !is_ios && (current_cpu == "x86" || current_cpu == "x64")
 #
-if(EMSCRIPTEN)
-elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+if(TARGET_EMSCRIPTEN)
+elseif(TARGET_LINUX)
   list(APPEND SKIA_EXT_COMMON_SOURCES
     ${SKIA_EXT_DIR}ext/convolver_SSE2.cc
     ${SKIA_EXT_DIR}ext/convolver_SSE2.h

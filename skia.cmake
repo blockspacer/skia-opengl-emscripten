@@ -35,12 +35,12 @@ endif(RELEASE_BUILD)
 # the ExternalProject setup is beyond reasonable.
 option(EXT_SKIA_ALWAYS_BUILD "" OFF)
 option(EXT_SKIA_DEBUG "" ${IS_DEBUG_BUILD})
-if(EMSCRIPTEN)
+if(TARGET_EMSCRIPTEN)
   # NOTE: Use is_component_build=false with EMSCRIPTEN
   option(EXT_SKIA_SHARED "build a shared lbrary (ON) or a static library (OFF)" OFF)
 else(EMSCRIPTEN)
   option(EXT_SKIA_SHARED "build a shared lbrary (ON) or a static library (OFF)" OFF)
-endif(EMSCRIPTEN)
+endif(TARGET_EMSCRIPTEN)
 
 set(SKIA_SRC_DIR "${SKIA_DIR}")
 
@@ -73,7 +73,7 @@ message(STATUS "SKIA_C_FLAGS=${SKIA_C_FLAGS}")
 
 set(NEW_CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 
-if(EMSCRIPTEN)
+if(TARGET_EMSCRIPTEN)
   #set(NEW_CMAKE_CXX_FLAGS "${NEW_CMAKE_CXX_FLAGS} -s MODULARIZE=1 -s EXPORT_NAME=\"PathKitInit\"")
   #set(NEW_CMAKE_CXX_FLAGS "${NEW_CMAKE_CXX_FLAGS} -s STRICT=1")
 endif() # EMSCRIPTEN
@@ -532,7 +532,7 @@ endif ()
 # This is needed only for static library build where the dependencies have
 # to be added explicitly.
 
-if(EMSCRIPTEN)
+if(TARGET_EMSCRIPTEN)
   # message(FATAL_ERROR "${TODO}")
 else()
 
@@ -551,48 +551,55 @@ if (NOT EXT_SKIA_SHARED)
   endfunction()
 
   # seem to be always required...
-  ADD_SKIA_LIBRARY_DEPENDENCY("dl")
+  if(TARGET_LINUX)
+    #ADD_SKIA_LIBRARY_DEPENDENCY("dl")
+    set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${libDL_LIB}" PARENT_SCOPE)
 
-  #ADD_SKIA_LIBRARY_DEPENDENCY("pthread")
-  find_package(Threads REQUIRED)
-  #target_link_libraries(SKIA Threads::Threads)
-  message("CMAKE_THREAD_LIBS_INIT=${CMAKE_THREAD_LIBS_INIT}")
-  set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};Threads::Threads" PARENT_SCOPE)
+    #ADD_SKIA_LIBRARY_DEPENDENCY("pthread")
+    find_package(Threads REQUIRED)
+    #target_link_libraries(SKIA Threads::Threads)
+    message("CMAKE_THREAD_LIBS_INIT=${CMAKE_THREAD_LIBS_INIT}")
+    set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};Threads::Threads" PARENT_SCOPE)
+
+    # when skia_enable_gpu:
+    #
+    # OpenGL::GL
+    #   Defined to the platform-specific OpenGL libraries if the system has OpenGL.
+    # OpenGL::OpenGL
+    #   Defined to libOpenGL if the system is GLVND-based.
+    # OpenGL::GLU
+    #   Defined if the system has GLU.
+    # OpenGL::GLX
+    #   Defined if the system has GLX.
+    # OpenGL::EGL
+    #   Defined if the system has EGL.
+    find_package(OpenGL REQUIRED) # see OPENGL_LIBRARIES
+    #
+    if(SK_IS_EGL)
+      #ADD_SKIA_LIBRARY_DEPENDENCY("EGL") # skia_use_egl
+      set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};OpenGL::EGL" PARENT_SCOPE)
+      #see OPENGL_EGL_INCLUDE_DIRS
+    else()
+      #ADD_SKIA_LIBRARY_DEPENDENCY("GL") # !skia_use_egl # TODO: GLU?
+      set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};OpenGL::GL" PARENT_SCOPE)
+      #see OPENGL_INCLUDE_DIR
+    endif() # SK_IS_EGL
+
+    #ADD_SKIA_LIBRARY_DEPENDENCY("icuuc") # skia_use_system_icu
+
+    #ADD_SKIA_LIBRARY_DEPENDENCY("expat") #skia_use_system_expat
+    find_package(EXPAT REQUIRED)
+    set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};EXPAT::EXPAT" PARENT_SCOPE)
+
+    ADD_SKIA_LIBRARY_DEPENDENCY(${EXT_SKIA_USE_FONTCONFIG} "fontconfig") # skia_use_fontconfig
+    ADD_SKIA_LIBRARY_DEPENDENCY(${EXT_SKIA_USE_FREETYPE2} "freetype") # skia_use_system_freetype2
+
+  endif(TARGET_LINUX)
 
   # see HARFBUZZ_LIBRARIES
   #if(ENABLE_HARFBUZZ)
   #  ADD_SKIA_LIBRARY_DEPENDENCY("harfbuzz")
   #endif(ENABLE_HARFBUZZ)
-
-  # when skia_enable_gpu:
-  #
-  # OpenGL::GL
-  #   Defined to the platform-specific OpenGL libraries if the system has OpenGL.
-  # OpenGL::OpenGL
-  #   Defined to libOpenGL if the system is GLVND-based.
-  # OpenGL::GLU
-  #   Defined if the system has GLU.
-  # OpenGL::GLX
-  #   Defined if the system has GLX.
-  # OpenGL::EGL
-  #   Defined if the system has EGL.
-  find_package(OpenGL REQUIRED) # see OPENGL_LIBRARIES
-  #
-if(SK_IS_EGL)
-  #ADD_SKIA_LIBRARY_DEPENDENCY("EGL") # skia_use_egl
-  set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};OpenGL::EGL" PARENT_SCOPE)
-  #see OPENGL_EGL_INCLUDE_DIRS
-else()
-  #ADD_SKIA_LIBRARY_DEPENDENCY("GL") # !skia_use_egl # TODO: GLU?
-  set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};OpenGL::GL" PARENT_SCOPE)
-  #see OPENGL_INCLUDE_DIR
-endif() # SK_IS_EGL
-
-  #ADD_SKIA_LIBRARY_DEPENDENCY("icuuc") # skia_use_system_icu
-
-  #ADD_SKIA_LIBRARY_DEPENDENCY("expat") #skia_use_system_expat
-  find_package(EXPAT REQUIRED)
-  set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};EXPAT::EXPAT" PARENT_SCOPE)
 
   #ADD_SKIA_LIBRARY_DEPENDENCY("jpeg") # skia_use_system_libjpeg_turbo
 
@@ -630,8 +637,6 @@ endif() # SK_IS_EGL
   # webp integration doesn't expose the system option...
   #ADD_SKIA_LIBRARY_DEPENDENCY("webp") # SK_CONF_IS_OFFICIAL_BUILD && skia_use_libwebp
 
-  ADD_SKIA_LIBRARY_DEPENDENCY(${EXT_SKIA_USE_FONTCONFIG} "fontconfig") # skia_use_fontconfig
-  ADD_SKIA_LIBRARY_DEPENDENCY(${EXT_SKIA_USE_FREETYPE2} "freetype") # skia_use_system_freetype2
 endif (NOT EXT_SKIA_SHARED)
 
 set(SKIA_CMAKE_ONLY_HEADERS "${SKIA_CMAKE_ONLY_HEADERS};${HARFBUZZ_INCLUDE_DIRS};${OPENGL_INCLUDE_DIR};${OPENGL_EGL_INCLUDE_DIRS}")
@@ -653,7 +658,7 @@ else (EXT_SKIA_SHARED)
   set(SK_LIBRARY_TYPE STATIC)
 endif (EXT_SKIA_SHARED)
 
-if(EMSCRIPTEN)
+if(TARGET_EMSCRIPTEN)
   set(SK_LIBRARY_TYPE STATIC) # FORCE STATIC
 else()
   # TODO
