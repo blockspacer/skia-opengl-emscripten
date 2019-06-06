@@ -1,0 +1,1032 @@
+﻿mapped_file.cc:(.text+0xc8): undefined reference to
+  `disk_cache::File::GetLength()'
+
+  /usr/bin/ld: mapped_file.cc:(.text+0xe6): undefined reference to
+  `disk_cache::File::Read(void*, unsigned long, unsigned long)'
+
+  /usr/bin/ld: src/chromium/libGNET.a(sparse_control.cc.o): in function
+  `(anonymous namespace)::ChildrenDeleter::ReadData(disk_cache::Addr, int)':
+
+  sparse_control.cc:(.text+0x1173): undefined reference to
+  `disk_cache::File::Read(void*, unsigned long, unsigned long,
+  disk_cache::FileIOCallback*, bool*)'
+
+  /usr/bin/ld: src/chromium/libGNET.a(cache_util.cc.o): in function
+  `disk_cache::DelayedCacheCleanup(base::FilePath const&)':
+
+  cache_util.cc:(.text+0x344): undefined reference to
+  `disk_cache::MoveCache(base::FilePath const&, base::FilePath const&)'
+
+  /usr/bin/ld: src/chromium/libbase.a(xdg_util.cc.o): in function
+  `base::nix::GetXDGUserDirectory(char const*, char const*)':
+
+  xdg_util.cc:(.text+0x1a0): undefined reference to `xdg_user_dir_lookup(char
+  const*)'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
+  `jsimd_can_rgb_ycc':
+
+  jsimd.c:(.text+0x10): undefined reference to `jconst_rgb_ycc_convert_avx2'
+
+  /usr/bin/ld: jsimd.c:(.text+0x21): undefined reference to
+  `jpeg_simd_cpu_support'
+
+  /usr/bin/ld: jsimd.c:(.text+0x34): undefined reference to
+  `jconst_rgb_ycc_convert_sse2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
+  `jsimd_can_rgb_gray':
+
+  jsimd.c:(.text+0x60): undefined reference to `jconst_rgb_gray_convert_avx2'
+
+  /usr/bin/ld: jsimd.c:(.text+0x71): undefined reference to
+  `jpeg_simd_cpu_support'
+
+  /usr/bin/ld: jsimd.c:(.text+0x84): undefined reference to
+  `jconst_rgb_gray_convert_sse2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
+  `jsimd_can_ycc_rgb':
+
+  jsimd.c:(.text+0xb0): undefined reference to `jconst_ycc_rgb_convert_avx2'
+
+  /usr/bin/ld: jsimd.c:(.text+0xc1): undefined reference to
+  `jpeg_simd_cpu_support'
+
+  /usr/bin/ld: jsimd.c:(.text+0xd4): undefined reference to
+  `jconst_ycc_rgb_convert_sse2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
+  `jsimd_rgb_ycc_convert':
+
+  jsimd.c:(.text+0x13d): undefined reference to `jsimd_rgb_ycc_convert_mmx'
+
+  /usr/bin/ld: jsimd.c:(.text+0x143): undefined reference to
+  `jsimd_rgb_ycc_convert_sse2'
+
+  /usr/bin/ld: jsimd.c:(.text+0x149): undefined reference to
+  `jsimd_rgb_ycc_convert_avx2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
+  `jsimd_rgb_gray_convert':
+
+  jsimd.c:(.text+0x19d): undefined reference to `jsimd_rgb_gray_convert_mmx'
+
+  /usr/bin/ld: jsimd.c:(.text+0x1a3): undefined reference to
+  `jsimd_rgb_gray_convert_sse2'
+
+  /usr/bin/ld: jsimd.c:(.text+0x1a9): undefined reference to
+  `jsimd_rgb_gray_convert_avx2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
+  `jsimd_ycc_rgb_convert':
+
+  jsimd.c:(.text+0x200): undefined reference to `jsimd_ycc_rgb_convert_mmx'
+
+  /usr/bin/ld: jsimd.c:(.text+0x206): undefined reference to
+  `jsimd_ycc_rgb_convert_sse2'
+
+  /usr/bin/ld: jsimd.c:(.text+0x20c): undefined reference to
+  `jsimd_ycc_rgb_convert_avx2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
+  `jsimd_can_h2v2_downsample':
+
+  jsimd.c:(.text+0x24d): undefined reference to `jpeg_simd_cpu_support'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
+  `jsimd_can_h2v1_downsample':
+
+  jsimd.c:(.text+0x27d): undefined reference to `jpeg_simd_cpu_support'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
+  `jsimd_h2v2_downsample':
+
+  jsimd.c:(.text+0x2cc): undefined reference to `jsimd_h2v2_downsample_mmx'
+
+  /usr/bin/ld: jsimd.c:(.text+0x2e6): undefined reference to
+  `jsimd_h2v2_downsample_avx2'
+
+  /usr/bin/ld: jsimd.c:(.text+0x2eb): undefined reference to
+  `jsimd_h2v2_downsample_sse2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
+  `jsimd_h2v1_downsample':
+
+  jsimd.c:(.text+0x31c): undefined reference to `jsimd_h2v1_downsample_mmx'
+
+  /usr/bin/ld: jsimd.c:(.text+0x336): undefined reference to
+  `jsimd_h2v1_downsample_avx2'
+
+  /usr/bin/ld: jsimd.c:(.text+0x33b): undefined reference to
+  `jsimd_h2v1_downsample_sse2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
+  `jsimd_can_h2v2_upsample':
+
+  jsimd.c:(.text+0x34d): undefined reference to `jpeg_simd_cpu_support'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
+  `jsimd_can_h2v1_upsample':
+
+  jsimd.c:(.text+0x37d): undefined reference to `jpeg_simd_cpu_support'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
+  `jsimd_h2v2_upsample':
+
+  jsimd.c:(.text+0x3bb): undefined reference to `jsimd_h2v2_upsample_mmx'
+
+  /usr/bin/ld: jsimd.c:(.text+0x3cc): undefined reference to
+  `jsimd_h2v2_upsample_avx2'
+
+  /usr/bin/ld: jsimd.c:(.text+0x3d1): undefined reference to
+  `jsimd_h2v2_upsample_sse2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
+  `jsimd_h2v1_upsample':
+
+  jsimd.c:(.text+0x3fb): undefined reference to `jsimd_h2v1_upsample_mmx'
+
+  /usr/bin/ld: jsimd.c:(.text+0x40c): undefined reference to
+  `jsimd_h2v1_upsample_avx2'
+
+  /usr/bin/ld: jsimd.c:(.text+0x411): undefined reference to
+  `jsimd_h2v1_upsample_sse2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
+  `jsimd_can_h2v2_fancy_upsample':
+
+  jsimd.c:(.text+0x430): undefined reference to `jconst_fancy_upsample_avx2'
+
+  /usr/bin/ld: jsimd.c:(.text+0x441): undefined reference to
+  `jpeg_simd_cpu_support'
+
+  /usr/bin/ld: jsimd.c:(.text+0x454): undefined reference to
+  `jconst_fancy_upsample_sse2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
+  `jsimd_can_h2v1_fancy_upsample':
+
+  jsimd.c:(.text+0x480): undefined reference to `jconst_fancy_upsample_avx2'
+
+  /usr/bin/ld: jsimd.c:(.text+0x491): undefined reference to
+  `jpeg_simd_cpu_support'
+
+  /usr/bin/ld: jsimd.c:(.text+0x4a4): undefined reference to
+  `jconst_fancy_upsample_sse2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
+  `jsimd_h2v2_fancy_upsample':
+
+  jsimd.c:(.text+0x4d8): undefined reference to
+  `jsimd_h2v2_fancy_upsample_mmx'
+
+  /usr/bin/ld: jsimd.c:(.text+0x4e6): undefined reference to
+  `jsimd_h2v2_fancy_upsample_avx2'
+
+  /usr/bin/ld: jsimd.c:(.text+0x4eb): undefined reference to
+  `jsimd_h2v2_fancy_upsample_sse2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
+  `jsimd_h2v1_fancy_upsample':
+
+  jsimd.c:(.text+0x508): undefined reference to
+  `jsimd_h2v1_fancy_upsample_mmx'
+
+  /usr/bin/ld: jsimd.c:(.text+0x516): undefined reference to
+  `jsimd_h2v1_fancy_upsample_avx2'
+
+  /usr/bin/ld: jsimd.c:(.text+0x51b): undefined reference to
+  `jsimd_h2v1_fancy_upsample_sse2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
+  `jsimd_can_h2v2_merged_upsample':
+
+  jsimd.c:(.text+0x530): undefined reference to `jconst_merged_upsample_avx2'
+
+  /usr/bin/ld: jsimd.c:(.text+0x541): undefined reference to
+  `jpeg_simd_cpu_support'
+
+  /usr/bin/ld: jsimd.c:(.text+0x554): undefined reference to
+  `jconst_merged_upsample_sse2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
+  `jsimd_can_h2v1_merged_upsample':
+
+  jsimd.c:(.text+0x580): undefined reference to `jconst_merged_upsample_avx2'
+
+  /usr/bin/ld: jsimd.c:(.text+0x591): undefined reference to
+  `jpeg_simd_cpu_support'
+
+  /usr/bin/ld: jsimd.c:(.text+0x5a4): undefined reference to
+  `jconst_merged_upsample_sse2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
+  `jsimd_h2v2_merged_upsample':
+
+  jsimd.c:(.text+0x5fe): undefined reference to
+  `jsimd_h2v2_merged_upsample_mmx'
+
+  /usr/bin/ld: jsimd.c:(.text+0x604): undefined reference to
+  `jsimd_h2v2_merged_upsample_sse2'
+
+  /usr/bin/ld: jsimd.c:(.text+0x60a): undefined reference to
+  `jsimd_h2v2_merged_upsample_avx2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
+  `jsimd_h2v1_merged_upsample':
+
+  jsimd.c:(.text+0x66e): undefined reference to
+  `jsimd_h2v1_merged_upsample_mmx'
+
+  /usr/bin/ld: jsimd.c:(.text+0x674): undefined reference to
+  `jsimd_h2v1_merged_upsample_sse2'
+
+  /usr/bin/ld: jsimd.c:(.text+0x67a): undefined reference to
+  `jsimd_h2v1_merged_upsample_avx2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
+  `jsimd_can_convsamp':
+
+  jsimd.c:(.text+0x6ad): undefined reference to `jpeg_simd_cpu_support'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
+  `jsimd_can_convsamp_float':
+
+  jsimd.c:(.text+0x6dd): undefined reference to `jpeg_simd_cpu_support'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function `jsimd_convsamp':
+
+  jsimd.c:(.text+0x70f): undefined reference to `jsimd_convsamp_mmx'
+
+  /usr/bin/ld: jsimd.c:(.text+0x714): undefined reference to
+  `jsimd_convsamp_avx2'
+
+  /usr/bin/ld: jsimd.c:(.text+0x719): undefined reference to
+  `jsimd_convsamp_sse2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
+  `jsimd_convsamp_float':
+
+  jsimd.c:(.text+0x72f): undefined reference to `jsimd_convsamp_float_3dnow'
+
+  /usr/bin/ld: jsimd.c:(.text+0x734): undefined reference to
+  `jsimd_convsamp_float_sse2'
+
+  /usr/bin/ld: jsimd.c:(.text+0x739): undefined reference to
+  `jsimd_convsamp_float_sse'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
+  `jsimd_can_fdct_islow':
+
+  jsimd.c:(.text+0x750): undefined reference to `jconst_fdct_islow_avx2'
+
+  /usr/bin/ld: jsimd.c:(.text+0x761): undefined reference to
+  `jpeg_simd_cpu_support'
+
+  /usr/bin/ld: jsimd.c:(.text+0x774): undefined reference to
+  `jconst_fdct_islow_sse2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
+  `jsimd_can_fdct_ifast':
+
+  jsimd.c:(.text+0x79d): undefined reference to `jpeg_simd_cpu_support'
+
+  /usr/bin/ld: jsimd.c:(.text+0x7ac): undefined reference to
+  `jconst_fdct_ifast_sse2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
+  `jsimd_can_fdct_float':
+
+  jsimd.c:(.text+0x7dd): undefined reference to `jpeg_simd_cpu_support'
+
+  /usr/bin/ld: jsimd.c:(.text+0x7ec): undefined reference to
+  `jconst_fdct_float_sse'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
+  `jsimd_fdct_islow':
+
+  jsimd.c:(.text+0x81f): undefined reference to `jsimd_fdct_islow_mmx'
+
+  /usr/bin/ld: jsimd.c:(.text+0x824): undefined reference to
+  `jsimd_fdct_islow_avx2'
+
+  /usr/bin/ld: jsimd.c:(.text+0x829): undefined reference to
+  `jsimd_fdct_islow_sse2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
+  `jsimd_fdct_ifast':
+
+  jsimd.c:(.text+0x83a): undefined reference to `jconst_fdct_islow_sse2'
+
+  /usr/bin/ld: jsimd.c:(.text+0x843): undefined reference to
+  `jsimd_fdct_ifast_sse2'
+
+  /usr/bin/ld: jsimd.c:(.text+0x848): undefined reference to
+  `jsimd_fdct_ifast_mmx'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
+  `jsimd_fdct_float':
+
+  jsimd.c:(.text+0x85b): undefined reference to `jconst_fdct_float_sse'
+
+  /usr/bin/ld: jsimd.c:(.text+0x865): undefined reference to
+  `jsimd_fdct_float_sse'
+
+  /usr/bin/ld: jsimd.c:(.text+0x86f): undefined reference to
+  `jsimd_fdct_float_3dnow'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
+  `jsimd_can_quantize':
+
+  jsimd.c:(.text+0x88d): undefined reference to `jpeg_simd_cpu_support'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
+  `jsimd_can_quantize_float':
+
+  jsimd.c:(.text+0x8bd): undefined reference to `jpeg_simd_cpu_support'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function `jsimd_quantize':
+
+  jsimd.c:(.text+0x8ef): undefined reference to `jsimd_quantize_mmx'
+
+  /usr/bin/ld: jsimd.c:(.text+0x8f4): undefined reference to
+  `jsimd_quantize_avx2'
+
+  /usr/bin/ld: jsimd.c:(.text+0x8f9): undefined reference to
+  `jsimd_quantize_sse2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
+  `jsimd_quantize_float':
+
+  jsimd.c:(.text+0x90f): undefined reference to `jsimd_quantize_float_3dnow'
+
+  /usr/bin/ld: jsimd.c:(.text+0x914): undefined reference to
+  `jsimd_quantize_float_sse2'
+
+  /usr/bin/ld: jsimd.c:(.text+0x919): undefined reference to
+  `jsimd_quantize_float_sse'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
+  `jsimd_can_idct_2x2':
+
+  jsimd.c:(.text+0x92d): undefined reference to `jpeg_simd_cpu_support'
+
+  /usr/bin/ld: jsimd.c:(.text+0x93c): undefined reference to
+  `jconst_idct_red_sse2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
+  `jsimd_can_idct_4x4':
+
+  jsimd.c:(.text+0x96d): undefined reference to `jpeg_simd_cpu_support'
+
+  /usr/bin/ld: jsimd.c:(.text+0x97c): undefined reference to
+  `jconst_idct_red_sse2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function `jsimd_idct_2x2':
+
+  jsimd.c:(.text+0x9ae): undefined reference to `jconst_idct_red_sse2'
+
+  /usr/bin/ld: jsimd.c:(.text+0x9c0): undefined reference to
+  `jsimd_idct_2x2_sse2'
+
+  /usr/bin/ld: jsimd.c:(.text+0x9ce): undefined reference to
+  `jsimd_idct_2x2_mmx'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function `jsimd_idct_4x4':
+
+  jsimd.c:(.text+0x9ee): undefined reference to `jconst_idct_red_sse2'
+
+  /usr/bin/ld: jsimd.c:(.text+0xa00): undefined reference to
+  `jsimd_idct_4x4_sse2'
+
+  /usr/bin/ld: jsimd.c:(.text+0xa0e): undefined reference to
+  `jsimd_idct_4x4_mmx'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
+  `jsimd_can_idct_islow':
+
+  jsimd.c:(.text+0xa30): undefined reference to `jconst_idct_islow_avx2'
+
+  /usr/bin/ld: jsimd.c:(.text+0xa41): undefined reference to
+  `jpeg_simd_cpu_support'
+
+  /usr/bin/ld: jsimd.c:(.text+0xa54): undefined reference to
+  `jconst_idct_islow_sse2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
+  `jsimd_can_idct_ifast':
+
+  jsimd.c:(.text+0xa7d): undefined reference to `jpeg_simd_cpu_support'
+
+  /usr/bin/ld: jsimd.c:(.text+0xa8c): undefined reference to
+  `jconst_idct_ifast_sse2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
+  `jsimd_can_idct_float':
+
+  jsimd.c:(.text+0xac5): undefined reference to `jconst_idct_float_sse2'
+
+  /usr/bin/ld: jsimd.c:(.text+0xad2): undefined reference to
+  `jpeg_simd_cpu_support'
+
+  /usr/bin/ld: jsimd.c:(.text+0xaee): undefined reference to
+  `jconst_idct_float_sse'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
+  `jsimd_idct_islow':
+
+  jsimd.c:(.text+0xb2c): undefined reference to `jsimd_idct_islow_mmx'
+
+  /usr/bin/ld: jsimd.c:(.text+0xb3e): undefined reference to
+  `jsimd_idct_islow_avx2'
+
+  /usr/bin/ld: jsimd.c:(.text+0xb43): undefined reference to
+  `jsimd_idct_islow_sse2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
+  `jsimd_idct_ifast':
+
+  jsimd.c:(.text+0xb5e): undefined reference to `jconst_idct_ifast_sse2'
+
+  /usr/bin/ld: jsimd.c:(.text+0xb70): undefined reference to
+  `jsimd_idct_ifast_sse2'
+
+  /usr/bin/ld: jsimd.c:(.text+0xb7e): undefined reference to
+  `jsimd_idct_ifast_mmx'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
+  `jsimd_idct_float':
+
+  jsimd.c:(.text+0xb9b): undefined reference to `jconst_idct_float_sse2'
+
+  /usr/bin/ld: jsimd.c:(.text+0xbb3): undefined reference to
+  `jsimd_idct_float_sse2'
+
+  /usr/bin/ld: jsimd.c:(.text+0xbc0): undefined reference to
+  `jconst_idct_float_sse'
+
+  /usr/bin/ld: jsimd.c:(.text+0xbd2): undefined reference to
+  `jsimd_idct_float_sse'
+
+  /usr/bin/ld: jsimd.c:(.text+0xbe0): undefined reference to
+  `jsimd_idct_float_3dnow'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
+  `jsimd_can_huff_encode_one_block':
+
+  jsimd.c:(.text+0xbfd): undefined reference to `jpeg_simd_cpu_support'
+
+  /usr/bin/ld: jsimd.c:(.text+0xc0f): undefined reference to
+  `jconst_huff_encode_one_block'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
+  `jsimd_huff_encode_one_block':
+
+  jsimd.c:(.text+0xc21): undefined reference to
+  `jsimd_huff_encode_one_block_sse2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
+  `jsimd_can_encode_mcu_AC_first_prepare':
+
+  jsimd.c:(.text+0xc3e): undefined reference to `jpeg_simd_cpu_support'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
+  `jsimd_encode_mcu_AC_first_prepare':
+
+  jsimd.c:(.text+0xc51): undefined reference to
+  `jsimd_encode_mcu_AC_first_prepare_sse2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
+  `jsimd_can_encode_mcu_AC_refine_prepare':
+
+  jsimd.c:(.text+0xc6e): undefined reference to `jpeg_simd_cpu_support'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
+  `jsimd_encode_mcu_AC_refine_prepare':
+
+  jsimd.c:(.text+0xc81): undefined reference to
+  `jsimd_encode_mcu_AC_refine_prepare_sse2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x0): undefined
+  reference to `jsimd_extrgb_ycc_convert_avx2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x8): undefined
+  reference to `jsimd_extrgbx_ycc_convert_avx2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x10): undefined
+  reference to `jsimd_extbgr_ycc_convert_avx2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x18): undefined
+  reference to `jsimd_extbgrx_ycc_convert_avx2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x20): undefined
+  reference to `jsimd_extxbgr_ycc_convert_avx2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x28): undefined
+  reference to `jsimd_extxrgb_ycc_convert_avx2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x30): undefined
+  reference to `jsimd_extrgbx_ycc_convert_avx2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x38): undefined
+  reference to `jsimd_extbgrx_ycc_convert_avx2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x40): undefined
+  reference to `jsimd_extxbgr_ycc_convert_avx2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x48): undefined
+  reference to `jsimd_extxrgb_ycc_convert_avx2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x50): undefined
+  reference to `jsimd_extrgb_ycc_convert_sse2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x58): undefined
+  reference to `jsimd_extrgbx_ycc_convert_sse2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x60): undefined
+  reference to `jsimd_extbgr_ycc_convert_sse2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x68): undefined
+  reference to `jsimd_extbgrx_ycc_convert_sse2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x70): undefined
+  reference to `jsimd_extxbgr_ycc_convert_sse2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x78): undefined
+  reference to `jsimd_extxrgb_ycc_convert_sse2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x80): undefined
+  reference to `jsimd_extrgbx_ycc_convert_sse2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x88): undefined
+  reference to `jsimd_extbgrx_ycc_convert_sse2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x90): undefined
+  reference to `jsimd_extxbgr_ycc_convert_sse2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x98): undefined
+  reference to `jsimd_extxrgb_ycc_convert_sse2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0xa0): undefined
+  reference to `jsimd_extrgb_ycc_convert_mmx'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0xa8): undefined
+  reference to `jsimd_extrgbx_ycc_convert_mmx'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0xb0): undefined
+  reference to `jsimd_extbgr_ycc_convert_mmx'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0xb8): undefined
+  reference to `jsimd_extbgrx_ycc_convert_mmx'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0xc0): undefined
+  reference to `jsimd_extxbgr_ycc_convert_mmx'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0xc8): undefined
+  reference to `jsimd_extxrgb_ycc_convert_mmx'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0xd0): undefined
+  reference to `jsimd_extrgbx_ycc_convert_mmx'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0xd8): undefined
+  reference to `jsimd_extbgrx_ycc_convert_mmx'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0xe0): undefined
+  reference to `jsimd_extxbgr_ycc_convert_mmx'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0xe8): undefined
+  reference to `jsimd_extxrgb_ycc_convert_mmx'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0xf0): undefined
+  reference to `jsimd_extrgb_gray_convert_avx2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0xf8): undefined
+  reference to `jsimd_extrgbx_gray_convert_avx2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x100): undefined
+  reference to `jsimd_extbgr_gray_convert_avx2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x108): undefined
+  reference to `jsimd_extbgrx_gray_convert_avx2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x110): undefined
+  reference to `jsimd_extxbgr_gray_convert_avx2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x118): undefined
+  reference to `jsimd_extxrgb_gray_convert_avx2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x120): undefined
+  reference to `jsimd_extrgbx_gray_convert_avx2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x128): undefined
+  reference to `jsimd_extbgrx_gray_convert_avx2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x130): undefined
+  reference to `jsimd_extxbgr_gray_convert_avx2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x138): undefined
+  reference to `jsimd_extxrgb_gray_convert_avx2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x140): undefined
+  reference to `jsimd_extrgb_gray_convert_sse2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x148): undefined
+  reference to `jsimd_extrgbx_gray_convert_sse2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x150): undefined
+  reference to `jsimd_extbgr_gray_convert_sse2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x158): undefined
+  reference to `jsimd_extbgrx_gray_convert_sse2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x160): undefined
+  reference to `jsimd_extxbgr_gray_convert_sse2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x168): undefined
+  reference to `jsimd_extxrgb_gray_convert_sse2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x170): undefined
+  reference to `jsimd_extrgbx_gray_convert_sse2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x178): undefined
+  reference to `jsimd_extbgrx_gray_convert_sse2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x180): undefined
+  reference to `jsimd_extxbgr_gray_convert_sse2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x188): undefined
+  reference to `jsimd_extxrgb_gray_convert_sse2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x190): undefined
+  reference to `jsimd_extrgb_gray_convert_mmx'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x198): undefined
+  reference to `jsimd_extrgbx_gray_convert_mmx'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x1a0): undefined
+  reference to `jsimd_extbgr_gray_convert_mmx'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x1a8): undefined
+  reference to `jsimd_extbgrx_gray_convert_mmx'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x1b0): undefined
+  reference to `jsimd_extxbgr_gray_convert_mmx'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x1b8): undefined
+  reference to `jsimd_extxrgb_gray_convert_mmx'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x1c0): undefined
+  reference to `jsimd_extrgbx_gray_convert_mmx'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x1c8): undefined
+  reference to `jsimd_extbgrx_gray_convert_mmx'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x1d0): undefined
+  reference to `jsimd_extxbgr_gray_convert_mmx'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x1d8): undefined
+  reference to `jsimd_extxrgb_gray_convert_mmx'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x1e0): undefined
+  reference to `jsimd_ycc_extrgb_convert_avx2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x1e8): undefined
+  reference to `jsimd_ycc_extrgbx_convert_avx2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x1f0): undefined
+  reference to `jsimd_ycc_extbgr_convert_avx2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x1f8): undefined
+  reference to `jsimd_ycc_extbgrx_convert_avx2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x200): undefined
+  reference to `jsimd_ycc_extxbgr_convert_avx2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x208): undefined
+  reference to `jsimd_ycc_extxrgb_convert_avx2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x210): undefined
+  reference to `jsimd_ycc_extrgbx_convert_avx2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x218): undefined
+  reference to `jsimd_ycc_extbgrx_convert_avx2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x220): undefined
+  reference to `jsimd_ycc_extxbgr_convert_avx2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x228): undefined
+  reference to `jsimd_ycc_extxrgb_convert_avx2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x230): undefined
+  reference to `jsimd_ycc_extrgb_convert_sse2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x238): undefined
+  reference to `jsimd_ycc_extrgbx_convert_sse2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x240): undefined
+  reference to `jsimd_ycc_extbgr_convert_sse2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x248): undefined
+  reference to `jsimd_ycc_extbgrx_convert_sse2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x250): undefined
+  reference to `jsimd_ycc_extxbgr_convert_sse2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x258): undefined
+  reference to `jsimd_ycc_extxrgb_convert_sse2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x260): undefined
+  reference to `jsimd_ycc_extrgbx_convert_sse2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x268): undefined
+  reference to `jsimd_ycc_extbgrx_convert_sse2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x270): undefined
+  reference to `jsimd_ycc_extxbgr_convert_sse2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x278): undefined
+  reference to `jsimd_ycc_extxrgb_convert_sse2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x280): undefined
+  reference to `jsimd_ycc_extrgb_convert_mmx'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x288): undefined
+  reference to `jsimd_ycc_extrgbx_convert_mmx'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x290): undefined
+  reference to `jsimd_ycc_extbgr_convert_mmx'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x298): undefined
+  reference to `jsimd_ycc_extbgrx_convert_mmx'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x2a0): undefined
+  reference to `jsimd_ycc_extxbgr_convert_mmx'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x2a8): undefined
+  reference to `jsimd_ycc_extxrgb_convert_mmx'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x2b0): undefined
+  reference to `jsimd_ycc_extrgbx_convert_mmx'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x2b8): undefined
+  reference to `jsimd_ycc_extbgrx_convert_mmx'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x2c0): undefined
+  reference to `jsimd_ycc_extxbgr_convert_mmx'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x2c8): undefined
+  reference to `jsimd_ycc_extxrgb_convert_mmx'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x2d0): undefined
+  reference to `jsimd_h2v2_extrgb_merged_upsample_avx2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x2d8): undefined
+  reference to `jsimd_h2v2_extrgbx_merged_upsample_avx2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x2e0): undefined
+  reference to `jsimd_h2v2_extbgr_merged_upsample_avx2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x2e8): undefined
+  reference to `jsimd_h2v2_extbgrx_merged_upsample_avx2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x2f0): undefined
+  reference to `jsimd_h2v2_extxbgr_merged_upsample_avx2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x2f8): undefined
+  reference to `jsimd_h2v2_extxrgb_merged_upsample_avx2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x300): undefined
+  reference to `jsimd_h2v2_extrgbx_merged_upsample_avx2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x308): undefined
+  reference to `jsimd_h2v2_extbgrx_merged_upsample_avx2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x310): undefined
+  reference to `jsimd_h2v2_extxbgr_merged_upsample_avx2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x318): undefined
+  reference to `jsimd_h2v2_extxrgb_merged_upsample_avx2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x320): undefined
+  reference to `jsimd_h2v2_extrgb_merged_upsample_sse2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x328): undefined
+  reference to `jsimd_h2v2_extrgbx_merged_upsample_sse2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x330): undefined
+  reference to `jsimd_h2v2_extbgr_merged_upsample_sse2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x338): undefined
+  reference to `jsimd_h2v2_extbgrx_merged_upsample_sse2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x340): undefined
+  reference to `jsimd_h2v2_extxbgr_merged_upsample_sse2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x348): undefined
+  reference to `jsimd_h2v2_extxrgb_merged_upsample_sse2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x350): undefined
+  reference to `jsimd_h2v2_extrgbx_merged_upsample_sse2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x358): undefined
+  reference to `jsimd_h2v2_extbgrx_merged_upsample_sse2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x360): undefined
+  reference to `jsimd_h2v2_extxbgr_merged_upsample_sse2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x368): undefined
+  reference to `jsimd_h2v2_extxrgb_merged_upsample_sse2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x370): undefined
+  reference to `jsimd_h2v2_extrgb_merged_upsample_mmx'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x378): undefined
+  reference to `jsimd_h2v2_extrgbx_merged_upsample_mmx'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x380): undefined
+  reference to `jsimd_h2v2_extbgr_merged_upsample_mmx'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x388): undefined
+  reference to `jsimd_h2v2_extbgrx_merged_upsample_mmx'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x390): undefined
+  reference to `jsimd_h2v2_extxbgr_merged_upsample_mmx'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x398): undefined
+  reference to `jsimd_h2v2_extxrgb_merged_upsample_mmx'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x3a0): undefined
+  reference to `jsimd_h2v2_extrgbx_merged_upsample_mmx'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x3a8): undefined
+  reference to `jsimd_h2v2_extbgrx_merged_upsample_mmx'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x3b0): undefined
+  reference to `jsimd_h2v2_extxbgr_merged_upsample_mmx'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x3b8): undefined
+  reference to `jsimd_h2v2_extxrgb_merged_upsample_mmx'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x3c0): undefined
+  reference to `jsimd_h2v1_extrgb_merged_upsample_avx2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x3c8): undefined
+  reference to `jsimd_h2v1_extrgbx_merged_upsample_avx2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x3d0): undefined
+  reference to `jsimd_h2v1_extbgr_merged_upsample_avx2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x3d8): undefined
+  reference to `jsimd_h2v1_extbgrx_merged_upsample_avx2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x3e0): undefined
+  reference to `jsimd_h2v1_extxbgr_merged_upsample_avx2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x3e8): undefined
+  reference to `jsimd_h2v1_extxrgb_merged_upsample_avx2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x3f0): undefined
+  reference to `jsimd_h2v1_extrgbx_merged_upsample_avx2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x3f8): undefined
+  reference to `jsimd_h2v1_extbgrx_merged_upsample_avx2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x400): undefined
+  reference to `jsimd_h2v1_extxbgr_merged_upsample_avx2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x408): undefined
+  reference to `jsimd_h2v1_extxrgb_merged_upsample_avx2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x410): undefined
+  reference to `jsimd_h2v1_extrgb_merged_upsample_sse2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x418): undefined
+  reference to `jsimd_h2v1_extrgbx_merged_upsample_sse2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x420): undefined
+  reference to `jsimd_h2v1_extbgr_merged_upsample_sse2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x428): undefined
+  reference to `jsimd_h2v1_extbgrx_merged_upsample_sse2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x430): undefined
+  reference to `jsimd_h2v1_extxbgr_merged_upsample_sse2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x438): undefined
+  reference to `jsimd_h2v1_extxrgb_merged_upsample_sse2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x440): undefined
+  reference to `jsimd_h2v1_extrgbx_merged_upsample_sse2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x448): undefined
+  reference to `jsimd_h2v1_extbgrx_merged_upsample_sse2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x450): undefined
+  reference to `jsimd_h2v1_extxbgr_merged_upsample_sse2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x458): undefined
+  reference to `jsimd_h2v1_extxrgb_merged_upsample_sse2'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x460): undefined
+  reference to `jsimd_h2v1_extrgb_merged_upsample_mmx'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x468): undefined
+  reference to `jsimd_h2v1_extrgbx_merged_upsample_mmx'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x470): undefined
+  reference to `jsimd_h2v1_extbgr_merged_upsample_mmx'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x478): undefined
+  reference to `jsimd_h2v1_extbgrx_merged_upsample_mmx'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x480): undefined
+  reference to `jsimd_h2v1_extxbgr_merged_upsample_mmx'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x488): undefined
+  reference to `jsimd_h2v1_extxrgb_merged_upsample_mmx'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x490): undefined
+  reference to `jsimd_h2v1_extrgbx_merged_upsample_mmx'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x498): undefined
+  reference to `jsimd_h2v1_extbgrx_merged_upsample_mmx'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x4a0): undefined
+  reference to `jsimd_h2v1_extxbgr_merged_upsample_mmx'
+
+  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x4a8): undefined
+  reference to `jsimd_h2v1_extxrgb_merged_upsample_mmx'
+
+  /usr/bin/ld: src/cobalt/libcobalt_media.a(mime_util_internal.cc.o): in
+  function
+  `cobalt::media::internal::MimeUtil::StringToCodec(std::__cxx11::basic_string<char,
+  std::char_traits<char>, std::allocator<char> > const&,
+  std::__cxx11::basic_string<char, std::char_traits<char>,
+  std::allocator<char> > const&, cobalt::media::internal::MimeUtil::Codec*,
+  bool*, cobalt::media::VideoCodecProfile*, unsigned char*, bool) const':
+
+  mime_util_internal.cc:(.text+0x590): undefined reference to
+  `cobalt::media::ParseAVCCodecId(std::__cxx11::basic_string<char,
+  std::char_traits<char>, std::allocator<char> > const&,
+  cobalt::media::VideoCodecProfile*, unsigned char*)'
+
+  /usr/bin/ld: mime_util_internal.cc:(.text+0xa8a): undefined reference to
+  `cobalt::media::ParseHEVCCodecId(std::__cxx11::basic_string<char,
+  std::char_traits<char>, std::allocator<char> > const&,
+  cobalt::media::VideoCodecProfile*, unsigned char*)'
+
+  /usr/bin/ld: src/chromium/libGNET.a(mime_util.cc.o): in function
+  `net::MimeUtil::GetMimeTypeFromExtensionHelper(std::__cxx11::basic_string<char,
+  std::char_traits<char>, std::allocator<char> > const&, bool,
+  std::__cxx11::basic_string<char, std::char_traits<char>,
+  std::allocator<char> >*) const':
+
+  mime_util.cc:(.text+0x142): undefined reference to
+  `net::PlatformMimeUtil::GetPlatformMimeTypeFromExtension(std::__cxx11::basic_string<char,
+  std::char_traits<char>, std::allocator<char> > const&,
+  std::__cxx11::basic_string<char, std::char_traits<char>,
+  std::allocator<char> >*) const'
+
+  /usr/bin/ld: src/chromium/libGNET.a(mime_util.cc.o): in function
+  `net::MimeUtil::GetPreferredExtensionForMimeType(std::__cxx11::basic_string<char,
+  std::char_traits<char>, std::allocator<char> > const&,
+  std::__cxx11::basic_string<char, std::char_traits<char>,
+  std::allocator<char> >*) const':
+
+  mime_util.cc:(.text+0x2e5): undefined reference to
+  `net::PlatformMimeUtil::GetPlatformPreferredExtensionForMimeType(std::__cxx11::basic_string<char,
+  std::char_traits<char>, std::allocator<char> > const&,
+  std::__cxx11::basic_string<char, std::char_traits<char>,
+  std::allocator<char> >*) const'
+
+  /usr/bin/ld: src/chromium/libGNET.a(mime_util.cc.o): in function
+  `net::GetExtensionsForMimeType(std::__cxx11::basic_string<char,
+  std::char_traits<char>, std::allocator<char> > const&,
+  std::vector<std::__cxx11::basic_string<char, std::char_traits<char>,
+  std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char,
+  std::char_traits<char>, std::allocator<char> > > >*)':
+
+  mime_util.cc:(.text+0x2018): undefined reference to
+  `net::PlatformMimeUtil::GetPlatformExtensionsForMimeType(std::__cxx11::basic_string<char,
+  std::char_traits<char>, std::allocator<char> > const&,
+  std::unordered_set<std::__cxx11::basic_string<char, std::char_traits<char>,
+  std::allocator<char> >, std::hash<std::__cxx11::basic_string<char,
+  std::char_traits<char>, std::allocator<char> > >,
+  std::equal_to<std::__cxx11::basic_string<char, std::char_traits<char>,
+  std::allocator<char> > >, std::allocator<std::__cxx11::basic_string<char,
+  std::char_traits<char>, std::allocator<char> > > >*) const'
+
+  /usr/bin/ld: mime_util.cc:(.text+0x21be): undefined reference to
+  `net::PlatformMimeUtil::GetPlatformExtensionsForMimeType(std::__cxx11::basic_string<char,
+  std::char_traits<char>, std::allocator<char> > const&,
+  std::unordered_set<std::__cxx11::basic_string<char, std::char_traits<char>,
+  std::allocator<char> >, std::hash<std::__cxx11::basic_string<char,
+  std::char_traits<char>, std::allocator<char> > >,
+  std::equal_to<std::__cxx11::basic_string<char, std::char_traits<char>,
+  std::allocator<char> > >, std::allocator<std::__cxx11::basic_string<char,
+  std::char_traits<char>, std::allocator<char> > > >*) const'
+
+  clang: error: linker command failed with exit code 1 (use -v to see
+  invocation)
+
