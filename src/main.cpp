@@ -795,6 +795,79 @@ sk_sp<const GrGLInterface> emscripten_GrGLMakeNativeInterface() {
 #include "cobalt/dom/text.h"
 #include "cobalt/dom_parser/parser.h"
 //#include "cobalt/loader/fetcher_factory.h"
+
+#include "cobalt/css_parser/parser.h"
+
+#include <cmath>
+#include <memory>
+#include <string>
+#include <vector>
+
+#include "base/bind.h"
+#include "base/strings/stringprintf.h"
+#include "cobalt/cssom/active_pseudo_class.h"
+#include "cobalt/cssom/after_pseudo_element.h"
+#include "cobalt/cssom/attribute_selector.h"
+#include "cobalt/cssom/before_pseudo_element.h"
+#include "cobalt/cssom/child_combinator.h"
+#include "cobalt/cssom/class_selector.h"
+#include "cobalt/cssom/cobalt_ui_nav_focus_transform_function.h"
+#include "cobalt/cssom/cobalt_ui_nav_spotlight_transform_function.h"
+#include "cobalt/cssom/complex_selector.h"
+#include "cobalt/cssom/compound_selector.h"
+#include "cobalt/cssom/css_declared_style_data.h"
+#include "cobalt/cssom/css_font_face_declaration_data.h"
+#include "cobalt/cssom/css_font_face_rule.h"
+#include "cobalt/cssom/css_keyframe_rule.h"
+#include "cobalt/cssom/css_keyframes_rule.h"
+#include "cobalt/cssom/css_rule_list.h"
+#include "cobalt/cssom/css_style_rule.h"
+#include "cobalt/cssom/css_style_sheet.h"
+#include "cobalt/cssom/descendant_combinator.h"
+#include "cobalt/cssom/empty_pseudo_class.h"
+#include "cobalt/cssom/filter_function_list_value.h"
+#include "cobalt/cssom/focus_pseudo_class.h"
+#include "cobalt/cssom/following_sibling_combinator.h"
+#include "cobalt/cssom/font_style_value.h"
+#include "cobalt/cssom/font_weight_value.h"
+#include "cobalt/cssom/hover_pseudo_class.h"
+#include "cobalt/cssom/id_selector.h"
+#include "cobalt/cssom/integer_value.h"
+#include "cobalt/cssom/keyword_value.h"
+#include "cobalt/cssom/length_value.h"
+#include "cobalt/cssom/linear_gradient_value.h"
+#include "cobalt/cssom/local_src_value.h"
+#include "cobalt/cssom/map_to_mesh_function.h"
+#include "cobalt/cssom/matrix_function.h"
+#include "cobalt/cssom/media_list.h"
+#include "cobalt/cssom/media_query.h"
+#include "cobalt/cssom/next_sibling_combinator.h"
+#include "cobalt/cssom/not_pseudo_class.h"
+#include "cobalt/cssom/number_value.h"
+#include "cobalt/cssom/percentage_value.h"
+#include "cobalt/cssom/property_definitions.h"
+#include "cobalt/cssom/property_key_list_value.h"
+#include "cobalt/cssom/property_list_value.h"
+#include "cobalt/cssom/property_value_visitor.h"
+#include "cobalt/cssom/radial_gradient_value.h"
+#include "cobalt/cssom/rgba_color_value.h"
+#include "cobalt/cssom/rotate_function.h"
+#include "cobalt/cssom/scale_function.h"
+#include "cobalt/cssom/shadow_value.h"
+#include "cobalt/cssom/simple_selector.h"
+#include "cobalt/cssom/string_value.h"
+#include "cobalt/cssom/time_list_value.h"
+#include "cobalt/cssom/timing_function.h"
+#include "cobalt/cssom/timing_function_list_value.h"
+#include "cobalt/cssom/transform_function_list_value.h"
+#include "cobalt/cssom/translate_function.h"
+#include "cobalt/cssom/type_selector.h"
+#include "cobalt/cssom/unicode_range_value.h"
+#include "cobalt/cssom/universal_selector.h"
+#include "cobalt/cssom/url_src_value.h"
+#include "cobalt/cssom/url_value.h"
+#include "cobalt/cssom/viewport_size.h"
+
 #endif // ENABLE_COBALT
 
 //#if defined(ENABLE_SKIA) && (defined(USE_LIBJPEG) || defined(USE_LIBJPEG_TURBO))
@@ -2031,6 +2104,54 @@ void CobaltTester::run() {
 
   printf("head->tag_name() %s\n", head->tag_name().c_str());
   printf("head->text_content() %s\n", head->text_content().value_or("empty head").c_str());
+
+class CSSParserObserver {
+ public:
+  void OnWarning(const std::string& message){
+    printf("CSSParserObserver OnWarning %s\n", message.c_str());
+  }
+  void OnError(const std::string& message){
+    printf("CSSParserObserver OnError %s\n", message.c_str());
+  }
+};
+
+  printf("Testing COBALT css_parser...\n");
+  CSSParserObserver parser_observer_;
+  cobalt::css_parser::Parser::SupportsMapToMeshFlag supports_map_to_mesh =
+    cobalt::css_parser::Parser::SupportsMapToMeshFlag::kDoesNotSupportMapToMesh;
+  /*cobalt::css_parser::Parser parser_(base::Bind(&CSSParserObserver::OnWarning,
+                         base::Unretained(&parser_observer_)),
+              base::Bind(&CSSParserObserver::OnError,
+                         base::Unretained(&parser_observer_)),
+              cobalt::css_parser::Parser::MessageVerbosity::kShort, supports_map_to_mesh);
+  */
+  std::unique_ptr<css_parser::Parser> parser_ = cobalt::css_parser::Parser::Create(supports_map_to_mesh);
+  scoped_refptr<cssom::CSSStyleSheet> style_sheet = parser_->ParseStyleSheet(
+      "body {} @cobalt-magic; div {}", source_location_);
+  //ASSERT_TRUE(style_sheet);
+  //EXPECT_EQ(2, style_sheet->css_rules_same_origin()->length());
+  printf("style_sheet->css_rules_same_origin()->length() = %d == 2\n",  style_sheet->css_rules_same_origin()->length());
+  scoped_refptr<cssom::CSSDeclaredStyleData> style =
+    parser_->ParseStyleDeclarationList(
+        "background-size: auto 20%;"
+        "background: no-repeat rgba(0, 0, 0, .8);", source_location_);
+  if(style->IsDeclared(cssom::kBackgroundSizeProperty)) {
+    scoped_refptr<cssom::PropertyListValue> background_size_list =
+          dynamic_cast<cssom::PropertyListValue*>(
+              style->GetPropertyValue(cssom::kBackgroundSizeProperty).get());
+    if(background_size_list->value().size() == 2) {
+      printf("background_size_list = %s %s\n",
+       background_size_list->value()[0].get()->ToString().c_str(),
+       background_size_list->value()[1].get()->ToString().c_str()
+      );
+    }
+    scoped_refptr<cssom::RGBAColorValue> background_color =
+    dynamic_cast<cssom::RGBAColorValue*>(
+        style->GetPropertyValue(cssom::kBackgroundColorProperty).get());
+    if(background_color) {
+      printf("background_color = %s\n", background_color.get()->ToString().c_str());
+    }
+  }
 }
 
 static std::unique_ptr<CobaltTester> g_cobaltTester;

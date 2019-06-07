@@ -154,142 +154,6 @@ set(COBALT_skia_common_SOURCES
 
 ## --- COBALT ---###
 
-# cobalt/css_parser/css_parser.gyp
-#
-## Scanner exposes UChar32 in a header.
-#'direct_dependent_settings': {
-#  'include_dirs': [
-#    '<(DEPTH)/third_party/icu/source/common',
-#  ],
-#},
-#'dependencies': [
-#  '<(DEPTH)/cobalt/base/base.gyp:base',
-#  '<(DEPTH)/cobalt/cssom/cssom.gyp:cssom',
-#  '<(DEPTH)/nb/nb.gyp:nb',
-#  '<(DEPTH)/third_party/icu/icu.gyp:icuuc',
-#  'css_grammar',
-#],
-set(cobalt_css_parser_SOURCES
-  ${COBALT_CORE_DIR}css_parser/animation_shorthand_property_parse_structures.cc
-  ${COBALT_CORE_DIR}css_parser/animation_shorthand_property_parse_structures.h
-  ${COBALT_CORE_DIR}css_parser/background_shorthand_property_parse_structures.cc
-  ${COBALT_CORE_DIR}css_parser/background_shorthand_property_parse_structures.h
-  ${COBALT_CORE_DIR}css_parser/border_shorthand_property_parse_structures.cc
-  ${COBALT_CORE_DIR}css_parser/border_shorthand_property_parse_structures.h
-  ${COBALT_CORE_DIR}css_parser/flex_shorthand_property_parse_structures.cc
-  ${COBALT_CORE_DIR}css_parser/flex_shorthand_property_parse_structures.h
-  ${COBALT_CORE_DIR}css_parser/font_shorthand_property_parse_structures.cc
-  ${COBALT_CORE_DIR}css_parser/font_shorthand_property_parse_structures.h
-  ${COBALT_CORE_DIR}css_parser/margin_or_padding_shorthand.cc
-  ${COBALT_CORE_DIR}css_parser/margin_or_padding_shorthand.h
-  ${COBALT_CORE_DIR}css_parser/parser.cc
-  ${COBALT_CORE_DIR}css_parser/parser.h
-  ${COBALT_CORE_DIR}css_parser/position_parse_structures.cc
-  ${COBALT_CORE_DIR}css_parser/position_parse_structures.h
-  ${COBALT_CORE_DIR}css_parser/property_declaration.h
-  ${COBALT_CORE_DIR}css_parser/ref_counted_util.h
-  ${COBALT_CORE_DIR}css_parser/scanner.cc
-  ${COBALT_CORE_DIR}css_parser/scanner.h
-  ${COBALT_CORE_DIR}css_parser/shadow_property_parse_structures.cc
-  ${COBALT_CORE_DIR}css_parser/shadow_property_parse_structures.h
-  ${COBALT_CORE_DIR}css_parser/string_pool.h
-  ${COBALT_CORE_DIR}css_parser/text_decoration_shorthand_property_parse_structures.cc
-  ${COBALT_CORE_DIR}css_parser/text_decoration_shorthand_property_parse_structures.h
-  ${COBALT_CORE_DIR}css_parser/transition_shorthand_property_parse_structures.cc
-  ${COBALT_CORE_DIR}css_parser/transition_shorthand_property_parse_structures.h
-  ${COBALT_CORE_DIR}css_parser/trivial_string_piece.h
-  ${COBALT_CORE_DIR}css_parser/trivial_type_pairs.h
-)
-
-# cobalt/layout/layout.gyp
-#'dependencies': [
-#  '<(DEPTH)/cobalt/base/base.gyp:base',
-#  '<(DEPTH)/cobalt/dom/dom.gyp:dom',
-#  '<(DEPTH)/cobalt/loader/loader.gyp:loader',
-#  '<(DEPTH)/cobalt/render_tree/render_tree.gyp:animations',
-#  '<(DEPTH)/cobalt/render_tree/render_tree.gyp:render_tree',
-#  '<(DEPTH)/cobalt/ui_navigation/ui_navigation.gyp:ui_navigation',
-#  '<(DEPTH)/third_party/icu/icu.gyp:icuuc',
-#],
-## Exporting dom so that layout_test gets the transitive include paths to
-## include generated headers.
-#'export_dependent_settings': [
-#  '<(DEPTH)/cobalt/dom/dom.gyp:dom',
-#],
-#'conditions': [
-#  ['cobalt_enable_lib == 1', {
-#    'defines' : ['FORCE_VIDEO_EXTERNAL_MESH'],
-#  }],
-#],
-set(cobalt_layout_SOURCES
-  ${COBALT_CORE_DIR}layout/anonymous_block_box.cc
-  ${COBALT_CORE_DIR}anonymous_block_box.h
-  ${COBALT_CORE_DIR}base_direction.h
-  ${COBALT_CORE_DIR}benchmark_stat_names.cc
-  ${COBALT_CORE_DIR}benchmark_stat_names.h
-  ${COBALT_CORE_DIR}block_container_box.cc
-  ${COBALT_CORE_DIR}block_container_box.h
-  ${COBALT_CORE_DIR}block_formatting_block_container_box.cc
-  ${COBALT_CORE_DIR}block_formatting_block_container_box.h
-  ${COBALT_CORE_DIR}block_formatting_context.cc
-  ${COBALT_CORE_DIR}block_formatting_context.h
-  ${COBALT_CORE_DIR}block_level_replaced_box.cc
-  ${COBALT_CORE_DIR}block_level_replaced_box.h
-  ${COBALT_CORE_DIR}box.cc
-  ${COBALT_CORE_DIR}box.h
-  ${COBALT_CORE_DIR}box_generator.cc
-  ${COBALT_CORE_DIR}box_generator.h
-  ${COBALT_CORE_DIR}container_box.cc
-  ${COBALT_CORE_DIR}container_box.h
-  ${COBALT_CORE_DIR}letterboxed_image.cc
-  ${COBALT_CORE_DIR}letterboxed_image.h
-  ${COBALT_CORE_DIR}formatting_context.h
-  ${COBALT_CORE_DIR}initial_containing_block.cc
-  ${COBALT_CORE_DIR}initial_containing_block.h
-  ${COBALT_CORE_DIR}inline_container_box.cc
-  ${COBALT_CORE_DIR}inline_container_box.h
-  ${COBALT_CORE_DIR}inline_formatting_context.cc
-  ${COBALT_CORE_DIR}inline_formatting_context.h
-  ${COBALT_CORE_DIR}inline_level_replaced_box.cc
-  ${COBALT_CORE_DIR}inline_level_replaced_box.h
-  ${COBALT_CORE_DIR}insets_layout_unit.cc
-  ${COBALT_CORE_DIR}insets_layout_unit.h
-  ${COBALT_CORE_DIR}layout.cc
-  ${COBALT_CORE_DIR}layout.h
-  ${COBALT_CORE_DIR}layout_unit.h
-  ${COBALT_CORE_DIR}layout_boxes.cc
-  ${COBALT_CORE_DIR}layout_boxes.h
-  ${COBALT_CORE_DIR}layout_manager.cc
-  ${COBALT_CORE_DIR}layout_manager.h
-  ${COBALT_CORE_DIR}layout_stat_tracker.cc
-  ${COBALT_CORE_DIR}layout_stat_tracker.h
-  ${COBALT_CORE_DIR}line_box.cc
-  ${COBALT_CORE_DIR}line_box.h
-  ${COBALT_CORE_DIR}line_wrapping.cc
-  ${COBALT_CORE_DIR}line_wrapping.h
-  ${COBALT_CORE_DIR}paragraph.cc
-  ${COBALT_CORE_DIR}paragraph.h
-  ${COBALT_CORE_DIR}point_layout_unit.cc
-  ${COBALT_CORE_DIR}point_layout_unit.h
-  ${COBALT_CORE_DIR}replaced_box.cc
-  ${COBALT_CORE_DIR}replaced_box.h
-  ${COBALT_CORE_DIR}rect_layout_unit.cc
-  ${COBALT_CORE_DIR}rect_layout_unit.h
-  ${COBALT_CORE_DIR}render_tree_animations.h
-  ${COBALT_CORE_DIR}size_layout_unit.cc
-  ${COBALT_CORE_DIR}size_layout_unit.h
-  ${COBALT_CORE_DIR}text_box.cc
-  ${COBALT_CORE_DIR}text_box.h
-  ${COBALT_CORE_DIR}topmost_event_target.cc
-  ${COBALT_CORE_DIR}topmost_event_targer.h
-  ${COBALT_CORE_DIR}used_style.cc
-  ${COBALT_CORE_DIR}used_style.h
-  ${COBALT_CORE_DIR}vector2d_layout_unit.cc
-  ${COBALT_CORE_DIR}vector2d_layout_unit.h
-  ${COBALT_CORE_DIR}white_space_processing.cc
-  ${COBALT_CORE_DIR}white_space_processing.h
-)
-
 set(cobalt_third_party_super_fast_hash_SOURCES
   # embedded src!
   #${COBALT_PORT_DIR}third_party/super_fast_hash/super_fast_hash.cc
@@ -297,42 +161,18 @@ set(cobalt_third_party_super_fast_hash_SOURCES
 
 ## --- COBALT_CORE ---###
 
-# cobalt/dom_parser/dom_parser.gyp
-#
-#'dependencies': [
-#  '<(DEPTH)/cobalt/base/base.gyp:base',
-#  '<(DEPTH)/cobalt/dom/dom.gyp:dom',
-#  '<(DEPTH)/cobalt/loader/loader.gyp:loader',
-#  '<(DEPTH)/net/net.gyp:net',
-#  '<(DEPTH)/third_party/libxml/libxml.gyp:libxml',
-#],
-set(COBALT_dom_parser_SOURCES
-  ${COBALT_CORE_DIR}dom_parser/html_decoder.cc
-  ${COBALT_CORE_DIR}dom_parser/html_decoder.h
-  ${COBALT_CORE_DIR}dom_parser/libxml_html_parser_wrapper.cc
-  ${COBALT_CORE_DIR}dom_parser/libxml_html_parser_wrapper.h
-  ${COBALT_CORE_DIR}dom_parser/libxml_parser_wrapper.cc
-  ${COBALT_CORE_DIR}dom_parser/libxml_parser_wrapper.h
-  ${COBALT_CORE_DIR}dom_parser/libxml_xml_parser_wrapper.cc
-  ${COBALT_CORE_DIR}dom_parser/libxml_xml_parser_wrapper.h
-  ${COBALT_CORE_DIR}dom_parser/parser.cc
-  ${COBALT_CORE_DIR}dom_parser/parser.h
-  ${COBALT_CORE_DIR}dom_parser/xml_decoder.cc
-  ${COBALT_CORE_DIR}dom_parser/xml_decoder.h
-)
-
 #set(COBALT_browser_bindings_gen_gyp_SOURCES
 #)
 
-add_library(COBALT_CORE STATIC
+add_library(COBALT_CORE INTERFACE
   ${cobalt_third_party_super_fast_hash_SOURCES}
-  ${COBALT_dom_parser_SOURCES}
+  #${COBALT_dom_parser_SOURCES}
   #${cobalt_css_parser_SOURCES}
   #${COBALT_skia_cobalt_SOURCES}
   #${COBALT_skia_common_SOURCES}
 )
 
-target_link_libraries(COBALT_CORE PUBLIC
+target_link_libraries(COBALT_CORE INTERFACE
   base # TODO
   modp_b64
   ${COBALT_LIBS}
@@ -359,25 +199,25 @@ target_link_libraries(COBALT_CORE PUBLIC
   ### TODO ## starboard_platform
 )
 
-set_property(TARGET COBALT_CORE PROPERTY CXX_STANDARD 17)
+#set_property(TARGET COBALT_CORE PROPERTY CXX_STANDARD 17)
 
-target_include_directories(COBALT_CORE PRIVATE
+target_include_directories(COBALT_CORE INTERFACE
   ${GNET_PARENT_DIR} # to ./net
   #${UI_PARENT_DIR}
   ${COBALT_CORE_DIR}
   #${COBALT_CORE_DIR}/common
   #${BASE_DIR}
   ${COBALT_GEN_DIR}
-  ${COBALT_GEN_CSS_PARSER_PARENT_DIR}
+  #${COBALT_GEN_CSS_PARSER_PARENT_DIR}
   ${CHROMIUM_DIR} # to third_party/skia/include/core/SkWriteBuffer.h
 )
 
-target_include_directories(COBALT_CORE PUBLIC
+target_include_directories(COBALT_CORE INTERFACE
   ${COBALT_CORE_PARENT_DIR} # to ./cobalt
   ${COBALT_COMMON_INCLUDES}
 )
 
-target_compile_definitions(COBALT_CORE PRIVATE
+target_compile_definitions(COBALT_CORE INTERFACE
   #BASE_IMPLEMENTATION=1
   #BASE_I18N_IMPLEMENTATION=1
   #
@@ -387,7 +227,7 @@ target_compile_definitions(COBALT_CORE PRIVATE
   #ENABLE_MAP_TO_MESH=1
 )
 
-target_compile_options(COBALT_CORE PRIVATE
+target_compile_options(COBALT_CORE INTERFACE
   -Wno-error
   -Wno-macro-redefined
   -Wno-implicit-function-declaration

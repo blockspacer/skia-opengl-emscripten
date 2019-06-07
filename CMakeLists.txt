@@ -359,15 +359,17 @@ endif(TARGET_EMSCRIPTEN)
 
 # WebAssembly
 set(ENABLE_WASM TRUE)
-#set(ENABLE_WASM FALSE)
+if(NOT ENABLE_WASM)
+  message(FATAL_ERROR "only WASM build supported for now")
+endif(NOT ENABLE_WASM)
 
 # SIMD
 #set(ENABLE_SIMD TRUE)
 set(ENABLE_SIMD FALSE)
 
 # PTHREADS
-set(ENABLE_WEB_PTHREADS TRUE)
-#set(ENABLE_WEB_PTHREADS FALSE)
+#set(ENABLE_WEB_PTHREADS TRUE)
+set(ENABLE_WEB_PTHREADS FALSE)
 
 set(ENABLE_UKM FALSE)
 if(ENABLE_UKM)
@@ -380,10 +382,6 @@ if(ENABLE_GIPC)
   set(COMMON_FLAGS "${COMMON_FLAGS} -DENABLE_MOJO_IPC=1") # TODO
   set(GIPC_LIB GIPC)
 endif(ENABLE_GIPC)
-
-if(NOT ENABLE_WASM)
-  message(FATAL_ERROR "only WASM build supported for now")
-endif(NOT ENABLE_WASM)
 
 if(RELEASE_BUILD)
   if(NOT CMAKE_BUILD_TYPE MATCHES Release)
@@ -518,6 +516,9 @@ if(ENABLE_COBALT)
   set(COBALT_GEN_CSS_PARSER_PARENT_DIR
     ${COBALT_GEN_DIR}cobalt/ # to css_parser/grammar_impl_generated.h
   )
+  set(COBALT_GEN_DOM_PARSER_PARENT_DIR
+    ${COBALT_GEN_DIR}cobalt/
+  )
   set(COBALT_COMMON_DEFINES
     OS_STARBOARD=1
     STARBOARD=1
@@ -635,6 +636,9 @@ if(ENABLE_COBALT)
   set(COBALT_CSSOM_LIB cobalt_cssom)
   set(COBALT_WEB_ANIMATIONS_LIB cobalt_web_animations)
   set(COBALT_DOM_LIB cobalt_dom)
+  set(COBALT_LAYOUT_LIB cobalt_layout)
+  set(COBALT_DOM_PARSER_LIB cobalt_dom_parser)
+  set(COBALT_CSS_PARSER_LIB cobalt_css_parser)
   #
   set(STARBOARD_PLATFORM_LIB starboard_platform)
   set(STARBOARD_ICU_INIT_LIB starboard_icu_init)
@@ -665,6 +669,9 @@ if(ENABLE_COBALT)
     ${COBALT_CSSOM_LIB}
     ${COBALT_WEB_ANIMATIONS_LIB}
     ${COBALT_DOM_LIB}
+    ${COBALT_LAYOUT_LIB}
+    ${COBALT_DOM_PARSER_LIB}
+    ${COBALT_CSS_PARSER_LIB}
   )
 
   #if(ENABLE_GNET)
@@ -749,6 +756,8 @@ endif(ENABLE_SKOTTIE)
 
 # TODO https://github.com/mbbill/JSC.js
 # # http://userguide.icu-project.org/howtouseicu
+
+set(ICU_DEFINES "${ICU_DEFINES} -DUCHAR_TYPE=uint16_t")
 # set(ICU_DEFINES "${ICU_DEFINES} -DU_STATIC_IMPLEMENTATION=1")
 # set(ICU_DEFINES "${ICU_DEFINES} -DU_COMMON_IMPLEMENTATION=1")
 # set(ICU_DEFINES "${ICU_DEFINES} -DU_I18N_IMPLEMENTATION=1")

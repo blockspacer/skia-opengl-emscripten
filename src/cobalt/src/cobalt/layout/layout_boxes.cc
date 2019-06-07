@@ -136,7 +136,7 @@ float LayoutBoxes::GetPaddingEdgeHeight() const {
 void LayoutBoxes::InvalidateSizes() {
   for (Boxes::const_iterator box_iterator = boxes_.begin();
        box_iterator != boxes_.end(); ++box_iterator) {
-    Box* box = *box_iterator;
+    Box* box = (*box_iterator).get();
     do {
       box->InvalidateUpdateSizeInputsOfBoxAndAncestors();
       box = box->GetSplitSibling();
@@ -147,7 +147,7 @@ void LayoutBoxes::InvalidateSizes() {
 void LayoutBoxes::InvalidateCrossReferences() {
   for (Boxes::const_iterator box_iterator = boxes_.begin();
        box_iterator != boxes_.end(); ++box_iterator) {
-    Box* box = *box_iterator;
+    Box* box = (*box_iterator).get();
     do {
       box->InvalidateCrossReferencesOfBoxAndAncestors();
       box = box->GetSplitSibling();
@@ -158,7 +158,7 @@ void LayoutBoxes::InvalidateCrossReferences() {
 void LayoutBoxes::InvalidateRenderTreeNodes() {
   for (Boxes::const_iterator box_iterator = boxes_.begin();
        box_iterator != boxes_.end(); ++box_iterator) {
-    Box* box = *box_iterator;
+    Box* box = (*box_iterator).get();
     do {
       box->InvalidateRenderTreeNodesOfBoxAndAncestors();
       box = box->GetSplitSibling();
@@ -181,7 +181,7 @@ math::RectF LayoutBoxes::GetBoundingBorderRectangle() const {
 
   for (Boxes::const_iterator box_iterator = boxes_.begin();
        box_iterator != boxes_.end(); ++box_iterator) {
-    Box* box = *box_iterator;
+    Box* box = (*box_iterator).get();
     do {
       bounding_rectangle.Union(
           box->GetBorderBoxFromRoot(false /*transform_forms_root*/));
@@ -199,7 +199,7 @@ void LayoutBoxes::GetClientRectBoxes(const Boxes& boxes,
                                      Boxes* client_rect_boxes) const {
   for (Boxes::const_iterator box_iterator = boxes.begin();
        box_iterator != boxes.end(); ++box_iterator) {
-    Box* box = *box_iterator;
+    Box* box = (*box_iterator).get();
     do {
       // Replace each anonymous block box with its child box(es) and repeat this
       // until no anonymous block boxes are left in the final list.

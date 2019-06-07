@@ -245,8 +245,8 @@ class ParserImpl {
 namespace {
 
 struct NonTrivialStaticFields {
-  ::base::hash_set<std::string> properties_warned_about;
-  ::base::hash_set<std::string> pseudo_classes_warned_about;
+  ::std::set<std::string> properties_warned_about;
+  ::std::set<std::string> pseudo_classes_warned_about;
   ::base::Lock lock;
 };
 

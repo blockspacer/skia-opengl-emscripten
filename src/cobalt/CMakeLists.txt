@@ -50,6 +50,13 @@ include(cobalt_web_animations.cmake)
 
 include(cobalt_dom.cmake)
 
+include(cobalt_layout.cmake)
+
+include(cobalt_dom_parser.cmake)
+
+include(cobalt_css_parser.cmake)
+
+
 if(ENABLE_COBALT_RENDER_TREE)
   include(cobalt_render_tree.cmake)
 endif(ENABLE_COBALT_RENDER_TREE)

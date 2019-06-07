@@ -52,10 +52,10 @@ scoped_refptr<dom::HTMLElement> TopmostEventTarget::FindTopmostEventTarget(
   document->DoSynchronousLayout();
 
   html_element_ = document->html();
-  ConsiderElement(html_element_, coordinate);
+  ConsiderElement(html_element_.get(), coordinate);
   box_ = NULL;
   render_sequence_.clear();
-  document->SetIndicatedElement(html_element_);
+  document->SetIndicatedElement(html_element_.get());
   scoped_refptr<dom::HTMLElement> topmost_element;
   topmost_element.swap(html_element_);
   DCHECK(!html_element_);
@@ -65,7 +65,7 @@ scoped_refptr<dom::HTMLElement> TopmostEventTarget::FindTopmostEventTarget(
 namespace {
 
 LayoutBoxes* GetLayoutBoxesIfNotEmpty(dom::Element* element) {
-  dom::HTMLElement* html_element = element->AsHTMLElement();
+  dom::HTMLElement* html_element = element->AsHTMLElement().get();
   if (html_element && html_element->computed_style()) {
     dom::LayoutBoxes* dom_layout_boxes = html_element->layout_boxes();
     if (dom_layout_boxes &&
@@ -87,7 +87,7 @@ void TopmostEventTarget::ConsiderElement(dom::Element* element,
   math::Vector2dF element_coordinate(coordinate);
   LayoutBoxes* layout_boxes = GetLayoutBoxesIfNotEmpty(element);
   if (layout_boxes) {
-    const Box* box = layout_boxes->boxes().front();
+    const Box* box = layout_boxes->boxes().front().get();
     if (box->computed_style() && box->IsTransformed()) {
       // Early out if the transform cannot be applied. This can occur if the
       // transform matrix is not invertible.
@@ -117,7 +117,7 @@ void TopmostEventTarget::ConsiderBoxes(
                                        LayoutUnit(coordinate.y()));
   for (Boxes::const_iterator box_iterator = boxes.begin();
        box_iterator != boxes.end(); ++box_iterator) {
-    Box* box = *box_iterator;
+    Box* box = (*box_iterator).get();
     do {
       if (box->IsUnderCoordinate(layout_coordinate)) {
         Box::RenderSequence render_sequence = box->GetRenderSequence();
@@ -226,7 +226,7 @@ void SendCompatibilityMappingMouseEvent(
   // Send compatibility mapping mouse event if needed.
   //   https://www.w3.org/TR/2015/REC-pointerevents-20150224/#compatibility-mapping-with-mouse-events
   bool has_compatibility_mouse_event = true;
-  base::Token type = pointer_event->type();
+  base::CobToken type = pointer_event->type();
   if (type == base::Tokens::pointerdown()) {
     // If the pointer event dispatched was pointerdown and the event was
     // canceled, then set the PREVENT MOUSE EVENT flag for this pointerType.
@@ -340,7 +340,7 @@ void TopmostEventTarget::MaybeSendPointerEvents(
         }
         if (html_element) {
           pointer_state->SetPendingPointerCaptureTargetOverride(
-              pointer_event->pointer_id(), html_element);
+              pointer_event->pointer_id(), html_element.get());
         }
       }
     } else {
@@ -396,7 +396,7 @@ void TopmostEventTarget::MaybeSendPointerEvents(
   }
 
   scoped_refptr<dom::HTMLElement> previous_html_element(
-      previous_html_element_weak_);
+      previous_html_element_weak_.get());
 
   SendStateChangeEvents(pointer_event, previous_html_element, target_element,
                         &event_init);

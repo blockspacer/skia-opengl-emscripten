@@ -22,7 +22,7 @@
 #include "cobalt/media/base/video_frame_provider.h"
 #include "cobalt/media/filters/chunk_demuxer.h"
 #include "cobalt/media/player/buffered_data_source.h"
-#include "ui/gfx/rect.h"
+#include "cobalt/math/rect.h"
 #include "ui/gfx/size.h"
 #include "url/gurl.h"
 
@@ -35,7 +35,7 @@ class WebMediaPlayer {
  public:
   // Return true if the punch through box should be rendered.  Return false if
   // no punch through box should be rendered.
-  typedef base::Callback<bool(const gfx::Rect&)> SetBoundsCB;
+  typedef base::Callback<bool(const math::Rect&)> SetBoundsCB;
 
   enum NetworkState {
     kNetworkStateEmpty,

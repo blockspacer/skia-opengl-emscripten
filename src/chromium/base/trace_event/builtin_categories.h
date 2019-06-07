@@ -26,6 +26,7 @@
   X("cobalt::browser")                                                   \
   X("cobalt::script")                                                    \
   X("cobalt::media")                                                     \
+  X("cobalt::css_parser")                                                \
   X("cobalt::loader::image")                                             \
   X("cobalt::loader::image_decoder")                                     \
   X("cobalt::loader")                                                    \

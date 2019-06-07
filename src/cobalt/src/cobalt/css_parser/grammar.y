@@ -7256,7 +7256,7 @@ maybe_declaration:
     // Do not warn about non-standard or non-WebKit properties.
     if (property_name[0] != '-') {
       ::base::AutoLock lock(non_trivial_static_fields.Get().lock);
-      ::base::hash_set<std::string>& properties_warned_about =
+      ::std::set<std::string>& properties_warned_about =
           non_trivial_static_fields.Get().properties_warned_about;
 
       if (properties_warned_about.find(property_name) ==

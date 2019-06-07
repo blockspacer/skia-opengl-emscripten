@@ -1827,7 +1827,7 @@ scoped_refptr<render_tree::Node> Box::RenderAndAnimateUiNavigation(
   // using a custom transform function added to the CSS transform property.
   if (ui_nav_item_->IsContainer()) {
     scoped_refptr<CompositionNode> composition_node =
-        new CompositionNode(node_to_animate, math::Vector2dF());
+        new CompositionNode(node_to_animate.get(), math::Vector2dF());
     animate_node_builder->Add(
         composition_node,
         base::Bind(&SetupCompositionNodeFromUiNavContainer, ui_nav_item_));
