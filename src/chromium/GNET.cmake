@@ -518,8 +518,6 @@ list(APPEND GNET_SOURCES
   # ##"android/network_library.h
   # ##"android/traffic_stats.cc
   # ##"android/traffic_stats.h
-  ## TODO ## ${GNET_DIR}base/address_tracker_linux.cc
-  ## TODO ## ${GNET_DIR}base/address_tracker_linux.h
   ${GNET_DIR}base/backoff_entry.cc
   ${GNET_DIR}base/backoff_entry.h
   ${GNET_DIR}base/backoff_entry_serializer.cc
@@ -567,8 +565,6 @@ list(APPEND GNET_SOURCES
   ${GNET_DIR}base/network_change_notifier.cc
   ${GNET_DIR}base/network_change_notifier.h
   ${GNET_DIR}base/network_change_notifier_factory.h
-  ## TODO ## ${GNET_DIR}base/network_change_notifier_linux.cc
-  ## TODO ## ${GNET_DIR}base/network_change_notifier_linux.h
   # ##"base/network_change_notifier_mac.cc
   # ##"base/network_change_notifier_mac.h
   # ##"base/network_change_notifier_win.cc
@@ -579,13 +575,28 @@ list(APPEND GNET_SOURCES
   ${GNET_DIR}base/network_delegate.h
   ${GNET_DIR}base/network_delegate_impl.cc
   ${GNET_DIR}base/network_delegate_impl.h
-  ## TODO ## ${GNET_DIR}base/network_interfaces_linux.cc
-  ## TODO ## ${GNET_DIR}base/network_interfaces_linux.h
   # ##"base/network_interfaces_nacl.cc
   # ##"base/network_interfaces_win.cc
   # ##"base/network_interfaces_win.h
   # "base/platform_mime_util.h
-  ## TODO ## ${GNET_DIR}base/platform_mime_util_linux.cc
+  ## TODO ##
+)
+
+if(TARGET_LINUX)
+  list(APPEND GNET_SOURCES
+    ${GNET_DIR}base/platform_mime_util_linux.cc
+    ${GNET_DIR}base/network_interfaces_linux.cc
+    # ${GNET_DIR}base/network_interfaces_linux.h
+    ${GNET_DIR}base/network_change_notifier_linux.cc
+    # ${GNET_DIR}base/network_change_notifier_linux.h
+    ${GNET_DIR}base/address_tracker_linux.cc
+    # ${GNET_DIR}base/address_tracker_linux.h
+    ${GNET_DIR}proxy_resolution/proxy_config_service_linux.cc
+    # ${GNET_DIR}proxy_resolution/proxy_config_service_linux.h
+  )
+endif(TARGET_LINUX)
+
+list(APPEND GNET_SOURCES
   # ##"base/platform_mime_util_mac.mm",
   # ##"base/platform_mime_util_win.cc
   ${GNET_DIR}base/prioritized_dispatcher.cc
@@ -951,8 +962,6 @@ list(APPEND GNET_SOURCES
   ${GNET_DIR}proxy_resolution/proxy_config_service_fixed.h
   ## TODO ## ${GNET_DIR}proxy_resolution/proxy_config_service_ios.cc
   ## TODO ## ${GNET_DIR}proxy_resolution/proxy_config_service_ios.h
-  ## TODO ## ${GNET_DIR}proxy_resolution/proxy_config_service_linux.cc
-  ## TODO ## ${GNET_DIR}proxy_resolution/proxy_config_service_linux.h
   ## TODO ## ${GNET_DIR}proxy_resolution/proxy_config_service_mac.cc
   ## TODO ## ${GNET_DIR}proxy_resolution/proxy_config_service_mac.h
   ## TODO ## ${GNET_DIR}proxy_resolution/proxy_config_service_win.cc
@@ -1809,29 +1818,37 @@ list(APPEND GNET_SOURCES
   #
   ${GNET_DIR}base/file_stream_context_posix.cc
   ${GNET_DIR}base/network_interfaces_posix.cc
-  #"base/network_interfaces_posix.h
-  # TODO # ${GNET_DIR}disk_cache/blockfile/file_posix.cc
-  # TODO # ${GNET_DIR}disk_cache/cache_util_posix.cc
-  # TODO # ${GNET_DIR}disk_cache/simple/simple_index_file_posix.cc
-  # TODO # ${GNET_DIR}disk_cache/simple/simple_util_posix.cc
-  # TODO # ${GNET_DIR}http/url_security_manager_posix.cc
-  # TODO # ${GNET_DIR}socket/socket_posix.cc
-  #"socket/socket_posix.h
-  # TODO # ${GNET_DIR}socket/tcp_socket_posix.cc
-  #"socket/tcp_socket_posix.h
-  # TODO # ${GNET_DIR}socket/udp_socket_posix.cc
-  #"socket/udp_socket_posix.h
-  #
-  # if (posix_avoid_mmap)
-  #
-  # TODO # ${GNET_DIR}disk_cache/blockfile/mapped_file_avoid_mmap_posix.cc
-  #
   # !use_nss_certs
   #
   #${GNET_DIR}third_party/nss/ssl/cmpcert.cc
   #third_party/nss/ssl/cmpcert.h
-
 )
+
+if(TARGET_LINUX)
+  list(APPEND GNET_SOURCES
+    #
+    # is_posix || is_fuchsia
+    #
+    #"base/network_interfaces_posix.h
+    ${GNET_DIR}disk_cache/blockfile/file_posix.cc
+    ${GNET_DIR}disk_cache/cache_util_posix.cc
+    ${GNET_DIR}disk_cache/simple/simple_index_file_posix.cc
+    ${GNET_DIR}disk_cache/simple/simple_util_posix.cc
+    ${GNET_DIR}http/url_security_manager_posix.cc
+    ${GNET_DIR}socket/socket_posix.cc
+    #"socket/socket_posix.h
+    ${GNET_DIR}socket/tcp_socket_posix.cc
+    #"socket/tcp_socket_posix.h
+    ${GNET_DIR}socket/udp_socket_posix.cc
+    #"socket/udp_socket_posix.h
+    #
+    # if (posix_avoid_mmap)
+    #
+    # TODO #
+    ${GNET_DIR}disk_cache/blockfile/mapped_file_avoid_mmap_posix.cc
+    #
+  )
+endif(TARGET_LINUX)
 
 add_library(GNET STATIC
   ${GNET_SOURCES}
