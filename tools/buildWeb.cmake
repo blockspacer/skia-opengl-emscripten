@@ -29,6 +29,8 @@ include(${CURRENT_SCRIPT_DIR}/emscriptenBuildVars.cmake)
 # --- vars ---
 set(BUILD_DIR "${CMAKE_CURRENT_SOURCE_DIR}/build-emscripten/" CACHE STRING "output directory")
 
+set(WASM_FILE_PATH "skemgl.wasm")
+
 if (BUILD_APP)
   message("building for web from ${CMAKE_CURRENT_SOURCE_DIR} into ${BUILD_DIR} ...")
 
@@ -67,6 +69,10 @@ if (BUILD_APP)
   if(NOT "${retcode}" STREQUAL "0")
     message( FATAL_ERROR "Bad exit status ${retcode} ${_ERROR_VARIABLE}")
   endif()
+
+  # --- show resulting stats/metrics ---
+  wasm_opt_metrics(${WASM_FILE_PATH})
+
 endif(BUILD_APP)
 
 # --- run ---
@@ -79,6 +85,10 @@ if(RUN_APP)
   if (NOT EXISTS ${BUILD_DIR})
     colored_fatal("invalid app directory ${BUILD_DIR}" --red --bold)
   endif(NOT EXISTS ${BUILD_DIR})
+
+  # --- show resulting stats/metrics ---
+  wasm_opt_metrics(${WASM_FILE_PATH})
+
   message("starting app from ${BUILD_DIR} ...")
   execute_process(
     COMMAND "emrun" "--port" "9090" "--serve_root" "/" "."

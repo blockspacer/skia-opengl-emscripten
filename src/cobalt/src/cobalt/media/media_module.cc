@@ -50,12 +50,14 @@ void MediaModule::Suspend() {
   OnSuspend();
 }
 
+//#if defined(ENABLE_COBALT_RENDER_TREE)
 void MediaModule::Resume(render_tree::ResourceProvider* resource_provider) {
   OnResume(resource_provider);
   RunClosureOnMessageLoopAndWait(
       message_loop_,
       base::Bind(&MediaModule::ResumeTask, base::Unretained(this)));
 }
+//#endif // ENABLE_COBALT_RENDER_TREE
 
 void MediaModule::RegisterPlayer(WebMediaPlayer* player) {
   RunClosureOnMessageLoopAndWait(message_loop_,

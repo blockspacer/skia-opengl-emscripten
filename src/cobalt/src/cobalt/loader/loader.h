@@ -58,9 +58,12 @@ class Loader {
   // later.
   void Suspend();
 
+
+//#if defined(ENABLE_COBALT_RENDER_TREE)
   // Resumes the load of this resource. Suspend must have been previously
   // called.
   void Resume(render_tree::ResourceProvider* resource_provider);
+//#endif // ENABLE_COBALT_RENDER_TREE
 
   bool DidFailFromTransientError() const;
 

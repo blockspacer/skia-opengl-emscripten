@@ -17,8 +17,10 @@
 #include "cobalt/loader/image/image_encoder.h"
 
 #include "base/trace_event/trace_event.h"
+#if defined(ENABLE_COBALT_RENDERER_TEST)
 #include "cobalt/renderer/test/jpeg_utils/jpeg_encode.h"
 #include "cobalt/renderer/test/png_utils/png_encode.h"
+#endif // ENABLE_COBALT_RENDERER_TEST
 #include "third_party/libwebp/src/webp/encode.h"
 
 namespace cobalt {
@@ -36,6 +38,7 @@ scoped_refptr<loader::image::EncodedStaticImage> CompressRGBAImage(
   std::unique_ptr<uint8[]> compressed_data;
 
   using ImageFormat = loader::image::EncodedStaticImage::ImageFormat;
+#if defined(ENABLE_COBALT_RENDERER_TEST)
   switch (desired_format) {
     case ImageFormat::kPNG: {
       compressed_data = renderer::test::png_utils::EncodeRGBAToBuffer(
@@ -53,6 +56,10 @@ scoped_refptr<loader::image::EncodedStaticImage> CompressRGBAImage(
       NOTIMPLEMENTED();
       return nullptr;
   }
+#else
+      NOTIMPLEMENTED();
+      return nullptr;
+#endif // ENABLE_COBALT_RENDERER_TEST
 
   return scoped_refptr<loader::image::EncodedStaticImage>(
       new loader::image::EncodedStaticImage(

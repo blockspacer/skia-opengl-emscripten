@@ -31,6 +31,7 @@
   X("cobalt::loader")                                                    \
   X("cobalt::dom")                                                       \
   X("cobalt::layout")                                                    \
+  X("cobalt::renderer")                                                  \
   X("cobalt::storage")                                                   \
   X("cobalt::network")                                                   \
   X("tracing categories exhausted; must increase kMaxCategories")        \

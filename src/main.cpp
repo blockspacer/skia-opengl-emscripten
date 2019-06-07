@@ -2009,8 +2009,11 @@ void CobaltTester::run() {
       , csp::kCSPOptional
 #endif
       ));
+  printf("COBALT dom DecodeChunk...\n");
   html_decoder_->DecodeChunk(input.c_str(), input.length());
+  printf("COBALT dom html_decoder_->Finish...\n");
   html_decoder_->Finish();
+  printf("COBALT get dom first_element_child...\n");
   root_ = document_->first_element_child();
 
   //ASSERT_TRUE(root_);
@@ -2147,6 +2150,7 @@ int main(int argc, char** argv) {
   DCHECK(main_thread->task_runner().get());
   //sequence_manager->SetDefaultTaskRunner(main_thread->task_runner());
   //printf("Init MessageLoopCurrent ...\n");
+  //DCHECK(base::MessageLoopCurrent::Get()); // TODO
   //base::MessageLoopCurrent::Get()->SetTaskRunner(main_thread->task_runner());
   */
 

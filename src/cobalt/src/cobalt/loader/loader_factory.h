@@ -29,9 +29,14 @@
 #include "cobalt/loader/loader.h"
 #include "cobalt/loader/mesh/mesh_decoder.h"
 #include "cobalt/loader/text_decoder.h"
+
+//#if defined(ENABLE_COBALT_RENDER_TREE)
 #include "cobalt/render_tree/resource_provider.h"
+//#endif // ENABLE_COBALT_RENDER_TREE
 #include "url/gurl.h"
 
+
+//#if defined(ENABLE_COBALT_RENDER_TREE)
 namespace cobalt {
 namespace loader {
 
@@ -137,5 +142,6 @@ class LoaderFactory {
 
 }  // namespace loader
 }  // namespace cobalt
+//#endif // ENABLE_COBALT_RENDER_TREE
 
 #endif  // COBALT_LOADER_LOADER_FACTORY_H_

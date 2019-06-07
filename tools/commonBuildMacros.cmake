@@ -69,3 +69,22 @@ macro(conditional_remove ARG_DO_REMOVE ARG_DIR ARG_WORKING_DIR)
     colored_notify("kept old directory ${ARG_DIR}" --yellow --bold)
   endif(${ARG_DO_REMOVE})
 endmacro(conditional_remove)
+
+macro(wasm_opt_metrics ARG_WASM_FILE_PATH)
+  # NOTE: funcs count must not exceed browser limit
+  # see https://github.com/emscripten-core/emscripten/issues/8755
+
+  message("printing debug metrics ...")
+
+  execute_process(
+    COMMAND
+    ${COLORED_OUTPUT_ENABLER}
+      ${EMSCRIPTEN_WASM_OPT} ${ARG_WASM_FILE_PATH} "--metrics"
+    WORKING_DIRECTORY ${BUILD_DIR}
+    RESULT_VARIABLE retcode
+    ERROR_VARIABLE _ERROR_VARIABLE
+  )
+  if(NOT "${retcode}" STREQUAL "0")
+    message( FATAL_ERROR "Bad exit status ${retcode} ${_ERROR_VARIABLE}")
+  endif()
+endmacro(wasm_opt_metrics)

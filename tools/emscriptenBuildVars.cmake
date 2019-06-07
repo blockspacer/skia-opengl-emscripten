@@ -8,3 +8,5 @@ set(EXTRA_EMMAKE_OPTS  "-j" "6" CACHE STRING "emmake arguments")
 find_program_required(EMSCRIPTEN_CMAKE "emcmake" "emcmake not found, search for EMSCRIPTEN`s emsdk_env.sh")
 
 find_program_required(EMSCRIPTEN_MAKE "emmake" "emmake not found, search for EMSCRIPTEN`s emsdk_env.sh")
+
+find_program_required(EMSCRIPTEN_WASM_OPT "wasm-opt" "wasm-opt not found, add in in your path")

@@ -78,9 +78,11 @@
 #include "url/gurl.h"
 
 namespace cobalt {
+#if defined(ENABLE_COBALT_MEDIA_SESSION)
 namespace media_session {
 class MediaSession;
 }  // namespace media_session
+#endif // ENABLE_COBALT_MEDIA_SESSION
 #if defined(ENABLE_SPEECH)
 namespace speech {
 class SpeechSynthesis;
@@ -176,7 +178,9 @@ class Window : public EventTarget,
       const base::Closure& window_minimize_callback,
       OnScreenKeyboardBridge* on_screen_keyboard_bridge,
       const scoped_refptr<input::Camera3D>& camera_3d,
+#if defined(ENABLE_COBALT_MEDIA_SESSION)
       const scoped_refptr<cobalt::media_session::MediaSession>& media_session,
+#endif // ENABLE_COBALT_MEDIA_SESSION
       const OnStartDispatchEventCallback&
           start_tracking_dispatch_event_callback,
       const OnStopDispatchEventCallback& stop_tracking_dispatch_event_callback,

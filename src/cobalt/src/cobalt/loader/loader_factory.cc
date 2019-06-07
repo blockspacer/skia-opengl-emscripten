@@ -19,6 +19,7 @@
 #include "base/threading/platform_thread.h"
 #include "cobalt/loader/image/threaded_image_decoder_proxy.h"
 
+//#if defined(ENABLE_COBALT_RENDER_TREE)
 namespace cobalt {
 namespace loader {
 
@@ -251,3 +252,4 @@ void LoaderFactory::OnLoaderDestroyed(Loader* loader) {
 
 }  // namespace loader
 }  // namespace cobalt
+//#endif // ENABLE_COBALT_RENDER_TREE

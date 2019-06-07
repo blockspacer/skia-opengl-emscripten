@@ -20,7 +20,9 @@
 #include "base/strings/stringprintf.h"
 #include "cobalt/dom/local_storage_database.h"
 #include "cobalt/dom/storage.h"
+#if defined(ENABLE_COBALT_STORAGE)
 #include "cobalt/storage/store/memory_store.h"
+#endif // ENABLE_COBALT_STORAGE
 
 namespace cobalt {
 namespace dom {

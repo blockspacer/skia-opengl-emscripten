@@ -17,7 +17,9 @@
 #include <vector>
 
 #include "base/strings/string_split.h"
+#if defined(ENABLE_COBALT_system_window)
 #include "cobalt/system_window/input_event.h"
+#endif // ENABLE_COBALT_system_window
 
 namespace cobalt {
 namespace dom {

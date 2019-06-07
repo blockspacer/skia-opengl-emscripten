@@ -148,6 +148,7 @@ target_link_libraries(cobalt_loader PUBLIC
   #cobalt_script
   #v8_stub
   ${COBALT_CSP_LIB_NAME}
+  ${COBALT_RENDER_TREE_LIB}
   base # TODO
   modp_b64
   dynamic_annotations

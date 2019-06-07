@@ -139,6 +139,7 @@ void Loader::Suspend() {
   }
 }
 
+//#if defined(ENABLE_COBALT_RENDER_TREE)
 void Loader::Resume(render_tree::ResourceProvider* resource_provider) {
   DCHECK(thread_checker_.CalledOnValidThread());
   DCHECK(is_suspended_);
@@ -148,6 +149,7 @@ void Loader::Resume(render_tree::ResourceProvider* resource_provider) {
   decoder_->Resume(resource_provider);
   if (!is_load_complete_) Start();
 }
+//#endif // ENABLE_COBALT_RENDER_TREE
 
 bool Loader::DidFailFromTransientError() const {
   DCHECK(thread_checker_.CalledOnValidThread());
@@ -174,6 +176,8 @@ void Loader::Start() {
     fetcher_creator_error_closure_.Reset(
         base::Bind(base::Bind(&Loader::LoadComplete, base::Unretained(this)),
                    std::string("Fetcher was not created.")));
+
+    DCHECK(base::MessageLoopCurrent::Get()); // TODO
     base::MessageLoopCurrent::Get()->task_runner()->PostTask(
         FROM_HERE, fetcher_creator_error_closure_.callback());
   }

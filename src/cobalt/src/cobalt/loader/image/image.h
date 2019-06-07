@@ -23,8 +23,18 @@
 #include "base/time/time.h"
 #include "cobalt/math/size_f.h"
 #include "cobalt/math/transform_2d.h"
+
+//#if defined(ENABLE_COBALT_RENDER_TREE)
 #include "cobalt/render_tree/image.h"
 #include "cobalt/render_tree/image_node.h"
+//#endif // ENABLE_COBALT_RENDER_TREE
+
+#include "starboard/types.h"
+#include "base/basictypes.h"
+#include "base/logging.h"
+#include "base/memory/ref_counted.h"
+#include "base/optional.h"
+#include "cobalt/math/size.h"
 
 namespace cobalt {
 namespace loader {

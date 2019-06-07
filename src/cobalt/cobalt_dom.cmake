@@ -242,7 +242,8 @@ set(cobalt_dom_SOURCES
   ${COBALT_CORE_DIR}dom/mutation_reporter.h
   ${COBALT_CORE_DIR}dom/named_node_map.cc
   ${COBALT_CORE_DIR}dom/named_node_map.h
-  ## TODO ## ${COBALT_CORE_DIR}dom/navigator.cc
+  ## TODO ##
+  ${COBALT_CORE_DIR}dom/navigator.cc
   ## TODO ## ${COBALT_CORE_DIR}dom/navigator.h
   ${COBALT_CORE_DIR}dom/node.cc
   ${COBALT_CORE_DIR}dom/node.h
@@ -374,7 +375,7 @@ target_link_libraries(cobalt_dom PUBLIC
   cobalt_nanobase
   ${COBALT_CSP_LIB_NAME}
   ${COBALT_LOADER_LIB_NAME}
-  cobalt_media
+  ${COBALT_MEDIA_LIB}
   cobalt_page_visibility
   cobalt_script
   v8_stub

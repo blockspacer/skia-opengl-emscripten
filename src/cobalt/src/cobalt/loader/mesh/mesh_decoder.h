@@ -22,8 +22,12 @@
 #include "base/callback.h"
 #include "cobalt/loader/decoder.h"
 #include "cobalt/loader/mesh/mesh_projection.h"
-#include "cobalt/render_tree/resource_provider.h"
 
+// #if defined(ENABLE_COBALT_RENDER_TREE)
+#include "cobalt/render_tree/resource_provider.h"
+// #endif // ENABLE_COBALT_RENDER_TREE
+
+// #if defined(ENABLE_COBALT_RENDER_TREE)
 namespace cobalt {
 namespace loader {
 namespace mesh {
@@ -70,5 +74,6 @@ class MeshDecoder : public Decoder {
 }  // namespace mesh
 }  // namespace loader
 }  // namespace cobalt
+// #endif // ENABLE_COBALT_RENDER_TREE
 
 #endif  // COBALT_LOADER_MESH_MESH_DECODER_H_

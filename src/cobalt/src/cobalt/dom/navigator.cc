@@ -20,14 +20,20 @@
 #include "cobalt/dom/captions/system_caption_settings.h"
 #include "cobalt/dom/dom_exception.h"
 #include "cobalt/dom/eme/media_key_system_access.h"
+#if defined(ENABLE_COBALT_MEDIA_CAPTURE)
 #include "cobalt/media_capture/media_devices.h"
+#endif // ENABLE_COBALT_MEDIA_CAPTURE
+#if defined(ENABLE_COBALT_MEDIA_SESSION)
 #include "cobalt/media_session/media_session_client.h"
 #include "cobalt/media_session/media_session.h"
+#endif // ENABLE_COBALT_MEDIA_SESSION
 #include "cobalt/script/script_value_factory.h"
 #include "starboard/file.h"
 #include "starboard/media.h"
 
+#if defined(ENABLE_COBALT_MEDIA_SESSION)
 using cobalt::media_session::MediaSession;
+#endif // ENABLE_COBALT_MEDIA_SESSION
 
 namespace {
 const char kLicensesRelativePath[] = "/licenses/licenses_cobalt.txt";
@@ -38,15 +44,21 @@ namespace dom {
 
 Navigator::Navigator(
     const std::string& user_agent, const std::string& language,
+#if defined(ENABLE_COBALT_MEDIA_SESSION)
     scoped_refptr<MediaSession> media_session,
+#endif // ENABLE_COBALT_MEDIA_SESSION
     scoped_refptr<cobalt::dom::captions::SystemCaptionSettings> captions,
     script::ScriptValueFactory* script_value_factory)
     : user_agent_(user_agent),
       language_(language),
       mime_types_(new MimeTypeArray()),
       plugins_(new PluginArray()),
+#if defined(ENABLE_COBALT_MEDIA_SESSION)
       media_session_(media_session),
+#endif // ENABLE_COBALT_MEDIA_SESSION
+#if defined(ENABLE_COBALT_MEDIA_CAPTURE)
       media_devices_(new media_capture::MediaDevices(script_value_factory)),
+#endif // ENABLE_COBALT_MEDIA_CAPTURE
       system_caption_settings_(captions),
       script_value_factory_(script_value_factory) {}
 
@@ -102,9 +114,11 @@ bool Navigator::java_enabled() const { return false; }
 
 bool Navigator::cookie_enabled() const { return false; }
 
+#if defined(ENABLE_COBALT_MEDIA_CAPTURE)
 scoped_refptr<media_capture::MediaDevices> Navigator::media_devices() {
   return media_devices_;
 }
+#endif // ENABLE_COBALT_MEDIA_CAPTURE
 
 const scoped_refptr<MimeTypeArray>& Navigator::mime_types() const {
   return mime_types_;
@@ -114,10 +128,12 @@ const scoped_refptr<PluginArray>& Navigator::plugins() const {
   return plugins_;
 }
 
+#if defined(ENABLE_COBALT_MEDIA_SESSION)
 const scoped_refptr<media_session::MediaSession>& Navigator::media_session()
     const {
   return media_session_;
 }
+#endif // ENABLE_COBALT_MEDIA_SESSION
 
 namespace {
 
@@ -314,8 +330,15 @@ Navigator::system_caption_settings() const {
 void Navigator::TraceMembers(script::Tracer* tracer) {
   tracer->Trace(mime_types_);
   tracer->Trace(plugins_);
+
+#if defined(ENABLE_COBALT_MEDIA_SESSION)
   tracer->Trace(media_session_);
+#endif // ENABLE_COBALT_MEDIA_SESSION
+
+#if defined(ENABLE_COBALT_MEDIA_CAPTURE)
   tracer->Trace(media_devices_);
+#endif // ENABLE_COBALT_MEDIA_CAPTURE
+
   tracer->Trace(system_caption_settings_);
 }
 

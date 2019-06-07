@@ -22,9 +22,13 @@
 
 #include "base/basictypes.h"
 #include "base/logging.h"
+//#if defined(ENABLE_COBALT_RENDER_TREE)
 #include "cobalt/render_tree/mesh.h"
+//#endif // ENABLE_COBALT_RENDER_TREE
+#include "base/memory/ref_counted.h"
 #include "starboard/types.h"
 
+//#if defined(ENABLE_COBALT_RENDER_TREE)
 namespace cobalt {
 namespace loader {
 namespace mesh {
@@ -37,7 +41,9 @@ class MeshProjection : public base::RefCountedThreadSafe<MeshProjection> {
   // all others reserved, so this vector should only have one mesh. In the
   // future more streams or static images could be represented by the texture
   // IDs.
+//#if defined(ENABLE_COBALT_RENDER_TREE)
   typedef std::vector<scoped_refptr<render_tree::Mesh>> MeshCollection;
+//#endif // ENABLE_COBALT_RENDER_TREE
   // Represents a list of mesh collections; in stereo mode, there is either
   // just one collection for both eyes (which undergoes an adjustment per eye)
   // or one for each eye. Mono video will only have one collection in the list.
@@ -106,5 +112,6 @@ class MeshProjection : public base::RefCountedThreadSafe<MeshProjection> {
 }  // namespace mesh
 }  // namespace loader
 }  // namespace cobalt
+//#endif // ENABLE_COBALT_RENDER_TREE
 
 #endif  // COBALT_LOADER_MESH_MESH_PROJECTION_H_

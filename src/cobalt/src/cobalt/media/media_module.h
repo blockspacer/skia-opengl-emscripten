@@ -30,9 +30,13 @@
 #include "cobalt/math/size.h"
 #include "cobalt/media/can_play_type_handler.h"
 #include "cobalt/media/web_media_player_factory.h"
+//#if defined(ENABLE_COBALT_RENDER_TREE)
 #include "cobalt/render_tree/image.h"
 #include "cobalt/render_tree/resource_provider.h"
+//#endif // ENABLE_COBALT_RENDER_TREE
+#if defined(ENABLE_COBALT_system_window)
 #include "cobalt/system_window/system_window.h"
+#endif // ENABLE_COBALT_system_window
 
 #include "cobalt/media/player/web_media_player_delegate.h"
 
@@ -53,7 +57,9 @@ class MediaModule : public WebMediaPlayerFactory,
     bool allow_resume_after_suspend = true;
   };
 
+//#if defined(ENABLE_COBALT_RENDER_TREE)
   typedef render_tree::Image Image;
+//#endif // ENABLE_COBALT_RENDER_TREE
 
   // MediaModule implementation should implement this function to allow creation
   // of CanPlayTypeHandler.
@@ -74,14 +80,21 @@ class MediaModule : public WebMediaPlayerFactory,
   // from the main thread.  Sub-classes can override these functions for
   // platform specific tasks.
   virtual void OnSuspend() {}
+//#if defined(ENABLE_COBALT_RENDER_TREE)
   virtual void OnResume(render_tree::ResourceProvider* resource_provider) {
     SB_UNREFERENCED_PARAMETER(resource_provider);
   }
+//#endif
 
+#if defined(ENABLE_COBALT_system_window)
   virtual system_window::SystemWindow* system_window() const { return NULL; }
+#endif
 
   void Suspend();
+
+//#if defined(ENABLE_COBALT_RENDER_TREE)
   void Resume(render_tree::ResourceProvider* resource_provider);
+//#endif // ENABLE_COBALT_RENDER_TREE
 
   // TODO: Move the following methods into class like MediaModuleBase
   // to ensure that MediaModule is an interface.
@@ -92,8 +105,12 @@ class MediaModule : public WebMediaPlayerFactory,
   // This function should be defined on individual platform to create the
   // platform specific MediaModule.
   static std::unique_ptr<MediaModule> Create(
+#if defined(ENABLE_COBALT_system_window)
       system_window::SystemWindow* system_window,
+#endif
+//#if defined(ENABLE_COBALT_RENDER_TREE)
       render_tree::ResourceProvider* resource_provider,
+//#endif // ENABLE_COBALT_RENDER_TREE
       const Options& options = Options());
 
  protected:

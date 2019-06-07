@@ -10,7 +10,7 @@
 #  '<(DEPTH)/nb/nb.gyp:nb',
 #  '<(DEPTH)/starboard/starboard.gyp:starboard',
 #],
-set(cobalt_media_SOURCES
+list(APPEND cobalt_media_SOURCES
   ${COBALT_CORE_DIR}media/decoder_buffer_allocator.cc
   ${COBALT_CORE_DIR}media/decoder_buffer_allocator.h
   ## TODO ## ${COBALT_CORE_DIR}media/fetcher_buffered_data_source.cc
@@ -95,6 +95,9 @@ set(cobalt_media_SOURCES
   ${COBALT_CORE_DIR}media/base/stream_parser_buffer.h
   ${COBALT_CORE_DIR}media/base/text_track_config.cc
   ${COBALT_CORE_DIR}media/base/text_track_config.h
+)
+
+list(APPEND cobalt_media_SOURCES
   ## TODO ## ${COBALT_CORE_DIR}media/base/video_codecs.cc
   ## TODO ## ${COBALT_CORE_DIR}media/base/video_codecs.h
   ## TODO ## ${COBALT_CORE_DIR}media/base/video_decoder_config.cc

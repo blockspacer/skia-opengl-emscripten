@@ -52,7 +52,9 @@
 #include "cobalt/dom/storage.h"
 #include "cobalt/dom/wheel_event.h"
 #include "cobalt/dom/window_timers.h"
+#if defined(ENABLE_COBALT_MEDIA_SESSION)
 #include "cobalt/media_session/media_session_client.h"
+#endif // ENABLE_COBALT_MEDIA_SESSION
 #include "cobalt/script/environment_settings.h"
 #include "cobalt/script/javascript_engine.h"
 
@@ -63,7 +65,9 @@
 #include "starboard/file.h"
 
 using cobalt::cssom::ViewportSize;
+#if defined(ENABLE_COBALT_MEDIA_SESSION)
 using cobalt::media_session::MediaSession;
+#endif // ENABLE_COBALT_MEDIA_SESSION
 
 namespace cobalt {
 namespace dom {
@@ -135,7 +139,9 @@ Window::Window(
     const base::Closure& window_minimize_callback,
     OnScreenKeyboardBridge* on_screen_keyboard_bridge,
     const scoped_refptr<input::Camera3D>& camera_3d,
+#if defined(ENABLE_COBALT_MEDIA_SESSION)
     const scoped_refptr<MediaSession>& media_session,
+#endif // ENABLE_COBALT_MEDIA_SESSION
     const OnStartDispatchEventCallback& on_start_dispatch_event_callback,
     const OnStopDispatchEventCallback& on_stop_dispatch_event_callback,
     const ScreenshotManager::ProvideScreenshotFunctionCallback&
@@ -186,7 +192,11 @@ Window::Window(
               csp_insecure_allowed_token, dom_max_element_depth)))),
       document_loader_(nullptr),
       history_(new History()),
-      navigator_(new Navigator(user_agent, language, media_session, captions,
+      navigator_(new Navigator(user_agent, language
+#if defined(ENABLE_COBALT_MEDIA_SESSION)
+      , media_session
+#endif // ENABLE_COBALT_MEDIA_SESSION
+      , captions,
                                script_value_factory)),
       ALLOW_THIS_IN_INITIALIZER_LIST(
           relay_on_load_event_(new RelayLoadEvent(this))),
@@ -235,6 +245,7 @@ Window::Window(
   // Document load start is deferred from this constructor so that we can be
   // guaranteed that this Window object is fully constructed before document
   // loading begins.
+  DCHECK(base::MessageLoopCurrent::Get()); // TODO
   base::MessageLoopCurrent::Get()->task_runner()->PostTask(
       FROM_HERE,
       base::Bind(&Window::StartDocumentLoad, base::Unretained(this),
