@@ -39,6 +39,7 @@ void ScreenshotManager::Screenshot(
   DLOG(INFO) << "Will take a screenshot asynchronously";
   DCHECK(!screenshot_function_callback_.is_null());
 
+  DCHECK(base::MessageLoopCurrent::Get()); // TODO
   // We want to ScreenshotManager::FillScreenshot, on this thread.
   base::Callback<void(std::unique_ptr<uint8[]>, const math::Size&)>
       fill_screenshot = base::Bind(&ScreenshotManager::FillScreenshot,
@@ -66,6 +67,7 @@ void ScreenshotManager::FillScreenshot(
     scoped_refptr<base::SingleThreadTaskRunner> expected_message_loop,
     loader::image::EncodedStaticImage::ImageFormat desired_format,
     std::unique_ptr<uint8[]> image_data, const math::Size& image_dimensions) {
+  DCHECK(base::MessageLoopCurrent::Get()); // TODO
   if (base::MessageLoopCurrent::Get()->task_runner() != expected_message_loop) {
     expected_message_loop->PostTask(
         FROM_HERE,

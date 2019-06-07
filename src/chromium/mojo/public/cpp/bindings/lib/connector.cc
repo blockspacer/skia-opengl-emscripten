@@ -85,6 +85,7 @@ class Connector::RunLoopNestingObserver
  public:
   RunLoopNestingObserver() {
     base::RunLoop::AddNestingObserverOnCurrentThread(this);
+    DCHECK(base::MessageLoopCurrent::Get()); // TODO
     base::MessageLoopCurrent::Get()->AddDestructionObserver(this);
   }
 
@@ -99,6 +100,7 @@ class Connector::RunLoopNestingObserver
   // base::MessageLoopCurrent::DestructionObserver:
   void WillDestroyCurrentMessageLoop() override {
     base::RunLoop::RemoveNestingObserverOnCurrentThread(this);
+    DCHECK(base::MessageLoopCurrent::Get()); // TODO
     base::MessageLoopCurrent::Get()->RemoveDestructionObserver(this);
     DCHECK_EQ(this, g_sls_nesting_observer.Get().Get());
     g_sls_nesting_observer.Get().Set(nullptr);

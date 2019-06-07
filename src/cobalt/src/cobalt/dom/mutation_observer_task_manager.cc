@@ -55,6 +55,7 @@ void MutationObserverTaskManager::QueueMutationObserverMicrotask() {
   // 2. Set mutation observer compound microtask queued flag.
   task_posted_ = true;
   // 3. Queue a compound microtask to notify mutation observers.
+  DCHECK(base::MessageLoopCurrent::Get()); // TODO
   base::MessageLoopCurrent::Get()->task_runner()->PostTask(
       FROM_HERE,
       base::Bind(&MutationObserverTaskManager::NotifyMutationObservers,

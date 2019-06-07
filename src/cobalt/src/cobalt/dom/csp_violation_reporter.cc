@@ -147,6 +147,7 @@ void CspViolationReporter::Report(const csp::ViolationInfo& violation_info) {
     return;
   }*/
   DCHECK(message_loop_);
+    DCHECK(base::MessageLoopCurrent::Get()); // TODO
   if (base::MessageLoopCurrent::Get()->task_runner() !=
       message_loop_->task_runner()) {
     message_loop_->task_runner()->PostTask(

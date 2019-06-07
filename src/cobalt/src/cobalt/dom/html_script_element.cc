@@ -567,6 +567,7 @@ void HTMLScriptElement::OnContentProduced(
   content_.reset();
 
   // Post a task to release the loader.
+  DCHECK(base::MessageLoopCurrent::Get()); // TODO
   //base::MessageLoop::current()->task_runner()->PostTask(
   base::MessageLoopCurrent::Get()->task_runner()->PostTask(
       FROM_HERE, base::Bind(&HTMLScriptElement::ReleaseLoader, this));
@@ -619,6 +620,7 @@ void HTMLScriptElement::OnLoadingComplete(
   document_->DecreaseLoadingCounterAndMaybeDispatchLoadEvent();
 
   // Post a task to release the loader.
+  DCHECK(base::MessageLoopCurrent::Get()); // TODO
   //base::MessageLoop::current()->task_runner()->PostTask(
   base::MessageLoopCurrent::Get()->task_runner()->PostTask(
       FROM_HERE, base::Bind(&HTMLScriptElement::ReleaseLoader, this));

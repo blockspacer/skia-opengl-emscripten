@@ -573,13 +573,11 @@ void Document::DecreaseLoadingCounterAndMaybeDispatchLoadEvent() {
   DCHECK_GT(loading_counter_, 0);
   loading_counter_--;
   if (loading_counter_ == 0 && should_dispatch_load_event_) {
-/*#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
-  base::Thread tmpThread("tmpThread");
-  tmpThread.task_runner()->PostTask(
-      FROM_HERE, base::Bind(&Document::DispatchOnLoadEvent,
-                            base::AsWeakPtr<Document>(this)));
-#else*/
-    //DCHECK(base::MessageLoop::current());
+#if defined(OS_EMSCRIPTEN)
+  /// \note: with or without PTHREADS - create task manually
+  std::move(base::Bind(&Document::DispatchOnLoadEvent,
+                       base::AsWeakPtr<Document>(this))).Run();
+#else
     DCHECK(base::MessageLoopCurrent::Get());
     should_dispatch_load_event_ = false;
 
@@ -589,7 +587,7 @@ void Document::DecreaseLoadingCounterAndMaybeDispatchLoadEvent() {
     base::MessageLoopCurrent::Get()->task_runner()->PostTask(
         FROM_HERE, base::Bind(&Document::DispatchOnLoadEvent,
                               base::AsWeakPtr<Document>(this)));
-//#endif
+#endif
 
     HTMLBodyElement* body_element = body().get();
     if (body_element) {

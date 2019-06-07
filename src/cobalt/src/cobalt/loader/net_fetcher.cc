@@ -123,6 +123,8 @@ NetFetcher::NetFetcher(const GURL& url,
 
   }
 
+  DCHECK(base::MessageLoopCurrent::Get()); // TODO
+
   // Delay the actual start until this function is complete. Otherwise we might
   // call handler's callbacks at an unexpected time- e.g. receiving OnError()
   // while a loader is still being constructed.

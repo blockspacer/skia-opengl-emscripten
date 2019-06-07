@@ -129,10 +129,12 @@ class ThreadDestructionObserver
  private:
   explicit ThreadDestructionObserver(const base::Closure& callback)
       : callback_(callback) {
+    DCHECK(base::MessageLoopCurrent::Get()); // TODO
     base::MessageLoopCurrent::Get()->AddDestructionObserver(this);
   }
 
   ~ThreadDestructionObserver() override {
+    DCHECK(base::MessageLoopCurrent::Get()); // TODO
     base::MessageLoopCurrent::Get()->RemoveDestructionObserver(this);
   }
 

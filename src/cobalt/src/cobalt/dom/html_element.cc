@@ -1576,6 +1576,7 @@ void HTMLElement::UpdateUiNavigationType() {
       // when all references to it are released.
       ui_nav_item_->SetEnabled(false);
     }
+    DCHECK(base::MessageLoopCurrent::Get()); // TODO
     ui_nav_item_ = new ui_navigation::NavItem(
         *ui_nav_item_type,
         base::Bind(

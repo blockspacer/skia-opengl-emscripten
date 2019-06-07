@@ -893,6 +893,7 @@ void HTMLMediaElement::LoadResource(const GURL& initial_url,
     DCHECK(node_document()->location());
 
 #if defined(ENABLE_FETCHER)
+  DCHECK(base::MessageLoopCurrent::Get()); // TODO
     std::unique_ptr<BufferedDataSource> data_source(
         new media::FetcherBufferedDataSource(
             base::MessageLoopCurrent::Get()->task_runner(), url, csp_callback,

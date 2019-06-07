@@ -86,6 +86,9 @@ FileFetcher::FileFetcher(const base::FilePath& file_path, Handler* handler,
       file_proxy_(task_runner_.get()) {
   DCHECK_GT(buffer_size_, 0);
 
+  DCHECK(base::MessageLoopCurrent::Get()); // TODO
+  DCHECK(task_runner_); // TODO
+
   // Ensure the request does not attempt to navigate outside the whitelisted
   // directory.
   if (file_path_.ReferencesParent() || file_path_.IsAbsolute()) {
@@ -105,6 +108,7 @@ FileFetcher::FileFetcher(const base::FilePath& file_path, Handler* handler,
 FileFetcher::~FileFetcher() {
   DCHECK(thread_checker_.CalledOnValidThread());
 
+  DCHECK(base::MessageLoopCurrent::Get()); // TODO
   if (task_runner_ != base::MessageLoopCurrent::Get()->task_runner()) {
     // In case we are currently in the middle of a fetch (in which case it will
     // be aborted), invalidate the weak pointers to this FileFetcher object to
