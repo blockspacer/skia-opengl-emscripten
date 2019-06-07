@@ -2068,6 +2068,8 @@ static std::unique_ptr<base::Thread> main_thread;
 std::unique_ptr<base::sequence_manager::SequenceManager> sequence_manager;
 */
 
+/// \note don`t use int main(void)
+/// \see https://github.com/emscripten-core/emscripten/issues/8757
 int main(int argc, char** argv) {
     printf("main ...\n");
 #ifdef ENABLE_BORINGSSL
