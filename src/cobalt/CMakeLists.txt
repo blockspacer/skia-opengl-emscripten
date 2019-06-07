@@ -56,6 +56,7 @@ include(cobalt_dom_parser.cmake)
 
 include(cobalt_css_parser.cmake)
 
+#include(cobalt_renderer.cmake)
 
 if(ENABLE_COBALT_RENDER_TREE)
   include(cobalt_render_tree.cmake)

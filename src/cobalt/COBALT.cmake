@@ -18,64 +18,6 @@
 
 # cobalt/renderer/rasterizer/skia/skia/skia_library_opts.gyp
 # cobalt/renderer/rasterizer/skia/skia/skia.gyp
-# skia_cobalt.gypi
-# TODO: uses outdated skia ver!
-set(COBALT_skia_cobalt_SOURCES
-  ${COBALT_CORE_DIR}/renderer/rasterizer/skia/skia/config/SkUserConfig.h
-  ${COBALT_CORE_DIR}/renderer/rasterizer/skia/skia/src/effects/SkNV122RGBShader.cc
-  ${COBALT_CORE_DIR}/renderer/rasterizer/skia/skia/src/effects/SkNV122RGBShader.h
-  ${COBALT_CORE_DIR}/renderer/rasterizer/skia/skia/src/effects/SkYUV2RGBShader.cc
-  ${COBALT_CORE_DIR}/renderer/rasterizer/skia/skia/src/effects/SkYUV2RGBShader.h
-  ${COBALT_CORE_DIR}/renderer/rasterizer/skia/skia/src/google_logging.cc
-  ${COBALT_CORE_DIR}/renderer/rasterizer/skia/skia/src/ports/SkFontConfigParser_cobalt.cc
-  ${COBALT_CORE_DIR}/renderer/rasterizer/skia/skia/src/ports/SkFontConfigParser_cobalt.h
-  ${COBALT_CORE_DIR}/renderer/rasterizer/skia/skia/src/ports/SkFontMgr_cobalt.cc
-  ${COBALT_CORE_DIR}/renderer/rasterizer/skia/skia/src/ports/SkFontMgr_cobalt.h
-  ${COBALT_CORE_DIR}/renderer/rasterizer/skia/skia/src/ports/SkFontMgr_cobalt_factory.cc
-  ${COBALT_CORE_DIR}/renderer/rasterizer/skia/skia/src/ports/SkFontStyleSet_cobalt.cc
-  ${COBALT_CORE_DIR}/renderer/rasterizer/skia/skia/src/ports/SkFontStyleSet_cobalt.h
-  ${COBALT_CORE_DIR}/renderer/rasterizer/skia/skia/src/ports/SkFontUtil_cobalt.cc
-  ${COBALT_CORE_DIR}/renderer/rasterizer/skia/skia/src/ports/SkFontUtil_cobalt.h
-  ## TODO ## ${COBALT_CORE_DIR}/renderer/rasterizer/skia/skia/src/ports/SkFreeType_cobalt.cc
-  ## TODO ## ${COBALT_CORE_DIR}/renderer/rasterizer/skia/skia/src/ports/SkFreeType_cobalt.h
-  ## TODO ## ${COBALT_CORE_DIR}/renderer/rasterizer/skia/skia/src/ports/SkOSFile_cobalt.cc
-  ## TODO ## ${COBALT_CORE_DIR}/renderer/rasterizer/skia/skia/src/ports/SkOSFile_cobalt.h
-  ${COBALT_CORE_DIR}/renderer/rasterizer/skia/skia/src/ports/SkStream_cobalt.cc
-  ${COBALT_CORE_DIR}/renderer/rasterizer/skia/skia/src/ports/SkStream_cobalt.h
-  ${COBALT_CORE_DIR}/renderer/rasterizer/skia/skia/src/ports/SkTypeface_cobalt.cc
-  ${COBALT_CORE_DIR}/renderer/rasterizer/skia/skia/src/ports/SkTypeface_cobalt.h
-  ${COBALT_CORE_DIR}/renderer/rasterizer/skia/skia/src/ports/SkTLS_cobalt.cc
-  ${COBALT_CORE_DIR}/renderer/rasterizer/skia/skia/src/ports/SkTime_cobalt.cc
-)
-
-# cobalt/renderer/rasterizer/skia/common.gyp
-#'dependencies': [
-#  '<(DEPTH)/base/base.gyp:base',
-#  '<(DEPTH)/cobalt/renderer/rasterizer/skia/skia/skia.gyp:skia',
-#  '<(DEPTH)/third_party/harfbuzz-ng/harfbuzz.gyp:harfbuzz-ng',
-#  '<(DEPTH)/third_party/icu/icu.gyp:icuuc',
-#  '<(DEPTH)/third_party/ots/ots.gyp:ots',
-#],
-set(COBALT_skia_common_SOURCES
-  ${COBALT_CORE_DIR}/renderer/rasterizer/skia/cobalt_skia_type_conversions.cc
-  ${COBALT_CORE_DIR}/renderer/rasterizer/skia/cobalt_skia_type_conversions.h
-  ${COBALT_CORE_DIR}/renderer/rasterizer/skia/font.cc
-  ${COBALT_CORE_DIR}/renderer/rasterizer/skia/font.h
-  ${COBALT_CORE_DIR}/renderer/rasterizer/skia/glyph_buffer.cc
-  ${COBALT_CORE_DIR}/renderer/rasterizer/skia/glyph_buffer.h
-  ${COBALT_CORE_DIR}/renderer/rasterizer/skia/harfbuzz_font.cc
-  ${COBALT_CORE_DIR}/renderer/rasterizer/skia/harfbuzz_font.h
-  ${COBALT_CORE_DIR}/renderer/rasterizer/skia/image.cc
-  ${COBALT_CORE_DIR}/renderer/rasterizer/skia/image.h
-  ${COBALT_CORE_DIR}/renderer/rasterizer/skia/render_tree_node_visitor.cc
-  ${COBALT_CORE_DIR}/renderer/rasterizer/skia/render_tree_node_visitor.h
-  ${COBALT_CORE_DIR}/renderer/rasterizer/skia/scratch_surface_cache.cc
-  ${COBALT_CORE_DIR}/renderer/rasterizer/skia/scratch_surface_cache.h
-  ${COBALT_CORE_DIR}/renderer/rasterizer/skia/text_shaper.cc
-  ${COBALT_CORE_DIR}/renderer/rasterizer/skia/text_shaper.h
-  ${COBALT_CORE_DIR}/renderer/rasterizer/skia/typeface.cc
-  ${COBALT_CORE_DIR}/renderer/rasterizer/skia/typeface.h
-)
 
 # cobalt/renderer/rasterizer/skia/software_rasterizer.gyp
 # cobalt/renderer/rasterizer/skia/rasterizer.gyp
@@ -166,10 +108,6 @@ set(cobalt_third_party_super_fast_hash_SOURCES
 
 add_library(COBALT_CORE INTERFACE
   ${cobalt_third_party_super_fast_hash_SOURCES}
-  #${COBALT_dom_parser_SOURCES}
-  #${cobalt_css_parser_SOURCES}
-  #${COBALT_skia_cobalt_SOURCES}
-  #${COBALT_skia_common_SOURCES}
 )
 
 target_link_libraries(COBALT_CORE INTERFACE
