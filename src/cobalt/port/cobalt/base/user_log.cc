@@ -27,7 +27,9 @@ const int kMaxLabelSize = 16;
 // static
 bool UserLog::IsRegistrationSupported() {
   // TODO: Reimplement with starboard core dump
+#if !defined(OS_EMSCRIPTEN)
   NOTIMPLEMENTED();
+#endif
   return false;
 }
 
@@ -35,12 +37,16 @@ bool UserLog::IsRegistrationSupported() {
 bool UserLog::Register(Index index, const char* label, const void* address,
                        size_t size) {
   DCHECK_LT(strlen(label), kMaxLabelSize);
+#if !defined(OS_EMSCRIPTEN)
   NOTIMPLEMENTED();
+#endif
   return true;
 }
 
 bool UserLog::Deregister(Index index) {
+#if !defined(OS_EMSCRIPTEN)
   NOTIMPLEMENTED();
+#endif
   return true;
 }
 

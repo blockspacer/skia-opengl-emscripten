@@ -194,8 +194,10 @@ enum LoggingDestination {
   // stderr.
 #if defined(OS_WIN)
   LOG_DEFAULT = LOG_TO_FILE,
+#elif defined(OS_EMSCRIPTEN)
+  LOG_DEFAULT = LOG_NONE,
 #elif defined(STARBOARD) || defined(OS_FUCHSIA) \
-    || defined(OS_POSIX) || defined(OS_EMSCRIPTEN)
+    || defined(OS_POSIX)
   LOG_DEFAULT = LOG_TO_SYSTEM_DEBUG_LOG,
 #endif
 };
