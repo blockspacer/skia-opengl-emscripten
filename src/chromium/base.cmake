@@ -212,7 +212,7 @@ list(APPEND BASE_SOURCES
    ${BASE_DIR}files/scoped_temp_dir.cc
    ${BASE_DIR}files/scoped_temp_dir.h
    ${BASE_DIR}format_macros.h
-   ${BASE_DIR}gtest_prod_util.h
+   # TODO ${BASE_DIR}gtest_prod_util.h
    ${BASE_DIR}guid.cc
    ${BASE_DIR}guid.h
    ${BASE_DIR}hash/hash.cc
