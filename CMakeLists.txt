@@ -158,6 +158,15 @@ set(EMSCRIPTEN_USE_SAFE_HEAP TRUE)
 
 set(EMSCRIPTEN_USE_PROFILING FALSE)
 
+# NOTE: see https://github.com/emscripten-core/emscripten/issues/8755
+set(EMSCRIPTEN_ASSERTION_LEVEL "1")
+
+set(EMSCRIPTEN_EMIT_SYMBOL_MAP TRUE)
+
+set(EMSCRIPTEN_MEMORY_PROFILER TRUE)
+
+set(EMSCRIPTEN_THREAD_PROFILER TRUE)
+
 #include(FindPkgMacros)
 
 message("CMAKE_BUILD_TYPE = ${CMAKE_BUILD_TYPE}")
@@ -185,7 +194,7 @@ endif(NOT PYTHON_FOUND)
 option(ENABLE_HARFBUZZ "ENABLE_HARFBUZZ" ON)
 if(ENABLE_HARFBUZZ)
   set(USE_CUSTOM_HARFBUZZ TRUE)
-  set(FORCE_USE_SKIA_HARFBUZZ FALSE)
+  set(FORCE_USE_SKIA_HARFBUZZ TRUE)
   #
   # custom flags
   set(COMMON_FLAGS "${COMMON_FLAGS} -DENABLE_HARFBUZZ=1")
@@ -214,7 +223,7 @@ if(ENABLE_BORINGSSL)
   )
 endif(ENABLE_BORINGSSL)
 
-set(ENABLE_GNET TRUE)
+set(ENABLE_GNET FALSE)
 if(ENABLE_GNET)
   set(COMMON_FLAGS "${COMMON_FLAGS} -DENABLE_GNET=1")
   #set(COMMON_FLAGS "${COMMON_FLAGS} -DENABLE_NET=1")
@@ -242,16 +251,16 @@ if (ENABLE_SKIA)
   set(SKIA_EXT_DIR ${SKIA_EXT_PARENT_DIR}skia/)
 endif(ENABLE_SKIA)
 
-set(ENABLE_SKSG FALSE)
+set(ENABLE_SKSG TRUE)
 if(ENABLE_SKSG)
   set(sksg_LIB sksg)
   set(COMMON_FLAGS "${COMMON_FLAGS} -DENABLE_SKSG=1")
 endif(ENABLE_SKSG)
 
 # NOTE: always FALSE here (change below)
-set(ENABLE_SKIA_UTILS FALSE) # required by skottie
+set(ENABLE_SKIA_UTILS TRUE) # required by skottie
 
-set(ENABLE_SKOTTIE FALSE) # requires sksg
+set(ENABLE_SKOTTIE TRUE) # requires sksg
 if(ENABLE_SKOTTIE)
   set(skottie_LIB skottie)
   set(COMMON_FLAGS "${COMMON_FLAGS} -DENABLE_SKOTTIE=1")
@@ -259,7 +268,7 @@ if(ENABLE_SKOTTIE)
 endif(ENABLE_SKOTTIE)
 
 # see https://github.com/google/skia/blob/81abc43e6f0b1a789e1bf116820c8ede68d778ab/modules/skshaper/BUILD.gn#L23
-set(ENABLE_SKSHAPER FALSE)
+set(ENABLE_SKSHAPER TRUE)
 if (ENABLE_SKSHAPER)
   # SkShaper
   # Shapes text using HarfBuzz
@@ -357,8 +366,8 @@ set(ENABLE_WASM TRUE)
 set(ENABLE_SIMD FALSE)
 
 # PTHREADS
-#set(ENABLE_WEB_PTHREADS TRUE)
-set(ENABLE_WEB_PTHREADS FALSE)
+set(ENABLE_WEB_PTHREADS TRUE)
+#set(ENABLE_WEB_PTHREADS FALSE)
 
 set(ENABLE_UKM FALSE)
 if(ENABLE_UKM)
@@ -621,6 +630,7 @@ if(ENABLE_COBALT)
   set(COBALT_UI_NAVIGATION_LIB cobalt_ui_navigation)
   set(COBALT_MATH_LIB cobalt_math)
   set(COBALT_MEDIA_LIB cobalt_media)
+  #set(COBALT_MEDIA_LIB GMEDIA)
   set(COBALT_PAGE_VISIBILITY_LIB cobalt_page_visibility)
   set(COBALT_CSSOM_LIB cobalt_cssom)
   set(COBALT_WEB_ANIMATIONS_LIB cobalt_web_animations)
@@ -630,6 +640,15 @@ if(ENABLE_COBALT)
   set(STARBOARD_ICU_INIT_LIB starboard_icu_init)
   set(STARBOARD_EZTIME_LIB starboard_eztime)
   set(STARBOARD_COMMON_LIB starboard_common)
+  #
+  set(ENABLE_COBALT_RENDER_TREE TRUE)
+  if(ENABLE_COBALT_RENDER_TREE)
+    set(COBALT_RENDER_TREE_LIB cobalt_render_tree)
+    set(COMMON_FLAGS "${COMMON_FLAGS} -DENABLE_COBALT_RENDER_TREE=1")
+    list(APPEND COBALT_LIBS
+      ${COBALT_RENDER_TREE_LIB}
+    )
+  endif(ENABLE_COBALT_RENDER_TREE)
   #
   list(APPEND COBALT_LIBS
     ${COBALT_BASE_LIB}
@@ -1184,9 +1203,11 @@ endif(NOT RELEASE_BUILD)
   if(NOT RELEASE_BUILD)
     # -g4: Preserve LLVM debug information. This is the highest level of debuggability
     # see https://emscripten.org/docs/tools_reference/emcc.html#emcc-compiler-optimization-options
+    set(DEBUG_LEVEL_DEFAULT "-g4")
+    #
     # NOTE: -01 and higher by default discard LLVM debug information
     if(NOT DEBUG_LEVEL)
-      set(DEBUG_LEVEL "${DEBUG_LEVEL} -g4")
+      set(DEBUG_LEVEL "${DEBUG_LEVEL} ${DEBUG_LEVEL_DEFAULT}")
     else()
       # NOTE: DEBUG_LEVEL may contain not only "-g4" (multiple flags allowed)
       if(EMSCRIPTEN_USE_SOURCE_MAP AND NOT DEBUG_LEVEL MATCHES "-g4")
@@ -1241,20 +1262,24 @@ endif(NOT RELEASE_BUILD)
     #
     ## allows you, for example, to reconstruct meaningful stack traces.
     ## see https://habr.com/ru/post/343784/
-    set(EMCC_COMMON "${EMCC_COMMON} --emit-symbol-map")
+    if(EMSCRIPTEN_EMIT_SYMBOL_MAP)
+      set(EMCC_COMMON "${EMCC_COMMON} --emit-symbol-map")
+    endif(EMSCRIPTEN_EMIT_SYMBOL_MAP)
     #
     ## Enables warnings about the use of absolute paths in -I and -L command line directives.
     ## set(EMCC_COMMON "${EMCC_COMMON} -Wwarn-absolute-paths")
     ## see https://emscripten.org/docs/tools_reference/emcc.html#emcc-compiler-optimization-options
     #
-    set(EMCC_COMMON "${EMCC_COMMON} --memoryprofiler")
+    if(EMSCRIPTEN_MEMORY_PROFILER)
+      set(EMCC_COMMON "${EMCC_COMMON} --memoryprofiler")
+    endif(EMSCRIPTEN_MEMORY_PROFILER)
     ## see https://emscripten.org/docs/tools_reference/emcc.html#emcc-compiler-optimization-options
     #
-    if (ENABLE_WEB_PTHREADS)
+    if (ENABLE_WEB_PTHREADS AND EMSCRIPTEN_THREAD_PROFILER)
       set(EMCC_COMMON "${EMCC_COMMON} --threadprofiler")
-    endif(ENABLE_WEB_PTHREADS)
+    endif(ENABLE_WEB_PTHREADS AND EMSCRIPTEN_THREAD_PROFILER)
     #
-    set(EMCC_COMMON "${EMCC_COMMON} -DPATHKIT_TESTING")
+    #set(EMCC_COMMON "${EMCC_COMMON} -DPATHKIT_TESTING") # TODO
   endif(RELEASE_BUILD)
   # see above
   set(EMCC_COMMON "${EMCC_COMMON} ${OPTIMIZE_LEVEL}")
@@ -1326,9 +1351,17 @@ endif(NOT RELEASE_BUILD)
   # see https://emscripten.org/docs/porting/Debugging.html
   # see https://github.com/emscripten-core/emscripten/blob/master/src/settings.js#L41
   if(NOT RELEASE_BUILD)
-    #set(EMCC_COMMON "${EMCC_COMMON} -s ASSERTIONS=1")
-    # ASSERTIONS == 2 gives even more runtime checks
-    set(EMCC_COMMON "${EMCC_COMMON} -s ASSERTIONS=2")
+    if(EMSCRIPTEN_ASSERTION_LEVEL MATCHES "1")
+      set(EMCC_COMMON "${EMCC_COMMON} -s ASSERTIONS=1")
+    elseif(EMSCRIPTEN_ASSERTION_LEVEL MATCHES "2")
+      # ASSERTIONS == 2 gives even more runtime checks
+      set(EMCC_COMMON "${EMCC_COMMON} -s ASSERTIONS=2")
+    else()
+      message(FATAL_ERROR
+        "You need to set EMSCRIPTEN_ASSERTION_LEVEL for debug build.
+        Current EMSCRIPTEN_ASSERTION_LEVEL=${EMSCRIPTEN_ASSERTION_LEVEL}"
+      )
+    endif()
   endif(NOT RELEASE_BUILD)
 
   # see https://github.com/emscripten-core/emscripten/blob/master/src/settings.js#L443
@@ -1885,11 +1918,11 @@ if(TARGET_EMSCRIPTEN)
     ${COBALT_LIBRARY_NAME}
     ${COBALT_LIBS}
     #
-    ${HARFBUZZ_LIBRARIES}
-    ${CUSTOM_ICU_LIB}
+    #${HARFBUZZ_LIBRARIES}
+    #${CUSTOM_ICU_LIB}
     #
-    base # TODO
-    modp_b64
+    #base # TODO
+    #modp_b64
     #${COBALT_LIBRARY_NAME}
     #cobalt_base
     #cobalt_nanobase
@@ -1912,13 +1945,13 @@ if(TARGET_EMSCRIPTEN)
     #starboard_common
     #starboard_core
     #
-    modp_b64
-    base # TODO
+    #modp_b64
+    #base # TODO
     #BLINK_RENDERER_CORE
     #${SERVICES_NETWORK_PUBLIC_CPP_LIB}
     #COMPONENTS_VIZ_CLIENT
     #BLINK_RENDERER_PLATFORM
-    ${WTF_LIBRARY_NAME}
+    #${WTF_LIBRARY_NAME}
     #
     ${SKIA_LIBS}
     #
