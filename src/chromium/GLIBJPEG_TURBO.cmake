@@ -57,11 +57,14 @@ set(GLIBJPEG_TURBO_SOURCES
   ${GLIBJPEG_TURBO_DIR}jversion.h
 )
 
-if(TARGET_EMSCRIPTEN)
+if(TARGET_EMSCRIPTEN OR TARGET_LINUX)
   list(APPEND GLIBJPEG_TURBO_SOURCES # static_library("simd")
     ${GLIBJPEG_TURBO_DIR}jsimd_none.c
   )
-elseif(TARGET_LINUX)
+else()
+  # TODO port for TARGET_LINUX
+  # https://github.com/blockspacer/cobalt-clone-28052019/blob/master/src/third_party/libjpeg-turbo/libjpeg.gyp
+
   #
   # if (is_linux || is_android || is_fuchsia)
   #
@@ -165,7 +168,7 @@ elseif(TARGET_LINUX)
       WITH_SIMD=1
     )
   endif(CMAKE_CL_64)
-else()
+#else() # TODO
   message(FATAL_ERROR "platform not supported")
 endif()
 
