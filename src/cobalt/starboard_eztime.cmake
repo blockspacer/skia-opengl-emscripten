@@ -43,3 +43,7 @@ target_compile_definitions(starboard_eztime PRIVATE
   #
   ${COBALT_COMMON_DEFINES}
 )
+
+target_compile_definitions(starboard_eztime PUBLIC
+  ${STARBOARD_EXTRA_PUBLIC_FLAGS}
+)

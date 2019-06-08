@@ -442,3 +442,7 @@ target_compile_definitions(starboard_platform PRIVATE
   #
   ${COBALT_COMMON_DEFINES}
 )
+
+target_compile_definitions(starboard_platform PUBLIC
+  ${STARBOARD_EXTRA_PUBLIC_FLAGS}
+)
