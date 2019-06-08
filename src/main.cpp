@@ -1070,6 +1070,9 @@ static SkFont* skFont2 = nullptr;
 static const float FONT_SIZE_F = 22.0f;
 #endif
 
+static base::Thread main_thread_("Main_Thread");
+static base::WaitableEvent main_thread_event_;
+
 #ifdef ENABLE_HARFBUZZ
 // see https://github.com/sam8dec/skia/blob/master/tools/using_skia_and_harfbuzz.cpp#L140
 // see https://github.com/chromium/chromium/blob/master/third_party/blink/renderer/platform/fonts/shaping/harfbuzz_face.cc#L68
@@ -1081,9 +1084,6 @@ struct HBFontDel {
 static ::std::unique_ptr<hb_font_t, HBFontDel> fHarfBuzzFont;
 static const int FONT_SIZE_SCALE = 512;
 //static SkPaint glyph_paint;
-
-static base::Thread main_thread_("Main_Thread");
-static base::WaitableEvent main_thread_event_;
 
 /// \note see SkShaper_harfbuzz.cpp if you want shaping in rectangle
 /// \see https://github.com/skui-org/skia/blob/f577133e703ea6a81602426aea879857cfd0b2e1/experimental/canvaskit/canvaskit_bindings.cpp#L477
