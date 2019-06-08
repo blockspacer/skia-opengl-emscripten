@@ -29,7 +29,11 @@ include(${CURRENT_SCRIPT_DIR}/emscriptenBuildVars.cmake)
 # --- vars ---
 set(BUILD_DIR "${CMAKE_CURRENT_SOURCE_DIR}/build-emscripten/" CACHE STRING "output directory")
 
-set(WASM_FILE_PATH "skemgl.wasm")
+# NOTE: WASM_OPT can`t work with with WASM PTHREADS/ATOMICS
+set(ENABLE_WASM_OPT FALSE)
+if(ENABLE_WASM_OPT)
+  set(WASM_FILE_PATH "skemgl.wasm")
+endif(ENABLE_WASM_OPT)
 
 if (BUILD_APP)
   message("building for web from ${CMAKE_CURRENT_SOURCE_DIR} into ${BUILD_DIR} ...")
@@ -71,8 +75,9 @@ if (BUILD_APP)
   endif()
 
   # --- show resulting stats/metrics ---
-  wasm_opt_metrics(${WASM_FILE_PATH})
-
+  if(ENABLE_WASM_OPT)
+    wasm_opt_metrics(${WASM_FILE_PATH})
+  endif(ENABLE_WASM_OPT)
 endif(BUILD_APP)
 
 # --- run ---
@@ -87,7 +92,9 @@ if(RUN_APP)
   endif(NOT EXISTS ${BUILD_DIR})
 
   # --- show resulting stats/metrics ---
-  wasm_opt_metrics(${WASM_FILE_PATH})
+  if(ENABLE_WASM_OPT)
+    wasm_opt_metrics(${WASM_FILE_PATH})
+  endif(ENABLE_WASM_OPT)
 
   message("starting app from ${BUILD_DIR} ...")
   execute_process(
