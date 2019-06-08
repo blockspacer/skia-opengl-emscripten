@@ -1,4 +1,4 @@
-// Copyright (c) 2011 The Chromium Authors. All rights reserved.
+﻿// Copyright (c) 2011 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -82,6 +82,7 @@ File& File::operator=(File&& other) {
 
 #if !defined(OS_NACL)
 void File::Initialize(const FilePath& path, uint32_t flags) {
+    P_LOG("File 1 ::Initialize %s\n", path.value().c_str());
   if (path.ReferencesParent()) {
 #if defined(OS_WIN)
     ::SetLastError(ERROR_ACCESS_DENIED);

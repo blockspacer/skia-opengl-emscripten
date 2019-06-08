@@ -1,4 +1,4 @@
-// Copyright (c) 2014 Google Inc. All rights reserved.
+﻿// Copyright (c) 2014 Google Inc. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -11,7 +11,7 @@
 #include "base/logging.h"
 #include "build/build_config.h"
 
-#if defined(OS_STARBOARD)
+#if defined(OS_STARBOARD) && defined(__TODO__)
 #include "starboard/memory.h"
 #define malloc SbMemoryAllocate
 #define realloc SbMemoryReallocate

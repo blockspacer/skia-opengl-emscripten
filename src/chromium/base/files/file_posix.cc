@@ -1,4 +1,4 @@
-// Copyright (c) 2012 The Chromium Authors. All rights reserved.
+﻿// Copyright (c) 2012 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -459,6 +459,7 @@ File::Error File::OSErrorToFileError(int saved_errno) {
 #if !defined(OS_NACL)
 // TODO(erikkay): does it make sense to support FLAG_EXCLUSIVE_* here?
 void File::DoInitialize(const FilePath& path, uint32_t flags) {
+    P_LOG("File::DoInitialize %s\n", path.value().c_str());
   ScopedBlockingCall scoped_blocking_call(FROM_HERE, BlockingType::MAY_BLOCK);
   DCHECK(!IsValid());
 
@@ -513,6 +514,7 @@ void File::DoInitialize(const FilePath& path, uint32_t flags) {
   mode |= S_IRGRP | S_IROTH;
 #endif
 
+  P_LOG("File::DoInitialize 2 %s\n", path.value().c_str());
   int descriptor = HANDLE_EINTR(open(path.value().c_str(), open_flags, mode));
 
   if (flags & FLAG_OPEN_ALWAYS) {

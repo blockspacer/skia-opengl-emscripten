@@ -1,4 +1,4 @@
-// Copyright 2015 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2015 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -146,6 +146,7 @@ void LibxmlHTMLParserWrapper::DecodeChunk(const char* data, size_t size) {
 }
 
 void LibxmlHTMLParserWrapper::Finish() {
+  P_LOG("LibxmlHTMLParserWrapper::Finish\n");
   if (!html_parser_context_) {
     static const char empty_document[] = "<html><body></body></html>";
     DecodeChunk(empty_document, arraysize(empty_document));
@@ -155,6 +156,7 @@ void LibxmlHTMLParserWrapper::Finish() {
     htmlParseChunk(html_parser_context_, NULL, 0,
                    1 /*terminate*/);  // Triggers EndDocument
     if (IsFullDocument()) {
+      P_LOG("IsFullDocument\n");
       document()->DecreaseLoadingCounterAndMaybeDispatchLoadEvent();
     }
   }

@@ -1,4 +1,4 @@
-// Copyright 2014 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2014 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -196,6 +196,7 @@ void HTMLLinkElement::Obtain() {
 
 void HTMLLinkElement::OnContentProduced(const loader::Origin& last_url_origin,
                                         std::unique_ptr<std::string> content) {
+  P_LOG("HTMLLinkElement::OnContentProduced\n");
   DCHECK(thread_checker_.CalledOnValidThread());
   DCHECK(content);
   TRACK_MEMORY_SCOPE("DOM");
@@ -232,6 +233,7 @@ void HTMLLinkElement::OnContentProduced(const loader::Origin& last_url_origin,
 
 void HTMLLinkElement::OnLoadingComplete(
     const base::Optional<std::string>& error) {
+  P_LOG("HTMLLinkElement::OnLoadingComplete\n");
     DCHECK(base::MessageLoopCurrent::Get()); // TODO
   base::MessageLoopCurrent::Get()->task_runner()->PostTask(
       FROM_HERE, base::Bind(&HTMLLinkElement::ReleaseLoader, this));

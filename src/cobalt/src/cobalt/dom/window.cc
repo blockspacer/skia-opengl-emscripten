@@ -1,4 +1,4 @@
-// Copyright 2015 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2015 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -256,6 +256,7 @@ void Window::StartDocumentLoad(
     loader::FetcherFactory* fetcher_factory, const GURL& url,
     Parser* dom_parser,
     const loader::Decoder::OnCompleteFunction& load_complete_callback) {
+  P_LOG("StartDocumentLoad\n");
   document_loader_.reset(new loader::Loader(
       base::Bind(&loader::FetcherFactory::CreateFetcher,
                  base::Unretained(fetcher_factory), url),

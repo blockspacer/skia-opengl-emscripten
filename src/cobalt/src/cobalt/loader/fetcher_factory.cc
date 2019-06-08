@@ -1,4 +1,4 @@
-// Copyright 2015 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2015 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -43,8 +43,11 @@ const char kAboutScheme[] = "about";
 #endif
 
 bool FileURLToFilePath(const GURL& url, base::FilePath* file_path) {
+  P_LOG("FileURLToFilePath host %s\n", url.host().c_str());
+  P_LOG("FileURLToFilePath path %s\n", url.path().c_str());
   DCHECK(url.is_valid() && url.SchemeIsFile());
   std::string path = url.path();
+  P_LOG("FileURLToFilePath path %s\n", path.c_str());
   DCHECK_EQ('/', path[0]);
   path.erase(0, 1);
   *file_path = base::FilePath(path);
@@ -98,6 +101,7 @@ FetcherFactory::FetcherFactory(
 
 std::unique_ptr<Fetcher> FetcherFactory::CreateFetcher(
     const GURL& url, Fetcher::Handler* handler) {
+  P_LOG("CreateFetcher\n");
   return CreateSecureFetcher(url,
 #if defined(ENABLE_COBALT_CSP)
                               csp::SecurityCallback(),
@@ -112,6 +116,7 @@ std::unique_ptr<Fetcher> FetcherFactory::CreateSecureFetcher(
     const csp::SecurityCallback& url_security_callback,
 #endif
     RequestMode request_mode, const Origin& origin, Fetcher::Handler* handler) {
+  P_LOG("CreateSecureFetcher\n");
   DLOG(INFO) << "Fetching: " << ClipUrl(url, 80);
 
   if (!url.is_valid()) {

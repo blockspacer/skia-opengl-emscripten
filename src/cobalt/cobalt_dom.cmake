@@ -378,7 +378,7 @@ target_link_libraries(cobalt_dom PUBLIC
   ${COBALT_MEDIA_LIB}
   cobalt_page_visibility
   cobalt_script
-  v8_stub
+  #${COBALT_V8_STUB_LIB}
   cobalt_ui_navigation
   cobalt_web_animations
   #cobalt_browser ## TODO ##

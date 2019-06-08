@@ -1,4 +1,4 @@
-// Copyright 2015 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2015 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -156,6 +156,7 @@ void HTMLImageElement::UpdateImageData() {
 }
 
 void HTMLImageElement::OnLoadingSuccess() {
+  P_LOG("HTMLImageElement::OnLoadingSuccess\n");
   TRACE_EVENT0("cobalt::dom", "HTMLImageElement::OnLoadingSuccess()");
   AllowGarbageCollectionAfterEventIsDispatched(
       base::Tokens::load(), std::move(prevent_gc_until_load_complete_));
@@ -166,6 +167,7 @@ void HTMLImageElement::OnLoadingSuccess() {
 }
 
 void HTMLImageElement::OnLoadingError() {
+  P_LOG("HTMLImageElement::OnLoadingError\n");
   TRACE_EVENT0("cobalt::dom", "HTMLImageElement::OnLoadingError()");
   AllowGarbageCollectionAfterEventIsDispatched(
       base::Tokens::error(), std::move(prevent_gc_until_load_complete_));

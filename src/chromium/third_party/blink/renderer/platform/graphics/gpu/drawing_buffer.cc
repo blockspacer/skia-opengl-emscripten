@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (c) 2010, Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -65,7 +65,9 @@
 #include "third_party/skia/include/core/SkSurface.h"
 #include "third_party/skia/include/gpu/GrContext.h"
 #include "third_party/skia/include/gpu/gl/GrGLTypes.h"
+#if defined(ENABLE_V8)
 #include "v8/include/v8.h"
+#endif
 
 namespace blink {
 
@@ -99,9 +101,11 @@ scoped_refptr<DrawingBuffer> DrawingBuffer::Create(
   base::CheckedNumeric<int> data_size = color_params.BytesPerPixel();
   data_size *= size.Width();
   data_size *= size.Height();
+#if defined(ENABLE_V8)
   if (!data_size.IsValid() ||
       data_size.ValueOrDie() > v8::TypedArray::kMaxLength)
     return nullptr;
+#endif
 
   DCHECK(context_provider);
   std::unique_ptr<Extensions3DUtil> extensions_util =

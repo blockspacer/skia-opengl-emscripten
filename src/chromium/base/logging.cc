@@ -1,4 +1,4 @@
-// Copyright (c) 2012 The Chromium Authors. All rights reserved.
+﻿// Copyright (c) 2012 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -626,6 +626,10 @@ LogMessage::~LogMessage() {
 #endif
   stream_ << std::endl;
   std::string str_newline(stream_.str());
+
+#if defined(OS_EMSCRIPTEN)
+  printf("LOG: %s\n", str_newline.c_str()); // TODO
+#endif
 
   // Give any log message handler first dibs on the message.
   if (log_message_handler &&

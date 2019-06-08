@@ -1,4 +1,4 @@
-// Copyright 2015 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2015 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,9 +20,13 @@
 #include "cobalt/math/size.h"
 #include "cobalt/media/base/media_log.h"
 #include "cobalt/media/decoder_buffer_allocator.h"
+#ifdef __TODO__
 #include "cobalt/media/player/web_media_player_impl.h"
+#endif
 #include "cobalt/media/shell_media_platform_starboard.h"
+#ifdef __TODO__
 #include "cobalt/system_window/system_window.h"
+#endif
 #include "nb/memory_scope.h"
 #include "starboard/media.h"
 #include "starboard/string.h"
@@ -67,28 +71,39 @@ class CanPlayTypeHandlerStarboard : public CanPlayTypeHandler {
 
 class MediaModuleStarboard : public MediaModule {
  public:
-  MediaModuleStarboard(system_window::SystemWindow* system_window,
+  MediaModuleStarboard(
+#ifdef __TODO__
+      system_window::SystemWindow* system_window,
+#endif
                        render_tree::ResourceProvider* resource_provider,
                        const Options& options)
       : options_(options),
+#ifdef __TODO__
         system_window_(system_window),
+#endif
         media_platform_(resource_provider) {}
 
   std::unique_ptr<WebMediaPlayer> CreateWebMediaPlayer(
       WebMediaPlayerClient* client) override {
     TRACK_MEMORY_SCOPE("Media");
     SbWindow window = kSbWindowInvalid;
+#ifdef __TODO__
     if (system_window_) {
       window = system_window_->GetSbWindow();
     }
     return std::unique_ptr<WebMediaPlayer>(new media::WebMediaPlayerImpl(
         window, client, this, &decoder_buffer_allocator_,
         options_.allow_resume_after_suspend, new media::MediaLog));
+#else
+    return nullptr;
+#endif
   }
 
+#ifdef __TODO__
   system_window::SystemWindow* system_window() const override {
     return system_window_;
   }
+#endif
 
   void OnSuspend() override { media_platform_.Suspend(); }
 
@@ -98,7 +113,9 @@ class MediaModuleStarboard : public MediaModule {
 
  private:
   const Options options_;
+#ifdef __TODO__
   system_window::SystemWindow* system_window_;
+#endif
   DecoderBufferAllocator decoder_buffer_allocator_;
   ShellMediaPlatformStarboard media_platform_;
 };
@@ -106,11 +123,17 @@ class MediaModuleStarboard : public MediaModule {
 }  // namespace
 
 std::unique_ptr<MediaModule> MediaModule::Create(
+#ifdef __TODO__
     system_window::SystemWindow* system_window,
+#endif
     render_tree::ResourceProvider* resource_provider, const Options& options) {
   TRACK_MEMORY_SCOPE("Media");
   return std::unique_ptr<MediaModule>(
-      new MediaModuleStarboard(system_window, resource_provider, options));
+      new MediaModuleStarboard(
+#ifdef __TODO__
+          system_window,
+#endif
+          resource_provider, options));
 }
 
 std::unique_ptr<CanPlayTypeHandler> MediaModule::CreateCanPlayTypeHandler() {

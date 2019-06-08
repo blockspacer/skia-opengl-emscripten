@@ -1,4 +1,4 @@
-// Copyright 2014 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2014 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -80,13 +80,15 @@ HTMLScriptElement::HTMLScriptElement(Document* document)
       inline_script_location_(GetSourceLocationName(), 1, 1),
       is_sync_load_successful_(false),
       should_execute_(true)
-#ifdef ENABLE_LOADER
+#if defined(ENABLE_LOADER)
       ,
       synchronous_loader_interrupt_(
           document->html_element_context()->synchronous_loader_interrupt())
 #endif
           {
+#if defined(ENABLE_SCRIPT_RUNNER)
   DCHECK(document->html_element_context()->script_runner());
+#endif
 }
 
 base::Optional<std::string> HTMLScriptElement::cross_origin() const {
@@ -338,7 +340,7 @@ void HTMLScriptElement::Prepare() {
           base::Bind(&HTMLScriptElement::OnSyncLoadingComplete,
                      base::Unretained(this)));
 #endif
-
+#if defined(ENABLE_SCRIPT_RUNNER)
       if (is_sync_load_successful_) {
         script::GlobalEnvironment::ScopedPreventGarbageCollection
             scoped_prevent_gc(
@@ -347,7 +349,9 @@ void HTMLScriptElement::Prepare() {
         ExecuteExternal();
         // Release the content string now that we're finished with it.
         content_.reset();
-      } else {
+      } else
+#endif
+      {
         // Executing the script block must just consist of firing a simple event
         // named error at the element.
         DispatchEvent(new Event(base::Tokens::error()));
@@ -578,6 +582,7 @@ void HTMLScriptElement::OnContentProduced(
 //   https://www.w3.org/TR/html5/scripting-1.html#prepare-a-script
 void HTMLScriptElement::OnLoadingComplete(
     const base::Optional<std::string>& error) {
+  P_LOG("HTMLScriptElement::OnLoadingComplete\n");
   if (!error) return;
 
   DCHECK(thread_checker_.CalledOnValidThread());
@@ -672,8 +677,10 @@ void HTMLScriptElement::Execute(const std::string& content,
 #else
       false;
 #endif
+#if defined(ENABLE_SCRIPT_RUNNER)
   html_element_context()->script_runner()->Execute(
       content, script_location, mute_errors, NULL /*out_succeeded*/);
+#endif
 
   // 5. 6. Not needed by Cobalt.
 
@@ -707,6 +714,7 @@ void HTMLScriptElement::PreventGarbageCollectionAndPostToDispatchEvent(
         scoped_prevent_gc) {
   // Ensure that this HTMLScriptElement is not garbage collected until the event
   // has been processed.
+#if defined(ENABLE_SCRIPT_RUNNER)
   DCHECK(!(*scoped_prevent_gc));
   scoped_prevent_gc->reset(
       new script::GlobalEnvironment::ScopedPreventGarbageCollection(
@@ -716,6 +724,7 @@ void HTMLScriptElement::PreventGarbageCollectionAndPostToDispatchEvent(
       location, token,
       base::Bind(&HTMLScriptElement::AllowGCAfterEventDispatch, this,
                  scoped_prevent_gc));
+#endif
 }
 
 void HTMLScriptElement::AllowGCAfterEventDispatch(
@@ -725,11 +734,13 @@ void HTMLScriptElement::AllowGCAfterEventDispatch(
 }
 
 void HTMLScriptElement::PreventGCUntilLoadComplete() {
+#if defined(ENABLE_SCRIPT_RUNNER)
   DCHECK(!prevent_gc_until_load_complete_);
   prevent_gc_until_load_complete_.reset(
       new script::GlobalEnvironment::ScopedPreventGarbageCollection(
           html_element_context()->script_runner()->GetGlobalEnvironment(),
           this));
+#endif
 }
 
 void HTMLScriptElement::AllowGCAfterLoadComplete() {

@@ -1017,6 +1017,32 @@ sk_sp<const GrGLInterface> emscripten_GrGLMakeNativeInterface() {
 #include "starboard/window.h"
 #include "url/gurl.h"
 
+#include "cobalt/input/camera_3d.h"
+
+#include "cobalt/dom/event.h"
+#include "cobalt/dom/history.h"
+#include "cobalt/dom/html_element.h"
+#include "cobalt/dom/html_element_context.h"
+#include "cobalt/dom/input_event.h"
+#include "cobalt/dom/keyboard_event.h"
+#include "cobalt/dom/location.h"
+#include "cobalt/dom/media_source.h"
+#include "cobalt/dom/mouse_event.h"
+#include "cobalt/dom/mutation_observer_task_manager.h"
+#include "cobalt/dom/navigator.h"
+#include "cobalt/dom/performance.h"
+#include "cobalt/dom/pointer_event.h"
+#include "cobalt/dom/screen.h"
+#include "cobalt/dom/screenshot.h"
+#include "cobalt/dom/screenshot_manager.h"
+#include "cobalt/dom/storage.h"
+#include "cobalt/dom/wheel_event.h"
+#include "cobalt/dom/window_timers.h"
+//#include "cobalt/media_session/media_session_client.h"
+#include "cobalt/script/environment_settings.h"
+#include "cobalt/script/javascript_engine.h"
+//#include "cobalt/speech/speech_synthesis.h"
+#include "starboard/file.h"
 #endif // ENABLE_COBALT
 
 //#if defined(ENABLE_SKIA) && (defined(USE_LIBJPEG) || defined(USE_LIBJPEG_TURBO))
@@ -1055,6 +1081,9 @@ struct HBFontDel {
 static ::std::unique_ptr<hb_font_t, HBFontDel> fHarfBuzzFont;
 static const int FONT_SIZE_SCALE = 512;
 //static SkPaint glyph_paint;
+
+static base::Thread main_thread_("Main_Thread");
+static base::WaitableEvent main_thread_event_;
 
 /// \note see SkShaper_harfbuzz.cpp if you want shaping in rectangle
 /// \see https://github.com/skui-org/skia/blob/f577133e703ea6a81602426aea879857cfd0b2e1/experimental/canvaskit/canvaskit_bindings.cpp#L477
@@ -2088,6 +2117,7 @@ using namespace cobalt::dom;
 using namespace cobalt::script;
 using namespace cobalt::network;
 using namespace cobalt::media;
+//using namespace cobalt::csp;
 
 /*class CSSParserObserver {
  public:
@@ -2098,6 +2128,26 @@ using namespace cobalt::media;
     printf("CSSParserObserver OnError %s\n", message.c_str());
   }
 };*/
+
+
+class DocumentLoadedObserver : public dom::DocumentObserver {
+public:
+    typedef std::vector<base::Closure> ClosureVector;
+    explicit DocumentLoadedObserver(const ClosureVector& loaded_callbacks)
+        : loaded_callbacks_(loaded_callbacks) {}
+    // Called at most once, when document and all referred resources are loaded.
+    void OnLoad() override {
+        for (size_t i = 0; i < loaded_callbacks_.size(); ++i) {
+            loaded_callbacks_[i].Run();
+        }
+    }
+
+    void OnMutation() override {}
+    void OnFocusChanged() override {}
+
+private:
+    ClosureVector loaded_callbacks_;
+};
 
 class CobaltTester {
   public:
@@ -2138,6 +2188,10 @@ class CobaltTester {
   //dom::testing::StubScriptRunner stub_script_runner_;
   std::unique_ptr<cobalt::dom::DomStatTracker> dom_stat_tracker_;
 
+  scoped_refptr<render_tree::Node> render_tree_root_;
+
+  scoped_refptr<HTMLElement> html_element_;
+
   std::unique_ptr<cobalt::dom::HTMLElementContext> html_element_context_;
   scoped_refptr<cobalt::dom::Document> document_;
   //std::unique_ptr<cobalt::dom::Element> root_;
@@ -2149,12 +2203,21 @@ class CobaltTester {
   // ImageCache that is used to manage image cache logic.
   std::unique_ptr<loader::image::ImageCache> image_cache_;
 
+  dom::ScreenshotManager::ProvideScreenshotFunctionCallback
+      provide_screenshot_function;
 
   // The reduced cache capacity manager can be used to force a reduced image
   // cache over periods of time where memory is known to be restricted, such
   // as when a video is playing.
   std::unique_ptr<loader::image::ReducedCacheCapacityManager>
       reduced_image_cache_capacity_manager_;
+
+  // Object that provides renderer resources like images and fonts.
+  render_tree::ResourceProvider* resource_provider_ = nullptr;
+
+  // The type id of resource provider being used by the WebModule. Whenever this
+  // changes, the caches may have obsolete data and must be blown away.
+  //base::TypeId resource_provider_type_id_ = base::TypeId();
 
   // RemoteTypefaceCache that is used to manage loading and caching typefaces
   // from URLs.
@@ -2213,11 +2276,126 @@ class CobaltTester {
   // Triggers layout whenever the document changes.
   std::unique_ptr<layout::LayoutManager> layout_manager_;
 
+  // DocumentObserver that observes the loading document.
+  std::unique_ptr<DocumentLoadedObserver> document_load_observer_;
+
+  // see https://github.com/blockspacer/cobalt-clone-28052019/blob/89664d116629734759176d820e9923257717e09c/src/cobalt/browser/web_module.h#L126
+
+  // A list of callbacks to be called once the web page finishes loading.
+  std::vector<base::Closure> loaded_callbacks;
+
   //network::NetworkModule network_module_;
 
   scoped_refptr<cobalt::dom::captions::SystemCaptionSettings>
       system_caption_settings_;
+
+  scoped_refptr<cobalt::input::Camera3D> camera_3d_;
+
+  scoped_refptr<ui_navigation::NavItem> ui_nav_root_;
+
+
+  // Allows checking if particular media type can be played.
+  std::unique_ptr<cobalt::media::CanPlayTypeHandler> can_play_type_handler_;
+
+  dom::DOMSettings::Options dom_settings_options;
+
+  layout::LayoutManager::LayoutTrigger layout_trigger;
+
+  // Web module owns the dom and layout stat trackers.
+  std::unique_ptr<layout::LayoutStatTracker> layout_stat_tracker_;
+
+  std::unique_ptr<ScreenshotManager> screenshot_manager_;
+
+  base::WaitableEvent synchronous_loader_interrupt_ = {
+      base::WaitableEvent::ResetPolicy::MANUAL,
+      base::WaitableEvent::InitialState::NOT_SIGNALED};
+
+  scoped_refptr<cssom::CSSDeclaredStyleData> style;
 };
+
+
+void OnWindowClose(base::TimeDelta close_time) {
+    printf("OnWindowClose\n");
+/*#if defined(ENABLE_DEBUGGER)
+    if (input_device_manager_fuzzer_) {
+        return;
+    }
+#endif
+
+    SbSystemRequestStop(0);*/
+}
+
+void OnWindowMinimize() {
+    printf("OnWindowMinimize\n");
+/*#if defined(ENABLE_DEBUGGER)
+    if (input_device_manager_fuzzer_) {
+        return;
+    }
+#endif
+
+    SbSystemRequestSuspend();*/
+}
+
+void OnLoadComplete(const base::Optional<std::string>& error) {
+    printf("OnLoadComplete %s\n", error.value_or("empty err").c_str());
+    //if (error) error_callback_.Run(window_->location()->url(), *error);
+}
+void OnCspPolicyChanged() {
+    printf("OnCspPolicyChanged\n");
+
+}
+
+// Called by |layout_mananger_| after it runs the animation frame callbacks.
+void OnRanAnimationFrameCallbacks() {
+    printf("OnRanAnimationFrameCallbacks\n");
+
+}
+
+// Called by |layout_mananger_| when it produces a render tree. May modify
+// the render tree (e.g. to add a debug overlay), then runs the callback
+// specified in the constructor, |render_tree_produced_callback_|.
+void OnRenderTreeProduced(const cobalt::layout::LayoutManager::LayoutResults& layout_results) {
+    printf("OnRenderTreeProduced\n");
+    /// \see https://github.com/blockspacer/cobalt-clone-28052019/blob/master/src/cobalt/browser/browser_module.cc#L736
+}
+
+// Called by the Renderer on the Renderer thread when it rasterizes a render
+// tree with this callback attached. It includes the time the render tree was
+// produced.
+void OnRenderTreeRasterized(
+    scoped_refptr<base::SingleThreadTaskRunner> web_module_message_loop,
+    const base::TimeTicks& produced_time) {
+    printf("OnRenderTreeRasterized\n");
+}
+
+void navigationCallback(const GURL&) {
+    printf("navigationCallback\n");
+}
+
+void OnStartDispatchEvent(const scoped_refptr<dom::Event>& event) {
+    printf("OnStartDispatchEvent %s\n", event->type().c_str());
+    /*if (!on_start_dispatch_event_callback_.is_null()) {
+        on_start_dispatch_event_callback_.Run(event);
+    }*/
+}
+
+void OnStopDispatchEvent(const scoped_refptr<dom::Event>& event) {
+    printf("OnStopDispatchEvent %s\n", event->type().c_str());
+    /*if (!on_stop_dispatch_event_callback_.is_null()) {
+        on_stop_dispatch_event_callback_.Run(event);
+    }*/
+}
+
+void HandlePointerEvents() {
+    printf("HandlePointerEvents\n");
+}
+
+// Called when the WebModule's Window.onload event is fired.
+void OnLoad() {
+    printf("HandlePointerEvents\n");
+
+    // see https://github.com/blockspacer/cobalt-clone-28052019/blob/master/src/cobalt/browser/browser_module.cc#L625
+}
 
 CobaltTester::CobaltTester()
 //network_module_(&storage_manager_, event_dispatcher_,
@@ -2229,6 +2407,28 @@ CobaltTester::CobaltTester()
 {
   // see https://github.com/blockspacer/cobalt-clone-28052019/blob/master/src/cobalt/browser/browser_module.cc#L578
   // see https://github.com/blockspacer/cobalt-clone-28052019/blob/master/src/cobalt/browser/web_module.cc
+
+  //camera_3d_ = new Camera3D(camera_3d_); // TODO: CreatedDefaultCamera3D
+
+  resource_provider_ = nullptr;
+  /*
+      if (!renderer_module_) {
+        if (resource_provider_stub_) {
+          DCHECK(application_state_ == base::kApplicationStatePreloading);
+          return &(resource_provider_stub_.value());
+        }
+
+      return NULL;
+    }
+
+    return renderer_module_->resource_provider();
+   */
+
+  loaded_callbacks.push_back(
+      //base::Bind(&BrowserModule::OnLoad, base::Unretained(this)));
+      base::Bind(&OnLoad));
+
+   dom::OnScreenKeyboardBridge* on_screen_keyboard_bridge = NULL;
 
   //CSSParserObserver parser_observer_;
   cobalt::css_parser::Parser::SupportsMapToMeshFlag supports_map_to_mesh =
@@ -2253,17 +2453,38 @@ CobaltTester::CobaltTester()
   //}
   fetcher_factory_.reset(new loader::FetcherFactory(
     nullptr/*network_module*/,
-    base::FilePath("data/options/extra_web_file_dir"),
+    base::FilePath(R"raw()raw"),//base::FilePath("resources/html"), // extra_web_file_dir
     dom::URL::MakeBlobResolverCallback(blob_registry_.get()),
     read_cache_callback));
   DCHECK(fetcher_factory_);
 
+  /// \see https://github.com/blockspacer/cobalt-clone-28052019/blob/89664d116629734759176d820e9923257717e09c/src/cobalt/browser/web_module_stat_tracker.cc
+  dom_stat_tracker_ = std::make_unique<DomStatTracker>("name");
+  layout_stat_tracker_ = std::make_unique<LayoutStatTracker>("name");
+
+
+  javascript_engine_ = script::JavaScriptEngine::CreateEngine(
+      //data.options.javascript_engine_options);
+      );
+  DCHECK(javascript_engine_);
+
+  global_environment_ = javascript_engine_->CreateGlobalEnvironment();
+  DCHECK(global_environment_);
+
+  execution_state_ =
+      script::ExecutionState::CreateExecutionState(global_environment_);
+  DCHECK(execution_state_);
+
+  script_runner_ =
+      script::ScriptRunner::CreateScriptRunner(global_environment_);
+  DCHECK(script_runner_);
+
   html_element_context_.reset(new cobalt::dom::HTMLElementContext(
         //&fetcher_factory_, &loader_factory_, &stub_css_parser_,
-        fetcher_factory_.get(), loader_factory_.get(), NULL,
+        fetcher_factory_.get(), loader_factory_.get(), css_parser_.get(),
         dom_parser_.get(), NULL ,
         //NULL , &stub_script_runner_,
-        NULL , NULL,
+        NULL , script_runner_.get(),
         NULL , NULL, NULL, NULL, NULL, NULL, NULL,
         NULL, dom_stat_tracker_.get(), "",
         base::kApplicationStateStarted,
@@ -2276,7 +2497,7 @@ CobaltTester::CobaltTester()
   new base::SourceLocation("[object HTMLDecoderTest]", 1, 1));*/
 
   loader_factory_.reset(
-      new loader::LoaderFactory(fetcher_factory_.get(), nullptr/*resource_provider_*/,
+      new loader::LoaderFactory(fetcher_factory_.get(), resource_provider_,
                                 /*data.options.loader_thread_priority*/ base::ThreadPriority::NORMAL));
 
   animated_image_tracker_.reset(new loader::image::AnimatedImageTracker(
@@ -2317,22 +2538,6 @@ CobaltTester::CobaltTester()
       new browser::WebModuleStatTracker(name_, data.options.track_event_stats));
   DCHECK(web_module_stat_tracker_);*/
 
-  javascript_engine_ = script::JavaScriptEngine::CreateEngine(
-      //data.options.javascript_engine_options);
-      );
-  DCHECK(javascript_engine_);
-
-  global_environment_ = javascript_engine_->CreateGlobalEnvironment();
-  DCHECK(global_environment_);
-
-  /*execution_state_ =
-      script::ExecutionState::CreateExecutionState(global_environment_);
-  DCHECK(execution_state_);
-
-  script_runner_ =
-      script::ScriptRunner::CreateScriptRunner(global_environment_);
-  DCHECK(script_runner_);*/
-
   media_source_registry_.reset(new dom::MediaSource::Registry);
 
   //media_session_client_ = media_session::MediaSessionClient::Create();
@@ -2348,7 +2553,17 @@ CobaltTester::CobaltTester()
   global_environment_->AddRoot(media_source_registry_.get());
   global_environment_->AddRoot(blob_registry_.get());
 
-/*  window_ = new dom::Window(
+  ui_nav_root_ = (new cobalt::ui_navigation::NavItem(
+      cobalt::ui_navigation::kNativeItemTypeContainer,
+      // Currently, events do not need to be processed for the root item.
+      base::Closure(), base::Closure(), base::Closure()));
+
+  /*std::unique_ptr<CanPlayTypeHandler> can_play_type_handler_ = cobalt::media::MediaModule::CreateCanPlayTypeHandler();*/
+
+  can_play_type_handler_ = cobalt::media::MediaModule::CreateCanPlayTypeHandler();
+
+  //new dom::Window;
+  window_ = new cobalt::dom::Window(
       cssom::ViewportSize(500, 500), //data.window_dimensions,
       1.0,//data.video_pixel_ratio,
       base::ApplicationState::kApplicationStateStarted,//data.initial_application_state,
@@ -2356,45 +2571,59 @@ CobaltTester::CobaltTester()
       dom_parser_.get(),
       fetcher_factory_.get(),
       loader_factory_.get(),
-      nullptr,//&resource_provider_,
+      &resource_provider_,
       animated_image_tracker_.get(),
       image_cache_.get(),
       reduced_image_cache_capacity_manager_.get(),
       remote_typeface_cache_.get(),
       mesh_cache_.get(),
       local_storage_database_.get(),
-      media::MediaModule::CreateCanPlayTypeHandler(),//data.can_play_type_handler,
+      can_play_type_handler_.get(),//data.can_play_type_handler,
       nullptr,//data.web_media_player_factory,
       execution_state_.get(),
       script_runner_.get(),
       global_environment_->script_value_factory(),
       media_source_registry_.get(),
       nullptr,//web_module_stat_tracker_->dom_stat_tracker(),
-      GURL(),//data.initial_url,
+      GURL(R"raw(file:///resources/html/index.html)raw"),//data.initial_url,
       "data.network_module->GetUserAgent()",
       "data.network_module->preferred_language()",
       "font_language_script",
       //ata.options.font_language_script_override.empty()
       //   ? base::GetSystemLanguageScript()
       //   : data.options.font_language_script_override,
-      data.options.navigation_callback, // const base::Callback<void(const GURL&)>
-      base::Bind(&WebModule::Impl::OnLoadComplete, base::Unretained(this)),
+      base::Bind(&navigationCallback),
+      //base::Bind(&navigationCallback, base::Unretained(this)),//data.options.navigation_callback, // const base::Callback<void(const GURL&)>
+      //base::Bind(&OnLoadComplete, base::Unretained(this)),
+      base::Bind(&OnLoadComplete),
       // //data.network_module->cookie_jar(),
       // //data.network_module->GetPostSender(),
       // //data.options.require_csp,
-      data.options.csp_enforcement_mode,
-      base::Bind(&WebModule::Impl::OnCspPolicyChanged, base::Unretained(this)),
-      base::Bind(&WebModule::Impl::OnRanAnimationFrameCallbacks,
-                 base::Unretained(this)),
-      data.window_close_callback, data.window_minimize_callback,
-      data.options.on_screen_keyboard_bridge, data.options.camera_3d,
+      cobalt::dom::CspEnforcementType::kCspEnforcementDisable,
+      ///csp::kCspEnforcementEnable,//data.options.csp_enforcement_mode,
+      //base::Bind(&OnCspPolicyChanged, base::Unretained(this)),
+      base::Bind(&OnCspPolicyChanged),
+      //base::Bind(&OnRanAnimationFrameCallbacks,
+      //           base::Unretained(this)),
+      base::Bind(&OnRanAnimationFrameCallbacks),
+      base::Bind(&OnWindowClose),
+      //base::Bind(&OnWindowClose, base::Unretained(this)), //data.window_close_callback, // base::Callback<void(base::TimeDelta)>
+      //base::Bind(&OnWindowMinimize, base::Unretained(this)), //data.window_minimize_callback, // base::Closure
+      base::Bind(&OnWindowMinimize),
+      on_screen_keyboard_bridge, //data.options.on_screen_keyboard_bridge,
+      camera_3d_, //new Camera3D(),//data.options.camera_3d,
       // //media_session_client_->GetMediaSession(),
-      base::Bind(&WebModule::Impl::OnStartDispatchEvent,
-                 base::Unretained(this)),
-      base::Bind(&WebModule::Impl::OnStopDispatchEvent, base::Unretained(this)),
-      data.options.provide_screenshot_function, &synchronous_loader_interrupt_,
-      data.ui_nav_root, data.options.csp_insecure_allowed_token,
-      data.dom_max_element_depth, data.options.video_playback_rate_multiplier,
+      base::Bind(&OnStartDispatchEvent),
+      //base::Bind(&WebModule::Impl::OnStartDispatchEvent,
+      //           base::Unretained(this)),
+      base::Bind(&OnStopDispatchEvent),
+      //base::Bind(&WebModule::Impl::OnStopDispatchEvent, base::Unretained(this)),
+      provide_screenshot_function,//data.options.provide_screenshot_function,
+      &synchronous_loader_interrupt_,
+      ui_nav_root_,//data.ui_nav_root,
+      0,//data.options.csp_insecure_allowed_token,
+      999,//data.dom_max_element_depth,
+      1.0,//data.options.video_playback_rate_multiplier,
 #if defined(ENABLE_TEST_RUNNER)
       data.options.layout_trigger == layout::LayoutManager::kTestRunnerMode
           ? dom::Window::kClockTypeTestRunner
@@ -2402,13 +2631,93 @@ CobaltTester::CobaltTester()
                  ? dom::Window::kClockTypeResolutionLimitedSystemTime
                  : dom::Window::kClockTypeSystemTime),
 #else
-      dom::Window::kClockTypeSystemTime,
+      dom::Window::kClockTypeResolutionLimitedSystemTime,
 #endif
-      splash_screen_cache_callback, system_caption_settings_, log_tts);
+      splash_screen_cache_callback,
+      system_caption_settings_,
+      false//log_tts
+      );
   DCHECK(window_);
 
   window_weak_ = base::AsWeakPtr(window_.get());
-  DCHECK(window_weak_);*/
+  DCHECK(window_weak_);
+
+  environment_settings_.reset(new cobalt::dom::DOMSettings(
+      99,//kDOMMaxElementDepth,
+      fetcher_factory_.get(),
+      nullptr,//data.network_module,
+      window_,
+      media_source_registry_.get(),
+      blob_registry_.get(),
+      can_play_type_handler_.get(),//data.can_play_type_handler,
+      javascript_engine_.get(),
+      global_environment_.get(),
+      &mutation_observer_task_manager_,
+      //data.options.dom_settings_options
+      dom_settings_options
+      ));
+  DCHECK(environment_settings_);
+
+  window_->SetEnvironmentSettings(environment_settings_.get());
+  //environment_settings_->set_window()
+  //global_environment_->CreateGlobalObject(window_, environment_settings_.get());
+  //global_environment_->CreateGlobalObject(window_, nullptr);
+
+  //render_tree_produced_callback_ = data.render_tree_produced_callback;
+  //DCHECK(!render_tree_produced_callback_.is_null());
+
+  //error_callback_ = data.error_callback;
+  //DCHECK(!error_callback_.is_null());
+
+  /*layout_trigger == layout::LayoutManager::kTestRunnerMode
+      ? dom::Window::kClockTypeTestRunner
+      : (data.options.limit_performance_timer_resolution
+             ? dom::Window::kClockTypeResolutionLimitedSystemTime
+             : dom::Window::kClockTypeSystemTime),*/
+  //layout_trigger = dom::Window::kClockTypeSystemTime;
+
+  layout_manager_.reset(new cobalt::layout::LayoutManager(
+      "name_",
+      window_.get(),
+      //base::Bind(&WebModule::Impl::OnRenderTreeProduced,
+      //           base::Unretained(this)),
+      base::Bind(&OnRenderTreeProduced),
+      //base::Bind(&WebModule::Impl::HandlePointerEvents, base::Unretained(this)),
+      base::Bind(&HandlePointerEvents),
+      layout_trigger,//data.options.layout_trigger,
+      99,//data.dom_max_element_depth,
+      1.0,//data.layout_refresh_rate,
+      "data.network_module->preferred_language()",
+      false, //data.options.enable_image_animations,
+      layout_stat_tracker_.get(),//web_module_stat_tracker_->layout_stat_tracker(),
+      false//data.options.clear_window_with_background_color
+      ));
+  DCHECK(layout_manager_);
+
+/*#if !defined(COBALT_FORCE_CSP)
+    if (data.options.csp_enforcement_mode == dom::kCspEnforcementDisable) {
+        // If CSP is disabled, enable eval(). Otherwise, it will be enabled by
+        // a CSP directive.
+        global_environment_->EnableEval();
+    }
+#endif*/
+
+    //global_environment_->SetReportEvalCallback(
+    //    base::Bind(&dom::CspDelegate::ReportEval,
+    //               base::Unretained(window_->document()->csp_delegate())));
+    //
+    //global_environment_->SetReportErrorCallback(
+    //    base::Bind(&WebModule::Impl::ReportScriptError, base::Unretained(this)));
+    //
+    //InjectCustomWindowAttributes(data.options.injected_window_attributes);
+
+    //if (!data.options.loaded_callbacks.empty()) {
+    if (!loaded_callbacks.empty()) {
+        document_load_observer_.reset(
+            new DocumentLoadedObserver(loaded_callbacks));
+        window_->document()->AddObserver(document_load_observer_.get());
+    }
+
 }
 
 void CobaltTester::run() {
@@ -2526,10 +2835,11 @@ void CobaltTester::run() {
   //ASSERT_TRUE(style_sheet);
   //EXPECT_EQ(2, style_sheet->css_rules_same_origin()->length());
   printf("style_sheet->css_rules_same_origin()->length() = %d == 2\n",  style_sheet->css_rules_same_origin()->length());
-  scoped_refptr<cssom::CSSDeclaredStyleData> style =
+  style =
     css_parser_->ParseStyleDeclarationList(
         "background-size: auto 20%;"
         "background: no-repeat rgba(0, 0, 0, .8);", base::SourceLocation("[object HTMLDecoderTest]", 1, 1));
+  //style->se
   if(style->IsDeclared(cssom::kBackgroundSizeProperty)) {
     scoped_refptr<cssom::PropertyListValue> background_size_list =
           dynamic_cast<cssom::PropertyListValue*>(
@@ -2547,6 +2857,63 @@ void CobaltTester::run() {
       printf("background_color = %s\n", background_color.get()->ToString().c_str());
     }
   }
+
+  printf("document_->set_window...\n");
+  document_->set_window(window_->window().get());
+  document_->SetViewport(cssom::ViewportSize(500, 500));//kViewSize);
+  html_element_ =
+      document_->CreateElement("div")->AsHTMLElement();
+  document_->AppendChild(html_element_);
+  html_element_->set_tab_index(-1);
+  html_element_->Focus();
+  html_element_->Blur();
+  printf("AsHTMLElement()->text_content %s\n", document_->active_element()->AsHTMLElement()->text_content()->c_str());
+  //SetElementStyle(style, html_element);
+  html_element_->SetAttribute("style", style->SerializeCSSDeclarationBlock());
+  printf("html_element_->GetAttribute(style) %s\n", html_element_->GetAttribute("style")->c_str());
+  //window_->SetApplicationState(base::ApplicationState::kApplicationStateStarted);
+
+  render_tree_root_ =
+      document_->DoSynchronousLayoutAndGetRenderTree();
+
+  synchronous_loader_interrupt_.Reset();
+  if (resource_provider_) {
+      base::TypeId resource_provider_type_id = resource_provider_->GetTypeId();
+      // Check for if the resource provider type id has changed. If it has, then
+      // anything contained within the caches is invalid and must be purged.
+      /*if (resource_provider_type_id_ != resource_provider_type_id) {
+          //PurgeResourceCaches(false);
+      }
+      resource_provider_type_id_ = resource_provider_type_id;*/
+
+      loader_factory_->Resume(resource_provider_);
+
+  }
+  // Permit render trees to be generated again.  Layout will have been
+  // invalidated with the call to Suspend(), so the layout manager's first
+  // task will be to perform a full re-layout.
+  layout_manager_->Resume();
+
+  //window_->RequestAnimationFrame();
+
+  //RunAnimationFrameCallbacks
+  //HasPendingAnimationFrameCallbacks
+
+  //layout_manager_->DoLayoutAndProduceRenderTree();
+
+  /*script::Handle<ScreenshotManager::InterfacePromise> promise =
+      html_element_context_
+          ->script_value_factory()
+          ->CreateInterfacePromise<dom::Screenshot>();
+
+  std::unique_ptr<ScreenshotManager::InterfacePromiseValue::Reference>
+      promise_reference(new ScreenshotManager::InterfacePromiseValue::Reference(
+          nullptr, promise));
+
+  screenshot_manager_ = std::make_unique<ScreenshotManager>(provide_screenshot_function);
+  screenshot_manager_->Screenshot(
+      loader::image::EncodedStaticImage::ImageFormat::kPNG, render_tree_root,
+      std::move(promise_reference));*/
 }
 
 static std::unique_ptr<CobaltTester> g_cobaltTester;
@@ -2590,7 +2957,10 @@ std::unique_ptr<base::sequence_manager::SequenceManager> sequence_manager;
 /// \note don`t use int main(void)
 /// \see https://github.com/emscripten-core/emscripten/issues/8757
 int main(int argc, char** argv) {
-    printf("main ...\n");
+    printf("main 1...\n");
+    //SbMemoryAllocateAligned();
+    //SbMemoryDeallocateAligned();
+    printf("main 2...\n");
 #ifdef ENABLE_BORINGSSL
     // see https://boringssl.googlesource.com/boringssl/+/version_for_cocoapods_1.0/ssl/ssl_test.cc
     CRYPTO_library_init();
@@ -2687,8 +3057,8 @@ int main(int argc, char** argv) {
     /// @TODO don`t reserve much memory on WASM/EMSCRIPTEN platform
     // Try to reserve as much address space as we reasonably can.
     const size_t kMB = 1024 * 1024;
-    // for (size_t size = 512 * kMB; size >= 32 * kMB; size -= 16 * kMB) {
-    for (size_t size = 128 * kMB; size >= 32 * kMB; size -= 16 * kMB) {
+    for (size_t size = 512 * kMB; size >= 32 * kMB; size -= 16 * kMB) {
+    // for (size_t size = 128 * kMB; size >= 32 * kMB; size -= 16 * kMB) {
       printf("ReserveAddressSpace...\n");
       if (base::ReserveAddressSpace(size)) {
         // Report successful reservation.
@@ -3295,17 +3665,46 @@ int main(int argc, char** argv) {
 
   InitGL();
 
+  printf("creating tests thread...\n");
+  base::Thread::Options options;
+  options.message_loop_type = base::MessageLoop::TYPE_IO;
+  main_thread_.StartWithOptions(options);
+  printf("tests thread started...\n");
+  main_thread_.task_runner()->PostTask(
+      FROM_HERE, base::Bind([](base::WaitableEvent* main_thread_event_){
+          DCHECK(base::MessageLoopCurrent::Get());
+          printf("Main thread works...\n");
+      }, &main_thread_event_));
+  printf("Waiting for tests thread...\n");
+  main_thread_event_.Wait();
+  main_thread_event_.Reset();
+
 #ifdef ENABLE_COBALT
   printf("Initializing COBALT tests...\n");
   base::AtExitManager at_exit;
   /// \see https://github.com/blockspacer/cobalt-clone-28052019/blob/master/src/cobalt/base/init_cobalt.cc
   cobalt::InitCobalt(argc, argv, NULL);
   printf("Starting COBALT tests...\n");
-  g_cobaltTester = std::make_unique<CobaltTester>();
-  g_cobaltTester->run();
+
+  // Make sure the thread started.
+  main_thread_.task_runner()->PostTask(
+      FROM_HERE, base::Bind([](base::WaitableEvent* main_thread_event_){
+          DCHECK(base::MessageLoopCurrent::Get());
+          printf("Creating g_cobaltTester...\n");
+          g_cobaltTester = std::make_unique<CobaltTester>();
+          printf("Starting g_cobaltTester...\n");
+          g_cobaltTester->run();
+          printf("Finishing g_cobaltTester...\n");
+          main_thread_event_->Signal();
+      }, &main_thread_event_));
+
+  printf("Waiting COBALT tests...\n");
+  main_thread_event_.Wait();
+  main_thread_event_.Reset();
 #endif // ENABLE_COBALT
 
 #if defined(ENABLE_SKIA)
+  printf("Starting SKIA tests...\n");
 
 #if defined(ENABLE_UI)
   {

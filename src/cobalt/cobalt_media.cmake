@@ -11,6 +11,8 @@
 #  '<(DEPTH)/starboard/starboard.gyp:starboard',
 #],
 list(APPEND cobalt_media_SOURCES
+  ${COBALT_CORE_DIR}media/media_module_starboard.cc
+  #
   ${COBALT_CORE_DIR}media/decoder_buffer_allocator.cc
   ${COBALT_CORE_DIR}media/decoder_buffer_allocator.h
   ## TODO ## ${COBALT_CORE_DIR}media/fetcher_buffered_data_source.cc

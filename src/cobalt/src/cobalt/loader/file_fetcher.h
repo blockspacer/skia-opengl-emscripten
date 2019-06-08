@@ -1,4 +1,4 @@
-// Copyright 2015 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2015 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -44,8 +44,10 @@ class FileFetcher : public Fetcher {
     Options()
         : buffer_size(kDefaultBufferSize),
           start_offset(0),
-          bytes_to_read(std::numeric_limits<int64>::max()),
-          message_loop_proxy(base::MessageLoopCurrent::Get()->task_runner()) {}
+          bytes_to_read(std::numeric_limits<int64>::max()) {
+      DCHECK(base::MessageLoopCurrent::Get());
+      message_loop_proxy = (base::MessageLoopCurrent::Get()->task_runner());
+    }
 
     int32 buffer_size;
     int64 start_offset;

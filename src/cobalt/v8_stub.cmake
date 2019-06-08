@@ -2,6 +2,10 @@
 
 set(v8_stub_SOURCES
   ${COBALT_PORT_DIR}v8_stub/v8c_array_buffer.cc
+  ${COBALT_PORT_DIR}v8_stub/v8c_engine.cc
+  ${COBALT_PORT_DIR}v8_stub/v8c_global_environment.cc
+  ${COBALT_PORT_DIR}v8_stub/v8c_source_code.cc
+  ${COBALT_PORT_DIR}v8_stub/v8c.cc
 )
 
 add_library(v8_stub STATIC
@@ -9,10 +13,10 @@ add_library(v8_stub STATIC
 )
 
 target_link_libraries(v8_stub PUBLIC
+  base # TODO
   cobalt_base
   cobalt_nanobase
   cobalt_script
-  base # TODO
   #modp_b64
 )
 

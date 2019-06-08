@@ -1,4 +1,4 @@
-// Copyright 2014 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2014 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -570,16 +570,17 @@ void Document::IncreaseLoadingCounter() { ++loading_counter_; }
 void Document::DecreaseLoadingCounter() { --loading_counter_; }
 
 void Document::DecreaseLoadingCounterAndMaybeDispatchLoadEvent() {
+  P_LOG("DecreaseLoadingCounterAndMaybeDispatchLoadEvent 1\n");
   DCHECK_GT(loading_counter_, 0);
   loading_counter_--;
   if (loading_counter_ == 0 && should_dispatch_load_event_) {
-#if defined(OS_EMSCRIPTEN)
-  /// \note: with or without PTHREADS - create task manually
+    should_dispatch_load_event_ = false;
+    // TODO https://github.com/emscripten-core/emscripten/issues/6843
+#if(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   std::move(base::Bind(&Document::DispatchOnLoadEvent,
                        base::AsWeakPtr<Document>(this))).Run();
 #else
     DCHECK(base::MessageLoopCurrent::Get());
-    should_dispatch_load_event_ = false;
 
     /*base::MessageLoop::current()->task_runner()->PostTask(
         FROM_HERE, base::Bind(&Document::DispatchOnLoadEvent,
@@ -588,6 +589,7 @@ void Document::DecreaseLoadingCounterAndMaybeDispatchLoadEvent() {
         FROM_HERE, base::Bind(&Document::DispatchOnLoadEvent,
                               base::AsWeakPtr<Document>(this)));
 #endif
+  P_LOG("DecreaseLoadingCounterAndMaybeDispatchLoadEvent 2\n");
 
     HTMLBodyElement* body_element = body().get();
     if (body_element) {

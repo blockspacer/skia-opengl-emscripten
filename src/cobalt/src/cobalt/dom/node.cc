@@ -1,4 +1,4 @@
-// Copyright 2014 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2014 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -163,15 +163,17 @@ bool Node::DispatchEvent(const scoped_refptr<Event>& event) {
   }
 
   event->set_event_phase(Event::kNone);
-
+  P_LOG("OnStopDispatchEvent 1\n");
   if (window) {
     window->OnStopDispatchEvent(event);
   }
+  P_LOG("OnStopDispatchEvent 2\n");
 
   // The event has completed being dispatched. Stop tracking it in the global
   // stats.
   GlobalStats::GetInstance()->StopJavaScriptEvent();
 
+  P_LOG("OnStopDispatchEvent 3\n");
   return !event->default_prevented();
 }
 

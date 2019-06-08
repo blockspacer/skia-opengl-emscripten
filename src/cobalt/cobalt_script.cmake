@@ -68,6 +68,7 @@ target_link_libraries(cobalt_script PUBLIC
   cobalt_base
   cobalt_nanobase
   base # TODO
+  #${COBALT_V8_STUB_LIB}
   #modp_b64
   #GFX_GEOMETRY
   #${BASE_LIBRARIES}

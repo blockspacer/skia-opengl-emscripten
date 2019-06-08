@@ -251,7 +251,7 @@ target_link_libraries(cobalt_cssom PUBLIC
   cobalt_base
   cobalt_nanobase
   #cobalt_script
-  #v8_stub
+  #${COBALT_V8_STUB_LIB}
   ${COBALT_CSP_LIB_NAME}
   starboard_icu_init
   starboard_eztime  # requires starboard_icu_init

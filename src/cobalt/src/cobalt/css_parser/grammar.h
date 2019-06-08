@@ -1,4 +1,4 @@
-// Copyright 2014 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2014 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -105,7 +105,7 @@ struct cobalt_yyltype {
 #define YYLTYPE_IS_DECLARED 1
 #define YYLTYPE_IS_TRIVIAL 0
 
-#if defined(OS_STARBOARD)
+#if defined(OS_STARBOARD) && defined(__TODO__)
 #include "starboard/memory.h"
 #define YYFREE SbMemoryDeallocate
 #define YYMALLOC SbMemoryAllocate

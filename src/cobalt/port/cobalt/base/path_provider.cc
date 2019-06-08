@@ -1,4 +1,4 @@
-// Copyright 2017 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2017 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -39,6 +39,11 @@ base::FilePath GetOrCreateDirectory(SbSystemPathId path_id) {
 namespace cobalt {
 
 bool PathProvider(int key, base::FilePath* result) {
+#if defined(OS_EMSCRIPTEN)
+    *result = base::FilePath(""); // use in-browser file system
+    return true;
+#endif // OS_EMSCRIPTEN
+
   switch (key) {
     case paths::DIR_COBALT_DEBUG_OUT: {
       base::FilePath directory =
