@@ -2337,7 +2337,7 @@ void OnWindowMinimize() {
 }
 
 void OnLoadComplete(const base::Optional<std::string>& error) {
-    printf("OnLoadComplete %s\n", error.value_or("empty err").c_str());
+    printf("OnLoadComplete %s\n", error.value_or("no errors").c_str());
     //if (error) error_callback_.Run(window_->location()->url(), *error);
 }
 void OnCspPolicyChanged() {
@@ -3674,6 +3674,7 @@ int main(int argc, char** argv) {
       FROM_HERE, base::Bind([](base::WaitableEvent* main_thread_event_){
           DCHECK(base::MessageLoopCurrent::Get());
           printf("Main thread works...\n");
+          main_thread_event_->Signal();
       }, &main_thread_event_));
   printf("Waiting for tests thread...\n");
   main_thread_event_.Wait();
