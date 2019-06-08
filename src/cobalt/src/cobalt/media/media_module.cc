@@ -1,4 +1,4 @@
-// Copyright 2016 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2016 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -50,14 +50,12 @@ void MediaModule::Suspend() {
   OnSuspend();
 }
 
-//#if defined(ENABLE_COBALT_RENDER_TREE)
 void MediaModule::Resume(render_tree::ResourceProvider* resource_provider) {
   OnResume(resource_provider);
   RunClosureOnMessageLoopAndWait(
       message_loop_,
       base::Bind(&MediaModule::ResumeTask, base::Unretained(this)));
 }
-//#endif // ENABLE_COBALT_RENDER_TREE
 
 void MediaModule::RegisterPlayer(WebMediaPlayer* player) {
   RunClosureOnMessageLoopAndWait(message_loop_,

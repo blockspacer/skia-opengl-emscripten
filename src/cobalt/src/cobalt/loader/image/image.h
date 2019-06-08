@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright 2017 The Cobalt Authors. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,10 +24,8 @@
 #include "cobalt/math/size_f.h"
 #include "cobalt/math/transform_2d.h"
 
-//#if defined(ENABLE_COBALT_RENDER_TREE)
 #include "cobalt/render_tree/image.h"
 #include "cobalt/render_tree/image_node.h"
-//#endif // ENABLE_COBALT_RENDER_TREE
 
 #include "starboard/types.h"
 #include "base/basictypes.h"

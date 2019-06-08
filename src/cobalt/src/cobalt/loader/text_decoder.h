@@ -1,4 +1,4 @@
-// Copyright 2015 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2015 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -94,11 +94,9 @@ class TextDecoder : public Decoder {
     return true;
   }
 
-//#if defined(ENABLE_COBALT_RENDER_TREE)
   void Resume(render_tree::ResourceProvider* /*resource_provider*/) override {
     suspended_ = false;
   }
-//#endif // ENABLE_COBALT_RENDER_TREE
 
   void SetLastURLOrigin(const loader::Origin& last_url_origin) override {
     last_url_origin_ = last_url_origin;

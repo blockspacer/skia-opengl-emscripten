@@ -1,4 +1,4 @@
-// Copyright 2015 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2015 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -139,7 +139,6 @@ void Loader::Suspend() {
   }
 }
 
-//#if defined(ENABLE_COBALT_RENDER_TREE)
 void Loader::Resume(render_tree::ResourceProvider* resource_provider) {
   DCHECK(thread_checker_.CalledOnValidThread());
   DCHECK(is_suspended_);
@@ -149,7 +148,6 @@ void Loader::Resume(render_tree::ResourceProvider* resource_provider) {
   decoder_->Resume(resource_provider);
   if (!is_load_complete_) Start();
 }
-//#endif // ENABLE_COBALT_RENDER_TREE
 
 bool Loader::DidFailFromTransientError() const {
   DCHECK(thread_checker_.CalledOnValidThread());

@@ -1,4 +1,4 @@
-// Copyright 2015 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2015 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -59,11 +59,9 @@ class Loader {
   void Suspend();
 
 
-//#if defined(ENABLE_COBALT_RENDER_TREE)
   // Resumes the load of this resource. Suspend must have been previously
   // called.
   void Resume(render_tree::ResourceProvider* resource_provider);
-//#endif // ENABLE_COBALT_RENDER_TREE
 
   bool DidFailFromTransientError() const;
 

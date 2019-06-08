@@ -1,4 +1,4 @@
-// Copyright 2015 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2015 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,10 +23,8 @@
 #include "cobalt/loader/fetcher_factory.h"
 #include "cobalt/media/media_module.h"
 
-//#if defined(ENABLE_COBALT_RENDER_TREE)
 #include "cobalt/render_tree/image.h"
 #include "cobalt/render_tree/resource_provider.h"
-//#endif
 
 namespace cobalt {
 namespace media {
@@ -34,10 +32,8 @@ namespace sandbox {
 
 class MediaSandbox {
  public:
-#if defined(ENABLE_COBALT_RENDER_TREE)
   typedef render_tree::Image Image;
   typedef base::Callback<scoped_refptr<Image>(const base::TimeDelta&)> FrameCB;
-#endif
 
   MediaSandbox(int argc, char** argv, const base::FilePath& trace_log_path);
   ~MediaSandbox();

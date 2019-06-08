@@ -1,4 +1,4 @@
-// Copyright 2015 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2015 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,9 +21,7 @@
 #include "base/optional.h"
 #include "cobalt/dom/url_utils.h"
 #include "cobalt/loader/loader_types.h"
-//#if defined(ENABLE_COBALT_RENDER_TREE)
 #include "cobalt/render_tree/resource_provider.h"
-//#endif
 
 #if defined(ENABLE_GNET)
 #include "net/http/http_response_headers.h"
@@ -78,10 +76,8 @@ class Decoder {
   // aborted.
   virtual bool Suspend() = 0;
 
-#if defined(ENABLE_COBALT_RENDER_TREE)
   // Resumes the decode of this resource, starting over from the zero state.
   virtual void Resume(render_tree::ResourceProvider* resource_provider) = 0;
-#endif
 
   // Provides textdecoder with last url to prevent security leak if resource is
   // cross-origin.
