@@ -1,4 +1,4 @@
-// Copyright 2012 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2012 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -286,10 +286,10 @@ bool ShellAVCParser::ParseSPS(const uint8* sps, size_t sps_size,
   // checks out, write output structure
   int visible_width = width - (crop_left + crop_right);
   int visible_height = height - (crop_top + crop_bottom);
-  record_out->coded_size = gfx::Size(width, height),
+  record_out->coded_size = cobalt::math::Size(width, height),
   record_out->visible_rect =
       gfx::Rect(crop_left, crop_top, visible_width, visible_height),
-  record_out->natural_size = gfx::Size(visible_width, visible_height);
+  record_out->natural_size = cobalt::math::Size(visible_width, visible_height);
   record_out->num_ref_frames = num_ref_frames;
   return true;
 }

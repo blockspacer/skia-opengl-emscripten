@@ -2623,6 +2623,9 @@ CobaltTester::CobaltTester()
       // //data.network_module->cookie_jar(),
       // //data.network_module->GetPostSender(),
       // //data.options.require_csp,
+#if defined(ENABLE_COBALT_CSP)
+      csp::CSPHeaderPolicy::kCSPOptional,
+#endif
       cobalt::dom::CspEnforcementType::kCspEnforcementDisable,
       ///csp::kCspEnforcementEnable,//data.options.csp_enforcement_mode,
       //base::Bind(&OnCspPolicyChanged, base::Unretained(this)),

@@ -1,4 +1,4 @@
-// Copyright (c) 2012 The Chromium Authors. All rights reserved.
+﻿// Copyright (c) 2012 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -92,13 +92,13 @@ void VideoDecoderConfig::Initialize(VideoCodec codec, VideoCodecProfile profile,
 
   switch (color_space) {
     case COLOR_SPACE_JPEG:
-      webm_color_metadata_.color_space = gfx::ColorSpace::CreateJpeg();
+      webm_color_metadata_.color_space = gfx::CbColorSpace::CreateJpeg();
       break;
     case COLOR_SPACE_HD_REC709:
-      webm_color_metadata_.color_space = gfx::ColorSpace::CreateREC709();
+      webm_color_metadata_.color_space = gfx::CbColorSpace::CreateREC709();
       break;
     case COLOR_SPACE_SD_REC601:
-      webm_color_metadata_.color_space = gfx::ColorSpace::CreateREC601();
+      webm_color_metadata_.color_space = gfx::CbColorSpace::CreateREC601();
       break;
     case COLOR_SPACE_UNSPECIFIED:
     default:

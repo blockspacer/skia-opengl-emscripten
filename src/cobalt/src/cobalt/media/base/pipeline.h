@@ -1,4 +1,4 @@
-// Copyright 2016 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2016 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -192,7 +192,7 @@ class MEDIA_EXPORT Pipeline : public base::RefCountedThreadSafe<Pipeline> {
   // Gets the natural size of the video output in pixel units.  If there is no
   // video or the video has not been rendered yet, the width and height will
   // be 0.
-  virtual void GetNaturalVideoSize(gfx::Size* out_size) const = 0;
+  virtual void GetNaturalVideoSize(cobalt::math::Size* out_size) const = 0;
 
   // Return true if loading progress has been made since the last time this
   // method was called.

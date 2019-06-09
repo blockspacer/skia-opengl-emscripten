@@ -1,4 +1,4 @@
-// Copyright 2012 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2012 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -394,7 +394,8 @@ void ShellDemuxer::AllocateBuffer() {
         total_buffer_count > progressive_buffer_count_cap) {
       // Retry after 100 milliseconds.
       const base::TimeDelta kDelay = base::TimeDelta::FromMilliseconds(100);
-      blocking_thread_.message_loop()->task_runner()->PostDelayedTask(
+      //blocking_thread_.message_loop()->task_runner()->PostDelayedTask(
+      blocking_thread_.task_runner()->PostDelayedTask(
           FROM_HERE,
           base::Bind(&ShellDemuxer::AllocateBuffer, base::Unretained(this)),
           kDelay);
@@ -412,7 +413,8 @@ void ShellDemuxer::AllocateBuffer() {
       // As the buffer is full of media data, it is safe to delay 100
       // milliseconds.
       const base::TimeDelta kDelay = base::TimeDelta::FromMilliseconds(100);
-      blocking_thread_.message_loop()->task_runner()->PostDelayedTask(
+      blocking_thread_.task_runner()->PostDelayedTask(
+      //blocking_thread_.message_loop()->task_runner()->PostDelayedTask(
           FROM_HERE,
           base::Bind(&ShellDemuxer::AllocateBuffer, base::Unretained(this)),
           kDelay);
@@ -564,7 +566,8 @@ bool ShellDemuxer::HasStopCalled() {
 }
 
 void ShellDemuxer::Seek(base::TimeDelta time, const PipelineStatusCB& cb) {
-  blocking_thread_.message_loop()->task_runner()->PostTask(
+  //blocking_thread_.message_loop()->task_runner()->PostTask(
+  blocking_thread_.task_runner()->PostTask(
       FROM_HERE, base::Bind(&ShellDemuxer::SeekTask, base::Unretained(this),
                             time, BindToCurrentLoop(cb)));
 }

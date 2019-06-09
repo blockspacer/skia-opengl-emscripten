@@ -593,61 +593,60 @@ if(TARGET_EMSCRIPTEN)
 elseif(TARGET_LINUX)
   message(INFO "building skia for LINUX")
 
-    # seem to be always required...
-    #ADD_SKIA_LIBRARY_DEPENDENCY("dl")
-    set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${libDL_LIB}" PARENT_SCOPE)
+  # seem to be always required...
+  #ADD_SKIA_LIBRARY_DEPENDENCY("dl")
+  set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${libDL_LIB}" PARENT_SCOPE)
 
-    #ADD_SKIA_LIBRARY_DEPENDENCY("icuuc") # skia_use_system_icu
+  #ADD_SKIA_LIBRARY_DEPENDENCY("icuuc") # skia_use_system_icu
 
-    #ADD_SKIA_LIBRARY_DEPENDENCY("expat") #skia_use_system_expat
-    find_package(EXPAT REQUIRED)
-    set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};EXPAT::EXPAT" PARENT_SCOPE)
+  #ADD_SKIA_LIBRARY_DEPENDENCY("expat") #skia_use_system_expat
+  find_package(EXPAT REQUIRED)
+  set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};EXPAT::EXPAT" PARENT_SCOPE)
 
-    ADD_SKIA_LIBRARY_DEPENDENCY(${EXT_SKIA_USE_FONTCONFIG} "fontconfig") # skia_use_fontconfig
-    ADD_SKIA_LIBRARY_DEPENDENCY(${EXT_SKIA_USE_FREETYPE2} "freetype") # skia_use_system_freetype2
+  ADD_SKIA_LIBRARY_DEPENDENCY(${EXT_SKIA_USE_FONTCONFIG} "fontconfig") # skia_use_fontconfig
+  ADD_SKIA_LIBRARY_DEPENDENCY(${EXT_SKIA_USE_FREETYPE2} "freetype") # skia_use_system_freetype2
 
-    # see HARFBUZZ_LIBRARIES
-    #if(FORCE_USE_SKIA_HARFBUZZ)
-    #  ADD_SKIA_LIBRARY_DEPENDENCY("harfbuzz")
-    #endif(FORCE_USE_SKIA_HARFBUZZ)
+  # see HARFBUZZ_LIBRARIES
+  #if(FORCE_USE_SKIA_HARFBUZZ)
+  #  ADD_SKIA_LIBRARY_DEPENDENCY("harfbuzz")
+  #endif(FORCE_USE_SKIA_HARFBUZZ)
 
-    #ADD_SKIA_LIBRARY_DEPENDENCY("jpeg") # skia_use_system_libjpeg_turbo
+  #ADD_SKIA_LIBRARY_DEPENDENCY("jpeg") # skia_use_system_libjpeg_turbo
 
-    #ADD_SKIA_LIBRARY_DEPENDENCY(${EXT_SKIA_USE_SYSTEM_ZLIB} "z") # skia_use_system_zlib
-    find_package(ZLIB REQUIRED)
-    set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${libZLIB_LIB}" PARENT_SCOPE)
+  #ADD_SKIA_LIBRARY_DEPENDENCY(${EXT_SKIA_USE_SYSTEM_ZLIB} "z") # skia_use_system_zlib
+  find_package(ZLIB REQUIRED)
+  set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${libZLIB_LIB}" PARENT_SCOPE)
 
-    # NOTE: libjpeg_turbo requires libjpeg
-    #set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${libjpeg_LIB}" PARENT_SCOPE)
+  # NOTE: libjpeg_turbo requires libjpeg
+  #set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${libjpeg_LIB}" PARENT_SCOPE)
 
-    # NOTE: libjpeg_turbo requires libjpeg
-    set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${libjpeg_TURBO_LIB}" PARENT_SCOPE)
+  # NOTE: libjpeg_turbo requires libjpeg
+  set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${libjpeg_TURBO_LIB}" PARENT_SCOPE)
 
-    #ADD_SKIA_LIBRARY_DEPENDENCY("png") # skia_use_system_libpng
-    #find_package(PNG REQUIRED)
-    # none of the above will be defined unless ZLib can be found!
-    #PNG_INCLUDE_DIRS, where to find png.h, etc.
-    #PNG_LIBRARIES, the libraries to link against to use PNG.
-    #PNG_DEFINITIONS - You should add_definitons(${PNG_DEFINITIONS}) before compiling code that includes png library files.
-    #PNG_FOUND, If false, do not try to use PNG.
-    #PNG_VERSION_STRING - the version of the PNG library found (since CMake 2.8.8)
-    #set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};PNG::PNG" PARENT_SCOPE)
-    #
-    # TODO: Linking globals named 'png_sRGB_table': symbol multiply defined!
-    #set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${libpng_LIB}" PARENT_SCOPE)
+  #ADD_SKIA_LIBRARY_DEPENDENCY("png") # skia_use_system_libpng
+  #find_package(PNG REQUIRED)
+  # none of the above will be defined unless ZLib can be found!
+  #PNG_INCLUDE_DIRS, where to find png.h, etc.
+  #PNG_LIBRARIES, the libraries to link against to use PNG.
+  #PNG_DEFINITIONS - You should add_definitons(${PNG_DEFINITIONS}) before compiling code that includes png library files.
+  #PNG_FOUND, If false, do not try to use PNG.
+  #PNG_VERSION_STRING - the version of the PNG library found (since CMake 2.8.8)
+  #set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};PNG::PNG" PARENT_SCOPE)
+  #
+  # TODO: Linking globals named 'png_sRGB_table': symbol multiply defined!
+  #set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${libpng_LIB}" PARENT_SCOPE)
 
-    if(USE_CUSTOM_ICU)
-      set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${CUSTOM_ICU_LIB};${HARFBUZZ_LIBRARIES}" PARENT_SCOPE)
-    endif(USE_CUSTOM_ICU)
+  if(USE_CUSTOM_ICU)
+    set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${CUSTOM_ICU_LIB};${HARFBUZZ_LIBRARIES}" PARENT_SCOPE)
+  endif(USE_CUSTOM_ICU)
 
-    # TODO: Linking globals named 'png_sRGB_table': symbol multiply defined!
-    #list(APPEND SKIA_DEFINES ${PNG_DEFINITIONS})
-    #message("SKIA_DEFINES=${SKIA_DEFINES}")
+  # TODO: Linking globals named 'png_sRGB_table': symbol multiply defined!
+  #list(APPEND SKIA_DEFINES ${PNG_DEFINITIONS})
+  #message("SKIA_DEFINES=${SKIA_DEFINES}")
 
-    # webp integration doesn't expose the system option...
-    #ADD_SKIA_LIBRARY_DEPENDENCY("webp") # SK_CONF_IS_OFFICIAL_BUILD && skia_use_libwebp
-
-  endif (NOT EXT_SKIA_SHARED)
+  # webp integration doesn't expose the system option...
+  #ADD_SKIA_LIBRARY_DEPENDENCY("webp") # SK_CONF_IS_OFFICIAL_BUILD && skia_use_libwebp
+endif()
 
   set(SKIA_CMAKE_ONLY_HEADERS "${SKIA_CMAKE_ONLY_HEADERS};${HARFBUZZ_INCLUDE_DIRS};${OPENGL_INCLUDE_DIR};${OPENGL_EGL_INCLUDE_DIRS}")
   set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${HARFBUZZ_LIBRARIES};${OPENGL_LIBRARIES}")

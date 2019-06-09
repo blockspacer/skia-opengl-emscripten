@@ -215,7 +215,11 @@ if(ENABLE_HARFBUZZ)
   endif(USE_CUSTOM_HARFBUZZ)
 endif(ENABLE_HARFBUZZ)
 
-set(ENABLE_BORINGSSL FALSE)
+if(TARGET_EMSCRIPTEN)
+  set(ENABLE_BORINGSSL FALSE) # keep wasm build as small as possible
+else()
+  set(ENABLE_BORINGSSL TRUE)
+endif()
 if(ENABLE_BORINGSSL)
   set(COMMON_FLAGS "${COMMON_FLAGS} -DENABLE_BORINGSSL=1")
   set(BORINGSSL_LIBS
@@ -223,7 +227,11 @@ if(ENABLE_BORINGSSL)
   )
 endif(ENABLE_BORINGSSL)
 
-set(ENABLE_GNET FALSE)
+if(TARGET_EMSCRIPTEN)
+  set(ENABLE_GNET FALSE) # keep wasm build as small as possible
+else()
+  set(ENABLE_GNET TRUE)
+endif()
 if(ENABLE_GNET)
   set(COMMON_FLAGS "${COMMON_FLAGS} -DENABLE_GNET=1")
   #set(COMMON_FLAGS "${COMMON_FLAGS} -DENABLE_NET=1")
@@ -371,12 +379,20 @@ set(ENABLE_SIMD FALSE)
 set(ENABLE_WEB_PTHREADS TRUE)
 #set(ENABLE_WEB_PTHREADS FALSE)
 
-set(ENABLE_UKM FALSE)
+if(TARGET_EMSCRIPTEN)
+  set(ENABLE_UKM FALSE) # keep wasm build as small as possible
+else()
+  set(ENABLE_UKM TRUE)
+endif()
 if(ENABLE_UKM)
   set(COMMON_FLAGS "${COMMON_FLAGS} -DENABLE_UKM=1")
 endif(ENABLE_UKM)
 
-set(ENABLE_GIPC TRUE)
+if(TARGET_EMSCRIPTEN)
+  set(ENABLE_GIPC FALSE) # keep wasm build as small as possible
+else()
+  set(ENABLE_GIPC TRUE)
+endif()
 if(ENABLE_GIPC)
   set(COMMON_FLAGS "${COMMON_FLAGS} -DENABLE_GIPC=1")
   set(COMMON_FLAGS "${COMMON_FLAGS} -DENABLE_MOJO_IPC=1") # TODO
@@ -685,7 +701,11 @@ if(ENABLE_COBALT)
   #endif()
 
   #cobalt_csp
-  set(ENABLE_COBALT_CSP FALSE)
+  if(TARGET_EMSCRIPTEN)
+    set(ENABLE_COBALT_CSP FALSE) # keep wasm build as small as possible
+  else()
+    set(ENABLE_COBALT_CSP TRUE)
+  endif()
   if(ENABLE_COBALT_CSP)
     set(COMMON_FLAGS "${COMMON_FLAGS} -DENABLE_COBALT_CSP=1")
     set(COBALT_CSP_LIB_NAME
@@ -1459,7 +1479,11 @@ else(EMSCRIPTEN)
   set(COMMON_FLAGS "${COMMON_FLAGS} ${DEBUG_LEVEL}")
 
   ### Find Libraries
-  set(USE_OPENGL_LIB FALSE)
+  if(TARGET_EMSCRIPTEN)
+    set(USE_OPENGL_LIB FALSE) # no system OPENGL for wasm
+  else()
+    set(USE_OPENGL_LIB TRUE)
+  endif()
   find_package(OpenGL REQUIRED)
   if(OPENGL_FOUND)
     message("OPENGL_LIBRARIES = ${OPENGL_LIBRARIES} ")
@@ -1467,7 +1491,11 @@ else(EMSCRIPTEN)
     set(USE_OPENGL_LIB TRUE)
   endif()
 
-  set(USE_OPENGLES2_LIB FALSE)
+  if(TARGET_EMSCRIPTEN)
+    set(USE_OPENGLES2_LIB FALSE) # no system OPENGLES for wasm
+  else()
+    set(USE_OPENGLES2_LIB TRUE)
+  endif()
   find_package(OpenGLES2 REQUIRED)
   if(OPENGLES2_FOUND)
     message("OPENGLES2_DEFINITIONS = ${OPENGLES2_DEFINITIONS} ")

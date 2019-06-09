@@ -1,4 +1,4 @@
-// Copyright 2012 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2012 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -38,9 +38,9 @@ class ShellAVCParser : public ShellParser {
   virtual ~ShellAVCParser();
 
   struct ShellSPSRecord {
-    gfx::Size coded_size;
+    cobalt::math::Size coded_size;
     gfx::Rect visible_rect;
-    gfx::Size natural_size;
+    cobalt::math::Size natural_size;
     uint32 num_ref_frames;
   };
   static bool ParseSPS(const uint8* sps, size_t sps_size,

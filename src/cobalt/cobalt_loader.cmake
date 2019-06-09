@@ -69,6 +69,7 @@ set(cobalt_loader_SOURCES
   ${COBALT_CORE_DIR}loader/cobalt_url_fetcher_string_writer.h
   ${COBALT_CORE_DIR}loader/cache_fetcher.cc
   ${COBALT_CORE_DIR}loader/cache_fetcher.h
+  # requires cobalt/network/network_module.h
   ${COBALT_CORE_DIR}loader/cors_preflight.cc
   ${COBALT_CORE_DIR}loader/cors_preflight.h
   ${COBALT_CORE_DIR}loader/cors_preflight_cache.cc
