@@ -1,4 +1,4 @@
-// Copyright 2015 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2015 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -86,8 +86,10 @@ FileFetcher::FileFetcher(const base::FilePath& file_path, Handler* handler,
       file_proxy_(task_runner_.get()) {
   DCHECK_GT(buffer_size_, 0);
 
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   DCHECK(base::MessageLoopCurrent::Get()); // TODO
   DCHECK(task_runner_); // TODO
+#endif
 
   // Ensure the request does not attempt to navigate outside the whitelisted
   // directory.

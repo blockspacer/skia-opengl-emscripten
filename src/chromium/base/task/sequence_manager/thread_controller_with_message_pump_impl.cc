@@ -1,4 +1,4 @@
-// Copyright 2018 The Chromium Authors. All rights reserved.
+﻿// Copyright 2018 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -48,7 +48,9 @@ ThreadControllerWithMessagePumpImpl::ThreadControllerWithMessagePumpImpl(
     std::unique_ptr<MessagePump> message_pump,
     const SequenceManager::Settings& settings)
     : ThreadControllerWithMessagePumpImpl(settings) {
+//#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   BindToCurrentThread(std::move(message_pump));
+//#endif
 }
 
 ThreadControllerWithMessagePumpImpl::~ThreadControllerWithMessagePumpImpl() {
@@ -73,13 +75,17 @@ ThreadControllerWithMessagePumpImpl::MainThreadOnly::~MainThreadOnly() =
 void ThreadControllerWithMessagePumpImpl::SetSequencedTaskSource(
     SequencedTaskSource* task_source) {
   DCHECK(task_source);
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   DCHECK(!main_thread_only().task_source);
+#endif
   main_thread_only().task_source = task_source;
 }
 
 void ThreadControllerWithMessagePumpImpl::BindToCurrentThread(
     std::unique_ptr<MessagePump> message_pump) {
+  DCHECK(associated_thread_);
   associated_thread_->BindToCurrentThread();
+//#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   pump_ = std::move(message_pump);
   work_id_provider_ = WorkIdProvider::GetForCurrentThread();
   RunLoop::RegisterDelegateForCurrentThread(this);
@@ -95,6 +101,7 @@ void ThreadControllerWithMessagePumpImpl::BindToCurrentThread(
       ShouldScheduleWork::kScheduleImmediate) {
     pump_->ScheduleWork();
   }
+//#endif
 }
 
 void ThreadControllerWithMessagePumpImpl::SetWorkBatchSize(
@@ -106,7 +113,9 @@ void ThreadControllerWithMessagePumpImpl::SetWorkBatchSize(
 void ThreadControllerWithMessagePumpImpl::SetTimerSlack(
     TimerSlack timer_slack) {
   DCHECK(RunsTasksInCurrentSequence());
+//#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   pump_->SetTimerSlack(timer_slack);
+//#endif
 }
 
 void ThreadControllerWithMessagePumpImpl::WillQueueTask(
@@ -137,6 +146,7 @@ void ThreadControllerWithMessagePumpImpl::SetNextDelayedDoWork(
   main_thread_only().next_delayed_do_work = run_time;
   run_time = CapAtOneDay(run_time, lazy_now);
 
+//#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   // It's very rare for PostDelayedTask to be called outside of a Do(Some)Work
   // in production, so most of the time this does nothing.
   if (work_deduplicator_.OnDelayedWorkRequested() ==
@@ -146,6 +156,7 @@ void ThreadControllerWithMessagePumpImpl::SetNextDelayedDoWork(
     // task.
     pump_->ScheduleDelayedWork(run_time);
   }
+//#endif
 }
 
 const TickClock* ThreadControllerWithMessagePumpImpl::GetClock() {
@@ -153,11 +164,13 @@ const TickClock* ThreadControllerWithMessagePumpImpl::GetClock() {
 }
 
 bool ThreadControllerWithMessagePumpImpl::RunsTasksInCurrentSequence() {
+  DCHECK(associated_thread_);
   return associated_thread_->IsBoundToCurrentThread();
 }
 
 void ThreadControllerWithMessagePumpImpl::SetDefaultTaskRunner(
     scoped_refptr<SingleThreadTaskRunner> task_runner) {
+  DCHECK(associated_thread_);
   base::internal::CheckedAutoLock lock(task_runner_lock_);
   task_runner_ = task_runner;
   if (associated_thread_->IsBound()) {
@@ -188,7 +201,9 @@ void ThreadControllerWithMessagePumpImpl::RestoreDefaultTaskRunner() {
 
 void ThreadControllerWithMessagePumpImpl::AddNestingObserver(
     RunLoop::NestingObserver* observer) {
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   DCHECK(!main_thread_only().nesting_observer);
+#endif
   DCHECK(observer);
   main_thread_only().nesting_observer = observer;
   RunLoop::AddNestingObserverOnCurrentThread(this);
@@ -203,6 +218,7 @@ void ThreadControllerWithMessagePumpImpl::RemoveNestingObserver(
 
 const scoped_refptr<AssociatedThreadId>&
 ThreadControllerWithMessagePumpImpl::GetAssociatedThread() const {
+  DCHECK(associated_thread_);
   return associated_thread_;
 }
 
@@ -318,11 +334,13 @@ bool ThreadControllerWithMessagePumpImpl::DoDelayedWork(
     *next_run_time = TimeTicks();
   }
 
+//#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   // Figure out if we need to post an immediate continuation.
   if (work_deduplicator_.OnDelayedWorkEnded(next_task) ==
       ShouldScheduleWork::kScheduleImmediate) {
     pump_->ScheduleWork();
   }
+//#endif
 
   return ran_task;
 }
@@ -413,6 +431,7 @@ bool ThreadControllerWithMessagePumpImpl::DoIdleWork() {
   }
 #endif  // defined(OS_WIN)
 
+//#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   if (main_thread_only().task_source->OnSystemIdle()) {
     // The OnSystemIdle() callback resulted in more immediate work, so schedule
     // a DoWork callback. For some message pumps returning true from here is
@@ -420,7 +439,9 @@ bool ThreadControllerWithMessagePumpImpl::DoIdleWork() {
     pump_->ScheduleWork();
     return false;
   }
+//#endif
 
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   // Check if any runloop timeout has expired.
   if (main_thread_only().quit_runloop_after != TimeTicks::Max() &&
       main_thread_only().quit_runloop_after <= time_source_->NowTicks()) {
@@ -431,6 +452,7 @@ bool ThreadControllerWithMessagePumpImpl::DoIdleWork() {
   // RunLoop::Delegate knows whether we called Run() or RunUntilIdle().
   if (ShouldQuitWhenIdle())
     Quit();
+#endif
 
   return false;
 }
@@ -451,6 +473,7 @@ void ThreadControllerWithMessagePumpImpl::Run(bool application_tasks_allowed,
   AutoReset<bool> quit_when_idle_requested(&quit_when_idle_requested_, false);
 #endif
 
+//#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   // Quit may have been called outside of a Run(), so |quit_pending| might be
   // true here. We can't use InTopLevelDoWork() in Quit() as this call may be
   // outside top-level DoWork but still in Run().
@@ -465,7 +488,9 @@ void ThreadControllerWithMessagePumpImpl::Run(bool application_tasks_allowed,
   } else {
     pump_->Run(this);
   }
+//#endif
 
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
 #if DCHECK_IS_ON()
   if (log_runloop_quit_and_quit_when_idle_)
     DVLOG(1) << "ThreadControllerWithMessagePumpImpl::Quit";
@@ -473,6 +498,7 @@ void ThreadControllerWithMessagePumpImpl::Run(bool application_tasks_allowed,
 
   main_thread_only().runloop_count--;
   main_thread_only().quit_pending = false;
+#endif
 }
 
 void ThreadControllerWithMessagePumpImpl::OnBeginNestedRunLoop() {
@@ -489,18 +515,22 @@ void ThreadControllerWithMessagePumpImpl::OnExitNestedRunLoop() {
 }
 
 void ThreadControllerWithMessagePumpImpl::Quit() {
+//#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   DCHECK(RunsTasksInCurrentSequence());
   // Interrupt a batch of work.
   main_thread_only().quit_pending = true;
 
   // If we're in a nested RunLoop, continuation will be posted if necessary.
   pump_->Quit();
+//#endif
 }
 
 void ThreadControllerWithMessagePumpImpl::EnsureWorkScheduled() {
+//#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   if (work_deduplicator_.OnWorkRequested() ==
       ShouldScheduleWork::kScheduleImmediate)
     pump_->ScheduleWork();
+//#endif
 }
 
 void ThreadControllerWithMessagePumpImpl::SetTaskExecutionAllowed(
@@ -510,7 +540,9 @@ void ThreadControllerWithMessagePumpImpl::SetTaskExecutionAllowed(
     // enter an OS level nested message loop. Unlike a RunLoop().Run() we don't
     // get a call to Do(Some)Work on entering for free.
     work_deduplicator_.OnWorkRequested();  // Set the pending DoWork flag.
+//#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
     pump_->ScheduleWork();
+//#endif
   } else {
     // We've (probably) just left an OS level nested message loop. Make sure a
     // subsequent PostTask within the same Task doesn't ScheduleWork with the

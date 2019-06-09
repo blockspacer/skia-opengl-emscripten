@@ -576,7 +576,8 @@ void Document::DecreaseLoadingCounterAndMaybeDispatchLoadEvent() {
   if (loading_counter_ == 0 && should_dispatch_load_event_) {
     should_dispatch_load_event_ = false;
     // TODO https://github.com/emscripten-core/emscripten/issues/6843
-#if(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+    P_LOG("DecreaseLoadingCounterAndMaybeDispatchLoadEvent 1.1\n");
   std::move(base::Bind(&Document::DispatchOnLoadEvent,
                        base::AsWeakPtr<Document>(this))).Run();
 #else
@@ -759,18 +760,25 @@ void ClearAddedToSelectorTreeFromCSSStyleSheetRules(
 }  // namespace
 
 void Document::UpdateComputedStyles() {
+  P_LOG("Document::UpdateComputedStyles() 1\n");
   TRACE_EVENT0("cobalt::dom", "Document::UpdateComputedStyles()");
 
   UpdateSelectorTree();
   UpdateKeyframes();
   UpdateFontFaces();
 
+  P_LOG("Document::UpdateComputedStyles() 2\n");
+  DCHECK(html_element_context_);
+
   if (is_computed_style_dirty_) {
     TRACE_EVENT0("cobalt::layout", kBenchmarkStatUpdateComputedStyles);
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
     base::StopWatch stop_watch_update_compute_style(
         DomStatTracker::kStopWatchTypeUpdateComputedStyle,
         base::StopWatch::kAutoStartOn,
         html_element_context_->dom_stat_tracker());
+#endif
+    P_LOG("Document::UpdateComputedStyles() 2.1\n");
 
     // Determine the official time that this style change event took place. This
     // is needed (as opposed to repeatedly calling base::Time::Now()) because
@@ -780,16 +788,24 @@ void Document::UpdateComputedStyles() {
     base::TimeDelta style_change_event_time =
         base::TimeDelta::FromMillisecondsD(*default_timeline_->current_time());
 
+    P_LOG("Document::UpdateComputedStyles() 2.2\n");
+
     scoped_refptr<HTMLElement> root = html();
     if (root) {
+      P_LOG("Document::UpdateComputedStyles() 2.3\n");
+
       DCHECK_EQ(this, root->parent_node());
       // First, update the matching rules for all elements.
       root->UpdateMatchingRulesRecursively();
+
+      P_LOG("Document::UpdateComputedStyles() 2.4\n");
 
       // Then, update the computed style for the root element.
       root->UpdateComputedStyle(
           initial_computed_style_declaration_, initial_computed_style_data_,
           style_change_event_time, HTMLElement::kAncestorsAreDisplayed);
+
+      P_LOG("Document::UpdateComputedStyles() 2.5\n");
 
       // Finally, update the computed styles for the other elements.
       root->UpdateComputedStyleRecursively(
@@ -799,6 +815,7 @@ void Document::UpdateComputedStyles() {
 
     is_computed_style_dirty_ = false;
   }
+  P_LOG("Document::UpdateComputedStyles() 3\n");
 }
 
 bool Document::UpdateComputedStyleOnElementAndAncestor(HTMLElement* element) {
@@ -1050,6 +1067,7 @@ void Document::OnRootElementUnableToProvideOffsetDimensions() {
 }
 
 void Document::DispatchOnLoadEvent() {
+  P_LOG("Document::DispatchOnLoadEvent() 1\n");
   TRACE_EVENT0("cobalt::dom", "Document::DispatchOnLoadEvent()");
 
   if (HasBrowsingContext()) {
@@ -1061,6 +1079,7 @@ void Document::DispatchOnLoadEvent() {
     SampleTimelineTime();
     UpdateComputedStyles();
   }
+  P_LOG("Document::DispatchOnLoadEvent() 2\n");
 
   // Adjust the document ready state to reflect the fact that the document has
   // finished loading.  Performing this update and firing the readystatechange
@@ -1073,10 +1092,12 @@ void Document::DispatchOnLoadEvent() {
 
   // Dispatch the document's onload event.
   DispatchEvent(new Event(base::Tokens::load()));
+  P_LOG("Document::DispatchOnLoadEvent() 3\n");
 
   // After all JavaScript OnLoad event handlers have executed, signal to let
   // any Document observers know that a load event has occurred.
   SignalOnLoadToObservers();
+  P_LOG("Document::DispatchOnLoadEvent() 4\n");
 }
 
 void Document::UpdateStyleSheets() {

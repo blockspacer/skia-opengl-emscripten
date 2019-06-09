@@ -27,14 +27,19 @@
 #include "base/win/scoped_com_initializer.h"
 #endif
 
+#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+/// \note only single thread = only one message loop
+static std::unique_ptr<base::MessageLoop> g_message_loop;
+#endif
+
+#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+/// \note only one main thread = only one run loop
+static base::RunLoop* run_loop;
+#endif
+
 namespace base {
 
 namespace {
-
-#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
-  // only one main thread = only one run loop
-  static RunLoop* run_loop;
-#endif
 
 // We use this thread-local variable to record whether or not a thread exited
 // because its Stop method was called.  This allows us to catch cases where
@@ -85,6 +90,10 @@ options.message_loop_type = MessageLoop::TYPE_DEFAULT;
   return StartWithOptions(options);
 }
 
+#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+static bool hasPlatformThread = false;
+#endif
+
 bool Thread::StartWithOptions(const Options& options) {
   DCHECK(owning_sequence_checker_.CalledOnValidSequence());
   DCHECK(!task_environment_);
@@ -104,6 +113,7 @@ bool Thread::StartWithOptions(const Options& options) {
 
   timer_slack_ = options.timer_slack;
 
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   if (options.task_environment) {
     DCHECK(!options.message_pump_factory);
     task_environment_ = WrapUnique(options.task_environment);
@@ -114,12 +124,22 @@ bool Thread::StartWithOptions(const Options& options) {
     task_environment_ = std::make_unique<internal::MessageLoopTaskEnvironment>(
         MessageLoop::CreateUnbound(options.message_loop_type));
   }
-
+#else
+  if(!g_message_loop) {
+      g_message_loop = MessageLoop::CreateUnbound(MessageLoop::TYPE_DEFAULT);
+  }
+  if(!task_environment_) {
+      task_environment_ = std::make_unique<internal::MessageLoopTaskEnvironment>(
+          //std::move(g_message_loop));
+          nullptr);
+  }
+#endif
 /*#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
   return false;
 #else*/
   start_event_.Reset();
 
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   // Hold |thread_lock_| while starting the new thread to synchronize with
   // Stop() while it's not guaranteed to be sequenced (until crbug/629139 is
   // fixed).
@@ -138,6 +158,24 @@ bool Thread::StartWithOptions(const Options& options) {
   }
 
   joinable_ = options.joinable;
+#else
+  if(!hasPlatformThread) {
+    hasPlatformThread = true;
+    AutoLock lock(thread_lock_);
+    bool success =
+        options.joinable
+        ? PlatformThread::CreateWithPriority(options.stack_size, this,
+                                             &thread_, options.priority)
+        : PlatformThread::CreateNonJoinableWithPriority(
+              options.stack_size, this, options.priority);
+    if (!success) {
+        DLOG(ERROR) << "failed to create thread";
+        return false;
+    }
+  }
+
+  joinable_ = options.joinable;
+#endif
 
   return true;
 //#endif
@@ -326,8 +364,10 @@ void Thread::ThreadMain() {
   DCHECK(task_environment_);
   // This binds MessageLoopCurrent and ThreadTaskRunnerHandle.
   task_environment_->BindToCurrentThread(timer_slack_);
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   DCHECK(MessageLoopCurrent::Get());
   DCHECK(ThreadTaskRunnerHandle::IsSet());
+#endif
 
 #if defined(OS_POSIX) && !defined(OS_NACL) && !defined(OS_EMSCRIPTEN)
   // Allow threads running a MessageLoopForIO to use FileDescriptorWatcher API.
@@ -369,9 +409,7 @@ void Thread::ThreadMain() {
 
   Run(run_loop_);
 
-#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
-  // nothing
-#else
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   {
     AutoLock lock(running_lock_);
     running_ = false;
@@ -403,27 +441,39 @@ void Thread::ThreadQuitHelper() {
 
 namespace internal {
 
+//#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
 MessageLoopTaskEnvironment::MessageLoopTaskEnvironment(
     std::unique_ptr<MessageLoop> message_loop)
-    : message_loop_(std::move(message_loop)) {}
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+    : message_loop_(std::move(message_loop))
+#endif
+     {}
 
 MessageLoopTaskEnvironment::~MessageLoopTaskEnvironment() {}
 
 scoped_refptr<SingleThreadTaskRunner>
 MessageLoopTaskEnvironment::GetDefaultTaskRunner() {
-#if defined(OS_EMSCRIPTEN)
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
     DCHECK(message_loop_);
+    return message_loop_->task_runner();
+#else
+    DCHECK(g_message_loop);
+    return g_message_loop->task_runner();
 #endif
-  return message_loop_->task_runner();
 }
 
 void MessageLoopTaskEnvironment::BindToCurrentThread(TimerSlack timer_slack) {
-#if defined(OS_EMSCRIPTEN)
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
     DCHECK(message_loop_);
+    message_loop_->BindToCurrentThread();
+    message_loop_->SetTimerSlack(timer_slack);
+#else
+    DCHECK(g_message_loop);
+    g_message_loop->BindToCurrentThread();
+    g_message_loop->SetTimerSlack(timer_slack);
 #endif
-  message_loop_->BindToCurrentThread();
-  message_loop_->SetTimerSlack(timer_slack);
 }
+//#endif
 
 }  // namespace internal
 

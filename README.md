@@ -815,3 +815,6 @@ https://www.reddit.com/r/Unity3D/comments/4ochm9/memory_settings_for_webgl_conte
 
 > upload_unicode_char_to_texture
   https://github.com/juj/tiny_chess/blob/master/src/library_unicode.js
+
+> emscripten_async_wget2
+  https://github.com/openframeworks/openFrameworks/blob/master/addons/ofxEmscripten/src/ofxEmscriptenURLFileLoader.cpp#L41

@@ -2479,29 +2479,22 @@ CobaltTester::CobaltTester()
       script::ScriptRunner::CreateScriptRunner(global_environment_);
   DCHECK(script_runner_);
 
-  html_element_context_.reset(new cobalt::dom::HTMLElementContext(
-        //&fetcher_factory_, &loader_factory_, &stub_css_parser_,
-        fetcher_factory_.get(), loader_factory_.get(), css_parser_.get(),
-        dom_parser_.get(), NULL ,
-        //NULL , &stub_script_runner_,
-        NULL , script_runner_.get(),
-        NULL , NULL, NULL, NULL, NULL, NULL, NULL,
-        NULL, dom_stat_tracker_.get(), "",
-        base::kApplicationStateStarted,
-        NULL));
 
-  document_ = (new cobalt::dom::Document(html_element_context_.get()));
-  root_ = (new cobalt::dom::Element(document_.get(),
-  base::CobToken("element")));
+  /*std::unique_ptr<CanPlayTypeHandler> can_play_type_handler_ = cobalt::media::MediaModule::CreateCanPlayTypeHandler();*/
+
+  can_play_type_handler_ = cobalt::media::MediaModule::CreateCanPlayTypeHandler();
+
+  media_source_registry_.reset(new dom::MediaSource::Registry);
+
+  animated_image_tracker_.reset(new loader::image::AnimatedImageTracker(
+      base::ThreadPriority::BACKGROUND));
+
   /*source_location_.reset(
   new base::SourceLocation("[object HTMLDecoderTest]", 1, 1));*/
 
   loader_factory_.reset(
       new loader::LoaderFactory(fetcher_factory_.get(), resource_provider_,
                                 /*data.options.loader_thread_priority*/ base::ThreadPriority::NORMAL));
-
-  animated_image_tracker_.reset(new loader::image::AnimatedImageTracker(
-      base::ThreadPriority::BACKGROUND));
 
   //DCHECK_LE(0, data.options.image_cache_capacity);
   image_cache_ = loader::image::CreateImageCache(
@@ -2529,6 +2522,40 @@ CobaltTester::CobaltTester()
       loader_factory_.get());
   DCHECK(mesh_cache_);
 
+  /*
+      loader::FetcherFactory* fetcher_factory,
+      loader::LoaderFactory* loader_factory, cssom::CSSParser* css_parser,
+      Parser* dom_parser, media::CanPlayTypeHandler* can_play_type_handler,
+      media::WebMediaPlayerFactory* web_media_player_factory,
+      script::ScriptRunner* script_runner,
+      script::ScriptValueFactory* script_value_factory,
+      MediaSourceRegistry* media_source_registry,
+      render_tree::ResourceProvider** resource_provider,
+      loader::image::AnimatedImageTracker* animated_image_tracker,
+      loader::image::ImageCache* image_cache,
+      loader::image::ReducedCacheCapacityManager*
+          reduced_image_cache_capacity_manager,
+      loader::font::RemoteTypefaceCache* remote_typeface_cache,
+      loader::mesh::MeshCache* mesh_cache, DomStatTracker* dom_stat_tracker,
+      const std::string& font_language_script,
+      base::ApplicationState initial_application_state,
+      base::WaitableEvent* synchronous_loader_interrupt,
+      float video_playback_rate_multiplier = 1.0);
+   */
+   P_LOG("Create html_element_context_...\n");
+   html_element_context_.reset(new cobalt::dom::HTMLElementContext(
+        //&fetcher_factory_, &loader_factory_, &stub_css_parser_,
+        fetcher_factory_.get(), loader_factory_.get(), css_parser_.get(),
+        dom_parser_.get(), can_play_type_handler_.get() ,
+        //NULL , &stub_script_runner_,
+        NULL , script_runner_.get(),
+        NULL , media_source_registry_.get(), &resource_provider_,
+        animated_image_tracker_.get(), image_cache_.get(),
+        reduced_image_cache_capacity_manager_.get(), remote_typeface_cache_.get(),
+        mesh_cache_.get(), dom_stat_tracker_.get(), "font_language_script",
+        base::kApplicationStateStarted,
+        &synchronous_loader_interrupt_));
+
   local_storage_database_.reset(
       //new dom::LocalStorageDatabase(data.network_module->storage_manager()));
       new dom::LocalStorageDatabase(nullptr));
@@ -2537,8 +2564,6 @@ CobaltTester::CobaltTester()
   /*web_module_stat_tracker_.reset(
       new browser::WebModuleStatTracker(name_, data.options.track_event_stats));
   DCHECK(web_module_stat_tracker_);*/
-
-  media_source_registry_.reset(new dom::MediaSource::Registry);
 
   //media_session_client_ = media_session::MediaSessionClient::Create();
 
@@ -2553,16 +2578,15 @@ CobaltTester::CobaltTester()
   global_environment_->AddRoot(media_source_registry_.get());
   global_environment_->AddRoot(blob_registry_.get());
 
+  P_LOG("Create ui_nav_root_...\n");
+
   ui_nav_root_ = (new cobalt::ui_navigation::NavItem(
       cobalt::ui_navigation::kNativeItemTypeContainer,
       // Currently, events do not need to be processed for the root item.
       base::Closure(), base::Closure(), base::Closure()));
 
-  /*std::unique_ptr<CanPlayTypeHandler> can_play_type_handler_ = cobalt::media::MediaModule::CreateCanPlayTypeHandler();*/
+  P_LOG("Create dom::Window...\n");
 
-  can_play_type_handler_ = cobalt::media::MediaModule::CreateCanPlayTypeHandler();
-
-  //new dom::Window;
   window_ = new cobalt::dom::Window(
       cssom::ViewportSize(500, 500), //data.window_dimensions,
       1.0,//data.video_pixel_ratio,
@@ -2584,7 +2608,7 @@ CobaltTester::CobaltTester()
       script_runner_.get(),
       global_environment_->script_value_factory(),
       media_source_registry_.get(),
-      nullptr,//web_module_stat_tracker_->dom_stat_tracker(),
+      dom_stat_tracker_.get(),//nullptr,//web_module_stat_tracker_->dom_stat_tracker(),
       GURL(R"raw(file:///resources/html/index.html)raw"),//data.initial_url,
       "data.network_module->GetUserAgent()",
       "data.network_module->preferred_language()",
@@ -2639,8 +2663,16 @@ CobaltTester::CobaltTester()
       );
   DCHECK(window_);
 
+  P_LOG("Create window_weak_...\n");
+
   window_weak_ = base::AsWeakPtr(window_.get());
   DCHECK(window_weak_);
+
+  printf("document_->set_window...\n");
+
+  document_ = (new cobalt::dom::Document(html_element_context_.get()));
+  document_->set_window(window_->window().get());
+  document_->SetViewport(cssom::ViewportSize(500, 500));//kViewSize);
 
   environment_settings_.reset(new cobalt::dom::DOMSettings(
       99,//kDOMMaxElementDepth,
@@ -2811,6 +2843,8 @@ void CobaltTester::run() {
   printf("COBALT dom html_decoder_->Finish...\n");
   html_decoder_->Finish();
   printf("COBALT get dom first_element_child...\n");
+  root_ = (new cobalt::dom::Element(document_.get(),
+                                    base::CobToken("element")));
   root_ = (document_->first_element_child());
 
   //ASSERT_TRUE(root_);
@@ -2858,9 +2892,7 @@ void CobaltTester::run() {
     }
   }
 
-  printf("document_->set_window...\n");
-  document_->set_window(window_->window().get());
-  document_->SetViewport(cssom::ViewportSize(500, 500));//kViewSize);
+  printf("html_element_...\n");
   html_element_ =
       document_->CreateElement("div")->AsHTMLElement();
   document_->AppendChild(html_element_);
@@ -3667,12 +3699,14 @@ int main(int argc, char** argv) {
 
   printf("creating tests thread...\n");
   base::Thread::Options options;
-  options.message_loop_type = base::MessageLoop::TYPE_IO;
+  //options.message_loop_type = base::MessageLoop::TYPE_IO;
   main_thread_.StartWithOptions(options);
   printf("tests thread started...\n");
   main_thread_.task_runner()->PostTask(
-      FROM_HERE, base::Bind([](base::WaitableEvent* main_thread_event_){
-          DCHECK(base::MessageLoopCurrent::Get());
+      FROM_HERE, base::Bind([](base::WaitableEvent* main_thread_event_) {
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+            DCHECK(base::MessageLoopCurrent::Get());
+#endif
           printf("Main thread works...\n");
           main_thread_event_->Signal();
       }, &main_thread_event_));
@@ -3690,7 +3724,9 @@ int main(int argc, char** argv) {
   // Make sure the thread started.
   main_thread_.task_runner()->PostTask(
       FROM_HERE, base::Bind([](base::WaitableEvent* main_thread_event_){
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
           DCHECK(base::MessageLoopCurrent::Get());
+#endif
           printf("Creating g_cobaltTester...\n");
           g_cobaltTester = std::make_unique<CobaltTester>();
           printf("Starting g_cobaltTester...\n");

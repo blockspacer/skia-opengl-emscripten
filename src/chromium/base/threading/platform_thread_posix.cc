@@ -1,4 +1,4 @@
-// Copyright (c) 2012 The Chromium Authors. All rights reserved.
+﻿// Copyright (c) 2012 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -64,6 +64,7 @@ struct ThreadParams {
 };
 
 void* ThreadFunc(void* params) {
+    P_LOG("ThreadFunc 1\n");
   PlatformThread::Delegate* delegate = nullptr;
 
 #if defined(OS_EMSCRIPTEN)
@@ -80,10 +81,11 @@ void* ThreadFunc(void* params) {
     DCHECK(delegate);
 #endif
 
+    P_LOG("ThreadFunc 2\n");
     if (!thread_params->joinable)
       base::ThreadRestrictions::SetSingletonAllowed(false);
 
-#if !defined(OS_NACL) && !defined(OS_EMSCRIPTEN)
+#if !defined(OS_NACL) && !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
     // Threads on linux/android may inherit their priority from the thread
     // where they were created. This explicitly sets the priority of all new
     // threads.
@@ -95,10 +97,13 @@ void* ThreadFunc(void* params) {
       PlatformThread::CurrentHandle().platform_handle(),
       PlatformThread::CurrentId());
 
+  P_LOG("ThreadFunc 3\n");
+//#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   delegate->ThreadMain();
+//#endif
+  P_LOG("ThreadFunc 4\n");
 
-#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
-#else
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   ThreadIdNameManager::GetInstance()->RemoveName(
       PlatformThread::CurrentHandle().platform_handle(),
       PlatformThread::CurrentId());
@@ -127,6 +132,7 @@ bool CreateThread(size_t stack_size,
 
   ThreadFunc(params.get());
 
+  //return false; // TODO
   return true; // TODO
 #else
 

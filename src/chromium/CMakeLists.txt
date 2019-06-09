@@ -148,7 +148,7 @@ SET(BUILD_TOOLS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/build")
 # requires to set 'GEN_*_DIR' vars
 include(configure_buildflags.cmake)
 
-option(SINGLE_THREADED "Enable single threaded mode" OFF)
+option(SINGLE_THREADED "Enable single threaded mode" OFF) # TODO
 
 include(modp_b64.cmake) # TODO: link with modp_b64
 

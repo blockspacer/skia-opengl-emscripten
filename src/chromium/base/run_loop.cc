@@ -140,10 +140,11 @@ void RunLoop::RegisterDelegateForCurrentThread(Delegate* delegate) {
   }
 #else*/
   // Bind |delegate| to this thread.
+
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   DCHECK(!delegate->bound_);
   DCHECK_CALLED_ON_VALID_THREAD(delegate->bound_thread_checker_);
 
-#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   // There can only be one RunLoop::Delegate per thread.
   DCHECK(!tls_delegate.Get().Get())
       << "Error: Multiple RunLoop::Delegates registered on the same thread.\n\n"
@@ -245,6 +246,7 @@ void RunLoop::RunUntilIdle() {
 void RunLoop::Quit() {
   // Thread-safe.
 
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   DCHECK(origin_task_runner_);
 
   // This can only be hit if run_loop->Quit() is called directly (QuitClosure()
@@ -257,7 +259,6 @@ void RunLoop::Quit() {
   }
 
   quit_called_ = true;
-#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   if (running_ && delegate_->active_run_loops_.top() == this) {
     // This is the inner-most RunLoop, so quit now.
     delegate_->Quit();
@@ -453,11 +454,11 @@ bool RunLoop::BeforeRun() {
 }
 
 void RunLoop::AfterRun() {
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   DCHECK_CALLED_ON_VALID_SEQUENCE(sequence_checker_);
 
   running_ = false;
 
-#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   auto& active_run_loops_ = delegate_->active_run_loops_;
   DCHECK_EQ(active_run_loops_.top(), this);
   active_run_loops_.pop();

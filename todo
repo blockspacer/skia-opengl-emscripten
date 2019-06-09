@@ -1,4 +1,24 @@
-﻿mapped_file.cc:(.text+0xc8): undefined reference to
+﻿at cobalt::layout::Paragraph::Paragraph(icu_64::Locale const&, cobalt::layout::BaseDirection, std::__2::vector<cobalt::layout::Paragraph::DirectionalEmbedding, std::__2::allocator<cobalt::layout::Paragraph::DirectionalEmbedding> > const&, icu_64::BreakIterator*, icu_64::BreakIterator*)::__0::operator()() const [__ZZN6cobalt6layout9ParagraphC1ERKN6icu_646LocaleENS0_13BaseDirectionERKNSt3__26vectorINS1_20DirectionalEmbeddingENS7_9allocatorIS9_EEEEPNS2_13BreakIteratorESG_ENK3__0clEv] (wasm-function[7734]:84)
+localhost/:1234     at cobalt::layout::Paragraph::Paragraph(icu_64::Locale const&, cobalt::layout::BaseDirection, std::__2::vector<cobalt::layout::Paragraph::DirectionalEmbedding, std::__2::allocator<cobalt::layout::Paragraph::DirectionalEmbedding> > const&, icu_64::BreakIterator*, icu_64::BreakIterator*) [__ZN6cobalt6layout9ParagraphC2ERKN6icu_646LocaleENS0_13BaseDirectionERKNSt3__26vectorINS1_20DirectionalEmbeddingENS7_9allocatorIS9_EEEEPNS2_13BreakIteratorESG_] (wasm-function[7731]:185)
+localhost/:1234     at cobalt::layout::UpdateComputedStylesAndLayoutBoxTree(icu_64::Locale const&, scoped_refptr<cobalt::dom::Document> const&, int, cobalt::layout::UsedStyleProvider*, cobalt::layout::LayoutStatTracker*, icu_64::BreakIterator*, icu_64::BreakIterator*, scoped_refptr<cobalt::layout::BlockLevelBlockContainerBox>*, bool) [__ZN6cobalt6layout36UpdateComputedStylesAndLayoutBoxTreeERKN6icu_646LocaleERK13scoped_refptrINS_3dom8DocumentEEiPNS0_17UsedStyleProviderEPNS0_17LayoutStatTrackerEPNS1_13BreakIteratorESG_PS5_INS0_27BlockLevelBlockContainerBoxEEb] (wasm-function[7698]:293)
+localhost/:1234     at cobalt::layout::LayoutManager::Impl::DoSynchronousLayout() [__ZN6cobalt6layout13LayoutManager4Impl19DoSynchronousLayoutEv] (wasm-function[7203]:208)
+localhost/:1234     at cobalt::layout::LayoutManager::Impl::DoLayoutAndProduceRenderTree() [__ZN6cobalt6layout13LayoutManager4Impl28DoLayoutAndProduceRenderTreeEv] (wasm-function[7190]:311)
+
+skemgl.js:15293 Pthread aborting at Error
+    at Object.abort (http://localhost:9090/home/denis/workspace/skia-opengl-emscripten/build-emscripten/skemgl.js:15293:70)
+    at _abort (http://localhost:9090/home/denis/workspace/skia-opengl-emscripten/build-emscripten/skemgl.js:6004:22)
+    at __ZZN6cobalt6layout9ParagraphC1ERKN6icu_646LocaleENS0_13BaseDirectionERKNSt3__26vectorINS1_20DirectionalEmbeddingENS7_9allocatorIS9_EEEEPNS2_13BreakIteratorESG_ENK3__0clEv (wasm-function[7734]:102)
+    at __ZN6cobalt6layout9ParagraphC2ERKN6icu_646LocaleENS0_13BaseDirectionERKNSt3__26vectorINS1_20DirectionalEmbeddingENS7_9allocatorIS9_EEEEPNS2_13BreakIteratorESG_ (wasm-function[7731]:185)
+    at __ZN6cobalt6layout36UpdateComputedStylesAndLayoutBoxTreeERKN6icu_646LocaleERK13scoped_refptrINS_3dom8DocumentEEiPNS0_17UsedStyleProviderEPNS0_17LayoutStatTrackerEPNS1_13BreakIteratorESG_PS5_INS0_27BlockLevelBlockContainerBoxEEb (wasm-function[7698]:293)
+    at __ZN6cobalt6layout13LayoutManager4Impl19DoSynchronousLayoutEv (wasm-function[7203]:208)
+    at __ZN6cobalt6layout13LayoutManager4Impl28DoLayoutAndProduceRenderTreeEv (wasm-function[7190]:311)
+    at __ZN4base8internal13FunctorTraitsIMN3WTF29ThreadCheckingCallbackWrapperINS_12OnceCallbackIFvvEEES5_EEFvvEvE6InvokeIS9_NSt3__210unique_ptrIS7_NSC_14default_deleteIS7_EEEEJEEEvT_OT0_DpOT1_ (wasm-function[1563]:83)
+    at __ZN4base8internal12InvokeHelperILb0EvE8MakeItSoIRKMN6cobalt6layout13LayoutManager4ImplEFvvEJPS7_EEEvOT_DpOT0_ (wasm-function[7199]:75)
+    at __ZN4base8internal7InvokerINS0_9BindStateIMN6cobalt6layout13LayoutManager4ImplEFvvEJNS0_17UnretainedWrapperIS6_EEEEEFvvEE7RunImplIRKS8_RKNSt3__25tupleIJSA_EEEJLm0EEEEvOT_OT0_NSH_16integer_sequenceImJXspT1_EEEE (wasm-function[7197]:38)
+
+
+
+mapped_file.cc:(.text+0xc8): undefined reference to
   `disk_cache::File::GetLength()'
 
   /usr/bin/ld: mapped_file.cc:(.text+0xe6): undefined reference to

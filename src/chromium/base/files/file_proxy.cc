@@ -1,4 +1,4 @@
-// Copyright 2014 The Chromium Authors. All rights reserved.
+﻿// Copyright 2014 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -36,9 +36,11 @@ class FileHelper {
    void PassFile() {
      if (proxy_)
        proxy_->SetFile(std::move(file_));
-     else if (file_.IsValid())
+     else if (file_.IsValid()) {
+       DCHECK(task_runner_);
        task_runner_->PostTask(FROM_HERE,
                               BindOnce(&FileDeleter, std::move(file_)));
+     }
    }
 
  protected:
@@ -235,6 +237,7 @@ FileProxy::FileProxy(TaskRunner* task_runner) : task_runner_(task_runner) {
 }
 
 FileProxy::~FileProxy() {
+  DCHECK(task_runner_);
   if (file_.IsValid())
     task_runner_->PostTask(FROM_HERE, BindOnce(&FileDeleter, std::move(file_)));
 }
@@ -244,6 +247,7 @@ bool FileProxy::CreateOrOpen(const FilePath& file_path,
                              StatusCallback callback) {
   DCHECK(!file_.IsValid());
   CreateOrOpenHelper* helper = new CreateOrOpenHelper(this, File());
+  DCHECK(task_runner_);
   return task_runner_->PostTaskAndReply(
       FROM_HERE,
       BindOnce(&CreateOrOpenHelper::RunWork, Unretained(helper), file_path,
@@ -255,6 +259,7 @@ bool FileProxy::CreateTemporary(uint32_t additional_file_flags,
                                 CreateTemporaryCallback callback) {
   DCHECK(!file_.IsValid());
   CreateTemporaryHelper* helper = new CreateTemporaryHelper(this, File());
+  DCHECK(task_runner_);
   return task_runner_->PostTaskAndReply(
       FROM_HERE,
       BindOnce(&CreateTemporaryHelper::RunWork, Unretained(helper),
@@ -287,6 +292,7 @@ PlatformFile FileProxy::GetPlatformFile() const {
 bool FileProxy::Close(StatusCallback callback) {
   DCHECK(file_.IsValid());
   GenericFileHelper* helper = new GenericFileHelper(this, std::move(file_));
+  DCHECK(task_runner_);
   return task_runner_->PostTaskAndReply(
       FROM_HERE, BindOnce(&GenericFileHelper::Close, Unretained(helper)),
       BindOnce(&GenericFileHelper::Reply, Owned(helper), std::move(callback)));
@@ -295,6 +301,7 @@ bool FileProxy::Close(StatusCallback callback) {
 bool FileProxy::GetInfo(GetFileInfoCallback callback) {
   DCHECK(file_.IsValid());
   GetInfoHelper* helper = new GetInfoHelper(this, std::move(file_));
+  DCHECK(task_runner_);
   return task_runner_->PostTaskAndReply(
       FROM_HERE, BindOnce(&GetInfoHelper::RunWork, Unretained(helper)),
       BindOnce(&GetInfoHelper::Reply, Owned(helper), std::move(callback)));
@@ -306,6 +313,7 @@ bool FileProxy::Read(int64_t offset, int bytes_to_read, ReadCallback callback) {
     return false;
 
   ReadHelper* helper = new ReadHelper(this, std::move(file_), bytes_to_read);
+  DCHECK(task_runner_);
   return task_runner_->PostTaskAndReply(
       FROM_HERE, BindOnce(&ReadHelper::RunWork, Unretained(helper), offset),
       BindOnce(&ReadHelper::Reply, Owned(helper), std::move(callback)));
@@ -321,6 +329,7 @@ bool FileProxy::Write(int64_t offset,
 
   WriteHelper* helper =
       new WriteHelper(this, std::move(file_), buffer, bytes_to_write);
+  DCHECK(task_runner_);
   return task_runner_->PostTaskAndReply(
       FROM_HERE, BindOnce(&WriteHelper::RunWork, Unretained(helper), offset),
       BindOnce(&WriteHelper::Reply, Owned(helper), std::move(callback)));
@@ -331,6 +340,7 @@ bool FileProxy::SetTimes(Time last_access_time,
                          StatusCallback callback) {
   DCHECK(file_.IsValid());
   GenericFileHelper* helper = new GenericFileHelper(this, std::move(file_));
+  DCHECK(task_runner_);
   return task_runner_->PostTaskAndReply(
       FROM_HERE,
       BindOnce(&GenericFileHelper::SetTimes, Unretained(helper),
@@ -341,6 +351,7 @@ bool FileProxy::SetTimes(Time last_access_time,
 bool FileProxy::SetLength(int64_t length, StatusCallback callback) {
   DCHECK(file_.IsValid());
   GenericFileHelper* helper = new GenericFileHelper(this, std::move(file_));
+  DCHECK(task_runner_);
   return task_runner_->PostTaskAndReply(
       FROM_HERE,
       BindOnce(&GenericFileHelper::SetLength, Unretained(helper), length),
@@ -350,6 +361,7 @@ bool FileProxy::SetLength(int64_t length, StatusCallback callback) {
 bool FileProxy::Flush(StatusCallback callback) {
   DCHECK(file_.IsValid());
   GenericFileHelper* helper = new GenericFileHelper(this, std::move(file_));
+  DCHECK(task_runner_);
   return task_runner_->PostTaskAndReply(
       FROM_HERE, BindOnce(&GenericFileHelper::Flush, Unretained(helper)),
       BindOnce(&GenericFileHelper::Reply, Owned(helper), std::move(callback)));

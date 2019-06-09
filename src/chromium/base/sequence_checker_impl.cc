@@ -1,4 +1,4 @@
-// Copyright (c) 2012 The Chromium Authors. All rights reserved.
+﻿// Copyright (c) 2012 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -37,10 +37,14 @@ SequenceCheckerImpl::SequenceCheckerImpl() : core_(std::make_unique<Core>()) {}
 SequenceCheckerImpl::~SequenceCheckerImpl() = default;
 
 bool SequenceCheckerImpl::CalledOnValidSequence() const {
-  AutoLock auto_lock(lock_);
-  if (!core_)
-    core_ = std::make_unique<Core>();
-  return core_->CalledOnValidSequence();
+#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+    return true;
+#else
+    AutoLock auto_lock(lock_);
+    if (!core_)
+        core_ = std::make_unique<Core>();
+    return core_->CalledOnValidSequence();
+#endif
 }
 
 void SequenceCheckerImpl::DetachFromSequence() {

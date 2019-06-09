@@ -45,7 +45,9 @@ class FileFetcher : public Fetcher {
         : buffer_size(kDefaultBufferSize),
           start_offset(0),
           bytes_to_read(std::numeric_limits<int64>::max()) {
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
       DCHECK(base::MessageLoopCurrent::Get());
+#endif
       message_loop_proxy = (base::MessageLoopCurrent::Get()->task_runner());
     }
 

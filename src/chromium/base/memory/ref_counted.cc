@@ -1,4 +1,4 @@
-// Copyright (c) 2011 The Chromium Authors. All rights reserved.
+﻿// Copyright (c) 2011 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -58,8 +58,12 @@ void RefCountedThreadSafeBase::AddRefWithCheck() const {
 
 #if DCHECK_IS_ON()
 bool RefCountedBase::CalledOnValidSequence() const {
+#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+    return true;
+#else
   return sequence_checker_.CalledOnValidSequence() ||
          g_cross_thread_ref_count_access_allow_count.load() != 0;
+#endif
 }
 #endif
 

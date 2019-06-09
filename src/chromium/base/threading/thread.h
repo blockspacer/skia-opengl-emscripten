@@ -1,4 +1,4 @@
-// Copyright (c) 2012 The Chromium Authors. All rights reserved.
+﻿// Copyright (c) 2012 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -333,6 +333,7 @@ class BASE_EXPORT Thread : PlatformThread::Delegate {
 
 namespace internal {
 
+//#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
 class BASE_EXPORT MessageLoopTaskEnvironment : public Thread::TaskEnvironment {
  public:
   explicit MessageLoopTaskEnvironment(
@@ -345,8 +346,11 @@ class BASE_EXPORT MessageLoopTaskEnvironment : public Thread::TaskEnvironment {
   void BindToCurrentThread(TimerSlack timer_slack) override;
 
  private:
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   std::unique_ptr<MessageLoop> message_loop_;
+#endif
 };
+//#endif
 
 }  // namespace internal
 

@@ -46,6 +46,10 @@
 #endif  // SB_HAS(CORE_DUMP_HANDLER_SUPPORT)
 #endif  // defined(OS_STARBOARD)
 
+#if defined(OS_EMSCRIPTEN)
+#include <emscripten.h>
+#endif
+
 namespace cobalt {
 namespace dom {
 
@@ -90,6 +94,19 @@ base::LazyInstance<NodeCountLog>::DestructorAtExit node_count_log =
 // Diagram for DispatchEvent:
 //  https://www.w3.org/TR/DOM-Level-3-Events/#event-flow
 bool Node::DispatchEvent(const scoped_refptr<Event>& event) {
+  P_LOG("Node::DispatchEvent 1\n");
+
+#if defined(OS_EMSCRIPTEN)
+  //HTML5_STACKTRACE();
+/*
+  at cobalt::dom::Node::DispatchEvent(scoped_refptr<cobalt::dom::Event> const&) [__ZN6cobalt3dom4Node13DispatchEventERK13scoped_refptrINS0_5EventEE] (wasm-function[5972]:132)
+(index):1234     at cobalt::dom::EventTarget::DispatchEventNameAndRunCallback(base::CobToken, base::RepeatingCallback<void ()> const&) [__ZN6cobalt3dom11EventTarget31DispatchEventNameAndRunCallbackEN4base8CobTokenERKNS2_17RepeatingCallbackIFvvEEE] (wasm-function[4527]:112)
+(index):1234     at void base::internal::FunctorTraits<void (cobalt::dom::EventTarget::*)(base::CobToken, base::RepeatingCallback<void ()> const&), void>::Invoke<void (cobalt::dom::EventTarget::*)(base::CobToken, base::RepeatingCallback<void ()> const&), base::WeakPtr<cobalt::dom::EventTarget> const&, base::CobToken const&, base::RepeatingCallback<void ()> const&>(void (cobalt::dom::EventTarget::*)(base::CobToken, base::RepeatingCallback<void ()> const&), base::WeakPtr<cobalt::dom::EventTarget> const&&&, base::CobToken const&&&, base::RepeatingCallback<void ()> const&&&) [__ZN4base8internal13FunctorTraitsIMN6cobalt3dom11EventTargetEFvNS_8CobTokenERKNS_17RepeatingCallbackIFvvEEEEvE6InvokeISC_RKNS_7WeakPtrIS4_EEJRKS5_SA_EEEvT_OT0_DpOT1_] (wasm-function[4554]:126)
+(index):1234     at void base::internal::FunctorTraits<base::internal::IgnoreResultHelper<void (cobalt::dom::EventTarget::*)(base::CobToken, base::RepeatingCallback<void ()> const&)>, void>::Invoke<base::internal::IgnoreResultHelper<void (cobalt::dom::EventTarget::*)(base::CobToken, base::RepeatingCallback<void ()> const&)> const&, base::WeakPtr<cobalt::dom::EventTarget> const&, base::CobToken const&, base::RepeatingCallback<void ()> const&>(base::internal::IgnoreResultHelper<void (cobalt::dom::EventTarget::*)(base::CobToken, base::RepeatingCallback<void ()> const&)> const&&&, base::WeakPtr<cobalt::dom::EventTarget> const&&&, base::CobToken const&&&, base::RepeatingCallback<void ()> const&&&) [__ZN4base8internal13FunctorTraitsINS0_18IgnoreResultHelperIMN6cobalt3dom11EventTargetEFvNS_8CobTokenERKNS_17RepeatingCallbackIFvvEEEEEEvE6InvokeIRKSE_JRKNS_7WeakPtrIS5_EERKS6_SB_EEEvOT_DpOT0_] (wasm-function[4553]:79)
+(index):1234     at void base::internal::InvokeHelper<true, void>::MakeItSo<base::internal::IgnoreResultHelper<void (cobalt::dom::EventTarget::*)(base::CobToken, base::RepeatingCallback<void ()> const&)> const&, base::WeakPtr<cobalt::dom::EventTarget> const&, base::CobToken const&, base::RepeatingCallback<void ()> const&>(base::internal::IgnoreResultHelper<void (cobalt::dom::EventTarget::*)(base::CobToken, base::RepeatingCallback<void ()> const&)> const&&&, base::WeakPtr<cobalt::dom::EventTarget> const&&&, base::CobToken const&&&, base::RepeatingCallback<void ()> const&&&) [__ZN4base8internal12InvokeHelperILb1EvE8MakeItSoIRKNS0_18IgnoreResultHelperIMN6cobalt3dom11EventTargetEFvNS_8CobTokenERKNS_17RepeatingCallbackIFvvEEEEEERKNS_7WeakPtrIS7_EEJRKS8_SD_EEEvOT_OT0_DpOT1_] (wasm-function[4552]:19)
+ */
+#endif
+
   DCHECK(event);
   DCHECK(!event->IsBeingDispatched());
   DCHECK(event->initialized_flag());
@@ -103,16 +120,22 @@ bool Node::DispatchEvent(const scoped_refptr<Event>& event) {
 
   // The event is now being dispatched. Track it in the global stats.
   GlobalStats::GetInstance()->StartJavaScriptEvent();
+  P_LOG("Node::DispatchEvent 2\n");
 
-  scoped_refptr<Window> window;
+  //scoped_refptr<Window> window;
+  Window* window;
   if (IsInDocument()) {
     DCHECK(node_document());
-    window = node_document()->default_view();
+    if(node_document()->default_view()) // TODO
+      //window = node_document()->default_view();
+      window = node_document()->default_view().get();
   }
+  P_LOG("Node::DispatchEvent 3\n");
 
   if (window) {
     window->OnStartDispatchEvent(event);
   }
+  P_LOG("Node::DispatchEvent 4\n");
 
   typedef std::vector<scoped_refptr<Node> > Ancestors;
   Ancestors ancestors;
@@ -161,19 +184,20 @@ bool Node::DispatchEvent(const scoped_refptr<Event>& event) {
       }
     }
   }
+  P_LOG("Node::DispatchEvent 5\n");
 
   event->set_event_phase(Event::kNone);
-  P_LOG("OnStopDispatchEvent 1\n");
+  P_LOG("Node OnStopDispatchEvent 1\n");
   if (window) {
     window->OnStopDispatchEvent(event);
   }
-  P_LOG("OnStopDispatchEvent 2\n");
+  P_LOG("Node Node OnStopDispatchEvent 2\n");
 
   // The event has completed being dispatched. Stop tracking it in the global
   // stats.
   GlobalStats::GetInstance()->StopJavaScriptEvent();
 
-  P_LOG("OnStopDispatchEvent 3\n");
+  P_LOG("Node OnStopDispatchEvent 3\n");
   return !event->default_prevented();
 }
 

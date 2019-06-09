@@ -1,4 +1,4 @@
-// Copyright 2015 The Chromium Authors. All rights reserved.
+﻿// Copyright 2015 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -116,11 +116,15 @@ void WorkerThread::SimpleThreadImpl::Run() {
   run_loop_ = &run_loop;
   is_initialized_.Set();
   run_loop_->Run();
+
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   non_main_thread_scheduler_.reset();
   run_loop_ = nullptr;
+#endif
 }
 
 void WorkerThread::SimpleThreadImpl::Quit() {
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   if (!internal_task_runner_->RunsTasksInCurrentSequence()) {
     internal_task_runner_->PostTask(
         FROM_HERE, base::BindOnce(&WorkerThread::SimpleThreadImpl::Quit,
@@ -131,6 +135,7 @@ void WorkerThread::SimpleThreadImpl::Quit() {
   // We should only get here if we are called by the run loop.
   DCHECK(run_loop_);
   run_loop_->Quit();
+#endif
 }
 
 }  // namespace scheduler

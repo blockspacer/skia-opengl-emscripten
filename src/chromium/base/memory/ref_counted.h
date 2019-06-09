@@ -1,4 +1,4 @@
-// Copyright (c) 2012 The Chromium Authors. All rights reserved.
+﻿// Copyright (c) 2012 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -54,11 +54,13 @@ class BASE_EXPORT RefCountedBase {
     // without release it.
     // DFAKE_SCOPED_LOCK_THREAD_LOCKED(add_release_);
 #if DCHECK_IS_ON()
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS)) // TODO
     DCHECK(!in_dtor_);
     DCHECK(!needs_adopt_ref_)
         << "This RefCounted object is created with non-zero reference count."
         << " The first reference to such a object has to be made by AdoptRef or"
         << " MakeRefCounted.";
+#endif
     if (ref_count_ >= 1) {
       DCHECK(CalledOnValidSequence());
     }
@@ -77,7 +79,9 @@ class BASE_EXPORT RefCountedBase {
     // DFAKE_SCOPED_LOCK_THREAD_LOCKED(add_release_);
 
 #if DCHECK_IS_ON()
+//#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS)) // TODO
     DCHECK(!in_dtor_);
+//#endif
     if (ref_count_ == 0)
       in_dtor_ = true;
 

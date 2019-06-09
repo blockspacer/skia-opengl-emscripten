@@ -245,11 +245,16 @@ Window::Window(
   // Document load start is deferred from this constructor so that we can be
   // guaranteed that this Window object is fully constructed before document
   // loading begins.
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   DCHECK(base::MessageLoopCurrent::Get()); // TODO
   base::MessageLoopCurrent::Get()->task_runner()->PostTask(
       FROM_HERE,
       base::Bind(&Window::StartDocumentLoad, base::Unretained(this),
                  fetcher_factory, url, dom_parser, load_complete_callback));
+#else
+  std::move(base::Bind(&Window::StartDocumentLoad, base::Unretained(this),
+                       fetcher_factory, url, dom_parser, load_complete_callback)).Run();
+#endif
 }
 
 void Window::StartDocumentLoad(
@@ -349,10 +354,14 @@ scoped_refptr<cssom::CSSStyleDeclaration> Window::GetComputedStyle(
   // The getComputedStyle(elt, pseudoElt) method must run these steps:
   // https://www.w3.org/TR/2013/WD-cssom-20131205/#dom-window-getcomputedstyle
 
+  P_LOG("Window::GetComputedStyle 1\n");
+
   // 1. Let doc be the Document associated with the Window object on which the
   // method was invoked.
   DCHECK_EQ(document_.get(), elt->node_document())
       << "getComputedStyle not supported for elements outside of the document";
+
+  P_LOG("Window::GetComputedStyle 2\n");
 
   scoped_refptr<HTMLElement> html_element = elt->AsHTMLElement();
   scoped_refptr<cssom::CSSComputedStyleDeclaration> obj;
