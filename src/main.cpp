@@ -3159,11 +3159,11 @@ int main(int argc, char** argv) {
 
     auto AsyncTaskCb = [](const int x) {
       //printf("AsyncTaskCb %d\n", x);
-      ::std::cout << "AsyncTaskCb " << x << " " << base::Time::Now() << "\n";
+      ::std::cout << "AsyncTaskCb " << x << " " << base::Time::Now() << std::endl;
     };
 
     //printf("thread testing PostDelayedTask...\n");
-    ::std::cout << "thread testing PostTask 0..." << base::Time::Now() << "\n";
+    ::std::cout << "thread testing PostTask 0..." << base::Time::Now() << std::endl;
 
     // see https://habr.com/ru/post/256907/
     DCHECK(thread.task_runner());
@@ -3174,7 +3174,7 @@ int main(int argc, char** argv) {
                  base::Bind(AsyncTaskCb)),
       base::TimeDelta::FromSeconds(3));
 
-    // ::std::cout << "thread testing PostTask 1..." << base::Time::Now() << "\n";
+    // ::std::cout << "thread testing PostTask 1..." << base::Time::Now() << std::endl;
 
     DCHECK(thread.task_runner());
     thread.task_runner()->PostTask(
@@ -3188,7 +3188,7 @@ int main(int argc, char** argv) {
             printf("BindOncePostTask 2\n");
           })));
 
-    //::std::cout << "thread testing PostTask 2..." << base::Time::Now() << "\n";
+    //::std::cout << "thread testing PostTask 2..." << base::Time::Now() << std::endl;
 
     //DCHECK(thread.task_runner());
     //thread.task_runner()->PostTask(
@@ -3198,14 +3198,14 @@ int main(int argc, char** argv) {
     //             base::Bind(AsyncTaskCb)));
     //
     ////printf("thread testing Wait...\n");
-    ::std::cout << "thread testing start Wait..." << base::Time::Now() << "\n";
+    ::std::cout << "thread testing start Wait..." << base::Time::Now() << std::endl;
 
     event.Wait();
 
     printf("thread.Stop()...\n");
     thread.Stop();
 
-    ::std::cout << "thread testing ended..." << base::Time::Now() << "\n";
+    ::std::cout << "thread testing ended..." << base::Time::Now() << std::endl;
     //printf("thread testing ended\n");
   }
 #endif // ENABLE_THREAD_TESTS
