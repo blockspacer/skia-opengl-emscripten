@@ -3733,12 +3733,12 @@ int main(int argc, char** argv) {
           printf("Starting g_cobaltTester...\n");
           g_cobaltTester->run();
           printf("Finishing g_cobaltTester...\n");
-          main_thread_event_->Signal();
+          //main_thread_event_->Signal();
       }, &main_thread_event_));
 
   printf("Waiting COBALT tests...\n");
-  main_thread_event_.Wait();
-  main_thread_event_.Reset();
+  //main_thread_event_.Wait();
+  //main_thread_event_.Reset();
 #endif // ENABLE_COBALT
 
 #if defined(ENABLE_SKIA)
