@@ -772,7 +772,7 @@ void Document::UpdateComputedStyles() {
 
   if (is_computed_style_dirty_) {
     TRACE_EVENT0("cobalt::layout", kBenchmarkStatUpdateComputedStyles);
-#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+#if !defined(OS_EMSCRIPTEN)
     base::StopWatch stop_watch_update_compute_style(
         DomStatTracker::kStopWatchTypeUpdateComputedStyle,
         base::StopWatch::kAutoStartOn,
