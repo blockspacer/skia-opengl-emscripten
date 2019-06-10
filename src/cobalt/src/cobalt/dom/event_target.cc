@@ -136,7 +136,7 @@ void EventTarget::PostToDispatchEventAndRunCallback(
   /*if (!base::MessageLoop::current()) {
     return;
   }*/
-#ifdef __EMSCRIPTEN__
+#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   std::move(base::Bind(base::IgnoreResult(&EventTarget::DispatchEventAndRunCallback),
                    base::AsWeakPtr<EventTarget>(this), event, callback)).Run();
   return;
@@ -154,8 +154,8 @@ void EventTarget::PostToDispatchEventAndRunCallback(
 void EventTarget::PostToDispatchEventNameAndRunCallback(
     const base::Location& location, base::CobToken event_name,
     const base::Closure& callback) {
-#ifdef __EMSCRIPTEN__
-  std::move(base::Bind(
+#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+  std::move(base::Bind(base::IgnoreResult(&EventTarget::DispatchEventAndRunCallback),
                 base::IgnoreResult(&EventTarget::DispatchEventNameAndRunCallback),
                 base::AsWeakPtr<EventTarget>(this), event_name, callback)).Run();
   return;
