@@ -437,6 +437,7 @@ bool ThreadControllerWithMessagePumpImpl::DoIdleWork() {
 
 void ThreadControllerWithMessagePumpImpl::Run(bool application_tasks_allowed,
                                               TimeDelta timeout) {
+  P_LOG("RunLoop::RunWithTimeout 1()\n");
   DCHECK(RunsTasksInCurrentSequence());
   // RunLoops can be nested so we need to restore the previous value of
   // |quit_runloop_after| upon exit. NB we could use saturated arithmetic here
@@ -451,6 +452,7 @@ void ThreadControllerWithMessagePumpImpl::Run(bool application_tasks_allowed,
   AutoReset<bool> quit_when_idle_requested(&quit_when_idle_requested_, false);
 #endif
 
+  P_LOG("RunLoop::RunWithTimeout 2()\n");
   // Quit may have been called outside of a Run(), so |quit_pending| might be
   // true here. We can't use InTopLevelDoWork() in Quit() as this call may be
   // outside top-level DoWork but still in Run().
@@ -473,6 +475,7 @@ void ThreadControllerWithMessagePumpImpl::Run(bool application_tasks_allowed,
 
   main_thread_only().runloop_count--;
   main_thread_only().quit_pending = false;
+  P_LOG("RunLoop::RunWithTimeout 3()\n");
 }
 
 void ThreadControllerWithMessagePumpImpl::OnBeginNestedRunLoop() {

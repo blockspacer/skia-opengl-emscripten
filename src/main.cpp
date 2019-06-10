@@ -2522,6 +2522,40 @@ CobaltTester::CobaltTester()
       loader_factory_.get());
   DCHECK(mesh_cache_);
 
+  /*
+      loader::FetcherFactory* fetcher_factory,
+      loader::LoaderFactory* loader_factory, cssom::CSSParser* css_parser,
+      Parser* dom_parser, media::CanPlayTypeHandler* can_play_type_handler,
+      media::WebMediaPlayerFactory* web_media_player_factory,
+      script::ScriptRunner* script_runner,
+      script::ScriptValueFactory* script_value_factory,
+      MediaSourceRegistry* media_source_registry,
+      render_tree::ResourceProvider** resource_provider,
+      loader::image::AnimatedImageTracker* animated_image_tracker,
+      loader::image::ImageCache* image_cache,
+      loader::image::ReducedCacheCapacityManager*
+          reduced_image_cache_capacity_manager,
+      loader::font::RemoteTypefaceCache* remote_typeface_cache,
+      loader::mesh::MeshCache* mesh_cache, DomStatTracker* dom_stat_tracker,
+      const std::string& font_language_script,
+      base::ApplicationState initial_application_state,
+      base::WaitableEvent* synchronous_loader_interrupt,
+      float video_playback_rate_multiplier = 1.0);
+   */
+   P_LOG("Create html_element_context_...\n");
+   html_element_context_.reset(new cobalt::dom::HTMLElementContext(
+        //&fetcher_factory_, &loader_factory_, &stub_css_parser_,
+        fetcher_factory_.get(), loader_factory_.get(), css_parser_.get(),
+        dom_parser_.get(), can_play_type_handler_.get() ,
+        //NULL , &stub_script_runner_,
+        NULL , script_runner_.get(),
+        NULL , media_source_registry_.get(), &resource_provider_,
+        animated_image_tracker_.get(), image_cache_.get(),
+        reduced_image_cache_capacity_manager_.get(), remote_typeface_cache_.get(),
+        mesh_cache_.get(), dom_stat_tracker_.get(), "font_language_script",
+        base::kApplicationStateStarted,
+        &synchronous_loader_interrupt_));
+
   local_storage_database_.reset(
       //new dom::LocalStorageDatabase(data.network_module->storage_manager()));
       new dom::LocalStorageDatabase(nullptr));
@@ -2589,6 +2623,9 @@ CobaltTester::CobaltTester()
       // //data.network_module->cookie_jar(),
       // //data.network_module->GetPostSender(),
       // //data.options.require_csp,
+#if defined(ENABLE_COBALT_CSP)
+      csp::CSPHeaderPolicy::kCSPOptional,
+#endif
       cobalt::dom::CspEnforcementType::kCspEnforcementDisable,
       ///csp::kCspEnforcementEnable,//data.options.csp_enforcement_mode,
       //base::Bind(&OnCspPolicyChanged, base::Unretained(this)),
@@ -2633,41 +2670,6 @@ CobaltTester::CobaltTester()
 
   window_weak_ = base::AsWeakPtr(window_.get());
   DCHECK(window_weak_);
-
-
-  /*
-      loader::FetcherFactory* fetcher_factory,
-      loader::LoaderFactory* loader_factory, cssom::CSSParser* css_parser,
-      Parser* dom_parser, media::CanPlayTypeHandler* can_play_type_handler,
-      media::WebMediaPlayerFactory* web_media_player_factory,
-      script::ScriptRunner* script_runner,
-      script::ScriptValueFactory* script_value_factory,
-      MediaSourceRegistry* media_source_registry,
-      render_tree::ResourceProvider** resource_provider,
-      loader::image::AnimatedImageTracker* animated_image_tracker,
-      loader::image::ImageCache* image_cache,
-      loader::image::ReducedCacheCapacityManager*
-          reduced_image_cache_capacity_manager,
-      loader::font::RemoteTypefaceCache* remote_typeface_cache,
-      loader::mesh::MeshCache* mesh_cache, DomStatTracker* dom_stat_tracker,
-      const std::string& font_language_script,
-      base::ApplicationState initial_application_state,
-      base::WaitableEvent* synchronous_loader_interrupt,
-      float video_playback_rate_multiplier = 1.0);
-   */
-   P_LOG("Create html_element_context_...\n");
-   html_element_context_.reset(new cobalt::dom::HTMLElementContext(
-        //&fetcher_factory_, &loader_factory_, &stub_css_parser_,
-        fetcher_factory_.get(), loader_factory_.get(), css_parser_.get(),
-        dom_parser_.get(), can_play_type_handler_.get() ,
-        //NULL , &stub_script_runner_,
-        NULL , script_runner_.get(),
-        NULL , media_source_registry_.get(), &resource_provider_,
-        animated_image_tracker_.get(), image_cache_.get(),
-        reduced_image_cache_capacity_manager_.get(), remote_typeface_cache_.get(),
-        mesh_cache_.get(), dom_stat_tracker_.get(), "font_language_script",
-        base::kApplicationStateStarted,
-        &synchronous_loader_interrupt_));
 
   printf("document_->set_window...\n");
 
@@ -2754,16 +2756,16 @@ CobaltTester::CobaltTester()
 }
 
 void CobaltTester::run() {
-  printf("Testing COBALT web_animations...\n");
+  printf("main Testing COBALT web_animations...\n");
 
   animation.set_start_time(base::TimeDelta::FromSeconds(2));
   local_time =
       animation.ComputeLocalTimeFromTimelineTime(
           base::TimeDelta::FromMilliseconds(3000));
   // EXPECT_EQ(1.0, local_time->InSecondsF());
-  printf("local_time->InSecondsF() %f\n", local_time->InSecondsF());
+  printf("main local_time->InSecondsF() %f\n", local_time->InSecondsF());
 
-  printf("Testing COBALT cssom...\n");
+  printf("main Testing COBALT cssom...\n");
 
   rule_list = new cobalt::cssom::CSSRuleList();
   rule =
@@ -2773,10 +2775,10 @@ void CobaltTester::run() {
       );
   rule_list->AppendCSSRule(rule);
 
-  printf("1 = rule_list->length() = %d\n", rule_list->length());
-  printf("CSSRule::kMediaRule = %b\n", cobalt::cssom::CSSRule::kMediaRule == rule_list->Item(0)->type());
+  printf("main 1 = rule_list->length() = %d\n", rule_list->length());
+  printf("main CSSRule::kMediaRule = %b\n", cobalt::cssom::CSSRule::kMediaRule == rule_list->Item(0)->type());
 
-  printf("Testing COBALT selectors...\n");
+  printf("main Testing COBALT selectors...\n");
 
   //// Selector Tree:
   //// root
@@ -2816,7 +2818,7 @@ void CobaltTester::run() {
   //EXPECT_EQ(css_style_rule_1, node_1->rules()[0]);
   //EXPECT_EQ(cobalt::cssom::Specificity(0, 0, 1), node_1->cumulative_specificity());
 
-  printf("Testing COBALT dom...\n");
+  printf("main Testing COBALT dom...\n");
 
   const int kDOMMaxElementDepth = 32;
 
@@ -2832,18 +2834,18 @@ void CobaltTester::run() {
       document_.get(), document_.get(), NULL, kDOMMaxElementDepth,
       base::SourceLocation("[object HTMLDecoderTest]", 1, 1),//source_location_.get(),
       base::Bind([](const base::Optional<std::string>& a){
-        printf("Decoder::OnCompleteFunction\n");
+        printf("main Decoder::OnCompleteFunction\n");
       }),
       true
 #if defined(ENABLE_COBALT_CSP)
       , csp::kCSPOptional
 #endif
       ));
-  printf("COBALT dom DecodeChunk...\n");
+  printf("main COBALT dom DecodeChunk...\n");
   html_decoder_->DecodeChunk(input.c_str(), input.length());
-  printf("COBALT dom html_decoder_->Finish...\n");
+  printf("main COBALT dom html_decoder_->Finish...\n");
   html_decoder_->Finish();
-  printf("COBALT get dom first_element_child...\n");
+  printf("main COBALT get dom first_element_child...\n");
   root_ = (new cobalt::dom::Element(document_.get(),
                                     base::CobToken("element")));
   root_ = (document_->first_element_child());
@@ -2851,8 +2853,8 @@ void CobaltTester::run() {
   //ASSERT_TRUE(root_);
   //EXPECT_EQ("html", root_->tag_name());
 
-  printf("root_->tag_name() %s\n", root_->tag_name().c_str());
-  printf("root_->text_content() %s\n", root_->text_content().value_or("empty root_").c_str());
+  printf("main root_->tag_name() %s\n", root_->tag_name().c_str());
+  printf("main root_->text_content() %s\n", root_->text_content().value_or("empty root_").c_str());
 
   //EXPECT_EQ(1, root_->children()->length());
 
@@ -2861,15 +2863,15 @@ void CobaltTester::run() {
   //ASSERT_TRUE(head);
   //EXPECT_EQ("head", head->tag_name());
 
-  printf("head->tag_name() %s\n", head->tag_name().c_str());
-  printf("head->text_content() %s\n", head->text_content().value_or("empty head").c_str());
+  printf("main head->tag_name() %s\n", head->tag_name().c_str());
+  printf("main head->text_content() %s\n", head->text_content().value_or("empty head").c_str());
 
-  printf("Testing COBALT css_parser...\n");
+  printf("main Testing COBALT css_parser...\n");
   scoped_refptr<cssom::CSSStyleSheet> style_sheet = css_parser_->ParseStyleSheet(
       "body {} @cobalt-magic; div {}", base::SourceLocation("[object HTMLDecoderTest]", 1, 1));
   //ASSERT_TRUE(style_sheet);
   //EXPECT_EQ(2, style_sheet->css_rules_same_origin()->length());
-  printf("style_sheet->css_rules_same_origin()->length() = %d == 2\n",  style_sheet->css_rules_same_origin()->length());
+  printf("main style_sheet->css_rules_same_origin()->length() = %d == 2\n",  style_sheet->css_rules_same_origin()->length());
   style =
     css_parser_->ParseStyleDeclarationList(
         "background-size: auto 20%;"
@@ -2880,7 +2882,7 @@ void CobaltTester::run() {
           dynamic_cast<cssom::PropertyListValue*>(
               style->GetPropertyValue(cssom::kBackgroundSizeProperty).get());
     if(background_size_list->value().size() == 2) {
-      printf("background_size_list = %s %s\n",
+      printf("main background_size_list = %s %s\n",
        background_size_list->value()[0].get()->ToString().c_str(),
        background_size_list->value()[1].get()->ToString().c_str()
       );
@@ -2889,26 +2891,28 @@ void CobaltTester::run() {
     dynamic_cast<cssom::RGBAColorValue*>(
         style->GetPropertyValue(cssom::kBackgroundColorProperty).get());
     if(background_color) {
-      printf("background_color = %s\n", background_color.get()->ToString().c_str());
+      printf("main background_color = %s\n", background_color.get()->ToString().c_str());
     }
   }
 
-  printf("html_element_...\n");
+  printf("main html_element_...\n");
   html_element_ =
       document_->CreateElement("div")->AsHTMLElement();
   document_->AppendChild(html_element_);
   html_element_->set_tab_index(-1);
   html_element_->Focus();
   html_element_->Blur();
-  printf("AsHTMLElement()->text_content %s\n", document_->active_element()->AsHTMLElement()->text_content()->c_str());
+  printf("main AsHTMLElement()->text_content %s\n", document_->active_element()->AsHTMLElement()->text_content()->c_str());
   //SetElementStyle(style, html_element);
   html_element_->SetAttribute("style", style->SerializeCSSDeclarationBlock());
-  printf("html_element_->GetAttribute(style) %s\n", html_element_->GetAttribute("style")->c_str());
+  printf("main html_element_->GetAttribute(style) %s\n", html_element_->GetAttribute("style")->c_str());
   //window_->SetApplicationState(base::ApplicationState::kApplicationStateStarted);
 
+  printf("main DoSynchronousLayoutAndGetRenderTree()...\n");
   render_tree_root_ =
       document_->DoSynchronousLayoutAndGetRenderTree();
 
+  printf("main synchronous_loader_interrupt_.Reset()...\n");
   synchronous_loader_interrupt_.Reset();
   if (resource_provider_) {
       base::TypeId resource_provider_type_id = resource_provider_->GetTypeId();
@@ -2925,6 +2929,7 @@ void CobaltTester::run() {
   // Permit render trees to be generated again.  Layout will have been
   // invalidated with the call to Suspend(), so the layout manager's first
   // task will be to perform a full re-layout.
+  printf("main layout_manager_->Resume...\n");
   layout_manager_->Resume();
 
   //window_->RequestAnimationFrame();

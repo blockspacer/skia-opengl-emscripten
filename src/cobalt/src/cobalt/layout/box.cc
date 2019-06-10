@@ -76,8 +76,9 @@ Box::Box(const scoped_refptr<cssom::CSSComputedStyleDeclaration>&
       draw_order_position_in_stacking_context_(0) {
   DCHECK(animations());
   DCHECK(used_style_provider_);
-
+#if !defined(OS_EMSCRIPTEN)
   layout_stat_tracker_->OnBoxCreated();
+#endif
 
 #ifdef _DEBUG
   margin_box_offset_from_containing_block_.SetVector(LayoutUnit(),
@@ -95,7 +96,11 @@ Box::Box(const scoped_refptr<cssom::CSSComputedStyleDeclaration>&
 #endif  // _DEBUG
 }
 
-Box::~Box() { layout_stat_tracker_->OnBoxDestroyed(); }
+Box::~Box() {
+#if !defined(OS_EMSCRIPTEN)
+layout_stat_tracker_->OnBoxDestroyed();
+#endif
+}
 
 bool Box::IsOverflowHidden() const {
   return computed_style()->overflow() == cssom::KeywordValue::GetAuto() ||
@@ -122,7 +127,9 @@ void Box::UpdateSize(const LayoutParams& layout_params) {
   }
 
   // If this point is reached, then the size of the box is being re-calculated.
+#if !defined(OS_EMSCRIPTEN)
   layout_stat_tracker_->OnUpdateSize();
+#endif
 
   UpdateBorders();
   UpdatePaddings(layout_params);
@@ -540,7 +547,9 @@ void Box::RenderAndAnimate(
 
   // If this point is reached, then the pre-existing cached render tree node is
   // not being used.
+#if !defined(OS_EMSCRIPTEN)
   layout_stat_tracker_->OnRenderAndAnimate();
+#endif
 
   // Initialize the cached render tree node with the border box offset.
   cached_render_tree_node_info_ = CachedRenderTreeNodeInfo(border_box_offset);

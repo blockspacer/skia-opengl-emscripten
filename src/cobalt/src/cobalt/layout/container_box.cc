@@ -199,8 +199,9 @@ void ContainerBox::UpdateCrossReferences() {
   if (!are_cross_references_valid_) {
     // If this point is reached, then the cross references for this container
     // box are being re-generated.
+#if !defined(OS_EMSCRIPTEN)
     layout_stat_tracker()->OnUpdateCrossReferences();
-
+#endif
     bool is_stacking_context = IsStackingContext();
 
     // Cross references are not cleared when they are invalidated. This is

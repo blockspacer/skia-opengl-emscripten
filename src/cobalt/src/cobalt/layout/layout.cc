@@ -56,6 +56,7 @@ void UpdateComputedStylesAndLayoutBoxTree(
     icu::BreakIterator* character_break_iterator,
     scoped_refptr<BlockLevelBlockContainerBox>* initial_containing_block,
     bool clear_window_with_background_color) {
+  DCHECK(line_break_iterator);
   TRACE_EVENT0("cobalt::layout", "UpdateComputedStylesAndLayoutBoxTree()");
   // Layout-related cleanup is performed on the UsedStyleProvider in this
   // object's destructor.
@@ -64,11 +65,11 @@ void UpdateComputedStylesAndLayoutBoxTree(
 
   // Update the computed style of all elements in the DOM, if necessary.
   document->UpdateComputedStyles();
-
+#if !defined(OS_EMSCRIPTEN)
   base::StopWatch stop_watch_layout_box_tree(
       LayoutStatTracker::kStopWatchTypeLayoutBoxTree,
       base::StopWatch::kAutoStartOn, layout_stat_tracker);
-
+#endif
   // Create initial containing block.
   InitialContainingBlockCreationResults
       initial_containing_block_creation_results = CreateInitialContainingBlock(
@@ -83,10 +84,13 @@ void UpdateComputedStylesAndLayoutBoxTree(
   // Generate boxes.
   if (document->html()) {
     TRACE_EVENT0("cobalt::layout", kBenchmarkStatBoxGeneration);
+#if !defined(OS_EMSCRIPTEN)
     base::StopWatch stop_watch_box_generation(
         LayoutStatTracker::kStopWatchTypeBoxGeneration,
         base::StopWatch::kAutoStartOn, layout_stat_tracker);
+#endif
 
+  DCHECK(line_break_iterator);
     ScopedParagraph scoped_paragraph(
         new Paragraph(locale, (*initial_containing_block)->GetBaseDirection(),
                       Paragraph::DirectionalEmbeddingStack(),
@@ -122,9 +126,11 @@ void UpdateComputedStylesAndLayoutBoxTree(
   // Layout.
   {
     TRACE_EVENT0("cobalt::layout", kBenchmarkStatUpdateUsedSizes);
+#if !defined(OS_EMSCRIPTEN)
     base::StopWatch stop_watch_update_used_sizes(
         LayoutStatTracker::kStopWatchTypeUpdateUsedSizes,
         base::StopWatch::kAutoStartOn, layout_stat_tracker);
+#endif
 
     (*initial_containing_block)->set_left(LayoutUnit());
     (*initial_containing_block)->set_top(LayoutUnit());
@@ -140,9 +146,11 @@ scoped_refptr<render_tree::Node> GenerateRenderTreeFromBoxTree(
   render_tree::CompositionNode::Builder render_tree_root_builder;
   {
     TRACE_EVENT0("cobalt::layout", kBenchmarkStatRenderAndAnimate);
+#if !defined(OS_EMSCRIPTEN)
     base::StopWatch stop_watch_render_and_animate(
         LayoutStatTracker::kStopWatchTypeRenderAndAnimate,
         base::StopWatch::kAutoStartOn, layout_stat_tracker);
+#endif
 
     (*initial_containing_block)
         ->RenderAndAnimate(&render_tree_root_builder, math::Vector2dF(0, 0),

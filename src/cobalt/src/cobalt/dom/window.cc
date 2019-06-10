@@ -526,10 +526,12 @@ void Window::RunAnimationFrameCallbacks() {
   // Scope the StopWatch. It should not include any processing from
   // |ran_animation_frame_callbacks_callback_|.
   {
+#if !defined(OS_EMSCRIPTEN)
     base::StopWatch stop_watch_run_animation_frame_callbacks(
         DomStatTracker::kStopWatchTypeRunAnimationFrameCallbacks,
         base::StopWatch::kAutoStartOn,
         html_element_context()->dom_stat_tracker());
+#endif
 
     // First grab the current list of frame request callbacks and hold on to it
     // here locally.
