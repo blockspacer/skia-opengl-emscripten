@@ -37,6 +37,10 @@ static std::unique_ptr<base::MessageLoop> g_message_loop;
 static base::RunLoop* run_loop;
 #endif
 
+#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+static bool hasPlatformThread = false;
+#endif
+
 namespace base {
 
 namespace {
@@ -89,10 +93,6 @@ options.message_loop_type = MessageLoop::TYPE_DEFAULT;
 #endif
   return StartWithOptions(options);
 }
-
-#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
-static bool hasPlatformThread = false;
-#endif
 
 bool Thread::StartWithOptions(const Options& options) {
   DCHECK(owning_sequence_checker_.CalledOnValidSequence());
