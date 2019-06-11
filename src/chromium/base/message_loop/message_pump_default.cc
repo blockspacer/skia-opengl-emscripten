@@ -30,7 +30,7 @@ MessagePumpDefault::~MessagePumpDefault() = default;
 
 void MessagePumpDefault::Run(Delegate* delegate) {
   AutoReset<bool> auto_reset_keep_running(&keep_running_, true);
-P_LOG("MessagePumpDefault::Run 1\n");
+//P_LOG("MessagePumpDefault::Run 1\n");
 #if defined(OS_EMSCRIPTEN)
   DCHECK(delegate);
 #endif
@@ -50,17 +50,17 @@ P_LOG("MessagePumpDefault::Run 1\n");
     mac::ScopedNSAutoreleasePool autorelease_pool;
 #endif
 
-P_LOG("MessagePumpDefault::Run 1.1\n");
+//P_LOG("MessagePumpDefault::Run 1.1\n");
     Delegate::NextWorkInfo next_work_info = delegate->DoSomeWork();
     bool has_more_immediate_work = next_work_info.is_immediate();
     if (!keep_running_)
       break;
 
-P_LOG("MessagePumpDefault::Run 1.2\n");
+//P_LOG("MessagePumpDefault::Run 1.2\n");
     if (has_more_immediate_work)
       continue;
 
-P_LOG("MessagePumpDefault::Run 1.3\n");
+//P_LOG("MessagePumpDefault::Run 1.3\n");
     has_more_immediate_work = delegate->DoIdleWork();
     if (!keep_running_)
       break;
@@ -68,19 +68,19 @@ P_LOG("MessagePumpDefault::Run 1.3\n");
     if (has_more_immediate_work)
       continue;
 
-P_LOG("MessagePumpDefault::Run 1.4\n");
+//P_LOG("MessagePumpDefault::Run 1.4\n");
     if (next_work_info.delayed_run_time.is_max()) {
-P_LOG("MessagePumpDefault::Run 1.4.1\n");
+//P_LOG("MessagePumpDefault::Run 1.4.1\n");
       event_.Wait();
     } else {
-P_LOG("MessagePumpDefault::Run 1.4.2\n");
+//P_LOG("MessagePumpDefault::Run 1.4.2\n");
       event_.TimedWait(next_work_info.remaining_delay());
     }
-P_LOG("MessagePumpDefault::Run 1.5\n");
+//P_LOG("MessagePumpDefault::Run 1.5\n");
     // Since event_ is auto-reset, we don't need to do anything special here
     // other than service each delegate method.
   }
-P_LOG("MessagePumpDefault::Run 2\n");
+//P_LOG("MessagePumpDefault::Run 2\n");
 }
 
 void MessagePumpDefault::Quit() {

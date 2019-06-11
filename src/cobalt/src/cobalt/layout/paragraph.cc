@@ -42,8 +42,8 @@ Paragraph::Paragraph(
       character_break_iterator_(character_break_iterator),
       is_closed_(false),
       last_retrieved_run_index_(0) {
-  DCHECK(line_break_iterator_);
-  DCHECK(character_break_iterator_);
+  //DCHECK(line_break_iterator_);
+  //DCHECK(character_break_iterator_);
 
   level_runs_.push_back(
       BidiLevelRun(0, ConvertBaseDirectionToBidiLevel(base_direction)));
@@ -199,6 +199,9 @@ bool Paragraph::FindBreakPosition(const scoped_refptr<dom::FontList>& used_font,
 int32 Paragraph::GetNextBreakPosition(int32 position,
                                       BreakPolicy break_policy) {
   icu::BreakIterator* break_iterator = GetBreakIterator(break_policy);
+  if (!break_iterator) {
+    return position;
+  }
   break_iterator->setText(unicode_text_);
   return break_iterator->following(position);
 }
@@ -206,12 +209,18 @@ int32 Paragraph::GetNextBreakPosition(int32 position,
 int32 Paragraph::GetPreviousBreakPosition(int32 position,
                                           BreakPolicy break_policy) {
   icu::BreakIterator* break_iterator = GetBreakIterator(break_policy);
+  if (!break_iterator) {
+    return position;
+  }
   break_iterator->setText(unicode_text_);
   return break_iterator->preceding(position);
 }
 
 bool Paragraph::IsBreakPosition(int32 position, BreakPolicy break_policy) {
   icu::BreakIterator* break_iterator = GetBreakIterator(break_policy);
+  if (!break_iterator) {
+    return false;
+  }
   break_iterator->setText(unicode_text_);
   return break_iterator->isBoundary(position) == TRUE;
 }
@@ -356,6 +365,9 @@ void Paragraph::FindIteratorBreakPosition(
   // Iterate through break segments, beginning from the passed in start
   // position. Continue until TryIncludeSegmentWithinAvailableWidth() returns
   // false, indicating that no more segments can be included.
+  if (!break_iterator) {
+    return;
+  }
   break_iterator->setText(unicode_text_);
   for (int32 segment_end = break_iterator->following(start_position);
        segment_end != icu::BreakIterator::DONE && segment_end < end_position;

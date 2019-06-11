@@ -56,7 +56,8 @@ void UpdateComputedStylesAndLayoutBoxTree(
     icu::BreakIterator* character_break_iterator,
     scoped_refptr<BlockLevelBlockContainerBox>* initial_containing_block,
     bool clear_window_with_background_color) {
-  DCHECK(line_break_iterator);
+printf("UpdateComputedStylesAndLayoutBoxTree 1\n");
+  //DCHECK(line_break_iterator);
   TRACE_EVENT0("cobalt::layout", "UpdateComputedStylesAndLayoutBoxTree()");
   // Layout-related cleanup is performed on the UsedStyleProvider in this
   // object's destructor.
@@ -77,6 +78,7 @@ void UpdateComputedStylesAndLayoutBoxTree(
           used_style_provider, layout_stat_tracker);
   *initial_containing_block = initial_containing_block_creation_results.box;
 
+printf("UpdateComputedStylesAndLayoutBoxTree 2\n");
   if (clear_window_with_background_color) {
     (*initial_containing_block)->set_blend_background_color(false);
   }
@@ -90,7 +92,7 @@ void UpdateComputedStylesAndLayoutBoxTree(
         base::StopWatch::kAutoStartOn, layout_stat_tracker);
 #endif
 
-  DCHECK(line_break_iterator);
+  //DCHECK(line_break_iterator);
     ScopedParagraph scoped_paragraph(
         new Paragraph(locale, (*initial_containing_block)->GetBaseDirection(),
                       Paragraph::DirectionalEmbeddingStack(),
@@ -136,6 +138,7 @@ void UpdateComputedStylesAndLayoutBoxTree(
     (*initial_containing_block)->set_top(LayoutUnit());
     (*initial_containing_block)->UpdateSize(LayoutParams());
   }
+printf("UpdateComputedStylesAndLayoutBoxTree 3\n");
 }
 
 scoped_refptr<render_tree::Node> GenerateRenderTreeFromBoxTree(

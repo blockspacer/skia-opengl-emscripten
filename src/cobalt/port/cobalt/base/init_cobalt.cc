@@ -39,6 +39,11 @@ void InitCobalt(int argc, char* argv[], const char* link) {
     s_initial_deep_link.Get() = link;
   }
   bool icu_initialized = base::i18n::InitializeICU();
+#if defined(OS_EMSCRIPTEN)
+  if(!icu_initialized) {
+    DCHECK(false);
+  }
+#endif
   LOG_IF(ERROR, !icu_initialized) << "ICU initialization failed.";
 
   // Register a path provider for Cobalt-specific paths.

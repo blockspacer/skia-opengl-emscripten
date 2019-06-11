@@ -10,11 +10,16 @@
 
 #include "base/lazy_instance.h"
 #include "base/logging.h"
+
+//#if defined(USE_CUSTOM_ICU)
 #include "third_party/icu/source/common/unicode/uidna.h"
 #include "third_party/icu/source/common/unicode/utypes.h"
+//#endif
+
 #include "url/url_canon_icu.h"
 #include "url/url_canon_internal.h"  // for _itoa_s
 
+//#if defined(USE_CUSTOM_ICU)
 namespace url {
 
 namespace {
@@ -104,3 +109,4 @@ bool IDNToASCII(const base::char16* src, int src_len, CanonOutputW* output) {
 }
 
 }  // namespace url
+//#endif

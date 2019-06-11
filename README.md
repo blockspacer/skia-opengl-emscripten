@@ -818,3 +818,13 @@ https://www.reddit.com/r/Unity3D/comments/4ochm9/memory_settings_for_webgl_conte
 
 > emscripten_async_wget2
   https://github.com/openframeworks/openFrameworks/blob/master/addons/ofxEmscripten/src/ofxEmscriptenURLFileLoader.cpp#L41
+
+> smaller icu data file
+Filtering by Language Only
+see https://github.com/unicode-org/icu/blob/master/docs/userguide/icu_data/buildtool.md#filtering-by-language-only
+see http://userguide.icu-project.org/howtouseicu#TOC-C-With-Your-Own-Build-System
+see http://userguide.icu-project.org/icudata
+see https://qiita.com/shimacpyon/items/82d275c2f5f508cbd7f4
+
+> MCLocaleBreakIteratorCreate
+https://github.com/livecode/livecode/blob/a6591613dd3d7704ae1d0ff479584d7d1b7d4349/engine/src/paragraf.cpp

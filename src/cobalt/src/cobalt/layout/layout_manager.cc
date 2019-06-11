@@ -186,6 +186,9 @@ LayoutManager::Impl::Impl(
       layout_stat_tracker_(layout_stat_tracker),
       suspended_(false),
       clear_window_with_background_color_(clear_window_with_background_color) {
+
+  printf("LayoutManager::Impl::Impl::LayoutManager::Impl::Impl()...%s\n", locale_.getName());
+  DCHECK(window_);
   window_->document()->AddObserver(this);
   window_->SetSynchronousLayoutCallback(
       base::Bind(&Impl::DoSynchronousLayout, base::Unretained(this)));
@@ -193,16 +196,17 @@ LayoutManager::Impl::Impl(
       &Impl::DoSynchronousLayoutAndGetRenderTree, base::Unretained(this)));
 
   UErrorCode status = U_ZERO_ERROR;
-  P_LOG("createLineInstance locale_ %s\n", locale_.getName());
+  printf("createLineInstance locale_ %s\n", locale_.getName());
   line_break_iterator_ =
       base::WrapUnique(icu::BreakIterator::createLineInstance(locale_, status));
   CHECK(U_SUCCESS(status));
-  DCHECK(line_break_iterator_);
-  P_LOG("BreakIterator createLineInstance locale_ %s\n", locale_.getName());
+  //DCHECK(line_break_iterator_);
+  printf("BreakIterator createLineInstance locale_ %s\n", locale_.getName());
   status = U_ZERO_ERROR;
   character_break_iterator_ = base::WrapUnique(
       icu::BreakIterator::createCharacterInstance(locale_, status));
   CHECK(U_SUCCESS(status));
+  //DCHECK(character_break_iterator_);
 
 #if defined(ENABLE_TEST_RUNNER)
   if (layout_trigger_ == kTestRunnerMode) {
@@ -278,7 +282,8 @@ void LayoutManager::Impl::DoSynchronousLayout() {
     return;
   }
 
-  DCHECK(line_break_iterator_);
+  //DCHECK(line_break_iterator_);
+  DCHECK(window_);
   if (are_computed_styles_and_box_tree_dirty_) {
     layout::UpdateComputedStylesAndLayoutBoxTree(
         locale_, window_->document(), dom_max_element_depth_,
@@ -458,7 +463,9 @@ LayoutManager::LayoutManager(
     : impl_(new Impl(name, window, on_render_tree_produced, on_layout,
                      layout_trigger, dom_max_element_depth, layout_refresh_rate,
                      language, enable_image_animations, layout_stat_tracker,
-                     clear_window_with_background_color)) {}
+                     clear_window_with_background_color)) {
+    printf("LayoutManager::LayoutManager()...\n");
+  }
 
 LayoutManager::~LayoutManager() {}
 

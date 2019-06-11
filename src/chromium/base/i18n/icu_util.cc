@@ -20,7 +20,7 @@
 #include "build/build_config.h"
 #include "third_party/icu/source/common/unicode/putil.h"
 #include "third_party/icu/source/common/unicode/udata.h"
-#if (defined(OS_LINUX) && !defined(OS_CHROMEOS)) || defined(OS_ANDROID)
+#if (defined(OS_LINUX) && !defined(OS_CHROMEOS)) || defined(OS_ANDROID) || defined(OS_EMSCRIPTEN)
 #include "third_party/icu/source/i18n/unicode/timezone.h"
 #endif
 
@@ -51,6 +51,10 @@ namespace i18n {
 #endif
 #endif
 
+#if defined(OS_EMSCRIPTEN) && ICU_UTIL_DATA_IMPL != ICU_UTIL_DATA_FILE
+#error "set ICU_UTIL_DATA_IMPL=ICU_UTIL_DATA_FILE on wasm"
+#endif
+
 namespace {
 #if !defined(OS_NACL)// && !defined(OS_EMSCRIPTEN)
 #if DCHECK_IS_ON()
@@ -75,7 +79,14 @@ wchar_t g_debug_icu_pf_filename[_MAX_PATH];
 // No need to change the filename in multiple places (gyp files, windows
 // build pkg configurations, etc). 'l' stands for Little Endian.
 // This variable is exported through the header file.
+#if defined(OS_EMSCRIPTEN)
+// see http://userguide.icu-project.org/icudata
+// see http://userguide.icu-project.org/howtouseicu#TOC-C-With-Your-Own-Build-System
+// see https://github.com/unicode-org/icu/blob/master/docs/userguide/icu_data/buildtool.md
+const char kIcuDataFileName[] = "resources/icu/icudtl.dat";
+#else
 const char kIcuDataFileName[] = "icudtl.dat";
+#endif
 #if defined(OS_ANDROID)
 const char kAndroidAssetsIcuDataFileName[] = "assets/icudtl.dat";
 #endif
@@ -88,6 +99,7 @@ MemoryMappedFile* g_icudtl_mapped_file = nullptr;
 MemoryMappedFile::Region g_icudtl_region;
 
 void LazyInitIcuDataFile() {
+printf("reading icu data 1...\n");
   if (g_icudtl_pf != kInvalidPlatformFile) {
     return;
   }
@@ -104,8 +116,12 @@ void LazyInitIcuDataFile() {
   FilePath data_path;
   if (!PathService::Get(DIR_ASSETS, &data_path)) {
     LOG(ERROR) << "Can't find " << kIcuDataFileName;
+#if defined(OS_EMSCRIPTEN)
+    DCHECK(false);
+#endif
     return;
   }
+printf("reading icu data 2...\n");
 #if defined(OS_WIN)
   // TODO(brucedawson): http://crbug.com/445616
   wchar_t tmp_buffer[_MAX_PATH] = {0};
@@ -113,6 +129,7 @@ void LazyInitIcuDataFile() {
   debug::Alias(tmp_buffer);
 #endif
   data_path = data_path.AppendASCII(kIcuDataFileName);
+printf("reading icu data 2.1 %s...\n", data_path.value().c_str());
 
 #if defined(OS_WIN)
   // TODO(brucedawson): http://crbug.com/445616
@@ -137,8 +154,10 @@ void LazyInitIcuDataFile() {
     return;
   }
 #endif  // !defined(OS_MACOSX)
+printf("reading icu data 3...\n");
   File file(data_path, File::FLAG_OPEN | File::FLAG_READ);
   if (file.IsValid()) {
+    printf("reading icu data 3.1...\n");
     // TODO(brucedawson): http://crbug.com/445616.
     g_debug_icu_pf_last_error = 0;
     g_debug_icu_pf_error_details = 0;
@@ -157,19 +176,27 @@ void LazyInitIcuDataFile() {
     wcscpy_s(g_debug_icu_pf_filename, as_wcstr(data_path.value()));
   }
 #endif  // OS_WIN
+printf("reading icu data 4...\n");
 }
 
 bool InitializeICUWithFileDescriptorInternal(
     PlatformFile data_fd,
     const MemoryMappedFile::Region& data_region) {
+printf("InitializeICUWithFileDescriptorInternal 1\n");
   // This can be called multiple times in tests.
   if (g_icudtl_mapped_file) {
+printf("InitializeICUWithFileDescriptorInternal 1.1\n");
     g_debug_icu_load = 0;  // To debug http://crbug.com/445616.
     return true;
   }
   if (data_fd == kInvalidPlatformFile) {
+printf("InitializeICUWithFileDescriptorInternal 1.2\n");
     g_debug_icu_load = 1;  // To debug http://crbug.com/445616.
     LOG(ERROR) << "Invalid file descriptor to ICU data received.";
+#if defined(OS_EMSCRIPTEN)
+    DCHECK(false);
+#endif
+printf("InitializeICUWithFileDescriptorInternal 2\n");
     return false;
   }
 
@@ -177,13 +204,19 @@ bool InitializeICUWithFileDescriptorInternal(
   if (!icudtl_mapped_file->Initialize(File(data_fd), data_region)) {
     g_debug_icu_load = 2;  // To debug http://crbug.com/445616.
     LOG(ERROR) << "Couldn't mmap icu data file";
+printf("InitializeICUWithFileDescriptorInternal 2.1\n");
+#if defined(OS_EMSCRIPTEN)
+    DCHECK(false);
+#endif
     return false;
   }
   g_icudtl_mapped_file = icudtl_mapped_file.release();
+printf("InitializeICUWithFileDescriptorInternal 3\n");
 
   UErrorCode err = U_ZERO_ERROR;
   udata_setCommonData(const_cast<uint8_t*>(g_icudtl_mapped_file->data()), &err);
   if (err != U_ZERO_ERROR) {
+printf("udata_setCommonData error!\n");
     g_debug_icu_load = 3;  // To debug http://crbug.com/445616.
     g_debug_icu_last_error = err;
   }
@@ -202,6 +235,10 @@ bool InitializeICUWithFileDescriptorInternal(
 #endif
   // Never try to load ICU data from files.
   udata_setFileAccess(UDATA_ONLY_PACKAGES, &err);
+printf("InitializeICUWithFileDescriptorInternal 4\n");
+//UErrorCode status = U_ZERO_ERROR;
+// u_init(&status);
+  DCHECK(err == U_ZERO_ERROR);
   return err == U_ZERO_ERROR;
 }
 #endif  // ICU_UTIL_DATA_IMPL == ICU_UTIL_DATA_FILE
@@ -256,6 +293,7 @@ bool InitializeICUFromRawMemory(const uint8_t* raw_memory) {
 //  __EMSCRIPTEN__: TODO https://github.com/blockspacer/cobalt-clone-28052019/blob/master/src/base/i18n/icu_util.cc
 
 bool InitializeICU() {
+printf("InitializeICU() 1\n");
 #if DCHECK_IS_ON()
   DCHECK(!g_check_called_once || !g_called_once);
   g_called_once = true;
@@ -289,6 +327,7 @@ bool InitializeICU() {
   // The ICU data is statically linked.
   result = true;
 #elif (ICU_UTIL_DATA_IMPL == ICU_UTIL_DATA_FILE)
+printf("loading ICU_UTIL_DATA_FILE...\n");
   // If the ICU data directory is set, ICU won't actually load the data until
   // it is needed.  This can fail if the process is sandboxed at that time.
   // Instead, we map the file in and hand off the data so the sandbox won't
@@ -317,10 +356,11 @@ bool InitializeICU() {
 // TODO(jungshik): Some callers do not care about tz at all. If necessary,
 // add a boolean argument to this function to init'd the default tz only
 // when requested.
-#if defined(OS_LINUX) && !defined(OS_CHROMEOS)
+#if (defined(OS_LINUX) && !defined(OS_CHROMEOS)) || defined(OS_EMSCRIPTEN)
   if (result)
     std::unique_ptr<icu::TimeZone> zone(icu::TimeZone::createDefault());
 #endif
+printf("InitializeICU() 2\n");
   return result;
 }
 #endif  // !defined(OS_NACL)

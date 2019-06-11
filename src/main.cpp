@@ -583,6 +583,14 @@ static sk_sp<SkImage> skImageSp;
 #include <hb-ot.h>
 #endif // ENABLE_HARFBUZZ
 
+#include "third_party/icu/source/common/unicode/uchar.h"
+#include "third_party/icu/source/i18n/unicode/datefmt.h"
+#include "third_party/icu/source/i18n/unicode/dtfmtsym.h"
+#include "third_party/icu/source/common/unicode/ubrk.h"
+#include "third_party/icu/source/common/unicode/uchar.h"
+#include "third_party/icu/source/common/unicode/ustring.h"
+#include "third_party/icu/source/common/unicode/brkiter.h"
+
 /*#include <stddef.h>
 
 #include <cassert>
@@ -1523,10 +1531,11 @@ public:
             hb_buffer_set_direction(hb_buffer, HB_DIRECTION_LTR);
 #ifdef HARFBUZZ_UNICODE
             hb_buffer_set_script(hb_buffer, HB_SCRIPT_CYRILLIC);
-            hb_buffer_set_language(hb_buffer, hb_language_from_string("ru", 2));
+            //hb_buffer_set_language(hb_buffer, hb_language_from_string("ru", 2));
+            hb_buffer_set_language(hb_buffer, hb_language_from_string("en_US", 2));
 #else
             hb_buffer_set_script(hb_buffer, HB_SCRIPT_LATIN);
-            hb_buffer_set_language(hb_buffer, hb_language_from_string("en", 2));
+            hb_buffer_set_language(hb_buffer, hb_language_from_string("en_US", 2));
 #endif
             //hb_buffer_add_latin1(hb_buffer, text, -1, 0, -1);
             hb_buffer_add_utf8 (hb_buffer, text, -1, 0, -1);
@@ -2397,6 +2406,20 @@ void OnLoad() {
     // see https://github.com/blockspacer/cobalt-clone-28052019/blob/master/src/cobalt/browser/browser_module.cc#L625
 }
 
+void listWordBoundaries(const icu::UnicodeString& s) {
+    UErrorCode status = U_ZERO_ERROR;
+    icu::BreakIterator* bi = icu::BreakIterator::createWordInstance(icu::Locale::getUS(), status);
+    DCHECK(bi);
+
+    bi->setText(s);
+    int32_t p = bi->first();
+    while (p != icu::BreakIterator::DONE) {
+        printf("Boundary at position %d\n", p);
+        p = bi->next();
+    }
+    delete bi;
+}
+
 CobaltTester::CobaltTester()
 //network_module_(&storage_manager_, event_dispatcher_,
 //        options_.network_module_options),
@@ -2552,7 +2575,8 @@ CobaltTester::CobaltTester()
         NULL , media_source_registry_.get(), &resource_provider_,
         animated_image_tracker_.get(), image_cache_.get(),
         reduced_image_cache_capacity_manager_.get(), remote_typeface_cache_.get(),
-        mesh_cache_.get(), dom_stat_tracker_.get(), "font_language_script",
+        mesh_cache_.get(), dom_stat_tracker_.get(),
+        "en_US", //"font_language_script",
         base::kApplicationStateStarted,
         &synchronous_loader_interrupt_));
 
@@ -2612,7 +2636,7 @@ CobaltTester::CobaltTester()
       GURL(R"raw(file:///resources/html/index.html)raw"),//data.initial_url,
       "data.network_module->GetUserAgent()",
       "data.network_module->preferred_language()",
-      "font_language_script",
+      "en_US", // font_language_script
       //ata.options.font_language_script_override.empty()
       //   ? base::GetSystemLanguageScript()
       //   : data.options.font_language_script_override,
@@ -2722,7 +2746,7 @@ CobaltTester::CobaltTester()
       layout_trigger,//data.options.layout_trigger,
       99,//data.dom_max_element_depth,
       1.0,//data.layout_refresh_rate,
-      "data.network_module->preferred_language()",
+      "en_US", //"data.network_module->preferred_language()",
       false, //data.options.enable_image_animations,
       layout_stat_tracker_.get(),//web_module_stat_tracker_->layout_stat_tracker(),
       false//data.options.clear_window_with_background_color
@@ -3035,6 +3059,8 @@ int main(int argc, char** argv) {
 #endif // ENABLE_BLINK_PLATFORM
 
 #ifdef ENABLE_BASE
+  printf("Init AtExitManager ...\n");
+  base::AtExitManager at_exit;
   printf("Init CommandLine ...\n");
 
   base::CommandLine::Init(0, nullptr);
@@ -3084,9 +3110,48 @@ int main(int argc, char** argv) {
   gfx::FontList::SetDefaultFontDescription(::std::string());
 #endif
 
+#if defined(OS_WIN)
+  base::RouteStdioToConsole(false);
+#endif
+
   printf("Init logging ...\n");
 
-  logging::InitLogging(logging::LoggingSettings());
+  logging::LoggingSettings logging_settings;
+  logging_settings.logging_dest = logging::LOG_TO_SYSTEM_DEBUG_LOG;
+  logging::InitLogging(logging_settings);
+
+  // To view log output with IDs and timestamps use "adb logcat -v threadtime".
+  logging::SetLogItems(true,   // Process ID
+                       true,   // Thread ID
+                       true,   // Timestamp
+                       true);  // Tick count
+
+#ifdef ENABLE_COBALT
+  /// \note nothing to do, see InitCobalt
+#else
+  bool icu_initialized = base::i18n::InitializeICU();
+#if defined(OS_EMSCRIPTEN)
+  if(!icu_initialized) {
+    DCHECK(false);
+  }
+#endif
+#endif
+
+/*#if !defined(OS_EMSCRIPTEN)
+  // Initialize stack dumping before initializing sandbox to make sure symbol
+  // names in all loaded libraries will be cached.
+  base::debug::EnableInProcessStackDumping();
+#endif*/
+
+  base::CommandLine* command_line = base::CommandLine::ForCurrentProcess();
+  base::FeatureList::InitializeInstance(
+      command_line->GetSwitchValueASCII(switches::kEnableFeatures),
+      command_line->GetSwitchValueASCII(switches::kDisableFeatures));
+
+  /*WaitForDebuggerIfNecessary();
+  service_manager::ServiceExecutableEnvironment environment;
+  ServiceMain(environment.TakeServiceRequestFromCommandLine());
+  base::ThreadPool::GetInstance()->Shutdown();*/
 
   printf("Init alloc ...\n");
   // see
@@ -3722,11 +3787,27 @@ int main(int argc, char** argv) {
 
 #ifdef ENABLE_COBALT
   printf("Initializing COBALT tests...\n");
-  base::AtExitManager at_exit;
   /// \see https://github.com/blockspacer/cobalt-clone-28052019/blob/master/src/cobalt/base/init_cobalt.cc
   cobalt::InitCobalt(argc, argv, NULL);
+  printf("Starting ICU tests...\n");
+
+  // TODO
+  //listWordBoundaries(icu::UnicodeString("string asd asd 1"));
+
   printf("Starting COBALT tests...\n");
 
+    int32_t locales_count;
+    const icu::Locale* locales =
+        icu::Locale::getAvailableLocales(locales_count);
+
+    printf("locales_count %d\n", locales_count);
+    /// \see http://userguide.icu-project.org/locale/examples
+    for (int32_t locale = 0; locale < locales_count; locale++) {
+      printf("getLanguage %s getName %s getScript %s\n",
+        locales[locale].getLanguage(),
+        locales[locale].getName(),
+        locales[locale].getScript());
+    }
   // Make sure the thread started.
   main_thread_.task_runner()->PostTask(
       FROM_HERE, base::Bind([](base::WaitableEvent* main_thread_event_){

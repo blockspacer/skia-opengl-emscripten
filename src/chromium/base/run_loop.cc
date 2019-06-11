@@ -176,12 +176,12 @@ void RunLoop::Run() {
 }
 
 void RunLoop::RunWithTimeout(TimeDelta timeout) {
-  P_LOG("RunLoop::RunWithTimeout 1()\n");
+  //P_LOG("RunLoop::RunWithTimeout 1()\n");
   DCHECK_CALLED_ON_VALID_SEQUENCE(sequence_checker_);
 
   if (!BeforeRun())
     return;
-  P_LOG("RunLoop::RunWithTimeout 2()\n");
+  //P_LOG("RunLoop::RunWithTimeout 2()\n");
 
   // If there is a ScopedRunTimeoutForTest active then set the timeout.
   // TODO(crbug.com/905412): Use real-time for Run() timeouts so that they
@@ -194,17 +194,17 @@ void RunLoop::RunWithTimeout(TimeDelta timeout) {
     ThreadTaskRunnerHandle::Get()->PostDelayedTask(
         FROM_HERE, cancelable_timeout.callback(), run_timeout->timeout());
   }
-  P_LOG("RunLoop::RunWithTimeout 3()\n");
+  //P_LOG("RunLoop::RunWithTimeout 3()\n");
 
   if(!delegate_) {
     printf("invalid delegate in RunLoop\n");
   }
 
 #if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
-  P_LOG("RunLoop::RunWithTimeout 3.1()\n");
+  //P_LOG("RunLoop::RunWithTimeout 3.1()\n");
   const bool application_tasks_allowed = false;
 #else
-  P_LOG("RunLoop::RunWithTimeout 3.2()\n");
+  //P_LOG("RunLoop::RunWithTimeout 3.2()\n");
 
   // It is okay to access this RunLoop from another sequence while Run() is
   // active as this RunLoop won't touch its state until after that returns (if
@@ -218,10 +218,10 @@ void RunLoop::RunWithTimeout(TimeDelta timeout) {
       delegate_->active_run_loops_.size() == 1U ||
       type_ == Type::kNestableTasksAllowed;
 
-  P_LOG("RunLoop::RunWithTimeout 3.5()\n");
+  //P_LOG("RunLoop::RunWithTimeout 3.5()\n");
   delegate_->Run(application_tasks_allowed, timeout);
 #endif
-  P_LOG("RunLoop::RunWithTimeout 4()\n");
+  //P_LOG("RunLoop::RunWithTimeout 4()\n");
 
   // Rebind this RunLoop to the current thread after Run().
   DETACH_FROM_SEQUENCE(sequence_checker_);
@@ -232,7 +232,7 @@ void RunLoop::RunWithTimeout(TimeDelta timeout) {
 #else
   AfterRun();
 #endif
-  P_LOG("RunLoop::RunWithTimeout 5()\n");
+  //P_LOG("RunLoop::RunWithTimeout 5()\n");
 }
 
 void RunLoop::RunUntilIdle() {
@@ -405,7 +405,7 @@ RunLoop::ScopedDisallowRunningForTesting::~ScopedDisallowRunningForTesting() {
 #endif  // DCHECK_IS_ON()
 
 bool RunLoop::BeforeRun() {
-  P_LOG("RunLoop::BeforeRun 1\n");
+  //P_LOG("RunLoop::BeforeRun 1\n");
   DCHECK_CALLED_ON_VALID_SEQUENCE(sequence_checker_);
 
 #if DCHECK_IS_ON() && !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
@@ -423,30 +423,30 @@ bool RunLoop::BeforeRun() {
     return false;
 #endif  // DCHECK_IS_ON()
 
-  P_LOG("RunLoop::BeforeRun 2\n");
+  //P_LOG("RunLoop::BeforeRun 2\n");
 
 #if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   auto& active_run_loops_ = delegate_->active_run_loops_;
   active_run_loops_.push(this);
 #endif
 
-  P_LOG("RunLoop::BeforeRun 3\n");
+  //P_LOG("RunLoop::BeforeRun 3\n");
 
 #if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   const bool is_nested = active_run_loops_.size() > 1;
 
-  P_LOG("RunLoop::BeforeRun 4\n");
+  //P_LOG("RunLoop::BeforeRun 4\n");
   if (is_nested) {
     for (auto& observer : delegate_->nesting_observers_)
       observer.OnBeginNestedRunLoop();
 
-    P_LOG("RunLoop::BeforeRun 5\n");
+    //P_LOG("RunLoop::BeforeRun 5\n");
     if (type_ == Type::kNestableTasksAllowed)
       delegate_->EnsureWorkScheduled();
   }
 #endif
 
-  P_LOG("RunLoop::BeforeRun 6\n");
+  //P_LOG("RunLoop::BeforeRun 6\n");
 
   running_ = true;
   return true;
