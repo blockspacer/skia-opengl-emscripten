@@ -3823,6 +3823,8 @@ int main(int argc, char** argv) {
       }, &main_thread_event_));
 
   printf("Waiting COBALT tests...\n");
+  //// \NOTE: DON`T BLOCK MAIN WASM THREAD
+  /// WHILE WAITING IN OTHER THREADS!
   //main_thread_event_.Wait();
   //main_thread_event_.Reset();
 #endif // ENABLE_COBALT
