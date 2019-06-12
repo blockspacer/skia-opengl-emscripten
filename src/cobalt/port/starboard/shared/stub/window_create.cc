@@ -1,4 +1,4 @@
-// Copyright 2016 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2016 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,6 +14,30 @@
 
 #include "starboard/window.h"
 
-SbWindow SbWindowCreate(const SbWindowOptions* /*options*/) {
+// TODO: move to "starboard/shared/emscripten/window_internal.h"
+#if defined(__EMSCRIPTEN__)
+SbWindowPrivate::SbWindowPrivate(const SbWindowOptions* options)
+{
+    width = options->size.width;
+    height = options->size.height;
+    video_pixel_ratio = options->size.video_pixel_ratio;
+}
+
+SbWindowPrivate:: ~SbWindowPrivate()
+{}
+
+SbWindowPrivateEmscripten::SbWindowPrivateEmscripten(const SbWindowOptions* options)
+    : SbWindowPrivate(options)
+{}
+
+SbWindowPrivateEmscripten:: ~SbWindowPrivateEmscripten()
+{}
+#endif
+
+SbWindow SbWindowCreate(const SbWindowOptions* options) {
+#if defined(__EMSCRIPTEN__)
+    SbWindow window = new SbWindowPrivateEmscripten(options);
+    return window;
+#endif
   return kSbWindowInvalid;
 }

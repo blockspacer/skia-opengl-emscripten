@@ -1,4 +1,4 @@
-// Copyright 2015 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2015 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,9 +17,9 @@
 #include <vector>
 
 #include "base/strings/string_split.h"
-#if defined(ENABLE_COBALT_system_window)
+//#if defined(ENABLE_COBALT_system_window)
 #include "cobalt/system_window/input_event.h"
-#endif // ENABLE_COBALT_system_window
+//#endif // ENABLE_COBALT_system_window
 
 namespace cobalt {
 namespace dom {

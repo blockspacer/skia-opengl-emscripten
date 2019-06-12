@@ -1,4 +1,4 @@
-// Copyright 2016 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2016 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@
 #include "base/callback.h"
 #include "base/logging.h"
 #include "base/synchronization/lock.h"
-#include "base/trace_event/trace_event.h"
+///#include "base/trace_event/trace_event.h" // __TODO__
 
 namespace base {
 
@@ -36,7 +36,7 @@ class MessageQueue {
 
   // Add a message to the end of the queue.
   void AddMessage(const base::Closure& message) {
-    TRACE_EVENT0("cobalt::base", "MessageQueue::AddMessage()");
+    ///TRACE_EVENT0("cobalt::base", "MessageQueue::AddMessage()"); // __TODO__
     base::AutoLock lock(mutex_);
     DCHECK(!message.is_null());
     queue_.push(message);
@@ -45,7 +45,7 @@ class MessageQueue {
   // Execute all messages in the MessageQueue until the queue is empty and then
   // return.
   void ProcessAll() {
-    TRACE_EVENT0("cobalt::base", "MessageQueue::ProcessAll()");
+    ///TRACE_EVENT0("cobalt::base", "MessageQueue::ProcessAll()"); // __TODO__
     std::queue<base::Closure> work_queue;
     {
       base::AutoLock lock(mutex_);

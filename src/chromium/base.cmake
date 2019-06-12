@@ -842,7 +842,7 @@ list(APPEND BASE_SOURCES
    ${BASE_DIR}trace_event/builtin_categories.h
    ${BASE_DIR}trace_event/category_registry.cc
    ${BASE_DIR}trace_event/category_registry.h
-   ${BASE_DIR}trace_event/common/trace_event_common.h
+   #${BASE_DIR}trace_event/common/trace_event_common.h
    #${BASE_DIR}trace_event/cpufreq_monitor_android.cc
    #${BASE_DIR}trace_event/cpufreq_monitor_android.h
    ${BASE_DIR}trace_event/event_name_filter.cc

@@ -20,7 +20,8 @@
 #define INTERNAL_TRACE_LIST_BUILTIN_CATEGORIES(X)                        \
   /* These entries must go first to be consistent with the               \
    * CategoryRegistry::kCategory* consts.*/                              \
-  X("media_stream")                                                     \
+  X("media_stream")                                                      \
+  X("cobalt::base")                                                     \
   X("cobalt::cssom")                                                     \
   X("cobalt::page_visibility")                                           \
   X("cobalt::browser")                                                   \

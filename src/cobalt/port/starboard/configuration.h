@@ -1,4 +1,4 @@
-// Copyright 2015 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2015 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -787,7 +787,9 @@ SB_COMPILE_ASSERT(sizeof(long) == 8,  // NOLINT(runtime/int)
 // which allows client applications to use GL rendering paths.  Derived from
 // the gyp variable `gl_type` which indicates what kind of GL implementation
 // is available.
-#if !defined(SB_HAS_GLES2)
+#if defined(OS_EMSCRIPTEN)
+#define SB_HAS_GLES2 SB_TRUE
+#elif !defined(SB_HAS_GLES2)
 #define SB_HAS_GLES2 !SB_GYP_GL_TYPE_IS_NONE
 #endif
 

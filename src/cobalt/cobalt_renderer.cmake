@@ -70,11 +70,13 @@ target_link_libraries(cobalt_renderer PUBLIC
   cobalt_base
   cobalt_dom
   cobalt_loader
+  cobalt_layout
   cobalt_render_tree
   cobalt_ui_navigation
+  cobalt_system_window
   icu
   starboard_platform
-  starboard_core
+  #starboard_core
   starboard_eztime
   starboard_common
   modp_b64
@@ -100,4 +102,7 @@ target_compile_definitions(cobalt_renderer PRIVATE
   #FORCE_VIDEO_EXTERNAL_MESH=1
   #
   ${COBALT_COMMON_DEFINES}
+  # renderer
+  COBALT_MINIMUM_FRAME_TIME_IN_MILLISECONDS=10
+  #ENABLE_MAP_TO_MESH=1
 )

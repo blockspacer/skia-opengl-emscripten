@@ -42,7 +42,7 @@ add_library(starboard_common STATIC
 )
 
 target_link_libraries(starboard_common PUBLIC
-  #base # TODO
+  base # TODO
   #cobalt_base
   starboard_eztime
   starboard_icu_init

@@ -376,6 +376,7 @@ target_link_libraries(cobalt_dom PUBLIC
   ${COBALT_CSP_LIB_NAME}
   ${COBALT_LOADER_LIB_NAME}
   ${COBALT_MEDIA_LIB}
+  cobalt_system_window
   cobalt_page_visibility
   cobalt_script
   #${COBALT_V8_STUB_LIB}

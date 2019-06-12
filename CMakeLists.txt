@@ -656,6 +656,7 @@ if(ENABLE_COBALT)
   set(COBALT_BASE_LIB cobalt_base)
   set(COBALT_NANOBASE_LIB cobalt_nanobase)
   set(COBALT_SCRIPT_LIB cobalt_script)
+  set(COBALT_SYSTEM_WINDOW_LIB cobalt_system_window)
   set(COBALT_V8_STUB_LIB v8_stub)
   set(COBALT_DOM_EXCEPTION_LIB cobalt_dom_exception)
   set(COBALT_UI_NAVIGATION_LIB cobalt_ui_navigation)
@@ -669,6 +670,19 @@ if(ENABLE_COBALT)
   set(COBALT_LAYOUT_LIB cobalt_layout)
   set(COBALT_DOM_PARSER_LIB cobalt_dom_parser)
   set(COBALT_CSS_PARSER_LIB cobalt_css_parser)
+  #
+  set(ENABLE_COBALT_RENDERER TRUE)
+  if(ENABLE_COBALT_RENDERER)
+    list(APPEND APP_DEFINITIONS ENABLE_COBALT_RENDERER=1)
+    set(ENABLE_COBALT_RENDERER_STUB TRUE)
+    if(ENABLE_COBALT_RENDERER_STUB)
+      set(COBALT_RENDERER_LIB cobalt_renderer_stub)
+      set(COBALT_RENDERER_LIB_FILE_NAME cobalt_renderer_stub)
+    else(ENABLE_COBALT_RENDERER_STUB)
+      set(COBALT_RENDERER_LIB cobalt_renderer)
+      set(COBALT_RENDERER_LIB_FILE_NAME cobalt_renderer)
+    endif(ENABLE_COBALT_RENDERER_STUB)
+  endif(ENABLE_COBALT_RENDERER)
   #
   set(STARBOARD_PLATFORM_LIB starboard_platform)
   set(STARBOARD_ICU_INIT_LIB starboard_icu_init)
@@ -685,8 +699,14 @@ if(ENABLE_COBALT)
   endif(ENABLE_COBALT_RENDER_TREE)
   #
   list(APPEND COBALT_LIBS
+    ${STARBOARD_PLATFORM_LIB}
+    ${STARBOARD_ICU_INIT_LIB}
+    ${STARBOARD_EZTIME_LIB}
+    ${STARBOARD_COMMON_LIB}
+    #
     ${COBALT_BASE_LIB}
     ${COBALT_NANOBASE_LIB}
+    ${COBALT_SYSTEM_WINDOW_LIB}
     ${COBALT_SCRIPT_LIB}
     ${COBALT_V8_STUB_LIB}
     ${COBALT_DOM_EXCEPTION_LIB}
@@ -702,7 +722,7 @@ if(ENABLE_COBALT)
     ${COBALT_LAYOUT_LIB}
     ${COBALT_DOM_PARSER_LIB}
     ${COBALT_CSS_PARSER_LIB}
-    #cobalt_renderer
+    ${COBALT_RENDERER_LIB}
   )
 
   #if(ENABLE_GNET)
@@ -1450,7 +1470,14 @@ else(EMSCRIPTEN)
     # Debugging CFLAGS. Turn optimizations off; turn debugging symbols on.
     # see https://github.com/mmatyas/supermariowar/blob/master/CMakeLists.txt#L165
     # see http://www.brendangregg.com/blog/2016-08-09/gdb-example-ncurses.html
-    #add_definitions(-DDEBUG -D_DEBUG)
+    #add_definitions(-DDEBUG=1 -D_DEBUG=1)
+    #add_definitions(-D_DEBUG=1)
+
+    # see cobalt/src/cobalt/layout/layout_unit.h
+    set(COMMON_FLAGS "${COMMON_FLAGS} -D_DEBUG=1")
+    # see https://github.com/blockspacer/cobalt-clone-28052019/blob/master/src/cobalt/renderer/pipeline.cc#L119
+    set(COMMON_FLAGS "${COMMON_FLAGS} -DENABLE_DEBUGGER=1")
+
     if(NOT DEBUG_LEVEL)
       set(DEBUG_LEVEL "${DEBUG_LEVEL} -g")
     endif(NOT DEBUG_LEVEL)
@@ -1689,6 +1716,7 @@ endif(ENABLE_COBALT)
 #
 set(PROJECT_SRC
   src/main.cpp
+  src/render_tree_combiner.cc
 )
 
 if (ENABLE_SKIA)

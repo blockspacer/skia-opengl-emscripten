@@ -30,6 +30,8 @@ include(cobalt_script.cmake)
 
 include(v8_stub.cmake)
 
+include(cobalt_system_window.cmake)
+
 include(cobalt_dom_exception.cmake)
 
 include(cobalt_ui_navigation.cmake)
@@ -56,10 +58,12 @@ include(cobalt_dom_parser.cmake)
 
 include(cobalt_css_parser.cmake)
 
-#include(cobalt_renderer.cmake)
-
 if(ENABLE_COBALT_RENDER_TREE)
   include(cobalt_render_tree.cmake)
 endif(ENABLE_COBALT_RENDER_TREE)
+
+if(ENABLE_COBALT_RENDERER)
+  include(${COBALT_RENDERER_LIB_FILE_NAME}.cmake)
+endif(ENABLE_COBALT_RENDERER)
 
 include(COBALT.cmake)

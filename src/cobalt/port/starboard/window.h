@@ -1,4 +1,4 @@
-// Copyright 2015 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2015 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -228,6 +228,28 @@ SB_EXPORT bool SbWindowOnScreenKeyboardSuggestionsSupported(SbWindow window);
 
 #ifdef __cplusplus
 }  // extern "C"
+#endif
+
+// TODO: move to "starboard/shared/emscripten/window_internal.h"
+#if defined(__EMSCRIPTEN__)
+struct SbWindowPrivate {
+    explicit SbWindowPrivate(const SbWindowOptions* options);
+    virtual ~SbWindowPrivate();
+
+    // The width, height, pixel ratio of this window.
+    int width;
+    int height;
+    float video_pixel_ratio;
+};
+
+struct SbWindowPrivateEmscripten : SbWindowPrivate {
+    explicit SbWindowPrivateEmscripten(const SbWindowOptions* options);
+    ~SbWindowPrivateEmscripten();
+
+    int width;
+    int height;
+    float video_pixel_ratio;
+};
 #endif
 
 #endif  // STARBOARD_WINDOW_H_

@@ -14,10 +14,14 @@
 set(starboard_platform_SOURCES
   ${COBALT_PORT_DIR}/starboard/linux/shared/atomic_public.h
   ${COBALT_PORT_DIR}/starboard/linux/shared/configuration_public.h
-  ## TODO ## ${COBALT_PORT_DIR}/starboard/linux/shared/decode_target_get_info.cc
-  ## TODO ## ${COBALT_PORT_DIR}/starboard/linux/shared/decode_target_internal.cc
-  ## TODO ## ${COBALT_PORT_DIR}/starboard/linux/shared/decode_target_internal.h
-  ## TODO ## ${COBALT_PORT_DIR}/starboard/linux/shared/decode_target_release.cc
+  ## TODO ## requires RefCounted from starboard_common
+  ${COBALT_PORT_DIR}/starboard/linux/shared/decode_target_get_info.cc
+  ## TODO ## requires RefCounted from starboard_common
+  ${COBALT_PORT_DIR}/starboard/linux/shared/decode_target_internal.cc
+  ## TODO ## requires RefCounted from starboard_common
+  ${COBALT_PORT_DIR}/starboard/linux/shared/decode_target_internal.h
+  ## TODO ## requires RefCounted from starboard_common
+  ${COBALT_PORT_DIR}/starboard/linux/shared/decode_target_release.cc
   ## TODO ## ${COBALT_PORT_DIR}/starboard/linux/shared/media_is_video_supported.cc
   ## TODO ## ${COBALT_PORT_DIR}/starboard/linux/shared/player_components_impl.cc
   ${COBALT_PORT_DIR}/starboard/linux/shared/system_get_connection_type.cc
@@ -352,6 +356,13 @@ set(starboard_platform_SOURCES
   ${COBALT_PORT_DIR}/starboard/shared/stub/system_raise_platform_error.cc
   ${COBALT_PORT_DIR}/starboard/shared/stub/ui_nav_get_interface.cc
   ${COBALT_PORT_DIR}/starboard/shared/stub/window_get_diagonal_size_in_inches.cc
+  #
+  ${COBALT_PORT_DIR}/starboard/shared/stub/window_create.cc
+  ${COBALT_PORT_DIR}/starboard/shared/stub/window_destroy.cc
+  ${COBALT_PORT_DIR}/starboard/shared/stub/window_get_platform_handle.cc
+  ${COBALT_PORT_DIR}/starboard/shared/stub/window_get_size.cc
+  ${COBALT_PORT_DIR}/starboard/shared/stub/window_on_screen_keyboard_suggestions_supported.cc
+  ${COBALT_PORT_DIR}/starboard/shared/stub/window_update_on_screen_keyboard_suggestions.cc
   # TODO
   # ## TODO ##
   #

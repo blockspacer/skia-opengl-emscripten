@@ -1,4 +1,4 @@
-// Copyright 2014 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2014 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -356,7 +356,7 @@ void LayoutManager::Impl::StartLayoutTimer() {
       static_cast<int64_t>(base::Time::kMicrosecondsPerSecond * 1.0f /
                            (layout_refresh_rate_ + 1.0f));
 
-  printf("layout_timer_.Start %d\n", timer_interval_in_microseconds);
+  printf("layout_timer_.Start %lld\n", timer_interval_in_microseconds);
   layout_timer_.Start(
       FROM_HERE,
       base::TimeDelta::FromMicroseconds(timer_interval_in_microseconds),

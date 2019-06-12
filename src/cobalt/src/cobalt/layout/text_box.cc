@@ -1,4 +1,4 @@
-// Copyright 2014 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2014 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -87,7 +87,9 @@ LayoutUnit TextBox::GetInlineLevelTopMargin() const {
 }
 
 void TextBox::UpdateContentSizeAndMargins(const LayoutParams& layout_params) {
+  printf("UpdateContentSizeAndMargins 1\n");
   // Anonymous boxes do not have margins.
+#if !defined(OS_EMSCRIPTEN)
   DCHECK(GetUsedMarginLeftIfNotAuto(computed_style(),
                                     layout_params.containing_block_size)
              ->EqualOrNaN(LayoutUnit()));
@@ -100,6 +102,8 @@ void TextBox::UpdateContentSizeAndMargins(const LayoutParams& layout_params) {
   DCHECK(GetUsedMarginBottomIfNotAuto(computed_style(),
                                       layout_params.containing_block_size)
              ->EqualOrNaN(LayoutUnit()));
+#endif
+  printf("UpdateContentSizeAndMargins 2\n");
 
   // The non-collapsible content size only needs to be calculated if
   // |non_collapsible_text_width_| is unset. This indicates that either the
@@ -368,12 +372,18 @@ void AddTextShadows(render_tree::TextNode::Builder* builder,
 void TextBox::RenderAndAnimateContent(
     render_tree::CompositionNode::Builder* border_node_builder,
     ContainerBox* /*stacking_context*/) const {
+  printf("RenderAndAnimateContent 1\n");
   if (computed_style()->visibility() != cssom::KeywordValue::GetVisible()) {
     return;
   }
 
+  // Anonymous boxes do not have margins.
+#if !defined(OS_EMSCRIPTEN)
   DCHECK((border_left_width() + padding_left()).EqualOrNaN(LayoutUnit()));
   DCHECK((border_top_width() + padding_top()).EqualOrNaN(LayoutUnit()));
+#endif
+
+  printf("RenderAndAnimateContent 2\n");
 
   // Only add the text node to the render tree if it actually has visible
   // content that isn't simply collapsible whitespace and a font isn't loading.

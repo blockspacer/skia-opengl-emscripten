@@ -1,4 +1,4 @@
-// Copyright 2017 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2017 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,19 +15,22 @@
 #ifndef STARBOARD_LINUX_SHARED_DECODE_TARGET_INTERNAL_H_
 #define STARBOARD_LINUX_SHARED_DECODE_TARGET_INTERNAL_H_
 
-#include "starboard/common/ref_counted.h"
 #include "starboard/decode_target.h"
 #include "starboard/shared/starboard/player/filter/cpu_video_frame.h"
 
+/// \note removes circular deps common <-> platform
+//#include "starboard/common/ref_counted.h"
+#include "base/memory/ref_counted.h" // TODO: was starboard::RefCounted
+
 struct SbDecodeTargetPrivate {
-  class Data : public starboard::RefCounted<Data> {
+  class Data : public base::RefCounted<Data> { // TODO: was starboard::RefCounted
    public:
     Data() {}
 
     SbDecodeTargetInfo info;
 
    private:
-    friend class starboard::RefCounted<Data>;
+    friend class base::RefCounted<Data>; // TODO: was starboard::RefCounted
     ~Data();
   };
 

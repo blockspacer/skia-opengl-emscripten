@@ -32,9 +32,9 @@
 #include "cobalt/media/web_media_player_factory.h"
 #include "cobalt/render_tree/image.h"
 #include "cobalt/render_tree/resource_provider.h"
-#if defined(ENABLE_COBALT_system_window)
+//#if defined(ENABLE_COBALT_system_window)
 #include "cobalt/system_window/system_window.h"
-#endif // ENABLE_COBALT_system_window
+//#endif // ENABLE_COBALT_system_window
 
 #include "cobalt/media/player/web_media_player_delegate.h"
 
@@ -80,9 +80,9 @@ class MediaModule : public WebMediaPlayerFactory,
     SB_UNREFERENCED_PARAMETER(resource_provider);
   }
 
-#if defined(ENABLE_COBALT_system_window)
+//#if defined(ENABLE_COBALT_system_window)
   virtual system_window::SystemWindow* system_window() const { return NULL; }
-#endif
+//#endif
 
   void Suspend();
 
@@ -97,9 +97,9 @@ class MediaModule : public WebMediaPlayerFactory,
   // This function should be defined on individual platform to create the
   // platform specific MediaModule.
   static std::unique_ptr<MediaModule> Create(
-#if defined(ENABLE_COBALT_system_window)
+//#if defined(ENABLE_COBALT_system_window)
       system_window::SystemWindow* system_window,
-#endif
+//#endif
       render_tree::ResourceProvider* resource_provider,
       const Options& options = Options());
 

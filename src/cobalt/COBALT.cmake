@@ -128,11 +128,11 @@ target_link_libraries(COBALT_CORE INTERFACE
   #cobalt_cssom
   #cobalt_web_animations
   #cobalt_dom
-  starboard_icu_init
-  starboard_eztime  # requires starboard_icu_init
+  #starboard_icu_init
+  #starboard_eztime  # requires starboard_icu_init
   #starboard_stub
-  starboard_platform # requires starboard_stub
-  starboard_common
+  #starboard_platform # requires starboard_stub
+  #starboard_common
   #starboard_core
   ### TODO ## starboard_platform
 )
@@ -160,9 +160,6 @@ target_compile_definitions(COBALT_CORE INTERFACE
   #BASE_I18N_IMPLEMENTATION=1
   #
   ${COBALT_COMMON_DEFINES}
-  # renderer
-  COBALT_MINIMUM_FRAME_TIME_IN_MILLISECONDS=10
-  #ENABLE_MAP_TO_MESH=1
 )
 
 target_compile_options(COBALT_CORE INTERFACE

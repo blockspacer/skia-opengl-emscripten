@@ -122,6 +122,11 @@
 #undef ENABLE_SK_EFFECTS
 #endif
 
+//#if defined(ENABLE_COBALT_RENDERER_STUB)
+//#include "renderer_stub/renderer_module.h"
+//#include "renderer_stub/pipeline.h"
+//#endif
+
 #ifdef ENABLE_BORINGSSL
 #include <third_party/boringssl/src/include/openssl/ssl.h>
 #include <assert.h>
@@ -765,6 +770,12 @@ sk_sp<const GrGLInterface> emscripten_GrGLMakeNativeInterface() {
 //#endif
 //#undef ENABLE_COBALT
 #ifdef ENABLE_COBALT
+#include "render_tree_combiner.h"
+
+#include "cobalt/base/message_queue.h"
+#include "cobalt/base/event_dispatcher.h"
+#include "starboard/event.h"
+
 #include "cobalt/base/init_cobalt.h"
 
 #include "cobalt/web_animations/animation.h"
@@ -1019,7 +1030,7 @@ sk_sp<const GrGLInterface> emscripten_GrGLMakeNativeInterface() {
 //#include "cobalt/renderer/renderer_module.h"
 //#include "cobalt/script/array_buffer.h"
 //#include "cobalt/storage/storage_manager.h"
-//#include "cobalt/system_window/system_window.h"
+#include "cobalt/system_window/system_window.h"
 //#include "cobalt/webdriver/session_driver.h"
 #include "starboard/configuration.h"
 #include "starboard/window.h"
@@ -1051,6 +1062,17 @@ sk_sp<const GrGLInterface> emscripten_GrGLMakeNativeInterface() {
 #include "cobalt/script/javascript_engine.h"
 //#include "cobalt/speech/speech_synthesis.h"
 #include "starboard/file.h"
+
+#include "renderer_stub/renderer_module.h"
+#include "renderer_stub/pipeline.h"
+#include "renderer_stub/submission.h"
+#include "renderer_stub/backend/graphics_system.h"
+#include "renderer_stub/backend/graphics_context.h"
+#include "renderer_stub/backend/default_graphics_system.h"
+#include "renderer_stub/backend/graphics_system_stub.h"
+
+typedef base::Callback<void(const cobalt::layout::LayoutManager::LayoutResults&)>
+    OnRenderTreeProducedCallback;
 #endif // ENABLE_COBALT
 
 //#if defined(ENABLE_SKIA) && (defined(USE_LIBJPEG) || defined(USE_LIBJPEG_TURBO))
@@ -2126,6 +2148,10 @@ using namespace cobalt::dom;
 using namespace cobalt::script;
 using namespace cobalt::network;
 using namespace cobalt::media;
+using namespace cobalt::renderer;
+using namespace cobalt::browser;
+//using namespace cobalt::ras;
+using namespace cobalt::renderer::backend;
 //using namespace cobalt::csp;
 
 /*class CSSParserObserver {
@@ -2162,6 +2188,33 @@ class CobaltTester {
   public:
     CobaltTester();
     void run();
+    void OnWindowClose(base::TimeDelta close_time);
+    void OnWindowMinimize();
+    void OnLoadComplete(const base::Optional<std::string>& error);
+    void OnCspPolicyChanged();
+    void OnRanAnimationFrameCallbacks();
+    void OnRenderTreeRasterized(
+        scoped_refptr<base::SingleThreadTaskRunner> web_module_message_loop,
+        const base::TimeTicks& produced_time);
+    void BrowserProcessRenderTreeSubmissionQueue();
+    renderer::Submission CreateSubmissionFromLayoutResults(
+        const cobalt::layout::LayoutManager::LayoutResults& layout_results);
+    void OnRendererSubmissionRasterized();
+    void SubmitCurrentRenderTreeToRenderer();
+    void OnBrowserRenderTreeProduced(
+        int main_web_module_generation,
+        const cobalt::layout::LayoutManager::LayoutResults& layout_results);
+    void QueueOnRenderTreeProduced(
+        int main_web_module_generation,
+        const cobalt::layout::LayoutManager::LayoutResults& layout_results);
+    void OnRenderTreeProduced(const cobalt::layout::LayoutManager::LayoutResults& layout_results);
+    void navigationCallback(const GURL&);
+    void OnStartDispatchEvent(const scoped_refptr<dom::Event>& event);
+    void OnStopDispatchEvent(const scoped_refptr<dom::Event>& event);
+    void HandlePointerEvents();
+    void OnLoad();
+    void listWordBoundaries(const icu::UnicodeString& s);
+
 
   private:
     cobalt::web_animations::Animation::Data animation;
@@ -2169,6 +2222,12 @@ class CobaltTester {
     scoped_refptr<cobalt::cssom::CSSRuleList> rule_list;
     scoped_refptr<cobalt::cssom::CSSMediaRule> rule;
     cobalt::cssom::SelectorTree selector_tree;
+    // Keeps track of all messages containing render tree submissions that will
+    // ultimately reference the |render_tree_combiner_| and the
+    // |renderer_module_|.  It is important that this is destroyed before the
+    // above mentioned references are.  It must however outlive all WebModules
+    // that may be producing render trees.
+    base::MessageQueue render_tree_submission_queue_;
     // TODO: UTF8
     // set
     // "<meta content='text/html; charset=gb2312' http-equiv=Content-Type>"
@@ -2295,6 +2354,10 @@ class CobaltTester {
 
   //network::NetworkModule network_module_;
 
+  // Manages the three render trees, combines and renders them.
+  RenderTreeCombiner render_tree_combiner_;
+  std::unique_ptr<RenderTreeCombiner::Layer> main_web_module_layer_;
+
   scoped_refptr<cobalt::dom::captions::SystemCaptionSettings>
       system_caption_settings_;
 
@@ -2320,10 +2383,26 @@ class CobaltTester {
       base::WaitableEvent::InitialState::NOT_SIGNALED};
 
   scoped_refptr<cssom::CSSDeclaredStyleData> style;
+
+  base::EventDispatcher event_dispatcher_;
+
+  //std::unique_ptr<backend::GraphicsSystem> graphics_system_;
+  //std::unique_ptr<backend::GraphicsContext> graphics_context_;
+  //std::unique_ptr<rasterizer::Rasterizer> rasterizer_;
+
+  // Sets up everything to do with graphics, from backend objects like the
+  // display and graphics context to the rasterizer and rendering pipeline.
+  std::unique_ptr<renderer::RendererModule> renderer_module_;
+
+  // The main system window for our application. This routes input event
+  // callbacks, and provides a native window handle on desktop systems.
+  std::unique_ptr<system_window::SystemWindow> system_window_;
+
+  const int kMainWebModuleZIndex = 1;
 };
 
 
-void OnWindowClose(base::TimeDelta close_time) {
+void CobaltTester::OnWindowClose(base::TimeDelta close_time) {
     printf("OnWindowClose\n");
 /*#if defined(ENABLE_DEBUGGER)
     if (input_device_manager_fuzzer_) {
@@ -2334,7 +2413,7 @@ void OnWindowClose(base::TimeDelta close_time) {
     SbSystemRequestStop(0);*/
 }
 
-void OnWindowMinimize() {
+void CobaltTester::OnWindowMinimize() {
     printf("OnWindowMinimize\n");
 /*#if defined(ENABLE_DEBUGGER)
     if (input_device_manager_fuzzer_) {
@@ -2345,68 +2424,185 @@ void OnWindowMinimize() {
     SbSystemRequestSuspend();*/
 }
 
-void OnLoadComplete(const base::Optional<std::string>& error) {
+void CobaltTester::OnLoadComplete(const base::Optional<std::string>& error) {
     printf("OnLoadComplete %s\n", error.value_or("no errors").c_str());
     //if (error) error_callback_.Run(window_->location()->url(), *error);
 }
-void OnCspPolicyChanged() {
+
+void CobaltTester::OnCspPolicyChanged() {
     printf("OnCspPolicyChanged\n");
 
 }
 
 // Called by |layout_mananger_| after it runs the animation frame callbacks.
-void OnRanAnimationFrameCallbacks() {
+void CobaltTester::OnRanAnimationFrameCallbacks() {
     printf("OnRanAnimationFrameCallbacks\n");
 
-}
-
-// Called by |layout_mananger_| when it produces a render tree. May modify
-// the render tree (e.g. to add a debug overlay), then runs the callback
-// specified in the constructor, |render_tree_produced_callback_|.
-void OnRenderTreeProduced(const cobalt::layout::LayoutManager::LayoutResults& layout_results) {
-    printf("OnRenderTreeProduced\n");
-    /// \see https://github.com/blockspacer/cobalt-clone-28052019/blob/master/src/cobalt/browser/browser_module.cc#L736
 }
 
 // Called by the Renderer on the Renderer thread when it rasterizes a render
 // tree with this callback attached. It includes the time the render tree was
 // produced.
-void OnRenderTreeRasterized(
+void CobaltTester::OnRenderTreeRasterized(
     scoped_refptr<base::SingleThreadTaskRunner> web_module_message_loop,
     const base::TimeTicks& produced_time) {
     printf("OnRenderTreeRasterized\n");
 }
 
-void navigationCallback(const GURL&) {
+void CobaltTester::BrowserProcessRenderTreeSubmissionQueue() {
+    TRACE_EVENT0("cobalt::browser",
+                 "BrowserModule::ProcessRenderTreeSubmissionQueue()");
+    //DCHECK_EQ(base::MessageLoop::current(), self_message_loop_);
+    render_tree_submission_queue_.ProcessAll();
+}
+
+renderer::Submission CobaltTester::CreateSubmissionFromLayoutResults(
+    const cobalt::layout::LayoutManager::LayoutResults& layout_results) {
+    renderer::Submission renderer_submission(layout_results.render_tree,
+                                             layout_results.layout_time);
+    if (!layout_results.on_rasterized_callback.is_null()) {
+        renderer_submission.on_rasterized_callbacks.push_back(
+            layout_results.on_rasterized_callback);
+    }
+    return renderer_submission;
+}
+
+void CobaltTester::OnRendererSubmissionRasterized() {
+    TRACE_EVENT0("cobalt::browser",
+                 "BrowserModule::OnRendererSubmissionRasterized()");
+    //if (!is_rendered_) {
+    //    // Hide the system splash screen when the first render has completed.
+    //    is_rendered_ = true;
+    //    SbSystemHideSplashScreen();
+    //}
+}
+
+void CobaltTester::SubmitCurrentRenderTreeToRenderer() {
+    printf("SubmitCurrentRenderTreeToRenderer 1\n");
+    if (!renderer_module_) {
+        return;
+    }
+
+    base::Optional<renderer::Submission> submission =
+        render_tree_combiner_.GetCurrentSubmission();
+    if (submission) {
+        renderer_module_->pipeline()->Submit(*submission);
+    }
+    printf("SubmitCurrentRenderTreeToRenderer 2\n");
+}
+
+void CobaltTester::OnBrowserRenderTreeProduced(
+    int main_web_module_generation,
+    //const browser::WebModule::LayoutResults& layout_results) {
+    const cobalt::layout::LayoutManager::LayoutResults& layout_results) {
+    printf("OnBrowserRenderTreeProduced 1\n");
+
+    //if (splash_screen_) {
+    //    if (on_screen_keyboard_show_called_) {
+    //        // Hide the splash screen as quickly as possible.
+    //        DestroySplashScreen(base::TimeDelta());
+    //    } else if (!splash_screen_->ShutdownSignaled()) {
+    //        splash_screen_->Shutdown();
+    //    }
+    //}
+    //if (application_state_ == base::kApplicationStatePreloading) {
+    //    layout_results.on_rasterized_callback.Run();
+    //    return;
+    //}
+
+    renderer::Submission renderer_submission(
+        CreateSubmissionFromLayoutResults(layout_results));
+
+    // Set the timeline id for the main web module.  The main web module is
+    // assumed to be an interactive experience for which the default timeline
+    // configuration is already designed for, so we don't configure anything
+    // explicitly.
+    renderer_submission.timeline_info.id = 0;//current_main_web_module_timeline_id_;
+
+    renderer_submission.on_rasterized_callbacks.push_back(base::Bind(
+        &CobaltTester::OnRendererSubmissionRasterized,
+        base::Unretained(this)));
+
+    //if (!splash_screen_) {
+        render_tree_combiner_.SetTimelineLayer(main_web_module_layer_.get());
+    //}
+    main_web_module_layer_->Submit(renderer_submission);
+
+    SubmitCurrentRenderTreeToRenderer();
+    printf("OnBrowserRenderTreeProduced 2\n");
+}
+
+void CobaltTester::QueueOnRenderTreeProduced(
+    int main_web_module_generation,
+    const cobalt::layout::LayoutManager::LayoutResults& layout_results) {
+    TRACE_EVENT0("cobalt::browser", "BrowserModule::QueueOnRenderTreeProduced()");
+    render_tree_submission_queue_.AddMessage(
+        base::Bind(&CobaltTester::OnBrowserRenderTreeProduced,
+                   base::Unretained(this),
+                   main_web_module_generation, layout_results));
+    //self_message_loop_->task_runner()->PostTask(
+    base::MessageLoopCurrent::Get()->task_runner()->PostTask(
+        FROM_HERE,
+        base::Bind(&CobaltTester::BrowserProcessRenderTreeSubmissionQueue,
+                   base::Unretained(this)));
+}
+
+// Called by |layout_mananger_| when it produces a render tree. May modify
+// the render tree (e.g. to add a debug overlay), then runs the callback
+// specified in the constructor, |render_tree_produced_callback_|.
+void CobaltTester::OnRenderTreeProduced(const cobalt::layout::LayoutManager::LayoutResults& layout_results) {
+    printf("OnRenderTreeProduced\n");
+    /// \see https://github.com/blockspacer/cobalt-clone-28052019/blob/master/src/cobalt/browser/browser_module.cc#L736
+    auto last_render_tree_produced_time_ = base::TimeTicks::Now();
+    cobalt::layout::LayoutManager::LayoutResults layout_results_with_callback(
+        layout_results.render_tree, layout_results.layout_time,
+        base::Bind(&CobaltTester::OnRenderTreeRasterized,
+                   base::Unretained(this),
+                   base::MessageLoopCurrent::Get()->task_runner(),
+                   last_render_tree_produced_time_));
+
+    int main_web_module_generation_ = 1; // TODO
+    OnRenderTreeProducedCallback render_tree_produced_callback_ =
+        base::Bind(&CobaltTester::QueueOnRenderTreeProduced,
+                   base::Unretained(this),
+                   main_web_module_generation_);
+///#if defined(ENABLE_DEBUGGER)
+///    debug_overlay_->OnRenderTreeProduced(layout_results_with_callback);
+///#else   // ENABLE_DEBUGGER
+    render_tree_produced_callback_.Run(layout_results_with_callback);
+///#endif  // ENABLE_DEBUGGER
+}
+
+void CobaltTester::navigationCallback(const GURL&) {
     printf("navigationCallback\n");
 }
 
-void OnStartDispatchEvent(const scoped_refptr<dom::Event>& event) {
+void CobaltTester::OnStartDispatchEvent(const scoped_refptr<dom::Event>& event) {
     printf("OnStartDispatchEvent %s\n", event->type().c_str());
     /*if (!on_start_dispatch_event_callback_.is_null()) {
         on_start_dispatch_event_callback_.Run(event);
     }*/
 }
 
-void OnStopDispatchEvent(const scoped_refptr<dom::Event>& event) {
+void CobaltTester::OnStopDispatchEvent(const scoped_refptr<dom::Event>& event) {
     printf("OnStopDispatchEvent %s\n", event->type().c_str());
     /*if (!on_stop_dispatch_event_callback_.is_null()) {
         on_stop_dispatch_event_callback_.Run(event);
     }*/
 }
 
-void HandlePointerEvents() {
+void CobaltTester::HandlePointerEvents() {
     printf("HandlePointerEvents\n");
 }
 
 // Called when the WebModule's Window.onload event is fired.
-void OnLoad() {
+void CobaltTester::OnLoad() {
     printf("HandlePointerEvents\n");
 
     // see https://github.com/blockspacer/cobalt-clone-28052019/blob/master/src/cobalt/browser/browser_module.cc#L625
 }
 
-void listWordBoundaries(const icu::UnicodeString& s) {
+void CobaltTester::listWordBoundaries(const icu::UnicodeString& s) {
     UErrorCode status = U_ZERO_ERROR;
     icu::BreakIterator* bi = icu::BreakIterator::createWordInstance(icu::Locale::getUS(), status);
     DCHECK(bi);
@@ -2432,8 +2628,56 @@ CobaltTester::CobaltTester()
   // see https://github.com/blockspacer/cobalt-clone-28052019/blob/master/src/cobalt/browser/web_module.cc
 
   //camera_3d_ = new Camera3D(camera_3d_); // TODO: CreatedDefaultCamera3D
+///#if defined(ENABLE_COBALT_RENDERER_STUB)
+///#else
+///  resource_provider_ = new render_tree::ResourceProviderStub();
+///#endif
 
-  resource_provider_ = nullptr;
+  //graphics_system_ = backend::CreateDefaultGraphicsSystem();
+  //graphics_context_ = graphics_system_->CreateGraphicsContext();
+
+  //std::unique_ptr<GraphicsSystem> gs(new GraphicsSystemStub());
+  //auto gc = gs->CreateGraphicsContext();
+  //gc->
+
+  // Create the rasterizer using the platform default RenderModule options.
+  RendererModule::Options render_module_options;
+  render_module_options.enable_fps_stdout = false;
+  render_module_options.enable_fps_overlay = false;
+
+  /// \todo https://github.com/blockspacer/cobalt-clone-28052019/blob/master/src/cobalt/renderer/renderer_module_default_options.cc
+  //render_module_options.create_rasterizer_function = ;
+
+  render_module_options.submit_even_if_render_tree_is_unchanged = true;
+  //rasterizer_ = render_module_options.create_rasterizer_function.Run(
+  //    graphics_context_.get(), render_module_options);
+
+  base::Optional<math::Size> maybe_size;
+  /*if (options_.requested_viewport_size) {
+      maybe_size = options_.requested_viewport_size->width_height();
+  }*/
+  maybe_size = math::Size(500, 500);
+  system_window_.reset(
+      new system_window::SystemWindow(&event_dispatcher_, maybe_size));
+
+  // Create the main web module layer.
+  main_web_module_layer_ =
+      render_tree_combiner_.CreateLayer(kMainWebModuleZIndex);
+
+  // see RendererModuleWithCameraOptions
+  render_module_options.get_camera_transform = base::Bind(
+      &input::Camera3D::GetCameraTransformAndUpdateOrientation, camera_3d_);
+
+  renderer_module_.reset(new renderer::RendererModule(
+      system_window_.get(),
+      render_module_options));
+      /*RendererModuleWithCameraOptions(render_module_options,
+                                      //input_device_manager_->camera_3d()
+                                      camera_3d_
+                                      )));*/
+
+  //resource_provider_ = rasterizer_->GetResourceProvider();
+  resource_provider_ = renderer_module_->resource_provider();
   /*
       if (!renderer_module_) {
         if (resource_provider_stub_) {
@@ -2446,10 +2690,12 @@ CobaltTester::CobaltTester()
 
     return renderer_module_->resource_provider();
    */
+  DCHECK(resource_provider_);
 
   loaded_callbacks.push_back(
       //base::Bind(&BrowserModule::OnLoad, base::Unretained(this)));
-      base::Bind(&OnLoad));
+      base::Bind(&CobaltTester::OnLoad,
+                 base::Unretained(this)));
 
    dom::OnScreenKeyboardBridge* on_screen_keyboard_bridge = NULL;
 
@@ -2640,10 +2886,10 @@ CobaltTester::CobaltTester()
       //ata.options.font_language_script_override.empty()
       //   ? base::GetSystemLanguageScript()
       //   : data.options.font_language_script_override,
-      base::Bind(&navigationCallback),
+      base::Bind(&CobaltTester::CobaltTester::navigationCallback, base::Unretained(this)),
       //base::Bind(&navigationCallback, base::Unretained(this)),//data.options.navigation_callback, // const base::Callback<void(const GURL&)>
       //base::Bind(&OnLoadComplete, base::Unretained(this)),
-      base::Bind(&OnLoadComplete),
+      base::Bind(&CobaltTester::OnLoadComplete, base::Unretained(this)),
       // //data.network_module->cookie_jar(),
       // //data.network_module->GetPostSender(),
       // //data.options.require_csp,
@@ -2653,21 +2899,21 @@ CobaltTester::CobaltTester()
       cobalt::dom::CspEnforcementType::kCspEnforcementDisable,
       ///csp::kCspEnforcementEnable,//data.options.csp_enforcement_mode,
       //base::Bind(&OnCspPolicyChanged, base::Unretained(this)),
-      base::Bind(&OnCspPolicyChanged),
+      base::Bind(&CobaltTester::OnCspPolicyChanged, base::Unretained(this)),
       //base::Bind(&OnRanAnimationFrameCallbacks,
       //           base::Unretained(this)),
-      base::Bind(&OnRanAnimationFrameCallbacks),
-      base::Bind(&OnWindowClose),
+      base::Bind(&CobaltTester::OnRanAnimationFrameCallbacks, base::Unretained(this)),
+      base::Bind(&CobaltTester::OnWindowClose, base::Unretained(this)),
       //base::Bind(&OnWindowClose, base::Unretained(this)), //data.window_close_callback, // base::Callback<void(base::TimeDelta)>
       //base::Bind(&OnWindowMinimize, base::Unretained(this)), //data.window_minimize_callback, // base::Closure
-      base::Bind(&OnWindowMinimize),
+      base::Bind(&CobaltTester::OnWindowMinimize, base::Unretained(this)),
       on_screen_keyboard_bridge, //data.options.on_screen_keyboard_bridge,
       camera_3d_, //new Camera3D(),//data.options.camera_3d,
       // //media_session_client_->GetMediaSession(),
-      base::Bind(&OnStartDispatchEvent),
+      base::Bind(&CobaltTester::OnStartDispatchEvent, base::Unretained(this)),
       //base::Bind(&WebModule::Impl::OnStartDispatchEvent,
       //           base::Unretained(this)),
-      base::Bind(&OnStopDispatchEvent),
+      base::Bind(&CobaltTester::OnStopDispatchEvent, base::Unretained(this)),
       //base::Bind(&WebModule::Impl::OnStopDispatchEvent, base::Unretained(this)),
       provide_screenshot_function,//data.options.provide_screenshot_function,
       &synchronous_loader_interrupt_,
@@ -2740,9 +2986,9 @@ CobaltTester::CobaltTester()
       window_.get(),
       //base::Bind(&WebModule::Impl::OnRenderTreeProduced,
       //           base::Unretained(this)),
-      base::Bind(&OnRenderTreeProduced),
+      base::Bind(&CobaltTester::OnRenderTreeProduced, base::Unretained(this)),
       //base::Bind(&WebModule::Impl::HandlePointerEvents, base::Unretained(this)),
-      base::Bind(&HandlePointerEvents),
+      base::Bind(&CobaltTester::HandlePointerEvents, base::Unretained(this)),
       layout_trigger,//data.options.layout_trigger,
       99,//data.dom_max_element_depth,
       1.0,//data.layout_refresh_rate,
@@ -2800,7 +3046,7 @@ void CobaltTester::run() {
   rule_list->AppendCSSRule(rule);
 
   printf("main 1 = rule_list->length() = %d\n", rule_list->length());
-  printf("main CSSRule::kMediaRule = %b\n", cobalt::cssom::CSSRule::kMediaRule == rule_list->Item(0)->type());
+  printf("main CSSRule::kMediaRule = %i\n", cobalt::cssom::CSSRule::kMediaRule == rule_list->Item(0)->type());
 
   printf("main Testing COBALT selectors...\n");
 

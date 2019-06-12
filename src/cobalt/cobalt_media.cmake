@@ -234,6 +234,7 @@ target_link_libraries(cobalt_media PUBLIC
   #v8_stub
   ${COBALT_LOADER_LIB_NAME} ## TODO
   ${COBALT_CSP_LIB_NAME}
+  cobalt_system_window # TODO
   starboard_icu_init
   starboard_eztime  # requires starboard_icu_init
   #starboard_stub
