@@ -1,4 +1,4 @@
-// Copyright 2016 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2016 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -225,9 +225,14 @@ void DebugTreePrinter::AddNamedNodeString(Node* node, const char* type_name) {
 }  // namespace
 
 std::string DumpRenderTreeToString(render_tree::Node* node) {
+  printf("DumpRenderTreeToString 0\n");
+  DCHECK(node);
+  printf("DumpRenderTreeToString 1\n");
   DebugTreePrinter tree_printer;
+  printf("DumpRenderTreeToString 2\n");
   node->Accept(&tree_printer);
 
+  printf("DumpRenderTreeToString 3\n");
   return tree_printer.Result();
 }
 

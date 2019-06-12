@@ -981,6 +981,12 @@ sk_sp<const GrGLInterface> emscripten_GrGLMakeNativeInterface() {
 //#include "cobalt/network/network_module.h"
 #include "cobalt/render_tree/node.h"
 #include "cobalt/render_tree/resource_provider.h"
+
+#include "cobalt/render_tree/brush.h"
+#include "cobalt/render_tree/composition_node.h"
+#include "cobalt/render_tree/dump_render_tree_to_string.h"
+#include "cobalt/render_tree/rect_node.h"
+
 #include "cobalt/script/global_environment.h"
 #include "cobalt/script/javascript_engine.h"
 #include "cobalt/script/script_runner.h"
@@ -2453,7 +2459,10 @@ void CobaltTester::BrowserProcessRenderTreeSubmissionQueue() {
     TRACE_EVENT0("cobalt::browser",
                  "BrowserModule::ProcessRenderTreeSubmissionQueue()");
     //DCHECK_EQ(base::MessageLoop::current(), self_message_loop_);
+    printf("BrowserProcessRenderTreeSubmissionQueue 1\n");
+
     render_tree_submission_queue_.ProcessAll();
+    printf("BrowserProcessRenderTreeSubmissionQueue 2\n");
 }
 
 renderer::Submission CobaltTester::CreateSubmissionFromLayoutResults(
@@ -2477,6 +2486,8 @@ void CobaltTester::OnRendererSubmissionRasterized() {
     //}
 }
 
+static render_tree::animations::AnimateNode::AnimateResults animateResults;
+
 void CobaltTester::SubmitCurrentRenderTreeToRenderer() {
     printf("SubmitCurrentRenderTreeToRenderer 1\n");
     if (!renderer_module_) {
@@ -2486,7 +2497,37 @@ void CobaltTester::SubmitCurrentRenderTreeToRenderer() {
     base::Optional<renderer::Submission> submission =
         render_tree_combiner_.GetCurrentSubmission();
     if (submission) {
+        printf("SubmitCurrentRenderTreeToRenderer 2.1\n");
+
         renderer_module_->pipeline()->Submit(*submission);
+
+        // TODO: remove DumpRenderTreeToString
+        /*{
+            DCHECK(submission->render_tree);
+            render_tree::animations::AnimateNode* animate_node =
+                static_cast<render_tree::animations::AnimateNode*>(
+                    submission->render_tree.get());
+            printf("SubmitCurrentRenderTreeToRenderer 1.1\n");
+            DCHECK(animate_node);
+            animateResults =
+                animate_node->Apply(submission->time_offset);
+            printf("SubmitCurrentRenderTreeToRenderer 1.2\n");
+
+            DCHECK(animateResults.animated);
+            DCHECK(animateResults.animated.get());
+            printf("SubmitCurrentRenderTreeToRenderer 1.3\n");
+            DCHECK(animateResults.animated->source());
+            printf("SubmitCurrentRenderTreeToRenderer 1.4\n");
+            DCHECK(animateResults.animated->source().get());
+            printf("SubmitCurrentRenderTreeToRenderer 1.5\n");
+            std::string tree_dump =
+                render_tree::DumpRenderTreeToString(animateResults.animated->source().get());
+            printf("DumpRenderTreeToString %s\n", tree_dump.c_str());
+        }*/
+        {
+            renderer_module_->pipeline()->OnDumpCurrentRenderTree("");
+        }
+        printf("SubmitCurrentRenderTreeToRenderer 2.2\n");
     }
     printf("SubmitCurrentRenderTreeToRenderer 2\n");
 }
@@ -2541,10 +2582,12 @@ void CobaltTester::QueueOnRenderTreeProduced(
                    base::Unretained(this),
                    main_web_module_generation, layout_results));
     //self_message_loop_->task_runner()->PostTask(
+
     base::MessageLoopCurrent::Get()->task_runner()->PostTask(
         FROM_HERE,
         base::Bind(&CobaltTester::BrowserProcessRenderTreeSubmissionQueue,
                    base::Unretained(this)));
+    //base::Bind BrowserProcessRenderTreeSubmissionQueue();
 }
 
 // Called by |layout_mananger_| when it produces a render tree. May modify

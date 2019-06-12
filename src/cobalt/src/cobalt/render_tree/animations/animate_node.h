@@ -1,4 +1,4 @@
-// Copyright 2016 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2016 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -181,7 +181,11 @@ class AnimateNode : public Node {
   AnimateResults Apply(base::TimeDelta time_offset);
 
   // Returns the sub-tree for which the animations apply to.
-  const scoped_refptr<Node> source() const { return source_; }
+  const scoped_refptr<Node> source() const {
+    DCHECK(source_.get());
+    DCHECK(source_);
+    return source_;
+  }
 
   // Returns the time at which all animations will have completed, or
   // base::TimeDelta::Max() if they will never complete.

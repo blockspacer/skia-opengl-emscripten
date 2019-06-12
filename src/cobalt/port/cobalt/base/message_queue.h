@@ -53,8 +53,10 @@ class MessageQueue {
     }
 
     while (!work_queue.empty()) {
+        printf("while (!work_queue.empty()) %i 1\n", work_queue.size());
       work_queue.front().Run();
       work_queue.pop();
+        printf("while (!work_queue.empty()) %i 2\n", work_queue.size());
     }
   }
 

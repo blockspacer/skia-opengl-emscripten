@@ -610,10 +610,10 @@ void Pipeline::ShutdownRasterizerThread() {
   rasterizer_.reset();
 }
 
-#if defined(ENABLE_DEBUGGER)
 void Pipeline::OnDumpCurrentRenderTree(const std::string& message) {
-  if (base::MessageLoop::current() != rasterizer_thread_.message_loop()) {
-    rasterizer_thread_.message_loop()->task_runner()->PostTask(
+  //if (base::MessageLoop::current() != rasterizer_thread_.message_loop()) {
+  if (base::MessageLoopCurrent::Get().task_runner() != rasterizer_thread_.task_runner()) {
+    rasterizer_thread_.task_runner()->PostTask(
         FROM_HERE, base::Bind(&Pipeline::OnDumpCurrentRenderTree,
                               base::Unretained(this), message));
     return;
@@ -650,9 +650,11 @@ void Pipeline::OnDumpCurrentRenderTree(const std::string& message) {
   }
 }
 
+#if defined(ENABLE_DEBUGGER)
 void Pipeline::OnToggleFpsStdout(const std::string& message) {
-  if (base::MessageLoop::current() != rasterizer_thread_.message_loop()) {
-    rasterizer_thread_.message_loop()->task_runner()->PostTask(
+  if (base::MessageLoopCurrent::Get().task_runner() != rasterizer_thread_.task_runner()) {
+  //if (base::MessageLoop::current() != rasterizer_thread_.message_loop()) {
+    rasterizer_thread_.task_runner()->PostTask(
         FROM_HERE, base::Bind(&Pipeline::OnToggleFpsStdout,
                               base::Unretained(this), message));
     return;
@@ -662,8 +664,9 @@ void Pipeline::OnToggleFpsStdout(const std::string& message) {
 }
 
 void Pipeline::OnToggleFpsOverlay(const std::string& message) {
-  if (base::MessageLoop::current() != rasterizer_thread_.message_loop()) {
-    rasterizer_thread_.message_loop()->task_runner()->PostTask(
+  if (base::MessageLoopCurrent::Get().task_runner() != rasterizer_thread_.task_runner()) {
+  //if (base::MessageLoop::current() != rasterizer_thread_.message_loop()) {
+    rasterizer_thread_.task_runner()->PostTask(
         FROM_HERE, base::Bind(&Pipeline::OnToggleFpsOverlay,
                               base::Unretained(this), message));
     return;

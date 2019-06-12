@@ -158,7 +158,7 @@ set(USE_SK_GPU TRUE)
 # see http://webassemblycode.com/using-browsers-debug-webassembly/
 set(EMSCRIPTEN_USE_SOURCE_MAP TRUE)
 
-set(EMSCRIPTEN_USE_SAFE_HEAP FALSE)
+set(EMSCRIPTEN_USE_SAFE_HEAP TRUE)
 
 set(EMSCRIPTEN_USE_PROFILING FALSE)
 
@@ -403,6 +403,17 @@ else()
       message(FATAL_ERROR "build with -DCMAKE_BUILD_TYPE=Debug")
     endif(TARGET_EMSCRIPTEN)
   endif(NOT CMAKE_BUILD_TYPE MATCHES Debug)
+  #
+  # Debugging CFLAGS. Turn optimizations off; turn debugging symbols on.
+  # see https://github.com/mmatyas/supermariowar/blob/master/CMakeLists.txt#L165
+  # see http://www.brendangregg.com/blog/2016-08-09/gdb-example-ncurses.html
+  #add_definitions(-DDEBUG=1 -D_DEBUG=1)
+  #add_definitions(-D_DEBUG=1)
+
+  # see cobalt/src/cobalt/layout/layout_unit.h
+  set(COMMON_FLAGS "${COMMON_FLAGS} -D_DEBUG=1")
+  # see https://github.com/blockspacer/cobalt-clone-28052019/blob/master/src/cobalt/renderer/pipeline.cc#L119
+  #set(COMMON_FLAGS "${COMMON_FLAGS} -DENABLE_DEBUGGER=1")
 endif(RELEASE_BUILD)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}
@@ -1467,16 +1478,6 @@ else(EMSCRIPTEN)
   # set -DCMAKE_BUILD_TYPE=Debug
   # see https://stackoverflow.com/a/25199377/10904212
   if(NOT RELEASE_BUILD)
-    # Debugging CFLAGS. Turn optimizations off; turn debugging symbols on.
-    # see https://github.com/mmatyas/supermariowar/blob/master/CMakeLists.txt#L165
-    # see http://www.brendangregg.com/blog/2016-08-09/gdb-example-ncurses.html
-    #add_definitions(-DDEBUG=1 -D_DEBUG=1)
-    #add_definitions(-D_DEBUG=1)
-
-    # see cobalt/src/cobalt/layout/layout_unit.h
-    set(COMMON_FLAGS "${COMMON_FLAGS} -D_DEBUG=1")
-    # see https://github.com/blockspacer/cobalt-clone-28052019/blob/master/src/cobalt/renderer/pipeline.cc#L119
-    set(COMMON_FLAGS "${COMMON_FLAGS} -DENABLE_DEBUGGER=1")
 
     if(NOT DEBUG_LEVEL)
       set(DEBUG_LEVEL "${DEBUG_LEVEL} -g")

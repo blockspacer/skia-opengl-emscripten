@@ -41,7 +41,7 @@
 #include "cobalt/render_tree/resource_provider.h"
 
 #if defined(ENABLE_DEBUGGER)
-#include "cobalt/debug/console/command_manager.h"
+//#include "cobalt/debug/console/command_manager.h" // TODO
 #endif  // defined(ENABLE_DEBUGGER)
 
 namespace cobalt {
@@ -121,6 +121,8 @@ class Pipeline {
   // subsequently submitted to this pipeline.
   render_tree::ResourceProvider* GetResourceProvider();
 
+  void OnDumpCurrentRenderTree(const std::string&);
+
  private:
   // All private data members should be accessed only on the rasterizer thread,
   // with the exception of rasterizer_thread_ itself through which messages
@@ -170,7 +172,6 @@ class Pipeline {
   void ShutdownRasterizerThread();
 
 #if defined(ENABLE_DEBUGGER)
-  void OnDumpCurrentRenderTree(const std::string&);
   void OnToggleFpsStdout(const std::string&);
   void OnToggleFpsOverlay(const std::string&);
 #endif  // defined(ENABLE_DEBUGGER)

@@ -1,4 +1,4 @@
-// Copyright (c) 2012 The Chromium Authors. All rights reserved.
+﻿// Copyright (c) 2012 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -196,6 +196,7 @@ class BASE_EXPORT RefCountedThreadSafeBase {
   ALWAYS_INLINE void AddRefImpl() const {
 #if DCHECK_IS_ON()
     DCHECK(!in_dtor_);
+    // TODO
     DCHECK(!needs_adopt_ref_)
         << "This RefCounted object is created with non-zero reference count."
         << " The first reference to such a object has to be made by AdoptRef or"
