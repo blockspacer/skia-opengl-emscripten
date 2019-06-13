@@ -58,6 +58,10 @@ include(cobalt_dom_parser.cmake)
 
 include(cobalt_css_parser.cmake)
 
+if(ENABLE_COBALT_GLIMP)
+  include(cobalt_glimp.cmake)
+endif(ENABLE_COBALT_GLIMP)
+
 if(ENABLE_COBALT_RENDER_TREE)
   include(cobalt_render_tree.cmake)
 endif(ENABLE_COBALT_RENDER_TREE)

@@ -213,6 +213,8 @@ FontCache::GetCharacterFallbackTypeface(int32 utf32_character,
                                         const render_tree::FontStyle& style) {
   DCHECK(thread_checker_.CalledOnValidThread());
   DCHECK(resource_provider());
+    DCHECK(resource_provider()->GetCharacterFallbackTypeface(utf32_character, style,
+                                                        language_script_));
   return GetCachedLocalTypeface(
       resource_provider()->GetCharacterFallbackTypeface(utf32_character, style,
                                                         language_script_));
@@ -395,6 +397,7 @@ scoped_refptr<render_tree::Font> FontCache::TryGetLocalFont(
     return NULL;
   } else {
     *state = FontListFont::kLoadedState;
+    DCHECK(resource_provider()->GetLocalTypeface(family.c_str(), style));
     return GetFontFromTypefaceAndSize(
         GetCachedLocalTypeface(
             resource_provider()->GetLocalTypeface(family.c_str(), style)),
@@ -414,6 +417,7 @@ scoped_refptr<render_tree::Font> FontCache::TryGetLocalFontByFaceName(
     if (!typeface) {
       break;
     }
+    DCHECK(typeface);
     const scoped_refptr<render_tree::Typeface>& typeface_cached(
         GetCachedLocalTypeface(typeface));
 

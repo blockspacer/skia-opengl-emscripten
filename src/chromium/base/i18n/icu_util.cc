@@ -51,9 +51,9 @@ namespace i18n {
 #endif
 #endif
 
-#if defined(OS_EMSCRIPTEN) && ICU_UTIL_DATA_IMPL != ICU_UTIL_DATA_FILE
-#error "set ICU_UTIL_DATA_IMPL=ICU_UTIL_DATA_FILE on wasm"
-#endif
+//#if defined(OS_EMSCRIPTEN) && ICU_UTIL_DATA_IMPL != ICU_UTIL_DATA_FILE
+//#error "set ICU_UTIL_DATA_IMPL=ICU_UTIL_DATA_FILE on wasm"
+//#endif
 
 namespace {
 #if !defined(OS_NACL)// && !defined(OS_EMSCRIPTEN)

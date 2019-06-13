@@ -8,7 +8,7 @@
 
 #include "base/compiler_specific.h"
 #include "base/logging.h"
-#include "cobalt/renderer/rasterizer/egl/shader_base.h"
+#include "renderer_stub/rasterizer/skgl/shader_base.h"
 
 namespace cobalt {
 namespace renderer {

@@ -17,6 +17,7 @@
 #include "renderer_stub/get_default_rasterizer_for_platform.h"
 
 #include "renderer_stub/backend/graphics_context.h"
+#include "renderer_stub/rasterizer/skgl/software_rasterizer.h"
 /*#include "renderer_stub/rasterizer/blitter/hardware_rasterizer.h"
 #include "renderer_stub/rasterizer/blitter/software_rasterizer.h"
 #include "renderer_stub/rasterizer/egl/hardware_rasterizer.h"
@@ -26,7 +27,8 @@
 #include "renderer_stub/renderer_module.h"
 
 // TODO
-#define COBALT_FORCE_STUB_RASTERIZER 1
+//#define COBALT_FORCE_STUB_RASTERIZER 1
+//#define COBALT_FORCE_SOFTWARE_RASTERIZER 1
 
 namespace cobalt {
 namespace renderer {
@@ -44,15 +46,16 @@ std::unique_ptr<rasterizer::Rasterizer> CreateStubRasterizer(
 #endif  // COBALT_FORCE_STUB_RASTERIZER
 
 #if SB_HAS(GLES2)
-/*std::unique_ptr<rasterizer::Rasterizer> CreateGLESSoftwareRasterizer(
+std::unique_ptr<rasterizer::Rasterizer> CreateGLESSoftwareRasterizer(
     backend::GraphicsContext* graphics_context,
     const RendererModule::Options& options) {
   return std::unique_ptr<rasterizer::Rasterizer>(
       new rasterizer::egl::SoftwareRasterizer(
-          graphics_context, options.purge_skia_font_caches_on_destruction));
+          /*graphics_context,*/ options.purge_skia_font_caches_on_destruction)
+          );
 }
 
-std::unique_ptr<rasterizer::Rasterizer> CreateGLESHardwareRasterizer(
+/*std::unique_ptr<rasterizer::Rasterizer> CreateGLESHardwareRasterizer(
     backend::GraphicsContext* graphics_context,
     const RendererModule::Options& options) {
   return std::unique_ptr<rasterizer::Rasterizer>(

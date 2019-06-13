@@ -445,6 +445,8 @@ P_LOG("LayoutManager::Impl::DoLayoutAndProduceRenderTree 6\n");
       is_render_tree_pending_ = false;
     }
     TRACE_EVENT_END0("cobalt::layout", kBenchmarkStatLayout);
+
+    //layout_timer_.Stop(); // TODO: remove line
   }
 P_LOG("LayoutManager::Impl::DoLayoutAndProduceRenderTree 7\n");
 

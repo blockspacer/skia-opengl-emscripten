@@ -55,6 +55,12 @@ if (BUILD_APP)
     message( FATAL_ERROR "Bad exit status ${retcode} ${_ERROR_VARIABLE}")
   endif()
 
+  # force file repackaging
+  conditional_remove(TRUE ${BUILD_DIR}resources ${BUILD_DIR})
+  conditional_remove(TRUE ${BUILD_DIR}skemgl.data ${BUILD_DIR})
+  conditional_remove(TRUE ${BUILD_DIR}skemgl.js ${BUILD_DIR})
+  conditional_remove(TRUE ${BUILD_DIR}skemgl.mem ${BUILD_DIR})
+
   # --- build ---
   execute_process(
     COMMAND
@@ -67,6 +73,18 @@ if (BUILD_APP)
   if(NOT "${retcode}" STREQUAL "0")
     message( FATAL_ERROR "Bad exit status ${retcode} ${_ERROR_VARIABLE}")
   endif()
+
+  #execute_process(
+  #  COMMAND
+  #  ${COLORED_OUTPUT_ENABLER}
+  #    python "${EMSCRIPTEN_PACKAGER_SCRIPT}" "skemgl.data" "--preload" "${PACKAGER_DATA_DIR}" "--no-heap-copy" "--js-output=skemgl.js" ${COMPRESSION_LEVEL}
+  #  WORKING_DIRECTORY ${BUILD_DIR}
+  #  RESULT_VARIABLE retcode
+  #  ERROR_VARIABLE _ERROR_VARIABLE
+  #)
+  #if(NOT "${retcode}" STREQUAL "0")
+  #  message( FATAL_ERROR "Bad exit status ${retcode} ${_ERROR_VARIABLE}")
+  #endif()
 
   # --- show resulting stats/metrics ---
   if(ENABLE_WASM_OPT)

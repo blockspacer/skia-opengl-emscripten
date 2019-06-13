@@ -770,6 +770,8 @@ sk_sp<const GrGLInterface> emscripten_GrGLMakeNativeInterface() {
 //#endif
 //#undef ENABLE_COBALT
 #ifdef ENABLE_COBALT
+#include "renderer_stub/rasterizer/skgl/software_rasterizer.h"
+
 #include "render_tree_combiner.h"
 
 #include "cobalt/base/message_queue.h"
@@ -1207,7 +1209,7 @@ static bool DrawGlyphs(double current_x, double current_y,
 static const int kStencilBits = 8; // Skia needs 8 stencil bits
 static const int kMsaaSampleCount = 0;
 
-static GLclampf redClrTintAnim = 0.0f;
+//static GLclampf redClrTintAnim = 0.0f;
 
 #if defined(ENABLE_SKIA)
 
@@ -1237,11 +1239,11 @@ static SkSurface* sSurface = nullptr;
 // must be POT
 static int width = 1920;//1024;//512;
 // must be POT
-static int height = 1200;//1024;//512;
+static int height = 3000;//1200;//1024;//512;
 
 static GLint uniformTex;
 
-static GLint uniformRedClrTint;
+//static GLint uniformRedClrTint;
 
 #if defined(ENABLE_HTML5_SDL) || !defined(__EMSCRIPTEN__)
 static SDL_Window* window;
@@ -1831,7 +1833,7 @@ static int InitGL() {
 
   char fShaderStr[] = "precision mediump float;\n"
                       "uniform sampler2D u_tex;\n"
-                      "uniform float clrRedTint;\n"
+                      //"uniform float clrRedTint;\n"
                       "varying vec2 v_texcoord;\n"
                       //		"uniform vec4 vColor;"
                       "void main()                                  \n"
@@ -1840,7 +1842,7 @@ static int InitGL() {
                       "    vec4 colour = texture2D(u_tex, v_texcoord);\n"
                       //    "    vec4 colour = vec4(100, 0, 100, 100);\n"
                       "    colour.rgba = colour.rgba;\n"
-                      "    colour.r = clrRedTint;\n"
+                      //"    colour.r = clrRedTint;\n"
                       "    gl_FragColor = colour;\n"
                       "}                                            \n";
 
@@ -1888,7 +1890,7 @@ static int InitGL() {
 #endif
 
   uniformTex = glGetUniformLocation(programObject, "u_tex");
-  uniformRedClrTint = glGetUniformLocation(programObject, "clrRedTint");
+  //uniformRedClrTint = glGetUniformLocation(programObject, "clrRedTint");
   GL_CHECK( glGetProgramiv(programObject, GL_LINK_STATUS, &linked) );
   if (!linked) {
     GLint infoLen = 0;
@@ -1931,45 +1933,54 @@ static void Draw() {
       //printf("Draw() 2\n");
 
 #if defined(ENABLE_SKIA)
+  //using cobalt::renderer::rasterizer::egl::getRasterizerSkSurface;
+  using cobalt::renderer::rasterizer::egl::getRasterizerSkImage;
+
+  //if (getRasterizerSkSurface())
   {
+
     // Draw to the surface via its SkCanvas.
     // We don't manage this pointer's lifetime.
-    SkCanvas* canvas = sRasterSurface->getCanvas();
+    //SkCanvas* canvas =
+      //  getRasterizerSkSurface()->getCanvas();
+      //sRasterSurface->getCanvas();
 
-    canvas->clear(SkColorSetARGB(255, 255, 255, 255));
+    ///canvas->clear(SkColorSetARGB(255, 255, 255, 255));
       //printf("Draw() 3\n");
 
-    myView->onDraw(canvas);
+    ///myView->onDraw(canvas);
       //printf("Draw() 4\n");
 
-    sRasterSurface->flush();
+    ///sRasterSurface->flush();
       //printf("Draw() 5\n");
-
-    const sk_sp<SkImage> pImage = sRasterSurface->makeImageSnapshot();
+    const sk_sp<SkImage> pImage = getRasterizerSkImage();
+    //const sk_sp<SkImage> pImage = sRasterSurface->makeImageSnapshot();
+    /*const sk_sp<SkImage> pImage = getRasterizerSkSurface()->makeImageSnapshot();
     if (nullptr == pImage) {
       //printf("can`t makeImageSnapshot\n");
-    }
+    }*/
+    if(pImage) {
+      SkPixmap pixmap;
+      if (!pImage->peekPixels(&pixmap)) {
+        //printf("can`t peekPixels\n");
+      }
+        //printf("Draw() 6\n");
 
-    SkPixmap pixmap;
-    if (!pImage->peekPixels(&pixmap)) {
-      //printf("can`t peekPixels\n");
+      GL_CHECK( glBindTexture(GL_TEXTURE_2D, skia_texture) );
+      GL_CHECK( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE) );
+      GL_CHECK( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE) );
+      GL_CHECK( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR) );
+      GL_CHECK( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR) );
+      GL_CHECK( glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, pixmap.width(), pixmap.height(), 0, GL_RGBA,
+                   GL_UNSIGNED_BYTE, pixmap.addr()) );
     }
-      //printf("Draw() 6\n");
-
-    GL_CHECK( glBindTexture(GL_TEXTURE_2D, skia_texture) );
-    GL_CHECK( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE) );
-    GL_CHECK( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE) );
-    GL_CHECK( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR) );
-    GL_CHECK( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR) );
-    GL_CHECK( glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, pixmap.width(), pixmap.height(), 0, GL_RGBA,
-                 GL_UNSIGNED_BYTE, pixmap.addr()) );
   }
 #endif // ENABLE_SKIA
 
   GL_CHECK( glUniform1i(uniformTex, 0) );
 
   //printf("redClrTintAnim %f\n", redClrTintAnim);
-  GL_CHECK( glUniform1f(uniformRedClrTint, (sin(redClrTintAnim) / 2.0f + 0.5f)) );
+  //GL_CHECK( glUniform1f(uniformRedClrTint, (sin(redClrTintAnim) / 2.0f + 0.5f)) );
 
   GL_CHECK( glBindBuffer(GL_ARRAY_BUFFER, vertexPosObject) );
   //
@@ -2003,10 +2014,10 @@ static void Draw() {
 }
 
 static void animate() {
-  redClrTintAnim += 0.01f;
-  if (redClrTintAnim > 360.0f) {
-    redClrTintAnim = 0.0f;
-  }
+  //redClrTintAnim += 0.01f;
+  //if (redClrTintAnim > 360.0f) {
+  //  redClrTintAnim = 0.0f;
+  //}
 
 #if defined(ENABLE_SKIA) && defined(ENABLE_SKOTTIE)
 
@@ -2453,6 +2464,25 @@ void CobaltTester::OnRenderTreeRasterized(
     scoped_refptr<base::SingleThreadTaskRunner> web_module_message_loop,
     const base::TimeTicks& produced_time) {
     printf("OnRenderTreeRasterized\n");
+
+
+    // TODO
+    //main_web_module_layer_->Reset();
+
+    //if (media_module_) {
+    //  media_module_->Suspend();
+    //}
+
+    // Flush out any submitted render trees pushed since we started shutting down
+    // the web modules above.
+    //base::MessageLoopCurrent::Get()->task_runner()->PostTask(
+    //    FROM_HERE,
+    //    base::Bind(&CobaltTester::BrowserProcessRenderTreeSubmissionQueue,
+    //               base::Unretained(this)));
+
+    ///layout_manager_->Suspend(); // TODO: remove it & fix freezes
+    ///renderer_module_->pipeline()->Clear();
+    //renderer_module_->pipeline()->
 }
 
 void CobaltTester::BrowserProcessRenderTreeSubmissionQueue() {
@@ -3181,7 +3211,7 @@ void CobaltTester::run() {
 
   printf("main Testing COBALT css_parser...\n");
   scoped_refptr<cssom::CSSStyleSheet> style_sheet = css_parser_->ParseStyleSheet(
-      "body {} @cobalt-magic; div {}", base::SourceLocation("[object HTMLDecoderTest]", 1, 1));
+      "body {} div {}", base::SourceLocation("[object HTMLDecoderTest]", 1, 1));
   //ASSERT_TRUE(style_sheet);
   //EXPECT_EQ(2, style_sheet->css_rules_same_origin()->length());
   printf("main style_sheet->css_rules_same_origin()->length() = %d == 2\n",  style_sheet->css_rules_same_origin()->length());
@@ -3208,42 +3238,42 @@ void CobaltTester::run() {
     }
   }
 
-  printf("main html_element_...\n");
-  html_element_ =
-      document_->CreateElement("div")->AsHTMLElement();
-  document_->AppendChild(html_element_);
-  html_element_->set_tab_index(-1);
-  html_element_->Focus();
-  html_element_->Blur();
-  printf("main AsHTMLElement()->text_content %s\n", document_->active_element()->AsHTMLElement()->text_content()->c_str());
-  //SetElementStyle(style, html_element);
-  html_element_->SetAttribute("style", style->SerializeCSSDeclarationBlock());
-  printf("main html_element_->GetAttribute(style) %s\n", html_element_->GetAttribute("style")->c_str());
-  //window_->SetApplicationState(base::ApplicationState::kApplicationStateStarted);
-
-  printf("main DoSynchronousLayoutAndGetRenderTree()...\n");
-  render_tree_root_ =
-      document_->DoSynchronousLayoutAndGetRenderTree();
+  /// printf("main html_element_...\n");
+  /// html_element_ =
+  ///     document_->CreateElement("div")->AsHTMLElement();
+  /// document_->AppendChild(html_element_);
+  /// html_element_->set_tab_index(-1);
+  /// html_element_->Focus();
+  /// html_element_->Blur();
+  /// printf("main AsHTMLElement()->text_content %s\n", document_->active_element()->AsHTMLElement()->text_content()->c_str());
+  /// //SetElementStyle(style, html_element);
+  /// html_element_->SetAttribute("style", style->SerializeCSSDeclarationBlock());
+  /// printf("main html_element_->GetAttribute(style) %s\n", html_element_->GetAttribute("style")->c_str());
+  /// //window_->SetApplicationState(base::ApplicationState::kApplicationStateStarted);
+  ///
+  /// printf("main DoSynchronousLayoutAndGetRenderTree()...\n");
+  /// render_tree_root_ =
+  ///     document_->DoSynchronousLayoutAndGetRenderTree();
 
   printf("main synchronous_loader_interrupt_.Reset()...\n");
-  synchronous_loader_interrupt_.Reset();
-  if (resource_provider_) {
-      base::TypeId resource_provider_type_id = resource_provider_->GetTypeId();
-      // Check for if the resource provider type id has changed. If it has, then
-      // anything contained within the caches is invalid and must be purged.
-      /*if (resource_provider_type_id_ != resource_provider_type_id) {
-          //PurgeResourceCaches(false);
-      }
-      resource_provider_type_id_ = resource_provider_type_id;*/
-
-      loader_factory_->Resume(resource_provider_);
-
-  }
+  ///synchronous_loader_interrupt_.Reset();
+  ///if (resource_provider_) {
+  ///    base::TypeId resource_provider_type_id = resource_provider_->GetTypeId();
+  ///    // Check for if the resource provider type id has changed. If it has, then
+  ///    // anything contained within the caches is invalid and must be purged.
+  ///    /*if (resource_provider_type_id_ != resource_provider_type_id) {
+  ///        //PurgeResourceCaches(false);
+  ///    }
+  ///    resource_provider_type_id_ = resource_provider_type_id;*/
+  ///
+  ///    loader_factory_->Resume(resource_provider_);
+  ///
+  ///}
   // Permit render trees to be generated again.  Layout will have been
   // invalidated with the call to Suspend(), so the layout manager's first
   // task will be to perform a full re-layout.
-  printf("main layout_manager_->Resume...\n");
-  layout_manager_->Resume();
+  ///printf("main layout_manager_->Resume...\n");
+  ///layout_manager_->Resume();
 
   //window_->RequestAnimationFrame();
 
@@ -4010,7 +4040,8 @@ int main(int argc, char** argv) {
 
   GL_CHECK( glDisable(GL_DEPTH_TEST) );
   GL_CHECK( glViewport(0, 0, (int)width, (int)height) );
-  GL_CHECK( glClearColor(redClrTintAnim, 1.0f, 1.0f, 1.0f) );
+  //GL_CHECK( glClearColor(redClrTintAnim, 1.0f, 1.0f, 1.0f) );
+  GL_CHECK( glClearColor(1.0f, 1.0f, 1.0f, 1.0f) );
   GL_CHECK( glClearStencil(0) );
   GL_CHECK( glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT) );
 
