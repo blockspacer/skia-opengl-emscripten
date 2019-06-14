@@ -123,6 +123,7 @@ std::unique_ptr<render_tree::ImageData> ImageDataDecoder::AllocateImageData(
 
 scoped_refptr<Image> ImageDataDecoder::CreateStaticImage(
     std::unique_ptr<render_tree::ImageData> image_data) {
+  printf("ImageDataDecoder::CreateStaticImage\n");
   DCHECK(image_data);
   return new StaticImage(
       resource_provider()->CreateImage(std::move(image_data)));

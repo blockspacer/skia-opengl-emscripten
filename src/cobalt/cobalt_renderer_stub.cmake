@@ -30,13 +30,18 @@ set(COBALT_renderer_stub_skia_SOURCES
   ${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/software_resource_provider.cc
   ${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/software_resource_provider.h
   #${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/hardware_image.cc
-  #${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/image.cc
   ${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/cobalt_skia_type_conversions.cc
   ${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/cobalt_skia_type_conversions.h
   #${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/gl_format_conversions.cc
   ${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/image.cc
   ${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/software_image.cc
   ${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/software_mesh.h
+  ${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/font.cc
+  ${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/typeface.cc
+  ${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/skia/src/ports/SkTypeface_cobalt.cc
+  ${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/skia/src/ports/SkStream_cobalt.cc
+  ${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/skia/src/ports/SkOSFile_cobalt.cc
+  ${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/glyph_buffer.cc
   #
   # common
   #
@@ -268,7 +273,7 @@ target_compile_definitions(cobalt_renderer_stub_skgl PRIVATE
 #}],
 # skia_cobalt.gypi
 # TODO: uses outdated skia ver!
-set(COBALT_renderer_stub_SOURCES
+list(APPEND COBALT_renderer_stub_SOURCES
   ${COBALT_PORT_DIR}/renderer_stub/get_default_rasterizer_for_platform.cc
   ${COBALT_PORT_DIR}/renderer_stub/renderer_module_default_options.cc
   ${COBALT_PORT_DIR}/renderer_stub/pipeline.cc
@@ -276,22 +281,34 @@ set(COBALT_renderer_stub_SOURCES
   ${COBALT_PORT_DIR}/renderer_stub/smoothed_value.cc
   ${COBALT_PORT_DIR}/renderer_stub/submission_queue.cc
   #
-  #${COBALT_PORT_DIR}/renderer_stub/backend/egl/display.cc
-  #${COBALT_PORT_DIR}/renderer_stub/backend/egl/framebuffer.cc
-  #${COBALT_PORT_DIR}/renderer_stub/backend/egl/graphics_context.cc
-  #${COBALT_PORT_DIR}/renderer_stub/backend/egl/graphics_system.cc
-  #${COBALT_PORT_DIR}/renderer_stub/backend/egl/pbuffer_render_target.cc
-  #${COBALT_PORT_DIR}/renderer_stub/backend/egl/resource_context.cc
-  #${COBALT_PORT_DIR}/renderer_stub/backend/egl/texture.cc
-  #${COBALT_PORT_DIR}/renderer_stub/backend/egl/texture_data.cc
-  #${COBALT_PORT_DIR}/renderer_stub/backend/egl/texture_data_cpu.cc
-  #${COBALT_PORT_DIR}/renderer_stub/backend/egl/texture_data_pbo.cc
-  #${COBALT_PORT_DIR}/renderer_stub/backend/egl/utils.cc
-  #
+)
+
+if(ENABLE_COBALT_GLIMP)
+  list(APPEND COBALT_renderer_stub_SOURCES
+    ${COBALT_PORT_DIR}/renderer_stub/backend/egl/display.cc
+    ${COBALT_PORT_DIR}/renderer_stub/backend/egl/framebuffer.cc
+    ${COBALT_PORT_DIR}/renderer_stub/backend/egl/graphics_context.cc
+    ${COBALT_PORT_DIR}/renderer_stub/backend/egl/graphics_system.cc
+    ${COBALT_PORT_DIR}/renderer_stub/backend/egl/pbuffer_render_target.cc
+    ${COBALT_PORT_DIR}/renderer_stub/backend/egl/resource_context.cc
+    ${COBALT_PORT_DIR}/renderer_stub/backend/egl/texture.cc
+    ${COBALT_PORT_DIR}/renderer_stub/backend/egl/texture_data.cc
+    ${COBALT_PORT_DIR}/renderer_stub/backend/egl/texture_data_cpu.cc
+    ${COBALT_PORT_DIR}/renderer_stub/backend/egl/texture_data_pbo.cc
+    ${COBALT_PORT_DIR}/renderer_stub/backend/egl/utils.cc
+    #
+    ${COBALT_PORT_DIR}/renderer_stub/backend/starboard/default_graphics_system_egl.cc
+  )
+else(ENABLE_COBALT_GLIMP)
+  list(APPEND COBALT_renderer_stub_SOURCES
+    ${COBALT_PORT_DIR}/renderer_stub/backend/starboard/default_graphics_system_stub.cc
+  )
+endif(ENABLE_COBALT_GLIMP)
+
+list(APPEND COBALT_renderer_stub_SOURCES
   ${COBALT_PORT_DIR}/renderer_stub/rasterizer/stub/rasterizer.cc
   #
   ${COBALT_PORT_DIR}/renderer_stub/backend/render_target.cc
-  ${COBALT_PORT_DIR}/renderer_stub/backend/starboard/default_graphics_system_stub.cc
 )
 
 
@@ -372,6 +389,7 @@ target_compile_definitions(cobalt_renderer_stub PRIVATE
   # backend/egl/
   #
   COBALT_EGL_SWAP_INTERVAL=1
+  # COBALT_RENDER_DIRTY_REGION_ONLY
   #
   ${OPENGLES2_DEFINITIONS}
 )

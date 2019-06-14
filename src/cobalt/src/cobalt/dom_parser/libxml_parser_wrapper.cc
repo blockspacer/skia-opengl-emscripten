@@ -215,6 +215,7 @@ void CDATABlock(void* context, const xmlChar* value, int len) {
 void LibxmlParserWrapper::OnStartDocument() { node_stack_.push(parent_node_); }
 
 void LibxmlParserWrapper::OnEndDocument() {
+  printf("OnEndDocument 1\n");
   // Libxml can call OnEndDocument without calling OnStartDocument.
   if (node_stack_.empty()) {
     LOG(WARNING) << "OnEndDocument is called without OnStartDocument.";
@@ -232,11 +233,13 @@ void LibxmlParserWrapper::OnEndDocument() {
     load_complete_callback_.Run(
         std::string("Node stack not empty at end of document."));
   }
+  printf("OnEndDocument 2\n");
 
   if (IsFullDocument()) {
     document_->PostToDispatchEventName(FROM_HERE,
                                        base::Tokens::domcontentloaded());
   }
+  printf("OnEndDocument 3\n");
 }
 
 void LibxmlParserWrapper::OnStartElement(

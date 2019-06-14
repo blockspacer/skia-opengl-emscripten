@@ -125,6 +125,10 @@ class SkFileMemoryChunkStreamProvider {
   // provider.
   void PurgeUnusedMemoryChunks();
 
+  SkFileMemoryChunkStreamManager* getManager() const {
+    return manager_;
+  };
+
  private:
   friend SkFileMemoryChunkStream;
   friend SkFileMemoryChunkStreamManager;
@@ -171,6 +175,17 @@ class SkFileMemoryChunkStream : public SkStreamAsset {
   size_t read(void* buffer, size_t size) override;
   bool isAtEnd() const override;
 
+  SkStreamAsset* onDuplicate() const override {
+      return new SkFileMemoryChunkStream(
+        stream_provider_->getManager()->GetStreamProvider(stream_provider_->file_path()));
+  }
+
+  SkStreamAsset* onFork() const override {
+    auto clone = this->duplicate();
+    clone->seek(this->getPosition());
+    return clone;//clone->release();
+  }
+
   // Required by SkStreamRewindable
   bool rewind() override;
   SkFileMemoryChunkStream* duplicate() const /*override*/;
@@ -196,7 +211,9 @@ class SkFileMemoryChunkStream : public SkStreamAsset {
 
   SkFileMemoryChunkStreamProvider* const stream_provider_;
 
-  SkFile* const file_;
+  //SkFile* const file_;
+  FILE* const file_;
+  //SkFILEStream* const file_;
   size_t file_length_;
   size_t file_position_;
 

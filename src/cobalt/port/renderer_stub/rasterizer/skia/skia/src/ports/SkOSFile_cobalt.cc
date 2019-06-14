@@ -17,20 +17,23 @@
 #include "base/optional.h"
 #include "base/path_service.h"
 
+#include "starboard/file.h"
+#include "base/files/platform_file.h"
+
 // Implement functionality declared in SkOSFile.h via primitives provided
 // by Chromium.  In doing this, we need only ensure that support for Chromium
 // file utilities is working and then Skia file utilities will also work.
 
 namespace {
 
-SbFile ToSbFile(SkFile* sk_file) {
+SbFile ToSbFile(FILE* sk_file) {
   // PlatformFile is a pointer type in Starboard, so we cannot use static_cast
   // from intptr_t.
   return reinterpret_cast<SbFile>(sk_file);
 }
 
-SkFile* ToFILE(SbFile starboard_file) {
-  return reinterpret_cast<SkFile*>(starboard_file);
+FILE* ToFILE(SbFile starboard_file) {
+  return reinterpret_cast<FILE*>(starboard_file);
 }
 
 int ToSbFileFlags(SkFILE_Flags sk_flags) {
@@ -48,21 +51,22 @@ int ToSbFileFlags(SkFILE_Flags sk_flags) {
 
 }  // namespace
 
-SkFile* sk_fopen(const char path[], SkFILE_Flags sk_flags) {
+FILE* sk_fopen(const char path[], SkFILE_Flags sk_flags) {
   SbFile starboard_file = SbFileOpen(path, ToSbFileFlags(sk_flags), NULL, NULL);
-  if (starboard_file == base::kInvalidPlatformFile) {
+  ///if (starboard_file == base::kInvalidPlatformFile) {
+  if(!SbFileIsValid(starboard_file)) {
     return nullptr;
   }
 
   return ToFILE(starboard_file);
 }
 
-void sk_fclose(SkFile* sk_file) {
+void sk_fclose(FILE* sk_file) {
   SkASSERT(sk_file);
   SbFileClose(ToSbFile(sk_file));
 }
 
-size_t sk_fgetsize(SkFile* sk_file) {
+size_t sk_fgetsize(FILE* sk_file) {
   SkASSERT(sk_file);
   SbFile file = ToSbFile(sk_file);
 
@@ -83,32 +87,32 @@ size_t sk_fgetsize(SkFile* sk_file) {
   return size;
 }
 
-size_t sk_fwrite(const void* buffer, size_t byteCount, SkFile* sk_file) {
+size_t sk_fwrite(const void* buffer, size_t byteCount, FILE* sk_file) {
   SkASSERT(sk_file);
   SbFile file = ToSbFile(sk_file);
   return SbFileWrite(file, reinterpret_cast<const char*>(buffer), byteCount);
 }
 
-void sk_fflush(SkFile* sk_file) {
+void sk_fflush(FILE* sk_file) {
   SkASSERT(sk_file);
   SbFile file = ToSbFile(sk_file);
   SbFileFlush(file);
 }
 
-bool sk_fseek(SkFile* sk_file, size_t position) {
+bool sk_fseek(FILE* sk_file, size_t position) {
   SkASSERT(sk_file);
   SbFile file = ToSbFile(sk_file);
   int64_t new_position = SbFileSeek(file, kSbFileFromBegin, position);
   return new_position == position;
 }
 
-size_t sk_ftell(SkFile* sk_file) {
+size_t sk_ftell(FILE* sk_file) {
   SkASSERT(sk_file);
   SbFile file = ToSbFile(sk_file);
   return SbFileSeek(file, kSbFileFromCurrent, 0);
 }
 
-void* sk_fmmap(SkFile* sk_file, size_t* length) {
+void* sk_fmmap(FILE* sk_file, size_t* length) {
   // Not supported, but clients may try to call to see if it is supported.
   return NULL;
 }
@@ -122,12 +126,12 @@ void sk_fmunmap(const void* addr, size_t length) {
   NOTREACHED() << __FUNCTION__;
 }
 
-bool sk_fidentical(SkFile* sk_file_a, SkFile* sk_file_b) {
+bool sk_fidentical(FILE* sk_file_a, FILE* sk_file_b) {
   NOTREACHED() << __FUNCTION__;
   return false;
 }
 
-int sk_fileno(SkFile* sk_file_a) {
+int sk_fileno(FILE* sk_file_a) {
   NOTREACHED() << __FUNCTION__;
   return -1;
 }
@@ -147,7 +151,7 @@ bool sk_mkdir(const char* path) {
   return false;
 }
 
-void sk_fsync(SkFile* f) {
+void sk_fsync(FILE* f) {
   SkASSERT(f);
   SbFile file = ToSbFile(f);
   // Technically, flush doesn't have to call sync... but this is the best
@@ -155,7 +159,7 @@ void sk_fsync(SkFile* f) {
   SbFileFlush(file);
 }
 
-size_t sk_qread(SkFile* file, void* buffer, size_t count, size_t offset) {
+size_t sk_qread(FILE* file, void* buffer, size_t count, size_t offset) {
   SkASSERT(file);
   SbFile starboard_file = ToSbFile(file);
 
@@ -178,7 +182,7 @@ size_t sk_qread(SkFile* file, void* buffer, size_t count, size_t offset) {
   }
 }
 
-size_t sk_fread(void* buffer, size_t byteCount, SkFile* file) {
+size_t sk_fread(void* buffer, size_t byteCount, FILE* file) {
   SkASSERT(file);
   SbFile starboard_file = ToSbFile(file);
   return SbFileReadAll(starboard_file, reinterpret_cast<char*>(buffer),

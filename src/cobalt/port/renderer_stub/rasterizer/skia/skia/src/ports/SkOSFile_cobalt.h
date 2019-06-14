@@ -17,6 +17,18 @@
 
 #include "third_party/skia/src/core/SkOSFile.h"
 
+#include "include/core/SkData.h"
+#include "include/core/SkStream.h"
+#include "include/private/SkTo.h"
+#include "include/utils/SkFrontBufferedStream.h"
+#include "include/utils/SkRandom.h"
+#include "src/core/SkAutoMalloc.h"
+#include "src/core/SkOSFile.h"
+#include "src/core/SkStreamPriv.h"
+#include "src/utils/SkOSPath.h"
+
+#include <cstdio>
+
 // Read |byteCount| bytes from current file cursor position.
 size_t sk_fread(void* buffer, size_t byteCount, SkFILEStream* file);
 // Seek to |offset| bytes within the file.

@@ -45,12 +45,15 @@ class TextNode : public Node {
     Builder(const Builder&) = default;
     Builder(const math::Vector2dF& offset,
             const scoped_refptr<GlyphBuffer>& glyph_buffer,
-            const ColorRGBA& color);
+            const ColorRGBA& color,
+            const base::string16& text);
 
     bool operator==(const Builder& other) const {
       return offset == other.offset && glyph_buffer == other.glyph_buffer &&
              color == other.color && shadows == other.shadows;
     }
+
+    base::string16 text;
 
     math::Vector2dF offset;
 

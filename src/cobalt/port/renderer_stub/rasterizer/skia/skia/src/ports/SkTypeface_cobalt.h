@@ -27,7 +27,7 @@ class SkFontMgr_Cobalt;
 
 class SkTypeface_Cobalt : public SkTypeface_FreeType {
  public:
-  SkTypeface_Cobalt(int face_index, Style style, bool is_fixed_pitch,
+  SkTypeface_Cobalt(int face_index, SkFontStyle style, bool is_fixed_pitch,
                     const SkString& family_name);
 
   virtual size_t GetStreamLength() const = 0;
@@ -47,13 +47,13 @@ class SkTypeface_Cobalt : public SkTypeface_FreeType {
 
 class SkTypeface_CobaltStream : public SkTypeface_Cobalt {
  public:
-  SkTypeface_CobaltStream(SkStreamAsset* stream, int face_index, Style style,
+  SkTypeface_CobaltStream(SkStreamAsset* stream, int face_index, SkFontStyle style,
                           bool is_fixed_pitch, const SkString& family_name);
 
   void onGetFontDescriptor(SkFontDescriptor* descriptor,
                            bool* serialize) const override;
 
-  SkStreamAsset* onOpenStream(int* face_index) const override;
+  std::unique_ptr<SkStreamAsset> onOpenStream(int* face_index) const override;
 
   size_t GetStreamLength() const override;
 
@@ -67,13 +67,13 @@ class SkTypeface_CobaltStreamProvider : public SkTypeface_Cobalt {
  public:
   SkTypeface_CobaltStreamProvider(
       SkFileMemoryChunkStreamProvider* stream_provider, int face_index,
-      Style style, bool is_fixed_pitch, const SkString& family_name,
+      SkFontStyle style, bool is_fixed_pitch, const SkString& family_name,
       bool disable_synthetic_bolding);
 
   void onGetFontDescriptor(SkFontDescriptor* descriptor,
                            bool* serialize) const override;
 
-  SkStreamAsset* onOpenStream(int* face_index) const override;
+  std::unique_ptr<SkStreamAsset> onOpenStream(int* face_index) const override;
 
   size_t GetStreamLength() const override;
 

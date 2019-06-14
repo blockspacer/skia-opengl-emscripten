@@ -38,8 +38,9 @@ class GraphicsSystemStub : public GraphicsSystem {
  public:
   std::unique_ptr<Display> CreateDisplay(
       system_window::SystemWindow* system_window) override {
-    SB_UNREFERENCED_PARAMETER(system_window);
-    return std::unique_ptr<Display>(new DisplayStub());
+    //SB_UNREFERENCED_PARAMETER(system_window);
+    DCHECK(system_window);
+    return std::unique_ptr<Display>(new DisplayStub(system_window->GetWindowSize()));
   }
 
   std::unique_ptr<GraphicsContext> CreateGraphicsContext() override {

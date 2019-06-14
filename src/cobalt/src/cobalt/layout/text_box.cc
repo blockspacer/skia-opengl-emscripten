@@ -415,9 +415,13 @@ void TextBox::RenderAndAnimateContent(
               paragraph_->GetTextBuffer() + text_start_position, text_length,
               paragraph_->IsRTL(text_start_position));
 
+      const base::char16* text_buffer_res =
+        paragraph_->GetTextBuffer() + text_start_position;
+      base::string16 text_res = text_buffer_res;
+
       render_tree::TextNode::Builder text_node_builder(
           math::Vector2dF(truncated_text_offset_from_left_, ascent_),
-          glyph_buffer, used_color);
+          glyph_buffer, used_color, text_buffer_res);
 
       if (text_shadow != cssom::KeywordValue::GetNone()) {
         cssom::PropertyListValue* shadow_list =

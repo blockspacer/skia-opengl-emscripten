@@ -764,6 +764,14 @@ sk_sp<const GrGLInterface> emscripten_GrGLMakeNativeInterface() {
 }
 #endif
 
+// must be POT
+static int width = 1920;//1024;//512;
+// must be POT
+static int height = 4096;//1080;//4096;//10000;//1200;//1024;//512;
+
+static int browser_width = width;//1920;
+static int browser_height = height;//10000;
+
 /// \note defined by CMAKE
 //#ifndef ENABLE_COBALT
 //#define ENABLE_COBALT 1
@@ -1096,7 +1104,7 @@ static SkString fAnimPath = SkString("./resources/animations/data.json");
 // static SkString                           fPath = SkString("./resources/fonts/FreeSans.ttf");
 static sk_sp<skottie::Animation> fAnimation;
 static skottie::Animation::Builder::Stats fAnimationStats;
-static SkSize fWinSize = SkSize::Make(512, 512);
+static SkSize fWinSize = SkSize::Make(width, height);
 static SkMSec fTimeBase = 0;
 static bool fShowAnimationInval = false;
 static bool fShowAnimationStats = false;
@@ -1137,7 +1145,8 @@ static bool DrawGlyphs(double current_x, double current_y,
     }
     hb_glyph_info_t *info = hb_buffer_get_glyph_infos (hb_buffer, NULL);
     hb_glyph_position_t *pos = hb_buffer_get_glyph_positions (hb_buffer, NULL);
-    auto runBuffer = textBlobBuilder.allocRunPos(sfont, len);
+    const SkTextBlobBuilder::RunBuffer& runBuffer =
+      textBlobBuilder.allocRunPos(sfont, len);
 
     double x = 0;
     double y = 0;
@@ -1235,11 +1244,6 @@ static SkSurface* sSurface = nullptr;
 #endif
 
 #endif // ENABLE_SKIA
-
-// must be POT
-static int width = 1920;//1024;//512;
-// must be POT
-static int height = 3000;//1200;//1024;//512;
 
 static GLint uniformTex;
 
@@ -2189,9 +2193,11 @@ public:
         : loaded_callbacks_(loaded_callbacks) {}
     // Called at most once, when document and all referred resources are loaded.
     void OnLoad() override {
+        printf("DocumentLoadedObserver OnLoad 1\n");
         for (size_t i = 0; i < loaded_callbacks_.size(); ++i) {
             loaded_callbacks_[i].Run();
         }
+        printf("DocumentLoadedObserver OnLoad 2\n");
     }
 
     void OnMutation() override {}
@@ -2497,6 +2503,7 @@ void CobaltTester::BrowserProcessRenderTreeSubmissionQueue() {
 
 renderer::Submission CobaltTester::CreateSubmissionFromLayoutResults(
     const cobalt::layout::LayoutManager::LayoutResults& layout_results) {
+        printf("CreateSubmissionFromLayoutResults 1\n");
     renderer::Submission renderer_submission(layout_results.render_tree,
                                              layout_results.layout_time);
     if (!layout_results.on_rasterized_callback.is_null()) {
@@ -2507,6 +2514,7 @@ renderer::Submission CobaltTester::CreateSubmissionFromLayoutResults(
 }
 
 void CobaltTester::OnRendererSubmissionRasterized() {
+        printf("OnRendererSubmissionRasterized 1\n");
     TRACE_EVENT0("cobalt::browser",
                  "BrowserModule::OnRendererSubmissionRasterized()");
     //if (!is_rendered_) {
@@ -2606,6 +2614,7 @@ void CobaltTester::OnBrowserRenderTreeProduced(
 void CobaltTester::QueueOnRenderTreeProduced(
     int main_web_module_generation,
     const cobalt::layout::LayoutManager::LayoutResults& layout_results) {
+        printf("QueueOnRenderTreeProduced 1\n");
     TRACE_EVENT0("cobalt::browser", "BrowserModule::QueueOnRenderTreeProduced()");
     render_tree_submission_queue_.AddMessage(
         base::Bind(&CobaltTester::OnBrowserRenderTreeProduced,
@@ -2675,9 +2684,25 @@ void CobaltTester::OnLoad() {
     // see https://github.com/blockspacer/cobalt-clone-28052019/blob/master/src/cobalt/browser/browser_module.cc#L625
 }
 
-void CobaltTester::listWordBoundaries(const icu::UnicodeString& s) {
+static const icu::Locale *t_icu_locale;
+
+// __TODO__
+static void listWordBoundaries(const icu::UnicodeString& s) {
+        printf("listWordBoundaries 1\n");
+        printf("icu::Locale::getUS() %s, %s\n", icu::Locale::getUS().getLanguage(), icu::Locale::getUS().getName());
+
+        printf("listWordBoundaries 2\n");
+
+    /*if(!t_icu_locale) {
+      const char* lang = "C";//;"en_US";
+      t_icu_locale = new icu::Locale(lang, NULL, NULL, NULL);
+    }*/
+
     UErrorCode status = U_ZERO_ERROR;
-    icu::BreakIterator* bi = icu::BreakIterator::createWordInstance(icu::Locale::getUS(), status);
+    icu::BreakIterator* bi = icu::BreakIterator::createWordInstance(
+      icu::Locale::getUS()
+      /**t_icu_locale*/
+      , status);
     DCHECK(bi);
 
     bi->setText(s);
@@ -2729,7 +2754,7 @@ CobaltTester::CobaltTester()
   /*if (options_.requested_viewport_size) {
       maybe_size = options_.requested_viewport_size->width_height();
   }*/
-  maybe_size = math::Size(500, 500);
+  maybe_size = math::Size(browser_width, browser_height);
   system_window_.reset(
       new system_window::SystemWindow(&event_dispatcher_, maybe_size));
 
@@ -2741,6 +2766,11 @@ CobaltTester::CobaltTester()
   render_module_options.get_camera_transform = base::Bind(
       &input::Camera3D::GetCameraTransformAndUpdateOrientation, camera_3d_);
 
+  DCHECK(system_window_);
+
+  printf("main system_window_->GetWindowSize().ToString().c_str() %s\n",
+    system_window_->GetWindowSize().ToString().c_str());
+
   renderer_module_.reset(new renderer::RendererModule(
       system_window_.get(),
       render_module_options));
@@ -2749,8 +2779,12 @@ CobaltTester::CobaltTester()
                                       camera_3d_
                                       )));*/
 
+
+  DCHECK(renderer_module_);
+
   //resource_provider_ = rasterizer_->GetResourceProvider();
   resource_provider_ = renderer_module_->resource_provider();
+  DCHECK(resource_provider_);
   /*
       if (!renderer_module_) {
         if (resource_provider_stub_) {
@@ -2931,7 +2965,7 @@ CobaltTester::CobaltTester()
   P_LOG("Create dom::Window...\n");
 
   window_ = new cobalt::dom::Window(
-      cssom::ViewportSize(500, 500), //data.window_dimensions,
+      cssom::ViewportSize(browser_width, browser_height), //data.window_dimensions,
       1.0,//data.video_pixel_ratio,
       base::ApplicationState::kApplicationStateStarted,//data.initial_application_state,
       css_parser_.get(),
@@ -3018,7 +3052,7 @@ CobaltTester::CobaltTester()
 
   document_ = (new cobalt::dom::Document(html_element_context_.get()));
   document_->set_window(window_->window().get());
-  document_->SetViewport(cssom::ViewportSize(500, 500));//kViewSize);
+  document_->SetViewport(cssom::ViewportSize(browser_width, browser_height));//kViewSize);
 
   environment_settings_.reset(new cobalt::dom::DOMSettings(
       99,//kDOMMaxElementDepth,
@@ -4111,14 +4145,14 @@ int main(int argc, char** argv) {
   cobalt::InitCobalt(argc, argv, NULL);
   printf("Starting ICU tests...\n");
 
-  // TODO
-  //listWordBoundaries(icu::UnicodeString("string asd asd 1"));
-
   printf("Starting COBALT tests...\n");
+
+    //icu::BreakIterator::getAvailableLocales(); // init
 
     int32_t locales_count;
     const icu::Locale* locales =
         icu::Locale::getAvailableLocales(locales_count);
+        //icu::BreakIterator::getAvailableLocales(locales_count);
 
     printf("locales_count %d\n", locales_count);
     /// \see http://userguide.icu-project.org/locale/examples
@@ -4128,6 +4162,12 @@ int main(int argc, char** argv) {
         locales[locale].getName(),
         locales[locale].getScript());
     }
+
+    // TODO
+    /**/
+    listWordBoundaries(
+      icu::UnicodeString(u8"string asd asd 1"));
+
   // Make sure the thread started.
   main_thread_.task_runner()->PostTask(
       FROM_HERE, base::Bind([](base::WaitableEvent* main_thread_event_){
@@ -4136,6 +4176,8 @@ int main(int argc, char** argv) {
 #endif
           printf("Creating g_cobaltTester...\n");
           g_cobaltTester = std::make_unique<CobaltTester>();
+
+
           printf("Starting g_cobaltTester...\n");
           g_cobaltTester->run();
           printf("Finishing g_cobaltTester...\n");

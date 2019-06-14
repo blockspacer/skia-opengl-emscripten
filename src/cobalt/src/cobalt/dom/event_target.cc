@@ -114,10 +114,14 @@ void EventTarget::DispatchEventAndRunCallback(
 
 void EventTarget::DispatchEventNameAndRunCallback(
     base::CobToken event_name, const base::Closure& dispatched_callback) {
+    printf("DispatchEventNameAndRunCallback 1\n");
   DispatchEvent(base::WrapRefCounted(new Event(event_name)));
+    printf("DispatchEventNameAndRunCallback 2\n");
   if (!dispatched_callback.is_null()) {
+    printf("DispatchEventNameAndRunCallback 3\n");
     dispatched_callback.Run();
   }
+    printf("DispatchEventNameAndRunCallback 4\n");
 }
 
 void EventTarget::PostToDispatchEventName(const base::Location& location,
@@ -133,6 +137,7 @@ void EventTarget::PostToDispatchEvent(const base::Location& location,
 void EventTarget::PostToDispatchEventAndRunCallback(
     const base::Location& location, const scoped_refptr<Event>& event,
     const base::Closure& callback) {
+    printf("PostToDispatchEventAndRunCallback 1\n");
   /*if (!base::MessageLoop::current()) {
     return;
   }*/
@@ -144,16 +149,19 @@ void EventTarget::PostToDispatchEventAndRunCallback(
   if (!base::MessageLoopCurrent::Get()) {
     return;
   }
+    printf("PostToDispatchEventAndRunCallback 2\n");
     DCHECK(base::MessageLoopCurrent::Get()); // TODO
   base::MessageLoopCurrent::Get()->task_runner()->PostTask(
       location,
       base::Bind(base::IgnoreResult(&EventTarget::DispatchEventAndRunCallback),
                  base::AsWeakPtr<EventTarget>(this), event, callback));
+    printf("PostToDispatchEventAndRunCallback 3\n");
 }
 
 void EventTarget::PostToDispatchEventNameAndRunCallback(
     const base::Location& location, base::CobToken event_name,
     const base::Closure& callback) {
+    printf("PostToDispatchEventNameAndRunCallback 1\n");
 #if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   std::move(base::Bind(base::IgnoreResult(&EventTarget::DispatchEventAndRunCallback),
                 base::IgnoreResult(&EventTarget::DispatchEventNameAndRunCallback),
@@ -164,11 +172,13 @@ void EventTarget::PostToDispatchEventNameAndRunCallback(
   if (!base::MessageLoopCurrent::Get()) {
     return;
   }
+    printf("PostToDispatchEventNameAndRunCallback 2\n");
   base::MessageLoopCurrent::Get()->task_runner()->PostTask(
       location,
       base::Bind(
           base::IgnoreResult(&EventTarget::DispatchEventNameAndRunCallback),
           base::AsWeakPtr<EventTarget>(this), event_name, callback));
+    printf("PostToDispatchEventNameAndRunCallback 3\n");
 }
 
 void EventTarget::SetAttributeEventListener(

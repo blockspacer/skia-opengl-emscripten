@@ -51,7 +51,8 @@ std::unique_ptr<rasterizer::Rasterizer> CreateGLESSoftwareRasterizer(
     const RendererModule::Options& options) {
   return std::unique_ptr<rasterizer::Rasterizer>(
       new rasterizer::egl::SoftwareRasterizer(
-          /*graphics_context,*/ options.purge_skia_font_caches_on_destruction)
+          ///graphics_context,
+          options.purge_skia_font_caches_on_destruction)
           );
 }
 

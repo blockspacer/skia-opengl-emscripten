@@ -423,12 +423,15 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}
 # # http://userguide.icu-project.org/howtouseicu
 # see http://transit.iut2.upmf-grenoble.fr/doc/icu-doc/html/uconfig_8h.html
 set(COMMON_CXX_FLAGS "-DLIB_ICU_I18N_STATIC=1")
-#set(COMMON_CXX_FLAGS "-DU_CHARSET_IS_UTF8=1")
+set(COMMON_CXX_FLAGS "-DU_CHARSET_IS_UTF8=1")
 #set(COMMON_CXX_FLAGS "-DU_NO_DEFAULT_INCLUDE_UTF_HEADERS=0")
 #set(COMMON_CXX_FLAGS "-DU_NO_DEFAULT_INCLUDE_UTF_HEADERS=0")
 set(COMMON_CXX_FLAGS "-DU_ENABLE_DYLOAD=0")
-set(COMMON_CXX_FLAGS "-DICU_UTIL_DATA_IMPL=ICU_UTIL_DATA_STATIC")
-#set(COMMON_CXX_FLAGS "-DICU_UTIL_DATA_IMPL=ICU_UTIL_DATA_FILE")
+#set(COMMON_CXX_FLAGS "-DICU_UTIL_DATA_IMPL=ICU_UTIL_DATA_STATIC")
+set(COMMON_CXX_FLAGS "-DICU_UTIL_DATA_IMPL=ICU_UTIL_DATA_FILE")
+#
+#set(COMMON_CXX_FLAGS "-DU_DISABLE_VERSION_SUFFIX=1")
+#set(COMMON_FLAGS "${COMMON_FLAGS} -DU_USING_ICU_NAMESPACE=0")
 #
 #set(COMMON_CXX_FLAGS "-DUCONFIG_NO_SERVICE=1")
 #set(COMMON_CXX_FLAGS "-DU_HAVE_STD_STRING=1")
@@ -682,7 +685,7 @@ if(ENABLE_COBALT)
   set(COBALT_LAYOUT_LIB cobalt_layout)
   set(COBALT_DOM_PARSER_LIB cobalt_dom_parser)
   set(COBALT_CSS_PARSER_LIB cobalt_css_parser)
-  set(ENABLE_COBALT_RENDERER TRUE)
+  set(ENABLE_COBALT_GLIMP FALSE)
   if(ENABLE_COBALT_GLIMP)
     set(COBALT_GLIMP_LIB cobalt_glimp)
     list(APPEND APP_DEFINITIONS ENABLE_COBALT_GLIMP=1)
@@ -1363,6 +1366,7 @@ endif(NOT RELEASE_BUILD)
       # EMCC_DEBUG=1 python tests/runner.py simd2
       # NOTE: run brower with --js-flags="--experimental-wasm-simd"
       set(EMCC_COMMON "${EMCC_COMMON} -msimd128")
+      set(EMCC_COMMON "${EMCC_COMMON} -mmsse")
     else(ENABLE_WASM)
       # NOTE: Emscripten's SIMD.js support should be considered deprecated and may be removed
       # see https://github.com/emscripten-core/emscripten/pull/8582/commits/1ab1600024823d430ce08bddd4e000e822d75c7d

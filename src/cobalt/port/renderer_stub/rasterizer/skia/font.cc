@@ -18,6 +18,30 @@
 
 #include "third_party/skia/include/core/SkPaint.h"
 
+#include "include/core/SkFont.h"
+#include "include/core/SkFontMetrics.h"
+
+static const char* fallbackFontPath = "./resources/fonts/FreeSans.ttf";
+static SkFont* fallbackFont;
+static sk_sp<SkTypeface> fallbackFontTypeface;
+static const float FONT_SIZE_F = 22.0;
+
+static SkFont* getOrCreateFallbackFont() {
+  if (!fallbackFont) {
+    sk_sp<SkData> data = SkData::MakeFromFileName(fallbackFontPath);
+    if (!data) {
+      printf("failed SkData::MakeFromMalloc for font %s\n", fallbackFontPath);
+    }
+    DCHECK(data);
+    const int index = 0;
+    fallbackFontTypeface = SkTypeface::MakeFromData(::std::move(data), index);
+    fallbackFont =
+        new SkFont(fallbackFontTypeface, FONT_SIZE_F, 1.0f, 0.0f);
+  }
+  DCHECK(fallbackFont);
+  return fallbackFont;
+}
+
 namespace {
 const float kXHeightEstimateFactor = 0.56f;
 }  // namespace
@@ -31,7 +55,7 @@ namespace {
 struct NonTrivialStaticFields {
   NonTrivialStaticFields() {
     default_paint.setAntiAlias(true);
-    default_paint.setSubpixelText(true);
+    ///default_paint.setSubpixelText(true);
   }
 
   SkPaint default_paint;
@@ -63,8 +87,10 @@ render_tree::TypefaceId Font::GetTypefaceId() const {
 render_tree::FontMetrics Font::GetFontMetrics() const {
   SkPaint paint = GetSkPaint();
 
-  SkPaint::FontMetrics font_metrics;
-  paint.getFontMetrics(&font_metrics);
+  //SkPaint::FontMetrics font_metrics;
+  SkFontMetrics font_metrics;
+  //paint.getFontMetrics(&font_metrics);
+  getOrCreateFallbackFont()->getMetrics(&font_metrics);
 
   // The x-height is the height of the 'x' glyph. It is used to find the visual
   // 'middle' of the font to allow vertical alignment to the middle of the font.
@@ -114,11 +140,32 @@ const math::RectF& Font::GetGlyphBounds(render_tree::GlyphIndex glyph) {
   // If we reach this point, the glyph's bounds were not previously cached and
   // need to be calculated them now.
   SkPaint paint = GetSkPaint();
-  paint.setTextEncoding(SkPaint::kGlyphID_TextEncoding);
+  ///paint.setTextEncoding(SkPaint::kGlyphID_TextEncoding);
+
+  // TODO
+  int ascent_pixels_;
+  int height_pixels_;
+  int cap_height_pixels_;
+  double average_width_pixels_;
+  {
+    SkFontMetrics metrics;
+    getOrCreateFallbackFont()->getMetrics(&metrics);
+    ascent_pixels_ = SkScalarCeilToInt(-metrics.fAscent);
+    height_pixels_ = ascent_pixels_ + SkScalarCeilToInt(metrics.fDescent);
+    cap_height_pixels_ = SkScalarCeilToInt(metrics.fCapHeight);
+    average_width_pixels_ = SkScalarToDouble(metrics.fAvgCharWidth);
+  }
 
   SkRect skia_bounds;
+  // TODO
   float width =
-      paint.measureText(&glyph, sizeof(render_tree::GlyphIndex), &skia_bounds);
+    getOrCreateFallbackFont()->measureText(
+      &glyph,
+      sizeof(render_tree::GlyphIndex),
+      kUTF8_SkTextEncoding,
+      &skia_bounds);
+  //float width = average_width_pixels_;
+      ///paint.measureText(&glyph, sizeof(render_tree::GlyphIndex), &skia_bounds);
 
   // Both cache and return the glyph's bounds.
   if (glyph < kPrimaryPageSize) {
@@ -138,14 +185,21 @@ float Font::GetGlyphWidth(render_tree::GlyphIndex glyph) {
 SkPaint Font::GetSkPaint() const {
   SkPaint paint(GetDefaultSkPaint());
   const sk_sp<SkTypeface>& typeface(typeface_->GetSkTypeface());
+  /*
   paint.setTypeface(typeface);
   paint.setTextSize(size_);
+  */
   return paint;
 }
 
 const SkPaint& Font::GetDefaultSkPaint() {
   return non_trivial_static_fields.Get().default_paint;
 }
+
+const SkFont* Font::GetDefaultFont() {
+  return getOrCreateFallbackFont();
+}
+
 
 }  // namespace skia
 }  // namespace rasterizer

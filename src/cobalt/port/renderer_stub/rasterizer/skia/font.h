@@ -76,6 +76,8 @@ class Font : public render_tree::Font {
   // Returns a static SkPaint with the default flags enabled.
   static const SkPaint& GetDefaultSkPaint();
 
+  static const SkFont* GetDefaultFont();
+
  private:
   // Usually covers Latin-1 in a single page.
   static const int kPrimaryPageSize = 256;

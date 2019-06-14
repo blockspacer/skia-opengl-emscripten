@@ -20,8 +20,9 @@
 ///#include <GLES2/gl2ext.h>
 
 ///#include "renderer_stub/backend/egl/graphics_context.h"
-///#include "renderer_stub/backend/egl/graphics_system.h"
-///#include "renderer_stub/backend/egl/texture.h"
+///
+#include "renderer_stub/backend/egl/graphics_system.h"
+#include "renderer_stub/backend/egl/texture.h"
 
 ///#include "renderer_stub/rasterizer/skia/cobalt_skia_type_conversions.h"
 #include "third_party/skia/include/core/SkBitmap.h"
@@ -51,8 +52,7 @@ SoftwareRasterizer::SoftwareRasterizer(
     :
     /* context_(
           base::polymorphic_downcast<backend::GraphicsContextEGL*>(context))
-    */
-          // ,
+          ,*/
           skia_rasterizer_(purge_skia_font_caches_on_destruction)
     {}
 

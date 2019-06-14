@@ -60,6 +60,14 @@ RendererModule::RendererModule(system_window::SystemWindow* system_window,
                                const Options& options)
     : system_window_(system_window), options_(options) {
   TRACE_EVENT0("cobalt::renderer", "RendererModule::RendererModule()");
+
+  DCHECK(system_window_);
+
+  printf("system_window_->GetWindowSize().ToString().c_str() %s\n",
+    system_window_->GetWindowSize().ToString().c_str());
+
+  DCHECK(system_window_->GetWindowSize().GetArea() > 0);
+
   // Load up the platform's default graphics system.
   {
     TRACE_EVENT0("cobalt::renderer", "backend::CreateDefaultGraphicsSystem()");
@@ -73,6 +81,11 @@ RendererModule::RendererModule(system_window::SystemWindow* system_window,
     DCHECK(system_window_);
     display_ = graphics_system_->CreateDisplay(system_window_);
   }
+
+  DCHECK(display_);
+  DCHECK(display_->GetRenderTarget());
+  printf("display_->GetRenderTarget()->GetSize().ToString().c_str() %s\n",
+    display_->GetRenderTarget()->GetSize().ToString().c_str());
 
   // Create a graphics context associated with the default display's render
   // target so that we have a channel to write to the display.

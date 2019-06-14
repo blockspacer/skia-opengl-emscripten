@@ -18,6 +18,11 @@
 #include "renderer_stub/backend/display.h"
 #include "renderer_stub/backend/render_target_stub.h"
 
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#include <emscripten/html5.h>
+#endif
+
 namespace cobalt {
 namespace renderer {
 namespace backend {
@@ -27,8 +32,25 @@ namespace backend {
 // that it returns if queried for a render target.
 class DisplayStub : public Display {
  public:
-  DisplayStub()
-      : render_target_(new RenderTargetStub(math::Size(1920, 1080))) {}
+  DisplayStub(const math::Size& size)
+      //: render_target_(new RenderTargetStub(math::Size(1920, 1080))) {
+      : render_target_(new RenderTargetStub(size)) {
+/*      {
+  int w, h, fs;
+#ifdef __EMSCRIPTEN__
+  // see
+  // https://github.com/floooh/oryol/blob/master/code/Modules/Gfx/private/emsc/emscDisplayMgr.cc#L174
+  emscripten_get_canvas_element_size("#canvas", &w, &h); //, &fs); // width, height, isFullscreen
+#else
+  // __TODO__
+  w = 1920;
+  h = 1080;
+#endif
+      printf("creating render_target w,h = %d,%d", w, h);
+      render_target_ = new RenderTargetStub(math::Size(w, h));*/
+      printf("creating render_target = %s\n", size.ToString().c_str());
+      DCHECK(render_target_->GetSize().GetArea() > 0);
+      }
 
   // Return the stub render target.
   scoped_refptr<RenderTarget> GetRenderTarget() override {

@@ -41,8 +41,8 @@
 #include "renderer_stub/rasterizer/common/offscreen_render_coordinate_mapping.h"
 #include "renderer_stub/rasterizer/common/utils.h"
 #include "renderer_stub/rasterizer/skia/cobalt_skia_type_conversions.h"
-///#include "renderer_stub/rasterizer/skia/font.h"
-///#include "renderer_stub/rasterizer/skia/glyph_buffer.h"
+#include "renderer_stub/rasterizer/skia/font.h"
+#include "renderer_stub/rasterizer/skia/glyph_buffer.h"
 #include "renderer_stub/rasterizer/skia/image.h"
 
 ///#include "renderer_stub/rasterizer/skia/skia/src/effects/SkNV122RGBShader.h"
@@ -632,6 +632,8 @@ void RenderMultiPlaneImage(MultiPlaneImage* multi_plane_image,
   SB_UNREFERENCED_PARAMETER(destination_rect);
   SB_UNREFERENCED_PARAMETER(local_transform);
 
+  printf("RenderMultiPlaneImage not supported\n");
+
   // Multi-plane images like YUV images are not supported when using the
   // software rasterizers.
   NOTIMPLEMENTED();
@@ -641,11 +643,13 @@ void RenderMultiPlaneImage(MultiPlaneImage* multi_plane_image,
 }  // namespace
 
 void RenderTreeNodeVisitor::Visit(render_tree::ImageNode* image_node) {
+  printf("RenderTreeNodeVisitor::Visit(render_tree::ImageNode 1\n");
   // The image_node may contain nothing. For example, when it represents a video
   // element before any frame is decoded.
   if (!image_node->data().source) {
     return;
   }
+  printf("RenderTreeNodeVisitor::Visit(render_tree::ImageNode 2\n");
 
 #if ENABLE_RENDER_TREE_VISITOR_TRACING
   TRACE_EVENT0("cobalt::renderer", "Visit(ImageNode)");
@@ -700,9 +704,11 @@ void RenderTreeNodeVisitor::Visit(render_tree::ImageNode* image_node) {
                             &draw_state_, image_node->data().destination_rect,
                             &local_transform);
     } else {
+      printf("Cant`t render render_tree::ImageNode\n");
       NOTREACHED();
     }
   } else {
+    printf("!image->CanRenderInSkia()\n");
     render_image_fallback_function_.Run(image_node, &draw_state_);
   }
 
@@ -1407,6 +1413,7 @@ void DrawSolidRoundedRectBorder(
         draw_state, rect, rounded_corners, content_rect, inner_rounded_corners,
         border.top.color);
   } else {
+    printf("DrawSolidRoundedRectBorder configuration not supported\n");
     // For now we fallback to software for drawing most rounded corner borders,
     // with some situations specified above being special cased. The reason we
     // do this is to limit then number of shaders that need to be implemented.
@@ -1516,9 +1523,7 @@ SkPaint GetPaintForBoxShadow(const render_tree::Shadow& shadow) {
   paint.setARGB(shadow.color.a() * 255, shadow.color.r() * 255,
                 shadow.color.g() * 255, shadow.color.b() * 255);
 
-  /*sk_sp<SkMaskFilter> mf(
-      SkBlurMaskFilter::Make(kNormal_SkBlurStyle, shadow.blur_sigma));
-  paint.setMaskFilter(mf);*/
+  paint.setMaskFilter(SkMaskFilter::MakeBlur(kNormal_SkBlurStyle, shadow.blur_sigma, 0));
 
   return paint;
 }
@@ -1681,6 +1686,7 @@ void RenderTreeNodeVisitor::Visit(
 
 namespace {
 void RenderText(SkCanvas* render_target,
+                render_tree::TextNode* text_node,
                 const scoped_refptr<render_tree::GlyphBuffer>& glyph_buffer,
                 const render_tree::ColorRGBA& color,
                 const math::PointF& position, float blur_sigma) {
@@ -1688,6 +1694,7 @@ void RenderText(SkCanvas* render_target,
   TRACE_EVENT0("cobalt::renderer", "RenderText()");
 #endif
   if (blur_sigma > 20.0f) {
+    printf("blur_sigma > 20.0f not supported\n");
     // TODO: We could easily switch to using a blur filter at this point.
     //       Ideally we would just use a blur filter to do all blurred text
     //       rendering. Unfortunately, performance is currently terrible when
@@ -1698,21 +1705,35 @@ void RenderText(SkCanvas* render_target,
     NOTIMPLEMENTED() << "Cobalt does not yet support text blurs with Gaussian "
                         "sigmas larger than 20.";
   } else {
-    /*GlyphBuffer* skia_glyph_buffer =
+    GlyphBuffer* skia_glyph_buffer =
         base::polymorphic_downcast<GlyphBuffer*>(glyph_buffer.get());
 
     SkPaint paint(Font::GetDefaultSkPaint());
     paint.setARGB(color.a() * 255, color.r() * 255, color.g() * 255,
-                  color.b() * 255);*/
+                  color.b() * 255);
 
     if (blur_sigma > 0.0f) {
       /*sk_sp<SkMaskFilter> mf(
           SkBlurMaskFilter::Make(kNormal_SkBlurStyle, blur_sigma,
                                  SkBlurMaskFilter::kHighQuality_BlurFlag));
       paint.setMaskFilter(mf);*/
+      paint.setMaskFilter(SkMaskFilter::MakeBlur(kNormal_SkBlurStyle, blur_sigma, 0));
     }
 
+    DCHECK(Font::GetDefaultFont());
+    auto blob = SkTextBlob::MakeFromText(
+      text_node->data().text.c_str(),
+      text_node->data().text.length() * sizeof(base::char16),
+      *Font::GetDefaultFont(),
+      SkTextEncoding::kUTF16
+      //SkTextEncoding::kUTF8
+    );
+    render_target->drawTextBlob(blob.get(), position.x(), position.y(), paint);
+
     /*sk_sp<const SkTextBlob> text_blob(skia_glyph_buffer->GetTextBlob());
+    // TODO
+    //skia_glyph_buffer->GetTextBlob()->MakeFromString(glyph_buffer->)
+
     render_target->drawTextBlob(text_blob.get(), position.x(), position.y(),
                                 paint);*/
   }
@@ -1751,7 +1772,7 @@ void RenderTreeNodeVisitor::Visit(render_tree::TextNode* text_node) {
       const render_tree::Shadow& shadow = shadows[i];
 
       RenderText(
-          draw_state_.render_target, text_node->data().glyph_buffer,
+          draw_state_.render_target, text_node, text_node->data().glyph_buffer,
           shadow.color, math::PointAtOffsetFromOrigin(text_node->data().offset +
                                                       shadow.offset),
           shadow.blur_sigma == 0.0f ? blur_zero_sigma : shadow.blur_sigma);
@@ -1759,7 +1780,7 @@ void RenderTreeNodeVisitor::Visit(render_tree::TextNode* text_node) {
   }
 
   // Finally render the main text.
-  RenderText(draw_state_.render_target, text_node->data().glyph_buffer,
+  RenderText(draw_state_.render_target, text_node, text_node->data().glyph_buffer,
              text_node->data().color,
              math::PointAtOffsetFromOrigin(text_node->data().offset),
              blur_zero_sigma);

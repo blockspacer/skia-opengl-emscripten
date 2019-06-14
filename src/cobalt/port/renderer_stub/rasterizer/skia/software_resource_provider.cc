@@ -20,13 +20,13 @@
 #include "base/trace_event/trace_event.h"
 #include "cobalt/base/polymorphic_downcast.h"
 #include "renderer_stub/rasterizer/skia/cobalt_skia_type_conversions.h"
-///#include "renderer_stub/rasterizer/skia/font.h"
-///#include "renderer_stub/rasterizer/skia/glyph_buffer.h"
-///#include "renderer_stub/rasterizer/skia/skia/src/ports/SkFontMgr_cobalt.h"
-///#include "renderer_stub/rasterizer/skia/skia/src/ports/SkTypeface_cobalt.h"
+#include "renderer_stub/rasterizer/skia/font.h"
+#include "renderer_stub/rasterizer/skia/glyph_buffer.h"
+//#include "renderer_stub/rasterizer/skia/skia/src/ports/SkFontMgr_cobalt.h"
+#include "renderer_stub/rasterizer/skia/skia/src/ports/SkTypeface_cobalt.h"
 #include "renderer_stub/rasterizer/skia/software_image.h"
 #include "renderer_stub/rasterizer/skia/software_mesh.h"
-///#include "renderer_stub/rasterizer/skia/typeface.h"
+#include "renderer_stub/rasterizer/skia/typeface.h"
 ///#include "third_party/ots/include/opentype-sanitiser.h"
 ///#include "third_party/ots/include/ots-memory-stream.h"
 #include "third_party/skia/include/core/SkData.h"
@@ -74,6 +74,8 @@ bool SoftwareResourceProvider::AlphaFormatSupported(
 std::unique_ptr<ImageData> SoftwareResourceProvider::AllocateImageData(
     const math::Size& size, render_tree::PixelFormat pixel_format,
     render_tree::AlphaFormat alpha_format) {
+  printf("SoftwareResourceProvider::AllocateImageData 1...\n");
+
   TRACE_EVENT0("cobalt::renderer",
                "SoftwareResourceProvider::AllocateImageData()");
   DCHECK(PixelFormatSupported(pixel_format));
@@ -84,6 +86,8 @@ std::unique_ptr<ImageData> SoftwareResourceProvider::AllocateImageData(
 
 scoped_refptr<render_tree::Image> SoftwareResourceProvider::CreateImage(
     std::unique_ptr<ImageData> source_data) {
+  printf("SoftwareResourceProvider::CreateImage 1...\n");
+
   TRACE_EVENT0("cobalt::renderer", "SoftwareResourceProvider::CreateImage()");
   std::unique_ptr<SoftwareImageData> skia_source_data(
       base::polymorphic_downcast<SoftwareImageData*>(source_data.release()));
@@ -95,6 +99,7 @@ scoped_refptr<render_tree::Image> SoftwareResourceProvider::CreateImage(
 std::unique_ptr<render_tree::RawImageMemory>
 SoftwareResourceProvider::AllocateRawImageMemory(size_t size_in_bytes,
                                                  size_t alignment) {
+  printf("SoftwareResourceProvider::AllocateRawImageMemory 1...\n");
   TRACE_EVENT0("cobalt::renderer",
                "SoftwareResourceProvider::AllocateRawImageMemory()");
 
@@ -106,6 +111,7 @@ scoped_refptr<render_tree::Image>
 SoftwareResourceProvider::CreateMultiPlaneImageFromRawMemory(
     std::unique_ptr<render_tree::RawImageMemory> raw_image_memory,
     const render_tree::MultiPlaneImageDataDescriptor& descriptor) {
+  printf("SoftwareResourceProvider::CreateMultiPlaneImageFromRawMemory 1...\n");
   TRACE_EVENT0(
       "cobalt::renderer",
       "SoftwareResourceProvider::CreateMultiPlaneImageFromRawMemory()");
@@ -114,6 +120,7 @@ SoftwareResourceProvider::CreateMultiPlaneImageFromRawMemory(
       base::polymorphic_downcast<SoftwareRawImageMemory*>(
           raw_image_memory.release()));
 
+  printf("SoftwareResourceProvider::CreateMultiPlaneImageFromRawMemory 2...\n");
   return base::WrapRefCounted(new SoftwareMultiPlaneImage(
       std::move(skia_software_raw_image_memory), descriptor));
 }
@@ -189,6 +196,9 @@ SoftwareResourceProvider::CreateTypefaceFromRawData(
     std::unique_ptr<render_tree::ResourceProvider::RawTypefaceDataVector>
         raw_data,
     std::string* error_string) {
+
+  printf("SoftwareResourceProvider::CreateTypefaceFromRawData...\n");
+
   TRACE_EVENT0("cobalt::renderer",
                "SoftwareResourceProvider::CreateFontFromRawData()");
 
@@ -197,6 +207,23 @@ SoftwareResourceProvider::CreateTypefaceFromRawData(
     return NULL;
   }
 
+  /*/// \note SkData::MakeFromFileName don`t support wasm pthreads,
+  /// so we use MakeFromMalloc
+  sk_sp<SkData> data = SkData::MakeFromMalloc(fileData1, fsize1);
+  //sk_sp<SkData> data = SkData::MakeFromFileName(fontPath);
+  //if (!data) {
+  //  printf("failed SkData::MakeFromMalloc for font %s\n", fontPath);
+  //}
+
+  /// \note SkTypeface::MakeFromFile don`t support wasm pthreads,
+  /// so we use MakeFromData
+  const int index = 0;
+
+  sk_sp<SkTypeface> sktp = SkTypeface::MakeFromData(data, index);
+  sk_sp<SkTypeface_Cobalt> typeface(
+     base::polymorphic_downcast<SkTypeface_Cobalt*>(
+         SkTypeface::MakeFromStream(stream.release()).release()));*/
+
   ///ots::ExpandingMemoryStream sanitized_data(
   ///    raw_data->size(), render_tree::ResourceProvider::kMaxTypefaceDataSize);
   ///ots::OTSContext context;
@@ -204,27 +231,31 @@ SoftwareResourceProvider::CreateTypefaceFromRawData(
   ///  *error_string = "OpenType sanitizer unable to process data";
   ///  return NULL;
   ///}
-  ///
-  ///// Free the raw data now that we're done with it.
-  ///raw_data.reset();
-  ///
-  ///std::unique_ptr<SkStreamAsset> stream;
-  ///{
-  ///  sk_sp<SkData> skia_data(SkData::MakeWithCopy(
-  ///      sanitized_data.get(), static_cast<size_t>(sanitized_data.Tell())));
-  ///  stream.reset(new SkMemoryStream(skia_data));
-  ///}
-  ///
-  ///sk_sp<SkTypeface_Cobalt> typeface(
-  ///    base::polymorphic_downcast<SkTypeface_Cobalt*>(
-  ///        SkTypeface::MakeFromStream(stream.release()).release()));
-  ///if (typeface) {
-  ///  return scoped_refptr<render_tree::Typeface>(new SkiaTypeface(typeface));
-  ///} else {
-  ///  *error_string = "Skia unable to create typeface";
-  ///  return NULL;
-  ///}
-  return base::WrapRefCounted(new cobalt::render_tree::TypefaceStub(NULL));
+
+  // Free the raw data now that we're done with it.
+  raw_data.reset();
+
+  std::unique_ptr<SkStreamAsset> stream;
+  {
+    sk_sp<SkData> skia_data(SkData::MakeFromMalloc(
+      &((*raw_data)[0]), raw_data->size()
+    ));
+    ///sk_sp<SkData> skia_data(SkData::MakeWithCopy(
+    ///    sanitized_data.get(), static_cast<size_t>(sanitized_data.Tell())));
+    stream.reset(new SkMemoryStream(skia_data));
+  }
+
+  sk_sp<SkTypeface_Cobalt> typeface(
+      base::polymorphic_downcast<SkTypeface_Cobalt*>(
+          SkTypeface::MakeFromStream(std::move(stream)).release()));
+  if (typeface) {
+    return scoped_refptr<render_tree::Typeface>(new SkiaTypeface(typeface));
+  } else {
+    *error_string = "Skia unable to create typeface";
+    return NULL;
+  }
+
+  //return base::WrapRefCounted(new cobalt::render_tree::TypefaceStub(NULL));
 }
 
 const int32 kDefaultCharacter = 48;  // Decimal value for '0'
@@ -283,11 +314,13 @@ float SoftwareResourceProvider::GetTextWidth(
 scoped_refptr<render_tree::Mesh> SoftwareResourceProvider::CreateMesh(
     std::unique_ptr<std::vector<render_tree::Mesh::Vertex> > vertices,
     render_tree::Mesh::DrawMode draw_mode) {
+  printf("SoftwareResourceProvider::CreateMesh\n");
   return new SoftwareMesh(std::move(vertices), draw_mode);
 }
 
 scoped_refptr<render_tree::Image> SoftwareResourceProvider::DrawOffscreenImage(
     const scoped_refptr<render_tree::Node>& root) {
+  printf("SoftwareResourceProvider::DrawOffscreenImage\n");
   SB_UNREFERENCED_PARAMETER(root);
   return scoped_refptr<render_tree::Image>(NULL);
 }

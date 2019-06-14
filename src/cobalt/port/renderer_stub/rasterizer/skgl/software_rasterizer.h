@@ -17,7 +17,7 @@
 
 #include "base/memory/ref_counted.h"
 #include "cobalt/render_tree/resource_provider.h"
-#include "renderer_stub/backend/graphics_context.h"
+///#include "renderer_stub/backend/graphics_context.h"
 #include "renderer_stub/backend/render_target.h"
 #include "renderer_stub/rasterizer/rasterizer.h"
 #include "renderer_stub/rasterizer/skia/software_rasterizer.h"

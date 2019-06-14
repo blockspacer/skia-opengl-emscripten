@@ -876,8 +876,8 @@ set(ICU_SOURCES
   # http://userguide.icu-project.org/howtouseicu#TOC-C-With-Your-Own-Build-System
   set(ICU_PUBLIC_DEFINES
     U_ENABLE_DYLOAD=0
-    #ICU_UTIL_DATA_IMPL=ICU_UTIL_DATA_FILE
-    ICU_UTIL_DATA_IMPL=ICU_UTIL_DATA_STATIC
+    ICU_UTIL_DATA_IMPL=ICU_UTIL_DATA_FILE
+    #ICU_UTIL_DATA_IMPL=ICU_UTIL_DATA_STATIC
   )
 
   set(ICU_PRIVATE_DEFINES
@@ -885,7 +885,7 @@ set(ICU_SOURCES
     # see http://icu-project.org/apiref/icu4c561/uconfig_8h.html
     #
     #UCONFIG_ONLY_HTML_CONVERSION=1
-    #U_CHARSET_IS_UTF8=1
+    U_CHARSET_IS_UTF8=1
     # custom
     HAVE_DLFCN_H=0
   )
@@ -909,7 +909,7 @@ set(ICU_SOURCES
     U_IMPORT=U_EXPORT
   )
 
-  #    "USING_SYSTEM_ICU=1",
+  #    "USING_SYSTEM_ICU=1",a_
   #    "ICU_UTIL_DATA_IMPL=ICU_UTIL_DATA_STATIC",
   #    "UCHAR_TYPE=uint16_t",
   #

@@ -43,6 +43,7 @@ HTMLImageElement::HTMLImageElement(script::EnvironmentSettings* env_settings)
 
 void HTMLImageElement::OnSetAttribute(const std::string& name,
                                       const std::string& /* value */) {
+  printf("HTMLImageElement::OnSetAttribute 1");
   // A user agent that obtains images immediately must synchronously update the
   // image data of an img element whenever that element is created with a src
   // attribute. A user agent that obtains images immediately must also
@@ -54,6 +55,7 @@ void HTMLImageElement::OnSetAttribute(const std::string& name,
 }
 
 void HTMLImageElement::OnRemoveAttribute(const std::string& name) {
+  printf("HTMLImageElement::OnRemoveAttribute 1");
   // A user agent that obtains images immediately must synchronously update the
   // image data of an img element whenever that element is created with a src
   // attribute. A user agent that obtains images immediately must also
@@ -67,6 +69,7 @@ void HTMLImageElement::OnRemoveAttribute(const std::string& name) {
 // Algorithm for UpdateTheImageData:
 //   https://www.w3.org/TR/html5/embedded-content-0.html#update-the-image-data
 void HTMLImageElement::UpdateImageData() {
+  printf("HTMLImageElement::UpdateImageData 1");
   DCHECK(base::MessageLoopCurrent::Get());
   DCHECK(node_document());
   TRACE_EVENT0("cobalt::dom", "HTMLImageElement::UpdateImageData()");
@@ -95,6 +98,8 @@ void HTMLImageElement::UpdateImageData() {
 
   // 7. If selected source is not null, run these substeps:
   scoped_refptr<loader::image::CachedImage> cached_image;
+
+  printf("HTMLImageElement::UpdateImageData 2");
 
   if (!src.empty()) {
     // 7.1. Resolve selected source, relative to the element. If that is not
@@ -131,6 +136,8 @@ void HTMLImageElement::UpdateImageData() {
     return;
   }
 
+  printf("HTMLImageElement::UpdateImageData 3");
+
   // 11. Not needed by Cobalt.
 
   // 12. Do a potentially CORS-enabled fetch of the absolute URL that resulted
@@ -153,6 +160,8 @@ void HTMLImageElement::UpdateImageData() {
                                    base::Unretained(this)),
           base::Bind(&HTMLImageElement::OnLoadingError,
                      base::Unretained(this))));
+
+  printf("HTMLImageElement::UpdateImageData 3");
 }
 
 void HTMLImageElement::OnLoadingSuccess() {
@@ -179,6 +188,7 @@ void HTMLImageElement::OnLoadingError() {
 
 void HTMLImageElement::PreventGarbageCollectionUntilEventIsDispatched(
     base::CobToken event_name) {
+  P_LOG("HTMLImageElement::PreventGarbageCollectionUntilEventIsDispatched\n");
   std::unique_ptr<script::GlobalEnvironment::ScopedPreventGarbageCollection>
       prevent_gc_until_event_dispatch(
           new script::GlobalEnvironment::ScopedPreventGarbageCollection(
@@ -192,6 +202,7 @@ void HTMLImageElement::AllowGarbageCollectionAfterEventIsDispatched(
     base::CobToken event_name,
     std::unique_ptr<script::GlobalEnvironment::ScopedPreventGarbageCollection>
         scoped_prevent_gc) {
+  P_LOG("HTMLImageElement::AllowGarbageCollectionAfterEventIsDispatched\n");
   PostToDispatchEventNameAndRunCallback(
       FROM_HERE, event_name,
       base::Bind(&HTMLImageElement::DestroyScopedPreventGC,
@@ -202,6 +213,7 @@ void HTMLImageElement::AllowGarbageCollectionAfterEventIsDispatched(
 void HTMLImageElement::DestroyScopedPreventGC(
     std::unique_ptr<script::GlobalEnvironment::ScopedPreventGarbageCollection>
         scoped_prevent_gc) {
+  P_LOG("HTMLImageElement::DestroyScopedPreventGC\n");
   scoped_prevent_gc.reset();
 }
 

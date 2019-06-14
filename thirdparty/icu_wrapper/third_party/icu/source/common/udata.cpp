@@ -884,7 +884,7 @@ static UBool extendICUData(UErrorCode *pErr)
 U_CAPI void U_EXPORT2
 udata_setCommonData(const void *data, UErrorCode *pErrorCode) {
     UDataMemory dataMemory;
-
+    printf("udata_setCommonData 1\n");
     if(pErrorCode==NULL || U_FAILURE(*pErrorCode)) {
         return;
     }
@@ -894,15 +894,21 @@ udata_setCommonData(const void *data, UErrorCode *pErrorCode) {
         return;
     }
 
+    printf("udata_setCommonData 2\n");
     /* set the data pointer and test for validity */
     UDataMemory_init(&dataMemory);
+    printf("udata_setCommonData 3\n");
     UDataMemory_setData(&dataMemory, data);
+    printf("udata_setCommonData 4\n");
     udata_checkCommonData(&dataMemory, pErrorCode);
+    printf("udata_setCommonData 5\n");
     if (U_FAILURE(*pErrorCode)) {return;}
 
+    printf("udata_setCommonData 6\n");
     /* we have good data */
     /* Set it up as the ICU Common Data.  */
     setCommonICUData(&dataMemory, TRUE, pErrorCode);
+    printf("udata_setCommonData 7\n");
 }
 
 /*---------------------------------------------------------------------------

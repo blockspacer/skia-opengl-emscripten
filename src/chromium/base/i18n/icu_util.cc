@@ -22,7 +22,33 @@
 #include "third_party/icu/source/common/unicode/udata.h"
 #if (defined(OS_LINUX) && !defined(OS_CHROMEOS)) || defined(OS_ANDROID) || defined(OS_EMSCRIPTEN)
 #include "third_party/icu/source/i18n/unicode/timezone.h"
+#include "third_party/icu/source/common/unicode/brkiter.h"
 #endif
+
+#include "unicode/calendar.h"
+#include "unicode/datefmt.h"
+#include "unicode/dcfmtsym.h"
+#include "unicode/decimfmt.h"
+#include "unicode/dtfmtsym.h"
+#include "unicode/gregocal.h"
+#include "unicode/locid.h"
+#include "unicode/numfmt.h"
+#include "unicode/strenum.h"
+#include "unicode/ubrk.h"
+#include "unicode/ucal.h"
+#include "unicode/uclean.h"
+#include "unicode/ucol.h"
+#include "unicode/ucurr.h"
+#include "unicode/udat.h"
+#include "unicode/uloc.h"
+#include "unicode/ustring.h"
+#include <unicode/ucnv.h>
+#include <unicode/ulocdata.h>
+#include "unicode/uchar.h"
+#include "unicode/utypes.h"
+
+#include "base/strings/string_util.h"
+#include "base/strings/utf_string_conversions.h"
 
 #if defined(OS_ANDROID)
 #include "base/android/apk_assets.h"
@@ -40,6 +66,12 @@
 #if defined(OS_FUCHSIA)
 #include "base/base_paths_fuchsia.h"
 #endif
+
+#include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 
 namespace base {
 namespace i18n {
@@ -83,7 +115,7 @@ wchar_t g_debug_icu_pf_filename[_MAX_PATH];
 // see http://userguide.icu-project.org/icudata
 // see http://userguide.icu-project.org/howtouseicu#TOC-C-With-Your-Own-Build-System
 // see https://github.com/unicode-org/icu/blob/master/docs/userguide/icu_data/buildtool.md
-const char kIcuDataFileName[] = "resources/icu/icudtl.dat";
+const char kIcuDataFileName[] = "./resources/icu/icudtl.dat";
 #else
 const char kIcuDataFileName[] = "icudtl.dat";
 #endif
@@ -114,6 +146,7 @@ printf("reading icu data 1...\n");
 #endif  // defined(OS_ANDROID)
 #if !defined(OS_MACOSX)
   FilePath data_path;
+#if !defined(OS_EMSCRIPTEN)
   if (!PathService::Get(DIR_ASSETS, &data_path)) {
     LOG(ERROR) << "Can't find " << kIcuDataFileName;
 #if defined(OS_EMSCRIPTEN)
@@ -121,6 +154,7 @@ printf("reading icu data 1...\n");
 #endif
     return;
   }
+#endif
 printf("reading icu data 2...\n");
 #if defined(OS_WIN)
   // TODO(brucedawson): http://crbug.com/445616
@@ -201,7 +235,9 @@ printf("InitializeICUWithFileDescriptorInternal 2\n");
   }
 
   std::unique_ptr<MemoryMappedFile> icudtl_mapped_file(new MemoryMappedFile());
-  if (!icudtl_mapped_file->Initialize(File(data_fd), data_region)) {
+  //if (!icudtl_mapped_file->Initialize(File(data_fd), data_region)) {
+  //const base::string16 str = base::ASCIIToUTF16("data_fd");
+  if (!icudtl_mapped_file->Initialize(FilePath(kIcuDataFileName))) {
     g_debug_icu_load = 2;  // To debug http://crbug.com/445616.
     LOG(ERROR) << "Couldn't mmap icu data file";
 printf("InitializeICUWithFileDescriptorInternal 2.1\n");
@@ -210,16 +246,51 @@ printf("InitializeICUWithFileDescriptorInternal 2.1\n");
 #endif
     return false;
   }
+  DCHECK(icudtl_mapped_file->length()>0);
+  DCHECK(icudtl_mapped_file->data());
+  DCHECK(icudtl_mapped_file->IsValid());
   g_icudtl_mapped_file = icudtl_mapped_file.release();
 printf("InitializeICUWithFileDescriptorInternal 3\n");
 
   UErrorCode err = U_ZERO_ERROR;
-  udata_setCommonData(const_cast<uint8_t*>(g_icudtl_mapped_file->data()), &err);
+  DCHECK(g_icudtl_mapped_file->data());
+  DCHECK(g_icudtl_mapped_file->length()>0);
+  DCHECK(g_icudtl_mapped_file->IsValid());
+printf("InitializeICUWithFileDescriptorInternal 3.0\n");
+
+  /// TODO: wasm alignment fault udata_setCommonData 4 -> udata_checkCommonData
+  ///udata_setCommonData(const_cast<uint8_t*>(g_icudtl_mapped_file->data()), &err);
+
+
+    /// \see "Alignment" at http://userguide.icu-project.org/icudata#TOC-ICU-Data-File-Formats
+    /// \see https://github.com/tombo-a2o/Foundation/blob/51e451959cba7eade126e0cb3df28c370def7498/System/CoreFoundation/src/CFRuntime.c#L999
+    UErrorCode err2 = U_ZERO_ERROR;
+    int icuDataFd = open(kIcuDataFileName, O_RDONLY);
+    if (icuDataFd != -1) {
+        struct stat stbuf;
+        fstat(icuDataFd, &stbuf);
+        size_t icuDataLen = stbuf.st_size;
+
+        // void *icuData = mmap(0, icuDataLen, PROT_READ, MAP_SHARED, icuDataFd, 0);
+        char *icuData = (char*)malloc(icuDataLen);
+        read(icuDataFd, icuData, icuDataLen);
+        close(icuDataFd);
+
+        udata_setCommonData(icuData, &err2);
+        if (err2 != 0)
+        {
+            printf("icu initialization failed with error %d\n", (int)err);
+        }
+    } else {
+        printf("No icu data found, using minimal built-in tables\n");
+    }
+
   if (err != U_ZERO_ERROR) {
 printf("udata_setCommonData error!\n");
     g_debug_icu_load = 3;  // To debug http://crbug.com/445616.
     g_debug_icu_last_error = err;
   }
+printf("InitializeICUWithFileDescriptorInternal 3.1\n");
 #if defined(OS_ANDROID)
   else {
     // On Android, we can't leave it up to ICU to set the default timezone
@@ -234,7 +305,11 @@ printf("udata_setCommonData error!\n");
   }
 #endif
   // Never try to load ICU data from files.
-  udata_setFileAccess(UDATA_ONLY_PACKAGES, &err);
+  ///udata_setFileAccess(UDATA_ONLY_PACKAGES, &err);
+
+  // Tell ICU it can *only* use our memory-mapped data.
+  udata_setFileAccess(UDATA_NO_FILES, &err);
+
 printf("InitializeICUWithFileDescriptorInternal 4\n");
 //UErrorCode status = U_ZERO_ERROR;
 // u_init(&status);
@@ -277,11 +352,15 @@ bool InitializeICUFromRawMemory(const uint8_t* raw_memory) {
   DCHECK(!g_check_called_once || !g_called_once);
   g_called_once = true;
 #endif
-
+  DCHECK(raw_memory);
   UErrorCode err = U_ZERO_ERROR;
   udata_setCommonData(const_cast<uint8_t*>(raw_memory), &err);
   // Never try to load ICU data from files.
-  udata_setFileAccess(UDATA_ONLY_PACKAGES, &err);
+  ///udata_setFileAccess(UDATA_ONLY_PACKAGES, &err);
+
+  // Tell ICU it can *only* use our memory-mapped data.
+  udata_setFileAccess(UDATA_NO_FILES, &err);
+
   return err == U_ZERO_ERROR;
 #else
   return true;
@@ -321,7 +400,10 @@ printf("InitializeICU() 1\n");
   UErrorCode err = U_ZERO_ERROR;
   udata_setCommonData(reinterpret_cast<void*>(addr), &err);
   // Never try to load ICU data from files.
-  udata_setFileAccess(UDATA_ONLY_PACKAGES, &err);
+  ///udata_setFileAccess(UDATA_ONLY_PACKAGES, &err);
+
+  // Tell ICU it can *only* use our memory-mapped data.
+  udata_setFileAccess(UDATA_NO_FILES, &err);
   result = (err == U_ZERO_ERROR);
 #elif (ICU_UTIL_DATA_IMPL == ICU_UTIL_DATA_STATIC)
   // The ICU data is statically linked.
@@ -335,6 +417,10 @@ printf("loading ICU_UTIL_DATA_FILE...\n");
   LazyInitIcuDataFile();
   result =
       InitializeICUWithFileDescriptorInternal(g_icudtl_pf, g_icudtl_region);
+
+
+  // TODO: ICU_initLocaleDataImpl https://github.com/PhungXuanAnh91/mza-v3.0-bsp/blob/ddfa13450bb0dfdaf424265d70dfcd7cd28591ba/libcore/luni/src/main/native/libcore_icu_ICU.cpp#L364
+
 #if defined(OS_WIN)
   int debug_icu_load = g_debug_icu_load;
   debug::Alias(&debug_icu_load);
@@ -361,6 +447,72 @@ printf("loading ICU_UTIL_DATA_FILE...\n");
     std::unique_ptr<icu::TimeZone> zone(icu::TimeZone::createDefault());
 #endif
 printf("InitializeICU() 2\n");
+  UErrorCode status = U_ZERO_ERROR;
+
+/**
+ *  Initialize ICU.
+ *
+ *  Use of this function is optional.  It is OK to simply use ICU
+ *  services and functions without first having initialized
+ *  ICU by calling u_init().
+ *
+ *  u_init() will attempt to load some part of ICU's data, and is
+ *  useful as a test for configuration or installation problems that
+ *  leave the ICU data inaccessible.  A successful invocation of u_init()
+ *  does not, however, guarantee that all ICU data is accessible.
+ *
+ *  Multiple calls to u_init() cause no harm, aside from the small amount
+ *  of time required.
+ *
+ *  In old versions of ICU, u_init() was required in multi-threaded applications
+ *  to ensure the thread safety of ICU.  u_init() is no longer needed for this purpose.
+ *
+ * @param status An ICU UErrorCode parameter. It must not be <code>NULL</code>.
+ *    An Error will be returned if some required part of ICU data can not
+ *    be loaded or initialized.
+ *    The function returns immediately if the input error code indicates a
+ *    failure, as usual.
+ *
+ * @stable ICU 2.6
+ */
+ /// \see https://github.com/abergmeier/emscripten-icu/blob/master/readme.html#L1464
+ /// \see https://github.com/blockspacer/cobalt-clone-28052019/blob/master/src/third_party/icu/source/common/uinit.cpp
+   u_init(&status); /// __TODO__
+   //DCHECK((status == U_ZERO_ERROR)); /// __TODO__
+    printf("ICU Initialized: u_init() returned %s\n", u_errorName(status));
+printf("InitializeICU() 3\n");
+  //printf("Milliseconds since Epoch: %.0f\n", uprv_getUTCtime());
+
+  union {
+      uint8_t byte;
+      uint16_t word;
+  } u;
+  u.word=0x0100;
+  if(U_IS_BIG_ENDIAN==u.byte) {
+    printf("U_IS_BIG_ENDIAN: %d\n", U_IS_BIG_ENDIAN);
+  } else {
+      fprintf(stderr, "  error: U_IS_BIG_ENDIAN=%d != %d=actual 'is big endian'\n",
+              U_IS_BIG_ENDIAN, u.byte);
+      status=U_INTERNAL_PROGRAM_ERROR;
+  }
+
+  int charsetFamily;
+  if('A'==0x41) {
+      charsetFamily=U_ASCII_FAMILY;
+  } else if('A'==0xc1) {
+      charsetFamily=U_EBCDIC_FAMILY;
+  } else {
+      charsetFamily=-1;  // unknown
+  }
+
+  if(U_CHARSET_FAMILY==charsetFamily) {
+    printf("U_CHARSET_FAMILY: %d\n", U_CHARSET_FAMILY);
+  } else {
+      fprintf(stderr, "  error: U_CHARSET_FAMILY=%d != %d=actual charset family\n",
+              U_CHARSET_FAMILY, charsetFamily);
+      status=U_INTERNAL_PROGRAM_ERROR;
+  }
+
   return result;
 }
 #endif  // !defined(OS_NACL)

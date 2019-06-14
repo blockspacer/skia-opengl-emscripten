@@ -38,11 +38,15 @@ void XMLDecoder::DecodeChunk(const char* data, size_t size) {
 }
 
 void XMLDecoder::Finish() {
+      P_LOG("XMLDecoder::Finish 1\n");
   DCHECK(thread_checker_.CalledOnValidThread());
   libxml_xml_parser_wrapper_->Finish();
+      P_LOG("XMLDecoder::Finish 2\n");
   if (!load_complete_callback_.is_null()) {
+      P_LOG("XMLDecoder::Finish 3\n");
     load_complete_callback_.Run(base::nullopt);
   }
+      P_LOG("XMLDecoder::Finish 4\n");
 }
 
 }  // namespace dom_parser
