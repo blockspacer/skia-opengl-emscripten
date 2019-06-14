@@ -40,7 +40,8 @@ class TextureDataCPU : public TextureDataEGL {
   uint8_t* GetMemory() override { return static_cast<uint8_t*>(memory_.get()); }
 
   GLuint ConvertToTexture(GraphicsContextEGL* graphics_context,
-                          bool bgra_supported);
+                          bool bgra_supported)
+                          override; // __TODO__
 
   bool CreationError() override;
 

@@ -19,6 +19,10 @@
 
 #include <KHR/khrplatform.h>
 
+#include <ctype.h>
+#include <cstdint>
+#include <cmath>
+
 namespace glimp {
 namespace gles {
 

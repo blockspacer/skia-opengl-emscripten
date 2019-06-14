@@ -19,12 +19,19 @@
 
 #include "glimp/egl/surface_impl.h"
 
+#include "starboard/configuration.h"
+
 namespace glimp {
 namespace egl {
 
 class SurfaceImplStub : public SurfaceImpl {
  public:
   virtual bool IsDisplayRenderTarget() const { return false; }
+
+  // __TODO__
+  bool IsWindowSurface() const SB_OVERRIDE {
+    return false;
+  }
 };
 
 }  // namespace egl

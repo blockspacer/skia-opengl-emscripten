@@ -35,6 +35,10 @@
 #include "nb/scoped_ptr.h"
 #include "starboard/thread.h"
 
+#include <ctype.h>
+#include <cstdint>
+#include <cmath>
+
 namespace glimp {
 namespace gles {
 

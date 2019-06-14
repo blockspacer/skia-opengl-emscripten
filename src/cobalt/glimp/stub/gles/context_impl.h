@@ -39,6 +39,16 @@ class ContextImplStub : public ContextImpl {
   int GetMaxRenderbufferSize() const SB_OVERRIDE;
   int GetMaxFragmentUniformVectors() const SB_OVERRIDE;
 
+  // __TODO__
+  int GetMaxCombinedTextureImageUnits() const SB_OVERRIDE {
+    return 1;
+  }
+
+  // __TODO__
+  int GetMaxVertexTextureImageUnits() const SB_OVERRIDE {
+    return 1;
+  }
+
   nb::scoped_ptr<ProgramImpl> CreateProgram() SB_OVERRIDE;
 
   nb::scoped_ptr<ShaderImpl> CreateVertexShader() SB_OVERRIDE;

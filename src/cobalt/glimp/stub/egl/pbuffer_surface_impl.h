@@ -35,6 +35,11 @@ class PbufferSurfaceImplStub : public SurfaceImplStub {
   int GetWidth() const SB_OVERRIDE { return width_; }
   int GetHeight() const SB_OVERRIDE { return height_; }
 
+  // __TODO__
+  //int GetMaxVertexTextureImageUnits() const SB_OVERRIDE {
+  //  return 1;
+  //}
+
  private:
   int width_;
   int height_;

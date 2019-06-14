@@ -66,8 +66,13 @@ void DisplayImplStub::InitializeSupportedConfigs() {
   (*config)[EGL_LUMINANCE_SIZE] = 0;
   (*config)[EGL_STENCIL_SIZE] = 0;
   (*config)[EGL_COLOR_BUFFER_TYPE] = EGL_RGB_BUFFER;
+  #if defined(__EMSCRIPTEN__)
+  (*config)[EGL_CONFORMANT] = EGL_OPENGL_ES2_BIT;
+  (*config)[EGL_RENDERABLE_TYPE] = EGL_OPENGL_ES2_BIT;
+  #else
   (*config)[EGL_CONFORMANT] = EGL_OPENGL_ES2_BIT | EGL_OPENGL_ES3_BIT;
   (*config)[EGL_RENDERABLE_TYPE] = EGL_OPENGL_ES2_BIT | EGL_OPENGL_ES3_BIT;
+  #endif
   (*config)[EGL_SURFACE_TYPE] = EGL_WINDOW_BIT | EGL_PBUFFER_BIT;
   (*config)[EGL_BIND_TO_TEXTURE_RGBA] = EGL_TRUE;
 
