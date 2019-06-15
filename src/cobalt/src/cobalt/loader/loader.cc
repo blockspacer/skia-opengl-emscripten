@@ -65,9 +65,12 @@ class Loader::FetcherToDecoderAdapter : public Fetcher::Handler {
     decoder_->DecodeChunkPassed(std::move(data));
   }
   void OnDone(Fetcher* fetcher) override {
+    printf("OnDone 1...\n");
     DCHECK(fetcher);
     decoder_->SetLastURLOrigin(fetcher->last_url_origin());
+    printf("OnDone 2...\n");
     decoder_->Finish();
+    printf("OnDone 3...\n");
   }
   void OnError(Fetcher* /*fetcher*/, const std::string& error) override {
     load_complete_callback_.Run(error);

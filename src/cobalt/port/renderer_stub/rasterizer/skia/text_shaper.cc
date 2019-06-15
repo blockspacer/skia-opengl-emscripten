@@ -1,4 +1,4 @@
-// Copyright 2016 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2016 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -93,10 +93,12 @@ scoped_refptr<GlyphBuffer> TextShaper::CreateGlyphBuffer(
     const base::char16* text_buffer, size_t text_length,
     const std::string& language, bool is_rtl,
     render_tree::FontProvider* font_provider) {
+    //printf("TextShaper::CreateGlyphBuffer 4\n");
   math::RectF bounds;
   SkTextBlobBuilder builder;
   ShapeText(text_buffer, text_length, language, is_rtl, font_provider, &builder,
             &bounds, NULL);
+  //printf("TextShaper::CreateGlyphBuffer 5\n");
   return base::WrapRefCounted(new GlyphBuffer(bounds, &builder));
 }
 
@@ -104,10 +106,13 @@ scoped_refptr<GlyphBuffer> TextShaper::CreateGlyphBuffer(
     const std::string& utf8_string,
     const scoped_refptr<render_tree::Font>& font) {
   base::string16 utf16_string;
+  //printf("TextShaper::CreateGlyphBuffer 1\n");
   base::CodepageToUTF16(utf8_string, base::kCodepageUTF8,
                         base::OnStringConversionError::SUBSTITUTE,
                         &utf16_string);
+  //printf("TextShaper::CreateGlyphBuffer 2\n");
   SingleFontFontProvider font_provider(font);
+  //printf("TextShaper::CreateGlyphBuffer 3\n");
   return CreateGlyphBuffer(utf16_string.c_str(), utf16_string.size(), "en-US",
                            false, &font_provider);
 }
@@ -132,6 +137,7 @@ float TextShaper::ShapeText(const base::char16* text_buffer, size_t text_length,
                             SkTextBlobBuilder* maybe_builder,
                             math::RectF* maybe_bounds,
                             render_tree::FontVector* maybe_used_fonts) {
+    //printf("TextShaper::ShapeText 1\n");
   base::AutoLock lock(shaping_mutex_);
   float total_width = 0;
   VerticalBounds vertical_bounds;
@@ -195,6 +201,7 @@ bool TextShaper::CollectScriptRuns(const base::char16* text_buffer,
                                    size_t text_length,
                                    render_tree::FontProvider* font_provider,
                                    ScriptRuns* runs) {
+    //printf("TextShaper::CollectScriptRuns 1\n");
   // Initialize the next data with the first character. This allows us to avoid
   // checking for the first character case within the while loop.
   int32 next_character = base::unicode::NormalizeSpaces(
@@ -291,6 +298,7 @@ void TextShaper::ShapeComplexRun(const base::char16* text_buffer,
                                  VerticalBounds* maybe_vertical_bounds,
                                  render_tree::FontVector* maybe_used_fonts,
                                  float* total_width) {
+    //printf("TextShaper::ShapeComplexRun 1\n");
   TryAddFontToUsedFonts(script_run.font, maybe_used_fonts);
 
   hb_font_t* harfbuzz_font =
@@ -337,10 +345,13 @@ void TextShaper::ShapeComplexRun(const base::char16* text_buffer,
   // the builder for the shaped glyphs.
   const SkTextBlobBuilder::RunBuffer* run_buffer = NULL;
   if (maybe_builder) {
-    SkPaint paint = script_run.font->GetSkPaint();
-    paint.setTextEncoding(SkPaint::kGlyphID_TextEncoding);
-    paint.setFakeBoldText(ShouldFakeBoldText(font_provider, script_run.font));
-    run_buffer = &(maybe_builder->allocRunPos(paint, glyph_count));
+    ///SkPaint paint = script_run.font->GetSkPaint();
+    ///paint.setTextEncoding(SkPaint::kGlyphID_TextEncoding);
+    ///paint.setFakeBoldText(ShouldFakeBoldText(font_provider, script_run.font));
+    const SkFont* fnt = script_run.font->GetDefaultFont();
+
+    DCHECK(fnt);
+    run_buffer = &(maybe_builder->allocRunPos(*fnt, glyph_count));
   }
 
   // Walk each of the shaped glyphs.
@@ -380,6 +391,7 @@ void TextShaper::ShapeSimpleRunWithDirection(
     render_tree::FontProvider* font_provider, SkTextBlobBuilder* maybe_builder,
     VerticalBounds* maybe_vertical_bounds,
     render_tree::FontVector* maybe_used_fonts, float* total_width) {
+    //printf("TextShaper::ShapeSimpleRunWithDirection 1\n");
   // If the text has an RTL direction and a builder was provided, then reverse
   // the text. This ensures that the glyphs will appear in the proper order
   // within the glyph buffer. The width and bounds do not rely on the direction
@@ -419,6 +431,7 @@ void TextShaper::ShapeSimpleRun(const base::char16* text_buffer,
                                 VerticalBounds* maybe_vertical_bounds,
                                 render_tree::FontVector* maybe_used_fonts,
                                 float* total_width) {
+    //printf("TextShaper::ShapeSimpleRun 1\n");
   // If there's a builder (meaning that a glyph buffer is being generated), then
   // ensure that the local arrays are large enough to hold all of the glyphs
   // within the simple run.
@@ -498,17 +511,27 @@ void TextShaper::ShapeSimpleRun(const base::char16* text_buffer,
 void TextShaper::AddFontRunToGlyphBuffer(
     const render_tree::FontProvider* font_provider, const Font* font,
     const int glyph_count, SkTextBlobBuilder* builder) {
-  SkPaint paint = font->GetSkPaint();
-  paint.setTextEncoding(SkPaint::kGlyphID_TextEncoding);
-  paint.setFakeBoldText(ShouldFakeBoldText(font_provider, font));
+    //printf("TextShaper::AddFontRunToGlyphBuffer 1\n");
+    DCHECK(font);
+    DCHECK(builder);
+    DCHECK(font_provider);
+  ///SkPaint paint = font->GetSkPaint();
+  //const SkFont* fnt = Font::GetDefaultFont();
+  ///paint.setTextEncoding(SkFont::kGlyphID_TextEncoding);
+  ///paint.setFakeBoldText(ShouldFakeBoldText(font_provider, font));
 
   // Allocate space within the text blob for the glyphs and copy them into the
   // blob.
+  DCHECK(font->GetDefaultFont());
+  //printf("TextShaper::AddFontRunToGlyphBuffer 2\n");
   const SkTextBlobBuilder::RunBuffer& buffer =
-      builder->allocRunPosH(paint, glyph_count, 0);
+      builder->allocRunPosH(*font->GetDefaultFont(), glyph_count, 0);
+  //printf("TextShaper::AddFontRunToGlyphBuffer 3\n");
   std::copy(&local_glyphs_[0], &local_glyphs_[0] + glyph_count, buffer.glyphs);
+  //printf("TextShaper::AddFontRunToGlyphBuffer 4\n");
   std::copy(&local_positions_[0], &local_positions_[0] + glyph_count,
             buffer.pos);
+  //printf("TextShaper::AddFontRunToGlyphBuffer 5\n");
 }
 
 void TextShaper::EnsureLocalGlyphArraysHaveSize(size_t size) {

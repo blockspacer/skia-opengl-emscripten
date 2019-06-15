@@ -1,4 +1,4 @@
-// Copyright 2015 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2015 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -93,10 +93,15 @@ class FetcherToDecoderAdapter : public Fetcher::Handler {
     decoder_->DecodeChunk(data, size);
   }
   void OnDone(Fetcher* fetcher) override {
+    printf("sync OnDone 1...\n");
     DCHECK(fetcher);
+    printf("sync OnDone 2...\n");
     decoder_->SetLastURLOrigin(fetcher->last_url_origin());
+    printf("sync OnDone 3...\n");
     decoder_->Finish();
+    printf("sync OnDone 4...\n");
     loader_on_thread_->SignalStartDone();
+    printf("sync OnDone 5...\n");
   }
   void OnError(Fetcher* /*fetcher*/, const std::string& error) override {
     load_complete_callback_.Run(error);

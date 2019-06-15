@@ -1,4 +1,4 @@
-// Copyright 2014 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2014 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -77,6 +77,10 @@ class Font : public render_tree::Font {
   static const SkPaint& GetDefaultSkPaint();
 
   static const SkFont* GetDefaultFont();
+
+  static sk_sp<SkTypeface> getDefaultTypeface();
+
+  static sk_sp<SkTypeface_Cobalt> GetDefaultSkTypeface();
 
  private:
   // Usually covers Latin-1 in a single page.

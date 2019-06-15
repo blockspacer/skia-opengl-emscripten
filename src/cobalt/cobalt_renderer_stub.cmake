@@ -43,6 +43,9 @@ set(COBALT_renderer_stub_skia_SOURCES
   ${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/skia/src/ports/SkOSFile_cobalt.cc
   ${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/glyph_buffer.cc
   #
+  ${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/text_shaper.cc
+  ${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/harfbuzz_font.cc
+  #
   # common
   #
   ${COBALT_PORT_DIR}/renderer_stub/rasterizer/common/find_node.cc

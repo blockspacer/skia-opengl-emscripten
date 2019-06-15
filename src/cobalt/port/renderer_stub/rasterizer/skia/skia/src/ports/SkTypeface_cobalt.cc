@@ -1,4 +1,4 @@
-// Copyright 2017 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2017 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -27,7 +27,9 @@ SkTypeface_Cobalt::SkTypeface_Cobalt(int face_index, SkFontStyle style,
       INHERITED(style, is_fixed_pitch),
       face_index_(face_index),
       family_name_(family_name),
-      synthesizes_bold_(!isBold()) {}
+      synthesizes_bold_(!isBold()) {
+    printf("SkTypeface_Cobalt 1\n");
+}
 
 void SkTypeface_Cobalt::onGetFamilyName(SkString* family_name) const {
   *family_name = family_name_;

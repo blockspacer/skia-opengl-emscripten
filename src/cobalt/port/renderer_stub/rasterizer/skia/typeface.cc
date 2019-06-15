@@ -1,4 +1,4 @@
-// Copyright 2016 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2016 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,6 +18,10 @@
 
 #include "third_party/skia/include/core/SkPaint.h"
 
+#include "third_party/skia/include/core/SkTypeface.h"
+#include "include/core/SkFont.h"
+#include "include/core/SkFontMetrics.h"
+
 namespace cobalt {
 namespace renderer {
 namespace rasterizer {
@@ -25,7 +29,15 @@ namespace skia {
 
 SkiaTypeface::SkiaTypeface(const sk_sp<SkTypeface_Cobalt>& typeface)
     : typeface_(typeface) {
+    printf("SkiaTypeface 1\n");
+    /// __TODO__
+    typeface_ = Font::GetDefaultSkTypeface();
+    printf("SkiaTypeface 2\n");
+#if !defined(OS_EMSCRIPTEN)
+    printf("SkiaTypeface 3\n");
   character_glyph_thread_checker_.DetachFromThread();
+#endif
+  printf("SkiaTypeface 4\n");
 }
 
 const sk_sp<SkTypeface_Cobalt>& SkiaTypeface::GetSkTypeface() const {
@@ -42,12 +54,16 @@ uint32 SkiaTypeface::GetEstimatedSizeInBytes() const {
 
 scoped_refptr<render_tree::Font> SkiaTypeface::CreateFontWithSize(
     float font_size) {
+    printf("SkiaTypeface::CreateFontWithSize size %f", font_size);
   return scoped_refptr<render_tree::Font>(new Font(this, font_size));
 }
 
 render_tree::GlyphIndex SkiaTypeface::GetGlyphForCharacter(
     int32 utf32_character) {
+#if !defined(OS_EMSCRIPTEN)
   DCHECK(character_glyph_thread_checker_.CalledOnValidThread());
+#endif
+
   // If the character falls within the first 256 characters (Latin-1), then
   // simply check the primary page for the glyph.
   if (utf32_character < kPrimaryPageSize) {
@@ -79,8 +95,16 @@ render_tree::GlyphIndex SkiaTypeface::GetGlyphForCharacter(
   render_tree::GlyphIndex glyph = render_tree::kInvalidGlyphIndex;
   /*typeface_->charsToGlyphs(&utf32_character, SkTypeface::kUTF32_Encoding,
                            &glyph, 1);*/
-  typeface_->unicharsToGlyphs(&utf32_character, 1, &glyph);
 
+  //typeface_->unicharsToGlyphs(&utf32_character, 1, &glyph);
+  glyph = typeface_->unicharToGlyph(utf32_character);
+  /*int res = Font::GetDefaultFont()->textToGlyphs(&utf32_character,
+                                       sizeof(render_tree::GlyphIndex),
+                                       //SkTextEncoding::kUTF32,
+                                       SkTextEncoding::kGlyphID,
+                                       &glyph,
+                                       1);
+  DCHECK(res > 0);*/
   // Both cache and return the character's glyph.
   if (utf32_character < kPrimaryPageSize) {
     return primary_page_character_glyphs_[utf32_character] = glyph;

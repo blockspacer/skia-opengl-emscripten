@@ -1566,10 +1566,10 @@ public:
 #ifdef HARFBUZZ_UNICODE
             hb_buffer_set_script(hb_buffer, HB_SCRIPT_CYRILLIC);
             //hb_buffer_set_language(hb_buffer, hb_language_from_string("ru", 2));
-            hb_buffer_set_language(hb_buffer, hb_language_from_string("en_US", 2));
+            hb_buffer_set_language(hb_buffer, hb_language_from_string("en", 2));
 #else
             hb_buffer_set_script(hb_buffer, HB_SCRIPT_LATIN);
-            hb_buffer_set_language(hb_buffer, hb_language_from_string("en_US", 2));
+            hb_buffer_set_language(hb_buffer, hb_language_from_string("en", 2));
 #endif
             //hb_buffer_add_latin1(hb_buffer, text, -1, 0, -1);
             hb_buffer_add_utf8 (hb_buffer, text, -1, 0, -1);
@@ -2469,7 +2469,7 @@ void CobaltTester::OnRanAnimationFrameCallbacks() {
 void CobaltTester::OnRenderTreeRasterized(
     scoped_refptr<base::SingleThreadTaskRunner> web_module_message_loop,
     const base::TimeTicks& produced_time) {
-    printf("OnRenderTreeRasterized\n");
+    //printf("OnRenderTreeRasterized\n");
 
 
     // TODO
@@ -2514,7 +2514,7 @@ renderer::Submission CobaltTester::CreateSubmissionFromLayoutResults(
 }
 
 void CobaltTester::OnRendererSubmissionRasterized() {
-        printf("OnRendererSubmissionRasterized 1\n");
+        //printf("OnRendererSubmissionRasterized 1\n");
     TRACE_EVENT0("cobalt::browser",
                  "BrowserModule::OnRendererSubmissionRasterized()");
     //if (!is_rendered_) {
@@ -2535,39 +2535,15 @@ void CobaltTester::SubmitCurrentRenderTreeToRenderer() {
     base::Optional<renderer::Submission> submission =
         render_tree_combiner_.GetCurrentSubmission();
     if (submission) {
-        printf("SubmitCurrentRenderTreeToRenderer 2.1\n");
+        //printf("SubmitCurrentRenderTreeToRenderer 2.1\n");
 
         renderer_module_->pipeline()->Submit(*submission);
-
-        // TODO: remove DumpRenderTreeToString
-        /*{
-            DCHECK(submission->render_tree);
-            render_tree::animations::AnimateNode* animate_node =
-                static_cast<render_tree::animations::AnimateNode*>(
-                    submission->render_tree.get());
-            printf("SubmitCurrentRenderTreeToRenderer 1.1\n");
-            DCHECK(animate_node);
-            animateResults =
-                animate_node->Apply(submission->time_offset);
-            printf("SubmitCurrentRenderTreeToRenderer 1.2\n");
-
-            DCHECK(animateResults.animated);
-            DCHECK(animateResults.animated.get());
-            printf("SubmitCurrentRenderTreeToRenderer 1.3\n");
-            DCHECK(animateResults.animated->source());
-            printf("SubmitCurrentRenderTreeToRenderer 1.4\n");
-            DCHECK(animateResults.animated->source().get());
-            printf("SubmitCurrentRenderTreeToRenderer 1.5\n");
-            std::string tree_dump =
-                render_tree::DumpRenderTreeToString(animateResults.animated->source().get());
-            printf("DumpRenderTreeToString %s\n", tree_dump.c_str());
-        }*/
         {
-            renderer_module_->pipeline()->OnDumpCurrentRenderTree("");
+            //renderer_module_->pipeline()->OnDumpCurrentRenderTree("");
         }
-        printf("SubmitCurrentRenderTreeToRenderer 2.2\n");
+        //printf("SubmitCurrentRenderTreeToRenderer 2.2\n");
     }
-    printf("SubmitCurrentRenderTreeToRenderer 2\n");
+    //printf("SubmitCurrentRenderTreeToRenderer 2\n");
 }
 
 void CobaltTester::OnBrowserRenderTreeProduced(
@@ -2608,7 +2584,7 @@ void CobaltTester::OnBrowserRenderTreeProduced(
     main_web_module_layer_->Submit(renderer_submission);
 
     SubmitCurrentRenderTreeToRenderer();
-    printf("OnBrowserRenderTreeProduced 2\n");
+    //printf("OnBrowserRenderTreeProduced 2\n");
 }
 
 void CobaltTester::QueueOnRenderTreeProduced(
@@ -2674,7 +2650,7 @@ void CobaltTester::OnStopDispatchEvent(const scoped_refptr<dom::Event>& event) {
 }
 
 void CobaltTester::HandlePointerEvents() {
-    printf("HandlePointerEvents\n");
+    //printf("HandlePointerEvents\n");
 }
 
 // Called when the WebModule's Window.onload event is fired.

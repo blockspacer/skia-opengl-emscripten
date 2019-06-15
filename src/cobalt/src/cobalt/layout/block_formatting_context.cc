@@ -66,7 +66,7 @@ void BlockFormattingContext::EstimateStaticPosition(Box* child_box) {
 }
 
 void BlockFormattingContext::UpdatePosition(Box* child_box) {
-  printf("BlockFormattingContext::UpdatePosition 1\n");
+  //printf("BlockFormattingContext::UpdatePosition 1\n");
   DCHECK_EQ(Box::kBlockLevel, child_box->GetLevel());
 
   // In a block formatting context, each box's left outer edge touches
@@ -87,28 +87,28 @@ void BlockFormattingContext::UpdatePosition(Box* child_box) {
   const LayoutUnit margin_top = child_box->margin_top();
   LayoutUnit collapsed_margin;
   if ((margin_top >= LayoutUnit()) && (collapsing_margin_ >= LayoutUnit())) {
-    printf("BlockFormattingContext::UpdatePosition 1.1\n");
+    //printf("BlockFormattingContext::UpdatePosition 1.1\n");
     collapsed_margin = std::max(margin_top, collapsing_margin_);
   } else if ((margin_top < LayoutUnit()) &&
              (collapsing_margin_ < LayoutUnit())) {
-    printf("BlockFormattingContext::UpdatePosition 1.2\n");
+    //printf("BlockFormattingContext::UpdatePosition 1.2\n");
     // If there are no positive margins, the maximum of the absolute values of
     // the adjoining margins is deducted from zero.
     collapsed_margin = LayoutUnit() + std::min(margin_top, collapsing_margin_);
   } else {
-    printf("BlockFormattingContext::UpdatePosition 1.3\n");
+    //printf("BlockFormattingContext::UpdatePosition 1.3\n");
     // In the case of negative margins, the maximum of the absolute values of
     // the negative adjoining margins is deducted from the maximum of the
     // positive adjoining margins.
     // When there is only one negative and one positive margin, that translates
     // to: The margins are summed.
-#if !defined(OS_EMSCRIPTEN)
+//#if !defined(OS_EMSCRIPTEN)
     DCHECK(collapsing_margin_.GreaterEqualOrNaN(LayoutUnit()) ||
            margin_top.GreaterEqualOrNaN(LayoutUnit()));
-#endif
+//#endif
     collapsed_margin = collapsing_margin_ + margin_top;
   }
-  printf("BlockFormattingContext::UpdatePosition 2\n");
+  //printf("BlockFormattingContext::UpdatePosition 2\n");
 
   LayoutUnit combined_margin = collapsing_margin_ + margin_top;
   child_box->set_top(auto_height() - combined_margin + collapsed_margin);

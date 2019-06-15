@@ -1,4 +1,4 @@
-// Copyright 2016 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2016 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -220,6 +220,7 @@ hb_face_t* HarfBuzzFontProvider::HarfBuzzFace::get() { return face_; }
 hb_font_t* HarfBuzzFontProvider::GetHarfBuzzFont(Font* skia_font) {
   // Retrieve the typeface from the cache. In the case where it does not already
   // exist, it will be NULL and we must create it.
+
   HarfBuzzFace& face = face_cache_[skia_font->GetTypefaceId()];
   if (face.get() == NULL) {
     const sk_sp<SkTypeface_Cobalt>& typeface = skia_font->GetSkTypeface();
@@ -228,6 +229,7 @@ hb_font_t* HarfBuzzFontProvider::GetHarfBuzzFont(Font* skia_font) {
 
   hb_font_t* harfbuzz_font = hb_font_create(face.get());
   const int scale = SkScalarToFixed(skia_font->size());
+  //printf("hb_font_set_scale %d\n", scale);
   hb_font_set_scale(harfbuzz_font, scale, scale);
   hb_font_set_funcs(harfbuzz_font, g_font_funcs.Get().get(), skia_font, NULL);
   hb_font_make_immutable(harfbuzz_font);

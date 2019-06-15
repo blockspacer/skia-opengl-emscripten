@@ -1,4 +1,4 @@
-// Copyright 2015 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2015 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -395,6 +395,7 @@ class ResourceProviderStub : public ResourceProvider {
     SB_UNREFERENCED_PARAMETER(language);
     SB_UNREFERENCED_PARAMETER(is_rtl);
     render_tree::GlyphIndex glyph_index;
+    DCHECK(font_provider);
     const scoped_refptr<render_tree::Font>& font =
         font_provider->GetCharacterFont(Internal::kDefaultCharacter,
                                         &glyph_index);

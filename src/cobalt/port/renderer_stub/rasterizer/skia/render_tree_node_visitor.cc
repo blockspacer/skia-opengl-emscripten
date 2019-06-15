@@ -1,4 +1,4 @@
-// Copyright 2014 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2014 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -1413,7 +1413,7 @@ void DrawSolidRoundedRectBorder(
         draw_state, rect, rounded_corners, content_rect, inner_rounded_corners,
         border.top.color);
   } else {
-    printf("DrawSolidRoundedRectBorder configuration not supported\n");
+    //printf("DrawSolidRoundedRectBorder configuration not supported\n");
     // For now we fallback to software for drawing most rounded corner borders,
     // with some situations specified above being special cased. The reason we
     // do this is to limit then number of shaders that need to be implemented.
@@ -1721,21 +1721,24 @@ void RenderText(SkCanvas* render_target,
     }
 
     DCHECK(Font::GetDefaultFont());
-    auto blob = SkTextBlob::MakeFromText(
+    DCHECK(skia_glyph_buffer->GetTextBlob());
+    /*auto blob = SkTextBlob::MakeFromText(
       text_node->data().text.c_str(),
       text_node->data().text.length() * sizeof(base::char16),
       *Font::GetDefaultFont(),
-      SkTextEncoding::kUTF16
+      //SkTextEncoding::kUTF32
+      //SkTextEncoding::kUTF16
       //SkTextEncoding::kUTF8
     );
-    render_target->drawTextBlob(blob.get(), position.x(), position.y(), paint);
+    render_target->drawTextBlob(blob.get(), position.x(), position.y(), paint);*/
 
-    /*sk_sp<const SkTextBlob> text_blob(skia_glyph_buffer->GetTextBlob());
+    sk_sp<const SkTextBlob> text_blob(skia_glyph_buffer->GetTextBlob());
+    DCHECK(text_blob);
     // TODO
     //skia_glyph_buffer->GetTextBlob()->MakeFromString(glyph_buffer->)
 
     render_target->drawTextBlob(text_blob.get(), position.x(), position.y(),
-                                paint);*/
+                                paint);
   }
 }
 }  // namespace

@@ -1,4 +1,4 @@
-// Copyright 2014 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2014 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@
 #include <vector>
 
 #include "cobalt/render_tree/resource_provider.h"
-///#include "renderer_stub/rasterizer/skia/text_shaper.h"
+#include "renderer_stub/rasterizer/skia/text_shaper.h"
 
 //#include "skia/include/ports/SkFontMgr.h"
 //#include "skia/include/ports/SkFontMgr_empty.h"
@@ -202,7 +202,7 @@ class SoftwareResourceProvider : public render_tree::ResourceProvider {
  private:
   const bool purge_skia_font_caches_on_destruction_;
 
-  ///TextShaper text_shaper_;
+  TextShaper text_shaper_;
 };
 
 }  // namespace skia

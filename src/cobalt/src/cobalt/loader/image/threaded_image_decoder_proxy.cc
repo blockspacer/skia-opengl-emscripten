@@ -1,4 +1,4 @@
-// Copyright 2016 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2016 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -122,9 +122,11 @@ void ThreadedImageDecoderProxy::DecodeChunkPassed(
 }
 
 void ThreadedImageDecoderProxy::Finish() {
+  printf("ThreadedImageDecoderProxy::Finish 1...\n");
   load_message_loop_->task_runner()->PostTask(
       FROM_HERE, base::Bind(&ImageDecoder::Finish,
                             base::Unretained(image_decoder_.get())));
+  printf("ThreadedImageDecoderProxy::Finish 2...\n");
 }
 
 bool ThreadedImageDecoderProxy::Suspend() {

@@ -1,4 +1,4 @@
-// Copyright 2016 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2016 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -75,7 +75,9 @@ class SkiaTypeface : public render_tree::Typeface {
   // modified on a single thread.
   std::unique_ptr<render_tree::GlyphIndex[]> primary_page_character_glyphs_;
   CharacterToGlyphMap character_to_glyph_map_;
-  base::ThreadChecker character_glyph_thread_checker_;
+#if !defined(OS_EMSCRIPTEN)
+    base::ThreadChecker character_glyph_thread_checker_;
+#endif
 };
 
 }  // namespace skia

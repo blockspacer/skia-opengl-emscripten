@@ -1,4 +1,4 @@
-// Copyright 2015 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2015 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -42,8 +42,8 @@ Paragraph::Paragraph(
       character_break_iterator_(character_break_iterator),
       is_closed_(false),
       last_retrieved_run_index_(0) {
-  //DCHECK(line_break_iterator_);
-  //DCHECK(character_break_iterator_);
+  DCHECK(line_break_iterator_);
+  DCHECK(character_break_iterator_);
 
   level_runs_.push_back(
       BidiLevelRun(0, ConvertBaseDirectionToBidiLevel(base_direction)));
@@ -253,12 +253,12 @@ std::string Paragraph::RetrieveUtf8SubString(int32 start_position,
 }
 
 const base::char16* Paragraph::GetTextBuffer() const {
-#if defined(OS_EMSCRIPTEN)
+/*#if defined(OS_EMSCRIPTEN)
   return reinterpret_cast<const uint16_t*>(unicode_text_.getBuffer());
-#else
+#else*/
   // TODO https://bugs.chromium.org/p/v8/issues/detail?id=6487
   return reinterpret_cast<const uint16_t*>(unicode_text_.getBuffer());
-#endif
+//#endif
 }
 
 const icu::Locale& Paragraph::GetLocale() const { return locale_; }
@@ -390,16 +390,17 @@ bool Paragraph::TryIncludeSegmentWithinAvailableWidth(
   // that causes the available width to be exceeded. The previous break position
   // is the last usable one. However, if overflow is allowed and no segment has
   // been found, then the first overflowing segment is accepted.
-#if defined(OS_EMSCRIPTEN)
+/*#if defined(OS_EMSCRIPTEN)
   LayoutUnit segment_width = LayoutUnit(used_font->GetTextWidth(
       reinterpret_cast<const uint16_t*>(unicode_text_.getBuffer()) + segment_start, segment_end - segment_start,
       IsRTL(segment_start), NULL));
-#else
+#else*/
+  DCHECK(unicode_text_.getBuffer());
   // TODO https://bugs.chromium.org/p/v8/issues/detail?id=6487
   LayoutUnit segment_width = LayoutUnit(used_font->GetTextWidth(
       reinterpret_cast<const uint16_t*>(unicode_text_.getBuffer()) + segment_start, segment_end - segment_start,
       IsRTL(segment_start), NULL));
-#endif
+//#endif
 
   // If trailing white space is being collapsed, then it will not be included
   // when determining if the segment can fit within the available width.
@@ -460,16 +461,16 @@ void Paragraph::GenerateBidiLevelRuns() {
   if (U_FAILURE(error)) {
     return;
   }
-#if defined(OS_EMSCRIPTEN)
+/*#if defined(OS_EMSCRIPTEN)
   ubidi_setPara(ubidi.get(), reinterpret_cast<const uint16_t*>(unicode_text_.getBuffer()), unicode_text_.length(),
                 UBiDiLevel(ConvertBaseDirectionToBidiLevel(base_direction_)),
                 NULL, &error);
-#else
+#else*/
   // TODO https://bugs.chromium.org/p/v8/issues/detail?id=6487
   ubidi_setPara(ubidi.get(), reinterpret_cast<const uint16_t*>(unicode_text_.getBuffer()), unicode_text_.length(),
                 UBiDiLevel(ConvertBaseDirectionToBidiLevel(base_direction_)),
                 NULL, &error);
-#endif
+//#endif
   if (U_FAILURE(error)) {
     return;
   }

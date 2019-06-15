@@ -1,4 +1,4 @@
-// Copyright 2015 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2015 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -152,7 +152,9 @@ const scoped_refptr<render_tree::Font>& FontCache::GetFontFromTypefaceAndSize(
   // Check to see if the font is already in the cache. If it is not, then
   // create it from the typeface and size and add it to the cache.
   FontInfo& cached_font_info = font_map_[font_key];
+  printf("FontCache::GetFontFromTypefaceAndSize size %f", size);
   if (cached_font_info.font.get() == NULL) {
+    //size = 22.0f; // __TODO__
     cached_font_info.font = typeface->CreateFontWithSize(size);
   }
   return cached_font_info.font;
@@ -234,6 +236,9 @@ float FontCache::GetTextWidth(const base::char16* text_buffer,
                               FontList* font_list,
                               render_tree::FontVector* maybe_used_fonts) {
   DCHECK(resource_provider());
+  DCHECK(font_list);
+  //DCHECK(maybe_used_fonts);
+  DCHECK(text_buffer);
   return resource_provider()->GetTextWidth(
       text_buffer, static_cast<size_t>(text_length), language_script_, is_rtl,
       font_list, maybe_used_fonts);
@@ -407,7 +412,7 @@ scoped_refptr<render_tree::Font> FontCache::TryGetLocalFont(
 
 scoped_refptr<render_tree::Font> FontCache::TryGetLocalFontByFaceName(
     const std::string& font_face, float size, FontListFont::State* state) {
-  do {
+    do {
     if (font_face.empty()) {
       break;
     }

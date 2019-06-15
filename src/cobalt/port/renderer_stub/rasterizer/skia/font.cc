@@ -1,4 +1,4 @@
-// Copyright 2014 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2014 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,25 +21,47 @@
 #include "include/core/SkFont.h"
 #include "include/core/SkFontMetrics.h"
 
+#include "cobalt/base/polymorphic_downcast.h"
+
 static const char* fallbackFontPath = "./resources/fonts/FreeSans.ttf";
 static SkFont* fallbackFont;
 static sk_sp<SkTypeface> fallbackFontTypeface;
 static const float FONT_SIZE_F = 22.0;
+static sk_sp<SkTypeface_Cobalt> fallbackSkTypeface_Cobalt;
+
+static sk_sp<SkTypeface> getOrCreateFallbackTypeface() {
+    if (!fallbackFontTypeface) {
+        /*sk_sp<SkData> data = SkData::MakeFromFileName(fallbackFontPath);
+        if (!data) {
+            printf("failed SkData::MakeFromMalloc for font %s\n", fallbackFontPath);
+        }
+        DCHECK(data);*/
+        const int index = 0;
+        //fallbackFontTypeface = SkTypeface::MakeFromData(::std::move(data), index);
+        fallbackFontTypeface = SkTypeface::MakeFromFile(fallbackFontPath, index);
+    }
+    DCHECK(fallbackFontTypeface);
+    return fallbackFontTypeface;
+}
 
 static SkFont* getOrCreateFallbackFont() {
   if (!fallbackFont) {
-    sk_sp<SkData> data = SkData::MakeFromFileName(fallbackFontPath);
-    if (!data) {
-      printf("failed SkData::MakeFromMalloc for font %s\n", fallbackFontPath);
-    }
-    DCHECK(data);
-    const int index = 0;
-    fallbackFontTypeface = SkTypeface::MakeFromData(::std::move(data), index);
     fallbackFont =
-        new SkFont(fallbackFontTypeface, FONT_SIZE_F, 1.0f, 0.0f);
+        new SkFont(getOrCreateFallbackTypeface(), FONT_SIZE_F, 1.0f, 0.0f);
   }
   DCHECK(fallbackFont);
   return fallbackFont;
+}
+
+
+static sk_sp<SkTypeface_Cobalt> getOrCreateFallbackSkTypeface() {
+    if (!fallbackSkTypeface_Cobalt) {
+        fallbackSkTypeface_Cobalt =
+            sk_sp<SkTypeface_Cobalt>(base::polymorphic_downcast<SkTypeface_Cobalt*>(
+        getOrCreateFallbackTypeface()->makeClone(SkFontArguments()).release()));
+    }
+    DCHECK(fallbackSkTypeface_Cobalt);
+    return fallbackSkTypeface_Cobalt;
 }
 
 namespace {
@@ -73,19 +95,24 @@ base::LazyInstance<NonTrivialStaticFields>::DestructorAtExit
 
 Font::Font(SkiaTypeface* typeface, SkScalar size)
     : typeface_(typeface), size_(size) {
+    //DCHECK(size > 21 && size < 23); // TODO
+    //printf("Font::GetDefaultFont()->getSize() %f\n", Font::GetDefaultFont()->getSize());
   glyph_bounds_thread_checker_.DetachFromThread();
 }
 
 const sk_sp<SkTypeface_Cobalt>& Font::GetSkTypeface() const {
   return typeface_->GetSkTypeface();
+
+  ///return getOrCreateFallbackSkTypeface();
 }
 
+
 render_tree::TypefaceId Font::GetTypefaceId() const {
-  return typeface_->GetId();
+  return typeface_->GetId();;//
 }
 
 render_tree::FontMetrics Font::GetFontMetrics() const {
-  SkPaint paint = GetSkPaint();
+  //SkPaint paint = GetSkPaint();
 
   //SkPaint::FontMetrics font_metrics;
   SkFontMetrics font_metrics;
@@ -114,68 +141,106 @@ render_tree::GlyphIndex Font::GetGlyphForCharacter(int32 utf32_character) {
 }
 
 const math::RectF& Font::GetGlyphBounds(render_tree::GlyphIndex glyph) {
+    //printf("GetGlyphBounds 1\n");
   DCHECK(glyph_bounds_thread_checker_.CalledOnValidThread());
+  //printf("GetGlyphBounds 2\n");
   // Check to see if the glyph falls within the the first 256 glyphs. These
   // characters are part of the primary page and are stored within an array as
   // an optimization.
+  //printf("GetGlyphBounds 3\n");
   if (glyph < kPrimaryPageSize) {
+      //printf("GetGlyphBounds 4\n");
     // The first page is lazily allocated, so we don't use the memory if it's
     // never used.
     if (!primary_page_glyph_bounds_) {
+        //printf("GetGlyphBounds 5\n");
       primary_page_glyph_bounds_.reset(new math::RectF[kPrimaryPageSize]);
       // If the page has already been allocated, then check for the glyph's
       // bounds having already been set. If this is the case, simply return the
       // bounds.
     } else if (primary_page_glyph_bounds_bits_[glyph]) {
+        //printf("GetGlyphBounds 6\n");
       return primary_page_glyph_bounds_[glyph];
     }
     // Otherwise, check for the glyph's bounds within the map.
+    //printf("GetGlyphBounds 7\n");
   } else {
+      //printf("GetGlyphBounds 8\n");
     GlyphToBoundsMap::iterator map_iterator = glyph_to_bounds_map_.find(glyph);
     if (map_iterator != glyph_to_bounds_map_.end()) {
+        //printf("GetGlyphBounds 9\n");
       return map_iterator->second;
     }
   }
 
+  //printf("GetGlyphBounds 10\n");
   // If we reach this point, the glyph's bounds were not previously cached and
   // need to be calculated them now.
-  SkPaint paint = GetSkPaint();
+  //SkPaint paint = GetSkPaint();
   ///paint.setTextEncoding(SkPaint::kGlyphID_TextEncoding);
 
+  //printf("GetGlyphBounds 11\n");
   // TODO
   int ascent_pixels_;
   int height_pixels_;
   int cap_height_pixels_;
   double average_width_pixels_;
+  auto fnt = getOrCreateFallbackFont();
+  DCHECK(fnt);
   {
     SkFontMetrics metrics;
-    getOrCreateFallbackFont()->getMetrics(&metrics);
+    fnt->getMetrics(&metrics);
+    //printf("GetGlyphBounds 12\n");
     ascent_pixels_ = SkScalarCeilToInt(-metrics.fAscent);
     height_pixels_ = ascent_pixels_ + SkScalarCeilToInt(metrics.fDescent);
     cap_height_pixels_ = SkScalarCeilToInt(metrics.fCapHeight);
     average_width_pixels_ = SkScalarToDouble(metrics.fAvgCharWidth);
   }
+  //printf("GetGlyphBounds 13\n");
 
   SkRect skia_bounds;
   // TODO
-  float width =
-    getOrCreateFallbackFont()->measureText(
-      &glyph,
-      sizeof(render_tree::GlyphIndex),
-      kUTF8_SkTextEncoding,
-      &skia_bounds);
-  //float width = average_width_pixels_;
+  //printf("GetGlyphBounds 14\n");
+  DCHECK(fnt);
+  float width;
+
+  width = fnt->measureText(
+          &glyph,
+          sizeof(render_tree::GlyphIndex),//2,//4,//
+          //kUTF8_SkTextEncoding,
+          //kUTF16_SkTextEncoding,
+          SkTextEncoding::kGlyphID,
+          //kUTF32_SkTextEncoding,
+          &skia_bounds
+          //, &paint
+      );
+  DCHECK(width > 0);
+  //SkScalar* widths;
+  //fnt->getWidths(&glyph,1,widths,&skia_bounds);
+  //printf("fnt measureText %f\n", width);
+  // printf("average_width_pixels_ %f\n", average_width_pixels_);
+  // width = std::fmax(average_width_pixels_, width); // __TODO__
+  // float spacing = 5.0f;
+  // width = skia_bounds.width(); // https://stackoverflow.com/a/24104251/10904212
+  //width += 5.f;
       ///paint.measureText(&glyph, sizeof(render_tree::GlyphIndex), &skia_bounds);
 
+  //printf("GetGlyphBounds 15\n");
   // Both cache and return the glyph's bounds.
   if (glyph < kPrimaryPageSize) {
+      //printf("GetGlyphBounds 16\n");
     primary_page_glyph_bounds_bits_.set(glyph, true);
     return primary_page_glyph_bounds_[glyph] =
                math::RectF(0, skia_bounds.top(), width, skia_bounds.height());
   } else {
+      //printf("GetGlyphBounds 17\n");
     return glyph_to_bounds_map_[glyph] =
                math::RectF(0, skia_bounds.top(), width, skia_bounds.height());
   }
+  /*return glyph_to_bounds_map_[glyph] =
+             math::RectF(0, skia_bounds.top(), skia_bounds.right() - skia_bounds.left(), skia_bounds.height());
+  return glyph_to_bounds_map_[glyph] =
+             math::RectF(0, skia_bounds.top(), width, skia_bounds.height());*/
 }
 
 float Font::GetGlyphWidth(render_tree::GlyphIndex glyph) {
@@ -192,6 +257,12 @@ SkPaint Font::GetSkPaint() const {
   return paint;
 }
 
+sk_sp<SkTypeface_Cobalt> Font::GetDefaultSkTypeface() {
+    ///return typeface_->GetSkTypeface();
+
+    return getOrCreateFallbackSkTypeface();
+}
+
 const SkPaint& Font::GetDefaultSkPaint() {
   return non_trivial_static_fields.Get().default_paint;
 }
@@ -200,6 +271,9 @@ const SkFont* Font::GetDefaultFont() {
   return getOrCreateFallbackFont();
 }
 
+sk_sp<SkTypeface> Font::getDefaultTypeface() {
+    return getOrCreateFallbackTypeface();
+}
 
 }  // namespace skia
 }  // namespace rasterizer

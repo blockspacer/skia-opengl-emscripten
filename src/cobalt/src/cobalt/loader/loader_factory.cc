@@ -218,10 +218,11 @@ void LoaderFactory::Suspend() {
     (*iter)->Suspend();
   }
 
-#if defined(__TODO__)
   // Wait for all loader thread messages to be flushed before returning.
-  load_thread_.message_loop()->task_runner()->WaitForFence();
-#endif
+  ///load_thread_.task_runner()->WaitForFence();
+  ///
+  load_thread_.task_runner()->RunsTasksInCurrentSequence();
+
 }
 
 void LoaderFactory::Resume(render_tree::ResourceProvider* resource_provider) {
@@ -238,12 +239,14 @@ void LoaderFactory::Resume(render_tree::ResourceProvider* resource_provider) {
 }
 
 void LoaderFactory::OnLoaderCreated(Loader* loader) {
+  printf(" LoaderFactory::OnLoaderCreated\n");
   DCHECK(thread_checker_.CalledOnValidThread());
   DCHECK(active_loaders_.find(loader) == active_loaders_.end());
   active_loaders_.insert(loader);
 }
 
 void LoaderFactory::OnLoaderDestroyed(Loader* loader) {
+  printf(" LoaderFactory::OnLoaderDestroyed\n");
   DCHECK(thread_checker_.CalledOnValidThread());
   DCHECK(active_loaders_.find(loader) != active_loaders_.end());
   active_loaders_.erase(loader);

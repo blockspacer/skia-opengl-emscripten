@@ -1,4 +1,4 @@
-// Copyright 2016 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2016 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -67,27 +67,35 @@ void TypefaceDecoder::DecodeChunk(const char* data, size_t size) {
 }
 
 void TypefaceDecoder::Finish() {
+  printf("TypefaceDecoder::Finish 1...\n");
   if (is_suspended_) {
     DLOG(WARNING) << __FUNCTION__ << "[" << this << "] while suspended.";
     return;
   }
 
   if (is_raw_data_too_large_) {
+    printf("TypefaceDecoder::Finish 1.1...\n");
     load_complete_callback_.Run(
         std::string("Raw typeface data size too large"));
     return;
   }
 
+  printf("TypefaceDecoder::Finish 11...\n");
   std::string error_string;
   scoped_refptr<render_tree::Typeface> decoded_typeface =
       resource_provider_->CreateTypefaceFromRawData(std::move(raw_data_),
                                                     &error_string);
 
+  printf("TypefaceDecoder::Finish 2...\n");
   if (decoded_typeface) {
     typeface_available_callback_.Run(decoded_typeface);
+    printf("TypefaceDecoder::Finish 2.1...\n");
     load_complete_callback_.Run(base::nullopt);
+    printf("TypefaceDecoder::Finish 2.2...\n");
   } else {
+    printf("TypefaceDecoder::Finish 2.3...\n");
     load_complete_callback_.Run(std::string(error_string));
+    printf("TypefaceDecoder::Finish 2.4...\n");
   }
 }
 

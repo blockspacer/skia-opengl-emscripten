@@ -187,7 +187,7 @@ LayoutManager::Impl::Impl(
       suspended_(false),
       clear_window_with_background_color_(clear_window_with_background_color) {
 
-  printf("LayoutManager::Impl::Impl::LayoutManager::Impl::Impl()...%s\n", locale_.getName());
+  //printf("LayoutManager::Impl::Impl::LayoutManager::Impl::Impl()...%s\n", locale_.getName());
   DCHECK(window_);
   window_->document()->AddObserver(this);
   window_->SetSynchronousLayoutCallback(
@@ -196,7 +196,7 @@ LayoutManager::Impl::Impl(
       &Impl::DoSynchronousLayoutAndGetRenderTree, base::Unretained(this)));
 
   UErrorCode status = U_ZERO_ERROR;
-  printf("createLineInstance locale_ %s\n", locale_.getName());
+  //printf("createLineInstance locale_ %s\n", locale_.getName());
   line_break_iterator_ =
       base::WrapUnique(icu::BreakIterator::createLineInstance(locale_, status));
   CHECK(U_SUCCESS(status));
@@ -365,7 +365,7 @@ void LayoutManager::Impl::StartLayoutTimer() {
 }
 
 void LayoutManager::Impl::DoLayoutAndProduceRenderTree() {
-P_LOG("LayoutManager::Impl::DoLayoutAndProduceRenderTree 1\n");
+//P_LOG("LayoutManager::Impl::DoLayoutAndProduceRenderTree 1\n");
   TRACE_EVENT0("cobalt::layout",
                "LayoutManager::Impl::DoLayoutAndProduceRenderTree()");
 
@@ -376,7 +376,7 @@ P_LOG("LayoutManager::Impl::DoLayoutAndProduceRenderTree 1\n");
   if (!document->html()) {
     return;
   }
-P_LOG("LayoutManager::Impl::DoLayoutAndProduceRenderTree 2\n");
+//P_LOG("LayoutManager::Impl::DoLayoutAndProduceRenderTree 2\n");
 
   // Update the document's sample time, used for updating animations.
   document->SampleTimelineTime();
@@ -399,7 +399,7 @@ P_LOG("LayoutManager::Impl::DoLayoutAndProduceRenderTree 2\n");
     // document.timeline.currentTime is derived from the latest sample time.
     window_->RunAnimationFrameCallbacks();
   }
-P_LOG("LayoutManager::Impl::DoLayoutAndProduceRenderTree 3\n");
+//P_LOG("LayoutManager::Impl::DoLayoutAndProduceRenderTree 3\n");
 
   // It should never be possible for for the computed styles and box tree to
   // be dirty when a render tree is not pending.
@@ -413,7 +413,7 @@ P_LOG("LayoutManager::Impl::DoLayoutAndProduceRenderTree 3\n");
     }
 
     DoSynchronousLayout();
-P_LOG("LayoutManager::Impl::DoLayoutAndProduceRenderTree 4\n");
+//P_LOG("LayoutManager::Impl::DoLayoutAndProduceRenderTree 4\n");
 
     // If no render tree has been produced yet, check if html display
     // should prevent the first render tree.
@@ -433,14 +433,14 @@ P_LOG("LayoutManager::Impl::DoLayoutAndProduceRenderTree 4\n");
         run_on_render_tree_produced_callback = false;
       }
 #endif  // ENABLE_TEST_RUNNER
-P_LOG("LayoutManager::Impl::DoLayoutAndProduceRenderTree 5\n");
+//P_LOG("LayoutManager::Impl::DoLayoutAndProduceRenderTree 5\n");
 
       if (run_on_render_tree_produced_callback) {
         on_render_tree_produced_callback_.Run(LayoutResults(
             render_tree_root, base::TimeDelta::FromMillisecondsD(
                                   *document->timeline()->current_time())));
       }
-P_LOG("LayoutManager::Impl::DoLayoutAndProduceRenderTree 6\n");
+//P_LOG("LayoutManager::Impl::DoLayoutAndProduceRenderTree 6\n");
 
       is_render_tree_pending_ = false;
     }
@@ -448,10 +448,10 @@ P_LOG("LayoutManager::Impl::DoLayoutAndProduceRenderTree 6\n");
 
     //layout_timer_.Stop(); // TODO: remove line
   }
-P_LOG("LayoutManager::Impl::DoLayoutAndProduceRenderTree 7\n");
+//P_LOG("LayoutManager::Impl::DoLayoutAndProduceRenderTree 7\n");
 
   on_layout_callback_.Run();
-P_LOG("LayoutManager::Impl::DoLayoutAndProduceRenderTree 8\n");
+//P_LOG("LayoutManager::Impl::DoLayoutAndProduceRenderTree 8\n");
 }
 
 LayoutManager::LayoutManager(
