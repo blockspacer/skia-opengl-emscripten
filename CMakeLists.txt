@@ -219,7 +219,13 @@ if(ENABLE_HARFBUZZ)
   endif(USE_CUSTOM_HARFBUZZ)
 endif(ENABLE_HARFBUZZ)
 
-set(ENABLE_BORINGSSL FALSE)
+if(TARGET_EMSCRIPTEN)
+  set(ENABLE_BORINGSSL FALSE)
+elseif(TARGET_LINUX)
+  set(ENABLE_BORINGSSL FALSE)#TRUE) #TODO
+else()
+  message(FATAL_ERROR "platform not supported")
+endif()
 if(ENABLE_BORINGSSL)
   set(COMMON_FLAGS "${COMMON_FLAGS} -DENABLE_BORINGSSL=1")
   set(BORINGSSL_LIBS
@@ -227,7 +233,13 @@ if(ENABLE_BORINGSSL)
   )
 endif(ENABLE_BORINGSSL)
 
-set(ENABLE_GNET FALSE)
+if(TARGET_EMSCRIPTEN)
+  set(ENABLE_GNET FALSE)
+elseif(TARGET_LINUX)
+  set(ENABLE_GNET FALSE)#TRUE) # TODO
+else()
+  message(FATAL_ERROR "platform not supported")
+endif()
 if(ENABLE_GNET)
   set(COMMON_FLAGS "${COMMON_FLAGS} -DENABLE_GNET=1")
   #set(COMMON_FLAGS "${COMMON_FLAGS} -DENABLE_NET=1")
@@ -297,7 +309,7 @@ if (ENABLE_SKIA)
   )
 endif(ENABLE_SKIA)
 
-set(ENABLE_BLINK TRUE)
+set(ENABLE_BLINK FALSE) # TODO
 if(ENABLE_SKIA AND ENABLE_BLINK)
   list(APPEND APP_DEFINITIONS ENABLE_BLINK=1)
   list(APPEND APP_DEFINITIONS ENABLE_BLINK_PLATFORM=1)
@@ -331,6 +343,8 @@ if(ENABLE_SKIA AND ENABLE_BLINK)
     BASE_CC
     PAINT_CC
     CC
+    LIB_V8_INTERFACE
+    MOJO
   )
   list(APPEND BLINK_LIBS
     ${BLINK_GFX_LIBS}
@@ -375,12 +389,20 @@ set(ENABLE_SIMD FALSE)
 set(ENABLE_WEB_PTHREADS TRUE)
 #set(ENABLE_WEB_PTHREADS FALSE)
 
-set(ENABLE_UKM FALSE)
+if(TARGET_EMSCRIPTEN)
+  set(ENABLE_UKM FALSE) # keep wasm build as small as possible
+else()
+  set(ENABLE_UKM TRUE)
+endif()
 if(ENABLE_UKM)
   set(COMMON_FLAGS "${COMMON_FLAGS} -DENABLE_UKM=1")
 endif(ENABLE_UKM)
 
-set(ENABLE_GIPC TRUE)
+if(TARGET_EMSCRIPTEN)
+  set(ENABLE_GIPC FALSE) # keep wasm build as small as possible
+else()
+  set(ENABLE_GIPC TRUE)
+endif()
 if(ENABLE_GIPC)
   set(COMMON_FLAGS "${COMMON_FLAGS} -DENABLE_GIPC=1")
   set(COMMON_FLAGS "${COMMON_FLAGS} -DENABLE_MOJO_IPC=1") # TODO
@@ -456,7 +478,7 @@ set(ICU_DEFINES "${ICU_DEFINES} -DUCHAR_TYPE=uint16_t")
 # #set(ICU_DEFINES "${ICU_DEFINES} -UU_NO_DEFAULT_INCLUDE_UTF_HEADERS")
 
 # TODO
-set(COMMON_CXX_FLAGS "-DNEED_SHORT_EXTERNAL_NAMES=1")
+#set(COMMON_CXX_FLAGS "-DNEED_SHORT_EXTERNAL_NAMES=1")
 
 # -fno-exceptions
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
@@ -756,7 +778,13 @@ if(ENABLE_COBALT)
   #endif()
 
   #cobalt_csp
-  set(ENABLE_COBALT_CSP FALSE)
+  if(TARGET_EMSCRIPTEN)
+    set(ENABLE_COBALT_CSP FALSE)
+  elseif(TARGET_LINUX)
+    set(ENABLE_COBALT_CSP FALSE)#TRUE) # TODO
+  else()
+    message(FATAL_ERROR "platform not supported")
+  endif()
   if(ENABLE_COBALT_CSP)
     set(COMMON_FLAGS "${COMMON_FLAGS} -DENABLE_COBALT_CSP=1")
     set(COBALT_CSP_LIB_NAME
@@ -1073,6 +1101,7 @@ endif(HAS_ASYNCIFY OR HAS_EMTERPRETIFY)
   endif(NOT USE_CUSTOM_ICU)
   set(EMCC_COMMON "${EMCC_COMMON} -s USE_LIBPNG=1")
   if(USE_EMCC_LIBJPEG_PORT)
+    message(FATAL_ERROR "LIBJPEG port not supported yet")
     if ("${EMSCRIPTEN_VERSION}" VERSION_GREATER 1.38.32)
       message(STATUS "using LIBJPEG port, Emscripten version is ${EMSCRIPTEN_VERSION}")
     else()
@@ -1170,6 +1199,9 @@ if(NOT RELEASE_BUILD)
   # see https://emscripten.org/docs/api_reference/emscripten.h.html?highlight=demangle#c.EM_LOG_DEMANGLE
   # see https://github.com/emscripten-core/emscripten/blob/incoming/src/settings.js#L288
   set(EMCC_COMMON "${EMCC_COMMON} -s DEMANGLE_SUPPORT=1")
+else()
+  # https://emscripten.org/docs/optimizing/Optimizing-Code.html#c-rtti
+  set(EMCC_COMMON "${EMCC_COMMON} -fno-exceptions")
 endif(NOT RELEASE_BUILD)
 
   # rtti required by skia
@@ -1507,7 +1539,11 @@ else(EMSCRIPTEN)
   set(COMMON_FLAGS "${COMMON_FLAGS} ${DEBUG_LEVEL}")
 
   ### Find Libraries
-  set(USE_OPENGL_LIB FALSE)
+  if(TARGET_EMSCRIPTEN)
+    set(USE_OPENGL_LIB FALSE) # no system OPENGL for wasm
+  else()
+    set(USE_OPENGL_LIB TRUE)
+  endif()
   find_package(OpenGL
     COMPONENTS OpenGL EGL
     REQUIRED)
@@ -1517,7 +1553,11 @@ else(EMSCRIPTEN)
     set(USE_OPENGL_LIB TRUE)
   endif()
 
-  set(USE_OPENGLES2_LIB FALSE)
+  if(TARGET_EMSCRIPTEN)
+    set(USE_OPENGLES2_LIB FALSE) # no system OPENGLES for wasm
+  else()
+    set(USE_OPENGLES2_LIB TRUE)
+  endif()
   find_package(OpenGLES2 REQUIRED)
   if(OPENGLES2_FOUND)
     message("OPENGLES2_DEFINITIONS = ${OPENGLES2_DEFINITIONS} ")
@@ -1654,14 +1694,17 @@ if (USE_LIBPNG AND USE_CUSTOM_LIBPNG)
 endif()
 
 if(USE_LIBJPEG AND USE_CUSTOM_LIBJPEG)
+  message(FATAL_ERROR "GLIBJPEG not supported yet")
   # libjpeg: requires LIBXML
   include(${CHROMIUM_DIR}GLIBJPEG.cmake)
-endif(USE_LIBJPEG)
+endif(USE_LIBJPEG AND USE_CUSTOM_LIBJPEG)
 
 if(USE_LIBJPEG_TURBO AND USE_CUSTOM_LIBJPEG_TURBO)
   # GLIBJPEG_TURBO: requires LIBJPEG
   include(${CHROMIUM_DIR}GLIBJPEG_TURBO.cmake)
-endif(USE_LIBJPEG_TURBO)
+else()
+  message(FATAL_ERROR "GLIBJPEG_TURBO must be active")
+endif(USE_LIBJPEG_TURBO AND USE_CUSTOM_LIBJPEG_TURBO)
 
 set(libyuv_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/${CHROMIUM_DIR}third_party/)
 set(libyuv_DIR ${libyuv_PARENT_DIR}libyuv/)
@@ -1925,8 +1968,8 @@ if(TARGET_EMSCRIPTEN)
     # and a "-s ENVIRONMENT=" directive is specified,
     # it must include "worker" as a target!
     # (Try e.g. -s ENVIRONMENT=web,worker)';
-    #set(EMCC_ENVIRONMENT "web,worker")
-    set(EMCC_ENVIRONMENT "web")
+    set(EMCC_ENVIRONMENT "web,worker")
+    #set(EMCC_ENVIRONMENT "web")
   else()
     set(EMCC_ENVIRONMENT "web")
   endif(ENABLE_WEB_PTHREADS)
@@ -1951,7 +1994,8 @@ if(TARGET_EMSCRIPTEN)
     # see https://github.com/emscripten-core/emscripten/issues/6717
     # NOTE: notice the single quoted 'web'
     # TODO # "-s ENVIRONMENT=\"'web'\""
-    # TODO # "-s ENVIRONMENT='${EMCC_ENVIRONMENT}'"
+    # TODO #
+    "-s ENVIRONMENT='${EMCC_ENVIRONMENT}'"
     #
   )
 
@@ -2138,7 +2182,7 @@ else()
     #skcms
     # "//third_party:freetype_harfbuzz",
     #  "//third_party/blink/public/common",
-    MOJO
+    #MOJO
     ced
     # emoji-segmenter
     ${HARFBUZZ_LIBRARIES}
@@ -2212,16 +2256,16 @@ else()
     #PAINT_CC
     #CC
     #${SERVICES_NETWORK_PUBLIC_CPP_LIB}
-    libwebp # requires libpng
-    ${libjpeg_LIB}
-    ${libjpeg_TURBO_LIB}
+    #libwebp # requires libpng
+    #${libjpeg_LIB}
+    #${libjpeg_TURBO_LIB}
     #${libpng_LIB}
     ${libDL_LIB}
-    ${iccjpeg_LIB}
+    #${iccjpeg_LIB}
     #
     # khronos
     ${khronos_LIB}
-    LIB_V8_INTERFACE
+    #LIB_V8_INTERFACE
     #COMPONENTS_SCHEDULING_METRICS
     ${HARFBUZZ_LIBRARIES}
   )

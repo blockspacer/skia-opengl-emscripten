@@ -1,4 +1,4 @@
-// Copyright 2016 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2016 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,18 +14,19 @@
 
 #include <memory>
 
-#include "cobalt/renderer/rasterizer/skia/skia/src/ports/SkFontMgr_cobalt.h"
+#include "renderer_stub/rasterizer/skia/skia/src/ports/SkFontMgr_cobalt.h"
 
 #include "SkData.h"
 #include "SkGraphics.h"
 #include "SkStream.h"
 #include "SkString.h"
 #include "SkTSearch.h"
+#include "SkFontStyle.h"
 #include "base/memory/ptr_util.h"
 #include "base/trace_event/trace_event.h"
-#include "cobalt/renderer/rasterizer/skia/skia/src/ports/SkFontConfigParser_cobalt.h"
-#include "cobalt/renderer/rasterizer/skia/skia/src/ports/SkFreeType_cobalt.h"
-#include "cobalt/renderer/rasterizer/skia/skia/src/ports/SkTypeface_cobalt.h"
+#include "renderer_stub/rasterizer/skia/skia/src/ports/SkFontConfigParser_cobalt.h"
+#include "renderer_stub/rasterizer/skia/skia/src/ports/SkFreeType_cobalt.h"
+#include "renderer_stub/rasterizer/skia/skia/src/ports/SkTypeface_cobalt.h"
 
 SkFontMgr_Cobalt::SkFontMgr_Cobalt(
     const char* cobalt_font_config_directory,
@@ -228,37 +229,55 @@ SkTypeface* SkFontMgr_Cobalt::onMatchFamilyStyleCharacter(
                            : default_family_->MatchStyleWithoutLocking(style);
 }
 
-SkTypeface* SkFontMgr_Cobalt::onCreateFromData(SkData* data,
+sk_sp<SkTypeface> SkFontMgr_Cobalt::onMakeFromData(sk_sp<SkData> data,
                                                int face_index) const {
   std::unique_ptr<SkStreamAsset> stream(
       new SkMemoryStream(data->data(), data->size()));
-  return createFromStream(stream.get(), face_index);
+  return onMakeFromStreamIndex(std::move(stream), face_index);
 }
 
-SkTypeface* SkFontMgr_Cobalt::onCreateFromStream(SkStreamAsset* stream,
+sk_sp<SkTypeface> SkFontMgr_Cobalt::onMakeFromStreamIndex(std::unique_ptr<SkStreamAsset> stream,
                                                  int face_index) const {
   TRACE_EVENT0("cobalt::renderer", "SkFontMgr_Cobalt::onCreateFromStream()");
   bool is_fixed_pitch;
-  SkTypeface::Style style;
+  ///SkTypeface::Style style;
+  SkFontStyle style;
   SkString name;
-  if (!sk_freetype_cobalt::ScanFont(stream, face_index, &name, &style,
+  // TODO: std::move(stream)
+  if (!sk_freetype_cobalt::ScanFont(stream.get(), face_index, &name, &style,
                                     &is_fixed_pitch)) {
     return NULL;
   }
-  return new SkTypeface_CobaltStream(stream, face_index, style, is_fixed_pitch,
-                                     name);
+
+  sk_sp<SkTypeface> tf;
+  tf.reset(reinterpret_cast<SkTypeface*>(new SkTypeface_CobaltStream(std::move(stream), face_index, style, is_fixed_pitch,
+                                                      name)));
+  return tf;
 }
 
-SkTypeface* SkFontMgr_Cobalt::onCreateFromFile(const char path[],
+sk_sp<SkTypeface> SkFontMgr_Cobalt::onMakeFromFile(const char path[],
                                                int face_index) const {
   TRACE_EVENT0("cobalt::renderer", "SkFontMgr_Cobalt::onCreateFromFile()");
   std::unique_ptr<SkStreamAsset> stream = SkStream::MakeFromFile(path);
-  return stream.get() ? createFromStream(stream.release(), face_index) : NULL;
+  return stream.get() ? onMakeFromStreamIndex(std::move(stream), face_index) : NULL;
 }
 
-SkTypeface* SkFontMgr_Cobalt::onLegacyCreateTypeface(const char family_name[],
+sk_sp<SkTypeface> SkFontMgr_Cobalt::onLegacyMakeTypeface(const char family_name[],
                                                      SkFontStyle style) const {
-  return matchFamilyStyle(family_name, style);
+  // see https://github.com/google/skia/blob/master/src/ports/SkFontMgr_custom.cpp
+
+  sk_sp<SkTypeface> tf;
+
+  if (family_name) {
+      tf.reset(this->onMatchFamilyStyle(family_name, style));
+  }
+
+  if (nullptr == tf) {
+      tf.reset(default_family_->matchStyle(style));
+  }
+
+  return tf;
+  ///return matchFamilyStyle(family_name, style);
 }
 
 void SkFontMgr_Cobalt::ParseConfigAndBuildFamilies(

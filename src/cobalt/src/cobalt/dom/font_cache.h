@@ -1,4 +1,4 @@
-// Copyright 2015 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2015 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -66,8 +66,13 @@ class FontCache {
             cached_remote_typeface,
         const base::Closure& font_load_event_callback);
 
-    bool HasActiveRequestTimer() const { return request_timer_ != NULL; }
-    void ClearRequestTimer() { request_timer_.reset(); }
+    bool HasActiveRequestTimer() const {
+      return request_timer_ != NULL;
+      //return false;
+    }
+    void ClearRequestTimer() {
+      request_timer_.reset();
+    }
 
    private:
     // The request timer delay, after which the requesting font list's fallback
@@ -91,6 +96,7 @@ class FontCache {
     // the text while waiting for it to load is considered non-conformant
     // behavior by the spec, so after the timer expires, the fallback font
     // becomes visible (https://www.w3.org/TR/css3-fonts/#font-face-loading).
+    ///
     std::unique_ptr<base::OneShotTimer> request_timer_;
   };
 
@@ -238,7 +244,8 @@ class FontCache {
                      bool is_rtl, FontList* font_list,
                      render_tree::FontVector* maybe_used_fonts);
 
- private:
+ ///private:
+ public:
   render_tree::ResourceProvider* resource_provider() const {
     return *resource_provider_;
   }

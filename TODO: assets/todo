@@ -1,4 +1,5 @@
-﻿
+﻿https://chromium.googlesource.com/chromium/src/base/+/master/third_party/xdg_user_dirs
+
 @font-face {
     font-family: "myFirstFont";
     src: url("/resources/fonts/FreeSans.ttf");
@@ -26,1036 +27,1265 @@ udata_setCommonData(const_cast<uint8_t*>(g_icudtl_mapped_file->data()),
 see https://github.com/blockspacer/cobalt-clone-28052019/blob/89664d116629734759176d820e9923257717e09c/src/third_party/icu/source/common/uresbund.cpp#L368
 
 
+/usr/bin/ld: src/cobalt/libcobalt_dom.a(window.cc.o): in function
+`cobalt::script::Handle<cobalt::script::Promise<scoped_refptr<cobalt::script::Wrappable>
+> >
+cobalt::script::ScriptValueFactory::CreateInterfacePromise<cobalt::dom::Screenshot>()':
 
-mapped_file.cc:(.text+0xc8): undefined reference to
-  `disk_cache::File::GetLength()'
 
-  /usr/bin/ld: mapped_file.cc:(.text+0xe6): undefined reference to
-  `disk_cache::File::Read(void*, unsigned long, unsigned long)'
 
-  /usr/bin/ld: src/chromium/libGNET.a(sparse_control.cc.o): in function
-  `(anonymous namespace)::ChildrenDeleter::ReadData(disk_cache::Addr, int)':
+/home/denis/workspace/skia-opengl-emscripten/src/cobalt/src/cobalt/script/script_value_factory.h:45:
+undefined reference to
+`cobalt::script::Handle<cobalt::script::Promise<scoped_refptr<cobalt::script::Wrappable>
+> >
+cobalt::script::ScriptValueFactory::CreatePromise<scoped_refptr<cobalt::script::Wrappable>
+>()'
 
-  sparse_control.cc:(.text+0x1173): undefined reference to
-  `disk_cache::File::Read(void*, unsigned long, unsigned long,
-  disk_cache::FileIOCallback*, bool*)'
+/usr/bin/ld: src/cobalt/libcobalt_dom.a(html_media_element.cc.o): in
+function `cobalt::script::Handle<cobalt::script::Promise<void> >
+cobalt::script::ScriptValueFactory::CreateBasicPromise<void>()':
 
-  /usr/bin/ld: src/chromium/libGNET.a(cache_util.cc.o): in function
-  `disk_cache::DelayedCacheCleanup(base::FilePath const&)':
 
-  cache_util.cc:(.text+0x344): undefined reference to
-  `disk_cache::MoveCache(base::FilePath const&, base::FilePath const&)'
+/home/denis/workspace/skia-opengl-emscripten/src/cobalt/src/cobalt/script/script_value_factory.h:33:
+undefined reference to
+`cobalt::script::Handle<cobalt::script::Promise<void> >
+cobalt::script::ScriptValueFactory::CreatePromise<void>()'
 
-  /usr/bin/ld: src/chromium/libbase.a(xdg_util.cc.o): in function
-  `base::nix::GetXDGUserDirectory(char const*, char const*)':
+/usr/bin/ld: src/cobalt/libcobalt_media.a(video_decoder_config.cc.o): in
+function `VideoDecoderConfig':
 
-  xdg_util.cc:(.text+0x1a0): undefined reference to `xdg_user_dir_lookup(char
-  const*)'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
-  `jsimd_can_rgb_ycc':
+/home/denis/workspace/skia-opengl-emscripten/src/cobalt/src/cobalt/media/base/video_decoder_config.cc:58:
+undefined reference to
+`cobalt::media::WebMColorMetadata::WebMColorMetadata()'
 
-  jsimd.c:(.text+0x10): undefined reference to `jconst_rgb_ycc_convert_avx2'
+/usr/bin/ld:
+/home/denis/workspace/skia-opengl-emscripten/src/cobalt/src/cobalt/media/base/video_decoder_config.cc:63:
+undefined reference to
+`cobalt::media::WebMColorMetadata::WebMColorMetadata()'
 
-  /usr/bin/ld: jsimd.c:(.text+0x21): undefined reference to
-  `jpeg_simd_cpu_support'
+/usr/bin/ld: src/cobalt/libcobalt_media.a(video_decoder_config.cc.o): in
+function
+`cobalt::media::VideoDecoderConfig::Matches(cobalt::media::VideoDecoderConfig
+const&) const':
 
-  /usr/bin/ld: jsimd.c:(.text+0x34): undefined reference to
-  `jconst_rgb_ycc_convert_sse2'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
-  `jsimd_can_rgb_gray':
+/home/denis/workspace/skia-opengl-emscripten/src/cobalt/src/cobalt/media/base/video_decoder_config.cc:122:
+undefined reference to
+`cobalt::media::WebMColorMetadata::operator==(cobalt::media::WebMColorMetadata
+const&) const'
 
-  jsimd.c:(.text+0x60): undefined reference to `jconst_rgb_gray_convert_avx2'
+/usr/bin/ld: src/cobalt/libcobalt_media.a(stream_parser_factory.cc.o): in
+function
+`cobalt::media::BuildWebMParser(cobalt::media::DecoderBuffer::Allocator*,
+std::vector<std::__cxx11::basic_string<char, std::char_traits<char>,
+std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char,
+std::char_traits<char>, std::allocator<char> > > > const&,
+scoped_refptr<cobalt::media::MediaLog> const&)':
 
-  /usr/bin/ld: jsimd.c:(.text+0x71): undefined reference to
-  `jpeg_simd_cpu_support'
 
-  /usr/bin/ld: jsimd.c:(.text+0x84): undefined reference to
-  `jconst_rgb_gray_convert_sse2'
+/home/denis/workspace/skia-opengl-emscripten/src/cobalt/src/cobalt/media/filters/stream_parser_factory.cc:98:
+undefined reference to
+`cobalt::media::WebMStreamParser::WebMStreamParser(cobalt::media::DecoderBuffer::Allocator*)'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
-  `jsimd_can_ycc_rgb':
 
-  jsimd.c:(.text+0xb0): undefined reference to `jconst_ycc_rgb_convert_avx2'
+/usr/bin/ld: src/cobalt/libcobalt_media.a(stream_parser_factory.cc.o): in
+function
+`cobalt::media::BuildADTSParser(cobalt::media::DecoderBuffer::Allocator*,
+std::vector<std::__cxx11::basic_string<char, std::char_traits<char>,
+std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char,
+std::char_traits<char>, std::allocator<char> > > > const&,
+scoped_refptr<cobalt::media::MediaLog> const&)':
 
-  /usr/bin/ld: jsimd.c:(.text+0xc1): undefined reference to
-  `jpeg_simd_cpu_support'
 
-  /usr/bin/ld: jsimd.c:(.text+0xd4): undefined reference to
-  `jconst_ycc_rgb_convert_sse2'
+/home/denis/workspace/skia-opengl-emscripten/src/cobalt/src/cobalt/media/filters/stream_parser_factory.cc:243:
+undefined reference to
+`cobalt::media::ADTSStreamParser::ADTSStreamParser(cobalt::media::DecoderBuffer::Allocator*)'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
-  `jsimd_rgb_ycc_convert':
 
-  jsimd.c:(.text+0x13d): undefined reference to `jsimd_rgb_ycc_convert_mmx'
+/usr/bin/ld: src/cobalt/libcobalt_media.a(stream_parser_factory.cc.o): in
+function
+`cobalt::media::BuildMP3Parser(cobalt::media::DecoderBuffer::Allocator*,
+std::vector<std::__cxx11::basic_string<char, std::char_traits<char>,
+std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char,
+std::char_traits<char>, std::allocator<char> > > > const&,
+scoped_refptr<cobalt::media::MediaLog> const&)':
 
-  /usr/bin/ld: jsimd.c:(.text+0x143): undefined reference to
-  `jsimd_rgb_ycc_convert_sse2'
 
-  /usr/bin/ld: jsimd.c:(.text+0x149): undefined reference to
-  `jsimd_rgb_ycc_convert_avx2'
+/home/denis/workspace/skia-opengl-emscripten/src/cobalt/src/cobalt/media/filters/stream_parser_factory.cc:233:
+undefined reference to
+`cobalt::media::MPEG1AudioStreamParser::MPEG1AudioStreamParser(cobalt::media::DecoderBuffer::Allocator*)'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
-  `jsimd_rgb_gray_convert':
 
-  jsimd.c:(.text+0x19d): undefined reference to `jsimd_rgb_gray_convert_mmx'
+/usr/bin/ld: src/cobalt/libcobalt_media.a(stream_parser_factory.cc.o): in
+function
+`cobalt::media::BuildMP4Parser(cobalt::media::DecoderBuffer::Allocator*,
+std::vector<std::__cxx11::basic_string<char, std::char_traits<char>,
+std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char,
+std::char_traits<char>, std::allocator<char> > > > const&,
+scoped_refptr<cobalt::media::MediaLog> const&)':
 
-  /usr/bin/ld: jsimd.c:(.text+0x1a3): undefined reference to
-  `jsimd_rgb_gray_convert_sse2'
 
-  /usr/bin/ld: jsimd.c:(.text+0x1a9): undefined reference to
-  `jsimd_rgb_gray_convert_avx2'
+/home/denis/workspace/skia-opengl-emscripten/src/cobalt/src/cobalt/media/filters/stream_parser_factory.cc:221:
+undefined reference to
+`cobalt::media::mp4::MP4StreamParser::MP4StreamParser(cobalt::media::DecoderBuffer::Allocator*,
+std::set<int, std::less<int>, std::allocator<int> > const&, bool)'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
-  `jsimd_ycc_rgb_convert':
+/usr/bin/ld: src/cobalt/libcobalt_dom.a(navigator.cc.o): in function
+`cobalt::script::Handle<cobalt::script::Promise<scoped_refptr<cobalt::script::Wrappable>
+> >
+cobalt::script::ScriptValueFactory::CreateInterfacePromise<scoped_refptr<cobalt::dom::eme::MediaKeySystemAccess>
+>()':
 
-  jsimd.c:(.text+0x200): undefined reference to `jsimd_ycc_rgb_convert_mmx'
 
-  /usr/bin/ld: jsimd.c:(.text+0x206): undefined reference to
-  `jsimd_ycc_rgb_convert_sse2'
+/home/denis/workspace/skia-opengl-emscripten/src/cobalt/src/cobalt/script/script_value_factory.h:45:
+undefined reference to
+`cobalt::script::Handle<cobalt::script::Promise<scoped_refptr<cobalt::script::Wrappable>
+> >
+cobalt::script::ScriptValueFactory::CreatePromise<scoped_refptr<cobalt::script::Wrappable>
+>()'
 
-  /usr/bin/ld: jsimd.c:(.text+0x20c): undefined reference to
-  `jsimd_ycc_rgb_convert_avx2'
+/usr/bin/ld: src/cobalt/libcobalt_dom.a(media_key_system_access.cc.o): in
+function
+`cobalt::script::Handle<cobalt::script::Promise<scoped_refptr<cobalt::script::Wrappable>
+> >
+cobalt::script::ScriptValueFactory::CreateInterfacePromise<scoped_refptr<cobalt::dom::eme::MediaKeys>
+>()':
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
-  `jsimd_can_h2v2_downsample':
 
-  jsimd.c:(.text+0x24d): undefined reference to `jpeg_simd_cpu_support'
+/home/denis/workspace/skia-opengl-emscripten/src/cobalt/src/cobalt/script/script_value_factory.h:45:
+undefined reference to
+`cobalt::script::Handle<cobalt::script::Promise<scoped_refptr<cobalt::script::Wrappable>
+> >
+cobalt::script::ScriptValueFactory::CreatePromise<scoped_refptr<cobalt::script::Wrappable>
+>()'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
-  `jsimd_can_h2v1_downsample':
+/usr/bin/ld: src/cobalt/libcobalt_dom.a(media_keys.cc.o): in function
+`cobalt::script::Handle<cobalt::script::Promise<bool> >
+cobalt::script::ScriptValueFactory::CreateBasicPromise<bool>()':
 
-  jsimd.c:(.text+0x27d): undefined reference to `jpeg_simd_cpu_support'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
-  `jsimd_h2v2_downsample':
+/home/denis/workspace/skia-opengl-emscripten/src/cobalt/src/cobalt/script/script_value_factory.h:33:
+undefined reference to
+`cobalt::script::Handle<cobalt::script::Promise<bool> >
+cobalt::script::ScriptValueFactory::CreatePromise<bool>()'
 
-  jsimd.c:(.text+0x2cc): undefined reference to `jsimd_h2v2_downsample_mmx'
+/usr/bin/ld: src/chromium/libbase.a(xdg_util.cc.o): in function
+`base::nix::GetXDGUserDirectory(char const*, char const*)':
 
-  /usr/bin/ld: jsimd.c:(.text+0x2e6): undefined reference to
-  `jsimd_h2v2_downsample_avx2'
 
-  /usr/bin/ld: jsimd.c:(.text+0x2eb): undefined reference to
-  `jsimd_h2v2_downsample_sse2'
+/home/denis/workspace/skia-opengl-emscripten/src/chromium/base/nix/xdg_util.cc:46:
+undefined reference to `xdg_user_dir_lookup(char const*)'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
-  `jsimd_h2v1_downsample':
+/usr/bin/ld:
+src/cobalt/libstarboard_platform.a(decode_target_internal.cc.o): in
+function `starboard::shared::(anonymous
+namespace)::CreateTargetFromVideoFrameWithContextRunner(void*)':
 
-  jsimd.c:(.text+0x31c): undefined reference to `jsimd_h2v1_downsample_mmx'
 
-  /usr/bin/ld: jsimd.c:(.text+0x336): undefined reference to
-  `jsimd_h2v1_downsample_avx2'
+/home/denis/workspace/skia-opengl-emscripten/src/cobalt/port/starboard/linux/shared/decode_target_internal.cc:89:
+undefined reference to
+`starboard::shared::starboard::player::filter::CpuVideoFrame::GetPlane(int)
+const'
 
-  /usr/bin/ld: jsimd.c:(.text+0x33b): undefined reference to
-  `jsimd_h2v1_downsample_sse2'
+/usr/bin/ld:
+src/cobalt/libstarboard_platform.a(decode_target_internal.cc.o): in
+function
+`starboard::RefCountedThreadSafe<starboard::shared::starboard::player::filter::VideoFrame,
+starboard::DefaultRefCountedThreadSafeTraits<starboard::shared::starboard::player::filter::VideoFrame>
+>::Release() const':
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
-  `jsimd_can_h2v2_upsample':
 
-  jsimd.c:(.text+0x34d): undefined reference to `jpeg_simd_cpu_support'
+/home/denis/workspace/skia-opengl-emscripten/src/cobalt/port/starboard/common/ref_counted.h:128:
+undefined reference to
+`starboard::subtle::RefCountedThreadSafeBase::Release() const'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
-  `jsimd_can_h2v1_upsample':
+/usr/bin/ld:
+src/cobalt/libstarboard_platform.a(decode_target_internal.cc.o): in
+function
+`starboard::RefCountedThreadSafe<starboard::shared::starboard::player::filter::VideoFrame,
+starboard::DefaultRefCountedThreadSafeTraits<starboard::shared::starboard::player::filter::VideoFrame>
+>::AddRef() const':
 
-  jsimd.c:(.text+0x37d): undefined reference to `jpeg_simd_cpu_support'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
-  `jsimd_h2v2_upsample':
+/home/denis/workspace/skia-opengl-emscripten/src/cobalt/port/starboard/common/ref_counted.h:125:
+undefined reference to
+`starboard::subtle::RefCountedThreadSafeBase::AddRef() const'
 
-  jsimd.c:(.text+0x3bb): undefined reference to `jsimd_h2v2_upsample_mmx'
+clang: error: linker command failed with exit code 1 (use -v to see
+invocation)
 
-  /usr/bin/ld: jsimd.c:(.text+0x3cc): undefined reference to
-  `jsimd_h2v2_upsample_avx2'
+make[2]: *** [CMakeFiles/skemgl.dir/build.make:221: skemgl] Error 1
 
-  /usr/bin/ld: jsimd.c:(.text+0x3d1): undefined reference to
-  `jsimd_h2v2_upsample_sse2'
+make[1]: *** [CMakeFiles/Makefile2:424: CMakeFiles/skemgl.dir/all] Error 2
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
-  `jsimd_h2v1_upsample':
+make: *** [Makefile:130: all] Error 2
 
-  jsimd.c:(.text+0x3fb): undefined reference to `jsimd_h2v1_upsample_mmx'
 
-  /usr/bin/ld: jsimd.c:(.text+0x40c): undefined reference to
-  `jsimd_h2v1_upsample_avx2'
+/home/denis/workspace/skia-opengl-emscripten/src/chromium/tcmalloc_wrapper/third_party/tcmalloc/chromium/src/tcmalloc.cc:1960:
+ multiple definition of `operator delete[](void*)';
+ src/cobalt/libstarboard_common.a(new.cc.o):/home/denis/workspace/skia-opengl-emscripten/src/cobalt/port/starboard/common/new.cc:41:
+ first defined here
 
-  /usr/bin/ld: jsimd.c:(.text+0x411): undefined reference to
-  `jsimd_h2v1_upsample_sse2'
+ /usr/bin/ld: src/chromium/libtcmalloc.a(tcmalloc.cc.o): in function
+ `operator delete[](void*)':
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
-  `jsimd_can_h2v2_fancy_upsample':
 
-  jsimd.c:(.text+0x430): undefined reference to `jconst_fancy_upsample_avx2'
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/tcmalloc_wrapper/third_party/tcmalloc/chromium/src/tcmalloc.cc:1960:
+ multiple definition of `operator delete(void*)';
+ src/cobalt/libstarboard_common.a(new.cc.o):/home/denis/workspace/skia-opengl-emscripten/src/cobalt/port/starboard/common/new.cc:25:
+ first defined here
 
-  /usr/bin/ld: jsimd.c:(.text+0x441): undefined reference to
-  `jpeg_simd_cpu_support'
+ /usr/bin/ld: src/chromium/libtcmalloc.a(tcmalloc.cc.o): in function
+ `operator delete[](void*)':
 
-  /usr/bin/ld: jsimd.c:(.text+0x454): undefined reference to
-  `jconst_fancy_upsample_sse2'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
-  `jsimd_can_h2v1_fancy_upsample':
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/tcmalloc_wrapper/third_party/tcmalloc/chromium/src/tcmalloc.cc:1960:
+ multiple definition of `operator delete(void*, std::nothrow_t const&)';
+ src/cobalt/libstarboard_common.a(new.cc.o):/home/denis/workspace/skia-opengl-emscripten/src/cobalt/port/starboard/common/new.cc:33:
+ first defined here
 
-  jsimd.c:(.text+0x480): undefined reference to `jconst_fancy_upsample_avx2'
+ /usr/bin/ld: src/chromium/libtcmalloc.a(tcmalloc.cc.o): in function
+ `operator new[](unsigned long)':
 
-  /usr/bin/ld: jsimd.c:(.text+0x491): undefined reference to
-  `jpeg_simd_cpu_support'
 
-  /usr/bin/ld: jsimd.c:(.text+0x4a4): undefined reference to
-  `jconst_fancy_upsample_sse2'
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/tcmalloc_wrapper/third_party/tcmalloc/chromium/src/tcmalloc.cc:2042:
+ multiple definition of `operator new[](unsigned long)';
+ src/cobalt/libstarboard_common.a(new.cc.o):/home/denis/workspace/skia-opengl-emscripten/src/cobalt/port/starboard/common/new.cc:37:
+ first defined here
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
-  `jsimd_h2v2_fancy_upsample':
+ /usr/bin/ld: src/chromium/libtcmalloc.a(tcmalloc.cc.o): in function
+ `operator new[](unsigned long)':
 
-  jsimd.c:(.text+0x4d8): undefined reference to
-  `jsimd_h2v2_fancy_upsample_mmx'
 
-  /usr/bin/ld: jsimd.c:(.text+0x4e6): undefined reference to
-  `jsimd_h2v2_fancy_upsample_avx2'
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/tcmalloc_wrapper/third_party/tcmalloc/chromium/src/tcmalloc.cc:2042:
+ multiple definition of `operator new(unsigned long)';
+ src/cobalt/libstarboard_common.a(new.cc.o):/home/denis/workspace/skia-opengl-emscripten/src/cobalt/port/starboard/common/new.cc:21:
+ first defined here
 
-  /usr/bin/ld: jsimd.c:(.text+0x4eb): undefined reference to
-  `jsimd_h2v2_fancy_upsample_sse2'
+ /usr/bin/ld: src/chromium/libtcmalloc.a(tcmalloc.cc.o): in function
+ `operator new[](unsigned long, std::nothrow_t const&)':
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
-  `jsimd_h2v1_fancy_upsample':
 
-  jsimd.c:(.text+0x508): undefined reference to
-  `jsimd_h2v1_fancy_upsample_mmx'
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/tcmalloc_wrapper/third_party/tcmalloc/chromium/src/tcmalloc.cc:2047:
+ multiple definition of `operator new(unsigned long, std::nothrow_t
+ const&)';
+ src/cobalt/libstarboard_common.a(new.cc.o):/home/denis/workspace/skia-opengl-emscripten/src/cobalt/port/starboard/common/new.cc:29:
+ first defined here
 
-  /usr/bin/ld: jsimd.c:(.text+0x516): undefined reference to
-  `jsimd_h2v1_fancy_upsample_avx2'
+ /usr/bin/ld: CMakeFiles/skemgl.dir/src/main.cpp.o: in function `main':
 
-  /usr/bin/ld: jsimd.c:(.text+0x51b): undefined reference to
-  `jsimd_h2v1_fancy_upsample_sse2'
+ /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:4064: undefined
+ reference to `GLES2Disable'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
-  `jsimd_can_h2v2_merged_upsample':
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:4065: undefined
+ reference to `GLES2Viewport'
 
-  jsimd.c:(.text+0x530): undefined reference to `jconst_merged_upsample_avx2'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:4067: undefined
+ reference to `GLES2ClearColor'
 
-  /usr/bin/ld: jsimd.c:(.text+0x541): undefined reference to
-  `jpeg_simd_cpu_support'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:4068: undefined
+ reference to `GLES2ClearStencil'
 
-  /usr/bin/ld: jsimd.c:(.text+0x554): undefined reference to
-  `jconst_merged_upsample_sse2'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:4069: undefined
+ reference to `GLES2Clear'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
-  `jsimd_can_h2v1_merged_upsample':
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:4445: undefined
+ reference to `GLES2DeleteTextures'
 
-  jsimd.c:(.text+0x580): undefined reference to `jconst_merged_upsample_avx2'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:4448: undefined
+ reference to `GLES2DeleteBuffers'
 
-  /usr/bin/ld: jsimd.c:(.text+0x591): undefined reference to
-  `jpeg_simd_cpu_support'
+ /usr/bin/ld: CMakeFiles/skemgl.dir/src/main.cpp.o: in function
+ `CheckOpenGLError(char const*, char const*, int)':
 
-  /usr/bin/ld: jsimd.c:(.text+0x5a4): undefined reference to
-  `jconst_merged_upsample_sse2'
+ /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:673: undefined
+ reference to `GLES2GetError'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
-  `jsimd_h2v2_merged_upsample':
+ /usr/bin/ld: CMakeFiles/skemgl.dir/src/main.cpp.o: in function `InitGL()':
 
-  jsimd.c:(.text+0x5fe): undefined reference to
-  `jsimd_h2v2_merged_upsample_mmx'
+ /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:1861: undefined
+ reference to `GLES2CreateProgram'
 
-  /usr/bin/ld: jsimd.c:(.text+0x604): undefined reference to
-  `jsimd_h2v2_merged_upsample_sse2'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:1872: undefined
+ reference to `GLES2AttachShader'
 
-  /usr/bin/ld: jsimd.c:(.text+0x60a): undefined reference to
-  `jsimd_h2v2_merged_upsample_avx2'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:1873: undefined
+ reference to `GLES2AttachShader'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
-  `jsimd_h2v1_merged_upsample':
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:1875: undefined
+ reference to `GLES2BindAttribLocation'
 
-  jsimd.c:(.text+0x66e): undefined reference to
-  `jsimd_h2v1_merged_upsample_mmx'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:1876: undefined
+ reference to `GLES2BindAttribLocation'
 
-  /usr/bin/ld: jsimd.c:(.text+0x674): undefined reference to
-  `jsimd_h2v1_merged_upsample_sse2'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:1878: undefined
+ reference to `GLES2LinkProgram'
 
-  /usr/bin/ld: jsimd.c:(.text+0x67a): undefined reference to
-  `jsimd_h2v1_merged_upsample_avx2'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:1879: undefined
+ reference to `GLES2GetProgramInfoLog'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
-  `jsimd_can_convsamp':
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:1880: undefined
+ reference to `GLES2GetProgramiv'
 
-  jsimd.c:(.text+0x6ad): undefined reference to `jpeg_simd_cpu_support'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:1894: undefined
+ reference to `GLES2GetProgramiv'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
-  `jsimd_can_convsamp_float':
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:1897: undefined
+ reference to `GLES2GetUniformLocation'
 
-  jsimd.c:(.text+0x6dd): undefined reference to `jpeg_simd_cpu_support'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:1899: undefined
+ reference to `GLES2GetProgramiv'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function `jsimd_convsamp':
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:1902: undefined
+ reference to `GLES2GetProgramiv'
 
-  jsimd.c:(.text+0x70f): undefined reference to `jsimd_convsamp_mmx'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:1905: undefined
+ reference to `GLES2GetProgramInfoLog'
 
-  /usr/bin/ld: jsimd.c:(.text+0x714): undefined reference to
-  `jsimd_convsamp_avx2'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:1909: undefined
+ reference to `GLES2DeleteProgram'
 
-  /usr/bin/ld: jsimd.c:(.text+0x719): undefined reference to
-  `jsimd_convsamp_sse2'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:1914: undefined
+ reference to `GLES2GenTextures'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
-  `jsimd_convsamp_float':
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:1918: undefined
+ reference to `GLES2GenBuffers'
 
-  jsimd.c:(.text+0x72f): undefined reference to `jsimd_convsamp_float_3dnow'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:1919: undefined
+ reference to `GLES2BindBuffer'
 
-  /usr/bin/ld: jsimd.c:(.text+0x734): undefined reference to
-  `jsimd_convsamp_float_sse2'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:1920: undefined
+ reference to `GLES2BufferData'
 
-  /usr/bin/ld: jsimd.c:(.text+0x739): undefined reference to
-  `jsimd_convsamp_float_sse'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:1921: undefined
+ reference to `GLES2BindBuffer'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
-  `jsimd_can_fdct_islow':
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:1923: undefined
+ reference to `GLES2ClearColor'
 
-  jsimd.c:(.text+0x750): undefined reference to `jconst_fdct_islow_avx2'
+ /usr/bin/ld: CMakeFiles/skemgl.dir/src/main.cpp.o: in function
+ `LoadShader(unsigned int, char const*)':
 
-  /usr/bin/ld: jsimd.c:(.text+0x761): undefined reference to
-  `jpeg_simd_cpu_support'
+ /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:1799: undefined
+ reference to `GLES2CreateShader'
 
-  /usr/bin/ld: jsimd.c:(.text+0x774): undefined reference to
-  `jconst_fdct_islow_sse2'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:1806: undefined
+ reference to `GLES2ShaderSource'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
-  `jsimd_can_fdct_ifast':
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:1807: undefined
+ reference to `GLES2CompileShader'
 
-  jsimd.c:(.text+0x79d): undefined reference to `jpeg_simd_cpu_support'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:1808: undefined
+ reference to `GLES2GetShaderiv'
 
-  /usr/bin/ld: jsimd.c:(.text+0x7ac): undefined reference to
-  `jconst_fdct_ifast_sse2'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:1811: undefined
+ reference to `GLES2GetShaderiv'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
-  `jsimd_can_fdct_float':
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:1814: undefined
+ reference to `GLES2GetShaderInfoLog'
 
-  jsimd.c:(.text+0x7dd): undefined reference to `jpeg_simd_cpu_support'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:1818: undefined
+ reference to `GLES2DeleteShader'
 
-  /usr/bin/ld: jsimd.c:(.text+0x7ec): undefined reference to
-  `jconst_fdct_float_sse'
+ /usr/bin/ld: CMakeFiles/skemgl.dir/src/main.cpp.o: in function `Draw()':
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
-  `jsimd_fdct_islow':
+ /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:1933: undefined
+ reference to `GLES2Viewport'
 
-  jsimd.c:(.text+0x81f): undefined reference to `jsimd_fdct_islow_mmx'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:1934: undefined
+ reference to `GLES2Clear'
 
-  /usr/bin/ld: jsimd.c:(.text+0x824): undefined reference to
-  `jsimd_fdct_islow_avx2'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:1936: undefined
+ reference to `GLES2UseProgram'
 
-  /usr/bin/ld: jsimd.c:(.text+0x829): undefined reference to
-  `jsimd_fdct_islow_sse2'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:1937: undefined
+ reference to `GLES2ActiveTexture'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
-  `jsimd_fdct_ifast':
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:1974: undefined
+ reference to `GLES2BindTexture'
 
-  jsimd.c:(.text+0x83a): undefined reference to `jconst_fdct_islow_sse2'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:1975: undefined
+ reference to `GLES2TexParameteri'
 
-  /usr/bin/ld: jsimd.c:(.text+0x843): undefined reference to
-  `jsimd_fdct_ifast_sse2'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:1976: undefined
+ reference to `GLES2TexParameteri'
 
-  /usr/bin/ld: jsimd.c:(.text+0x848): undefined reference to
-  `jsimd_fdct_ifast_mmx'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:1977: undefined
+ reference to `GLES2TexParameteri'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
-  `jsimd_fdct_float':
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:1978: undefined
+ reference to `GLES2TexParameteri'
 
-  jsimd.c:(.text+0x85b): undefined reference to `jconst_fdct_float_sse'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:1979: undefined
+ reference to `GLES2TexImage2D'
 
-  /usr/bin/ld: jsimd.c:(.text+0x865): undefined reference to
-  `jsimd_fdct_float_sse'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:1985: undefined
+ reference to `GLES2Uniform1i'
 
-  /usr/bin/ld: jsimd.c:(.text+0x86f): undefined reference to
-  `jsimd_fdct_float_3dnow'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:1990: undefined
+ reference to `GLES2BindBuffer'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
-  `jsimd_can_quantize':
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:1992: undefined
+ reference to `GLES2VertexAttribPointer'
 
-  jsimd.c:(.text+0x88d): undefined reference to `jpeg_simd_cpu_support'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:1993: undefined
+ reference to `GLES2EnableVertexAttribArray'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
-  `jsimd_can_quantize_float':
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:1995: undefined
+ reference to `GLES2VertexAttribPointer'
 
-  jsimd.c:(.text+0x8bd): undefined reference to `jpeg_simd_cpu_support'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:1997: undefined
+ reference to `GLES2EnableVertexAttribArray'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function `jsimd_quantize':
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:2012: undefined
+ reference to `GLES2BindBuffer'
 
-  jsimd.c:(.text+0x8ef): undefined reference to `jsimd_quantize_mmx'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:2014: undefined
+ reference to `GLES2DrawArrays'
 
-  /usr/bin/ld: jsimd.c:(.text+0x8f4): undefined reference to
-  `jsimd_quantize_avx2'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:2016: undefined
+ reference to `GLES2DisableVertexAttribArray'
 
-  /usr/bin/ld: jsimd.c:(.text+0x8f9): undefined reference to
-  `jsimd_quantize_sse2'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:2017: undefined
+ reference to `GLES2DisableVertexAttribArray'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
-  `jsimd_quantize_float':
+ /usr/bin/ld: src/cobalt/libcobalt_dom.a(window.cc.o): in function
+ `cobalt::script::Handle<cobalt::script::Promise<scoped_refptr<cobalt::script::Wrappable>
+ > >
+ cobalt::script::ScriptValueFactory::CreateInterfacePromise<cobalt::dom::Screenshot>()':
 
-  jsimd.c:(.text+0x90f): undefined reference to `jsimd_quantize_float_3dnow'
 
-  /usr/bin/ld: jsimd.c:(.text+0x914): undefined reference to
-  `jsimd_quantize_float_sse2'
 
-  /usr/bin/ld: jsimd.c:(.text+0x919): undefined reference to
-  `jsimd_quantize_float_sse'
+ /home/denis/workspace/skia-opengl-emscripten/src/cobalt/src/cobalt/script/script_value_factory.h:45:
+ undefined reference to
+ `cobalt::script::Handle<cobalt::script::Promise<scoped_refptr<cobalt::script::Wrappable>
+ > >
+ cobalt::script::ScriptValueFactory::CreatePromise<scoped_refptr<cobalt::script::Wrappable>
+ >()'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
-  `jsimd_can_idct_2x2':
+ /usr/bin/ld: src/cobalt/libcobalt_dom.a(html_media_element.cc.o): in
+ function `cobalt::script::Handle<cobalt::script::Promise<void> >
+ cobalt::script::ScriptValueFactory::CreateBasicPromise<void>()':
 
-  jsimd.c:(.text+0x92d): undefined reference to `jpeg_simd_cpu_support'
 
-  /usr/bin/ld: jsimd.c:(.text+0x93c): undefined reference to
-  `jconst_idct_red_sse2'
+ /home/denis/workspace/skia-opengl-emscripten/src/cobalt/src/cobalt/script/script_value_factory.h:33:
+ undefined reference to
+ `cobalt::script::Handle<cobalt::script::Promise<void> >
+ cobalt::script::ScriptValueFactory::CreatePromise<void>()'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
-  `jsimd_can_idct_4x4':
+ /usr/bin/ld: src/cobalt/libcobalt_media.a(video_decoder_config.cc.o): in
+ function `VideoDecoderConfig':
 
-  jsimd.c:(.text+0x96d): undefined reference to `jpeg_simd_cpu_support'
 
-  /usr/bin/ld: jsimd.c:(.text+0x97c): undefined reference to
-  `jconst_idct_red_sse2'
+ /home/denis/workspace/skia-opengl-emscripten/src/cobalt/src/cobalt/media/base/video_decoder_config.cc:58:
+ undefined reference to
+ `cobalt::media::WebMColorMetadata::WebMColorMetadata()'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function `jsimd_idct_2x2':
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/cobalt/src/cobalt/media/base/video_decoder_config.cc:63:
+ undefined reference to
+ `cobalt::media::WebMColorMetadata::WebMColorMetadata()'
 
-  jsimd.c:(.text+0x9ae): undefined reference to `jconst_idct_red_sse2'
+ /usr/bin/ld: src/cobalt/libcobalt_media.a(video_decoder_config.cc.o): in
+ function
+ `cobalt::media::VideoDecoderConfig::Matches(cobalt::media::VideoDecoderConfig
+ const&) const':
 
-  /usr/bin/ld: jsimd.c:(.text+0x9c0): undefined reference to
-  `jsimd_idct_2x2_sse2'
 
-  /usr/bin/ld: jsimd.c:(.text+0x9ce): undefined reference to
-  `jsimd_idct_2x2_mmx'
+ /home/denis/workspace/skia-opengl-emscripten/src/cobalt/src/cobalt/media/base/video_decoder_config.cc:122:
+ undefined reference to
+ `cobalt::media::WebMColorMetadata::operator==(cobalt::media::WebMColorMetadata
+ const&) const'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function `jsimd_idct_4x4':
+ /usr/bin/ld: src/cobalt/libcobalt_media.a(stream_parser_factory.cc.o): in
+ function
+ `cobalt::media::BuildWebMParser(cobalt::media::DecoderBuffer::Allocator*,
+ std::vector<std::__cxx11::basic_string<char, std::char_traits<char>,
+ std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char,
+ std::char_traits<char>, std::allocator<char> > > > const&,
+ scoped_refptr<cobalt::media::MediaLog> const&)':
 
-  jsimd.c:(.text+0x9ee): undefined reference to `jconst_idct_red_sse2'
 
-  /usr/bin/ld: jsimd.c:(.text+0xa00): undefined reference to
-  `jsimd_idct_4x4_sse2'
+ /home/denis/workspace/skia-opengl-emscripten/src/cobalt/src/cobalt/media/filters/stream_parser_factory.cc:98:
+ undefined reference to
+ `cobalt::media::WebMStreamParser::WebMStreamParser(cobalt::media::DecoderBuffer::Allocator*)'
 
-  /usr/bin/ld: jsimd.c:(.text+0xa0e): undefined reference to
-  `jsimd_idct_4x4_mmx'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
-  `jsimd_can_idct_islow':
+ /usr/bin/ld: src/cobalt/libcobalt_media.a(stream_parser_factory.cc.o): in
+ function
+ `cobalt::media::BuildADTSParser(cobalt::media::DecoderBuffer::Allocator*,
+ std::vector<std::__cxx11::basic_string<char, std::char_traits<char>,
+ std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char,
+ std::char_traits<char>, std::allocator<char> > > > const&,
+ scoped_refptr<cobalt::media::MediaLog> const&)':
 
-  jsimd.c:(.text+0xa30): undefined reference to `jconst_idct_islow_avx2'
 
-  /usr/bin/ld: jsimd.c:(.text+0xa41): undefined reference to
-  `jpeg_simd_cpu_support'
+ /home/denis/workspace/skia-opengl-emscripten/src/cobalt/src/cobalt/media/filters/stream_parser_factory.cc:243:
+ undefined reference to
+ `cobalt::media::ADTSStreamParser::ADTSStreamParser(cobalt::media::DecoderBuffer::Allocator*)'
 
-  /usr/bin/ld: jsimd.c:(.text+0xa54): undefined reference to
-  `jconst_idct_islow_sse2'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
-  `jsimd_can_idct_ifast':
+ /usr/bin/ld: src/cobalt/libcobalt_media.a(stream_parser_factory.cc.o): in
+ function
+ `cobalt::media::BuildMP3Parser(cobalt::media::DecoderBuffer::Allocator*,
+ std::vector<std::__cxx11::basic_string<char, std::char_traits<char>,
+ std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char,
+ std::char_traits<char>, std::allocator<char> > > > const&,
+ scoped_refptr<cobalt::media::MediaLog> const&)':
 
-  jsimd.c:(.text+0xa7d): undefined reference to `jpeg_simd_cpu_support'
 
-  /usr/bin/ld: jsimd.c:(.text+0xa8c): undefined reference to
-  `jconst_idct_ifast_sse2'
+ /home/denis/workspace/skia-opengl-emscripten/src/cobalt/src/cobalt/media/filters/stream_parser_factory.cc:233:
+ undefined reference to
+ `cobalt::media::MPEG1AudioStreamParser::MPEG1AudioStreamParser(cobalt::media::DecoderBuffer::Allocator*)'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
-  `jsimd_can_idct_float':
 
-  jsimd.c:(.text+0xac5): undefined reference to `jconst_idct_float_sse2'
+ /usr/bin/ld: src/cobalt/libcobalt_media.a(stream_parser_factory.cc.o): in
+ function
+ `cobalt::media::BuildMP4Parser(cobalt::media::DecoderBuffer::Allocator*,
+ std::vector<std::__cxx11::basic_string<char, std::char_traits<char>,
+ std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char,
+ std::char_traits<char>, std::allocator<char> > > > const&,
+ scoped_refptr<cobalt::media::MediaLog> const&)':
 
-  /usr/bin/ld: jsimd.c:(.text+0xad2): undefined reference to
-  `jpeg_simd_cpu_support'
 
-  /usr/bin/ld: jsimd.c:(.text+0xaee): undefined reference to
-  `jconst_idct_float_sse'
+ /home/denis/workspace/skia-opengl-emscripten/src/cobalt/src/cobalt/media/filters/stream_parser_factory.cc:221:
+ undefined reference to
+ `cobalt::media::mp4::MP4StreamParser::MP4StreamParser(cobalt::media::DecoderBuffer::Allocator*,
+ std::set<int, std::less<int>, std::allocator<int> > const&, bool)'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
-  `jsimd_idct_islow':
+ /usr/bin/ld: src/cobalt/libcobalt_dom.a(navigator.cc.o): in function
+ `cobalt::script::Handle<cobalt::script::Promise<scoped_refptr<cobalt::script::Wrappable>
+ > >
+ cobalt::script::ScriptValueFactory::CreateInterfacePromise<scoped_refptr<cobalt::dom::eme::MediaKeySystemAccess>
+ >()':
 
-  jsimd.c:(.text+0xb2c): undefined reference to `jsimd_idct_islow_mmx'
 
-  /usr/bin/ld: jsimd.c:(.text+0xb3e): undefined reference to
-  `jsimd_idct_islow_avx2'
+ /home/denis/workspace/skia-opengl-emscripten/src/cobalt/src/cobalt/script/script_value_factory.h:45:
+ undefined reference to
+ `cobalt::script::Handle<cobalt::script::Promise<scoped_refptr<cobalt::script::Wrappable>
+ > >
+ cobalt::script::ScriptValueFactory::CreatePromise<scoped_refptr<cobalt::script::Wrappable>
+ >()'
 
-  /usr/bin/ld: jsimd.c:(.text+0xb43): undefined reference to
-  `jsimd_idct_islow_sse2'
+ /usr/bin/ld: src/cobalt/libcobalt_dom.a(media_key_system_access.cc.o): in
+ function
+ `cobalt::script::Handle<cobalt::script::Promise<scoped_refptr<cobalt::script::Wrappable>
+ > >
+ cobalt::script::ScriptValueFactory::CreateInterfacePromise<scoped_refptr<cobalt::dom::eme::MediaKeys>
+ >()':
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
-  `jsimd_idct_ifast':
 
-  jsimd.c:(.text+0xb5e): undefined reference to `jconst_idct_ifast_sse2'
+ /home/denis/workspace/skia-opengl-emscripten/src/cobalt/src/cobalt/script/script_value_factory.h:45:
+ undefined reference to
+ `cobalt::script::Handle<cobalt::script::Promise<scoped_refptr<cobalt::script::Wrappable>
+ > >
+ cobalt::script::ScriptValueFactory::CreatePromise<scoped_refptr<cobalt::script::Wrappable>
+ >()'
 
-  /usr/bin/ld: jsimd.c:(.text+0xb70): undefined reference to
-  `jsimd_idct_ifast_sse2'
+ /usr/bin/ld: src/cobalt/libcobalt_dom.a(media_keys.cc.o): in function
+ `cobalt::script::Handle<cobalt::script::Promise<bool> >
+ cobalt::script::ScriptValueFactory::CreateBasicPromise<bool>()':
 
-  /usr/bin/ld: jsimd.c:(.text+0xb7e): undefined reference to
-  `jsimd_idct_ifast_mmx'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
-  `jsimd_idct_float':
+ /home/denis/workspace/skia-opengl-emscripten/src/cobalt/src/cobalt/script/script_value_factory.h:33:
+ undefined reference to
+ `cobalt::script::Handle<cobalt::script::Promise<bool> >
+ cobalt::script::ScriptValueFactory::CreatePromise<bool>()'
 
-  jsimd.c:(.text+0xb9b): undefined reference to `jconst_idct_float_sse2'
+ /usr/bin/ld:
+ src/cobalt/libcobalt_loader.a(cors_preflight.cc.o):(.rodata+0x10):
+ undefined reference to
+ `net::URLFetcherDelegate::OnURLFetchResponseStarted(net::URLFetcher
+ const*)'
 
-  /usr/bin/ld: jsimd.c:(.text+0xbb3): undefined reference to
-  `jsimd_idct_float_sse2'
+ /usr/bin/ld: src/chromium/libGNET.a(http_response_info.cc.o): in function
+ `net::(anonymous namespace)::KeyExchangeGroupIsValid(int)':
 
-  /usr/bin/ld: jsimd.c:(.text+0xbc0): undefined reference to
-  `jconst_idct_float_sse'
 
-  /usr/bin/ld: jsimd.c:(.text+0xbd2): undefined reference to
-  `jsimd_idct_float_sse'
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/http/http_response_info.cc:38:
+ undefined reference to `SSL_get_cipher_by_value'
 
-  /usr/bin/ld: jsimd.c:(.text+0xbe0): undefined reference to
-  `jsimd_idct_float_3dnow'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/http/http_response_info.cc:40:
+ undefined reference to `SSL_CIPHER_get_kx_nid'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
-  `jsimd_can_huff_encode_one_block':
+ /usr/bin/ld: src/chromium/libGNET.a(network_change_notifier_linux.cc.o): in
+ function `BlockingThreadObjects':
 
-  jsimd.c:(.text+0xbfd): undefined reference to `jpeg_simd_cpu_support'
 
-  /usr/bin/ld: jsimd.c:(.text+0xc0f): undefined reference to
-  `jconst_huff_encode_one_block'
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/base/network_change_notifier_linux.cc:51:
+ undefined reference to
+ `net::internal::DnsConfigServicePosix::DnsConfigServicePosix()'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
-  `jsimd_huff_encode_one_block':
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/base/network_change_notifier_linux.cc:62:
+ undefined reference to
+ `net::internal::DnsConfigServicePosix::~DnsConfigServicePosix()'
 
-  jsimd.c:(.text+0xc21): undefined reference to
-  `jsimd_huff_encode_one_block_sse2'
+ /usr/bin/ld: src/chromium/libGNET.a(network_change_notifier_linux.cc.o): in
+ function `~BlockingThreadObjects':
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
-  `jsimd_can_encode_mcu_AC_first_prepare':
 
-  jsimd.c:(.text+0xc3e): undefined reference to `jpeg_simd_cpu_support'
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/base/network_change_notifier_linux.cc:22:
+ undefined reference to
+ `net::internal::DnsConfigServicePosix::~DnsConfigServicePosix()'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
-  `jsimd_encode_mcu_AC_first_prepare':
+ /usr/bin/ld: src/chromium/libGNET.a(ssl_client_session_cache.cc.o): in
+ function
+ `net::SSLClientSessionCache::Lookup(std::__cxx11::basic_string<char,
+ std::char_traits<char>, std::allocator<char> > const&)':
 
-  jsimd.c:(.text+0xc51): undefined reference to
-  `jsimd_encode_mcu_AC_first_prepare_sse2'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
-  `jsimd_can_encode_mcu_AC_refine_prepare':
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/ssl/ssl_client_session_cache.cc:73:
+ undefined reference to `SSL_SESSION_get_time'
 
-  jsimd.c:(.text+0xc6e): undefined reference to `jpeg_simd_cpu_support'
+ /usr/bin/ld: src/chromium/libGNET.a(ssl_client_session_cache.cc.o): in
+ function `net::SSLClientSessionCache::Entry::Pop()':
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o): in function
-  `jsimd_encode_mcu_AC_refine_prepare':
 
-  jsimd.c:(.text+0xc81): undefined reference to
-  `jsimd_encode_mcu_AC_refine_prepare_sse2'
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/ssl/ssl_client_session_cache.cc:192:
+ undefined reference to `SSL_SESSION_should_be_single_use'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x0): undefined
-  reference to `jsimd_extrgb_ycc_convert_avx2'
+ /usr/bin/ld: src/chromium/libGNET.a(ssl_client_session_cache.cc.o): in
+ function `net::SSLClientSessionCache::IsExpired(ssl_session_st*, long)':
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x8): undefined
-  reference to `jsimd_extrgbx_ycc_convert_avx2'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x10): undefined
-  reference to `jsimd_extbgr_ycc_convert_avx2'
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/ssl/ssl_client_session_cache.cc:118:
+ undefined reference to `SSL_SESSION_get_time'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x18): undefined
-  reference to `jsimd_extbgrx_ycc_convert_avx2'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/ssl/ssl_client_session_cache.cc:120:
+ undefined reference to `SSL_SESSION_get_time'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x20): undefined
-  reference to `jsimd_extxbgr_ycc_convert_avx2'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/ssl/ssl_client_session_cache.cc:120:
+ undefined reference to `SSL_SESSION_get_timeout'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x28): undefined
-  reference to `jsimd_extxrgb_ycc_convert_avx2'
+ /usr/bin/ld: src/chromium/libGNET.a(ssl_client_session_cache.cc.o): in
+ function `net::(anonymous namespace)::IsTLS13(ssl_session_st const*)':
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x30): undefined
-  reference to `jsimd_extrgbx_ycc_convert_avx2'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x38): undefined
-  reference to `jsimd_extbgrx_ycc_convert_avx2'
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/ssl/ssl_client_session_cache.cc:22:
+ undefined reference to `SSL_SESSION_get_protocol_version'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x40): undefined
-  reference to `jsimd_extxbgr_ycc_convert_avx2'
+ /usr/bin/ld: src/chromium/libGNET.a(ssl_client_session_cache.cc.o): in
+ function
+ `net::SSLClientSessionCache::Insert(std::__cxx11::basic_string<char,
+ std::char_traits<char>, std::allocator<char> > const&,
+ std::unique_ptr<ssl_session_st, bssl::internal::Deleter<ssl_session_st>
+ >)':
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x48): undefined
-  reference to `jsimd_extxrgb_ycc_convert_avx2'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x50): undefined
-  reference to `jsimd_extrgb_ycc_convert_sse2'
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/ssl/ssl_client_session_cache.cc:94:
+ undefined reference to `SSL_SESSION_get_timeout'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x58): undefined
-  reference to `jsimd_extrgbx_ycc_convert_sse2'
+ /usr/bin/ld: src/chromium/libGNET.a(ssl_client_session_cache.cc.o): in
+ function
+ `net::SSLClientSessionCache::Entry::Push(std::unique_ptr<ssl_session_st,
+ bssl::internal::Deleter<ssl_session_st> >)':
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x60): undefined
-  reference to `jsimd_extbgr_ycc_convert_sse2'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x68): undefined
-  reference to `jsimd_extbgrx_ycc_convert_sse2'
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/ssl/ssl_client_session_cache.cc:182:
+ undefined reference to `SSL_SESSION_should_be_single_use'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x70): undefined
-  reference to `jsimd_extxbgr_ycc_convert_sse2'
+ /usr/bin/ld: src/chromium/libGNET.a(ssl_client_session_cache.cc.o): in
+ function
+ `net::SSLClientSessionCache::DumpMemoryStats(base::trace_event::ProcessMemoryDump*,
+ std::__cxx11::basic_string<char, std::char_traits<char>,
+ std::allocator<char> > const&) const':
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x78): undefined
-  reference to `jsimd_extxrgb_ycc_convert_sse2'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x80): undefined
-  reference to `jsimd_extrgbx_ycc_convert_sse2'
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/ssl/ssl_client_session_cache.cc:138:
+ undefined reference to `SSL_SESSION_get0_peer_certificates'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x88): undefined
-  reference to `jsimd_extbgrx_ycc_convert_sse2'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/ssl/ssl_client_session_cache.cc:149:
+ undefined reference to `SSL_SESSION_get0_peer_certificates'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x90): undefined
-  reference to `jsimd_extxbgr_ycc_convert_sse2'
+ /usr/bin/ld: src/chromium/libGNET.a(ssl_client_session_cache.cc.o): in
+ function `bssl::UpRef(ssl_session_st*)':
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x98): undefined
-  reference to `jsimd_extxrgb_ycc_convert_sse2'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0xa0): undefined
-  reference to `jsimd_extrgb_ycc_convert_mmx'
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/third_party/boringssl/src/include/openssl/ssl.h:4695:
+ undefined reference to `SSL_SESSION_up_ref'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0xa8): undefined
-  reference to `jsimd_extrgbx_ycc_convert_mmx'
+ /usr/bin/ld: src/chromium/libGNET.a(ssl_client_session_cache.cc.o): in
+ function `bssl::internal::DeleterImpl<ssl_session_st,
+ void>::Free(ssl_session_st*)':
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0xb0): undefined
-  reference to `jsimd_extbgr_ycc_convert_mmx'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0xb8): undefined
-  reference to `jsimd_extbgrx_ycc_convert_mmx'
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/third_party/boringssl/src/include/openssl/ssl.h:4694:
+ undefined reference to `SSL_SESSION_free'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0xc0): undefined
-  reference to `jsimd_extxbgr_ycc_convert_mmx'
+ /usr/bin/ld: src/chromium/libGNET.a(ssl_client_socket_impl.cc.o): in
+ function
+ `net::SSLClientSocketImpl::ExportKeyingMaterial(base::BasicStringPiece<std::__cxx11::basic_string<char,
+ std::char_traits<char>, std::allocator<char> > > const&, bool,
+ base::BasicStringPiece<std::__cxx11::basic_string<char,
+ std::char_traits<char>, std::allocator<char> > > const&, unsigned char*,
+ unsigned int)':
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0xc8): undefined
-  reference to `jsimd_extxrgb_ycc_convert_mmx'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0xd0): undefined
-  reference to `jsimd_extrgbx_ycc_convert_mmx'
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:475:
+ undefined reference to `SSL_export_keying_material'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0xd8): undefined
-  reference to `jsimd_extbgrx_ycc_convert_mmx'
+ /usr/bin/ld: src/chromium/libGNET.a(ssl_client_socket_impl.cc.o): in
+ function `net::SSLClientSocketImpl::Connect(base::OnceCallback<void
+ (int)>)':
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0xe0): undefined
-  reference to `jsimd_extxbgr_ycc_convert_mmx'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0xe8): undefined
-  reference to `jsimd_extxrgb_ycc_convert_mmx'
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:507:
+ undefined reference to `SSL_set_connect_state'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0xf0): undefined
-  reference to `jsimd_extrgb_gray_convert_avx2'
+ /usr/bin/ld: src/chromium/libGNET.a(ssl_client_socket_impl.cc.o): in
+ function `net::SSLClientSocketImpl::Init()':
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0xf8): undefined
-  reference to `jsimd_extrgbx_gray_convert_avx2'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x100): undefined
-  reference to `jsimd_extbgr_gray_convert_avx2'
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:813:
+ undefined reference to `SSL_new'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x108): undefined
-  reference to `jsimd_extbgrx_gray_convert_avx2'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:824:
+ undefined reference to `SSL_set_tlsext_host_name'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x110): undefined
-  reference to `jsimd_extxbgr_gray_convert_avx2'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:832:
+ undefined reference to `SSL_set_session'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x118): undefined
-  reference to `jsimd_extxrgb_gray_convert_avx2'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:841:
+ undefined reference to `SSL_set0_rbio'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x120): undefined
-  reference to `jsimd_extrgbx_gray_convert_avx2'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:844:
+ undefined reference to `SSL_set0_wbio'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x128): undefined
-  reference to `jsimd_extbgrx_gray_convert_avx2'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:848:
+ undefined reference to `SSL_set_min_proto_version'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x130): undefined
-  reference to `jsimd_extxbgr_gray_convert_avx2'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:849:
+ undefined reference to `SSL_set_max_proto_version'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x138): undefined
-  reference to `jsimd_extxrgb_gray_convert_avx2'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:853:
+ undefined reference to `SSL_set_early_data_enabled'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x140): undefined
-  reference to `jsimd_extrgb_gray_convert_sse2'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:857:
+ undefined reference to `SSL_set_ignore_tls13_downgrade'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x148): undefined
-  reference to `jsimd_extrgbx_gray_convert_sse2'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:868:
+ undefined reference to `SSL_set_options'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x150): undefined
-  reference to `jsimd_extbgr_gray_convert_sse2'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:869:
+ undefined reference to `SSL_clear_options'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x158): undefined
-  reference to `jsimd_extbgrx_gray_convert_sse2'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:880:
+ undefined reference to `SSL_set_mode'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x160): undefined
-  reference to `jsimd_extxbgr_gray_convert_sse2'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:881:
+ undefined reference to `SSL_clear_mode'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x168): undefined
-  reference to `jsimd_extxrgb_gray_convert_sse2'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:892:
+ undefined reference to `SSL_get_cipher_by_value'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x170): undefined
-  reference to `jsimd_extrgbx_gray_convert_sse2'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:895:
+ undefined reference to `SSL_CIPHER_get_name'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x178): undefined
-  reference to `jsimd_extbgrx_gray_convert_sse2'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:899:
+ undefined reference to `SSL_set_strict_cipher_list'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x180): undefined
-  reference to `jsimd_extxbgr_gray_convert_sse2'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:907:
+ undefined reference to `SSL_set_alpn_protos'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x188): undefined
-  reference to `jsimd_extxrgb_gray_convert_sse2'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:912:
+ undefined reference to `SSL_enable_signed_cert_timestamps'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x190): undefined
-  reference to `jsimd_extrgb_gray_convert_mmx'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:913:
+ undefined reference to `SSL_enable_ocsp_stapling'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x198): undefined
-  reference to `jsimd_extrgbx_gray_convert_mmx'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:919:
+ undefined reference to `SSL_set_renegotiate_mode'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x1a0): undefined
-  reference to `jsimd_extbgr_gray_convert_mmx'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:921:
+ undefined reference to `SSL_set_shed_handshake_config'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x1a8): undefined
-  reference to `jsimd_extbgrx_gray_convert_mmx'
+ /usr/bin/ld: src/chromium/libGNET.a(ssl_client_socket_impl.cc.o): in
+ function
+ `net::SSLClientSocketImpl::ConfirmHandshake(base::OnceCallback<void
+ (int)>)':
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x1b0): undefined
-  reference to `jsimd_extxbgr_gray_convert_mmx'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x1b8): undefined
-  reference to `jsimd_extxrgb_gray_convert_mmx'
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:549:
+ undefined reference to `SSL_in_early_data'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x1c0): undefined
-  reference to `jsimd_extrgbx_gray_convert_mmx'
+ /usr/bin/ld: src/chromium/libGNET.a(ssl_client_socket_impl.cc.o): in
+ function `net::SSLClientSocketImpl::GetSSLInfo(net::SSLInfo*)':
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x1c8): undefined
-  reference to `jsimd_extbgrx_gray_convert_mmx'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x1d0): undefined
-  reference to `jsimd_extxbgr_gray_convert_mmx'
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:646:
+ undefined reference to `SSL_get_current_cipher'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x1d8): undefined
-  reference to `jsimd_extxrgb_gray_convert_mmx'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:649:
+ undefined reference to `SSL_get_curve_id'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x1e0): undefined
-  reference to `jsimd_ycc_extrgb_convert_avx2'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:651:
+ undefined reference to `SSL_get_peer_signature_algorithm'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x1e8): undefined
-  reference to `jsimd_ycc_extrgbx_convert_avx2'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:654:
+ undefined reference to `SSL_CIPHER_get_id'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x1f0): undefined
-  reference to `jsimd_ycc_extbgr_convert_avx2'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:659:
+ undefined reference to `SSL_session_reused'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x1f8): undefined
-  reference to `jsimd_ycc_extbgrx_convert_avx2'
+ /usr/bin/ld: src/chromium/libGNET.a(ssl_client_socket_impl.cc.o): in
+ function
+ `net::SSLClientSocketImpl::DumpMemoryStats(net::StreamSocket::SocketMemoryStats*)
+ const':
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x200): undefined
-  reference to `jsimd_ycc_extxbgr_convert_avx2'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x208): undefined
-  reference to `jsimd_ycc_extxrgb_convert_avx2'
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:680:
+ undefined reference to `SSL_get0_peer_certificates'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x210): undefined
-  reference to `jsimd_ycc_extrgbx_convert_avx2'
+ /usr/bin/ld: src/chromium/libGNET.a(ssl_client_socket_impl.cc.o): in
+ function
+ `net::SSLClientSocketImpl::GetSSLCertRequestInfo(net::SSLCertRequestInfo*)
+ const':
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x218): undefined
-  reference to `jsimd_ycc_extbgrx_convert_avx2'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x220): undefined
-  reference to `jsimd_ycc_extxbgr_convert_avx2'
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:703:
+ undefined reference to `SSL_get0_server_requested_CAs'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x228): undefined
-  reference to `jsimd_ycc_extxrgb_convert_avx2'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:713:
+ undefined reference to `SSL_get0_certificate_types'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x230): undefined
-  reference to `jsimd_ycc_extrgb_convert_sse2'
+ /usr/bin/ld: src/chromium/libGNET.a(ssl_client_socket_impl.cc.o): in
+ function `net::SSLClientSocketImpl::DoPayloadRead(net::IOBuffer*, int)':
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x238): undefined
-  reference to `jsimd_ycc_extrgbx_convert_sse2'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x240): undefined
-  reference to `jsimd_ycc_extbgr_convert_sse2'
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:1358:
+ undefined reference to `SSL_read'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x248): undefined
-  reference to `jsimd_ycc_extbgrx_convert_sse2'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:1371:
+ undefined reference to `SSL_get_error'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x250): undefined
-  reference to `jsimd_ycc_extxbgr_convert_sse2'
+ /usr/bin/ld: src/chromium/libGNET.a(ssl_client_socket_impl.cc.o): in
+ function `net::SSLClientSocketImpl::DoPayloadWrite()':
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x258): undefined
-  reference to `jsimd_ycc_extxrgb_convert_sse2'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x260): undefined
-  reference to `jsimd_ycc_extrgbx_convert_sse2'
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:1432:
+ undefined reference to `SSL_write'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x268): undefined
-  reference to `jsimd_ycc_extbgrx_convert_sse2'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:1437:
+ undefined reference to `SSL_is_init_finished'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x270): undefined
-  reference to `jsimd_ycc_extxbgr_convert_sse2'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:1439:
+ undefined reference to `SSL_version'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x278): undefined
-  reference to `jsimd_ycc_extxrgb_convert_sse2'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:1440:
+ undefined reference to `SSL_key_update'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x280): undefined
-  reference to `jsimd_ycc_extrgb_convert_mmx'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:1448:
+ undefined reference to `SSL_get_error'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x288): undefined
-  reference to `jsimd_ycc_extrgbx_convert_mmx'
+ /usr/bin/ld: src/chromium/libGNET.a(ssl_client_socket_impl.cc.o): in
+ function `net::SSLClientSocketImpl::DoHandshake()':
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x290): undefined
-  reference to `jsimd_ycc_extbgr_convert_mmx'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x298): undefined
-  reference to `jsimd_ycc_extbgrx_convert_mmx'
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:950:
+ undefined reference to `SSL_do_handshake'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x2a0): undefined
-  reference to `jsimd_ycc_extxbgr_convert_mmx'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:953:
+ undefined reference to `SSL_get_error'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x2a8): undefined
-  reference to `jsimd_ycc_extxrgb_convert_mmx'
+ /usr/bin/ld: src/chromium/libGNET.a(ssl_client_socket_impl.cc.o): in
+ function `net::SSLClientSocketImpl::DoHandshakeComplete(int)':
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x2b0): undefined
-  reference to `jsimd_ycc_extrgbx_convert_mmx'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x2b8): undefined
-  reference to `jsimd_ycc_extbgrx_convert_mmx'
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:1008:
+ undefined reference to `SSL_get0_alpn_selected'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x2c0): undefined
-  reference to `jsimd_ycc_extxbgr_convert_mmx'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:1019:
+ undefined reference to `SSL_get0_ocsp_response'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x2c8): undefined
-  reference to `jsimd_ycc_extxrgb_convert_mmx'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:1024:
+ undefined reference to `SSL_get0_signed_cert_timestamp_list'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x2d0): undefined
-  reference to `jsimd_h2v2_extrgb_merged_upsample_avx2'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:1028:
+ undefined reference to `SSL_set_renegotiate_mode'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x2d8): undefined
-  reference to `jsimd_h2v2_extrgbx_merged_upsample_avx2'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:1030:
+ undefined reference to `SSL_get_peer_signature_algorithm'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x2e0): undefined
-  reference to `jsimd_h2v2_extbgr_merged_upsample_avx2'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:1044:
+ undefined reference to `SSL_get_current_cipher'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x2e8): undefined
-  reference to `jsimd_h2v2_extbgrx_merged_upsample_avx2'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:1067:
+ undefined reference to `SSL_is_tls13_downgrade'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x2f0): undefined
-  reference to `jsimd_h2v2_extxbgr_merged_upsample_avx2'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:1091:
+ undefined reference to `SSL_get_current_cipher'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x2f8): undefined
-  reference to `jsimd_h2v2_extxrgb_merged_upsample_avx2'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:1091:
+ undefined reference to `SSL_CIPHER_get_kx_nid'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x300): undefined
-  reference to `jsimd_h2v2_extrgbx_merged_upsample_avx2'
+ /usr/bin/ld: src/chromium/libGNET.a(ssl_client_socket_impl.cc.o): in
+ function `net::(anonymous namespace)::CheckRSAKeyUsage(net::X509Certificate
+ const*, ssl_cipher_st const*)':
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x308): undefined
-  reference to `jsimd_h2v2_extbgrx_merged_upsample_avx2'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x310): undefined
-  reference to `jsimd_h2v2_extxbgr_merged_upsample_avx2'
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:187:
+ undefined reference to `SSL_CIPHER_get_kx_nid'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x318): undefined
-  reference to `jsimd_h2v2_extxrgb_merged_upsample_avx2'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:192:
+ undefined reference to `SSL_CIPHER_get_auth_nid'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x320): undefined
-  reference to `jsimd_h2v2_extrgb_merged_upsample_sse2'
+ /usr/bin/ld: src/chromium/libGNET.a(ssl_client_socket_impl.cc.o): in
+ function `net::SSLClientSocketImpl::VerifyCert()':
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x328): undefined
-  reference to `jsimd_h2v2_extrgbx_merged_upsample_sse2'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x330): undefined
-  reference to `jsimd_h2v2_extbgr_merged_upsample_sse2'
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:1149:
+ undefined reference to `SSL_get0_peer_certificates'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x338): undefined
-  reference to `jsimd_h2v2_extbgrx_merged_upsample_sse2'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:1178:
+ undefined reference to `SSL_get0_ocsp_response'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x340): undefined
-  reference to `jsimd_h2v2_extxbgr_merged_upsample_sse2'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:1195:
+ undefined reference to `SSL_set_enforce_rsa_key_usage'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x348): undefined
-  reference to `jsimd_h2v2_extxrgb_merged_upsample_sse2'
+ /usr/bin/ld: src/chromium/libGNET.a(ssl_client_socket_impl.cc.o): in
+ function `net::SSLClientSocketImpl::VerifyCT()':
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x350): undefined
-  reference to `jsimd_h2v2_extrgbx_merged_upsample_sse2'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x358): undefined
-  reference to `jsimd_h2v2_extbgrx_merged_upsample_sse2'
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:1510:
+ undefined reference to `SSL_get0_signed_cert_timestamp_list'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x360): undefined
-  reference to `jsimd_h2v2_extxbgr_merged_upsample_sse2'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:1516:
+ undefined reference to `SSL_get0_ocsp_response'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x368): undefined
-  reference to `jsimd_h2v2_extxrgb_merged_upsample_sse2'
+ /usr/bin/ld: src/chromium/libGNET.a(ssl_client_socket_impl.cc.o): in
+ function `net::SSLClientSocketImpl::ClientCertRequestCallback(ssl_st*)':
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x370): undefined
-  reference to `jsimd_h2v2_extrgb_merged_upsample_mmx'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x378): undefined
-  reference to `jsimd_h2v2_extrgbx_merged_upsample_mmx'
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:1606:
+ undefined reference to `SSL_certs_clear'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x380): undefined
-  reference to `jsimd_h2v2_extbgr_merged_upsample_mmx'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:1637:
+ undefined reference to `SSL_set_signing_algorithm_prefs'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x388): undefined
-  reference to `jsimd_h2v2_extbgrx_merged_upsample_mmx'
+ /usr/bin/ld: src/chromium/libGNET.a(ssl_client_socket_impl.cc.o): in
+ function `net::(anonymous
+ namespace)::NetLogPrivateKeyOperationCallback(unsigned short,
+ net::SSLPrivateKey*, net::NetLogCaptureMode)':
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x390): undefined
-  reference to `jsimd_h2v2_extxbgr_merged_upsample_mmx'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x398): undefined
-  reference to `jsimd_h2v2_extxrgb_merged_upsample_mmx'
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:91:
+ undefined reference to `SSL_get_signature_algorithm_name'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x3a0): undefined
-  reference to `jsimd_h2v2_extrgbx_merged_upsample_mmx'
+ /usr/bin/ld: src/chromium/libGNET.a(ssl_client_socket_impl.cc.o): in
+ function `net::SSLClientSocketImpl::InfoCallback(int, int)':
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x3a8): undefined
-  reference to `jsimd_h2v2_extbgrx_merged_upsample_mmx'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x3b0): undefined
-  reference to `jsimd_h2v2_extxbgr_merged_upsample_mmx'
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:1765:
+ undefined reference to `SSL_get_secure_renegotiation_support'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x3b8): undefined
-  reference to `jsimd_h2v2_extxrgb_merged_upsample_mmx'
+ /usr/bin/ld: src/chromium/libGNET.a(ssl_client_socket_impl.cc.o): in
+ function
+ `net::SSLClientSocketImpl::SSLContext::SetSSLKeyLogger(std::unique_ptr<net::SSLKeyLogger,
+ std::default_delete<net::SSLKeyLogger> >)':
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x3c0): undefined
-  reference to `jsimd_h2v1_extrgb_merged_upsample_avx2'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x3c8): undefined
-  reference to `jsimd_h2v1_extrgbx_merged_upsample_avx2'
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:301:
+ undefined reference to `SSL_CTX_set_keylog_callback'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x3d0): undefined
-  reference to `jsimd_h2v1_extbgr_merged_upsample_avx2'
+ /usr/bin/ld: src/chromium/libGNET.a(ssl_client_socket_impl.cc.o): in
+ function
+ `net::SSLClientSocketImpl::SSLContext::SetClientSocketForSSL(ssl_st*,
+ net::SSLClientSocketImpl*)':
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x3d8): undefined
-  reference to `jsimd_h2v1_extbgrx_merged_upsample_avx2'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x3e0): undefined
-  reference to `jsimd_h2v1_extxbgr_merged_upsample_avx2'
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:295:
+ undefined reference to `SSL_set_ex_data'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x3e8): undefined
-  reference to `jsimd_h2v1_extxrgb_merged_upsample_avx2'
+ /usr/bin/ld: src/chromium/libGNET.a(ssl_client_socket_impl.cc.o): in
+ function
+ `net::SSLClientSocketImpl::SSLContext::GetClientSocketFromSSL(ssl_st
+ const*)':
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x3f0): undefined
-  reference to `jsimd_h2v1_extrgbx_merged_upsample_avx2'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x3f8): undefined
-  reference to `jsimd_h2v1_extbgrx_merged_upsample_avx2'
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:289:
+ undefined reference to `SSL_get_ex_data'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x400): undefined
-  reference to `jsimd_h2v1_extxbgr_merged_upsample_avx2'
+ /usr/bin/ld: src/chromium/libGNET.a(ssl_client_socket_impl.cc.o): in
+ function `SSLContext':
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x408): undefined
-  reference to `jsimd_h2v1_extxrgb_merged_upsample_avx2'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x410): undefined
-  reference to `jsimd_h2v1_extrgb_merged_upsample_sse2'
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:312:
+ undefined reference to `SSL_get_ex_new_index'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x418): undefined
-  reference to `jsimd_h2v1_extrgbx_merged_upsample_sse2'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:314:
+ undefined reference to `TLS_with_buffers_method'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x420): undefined
-  reference to `jsimd_h2v1_extbgr_merged_upsample_sse2'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:314:
+ undefined reference to `SSL_CTX_new'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x428): undefined
-  reference to `jsimd_h2v1_extbgrx_merged_upsample_sse2'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:315:
+ undefined reference to `SSL_CTX_set_cert_cb'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x430): undefined
-  reference to `jsimd_h2v1_extxbgr_merged_upsample_sse2'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:318:
+ undefined reference to `SSL_CTX_set_reverify_on_resume'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x438): undefined
-  reference to `jsimd_h2v1_extxrgb_merged_upsample_sse2'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:319:
+ undefined reference to `SSL_CTX_set_custom_verify'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x440): undefined
-  reference to `jsimd_h2v1_extrgbx_merged_upsample_sse2'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:323:
+ undefined reference to `SSL_CTX_set_session_cache_mode'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x448): undefined
-  reference to `jsimd_h2v1_extbgrx_merged_upsample_sse2'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:325:
+ undefined reference to `SSL_CTX_sess_set_new_cb'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x450): undefined
-  reference to `jsimd_h2v1_extxbgr_merged_upsample_sse2'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:326:
+ undefined reference to `SSL_CTX_set_timeout'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x458): undefined
-  reference to `jsimd_h2v1_extxrgb_merged_upsample_sse2'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:328:
+ undefined reference to `SSL_CTX_set_grease_enabled'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x460): undefined
-  reference to `jsimd_h2v1_extrgb_merged_upsample_mmx'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:331:
+ undefined reference to `SSL_CTX_set0_buffer_pool'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x468): undefined
-  reference to `jsimd_h2v1_extrgbx_merged_upsample_mmx'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:333:
+ undefined reference to `SSL_CTX_set_info_callback'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x470): undefined
-  reference to `jsimd_h2v1_extbgr_merged_upsample_mmx'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:334:
+ undefined reference to `SSL_CTX_set_msg_callback'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x478): undefined
-  reference to `jsimd_h2v1_extbgrx_merged_upsample_mmx'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:345:
+ undefined reference to `SSL_CTX_set1_curves'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x480): undefined
-  reference to `jsimd_h2v1_extxbgr_merged_upsample_mmx'
+ /usr/bin/ld: src/chromium/libGNET.a(ssl_client_socket_impl.cc.o): in
+ function `bssl::internal::DeleterImpl<ssl_ctx_st,
+ void>::Free(ssl_ctx_st*)':
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x488): undefined
-  reference to `jsimd_h2v1_extxrgb_merged_upsample_mmx'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x490): undefined
-  reference to `jsimd_h2v1_extrgbx_merged_upsample_mmx'
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/third_party/boringssl/src/include/openssl/ssl.h:4692:
+ undefined reference to `SSL_CTX_free'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x498): undefined
-  reference to `jsimd_h2v1_extbgrx_merged_upsample_mmx'
+ /usr/bin/ld: src/chromium/libGNET.a(ssl_client_socket_impl.cc.o): in
+ function `bssl::internal::DeleterImpl<ssl_st, void>::Free(ssl_st*)':
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x4a0): undefined
-  reference to `jsimd_h2v1_extxbgr_merged_upsample_mmx'
 
-  /usr/bin/ld: libGLIBJPEG_TURBO.a(jsimd.c.o):(.rodata+0x4a8): undefined
-  reference to `jsimd_h2v1_extxrgb_merged_upsample_mmx'
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/third_party/boringssl/src/include/openssl/ssl.h:4691:
+ undefined reference to `SSL_free'
 
-  /usr/bin/ld: src/cobalt/libcobalt_media.a(mime_util_internal.cc.o): in
-  function
-  `cobalt::media::internal::MimeUtil::StringToCodec(std::__cxx11::basic_string<char,
-  std::char_traits<char>, std::allocator<char> > const&,
-  std::__cxx11::basic_string<char, std::char_traits<char>,
-  std::allocator<char> > const&, cobalt::media::internal::MimeUtil::Codec*,
-  bool*, cobalt::media::VideoCodecProfile*, unsigned char*, bool) const':
+ /usr/bin/ld: src/chromium/libGNET.a(openssl_ssl_util.cc.o): in function
+ `net::GetNetSSLVersion(ssl_st*)':
 
-  mime_util_internal.cc:(.text+0x590): undefined reference to
-  `cobalt::media::ParseAVCCodecId(std::__cxx11::basic_string<char,
-  std::char_traits<char>, std::allocator<char> > const&,
-  cobalt::media::VideoCodecProfile*, unsigned char*)'
 
-  /usr/bin/ld: mime_util_internal.cc:(.text+0xa8a): undefined reference to
-  `cobalt::media::ParseHEVCCodecId(std::__cxx11::basic_string<char,
-  std::char_traits<char>, std::allocator<char> > const&,
-  cobalt::media::VideoCodecProfile*, unsigned char*)'
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/ssl/openssl_ssl_util.cc:222:
+ undefined reference to `SSL_version'
 
-  /usr/bin/ld: src/chromium/libGNET.a(mime_util.cc.o): in function
-  `net::MimeUtil::GetMimeTypeFromExtensionHelper(std::__cxx11::basic_string<char,
-  std::char_traits<char>, std::allocator<char> > const&, bool,
-  std::__cxx11::basic_string<char, std::char_traits<char>,
-  std::allocator<char> >*) const':
+ /usr/bin/ld: src/chromium/libGNET.a(openssl_ssl_util.cc.o): in function
+ `net::SetSSLChainAndKey(ssl_st*, net::X509Certificate*, evp_pkey_st*,
+ ssl_private_key_method_st const*)':
 
-  mime_util.cc:(.text+0x142): undefined reference to
-  `net::PlatformMimeUtil::GetPlatformMimeTypeFromExtension(std::__cxx11::basic_string<char,
-  std::char_traits<char>, std::allocator<char> > const&,
-  std::__cxx11::basic_string<char, std::char_traits<char>,
-  std::allocator<char> >*) const'
 
-  /usr/bin/ld: src/chromium/libGNET.a(mime_util.cc.o): in function
-  `net::MimeUtil::GetPreferredExtensionForMimeType(std::__cxx11::basic_string<char,
-  std::char_traits<char>, std::allocator<char> > const&,
-  std::__cxx11::basic_string<char, std::char_traits<char>,
-  std::allocator<char> >*) const':
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/ssl/openssl_ssl_util.cc:247:
+ undefined reference to `SSL_set_chain_and_key'
 
-  mime_util.cc:(.text+0x2e5): undefined reference to
-  `net::PlatformMimeUtil::GetPlatformPreferredExtensionForMimeType(std::__cxx11::basic_string<char,
-  std::char_traits<char>, std::allocator<char> > const&,
-  std::__cxx11::basic_string<char, std::char_traits<char>,
-  std::allocator<char> >*) const'
+ /usr/bin/ld: src/chromium/libGNET.a(ssl_cipher_suite_names.cc.o): in
+ function `net::SSLCipherSuiteToStrings(char const**, char const**, char
+ const**, bool*, bool*, unsigned short)':
 
-  /usr/bin/ld: src/chromium/libGNET.a(mime_util.cc.o): in function
-  `net::GetExtensionsForMimeType(std::__cxx11::basic_string<char,
-  std::char_traits<char>, std::allocator<char> > const&,
-  std::vector<std::__cxx11::basic_string<char, std::char_traits<char>,
-  std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char,
-  std::char_traits<char>, std::allocator<char> > > >*)':
 
-  mime_util.cc:(.text+0x2018): undefined reference to
-  `net::PlatformMimeUtil::GetPlatformExtensionsForMimeType(std::__cxx11::basic_string<char,
-  std::char_traits<char>, std::allocator<char> > const&,
-  std::unordered_set<std::__cxx11::basic_string<char, std::char_traits<char>,
-  std::allocator<char> >, std::hash<std::__cxx11::basic_string<char,
-  std::char_traits<char>, std::allocator<char> > >,
-  std::equal_to<std::__cxx11::basic_string<char, std::char_traits<char>,
-  std::allocator<char> > >, std::allocator<std::__cxx11::basic_string<char,
-  std::char_traits<char>, std::allocator<char> > > >*) const'
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/ssl/ssl_cipher_suite_names.cc:69:
+ undefined reference to `SSL_get_cipher_by_value'
 
-  /usr/bin/ld: mime_util.cc:(.text+0x21be): undefined reference to
-  `net::PlatformMimeUtil::GetPlatformExtensionsForMimeType(std::__cxx11::basic_string<char,
-  std::char_traits<char>, std::allocator<char> > const&,
-  std::unordered_set<std::__cxx11::basic_string<char, std::char_traits<char>,
-  std::allocator<char> >, std::hash<std::__cxx11::basic_string<char,
-  std::char_traits<char>, std::allocator<char> > >,
-  std::equal_to<std::__cxx11::basic_string<char, std::char_traits<char>,
-  std::allocator<char> > >, std::allocator<std::__cxx11::basic_string<char,
-  std::char_traits<char>, std::allocator<char> > > >*) const'
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/ssl/ssl_cipher_suite_names.cc:73:
+ undefined reference to `SSL_CIPHER_get_kx_nid'
 
-  clang: error: linker command failed with exit code 1 (use -v to see
-  invocation)
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/ssl/ssl_cipher_suite_names.cc:82:
+ undefined reference to `SSL_CIPHER_get_auth_nid'
+
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/ssl/ssl_cipher_suite_names.cc:93:
+ undefined reference to `SSL_CIPHER_get_cipher_nid'
+
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/ssl/ssl_cipher_suite_names.cc:114:
+ undefined reference to `SSL_CIPHER_is_aead'
+
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/ssl/ssl_cipher_suite_names.cc:118:
+ undefined reference to `SSL_CIPHER_get_digest_nid'
+
+ /usr/bin/ld: src/chromium/libGNET.a(ssl_cipher_suite_names.cc.o): in
+ function `net::(anonymous
+ namespace)::ObsoleteSSLStatusForCipherSuite(unsigned short)':
+
+
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/ssl/ssl_cipher_suite_names.cc:27:
+ undefined reference to `SSL_get_cipher_by_value'
+
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/ssl/ssl_cipher_suite_names.cc:35:
+ undefined reference to `SSL_CIPHER_get_kx_nid'
+
+ /usr/bin/ld:
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/ssl/ssl_cipher_suite_names.cc:39:
+ undefined reference to `SSL_CIPHER_is_aead'
+
+ /usr/bin/ld: src/chromium/libbase.a(xdg_util.cc.o): in function
+ `base::nix::GetXDGUserDirectory(char const*, char const*)':
+
+
+ /home/denis/workspace/skia-opengl-emscripten/src/chromium/base/nix/xdg_util.cc:46:
+ undefined reference to `xdg_user_dir_lookup(char const*)'
+
+ /usr/bin/ld:
+ src/cobalt/libstarboard_platform.a(decode_target_internal.cc.o): in
+ function `starboard::shared::(anonymous
+ namespace)::CreateTargetFromVideoFrameWithContextRunner(void*)':
+
+
+ /home/denis/workspace/skia-opengl-emscripten/src/cobalt/port/starboard/linux/shared/decode_target_internal.cc:89:
+ undefined reference to
+ `starboard::shared::starboard::player::filter::CpuVideoFrame::GetPlane(int)
+ const'
+
+ /usr/bin/ld:
+ src/cobalt/libstarboard_platform.a(decode_target_internal.cc.o): in
+ function
+ `starboard::RefCountedThreadSafe<starboard::shared::starboard::player::filter::VideoFrame,
+ starboard::DefaultRefCountedThreadSafeTraits<starboard::shared::starboard::player::filter::VideoFrame>
+ >::Release() const':
+
+
+ /home/denis/workspace/skia-opengl-emscripten/src/cobalt/port/starboard/common/ref_counted.h:128:
+ undefined reference to
+ `starboard::subtle::RefCountedThreadSafeBase::Release() const'
+
+ /usr/bin/ld:
+ src/cobalt/libstarboard_platform.a(decode_target_internal.cc.o): in
+ function
+ `starboard::RefCountedThreadSafe<starboard::shared::starboard::player::filter::VideoFrame,
+ starboard::DefaultRefCountedThreadSafeTraits<starboard::shared::starboard::player::filter::VideoFrame>
+ >::AddRef() const':
+
+
+ /home/denis/workspace/skia-opengl-emscripten/src/cobalt/port/starboard/common/ref_counted.h:125:
+ undefined reference to
+ `starboard::subtle::RefCountedThreadSafeBase::AddRef() const'
+
+ clang: error: linker command failed with exit code 1 (use -v to see
+ invocation)
+
+ make[2]: *** [CMakeFiles/skemgl.dir/build.make:294: skemgl] Error 1
+
+ make[1]: *** [CMakeFiles/Makefile2:460: CMakeFiles/skemgl.dir/all] Error 2
+
+ make: *** [Makefile:130: all] Error 2
 

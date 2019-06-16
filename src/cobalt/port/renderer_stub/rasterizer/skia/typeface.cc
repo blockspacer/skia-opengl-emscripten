@@ -49,6 +49,7 @@ render_tree::TypefaceId SkiaTypeface::GetId() const {
 }
 
 uint32 SkiaTypeface::GetEstimatedSizeInBytes() const {
+  DCHECK(typeface_);
   return static_cast<uint32>(typeface_->GetStreamLength());
 }
 

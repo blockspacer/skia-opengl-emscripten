@@ -1,4 +1,4 @@
-// Copyright 2017 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2017 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -34,6 +34,11 @@ class SkTypeface_Cobalt : public SkTypeface_FreeType {
 
   bool synthesizes_bold() const { return synthesizes_bold_; }
 
+  // see https://github.com/google/skia/blob/81abc43e6f0b1a789e1bf116820c8ede68d778ab/src/ports/SkFontMgr_custom.cpp#L51
+  sk_sp<SkTypeface> onMakeClone(const SkFontArguments& args) const override {
+      return sk_ref_sp(this);
+  }
+
  protected:
   void onGetFamilyName(SkString* family_name) const override;
 
@@ -47,13 +52,18 @@ class SkTypeface_Cobalt : public SkTypeface_FreeType {
 
 class SkTypeface_CobaltStream : public SkTypeface_Cobalt {
  public:
-  SkTypeface_CobaltStream(SkStreamAsset* stream, int face_index, SkFontStyle style,
+  SkTypeface_CobaltStream(std::unique_ptr<SkStreamAsset> stream, int face_index, SkFontStyle style,
                           bool is_fixed_pitch, const SkString& family_name);
 
   void onGetFontDescriptor(SkFontDescriptor* descriptor,
                            bool* serialize) const override;
 
   std::unique_ptr<SkStreamAsset> onOpenStream(int* face_index) const override;
+
+  // see https://github.com/google/skia/blob/81abc43e6f0b1a789e1bf116820c8ede68d778ab/src/ports/SkFontMgr_custom.cpp#L51
+  sk_sp<SkTypeface> onMakeClone(const SkFontArguments& args) const override {
+      return sk_ref_sp(this);
+  }
 
   size_t GetStreamLength() const override;
 
@@ -69,6 +79,11 @@ class SkTypeface_CobaltStreamProvider : public SkTypeface_Cobalt {
       SkFileMemoryChunkStreamProvider* stream_provider, int face_index,
       SkFontStyle style, bool is_fixed_pitch, const SkString& family_name,
       bool disable_synthetic_bolding);
+
+  // see https://github.com/google/skia/blob/81abc43e6f0b1a789e1bf116820c8ede68d778ab/src/ports/SkFontMgr_custom.cpp#L51
+  sk_sp<SkTypeface> onMakeClone(const SkFontArguments& args) const override {
+      return sk_ref_sp(this);
+  }
 
   void onGetFontDescriptor(SkFontDescriptor* descriptor,
                            bool* serialize) const override;

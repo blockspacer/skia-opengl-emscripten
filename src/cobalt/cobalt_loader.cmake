@@ -69,6 +69,7 @@ set(cobalt_loader_SOURCES
   ${COBALT_CORE_DIR}loader/cobalt_url_fetcher_string_writer.h
   ${COBALT_CORE_DIR}loader/cache_fetcher.cc
   ${COBALT_CORE_DIR}loader/cache_fetcher.h
+  # requires cobalt/network/network_module.h
   ${COBALT_CORE_DIR}loader/cors_preflight.cc
   ${COBALT_CORE_DIR}loader/cors_preflight.h
   ${COBALT_CORE_DIR}loader/cors_preflight_cache.cc
@@ -106,8 +107,10 @@ set(cobalt_loader_SOURCES
   ${COBALT_CORE_DIR}loader/image/jpeg_image_decoder.cc
   ${COBALT_CORE_DIR}loader/image/jpeg_image_decoder.h
   ## TODO ## forward declaration of 'png_struct_def'
-  #${COBALT_CORE_DIR}loader/image/png_image_decoder.cc
-  #${COBALT_CORE_DIR}loader/image/png_image_decoder.h
+  #
+  ${COBALT_CORE_DIR}loader/image/png_image_decoder.cc
+  #
+  ${COBALT_CORE_DIR}loader/image/png_image_decoder.h
   ${COBALT_CORE_DIR}loader/image/stub_image_decoder.h
   ${COBALT_CORE_DIR}loader/image/threaded_image_decoder_proxy.cc
   ${COBALT_CORE_DIR}loader/image/threaded_image_decoder_proxy.h
@@ -142,6 +145,8 @@ add_library(cobalt_loader STATIC
   ${cobalt_loader_origin_SOURCES}
 )
 
+#message(FATAL_ERROR "libjpeg_TURBO_LIB=${libjpeg_TURBO_LIB}")
+
 target_link_libraries(cobalt_loader PUBLIC
   cobalt_base
   #cobalt_nanobase
@@ -159,10 +164,12 @@ target_link_libraries(cobalt_loader PUBLIC
   ced
   glm
   libwebp # requires libpng
-  ${libjpeg_LIB}
+  #${libjpeg_LIB}
   ${libjpeg_TURBO_LIB}
+  #GLIBJPEG_TURBO
   ${libpng_LIB}
   #${iccjpeg_LIB}
+  #SKIA
 )
 
 set_property(TARGET cobalt_loader PROPERTY CXX_STANDARD 17)
@@ -191,4 +198,5 @@ target_compile_definitions(cobalt_loader PRIVATE
   #COBALT_ENABLE_XHR_HEADER_FILTERING=1
   #
   ${COBALT_COMMON_DEFINES}
+  ENABLE_PNG=1
 )

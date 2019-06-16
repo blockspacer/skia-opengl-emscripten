@@ -1,4 +1,4 @@
-// Copyright 2015 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2015 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -244,6 +244,8 @@ CachedResource<CacheType>::CachedResource(const GURL& url, const Origin& origin,
       are_completion_callbacks_enabled_(false),
       retry_count_(0) {
   DCHECK(cached_resource_thread_checker_.CalledOnValidThread());
+
+  /// __TODO__
   StartLoading();
 }
 
@@ -440,7 +442,9 @@ class CachedResourceReferenceWithCallbacks {
         cached_resource_loaded_callback_handler_(
             new CachedResourceTypeOnLoadedCallbackHandler(
                 cached_resource, content_produced_callback,
-                load_complete_callback)) {}
+                load_complete_callback)
+            //nullptr
+            ) {}
 
   scoped_refptr<CachedResourceType> cached_resource() {
     return cached_resource_;
@@ -562,6 +566,7 @@ class ResourceCache {
 
   bool are_loading_retries_enabled() const {
     return are_loading_retries_enabled_;
+    //return false;
   }
 
   // The name of this resource cache object, useful while debugging.
@@ -682,6 +687,7 @@ template <typename CacheType>
 scoped_refptr<CachedResource<CacheType>>
 ResourceCache<CacheType>::CreateCachedResource(const GURL& url,
                                                const Origin& origin) {
+  printf("CreateCachedResource %s %s\n", url.path().c_str(), origin.SerializedOrigin().c_str());
   DCHECK(resource_cache_thread_checker_.CalledOnValidThread());
   DCHECK(url.is_valid());
 

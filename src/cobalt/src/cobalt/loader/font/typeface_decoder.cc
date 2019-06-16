@@ -35,6 +35,7 @@ TypefaceDecoder::TypefaceDecoder(
 }
 
 void TypefaceDecoder::DecodeChunk(const char* data, size_t size) {
+  printf("TypefaceDecoder::DecodeChunk\n");
   if (is_suspended_) {
     DLOG(WARNING) << __FUNCTION__ << "[" << this << "] while suspended.";
     return;

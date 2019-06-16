@@ -1,4 +1,4 @@
-// Copyright 2015 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2015 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -191,10 +191,12 @@ float FontList::GetSpaceWidth() {
 
 const scoped_refptr<render_tree::Font>& FontList::GetCharacterFont(
     int32 utf32_character, render_tree::GlyphIndex* glyph_index) {
+  //printf("FontList::GetCharacterFont 1");
   // Walk the list of fonts, requesting any encountered that are in an
   // unrequested state. The first font encountered that has the character is the
   // character font.
   for (size_t i = 0; i < fonts_.size(); ++i) {
+    //printf("FontList::GetCharacterFont 2");
     FontListFont& font_list_font = fonts_[i];
 
     if (font_list_font.state() == FontListFont::kUnrequestedState) {
@@ -215,6 +217,7 @@ const scoped_refptr<render_tree::Font>& FontList::GetCharacterFont(
 
 const scoped_refptr<render_tree::Font>& FontList::GetFallbackCharacterFont(
     int32 utf32_character, render_tree::GlyphIndex* glyph_index) {
+  printf("FontList::GetFallbackCharacterFont 1");
   scoped_refptr<render_tree::Typeface>& fallback_typeface =
       character_fallback_typeface_map_[utf32_character];
   if (fallback_typeface.get() == NULL) {
@@ -232,11 +235,13 @@ const scoped_refptr<render_tree::Font>& FontList::GetFallbackCharacterFont(
     fallback_font = fallback_typeface_to_font_map_[fallback_typeface->GetId()] =
         font_cache_->GetFontFromTypefaceAndSize(fallback_typeface, size_);
   }
+  printf("FontList::GetFallbackCharacterFont 2");
 
   return fallback_font;
 }
 
 const scoped_refptr<render_tree::Font>& FontList::GetPrimaryFont() {
+  printf("FontList::GetPrimaryFont 1");
   // The primary font is lazily generated. If it hasn't been set yet, then it's
   // time to do it now.
   if (!primary_font_) {
@@ -244,6 +249,7 @@ const scoped_refptr<render_tree::Font>& FontList::GetPrimaryFont() {
     // unrequested state. The first font encountered that is loaded is
     // the primary font.
     for (size_t i = 0; i < fonts_.size(); ++i) {
+      printf("FontList::GetPrimaryFont 2");
       FontListFont& font_list_font = fonts_[i];
 
       if (font_list_font.state() == FontListFont::kUnrequestedState) {
@@ -264,21 +270,24 @@ const scoped_refptr<render_tree::Font>& FontList::GetPrimaryFont() {
 void FontList::RequestFont(size_t index) {
   FontListFont& font_list_font = fonts_[index];
   FontListFont::State state;
-
+  printf("FontList::RequestFont 1");
   // Request the font from the font cache; the state of the font will be set
   // during the call.
   scoped_refptr<render_tree::Font> render_tree_font = font_cache_->TryGetFont(
       font_list_font.family_name(), style_, size_, &state);
 
+  printf("FontList::RequestFont 2");
   if (state == FontListFont::kLoadedState) {
     DCHECK(render_tree_font.get() != NULL);
 
+    printf("FontList::RequestFont 3");
     // Walk all of the fonts in the list preceding the loaded font. If they have
     // the same typeface as the loaded font, then set the font list font as a
     // duplicate. There's no reason to have multiple fonts in the list with the
     // same typeface.
     render_tree::TypefaceId typeface_id = render_tree_font->GetTypefaceId();
     for (size_t i = 0; i < index; ++i) {
+      printf("FontList::RequestFont 4");
       FontListFont& check_font = fonts_[i];
       if (check_font.state() == FontListFont::kLoadedState &&
           check_font.font()->GetTypefaceId() == typeface_id) {
@@ -290,10 +299,12 @@ void FontList::RequestFont(size_t index) {
     // If this font wasn't a duplicate, then its time to initialize its font
     // data. This font is now available to use.
     if (font_list_font.state() != FontListFont::kDuplicateState) {
+      printf("FontList::RequestFont 5");
       font_list_font.set_state(FontListFont::kLoadedState);
       font_list_font.set_font(render_tree_font);
     }
   } else {
+    printf("FontList::RequestFont 6");
     font_list_font.set_state(state);
   }
 }

@@ -120,6 +120,7 @@ std::unique_ptr<Fetcher> FetcherFactory::CreateSecureFetcher(
   DLOG(INFO) << "Fetching: " << ClipUrl(url, 80);
 
   if (!url.is_valid()) {
+    printf("url.!is_valid %s\n", url.path().c_str());
     std::stringstream error_message;
     error_message << "URL is invalid: " << url;
     return std::unique_ptr<Fetcher>(
@@ -128,6 +129,7 @@ std::unique_ptr<Fetcher> FetcherFactory::CreateSecureFetcher(
 
   if ((url.SchemeIs("https") || url.SchemeIs("http") || url.SchemeIs("data")) &&
       network_module_) {
+    printf("url.network_module_ %s\n", url.path().c_str());
 
 #if defined(ENABLE_GNET)
     NetFetcher::Options options;
@@ -147,11 +149,13 @@ std::unique_ptr<Fetcher> FetcherFactory::CreateSecureFetcher(
   }
 
   if (url.SchemeIs("blob") && !blob_resolver_.is_null()) {
+    printf("url.blob %s\n", url.path().c_str());
     return std::unique_ptr<Fetcher>(
         new BlobFetcher(url, handler, blob_resolver_));
   }
 
   if (url.SchemeIs(kEmbeddedScheme)) {
+    printf("url.kEmbeddedScheme %s\n", url.path().c_str());
     EmbeddedFetcher::Options options;
     return std::unique_ptr<Fetcher>(
         new EmbeddedFetcher(url,
@@ -164,6 +168,7 @@ std::unique_ptr<Fetcher> FetcherFactory::CreateSecureFetcher(
   // h5vcc-cache: scheme requires read_cache_callback_ which is not available
   // in the main WebModule.
   if (url.SchemeIs(kCacheScheme) && !read_cache_callback_.is_null()) {
+    printf("url.kCacheScheme %s\n", url.path().c_str());
     return std::unique_ptr<Fetcher>(new CacheFetcher(
         url,
 #if defined(ENABLE_COBALT_CSP)
@@ -173,16 +178,21 @@ std::unique_ptr<Fetcher> FetcherFactory::CreateSecureFetcher(
   }
 
   if (url.SchemeIsFile()) {
+    printf("url.SchemeIsFile %s\n", url.path().c_str());
     base::FilePath file_path;
     if (!FileURLToFilePath(url, &file_path)) {
+      printf("url.!FileURLToFilePath %s\n", url.path().c_str());
       std::stringstream error_message;
       error_message << "File URL cannot be converted to file path: " << url;
       return std::unique_ptr<Fetcher>(
           new ErrorFetcher(handler, error_message.str()));
     }
+    printf("url.FileURLToFilePath %s\n", file_path.value().c_str());
 
     FileFetcher::Options options;
     options.message_loop_proxy = file_thread_.task_runner();
+    /// __TODO__
+    ///options.message_loop_proxy = base::MessageLoopCurrent::Get().task_runner();
     options.extra_search_dir = extra_search_dir_;
     return std::unique_ptr<Fetcher>(
         new FileFetcher(file_path, handler, options));

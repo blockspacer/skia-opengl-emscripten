@@ -1,4 +1,4 @@
-// Copyright 2015 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2015 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -84,14 +84,26 @@ FileFetcher::FileFetcher(const base::FilePath& file_path, Handler* handler,
       file_path_(file_path),
       ALLOW_THIS_IN_INITIALIZER_LIST(weak_ptr_factory_(this)),
       file_proxy_(task_runner_.get()) {
+
+#if defined(OS_EMSCRIPTEN)
+  /// \note load all files from main thread on wasm
+  /// \see https://github.com/emscripten-core/emscripten/issues/3495
+  ///
+  /// __TODO__
+  ///
+  ///DCHECK(!base::MessageLoopCurrent::Get());
+#endif
+
+  printf("FileFetcher 1 %s\n", file_path.value().c_str());
   DCHECK_GT(buffer_size_, 0);
 
-  DCHECK(base::MessageLoopCurrent::Get()); // TODO
+  //DCHECK(base::MessageLoopCurrent::Get()); // TODO
   DCHECK(task_runner_); // TODO
 
   // Ensure the request does not attempt to navigate outside the whitelisted
   // directory.
   if (file_path_.ReferencesParent() || file_path_.IsAbsolute()) {
+    printf("!FileFetcher file_path_.ReferencesParent() || file_path_.IsAbsolute() %s\n", file_path.value().c_str());
     handler->OnError(this,
                      FileErrorToString(base::File::FILE_ERROR_ACCESS_DENIED));
     return;
@@ -121,6 +133,9 @@ FileFetcher::~FileFetcher() {
 #if defined(__TODO__)
     task_runner_->WaitForFence();
 #endif
+
+    /// __TODO__
+    task_runner_->RunsTasksInCurrentSequence();
   }
 }
 
@@ -145,6 +160,7 @@ void FileFetcher::BuildSearchPath(const base::FilePath& extra_search_dir) {
 }
 
 void FileFetcher::TryFileOpen() {
+  printf("FileFetcher::TryFileOpen 1 %s\n", file_path_.value().c_str());
   // Append the file path to the current search path entry and try.
   base::FilePath actual_file_path;
   actual_file_path = curr_search_path_iter_->Append(file_path_);
@@ -156,6 +172,7 @@ void FileFetcher::TryFileOpen() {
 }
 
 void FileFetcher::ReadNextChunk() {
+  printf("FileFetcher::ReadNextChunk 1 %s\n", file_path_.value().c_str());
   int32 bytes_to_read = buffer_size_;
   if (bytes_to_read > bytes_left_to_read_) {
     bytes_to_read = static_cast<int32>(bytes_left_to_read_);
@@ -166,6 +183,7 @@ void FileFetcher::ReadNextChunk() {
 }
 
 void FileFetcher::DidCreateOrOpen(base::File::Error error) {
+  printf("FileFetcher::DidCreateOrOpen error=%d (where FILE_OK = 0)\n", error);
   DCHECK(thread_checker_.CalledOnValidThread());
   if (error != base::File::FILE_OK) {
     // File could not be opened at the current search path entry.
@@ -173,6 +191,7 @@ void FileFetcher::DidCreateOrOpen(base::File::Error error) {
     if (++curr_search_path_iter_ != search_path_.end()) {
       TryFileOpen();
     } else {
+      printf("FileFetcher::DidCreateOrOpen OnError=%s\n", FileErrorToString(error));
       // base::File::Error and Starboard file error can cast to each other.
       handler()->OnError(this, FileErrorToString(error));
     }

@@ -1,4 +1,4 @@
-// Copyright 2016 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2016 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -40,6 +40,7 @@ struct RemoteTypefaceResourceCacheType {
 
   static uint32 GetEstimatedSizeInBytes(
       const scoped_refptr<ResourceType>& resource) {
+    DCHECK(resource);
     return resource->GetEstimatedSizeInBytes();
   }
 };
@@ -57,8 +58,14 @@ typedef ResourceCache<RemoteTypefaceResourceCacheType> RemoteTypefaceCache;
 inline static std::unique_ptr<RemoteTypefaceCache> CreateRemoteTypefaceCache(
     const std::string& name, uint32 cache_capacity,
     loader::LoaderFactory* loader_factory) {
+  printf("CreateRemoteTypefaceCache\n");
   return std::unique_ptr<RemoteTypefaceCache>(new RemoteTypefaceCache(
-      name, cache_capacity, true /*are_loading_retries_enabled*/,
+      name, cache_capacity,
+#if defined(OS_EMSCRIPTEN)
+      false,
+#else
+      true /*are_loading_retries_enabled*/,
+#endif
       base::Bind(&loader::LoaderFactory::CreateTypefaceLoader,
                  base::Unretained(loader_factory))));
 }

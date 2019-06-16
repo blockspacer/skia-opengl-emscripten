@@ -97,6 +97,13 @@ target_include_directories(GLIBPNG PRIVATE
 
 #"//third_party/zlib",
 
+target_compile_definitions(GLIBPNG PUBLIC
+  # TODO https://stackoverflow.com/a/44265528/10904212
+  #   chromium/third_party/libpng/pnglibconf.h:80:9:
+  #warning: 'PNG_SETJMP_SUPPORTED' macro redefined [-Wmacro-redefined]
+  #PNG_SETJMP_SUPPORTED=1
+)
+
 target_compile_definitions(GLIBPNG PRIVATE
   PNG_SET_OPTION_SUPPORTED=1
   #"PNG_USE_DLL",

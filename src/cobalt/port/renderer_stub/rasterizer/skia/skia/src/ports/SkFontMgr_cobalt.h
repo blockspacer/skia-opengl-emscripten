@@ -1,4 +1,4 @@
-// Copyright 2016 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2016 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -26,9 +26,9 @@
 //#include "base/containers/hash_tables.h"
 #include <map>
 #include "base/containers/small_map.h"
-#include "cobalt/renderer/rasterizer/skia/skia/src/ports/SkFontStyleSet_cobalt.h"
-#include "cobalt/renderer/rasterizer/skia/skia/src/ports/SkFontUtil_cobalt.h"
-#include "cobalt/renderer/rasterizer/skia/skia/src/ports/SkStream_cobalt.h"
+#include "renderer_stub/rasterizer/skia/skia/src/ports/SkFontStyleSet_cobalt.h"
+#include "renderer_stub/rasterizer/skia/skia/src/ports/SkFontUtil_cobalt.h"
+#include "renderer_stub/rasterizer/skia/skia/src/ports/SkStream_cobalt.h"
 
 // This class, which is thread-safe, is Cobalt's implementation of SkFontMgr. It
 // is responsible for the creation of remote typefaces and for, given a set of
@@ -49,6 +49,9 @@
 // best matching family, the determination of the specific typeface to use is
 // left to the family. The manager provides the family with the requested style
 // and the family returns the typeface that best fits that style.
+
+/// \see https://github.com/google/skia/blob/master/src/ports/SkFontMgr_custom.cpp
+
 class SkFontMgr_Cobalt : public SkFontMgr {
  public:
   typedef std::vector<SkFontStyleSet_Cobalt*> StyleSetArray;
@@ -95,19 +98,19 @@ class SkFontMgr_Cobalt : public SkFontMgr {
                                const SkFontStyle& font_style) const override;
 
   // NOTE: This returns NULL if the typeface cannot be created.
-  SkTypeface* onCreateFromData(SkData* data, int face_index) const override;
+  sk_sp<SkTypeface> onMakeFromData(sk_sp<SkData>, int face_index) const override;
 
   // NOTE: This returns NULL if the typeface cannot be created.
-  SkTypeface* onCreateFromStream(SkStreamAsset* stream,
+  sk_sp<SkTypeface> onMakeFromStreamIndex(std::unique_ptr<SkStreamAsset> stream,
                                  int face_index) const override;
 
   // NOTE: This returns NULL if the typeface cannot be created.
-  SkTypeface* onCreateFromFile(const char path[],
+  sk_sp<SkTypeface> onMakeFromFile(const char path[],
                                int face_index) const override;
 
   // NOTE: This always returns a non-NULL value. If no match can be found, then
   // the best match among the default family is returned.
-  SkTypeface* onLegacyCreateTypeface(const char family_name[],
+  sk_sp<SkTypeface> onLegacyMakeTypeface(const char family_name[],
                                      SkFontStyle style) const override;
 
  private:

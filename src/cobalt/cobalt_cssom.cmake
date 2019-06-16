@@ -268,10 +268,10 @@ target_link_libraries(cobalt_cssom PUBLIC
   icu
   ced
   glm
-  libwebp # requires libpng
-  ${libjpeg_LIB}
-  ${libjpeg_TURBO_LIB}
-  ${libpng_LIB}
+  #libwebp # requires libpng
+  #${libjpeg_LIB}
+  #${libjpeg_TURBO_LIB}
+  #${libpng_LIB}
   #${iccjpeg_LIB}
 )
 

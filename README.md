@@ -27,6 +27,7 @@ notes
 > if you want good performance - set RELEASE_BUILD to TRUE in CMakeLists.txt and set -DCMAKE_BUILD_TYPE=Release. Or even better - use scripts from tools directory with right arguments.
 > no embedded js engine, prefer C++/wasm
 > May break compatibility to the web (move beyond the web). Web pays enormous penalties for compatibility with 30-year-old web pages. See https://softwareengineeringdaily.com/wp-content/uploads/2018/06/SED625-Flutter.pdf
+> don`t load files from ptreads: may cause deadlock on wasm! See https://github.com/emscripten-core/emscripten/issues/3495
 
 # Features
 

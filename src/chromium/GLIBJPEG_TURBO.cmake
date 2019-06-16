@@ -212,4 +212,13 @@ target_compile_definitions(GLIBJPEG_TURBO PRIVATE
   ${EXTRA_DEFINES}
   #WITH_SIMD
   #NO_GETENV
+  # https://github.com/blockspacer/cobalt-clone-28052019/blob/89664d116629734759176d820e9923257717e09c/src/third_party/libjpeg-turbo/CMakeLists.txt
+  # -DBMP_SUPPORTED -DGIF_SUPPORTED -DPPM_SUPPORTED -DTARGA_SUPPORTED
+  # https://github.com/blockspacer/cobalt-clone-28052019/blob/89664d116629734759176d820e9923257717e09c/src/third_party/libjpeg-turbo/CMakeLists.txt#L358
+  #HAVE_LOCALE_H
+  #HAVE_STDDEF_H
+  #HAVE_STDLIB_H
+  #NEED_SYS_TYPES_H
+  #HAVE_MEMSET
+  #HAVE_MEMCPY
 )

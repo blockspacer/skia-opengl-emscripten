@@ -1,4 +1,4 @@
-// Copyright 2015 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2015 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,7 +19,10 @@
 #include "base/logging.h"
 #include "base/trace_event/trace_event.h"
 #include "nb/memory_scope.h"
-#include "third_party/libjpeg/jpegint.h"
+
+//#include "third_party/libjpeg/jpegint.h"
+
+#include "jpegint.h"
 
 namespace cobalt {
 namespace loader {
@@ -82,6 +85,10 @@ void ErrorManagerExit(j_common_ptr common_ptr) {
   // previous call to setjmp that contains information to store the environment
   // to that point.
   jmp_buf* buffer = static_cast<jmp_buf*>(common_ptr->client_data);
+/*
+ * TODO: emscripten
+Code that uses low-level features of the native environment, for example native stack manipulation in conjunction with setjmp/longjmp (we support proper setjmp/longjmp, i.e., jumping down the stack, but not jumping up to an unwound stack, which is undefined behavior).
+*/
   longjmp(*buffer, 1);
 }
 

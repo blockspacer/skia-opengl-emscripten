@@ -22,7 +22,7 @@
 #include "renderer_stub/rasterizer/skia/cobalt_skia_type_conversions.h"
 #include "renderer_stub/rasterizer/skia/font.h"
 #include "renderer_stub/rasterizer/skia/glyph_buffer.h"
-//#include "renderer_stub/rasterizer/skia/skia/src/ports/SkFontMgr_cobalt.h"
+#include "renderer_stub/rasterizer/skia/skia/src/ports/SkFontMgr_cobalt.h"
 #include "renderer_stub/rasterizer/skia/skia/src/ports/SkTypeface_cobalt.h"
 #include "renderer_stub/rasterizer/skia/software_image.h"
 #include "renderer_stub/rasterizer/skia/software_mesh.h"
@@ -46,17 +46,17 @@ SoftwareResourceProvider::SoftwareResourceProvider(
           purge_skia_font_caches_on_destruction) {
   // Initialize the font manager now to ensure that it doesn't get initialized
   // on multiple threads simultaneously later.
-  ///SkFontMgr::RefDefault();
+  SkFontMgr::RefDefault();
 }
 
 SoftwareResourceProvider::~SoftwareResourceProvider() {
   if (purge_skia_font_caches_on_destruction_) {
     text_shaper_.PurgeCaches();
 
-  ///  sk_sp<SkFontMgr> font_manager(SkFontMgr::RefDefault());
-  ///  SkFontMgr_Cobalt* cobalt_font_manager =
-  ///      base::polymorphic_downcast<SkFontMgr_Cobalt*>(font_manager.get());
-  ///  cobalt_font_manager->PurgeCaches();
+      sk_sp<SkFontMgr> font_manager(SkFontMgr::RefDefault());
+      SkFontMgr_Cobalt* cobalt_font_manager =
+          base::polymorphic_downcast<SkFontMgr_Cobalt*>(font_manager.get());
+      cobalt_font_manager->PurgeCaches();
   }
 }
 
@@ -144,14 +144,14 @@ bool SoftwareResourceProvider::HasLocalFontFamily(
                "SoftwareResourceProvider::HasLocalFontFamily()");
 
 
-  return true;
+  //return true;
 
 
 
 
-  ///sk_sp<SkFontMgr> font_manager(SkFontMgr::RefDefault());
-  ///sk_sp<SkFontStyleSet> style_set(font_manager->matchFamily(font_family_name));
-  ///return style_set->count() > 0;
+  sk_sp<SkFontMgr> font_manager(SkFontMgr::RefDefault());
+  sk_sp<SkFontStyleSet> style_set(font_manager->matchFamily(font_family_name));
+  return style_set->count() > 0;
   //return false;
 }
 
@@ -162,20 +162,19 @@ scoped_refptr<render_tree::Typeface> SoftwareResourceProvider::GetLocalTypeface(
                "SoftwareResourceProvider::GetLocalTypeface()");
 
 
-  sk_sp<SkFontMgr> font_manager(SkFontMgr::RefDefault());
+  /*sk_sp<SkFontMgr> font_manager(SkFontMgr::RefDefault());
   //font_manager->
   sk_sp<SkTypeface_Cobalt> typeface(
       base::polymorphic_downcast<SkTypeface_Cobalt*>(Font::getDefaultTypeface()->makeClone(SkFontArguments()).release()));
+  return scoped_refptr<render_tree::Typeface>(new SkiaTypeface(typeface));*/
+
+
+  sk_sp<SkFontMgr> font_manager(SkFontMgr::RefDefault());
+  sk_sp<SkTypeface_Cobalt> typeface(
+      base::polymorphic_downcast<SkTypeface_Cobalt*>(
+          font_manager->matchFamilyStyle(
+              font_family_name, CobaltFontStyleToSkFontStyle(font_style))));
   return scoped_refptr<render_tree::Typeface>(new SkiaTypeface(typeface));
-
-
-
-  ///sk_sp<SkFontMgr> font_manager(SkFontMgr::RefDefault());
-  ///sk_sp<SkTypeface_Cobalt> typeface(
-  ///    base::polymorphic_downcast<SkTypeface_Cobalt*>(
-  ///        font_manager->matchFamilyStyle(
-  ///            font_family_name, CobaltFontStyleToSkFontStyle(font_style))));
-  ///return scoped_refptr<render_tree::Typeface>(new SkiaTypeface(typeface));
   //return nullptr;
   //return base::WrapRefCounted(new cobalt::render_tree::TypefaceStub(NULL));
 }
@@ -187,25 +186,25 @@ SoftwareResourceProvider::GetLocalTypefaceByFaceNameIfAvailable(
   TRACE_EVENT0("cobalt::renderer",
                "SoftwareResourceProvider::GetLocalTypefaceIfAvailable()");
 
-  sk_sp<SkFontMgr> font_manager(SkFontMgr::RefDefault());
+  /*sk_sp<SkFontMgr> font_manager(SkFontMgr::RefDefault());
   //font_manager->
   sk_sp<SkTypeface_Cobalt> typeface(
       base::polymorphic_downcast<SkTypeface_Cobalt*>(Font::getDefaultTypeface()->makeClone(SkFontArguments()).release()));
-  return scoped_refptr<render_tree::Typeface>(new SkiaTypeface(typeface));
+  return scoped_refptr<render_tree::Typeface>(new SkiaTypeface(typeface));*/
 
-  ///sk_sp<SkFontMgr> font_manager(SkFontMgr::RefDefault());
-  ///SkFontMgr_Cobalt* cobalt_font_manager =
-  ///    base::polymorphic_downcast<SkFontMgr_Cobalt*>(font_manager.get());
-  ///
-  ///sk_sp<SkTypeface_Cobalt> typeface(
-  ///    base::polymorphic_downcast<SkTypeface_Cobalt*>(
-  ///        cobalt_font_manager->MatchFaceName(font_face_name)));
-  ///
-  ///if (!typeface) {
-  ///  return nullptr;
-  ///}
-  ///
-  ///return scoped_refptr<render_tree::Typeface>(new SkiaTypeface(typeface));
+  sk_sp<SkFontMgr> font_manager(SkFontMgr::RefDefault());
+  SkFontMgr_Cobalt* cobalt_font_manager =
+      base::polymorphic_downcast<SkFontMgr_Cobalt*>(font_manager.get());
+
+  sk_sp<SkTypeface_Cobalt> typeface(
+      base::polymorphic_downcast<SkTypeface_Cobalt*>(
+          cobalt_font_manager->MatchFaceName(font_face_name)));
+
+  if (!typeface) {
+    return nullptr;
+  }
+
+  return scoped_refptr<render_tree::Typeface>(new SkiaTypeface(typeface));
   //return base::WrapRefCounted(new cobalt::render_tree::TypefaceStub(NULL));
 }
 
@@ -217,21 +216,20 @@ SoftwareResourceProvider::GetCharacterFallbackTypeface(
   TRACE_EVENT0("cobalt::renderer",
                "SoftwareResourceProvider::GetCharacterFallbackTypeface()");
 
-
-  sk_sp<SkFontMgr> font_manager(SkFontMgr::RefDefault());
+  /*sk_sp<SkFontMgr> font_manager(SkFontMgr::RefDefault());
   //font_manager->
   sk_sp<SkTypeface_Cobalt> typeface(
       base::polymorphic_downcast<SkTypeface_Cobalt*>(Font::getDefaultTypeface()->makeClone(SkFontArguments()).release()));
-  return scoped_refptr<render_tree::Typeface>(new SkiaTypeface(typeface));
+  return scoped_refptr<render_tree::Typeface>(new SkiaTypeface(typeface));*/
 
-  ///sk_sp<SkFontMgr> font_manager(SkFontMgr::RefDefault());
-  ///const char* language_cstr = language.c_str();
-  ///sk_sp<SkTypeface_Cobalt> typeface(
-  ///    base::polymorphic_downcast<SkTypeface_Cobalt*>(
-  ///        font_manager->matchFamilyStyleCharacter(
-  ///            NULL, CobaltFontStyleToSkFontStyle(font_style), &language_cstr, 1,
-  ///            character)));
-  ///return scoped_refptr<render_tree::Typeface>(new SkiaTypeface(typeface));
+  sk_sp<SkFontMgr> font_manager(SkFontMgr::RefDefault());
+  const char* language_cstr = language.c_str();
+  sk_sp<SkTypeface_Cobalt> typeface(
+      base::polymorphic_downcast<SkTypeface_Cobalt*>(
+          font_manager->matchFamilyStyleCharacter(
+              NULL, CobaltFontStyleToSkFontStyle(font_style), &language_cstr, 1,
+              character)));
+  return scoped_refptr<render_tree::Typeface>(new SkiaTypeface(typeface));
   //return base::WrapRefCounted(new cobalt::render_tree::TypefaceStub(NULL));
 }
 

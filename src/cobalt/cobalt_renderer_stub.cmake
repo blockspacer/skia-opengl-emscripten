@@ -1,5 +1,13 @@
 ﻿cmake_minimum_required(VERSION 2.8)
 
+list(APPEND RENDERER_PUBLIC_DEFINES
+  #
+  # see https://github.com/blockspacer/cobalt-clone-28052019/blob/master/src/cobalt/renderer/rasterizer/skia/skia/skia_cobalt.gypi#L47
+  #
+  COBALT_LOCAL_TYPEFACE_CACHE_SIZE_IN_BYTES=16777216
+  # 16.777216 Megabytes
+)
+
 ## ===========
 
 # 'dependencies': [
@@ -41,6 +49,13 @@ set(COBALT_renderer_stub_skia_SOURCES
   ${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/skia/src/ports/SkTypeface_cobalt.cc
   ${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/skia/src/ports/SkStream_cobalt.cc
   ${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/skia/src/ports/SkOSFile_cobalt.cc
+  #
+  ${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/skia/src/ports/SkFontConfigParser_cobalt.cc
+  ${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/skia/src/ports/SkFontMgr_cobalt.cc
+  ${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/skia/src/ports/SkFontStyleSet_cobalt.cc
+  ${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/skia/src/ports/SkFontUtil_cobalt.cc
+  ${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/skia/src/ports/SkFreeType_cobalt.cc
+  #
   ${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/glyph_buffer.cc
   #
   ${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/text_shaper.cc
@@ -98,6 +113,7 @@ target_link_libraries(cobalt_renderer_stub_skia PUBLIC
   ${HARFBUZZ_LIBRARIES}
   ${EXTRA_cobalt_renderer_stub_skia_LIBS}
   ${OPENGLES2_LIBRARIES}
+  ${FREETYPE_LIBRARIES}
 )
 
 set_property(TARGET cobalt_renderer_stub_skia PROPERTY CXX_STANDARD 17)
@@ -114,6 +130,11 @@ target_include_directories(cobalt_renderer_stub_skia PRIVATE
   ${OPENGLES2_INCLUDE_DIRS}
   ${OPENGL_INCLUDE_DIR}
   ${OPENGL_EGL_INCLUDE_DIRS}
+  ${FREETYPE_INCLUDE_DIRS}
+)
+
+target_compile_definitions(cobalt_renderer_stub_skia PUBLIC
+  ${RENDERER_PUBLIC_DEFINES}
 )
 
 target_compile_definitions(cobalt_renderer_stub_skia PRIVATE
@@ -201,6 +222,7 @@ target_link_libraries(cobalt_renderer_stub_skgl PUBLIC
   ${HARFBUZZ_LIBRARIES}
   ${EXTRA_cobalt_renderer_stub_skgl_LIBS}
   ${OPENGLES2_LIBRARIES}
+  ${FREETYPE_LIBRARIES}
 )
 
 set_property(TARGET cobalt_renderer_stub_skgl PROPERTY CXX_STANDARD 17)
@@ -217,6 +239,11 @@ target_include_directories(cobalt_renderer_stub_skgl PRIVATE
   ${OPENGLES2_INCLUDE_DIRS}
   ${OPENGL_INCLUDE_DIR}
   ${OPENGL_EGL_INCLUDE_DIRS}
+  ${FREETYPE_INCLUDE_DIRS}
+)
+
+target_compile_definitions(cobalt_renderer_stub_skgl PUBLIC
+  ${RENDERER_PUBLIC_DEFINES}
 )
 
 target_compile_definitions(cobalt_renderer_stub_skgl PRIVATE
@@ -361,6 +388,7 @@ target_link_libraries(cobalt_renderer_stub PUBLIC
   ${HARFBUZZ_LIBRARIES}
   ${EXTRA_cobalt_renderer_stub_LIBS}
   ${OPENGLES2_LIBRARIES}
+  ${FREETYPE_LIBRARIES}
 )
 
 set_property(TARGET cobalt_renderer_stub PROPERTY CXX_STANDARD 17)
@@ -377,6 +405,11 @@ target_include_directories(cobalt_renderer_stub PRIVATE
   ${OPENGLES2_INCLUDE_DIRS}
   ${OPENGL_INCLUDE_DIR}
   ${OPENGL_EGL_INCLUDE_DIRS}
+  ${FREETYPE_INCLUDE_DIRS}
+)
+
+target_compile_definitions(cobalt_renderer_stub PUBLIC
+  ${RENDERER_PUBLIC_DEFINES}
 )
 
 target_compile_definitions(cobalt_renderer_stub PRIVATE

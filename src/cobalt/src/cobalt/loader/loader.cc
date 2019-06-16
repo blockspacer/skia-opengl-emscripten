@@ -155,6 +155,7 @@ void Loader::Resume(render_tree::ResourceProvider* resource_provider) {
 bool Loader::DidFailFromTransientError() const {
   DCHECK(thread_checker_.CalledOnValidThread());
   return fetcher_ && fetcher_->did_fail_from_transient_error();
+  ///return true;
 }
 
 void Loader::LoadComplete(const base::Optional<std::string>& error) {

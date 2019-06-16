@@ -60,20 +60,21 @@ std::unique_ptr<Loader> LoaderFactory::CreateImageLoader(
       ,
       kNoCORSMode, origin);
 
-#if defined(__TODO__)
+//#if defined(__TODO__)
+  scoped_refptr<base::SingleThreadTaskRunner> load_message_loop_ =  load_thread_.task_runner();
   std::unique_ptr<Loader> loader(new Loader(
       fetcher_creator,
       base::Bind(&image::ThreadedImageDecoderProxy::Create, resource_provider_,
       //           image_available_callback, load_thread_.message_loop()),
-                 image_available_callback, base::MessageLoopCurrent::Get()),
+                 image_available_callback, load_message_loop_),
       load_complete_callback,
       base::Bind(&LoaderFactory::OnLoaderDestroyed, base::Unretained(this)),
       is_suspended_));
   OnLoaderCreated(loader.get());
   return loader;
-#else
-  return nullptr;
-#endif
+//#else
+//  return nullptr;
+//#endif
 }
 
 std::unique_ptr<Loader> LoaderFactory::CreateTypefaceLoader(
@@ -84,6 +85,7 @@ std::unique_ptr<Loader> LoaderFactory::CreateTypefaceLoader(
     const font::TypefaceDecoder::TypefaceAvailableCallback&
         typeface_available_callback,
     const Loader::OnCompleteFunction& load_complete_callback) {
+  printf("CreateTypefaceLoader\n");
   DCHECK(thread_checker_.CalledOnValidThread());
 
   Loader::FetcherCreator fetcher_creator = MakeFetcherCreator(
@@ -212,11 +214,13 @@ void LoaderFactory::Suspend() {
 
   is_suspended_ = true;
   resource_provider_ = NULL;
-
+  printf("LoaderFactory::Suspend 1\n");
   for (LoaderSet::const_iterator iter = active_loaders_.begin();
        iter != active_loaders_.end(); ++iter) {
     (*iter)->Suspend();
   }
+
+  printf("LoaderFactory::Suspend 2\n");
 
   // Wait for all loader thread messages to be flushed before returning.
   ///load_thread_.task_runner()->WaitForFence();

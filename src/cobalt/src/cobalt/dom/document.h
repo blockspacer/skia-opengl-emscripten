@@ -1,4 +1,4 @@
-// Copyright 2014 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2014 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -454,6 +454,11 @@ class Document : public Node,
   // Called when the root element has its offset dimensions requested and is
   // unable to provide them.
   void OnRootElementUnableToProvideOffsetDimensions();
+
+  FontCache* GetFontCache() const {
+    DCHECK(font_cache_);
+    return font_cache_.get();
+  }
 
   DEFINE_WRAPPABLE_TYPE(Document);
   void TraceMembers(script::Tracer* tracer) override;

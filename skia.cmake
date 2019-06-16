@@ -588,10 +588,10 @@ if (NOT EXT_SKIA_SHARED)
     endforeach()
   endfunction()
 
-if(TARGET_EMSCRIPTEN)
-  message(INFO "building skia for EMSCRIPTEN")
-elseif(TARGET_LINUX)
-  message(INFO "building skia for LINUX")
+  if(TARGET_EMSCRIPTEN)
+    message(INFO "building skia for EMSCRIPTEN")
+  elseif(TARGET_LINUX)
+    message(INFO "building skia for LINUX")
 
     # seem to be always required...
     #ADD_SKIA_LIBRARY_DEPENDENCY("dl")
@@ -647,7 +647,9 @@ elseif(TARGET_LINUX)
     # webp integration doesn't expose the system option...
     #ADD_SKIA_LIBRARY_DEPENDENCY("webp") # SK_CONF_IS_OFFICIAL_BUILD && skia_use_libwebp
 
-  endif (NOT EXT_SKIA_SHARED)
+  else()
+    message(FATAL_ERROR "unknown platform")
+  endif() # EMSCRIPTEN
 
   set(SKIA_CMAKE_ONLY_HEADERS "${SKIA_CMAKE_ONLY_HEADERS};${HARFBUZZ_INCLUDE_DIRS};${OPENGL_INCLUDE_DIR};${OPENGL_EGL_INCLUDE_DIRS}")
   set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${HARFBUZZ_LIBRARIES};${OPENGL_LIBRARIES}")
@@ -681,9 +683,9 @@ elseif(TARGET_LINUX)
     set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};OpenGL::GL" PARENT_SCOPE)
     #see OPENGL_INCLUDE_DIR
   endif() # SK_IS_EGL
-else()
-  message(FATAL_ERROR "unknown platform")
-endif() # EMSCRIPTEN
+else(NOT EXT_SKIA_SHARED)
+  #message(FATAL_ERROR "unknown platform")
+endif(NOT EXT_SKIA_SHARED)
 
 message(STATUS "SKIA_CMAKE_ONLY_HEADERS=${SKIA_CMAKE_ONLY_HEADERS}")
 message(STATUS "SKIA_DEPENDENCIES=${SKIA_DEPENDENCIES}")

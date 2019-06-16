@@ -811,6 +811,7 @@ static int browser_height = height;//10000;
 #include "base/callback.h"
 ////#include "base/message_loop.h"
 #include "cobalt/dom/attr.h"
+#include "cobalt/dom/font_cache.h"
 #include "cobalt/dom/document.h"
 #include "cobalt/dom/dom_stat_tracker.h"
 #include "cobalt/dom/element.h"
@@ -2043,7 +2044,16 @@ static void animate() {
 }
 
 static void mainLoop() {
+
+
 #ifdef __EMSCRIPTEN__
+
+  // see https://github.com/emscripten-core/emscripten/issues/3495
+  ///
+  /// __TODO__
+  ///
+  ///emscripten_main_thread_process_queued_calls();
+
   /*{
     // see https://github.com/emscripten-core/emscripten/issues/8307
     EMSCRIPTEN_RESULT r = emscripten_webgl_make_context_current(em_ctx);
@@ -2867,6 +2877,8 @@ CobaltTester::CobaltTester()
       loader_factory_.get());
   DCHECK(remote_typeface_cache_);
 
+  ///remote_typeface_cache_.get()->CreateCachedResource()
+
   //DCHECK_LE(0, data.options.mesh_cache_capacity);
   mesh_cache_ = loader::mesh::CreateMeshCache(
       base::StringPrintf("%s.MeshCache", "name_.c_str()"),
@@ -3106,6 +3118,11 @@ CobaltTester::CobaltTester()
         window_->document()->AddObserver(document_load_observer_.get());
     }
 
+    /// __TODO__
+    ///printf("document_->GetFontCache()->TryGetRemoteFont...\n");
+    ///FontListFont::State font_load_state = FontListFont::State::kUnrequestedState;
+    ///DCHECK(document_->GetFontCache());
+    ///document_->GetFontCache()->TryGetRemoteFont(GURL("file:///resources/fonts/FreeSans.ttf"), 22, &font_load_state);
 }
 
 void CobaltTester::run() {
@@ -4144,17 +4161,21 @@ int main(int argc, char** argv) {
     listWordBoundaries(
       icu::UnicodeString(u8"string asd asd 1"));
 
+    printf("Creating g_cobaltTester...\n");
+    /// __TODO__
+    //g_cobaltTester = std::make_unique<CobaltTester>();
+
   // Make sure the thread started.
   main_thread_.task_runner()->PostTask(
       FROM_HERE, base::Bind([](base::WaitableEvent* main_thread_event_){
 #if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
           DCHECK(base::MessageLoopCurrent::Get());
 #endif
-          printf("Creating g_cobaltTester...\n");
-          g_cobaltTester = std::make_unique<CobaltTester>();
 
 
           printf("Starting g_cobaltTester...\n");
+          /// __TODO__
+          g_cobaltTester = std::make_unique<CobaltTester>();
           g_cobaltTester->run();
           printf("Finishing g_cobaltTester...\n");
           //main_thread_event_->Signal();
@@ -4162,7 +4183,7 @@ int main(int argc, char** argv) {
 
   printf("Waiting COBALT tests...\n");
   //// \NOTE: DON`T BLOCK MAIN WASM THREAD
-  /// WHILE WAITING IN OTHER THREADS!
+  /// WAITING FOR INFINITE THREAD!
   //main_thread_event_.Wait();
   //main_thread_event_.Reset();
 #endif // ENABLE_COBALT

@@ -35,12 +35,12 @@ void SkTypeface_Cobalt::onGetFamilyName(SkString* family_name) const {
   *family_name = family_name_;
 }
 
-SkTypeface_CobaltStream::SkTypeface_CobaltStream(SkStreamAsset* stream,
+SkTypeface_CobaltStream::SkTypeface_CobaltStream(std::unique_ptr<SkStreamAsset> stream,
                                                  int face_index, SkFontStyle style,
                                                  bool is_fixed_pitch,
                                                  const SkString& family_name)
     : INHERITED(face_index, style, is_fixed_pitch, family_name),
-      stream_(stream) {
+      stream_(std::move(stream)) {
   /*LOG(INFO) << "Created SkTypeface_CobaltStream: " << family_name.c_str() << "("
             << style << "); Size: " << stream_->getLength() << " bytes";*/
 }
@@ -59,6 +59,7 @@ std::unique_ptr<SkStreamAsset> SkTypeface_CobaltStream::onOpenStream(int* face_i
 }
 
 size_t SkTypeface_CobaltStream::GetStreamLength() const {
+  DCHECK(stream_);
   return stream_->getLength();
 }
 

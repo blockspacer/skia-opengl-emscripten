@@ -1,4 +1,4 @@
-// Copyright 2016 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2016 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -47,7 +47,8 @@ class ThreadedImageDecoderProxy : public Decoder {
   static std::unique_ptr<Decoder> Create(
       render_tree::ResourceProvider* resource_provider,
       const ImageAvailableCallback& image_available_callback,
-      base::MessageLoop* load_message_loop_,
+      //base::MessageLoop* load_message_loop_,
+      scoped_refptr<base::SingleThreadTaskRunner> load_message_loop_,
       const loader::Decoder::OnCompleteFunction& load_complete_callback) {
     return std::unique_ptr<Decoder>(new ThreadedImageDecoderProxy(
         resource_provider, image_available_callback, load_message_loop_,
@@ -72,18 +73,21 @@ class ThreadedImageDecoderProxy : public Decoder {
   ThreadedImageDecoderProxy(
       render_tree::ResourceProvider* resource_provider,
       const ImageAvailableCallback& image_available_callback,
-      base::MessageLoop* load_message_loop_,
+      //base::MessageLoop* load_message_loop_,
+      scoped_refptr<base::SingleThreadTaskRunner> load_message_loop_,
       const loader::Decoder::OnCompleteFunction& load_complete_callback);
 
   base::WeakPtrFactory<ThreadedImageDecoderProxy> weak_ptr_factory_;
   base::WeakPtr<ThreadedImageDecoderProxy> weak_this_;
 
   // The message loop that |image_decoder_| should run on.
-  base::MessageLoop* load_message_loop_;
+  //base::MessageLoop* load_message_loop_;
+  scoped_refptr<base::SingleThreadTaskRunner> load_message_loop_;
 
   // The message loop that the original callbacks passed into us should run
   // on.
-  base::MessageLoop* result_message_loop_;
+  //base::MessageLoop* result_message_loop_;
+  scoped_refptr<base::SingleThreadTaskRunner> result_message_loop_;
 
   // The actual image decoder.
   std::unique_ptr<ImageDecoder> image_decoder_;

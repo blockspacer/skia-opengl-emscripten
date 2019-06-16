@@ -1,4 +1,4 @@
-// Copyright 2014 The Chromium Authors. All rights reserved.
+﻿// Copyright 2014 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -242,6 +242,7 @@ FileProxy::~FileProxy() {
 bool FileProxy::CreateOrOpen(const FilePath& file_path,
                              uint32_t file_flags,
                              StatusCallback callback) {
+    printf("FileFetcher::CreateOrOpen 1 %s\n", file_path.value().c_str());
   DCHECK(!file_.IsValid());
   CreateOrOpenHelper* helper = new CreateOrOpenHelper(this, File());
   return task_runner_->PostTaskAndReply(
@@ -301,6 +302,7 @@ bool FileProxy::GetInfo(GetFileInfoCallback callback) {
 }
 
 bool FileProxy::Read(int64_t offset, int bytes_to_read, ReadCallback callback) {
+    printf("FileProxy::Read 1\n");
   DCHECK(file_.IsValid());
   if (bytes_to_read < 0)
     return false;
