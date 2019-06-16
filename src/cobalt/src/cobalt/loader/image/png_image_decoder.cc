@@ -1,4 +1,4 @@
-// Copyright 2015 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2015 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,6 +17,8 @@
 #include "base/logging.h"
 #include "base/trace_event/trace_event.h"
 #include "nb/memory_scope.h"
+
+#include "third_party/libpng/pngstruct.h"
 
 namespace cobalt {
 namespace loader {
@@ -49,7 +51,9 @@ uint32 FixPointUnsignedMultiply(uint32 fixed, uint32 alpha) {
 // static
 void DecodingFailed(png_structp png, png_const_charp) {
   DLOG(WARNING) << "Decoding failed.";
-  longjmp(png->jmpbuf, 1);
+  //longjmp(png->jmpbuf, 1);
+  /* New name in 1.6.0 for jmp_buf in png_struct */
+  longjmp(png->jmp_buf_local, 1);
 }
 
 // static
@@ -98,7 +102,12 @@ size_t PNGImageDecoder::DecodeChunkInternal(const uint8* data, size_t size) {
 MSVC_PUSH_DISABLE_WARNING(4611);
   // warning C4611: interaction between '_setjmp' and C++ object destruction is
   // non-portable.
-  if (setjmp(png_->jmpbuf)) {
+/*
+ * TODO: emscripten
+Code that uses low-level features of the native environment, for example native stack manipulation in conjunction with setjmp/longjmp (we support proper setjmp/longjmp, i.e., jumping down the stack, but not jumping up to an unwound stack, which is undefined behavior).
+*/
+  //if (setjmp(png_->jmpbuf)) {
+  if (setjmp(png_->jmp_buf_local)) {
     // image data is empty.
     DLOG(WARNING) << "Decoder encounters an error.";
     set_state(kError);
@@ -186,7 +195,8 @@ void PNGImageDecoder::HeaderAvailableCallback() {
     DLOG(WARNING) << "Large PNG with width: " << width
                   << ", height: " << height;
     set_state(kError);
-    longjmp(png_->jmpbuf, 1);
+    //longjmp(png_->jmpbuf, 1);
+    longjmp(png_->jmp_buf_local, 1);
     return;
   }
 
@@ -254,7 +264,7 @@ void PNGImageDecoder::HeaderAvailableCallback() {
     if (!interlace_buffer_) {
       DLOG(WARNING) << "Allocate interlace buffer failed.";
       set_state(kError);
-      longjmp(png_->jmpbuf, 1);
+      longjmp(png_->jmp_buf_local, 1);
       return;
     }
   }
@@ -264,7 +274,7 @@ void PNGImageDecoder::HeaderAvailableCallback() {
       has_alpha_);
   if (!decoded_image_data_) {
     set_state(kError);
-    longjmp(png_->jmpbuf, 1);
+    longjmp(png_->jmp_buf_local, 1);
     return;
   }
 
