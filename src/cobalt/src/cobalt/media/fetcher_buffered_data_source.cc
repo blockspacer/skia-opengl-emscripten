@@ -1,4 +1,4 @@
-// Copyright 2015 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2015 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -162,6 +162,7 @@ void FetcherBufferedDataSource::OnURLFetchResponseStarted(
       source->GetResponseHeaders();
   DCHECK(headers);
 
+#if defined(ENABLE_GNET)
   if (!is_origin_safe_) {
     if (loader::CORSPreflight::CORSCheck(
             *headers, document_origin_.SerializedOrigin(),
@@ -175,6 +176,7 @@ void FetcherBufferedDataSource::OnURLFetchResponseStarted(
       return;
     }
   }
+#endif
 
   uint64 first_byte_offset = 0;
 
@@ -207,6 +209,7 @@ void FetcherBufferedDataSource::OnURLFetchDownloadProgress(
     const net::URLFetcher* source, int64_t /*current*/, int64_t /*total*/,
     int64_t /*current_network_bytes*/) {
   DCHECK(task_runner_->BelongsToCurrentThread());
+#if defined(ENABLE_GNET)
   auto* download_data_writer =
       base::polymorphic_downcast<CobaltURLFetcherStringWriter*>(
           source->GetResponseWriter());
@@ -273,6 +276,7 @@ void FetcherBufferedDataSource::OnURLFetchDownloadProgress(
   last_request_size_ -= bytes_written;
 
   ProcessPendingRead_Locked();
+#endif
 }
 
 void FetcherBufferedDataSource::OnURLFetchComplete(
@@ -330,6 +334,8 @@ void FetcherBufferedDataSource::CreateNewFetcher() {
       std::move(net::URLFetcher::Create(url_, net::URLFetcher::GET, this));
   fetcher_->SetRequestContext(
       network_module_->url_request_context_getter().get());
+
+#if defined(ENABLE_GNET)
   auto* download_data_writer = new CobaltURLFetcherStringWriter();
   fetcher_->SaveResponseWithWriter(
       std::unique_ptr<CobaltURLFetcherStringWriter>(download_data_writer));
@@ -349,6 +355,7 @@ void FetcherBufferedDataSource::CreateNewFetcher() {
   }
   fetcher_->Start();
   UpdateDownloadingStatus(/* is_downloading = */ true);
+#endif
 }
 
 void FetcherBufferedDataSource::UpdateDownloadingStatus(bool is_downloading) {

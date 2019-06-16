@@ -1,4 +1,4 @@
-// Copyright 2016 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2016 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -123,7 +123,7 @@ class MEDIA_EXPORT SbPlayerPipeline : public Pipeline,
 #if SB_HAS(PLAYER_WITH_URL)
   TimeDelta GetMediaStartDate() const override;
 #endif  // SB_HAS(PLAYER_WITH_URL)
-  void GetNaturalVideoSize(gfx::Size* out_size) const override;
+  void GetNaturalVideoSize(cobalt::math::Size* out_size) const override;
 
   bool DidLoadingProgress() const override;
   PipelineStatistics GetStatistics() const override;
@@ -200,7 +200,7 @@ class MEDIA_EXPORT SbPlayerPipeline : public Pipeline,
   mutable bool did_loading_progress_;
 
   // Video's natural width and height.  Set by filters.
-  gfx::Size natural_size_;
+  cobalt::math::Size natural_size_;
 
   // Current volume level (from 0.0f to 1.0f).  This value is set immediately
   // via SetVolume() and a task is dispatched on the message loop to notify the
@@ -600,7 +600,7 @@ TimeDelta SbPlayerPipeline::GetMediaTime() {
     player_->GetVideoResolution(&frame_width, &frame_height);
     if (frame_width != natural_size_.width() ||
         frame_height != natural_size_.height()) {
-      natural_size_ = gfx::Size(frame_width, frame_height);
+      natural_size_ = cobalt::math::Size(frame_width, frame_height);
       content_size_change_cb_.Run();
     }
   }
@@ -685,7 +685,7 @@ TimeDelta SbPlayerPipeline::GetMediaStartDate() const {
 }
 #endif  // SB_HAS(PLAYER_WITH_URL)
 
-void SbPlayerPipeline::GetNaturalVideoSize(gfx::Size* out_size) const {
+void SbPlayerPipeline::GetNaturalVideoSize(cobalt::math::Size* out_size) const {
   CHECK(out_size);
   base::AutoLock auto_lock(lock_);
   *out_size = natural_size_;
@@ -1216,7 +1216,7 @@ void SbPlayerPipeline::OnPlayerStatus(SbPlayerState state) {
         player_->GetVideoResolution(&frame_width, &frame_height);
         bool natural_size_changed = (frame_width != natural_size_.width() ||
                                      frame_height != natural_size_.height());
-        natural_size_ = gfx::Size(frame_width, frame_height);
+        natural_size_ = cobalt::math::Size(frame_width, frame_height);
         if (natural_size_changed) {
           content_size_change_cb_.Run();
         }

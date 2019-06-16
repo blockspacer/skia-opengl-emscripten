@@ -142,7 +142,7 @@ WorkerThreadScheduler::WorkerThreadScheduler(
   helper()->AddTaskTimeObserver(this);
 
   if (proxy && proxy->parent_frame_type())
-#ifdef __TODO__
+#if defined(ENABLE_UKM)
     worker_metrics_helper_.SetParentFrameType(*proxy->parent_frame_type());
 #endif
 
@@ -251,7 +251,9 @@ void WorkerThreadScheduler::OnTaskCompleted(
     const base::sequence_manager::Task& task,
     const base::sequence_manager::TaskQueue::TaskTiming& task_timing) {
 
-    //worker_metrics_helper_.RecordTaskMetrics(task_queue, task, task_timing);
+#if defined(ENABLE_UKM)
+    worker_metrics_helper_.RecordTaskMetrics(task_queue, task, task_timing);
+#endif
 
     if (task_queue_throttler_) {
         task_queue_throttler_->OnTaskRunTimeReported(
@@ -272,7 +274,7 @@ void WorkerThreadScheduler::OnTaskCompleted(
   PerformMicrotaskCheckpoint();
 
   task_timing->RecordTaskEnd(lazy_now);
-#ifdef __TODO__
+#if defined(ENABLE_UKM)
   worker_metrics_helper_.RecordTaskMetrics(task_queue, task, *task_timing);
 #endif
 

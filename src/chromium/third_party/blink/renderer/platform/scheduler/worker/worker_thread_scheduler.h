@@ -11,6 +11,8 @@
 #include "base/task/sequence_manager/task_time_observer.h"
 #ifdef __TODO__
 #include "components/scheduling_metrics/task_duration_metric_reporter.h"
+#endif
+#if defined(ENABLE_UKM)
 #include "third_party/blink/renderer/platform/scheduler/worker/worker_metrics_helper.h"
 #endif
 #include "third_party/blink/public/platform/web_thread_type.h"
@@ -171,7 +173,7 @@ class PLATFORM_EXPORT WorkerThreadScheduler
   scoped_refptr<base::SingleThreadTaskRunner> compositor_task_runner_;
   SchedulingLifecycleState lifecycle_state_;
 
-#ifdef __TODO__
+#if defined(ENABLE_UKM)
   WorkerMetricsHelper worker_metrics_helper_;
 #endif
 
@@ -197,7 +199,7 @@ class PLATFORM_EXPORT WorkerThreadScheduler
 #if defined(ENABLE_GNET)
   std::unique_ptr<service_manager::Connector> connector_;
 #endif // ENABLE_GNET
-#ifdef __TODO__
+#if defined(ENABLE_UKM)
   std::unique_ptr<ukm::UkmRecorder> ukm_recorder_;
 #endif
   DISALLOW_COPY_AND_ASSIGN(WorkerThreadScheduler);

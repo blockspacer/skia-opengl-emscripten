@@ -1,4 +1,4 @@
-// Copyright 2018 The Chromium Authors. All rights reserved.
+﻿// Copyright 2018 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -8,7 +8,7 @@
 #include "base/macros.h"
 #if defined(ENABLE_UKM)
 #include "services/metrics/public/cpp/ukm_source_id.h"
-#endif defined(ENABLE_UKM)
+#endif // defined(ENABLE_UKM)
 #include "ui/base/ime/text_input_type.h"
 #include "ui/keyboard/keyboard_export.h"
 
