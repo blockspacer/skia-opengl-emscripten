@@ -1432,7 +1432,7 @@ public:
       return;
     }*/
 
-      //printf("onDraw() 1\n");
+      printf("onDraw() 1\n");
 
     SkPaint paint;
 
@@ -1823,270 +1823,7 @@ static GLuint LoadShader(GLenum type, const char* shaderSrc) {
   return shader;
 }
 
-static int InitGL() {
-  char vShaderStr[] = "attribute vec2 vPosition;                \n"
-                      "attribute vec2 vUV;                \n"
-                      "varying vec2 v_texcoord;\n"
-                      //"uniform mat4 uMVPMatrix; \n"
-                      //"uniform float zoom;	\n"
-                      "void main()                              \n"
-                      "{                                        \n"
-                      "    v_texcoord = vUV;\n"
-                      "    gl_Position = vec4(vPosition, -1, 1);\n"
-                      //		"   gl_Position = uMVPMatrix * vPosition;              \n"
-                      //		"   gl_Position.x = gl_Position.x * zoom; \n"
-                      //		"   gl_Position.y = gl_Position.y * zoom; \n"
-                      "}                                        \n";
 
-  char fShaderStr[] = "precision mediump float;\n"
-                      "uniform sampler2D u_tex;\n"
-                      //"uniform float clrRedTint;\n"
-                      "varying vec2 v_texcoord;\n"
-                      //		"uniform vec4 vColor;"
-                      "void main()                                  \n"
-                      "{                                            \n"
-                      //		"  gl_FragColor = vColor;        \n"
-                      "    vec4 colour = texture2D(u_tex, v_texcoord);\n"
-                      //    "    vec4 colour = vec4(100, 0, 100, 100);\n"
-                      "    colour.rgba = colour.rgba;\n"
-                      //"    colour.r = clrRedTint;\n"
-                      "    gl_FragColor = colour;\n"
-                      "}                                            \n";
-
-  GLuint vertexShader;
-  GLuint fragmentShader;
-  GLint linked;
-
-  vertexShader = LoadShader(GL_VERTEX_SHADER, vShaderStr);
-  fragmentShader = LoadShader(GL_FRAGMENT_SHADER, fShaderStr);
-
-  programObject = glCreateProgram();
-  GL_CHECK_WITH_MESSAGE((::std::string("failed glCreateProgram for") + vShaderStr).c_str());
-  if (programObject == 0) {
-    printf("programObject == 0 \n");
-    return 0;
-  }
-
-  char errbuf[4096];
-  GLint status;
-  GLsizei len;
-
-  GL_CHECK( glAttachShader(programObject, vertexShader) );
-  GL_CHECK( glAttachShader(programObject, fragmentShader) );
-
-  GL_CHECK( glBindAttribLocation(programObject, 0, "vPosition") );
-  GL_CHECK( glBindAttribLocation(programObject, 1, "vUV") );
-
-  GL_CHECK( glLinkProgram(programObject) );
-  GL_CHECK( glGetProgramInfoLog(programObject, sizeof(errbuf), &len, errbuf) );
-  GL_CHECK( glGetProgramiv(programObject, GL_LINK_STATUS, &status) );
-  if (status != GL_TRUE) {
-      printf("failed to link program %s: %s\n", vShaderStr, errbuf);
-  }
-  else if (len > 16) {
-      printf("link log for program %s: %s\n", vShaderStr, errbuf);
-  }
-
-/// \todo unused
-/// \see https://github.com/lolengine/lol/blob/master/src/gpu/shader.cpp
-#if __EMSCRIPTEN__ // WebGL doesn't support GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, so chose a default size value.
-    GLint max_len = 256;
-#else
-    GLint max_len;
-    GL_CHECK( glGetProgramiv(programObject, GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, &max_len) );
-#endif
-
-  uniformTex = glGetUniformLocation(programObject, "u_tex");
-  //uniformRedClrTint = glGetUniformLocation(programObject, "clrRedTint");
-  GL_CHECK( glGetProgramiv(programObject, GL_LINK_STATUS, &linked) );
-  if (!linked) {
-    GLint infoLen = 0;
-    GL_CHECK( glGetProgramiv(programObject, GL_INFO_LOG_LENGTH, &infoLen) );
-    if (infoLen > 1) {
-      char* infoLog = static_cast<char*>(malloc(sizeof(char) * infoLen));
-      GL_CHECK( glGetProgramInfoLog(programObject, infoLen, NULL, infoLog) );
-      printf("Error linking program:\n%s\n", infoLog);
-      free(infoLog);
-    }
-    GL_CHECK( glDeleteProgram(programObject) );
-    return GL_FALSE;
-  }
-
-#if defined(ENABLE_SKIA)
-  GL_CHECK( glGenTextures(1, &skia_texture) );
-#endif // ENABLE_SKIA
-
-  // No clientside arrays, so do this in a webgl-friendly manner
-  GL_CHECK( glGenBuffers(1, &vertexPosObject) );
-  GL_CHECK( glBindBuffer(GL_ARRAY_BUFFER, vertexPosObject) );
-  GL_CHECK( glBufferData(GL_ARRAY_BUFFER, sizeof(kVertexData), kVertexData, GL_STATIC_DRAW) );
-  GL_CHECK( glBindBuffer(GL_ARRAY_BUFFER, 0) );
-
-  GL_CHECK( glClearColor(0.0f, 0.0f, 0.0f, 0.0f) );
-
-  return GL_TRUE;
-}
-
-///
-// Draw a triangle using the shader pair created in Init()
-//
-static void Draw() {
-      //printf("Draw() 1\n");
-  GL_CHECK( glViewport(0, 0, width, height) );
-  GL_CHECK( glClear(GL_COLOR_BUFFER_BIT) );
-
-  GL_CHECK( glUseProgram(programObject) );
-  GL_CHECK( glActiveTexture(GL_TEXTURE0) );
-      //printf("Draw() 2\n");
-
-#if defined(ENABLE_SKIA)
-  //using cobalt::renderer::rasterizer::egl::getRasterizerSkSurface;
-  using cobalt::renderer::rasterizer::egl::getRasterizerSkImage;
-#define TODO_PIMG 1
-#if defined(TODO_PIMG)
-  {
-
-    sk_sp<SkImage> pImage = nullptr;
-    if (render_browser_window)
-    {
-       pImage = getRasterizerSkImage();
-        //printf("Draw() 6.1\n");
-    } else {
-      // Draw to the surface via its SkCanvas.
-      // We don't manage this pointer's lifetime.
-      SkCanvas* canvas =
-        //  getRasterizerSkSurface()->getCanvas();
-        sRasterSurface->getCanvas();
-
-      canvas->clear(SkColorSetARGB(255, 255, 255, 255));
-        //printf("Draw() 3\n");
-
-      myView->onDraw(canvas);
-        //printf("Draw() 4\n");
-
-      sRasterSurface->flush();
-        //printf("Draw() 5\n");
-
-      pImage = sRasterSurface->makeImageSnapshot();
-      //const sk_sp<SkImage> pImage = getRasterizerSkSurface()->makeImageSnapshot();
-    }
-
-    if (nullptr == pImage) {
-      printf("can`t get pImage\n");
-    }
-
-    // Draw to the surface via its SkCanvas.
-    // We don't manage this pointer's lifetime.
-    //SkCanvas* canvas =
-      //  getRasterizerSkSurface()->getCanvas();
-      //sRasterSurface->getCanvas();
-
-    //const sk_sp<SkImage> pImage = sRasterSurface->makeImageSnapshot();
-    /*const sk_sp<SkImage> pImage = getRasterizerSkSurface()->makeImageSnapshot();
-    if (nullptr == pImage) {
-      //printf("can`t makeImageSnapshot\n");
-    }*/
-    if(pImage/* && !pImage->isAlphaOnly()
-      && pImage->width() > 0 && pImage->height() > 0*/) {
-      //printf("Draw() 7\n");
-      SkPixmap pixmap;
-      if (!pImage->peekPixels(&pixmap)) {
-        //printf("can`t peekPixels\n");
-      }
-      DCHECK(!pixmap.bounds().isEmpty());
-      //printf("Draw() 7.1\n");
-
-      GL_CHECK( glBindTexture(GL_TEXTURE_2D, skia_texture) );
-      GL_CHECK( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE) );
-      GL_CHECK( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE) );
-      GL_CHECK( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR) );
-      GL_CHECK( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR) );
-      GL_CHECK( glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, pixmap.width(), pixmap.height(), 0, GL_RGBA,
-                   GL_UNSIGNED_BYTE, pixmap.addr()) );
-    }
-      //printf("Draw() 8\n");
-  }
-#else
-  {
-
-    // Draw to the surface via its SkCanvas.
-    // We don't manage this pointer's lifetime.
-    //SkCanvas* canvas =
-      //  getRasterizerSkSurface()->getCanvas();
-      //sRasterSurface->getCanvas();
-
-    ///canvas->clear(SkColorSetARGB(255, 255, 255, 255));
-      //printf("Draw() 3\n");
-
-    ///myView->onDraw(canvas);
-      //printf("Draw() 4\n");
-
-    ///sRasterSurface->flush();
-      //printf("Draw() 5\n");
-    const sk_sp<SkImage> pImage = getRasterizerSkImage();
-    //const sk_sp<SkImage> pImage = sRasterSurface->makeImageSnapshot();
-    /*const sk_sp<SkImage> pImage = getRasterizerSkSurface()->makeImageSnapshot();
-    if (nullptr == pImage) {
-      //printf("can`t makeImageSnapshot\n");
-    }*/
-    if(pImage) {
-      SkPixmap pixmap;
-      if (!pImage->peekPixels(&pixmap)) {
-        //printf("can`t peekPixels\n");
-      }
-        //printf("Draw() 6\n");
-
-      GL_CHECK( glBindTexture(GL_TEXTURE_2D, skia_texture) );
-      GL_CHECK( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE) );
-      GL_CHECK( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE) );
-      GL_CHECK( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR) );
-      GL_CHECK( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR) );
-      GL_CHECK( glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, pixmap.width(), pixmap.height(), 0, GL_RGBA,
-                   GL_UNSIGNED_BYTE, pixmap.addr()) );
-    }
-  }
-#endif
-
-#endif // ENABLE_SKIA
-      //printf("Draw() 9\n");
-
-  GL_CHECK( glUniform1i(uniformTex, 0) );
-
-  //printf("redClrTintAnim %f\n", redClrTintAnim);
-  //GL_CHECK( glUniform1f(uniformRedClrTint, (sin(redClrTintAnim) / 2.0f + 0.5f)) );
-
-  GL_CHECK( glBindBuffer(GL_ARRAY_BUFFER, vertexPosObject) );
-  //
-  GL_CHECK( glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), NULL) );
-  GL_CHECK( glEnableVertexAttribArray(0) );
-  //
-  GL_CHECK( glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat),
-                        (GLvoid*)(2 * sizeof(GLfloat))) );
-  GL_CHECK( glEnableVertexAttribArray(1) );
-
-      //printf("Draw() 10\n");
-
-  int w, h, fs;
-#ifdef __EMSCRIPTEN__
-  // see
-  // https://github.com/floooh/oryol/blob/master/code/Modules/Gfx/private/emsc/emscDisplayMgr.cc#L174
-  emscripten_get_canvas_element_size("#canvas", &w, &h); //, &fs); // width, height, isFullscreen
-#else
-  w = width;
-  h = height;
-#endif
-  float xs = (float)h / w;
-  float ys = 1.0f;
-  float mat[] = {xs, 0, 0, 0, 0, ys, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1};
-
-  GL_CHECK( glBindBuffer(GL_ARRAY_BUFFER, 0) );
-
-  GL_CHECK( glDrawArrays(GL_TRIANGLE_STRIP, 0, 4) );
-
-  GL_CHECK( glDisableVertexAttribArray(0) );
-  GL_CHECK( glDisableVertexAttribArray(1) );
-      //printf("Draw() 11\n");
-}
 
 
 #ifdef ENABLE_COBALT
@@ -3302,6 +3039,110 @@ void CobaltTester::run() {
 static std::unique_ptr<CobaltTester> g_cobaltTester;
 #endif // ENABLE_COBALT
 
+static int InitGL() {
+  char vShaderStr[] = "attribute vec2 vPosition;                \n"
+                      "attribute vec2 vUV;                \n"
+                      "varying vec2 v_texcoord;\n"
+                      //"uniform mat4 uMVPMatrix; \n"
+                      //"uniform float zoom;	\n"
+                      "void main()                              \n"
+                      "{                                        \n"
+                      "    v_texcoord = vUV;\n"
+                      "    gl_Position = vec4(vPosition, -1, 1);\n"
+                      //		"   gl_Position = uMVPMatrix * vPosition;              \n"
+                      //		"   gl_Position.x = gl_Position.x * zoom; \n"
+                      //		"   gl_Position.y = gl_Position.y * zoom; \n"
+                      "}                                        \n";
+
+  char fShaderStr[] = "precision mediump float;\n"
+                      "uniform sampler2D u_tex;\n"
+                      //"uniform float clrRedTint;\n"
+                      "varying vec2 v_texcoord;\n"
+                      //		"uniform vec4 vColor;"
+                      "void main()                                  \n"
+                      "{                                            \n"
+                      //		"  gl_FragColor = vColor;        \n"
+                      "    vec4 colour = texture2D(u_tex, v_texcoord);\n"
+                      //    "    vec4 colour = vec4(100, 0, 100, 100);\n"
+                      "    colour.rgba = colour.rgba;\n"
+                      //"    colour.r = clrRedTint;\n"
+                      "    gl_FragColor = colour;\n"
+                      "}                                            \n";
+
+  GLuint vertexShader;
+  GLuint fragmentShader;
+  GLint linked;
+
+  vertexShader = LoadShader(GL_VERTEX_SHADER, vShaderStr);
+  fragmentShader = LoadShader(GL_FRAGMENT_SHADER, fShaderStr);
+
+  programObject = glCreateProgram();
+  GL_CHECK_WITH_MESSAGE((::std::string("failed glCreateProgram for") + vShaderStr).c_str());
+  if (programObject == 0) {
+    printf("programObject == 0 \n");
+    return 0;
+  }
+
+  char errbuf[4096];
+  GLint status;
+  GLsizei len;
+
+  GL_CHECK( glAttachShader(programObject, vertexShader) );
+  GL_CHECK( glAttachShader(programObject, fragmentShader) );
+
+  GL_CHECK( glBindAttribLocation(programObject, 0, "vPosition") );
+  GL_CHECK( glBindAttribLocation(programObject, 1, "vUV") );
+
+  GL_CHECK( glLinkProgram(programObject) );
+  GL_CHECK( glGetProgramInfoLog(programObject, sizeof(errbuf), &len, errbuf) );
+  GL_CHECK( glGetProgramiv(programObject, GL_LINK_STATUS, &status) );
+  if (status != GL_TRUE) {
+      printf("failed to link program %s: %s\n", vShaderStr, errbuf);
+  }
+  else if (len > 16) {
+      printf("link log for program %s: %s\n", vShaderStr, errbuf);
+  }
+
+/// \todo unused
+/// \see https://github.com/lolengine/lol/blob/master/src/gpu/shader.cpp
+#if __EMSCRIPTEN__ // WebGL doesn't support GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, so chose a default size value.
+    GLint max_len = 256;
+#else
+    GLint max_len;
+    GL_CHECK( glGetProgramiv(programObject, GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, &max_len) );
+#endif
+
+  uniformTex = glGetUniformLocation(programObject, "u_tex");
+  //uniformRedClrTint = glGetUniformLocation(programObject, "clrRedTint");
+  GL_CHECK( glGetProgramiv(programObject, GL_LINK_STATUS, &linked) );
+  if (!linked) {
+    GLint infoLen = 0;
+    GL_CHECK( glGetProgramiv(programObject, GL_INFO_LOG_LENGTH, &infoLen) );
+    if (infoLen > 1) {
+      char* infoLog = static_cast<char*>(malloc(sizeof(char) * infoLen));
+      GL_CHECK( glGetProgramInfoLog(programObject, infoLen, NULL, infoLog) );
+      printf("Error linking program:\n%s\n", infoLog);
+      free(infoLog);
+    }
+    GL_CHECK( glDeleteProgram(programObject) );
+    return GL_FALSE;
+  }
+
+#if defined(ENABLE_SKIA)
+  GL_CHECK( glGenTextures(1, &skia_texture) );
+#endif // ENABLE_SKIA
+
+  // No clientside arrays, so do this in a webgl-friendly manner
+  GL_CHECK( glGenBuffers(1, &vertexPosObject) );
+  GL_CHECK( glBindBuffer(GL_ARRAY_BUFFER, vertexPosObject) );
+  GL_CHECK( glBufferData(GL_ARRAY_BUFFER, sizeof(kVertexData), kVertexData, GL_STATIC_DRAW) );
+  GL_CHECK( glBindBuffer(GL_ARRAY_BUFFER, 0) );
+
+  GL_CHECK( glClearColor(0.0f, 0.0f, 0.0f, 0.0f) );
+
+  return GL_TRUE;
+}
+
 static void animate() {
   //redClrTintAnim += 0.01f;
   //if (redClrTintAnim > 360.0f) {
@@ -3324,8 +3165,34 @@ static void animate() {
 #error "TODO: port SDL_GetTicks without SDL"
 #endif
 
+    if (render_browser_window && !g_cobaltTester)
+    {
+      printf("Creating g_cobaltTester...\n");
+      /// __TODO__
+      //g_cobaltTester = std::make_unique<CobaltTester>();
+#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+          g_cobaltTester = std::make_unique<CobaltTester>();
+          g_cobaltTester->run();
+#else
+    // Make sure the thread started.
+    main_thread_.task_runner()->PostTask(
+        FROM_HERE, base::Bind([](base::WaitableEvent* main_thread_event_){
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+          DCHECK(base::MessageLoopCurrent::Get());
+#endif
+
+            printf("Starting g_cobaltTester...\n");
+            /// __TODO__
+            g_cobaltTester = std::make_unique<CobaltTester>();
+            g_cobaltTester->run();
+            printf("Finishing g_cobaltTester...\n");
+            //main_thread_event_->Signal();
+        }, &main_thread_event_));
+#endif
+  }
+
   /// __TODO__
-#if !(defined(__EMSCRIPTEN__) && defined(__EMSCRIPTEN_PTHREADS__))
+#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
   if (render_browser_window) {
     DCHECK(g_cobaltTester);
     DCHECK(g_cobaltTester->window_->document());
@@ -3337,6 +3204,130 @@ static void animate() {
 #endif
 
 #endif // ENABLE_SKOTTIE
+}
+
+///
+// Draw a triangle using the shader pair created in Init()
+//
+static void Draw() {
+      printf("Draw() 1\n");
+  GL_CHECK( glViewport(0, 0, width, height) );
+  GL_CHECK( glClear(GL_COLOR_BUFFER_BIT) );
+
+  printf("animate...\n");
+
+  animate();
+
+  GL_CHECK( glUseProgram(programObject) );
+  GL_CHECK( glActiveTexture(GL_TEXTURE0) );
+      printf("Draw() 2\n");
+
+#if defined(ENABLE_SKIA)
+  //using cobalt::renderer::rasterizer::egl::getRasterizerSkSurface;
+  using cobalt::renderer::rasterizer::egl::getRasterizerSkImage;
+
+  {
+
+    sk_sp<SkImage> pImage = nullptr;
+    if (render_browser_window)
+    {
+       pImage = getRasterizerSkImage();
+        printf("Draw() 6.1\n");
+    } else {
+      // Draw to the surface via its SkCanvas.
+      // We don't manage this pointer's lifetime.
+      SkCanvas* canvas =
+        //  getRasterizerSkSurface()->getCanvas();
+        sRasterSurface->getCanvas();
+
+      canvas->clear(SkColorSetARGB(255, 255, 255, 255));
+        printf("Draw() 3\n");
+
+      myView->onDraw(canvas);
+        //printf("Draw() 4\n");
+
+      sRasterSurface->flush();
+        //printf("Draw() 5\n");
+
+      pImage = sRasterSurface->makeImageSnapshot();
+      //const sk_sp<SkImage> pImage = getRasterizerSkSurface()->makeImageSnapshot();
+    }
+
+    if (nullptr == pImage) {
+      printf("can`t get pImage\n");
+    }
+
+    // Draw to the surface via its SkCanvas.
+    // We don't manage this pointer's lifetime.
+    //SkCanvas* canvas =
+      //  getRasterizerSkSurface()->getCanvas();
+      //sRasterSurface->getCanvas();
+
+    //const sk_sp<SkImage> pImage = sRasterSurface->makeImageSnapshot();
+    /*const sk_sp<SkImage> pImage = getRasterizerSkSurface()->makeImageSnapshot();
+    if (nullptr == pImage) {
+      //printf("can`t makeImageSnapshot\n");
+    }*/
+    if(pImage/* && !pImage->isAlphaOnly()
+      && pImage->width() > 0 && pImage->height() > 0*/) {
+      printf("Draw() 7\n");
+      SkPixmap pixmap;
+      if (!pImage->peekPixels(&pixmap)) {
+        printf("can`t peekPixels\n");
+      }
+      DCHECK(!pixmap.bounds().isEmpty());
+      printf("Draw() 7.1\n");
+
+      GL_CHECK( glBindTexture(GL_TEXTURE_2D, skia_texture) );
+      GL_CHECK( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE) );
+      GL_CHECK( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE) );
+      GL_CHECK( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR) );
+      GL_CHECK( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR) );
+      GL_CHECK( glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, pixmap.width(), pixmap.height(), 0, GL_RGBA,
+                   GL_UNSIGNED_BYTE, pixmap.addr()) );
+    }
+      //printf("Draw() 8\n");
+  }
+
+#endif // ENABLE_SKIA
+      //printf("Draw() 9\n");
+
+  GL_CHECK( glUniform1i(uniformTex, 0) );
+
+  //printf("redClrTintAnim %f\n", redClrTintAnim);
+  //GL_CHECK( glUniform1f(uniformRedClrTint, (sin(redClrTintAnim) / 2.0f + 0.5f)) );
+
+  GL_CHECK( glBindBuffer(GL_ARRAY_BUFFER, vertexPosObject) );
+  //
+  GL_CHECK( glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), NULL) );
+  GL_CHECK( glEnableVertexAttribArray(0) );
+  //
+  GL_CHECK( glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat),
+                        (GLvoid*)(2 * sizeof(GLfloat))) );
+  GL_CHECK( glEnableVertexAttribArray(1) );
+
+      //printf("Draw() 10\n");
+
+  int w, h, fs;
+#ifdef __EMSCRIPTEN__
+  // see
+  // https://github.com/floooh/oryol/blob/master/code/Modules/Gfx/private/emsc/emscDisplayMgr.cc#L174
+  emscripten_get_canvas_element_size("#canvas", &w, &h); //, &fs); // width, height, isFullscreen
+#else
+  w = width;
+  h = height;
+#endif
+  float xs = (float)h / w;
+  float ys = 1.0f;
+  float mat[] = {xs, 0, 0, 0, 0, ys, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1};
+
+  GL_CHECK( glBindBuffer(GL_ARRAY_BUFFER, 0) );
+
+  GL_CHECK( glDrawArrays(GL_TRIANGLE_STRIP, 0, 4) );
+
+  GL_CHECK( glDisableVertexAttribArray(0) );
+  GL_CHECK( glDisableVertexAttribArray(1) );
+      printf("Draw() 11\n");
 }
 
 static void mainLoop() {
@@ -3362,8 +3353,8 @@ static void mainLoop() {
 #endif
 
   //printf("animate...\n");
-
-  animate();
+  //
+  //animate();
 
 // __EMSCRIPTEN_PTHREADS__ can be used to detect whether Emscripten is currently targeting pthreads.
 // At runtime, you can use the emscripten_has_threading_support()
@@ -3374,12 +3365,12 @@ static void mainLoop() {
   // emscripten_current_thread_process_queued_calls();
 #endif
 
-  //printf("draw...\n");
+  printf("draw...\n");
 
   // Render
   Draw();
 
-        //printf("mainLoop 3\n");
+        printf("mainLoop 3\n");
 
 #if defined(__EMSCRIPTEN__) && defined(HAVE_SWAP_CONTROL)
   if (enableSwapControl) {
@@ -3394,15 +3385,15 @@ static void mainLoop() {
   }
 #else
 
-        //printf("mainLoop 4\n");
+        printf("mainLoop 4\n");
 
   // Update screen
   SDL_GL_SwapWindow(window);
 
-        //printf("mainLoop 5\n");
+        printf("mainLoop 5\n");
 #endif
 
-        //printf("mainLoop 6\n");
+        printf("mainLoop 6\n");
 
 #if defined(ENABLE_HTML5_SDL) || !defined(__EMSCRIPTEN__)
   while (SDL_PollEvent(&e) != 0) {
@@ -3428,7 +3419,7 @@ static void mainLoop() {
     emscripten_cancel_main_loop();
   }
 #endif
-        //printf("mainLoop 7\n");
+        printf("mainLoop 7\n");
 }
 
 #ifdef ENABLE_WTF
@@ -4307,32 +4298,6 @@ int main(int argc, char** argv) {
     /**/
     listWordBoundaries(
       icu::UnicodeString(u8"string asd asd 1"));
-
-    if (render_browser_window)
-    {
-      printf("Creating g_cobaltTester...\n");
-      /// __TODO__
-      //g_cobaltTester = std::make_unique<CobaltTester>();
-#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
-          g_cobaltTester = std::make_unique<CobaltTester>();
-          g_cobaltTester->run();
-#else
-    // Make sure the thread started.
-    main_thread_.task_runner()->PostTask(
-        FROM_HERE, base::Bind([](base::WaitableEvent* main_thread_event_){
-#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
-          DCHECK(base::MessageLoopCurrent::Get());
-#endif
-
-            printf("Starting g_cobaltTester...\n");
-            /// __TODO__
-            g_cobaltTester = std::make_unique<CobaltTester>();
-            g_cobaltTester->run();
-            printf("Finishing g_cobaltTester...\n");
-            //main_thread_event_->Signal();
-        }, &main_thread_event_));
-#endif
-  }
 
   printf("Waiting COBALT tests...\n");
   //// \NOTE: DON`T BLOCK MAIN WASM THREAD

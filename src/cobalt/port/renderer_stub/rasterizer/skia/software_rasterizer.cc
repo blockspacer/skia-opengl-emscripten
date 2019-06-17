@@ -86,7 +86,7 @@ SoftwareRasterizer::Impl::Impl(bool purge_skia_font_caches_on_destruction)
 void SoftwareRasterizer::Impl::Submit(
     const scoped_refptr<render_tree::Node>& render_tree,
     SkCanvas* render_target) {
-  //printf("SoftwareRasterizer::Impl::Submit 1\n");
+  printf("SoftwareRasterizer::Impl::Submit 1\n");
   TRACE_EVENT0("cobalt::renderer", "Rasterizer::Submit()");
   TRACE_EVENT0("cobalt::renderer", "SoftwareRasterizer::Submit()");
 
@@ -107,7 +107,7 @@ void SoftwareRasterizer::Impl::Submit(
     // rasterizer we just created.
     render_tree->Accept(&visitor);
   }
-  //printf("SoftwareRasterizer::Impl::Submit 2\n");
+  printf("SoftwareRasterizer::Impl::Submit 2\n");
 }
 
 render_tree::ResourceProvider* SoftwareRasterizer::Impl::GetResourceProvider() {
@@ -126,12 +126,12 @@ SoftwareRasterizer::~SoftwareRasterizer() {}
 void SoftwareRasterizer::Submit(
     const scoped_refptr<render_tree::Node>& render_tree,
     SkCanvas* render_target) {
-  //printf("SoftwareRasterizer::Submit 1\n");
+  printf("SoftwareRasterizer::Submit 1\n");
   impl_->Submit(render_tree, render_target);
 }
 
 render_tree::ResourceProvider* SoftwareRasterizer::GetResourceProvider() {
-  //printf("SoftwareRasterizer::GetResourceProvider 1\n");
+  printf("SoftwareRasterizer::GetResourceProvider 1\n");
   return impl_->GetResourceProvider();
 }
 

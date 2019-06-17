@@ -119,7 +119,7 @@ bool Node::DispatchEvent(const scoped_refptr<Event>& event) {
   // The event is now being dispatched. Track it in the global stats.
   GlobalStats::GetInstance()->StartJavaScriptEvent();
 
-  //P_LOG("Node::DispatchEvent 2\n");
+  P_LOG("Node::DispatchEvent 2\n");
 
   scoped_refptr<Window> window = nullptr;
   //P_LOG("Node::DispatchEvent 2.1\n");
@@ -135,7 +135,7 @@ bool Node::DispatchEvent(const scoped_refptr<Event>& event) {
     //P_LOG("Node::DispatchEvent 2.5\n");
     //window = node_document()->default_view().get();
   }
-  //P_LOG("Node::DispatchEvent 3\n");
+  P_LOG("Node::DispatchEvent 3\n");
 
   if (window) {
     DCHECK(window);
@@ -160,7 +160,7 @@ bool Node::DispatchEvent(const scoped_refptr<Event>& event) {
   // as the capturing phase.
   //P_LOG("Node::DispatchEvent 4.3\n");
   event->set_event_phase(Event::kCapturingPhase);
-  //P_LOG("Node::DispatchEvent 4.4\n");
+  P_LOG("Node::DispatchEvent 4.4\n");
   if (window) {
     //P_LOG("Node::DispatchEvent 4.5\n");
     window->FireEventOnListeners(event);
@@ -217,7 +217,7 @@ bool Node::DispatchEvent(const scoped_refptr<Event>& event) {
   // stats.
   GlobalStats::GetInstance()->StopJavaScriptEvent();
 
-  //P_LOG("OnStopDispatchEvent 3\n");
+  P_LOG("OnStopDispatchEvent 3\n");
   return !event->default_prevented();
 }
 

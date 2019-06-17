@@ -643,7 +643,7 @@ void RenderMultiPlaneImage(MultiPlaneImage* multi_plane_image,
 }  // namespace
 
 void RenderTreeNodeVisitor::Visit(render_tree::ImageNode* image_node) {
-  //printf("RenderTreeNodeVisitor::Visit(render_tree::ImageNode 1\n");
+  printf("RenderTreeNodeVisitor::Visit(render_tree::ImageNode 1\n");
 
   // The image_node may contain nothing. For example, when it represents a video
   // element before any frame is decoded.
@@ -1745,7 +1745,7 @@ void RenderText(SkCanvas* render_target,
 }  // namespace
 
 void RenderTreeNodeVisitor::Visit(render_tree::TextNode* text_node) {
-  //printf("RenderTreeNodeVisitor::Visit(render_tree::TextNode* text_node)\n");
+  printf("RenderTreeNodeVisitor::Visit(render_tree::TextNode* text_node)\n");
 #if ENABLE_RENDER_TREE_VISITOR_TRACING && !FILTER_RENDER_TREE_VISITOR_TRACING
   TRACE_EVENT0("cobalt::renderer", "Visit(TextNode)");
 #endif

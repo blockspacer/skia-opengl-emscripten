@@ -35,7 +35,7 @@ class BaseTimerTaskInternal {
   }
 
   void Run() {
-    //printf("BaseTimerTaskInternal::Run 1\n");
+    printf("BaseTimerTaskInternal::Run 1\n");
     // |timer_| is nullptr if we were abandoned.
     if (!timer_)
       return;
@@ -50,7 +50,7 @@ class BaseTimerTaskInternal {
     TimerBase* timer = timer_;
     timer_ = nullptr;
     timer->RunScheduledTask();
-    //printf("BaseTimerTaskInternal::Run 4\n");
+    printf("BaseTimerTaskInternal::Run 4\n");
   }
 
   // The task remains in the queue, but nothing will happen when it runs.
@@ -134,7 +134,7 @@ void TimerBase::Stop() {
 }
 
 void TimerBase::Reset() {
-  //printf("TimerBase::Reset 1\n");
+  printf("TimerBase::Reset 1\n");
   DCHECK(origin_sequence_checker_.CalledOnValidSequence());
 
   //printf("TimerBase::Reset 2\n");
@@ -165,7 +165,7 @@ void TimerBase::Reset() {
   AbandonScheduledTask();
   //printf("TimerBase::Reset 7\n");
   PostNewScheduledTask(delay_);
-  //printf("TimerBase::Reset 8\n");
+  printf("TimerBase::Reset 8\n");
 }
 
 TimeTicks TimerBase::Now() const {
@@ -176,7 +176,7 @@ TimeTicks TimerBase::Now() const {
 }
 
 void TimerBase::PostNewScheduledTask(TimeDelta delay) {
-  //printf("TimerBase::PostNewScheduledTask 1\n");
+  printf("TimerBase::PostNewScheduledTask 1\n");
   // TODO(gab): Enable this when it's no longer called racily from
   // RunScheduledTask(): https://crbug.com/587199.
   // DCHECK(origin_sequence_checker_.CalledOnValidSequence());
@@ -197,7 +197,7 @@ void TimerBase::PostNewScheduledTask(TimeDelta delay) {
         BindOnce(&BaseTimerTaskInternal::Run, Owned(scheduled_task_)));
     scheduled_run_time_ = desired_run_time_ = TimeTicks();
   }
-  //printf("TimerBase::PostNewScheduledTask 3\n");
+  printf("TimerBase::PostNewScheduledTask 3\n");
 }
 
 scoped_refptr<SequencedTaskRunner> TimerBase::GetTaskRunner() {
@@ -215,7 +215,7 @@ void TimerBase::AbandonScheduledTask() {
 }
 
 void TimerBase::RunScheduledTask() {
-  //printf("TimerBase::RunScheduledTask 1\n");
+  printf("TimerBase::RunScheduledTask 1\n");
   // TODO(gab): Enable this when it's no longer called racily:
   // https://crbug.com/587199.
   // DCHECK(origin_sequence_checker_.CalledOnValidSequence());
@@ -242,7 +242,7 @@ void TimerBase::RunScheduledTask() {
   //printf("TimerBase::RunScheduledTask 3\n");
   RunUserTask();
   // No more member accesses here: |this| could be deleted at this point.
-  //printf("TimerBase::RunScheduledTask 4\n");
+  printf("TimerBase::RunScheduledTask 4\n");
 }
 
 }  // namespace internal

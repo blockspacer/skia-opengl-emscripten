@@ -365,7 +365,7 @@ void Pipeline::ClearCurrentRenderTree() {
 }
 
 void Pipeline::RasterizeCurrentTree() {
-    //printf("Pipeline::RasterizeCurrentTree 1\n");
+    printf("Pipeline::RasterizeCurrentTree 1\n");
   TRACK_MEMORY_SCOPE("Renderer");
   DCHECK(rasterizer_thread_checker_.CalledOnValidThread());
   TRACE_EVENT0("cobalt::renderer", "Pipeline::RasterizeCurrentTree()");
@@ -441,7 +441,7 @@ void Pipeline::RasterizeCurrentTree() {
       post_fence_receipt_time_ = base::nullopt;
     }
   }
-  //printf("Pipeline::RasterizeCurrentTree 9\n");
+  printf("Pipeline::RasterizeCurrentTree 9\n");
 }
 
 void Pipeline::UpdateRasterizeStats(bool did_rasterize,
