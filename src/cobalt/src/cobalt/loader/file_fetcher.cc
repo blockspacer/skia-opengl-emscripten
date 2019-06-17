@@ -97,8 +97,11 @@ FileFetcher::FileFetcher(const base::FilePath& file_path, Handler* handler,
   printf("FileFetcher 1 %s\n", file_path.value().c_str());
   DCHECK_GT(buffer_size_, 0);
 
-  //DCHECK(base::MessageLoopCurrent::Get()); // TODO
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+  ///DCHECK(base::MessageLoopCurrent::Get()); // TODO
+  /// __TODO__
   DCHECK(task_runner_); // TODO
+#endif
 
   // Ensure the request does not attempt to navigate outside the whitelisted
   // directory.

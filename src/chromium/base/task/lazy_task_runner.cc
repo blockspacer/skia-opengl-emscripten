@@ -110,7 +110,9 @@ ScopedLazyTaskRunnerListForTesting::~ScopedLazyTaskRunnerListForTesting() {
   internal::CheckedAutoLock auto_lock(lock_);
   for (auto& callback : callbacks_)
     std::move(callback).Run();
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   g_scoped_lazy_task_runner_list_for_testing = nullptr;
+#endif
 }
 
 void ScopedLazyTaskRunnerListForTesting::AddCallback(OnceClosure callback) {

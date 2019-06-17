@@ -37,10 +37,14 @@ SequenceCheckerImpl::SequenceCheckerImpl() : core_(std::make_unique<Core>()) {}
 SequenceCheckerImpl::~SequenceCheckerImpl() = default;
 
 bool SequenceCheckerImpl::CalledOnValidSequence() const {
-  AutoLock auto_lock(lock_);
-  if (!core_)
-    core_ = std::make_unique<Core>();
-  return core_->CalledOnValidSequence();
+    AutoLock auto_lock(lock_);
+    if (!core_)
+        core_ = std::make_unique<Core>();
+#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+    return true;
+#else
+    return core_->CalledOnValidSequence();
+#endif
 }
 
 void SequenceCheckerImpl::DetachFromSequence() {

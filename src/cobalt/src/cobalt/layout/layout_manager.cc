@@ -67,7 +67,8 @@ class LayoutManager::Impl : public dom::DocumentObserver {
 
   bool IsRenderTreePending() const;
 
- private:
+ //private:
+ public:
   void DirtyLayout();
   void StartLayoutTimer();
   void DoLayoutAndProduceRenderTree();
@@ -470,6 +471,11 @@ LayoutManager::LayoutManager(
   }
 
 LayoutManager::~LayoutManager() {}
+
+void LayoutManager::ForceReLayout() {
+  ///impl_->OnMutation();
+  impl_->DoLayoutAndProduceRenderTree();
+}
 
 void LayoutManager::Suspend() { impl_->Suspend(); }
 void LayoutManager::Resume() { impl_->Resume(); }

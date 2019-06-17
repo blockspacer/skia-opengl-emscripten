@@ -55,11 +55,16 @@ void MutationObserverTaskManager::QueueMutationObserverMicrotask() {
   // 2. Set mutation observer compound microtask queued flag.
   task_posted_ = true;
   // 3. Queue a compound microtask to notify mutation observers.
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   DCHECK(base::MessageLoopCurrent::Get()); // TODO
   base::MessageLoopCurrent::Get()->task_runner()->PostTask(
       FROM_HERE,
       base::Bind(&MutationObserverTaskManager::NotifyMutationObservers,
                  base::Unretained(this)));
+#else
+  std::move(base::Bind(&MutationObserverTaskManager::NotifyMutationObservers,
+                 base::Unretained(this))).Run();
+#endif
 }
 
 void MutationObserverTaskManager::TraceMembers(script::Tracer* tracer) {

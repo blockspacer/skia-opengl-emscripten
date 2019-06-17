@@ -32,6 +32,7 @@ ScopedMockTimeMessageLoopTaskRunner::~ScopedMockTimeMessageLoopTaskRunner() {
         pending_task.location, std::move(pending_task.task),
         pending_task.GetTimeToRun() - task_runner_->NowTicks());
   }
+  DCHECK(MessageLoopCurrent::Get()); // TODO
   MessageLoopCurrent::Get()->SetTaskRunner(std::move(previous_task_runner_));
 }
 

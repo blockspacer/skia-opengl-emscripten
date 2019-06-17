@@ -904,6 +904,7 @@ void HTMLElement::OnUiNavFocus() {
 }
 
 void HTMLElement::OnUiNavScroll() {
+  printf("HTMLElement::OnUiNavScroll\n");
   Document* document = node_document();
   scoped_refptr<Window> window(document ? document->window() : nullptr);
   DispatchEvent(new UIEvent(base::Tokens::scroll(),
@@ -1044,6 +1045,7 @@ bool HTMLElement::IsBeingRendered() {
 // Algorithm for RunFocusingSteps:
 //   https://www.w3.org/TR/html5/editing.html#focusing-steps
 void HTMLElement::RunFocusingSteps() {
+  printf("HTMLElement::RunFocusingSteps()\n");
   // 1. If the element is not in a Document, or if the element's Document has
   // no browsing context, or if the element's Document's browsing context has no
   // top-level browsing context, or if the element is not focusable, or if the
@@ -1602,6 +1604,7 @@ void HTMLElement::UpdateUiNavigationType() {
 }
 
 void HTMLElement::RegisterUiNavigationParent() {
+  //printf("HTMLElement::RegisterUiNavigationParent()\n");
   if (!ui_nav_item_) {
     return;
   }

@@ -146,6 +146,7 @@ void EventTarget::PostToDispatchEventAndRunCallback(
                    base::AsWeakPtr<EventTarget>(this), event, callback)).Run();
   return;
 #endif
+
   if (!base::MessageLoopCurrent::Get()) {
     return;
   }
@@ -163,9 +164,11 @@ void EventTarget::PostToDispatchEventNameAndRunCallback(
     const base::Closure& callback) {
     printf("PostToDispatchEventNameAndRunCallback 1\n");
 #if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
-  std::move(base::Bind(base::IgnoreResult(&EventTarget::DispatchEventAndRunCallback),
-                base::IgnoreResult(&EventTarget::DispatchEventNameAndRunCallback),
-                base::AsWeakPtr<EventTarget>(this), event_name, callback)).Run();
+  std::move(
+    base::Bind(
+              base::IgnoreResult(&EventTarget::DispatchEventNameAndRunCallback),
+              base::AsWeakPtr<EventTarget>(this), event_name, callback)
+  ).Run();
   return;
 #endif
 

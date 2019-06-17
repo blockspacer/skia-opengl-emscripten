@@ -46,6 +46,10 @@
 #endif  // SB_HAS(CORE_DUMP_HANDLER_SUPPORT)
 #endif  // defined(OS_STARBOARD)
 
+#if defined(OS_EMSCRIPTEN)
+#include <emscripten.h>
+#endif
+
 namespace cobalt {
 namespace dom {
 
@@ -94,6 +98,17 @@ bool Node::DispatchEvent(const scoped_refptr<Event>& event) {
   DCHECK(!event->IsBeingDispatched());
   DCHECK(event->initialized_flag());
 
+#if defined(OS_EMSCRIPTEN)
+  //HTML5_STACKTRACE();
+/*
+  at cobalt::dom::Node::DispatchEvent(scoped_refptr<cobalt::dom::Event> const&) [__ZN6cobalt3dom4Node13DispatchEventERK13scoped_refptrINS0_5EventEE] (wasm-function[5972]:132)
+(index):1234     at cobalt::dom::EventTarget::DispatchEventNameAndRunCallback(base::CobToken, base::RepeatingCallback<void ()> const&) [__ZN6cobalt3dom11EventTarget31DispatchEventNameAndRunCallbackEN4base8CobTokenERKNS2_17RepeatingCallbackIFvvEEE] (wasm-function[4527]:112)
+(index):1234     at void base::internal::FunctorTraits<void (cobalt::dom::EventTarget::*)(base::CobToken, base::RepeatingCallback<void ()> const&), void>::Invoke<void (cobalt::dom::EventTarget::*)(base::CobToken, base::RepeatingCallback<void ()> const&), base::WeakPtr<cobalt::dom::EventTarget> const&, base::CobToken const&, base::RepeatingCallback<void ()> const&>(void (cobalt::dom::EventTarget::*)(base::CobToken, base::RepeatingCallback<void ()> const&), base::WeakPtr<cobalt::dom::EventTarget> const&&&, base::CobToken const&&&, base::RepeatingCallback<void ()> const&&&) [__ZN4base8internal13FunctorTraitsIMN6cobalt3dom11EventTargetEFvNS_8CobTokenERKNS_17RepeatingCallbackIFvvEEEEvE6InvokeISC_RKNS_7WeakPtrIS4_EEJRKS5_SA_EEEvT_OT0_DpOT1_] (wasm-function[4554]:126)
+(index):1234     at void base::internal::FunctorTraits<base::internal::IgnoreResultHelper<void (cobalt::dom::EventTarget::*)(base::CobToken, base::RepeatingCallback<void ()> const&)>, void>::Invoke<base::internal::IgnoreResultHelper<void (cobalt::dom::EventTarget::*)(base::CobToken, base::RepeatingCallback<void ()> const&)> const&, base::WeakPtr<cobalt::dom::EventTarget> const&, base::CobToken const&, base::RepeatingCallback<void ()> const&>(base::internal::IgnoreResultHelper<void (cobalt::dom::EventTarget::*)(base::CobToken, base::RepeatingCallback<void ()> const&)> const&&&, base::WeakPtr<cobalt::dom::EventTarget> const&&&, base::CobToken const&&&, base::RepeatingCallback<void ()> const&&&) [__ZN4base8internal13FunctorTraitsINS0_18IgnoreResultHelperIMN6cobalt3dom11EventTargetEFvNS_8CobTokenERKNS_17RepeatingCallbackIFvvEEEEEEvE6InvokeIRKSE_JRKNS_7WeakPtrIS5_EERKS6_SB_EEEvOT_DpOT0_] (wasm-function[4553]:79)
+(index):1234     at void base::internal::InvokeHelper<true, void>::MakeItSo<base::internal::IgnoreResultHelper<void (cobalt::dom::EventTarget::*)(base::CobToken, base::RepeatingCallback<void ()> const&)> const&, base::WeakPtr<cobalt::dom::EventTarget> const&, base::CobToken const&, base::RepeatingCallback<void ()> const&>(base::internal::IgnoreResultHelper<void (cobalt::dom::EventTarget::*)(base::CobToken, base::RepeatingCallback<void ()> const&)> const&&&, base::WeakPtr<cobalt::dom::EventTarget> const&&&, base::CobToken const&&&, base::RepeatingCallback<void ()> const&&&) [__ZN4base8internal12InvokeHelperILb1EvE8MakeItSoIRKNS0_18IgnoreResultHelperIMN6cobalt3dom11EventTargetEFvNS_8CobTokenERKNS_17RepeatingCallbackIFvvEEEEEERKNS_7WeakPtrIS7_EEJRKS8_SD_EEEvOT_OT0_DpOT1_] (wasm-function[4552]:19)
+ */
+#endif
+
   TRACE_EVENT1("cobalt::dom", "Node::DispatchEvent", "event",
                event->type().c_str());
 
@@ -104,50 +119,77 @@ bool Node::DispatchEvent(const scoped_refptr<Event>& event) {
   // The event is now being dispatched. Track it in the global stats.
   GlobalStats::GetInstance()->StartJavaScriptEvent();
 
-  scoped_refptr<Window> window;
+  //P_LOG("Node::DispatchEvent 2\n");
+
+  scoped_refptr<Window> window = nullptr;
+  //P_LOG("Node::DispatchEvent 2.1\n");
+  //Window* window = nullptr;
   if (IsInDocument()) {
+    //P_LOG("Node::DispatchEvent 2.2\n");
     DCHECK(node_document());
-    window = node_document()->default_view();
+    //P_LOG("Node::DispatchEvent 2.3\n");
+    if(node_document()->default_view()) {// TODO
+      //P_LOG("Node::DispatchEvent 2.4\n");
+      window = node_document()->default_view();
+    }
+    //P_LOG("Node::DispatchEvent 2.5\n");
+    //window = node_document()->default_view().get();
   }
+  //P_LOG("Node::DispatchEvent 3\n");
 
   if (window) {
+    DCHECK(window);
     window->OnStartDispatchEvent(event);
   }
+  //P_LOG("Node::DispatchEvent 4\n");
 
   typedef std::vector<scoped_refptr<Node> > Ancestors;
+  ///typedef std::vector<Node* > Ancestors;
   Ancestors ancestors;
   for (Node* current = this->parent_node(); current != NULL;
        current = current->parent_node()) {
     ancestors.push_back(current);
   }
+  //P_LOG("Node::DispatchEvent 4.1\n");
 
   event->set_target(this);
+  //P_LOG("Node::DispatchEvent 4.2\n");
 
   // The capture phase: The event object propagates through the target's
   // ancestors from the Window to the target's parent. This phase is also known
   // as the capturing phase.
+  //P_LOG("Node::DispatchEvent 4.3\n");
   event->set_event_phase(Event::kCapturingPhase);
+  //P_LOG("Node::DispatchEvent 4.4\n");
   if (window) {
+    //P_LOG("Node::DispatchEvent 4.5\n");
     window->FireEventOnListeners(event);
   }
+    //P_LOG("Node::DispatchEvent 4.6\n");
   if (!event->propagation_stopped() && !ancestors.empty()) {
+    //P_LOG("Node::DispatchEvent 4.7\n");
     for (Ancestors::reverse_iterator iter = ancestors.rbegin();
          iter != ancestors.rend() && !event->propagation_stopped(); ++iter) {
       (*iter)->FireEventOnListeners(event);
     }
   }
 
+    //P_LOG("Node::DispatchEvent 4.8\n");
   if (!event->propagation_stopped()) {
+    //P_LOG("Node::DispatchEvent 4.9\n");
     // The target phase: The event object arrives at the event object's event
     // target. This phase is also known as the at-target phase.
     event->set_event_phase(Event::kAtTarget);
+    //P_LOG("Node::DispatchEvent 4.10\n");
     FireEventOnListeners(event);
   }
 
+    //P_LOG("Node::DispatchEvent 4.11\n");
   // If the event type indicates that the event doesn't bubble, then the event
   // object will halt after completion of this phase.
   if (!event->propagation_stopped() && event->bubbles()) {
     if (!ancestors.empty()) {
+      //P_LOG("Node::DispatchEvent 4.12\n");
       // The bubble phase: The event object propagates through the target's
       // ancestors in reverse order, starting with the target's parent and
       // ending with the Window. This phase is also known as the bubbling phase.
@@ -162,9 +204,11 @@ bool Node::DispatchEvent(const scoped_refptr<Event>& event) {
     }
   }
 
+  //P_LOG("Node::DispatchEvent 4.13\n");
   event->set_event_phase(Event::kNone);
   //P_LOG("OnStopDispatchEvent 1\n");
   if (window) {
+    //P_LOG("Node::DispatchEvent 4.14\n");
     window->OnStopDispatchEvent(event);
   }
   //P_LOG("OnStopDispatchEvent 2\n");

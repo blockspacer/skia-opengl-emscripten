@@ -60,6 +60,8 @@ void SoftwareRasterizer::Submit(
     const scoped_refptr<render_tree::Node>& render_tree,
     const scoped_refptr<backend::RenderTarget>& render_target,
     const Options& options) {
+  //printf("SoftwareRasterizer::Submit( 1\n");
+  DCHECK(render_target);
   int width = render_target->GetSize().width();
   int height = render_target->GetSize().height();
 
@@ -94,6 +96,7 @@ void SoftwareRasterizer::Submit(
   // output.
   SkCanvas canvas(bitmap);*/
 
+  //printf("SoftwareRasterizer::Submit( 2\n");
   if (!sRasterSurface) {
     const SkImageInfo info = SkImageInfo::MakeN32(width, height, kPremul_SkAlphaType);
     sRasterSurface = SkSurface::MakeRaster(info);
@@ -102,8 +105,10 @@ void SoftwareRasterizer::Submit(
     }
   }
 
+  //printf("SoftwareRasterizer::Submit( 3\n");
   SkCanvas* canvas = sRasterSurface->getCanvas();
 
+  //printf("SoftwareRasterizer::Submit( 4\n");
   canvas->clear(SkColorSetARGB(0, 0, 0, 0));
 
     SkPaint paint;
@@ -116,10 +121,14 @@ void SoftwareRasterizer::Submit(
     paint.setAntiAlias(false);
     paint.setFilterQuality( SkFilterQuality::kNone_SkFilterQuality );
 #endif
-    /*paint.setColor(SK_ColorRED);
+
+  const bool draw_dummy_shapes = false;
+  if(draw_dummy_shapes) {
+  //printf("SoftwareRasterizer::Submit( 5.1\n");
+    paint.setColor(SK_ColorRED);
     /// paint.setColor(0xffeeeeee);
       //printf("onDraw() 2\n");
-    paint.setColor(SK_ColorBLACK);
+    ///paint.setColor(SK_ColorBLACK);
     paint.setStyle(SkPaint::kFill_Style);
       //printf("onDraw() 4\n");
 
@@ -133,16 +142,21 @@ void SoftwareRasterizer::Submit(
 
     paint.setColor(SK_ColorWHITE);
     const SkScalar m_size = 200;
-    canvas->drawCircle(100, 100, m_size, paint);*/
+    canvas->drawCircle(100, 100, m_size, paint);
+  }
 
+  //printf("SoftwareRasterizer::Submit( 5\n");
   skia_rasterizer_.Submit(render_tree, canvas);
 
+  //printf("SoftwareRasterizer::Submit( 6\n");
     sRasterSurface->flush();
 
+  //printf("SoftwareRasterizer::Submit( 7\n");
   pImage = sRasterSurface->makeImageSnapshot();
   if (nullptr == pImage) {
-    //printf("can`t makeImageSnapshot\n");
+    printf("pImage can`t makeImageSnapshot\n");
   }
+  //printf("SoftwareRasterizer::Submit( 8\n");
 
   // The rasterized pixels are still on the CPU, ship them off to the GPU
   // for output to the display.  We must first create a backend GPU texture
@@ -163,6 +177,7 @@ void SoftwareRasterizer::Submit(
 
 render_tree::ResourceProvider* SoftwareRasterizer::GetResourceProvider() {
   //return nullptr;///
+  printf("SoftwareRasterizer::GetResourceProvider 1\n");
   return skia_rasterizer_.GetResourceProvider();
   ///return &resource_provider_stub_;
 }

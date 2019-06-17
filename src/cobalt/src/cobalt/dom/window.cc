@@ -64,6 +64,11 @@
 
 #include "starboard/file.h"
 
+#if defined(OS_EMSCRIPTEN)
+#include <emscripten/emscripten.h>
+static bool window_initialized = false;
+#endif
+
 using cobalt::cssom::ViewportSize;
 #if defined(ENABLE_COBALT_MEDIA_SESSION)
 using cobalt::media_session::MediaSession;
@@ -75,16 +80,18 @@ namespace dom {
 // This class fires the window's load event when the document is loaded.
 class Window::RelayLoadEvent : public DocumentObserver {
  public:
-  explicit RelayLoadEvent(Window* window) : window_(window) {}
+  explicit RelayLoadEvent(/*scoped_refptr<Window>&*/Window* window) : window_(window) {}
 
   // From DocumentObserver.
   void OnLoad() override {
+    DCHECK(window_);
     window_->PostToDispatchEventName(FROM_HERE, base::Tokens::load());
   }
   void OnMutation() override {}
   void OnFocusChanged() override {}
 
  private:
+  ///scoped_refptr<Window> window_;
   Window* window_;
 
   DISALLOW_COPY_AND_ASSIGN(RelayLoadEvent);
@@ -231,6 +238,15 @@ Window::Window(
       on_stop_dispatch_event_callback_(on_stop_dispatch_event_callback),
       screenshot_manager_(screenshot_function_callback),
       ui_nav_root_(ui_nav_root) {
+
+#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+  if(window_initialized)
+    printf("can`t init Window twice wasm ST platform!");
+  DCHECK(!window_initialized);
+  window_initialized = true;
+  //HTML5_STACKTRACE();
+#endif
+
 #if !defined(ENABLE_TEST_RUNNER)
   SB_UNREFERENCED_PARAMETER(clock_type);
 #endif
@@ -245,11 +261,16 @@ Window::Window(
   // Document load start is deferred from this constructor so that we can be
   // guaranteed that this Window object is fully constructed before document
   // loading begins.
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   DCHECK(base::MessageLoopCurrent::Get()); // TODO
   base::MessageLoopCurrent::Get()->task_runner()->PostTask(
       FROM_HERE,
       base::Bind(&Window::StartDocumentLoad, base::Unretained(this),
                  fetcher_factory, url, dom_parser, load_complete_callback));
+#else
+  std::move(base::Bind(&Window::StartDocumentLoad, base::Unretained(this),
+                       fetcher_factory, url, dom_parser, load_complete_callback)).Run();
+#endif
 }
 
 void Window::StartDocumentLoad(
@@ -706,18 +727,27 @@ void Window::OnDocumentRootElementUnableToProvideOffsetDimensions() {
 }
 
 void Window::OnStartDispatchEvent(const scoped_refptr<dom::Event>& event) {
+  P_LOG("Window::OnStartDispatchEvent 1\n");
   if (!on_start_dispatch_event_callback_.is_null()) {
+    P_LOG("Window::OnStartDispatchEvent 2\n");
+    DCHECK(!on_start_dispatch_event_callback_.IsCancelled());
+    P_LOG("Window::OnStartDispatchEvent 2.1\n");
     on_start_dispatch_event_callback_.Run(event);
+    P_LOG("Window::OnStartDispatchEvent 3\n");
   }
 }
 
 void Window::OnStopDispatchEvent(const scoped_refptr<dom::Event>& event) {
+  P_LOG("Window::OnStopDispatchEvent 1\n");
   if (!on_stop_dispatch_event_callback_.is_null()) {
+    P_LOG("Window::OnStopDispatchEvent 2\n");
     on_stop_dispatch_event_callback_.Run(event);
+    P_LOG("Window::OnStopDispatchEvent 3\n");
   }
 }
 
 void Window::ClearPointerStateForShutdown() {
+  printf("Window::ClearPointerStateForShutdown\n");
   document_->pointer_state()->ClearForShutdown();
 }
 
@@ -763,6 +793,11 @@ const scoped_refptr<OnScreenKeyboard>& Window::on_screen_keyboard() const {
 void Window::ReleaseOnScreenKeyboard() { on_screen_keyboard_ = nullptr; }
 
 Window::~Window() {
+  printf("Window::~Window\n");
+#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+  printf("can`t destroy Window on wasm ST platform!");
+  HTML5_STACKTRACE();
+#endif
   if (ui_nav_root_) {
     ui_nav_root_->SetEnabled(false);
   }

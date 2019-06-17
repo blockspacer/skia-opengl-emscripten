@@ -39,7 +39,7 @@ class Storage : public script::Wrappable {
     kLocalStorage,
     kSessionStorage,
   };
-  Storage(Window* window, StorageType type, LocalStorageDatabase* db);
+  Storage(const scoped_refptr<Window>& window, StorageType type, LocalStorageDatabase* db);
 
   // Web API
   // https://www.w3.org/TR/2015/CR-webstorage-20150609/#storage-0
@@ -72,7 +72,8 @@ class Storage : public script::Wrappable {
   DEFINE_WRAPPABLE_TYPE(Storage);
 
  protected:
-  Window* window_;
+  scoped_refptr<Window> window_;
+  ///Window* window_;
   std::unique_ptr<StorageArea> area_;
 
   FRIEND_TEST(StorageAreaTest, InitialState);

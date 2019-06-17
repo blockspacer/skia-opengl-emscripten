@@ -36,9 +36,16 @@ class FileHelper {
    void PassFile() {
      if (proxy_)
        proxy_->SetFile(std::move(file_));
-     else if (file_.IsValid())
-       task_runner_->PostTask(FROM_HERE,
-                              BindOnce(&FileDeleter, std::move(file_)));
+     else if (file_.IsValid()) {
+      if(!task_runner_) {
+        P_LOG("PassFile: no task_runner_\n");
+        std::move(BindOnce(&FileDeleter, std::move(file_))).Run();
+      } else {
+        DCHECK(task_runner_);
+        task_runner_->PostTask(FROM_HERE,
+                               BindOnce(&FileDeleter, std::move(file_)));
+      }
+     }
    }
 
  protected:
@@ -235,8 +242,15 @@ FileProxy::FileProxy(TaskRunner* task_runner) : task_runner_(task_runner) {
 }
 
 FileProxy::~FileProxy() {
-  if (file_.IsValid())
-    task_runner_->PostTask(FROM_HERE, BindOnce(&FileDeleter, std::move(file_)));
+  DCHECK(task_runner_);
+  if(!task_runner_) {
+    P_LOG("~FileProxy: no task_runner_\n");
+    std::move(BindOnce(&FileDeleter, std::move(file_))).Run();
+  } else {
+    DCHECK(task_runner_);
+    if (file_.IsValid())
+      task_runner_->PostTask(FROM_HERE, BindOnce(&FileDeleter, std::move(file_)));
+  }
 }
 
 bool FileProxy::CreateOrOpen(const FilePath& file_path,
@@ -245,23 +259,43 @@ bool FileProxy::CreateOrOpen(const FilePath& file_path,
     printf("FileFetcher::CreateOrOpen 1 %s\n", file_path.value().c_str());
   DCHECK(!file_.IsValid());
   CreateOrOpenHelper* helper = new CreateOrOpenHelper(this, File());
-  return task_runner_->PostTaskAndReply(
-      FROM_HERE,
-      BindOnce(&CreateOrOpenHelper::RunWork, Unretained(helper), file_path,
-               file_flags),
-      BindOnce(&CreateOrOpenHelper::Reply, Owned(helper), std::move(callback)));
+
+  if(!task_runner_) {
+    P_LOG("FileProxy::CreateOrOpen no task_runner_\n");
+    std::move(BindOnce(&CreateOrOpenHelper::RunWork, Unretained(helper), file_path,
+                 file_flags)).Run();
+    std::move(BindOnce(&CreateOrOpenHelper::Reply, Owned(helper), std::move(callback))).Run();
+  } else {
+      DCHECK(task_runner_);
+      return task_runner_->PostTaskAndReply(
+          FROM_HERE,
+          BindOnce(&CreateOrOpenHelper::RunWork, Unretained(helper), file_path,
+                   file_flags),
+          BindOnce(&CreateOrOpenHelper::Reply, Owned(helper), std::move(callback)));
+
+  }
+
 }
 
 bool FileProxy::CreateTemporary(uint32_t additional_file_flags,
                                 CreateTemporaryCallback callback) {
   DCHECK(!file_.IsValid());
   CreateTemporaryHelper* helper = new CreateTemporaryHelper(this, File());
-  return task_runner_->PostTaskAndReply(
-      FROM_HERE,
-      BindOnce(&CreateTemporaryHelper::RunWork, Unretained(helper),
-               additional_file_flags),
-      BindOnce(&CreateTemporaryHelper::Reply, Owned(helper),
-               std::move(callback)));
+  if(!task_runner_) {
+    P_LOG("FileProxy::CreateTemporary no task_runner_\n");
+    std::move(BindOnce(&CreateTemporaryHelper::RunWork, Unretained(helper),
+               additional_file_flags)).Run();
+    std::move(BindOnce(&CreateTemporaryHelper::Reply, Owned(helper),
+               std::move(callback))).Run();
+  } else {
+    DCHECK(task_runner_);
+    return task_runner_->PostTaskAndReply(
+        FROM_HERE,
+        BindOnce(&CreateTemporaryHelper::RunWork, Unretained(helper),
+                 additional_file_flags),
+        BindOnce(&CreateTemporaryHelper::Reply, Owned(helper),
+                 std::move(callback)));
+ }
 }
 
 bool FileProxy::IsValid() const {
@@ -288,17 +322,31 @@ PlatformFile FileProxy::GetPlatformFile() const {
 bool FileProxy::Close(StatusCallback callback) {
   DCHECK(file_.IsValid());
   GenericFileHelper* helper = new GenericFileHelper(this, std::move(file_));
-  return task_runner_->PostTaskAndReply(
-      FROM_HERE, BindOnce(&GenericFileHelper::Close, Unretained(helper)),
-      BindOnce(&GenericFileHelper::Reply, Owned(helper), std::move(callback)));
+  if(!task_runner_) {
+    P_LOG("FileProxy::Close no task_runner_\n");
+    std::move(BindOnce(&GenericFileHelper::Close, Unretained(helper))).Run();
+    std::move(BindOnce(&GenericFileHelper::Reply, Owned(helper), std::move(callback))).Run();
+  } else {
+    DCHECK(task_runner_);
+    return task_runner_->PostTaskAndReply(
+        FROM_HERE, BindOnce(&GenericFileHelper::Close, Unretained(helper)),
+        BindOnce(&GenericFileHelper::Reply, Owned(helper), std::move(callback)));
+  }
 }
 
 bool FileProxy::GetInfo(GetFileInfoCallback callback) {
   DCHECK(file_.IsValid());
   GetInfoHelper* helper = new GetInfoHelper(this, std::move(file_));
-  return task_runner_->PostTaskAndReply(
-      FROM_HERE, BindOnce(&GetInfoHelper::RunWork, Unretained(helper)),
-      BindOnce(&GetInfoHelper::Reply, Owned(helper), std::move(callback)));
+  if(!task_runner_) {
+    P_LOG("FileProxy::GetInfo no task_runner_\n");
+    std::move(BindOnce(&GetInfoHelper::RunWork, Unretained(helper))).Run();
+    std::move(BindOnce(&GetInfoHelper::Reply, Owned(helper), std::move(callback))).Run();
+  } else {
+    DCHECK(task_runner_);
+    return task_runner_->PostTaskAndReply(
+        FROM_HERE, BindOnce(&GetInfoHelper::RunWork, Unretained(helper)),
+        BindOnce(&GetInfoHelper::Reply, Owned(helper), std::move(callback)));
+  }
 }
 
 bool FileProxy::Read(int64_t offset, int bytes_to_read, ReadCallback callback) {
@@ -308,9 +356,16 @@ bool FileProxy::Read(int64_t offset, int bytes_to_read, ReadCallback callback) {
     return false;
 
   ReadHelper* helper = new ReadHelper(this, std::move(file_), bytes_to_read);
-  return task_runner_->PostTaskAndReply(
+  if(!task_runner_) {
+    P_LOG("FileProxy::Read no task_runner_\n");
+    std::move(BindOnce(&ReadHelper::RunWork, Unretained(helper), offset)).Run();
+    std::move(BindOnce(&ReadHelper::Reply, Owned(helper), std::move(callback))).Run();
+  } else {
+    DCHECK(task_runner_);
+    return task_runner_->PostTaskAndReply(
       FROM_HERE, BindOnce(&ReadHelper::RunWork, Unretained(helper), offset),
       BindOnce(&ReadHelper::Reply, Owned(helper), std::move(callback)));
+  }
 }
 
 bool FileProxy::Write(int64_t offset,
@@ -323,9 +378,15 @@ bool FileProxy::Write(int64_t offset,
 
   WriteHelper* helper =
       new WriteHelper(this, std::move(file_), buffer, bytes_to_write);
-  return task_runner_->PostTaskAndReply(
-      FROM_HERE, BindOnce(&WriteHelper::RunWork, Unretained(helper), offset),
-      BindOnce(&WriteHelper::Reply, Owned(helper), std::move(callback)));
+  if(task_runner_) {
+    DCHECK(task_runner_);
+    return task_runner_->PostTaskAndReply(
+        FROM_HERE, BindOnce(&WriteHelper::RunWork, Unretained(helper), offset),
+        BindOnce(&WriteHelper::Reply, Owned(helper), std::move(callback)));
+  } else {
+    std::move(BindOnce(&WriteHelper::RunWork, Unretained(helper), offset)).Run();
+    std::move(BindOnce(&WriteHelper::Reply, Owned(helper), std::move(callback))).Run();
+  }
 }
 
 bool FileProxy::SetTimes(Time last_access_time,
@@ -333,28 +394,47 @@ bool FileProxy::SetTimes(Time last_access_time,
                          StatusCallback callback) {
   DCHECK(file_.IsValid());
   GenericFileHelper* helper = new GenericFileHelper(this, std::move(file_));
-  return task_runner_->PostTaskAndReply(
-      FROM_HERE,
-      BindOnce(&GenericFileHelper::SetTimes, Unretained(helper),
-               last_access_time, last_modified_time),
-      BindOnce(&GenericFileHelper::Reply, Owned(helper), std::move(callback)));
+  if(task_runner_) {
+    DCHECK(task_runner_);
+    return task_runner_->PostTaskAndReply(
+        FROM_HERE,
+        BindOnce(&GenericFileHelper::SetTimes, Unretained(helper),
+                 last_access_time, last_modified_time),
+        BindOnce(&GenericFileHelper::Reply, Owned(helper), std::move(callback)));
+  } else {
+    std::move(BindOnce(&GenericFileHelper::SetTimes, Unretained(helper),
+                 last_access_time, last_modified_time)).Run();
+    std::move(BindOnce(&GenericFileHelper::Reply, Owned(helper), std::move(callback))).Run();
+  }
 }
 
 bool FileProxy::SetLength(int64_t length, StatusCallback callback) {
   DCHECK(file_.IsValid());
   GenericFileHelper* helper = new GenericFileHelper(this, std::move(file_));
-  return task_runner_->PostTaskAndReply(
-      FROM_HERE,
-      BindOnce(&GenericFileHelper::SetLength, Unretained(helper), length),
-      BindOnce(&GenericFileHelper::Reply, Owned(helper), std::move(callback)));
+  if(task_runner_) {
+    DCHECK(task_runner_);
+    return task_runner_->PostTaskAndReply(
+        FROM_HERE,
+        BindOnce(&GenericFileHelper::SetLength, Unretained(helper), length),
+        BindOnce(&GenericFileHelper::Reply, Owned(helper), std::move(callback)));
+  } else {
+    std::move(BindOnce(&GenericFileHelper::SetLength, Unretained(helper), length)).Run();
+    std::move(BindOnce(&GenericFileHelper::Reply, Owned(helper), std::move(callback))).Run();
+  }
 }
 
 bool FileProxy::Flush(StatusCallback callback) {
   DCHECK(file_.IsValid());
   GenericFileHelper* helper = new GenericFileHelper(this, std::move(file_));
-  return task_runner_->PostTaskAndReply(
-      FROM_HERE, BindOnce(&GenericFileHelper::Flush, Unretained(helper)),
-      BindOnce(&GenericFileHelper::Reply, Owned(helper), std::move(callback)));
+  if(task_runner_) {
+    DCHECK(task_runner_);
+    return task_runner_->PostTaskAndReply(
+        FROM_HERE, BindOnce(&GenericFileHelper::Flush, Unretained(helper)),
+        BindOnce(&GenericFileHelper::Reply, Owned(helper), std::move(callback)));
+  } else {
+    std::move(BindOnce(&GenericFileHelper::Flush, Unretained(helper))).Run();
+    std::move(BindOnce(&GenericFileHelper::Reply, Owned(helper), std::move(callback))).Run();
+  }
 }
 
 }  // namespace base

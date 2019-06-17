@@ -22,7 +22,7 @@
 namespace cobalt {
 namespace dom {
 
-Storage::Storage(Window* window, StorageType type,
+Storage::Storage(const scoped_refptr<Window>& window, StorageType type,
                  LocalStorageDatabase* db_interface)
     : window_(window) {
   if (type == kLocalStorage) {

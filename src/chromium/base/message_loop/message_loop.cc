@@ -55,15 +55,14 @@ MessageLoop::MessageLoop(std::unique_ptr<MessagePump> pump)
 }
 
 MessageLoop::~MessageLoop() {
+    P_LOG("~MessageLoop\n");
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   // Clean up any unprocessed tasks, but take care: deleting a task could
   // result in the addition of more tasks (e.g., via DeleteSoon). This is taken
   // care by the queue as it will prevent further tasks from being posted to its
   // associated TaskRunner instances.
   default_task_queue_->ShutdownTaskQueue();
 
-#if defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS)
-  // no check
-#else
   // If |pump_| is non-null, this message loop has been bound and should be the
   // current one on this thread. Otherwise, this loop is being destructed before
   // it was bound to a thread, so a different message loop (or no loop at all)
@@ -188,7 +187,13 @@ MessageLoop::CreateDefaultTaskQueue() {
   return default_task_queue;
 }
 
+static bool isBound = false;
+
 void MessageLoop::BindToCurrentThread() {
+#if defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS)
+  if(!isBound) {
+    isBound = true;
+#endif
   DCHECK_CALLED_ON_VALID_THREAD(bound_thread_checker_);
   thread_id_ = PlatformThread::CurrentId();
 
@@ -197,12 +202,13 @@ void MessageLoop::BindToCurrentThread() {
   std::unique_ptr<MessagePump> pump = CreateMessagePump();
   pump_ = pump.get();
 
-#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   DCHECK(!MessageLoopCurrent::IsSet())
       << "should only have one message loop per thread";
-#endif
 
   sequence_manager_->BindToCurrentThread(std::move(pump));
+#if defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS)
+  } // (!pump_)
+#endif
 }
 
 std::unique_ptr<MessagePump> MessageLoop::CreateMessagePump() {

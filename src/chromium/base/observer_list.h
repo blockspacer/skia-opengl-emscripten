@@ -271,10 +271,12 @@ class ObserverList {
   // Precondition: !HasObserver(obs)
   void AddObserver(ObserverType* obs) {
     DCHECK(obs);
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
     if (HasObserver(obs)) {
       NOTREACHED() << "Observers can only be added once!";
       return;
     }
+#endif
     observers_.emplace_back(ObserverStorageType(obs));
   }
 

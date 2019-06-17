@@ -93,8 +93,12 @@ class BASE_EXPORT AssociatedThreadId
 #if defined(DISABLE_PTHREADS)
     return true;
 #else
+//#if  defined(OS_EMSCRIPTEN)
+//    return true;
+//#else
     return thread_id_.load(std::memory_order_relaxed) ==
            PlatformThread::CurrentId();
+//#endif
 #endif
   }
 

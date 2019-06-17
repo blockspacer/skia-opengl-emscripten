@@ -64,6 +64,7 @@ struct ThreadParams {
 };
 
 void* ThreadFunc(void* params) {
+    P_LOG("ThreadFunc 1\n");
   PlatformThread::Delegate* delegate = nullptr;
 
 #if defined(OS_EMSCRIPTEN)
@@ -79,6 +80,7 @@ void* ThreadFunc(void* params) {
 #if defined(OS_EMSCRIPTEN)
     DCHECK(delegate);
 #endif
+    P_LOG("ThreadFunc 2\n");
 
     if (!thread_params->joinable)
       base::ThreadRestrictions::SetSingletonAllowed(false);

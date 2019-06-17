@@ -172,6 +172,7 @@ SequenceManagerImpl::~SequenceManagerImpl() {
   TRACE_EVENT_OBJECT_DELETED_WITH_ID(
       TRACE_DISABLED_BY_DEFAULT("sequence_manager"), "SequenceManager", this);
 
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   // Make sure no Task is running as given that RunLoop does not support the
   // Delegate being destroyed from a Task and
   // ThreadControllerWithMessagePumpImpl does not support being destroyed from a
@@ -179,6 +180,7 @@ SequenceManagerImpl::~SequenceManagerImpl() {
   // fine
   DCHECK(!controller_->GetBoundMessagePump() ||
          main_thread_only().task_execution_stack.empty());
+#endif
 
   for (internal::TaskQueueImpl* queue : main_thread_only().active_queues) {
     main_thread_only().selector.RemoveQueue(queue);
@@ -856,6 +858,7 @@ void SequenceManagerImpl::OnTaskQueueEnabled(internal::TaskQueueImpl* queue) {
 }
 
 void SequenceManagerImpl::MaybeReclaimMemory() {
+//#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   if (!main_thread_only().memory_reclaim_scheduled)
     return;
 
@@ -866,6 +869,7 @@ void SequenceManagerImpl::MaybeReclaimMemory() {
   main_thread_only().next_time_to_reclaim_memory =
       NowTicks() + kReclaimMemoryInterval;
   main_thread_only().memory_reclaim_scheduled = false;
+//#endif
 }
 
 void SequenceManagerImpl::ReclaimMemory() {

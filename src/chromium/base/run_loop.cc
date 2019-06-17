@@ -139,11 +139,11 @@ void RunLoop::RegisterDelegateForCurrentThread(Delegate* delegate) {
     delegate->bound_ = true;
   }
 #else*/
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   // Bind |delegate| to this thread.
   DCHECK(!delegate->bound_);
   DCHECK_CALLED_ON_VALID_THREAD(delegate->bound_thread_checker_);
 
-#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   // There can only be one RunLoop::Delegate per thread.
   DCHECK(!tls_delegate.Get().Get())
       << "Error: Multiple RunLoop::Delegates registered on the same thread.\n\n"

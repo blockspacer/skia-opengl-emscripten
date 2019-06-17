@@ -211,6 +211,7 @@ void WorkerThreadScheduler::RemoveTaskObserver(
 }
 
 void WorkerThreadScheduler::Shutdown() {
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   DCHECK(initialized_);
   load_tracker_.RecordIdle(helper()->NowTicks());
   base::TimeTicks end_time = helper()->NowTicks();
@@ -226,6 +227,7 @@ void WorkerThreadScheduler::Shutdown() {
   idle_helper_.Shutdown();
   helper()->RemoveTaskTimeObserver(this);
   helper()->Shutdown();
+#endif
 }
 
 scoped_refptr<NonMainThreadTaskQueue>

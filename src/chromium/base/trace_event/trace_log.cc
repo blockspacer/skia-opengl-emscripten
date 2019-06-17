@@ -242,6 +242,7 @@ TraceLog::ThreadLocalEventBuffer::ThreadLocalEventBuffer(TraceLog* trace_log)
       generation_(trace_log->generation()) {
   // ThreadLocalEventBuffer is created only if the thread has a message loop, so
   // the following message_loop won't be NULL.
+  DCHECK(MessageLoopCurrent::Get()); // TODO
   MessageLoopCurrent::Get()->AddDestructionObserver(this);
 
   // This is to report the local memory usage when memory-infra is enabled.

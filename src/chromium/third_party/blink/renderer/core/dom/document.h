@@ -850,6 +850,7 @@ class CORE_EXPORT Document : public ContainerNode,
                          unsigned old_length);
   void DidSplitTextNode(const Text& old_node);
 
+  // __TODO__
   void ClearDOMWindow() { dom_window_ = nullptr; }
   LocalDOMWindow* domWindow() const { return dom_window_; }
 

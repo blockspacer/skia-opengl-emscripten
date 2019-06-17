@@ -98,6 +98,7 @@ GpuWatchdogThread::GpuWatchdogThread()
   tty_file_ = base::OpenFile(base::FilePath(kTtyFilePath), "r");
   SetupXServer();
 #endif
+  DCHECK(base::MessageLoopCurrent::Get()); // TODO
   base::MessageLoopCurrent::Get()->AddTaskObserver(&task_observer_);
 }
 

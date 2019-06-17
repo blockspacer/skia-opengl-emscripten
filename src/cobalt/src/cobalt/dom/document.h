@@ -118,7 +118,9 @@ class Document : public Node,
           cookie_jar(NULL),
 #endif
           csp_enforcement_mode(kCspEnforcementEnable) {}
-    Options(const GURL& url_value, Window* window,
+    Options(const GURL& url_value,
+            const scoped_refptr<Window>& window,
+            //Window* window,
             const base::Closure& hashchange_callback,
             const scoped_refptr<base::BasicClock>& navigation_start_clock_value,
             const base::Callback<void(const GURL&)>& navigation_callback,
@@ -156,7 +158,8 @@ class Document : public Node,
           dom_max_element_depth(dom_max_element_depth) {}
 
     GURL url;
-    Window* window;
+    //Window* window;
+    scoped_refptr<Window> window;
     base::Closure hashchange_callback;
     scoped_refptr<base::BasicClock> navigation_start_clock;
     base::Callback<void(const GURL&)> navigation_callback;
@@ -195,6 +198,7 @@ class Document : public Node,
   std::string title() const;
 
   scoped_refptr<Window> default_view() const;
+  //Window* default_view() const;
 
   scoped_refptr<HTMLCollection> GetElementsByTagName(
       const std::string& local_name) const;
@@ -312,8 +316,12 @@ class Document : public Node,
   //   https://www.w3.org/TR/html5/browsers.html#browsing-context
   bool HasBrowsingContext() const { return !!window_; }
 
-  void set_window(Window* window) { window_ = window; }
+
+  void set_window(const scoped_refptr<Window>& window) { window_ = window; }
+  //void set_window(Window* window) { window_ = window; }
+
   const scoped_refptr<Window> window();
+  //Window* window();
 
   // Sets the active element of the document.
   void SetActiveElement(Element* active_element);
@@ -502,7 +510,8 @@ class Document : public Node,
   base::WeakPtr<page_visibility::PageVisibilityState> page_visibility_state_;
 
   // Reference to the associated window object.
-  Window* window_;
+  //Window* window_;
+  scoped_refptr<Window> window_;
   // Associated DOM implementation object.
   scoped_refptr<DOMImplementation> implementation_;
   // List of CSS style sheets.

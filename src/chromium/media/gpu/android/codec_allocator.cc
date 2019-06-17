@@ -155,6 +155,7 @@ void CodecAllocator::StartThread(CodecAllocatorClient* client) {
         FROM_HERE,
         base::BindOnce(
             [](base::MessageLoop::TaskObserver* observer) {
+              DCHECK(base::MessageLoopCurrent::Get()); // TODO
               base::MessageLoopCurrent::Get()->AddTaskObserver(observer);
             },
             base::Unretained(&thread->hang_detector)));

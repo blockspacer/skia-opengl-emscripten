@@ -246,7 +246,7 @@ FontCache::GetCharacterFallbackTypeface(int32 utf32_character,
 scoped_refptr<render_tree::GlyphBuffer> FontCache::CreateGlyphBuffer(
     const base::char16* text_buffer, int32 text_length, bool is_rtl,
     FontList* font_list) {
-  printf("FontCache::CreateGlyphBuffer 1\n");
+  //printf("FontCache::CreateGlyphBuffer 1\n");
   DCHECK(resource_provider());
   return resource_provider()->CreateGlyphBuffer(
       text_buffer, static_cast<size_t>(text_length), language_script_, is_rtl,

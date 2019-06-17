@@ -35,18 +35,22 @@ class BaseTimerTaskInternal {
   }
 
   void Run() {
+    //printf("BaseTimerTaskInternal::Run 1\n");
     // |timer_| is nullptr if we were abandoned.
     if (!timer_)
       return;
 
+    //printf("BaseTimerTaskInternal::Run 2\n");
     // |this| will be deleted by the task runner, so Timer needs to forget us:
     timer_->scheduled_task_ = nullptr;
 
+    //printf("BaseTimerTaskInternal::Run 3\n");
     // Although Timer should not call back into |this|, let's clear |timer_|
     // first to be pedantic.
     TimerBase* timer = timer_;
     timer_ = nullptr;
     timer->RunScheduledTask();
+    //printf("BaseTimerTaskInternal::Run 4\n");
   }
 
   // The task remains in the queue, but nothing will happen when it runs.
@@ -130,20 +134,25 @@ void TimerBase::Stop() {
 }
 
 void TimerBase::Reset() {
+  //printf("TimerBase::Reset 1\n");
   DCHECK(origin_sequence_checker_.CalledOnValidSequence());
 
+  //printf("TimerBase::Reset 2\n");
   // If there's no pending task, start one up and return.
   if (!scheduled_task_) {
+  //printf("TimerBase::Reset 3\n");
     PostNewScheduledTask(delay_);
     return;
   }
 
+  //printf("TimerBase::Reset 4\n");
   // Set the new |desired_run_time_|.
   if (delay_ > TimeDelta::FromMicroseconds(0))
     desired_run_time_ = Now() + delay_;
   else
     desired_run_time_ = TimeTicks();
 
+  //printf("TimerBase::Reset 5\n");
   // We can use the existing scheduled task if it arrives before the new
   // |desired_run_time_|.
   if (desired_run_time_ >= scheduled_run_time_) {
@@ -151,9 +160,12 @@ void TimerBase::Reset() {
     return;
   }
 
+  //printf("TimerBase::Reset 6\n");
   // We can't reuse the |scheduled_task_|, so abandon it and post a new one.
   AbandonScheduledTask();
+  //printf("TimerBase::Reset 7\n");
   PostNewScheduledTask(delay_);
+  //printf("TimerBase::Reset 8\n");
 }
 
 TimeTicks TimerBase::Now() const {
@@ -164,12 +176,14 @@ TimeTicks TimerBase::Now() const {
 }
 
 void TimerBase::PostNewScheduledTask(TimeDelta delay) {
+  //printf("TimerBase::PostNewScheduledTask 1\n");
   // TODO(gab): Enable this when it's no longer called racily from
   // RunScheduledTask(): https://crbug.com/587199.
   // DCHECK(origin_sequence_checker_.CalledOnValidSequence());
   DCHECK(!scheduled_task_);
   is_running_ = true;
   scheduled_task_ = new BaseTimerTaskInternal(this);
+  //printf("TimerBase::PostNewScheduledTask 2\n");
   if (delay > TimeDelta::FromMicroseconds(0)) {
     // TODO(gab): Posting BaseTimerTaskInternal::Run to another sequence makes
     // this code racy. https://crbug.com/587199
@@ -183,6 +197,7 @@ void TimerBase::PostNewScheduledTask(TimeDelta delay) {
         BindOnce(&BaseTimerTaskInternal::Run, Owned(scheduled_task_)));
     scheduled_run_time_ = desired_run_time_ = TimeTicks();
   }
+  //printf("TimerBase::PostNewScheduledTask 3\n");
 }
 
 scoped_refptr<SequencedTaskRunner> TimerBase::GetTaskRunner() {
@@ -200,6 +215,7 @@ void TimerBase::AbandonScheduledTask() {
 }
 
 void TimerBase::RunScheduledTask() {
+  //printf("TimerBase::RunScheduledTask 1\n");
   // TODO(gab): Enable this when it's no longer called racily:
   // https://crbug.com/587199.
   // DCHECK(origin_sequence_checker_.CalledOnValidSequence());
@@ -208,6 +224,7 @@ void TimerBase::RunScheduledTask() {
   if (!is_running_)
     return;
 
+  //printf("TimerBase::RunScheduledTask 2\n");
   // First check if we need to delay the task because of a new target time.
   if (desired_run_time_ > scheduled_run_time_) {
     // Now() can be expensive, so only call it if we know the user has changed
@@ -222,8 +239,10 @@ void TimerBase::RunScheduledTask() {
     }
   }
 
+  //printf("TimerBase::RunScheduledTask 3\n");
   RunUserTask();
   // No more member accesses here: |this| could be deleted at this point.
+  //printf("TimerBase::RunScheduledTask 4\n");
 }
 
 }  // namespace internal

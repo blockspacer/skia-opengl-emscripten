@@ -373,6 +373,12 @@ if(TARGET_EMSCRIPTEN)
   else()
     message(FATAL_ERROR "EMSCRIPTEN_VERSION is not present, or is older than 1.38.6: '${EMSCRIPTEN_VERSION}'")
   endif()
+  #
+  if ("${EMSCRIPTEN_VERSION}" VERSION_GREATER 1.38.22)
+    set(EMCC_SUPPORTS_ENVIRONMENT TRUE)
+  else()
+    set(EMCC_SUPPORTS_ENVIRONMENT FALSE)
+  endif()
 endif(TARGET_EMSCRIPTEN)
 
 # WebAssembly
@@ -386,8 +392,8 @@ endif(NOT ENABLE_WASM)
 set(ENABLE_SIMD FALSE)
 
 # PTHREADS
-set(ENABLE_WEB_PTHREADS TRUE)
-#set(ENABLE_WEB_PTHREADS FALSE)
+#set(ENABLE_WEB_PTHREADS TRUE)
+set(ENABLE_WEB_PTHREADS FALSE)
 
 if(TARGET_EMSCRIPTEN)
   set(ENABLE_UKM FALSE) # keep wasm build as small as possible
@@ -1963,16 +1969,19 @@ if(TARGET_EMSCRIPTEN)
 endif() # EMSCRIPTEN
 
 if(TARGET_EMSCRIPTEN)
-  if(ENABLE_WEB_PTHREADS)
-    # When building with multithreading enabled
-    # and a "-s ENVIRONMENT=" directive is specified,
-    # it must include "worker" as a target!
-    # (Try e.g. -s ENVIRONMENT=web,worker)';
-    set(EMCC_ENVIRONMENT "web,worker")
-    #set(EMCC_ENVIRONMENT "web")
-  else()
-    set(EMCC_ENVIRONMENT "web")
-  endif(ENABLE_WEB_PTHREADS)
+  if(EMCC_SUPPORTS_ENVIRONMENT)
+    if(ENABLE_WEB_PTHREADS)
+      # When building with multithreading enabled
+      # and a "-s ENVIRONMENT=" directive is specified,
+      # it must include "worker" as a target!
+      # (Try e.g. -s ENVIRONMENT=web,worker)';
+      set(EMCC_ENVIRONMENT "-s ENVIRONMENT='web,worker'")
+      #set(EMCC_ENVIRONMENT "web")
+    else()
+      set(EMCC_ENVIRONMENT "-s ENVIRONMENT='web'")
+    endif(ENABLE_WEB_PTHREADS)
+  endif(EMCC_SUPPORTS_ENVIRONMENT)
+  #
   # It is recommended to use target_link_libraries() for linker flags,
   # not set_target_properties (!!!)
   # see https://stackoverflow.com/a/45905060/10904212
@@ -1995,7 +2004,7 @@ if(TARGET_EMSCRIPTEN)
     # NOTE: notice the single quoted 'web'
     # TODO # "-s ENVIRONMENT=\"'web'\""
     # TODO #
-    "-s ENVIRONMENT='${EMCC_ENVIRONMENT}'"
+    "${EMCC_ENVIRONMENT}"
     #
   )
 

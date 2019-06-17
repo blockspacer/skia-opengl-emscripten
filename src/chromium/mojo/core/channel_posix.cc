@@ -302,6 +302,7 @@ class ChannelPosix : public Channel,
     DCHECK(!write_watcher_);
     read_watcher_.reset(
         new base::MessagePumpForIO::FdWatchController(FROM_HERE));
+    DCHECK(MessageLoopCurrent::Get()); // TODO
     base::MessageLoopCurrent::Get()->AddDestructionObserver(this);
     if (server_.is_valid()) {
       base::MessageLoopCurrentForIO::Get()->WatchFileDescriptor(
@@ -341,6 +342,7 @@ class ChannelPosix : public Channel,
   }
 
   void ShutDownOnIOThread() {
+    DCHECK(MessageLoopCurrent::Get()); // TODO
     base::MessageLoopCurrent::Get()->RemoveDestructionObserver(this);
 
     read_watcher_.reset();
@@ -433,6 +435,7 @@ class ChannelPosix : public Channel,
       CHECK_EQ(fd, server_.platform_handle().GetFD().get());
 #if !defined(OS_NACL)
       read_watcher_.reset();
+      DCHECK(MessageLoopCurrent::Get()); // TODO
       base::MessageLoopCurrent::Get()->RemoveDestructionObserver(this);
 
       AcceptSocketConnection(server_.platform_handle().GetFD().get(), &socket_);

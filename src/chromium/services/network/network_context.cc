@@ -1703,6 +1703,7 @@ URLRequestContextOwner NetworkContext::ApplyContextParamsToBuilder(
 
   scoped_refptr<SessionCleanupCookieStore> session_cleanup_cookie_store;
   if (params_->cookie_path) {
+    DCHECK(base::MessageLoopCurrent::Get()); // TODO
     scoped_refptr<base::SequencedTaskRunner> client_task_runner =
         base::MessageLoopCurrent::Get()->task_runner();
     scoped_refptr<base::SequencedTaskRunner> background_task_runner =

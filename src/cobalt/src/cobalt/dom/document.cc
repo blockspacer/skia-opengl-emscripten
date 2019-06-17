@@ -68,6 +68,11 @@
 #include "cobalt/script/global_environment.h"
 #include "nb/memory_scope.h"
 
+#if defined(OS_EMSCRIPTEN)
+#include <emscripten/emscripten.h>
+static bool document_initialized = false;
+#endif
+
 using cobalt::cssom::ViewportSize;
 
 namespace cobalt {
@@ -104,6 +109,15 @@ Document::Document(HTMLElementContext* html_element_context,
       ready_state_(kDocumentReadyStateComplete),
       dom_max_element_depth_(options.dom_max_element_depth),
       render_postponed_(false) {
+
+#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+  if(document_initialized)
+    printf("can`t init Document twice wasm ST platform!");
+  DCHECK(!document_initialized);
+  document_initialized = true;
+  //HTML5_STACKTRACE();
+#endif
+
   DCHECK(html_element_context_);
   DCHECK(options.url.is_empty() || options.url.is_valid());
   page_visibility_state_->AddObserver(this);
@@ -183,7 +197,10 @@ scoped_refptr<Element> Document::document_element() const {
   return first_element_child();
 }
 
+/// __TODO__: fixme: immediately destroys scoped_refptr on WASM ST
 scoped_refptr<Window> Document::default_view() const { return window_; }
+
+//Window* Document::default_view() const { return window_; }
 
 std::string Document::title() const {
   const char kTitleTag[] = "title";
@@ -564,6 +581,7 @@ void Document::SetIndicatedElement(HTMLElement* indicated_element) {
 }
 
 const scoped_refptr<Window> Document::window() { return window_; }
+//Window* Document::window() { return window_; }
 
 void Document::IncreaseLoadingCounter() { ++loading_counter_; }
 
@@ -576,7 +594,7 @@ void Document::DecreaseLoadingCounterAndMaybeDispatchLoadEvent() {
   if (loading_counter_ == 0 && should_dispatch_load_event_) {
     should_dispatch_load_event_ = false;
     // TODO https://github.com/emscripten-core/emscripten/issues/6843
-#if(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   std::move(base::Bind(&Document::DispatchOnLoadEvent,
                        base::AsWeakPtr<Document>(this))).Run();
 #else
@@ -764,6 +782,8 @@ void Document::UpdateComputedStyles() {
   UpdateSelectorTree();
   UpdateKeyframes();
   UpdateFontFaces();
+
+  DCHECK(html_element_context_);
 
   if (is_computed_style_dirty_) {
     TRACE_EVENT0("cobalt::layout", kBenchmarkStatUpdateComputedStyles);

@@ -764,6 +764,8 @@ sk_sp<const GrGLInterface> emscripten_GrGLMakeNativeInterface() {
 }
 #endif
 
+static bool render_browser_window = true;
+
 // must be POT
 static int width = 1920;//1024;//512;
 // must be POT
@@ -1940,8 +1942,71 @@ static void Draw() {
 #if defined(ENABLE_SKIA)
   //using cobalt::renderer::rasterizer::egl::getRasterizerSkSurface;
   using cobalt::renderer::rasterizer::egl::getRasterizerSkImage;
+#define TODO_PIMG 1
+#if defined(TODO_PIMG)
+  {
 
-  //if (getRasterizerSkSurface())
+    sk_sp<SkImage> pImage = nullptr;
+    if (render_browser_window)
+    {
+       pImage = getRasterizerSkImage();
+        //printf("Draw() 6.1\n");
+    } else {
+      // Draw to the surface via its SkCanvas.
+      // We don't manage this pointer's lifetime.
+      SkCanvas* canvas =
+        //  getRasterizerSkSurface()->getCanvas();
+        sRasterSurface->getCanvas();
+
+      canvas->clear(SkColorSetARGB(255, 255, 255, 255));
+        //printf("Draw() 3\n");
+
+      myView->onDraw(canvas);
+        //printf("Draw() 4\n");
+
+      sRasterSurface->flush();
+        //printf("Draw() 5\n");
+
+      pImage = sRasterSurface->makeImageSnapshot();
+      //const sk_sp<SkImage> pImage = getRasterizerSkSurface()->makeImageSnapshot();
+    }
+
+    if (nullptr == pImage) {
+      printf("can`t get pImage\n");
+    }
+
+    // Draw to the surface via its SkCanvas.
+    // We don't manage this pointer's lifetime.
+    //SkCanvas* canvas =
+      //  getRasterizerSkSurface()->getCanvas();
+      //sRasterSurface->getCanvas();
+
+    //const sk_sp<SkImage> pImage = sRasterSurface->makeImageSnapshot();
+    /*const sk_sp<SkImage> pImage = getRasterizerSkSurface()->makeImageSnapshot();
+    if (nullptr == pImage) {
+      //printf("can`t makeImageSnapshot\n");
+    }*/
+    if(pImage/* && !pImage->isAlphaOnly()
+      && pImage->width() > 0 && pImage->height() > 0*/) {
+      //printf("Draw() 7\n");
+      SkPixmap pixmap;
+      if (!pImage->peekPixels(&pixmap)) {
+        //printf("can`t peekPixels\n");
+      }
+      DCHECK(!pixmap.bounds().isEmpty());
+      //printf("Draw() 7.1\n");
+
+      GL_CHECK( glBindTexture(GL_TEXTURE_2D, skia_texture) );
+      GL_CHECK( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE) );
+      GL_CHECK( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE) );
+      GL_CHECK( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR) );
+      GL_CHECK( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR) );
+      GL_CHECK( glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, pixmap.width(), pixmap.height(), 0, GL_RGBA,
+                   GL_UNSIGNED_BYTE, pixmap.addr()) );
+    }
+      //printf("Draw() 8\n");
+  }
+#else
   {
 
     // Draw to the surface via its SkCanvas.
@@ -1980,7 +2045,10 @@ static void Draw() {
                    GL_UNSIGNED_BYTE, pixmap.addr()) );
     }
   }
+#endif
+
 #endif // ENABLE_SKIA
+      //printf("Draw() 9\n");
 
   GL_CHECK( glUniform1i(uniformTex, 0) );
 
@@ -1995,6 +2063,8 @@ static void Draw() {
   GL_CHECK( glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat),
                         (GLvoid*)(2 * sizeof(GLfloat))) );
   GL_CHECK( glEnableVertexAttribArray(1) );
+
+      //printf("Draw() 10\n");
 
   int w, h, fs;
 #ifdef __EMSCRIPTEN__
@@ -2015,157 +2085,9 @@ static void Draw() {
 
   GL_CHECK( glDisableVertexAttribArray(0) );
   GL_CHECK( glDisableVertexAttribArray(1) );
-      //printf("Draw() 7\n");
+      //printf("Draw() 11\n");
 }
 
-static void animate() {
-  //redClrTintAnim += 0.01f;
-  //if (redClrTintAnim > 360.0f) {
-  //  redClrTintAnim = 0.0f;
-  //}
-
-#if defined(ENABLE_SKIA) && defined(ENABLE_SKOTTIE)
-
-#if defined(ENABLE_HTML5_SDL) || !defined(__EMSCRIPTEN__)
-  if (fTimeBase == 0) {
-    // Reset the animation time.
-    fTimeBase = SDL_GetTicks();
-  }
-  if (fAnimation) {
-    const auto t = SDL_GetTicks() - fTimeBase;
-    const auto d = fAnimation->duration() * 1000;
-    fAnimation->seek(::std::fmod(t, d) / d);
-  }
-#else
-#error "TODO: port SDL_GetTicks without SDL"
-#endif
-
-#endif // ENABLE_SKOTTIE
-}
-
-static void mainLoop() {
-
-
-#ifdef __EMSCRIPTEN__
-
-  // see https://github.com/emscripten-core/emscripten/issues/3495
-  ///
-  /// __TODO__
-  ///
-  ///emscripten_main_thread_process_queued_calls();
-
-  /*{
-    // see https://github.com/emscripten-core/emscripten/issues/8307
-    EMSCRIPTEN_RESULT r = emscripten_webgl_make_context_current(em_ctx);
-    if( r != EMSCRIPTEN_RESULT_SUCCESS )
-    {
-      printf( "Unable to make OffscreenCanvas instance the current context (code %d)\n", r );
-    }
-  }
-  DCHECK(emscripten_webgl_get_current_context() == em_ctx);*/
-#endif
-
-  //printf("animate...\n");
-
-  animate();
-
-// __EMSCRIPTEN_PTHREADS__ can be used to detect whether Emscripten is currently targeting pthreads.
-// At runtime, you can use the emscripten_has_threading_support()
-// see https://emscripten.org/docs/porting/pthreads.html
-#if defined(__EMSCRIPTEN__) && defined(__EMSCRIPTEN_PTHREADS__)
-  // TODO
-  // printf("emscripten_current_thread_process_queued_calls...\n");
-  // emscripten_current_thread_process_queued_calls();
-#endif
-
-  //printf("draw...\n");
-
-  // Render
-  Draw();
-
-#if defined(__EMSCRIPTEN__) && defined(HAVE_SWAP_CONTROL)
-  if (enableSwapControl) {
-    // emscripten_webgl_commit_frame requires offscreen canvas support
-    // see https://github.com/emscripten-core/emscripten/issues/5437
-    EMSCRIPTEN_RESULT r = emscripten_webgl_commit_frame();
-    if(r != EMSCRIPTEN_RESULT_SUCCESS)
-    {
-      // TODO: https://github.com/emscripten-core/emscripten/issues/5437
-      printf( "There was an issue commiting the frame to the offscreen canvas (code %d)\n", r );
-    }
-  }
-#else
-
-  // Update screen
-  SDL_GL_SwapWindow(window);
-
-#endif
-
-#if defined(ENABLE_HTML5_SDL) || !defined(__EMSCRIPTEN__)
-  while (SDL_PollEvent(&e) != 0) {
-    switch (e.type) {
-      case SDL_QUIT: {
-        quit = true;
-        printf("recieved quit signal\n");
-      }
-    }
-  }
-#elif defined(__EMSCRIPTEN__)
-  #warning "TODO: port SDL_PollEvent (emscripten_set_mousedown_callback, e.t.c.)"
-  #warning "see https://github.com/floooh/sokol/blob/master/sokol_app.h#L2403 for example"
-  #warning "see https://github.com/hongkk/urho/blob/master/Source/Urho3D/Input/Input.cpp for example"
-  #warning "see https://github.com/h-s-c/libKD/blob/master/source/kd.c#L2658 for example"
-#else
-  #error "TODO: port SDL_PollEvent"
-#endif
-
-#ifdef __EMSCRIPTEN__
-  if (quit) {
-    printf("quitting main loop\n");
-    emscripten_cancel_main_loop();
-  }
-#endif
-}
-
-#ifdef ENABLE_WTF
-/*static void CallOnMainThreadFunction(WTF::MainThreadFunction function, void* context) {
-  // TODO
-  //
-https://github.com/chromium/chromium/blob/master/third_party/blink/renderer/platform/scheduler/public/post_cross_thread_task.h#L17
-  PostCrossThreadTask(
-      *Thread::MainThread()->GetTaskRunner(), FROM_HERE,
-      CrossThreadBind(function, CrossThreadUnretained(context)));
-}*/
-
-static void MakeClosure(base::OnceClosure** closure_out) {
-  *closure_out = new base::OnceClosure(WTF::Bind([] {
-    printf("OnceClosure!\n");
-  }));
-  LEAK_SANITIZER_IGNORE_OBJECT(*closure_out);
-}
-
-
-class BindChecks{
-public:
-  int Run(){
-    return base::BindOnce(&BindChecks::ConstNoexceptMethod, base::Unretained(this))
-              .Run();
-  }
-
-  int ConstNoexceptMethod() const noexcept { return 42; }
-};
-
-static int SomeHardcoreTask(int max_num) {
-    //TRACE_EVENT1(kCategoryName, "SomeHardcoreTask", "max_num", max_num);
-    //float x = 1.5f;
-    int x = 0;
-    for (int i = 0; i < max_num; ++i) {
-        //x *= sin(x) / atan(x) * tanh(x) * sqrt(x);
-        x += i;
-    }
-
-    return x;
-}
 
 #ifdef ENABLE_COBALT
 using namespace cobalt;
@@ -2220,6 +2142,13 @@ private:
 class CobaltTester {
   public:
     CobaltTester();
+    ~CobaltTester()
+    {
+#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+  printf("can`t destroy CobaltTester on wasm ST platform!");
+  HTML5_STACKTRACE();
+#endif
+    }
     void run();
     void OnWindowClose(base::TimeDelta close_time);
     void OnWindowMinimize();
@@ -2249,7 +2178,8 @@ class CobaltTester {
     void listWordBoundaries(const icu::UnicodeString& s);
 
 
-  private:
+  //private:
+  public:
     cobalt::web_animations::Animation::Data animation;
     base::Optional<base::TimeDelta> local_time;
     scoped_refptr<cobalt::cssom::CSSRuleList> rule_list;
@@ -2275,7 +2205,7 @@ class CobaltTester {
         "</head>"
         "<body>123test456</body>"
         "</html>";
-  std::unique_ptr<cobalt::dom_parser::HTMLDecoder> html_decoder_;
+  //std::unique_ptr<cobalt::dom_parser::HTMLDecoder> html_decoder_;
 
   std::unique_ptr<loader::FetcherFactory> fetcher_factory_;
 
@@ -2294,9 +2224,9 @@ class CobaltTester {
   scoped_refptr<HTMLElement> html_element_;
 
   std::unique_ptr<cobalt::dom::HTMLElementContext> html_element_context_;
-  scoped_refptr<cobalt::dom::Document> document_;
+  //scoped_refptr<cobalt::dom::Document> document_;
   //std::unique_ptr<cobalt::dom::Element> root_;
-  scoped_refptr<cobalt::dom::Element> root_;
+  //scoped_refptr<cobalt::dom::Element> root_;
   //std::unique_ptr<base::SourceLocation> source_location_;
 
   std::unique_ptr<cobalt::loader::image::AnimatedImageTracker> animated_image_tracker_;
@@ -2358,6 +2288,7 @@ class CobaltTester {
 
   // The Window object wraps all DOM-related components.
   scoped_refptr<dom::Window> window_;
+  //dom::Window* window_ = nullptr;
 
   // Cache a WeakPtr in the WebModule that is bound to the Window's message loop
   // so we can ensure that all subsequently created WeakPtr's are also bound to
@@ -2537,10 +2468,11 @@ void CobaltTester::OnRendererSubmissionRasterized() {
 static render_tree::animations::AnimateNode::AnimateResults animateResults;
 
 void CobaltTester::SubmitCurrentRenderTreeToRenderer() {
-    printf("SubmitCurrentRenderTreeToRenderer 1\n");
+    //printf("SubmitCurrentRenderTreeToRenderer 1\n");
     if (!renderer_module_) {
         return;
     }
+    //printf("SubmitCurrentRenderTreeToRenderer 2\n");
 
     base::Optional<renderer::Submission> submission =
         render_tree_combiner_.GetCurrentSubmission();
@@ -2549,7 +2481,9 @@ void CobaltTester::SubmitCurrentRenderTreeToRenderer() {
 
         renderer_module_->pipeline()->Submit(*submission);
         {
-            //renderer_module_->pipeline()->OnDumpCurrentRenderTree("");
+            /// __TODO__
+            printf("SubmitCurrentRenderTreeToRenderer OnDumpCurrentRenderTree\n");
+            renderer_module_->pipeline()->OnDumpCurrentRenderTree("");
         }
         //printf("SubmitCurrentRenderTreeToRenderer 2.2\n");
     }
@@ -2728,11 +2662,17 @@ CobaltTester::CobaltTester()
   RendererModule::Options render_module_options;
   render_module_options.enable_fps_stdout = false;
   render_module_options.enable_fps_overlay = false;
+#if !(defined(__EMSCRIPTEN__) && defined(__EMSCRIPTEN_PTHREADS__))
+  render_module_options.submit_even_if_render_tree_is_unchanged = true;
+#else
+  /// __TODO__
+  ///render_module_options.submit_even_if_render_tree_is_unchanged = false;
+  render_module_options.submit_even_if_render_tree_is_unchanged = true;
+#endif
 
   /// \todo https://github.com/blockspacer/cobalt-clone-28052019/blob/master/src/cobalt/renderer/renderer_module_default_options.cc
   //render_module_options.create_rasterizer_function = ;
 
-  render_module_options.submit_even_if_render_tree_is_unchanged = true;
   //rasterizer_ = render_module_options.create_rasterizer_function.Run(
   //    graphics_context_.get(), render_module_options);
 
@@ -2950,6 +2890,8 @@ CobaltTester::CobaltTester()
       // Currently, events do not need to be processed for the root item.
       base::Closure(), base::Closure(), base::Closure()));
 
+
+
   P_LOG("Create dom::Window...\n");
 
   window_ = new cobalt::dom::Window(
@@ -3034,13 +2976,41 @@ CobaltTester::CobaltTester()
   P_LOG("Create window_weak_...\n");
 
   window_weak_ = base::AsWeakPtr(window_.get());
+  ///window_weak_ = base::AsWeakPtr(window_);
   DCHECK(window_weak_);
+
+  DCHECK(window_);
+  DCHECK(window_->document());
+
+
+  /*P_LOG("Create document_...\n");
+  Document::Options document_options_;
+  document_options_.window = nullptr;//window_.get();
+  document_ = (new cobalt::dom::Document(html_element_context_.get(),document_options_));
+  document_->SetViewport(cssom::ViewportSize(browser_width, browser_height));//kViewSize);
+  document_->set_window(window_->window().get());*/
+
+  //if (!data.options.loaded_callbacks.empty()) {
+  if (!loaded_callbacks.empty()) {
+      document_load_observer_.reset(
+          new DocumentLoadedObserver(loaded_callbacks));
+      //
+      //DCHECK(document_);
+      DCHECK(window_->document());
+      //document_->AddObserver(document_load_observer_.get());
+      window_->document()->AddObserver(document_load_observer_.get());
+  }
+
+  window_->document()->set_window(window_);
+
+  window_->document()->SetViewport(
+    cssom::ViewportSize(browser_width, browser_height));//kViewSize);
+
 
   printf("document_->set_window...\n");
 
-  document_ = (new cobalt::dom::Document(html_element_context_.get()));
-  document_->set_window(window_->window().get());
-  document_->SetViewport(cssom::ViewportSize(browser_width, browser_height));//kViewSize);
+  /*document_->set_window(window_->window().get());
+   * */
 
   environment_settings_.reset(new cobalt::dom::DOMSettings(
       99,//kDOMMaxElementDepth,
@@ -3076,9 +3046,13 @@ CobaltTester::CobaltTester()
              : dom::Window::kClockTypeSystemTime),*/
   //layout_trigger = dom::Window::kClockTypeSystemTime;
 
+  DCHECK(window_);
+  printf("layout_manager_.reset...\n");
   layout_manager_.reset(new cobalt::layout::LayoutManager(
       "name_",
-      window_.get(),
+      /// window_.get(),
+      window_, /// __TODO__
+      ///window_.get(),
       //base::Bind(&WebModule::Impl::OnRenderTreeProduced,
       //           base::Unretained(this)),
       base::Bind(&CobaltTester::OnRenderTreeProduced, base::Unretained(this)),
@@ -3111,12 +3085,6 @@ CobaltTester::CobaltTester()
     //
     //InjectCustomWindowAttributes(data.options.injected_window_attributes);
 
-    //if (!data.options.loaded_callbacks.empty()) {
-    if (!loaded_callbacks.empty()) {
-        document_load_observer_.reset(
-            new DocumentLoadedObserver(loaded_callbacks));
-        window_->document()->AddObserver(document_load_observer_.get());
-    }
 
     /// __TODO__
     ///printf("document_->GetFontCache()->TryGetRemoteFont...\n");
@@ -3200,8 +3168,12 @@ void CobaltTester::run() {
   });*/
 
 // const base::Optional<std::string>&
-  html_decoder_.reset(new HTMLDecoder(
-      document_.get(), document_.get(), NULL, kDOMMaxElementDepth,
+  DCHECK(window_);
+  DCHECK(window_->document());
+  /*html_decoder_.reset(new HTMLDecoder(
+      document_.get(), document_.get(),
+      ///window_->document().get(), window_->document().get(),
+      NULL, kDOMMaxElementDepth,
       base::SourceLocation("[object HTMLDecoderTest]", 1, 1),//source_location_.get(),
       base::Bind([](const base::Optional<std::string>& a){
         printf("main Decoder::OnCompleteFunction\n");
@@ -3217,7 +3189,9 @@ void CobaltTester::run() {
   html_decoder_->Finish();
   printf("main COBALT get dom first_element_child...\n");
   root_ = (new cobalt::dom::Element(document_.get(),
+                                    //window_->document().get(),
                                     base::CobToken("element")));
+  ///root_ = (window_->document()->first_element_child());
   root_ = (document_->first_element_child());
 
   //ASSERT_TRUE(root_);
@@ -3264,6 +3238,7 @@ void CobaltTester::run() {
       printf("main background_color = %s\n", background_color.get()->ToString().c_str());
     }
   }
+*/
 
   /// printf("main html_element_...\n");
   /// html_element_ =
@@ -3326,6 +3301,175 @@ void CobaltTester::run() {
 
 static std::unique_ptr<CobaltTester> g_cobaltTester;
 #endif // ENABLE_COBALT
+
+static void animate() {
+  //redClrTintAnim += 0.01f;
+  //if (redClrTintAnim > 360.0f) {
+  //  redClrTintAnim = 0.0f;
+  //}
+
+#if defined(ENABLE_SKIA) && defined(ENABLE_SKOTTIE)
+
+#if defined(ENABLE_HTML5_SDL) || !defined(__EMSCRIPTEN__)
+  if (fTimeBase == 0) {
+    // Reset the animation time.
+    fTimeBase = SDL_GetTicks();
+  }
+  if (fAnimation) {
+    const auto t = SDL_GetTicks() - fTimeBase;
+    const auto d = fAnimation->duration() * 1000;
+    fAnimation->seek(::std::fmod(t, d) / d);
+  }
+#else
+#error "TODO: port SDL_GetTicks without SDL"
+#endif
+
+  /// __TODO__
+#if !(defined(__EMSCRIPTEN__) && defined(__EMSCRIPTEN_PTHREADS__))
+  if (render_browser_window) {
+    DCHECK(g_cobaltTester);
+    DCHECK(g_cobaltTester->window_->document());
+    DCHECK(g_cobaltTester->window_);
+    DCHECK(g_cobaltTester->layout_manager_);
+    g_cobaltTester->window_->document()->DoSynchronousLayoutAndGetRenderTree();
+    g_cobaltTester->layout_manager_->ForceReLayout();
+  }
+#endif
+
+#endif // ENABLE_SKOTTIE
+}
+
+static void mainLoop() {
+
+
+#ifdef __EMSCRIPTEN__
+
+  // see https://github.com/emscripten-core/emscripten/issues/3495
+  ///
+  /// __TODO__
+  ///
+  ///emscripten_main_thread_process_queued_calls();
+
+  /*{
+    // see https://github.com/emscripten-core/emscripten/issues/8307
+    EMSCRIPTEN_RESULT r = emscripten_webgl_make_context_current(em_ctx);
+    if( r != EMSCRIPTEN_RESULT_SUCCESS )
+    {
+      printf( "Unable to make OffscreenCanvas instance the current context (code %d)\n", r );
+    }
+  }
+  DCHECK(emscripten_webgl_get_current_context() == em_ctx);*/
+#endif
+
+  //printf("animate...\n");
+
+  animate();
+
+// __EMSCRIPTEN_PTHREADS__ can be used to detect whether Emscripten is currently targeting pthreads.
+// At runtime, you can use the emscripten_has_threading_support()
+// see https://emscripten.org/docs/porting/pthreads.html
+#if defined(__EMSCRIPTEN__) && defined(__EMSCRIPTEN_PTHREADS__)
+  // TODO
+  // printf("emscripten_current_thread_process_queued_calls...\n");
+  // emscripten_current_thread_process_queued_calls();
+#endif
+
+  //printf("draw...\n");
+
+  // Render
+  Draw();
+
+        //printf("mainLoop 3\n");
+
+#if defined(__EMSCRIPTEN__) && defined(HAVE_SWAP_CONTROL)
+  if (enableSwapControl) {
+    // emscripten_webgl_commit_frame requires offscreen canvas support
+    // see https://github.com/emscripten-core/emscripten/issues/5437
+    EMSCRIPTEN_RESULT r = emscripten_webgl_commit_frame();
+    if(r != EMSCRIPTEN_RESULT_SUCCESS)
+    {
+      // TODO: https://github.com/emscripten-core/emscripten/issues/5437
+      printf( "There was an issue commiting the frame to the offscreen canvas (code %d)\n", r );
+    }
+  }
+#else
+
+        //printf("mainLoop 4\n");
+
+  // Update screen
+  SDL_GL_SwapWindow(window);
+
+        //printf("mainLoop 5\n");
+#endif
+
+        //printf("mainLoop 6\n");
+
+#if defined(ENABLE_HTML5_SDL) || !defined(__EMSCRIPTEN__)
+  while (SDL_PollEvent(&e) != 0) {
+    switch (e.type) {
+      case SDL_QUIT: {
+        quit = true;
+        printf("recieved quit signal\n");
+      }
+    }
+  }
+#elif defined(__EMSCRIPTEN__)
+  #warning "TODO: port SDL_PollEvent (emscripten_set_mousedown_callback, e.t.c.)"
+  #warning "see https://github.com/floooh/sokol/blob/master/sokol_app.h#L2403 for example"
+  #warning "see https://github.com/hongkk/urho/blob/master/Source/Urho3D/Input/Input.cpp for example"
+  #warning "see https://github.com/h-s-c/libKD/blob/master/source/kd.c#L2658 for example"
+#else
+  #error "TODO: port SDL_PollEvent"
+#endif
+
+#ifdef __EMSCRIPTEN__
+  if (quit) {
+    printf("quitting main loop\n");
+    emscripten_cancel_main_loop();
+  }
+#endif
+        //printf("mainLoop 7\n");
+}
+
+#ifdef ENABLE_WTF
+/*static void CallOnMainThreadFunction(WTF::MainThreadFunction function, void* context) {
+  // TODO
+  //
+https://github.com/chromium/chromium/blob/master/third_party/blink/renderer/platform/scheduler/public/post_cross_thread_task.h#L17
+  PostCrossThreadTask(
+      *Thread::MainThread()->GetTaskRunner(), FROM_HERE,
+      CrossThreadBind(function, CrossThreadUnretained(context)));
+}*/
+
+static void MakeClosure(base::OnceClosure** closure_out) {
+  *closure_out = new base::OnceClosure(WTF::Bind([] {
+    printf("OnceClosure!\n");
+  }));
+  LEAK_SANITIZER_IGNORE_OBJECT(*closure_out);
+}
+
+
+class BindChecks{
+public:
+  int Run(){
+    return base::BindOnce(&BindChecks::ConstNoexceptMethod, base::Unretained(this))
+              .Run();
+  }
+
+  int ConstNoexceptMethod() const noexcept { return 42; }
+};
+
+static int SomeHardcoreTask(int max_num) {
+    //TRACE_EVENT1(kCategoryName, "SomeHardcoreTask", "max_num", max_num);
+    //float x = 1.5f;
+    int x = 0;
+    for (int i = 0; i < max_num; ++i) {
+        //x *= sin(x) / atan(x) * tanh(x) * sqrt(x);
+        x += i;
+    }
+
+    return x;
+}
 
 static void SomeHardcoreAsyncTask(
     base::WaitableEvent* event,
@@ -3446,7 +3590,10 @@ int main(int argc, char** argv) {
   DCHECK(main_thread->task_runner().get());
   //sequence_manager->SetDefaultTaskRunner(main_thread->task_runner());
   //printf("Init MessageLoopCurrent ...\n");
-  //DCHECK(base::MessageLoopCurrent::Get()); // TODO
+  // TODO
+//#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+//          DCHECK(base::MessageLoopCurrent::Get());
+//#endif
   //base::MessageLoopCurrent::Get()->SetTaskRunner(main_thread->task_runner());
   */
 
@@ -4161,25 +4308,31 @@ int main(int argc, char** argv) {
     listWordBoundaries(
       icu::UnicodeString(u8"string asd asd 1"));
 
-    printf("Creating g_cobaltTester...\n");
-    /// __TODO__
-    //g_cobaltTester = std::make_unique<CobaltTester>();
-
-  // Make sure the thread started.
-  main_thread_.task_runner()->PostTask(
-      FROM_HERE, base::Bind([](base::WaitableEvent* main_thread_event_){
+    if (render_browser_window)
+    {
+      printf("Creating g_cobaltTester...\n");
+      /// __TODO__
+      //g_cobaltTester = std::make_unique<CobaltTester>();
+#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+          g_cobaltTester = std::make_unique<CobaltTester>();
+          g_cobaltTester->run();
+#else
+    // Make sure the thread started.
+    main_thread_.task_runner()->PostTask(
+        FROM_HERE, base::Bind([](base::WaitableEvent* main_thread_event_){
 #if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
           DCHECK(base::MessageLoopCurrent::Get());
 #endif
 
-
-          printf("Starting g_cobaltTester...\n");
-          /// __TODO__
-          g_cobaltTester = std::make_unique<CobaltTester>();
-          g_cobaltTester->run();
-          printf("Finishing g_cobaltTester...\n");
-          //main_thread_event_->Signal();
-      }, &main_thread_event_));
+            printf("Starting g_cobaltTester...\n");
+            /// __TODO__
+            g_cobaltTester = std::make_unique<CobaltTester>();
+            g_cobaltTester->run();
+            printf("Finishing g_cobaltTester...\n");
+            //main_thread_event_->Signal();
+        }, &main_thread_event_));
+#endif
+  }
 
   printf("Waiting COBALT tests...\n");
   //// \NOTE: DON`T BLOCK MAIN WASM THREAD

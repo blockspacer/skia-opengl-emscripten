@@ -73,12 +73,15 @@ ThreadControllerWithMessagePumpImpl::MainThreadOnly::~MainThreadOnly() =
 void ThreadControllerWithMessagePumpImpl::SetSequencedTaskSource(
     SequencedTaskSource* task_source) {
   DCHECK(task_source);
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   DCHECK(!main_thread_only().task_source);
+#endif
   main_thread_only().task_source = task_source;
 }
 
 void ThreadControllerWithMessagePumpImpl::BindToCurrentThread(
     std::unique_ptr<MessagePump> message_pump) {
+  DCHECK(associated_thread_);
   associated_thread_->BindToCurrentThread();
   pump_ = std::move(message_pump);
   work_id_provider_ = WorkIdProvider::GetForCurrentThread();
@@ -153,6 +156,7 @@ const TickClock* ThreadControllerWithMessagePumpImpl::GetClock() {
 }
 
 bool ThreadControllerWithMessagePumpImpl::RunsTasksInCurrentSequence() {
+  DCHECK(associated_thread_);
   return associated_thread_->IsBoundToCurrentThread();
 }
 
@@ -160,6 +164,7 @@ void ThreadControllerWithMessagePumpImpl::SetDefaultTaskRunner(
     scoped_refptr<SingleThreadTaskRunner> task_runner) {
   base::internal::CheckedAutoLock lock(task_runner_lock_);
   task_runner_ = task_runner;
+  DCHECK(associated_thread_);
   if (associated_thread_->IsBound()) {
     DCHECK(associated_thread_->IsBoundToCurrentThread());
     // Thread task runner handle will be created in BindToCurrentThread().
@@ -188,7 +193,9 @@ void ThreadControllerWithMessagePumpImpl::RestoreDefaultTaskRunner() {
 
 void ThreadControllerWithMessagePumpImpl::AddNestingObserver(
     RunLoop::NestingObserver* observer) {
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   DCHECK(!main_thread_only().nesting_observer);
+#endif
   DCHECK(observer);
   main_thread_only().nesting_observer = observer;
   RunLoop::AddNestingObserverOnCurrentThread(this);
@@ -203,6 +210,7 @@ void ThreadControllerWithMessagePumpImpl::RemoveNestingObserver(
 
 const scoped_refptr<AssociatedThreadId>&
 ThreadControllerWithMessagePumpImpl::GetAssociatedThread() const {
+  DCHECK(associated_thread_);
   return associated_thread_;
 }
 
@@ -421,6 +429,7 @@ bool ThreadControllerWithMessagePumpImpl::DoIdleWork() {
     return false;
   }
 
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   // Check if any runloop timeout has expired.
   if (main_thread_only().quit_runloop_after != TimeTicks::Max() &&
       main_thread_only().quit_runloop_after <= time_source_->NowTicks()) {
@@ -431,6 +440,7 @@ bool ThreadControllerWithMessagePumpImpl::DoIdleWork() {
   // RunLoop::Delegate knows whether we called Run() or RunUntilIdle().
   if (ShouldQuitWhenIdle())
     Quit();
+#endif
 
   return false;
 }
@@ -468,6 +478,7 @@ void ThreadControllerWithMessagePumpImpl::Run(bool application_tasks_allowed,
     pump_->Run(this);
   }
 
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
 #if DCHECK_IS_ON()
   if (log_runloop_quit_and_quit_when_idle_)
     DVLOG(1) << "ThreadControllerWithMessagePumpImpl::Quit";
@@ -476,6 +487,7 @@ void ThreadControllerWithMessagePumpImpl::Run(bool application_tasks_allowed,
   main_thread_only().runloop_count--;
   main_thread_only().quit_pending = false;
   P_LOG("RunLoop::RunWithTimeout 3()\n");
+#endif
 }
 
 void ThreadControllerWithMessagePumpImpl::OnBeginNestedRunLoop() {

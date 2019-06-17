@@ -345,7 +345,9 @@ class BASE_EXPORT MessageLoopTaskEnvironment : public Thread::TaskEnvironment {
   void BindToCurrentThread(TimerSlack timer_slack) override;
 
  private:
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   std::unique_ptr<MessageLoop> message_loop_;
+#endif
 };
 
 }  // namespace internal

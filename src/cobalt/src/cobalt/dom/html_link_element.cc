@@ -141,7 +141,9 @@ void HTMLLinkElement::Obtain() {
     return;
   }
 
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   DCHECK(base::MessageLoopCurrent::Get());
+#endif
   DCHECK(!loader_);
 
   // 1. If the href attribute's value is the empty string, then abort these
@@ -234,9 +236,14 @@ void HTMLLinkElement::OnContentProduced(const loader::Origin& last_url_origin,
 void HTMLLinkElement::OnLoadingComplete(
     const base::Optional<std::string>& error) {
   P_LOG("HTMLLinkElement::OnLoadingComplete\n");
+
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
     DCHECK(base::MessageLoopCurrent::Get()); // TODO
   base::MessageLoopCurrent::Get()->task_runner()->PostTask(
       FROM_HERE, base::Bind(&HTMLLinkElement::ReleaseLoader, this));
+#else
+  std::move( base::Bind(&HTMLLinkElement::ReleaseLoader, this)).Run();
+#endif
 
   if (!error) return;
 
@@ -264,7 +271,9 @@ void HTMLLinkElement::OnLoadingComplete(
 
 void HTMLLinkElement::OnSplashscreenLoaded(Document* document,
                                            const std::string& content) {
+  printf("HTMLLinkElement::OnSplashscreenLoaded()\n");
   scoped_refptr<Window> window = document->window();
+  //Window* window = document->window();
   window->CacheSplashScreen(content);
 }
 
