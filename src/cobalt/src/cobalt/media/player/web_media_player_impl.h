@@ -84,7 +84,7 @@ class MediaLog;
 class WebMediaPlayerProxy;
 
 class WebMediaPlayerImpl : public WebMediaPlayer,
-                           public base::MessageLoop::DestructionObserver,
+                           ///public base::MessageLoop::DestructionObserver,
                            public base::SupportsWeakPtr<WebMediaPlayerImpl> {
  public:
   // Construct a WebMediaPlayerImpl with reference to the client, and media
@@ -144,7 +144,7 @@ class WebMediaPlayerImpl : public WebMediaPlayer,
   bool HasAudio() const override;
 
   // Dimensions of the video.
-  gfx::Size GetNaturalSize() const override;
+  cobalt::math::Size GetNaturalSize() const override;
 
   // Getters of playback state.
   bool IsPaused() const override;
@@ -181,7 +181,7 @@ class WebMediaPlayerImpl : public WebMediaPlayer,
   // even before this object gets destructed, so we need to know when
   // |main_loop_| is being destroyed and we can stop posting repaint task
   // to it.
-  void WillDestroyCurrentMessageLoop() override;
+  ///void WillDestroyCurrentMessageLoop() override;
 
   bool GetDebugReportDataAddress(void** out_address, size_t* out_size) override;
 
@@ -242,7 +242,8 @@ class WebMediaPlayerImpl : public WebMediaPlayer,
 
   // Message loops for posting tasks between Chrome's main thread. Also used
   // for DCHECKs so methods calls won't execute in the wrong thread.
-  base::MessageLoop* main_loop_;
+  //base::MessageLoop* main_loop_;
+  scoped_refptr<base::SingleThreadTaskRunner> main_loop_;
 
   scoped_refptr<Pipeline> pipeline_;
 

@@ -63,7 +63,7 @@ VideoDecoderConfig::VideoDecoderConfig()
 VideoDecoderConfig::VideoDecoderConfig(
     VideoCodec codec, VideoCodecProfile profile, VideoPixelFormat format,
     ColorSpace color_space, const cobalt::math::Size& coded_size,
-    const gfx::Rect& visible_rect, const cobalt::math::Size& natural_size,
+    const cobalt::math::Rect& visible_rect, const cobalt::math::Size& natural_size,
     const std::vector<uint8_t>& extra_data,
     const EncryptionScheme& encryption_scheme) {
   Initialize(codec, profile, format, color_space, coded_size, visible_rect,
@@ -76,7 +76,7 @@ void VideoDecoderConfig::Initialize(VideoCodec codec, VideoCodecProfile profile,
                                     VideoPixelFormat format,
                                     ColorSpace color_space,
                                     const cobalt::math::Size& coded_size,
-                                    const gfx::Rect& visible_rect,
+                                    const cobalt::math::Rect& visible_rect,
                                     const cobalt::math::Size& natural_size,
                                     const std::vector<uint8_t>& extra_data,
                                     const EncryptionScheme& encryption_scheme) {

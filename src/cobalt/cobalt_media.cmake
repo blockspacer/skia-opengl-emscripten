@@ -128,6 +128,75 @@ if(TARGET_LINUX)
     ${COBALT_CORE_DIR}media/base/sbplayer_pipeline.cc
     ${COBALT_CORE_DIR}media/base/sbplayer_set_bounds_helper.cc
     ${COBALT_CORE_DIR}media/base/sbplayer_set_bounds_helper.h
+    ${COBALT_CORE_DIR}media/formats/common/offset_byte_queue.cc
+    ${COBALT_CORE_DIR}media/formats/common/offset_byte_queue.h
+    ${COBALT_CORE_DIR}media/formats/mp4/aac.cc
+    ${COBALT_CORE_DIR}media/formats/mp4/aac.h
+    ${COBALT_CORE_DIR}media/formats/mp4/avc.cc
+    ${COBALT_CORE_DIR}media/formats/mp4/avc.h
+    ${COBALT_CORE_DIR}media/formats/mp4/bitstream_converter.cc
+    ${COBALT_CORE_DIR}media/formats/mp4/bitstream_converter.h
+    ${COBALT_CORE_DIR}media/formats/mp4/box_definitions.cc
+    ${COBALT_CORE_DIR}media/formats/mp4/box_definitions.h
+    ${COBALT_CORE_DIR}media/formats/mp4/box_reader.cc
+    ${COBALT_CORE_DIR}media/formats/mp4/box_reader.h
+    ${COBALT_CORE_DIR}media/formats/mp4/es_descriptor.cc
+    ${COBALT_CORE_DIR}media/formats/mp4/es_descriptor.h
+    ${COBALT_CORE_DIR}media/formats/mp4/fourccs.h
+    ${COBALT_CORE_DIR}media/formats/mp4/hevc.cc
+    ${COBALT_CORE_DIR}media/formats/mp4/hevc.h
+    ${COBALT_CORE_DIR}media/formats/mp4/mp4_stream_parser.cc
+    ${COBALT_CORE_DIR}media/formats/mp4/mp4_stream_parser.h
+    ${COBALT_CORE_DIR}media/formats/mp4/rcheck.h
+    ${COBALT_CORE_DIR}media/formats/mp4/sample_to_group_iterator.cc
+    ${COBALT_CORE_DIR}media/formats/mp4/sample_to_group_iterator.h
+    ${COBALT_CORE_DIR}media/formats/mp4/track_run_iterator.cc
+    ${COBALT_CORE_DIR}media/formats/mp4/track_run_iterator.h
+    ${COBALT_CORE_DIR}media/formats/mpeg/adts_constants.cc
+    ${COBALT_CORE_DIR}media/formats/mpeg/adts_constants.h
+    ${COBALT_CORE_DIR}media/formats/mpeg/adts_stream_parser.cc
+    ${COBALT_CORE_DIR}media/formats/mpeg/adts_stream_parser.h
+    ${COBALT_CORE_DIR}media/formats/mpeg/mpeg1_audio_stream_parser.cc
+    ${COBALT_CORE_DIR}media/formats/mpeg/mpeg1_audio_stream_parser.h
+    ${COBALT_CORE_DIR}media/formats/mpeg/mpeg_audio_stream_parser_base.cc
+    ${COBALT_CORE_DIR}media/formats/mpeg/mpeg_audio_stream_parser_base.h
+    ${COBALT_CORE_DIR}media/formats/webm/cluster_builder.cc
+    ${COBALT_CORE_DIR}media/formats/webm/cluster_builder.h
+    ${COBALT_CORE_DIR}media/formats/webm/opus_packet_builder.cc
+    ${COBALT_CORE_DIR}media/formats/webm/opus_packet_builder.h
+    ${COBALT_CORE_DIR}media/formats/webm/tracks_builder.cc
+    ${COBALT_CORE_DIR}media/formats/webm/tracks_builder.h
+    ${COBALT_CORE_DIR}media/formats/webm/webm_audio_client.cc
+    ${COBALT_CORE_DIR}media/formats/webm/webm_audio_client.h
+    ${COBALT_CORE_DIR}media/formats/webm/webm_cluster_parser.cc
+    ${COBALT_CORE_DIR}media/formats/webm/webm_cluster_parser.h
+    ${COBALT_CORE_DIR}media/formats/webm/webm_colour_parser.cc
+    ${COBALT_CORE_DIR}media/formats/webm/webm_colour_parser.h
+    ${COBALT_CORE_DIR}media/formats/webm/webm_constants.cc
+    ${COBALT_CORE_DIR}media/formats/webm/webm_constants.h
+    ${COBALT_CORE_DIR}media/formats/webm/webm_content_encodings.cc
+    ${COBALT_CORE_DIR}media/formats/webm/webm_content_encodings.h
+    ${COBALT_CORE_DIR}media/formats/webm/webm_content_encodings_client.cc
+    ${COBALT_CORE_DIR}media/formats/webm/webm_content_encodings_client.h
+    ${COBALT_CORE_DIR}media/formats/webm/webm_crypto_helpers.cc
+    ${COBALT_CORE_DIR}media/formats/webm/webm_crypto_helpers.h
+    ${COBALT_CORE_DIR}media/formats/webm/webm_info_parser.cc
+    ${COBALT_CORE_DIR}media/formats/webm/webm_info_parser.h
+    ${COBALT_CORE_DIR}media/formats/webm/webm_parser.cc
+    ${COBALT_CORE_DIR}media/formats/webm/webm_parser.h
+    ${COBALT_CORE_DIR}media/formats/webm/webm_stream_parser.cc
+    ${COBALT_CORE_DIR}media/formats/webm/webm_stream_parser.h
+    ${COBALT_CORE_DIR}media/formats/webm/webm_tracks_parser.cc
+    ${COBALT_CORE_DIR}media/formats/webm/webm_tracks_parser.h
+    ${COBALT_CORE_DIR}media/formats/webm/webm_video_client.cc
+    ${COBALT_CORE_DIR}media/formats/webm/webm_video_client.h
+    ${COBALT_CORE_DIR}media/formats/webm/webm_webvtt_parser.cc
+    ${COBALT_CORE_DIR}media/formats/webm/webm_webvtt_parser.h
+    ${COBALT_CORE_DIR}media/player/buffered_data_source.h
+    ${COBALT_CORE_DIR}media/player/web_media_player_impl.cc
+    ${COBALT_CORE_DIR}media/player/web_media_player_impl.h
+    ${COBALT_CORE_DIR}media/player/web_media_player_proxy.cc
+    ${COBALT_CORE_DIR}media/player/web_media_player_proxy.h
   )
 endif(TARGET_LINUX)
 

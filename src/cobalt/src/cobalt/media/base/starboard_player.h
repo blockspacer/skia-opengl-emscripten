@@ -1,4 +1,4 @@
-// Copyright 2016 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2016 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -88,7 +88,7 @@ class StarboardPlayer {
   void WriteBuffer(DemuxerStream::Type type,
                    const scoped_refptr<DecoderBuffer>& buffer);
 
-  void SetBounds(int z_index, const gfx::Rect& rect);
+  void SetBounds(int z_index, const cobalt::math::Rect& rect);
 
   void PrepareForSeek();
   void Seek(base::TimeDelta time);
@@ -238,7 +238,7 @@ class StarboardPlayer {
 
   // Stores the |z_index| and |rect| parameters of the latest SetBounds() call.
   base::Optional<int> set_bounds_z_index_;
-  base::Optional<gfx::Rect> set_bounds_rect_;
+  base::Optional<cobalt::math::Rect> set_bounds_rect_;
   State state_ = kPlaying;
   SbPlayer player_;
   uint32 cached_video_frames_decoded_;

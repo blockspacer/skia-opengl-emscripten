@@ -1,4 +1,4 @@
-// Copyright (c) 2012 The Chromium Authors. All rights reserved.
+﻿// Copyright (c) 2012 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -17,7 +17,7 @@ namespace media {
 class VideoFrame;
 
 // Computes the size of |visible_size| for a given aspect ratio.
-MEDIA_EXPORT gfx::Size GetNaturalSize(const gfx::Size& visible_size,
+MEDIA_EXPORT cobalt::math::Size GetNaturalSize(const cobalt::math::Size& visible_size,
                                       int aspect_ratio_numerator,
                                       int aspect_ratio_denominator);
 

@@ -48,7 +48,7 @@ target_link_libraries(starboard_common PUBLIC
   starboard_icu_init
   #starboard_stub
   ##
-  starboard_platform
+  #starboard_platform
   #starboard
   #modp_b64
 )

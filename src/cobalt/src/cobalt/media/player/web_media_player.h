@@ -1,4 +1,4 @@
-// Copyright (c) 2012 The Chromium Authors. All rights reserved.
+﻿// Copyright (c) 2012 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -122,7 +122,7 @@ class WebMediaPlayer {
   virtual bool HasAudio() const = 0;
 
   // Dimension of the video.
-  virtual gfx::Size GetNaturalSize() const = 0;
+  virtual cobalt::math::Size GetNaturalSize() const = 0;
 
   // Getters of playback state.
   virtual bool IsPaused() const = 0;

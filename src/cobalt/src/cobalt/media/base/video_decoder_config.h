@@ -1,4 +1,4 @@
-// Copyright (c) 2012 The Chromium Authors. All rights reserved.
+﻿// Copyright (c) 2012 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -37,7 +37,7 @@ class MEDIA_EXPORT VideoDecoderConfig {
   // |extra_data|, otherwise the memory is copied.
   VideoDecoderConfig(VideoCodec codec, VideoCodecProfile profile,
                      VideoPixelFormat format, ColorSpace color_space,
-                     const cobalt::math::Size& coded_size, const gfx::Rect& visible_rect,
+                     const cobalt::math::Size& coded_size, const cobalt::math::Rect& visible_rect,
                      const cobalt::math::Size& natural_size,
                      const std::vector<uint8_t>& extra_data,
                      const EncryptionScheme& encryption_scheme);
@@ -47,7 +47,7 @@ class MEDIA_EXPORT VideoDecoderConfig {
   // Resets the internal state of this object.
   void Initialize(VideoCodec codec, VideoCodecProfile profile,
                   VideoPixelFormat format, ColorSpace color_space,
-                  const cobalt::math::Size& coded_size, const gfx::Rect& visible_rect,
+                  const cobalt::math::Size& coded_size, const cobalt::math::Rect& visible_rect,
                   const cobalt::math::Size& natural_size,
                   const std::vector<uint8_t>& extra_data,
                   const EncryptionScheme& encryption_scheme);
@@ -84,7 +84,7 @@ class MEDIA_EXPORT VideoDecoderConfig {
   cobalt::math::Size coded_size() const { return coded_size_; }
 
   // Region of |coded_size_| that is visible.
-  gfx::Rect visible_rect() const { return visible_rect_; }
+  cobalt::math::Rect visible_rect() const { return visible_rect_; }
 
   // Final visible width and height of a video frame with aspect ratio taken
   // into account.
@@ -122,7 +122,7 @@ class MEDIA_EXPORT VideoDecoderConfig {
   ColorSpace color_space_;
 
   cobalt::math::Size coded_size_;
-  gfx::Rect visible_rect_;
+  cobalt::math::Rect visible_rect_;
   cobalt::math::Size natural_size_;
 
   std::vector<uint8_t> extra_data_;

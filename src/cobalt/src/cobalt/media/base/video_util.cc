@@ -1,4 +1,4 @@
-// Copyright (c) 2012 The Chromium Authors. All rights reserved.
+﻿// Copyright (c) 2012 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -14,17 +14,17 @@
 namespace cobalt {
 namespace media {
 
-gfx::Size GetNaturalSize(const gfx::Size& visible_size,
+cobalt::math::Size GetNaturalSize(const cobalt::math::Size& visible_size,
                          int aspect_ratio_numerator,
                          int aspect_ratio_denominator) {
   if (aspect_ratio_denominator == 0 || aspect_ratio_numerator < 0 ||
       aspect_ratio_denominator < 0)
-    return gfx::Size();
+    return cobalt::math::Size();
 
   double aspect_ratio =
       aspect_ratio_numerator / static_cast<double>(aspect_ratio_denominator);
 
-  return gfx::Size(round(visible_size.width() * aspect_ratio),
+  return cobalt::math::Size(round(visible_size.width() * aspect_ratio),
                    visible_size.height());
 }
 

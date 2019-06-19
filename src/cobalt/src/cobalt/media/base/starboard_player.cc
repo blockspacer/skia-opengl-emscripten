@@ -1,4 +1,4 @@
-// Copyright 2016 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2016 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -197,7 +197,7 @@ void StarboardPlayer::WriteBuffer(DemuxerStream::Type type,
   WriteBufferInternal(type, buffer);
 }
 
-void StarboardPlayer::SetBounds(int z_index, const gfx::Rect& rect) {
+void StarboardPlayer::SetBounds(int z_index, const cobalt::math::Rect& rect) {
   base::AutoLock auto_lock(lock_);
 
   set_bounds_z_index_ = z_index;

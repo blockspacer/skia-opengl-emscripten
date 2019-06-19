@@ -288,7 +288,7 @@ bool ShellAVCParser::ParseSPS(const uint8* sps, size_t sps_size,
   int visible_height = height - (crop_top + crop_bottom);
   record_out->coded_size = cobalt::math::Size(width, height),
   record_out->visible_rect =
-      gfx::Rect(crop_left, crop_top, visible_width, visible_height),
+      cobalt::math::Rect(crop_left, crop_top, visible_width, visible_height),
   record_out->natural_size = cobalt::math::Size(visible_width, visible_height);
   record_out->num_ref_frames = num_ref_frames;
   return true;

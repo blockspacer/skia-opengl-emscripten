@@ -53,7 +53,7 @@ class MEDIA_EXPORT Pipeline : public base::RefCountedThreadSafe<Pipeline> {
  public:
   // Return true if the punch through box should be rendered.  Return false if
   // no punch through box should be rendered.
-  typedef base::Callback<bool(const gfx::Rect&)> SetBoundsCB;
+  typedef base::Callback<bool(const cobalt::math::Rect&)> SetBoundsCB;
 
   // Buffering states the pipeline transitions between during playback.
   // kHaveMetadata:

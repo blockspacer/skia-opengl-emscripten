@@ -1,4 +1,4 @@
-// Copyright 2014 The Chromium Authors. All rights reserved.
+﻿// Copyright 2014 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -338,19 +338,19 @@ bool MP4StreamParser::ParseMoov(BoxReader* reader) {
       }
 
       // TODO(strobe): Recover correct crop box
-      gfx::Size coded_size(entry.width, entry.height);
-      gfx::Rect visible_rect(coded_size);
+      cobalt::math::Size coded_size(entry.width, entry.height);
+      cobalt::math::Rect visible_rect(coded_size);
 
       // If PASP is available, use the coded size and PASP to calculate the
       // natural size. Otherwise, use the size in track header for natural size.
-      gfx::Size natural_size(visible_rect.size());
+      cobalt::math::Size natural_size(visible_rect.size());
       if (entry.pixel_aspect.h_spacing != 1 ||
           entry.pixel_aspect.v_spacing != 1) {
         natural_size =
             GetNaturalSize(visible_rect.size(), entry.pixel_aspect.h_spacing,
                            entry.pixel_aspect.v_spacing);
       } else if (track->header.width && track->header.height) {
-        natural_size = gfx::Size(track->header.width, track->header.height);
+        natural_size = cobalt::math::Size(track->header.width, track->header.height);
       }
 
       uint32_t video_track_id = track->header.track_id;

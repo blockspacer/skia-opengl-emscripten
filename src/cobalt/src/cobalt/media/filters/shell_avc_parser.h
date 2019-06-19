@@ -39,7 +39,7 @@ class ShellAVCParser : public ShellParser {
 
   struct ShellSPSRecord {
     cobalt::math::Size coded_size;
-    gfx::Rect visible_rect;
+    cobalt::math::Rect visible_rect;
     cobalt::math::Size natural_size;
     uint32 num_ref_frames;
   };
