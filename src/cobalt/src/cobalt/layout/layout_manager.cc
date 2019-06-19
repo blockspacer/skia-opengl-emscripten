@@ -357,12 +357,15 @@ void LayoutManager::Impl::StartLayoutTimer() {
       static_cast<int64_t>(base::Time::kMicrosecondsPerSecond * 1.0f /
                            (layout_refresh_rate_ + 1.0f));
 
+
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   printf("layout_timer_.Start %lld\n", timer_interval_in_microseconds);
   layout_timer_.Start(
       FROM_HERE,
       base::TimeDelta::FromMicroseconds(timer_interval_in_microseconds),
       base::Bind(&LayoutManager::Impl::DoLayoutAndProduceRenderTree,
                  base::Unretained(this)));
+#endif
 }
 
 void LayoutManager::Impl::DoLayoutAndProduceRenderTree() {
@@ -473,6 +476,7 @@ LayoutManager::LayoutManager(
 LayoutManager::~LayoutManager() {}
 
 void LayoutManager::ForceReLayout() {
+    //printf("LayoutManager::ForceReLayout...\n");
   ///impl_->OnMutation();
   impl_->DoLayoutAndProduceRenderTree();
 }

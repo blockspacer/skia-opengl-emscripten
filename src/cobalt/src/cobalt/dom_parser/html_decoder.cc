@@ -91,8 +91,11 @@ void HTMLDecoder::DecodeChunk(const char* data, size_t size) {
 }
 
 void HTMLDecoder::Finish() {
+printf("HTMLDecoder::Finish()\n");
   DCHECK(thread_checker_.CalledOnValidThread());
+//#ifdef __TODO__
   libxml_html_parser_wrapper_->Finish();
+//#endif
   if (!load_complete_callback_.is_null()) {
     load_complete_callback_.Run(base::nullopt);
   }

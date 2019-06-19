@@ -155,10 +155,12 @@ void LibxmlHTMLParserWrapper::Finish() {
   if (html_parser_context_) {
     htmlParseChunk(html_parser_context_, NULL, 0,
                    1 /*terminate*/);  // Triggers EndDocument
+//#ifdef __TODO__
     if (IsFullDocument()) {
       P_LOG("IsFullDocument\n");
       document()->DecreaseLoadingCounterAndMaybeDispatchLoadEvent();
     }
+//#endif
   }
 }
 

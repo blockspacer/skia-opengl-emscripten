@@ -125,14 +125,14 @@ bool Node::DispatchEvent(const scoped_refptr<Event>& event) {
   //P_LOG("Node::DispatchEvent 2.1\n");
   //Window* window = nullptr;
   if (IsInDocument()) {
-    //P_LOG("Node::DispatchEvent 2.2\n");
+    P_LOG("Node::DispatchEvent 2.2\n");
     DCHECK(node_document());
-    //P_LOG("Node::DispatchEvent 2.3\n");
+    P_LOG("Node::DispatchEvent 2.3\n");
     if(node_document()->default_view()) {// TODO
       //P_LOG("Node::DispatchEvent 2.4\n");
       window = node_document()->default_view();
     }
-    //P_LOG("Node::DispatchEvent 2.5\n");
+    P_LOG("Node::DispatchEvent 2.5\n");
     //window = node_document()->default_view().get();
   }
   P_LOG("Node::DispatchEvent 3\n");
@@ -141,8 +141,9 @@ bool Node::DispatchEvent(const scoped_refptr<Event>& event) {
     DCHECK(window);
     window->OnStartDispatchEvent(event);
   }
-  //P_LOG("Node::DispatchEvent 4\n");
+  P_LOG("Node::DispatchEvent 4\n");
 
+//#ifdef __TODO__
   typedef std::vector<scoped_refptr<Node> > Ancestors;
   ///typedef std::vector<Node* > Ancestors;
   Ancestors ancestors;
@@ -216,6 +217,7 @@ bool Node::DispatchEvent(const scoped_refptr<Event>& event) {
   // The event has completed being dispatched. Stop tracking it in the global
   // stats.
   GlobalStats::GetInstance()->StopJavaScriptEvent();
+//#endif
 
   P_LOG("OnStopDispatchEvent 3\n");
   return !event->default_prevented();

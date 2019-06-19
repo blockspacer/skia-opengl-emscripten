@@ -65,14 +65,17 @@ class Loader::FetcherToDecoderAdapter : public Fetcher::Handler {
     decoder_->DecodeChunkPassed(std::move(data));
   }
   void OnDone(Fetcher* fetcher) override {
-    printf("OnDone 1...\n");
+    printf("FetcherToDecoderAdapter OnDone 1...\n");
+//#ifdef __TODO__
     DCHECK(fetcher);
     decoder_->SetLastURLOrigin(fetcher->last_url_origin());
-    printf("OnDone 2...\n");
+    printf("FetcherToDecoderAdapter OnDone 2...\n");
     decoder_->Finish();
-    printf("OnDone 3...\n");
+    printf("FetcherToDecoderAdapter OnDone 3...\n");
+//#endif
   }
   void OnError(Fetcher* /*fetcher*/, const std::string& error) override {
+    printf("FetcherToDecoderAdapter OnError 1...\n");
     load_complete_callback_.Run(error);
   }
 
@@ -159,19 +162,27 @@ bool Loader::DidFailFromTransientError() const {
 }
 
 void Loader::LoadComplete(const base::Optional<std::string>& error) {
+//#ifdef __TODO__
   is_load_complete_ = true;
+  DCHECK(on_load_complete_);
+  DCHECK(!on_load_complete_.is_null());
   on_load_complete_.Run(error);
+//#endif
 }
 
 void Loader::Start() {
+  printf("Loader::Start\n");
+  isStarted_ = true;
+
   DCHECK(thread_checker_.CalledOnValidThread());
   DCHECK(!is_suspended_);
 
   fetcher_to_decoder_adaptor_.reset(new FetcherToDecoderAdapter(
       decoder_.get(),
       base::Bind(&Loader::LoadComplete, base::Unretained(this))));
+//#ifdef __TODO__
   fetcher_ = fetcher_creator_.Run(fetcher_to_decoder_adaptor_.get());
-
+//#endif
   // Post the error callback on the current message loop in case the loader is
   // destroyed in the callback.
   if (!fetcher_) {

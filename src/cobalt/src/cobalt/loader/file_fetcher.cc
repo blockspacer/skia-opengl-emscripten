@@ -80,10 +80,18 @@ FileFetcher::FileFetcher(const base::FilePath& file_path, Handler* handler,
       file_(base::kInvalidPlatformFile),
       file_offset_(options.start_offset),
       bytes_left_to_read_(options.bytes_to_read),
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
       task_runner_(options.message_loop_proxy),
+#endif
       file_path_(file_path),
       ALLOW_THIS_IN_INITIALIZER_LIST(weak_ptr_factory_(this)),
-      file_proxy_(task_runner_.get()) {
+#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+      file_proxy_(nullptr)
+#else
+      file_proxy_(task_runner_.get())
+#endif
+      {
+
 
 #if defined(OS_EMSCRIPTEN)
   /// \note load all files from main thread on wasm
@@ -117,13 +125,17 @@ FileFetcher::FileFetcher(const base::FilePath& file_path, Handler* handler,
   // and so on until we open the file or reach the end of the search path.
   BuildSearchPath(options.extra_search_dir);
   curr_search_path_iter_ = search_path_.begin();
+//#ifdef __TODO__
   TryFileOpen();
+
+//#endif
 }
 
 FileFetcher::~FileFetcher() {
   DCHECK(thread_checker_.CalledOnValidThread());
 
   DCHECK(base::MessageLoopCurrent::Get()); // TODO
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   if (task_runner_ != base::MessageLoopCurrent::Get()->task_runner()) {
     // In case we are currently in the middle of a fetch (in which case it will
     // be aborted), invalidate the weak pointers to this FileFetcher object to
@@ -140,6 +152,9 @@ FileFetcher::~FileFetcher() {
     /// __TODO__
     task_runner_->RunsTasksInCurrentSequence();
   }
+#else
+  weak_ptr_factory_.InvalidateWeakPtrs();
+#endif
 }
 
 void FileFetcher::BuildSearchPath(const base::FilePath& extra_search_dir) {

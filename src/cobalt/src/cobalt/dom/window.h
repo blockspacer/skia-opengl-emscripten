@@ -421,9 +421,18 @@ class Window : public EventTarget,
     return ui_nav_root_;
   }
 
-  DEFINE_WRAPPABLE_TYPE(Window);
+  bool TryForceStartDocumentLoad();
 
- private:
+  const bool isDocumentStartedLoading() const {
+    return isDocumentStartedLoading_;
+  }
+
+  const bool isStartedDocumentLoader() const;
+
+  void ForceStartDocumentLoader();
+
+  DEFINE_WRAPPABLE_TYPE(Window);
+private:
   void StartDocumentLoad(
       loader::FetcherFactory* fetcher_factory, const GURL& url,
       Parser* dom_parser,
@@ -437,7 +446,6 @@ class Window : public EventTarget,
 
   // From EventTarget.
   std::string GetDebugName() override { return "Window"; }
-
   void FireHashChangeEvent();
 
   cssom::ViewportSize viewport_size_;
@@ -492,6 +500,10 @@ class Window : public EventTarget,
   scoped_refptr<OnScreenKeyboard> on_screen_keyboard_;
 
   CacheCallback splash_screen_cache_callback_;
+
+  const loader::Decoder::OnCompleteFunction/*&*/ load_complete_callback_;
+
+  bool isDocumentStartedLoading_ = false;
 
   OnStartDispatchEventCallback on_start_dispatch_event_callback_;
   OnStopDispatchEventCallback on_stop_dispatch_event_callback_;

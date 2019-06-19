@@ -210,7 +210,11 @@ Pipeline::~Pipeline() {
 }
 
 render_tree::ResourceProvider* Pipeline::GetResourceProvider() {
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   rasterizer_created_event_.Wait();
+#else
+  DCHECK(rasterizer_);
+#endif
   return rasterizer_->GetResourceProvider();
 }
 

@@ -10,23 +10,6 @@ body {
   font-family: "myFirstFont";
 }
 
-not us-ascii html input resulted in:
-(index):1246 exception thrown: abort("alignment fault") at Error
-    at jsStackTrace (http://localhost:9090/home/avakimov_am/skia-opengl-emscripten/build-emscripten/skemgl.js:1348:13)
-    at stackTrace (http://localhost:9090/home/avakimov_am/skia-opengl-emscripten/build-emscripten/skemgl.js:1365:12)
-    at abort (http://localhost:9090/home/avakimov_am/skia-opengl-emscripten/build-emscripten/skemgl.js:17447:44)
-    at alignfault (http://localhost:9090/home/avakimov_am/skia-opengl-emscripten/build-emscripten/skemgl.js:697:3)
-    at SAFE_HEAP_LOAD_i32_4_U_4 (wasm-function[44008]:39)
-    at offsetTOCLookupFn(UDataMemory const*, char const*, int*, UErrorCode*) [__ZL17offsetTOCLookupFnPK11UDataMemoryPKcPiP10UErrorCode] (wasm-function[40838]:41)
-    at doLoadFromCommonData(signed char, char const*, char const*, char const*, char const*, char const*, char const*, char const*, signed char (*)(void*, char const*, char const*, UDataInfo const*), void*, UErrorCode*, UErrorCode*) [__ZL20doLoadFromCommonDataaPKcS0_S0_S0_S0_S0_S0_PFaPvS0_S0_PK9UDataInfoES1_P10UErrorCodeS8_] (wasm-function[39601]:164)
-    at doOpenChoice(char const*, char const*, char const*, signed char (*)(void*, char const*, char const*, UDataInfo const*), void*, UErrorCode*) [__ZL12doOpenChoicePKcS0_S0_PFaPvS0_S0_PK9UDataInfoES1_P10UErrorCode] (wasm-function[39598]:1406)
-    at _udata_openChoice_64 (wasm-function[39609]:63)
-    at _res_load_64 (wasm-function[40171]:107)
-after InitializeICUWithFileDescriptorInternal 3
-udata_setCommonData(const_cast<uint8_t*>(g_icudtl_mapped_file->data()),
-see https://github.com/blockspacer/cobalt-clone-28052019/blob/89664d116629734759176d820e9923257717e09c/src/third_party/icu/source/common/uresbund.cpp#L368
-
-
 /usr/bin/ld: src/cobalt/libcobalt_dom.a(window.cc.o): in function
 `cobalt::script::Handle<cobalt::script::Promise<scoped_refptr<cobalt::script::Wrappable>
 > >

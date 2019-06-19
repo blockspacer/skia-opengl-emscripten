@@ -67,6 +67,7 @@ class StorageArea {
   int size_bytes_;
   LocalStorageDatabase* db_interface_;
   bool initialized_;
+  bool completed_ = false;
 
   DISALLOW_COPY_AND_ASSIGN(StorageArea);
 };

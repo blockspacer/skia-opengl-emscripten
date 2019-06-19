@@ -40,7 +40,7 @@ class BaseTimerTaskInternal {
     if (!timer_)
       return;
 
-    //printf("BaseTimerTaskInternal::Run 2\n");
+    printf("BaseTimerTaskInternal::Run 2\n");
     // |this| will be deleted by the task runner, so Timer needs to forget us:
     timer_->scheduled_task_ = nullptr;
 
@@ -163,7 +163,7 @@ void TimerBase::Reset() {
   //printf("TimerBase::Reset 6\n");
   // We can't reuse the |scheduled_task_|, so abandon it and post a new one.
   AbandonScheduledTask();
-  //printf("TimerBase::Reset 7\n");
+  printf("TimerBase::Reset 7\n");
   PostNewScheduledTask(delay_);
   printf("TimerBase::Reset 8\n");
 }
@@ -224,7 +224,7 @@ void TimerBase::RunScheduledTask() {
   if (!is_running_)
     return;
 
-  //printf("TimerBase::RunScheduledTask 2\n");
+  printf("TimerBase::RunScheduledTask 2\n");
   // First check if we need to delay the task because of a new target time.
   if (desired_run_time_ > scheduled_run_time_) {
     // Now() can be expensive, so only call it if we know the user has changed
@@ -234,12 +234,13 @@ void TimerBase::RunScheduledTask() {
     // task if the |desired_run_time_| is in the future.
     if (desired_run_time_ > now) {
       // Post a new task to span the remaining time.
+      printf("TimerBase::RunScheduledTask 2.1\n");
       PostNewScheduledTask(desired_run_time_ - now);
       return;
     }
   }
 
-  //printf("TimerBase::RunScheduledTask 3\n");
+  printf("TimerBase::RunScheduledTask 3\n");
   RunUserTask();
   // No more member accesses here: |this| could be deleted at this point.
   printf("TimerBase::RunScheduledTask 4\n");
@@ -260,6 +261,7 @@ void OneShotTimer::Start(const Location& posted_from,
 }
 
 void OneShotTimer::FireNow() {
+  printf("OneShotTimer::FireNow(() 1\n");
   DCHECK(origin_sequence_checker_.CalledOnValidSequence());
   DCHECK(!task_runner_) << "FireNow() is incompatible with SetTaskRunner()";
   DCHECK(IsRunning());
@@ -303,12 +305,19 @@ RepeatingTimer::RepeatingTimer(const Location& posted_from,
 void RepeatingTimer::Start(const Location& posted_from,
                            TimeDelta delay,
                            RepeatingClosure user_task) {
+#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+  printf("RepeatingTimer::Start not supported on ST WASM");
+  DCHECK(false);
+  NOTIMPLEMENTED();
+  NOTREACHED();
+#endif
   user_task_ = std::move(user_task);
   StartInternal(posted_from, delay);
 }
 
 void RepeatingTimer::OnStop() {}
 void RepeatingTimer::RunUserTask() {
+  printf("RepeatingTimer::RunUserTask() 1\n");
 #if defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS)
   #warning "TODO: port timers, see https://github.com/trevorlinton/webkit.js/blob/master/src/WebCoreSupport/AcceleratedContext.cpp#L155"
 #endif

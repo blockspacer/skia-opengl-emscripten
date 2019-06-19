@@ -119,6 +119,7 @@ std::unique_ptr<Fetcher> FetcherFactory::CreateSecureFetcher(
   P_LOG("CreateSecureFetcher\n");
   DLOG(INFO) << "Fetching: " << ClipUrl(url, 80);
 
+//#ifdef __TODO__
   if (!url.is_valid()) {
     printf("url.!is_valid %s\n", url.path().c_str());
     std::stringstream error_message;
@@ -190,19 +191,30 @@ std::unique_ptr<Fetcher> FetcherFactory::CreateSecureFetcher(
     printf("url.FileURLToFilePath %s\n", file_path.value().c_str());
 
     FileFetcher::Options options;
+
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
     options.message_loop_proxy = file_thread_.task_runner();
+#endif
+
     /// __TODO__
     ///options.message_loop_proxy = base::MessageLoopCurrent::Get().task_runner();
     options.extra_search_dir = extra_search_dir_;
+//#ifdef __TODO__
     return std::unique_ptr<Fetcher>(
         new FileFetcher(file_path, handler, options));
+//#endif
   }
 
 #if defined(ENABLE_ABOUT_SCHEME)
   if (url.SchemeIs(kAboutScheme)) {
     return std::unique_ptr<Fetcher>(new AboutFetcher(handler));
   }
+//#endif
+
 #endif
+
+  DCHECK(false);
+  printf("Unknown fetcher scheme");
 
   std::stringstream error_message;
   error_message << "Scheme " << url.scheme() << ": is not supported";

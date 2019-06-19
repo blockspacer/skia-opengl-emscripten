@@ -140,7 +140,12 @@ void StorageArea::Init() {
     // LocalStorage.
     db_interface_->ReadAll(origin_, base::Bind(&StorageArea::OnInitComplete,
                                                base::Unretained(this)));
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
     read_event_.Wait();
+#else
+  DCHECK(storage_map_);
+  DCHECK(completed_);
+#endif
   } else {
     // SessionStorage. Create a new, empty StorageMap.
     storage_map_.reset(new StorageMap);
@@ -151,6 +156,7 @@ void StorageArea::Init() {
 void StorageArea::OnInitComplete(std::unique_ptr<StorageMap> data) {
   storage_map_.reset(data.release());
   read_event_.Signal();
+  completed_ = true;
 }
 
 }  // namespace dom

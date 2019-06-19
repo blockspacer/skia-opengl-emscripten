@@ -594,6 +594,8 @@ void Document::DecreaseLoadingCounterAndMaybeDispatchLoadEvent() {
   if (loading_counter_ == 0 && should_dispatch_load_event_) {
     should_dispatch_load_event_ = false;
     // TODO https://github.com/emscripten-core/emscripten/issues/6843
+
+
 #if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   std::move(base::Bind(&Document::DispatchOnLoadEvent,
                        base::AsWeakPtr<Document>(this))).Run();
@@ -607,13 +609,17 @@ void Document::DecreaseLoadingCounterAndMaybeDispatchLoadEvent() {
         FROM_HERE, base::Bind(&Document::DispatchOnLoadEvent,
                               base::AsWeakPtr<Document>(this)));
 #endif
-  P_LOG("DecreaseLoadingCounterAndMaybeDispatchLoadEvent 2\n");
 
+
+  P_LOG("DecreaseLoadingCounterAndMaybeDispatchLoadEvent 2\n");
+//#ifdef __TODO__
     HTMLBodyElement* body_element = body().get();
     if (body_element) {
       body_element->PostToDispatchEventName(FROM_HERE, base::Tokens::load());
     }
+//#endif
   }
+  P_LOG("DecreaseLoadingCounterAndMaybeDispatchLoadEvent 3\n");
 }
 
 void Document::AddObserver(DocumentObserver* observer) {
@@ -1087,17 +1093,18 @@ void Document::DispatchOnLoadEvent() {
   // finished loading.  Performing this update and firing the readystatechange
   // event before the load event matches Chromium's behavior.
   ready_state_ = kDocumentReadyStateComplete;
-
+///#ifdef __TODO__
   // Dispatch the readystatechange event (before the load event), since we
   // have changed the document ready state.
   DispatchEvent(new Event(base::Tokens::readystatechange()));
-
+//#ifdef __TODO__
   // Dispatch the document's onload event.
   DispatchEvent(new Event(base::Tokens::load()));
 
   // After all JavaScript OnLoad event handlers have executed, signal to let
   // any Document observers know that a load event has occurred.
   SignalOnLoadToObservers();
+//#endif
 }
 
 void Document::UpdateStyleSheets() {

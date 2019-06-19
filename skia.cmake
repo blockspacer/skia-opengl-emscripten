@@ -647,18 +647,18 @@ if (NOT EXT_SKIA_SHARED)
     # webp integration doesn't expose the system option...
     #ADD_SKIA_LIBRARY_DEPENDENCY("webp") # SK_CONF_IS_OFFICIAL_BUILD && skia_use_libwebp
 
+    #ADD_SKIA_LIBRARY_DEPENDENCY("pthread")
+    find_package(Threads REQUIRED)
+    #target_link_libraries(SKIA Threads::Threads)
+    message("CMAKE_THREAD_LIBS_INIT=${CMAKE_THREAD_LIBS_INIT}")
+    set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};Threads::Threads" PARENT_SCOPE)
   else()
     message(FATAL_ERROR "unknown platform")
-  endif() # EMSCRIPTEN
+  endif()
 
   set(SKIA_CMAKE_ONLY_HEADERS "${SKIA_CMAKE_ONLY_HEADERS};${HARFBUZZ_INCLUDE_DIRS};${OPENGL_INCLUDE_DIR};${OPENGL_EGL_INCLUDE_DIRS}")
   set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${HARFBUZZ_LIBRARIES};${OPENGL_LIBRARIES}")
 
-  #ADD_SKIA_LIBRARY_DEPENDENCY("pthread")
-  find_package(Threads REQUIRED)
-  #target_link_libraries(SKIA Threads::Threads)
-  message("CMAKE_THREAD_LIBS_INIT=${CMAKE_THREAD_LIBS_INIT}")
-  set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};Threads::Threads" PARENT_SCOPE)
 
   # when skia_enable_gpu:
   #

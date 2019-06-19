@@ -17,6 +17,10 @@
 #include "base/threading/scoped_blocking_call.h"
 #include "base/threading/thread_restrictions.h"
 
+#if defined(OS_EMSCRIPTEN)
+#include <emscripten/emscripten.h>
+#include <emscripten/html5.h>
+#endif
 // -----------------------------------------------------------------------------
 // A WaitableEvent on POSIX is implemented as a wait-list. Currently we don't
 // support cross-process events (where one process can signal an event which
@@ -157,6 +161,10 @@ void WaitableEvent::Wait() {
 }
 
 bool WaitableEvent::TimedWait(const TimeDelta& wait_delta) {
+#if defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS)
+    P_LOG("TODO: WaitableEvent::TimedWait\n");
+    HTML5_STACKTRACE();
+#endif
   // TimeTicks takes care of overflow including the cases when wait_delta
   // is a maximum value.
   return TimedWaitUntil(TimeTicks::Now() + wait_delta);
@@ -165,6 +173,7 @@ bool WaitableEvent::TimedWait(const TimeDelta& wait_delta) {
 bool WaitableEvent::TimedWaitUntil(const TimeTicks& end_time) {
 #if defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS)
     P_LOG("TODO: WaitableEvent::TimedWaitUntil\n");
+    HTML5_STACKTRACE();
 #warning "TODO: WaitableEvent::TimedWaitUntil"
     return true; // Return true if the event was signaled.
 #endif

@@ -50,7 +50,11 @@ class BASE_EXPORT FileProxy : public SupportsWeakPtr<FileProxy> {
   using WriteCallback = OnceCallback<void(File::Error, int bytes_written)>;
 
   FileProxy();
+/*#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+  explicit FileProxy();
+#else*/
   explicit FileProxy(TaskRunner* task_runner);
+//#endif
   ~FileProxy();
 
   // Creates or opens a file with the given flags. It is invalid to pass a null
@@ -130,7 +134,9 @@ class BASE_EXPORT FileProxy : public SupportsWeakPtr<FileProxy> {
 
  private:
   friend class FileHelper;
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   TaskRunner* task_runner() { return task_runner_.get(); }
+#endif
 
   scoped_refptr<TaskRunner> task_runner_;
   File file_;

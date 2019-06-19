@@ -77,6 +77,8 @@ using cobalt::media_session::MediaSession;
 namespace cobalt {
 namespace dom {
 
+static bool canStartDocumentLoad = false;
+
 // This class fires the window's load event when the document is loaded.
 class Window::RelayLoadEvent : public DocumentObserver {
  public:
@@ -163,6 +165,7 @@ Window::Window(
     // 'window' object EventTargets require special handling for onerror events,
     // see EventTarget constructor for more details.
     : EventTarget(kUnpackOnErrorEvents),
+      load_complete_callback_(load_complete_callback),
       viewport_size_(view_size),
       device_pixel_ratio_(device_pixel_ratio),
       is_resize_event_pending_(false),
@@ -258,6 +261,8 @@ Window::Window(
     ui_nav_root_->SetEnabled(true);
   }
 
+//#ifdef __TODO__
+
   // Document load start is deferred from this constructor so that we can be
   // guaranteed that this Window object is fully constructed before document
   // loading begins.
@@ -267,23 +272,57 @@ Window::Window(
       FROM_HERE,
       base::Bind(&Window::StartDocumentLoad, base::Unretained(this),
                  fetcher_factory, url, dom_parser, load_complete_callback));
-#else
-  std::move(base::Bind(&Window::StartDocumentLoad, base::Unretained(this),
-                       fetcher_factory, url, dom_parser, load_complete_callback)).Run();
 #endif
+
+  canStartDocumentLoad = true;
+
+//#endif
+}
+
+bool Window::TryForceStartDocumentLoad() {
+  if(!canStartDocumentLoad) {
+    return false;
+  }
+
+  DCHECK(load_complete_callback_);
+  DCHECK(html_element_context_);
+  DCHECK(html_element_context_->fetcher_factory());
+  DCHECK(html_element_context_->dom_parser());
+  DCHECK(document_);
+  DCHECK(load_complete_callback_);
+  DCHECK(!load_complete_callback_.is_null());
+
+  std::move(base::Bind(&Window::StartDocumentLoad, base::Unretained(this),
+                       html_element_context_->fetcher_factory(),
+                       document_->url_as_gurl(),
+                       html_element_context_->dom_parser(),
+                       load_complete_callback_)).Run();
+
+  isDocumentStartedLoading_ = true;
+  return isDocumentStartedLoading_;
 }
 
 void Window::StartDocumentLoad(
     loader::FetcherFactory* fetcher_factory, const GURL& url,
     Parser* dom_parser,
     const loader::Decoder::OnCompleteFunction& load_complete_callback) {
-  P_LOG("StartDocumentLoad\n");
+  P_LOG("StartDocumentLoad 1\n");
   document_loader_.reset(new loader::Loader(
       base::Bind(&loader::FetcherFactory::CreateFetcher,
                  base::Unretained(fetcher_factory), url),
       base::Bind(&Parser::ParseDocumentAsync, base::Unretained(dom_parser),
                  document_, base::SourceLocation(url.spec(), 1, 1)),
-      load_complete_callback));
+      load_complete_callback
+      /*base::Bind([](){
+
+      },*/
+#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+      , loader::Loader::OnDestructionFunction()
+      /// \note start suspended
+      , true
+#endif
+      ));
+  P_LOG("StartDocumentLoad 2\n");
 }
 
 scoped_refptr<base::BasicClock> Window::MakePerformanceClock(
@@ -728,6 +767,8 @@ void Window::OnDocumentRootElementUnableToProvideOffsetDimensions() {
 
 void Window::OnStartDispatchEvent(const scoped_refptr<dom::Event>& event) {
   P_LOG("Window::OnStartDispatchEvent 1\n");
+
+//#ifdef __TODO__
   if (!on_start_dispatch_event_callback_.is_null()) {
     P_LOG("Window::OnStartDispatchEvent 2\n");
     DCHECK(!on_start_dispatch_event_callback_.IsCancelled());
@@ -735,6 +776,8 @@ void Window::OnStartDispatchEvent(const scoped_refptr<dom::Event>& event) {
     on_start_dispatch_event_callback_.Run(event);
     P_LOG("Window::OnStartDispatchEvent 3\n");
   }
+//#endif
+
 }
 
 void Window::OnStopDispatchEvent(const scoped_refptr<dom::Event>& event) {
@@ -776,6 +819,16 @@ void Window::TraceMembers(script::Tracer* tracer) {
 void Window::SetEnvironmentSettings(script::EnvironmentSettings* settings) {
   screenshot_manager_.SetEnvironmentSettings(settings);
   navigator_->SetEnvironmentSettings(settings);
+}
+
+const bool Window::isStartedDocumentLoader() const {
+  return document_loader_ && document_loader_->isStarted();
+}
+
+void Window::ForceStartDocumentLoader() {
+  DCHECK(document_loader_);
+  document_loader_->Resume(nullptr);
+  //document_loader_->Start();
 }
 
 void Window::CacheSplashScreen(const std::string& content) {

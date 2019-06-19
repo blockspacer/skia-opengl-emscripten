@@ -76,6 +76,8 @@ class TextDecoder : public Decoder {
   }
 
   void Finish() override {
+    printf("TextDecoder Finish 1...\n");
+//#ifdef __TODO__
     DCHECK(thread_checker_.CalledOnValidThread());
 
     if (suspended_) return;
@@ -86,6 +88,8 @@ class TextDecoder : public Decoder {
     if (!load_complete_callback_.is_null()) {
       load_complete_callback_.Run(base::nullopt);
     }
+    printf("TextDecoder Finish 2...\n");
+//#endif
   }
 
   bool Suspend() override {

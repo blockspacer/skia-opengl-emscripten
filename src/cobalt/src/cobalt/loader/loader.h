@@ -54,6 +54,10 @@ class Loader {
 
   ~Loader();
 
+  const bool isStarted() const {
+    return isStarted_;
+  }
+
   // Suspends the load of this resource, expecting it to be resumed or destroyed
   // later.
   void Suspend();
@@ -67,11 +71,11 @@ class Loader {
 
   void LoadComplete(const base::Optional<std::string>& status);
 
- private:
-  class FetcherToDecoderAdapter;
-
   // Starts the fetch-and-decode.
   void Start();
+
+ private:
+  class FetcherToDecoderAdapter;
 
   const FetcherCreator fetcher_creator_;
   const DecoderCreator decoder_creator_;
@@ -88,6 +92,8 @@ class Loader {
 
   bool is_suspended_;
   bool is_load_complete_ = false;
+
+  bool isStarted_ = false;
 
   DISALLOW_COPY_AND_ASSIGN(Loader);
 };

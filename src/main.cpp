@@ -1257,6 +1257,24 @@ static SDL_Window* window;
 #endif
 
 #ifdef __EMSCRIPTEN__
+EM_BOOL context_lost(int eventType, const void *reserved, void *userData)
+{
+  printf("C code received a signal for WebGL context lost! This should not happen!\n");
+  ///result = 1;
+  /// __TODO__ : free resources
+  return 0;
+}
+
+EM_BOOL context_restored(int eventType, const void *reserved, void *userData)
+{
+  printf("C code received a signal for WebGL context restored! This should not happen!\n");
+  ///result = 1;
+  /// __TODO__ : free resources
+  return 0;
+}
+#endif
+
+#ifdef __EMSCRIPTEN__
 static EMSCRIPTEN_WEBGL_CONTEXT_HANDLE em_ctx;
 
 // @see https://emscripten.org/docs/api_reference/html5.h.html?highlight=emscripten_webgl_create_context#c.EmscriptenWebGLContextAttributes
@@ -1282,7 +1300,7 @@ static SDL_Event e;
 #endif
 
 // Main loop flag
-static bool quit = false;
+static bool quitApp = false;
 
 static GLuint vertexPosObject;
 
@@ -1313,6 +1331,24 @@ static int read_file(const char* fPath, char*& fileString, long int& fsize, cons
     if(closeString)
       fileString[fsize] = 0;
     return 0;
+}
+
+static int debugPeriodicCounter = 0;
+static int debugPeriod = 100;
+static bool hasLayout = false;
+
+static bool isDebugPeriodReached() {
+  DCHECK(debugPeriodicCounter >=0
+    && debugPeriodicCounter <= debugPeriod);
+  ///return debugPeriodicCounter == debugPeriod;
+  return true;
+}
+
+static bool incDebugPeriodicCounter() {
+  debugPeriodicCounter++;
+  if(debugPeriodicCounter >= debugPeriod) {
+    debugPeriodicCounter = 0;
+  }
 }
 
 #if defined(ENABLE_SKIA)
@@ -1432,7 +1468,7 @@ public:
       return;
     }*/
 
-      printf("onDraw() 1\n");
+    if (isDebugPeriodReached()) printf("onDraw() 1\n");
 
     SkPaint paint;
 
@@ -1917,6 +1953,7 @@ class CobaltTester {
 
   //private:
   public:
+    bool isLoadComplete_ = false;
     cobalt::web_animations::Animation::Data animation;
     base::Optional<base::TimeDelta> local_time;
     scoped_refptr<cobalt::cssom::CSSRuleList> rule_list;
@@ -2127,6 +2164,7 @@ void CobaltTester::OnWindowMinimize() {
 
 void CobaltTester::OnLoadComplete(const base::Optional<std::string>& error) {
     printf("OnLoadComplete %s\n", error.value_or("no errors").c_str());
+    isLoadComplete_ = true;
     //if (error) error_callback_.Run(window_->location()->url(), *error);
 }
 
@@ -2628,7 +2666,6 @@ CobaltTester::CobaltTester()
       base::Closure(), base::Closure(), base::Closure()));
 
 
-
   P_LOG("Create dom::Window...\n");
 
   window_ = new cobalt::dom::Window(
@@ -2663,6 +2700,7 @@ CobaltTester::CobaltTester()
       base::Bind(&CobaltTester::CobaltTester::navigationCallback, base::Unretained(this)),
       //base::Bind(&navigationCallback, base::Unretained(this)),//data.options.navigation_callback, // const base::Callback<void(const GURL&)>
       //base::Bind(&OnLoadComplete, base::Unretained(this)),
+      // load_complete_callback
       base::Bind(&CobaltTester::OnLoadComplete, base::Unretained(this)),
       // //data.network_module->cookie_jar(),
       // //data.network_module->GetPostSender(),
@@ -2710,6 +2748,7 @@ CobaltTester::CobaltTester()
       );
   DCHECK(window_);
 
+//#ifdef __TODO__
   P_LOG("Create window_weak_...\n");
 
   window_weak_ = base::AsWeakPtr(window_.get());
@@ -2718,7 +2757,6 @@ CobaltTester::CobaltTester()
 
   DCHECK(window_);
   DCHECK(window_->document());
-
 
   /*P_LOG("Create document_...\n");
   Document::Options document_options_;
@@ -2742,7 +2780,6 @@ CobaltTester::CobaltTester()
 
   window_->document()->SetViewport(
     cssom::ViewportSize(browser_width, browser_height));//kViewSize);
-
 
   printf("document_->set_window...\n");
 
@@ -2784,26 +2821,6 @@ CobaltTester::CobaltTester()
   //layout_trigger = dom::Window::kClockTypeSystemTime;
 
   DCHECK(window_);
-  printf("layout_manager_.reset...\n");
-  layout_manager_.reset(new cobalt::layout::LayoutManager(
-      "name_",
-      /// window_.get(),
-      window_, /// __TODO__
-      ///window_.get(),
-      //base::Bind(&WebModule::Impl::OnRenderTreeProduced,
-      //           base::Unretained(this)),
-      base::Bind(&CobaltTester::OnRenderTreeProduced, base::Unretained(this)),
-      //base::Bind(&WebModule::Impl::HandlePointerEvents, base::Unretained(this)),
-      base::Bind(&CobaltTester::HandlePointerEvents, base::Unretained(this)),
-      layout_trigger,//data.options.layout_trigger,
-      99,//data.dom_max_element_depth,
-      1.0,//data.layout_refresh_rate,
-      "en_US", //"data.network_module->preferred_language()",
-      false, //data.options.enable_image_animations,
-      layout_stat_tracker_.get(),//web_module_stat_tracker_->layout_stat_tracker(),
-      false//data.options.clear_window_with_background_color
-      ));
-  DCHECK(layout_manager_);
 
 /*#if !defined(COBALT_FORCE_CSP)
     if (data.options.csp_enforcement_mode == dom::kCspEnforcementDisable) {
@@ -2822,6 +2839,7 @@ CobaltTester::CobaltTester()
     //
     //InjectCustomWindowAttributes(data.options.injected_window_attributes);
 
+//#endif
 
     /// __TODO__
     ///printf("document_->GetFontCache()->TryGetRemoteFont...\n");
@@ -3144,6 +3162,8 @@ static int InitGL() {
 }
 
 static void animate() {
+        if (isDebugPeriodReached()) printf("animate start\n");
+
   //redClrTintAnim += 0.01f;
   //if (redClrTintAnim > 360.0f) {
   //  redClrTintAnim = 0.0f;
@@ -3165,14 +3185,16 @@ static void animate() {
 #error "TODO: port SDL_GetTicks without SDL"
 #endif
 
-    if (render_browser_window && !g_cobaltTester)
+    //if(render_browser_window)
+    if (!g_cobaltTester)
     {
       printf("Creating g_cobaltTester...\n");
       /// __TODO__
       //g_cobaltTester = std::make_unique<CobaltTester>();
 #if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+          printf("creating g_cobaltTester 1...\n");
           g_cobaltTester = std::make_unique<CobaltTester>();
-          g_cobaltTester->run();
+          printf("creating g_cobaltTester 2...\n");
 #else
     // Make sure the thread started.
     main_thread_.task_runner()->PostTask(
@@ -3184,43 +3206,115 @@ static void animate() {
             printf("Starting g_cobaltTester...\n");
             /// __TODO__
             g_cobaltTester = std::make_unique<CobaltTester>();
-            g_cobaltTester->run();
+            /// __TODO__
+            {
+              g_cobaltTester->run();
+            }
             printf("Finishing g_cobaltTester...\n");
             //main_thread_event_->Signal();
         }, &main_thread_event_));
 #endif
+  ///} else if (!g_cobaltTester->isLoadComplete_) {
+  ///  /// wait
+  ///  //if (isDebugPeriodReached())
+  ///  printf("!g_cobaltTester->isLoadComplete_\n");
+  } else if (
+    !g_cobaltTester->layout_manager_
+    ///&& g_cobaltTester->isLoadComplete_
+    ) {
+    printf("layout_manager_.reset...\n");
+    g_cobaltTester->layout_manager_.reset(new cobalt::layout::LayoutManager(
+        "name_",
+        /// window_.get(),
+        g_cobaltTester->window_, /// __TODO__
+        ///window_.get(),
+        //base::Bind(&WebModule::Impl::OnRenderTreeProduced,
+        //           base::Unretained(this)),
+        base::Bind(&CobaltTester::OnRenderTreeProduced,
+          base::Unretained(g_cobaltTester.get())),
+        //base::Bind(&WebModule::Impl::HandlePointerEvents, base::Unretained(this)),
+        base::Bind(&CobaltTester::HandlePointerEvents,
+          base::Unretained(g_cobaltTester.get())),
+        g_cobaltTester->layout_trigger,//data.options.layout_trigger,
+        99,//data.dom_max_element_depth,
+        1.0,//data.layout_refresh_rate,
+        "en_US", //"data.network_module->preferred_language()",
+        false, //data.options.enable_image_animations,
+        g_cobaltTester->layout_stat_tracker_.get(),//web_module_stat_tracker_->layout_stat_tracker(),
+        false//data.options.clear_window_with_background_color
+      ));
+      DCHECK(g_cobaltTester->layout_manager_);
   }
-
   /// __TODO__
 #if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
-  if (render_browser_window) {
+  /// \note: (only wasm ST - wasm without pthreads)
+  /// don`t batch a lot of work to browser
+  /// or browser will crash/hang/loose webgl context
+  /// you MUST split work between main loop iterations
+  else if(!g_cobaltTester->window_->isDocumentStartedLoading()) {
+    printf("g_cobaltTester TryForceStartDocumentLoad 1\n");
     DCHECK(g_cobaltTester);
-    DCHECK(g_cobaltTester->window_->document());
     DCHECK(g_cobaltTester->window_);
-    DCHECK(g_cobaltTester->layout_manager_);
-    g_cobaltTester->window_->document()->DoSynchronousLayoutAndGetRenderTree();
-    g_cobaltTester->layout_manager_->ForceReLayout();
+    const bool res = g_cobaltTester->window_->TryForceStartDocumentLoad();
+    DCHECK(res);
+    printf("g_cobaltTester TryForceStartDocumentLoad 2\n");
+  } else if(!g_cobaltTester->window_->isStartedDocumentLoader()) {
+    printf("g_cobaltTester ForceStartDocumentLoader 1\n");
+    g_cobaltTester->window_->ForceStartDocumentLoader();
+    printf("g_cobaltTester ForceStartDocumentLoader 1\n");
+  } else if (render_browser_window) {
+    if(g_cobaltTester
+       && g_cobaltTester->window_->isStartedDocumentLoader()
+       && g_cobaltTester->window_->isDocumentStartedLoading())
+    {
+      //if (isDebugPeriodReached() || !hasLayout)
+      {
+        //if (isDebugPeriodReached())
+        printf("g_cobaltTester DoSynchronousLayoutAndGetRenderTree\n");
+        DCHECK(g_cobaltTester);
+        DCHECK(g_cobaltTester->window_);
+        DCHECK(g_cobaltTester->window_->document());
+        DCHECK(g_cobaltTester->window_);
+        DCHECK(g_cobaltTester->window_->isDocumentStartedLoading());
+        DCHECK(g_cobaltTester->window_->isStartedDocumentLoader());
+        DCHECK(g_cobaltTester);
+        DCHECK(g_cobaltTester->layout_manager_);
+        g_cobaltTester->window_->document()->DoSynchronousLayoutAndGetRenderTree();
+        g_cobaltTester->layout_manager_->ForceReLayout();
+        hasLayout = true;
+        //
+        //if (isDebugPeriodReached())
+        printf("g_cobaltTester->run\n");
+      }
+#ifdef __TODO__
+      DCHECK(g_cobaltTester);
+      g_cobaltTester->run();
+#endif
+    }
   }
 #endif
 
 #endif // ENABLE_SKOTTIE
+        //if (isDebugPeriodReached())
+        printf("animate end\n");
 }
 
 ///
 // Draw a triangle using the shader pair created in Init()
 //
 static void Draw() {
+      //if (isDebugPeriodReached())
       printf("Draw() 1\n");
   GL_CHECK( glViewport(0, 0, width, height) );
   GL_CHECK( glClear(GL_COLOR_BUFFER_BIT) );
 
-  printf("animate...\n");
+  if (isDebugPeriodReached()) printf("animate...\n");
 
   animate();
 
   GL_CHECK( glUseProgram(programObject) );
   GL_CHECK( glActiveTexture(GL_TEXTURE0) );
-      printf("Draw() 2\n");
+      if (isDebugPeriodReached()) printf("Draw() 2\n");
 
 #if defined(ENABLE_SKIA)
   //using cobalt::renderer::rasterizer::egl::getRasterizerSkSurface;
@@ -3229,10 +3323,14 @@ static void Draw() {
   {
 
     sk_sp<SkImage> pImage = nullptr;
-    if (render_browser_window)
+    if (render_browser_window//)
+        && g_cobaltTester
+        && g_cobaltTester->window_->isDocumentStartedLoading()
+        && g_cobaltTester->window_->isStartedDocumentLoader())
     {
+        if (isDebugPeriodReached()) printf("Draw() 6.0\n");
        pImage = getRasterizerSkImage();
-        printf("Draw() 6.1\n");
+        if (isDebugPeriodReached()) printf("Draw() 6.1\n");
     } else {
       // Draw to the surface via its SkCanvas.
       // We don't manage this pointer's lifetime.
@@ -3241,20 +3339,20 @@ static void Draw() {
         sRasterSurface->getCanvas();
 
       canvas->clear(SkColorSetARGB(255, 255, 255, 255));
-        printf("Draw() 3\n");
+        if (isDebugPeriodReached()) printf("Draw() 3\n");
 
       myView->onDraw(canvas);
-        //printf("Draw() 4\n");
+        //if (isDebugPeriodReached()) printf("Draw() 4\n");
 
       sRasterSurface->flush();
-        //printf("Draw() 5\n");
+        //if (isDebugPeriodReached()) printf("Draw() 5\n");
 
       pImage = sRasterSurface->makeImageSnapshot();
       //const sk_sp<SkImage> pImage = getRasterizerSkSurface()->makeImageSnapshot();
     }
 
     if (nullptr == pImage) {
-      printf("can`t get pImage\n");
+      if (isDebugPeriodReached()) printf("can`t get pImage\n");
     }
 
     // Draw to the surface via its SkCanvas.
@@ -3270,13 +3368,13 @@ static void Draw() {
     }*/
     if(pImage/* && !pImage->isAlphaOnly()
       && pImage->width() > 0 && pImage->height() > 0*/) {
-      printf("Draw() 7\n");
+      if (isDebugPeriodReached()) printf("Draw() 7\n");
       SkPixmap pixmap;
       if (!pImage->peekPixels(&pixmap)) {
-        printf("can`t peekPixels\n");
+        if (isDebugPeriodReached()) printf("can`t peekPixels\n");
       }
       DCHECK(!pixmap.bounds().isEmpty());
-      printf("Draw() 7.1\n");
+      if (isDebugPeriodReached()) printf("Draw() 7.1\n");
 
       GL_CHECK( glBindTexture(GL_TEXTURE_2D, skia_texture) );
       GL_CHECK( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE) );
@@ -3286,15 +3384,15 @@ static void Draw() {
       GL_CHECK( glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, pixmap.width(), pixmap.height(), 0, GL_RGBA,
                    GL_UNSIGNED_BYTE, pixmap.addr()) );
     }
-      //printf("Draw() 8\n");
+      //if (isDebugPeriodReached()) printf("Draw() 8\n");
   }
 
 #endif // ENABLE_SKIA
-      //printf("Draw() 9\n");
+      //if (isDebugPeriodReached()) printf("Draw() 9\n");
 
   GL_CHECK( glUniform1i(uniformTex, 0) );
 
-  //printf("redClrTintAnim %f\n", redClrTintAnim);
+  //if (isDebugPeriodReached()) printf("redClrTintAnim %f\n", redClrTintAnim);
   //GL_CHECK( glUniform1f(uniformRedClrTint, (sin(redClrTintAnim) / 2.0f + 0.5f)) );
 
   GL_CHECK( glBindBuffer(GL_ARRAY_BUFFER, vertexPosObject) );
@@ -3306,7 +3404,7 @@ static void Draw() {
                         (GLvoid*)(2 * sizeof(GLfloat))) );
   GL_CHECK( glEnableVertexAttribArray(1) );
 
-      //printf("Draw() 10\n");
+      //if (isDebugPeriodReached()) printf("Draw() 10\n");
 
   int w, h, fs;
 #ifdef __EMSCRIPTEN__
@@ -3327,6 +3425,7 @@ static void Draw() {
 
   GL_CHECK( glDisableVertexAttribArray(0) );
   GL_CHECK( glDisableVertexAttribArray(1) );
+      //if (isDebugPeriodReached())
       printf("Draw() 11\n");
 }
 
@@ -3365,12 +3464,13 @@ static void mainLoop() {
   // emscripten_current_thread_process_queued_calls();
 #endif
 
+  //if (isDebugPeriodReached())
   printf("draw...\n");
 
   // Render
   Draw();
 
-        printf("mainLoop 3\n");
+        if (isDebugPeriodReached()) printf("mainLoop 3\n");
 
 #if defined(__EMSCRIPTEN__) && defined(HAVE_SWAP_CONTROL)
   if (enableSwapControl) {
@@ -3385,23 +3485,26 @@ static void mainLoop() {
   }
 #else
 
-        printf("mainLoop 4\n");
+        if (isDebugPeriodReached()) printf("mainLoop 4\n");
 
   // Update screen
   SDL_GL_SwapWindow(window);
 
-        printf("mainLoop 5\n");
+        if (isDebugPeriodReached()) printf("mainLoop 5\n");
 #endif
 
-        printf("mainLoop 6\n");
+        if (isDebugPeriodReached()) printf("mainLoop 6\n");
 
 #if defined(ENABLE_HTML5_SDL) || !defined(__EMSCRIPTEN__)
   while (SDL_PollEvent(&e) != 0) {
     switch (e.type) {
+#if !defined(__EMSCRIPTEN__)
       case SDL_QUIT: {
-        quit = true;
-        printf("recieved quit signal\n");
+        printf("recieved quit signal 1\n");
+        quitApp = true;
+        printf("recieved quit signal 2\n");
       }
+#endif
     }
   }
 #elif defined(__EMSCRIPTEN__)
@@ -3414,12 +3517,18 @@ static void mainLoop() {
 #endif
 
 #ifdef __EMSCRIPTEN__
-  if (quit) {
-    printf("quitting main loop\n");
+  DCHECK(quitApp == false); /// __TODO__
+  if (quitApp) {
+    printf("quitting main loop 1\n");
     emscripten_cancel_main_loop();
+    printf("quitting main loop 2\n");
   }
 #endif
-        printf("mainLoop 7\n");
+  //if (isDebugPeriodReached())
+  printf("mainLoop 7\n");
+
+  incDebugPeriodicCounter();
+  printf("mainLoop 8\n");
 }
 
 #ifdef ENABLE_WTF
@@ -3752,7 +3861,9 @@ int main(int argc, char** argv) {
     ////printf("thread testing Wait...\n");
     ::std::cout << "thread testing start Wait..." << base::Time::Now() << "\n";
 
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
     event.Wait();
+#endif
 
     printf("thread.Stop()...\n");
     thread.Stop();
@@ -4075,6 +4186,9 @@ int main(int argc, char** argv) {
     printf ("error: can't create EMSCRIPTEN_WEBGL_CONTEXT_HANDLE\n");
   }
 
+  emscripten_set_webglcontextlost_callback("#canvas", 0, 0, context_lost);
+  emscripten_set_webglcontextrestored_callback("#canvas", 0, 0, context_restored);
+
   // see https://github.com/emscripten-core/emscripten/issues/8307
   {
     EMSCRIPTEN_RESULT r = emscripten_webgl_make_context_current(em_ctx);
@@ -4266,8 +4380,11 @@ int main(int argc, char** argv) {
           printf("Main thread works...\n");
           main_thread_event_->Signal();
       }, &main_thread_event_));
+
   printf("Waiting for tests thread...\n");
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   main_thread_event_.Wait();
+#endif
   main_thread_event_.Reset();
 
 #ifdef ENABLE_COBALT
@@ -4302,7 +4419,9 @@ int main(int argc, char** argv) {
   printf("Waiting COBALT tests...\n");
   //// \NOTE: DON`T BLOCK MAIN WASM THREAD
   /// WAITING FOR INFINITE THREAD!
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   //main_thread_event_.Wait();
+#endif
   //main_thread_event_.Reset();
 #endif // ENABLE_COBALT
 
@@ -4557,7 +4676,8 @@ int main(int argc, char** argv) {
   emscripten_set_main_loop(mainLoop, 0, 1);
 #else
   printf("running with glew\n");
-  while (!quit) {
+  DCHECK(quitApp == false);
+  while (!quitApp) {
     mainLoop();
   }
 #endif

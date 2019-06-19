@@ -162,6 +162,7 @@ void EventTarget::PostToDispatchEventAndRunCallback(
 void EventTarget::PostToDispatchEventNameAndRunCallback(
     const base::Location& location, base::CobToken event_name,
     const base::Closure& callback) {
+
     printf("PostToDispatchEventNameAndRunCallback 1\n");
 #if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   std::move(

@@ -68,6 +68,7 @@ void MessagePumpDefault::Run(Delegate* delegate) {
     if (has_more_immediate_work)
       continue;
 
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
 //P_LOG("MessagePumpDefault::Run 1.4\n");
     if (next_work_info.delayed_run_time.is_max()) {
 //P_LOG("MessagePumpDefault::Run 1.4.1\n");
@@ -76,6 +77,7 @@ void MessagePumpDefault::Run(Delegate* delegate) {
 //P_LOG("MessagePumpDefault::Run 1.4.2\n");
       event_.TimedWait(next_work_info.remaining_delay());
     }
+#endif
 //P_LOG("MessagePumpDefault::Run 1.5\n");
     // Since event_ is auto-reset, we don't need to do anything special here
     // other than service each delegate method.

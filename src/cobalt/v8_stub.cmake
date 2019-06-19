@@ -5,6 +5,7 @@ set(v8_stub_SOURCES
   ${COBALT_PORT_DIR}v8_stub/v8c_engine.cc
   ${COBALT_PORT_DIR}v8_stub/v8c_global_environment.cc
   ${COBALT_PORT_DIR}v8_stub/v8c_source_code.cc
+  #${COBALT_PORT_DIR}v8_stub/v8c_script_value_factory.cc
   ${COBALT_PORT_DIR}v8_stub/v8c.cc
 )
 
