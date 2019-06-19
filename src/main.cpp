@@ -2914,7 +2914,7 @@ static void Draw() {
               SkPixmap pixmap;// = getRasterizerSkPixmap();
               if (!pImage->peekPixels(&pixmap)) {
                   ///if (isDebugPeriodReached())
-                  ///printf("can`t peekPixels\n");
+                  printf("can`t peekPixels\n");
               }
                   if(!pixmap.bounds().isEmpty()) {
                       DCHECK(!pixmap.bounds().isEmpty());
@@ -2929,13 +2929,13 @@ static void Draw() {
                                             GL_UNSIGNED_BYTE, pixmap.addr()) );
                   } else {
                       ///if (isDebugPeriodReached())
-                          ///printf("pixmap.bounds().isEmpty()\n");
+                          printf("pixmap.bounds().isEmpty()\n");
                   }
               }
 
               if (nullptr == pImage) {
                   ///if (isDebugPeriodReached())
-                  ///printf("can`t get pImage\n");
+                  printf("can`t get pImage\n");
               }
       } else {
           sk_sp<SkImage> pImage = nullptr;
@@ -2962,7 +2962,7 @@ static void Draw() {
               SkPixmap pixmap;
               if (!pImage->peekPixels(&pixmap)) {
                   ///if (isDebugPeriodReached())
-                      ///printf("can`t peekPixels\n");
+                      printf("can`t peekPixels\n");
               }
               DCHECK(!pixmap.bounds().isEmpty());
               ///if (isDebugPeriodReached()) printf("Draw() 7.1\n");
@@ -2978,7 +2978,7 @@ static void Draw() {
 
           if (nullptr == pImage) {
               ///if (isDebugPeriodReached())
-                  ///printf("can`t get pImage\n");
+                  printf("can`t get pImage\n");
           }
       }
 
@@ -3056,9 +3056,75 @@ static void animate() {
 #error "TODO: port SDL_GetTicks without SDL"
 #endif
 
-#endif // ENABLE_SKOTTIE
 
-  ///if (isDebugPeriodReached()) printf("animate end\n");
+  /// \note: (only wasm ST - wasm without pthreads)
+#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+  /// \todo posts new task every frame
+  //if (!createdCobaltTester)
+  {
+      /// \note g_cobaltTester created from separate thread, so
+      /// we use extra variable: don`t call "if (!g_cobaltTester)" here
+      //createdCobaltTester = true;
+      printf("Creating g_cobaltTester...\n");
+      if (!g_cobaltTester) {
+          createCobaltTester();
+      } else if (
+          !g_cobaltTester->layout_manager_
+          ///&& g_cobaltTester->isLoadComplete_
+          ) {
+          createLayoutManager();
+      }
+      /// __TODO__
+      /// \note: (only wasm ST - wasm without pthreads)
+      /// don`t batch a lot of work to browser
+      /// or browser will crash/hang/loose webgl context
+      /// you MUST split work between main loop iterations
+      else if(!g_cobaltTester->window_->isDocumentStartedLoading()) {
+          printf("g_cobaltTester TryForceStartDocumentLoad 1\n");
+          DCHECK(g_cobaltTester);
+          DCHECK(g_cobaltTester->window_);
+          const bool res = g_cobaltTester->window_->TryForceStartDocumentLoad();
+          DCHECK(res);
+          printf("g_cobaltTester TryForceStartDocumentLoad 2\n");
+      } else if(!g_cobaltTester->window_->isStartedDocumentLoader()) {
+          printf("g_cobaltTester ForceStartDocumentLoader 1\n");
+          g_cobaltTester->window_->ForceStartDocumentLoader();
+          printf("g_cobaltTester ForceStartDocumentLoader 1\n");
+      } else if (render_browser_window) {
+          if(g_cobaltTester
+              && g_cobaltTester->window_->isStartedDocumentLoader()
+              && g_cobaltTester->window_->isDocumentStartedLoading())
+          {
+              //if (isDebugPeriodReached() || !hasLayout)
+              {
+                  //if (isDebugPeriodReached())
+                  printf("g_cobaltTester DoSynchronousLayoutAndGetRenderTree\n");
+                  DCHECK(g_cobaltTester);
+                  DCHECK(g_cobaltTester->window_);
+                  DCHECK(g_cobaltTester->window_->document());
+                  DCHECK(g_cobaltTester->window_);
+                  DCHECK(g_cobaltTester->window_->isDocumentStartedLoading());
+                  DCHECK(g_cobaltTester->window_->isStartedDocumentLoader());
+                  DCHECK(g_cobaltTester);
+                  DCHECK(g_cobaltTester->layout_manager_);
+                  g_cobaltTester->window_->document()->DoSynchronousLayoutAndGetRenderTree();
+                  g_cobaltTester->layout_manager_->ForceReLayout();
+                  hasLayout = true;
+                  //
+                  //if (isDebugPeriodReached())
+                  //printf("g_cobaltTester->run\n");
+              }
+#ifdef __TODO__
+              DCHECK(g_cobaltTester);
+              g_cobaltTester->run();
+#endif
+          }
+      }
+  } // if (!createdCobaltTester)
+#endif
+
+#endif // ENABLE_SKOTTIE
+    ///if (isDebugPeriodReached()) printf("animate end\n");
 }
 
 static void mainLoop() {
