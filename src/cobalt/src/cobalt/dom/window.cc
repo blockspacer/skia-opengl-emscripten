@@ -316,6 +316,7 @@ void Window::StartDocumentLoad(
       /*base::Bind([](){
 
       },*/
+      /// \note: (only wasm ST - wasm without pthreads)
 #if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
       , loader::Loader::OnDestructionFunction()
       /// \note start suspended

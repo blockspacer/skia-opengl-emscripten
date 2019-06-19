@@ -161,6 +161,7 @@ void WaitableEvent::Wait() {
 }
 
 bool WaitableEvent::TimedWait(const TimeDelta& wait_delta) {
+ /// \note Reactor your code so that the waiting happens on another thread instead of the main thread
 #if defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS)
     P_LOG("TODO: WaitableEvent::TimedWait\n");
     HTML5_STACKTRACE();
@@ -171,6 +172,7 @@ bool WaitableEvent::TimedWait(const TimeDelta& wait_delta) {
 }
 
 bool WaitableEvent::TimedWaitUntil(const TimeTicks& end_time) {
+ /// \note Reactor your code so that the waiting happens on another thread instead of the main thread
 #if defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS)
     P_LOG("TODO: WaitableEvent::TimedWaitUntil\n");
     HTML5_STACKTRACE();
@@ -278,6 +280,7 @@ cmp_fst_addr(const std::pair<WaitableEvent*, unsigned> &a,
 // static
 size_t WaitableEvent::WaitMany(WaitableEvent** raw_waitables,
                                size_t count) {
+ /// \note Reactor your code so that the waiting happens on another thread instead of the main thread
 #if defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS)
     P_LOG("TODO: WaitableEvent::WaitMany\n");
     #warning "TODO: WaitableEvent::WaitMany"

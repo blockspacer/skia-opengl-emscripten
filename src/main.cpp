@@ -1334,14 +1334,14 @@ static int read_file(const char* fPath, char*& fileString, long int& fsize, cons
 }
 
 static int debugPeriodicCounter = 0;
-static int debugPeriod = 100;
+static int debugPeriod = 1000;
 static bool hasLayout = false;
 
 static bool isDebugPeriodReached() {
   DCHECK(debugPeriodicCounter >=0
     && debugPeriodicCounter <= debugPeriod);
-  ///return debugPeriodicCounter == debugPeriod;
-  return true;
+  return debugPeriodicCounter == debugPeriod;
+  ///return true;
 }
 
 static bool incDebugPeriodicCounter() {
@@ -3055,6 +3055,7 @@ void CobaltTester::run() {
 }
 
 static std::unique_ptr<CobaltTester> g_cobaltTester;
+//bool createdCobaltTester = false;
 #endif // ENABLE_COBALT
 
 static int InitGL() {
@@ -3161,6 +3162,47 @@ static int InitGL() {
   return GL_TRUE;
 }
 
+static void createCobaltTester() {
+  printf("Starting g_cobaltTester...\n");
+  /// __TODO__
+  g_cobaltTester = std::make_unique<CobaltTester>();
+  /// __TODO__
+  {
+    //g_cobaltTester->run();
+  }
+  printf("Finishing g_cobaltTester...\n");
+  //main_thread_event_->Signal();
+  ///} else if (!g_cobaltTester->isLoadComplete_) {
+  ///  /// wait
+  ///  //if (isDebugPeriodReached())
+  ///  printf("!g_cobaltTester->isLoadComplete_\n");
+}
+
+static void createLayoutManager() {
+  printf("layout_manager_.reset...\n");
+  g_cobaltTester->layout_manager_.reset(new cobalt::layout::LayoutManager(
+      "name_",
+      /// window_.get(),
+      g_cobaltTester->window_, /// __TODO__
+      ///window_.get(),
+      //base::Bind(&WebModule::Impl::OnRenderTreeProduced,
+      //           base::Unretained(this)),
+      base::Bind(&CobaltTester::OnRenderTreeProduced,
+        base::Unretained(g_cobaltTester.get())),
+      //base::Bind(&WebModule::Impl::HandlePointerEvents, base::Unretained(this)),
+      base::Bind(&CobaltTester::HandlePointerEvents,
+        base::Unretained(g_cobaltTester.get())),
+      g_cobaltTester->layout_trigger,//data.options.layout_trigger,
+      99,//data.dom_max_element_depth,
+      1.0,//data.layout_refresh_rate,
+      "en_US", //"data.network_module->preferred_language()",
+      false, //data.options.enable_image_animations,
+      g_cobaltTester->layout_stat_tracker_.get(),//web_module_stat_tracker_->layout_stat_tracker(),
+      false//data.options.clear_window_with_background_color
+    ));
+    DCHECK(g_cobaltTester->layout_manager_);
+}
+
 static void animate() {
         if (isDebugPeriodReached()) printf("animate start\n");
 
@@ -3185,118 +3227,74 @@ static void animate() {
 #error "TODO: port SDL_GetTicks without SDL"
 #endif
 
-    //if(render_browser_window)
-    if (!g_cobaltTester)
-    {
-      printf("Creating g_cobaltTester...\n");
-      /// __TODO__
-      //g_cobaltTester = std::make_unique<CobaltTester>();
-#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
-          printf("creating g_cobaltTester 1...\n");
-          g_cobaltTester = std::make_unique<CobaltTester>();
-          printf("creating g_cobaltTester 2...\n");
-#else
-    // Make sure the thread started.
-    main_thread_.task_runner()->PostTask(
-        FROM_HERE, base::Bind([](base::WaitableEvent* main_thread_event_){
-#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
-          DCHECK(base::MessageLoopCurrent::Get());
-#endif
-
-            printf("Starting g_cobaltTester...\n");
-            /// __TODO__
-            g_cobaltTester = std::make_unique<CobaltTester>();
-            /// __TODO__
-            {
-              g_cobaltTester->run();
-            }
-            printf("Finishing g_cobaltTester...\n");
-            //main_thread_event_->Signal();
-        }, &main_thread_event_));
-#endif
-  ///} else if (!g_cobaltTester->isLoadComplete_) {
-  ///  /// wait
-  ///  //if (isDebugPeriodReached())
-  ///  printf("!g_cobaltTester->isLoadComplete_\n");
-  } else if (
-    !g_cobaltTester->layout_manager_
-    ///&& g_cobaltTester->isLoadComplete_
-    ) {
-    printf("layout_manager_.reset...\n");
-    g_cobaltTester->layout_manager_.reset(new cobalt::layout::LayoutManager(
-        "name_",
-        /// window_.get(),
-        g_cobaltTester->window_, /// __TODO__
-        ///window_.get(),
-        //base::Bind(&WebModule::Impl::OnRenderTreeProduced,
-        //           base::Unretained(this)),
-        base::Bind(&CobaltTester::OnRenderTreeProduced,
-          base::Unretained(g_cobaltTester.get())),
-        //base::Bind(&WebModule::Impl::HandlePointerEvents, base::Unretained(this)),
-        base::Bind(&CobaltTester::HandlePointerEvents,
-          base::Unretained(g_cobaltTester.get())),
-        g_cobaltTester->layout_trigger,//data.options.layout_trigger,
-        99,//data.dom_max_element_depth,
-        1.0,//data.layout_refresh_rate,
-        "en_US", //"data.network_module->preferred_language()",
-        false, //data.options.enable_image_animations,
-        g_cobaltTester->layout_stat_tracker_.get(),//web_module_stat_tracker_->layout_stat_tracker(),
-        false//data.options.clear_window_with_background_color
-      ));
-      DCHECK(g_cobaltTester->layout_manager_);
-  }
-  /// __TODO__
+      /// \note: (only wasm ST - wasm without pthreads)
 #if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
-  /// \note: (only wasm ST - wasm without pthreads)
-  /// don`t batch a lot of work to browser
-  /// or browser will crash/hang/loose webgl context
-  /// you MUST split work between main loop iterations
-  else if(!g_cobaltTester->window_->isDocumentStartedLoading()) {
-    printf("g_cobaltTester TryForceStartDocumentLoad 1\n");
-    DCHECK(g_cobaltTester);
-    DCHECK(g_cobaltTester->window_);
-    const bool res = g_cobaltTester->window_->TryForceStartDocumentLoad();
-    DCHECK(res);
-    printf("g_cobaltTester TryForceStartDocumentLoad 2\n");
-  } else if(!g_cobaltTester->window_->isStartedDocumentLoader()) {
-    printf("g_cobaltTester ForceStartDocumentLoader 1\n");
-    g_cobaltTester->window_->ForceStartDocumentLoader();
-    printf("g_cobaltTester ForceStartDocumentLoader 1\n");
-  } else if (render_browser_window) {
-    if(g_cobaltTester
-       && g_cobaltTester->window_->isStartedDocumentLoader()
-       && g_cobaltTester->window_->isDocumentStartedLoading())
-    {
-      //if (isDebugPeriodReached() || !hasLayout)
-      {
-        //if (isDebugPeriodReached())
-        printf("g_cobaltTester DoSynchronousLayoutAndGetRenderTree\n");
-        DCHECK(g_cobaltTester);
-        DCHECK(g_cobaltTester->window_);
-        DCHECK(g_cobaltTester->window_->document());
-        DCHECK(g_cobaltTester->window_);
-        DCHECK(g_cobaltTester->window_->isDocumentStartedLoading());
-        DCHECK(g_cobaltTester->window_->isStartedDocumentLoader());
-        DCHECK(g_cobaltTester);
-        DCHECK(g_cobaltTester->layout_manager_);
-        g_cobaltTester->window_->document()->DoSynchronousLayoutAndGetRenderTree();
-        g_cobaltTester->layout_manager_->ForceReLayout();
-        hasLayout = true;
-        //
-        //if (isDebugPeriodReached())
-        printf("g_cobaltTester->run\n");
+  /// \todo posts new task every frame
+  //if (!createdCobaltTester)
+  {
+    /// \note g_cobaltTester created from separate thread, so
+    /// we use extra variable: don`t call "if (!g_cobaltTester)" here
+    //createdCobaltTester = true;
+    printf("Creating g_cobaltTester...\n");
+      if (!g_cobaltTester) {
+        createCobaltTester();
+      } else if (
+        !g_cobaltTester->layout_manager_
+        ///&& g_cobaltTester->isLoadComplete_
+        ) {
+        createLayoutManager();
       }
+      /// __TODO__
+      /// \note: (only wasm ST - wasm without pthreads)
+      /// don`t batch a lot of work to browser
+      /// or browser will crash/hang/loose webgl context
+      /// you MUST split work between main loop iterations
+      else if(!g_cobaltTester->window_->isDocumentStartedLoading()) {
+        printf("g_cobaltTester TryForceStartDocumentLoad 1\n");
+        DCHECK(g_cobaltTester);
+        DCHECK(g_cobaltTester->window_);
+        const bool res = g_cobaltTester->window_->TryForceStartDocumentLoad();
+        DCHECK(res);
+        printf("g_cobaltTester TryForceStartDocumentLoad 2\n");
+      } else if(!g_cobaltTester->window_->isStartedDocumentLoader()) {
+        printf("g_cobaltTester ForceStartDocumentLoader 1\n");
+        g_cobaltTester->window_->ForceStartDocumentLoader();
+        printf("g_cobaltTester ForceStartDocumentLoader 1\n");
+      } else if (render_browser_window) {
+        if(g_cobaltTester
+           && g_cobaltTester->window_->isStartedDocumentLoader()
+           && g_cobaltTester->window_->isDocumentStartedLoading())
+        {
+          //if (isDebugPeriodReached() || !hasLayout)
+          {
+            //if (isDebugPeriodReached())
+            printf("g_cobaltTester DoSynchronousLayoutAndGetRenderTree\n");
+            DCHECK(g_cobaltTester);
+            DCHECK(g_cobaltTester->window_);
+            DCHECK(g_cobaltTester->window_->document());
+            DCHECK(g_cobaltTester->window_);
+            DCHECK(g_cobaltTester->window_->isDocumentStartedLoading());
+            DCHECK(g_cobaltTester->window_->isStartedDocumentLoader());
+            DCHECK(g_cobaltTester);
+            DCHECK(g_cobaltTester->layout_manager_);
+            g_cobaltTester->window_->document()->DoSynchronousLayoutAndGetRenderTree();
+            g_cobaltTester->layout_manager_->ForceReLayout();
+            hasLayout = true;
+            //
+            //if (isDebugPeriodReached())
+            //printf("g_cobaltTester->run\n");
+          }
 #ifdef __TODO__
-      DCHECK(g_cobaltTester);
-      g_cobaltTester->run();
+          DCHECK(g_cobaltTester);
+          g_cobaltTester->run();
 #endif
-    }
-  }
+        }
+      }
+  } // if (!createdCobaltTester)
 #endif
 
 #endif // ENABLE_SKOTTIE
-        //if (isDebugPeriodReached())
-        printf("animate end\n");
+        if (isDebugPeriodReached()) printf("animate end\n");
 }
 
 ///
@@ -3304,7 +3302,7 @@ static void animate() {
 //
 static void Draw() {
       //if (isDebugPeriodReached())
-      printf("Draw() 1\n");
+      if (isDebugPeriodReached()) printf("Draw() 1\n");
   GL_CHECK( glViewport(0, 0, width, height) );
   GL_CHECK( glClear(GL_COLOR_BUFFER_BIT) );
 
@@ -3425,8 +3423,8 @@ static void Draw() {
 
   GL_CHECK( glDisableVertexAttribArray(0) );
   GL_CHECK( glDisableVertexAttribArray(1) );
-      //if (isDebugPeriodReached())
-      printf("Draw() 11\n");
+
+      if (isDebugPeriodReached()) printf("Draw() 11\n");
 }
 
 static void mainLoop() {
@@ -3451,7 +3449,7 @@ static void mainLoop() {
   DCHECK(emscripten_webgl_get_current_context() == em_ctx);*/
 #endif
 
-  //printf("animate...\n");
+  if (isDebugPeriodReached()) printf("animate...\n");
   //
   //animate();
 
@@ -3465,7 +3463,7 @@ static void mainLoop() {
 #endif
 
   //if (isDebugPeriodReached())
-  printf("draw...\n");
+  if (isDebugPeriodReached()) printf("draw...\n");
 
   // Render
   Draw();
@@ -3524,11 +3522,10 @@ static void mainLoop() {
     printf("quitting main loop 2\n");
   }
 #endif
-  //if (isDebugPeriodReached())
-  printf("mainLoop 7\n");
+  if (isDebugPeriodReached()) printf("mainLoop 7\n");
 
   incDebugPeriodicCounter();
-  printf("mainLoop 8\n");
+  if (isDebugPeriodReached()) printf("mainLoop 8\n");
 }
 
 #ifdef ENABLE_WTF
@@ -3862,6 +3859,7 @@ int main(int argc, char** argv) {
     ::std::cout << "thread testing start Wait..." << base::Time::Now() << "\n";
 
 #if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+    /// \todo Reactor your code so that the waiting happens on another thread instead of the main thread
     event.Wait();
 #endif
 
@@ -4383,6 +4381,7 @@ int main(int argc, char** argv) {
 
   printf("Waiting for tests thread...\n");
 #if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+  /// \todo Reactor your code so that the waiting happens on another thread instead of the main thread
   main_thread_event_.Wait();
 #endif
   main_thread_event_.Reset();
@@ -4416,10 +4415,31 @@ int main(int argc, char** argv) {
     listWordBoundaries(
       icu::UnicodeString(u8"string asd asd 1"));
 
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+  printf("createCobaltTester task 0\n");
+    main_thread_.task_runner()->PostTask(
+      FROM_HERE, base::Bind([](base::WaitableEvent* main_thread_event_) {
+              // start postTask
+  printf("createCobaltTester task 1\n");
+  #if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+      DCHECK(base::MessageLoopCurrent::Get());
+  #endif
+      if (!g_cobaltTester) {
+  printf("createCobaltTester task 1.1\n");
+        createCobaltTester();
+        createLayoutManager();
+      }
+  printf("createCobaltTester task 2\n");
+              // end postTask
+    }, &main_thread_event_));
+  printf("createCobaltTester task 3\n");
+#endif
+
   printf("Waiting COBALT tests...\n");
   //// \NOTE: DON`T BLOCK MAIN WASM THREAD
   /// WAITING FOR INFINITE THREAD!
 #if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+  /// \todo Reactor your code so that the waiting happens on another thread instead of the main thread
   //main_thread_event_.Wait();
 #endif
   //main_thread_event_.Reset();
