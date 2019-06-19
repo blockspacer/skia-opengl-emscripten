@@ -643,7 +643,7 @@ void RenderMultiPlaneImage(MultiPlaneImage* multi_plane_image,
 }  // namespace
 
 void RenderTreeNodeVisitor::Visit(render_tree::ImageNode* image_node) {
-  printf("RenderTreeNodeVisitor::Visit(render_tree::ImageNode 1\n");
+  ///printf("RenderTreeNodeVisitor::Visit(render_tree::ImageNode 1\n");
 
   // The image_node may contain nothing. For example, when it represents a video
   // element before any frame is decoded.
@@ -1418,9 +1418,9 @@ void DrawSolidRoundedRectBorder(
     // For now we fallback to software for drawing most rounded corner borders,
     // with some situations specified above being special cased. The reason we
     // do this is to limit then number of shaders that need to be implemented.
-    NOTIMPLEMENTED() << "Warning: Software rasterizing either a solid "
+    /*NOTIMPLEMENTED() << "Warning: Software rasterizing either a solid "
                         "rectangle, oval or circle border with different "
-                        "properties.";
+                        "properties.";*/
     DrawSolidRoundedRectBorderSoftware(draw_state, rect, rounded_corners,
                                        content_rect, inner_rounded_corners,
                                        border);
@@ -1745,7 +1745,7 @@ void RenderText(SkCanvas* render_target,
 }  // namespace
 
 void RenderTreeNodeVisitor::Visit(render_tree::TextNode* text_node) {
-  printf("RenderTreeNodeVisitor::Visit(render_tree::TextNode* text_node)\n");
+  ///printf("RenderTreeNodeVisitor::Visit(render_tree::TextNode* text_node)\n");
 #if ENABLE_RENDER_TREE_VISITOR_TRACING && !FILTER_RENDER_TREE_VISITOR_TRACING
   TRACE_EVENT0("cobalt::renderer", "Visit(TextNode)");
 #endif

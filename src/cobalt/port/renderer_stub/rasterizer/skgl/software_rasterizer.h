@@ -1,4 +1,4 @@
-// Copyright 2016 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2016 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -46,6 +46,8 @@ namespace egl {
 //Thus to shard a large drawing across multiple threads, you need a separate instance of a surface/canvas in each thread.
 //sk_sp<SkSurface> getRasterizerSkSurface();
 sk_sp<SkImage> getRasterizerSkImage();
+
+///SkPixmap getRasterizerSkPixmap();
 
 // A software rasterizer which uses Skia to rasterize render trees on the CPU
 // and then uses EGL/GLES2 to transfer the result to the passed in given render

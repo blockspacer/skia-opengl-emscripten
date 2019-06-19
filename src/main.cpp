@@ -1335,9 +1335,9 @@ static int debugPeriodicCounter = 0;
 static int debugPeriod = 1000;
 static bool hasLayout = false;
 
-static bool isDebugPeriodReached() {
-    DCHECK(debugPeriodicCounter >=0
-           && debugPeriodicCounter <= debugPeriod);
+/*static bool isDebugPeriodReached() {
+    //DCHECK(debugPeriodicCounter >=0
+    //       && debugPeriodicCounter <= debugPeriod);
     return debugPeriodicCounter == debugPeriod;
     ///return true;
 }
@@ -1348,7 +1348,7 @@ static bool incDebugPeriodicCounter() {
         debugPeriodicCounter = 0;
     }
 }
-
+*/
 #if defined(ENABLE_SKIA)
 // see https://github.com/flutter/engine/blob/master/shell/gpu/gpu_surface_gl.cc#L125
 static void initSkiaSurface(int w, int h) {
@@ -1466,7 +1466,7 @@ public:
       return;
     }*/
 
-    if (isDebugPeriodReached()) printf("onDraw() 1\n");
+    ///if (isDebugPeriodReached()) printf("onDraw() 1\n");
 
     SkPaint paint;
 
@@ -2702,7 +2702,7 @@ CobaltTester::CobaltTester()
 
   window_->SetEnvironmentSettings(environment_settings_.get());
 
-  layout_manager_.reset(new cobalt::layout::LayoutManager(
+  /*layout_manager_.reset(new cobalt::layout::LayoutManager(
       "name_",
       window_,
       //base::Bind(&WebModule::Impl::OnRenderTreeProduced,
@@ -2724,7 +2724,7 @@ CobaltTester::CobaltTester()
         document_load_observer_.reset(
             new DocumentLoadedObserver(loaded_callbacks));
         window_->document()->AddObserver(document_load_observer_.get());
-    }
+    }*/
 }
 
 static void createCobaltTester() {
@@ -2766,6 +2766,12 @@ static void createLayoutManager() {
         false//data.options.clear_window_with_background_color
         ));
     DCHECK(g_cobaltTester->layout_manager_);
+
+    if (!g_cobaltTester->loaded_callbacks.empty()) {
+        g_cobaltTester->document_load_observer_.reset(
+            new DocumentLoadedObserver(g_cobaltTester->loaded_callbacks));
+        g_cobaltTester->window_->document()->AddObserver(g_cobaltTester->document_load_observer_.get());
+    }
 }
 
 void CobaltTester::run() {
@@ -2881,31 +2887,58 @@ static int InitGL() {
 // Draw a triangle using the shader pair created in Init()
 //
 static void Draw() {
-      //printf("Draw() 1\n");
+    ///if (isDebugPeriodReached()) printf("Draw() 1\n");
   GL_CHECK( glViewport(0, 0, width, height) );
   GL_CHECK( glClear(GL_COLOR_BUFFER_BIT) );
 
   GL_CHECK( glUseProgram(programObject) );
   GL_CHECK( glActiveTexture(GL_TEXTURE0) );
-      //printf("Draw() 2\n");
+  ///if (isDebugPeriodReached()) printf("Draw() 2\n");
 
 #if defined(ENABLE_SKIA)
   //using cobalt::renderer::rasterizer::egl::getRasterizerSkSurface;
   using cobalt::renderer::rasterizer::egl::getRasterizerSkImage;
+  ///using cobalt::renderer::rasterizer::egl::getRasterizerSkPixmap;
 
 
   {
 
-      sk_sp<SkImage> pImage = nullptr;
       if (render_browser_window
           /*&& g_cobaltTester
           && g_cobaltTester->window_->isDocumentStartedLoading()
           && g_cobaltTester->window_->isStartedDocumentLoader()*/)
       {
-          if (isDebugPeriodReached()) printf("Draw() 6.0\n");
-          pImage = getRasterizerSkImage();
-          if (isDebugPeriodReached()) printf("Draw() 6.1\n");
+              ///if (isDebugPeriodReached()) printf("Draw() 7\n");
+              sk_sp<SkImage> pImage = getRasterizerSkImage();
+              if(pImage) {
+              SkPixmap pixmap;// = getRasterizerSkPixmap();
+              if (!pImage->peekPixels(&pixmap)) {
+                  ///if (isDebugPeriodReached())
+                  ///printf("can`t peekPixels\n");
+              }
+                  if(!pixmap.bounds().isEmpty()) {
+                      DCHECK(!pixmap.bounds().isEmpty());
+                      ///if (isDebugPeriodReached()) printf("Draw() 7.1\n");
+
+                      GL_CHECK( glBindTexture(GL_TEXTURE_2D, skia_texture) );
+                      GL_CHECK( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE) );
+                      GL_CHECK( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE) );
+                      GL_CHECK( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR) );
+                      GL_CHECK( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR) );
+                      GL_CHECK( glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, pixmap.width(), pixmap.height(), 0, GL_RGBA,
+                                            GL_UNSIGNED_BYTE, pixmap.addr()) );
+                  } else {
+                      ///if (isDebugPeriodReached())
+                          ///printf("pixmap.bounds().isEmpty()\n");
+                  }
+              }
+
+              if (nullptr == pImage) {
+                  ///if (isDebugPeriodReached())
+                  ///printf("can`t get pImage\n");
+              }
       } else {
+          sk_sp<SkImage> pImage = nullptr;
           // Draw to the surface via its SkCanvas.
           // We don't manage this pointer's lifetime.
           SkCanvas* canvas =
@@ -2913,7 +2946,7 @@ static void Draw() {
               sRasterSurface->getCanvas();
 
           canvas->clear(SkColorSetARGB(255, 255, 255, 255));
-          if (isDebugPeriodReached()) printf("Draw() 3\n");
+          ///if (isDebugPeriodReached()) printf("Draw() 3\n");
 
           myView->onDraw(canvas);
           //if (isDebugPeriodReached()) printf("Draw() 4\n");
@@ -2923,10 +2956,30 @@ static void Draw() {
 
           pImage = sRasterSurface->makeImageSnapshot();
           //const sk_sp<SkImage> pImage = getRasterizerSkSurface()->makeImageSnapshot();
-      }
+          if(pImage/* && !pImage->isAlphaOnly()
+      && pImage->width() > 0 && pImage->height() > 0*/) {
+              ///if (isDebugPeriodReached()) printf("Draw() 7\n");
+              SkPixmap pixmap;
+              if (!pImage->peekPixels(&pixmap)) {
+                  ///if (isDebugPeriodReached())
+                      ///printf("can`t peekPixels\n");
+              }
+              DCHECK(!pixmap.bounds().isEmpty());
+              ///if (isDebugPeriodReached()) printf("Draw() 7.1\n");
 
-      if (nullptr == pImage) {
-          if (isDebugPeriodReached()) printf("can`t get pImage\n");
+              GL_CHECK( glBindTexture(GL_TEXTURE_2D, skia_texture) );
+              GL_CHECK( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE) );
+              GL_CHECK( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE) );
+              GL_CHECK( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR) );
+              GL_CHECK( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR) );
+              GL_CHECK( glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, pixmap.width(), pixmap.height(), 0, GL_RGBA,
+                                    GL_UNSIGNED_BYTE, pixmap.addr()) );
+          }
+
+          if (nullptr == pImage) {
+              ///if (isDebugPeriodReached())
+                  ///printf("can`t get pImage\n");
+          }
       }
 
       // Draw to the surface via its SkCanvas.
@@ -2940,24 +2993,6 @@ static void Draw() {
     if (nullptr == pImage) {
       //printf("can`t makeImageSnapshot\n");
     }*/
-      if(pImage/* && !pImage->isAlphaOnly()
-      && pImage->width() > 0 && pImage->height() > 0*/) {
-          if (isDebugPeriodReached()) printf("Draw() 7\n");
-          SkPixmap pixmap;
-          if (!pImage->peekPixels(&pixmap)) {
-              if (isDebugPeriodReached()) printf("can`t peekPixels\n");
-          }
-          DCHECK(!pixmap.bounds().isEmpty());
-          if (isDebugPeriodReached()) printf("Draw() 7.1\n");
-
-          GL_CHECK( glBindTexture(GL_TEXTURE_2D, skia_texture) );
-          GL_CHECK( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE) );
-          GL_CHECK( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE) );
-          GL_CHECK( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR) );
-          GL_CHECK( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR) );
-          GL_CHECK( glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, pixmap.width(), pixmap.height(), 0, GL_RGBA,
-                                GL_UNSIGNED_BYTE, pixmap.addr()) );
-      }
       //if (isDebugPeriodReached()) printf("Draw() 8\n");
   }
 
@@ -3022,6 +3057,8 @@ static void animate() {
 #endif
 
 #endif // ENABLE_SKOTTIE
+
+  ///if (isDebugPeriodReached()) printf("animate end\n");
 }
 
 static void mainLoop() {
@@ -3046,7 +3083,7 @@ static void mainLoop() {
   DCHECK(emscripten_webgl_get_current_context() == em_ctx);*/
 #endif
 
-  //printf("animate...\n");
+  ///if (isDebugPeriodReached()) printf("animate...\n");
 
   animate();
 
@@ -3059,10 +3096,12 @@ static void mainLoop() {
   // emscripten_current_thread_process_queued_calls();
 #endif
 
-  //printf("draw...\n");
+  ///if (isDebugPeriodReached()) printf("draw...\n");
 
   // Render
   Draw();
+
+  ///if (isDebugPeriodReached()) printf("mainLoop 3\n");
 
 #if defined(__EMSCRIPTEN__) && defined(HAVE_SWAP_CONTROL)
   if (enableSwapControl) {
@@ -3077,10 +3116,16 @@ static void mainLoop() {
   }
 #else
 
+  ///if (isDebugPeriodReached()) printf("mainLoop 4\n");
+
   // Update screen
   SDL_GL_SwapWindow(window);
 
+  ///if (isDebugPeriodReached()) printf("mainLoop 5\n");
+
 #endif
+
+  ///if (isDebugPeriodReached()) printf("mainLoop 6\n");
 
 #if defined(ENABLE_HTML5_SDL) || !defined(__EMSCRIPTEN__)
   while (SDL_PollEvent(&e) != 0) {
@@ -3101,11 +3146,17 @@ static void mainLoop() {
 #endif
 
 #ifdef __EMSCRIPTEN__
-  if (quitApp) {
-    printf("quitting main loop\n");
-    emscripten_cancel_main_loop();
-  }
+    if (quitApp) {
+        printf("quitting main loop 1\n");
+        emscripten_cancel_main_loop();
+        printf("quitting main loop 2\n");
+    }
 #endif
+
+    ///if (isDebugPeriodReached()) printf("mainLoop 7\n");
+
+    ///incDebugPeriodicCounter();
+    ///if (isDebugPeriodReached()) printf("mainLoop 8\n");
 }
 
 #ifdef ENABLE_WTF
@@ -3994,14 +4045,15 @@ int main(int argc, char** argv) {
     /// __TODO__
     //g_cobaltTester = std::make_unique<CobaltTester>();
 
-#if (defined(OS_EMSCRIPTEN) && !defined(DISABLE_PTHREADS))
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   // Make sure the thread started.
   main_thread_.task_runner()->PostTask(
       FROM_HERE, base::Bind([](base::WaitableEvent* main_thread_event_){
           DCHECK(base::MessageLoopCurrent::Get());
           printf("Starting g_cobaltTester...\n");
           /// __TODO__
-          g_cobaltTester = std::make_unique<CobaltTester>();
+          createCobaltTester();
+          createLayoutManager();
           //g_cobaltTester->run();
           printf("Finishing g_cobaltTester...\n");
           //main_thread_event_->Signal();

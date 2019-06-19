@@ -1,4 +1,4 @@
-// Copyright 2016 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2016 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -29,6 +29,12 @@
 #include "third_party/skia/include/core/SkCanvas.h"
 #include "third_party/skia/include/core/SkImageInfo.h"
 
+#include <memory>
+#include <thread>
+#include <mutex>
+
+//static std::mutex mutexRasterizerSkImage;
+
 namespace cobalt {
 namespace renderer {
 namespace rasterizer {
@@ -43,8 +49,21 @@ static sk_sp<SkImage> pImage;
 }*/
 
 sk_sp<SkImage> getRasterizerSkImage() {
+  //std::lock_guard<std::mutex> lock(mutexRasterizerSkImage);
   return pImage;
 }
+
+/*SkPixmap getRasterizerSkPixmap() {
+    std::lock_guard<std::mutex> lock(mutexRasterizerSkImage);
+    SkPixmap pixmap;
+    if(pImage) {
+        if (!pImage->peekPixels(&pixmap)) {
+            printf("can`t peekPixels\n");
+        }
+        DCHECK(!pixmap.bounds().isEmpty());
+    }
+    return pixmap;
+}*/
 
 SoftwareRasterizer::SoftwareRasterizer(
     ///backend::GraphicsContext* context,
@@ -60,7 +79,7 @@ void SoftwareRasterizer::Submit(
     const scoped_refptr<render_tree::Node>& render_tree,
     const scoped_refptr<backend::RenderTarget>& render_target,
     const Options& options) {
-  printf("SoftwareRasterizer::Submit( 1\n");
+  ///printf("SoftwareRasterizer::Submit( 1\n");
   DCHECK(render_target);
   int width = render_target->GetSize().width();
   int height = render_target->GetSize().height();
@@ -145,18 +164,21 @@ void SoftwareRasterizer::Submit(
     canvas->drawCircle(100, 100, m_size, paint);
   }
 
-  printf("SoftwareRasterizer::Submit( 5\n");
+  ///printf("SoftwareRasterizer::Submit( 5\n");
   skia_rasterizer_.Submit(render_tree, canvas);
 
-  printf("SoftwareRasterizer::Submit( 6\n");
+  ///printf("SoftwareRasterizer::Submit( 6\n");
     sRasterSurface->flush();
 
-  //printf("SoftwareRasterizer::Submit( 7\n");
-  pImage = sRasterSurface->makeImageSnapshot();
-  if (nullptr == pImage) {
-    printf("pImage can`t makeImageSnapshot\n");
-  }
-  printf("SoftwareRasterizer::Submit( 8\n");
+    {
+      ///std::lock_guard<std::mutex> lock(mutexRasterizerSkImage);
+      //printf("SoftwareRasterizer::Submit( 7\n");
+      pImage = sRasterSurface->makeImageSnapshot();
+      if (nullptr == pImage) {
+        printf("pImage can`t makeImageSnapshot\n");
+      }
+      ///printf("SoftwareRasterizer::Submit( 8\n");
+    }
 
   // The rasterized pixels are still on the CPU, ship them off to the GPU
   // for output to the display.  We must first create a backend GPU texture

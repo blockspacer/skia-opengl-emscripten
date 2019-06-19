@@ -1,4 +1,4 @@
-// Copyright 2014 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2014 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -86,7 +86,7 @@ SoftwareRasterizer::Impl::Impl(bool purge_skia_font_caches_on_destruction)
 void SoftwareRasterizer::Impl::Submit(
     const scoped_refptr<render_tree::Node>& render_tree,
     SkCanvas* render_target) {
-  printf("SoftwareRasterizer::Impl::Submit 1\n");
+  ///printf("SoftwareRasterizer::Impl::Submit 1\n");
   TRACE_EVENT0("cobalt::renderer", "Rasterizer::Submit()");
   TRACE_EVENT0("cobalt::renderer", "SoftwareRasterizer::Submit()");
 
@@ -107,7 +107,7 @@ void SoftwareRasterizer::Impl::Submit(
     // rasterizer we just created.
     render_tree->Accept(&visitor);
   }
-  printf("SoftwareRasterizer::Impl::Submit 2\n");
+  ///printf("SoftwareRasterizer::Impl::Submit 2\n");
 }
 
 render_tree::ResourceProvider* SoftwareRasterizer::Impl::GetResourceProvider() {
