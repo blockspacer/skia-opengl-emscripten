@@ -116,6 +116,8 @@ wchar_t g_debug_icu_pf_filename[_MAX_PATH];
 // see http://userguide.icu-project.org/howtouseicu#TOC-C-With-Your-Own-Build-System
 // see https://github.com/unicode-org/icu/blob/master/docs/userguide/icu_data/buildtool.md
 const char kIcuDataFileName[] = "./resources/icu/icudtl.dat";
+#elif defined(OS_LINUX)
+const char kIcuDataFileName[] = "./resources/icu/icudtl.dat";
 #else
 const char kIcuDataFileName[] = "icudtl.dat";
 #endif
@@ -135,6 +137,7 @@ printf("reading icu data 1...\n");
   if (g_icudtl_pf != kInvalidPlatformFile) {
     return;
   }
+printf("reading icu data 1.1...\n");
 #if defined(OS_ANDROID)
   int fd =
       android::OpenApkAsset(kAndroidAssetsIcuDataFileName, &g_icudtl_region);
@@ -188,10 +191,10 @@ printf("reading icu data 2.1 %s...\n", data_path.value().c_str());
     return;
   }
 #endif  // !defined(OS_MACOSX)
-printf("reading icu data 3...\n");
+printf("reading icu data 3 %s...\n", data_path.value().c_str());
   File file(data_path, File::FLAG_OPEN | File::FLAG_READ);
   if (file.IsValid()) {
-    printf("reading icu data 3.1...\n");
+    printf("reading icu data 3.1 %s...\n", data_path.value().c_str());
     // TODO(brucedawson): http://crbug.com/445616.
     g_debug_icu_pf_last_error = 0;
     g_debug_icu_pf_error_details = 0;
@@ -226,7 +229,7 @@ printf("InitializeICUWithFileDescriptorInternal 1.1\n");
   if (data_fd == kInvalidPlatformFile) {
 printf("InitializeICUWithFileDescriptorInternal 1.2\n");
     g_debug_icu_load = 1;  // To debug http://crbug.com/445616.
-    LOG(ERROR) << "Invalid file descriptor to ICU data received.";
+    LOG(ERROR) << "Invalid file descriptor to ICU data received: "  << kIcuDataFileName;
 #if defined(OS_EMSCRIPTEN)
     DCHECK(false);
 #endif
@@ -239,7 +242,7 @@ printf("InitializeICUWithFileDescriptorInternal 2\n");
   //const base::string16 str = base::ASCIIToUTF16("data_fd");
   if (!icudtl_mapped_file->Initialize(FilePath(kIcuDataFileName))) {
     g_debug_icu_load = 2;  // To debug http://crbug.com/445616.
-    LOG(ERROR) << "Couldn't mmap icu data file";
+    LOG(ERROR) << "Couldn't mmap icu data file: " << kIcuDataFileName;
 printf("InitializeICUWithFileDescriptorInternal 2.1\n");
 #if defined(OS_EMSCRIPTEN)
     DCHECK(false);
@@ -409,15 +412,16 @@ printf("InitializeICU() 1\n");
   // The ICU data is statically linked.
   result = true;
 #elif (ICU_UTIL_DATA_IMPL == ICU_UTIL_DATA_FILE)
-printf("loading ICU_UTIL_DATA_FILE...\n");
+printf("loading ICU_UTIL_DATA_FILE 1...\n");
   // If the ICU data directory is set, ICU won't actually load the data until
   // it is needed.  This can fail if the process is sandboxed at that time.
   // Instead, we map the file in and hand off the data so the sandbox won't
   // cause any problems.
   LazyInitIcuDataFile();
+printf("loading ICU_UTIL_DATA_FILE 2...\n");
   result =
       InitializeICUWithFileDescriptorInternal(g_icudtl_pf, g_icudtl_region);
-
+printf("loading ICU_UTIL_DATA_FILE 3...\n");
 
   // TODO: ICU_initLocaleDataImpl https://github.com/PhungXuanAnh91/mza-v3.0-bsp/blob/ddfa13450bb0dfdaf424265d70dfcd7cd28591ba/libcore/luni/src/main/native/libcore_icu_ICU.cpp#L364
 

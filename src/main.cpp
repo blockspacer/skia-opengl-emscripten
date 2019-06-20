@@ -3345,6 +3345,7 @@ int main(int argc, char** argv) {
 #ifdef ENABLE_BASE
   printf("Init AtExitManager ...\n");
   base::AtExitManager at_exit;
+  at_exit.DisableAllAtExitManagers();
   printf("Init CommandLine ...\n");
 
   base::CommandLine::Init(0, nullptr);

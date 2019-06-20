@@ -231,7 +231,7 @@ SB_EXPORT bool SbWindowOnScreenKeyboardSuggestionsSupported(SbWindow window);
 #endif
 
 // TODO: move to "starboard/shared/emscripten/window_internal.h"
-#if defined(__EMSCRIPTEN__)
+//#if defined(__EMSCRIPTEN__)
 struct SbWindowPrivate {
     explicit SbWindowPrivate(const SbWindowOptions* options);
     virtual ~SbWindowPrivate();
@@ -250,6 +250,6 @@ struct SbWindowPrivateEmscripten : SbWindowPrivate {
     int height;
     float video_pixel_ratio;
 };
-#endif
+//#endif
 
 #endif  // STARBOARD_WINDOW_H_

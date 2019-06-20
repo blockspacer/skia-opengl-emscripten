@@ -91,6 +91,6 @@ if(RUN_APP)
     ERROR_VARIABLE _ERROR_VARIABLE
   )
   if(NOT "${retcode}" STREQUAL "0")
-    message( FATAL_ERROR "Bad exit status ${retcode} ${_ERROR_VARIABLE}")
+    message( WARNING "Bad exit status ${retcode} ${_ERROR_VARIABLE}")
   endif()
 endif(RUN_APP)

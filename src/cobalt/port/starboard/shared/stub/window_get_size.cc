@@ -16,14 +16,14 @@
 
 bool SbWindowGetSize(SbWindow window, SbWindowSize* size) {
 
-#if defined(__EMSCRIPTEN__)
+//#if defined(__EMSCRIPTEN__)
   if(window) {
     size->width = window->width;
     size->height = window->height;
     size->video_pixel_ratio = window->video_pixel_ratio;
     return true;
   }
-#endif
+//#endif
 
-  return false;
+  ///return false;
 }

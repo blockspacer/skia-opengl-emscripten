@@ -15,7 +15,7 @@
 #include "starboard/window.h"
 
 // TODO: move to "starboard/shared/emscripten/window_internal.h"
-#if defined(__EMSCRIPTEN__)
+//#if defined(__EMSCRIPTEN__)
 SbWindowPrivate::SbWindowPrivate(const SbWindowOptions* options)
 {
     width = options->size.width;
@@ -32,12 +32,12 @@ SbWindowPrivateEmscripten::SbWindowPrivateEmscripten(const SbWindowOptions* opti
 
 SbWindowPrivateEmscripten:: ~SbWindowPrivateEmscripten()
 {}
-#endif
+//#endif
 
 SbWindow SbWindowCreate(const SbWindowOptions* options) {
-#if defined(__EMSCRIPTEN__)
+//#if defined(__EMSCRIPTEN__)
     SbWindow window = new SbWindowPrivateEmscripten(options);
     return window;
-#endif
-  return kSbWindowInvalid;
+//#endif
+///  return kSbWindowInvalid;
 }

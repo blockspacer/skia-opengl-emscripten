@@ -15,7 +15,9 @@ namespace {
 // Whether thread priorities should be used. When disabled,
 // PlatformThread::SetCurrentThreadPriority() no-ops.
 const Feature kThreadPrioritiesFeature{"ThreadPriorities",
-                                       FEATURE_ENABLED_BY_DEFAULT};
+                                       FEATURE_DISABLED_BY_DEFAULT};
+                                          /// __TODO__
+                                       ///FEATURE_ENABLED_BY_DEFAULT};
 
 // Whether thread priorities should be used.
 //
@@ -31,10 +33,11 @@ std::atomic<bool> g_use_thread_priorities(true);
 
 // static
 void PlatformThread::SetCurrentThreadPriority(ThreadPriority priority) {
-#if !defined(OS_EMSCRIPTEN)
+  /// __TODO__
+/*#if !defined(OS_EMSCRIPTEN)
   if (g_use_thread_priorities.load())
     SetCurrentThreadPriorityImpl(priority);
-#endif
+#endif*/
 }
 
 namespace internal {

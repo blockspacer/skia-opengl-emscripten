@@ -99,7 +99,8 @@ const ThreadPriorityToNiceValuePair kThreadPriorityToNiceValueMap[4] = {
 
 Optional<bool> CanIncreaseCurrentThreadPriorityForPlatform(
     ThreadPriority priority) {
-#if !defined(OS_NACL) && !defined(OS_EMSCRIPTEN)
+    /// __TODO__
+/*#if !defined(OS_NACL) && !defined(OS_EMSCRIPTEN)
   // A non-zero soft-limit on RLIMIT_RTPRIO is required to be allowed to invoke
   // pthread_setschedparam in SetCurrentThreadPriorityForPlatform().
   struct rlimit rlim;
@@ -107,18 +108,19 @@ Optional<bool> CanIncreaseCurrentThreadPriorityForPlatform(
       getrlimit(RLIMIT_RTPRIO, &rlim) != 0 && rlim.rlim_cur != 0) {
     return base::make_optional(true);
   }
-#endif
+#endif*/
   return base::nullopt;
 }
 
 bool SetCurrentThreadPriorityForPlatform(ThreadPriority priority) {
-#if !defined(OS_NACL) && !defined(OS_EMSCRIPTEN)
+  /// __TODO__
+/*#if !defined(OS_NACL) && !defined(OS_EMSCRIPTEN)
   SetThreadCgroupsForThreadPriority(PlatformThread::CurrentId(), priority);
   return priority == ThreadPriority::REALTIME_AUDIO &&
          pthread_setschedparam(pthread_self(), SCHED_RR, &kRealTimePrio) == 0;
-#else
+#else*/
   return false;
-#endif
+//#endif
 }
 
 Optional<ThreadPriority> GetCurrentThreadPriorityForPlatform() {
@@ -161,7 +163,8 @@ void PlatformThread::SetName(const std::string& name) {
 #endif  //  !defined(OS_NACL) && !defined(OS_AIX)
 }
 
-#if !defined(OS_NACL) && !defined(OS_AIX) && !defined(OS_EMSCRIPTEN)
+  /// __TODO__
+/*#if !defined(OS_NACL) && !defined(OS_AIX) && !defined(OS_EMSCRIPTEN)
 // static
 void PlatformThread::SetThreadPriority(PlatformThreadId thread_id,
                                        ThreadPriority priority) {
@@ -178,7 +181,7 @@ void PlatformThread::SetThreadPriority(PlatformThreadId thread_id,
               << nice_setting;
   }
 }
-#endif  //  !defined(OS_NACL) && !defined(OS_AIX)
+#endif  //  !defined(OS_NACL) && !defined(OS_AIX)*/
 
 void InitThreading() {}
 
