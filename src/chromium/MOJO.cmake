@@ -134,55 +134,60 @@ set(MOJO_CORE_SOURCES
   ###${MOJO_DIR}/core/broker_host.h
 )
 
-set(MOJO_PUBLIC_CPP_BASE_SOURCES
-  # see process_id.typemap
-  #${MOJO_DIR}/public/cpp/base/application_state_mojom_traits.cc # android
-  ${MOJO_DIR}/public/cpp/base/big_buffer_mojom_traits.cc
-  ${MOJO_DIR}/public/cpp/base/big_string_mojom_traits.cc
-  #${MOJO_DIR}/public/cpp/base/file_error_mojom_traits.h # header only
-  ${MOJO_DIR}/public/cpp/base/file_info_mojom_traits.cc
-  ${MOJO_DIR}/public/cpp/base/file_path_mojom_traits.cc
-  ${MOJO_DIR}/public/cpp/base/file_mojom_traits.cc
-  ${MOJO_DIR}/public/cpp/base/read_only_buffer_mojom_traits.cc
-  ${MOJO_DIR}/public/cpp/base/memory_allocator_dump_cross_process_uid_mojom_traits.cc
-  ${MOJO_DIR}/public/cpp/base/memory_pressure_level_mojom_traits.cc
-  ${MOJO_DIR}/public/cpp/base/process_id_mojom_traits.cc
-  ${MOJO_DIR}/public/cpp/base/ref_counted_memory_mojom_traits.cc
-  ${MOJO_DIR}/public/cpp/base/shared_memory_mojom_traits.cc
-  ${MOJO_DIR}/public/cpp/base/string16_mojom_traits.cc
-  #${MOJO_DIR}/public/cpp/base/logfont_win_mojom_traits.cc # windows
-  ${MOJO_DIR}/public/cpp/base/text_direction_mojom_traits.cc
-  ${MOJO_DIR}/public/cpp/base/thread_priority_mojom_traits.cc
-  ${MOJO_DIR}/public/cpp/base/time_mojom_traits.cc
-  ${MOJO_DIR}/public/cpp/base/token_mojom_traits.cc
-  ${MOJO_DIR}/public/cpp/base/unguessable_token_mojom_traits.cc
-  ${MOJO_DIR}/public/cpp/base/values_mojom_traits.cc
+if(ENABLE_GIPC)
+  list(APPEND MOJO_PUBLIC_CPP_BASE_SOURCES
+    # see process_id.typemap
+    #${MOJO_DIR}/public/cpp/base/file_error_mojom_traits.h # header only
+    ${MOJO_DIR}/public/cpp/base/file_info_mojom_traits.cc
+    ${MOJO_DIR}/public/cpp/base/file_path_mojom_traits.cc
+    ${MOJO_DIR}/public/cpp/base/file_mojom_traits.cc
+    ${MOJO_DIR}/public/cpp/base/read_only_buffer_mojom_traits.cc
+    ${MOJO_DIR}/public/cpp/base/memory_allocator_dump_cross_process_uid_mojom_traits.cc
+    ${MOJO_DIR}/public/cpp/base/memory_pressure_level_mojom_traits.cc
+    ${MOJO_DIR}/public/cpp/base/process_id_mojom_traits.cc
+    ${MOJO_DIR}/public/cpp/base/ref_counted_memory_mojom_traits.cc
+    ${MOJO_DIR}/public/cpp/base/shared_memory_mojom_traits.cc
+    ${MOJO_DIR}/public/cpp/base/string16_mojom_traits.cc
+    #${MOJO_DIR}/public/cpp/base/logfont_win_mojom_traits.cc # windows
+    ${MOJO_DIR}/public/cpp/base/text_direction_mojom_traits.cc
+    ${MOJO_DIR}/public/cpp/base/thread_priority_mojom_traits.cc
+    ${MOJO_DIR}/public/cpp/base/time_mojom_traits.cc
+    ${MOJO_DIR}/public/cpp/base/token_mojom_traits.cc
+    ${MOJO_DIR}/public/cpp/base/unguessable_token_mojom_traits.cc
+    ${MOJO_DIR}/public/cpp/base/values_mojom_traits.cc
+    #${MOJO_DIR}/public/cpp/base/application_state_mojom_traits.cc # android
+    ${MOJO_DIR}/public/cpp/base/big_buffer_mojom_traits.cc
+    ${MOJO_DIR}/public/cpp/base/big_string_mojom_traits.cc
+    #
+    #component("shared_typemap_traits")
+    #
+    ${MOJO_DIR}/public/cpp/base/big_buffer_mojom_traits.cc
+    #${MOJO_DIR}/public/cpp/base/big_buffer_mojom_traits.h
+    ${MOJO_DIR}/public/cpp/base/file_info_mojom_traits.cc
+    #${MOJO_DIR}/public/cpp/base/file_info_mojom_traits.h
+    # gens mojo/public/mojom/base/file_path.mojom-shared.h
+    ${MOJO_DIR}/public/cpp/base/file_path_mojom_traits.cc
+    #${MOJO_DIR}/public/cpp/base/file_path_mojom_traits.h
+    # gens mojo/public/mojom/base/shared_memory.mojom-shared.h
+    ${MOJO_DIR}/public/cpp/base/shared_memory_mojom_traits.cc
+    #${MOJO_DIR}/public/cpp/base/shared_memory_mojom_traits.h
+    ${MOJO_DIR}/public/cpp/base/time_mojom_traits.cc
+    #${MOJO_DIR}/public/cpp/base/time_mojom_traits.h
+    ${MOJO_DIR}/public/cpp/base/token_mojom_traits.cc
+    #${MOJO_DIR}/public/cpp/base/token_mojom_traits.h
+    ${MOJO_DIR}/public/cpp/base/unguessable_token_mojom_traits.cc
+    #${MOJO_DIR}/public/cpp/base/unguessable_token_mojom_traits.h
+    ${MOJO_DIR}/public/cpp/base/values_mojom_traits.cc
+    #${MOJO_DIR}/public/cpp/base/values_mojom_traits.h
+  )
+endif(ENABLE_GIPC)
+
+list(APPEND MOJO_PUBLIC_CPP_BASE_SOURCES
   #
   ${MOJO_DIR}/public/cpp/base/big_buffer.cc
   #${MOJO_DIR}/public/cpp/base/big_buffer.h
   ${MOJO_DIR}/public/cpp/base/shared_memory_utils.cc
   #${MOJO_DIR}/public/cpp/base/shared_memory_utils.h
-  #
-  #component("shared_typemap_traits")
-  #
-  ${MOJO_DIR}/public/cpp/base/big_buffer_mojom_traits.cc
-  #${MOJO_DIR}/public/cpp/base/big_buffer_mojom_traits.h
-  ${MOJO_DIR}/public/cpp/base/file_info_mojom_traits.cc
-  #${MOJO_DIR}/public/cpp/base/file_info_mojom_traits.h
-  # gens mojo/public/mojom/base/file_path.mojom-shared.h
-  ${MOJO_DIR}/public/cpp/base/file_path_mojom_traits.cc
-  #${MOJO_DIR}/public/cpp/base/file_path_mojom_traits.h
-  # gens mojo/public/mojom/base/shared_memory.mojom-shared.h
-  ${MOJO_DIR}/public/cpp/base/shared_memory_mojom_traits.cc
-  #${MOJO_DIR}/public/cpp/base/shared_memory_mojom_traits.h
-  ${MOJO_DIR}/public/cpp/base/time_mojom_traits.cc
-  #${MOJO_DIR}/public/cpp/base/time_mojom_traits.h
-  ${MOJO_DIR}/public/cpp/base/token_mojom_traits.cc
-  #${MOJO_DIR}/public/cpp/base/token_mojom_traits.h
-  ${MOJO_DIR}/public/cpp/base/unguessable_token_mojom_traits.cc
-  #${MOJO_DIR}/public/cpp/base/unguessable_token_mojom_traits.h
-  ${MOJO_DIR}/public/cpp/base/values_mojom_traits.cc
-  #${MOJO_DIR}/public/cpp/base/values_mojom_traits.h
 )
 
 set(MOJO_PUBLIC_CPP_BINDINGS_SOURCES

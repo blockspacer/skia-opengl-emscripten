@@ -437,7 +437,9 @@
 #include "ui/gfx/scoped_canvas.h"
 #include "ui/gfx/vector_icon_types.h"
 //static gfx::Canvas gfx_canvas;
+#ifdef HAS_ICU
 #include "third_party/icu/source/common/unicode/uscript.h"
+#endif
 #include "ui/gfx/canvas.h"
 #include "ui/gfx/font_list.h"
 #include "ui/gfx/geometry/rect.h"
@@ -589,6 +591,7 @@ static sk_sp<SkImage> skImageSp;
 #include <hb-ot.h>
 #endif // ENABLE_HARFBUZZ
 
+#ifdef HAS_ICU
 #include "third_party/icu/source/common/unicode/uchar.h"
 #include "third_party/icu/source/i18n/unicode/datefmt.h"
 #include "third_party/icu/source/i18n/unicode/dtfmtsym.h"
@@ -596,6 +599,7 @@ static sk_sp<SkImage> skImageSp;
 #include "third_party/icu/source/common/unicode/uchar.h"
 #include "third_party/icu/source/common/unicode/ustring.h"
 #include "third_party/icu/source/common/unicode/brkiter.h"
+#endif
 
 /*#include <stddef.h>
 
@@ -1948,7 +1952,9 @@ class CobaltTester {
     void OnStopDispatchEvent(const scoped_refptr<dom::Event>& event);
     void HandlePointerEvents();
     void OnLoad();
+#ifdef HAS_ICU
     void listWordBoundaries(const icu::UnicodeString& s);
+#endif
 
   public:
   //private:
@@ -2366,6 +2372,7 @@ void CobaltTester::OnLoad() {
     // see https://github.com/blockspacer/cobalt-clone-28052019/blob/master/src/cobalt/browser/browser_module.cc#L625
 }
 
+#ifdef HAS_ICU
 static const icu::Locale *t_icu_locale;
 
 // __TODO__
@@ -2395,6 +2402,7 @@ static void listWordBoundaries(const icu::UnicodeString& s) {
     }
     delete bi;
 }
+#endif
 
 CobaltTester::CobaltTester()
 {
@@ -3420,13 +3428,15 @@ int main(int argc, char** argv) {
 #ifdef ENABLE_COBALT
   /// \note nothing to do, see InitCobalt
 #else
+#ifdef HAS_ICU
   bool icu_initialized = base::i18n::InitializeICU();
 #if defined(OS_EMSCRIPTEN)
   if(!icu_initialized) {
     DCHECK(false);
   }
-#endif
-#endif
+#endif // OS_EMSCRIPTEN
+#endif // HAS_ICU
+#endif // ENABLE_COBALT
 
 /*#if !defined(OS_EMSCRIPTEN)
   // Initialize stack dumping before initializing sandbox to make sure symbol
@@ -4091,10 +4101,11 @@ int main(int argc, char** argv) {
   printf("Initializing COBALT tests...\n");
   /// \see https://github.com/blockspacer/cobalt-clone-28052019/blob/master/src/cobalt/base/init_cobalt.cc
   cobalt::InitCobalt(argc, argv, NULL);
-  printf("Starting ICU tests...\n");
 
   printf("Starting COBALT tests...\n");
 
+#ifdef HAS_ICU
+  printf("Starting ICU tests...\n");
     //icu::BreakIterator::getAvailableLocales(); // init
 
     int32_t locales_count;
@@ -4115,6 +4126,7 @@ int main(int argc, char** argv) {
     /**/
     listWordBoundaries(
       icu::UnicodeString(u8"string asd asd 1"));
+#endif // HAS_ICU
 
     printf("Creating g_cobaltTester...\n");
     /// __TODO__

@@ -43,11 +43,11 @@ const char kAboutScheme[] = "about";
 #endif
 
 bool FileURLToFilePath(const GURL& url, base::FilePath* file_path) {
-  P_LOG("FileURLToFilePath host %s\n", url.host().c_str());
-  P_LOG("FileURLToFilePath path %s\n", url.path().c_str());
+  printf("FileURLToFilePath host %s\n", url.host().c_str());
+  printf("FileURLToFilePath path %s\n", url.path().c_str());
   DCHECK(url.is_valid() && url.SchemeIsFile());
   std::string path = url.path();
-  P_LOG("FileURLToFilePath path %s\n", path.c_str());
+  printf("FileURLToFilePath path %s\n", path.c_str());
   DCHECK_EQ('/', path[0]);
   path.erase(0, 1);
   *file_path = base::FilePath(path);

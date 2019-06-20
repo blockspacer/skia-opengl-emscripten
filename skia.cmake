@@ -195,6 +195,8 @@ if(USE_LIBJPEG_TURBO)
     #  message(FATAL_ERROR "Custom LIBJPEG_TURBO requires custom LIBJPEG")
     #endif(NOT USE_CUSTOM_LIBJPEG)
   endif(USE_CUSTOM_LIBJPEG_TURBO)
+else()
+  set(SK_IS_libjpeg_turbo "false")
 endif(USE_LIBJPEG_TURBO)
 
 if(RELEASE_BUILD)
@@ -268,9 +270,11 @@ endif(FORCE_USE_SKIA_HARFBUZZ)
 #     "\"-I${GLIBJPEG_TURBO_DIR}\"" # to libjpeg_turbo/jpeglib.h
 #
 # NOTE: WITHOUT trailing comma
-set(SKIA_EXTRA_CFLAGS
-  "${SKIA_EXTRA_CFLAGS}\"-I${GLIBJPEG_TURBO_DIR}\""
-)
+if(USE_LIBJPEG_TURBO)
+  set(SKIA_EXTRA_CFLAGS
+    "${SKIA_EXTRA_CFLAGS}\"-I${GLIBJPEG_TURBO_DIR}\""
+  )
+endif(USE_LIBJPEG_TURBO)
 
 if(ENABLE_SKOTTIE)
   set(SK_IS_skottie "true")
@@ -414,7 +418,7 @@ list(APPEND SKIA_CMAKE_ONLY_HEADERS
 #  ${SKIA_SRC_DIR}/third_party/cpu-features
 #  ${SKIA_SRC_DIR}/third_party/dng_sdk
 #  ${SKIA_SRC_DIR}/third_party/etc1
-  ${SKIA_SRC_DIR}/third_party/expat
+#  ${SKIA_SRC_DIR}/third_party/expat
 #  ${SKIA_SRC_DIR}/third_party/externals
   ${SKIA_SRC_DIR}/third_party/freetype2
 #  ${SKIA_SRC_DIR}/third_party/gif
@@ -509,8 +513,6 @@ list(APPEND SKIA_DEFINES
   # see https://skia.org/user/api/skcanvas_creation
   SK_HAS_PNG_LIBRARY=1 # skia_use_libpng
   SK_HAS_PNG_LIBRARY
-  SK_HAS_JPEG_LIBRARY=1 # skia_use_libjpeg_turbo
-  SK_HAS_JPEG_LIBRARY
   # SK_HAS_GIF_LIBRARY
   # SK_HAS_WEBP_LIBRARY
 )
@@ -527,7 +529,12 @@ if(SUPPORTS_JPEG)
     SK_HAS_JPEG_LIBRARY=1 # skia_use_libjpeg_turbo
     SK_HAS_JPEG_LIBRARY
   )
-endif(SUPPORTS_JPEG)
+elseif(USE_LIBJPEG_TURBO)
+  list(APPEND SKIA_DEFINES
+    SK_HAS_JPEG_LIBRARY=1 # skia_use_libjpeg_turbo
+    SK_HAS_JPEG_LIBRARY
+  )
+endif(USE_LIBJPEG_TURBO)
 
 #<listOptionValue builtIn="false" value="SK_DEFAULT_FONT_CACHE_LIMIT=20971520"/>
 #<listOptionValue builtIn="false" value="SK_GAMMA_CONTRAST=0.2"/>
@@ -585,7 +592,10 @@ else(EMSCRIPTEN)
   #list(APPEND SKIA_DEFINES SK_DISABLE_AAA=1)
 
   # see https://github.com/flutter/flutter/issues/11402
-  list(APPEND SKIA_DEFINES SK_ENABLE_DUMP_GPU=1)
+
+  if(USE_SK_GPU)
+   list(APPEND SKIA_DEFINES SK_ENABLE_DUMP_GPU=1)
+  endif(USE_SK_GPU)
 endif (EMSCRIPTEN)
 
 if (SK_CONF_SHARED)
@@ -657,7 +667,9 @@ if (NOT EXT_SKIA_SHARED)
     #set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${libjpeg_LIB}" PARENT_SCOPE)
 
     # NOTE: libjpeg_turbo requires libjpeg
-    set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${libjpeg_TURBO_LIB}" PARENT_SCOPE)
+    if(USE_LIBJPEG_TURBO)
+      set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${libjpeg_TURBO_LIB}" PARENT_SCOPE)
+    endif(USE_LIBJPEG_TURBO)
 
     #ADD_SKIA_LIBRARY_DEPENDENCY("png") # skia_use_system_libpng
     #find_package(PNG REQUIRED)

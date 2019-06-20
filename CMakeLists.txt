@@ -38,6 +38,66 @@ set(GEN_COMPONENTS_CONTENT_SETTINGS_CORE_COMMON_DIR ${GN_GEN_DIR}gen_components_
 # autoninja -C out/Default/ third_party/blink/renderer/core/mojo
 #set(GEN_BLINK_RENDERER_CORE_DIR ${GN_GEN_DIR}gen_blink_renderer_core/)
 
+# == NOTE: place set(ENABLE_*) before all checks ==
+# Blink platform
+set(ENABLE_BLINK FALSE) # TODO
+# cobalt
+set(ENABLE_COBALT TRUE)
+# SKIA
+set(ENABLE_SKIA TRUE)
+set(USE_LIBPNG TRUE)
+if(TARGET_EMSCRIPTEN)
+  if(ENABLE_BLINK)
+    set(USE_SK_GPU TRUE)
+  else()
+    set(USE_SK_GPU FALSE) # TODO
+  endif()
+else()
+  set(USE_SK_GPU TRUE)
+endif()
+set(ENABLE_SKSG TRUE)
+# NOTE: always FALSE here (change below)
+set(ENABLE_SKIA_UTILS TRUE) # required by skottie
+set(ENABLE_SKOTTIE TRUE) # requires sksg
+# see https://github.com/google/skia/blob/81abc43e6f0b1a789e1bf116820c8ede68d778ab/modules/skshaper/BUILD.gn#L23
+set(ENABLE_SKSHAPER TRUE)
+# WebAssembly
+set(ENABLE_WASM TRUE)
+if(NOT ENABLE_WASM)
+  message(FATAL_ERROR "only WASM build supported for now")
+endif(NOT ENABLE_WASM)
+# SIMD
+#set(ENABLE_SIMD TRUE)
+set(ENABLE_SIMD FALSE)
+# PTHREADS
+#set(ENABLE_WEB_PTHREADS TRUE)
+set(ENABLE_WEB_PTHREADS FALSE)
+#
+set(ENABLE_WEBGL2 TRUE)
+#set(ENABLE_WEBGL1 TRUE) # TODO
+set(ENABLE_WEBGL_DEBUG_CHECKS TRUE) # only in debug
+set(ENABLE_WTF TRUE)
+set(ENABLE_GRE2 TRUE)#FALSE)
+set(ENABLE_GLIBXML TRUE)#FALSE)
+set(ENABLE_LIBYUV TRUE)#FALSE)
+set(ENABLE_ICCJPEG TRUE)#FALSE)
+set(ENABLE_LIBWEBP TRUE)#FALSE)
+set(USE_ICU TRUE)
+set(USE_LIBJPEG_TURBO TRUE)#FALSE)
+### Find Libraries
+if(TARGET_EMSCRIPTEN)
+  set(USE_OPENGL_LIB FALSE) # no system OPENGL for wasm
+else()
+  set(USE_OPENGL_LIB TRUE)
+endif()
+if(TARGET_EMSCRIPTEN)
+  set(USE_OPENGLES2_LIB FALSE) # no system OPENGLES for wasm
+else()
+  set(USE_OPENGLES2_LIB TRUE)
+endif()
+set(USE_SYSTEM_ZLIB ON)
+set(ENABLE_HARFBUZZ TRUE)
+
 macro(add_mojo_prefixes_3 ARG_BASE_PATH ARG_WHERE_COLLECT)
   set(CUR_MOJO_TO_PREFIXES
     ${ARG_BASE_PATH}.mojom.cc
@@ -96,7 +156,6 @@ endif(DEBUG_LEVEL)
 
 set(COMMON_THIRDPARTY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/)
 
-set(USE_ICU TRUE)
 if(USE_ICU)
   set(COMMON_FLAGS "${COMMON_FLAGS} -DHAS_ICU=1")
   set(USE_CUSTOM_ICU TRUE)
@@ -134,27 +193,25 @@ if(USE_ICU)
   endif(USE_CUSTOM_ICU)
 endif(USE_ICU)
 
-set(USE_LIBPNG FALSE)
-if(TARGET_LINUX)
-  set(USE_LIBPNG TRUE)
-endif(TARGET_LINUX)
+if(TARGET_EMSCRIPTEN)
+  set(USE_CUSTOM_FALSE TRUE)
+else()
+  set(USE_CUSTOM_LIBPNG TRUE)
+endif()
 if(USE_LIBPNG)
   set(COMMON_FLAGS "${COMMON_FLAGS} -DHAS_LIBPNG=1")
   #
-  set(USE_CUSTOM_LIBPNG TRUE)
   if(USE_CUSTOM_LIBPNG)
     set(USE_SYSTEM_PNG TRUE)
     set(libpng_LIB GLIBPNG)
   else(USE_CUSTOM_LIBPNG)
     if(TARGET_EMSCRIPTEN)
       set(EMCC_COMMON "${EMCC_COMMON} -s USE_LIBPNG=1")
-      message(FATAL_ERROR "wasm: only custom LIBPNG is supported for now")
+      #message(FATAL_ERROR "wasm: only custom LIBPNG is supported for now")
     endif(TARGET_EMSCRIPTEN)
     set(USE_SYSTEM_PNG FALSE)
   endif(USE_CUSTOM_LIBPNG)
 endif(USE_LIBPNG)
-
-set(USE_SK_GPU TRUE)
 
 # NOTE: SOURCE_MAP requires -g4 and --source-map-base
 # see http://webassemblycode.com/using-browsers-debug-webassembly/
@@ -197,7 +254,11 @@ else()
 endif(NOT PYTHON_FOUND)
 
 # harfbuzz
-option(ENABLE_HARFBUZZ "ENABLE_HARFBUZZ" ON)
+#option(ENABLE_HARFBUZZ "ENABLE_HARFBUZZ" ON)
+#if((ENABLE_BLINK OR ENABLE_COBALT) AND NOT ENABLE_HARFBUZZ)
+#  message(WARNING "AUTO ENABLED HARFBUZZ")
+#  option(ENABLE_HARFBUZZ "ENABLE_HARFBUZZ" ON)
+#endif()
 if(ENABLE_HARFBUZZ)
   set(USE_CUSTOM_HARFBUZZ TRUE)
   set(FORCE_USE_SKIA_HARFBUZZ TRUE)
@@ -251,7 +312,6 @@ if(ENABLE_GNET)
   )
 endif(ENABLE_GNET)
 
-set(ENABLE_SKIA TRUE)
 if (ENABLE_SKIA)
   set(ENABLE_WUFFS FALSE)
   if(ENABLE_WUFFS)
@@ -269,24 +329,17 @@ if (ENABLE_SKIA)
   set(SKIA_EXT_DIR ${SKIA_EXT_PARENT_DIR}skia/)
 endif(ENABLE_SKIA)
 
-set(ENABLE_SKSG FALSE)#TRUE)
 if(ENABLE_SKSG)
   set(sksg_LIB sksg)
   list(APPEND APP_DEFINITIONS ENABLE_SKSG=1)
 endif(ENABLE_SKSG)
 
-# NOTE: always FALSE here (change below)
-set(ENABLE_SKIA_UTILS FALSE)#TRUE) # required by skottie
-
-set(ENABLE_SKOTTIE FALSE)#TRUE) # requires sksg
 if(ENABLE_SKOTTIE)
   set(skottie_LIB skottie)
   set(COMMON_FLAGS "${COMMON_FLAGS} -DENABLE_SKOTTIE=1")
   set(ENABLE_SKIA_UTILS TRUE)
 endif(ENABLE_SKOTTIE)
 
-# see https://github.com/google/skia/blob/81abc43e6f0b1a789e1bf116820c8ede68d778ab/modules/skshaper/BUILD.gn#L23
-set(ENABLE_SKSHAPER FALSE)#TRUE)
 if (ENABLE_SKSHAPER)
   # SkShaper
   # Shapes text using HarfBuzz
@@ -311,7 +364,6 @@ if (ENABLE_SKIA)
   )
 endif(ENABLE_SKIA)
 
-set(ENABLE_BLINK FALSE) # TODO
 if(ENABLE_SKIA AND ENABLE_BLINK)
   list(APPEND APP_DEFINITIONS ENABLE_BLINK=1)
   list(APPEND APP_DEFINITIONS ENABLE_BLINK_PLATFORM=1)
@@ -383,20 +435,6 @@ if(TARGET_EMSCRIPTEN)
   endif()
 endif(TARGET_EMSCRIPTEN)
 
-# WebAssembly
-set(ENABLE_WASM TRUE)
-if(NOT ENABLE_WASM)
-  message(FATAL_ERROR "only WASM build supported for now")
-endif(NOT ENABLE_WASM)
-
-# SIMD
-#set(ENABLE_SIMD TRUE)
-set(ENABLE_SIMD FALSE)
-
-# PTHREADS
-#set(ENABLE_WEB_PTHREADS TRUE)
-set(ENABLE_WEB_PTHREADS FALSE)
-
 if(TARGET_EMSCRIPTEN)
   set(ENABLE_UKM FALSE) # keep wasm build as small as possible
 else()
@@ -408,6 +446,9 @@ endif(ENABLE_UKM)
 
 if(TARGET_EMSCRIPTEN)
   set(ENABLE_GIPC FALSE) # keep wasm build as small as possible
+  if(ENABLE_BLINK)
+    set(ENABLE_GIPC TRUE) # TODO: emove MOJO & GIPC from WASM builds
+  endif(ENABLE_BLINK)
 else()
   set(ENABLE_GIPC TRUE)
 endif()
@@ -515,7 +556,7 @@ else()
   message(FATAL_ERROR "platform not supported")
 endif()
 
-set(USE_LIBJPEG FALSE)
+set(USE_LIBJPEG FALSE) # NOTE: always FALSE
 if(USE_LIBJPEG)
   set(GLIBJPEG_DIR
     ${CHROMIUM_DIR}third_party/libjpeg/
@@ -546,7 +587,10 @@ if(USE_LIBJPEG)
   endif()
 endif(USE_LIBJPEG)
 
-set(USE_LIBJPEG_TURBO TRUE)
+#if((ENABLE_BLINK OR ENABLE_COBALT) AND NOT USE_LIBJPEG_TURBO)
+#  message(WARNING "AUTO ENABLED LIBJPEG_TURBO")
+#  set(USE_LIBJPEG_TURBO TRUE)
+#endif()
 if(USE_LIBJPEG_TURBO)
   #
   set(GLIBJPEG_TURBO_DIR
@@ -577,7 +621,6 @@ if(USE_LIBJPEG_TURBO)
   endif()
 endif(USE_LIBJPEG_TURBO)
 
-set(ENABLE_COBALT FALSE)
 if(ENABLE_COBALT)
   list(APPEND APP_DEFINITIONS ENABLE_COBALT=1)
   #set(COMMON_FLAGS "${COMMON_FLAGS} -DCOBALT=1") # see htmlEmitImpliedRootLevelParagraph
@@ -1109,10 +1152,12 @@ endif(HAS_ASYNCIFY OR HAS_EMTERPRETIFY)
   set(EMCC_COMMON "${EMCC_COMMON} -s USE_ZLIB=1")
   #set(EMCC_COMMON "${EMCC_COMMON} -s USE_BZIP2=1")
 
-  if(NOT USE_CUSTOM_ICU)
+  if(USE_ICU AND NOT USE_CUSTOM_ICU)
     set(EMCC_COMMON "${EMCC_COMMON} -s USE_ICU=1")
-  endif(NOT USE_CUSTOM_ICU)
-  set(EMCC_COMMON "${EMCC_COMMON} -s USE_LIBPNG=1")
+  endif(USE_ICU AND NOT USE_CUSTOM_ICU)
+
+  #set(EMCC_COMMON "${EMCC_COMMON} -s USE_LIBPNG=1")
+
   if(USE_EMCC_LIBJPEG_PORT)
     message(FATAL_ERROR "LIBJPEG port not supported yet")
     if ("${EMSCRIPTEN_VERSION}" VERSION_GREATER 1.38.32)
@@ -1125,14 +1170,6 @@ endif(HAS_ASYNCIFY OR HAS_EMTERPRETIFY)
   set(EMCC_COMMON "${EMCC_COMMON} -s USE_SDL_IMAGE=2")
   set(EMCC_COMMON "${EMCC_COMMON} -s USE_SDL_TTF=2")
 
-set(ENABLE_WEBGL2 TRUE)
-#set(ENABLE_WEBGL2 FALSE)
-
-#set(ENABLE_WEBGL1 TRUE) # TODO
-#set(ENABLE_WEBGL1 FALSE)
-
-set(ENABLE_WEBGL_DEBUG_CHECKS TRUE)
-#set(ENABLE_WEBGL_DEBUG_CHECKS FALSE)
 if(RELEASE_BUILD)
   set(ENABLE_WEBGL_DEBUG_CHECKS FALSE)
 endif(RELEASE_BUILD)
@@ -1558,12 +1595,6 @@ else(EMSCRIPTEN)
   set(COMMON_FLAGS "${COMMON_FLAGS} ${OPTIMIZE_LEVEL}")
   set(COMMON_FLAGS "${COMMON_FLAGS} ${DEBUG_LEVEL}")
 
-  ### Find Libraries
-  if(TARGET_EMSCRIPTEN)
-    set(USE_OPENGL_LIB FALSE) # no system OPENGL for wasm
-  else()
-    set(USE_OPENGL_LIB TRUE)
-  endif()
   find_package(OpenGL
     COMPONENTS OpenGL EGL
     REQUIRED)
@@ -1573,11 +1604,6 @@ else(EMSCRIPTEN)
     set(USE_OPENGL_LIB TRUE)
   endif()
 
-  if(TARGET_EMSCRIPTEN)
-    set(USE_OPENGLES2_LIB FALSE) # no system OPENGLES for wasm
-  else()
-    set(USE_OPENGLES2_LIB TRUE)
-  endif()
   find_package(OpenGLES2 REQUIRED)
   if(OPENGLES2_FOUND)
     message("OPENGLES2_DEFINITIONS = ${OPENGLES2_DEFINITIONS} ")
@@ -1619,7 +1645,6 @@ else(EMSCRIPTEN)
     set(HAS_GLEW_LIB TRUE)
   endif()
 
-  set(USE_SYSTEM_ZLIB ON)
   if(USE_SYSTEM_ZLIB)
     #message(FATAL_ERROR "NOT SUPPORTED")
     find_package(ZLIB REQUIRED) # ZLIB::ZLIB
@@ -1658,8 +1683,6 @@ else(EMSCRIPTEN)
 
 endif(TARGET_EMSCRIPTEN)
 
-#set(ENABLE_WTF TRUE)
-set(ENABLE_WTF FALSE)
 # custom flags
 if(ENABLE_WTF)
   list(APPEND APP_DEFINITIONS ENABLE_BASE=1)
@@ -1695,18 +1718,35 @@ endif(TARGET_EMSCRIPTEN)
 include(ExternalProject)
 
 ## re2
-set(GRE2_PARENT_DIR ${CHROMIUM_DIR}third_party/)
-set(GRE2_DIR ${GRE2_PARENT_DIR}re2/)
-include(${CHROMIUM_DIR}GRE2.cmake)
+if((ENABLE_BLINK OR ENABLE_COBALT) AND NOT ENABLE_GRE2)
+  message(WARNING "AUTO ENABLED GRE2")
+  set(ENABLE_GRE2 TRUE)
+endif()
+if(ENABLE_GRE2)
+  set(GRE2_PARENT_DIR ${CHROMIUM_DIR}third_party/)
+  set(GRE2_DIR ${GRE2_PARENT_DIR}re2/)
+  include(${CHROMIUM_DIR}GRE2.cmake)
+endif(ENABLE_GRE2)
 #
 ## libxml
-set(GLIBXML_PARENT_DIR
-  ${CHROMIUM_DIR}/third_party/
-)
-set(GLIBXML_DIR
-  ${GLIBXML_PARENT_DIR}libxml/
-)
-include(${CHROMIUM_DIR}GLIBXML.cmake)
+#if((ENABLE_BLINK OR ENABLE_COBALT) AND NOT ENABLE_GLIBXML)
+#  message(WARNING "AUTO ENABLED GLIBXML")
+#  set(ENABLE_GLIBXML TRUE)
+#endif()
+#set(ENABLE_GLIBXML TRUE)
+if(ENABLE_GLIBXML)
+  if(NOT USE_ICU)
+    message(FATAL_ERROR "GLIBXML requires ICU")
+  endif(NOT USE_ICU)
+  #
+  set(GLIBXML_PARENT_DIR
+    ${CHROMIUM_DIR}/third_party/
+  )
+  set(GLIBXML_DIR
+    ${GLIBXML_PARENT_DIR}libxml/
+  )
+  include(${CHROMIUM_DIR}GLIBXML.cmake)
+endif(ENABLE_GLIBXML)
 
 if (USE_LIBPNG AND USE_CUSTOM_LIBPNG)
   # GLIBPNG
@@ -1723,19 +1763,39 @@ if(USE_LIBJPEG_TURBO AND USE_CUSTOM_LIBJPEG_TURBO)
   # GLIBJPEG_TURBO: requires LIBJPEG
   include(${CHROMIUM_DIR}GLIBJPEG_TURBO.cmake)
 else()
-  message(FATAL_ERROR "GLIBJPEG_TURBO must be active")
+  if(ENABLE_COBALT OR ENABLE_BLINK)
+    message(FATAL_ERROR "GLIBJPEG_TURBO must be active")
+  endif()
 endif(USE_LIBJPEG_TURBO AND USE_CUSTOM_LIBJPEG_TURBO)
 
-set(libyuv_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/${CHROMIUM_DIR}third_party/)
-set(libyuv_DIR ${libyuv_PARENT_DIR}libyuv/)
-# libyuv: requires LIBJPEG
-include(${CHROMIUM_DIR}libyuv.cmake)
+#if((ENABLE_BLINK OR ENABLE_COBALT) AND NOT ENABLE_LIBYUV)
+#  message(WARNING "AUTO ENABLED LIBYUV")
+#  set(ENABLE_LIBYUV TRUE)
+#endif()
+if(ENABLE_LIBYUV)
+  set(libyuv_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/${CHROMIUM_DIR}third_party/)
+  set(libyuv_DIR ${libyuv_PARENT_DIR}libyuv/)
+  # libyuv: requires LIBJPEG
+  include(${CHROMIUM_DIR}libyuv.cmake)
+endif(ENABLE_LIBYUV)
 
-# iccjpeg: requires LIBJPEG
-include(${CHROMIUM_DIR}iccjpeg.cmake)
+#if((ENABLE_BLINK OR ENABLE_COBALT) AND NOT ENABLE_ICCJPEG)
+#  message(WARNING "AUTO ENABLED ICCJPEG")
+#  set(ENABLE_ICCJPEG TRUE)
+#endif()
+if(ENABLE_ICCJPEG)
+  # iccjpeg: requires LIBJPEG
+  include(${CHROMIUM_DIR}iccjpeg.cmake)
+endif(ENABLE_ICCJPEG)
 
 # libwebp: requires libpng, zlib
-include(${CHROMIUM_DIR}libwebp.cmake)
+#if((ENABLE_BLINK OR ENABLE_COBALT) AND NOT ENABLE_LIBWEBP)
+#  message(WARNING "AUTO ENABLED LIBWEBP")
+#  set(ENABLE_LIBWEBP TRUE)
+#endif()
+if(ENABLE_LIBWEBP)
+  include(${CHROMIUM_DIR}libwebp.cmake)
+endif(ENABLE_LIBWEBP)
 
 if(TARGET_LINUX)
   # xdg_mime

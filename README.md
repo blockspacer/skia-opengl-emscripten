@@ -215,6 +215,8 @@ add || defined(__EMSCRIPTEN__) to
 CreatePlatformCanvasWithPixels
 remove SK_CRASH
 
+13 remove skia debugcanvas lib
+
 ## Experimental features
 
 > chromium base (libchrome) from Blink ported to WASM
@@ -236,6 +238,8 @@ https://github.com/google/skia/blob/master/BUILD.gn#L1085
 https://github.com/google/skia/blob/master/gn/core.gni#L100
 
 with wtf & skia: 3.0M
+
+only skia without gpu & skottie & icu & harfbuzz & jpeg & wuffs: 1.9M
 
 > New renderer (blink)
 https://zhuanlan.zhihu.com/p/63318397
