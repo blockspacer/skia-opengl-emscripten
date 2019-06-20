@@ -1119,8 +1119,10 @@ static SkFont* skFont2 = nullptr;
 static const float FONT_SIZE_F = 22.0f;
 #endif
 
+#ifdef ENABLE_BASE
 static base::Thread main_thread_("Main_Thread");
 static base::WaitableEvent main_thread_event_;
+#endif
 
 #ifdef ENABLE_HARFBUZZ
 // see https://github.com/sam8dec/skia/blob/master/tools/using_skia_and_harfbuzz.cpp#L140
@@ -4063,6 +4065,7 @@ int main(int argc, char** argv) {
   InitGL();
 
   printf("creating tests thread...\n");
+#ifdef ENABLE_BASE
   base::Thread::Options options;
   //options.message_loop_type = base::MessageLoop::TYPE_IO;
   main_thread_.StartWithOptions(options);
@@ -4081,6 +4084,7 @@ int main(int argc, char** argv) {
   main_thread_event_.Wait();
 #endif
   main_thread_event_.Reset();
+#endif // ENABLE_BASE
 
 #ifdef ENABLE_COBALT
   printf("Initializing COBALT tests...\n");
