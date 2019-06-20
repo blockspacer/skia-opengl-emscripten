@@ -211,6 +211,7 @@
 
 #ifdef ENABLE_SKIA
 #include <skia/include/core/SkCanvas.h>
+#include <skia/include/core/SkString.h>
 #include <skia/include/core/SkFont.h>
 #include <skia/include/core/SkGraphics.h>
 #include <skia/include/core/SkPictureRecorder.h>

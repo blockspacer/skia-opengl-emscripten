@@ -269,16 +269,16 @@ if (ENABLE_SKIA)
   set(SKIA_EXT_DIR ${SKIA_EXT_PARENT_DIR}skia/)
 endif(ENABLE_SKIA)
 
-set(ENABLE_SKSG TRUE)
+set(ENABLE_SKSG FALSE)#TRUE)
 if(ENABLE_SKSG)
   set(sksg_LIB sksg)
   list(APPEND APP_DEFINITIONS ENABLE_SKSG=1)
 endif(ENABLE_SKSG)
 
 # NOTE: always FALSE here (change below)
-set(ENABLE_SKIA_UTILS TRUE) # required by skottie
+set(ENABLE_SKIA_UTILS FALSE)#TRUE) # required by skottie
 
-set(ENABLE_SKOTTIE TRUE) # requires sksg
+set(ENABLE_SKOTTIE FALSE)#TRUE) # requires sksg
 if(ENABLE_SKOTTIE)
   set(skottie_LIB skottie)
   set(COMMON_FLAGS "${COMMON_FLAGS} -DENABLE_SKOTTIE=1")
@@ -286,7 +286,7 @@ if(ENABLE_SKOTTIE)
 endif(ENABLE_SKOTTIE)
 
 # see https://github.com/google/skia/blob/81abc43e6f0b1a789e1bf116820c8ede68d778ab/modules/skshaper/BUILD.gn#L23
-set(ENABLE_SKSHAPER TRUE)
+set(ENABLE_SKSHAPER FALSE)#TRUE)
 if (ENABLE_SKSHAPER)
   # SkShaper
   # Shapes text using HarfBuzz
@@ -2059,8 +2059,9 @@ if(TARGET_EMSCRIPTEN)
     ${COBALT_LIBRARY_NAME}
     ${COBALT_LIBS}
     #
-    #${HARFBUZZ_LIBRARIES}
-    #${CUSTOM_ICU_LIB}
+    ${HARFBUZZ_LIBRARIES}
+    ${CUSTOM_ICU_LIB}
+    ${libZLIB_LIB}
     #
     #base # TODO
     #modp_b64
