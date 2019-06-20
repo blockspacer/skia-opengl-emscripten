@@ -86,10 +86,46 @@ if (BUILD_APP)
   #  message( FATAL_ERROR "Bad exit status ${retcode} ${_ERROR_VARIABLE}")
   #endif()
 
+  # --- check resulting files ---
+  if (NOT EXISTS ${BUILD_DIR}/${WASM_FILE_PATH})
+    colored_fatal("invalid BUILD_DIR/WASM_FILE_PATH=${BUILD_DIR}/${WASM_FILE_PATH}" --red --bold)
+  endif(NOT EXISTS ${BUILD_DIR}/${WASM_FILE_PATH})
+
   # --- show resulting stats/metrics ---
   if(ENABLE_WASM_OPT)
-    wasm_opt_metrics(${WASM_FILE_PATH})
+    wasm_opt_metrics(${WASM_FILE_PATH} ${BUILD_DIR})
   endif(ENABLE_WASM_OPT)
+
+  if(ENABLE_WASM_GZIP)
+    colored_notify("running gzip=${GZIP} on ${WASM_FILE_PATH}..." --green --bold)
+    execute_process(
+      COMMAND
+      ${COLORED_OUTPUT_ENABLER}
+        ${GZIP} "--best" "--keep" "--force" "--suffix=.gz" "${WASM_FILE_PATH}"
+      WORKING_DIRECTORY ${BUILD_DIR}
+      RESULT_VARIABLE retcode
+      ERROR_VARIABLE _ERROR_VARIABLE
+    )
+    if(NOT "${retcode}" STREQUAL "0")
+      message( FATAL_ERROR "Bad exit status ${retcode} ${_ERROR_VARIABLE}")
+    endif()
+  endif(ENABLE_WASM_GZIP)
+
+  if(ENABLE_WASM_BROTLI)
+    colored_notify("running brotli=${BROTLI} on ${WASM_FILE_PATH}..." --green --bold)
+    execute_process(
+      COMMAND
+      ${COLORED_OUTPUT_ENABLER}
+        ${BROTLI} "--best" "--keep" "--force" "--lgwin=24" "--suffix=.br" "${WASM_FILE_PATH}"
+      WORKING_DIRECTORY ${BUILD_DIR}
+      RESULT_VARIABLE retcode
+      ERROR_VARIABLE _ERROR_VARIABLE
+    )
+    if(NOT "${retcode}" STREQUAL "0")
+      message( FATAL_ERROR "Bad exit status ${retcode} ${_ERROR_VARIABLE}")
+    endif()
+  endif(ENABLE_WASM_BROTLI)
+
 endif(BUILD_APP)
 
 # --- run ---

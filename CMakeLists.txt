@@ -1339,6 +1339,7 @@ endif(NOT RELEASE_BUILD)
     #set(EMCC_COMMON "${EMCC_COMMON} -Os")
     # Oz reduces code size even further at the expense of performance (!!!)
     # see https://github.com/emscripten-core/emscripten/issues/362
+    # NOTE: -O3 = best performance. -Oz = best size.
     #set(EMCC_COMMON "${EMCC_COMMON} -Oz")
   else(RELEASE_BUILD)
     # set(EMCC_COMMON "${EMCC_COMMON} -O0")

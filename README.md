@@ -829,3 +829,99 @@ see https://qiita.com/shimacpyon/items/82d275c2f5f508cbd7f4
 
 > MCLocaleBreakIteratorCreate
 https://github.com/livecode/livecode/blob/a6591613dd3d7704ae1d0ff479584d7d1b7d4349/engine/src/paragraf.cpp
+
+
+## How to compress .wasm files
+
+Install https://github.com/WebAssembly/wabt#cloning
+
+```
+sudo -E apt update
+cd ~/
+# OPTIONAL: install deps sudo -E apt install -y cmake make clang git python
+GIT_SSL_NO_VERIFY=true git clone https://github.com/WebAssembly/wabt.git
+# OR same as git clone
+# wget --no-check-certificate https://github.com/WebAssembly/wabt/archive/master.zip
+# unzip -x master.zip -d ~/wabt
+# rm master.zip ; cd ~/wabt/wabt-master/
+cd ~/wabt
+git submodule update --init --recursive
+mkdir build
+cd build
+cmake .. -DBUILD_TESTS=OFF
+cmake --build . -- -j2
+# test/run-tests.py
+export PATH=$PWD:$PATH
+```
+
+```
+cp ./bin/*.wasm ./bin/*.wasm.bak
+wasm-strip bin/*.wasm
+```
+
+Install https://github.com/WebAssembly/binaryen#tools
+
+```
+sudo -E apt update
+cd ~/
+# OPTIONAL: install deps sudo -E apt install -y cmake make clang git python
+GIT_SSL_NO_VERIFY=true git clone https://github.com/WebAssembly/wabt.git
+# OR same as git clone
+# wget --no-check-certificate https://github.com/WebAssembly/binaryen/archive/master.zip
+# unzip -x master.zip -d ~/binaryen
+# rm master.zip ; cd ~/binaryen/binaryen-master/
+cd ~/binaryen
+git submodule update --init --recursive
+mkdir build
+cd build
+cmake ..
+cmake --build . -- -j2
+export PATH=$PWD/bin:$PATH
+```
+
+```
+# wasm-opt from the Binaryen project, to optimise the binary
+# NOTE: -O3 = best performance. -Oz = best size.
+wasm-opt -O3 -o bin/*.wasm bin/*.wasm
+```
+
+# Compress.
+
+If you serve large .wasm files, the webserver will consume CPU compressing them on the fly at each request. Instead you can pre-compress them to .wasm.gz and use content negotiation https://emscripten.org/docs/compiling/WebAssembly.html#web-server-setup
+
+```
+# sudo apt install gzip
+gzip --best --stdout bin/*.wasm > bin/*.wasm.gz
+# OR  Brotli, it is implemented by most browsers https://caniuse.com/#search=brotli
+# about Brotli https://hacks.mozilla.org/2015/11/better-than-gzip-compression-with-brotli/
+# sudo apt install brotli
+brotli --best --stdout --lgwin=24 bin/*.wasm > bin/*.wasm.br
+```
+
+# Run server.
+Need server with gzip support `Accept-Encoding: gz` or brotli support `Accept-Encoding: br`, see https://hacks.mozilla.org/2015/11/better-than-gzip-compression-with-brotli/
+
+```
+npm config set strict-ssl false
+npm config set registry="http://registry.npmjs.org/"
+git config --global url."https://".insteadOf git://
+echo 'NODE_TLS_REJECT_UNAUTHORIZED=0' >> ~/.bashrc
+echo "strict-ssl=false" >> ~/.npmrc
+echo "registry=http://registry.npmjs.org/" > ~/.npmrc
+# SET PROXY! CHANGE URL TO YOURS!
+# npm config set proxy http://127.0.0.1:8088
+# npm config set https-proxy http://127.0.0.1:8088
+npm config get proxy
+npm install
+```
+
+```
+# optional
+mv bin/*.wasm bin/*.wasm.old
+# NOTE: express will send .wasm.gz instead of not-existing .wasm
+```
+
+```
+npm run-script run
+open localhost:3000/*.html
+```

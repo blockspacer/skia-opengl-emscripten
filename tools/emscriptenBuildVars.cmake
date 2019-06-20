@@ -12,10 +12,19 @@ set(EXTRA_EMMAKE_OPTS  "-j" "6" CACHE STRING "emmake arguments")
 set(PACKAGER_DATA_DIR "${CURRENT_SCRIPT_DIR}/../resources")
 
 # NOTE: WASM_OPT can`t work with with WASM PTHREADS/ATOMICS
-option(ENABLE_WASM_OPT OFF)
-if(ENABLE_WASM_OPT)
-  set(WASM_FILE_PATH "skemgl.wasm")
-endif(ENABLE_WASM_OPT)
+set(ENABLE_WASM_OPT FALSE CACHE BOOL "ENABLE_WASM_OPT")
+
+set(ENABLE_WASM_GZIP TRUE CACHE BOOL "ENABLE_WASM_GZIP")
+
+set(ENABLE_WASM_BROTLI TRUE CACHE BOOL "ENABLE_WASM_BROTLI")
+
+set(WASM_FILE_PATH "skemgl.wasm")
+set(WASM_GZIP_FILE_PATH "skemgl.wasm.gz")
+set(WASM_BROTLI_FILE_PATH "skemgl.wasm.br")
+
+find_program_required(GZIP "gzip" "gzip not found, you need to install it: sudo apt install brotli")
+
+find_program_required(BROTLI "brotli" "brotli not found, you need to install it: sudo apt install brotli")
 
 find_program_required(EMSCRIPTEN_CMAKE "emcmake" "emcmake not found, search for EMSCRIPTEN`s emsdk_env.sh")
 

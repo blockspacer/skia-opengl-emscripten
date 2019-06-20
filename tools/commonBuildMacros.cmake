@@ -85,7 +85,7 @@ macro(conditional_remove ARG_DO_REMOVE ARG_DIR ARG_WORKING_DIR)
   endif(${ARG_DO_REMOVE})
 endmacro(conditional_remove)
 
-macro(wasm_opt_metrics ARG_WASM_FILE_PATH)
+macro(wasm_opt_metrics ARG_WASM_FILE_PATH ARG_DIR)
   # NOTE: funcs count must not exceed browser limit
   # see https://github.com/emscripten-core/emscripten/issues/8755
 
@@ -95,7 +95,7 @@ macro(wasm_opt_metrics ARG_WASM_FILE_PATH)
     COMMAND
     ${COLORED_OUTPUT_ENABLER}
       ${EMSCRIPTEN_WASM_OPT} ${ARG_WASM_FILE_PATH} "--metrics"
-    WORKING_DIRECTORY ${BUILD_DIR}
+    WORKING_DIRECTORY ${ARG_DIR}
     RESULT_VARIABLE retcode
     ERROR_VARIABLE _ERROR_VARIABLE
   )
