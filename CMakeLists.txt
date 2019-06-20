@@ -495,9 +495,13 @@ set(COMMON_CXX_FLAGS "${COMMON_CXX_FLAGS} -std=c++17") # use target options
 # TODO
 set(COMMON_CXX_FLAGS "${COMMON_CXX_FLAGS} -DCODEC_IMPLEMENTATION=1")
 
-# https://stackoverflow.com/a/4184877/10904212
-#set(COMMON_FLAGS "${COMMON_FLAGS} -frtti")
-set(COMMON_FLAGS "${COMMON_FLAGS} -fno-rtti")
+if(RELEASE_BUILD)
+  set(COMMON_FLAGS "${COMMON_FLAGS} -fno-rtti")
+  set(COMMON_FLAGS "${COMMON_FLAGS} -fno-exceptions")
+else()
+  # https://stackoverflow.com/a/4184877/10904212
+  set(COMMON_FLAGS "${COMMON_FLAGS} -frtti")
+endif(RELEASE_BUILD)
 
 if (EMSCRIPTEN)
   #set(COMMON_FLAGS "${COMMON_FLAGS} -DUSE_X11=0")
@@ -1213,9 +1217,6 @@ else()
   set(EMCC_COMMON "${EMCC_COMMON} -fno-exceptions")
 endif(NOT RELEASE_BUILD)
 
-  # rtti required by skia
-  #set(EMCC_COMMON "${EMCC_COMMON} -frtti") # force enable rtti on wasm!
-  set(EMCC_COMMON "${EMCC_COMMON} -fno-rtti")
   set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_RELEASE=1")
   set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DNDEBUG=1")
 
@@ -1400,6 +1401,10 @@ endif(NOT RELEASE_BUILD)
   # https://emscripten.org/docs/getting_started/FAQ.html#why-does-my-code-break-and-gives-odd-errors-when-using-o2-closure-1
   #set(EMCC_COMMON "${EMCC_COMMON} --closure 1") # UNSAFE optimization
   # Enables LLVM link-time optimizations (LTO)
+  # --llvm-lto N: this controls LLVM’s LTO (Link-Time-Optimization) pass,
+  # 1 seems to produce the best tradeoff between size and speed for my code.
+  # Bigger values seem to do more inlining
+  # and produce bigger code for little performance increase.
   #set(EMCC_COMMON "${EMCC_COMMON} --llvm-lto 1") # UNSAFE optimization
   # set(EMCC_COMMON "${EMCC_COMMON} --llvm-lto 3") # UNSAFE optimization
   if(ENABLE_SIMD)

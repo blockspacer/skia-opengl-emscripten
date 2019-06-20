@@ -197,9 +197,15 @@ if(USE_LIBJPEG_TURBO)
   endif(USE_CUSTOM_LIBJPEG_TURBO)
 endif(USE_LIBJPEG_TURBO)
 
-set(SKIA_EXTRA_CFLAGS
-  "${SKIA_EXTRA_CFLAGS}\"-fno-rtti\", "
-)
+if(RELEASE_BUILD)
+  set(SKIA_EXTRA_CFLAGS
+    "${SKIA_EXTRA_CFLAGS}\"-fno-rtti\", "
+  )
+else()
+  set(SKIA_EXTRA_CFLAGS
+    "${SKIA_EXTRA_CFLAGS}\"-frtti\", "
+  )
+endif(RELEASE_BUILD)
 
 if(RELEASE_BUILD)
   # If you're using our GYP files to build Skia,
