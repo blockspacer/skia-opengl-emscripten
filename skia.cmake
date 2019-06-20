@@ -107,7 +107,10 @@ if (EXT_SKIA_OFFICIAL_BUILD AND NOT EXT_SKIA_DEBUG)
   set(SK_CONF_IS_OFFICIAL_BUILD "true")
 else ()
   set(SK_CONF_IS_OFFICIAL_BUILD "false")
-endif ()
+endif()
+
+message(INFO "SK_CONF_DEBUG=${SK_CONF_DEBUG}")
+message(INFO "SK_CONF_IS_OFFICIAL_BUILD=${SK_CONF_IS_OFFICIAL_BUILD}")
 
 if (EMSCRIPTEN)
   set(SK_IS_x11 "true")
@@ -193,6 +196,31 @@ if(USE_LIBJPEG_TURBO)
     #endif(NOT USE_CUSTOM_LIBJPEG)
   endif(USE_CUSTOM_LIBJPEG_TURBO)
 endif(USE_LIBJPEG_TURBO)
+
+set(SKIA_EXTRA_CFLAGS
+  "${SKIA_EXTRA_CFLAGS}\"-fno-rtti\", "
+)
+
+if(RELEASE_BUILD)
+  # If you're using our GYP files to build Skia,
+  # you're using build scripts mostly designed for development
+  # (even Release) where we don't pay much attention to
+  # library structure or size.
+  # They're all built with -g,
+  # which bloats the file size considerably.
+  # https://groups.google.com/forum/#!topic/skia-discuss/5hNRcmERVSI
+  set(SKIA_EXTRA_CFLAGS
+    "${SKIA_EXTRA_CFLAGS}\"-g0\", "
+  )
+  set(SKIA_EXTRA_CFLAGS
+    "${SKIA_EXTRA_CFLAGS}\"-DNDEBUG=1\", "
+  )
+  set(SKIA_EXTRA_CFLAGS
+    "${SKIA_EXTRA_CFLAGS}\"-DSK_RELEASE=1\", "
+  )
+else(RELEASE_BUILD)
+  message(WARNING "building SKIA in DEBUG mode")
+endif(NOT RELEASE_BUILD)
 
 # NOTE: in skia HARFBUZZ requires icui18n (unicode/uscript.h)
 if(FORCE_USE_SKIA_HARFBUZZ)
@@ -439,7 +467,7 @@ endif(ENABLE_WUFFS)
   #"SK_SUPPORT_ATLAS_TEXT=0"
   #"SK_SUPPORT_PDF=1" # skia_enable_pdf
   #"SK_PDF_USE_SFNTLY=1" # skia_use_sfntly
-  #"SK_HAS_WEBP_LIBRARY=1" # skia_use_libwebp
+  #"SK_HAS_WEBP_LIBRARY=1" # skia_use_libwebp, skia_use_system_libwebp
   #"SK_XML=1" # skia_use_expat
   #"SK_HAS_HEIF_LIBRARY=1" # skia_use_libheif
   #"SK_METAL"
@@ -477,6 +505,8 @@ list(APPEND SKIA_DEFINES
   SK_HAS_PNG_LIBRARY
   SK_HAS_JPEG_LIBRARY=1 # skia_use_libjpeg_turbo
   SK_HAS_JPEG_LIBRARY
+  # SK_HAS_GIF_LIBRARY
+  # SK_HAS_WEBP_LIBRARY
 )
 
 if(ENABLE_SKOTTIE)

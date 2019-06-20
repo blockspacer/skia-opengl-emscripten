@@ -968,6 +968,9 @@ set(ICU_SOURCES
 
   target_compile_options(icu PRIVATE
     -Wno-error
+    # TODO: remove rtti from icu
+    # https://bugs.chromium.org/p/chromium/issues/detail?id=463085
+    -frtti
   )
 #endif(USE_OWN_ICU)
 

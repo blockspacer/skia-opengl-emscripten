@@ -496,7 +496,8 @@ set(COMMON_CXX_FLAGS "${COMMON_CXX_FLAGS} -std=c++17") # use target options
 set(COMMON_CXX_FLAGS "${COMMON_CXX_FLAGS} -DCODEC_IMPLEMENTATION=1")
 
 # https://stackoverflow.com/a/4184877/10904212
-set(COMMON_FLAGS "${COMMON_FLAGS} -frtti")
+#set(COMMON_FLAGS "${COMMON_FLAGS} -frtti")
+set(COMMON_FLAGS "${COMMON_FLAGS} -fno-rtti")
 
 if (EMSCRIPTEN)
   #set(COMMON_FLAGS "${COMMON_FLAGS} -DUSE_X11=0")
@@ -1213,8 +1214,10 @@ else()
 endif(NOT RELEASE_BUILD)
 
   # rtti required by skia
-  set(EMCC_COMMON "${EMCC_COMMON} -frtti") # force enable rtti on wasm!
-  set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_RELEASE")
+  #set(EMCC_COMMON "${EMCC_COMMON} -frtti") # force enable rtti on wasm!
+  set(EMCC_COMMON "${EMCC_COMMON} -fno-rtti")
+  set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_RELEASE=1")
+  set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DNDEBUG=1")
 
   # https://github.com/google/skia/blob/master/BUILD.gn#L502
   # set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSKSL_STANDALONE") # if (skia_compile_processors)
@@ -1314,6 +1317,9 @@ endif(NOT RELEASE_BUILD)
         message(WARNING "SOURCE_MAP requires DEBUG_LEVEL = -g4. Your DEBUG_LEVEL=${DEBUG_LEVEL}")
       endif()
     endif(NOT DEBUG_LEVEL)
+  else()
+    # force g0 to reduce the size
+    set(DEBUG_LEVEL "${DEBUG_LEVEL} -g0")
   endif(NOT RELEASE_BUILD)
   # see above
   set(EMCC_COMMON "${EMCC_COMMON} ${DEBUG_LEVEL}")

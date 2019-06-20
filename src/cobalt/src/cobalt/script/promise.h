@@ -428,7 +428,9 @@ public:
             m_state->reject( err );
         }
         else {
-            throw err;
+            //throw err;
+            /// __TODO__
+            /// defined(__EXCEPTIONS)) || (defined(_HAS_EXCEPTIONS) && !_HAS_EXCEPTIONS
         }
     }
 
@@ -754,12 +756,18 @@ template<
 Future< ResolveResult > Future< T >::_then( Resolve&& resolve, Reject&& reject ){
     return then< ResolveResult >(
         [ resolve ]( T&& value, Promise< ResolveResult >&& promise ) mutable {
-            try {
+
+            /// __TODO__
+            /// defined(__EXCEPTIONS)) || (defined(_HAS_EXCEPTIONS) && !_HAS_EXCEPTIONS
+            //try {
                 promise.resolve( resolve( std::move( value ) ) );
-            }
-            catch( const bool& err ){
-                promise.reject( err );
-            }
+            //}
+            //catch( const bool& err ){
+                if (!promise.is_resolved()) {
+                  bool err;
+                  promise.reject( err );
+                }
+            //}
         },
         std::forward< Reject >( reject )
     );
@@ -776,14 +784,19 @@ template<
 >
 Future<> Future< T >::_then( Resolve&& resolve, Reject&& reject ){
     return then(
-        [ resolve ]( T&& value, Promise<>&& promise ){
-            try {
+        [ resolve ]( T&& value, Promise<>&& promise ) {
+            /// __TODO__
+            /// defined(__EXCEPTIONS)) || (defined(_HAS_EXCEPTIONS) && !_HAS_EXCEPTIONS
+            //try {
                 resolve( std::move( value ) );
-            }
-            catch( const bool& err ){
-                promise.reject( err );
-                return;
-            }
+            //}
+            //catch( const bool& err ){
+                if (!promise.is_resolved()) {
+                  bool err;
+                  promise.reject( err );
+                  return;
+                }
+            //}
             promise.resolve();
         },
         std::forward< Reject >( reject )
@@ -882,13 +895,18 @@ template<
 >
 Future< ResolveResult > Future< void >::_then( Resolve&& resolve, Reject&& reject ){
     return then< ResolveResult >(
-        [ resolve ]( Promise< ResolveResult >&& promise ){
-            try {
+        [ resolve ]( Promise< ResolveResult >&& promise ) {
+            /// __TODO__
+            /// defined(__EXCEPTIONS)) || (defined(_HAS_EXCEPTIONS) && !_HAS_EXCEPTIONS
+            //try {
                 promise.resolve( resolve() );
-            }
-            catch( const bool& err ){
-                promise.reject( err );
-            }
+            //}
+            //catch( const bool& err ){
+                if (!promise.is_resolved()) {
+                  bool err;
+                  promise.reject( err );
+                }
+            //}
         },
         std::forward< Reject >( reject )
     );
@@ -904,14 +922,19 @@ template<
 >
 Future< void > Future< void >::_then( Resolve&& resolve, Reject&& reject ){
     return then< void >(
-        [ resolve ]( Promise< void >&& promise ){
-            try {
+        [ resolve ]( Promise< void >&& promise ) {
+            /// __TODO__
+            /// defined(__EXCEPTIONS)) || (defined(_HAS_EXCEPTIONS) && !_HAS_EXCEPTIONS
+            //try {
                 resolve();
-            }
-            catch( const bool& err ){
-                promise.reject( err );
-                return;
-            }
+            //}
+            //catch( const bool& err ){
+                if (!promise.is_resolved()) {
+                  bool err;
+                  promise.reject( err );
+                  return;
+                }
+            //}
             promise.resolve();
         },
         std::forward< Reject >( reject )
