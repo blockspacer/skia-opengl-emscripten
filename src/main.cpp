@@ -2896,105 +2896,104 @@ static void Draw() {
   ///if (isDebugPeriodReached()) printf("Draw() 2\n");
 
 #if defined(ENABLE_SKIA)
-  //using cobalt::renderer::rasterizer::egl::getRasterizerSkSurface;
-  using cobalt::renderer::rasterizer::egl::getRasterizerSkImage;
-  ///using cobalt::renderer::rasterizer::egl::getRasterizerSkPixmap;
 
-
+#if defined(ENABLE_COBALT)
+//using cobalt::renderer::rasterizer::egl::getRasterizerSkSurface;
+using cobalt::renderer::rasterizer::egl::getRasterizerSkImage;
+///using cobalt::renderer::rasterizer::egl::getRasterizerSkPixmap;
+  if (render_browser_window
+      /*&& g_cobaltTester
+      && g_cobaltTester->window_->isDocumentStartedLoading()
+      && g_cobaltTester->window_->isStartedDocumentLoader()*/)
   {
+          ///if (isDebugPeriodReached()) printf("Draw() 7\n");
+          sk_sp<SkImage> pImage = getRasterizerSkImage();
+          if(pImage) {
+          SkPixmap pixmap;// = getRasterizerSkPixmap();
+          if (!pImage->peekPixels(&pixmap)) {
+              ///if (isDebugPeriodReached())
+              printf("can`t peekPixels\n");
+          }
+              if(!pixmap.bounds().isEmpty()) {
+                  DCHECK(!pixmap.bounds().isEmpty());
+                  ///if (isDebugPeriodReached()) printf("Draw() 7.1\n");
 
-      if (render_browser_window
-          /*&& g_cobaltTester
-          && g_cobaltTester->window_->isDocumentStartedLoading()
-          && g_cobaltTester->window_->isStartedDocumentLoader()*/)
-      {
-              ///if (isDebugPeriodReached()) printf("Draw() 7\n");
-              sk_sp<SkImage> pImage = getRasterizerSkImage();
-              if(pImage) {
-              SkPixmap pixmap;// = getRasterizerSkPixmap();
-              if (!pImage->peekPixels(&pixmap)) {
+                  GL_CHECK( glBindTexture(GL_TEXTURE_2D, skia_texture) );
+                  GL_CHECK( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE) );
+                  GL_CHECK( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE) );
+                  GL_CHECK( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR) );
+                  GL_CHECK( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR) );
+                  GL_CHECK( glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, pixmap.width(), pixmap.height(), 0, GL_RGBA,
+                                        GL_UNSIGNED_BYTE, pixmap.addr()) );
+              } else {
                   ///if (isDebugPeriodReached())
-                  printf("can`t peekPixels\n");
+                      printf("pixmap.bounds().isEmpty()\n");
               }
-                  if(!pixmap.bounds().isEmpty()) {
-                      DCHECK(!pixmap.bounds().isEmpty());
-                      ///if (isDebugPeriodReached()) printf("Draw() 7.1\n");
-
-                      GL_CHECK( glBindTexture(GL_TEXTURE_2D, skia_texture) );
-                      GL_CHECK( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE) );
-                      GL_CHECK( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE) );
-                      GL_CHECK( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR) );
-                      GL_CHECK( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR) );
-                      GL_CHECK( glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, pixmap.width(), pixmap.height(), 0, GL_RGBA,
-                                            GL_UNSIGNED_BYTE, pixmap.addr()) );
-                  } else {
-                      ///if (isDebugPeriodReached())
-                          printf("pixmap.bounds().isEmpty()\n");
-                  }
-              }
-
-              if (nullptr == pImage) {
-                  ///if (isDebugPeriodReached())
-                  printf("can`t get pImage\n");
-              }
-      } else {
-          sk_sp<SkImage> pImage = nullptr;
-          // Draw to the surface via its SkCanvas.
-          // We don't manage this pointer's lifetime.
-          SkCanvas* canvas =
-              //  getRasterizerSkSurface()->getCanvas();
-              sRasterSurface->getCanvas();
-
-          canvas->clear(SkColorSetARGB(255, 255, 255, 255));
-          ///if (isDebugPeriodReached()) printf("Draw() 3\n");
-
-          myView->onDraw(canvas);
-          //if (isDebugPeriodReached()) printf("Draw() 4\n");
-
-          sRasterSurface->flush();
-          //if (isDebugPeriodReached()) printf("Draw() 5\n");
-
-          pImage = sRasterSurface->makeImageSnapshot();
-          //const sk_sp<SkImage> pImage = getRasterizerSkSurface()->makeImageSnapshot();
-          if(pImage/* && !pImage->isAlphaOnly()
-      && pImage->width() > 0 && pImage->height() > 0*/) {
-              ///if (isDebugPeriodReached()) printf("Draw() 7\n");
-              SkPixmap pixmap;
-              if (!pImage->peekPixels(&pixmap)) {
-                  ///if (isDebugPeriodReached())
-                      printf("can`t peekPixels\n");
-              }
-              DCHECK(!pixmap.bounds().isEmpty());
-              ///if (isDebugPeriodReached()) printf("Draw() 7.1\n");
-
-              GL_CHECK( glBindTexture(GL_TEXTURE_2D, skia_texture) );
-              GL_CHECK( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE) );
-              GL_CHECK( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE) );
-              GL_CHECK( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR) );
-              GL_CHECK( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR) );
-              GL_CHECK( glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, pixmap.width(), pixmap.height(), 0, GL_RGBA,
-                                    GL_UNSIGNED_BYTE, pixmap.addr()) );
           }
 
           if (nullptr == pImage) {
               ///if (isDebugPeriodReached())
-                  printf("can`t get pImage\n");
+              printf("can`t get pImage\n");
           }
-      }
-
+  } else
+#endif
+  {
+      sk_sp<SkImage> pImage = nullptr;
       // Draw to the surface via its SkCanvas.
       // We don't manage this pointer's lifetime.
-      //SkCanvas* canvas =
-      //  getRasterizerSkSurface()->getCanvas();
-      //sRasterSurface->getCanvas();
+      SkCanvas* canvas =
+          //  getRasterizerSkSurface()->getCanvas();
+          sRasterSurface->getCanvas();
 
-      //const sk_sp<SkImage> pImage = sRasterSurface->makeImageSnapshot();
-      /*const sk_sp<SkImage> pImage = getRasterizerSkSurface()->makeImageSnapshot();
-    if (nullptr == pImage) {
-      //printf("can`t makeImageSnapshot\n");
-    }*/
-      //if (isDebugPeriodReached()) printf("Draw() 8\n");
+      canvas->clear(SkColorSetARGB(255, 255, 255, 255));
+      ///if (isDebugPeriodReached()) printf("Draw() 3\n");
+
+      myView->onDraw(canvas);
+      //if (isDebugPeriodReached()) printf("Draw() 4\n");
+
+      sRasterSurface->flush();
+      //if (isDebugPeriodReached()) printf("Draw() 5\n");
+
+      pImage = sRasterSurface->makeImageSnapshot();
+      //const sk_sp<SkImage> pImage = getRasterizerSkSurface()->makeImageSnapshot();
+      if(pImage/* && !pImage->isAlphaOnly()
+  && pImage->width() > 0 && pImage->height() > 0*/) {
+          ///if (isDebugPeriodReached()) printf("Draw() 7\n");
+          SkPixmap pixmap;
+          if (!pImage->peekPixels(&pixmap)) {
+              ///if (isDebugPeriodReached())
+                  printf("can`t peekPixels\n");
+          }
+          DCHECK(!pixmap.bounds().isEmpty());
+          ///if (isDebugPeriodReached()) printf("Draw() 7.1\n");
+
+          GL_CHECK( glBindTexture(GL_TEXTURE_2D, skia_texture) );
+          GL_CHECK( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE) );
+          GL_CHECK( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE) );
+          GL_CHECK( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR) );
+          GL_CHECK( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR) );
+          GL_CHECK( glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, pixmap.width(), pixmap.height(), 0, GL_RGBA,
+                                GL_UNSIGNED_BYTE, pixmap.addr()) );
+      }
+
+      if (nullptr == pImage) {
+          ///if (isDebugPeriodReached())
+              printf("can`t get pImage\n");
+      }
   }
+
+  // Draw to the surface via its SkCanvas.
+  // We don't manage this pointer's lifetime.
+  //SkCanvas* canvas =
+  //  getRasterizerSkSurface()->getCanvas();
+  //sRasterSurface->getCanvas();
+
+  //const sk_sp<SkImage> pImage = sRasterSurface->makeImageSnapshot();
+  /*const sk_sp<SkImage> pImage = getRasterizerSkSurface()->makeImageSnapshot();
+  if (nullptr == pImage) {
+    //printf("can`t makeImageSnapshot\n");
+  }*/
+  //if (isDebugPeriodReached()) printf("Draw() 8\n");
 
 #endif // ENABLE_SKIA
 
@@ -3058,7 +3057,8 @@ static void animate() {
 
 
   /// \note: (only wasm ST - wasm without pthreads)
-#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__) \
+  && defined(ENABLE_COBALT)
   /// \todo posts new task every frame
   //if (!createdCobaltTester)
   {
@@ -3344,8 +3344,11 @@ int main(int argc, char** argv) {
 
 #ifdef ENABLE_BASE
   printf("Init AtExitManager ...\n");
+#ifdef ENABLE_COBALT
   base::AtExitManager at_exit;
   at_exit.DisableAllAtExitManagers();
+#endif
+
   printf("Init CommandLine ...\n");
 
   base::CommandLine::Init(0, nullptr);
@@ -4112,7 +4115,8 @@ int main(int argc, char** argv) {
     /// __TODO__
     //g_cobaltTester = std::make_unique<CobaltTester>();
 
-#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS)) \
+    && defined(ENABLE_COBALT)
   // Make sure the thread started.
   main_thread_.task_runner()->PostTask(
       FROM_HERE, base::Bind([](base::WaitableEvent* main_thread_event_){

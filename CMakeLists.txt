@@ -158,16 +158,16 @@ set(USE_SK_GPU TRUE)
 
 # NOTE: SOURCE_MAP requires -g4 and --source-map-base
 # see http://webassemblycode.com/using-browsers-debug-webassembly/
-set(EMSCRIPTEN_USE_SOURCE_MAP TRUE)
+set(EMSCRIPTEN_USE_SOURCE_MAP TRUE) # only for debug builds
 
-set(EMSCRIPTEN_USE_SAFE_HEAP TRUE)
+set(EMSCRIPTEN_USE_SAFE_HEAP TRUE) # only for debug builds
 
 set(EMSCRIPTEN_USE_PROFILING FALSE)
 
 # NOTE: see https://github.com/emscripten-core/emscripten/issues/8755
 set(EMSCRIPTEN_ASSERTION_LEVEL "1")
 
-set(EMSCRIPTEN_EMIT_SYMBOL_MAP TRUE)
+set(EMSCRIPTEN_EMIT_SYMBOL_MAP TRUE) # only for debug builds
 
 set(EMSCRIPTEN_MEMORY_PROFILER FALSE)
 
@@ -573,7 +573,7 @@ if(USE_LIBJPEG_TURBO)
   endif()
 endif(USE_LIBJPEG_TURBO)
 
-set(ENABLE_COBALT TRUE)
+set(ENABLE_COBALT FALSE)
 if(ENABLE_COBALT)
   list(APPEND APP_DEFINITIONS ENABLE_COBALT=1)
   #set(COMMON_FLAGS "${COMMON_FLAGS} -DCOBALT=1") # see htmlEmitImpliedRootLevelParagraph
@@ -1792,10 +1792,15 @@ endif(ENABLE_COBALT)
 #
 # PROJECT
 #
-set(PROJECT_SRC
+list(APPEND PROJECT_SRC
   src/main.cpp
-  src/render_tree_combiner.cc
 )
+#
+if(ENABLE_COBALT)
+  list(APPEND PROJECT_SRC
+    src/render_tree_combiner.cc
+  )
+endif(ENABLE_COBALT)
 
 if (ENABLE_SKIA)
   set(SKIA_INCLUDES
