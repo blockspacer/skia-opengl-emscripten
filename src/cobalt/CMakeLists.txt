@@ -8,6 +8,10 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/third_party/glm)
 
 #include(starboard_stub.cmake)
 
+#include(xdg_mime.cmake)
+
+#include(xdg_user_dirs.cmake)
+
 include(starboard_icu_init.cmake)
 
 include(starboard_eztime.cmake) # requires starboard_icu_init

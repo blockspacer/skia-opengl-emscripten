@@ -118,8 +118,8 @@ endif(ENABLE_BORINGSSL)
 set(GCRYPTO_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/)
 set(GCRYPTO_DIR ${GCRYPTO_PARENT_DIR}crypto/)
 
-set(xdg_mime_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/base/third_party/)
-set(xdg_mime_DIR ${xdg_mime_PARENT_DIR}xdg_mime/)
+#set(xdg_mime_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/base/third_party/)
+#set(xdg_mime_DIR ${xdg_mime_PARENT_DIR}xdg_mime/)
 
 if(ENABLE_GNET)
   set(GNET_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/)
@@ -233,9 +233,6 @@ if(ENABLE_BORINGSSL)
   include(BORINGSSL.cmake)
 endif(ENABLE_BORINGSSL)
 
-# xdg_mime
-include(xdg_mime.cmake)
-
 if (NOT EMSCRIPTEN)
   # libevent
   include(libevent.cmake)
@@ -326,7 +323,6 @@ if(ENABLE_SKIA AND ENABLE_BLINK)
     #particles
     #skottie
     #dynamic_annotations
-    #${BASE_LIBRARIES}
     #libjpeg
     #libpng
     #zlib

@@ -51,7 +51,6 @@ add_library(GRE2 STATIC
 )
 
 target_link_libraries(GRE2 PUBLIC
-  #${BASE_LIBRARIES}
   base
   #GCRYPTO
   #GURL

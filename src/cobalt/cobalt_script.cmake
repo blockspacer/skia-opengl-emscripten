@@ -71,7 +71,6 @@ target_link_libraries(cobalt_script PUBLIC
   #${COBALT_V8_STUB_LIB}
   #modp_b64
   #GFX_GEOMETRY
-  #${BASE_LIBRARIES}
 )
 
 set_property(TARGET cobalt_script PROPERTY CXX_STANDARD 17)

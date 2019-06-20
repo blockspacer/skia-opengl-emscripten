@@ -78,7 +78,6 @@ add_library(GLIBPNG STATIC
 )
 
 target_link_libraries(GLIBPNG PUBLIC
-  #${BASE_LIBRARIES}
   #base
   #${ZLIB_LIBRARIES}
   ${libZLIB_LIB}

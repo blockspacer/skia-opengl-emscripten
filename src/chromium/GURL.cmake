@@ -59,7 +59,7 @@ target_link_libraries(GURL PUBLIC
   ${STARBOARD_EZTIME_LIB}
   ${STARBOARD_COMMON_LIB}
   modp_b64
-  ${BASE_LIBRARIES}
+  #${BASE_LIBRARIES}
   ${CUSTOM_ICU_LIB}
   ${HARFBUZZ_LIBRARIES}
   #dynamic_annotations
@@ -69,7 +69,6 @@ set_property(TARGET GURL PROPERTY CXX_STANDARD 17)
 
 #target_include_directories(GURL PRIVATE
 #  ${GURL_DIR}
-#  #${BASE_LIBRARIES}
 #  # TODO
 #  ${COBALT_COMMON_INCLUDES}
 #)

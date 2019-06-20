@@ -81,6 +81,13 @@ add_library(cobalt_base STATIC
   ${COBALT_port_base_SOURCES}
 )
 
+if(TARGET_LINUX)
+  list(APPEND EXTRA_COBALT_BASE_LIBS
+    xdg_mime
+    xdg_user_dirs
+  )
+endif(TARGET_LINUX)
+
 target_link_libraries(cobalt_base PUBLIC
   base # TODO
   starboard_platform
@@ -93,6 +100,7 @@ target_link_libraries(cobalt_base PUBLIC
   icu
   ced
   glm
+  ${EXTRA_COBALT_BASE_LIBS}
 )
 
 set_property(TARGET cobalt_base PROPERTY CXX_STANDARD 17)

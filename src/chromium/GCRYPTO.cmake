@@ -71,7 +71,6 @@ add_library(GCRYPTO STATIC
 target_link_libraries(GCRYPTO PUBLIC
   ${BORINGSSL_LIBS}
   dynamic_annotations
-  #${BASE_LIBRARIES}
   base
   #GLIBJPEG_TURBO
   ${libjpeg_TURBO_LIB}

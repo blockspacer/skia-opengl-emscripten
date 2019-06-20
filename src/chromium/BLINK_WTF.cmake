@@ -393,7 +393,6 @@ target_include_directories(${WTF_LIBRARY_NAME} PUBLIC
 set(WTF_LIBRARIES
   ${CUSTOM_ICU_LIB}
   ${HARFBUZZ_LIBRARIES}
-  #${BASE_LIBRARIES}
   base
 )
 

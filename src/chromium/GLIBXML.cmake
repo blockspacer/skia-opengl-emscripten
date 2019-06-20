@@ -174,7 +174,6 @@ if (EMSCRIPTEN)
   )
 else()
   target_link_libraries(GLIBXML PUBLIC
-    #${BASE_LIBRARIES}
     #base
     #${ZLIB_LIBRARIES}
     #zlib

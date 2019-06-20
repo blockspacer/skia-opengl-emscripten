@@ -52,7 +52,6 @@ message(INFO "LibUUID_INCLUDE_DIRS=${LibUUID_INCLUDE_DIRS}")
 message(INFO "LibUUID_LIBRARIES=${LibUUID_LIBRARIES}")
 
 target_link_libraries(fontconfig PUBLIC
-  #${BASE_LIBRARIES}
   base
   GLIBXML
   #GZLIB

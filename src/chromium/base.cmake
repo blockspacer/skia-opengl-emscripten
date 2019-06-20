@@ -1381,16 +1381,13 @@ add_library(base STATIC
 )
 
 if(TARGET_EMSCRIPTEN)
-  list(APPEND BASE_LIBRARIES
+  list(APPEND EXTRA_CHROMIUM_BASE_LIBS
     ced
     ${CUSTOM_ICU_LIB}
     ${HARFBUZZ_LIBRARIES}
   )
-  add_dependencies(base
-    ${BASE_LIBRARIES}
-  )
 elseif(TARGET_LINUX)
-  list(APPEND BASE_LIBRARIES
+  list(APPEND EXTRA_CHROMIUM_BASE_LIBS
     tcmalloc
     atomic
     ced
@@ -1412,6 +1409,19 @@ else()
   message(FATAL_ERROR "platform not supported")
 endif()
 
+if(TARGET_LINUX)
+  list(APPEND EXTRA_CHROMIUM_BASE_LIBS
+    xdg_mime
+    xdg_user_dirs
+  )
+endif(TARGET_LINUX)
+
+add_dependencies(base
+  ${EXTRA_CHROMIUM_BASE_LIBS}
+)
+
+#message(FATAL_ERROR EXTRA_CHROMIUM_BASE_LIBS=${EXTRA_CHROMIUM_BASE_LIBS})
+
 #'dependencies': [
 #  '<(DEPTH)/nb/nb.gyp:nb',
 #  '<(DEPTH)/starboard/client_porting/eztime/eztime.gyp:eztime',
@@ -1430,8 +1440,7 @@ target_link_libraries(base PUBLIC
   modp_b64
   #
   dynamic_annotations
-  xdg_mime
-  ${BASE_LIBRARIES}
+  ${EXTRA_CHROMIUM_BASE_LIBS}
 )
 
 set_property(TARGET base PROPERTY CXX_STANDARD 17)

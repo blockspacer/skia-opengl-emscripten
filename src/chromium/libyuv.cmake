@@ -75,7 +75,6 @@ target_link_libraries(libyuv PUBLIC
   ${libZLIB_LIB}
   #JPEG
   #
-  #${BASE_LIBRARIES}
   #base
   #GLIBXML
   #GZLIB

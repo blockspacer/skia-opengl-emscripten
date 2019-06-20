@@ -94,6 +94,8 @@ else(DEBUG_LEVEL)
   message(STATUS "DEBUG_LEVEL will be detected based on BUILD_TYPE/RELEASE_BUILD")
 endif(DEBUG_LEVEL)
 
+set(COMMON_THIRDPARTY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/)
+
 set(USE_ICU TRUE)
 if(USE_ICU)
   set(COMMON_FLAGS "${COMMON_FLAGS} -DHAS_ICU=1")
@@ -110,7 +112,7 @@ if(USE_ICU)
     set(ICU_PARENT_FULL_DIR
       #third_party/icu/
       #../../thirdparty/skia/third_party/externals/icu/
-      ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/icu_wrapper/
+      ${COMMON_THIRDPARTY_DIR}/icu_wrapper/
     )
 
     set(ICU_FULL_DIR
@@ -1723,6 +1725,13 @@ include(${CHROMIUM_DIR}iccjpeg.cmake)
 # libwebp: requires libpng, zlib
 include(${CHROMIUM_DIR}libwebp.cmake)
 
+if(TARGET_LINUX)
+  # xdg_mime
+  include(xdg_mime.cmake)
+  # xdg_user_dirs
+  include(xdg_user_dirs.cmake)
+endif(TARGET_LINUX)
+
 if (ENABLE_SKIA)
   #
   # skia
@@ -2182,7 +2191,6 @@ else()
     GCRYPTO
     # services/service_manager
     # services/ws/public/cpp/gpu
-    #${BASE_LIBRARIES}
     #BLINK_WTF
     ${WTF_LIBRARY_NAME}
     # media

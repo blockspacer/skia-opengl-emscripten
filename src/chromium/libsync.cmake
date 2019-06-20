@@ -14,7 +14,6 @@ add_library(libsync STATIC
 
 #target_link_libraries(libsync PUBLIC
 #  #dynamic_annotations
-#  #${BASE_LIBRARIES}
 #  #base
 #)
 
