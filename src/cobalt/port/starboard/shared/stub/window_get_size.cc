@@ -25,5 +25,5 @@ bool SbWindowGetSize(SbWindow window, SbWindowSize* size) {
   }
 //#endif
 
-  ///return false;
+  return false;
 }

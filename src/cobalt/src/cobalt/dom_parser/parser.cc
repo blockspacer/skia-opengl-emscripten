@@ -97,7 +97,7 @@ std::unique_ptr<loader::Decoder> Parser::ParseDocumentAsync(
     const loader::Decoder::OnCompleteFunction& load_complete_callback) {
 
 //#ifdef __TODO__
-  P_LOG("ParseDocumentAsync %s\n", document->text_content().value_or("empty").c_str());
+  printf("ParseDocumentAsync %s\n", document->text_content().value_or("empty").c_str());
   return std::unique_ptr<loader::Decoder>(new HTMLDecoder(
       document, document, NULL, dom_max_element_depth_, input_location,
       load_complete_callback, true

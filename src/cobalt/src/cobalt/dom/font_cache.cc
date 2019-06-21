@@ -366,7 +366,7 @@ const scoped_refptr<render_tree::Typeface>& FontCache::GetCachedLocalTypeface(
 
 scoped_refptr<render_tree::Font> FontCache::TryGetRemoteFont(
     const GURL& url, float size, FontListFont::State* state) {
-  printf("FontCache::TryGetRemoteFont 1 %d %s %s \n", size, url.path().c_str(), document_location_->origin().c_str());
+  printf("FontCache::TryGetRemoteFont 1 %f %s %s \n", size, url.path().c_str(), document_location_->origin().c_str());
   //return TryGetLocalFont("", render_tree::FontStyle(),22,state); /// __TODO__
 
   // Retrieve the font from the remote typeface cache, potentially triggering a

@@ -501,5 +501,16 @@ target_compile_definitions(${WTF_LIBRARY_NAME} PRIVATE
 )
 
 target_compile_options(${WTF_LIBRARY_NAME} PRIVATE
-  -Wno-error
+  # always return on non-void functions to prevent UB
+  -Wreturn-type
+  #-Wno-error
+  -Wall
+  -Wextra
+  #-pedantic-errors
+  -Wno-nested-anon-types
+  -Wno-expansion-to-defined
+  -Wno-gnu-zero-variadic-macro-arguments
+  -Wno-unused-parameter
+  -Wno-unused-variable
+  -Wno-unused-lambda-capture
 )

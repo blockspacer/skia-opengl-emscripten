@@ -822,7 +822,7 @@ void Window::SetEnvironmentSettings(script::EnvironmentSettings* settings) {
   navigator_->SetEnvironmentSettings(settings);
 }
 
-const bool Window::isStartedDocumentLoader() const {
+bool Window::isStartedDocumentLoader() const {
   return document_loader_ && document_loader_->isStarted();
 }
 

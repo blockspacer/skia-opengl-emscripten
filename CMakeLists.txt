@@ -157,6 +157,11 @@ endif(DEBUG_LEVEL)
 
 set(COMMON_THIRDPARTY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/)
 
+# always return on non-void functions to prevent UB
+set(COMMON_FLAGS "${COMMON_FLAGS} -Wreturn-type")
+# https://gist.github.com/morido/8637535
+set(COMMON_FLAGS "${COMMON_FLAGS} -Werror=return-type")
+
 if(USE_ICU)
   set(COMMON_FLAGS "${COMMON_FLAGS} -DHAS_ICU=1")
   set(USE_CUSTOM_ICU TRUE)
@@ -2377,7 +2382,25 @@ else()
 endif() # EMSCRIPTEN
 
 target_compile_options(${PROJECT_NAME} PRIVATE
-  -Wno-error
+  # always return on non-void functions to prevent UB
+  -Wreturn-type
+  # https://gist.github.com/morido/8637535
+  -Werror=return-type
+  -Wall
+  -Wextra
+  -Weverything # clang
+  #-pedantic-errors
+  #-Wno-error
+  -Wno-nested-anon-types
+  -Wno-deprecated-declarations
+  -Wno-deprecated
+  -Wno-expansion-to-defined
+  -Wno-gnu-zero-variadic-macro-arguments
+  -Wno-unused-value
+  -Wno-unused-parameter
+  -Wno-unused-variable
+  -Wno-unused-function
+  -Wno-unused-lambda-capture
   -Wno-macro-redefined
   -Wno-implicit-function-declaration
   -Wno-c++11-narrowing

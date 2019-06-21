@@ -48,8 +48,8 @@ find_package(Freetype REQUIRED)
 # LibUUID_FOUND, LibUUID_INCLUDE_DIRS, LibUUID_LIBRARIES
 # https://gitlab.kitware.com/cmake/cmake/blob/master/Source/Modules/FindLibUUID.cmake
 find_package(LibUUID REQUIRED)
-message(INFO "LibUUID_INCLUDE_DIRS=${LibUUID_INCLUDE_DIRS}")
-message(INFO "LibUUID_LIBRARIES=${LibUUID_LIBRARIES}")
+message(STATUS "LibUUID_INCLUDE_DIRS=${LibUUID_INCLUDE_DIRS}")
+message(STATUS "LibUUID_LIBRARIES=${LibUUID_LIBRARIES}")
 
 target_link_libraries(fontconfig PUBLIC
   base

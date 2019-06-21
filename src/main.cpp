@@ -1115,7 +1115,7 @@ static skottie::Animation::Builder::Stats fAnimationStats;
 static SkSize fWinSize = SkSize::Make(width, height);
 static SkMSec fTimeBase = 0;
 static bool fShowAnimationInval = false;
-static bool fShowAnimationStats = false;
+//static bool fShowAnimationStats = false;
 #endif // ENABLE_SKOTTIE
 
 #if defined(ENABLE_SKIA) && defined(ENABLE_CUSTOM_FONTS)
@@ -1153,24 +1153,29 @@ static bool DrawGlyphs(double current_x, double current_y,
         printf("empty hb_buffer_get_length \n");
         return true;
     }
-    hb_glyph_info_t *info = hb_buffer_get_glyph_infos (hb_buffer, NULL);
-    hb_glyph_position_t *pos = hb_buffer_get_glyph_positions (hb_buffer, NULL);
+    hb_glyph_info_t *info = hb_buffer_get_glyph_infos (hb_buffer, nullptr);
+    hb_glyph_position_t *pos = hb_buffer_get_glyph_positions (hb_buffer, nullptr);
     const SkTextBlobBuilder::RunBuffer& runBuffer =
-      textBlobBuilder.allocRunPos(sfont, len);
+      textBlobBuilder.allocRunPos(sfont, static_cast<int>(len));
 
     double x = 0;
     double y = 0;
     for (unsigned int i = 0; i < len; i++)
     {
-        runBuffer.glyphs[i] = info[i].codepoint;
-        reinterpret_cast<SkPoint*>(runBuffer.pos)[i] = SkPoint::Make(
-            x + pos[i].x_offset / FONT_SIZE_SCALE,
-            y - pos[i].y_offset / FONT_SIZE_SCALE);
+        runBuffer.glyphs[i] =
+          static_cast<SkGlyphID>(info[i].codepoint);
+        reinterpret_cast<SkPoint*>(runBuffer.pos)[i] =
+          SkPoint::Make(
+            static_cast<SkScalar>(x + pos[i].x_offset / FONT_SIZE_SCALE),
+            static_cast<SkScalar>(y - pos[i].y_offset / FONT_SIZE_SCALE));
         x += pos[i].x_advance / FONT_SIZE_SCALE;
         y += pos[i].y_advance / FONT_SIZE_SCALE;
     }
 
-    canvas->drawTextBlob(textBlobBuilder.make(), current_x, current_y, glyph_paint);
+    canvas->drawTextBlob(textBlobBuilder.make(),
+      static_cast<SkScalar>(current_x),
+      static_cast<SkScalar>(current_y),
+      glyph_paint);
     return true;
 } // end of DrawGlyphs
 
@@ -1192,9 +1197,9 @@ static bool DrawGlyphs(double current_x, double current_y,
         hb_buffer_clear_contents(buffer);
         return 0;
     }
-    hb_glyph_info_t* info = hb_buffer_get_glyph_infos(buffer, NULL);
+    hb_glyph_info_t* info = hb_buffer_get_glyph_infos(buffer, nullptr);
     hb_glyph_position_t* pos =
-        hb_buffer_get_glyph_positions(buffer, NULL);
+        hb_buffer_get_glyph_positions(buffer, nullptr);
     auto runBuffer = builder->allocRunTextPos(
         paint, SkToInt(len), SkToInt(textBytes), SkString());
     memcpy(runBuffer.utf8text, utf8text, textBytes);
@@ -1330,8 +1335,8 @@ static int read_file(const char* fPath, char*& fileString, long int& fsize, cons
     fseek(f, 0, SEEK_END);
     fsize = ftell(f);
     fseek(f, 0, SEEK_SET); /* same as rewind(f); */
-    fileString = new char[fsize + 1];
-    fread(fileString, 1, fsize, f);
+    fileString = new char[static_cast<unsigned long>(fsize + 1)];
+    fread(fileString, 1, static_cast<size_t>(fsize), f);
     fclose(f);
     if(closeString)
       fileString[fsize] = 0;
@@ -1339,10 +1344,13 @@ static int read_file(const char* fPath, char*& fileString, long int& fsize, cons
 }
 
 static int debugPeriodicCounter = 0;
-static int debugPeriod = 1000;
+static int debugPeriod = 100;
+#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__) \
+  && defined(ENABLE_COBALT)
 static bool hasLayout = false;
+#endif
 
-/*static bool isDebugPeriodReached() {
+static bool isDebugPeriodReached() {
     //DCHECK(debugPeriodicCounter >=0
     //       && debugPeriodicCounter <= debugPeriod);
     return debugPeriodicCounter == debugPeriod;
@@ -1351,14 +1359,16 @@ static bool hasLayout = false;
 
 static bool incDebugPeriodicCounter() {
     debugPeriodicCounter++;
-    if(debugPeriodicCounter >= debugPeriod) {
+    if(debugPeriodicCounter > debugPeriod) {
         debugPeriodicCounter = 0;
+        return false;
     }
+    return true;
 }
-*/
+
 #if defined(ENABLE_SKIA)
 // see https://github.com/flutter/engine/blob/master/shell/gpu/gpu_surface_gl.cc#L125
-static void initSkiaSurface(int w, int h) {
+static void initSkiaSurface(int /*w*/, int /*h*/) {
 #ifdef SKIA_GR_CONTEXT
   {
     auto sInterface =
@@ -1599,10 +1609,10 @@ public:
 
         double current_x = 400.0;
         double current_y = 400.0;
-        double line_spacing_ratio = 1.5f;
-        double font_size = FONT_SIZE_F;
+        double line_spacing_ratio = 1.5;
+        double font_size = static_cast<double>(FONT_SIZE_F);
 
-        auto WriteLine = [this, &current_x, &current_y, &line_spacing_ratio, &font_size, &glyph_paint, &sk_canvas](const char *text) {
+        auto WriteLine = [&current_x, &current_y, &line_spacing_ratio, &font_size, &glyph_paint, &sk_canvas](const char *text) {
             /* Create hb-buffer and populate. */
             hb_buffer_t *hb_buffer = hb_buffer_create ();
 
@@ -1621,7 +1631,7 @@ public:
             //hb_buffer_add_utf8 (hb_buffer, text, strlen(text), 0, -1);
             hb_buffer_guess_segment_properties (hb_buffer);
             /* Shape it! */
-            hb_shape (fHarfBuzzFont.get(), hb_buffer, NULL, 0);
+            hb_shape (fHarfBuzzFont.get(), hb_buffer, nullptr, 0);
             unsigned len = hb_buffer_get_length(hb_buffer);
             if (len == 0) {
                 printf("empty hb_buffer_get_length\n");
@@ -1666,7 +1676,7 @@ public:
       const SkScalar yDrop = 2.0f;
       const SkScalar x = 8.0f;
       const SkScalar y = 52.0f;
-      const SkScalar textSize = 48.0f;
+      //const SkScalar textSize = 48.0f;
       const uint8_t blurAlpha = 127;
       auto blob1 = SkTextBlob::MakeFromString("?123Skia! skFont1", *skFont1);
       auto blob2 = SkTextBlob::MakeFromString("skFont2 !!! skFont2", *skFont2);
@@ -1846,7 +1856,7 @@ static GLuint LoadShader(GLenum type, const char* shaderSrc) {
     return 0;
   }
 
-  GL_CHECK( glShaderSource(shader, 1, &shaderSrc, NULL) );
+  GL_CHECK( glShaderSource(shader, 1, &shaderSrc, nullptr) );
   GL_CHECK( glCompileShader(shader) );
   GL_CHECK( glGetShaderiv(shader, GL_COMPILE_STATUS, &compiled) );
   if (!compiled) {
@@ -1854,7 +1864,7 @@ static GLuint LoadShader(GLenum type, const char* shaderSrc) {
     GL_CHECK( glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &infoLen) );
     if (infoLen > 1) {
       char* infoLog = static_cast<char*>(malloc(sizeof(char) * infoLen));
-      GL_CHECK( glGetShaderInfoLog(shader, infoLen, NULL, infoLog) );
+      GL_CHECK( glGetShaderInfoLog(shader, infoLen, nullptr, infoLog) );
       printf("Error compiling shader:\n%s\n", infoLog);
       free(infoLog);
     }
@@ -2135,7 +2145,7 @@ class CobaltTester {
 
 static std::unique_ptr<CobaltTester> g_cobaltTester;
 
-void CobaltTester::OnWindowClose(base::TimeDelta close_time) {
+void CobaltTester::OnWindowClose(base::TimeDelta /*close_time*/) {
     printf("OnWindowClose\n");
 /*#if defined(ENABLE_DEBUGGER)
     if (input_device_manager_fuzzer_) {
@@ -2177,8 +2187,8 @@ void CobaltTester::OnRanAnimationFrameCallbacks() {
 // tree with this callback attached. It includes the time the render tree was
 // produced.
 void CobaltTester::OnRenderTreeRasterized(
-    scoped_refptr<base::SingleThreadTaskRunner> web_module_message_loop,
-    const base::TimeTicks& produced_time) {
+    scoped_refptr<base::SingleThreadTaskRunner> /*web_module_message_loop*/,
+    const base::TimeTicks& /*produced_time*/) {
     //printf("OnRenderTreeRasterized\n");
 
 
@@ -2259,7 +2269,7 @@ void CobaltTester::SubmitCurrentRenderTreeToRenderer() {
 }
 
 void CobaltTester::OnBrowserRenderTreeProduced(
-    int main_web_module_generation,
+    int /*main_web_module_generation*/,
     //const browser::WebModule::LayoutResults& layout_results) {
     const cobalt::layout::LayoutManager::LayoutResults& layout_results) {
     printf("OnBrowserRenderTreeProduced 1\n");
@@ -2373,7 +2383,7 @@ void CobaltTester::OnLoad() {
 }
 
 #ifdef HAS_ICU
-static const icu::Locale *t_icu_locale;
+//static const icu::Locale *t_icu_locale;
 
 // __TODO__
 static void listWordBoundaries(const icu::UnicodeString& s) {
@@ -2384,7 +2394,7 @@ static void listWordBoundaries(const icu::UnicodeString& s) {
 
     /*if(!t_icu_locale) {
       const char* lang = "C";//;"en_US";
-      t_icu_locale = new icu::Locale(lang, NULL, NULL, NULL);
+      t_icu_locale = new icu::Locale(lang, nullptr, nullptr, nullptr);
     }*/
 
     UErrorCode status = U_ZERO_ERROR;
@@ -2460,7 +2470,7 @@ CobaltTester::CobaltTester()
           return &(resource_provider_stub_.value());
         }
 
-      return NULL;
+      return nullptr;
     }
 
     return renderer_module_->resource_provider();
@@ -2472,7 +2482,7 @@ CobaltTester::CobaltTester()
       base::Bind(&CobaltTester::OnLoad,
                  base::Unretained(this)));
 
-   dom::OnScreenKeyboardBridge* on_screen_keyboard_bridge = NULL;
+   dom::OnScreenKeyboardBridge* on_screen_keyboard_bridge = nullptr;
 
   //CSSParserObserver parser_observer_;
   cobalt::css_parser::Parser::SupportsMapToMeshFlag supports_map_to_mesh =
@@ -2566,8 +2576,8 @@ CobaltTester::CobaltTester()
         fetcher_factory_.get(), loader_factory_.get(), css_parser_.get(),
         dom_parser_.get(), can_play_type_handler_.get() ,
         //NULL , &stub_script_runner_,
-        NULL , script_runner_.get(),
-        NULL , media_source_registry_.get(), &resource_provider_,
+        nullptr , script_runner_.get(),
+        nullptr , media_source_registry_.get(), &resource_provider_,
         animated_image_tracker_.get(), image_cache_.get(),
         reduced_image_cache_capacity_manager_.get(), remote_typeface_cache_.get(),
         mesh_cache_.get(), dom_stat_tracker_.get(),
@@ -3015,14 +3025,14 @@ using cobalt::renderer::rasterizer::egl::getRasterizerSkImage;
 
   GL_CHECK( glBindBuffer(GL_ARRAY_BUFFER, vertexPosObject) );
   //
-  GL_CHECK( glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), NULL) );
+  GL_CHECK( glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), nullptr) );
   GL_CHECK( glEnableVertexAttribArray(0) );
   //
   GL_CHECK( glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat),
                         (GLvoid*)(2 * sizeof(GLfloat))) );
   GL_CHECK( glEnableVertexAttribArray(1) );
 
-  int w, h, fs;
+  int w, h;//, fs;
 #ifdef __EMSCRIPTEN__
   // see
   // https://github.com/floooh/oryol/blob/master/code/Modules/Gfx/private/emsc/emscDisplayMgr.cc#L174
@@ -3031,9 +3041,9 @@ using cobalt::renderer::rasterizer::egl::getRasterizerSkImage;
   w = width;
   h = height;
 #endif
-  float xs = (float)h / w;
-  float ys = 1.0f;
-  float mat[] = {xs, 0, 0, 0, 0, ys, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1};
+  //float xs = (float)h / w;
+  //float ys = 1.0f;
+  //float mat[] = {xs, 0, 0, 0, 0, ys, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1};
 
   GL_CHECK( glBindBuffer(GL_ARRAY_BUFFER, 0) );
 
@@ -3058,9 +3068,9 @@ static void animate() {
     fTimeBase = SDL_GetTicks();
   }
   if (fAnimation) {
-    const auto t = SDL_GetTicks() - fTimeBase;
-    const auto d = fAnimation->duration() * 1000;
-    fAnimation->seek(::std::fmod(t, d) / d);
+    const SkMSec t = SDL_GetTicks() - fTimeBase;
+    const SkScalar d = fAnimation->duration() * 1000;
+    fAnimation->seek(static_cast<SkScalar>(::std::fmod(t, d) / d));
   }
 #else
 #error "TODO: port SDL_GetTicks without SDL"
@@ -3076,8 +3086,8 @@ static void animate() {
       /// \note g_cobaltTester created from separate thread, so
       /// we use extra variable: don`t call "if (!g_cobaltTester)" here
       //createdCobaltTester = true;
-      printf("Creating g_cobaltTester...\n");
       if (!g_cobaltTester) {
+          printf("Creating g_cobaltTester...\n");
           createCobaltTester();
       } else if (
           !g_cobaltTester->layout_manager_
@@ -3106,7 +3116,7 @@ static void animate() {
               && g_cobaltTester->window_->isStartedDocumentLoader()
               && g_cobaltTester->window_->isDocumentStartedLoading())
           {
-              //if (isDebugPeriodReached() || !hasLayout)
+              if (isDebugPeriodReached() || !hasLayout)
               {
                   //if (isDebugPeriodReached())
                   printf("g_cobaltTester DoSynchronousLayoutAndGetRenderTree\n");
@@ -3232,8 +3242,8 @@ static void mainLoop() {
 
     ///if (isDebugPeriodReached()) printf("mainLoop 7\n");
 
-    ///incDebugPeriodicCounter();
-    ///if (isDebugPeriodReached()) printf("mainLoop 8\n");
+    incDebugPeriodicCounter();
+    if (isDebugPeriodReached()) printf("mainLoop 8\n");
 }
 
 #ifdef ENABLE_WTF
@@ -3246,12 +3256,12 @@ https://github.com/chromium/chromium/blob/master/third_party/blink/renderer/plat
       CrossThreadBind(function, CrossThreadUnretained(context)));
 }*/
 
-static void MakeClosure(base::OnceClosure** closure_out) {
+/*static void MakeClosure(base::OnceClosure** closure_out) {
   *closure_out = new base::OnceClosure(WTF::Bind([] {
     printf("OnceClosure!\n");
   }));
   LEAK_SANITIZER_IGNORE_OBJECT(*closure_out);
-}
+}*/
 
 
 class BindChecks{
@@ -3509,7 +3519,7 @@ int main(int argc, char** argv) {
 #endif
   {
     printf("thread testing started\n");
-    base::OnceClosure* closure = nullptr;
+    //base::OnceClosure* closure = nullptr;
     //base::OnceCallback<void()> binded = base::BindOnce(&MakeClosure, &closure);
     //::std::move(binded).Run();
 
@@ -3661,8 +3671,8 @@ int main(int argc, char** argv) {
                        StringImpl::Create("A\xC1")->LowerASCII().get()));*/
 
     static const UChar kTest[5] = {0x006c, 0x0069, 0x006e, 0x006b, 0};  // link
-    static const UChar kTestCapitalized[5] = {0x004c, 0x0049, 0x004e, 0x004b,
-                                              0};  // LINK
+    /*static const UChar kTestCapitalized[5] = {0x004c, 0x0049, 0x004e, 0x004b,
+                                              0};  // LINK*/
 
     scoped_refptr<StringImpl> test_string_impl16 = StringImpl::Create(kTest, 4);
     //EXPECT_FALSE(test_string_impl16->Is8Bit());
@@ -3777,15 +3787,15 @@ int main(int argc, char** argv) {
       foo.insert(::std::make_pair("foo", "bar"));
       foo.insert(::std::make_pair("bar", "bar"));
       auto found = foo.find("asdf");
-      printf("1 Found == foo.end() %d\n", (int)(found == foo.end()));
+      printf("1 Found == foo.end() %d\n", static_cast<int>(found == foo.end()));
       found = foo.find("foo");
-      printf("2 Found == foo.end() %d\n", (int)(found == foo.end()));
+      printf("2 Found == foo.end() %d\n", static_cast<int>(found == foo.end()));
       found = foo.find("bar");
-      printf("3 Found == foo.end() %d\n", (int)(found == foo.end()));
+      printf("3 Found == foo.end() %d\n", static_cast<int>(found == foo.end()));
       found = foo.find("asdfhf");
-      printf("4 Found == foo.end() %d\n", (int)(found == foo.end()));
+      printf("4 Found == foo.end() %d\n", static_cast<int>(found == foo.end()));
       found = foo.find("bar1");
-      printf("5 Found == foo.end() %d\n", (int)(found == foo.end()));
+      printf("5 Found == foo.end() %d\n", static_cast<int>(found == foo.end()));
   }
 #endif
 
@@ -4026,7 +4036,8 @@ int main(int argc, char** argv) {
 #endif
 
   GL_CHECK( glDisable(GL_DEPTH_TEST) );
-  GL_CHECK( glViewport(0, 0, (int)width, (int)height) );
+  GL_CHECK( glViewport(0, 0, static_cast<int>(width),
+      static_cast<int>(height)));
   //GL_CHECK( glClearColor(redClrTintAnim, 1.0f, 1.0f, 1.0f) );
   GL_CHECK( glClearColor(1.0f, 1.0f, 1.0f, 1.0f) );
   GL_CHECK( glClearStencil(0) );
@@ -4100,7 +4111,7 @@ int main(int argc, char** argv) {
 #ifdef ENABLE_COBALT
   printf("Initializing COBALT tests...\n");
   /// \see https://github.com/blockspacer/cobalt-clone-28052019/blob/master/src/cobalt/base/init_cobalt.cc
-  cobalt::InitCobalt(argc, argv, NULL);
+  cobalt::InitCobalt(argc, argv, nullptr);
 
   printf("Starting COBALT tests...\n");
 
@@ -4136,7 +4147,7 @@ int main(int argc, char** argv) {
     && defined(ENABLE_COBALT)
   // Make sure the thread started.
   main_thread_.task_runner()->PostTask(
-      FROM_HERE, base::Bind([](base::WaitableEvent* main_thread_event_){
+      FROM_HERE, base::Bind([](){
           DCHECK(base::MessageLoopCurrent::Get());
           printf("Starting g_cobaltTester...\n");
           /// __TODO__
@@ -4145,7 +4156,7 @@ int main(int argc, char** argv) {
           //g_cobaltTester->run();
           printf("Finishing g_cobaltTester...\n");
           //main_thread_event_->Signal();
-      }, &main_thread_event_));
+      }));
 #endif
 
   printf("Waiting COBALT tests...\n");
@@ -4261,8 +4272,8 @@ int main(int argc, char** argv) {
 
 #ifdef ENABLE_HARFBUZZ
   auto destroy = [](void *d) { static_cast<SkData*>(d)->unref(); };
-  const char* bytes = (const char*)data->data();
-  unsigned int size = (unsigned int)data->size();
+  const char* bytes = static_cast<const char*>(data->data());
+  unsigned int size = static_cast<unsigned int>(data->size());
   hb_blob_t* blob = hb_blob_create(bytes,
                                    size,
                                    HB_MEMORY_MODE_READONLY,
@@ -4270,7 +4281,7 @@ int main(int argc, char** argv) {
                                    destroy);
   assert(blob);
   hb_blob_make_immutable(blob);
-  hb_face_t* face = hb_face_create(blob, (unsigned)index);
+  hb_face_t* face = hb_face_create(blob, static_cast<unsigned>(index));
   hb_blob_destroy(blob);
   //assert(face);
   if (!face) {
@@ -4278,8 +4289,8 @@ int main(int argc, char** argv) {
       sktp.reset();
       return 1;
   }
-  hb_face_set_index(face, (unsigned)index);
-  hb_face_set_upem(face, sktp->getUnitsPerEm());
+  hb_face_set_index(face, static_cast<unsigned>(index));
+  hb_face_set_upem(face, static_cast<unsigned>(sktp->getUnitsPerEm()));
   fHarfBuzzFace.reset(face);
 
   // see https://chromium.googlesource.com/skia/+/chrome/m56/tools/SkShaper_harfbuzz.cpp
@@ -4292,7 +4303,9 @@ int main(int argc, char** argv) {
 
   // see https://github.com/aam/skiaex/blob/master/app/main.cpp#L177
   // see https://github.com/harfbuzz/harfbuzz-tutorial/blob/master/hello-harfbuzz-opentype.c#L31
-  hb_font_set_scale(fHarfBuzzFont.get(), FONT_SIZE_SCALE * FONT_SIZE_F, FONT_SIZE_SCALE * FONT_SIZE_F);
+  hb_font_set_scale(fHarfBuzzFont.get(),
+    static_cast<int>(FONT_SIZE_SCALE * FONT_SIZE_F),
+    static_cast<int>(FONT_SIZE_SCALE * FONT_SIZE_F));
   hb_ot_font_set_funcs(fHarfBuzzFont.get());
 #endif // ENABLE_HARFBUZZ
 
@@ -4366,7 +4379,7 @@ int main(int argc, char** argv) {
     printf("Building skottie animations...\n");
 
     // see https://github.com/google/skia/blob/master/modules/skottie/src/Skottie.cpp#L459
-    fAnimation = builder.make(fileString, fsize);
+    fAnimation = builder.make(fileString, static_cast<size_t>(fsize));
     printf("Built skottie animations...\n");
 
     printf("Get skottie stats...\n");
@@ -4375,7 +4388,8 @@ int main(int argc, char** argv) {
     if (fAnimation) {
       fAnimation->setShowInval(fShowAnimationInval);
       printf("Loaded Bodymovin animation v: %s, size: [%f %f]\n", fAnimation->version().c_str(),
-             fAnimation->size().width(), fAnimation->size().height());
+             static_cast<double>(fAnimation->size().width()),
+             static_cast<double>(fAnimation->size().height()));
     } else {
       printf("failed to load Bodymovin animation: %s\n", fAnimPath.c_str());
       return 1;

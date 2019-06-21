@@ -359,7 +359,7 @@ void LayoutManager::Impl::StartLayoutTimer() {
 
 
 #if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
-  printf("layout_timer_.Start %lld\n", timer_interval_in_microseconds);
+  printf("layout_timer_.Start %ld\n", timer_interval_in_microseconds);
   layout_timer_.Start(
       FROM_HERE,
       base::TimeDelta::FromMicroseconds(timer_interval_in_microseconds),

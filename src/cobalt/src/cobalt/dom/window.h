@@ -423,11 +423,11 @@ class Window : public EventTarget,
 
   bool TryForceStartDocumentLoad();
 
-  const bool isDocumentStartedLoading() const {
+  bool isDocumentStartedLoading() const {
     return isDocumentStartedLoading_;
   }
 
-  const bool isStartedDocumentLoader() const;
+  bool isStartedDocumentLoader() const;
 
   void ForceStartDocumentLoader();
 

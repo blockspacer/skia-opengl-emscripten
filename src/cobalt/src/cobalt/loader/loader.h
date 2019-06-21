@@ -54,7 +54,7 @@ class Loader {
 
   ~Loader();
 
-  const bool isStarted() const {
+  bool isStarted() const {
     return isStarted_;
   }
 
