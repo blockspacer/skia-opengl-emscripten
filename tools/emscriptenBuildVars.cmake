@@ -22,9 +22,15 @@ set(WASM_FILE_PATH "skemgl.wasm")
 set(WASM_GZIP_FILE_PATH "skemgl.wasm.gz")
 set(WASM_BROTLI_FILE_PATH "skemgl.wasm.br")
 
-find_program_required(GZIP "gzip" "gzip not found, you need to install it: sudo apt install brotli")
+set(ENABLE_WASM_GZIP FALSE CACHE BOOL "ENABLE_WASM_GZIP")
 
-find_program_required(BROTLI "brotli" "brotli not found, you need to install it: sudo apt install brotli")
+if(ENABLE_WASM_GZIP)
+  find_program_required(GZIP "gzip" "gzip not found, you need to install it: sudo apt install brotli")
+endif(ENABLE_WASM_GZIP)
+
+if(ENABLE_WASM_BROTLI)
+  find_program_required(BROTLI "brotli" "brotli not found, you need to install it: sudo apt install brotli")
+endif(ENABLE_WASM_BROTLI)
 
 find_program_required(EMSCRIPTEN_CMAKE "emcmake" "emcmake not found, search for EMSCRIPTEN`s emsdk_env.sh")
 
