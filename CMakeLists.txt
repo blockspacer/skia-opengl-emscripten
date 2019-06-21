@@ -40,7 +40,7 @@ set(GEN_COMPONENTS_CONTENT_SETTINGS_CORE_COMMON_DIR ${GN_GEN_DIR}gen_components_
 
 # == NOTE: place set(ENABLE_*) before all checks ==
 # Blink platform
-set(ENABLE_BLINK FALSE) # TODO
+set(ENABLE_BLINK TRUE) # TODO
 # cobalt
 set(ENABLE_COBALT TRUE)
 # SKIA
@@ -291,7 +291,7 @@ endif(ENABLE_HARFBUZZ)
 if(TARGET_EMSCRIPTEN)
   set(ENABLE_BORINGSSL FALSE)
 elseif(TARGET_LINUX)
-  set(ENABLE_BORINGSSL FALSE)#TRUE) #TODO
+  set(ENABLE_BORINGSSL TRUE) #TODO
 else()
   message(FATAL_ERROR "platform not supported")
 endif()
@@ -305,7 +305,7 @@ endif(ENABLE_BORINGSSL)
 if(TARGET_EMSCRIPTEN)
   set(ENABLE_GNET FALSE)
 elseif(TARGET_LINUX)
-  set(ENABLE_GNET FALSE)#TRUE) # TODO
+  set(ENABLE_GNET TRUE) # TODO
 else()
   message(FATAL_ERROR "platform not supported")
 endif()
@@ -370,7 +370,11 @@ if (ENABLE_SKIA)
   )
 endif(ENABLE_SKIA)
 
-if(ENABLE_SKIA AND ENABLE_BLINK)
+if(ENABLE_BLINK)
+  if(NOT ENABLE_SKIA)
+    message(FATAL_ERROR "BLINK requires SKIA")
+  endif(NOT ENABLE_SKIA)
+  #
   list(APPEND APP_DEFINITIONS ENABLE_BLINK=1)
   list(APPEND APP_DEFINITIONS ENABLE_BLINK_PLATFORM=1)
   #
@@ -450,13 +454,11 @@ if(ENABLE_UKM)
   set(COMMON_FLAGS "${COMMON_FLAGS} -DENABLE_UKM=1")
 endif(ENABLE_UKM)
 
-if(TARGET_EMSCRIPTEN)
-  set(ENABLE_GIPC FALSE) # keep wasm build as small as possible
-  if(ENABLE_BLINK)
-    set(ENABLE_GIPC TRUE) # TODO: emove MOJO & GIPC from WASM builds
-  endif(ENABLE_BLINK)
-else()
+if(ENABLE_BLINK)
+  # TODO: keep wasm build as small as possible
   set(ENABLE_GIPC TRUE)
+else()
+  set(ENABLE_GIPC FALSE)
 endif()
 if(ENABLE_GIPC)
   set(COMMON_FLAGS "${COMMON_FLAGS} -DENABLE_GIPC=1")
@@ -2382,6 +2384,7 @@ else()
 endif() # EMSCRIPTEN
 
 target_compile_options(${PROJECT_NAME} PRIVATE
+  #-Wno-error
   # always return on non-void functions to prevent UB
   -Wreturn-type
   # https://gist.github.com/morido/8637535
@@ -2390,7 +2393,28 @@ target_compile_options(${PROJECT_NAME} PRIVATE
   -Wextra
   -Weverything # clang
   #-pedantic-errors
-  #-Wno-error
+  -Wno-pedantic
+  -Wno-c++98-compat-pedantic
+  -Wno-c++98-compat-local-type-template-args
+  -Wno-c++98-compat
+  -Wno-weak-vtables
+  -Wno-missing-prototypes
+  #-Wno-shadow # TODO
+  #-Wnocast-align # TODO
+  -Wno-extra-semi
+  #-Wno-thread-safety-negative # TODO
+  -Wno-documentation
+  #-Wno-double-promotion # TODO
+  #-Wno-float-equal # TODO
+  -Wno-missing-noreturn
+  -Wno-exit-time-destructors
+  -Wno-inconsistent-missing-destructor-override
+  -Wno-global-constructors
+  -Wno-documentation-unknown-command
+  -Wno-zero-as-null-pointer-constant
+  -Wno-shadow-field-in-constructor
+  -Wno-padded
+  -Wno-old-style-cast
   -Wno-nested-anon-types
   -Wno-deprecated-declarations
   -Wno-deprecated

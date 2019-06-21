@@ -2260,8 +2260,8 @@ void CobaltTester::SubmitCurrentRenderTreeToRenderer() {
         renderer_module_->pipeline()->Submit(*submission);
         {
             /// __TODO__
-            printf("SubmitCurrentRenderTreeToRenderer OnDumpCurrentRenderTree\n");
-            renderer_module_->pipeline()->OnDumpCurrentRenderTree("");
+            ///printf("SubmitCurrentRenderTreeToRenderer OnDumpCurrentRenderTree\n");
+            ///renderer_module_->pipeline()->OnDumpCurrentRenderTree("");
         }
         //printf("SubmitCurrentRenderTreeToRenderer 2.2\n");
     }
@@ -2327,11 +2327,45 @@ void CobaltTester::QueueOnRenderTreeProduced(
     //base::Bind BrowserProcessRenderTreeSubmissionQueue();
 }
 
+
+#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__) \
+  && defined(ENABLE_COBALT)
+static bool isRenderTreeProducePending = false;
+//static cobalt::layout::LayoutManager::LayoutResults pending_layout_results;
+static scoped_refptr<render_tree::Node> pending_render_tree;
+static base::TimeDelta pending_layout_time;
+#endif
+
 // Called by |layout_mananger_| when it produces a render tree. May modify
 // the render tree (e.g. to add a debug overlay), then runs the callback
 // specified in the constructor, |render_tree_produced_callback_|.
 void CobaltTester::OnRenderTreeProduced(const cobalt::layout::LayoutManager::LayoutResults& layout_results) {
-    printf("OnRenderTreeProduced\n");
+
+    printf("OnRenderTreeProduced 1\n");
+
+#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__) \
+  && defined(ENABLE_COBALT)
+    /// TODO:
+    /// wasm ST only: we need to split heavy task
+    /// into multiple smaller tasks
+    /// and process them between
+    /// multiple main loop iterations
+    /// (otherwise we will block/hang single browser thread)
+    if(!isRenderTreeProducePending) {
+      printf("OnRenderTreeProduced 1.1\n");
+      isRenderTreeProducePending = true;
+      /*pending_layout_results =
+        cobalt::layout::LayoutManager::LayoutResults
+          (layout_results.render_tree, layout_results.layout_time);*/
+      pending_render_tree = layout_results.render_tree;
+      pending_layout_time = layout_results.layout_time;
+      return;
+    }
+
+    isRenderTreeProducePending = false;
+#endif
+
+    printf("OnRenderTreeProduced 1.2\n");
     /// \see https://github.com/blockspacer/cobalt-clone-28052019/blob/master/src/cobalt/browser/browser_module.cc#L736
     auto last_render_tree_produced_time_ = base::TimeTicks::Now();
     cobalt::layout::LayoutManager::LayoutResults layout_results_with_callback(
@@ -2615,6 +2649,8 @@ CobaltTester::CobaltTester()
       base::Closure(), base::Closure(), base::Closure()));
 
   P_LOG("Create dom::Window...\n");
+
+  layout_trigger = layout::LayoutManager::LayoutTrigger::kOnDocumentMutation;
 
   window_ = new cobalt::dom::Window(
       cssom::ViewportSize(browser_width, browser_height), //data.window_dimensions,
@@ -3088,36 +3124,53 @@ static void animate() {
       //createdCobaltTester = true;
       if (!g_cobaltTester) {
           printf("Creating g_cobaltTester...\n");
+          emscripten_pause_main_loop();
           createCobaltTester();
-      } else if (
+          emscripten_resume_main_loop();
+
+      }
+      else if (
           !g_cobaltTester->layout_manager_
           ///&& g_cobaltTester->isLoadComplete_
           ) {
+          emscripten_pause_main_loop();
           createLayoutManager();
+          emscripten_resume_main_loop();
       }
-      /// __TODO__
       /// \note: (only wasm ST - wasm without pthreads)
       /// don`t batch a lot of work to browser
       /// or browser will crash/hang/loose webgl context
       /// you MUST split work between main loop iterations
       else if(!g_cobaltTester->window_->isDocumentStartedLoading()) {
+          emscripten_pause_main_loop();
           printf("g_cobaltTester TryForceStartDocumentLoad 1\n");
           DCHECK(g_cobaltTester);
           DCHECK(g_cobaltTester->window_);
           const bool res = g_cobaltTester->window_->TryForceStartDocumentLoad();
           DCHECK(res);
           printf("g_cobaltTester TryForceStartDocumentLoad 2\n");
-      } else if(!g_cobaltTester->window_->isStartedDocumentLoader()) {
+          emscripten_resume_main_loop();
+      }
+      else if(!g_cobaltTester->window_->isStartedDocumentLoader()) {
+          emscripten_pause_main_loop();
           printf("g_cobaltTester ForceStartDocumentLoader 1\n");
           g_cobaltTester->window_->ForceStartDocumentLoader();
           printf("g_cobaltTester ForceStartDocumentLoader 1\n");
-      } else if (render_browser_window) {
+          emscripten_resume_main_loop();
+      }
+      /// __TODO__
+      else if (render_browser_window)
+      {
           if(g_cobaltTester
               && g_cobaltTester->window_->isStartedDocumentLoader()
               && g_cobaltTester->window_->isDocumentStartedLoading())
           {
+              if(isDebugPeriodReached()) printf("isDebugPeriodReached() render_browser_window \n");
+              if(!hasLayout) printf("!hasLayout render_browser_window \n");
+
               if (isDebugPeriodReached() || !hasLayout)
               {
+                  emscripten_pause_main_loop();
                   //if (isDebugPeriodReached())
                   printf("g_cobaltTester DoSynchronousLayoutAndGetRenderTree\n");
                   DCHECK(g_cobaltTester);
@@ -3128,19 +3181,34 @@ static void animate() {
                   DCHECK(g_cobaltTester->window_->isStartedDocumentLoader());
                   DCHECK(g_cobaltTester);
                   DCHECK(g_cobaltTester->layout_manager_);
+
+//#ifdef __TODO__
                   g_cobaltTester->window_->document()->DoSynchronousLayoutAndGetRenderTree();
+//#endif // __TODO__
+
                   g_cobaltTester->layout_manager_->ForceReLayout();
+
                   hasLayout = true;
                   //
                   //if (isDebugPeriodReached())
                   //printf("g_cobaltTester->run\n");
+                  emscripten_resume_main_loop();
+              }
+              else if (isRenderTreeProducePending) {
+                printf("g_cobaltTester isRenderTreeProducePending OnRenderTreeProduced\n");
+                g_cobaltTester->OnRenderTreeProduced(
+                  // pending_layout_results
+                  cobalt::layout::LayoutManager::LayoutResults
+                    (pending_render_tree, pending_layout_time)
+                );
               }
 #ifdef __TODO__
               DCHECK(g_cobaltTester);
               g_cobaltTester->run();
 #endif
-          }
-      }
+          } // if(g_cobaltTester && .. )
+      } // if (render_browser_window)
+
   } // if (!createdCobaltTester)
 #endif
 
@@ -4093,12 +4161,12 @@ int main(int argc, char** argv) {
   main_thread_.StartWithOptions(options);
   printf("tests thread started...\n");
   main_thread_.task_runner()->PostTask(
-      FROM_HERE, base::Bind([](base::WaitableEvent* main_thread_event_) {
+      FROM_HERE, base::Bind([](base::WaitableEvent* thread_event) {
 #if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
             DCHECK(base::MessageLoopCurrent::Get());
 #endif
           printf("Main thread works...\n");
-          main_thread_event_->Signal();
+          thread_event->Signal();
       }, &main_thread_event_));
   printf("Waiting for tests thread...\n");
 #if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
