@@ -36,7 +36,7 @@ set(C_COMPILER "/usr/bin/clang-6.0" CACHE STRING "C COMPILER, must be full path 
 set(CXX_COMPILER "/usr/bin/clang++-6.0" CACHE STRING "C++ COMPILER, must be full path to clang > 4")
 
 if (BUILD_APP)
-  message("building for Unix from ${CMAKE_CURRENT_SOURCE_DIR} into ${BUILD_DIR} ...")
+  message(STATUS "building for Unix from ${CMAKE_CURRENT_SOURCE_DIR} into ${BUILD_DIR} ...")
 
   # --- set CMAKE_OPTS, MAKE_OPTS, e.t.c. ---
   common_build_vars_step()
@@ -83,7 +83,7 @@ if(RUN_APP)
   if (NOT EXISTS ${BUILD_DIR})
     colored_fatal("invalid app directory ${BUILD_DIR}" --red --bold)
   endif(NOT EXISTS ${BUILD_DIR})
-  message("starting app from ${BUILD_DIR} ...")
+  message(STATUS "starting app from ${BUILD_DIR} ...")
   execute_process(
     COMMAND "${BUILD_DIR}/skemgl"
     WORKING_DIRECTORY ${BUILD_DIR}

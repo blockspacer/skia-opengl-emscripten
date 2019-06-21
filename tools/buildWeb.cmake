@@ -30,7 +30,7 @@ include(${CURRENT_SCRIPT_DIR}/emscriptenBuildVars.cmake)
 set(BUILD_DIR "${CMAKE_CURRENT_SOURCE_DIR}/build-emscripten/" CACHE STRING "output directory")
 
 if (BUILD_APP)
-  message("building for web from ${CMAKE_CURRENT_SOURCE_DIR} into ${BUILD_DIR} ...")
+  message(STATUS "building for web from ${CMAKE_CURRENT_SOURCE_DIR} into ${BUILD_DIR} ...")
 
   # --- set CMAKE_OPTS, MAKE_OPTS, e.t.c. ---
   common_build_vars_step()
@@ -144,7 +144,7 @@ if(RUN_APP)
     wasm_opt_metrics(${WASM_FILE_PATH})
   endif(ENABLE_WASM_OPT)
 
-  message("starting app from ${BUILD_DIR} ...")
+  message(STATUS "starting app from ${BUILD_DIR} ...")
   execute_process(
     COMMAND "emrun" "--port" "9090" "--serve_root" "/" "."
     WORKING_DIRECTORY ${BUILD_DIR}

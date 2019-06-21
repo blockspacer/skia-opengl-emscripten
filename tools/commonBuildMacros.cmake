@@ -33,7 +33,7 @@ macro(check_is_dir ARG_DIR ARG_LOG_NAME)
   elseif (NOT EXISTS "${ARG_DIR}")
     colored_fatal("you must set existing ${ARG_LOG_NAME}. current ${ARG_LOG_NAME}=${ARG_DIR} ..." --red --bold)
   else()
-    message(INFO "${ARG_LOG_NAME}=${ARG_DIR} ...")
+    message(STATUS "${ARG_LOG_NAME}=${ARG_DIR} ...")
   endif()
 endmacro(check_is_dir)
 
@@ -89,7 +89,7 @@ macro(wasm_opt_metrics ARG_WASM_FILE_PATH ARG_DIR)
   # NOTE: funcs count must not exceed browser limit
   # see https://github.com/emscripten-core/emscripten/issues/8755
 
-  message("printing debug metrics ...")
+  message(STATUS "printing debug metrics ...")
 
   execute_process(
     COMMAND

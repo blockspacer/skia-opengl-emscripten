@@ -109,8 +109,8 @@ else ()
   set(SK_CONF_IS_OFFICIAL_BUILD "false")
 endif()
 
-message(INFO "SK_CONF_DEBUG=${SK_CONF_DEBUG}")
-message(INFO "SK_CONF_IS_OFFICIAL_BUILD=${SK_CONF_IS_OFFICIAL_BUILD}")
+message(STATUS "SK_CONF_DEBUG=${SK_CONF_DEBUG}")
+message(STATUS "SK_CONF_IS_OFFICIAL_BUILD=${SK_CONF_IS_OFFICIAL_BUILD}")
 
 if (EMSCRIPTEN)
   set(SK_IS_x11 "true")
@@ -635,9 +635,9 @@ if (NOT EXT_SKIA_SHARED)
   endfunction()
 
   if(TARGET_EMSCRIPTEN)
-    message(INFO "building skia for EMSCRIPTEN")
+    message(STATUS "building skia for EMSCRIPTEN")
   elseif(TARGET_LINUX)
-    message(INFO "building skia for LINUX")
+    message(STATUS "building skia for LINUX")
 
     # seem to be always required...
     #ADD_SKIA_LIBRARY_DEPENDENCY("dl")
