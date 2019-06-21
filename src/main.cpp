@@ -2260,8 +2260,8 @@ void CobaltTester::SubmitCurrentRenderTreeToRenderer() {
         renderer_module_->pipeline()->Submit(*submission);
         {
             /// __TODO__
-            ///printf("SubmitCurrentRenderTreeToRenderer OnDumpCurrentRenderTree\n");
-            ///renderer_module_->pipeline()->OnDumpCurrentRenderTree("");
+            // printf("SubmitCurrentRenderTreeToRenderer OnDumpCurrentRenderTree\n");
+            // renderer_module_->pipeline()->OnDumpCurrentRenderTree("");
         }
         //printf("SubmitCurrentRenderTreeToRenderer 2.2\n");
     }
@@ -2350,7 +2350,8 @@ void CobaltTester::OnRenderTreeProduced(const cobalt::layout::LayoutManager::Lay
     /// into multiple smaller tasks
     /// and process them between
     /// multiple main loop iterations
-    /// (otherwise we will block/hang single browser thread)
+    /// (otherwise we will block/hang single browser thread
+    /// and browser will kill task/free resources)
     if(!isRenderTreeProducePending) {
       printf("OnRenderTreeProduced 1.1\n");
       isRenderTreeProducePending = true;
@@ -3127,7 +3128,6 @@ static void animate() {
           emscripten_pause_main_loop();
           createCobaltTester();
           emscripten_resume_main_loop();
-
       }
       else if (
           !g_cobaltTester->layout_manager_
@@ -3195,12 +3195,14 @@ static void animate() {
                   emscripten_resume_main_loop();
               }
               else if (isRenderTreeProducePending) {
+                emscripten_pause_main_loop();
                 printf("g_cobaltTester isRenderTreeProducePending OnRenderTreeProduced\n");
                 g_cobaltTester->OnRenderTreeProduced(
                   // pending_layout_results
                   cobalt::layout::LayoutManager::LayoutResults
                     (pending_render_tree, pending_layout_time)
                 );
+                emscripten_resume_main_loop();
               }
 #ifdef __TODO__
               DCHECK(g_cobaltTester);

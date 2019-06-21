@@ -1,5 +1,165 @@
-﻿https://chromium.googlesource.com/chromium/src/base/+/master/third_party/xdg_user_dirs
-
+﻿dom components
+runtime/compile-time feature enabler/disabler VISUAL TOOL & disable dom elements/widgets
+project creator VISUAL TOOL & assets viewer
+zipped file system support (native, not wasm)
+links between pages
+DOM Modifications
+UI thread & WASM ST (don`t block UI!)
+REST API
+dom visual editor
+ > https://webdesigner.withgoogle.com/
+ > https://coherent-labs.com/posts/first-peek-into-the-coherent-gt-editor/
+ > https://pinegrow.com/wordpress-theme-builder.html
+ > http://macaw.co/
+ > phonegap
+widget gallery / demo apps apps
+widget gallery / demo apps online https://developer.xamarin.com/samples-all
+dynamic font loading
+clipboard support (WASM)
+UI animation system & fps & Easing
+dom/widgets 3d animations
+animation editor a.k.a Spine
+LTR & RTL fonts
+dom node effects / shaders (flashlight e.t.c.)
+text Stroking / gradients / DrawLooper https://peach.oschina.io/post/c++_skia%E5%AD%A6%E4%B9%A0drawlooper/e.t.c.
+Zoom on wheel
+Settings / config sustem
+flexbox / yoga / QT Anchor Layout
+icon fonts: FontAwesome, Emoji, UTF symbols e.t.c.
+smaller package size
+smaller ICU size
+faster build time
+dynamic asset loading (wasm)
+save data to native filesystem (wasm)
+hot reload & cling https://blog.qt.io/blog/2018/06/15/scripting-in-c/
+visual IDE (aka photoshop/Figma/sketch.com/e.t.c.)
+dom debugger (aka chrome dev tools) with live editing/combined styles/display size change/loaded resources/animations & changes e.t.c.
+exe remote debugger aka gammaray https://www.kdab.com/development-resources/qt-tools/gammaray/
+crash & exception reports (EXE & WASM)
+WASM: record performance traces to JSON
+performance chart
+godot support
+dom reactive bindings
+i18n & dynamic language switch & poedit support
+GPU (GLES2/WEBGL2) rendering
+dynamic dom changes
+widgets system (aka flutter clip shape/qt tabs/qt tree-table with Sort&Filter/qt Calendar/file tree/Color picker/text Completer e.t.c)
+CSS clip path
+SCSS vars modifications in dev-tools / final app / app settings page
+ > https://bennettfeely.com/clippy/
+ > https://developer.mozilla.org/en-US/docs/Web/CSS/background-clip
+theming system (aka material design e.t.c.) & designer/color/settings tool https://www.primefaces.org/designer-ng/
+scrollers
+custom dom elements/widgets as dom elements
+dom inputs
+dom hover/click/e.t.c events
+resize dom on window resize
+dom cache/reload only on changes
+repaint only on changes
+windows support
+dialogs / popups & inner closable windows with own event propagation
+android support
+android market & payment support
+ios support
+ios market & payment support
+refactor
+docs
+CI & CD + Building and testing on multiple platforms https://blog.qt.io/blog/2019/06/04/introducing-minicoin/
+CSS extentions
+tuts portal
+slot system
+extended C++ & serialisation & IDE integration (aka https://github.com/curimit/SugarCpp)
+html dom <-> C++ transpiler
+JS lib a.k.a. google amp/react.js = html compatability layer
+Multimedia: audio
+Multimedia: video
+asmdom support https://github.com/mbasso/asm-dom
+charts module & gantt chart aka https://doc.qt.io/qt-5/qtcharts-index.html
+audio waveforms e.t.c. https://docs.juce.com/master/tutorial_audio_thumbnail.html
+accessibility / screen reader / Color Blindness / e.t.c.
+PickList https://www.primefaces.org/primeng/#/picklist
+Camera support
+Mobile widgets https://blog.qt.io/blog/2017/06/14/mobile-app-development-qt-part-1-top-considerations-choosing-app-development-framework/
+event Calendar https://www.primefaces.org/primeng/#/fullcalendar
+Lazy Loading
+ > https://css-tricks.com/snippets/javascript/lazy-loading-images/
+Skia based image editor (vector/raster/pixel art) https://blog.qt.io/blog/2018/03/06/slate-basic-pixel-art-editor-built-qt-quick/
+Atlas fonts & Distance Field Generator https://blog.qt.io/dev/page/12/
+WEBGL/GLES texture to skia texture
+input text filter pattern https://www.primefaces.org/primeng/#/keyfilter
+BBcode editor https://www.primefaces.org/primeng/#/editor
+horizontal slideshow & effects
+Drag and Drop & 2D Colliding/Box2D
+file upload & native file chooser dialog
+Touch Interaction & gestures https://developer.xamarin.com/samples/monotouch/Touches_GestureRecognizers/
+in-browser dom to skia/webgl texture capturer
+in-browser text to texture
+text selection
+in-browser text to renderered layout (1-to-1)
+webrtc & websockets support
+SCSS
+Model/View/Provider/Mapper e.t.c
+ > QT MVC
+ > Flutter https://medium.com/fluttery/what-even-are-flutter-widgets-ce537a048a7d
+Particles / Emmiters
+Graph/diagram system aka d3.js
+Text Editor & Code highlighing / Infinite text scroll
+Wearable / embedded / tv / raspberri support
+reactive form validator
+package registry
+SQL/DB support & OODB
+SVG support
+GIF support
+Speech support
+rxcpp
+batch rendering / a lot o text on page
+3D dom widget
+google Maps with custom markers/overlay
+ > https://developer.xamarin.com/samples/xamarin-forms/CustomRenderers/Map/Polygon/
+geopositioning
+Source Code Analyzer
+License
+wasm dynamic loading
+native dll
+Scripting / luajit
+blockchain app platform
+SPA constructor / landing page generator
+backend & code reuse: C++ WEB CMS, game servers e.t.c.
+Push Notifications e.t.c.
+App analytics
+memory sanitizer
+AI helper
+assets minifier
+web widget gallery portal/fiddles with live edit https://bit.dev
+ratings portal / awwwards
+freelance portal
+JS bindings
+QT bindings
+remote UI https://blog.qt.io/blog/2018/06/12/remote-uis-webgl-webassembly/
+dev forum
+layer system
+python/go/e.t.c. bingings
+ClangFormat & clang tools (iwyu e.t.c.)
+Security & Memory attacks & SSL & e.t.c.
+Dude, desktop applications are so last decade! https://blog.qt.io/blog/2019/03/21/dude-desktop-applications-last-decade/
+Docker images
+Create roadmap & bug portal
+Create LTS supportd versions
+https://chromium.googlesource.com/chromium/src/base/+/master/third_party/xdg_user_dirs
+Installer for every platform (both for sdk & resulting apps)
+Build server integration & github & jenkins & e.t.c.
+API & dom migration tool
+Style guide / Review policy / Community chats e.t.c.
+Support portal & paid support
+GTEST / ui test (both for apps & engine) e.t.c.
+WIX
+PSD import / skia converter
+adMob integration
+Cloud Services API integration / JWT
+Text Path/Arc
+ > https://developer.xamarin.com/samples/mac/CoreTextArcMonoMac/
+SVG Text Path/Arc
+ > https://css-tricks.com/snippets/svg/curved-text-along-path/
 @font-face {
     font-family: "myFirstFont";
     src: url("/resources/fonts/FreeSans.ttf");
@@ -98,7 +258,6 @@ scoped_refptr<cobalt::media::MediaLog> const&)':
 /home/denis/workspace/skia-opengl-emscripten/src/cobalt/src/cobalt/media/filters/stream_parser_factory.cc:233:
 undefined reference to
 `cobalt::media::MPEG1AudioStreamParser::MPEG1AudioStreamParser(cobalt::media::DecoderBuffer::Allocator*)'
-
 
 /usr/bin/ld: src/cobalt/libcobalt_media.a(stream_parser_factory.cc.o): in
 function
