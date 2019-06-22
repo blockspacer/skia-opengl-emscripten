@@ -1,4 +1,4 @@
-
+﻿
 # see UI_GFX
 
 # TODO #
@@ -158,8 +158,6 @@ target_link_libraries(UI_GL PUBLIC
   base # TODO
   #dynamic_annotations
   #${BASE_LIBRARIES}
-  # khronos
-  ${khronos_LIB}
   # linux libsync
   ${libsync_LIB}
   SKIA
@@ -175,6 +173,11 @@ target_link_libraries(UI_GL PUBLIC
   GFX_GEOMETRY
   #egl
   #GLESv2
+)
+
+target_link_libraries(UI_GL PRIVATE
+  # khronos
+  ${khronos_LIB}
 )
 
 set_property(TARGET UI_GL PROPERTY CXX_STANDARD 17)

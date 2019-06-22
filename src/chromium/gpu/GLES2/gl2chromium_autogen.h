@@ -1,4 +1,4 @@
-// Copyright 2014 The Chromium Authors. All rights reserved.
+﻿// Copyright 2014 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -12,6 +12,10 @@
 
 #ifndef GPU_GLES2_GL2CHROMIUM_AUTOGEN_H_
 #define GPU_GLES2_GL2CHROMIUM_AUTOGEN_H_
+
+///#if defined(__EMSCRIPTEN__) /// __TODO__
+///#warning "TODO: port gl2chromium_autogen.h to mobile"
+/// TODO: use GLEW_GET_FUN
 
 #define glActiveTexture GLES2_GET_FUN(ActiveTexture)
 #define glAttachShader GLES2_GET_FUN(AttachShader)
@@ -424,5 +428,7 @@
   GLES2_GET_FUN(BeginSharedImageAccessDirectCHROMIUM)
 #define glEndSharedImageAccessDirectCHROMIUM \
   GLES2_GET_FUN(EndSharedImageAccessDirectCHROMIUM)
+
+///#endif
 
 #endif  // GPU_GLES2_GL2CHROMIUM_AUTOGEN_H_

@@ -5569,8 +5569,6 @@ target_link_libraries(BLINK_RENDERER_CORE PUBLIC
   ${iccjpeg_LIB}
   MOJO
   #
-  # khronos
-  ${khronos_LIB}
   LIB_V8_INTERFACE
   COMPONENTS_SCHEDULING_METRICS
   ${HARFBUZZ_LIBRARIES}
@@ -5578,6 +5576,11 @@ target_link_libraries(BLINK_RENDERER_CORE PUBLIC
   GZLIB_EXT
   ${SERVICES_SERVICE_MANAGER_PUBLIC_CPP_LIB}
   GFX_CODEC
+)
+
+target_link_libraries(BLINK_RENDERER_CORE PRIVATE
+  # khronos
+  ${khronos_LIB}
 )
 
 set_property(TARGET BLINK_RENDERER_CORE PROPERTY CXX_STANDARD 17)

@@ -183,6 +183,17 @@ else(ENABLE_SKSHAPER)
   set(SK_IS_skshaper "false")
 endif(ENABLE_SKSHAPER)
 
+if(TARGET_EMSCRIPTEN)
+  set(SK_system_libpng
+    "skia_use_system_libpng=true"
+  )
+else()
+  # TODO: support system png
+  set(SK_system_libpng
+    "skia_use_system_libpng=false"
+  )
+endif(TARGET_EMSCRIPTEN)
+
 if(USE_LIBJPEG_TURBO)
   set(SK_IS_libjpeg_turbo "true")
   if(USE_CUSTOM_LIBJPEG_TURBO)
@@ -228,7 +239,7 @@ if(RELEASE_BUILD)
   )
 else(RELEASE_BUILD)
   message(WARNING "building SKIA in DEBUG mode")
-endif(NOT RELEASE_BUILD)
+endif(RELEASE_BUILD)
 
 # NOTE: in skia HARFBUZZ requires icui18n (unicode/uscript.h)
 if(FORCE_USE_SKIA_HARFBUZZ)
@@ -313,7 +324,7 @@ skia_enable_skottie=${SK_IS_skottie} \
 skia_use_libjpeg_turbo=${SK_IS_libjpeg_turbo} \
 ${SK_system_libjpeg_turbo} \
 skia_use_libpng=true \
-skia_use_system_libpng=true \
+${SK_system_libpng} \
 skia_use_zlib=true \
 skia_use_wuffs=${SK_IS_wuffs} \
 skia_use_libwebp=false \
@@ -707,7 +718,9 @@ if (NOT EXT_SKIA_SHARED)
   set(SKIA_CMAKE_ONLY_HEADERS "${SKIA_CMAKE_ONLY_HEADERS};${HARFBUZZ_INCLUDE_DIRS};${OPENGL_INCLUDE_DIR};${OPENGL_EGL_INCLUDE_DIRS}")
   set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${HARFBUZZ_LIBRARIES};${OPENGL_LIBRARIES}")
 
-
+  #message(FATAL_ERROR OPENGLES2_LIBRARIES=${OPENGLES2_LIBRARIES})
+  #
+  #set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${OPENGLES2_LIBRARIES}" PARENT_SCOPE)
   # when skia_enable_gpu:
   #
   # OpenGL::GL

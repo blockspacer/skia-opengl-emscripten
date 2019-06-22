@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (C) 2009 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -158,6 +158,7 @@ scoped_refptr<DOMWrapperWorld> DOMWrapperWorld::EnsureIsolatedWorld(
       new DOMWrapperWorld(isolate, WorldType::kIsolated, world_id));
 }
 
+#if defined(ENABLE_GNET)
 typedef HashMap<int, scoped_refptr<SecurityOrigin>>
     IsolatedWorldSecurityOriginMap;
 static IsolatedWorldSecurityOriginMap& IsolatedWorldSecurityOrigins() {
@@ -184,6 +185,7 @@ void DOMWrapperWorld::SetIsolatedWorldSecurityOrigin(
   else
     IsolatedWorldSecurityOrigins().erase(world_id);
 }
+#endif
 
 typedef HashMap<int, String> IsolatedWorldHumanReadableNameMap;
 static IsolatedWorldHumanReadableNameMap& IsolatedWorldHumanReadableNames() {

@@ -1,4 +1,4 @@
-#### --- GPU_GLES2 ---###
+﻿#### --- GPU_GLES2 ---###
 #
 #set(GPU_GLES2_SOURCES
 #  ${GPU_GLES2_DIR}constants.cc
@@ -149,6 +149,7 @@
 #  GFX_GEOMETRY
 #  GFX_SWITCHES
 #  GFX_RANGE
+#  ${OPENGLES2_LIBRARIES}
 #)
 #
 #set_property(TARGET GPU_GLES2 PROPERTY CXX_STANDARD 17)

@@ -1,4 +1,4 @@
-// Copyright (c) 2012 The Chromium Authors. All rights reserved.
+﻿// Copyright (c) 2012 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -19,7 +19,17 @@
 #if defined(GLES2_USE_CPP_BINDINGS)
 #define GLES2_GET_FUN(name) gles2::GetGLContext()->name
 #else
+
+/// TODO
+#if defined(__EMSCRIPTEN__)
 #define GLES2_GET_FUN(name) GLES2 ## name
+#else
+#include <GL/gl.h>
+#include <GL/glext.h>
+
+#define GLES2_GET_FUN(name) gl ## name
+#endif
+
 #endif
 #endif
 

@@ -1,4 +1,4 @@
-### --- GFX_RANGE ---###
+﻿### --- GFX_RANGE ---###
 
 set(GFX_RANGE_SOURCES
   #${GFX_RANGE_DIR}gfx_range_export.h",
@@ -17,6 +17,7 @@ add_library(GFX_RANGE STATIC
 target_link_libraries(GFX_RANGE PUBLIC
   #${BASE_LIBRARIES}
   base
+  #${OPENGLES2_LIBRARIES}
 )
 
 set_property(TARGET GFX_RANGE PROPERTY CXX_STANDARD 17)

@@ -378,6 +378,10 @@ target_link_libraries(CC PUBLIC
   GFX_RANGE
   SKIA
   base
+)
+
+target_link_libraries(CC PRIVATE
+  # khronos
   ${khronos_LIB}
 )
 

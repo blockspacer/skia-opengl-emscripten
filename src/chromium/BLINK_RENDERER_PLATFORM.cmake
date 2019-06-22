@@ -1506,27 +1506,6 @@ if(ENABLE_HARFBUZZ)
 endif(ENABLE_HARFBUZZ)
 
 if(TARGET_LINUX)
-  list(APPEND BLINK_RENDERER_PLATFORM_INSTRUMENTATION_SOURCES
-    #
-    #blink_platform_sources("instrumentation")
-    # see services/resource_coordinator/public/mojom/coordination_unit.mojom-blink.h
-    # requires services/resource_coordinator/public/mojom/
-    ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}instrumentation/resource_coordinator/document_resource_coordinator.cc
-    ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}instrumentation/resource_coordinator/document_resource_coordinator.h
-    ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}instrumentation/resource_coordinator/renderer_resource_coordinator.cc
-    ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}instrumentation/resource_coordinator/renderer_resource_coordinator.h
-    ${BLINK_RENDERER_PLATFORM_DIR}instrumentation/tracing/memory_cache_dump_provider.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}instrumentation/tracing/memory_cache_dump_provider.h
-    ${BLINK_RENDERER_PLATFORM_DIR}instrumentation/tracing/trace_event.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}instrumentation/tracing/trace_event.h
-    ${BLINK_RENDERER_PLATFORM_DIR}instrumentation/tracing/traced_value.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}instrumentation/tracing/traced_value.h
-    ${BLINK_RENDERER_PLATFORM_DIR}instrumentation/tracing/web_memory_allocator_dump.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}instrumentation/tracing/web_memory_allocator_dump.h
-    ${BLINK_RENDERER_PLATFORM_DIR}instrumentation/tracing/web_process_memory_dump.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}instrumentation/tracing/web_process_memory_dump.h
-  )
-
   list(APPEND BLINK_RENDERER_PLATFORM_AUDIO_SOURCES
     ## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}audio/audio_array.h
     ## TODO ##   ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}audio/audio_bus.cc
@@ -1630,86 +1609,107 @@ if(TARGET_LINUX)
     ## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}audio/vector_math.h
     ## TODO ##   ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}audio/vector_math_scalar.h
   )
-
-  list(APPEND BLINK_RENDERER_PLATFORM_BINDINGS_SOURCES
-    ${BLINK_RENDERER_PLATFORM_DIR}bindings/wrapper_type_info.cc
-    #bindings/wrapper_type_info.h
-    ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}bindings/active_script_wrappable_base.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}bindings/active_script_wrappable_base.h
-    ${BLINK_RENDERER_PLATFORM_DIR}bindings/binding_security_for_platform.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}bindings/binding_security_for_platform.h
-    ${BLINK_RENDERER_PLATFORM_DIR}bindings/callback_function_base.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}bindings/callback_function_base.h
-    ${BLINK_RENDERER_PLATFORM_DIR}bindings/callback_interface_base.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}bindings/callback_interface_base.h
-    ${BLINK_RENDERER_PLATFORM_DIR}bindings/callback_method_retriever.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}bindings/callback_method_retriever.h
-    #${BLINK_RENDERER_PLATFORM_DIR}bindings/custom_wrappable.h
-    #${BLINK_RENDERER_PLATFORM_DIR}bindings/dom_data_store.h
-    ${BLINK_RENDERER_PLATFORM_DIR}bindings/dom_wrapper_world.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}bindings/dom_wrapper_world.h
-    #${BLINK_RENDERER_PLATFORM_DIR}bindings/exception_code.h
-    ${BLINK_RENDERER_PLATFORM_DIR}bindings/exception_messages.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}bindings/exception_messages.h
-    ${BLINK_RENDERER_PLATFORM_DIR}bindings/exception_state.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}bindings/exception_state.h
-    ${BLINK_RENDERER_PLATFORM_DIR}bindings/microtask.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}bindings/microtask.h
-    #${BLINK_RENDERER_PLATFORM_DIR}bindings/name_client.h
-    # uses v8::Isolate::GetCurrentContext
-    ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}bindings/origin_trial_features.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}bindings/origin_trial_features.h
-    ## TODO ## requires third_party/zlib/google/
-    ${BLINK_RENDERER_PLATFORM_DIR}bindings/parkable_string.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}bindings/parkable_string.h
-    ## TODO ##
-    ${BLINK_RENDERER_PLATFORM_DIR}bindings/parkable_string_manager.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}bindings/parkable_string_manager.h
-    ${BLINK_RENDERER_PLATFORM_DIR}bindings/runtime_call_stats.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}bindings/runtime_call_stats.h
-    #${BLINK_RENDERER_PLATFORM_DIR}bindings/scoped_persistent.h
-    ${BLINK_RENDERER_PLATFORM_DIR}bindings/script_forbidden_scope.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}bindings/script_forbidden_scope.h
-    #${BLINK_RENDERER_PLATFORM_DIR}bindings/script_promise_properties.h
-    ${BLINK_RENDERER_PLATFORM_DIR}bindings/script_state.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}bindings/script_state.h
-    ${BLINK_RENDERER_PLATFORM_DIR}bindings/script_wrappable.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}bindings/script_wrappable.h
-    #${BLINK_RENDERER_PLATFORM_DIR}bindings/shared_persistent.h
-    ${BLINK_RENDERER_PLATFORM_DIR}bindings/string_resource.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}bindings/string_resource.h
-    #${BLINK_RENDERER_PLATFORM_DIR}bindings/to_v8.h
-    #${BLINK_RENDERER_PLATFORM_DIR}bindings/trace_wrapper_member.h
-    ${BLINK_RENDERER_PLATFORM_DIR}bindings/v0_custom_element_binding.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}bindings/v0_custom_element_binding.h
-    ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}bindings/trace_wrapper_v8_reference.h
-    ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}bindings/trace_wrapper_v8_string.cc
-    ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}bindings/trace_wrapper_v8_string.h
-    ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}bindings/v8_binding.cc
-    ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}bindings/v8_binding.h
-    ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}bindings/v8_binding_macros.h
-    ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}bindings/v8_cross_origin_setter_info.h
-    ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}bindings/v8_dom_activity_logger.cc
-    ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}bindings/v8_dom_activity_logger.h
-    ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}bindings/v8_dom_wrapper.cc
-    ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}bindings/v8_dom_wrapper.h
-    ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}bindings/v8_global_value_map.h
-    ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}bindings/v8_object_constructor.cc
-    ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}bindings/v8_object_constructor.h
-    ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}bindings/v8_per_context_data.cc
-    ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}bindings/v8_per_context_data.h
-    ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}bindings/v8_per_isolate_data.cc
-    ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}bindings/v8_per_isolate_data.h
-    ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}bindings/v8_private_property.cc
-    ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}bindings/v8_private_property.h
-    ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}bindings/v8_throw_exception.cc
-    ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}bindings/v8_throw_exception.h
-    ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}bindings/v8_value_cache.cc
-    ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}bindings/v8_value_cache.h
-    ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}bindings/v8_value_or_script_wrappable_adapter.cc
-    ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}bindings/v8_value_or_script_wrappable_adapter.h
-  )
 endif() # ${CMAKE_SYSTEM_NAME}
+
+list(APPEND BLINK_RENDERER_PLATFORM_INSTRUMENTATION_SOURCES
+  #
+  #blink_platform_sources("instrumentation")
+  # see services/resource_coordinator/public/mojom/coordination_unit.mojom-blink.h
+  # requires services/resource_coordinator/public/mojom/
+  ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}instrumentation/resource_coordinator/document_resource_coordinator.cc
+  ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}instrumentation/resource_coordinator/document_resource_coordinator.h
+  ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}instrumentation/resource_coordinator/renderer_resource_coordinator.cc
+  ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}instrumentation/resource_coordinator/renderer_resource_coordinator.h
+  ${BLINK_RENDERER_PLATFORM_DIR}instrumentation/tracing/memory_cache_dump_provider.cc
+  #${BLINK_RENDERER_PLATFORM_DIR}instrumentation/tracing/memory_cache_dump_provider.h
+  ${BLINK_RENDERER_PLATFORM_DIR}instrumentation/tracing/trace_event.cc
+  #${BLINK_RENDERER_PLATFORM_DIR}instrumentation/tracing/trace_event.h
+  ${BLINK_RENDERER_PLATFORM_DIR}instrumentation/tracing/traced_value.cc
+  #${BLINK_RENDERER_PLATFORM_DIR}instrumentation/tracing/traced_value.h
+  ${BLINK_RENDERER_PLATFORM_DIR}instrumentation/tracing/web_memory_allocator_dump.cc
+  #${BLINK_RENDERER_PLATFORM_DIR}instrumentation/tracing/web_memory_allocator_dump.h
+  ${BLINK_RENDERER_PLATFORM_DIR}instrumentation/tracing/web_process_memory_dump.cc
+  #${BLINK_RENDERER_PLATFORM_DIR}instrumentation/tracing/web_process_memory_dump.h
+)
+
+list(APPEND BLINK_RENDERER_PLATFORM_BINDINGS_SOURCES
+  ${BLINK_RENDERER_PLATFORM_DIR}bindings/wrapper_type_info.cc
+  #bindings/wrapper_type_info.h
+  ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}bindings/active_script_wrappable_base.cc
+  #${BLINK_RENDERER_PLATFORM_DIR}bindings/active_script_wrappable_base.h
+  ${BLINK_RENDERER_PLATFORM_DIR}bindings/binding_security_for_platform.cc
+  #${BLINK_RENDERER_PLATFORM_DIR}bindings/binding_security_for_platform.h
+  ${BLINK_RENDERER_PLATFORM_DIR}bindings/callback_function_base.cc
+  #${BLINK_RENDERER_PLATFORM_DIR}bindings/callback_function_base.h
+  ${BLINK_RENDERER_PLATFORM_DIR}bindings/callback_interface_base.cc
+  #${BLINK_RENDERER_PLATFORM_DIR}bindings/callback_interface_base.h
+  ${BLINK_RENDERER_PLATFORM_DIR}bindings/callback_method_retriever.cc
+  #${BLINK_RENDERER_PLATFORM_DIR}bindings/callback_method_retriever.h
+  #${BLINK_RENDERER_PLATFORM_DIR}bindings/custom_wrappable.h
+  #${BLINK_RENDERER_PLATFORM_DIR}bindings/dom_data_store.h
+  ${BLINK_RENDERER_PLATFORM_DIR}bindings/dom_wrapper_world.cc
+  #${BLINK_RENDERER_PLATFORM_DIR}bindings/dom_wrapper_world.h
+  #${BLINK_RENDERER_PLATFORM_DIR}bindings/exception_code.h
+  ${BLINK_RENDERER_PLATFORM_DIR}bindings/exception_messages.cc
+  #${BLINK_RENDERER_PLATFORM_DIR}bindings/exception_messages.h
+  ${BLINK_RENDERER_PLATFORM_DIR}bindings/exception_state.cc
+  #${BLINK_RENDERER_PLATFORM_DIR}bindings/exception_state.h
+  ${BLINK_RENDERER_PLATFORM_DIR}bindings/microtask.cc
+  #${BLINK_RENDERER_PLATFORM_DIR}bindings/microtask.h
+  #${BLINK_RENDERER_PLATFORM_DIR}bindings/name_client.h
+  # uses v8::Isolate::GetCurrentContext
+  ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}bindings/origin_trial_features.cc
+  #${BLINK_RENDERER_PLATFORM_DIR}bindings/origin_trial_features.h
+  ## TODO ## requires third_party/zlib/google/
+  ${BLINK_RENDERER_PLATFORM_DIR}bindings/parkable_string.cc
+  #${BLINK_RENDERER_PLATFORM_DIR}bindings/parkable_string.h
+  ## TODO ##
+  ${BLINK_RENDERER_PLATFORM_DIR}bindings/parkable_string_manager.cc
+  #${BLINK_RENDERER_PLATFORM_DIR}bindings/parkable_string_manager.h
+  ${BLINK_RENDERER_PLATFORM_DIR}bindings/runtime_call_stats.cc
+  #${BLINK_RENDERER_PLATFORM_DIR}bindings/runtime_call_stats.h
+  #${BLINK_RENDERER_PLATFORM_DIR}bindings/scoped_persistent.h
+  ${BLINK_RENDERER_PLATFORM_DIR}bindings/script_forbidden_scope.cc
+  #${BLINK_RENDERER_PLATFORM_DIR}bindings/script_forbidden_scope.h
+  #${BLINK_RENDERER_PLATFORM_DIR}bindings/script_promise_properties.h
+  ${BLINK_RENDERER_PLATFORM_DIR}bindings/script_state.cc
+  #${BLINK_RENDERER_PLATFORM_DIR}bindings/script_state.h
+  ${BLINK_RENDERER_PLATFORM_DIR}bindings/script_wrappable.cc
+  #${BLINK_RENDERER_PLATFORM_DIR}bindings/script_wrappable.h
+  #${BLINK_RENDERER_PLATFORM_DIR}bindings/shared_persistent.h
+  ${BLINK_RENDERER_PLATFORM_DIR}bindings/string_resource.cc
+  #${BLINK_RENDERER_PLATFORM_DIR}bindings/string_resource.h
+  #${BLINK_RENDERER_PLATFORM_DIR}bindings/to_v8.h
+  #${BLINK_RENDERER_PLATFORM_DIR}bindings/trace_wrapper_member.h
+  ${BLINK_RENDERER_PLATFORM_DIR}bindings/v0_custom_element_binding.cc
+  #${BLINK_RENDERER_PLATFORM_DIR}bindings/v0_custom_element_binding.h
+  ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}bindings/trace_wrapper_v8_reference.h
+  ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}bindings/trace_wrapper_v8_string.cc
+  ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}bindings/trace_wrapper_v8_string.h
+  ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}bindings/v8_binding.cc
+  ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}bindings/v8_binding.h
+  ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}bindings/v8_binding_macros.h
+  ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}bindings/v8_cross_origin_setter_info.h
+  ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}bindings/v8_dom_activity_logger.cc
+  ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}bindings/v8_dom_activity_logger.h
+  ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}bindings/v8_dom_wrapper.cc
+  ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}bindings/v8_dom_wrapper.h
+  ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}bindings/v8_global_value_map.h
+  ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}bindings/v8_object_constructor.cc
+  ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}bindings/v8_object_constructor.h
+  ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}bindings/v8_per_context_data.cc
+  ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}bindings/v8_per_context_data.h
+  ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}bindings/v8_per_isolate_data.cc
+  ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}bindings/v8_per_isolate_data.h
+  ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}bindings/v8_private_property.cc
+  ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}bindings/v8_private_property.h
+  ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}bindings/v8_throw_exception.cc
+  ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}bindings/v8_throw_exception.h
+  ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}bindings/v8_value_cache.cc
+  ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}bindings/v8_value_cache.h
+  ## TODO ## ${BLINK_RENDERER_PLATFORM_DIR}bindings/v8_value_or_script_wrappable_adapter.cc
+  ## TODO ## #${BLINK_RENDERER_PLATFORM_DIR}bindings/v8_value_or_script_wrappable_adapter.h
+)
 
 add_library(BLINK_RENDERER_PLATFORM STATIC
   ${BLINK_RENDERER_PLATFORM_GEN_SOURCES}
@@ -1883,13 +1883,16 @@ target_link_libraries(BLINK_RENDERER_PLATFORM PRIVATE
   #${libpng_LIB}
   ${iccjpeg_LIB}
   #
-  # khronos
-  ${khronos_LIB}
   LIB_V8_INTERFACE
   COMPONENTS_SCHEDULING_METRICS
   ${HARFBUZZ_LIBRARIES}
   GMEDIA
   GZLIB_EXT
+)
+
+target_link_libraries(BLINK_RENDERER_PLATFORM PRIVATE
+  # khronos
+  ${khronos_LIB}
 )
 
 set_property(TARGET BLINK_RENDERER_PLATFORM PROPERTY CXX_STANDARD 17)

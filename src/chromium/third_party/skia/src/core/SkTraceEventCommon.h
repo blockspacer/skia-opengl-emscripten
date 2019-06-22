@@ -1,4 +1,4 @@
-// Copyright 2015 The Chromium Authors. All rights reserved.
+﻿// Copyright 2015 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 #ifndef SkTraceEventCommon_DEFINED
@@ -54,7 +54,8 @@
 // The tracing UI will show these counters in a single graph, as a summed area chart.
 
 #if defined(TRACE_EVENT0)
-#error "Another copy of this file has already been included."
+///#error "Another copy of this file has already been included."
+#warning "Another copy of this file has already been included." // __TODO__
 #endif
 
 #define TRACE_EMPTY do {} while (0)

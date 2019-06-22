@@ -1,4 +1,4 @@
-### --- GFX_SWITCHES ---###
+﻿### --- GFX_SWITCHES ---###
 
 set(GFX_SWITCHES_SOURCES
   ${GFX_SWITCHES_DIR}switches.cc
@@ -13,6 +13,7 @@ add_library(GFX_SWITCHES STATIC
 target_link_libraries(GFX_SWITCHES PUBLIC
   #${BASE_LIBRARIES}
   base
+  #${OPENGLES2_LIBRARIES}
 )
 
 set_property(TARGET GFX_SWITCHES PROPERTY CXX_STANDARD 17)

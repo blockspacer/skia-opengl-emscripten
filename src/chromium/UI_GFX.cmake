@@ -312,10 +312,13 @@ target_link_libraries(UI_GFX PUBLIC
   base
   # linux libsync
   ${libsync_LIB}
-  # khronos
-  ${khronos_LIB}
   #
   ${EXTRA_DEPS}
+)
+
+target_link_libraries(UI_GFX PRIVATE
+  # khronos
+  ${khronos_LIB}
 )
 
 set_property(TARGET UI_GFX PROPERTY CXX_STANDARD 17)

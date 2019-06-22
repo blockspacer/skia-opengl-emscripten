@@ -1,4 +1,4 @@
-// Copyright (c) 2012 The Chromium Authors. All rights reserved.
+﻿// Copyright (c) 2012 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -22,6 +22,31 @@
 #include "base/time/time.h"
 #include "build/build_config.h"
 
+#if defined(OS_EMSCRIPTEN)
+#include <emscripten/emscripten.h>
+#include <emscripten/html5.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <assert.h>
+
+struct s_mallinfo {
+    int arena;    /* non-mmapped space allocated from system */
+    int ordblks;  /* number of free chunks */
+    int smblks;   /* always 0 */
+    int hblks;    /* always 0 */
+    int hblkhd;   /* space in mmapped regions */
+    int usmblks;  /* maximum total allocated space */
+    int fsmblks;  /* always 0 */
+    int uordblks; /* total allocated space */
+    int fordblks; /* total free space */
+    int keepcost; /* releasable (via malloc_trim) space */
+};
+
+extern "C" {
+extern s_mallinfo mallinfo();
+}
+#endif
+
 namespace base {
 namespace {
 
@@ -40,6 +65,38 @@ int GetLowMemoryDeviceThresholdMB() {
   return kLowEndDeviceMemoryThresholdMB.Get();
 }
 }  // namespace
+
+#if defined(OS_EMSCRIPTEN)
+int64_t SysInfo::AmountOfPhysicalMemoryImpl() {
+    //int resTOTAL_MEMORY = EM_ASM_INT(return TOTAL_MEMORY);
+    int resHEAP8 = EM_ASM_INT(return HEAP8.length);
+    //DCHECK(resHEAP8 == resTOTAL_MEMORY);
+    return static_cast<int64_t>(resHEAP8);
+}
+
+// static
+SysInfo::HardwareInfo SysInfo::GetHardwareInfoSync() {
+    static const size_t kMaxStringSize = 100u;
+    HardwareInfo info;
+    info.model = "emscripten";
+    info.manufacturer = "emscripten";
+    info.serial_number = "emscripten";
+    return info;
+}
+
+// static
+int64_t SysInfo::AmountOfAvailablePhysicalMemoryImpl() {
+    s_mallinfo i = mallinfo();
+    unsigned int totalMemory = AmountOfPhysicalMemoryImpl();
+    unsigned int dynamicTop = EM_ASM_INT(return HEAPU32[DYNAMICTOP_PTR>>2]);
+    return static_cast<int64_t>( totalMemory - dynamicTop + i.fordblks);
+}
+
+// static
+std::string SysInfo::CPUModelName() {
+    return std::string("emscripten");
+}
+#endif
 
 // static
 int64_t SysInfo::AmountOfPhysicalMemory() {

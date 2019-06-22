@@ -1,4 +1,4 @@
-### --- GFX_COLOR_SPACE ---###
+﻿### --- GFX_COLOR_SPACE ---###
 
 set(GFX_COLOR_SPACE_SOURCES
   ${GFX_COLOR_SPACE_DIR}color_space.cc
@@ -21,6 +21,7 @@ target_link_libraries(GFX_COLOR_SPACE PUBLIC
   base
   SKIA
   #skcms
+  #${OPENGLES2_LIBRARIES}
 )
 
 set_property(TARGET GFX_COLOR_SPACE PROPERTY CXX_STANDARD 17)

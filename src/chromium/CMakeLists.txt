@@ -198,18 +198,17 @@ else()
   set(WTF_EMCC_DEFINITIONS "")
 endif ()
 
-if (EMSCRIPTEN)
+if (TARGET_EMSCRIPTEN)
   # libxml
   #include(GLIBXML.cmake)
   # zlib
   include(GZLIB_EXT.cmake)
 elseif(TARGET_LINUX)
   # khronos
-  set(khronos_LIB
-    khronos
-  )
-  # khronos
-  include(khronos.cmake)
+  if(ENABLE_KHRONOS)
+    # khronos
+    include(khronos.cmake)
+  endif(ENABLE_KHRONOS)
   # libsync
   set(libsync_LIB
     libsync

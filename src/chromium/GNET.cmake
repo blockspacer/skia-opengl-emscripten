@@ -1857,6 +1857,8 @@ add_library(GNET STATIC
   ${GNET_DNS_SOURCES}
 )
 
+#message(FATAL_ERROR BORINGSSL_LIBS=${BORINGSSL_LIBS})
+
 target_link_libraries(GNET PUBLIC
   #${BASE_LIBRARIES}
   base
@@ -1872,6 +1874,7 @@ target_link_libraries(GNET PUBLIC
   # sql
   # protobuf
   # libnss or boringssl
+  ${BORINGSSL_LIBS}
   # libnspr
   # open-vcdiff
   #dynamic_annotations

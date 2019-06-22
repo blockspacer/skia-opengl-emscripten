@@ -399,7 +399,7 @@
 # ${ICU_FULL_DIR}ztrans.cpp
 #)
 
-message(WARNING "TODO: add icu data file, see stubdata.cpp, ICU_UTIL_DATA_IMPL=ICU_UTIL_DATA_FILE, U_ICUDATAENTRY_IN_COMMON, icu_use_data_file_flag")
+message(WARNING "TODO: add icu data file for BLINK, see stubdata.cpp, ICU_UTIL_DATA_IMPL=ICU_UTIL_DATA_FILE, U_ICUDATAENTRY_IN_COMMON, icu_use_data_file_flag")
 
 # find source/i18n -maxdepth 1 ! -type d | egrep '\.(c|cpp)$' |  sort | sed "s/^\(.*\)$/ '\1',/"
 # find source/common -maxdepth 1 ! -type d | egrep '\.(c|cpp)$' |  sort | sed "s/^\(.*\)$/ '\1',/"

@@ -49,7 +49,7 @@
 #endif
 
 #if defined(ENABLE_SKIA) && defined(ENABLE_BLINK)
-#define ENABLE_GFX_GEOMETRY 1
+//#define ENABLE_GFX_GEOMETRY 1
 #endif
 
 #if defined(ENABLE_GFX_GEOMETRY) && !defined(ENABLE_BASE)
@@ -217,8 +217,10 @@
 #include <skia/include/core/SkPictureRecorder.h>
 #include <skia/include/core/SkStream.h>
 #include <skia/include/core/SkSurface.h>
+#if defined(ENABLE_SKOTTIE)
 #include <skia/modules/skottie/include/Skottie.h>
 #include <skia/modules/skottie/utils/SkottieUtils.h>
+#endif
 #include <skia/src/core/SkMakeUnique.h>
 
 #include <skia/include/effects/SkGradientShader.h>
@@ -421,6 +423,7 @@
 //#include "ui/views/layout/grid_layout.h"
 //#include "ui/views/view.h"
 #include "base/logging.h"
+#include "base/system/sys_info.h"
 //#include "ui/compositor/layer.h"
 //#include "ui/compositor/layer_delegate.h"
 //#include "ui/compositor/layer_owner.h"
@@ -536,6 +539,8 @@ static sk_sp<SkImage> skImageSp;
 //#define ENABLE_BLINK_PLATFORM 1
 //#endif
 
+//#undef ENABLE_BLINK_PLATFORM
+
 #ifdef ENABLE_BLINK_PLATFORM
 
 #include <third_party/blink/renderer/platform/runtime_enabled_features.h>
@@ -584,7 +589,15 @@ static sk_sp<SkImage> skImageSp;
 #include "third_party/blink/renderer/platform/wtf/allocator.h"
 #include "third_party/blink/renderer/platform/wtf/forward.h"
 #include "third_party/blink/renderer/platform/wtf/vector.h"
+#include "third_party/blink/renderer/platform/heap/thread_state.h"
+//#include "third_party/blink/renderer/platform/scheduler/public/thread_scheduler.h"
+#include "third_party/blink/public/platform/platform.h"
+#include "third_party/blink/renderer/platform/image-decoders/image_decoder.h"
+#include "third_party/blink/renderer/platform/shared_buffer.h"
 
+static scoped_refptr<blink::StaticBitmapImage> sStaticBitmapImage;
+
+static std::unique_ptr<blink::Platform> g_platform;
 #endif // ENABLE_BLINK_PLATFORM
 
 #ifdef ENABLE_HARFBUZZ
@@ -1526,7 +1539,10 @@ public:
     {
       // see https://github.com/codebyravi/electron/blob/master/atom/common/api/atom_api_native_image.cc#L115
       //gfx_canvas.DrawImageInt(*imageSkia.get(), 330, 330);
+#if defined(ENABLE_UI)/// && defined(__TODO__)
+      DCHECK(gfxImageSkia);
       gfx_canvas.DrawImageInt(gfx::ImageSkia(gfxImageSkia->GetRepresentation(10.0f)), 630, 30);
+#endif
     }
     {
       cc::PaintFlags flags;
@@ -1723,6 +1739,8 @@ public:
     }
 #endif // ENABLE_SKOTTIE
 
+    std::cout << std::endl; // flush
+
 #ifdef ENABLE_BLINK_PLATFORM
   // see https://chromium.googlesource.com/chromium/src/+/master/third_party/blink/renderer/platform/graphics/paint/README.md
   // see https://blog.csdn.net/tornmy/article/details/82593718
@@ -1790,6 +1808,7 @@ public:
   context.FillRoundedRect(blink::FloatRoundedRect(400, 400, 600, 600),
     blink::Color(0.0f, 1.0f, 0.5f, 0.5f));
 
+
   //printf("FillRect 8\n");
   // The inset shadow case.
   blink::GraphicsContext::Edges clipped_edges = blink::GraphicsContext::kNoEdge;
@@ -1801,10 +1820,8 @@ public:
     clipped_edges);
   //printf("FillRect 9\n");
 
-  base::WeakPtr<blink::WebGraphicsContext3DProviderWrapper> wptr = nullptr;
-  scoped_refptr<blink::StaticBitmapImage> bitmap =
-      blink::StaticBitmapImage::Create(skImageSp, ::std::move(wptr));
-  if (!bitmap || bitmap->IsNull() || !bitmap->IsValid()) {
+#if defined(ENABLE_UI) ///&& defined(__TODO__)
+  if (!sStaticBitmapImage || sStaticBitmapImage->IsNull() || !sStaticBitmapImage->IsValid()) {
     printf("Invalid StaticBitmapImage\n");
   }
 
@@ -1816,14 +1833,15 @@ public:
   //blink::Image img = gfx::ImageSkia(imageSkia->GetRepresentation(10.0f));
 
   //printf("FillRect 70\n");
-
-  context.DrawImageTiled(bitmap.get(),
+  DCHECK(sStaticBitmapImage);
+  context.DrawImageTiled(sStaticBitmapImage.get(),
     blink::FloatRect(0, 0, 400, 400),
     blink::FloatRect(0, 0, 1000, 1000),
     blink::FloatSize(1, 1),
     blink::FloatPoint{1.0, 1.0},
     blink::FloatSize(0.0, 0.0),
     SkBlendMode::kSrcOver);
+#endif
 
   //printf("FillRect 71\n");
   auto rr = context.EndRecording();
@@ -2941,6 +2959,87 @@ static int InitGL() {
   return GL_TRUE;
 }
 
+static void drawGLTexture(const int width, const int height, const void* data, const GLuint texID) {
+    GL_CHECK( glBindTexture(GL_TEXTURE_2D, texID) );
+    GL_CHECK( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE) );
+    GL_CHECK( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE) );
+    GL_CHECK( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR) );
+    GL_CHECK( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR) );
+    GL_CHECK( glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data) );
+}
+
+static void drawUIDemo() {
+    sk_sp<SkImage> pImage = nullptr;
+    // Draw to the surface via its SkCanvas.
+    // We don't manage this pointer's lifetime.
+    SkCanvas* canvas =
+        //  getRasterizerSkSurface()->getCanvas();
+        sRasterSurface->getCanvas();
+
+    canvas->clear(SkColorSetARGB(255, 255, 255, 255));
+    ///if (isDebugPeriodReached()) printf("Draw() 3\n");
+
+    myView->onDraw(canvas);
+    //if (isDebugPeriodReached()) printf("Draw() 4\n");
+
+    sRasterSurface->flush();
+    //if (isDebugPeriodReached()) printf("Draw() 5\n");
+
+    pImage = sRasterSurface->makeImageSnapshot();
+    //const sk_sp<SkImage> pImage = getRasterizerSkSurface()->makeImageSnapshot();
+    if(pImage/* && !pImage->isAlphaOnly()
+  && pImage->width() > 0 && pImage->height() > 0*/) {
+        ///if (isDebugPeriodReached()) printf("Draw() 7\n");
+        SkPixmap pixmap;
+        if (!pImage->peekPixels(&pixmap)) {
+            ///if (isDebugPeriodReached())
+            printf("can`t peekPixels\n");
+        }
+        DCHECK(!pixmap.bounds().isEmpty());
+        ///if (isDebugPeriodReached()) printf("Draw() 7.1\n");
+        drawGLTexture(pixmap.width(), pixmap.height(), pixmap.addr(), skia_texture);
+    }
+
+    if (nullptr == pImage) {
+        ///if (isDebugPeriodReached())
+        printf("can`t get pImage\n");
+    }
+}
+
+#if defined(ENABLE_COBALT)
+static void drawBrowserDemo() {
+    //using cobalt::renderer::rasterizer::egl::getRasterizerSkSurface;
+    using cobalt::renderer::rasterizer::egl::getRasterizerSkImage;
+    ///using cobalt::renderer::rasterizer::egl::getRasterizerSkPixmap;
+
+    ///if (isDebugPeriodReached()) printf("Draw() 7\n");
+    sk_sp<SkImage> pImage = getRasterizerSkImage();
+    if(pImage) {
+        SkPixmap pixmap;// = getRasterizerSkPixmap();
+        if (!pImage->peekPixels(&pixmap)) {
+            ///if (isDebugPeriodReached())
+            printf("can`t peekPixels\n");
+        }
+        if(!pixmap.bounds().isEmpty()) {
+            DCHECK(!pixmap.bounds().isEmpty());
+            ///if (isDebugPeriodReached()) printf("Draw() 7.1\n");
+
+            drawGLTexture(pixmap.width(), pixmap.height(), pixmap.addr(), skia_texture);
+        } else {
+            ///if (isDebugPeriodReached())
+            printf("pixmap.bounds().isEmpty()\n");
+        }
+    } else {
+        drawUIDemo();
+    }
+
+    //if (nullptr == pImage) {
+    //    ///if (isDebugPeriodReached())
+    //    printf("can`t get pImage\n");
+    //}
+}
+#endif
+
 ///
 // Draw a triangle using the shader pair created in Init()
 //
@@ -2956,88 +3055,16 @@ static void Draw() {
 #if defined(ENABLE_SKIA)
 
 #if defined(ENABLE_COBALT)
-//using cobalt::renderer::rasterizer::egl::getRasterizerSkSurface;
-using cobalt::renderer::rasterizer::egl::getRasterizerSkImage;
-///using cobalt::renderer::rasterizer::egl::getRasterizerSkPixmap;
   if (render_browser_window
       /*&& g_cobaltTester
       && g_cobaltTester->window_->isDocumentStartedLoading()
       && g_cobaltTester->window_->isStartedDocumentLoader()*/)
   {
-          ///if (isDebugPeriodReached()) printf("Draw() 7\n");
-          sk_sp<SkImage> pImage = getRasterizerSkImage();
-          if(pImage) {
-          SkPixmap pixmap;// = getRasterizerSkPixmap();
-          if (!pImage->peekPixels(&pixmap)) {
-              ///if (isDebugPeriodReached())
-              printf("can`t peekPixels\n");
-          }
-              if(!pixmap.bounds().isEmpty()) {
-                  DCHECK(!pixmap.bounds().isEmpty());
-                  ///if (isDebugPeriodReached()) printf("Draw() 7.1\n");
-
-                  GL_CHECK( glBindTexture(GL_TEXTURE_2D, skia_texture) );
-                  GL_CHECK( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE) );
-                  GL_CHECK( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE) );
-                  GL_CHECK( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR) );
-                  GL_CHECK( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR) );
-                  GL_CHECK( glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, pixmap.width(), pixmap.height(), 0, GL_RGBA,
-                                        GL_UNSIGNED_BYTE, pixmap.addr()) );
-              } else {
-                  ///if (isDebugPeriodReached())
-                      printf("pixmap.bounds().isEmpty()\n");
-              }
-          }
-
-          if (nullptr == pImage) {
-              ///if (isDebugPeriodReached())
-              printf("can`t get pImage\n");
-          }
+      drawBrowserDemo();
   } else
 #endif
   {
-      sk_sp<SkImage> pImage = nullptr;
-      // Draw to the surface via its SkCanvas.
-      // We don't manage this pointer's lifetime.
-      SkCanvas* canvas =
-          //  getRasterizerSkSurface()->getCanvas();
-          sRasterSurface->getCanvas();
-
-      canvas->clear(SkColorSetARGB(255, 255, 255, 255));
-      ///if (isDebugPeriodReached()) printf("Draw() 3\n");
-
-      myView->onDraw(canvas);
-      //if (isDebugPeriodReached()) printf("Draw() 4\n");
-
-      sRasterSurface->flush();
-      //if (isDebugPeriodReached()) printf("Draw() 5\n");
-
-      pImage = sRasterSurface->makeImageSnapshot();
-      //const sk_sp<SkImage> pImage = getRasterizerSkSurface()->makeImageSnapshot();
-      if(pImage/* && !pImage->isAlphaOnly()
-  && pImage->width() > 0 && pImage->height() > 0*/) {
-          ///if (isDebugPeriodReached()) printf("Draw() 7\n");
-          SkPixmap pixmap;
-          if (!pImage->peekPixels(&pixmap)) {
-              ///if (isDebugPeriodReached())
-                  printf("can`t peekPixels\n");
-          }
-          DCHECK(!pixmap.bounds().isEmpty());
-          ///if (isDebugPeriodReached()) printf("Draw() 7.1\n");
-
-          GL_CHECK( glBindTexture(GL_TEXTURE_2D, skia_texture) );
-          GL_CHECK( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE) );
-          GL_CHECK( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE) );
-          GL_CHECK( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR) );
-          GL_CHECK( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR) );
-          GL_CHECK( glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, pixmap.width(), pixmap.height(), 0, GL_RGBA,
-                                GL_UNSIGNED_BYTE, pixmap.addr()) );
-      }
-
-      if (nullptr == pImage) {
-          ///if (isDebugPeriodReached())
-              printf("can`t get pImage\n");
-      }
+      drawUIDemo();
   }
 
   // Draw to the surface via its SkCanvas.
@@ -3258,6 +3285,35 @@ static void mainLoop() {
   // Render
   Draw();
 
+/*
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+  base::Thread thread("render");
+  base::WaitableEvent event(base::WaitableEvent::ResetPolicy::MANUAL,
+                            base::WaitableEvent::InitialState::NOT_SIGNALED);
+
+  thread.Start();
+  DCHECK(thread.task_runner());
+  thread.task_runner()->PostTask(
+      FROM_HERE,
+      base::BindOnce(
+          [](base::RepeatingCallback<void()> cb) {
+              printf("rendering Draw 1\n");
+#endif
+              Draw();
+              event.Signal();
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+          },
+          base::BindRepeating([]() {
+              printf("rendering Draw 2\n");
+          })));
+  ::std::cout << "thread rendering start Wait..." << base::Time::Now() << "\n";
+#endif
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+  /// \todo Reactor your code so that the waiting happens on another thread instead of the main thread
+  event.Wait();
+#endif
+*/
+
   ///if (isDebugPeriodReached()) printf("mainLoop 3\n");
 
 #if defined(__EMSCRIPTEN__) && defined(HAVE_SWAP_CONTROL)
@@ -3313,7 +3369,10 @@ static void mainLoop() {
     ///if (isDebugPeriodReached()) printf("mainLoop 7\n");
 
     incDebugPeriodicCounter();
-    if (isDebugPeriodReached()) printf("mainLoop 8\n");
+    if (isDebugPeriodReached()) {
+        printf("mainLoop 8\n");
+        std::cout << std::endl; // flush
+    }
 }
 
 #ifdef ENABLE_WTF
@@ -3425,6 +3484,16 @@ int main(int argc, char** argv) {
     printf("gfxRect top_right = %s ...\n", gfxRect.top_right().ToString().c_str());
 #endif
 
+#ifdef ENABLE_BASE
+    base::Thread::Options options;
+    //options.message_loop_type = base::MessageLoop::TYPE_IO;
+    main_thread_.StartWithOptions(options);
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+    /// \todo Reactor your code so that the waiting happens on another thread instead of the main thread
+    main_thread_.WaitUntilThreadStarted();
+#endif
+#endif // ENABLE_BASE
+
 #ifdef ENABLE_BLINK_PLATFORM
   printf("Init RuntimeEnabledFeatures ...\n");
   // Disable all runtime enabled features
@@ -3434,6 +3503,13 @@ int main(int argc, char** argv) {
 #endif // ENABLE_BLINK_PLATFORM
 
 #ifdef ENABLE_BASE
+
+  ///printf("SysInfo::AmountOfFreeDiskSpace %d ...\n", base::SysInfo::AmountOfFreeDiskSpace());
+  printf("SysInfo::AmountOfAvailablePhysicalMemory %ld ...\n", base::SysInfo::AmountOfAvailablePhysicalMemory());
+  printf("SysInfo::NumberOfProcessors %d ...\n", base::SysInfo::NumberOfProcessors());
+  printf("SysInfo::NumberOfProcessors %s ...\n", base::SysInfo::OperatingSystemArchitecture().c_str());
+  printf("SysInfo::NumberOfProcessors %s ...\n", base::SysInfo::CPUModelName().c_str());
+
   printf("Init AtExitManager ...\n");
 #ifdef ENABLE_COBALT
   base::AtExitManager at_exit;
@@ -3562,8 +3638,33 @@ int main(int argc, char** argv) {
   // https://github.com/chromium/chromium/blob/master/third_party/blink/renderer/platform/exported/platform.cc#L119
   WTF::Partitions::Initialize(nullptr); // TODO
 
+#if defined(ENABLE_UI) //&& defined(__TODO__)
+    //base::Thread ui_thread("render");
+    //blink::ThreadCreationParams params(blink::WebThreadType::kMainThread);
+
+    // https://github.com/chromium/chromium/blob/a54556118f27685fc04547c939805de6acdccc26/third_party/blink/renderer/platform/testing/image_decode_bench.cc#L104
+  printf("Init blink::Platform ...\n");
+  main_thread_.task_runner()->PostTask(
+      FROM_HERE, base::Bind([](base::WaitableEvent* thread_event) {
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+          DCHECK(base::MessageLoopCurrent::Get());
+#endif
+          g_platform = std::make_unique<blink::Platform>();
+          ///mojo::core::Init();
+          blink::Platform::CreateMainThreadAndInitialize(g_platform.get());
+          printf("Main thread works...\n");
+          thread_event->Signal();
+      }, &main_thread_event_));
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+  /// \todo Reactor your code so that the waiting happens on another thread instead of the main thread
+  main_thread_event_.Wait();
+#endif
+  main_thread_event_.Reset();
+#else
   printf("Init WTF ...\n");
   WTF::Initialize(nullptr); // TODO
+#endif
+
   printf("Testing ...\n");
 
   {
@@ -3602,6 +3703,10 @@ int main(int argc, char** argv) {
     //DCHECK(thread.task_runner());
     //thread.task_runner()->PostTask(FROM_HERE, base::BindOnce(&MakeClosure, &closure));
     //thread.Stop();
+    DCHECK(thread.task_runner());
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+    thread.WaitUntilThreadStarted();
+#endif
 
     base::WaitableEvent event(base::WaitableEvent::ResetPolicy::MANUAL,
       base::WaitableEvent::InitialState::NOT_SIGNALED);
@@ -4158,9 +4263,6 @@ int main(int argc, char** argv) {
 
   printf("creating tests thread...\n");
 #ifdef ENABLE_BASE
-  base::Thread::Options options;
-  //options.message_loop_type = base::MessageLoop::TYPE_IO;
-  main_thread_.StartWithOptions(options);
   printf("tests thread started...\n");
   main_thread_.task_runner()->PostTask(
       FROM_HERE, base::Bind([](base::WaitableEvent* thread_event) {
@@ -4242,62 +4344,144 @@ int main(int argc, char** argv) {
 #if defined(ENABLE_SKIA)
   printf("Starting SKIA tests...\n");
 
-#if defined(ENABLE_UI)
-  {
-    SkImageInfo skImageInfo = SkImageInfo::Make(
-      100,
-      100,
-      SkColorType::kRGBA_8888_SkColorType,
-      SkAlphaType::kPremul_SkAlphaType, // alpha type can also be opaque if there is no alpha information
-      SkColorSpace::MakeSRGBLinear()
-    );
-    //SkBitmap::Config config = SkImageInfoToBitmapConfig(info, &isOpaque);
-    //SkBitmap fetched_bitmap;
-    void* pixels = nullptr;
-    char* fileData = nullptr;
-    long int fsize;
-    //size_t fsize;
-    int readRes = read_file(fImagePath.c_str(), fileData, fsize, true);
-    if (readRes != 0) {
-      printf("can`t read file %s\n", fImagePath.c_str());
-      return 1;
-    }
-    DCHECK(fileData != nullptr);
-    ::std::unique_ptr<SkBitmap> decoded(new SkBitmap());
-    /*
+  std::cout << std::endl; // flush
+
+#if defined(ENABLE_UI) //&& defined(__TODO__)
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+  //base::Thread ui_thread("render");
+        //blink::ThreadCreationParams params(blink::WebThreadType::kMainThread);
+
+
+#if DCHECK_IS_ON()
+  WTF::WillCreateThread();
+#endif
+        //params.thread_priority = base::ThreadPriority::DISPLAY;
+  /// TODO: UpdateThreadTLSAndWait
+  //blink::Thread::CreateAndSetCompositorThread();
+      //std::unique_ptr<blink::Thread> ui_thread = blink::Thread::CreateThread(params);
+  //blink::Thread* ui_thread = blink::Thread::CompositorThread();
+
+
+  base::WaitableEvent ui_sync_event(base::WaitableEvent::ResetPolicy::MANUAL,
+                            base::WaitableEvent::InitialState::NOT_SIGNALED);
+
+  //base::Thread::Options ui_thread_options;
+  //options.message_loop_type = base::MessageLoop::TYPE_IO;
+  //ui_thread.StartWithOptions(ui_thread_options);
+  //ui_thread->Start();
+
+  //base::SingleThreadTaskRunner*
+  //scoped_refptr<base::SingleThreadTaskRunner> task_runner =
+  //    //ui_thread->GetTaskRunner().get();
+  //    blink::Thread::MainThread()->GetTaskRunner();
+  //DCHECK(task_runner);
+  //DCHECK(ui_thread.task_runner());
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+  //ui_thread.WaitUntilThreadStarted();
+#endif
+  /// \note StaticBitmapImage::Create & SkImage::MakeFromBitmap require parent thread (TLS)
+  //ui_thread.task_runner()
+  //blink::Thread* uithread = ui_thread.get();
+  //task_runner->PostTask(
+  main_thread_.task_runner()->PostTask(
+      FROM_HERE,
+      base::BindOnce(
+          [](base::WaitableEvent* thread_event, /*blink::Thread**/ base::Thread* thread) {
+              printf("rendering Draw 1\n");
+              std::cout << std::endl; // flush
+#endif
+
+///#if defined(__TODO__)
+              ///DCHECK(thread->IsCurrentThread());
+              ///
+              ///blink::ThreadState::AttachCurrentThread();
+              {
+                  SkImageInfo skImageInfo = SkImageInfo::Make(
+                      100,
+                      100,
+                      SkColorType::kRGBA_8888_SkColorType,
+                      SkAlphaType::kPremul_SkAlphaType, // alpha type can also be opaque if there is no alpha information
+                      SkColorSpace::MakeSRGBLinear()
+                      );
+                  //SkBitmap::Config config = SkImageInfoToBitmapConfig(info, &isOpaque);
+                  //SkBitmap fetched_bitmap;
+                  void* pixels = nullptr;
+                  char* fileData = nullptr;
+                  long int fsize;
+                  //size_t fsize;
+                  int readRes = read_file(fImagePath.c_str(), fileData, fsize, true);
+                  if (readRes != 0) {
+                      printf("can`t read file %s\n", fImagePath.c_str());
+                  }
+                  DCHECK(fileData != nullptr);
+                  ::std::unique_ptr<SkBitmap> decoded(new SkBitmap());
+                  /*
   static bool Decode(const unsigned char* input, size_t input_size,
                      ColorFormat format, ::std::vector<unsigned char>* output,
                      int* w, int* h);
   static bool Decode(const unsigned char* input, size_t input_size,
                      SkBitmap* bitmap);
      */
-    const unsigned char* data =
-      reinterpret_cast<const unsigned char*>(fileData);
-    if (!gfx::PNGCodec::Decode(data, static_cast<size_t>(fsize), decoded.get())) {
-      printf("can`t decode png file %s\n", fImagePath.c_str());
-      decoded = gfx::JPEGCodec::Decode(data, static_cast<size_t>(fsize));
-      if (!decoded) {
-        printf("can`t decode JPEG file %s\n", fImagePath.c_str());
-        return 1;
-      }
-    }
-    //fetched_bitmap.setPixels(pixels);
-    //fetched_bitmap.setIsOpaque(isOpaque);
-    //gfx::ImageSkia imageSkia(gfx::ImageSkiaRep(*decoded, /*scale=*/1.0));
-    gfx::ImageSkiaRep rep = gfx::ImageSkiaRep(*decoded, /*scale=*/1.0);
-    gfxImageSkia = ::std::make_unique<gfx::ImageSkia>(rep);
-    if (!gfxImageSkia || gfxImageSkia->isNull()) {
-      printf("can`t get gfxImageSkia\n");
-      return 1;
-    }
-    //skImageSp = SkImage::MakeFromBitmap(
-    //  gfxImageSkia->GetRepresentation(/*scale=*/1.0).GetBitmap());
-    skImageSp = SkImage::MakeFromBitmap(rep.GetBitmap());
-    if (!skImageSp || !skImageSp->isValid(nullptr)) {
-      printf("can`t get skImageSp\n");
-      return 1;
-    }
-  }
+                  const unsigned char* data =
+                      reinterpret_cast<const unsigned char*>(fileData);
+                  if (!gfx::PNGCodec::Decode(data, static_cast<size_t>(fsize), decoded.get())) {
+                      printf("can`t decode png file %s\n", fImagePath.c_str());
+                      decoded = gfx::JPEGCodec::Decode(data, static_cast<size_t>(fsize));
+                      if (!decoded) {
+                          printf("can`t decode JPEG file %s\n", fImagePath.c_str());
+                      }
+                  }
+                  //fetched_bitmap.setPixels(pixels);
+                  //fetched_bitmap.setIsOpaque(isOpaque);
+                  //gfx::ImageSkia imageSkia(gfx::ImageSkiaRep(*decoded, /*scale=*/1.0));
+                  gfx::ImageSkiaRep rep = gfx::ImageSkiaRep(*decoded, /*scale=*/1.0);
+                  gfxImageSkia = ::std::make_unique<gfx::ImageSkia>(rep);
+                  if (!gfxImageSkia || gfxImageSkia->isNull()) {
+                      printf("can`t get gfxImageSkia\n");
+                  }
+                  //skImageSp = SkImage::MakeFromBitmap(
+                  //  gfxImageSkia->GetRepresentation(/*scale=*/1.0).GetBitmap());
+                  /// \note requires parent thread (TLS)
+                  skImageSp = SkImage::MakeFromBitmap(rep.GetBitmap());
+                  if (!skImageSp || !skImageSp->isValid(nullptr)) {
+                      printf("can`t get skImageSp\n");
+                  }
+                  DCHECK(skImageSp);
+                  std::cout << std::endl; // flush
+
+//#ifdef __TODO__
+                  base::WeakPtr<blink::WebGraphicsContext3DProviderWrapper> wptr = nullptr;
+                  DCHECK(skImageSp);
+                  sStaticBitmapImage =
+                      blink::StaticBitmapImage::Create(skImageSp, ::std::move(wptr));
+//#endif
+
+                  // Shutdown the thread (via its scheduler).
+                  //thread_->Scheduler()->Shutdown();
+
+                  ///
+                  ///blink::ThreadState::DetachCurrentThread();
+              }
+
+
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+              thread_event->Signal();
+          }, &ui_sync_event, &main_thread_/*ui_thread*//*.get()*/));
+  ::std::cout << "thread rendering start Wait 1..." << base::Time::Now() << "\n";
+    std::cout << std::endl; // flush
+#endif
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+    /// \todo Reactor your code so that the waiting happens on another thread instead of the main thread
+    ui_sync_event.Wait();
+    ui_sync_event.Reset();
+#endif
+        ::std::cout << "thread rendering start Wait 2..." << base::Time::Now() << "\n";
+    std::cout << std::endl; // flush
+    //ui_thread->Scheduler()->Shutdown();
+    //ui_thread.Stop();
+    // blink::Thread's destructor blocks until all the tasks are processed.
+    ///ui_thread.reset();
+
 #endif // ENABLE_UI
 
 #ifdef ENABLE_CUSTOM_FONTS

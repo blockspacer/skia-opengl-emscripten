@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (C) 2009 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -47,7 +47,9 @@ namespace blink {
 
 class DOMDataStore;
 class ScriptWrappable;
+#if defined(ENABLE_GNET)
 class SecurityOrigin;
+#endif
 
 // This class represent a collection of DOM wrappers for a specific world. This
 // is identified by a world id that is a per-thread global identifier (see
@@ -121,6 +123,7 @@ class PLATFORM_EXPORT DOMWrapperWorld : public RefCounted<DOMWrapperWorld> {
   static void SetNonMainWorldHumanReadableName(int world_id, const String&);
   String NonMainWorldHumanReadableName();
 
+#if defined(ENABLE_GNET)
   // Associates an isolated world (see above for description) with a security
   // origin. XMLHttpRequest instances used in that world will be considered
   // to come from that origin, not the frame's.
@@ -130,6 +133,7 @@ class PLATFORM_EXPORT DOMWrapperWorld : public RefCounted<DOMWrapperWorld> {
       int world_id,
       scoped_refptr<SecurityOrigin> security_origin);
   SecurityOrigin* IsolatedWorldSecurityOrigin();
+#endif
 
   static bool HasWrapperInAnyWorldInMainThread(ScriptWrappable*);
 

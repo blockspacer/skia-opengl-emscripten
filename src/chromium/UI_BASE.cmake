@@ -349,8 +349,6 @@ target_link_libraries(UI_BASE PUBLIC
   #
   #dynamic_annotations
   #${BASE_LIBRARIES}
-  # khronos
-  #${khronos_LIB}
   ## linux libsync
   #${libsync_LIB}
   #SKIA
@@ -366,6 +364,11 @@ target_link_libraries(UI_BASE PUBLIC
   #GFX_GEOMETRY
   #egl
   #GLESv2
+)
+
+target_link_libraries(UI_BASE PRIVATE
+  # khronos
+  ${khronos_LIB} # TODO
 )
 
 set_property(TARGET UI_BASE PROPERTY CXX_STANDARD 17)

@@ -1,4 +1,4 @@
-### --- PAINT_CC ---###
+﻿### --- PAINT_CC ---###
 
 # TODO https://github.com/chromium/chromium/blob/master/third_party/blink/renderer/platform/BUILD.gn
 list(APPEND PAINT_CC_SOURCES
@@ -109,6 +109,7 @@ target_link_libraries(PAINT_CC PUBLIC
   GFX_RANGE
   SKIA
   base
+  #${OPENGLES2_LIBRARIES}
 )
 
 set_property(TARGET PAINT_CC PROPERTY CXX_STANDARD 17)

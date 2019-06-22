@@ -39,6 +39,21 @@ set(GEN_COMPONENTS_CONTENT_SETTINGS_CORE_COMMON_DIR ${GN_GEN_DIR}gen_components_
 #set(GEN_BLINK_RENDERER_CORE_DIR ${GN_GEN_DIR}gen_blink_renderer_core/)
 
 # == NOTE: place set(ENABLE_*) before all checks ==
+
+# khronos
+if (TARGET_EMSCRIPTEN)
+  # nothing
+elseif(TARGET_LINUX)
+  set(ENABLE_KHRONOS TRUE) # TODO
+else()
+  message(FATAL_ERROR "platform not supported")
+endif()
+#
+if(ENABLE_KHRONOS)
+  set(khronos_LIB
+    khronos
+  )
+endif(ENABLE_KHRONOS)
 # Blink platform
 set(ENABLE_BLINK TRUE) # TODO
 # cobalt
@@ -71,8 +86,8 @@ endif(NOT ENABLE_WASM)
 #set(ENABLE_SIMD TRUE)
 set(ENABLE_SIMD FALSE)
 # PTHREADS
-#set(ENABLE_WEB_PTHREADS TRUE)
-set(ENABLE_WEB_PTHREADS FALSE)
+set(ENABLE_WEB_PTHREADS TRUE)
+#set(ENABLE_WEB_PTHREADS FALSE)
 #
 set(ENABLE_WEBGL2 TRUE)
 #set(ENABLE_WEBGL1 TRUE) # TODO
@@ -94,7 +109,7 @@ endif()
 if(TARGET_EMSCRIPTEN)
   set(USE_OPENGLES2_LIB FALSE) # no system OPENGLES for wasm
 else()
-  set(USE_OPENGLES2_LIB TRUE)
+  set(USE_OPENGLES2_LIB FALSE) # TODO
 endif()
 set(USE_SYSTEM_ZLIB ON)
 set(ENABLE_HARFBUZZ TRUE)
@@ -291,7 +306,7 @@ endif(ENABLE_HARFBUZZ)
 if(TARGET_EMSCRIPTEN)
   set(ENABLE_BORINGSSL FALSE)
 elseif(TARGET_LINUX)
-  set(ENABLE_BORINGSSL TRUE) #TODO
+  set(ENABLE_BORINGSSL FALSE) # TODO: add src/chromium/third_party/boringssl/src/ssl/CMakeLists.txt
 else()
   message(FATAL_ERROR "platform not supported")
 endif()
@@ -305,7 +320,7 @@ endif(ENABLE_BORINGSSL)
 if(TARGET_EMSCRIPTEN)
   set(ENABLE_GNET FALSE)
 elseif(TARGET_LINUX)
-  set(ENABLE_GNET TRUE) # TODO
+  set(ENABLE_GNET FALSE) # TODO
 else()
   message(FATAL_ERROR "platform not supported")
 endif()
@@ -448,7 +463,7 @@ endif(TARGET_EMSCRIPTEN)
 if(TARGET_EMSCRIPTEN)
   set(ENABLE_UKM FALSE) # keep wasm build as small as possible
 else()
-  set(ENABLE_UKM TRUE)
+  set(ENABLE_UKM FALSE) # TODO: UKM NOT SUPPORTED FOR NOW
 endif()
 if(ENABLE_UKM)
   set(COMMON_FLAGS "${COMMON_FLAGS} -DENABLE_UKM=1")
@@ -1612,13 +1627,17 @@ else(EMSCRIPTEN)
     set(USE_OPENGL_LIB TRUE)
   endif()
 
-  find_package(OpenGLES2 REQUIRED)
-  if(OPENGLES2_FOUND)
-    message(STATUS "OPENGLES2_DEFINITIONS = ${OPENGLES2_DEFINITIONS} ")
-    message(STATUS "OPENGLES2_LIBRARIES = ${OPENGLES2_LIBRARIES} ")
-    message(STATUS "OPENGLES2_INCLUDE_DIRS = ${OPENGLES2_INCLUDE_DIRS} ")
-    set(USE_OPENGLES2_LIB TRUE)
-  endif()
+  if(USE_OPENGLES2_LIB)
+    find_package(OpenGLES2 REQUIRED)
+    if(OPENGLES2_FOUND)
+      message(STATUS "OPENGLES2_DEFINITIONS = ${OPENGLES2_DEFINITIONS} ")
+      message(STATUS "OPENGLES2_LIBRARIES = ${OPENGLES2_LIBRARIES} ")
+      message(STATUS "OPENGLES2_INCLUDE_DIRS = ${OPENGLES2_INCLUDE_DIRS} ")
+      #set(USE_OPENGLES2_LIB TRUE)
+    endif()
+  endif(USE_OPENGLES2_LIB)
+
+  #message(FATAL_ERROR "OPENGLES2_LIBRARIES = ${OPENGLES2_LIBRARIES} ")
 
   find_package(SDL2 REQUIRED)
   if(SDL2_FOUND)
@@ -2261,7 +2280,6 @@ else()
     ${SDL2_TTF_INCLUDE_DIR}
     ${HARFBUZZ_LIBRARIES}
     ${OPENGL_LIBRARIES}
-    ${OPENGLES2_LIBRARIES}
     ${GLEW_LIBRARY}
     SDL2::Main
     #SDL2:Net
@@ -2367,10 +2385,14 @@ else()
     #${iccjpeg_LIB}
     #
     # khronos
-    ${khronos_LIB}
+    #${khronos_LIB}
     #LIB_V8_INTERFACE
     #COMPONENTS_SCHEDULING_METRICS
     ${HARFBUZZ_LIBRARIES}
+    #${OPENGLES2_LIBRARIES}
+    GLESv2
+    #OpenGL::OpenGL
+    #OpenGL::EGL
   )
   target_compile_definitions(${PROJECT_NAME} PRIVATE
     ${APP_DEFINITIONS}
@@ -2392,8 +2414,12 @@ target_compile_options(${PROJECT_NAME} PRIVATE
   -Wall
   -Wextra
   -Weverything # clang
+  -Wno-undef
   #-pedantic-errors
   -Wno-pedantic
+  -Wno-duplicate-enum
+  -Wno-newline-eof
+  -Wno-disabled-macro-expansion
   -Wno-c++98-compat-pedantic
   -Wno-c++98-compat-local-type-template-args
   -Wno-c++98-compat

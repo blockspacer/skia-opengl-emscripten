@@ -491,9 +491,15 @@ target_link_libraries(GPU_COMMAND_BUFFER PUBLIC
   #${BASE_LIBRARIES}
   #mojom
   base
-  ${khronos_LIB}
   GRE2
+  #${OPENGLES2_LIBRARIES}
 )
+
+target_link_libraries(GPU_COMMAND_BUFFER PRIVATE
+  # khronos
+  ${khronos_LIB}
+)
+
 #message(FATAL_ERROR ${GPU_COMMAND_BUFFER_PARENT_DIR}GLES2/gl2extchromium.h)
 set_property(TARGET GPU_COMMAND_BUFFER PROPERTY CXX_STANDARD 17)
 

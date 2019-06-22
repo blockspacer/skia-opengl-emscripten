@@ -71,6 +71,7 @@ target_link_libraries(GFX_CODEC PRIVATE
   # "//ui/gfx:geometry_skia",
   # "//ui/gfx:gfx_export",
   # "//ui/gfx/geometry",
+  #${OPENGLES2_LIBRARIES}
 )
 
 set_property(TARGET GFX_CODEC PROPERTY CXX_STANDARD 17)

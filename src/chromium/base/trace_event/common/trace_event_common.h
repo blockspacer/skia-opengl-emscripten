@@ -197,7 +197,8 @@
 // Check that nobody includes this file directly.  Clients are supposed to
 // include the surrounding "trace_event.h" of their project instead.
 #if defined(TRACE_EVENT0)
-#error "Another copy of this file has already been included."
+///#error "Another copy of this file has already been included."
+#warning "Another copy of this file has already been included." // __TODO__
 #endif
 
 // This will mark the trace event as disabled by default. The user will need

@@ -574,6 +574,8 @@ MainThreadSchedulerImpl::SchedulingSettings::SchedulingSettings() {
   use_resource_priorities_only_during_loading =
       base::FeatureList::IsEnabled(kUseResourceFetchPriorityOnlyWhenLoading);
 
+
+#if defined(ENABLE_GNET)
   if (use_resource_fetch_priority ||
       use_resource_priorities_only_during_loading) {
     std::map<std::string, std::string> params;
@@ -591,6 +593,7 @@ MainThreadSchedulerImpl::SchedulingSettings::SchedulingSettings() {
       }
     }
   }
+#endif
 
   FrameSchedulerImpl::InitializeTaskTypeQueueTraitsMap(
       frame_task_types_to_queue_traits);

@@ -1,4 +1,4 @@
-### --- COMPONENTS_VIZ_COMMON ---###
+﻿### --- COMPONENTS_VIZ_COMMON ---###
 
 set(COMPONENTS_VIZ_COMMON_SOURCES
   #
@@ -186,9 +186,13 @@ target_link_libraries(COMPONENTS_VIZ_COMMON PUBLIC
   GFX_SWITCHES
   GFX_RANGE
   libyuv
+  #UI_GFX
+  #${OPENGLES2_LIBRARIES}
+)
+
+target_link_libraries(COMPONENTS_VIZ_COMMON PRIVATE
   # khronos
   ${khronos_LIB}
-  #UI_GFX
 )
 
 set_property(TARGET COMPONENTS_VIZ_COMMON PROPERTY CXX_STANDARD 17)

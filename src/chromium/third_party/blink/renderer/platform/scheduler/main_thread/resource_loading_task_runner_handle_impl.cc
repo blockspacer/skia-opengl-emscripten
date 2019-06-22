@@ -1,4 +1,4 @@
-#include "third_party/blink/renderer/platform/scheduler/main_thread/resource_loading_task_runner_handle_impl.h"
+﻿#include "third_party/blink/renderer/platform/scheduler/main_thread/resource_loading_task_runner_handle_impl.h"
 
 #include <iostream>
 
@@ -33,6 +33,7 @@ ResourceLoadingTaskRunnerHandleImpl::~ResourceLoadingTaskRunnerHandleImpl() {
   }
 }
 
+#if defined(ENABLE_GNET)
 void ResourceLoadingTaskRunnerHandleImpl::DidChangeRequestPriority(
     net::RequestPriority priority) {
   task_queue_->SetNetRequestPriority(priority);
@@ -41,6 +42,7 @@ void ResourceLoadingTaskRunnerHandleImpl::DidChangeRequestPriority(
     frame_scheduler->DidChangeResourceLoadingPriority(task_queue_, priority);
   }
 }
+#endif
 
 scoped_refptr<base::SingleThreadTaskRunner>
 ResourceLoadingTaskRunnerHandleImpl::GetTaskRunner() const {

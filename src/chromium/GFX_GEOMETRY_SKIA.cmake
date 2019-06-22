@@ -1,4 +1,4 @@
-### --- GFX_GEOMETRY_SKIA ---###
+﻿### --- GFX_GEOMETRY_SKIA ---###
 
 set(GFX_GEOMETRY_SKIA_SOURCES
   #geometry_skia_export.h",
@@ -21,6 +21,7 @@ target_link_libraries(GFX_GEOMETRY_SKIA PUBLIC
   SKIA
   GFX_GEOMETRY
   base
+  #${OPENGLES2_LIBRARIES}
 )
 
 set_property(TARGET GFX_GEOMETRY_SKIA PROPERTY CXX_STANDARD 17)

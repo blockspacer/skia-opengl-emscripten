@@ -1,4 +1,4 @@
-### --- GFX_GEOMETRY ---###
+﻿### --- GFX_GEOMETRY ---###
 
 set(GFX_GEOMETRY_SOURCES
   #${GFX_GEOMETRY_DIR}../gfx_export.h
@@ -63,6 +63,7 @@ target_link_libraries(GFX_GEOMETRY PUBLIC
   #dynamic_annotations
   #${BASE_LIBRARIES}
   base
+  #${OPENGLES2_LIBRARIES}
 )
 
 set_property(TARGET GFX_GEOMETRY PROPERTY CXX_STANDARD 17)
