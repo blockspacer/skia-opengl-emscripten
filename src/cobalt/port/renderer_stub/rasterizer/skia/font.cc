@@ -96,11 +96,23 @@ base::LazyInstance<NonTrivialStaticFields>::DestructorAtExit
 Font::Font(SkiaTypeface* typeface, SkScalar size)
     : typeface_(typeface), size_(size) {
     //DCHECK(size > 21 && size < 23); // TODO
-    //printf("Font::GetDefaultFont()->getSize() %f\n", Font::GetDefaultFont()->getSize());
+    std::cout << "Font::Font() %d \n" << typeface_->GetId() << std::endl;
   glyph_bounds_thread_checker_.DetachFromThread();
+  DCHECK(typeface_);
+  //DCHECK(typeface_->GetId());
+  DCHECK(typeface_->GetSkTypeface());
+  if (!skFont_) {
+      skFont_ =
+          new SkFont(typeface_->GetSkTypeface(), size_, 1.0f, 0.0f); // TODO: free resources (!!!)
+      //font_metrics_ = new SkFontMetrics;
+      //skFont_->getMetrics(font_metrics_);
+      //DCHECK(font_metrics_);
+  }
+  DCHECK(skFont_);
 }
 
 const sk_sp<SkTypeface_Cobalt>& Font::GetSkTypeface() const {
+    DCHECK(typeface_);
   return typeface_->GetSkTypeface();
 
   ///return getOrCreateFallbackSkTypeface();
@@ -108,23 +120,37 @@ const sk_sp<SkTypeface_Cobalt>& Font::GetSkTypeface() const {
 
 
 render_tree::TypefaceId Font::GetTypefaceId() const {
+    DCHECK(typeface_);
   return typeface_->GetId();;//
 }
 
 render_tree::FontMetrics Font::GetFontMetrics() const {
+    ///printf("FontMetrics Font::GetFontMetrics 1\n");
+    DCHECK(skFont_);
+    DCHECK(typeface_);
+    //DCHECK(font_metrics_);
   //SkPaint paint = GetSkPaint();
+
+  SkFont* tmpFont =
+      new SkFont(typeface_->GetSkTypeface(), size_, 1.0f, 0.0f); /// __TODO__
 
   //SkPaint::FontMetrics font_metrics;
   SkFontMetrics font_metrics;
   //paint.getFontMetrics(&font_metrics);
-  getOrCreateFallbackFont()->getMetrics(&font_metrics);
+  //getOrCreateFallbackFont()->getMetrics(&font_metrics); /// __TODO__
+  //DCHECK(skFont_);
+
+  ///skFont_->getMetrics(&font_metrics); /// __TODO__
+  tmpFont->getMetrics(&font_metrics);
+  delete tmpFont;
 
   // The x-height is the height of the 'x' glyph. It is used to find the visual
   // 'middle' of the font to allow vertical alignment to the middle of the font.
   // See also https://en.wikipedia.org/wiki/X-height
   float x_height;
+  //DCHECK(font_metrics);
   if (font_metrics.fXHeight) {
-    x_height = font_metrics.fXHeight;
+      x_height = font_metrics.fXHeight;
   } else {
     // If the font does not have an 'x' glyph, we need to estimate the value.
     // A good estimation  is to use 0.56 * the font ascent.
@@ -142,6 +168,9 @@ render_tree::GlyphIndex Font::GetGlyphForCharacter(int32 utf32_character) {
 
 const math::RectF& Font::GetGlyphBounds(render_tree::GlyphIndex glyph) {
     //printf("GetGlyphBounds 1\n");
+    DCHECK(skFont_);
+    DCHECK(typeface_);
+    //DCHECK(font_metrics_);
   DCHECK(glyph_bounds_thread_checker_.CalledOnValidThread());
   //printf("GetGlyphBounds 2\n");
   // Check to see if the glyph falls within the the first 256 glyphs. These
@@ -181,30 +210,34 @@ const math::RectF& Font::GetGlyphBounds(render_tree::GlyphIndex glyph) {
 
   //printf("GetGlyphBounds 11\n");
   // TODO
-  int ascent_pixels_;
-  int height_pixels_;
-  int cap_height_pixels_;
-  double average_width_pixels_;
-  auto fnt = getOrCreateFallbackFont();
-  DCHECK(fnt);
+  //int ascent_pixels_;
+  //int height_pixels_;
+  //int cap_height_pixels_;
+  //double average_width_pixels_;
+
+  //auto fnt = getOrCreateFallbackFont(); /// __TODO__
+  //DCHECK(fnt);
   {
-    SkFontMetrics metrics;
-    fnt->getMetrics(&metrics);
+    //SkFontMetrics metrics;
+    //skFont_->getMetrics(&metrics);
     //printf("GetGlyphBounds 12\n");
-    ascent_pixels_ = SkScalarCeilToInt(-metrics.fAscent);
-    height_pixels_ = ascent_pixels_ + SkScalarCeilToInt(metrics.fDescent);
-    cap_height_pixels_ = SkScalarCeilToInt(metrics.fCapHeight);
-    average_width_pixels_ = SkScalarToDouble(metrics.fAvgCharWidth);
+    //ascent_pixels_ = SkScalarCeilToInt(-font_metrics_.fAscent);
+    //height_pixels_ = ascent_pixels_ + SkScalarCeilToInt(font_metrics_.fDescent);
+    //cap_height_pixels_ = SkScalarCeilToInt(font_metrics_.fCapHeight);
+    //average_width_pixels_ = SkScalarToDouble(font_metrics_.fAvgCharWidth);
   }
   //printf("GetGlyphBounds 13\n");
 
   SkRect skia_bounds;
   // TODO
   //printf("GetGlyphBounds 14\n");
-  DCHECK(fnt);
+  //DCHECK(fnt);
   float width;
 
-  width = fnt->measureText(
+  SkFont* tmpFont =
+      new SkFont(typeface_->GetSkTypeface(), size_, 1.0f, 0.0f); /// __TODO__
+
+  width = tmpFont->measureText(
           &glyph,
           sizeof(render_tree::GlyphIndex),//2,//4,//
           //kUTF8_SkTextEncoding,
@@ -215,6 +248,9 @@ const math::RectF& Font::GetGlyphBounds(render_tree::GlyphIndex glyph) {
           //, &paint
       );
   DCHECK(width > 0);
+
+  delete tmpFont; /// __TODO__
+
   //SkScalar* widths;
   //fnt->getWidths(&glyph,1,widths,&skia_bounds);
   //printf("fnt measureText %f\n", width);
@@ -249,8 +285,8 @@ float Font::GetGlyphWidth(render_tree::GlyphIndex glyph) {
 
 SkPaint Font::GetSkPaint() const {
   SkPaint paint(GetDefaultSkPaint());
-  const sk_sp<SkTypeface>& typeface(typeface_->GetSkTypeface());
-  /*
+  /*const sk_sp<SkTypeface>& typeface(typeface_->GetSkTypeface());
+
   paint.setTypeface(typeface);
   paint.setTextSize(size_);
   */
@@ -265,6 +301,11 @@ sk_sp<SkTypeface_Cobalt> Font::GetDefaultSkTypeface() {
 
 const SkPaint& Font::GetDefaultSkPaint() {
   return non_trivial_static_fields.Get().default_paint;
+}
+
+const SkFont* Font::GetSkFont() const {
+    DCHECK(skFont_);
+    return skFont_;
 }
 
 const SkFont* Font::GetDefaultFont() {

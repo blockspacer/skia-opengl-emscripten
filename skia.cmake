@@ -33,7 +33,7 @@ endif(RELEASE_BUILD)
 # options are set appropriately. But it's not always obvious - one would have to dig into
 # Skia configuration. And replicating the dependencies here + propagating it correctly into
 # the ExternalProject setup is beyond reasonable.
-option(EXT_SKIA_ALWAYS_BUILD "" OFF)
+option(EXT_SKIA_ALWAYS_BUILD "" OFF) # TODO
 option(EXT_SKIA_DEBUG "" ${IS_DEBUG_BUILD})
 if(TARGET_EMSCRIPTEN)
   # NOTE: Use is_component_build=false with EMSCRIPTEN
@@ -368,6 +368,7 @@ ExternalProject_Add(SKIA_build
 )
 
 if (EXT_SKIA_ALWAYS_BUILD)
+  message(WARNING "Forced skia rebuild")
   # Make sure the target is always rebuilt.
   # Without this changing Skia sources doesn't trigger a ninja build. With this
   # ninja build is always triggered. This is not needed if you never touch the

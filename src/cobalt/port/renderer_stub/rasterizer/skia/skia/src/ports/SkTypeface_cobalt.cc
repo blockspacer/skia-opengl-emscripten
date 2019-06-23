@@ -20,6 +20,8 @@
 #include "SkFontStyle.h"
 #include "SkTypefaceCache.h"
 
+#include <iostream> /// __TODO__
+
 SkTypeface_Cobalt::SkTypeface_Cobalt(int face_index, SkFontStyle style,
                                      bool is_fixed_pitch,
                                      const SkString& family_name)
@@ -41,6 +43,7 @@ SkTypeface_CobaltStream::SkTypeface_CobaltStream(std::unique_ptr<SkStreamAsset> 
                                                  const SkString& family_name)
     : INHERITED(face_index, style, is_fixed_pitch, family_name),
       stream_(std::move(stream)) {
+    DCHECK(stream_);
   /*LOG(INFO) << "Created SkTypeface_CobaltStream: " << family_name.c_str() << "("
             << style << "); Size: " << stream_->getLength() << " bytes";*/
 }
@@ -55,10 +58,12 @@ void SkTypeface_CobaltStream::onGetFontDescriptor(SkFontDescriptor* descriptor,
 
 std::unique_ptr<SkStreamAsset> SkTypeface_CobaltStream::onOpenStream(int* face_index) const {
   *face_index = face_index_;
+  DCHECK(stream_);
   return stream_->duplicate();
 }
 
 size_t SkTypeface_CobaltStream::GetStreamLength() const {
+    std::cout << "SkTypeface_CobaltStream::GetStreamLength() 1" << std::endl;
   DCHECK(stream_);
   return stream_->getLength();
 }
@@ -69,6 +74,7 @@ SkTypeface_CobaltStreamProvider::SkTypeface_CobaltStreamProvider(
     bool disable_synthetic_bolding)
     : INHERITED(face_index, style, is_fixed_pitch, family_name),
       stream_provider_(stream_provider) {
+    DCHECK(stream_provider_);
   if (disable_synthetic_bolding) {
     synthesizes_bold_ = false;
   }
@@ -88,15 +94,34 @@ void SkTypeface_CobaltStreamProvider::onGetFontDescriptor(
 std::unique_ptr<SkStreamAsset> SkTypeface_CobaltStreamProvider::onOpenStream(
     int* face_index) const {
   *face_index = face_index_;
+  DCHECK(stream_provider_);
+
+  //DCHECK(stream_);
+  //return stream_provider_->stream_->duplicate();
+
+  std::unique_ptr<SkFileMemoryChunkStream> stream(
+      stream_provider_->OpenStream());
+  return std::move(stream);
+
+  /// __TODO__
   ///return stream_provider_->OpenStream();
-  return SkStream::MakeFromFile(stream_provider_->file_path().c_str());
+  //SkFileMemoryChunkStream* res = stream_provider_->OpenStream();
+
+  //return SkStream::MakeFromFile()
+  //return SkStream::MakeFromFile(stream_provider_->file_path().c_str());
 }
 
 size_t SkTypeface_CobaltStreamProvider::GetStreamLength() const {
+    std::cout << "SkTypeface_CobaltStreamProvider::GetStreamLength() 1" << std::endl;
   DLOG(WARNING)
       << "Requesting stream length of SkTypeface_CobaltStreamProvider. "
          "This requires a file load and should be used sparingly.";
+  DCHECK(stream_provider_);
   std::unique_ptr<SkFileMemoryChunkStream> stream(
       stream_provider_->OpenStream());
   return stream->getLength();
+
+  /// __TODO__: FIXME
+
+  //return 0;//this->memory_chunks_
 }

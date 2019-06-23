@@ -270,24 +270,24 @@ const scoped_refptr<render_tree::Font>& FontList::GetPrimaryFont() {
 void FontList::RequestFont(size_t index) {
   FontListFont& font_list_font = fonts_[index];
   FontListFont::State state;
-  //printf("FontList::RequestFont 1\n");
+  printf("FontList::RequestFont 1\n");
   // Request the font from the font cache; the state of the font will be set
   // during the call.
   scoped_refptr<render_tree::Font> render_tree_font = font_cache_->TryGetFont(
       font_list_font.family_name(), style_, size_, &state);
 
-  //printf("FontList::RequestFont 2\n");
+  printf("FontList::RequestFont 2\n");
   if (state == FontListFont::kLoadedState) {
     DCHECK(render_tree_font.get() != NULL);
 
-    //printf("FontList::RequestFont 3\n");
+    printf("FontList::RequestFont 3\n");
     // Walk all of the fonts in the list preceding the loaded font. If they have
     // the same typeface as the loaded font, then set the font list font as a
     // duplicate. There's no reason to have multiple fonts in the list with the
     // same typeface.
     render_tree::TypefaceId typeface_id = render_tree_font->GetTypefaceId();
     for (size_t i = 0; i < index; ++i) {
-      //printf("FontList::RequestFont 4\n");
+      printf("FontList::RequestFont 4\n");
       FontListFont& check_font = fonts_[i];
       if (check_font.state() == FontListFont::kLoadedState &&
           check_font.font()->GetTypefaceId() == typeface_id) {
@@ -299,12 +299,12 @@ void FontList::RequestFont(size_t index) {
     // If this font wasn't a duplicate, then its time to initialize its font
     // data. This font is now available to use.
     if (font_list_font.state() != FontListFont::kDuplicateState) {
-      //printf("FontList::RequestFont 5\n");
+      printf("FontList::RequestFont 5\n");
       font_list_font.set_state(FontListFont::kLoadedState);
       font_list_font.set_font(render_tree_font);
     }
   } else {
-    //printf("FontList::RequestFont 6\n");
+    printf("FontList::RequestFont 6\n");
     font_list_font.set_state(state);
   }
 }

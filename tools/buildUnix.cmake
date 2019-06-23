@@ -63,11 +63,13 @@ if (BUILD_APP)
     message( FATAL_ERROR "Bad exit status")
   endif()
 
+  # TODO: "--clean-first"
+
   # --- build ---
   execute_process(
     COMMAND
       ${COLORED_OUTPUT_ENABLER}
-        ${CMAKE_COMMAND} "--build" "." "--clean-first" "--" ${MAKE_OPTS} ${EXTRA_MAKE_OPTS}
+        ${CMAKE_COMMAND} "--build" "." "--" ${MAKE_OPTS} ${EXTRA_MAKE_OPTS}
     WORKING_DIRECTORY ${BUILD_DIR}
     RESULT_VARIABLE retcode
     ERROR_VARIABLE _ERROR_VARIABLE

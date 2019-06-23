@@ -126,7 +126,7 @@ SoftwareRasterizer::~SoftwareRasterizer() {}
 void SoftwareRasterizer::Submit(
     const scoped_refptr<render_tree::Node>& render_tree,
     SkCanvas* render_target) {
-  printf("SoftwareRasterizer::Submit 1\n");
+  ///printf("SoftwareRasterizer::Submit 1\n");
   impl_->Submit(render_tree, render_target);
 }
 

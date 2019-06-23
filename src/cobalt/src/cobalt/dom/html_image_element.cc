@@ -43,7 +43,7 @@ HTMLImageElement::HTMLImageElement(script::EnvironmentSettings* env_settings)
 
 void HTMLImageElement::OnSetAttribute(const std::string& name,
                                       const std::string& /* value */) {
-  printf("HTMLImageElement::OnSetAttribute 1");
+  printf("HTMLImageElement::OnSetAttribute 1 %s", name.c_str());
   // A user agent that obtains images immediately must synchronously update the
   // image data of an img element whenever that element is created with a src
   // attribute. A user agent that obtains images immediately must also
@@ -55,7 +55,7 @@ void HTMLImageElement::OnSetAttribute(const std::string& name,
 }
 
 void HTMLImageElement::OnRemoveAttribute(const std::string& name) {
-  printf("HTMLImageElement::OnRemoveAttribute 1");
+  printf("HTMLImageElement::OnRemoveAttribute 1 %s", name.c_str());
   // A user agent that obtains images immediately must synchronously update the
   // image data of an img element whenever that element is created with a src
   // attribute. A user agent that obtains images immediately must also
@@ -69,7 +69,7 @@ void HTMLImageElement::OnRemoveAttribute(const std::string& name) {
 // Algorithm for UpdateTheImageData:
 //   https://www.w3.org/TR/html5/embedded-content-0.html#update-the-image-data
 void HTMLImageElement::UpdateImageData() {
-  printf("HTMLImageElement::UpdateImageData 1");
+  printf("HTMLImageElement::UpdateImageData 1\n");
   DCHECK(base::MessageLoopCurrent::Get());
   DCHECK(node_document());
   TRACE_EVENT0("cobalt::dom", "HTMLImageElement::UpdateImageData()");
@@ -99,14 +99,16 @@ void HTMLImageElement::UpdateImageData() {
   // 7. If selected source is not null, run these substeps:
   scoped_refptr<loader::image::CachedImage> cached_image;
 
-  printf("HTMLImageElement::UpdateImageData 2");
+  printf("HTMLImageElement::UpdateImageData 2\n");
 
   if (!src.empty()) {
+    printf("HTMLImageElement::UpdateImageData 2.1\n");
     // 7.1. Resolve selected source, relative to the element. If that is not
     // successful, abort these steps.
     const GURL& base_url = node_document()->url_as_gurl();
     const GURL selected_source = base_url.Resolve(src);
     if (!selected_source.is_valid()) {
+      printf("HTMLImageElement::UpdateImageData 2.2\n");
       LOG(WARNING) << src << " cannot be resolved based on " << base_url << ".";
       return;
     }
@@ -123,11 +125,16 @@ void HTMLImageElement::UpdateImageData() {
             ->html_element_context()
             ->image_cache()
             ->CreateCachedResource(selected_source, loader::Origin());
+    printf("HTMLImageElement::UpdateImageData 2.3\n");
     if (cached_image->TryGetResource()) {
+      printf("HTMLImageElement::UpdateImageData 2.4\n");
       PreventGarbageCollectionUntilEventIsDispatched(base::Tokens::load());
+      printf("HTMLImageElement::UpdateImageData 2.5 %s\n", cached_image->url().path().c_str());
       return;
     }
+    printf("HTMLImageElement::UpdateImageData 2.6 %s\n", cached_image->url().path().c_str());
   } else {
+    printf("HTMLImageElement::UpdateImageData 2.6\n");
     // 8. 9. Not needed by Cobalt.
     // 10. If selected source is null, then set the element to the broken state,
     // queue a task to fire a simple event named error at the img element, and
@@ -136,7 +143,7 @@ void HTMLImageElement::UpdateImageData() {
     return;
   }
 
-  printf("HTMLImageElement::UpdateImageData 3");
+  printf("HTMLImageElement::UpdateImageData 3\n");
 
   // 11. Not needed by Cobalt.
 
@@ -161,7 +168,7 @@ void HTMLImageElement::UpdateImageData() {
           base::Bind(&HTMLImageElement::OnLoadingError,
                      base::Unretained(this))));
 
-  printf("HTMLImageElement::UpdateImageData 3");
+  printf("HTMLImageElement::UpdateImageData 4\n");
 }
 
 void HTMLImageElement::OnLoadingSuccess() {

@@ -371,11 +371,13 @@
 #include "base/memory/weak_ptr.h"
 //#include "base/test/gtest_util.h"
 #include "base/threading/thread.h"
+#include "base/logging.h"
+#include "base/system/sys_info.h"
 
 #include "base/synchronization/waitable_event.h"
 
 //#include "base/task/sequence_manager/sequence_manager.h"
-#endif
+#endif // ENABLE_BASE
 
 #ifdef ENABLE_WTF
 #include "third_party/blink/renderer/platform/wtf/wtf.h"
@@ -422,8 +424,6 @@
 //#include "ui/views/examples/example_combobox_model.h"
 //#include "ui/views/layout/grid_layout.h"
 //#include "ui/views/view.h"
-#include "base/logging.h"
-#include "base/system/sys_info.h"
 //#include "ui/compositor/layer.h"
 //#include "ui/compositor/layer_delegate.h"
 //#include "ui/compositor/layer_owner.h"
@@ -2262,7 +2262,7 @@ void CobaltTester::OnRendererSubmissionRasterized() {
     //}
 }
 
-static render_tree::animations::AnimateNode::AnimateResults animateResults;
+static render_tree::animations::AnimateNode::AnimateResults animateResults; // TODO
 
 void CobaltTester::SubmitCurrentRenderTreeToRenderer() {
     //printf("SubmitCurrentRenderTreeToRenderer 1\n");
@@ -2278,8 +2278,8 @@ void CobaltTester::SubmitCurrentRenderTreeToRenderer() {
         renderer_module_->pipeline()->Submit(*submission);
         {
             /// __TODO__
-            // printf("SubmitCurrentRenderTreeToRenderer OnDumpCurrentRenderTree\n");
-            // renderer_module_->pipeline()->OnDumpCurrentRenderTree("");
+            printf("SubmitCurrentRenderTreeToRenderer OnDumpCurrentRenderTree\n");
+            renderer_module_->pipeline()->OnDumpCurrentRenderTree("");
         }
         //printf("SubmitCurrentRenderTreeToRenderer 2.2\n");
     }
@@ -2313,6 +2313,8 @@ void CobaltTester::OnBrowserRenderTreeProduced(
     // configuration is already designed for, so we don't configure anything
     // explicitly.
     renderer_submission.timeline_info.id = 0;//current_main_web_module_timeline_id_;
+    renderer_submission.timeline_info.max_submission_queue_size = 8; // <= 8
+    renderer_submission.timeline_info.allow_latency_reduction = false;
 
     renderer_submission.on_rasterized_callbacks.push_back(base::Bind(
         &CobaltTester::OnRendererSubmissionRasterized,
@@ -2601,8 +2603,8 @@ CobaltTester::CobaltTester()
 
   //DCHECK_LE(0, data.options.image_cache_capacity);
   image_cache_ = loader::image::CreateImageCache(
-      base::StringPrintf("%s.ImageCache", "name_.c_str()"),
-      static_cast<uint32>(32 * 1024 * 1024),
+      base::StringPrintf("%s.ImageCache", "Test"),
+      static_cast<uint32>(32U * 1024 * 1024),
       loader_factory_.get());
   DCHECK(image_cache_);
 
@@ -2742,7 +2744,7 @@ CobaltTester::CobaltTester()
                  ? dom::Window::kClockTypeResolutionLimitedSystemTime
                  : dom::Window::kClockTypeSystemTime),
 #else
-      dom::Window::kClockTypeResolutionLimitedSystemTime,
+      dom::Window::kClockTypeSystemTime,//kClockTypeResolutionLimitedSystemTime,
 #endif
       splash_screen_cache_callback,
       system_caption_settings_,
@@ -2837,7 +2839,7 @@ static void createLayoutManager() {
         99,//data.dom_max_element_depth,
         1.0,//data.layout_refresh_rate,
         "en_US", //"data.network_module->preferred_language()",
-        false, //data.options.enable_image_animations,
+        true, //data.options.enable_image_animations,
         g_cobaltTester->layout_stat_tracker_.get(),//web_module_stat_tracker_->layout_stat_tracker(),
         false//data.options.clear_window_with_background_color
         ));
@@ -2959,13 +2961,13 @@ static int InitGL() {
   return GL_TRUE;
 }
 
-static void drawGLTexture(const int width, const int height, const void* data, const GLuint texID) {
+static void drawGLTexture(const int texWidth, const int texHeight, const void* texData, const GLuint texID) {
     GL_CHECK( glBindTexture(GL_TEXTURE_2D, texID) );
     GL_CHECK( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE) );
     GL_CHECK( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE) );
     GL_CHECK( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR) );
     GL_CHECK( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR) );
-    GL_CHECK( glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data) );
+    GL_CHECK( glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texWidth, texHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, texData) );
 }
 
 static void drawUIDemo() {
@@ -3030,7 +3032,7 @@ static void drawBrowserDemo() {
             printf("pixmap.bounds().isEmpty()\n");
         }
     } else {
-        drawUIDemo();
+        //drawUIDemo();
     }
 
     //if (nullptr == pImage) {
@@ -3240,6 +3242,11 @@ static void animate() {
 
   } // if (!createdCobaltTester)
 #endif
+
+  //if (g_cobaltTester && g_cobaltTester->window_ && g_cobaltTester->window_->document()) {
+  //    //g_cobaltTester->window_->document()->DoSynchronousLayoutAndGetRenderTree();
+  //    g_cobaltTester->layout_manager_->ForceReLayout();
+  //}
 
 #endif // ENABLE_SKOTTIE
     ///if (isDebugPeriodReached()) printf("animate end\n");
@@ -3504,6 +3511,11 @@ int main(int argc, char** argv) {
 
 #ifdef ENABLE_BASE
 
+  printf("Init CommandLine ...\n");
+
+  base::CommandLine::Init(0, nullptr);
+  base::CommandLine::ForCurrentProcess()->InitFromArgv(argc, argv);
+
   ///printf("SysInfo::AmountOfFreeDiskSpace %d ...\n", base::SysInfo::AmountOfFreeDiskSpace());
   printf("SysInfo::AmountOfAvailablePhysicalMemory %ld ...\n", base::SysInfo::AmountOfAvailablePhysicalMemory());
   printf("SysInfo::NumberOfProcessors %d ...\n", base::SysInfo::NumberOfProcessors());
@@ -3515,11 +3527,6 @@ int main(int argc, char** argv) {
   base::AtExitManager at_exit;
   at_exit.DisableAllAtExitManagers();
 #endif
-
-  printf("Init CommandLine ...\n");
-
-  base::CommandLine::Init(0, nullptr);
-  base::CommandLine::ForCurrentProcess()->InitFromArgv(argc, argv);
 
  /* printf("Init ThreadControllerNoMT ...\n");
   if(!g_thread_controller.get()) {

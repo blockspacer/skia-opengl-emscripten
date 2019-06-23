@@ -650,7 +650,7 @@ void RenderTreeNodeVisitor::Visit(render_tree::ImageNode* image_node) {
   if (!image_node->data().source) {
     return;
   }
-  //printf("RenderTreeNodeVisitor::Visit(render_tree::ImageNode 2\n");
+  ///printf("RenderTreeNodeVisitor::Visit(render_tree::ImageNode 2\n");
 
 #if ENABLE_RENDER_TREE_VISITOR_TRACING
   TRACE_EVENT0("cobalt::renderer", "Visit(ImageNode)");
@@ -676,6 +676,7 @@ void RenderTreeNodeVisitor::Visit(render_tree::ImageNode* image_node) {
       reset_skia_context_function_.Run();
     }
   }
+  ///printf("RenderTreeNodeVisitor::Visit(render_tree::ImageNode GetSize %s\n", image->GetSize().ToString().c_str());
 
   // We issue different skia rasterization commands to render the image
   // depending on whether it's single or multi planed.
@@ -716,6 +717,7 @@ void RenderTreeNodeVisitor::Visit(render_tree::ImageNode* image_node) {
 #if ENABLE_FLUSH_AFTER_EVERY_NODE
   draw_state_.render_target->flush();
 #endif
+  ///printf("RenderTreeNodeVisitor::Visit(render_tree::ImageNode GetSize end\n");
 }
 
 void RenderTreeNodeVisitor::Visit(

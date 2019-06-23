@@ -31,7 +31,11 @@ SkiaTypeface::SkiaTypeface(const sk_sp<SkTypeface_Cobalt>& typeface)
     : typeface_(typeface) {
     printf("SkiaTypeface 1\n");
     /// __TODO__
-    typeface_ = Font::GetDefaultSkTypeface();
+    DCHECK(typeface_);
+    if(!typeface_) {
+        printf("Fall back to default typeface\n");
+        typeface_ = Font::GetDefaultSkTypeface();
+    }
     printf("SkiaTypeface 2\n");
 #if !defined(OS_EMSCRIPTEN)
     printf("SkiaTypeface 3\n");
@@ -49,8 +53,11 @@ render_tree::TypefaceId SkiaTypeface::GetId() const {
 }
 
 uint32 SkiaTypeface::GetEstimatedSizeInBytes() const {
-  DCHECK(typeface_);
-  return static_cast<uint32>(typeface_->GetStreamLength());
+    /// __TODO__
+    return 256;
+
+  //DCHECK(typeface_);
+  //return static_cast<uint32>(typeface_->GetStreamLength());
 }
 
 scoped_refptr<render_tree::Font> SkiaTypeface::CreateFontWithSize(

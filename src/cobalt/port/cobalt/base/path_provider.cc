@@ -24,14 +24,18 @@
 
 namespace {
 base::FilePath GetOrCreateDirectory(SbSystemPathId path_id) {
+    printf("GetOrCreateDirectory 1");
   std::unique_ptr<char[]> path(new char[SB_FILE_MAX_PATH]);
   path[0] = '\0';
   if (SbSystemGetPath(path_id, path.get(), SB_FILE_MAX_PATH)) {
+      printf("GetOrCreateDirectory 2");
     base::FilePath directory(path.get());
     if (base::PathExists(directory) || base::CreateDirectory(directory)) {
+        printf("GetOrCreateDirectory 3");
       return directory;
     }
   }
+  printf("GetOrCreateDirectory 4");
   return base::FilePath();
 }
 }  // namespace
@@ -74,12 +78,14 @@ bool PathProvider(int key, base::FilePath* result) {
     case paths::DIR_COBALT_WEB_ROOT: {
       base::FilePath directory =
           GetOrCreateDirectory(kSbSystemPathContentDirectory);
-      if (!directory.empty()) {
-        *result = directory.Append("web");
+      ///if (!directory.empty())
+      {
+        *result = directory; /// __TODO__
+        ///*result = directory.Append("web"); /// __TODO__
         return true;
-      } else {
+      /*} else {
         DLOG(ERROR) << "Unable to get or create paths::DIR_COBALT_WEB_ROOT";
-        return false;
+        return false;*/
       }
     }
       return true;

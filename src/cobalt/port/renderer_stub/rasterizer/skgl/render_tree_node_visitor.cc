@@ -1,4 +1,4 @@
-// Copyright 2017 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2017 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -117,6 +117,7 @@ math::Matrix3F GetTexcoordTransform(
 }
 
 bool ImageNodeSupportedNatively(render_tree::ImageNode* image_node) {
+    /// __TODO__
   /*skia::Image* skia_image =
       base::polymorphic_downcast<skia::Image*>(image_node->data().source.get());
   if (skia_image->GetTypeId() == base::GetTypeId<skia::MultiPlaneImage>()) {
@@ -134,7 +135,7 @@ bool ImageNodeSupportedNatively(render_tree::ImageNode* image_node) {
     // texture.  This comes up, for example, with UYVY (YUV 422) textures.
     return !hardware_image->alternate_rgba_format();
   }*/
-  return false;
+  return true;
 }
 
 bool RoundedRectContainsNonRoundedRect(
@@ -192,6 +193,7 @@ bool RoundedViewportSupportedForSource(
     const render_tree::ViewportFilter& filter) {
   base::TypeId source_type = source->GetTypeId();
   if (source_type == base::GetTypeId<render_tree::ImageNode>()) {
+      printf("RoundedViewportSupportedForSource ImageNode\n");
     // Image nodes are supported if the image can be rendered natively.
     render_tree::ImageNode* image_node =
         base::polymorphic_downcast<render_tree::ImageNode*>(source);
@@ -493,6 +495,7 @@ void RenderTreeNodeVisitor::Visit(render_tree::FilterNode* filter_node) {
 
 void RenderTreeNodeVisitor::Visit(render_tree::ImageNode* image_node) {
   const render_tree::ImageNode::Builder& data = image_node->data();
+  printf("skgl RenderTreeNodeVisitor::Visit(render_tree::ImageNode\n");
 
   // The image node may contain nothing. For example, when it represents a video
   // element before any frame is decoded.
@@ -544,8 +547,10 @@ void RenderTreeNodeVisitor::Visit(render_tree::ImageNode* image_node) {
   // plane or multiple planes.
   std::unique_ptr<DrawObject> draw;
 
-  /*if (skia_image->GetTypeId() == base::GetTypeId<skia::SinglePlaneImage>()) {
-    skia::HardwareFrontendImage* hardware_image =
+  if (skia_image->GetTypeId() == base::GetTypeId<skia::SinglePlaneImage>()) {
+      printf("skia_image->GetTypeId() == base::GetTypeId<skia::SinglePlaneImage>\n");
+      /// __TODO__
+    /*skia::HardwareFrontendImage* hardware_image =
         base::polymorphic_downcast<skia::HardwareFrontendImage*>(skia_image);
     if (!hardware_image->GetTextureEGL()) {
       return;
@@ -567,10 +572,11 @@ void RenderTreeNodeVisitor::Visit(render_tree::ImageNode* image_node) {
       draw.reset(new DrawRectTexture(
           graphics_state_, draw_state_, data.destination_rect,
           hardware_image->GetTextureEGL(), texcoord_transform));
-    }
+    }*/
   } else if (skia_image->GetTypeId() ==
              base::GetTypeId<skia::MultiPlaneImage>()) {
-    skia::HardwareMultiPlaneImage* hardware_image =
+      printf("skia_image->GetTypeId() == base::GetTypeId<skia::MultiPlaneImage>\n");
+    /*skia::HardwareMultiPlaneImage* hardware_image =
         base::polymorphic_downcast<skia::HardwareMultiPlaneImage*>(skia_image);
     auto image_format = hardware_image->GetFormat();
     auto y_texture_egl = hardware_image->GetTextureEGL(0);
@@ -603,13 +609,13 @@ void RenderTreeNodeVisitor::Visit(render_tree::ImageNode* image_node) {
           graphics_state_, draw_state_, data.destination_rect, y_texture_egl,
           u_texture_egl, v_texture_egl, color_transform_in_column_major,
           texcoord_transform));
-    }
+    }*/
   } else {
     NOTREACHED();
     return;
   }
 
-  AddDraw(std::move(draw), image_node->GetBounds(),
+  /*AddDraw(std::move(draw), image_node->GetBounds(),
           is_opaque ? DrawObjectManager::kBlendNoneOrSrcAlpha
                     : DrawObjectManager::kBlendSrcAlpha);*/
 }

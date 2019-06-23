@@ -55,7 +55,7 @@ if(ENABLE_KHRONOS)
   )
 endif(ENABLE_KHRONOS)
 # Blink platform
-set(ENABLE_BLINK TRUE) # TODO
+set(ENABLE_BLINK FALSE) # TODO
 # cobalt
 set(ENABLE_COBALT TRUE)
 # SKIA
@@ -86,8 +86,8 @@ endif(NOT ENABLE_WASM)
 #set(ENABLE_SIMD TRUE)
 set(ENABLE_SIMD FALSE)
 # PTHREADS
-set(ENABLE_WEB_PTHREADS TRUE)
-#set(ENABLE_WEB_PTHREADS FALSE)
+#set(ENABLE_WEB_PTHREADS TRUE)
+set(ENABLE_WEB_PTHREADS FALSE)
 #
 set(ENABLE_WEBGL2 TRUE)
 #set(ENABLE_WEBGL1 TRUE) # TODO
@@ -2415,6 +2415,7 @@ target_compile_options(${PROJECT_NAME} PRIVATE
   -Wextra
   -Weverything # clang
   -Wno-undef
+  -Wno-switch
   #-pedantic-errors
   -Wno-pedantic
   -Wno-duplicate-enum
@@ -2446,7 +2447,9 @@ target_compile_options(${PROJECT_NAME} PRIVATE
   -Wno-deprecated
   -Wno-expansion-to-defined
   -Wno-gnu-zero-variadic-macro-arguments
+  -Wno-double-promotion
   -Wno-unused-value
+  -Wno-unused-template
   -Wno-unused-parameter
   -Wno-unused-variable
   -Wno-unused-function

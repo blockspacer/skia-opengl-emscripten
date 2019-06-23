@@ -135,7 +135,7 @@ void FontCache::PurgeCachedResources() {
 }
 
 void FontCache::ProcessInactiveFontListsAndFonts() {
-  printf("FontCache::ProcessInactiveFontListsAndFonts\n");
+  ///printf("FontCache::ProcessInactiveFontListsAndFonts\n");
   DCHECK(thread_checker_.CalledOnValidThread());
   base::TimeTicks current_time = base::TimeTicks::Now();
   if ((current_time - last_inactive_process_time_).InMilliseconds() >
@@ -167,16 +167,18 @@ const scoped_refptr<render_tree::Font>& FontCache::GetFontFromTypefaceAndSize(
   FontInfo& cached_font_info = font_map_[font_key];
   printf("FontCache::GetFontFromTypefaceAndSize size %f", size);
   if (cached_font_info.font.get() == NULL) {
+    printf("FontCache::GetFontFromTypefaceAndSize 2 size %f", size);
     //size = 22.0f; // __TODO__
     cached_font_info.font = typeface->CreateFontWithSize(size);
   }
+  printf("FontCache::GetFontFromTypefaceAndSize 3 size %f", size);
   return cached_font_info.font;
 }
 
 scoped_refptr<render_tree::Font> FontCache::TryGetFont(
     const std::string& family, render_tree::FontStyle style, float size,
     FontListFont::State* state) {
-  printf("FontCache::TryGetFont 1\n");
+  printf("FontCache::TryGetFont 1 %s\n", family.c_str());
   DCHECK(thread_checker_.CalledOnValidThread());
   FontFaceMap::iterator font_face_map_iterator = font_face_map_->find(family);
   if (font_face_map_iterator != font_face_map_->end()) {
@@ -297,10 +299,10 @@ void FontCache::ProcessInactiveFontLists(const base::TimeTicks& current_time) {
 }
 
 void FontCache::ProcessInactiveFonts(const base::TimeTicks& current_time) {
-  printf("FontCache::ProcessInactiveFonts 1\n");
+  //printf("FontCache::ProcessInactiveFonts 1\n");
   for (FontMap::iterator font_iterator = font_map_.begin();
        font_iterator != font_map_.end();) {
-    printf("FontCache::ProcessInactiveFonts 2\n");
+    //printf("FontCache::ProcessInactiveFonts 2\n");
     FontInfo& font_info = font_iterator->second;
 
     // Any font that has a single ref is unreferenced outside of the font cache
@@ -323,13 +325,13 @@ void FontCache::ProcessInactiveFonts(const base::TimeTicks& current_time) {
 
     ++font_iterator;
   }
-  printf("FontCache::ProcessInactiveFonts 3\n");
+  //printf("FontCache::ProcessInactiveFonts 3\n");
 
   // Continue looping until the total font count drops to the purge threshold or
   // there are no more inactive fonts to purge.
   while (font_map_.size() > kTotalFontCountPurgeThreshold &&
          inactive_font_set_.size() > 0) {
-    printf("FontCache::ProcessInactiveFonts 4\n");
+    ///printf("FontCache::ProcessInactiveFonts 4\n");
     // Grab the first inactive font in the set. They are ordered by the time
     // they became inactive, so the first inactive font in the set is the
     // oldest.
@@ -348,7 +350,7 @@ void FontCache::ProcessInactiveFonts(const base::TimeTicks& current_time) {
     font_map_.erase(inactive_font_iterator->font_key);
     inactive_font_set_.erase(inactive_font_iterator);
   }
-  printf("FontCache::ProcessInactiveFonts 5\n");
+  ///printf("FontCache::ProcessInactiveFonts 5\n");
 }
 
 const scoped_refptr<render_tree::Typeface>& FontCache::GetCachedLocalTypeface(
@@ -457,7 +459,7 @@ scoped_refptr<render_tree::Font> FontCache::TryGetRemoteFont(
 scoped_refptr<render_tree::Font> FontCache::TryGetLocalFont(
     const std::string& family, render_tree::FontStyle style, float size,
     FontListFont::State* state) {
-  printf("FontCache::TryGetLocalFont 1\n");
+  printf("FontCache::TryGetLocalFont 1 %s\n", family.c_str());
 
   DCHECK(resource_provider());
   DCHECK(resource_provider() != NULL);
@@ -469,9 +471,11 @@ scoped_refptr<render_tree::Font> FontCache::TryGetLocalFont(
   // signifies using the default font.
   if (!family.empty() &&
       !resource_provider()->HasLocalFontFamily(family.c_str())) {
+    printf("FontCache::TryGetLocalFont 2 %s\n", family.c_str());
     *state = FontListFont::kUnavailableState;
     return NULL;
   } else {
+    printf("FontCache::TryGetLocalFont 3 %s\n", family.c_str());
     *state = FontListFont::kLoadedState;
     DCHECK(resource_provider()->GetLocalTypeface(family.c_str(), style));
     return GetFontFromTypefaceAndSize(

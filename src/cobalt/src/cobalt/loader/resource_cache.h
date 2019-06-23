@@ -817,8 +817,10 @@ void ResourceCache<CacheType>::NotifyResourceLoadingComplete(
     CachedResourceType* cached_resource, CallbackType callback_type) {
   DCHECK(resource_cache_thread_checker_.CalledOnValidThread());
   const std::string& url = cached_resource->url().spec();
+  printf("ResourceCache<CacheType>::NotifyResourceLoadingComplete 1 \n");
 
   if (cached_resource->TryGetResource()) {
+    printf("ResourceCache<CacheType>::NotifyResourceLoadingComplete 2 \n");
     uint32 estimated_size_in_bytes =
         CacheType::GetEstimatedSizeInBytes(cached_resource->TryGetResource());
     memory_size_in_bytes_ += estimated_size_in_bytes;
@@ -850,6 +852,8 @@ void ResourceCache<CacheType>::NotifyResourceLoadingComplete(
 
   ProcessPendingCallbacksIfUnblocked();
   ReclaimMemoryAndMaybeProcessPendingCallbacks(cache_capacity_);
+
+  printf("ResourceCache<CacheType>::NotifyResourceLoadingComplete 3 \n");
 }
 
 template <typename CacheType>

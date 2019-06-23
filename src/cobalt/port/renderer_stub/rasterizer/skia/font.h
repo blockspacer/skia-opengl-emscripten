@@ -82,7 +82,9 @@ class Font : public render_tree::Font {
 
   static sk_sp<SkTypeface_Cobalt> GetDefaultSkTypeface();
 
- private:
+  const SkFont* GetSkFont() const;
+
+private:
   // Usually covers Latin-1 in a single page.
   static const int kPrimaryPageSize = 256;
   typedef std::map<render_tree::GlyphIndex, math::RectF> GlyphToBoundsMap;
@@ -101,6 +103,8 @@ class Font : public render_tree::Font {
   std::unique_ptr<math::RectF[]> primary_page_glyph_bounds_;
   GlyphToBoundsMap glyph_to_bounds_map_;
   base::ThreadChecker glyph_bounds_thread_checker_;
+  SkFont* skFont_;
+  //SkFontMetrics* font_metrics_;
 };
 
 }  // namespace skia

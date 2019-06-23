@@ -348,10 +348,17 @@ void TextShaper::ShapeComplexRun(const base::char16* text_buffer,
     ///SkPaint paint = script_run.font->GetSkPaint();
     ///paint.setTextEncoding(SkPaint::kGlyphID_TextEncoding);
     ///paint.setFakeBoldText(ShouldFakeBoldText(font_provider, script_run.font));
-    const SkFont* fnt = script_run.font->GetDefaultFont();
 
-    DCHECK(fnt);
-    run_buffer = &(maybe_builder->allocRunPos(*fnt, glyph_count));
+    //const SkFont* fnt = script_run.font->GetSkFont();//GetDefaultFont();
+    //DCHECK(fnt);
+
+    DCHECK(script_run.font->GetSkTypeface());
+    SkFont* tmpFont =
+        new SkFont(script_run.font->GetSkTypeface(), script_run.font->size(), 1.0f, 0.0f); /// __TODO__
+
+    run_buffer = &(maybe_builder->allocRunPos(*tmpFont, glyph_count));
+
+    delete tmpFont;
   }
 
   // Walk each of the shaped glyphs.
@@ -484,6 +491,8 @@ void TextShaper::ShapeSimpleRun(const base::char16* text_buffer,
       local_positions_[glyph_count] = *total_width;
     }
 
+    DCHECK(current_font);
+    //DCHECK(current_font->GetSkFont());
     const math::RectF& glyph_bounds = current_font->GetGlyphBounds(glyph);
     *total_width += glyph_bounds.width();
 
@@ -524,8 +533,17 @@ void TextShaper::AddFontRunToGlyphBuffer(
   // blob.
   DCHECK(font->GetDefaultFont());
   //printf("TextShaper::AddFontRunToGlyphBuffer 2\n");
+
+  DCHECK(font->GetSkTypeface());
+  SkFont* tmpFont =
+      new SkFont(font->GetSkTypeface(), font->size(), 1.0f, 0.0f); /// __TODO__
+
   const SkTextBlobBuilder::RunBuffer& buffer =
-      builder->allocRunPosH(*font->GetDefaultFont(), glyph_count, 0);
+      builder->allocRunPosH(*tmpFont, glyph_count, 0); // TODO: GetDefaultFont
+      //builder->allocRunPosH(*font->GetSkFont(), glyph_count, 0); // TODO: GetDefaultFont
+
+  delete tmpFont;
+
   //printf("TextShaper::AddFontRunToGlyphBuffer 3\n");
   std::copy(&local_glyphs_[0], &local_glyphs_[0] + glyph_count, buffer.glyphs);
   //printf("TextShaper::AddFontRunToGlyphBuffer 4\n");

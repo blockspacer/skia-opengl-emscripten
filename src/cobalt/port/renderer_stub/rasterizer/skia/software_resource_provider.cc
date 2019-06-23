@@ -92,8 +92,10 @@ scoped_refptr<render_tree::Image> SoftwareResourceProvider::CreateImage(
   std::unique_ptr<SoftwareImageData> skia_source_data(
       base::polymorphic_downcast<SoftwareImageData*>(source_data.release()));
 
-  return scoped_refptr<render_tree::Image>(
+  auto res = scoped_refptr<render_tree::Image>(
       new SoftwareImage(std::move(skia_source_data)));
+  printf("SoftwareResourceProvider::CreateImage GetSize %s...\n", res->GetSize().ToString().c_str());
+  return res;
 }
 
 std::unique_ptr<render_tree::RawImageMemory>
@@ -168,15 +170,30 @@ scoped_refptr<render_tree::Typeface> SoftwareResourceProvider::GetLocalTypeface(
       base::polymorphic_downcast<SkTypeface_Cobalt*>(Font::getDefaultTypeface()->makeClone(SkFontArguments()).release()));
   return scoped_refptr<render_tree::Typeface>(new SkiaTypeface(typeface));*/
 
-
   sk_sp<SkFontMgr> font_manager(SkFontMgr::RefDefault());
-  sk_sp<SkTypeface_Cobalt> typeface(
-      base::polymorphic_downcast<SkTypeface_Cobalt*>(
-          font_manager->matchFamilyStyle(
-              font_family_name, CobaltFontStyleToSkFontStyle(font_style))));
-  return scoped_refptr<render_tree::Typeface>(new SkiaTypeface(typeface));
+
+  SkTypeface* fontManagerSkTypeface = font_manager->matchFamilyStyle(
+      font_family_name, CobaltFontStyleToSkFontStyle(font_style));
+  scoped_refptr<render_tree::Typeface> res;
+
+  if(fontManagerSkTypeface) {
+      sk_sp<SkTypeface_Cobalt> typeface(
+          base::polymorphic_downcast<SkTypeface_Cobalt*>(
+              fontManagerSkTypeface));
+      res = scoped_refptr<render_tree::Typeface>(new SkiaTypeface(typeface));
+  }
+
   //return nullptr;
   //return base::WrapRefCounted(new cobalt::render_tree::TypefaceStub(NULL));
+
+  /// __TODO__
+  if (!res || fontManagerSkTypeface == nullptr) {
+      sk_sp<SkTypeface_Cobalt> fallbackTypeface(
+          base::polymorphic_downcast<SkTypeface_Cobalt*>(Font::getDefaultTypeface()->makeClone(SkFontArguments()).release()));
+      res = scoped_refptr<render_tree::Typeface>(new SkiaTypeface(fallbackTypeface));
+  }
+
+  return res;
 }
 
 scoped_refptr<render_tree::Typeface>
@@ -277,7 +294,8 @@ SoftwareResourceProvider::CreateTypefaceFromRawData(
 
   std::unique_ptr<SkStreamAsset> stream;
   {
-      sk_sp<SkData> skia_data(SkData::MakeFromMalloc(
+      //sk_sp<SkData> skia_data(SkData::MakeFromMalloc(
+      sk_sp<SkData> skia_data(SkData::MakeWithCopy(
           &((*raw_data)[0]), raw_data->size()
           ));
       ///sk_sp<SkData> skia_data(SkData::MakeWithCopy(
@@ -292,10 +310,15 @@ SoftwareResourceProvider::CreateTypefaceFromRawData(
 
   sk_sp<SkTypeface_Cobalt> typeface(
       base::polymorphic_downcast<SkTypeface_Cobalt*>(
-          Font::getDefaultTypeface()->makeClone(SkFontArguments()).release()));
-  /*sk_sp<SkTypeface_Cobalt> typeface(
-      base::polymorphic_downcast<SkTypeface_Cobalt*>(
-          SkTypeface::MakeFromStream(std::move(stream)).release()));*/
+          SkTypeface::MakeFromStream(std::move(stream)).release()));
+
+  if(!typeface) {
+      printf("SoftwareResourceProvider::CreateTypefaceFromRawData no typeface...\n");
+      typeface.reset(
+          base::polymorphic_downcast<SkTypeface_Cobalt*>(
+              Font::getDefaultTypeface()->makeClone(SkFontArguments()).release())); // TODO
+  }
+
   if (typeface) {
       printf("SoftwareResourceProvider::CreateTypefaceFromRawData 3...\n");
       //return nullptr;

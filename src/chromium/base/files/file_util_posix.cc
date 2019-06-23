@@ -482,12 +482,15 @@ bool SetCloseOnExec(int fd) {
 
 bool PathExists(const FilePath& path) {
   ScopedBlockingCall scoped_blocking_call(FROM_HERE, BlockingType::MAY_BLOCK);
+  printf("PathExists 1 %s /n", path.value().c_str());
 #if defined(OS_ANDROID)
   if (path.IsContentUri()) {
     return ContentUriExists(path);
   }
 #endif
-  return access(path.value().c_str(), F_OK) == 0;
+  const bool res = access(path.value().c_str(), F_OK) == 0;
+  printf("PathExists 1 %s, %d /n", path.value().c_str(), res);
+  return res;
 }
 
 #if !defined(OS_NACL_NONSFI)// && !defined(OS_EMSCRIPTEN)

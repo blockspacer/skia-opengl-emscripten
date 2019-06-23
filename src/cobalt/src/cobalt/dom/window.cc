@@ -767,26 +767,26 @@ void Window::OnDocumentRootElementUnableToProvideOffsetDimensions() {
 }
 
 void Window::OnStartDispatchEvent(const scoped_refptr<dom::Event>& event) {
-  P_LOG("Window::OnStartDispatchEvent 1\n");
+  //P_LOG("Window::OnStartDispatchEvent 1\n");
 
 //#ifdef __TODO__
   if (!on_start_dispatch_event_callback_.is_null()) {
-    P_LOG("Window::OnStartDispatchEvent 2\n");
+    //P_LOG("Window::OnStartDispatchEvent 2\n");
     DCHECK(!on_start_dispatch_event_callback_.IsCancelled());
-    P_LOG("Window::OnStartDispatchEvent 2.1\n");
+    //P_LOG("Window::OnStartDispatchEvent 2.1\n");
     on_start_dispatch_event_callback_.Run(event);
-    P_LOG("Window::OnStartDispatchEvent 3\n");
+    //P_LOG("Window::OnStartDispatchEvent 3\n");
   }
 //#endif
 
 }
 
 void Window::OnStopDispatchEvent(const scoped_refptr<dom::Event>& event) {
-  P_LOG("Window::OnStopDispatchEvent 1\n");
+  //P_LOG("Window::OnStopDispatchEvent 1\n");
   if (!on_stop_dispatch_event_callback_.is_null()) {
-    P_LOG("Window::OnStopDispatchEvent 2\n");
+    //P_LOG("Window::OnStopDispatchEvent 2\n");
     on_stop_dispatch_event_callback_.Run(event);
-    P_LOG("Window::OnStopDispatchEvent 3\n");
+    //P_LOG("Window::OnStopDispatchEvent 3\n");
   }
 }
 
