@@ -7,17 +7,38 @@ DOM Modifications
 UI thread & WASM ST (don`t block UI!)
 REST API
 dom visual editor
+ > https://designmodo.com/startup/
+ > https://webflow.com/ecommerce
  > https://webdesigner.withgoogle.com/
  > https://coherent-labs.com/posts/first-peek-into-the-coherent-gt-editor/
  > https://pinegrow.com/wordpress-theme-builder.html
  > http://macaw.co/
+ > https://medium.com/subform/dynamic-layout-at-design-time-91d3bbda64e3
  > phonegap
+ > https://uxpro.cc/toolbox/visual-design/animation/
 widget gallery / demo apps apps
 widget gallery / demo apps online https://developer.xamarin.com/samples-all
 dynamic font loading
 clipboard support (WASM)
+image region zoom
+ > https://www.walmart.com/ip/Classic-Accessories-StormPro-Boat-Storage-Cover/
+ > https://www.walgreens.com/store/c/pantene-gold-series-repairing-mask-treatment/ID=prod6393463-product
 UI animation system & fps & Easing
+ > https://www.wolfwhale.com/works/
+ > https://gleechat.com/instant-messages
+ > https://lusion.co/
+ > https://www.awwwards.com/inspiration/58a2fddce138232c961d9cb7
+ > https://www.awwwards.com/sites/a-world-with-no-heroes
+ > https://www.awwwards.com/sites/rogue-one-star-wars
+infographics https://www.invisionapp.com/design-better/design-maturity-model/
 dom/widgets 3d animations
+floating support chat
+button with load status & effects https://www.pinterest.ru/pin/534098837057407689/?lp=true
+mobile UI & UX
+ > https://uxplanet.org/animated-transitions-in-mobile-apps-412b8e8478e7
+ > https://play.google.com/store/apps/details?id=com.mcdonalds.app&hl=en
+ > https://play.google.com/store/apps/details?id=com.usablenet.mobile.walgreen&hl=en
+ > https://ui8.net/products/wala
 animation editor a.k.a Spine
 LTR & RTL fonts
 dom node effects / shaders (flashlight e.t.c.)
@@ -37,7 +58,7 @@ dom debugger (aka chrome dev tools) with live editing/combined styles/display si
 exe remote debugger aka gammaray https://www.kdab.com/development-resources/qt-tools/gammaray/
 crash & exception reports (EXE & WASM)
 WASM: record performance traces to JSON
-performance chart
+performance chart (browser dev tools)
 godot support
 dom reactive bindings
 i18n & dynamic language switch & poedit support
@@ -75,6 +96,7 @@ Multimedia: audio
 Multimedia: video
 asmdom support https://github.com/mbasso/asm-dom
 charts module & gantt chart aka https://doc.qt.io/qt-5/qtcharts-index.html
+> https://sketch.cloud/s/3bppr
 audio waveforms e.t.c. https://docs.juce.com/master/tutorial_audio_thumbnail.html
 accessibility / screen reader / Color Blindness / e.t.c.
 PickList https://www.primefaces.org/primeng/#/picklist
@@ -98,6 +120,25 @@ text selection
 in-browser text to renderered layout (1-to-1)
 webrtc & websockets support
 SCSS
+dynamic dom props from css (calc, attr) for any elem https://stackoverflow.com/a/46213559/10904212
+css grid
+ > https://www.joomlashack.com/blog/tutorials/determining-the-size-of-the-tracks-in-css-grid/
+ > https://cloudfour.com/thinks/breaking-out-with-css-grid-layout/
+A curated list of commonly frustrating HTML and CSS quandaries https://github.com/mdo/wtf-html-css
+css to C++ tranpiler (remove first interpretation)
+html dom to C++ tranpiler (remove first interpretation)
+custom mouse & mouse effects on hover https://www.romainavalle.dev/
+meterial design & video & parallax support https://store.google.com/us/product/stadia_founders_edition?hl=en-US
+caching in localstorage
+multi-resolution image bundle (for image preload)
+animated effects https://cloud.withgoogle.com/infrastructure/explore/step-1
+Constraint CSS
+preloader
+ > .logo { width: { #logo-img:width * 2.0 - $somevar + :next[left] }; }
+ > https://gss.github.io/guides/ccss
+ > https://gss.github.io/demos/hello-world
+A free visual guide to CSS https://cssreference.io/
+@media for detecting device size
 Model/View/Provider/Mapper e.t.c
  > QT MVC
  > Flutter https://medium.com/fluttery/what-even-are-flutter-widgets-ce537a048a7d
