@@ -545,7 +545,7 @@ elseif(USE_LIBJPEG_TURBO)
     SK_HAS_JPEG_LIBRARY=1 # skia_use_libjpeg_turbo
     SK_HAS_JPEG_LIBRARY
   )
-endif(USE_LIBJPEG_TURBO)
+endif()
 
 #<listOptionValue builtIn="false" value="SK_DEFAULT_FONT_CACHE_LIMIT=20971520"/>
 #<listOptionValue builtIn="false" value="SK_GAMMA_CONTRAST=0.2"/>
