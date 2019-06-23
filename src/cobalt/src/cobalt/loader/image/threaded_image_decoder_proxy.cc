@@ -48,9 +48,14 @@ void PostToMessageLoopChecked(
     //base::MessageLoop* message_loop,
     scoped_refptr<base::SingleThreadTaskRunner> message_loop,
     const Arg& arg) {
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   message_loop->PostTask(
       FROM_HERE, base::Bind(&MaybeRun<Callback, Arg>,
                             threaded_image_decoder_proxy, callback, arg));
+#else
+  std::move(base::Bind(&MaybeRun<Callback, Arg>,
+                       threaded_image_decoder_proxy, callback, arg)).Run();
+#endif
 }
 
 }  // namespace
@@ -65,8 +70,11 @@ ThreadedImageDecoderProxy::ThreadedImageDecoderProxy(
       ALLOW_THIS_IN_INITIALIZER_LIST(
           weak_this_(weak_ptr_factory_.GetWeakPtr())),
       load_message_loop_(load_message_loop),
-      //result_message_loop_(base::MessageLoopCurrent::Get()),
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+      result_message_loop_(base::MessageLoopCurrent::Get().task_runner()),
+#else
       result_message_loop_(),
+#endif
       image_decoder_(new ImageDecoder(
           resource_provider,
           base::Bind(&PostToMessageLoopChecked<ImageAvailableCallback,
@@ -77,8 +85,13 @@ ThreadedImageDecoderProxy::ThreadedImageDecoderProxy(
               &PostToMessageLoopChecked<loader::Decoder::OnCompleteFunction,
                                         base::Optional<std::string>>,
               weak_this_, load_complete_callback, result_message_loop_))) {
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   DCHECK(load_message_loop_);
-  DCHECK(result_message_loop_);
+  DCHECK(result_message_loop_); // TODO
+#else
+  DCHECK(!load_message_loop_);
+  DCHECK(!load_message_loop_);
+#endif
   DCHECK(image_decoder_);
 }
 
@@ -89,9 +102,16 @@ ThreadedImageDecoderProxy::ThreadedImageDecoderProxy(
 ThreadedImageDecoderProxy::~ThreadedImageDecoderProxy() {
   // Notify the ImageDecoder that there's a pending deletion to ensure that no
   // additional work is done decoding the image.
+  DCHECK(image_decoder_);
   image_decoder_->SetDeletionPending();
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+  DCHECK(load_message_loop_);
   load_message_loop_->DeleteSoon(FROM_HERE,
                                                 image_decoder_.release());
+#else
+  DCHECK(!load_message_loop_);
+  image_decoder_.release();
+#endif
 }
 
 LoadResponseType ThreadedImageDecoderProxy::OnResponseStarted(
@@ -111,41 +131,72 @@ LoadResponseType ThreadedImageDecoderProxy::OnResponseStarted(
 
 void ThreadedImageDecoderProxy::DecodeChunk(const char* data, size_t size) {
   std::unique_ptr<std::string> scoped_data(new std::string(data, size));
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+  DCHECK(load_message_loop_);
   load_message_loop_->PostTask(
       FROM_HERE, base::Bind(&Decoder::DecodeChunkPassed,
                             base::Unretained(image_decoder_.get()),
                             base::Passed(&scoped_data)));
+#else
+  std::move(base::Bind(&Decoder::DecodeChunkPassed,
+                       base::Unretained(image_decoder_.get()),
+                       base::Passed(&scoped_data))).Run();
+#endif
 }
 
 void ThreadedImageDecoderProxy::DecodeChunkPassed(
     std::unique_ptr<std::string> data) {
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+  DCHECK(load_message_loop_);
   load_message_loop_->PostTask(
       FROM_HERE,
       base::Bind(&Decoder::DecodeChunkPassed,
                  base::Unretained(image_decoder_.get()), base::Passed(&data)));
+#else
+  std::move(base::Bind(&Decoder::DecodeChunkPassed,
+                       base::Unretained(image_decoder_.get()), base::Passed(&data))).Run();
+#endif
 }
 
 void ThreadedImageDecoderProxy::Finish() {
   printf("ThreadedImageDecoderProxy::Finish 1...\n");
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+  DCHECK(load_message_loop_);
   load_message_loop_->PostTask(
       FROM_HERE, base::Bind(&ImageDecoder::Finish,
                             base::Unretained(image_decoder_.get())));
+#else
+  std::move(base::Bind(&ImageDecoder::Finish,
+                       base::Unretained(image_decoder_.get()))).Run();
+#endif
   printf("ThreadedImageDecoderProxy::Finish 2...\n");
 }
 
 bool ThreadedImageDecoderProxy::Suspend() {
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+  DCHECK(load_message_loop_);
   load_message_loop_->PostTask(
       FROM_HERE, base::Bind(base::IgnoreResult(&ImageDecoder::Suspend),
                             base::Unretained(image_decoder_.get())));
+#else
+  std::move(base::Bind(base::IgnoreResult(&ImageDecoder::Suspend),
+                       base::Unretained(image_decoder_.get()))).Run();
+#endif
   return true;
 }
 
 void ThreadedImageDecoderProxy::Resume(
     render_tree::ResourceProvider* resource_provider) {
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+  DCHECK(load_message_loop_);
   load_message_loop_->PostTask(
       FROM_HERE,
       base::Bind(&ImageDecoder::Resume, base::Unretained(image_decoder_.get()),
                  resource_provider));
+#else
+  std::move(base::Bind(&ImageDecoder::Resume, base::Unretained(image_decoder_.get()),
+                       resource_provider)).Run();
+#endif
 }
 
 }  // namespace image
