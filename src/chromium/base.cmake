@@ -1389,7 +1389,8 @@ if(TARGET_EMSCRIPTEN)
 elseif(TARGET_LINUX)
   list(APPEND EXTRA_CHROMIUM_BASE_LIBS
     tcmalloc
-    atomic
+    # TODO: find_package for atomic
+    atomic # from system, no dep
     ced
     ${CUSTOM_ICU_LIB}
     ${HARFBUZZ_LIBRARIES}
