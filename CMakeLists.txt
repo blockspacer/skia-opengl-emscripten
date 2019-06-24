@@ -787,6 +787,8 @@ if(ENABLE_COBALT)
   set(COBALT_CSSOM_LIB cobalt_cssom)
   set(COBALT_WEB_ANIMATIONS_LIB cobalt_web_animations)
   set(COBALT_DOM_LIB cobalt_dom)
+  set(COBALT_OVERLAY_INFO_LIB cobalt_overlay_info)
+  set(COBALT_INPUT_LIB cobalt_input)
   set(COBALT_LAYOUT_LIB cobalt_layout)
   set(COBALT_DOM_PARSER_LIB cobalt_dom_parser)
   set(COBALT_CSS_PARSER_LIB cobalt_css_parser)
@@ -844,8 +846,10 @@ if(ENABLE_COBALT)
     ${COBALT_CSSOM_LIB}
     ${COBALT_WEB_ANIMATIONS_LIB}
     ${COBALT_DOM_LIB}
+    ${COBALT_INPUT_LIB}
     ${COBALT_LAYOUT_LIB}
     ${COBALT_DOM_PARSER_LIB}
+    ${COBALT_OVERLAY_INFO_LIB}
     ${COBALT_CSS_PARSER_LIB}
     ${COBALT_GLIMP_LIB}
     ${COBALT_RENDERER_LIB}

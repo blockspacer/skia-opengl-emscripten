@@ -53,10 +53,12 @@ faster build time
 dynamic asset loading (wasm)
 save data to native filesystem (wasm)
 hot reload & cling
+ > https://github.com/RuntimeCompiledCPlusPlus/RuntimeCompiledCPlusPlus/wiki/Alternatives
  > https://github.com/topcoder-platform/cpp-mm-scoring/blob/master/README.md#install-dependencies-notes-for-ubuntu
  > https://root.cern.ch/root/htmldoc/guides/users-guide/Cling.html
  > https://github.com/galsasson/ClingOFPlayground
- > https://github.com/vincecr0ft/RooFitMinimiserBuild/tree/master/interpreter/cling/tools/demo
+ > https://caiorss.github.io/C-Cpp-Notes/Root-cern-repl.html
+ > https://github.com/root-project/cling/tree/master/tools/demo
  > https://github.com/dilevin/DGPCompFab/tree/master/interpreter/src
  > https://github.com/vkhristenko/test-cpp/tree/master/cling/test_project
  > https://github.com/daminetreg/trommeli
@@ -65,7 +67,20 @@ hot reload & cling
  > https://github.com/esakellari/TabCompletionCling
  > http://secomparteosepierde.blogspot.com/search?q=cling
  > https://blog.qt.io/blog/2018/06/15/scripting-in-c/
+ > http://www.ftj.agh.edu.pl/~Bold/scripts/wyklady/w5.pdf
  > https://github.com/vkhristenko/test-cpp/tree/master/cling/test_project
+ > http://blog.audio-tk.com/2018/09/18/compiling-c-code-in-memory-with-clang/
+ > https://llvm.org/devmtg/2019-04/slides/TechTalk-Guo-Zhou-Handling_all_Facebook_requests_with_JITed_C++_code.pdf
+ > https://stackoverflow.com/questions/1838304/call-llvm-jit-from-c-program
+ > https://github.com/dcbishop/llvmscriptdemo
+ > https://llvm.org/devmtg/2019-04/slides/TechTalk-Schatz-Sulong_an_experience_report.pdf
+ > https://medium.com/@all2one/a-working-edit-and-continue-dynamicpatcher-75c61091f6d
+ > https://www.youtube.com/watch?v=f9Xfh8pv3Fs
+ > Hot-swapping is a very, very difficult problem to solve with binary code. Even if your code is placed into separate dynamic link libraries, your code needs to ensure that there are no direct references to functions in memory (as the address of functions can change with a recompile). This essentially means not using virtual functions, and anything that uses function pointers do so via some sort of dispatch table. https://gamedev.stackexchange.com/a/365
+ > https://habr.com/ru/company/Voximplant/blog/270593/
+ > https://jacksondunstan.com/articles/4489
+ >
+https://www.phoronix.com/forums/forum/software/programming-compilers/1095291-facebook-is-jit-ing-c-code-to-treat-it-like-a-crazy-fast-scripting-language
 visual IDE (aka photoshop/Figma/sketch.com/e.t.c.)
 dom debugger (aka chrome dev tools) with live editing/combined styles/display size change/loaded resources/animations & changes e.t.c.
 exe remote debugger aka gammaray https://www.kdab.com/development-resources/qt-tools/gammaray/

@@ -1100,6 +1100,15 @@ static int browser_height = height;//10000;
 //#include "cobalt/speech/speech_synthesis.h"
 #include "starboard/file.h"
 
+#include "cobalt/input/input_device_manager.h"
+#include "cobalt/dom/input_event_init.h"
+#include "cobalt/dom/dom_settings.h"
+#include "cobalt/dom/wheel_event_init.h"
+#include "cobalt/dom/on_screen_keyboard_bridge.h"
+#include "cobalt/dom/pointer_event_init.h"
+#include "cobalt/dom/keyboard_event_init.h"
+#include "cobalt/overlay_info/overlay_info_registry.h"
+
 #include "renderer_stub/renderer_module.h"
 #include "renderer_stub/pipeline.h"
 #include "renderer_stub/submission.h"
@@ -1903,6 +1912,7 @@ using namespace cobalt::css_parser;
 using namespace cobalt::layout;
 using namespace cobalt::loader;
 using namespace cobalt::dom;
+using namespace cobalt::input;
 using namespace cobalt::script;
 using namespace cobalt::network;
 using namespace cobalt::media;
@@ -1983,6 +1993,9 @@ class CobaltTester {
 #ifdef HAS_ICU
     void listWordBoundaries(const icu::UnicodeString& s);
 #endif
+  void OnKeyEventProduced(base::CobToken type, const dom::KeyboardEventInit &event);
+  void OnPointerEventProduced(base::CobToken type, const dom::PointerEventInit &event);
+  void OnWheelEventProduced(base::CobToken type, const dom::WheelEventInit &event);
 
   public:
   //private:
@@ -2117,10 +2130,14 @@ class CobaltTester {
   RenderTreeCombiner render_tree_combiner_;
   std::unique_ptr<RenderTreeCombiner::Layer> main_web_module_layer_;
 
+  // Wraps input device and produces input events that can be passed into
+  // the web module.
+  std::unique_ptr<cobalt::input::InputDeviceManager> input_device_manager_;
+
   scoped_refptr<cobalt::dom::captions::SystemCaptionSettings>
       system_caption_settings_;
 
-  scoped_refptr<cobalt::input::Camera3D> camera_3d_;
+  //scoped_refptr<cobalt::input::Camera3D> camera_3d_;
 
   scoped_refptr<ui_navigation::NavItem> ui_nav_root_;
 
@@ -2231,7 +2248,7 @@ void CobaltTester::OnRenderTreeRasterized(
 
 void CobaltTester::BrowserProcessRenderTreeSubmissionQueue() {
     TRACE_EVENT0("cobalt::browser",
-                 "BrowserModule::ProcessRenderTreeSubmissionQueue()");
+                 "CobaltTester::ProcessRenderTreeSubmissionQueue()");
     //DCHECK_EQ(base::MessageLoop::current(), self_message_loop_);
     printf("BrowserProcessRenderTreeSubmissionQueue 1\n");
 
@@ -2254,7 +2271,7 @@ renderer::Submission CobaltTester::CreateSubmissionFromLayoutResults(
 void CobaltTester::OnRendererSubmissionRasterized() {
         //printf("OnRendererSubmissionRasterized 1\n");
     TRACE_EVENT0("cobalt::browser",
-                 "BrowserModule::OnRendererSubmissionRasterized()");
+                 "CobaltTester::OnRendererSubmissionRasterized()");
     //if (!is_rendered_) {
     //    // Hide the system splash screen when the first render has completed.
     //    is_rendered_ = true;
@@ -2333,7 +2350,7 @@ void CobaltTester::QueueOnRenderTreeProduced(
     int main_web_module_generation,
     const cobalt::layout::LayoutManager::LayoutResults& layout_results) {
         printf("QueueOnRenderTreeProduced 1\n");
-    TRACE_EVENT0("cobalt::browser", "BrowserModule::QueueOnRenderTreeProduced()");
+    TRACE_EVENT0("cobalt::browser", "CobaltTester::QueueOnRenderTreeProduced()");
     render_tree_submission_queue_.AddMessage(
         base::Bind(&CobaltTester::OnBrowserRenderTreeProduced,
                    base::Unretained(this),
@@ -2437,6 +2454,108 @@ void CobaltTester::OnLoad() {
     // see https://github.com/blockspacer/cobalt-clone-28052019/blob/master/src/cobalt/browser/browser_module.cc#L625
 }
 
+
+#if SB_HAS(ON_SCREEN_KEYBOARD)
+void CobaltTester::OnOnScreenKeyboardInputEventProduced(
+    base::CobToken type, const dom::InputEventInit& event) {
+  /*TRACE_EVENT0("cobalt::browser",
+               "CobaltTester::OnOnScreenKeyboardInputEventProduced()");
+  if (base::MessageLoop::current() != self_message_loop_) {
+    self_message_loop_->task_runner()->PostTask(
+        FROM_HERE,
+        base::Bind(&CobaltTester::OnOnScreenKeyboardInputEventProduced,
+                   weak_this_, type, event));
+    return;
+  }
+
+#if defined(ENABLE_DEBUGGER)
+  // If the debug console is fully visible, it gets the next chance to handle
+  // input events.
+  if (debug_console_->GetMode() >= debug::console::DebugHub::kDebugConsoleOn) {
+    if (!debug_console_->InjectOnScreenKeyboardInputEvent(type, event)) {
+      return;
+    }
+  }
+#endif  // defined(ENABLE_DEBUGGER)
+
+  InjectOnScreenKeyboardInputEventToMainWebModule(type, event);*/
+}
+#endif  // SB_HAS(ON_SCREEN_KEYBOARD)
+
+void CobaltTester::OnKeyEventProduced(base::CobToken type,
+                                       const dom::KeyboardEventInit& event) {
+  printf("OnKeyEventProduced client_x %s \n",
+    event.code().c_str());
+  /*TRACE_EVENT0("cobalt::browser", "CobaltTester::OnKeyEventProduced()");
+  if (base::MessageLoop::current() != self_message_loop_) {
+    self_message_loop_->task_runner()->PostTask(
+        FROM_HERE, base::Bind(&CobaltTester::OnKeyEventProduced, weak_this_,
+                              type, event));
+    return;
+  }
+
+  // Filter the key event.
+  if (!FilterKeyEvent(type, event)) {
+    return;
+  }
+
+  InjectKeyEventToMainWebModule(type, event);*/
+}
+
+void CobaltTester::OnPointerEventProduced(base::CobToken type,
+                                           const dom::PointerEventInit& event) {
+  printf("OnPointerEventProduced client_x %d client_y %d \n",
+    event.client_x(), event.client_y());
+  /*TRACE_EVENT0("cobalt::browser", "CobaltTester::OnPointerEventProduced()");
+  if (base::MessageLoop::current() != self_message_loop_) {
+    self_message_loop_->task_runner()->PostTask(
+        FROM_HERE, base::Bind(&CobaltTester::OnPointerEventProduced,
+                              weak_this_, type, event));
+    return;
+  }
+
+#if defined(ENABLE_DEBUGGER)
+  // If the debug console is fully visible, it gets the next chance to handle
+  // pointer events.
+  if (debug_console_->GetMode() >= debug::console::DebugHub::kDebugConsoleOn) {
+    if (!debug_console_->FilterPointerEvent(type, event)) {
+      return;
+    }
+  }
+
+#endif  // defined(ENABLE_DEBUGGER)
+
+  DCHECK(web_module_);
+  web_module_->InjectPointerEvent(type, event);*/
+}
+
+void CobaltTester::OnWheelEventProduced(base::CobToken type,
+                                         const dom::WheelEventInit& event) {
+  printf("OnWheelEventProduced client_x %d client_y %d \n",
+    event.client_x(), event.client_y());
+  /*TRACE_EVENT0("cobalt::browser", "CobaltTester::OnWheelEventProduced()");
+  if (base::MessageLoop::current() != self_message_loop_) {
+    self_message_loop_->task_runner()->PostTask(
+        FROM_HERE, base::Bind(&CobaltTester::OnWheelEventProduced, weak_this_,
+                              type, event));
+    return;
+  }
+
+#if defined(ENABLE_DEBUGGER)
+  // If the debug console is fully visible, it gets the next chance to handle
+  // wheel events.
+  if (debug_console_->GetMode() >= debug::console::DebugHub::kDebugConsoleOn) {
+    if (!debug_console_->FilterWheelEvent(type, event)) {
+      return;
+    }
+  }
+
+#endif  // defined(ENABLE_DEBUGGER)
+
+  DCHECK(web_module_);
+  web_module_->InjectWheelEvent(type, event);*/
+}
+
 #ifdef HAS_ICU
 //static const icu::Locale *t_icu_locale;
 
@@ -2497,7 +2616,7 @@ CobaltTester::CobaltTester()
 
   // see RendererModuleWithCameraOptions
   render_module_options.get_camera_transform = base::Bind(
-      &input::Camera3D::GetCameraTransformAndUpdateOrientation, camera_3d_);
+      &input::Camera3D::GetCameraTransformAndUpdateOrientation, input_device_manager_->camera_3d());
 
   DCHECK(system_window_);
 
@@ -2508,10 +2627,75 @@ CobaltTester::CobaltTester()
       system_window_.get(),
       render_module_options));
       /*RendererModuleWithCameraOptions(render_module_options,
-                                      //input_device_manager_->camera_3d()
-                                      camera_3d_
+                                      input_device_manager_->camera_3d()
+                                      //camera_3d_
                                       )));*/
 
+  input_device_manager_ = input::InputDeviceManager::CreateFromWindow(
+      base::Bind(&CobaltTester::OnKeyEventProduced, base::Unretained(this)),
+      base::Bind(&CobaltTester::OnPointerEventProduced,
+                 base::Unretained(this)),
+      base::Bind(&CobaltTester::OnWheelEventProduced, base::Unretained(this)),
+#if SB_HAS(ON_SCREEN_KEYBOARD)
+      base::Bind(&CobaltTester::OnOnScreenKeyboardInputEventProduced,
+                 base::Unretained(this)),
+#endif  // SB_HAS(ON_SCREEN_KEYBOARD)
+      system_window_.get());
+
+#ifdef __TODO__
+/*
+skemgl.js:6107 Uncaught abort("segmentation fault") at Error
+    at jsStackTrace (http://localhost:9090/home/avakimov_am/skia-opengl-emscripten/build-emscripten/skemgl.js:1363:13)
+    at stackTrace (http://localhost:9090/home/avakimov_am/skia-opengl-emscripten/build-emscripten/skemgl.js:1380:12)
+    at abort (http://localhost:9090/home/avakimov_am/skia-opengl-emscripten/build-emscripten/skemgl.js:16641:44)
+    at segfault (http://localhost:9090/home/avakimov_am/skia-opengl-emscripten/build-emscripten/skemgl.js:688:3)
+    at SAFE_HEAP_LOAD_i64_8_U_8 (wasm-function[43123]:29)
+    at cobalt::system_window::SystemWindow::DispatchInputEvent(SbInputData const&, cobalt::system_window::InputEvent::Type, bool) [__ZN6cobalt13system_window12SystemWindow18DispatchInputEventERK11SbInputDataNS0_10InputEvent4TypeEb] (wasm-function[2818]:80)
+    at cobalt::system_window::SystemWindow::HandleInputEvent(SbInputData const&) [__ZN6cobalt13system_window12SystemWindow16HandleInputEventERK11SbInputData] (wasm-function[2828]:126)
+    at cobalt::system_window::HandleInputEvent(SbEvent const*) [__ZN6cobalt13system_window16HandleInputEventEPK7SbEvent] (wasm-function[2829]:35)
+    at CobaltTester::CobaltTester() [__ZN12CobaltTesterC2Ev] (wasm-function[1089]:2377)
+    at createCobaltTester() [__ZL18createCobaltTesterv] (wasm-function[1610]:20)
+ * */
+  // https://github.com/blockspacer/cobalt-clone-28052019/blob/master/src/cobalt/browser/application.cc#L907
+  // https://github.com/blockspacer/cobalt-clone-28052019/blob/89664d116629734759176d820e9923257717e09c/src/cobalt/base/wrap_main_starboard.h#L34
+  // https://github.com/blockspacer/cobalt-clone-28052019/blob/master/src/starboard/shared/starboard/application.cc#L41
+  // https://github.com/blockspacer/cobalt-clone-28052019/blob/master/src/starboard/android/shared/application_android.cc#L494
+  SbEvent* event = new SbEvent(); // TODO: free mem
+  event->type = SbEventType::kSbEventTypeInput;
+  const char* input_text = "input_text";
+  char* text = SbStringDuplicate(input_text);
+  SbInputData* data = new SbInputData();
+  SbMemorySet(data, 0, sizeof(*data));
+  ///data->window = window_;
+  data->type = SbInputEventType::kSbInputEventTypePress;
+  data->device_id = 0;
+  data->key_location = kSbKeyLocationUnspecified;
+  data->key_modifiers = kSbKeyModifiersNone;;
+  data->device_type = SbInputDeviceType::kSbInputDeviceTypeKeyboard;
+  data->key = SbKey::kSbKeyK;
+  //data->character = "k";
+
+  //https://github.com/blockspacer/cobalt-clone-28052019/blob/master/src/starboard/examples/window/main.cc#L56
+  ///
+  //////
+  /// same as SbEventHandle(&event), BUT ONLY for SbInputData;
+  /// >>>
+  {
+    SbInputData* dataSb = static_cast<SbInputData*>(event->data);
+    typedef std::set<SbKey> KeySet; // TODO
+    KeySet s_is_pressed;
+    s_is_pressed.insert(dataSb->key);
+    std::stringstream keys;
+    keys << "Keys currently pressed:";
+    for (KeySet::const_iterator iter = s_is_pressed.begin();
+         iter != s_is_pressed.end(); ++iter) {
+      keys << " " << std::hex << *iter;
+    }
+  }
+  //system_window_->HandleInputEvent(&event);
+  system_window::HandleInputEvent(event);
+  // TODO: free mem, see event "deleter"
+#endif
 
   DCHECK(renderer_module_);
 
@@ -2533,7 +2717,7 @@ CobaltTester::CobaltTester()
   DCHECK(resource_provider_);
 
   loaded_callbacks.push_back(
-      //base::Bind(&BrowserModule::OnLoad, base::Unretained(this)));
+      //base::Bind(&CobaltTester::OnLoad, base::Unretained(this)));
       base::Bind(&CobaltTester::OnLoad,
                  base::Unretained(this)));
 
@@ -2724,7 +2908,7 @@ CobaltTester::CobaltTester()
       //base::Bind(&OnWindowMinimize, base::Unretained(this)), //data.window_minimize_callback, // base::Closure
       base::Bind(&CobaltTester::OnWindowMinimize, base::Unretained(this)),
       on_screen_keyboard_bridge, //data.options.on_screen_keyboard_bridge,
-      camera_3d_, //new Camera3D(),//data.options.camera_3d,
+      input_device_manager_->camera_3d(), //new Camera3D(),//data.options.camera_3d,
       // //media_session_client_->GetMediaSession(),
       base::Bind(&CobaltTester::OnStartDispatchEvent, base::Unretained(this)),
       //base::Bind(&WebModule::Impl::OnStartDispatchEvent,

@@ -39,7 +39,7 @@ KeyRepeatFilter::KeyRepeatFilter(KeyEventHandler* filter)
     : KeyEventHandler(filter) {}
 
 void KeyRepeatFilter::HandleKeyboardEvent(
-    base::Token type, const dom::KeyboardEventInit& keyboard_event) {
+    base::CobToken type, const dom::KeyboardEventInit& keyboard_event) {
   if (type == base::Tokens::keydown()) {
     HandleKeyDown(type, keyboard_event);
   }
@@ -50,7 +50,7 @@ void KeyRepeatFilter::HandleKeyboardEvent(
 }
 
 void KeyRepeatFilter::HandleKeyDown(
-    base::Token type, const dom::KeyboardEventInit& keyboard_event) {
+    base::CobToken type, const dom::KeyboardEventInit& keyboard_event) {
   // Record the information of the KeyboardEvent for firing repeat events.
   last_event_data_ = keyboard_event;
 
@@ -63,7 +63,7 @@ void KeyRepeatFilter::HandleKeyDown(
 }
 
 void KeyRepeatFilter::HandleKeyUp(
-    base::Token type, const dom::KeyboardEventInit& keyboard_event) {
+    base::CobToken type, const dom::KeyboardEventInit& keyboard_event) {
   DispatchKeyboardEvent(type, keyboard_event);
 
   // If it is a key up event and it matches the previous one, stop the key

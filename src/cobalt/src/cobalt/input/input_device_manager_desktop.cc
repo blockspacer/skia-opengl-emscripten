@@ -34,7 +34,12 @@
 #include "cobalt/dom/wheel_event_init.h"
 #include "cobalt/input/create_default_camera_3d.h"
 #include "cobalt/input/input_poller_impl.h"
+
+#define ENABLE_OVERLAY_INFO 1 /// TODO: make optional
+
+#if defined(ENABLE_OVERLAY_INFO)
 #include "cobalt/overlay_info/overlay_info_registry.h"
+#endif // ENABLE_OVERLAY_INFO
 #include "cobalt/system_window/input_event.h"
 
 namespace cobalt {
@@ -228,7 +233,7 @@ float value_or(float value, float default_value) {
 void InputDeviceManagerDesktop::HandleKeyboardEvent(
     bool is_key_down, const system_window::InputEvent* input_event,
     int key_code) {
-  base::Token type =
+  base::CobToken type =
       is_key_down ? base::Tokens::keydown() : base::Tokens::keyup();
   dom::KeyboardEvent::KeyLocationCode location =
       dom::KeyboardEvent::KeyCodeToKeyLocation(key_code);
@@ -242,12 +247,14 @@ void InputDeviceManagerDesktop::HandleKeyboardEvent(
   keypress_generator_filter_.HandleKeyboardEvent(type, keyboard_event);
 
   int32_t key_code_in_int32 = static_cast<int32_t>(key_code);
+#if defined(ENABLE_OVERLAY_INFO)
   overlay_info::OverlayInfoRegistry::Register(
       "input_manager:keydown", &key_code_in_int32, sizeof(key_code_in_int32));
+#endif // ENABLE_OVERLAY_INFO
 }
 
 void InputDeviceManagerDesktop::HandlePointerEvent(
-    base::Token type, const system_window::InputEvent* input_event) {
+    base::CobToken type, const system_window::InputEvent* input_event) {
   dom::PointerEventInit pointer_event;
   UpdateEventInit(input_event, &pointer_event);
   UpdateMouseEventInit(input_event, &pointer_event);
@@ -291,7 +298,7 @@ void InputDeviceManagerDesktop::HandlePointerEvent(
 
 void InputDeviceManagerDesktop::HandleWheelEvent(
     const system_window::InputEvent* input_event) {
-  base::Token type = base::Tokens::wheel();
+  base::CobToken type = base::Tokens::wheel();
   dom::WheelEventInit wheel_event;
   UpdateEventInit(input_event, &wheel_event);
   UpdateMouseEventInit(input_event, &wheel_event);
@@ -350,7 +357,7 @@ void InputDeviceManagerDesktop::HandleSystemWindowInputEvent(
             input_event->type() == system_window::InputEvent::kPointerDown,
             input_event, key_code);
       } else {
-        base::Token type =
+        base::CobToken type =
             input_event->type() == system_window::InputEvent::kPointerDown
                 ? base::Tokens::pointerdown()
                 : base::Tokens::pointerup();

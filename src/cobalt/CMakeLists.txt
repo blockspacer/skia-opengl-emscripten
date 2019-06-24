@@ -74,4 +74,8 @@ if(ENABLE_COBALT_RENDERER)
   include(${COBALT_RENDERER_LIB_FILE_NAME}.cmake)
 endif(ENABLE_COBALT_RENDERER)
 
+include(cobalt_overlay_info.cmake)
+
+include(cobalt_input.cmake)
+
 include(COBALT.cmake)
