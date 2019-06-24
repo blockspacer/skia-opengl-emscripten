@@ -20,7 +20,7 @@
 #include "SkFontStyle.h"
 #include "SkTypefaceCache.h"
 
-#include <iostream> /// __TODO__
+//#include <iostream> /// __TODO__
 
 SkTypeface_Cobalt::SkTypeface_Cobalt(int face_index, SkFontStyle style,
                                      bool is_fixed_pitch,
@@ -63,7 +63,7 @@ std::unique_ptr<SkStreamAsset> SkTypeface_CobaltStream::onOpenStream(int* face_i
 }
 
 size_t SkTypeface_CobaltStream::GetStreamLength() const {
-    std::cout << "SkTypeface_CobaltStream::GetStreamLength() 1" << std::endl;
+  ///std::cout << "SkTypeface_CobaltStream::GetStreamLength() 1" << std::endl;
   DCHECK(stream_);
   return stream_->getLength();
 }
@@ -112,7 +112,7 @@ std::unique_ptr<SkStreamAsset> SkTypeface_CobaltStreamProvider::onOpenStream(
 }
 
 size_t SkTypeface_CobaltStreamProvider::GetStreamLength() const {
-    std::cout << "SkTypeface_CobaltStreamProvider::GetStreamLength() 1" << std::endl;
+  ///std::cout << "SkTypeface_CobaltStreamProvider::GetStreamLength() 1" << std::endl;
   DLOG(WARNING)
       << "Requesting stream length of SkTypeface_CobaltStreamProvider. "
          "This requires a file load and should be used sparingly.";

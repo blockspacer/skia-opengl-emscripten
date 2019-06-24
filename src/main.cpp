@@ -4574,9 +4574,10 @@ int main(int argc, char** argv) {
 
   skFont1 =
       new SkFont(sktp, FONT_SIZE_F, 1.0f, 0.0f);
-
+  skFont1->setEdging(SkFont::Edging::kAntiAlias);
   skFont2 =
       new SkFont(sktp, 30.0f, 1.5f, 0.0f);
+  skFont2->setEdging(SkFont::Edging::kAntiAlias);
 
   //delete[] fileData1;
 

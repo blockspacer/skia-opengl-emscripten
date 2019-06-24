@@ -1,5 +1,7 @@
 ﻿find_package(Git)
 
+set(RUN_GENERATORS TRUE)
+
 # https://cmake.org/cmake/help/latest/module/FindPythonInterp.html
 find_package( PythonInterp 2.7 REQUIRED )
 #find_package( PythonLibs 2.7 REQUIRED )
@@ -20,13 +22,13 @@ set(NEED_GEN_MOJO FALSE) # TODO: not supported for now
 # TODO: mkdir chromium/ui/resources/grit
 
 # TODO
-if(RELEASE_BUILD)
+if(RUN_GENERATORS)
   set(NEED_GEN_BUILD_DATE TRUE) # TODO
   set(NEED_GEN_BUILDFLAGS TRUE) # TODO
 else()
   set(NEED_GEN_BUILD_DATE FALSE) # TODO
   set(NEED_GEN_BUILDFLAGS FALSE) # TODO
-endif(RELEASE_BUILD)
+endif()
 
 if(NEED_GEN_BUILD_DATE)
   execute_process(

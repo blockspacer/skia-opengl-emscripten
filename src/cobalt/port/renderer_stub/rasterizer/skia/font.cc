@@ -23,10 +23,11 @@
 
 #include "cobalt/base/polymorphic_downcast.h"
 
+// TODO: free memory
 static const char* fallbackFontPath = "./resources/fonts/FreeSans.ttf";
 static SkFont* fallbackFont;
 static sk_sp<SkTypeface> fallbackFontTypeface;
-static const float FONT_SIZE_F = 22.0;
+//static const float FONT_SIZE_F = 22.0;
 static sk_sp<SkTypeface_Cobalt> fallbackSkTypeface_Cobalt;
 
 static sk_sp<SkTypeface> getOrCreateFallbackTypeface() {
@@ -44,15 +45,14 @@ static sk_sp<SkTypeface> getOrCreateFallbackTypeface() {
     return fallbackFontTypeface;
 }
 
-static SkFont* getOrCreateFallbackFont() {
+/*static SkFont* getOrCreateFallbackFont() {
   if (!fallbackFont) {
     fallbackFont =
         new SkFont(getOrCreateFallbackTypeface(), FONT_SIZE_F, 1.0f, 0.0f);
   }
   DCHECK(fallbackFont);
   return fallbackFont;
-}
-
+}*/
 
 static sk_sp<SkTypeface_Cobalt> getOrCreateFallbackSkTypeface() {
     if (!fallbackSkTypeface_Cobalt) {
@@ -101,14 +101,23 @@ Font::Font(SkiaTypeface* typeface, SkScalar size)
   DCHECK(typeface_);
   //DCHECK(typeface_->GetId());
   DCHECK(typeface_->GetSkTypeface());
-  if (!skFont_) {
+  /*if (!skFont_) {
       skFont_ =
           new SkFont(typeface_->GetSkTypeface(), size_, 1.0f, 0.0f); // TODO: free resources (!!!)
       //font_metrics_ = new SkFontMetrics;
       //skFont_->getMetrics(font_metrics_);
       //DCHECK(font_metrics_);
   }
-  DCHECK(skFont_);
+  DCHECK(skFont_);*/
+}
+
+Font::~Font()
+{
+/*
+  if (!skFont_) {
+   delete skFont_;
+  }
+*/
 }
 
 const sk_sp<SkTypeface_Cobalt>& Font::GetSkTypeface() const {
@@ -126,13 +135,13 @@ render_tree::TypefaceId Font::GetTypefaceId() const {
 
 render_tree::FontMetrics Font::GetFontMetrics() const {
     ///printf("FontMetrics Font::GetFontMetrics 1\n");
-    DCHECK(skFont_);
+    //DCHECK(skFont_);
     DCHECK(typeface_);
     //DCHECK(font_metrics_);
   //SkPaint paint = GetSkPaint();
 
-  SkFont* tmpFont =
-      new SkFont(typeface_->GetSkTypeface(), size_, 1.0f, 0.0f); /// __TODO__
+  SkFont tmpFont = GetSkFont();
+    //(typeface_->GetSkTypeface(), size_, 1.0f, 0.0f); /// __TODO__
 
   //SkPaint::FontMetrics font_metrics;
   SkFontMetrics font_metrics;
@@ -141,8 +150,7 @@ render_tree::FontMetrics Font::GetFontMetrics() const {
   //DCHECK(skFont_);
 
   ///skFont_->getMetrics(&font_metrics); /// __TODO__
-  tmpFont->getMetrics(&font_metrics);
-  delete tmpFont;
+  tmpFont.getMetrics(&font_metrics);
 
   // The x-height is the height of the 'x' glyph. It is used to find the visual
   // 'middle' of the font to allow vertical alignment to the middle of the font.
@@ -168,7 +176,7 @@ render_tree::GlyphIndex Font::GetGlyphForCharacter(int32 utf32_character) {
 
 const math::RectF& Font::GetGlyphBounds(render_tree::GlyphIndex glyph) {
     //printf("GetGlyphBounds 1\n");
-    DCHECK(skFont_);
+    //DCHECK(skFont_);
     DCHECK(typeface_);
     //DCHECK(font_metrics_);
   DCHECK(glyph_bounds_thread_checker_.CalledOnValidThread());
@@ -234,10 +242,10 @@ const math::RectF& Font::GetGlyphBounds(render_tree::GlyphIndex glyph) {
   //DCHECK(fnt);
   float width;
 
-  SkFont* tmpFont =
-      new SkFont(typeface_->GetSkTypeface(), size_, 1.0f, 0.0f); /// __TODO__
+  SkFont tmpFont = GetSkFont();
+      //new SkFont(typeface_->GetSkTypeface(), size_, 1.0f, 0.0f); /// __TODO__
 
-  width = tmpFont->measureText(
+  width = tmpFont.measureText(
           &glyph,
           sizeof(render_tree::GlyphIndex),//2,//4,//
           //kUTF8_SkTextEncoding,
@@ -249,7 +257,7 @@ const math::RectF& Font::GetGlyphBounds(render_tree::GlyphIndex glyph) {
       );
   DCHECK(width > 0);
 
-  delete tmpFont; /// __TODO__
+  //delete tmpFont; /// __TODO__
 
   //SkScalar* widths;
   //fnt->getWidths(&glyph,1,widths,&skia_bounds);
@@ -303,14 +311,38 @@ const SkPaint& Font::GetDefaultSkPaint() {
   return non_trivial_static_fields.Get().default_paint;
 }
 
-const SkFont* Font::GetSkFont() const {
+/*const SkFont* Font::GetSkFont() const {
     DCHECK(skFont_);
     return skFont_;
+}*/
+
+const SkFont Font::GetSkFont() const {
+  return GetSkFont(size_, 1.0f, 0.0f);
 }
 
-const SkFont* Font::GetDefaultFont() {
-  return getOrCreateFallbackFont();
+const SkFont Font::GetSkFont(SkScalar size, SkScalar scaleX, SkScalar skewX, sk_sp<SkTypeface> typeface) const {
+  sk_sp<SkTypeface> usedTypeface = typeface;
+  if (!typeface) {
+    usedTypeface = typeface_->GetSkTypeface();
+  }
+
+  DCHECK(usedTypeface);
+  DCHECK(size > 0);
+
+  /// see https://chromium.googlesource.com/chromium/src/+/master/ui/gfx/render_text_harfbuzz.cc#520
+  SkFont tmpFont(usedTypeface, size, scaleX, skewX); /// __TODO__
+
+  /// \todo test kAntiAlias on wasm
+#if !defined(OS_EMSCRIPTEN)
+  tmpFont.setEdging(SkFont::Edging::kAntiAlias);
+#endif
+
+  return tmpFont;
 }
+
+/*const SkFont* Font::GetDefaultFont() {
+  return getOrCreateFallbackFont();
+}*/
 
 sk_sp<SkTypeface> Font::getDefaultTypeface() {
     return getOrCreateFallbackTypeface();

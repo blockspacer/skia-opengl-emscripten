@@ -184,15 +184,25 @@ else(ENABLE_SKSHAPER)
 endif(ENABLE_SKSHAPER)
 
 if(TARGET_EMSCRIPTEN)
+  set(SK_USE_SYSTEM_LIBPNG FALSE) # TODO: path to png.h (SkPngCodec.cpp)
+  set(SK_USE_SYSTEM_ZLIB FALSE) # TODO
+else()
+  # TODO
+  set(SK_USE_SYSTEM_LIBPNG TRUE)
+  set(SK_USE_SYSTEM_ZLIB FALSE) # TODO
+endif(TARGET_EMSCRIPTEN)
+
+if(SK_USE_SYSTEM_LIBPNG)
   set(SK_system_libpng
     "skia_use_system_libpng=true"
   )
-else()
-  # TODO: support system png
-  set(SK_system_libpng
-    "skia_use_system_libpng=false"
+endif(SK_USE_SYSTEM_LIBPNG)
+
+if(SK_USE_SYSTEM_ZLIB)
+  set(SK_system_zlib
+    "skia_use_system_zlib=true"
   )
-endif(TARGET_EMSCRIPTEN)
+endif(SK_USE_SYSTEM_ZLIB)
 
 if(USE_LIBJPEG_TURBO)
   set(SK_IS_libjpeg_turbo "true")
@@ -326,6 +336,7 @@ ${SK_system_libjpeg_turbo} \
 skia_use_libpng=true \
 ${SK_system_libpng} \
 skia_use_zlib=true \
+${SK_system_zlib} \
 skia_use_wuffs=${SK_IS_wuffs} \
 skia_use_libwebp=false \
 skia_enable_pdf=false \
@@ -362,10 +373,33 @@ ExternalProject_Add(SKIA_build
   LIST_SEPARATOR "^^"
   SOURCE_DIR ${SKIA_SRC_DIR}
   CONFIGURE_COMMAND "${CONFIGURE_COMMAND}"
-  BUILD_COMMAND ninja -C ${SKIA_BUILD_DIR} -j8
+  BUILD_COMMAND ninja -C ${SKIA_BUILD_DIR} -d keepdepfile -j8
   # there is no install step provided
   INSTALL_COMMAND true
 )
+
+if(EXISTS "${CMAKE_CURRENT_BINARY_DIR}/skia/args.gn")
+  set(PRINT_ALL_GN_ARGS TRUE)
+else()
+  message(WARING "not found for debug info: ${CMAKE_CURRENT_BINARY_DIR}/skia/args.gn")
+endif()
+if(PRINT_ALL_GN_ARGS)
+  execute_process(
+    COMMAND "${SKIA_SRC_DIR}/bin/gn" "args" "--list" "${CMAKE_CURRENT_BINARY_DIR}/skia"
+    WORKING_DIRECTORY ${SKIA_SRC_DIR}
+    #WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/skia
+    OUTPUT_VARIABLE _gn_args_list
+    #ERROR_QUIET
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+    ERROR_VARIABLE _ERROR_VARIABLE
+    RESULT_VARIABLE retcode
+  )
+  if(NOT "${retcode}" STREQUAL "0")
+    message( FATAL_ERROR "Bad exit status ${_ERROR_VARIABLE} ${_gn_args_list} ${retcode}")
+  endif()
+  message( STATUS "gn_args_list=${_gn_args_list}")
+endif(PRINT_ALL_GN_ARGS)
+
 
 if (EXT_SKIA_ALWAYS_BUILD)
   message(WARNING "Forced skia rebuild")
@@ -439,7 +473,8 @@ list(APPEND SKIA_CMAKE_ONLY_HEADERS
 #  ${SKIA_SRC_DIR}/third_party/imgui
 #  ${SKIA_SRC_DIR}/third_party/libjpeg-turbo
 #  ${SKIA_SRC_DIR}/third_party/libmicrohttpd
-#  ${SKIA_SRC_DIR}/third_party/libpng
+#
+   ${SKIA_SRC_DIR}/third_party/libpng
 #  ${SKIA_SRC_DIR}/third_party/libsdl
 #  ${SKIA_SRC_DIR}/third_party/libwebp
 #  ${SKIA_SRC_DIR}/third_party/lua
@@ -452,7 +487,8 @@ list(APPEND SKIA_CMAKE_ONLY_HEADERS
 #  ${SKIA_SRC_DIR}/third_party/spirv-headers
 #  ${SKIA_SRC_DIR}/third_party/spirv-tools
 #  ${SKIA_SRC_DIR}/third_party/vulkanmemoryallocator
-  ${SKIA_SRC_DIR}/third_party/zlib
+#
+   ${SKIA_SRC_DIR}/third_party/zlib
 )
 
 if(ENABLE_WUFFS)
@@ -672,7 +708,12 @@ if (NOT EXT_SKIA_SHARED)
     #ADD_SKIA_LIBRARY_DEPENDENCY("jpeg") # skia_use_system_libjpeg_turbo
 
     #ADD_SKIA_LIBRARY_DEPENDENCY(${EXT_SKIA_USE_SYSTEM_ZLIB} "z") # skia_use_system_zlib
-    find_package(ZLIB REQUIRED)
+    if(SK_USE_SYSTEM_ZLIB)
+      #find_package(ZLIB REQUIRED)
+      #message(FATAL_ERROR "libZLIB_LIB=${libZLIB_LIB}")
+      # TODO: cannot find /lib64/libz.so.1
+    endif(SK_USE_SYSTEM_ZLIB)
+
     set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${libZLIB_LIB}" PARENT_SCOPE)
 
     # NOTE: libjpeg_turbo requires libjpeg
@@ -694,7 +735,9 @@ if (NOT EXT_SKIA_SHARED)
     #set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};PNG::PNG" PARENT_SCOPE)
     #
     # TODO: Linking globals named 'png_sRGB_table': symbol multiply defined!
-    #set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${libpng_LIB}" PARENT_SCOPE)
+    if(SK_USE_SYSTEM_LIBPNG)
+      set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${libpng_LIB}" PARENT_SCOPE)
+    endif(SK_USE_SYSTEM_LIBPNG)
 
     if(USE_CUSTOM_ICU)
       set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${CUSTOM_ICU_LIB};${HARFBUZZ_LIBRARIES}" PARENT_SCOPE)

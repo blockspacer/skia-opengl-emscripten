@@ -6,6 +6,9 @@
 # example (Debug build without run)
 # cmake -DBUILD_TYPE="Debug" -DCLEAN_BUILD=OFF -P tools/buildUnix.cmake
 #
+# example (Debug build with run)
+# cmake -DRUN_APP=ON -DBUILD_APP=ON -DEXTRA_EMMAKE_OPTS="-j;6" -DBUILD_TYPE="Debug" -DCLEAN_BUILD=OFF -DENABLE_CMAKE_CLEAN_FIRST=ON -P tools/buildUnix.cmake
+#
 # example (full Release rebuild & run, -j9 for 9 threads):
 # cmake -DRUN_APP=ON -DBUILD_APP=ON -DEXTRA_MAKE_OPTS="-j;9" -DBUILD_TYPE="Release" -DCLEAN_BUILD=ON -P tools/buildUnix.cmake
 #
@@ -55,7 +58,7 @@ if (BUILD_APP)
   execute_process(
     COMMAND
       ${COLORED_OUTPUT_ENABLER}
-        ${CMAKE_COMMAND} "-E" "time" "cmake" ".." ${CMAKE_OPTS} ${EXTRA_CMAKE_OPTS}
+        ${CMAKE_COMMAND} "-E" "time" "cmake" ".." "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON" ${CMAKE_OPTS} ${EXTRA_CMAKE_OPTS}
     WORKING_DIRECTORY ${BUILD_DIR}
     RESULT_VARIABLE retcode
   )
@@ -63,13 +66,11 @@ if (BUILD_APP)
     message( FATAL_ERROR "Bad exit status")
   endif()
 
-  # TODO: "--clean-first"
-
   # --- build ---
   execute_process(
     COMMAND
       ${COLORED_OUTPUT_ENABLER}
-        ${CMAKE_COMMAND} "--build" "." "--" ${MAKE_OPTS} ${EXTRA_MAKE_OPTS}
+        ${CMAKE_COMMAND} "--build" "." ${CMAKE_CLEAN_FIRST} "--" ${MAKE_OPTS} ${EXTRA_MAKE_OPTS}
     WORKING_DIRECTORY ${BUILD_DIR}
     RESULT_VARIABLE retcode
     ERROR_VARIABLE _ERROR_VARIABLE

@@ -170,6 +170,7 @@ target_link_libraries(cobalt_loader PUBLIC
   ${libpng_LIB}
   #${iccjpeg_LIB}
   #SKIA
+  ${libZLIB_LIB}
 )
 
 set_property(TARGET cobalt_loader PROPERTY CXX_STANDARD 17)

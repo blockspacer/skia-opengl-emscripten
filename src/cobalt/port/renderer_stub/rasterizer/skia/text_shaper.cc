@@ -353,12 +353,12 @@ void TextShaper::ShapeComplexRun(const base::char16* text_buffer,
     //DCHECK(fnt);
 
     DCHECK(script_run.font->GetSkTypeface());
-    SkFont* tmpFont =
-        new SkFont(script_run.font->GetSkTypeface(), script_run.font->size(), 1.0f, 0.0f); /// __TODO__
+    SkFont tmpFont = script_run.font->GetSkFont();
+        //new SkFont(script_run.font->GetSkTypeface(), script_run.font->size(), 1.0f, 0.0f); /// __TODO__
 
-    run_buffer = &(maybe_builder->allocRunPos(*tmpFont, glyph_count));
+    run_buffer = &(maybe_builder->allocRunPos(tmpFont, glyph_count));
 
-    delete tmpFont;
+    //delete tmpFont;
   }
 
   // Walk each of the shaped glyphs.
@@ -531,18 +531,18 @@ void TextShaper::AddFontRunToGlyphBuffer(
 
   // Allocate space within the text blob for the glyphs and copy them into the
   // blob.
-  DCHECK(font->GetDefaultFont());
+  //DCHECK(font->GetDefaultFont());
   //printf("TextShaper::AddFontRunToGlyphBuffer 2\n");
 
   DCHECK(font->GetSkTypeface());
-  SkFont* tmpFont =
+  SkFont tmpFont = font->GetSkFont();
       new SkFont(font->GetSkTypeface(), font->size(), 1.0f, 0.0f); /// __TODO__
 
   const SkTextBlobBuilder::RunBuffer& buffer =
-      builder->allocRunPosH(*tmpFont, glyph_count, 0); // TODO: GetDefaultFont
+      builder->allocRunPosH(tmpFont, glyph_count, 0); // TODO: GetDefaultFont
       //builder->allocRunPosH(*font->GetSkFont(), glyph_count, 0); // TODO: GetDefaultFont
 
-  delete tmpFont;
+  //delete tmpFont;
 
   //printf("TextShaper::AddFontRunToGlyphBuffer 3\n");
   std::copy(&local_glyphs_[0], &local_glyphs_[0] + glyph_count, buffer.glyphs);

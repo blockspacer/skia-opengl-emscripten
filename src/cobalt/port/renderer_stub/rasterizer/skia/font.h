@@ -41,6 +41,8 @@ class Font : public render_tree::Font {
  public:
   Font(SkiaTypeface* typeface, SkScalar size);
 
+  ~Font();
+
   const sk_sp<SkTypeface_Cobalt>& GetSkTypeface() const;
 
   // Returns the pixel size described by this font.
@@ -76,13 +78,17 @@ class Font : public render_tree::Font {
   // Returns a static SkPaint with the default flags enabled.
   static const SkPaint& GetDefaultSkPaint();
 
-  static const SkFont* GetDefaultFont();
+  //static const SkFont* GetDefaultFont();
 
   static sk_sp<SkTypeface> getDefaultTypeface();
 
   static sk_sp<SkTypeface_Cobalt> GetDefaultSkTypeface();
 
-  const SkFont* GetSkFont() const;
+  //const SkFont* GetSkFont() const;
+
+  const SkFont GetSkFont(SkScalar size, SkScalar scaleX, SkScalar skewX, sk_sp<SkTypeface> typeface = nullptr) const;
+
+  const SkFont GetSkFont() const;
 
 private:
   // Usually covers Latin-1 in a single page.
@@ -103,7 +109,7 @@ private:
   std::unique_ptr<math::RectF[]> primary_page_glyph_bounds_;
   GlyphToBoundsMap glyph_to_bounds_map_;
   base::ThreadChecker glyph_bounds_thread_checker_;
-  SkFont* skFont_;
+  //SkFont* skFont_;
   //SkFontMetrics* font_metrics_;
 };
 

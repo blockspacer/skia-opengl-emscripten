@@ -52,7 +52,20 @@ smaller ICU size
 faster build time
 dynamic asset loading (wasm)
 save data to native filesystem (wasm)
-hot reload & cling https://blog.qt.io/blog/2018/06/15/scripting-in-c/
+hot reload & cling
+ > https://github.com/topcoder-platform/cpp-mm-scoring/blob/master/README.md#install-dependencies-notes-for-ubuntu
+ > https://root.cern.ch/root/htmldoc/guides/users-guide/Cling.html
+ > https://github.com/galsasson/ClingOFPlayground
+ > https://github.com/vincecr0ft/RooFitMinimiserBuild/tree/master/interpreter/cling/tools/demo
+ > https://github.com/dilevin/DGPCompFab/tree/master/interpreter/src
+ > https://github.com/vkhristenko/test-cpp/tree/master/cling/test_project
+ > https://github.com/daminetreg/trommeli
+ > https://github.com/nikhedonia/docker-cling
+ > https://www.phoronix.com/scan.php?page=news_item&px=Facebook-JIT-Cpp-Scripting
+ > https://github.com/esakellari/TabCompletionCling
+ > http://secomparteosepierde.blogspot.com/search?q=cling
+ > https://blog.qt.io/blog/2018/06/15/scripting-in-c/
+ > https://github.com/vkhristenko/test-cpp/tree/master/cling/test_project
 visual IDE (aka photoshop/Figma/sketch.com/e.t.c.)
 dom debugger (aka chrome dev tools) with live editing/combined styles/display size change/loaded resources/animations & changes e.t.c.
 exe remote debugger aka gammaray https://www.kdab.com/development-resources/qt-tools/gammaray/

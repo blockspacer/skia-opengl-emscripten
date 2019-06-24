@@ -38,6 +38,8 @@ set(GEN_COMPONENTS_CONTENT_SETTINGS_CORE_COMMON_DIR ${GN_GEN_DIR}gen_components_
 # autoninja -C out/Default/ third_party/blink/renderer/core/mojo
 #set(GEN_BLINK_RENDERER_CORE_DIR ${GN_GEN_DIR}gen_blink_renderer_core/)
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 # == NOTE: place set(ENABLE_*) before all checks ==
 
 # khronos
@@ -111,7 +113,7 @@ if(TARGET_EMSCRIPTEN)
 else()
   set(USE_OPENGLES2_LIB FALSE) # TODO
 endif()
-set(USE_SYSTEM_ZLIB ON)
+set(USE_SYSTEM_ZLIB TRUE)
 set(ENABLE_HARFBUZZ TRUE)
 
 macro(add_mojo_prefixes_3 ARG_BASE_PATH ARG_WHERE_COLLECT)
@@ -215,22 +217,24 @@ if(USE_ICU)
 endif(USE_ICU)
 
 if(TARGET_EMSCRIPTEN)
-  set(USE_CUSTOM_FALSE TRUE)
-else()
   set(USE_CUSTOM_LIBPNG TRUE)
+else()
+  set(USE_CUSTOM_LIBPNG FALSE)
 endif()
 if(USE_LIBPNG)
   set(COMMON_FLAGS "${COMMON_FLAGS} -DHAS_LIBPNG=1")
   #
   if(USE_CUSTOM_LIBPNG)
-    set(USE_SYSTEM_PNG TRUE)
+    set(USE_SYSTEM_PNG FALSE)
     set(libpng_LIB GLIBPNG)
   else(USE_CUSTOM_LIBPNG)
     if(TARGET_EMSCRIPTEN)
       set(EMCC_COMMON "${EMCC_COMMON} -s USE_LIBPNG=1")
+      set(USE_SYSTEM_PNG FALSE) # TODO
       #message(FATAL_ERROR "wasm: only custom LIBPNG is supported for now")
+    else()
+      set(USE_SYSTEM_PNG TRUE)
     endif(TARGET_EMSCRIPTEN)
-    set(USE_SYSTEM_PNG FALSE)
   endif(USE_CUSTOM_LIBPNG)
 endif(USE_LIBPNG)
 
@@ -442,7 +446,7 @@ if(ENABLE_BLINK)
       ${SERVICES_SERVICE_MANAGER_PUBLIC_CPP_LIB}
     )
   endif(ENABLE_GNET)
-endif(ENABLE_SKIA AND ENABLE_BLINK)
+endif()
 
 message(STATUS "CMAKE_SYSTEM_NAME = ${CMAKE_SYSTEM_NAME}")
 if(TARGET_EMSCRIPTEN)
@@ -1172,7 +1176,12 @@ if (HAS_ASYNCIFY OR HAS_EMTERPRETIFY)
   set(EMCC_COMMON "${EMCC_COMMON} -DHAS_ASYNC=1")
 endif(HAS_ASYNCIFY OR HAS_EMTERPRETIFY)
 
-  set(EMCC_COMMON "${EMCC_COMMON} -s USE_ZLIB=1")
+  if(USE_SYSTEM_ZLIB)
+    set(EMCC_COMMON "${EMCC_COMMON} -s USE_ZLIB=1")
+  else()
+    message(FATAL_ERROR "wasm requires SYSTEM ZLIB")
+  endif(USE_SYSTEM_ZLIB)
+
   #set(EMCC_COMMON "${EMCC_COMMON} -s USE_BZIP2=1")
 
   if(USE_ICU AND NOT USE_CUSTOM_ICU)
@@ -1673,10 +1682,12 @@ else(EMSCRIPTEN)
   endif()
 
   if(USE_SYSTEM_ZLIB)
-    #message(FATAL_ERROR "NOT SUPPORTED")
+    #message(FATAL_ERROR "NOT SUPPORTED") # TODO
     find_package(ZLIB REQUIRED) # ZLIB::ZLIB
     set(libZLIB_LIB ZLIB::ZLIB)
-    #set(COMMON_FLAGS "${COMMON_FLAGS} -DUSE_SYSTEM_ZLIB=1")
+    # see chromium/third_party/zlib/google/compression_utils.cc
+    # TODO
+    # set(COMMON_FLAGS "${COMMON_FLAGS} -DUSE_SYSTEM_ZLIB=1")
     list(APPEND APP_DEFINITIONS USE_SYSTEM_ZLIB=1)
   else()
     set(libZLIB_LIB GZLIB)
@@ -1700,7 +1711,7 @@ else(EMSCRIPTEN)
   endif(ENABLE_HARFBUZZ AND NOT USE_CUSTOM_HARFBUZZ)
 
   if(USE_SYSTEM_PNG)
-    #message(FATAL_ERROR "NOT SUPPORTED")
+    #message(FATAL_ERROR "NOT SUPPORTED: SYSTEM PNG")
     find_package(PNG REQUIRED) # PNG::PNG
     set(libpng_LIB PNG::PNG)
     #set(libpng_LIB GLIBPNG)

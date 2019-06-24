@@ -1723,7 +1723,7 @@ void RenderText(SkCanvas* render_target,
       paint.setMaskFilter(SkMaskFilter::MakeBlur(kNormal_SkBlurStyle, blur_sigma, 0));
     }
 
-    DCHECK(Font::GetDefaultFont());
+    //DCHECK(Font::GetDefaultFont());
     DCHECK(skia_glyph_buffer->GetTextBlob());
     /*auto blob = SkTextBlob::MakeFromText(
       text_node->data().text.c_str(),

@@ -187,7 +187,7 @@ scoped_refptr<render_tree::Typeface> SoftwareResourceProvider::GetLocalTypeface(
   //return base::WrapRefCounted(new cobalt::render_tree::TypefaceStub(NULL));
 
   /// __TODO__
-  if (!res || fontManagerSkTypeface == nullptr) {
+  if (!fontManagerSkTypeface || !res) {
       sk_sp<SkTypeface_Cobalt> fallbackTypeface(
           base::polymorphic_downcast<SkTypeface_Cobalt*>(Font::getDefaultTypeface()->makeClone(SkFontArguments()).release()));
       res = scoped_refptr<render_tree::Typeface>(new SkiaTypeface(fallbackTypeface));
