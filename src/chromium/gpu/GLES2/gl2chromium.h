@@ -24,8 +24,9 @@
 #if defined(__EMSCRIPTEN__)
 #define GLES2_GET_FUN(name) GLES2 ## name
 #else
-#include <GL/gl.h>
-#include <GL/glext.h>
+/// TODO
+//#include <GL/gl.h>
+//#include <GL/glext.h>
 
 #define GLES2_GET_FUN(name) gl ## name
 #endif
@@ -34,6 +35,5 @@
 #endif
 
 #include <GLES2/gl2chromium_autogen.h>
-
 #endif  // GPU_GLES2_GL2CHROMIUM_H_
 

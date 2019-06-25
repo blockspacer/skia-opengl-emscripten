@@ -2644,32 +2644,13 @@ CobaltTester::CobaltTester()
                                       //camera_3d_
                                       )));*/
 
-#ifdef __TODO__
-
-/*
-skemgl.js:6107 Uncaught abort("segmentation fault") at Error
-    at jsStackTrace (http://localhost:9090/home/avakimov_am/skia-opengl-emscripten/build-emscripten/skemgl.js:1363:13)
-    at stackTrace (http://localhost:9090/home/avakimov_am/skia-opengl-emscripten/build-emscripten/skemgl.js:1380:12)
-    at abort (http://localhost:9090/home/avakimov_am/skia-opengl-emscripten/build-emscripten/skemgl.js:16641:44)
-    at segfault (http://localhost:9090/home/avakimov_am/skia-opengl-emscripten/build-emscripten/skemgl.js:688:3)
-    at SAFE_HEAP_LOAD_i64_8_U_8 (wasm-function[43123]:29)
-    at cobalt::system_window::SystemWindow::DispatchInputEvent(SbInputData const&, cobalt::system_window::InputEvent::Type, bool) [__ZN6cobalt13system_window12SystemWindow18DispatchInputEventERK11SbInputDataNS0_10InputEvent4TypeEb] (wasm-function[2818]:80)
-    at cobalt::system_window::SystemWindow::HandleInputEvent(SbInputData const&) [__ZN6cobalt13system_window12SystemWindow16HandleInputEventERK11SbInputData] (wasm-function[2828]:126)
-    at cobalt::system_window::HandleInputEvent(SbEvent const*) [__ZN6cobalt13system_window16HandleInputEventEPK7SbEvent] (wasm-function[2829]:35)
-    at CobaltTester::CobaltTester() [__ZN12CobaltTesterC2Ev] (wasm-function[1089]:2377)
-    at createCobaltTester() [__ZL18createCobaltTesterv] (wasm-function[1610]:20)
- * */
-  // https://github.com/blockspacer/cobalt-clone-28052019/blob/master/src/cobalt/browser/application.cc#L907
-  // https://github.com/blockspacer/cobalt-clone-28052019/blob/89664d116629734759176d820e9923257717e09c/src/cobalt/base/wrap_main_starboard.h#L34
-  // https://github.com/blockspacer/cobalt-clone-28052019/blob/master/src/starboard/shared/starboard/application.cc#L41
-  // https://github.com/blockspacer/cobalt-clone-28052019/blob/master/src/starboard/android/shared/application_android.cc#L494
   SbEvent* event = new SbEvent(); // TODO: free mem
   event->type = SbEventType::kSbEventTypeInput;
   const char* input_text = "input_text";
   char* text = SbStringDuplicate(input_text);
   SbInputData* data = new SbInputData();
   SbMemorySet(data, 0, sizeof(*data));
-  ///data->window = window_;
+  data->window = system_window_->GetSbWindow();
   data->type = SbInputEventType::kSbInputEventTypePress;
   data->device_id = 0;
   data->key_location = kSbKeyLocationUnspecified;
@@ -2678,19 +2659,24 @@ skemgl.js:6107 Uncaught abort("segmentation fault") at Error
   data->key = SbKey::kSbKeyK;
   //data->character = "k";
 
+  event->data = data;
+
   //https://github.com/blockspacer/cobalt-clone-28052019/blob/master/src/starboard/examples/window/main.cc#L56
   ///
   //////
   /// same as SbEventHandle(&event), BUT ONLY for SbInputData;
   /// >>>
   {
+    DCHECK(event);
+    DCHECK(event->data);
     SbInputData* dataSb = static_cast<SbInputData*>(event->data);
-    typedef std::set<SbKey> KeySet; // TODO
-    KeySet s_is_pressed;
+    DCHECK(dataSb);
+    //typedef std::set<SbKey> KeySet; // TODO
+    std::set<SbKey> s_is_pressed;
     s_is_pressed.insert(dataSb->key);
     std::stringstream keys;
     keys << "Keys currently pressed:";
-    for (KeySet::const_iterator iter = s_is_pressed.begin();
+    for (std::set<SbKey>::const_iterator iter = s_is_pressed.begin();
          iter != s_is_pressed.end(); ++iter) {
       keys << " " << std::hex << *iter;
     }
@@ -2698,6 +2684,8 @@ skemgl.js:6107 Uncaught abort("segmentation fault") at Error
   //system_window_->HandleInputEvent(&event);
   system_window::HandleInputEvent(event);
   // TODO: free mem, see event "deleter"
+#ifdef __TODO__
+
 #endif
 
   DCHECK(renderer_module_);
