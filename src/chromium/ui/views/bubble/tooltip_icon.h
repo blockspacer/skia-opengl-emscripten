@@ -10,7 +10,9 @@
 #include "base/macros.h"
 #include "base/scoped_observer.h"
 #include "base/strings/string16.h"
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
 #include "base/timer/timer.h"
+#endif
 #include "ui/views/bubble/bubble_border.h"
 #include "ui/views/controls/image_view.h"
 #include "ui/views/mouse_watcher.h"

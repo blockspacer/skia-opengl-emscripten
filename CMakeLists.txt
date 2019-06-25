@@ -57,7 +57,7 @@ if(ENABLE_KHRONOS)
   )
 endif(ENABLE_KHRONOS)
 # Blink platform
-set(ENABLE_BLINK FALSE) # TODO
+set(ENABLE_BLINK TRUE) # TODO
 # cobalt
 set(ENABLE_COBALT TRUE)
 # SKIA
@@ -110,8 +110,15 @@ else()
 endif()
 if(TARGET_EMSCRIPTEN)
   set(USE_OPENGLES2_LIB FALSE) # no system OPENGLES for wasm
+  set(USE_OPENGL_LIB FALSE)
 else()
   set(USE_OPENGLES2_LIB FALSE) # TODO
+  set(USE_OPENGL_LIB TRUE)
+endif()
+if(NOT USE_OPENGL_LIB)
+  # make OpenGL optional
+  set(FOUND_OPENGL_LIBRARIES "")
+  set(FOUND_OPENGL_INCLUDE_DIR "")
 endif()
 set(USE_SYSTEM_ZLIB TRUE)
 set(ENABLE_HARFBUZZ TRUE)
@@ -217,7 +224,7 @@ if(USE_ICU)
 endif(USE_ICU)
 
 if(TARGET_EMSCRIPTEN)
-  set(USE_CUSTOM_LIBPNG TRUE)
+  set(USE_CUSTOM_LIBPNG FALSE)
 else()
   set(USE_CUSTOM_LIBPNG FALSE)
 endif()
@@ -229,14 +236,31 @@ if(USE_LIBPNG)
     set(libpng_LIB GLIBPNG)
   else(USE_CUSTOM_LIBPNG)
     if(TARGET_EMSCRIPTEN)
-      set(EMCC_COMMON "${EMCC_COMMON} -s USE_LIBPNG=1")
-      set(USE_SYSTEM_PNG FALSE) # TODO
+      set(USE_SYSTEM_PNG TRUE) # TODO
       #message(FATAL_ERROR "wasm: only custom LIBPNG is supported for now")
     else()
       set(USE_SYSTEM_PNG TRUE)
     endif(TARGET_EMSCRIPTEN)
   endif(USE_CUSTOM_LIBPNG)
+  #
+  if(USE_SYSTEM_PNG)
+    #message(FATAL_ERROR "NOT SUPPORTED: SYSTEM PNG")
+    if(TARGET_EMSCRIPTEN)
+      set(EMCC_COMMON "${EMCC_COMMON} -s USE_LIBPNG=1")
+    else()
+      find_package(PNG REQUIRED) # PNG::PNG
+      set(libpng_LIB PNG::PNG)
+      #set(libpng_LIB GLIBPNG)
+    endif()
+  else()
+    if(USE_CUSTOM_LIBPNG)
+      set(libpng_LIB GLIBPNG)
+    else()
+      message(FATAL_ERROR "YOU MUST USE SYSTEM PNG OR CUSTOM PNG")
+    endif(USE_CUSTOM_LIBPNG)
+  endif()
 endif(USE_LIBPNG)
+
 
 # NOTE: SOURCE_MAP requires -g4 and --source-map-base
 # see http://webassemblycode.com/using-browsers-debug-webassembly/
@@ -1631,14 +1655,18 @@ else(EMSCRIPTEN)
   set(COMMON_FLAGS "${COMMON_FLAGS} ${OPTIMIZE_LEVEL}")
   set(COMMON_FLAGS "${COMMON_FLAGS} ${DEBUG_LEVEL}")
 
-  find_package(OpenGL
-    COMPONENTS OpenGL EGL
-    REQUIRED)
-  if(OPENGL_FOUND)
-    message(STATUS "OPENGL_LIBRARIES = ${OPENGL_LIBRARIES} ")
-    message(STATUS "OPENGL_INCLUDE_DIR = ${OPENGL_INCLUDE_DIR} ")
-    set(USE_OPENGL_LIB TRUE)
-  endif()
+  if(USE_OPENGL_LIB)
+    find_package(OpenGL
+      COMPONENTS OpenGL EGL
+      REQUIRED)
+    if(OPENGL_FOUND)
+      set(FOUND_OPENGL_LIBRARIES ${OPENGL_LIBRARIES})
+      set(FOUND_OPENGL_INCLUDE_DIR ${OPENGL_INCLUDE_DIR})
+      #
+      message(STATUS "OPENGL_LIBRARIES = ${OPENGL_LIBRARIES} ")
+      message(STATUS "OPENGL_INCLUDE_DIR = ${OPENGL_INCLUDE_DIR} ")
+    endif()
+  endif(USE_OPENGL_LIB)
 
   if(USE_OPENGLES2_LIB)
     find_package(OpenGLES2 REQUIRED)
@@ -1713,15 +1741,6 @@ else(EMSCRIPTEN)
     # custom flags
     set(COMMON_FLAGS "${COMMON_FLAGS} -DENABLE_HARFBUZZ=1")
   endif(ENABLE_HARFBUZZ AND NOT USE_CUSTOM_HARFBUZZ)
-
-  if(USE_SYSTEM_PNG)
-    #message(FATAL_ERROR "NOT SUPPORTED: SYSTEM PNG")
-    find_package(PNG REQUIRED) # PNG::PNG
-    set(libpng_LIB PNG::PNG)
-    #set(libpng_LIB GLIBPNG)
-  else()
-    set(libpng_LIB GLIBPNG)
-  endif()
 
 endif(TARGET_EMSCRIPTEN)
 
@@ -2249,7 +2268,7 @@ else()
   target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE
     ${SKIA_INCLUDES}
     ${GLEW_INCLUDE_PATH}
-    ${OPENGL_INCLUDE_DIR}
+    ${FOUND_OPENGL_INCLUDE_DIR}
     ${SDL2_INCLUDE_DIRS}
     ${SDL2_TTF_INCLUDE_DIR}
     ${HARFBUZZ_INCLUDE_DIRS}
@@ -2294,7 +2313,7 @@ else()
     #
     ${SDL2_TTF_INCLUDE_DIR}
     ${HARFBUZZ_LIBRARIES}
-    ${OPENGL_LIBRARIES}
+    ${FOUND_OPENGL_LIBRARIES}
     ${GLEW_LIBRARY}
     SDL2::Main
     #SDL2:Net
@@ -2468,7 +2487,9 @@ target_compile_options(${PROJECT_NAME} PRIVATE
   -Wno-unused-parameter
   -Wno-unused-variable
   -Wno-unused-function
+  -Wno-unused-member-function
   -Wno-unused-lambda-capture
+  -Wno-reserved-id-macro
   -Wno-macro-redefined
   -Wno-implicit-function-declaration
   -Wno-c++11-narrowing

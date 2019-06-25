@@ -18,7 +18,9 @@
 #include <vector>
 
 #include "base/threading/thread_checker.h"
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
 #include "base/timer/timer.h"
+#endif
 #include "cobalt/script/javascript_engine.h"
 #include "third_party/mozjs-45/js/src/jsapi.h"
 

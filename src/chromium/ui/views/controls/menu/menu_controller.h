@@ -16,7 +16,9 @@
 #include "base/compiler_specific.h"
 #include "base/macros.h"
 #include "base/memory/weak_ptr.h"
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
 #include "base/timer/timer.h"
+#endif
 #include "build/build_config.h"
 #include "ui/events/event.h"
 #include "ui/events/event_constants.h"

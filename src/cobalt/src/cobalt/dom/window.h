@@ -25,7 +25,9 @@
 #include "base/memory/ref_counted.h"
 #include "base/memory/weak_ptr.h"
 #include "base/synchronization/waitable_event.h"
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
 #include "base/timer/timer.h"
+#endif
 #include "cobalt/base/application_state.h"
 #include "cobalt/base/clock.h"
 #include "cobalt/cssom/css_parser.h"

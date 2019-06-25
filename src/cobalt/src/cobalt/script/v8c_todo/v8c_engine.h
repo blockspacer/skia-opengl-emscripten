@@ -19,7 +19,9 @@
 #include <vector>
 
 #include "base/threading/thread_checker.h"
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
 #include "base/timer/timer.h"
+#endif
 #include "cobalt/script/javascript_engine.h"
 #include "cobalt/script/v8c/v8c_heap_tracer.h"
 #include "v8/include/libplatform/libplatform.h"

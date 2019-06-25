@@ -91,6 +91,8 @@ macro(wasm_opt_metrics ARG_WASM_FILE_PATH ARG_DIR)
 
   message(STATUS "printing debug metrics ...")
 
+  # TODO: bin/wasm-opt --func-metrics split.wast --print --debug
+  # SEE: https://github.com/gonowa/wasm-opt/blob/master/README.md
   execute_process(
     COMMAND
     ${COLORED_OUTPUT_ENABLER}

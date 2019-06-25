@@ -28,7 +28,9 @@
 #include "base/optional.h"
 #include "base/strings/stringprintf.h"
 #include "base/threading/thread_checker.h"
+//#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
 #include "base/timer/timer.h"
+//#endif
 #include "cobalt/base/c_val.h"
 #if defined(ENABLE_COBALT_CSP)
 #include "cobalt/csp/content_security_policy.h"

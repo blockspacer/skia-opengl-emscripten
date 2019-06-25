@@ -20,7 +20,9 @@
 //#include "base/containers/hash_tables.h"
 #include <map>
 #include "base/memory/ref_counted.h"
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
 #include "base/timer/timer.h"
+#endif
 #include "cobalt/script/callback_function.h"
 #include "cobalt/script/script_value.h"
 #include "cobalt/script/wrappable.h"
@@ -56,16 +58,27 @@ class WindowTimers {
   class TimerInfo : public base::RefCounted<TimerInfo> {
    public:
     TimerInfo(script::Wrappable* const owner,
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
               std::unique_ptr<base::internal::TimerBase> timer,
+#endif
               const TimerCallbackArg& callback)
-        : timer_(std::move(timer)), callback_(owner, callback) {}
+        :
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+        timer_(std::move(timer)),
+#endif
+        callback_(owner, callback)
+        {}
 
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
     base::internal::TimerBase* timer() { return timer_.get(); }
+#endif
     TimerCallbackArg::Reference& callback_reference() { return callback_; }
 
    private:
     ~TimerInfo() {}
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
     std::unique_ptr<base::internal::TimerBase> timer_;
+#endif
     TimerCallbackArg::Reference callback_;
 
     friend class base::RefCounted<TimerInfo>;

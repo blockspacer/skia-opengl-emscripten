@@ -76,13 +76,13 @@ add_library(cobalt_renderer_stub_skia STATIC
 
 #message(WARNING OPENGL_EGL_INCLUDE_DIRS=
 #  ${OPENGL_EGL_INCLUDE_DIRS})
-#message(FATAL_ERROR OPENGL_LIBRARIES=
-#  ${OPENGL_LIBRARIES}
+#message(FATAL_ERROR FOUND_OPENGL_LIBRARIES=
+#  ${FOUND_OPENGL_LIBRARIES}
 #  ${OPENGLES2_LIBRARIES})
 
 if(TARGET_LINUX)
   list(APPEND EXTRA_cobalt_renderer_stub_skia_LIBS
-    ${OPENGL_LIBRARIES}
+    ${FOUND_OPENGL_LIBRARIES}
     #OpenGL::EGL
   )
 endif(TARGET_LINUX)
@@ -112,7 +112,8 @@ target_link_libraries(cobalt_renderer_stub_skia PUBLIC
   SKIA
   ${HARFBUZZ_LIBRARIES}
   ${EXTRA_cobalt_renderer_stub_skia_LIBS}
-  ${OPENGLES2_LIBRARIES}
+  #${OPENGLES2_LIBRARIES}
+  ${FOUND_OPENGL_LIBRARIES}
   ${FREETYPE_LIBRARIES}
 )
 
@@ -125,11 +126,8 @@ target_include_directories(cobalt_renderer_stub_skia PRIVATE
   ${COBALT_COMMON_INCLUDES}
   #${COBALT_PORT_DIR}/renderer_stub
   ${OPENGLES2_INCLUDE_DIRS}
-  ${OPENGL_INCLUDE_DIR}
   ${OPENGL_EGL_INCLUDE_DIRS}
-  ${OPENGLES2_INCLUDE_DIRS}
-  ${OPENGL_INCLUDE_DIR}
-  ${OPENGL_EGL_INCLUDE_DIRS}
+  ${FOUND_OPENGL_INCLUDE_DIR}
   ${FREETYPE_INCLUDE_DIRS}
 )
 
@@ -183,13 +181,13 @@ add_library(cobalt_renderer_stub_skgl STATIC
 
 #message(WARNING OPENGL_EGL_INCLUDE_DIRS=
 #  ${OPENGL_EGL_INCLUDE_DIRS})
-#message(FATAL_ERROR OPENGL_LIBRARIES=
-#  ${OPENGL_LIBRARIES}
+#message(FATAL_ERROR FOUND_OPENGL_LIBRARIES=
+#  ${FOUND_OPENGL_LIBRARIES}
 #  ${OPENGLES2_LIBRARIES})
 
 if(TARGET_LINUX)
   list(APPEND EXTRA_cobalt_renderer_stub_skgl_LIBS
-    ${OPENGL_LIBRARIES}
+    ${FOUND_OPENGL_LIBRARIES}
     #OpenGL::EGL
   )
 endif(TARGET_LINUX)
@@ -221,7 +219,8 @@ target_link_libraries(cobalt_renderer_stub_skgl PUBLIC
   SKIA
   ${HARFBUZZ_LIBRARIES}
   ${EXTRA_cobalt_renderer_stub_skgl_LIBS}
-  ${OPENGLES2_LIBRARIES}
+  #${OPENGLES2_LIBRARIES}
+  ${FOUND_OPENGL_LIBRARIES}
   ${FREETYPE_LIBRARIES}
 )
 
@@ -234,12 +233,9 @@ target_include_directories(cobalt_renderer_stub_skgl PRIVATE
   ${COBALT_COMMON_INCLUDES}
   #${COBALT_PORT_DIR}/renderer_stub
   ${OPENGLES2_INCLUDE_DIRS}
-  ${OPENGL_INCLUDE_DIR}
-  ${OPENGL_EGL_INCLUDE_DIRS}
-  ${OPENGLES2_INCLUDE_DIRS}
-  ${OPENGL_INCLUDE_DIR}
   ${OPENGL_EGL_INCLUDE_DIRS}
   ${FREETYPE_INCLUDE_DIRS}
+  ${FOUND_OPENGL_INCLUDE_DIR}
 )
 
 target_compile_definitions(cobalt_renderer_stub_skgl PUBLIC
@@ -348,13 +344,13 @@ add_library(cobalt_renderer_stub STATIC
 
 #message(WARNING OPENGL_EGL_INCLUDE_DIRS=
 #  ${OPENGL_EGL_INCLUDE_DIRS})
-#message(FATAL_ERROR OPENGL_LIBRARIES=
-#  ${OPENGL_LIBRARIES}
+#message(FATAL_ERROR FOUND_OPENGL_LIBRARIES=
+#  ${FOUND_OPENGL_LIBRARIES}
 #  ${OPENGLES2_LIBRARIES})
 
 if(TARGET_LINUX)
   list(APPEND EXTRA_cobalt_renderer_stub_LIBS
-    ${OPENGL_LIBRARIES}
+    ${FOUND_OPENGL_LIBRARIES}
     #OpenGL::EGL
   )
 endif(TARGET_LINUX)
@@ -387,7 +383,8 @@ target_link_libraries(cobalt_renderer_stub PUBLIC
   SKIA
   ${HARFBUZZ_LIBRARIES}
   ${EXTRA_cobalt_renderer_stub_LIBS}
-  ${OPENGLES2_LIBRARIES}
+  #${OPENGLES2_LIBRARIES}
+  ${FOUND_OPENGL_LIBRARIES}
   ${FREETYPE_LIBRARIES}
 )
 
@@ -400,12 +397,9 @@ target_include_directories(cobalt_renderer_stub PRIVATE
   ${COBALT_COMMON_INCLUDES}
   #${COBALT_PORT_DIR}/renderer_stub
   ${OPENGLES2_INCLUDE_DIRS}
-  ${OPENGL_INCLUDE_DIR}
-  ${OPENGL_EGL_INCLUDE_DIRS}
-  ${OPENGLES2_INCLUDE_DIRS}
-  ${OPENGL_INCLUDE_DIR}
   ${OPENGL_EGL_INCLUDE_DIRS}
   ${FREETYPE_INCLUDE_DIRS}
+  ${FOUND_OPENGL_INCLUDE_DIR}
 )
 
 target_compile_definitions(cobalt_renderer_stub PUBLIC

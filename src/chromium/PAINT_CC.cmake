@@ -110,6 +110,7 @@ target_link_libraries(PAINT_CC PUBLIC
   SKIA
   base
   #${OPENGLES2_LIBRARIES}
+  ${FOUND_OPENGL_LIBRARIES}
 )
 
 set_property(TARGET PAINT_CC PROPERTY CXX_STANDARD 17)
@@ -117,6 +118,7 @@ set_property(TARGET PAINT_CC PROPERTY CXX_STANDARD 17)
 target_include_directories(PAINT_CC PRIVATE
   ${PAINT_CC_DIR}
   ${BASE_DIR}
+  ${OPENGL_INCLUDE_DIR}
 )
 
 target_compile_definitions(PAINT_CC PRIVATE

@@ -18,6 +18,7 @@ target_link_libraries(GFX_RANGE PUBLIC
   #${BASE_LIBRARIES}
   base
   #${OPENGLES2_LIBRARIES}
+  ${FOUND_OPENGL_LIBRARIES}
 )
 
 set_property(TARGET GFX_RANGE PROPERTY CXX_STANDARD 17)
@@ -25,6 +26,7 @@ set_property(TARGET GFX_RANGE PROPERTY CXX_STANDARD 17)
 target_include_directories(GFX_RANGE PRIVATE
   ${GFX_RANGE_DIR}
   ${BASE_DIR}
+  ${OPENGL_INCLUDE_DIR}
 )
 
 target_compile_definitions(GFX_RANGE PRIVATE

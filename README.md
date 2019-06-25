@@ -4,6 +4,42 @@
 also see https://news.ycombinator.com/item?id=17733515
 > Can`t build? - Check readme & issues.
 
+## Use Bloaty: a size profiler for binaries (Supports WASM!)
+
+```
+sudo apt install protobuf-compiler
+cd ~
+git clone https://github.com/google/bloaty.git
+cd bloaty/
+git submodule update --init --recursive
+mkdir build
+cd build
+cmake ..
+cmake --build -- -j6
+# -d symbols gives you a sorted list of the biggest size funcs
+./bloaty -d sections,segments,symbols build-emscripten/*.wasm
+```
+
+## Use twiggy: code size profiler that supports WebAssembly as input
+see https://rustwasm.github.io/book/reference/code-size.html#the-twiggy-code-size-profiler
+
+```
+sudo -E apt-get update
+sudo -E apt install rustc cargo
+# under proxy: see https://www.reddit.com/r/rust/comments/58o7yc/psa_having_trouble_updating_crates_from_the/
+# To test installation:
+# cargo --version
+# cargo new hello --bin
+# echo "fn main(){println!(\"Hello World\");}" > hello/src/main.rs
+# cd hello
+# cargo build
+# cargo run
+cargo install twiggy --verbose
+twiggy --help
+# see https://rustwasm.github.io/twiggy/usage/command-line-interface/top.html
+twiggy top build-emscripten/*.wasm
+```
+
 # NOTE/NEED
 
 todos

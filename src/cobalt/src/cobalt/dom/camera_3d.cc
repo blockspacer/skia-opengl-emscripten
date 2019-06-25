@@ -47,14 +47,23 @@ void Camera3D::StartOrientationEvents(
   if (!impl()) {
     return;
   }
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   orientation_event_timer_.Start(
       FROM_HERE,
       base::TimeDelta::FromSecondsD(1.0 / ORIENTATION_POLL_FREQUENCY_HZ),
       base::Bind(&Camera3D::FireOrientationEvent, base::Unretained(this),
                  target));
+#else
+  std::move(base::Bind(&Camera3D::FireOrientationEvent, base::Unretained(this),
+                 target)).Run();
+#endif
 }
 
-void Camera3D::StopOrientationEvents() { orientation_event_timer_.Stop(); }
+void Camera3D::StopOrientationEvents() {
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+  orientation_event_timer_.Stop();
+#endif
+}
 
 namespace {
 

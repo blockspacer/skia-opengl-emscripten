@@ -18,7 +18,9 @@
 #include <string>
 
 #include "base/optional.h"
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
 #include "base/timer/timer.h"
+#endif
 #include "cobalt/dom/keyboard_event.h"
 #include "cobalt/input/key_event_handler.h"
 
@@ -43,7 +45,9 @@ class KeyRepeatFilter : public KeyEventHandler {
 
   base::Optional<dom::KeyboardEventInit> last_event_data_;
 
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   base::RepeatingTimer key_repeat_timer_;
+#endif
 };
 
 }  // namespace input

@@ -14,7 +14,9 @@
 #include "base/macros.h"
 #include "base/memory/weak_ptr.h"
 #include "base/threading/thread_checker.h"
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
 #include "base/timer/timer.h"
+#endif
 #include "base/win/object_watcher.h"
 #include "net/base/net_export.h"
 #include "net/base/network_change_notifier.h"

@@ -7,7 +7,9 @@
 
 #include "base/callback.h"
 #include "base/macros.h"
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
 #include "base/timer/timer.h"
+#endif
 
 namespace views {
 

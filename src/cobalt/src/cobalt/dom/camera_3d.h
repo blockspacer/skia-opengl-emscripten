@@ -18,7 +18,9 @@
 #define COBALT_DOM_CAMERA_3D_H_
 
 #include "base/basictypes.h"
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
 #include "base/timer/timer.h"
+#endif
 #include "cobalt/dom/event_target.h"
 #include "cobalt/input/camera_3d.h"
 #include "cobalt/script/wrappable.h"
@@ -86,7 +88,9 @@ class Camera3D : public script::Wrappable {
   scoped_refptr<input::Camera3D> impl_;
 
   // State to control the polling and event firing rate.
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   base::RepeatingTimer orientation_event_timer_;
+#endif
   base::Optional<base::TimeTicks> last_event_time_;
   double last_event_alpha_;
   double last_event_beta_;

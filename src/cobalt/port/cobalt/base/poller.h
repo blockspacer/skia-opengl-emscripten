@@ -20,7 +20,9 @@
 #include "base/callback.h"
 #include "base/message_loop/message_loop.h"
 #include "base/threading/thread.h"
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
 #include "base/timer/timer.h"
+#endif
 
 namespace base {
 

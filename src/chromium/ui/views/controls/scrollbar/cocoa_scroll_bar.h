@@ -7,7 +7,9 @@
 
 #import "base/mac/scoped_nsobject.h"
 #include "base/macros.h"
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
 #include "base/timer/timer.h"
+#endif
 #include "ui/compositor/layer_animation_observer.h"
 #include "ui/gfx/animation/slide_animation.h"
 #include "ui/views/controls/scrollbar/scroll_bar.h"

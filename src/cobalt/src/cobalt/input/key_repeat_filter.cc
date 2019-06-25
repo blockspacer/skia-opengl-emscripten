@@ -56,21 +56,25 @@ void KeyRepeatFilter::HandleKeyDown(
 
   DispatchKeyboardEvent(type, keyboard_event);
 
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   // This key down event is triggered for the first time, so start the timer
   // with |kRepeatInitialDelay|.
   key_repeat_timer_.Start(FROM_HERE, kRepeatInitialDelay, this,
                           &KeyRepeatFilter::FireKeyRepeatEvent);
+#endif
 }
 
 void KeyRepeatFilter::HandleKeyUp(
     base::CobToken type, const dom::KeyboardEventInit& keyboard_event) {
   DispatchKeyboardEvent(type, keyboard_event);
 
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   // If it is a key up event and it matches the previous one, stop the key
   // repeat timer.
   if (last_event_data_->key_code() == keyboard_event.key_code()) {
     key_repeat_timer_.Stop();
   }
+#endif
 }
 
 void KeyRepeatFilter::FireKeyRepeatEvent() {
@@ -79,6 +83,7 @@ void KeyRepeatFilter::FireKeyRepeatEvent() {
 
   DispatchKeyboardEvent(base::Tokens::keydown(), repeat_event);
 
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   // If |FireKeyRepeatEvent| is triggered for the first time then reset the
   // timer to the repeat rate instead of the initial delay.
   if (key_repeat_timer_.GetCurrentDelay() == kRepeatInitialDelay) {
@@ -86,6 +91,7 @@ void KeyRepeatFilter::FireKeyRepeatEvent() {
     key_repeat_timer_.Start(FROM_HERE, kRepeatRate, this,
                             &KeyRepeatFilter::FireKeyRepeatEvent);
   }
+#endif
 }
 
 }  // namespace input

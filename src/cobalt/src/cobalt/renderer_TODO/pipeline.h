@@ -23,7 +23,9 @@
 #include "base/synchronization/waitable_event.h"
 #include "base/threading/thread.h"
 #include "base/threading/thread_checker.h"
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
 #include "base/timer/timer.h"
+#endif
 #include "cobalt/base/c_val_collection_timer_stats.h"
 #include "cobalt/math/rect.h"
 #include "cobalt/render_tree/animations/animate_node.h"

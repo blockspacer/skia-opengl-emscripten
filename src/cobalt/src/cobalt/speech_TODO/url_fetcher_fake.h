@@ -23,7 +23,9 @@
 
 #include "base/optional.h"
 #include "base/threading/thread_checker.h"
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
 #include "base/timer/timer.h"
+#endif
 #include "net/base/host_port_pair.h"
 #include "net/url_request/url_fetcher.h"
 #include "net/url_request/url_request_status.h"

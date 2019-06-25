@@ -23,7 +23,9 @@
 #include "base/synchronization/waitable_event.h"
 #include "base/threading/thread.h"
 #include "base/threading/thread_checker.h"
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
 #include "base/timer/timer.h"
+#endif
 #include "cobalt/storage/savegame_thread.h"
 #include "cobalt/storage/store/memory_store.h"
 #include "cobalt/storage/upgrade/upgrade_reader.h"

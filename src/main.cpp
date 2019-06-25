@@ -2610,11 +2610,24 @@ CobaltTester::CobaltTester()
   system_window_.reset(
       new system_window::SystemWindow(&event_dispatcher_, maybe_size));
 
+  DCHECK(system_window_);
+  input_device_manager_ = input::InputDeviceManager::CreateFromWindow(
+      base::Bind(&CobaltTester::OnKeyEventProduced, base::Unretained(this)),
+      base::Bind(&CobaltTester::OnPointerEventProduced,
+                 base::Unretained(this)),
+      base::Bind(&CobaltTester::OnWheelEventProduced, base::Unretained(this)),
+#if SB_HAS(ON_SCREEN_KEYBOARD)
+      base::Bind(&CobaltTester::OnOnScreenKeyboardInputEventProduced,
+                 base::Unretained(this)),
+#endif  // SB_HAS(ON_SCREEN_KEYBOARD)
+      system_window_.get());
+
   // Create the main web module layer.
   main_web_module_layer_ =
       render_tree_combiner_.CreateLayer(kMainWebModuleZIndex);
 
   // see RendererModuleWithCameraOptions
+  DCHECK(input_device_manager_);
   render_module_options.get_camera_transform = base::Bind(
       &input::Camera3D::GetCameraTransformAndUpdateOrientation, input_device_manager_->camera_3d());
 
@@ -2631,18 +2644,8 @@ CobaltTester::CobaltTester()
                                       //camera_3d_
                                       )));*/
 
-  input_device_manager_ = input::InputDeviceManager::CreateFromWindow(
-      base::Bind(&CobaltTester::OnKeyEventProduced, base::Unretained(this)),
-      base::Bind(&CobaltTester::OnPointerEventProduced,
-                 base::Unretained(this)),
-      base::Bind(&CobaltTester::OnWheelEventProduced, base::Unretained(this)),
-#if SB_HAS(ON_SCREEN_KEYBOARD)
-      base::Bind(&CobaltTester::OnOnScreenKeyboardInputEventProduced,
-                 base::Unretained(this)),
-#endif  // SB_HAS(ON_SCREEN_KEYBOARD)
-      system_window_.get());
-
 #ifdef __TODO__
+
 /*
 skemgl.js:6107 Uncaught abort("segmentation fault") at Error
     at jsStackTrace (http://localhost:9090/home/avakimov_am/skia-opengl-emscripten/build-emscripten/skemgl.js:1363:13)
@@ -2857,6 +2860,7 @@ skemgl.js:6107 Uncaught abort("segmentation fault") at Error
 
   layout_trigger = layout::LayoutManager::LayoutTrigger::kOnDocumentMutation;
 
+  DCHECK(input_device_manager_);
   window_ = new cobalt::dom::Window(
       cssom::ViewportSize(browser_width, browser_height), //data.window_dimensions,
       1.0,//data.video_pixel_ratio,

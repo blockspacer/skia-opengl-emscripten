@@ -21,7 +21,9 @@
 
 #include "base/bind.h"
 #include "base/memory/ptr_util.h"
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
 #include "base/timer/timer.h"
+#endif
 #include "base/trace_event/trace_event.h"
 #include "cobalt/cssom/cascade_precedence.h"
 #include "cobalt/dom/camera_3d.h"

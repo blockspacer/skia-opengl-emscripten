@@ -36,6 +36,7 @@ int WindowTimers::SetTimeout(const TimerCallbackArg& handler, int timeout) {
     return 0;
   }
 
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   if (callbacks_active_) {
     auto* timer = new base::OneShotTimer();
     timer->Start(FROM_HERE, base::TimeDelta::FromMilliseconds(timeout),
@@ -46,11 +47,16 @@ int WindowTimers::SetTimeout(const TimerCallbackArg& handler, int timeout) {
   } else {
     timers_[handle] = nullptr;
   }
+#endif
 
   return handle;
 }
 
-void WindowTimers::ClearTimeout(int handle) { timers_.erase(handle); }
+void WindowTimers::ClearTimeout(int handle) {
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+  timers_.erase(handle);
+#endif
+}
 
 int WindowTimers::SetInterval(const TimerCallbackArg& handler, int timeout) {
   int handle = GetFreeTimerHandle();
@@ -61,6 +67,7 @@ int WindowTimers::SetInterval(const TimerCallbackArg& handler, int timeout) {
     return 0;
   }
 
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   if (callbacks_active_) {
     auto* timer(new base::RepeatingTimer());
     timer->Start(FROM_HERE, base::TimeDelta::FromMilliseconds(timeout),
@@ -71,23 +78,35 @@ int WindowTimers::SetInterval(const TimerCallbackArg& handler, int timeout) {
   } else {
     timers_[handle] = nullptr;
   }
+#endif
 
   return handle;
 }
 
-void WindowTimers::ClearInterval(int handle) { timers_.erase(handle); }
+void WindowTimers::ClearInterval(int handle) {
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+  timers_.erase(handle);
+#endif
+}
 
-void WindowTimers::ClearAllIntervalsAndTimeouts() { timers_.clear(); }
+void WindowTimers::ClearAllIntervalsAndTimeouts() {
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+  timers_.clear();
+#endif
+}
 
 void WindowTimers::DisableCallbacks() {
   callbacks_active_ = false;
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   // Immediately cancel any pending timers.
   for (auto& timer_entry : timers_) {
     timer_entry.second = nullptr;
   }
+#endif
 }
 
 int WindowTimers::GetFreeTimerHandle() {
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   int next_timer_index = current_timer_index_;
   while (true) {
     if (next_timer_index == std::numeric_limits<int>::max()) {
@@ -103,6 +122,7 @@ int WindowTimers::GetFreeTimerHandle() {
       break;
     }
   }
+#endif
   DLOG(INFO) << "No available timer handle.";
   return 0;
 }
@@ -111,6 +131,7 @@ void WindowTimers::RunTimerCallback(int handle) {
   TRACE_EVENT0("cobalt::dom", "WindowTimers::RunTimerCallback");
   DCHECK(callbacks_active_)
       << "All timer callbacks should have already been cancelled.";
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   Timers::iterator timer = timers_.find(handle);
   DCHECK(timer != timers_.end());
 
@@ -129,6 +150,7 @@ void WindowTimers::RunTimerCallback(int handle) {
   if (timer != timers_.end() && !timer->second->timer()->IsRunning()) {
     timers_.erase(timer);
   }
+#endif
 
   // The callback has finished running. Stop tracking it in the global stats.
   GlobalStats::GetInstance()->StopJavaScriptEvent();

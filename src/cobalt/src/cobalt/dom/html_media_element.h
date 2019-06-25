@@ -21,7 +21,9 @@
 #include "base/memory/ref_counted.h"
 #include "base/optional.h"
 #include "base/threading/thread_checker.h"
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
 #include "base/timer/timer.h"
+#endif
 #include "cobalt/dom/eme/media_keys.h"
 #include "cobalt/dom/event_queue.h"
 #include "cobalt/dom/html_element.h"

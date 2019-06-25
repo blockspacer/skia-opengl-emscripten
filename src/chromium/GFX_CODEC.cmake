@@ -72,6 +72,7 @@ target_link_libraries(GFX_CODEC PRIVATE
   # "//ui/gfx:gfx_export",
   # "//ui/gfx/geometry",
   #${OPENGLES2_LIBRARIES}
+  ${FOUND_OPENGL_LIBRARIES}
 )
 
 set_property(TARGET GFX_CODEC PROPERTY CXX_STANDARD 17)
@@ -79,6 +80,7 @@ set_property(TARGET GFX_CODEC PROPERTY CXX_STANDARD 17)
 target_include_directories(GFX_CODEC PRIVATE
   ${GFX_CODEC_DIR}
   ${BASE_DIR}
+  ${OPENGL_INCLUDE_DIR}
 )
 
 target_compile_definitions(GFX_CODEC PRIVATE

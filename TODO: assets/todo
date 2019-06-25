@@ -1,4 +1,8 @@
-﻿dom components
+﻿ui/views https://chromium.googlesource.com/chromium/src/+/master/docs/ui/views/overview.md
+reduce std size https://blog.magnum.graphics/backstage/forward-declaring-stl-container-types/
+dom components
+SIDE MODULE WASM: load the WASM module using the standard JavaScript APIs:
+ > https://blog.scottlogic.com/2017/10/17/wasm-mandelbrot.html
 runtime/compile-time feature enabler/disabler VISUAL TOOL & disable dom elements/widgets
 project creator VISUAL TOOL & assets viewer
 zipped file system support (native, not wasm)
@@ -49,6 +53,8 @@ flexbox / yoga / QT Anchor Layout
 icon fonts: FontAwesome, Emoji, UTF symbols e.t.c.
 smaller package size
 smaller ICU size
+timers on WASM ST
+native network & https
 faster build time
 dynamic asset loading (wasm)
 save data to native filesystem (wasm)
@@ -105,6 +111,8 @@ dom hover/click/e.t.c events
 resize dom on window resize
 dom cache/reload only on changes
 repaint only on changes
+https://blog.kowalczyk.info/article/e4132d5a44014b2aad81d8158c803ad1/ideas
+https://blog.kowalczyk.info/article/86727062379748ca854aba0e328260a9/log-for-ideas.html
 windows support
 dialogs / popups & inner closable windows with own event propagation
 android support
@@ -209,6 +217,8 @@ dev forum
 layer system
 python/go/e.t.c. bingings
 ClangFormat & clang tools (iwyu e.t.c.)
+Faster Builds https://slides.com/onqtam/faster_builds
+wasm-snip https://rustwasm.github.io/book/reference/code-size.html#use-the-wasm-snip-tool
 Security & Memory attacks & SSL & e.t.c.
 Dude, desktop applications are so last decade! https://blog.qt.io/blog/2019/03/21/dude-desktop-applications-last-decade/
 Docker images

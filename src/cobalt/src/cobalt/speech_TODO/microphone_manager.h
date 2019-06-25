@@ -23,7 +23,9 @@
 #include "base/callback.h"
 #include "base/optional.h"
 #include "base/threading/thread.h"
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
 #include "base/timer/timer.h"
+#endif
 #include "cobalt/dom/event.h"
 #include "cobalt/media/base/shell_audio_bus.h"
 #include "cobalt/speech/microphone.h"

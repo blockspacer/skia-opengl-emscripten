@@ -9,7 +9,9 @@
 
 #include "base/macros.h"
 #include "base/memory/weak_ptr.h"
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
 #include "base/timer/timer.h"
+#endif
 #include "ui/ozone/demo/renderer_base.h"
 
 namespace gfx {

@@ -493,6 +493,7 @@ target_link_libraries(GPU_COMMAND_BUFFER PUBLIC
   base
   GRE2
   #${OPENGLES2_LIBRARIES}
+  ${FOUND_OPENGL_LIBRARIES}
 )
 
 target_link_libraries(GPU_COMMAND_BUFFER PRIVATE
@@ -518,6 +519,7 @@ target_include_directories(GPU_COMMAND_BUFFER PRIVATE
 target_include_directories(GPU_COMMAND_BUFFER PUBLIC
   ${GPU_DIR}
   ${GEN_COMBINED_DIR} # requires gpu/config/gpu_driver_bug_list_autogen.h
+  ${OPENGL_INCLUDE_DIR}
 )
 
 target_compile_definitions(GPU_COMMAND_BUFFER PRIVATE

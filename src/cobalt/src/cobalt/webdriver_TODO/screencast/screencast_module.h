@@ -21,7 +21,9 @@
 
 #include "base/optional.h"
 #include "base/threading/thread_checker.h"
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
 #include "base/timer/timer.h"
+#endif
 #include "cobalt/loader/image/image_encoder.h"
 #include "cobalt/math/rect.h"
 #include "cobalt/webdriver/dispatcher.h"

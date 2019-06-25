@@ -6,7 +6,9 @@
 #define UI_VIEWS_SELECTION_CONTROLLER_H_
 
 #include "base/time/time.h"
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
 #include "base/timer/timer.h"
+#endif
 #include "ui/gfx/geometry/point.h"
 #include "ui/gfx/range/range.h"
 #include "ui/gfx/selection_model.h"
