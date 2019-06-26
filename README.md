@@ -894,10 +894,12 @@ ls ${PROJ_ROOT}/resources/icu
 ```
 
 see:
+ > https://gclxry.com/custom-chromium-icu-library/
  > https://github.com/unicode-org/icu/blob/master/docs/userguide/icu_data/buildtool.md#filtering-by-language-only
  > http://userguide.icu-project.org/howtouseicu#TOC-C-With-Your-Own-Build-System
  > http://userguide.icu-project.org/icudata
- > https://github.com/unicode-org/icu/tree/release-64-2 or https://github.com/unicode-org/icu/tree/release-56-1
+ > http://cldr.unicode.org/development/development-process/design-proposals/specifying-text-break-variants-in-locale-ids
+ > https://github.com/unicode-org/icu/tree/release-64-2
  > https://github.com/blockspacer/cobalt-clone-28052019/blob/89664d116629734759176d820e9923257717e09c/src/third_party/icu/README.chromium#L26
  > https://github.com/blockspacer/cobalt-clone-28052019/blob/89664d116629734759176d820e9923257717e09c/src/third_party/icu/scripts/accept_lang.list
  > http://userguide.icu-project.org/icufaq#TOC-How-can-I-reduce-the-size-of-the-ICU-data-library-

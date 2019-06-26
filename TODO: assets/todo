@@ -1,4 +1,5 @@
-﻿ui/views https://chromium.googlesource.com/chromium/src/+/master/docs/ui/views/overview.md
+﻿https://visualstudiomagazine.com/articles/2017/01/25/26-web-desktop-ui-tools.aspx
+https://github.com/LWJGL/lwjgl3/issues/101#issuecomment-289821751
 reduce std size https://blog.magnum.graphics/backstage/forward-declaring-stl-container-types/
 dom components
 SIDE MODULE WASM: load the WASM module using the standard JavaScript APIs:
@@ -98,7 +99,11 @@ dom reactive bindings
 i18n & dynamic language switch & poedit support
 GPU (GLES2/WEBGL2) rendering
 dynamic dom changes
+ui/views https://chromium.googlesource.com/chromium/src/+/master/docs/ui/views/overview.md
 widgets system (aka flutter clip shape/qt tabs/qt tree-table with Sort&Filter/qt Calendar/file tree/Color picker/text Completer e.t.c)
+ > https://www.chromium.org/developers/how-tos/inspecting-ash
+ > https://gclxry.com/chromium-ui-view/
+ > https://meowni.ca/posts/chromium-101/
 CSS clip path
 SCSS vars modifications in dev-tools / final app / app settings page
  > https://bennettfeely.com/clippy/
