@@ -9,6 +9,10 @@
 #include "base/bind.h"
 #include "base/logging.h"
 
+#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+#include "emscripten/emscripten.h"
+#endif
+
 namespace base {
 
 DeferredSequencedTaskRunner::DeferredTask::DeferredTask()
@@ -37,10 +41,36 @@ DeferredSequencedTaskRunner::DeferredSequencedTaskRunner()
 bool DeferredSequencedTaskRunner::PostDelayedTask(const Location& from_here,
                                                   OnceClosure task,
                                                   TimeDelta delay) {
-#if(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
-  std::move(task).Run();
-  // Returns true if the task may be run
-  return false;
+#if defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS)
+    if (started_) {
+        DCHECK(deferred_tasks_queue_.empty());
+        DCHECK(target_task_runner_);
+
+        std::move(task).Run();
+
+        /*printf("DeferredSequencedTaskRunner::PostDelayedTask scheduled after %d\n", delay.InMilliseconds());
+
+        /// __TODO__
+        /// \note struct must be freed in callback
+        STClosure* stClosure = new STClosure(std::move(task));
+        void* data = reinterpret_cast<void*>(stClosure);
+        DCHECK(data);
+        emscripten_async_call([](void* data){
+            printf("DeferredSequencedTaskRunner::PostDelayedTask fired\n");
+            DCHECK(data);
+            STClosure* stClosureData = reinterpret_cast<STClosure*>(data);
+            std::move(stClosureData->onceClosure_).Run();
+            delete stClosureData;
+        }, data, delay.is_max() ? 1 : delay.InMilliseconds());*/
+
+        return true;
+    }
+
+    QueueDeferredTask(from_here, std::move(task), delay,
+                      false /* is_non_nestable */);
+
+    // Returns true if the task may be run
+    return true;
 #else
   AutoLock lock(lock_);
   if (started_) {

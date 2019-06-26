@@ -1,4 +1,4 @@
-// Copyright 2017 The Chromium Authors. All rights reserved.
+﻿// Copyright 2017 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -32,6 +32,10 @@
 
 #include "base/win/scoped_com_initializer.h"
 #endif  // defined(OS_WIN)
+
+#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+#include "emscripten/emscripten.h"
+#endif
 
 namespace base {
 namespace internal {
@@ -370,32 +374,46 @@ class PooledSingleThreadTaskRunnerManager::PooledSingleThreadTaskRunner
                        OnceClosure closure,
                        TimeDelta delay) override {
 #if defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS)
-    std::move(closure).Run();
-    // Returns true if the task may be run
-    return false;
+  std::move(closure).Run();
+
+  /*printf("PooledSingleThreadTaskRunnerManager::PostDelayedTask scheduled after %d\n", delay.InMilliseconds());
+  /// \note struct must be freed in callback
+  STClosure* stClosure = new STClosure(std::move(closure));
+  void* data = reinterpret_cast<void*>(stClosure);
+  DCHECK(data);
+  emscripten_async_call([](void* data){
+      printf("PooledSingleThreadTaskRunnerManager::PostDelayedTask fired\n");
+      DCHECK(data);
+      STClosure* stClosureData = reinterpret_cast<STClosure*>(data);
+      std::move(stClosureData->onceClosure_).Run();
+      delete stClosureData;
+  }, data, delay.is_max() ? 1 : delay.InMilliseconds());*/
+
+  // Returns true if the task may be run
+  return true;
 #else
-    if (!g_manager_is_alive)
-      return false;
+  if (!g_manager_is_alive)
+    return false;
 
-    Task task(from_here, std::move(closure), delay);
+  Task task(from_here, std::move(closure), delay);
 
-    if (!outer_->task_tracker_->WillPostTask(&task,
-                                             sequence_->shutdown_behavior())) {
-      return false;
-    }
+  if (!outer_->task_tracker_->WillPostTask(&task,
+                                           sequence_->shutdown_behavior())) {
+    return false;
+  }
 
-    if (task.delayed_run_time.is_null()) {
-      GetDelegate()->PostTaskNow(sequence_, std::move(task));
-    } else {
-      // Unretained(GetDelegate()) is safe because this TaskRunner and its
-      // worker are kept alive as long as there are pending Tasks.
-      outer_->delayed_task_manager_->AddDelayedTask(
-          std::move(task),
-          BindOnce(&WorkerThreadDelegate::PostTaskNow,
-                   Unretained(GetDelegate()), sequence_),
-          this);
-    }
-    return true;
+  if (task.delayed_run_time.is_null()) {
+    GetDelegate()->PostTaskNow(sequence_, std::move(task));
+  } else {
+    // Unretained(GetDelegate()) is safe because this TaskRunner and its
+    // worker are kept alive as long as there are pending Tasks.
+    outer_->delayed_task_manager_->AddDelayedTask(
+        std::move(task),
+        BindOnce(&WorkerThreadDelegate::PostTaskNow,
+                 Unretained(GetDelegate()), sequence_),
+        this);
+  }
+  return true;
 #endif
   }
 

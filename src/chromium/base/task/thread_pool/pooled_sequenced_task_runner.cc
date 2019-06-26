@@ -1,10 +1,14 @@
-// Copyright 2018 The Chromium Authors. All rights reserved.
+﻿// Copyright 2018 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 #include "base/task/thread_pool/pooled_sequenced_task_runner.h"
 
 #include "base/sequence_token.h"
+
+#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+#include "emscripten/emscripten.h"
+#endif
 
 namespace base {
 namespace internal {
@@ -25,8 +29,22 @@ bool PooledSequencedTaskRunner::PostDelayedTask(const Location& from_here,
                                                 TimeDelta delay) {
 #if defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS)
   std::move(closure).Run();
+
+  /*printf("PooledSequencedTaskRunner::PostDelayedTask scheduled after %d\n", delay.InMilliseconds());
+  /// \note struct must be freed in callback
+  STClosure* stClosure = new STClosure(std::move(closure));
+  void* data = reinterpret_cast<void*>(stClosure);
+  DCHECK(data);
+  emscripten_async_call([](void* data){
+      printf("PooledSequencedTaskRunner::PostDelayedTask fired\n");
+      DCHECK(data);
+      STClosure* stClosureData = reinterpret_cast<STClosure*>(data);
+      std::move(stClosureData->onceClosure_).Run();
+      delete stClosureData;
+  }, data, delay.is_max() ? 1 : delay.InMilliseconds());*/
+
   // Returns true if the task may be run
-  return false;
+  return true;
 #else
   if (!PooledTaskRunnerDelegate::Exists())
     return false;

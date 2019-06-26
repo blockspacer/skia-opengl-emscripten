@@ -1,4 +1,4 @@
-// Copyright 2015 The Chromium Authors. All rights reserved.
+﻿// Copyright 2015 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -16,6 +16,10 @@
 #include "base/trace_event/blame_context.h"
 #include "base/trace_event/common/trace_event_common.h"
 #include "build/build_config.h"
+
+#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+#include "emscripten/emscripten.h"
+#endif
 
 namespace base {
 namespace sequence_manager {
@@ -71,9 +75,27 @@ bool TaskQueueImpl::TaskRunner::PostDelayedTask(const Location& location,
                                                 OnceClosure callback,
                                                 TimeDelta delay) {
 #if defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS)
-  std::move(callback).Run();
-  // Returns true if the task may be run
-  return false;
+    std::move(callback).Run();
+//
+//    /// __TODO__
+//    ///*
+//    printf("TaskQueueImpl::PostDelayedTask scheduled after %d\n", delay.InMilliseconds());
+//
+//    /// \note struct must be freed in callback
+//    STClosure* stClosure = new STClosure(std::move(callback));
+//    void* data = reinterpret_cast<void*>(stClosure);
+//    DCHECK(data);
+//    emscripten_async_call([](void* data){
+//        printf("TaskQueueImpl::PostDelayedTask fired\n");
+//        DCHECK(data);
+//        STClosure* stClosureData = reinterpret_cast<STClosure*>(data);
+//        std::move(stClosureData->onceClosure_).Run();
+//        //delete stClosureData;
+//    }, data, delay.is_max() ? 1 : delay.InMilliseconds());
+//    //*/
+//
+    // Returns true if the task may be run
+    return true;
 #else
   return task_poster_->PostTask(PostedTask(std::move(callback), location, delay,
                                            Nestable::kNestable, task_type_));

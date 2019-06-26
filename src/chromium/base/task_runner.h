@@ -1,4 +1,4 @@
-// Copyright (c) 2012 The Chromium Authors. All rights reserved.
+﻿// Copyright (c) 2012 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -16,6 +16,16 @@
 namespace base {
 
 struct TaskRunnerTraits;
+
+#if defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS)
+/// \note Used to schedule task using emscripten_async_call
+///       without blocking browser main loop.
+/// \see https://developer.mozilla.org/en-US/docs/Web/JavaScript/EventLoop#Zero_delays
+struct BASE_EXPORT STClosure {
+    STClosure(OnceClosure onceClosure) : onceClosure_(std::move(onceClosure)) {}
+    OnceClosure onceClosure_;
+};
+#endif
 
 // A TaskRunner is an object that runs posted tasks (in the form of
 // Closure objects).  The TaskRunner interface provides a way of
