@@ -9,51 +9,17 @@
           font-family: "Ubuntu";
           src: url("file:///resources/fonts/Ubuntu-Regular.ttf");
       }
+
       @font-face {
           font-family: "FreeSans";
           src: url("file:///resources/fonts/FreeSans.ttf");
       }
+
       body {
         background:yellow;
         font-size: 22px;
         font-family: "Ubuntu";
       }
-    </style>
-  </head>
-  <body style="background:white">
-
-    <div style="font-family: 'Ubuntu'; font-size: 12px;">bbb div font-family: 'Ubuntu'</div>
-    <div style="font-family: 'FreeSans'; font-size: 18px;">bbb div font-family: 'FreeSans'</div>
-    <div style="font-family: 'none'; font-size: 64px;">bbb div font-family: 'none'</div>
-    <div style="font-family: 'Ubuntu'; font-size: 12px;">(RU) 12 пикселей</div>
-    <div style="font-family: 'FreeSans'; font-size: 18px;">(RU) 18 пикселей</div>
-    <div style="font-family: 'none'; font-size: 64px;">(RU) 64 пикселя</div>
-    <div style="width:100px">
-      Не следует, однако, забывать, что повышение уровня гражданского сознания, а также свежий взгляд на привычные вещи - безусловно открывает новые горизонты для форм воздействия. Повседневная практика показывает, что постоянный количественный рост и сфера нашей активности напрямую зависит от благоприятных перспектив.
-      <br/>
-      Значимость этих проблем настолько очевидна, что сплоченность команды профессионалов не оставляет шанса для поставленных обществом задач. В своем стремлении повысить качество жизни, они забывают, что консультация с широким активом однозначно фиксирует необходимость укрепления моральных ценностей. Кстати, реплицированные с зарубежных источников, современные исследования набирают популярность среди определенных слоев населения, а значит, должны быть объективно рассмотрены соответствующими инстанциями. Являясь всего лишь частью общей картины, элементы политического процесса представлены в исключительно положительном свете. И нет сомнений, что базовые сценарии поведения пользователей превращены в посмешище, хотя само их существование приносит несомненную пользу обществу.
-      <br/>
-      Безусловно, сплоченность команды профессионалов предполагает независимые способы реализации форм воздействия. Равным образом, экономическая повестка сегодняшнего дня влечет за собой процесс внедрения и модернизации новых принципов формирования материально-технической и кадровой базы. В своем стремлении улучшить пользовательский опыт мы упускаем, что тщательные исследования конкурентов представляют собой не что иное, как квинтэссенцию победы маркетинга над разумом и должны быть ассоциативно распределены по отраслям. Мы вынуждены отталкиваться от того, что высокотехнологичная концепция общественного уклада влечет за собой процесс внедрения и модернизации экспериментов, поражающих по своей масштабности и грандиозности! С другой стороны, современная методология разработки предоставляет широкие возможности для переосмысления внешнеэкономических политик. А также тщательные исследования конкурентов являются только методом политического участия и описаны максимально подробно.
-    </div>
-    <!-- TODO: https://cobalt.foo/development/reference/supported-features.html
-    img1<br>
-    <img src="file:///resources/images/mouse.jpeg" width="200" height="200" style="border: 5px solid gray;"><br>
-    img2<br>
-    -->
-    <div style="background-image: url('file:///resources/images/mouse.jpeg'); width:200px; height:200px; border: 5px solid gray;animation: slidein 3s ease-in 1s infinite reverse both running;">
-    </div><br>
-    img3<br>
-    <div style="background-image: url('file:///resources/images/owl.png'); width:200px; height:200px; border: 5px solid gray;animation: slidein 3s ease-in 1s infinite reverse both running;">
-    </div><br>
-
-    <div class="view_port">
-      <div class="polling_message">
-        Listening for dispatches
-      </div>
-      <div class="cylon_eye"></div>
-    </div>
-
-    <style type="text/css">
 
       .showbox2 {
         margin: 4em 1em;
@@ -65,15 +31,10 @@
         text-align: center;
         transition: 1s ease-in-out;
       }
+
       .showbox2.slideright:hover {
         transform: translate(3em,0);
       }
-
-    </style>
-
-    <div class="showbox2 slideright">box 1</div>
-
-    <style type="text/css">
 
       .showbox {
         margin: 4em 1em;
@@ -106,20 +67,92 @@
         color: white;
         height: 100%;
         width: 20%;
-
-        -webkit-animation: 4s linear 0s infinite alternate move_eye;
-                animation: 4s linear 0s infinite alternate move_eye;
+        animation: 4s linear 0s infinite alternate move_eye;
       }
 
-      @-webkit-keyframes move_eye { from { margin-left: -20%; } to { margin-left: 100%; }  }
-              @keyframes move_eye { from { margin-left: -20%; } to { margin-left: 100%; }  }
+      @keyframes move_eye { from { margin-left: -20%; } to { margin-left: 100%; }  }
 
+      @keyframes rotating {
+          from{
+              -webkit-transform: rotate(0deg);
+          }
+          to{
+              -webkit-transform: rotate(360deg);
+          }
+      }
+
+      .rotating {
+          -webkit-animation: rotating 2s linear infinite;
+      }
+
+      @keyframes bounceIn {
+        0% {
+          transform: scale(0.1);
+          opacity: 0;
+        }
+        60% {
+          transform: scale(1.2);
+          opacity: 1;
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+
+      .bounceInDiv {
+        animation: bounceIn 2s;
+        animation-delay: 5s;
+        animation-iteration-count: 10;
+      }
+
+      @keyframes exanim {
+        from {background-color: red;}
+        to {background-color: yellow;}
+      }
+
+      .exanim {
+        background-color: red;
+        animation-name: exanim;
+        animation-duration: 10s;
+      }
     </style>
+  </head>
+  <body class="exanim">
+
+    <div style="font-family: 'Ubuntu'; font-size: 12px;" class='bounceInDiv'>bbb div font-family: 'Ubuntu'</div>
+    <div style="font-family: 'FreeSans'; font-size: 18px;">bbb div font-family: 'FreeSans'</div>
+    <div style="font-family: 'none'; font-size: 64px;">bbb div font-family: 'none'</div>
+    <div style="font-family: 'Ubuntu'; font-size: 18px;">(RU) 18 пикселей</div>
+    <!-- TODO: https://cobalt.foo/development/reference/supported-features.html
+    img1<br>
+    <img src="file:///resources/images/mouse.jpeg" width="200" height="200" style="border: 5px solid gray;"><br>
+    img2<br>
+    -->
+    <div style="background-image: url('file:///resources/images/mouse.jpeg'); width:200px; height:200px; border: 5px solid gray;animation: slidein 3s ease-in 1s infinite reverse both running;">
+    </div><br>
+    img3<br>
+    <div style="background-image: url('file:///resources/images/owl.png'); width:200px; height:200px; border: 5px solid gray;animation: slidein 3s ease-in 1s infinite reverse both running;">
+    </div><br>
+
+    <div class="view_port">
+      <div class="polling_message">
+        Listening for dispatches
+      </div>
+      <div class="cylon_eye"></div>
+    </div>
+
+    <div class="showbox2 slideright">box 1</div>
 
     <div class="showbox" style="transform: translate(3em,0);">box 1</div>
     <div class="showbox" style="transform: rotate(30deg); border-color: red;">box 2</div>
     <div class="showbox" style="transform: translate(-3em,1em);">box 3</div>
     <div class="showbox" style="transform: scale(2);">box 4</div>
+
+    <div style="width:300px" class='rotating'>
+      Не следует, однако, забывать, что повышение уровня гражданского сознания, а также свежий взгляд на привычные вещи.
+      <br/>
+      Значимость этих проблем очевидна.
+    </div>
 
   </body>
 </html>
