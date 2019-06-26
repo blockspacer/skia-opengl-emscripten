@@ -41,6 +41,8 @@ FontCache::RequestedRemoteTypefaceInfo::RequestedRemoteTypefaceInfo(
       , request_timer_(new base::OneShotTimer())
 {
 
+  /// TODO: !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+
   request_timer_->Start(FROM_HERE,
                         base::TimeDelta::FromMilliseconds(kRequestTimerDelay),
                         typeface_load_event_callback);

@@ -597,6 +597,7 @@ class BrowserModule {
   base::TimeTicks on_error_retry_time_;
   // The timer for the next call to OnErrorRetry(). It is started in OnError()
   // when it is not already active.
+  /// TODO: !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   base::OneShotTimer on_error_retry_timer_;
 
   // Set when we've posted a system error for network failure until we receive

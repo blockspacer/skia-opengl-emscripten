@@ -1366,7 +1366,7 @@ static int read_file(const char* fPath, char*& fileString, long int& fsize, cons
 }
 
 static int debugPeriodicCounter = 0;
-static int debugPeriod = 100;
+static int debugPeriod = 10;
 #if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__) \
   && defined(ENABLE_COBALT)
 static bool hasLayout = false;
@@ -3375,6 +3375,7 @@ static void animate() {
 
               if (isDebugPeriodReached() || !hasLayout)
               {
+                  DCHECK(!isRenderTreeProducePending);
                   emscripten_pause_main_loop();
                   //if (isDebugPeriodReached())
                   printf("g_cobaltTester DoSynchronousLayoutAndGetRenderTree\n");

@@ -184,6 +184,7 @@ class SourceBuffer : public dom::EventTarget {
   double append_window_start_;
   double append_window_end_;
 
+  /// TODO: !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   base::OneShotTimer append_timer_;
   bool first_initialization_segment_received_;
   std::vector<uint8_t> pending_append_data_;

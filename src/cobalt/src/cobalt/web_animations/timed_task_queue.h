@@ -21,9 +21,10 @@
 
 #include "base/memory/weak_ptr.h"
 #include "base/time/time.h"
-//#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
 #include "base/timer/timer.h"
-//#endif
+#endif
+#include "base/callback.h"
 
 namespace cobalt {
 namespace web_animations {

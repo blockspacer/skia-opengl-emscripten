@@ -18,6 +18,10 @@
 #include "cobalt/web_animations/animation_set.h"
 #include "cobalt/web_animations/animation_timeline.h"
 
+#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+#include "emscripten/emscripten.h"
+#endif
+
 namespace cobalt {
 namespace web_animations {
 
@@ -51,6 +55,7 @@ base::Optional<double> AnimationTimeline::current_time() const {
 }
 
 void AnimationTimeline::Sample() {
+  //printf("AnimationTimeline::Sample\n");
   if (clock_) {
     sampled_clock_time_ = clock_->Now();
     event_queue_.UpdateTime(*sampled_clock_time_);
@@ -62,6 +67,7 @@ void AnimationTimeline::Sample() {
 
 std::unique_ptr<TimedTaskQueue::Task> AnimationTimeline::QueueTask(
     base::TimeDelta fire_time, const base::Closure& closure) {
+  //printf("AnimationTimeline::QueueTask\n");
   std::unique_ptr<TimedTaskQueue::Task> task =
       event_queue_.QueueTask(fire_time, closure);
 
@@ -73,13 +79,35 @@ std::unique_ptr<TimedTaskQueue::Task> AnimationTimeline::QueueTask(
 }
 
 void AnimationTimeline::UpdateNextEventTimer() {
+  //printf("AnimationTimeline::UpdateNextEventTimer\n");
+
   if (event_queue_.empty() || !sampled_clock_time_ || !clock_) {
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
     next_event_timer_.Stop();
+#else
+  /// \note TODO: stop emscripten_async_call
+#endif
   } else {
     base::TimeDelta delay = event_queue_.next_fire_time() - clock_->Now();
+    const bool isTimeExpired = delay < base::TimeDelta();
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
     next_event_timer_.Start(
-        FROM_HERE, delay < base::TimeDelta() ? base::TimeDelta() : delay,
+        FROM_HERE, isTimeExpired ? base::TimeDelta() : delay,
         base::Bind(&AnimationTimeline::Sample, base::Unretained(this)));
+#else
+    if(isTimeExpired) {
+      std::move(base::Bind(&AnimationTimeline::Sample, base::Unretained(this))).Run();
+    } else {
+      //printf("scheduled AnimationTimeline::Sample after %d\n", delay.InMilliseconds());
+      void* data =  reinterpret_cast<void*>(this);
+      emscripten_async_call([](void* data){
+        //printf("scheduled AnimationTimeline::Sample fired\n");
+        DCHECK(data);
+        AnimationTimeline* toAnimationTimeline = reinterpret_cast<AnimationTimeline*>(data);
+        std::move(base::Bind(&AnimationTimeline::Sample, base::Unretained(toAnimationTimeline))).Run();
+      }, data, delay.InMilliseconds());
+    }
+#endif
   }
 }
 

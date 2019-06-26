@@ -21,9 +21,9 @@
 #include "base/compiler_specific.h"
 #include "base/memory/ref_counted.h"
 #include "base/optional.h"
-//#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
 #include "base/timer/timer.h"
-//#endif
+#endif
 #include "cobalt/base/clock.h"
 #include "cobalt/script/wrappable.h"
 #include "cobalt/web_animations/timed_task_queue.h"
@@ -84,8 +84,9 @@ class AnimationTimeline : public script::Wrappable {
   scoped_refptr<AnimationSet> animations_;
   TimedTaskQueue event_queue_;
   base::Optional<base::TimeDelta> sampled_clock_time_;
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   base::OneShotTimer next_event_timer_;
-
+#endif
   // So that Animation objects can register themselves.
   friend class Animation;
 

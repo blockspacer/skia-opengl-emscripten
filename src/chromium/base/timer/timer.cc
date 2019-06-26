@@ -134,6 +134,9 @@ void TimerBase::Stop() {
 }
 
 void TimerBase::Reset() {
+
+  /// TODO: !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+
   printf("TimerBase::Reset 1\n");
   DCHECK(origin_sequence_checker_.CalledOnValidSequence());
 

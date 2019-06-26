@@ -36,6 +36,7 @@ int WindowTimers::SetTimeout(const TimerCallbackArg& handler, int timeout) {
     return 0;
   }
 
+  /// TODO: !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
 #if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   if (callbacks_active_) {
     auto* timer = new base::OneShotTimer();

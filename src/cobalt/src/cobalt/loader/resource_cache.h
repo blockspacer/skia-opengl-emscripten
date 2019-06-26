@@ -188,6 +188,8 @@ class CachedResource
   // When the resource cache is set to allow retries and a transient loading
   // error causes a resource to fail to load, a retry is scheduled.
   int retry_count_;
+
+  /// TODO: !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   std::unique_ptr<base::RetainingOneShotTimer> retry_timer_;
 
   DISALLOW_COPY_AND_ASSIGN(CachedResource);
@@ -604,6 +606,8 @@ class ResourceCache {
   ResourceCallbackMap pending_callback_map_;
   // Timer used to ensure that pending callbacks are handled in a timely manner
   // when callbacks are being blocked by additional loading resources.
+
+  /// TODO: !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   base::OneShotTimer process_pending_callback_timer_;
 
   // Whether or not ProcessPendingCallbacks() is running.
