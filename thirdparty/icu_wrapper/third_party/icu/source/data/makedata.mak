@@ -126,7 +126,7 @@ TESTDATAOUT=$(ICUP)\source\test\testdata\out
 
 #
 #   TESTDATABLD
-#		The build directory for test data intermediate files
+#		The build directory for test data intermidiate files
 #		(Tests are NOT run from this makefile,
 #         only the data is put in place.)
 TESTDATABLD=$(ICUP)\source\test\testdata\out\build
@@ -233,8 +233,7 @@ $(TOOLS_TS): "$(ICUTOOLS)\genrb\$(CFGTOOLS)\genrb.exe" "$(ICUTOOLS)\gencnval\$(C
 
 $(COREDATA_TS):
 	@cd "$(ICUSRCDATA)"
-	set PYTHONPATH=$(ICUP)\source\python;%PYTHONPATH%
-	py -3 -B -m icutools.databuilder \
+	py -3 -B -m buildtool \
 		--mode windows-exec \
 		--src_dir "$(ICUSRCDATA)" \
 		--tool_dir "$(ICUTOOLS)" \
@@ -413,34 +412,41 @@ CLEAN : GODATA
 	-@erase "region\*.txt"
 	-@erase "zone\*.res"
 	-@erase "zone\*.txt"
-	-@erase "$(ICUBRK)\*.brk"
-	-@erase "$(ICUBRK)\*.res"
-	-@erase "$(ICUBRK)\*.txt"
-	-@erase "$(ICUBRK)\*.dict"
-	-@erase "$(ICUCOL)\*.res"
-	-@erase "$(ICUCOL)\*.txt"
-	-@erase "$(ICURBNF)\*.res"
-	-@erase "$(ICURBNF)\*.txt"
-	-@erase "$(ICUTRNS)\*.res"
-	-@erase "$(ICUOUT)\*.dat"
-	-@erase "$(ICUTMP)\*.html"
-	-@erase "$(ICUTMP)\*.lst"
-	-@erase "$(ICUTMP)\*.mak"
-	-@erase "$(ICUTMP)\*.obj"
-	-@erase "$(ICUTMP)\*.res"
-	-@erase "$(ICUTMP)\*.timestamp"
-	-@erase "$(TESTDATABLD)\*.cnv"
-	-@erase "$(TESTDATABLD)\*.icu"
-	-@erase "$(TESTDATABLD)\*.mak"
-	-@erase "$(TESTDATABLD)\*.nrm"
-	-@erase "$(TESTDATABLD)\*.res"
-	-@erase "$(TESTDATABLD)\*.spp"
-	-@erase "$(TESTDATABLD)\*.txt"
-	-@erase "$(TESTDATAOUT)\*.dat"
-	-@erase "$(TESTDATAOUT)\testdata\*.typ"
-	-@erase "$(TESTDATAOUT)\testdata\*.res"
-	-@erase "$(TESTDATAOUT)\testdata\*.txt"
-	-@erase "$(TESTDATAOUT)\testdata\*.lst"
+	@cd "$(ICUBLD_PKG)\$(ICUBRK)"
+	-@erase "*.brk"
+	-@erase "*.res"
+	-@erase "*.txt"
+	-@erase "*.dict"
+	@cd "$(ICUBLD_PKG)\$(ICUCOL)"
+	-@erase "*.res"
+	-@erase "*.txt"
+	@cd "$(ICUBLD_PKG)\$(ICURBNF)"
+	-@erase "*.res"
+	-@erase "*.txt"
+	@cd "$(ICUBLD_PKG)\$(ICUTRNS)"
+	-@erase "*.res"
+	@cd "$(ICUOUT)"
+	-@erase "*.dat"
+	@cd "$(ICUTMP)"
+	-@erase "*.html"
+	-@erase "*.lst"
+	-@erase "*.mak"
+	-@erase "*.obj"
+	-@erase "*.res"
+	-@erase "*.timestamp"
+	@cd "$(TESTDATABLD)"
+	-@erase "*.cnv"
+	-@erase "*.icu"
+	-@erase "*.mak"
+	-@erase "*.nrm"
+	-@erase "*.res"
+	-@erase "*.spp"
+	-@erase "*.txt"
+	@cd "$(TESTDATAOUT)"
+	-@erase "*.dat"
+	@cd "$(TESTDATAOUT)\testdata"
+	-@erase "*.typ"
+	@cd "$(ICUBLD_PKG)"
 
 
 # DLL version information

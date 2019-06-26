@@ -47,11 +47,11 @@ TODO: This cache should probably be removed when the deprecated code is
       completely removed.
 */
 static UHashtable *cache = NULL;
-static icu::UInitOnce gCacheInitOnce = U_INITONCE_INITIALIZER;
+static icu::UInitOnce gCacheInitOnce;
 
 static UMutex *resbMutex() {
-    static UMutex *m = STATIC_NEW(UMutex);
-    return m;
+    static UMutex m = U_MUTEX_INITIALIZER;
+    return &m;
 }
 
 /* INTERNAL: hashes an entry  */

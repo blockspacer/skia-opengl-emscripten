@@ -19,15 +19,12 @@
 #include "unicode/udat.h"
 #include "unicode/ustring.h"
 #include "unicode/utf16.h"
-#include "bytesinkutil.h"
-#include "charstr.h"
 #include "tzgnames.h"
 #include "cmemory.h"
 #include "cstring.h"
 #include "putilimp.h"
 #include "uassert.h"
 #include "ucln_in.h"
-#include "ulocimp.h"
 #include "umutex.h"
 #include "uresimp.h"
 #include "ureslocs.h"
@@ -151,8 +148,8 @@ static TextTrieMap *gShortZoneIdTrie = NULL;
 static icu::UInitOnce gShortZoneIdTrieInitOnce = U_INITONCE_INITIALIZER;
 
 static UMutex *gLock() {
-    static UMutex *m = STATIC_NEW(UMutex);
-    return m;
+    static UMutex m = U_MUTEX_INITIALIZER;
+    return &m;
 }
 
 U_CDECL_BEGIN
@@ -330,13 +327,10 @@ TimeZoneFormat::TimeZoneFormat(const Locale& locale, UErrorCode& status)
     const char* region = fLocale.getCountry();
     int32_t regionLen = static_cast<int32_t>(uprv_strlen(region));
     if (regionLen == 0) {
-        CharString loc;
-        {
-            CharStringByteSink sink(&loc);
-            ulocimp_addLikelySubtags(fLocale.getName(), sink, &status);
-        }
+        char loc[ULOC_FULLNAME_CAPACITY];
+        uloc_addLikelySubtags(fLocale.getName(), loc, sizeof(loc), &status);
 
-        regionLen = uloc_getCountry(loc.data(), fTargetRegion, sizeof(fTargetRegion), &status);
+        regionLen = uloc_getCountry(loc, fTargetRegion, sizeof(fTargetRegion), &status);
         if (U_SUCCESS(status)) {
             fTargetRegion[regionLen] = 0;
         } else {

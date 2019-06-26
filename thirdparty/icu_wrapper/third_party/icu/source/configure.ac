@@ -1399,8 +1399,7 @@ else
     if test -f "$srcdir/data/locales/root.txt";
     then
         echo "Spawning Python to generate data/rules.mk..."
-        PYTHONPATH="$srcdir/python" \
-            $PYTHON -m icutools.databuilder \
+        PYTHONPATH="$srcdir/data" $PYTHON -m buildtool \
             --mode gnumake \
             --seqmode parallel \
             --src_dir "$srcdir/data" \
@@ -1415,8 +1414,7 @@ else
       touch data/rules.mk
     fi
     echo "Spawning Python to generate test/testdata/rules.mk..."
-    PYTHONPATH="$srcdir/python" \
-        $PYTHON -m icutools.databuilder \
+    PYTHONPATH="$srcdir/test/testdata:$srcdir/data" $PYTHON -m buildtool \
         --mode gnumake \
         --seqmode parallel \
         --src_dir "$srcdir/test/testdata" \

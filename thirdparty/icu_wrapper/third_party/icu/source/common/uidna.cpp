@@ -57,16 +57,18 @@ toASCIILower(UChar ch){
 
 inline static UBool 
 startsWithPrefix(const UChar* src , int32_t srcLength){
+    UBool startsWithPrefix = TRUE;
+
     if(srcLength < ACE_PREFIX_LENGTH){
         return FALSE;
     }
 
     for(int8_t i=0; i< ACE_PREFIX_LENGTH; i++){
         if(toASCIILower(src[i]) != ACE_PREFIX[i]){
-            return FALSE;
+            startsWithPrefix = FALSE;
         }
     }
-    return TRUE;
+    return startsWithPrefix;
 }
 
 
@@ -439,7 +441,6 @@ _internal_toUnicode(const UChar* src, int32_t srcLength,
         for(int32_t j=0; j<srcLength; j++){
             if(src[j]> 0x7f){
                 srcIsASCII = FALSE;
-                break;
             }/*else if(isLDHChar(src[j])==FALSE){
                 // here we do not assemble surrogates
                 // since we know that LDH code points

@@ -2285,7 +2285,7 @@ void  RegexCompile::handleCloseParen() {
                 error(U_REGEX_LOOK_BEHIND_LIMIT);
                 break;
             }
-            if (minML == INT32_MAX) {
+            if (minML == INT32_MAX && maxML == 0) {
                 // This condition happens when no match is possible, such as with a
                 // [set] expression containing no elements.
                 // In principle, the generated code to evaluate the expression could be deleted,
@@ -2328,7 +2328,7 @@ void  RegexCompile::handleCloseParen() {
                 error(U_REGEX_LOOK_BEHIND_LIMIT);
                 break;
             }
-            if (minML == INT32_MAX) {
+            if (minML == INT32_MAX && maxML == 0) {
                 // This condition happens when no match is possible, such as with a
                 // [set] expression containing no elements.
                 // In principle, the generated code to evaluate the expression could be deleted,
@@ -3463,6 +3463,7 @@ int32_t   RegexCompile::maxMatchLength(int32_t start, int32_t end) {
     U_ASSERT(start <= end);
     U_ASSERT(end < fRXPat->fCompiledPat->size());
 
+
     int32_t    loc;
     int32_t    op;
     int32_t    opType;
@@ -3671,7 +3672,7 @@ int32_t   RegexCompile::maxMatchLength(int32_t start, int32_t end) {
 
         case URX_CTR_LOOP:
         case URX_CTR_LOOP_NG:
-            // These opcodes will be skipped over by code for URX_CTR_INIT.
+            // These opcodes will be skipped over by code for URX_CRT_INIT.
             // We shouldn't encounter them here.
             UPRV_UNREACHABLE;
 
@@ -3699,15 +3700,21 @@ int32_t   RegexCompile::maxMatchLength(int32_t start, int32_t end) {
             {
                 // Look-behind.  Scan forward until the matching look-around end,
                 //   without processing the look-behind block.
-                int32_t dataLoc = URX_VAL(op);
-                for (loc = loc + 1; loc < end; ++loc) {
+                int32_t  depth = 0;
+                for (;;) {
+                    loc++;
                     op = (int32_t)fRXPat->fCompiledPat->elementAti(loc);
-                    int32_t opType = URX_TYPE(op);
-                    if ((opType == URX_LA_END || opType == URX_LBN_END) && (URX_VAL(op) == dataLoc)) {
-                        break;
+                    if (URX_TYPE(op) == URX_LA_START || URX_TYPE(op) == URX_LB_START) {
+                        depth++;
                     }
+                    if (URX_TYPE(op) == URX_LA_END || URX_TYPE(op)==URX_LBN_END) {
+                        if (depth == 0) {
+                            break;
+                        }
+                        depth--;
+                    }
+                    U_ASSERT(loc < end);
                 }
-                U_ASSERT(loc < end);
             }
             break;
 

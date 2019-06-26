@@ -103,8 +103,7 @@ int main(int argc, char** argv) {
     defined(__AARCH64EL__) || defined(__aarch64__) || defined(__AARCH64EB__) || \
     defined(__riscv) || \
     defined(__or1k__) || defined(__arc__) || \
-    defined(OS_EMSCRIPTEN) || defined(__EMSCRIPTEN__)
-// see https://github.com/google/double-conversion/blob/master/double-conversion/utils.h#L105
+    defined(__EMSCRIPTEN__)
 #define DOUBLE_CONVERSION_CORRECT_DOUBLE_OPERATIONS 1
 #elif defined(__mc68000__) || \
     defined(__pnacl__) || defined(__native_client__)

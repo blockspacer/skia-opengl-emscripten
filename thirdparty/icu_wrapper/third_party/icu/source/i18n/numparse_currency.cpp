@@ -14,7 +14,6 @@
 #include "ucurrimp.h"
 #include "unicode/errorcode.h"
 #include "numparse_utils.h"
-#include "string_segment.h"
 
 using namespace icu;
 using namespace icu::numparse;

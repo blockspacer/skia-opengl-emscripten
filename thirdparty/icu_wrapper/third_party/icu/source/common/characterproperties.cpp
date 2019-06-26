@@ -38,8 +38,8 @@ UBool U_CALLCONV characterproperties_cleanup();
 constexpr int32_t NUM_INCLUSIONS = UPROPS_SRC_COUNT + UCHAR_INT_LIMIT - UCHAR_INT_START;
 
 struct Inclusion {
-    UnicodeSet  *fSet = nullptr;
-    UInitOnce    fInitOnce = U_INITONCE_INITIALIZER;
+    UnicodeSet  *fSet;
+    UInitOnce    fInitOnce;
 };
 Inclusion gInclusions[NUM_INCLUSIONS]; // cached getInclusions()
 
@@ -48,8 +48,8 @@ UnicodeSet *sets[UCHAR_BINARY_LIMIT] = {};
 UCPMap *maps[UCHAR_INT_LIMIT - UCHAR_INT_START] = {};
 
 icu::UMutex *cpMutex() {
-    static icu::UMutex *m = STATIC_NEW(icu::UMutex);
-    return m;
+    static icu::UMutex m = U_MUTEX_INITIALIZER;
+    return &m;
 }
 
 //----------------------------------------------------------------

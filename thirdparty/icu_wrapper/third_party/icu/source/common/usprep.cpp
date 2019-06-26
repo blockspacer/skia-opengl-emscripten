@@ -45,11 +45,11 @@ U_CDECL_BEGIN
 Static cache for already opened StringPrep profiles
 */
 static UHashtable *SHARED_DATA_HASHTABLE = NULL;
-static icu::UInitOnce gSharedDataInitOnce = U_INITONCE_INITIALIZER;
+static icu::UInitOnce gSharedDataInitOnce;
 
 static UMutex *usprepMutex() {
-    static UMutex *m = STATIC_NEW(UMutex);
-    return m;
+    static UMutex m = U_MUTEX_INITIALIZER;
+    return &m;
 }
 
 /* format version of spp file */

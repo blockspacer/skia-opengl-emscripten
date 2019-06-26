@@ -831,8 +831,8 @@ static UBool extendICUData(UErrorCode *pErr)
      * Use a specific mutex to avoid nested locks of the global mutex.
      */
 #if MAP_IMPLEMENTATION==MAP_STDIO
-    static UMutex *extendICUDataMutex = STATIC_NEW(UMutex);
-    umtx_lock(extendICUDataMutex);
+    static UMutex extendICUDataMutex = U_MUTEX_INITIALIZER;
+    umtx_lock(&extendICUDataMutex);
 #endif
     if(!umtx_loadAcquire(gHaveTriedToLoadCommonData)) {
         /* See if we can explicitly open a .dat file for the ICUData. */
@@ -868,7 +868,7 @@ static UBool extendICUData(UErrorCode *pErr)
                                                           /* Also handles a race through here before gHaveTriedToLoadCommonData is set. */
 
 #if MAP_IMPLEMENTATION==MAP_STDIO
-    umtx_unlock(extendICUDataMutex);
+    umtx_unlock(&extendICUDataMutex);
 #endif
     return didUpdate;               /* Return true if ICUData pointer was updated.   */
                                     /*   (Could potentially have been done by another thread racing */
@@ -884,7 +884,7 @@ static UBool extendICUData(UErrorCode *pErr)
 U_CAPI void U_EXPORT2
 udata_setCommonData(const void *data, UErrorCode *pErrorCode) {
     UDataMemory dataMemory;
-    printf("udata_setCommonData 1\n");
+
     if(pErrorCode==NULL || U_FAILURE(*pErrorCode)) {
         return;
     }
@@ -894,21 +894,15 @@ udata_setCommonData(const void *data, UErrorCode *pErrorCode) {
         return;
     }
 
-    printf("udata_setCommonData 2\n");
     /* set the data pointer and test for validity */
     UDataMemory_init(&dataMemory);
-    printf("udata_setCommonData 3\n");
     UDataMemory_setData(&dataMemory, data);
-    printf("udata_setCommonData 4\n");
     udata_checkCommonData(&dataMemory, pErrorCode);
-    printf("udata_setCommonData 5\n");
     if (U_FAILURE(*pErrorCode)) {return;}
 
-    printf("udata_setCommonData 6\n");
     /* we have good data */
     /* Set it up as the ICU Common Data.  */
     setCommonICUData(&dataMemory, TRUE, pErrorCode);
-    printf("udata_setCommonData 7\n");
 }
 
 /*---------------------------------------------------------------------------

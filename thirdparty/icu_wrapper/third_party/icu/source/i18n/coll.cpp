@@ -67,7 +67,7 @@ static int32_t  availableLocaleListCount;
 static icu::ICULocaleService* gService = NULL;
 static icu::UInitOnce gServiceInitOnce = U_INITONCE_INITIALIZER;
 #endif
-static icu::UInitOnce gAvailableLocaleListInitOnce = U_INITONCE_INITIALIZER;
+static icu::UInitOnce gAvailableLocaleListInitOnce;
 
 /**
  * Release all static memory held by collator.

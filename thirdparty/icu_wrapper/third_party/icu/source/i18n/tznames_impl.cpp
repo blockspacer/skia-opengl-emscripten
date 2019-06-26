@@ -21,14 +21,11 @@
 #include "unicode/utf16.h"
 
 #include "tznames_impl.h"
-#include "bytesinkutil.h"
-#include "charstr.h"
 #include "cmemory.h"
 #include "cstring.h"
 #include "uassert.h"
 #include "mutex.h"
 #include "resource.h"
-#include "ulocimp.h"
 #include "uresimp.h"
 #include "ureslocs.h"
 #include "zonemeta.h"
@@ -53,8 +50,8 @@ static const char* TZDBNAMES_KEYS[]               = {"ss", "sd"};
 static const int32_t TZDBNAMES_KEYS_SIZE = UPRV_LENGTHOF(TZDBNAMES_KEYS);
 
 static UMutex *gDataMutex() {
-    static UMutex *m = STATIC_NEW(UMutex);
-    return m;
+    static UMutex m = U_MUTEX_INITIALIZER;
+    return &m;
 }
 
 static UHashtable* gTZDBNamesMap = NULL;
@@ -391,9 +388,9 @@ TextTrieMap::search(const UnicodeString &text, int32_t start,
         //       Don't do unless it's really required.
 
         // Mutex for protecting the lazy creation of the Trie node structure on the first call to search().
-        static UMutex *TextTrieMutex = STATIC_NEW(UMutex);
+        static UMutex TextTrieMutex = U_MUTEX_INITIALIZER;
 
-        Mutex lock(TextTrieMutex);
+        Mutex lock(&TextTrieMutex);
         if (fLazyContents != NULL) {
             TextTrieMap *nonConstThis = const_cast<TextTrieMap *>(this);
             nonConstThis->buildTrie(status);
@@ -2138,12 +2135,9 @@ TZDBTimeZoneNames::TZDBTimeZoneNames(const Locale& locale)
     int32_t regionLen = static_cast<int32_t>(uprv_strlen(region));
     if (regionLen == 0) {
         UErrorCode status = U_ZERO_ERROR;
-        CharString loc;
-        {
-            CharStringByteSink sink(&loc);
-            ulocimp_addLikelySubtags(fLocale.getName(), sink, &status);
-        }
-        regionLen = uloc_getCountry(loc.data(), fRegion, sizeof(fRegion), &status);
+        char loc[ULOC_FULLNAME_CAPACITY];
+        uloc_addLikelySubtags(fLocale.getName(), loc, sizeof(loc), &status);
+        regionLen = uloc_getCountry(loc, fRegion, sizeof(fRegion), &status);
         if (U_SUCCESS(status) && regionLen < (int32_t)sizeof(fRegion)) {
             useWorld = FALSE;
         }
@@ -2253,8 +2247,8 @@ TZDBTimeZoneNames::getMetaZoneNames(const UnicodeString& mzID, UErrorCode& statu
     U_ASSERT(status == U_ZERO_ERROR);   // already checked length above
     mzIDKey[mzID.length()] = 0;
 
-    static UMutex *gTZDBNamesMapLock = STATIC_NEW(UMutex);
-    umtx_lock(gTZDBNamesMapLock);
+    static UMutex gTZDBNamesMapLock = U_MUTEX_INITIALIZER;
+    umtx_lock(&gTZDBNamesMapLock);
     {
         void *cacheVal = uhash_get(gTZDBNamesMap, mzIDKey);
         if (cacheVal == NULL) {
@@ -2297,7 +2291,7 @@ TZDBTimeZoneNames::getMetaZoneNames(const UnicodeString& mzID, UErrorCode& statu
             tzdbNames = (TZDBNames *)cacheVal;
         }
     }
-    umtx_unlock(gTZDBNamesMapLock);
+    umtx_unlock(&gTZDBNamesMapLock);
 
     return tzdbNames;
 }

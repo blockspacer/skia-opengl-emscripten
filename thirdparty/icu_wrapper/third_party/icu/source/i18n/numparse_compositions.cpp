@@ -11,7 +11,6 @@
 
 #include "numparse_types.h"
 #include "numparse_compositions.h"
-#include "string_segment.h"
 #include "unicode/uniset.h"
 
 using namespace icu;

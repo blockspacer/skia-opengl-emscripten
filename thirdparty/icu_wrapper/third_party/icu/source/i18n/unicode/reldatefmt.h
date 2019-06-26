@@ -246,7 +246,6 @@ class SharedPluralRules;
 class SharedBreakIterator;
 class NumberFormat;
 class UnicodeString;
-class FormattedRelativeDateTime;
 class FormattedRelativeDateTimeData;
 
 #ifndef U_HIDE_DRAFT_API

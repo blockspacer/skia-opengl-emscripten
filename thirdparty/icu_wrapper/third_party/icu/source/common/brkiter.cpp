@@ -277,7 +277,7 @@ ICUBreakIteratorService::~ICUBreakIteratorService() {}
 // defined in ucln_cmn.h
 U_NAMESPACE_END
 
-static icu::UInitOnce gInitOnceBrkiter = U_INITONCE_INITIALIZER;
+static icu::UInitOnce gInitOnceBrkiter;
 static icu::ICULocaleService* gService = NULL;
 
 
@@ -301,7 +301,6 @@ U_NAMESPACE_BEGIN
 
 static void U_CALLCONV 
 initService(void) {
-        printf("new ICUBreakIteratorService() 1\n");
     gService = new ICUBreakIteratorService();
     ucln_common_registerCleanup(UCLN_COMMON_BREAKITERATOR, breakiterator_cleanup);
 }
@@ -309,7 +308,6 @@ initService(void) {
 static ICULocaleService*
 getService(void)
 {
-        printf(" getService() 1\n");
     umtx_initOnce(gInitOnceBrkiter, &initService);
     return gService;
 }
@@ -330,7 +328,6 @@ BreakIterator::registerInstance(BreakIterator* toAdopt, const Locale& locale, UB
 {
     ICULocaleService *service = getService();
     if (service == NULL) {
-      printf("BreakIterator::registerInstance U_MEMORY_ALLOCATION_ERROR\n");
         status = U_MEMORY_ALLOCATION_ERROR;
         return NULL;
     }
@@ -369,16 +366,12 @@ BreakIterator::getAvailableLocales(void)
 BreakIterator*
 BreakIterator::createInstance(const Locale& loc, int32_t kind, UErrorCode& status)
 {
-        printf("BreakIterator::createInstance 1\n");
     if (U_FAILURE(status)) {
         return NULL;
     }
-        printf("BreakIterator::createInstance 2\n");
 
 #if !UCONFIG_NO_SERVICE
-        printf("BreakIterator::createInstance 3\n");
     if (hasService()) {
-        printf("BreakIterator::createInstance 4\n");
         Locale actualLoc("");
         BreakIterator *result = (BreakIterator*)gService->get(loc, kind, &actualLoc, status);
         // TODO: The way the service code works in ICU 2.8 is that if
@@ -392,19 +385,14 @@ BreakIterator::createInstance(const Locale& loc, int32_t kind, UErrorCode& statu
         // THIS LONG is a sign of bad code -- so the action item is to
         // revisit this in ICU 3.0 and clean it up/fix it/remove it.
         if (U_SUCCESS(status) && (result != NULL) && *actualLoc.getName() != 0) {
-
-        printf("BreakIterator::createInstance 5\n");
-
             U_LOCALE_BASED(locBased, *result);
             locBased.setLocaleIDs(actualLoc.getName(), actualLoc.getName());
         }
-        printf("BreakIterator::createInstance 6\n");
         return result;
     }
     else
 #endif
     {
-        printf("BreakIterator::createInstance 7\n");
         return makeInstance(loc, kind, status);
     }
 }

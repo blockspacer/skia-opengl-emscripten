@@ -28,9 +28,7 @@
 
 #if !UCONFIG_NO_FORMATTING
 
-//#if defined(USE_CUSTOM_ICU)
 #include "unicode/format.h"
-//#endif
 #include "unicode/locid.h"
 #include "unicode/messagepattern.h"
 #include "unicode/parseerr.h"

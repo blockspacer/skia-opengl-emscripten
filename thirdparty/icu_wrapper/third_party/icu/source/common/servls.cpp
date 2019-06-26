@@ -62,43 +62,31 @@ ICULocaleService::get(const Locale& locale, Locale* actualReturn, UErrorCode& st
 UObject*
 ICULocaleService::get(const Locale& locale, int32_t kind, Locale* actualReturn, UErrorCode& status) const
 {
-  printf("ICULocaleService::get 1\n");
     UObject* result = NULL;
     if (U_FAILURE(status)) {
         return result;
     }
-  printf("ICULocaleService::get 2\n");
 
     UnicodeString locName(locale.getName(), -1, US_INV);
-  printf("ICULocaleService::get 3 %s\n", locale.getName());
     if (locName.isBogus()) {
-  printf("ICULocaleService::get 4 U_MEMORY_ALLOCATION_ERROR\n");
         status = U_MEMORY_ALLOCATION_ERROR;
     } else {
-  printf("ICULocaleService::get 5 \n");
         ICUServiceKey* key = createKey(&locName, kind, status);
         if (key) {
-  printf("ICULocaleService::get 6 \n");
             if (actualReturn == NULL) {
-  printf("ICULocaleService::get 6.1 \n");
                 result = getKey(*key, status);
             } else {
-  printf("ICULocaleService::get 6.2 \n");
                 UnicodeString temp;
                 result = getKey(*key, &temp, status);
 
                 if (result != NULL) {
-  printf("ICULocaleService::get 6.3 \n");
                     key->parseSuffix(temp);
                     LocaleUtility::initLocaleFromName(temp, *actualReturn);
                 }
             }
-  printf("ICULocaleService::get 7 \n");
             delete key;
         }
-  printf("ICULocaleService::get 8 \n");
     }
-  printf("ICULocaleService::get 9 \n");
     return result;
 }
 
@@ -275,9 +263,9 @@ ICULocaleService::validateFallbackLocale() const
 {
     const Locale&     loc    = Locale::getDefault();
     ICULocaleService* ncThis = (ICULocaleService*)this;
-    static UMutex *llock = STATIC_NEW(UMutex);
+    static UMutex llock = U_MUTEX_INITIALIZER;
     {
-        Mutex mutex(llock);
+        Mutex mutex(&llock);
         if (loc != fallbackLocale) {
             ncThis->fallbackLocale = loc;
             LocaleUtility::initNameFromLocale(loc, ncThis->fallbackLocaleName);

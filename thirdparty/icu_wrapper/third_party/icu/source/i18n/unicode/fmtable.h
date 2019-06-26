@@ -28,9 +28,7 @@
 
 #include "unicode/unistr.h"
 #include "unicode/stringpiece.h"
-//#if defined(USE_CUSTOM_ICU)
 #include "unicode/uformattable.h"
-//#endif
 
 U_NAMESPACE_BEGIN
 
