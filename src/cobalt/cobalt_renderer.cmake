@@ -103,6 +103,9 @@ target_compile_definitions(cobalt_renderer PRIVATE
   #
   ${COBALT_COMMON_DEFINES}
   # renderer
-  COBALT_MINIMUM_FRAME_TIME_IN_MILLISECONDS=10
+  # see https://cobalt.googlesource.com/cobalt/+/RELEASE_9/src/cobalt/doc/performance_tuning.md#framerate-throttling
+  # 33ms = 30 FPS
+  COBALT_MINIMUM_FRAME_TIME_IN_MILLISECONDS=33
+  #COBALT_MINIMUM_FRAME_TIME_IN_MILLISECONDS=1000
   #ENABLE_MAP_TO_MESH=1
 )
