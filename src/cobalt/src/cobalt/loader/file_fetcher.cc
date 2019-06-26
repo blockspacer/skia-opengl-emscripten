@@ -102,7 +102,7 @@ FileFetcher::FileFetcher(const base::FilePath& file_path, Handler* handler,
   ///DCHECK(!base::MessageLoopCurrent::Get());
 #endif
 
-  printf("FileFetcher 1 %s\n", file_path.value().c_str());
+  //printf("FileFetcher 1 %s\n", file_path.value().c_str());
   DCHECK_GT(buffer_size_, 0);
 
 #if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
@@ -114,7 +114,7 @@ FileFetcher::FileFetcher(const base::FilePath& file_path, Handler* handler,
   // Ensure the request does not attempt to navigate outside the whitelisted
   // directory.
   if (file_path_.ReferencesParent() || file_path_.IsAbsolute()) {
-    printf("!FileFetcher file_path_.ReferencesParent() || file_path_.IsAbsolute() %s\n", file_path.value().c_str());
+    //printf("!FileFetcher file_path_.ReferencesParent() || file_path_.IsAbsolute() %s\n", file_path.value().c_str());
     handler->OnError(this,
                      FileErrorToString(base::File::FILE_ERROR_ACCESS_DENIED));
     return;
@@ -178,7 +178,7 @@ void FileFetcher::BuildSearchPath(const base::FilePath& extra_search_dir) {
 }
 
 void FileFetcher::TryFileOpen() {
-  printf("FileFetcher::TryFileOpen 1 %s\n", file_path_.value().c_str());
+  //printf("FileFetcher::TryFileOpen 1 %s\n", file_path_.value().c_str());
   // Append the file path to the current search path entry and try.
   base::FilePath actual_file_path;
   actual_file_path = curr_search_path_iter_->Append(file_path_);
@@ -190,7 +190,7 @@ void FileFetcher::TryFileOpen() {
 }
 
 void FileFetcher::ReadNextChunk() {
-  printf("FileFetcher::ReadNextChunk 1 %s\n", file_path_.value().c_str());
+  //printf("FileFetcher::ReadNextChunk 1 %s\n", file_path_.value().c_str());
   int32 bytes_to_read = buffer_size_;
   if (bytes_to_read > bytes_left_to_read_) {
     bytes_to_read = static_cast<int32>(bytes_left_to_read_);
@@ -201,7 +201,7 @@ void FileFetcher::ReadNextChunk() {
 }
 
 void FileFetcher::DidCreateOrOpen(base::File::Error error) {
-  printf("FileFetcher::DidCreateOrOpen error=%d (where FILE_OK = 0)\n", error);
+  //printf("FileFetcher::DidCreateOrOpen error=%d (where FILE_OK = 0)\n", error);
   DCHECK(thread_checker_.CalledOnValidThread());
   if (error != base::File::FILE_OK) {
     // File could not be opened at the current search path entry.
@@ -209,7 +209,7 @@ void FileFetcher::DidCreateOrOpen(base::File::Error error) {
     if (++curr_search_path_iter_ != search_path_.end()) {
       TryFileOpen();
     } else {
-      printf("FileFetcher::DidCreateOrOpen OnError=%s\n", FileErrorToString(error));
+      //printf("FileFetcher::DidCreateOrOpen OnError=%s\n", FileErrorToString(error));
       // base::File::Error and Starboard file error can cast to each other.
       handler()->OnError(this, FileErrorToString(error));
     }

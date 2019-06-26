@@ -29,19 +29,19 @@ namespace skia {
 
 SkiaTypeface::SkiaTypeface(const sk_sp<SkTypeface_Cobalt>& typeface)
     : typeface_(typeface) {
-    printf("SkiaTypeface 1\n");
+    //printf("SkiaTypeface 1\n");
     /// __TODO__
     DCHECK(typeface_);
     if(!typeface_) {
         printf("Fall back to default typeface\n");
         typeface_ = Font::GetDefaultSkTypeface();
     }
-    printf("SkiaTypeface 2\n");
+    //printf("SkiaTypeface 2\n");
 #if !defined(OS_EMSCRIPTEN)
-    printf("SkiaTypeface 3\n");
+    //printf("SkiaTypeface 3\n");
   character_glyph_thread_checker_.DetachFromThread();
 #endif
-  printf("SkiaTypeface 4\n");
+  //printf("SkiaTypeface 4\n");
 }
 
 const sk_sp<SkTypeface_Cobalt>& SkiaTypeface::GetSkTypeface() const {
@@ -62,7 +62,7 @@ uint32 SkiaTypeface::GetEstimatedSizeInBytes() const {
 
 scoped_refptr<render_tree::Font> SkiaTypeface::CreateFontWithSize(
     float font_size) {
-    printf("SkiaTypeface::CreateFontWithSize size %f", font_size);
+  //printf("SkiaTypeface::CreateFontWithSize size %f", font_size);
   return scoped_refptr<render_tree::Font>(new Font(this, font_size));
 }
 

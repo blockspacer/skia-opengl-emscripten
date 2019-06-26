@@ -2295,8 +2295,8 @@ void CobaltTester::SubmitCurrentRenderTreeToRenderer() {
         renderer_module_->pipeline()->Submit(*submission);
         {
             /// __TODO__
-            printf("SubmitCurrentRenderTreeToRenderer OnDumpCurrentRenderTree\n");
-            renderer_module_->pipeline()->OnDumpCurrentRenderTree("");
+            //printf("SubmitCurrentRenderTreeToRenderer OnDumpCurrentRenderTree\n");
+            //renderer_module_->pipeline()->OnDumpCurrentRenderTree("");
         }
         //printf("SubmitCurrentRenderTreeToRenderer 2.2\n");
     }

@@ -260,7 +260,7 @@ FileProxy::~FileProxy() {
 bool FileProxy::CreateOrOpen(const FilePath& file_path,
                              uint32_t file_flags,
                              StatusCallback callback) {
-    printf("FileFetcher::CreateOrOpen 1 %s\n", file_path.value().c_str());
+  //printf("FileFetcher::CreateOrOpen 1 %s\n", file_path.value().c_str());
   DCHECK(!file_.IsValid());
   CreateOrOpenHelper* helper = new CreateOrOpenHelper(this, File());
 
@@ -357,7 +357,7 @@ bool FileProxy::GetInfo(GetFileInfoCallback callback) {
 }
 
 bool FileProxy::Read(int64_t offset, int bytes_to_read, ReadCallback callback) {
-    printf("FileProxy::Read 1\n");
+  //printf("FileProxy::Read 1\n");
   DCHECK(file_.IsValid());
   if (bytes_to_read < 0)
     return false;

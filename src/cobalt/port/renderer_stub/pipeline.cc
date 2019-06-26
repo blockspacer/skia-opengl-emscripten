@@ -220,7 +220,7 @@ render_tree::ResourceProvider* Pipeline::GetResourceProvider() {
 
 void Pipeline::Submit(const Submission& render_tree_submission) {
   TRACE_EVENT0("cobalt::renderer", "Pipeline::Submit()");
-  printf("Pipeline::Submit 1\n");
+  //printf("Pipeline::Submit 1\n");
 
   // Execute the actual set of the new render tree on the rasterizer tree.
   //rasterizer_thread_.message_loop()->task_runner()->PostTask(
@@ -228,7 +228,7 @@ void Pipeline::Submit(const Submission& render_tree_submission) {
   rasterizer_thread_.task_runner()->PostTask(
       FROM_HERE, base::Bind(&Pipeline::SetNewRenderTree, base::Unretained(this),
                             CollectAnimations(render_tree_submission)));
-  printf("Pipeline::Submit 2\n");
+  //printf("Pipeline::Submit 2\n");
 }
 
 void Pipeline::Clear() {
@@ -305,7 +305,7 @@ void Pipeline::TimeFence(base::TimeDelta time_fence) {
 
 void Pipeline::SetNewRenderTree(const Submission& render_tree_submission) {
 
-  printf("Pipeline::SetNewRenderTree 1\n");
+  //printf("Pipeline::SetNewRenderTree 1\n");
 
   DCHECK(rasterizer_thread_checker_.CalledOnValidThread());
   DCHECK(render_tree_submission.render_tree.get());
@@ -321,15 +321,15 @@ void Pipeline::SetNewRenderTree(const Submission& render_tree_submission) {
     return;
   }
 
-  printf("Pipeline::SetNewRenderTree 2\n");
+  //printf("Pipeline::SetNewRenderTree 2\n");
 
   QueueSubmission(render_tree_submission, base::TimeTicks::Now());
 
-  printf("Pipeline::SetNewRenderTree 3\n");
+  //printf("Pipeline::SetNewRenderTree 3\n");
 
   // Start the rasterization timer if it is not yet started.
   if (!rasterize_timer_) {
-    printf("Pipeline::SetNewRenderTree 4\n");
+    //printf("Pipeline::SetNewRenderTree 4\n");
     // Artificially limit the period between submissions. This is useful for
     // platforms which do not rate limit themselves during swaps. Be careful
     // to use a non-zero interval time even if throttling occurs during frame
@@ -350,14 +350,14 @@ void Pipeline::SetNewRenderTree(const Submission& render_tree_submission) {
             COBALT_MINIMUM_FRAME_TIME_IN_MILLISECONDS),
         base::BindRepeating(&Pipeline::RasterizeCurrentTree,
                             base::Unretained(this)));
-    printf("Pipeline::SetNewRenderTree 4.2\n");
+    //printf("Pipeline::SetNewRenderTree 4.2\n");
     DCHECK(rasterize_timer_);
     rasterize_timer_->Reset();
 #endif
-    printf("Pipeline::SetNewRenderTree 4.3\n");
+    //printf("Pipeline::SetNewRenderTree 4.3\n");
   }
 
-  printf("Pipeline::SetNewRenderTree 5\n");
+  //printf("Pipeline::SetNewRenderTree 5\n");
 }
 
 void Pipeline::ClearCurrentRenderTree() {
@@ -726,14 +726,14 @@ void Pipeline::OnToggleFpsOverlay(const std::string& message) {
 
 Submission Pipeline::CollectAnimations(
     const Submission& render_tree_submission) {
-  printf("Pipeline::CollectAnimations 1\n");
+  //printf("Pipeline::CollectAnimations 1\n");
   // Constructing an AnimateNode will result in the tree being traversed to
   // collect all sub-AnimateNodes into the new one, in order to maintain the
   // invariant that a sub-tree of an AnimateNode has no AnimateNodes.
   Submission collected_submission = render_tree_submission;
   collected_submission.render_tree = new render_tree::animations::AnimateNode(
       render_tree_submission.render_tree);
-  printf("Pipeline::CollectAnimations 2\n");
+  //printf("Pipeline::CollectAnimations 2\n");
   return collected_submission;
 }
 
