@@ -405,6 +405,7 @@ message(WARNING "TODO: add icu data file for BLINK, see stubdata.cpp, ICU_UTIL_D
 # find source/common -maxdepth 1 ! -type d | egrep '\.(c|cpp)$' |  sort | sed "s/^\(.*\)$/ '\1',/"
 # see https://github.com/unicode-org/icu/tree/master/icu4c/source/common
 # see https://chromium.googlesource.com/chromium/deps/icu/+/refs/heads/master/icu.gypi
+# see https://github.com/unicode-org/icu/blob/release-64-2/icu4c/source/i18n/i18n.vcxproj#L164
 set(ICU_SOURCES
   ## ${ICU_FULL_DIR}cmemory.c
  ${ICU_FULL_DIR}source/stubdata/stubdata.cpp # if 'OS == "win" or icu_use_data_file_flag==1'
@@ -482,7 +483,6 @@ set(ICU_SOURCES
  ${ICU_FULL_DIR}source/i18n/fmtable_cnv.cpp
  ${ICU_FULL_DIR}source/i18n/fmtable.cpp
  ${ICU_FULL_DIR}source/i18n/format.cpp
- ${ICU_FULL_DIR}source/i18n/formatted_string_builder.cpp
  ${ICU_FULL_DIR}source/i18n/formattedval_iterimpl.cpp
  ${ICU_FULL_DIR}source/i18n/formattedval_sbimpl.cpp
  ${ICU_FULL_DIR}source/i18n/formattedvalue.cpp
@@ -532,6 +532,7 @@ set(ICU_SOURCES
  ${ICU_FULL_DIR}source/i18n/number_rounding.cpp
  ${ICU_FULL_DIR}source/i18n/number_scientific.cpp
  ${ICU_FULL_DIR}source/i18n/number_skeletons.cpp
+ ${ICU_FULL_DIR}source/i18n/number_stringbuilder.cpp
  ${ICU_FULL_DIR}source/i18n/number_utils.cpp
  ${ICU_FULL_DIR}source/i18n/numfmt.cpp
  ${ICU_FULL_DIR}source/i18n/numparse_affixes.cpp
@@ -541,6 +542,7 @@ set(ICU_SOURCES
  ${ICU_FULL_DIR}source/i18n/numparse_impl.cpp
  ${ICU_FULL_DIR}source/i18n/numparse_parsednumber.cpp
  ${ICU_FULL_DIR}source/i18n/numparse_scientific.cpp
+ ${ICU_FULL_DIR}source/i18n/numparse_stringsegment.cpp
  ${ICU_FULL_DIR}source/i18n/numparse_symbols.cpp
  ${ICU_FULL_DIR}source/i18n/numparse_validators.cpp
  ${ICU_FULL_DIR}source/i18n/numrange_fluent.cpp
@@ -580,7 +582,6 @@ set(ICU_SOURCES
  ${ICU_FULL_DIR}source/i18n/smpdtfst.cpp
  ${ICU_FULL_DIR}source/i18n/sortkey.cpp
  ${ICU_FULL_DIR}source/i18n/standardplural.cpp
- ${ICU_FULL_DIR}source/i18n/string_segment.cpp
  ${ICU_FULL_DIR}source/i18n/strmatch.cpp
  ${ICU_FULL_DIR}source/i18n/strrepl.cpp
  ${ICU_FULL_DIR}source/i18n/stsearch.cpp
@@ -873,11 +874,39 @@ set(ICU_SOURCES
     #${BASE_DIR}
   )
 
+  if(TARGET_EMSCRIPTEN)
+    list(APPEND ICU_PUBLIC_DEFINES
+      U_ENABLE_DYLOAD=0
+      U_CHECK_DYLOAD=0
+    )
+  endif(TARGET_EMSCRIPTEN)
+
+
+# TODO https://github.com/mbbill/JSC.js
+# # http://userguide.icu-project.org/howtouseicu
+# see http://transit.iut2.upmf-grenoble.fr/doc/icu-doc/html/uconfig_8h.html
+# see https://github.com/sillsdev/icu-dotnet/wiki/Making-a-minimal-build-for-ICU58-or-later
   # http://userguide.icu-project.org/howtouseicu#TOC-C-With-Your-Own-Build-System
-  set(ICU_PUBLIC_DEFINES
+  list(APPEND ICU_PUBLIC_DEFINES
     U_ENABLE_DYLOAD=0
     ICU_UTIL_DATA_IMPL=ICU_UTIL_DATA_FILE
     #ICU_UTIL_DATA_IMPL=ICU_UTIL_DATA_STATIC
+    LIB_ICU_I18N_STATIC=1
+    U_CHARSET_IS_UTF8=1
+    U_HAVE_STD_STRING=1 # obsolete (ICU-12736)
+    UCONFIG_NO_LEGACY_CONVERSION=1
+    # UCONFIG_ONLY_COLLATION=1 # NOTE: also disables break iteration!
+    UCONFIG_NO_FILE_IO=1
+    # UCONFIG_NO_CONVERSION=1 # see UConverter in libxml
+    # UCONFIG_NO_COLLATION=1 # see icu::Collator::TERTIARY in base/i18n
+    # UCONFIG_NO_FORMATTING=1 # see icu::NumberFormat in base/i18n
+    # UCONFIG_NO_IDNA=1 # see UIDNA_INFO_INITIALIZER in url/url_idna_icu.cc
+    # UCONFIG_NO_NORMALIZATION=1 # NOTE: also disables break iteration!
+    UCONFIG_NO_REGULAR_EXPRESSIONS=1
+    UCONFIG_NO_TRANSLITERATION=1
+    # U_NO_DEFAULT_INCLUDE_UTF_HEADERS=1 # see U16_NEXT in base/i18n
+    U_HIDE_OBSOLETE_UTF_OLD_H=1 # utf_old.h is deprecated or obsolete, ICU>60
+
   )
 
   set(ICU_PRIVATE_DEFINES

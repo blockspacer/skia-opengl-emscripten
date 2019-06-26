@@ -860,12 +860,50 @@ https://www.reddit.com/r/Unity3D/comments/4ochm9/memory_settings_for_webgl_conte
 > emscripten_async_wget2
   https://github.com/openframeworks/openFrameworks/blob/master/addons/ofxEmscripten/src/ofxEmscriptenURLFileLoader.cpp#L41
 
-> smaller icu data file
-Filtering by Language Only
-see https://github.com/unicode-org/icu/blob/master/docs/userguide/icu_data/buildtool.md#filtering-by-language-only
-see http://userguide.icu-project.org/howtouseicu#TOC-C-With-Your-Own-Build-System
-see http://userguide.icu-project.org/icudata
-see https://qiita.com/shimacpyon/items/82d275c2f5f508cbd7f4
+> smaller icu data file (ICU 64-2)
+
+modify languages in filters.json (see ICU_DATA_FILTER_FILE below), more languages = bigger bundle size
+
+See examples:
+ > thirdparty/icu_wrapper/third_party/scripts/filters.json
+ > https://github.com/cjbd/icu/tree/9f0f47b1e410b137762f2e3699359f0dbfcdbc05/filters
+
+verify filters.json using jsonschemavalidator.net and (remove comments) https://github.com/unicode-org/icu/blob/release-64-2/icu4c/source/data/buildtool/filtration_schema.json
+
+```
+PROJ_ROOT=${PWD}
+ls -artl ${PROJ_ROOT}
+pip3 install --user hjson jsonschema
+ICUROOT=${PROJ_ROOT}/thirdparty/icu_wrapper/third_party/icu
+ls -artl ${ICUROOT}
+cd ${ICUROOT}
+mkdir build
+cd build
+ICU_DATA_FILTER_FILE="${ICUROOT}/../scripts/filters.json" \
+  "${ICUROOT}/source/runConfigureICU" \
+    Linux/gcc --disable-tests --with-data-packaging=archive \
+    --enable-samples=no --enable-dyload=no \
+    --enable-static --disable-shared
+make clean
+rm -rf build
+make -j8
+ls data/out
+rm ${PROJ_ROOT}/resources/icu/icudtl.dat
+cp ${ICUROOT}/build/data/out/icudt64l.dat ${PROJ_ROOT}/resources/icu/icudtl.dat
+ls ${PROJ_ROOT}/resources/icu
+```
+
+see:
+ > https://github.com/unicode-org/icu/blob/master/docs/userguide/icu_data/buildtool.md#filtering-by-language-only
+ > http://userguide.icu-project.org/howtouseicu#TOC-C-With-Your-Own-Build-System
+ > http://userguide.icu-project.org/icudata
+ > https://github.com/unicode-org/icu/tree/release-64-2 or https://github.com/unicode-org/icu/tree/release-56-1
+ > https://github.com/blockspacer/cobalt-clone-28052019/blob/89664d116629734759176d820e9923257717e09c/src/third_party/icu/README.chromium#L26
+ > https://github.com/blockspacer/cobalt-clone-28052019/blob/89664d116629734759176d820e9923257717e09c/src/third_party/icu/scripts/accept_lang.list
+ > http://userguide.icu-project.org/icufaq#TOC-How-can-I-reduce-the-size-of-the-ICU-data-library-
+ > https://github.com/sillsdev/icu-dotnet/wiki/Making-a-minimal-build-for-ICU58-or-later
+ > https://www.oipapio.com/question-4138842
+ > https://qiita.com/shimacpyon/items/82d275c2f5f508cbd7f4
 
 > MCLocaleBreakIteratorCreate
 https://github.com/livecode/livecode/blob/a6591613dd3d7704ae1d0ff479584d7d1b7d4349/engine/src/paragraf.cpp

@@ -52,7 +52,6 @@ Settings / config sustem
 flexbox / yoga / QT Anchor Layout
 icon fonts: FontAwesome, Emoji, UTF symbols e.t.c.
 smaller package size
-smaller ICU size
 timers on WASM ST
 native network & https
 faster build time
@@ -85,8 +84,9 @@ hot reload & cling
  > Hot-swapping is a very, very difficult problem to solve with binary code. Even if your code is placed into separate dynamic link libraries, your code needs to ensure that there are no direct references to functions in memory (as the address of functions can change with a recompile). This essentially means not using virtual functions, and anything that uses function pointers do so via some sort of dispatch table. https://gamedev.stackexchange.com/a/365
  > https://habr.com/ru/company/Voximplant/blog/270593/
  > https://jacksondunstan.com/articles/4489
- >
-https://www.phoronix.com/forums/forum/software/programming-compilers/1095291-facebook-is-jit-ing-c-code-to-treat-it-like-a-crazy-fast-scripting-language
+ > https://www.phoronix.com/forums/forum/software/programming-compilers/1095291-facebook-is-jit-ing-c-code-to-treat-it-like-a-crazy-fast-scripting-language
+ > https://github.com/intel/wasm-micro-runtime
+ > WASI https://rustwasm.github.io/2019/03/28/this-week-in-rust-and-wasm-015.html
 visual IDE (aka photoshop/Figma/sketch.com/e.t.c.)
 dom debugger (aka chrome dev tools) with live editing/combined styles/display size change/loaded resources/animations & changes e.t.c.
 exe remote debugger aka gammaray https://www.kdab.com/development-resources/qt-tools/gammaray/

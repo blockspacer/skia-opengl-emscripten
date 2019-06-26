@@ -199,12 +199,12 @@ LayoutManager::Impl::Impl(
       &Impl::DoSynchronousLayoutAndGetRenderTree, base::Unretained(this)));
 
   UErrorCode status = U_ZERO_ERROR;
-  //printf("createLineInstance locale_ %s\n", locale_.getName());
+  //printf("1 createLineInstance locale_ %s\n", locale_.getName());
   line_break_iterator_ =
       base::WrapUnique(icu::BreakIterator::createLineInstance(locale_, status));
-  CHECK(U_SUCCESS(status));
+  CHECK(U_SUCCESS(status)) << "createLineInstance locale_=" << locale_.getName();
   //DCHECK(line_break_iterator_);
-  printf("BreakIterator createLineInstance locale_ %s\n", locale_.getName());
+  //printf("2 BreakIterator createLineInstance locale_ %s\n", locale_.getName());
   status = U_ZERO_ERROR;
   character_break_iterator_ = base::WrapUnique(
       icu::BreakIterator::createCharacterInstance(locale_, status));
