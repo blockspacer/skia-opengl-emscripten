@@ -15,6 +15,11 @@
 #include "base/task_runner.h"
 #include "base/task_runner_util.h"
 
+#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+#include "emscripten/emscripten.h"
+#include "base/task_runner.h"
+#endif
+
 namespace {
 
 void FileDeleter(base::File file) {
@@ -266,10 +271,55 @@ bool FileProxy::CreateOrOpen(const FilePath& file_path,
 
   if(!task_runner_) {
     P_LOG("FileProxy::CreateOrOpen no task_runner_\n");
+#if defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS)
+  /// __TODO__
+  /*{
+    /// \note struct must be freed in callback
+    base::STClosure* stClosure = new base::STClosure(std::move(
+          BindOnce(&CreateOrOpenHelper::RunWork, Unretained(helper), file_path,
+                   file_flags)
+        ));
+    void* data = reinterpret_cast<void*>(stClosure);
+    DCHECK(data);
+    emscripten_async_call([](void* data){
+        printf("FileProxy::CreateOrOpen RunWork fired\n");
+        DCHECK(data);
+        base::STClosure* stClosureData = reinterpret_cast<base::STClosure*>(data);
+        std::move(stClosureData->onceClosure_).Run();
+        delete stClosureData;
+    }, data, 10);
+  }*/
+
+  std::move(BindOnce(&CreateOrOpenHelper::RunWork, Unretained(helper), file_path,
+               file_flags)).Run();
+
+  /// __TODO__
+  /*{
+    /// \note struct must be freed in callback
+    base::STClosure* stClosure = new base::STClosure(std::move(
+          BindOnce(&CreateOrOpenHelper::Reply, Owned(helper), std::move(callback))
+        ));
+    void* data = reinterpret_cast<void*>(stClosure);
+    DCHECK(data);
+    emscripten_async_call([](void* data){
+        printf("FileProxy::CreateOrOpen Reply fired\n");
+        DCHECK(data);
+        base::STClosure* stClosureData = reinterpret_cast<base::STClosure*>(data);
+        std::move(stClosureData->onceClosure_).Run();
+        delete stClosureData;
+    }, data, 10);
+  }*/
+
+  std::move(BindOnce(&CreateOrOpenHelper::Reply, Owned(helper), std::move(callback))).Run();
+
+  // Returns true if the task may be run
+  return true;
+#else
     std::move(BindOnce(&CreateOrOpenHelper::RunWork, Unretained(helper), file_path,
                  file_flags)).Run();
     std::move(BindOnce(&CreateOrOpenHelper::Reply, Owned(helper), std::move(callback))).Run();
     return true;
+#endif
   } else {
       DCHECK(task_runner_);
       return task_runner_->PostTaskAndReply(
@@ -364,10 +414,53 @@ bool FileProxy::Read(int64_t offset, int bytes_to_read, ReadCallback callback) {
 
   ReadHelper* helper = new ReadHelper(this, std::move(file_), bytes_to_read);
   if(!task_runner_) {
-    P_LOG("FileProxy::Read no task_runner_\n");
+    //P_LOG("FileProxy::Read no task_runner_\n");
+#if defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS)
+  /// __TODO__
+  /*{
+    /// \note struct must be freed in callback
+    base::STClosure* stClosure = new base::STClosure(std::move(
+          BindOnce(&ReadHelper::RunWork, Unretained(helper), offset)
+        ));
+    void* data = reinterpret_cast<void*>(stClosure);
+    DCHECK(data);
+    emscripten_async_call([](void* data){
+        printf("FileProxy::Read RunWork fired\n");
+        DCHECK(data);
+        base::STClosure* stClosureData = reinterpret_cast<base::STClosure*>(data);
+        std::move(stClosureData->onceClosure_).Run();
+        delete stClosureData;
+    }, data, 10);
+  }*/
+
+  std::move(BindOnce(&ReadHelper::RunWork, Unretained(helper), offset)).Run();
+
+  /// __TODO__
+  /*{
+    /// \note struct must be freed in callback
+    base::STClosure* stClosure = new base::STClosure(std::move(
+          BindOnce(&ReadHelper::Reply, Owned(helper), std::move(callback))
+        ));
+    void* data = reinterpret_cast<void*>(stClosure);
+    DCHECK(data);
+    emscripten_async_call([](void* data){
+        printf("FileProxy::Read Reply fired\n");
+        DCHECK(data);
+        base::STClosure* stClosureData = reinterpret_cast<base::STClosure*>(data);
+        std::move(stClosureData->onceClosure_).Run();
+        delete stClosureData;
+    }, data, 10);
+  }*/
+
+  std::move(BindOnce(&ReadHelper::Reply, Owned(helper), std::move(callback))).Run();
+
+  // Returns true if the task may be run
+  return true;
+#else
     std::move(BindOnce(&ReadHelper::RunWork, Unretained(helper), offset)).Run();
     std::move(BindOnce(&ReadHelper::Reply, Owned(helper), std::move(callback))).Run();
     return true;
+#endif
   } else {
     DCHECK(task_runner_);
     return task_runner_->PostTaskAndReply(
