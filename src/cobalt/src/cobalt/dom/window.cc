@@ -292,13 +292,22 @@ bool Window::TryForceStartDocumentLoad() {
   DCHECK(load_complete_callback_);
   DCHECK(!load_complete_callback_.is_null());
 
-  std::move(base::Bind(&Window::StartDocumentLoad, base::Unretained(this),
+#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+    emscripten_async_call_closure(
+      base::BindOnce(&Window::StartDocumentLoad, base::Unretained(this),
+                       html_element_context_->fetcher_factory(),
+                       document_->url_as_gurl(),
+                       html_element_context_->dom_parser(),
+                       load_complete_callback_)
+    );
+#else
+  std::move(base::BindOnce(&Window::StartDocumentLoad, base::Unretained(this),
                        html_element_context_->fetcher_factory(),
                        document_->url_as_gurl(),
                        html_element_context_->dom_parser(),
                        load_complete_callback_)).Run();
+#endif
 
-  isDocumentStartedLoading_ = true;
   return isDocumentStartedLoading_;
 }
 
@@ -306,6 +315,8 @@ void Window::StartDocumentLoad(
     loader::FetcherFactory* fetcher_factory, const GURL& url,
     Parser* dom_parser,
     const loader::Decoder::OnCompleteFunction& load_complete_callback) {
+  isDocumentStartedLoading_ = true;
+
   P_LOG("StartDocumentLoad 1\n");
   document_loader_.reset(new loader::Loader(
       base::Bind(&loader::FetcherFactory::CreateFetcher,
