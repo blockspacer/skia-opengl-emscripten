@@ -125,6 +125,12 @@ class Pipeline {
 
   void OnDumpCurrentRenderTree(const std::string&);
 
+  // Called repeatedly (the rate is limited by the rasterizer, so likely it
+  // will be called every 1/60th of a second) on the rasterizer thread and
+  // results in the rasterization of the current tree and submission of it to
+  // the render target.
+  void RasterizeCurrentTree();
+
  private:
   // All private data members should be accessed only on the rasterizer thread,
   // with the exception of rasterizer_thread_ itself through which messages
@@ -136,12 +142,6 @@ class Pipeline {
 
   // Clears the current render tree and calls the callback when this is done.
   void ClearCurrentRenderTree();
-
-  // Called repeatedly (the rate is limited by the rasterizer, so likely it
-  // will be called every 1/60th of a second) on the rasterizer thread and
-  // results in the rasterization of the current tree and submission of it to
-  // the render target.
-  void RasterizeCurrentTree();
 
   // Rasterize the animated |render_tree_submission| to |render_target|,
   // applying the time_offset in the submission to the animations.
@@ -232,6 +232,10 @@ class Pipeline {
   // Manages a queue of render tree submissions that are to be rendered in
   // the future.
   base::Optional<SubmissionQueue> submission_queue_;
+
+  // prevent current tree rasterization without submition,
+  // critical to WASM ST (emscripten) due to manual rasterization calls
+  bool hasSubmissionToRasterize_ = false;
 
   // If true, we will submit the current render tree to the rasterizer every
   // frame, even if it hasn't changed.
@@ -333,6 +337,11 @@ class Pipeline {
   // which is specific to the current submission and is reset whenever a new
   // render tree is submitted.
   base::TimeTicks last_rasterize_time_;
+
+#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+  // critical to WASM ST (emscripten) due to manual rasterization calls
+  base::Time lastRasterizeTime_ = base::Time::Max();
+#endif
 };
 
 }  // namespace renderer

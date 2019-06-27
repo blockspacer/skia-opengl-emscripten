@@ -2359,7 +2359,7 @@ void CobaltTester::OnBrowserRenderTreeProduced(
 void CobaltTester::QueueOnRenderTreeProduced(
     int main_web_module_generation,
     const cobalt::layout::LayoutManager::LayoutResults& layout_results) {
-        printf("QueueOnRenderTreeProduced 1\n");
+        //printf("QueueOnRenderTreeProduced 1\n");
     TRACE_EVENT0("cobalt::browser", "CobaltTester::QueueOnRenderTreeProduced()");
     render_tree_submission_queue_.AddMessage(
         base::Bind(&CobaltTester::OnBrowserRenderTreeProduced,
@@ -3307,7 +3307,7 @@ static void Draw() {
 }
 
 static base::Time layoutProducedTime = base::Time::Max();
-static const int64_t layoutProducePeriodMs = 33;
+static const int64_t layoutProducePeriodMs = 100;//33;
 
 static bool isLayoutRefreshReached() {
   //const int64_t timer_interval_in_microseconds =
@@ -3317,7 +3317,7 @@ static bool isLayoutRefreshReached() {
   //base::TimeDelta::FromMicroseconds(timer_interval_in_microseconds).InMilliseconds();
   if (layoutProducedTime == base::Time::Max()
       || (timeNow - layoutProducedTime).InMilliseconds() > layoutProducePeriodMs) {
-    ::std::cout << "isLayoutRefreshReached..." << timeNow << "\n";
+    //::std::cout << "isLayoutRefreshReached..." << timeNow << "\n";
     return true;
   }
   return false;
@@ -3398,7 +3398,7 @@ static void animate() {
           {
               // TODO: use layout period, NOT isDebugPeriodReached (!!!)
               //if(isDebugPeriodReached()) printf("isDebugPeriodReached() render_browser_window \n");
-              if(isLayoutRefreshReached()) printf("isLayoutRefreshReached() render_browser_window \n");
+              //if(isLayoutRefreshReached()) printf("isLayoutRefreshReached() render_browser_window \n");
               //if(!hasLayout) printf("!hasLayout render_browser_window \n");
 
               if (isLayoutRefreshReached() /*|| !hasLayout*/)
@@ -3406,7 +3406,9 @@ static void animate() {
                   DCHECK(!isRenderTreeProducePending);
                   //emscripten_pause_main_loop();
                   //if (isDebugPeriodReached())
+
                   printf("g_cobaltTester ForceReLayout\n");
+
                   DCHECK(g_cobaltTester);
                   DCHECK(g_cobaltTester->window_);
                   DCHECK(g_cobaltTester->window_->document());
@@ -3422,6 +3424,8 @@ static void animate() {
 
                   g_cobaltTester->layout_manager_->ForceReLayout();
 
+                  g_cobaltTester->renderer_module_->pipeline()->RasterizeCurrentTree();
+
                   layoutProducedTime = base::Time::Now();
 
                   //hasLayout = true;
@@ -3432,13 +3436,16 @@ static void animate() {
               }
               else if (isRenderTreeProducePending) {
                 //emscripten_pause_main_loop();
+
                 printf("g_cobaltTester isRenderTreeProducePending OnRenderTreeProduced\n");
+
                 g_cobaltTester->OnRenderTreeProduced(
                   // pending_layout_results
                   cobalt::layout::LayoutManager::LayoutResults
                     (pending_render_tree, pending_layout_time)
                 );
                 //emscripten_resume_main_loop();
+                g_cobaltTester->renderer_module_->pipeline()->RasterizeCurrentTree();
               }
 #ifdef __TODO__
               DCHECK(g_cobaltTester);
@@ -3457,6 +3464,8 @@ static void animate() {
 
 #endif // ENABLE_SKOTTIE
     ///if (isDebugPeriodReached()) printf("animate end\n");
+
+    //g_cobaltTester->renderer_module_->pipeline()->RasterizeCurrentTree();
 }
 
 static void mainLoop() {
@@ -4191,6 +4200,8 @@ int main(int argc, char** argv) {
   printf("Starting ...\n");
 
 #ifdef __EMSCRIPTEN__
+  EM_LOG("EMSCRIPTEN DETECTED!\n");
+
   //https://github.com/Becavalier/Book-DISO-WebAssembly/issues/10
   double dpr = emscripten_get_device_pixel_ratio();
   emscripten_set_element_css_size("#canvas", width / dpr, height / dpr);

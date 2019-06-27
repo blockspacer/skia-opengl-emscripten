@@ -39,7 +39,13 @@ namespace cobalt {
 namespace renderer {
 
 #if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
-static bool isForceRasterized = false;
+static bool hasRasterizedTree = false;
+#endif
+
+#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+#include "emscripten/emscripten.h"
+#include "base/task_runner.h"
+#include "base/bind.h"
 #endif
 
 namespace {
@@ -338,12 +344,17 @@ void Pipeline::SetNewRenderTree(const Submission& render_tree_submission) {
     // frame swap occurs, and the minimum frame time is the only throttle.
     COMPILE_ASSERT(COBALT_MINIMUM_FRAME_TIME_IN_MILLISECONDS > 0,
                    frame_time_must_be_positive);
-    printf("Pipeline::SetNewRenderTree 4.1\n");
+    //printf("Pipeline::SetNewRenderTree 4.1\n");
 #if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+  /*emscripten_async_call_closure(
+    base::BindOnce(&Pipeline::RasterizeCurrentTree,
+                          base::Unretained(this))
+  );*/
+
   std::move(base::BindRepeating(&Pipeline::RasterizeCurrentTree,
                             base::Unretained(this))).Run();
-  isForceRasterized = true;
 #else
+
     rasterize_timer_.emplace(
         FROM_HERE,
         base::TimeDelta::FromMillisecondsD(
@@ -369,12 +380,35 @@ void Pipeline::ClearCurrentRenderTree() {
 }
 
 void Pipeline::RasterizeCurrentTree() {
-    ///printf("Pipeline::RasterizeCurrentTree 1\n");
+#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+  const int64_t msFromLastRasterization =
+    (base::Time::Now() - lastRasterizeTime_).InMilliseconds();
+
+  if(lastRasterizeTime_ != base::Time::Max()
+     && msFromLastRasterization < COBALT_MINIMUM_FRAME_TIME_IN_MILLISECONDS) {
+    /// \note don`t rasterize too often
+    return;
+  }
+
+  lastRasterizeTime_ = base::Time::Now();
+#endif
+
+  printf("Pipeline::RasterizeCurrentTree 1\n");
+
   TRACK_MEMORY_SCOPE("Renderer");
   DCHECK(rasterizer_thread_checker_.CalledOnValidThread());
   TRACE_EVENT0("cobalt::renderer", "Pipeline::RasterizeCurrentTree()");
 
-    //printf("Pipeline::RasterizeCurrentTree 2\n");
+  if(!hasSubmissionToRasterize_) {
+    return;
+  }
+
+#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+  hasRasterizedTree = true;
+#endif
+
+  printf("Pipeline::RasterizeCurrentTree 2\n");
+
   base::TimeTicks start_rasterize_time = base::TimeTicks::Now();
   Submission submission =
       submission_queue_->GetCurrentSubmission(start_rasterize_time);
@@ -660,7 +694,7 @@ void Pipeline::OnDumpCurrentRenderTree(const std::string& message) {
   }
 
 #if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
-  if (!(isForceRasterized)) {
+  if (!(hasRasterizedTree)) {
     LOG(INFO) << "No render tree available yet.";
     return;
   }
@@ -799,6 +833,8 @@ void Pipeline::QueueSubmission(const Submission& submission,
   }
 
   submission_queue_->PushSubmission(submission, receipt_time);
+
+  hasSubmissionToRasterize_ = true;
 }
 
 }  // namespace renderer
