@@ -55,6 +55,7 @@ void SmoothedValue::SnapToTarget() {
 double SmoothedValue::GetValueAtTime(const base::TimeTicks& time) const {
   if (!previous_value_) {
     // If only one target has ever been set, simply return it.
+    DCHECK(target_.has_value());
     return *target_;
   }
 
@@ -109,6 +110,7 @@ double SmoothedValue::t(const base::TimeTicks& time) const {
 
 double SmoothedValue::P1() const {
   // See comments in header for why P1() is calculated this way.
+  DCHECK(previous_value_.has_value());
   return *previous_value_ + previous_derivative_ / 3.0f;
 }
 

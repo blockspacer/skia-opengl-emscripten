@@ -1,4 +1,10 @@
-﻿https://visualstudiomagazine.com/articles/2017/01/25/26-web-desktop-ui-tools.aspx
+﻿runtime DOM modification
+runtime navigation (link href=file:///)
+multiple 3D "tabs"
+WASM ST: TODO: make file proxy async
+WASM ST: TODO: fix support of PostDelayedTask (allow delay)
+TODO: merge base from chromium & cobalt, merge build_config.h
+https://visualstudiomagazine.com/articles/2017/01/25/26-web-desktop-ui-tools.aspx
 https://github.com/LWJGL/lwjgl3/issues/101#issuecomment-289821751
 reduce std size https://blog.magnum.graphics/backstage/forward-declaring-stl-container-types/
 dom components
@@ -8,9 +14,10 @@ runtime/compile-time feature enabler/disabler VISUAL TOOL & disable dom elements
 project creator VISUAL TOOL & assets viewer
 zipped file system support (native, not wasm)
 links between pages
-DOM Modifications
 UI thread & WASM ST (don`t block UI!)
 REST API
+startup time
+load indicator without hangs (WASM ST)
 dom visual editor
  > https://designmodo.com/startup/
  > https://webflow.com/ecommerce

@@ -428,7 +428,7 @@ void LayoutManager::Impl::StartLayoutTimer() {
 
   timer_interval_ = base::TimeDelta::FromMicroseconds(timer_interval_in_microseconds);
 
-  printf("timer_interval_.InMilliseconds() = %d\n", timer_interval_.InMilliseconds());
+  printf("LayoutManager timer_interval_.InMilliseconds() = %d\n", timer_interval_.InMilliseconds());
 
   /// \note no reason to refresh layout less than once per millisecond
   DCHECK(timer_interval_.InMilliseconds() > 0

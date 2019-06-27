@@ -27,13 +27,14 @@ namespace renderer {
 namespace rasterizer {
 namespace skia {
 
+/// \note called for each character
 SkiaTypeface::SkiaTypeface(const sk_sp<SkTypeface_Cobalt>& typeface)
     : typeface_(typeface) {
     //printf("SkiaTypeface 1\n");
     /// __TODO__
     DCHECK(typeface_);
     if(!typeface_) {
-        printf("Fall back to default typeface\n");
+        //printf("Fall back to default typeface\n");
         typeface_ = Font::GetDefaultSkTypeface();
     }
     //printf("SkiaTypeface 2\n");

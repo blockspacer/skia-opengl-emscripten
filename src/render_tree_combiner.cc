@@ -109,7 +109,8 @@ void RenderTreeCombiner::RemoveLayer(const Layer* layer) {
 
 base::Optional<renderer::Submission>
 RenderTreeCombiner::GetCurrentSubmission() {
-    printf("RenderTreeCombiner::GetCurrentSubmission 1\n");
+  //printf("RenderTreeCombiner::GetCurrentSubmission 1\n");
+
   render_tree::CompositionNode::Builder builder;
 
   // Add children for all layers in order.
@@ -126,7 +127,9 @@ RenderTreeCombiner::GetCurrentSubmission() {
           layer->render_tree_->on_rasterized_callbacks.end());
     }
   }
-    printf("RenderTreeCombiner::GetCurrentSubmission 2\n");
+
+  //printf("RenderTreeCombiner::GetCurrentSubmission 2\n");
+
   if (!first_layer_with_render_tree) {
     return base::nullopt;
   }
@@ -140,7 +143,8 @@ RenderTreeCombiner::GetCurrentSubmission() {
   submission.timeline_info = timeline_layer->render_tree_->timeline_info;
   submission.on_rasterized_callbacks = std::move(on_rasterized_callbacks);
 
-    printf("RenderTreeCombiner::GetCurrentSubmission 3\n");
+  //printf("RenderTreeCombiner::GetCurrentSubmission 3\n");
+
   return submission;
 }
 

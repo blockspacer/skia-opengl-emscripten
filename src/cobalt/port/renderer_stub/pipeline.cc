@@ -333,6 +333,8 @@ void Pipeline::SetNewRenderTree(const Submission& render_tree_submission) {
 
   //printf("Pipeline::SetNewRenderTree 3\n");
 
+  printf("Pipeline COBALT_MINIMUM_FRAME_TIME_IN_MILLISECONDS = %d\n", COBALT_MINIMUM_FRAME_TIME_IN_MILLISECONDS);
+
   // Start the rasterization timer if it is not yet started.
   if (!rasterize_timer_) {
     //printf("Pipeline::SetNewRenderTree 4\n");

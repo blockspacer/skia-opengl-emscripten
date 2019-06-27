@@ -44,7 +44,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # khronos
 if (TARGET_EMSCRIPTEN)
-  # nothing
+  set(ENABLE_KHRONOS FALSE) # TODO
 elseif(TARGET_LINUX)
   set(ENABLE_KHRONOS TRUE) # TODO
 else()
@@ -57,7 +57,7 @@ if(ENABLE_KHRONOS)
   )
 endif(ENABLE_KHRONOS)
 # Blink platform
-set(ENABLE_BLINK TRUE) # TODO
+set(ENABLE_BLINK FALSE) # TODO
 # cobalt
 set(ENABLE_COBALT TRUE)
 # SKIA
