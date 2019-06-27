@@ -17,6 +17,12 @@
 #include "base/memory/ptr_util.h"
 #include "cobalt/loader/font/typeface_decoder.h"
 
+#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+#include "emscripten/emscripten.h"
+#include "base/task_runner.h"
+#include "base/bind.h"
+#endif
+
 namespace cobalt {
 namespace loader {
 namespace font {
@@ -89,10 +95,50 @@ void TypefaceDecoder::Finish() {
 
   printf("TypefaceDecoder::Finish 2...\n");
   if (decoded_typeface) {
+#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+    emscripten_async_call_closure(
+      base::BindOnce(typeface_available_callback_, decoded_typeface));
+
+    /*{
+      /// \note struct must be freed in callback
+      base::STClosure* stClosure = new base::STClosure(std::move(
+            base::BindOnce(typeface_available_callback_, decoded_typeface)
+          ));
+      void* data = reinterpret_cast<void*>(stClosure);
+      DCHECK(data);
+      emscripten_async_call([](void* data){
+          printf("TypefaceDecoder::Finish typeface_available_callback_ fired\n");
+          DCHECK(data);
+          base::STClosure* stClosureData = reinterpret_cast<base::STClosure*>(data);
+          std::move(stClosureData->onceClosure_).Run();
+          delete stClosureData;
+      }, data, 10);
+    }*/
+
+    emscripten_async_call_closure(
+      base::BindOnce(load_complete_callback_, base::nullopt));
+
+    /*{
+      /// \note struct must be freed in callback
+      base::STClosure* stClosure = new base::STClosure(std::move(
+            base::BindOnce(load_complete_callback_, base::nullopt)
+          ));
+      void* data = reinterpret_cast<void*>(stClosure);
+      DCHECK(data);
+      emscripten_async_call([](void* data){
+          printf("TypefaceDecoder::Finish load_complete_callback_ fired\n");
+          DCHECK(data);
+          base::STClosure* stClosureData = reinterpret_cast<base::STClosure*>(data);
+          std::move(stClosureData->onceClosure_).Run();
+          delete stClosureData;
+      }, data, 10);
+    }*/
+#else
     typeface_available_callback_.Run(decoded_typeface);
     printf("TypefaceDecoder::Finish 2.1...\n");
     load_complete_callback_.Run(base::nullopt);
     printf("TypefaceDecoder::Finish 2.2...\n");
+#endif
   } else {
     printf("TypefaceDecoder::Finish 2.3...\n");
     load_complete_callback_.Run(std::string(error_string));
