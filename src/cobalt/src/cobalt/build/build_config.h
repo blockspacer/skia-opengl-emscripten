@@ -149,19 +149,31 @@
     return ""; \
   }()
 
+#define EM_LOG(arg) \
+  EM_ASM(console.log('EM_LOG: ' + UTF8ToString($0)), arg);
+
+#define EM_ERR(arg) \
+  EM_ASM(console.error('EM_LOG: ' + UTF8ToString($0)), arg);
+
+#define EM_LOG_NUM(arg) \
+  EM_ASM(console.log('EM_LOG: ' + $0), arg);
+
+#define EM_ERR_NUM(arg) \
+  EM_ASM(console.error('EM_LOG: ' + $0), arg);
+
 #define emscripten_async_call_closure(closureArg) \
 { \
   base::STClosure* stClosure = new base::STClosure(std::move( \
         (closureArg) \
       )); \
-  void* data = reinterpret_cast<void*>(stClosure); \
-  DCHECK(data); \
+  void* dataIn = reinterpret_cast<void*>(stClosure); \
+  DCHECK(dataIn); \
   emscripten_async_call([](void* data) { \
       DCHECK(data); \
       base::STClosure* stClosureData = reinterpret_cast<base::STClosure*>(data); \
       std::move(stClosureData->onceClosure_).Run(); \
       delete stClosureData; \
-  }, data, 10); \
+  }, dataIn, 10); \
 }
 
 // wraps std::function into async call (emscripten only)
