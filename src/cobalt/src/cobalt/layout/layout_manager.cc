@@ -90,6 +90,10 @@ class LayoutManager::Impl : public dom::DocumentObserver {
   void DoLayoutAndProduceRenderTree(const bool forceReLayout = false);
 //#endif
 
+#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+  bool isLayoutRefreshReached();
+#endif
+
 #if defined(ENABLE_TEST_RUNNER)
   void DoTestRunnerLayoutCallback();
 #endif  // ENABLE_TEST_RUNNER
@@ -131,6 +135,13 @@ class LayoutManager::Impl : public dom::DocumentObserver {
   bool suspended_;
 
   const bool clear_window_with_background_color_;
+
+  base::TimeDelta timer_interval_ = base::TimeDelta::Max();
+
+#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+
+  base::Time layoutProducedTime_ = base::Time::Max();
+#endif
 
   DISALLOW_COPY_AND_ASSIGN(Impl);
 };
@@ -391,6 +402,21 @@ void LayoutManager::Impl::setLayoutPending(const bool isPending) {
   is_render_tree_pending_ = isPending;
 }
 
+#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+bool LayoutManager::Impl::isLayoutRefreshReached() {
+  const base::Time timeNow = base::Time::Now();
+  const base::TimeDelta timeElapsed = timeNow - layoutProducedTime_;
+  const uint64_t timeElapsedMs = timeElapsed.InMilliseconds();
+  const bool isIntervalElapsed = timeElapsedMs > timer_interval_.InMilliseconds();
+  const bool isValidLayoutProducedTime = layoutProducedTime_ != base::Time::Max();
+  if (!isValidLayoutProducedTime || isIntervalElapsed) {
+    //::std::cout << "isLayoutRefreshReached..." << timeNow << "\n";
+    return true;
+  }
+  return false;
+}
+#endif
+
 void LayoutManager::Impl::StartLayoutTimer() {
   printf("layout_refresh_rate_ %f\n", layout_refresh_rate_);
   // TODO: Eventually we would like to instead base our layouts off of a
@@ -400,20 +426,37 @@ void LayoutManager::Impl::StartLayoutTimer() {
       static_cast<int64_t>(base::Time::kMicrosecondsPerSecond * 1.0f /
                            (layout_refresh_rate_ + 1.0f));
 
+  timer_interval_ = base::TimeDelta::FromMicroseconds(timer_interval_in_microseconds);
+
+  printf("timer_interval_.InMilliseconds() = %d\n", timer_interval_.InMilliseconds());
+
+  /// \note no reason to refresh layout less than once per millisecond
+  DCHECK(timer_interval_.InMilliseconds() > 0
+         && timer_interval_ != base::TimeDelta::Max());
+
 #if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   printf("layout_timer_.Start %ld\n", timer_interval_in_microseconds);
   layout_timer_.Start(
       FROM_HERE,
-      base::TimeDelta::FromMicroseconds(timer_interval_in_microseconds),
+      timer_interval_,
       base::Bind(&LayoutManager::Impl::DoLayoutAndProduceRenderTree,
                  base::Unretained(this), /* forceReLayout*/ false));
 #endif
 }
 
 void LayoutManager::Impl::DoLayoutAndProduceRenderTree(const bool forceReLayout) {
-//P_LOG("LayoutManager::Impl::DoLayoutAndProduceRenderTree 1\n");
+#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+  if (!isLayoutRefreshReached()) {
+    return;
+  }
+
+  layoutProducedTime_ = base::Time::Now();
+#endif
+
   TRACE_EVENT0("cobalt::layout",
                "LayoutManager::Impl::DoLayoutAndProduceRenderTree()");
+
+  //P_LOG("LayoutManager::Impl::DoLayoutAndProduceRenderTree 1\n");
 
   if (suspended_) return;
 
@@ -570,7 +613,8 @@ LayoutManager::LayoutManager(
 LayoutManager::~LayoutManager() {}
 
 void LayoutManager::ForceReLayout() {
-    //printf("LayoutManager::ForceReLayout...\n");
+  //printf("LayoutManager::ForceReLayout...\n");
+
   //impl_->OnMutation(); // TODO
   //are_computed_styles_and_box_tree_dirty_ = true;
   impl_->DoLayoutAndProduceRenderTree(/* ForceReLayout */ false);
