@@ -8,6 +8,23 @@ list(APPEND RENDERER_PUBLIC_DEFINES
   # 16.777216 Megabytes
 )
 
+list(APPEND RENDERER_PRIVATE_DEFINES
+  #FORCE_VIDEO_EXTERNAL_MESH=1
+  #
+  ${COBALT_COMMON_DEFINES}
+  # renderer
+  #COBALT_MINIMUM_FRAME_TIME_IN_MILLISECONDS=1
+  COBALT_MINIMUM_FRAME_TIME_IN_MILLISECONDS=33
+  #ENABLE_MAP_TO_MESH=1
+  ${OPENGLES2_DEFINITIONS}
+  #
+  # backend/egl/
+  #
+  COBALT_EGL_SWAP_INTERVAL=1
+  #
+  ${OPENGLES2_DEFINITIONS}
+)
+
 ## ===========
 
 # 'dependencies': [
@@ -136,20 +153,7 @@ target_compile_definitions(cobalt_renderer_stub_skia PUBLIC
 )
 
 target_compile_definitions(cobalt_renderer_stub_skia PRIVATE
-  #FORCE_VIDEO_EXTERNAL_MESH=1
-  #
-  ${COBALT_COMMON_DEFINES}
-  # renderer
-  #COBALT_MINIMUM_FRAME_TIME_IN_MILLISECONDS=10
-  COBALT_MINIMUM_FRAME_TIME_IN_MILLISECONDS=1
-  #ENABLE_MAP_TO_MESH=1
-  ${OPENGLES2_DEFINITIONS}
-  #
-  # backend/egl/
-  #
-  COBALT_EGL_SWAP_INTERVAL=1
-  #
-  ${OPENGLES2_DEFINITIONS}
+  ${RENDERER_PRIVATE_DEFINES}
 )
 
 ## ===========
@@ -243,20 +247,7 @@ target_compile_definitions(cobalt_renderer_stub_skgl PUBLIC
 )
 
 target_compile_definitions(cobalt_renderer_stub_skgl PRIVATE
-  #FORCE_VIDEO_EXTERNAL_MESH=1
-  #
-  ${COBALT_COMMON_DEFINES}
-  # renderer
-  #COBALT_MINIMUM_FRAME_TIME_IN_MILLISECONDS=10
-  COBALT_MINIMUM_FRAME_TIME_IN_MILLISECONDS=1
-  #ENABLE_MAP_TO_MESH=1
-  ${OPENGLES2_DEFINITIONS}
-  #
-  # backend/egl/
-  #
-  COBALT_EGL_SWAP_INTERVAL=1
-  #
-  ${OPENGLES2_DEFINITIONS}
+  ${RENDERER_PRIVATE_DEFINES}
 )
 
 ## ===========
@@ -407,19 +398,5 @@ target_compile_definitions(cobalt_renderer_stub PUBLIC
 )
 
 target_compile_definitions(cobalt_renderer_stub PRIVATE
-  #FORCE_VIDEO_EXTERNAL_MESH=1
-  #
-  ${COBALT_COMMON_DEFINES}
-  # renderer
-  #COBALT_MINIMUM_FRAME_TIME_IN_MILLISECONDS=10
-  COBALT_MINIMUM_FRAME_TIME_IN_MILLISECONDS=1
-  #ENABLE_MAP_TO_MESH=1
-  ${OPENGLES2_DEFINITIONS}
-  #
-  # backend/egl/
-  #
-  COBALT_EGL_SWAP_INTERVAL=1
-  # COBALT_RENDER_DIRTY_REGION_ONLY
-  #
-  ${OPENGLES2_DEFINITIONS}
+  ${RENDERER_PRIVATE_DEFINES}
 )
