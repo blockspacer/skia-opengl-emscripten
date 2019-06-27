@@ -48,7 +48,11 @@ class GraphicsContextStub : public GraphicsContext {
 
   void Finish() override {}
 
-  float GetMinimumFramesPerSecond() override { return 0.0f; }
+  float GetMinimumFramesPerSecond() override {
+    return 15.0f;
+    // __TODO__
+    //return 0.0f;
+  }
 };
 
 }  // namespace backend
