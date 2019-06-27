@@ -82,13 +82,13 @@ bool TaskQueueImpl::TaskRunner::PostDelayedTask(const Location& location,
 //    printf("TaskQueueImpl::PostDelayedTask scheduled after %d\n", delay.InMilliseconds());
 //
 //    /// \note struct must be freed in callback
-//    STClosure* stClosure = new STClosure(std::move(callback));
+//    base::STClosure* stClosure = new base::STClosure(std::move(callback));
 //    void* data = reinterpret_cast<void*>(stClosure);
 //    DCHECK(data);
 //    emscripten_async_call([](void* data){
 //        printf("TaskQueueImpl::PostDelayedTask fired\n");
 //        DCHECK(data);
-//        STClosure* stClosureData = reinterpret_cast<STClosure*>(data);
+//        base::STClosure* stClosureData = reinterpret_cast<base::STClosure*>(data);
 //        std::move(stClosureData->onceClosure_).Run();
 //        //delete stClosureData;
 //    }, data, delay.is_max() ? 1 : delay.InMilliseconds());

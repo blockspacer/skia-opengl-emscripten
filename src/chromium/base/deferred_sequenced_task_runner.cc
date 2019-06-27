@@ -52,13 +52,13 @@ bool DeferredSequencedTaskRunner::PostDelayedTask(const Location& from_here,
 
         /// __TODO__
         /// \note struct must be freed in callback
-        STClosure* stClosure = new STClosure(std::move(task));
+        base::STClosure* stClosure = new base::STClosure(std::move(task));
         void* data = reinterpret_cast<void*>(stClosure);
         DCHECK(data);
         emscripten_async_call([](void* data){
             printf("DeferredSequencedTaskRunner::PostDelayedTask fired\n");
             DCHECK(data);
-            STClosure* stClosureData = reinterpret_cast<STClosure*>(data);
+            base::STClosure* stClosureData = reinterpret_cast<base::STClosure*>(data);
             std::move(stClosureData->onceClosure_).Run();
             delete stClosureData;
         }, data, delay.is_max() ? 1 : delay.InMilliseconds());*/
