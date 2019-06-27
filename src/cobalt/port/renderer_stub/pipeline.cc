@@ -381,11 +381,12 @@ void Pipeline::ClearCurrentRenderTree() {
 
 void Pipeline::RasterizeCurrentTree() {
 #if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
-  const int64_t msFromLastRasterization =
-    (base::Time::Now() - lastRasterizeTime_).InMilliseconds();
+  const base::TimeDelta timeElapsed = base::Time::Now() - lastRasterizeTime_;
+  const int64_t msFromRasterization = timeElapsed.InMilliseconds();
+  const bool isValidLastRasterizeTime = lastRasterizeTime_ != base::Time::Max();
+  const bool isFrameElapsed = msFromRasterization > COBALT_MINIMUM_FRAME_TIME_IN_MILLISECONDS;
 
-  if(lastRasterizeTime_ != base::Time::Max()
-     && msFromLastRasterization < COBALT_MINIMUM_FRAME_TIME_IN_MILLISECONDS) {
+  if(isValidLastRasterizeTime && !isFrameElapsed) {
     /// \note don`t rasterize too often
     return;
   }
@@ -393,7 +394,7 @@ void Pipeline::RasterizeCurrentTree() {
   lastRasterizeTime_ = base::Time::Now();
 #endif
 
-  printf("Pipeline::RasterizeCurrentTree 1\n");
+  //printf("Pipeline::RasterizeCurrentTree 1\n");
 
   TRACK_MEMORY_SCOPE("Renderer");
   DCHECK(rasterizer_thread_checker_.CalledOnValidThread());
@@ -407,7 +408,7 @@ void Pipeline::RasterizeCurrentTree() {
   hasRasterizedTree = true;
 #endif
 
-  printf("Pipeline::RasterizeCurrentTree 2\n");
+  //printf("Pipeline::RasterizeCurrentTree 2\n");
 
   base::TimeTicks start_rasterize_time = base::TimeTicks::Now();
   Submission submission =
@@ -600,8 +601,28 @@ bool Pipeline::RasterizeSubmissionToRenderTarget(
   // Rasterize the animated render tree.
   rasterizer::Rasterizer::Options rasterizer_options;
   rasterizer_options.dirty = redraw_area;
+#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+    DCHECK(submit_tree);
+    DCHECK(render_target);
+    emscripten_async_call_closure(
+      base::BindOnce([](rasterizer::Rasterizer* rasterizer_in,
+            const scoped_refptr<render_tree::Node>& render_tree_in,
+            const scoped_refptr<backend::RenderTarget>& render_target_in,
+            const rasterizer::Rasterizer::Options& options_in)
+      {
+        DCHECK(rasterizer_in);
+        DCHECK(render_tree_in);
+        DCHECK(render_target_in);
+        rasterizer_in->Submit(render_tree_in, render_target_in, options_in);
+      },
+      rasterizer_.get(),
+      submit_tree,
+      render_target,
+      rasterizer_options
+    ));
+#else
   rasterizer_->Submit(submit_tree, render_target, rasterizer_options);
-
+#endif
   // Run all of this submission's callbacks.
   for (const auto& callback : submission.on_rasterized_callbacks) {
     callback.Run();
@@ -671,6 +692,26 @@ void Pipeline::ShutdownRasterizerThread() {
   // punch-through, which may result in unexpected images/colors appearing for
   // a flicker behind the display.
   if (render_target_ && (clear_on_shutdown_mode_ == kClearToBlack)) {
+#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+    emscripten_async_call_closure(
+      base::BindOnce([](std::unique_ptr<rasterizer::Rasterizer> rasterizer_,
+            const scoped_refptr<backend::RenderTarget>& render_target)
+      {
+        DCHECK(rasterizer_);
+        rasterizer_->Submit(
+          new render_tree::RectNode(
+            math::RectF(render_target->GetSize()),
+            std::unique_ptr<render_tree::Brush>(
+                new render_tree::SolidColorBrush(
+                    render_tree::ColorRGBA(0.0f, 0.0f, 0.0f, 1.0f)))),
+          render_target);
+        // Finally, destroy the rasterizer.
+        rasterizer_.reset();
+      },
+      std::move(rasterizer_),
+      render_target_
+    ));
+#else
     rasterizer_->Submit(
         new render_tree::RectNode(
             math::RectF(render_target_->GetSize()),
@@ -678,10 +719,24 @@ void Pipeline::ShutdownRasterizerThread() {
                 new render_tree::SolidColorBrush(
                     render_tree::ColorRGBA(0.0f, 0.0f, 0.0f, 1.0f)))),
         render_target_);
+#endif
+    /*using cobalt::renderer::rasterizer::Rasterizer;
+    std::move(base::Bind(&Rasterizer::Submit,
+        base::Unretained(rasterizer_.get()),
+        new render_tree::RectNode(
+            math::RectF(render_target_->GetSize()),
+            std::unique_ptr<render_tree::Brush>(
+                new render_tree::SolidColorBrush(
+                    render_tree::ColorRGBA(0.0f, 0.0f, 0.0f, 1.0f)))),
+        render_target_, Options()
+    )).Run();*/
   }
 
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   // Finally, destroy the rasterizer.
+  DCHECK(rasterizer_);
   rasterizer_.reset();
+#endif
 }
 
 void Pipeline::OnDumpCurrentRenderTree(const std::string& message) {
