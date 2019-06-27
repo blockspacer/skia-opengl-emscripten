@@ -149,6 +149,21 @@
     return ""; \
   }()
 
+#define emscripten_async_call_closure(closureArg) \
+{ \
+  base::STClosure* stClosure = new base::STClosure(std::move( \
+        (closureArg) \
+      )); \
+  void* data = reinterpret_cast<void*>(stClosure); \
+  DCHECK(data); \
+  emscripten_async_call([](void* data) { \
+      DCHECK(data); \
+      base::STClosure* stClosureData = reinterpret_cast<base::STClosure*>(data); \
+      std::move(stClosureData->onceClosure_).Run(); \
+      delete stClosureData; \
+  }, data, 10); \
+}
+
 // wraps std::function into async call (emscripten only)
 // see https://github.com/chadaustin/Web-Benchmarks/blob/master/embind_calls/bench.cpp#L90
 #define DECLARE_HTML5_YIELD_HELPER() \
