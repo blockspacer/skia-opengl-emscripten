@@ -2255,9 +2255,9 @@ void CobaltTester::BrowserProcessRenderTreeSubmissionQueue() {
     printf("BrowserProcessRenderTreeSubmissionQueue 1\n");
 #if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
    emscripten_async_call_closure(
-    base::BindOnce([](base::MessageQueue * render_tree_submission_queue_) {
-      DCHECK(render_tree_submission_queue_);
-      render_tree_submission_queue_->ProcessAll();
+    base::BindOnce([](base::MessageQueue * queue_in) {
+      DCHECK(queue_in);
+      queue_in->ProcessAll();
     }, &render_tree_submission_queue_)
    );
 #else
@@ -2514,7 +2514,7 @@ void CobaltTester::OnKeyEventProduced(base::CobToken type,
 
 void CobaltTester::OnPointerEventProduced(base::CobToken type,
                                            const dom::PointerEventInit& event) {
-  printf("OnPointerEventProduced client_x %d client_y %d \n",
+  printf("OnPointerEventProduced client_x %f client_y %f \n",
     event.client_x(), event.client_y());
   /*TRACE_EVENT0("cobalt::browser", "CobaltTester::OnPointerEventProduced()");
   if (base::MessageLoop::current() != self_message_loop_) {
@@ -3306,23 +3306,6 @@ static void Draw() {
       //printf("Draw() 7\n");
 }
 
-static base::Time layoutProducedTime = base::Time::Max();
-static const int64_t layoutProducePeriodMs = 100;//33;
-
-static bool isLayoutRefreshReached() {
-  //const int64_t timer_interval_in_microseconds =
-  //    static_cast<int64_t>(base::Time::kMicrosecondsPerSecond * 1.0f /
-  //                         (g_cobaltTester->layout_refresh_rate_ + 1.0f));
-  const base::Time timeNow = base::Time::Now();
-  //base::TimeDelta::FromMicroseconds(timer_interval_in_microseconds).InMilliseconds();
-  if (layoutProducedTime == base::Time::Max()
-      || (timeNow - layoutProducedTime).InMilliseconds() > layoutProducePeriodMs) {
-    //::std::cout << "isLayoutRefreshReached..." << timeNow << "\n";
-    return true;
-  }
-  return false;
-}
-
 static void animate() {
   //redClrTintAnim += 0.01f;
   //if (redClrTintAnim > 360.0f) {
@@ -3401,13 +3384,26 @@ static void animate() {
               //if(isLayoutRefreshReached()) printf("isLayoutRefreshReached() render_browser_window \n");
               //if(!hasLayout) printf("!hasLayout render_browser_window \n");
 
-              if (isLayoutRefreshReached() /*|| !hasLayout*/)
-              {
+              //if (isLayoutRefreshReached() /*|| !hasLayout*/)
+              if (isRenderTreeProducePending) {
+                //emscripten_pause_main_loop();
+
+                //printf("g_cobaltTester isRenderTreeProducePending OnRenderTreeProduced\n");
+
+                g_cobaltTester->OnRenderTreeProduced(
+                  // pending_layout_results
+                  cobalt::layout::LayoutManager::LayoutResults
+                  (pending_render_tree, pending_layout_time)
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          );
+                //emscripten_resume_main_loop();
+
+                g_cobaltTester->renderer_module_->pipeline()->RasterizeCurrentTree();
+              } else {
                   DCHECK(!isRenderTreeProducePending);
                   //emscripten_pause_main_loop();
                   //if (isDebugPeriodReached())
 
-                  printf("g_cobaltTester ForceReLayout\n");
+                  //printf("g_cobaltTester ForceReLayout\n");
 
                   DCHECK(g_cobaltTester);
                   DCHECK(g_cobaltTester->window_);
@@ -3426,26 +3422,11 @@ static void animate() {
 
                   g_cobaltTester->renderer_module_->pipeline()->RasterizeCurrentTree();
 
-                  layoutProducedTime = base::Time::Now();
-
                   //hasLayout = true;
 
                   //if (isDebugPeriodReached())
                   //printf("g_cobaltTester->run\n");
                   //emscripten_resume_main_loop();
-              }
-              else if (isRenderTreeProducePending) {
-                //emscripten_pause_main_loop();
-
-                printf("g_cobaltTester isRenderTreeProducePending OnRenderTreeProduced\n");
-
-                g_cobaltTester->OnRenderTreeProduced(
-                  // pending_layout_results
-                  cobalt::layout::LayoutManager::LayoutResults
-                    (pending_render_tree, pending_layout_time)
-                );
-                //emscripten_resume_main_loop();
-                g_cobaltTester->renderer_module_->pipeline()->RasterizeCurrentTree();
               }
 #ifdef __TODO__
               DCHECK(g_cobaltTester);
@@ -3464,8 +3445,6 @@ static void animate() {
 
 #endif // ENABLE_SKOTTIE
     ///if (isDebugPeriodReached()) printf("animate end\n");
-
-    //g_cobaltTester->renderer_module_->pipeline()->RasterizeCurrentTree();
 }
 
 static void mainLoop() {
@@ -3592,10 +3571,10 @@ static void mainLoop() {
     ///if (isDebugPeriodReached()) printf("mainLoop 7\n");
 
     incDebugPeriodicCounter();
-    if (isDebugPeriodReached()) {
-        printf("mainLoop 8\n");
-        std::cout << std::endl; // flush
-    }
+    //if (isDebugPeriodReached()) {
+    //    printf("mainLoop 8\n");
+    //    std::cout << std::endl; // flush
+    //}
 }
 
 #ifdef ENABLE_WTF
@@ -3733,7 +3712,7 @@ int main(int argc, char** argv) {
   base::CommandLine::ForCurrentProcess()->InitFromArgv(argc, argv);
 
   ///printf("SysInfo::AmountOfFreeDiskSpace %d ...\n", base::SysInfo::AmountOfFreeDiskSpace());
-  printf("SysInfo::AmountOfAvailablePhysicalMemory %ld ...\n", base::SysInfo::AmountOfAvailablePhysicalMemory());
+  printf("SysInfo::AmountOfAvailablePhysicalMemory %lld ...\n", base::SysInfo::AmountOfAvailablePhysicalMemory());
   printf("SysInfo::NumberOfProcessors %d ...\n", base::SysInfo::NumberOfProcessors());
   printf("SysInfo::NumberOfProcessors %s ...\n", base::SysInfo::OperatingSystemArchitecture().c_str());
   printf("SysInfo::NumberOfProcessors %s ...\n", base::SysInfo::CPUModelName().c_str());
