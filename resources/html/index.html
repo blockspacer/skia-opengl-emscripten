@@ -115,6 +115,24 @@
         animation-name: exanim;
         animation-duration: 10s;
       }
+
+      @-webkit-keyframes slidein {
+          from {
+              margin-left: -20%;
+          }
+          to {
+              margin-left: 100%;
+          }
+      }
+
+      @keyframes slidein {
+          from {
+              margin-left: -20%;
+          }
+          to {
+              margin-left: 100%;
+          }
+      }
     </style>
   </head>
   <body class="exanim">
@@ -128,10 +146,10 @@
     <img src="file:///resources/images/mouse.jpeg" width="200" height="200" style="border: 5px solid gray;"><br>
     img2<br>
     -->
-    <div style="background-image: url('file:///resources/images/mouse.jpeg'); width:200px; height:200px; border: 5px solid gray;animation: slidein 3s ease-in 1s infinite reverse both running;">
+    <div style="background-image: url('file:///resources/images/mouse.jpeg'); width:200px; height:200px; border: 5px solid gray;animation: slidein 3s ease-in 1s infinite;">
     </div><br>
     img3<br>
-    <div style="background-image: url('file:///resources/images/owl.png'); width:200px; height:200px; border: 5px solid gray;animation: slidein 3s ease-in 1s infinite reverse both running;">
+    <div style="background-image: url('file:///resources/images/owl.png'); width:200px; height:200px; border: 5px solid gray;animation: slidein 3s ease-in 1s infinite;">
     </div><br>
 
     <div class="view_port">
@@ -153,6 +171,501 @@
       <br/>
       Значимость этих проблем очевидна.
     </div>
+
+    <style>
+      h1{
+        color: green;
+        text-align: center;
+      }
+      div.one{
+        margin-top: 40px;
+        text-align: center;
+      }
+      button{
+        margin-top: 10px;
+      }
+
+      #root {
+          width: 500px;
+          display: inline;
+      }
+      .first {
+          background-color: #ddd;
+          padding: 10px;
+          color: black;
+          margin-bottom: 5px;
+          border-bottom: 1px solid red;
+      }
+      .first div {
+          background-color: white;
+          border: 1px solid black;
+          height: 50px;
+          line-height: 100%;
+          text-align: center;
+          vertical-align: middle;
+      }
+      #root.second .first div {
+          border-color: red;
+          background-color: #aaa;
+          color: white;
+      }
+      .first .bunt {
+          border-radius: 25px;
+          border-top: 5px solid silver;
+          border-right: 5px solid blue;
+          border-bottom: 5px solid black;
+          border-left: 5px solid red;
+      }
+      .first .bunt2 {
+          border-radius: 5px;
+          border-top: 5px solid red;
+          border-right: 1px solid blue;
+          border-left: 1px solid blue;
+          border-bottom: 1px solid blue;
+      }
+
+      .first {
+          background-color: #eee;
+          height: 40px;
+          padding: 5px;
+          color: black;
+          border-bottom: 1px solid gray;
+      }
+      .a {
+          position: absolute;
+          top: 50px;
+          width: 250;
+          background: #eee;
+          padding-left: 25px;
+      }
+      .a strong {
+          display: inline;
+          background: white;
+          padding: 5px;
+          padding-top: 0px;
+          border-color: red;
+          margin: 5px;
+      }
+      .a .second {
+          background: black;
+          color: white;
+          line-height: 26px;
+          vertical-align: middle;
+      }
+      .b {
+          position: absolute;
+          left: 350;
+          top: 30;
+          width: 50;
+          height: 30;
+          background: gray;
+          border: 1px solid red;
+      }
+      #3 {
+          position: absolute;
+          left: 250;
+          top: 250;
+          width: 50;
+          height: 30;
+          background: black;
+          color: white;
+      }
+      .left {
+          position: absolute;
+          top: 5px;
+          left: 5px;
+          width: 245px;
+          bottom: 5px;
+          padding: 5px;
+          background-color: #eee;
+      }
+      sidebar-splitter {
+          position: absolute;
+          right: 0px;
+          top: 0;
+          width: 3px;
+          bottom: 0;
+          background-color: black;
+      }
+      content {
+          position: absolute;
+          left: 250px;
+          padding: 5px;
+          top: 5px;
+          right: 55px;
+          bottom: 5px;
+          background-color: #bbb;
+      }
+      .right {
+          position: absolute;
+          width: 50px;
+          background: red;
+          top: 5px;
+          right: 5px;
+          bottom: 5px;
+      }
+      #footer {
+          position: absolute;
+          left: 0;
+          right: 0;
+          bottom: 0px;
+          height: 50px;
+          background: gray;
+          color: white;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      .header h1 {
+        font-size: 50px;
+      }
+
+      /* Style the top navigation bar */
+      .topnav {
+        overflow: hidden;
+        background-color: #333;
+      }
+
+      /* Style the topnav links */
+      .topnav a {
+        float: left;
+        display: block;
+        color: #f2f2f2;
+        text-align: center;
+        padding: 14px 16px;
+        text-decoration: none;
+      }
+
+      /* Change color on hover */
+      .topnav a:hover {
+        background-color: #ddd;
+        color: black;
+      }
+
+      /* Create two unequal columns that floats next to each other */
+      /* Left column */
+      .leftcolumn {
+        float: left;
+        width: 75%;
+      }
+
+      /* Right column */
+      .rightcolumn {
+        float: left;
+        width: 25%;
+        background-color: #f1f1f1;
+        padding-left: 20px;
+      }
+
+      /* Fake image */
+      .fakeimg {
+        background-color: #aaa;
+        width: 100%;
+        padding: 20px;
+      }
+
+      /* Add a card effect for articles */
+      .card {
+        background-color: white;
+        padding: 20px;
+        margin-top: 20px;
+      }
+
+      /* Clear floats after the columns */
+      .row:after {
+        content: "";
+        display: table;
+        clear: both;
+      }
+
+      /* Footer */
+      .footer {
+        padding: 20px;
+        text-align: center;
+        background: #ddd;
+        margin-top: 20px;
+      }
+
+      /* Responsive layout - when the screen is less than 800px wide, make the two columns stack on top of each other instead of next to each other */
+      @media screen and (max-width: 800px) {
+        .leftcolumn, .rightcolumn {
+          width: 100%;
+          padding: 0;
+        }
+      }
+
+      /* Responsive layout - when the screen is less than 400px wide, make the navigation links stack on top of each other instead of next to each other */
+      @media screen and (max-width: 400px) {
+        .topnav a {
+          float: none;
+          width: 100%;
+        }
+      }
+
+      div.polaroid {
+        width: 250px;
+        height: 250px;
+        text-align: center;
+      }
+
+      div.container {
+        padding: 10px;
+      }
+
+      .container1 {
+        margin: 40px auto;
+        width: 80%;
+      }
+
+      .element1 {
+        border-width: 55px;
+        border-image: url(:/res/img/test3.png) 50 round round;
+        /* fill keyword makes sure the center part is preserved, so u can see how it is affected
+        by the different values of the border-image-repeat property */
+        border-image-repeat: round round;
+        border-image-width: 50px;
+      }
+    </style>
+
+
+    <div style="box-shadow: -4px -10px 5px 0px rgba(0,0,0,0.75) , 4px 10px 5px 0px rgba(110,0,0,0.75) , 18px 10px 5px 0px rgba(10,220,0,0.75);">
+      <div> прары box-shadow </div>
+    </div>
+
+    <div style="box-shadow: -4px -10px 5px 0px rgba(0,0,0,0.75) , 4px 10px 5px 0px rgba(110,0,0,0.75) , 18px 10px 5px 0px rgba(10,220,0,0.75);">
+      <div> прары box-shadow </div>
+    </div>
+
+  <div id="root">
+    <div class="first">
+      <div style="border-image: url(:/res/img/test2.png); border-width: 30px; ">ываыав border-image: url(:/res/img/test2.png); border-width: 30px; </div>
+    </div>
+    <div class="first">
+      <div style="border-image: linear-gradient(to left, #61c69d 0%, #2d72bc 100%); border-image-slice: 1; border-width: 3px;">border-image: linear-gradient(to left, #61c69d 0%, #2d72bc 100%); border-image-slice: 1; border-width: 3px;</div>
+    </div>
+    <div class="first">
+      <div style="border: 5px solid gold;border-style: inset;padding: 5px;">фывфыва border-style: inset; padding: 5px;</div>
+    </div>
+    <div class="first">
+      <div style="border: 5px solid gold;border-style: outset;padding: 5px;">смссмсмчыв border-style: outset; padding: 5px;</div>
+    </div>
+    <div class="first">
+      <div style="border-style: dashed;padding: 5px;">border-style: dashed; padding: 5px;</div>
+    </div>
+    <div class="first">
+      <div style="border-style: double;padding: 5px;">border-style: double; padding: 5px;</div>
+    </div>
+    <div class="first">
+      <div style="border: 5px solid gold; border-style: double;padding: 5px;">border: 5px solid gold;border-style: double; padding: 5px;</div>
+    </div>
+    <div class="first">
+      <div style="border: 15px solid rgba(255,0,0,0.0);background-color:gold;">border: 15px solid rgba(255,0,0,0.0);</div>
+    </div>
+    <div class="first">
+      <div style="border: 15px solid rgba(255,0,0,0.5);background-color:gold;">border: 15px solid rgba(255,0,0,0.5);</div>
+    </div>
+    <div class="first">
+      <div style="border: 15px solid rgba(255,0,0,1.0);background-color:gold;">border: 15px solid rgba(255,0,0,1.0);</div>
+    </div>
+    <div class="first">
+      <div style="border: 5px solid pink; border-left-width: 15px;">border: 5px solid pink; border-left-width: 15px;</div>
+    </div>
+    <div class="first">
+      <div style="border: 5px solid green; background-color: orange; border-left-width: 15px; border-radius: 55px;">border: 5px solid green; background: orange; border-left-width: 15px; border-radius: 55px;</div>
+    </div>
+    <div class="first">
+      <div style="">1px width / 1px radius</div>
+    </div>
+    <div class="first">
+      <div style="border-width: 5px">5px width / 0px radius</div>
+    </div>
+    <div class="first">
+      <div style="border-radius: 1px;">1px width / 1px radius</div>
+    </div>
+    <div class="first">
+      <div style="border-width: 5px; border-radius: 5px;">5px width / 5px radius</div>
+    </div>
+    <div class="first">
+      <div style="border-radius: 5px;">1px width / 5px radius</div>
+    </div>
+    <div class="first">
+      <div style="border-width: 5px; border-radius: 15px;">5px width / 15px radius</div>
+    </div>
+    <div class="first">
+      <div style="border-width: 5px; border-left-width: 15px; border-right-width: 15px; border-radius: 15px;">5px 15px width / 15px radius</div>
+    </div>
+    <div class="first">
+      <div style="border-width: 5px; border-left-width: 15px; border-right-width: 15px; border-radius: 25px;">5px 15px width / 25px radius</div>
+    </div>
+    <div class="first">
+      <div class="bunt">Bunt</div>
+    </div>
+  </div>
+
+
+  <div id="root" class="second">
+    <div class="first">
+      <div style="">1px width / 1px radius</div>
+    </div>
+    <div class="first">
+      <div style="border-width: 5px">5px width / 0px radius</div>
+    </div>
+    <div class="first">
+      <div style="border-radius: 1px;">1px width / 1px radius</div>
+    </div>
+    <div class="first">
+      <div style="border-width: 5px; border-radius: 5px;">5px width / 5px radius</div>
+    </div>
+    <div class="first">
+      <div style="border-radius: 5px;">1px width / 5px radius</div>
+    </div>
+    <div class="first">
+      <div style="border-width: 5px; border-radius: 15px;">5px width / 15px radius</div>
+    </div>
+    <div class="first">
+      <div style="border-width: 5px; border-left-width: 15px; border-right-width: 15px; border-radius: 15px;">5px 15px width / 15px radius</div>
+    </div>
+    <div class="first">
+      <div style="border-width: 5px; border-left-width: 15px; border-right-width: 15px; border-radius: 25px;">5px 15px width / 25px radius</div>
+    </div>
+    <div class="first">
+      <div class="bunt2">Bunt 2</div>
+    </div>
+  </div>
+
+<!--    <p>p line 1</p>
+    <p>p line 2</p>
+    <p>👶🏻 or 👩🏼‍🎨 🔍 💥 \uf08a ⚡💨 :)</p>
+    <p>Росси́я, официально также Росси́йская Федера́ция[e] (РФ[f]) — государство в Восточной Европе и Северной Азии. Территория России в рамках её конституционного устройства[c] составляет 17 125 191[6] км²; население страны (в пределах её заявленной территории[c]) составляет 146 781 095[7] чел. (2019). Занимает первое место в мире по территории, шестое — по объёму ВВП по ППС и девятое — по численности населения.
+<br/>
+Столица — Москва. Государственный язык — русский.
+
+<p>Президентско-парламентская республика[3] с федеративным устройством. С 7 мая 2012 года пост Президента занимает Владимир Путин. C 8 мая 2012 года пост Председателя Правительства занимает Дмитрий Медведев.</p>
+
+В состав Российской Федерации входят 85 субъектов[c], 46 из которых именуются областями, 22[c] — республиками, 9 — краями, 3[c] — городами федерального значения, 4 — автономными округами и 1 — автономной областью. Всего в стране около 157 тысяч населённых пунктов[16].
+
+Россия граничит с шестнадцатью государствами (больше, чем любая другая страна в мире), а также двумя частично признанными государствами.</p>
+    <div style="background-color:red; width:800px; height:100px;">
+      hello me!<br/>
+      new line! 1<br>
+      new line! 2<br>
+      new line! 3<br>
+      new line! 4<br>
+    </div>
+    <div style="background-color:green; width:200px; height:700px;">
+      hi world!
+      <p>p <i>italic</i> 1</p>
+      <p>p <b>bold</b> 2</p>
+      <font size = "6">Display this text using the font size 6</font>
+      <p style="color:orange;">This is the color orange</p>
+      <p style="color:hsl(60,100%,50%);">This is the color yellow</p>
+      <p style="color:rgb(153, 255, 153);">This is the color green</p>
+      <p style="color:#0000FF">This is the blue color</p>
+      <u>u He is a boy</u>
+      <sub>sub He is a boy</sub>
+      <sup>sup He is a boy</sup>
+      <a href="https://www.wikipedia.org/">A link to Wikipedia!</a>
+      <input type="text" />
+      <input type="file" />
+      <input type="checkbox" />
+      <p align="center">center He is a boy</p>
+      <ul>
+      <li>Item 1</li>
+      <li>Item 2</li>
+      <li>Item 3</li>
+      </ul>
+      <ol>
+      <li>Item 1</li>
+      <li>Item 2</li>
+      <li>Item 3</li>
+      </ol>
+    </div>
+    <h1>This is Your First HTML Heading</h1>
+    <h2>This is Your Second HTML Heading</h2>
+    <h1>This is Your First HTML Heading</h1>
+    <h3>This is Your Third HTML Heading</h3>
+    <h4>This is Your Fourth HTML Heading</h4>
+    <h5>This is Your Fifth HTML Heading</h5>
+    <h6>This is Your Sixth HTML Heading</h6>
+    <h1>This is Your First HTML Heading</h1>
+
+
+  <div class="header">
+    <h1>My Website</h1>
+    <p>Resize the browser window to see the effect.</p>
+  </div>
+
+  <div class="topnav">
+    <a href="#">Link</a>
+    <a href="#">Link</a>
+    <a href="#">Link</a>
+    <a href="#" style="float:right">Link</a>
+  </div>
+
+  <div class="row">
+    <div class="leftcolumn">
+      <div class="card">
+        <h2>TITLE HEADING</h2>
+        <h5>Title description, Dec 7, 2017</h5>
+        <div class="fakeimg" style="height:200px;">Image</div>
+        <p>Some text..</p>
+        <p>Sunt in culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco.</p>
+      </div>
+      <div class="card">
+        <h2>TITLE HEADING</h2>
+        <h5>Title description, Sep 2, 2017</h5>
+        <div class="fakeimg" style="height:200px;">Image</div>
+        <p>Some text..</p>
+        <p>Sunt in culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco.</p>
+      </div>
+    </div>
+    <div class="rightcolumn">
+      <div class="card">
+        <h2>About Me</h2>
+        <div class="fakeimg" style="height:100px;">Image</div>
+        <p>Some text about me in culpa qui officia deserunt mollit anim..</p>
+      </div>
+      <div class="card">
+        <h3>Popular Post</h3>
+        <div class="fakeimg"><p>Image</p></div>
+        <div class="fakeimg"><p>Image</p></div>
+        <div class="fakeimg"><p>Image</p></div>
+      </div>
+      <div class="card">
+        <h3>Follow Me</h3>
+        <p>Some text..</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <h2>Footer</h2>
+  </div>
+
+
+  <div class="left">
+      Hello Sidebar
+      <sidebar-splitter>
+      </sidebar-splitter>
+  </div>
+  <content>
+      <div id="content" cacheRender="true">
+          Hello Content
+      </div>
+      <button>Button 1</button>
+      <button if="showButton2">Button 2</button>
+      <div repeat="row in rows">
+          Hello!
+      </div>
+      <div id="footer">
+          Hello Footer
+      </div>
+  </content>
+  <div class="right">
+  </div>
+  -->
 
   </body>
 </html>
