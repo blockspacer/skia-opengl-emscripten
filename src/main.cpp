@@ -75,7 +75,7 @@
 
 // see https://github.com/save7502/youkyoung/blob/master/Engine/Source/Runtime/OpenGLDrv/Private/HTML5/HTML5OpenGL.cpp#L5
 // see https://github.com/emscripten-core/emscripten/issues/6009
-#define ENABLE_HTML5_SDL 1
+// #define ENABLE_HTML5_SDL 1
 
 // see https://github.com/emscripten-core/emscripten/pull/8430#issuecomment-486635898
 // #define SKIA_GR_CONTEXT 1
@@ -121,6 +121,13 @@
 #warning "ENABLE_SK_EFFECTS requires SKIA and CUSTOM_FONTS"
 #undef ENABLE_SK_EFFECTS
 #endif
+
+#define ENABLE_SK_UI 1
+#define ENABLE_IMAGES 1
+
+//#undef ENABLE_SKOTTIE
+//#undef ENABLE_CUSTOM_FONTS
+//#undef ENABLE_COBALT
 
 //#if defined(ENABLE_COBALT_RENDERER_STUB)
 //#include "renderer_stub/renderer_module.h"
@@ -217,6 +224,9 @@
 #include <skia/include/core/SkPictureRecorder.h>
 #include <skia/include/core/SkStream.h>
 #include <skia/include/core/SkSurface.h>
+#include "third_party/skia/include/core/SkBitmap.h"
+#include "third_party/skia/include/core/SkCanvas.h"
+#include "third_party/skia/include/core/SkShader.h"
 #if defined(ENABLE_SKOTTIE)
 #include <skia/modules/skottie/include/Skottie.h>
 #include <skia/modules/skottie/utils/SkottieUtils.h>
@@ -275,6 +285,7 @@
 #include "skia/include/gpu/GrTypes.h"
 //#include "skia/include/gpu/GrTypesPriv.h"
 #include "skia/include/core/SkRefCnt.h"
+#include "skia/include/core/SkTime.h"
 //
 //#include "GrContextPriv.h"
 #include "skia/src/gpu/GrGpu.h"
@@ -555,9 +566,6 @@ static sk_sp<SkImage> skImageSp;
 //#include "third_party/blink/renderer/platform/testing/font_test_helpers.h"
 //#include "third_party/blink/renderer/platform/testing/unit_test_helpers.h"
 #include "third_party/blink/renderer/platform/text/text_run.h"
-#include "third_party/skia/include/core/SkBitmap.h"
-#include "third_party/skia/include/core/SkCanvas.h"
-#include "third_party/skia/include/core/SkShader.h"
 
 //#include "third_party/blink/renderer/core/dom/document.h"
 //#include "third_party/blink/renderer/core/frame/local_frame_view.h"
@@ -567,18 +575,14 @@ static sk_sp<SkImage> skImageSp;
 //#include "third_party/blink/renderer/core/html/media/html_video_element.h"
 //#include "third_party/blink/renderer/core/loader/resource/image_resource_content.h"
 
-//#include "third_party/blink/renderer/core/imagebitmap/image_bitmap.h"
 
-#include "third_party/blink/renderer/platform/graphics/accelerated_static_bitmap_image.h"
 //#include "third_party/blink/renderer/platform/graphics/color_correction_test_utils.h"
 #include "third_party/blink/renderer/platform/graphics/gpu/shared_gpu_context.h"
 #include "third_party/blink/renderer/platform/graphics/skia/skia_utils.h"
-#include "third_party/blink/renderer/platform/graphics/static_bitmap_image.h"
 //#include "third_party/blink/renderer/platform/graphics/test/fake_gles2_interface.h"
 //#include "third_party/blink/renderer/platform/graphics/test/fake_web_graphics_context_3d_provider.h"
 #include "third_party/blink/renderer/platform/heap/handle.h"
 #include "third_party/blink/renderer/platform/heap/heap.h"
-//#include "third_party/blink/renderer/platform/image-decoders/image_decoder.h"
 //#include "third_party/blink/renderer/platform/loader/fetch/memory_cache.h"
 //#include "third_party/blink/renderer/platform/loader/fetch/resource_request.h"
 
@@ -592,10 +596,16 @@ static sk_sp<SkImage> skImageSp;
 #include "third_party/blink/renderer/platform/heap/thread_state.h"
 //#include "third_party/blink/renderer/platform/scheduler/public/thread_scheduler.h"
 #include "third_party/blink/public/platform/platform.h"
-#include "third_party/blink/renderer/platform/image-decoders/image_decoder.h"
 #include "third_party/blink/renderer/platform/shared_buffer.h"
 
+#if defined(ENABLE_IMAGES)
+#include "third_party/blink/renderer/platform/graphics/accelerated_static_bitmap_image.h"
+#include "third_party/blink/renderer/platform/graphics/static_bitmap_image.h"
+//#include "third_party/blink/renderer/core/imagebitmap/image_bitmap.h"
+#include "third_party/blink/renderer/platform/image-decoders/image_decoder.h"
+//#include "third_party/blink/renderer/platform/image-decoders/image_decoder.h"
 static scoped_refptr<blink::StaticBitmapImage> sStaticBitmapImage;
+#endif // ENABLE_IMAGES
 
 static std::unique_ptr<blink::Platform> g_platform;
 #endif // ENABLE_BLINK_PLATFORM
@@ -787,7 +797,13 @@ static bool render_browser_window = true;
 // must be POT
 static int width = 1920;//1024;//512;
 // must be POT
-static int height = 4096;//1080;//4096;//10000;//1200;//1024;//512;
+static int height = 1080;//1080;//4096;//10000;//1200;//1024;//512;
+
+static int drawingBufferWidth = 1920;
+static int drawingBufferHeight = 1080;
+
+static const int maxDrawingBufferWidth = 1920;
+static const int maxDrawingBufferHeight = 1080;
 
 static int browser_width = width;//1920;
 static int browser_height = height;//10000;
@@ -1121,6 +1137,7 @@ typedef base::Callback<void(const cobalt::layout::LayoutManager::LayoutResults&)
     OnRenderTreeProducedCallback;
 #endif // ENABLE_COBALT
 
+#if defined(ENABLE_IMAGES)
 //#if defined(ENABLE_SKIA) && (defined(USE_LIBJPEG) || defined(USE_LIBJPEG_TURBO))
 //static SkString fImagePath = SkString("./resources/images/JPEG_example.jpg");
 //#elif defined(ENABLE_SKIA)
@@ -1128,8 +1145,9 @@ typedef base::Callback<void(const cobalt::layout::LayoutManager::LayoutResults&)
 //#endif
 
 static SkString fImagePath = SkString("./resources/images/image.png");
+#endif // ENABLE_IMAGES
 
-#if defined(ENABLE_SKIA) && defined(ENABLE_SKOTTIE)
+#if defined(ENABLE_SKOTTIE)
 static SkString fAnimPath = SkString("./resources/animations/data.json");
 // static SkString                           fPath = SkString("./resources/fonts/FreeSans.ttf");
 static sk_sp<skottie::Animation> fAnimation;
@@ -1335,6 +1353,7 @@ static SDL_Event e;
 static bool quitApp = false;
 
 static GLuint vertexPosObject;
+static GLuint vertexArrayObject;
 
 static GLuint programObject;
 
@@ -1748,7 +1767,7 @@ public:
     }
 #endif // ENABLE_SKOTTIE
 
-    std::cout << std::endl; // flush
+    //std::cout << std::endl; // flush
 
 #ifdef ENABLE_BLINK_PLATFORM
   // see https://chromium.googlesource.com/chromium/src/+/master/third_party/blink/renderer/platform/graphics/paint/README.md
@@ -1830,6 +1849,7 @@ public:
   //printf("FillRect 9\n");
 
 #if defined(ENABLE_UI) ///&& defined(__TODO__)
+#if defined(ENABLE_IMAGES)
   if (!sStaticBitmapImage || sStaticBitmapImage->IsNull() || !sStaticBitmapImage->IsValid()) {
     printf("Invalid StaticBitmapImage\n");
   }
@@ -1850,7 +1870,8 @@ public:
     blink::FloatPoint{1.0, 1.0},
     blink::FloatSize(0.0, 0.0),
     SkBlendMode::kSrcOver);
-#endif
+#endif // ENABLE_IMAGES
+#endif // ENABLE_UI
 
   //printf("FillRect 71\n");
   auto rr = context.EndRecording();
@@ -3138,8 +3159,26 @@ static int InitGL() {
 
   // No clientside arrays, so do this in a webgl-friendly manner
   GL_CHECK( glGenBuffers(1, &vertexPosObject) );
+  GL_CHECK( glGenVertexArrays(1, &vertexArrayObject) );
+  GL_CHECK( glBindVertexArray(vertexArrayObject) );
+
   GL_CHECK( glBindBuffer(GL_ARRAY_BUFFER, vertexPosObject) );
   GL_CHECK( glBufferData(GL_ARRAY_BUFFER, sizeof(kVertexData), kVertexData, GL_STATIC_DRAW) );
+
+  //
+  GL_CHECK( glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), nullptr) );
+  GL_CHECK( glEnableVertexAttribArray(0) );
+  //
+  GL_CHECK( glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat),
+                        (GLvoid*)(2 * sizeof(GLfloat))) );
+  GL_CHECK( glEnableVertexAttribArray(1) );
+
+  // unbind
+  GL_CHECK( glBindVertexArray(0) );
+
+  GL_CHECK( glDisableVertexAttribArray(0) );
+  GL_CHECK( glDisableVertexAttribArray(1) );
+
   GL_CHECK( glBindBuffer(GL_ARRAY_BUFFER, 0) );
 
   GL_CHECK( glClearColor(0.0f, 0.0f, 0.0f, 0.0f) );
@@ -3156,6 +3195,7 @@ static void drawGLTexture(const int texWidth, const int texHeight, const void* t
     GL_CHECK( glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texWidth, texHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, texData) );
 }
 
+#if defined(ENABLE_SK_UI)
 static void drawUIDemo() {
     sk_sp<SkImage> pImage = nullptr;
     // Draw to the surface via its SkCanvas.
@@ -3193,6 +3233,7 @@ static void drawUIDemo() {
         printf("can`t get pImage\n");
     }
 }
+#endif
 
 #if defined(ENABLE_COBALT)
 static void drawBrowserDemo() {
@@ -3218,7 +3259,9 @@ static void drawBrowserDemo() {
             printf("pixmap.bounds().isEmpty()\n");
         }
     } else {
+#if defined(ENABLE_SK_UI)
         //drawUIDemo();
+#endif
     }
 
     //if (nullptr == pImage) {
@@ -3228,14 +3271,22 @@ static void drawBrowserDemo() {
 }
 #endif
 
+static void onResize(int widthIn, int heightIn)
+{
+  drawingBufferWidth = std::min(widthIn, maxDrawingBufferWidth);
+  drawingBufferHeight = std::min(heightIn, maxDrawingBufferHeight);
+  glViewport(0, 0, drawingBufferWidth, drawingBufferHeight);
+}
+
 ///
 // Draw a triangle using the shader pair created in Init()
 //
 static void Draw() {
     ///if (isDebugPeriodReached()) printf("Draw() 1\n");
-  GL_CHECK( glViewport(0, 0, width, height) );
+
   GL_CHECK( glClear(GL_COLOR_BUFFER_BIT) );
 
+//#if defined(__TODO__)
   GL_CHECK( glUseProgram(programObject) );
   GL_CHECK( glActiveTexture(GL_TEXTURE0) );
   ///if (isDebugPeriodReached()) printf("Draw() 2\n");
@@ -3251,9 +3302,15 @@ static void Draw() {
       drawBrowserDemo();
   } else
 #endif
+#if defined(ENABLE_SK_UI)
   {
       drawUIDemo();
   }
+#else
+  {
+    // nothing
+  }
+#endif
 
   // Draw to the surface via its SkCanvas.
   // We don't manage this pointer's lifetime.
@@ -3275,15 +3332,6 @@ static void Draw() {
   //printf("redClrTintAnim %f\n", redClrTintAnim);
   //GL_CHECK( glUniform1f(uniformRedClrTint, (sin(redClrTintAnim) / 2.0f + 0.5f)) );
 
-  GL_CHECK( glBindBuffer(GL_ARRAY_BUFFER, vertexPosObject) );
-  //
-  GL_CHECK( glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), nullptr) );
-  GL_CHECK( glEnableVertexAttribArray(0) );
-  //
-  GL_CHECK( glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat),
-                        (GLvoid*)(2 * sizeof(GLfloat))) );
-  GL_CHECK( glEnableVertexAttribArray(1) );
-
   int w, h;//, fs;
 #ifdef __EMSCRIPTEN__
   // see
@@ -3297,12 +3345,20 @@ static void Draw() {
   //float ys = 1.0f;
   //float mat[] = {xs, 0, 0, 0, 0, ys, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1};
 
-  GL_CHECK( glBindBuffer(GL_ARRAY_BUFFER, 0) );
+  //GL_CHECK( glBindBuffer(GL_ARRAY_BUFFER, 0) );
+
+  GL_CHECK( glBindVertexArray(vertexArrayObject) );
 
   GL_CHECK( glDrawArrays(GL_TRIANGLE_STRIP, 0, 4) );
 
-  GL_CHECK( glDisableVertexAttribArray(0) );
-  GL_CHECK( glDisableVertexAttribArray(1) );
+  GL_CHECK( glBindVertexArray(0) );
+
+  GL_CHECK( glUseProgram(0) );
+
+//#endif
+
+  //GL_CHECK( glDisableVertexAttribArray(0) );
+  //GL_CHECK( glDisableVertexAttribArray(1) );
       //printf("Draw() 7\n");
 }
 
@@ -3319,13 +3375,26 @@ static void animate() {
     // Reset the animation time.
     fTimeBase = SDL_GetTicks();
   }
+  // see https://github.com/google/skia/blob/master/platform_tools/android/apps/skottie/src/main/cpp/native-lib.cpp
   if (fAnimation) {
-    const SkMSec t = SDL_GetTicks() - fTimeBase;
-    const SkScalar d = fAnimation->duration() * 1000;
-    fAnimation->seek(static_cast<SkScalar>(::std::fmod(t, d) / d));
+    const SkMSec tElapsed = SDL_GetTicks() - fTimeBase;
+    const SkScalar duration = fAnimation->duration() * 1000;
+    const auto animPos = ::std::fmod(tElapsed, duration) / duration;
+    fAnimation->seek(static_cast<SkScalar>(animPos));
   }
 #else
-#error "TODO: port SDL_GetTicks without SDL"
+//#error "TODO: port SDL_GetTicks without SDL"
+  if (fTimeBase == 0) {
+    // Reset the animation time.
+    fTimeBase = SkTime::GetMSecs();
+  }
+  // see https://github.com/google/skia/blob/master/platform_tools/android/apps/skottie/src/main/cpp/native-lib.cpp
+  if (fAnimation) {
+    const SkMSec tElapsed = SkTime::GetMSecs() - fTimeBase;
+    const SkScalar duration = fAnimation->duration() * 1000;
+    const auto animPos = ::std::fmod(tElapsed, duration) / duration;
+    fAnimation->seek(static_cast<SkScalar>(animPos));
+  }
 #endif
 
   /// \note: (only wasm ST - wasm without pthreads)
@@ -3534,7 +3603,9 @@ static void mainLoop() {
   ///if (isDebugPeriodReached()) printf("mainLoop 4\n");
 
   // Update screen
+#if defined(ENABLE_HTML5_SDL) || !defined(__EMSCRIPTEN__)
   SDL_GL_SwapWindow(window);
+#endif
 
   ///if (isDebugPeriodReached()) printf("mainLoop 5\n");
 
@@ -4191,6 +4262,7 @@ int main(int argc, char** argv) {
   ///
   emscripten_webgl_init_context_attributes(&attr);
 
+//#ifdef __TODO__
   /*
   * In order to be able to set explicitSwapControl==true,
   * support for it must explicitly be enabled either
@@ -4276,6 +4348,8 @@ int main(int argc, char** argv) {
   attr.majorVersion = 1;
   attr.minorVersion = 0;
 #endif
+
+//#endif // __TODO__
 
   //em_ctx = emscripten_webgl_create_context(/* target = */ nullptr, &attr);
   em_ctx = emscripten_webgl_create_context("#canvas", &attr);
@@ -4465,6 +4539,8 @@ int main(int argc, char** argv) {
 
   InitGL();
 
+  onResize(width, height);
+
   printf("creating tests thread...\n");
 #ifdef ENABLE_BASE
   printf("tests thread started...\n");
@@ -4595,7 +4671,7 @@ int main(int argc, char** argv) {
               std::cout << std::endl; // flush
 #endif
 
-///#if defined(__TODO__)
+#if defined(ENABLE_IMAGES)
               ///DCHECK(thread->IsCurrentThread());
               ///
               ///blink::ThreadState::AttachCurrentThread();
@@ -4666,6 +4742,7 @@ int main(int argc, char** argv) {
                   ///
                   ///blink::ThreadState::DetachCurrentThread();
               }
+#endif // ENABLE_IMAGES
 
 
 #if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
@@ -4880,6 +4957,7 @@ int main(int argc, char** argv) {
   printf("running with __EMSCRIPTEN__\n");
   // If using own main loop, must use explicit context swapping (explicitSwapControl and OFFSCREENCANVAS_SUPPORT)
   emscripten_set_main_loop(mainLoop, 0, 1);
+  //emscripten_set_main_loop(mainLoop, 60, 1);
 #else
   printf("running with glew\n");
   DCHECK(quitApp == false);
@@ -4894,7 +4972,10 @@ int main(int argc, char** argv) {
   cleanup_skia();
 
   GL_CHECK( glDeleteTextures(1, &skia_texture) );
+
 #endif // ENABLE_SKIA
+
+  GL_CHECK( glDeleteVertexArrays(1, &vertexArrayObject) );
 
   GL_CHECK( glDeleteBuffers(1, &vertexPosObject) );
 

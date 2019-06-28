@@ -57,9 +57,9 @@ if(ENABLE_KHRONOS)
   )
 endif(ENABLE_KHRONOS)
 # Blink platform
-set(ENABLE_BLINK FALSE) # TODO
+set(ENABLE_BLINK TRUE) # TODO
 # cobalt
-set(ENABLE_COBALT TRUE)
+set(ENABLE_COBALT TRUE)#TRUE)
 # SKIA
 set(ENABLE_SKIA TRUE)
 set(USE_LIBPNG TRUE)
@@ -76,7 +76,7 @@ message(STATUS "USE_SK_GPU=${USE_SK_GPU}")
 set(ENABLE_SKSG TRUE)
 # NOTE: always FALSE here (change below)
 set(ENABLE_SKIA_UTILS TRUE) # required by skottie
-set(ENABLE_SKOTTIE TRUE) # requires sksg
+set(ENABLE_SKOTTIE TRUE)#TRUE) # requires sksg
 # see https://github.com/google/skia/blob/81abc43e6f0b1a789e1bf116820c8ede68d778ab/modules/skshaper/BUILD.gn#L23
 set(ENABLE_SKSHAPER TRUE)
 # WebAssembly
@@ -88,8 +88,8 @@ endif(NOT ENABLE_WASM)
 #set(ENABLE_SIMD TRUE)
 set(ENABLE_SIMD FALSE)
 # PTHREADS
-#set(ENABLE_WEB_PTHREADS TRUE)
 set(ENABLE_WEB_PTHREADS FALSE)
+#set(ENABLE_WEB_PTHREADS FALSE)
 #
 set(ENABLE_WEBGL2 TRUE)
 #set(ENABLE_WEBGL1 TRUE) # TODO
