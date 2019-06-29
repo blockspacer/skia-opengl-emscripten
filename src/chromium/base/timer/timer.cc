@@ -137,13 +137,13 @@ void TimerBase::Reset() {
 
   /// TODO: !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
 
-  printf("TimerBase::Reset 1\n");
+  //printf("TimerBase::Reset 1\n");
   DCHECK(origin_sequence_checker_.CalledOnValidSequence());
 
   //printf("TimerBase::Reset 2\n");
   // If there's no pending task, start one up and return.
   if (!scheduled_task_) {
-  //printf("TimerBase::Reset 3\n");
+    //printf("TimerBase::Reset 3\n");
     PostNewScheduledTask(delay_);
     return;
   }
@@ -166,9 +166,9 @@ void TimerBase::Reset() {
   //printf("TimerBase::Reset 6\n");
   // We can't reuse the |scheduled_task_|, so abandon it and post a new one.
   AbandonScheduledTask();
-  printf("TimerBase::Reset 7\n");
+  //printf("TimerBase::Reset 7\n");
   PostNewScheduledTask(delay_);
-  printf("TimerBase::Reset 8\n");
+  //printf("TimerBase::Reset 8\n");
 }
 
 TimeTicks TimerBase::Now() const {

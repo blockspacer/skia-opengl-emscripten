@@ -26,8 +26,10 @@ list(APPEND RENDERER_PRIVATE_DEFINES
 )
 
 # TODO: WASM ST: fix rasterizer performance issues
+# NOTE: need value < 50ms for animations
+# NOTE: also see layout_refresh_rate
 if (TARGET_EMSCRIPTEN AND NOT ENABLE_WEB_PTHREADS)
-  set(COBALT_MINIMUM_FRAME_TIME_IN_MILLISECONDS 100)
+  set(COBALT_MINIMUM_FRAME_TIME_IN_MILLISECONDS 33)
 else()
   set(COBALT_MINIMUM_FRAME_TIME_IN_MILLISECONDS 33)
 endif()

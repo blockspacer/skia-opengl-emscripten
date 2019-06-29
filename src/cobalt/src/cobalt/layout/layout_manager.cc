@@ -445,14 +445,6 @@ void LayoutManager::Impl::StartLayoutTimer() {
 }
 
 void LayoutManager::Impl::DoLayoutAndProduceRenderTree(const bool forceReLayout) {
-#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
-  if (!isLayoutRefreshReached()) {
-    return;
-  }
-
-  layoutProducedTime_ = base::Time::Now();
-#endif
-
   TRACE_EVENT0("cobalt::layout",
                "LayoutManager::Impl::DoLayoutAndProduceRenderTree()");
 
@@ -468,6 +460,15 @@ void LayoutManager::Impl::DoLayoutAndProduceRenderTree(const bool forceReLayout)
   if (!document->html()) {
     return;
   }
+
+#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+  if (!isLayoutRefreshReached()) {
+    return;
+  }
+
+  layoutProducedTime_ = base::Time::Now();
+#endif
+
 //P_LOG("LayoutManager::Impl::DoLayoutAndProduceRenderTree 2\n");
 
 //#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))

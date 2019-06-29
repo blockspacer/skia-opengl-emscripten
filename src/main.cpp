@@ -2170,7 +2170,15 @@ class CobaltTester {
 
   layout::LayoutManager::LayoutTrigger layout_trigger;
 
-  float layout_refresh_rate_ = 1.0;
+  // This constant defines the maximum rate at which the layout engine will
+  // refresh over time.  Since there is little benefit in performing a layout
+  // faster than the display's refresh rate, we set this to 60Hz.
+  const float kLayoutMaxRefreshFrequencyInHz = 60.0f;
+
+  /// \note need value < 200ms for animations
+  /// formula: MicrosecondsPerSecond / (layout_refresh_rate_ + 1.0)
+  /// 1.0 = 500ms, 5.0 = 166ms, 29.0 = 33.3ms, 60.0 = 16ms
+  float layout_refresh_rate_ = kLayoutMaxRefreshFrequencyInHz;
 
   // Web module owns the dom and layout stat trackers.
   std::unique_ptr<layout::LayoutStatTracker> layout_stat_tracker_;
