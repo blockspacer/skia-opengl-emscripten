@@ -180,6 +180,9 @@ void SystemWindow::DispatchInputEvent(const SbInputData& data,
       math::PointF(data.position.x, data.position.y),
       math::PointF(data.delta.x, data.delta.y)));
 #endif
+
+  // printf("DispatchInputEvent %s \n\n\n", input_event->position().ToString().c_str());
+
   event_dispatcher()->DispatchEvent(
       std::unique_ptr<base::Event>(input_event.release()));
 }

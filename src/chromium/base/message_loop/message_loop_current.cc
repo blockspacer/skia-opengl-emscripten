@@ -41,17 +41,20 @@ bool MessageLoopCurrent::IsSet() {
 
 void MessageLoopCurrent::AddDestructionObserver(
     DestructionObserver* destruction_observer) {
+  DCHECK(current_);
   DCHECK(current_->IsBoundToCurrentThread());
   current_->AddDestructionObserver(destruction_observer);
 }
 
 void MessageLoopCurrent::RemoveDestructionObserver(
     DestructionObserver* destruction_observer) {
+  DCHECK(current_);
   DCHECK(current_->IsBoundToCurrentThread());
   current_->RemoveDestructionObserver(destruction_observer);
 }
 
 scoped_refptr<SingleThreadTaskRunner> MessageLoopCurrent::task_runner() const {
+  DCHECK(current_);
   DCHECK(current_->IsBoundToCurrentThread());
   return current_->GetTaskRunner();
 }
@@ -59,6 +62,7 @@ scoped_refptr<SingleThreadTaskRunner> MessageLoopCurrent::task_runner() const {
 void MessageLoopCurrent::SetTaskRunner(
     scoped_refptr<SingleThreadTaskRunner> task_runner) {
   DCHECK(task_runner);
+  DCHECK(current_);
   DCHECK(current_->IsBoundToCurrentThread());
   current_->SetTaskRunner(std::move(task_runner));
 }
@@ -68,26 +72,31 @@ bool MessageLoopCurrent::IsBoundToCurrentThread() const {
 }
 
 bool MessageLoopCurrent::IsIdleForTesting() {
+  DCHECK(current_);
   DCHECK(current_->IsBoundToCurrentThread());
   return current_->IsIdleForTesting();
 }
 
 void MessageLoopCurrent::AddTaskObserver(TaskObserver* task_observer) {
+  DCHECK(current_);
   DCHECK(current_->IsBoundToCurrentThread());
   current_->AddTaskObserver(task_observer);
 }
 
 void MessageLoopCurrent::RemoveTaskObserver(TaskObserver* task_observer) {
+  DCHECK(current_);
   DCHECK(current_->IsBoundToCurrentThread());
   current_->RemoveTaskObserver(task_observer);
 }
 
 void MessageLoopCurrent::SetAddQueueTimeToTasks(bool enable) {
+  DCHECK(current_);
   DCHECK(current_->IsBoundToCurrentThread());
   current_->SetAddQueueTimeToTasks(enable);
 }
 
 void MessageLoopCurrent::SetNestableTasksAllowed(bool allowed) {
+  DCHECK(current_);
   DCHECK(current_->IsBoundToCurrentThread());
   current_->SetTaskExecutionAllowed(allowed);
 }
@@ -152,6 +161,7 @@ bool MessageLoopCurrentForUI::WatchFileDescriptor(
     MessagePumpForUI::Mode mode,
     MessagePumpForUI::FdWatchController* controller,
     MessagePumpForUI::FdWatcher* delegate) {
+  DCHECK(current_);
   DCHECK(current_->IsBoundToCurrentThread());
   return GetMessagePumpForUI()->WatchFileDescriptor(fd, persistent, mode,
                                                     controller, delegate);
@@ -211,6 +221,7 @@ MessagePumpForIO* MessageLoopCurrentForIO::GetMessagePumpForIO() const {
 HRESULT MessageLoopCurrentForIO::RegisterIOHandler(
     HANDLE file,
     MessagePumpForIO::IOHandler* handler) {
+  DCHECK(current_);
   DCHECK(current_->IsBoundToCurrentThread());
   return GetMessagePumpForIO()->RegisterIOHandler(file, handler);
 }
@@ -218,6 +229,7 @@ HRESULT MessageLoopCurrentForIO::RegisterIOHandler(
 bool MessageLoopCurrentForIO::RegisterJobObject(
     HANDLE job,
     MessagePumpForIO::IOHandler* handler) {
+  DCHECK(current_);
   DCHECK(current_->IsBoundToCurrentThread());
   return GetMessagePumpForIO()->RegisterJobObject(job, handler);
 }
@@ -225,6 +237,7 @@ bool MessageLoopCurrentForIO::RegisterJobObject(
 bool MessageLoopCurrentForIO::WaitForIOCompletion(
     DWORD timeout,
     MessagePumpForIO::IOHandler* filter) {
+  DCHECK(current_);
   DCHECK(current_->IsBoundToCurrentThread());
   return GetMessagePumpForIO()->WaitForIOCompletion(timeout, filter);
 }
@@ -235,6 +248,7 @@ bool MessageLoopCurrentForIO::WatchFileDescriptor(
     MessagePumpForIO::Mode mode,
     MessagePumpForIO::FdWatchController* controller,
     MessagePumpForIO::FdWatcher* delegate) {
+  DCHECK(current_);
   DCHECK(current_->IsBoundToCurrentThread());
   return GetMessagePumpForIO()->WatchFileDescriptor(fd, persistent, mode,
                                                     controller, delegate);
@@ -246,6 +260,7 @@ bool MessageLoopCurrentForIO::WatchMachReceivePort(
     mach_port_t port,
     MessagePumpForIO::MachPortWatchController* controller,
     MessagePumpForIO::MachPortWatcher* delegate) {
+  DCHECK(current_);
   DCHECK(current_->IsBoundToCurrentThread());
   return GetMessagePumpForIO()->WatchMachReceivePort(port, controller,
                                                      delegate);
@@ -262,6 +277,7 @@ bool MessageLoopCurrentForIO::WatchZxHandle(
     zx_signals_t signals,
     MessagePumpForIO::ZxHandleWatchController* controller,
     MessagePumpForIO::ZxHandleWatcher* delegate) {
+  DCHECK(current_);
   DCHECK(current_->IsBoundToCurrentThread());
   return GetMessagePumpForIO()->WatchZxHandle(handle, persistent, signals,
                                               controller, delegate);

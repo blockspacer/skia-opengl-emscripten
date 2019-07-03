@@ -855,6 +855,24 @@ static int browser_height = height;//10000;
 #include "cobalt/dom/html_element_context.h"
 #include "cobalt/dom/named_node_map.h"
 
+#include "cobalt/dom/attr.h"
+#include "cobalt/dom/comment.h"
+#include "cobalt/dom/document.h"
+#include "cobalt/dom/dom_rect.h"
+#include "cobalt/dom/dom_stat_tracker.h"
+#include "cobalt/dom/dom_token_list.h"
+#include "cobalt/dom/global_stats.h"
+#include "cobalt/dom/html_div_element.h"
+#include "cobalt/dom/html_element.h"
+#include "cobalt/dom/html_element_context.h"
+#include "cobalt/dom/named_node_map.h"
+#include "cobalt/dom/node_list.h"
+#include "cobalt/dom/text.h"
+#include "cobalt/dom/xml_document.h"
+#include "cobalt/dom_parser/parser.h"
+
+#include "cobalt/dom/rule_matching.h"
+
 //#include "cobalt/dom/testing/stub_css_parser.h"
 //#include "cobalt/dom/testing/stub_script_runner.h"
 
@@ -2017,6 +2035,7 @@ class CobaltTester {
   void OnKeyEventProduced(base::CobToken type, const dom::KeyboardEventInit &event);
   void OnPointerEventProduced(base::CobToken type, const dom::PointerEventInit &event);
   void OnWheelEventProduced(base::CobToken type, const dom::WheelEventInit &event);
+  void InjectInputEvent(scoped_refptr<cobalt::dom::Element> element, const scoped_refptr<cobalt::dom::Event> &event);
 
   public:
   //private:
@@ -2118,6 +2137,10 @@ class CobaltTester {
 
   // The Window object wraps all DOM-related components.
   scoped_refptr<dom::Window> window_;
+
+  std::unique_ptr<layout::TopmostEventTarget> topmost_event_target_;
+
+  scoped_refptr<base::SingleThreadTaskRunner> self_task_runner_;
 
   // Cache a WeakPtr in the WebModule that is bound to the Window's message loop
   // so we can ensure that all subsequently created WeakPtr's are also bound to
@@ -2483,7 +2506,26 @@ void CobaltTester::OnStopDispatchEvent(const scoped_refptr<dom::Event>& event) {
 }
 
 void CobaltTester::HandlePointerEvents() {
-    //printf("HandlePointerEvents\n");
+  //printf("HandlePointerEvents\n");
+
+  ///TRACE_EVENT0("cobalt::browser", "WebModule::Impl::HandlePointerEvents");
+  const scoped_refptr<dom::Document>& document = window_->document();
+
+  scoped_refptr<dom::Event> event;
+
+  do {
+    event = document->pointer_state()->GetNextQueuedPointerEvent();
+    if (event) {
+      SB_DCHECK(
+          window_ ==
+          base::polymorphic_downcast<const dom::UIEvent* const>(event.get())
+              ->view());
+      if (!topmost_event_target_) {
+        topmost_event_target_.reset(new layout::TopmostEventTarget());
+      }
+      topmost_event_target_->MaybeSendPointerEvents(event);
+    }
+  } while (event && !layout_manager_->IsRenderTreePending());
 }
 
 // Called when the WebModule's Window.onload event is fired.
@@ -2521,38 +2563,83 @@ void CobaltTester::OnOnScreenKeyboardInputEventProduced(
 }
 #endif  // SB_HAS(ON_SCREEN_KEYBOARD)
 
+void CobaltTester::InjectInputEvent(scoped_refptr<cobalt::dom::Element> element,
+                                       const scoped_refptr<cobalt::dom::Event>& event) {
+  printf("InjectInputEvent type %s \n", event->type().c_str());
+  TRACE_EVENT1("cobalt::browser", "WebModule::Impl::InjectInputEvent()",
+               "event", event->type().c_str());
+  //DCHECK(thread_checker_.CalledOnValidThread());
+  //DCHECK(is_running_);
+  DCHECK(window_);
+
+  if (element) {
+    element->DispatchEvent(event);
+  } else {
+    if (dom::PointerState::CanQueueEvent(event)) {
+      // As an optimization we batch together pointer/mouse events for as long
+      // as we can get away with it (e.g. until a non-pointer event is received
+      // or whenever the next layout occurs).
+      window_->document()->pointer_state()->QueuePointerEvent(event);
+    } else {
+      // In order to maintain the correct input event ordering, we first
+      // dispatch any queued pending pointer events.
+      HandlePointerEvents();
+      window_->InjectEvent(event);
+    }
+  }
+}
+
 void CobaltTester::OnKeyEventProduced(base::CobToken type,
                                        const dom::KeyboardEventInit& event) {
-  printf("OnKeyEventProduced client_x %s \n",
-    event.code().c_str());
-  /*TRACE_EVENT0("cobalt::browser", "CobaltTester::OnKeyEventProduced()");
-  if (base::MessageLoop::current() != self_message_loop_) {
-    self_message_loop_->task_runner()->PostTask(
-        FROM_HERE, base::Bind(&CobaltTester::OnKeyEventProduced, weak_this_,
-                              type, event));
+  printf("OnKeyEventProduced client_x %s \n", event.code().c_str());
+
+  DCHECK(system_window_);
+
+  TRACE_EVENT0("cobalt::browser", "CobaltTester::OnKeyEventProduced()");
+  DCHECK(self_task_runner_);
+  if (base::MessageLoopCurrent::Get().task_runner() != self_task_runner_) {
+    self_task_runner_->PostTask(
+        FROM_HERE, base::Bind(&CobaltTester::OnKeyEventProduced,
+                              base::Unretained(this), type, event));
     return;
   }
 
-  // Filter the key event.
+  /*// Filter the key event.
   if (!FilterKeyEvent(type, event)) {
     return;
-  }
+  }*/
 
-  InjectKeyEventToMainWebModule(type, event);*/
+  ///InjectKeyEventToMainWebModule(type, event);
+
+  /*if (base::MessageLoop::current() != self_message_loop_) {
+    self_message_loop_->task_runner()->PostTask(
+        FROM_HERE, base::Bind(&BrowserModule::InjectKeyEventToMainWebModule,
+                              weak_this_, type, event));
+    return;
+  }*/
+
+  //DCHECK(web_module_);
+  //web_module_->InjectKeyboardEvent(type, event);
+
+  scoped_refptr<dom::KeyboardEvent> keyboard_event(
+      new dom::KeyboardEvent(type, window_, event));
+  InjectInputEvent(scoped_refptr<dom::Element>(), keyboard_event);
 }
 
 void CobaltTester::OnPointerEventProduced(base::CobToken type,
                                            const dom::PointerEventInit& event) {
   printf("OnPointerEventProduced client_x %f client_y %f \n",
     event.client_x(), event.client_y());
-  /*TRACE_EVENT0("cobalt::browser", "CobaltTester::OnPointerEventProduced()");
-  if (base::MessageLoop::current() != self_message_loop_) {
-    self_message_loop_->task_runner()->PostTask(
+  TRACE_EVENT0("cobalt::browser", "CobaltTester::OnPointerEventProduced()");
+  DCHECK(system_window_);
+  DCHECK(self_task_runner_);
+  if (base::MessageLoopCurrent::Get().task_runner() != self_task_runner_) {
+    self_task_runner_->PostTask(
         FROM_HERE, base::Bind(&CobaltTester::OnPointerEventProduced,
-                              weak_this_, type, event));
+                              base::Unretained(this), type, event));
     return;
   }
-
+/*
 #if defined(ENABLE_DEBUGGER)
   // If the debug console is fully visible, it gets the next chance to handle
   // pointer events.
@@ -2566,14 +2653,29 @@ void CobaltTester::OnPointerEventProduced(base::CobToken type,
 
   DCHECK(web_module_);
   web_module_->InjectPointerEvent(type, event);*/
+
+  scoped_refptr<dom::PointerEvent> pointer_event(
+      new dom::PointerEvent(type, window_, event));
+  InjectInputEvent(scoped_refptr<dom::Element>(), pointer_event);
 }
 
 void CobaltTester::OnWheelEventProduced(base::CobToken type,
                                          const dom::WheelEventInit& event) {
-  printf("OnWheelEventProduced client_x %d client_y %d \n",
+  printf("OnWheelEventProduced client_x %f client_y %f \n",
     event.client_x(), event.client_y());
-  /*TRACE_EVENT0("cobalt::browser", "CobaltTester::OnWheelEventProduced()");
-  if (base::MessageLoop::current() != self_message_loop_) {
+
+  TRACE_EVENT0("cobalt::browser", "CobaltTester::OnWheelEventProduced()");
+
+  DCHECK(system_window_);
+  DCHECK(self_task_runner_);
+  if (base::MessageLoopCurrent::Get().task_runner() != self_task_runner_) {
+    self_task_runner_->PostTask(
+        FROM_HERE, base::Bind(&CobaltTester::OnWheelEventProduced,
+                              base::Unretained(this), type, event));
+    return;
+  }
+
+  /*if (base::MessageLoop::current() != self_message_loop_) {
     self_message_loop_->task_runner()->PostTask(
         FROM_HERE, base::Bind(&CobaltTester::OnWheelEventProduced, weak_this_,
                               type, event));
@@ -2593,6 +2695,10 @@ void CobaltTester::OnWheelEventProduced(base::CobToken type,
 
   DCHECK(web_module_);
   web_module_->InjectWheelEvent(type, event);*/
+
+  scoped_refptr<dom::WheelEvent> wheel_event(
+      new dom::WheelEvent(type, window_, event));
+  InjectInputEvent(scoped_refptr<dom::Element>(), wheel_event);
 }
 
 #ifdef HAS_ICU
@@ -2628,7 +2734,11 @@ static void listWordBoundaries(const icu::UnicodeString& s) {
 #endif
 
 CobaltTester::CobaltTester()
+  //:  self_task_runner_(base::MessageLoopCurrent::Get().task_runner())
+  :  self_task_runner_(main_thread_.task_runner())
 {
+  DCHECK(self_task_runner_);
+
   // Create the rasterizer using the platform default RenderModule options.
   RendererModule::Options render_module_options;
   render_module_options.enable_fps_stdout = false;
@@ -2683,6 +2793,7 @@ CobaltTester::CobaltTester()
                                       //camera_3d_
                                       )));*/
 
+#ifdef __TODO__
   SbEvent* event = new SbEvent(); // TODO: free mem
   event->type = SbEventType::kSbEventTypeInput;
   const char* input_text = "input_text";
@@ -2723,7 +2834,6 @@ CobaltTester::CobaltTester()
   //system_window_->HandleInputEvent(&event);
   system_window::HandleInputEvent(event);
   // TODO: free mem, see event "deleter"
-#ifdef __TODO__
 
 #endif
 
@@ -3524,8 +3634,145 @@ static void animate() {
     ///if (isDebugPeriodReached()) printf("animate end\n");
 }
 
-static void mainLoop() {
+static void updateBrowserMousePos(const int screenMouseX, const int screenMouseY) {
+  // https://github.com/blockspacer/cobalt-clone-28052019/blob/89664d116629734759176d820e9923257717e09c/src/starboard/shared/linux/dev_input/dev_input.cc#L910
+  // https://github.com/blockspacer/cobalt-clone-28052019/blob/master/src/starboard/android/shared/input_events_generator.cc#L703
+  if(!g_cobaltTester) {
+    return;
+  }
 
+  printf("updateBrowserMousePos x %d y %d\n", screenMouseX, screenMouseY);
+
+  DCHECK(g_cobaltTester->system_window_);
+  DCHECK(g_cobaltTester->self_task_runner_);
+
+  ///if (base::MessageLoopCurrent::Get().task_runner() != g_cobaltTester->self_task_runner_) {
+    g_cobaltTester->self_task_runner_->PostTask(
+        FROM_HERE, base::Bind(
+          [](const int mouseX, const int mouseY) {
+            SbEvent* event = new SbEvent(); // TODO: free mem
+            event->type = SbEventType::kSbEventTypeInput;
+            SbInputData* data = new SbInputData();
+            SbMemorySet(data, 0, sizeof(*data));
+            data->window = g_cobaltTester->system_window_->GetSbWindow();
+            data->type = SbInputEventType::kSbInputEventTypeMove;
+            data->device_id = 2; // kGamepadDeviceId
+            data->key_location = kSbKeyLocationUnspecified;
+            data->position.x = mouseX;
+            data->position.y = mouseY;
+            data->key_modifiers = kSbKeyModifiersNone;
+            data->device_type = SbInputDeviceType::kSbInputDeviceTypeMouse;
+            data->key = SbKey::kSbKeyMouse1;
+            //data->character = "k";
+#if SB_API_VERSION >= 6
+            data->pressure = NAN;
+            data->size = {NAN, NAN};
+            data->tilt = {NAN, NAN};
+#endif
+            event->data = data;
+
+            system_window::HandleInputEvent(event);
+
+            scoped_refptr<Document> document_ = g_cobaltTester->window_->document();
+            scoped_refptr<HTMLElement> indicated_element = document_->indicated_element();
+            if(indicated_element) {
+              printf("document->indicated_element() tag_name %s\n", indicated_element->tag_name().c_str());
+              printf("document->indicated_element() node_name %s\n", indicated_element->node_name().c_str());
+              printf("document->indicated_element() local_name %s\n", indicated_element->local_name().c_str());
+              printf("document->indicated_element() %s\n", indicated_element->text_content().value_or("text_content").c_str());
+              if (indicated_element->text_content().value_or("") == "hovertest") {
+                //indicated_element->set_text_content(std::string("New text content"));
+                indicated_element->set_inner_html("<br>Cobalt<br>best<br>");
+                // TODO:: free memory
+                scoped_refptr<HTMLElement> div_element_3 =
+                    indicated_element->AppendChild(new cobalt::dom::HTMLDivElement(document_.get()))
+                        ->AsElement()
+                        ->AsHTMLElement();
+                div_element_3->SetAttribute("style", "height: 120px;");
+                div_element_3->AsHTMLElement()->style()->set_width("210px", nullptr);
+                div_element_3->AppendChild(new cobalt::dom::Text(document_.get(), "This "));
+                div_element_3->AppendChild(new cobalt::dom::Text(document_.get(), "is "));
+                div_element_3->AppendChild(new cobalt::dom::Text(document_.get(), "not "));
+                div_element_3->AppendChild(new cobalt::dom::Text(document_.get(), "Sparta."));
+                indicated_element->style()->SetPropertyValue("background", "#ccc", nullptr);
+                // https://www.w3schools.com/cssref/trysel.asp
+                scoped_refptr<cobalt::dom::NodeList> spanSelectors = cobalt::dom::QuerySelectorAll(document_.get(), "div + div ~ span.testselector", document_->html_element_context()->css_parser());
+                if(spanSelectors) {
+                  for(uint32 i = 0; i < spanSelectors->length(); i++) {
+                    spanSelectors->Item(i)->AsElement()->SetAttribute("style", "color: green");
+                  }
+                }
+                //div_element_3->AddEventListener("mouseover")
+                //document_->UpdateSelectorTree();
+              }
+            }
+          } , screenMouseX, screenMouseY));
+  ///}
+}
+
+#ifdef __EMSCRIPTEN__
+EM_BOOL emsc_mouse_cb(int emsc_type, const EmscriptenMouseEvent* emsc_event, void* user_data) {
+    float dpi_scale = 1.0f;
+    float mouse_x = (emsc_event->targetX * dpi_scale);
+    float mouse_y = (emsc_event->targetY * dpi_scale);
+    const int MAX_MOUSEBUTTONS = 3;
+    if ((emsc_event->button >= 0) && (emsc_event->button < MAX_MOUSEBUTTONS)) {
+        bool is_button_event = false;
+        switch (emsc_type) {
+            case EMSCRIPTEN_EVENT_MOUSEDOWN:
+                is_button_event = true;
+                break;
+            case EMSCRIPTEN_EVENT_MOUSEUP:
+                is_button_event = true;
+                break;
+            case EMSCRIPTEN_EVENT_MOUSEMOVE:
+                updateBrowserMousePos(mouse_x, mouse_y);
+                break;
+            case EMSCRIPTEN_EVENT_MOUSEENTER:
+                break;
+            case EMSCRIPTEN_EVENT_MOUSELEAVE:
+                break;
+            default:
+                break;
+        }
+        // TODO
+        /*if (type != SAPP_EVENTTYPE_INVALID) {
+            _sapp_init_event(type);
+            if (emsc_event->ctrlKey) {
+                _sapp.event.modifiers |= SAPP_MODIFIER_CTRL;
+            }
+            if (emsc_event->shiftKey) {
+                _sapp.event.modifiers |= SAPP_MODIFIER_SHIFT;
+            }
+            if (emsc_event->altKey) {
+                _sapp.event.modifiers |= SAPP_MODIFIER_ALT;
+            }
+            if (emsc_event->metaKey) {
+                _sapp.event.modifiers |= SAPP_MODIFIER_SUPER;
+            }
+            if (is_button_event) {
+                switch (emsc_event->button) {
+                    case 0: _sapp.event.mouse_button = SAPP_MOUSEBUTTON_LEFT; break;
+                    case 1: _sapp.event.mouse_button = SAPP_MOUSEBUTTON_MIDDLE; break;
+                    case 2: _sapp.event.mouse_button = SAPP_MOUSEBUTTON_RIGHT; break;
+                    default: _sapp.event.mouse_button = (sapp_mousebutton)emsc_event->button; break;
+                }
+            }
+            else {
+                _sapp.event.mouse_button = SAPP_MOUSEBUTTON_INVALID;
+            }
+            _sapp.event.mouse_x = _sapp.mouse_x;
+            _sapp.event.mouse_y = _sapp.mouse_y;
+            _sapp_call_event(&_sapp.event);
+        }*/
+    }
+    // TODO
+    // _sapp_emsc_update_keyboard_state();
+    return true;
+}
+#endif
+
+static void mainLoop() {
 
 #ifdef __EMSCRIPTEN__
 
@@ -3621,13 +3868,35 @@ static void mainLoop() {
 
   ///if (isDebugPeriodReached()) printf("mainLoop 6\n");
 
+  static int screenMouseX, screenMouseY;
+
 #if defined(ENABLE_HTML5_SDL) || !defined(__EMSCRIPTEN__)
   while (SDL_PollEvent(&e) != 0) {
     switch (e.type) {
       case SDL_QUIT: {
         quitApp = true;
         printf("recieved quit signal\n");
+        break;
       }
+      case SDL_MOUSEMOTION: {
+        //SDL_GetGlobalMouseState(&screenMouseX, &screenMouseY);
+        SDL_GetMouseState(&screenMouseX, &screenMouseY);
+
+        printf("SDL_MOUSEMOTION %d %d\n", screenMouseX, screenMouseY);
+
+        updateBrowserMousePos(screenMouseX, screenMouseY);
+        break;
+      }
+      // TODO
+      /*case SDL_MOUSEBUTTONUP: {
+        //SDL_GetGlobalMouseState(&screenMouseX, &screenMouseY);
+        SDL_GetMouseState(&screenMouseX, &screenMouseY);
+
+        printf("SDL_MOUSEMOTION %d %d\n", screenMouseX, screenMouseY);
+
+        updateBrowserMousePos(screenMouseX, screenMouseY);
+        break;
+      }*/
     }
   }
 #elif defined(__EMSCRIPTEN__)
@@ -3635,6 +3904,9 @@ static void mainLoop() {
   #warning "see https://github.com/floooh/sokol/blob/master/sokol_app.h#L2403 for example"
   #warning "see https://github.com/hongkk/urho/blob/master/Source/Urho3D/Input/Input.cpp for example"
   #warning "see https://github.com/h-s-c/libKD/blob/master/source/kd.c#L2658 for example"
+
+  // TODO
+  emscripten_set_mousemove_callback("#canvas", 0, true, emsc_mouse_cb);
 #else
   #error "TODO: port SDL_PollEvent"
 #endif
@@ -3791,7 +4063,13 @@ int main(int argc, char** argv) {
   base::CommandLine::ForCurrentProcess()->InitFromArgv(argc, argv);
 
   ///printf("SysInfo::AmountOfFreeDiskSpace %d ...\n", base::SysInfo::AmountOfFreeDiskSpace());
+
+#ifdef __EMSCRIPTEN__
   printf("SysInfo::AmountOfAvailablePhysicalMemory %lld ...\n", base::SysInfo::AmountOfAvailablePhysicalMemory());
+#else
+  printf("SysInfo::AmountOfAvailablePhysicalMemory %ld ...\n", base::SysInfo::AmountOfAvailablePhysicalMemory());
+#endif
+
   printf("SysInfo::NumberOfProcessors %d ...\n", base::SysInfo::NumberOfProcessors());
   printf("SysInfo::NumberOfProcessors %s ...\n", base::SysInfo::OperatingSystemArchitecture().c_str());
   printf("SysInfo::NumberOfProcessors %s ...\n", base::SysInfo::CPUModelName().c_str());
