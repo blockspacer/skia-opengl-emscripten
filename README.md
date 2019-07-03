@@ -846,6 +846,9 @@ MISC
 > WASM tests https://chromium.googlesource.com/external/github.com/WebAssembly/waterfall/
 
 TODO
+> Fix WASM ST animations
+NOTE: we can use WASM MT only when all browsers enable Shared Array Buffer https://caniuse.com/#search=worker
+see: https://blog.qt.io/blog/2019/06/26/qt-webassembly-multithreading/
 > Chrome only:
 Init WTF ...
 RangeError: Array buffer allocation failed

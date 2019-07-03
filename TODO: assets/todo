@@ -8,6 +8,9 @@ https://visualstudiomagazine.com/articles/2017/01/25/26-web-desktop-ui-tools.asp
 https://github.com/LWJGL/lwjgl3/issues/101#issuecomment-289821751
 reduce std size https://blog.magnum.graphics/backstage/forward-declaring-stl-container-types/
 dom components
+PDF support (PDFium)
+> https://github.com/flutter/flutter/issues/15406
+Video support
 SIDE MODULE WASM: load the WASM module using the standard JavaScript APIs:
  > https://blog.scottlogic.com/2017/10/17/wasm-mandelbrot.html
 runtime/compile-time feature enabler/disabler VISUAL TOOL & disable dom elements/widgets
@@ -29,9 +32,17 @@ dom visual editor
  > phonegap
  > https://uxpro.cc/toolbox/visual-design/animation/
 widget gallery / demo apps apps
+ > https://sketch.cloud/s/3bppr
 widget gallery / demo apps online https://developer.xamarin.com/samples-all
 dynamic font loading
 clipboard support (WASM)
+ > https://github.com/godotengine/godot/blob/master/platform/javascript/os_javascript.cpp#L813
+ > https://codereview.qt-project.org/c/qt/qtbase/+/222682/23/src/plugins/platforms/wasm/qwasmclipboard.cpp
+ > https://bugreports.qt.io/browse/QTBUG-64638
+ > https://stackoverflow.com/questions/51203511/how-to-paste-outside-unity-copied-text-in-to-input-fields-in-unity-in-webgl-buil
+ > https://forum.unity.com/threads/copy-paste-has-anyone-built-a-good-solution-for-this.401851/#post-2672497
+ > https://github.com/flutter/flutter/issues/33470
+ > https://forum.unity.com/threads/webgl-copy-paste-for-input-field-not-working.494765/
 image region zoom
  > https://www.walmart.com/ip/Classic-Accessories-StormPro-Boat-Storage-Cover/
  > https://www.walgreens.com/store/c/pantene-gold-series-repairing-mask-treatment/ID=prod6393463-product
@@ -58,6 +69,7 @@ text Stroking / gradients / DrawLooper https://peach.oschina.io/post/c++_skia%E5
 Zoom on wheel
 Settings / config sustem
 flexbox / yoga / QT Anchor Layout
+ > https://github.com/flutter/flutter_web/blob/master/packages/flutter_web/lib/src/rendering/flex.dart
 icon fonts: FontAwesome, Emoji, UTF symbols e.t.c.
 smaller package size
 timers on WASM ST
@@ -101,7 +113,12 @@ exe remote debugger aka gammaray https://www.kdab.com/development-resources/qt-t
 crash & exception reports (EXE & WASM)
 WASM: record performance traces to JSON
 performance chart (browser dev tools)
+fix tests
+create benchmark
 godot support
+packaging / archivation on native (virtual FS)
+multiple tabs on same canvas / different 3D textures
+multiple canvases
 dom reactive bindings
 i18n & dynamic language switch & poedit support
 GPU (GLES2/WEBGL2) rendering
@@ -143,8 +160,37 @@ JS lib a.k.a. google amp/react.js = html compatability layer
 Multimedia: audio
 Multimedia: video
 asmdom support https://github.com/mbasso/asm-dom
-charts module & gantt chart aka https://doc.qt.io/qt-5/qtcharts-index.html
-> https://sketch.cloud/s/3bppr
+charts module & zoom/scroll/select & gantt chart aka https://doc.qt.io/qt-5/qtcharts-index.html
+ > https://github.com/emweb/wt/blob/master/src/Wt/Chart/WAxisSliderWidget.C
+ > https://www.reddit.com/r/cpp/comments/b2yryh/decent_charts_library_that_is_not_qt/
+ > https://github.com/PhilJay/MPAndroidChart/blob/master/MPChartLib/src/main/java/com/github/mikephil/charting/renderer/BarChartRenderer.java
+ > https://github.com/bobfrank/chart
+ > https://www.webtoolkit.eu/widgets/graphics-charts/scatter-plot
+ > https://en.m.wikibooks.org/wiki/OpenGL_Programming#The_scientific_arc
+ > https://github.com/tidyverse/ggplot2
+ > https://github.com/chartjs
+ > https://github.com/wxIshiko/wxCharts
+ > https://github.com/Kitware/VTK
+ > http://vtk.1045678.n5.nabble.com/WebAssembly-Support-td5749615.html
+ > https://github.com/arrayfire/forge
+ > https://blog.bitsrc.io/11-javascript-charts-and-data-visualization-libraries-for-2018-f01a283a5727
+ > https://github.com/plotly/plotly.js
+ > https://github.com/d3/d3
+ > https://devblogs.microsoft.com/xamarin/microcharts-elegant-cross-platform-charts-for-any-app/
+ > https://github.com/aloisdeniel/Microcharts & https://github.com/aloisdeniel/Microcharts.Samples
+ > https://github.com/qiuchengw/siachart/tree/0043fcf5539ea92b09e603ec7ceb02ed872ddfb3/src/charty/charty
+ > https://sketch.cloud/s/3bppr
+chart Buffer, Progressive rendering, quadtree, emory fragmentation, merge/group points
+ > https://github.com/chartjs/Chart.js/issues/4053
+ > https://medium.com/@christopheviau/6-weird-tricks-for-insane-chart-performance-afd29f90f271
+ > https://zoomcharts.com/developers/en/overview/architecture.html
+ > https://github.com/danielgindi/Charts/issues/29
+ > http://square.github.io/crossfilter/ & https://github.com/plotly/plotly.js/issues/1316
+Mixed Chart: on same plot
+ > https://www.chartjs.org/docs/latest/charts/mixed.html
+Pictorials (Any SVG path can be used as a shape for your chart)
+ > https://www.amcharts.com/javascript-charts/
+css chart styling & html tooltips / labels
 audio waveforms e.t.c. https://docs.juce.com/master/tutorial_audio_thumbnail.html
 accessibility / screen reader / Color Blindness / e.t.c.
 PickList https://www.primefaces.org/primeng/#/picklist
@@ -168,6 +214,15 @@ text selection
 in-browser text to renderered layout (1-to-1)
 webrtc & websockets support
 SCSS
+Text is not selectable
+ > https://github.com/flutter/flutter/issues/32246
+TODO http://jwu.github.io/wiki/gamedev-libs/
+Browser Forward button
+ > https://github.com/flutter/flutter/issues/32248
+Houdini CSS painter
+ > Houdini CSS & WebGL
+ > https://caniuse.com/#search=Houdini
+ > https://github.com/flutter/flutter/issues/34249
 dynamic dom props from css (calc, attr) for any elem https://stackoverflow.com/a/46213559/10904212
 css grid
  > https://www.joomlashack.com/blog/tutorials/determining-the-size-of-the-tracks-in-css-grid/
@@ -224,7 +279,11 @@ ratings portal / awwwards
 freelance portal
 JS bindings
 QT bindings
+support VS Code / XCode
 remote UI https://blog.qt.io/blog/2018/06/12/remote-uis-webgl-webassembly/
+make multiple demo apps using same lib
+ > https://sketch.cloud/s/3bppr
+RightToLeft text & fonts
 dev forum
 layer system
 python/go/e.t.c. bingings
