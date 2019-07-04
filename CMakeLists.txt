@@ -4,6 +4,14 @@
 set(PROJECT_NAME "skemgl")
 project(${PROJECT_NAME} CXX C)
 
+# build mode. separated from CMAKE_BUILD_TYPE to provide custom debug level
+# for example, you may want build optimized wasm with debug stack trace support
+# NOTE: measure performace on RELEASE builds!
+#set(RELEASE_BUILD TRUE)
+#set(RELEASE_BUILD FALSE)
+option(RELEASE_BUILD "RELEASE_BUILD" OFF)
+message(STATUS "RELEASE_BUILD = ${RELEASE_BUILD}")
+
 # NOTE: always FALSE here (change below)
 set(TARGET_EMSCRIPTEN FALSE)
 set(TARGET_LINUX FALSE)
@@ -286,14 +294,6 @@ IF( NOT CMAKE_BUILD_TYPE )
    SET( CMAKE_BUILD_TYPE Debug ... FORCE )
 ENDIF()
 
-# build mode. separated from CMAKE_BUILD_TYPE to provide custom debug level
-# for example, you may want build optimized wasm with debug stack trace support
-# NOTE: measure performace on RELEASE builds!
-#set(RELEASE_BUILD TRUE)
-#set(RELEASE_BUILD FALSE)
-option(RELEASE_BUILD "RELEASE_BUILD" OFF)
-message(STATUS "RELEASE_BUILD = ${RELEASE_BUILD}")
-
 # Mandatory dependencies
 find_program(PYTHON_FOUND python)
 if(NOT PYTHON_FOUND)
@@ -360,6 +360,10 @@ if(ENABLE_GNET)
     GNET
   )
 endif(ENABLE_GNET)
+
+if (RELEASE_BUILD)
+  list(APPEND APP_DEFINITIONS RELEASE_BUILD=1)
+endif (RELEASE_BUILD)
 
 if (ENABLE_SKIA)
   set(ENABLE_WUFFS FALSE)
@@ -603,6 +607,7 @@ set(COMMON_CXX_FLAGS "${COMMON_CXX_FLAGS} -DCODEC_IMPLEMENTATION=1")
 if(RELEASE_BUILD)
   set(COMMON_FLAGS "${COMMON_FLAGS} -fno-rtti")
   set(COMMON_FLAGS "${COMMON_FLAGS} -fno-exceptions")
+  set(COMMON_FLAGS "${COMMON_FLAGS} -DNDEBUG=1")
 else()
   # https://stackoverflow.com/a/4184877/10904212
   set(COMMON_FLAGS "${COMMON_FLAGS} -frtti")
@@ -1328,6 +1333,8 @@ else()
 endif(NOT RELEASE_BUILD)
 
   set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_RELEASE=1")
+
+  # TODO: fix hangs in WASM MT without NDEBUG=1 in SK_COMMON_FLAGS
   set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DNDEBUG=1")
 
   # https://github.com/google/skia/blob/master/BUILD.gn#L502
@@ -1452,7 +1459,7 @@ endif(NOT RELEASE_BUILD)
     # see https://github.com/emscripten-core/emscripten/issues/362
     # NOTE: -O3 = best performance. -Oz = best size.
     #set(EMCC_COMMON "${EMCC_COMMON} -Oz")
-  else(RELEASE_BUILD)
+  else()
     # set(EMCC_COMMON "${EMCC_COMMON} -O0")
     # NOTE Catching C++ exceptions is turned off by default in -O1 (and above).
     if(NOT OPTIMIZE_LEVEL) # TODO
