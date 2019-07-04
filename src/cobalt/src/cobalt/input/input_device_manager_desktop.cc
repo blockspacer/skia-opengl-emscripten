@@ -54,6 +54,23 @@ void UpdateEventInit(const system_window::InputEvent* input_event,
         cobalt::dom::Event::GetEventTime(input_event->timestamp()));
   }
 }
+
+/// \brief float to int without overflow
+/// \note fixes WASM (emscripten) release build: float unrepresentable in integer range
+/// \see https://github.com/emscripten-core/emscripten/blob/master/site/source/docs/compiling/WebAssembly.rst#trapping
+static int32_t f_to_int32(float f)
+{
+    using int_type = int32_t;
+    constexpr int_type min = std::numeric_limits<int_type>::min();
+    constexpr int_type max = std::numeric_limits<int_type>::max();
+
+    constexpr float fmin = static_cast<float>(min);
+    constexpr float fmax = static_cast<float>(max);
+
+    if(f < fmin) return min; // overflow
+    if(f > fmax) return max; // overflow
+    return static_cast<int_type>(f);
+}
 }  // namespace
 
 InputDeviceManagerDesktop::InputDeviceManagerDesktop(
@@ -134,6 +151,8 @@ void UpdateEventModifierInit(const system_window::InputEvent* input_event,
 
 void UpdateMouseEventInitButtons(const system_window::InputEvent* input_event,
                                  MouseEventInit* event) {
+  ///printf("UpdateMouseEventInitButtons\n");
+
   // The value of the button attribute MUST be as follows:
   //  https://www.w3.org/TR/uievents/#ref-for-dom-mouseevent-button-1
   switch (input_event->key_code()) {
@@ -214,7 +233,9 @@ void UpdateMouseEventInitButtons(const system_window::InputEvent* input_event,
 
 void UpdateMouseEventInit(const system_window::InputEvent* input_event,
                           dom::MouseEventInit* mouse_event) {
+  ///printf("UpdateMouseEventInit 1\n");
   UpdateEventModifierInit(input_event, mouse_event);
+  ///printf("UpdateMouseEventInit 2\n");
   UpdateMouseEventInitButtons(input_event, mouse_event);
 
   const math::PointF& position = input_event->position();
@@ -222,6 +243,7 @@ void UpdateMouseEventInit(const system_window::InputEvent* input_event,
   mouse_event->set_screen_y(static_cast<float>(position.y()));
   mouse_event->set_client_x(static_cast<float>(position.x()));
   mouse_event->set_client_y(static_cast<float>(position.y()));
+  ///printf("UpdateMouseEventInit 3\n");
 }
 
 // Returns the value or the default_value when value is NaN.
@@ -255,8 +277,16 @@ void InputDeviceManagerDesktop::HandleKeyboardEvent(
 
 void InputDeviceManagerDesktop::HandlePointerEvent(
     base::CobToken type, const system_window::InputEvent* input_event) {
+  ///printf("InputDeviceManagerDesktop HandlePointerEvent 1\n");
+
   dom::PointerEventInit pointer_event;
+
+  ///printf("InputDeviceManagerDesktop HandlePointerEvent 2\n");
+
   UpdateEventInit(input_event, &pointer_event);
+
+  ///printf("InputDeviceManagerDesktop HandlePointerEvent 3\n");
+
   UpdateMouseEventInit(input_event, &pointer_event);
 
   switch (input_event->type()) {
@@ -281,19 +311,29 @@ void InputDeviceManagerDesktop::HandlePointerEvent(
       pointer_event.set_pointer_type("mouse");
       break;
   }
+  ///printf("InputDeviceManagerDesktop HandlePointerEvent 3.1\n");
   pointer_event.set_pointer_id(input_event->device_id());
 #if SB_API_VERSION >= 6
+  ///printf("InputDeviceManagerDesktop HandlePointerEvent 3.2\n");
   pointer_event.set_width(value_or(input_event->size().x(), 0.0f));
   pointer_event.set_height(value_or(input_event->size().y(), 0.0f));
+  ///printf("InputDeviceManagerDesktop HandlePointerEvent 3.3\n");
   pointer_event.set_pressure(value_or(input_event->pressure(),
                                       input_event->modifiers() ? 0.5f : 0.0f));
-  pointer_event.set_tilt_x(
-      value_or(static_cast<float>(input_event->tilt().x()), 0.0f));
-  pointer_event.set_tilt_y(
-      value_or(static_cast<float>(input_event->tilt().y()), 0.0f));
+  ///printf("InputDeviceManagerDesktop HandlePointerEvent 3.4\n");
+  const int32_t tiltX = f_to_int32(value_or(input_event->tilt().x(), 0.0f));
+  const int32_t tiltY = f_to_int32(value_or(input_event->tilt().y(), 0.0f));
+  ///printf("InputDeviceManagerDesktop HandlePointerEvent 3.5\n");
+  pointer_event.set_tilt_x(tiltX);
+  pointer_event.set_tilt_y(tiltY);
 #endif  // SB_API_VERSION >= 6
   pointer_event.set_is_primary(true);
+
+  ///printf("InputDeviceManagerDesktop HandlePointerEvent 4\n");
+
   pointer_event_callback_.Run(type, pointer_event);
+
+  ///printf("InputDeviceManagerDesktop HandlePointerEvent 5\n");
 }
 
 void InputDeviceManagerDesktop::HandleWheelEvent(

@@ -50,6 +50,8 @@ float InputPollerImpl::AnalogInput(SbKey analog_input_id) {
 
 void InputPollerImpl::UpdateInputEvent(
     const system_window::InputEvent* input_event) {
+  ///printf("InputPollerImpl::UpdateInputEvent\n");
+
   starboard::ScopedLock lock(input_mutex_);
 
   switch (input_event->type()) {

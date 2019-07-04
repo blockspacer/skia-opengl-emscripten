@@ -47,6 +47,7 @@ void InputEvent::InitInputEvent(const std::string& type, bool bubbles,
                                 bool cancelable,
                                 const scoped_refptr<Window>& view,
                                 const std::string& data, bool is_composing) {
+  ///printf("InputEvent::InitInputEvent\n");
   InitUIEvent(type, bubbles, cancelable, view, 0);
   data_ = data;
   is_composing_ = is_composing;

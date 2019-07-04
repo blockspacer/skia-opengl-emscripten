@@ -630,6 +630,8 @@ bool Window::HasPendingAnimationFrameCallbacks() const {
 }
 
 void Window::InjectEvent(const scoped_refptr<Event>& event) {
+  ///printf("Window::InjectEvent\n");
+
   TRACE_EVENT1("cobalt::dom", "Window::InjectEvent()", "event",
                event->type().c_str());
 
@@ -802,7 +804,7 @@ void Window::OnStopDispatchEvent(const scoped_refptr<dom::Event>& event) {
 }
 
 void Window::ClearPointerStateForShutdown() {
-  printf("Window::ClearPointerStateForShutdown\n");
+  ///printf("Window::ClearPointerStateForShutdown\n");
   document_->pointer_state()->ClearForShutdown();
 }
 
@@ -858,7 +860,7 @@ const scoped_refptr<OnScreenKeyboard>& Window::on_screen_keyboard() const {
 void Window::ReleaseOnScreenKeyboard() { on_screen_keyboard_ = nullptr; }
 
 Window::~Window() {
-  printf("Window::~Window\n");
+  ///printf("Window::~Window\n");
 #if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   printf("can`t destroy Window on wasm ST platform!");
   HTML5_STACKTRACE();

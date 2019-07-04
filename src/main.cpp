@@ -2196,7 +2196,18 @@ class CobaltTester {
   // This constant defines the maximum rate at which the layout engine will
   // refresh over time.  Since there is little benefit in performing a layout
   // faster than the display's refresh rate, we set this to 60Hz.
+#if defined(__EMSCRIPTEN__)// && !defined(NDEBUG)
+#if defined(RELEASE_BUILD)
+  /// \note WASM DEBUG build may be too slow for high refresh rate
   const float kLayoutMaxRefreshFrequencyInHz = 60.0f;
+#else // !NDEBUG
+  const float kLayoutMaxRefreshFrequencyInHz = 29.0f;
+#endif // NDEBUG
+#else // !__EMSCRIPTEN__
+  const float kLayoutMaxRefreshFrequencyInHz = 60.0f;
+#endif // __EMSCRIPTEN__
+
+//  const float kLayoutMaxRefreshFrequencyInHz = 60.0f;
 
   /// \note need value < 200ms for animations
   /// formula: MicrosecondsPerSecond / (layout_refresh_rate_ + 1.0)
@@ -2304,7 +2315,9 @@ void CobaltTester::BrowserProcessRenderTreeSubmissionQueue() {
     TRACE_EVENT0("cobalt::browser",
                  "CobaltTester::ProcessRenderTreeSubmissionQueue()");
     //DCHECK_EQ(base::MessageLoop::current(), self_message_loop_);
-    printf("BrowserProcessRenderTreeSubmissionQueue 1\n");
+
+    //printf("BrowserProcessRenderTreeSubmissionQueue 1\n");
+
 #if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
    emscripten_async_call_closure(
     base::BindOnce([](base::MessageQueue * queue_in) {
@@ -2315,12 +2328,14 @@ void CobaltTester::BrowserProcessRenderTreeSubmissionQueue() {
 #else
     render_tree_submission_queue_.ProcessAll();
 #endif
-    printf("BrowserProcessRenderTreeSubmissionQueue 2\n");
+    //printf("BrowserProcessRenderTreeSubmissionQueue 2\n");
 }
 
 renderer::Submission CobaltTester::CreateSubmissionFromLayoutResults(
     const cobalt::layout::LayoutManager::LayoutResults& layout_results) {
-        printf("CreateSubmissionFromLayoutResults 1\n");
+
+    //printf("CreateSubmissionFromLayoutResults 1\n");
+
     renderer::Submission renderer_submission(layout_results.render_tree,
                                              layout_results.layout_time);
     if (!layout_results.on_rasterized_callback.is_null()) {
@@ -2369,7 +2384,7 @@ void CobaltTester::OnBrowserRenderTreeProduced(
     int /*main_web_module_generation*/,
     //const browser::WebModule::LayoutResults& layout_results) {
     const cobalt::layout::LayoutManager::LayoutResults& layout_results) {
-    printf("OnBrowserRenderTreeProduced 1\n");
+    //printf("OnBrowserRenderTreeProduced 1\n");
 
     //if (splash_screen_) {
     //    if (on_screen_keyboard_show_called_) {
@@ -2440,7 +2455,7 @@ static base::TimeDelta pending_layout_time;
 // specified in the constructor, |render_tree_produced_callback_|.
 void CobaltTester::OnRenderTreeProduced(const cobalt::layout::LayoutManager::LayoutResults& layout_results) {
 
-    printf("OnRenderTreeProduced 1\n");
+    //printf("OnRenderTreeProduced 1\n");
 
 #if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__) \
   && defined(ENABLE_COBALT)
@@ -2465,7 +2480,8 @@ void CobaltTester::OnRenderTreeProduced(const cobalt::layout::LayoutManager::Lay
     isRenderTreeProducePending = false;
 #endif
 
-    printf("OnRenderTreeProduced 1.2\n");
+    //printf("OnRenderTreeProduced 1.2\n");
+
     /// \see https://github.com/blockspacer/cobalt-clone-28052019/blob/master/src/cobalt/browser/browser_module.cc#L736
     auto last_render_tree_produced_time_ = base::TimeTicks::Now();
     cobalt::layout::LayoutManager::LayoutResults layout_results_with_callback(
@@ -2492,14 +2508,14 @@ void CobaltTester::navigationCallback(const GURL&) {
 }
 
 void CobaltTester::OnStartDispatchEvent(const scoped_refptr<dom::Event>& event) {
-    printf("OnStartDispatchEvent %s\n", event->type().c_str());
+    //printf("OnStartDispatchEvent %s\n", event->type().c_str());
     /*if (!on_start_dispatch_event_callback_.is_null()) {
         on_start_dispatch_event_callback_.Run(event);
     }*/
 }
 
 void CobaltTester::OnStopDispatchEvent(const scoped_refptr<dom::Event>& event) {
-    printf("OnStopDispatchEvent %s\n", event->type().c_str());
+    //printf("OnStopDispatchEvent %s\n", event->type().c_str());
     /*if (!on_stop_dispatch_event_callback_.is_null()) {
         on_stop_dispatch_event_callback_.Run(event);
     }*/
@@ -2530,9 +2546,9 @@ void CobaltTester::HandlePointerEvents() {
 
 // Called when the WebModule's Window.onload event is fired.
 void CobaltTester::OnLoad() {
-    printf("HandlePointerEvents\n");
+  //printf("OnLoad\n");
 
-    // see https://github.com/blockspacer/cobalt-clone-28052019/blob/master/src/cobalt/browser/browser_module.cc#L625
+  // see https://github.com/blockspacer/cobalt-clone-28052019/blob/master/src/cobalt/browser/browser_module.cc#L625
 }
 
 
@@ -2565,7 +2581,7 @@ void CobaltTester::OnOnScreenKeyboardInputEventProduced(
 
 void CobaltTester::InjectInputEvent(scoped_refptr<cobalt::dom::Element> element,
                                        const scoped_refptr<cobalt::dom::Event>& event) {
-  printf("InjectInputEvent type %s \n", event->type().c_str());
+  //printf("InjectInputEvent type %s \n", event->type().c_str());
   TRACE_EVENT1("cobalt::browser", "WebModule::Impl::InjectInputEvent()",
                "event", event->type().c_str());
   //DCHECK(thread_checker_.CalledOnValidThread());
@@ -2628,8 +2644,7 @@ void CobaltTester::OnKeyEventProduced(base::CobToken type,
 
 void CobaltTester::OnPointerEventProduced(base::CobToken type,
                                            const dom::PointerEventInit& event) {
-  printf("OnPointerEventProduced client_x %f client_y %f \n",
-    event.client_x(), event.client_y());
+  //printf("OnPointerEventProduced client_x %f client_y %f \n", event.client_x(), event.client_y());
   TRACE_EVENT0("cobalt::browser", "CobaltTester::OnPointerEventProduced()");
   DCHECK(system_window_);
   DCHECK(self_task_runner_);
@@ -2865,7 +2880,8 @@ CobaltTester::CobaltTester()
 
   //CSSParserObserver parser_observer_;
   cobalt::css_parser::Parser::SupportsMapToMeshFlag supports_map_to_mesh =
-    cobalt::css_parser::Parser::SupportsMapToMeshFlag::kDoesNotSupportMapToMesh;
+    //cobalt::css_parser::Parser::SupportsMapToMeshFlag::kDoesNotSupportMapToMesh;
+    cobalt::css_parser::Parser::SupportsMapToMeshFlag::kSupportsMapToMesh;
   /*cobalt::css_parser::Parser parser_(base::Bind(&CSSParserObserver::OnWarning,
                          base::Unretained(&parser_observer_)),
               base::Bind(&CSSParserObserver::OnError,
@@ -3148,6 +3164,9 @@ static void createCobaltTester() {
 
 static void createLayoutManager() {
     printf("layout_manager_.reset...\n");
+
+    ///printf("g_cobaltTester->layout_refresh_rate_ %f...\n", g_cobaltTester->layout_refresh_rate_);
+
     g_cobaltTester->layout_manager_.reset(new cobalt::layout::LayoutManager(
         "name_",
         /// window_.get(),
@@ -3634,6 +3653,9 @@ static void animate() {
     ///if (isDebugPeriodReached()) printf("animate end\n");
 }
 
+static int prevScreenMouseX = -1;
+static int prevScreenMouseY = -1;
+
 static void updateBrowserMousePos(const int screenMouseX, const int screenMouseY) {
   // https://github.com/blockspacer/cobalt-clone-28052019/blob/89664d116629734759176d820e9923257717e09c/src/starboard/shared/linux/dev_input/dev_input.cc#L910
   // https://github.com/blockspacer/cobalt-clone-28052019/blob/master/src/starboard/android/shared/input_events_generator.cc#L703
@@ -3641,7 +3663,14 @@ static void updateBrowserMousePos(const int screenMouseX, const int screenMouseY
     return;
   }
 
-  printf("updateBrowserMousePos x %d y %d\n", screenMouseX, screenMouseY);
+  if(prevScreenMouseX == screenMouseX && prevScreenMouseY == screenMouseY) {
+    return;
+  }
+
+  prevScreenMouseX = screenMouseX;
+  prevScreenMouseY = screenMouseY;
+
+  //printf("updateBrowserMousePos x %d y %d\n", screenMouseX, screenMouseY);
 
   DCHECK(g_cobaltTester->system_window_);
   DCHECK(g_cobaltTester->self_task_runner_);
@@ -3650,16 +3679,23 @@ static void updateBrowserMousePos(const int screenMouseX, const int screenMouseY
     g_cobaltTester->self_task_runner_->PostTask(
         FROM_HERE, base::Bind(
           [](const int mouseX, const int mouseY) {
-            SbEvent* event = new SbEvent(); // TODO: free mem
+            ///printf("PostTask InputEvent\n");
+            DCHECK(mouseX > -1);
+            DCHECK(mouseX < 100000);
+            DCHECK(mouseY > -1);
+            DCHECK(mouseY < 100000);
+             // TODO: free mem
+            SbEvent* event = new SbEvent();
             event->type = SbEventType::kSbEventTypeInput;
+             // TODO: free mem
             SbInputData* data = new SbInputData();
             SbMemorySet(data, 0, sizeof(*data));
             data->window = g_cobaltTester->system_window_->GetSbWindow();
             data->type = SbInputEventType::kSbInputEventTypeMove;
             data->device_id = 2; // kGamepadDeviceId
             data->key_location = kSbKeyLocationUnspecified;
-            data->position.x = mouseX;
-            data->position.y = mouseY;
+            data->position.x = static_cast<float>(mouseX);
+            data->position.y = static_cast<float>(mouseY);
             data->key_modifiers = kSbKeyModifiersNone;
             data->device_type = SbInputDeviceType::kSbInputDeviceTypeMouse;
             data->key = SbKey::kSbKeyMouse1;
@@ -3673,13 +3709,14 @@ static void updateBrowserMousePos(const int screenMouseX, const int screenMouseY
 
             system_window::HandleInputEvent(event);
 
+            ///printf("indicated_element...\n");
             scoped_refptr<Document> document_ = g_cobaltTester->window_->document();
             scoped_refptr<HTMLElement> indicated_element = document_->indicated_element();
             if(indicated_element) {
-              printf("document->indicated_element() tag_name %s\n", indicated_element->tag_name().c_str());
-              printf("document->indicated_element() node_name %s\n", indicated_element->node_name().c_str());
-              printf("document->indicated_element() local_name %s\n", indicated_element->local_name().c_str());
-              printf("document->indicated_element() %s\n", indicated_element->text_content().value_or("text_content").c_str());
+              //printf("document->indicated_element() tag_name %s\n", indicated_element->tag_name().c_str());
+              //printf("document->indicated_element() node_name %s\n", indicated_element->node_name().c_str());
+              //printf("document->indicated_element() local_name %s\n", indicated_element->local_name().c_str());
+              //printf("document->indicated_element() %s\n", indicated_element->text_content().value_or("text_content").c_str());
               if (indicated_element->text_content().value_or("") == "hovertest") {
                 //indicated_element->set_text_content(std::string("New text content"));
                 indicated_element->set_inner_html("<br>Cobalt<br>best<br>");
@@ -3882,7 +3919,7 @@ static void mainLoop() {
         //SDL_GetGlobalMouseState(&screenMouseX, &screenMouseY);
         SDL_GetMouseState(&screenMouseX, &screenMouseY);
 
-        printf("SDL_MOUSEMOTION %d %d\n", screenMouseX, screenMouseY);
+        // printf("SDL_MOUSEMOTION %d %d\n", screenMouseX, screenMouseY);
 
         updateBrowserMousePos(screenMouseX, screenMouseY);
         break;
@@ -5234,6 +5271,10 @@ int main(int argc, char** argv) {
   } else {
     printf("emscripten threading has %d cores\n", emscripten_num_logical_cores());
   }
+#endif
+
+#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+  printf("emscripten in singlethreaded mode\n");
 #endif
 
 /// \note emscripten_set_main_loop async, so

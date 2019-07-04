@@ -106,6 +106,8 @@ void* SystemWindow::GetWindowHandle() {
 
 void SystemWindow::DispatchInputEvent(const SbInputData& data,
                                       InputEvent::Type type, bool is_repeat) {
+  ///printf("SystemWindow::DispatchInputEvent\n");
+
   // Use the current time unless it was overridden.
   SbTimeMonotonic timestamp = 0;
 
@@ -236,6 +238,8 @@ void SystemWindow::HandlePointerInputEvent(const SbInputData& data) {
 }
 
 void SystemWindow::HandleInputEvent(const SbInputData& data) {
+  ///printf("SystemWindow::HandleInputEvent\n");
+
   DCHECK_EQ(window_, data.window);
   // Handle supported pointer device types.
   if ((kSbInputDeviceTypeMouse == data.device_type) ||

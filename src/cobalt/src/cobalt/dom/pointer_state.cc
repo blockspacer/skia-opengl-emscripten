@@ -26,6 +26,8 @@ namespace cobalt {
 namespace dom {
 
 void PointerState::QueuePointerEvent(const scoped_refptr<Event>& event) {
+  ///printf("PointerState::QueuePointerEvent\n");
+
   TRACE_EVENT1("cobalt::dom", "PointerState::QueuePointerEvent()", "event",
                event->type().c_str());
 

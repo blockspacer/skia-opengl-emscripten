@@ -313,6 +313,8 @@ void InitializePointerEventInitFromEvent(
 
 void TopmostEventTarget::MaybeSendPointerEvents(
     const scoped_refptr<dom::Event>& event) {
+  ///printf("TopmostEventTarget::MaybeSendPointerEvents\n");
+
   TRACE_EVENT0("cobalt::layout",
                "TopmostEventTarget::MaybeSendPointerEvents()");
 

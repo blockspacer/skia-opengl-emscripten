@@ -36,10 +36,26 @@
 #include <sys/vfs.h>
 #endif
 
+#if defined(__EMSCRIPTEN__)
+#include <emscripten/emscripten.h>
+#include <emscripten/html5.h>
+#endif
+
+#if defined(__EMSCRIPTEN__) && defined(__EMSCRIPTEN_PTHREADS__)
+#include <emscripten/threading.h>
+#endif
+
 namespace {
 
 #if !defined(OS_OPENBSD) && !defined(OS_FUCHSIA)
 int NumberOfProcessors() {
+#if defined(__EMSCRIPTEN__) && defined(__EMSCRIPTEN_PTHREADS__)
+  int res = emscripten_num_logical_cores();
+  DCHECK(res > 0);
+  return res;
+#elif defined(__EMSCRIPTEN__)
+  return 1; // Targeting a single-threaded Emscripten build.
+#else
   // sysconf returns the number of "logical" (not "physical") processors on both
   // Mac and Linux.  So we get the number of max available "logical" processors.
   //
@@ -60,6 +76,7 @@ int NumberOfProcessors() {
   }
 
   return static_cast<int>(res);
+#endif
 }
 
 base::LazyInstance<base::internal::LazySysInfoValue<int, NumberOfProcessors>>::

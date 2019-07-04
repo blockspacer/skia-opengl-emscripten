@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>Emscripten-Generated Code</title>
+    <link rel="splashscreen" href="file:///resources/html/index_hello.html">
     <style>
       @font-face {
           font-family: "Ubuntu";
@@ -137,26 +138,145 @@
         background-color: black;
         color: green;
       }
+
+      /* The flip card container - set the width and height to whatever you want. We have added the border property to demonstrate that the flip itself goes out of the box on hover (remove perspective if you don't want the 3D effect */
+      .flip-card {
+        background-color: transparent;
+        width: 300px;
+        height: 200px;
+        border: 1px solid #f1f1f1;
+        /*perspective: 1000px;*/ /* Remove this if you don't want the 3D effect */
+        overflow: hidden;
+      }
+
+      /* This container is needed to position the front and back side */
+      .flip-card-inner {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        text-align: center;
+        transition: transform 0.8s;
+      }
+
+
+      /* Do an horizontal flip when you move the mouse over the flip box container */
+      .flip-card:hover .flip-card-inner {
+        /*transform: rotateY(180deg);*/
+        /*filter: map-to-mesh(equirectangular, 2.5rad 3.14rad,
+                            matrix3d(1, 0, 0, 0,
+                                     0, 1, 0, 0,
+                                     0, 0, 1, 0,
+                                     100, 100, 100, 1));*/
+
+        transform: matrix(1, 2, -1, 1, 80, 80);
+        overflow: scroll;
+
+        /*transform:
+          matrix3d(
+            1, 0, 0, 0,
+            0, 1, 0, 0,
+            0, 0, 1, 0,
+            0, 0, 0, -1
+          )
+          translateZ(-2px);
+          transform: translate(-3em,1em);*/
+      }
+
+      /* Position the front and back side */
+      .flip-card-front, .flip-card-back {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+      }
+
+      /* Style the front side (fallback if image is missing) */
+      .flip-card-front {
+        background-color: #bbb;
+        color: black;
+      }
+
+      /* Style the back side */
+      .flip-card-back {
+        /*background-color: blue;*/
+        color: white;
+        /*transform: rotateY(180deg);*/
+      }
+
+
+/* TODO 3D transform https://docs.microsoft.com/en-us/xamarin/xamarin-forms/user-interface/graphics/skiasharp/transforms/3d-rotation */
+/* TODO 3D transform https://github.com/math3d/Skia/blob/d4cafdc28bd86da5eb993471bcd9a5feafc3b618/README.md */
+/* TODO 3D https://dev.opera.com/articles/ru/understanding-the-css-transforms-matrix/ */
+@keyframes MotionScale {
+  from {
+    /*
+      Identity matrix is used as basis here.
+      The matrix below describes the
+      following transformations:
+        Translates every X point by -50px
+        Translates every Y point by -100px
+        Translates every Z point by 0
+        Scales down by 10%
+
+    transform: matrix3d(
+      1,0,0,0,
+      0,1,0,0,
+      0,0,1,0,
+      -50,-100,0,1.1
+    );*/
+
+  }
+  50% {
+    /*transform: matrix3d(
+      1,0,0,0,
+      0,1,0,0,
+      0,0,1,0,
+      0,0,0,0.9
+    );*/
+  }
+  to {
+     /*transform: matrix3d(
+      1,0,0,0,
+      0,1,0,0,
+      0,0,1,0,
+      50,100,0,1.1
+    )*/
+  }
+}
     </style>
   </head>
   <body class="exanim">
 
-<div>
-  jjj
-</div>
-<div>
-<div>
-  <span>dddd</span>
-</div>
-</div>
-<span>hhhhhh 1</span>
-<span class="testselector">sadsad 1</span>
-<span>hhhhhh 2</span>
-<span class="testselector">sadsad 2</span>
+    <div class="flip-card">
+      <div class="flip-card-inner">
+        <div class="flip-card-front">
+          <div style="background-image: url('file:///resources/images/mouse.jpeg'); width:300px; height:300px;">
+          </div>
+        </div>
+        <div class="flip-card-back">
+          <h1>John Doe!</h1>
+          <p>Architect & Engineer</p>
+          <p>We love that guy</p>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      jjj
+    </div>
+    <div>
+    <div>
+      <span>dddd</span>
+      <span class="testselector">sadsad 0</span>
+    </div>
+    </div>
+    <span>hhhhhh 1</span>
+    <span class="testselector">sadsad 1</span>
+    <span>hhhhhh 2</span>
+    <span class="testselector">sadsad 2</span>
 
     <div style="font-family: 'Ubuntu'; font-size: 12px;" class='bounceInDiv'>bbb div font-family: 'Ubuntu'</div>
     <div style="font-family: 'FreeSans'; font-size: 18px;">bbb div font-family: 'FreeSans'</div>
-    <div style="font-family: 'none'; font-size: 64px;">bbb div font-family: 'none'</div>
+    <div style="animation: MotionScale 2s alternate linear infinite;">MotionScale 2s alternate linear infinite</div>
     <div style="font-family: 'Ubuntu'; font-size: 18px;">(RU) 18 пикселей</div>
     <div class="hovertest">hovertest</div>
     <!-- TODO: https://cobalt.foo/development/reference/supported-features.html

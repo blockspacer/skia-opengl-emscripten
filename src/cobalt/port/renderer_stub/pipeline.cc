@@ -184,6 +184,8 @@ Pipeline::Pipeline(const CreateRasterizerFunction& create_rasterizer_function,
       FROM_HERE,
       base::Bind(&Pipeline::InitializeRasterizerThread, base::Unretained(this),
                  create_rasterizer_function));
+
+  ///printf("Pipeline COBALT_MINIMUM_FRAME_TIME_IN_MILLISECONDS = %d\n", COBALT_MINIMUM_FRAME_TIME_IN_MILLISECONDS);
 }
 
 Pipeline::~Pipeline() {
@@ -332,8 +334,6 @@ void Pipeline::SetNewRenderTree(const Submission& render_tree_submission) {
   QueueSubmission(render_tree_submission, base::TimeTicks::Now());
 
   //printf("Pipeline::SetNewRenderTree 3\n");
-
-  printf("Pipeline COBALT_MINIMUM_FRAME_TIME_IN_MILLISECONDS = %d\n", COBALT_MINIMUM_FRAME_TIME_IN_MILLISECONDS);
 
   // Start the rasterization timer if it is not yet started.
   if (!rasterize_timer_) {
