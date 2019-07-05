@@ -693,7 +693,7 @@ template <typename CacheType>
 scoped_refptr<CachedResource<CacheType>>
 ResourceCache<CacheType>::CreateCachedResource(const GURL& url,
                                                const Origin& origin) {
-  printf("CreateCachedResource %s %s\n", url.path().c_str(), origin.SerializedOrigin().c_str());
+  //printf("CreateCachedResource %s %s\n", url.path().c_str(), origin.SerializedOrigin().c_str());
   DCHECK(resource_cache_thread_checker_.CalledOnValidThread());
   DCHECK(url.is_valid());
 

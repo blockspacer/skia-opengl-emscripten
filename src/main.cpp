@@ -2434,7 +2434,8 @@ void CobaltTester::QueueOnRenderTreeProduced(
                    main_web_module_generation, layout_results));
     //self_message_loop_->task_runner()->PostTask(
 
-    base::MessageLoopCurrent::Get()->task_runner()->PostTask(
+    DCHECK(g_cobaltTester);
+    g_cobaltTester->self_task_runner_->PostTask(
         FROM_HERE,
         base::Bind(&CobaltTester::BrowserProcessRenderTreeSubmissionQueue,
                    base::Unretained(this)));
@@ -2482,13 +2483,14 @@ void CobaltTester::OnRenderTreeProduced(const cobalt::layout::LayoutManager::Lay
 
     //printf("OnRenderTreeProduced 1.2\n");
 
+    DCHECK(g_cobaltTester);
     /// \see https://github.com/blockspacer/cobalt-clone-28052019/blob/master/src/cobalt/browser/browser_module.cc#L736
     auto last_render_tree_produced_time_ = base::TimeTicks::Now();
     cobalt::layout::LayoutManager::LayoutResults layout_results_with_callback(
         layout_results.render_tree, layout_results.layout_time,
         base::Bind(&CobaltTester::OnRenderTreeRasterized,
                    base::Unretained(this),
-                   base::MessageLoopCurrent::Get()->task_runner(),
+                   g_cobaltTester->self_task_runner_,
                    last_render_tree_produced_time_));
 
     int main_web_module_generation_ = 1; // TODO
@@ -3670,6 +3672,12 @@ static void updateBrowserMousePos(const int screenMouseX, const int screenMouseY
   prevScreenMouseX = screenMouseX;
   prevScreenMouseY = screenMouseY;
 
+//#if defined(__EMSCRIPTEN__)
+//  EM_LOG("updateBrowserMousePos");
+//  EM_LOG_NUM(screenMouseX);
+//  EM_LOG_NUM(screenMouseY);
+//#endif
+
   //printf("updateBrowserMousePos x %d y %d\n", screenMouseX, screenMouseY);
 
   DCHECK(g_cobaltTester->system_window_);
@@ -3763,7 +3771,7 @@ EM_BOOL emsc_mouse_cb(int emsc_type, const EmscriptenMouseEvent* emsc_event, voi
                 is_button_event = true;
                 break;
             case EMSCRIPTEN_EVENT_MOUSEMOVE:
-                updateBrowserMousePos(mouse_x, mouse_y);
+                updateBrowserMousePos(static_cast<int>(mouse_x), static_cast<int>(mouse_y));
                 break;
             case EMSCRIPTEN_EVENT_MOUSEENTER:
                 break;
@@ -3921,7 +3929,7 @@ static void mainLoop() {
 
         // printf("SDL_MOUSEMOTION %d %d\n", screenMouseX, screenMouseY);
 
-        updateBrowserMousePos(screenMouseX, screenMouseY);
+        updateBrowserMousePos(static_cast<int>(screenMouseX), static_cast<int>(screenMouseY));
         break;
       }
       // TODO

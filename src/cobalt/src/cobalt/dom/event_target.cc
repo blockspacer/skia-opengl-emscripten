@@ -137,7 +137,7 @@ void EventTarget::PostToDispatchEvent(const base::Location& location,
 void EventTarget::PostToDispatchEventAndRunCallback(
     const base::Location& location, const scoped_refptr<Event>& event,
     const base::Closure& callback) {
-    printf("PostToDispatchEventAndRunCallback 1\n");
+    //printf("PostToDispatchEventAndRunCallback 1\n");
   /*if (!base::MessageLoop::current()) {
     return;
   }*/
@@ -150,13 +150,13 @@ void EventTarget::PostToDispatchEventAndRunCallback(
   if (!base::MessageLoopCurrent::Get()) {
     return;
   }
-    printf("PostToDispatchEventAndRunCallback 2\n");
+    //printf("PostToDispatchEventAndRunCallback 2\n");
     DCHECK(base::MessageLoopCurrent::Get()); // TODO
   base::MessageLoopCurrent::Get()->task_runner()->PostTask(
       location,
       base::Bind(base::IgnoreResult(&EventTarget::DispatchEventAndRunCallback),
                  base::AsWeakPtr<EventTarget>(this), event, callback));
-    printf("PostToDispatchEventAndRunCallback 3\n");
+    //printf("PostToDispatchEventAndRunCallback 3\n");
 }
 
 void EventTarget::PostToDispatchEventNameAndRunCallback(
