@@ -177,8 +177,9 @@ void SoftwareRasterizer::Submit(
       if (nullptr == pImage) {
         printf("pImage can`t makeImageSnapshot\n");
       }
-      ///printf("SoftwareRasterizer::Submit( 8\n");
     }
+
+  //printf("SoftwareRasterizer::Submit( 8\n");
 
   // The rasterized pixels are still on the CPU, ship them off to the GPU
   // for output to the display.  We must first create a backend GPU texture

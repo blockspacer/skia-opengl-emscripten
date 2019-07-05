@@ -73,6 +73,7 @@
     }
 #endif
 
+// see https://github.com/emscripten-core/emscripten/pull/8282
 // see https://github.com/save7502/youkyoung/blob/master/Engine/Source/Runtime/OpenGLDrv/Private/HTML5/HTML5OpenGL.cpp#L5
 // see https://github.com/emscripten-core/emscripten/issues/6009
 // #define ENABLE_HTML5_SDL 1
@@ -2142,6 +2143,10 @@ class CobaltTester {
 
   scoped_refptr<base::SingleThreadTaskRunner> self_task_runner_;
 
+  // Thread checker ensures all calls are made from the same
+  // thread that it is created in.
+  base::ThreadChecker thread_checker_;
+
   // Cache a WeakPtr in the WebModule that is bound to the Window's message loop
   // so we can ensure that all subsequently created WeakPtr's are also bound to
   // the same loop.
@@ -2247,6 +2252,9 @@ static std::unique_ptr<CobaltTester> g_cobaltTester;
 
 void CobaltTester::OnWindowClose(base::TimeDelta /*close_time*/) {
     printf("OnWindowClose\n");
+    DCHECK(g_cobaltTester);
+    DCHECK_EQ(base::MessageLoopCurrent::Get().task_runner(), g_cobaltTester->self_task_runner_);
+    DCHECK(g_cobaltTester->thread_checker_.CalledOnValidThread());
 /*#if defined(ENABLE_DEBUGGER)
     if (input_device_manager_fuzzer_) {
         return;
@@ -2258,6 +2266,9 @@ void CobaltTester::OnWindowClose(base::TimeDelta /*close_time*/) {
 
 void CobaltTester::OnWindowMinimize() {
     printf("OnWindowMinimize\n");
+    DCHECK(g_cobaltTester);
+    DCHECK_EQ(base::MessageLoopCurrent::Get().task_runner(), g_cobaltTester->self_task_runner_);
+    DCHECK(g_cobaltTester->thread_checker_.CalledOnValidThread());
 /*#if defined(ENABLE_DEBUGGER)
     if (input_device_manager_fuzzer_) {
         return;
@@ -2270,16 +2281,25 @@ void CobaltTester::OnWindowMinimize() {
 void CobaltTester::OnLoadComplete(const base::Optional<std::string>& error) {
     printf("OnLoadComplete %s\n", error.value_or("no errors").c_str());
     //if (error) error_callback_.Run(window_->location()->url(), *error);
+    DCHECK(g_cobaltTester);
+    DCHECK_EQ(base::MessageLoopCurrent::Get().task_runner(), g_cobaltTester->self_task_runner_);
+    DCHECK(g_cobaltTester->thread_checker_.CalledOnValidThread());
 }
 
 void CobaltTester::OnCspPolicyChanged() {
     printf("OnCspPolicyChanged\n");
+    DCHECK(g_cobaltTester);
+    DCHECK_EQ(base::MessageLoopCurrent::Get().task_runner(), g_cobaltTester->self_task_runner_);
+    DCHECK(g_cobaltTester->thread_checker_.CalledOnValidThread());
 
 }
 
 // Called by |layout_mananger_| after it runs the animation frame callbacks.
 void CobaltTester::OnRanAnimationFrameCallbacks() {
     printf("OnRanAnimationFrameCallbacks\n");
+    DCHECK(g_cobaltTester);
+    DCHECK_EQ(base::MessageLoopCurrent::Get().task_runner(), g_cobaltTester->self_task_runner_);
+    DCHECK(g_cobaltTester->thread_checker_.CalledOnValidThread());
 
 }
 
@@ -2291,6 +2311,9 @@ void CobaltTester::OnRenderTreeRasterized(
     const base::TimeTicks& /*produced_time*/) {
     //printf("OnRenderTreeRasterized\n");
 
+    //DCHECK(g_cobaltTester);
+    //DCHECK_EQ(base::MessageLoopCurrent::Get().task_runner(), g_cobaltTester->self_task_runner_);
+    //DCHECK(g_cobaltTester->thread_checker_.CalledOnValidThread());
 
     // TODO
     //main_web_module_layer_->Reset();
@@ -2314,7 +2337,10 @@ void CobaltTester::OnRenderTreeRasterized(
 void CobaltTester::BrowserProcessRenderTreeSubmissionQueue() {
     TRACE_EVENT0("cobalt::browser",
                  "CobaltTester::ProcessRenderTreeSubmissionQueue()");
-    //DCHECK_EQ(base::MessageLoop::current(), self_message_loop_);
+
+    DCHECK(g_cobaltTester);
+    DCHECK_EQ(base::MessageLoopCurrent::Get().task_runner(), g_cobaltTester->self_task_runner_);
+    DCHECK(g_cobaltTester->thread_checker_.CalledOnValidThread());
 
     //printf("BrowserProcessRenderTreeSubmissionQueue 1\n");
 
@@ -2349,6 +2375,10 @@ void CobaltTester::OnRendererSubmissionRasterized() {
         //printf("OnRendererSubmissionRasterized 1\n");
     TRACE_EVENT0("cobalt::browser",
                  "CobaltTester::OnRendererSubmissionRasterized()");
+
+    DCHECK(g_cobaltTester);
+    DCHECK(g_cobaltTester->thread_checker_.CalledOnValidThread());
+
     //if (!is_rendered_) {
     //    // Hide the system splash screen when the first render has completed.
     //    is_rendered_ = true;
@@ -2359,6 +2389,9 @@ void CobaltTester::OnRendererSubmissionRasterized() {
 static render_tree::animations::AnimateNode::AnimateResults animateResults; // TODO
 
 void CobaltTester::SubmitCurrentRenderTreeToRenderer() {
+    DCHECK(g_cobaltTester);
+    DCHECK(g_cobaltTester->thread_checker_.CalledOnValidThread());
+
     //printf("SubmitCurrentRenderTreeToRenderer 1\n");
     if (!renderer_module_) {
         return;
@@ -2384,6 +2417,9 @@ void CobaltTester::OnBrowserRenderTreeProduced(
     int /*main_web_module_generation*/,
     //const browser::WebModule::LayoutResults& layout_results) {
     const cobalt::layout::LayoutManager::LayoutResults& layout_results) {
+    DCHECK(g_cobaltTester);
+    DCHECK(g_cobaltTester->thread_checker_.CalledOnValidThread());
+
     //printf("OnBrowserRenderTreeProduced 1\n");
 
     //if (splash_screen_) {
@@ -2428,6 +2464,10 @@ void CobaltTester::QueueOnRenderTreeProduced(
     const cobalt::layout::LayoutManager::LayoutResults& layout_results) {
         //printf("QueueOnRenderTreeProduced 1\n");
     TRACE_EVENT0("cobalt::browser", "CobaltTester::QueueOnRenderTreeProduced()");
+
+  DCHECK(g_cobaltTester);
+  DCHECK(g_cobaltTester->thread_checker_.CalledOnValidThread());
+
     render_tree_submission_queue_.AddMessage(
         base::Bind(&CobaltTester::OnBrowserRenderTreeProduced,
                    base::Unretained(this),
@@ -2484,6 +2524,9 @@ void CobaltTester::OnRenderTreeProduced(const cobalt::layout::LayoutManager::Lay
     //printf("OnRenderTreeProduced 1.2\n");
 
     DCHECK(g_cobaltTester);
+
+    DCHECK(g_cobaltTester->thread_checker_.CalledOnValidThread());
+
     /// \see https://github.com/blockspacer/cobalt-clone-28052019/blob/master/src/cobalt/browser/browser_module.cc#L736
     auto last_render_tree_produced_time_ = base::TimeTicks::Now();
     cobalt::layout::LayoutManager::LayoutResults layout_results_with_callback(
@@ -2524,7 +2567,11 @@ void CobaltTester::OnStopDispatchEvent(const scoped_refptr<dom::Event>& event) {
 }
 
 void CobaltTester::HandlePointerEvents() {
-  //printf("HandlePointerEvents\n");
+  //printf("HandlePointerEvents 1\n");
+
+  DCHECK(g_cobaltTester);
+  DCHECK_EQ(base::MessageLoopCurrent::Get().task_runner(), g_cobaltTester->self_task_runner_);
+  DCHECK(g_cobaltTester->thread_checker_.CalledOnValidThread());
 
   ///TRACE_EVENT0("cobalt::browser", "WebModule::Impl::HandlePointerEvents");
   const scoped_refptr<dom::Document>& document = window_->document();
@@ -2532,6 +2579,7 @@ void CobaltTester::HandlePointerEvents() {
   scoped_refptr<dom::Event> event;
 
   do {
+    //printf("HandlePointerEvents 2\n");
     event = document->pointer_state()->GetNextQueuedPointerEvent();
     if (event) {
       SB_DCHECK(
@@ -2544,6 +2592,7 @@ void CobaltTester::HandlePointerEvents() {
       topmost_event_target_->MaybeSendPointerEvents(event);
     }
   } while (event && !layout_manager_->IsRenderTreePending());
+  //printf("HandlePointerEvents 3\n");
 }
 
 // Called when the WebModule's Window.onload event is fired.
@@ -2557,6 +2606,10 @@ void CobaltTester::OnLoad() {
 #if SB_HAS(ON_SCREEN_KEYBOARD)
 void CobaltTester::OnOnScreenKeyboardInputEventProduced(
     base::CobToken type, const dom::InputEventInit& event) {
+  DCHECK(g_cobaltTester);
+  DCHECK_EQ(base::MessageLoopCurrent::Get().task_runner(), g_cobaltTester->self_task_runner_);
+  DCHECK(g_cobaltTester->thread_checker_.CalledOnValidThread());
+
   /*TRACE_EVENT0("cobalt::browser",
                "CobaltTester::OnOnScreenKeyboardInputEventProduced()");
   if (base::MessageLoop::current() != self_message_loop_) {
@@ -2586,7 +2639,11 @@ void CobaltTester::InjectInputEvent(scoped_refptr<cobalt::dom::Element> element,
   //printf("InjectInputEvent type %s \n", event->type().c_str());
   TRACE_EVENT1("cobalt::browser", "WebModule::Impl::InjectInputEvent()",
                "event", event->type().c_str());
-  //DCHECK(thread_checker_.CalledOnValidThread());
+
+  DCHECK(g_cobaltTester);
+  DCHECK_EQ(base::MessageLoopCurrent::Get().task_runner(), g_cobaltTester->self_task_runner_);
+  DCHECK(g_cobaltTester->thread_checker_.CalledOnValidThread());
+
   //DCHECK(is_running_);
   DCHECK(window_);
 
@@ -2609,6 +2666,10 @@ void CobaltTester::InjectInputEvent(scoped_refptr<cobalt::dom::Element> element,
 
 void CobaltTester::OnKeyEventProduced(base::CobToken type,
                                        const dom::KeyboardEventInit& event) {
+  DCHECK(g_cobaltTester);
+  DCHECK_EQ(base::MessageLoopCurrent::Get().task_runner(), g_cobaltTester->self_task_runner_);
+  DCHECK(g_cobaltTester->thread_checker_.CalledOnValidThread());
+
   printf("OnKeyEventProduced client_x %s \n", event.code().c_str());
 
   DCHECK(system_window_);
@@ -2646,6 +2707,10 @@ void CobaltTester::OnKeyEventProduced(base::CobToken type,
 
 void CobaltTester::OnPointerEventProduced(base::CobToken type,
                                            const dom::PointerEventInit& event) {
+  DCHECK(g_cobaltTester);
+  DCHECK_EQ(base::MessageLoopCurrent::Get().task_runner(), g_cobaltTester->self_task_runner_);
+  DCHECK(g_cobaltTester->thread_checker_.CalledOnValidThread());
+
   //printf("OnPointerEventProduced client_x %f client_y %f \n", event.client_x(), event.client_y());
   TRACE_EVENT0("cobalt::browser", "CobaltTester::OnPointerEventProduced()");
   DCHECK(system_window_);
@@ -2678,6 +2743,10 @@ void CobaltTester::OnPointerEventProduced(base::CobToken type,
 
 void CobaltTester::OnWheelEventProduced(base::CobToken type,
                                          const dom::WheelEventInit& event) {
+  DCHECK(g_cobaltTester);
+  DCHECK_EQ(base::MessageLoopCurrent::Get().task_runner(), g_cobaltTester->self_task_runner_);
+  DCHECK(g_cobaltTester->thread_checker_.CalledOnValidThread());
+
   printf("OnWheelEventProduced client_x %f client_y %f \n",
     event.client_x(), event.client_y());
 
@@ -2755,6 +2824,8 @@ CobaltTester::CobaltTester()
   :  self_task_runner_(main_thread_.task_runner())
 {
   DCHECK(self_task_runner_);
+  DCHECK_EQ(base::MessageLoopCurrent::Get().task_runner(), self_task_runner_);
+  DCHECK(thread_checker_.CalledOnValidThread());
 
   // Create the rasterizer using the platform default RenderModule options.
   RendererModule::Options render_module_options;
@@ -2882,8 +2953,8 @@ CobaltTester::CobaltTester()
 
   //CSSParserObserver parser_observer_;
   cobalt::css_parser::Parser::SupportsMapToMeshFlag supports_map_to_mesh =
-    //cobalt::css_parser::Parser::SupportsMapToMeshFlag::kDoesNotSupportMapToMesh;
-    cobalt::css_parser::Parser::SupportsMapToMeshFlag::kSupportsMapToMesh;
+    cobalt::css_parser::Parser::SupportsMapToMeshFlag::kDoesNotSupportMapToMesh;
+    //cobalt::css_parser::Parser::SupportsMapToMeshFlag::kSupportsMapToMesh;
   /*cobalt::css_parser::Parser parser_(base::Bind(&CSSParserObserver::OnWarning,
                          base::Unretained(&parser_observer_)),
               base::Bind(&CSSParserObserver::OnError,
@@ -3152,6 +3223,11 @@ static void createCobaltTester() {
     printf("Starting g_cobaltTester...\n");
     /// __TODO__
     g_cobaltTester = std::make_unique<CobaltTester>();
+
+    DCHECK(g_cobaltTester);
+    DCHECK_EQ(base::MessageLoopCurrent::Get().task_runner(), g_cobaltTester->self_task_runner_);
+    DCHECK(g_cobaltTester->thread_checker_.CalledOnValidThread());
+
     /// __TODO__
     {
         //g_cobaltTester->run();
@@ -3165,41 +3241,47 @@ static void createCobaltTester() {
 }
 
 static void createLayoutManager() {
-    printf("layout_manager_.reset...\n");
+  DCHECK(g_cobaltTester);
+  DCHECK_EQ(base::MessageLoopCurrent::Get().task_runner(), g_cobaltTester->self_task_runner_);
+  DCHECK(g_cobaltTester->thread_checker_.CalledOnValidThread());
+  printf("layout_manager_.reset...\n");
 
-    ///printf("g_cobaltTester->layout_refresh_rate_ %f...\n", g_cobaltTester->layout_refresh_rate_);
+  ///printf("g_cobaltTester->layout_refresh_rate_ %f...\n", g_cobaltTester->layout_refresh_rate_);
 
-    g_cobaltTester->layout_manager_.reset(new cobalt::layout::LayoutManager(
-        "name_",
-        /// window_.get(),
-        g_cobaltTester->window_, /// __TODO__
-        ///window_.get(),
-        //base::Bind(&WebModule::Impl::OnRenderTreeProduced,
-        //           base::Unretained(this)),
-        base::Bind(&CobaltTester::OnRenderTreeProduced,
-                   base::Unretained(g_cobaltTester.get())),
-        //base::Bind(&WebModule::Impl::HandlePointerEvents, base::Unretained(this)),
-        base::Bind(&CobaltTester::HandlePointerEvents,
-                   base::Unretained(g_cobaltTester.get())),
-        g_cobaltTester->layout_trigger,//data.options.layout_trigger,
-        99,//data.dom_max_element_depth,
-        g_cobaltTester->layout_refresh_rate_,
-        "en_US", //"data.network_module->preferred_language()",
-        true, //data.options.enable_image_animations,
-        g_cobaltTester->layout_stat_tracker_.get(),//web_module_stat_tracker_->layout_stat_tracker(),
-        false//data.options.clear_window_with_background_color
-        ));
-    DCHECK(g_cobaltTester->layout_manager_);
+  g_cobaltTester->layout_manager_.reset(new cobalt::layout::LayoutManager(
+      "name_",
+      /// window_.get(),
+      g_cobaltTester->window_, /// __TODO__
+      ///window_.get(),
+      //base::Bind(&WebModule::Impl::OnRenderTreeProduced,
+      //           base::Unretained(this)),
+      base::Bind(&CobaltTester::OnRenderTreeProduced,
+                 base::Unretained(g_cobaltTester.get())),
+      //base::Bind(&WebModule::Impl::HandlePointerEvents, base::Unretained(this)),
+      base::Bind(&CobaltTester::HandlePointerEvents,
+                 base::Unretained(g_cobaltTester.get())),
+      g_cobaltTester->layout_trigger,//data.options.layout_trigger,
+      99,//data.dom_max_element_depth,
+      g_cobaltTester->layout_refresh_rate_,
+      "en_US", //"data.network_module->preferred_language()",
+      true, //data.options.enable_image_animations,
+      g_cobaltTester->layout_stat_tracker_.get(),//web_module_stat_tracker_->layout_stat_tracker(),
+      false//data.options.clear_window_with_background_color
+      ));
+  DCHECK(g_cobaltTester->layout_manager_);
 
-    if (!g_cobaltTester->loaded_callbacks.empty()) {
-        g_cobaltTester->document_load_observer_.reset(
-            new DocumentLoadedObserver(g_cobaltTester->loaded_callbacks));
-        g_cobaltTester->window_->document()->AddObserver(g_cobaltTester->document_load_observer_.get());
-    }
+  if (!g_cobaltTester->loaded_callbacks.empty()) {
+      g_cobaltTester->document_load_observer_.reset(
+          new DocumentLoadedObserver(g_cobaltTester->loaded_callbacks));
+      g_cobaltTester->window_->document()->AddObserver(g_cobaltTester->document_load_observer_.get());
+  }
 }
 
 void CobaltTester::run() {
   printf("CobaltTester::run...\n");
+  DCHECK(g_cobaltTester);
+  DCHECK_EQ(base::MessageLoopCurrent::Get().task_runner(), g_cobaltTester->self_task_runner_);
+  DCHECK(g_cobaltTester->thread_checker_.CalledOnValidThread());
 }
 #endif // ENABLE_COBALT
 
@@ -3336,41 +3418,45 @@ static void drawGLTexture(const int texWidth, const int texHeight, const void* t
 
 #if defined(ENABLE_SK_UI)
 static void drawUIDemo() {
-    sk_sp<SkImage> pImage = nullptr;
-    // Draw to the surface via its SkCanvas.
-    // We don't manage this pointer's lifetime.
-    SkCanvas* canvas =
-        //  getRasterizerSkSurface()->getCanvas();
-        sRasterSurface->getCanvas();
+  //DCHECK(g_cobaltTester);
+  //DCHECK_EQ(base::MessageLoopCurrent::Get().task_runner(), g_cobaltTester->self_task_runner_);
+  //DCHECK(g_cobaltTester->thread_checker_.CalledOnValidThread());
 
-    canvas->clear(SkColorSetARGB(255, 255, 255, 255));
-    ///if (isDebugPeriodReached()) printf("Draw() 3\n");
+  sk_sp<SkImage> pImage = nullptr;
+  // Draw to the surface via its SkCanvas.
+  // We don't manage this pointer's lifetime.
+  SkCanvas* canvas =
+      //  getRasterizerSkSurface()->getCanvas();
+      sRasterSurface->getCanvas();
 
-    myView->onDraw(canvas);
-    //if (isDebugPeriodReached()) printf("Draw() 4\n");
+  canvas->clear(SkColorSetARGB(255, 255, 255, 255));
+  ///if (isDebugPeriodReached()) printf("Draw() 3\n");
 
-    sRasterSurface->flush();
-    //if (isDebugPeriodReached()) printf("Draw() 5\n");
+  myView->onDraw(canvas);
+  //if (isDebugPeriodReached()) printf("Draw() 4\n");
 
-    pImage = sRasterSurface->makeImageSnapshot();
-    //const sk_sp<SkImage> pImage = getRasterizerSkSurface()->makeImageSnapshot();
-    if(pImage/* && !pImage->isAlphaOnly()
-  && pImage->width() > 0 && pImage->height() > 0*/) {
-        ///if (isDebugPeriodReached()) printf("Draw() 7\n");
-        SkPixmap pixmap;
-        if (!pImage->peekPixels(&pixmap)) {
-            ///if (isDebugPeriodReached())
-            printf("can`t peekPixels\n");
-        }
-        DCHECK(!pixmap.bounds().isEmpty());
-        ///if (isDebugPeriodReached()) printf("Draw() 7.1\n");
-        drawGLTexture(pixmap.width(), pixmap.height(), pixmap.addr(), skia_texture);
-    }
+  sRasterSurface->flush();
+  //if (isDebugPeriodReached()) printf("Draw() 5\n");
 
-    if (nullptr == pImage) {
-        ///if (isDebugPeriodReached())
-        printf("can`t get pImage\n");
-    }
+  pImage = sRasterSurface->makeImageSnapshot();
+  //const sk_sp<SkImage> pImage = getRasterizerSkSurface()->makeImageSnapshot();
+  if(pImage/* && !pImage->isAlphaOnly()
+&& pImage->width() > 0 && pImage->height() > 0*/) {
+      ///if (isDebugPeriodReached()) printf("Draw() 7\n");
+      SkPixmap pixmap;
+      if (!pImage->peekPixels(&pixmap)) {
+          ///if (isDebugPeriodReached())
+          printf("can`t peekPixels\n");
+      }
+      DCHECK(!pixmap.bounds().isEmpty());
+      ///if (isDebugPeriodReached()) printf("Draw() 7.1\n");
+      drawGLTexture(pixmap.width(), pixmap.height(), pixmap.addr(), skia_texture);
+  }
+
+  if (nullptr == pImage) {
+      ///if (isDebugPeriodReached())
+      printf("can`t get pImage\n");
+  }
 }
 #endif
 
@@ -3661,10 +3747,6 @@ static int prevScreenMouseY = -1;
 static void updateBrowserMousePos(const int screenMouseX, const int screenMouseY) {
   // https://github.com/blockspacer/cobalt-clone-28052019/blob/89664d116629734759176d820e9923257717e09c/src/starboard/shared/linux/dev_input/dev_input.cc#L910
   // https://github.com/blockspacer/cobalt-clone-28052019/blob/master/src/starboard/android/shared/input_events_generator.cc#L703
-  if(!g_cobaltTester) {
-    return;
-  }
-
   if(prevScreenMouseX == screenMouseX && prevScreenMouseY == screenMouseY) {
     return;
   }
@@ -3673,21 +3755,35 @@ static void updateBrowserMousePos(const int screenMouseX, const int screenMouseY
   prevScreenMouseY = screenMouseY;
 
 //#if defined(__EMSCRIPTEN__)
-//  EM_LOG("updateBrowserMousePos");
+//  EM_LOG("updateBrowserMousePos 1");
 //  EM_LOG_NUM(screenMouseX);
 //  EM_LOG_NUM(screenMouseY);
 //#endif
 
   //printf("updateBrowserMousePos x %d y %d\n", screenMouseX, screenMouseY);
 
-  DCHECK(g_cobaltTester->system_window_);
-  DCHECK(g_cobaltTester->self_task_runner_);
 
   ///if (base::MessageLoopCurrent::Get().task_runner() != g_cobaltTester->self_task_runner_) {
-    g_cobaltTester->self_task_runner_->PostTask(
+    main_thread_.task_runner()->PostTask(
         FROM_HERE, base::Bind(
           [](const int mouseX, const int mouseY) {
             ///printf("PostTask InputEvent\n");
+
+#if defined(__EMSCRIPTEN__)
+  EM_LOG("updateBrowserMousePos PostTask InputEvent 1");
+  EM_LOG_NUM(mouseX);
+  EM_LOG_NUM(mouseY);
+#endif
+
+             if(!g_cobaltTester) {
+              return;
+            }
+            DCHECK(g_cobaltTester);
+            DCHECK(g_cobaltTester->system_window_);
+            DCHECK(g_cobaltTester->self_task_runner_);
+            DCHECK_EQ(base::MessageLoopCurrent::Get().task_runner(), g_cobaltTester->self_task_runner_);
+            DCHECK(g_cobaltTester->thread_checker_.CalledOnValidThread());
+
             DCHECK(mouseX > -1);
             DCHECK(mouseX < 100000);
             DCHECK(mouseY > -1);
@@ -3718,7 +3814,7 @@ static void updateBrowserMousePos(const int screenMouseX, const int screenMouseY
             system_window::HandleInputEvent(event);
 
             ///printf("indicated_element...\n");
-            scoped_refptr<Document> document_ = g_cobaltTester->window_->document();
+            /*scoped_refptr<Document> document_ = g_cobaltTester->window_->document();
             scoped_refptr<HTMLElement> indicated_element = document_->indicated_element();
             if(indicated_element) {
               //printf("document->indicated_element() tag_name %s\n", indicated_element->tag_name().c_str());
@@ -3727,6 +3823,7 @@ static void updateBrowserMousePos(const int screenMouseX, const int screenMouseY
               //printf("document->indicated_element() %s\n", indicated_element->text_content().value_or("text_content").c_str());
               if (indicated_element->text_content().value_or("") == "hovertest") {
                 //indicated_element->set_text_content(std::string("New text content"));
+                /// \todo check html on page is fully loaded before editing html
                 indicated_element->set_inner_html("<br>Cobalt<br>best<br>");
                 // TODO:: free memory
                 scoped_refptr<HTMLElement> div_element_3 =
@@ -3750,9 +3847,15 @@ static void updateBrowserMousePos(const int screenMouseX, const int screenMouseY
                 //div_element_3->AddEventListener("mouseover")
                 //document_->UpdateSelectorTree();
               }
-            }
+            }*/
           } , screenMouseX, screenMouseY));
   ///}
+
+//#if defined(__EMSCRIPTEN__)
+//  EM_LOG("updateBrowserMousePos 2");
+//  EM_LOG_NUM(screenMouseX);
+//  EM_LOG_NUM(screenMouseY);
+//#endif
 }
 
 #ifdef __EMSCRIPTEN__
@@ -4941,6 +5044,11 @@ int main(int argc, char** argv) {
           //main_thread_event_->Signal();
       }));
 #endif
+
+// TODO >>>>>>>>>>>>>>>>>>
+//    DCHECK(g_cobaltTester);
+//    DCHECK_EQ(base::MessageLoopCurrent::Get().task_runner(), g_cobaltTester->self_task_runner_);
+//    DCHECK(g_cobaltTester->thread_checker_.CalledOnValidThread());
 
   printf("Waiting COBALT tests...\n");
   //// \NOTE: DON`T BLOCK MAIN WASM THREAD
