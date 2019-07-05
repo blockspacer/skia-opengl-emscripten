@@ -10,6 +10,9 @@
 # example (run only):
 # cmake -DRUN_APP=ON -DBUILD_APP=OFF -P tools/buildWeb.cmake
 #
+# example (custom build dir, note full path and ending "/"):
+# cmake -DRUN_APP=ON -DBUILD_APP=ON -DEXTRA_EMMAKE_OPTS="-j;6" -DBUILD_TYPE="Release" -DCLEAN_BUILD=OFF -DENABLE_CMAKE_CLEAN_FIRST=OFF -DBUILD_DIR=/home/username_here/skia-opengl-emscripten/build-wasm-st-rel/ -P tools/buildWeb.cmake
+#
 # You can also pass own options like:
 # ... -DEXTRA_EMCMAKE_OPTS="-DOPTIMIZE_LEVEL=-O0;-DDEBUG_LEVEL=-g4" ...
 #
