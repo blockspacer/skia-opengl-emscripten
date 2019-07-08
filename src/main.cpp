@@ -1194,6 +1194,7 @@ static const float FONT_SIZE_F = 22.0f;
 
 #ifdef ENABLE_BASE
 static base::Thread main_thread_("Main_Thread");
+static base::Thread input_device_thread_("Input_Device_Thread");
 static base::WaitableEvent main_thread_event_;
 #endif
 
@@ -1899,13 +1900,13 @@ public:
     blink::FloatSize(0.0, 0.0),
     SkBlendMode::kSrcOver);
 #endif // ENABLE_IMAGES
-#endif // ENABLE_UI
 
   //printf("FillRect 71\n");
   auto rr = context.EndRecording();
   //printf("FillRect 81\n");
   paint_canvas.drawPicture(rr);
 
+#endif // ENABLE_UI
   // Must be called when a painting is finished. Updates the current paint
   // artifact with the new paintings.
   paint_controller->CommitNewDisplayItems();
@@ -2576,7 +2577,7 @@ void CobaltTester::OnStopDispatchEvent(const scoped_refptr<dom::Event>& event) {
 }
 
 void CobaltTester::HandlePointerEvents() {
-  //printf("HandlePointerEvents 1\n");
+  printf("HandlePointerEvents 1!\n");
 
   DCHECK(g_cobaltTester);
   DCHECK_EQ(base::MessageLoopCurrent::Get().task_runner(), g_cobaltTester->self_task_runner_);
@@ -2590,6 +2591,7 @@ void CobaltTester::HandlePointerEvents() {
   do {
 #if defined(__EMSCRIPTEN__)
     EM_LOG("HandlePointerEvents 2\n");
+    printf("HandlePointerEvents 2!\n");
 #endif
     event = document->pointer_state()->GetNextQueuedPointerEvent();
     if (event) {
@@ -2605,6 +2607,7 @@ void CobaltTester::HandlePointerEvents() {
   } while (event && !layout_manager_->IsRenderTreePending());
 #if defined(__EMSCRIPTEN__)
   EM_LOG("HandlePointerEvents 3\n");
+  printf("HandlePointerEvents 3!\n");
 #endif
 }
 
@@ -3787,22 +3790,16 @@ static void updateBrowserMousePos(const int screenMouseX, const int screenMouseY
   prevScreenMouseY = screenMouseY;
 
 //#if defined(__EMSCRIPTEN__)
-//  EM_LOG("updateBrowserMousePos 1");
+//  EM_LOG("updateBrowserMousePos 1!");
 //  EM_LOG_NUM(screenMouseX);
 //  EM_LOG_NUM(screenMouseY);
 //#endif
 
-  //printf("updateBrowserMousePos x %d y %d\n", screenMouseX, screenMouseY);
-
-//#if defined(__EMSCRIPTEN__)
-//  EM_LOG("updateBrowserMousePos PostTask InputEvent 1");
-//  EM_LOG_NUM(screenMouseX);
-//  EM_LOG_NUM(screenMouseY);
-//#endif
+  //printf("updateBrowserMousePos x %d y %d!!\n", screenMouseX, screenMouseY);
 
 //#ifdef __TODO__
   ///if (base::MessageLoopCurrent::Get().task_runner() != g_cobaltTester->self_task_runner_) {
-    main_thread_.task_runner()->PostTask(
+    input_device_thread_.task_runner()->PostTask(
         FROM_HERE, base::Bind(
           [](const int mouseX, const int mouseY) {
             ///printf("PostTask InputEvent\n");
@@ -3810,6 +3807,13 @@ static void updateBrowserMousePos(const int screenMouseX, const int screenMouseY
              if(!g_cobaltTester) {
               return;
             }
+
+          #if defined(__EMSCRIPTEN__)
+            EM_LOG("updateBrowserMousePos PostTask InputEvent 1 !!!!");
+            EM_LOG_NUM(screenMouseX);
+            EM_LOG_NUM(screenMouseY);
+          #endif
+
             DCHECK(g_cobaltTester);
             DCHECK(g_cobaltTester->system_window_);
             DCHECK(g_cobaltTester->self_task_runner_);
@@ -3925,7 +3929,7 @@ static void updateBrowserMousePos(const int screenMouseX, const int screenMouseY
             system_window::HandleInputEvent(event);*/
 
 //#if defined(__EMSCRIPTEN__)
-//  EM_LOG("updateBrowserMousePos 2");
+//  EM_LOG("updateBrowserMousePos 2.");
 //  EM_LOG_NUM(screenMouseX);
 //  EM_LOG_NUM(screenMouseY);
 //#endif
@@ -4257,9 +4261,11 @@ int main(int argc, char** argv) {
     base::Thread::Options options;
     //options.message_loop_type = base::MessageLoop::TYPE_IO;
     main_thread_.StartWithOptions(options);
+    input_device_thread_.StartWithOptions(options);
 #if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
     /// \todo Reactor your code so that the waiting happens on another thread instead of the main thread
     main_thread_.WaitUntilThreadStarted();
+    input_device_thread_.WaitUntilThreadStarted();
 #endif
 #endif // ENABLE_BASE
 

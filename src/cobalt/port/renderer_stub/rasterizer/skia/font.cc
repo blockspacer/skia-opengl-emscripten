@@ -23,6 +23,11 @@
 
 #include "cobalt/base/polymorphic_downcast.h"
 
+#if defined(__EMSCRIPTEN__)
+#include "emscripten/emscripten.h"
+#include "emscripten/html5.h"
+#endif
+
 // TODO: free memory
 static const char* fallbackFontPath = "./resources/fonts/FreeSans.ttf";
 static SkFont* fallbackFont;
@@ -56,12 +61,21 @@ static sk_sp<SkTypeface> getOrCreateFallbackTypeface() {
 }*/
 
 static sk_sp<SkTypeface_Cobalt> getOrCreateFallbackSkTypeface() {
+#if defined(__EMSCRIPTEN__)
+  EM_LOG("getOrCreateFallbackSkTypeface 1");
+#endif
     if (!fallbackSkTypeface_Cobalt) {
         fallbackSkTypeface_Cobalt =
             sk_sp<SkTypeface_Cobalt>(base::polymorphic_downcast<SkTypeface_Cobalt*>(
         getOrCreateFallbackTypeface()->makeClone(SkFontArguments()).release()));
+#if defined(__EMSCRIPTEN__)
+  EM_LOG("getOrCreateFallbackSkTypeface 2");
+#endif
     }
     DCHECK(fallbackSkTypeface_Cobalt);
+#if defined(__EMSCRIPTEN__)
+  EM_LOG("getOrCreateFallbackSkTypeface 3");
+#endif
     return fallbackSkTypeface_Cobalt;
 }
 
@@ -97,7 +111,10 @@ base::LazyInstance<NonTrivialStaticFields>::DestructorAtExit
 Font::Font(SkiaTypeface* typeface, SkScalar size)
     : typeface_(typeface), size_(size) {
     //DCHECK(size > 21 && size < 23); // TODO
-    std::cout << "Font::Font() %d \n" << typeface_->GetId() << std::endl;
+    //std::cout << "Font::Font() %d \n" << typeface_->GetId() << std::endl;
+#if defined(__EMSCRIPTEN__)
+  EM_LOG("Font::Font() 1");
+#endif
   glyph_bounds_thread_checker_.DetachFromThread();
   DCHECK(typeface_);
   //DCHECK(typeface_->GetId());
@@ -110,6 +127,9 @@ Font::Font(SkiaTypeface* typeface, SkScalar size)
       //DCHECK(font_metrics_);
   }
   DCHECK(skFont_);*/
+#if defined(__EMSCRIPTEN__)
+  EM_LOG("Font::Font() 2");
+#endif
 }
 
 Font::~Font()

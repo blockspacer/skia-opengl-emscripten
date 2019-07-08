@@ -341,7 +341,7 @@ SoftwareResourceProvider::CreateGlyphBuffer(
     const base::char16* text_buffer, size_t text_length,
     const std::string& language, bool is_rtl,
     render_tree::FontProvider* font_provider) {
-  printf("SoftwareResourceProvider::CreateGlyphBuffer 1\n");
+  //printf("SoftwareResourceProvider::CreateGlyphBuffer 1\n");
   return text_shaper_.CreateGlyphBuffer(text_buffer, text_length, language,
                                         is_rtl, font_provider);
   /*SB_UNREFERENCED_PARAMETER(text_buffer);
@@ -361,7 +361,7 @@ scoped_refptr<render_tree::GlyphBuffer>
 SoftwareResourceProvider::CreateGlyphBuffer(
     const std::string& utf8_string,
     const scoped_refptr<render_tree::Font>& font) {
-  printf("SoftwareResourceProvider::CreateGlyphBuffer 2\n");
+  //printf("SoftwareResourceProvider::CreateGlyphBuffer 2\n");
   return text_shaper_.CreateGlyphBuffer(utf8_string, font);
   /*const math::RectF& glyph_bounds =
       font->GetGlyphBounds(kDefaultGlyphIndex);

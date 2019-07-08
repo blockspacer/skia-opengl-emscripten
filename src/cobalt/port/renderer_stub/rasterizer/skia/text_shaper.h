@@ -188,6 +188,7 @@ class TextShaper {
 
   // Lock used during shaping to ensure it does not occur on multiple threads at
   // the same time.
+  /// TODO: check Locks on WASM
   base::Lock shaping_mutex_;
 
   // Provides fonts needed by HarfBuzz during complex shaping.

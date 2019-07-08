@@ -127,6 +127,7 @@ float TextShaper::GetTextWidth(const base::char16* text_buffer,
 }
 
 void TextShaper::PurgeCaches() {
+  /// TODO: check Locks on WASM
   base::AutoLock lock(shaping_mutex_);
   harfbuzz_font_provider_.PurgeCaches();
 }
@@ -138,6 +139,7 @@ float TextShaper::ShapeText(const base::char16* text_buffer, size_t text_length,
                             math::RectF* maybe_bounds,
                             render_tree::FontVector* maybe_used_fonts) {
     //printf("TextShaper::ShapeText 1\n");
+  /// TODO: check Locks on WASM
   base::AutoLock lock(shaping_mutex_);
   float total_width = 0;
   VerticalBounds vertical_bounds;

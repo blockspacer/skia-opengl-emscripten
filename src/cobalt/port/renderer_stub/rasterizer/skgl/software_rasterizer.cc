@@ -75,7 +75,8 @@ namespace egl {
 
 static sk_sp<SkSurface> sRasterSurface;
 
-//static std::mutex pImageMutex;
+static std::mutex pImageMutex;
+
 static sk_sp<SkImage> pImage;
 
 /*sk_sp<SkSurface> getRasterizerSkSurface() {
@@ -84,7 +85,7 @@ static sk_sp<SkImage> pImage;
 
 sk_sp<SkImage> getRasterizerSkImage() {
   //std::lock_guard<std::mutex> lock(mutexRasterizerSkImage);
-  //std::scoped_lock lock(pImageMutex);
+  std::scoped_lock lock(pImageMutex);
   return pImage;
 }
 
@@ -201,6 +202,8 @@ void SoftwareRasterizer::Submit(
   }
 
   ///printf("SoftwareRasterizer::Submit( 5\n");
+
+  // see https://github.com/blockspacer/cobalt-clone-28052019/blob/master/src/cobalt/renderer/pipeline.cc#L507
   skia_rasterizer_.Submit(render_tree, canvas);
 
   const bool draw_dummy_counter = true;
@@ -225,7 +228,7 @@ void SoftwareRasterizer::Submit(
     sRasterSurface->flush();
 
     {
-      //std::scoped_lock lock(pImageMutex);
+      std::scoped_lock lock(pImageMutex);
       ///std::lock_guard<std::mutex> lock(mutexRasterizerSkImage);
       //printf("SoftwareRasterizer::Submit( 7\n");
       pImage = sRasterSurface->makeImageSnapshot();

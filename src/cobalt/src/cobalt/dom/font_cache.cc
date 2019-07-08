@@ -169,7 +169,7 @@ const scoped_refptr<render_tree::Font>& FontCache::GetFontFromTypefaceAndSize(
   FontInfo& cached_font_info = font_map_[font_key];
   //printf("FontCache::GetFontFromTypefaceAndSize size %f", size);
   if (cached_font_info.font.get() == NULL) {
-    printf("FontCache::GetFontFromTypefaceAndSize 2 size %f", size);
+    //printf("FontCache::GetFontFromTypefaceAndSize 2 size %f\n", size);
     //size = 22.0f; // __TODO__
     cached_font_info.font = typeface->CreateFontWithSize(size);
   }

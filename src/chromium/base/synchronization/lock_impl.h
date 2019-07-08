@@ -81,16 +81,19 @@ class SCOPED_LOCKABLE BasicAutoLock {
 
   explicit BasicAutoLock(LockType& lock) EXCLUSIVE_LOCK_FUNCTION(lock)
       : lock_(lock) {
+    /// TODO:
     lock_.Acquire();
   }
 
   BasicAutoLock(LockType& lock, const AlreadyAcquired&)
       EXCLUSIVE_LOCKS_REQUIRED(lock)
       : lock_(lock) {
+    /// TODO:
     lock_.AssertAcquired();
   }
 
   ~BasicAutoLock() UNLOCK_FUNCTION() {
+    /// TODO:
     lock_.AssertAcquired();
     lock_.Release();
   }
@@ -106,6 +109,7 @@ class BasicAutoUnlock {
  public:
   explicit BasicAutoUnlock(LockType& lock) : lock_(lock) {
     // We require our caller to have the lock.
+    /// TODO:
     lock_.AssertAcquired();
     lock_.Release();
   }
@@ -123,14 +127,16 @@ class SCOPED_LOCKABLE BasicAutoLockMaybe {
  public:
   explicit BasicAutoLockMaybe(LockType* lock) EXCLUSIVE_LOCK_FUNCTION(lock)
       : lock_(lock) {
-    if (lock_)
-      lock_->Acquire();
+      /// TODO:
+      if (lock_)
+       lock_->Acquire();
   }
 
   ~BasicAutoLockMaybe() UNLOCK_FUNCTION() {
+      /// TODO:
     if (lock_) {
-      lock_->AssertAcquired();
-      lock_->Release();
+     lock_->AssertAcquired();
+     lock_->Release();
     }
   }
 
@@ -152,6 +158,7 @@ class SCOPED_LOCKABLE BasicReleasableAutoLock {
 
   ~BasicReleasableAutoLock() UNLOCK_FUNCTION() {
     if (lock_) {
+      /// TODO:
       lock_->AssertAcquired();
       lock_->Release();
     }
@@ -159,6 +166,7 @@ class SCOPED_LOCKABLE BasicReleasableAutoLock {
 
   void Release() UNLOCK_FUNCTION() {
     DCHECK(lock_);
+    /// TODO:
     lock_->AssertAcquired();
     lock_->Release();
     lock_ = nullptr;
