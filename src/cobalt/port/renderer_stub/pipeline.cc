@@ -32,6 +32,11 @@
 #include "cobalt/render_tree/rect_node.h"
 #include "nb/memory_scope.h"
 
+#if defined(OS_EMSCRIPTEN)
+#include "emscripten/emscripten.h"
+#include "emscripten/html5.h"
+#endif
+
 using cobalt::render_tree::Node;
 using cobalt::render_tree::animations::AnimateNode;
 
@@ -382,6 +387,12 @@ void Pipeline::ClearCurrentRenderTree() {
 }
 
 void Pipeline::RasterizeCurrentTree() {
+#if defined(OS_EMSCRIPTEN)
+  EM_LOG("Pipeline::RasterizeCurrentTree 0\n");
+#else
+  //printf("Pipeline::RasterizeCurrentTree 0\n");
+#endif
+
 #if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   const base::TimeDelta timeElapsed = base::Time::Now() - lastRasterizeTime_;
   const int64_t msFromRasterization = timeElapsed.InMilliseconds();

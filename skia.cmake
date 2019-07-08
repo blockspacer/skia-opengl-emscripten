@@ -370,40 +370,47 @@ skia_generate_workarounds=${SK_IS_workarounds}"
 #modules/skottie/utils/SkottieUtils.cpp
 
 message(STATUS "GN_ARGS=${GN_ARGS}")
+
 set(CONFIGURE_COMMAND "${SKIA_SRC_DIR}/bin/gn;gen;--root=${SKIA_SRC_DIR};${SKIA_BUILD_DIR};--args=${GN_ARGS}")
+message(STATUS "CONFIGURE_COMMAND=${CONFIGURE_COMMAND}")
+
+set(BUILD_COMMAND "ninja;-C;${SKIA_BUILD_DIR};-d;keepdepfile;-j8")
+message(STATUS "BUILD_COMMAND=${BUILD_COMMAND}")
 
 ExternalProject_Add(SKIA_build
   # LIST_SEPARATOR is needed for list expansion of C(XX)_FLAGS.
   LIST_SEPARATOR "^^"
   SOURCE_DIR ${SKIA_SRC_DIR}
   CONFIGURE_COMMAND "${CONFIGURE_COMMAND}"
-  BUILD_COMMAND ninja -C ${SKIA_BUILD_DIR} -d keepdepfile -j8
+  BUILD_COMMAND "${BUILD_COMMAND}"
   # there is no install step provided
   INSTALL_COMMAND true
 )
 
-if(EXISTS "${CMAKE_CURRENT_BINARY_DIR}/skia/args.gn")
-  set(PRINT_ALL_GN_ARGS TRUE)
-else()
-  message(WARING "not found for debug info: ${CMAKE_CURRENT_BINARY_DIR}/skia/args.gn")
-endif()
-if(PRINT_ALL_GN_ARGS)
-  execute_process(
-    COMMAND "${SKIA_SRC_DIR}/bin/gn" "args" "--list" "${CMAKE_CURRENT_BINARY_DIR}/skia"
-    WORKING_DIRECTORY ${SKIA_SRC_DIR}
-    #WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/skia
-    OUTPUT_VARIABLE _gn_args_list
-    #ERROR_QUIET
-    OUTPUT_STRIP_TRAILING_WHITESPACE
-    ERROR_VARIABLE _ERROR_VARIABLE
-    RESULT_VARIABLE retcode
-  )
-  if(NOT "${retcode}" STREQUAL "0")
-    message( FATAL_ERROR "Bad exit status ${_ERROR_VARIABLE} ${_gn_args_list} ${retcode}")
-  endif()
-  message( STATUS "gn_args_list=${_gn_args_list}")
-endif(PRINT_ALL_GN_ARGS)
-
+# TODO: make PRINT_ALL_GN_ARGS as target dependant of SKIA_build
+#if(EXISTS "${CMAKE_CURRENT_BINARY_DIR}/skia/args.gn")
+#  set(PRINT_ALL_GN_ARGS TRUE)
+#  message(WARING "skia debug info: ${CMAKE_CURRENT_BINARY_DIR}/skia/args.gn")
+#else()
+#  message(WARING "not found for skia debug info: ${CMAKE_CURRENT_BINARY_DIR}/skia/args.gn")
+#  set(PRINT_ALL_GN_ARGS FALSE)
+#endif()
+#if(PRINT_ALL_GN_ARGS)
+#  execute_process(
+#    COMMAND "${SKIA_SRC_DIR}/bin/gn" "args" "--list" "${CMAKE_CURRENT_BINARY_DIR}/skia/"
+#    WORKING_DIRECTORY ${SKIA_SRC_DIR}
+#    #WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/skia
+#    OUTPUT_VARIABLE _gn_args_list
+#    #ERROR_QUIET
+#    OUTPUT_STRIP_TRAILING_WHITESPACE
+#    ERROR_VARIABLE _ERROR_VARIABLE
+#    RESULT_VARIABLE retcode
+#  )
+#  if(NOT "${retcode}" STREQUAL "0")
+#    message( FATAL_ERROR "Bad exit status ${_ERROR_VARIABLE} ${_gn_args_list} ${retcode}")
+#  endif()
+#  message( STATUS "gn_args_list=${_gn_args_list}")
+#endif(PRINT_ALL_GN_ARGS)
 
 if (EXT_SKIA_ALWAYS_BUILD)
   message(WARNING "Forced skia rebuild")

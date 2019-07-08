@@ -40,6 +40,7 @@ endmacro(check_is_dir)
 macro(mkdir_with_rm_condition ARG_CLEAN ARG_MAKE_DIR ARG_WORKING_DIR)
   conditional_remove(${ARG_CLEAN} ${ARG_MAKE_DIR} ${ARG_WORKING_DIR})
 
+  message(STATUS "make_directory for ${ARG_MAKE_DIR}")
   execute_process(
     COMMAND ${CMAKE_COMMAND} "-E" "make_directory" "${ARG_MAKE_DIR}"
     WORKING_DIRECTORY ${ARG_WORKING_DIR}

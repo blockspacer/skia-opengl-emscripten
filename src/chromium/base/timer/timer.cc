@@ -190,11 +190,13 @@ void TimerBase::PostNewScheduledTask(TimeDelta delay) {
   if (delay > TimeDelta::FromMicroseconds(0)) {
     // TODO(gab): Posting BaseTimerTaskInternal::Run to another sequence makes
     // this code racy. https://crbug.com/587199
+    DCHECK(GetTaskRunner());
     GetTaskRunner()->PostDelayedTask(
         posted_from_,
         BindOnce(&BaseTimerTaskInternal::Run, Owned(scheduled_task_)), delay);
     scheduled_run_time_ = desired_run_time_ = Now() + delay;
   } else {
+    DCHECK(GetTaskRunner());
     GetTaskRunner()->PostTask(
         posted_from_,
         BindOnce(&BaseTimerTaskInternal::Run, Owned(scheduled_task_)));

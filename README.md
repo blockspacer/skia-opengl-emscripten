@@ -1,6 +1,6 @@
 ﻿# FAQ
 
-> WHY? - Inspired by chromium, WebAssembly, emscripten, web workers, CoherentGT, NoesisGUI, WEBGL2, flutter, hummingbird, Nidium, Ultralight, Awesomium, libRocket, servo, sciter, cobalt.foo, EAWebKit, QML (Qt), CEF, HTML5 & CSS3, VUE.js & REACT.js & ANGULAR.js, electron, https://github.com/livecode/livecode/blob/develop/libgraphics/src/context.cpp, chromium-lite, blink. Let`s combine best of them all together.
+> WHY? - Inspired by chromium, WebAssembly, emscripten, web workers, ionic, CoherentGT, NoesisGUI, WEBGL2, flutter, hummingbird, Nidium, Ultralight, Awesomium, libRocket, servo, sciter, cobalt.foo, EAWebKit, QML (Qt), CEF, HTML5 & CSS3, VUE.js & REACT.js & ANGULAR.js, electron, https://github.com/livecode/livecode/blob/develop/libgraphics/src/context.cpp, chromium-lite, blink. Let`s combine best of them all together.
 also see https://news.ycombinator.com/item?id=17733515
 > Can`t build? - Check readme & issues.
 

@@ -74,7 +74,7 @@ bool SoftwareResourceProvider::AlphaFormatSupported(
 std::unique_ptr<ImageData> SoftwareResourceProvider::AllocateImageData(
     const math::Size& size, render_tree::PixelFormat pixel_format,
     render_tree::AlphaFormat alpha_format) {
-  //printf("SoftwareResourceProvider::AllocateImageData 1...\n");
+  printf("SoftwareResourceProvider::AllocateImageData 1...\n");
 
   TRACE_EVENT0("cobalt::renderer",
                "SoftwareResourceProvider::AllocateImageData()");
@@ -86,7 +86,7 @@ std::unique_ptr<ImageData> SoftwareResourceProvider::AllocateImageData(
 
 scoped_refptr<render_tree::Image> SoftwareResourceProvider::CreateImage(
     std::unique_ptr<ImageData> source_data) {
-  //printf("SoftwareResourceProvider::CreateImage 1...\n");
+  printf("SoftwareResourceProvider::CreateImage 1...\n");
 
   TRACE_EVENT0("cobalt::renderer", "SoftwareResourceProvider::CreateImage()");
   std::unique_ptr<SoftwareImageData> skia_source_data(
@@ -94,14 +94,14 @@ scoped_refptr<render_tree::Image> SoftwareResourceProvider::CreateImage(
 
   auto res = scoped_refptr<render_tree::Image>(
       new SoftwareImage(std::move(skia_source_data)));
-  //printf("SoftwareResourceProvider::CreateImage GetSize %s...\n", res->GetSize().ToString().c_str());
+  printf("SoftwareResourceProvider::CreateImage GetSize %s...\n", res->GetSize().ToString().c_str());
   return res;
 }
 
 std::unique_ptr<render_tree::RawImageMemory>
 SoftwareResourceProvider::AllocateRawImageMemory(size_t size_in_bytes,
                                                  size_t alignment) {
-  //printf("SoftwareResourceProvider::AllocateRawImageMemory 1...\n");
+  printf("SoftwareResourceProvider::AllocateRawImageMemory 1...\n");
   TRACE_EVENT0("cobalt::renderer",
                "SoftwareResourceProvider::AllocateRawImageMemory()");
 
@@ -113,7 +113,7 @@ scoped_refptr<render_tree::Image>
 SoftwareResourceProvider::CreateMultiPlaneImageFromRawMemory(
     std::unique_ptr<render_tree::RawImageMemory> raw_image_memory,
     const render_tree::MultiPlaneImageDataDescriptor& descriptor) {
-  //printf("SoftwareResourceProvider::CreateMultiPlaneImageFromRawMemory 1...\n");
+  printf("SoftwareResourceProvider::CreateMultiPlaneImageFromRawMemory 1...\n");
   TRACE_EVENT0(
       "cobalt::renderer",
       "SoftwareResourceProvider::CreateMultiPlaneImageFromRawMemory()");
@@ -122,7 +122,7 @@ SoftwareResourceProvider::CreateMultiPlaneImageFromRawMemory(
       base::polymorphic_downcast<SoftwareRawImageMemory*>(
           raw_image_memory.release()));
 
-  //printf("SoftwareResourceProvider::CreateMultiPlaneImageFromRawMemory 2...\n");
+  printf("SoftwareResourceProvider::CreateMultiPlaneImageFromRawMemory 2...\n");
   return base::WrapRefCounted(new SoftwareMultiPlaneImage(
       std::move(skia_software_raw_image_memory), descriptor));
 }
@@ -141,7 +141,7 @@ SoftwareResourceProvider::CreateMultiPlaneImageFromRawMemory(
 
 bool SoftwareResourceProvider::HasLocalFontFamily(
     const char* font_family_name) const {
-  //printf("SoftwareResourceProvider::HasLocalFontFamily %s\n", font_family_name);
+  printf("SoftwareResourceProvider::HasLocalFontFamily %s\n", font_family_name);
   TRACE_EVENT0("cobalt::renderer",
                "SoftwareResourceProvider::HasLocalFontFamily()");
 
@@ -199,7 +199,7 @@ scoped_refptr<render_tree::Typeface> SoftwareResourceProvider::GetLocalTypeface(
 scoped_refptr<render_tree::Typeface>
 SoftwareResourceProvider::GetLocalTypefaceByFaceNameIfAvailable(
     const char* font_face_name) {
-  //printf("SoftwareResourceProvider::GetLocalTypefaceByFaceNameIfAvailable %s\n", font_face_name);
+  printf("SoftwareResourceProvider::GetLocalTypefaceByFaceNameIfAvailable %s\n", font_face_name);
   TRACE_EVENT0("cobalt::renderer",
                "SoftwareResourceProvider::GetLocalTypefaceIfAvailable()");
 
@@ -231,7 +231,7 @@ SoftwareResourceProvider::GetCharacterFallbackTypeface(
     const std::string& language) {
   TRACE_EVENT0("cobalt::renderer",
                "SoftwareResourceProvider::GetCharacterFallbackTypeface()");
-  //printf("SoftwareResourceProvider::GetCharacterFallbackTypeface %s\n", language.c_str());
+  printf("SoftwareResourceProvider::GetCharacterFallbackTypeface %s\n", language.c_str());
 
   /*sk_sp<SkFontMgr> font_manager(SkFontMgr::RefDefault());
   //font_manager->
@@ -256,7 +256,7 @@ SoftwareResourceProvider::CreateTypefaceFromRawData(
         raw_data,
     std::string* error_string) {
 
-  //printf("SoftwareResourceProvider::CreateTypefaceFromRawData 1...\n");
+  printf("SoftwareResourceProvider::CreateTypefaceFromRawData 1...\n");
 
   TRACE_EVENT0("cobalt::renderer",
                "SoftwareResourceProvider::CreateFontFromRawData()");
@@ -306,7 +306,7 @@ SoftwareResourceProvider::CreateTypefaceFromRawData(
   // Free the raw data now that we're done with it.
   raw_data.reset();
 
-  //printf("SoftwareResourceProvider::CreateTypefaceFromRawData 2...\n");
+  printf("SoftwareResourceProvider::CreateTypefaceFromRawData 2...\n");
 
   sk_sp<SkTypeface_Cobalt> typeface(
       base::polymorphic_downcast<SkTypeface_Cobalt*>(
@@ -329,6 +329,7 @@ SoftwareResourceProvider::CreateTypefaceFromRawData(
     return NULL;
   }
 
+  NOTREACHED();
   //return base::WrapRefCounted(new cobalt::render_tree::TypefaceStub(NULL));
 }
 
@@ -340,7 +341,7 @@ SoftwareResourceProvider::CreateGlyphBuffer(
     const base::char16* text_buffer, size_t text_length,
     const std::string& language, bool is_rtl,
     render_tree::FontProvider* font_provider) {
-  //printf("SoftwareResourceProvider::CreateGlyphBuffer 1\n");
+  printf("SoftwareResourceProvider::CreateGlyphBuffer 1\n");
   return text_shaper_.CreateGlyphBuffer(text_buffer, text_length, language,
                                         is_rtl, font_provider);
   /*SB_UNREFERENCED_PARAMETER(text_buffer);
@@ -360,7 +361,7 @@ scoped_refptr<render_tree::GlyphBuffer>
 SoftwareResourceProvider::CreateGlyphBuffer(
     const std::string& utf8_string,
     const scoped_refptr<render_tree::Font>& font) {
-  //printf("SoftwareResourceProvider::CreateGlyphBuffer 2\n");
+  printf("SoftwareResourceProvider::CreateGlyphBuffer 2\n");
   return text_shaper_.CreateGlyphBuffer(utf8_string, font);
   /*const math::RectF& glyph_bounds =
       font->GetGlyphBounds(kDefaultGlyphIndex);
@@ -390,13 +391,13 @@ float SoftwareResourceProvider::GetTextWidth(
 scoped_refptr<render_tree::Mesh> SoftwareResourceProvider::CreateMesh(
     std::unique_ptr<std::vector<render_tree::Mesh::Vertex> > vertices,
     render_tree::Mesh::DrawMode draw_mode) {
-  //printf("SoftwareResourceProvider::CreateMesh\n");
+  printf("SoftwareResourceProvider::CreateMesh\n");
   return new SoftwareMesh(std::move(vertices), draw_mode);
 }
 
 scoped_refptr<render_tree::Image> SoftwareResourceProvider::DrawOffscreenImage(
     const scoped_refptr<render_tree::Node>& root) {
-  //printf("SoftwareResourceProvider::DrawOffscreenImage\n");
+  printf("SoftwareResourceProvider::DrawOffscreenImage\n");
   SB_UNREFERENCED_PARAMETER(root);
   return scoped_refptr<render_tree::Image>(NULL);
 }

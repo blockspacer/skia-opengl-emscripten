@@ -39,6 +39,7 @@ static sk_sp<SkTypeface> getOrCreateFallbackTypeface() {
         DCHECK(data);*/
         const int index = 0;
         //fallbackFontTypeface = SkTypeface::MakeFromData(::std::move(data), index);
+        printf("reading file %s\n", fallbackFontPath);
         fallbackFontTypeface = SkTypeface::MakeFromFile(fallbackFontPath, index);
     }
     DCHECK(fallbackFontTypeface);

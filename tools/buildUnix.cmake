@@ -12,8 +12,8 @@
 # example (full Release rebuild & run, -j9 for 9 threads):
 # cmake -DRUN_APP=ON -DBUILD_APP=ON -DEXTRA_MAKE_OPTS="-j;9" -DBUILD_TYPE="Release" -DCLEAN_BUILD=ON -P tools/buildUnix.cmake
 #
-# example (custom build dir, note full path and ending "/"):
-# cmake -DRUN_APP=ON -DBUILD_APP=ON -DEXTRA_EMMAKE_OPTS="-j;6" -DBUILD_TYPE="Release" -DCLEAN_BUILD=OFF -DENABLE_CMAKE_CLEAN_FIRST=OFF -DBUILD_DIR=/home/username_here/skia-opengl-emscripten/build-linux-rel/ -P tools/buildWeb.cmake
+# example (clean & custom build dir, note full path and ending "/"):
+# cmake -DRUN_APP=ON -DBUILD_APP=ON -DEXTRA_EMMAKE_OPTS="-j;6" -DBUILD_TYPE="Release" -DCLEAN_BUILD=ON -DENABLE_CMAKE_CLEAN_FIRST=ON -DBUILD_DIR=$(pwd)/build-linux-rel/ -P tools/buildUnix.cmake
 #
 # example (run only):
 # cmake -DRUN_APP=ON -P tools/buildUnix.cmake

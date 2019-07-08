@@ -15,6 +15,7 @@
 #include "renderer_stub/rasterizer/skgl/software_rasterizer.h"
 
 #include <memory>
+#include <mutex>
 
 ///#include <GLES2/gl2.h>
 ///#include <GLES2/gl2ext.h>
@@ -29,11 +30,43 @@
 #include "third_party/skia/include/core/SkCanvas.h"
 #include "third_party/skia/include/core/SkImageInfo.h"
 
+#include <skia/include/core/SkCanvas.h>
+#include <skia/include/core/SkString.h>
+#include <skia/include/core/SkFont.h>
+#include <skia/include/core/SkGraphics.h>
+#include <skia/include/core/SkPictureRecorder.h>
+#include <skia/include/core/SkStream.h>
+#include <skia/include/core/SkSurface.h>
+#include <skia/include/core/SkBitmap.h>
+#include <skia/include/core/SkCanvas.h>
+#include <skia/include/core/SkShader.h>
+#include <skia/src/core/SkMakeUnique.h>
+
+#include <skia/include/effects/SkGradientShader.h>
+
+#include <skia/src/core/SkOSFile.h>
+#include <skia/src/utils/SkOSPath.h>
+
+#include <skia/include/core/SkMaskFilter.h>
+#include <skia/include/core/SkTextBlob.h>
+
+#include <skia/include/gpu/gl/GrGLAssembleInterface.h>
+#include <skia/include/gpu/gl/GrGLInterface.h>
+#include <skia/src/gpu/gl/GrGLUtil.h>
+
+#include <skia/include/core/SkTypeface.h>
+#include <skia/include/core/SkTextBlob.h>
+#include <skia/include/core/SkStream.h>
+#include <skia/include/core/SkDocument.h>
+
 #include <memory>
 #include <thread>
 #include <mutex>
 
 //static std::mutex mutexRasterizerSkImage;
+
+static SkFont* skFont = nullptr;
+static const float FONT_SIZE_F = 22.0f;
 
 namespace cobalt {
 namespace renderer {
@@ -42,6 +75,7 @@ namespace egl {
 
 static sk_sp<SkSurface> sRasterSurface;
 
+//static std::mutex pImageMutex;
 static sk_sp<SkImage> pImage;
 
 /*sk_sp<SkSurface> getRasterizerSkSurface() {
@@ -50,6 +84,7 @@ static sk_sp<SkImage> pImage;
 
 sk_sp<SkImage> getRasterizerSkImage() {
   //std::lock_guard<std::mutex> lock(mutexRasterizerSkImage);
+  //std::scoped_lock lock(pImageMutex);
   return pImage;
 }
 
@@ -81,6 +116,7 @@ void SoftwareRasterizer::Submit(
     const Options& options) {
   ///printf("SoftwareRasterizer::Submit( 1\n");
   DCHECK(render_target);
+
   int width = render_target->GetSize().width();
   int height = render_target->GetSize().height();
 
@@ -167,10 +203,29 @@ void SoftwareRasterizer::Submit(
   ///printf("SoftwareRasterizer::Submit( 5\n");
   skia_rasterizer_.Submit(render_tree, canvas);
 
+  const bool draw_dummy_counter = true;
+  if(draw_dummy_counter) {
+    SkPaint glyph_paint(paint);
+    glyph_paint.setColor(SK_ColorBLACK);
+    if(!skFont) {
+      sk_sp<SkTypeface> sktp = SkTypeface::MakeFromFile("./resources/fonts/FreeSans.ttf");
+      skFont =
+          new SkFont(sktp, 30.0f, 1.5f, 0.0f);
+      skFont->setEdging(SkFont::Edging::kAntiAlias);
+    }
+    CHECK(skFont);
+    auto last_time_sec = base::TimeTicks::Now().since_origin().InSeconds();
+    std::string blobText = "last_time_sec: ";
+    blobText += std::to_string(last_time_sec);
+    auto blob3 = SkTextBlob::MakeFromString(blobText.c_str(), *skFont);
+    canvas->drawTextBlob(blob3.get(), 500, 500, glyph_paint);
+  }
+
   ///printf("SoftwareRasterizer::Submit( 6\n");
     sRasterSurface->flush();
 
     {
+      //std::scoped_lock lock(pImageMutex);
       ///std::lock_guard<std::mutex> lock(mutexRasterizerSkImage);
       //printf("SoftwareRasterizer::Submit( 7\n");
       pImage = sRasterSurface->makeImageSnapshot();

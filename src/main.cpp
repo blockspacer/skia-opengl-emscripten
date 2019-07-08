@@ -389,6 +389,15 @@
 #include "base/synchronization/waitable_event.h"
 
 //#include "base/task/sequence_manager/sequence_manager.h"
+
+// Create a TYPE_DEFAULT message-loop.
+
+#if defined(__EMSCRIPTEN__)
+//static base::MessageLoop browser_loop;
+//base::RunLoop run_loop;
+//static scoped_refptr<base::SingleThreadTaskRunner> task_runner =
+#endif // __EMSCRIPTEN__
+
 #endif // ENABLE_BASE
 
 #ifdef ENABLE_WTF
@@ -2206,7 +2215,7 @@ class CobaltTester {
   /// \note WASM DEBUG build may be too slow for high refresh rate
   const float kLayoutMaxRefreshFrequencyInHz = 60.0f;
 #else // !NDEBUG
-  const float kLayoutMaxRefreshFrequencyInHz = 29.0f;
+  const float kLayoutMaxRefreshFrequencyInHz = 40.0f;
 #endif // NDEBUG
 #else // !__EMSCRIPTEN__
   const float kLayoutMaxRefreshFrequencyInHz = 60.0f;
@@ -2376,8 +2385,8 @@ void CobaltTester::OnRendererSubmissionRasterized() {
     TRACE_EVENT0("cobalt::browser",
                  "CobaltTester::OnRendererSubmissionRasterized()");
 
-    DCHECK(g_cobaltTester);
-    DCHECK(g_cobaltTester->thread_checker_.CalledOnValidThread());
+    //DCHECK(g_cobaltTester);
+    //DCHECK(g_cobaltTester->thread_checker_.CalledOnValidThread());
 
     //if (!is_rendered_) {
     //    // Hide the system splash screen when the first render has completed.
@@ -2386,7 +2395,7 @@ void CobaltTester::OnRendererSubmissionRasterized() {
     //}
 }
 
-static render_tree::animations::AnimateNode::AnimateResults animateResults; // TODO
+//static render_tree::animations::AnimateNode::AnimateResults animateResults; // TODO
 
 void CobaltTester::SubmitCurrentRenderTreeToRenderer() {
     DCHECK(g_cobaltTester);
@@ -2579,7 +2588,9 @@ void CobaltTester::HandlePointerEvents() {
   scoped_refptr<dom::Event> event;
 
   do {
-    //printf("HandlePointerEvents 2\n");
+#if defined(__EMSCRIPTEN__)
+    EM_LOG("HandlePointerEvents 2\n");
+#endif
     event = document->pointer_state()->GetNextQueuedPointerEvent();
     if (event) {
       SB_DCHECK(
@@ -2592,7 +2603,9 @@ void CobaltTester::HandlePointerEvents() {
       topmost_event_target_->MaybeSendPointerEvents(event);
     }
   } while (event && !layout_manager_->IsRenderTreePending());
-  //printf("HandlePointerEvents 3\n");
+#if defined(__EMSCRIPTEN__)
+  EM_LOG("HandlePointerEvents 3\n");
+#endif
 }
 
 // Called when the WebModule's Window.onload event is fired.
@@ -3593,6 +3606,9 @@ static void animate() {
   //  redClrTintAnim = 0.0f;
   //}
 
+
+  //printf("animate start\n");
+
 #if defined(ENABLE_SKIA) && defined(ENABLE_SKOTTIE)
 
 #if defined(ENABLE_HTML5_SDL) || !defined(__EMSCRIPTEN__)
@@ -3600,26 +3616,41 @@ static void animate() {
     // Reset the animation time.
     fTimeBase = SDL_GetTicks();
   }
+
+  //printf("animate 2\n");
+
   // see https://github.com/google/skia/blob/master/platform_tools/android/apps/skottie/src/main/cpp/native-lib.cpp
-  if (fAnimation) {
+  if (fAnimation && fAnimation->duration()) {
     const SkMSec tElapsed = SDL_GetTicks() - fTimeBase;
-    const SkScalar duration = fAnimation->duration() * 1000;
-    const auto animPos = ::std::fmod(tElapsed, duration) / duration;
+    //printf("animate 3\n");
+    const SkScalar duration = fAnimation->duration() * 1000.0;
+    //printf("animate 4\n");
+    const double animPos = ::std::fmod(tElapsed, duration) / duration;
+    //printf("animate 5\n");
     fAnimation->seek(static_cast<SkScalar>(animPos));
   }
+
+  //printf("animate 6\n");
+
 #else
 //#error "TODO: port SDL_GetTicks without SDL"
+  //EM_LOG("animate 7\n");
   if (fTimeBase == 0) {
     // Reset the animation time.
     fTimeBase = SkTime::GetMSecs();
   }
+  //EM_LOG("animate 8\n");
   // see https://github.com/google/skia/blob/master/platform_tools/android/apps/skottie/src/main/cpp/native-lib.cpp
-  if (fAnimation) {
+  if (fAnimation && fAnimation->duration()) {
     const SkMSec tElapsed = SkTime::GetMSecs() - fTimeBase;
-    const SkScalar duration = fAnimation->duration() * 1000;
-    const auto animPos = ::std::fmod(tElapsed, duration) / duration;
+    //EM_LOG("animate 9\n");
+    const SkScalar duration = fAnimation->duration() * 1000.0;
+    //EM_LOG("animate 10\n");
+    const double animPos = ::std::fmod(tElapsed, duration) / duration;
+    //EM_LOG("animate 11\n");
     fAnimation->seek(static_cast<SkScalar>(animPos));
   }
+  //EM_LOG("animate 12\n");
 #endif
 
   /// \note: (only wasm ST - wasm without pthreads)
@@ -3739,6 +3770,7 @@ static void animate() {
 
 #endif // ENABLE_SKOTTIE
     ///if (isDebugPeriodReached()) printf("animate end\n");
+    //printf("animate end\n");
 }
 
 static int prevScreenMouseX = -1;
@@ -3762,18 +3794,18 @@ static void updateBrowserMousePos(const int screenMouseX, const int screenMouseY
 
   //printf("updateBrowserMousePos x %d y %d\n", screenMouseX, screenMouseY);
 
+//#if defined(__EMSCRIPTEN__)
+//  EM_LOG("updateBrowserMousePos PostTask InputEvent 1");
+//  EM_LOG_NUM(screenMouseX);
+//  EM_LOG_NUM(screenMouseY);
+//#endif
 
+//#ifdef __TODO__
   ///if (base::MessageLoopCurrent::Get().task_runner() != g_cobaltTester->self_task_runner_) {
     main_thread_.task_runner()->PostTask(
         FROM_HERE, base::Bind(
           [](const int mouseX, const int mouseY) {
             ///printf("PostTask InputEvent\n");
-
-#if defined(__EMSCRIPTEN__)
-  EM_LOG("updateBrowserMousePos PostTask InputEvent 1");
-  EM_LOG_NUM(mouseX);
-  EM_LOG_NUM(mouseY);
-#endif
 
              if(!g_cobaltTester) {
               return;
@@ -3850,6 +3882,47 @@ static void updateBrowserMousePos(const int screenMouseX, const int screenMouseY
             }*/
           } , screenMouseX, screenMouseY));
   ///}
+//#endif // __TODO__
+
+
+/*             if(!g_cobaltTester) {
+              return;
+            }
+            DCHECK(g_cobaltTester);
+            DCHECK(g_cobaltTester->system_window_);
+            DCHECK(g_cobaltTester->self_task_runner_);
+
+            //DCHECK_EQ(base::MessageLoopCurrent::Get().task_runner(), g_cobaltTester->self_task_runner_);
+            //DCHECK(g_cobaltTester->thread_checker_.CalledOnValidThread());
+
+            DCHECK(screenMouseX > -1);
+            DCHECK(screenMouseX < 100000);
+            DCHECK(screenMouseY > -1);
+            DCHECK(screenMouseY < 100000);
+             // TODO: free mem
+            SbEvent* event = new SbEvent();
+            event->type = SbEventType::kSbEventTypeInput;
+             // TODO: free mem
+            SbInputData* data = new SbInputData();
+            SbMemorySet(data, 0, sizeof(*data));
+            data->window = g_cobaltTester->system_window_->GetSbWindow();
+            data->type = SbInputEventType::kSbInputEventTypeMove;
+            data->device_id = 2; // kGamepadDeviceId
+            data->key_location = kSbKeyLocationUnspecified;
+            data->position.x = static_cast<float>(screenMouseX);
+            data->position.y = static_cast<float>(screenMouseY);
+            data->key_modifiers = kSbKeyModifiersNone;
+            data->device_type = SbInputDeviceType::kSbInputDeviceTypeMouse;
+            data->key = SbKey::kSbKeyMouse1;
+            //data->character = "k";
+#if SB_API_VERSION >= 6
+            data->pressure = NAN;
+            data->size = {NAN, NAN};
+            data->tilt = {NAN, NAN};
+#endif
+            event->data = data;
+
+            system_window::HandleInputEvent(event);*/
 
 //#if defined(__EMSCRIPTEN__)
 //  EM_LOG("updateBrowserMousePos 2");
@@ -3921,8 +3994,9 @@ EM_BOOL emsc_mouse_cb(int emsc_type, const EmscriptenMouseEvent* emsc_event, voi
 #endif
 
 static void mainLoop() {
+#if defined(__EMSCRIPTEN__)
 
-#ifdef __EMSCRIPTEN__
+  //browser_loop.task_runner()->
 
   // see https://github.com/emscripten-core/emscripten/issues/3495
   ///
@@ -4048,13 +4122,7 @@ static void mainLoop() {
     }
   }
 #elif defined(__EMSCRIPTEN__)
-  #warning "TODO: port SDL_PollEvent (emscripten_set_mousedown_callback, e.t.c.)"
-  #warning "see https://github.com/floooh/sokol/blob/master/sokol_app.h#L2403 for example"
-  #warning "see https://github.com/hongkk/urho/blob/master/Source/Urho3D/Input/Input.cpp for example"
-  #warning "see https://github.com/h-s-c/libKD/blob/master/source/kd.c#L2658 for example"
-
-  // TODO
-  emscripten_set_mousemove_callback("#canvas", 0, true, emsc_mouse_cb);
+  // nothing
 #else
   #error "TODO: port SDL_PollEvent"
 #endif
@@ -4845,6 +4913,16 @@ int main(int argc, char** argv) {
     SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
     SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, kMsaaSampleCount);
   }
+#endif
+
+#if defined(__EMSCRIPTEN__) && !defined(ENABLE_HTML5_SDL)
+  #warning "TODO: port SDL_PollEvent (emscripten_set_mousedown_callback, e.t.c.)"
+  #warning "see https://github.com/floooh/sokol/blob/master/sokol_app.h#L2403 for example"
+  #warning "see https://github.com/hongkk/urho/blob/master/Source/Urho3D/Input/Input.cpp for example"
+  #warning "see https://github.com/h-s-c/libKD/blob/master/source/kd.c#L2658 for example"
+
+  // TODO
+  emscripten_set_mousemove_callback("#canvas", 0, true, emsc_mouse_cb);
 #endif
 
 #if defined(ENABLE_HTML5_SDL) || !defined(__EMSCRIPTEN__)
