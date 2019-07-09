@@ -279,6 +279,12 @@ void LayoutManager::Impl::OnMutation() {
   //
   //return; // TODO
 
+
+  /// TODO: check if need IsRenderTreePending here
+  if(IsRenderTreePending()) {
+    return;
+  }
+
   if (layout_trigger_ == kOnDocumentMutation) {
     /// TODO
     DirtyLayout();

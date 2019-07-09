@@ -22,33 +22,6 @@
         font-family: "Ubuntu";
       }
 
-      label:hover {
-        color: #000;
-      }
-      label::before {
-        content: "+";
-        vertical-align: text-top;
-        display: inline-block;
-        width: 20px;
-        height: 20px;
-        margin-right: 3px;
-      }
-      #expand {
-        height: 0px;
-        overflow: hidden;
-        transition: height 0.5s;
-        color: #FFF;
-      }
-      section {
-        padding: 0 20px;
-      }
-      #toggle:checked ~ #expand {
-        height: 250px;
-      }
-      #toggle:checked ~ label::before {
-        content: "-";
-      }
-
       .showbox2 {
         margin: 4em 1em;
         width: 100px;
@@ -272,20 +245,6 @@
     </style>
   </head>
   <body class="exanim">
-
-  <input id="toggle" type="checkbox" checked>
-  <label for="toggle">Hidden Kitten</label>
-  <div id="expand">
-    <div>
-      <p>mew</p>
-    </div>
-  </div>
-  <div>
-    <h3>Other content</h3>
-    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas porta non turpis faucibus lobortis. Curabitur non eros rutrum, gravida felis non, luctus velit. Ut commodo congue velit feugiat lobortis. Etiam nec dolor quis nulla bibendum blandit vitae nec enim. Maecenas id dignissim erat. Aenean ac mi nec ante venenatis interdum quis vel lacus.
-    </p>
-    <p>Aliquam ligula est, aliquet et semper vitae, elementum eget dolor. In ut dui id leo tristique iaculis eget a dui. Vestibulum cursus, dolor sit amet lacinia feugiat, turpis odio auctor nisi, quis pretium dui elit at est. Pellentesque lacus risus, vulputate sed gravida eleifend, accumsan ac ante. Donec accumsan, augue eu congue condimentum, erat magna luctus diam, adipiscing bibendum sem sem non elit.</p>
-  </div>
 
     <div class="flip-card">
       <div class="flip-card-inner">
