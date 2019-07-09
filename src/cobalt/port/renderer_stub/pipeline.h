@@ -199,7 +199,9 @@ class Pipeline {
   void QueueSubmission(const Submission& submission,
                        base::TimeTicks receipt_time);
 
+#if defined(ENABLE_RASTERIZER_THREAD)
   base::WaitableEvent rasterizer_created_event_;
+#endif
 
   // The render_target that all submitted render trees will be rasterized to.
   scoped_refptr<backend::RenderTarget> render_target_;
@@ -213,21 +215,23 @@ class Pipeline {
   // to make proper shutdown easier.
   base::Optional<base::RepeatingTimer> rasterize_timer_;
 
+#if defined(ENABLE_RASTERIZER_THREAD)
   // ThreadChecker for use by the rasterizer_thread_ defined below.
   base::ThreadChecker rasterizer_thread_checker_;
 
   // The thread that all rasterization will take place within.
   base::Thread rasterizer_thread_;
 
-  // The rasterizer object that will run on the rasterizer_thread_ and is
-  // effectively the last stage of the pipeline, responsible for rasterizing
-  // the final render tree and submitting it to the render target.
-  std::unique_ptr<rasterizer::Rasterizer> rasterizer_;
-
   // A thread whose only purpose is to destroy submissions/render trees.
   // This is important because destroying a render tree can take some time,
   // and we would like to avoid spending this time on the renderer thread.
   base::Thread submission_disposal_thread_;
+#endif
+
+  // The rasterizer object that will run on the rasterizer_thread_ and is
+  // effectively the last stage of the pipeline, responsible for rasterizing
+  // the final render tree and submitting it to the render target.
+  std::unique_ptr<rasterizer::Rasterizer> rasterizer_;
 
   // Manages a queue of render tree submissions that are to be rendered in
   // the future.
