@@ -38,6 +38,7 @@ public:
     }
 
     void writeText(const char* s) override {
+        printf("SkSLFileOutputStream.h: writeText\n");
         SkASSERT(fOpen);
         if (isValid()) {
             if (EOF == fputs(s, fFile)) {
@@ -47,6 +48,7 @@ public:
     }
 
     void write(const void* s, size_t size) override {
+        printf("SkSLFileOutputStream.h: write\n");
         if (isValid()) {
             size_t written = fwrite(s, 1, size, fFile);
             if (written != size) {

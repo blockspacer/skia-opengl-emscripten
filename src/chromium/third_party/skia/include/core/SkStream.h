@@ -316,6 +316,8 @@ public:
     ~SkFILEStream() override;
 
     static std::unique_ptr<SkFILEStream> Make(const char path[]) {
+        printf("SkFILEStream: Make\n");
+
         std::unique_ptr<SkFILEStream> stream(new SkFILEStream(path));
         return stream->isValid() ? std::move(stream) : nullptr;
     }

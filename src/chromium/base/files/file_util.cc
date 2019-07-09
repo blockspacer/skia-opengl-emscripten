@@ -157,6 +157,8 @@ bool TextContentsEqual(const FilePath& filename1, const FilePath& filename2) {
 bool ReadFileToStringWithMaxSize(const FilePath& path,
                                  std::string* contents,
                                  size_t max_size) {
+  printf("file_util.cc: ReadFileToStringWithMaxSize\n");
+
   if (contents)
     contents->clear();
   if (path.ReferencesParent())
@@ -244,6 +246,8 @@ bool CreateDirectory(const FilePath& full_path) {
 }
 
 bool GetFileSize(const FilePath& file_path, int64_t* file_size) {
+  printf("file_util.cc: GetFileSize\n");
+
   File::Info info;
   if (!GetFileInfo(file_path, &info))
     return false;
@@ -254,6 +258,8 @@ bool GetFileSize(const FilePath& file_path, int64_t* file_size) {
 bool TouchFile(const FilePath& path,
                const Time& last_accessed,
                const Time& last_modified) {
+  printf("file_util.cc: TouchFile\n");
+
   int flags = File::FLAG_OPEN | File::FLAG_WRITE_ATTRIBUTES;
 
 #if defined(OS_WIN)

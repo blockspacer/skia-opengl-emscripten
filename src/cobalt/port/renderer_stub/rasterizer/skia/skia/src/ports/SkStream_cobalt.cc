@@ -215,6 +215,8 @@ SkFileMemoryChunkStream::~SkFileMemoryChunkStream() {
 }
 
 size_t SkFileMemoryChunkStream::read(void* buffer, size_t size) {
+  printf("SkFileMemoryChunkStream: read\n");
+
   if (!file_) {
     return 0;
   }
@@ -313,6 +315,8 @@ SkFileMemoryChunkStream* SkFileMemoryChunkStream::duplicate() const {
 size_t SkFileMemoryChunkStream::getPosition() const { return stream_position_; }
 
 bool SkFileMemoryChunkStream::seek(size_t position) {
+  printf("SkFileMemoryChunkStream: seek\n");
+
   stream_position_ = std::min(position, file_length_);
   return true;
 }
@@ -336,6 +340,8 @@ size_t SkFileMemoryChunkStream::getLength() const { return file_length_; }
 
 bool SkFileMemoryChunkStream::ReadIndexIntoMemoryChunk(
     size_t index, SkFileMemoryChunk* chunk) {
+  printf("SkFileMemoryChunkStream: ReadIndexIntoMemoryChunk\n");
+
   size_t index_position = index * SkFileMemoryChunk::kSizeInBytes;
 
   // Ensure that the file position matches the index's position. If the seek

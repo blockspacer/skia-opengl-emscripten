@@ -108,6 +108,8 @@ size_t SbPageGetTotalPhysicalMemoryBytes() {
 }
 
 int64_t SbPageGetUnallocatedPhysicalMemoryBytes() {
+  printf("main.cpp: SbPageGetUnallocatedPhysicalMemoryBytes\n");
+
   // Computes unallocated memory as the total system memory (our fake 1GB limit)
   // minus the # of resident pages.
 

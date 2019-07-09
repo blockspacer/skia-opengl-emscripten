@@ -1393,6 +1393,8 @@ static GLfloat const kVertexData[] = {1.0f, 1.0f,  1.0f, 0.0f, -1.0f, 1.0f,  0.0
 // TODO https://github.com/bakerstu/openmrn/blob/5f6bb8934fe13b2897d5f52ec6b358bd87dd886a/src/utils/FileUtils.cxx#L44
 static int read_file(const char* fPath, char*& fileString, long int& fsize, const bool closeString)
 {
+    printf("main.cpp: read_file\n");
+
     if(!strlen(fPath)){
         printf("failed to open file with empty path\n");
         return 1;
@@ -2577,7 +2579,10 @@ void CobaltTester::OnStopDispatchEvent(const scoped_refptr<dom::Event>& event) {
 }
 
 void CobaltTester::HandlePointerEvents() {
-  printf("HandlePointerEvents 1!\n");
+//#if defined(__EMSCRIPTEN__)
+//  EM_LOG("HandlePointerEvents 1!\n");
+//  //printf("HandlePointerEvents 1!\n");
+//#endif
 
   DCHECK(g_cobaltTester);
   DCHECK_EQ(base::MessageLoopCurrent::Get().task_runner(), g_cobaltTester->self_task_runner_);
@@ -2589,10 +2594,10 @@ void CobaltTester::HandlePointerEvents() {
   scoped_refptr<dom::Event> event;
 
   do {
-#if defined(__EMSCRIPTEN__)
-    EM_LOG("HandlePointerEvents 2\n");
-    printf("HandlePointerEvents 2!\n");
-#endif
+//#if defined(__EMSCRIPTEN__)
+//    EM_LOG("HandlePointerEvents 2\n");
+//    //printf("HandlePointerEvents 2!\n");
+//#endif
     event = document->pointer_state()->GetNextQueuedPointerEvent();
     if (event) {
       SB_DCHECK(
@@ -2605,10 +2610,10 @@ void CobaltTester::HandlePointerEvents() {
       topmost_event_target_->MaybeSendPointerEvents(event);
     }
   } while (event && !layout_manager_->IsRenderTreePending());
-#if defined(__EMSCRIPTEN__)
-  EM_LOG("HandlePointerEvents 3\n");
-  printf("HandlePointerEvents 3!\n");
-#endif
+//#if defined(__EMSCRIPTEN__)
+//  EM_LOG("HandlePointerEvents 3\n");
+//  //printf("HandlePointerEvents 3!\n");
+//#endif
 }
 
 // Called when the WebModule's Window.onload event is fired.
@@ -3808,11 +3813,11 @@ static void updateBrowserMousePos(const int screenMouseX, const int screenMouseY
               return;
             }
 
-          #if defined(__EMSCRIPTEN__)
-            EM_LOG("updateBrowserMousePos PostTask InputEvent 1 !!!!");
-            EM_LOG_NUM(screenMouseX);
-            EM_LOG_NUM(screenMouseY);
-          #endif
+          //#if defined(__EMSCRIPTEN__)
+          //  EM_LOG("updateBrowserMousePos PostTask InputEvent 1 !!!!");
+          //  EM_LOG_NUM(mouseX);
+          //  EM_LOG_NUM(mouseY);
+          //#endif
 
             DCHECK(g_cobaltTester);
             DCHECK(g_cobaltTester->system_window_);

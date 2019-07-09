@@ -206,33 +206,23 @@
 #define TRACE_DISABLED_BY_DEFAULT(name) "disabled-by-default-" name
 
 #ifdef __EMSCRIPTEN__
+
 #define TRACE_EVENT0(category_group, name)    \
-  (void)(0); \
-  EM_LOG(category_group); \
-  EM_LOG(name);
+  (void)(0);
 #define TRACE_EVENT_WITH_FLOW0(category_group, name, bind_id, flow_flags)  \
-  (void)(0); \
-  EM_LOG(category_group); \
-  EM_LOG(name);
+  (void)(0);
 #define TRACE_EVENT1(category_group, name, arg1_name, arg1_val) \
-  (void)(0); \
-  EM_LOG(category_group); \
-  EM_LOG(name);
+  (void)(0);
 #define TRACE_EVENT_WITH_FLOW1(category_group, name, bind_id, flow_flags,  \
                                arg1_name, arg1_val)                        \
-  (void)(0); \
-  EM_LOG(category_group); \
-  EM_LOG(name);
+  (void)(0);
 #define TRACE_EVENT2(category_group, name, arg1_name, arg1_val, arg2_name,   \
                      arg2_val)                                               \
-  (void)(0); \
-  EM_LOG(category_group); \
-  EM_LOG(name);
+  (void)(0);
 #define TRACE_EVENT_WITH_FLOW2(category_group, name, bind_id, flow_flags,    \
                                arg1_name, arg1_val, arg2_name, arg2_val)     \
-  (void)(0); \
-  EM_LOG(category_group); \
-  EM_LOG(name);
+  (void)(0);
+
 #else
 
 // Records a pair of begin and end events called "name" for the current
@@ -260,6 +250,7 @@
   INTERNAL_TRACE_EVENT_ADD_SCOPED_WITH_FLOW(category_group, name, bind_id,   \
                                             flow_flags, arg1_name, arg1_val, \
                                             arg2_name, arg2_val)
+
 #endif // __EMSCRIPTEN__
 
 // Records a single event called "name" immediately, with 0, 1 or 2
