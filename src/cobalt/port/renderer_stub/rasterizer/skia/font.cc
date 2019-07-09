@@ -62,19 +62,19 @@ static sk_sp<SkTypeface> getOrCreateFallbackTypeface() {
 
 static sk_sp<SkTypeface_Cobalt> getOrCreateFallbackSkTypeface() {
 #if defined(__EMSCRIPTEN__)
-  EM_LOG("getOrCreateFallbackSkTypeface 1");
+  //EM_LOG("getOrCreateFallbackSkTypeface 1");
 #endif
     if (!fallbackSkTypeface_Cobalt) {
         fallbackSkTypeface_Cobalt =
             sk_sp<SkTypeface_Cobalt>(base::polymorphic_downcast<SkTypeface_Cobalt*>(
         getOrCreateFallbackTypeface()->makeClone(SkFontArguments()).release()));
 #if defined(__EMSCRIPTEN__)
-  EM_LOG("getOrCreateFallbackSkTypeface 2");
+  //EM_LOG("getOrCreateFallbackSkTypeface 2");
 #endif
     }
     DCHECK(fallbackSkTypeface_Cobalt);
 #if defined(__EMSCRIPTEN__)
-  EM_LOG("getOrCreateFallbackSkTypeface 3");
+  //EM_LOG("getOrCreateFallbackSkTypeface 3");
 #endif
     return fallbackSkTypeface_Cobalt;
 }
@@ -113,7 +113,7 @@ Font::Font(SkiaTypeface* typeface, SkScalar size)
     //DCHECK(size > 21 && size < 23); // TODO
     //std::cout << "Font::Font() %d \n" << typeface_->GetId() << std::endl;
 #if defined(__EMSCRIPTEN__)
-  EM_LOG("Font::Font() 1");
+  //EM_LOG("Font::Font() 1");
 #endif
   glyph_bounds_thread_checker_.DetachFromThread();
   DCHECK(typeface_);

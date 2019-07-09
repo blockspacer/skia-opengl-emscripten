@@ -556,6 +556,9 @@ void Document::SetActiveElement(Element* active_element) {
 }
 
 void Document::SetIndicatedElement(HTMLElement* indicated_element) {
+
+  //return; /// TODO
+
   if (indicated_element != indicated_element_.get()) {
     if (indicated_element_) {
       // Clear the rule matching state on this element and its ancestors, as
@@ -565,6 +568,7 @@ void Document::SetIndicatedElement(HTMLElement* indicated_element) {
       bool invalidate_tree_matching_rules = (indicated_element == NULL);
       indicated_element_->ClearRuleMatchingStateOnElementAndAncestors(
           invalidate_tree_matching_rules);
+      /// TODO
       indicated_element_->OnCSSMutation();
     }
     if (indicated_element) {
@@ -573,6 +577,7 @@ void Document::SetIndicatedElement(HTMLElement* indicated_element) {
       // their hover state may be changing.
       indicated_element_->ClearRuleMatchingStateOnElementAndAncestors(
           true /*invalidate_tree_matching_rules*/);
+      /// TODO
       indicated_element_->OnCSSMutation();
     } else {
       indicated_element_.reset();
@@ -637,6 +642,8 @@ void Document::SignalOnLoadToObservers() {
 void Document::RecordMutation() {
   TRACE_EVENT0("cobalt::dom", "Document::RecordMutation()");
 
+  /// \see LayoutManager::Impl::OnMutation()
+  /// \see HTMLElement::OnMutation()
   FOR_EACH_OBSERVER(DocumentObserver, observers_, OnMutation());
 }
 
@@ -714,6 +721,8 @@ void Document::OnTypefaceLoadEvent() {
 
 void Document::OnElementInlineStyleMutation() {
   is_computed_style_dirty_ = true;
+
+  //return; /// TODO
 
   RecordMutation();
 }

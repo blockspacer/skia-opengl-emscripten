@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include "cobalt/build/build_config.h"
+
 #include "cobalt/layout/topmost_event_target.h"
 
 #include "base/optional.h"
@@ -35,6 +37,11 @@
 #include "cobalt/dom/wheel_event.h"
 #include "cobalt/math/vector2d.h"
 #include "cobalt/math/vector2d_f.h"
+
+#if defined(__EMSCRIPTEN__)
+#include "emscripten/emscripten.h"
+#include "emscripten/html5.h"
+#endif
 
 namespace cobalt {
 namespace layout {
@@ -315,6 +322,8 @@ void TopmostEventTarget::MaybeSendPointerEvents(
     const scoped_refptr<dom::Event>& event) {
   ///printf("TopmostEventTarget::MaybeSendPointerEvents\n");
 
+  //return; /// TODO
+
   TRACE_EVENT0("cobalt::layout",
                "TopmostEventTarget::MaybeSendPointerEvents()");
 
@@ -378,9 +387,22 @@ void TopmostEventTarget::MaybeSendPointerEvents(
     target_element = FindTopmostEventTarget(view->document(), coordinate);
   }
 
+//#if defined(__EMSCRIPTEN__)
+//  if(target_element) {
+//    std::string str;
+//    str += "MaybeSendPointerEvents target_element: ";
+//    str += target_element->tag_name().c_str();
+//    EM_LOG(str.c_str());
+//  } else {
+//    EM_LOG("MaybeSendPointerEvents no target_element\n");
+//  }
+//#endif
+
   if (target_element) {
     target_element->DispatchEvent(event);
   }
+
+  //return; /// TODO
 
   if (pointer_event) {
     if (pointer_event->type() == base::Tokens::pointerup()) {
@@ -412,6 +434,8 @@ void TopmostEventTarget::MaybeSendPointerEvents(
           new dom::MouseEvent(base::Tokens::click(), view, event_init));
     }
   }
+
+  //return; /// TODO
 
   scoped_refptr<dom::HTMLElement> previous_html_element(
       previous_html_element_weak_.get());

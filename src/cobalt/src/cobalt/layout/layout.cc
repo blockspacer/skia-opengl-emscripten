@@ -148,11 +148,19 @@ scoped_refptr<render_tree::Node> GenerateRenderTreeFromBoxTree(
   TRACE_EVENT0("cobalt::layout", "GenerateRenderTreeFromBoxTree()");
   render_tree::CompositionNode::Builder render_tree_root_builder;
   {
+#if defined(__EMSCRIPTEN__)
+  //EM_LOG("GenerateRenderTreeFromBoxTree 1\n");
+#endif
+
     TRACE_EVENT0("cobalt::layout", kBenchmarkStatRenderAndAnimate);
 #if !defined(OS_EMSCRIPTEN)
     base::StopWatch stop_watch_render_and_animate(
         LayoutStatTracker::kStopWatchTypeRenderAndAnimate,
         base::StopWatch::kAutoStartOn, layout_stat_tracker);
+#endif
+
+#if defined(__EMSCRIPTEN__)
+  //EM_LOG("GenerateRenderTreeFromBoxTree 2\n");
 #endif
 
     (*initial_containing_block)
@@ -172,6 +180,10 @@ scoped_refptr<render_tree::Node> GenerateRenderTreeFromBoxTree(
   // root to merge any sub-AnimateNodes.
   render_tree::animations::AnimateNode* animate_node =
       new render_tree::animations::AnimateNode(static_root_node);
+
+#if defined(__EMSCRIPTEN__)
+  //EM_LOG("GenerateRenderTreeFromBoxTree 3\n");
+#endif
 
   return animate_node;
 }

@@ -123,7 +123,7 @@
 #undef ENABLE_SK_EFFECTS
 #endif
 
-#define ENABLE_SK_UI 1
+//#define ENABLE_SK_UI 1
 #define ENABLE_IMAGES 1
 
 //#undef ENABLE_SKOTTIE
@@ -1194,7 +1194,7 @@ static const float FONT_SIZE_F = 22.0f;
 
 #ifdef ENABLE_BASE
 static base::Thread main_thread_("Main_Thread");
-static base::Thread input_device_thread_("Input_Device_Thread");
+//static base::Thread input_device_thread_("Input_Device_Thread");
 static base::WaitableEvent main_thread_event_;
 #endif
 
@@ -2336,7 +2336,7 @@ void CobaltTester::OnRenderTreeRasterized(
 
     // Flush out any submitted render trees pushed since we started shutting down
     // the web modules above.
-    //base::MessageLoopCurrent::Get()->task_runner()->PostTask(
+    //base::MessageLoopCurrent::Get()->task_runner()->PostNonNestableTask(
     //    FROM_HERE,
     //    base::Bind(&CobaltTester::BrowserProcessRenderTreeSubmissionQueue,
     //               base::Unretained(this)));
@@ -2484,10 +2484,10 @@ void CobaltTester::QueueOnRenderTreeProduced(
         base::Bind(&CobaltTester::OnBrowserRenderTreeProduced,
                    base::Unretained(this),
                    main_web_module_generation, layout_results));
-    //self_message_loop_->task_runner()->PostTask(
+    //self_message_loop_->task_runner()->PostNonNestableTask(
 
     DCHECK(g_cobaltTester);
-    g_cobaltTester->self_task_runner_->PostTask(
+    g_cobaltTester->self_task_runner_->PostNonNestableTask(
         FROM_HERE,
         base::Bind(&CobaltTester::BrowserProcessRenderTreeSubmissionQueue,
                    base::Unretained(this)));
@@ -2579,25 +2579,36 @@ void CobaltTester::OnStopDispatchEvent(const scoped_refptr<dom::Event>& event) {
 }
 
 void CobaltTester::HandlePointerEvents() {
-//#if defined(__EMSCRIPTEN__)
-//  EM_LOG("HandlePointerEvents 1!\n");
-//  //printf("HandlePointerEvents 1!\n");
-//#endif
+#if defined(__EMSCRIPTEN__)
+  //EM_LOG("HandlePointerEvents 1!\n");
+  //printf("HandlePointerEvents 1!\n");
+#endif
 
-  DCHECK(g_cobaltTester);
-  DCHECK_EQ(base::MessageLoopCurrent::Get().task_runner(), g_cobaltTester->self_task_runner_);
-  DCHECK(g_cobaltTester->thread_checker_.CalledOnValidThread());
+  //DCHECK(g_cobaltTester);
+  //DCHECK_EQ(base::MessageLoopCurrent::Get().task_runner(), g_cobaltTester->self_task_runner_);
+  //DCHECK(g_cobaltTester->thread_checker_.CalledOnValidThread());
+
+  if (base::MessageLoopCurrent::Get().task_runner() != main_thread_.task_runner()) {
+  //if (base::MessageLoopCurrent::Get().task_runner() != input_device_thread_.task_runner()) {
+    //input_device_thread_.task_runner()->PostNonNestableTask(
+    main_thread_.task_runner()->PostNonNestableTask(
+        FROM_HERE, base::Bind(&CobaltTester::HandlePointerEvents,
+                              base::Unretained(this)));
+    return;
+  }
+
+#if defined(__EMSCRIPTEN__)
+    //EM_LOG("HandlePointerEvents 2\n");
+    //printf("HandlePointerEvents 2!\n");
+#endif
 
   ///TRACE_EVENT0("cobalt::browser", "WebModule::Impl::HandlePointerEvents");
   const scoped_refptr<dom::Document>& document = window_->document();
 
   scoped_refptr<dom::Event> event;
 
+  int i = 0;
   do {
-//#if defined(__EMSCRIPTEN__)
-//    EM_LOG("HandlePointerEvents 2\n");
-//    //printf("HandlePointerEvents 2!\n");
-//#endif
     event = document->pointer_state()->GetNextQueuedPointerEvent();
     if (event) {
       SB_DCHECK(
@@ -2608,12 +2619,17 @@ void CobaltTester::HandlePointerEvents() {
         topmost_event_target_.reset(new layout::TopmostEventTarget());
       }
       topmost_event_target_->MaybeSendPointerEvents(event);
+      i++;
+      if(i > 1000) {
+        printf("WARNING: too many iterations in HandlePointerEvents!\n");
+        break;
+      }
     }
   } while (event && !layout_manager_->IsRenderTreePending());
-//#if defined(__EMSCRIPTEN__)
-//  EM_LOG("HandlePointerEvents 3\n");
-//  //printf("HandlePointerEvents 3!\n");
-//#endif
+#if defined(__EMSCRIPTEN__)
+  //EM_LOG("HandlePointerEvents 3\n");
+  //printf("HandlePointerEvents 3!\n");
+#endif
 }
 
 // Called when the WebModule's Window.onload event is fired.
@@ -2634,7 +2650,7 @@ void CobaltTester::OnOnScreenKeyboardInputEventProduced(
   /*TRACE_EVENT0("cobalt::browser",
                "CobaltTester::OnOnScreenKeyboardInputEventProduced()");
   if (base::MessageLoop::current() != self_message_loop_) {
-    self_message_loop_->task_runner()->PostTask(
+    self_message_loop_->task_runner()->PostNonNestableTask(
         FROM_HERE,
         base::Bind(&CobaltTester::OnOnScreenKeyboardInputEventProduced,
                    weak_this_, type, event));
@@ -2657,7 +2673,16 @@ void CobaltTester::OnOnScreenKeyboardInputEventProduced(
 
 void CobaltTester::InjectInputEvent(scoped_refptr<cobalt::dom::Element> element,
                                        const scoped_refptr<cobalt::dom::Event>& event) {
-  //printf("InjectInputEvent type %s \n", event->type().c_str());
+//#if defined(__EMSCRIPTEN__)
+//  {
+//    std::string str;
+//    str += "InjectInputEvent type \n";
+//    str += event->type().c_str();
+//    str += "\n";
+//    EM_LOG(str.c_str());
+//  }
+//#endif
+
   TRACE_EVENT1("cobalt::browser", "WebModule::Impl::InjectInputEvent()",
                "event", event->type().c_str());
 
@@ -2669,27 +2694,62 @@ void CobaltTester::InjectInputEvent(scoped_refptr<cobalt::dom::Element> element,
   DCHECK(window_);
 
   if (element) {
+#if defined(__EMSCRIPTEN__)
+  //{
+  //  std::string str;
+  //  str += "InjectInputEvent type 1.1\n";
+  //  EM_LOG(str.c_str());
+  //}
+#endif
     element->DispatchEvent(event);
   } else {
     if (dom::PointerState::CanQueueEvent(event)) {
       // As an optimization we batch together pointer/mouse events for as long
       // as we can get away with it (e.g. until a non-pointer event is received
       // or whenever the next layout occurs).
+#if defined(__EMSCRIPTEN__)
+  //{
+  //  std::string str = "InjectInputEvent type 1.2\n";
+  //  EM_LOG(str.c_str());
+  //}
+#endif
       window_->document()->pointer_state()->QueuePointerEvent(event);
     } else {
+#if defined(__EMSCRIPTEN__)
+  //{
+  //  std::string str = "InjectInputEvent type 1.3\n";
+  //  EM_LOG(str.c_str());
+  //}
+#endif
       // In order to maintain the correct input event ordering, we first
       // dispatch any queued pending pointer events.
       HandlePointerEvents();
+#if defined(__EMSCRIPTEN__)
+  //{
+  //  std::string str = "InjectInputEvent type 1.4\n";
+  //  EM_LOG(str.c_str());
+  //}
+#endif
       window_->InjectEvent(event);
     }
   }
+
+#if defined(__EMSCRIPTEN__)
+  //{
+  //  std::string str;
+  //  str += "InjectInputEvent 2 type \n";
+  //  str += event->type().c_str();
+  //  str += "\n";
+  //  EM_LOG(str.c_str());
+  //}
+#endif
 }
 
 void CobaltTester::OnKeyEventProduced(base::CobToken type,
                                        const dom::KeyboardEventInit& event) {
-  DCHECK(g_cobaltTester);
-  DCHECK_EQ(base::MessageLoopCurrent::Get().task_runner(), g_cobaltTester->self_task_runner_);
-  DCHECK(g_cobaltTester->thread_checker_.CalledOnValidThread());
+  //DCHECK(g_cobaltTester);
+  //DCHECK_EQ(base::MessageLoopCurrent::Get().task_runner(), g_cobaltTester->self_task_runner_);
+  //DCHECK(g_cobaltTester->thread_checker_.CalledOnValidThread());
 
   printf("OnKeyEventProduced client_x %s \n", event.code().c_str());
 
@@ -2697,8 +2757,9 @@ void CobaltTester::OnKeyEventProduced(base::CobToken type,
 
   TRACE_EVENT0("cobalt::browser", "CobaltTester::OnKeyEventProduced()");
   DCHECK(self_task_runner_);
-  if (base::MessageLoopCurrent::Get().task_runner() != self_task_runner_) {
-    self_task_runner_->PostTask(
+  if (base::MessageLoopCurrent::Get().task_runner() != main_thread_.task_runner()) {
+  //if (base::MessageLoopCurrent::Get().task_runner() != input_device_thread_.task_runner()) {
+    main_thread_.task_runner()->PostNonNestableTask(
         FROM_HERE, base::Bind(&CobaltTester::OnKeyEventProduced,
                               base::Unretained(this), type, event));
     return;
@@ -2712,7 +2773,7 @@ void CobaltTester::OnKeyEventProduced(base::CobToken type,
   ///InjectKeyEventToMainWebModule(type, event);
 
   /*if (base::MessageLoop::current() != self_message_loop_) {
-    self_message_loop_->task_runner()->PostTask(
+    self_message_loop_->task_runner()->PostNonNestableTask(
         FROM_HERE, base::Bind(&BrowserModule::InjectKeyEventToMainWebModule,
                               weak_this_, type, event));
     return;
@@ -2728,16 +2789,17 @@ void CobaltTester::OnKeyEventProduced(base::CobToken type,
 
 void CobaltTester::OnPointerEventProduced(base::CobToken type,
                                            const dom::PointerEventInit& event) {
-  DCHECK(g_cobaltTester);
-  DCHECK_EQ(base::MessageLoopCurrent::Get().task_runner(), g_cobaltTester->self_task_runner_);
-  DCHECK(g_cobaltTester->thread_checker_.CalledOnValidThread());
+  //DCHECK(g_cobaltTester);
+  //DCHECK_EQ(base::MessageLoopCurrent::Get().task_runner(), g_cobaltTester->self_task_runner_);
+  //DCHECK(g_cobaltTester->thread_checker_.CalledOnValidThread());
 
   //printf("OnPointerEventProduced client_x %f client_y %f \n", event.client_x(), event.client_y());
   TRACE_EVENT0("cobalt::browser", "CobaltTester::OnPointerEventProduced()");
   DCHECK(system_window_);
   DCHECK(self_task_runner_);
-  if (base::MessageLoopCurrent::Get().task_runner() != self_task_runner_) {
-    self_task_runner_->PostTask(
+  //if (base::MessageLoopCurrent::Get().task_runner() != input_device_thread_.task_runner()) {
+  if (base::MessageLoopCurrent::Get().task_runner() != main_thread_.task_runner()) {
+    main_thread_.task_runner()->PostNonNestableTask(
         FROM_HERE, base::Bind(&CobaltTester::OnPointerEventProduced,
                               base::Unretained(this), type, event));
     return;
@@ -2776,14 +2838,14 @@ void CobaltTester::OnWheelEventProduced(base::CobToken type,
   DCHECK(system_window_);
   DCHECK(self_task_runner_);
   if (base::MessageLoopCurrent::Get().task_runner() != self_task_runner_) {
-    self_task_runner_->PostTask(
+    self_task_runner_->PostNonNestableTask(
         FROM_HERE, base::Bind(&CobaltTester::OnWheelEventProduced,
                               base::Unretained(this), type, event));
     return;
   }
 
   /*if (base::MessageLoop::current() != self_message_loop_) {
-    self_message_loop_->task_runner()->PostTask(
+    self_message_loop_->task_runner()->PostNonNestableTask(
         FROM_HERE, base::Bind(&CobaltTester::OnWheelEventProduced, weak_this_,
                               type, event));
     return;
@@ -2845,7 +2907,7 @@ CobaltTester::CobaltTester()
   :  self_task_runner_(main_thread_.task_runner())
 {
   DCHECK(self_task_runner_);
-  DCHECK_EQ(base::MessageLoopCurrent::Get().task_runner(), self_task_runner_);
+  //DCHECK_EQ(base::MessageLoopCurrent::Get().task_runner(), self_task_runner_);
   DCHECK(thread_checker_.CalledOnValidThread());
 
   // Create the rasterizer using the platform default RenderModule options.
@@ -3246,7 +3308,7 @@ static void createCobaltTester() {
     g_cobaltTester = std::make_unique<CobaltTester>();
 
     DCHECK(g_cobaltTester);
-    DCHECK_EQ(base::MessageLoopCurrent::Get().task_runner(), g_cobaltTester->self_task_runner_);
+    //DCHECK_EQ(base::MessageLoopCurrent::Get().task_runner(), g_cobaltTester->self_task_runner_);
     DCHECK(g_cobaltTester->thread_checker_.CalledOnValidThread());
 
     /// __TODO__
@@ -3263,7 +3325,7 @@ static void createCobaltTester() {
 
 static void createLayoutManager() {
   DCHECK(g_cobaltTester);
-  DCHECK_EQ(base::MessageLoopCurrent::Get().task_runner(), g_cobaltTester->self_task_runner_);
+  //DCHECK_EQ(base::MessageLoopCurrent::Get().task_runner(), g_cobaltTester->self_task_runner_);
   DCHECK(g_cobaltTester->thread_checker_.CalledOnValidThread());
   printf("layout_manager_.reset...\n");
 
@@ -3783,17 +3845,25 @@ static void animate() {
 
 static int prevScreenMouseX = -1;
 static int prevScreenMouseY = -1;
+// TODO: threading & mutexes / checks
+static int curScreenMouseX = -1;
+static int curScreenMouseY = -1;
 
-static void updateBrowserMousePos(const int screenMouseX, const int screenMouseY) {
+static void updateGlobalMousePos(const int screenMouseX, const int screenMouseY) {
+  curScreenMouseX = screenMouseX;
+  curScreenMouseY = screenMouseY;
+
   // https://github.com/blockspacer/cobalt-clone-28052019/blob/89664d116629734759176d820e9923257717e09c/src/starboard/shared/linux/dev_input/dev_input.cc#L910
   // https://github.com/blockspacer/cobalt-clone-28052019/blob/master/src/starboard/android/shared/input_events_generator.cc#L703
-  if(prevScreenMouseX == screenMouseX && prevScreenMouseY == screenMouseY) {
+  if(prevScreenMouseX == curScreenMouseX && prevScreenMouseY == curScreenMouseY) {
     return;
   }
 
-  prevScreenMouseX = screenMouseX;
-  prevScreenMouseY = screenMouseY;
+  prevScreenMouseX = curScreenMouseX;
+  prevScreenMouseY = curScreenMouseY;
+}
 
+static void updateBrowserMousePos() {
 //#if defined(__EMSCRIPTEN__)
 //  EM_LOG("updateBrowserMousePos 1!");
 //  EM_LOG_NUM(screenMouseX);
@@ -3804,12 +3874,15 @@ static void updateBrowserMousePos(const int screenMouseX, const int screenMouseY
 
 //#ifdef __TODO__
   ///if (base::MessageLoopCurrent::Get().task_runner() != g_cobaltTester->self_task_runner_) {
-    input_device_thread_.task_runner()->PostTask(
+    //input_device_thread_.task_runner()->PostNonNestableTask(
+    main_thread_.task_runner()->PostNonNestableTask(
         FROM_HERE, base::Bind(
           [](const int mouseX, const int mouseY) {
             ///printf("PostTask InputEvent\n");
 
-             if(!g_cobaltTester) {
+            DCHECK_EQ(base::MessageLoopCurrent::Get().task_runner(), g_cobaltTester->self_task_runner_);
+
+             if(!g_cobaltTester || curScreenMouseX <= -1 || curScreenMouseY <= -1) {
               return;
             }
 
@@ -3822,13 +3895,14 @@ static void updateBrowserMousePos(const int screenMouseX, const int screenMouseY
             DCHECK(g_cobaltTester);
             DCHECK(g_cobaltTester->system_window_);
             DCHECK(g_cobaltTester->self_task_runner_);
-            DCHECK_EQ(base::MessageLoopCurrent::Get().task_runner(), g_cobaltTester->self_task_runner_);
-            DCHECK(g_cobaltTester->thread_checker_.CalledOnValidThread());
 
-            DCHECK(mouseX > -1);
-            DCHECK(mouseX < 100000);
-            DCHECK(mouseY > -1);
-            DCHECK(mouseY < 100000);
+            //DCHECK_EQ(base::MessageLoopCurrent::Get().task_runner(), g_cobaltTester->self_task_runner_);
+            //DCHECK(g_cobaltTester->thread_checker_.CalledOnValidThread());
+
+            DCHECK(curScreenMouseX > -1);
+            DCHECK(curScreenMouseX < 100000);
+            DCHECK(curScreenMouseY > -1);
+            DCHECK(curScreenMouseY < 100000);
              // TODO: free mem
             SbEvent* event = new SbEvent();
             event->type = SbEventType::kSbEventTypeInput;
@@ -3839,8 +3913,8 @@ static void updateBrowserMousePos(const int screenMouseX, const int screenMouseY
             data->type = SbInputEventType::kSbInputEventTypeMove;
             data->device_id = 2; // kGamepadDeviceId
             data->key_location = kSbKeyLocationUnspecified;
-            data->position.x = static_cast<float>(mouseX);
-            data->position.y = static_cast<float>(mouseY);
+            data->position.x = static_cast<float>(curScreenMouseX);
+            data->position.y = static_cast<float>(curScreenMouseY);
             data->key_modifiers = kSbKeyModifiersNone;
             data->device_type = SbInputDeviceType::kSbInputDeviceTypeMouse;
             data->key = SbKey::kSbKeyMouse1;
@@ -3889,7 +3963,7 @@ static void updateBrowserMousePos(const int screenMouseX, const int screenMouseY
                 //document_->UpdateSelectorTree();
               }
             }*/
-          } , screenMouseX, screenMouseY));
+          } , curScreenMouseX, curScreenMouseY));
   ///}
 //#endif // __TODO__
 
@@ -3956,7 +4030,7 @@ EM_BOOL emsc_mouse_cb(int emsc_type, const EmscriptenMouseEvent* emsc_event, voi
                 is_button_event = true;
                 break;
             case EMSCRIPTEN_EVENT_MOUSEMOVE:
-                updateBrowserMousePos(static_cast<int>(mouse_x), static_cast<int>(mouse_y));
+                updateGlobalMousePos(static_cast<int>(mouse_x), static_cast<int>(mouse_y));
                 break;
             case EMSCRIPTEN_EVENT_MOUSEENTER:
                 break;
@@ -4003,6 +4077,8 @@ EM_BOOL emsc_mouse_cb(int emsc_type, const EmscriptenMouseEvent* emsc_event, voi
 #endif
 
 static void mainLoop() {
+  updateBrowserMousePos();
+
 #if defined(__EMSCRIPTEN__)
 
   //browser_loop.task_runner()->
@@ -4050,7 +4126,7 @@ static void mainLoop() {
 
   thread.Start();
   DCHECK(thread.task_runner());
-  thread.task_runner()->PostTask(
+  thread.task_runner()->PostNonNestableTask(
       FROM_HERE,
       base::BindOnce(
           [](base::RepeatingCallback<void()> cb) {
@@ -4115,7 +4191,7 @@ static void mainLoop() {
 
         // printf("SDL_MOUSEMOTION %d %d\n", screenMouseX, screenMouseY);
 
-        updateBrowserMousePos(static_cast<int>(screenMouseX), static_cast<int>(screenMouseY));
+        updateGlobalMousePos(static_cast<int>(screenMouseX), static_cast<int>(screenMouseY));
         break;
       }
       // TODO
@@ -4125,7 +4201,7 @@ static void mainLoop() {
 
         printf("SDL_MOUSEMOTION %d %d\n", screenMouseX, screenMouseY);
 
-        updateBrowserMousePos(screenMouseX, screenMouseY);
+        updateGlobalMousePos(screenMouseX, screenMouseY);
         break;
       }*/
     }
@@ -4266,11 +4342,11 @@ int main(int argc, char** argv) {
     base::Thread::Options options;
     //options.message_loop_type = base::MessageLoop::TYPE_IO;
     main_thread_.StartWithOptions(options);
-    input_device_thread_.StartWithOptions(options);
+    //input_device_thread_.StartWithOptions(options);
 #if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
     /// \todo Reactor your code so that the waiting happens on another thread instead of the main thread
     main_thread_.WaitUntilThreadStarted();
-    input_device_thread_.WaitUntilThreadStarted();
+    //input_device_thread_.WaitUntilThreadStarted();
 #endif
 #endif // ENABLE_BASE
 
@@ -4430,7 +4506,7 @@ int main(int argc, char** argv) {
 
     // https://github.com/chromium/chromium/blob/a54556118f27685fc04547c939805de6acdccc26/third_party/blink/renderer/platform/testing/image_decode_bench.cc#L104
   printf("Init blink::Platform ...\n");
-  main_thread_.task_runner()->PostTask(
+  main_thread_.task_runner()->PostNonNestableTask(
       FROM_HERE, base::Bind([](base::WaitableEvent* thread_event) {
 #if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
           DCHECK(base::MessageLoopCurrent::Get());
@@ -4487,7 +4563,7 @@ int main(int argc, char** argv) {
 
     thread.Start();
     //DCHECK(thread.task_runner());
-    //thread.task_runner()->PostTask(FROM_HERE, base::BindOnce(&MakeClosure, &closure));
+    //thread.task_runner()->PostNonNestableTask(FROM_HERE, base::BindOnce(&MakeClosure, &closure));
     //thread.Stop();
     DCHECK(thread.task_runner());
 #if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
@@ -4517,7 +4593,7 @@ int main(int argc, char** argv) {
     // ::std::cout << "thread testing PostTask 1..." << base::Time::Now() << "\n";
 
     DCHECK(thread.task_runner());
-    thread.task_runner()->PostTask(
+    thread.task_runner()->PostNonNestableTask(
       FROM_HERE,
       base::BindOnce(
           [](base::RepeatingCallback<void()> cb) {
@@ -4531,7 +4607,7 @@ int main(int argc, char** argv) {
     //::std::cout << "thread testing PostTask 2..." << base::Time::Now() << "\n";
 
     //DCHECK(thread.task_runner());
-    //thread.task_runner()->PostTask(
+    //thread.task_runner()->PostNonNestableTask(
     //  FROM_HERE,
     //  base::Bind(&SomeHardcoreAsyncTask,
     //             &event2,
@@ -5067,7 +5143,7 @@ int main(int argc, char** argv) {
   printf("creating tests thread...\n");
 #ifdef ENABLE_BASE
   printf("tests thread started...\n");
-  main_thread_.task_runner()->PostTask(
+  main_thread_.task_runner()->PostNonNestableTask(
       FROM_HERE, base::Bind([](base::WaitableEvent* thread_event) {
 #if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
             DCHECK(base::MessageLoopCurrent::Get());
@@ -5121,7 +5197,8 @@ int main(int argc, char** argv) {
 #if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS)) \
     && defined(ENABLE_COBALT)
   // Make sure the thread started.
-  main_thread_.task_runner()->PostTask(
+
+  main_thread_.task_runner()->PostNonNestableTask(
       FROM_HERE, base::Bind([](){
           DCHECK(base::MessageLoopCurrent::Get());
           printf("Starting g_cobaltTester...\n");
@@ -5132,6 +5209,9 @@ int main(int argc, char** argv) {
           printf("Finishing g_cobaltTester...\n");
           //main_thread_event_->Signal();
       }));
+
+  //createCobaltTester();
+  //createLayoutManager();
 #endif
 
 // TODO >>>>>>>>>>>>>>>>>>
@@ -5190,8 +5270,8 @@ int main(int argc, char** argv) {
   /// \note StaticBitmapImage::Create & SkImage::MakeFromBitmap require parent thread (TLS)
   //ui_thread.task_runner()
   //blink::Thread* uithread = ui_thread.get();
-  //task_runner->PostTask(
-  main_thread_.task_runner()->PostTask(
+  //task_runner->PostNonNestableTask(
+  main_thread_.task_runner()->PostNonNestableTask(
       FROM_HERE,
       base::BindOnce(
           [](base::WaitableEvent* thread_event, /*blink::Thread**/ base::Thread* thread) {

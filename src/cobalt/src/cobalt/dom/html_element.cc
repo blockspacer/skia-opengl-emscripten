@@ -581,6 +581,8 @@ void HTMLElement::OnCSSMutation() {
   computed_style_valid_ = false;
   descendant_computed_styles_valid_ = false;
 
+  //return; /// TODO
+
   // Remove the style attribute value from the Element.
   Element::RemoveStyleAttribute();
 
@@ -685,6 +687,7 @@ void HTMLElement::InvalidateMatchingRulesRecursivelyInternal(
   matching_rules_valid_ = false;
 
   // Invalidate matching rules on all children.
+  int i = 0;
   for (Element* element = first_element_child(); element;
        element = element->next_element_sibling()) {
     HTMLElement* html_element = element->AsHTMLElement().get();
@@ -692,11 +695,17 @@ void HTMLElement::InvalidateMatchingRulesRecursivelyInternal(
       html_element->InvalidateMatchingRulesRecursivelyInternal(
           false /*is_initial_element*/);
     }
+    i++;
+    if(i > 10000) {
+      printf("WARNING: too many iterations in HTMLElement::InvalidateMatchingRulesRecursivelyInternal\n");
+      break;
+    }
   }
 
   // Invalidate matching rules on all following siblings if this is the initial
   // element and sibling combinators are used; if this is not the initial
   // element, then these will already be handled by a previous call.
+  int j = 0;
   if (is_initial_element &&
       node_document()->selector_tree()->has_sibling_combinators()) {
     for (Element* element = next_element_sibling(); element;
@@ -706,6 +715,11 @@ void HTMLElement::InvalidateMatchingRulesRecursivelyInternal(
         html_element->InvalidateMatchingRulesRecursivelyInternal(
             false /*is_initial_element*/);
       }
+      j++;
+      if(j > 10000) {
+        printf("WARNING: too many iterations in HTMLElement::InvalidateMatchingRulesRecursivelyInternal\n");
+        break;
+      }
     }
   }
 }
@@ -714,11 +728,17 @@ void HTMLElement::UpdateMatchingRules() { UpdateElementMatchingRules(this); }
 
 void HTMLElement::UpdateMatchingRulesRecursively() {
   UpdateMatchingRules();
+  int j = 0;
   for (Element* element = first_element_child(); element;
        element = element->next_element_sibling()) {
     HTMLElement* html_element = element->AsHTMLElement().get();
     if (html_element) {
       html_element->UpdateMatchingRulesRecursively();
+    }
+    j++;
+    if(j > 10000) {
+      printf("WARNING: too many iterations in HTMLElement::UpdateMatchingRulesRecursively\n");
+      break;
     }
   }
 }
@@ -768,6 +788,7 @@ void HTMLElement::UpdateComputedStyleRecursively(
   // descendant_computed_styles_valid_ flag is not set, the ancestors should
   // still be considered invalid, which forces the computes styles to be updated
   // on all children.
+  int i = 0;
   for (Element* element = first_element_child(); element;
        element = element->next_element_sibling()) {
     HTMLElement* html_element = element->AsHTMLElement().get();
@@ -777,6 +798,11 @@ void HTMLElement::UpdateComputedStyleRecursively(
           style_change_event_time,
           is_valid && descendant_computed_styles_valid_,
           current_element_depth + 1);
+    }
+    i++;
+    if(i > 10000) {
+      printf("WARNING: too many iterations in HTMLElement::UpdateComputedStyleRecursively\n");
+      break;
     }
   }
 

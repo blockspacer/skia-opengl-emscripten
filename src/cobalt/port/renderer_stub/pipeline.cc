@@ -196,6 +196,8 @@ Pipeline::Pipeline(const CreateRasterizerFunction& create_rasterizer_function,
 Pipeline::~Pipeline() {
   TRACE_EVENT0("cobalt::renderer", "Pipeline::~Pipeline()");
 
+  printf("Pipeline::~Pipeline\n");
+
   // First we shutdown the submission queue.  We do this as a separate step from
   // rasterizer shutdown because it may post messages back to the rasterizer
   // thread as it clears itself out (e.g. it may ask the rasterizer thread to
@@ -388,7 +390,7 @@ void Pipeline::ClearCurrentRenderTree() {
 
 void Pipeline::RasterizeCurrentTree() {
 #if defined(OS_EMSCRIPTEN)
-  EM_LOG("Pipeline::RasterizeCurrentTree 0\n");
+  //EM_LOG("Pipeline::RasterizeCurrentTree 0\n");
 #else
   //printf("Pipeline::RasterizeCurrentTree 0\n");
 #endif
@@ -667,6 +669,8 @@ void Pipeline::InitializeRasterizerThread(
 }
 
 void Pipeline::ShutdownSubmissionQueue() {
+  printf("Pipeline::ShutdownSubmissionQueue\n");
+
   TRACE_EVENT0("cobalt::renderer", "Pipeline::ShutdownSubmissionQueue()");
   DCHECK(rasterizer_thread_checker_.CalledOnValidThread());
 

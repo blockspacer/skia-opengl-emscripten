@@ -81,7 +81,7 @@ class LayoutManager::Impl : public dom::DocumentObserver {
 
  //private:
  public:
-  void DirtyLayout();
+  void DirtyLayout(const bool changeComputedStyles = true, const bool changePendingRenderTree = true);
   void setLayoutPending(const bool isPending);
   void StartLayoutTimer();
 //#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
@@ -275,8 +275,14 @@ void LayoutManager::Impl::OnLoad() {
 }
 
 void LayoutManager::Impl::OnMutation() {
+
+  //
+  //return; // TODO
+
   if (layout_trigger_ == kOnDocumentMutation) {
+    /// TODO
     DirtyLayout();
+    /// DirtyLayout(/*changeComputedStyles*/ true, /*changePendingRenderTree*/ false);
   }
 }
 
@@ -393,9 +399,16 @@ void LayoutManager::Impl::DoTestRunnerLayoutCallback() {
 }
 #endif  // ENABLE_TEST_RUNNER
 
-void LayoutManager::Impl::DirtyLayout() {
-  are_computed_styles_and_box_tree_dirty_ = true;
-  is_render_tree_pending_ = true;
+void LayoutManager::Impl::DirtyLayout(const bool changeComputedStyles, const bool changePendingRenderTree) {
+  ///are_computed_styles_and_box_tree_dirty_ = true;
+
+  if (changeComputedStyles) {
+    are_computed_styles_and_box_tree_dirty_ = true;
+  }
+
+  if (changePendingRenderTree) {
+    is_render_tree_pending_ = true;
+  }
 }
 
 void LayoutManager::Impl::setLayoutPending(const bool isPending) {
@@ -447,6 +460,9 @@ void LayoutManager::Impl::StartLayoutTimer() {
 void LayoutManager::Impl::DoLayoutAndProduceRenderTree(const bool forceReLayout) {
   TRACE_EVENT0("cobalt::layout",
                "LayoutManager::Impl::DoLayoutAndProduceRenderTree()");
+#if defined(__EMSCRIPTEN__)
+  //EM_LOG("LayoutManager::Impl::DoLayoutAndProduceRenderTree 1\n");
+#endif
 
   //P_LOG("LayoutManager::Impl::DoLayoutAndProduceRenderTree 1\n");
 
@@ -460,6 +476,10 @@ void LayoutManager::Impl::DoLayoutAndProduceRenderTree(const bool forceReLayout)
   if (!document->html()) {
     return;
   }
+
+#if defined(__EMSCRIPTEN__)
+  //EM_LOG("LayoutManager::Impl::DoLayoutAndProduceRenderTree 1.1\n");
+#endif
 
 #if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   if (!isLayoutRefreshReached()) {
@@ -482,6 +502,10 @@ void LayoutManager::Impl::DoLayoutAndProduceRenderTree(const bool forceReLayout)
   document->SampleTimelineTime();
 //#endif
 
+#if defined(__EMSCRIPTEN__)
+  //EM_LOG("LayoutManager::Impl::DoLayoutAndProduceRenderTree 1.2\n");
+#endif
+
   bool has_layout_processing_started = false;
   if (window_->HasPendingAnimationFrameCallbacks()) {
     if (are_computed_styles_and_box_tree_dirty_) {
@@ -501,6 +525,10 @@ void LayoutManager::Impl::DoLayoutAndProduceRenderTree(const bool forceReLayout)
       document->UpdateComputedStyles();
 //#endif
     }
+
+#if defined(__EMSCRIPTEN__)
+  //EM_LOG("LayoutManager::Impl::DoLayoutAndProduceRenderTree 1.3\n");
+#endif
 
     // Note that according to:
     //     https://www.w3.org/TR/2015/WD-web-animations-1-20150707/#model-liveness,
@@ -535,6 +563,10 @@ void LayoutManager::Impl::DoLayoutAndProduceRenderTree(const bool forceReLayout)
     DoSynchronousLayout(forceReLayout);
 //P_LOG("LayoutManager::Impl::DoLayoutAndProduceRenderTree 4\n");
 
+#if defined(__EMSCRIPTEN__)
+  //EM_LOG("LayoutManager::Impl::DoLayoutAndProduceRenderTree 1.4\n");
+#endif
+
     // If no render tree has been produced yet, check if html display
     // should prevent the first render tree.
     bool display_none_prevents_render =
@@ -555,6 +587,10 @@ void LayoutManager::Impl::DoLayoutAndProduceRenderTree(const bool forceReLayout)
       }
 #endif  // ENABLE_TEST_RUNNER
 //P_LOG("LayoutManager::Impl::DoLayoutAndProduceRenderTree 5\n");
+
+#if defined(__EMSCRIPTEN__)
+  //EM_LOG("LayoutManager::Impl::DoLayoutAndProduceRenderTree 1.5\n");
+#endif
 
       if (run_on_render_tree_produced_callback) {
 //#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
@@ -586,14 +622,25 @@ void LayoutManager::Impl::DoLayoutAndProduceRenderTree(const bool forceReLayout)
 
     //layout_timer_.Stop(); // TODO: remove line
   }
+
+#if defined(__EMSCRIPTEN__)
+  //EM_LOG("LayoutManager::Impl::DoLayoutAndProduceRenderTree 2.0\n");
+#endif
+
 //P_LOG("LayoutManager::Impl::DoLayoutAndProduceRenderTree 7\n");
 //#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
 //    emscripten_async_call_closure(
 //      base::BindOnce(on_layout_callback_));
 //#else
+  DCHECK(on_layout_callback_);
+  DCHECK(!on_layout_callback_.is_null());
   on_layout_callback_.Run();
 //#endif
 //P_LOG("LayoutManager::Impl::DoLayoutAndProduceRenderTree 8\n");
+
+#if defined(__EMSCRIPTEN__)
+  //EM_LOG("LayoutManager::Impl::DoLayoutAndProduceRenderTree 2.1\n");
+#endif
 }
 
 LayoutManager::LayoutManager(

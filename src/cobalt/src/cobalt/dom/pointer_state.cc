@@ -64,6 +64,7 @@ scoped_refptr<Event> PointerState::GetNextQueuedPointerEvent() {
   int32_t next_event_pointer_id = GetPointerIdFromEvent(front_event);
   int32_t current_event_pointer_id;
   bool current_event_is_move_event;
+  int i = 0;
   do {
     current_event_pointer_id = next_event_pointer_id;
     current_event_is_move_event = next_event_is_move_event;
@@ -80,6 +81,11 @@ scoped_refptr<Event> PointerState::GetNextQueuedPointerEvent() {
     next_event_is_move_event =
         (front_event->type() == base::Tokens::pointermove() ||
          front_event->type() == base::Tokens::mousemove());
+    i++;
+    if(i > 10000) {
+      printf("WARNING: too many iterations in PointerState::GetNextQueuedPointerEvent\n");
+      break;
+    }
   } while (next_event_is_move_event);
   return event;
 }

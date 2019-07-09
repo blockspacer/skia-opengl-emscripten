@@ -31,6 +31,7 @@ void TimedTaskQueue::UpdateTime(base::TimeDelta time) {
   // Search through the list of tasks and fire each one whose time is now
   // in the past.  We use a while loop instead of a for loop so that we can
   // erase elements from the set as we go.
+  int i = 0;
   while (!task_priority_queue_.empty() &&
          (*task_priority_queue_.begin())->fire_time() <= time) {
     Task* task = *task_priority_queue_.begin();
@@ -38,6 +39,12 @@ void TimedTaskQueue::UpdateTime(base::TimeDelta time) {
     RemoveTaskFromQueue(task);
 
     task->Fire();
+
+    i++;
+    if(i > 10000) {
+      printf("WARNING: too many iterations in TimedTaskQueue::UpdateTime\n");
+      break;
+    }
   }
 }
 
