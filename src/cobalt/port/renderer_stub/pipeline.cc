@@ -219,7 +219,7 @@ Pipeline::~Pipeline() {
   // thread as it clears itself out (e.g. it may ask the rasterizer thread to
   // delete textures).  We wait for this shutdown to complete before proceeding
   // to shutdown the rasterizer thread.
-  //rasterizer_thread_.task_runner()->PostTask( // TODO: TRY TO USE PostBlockingTask alternative!
+  rasterizer_thread_.task_runner()->PostBlockingTask(
   //rasterizer_thread_.message_loop()->task_runner()->PostBlockingTask(
       FROM_HERE,
       base::Bind(&Pipeline::ShutdownSubmissionQueue, base::Unretained(this)));
@@ -286,7 +286,7 @@ void Pipeline::Clear() {
   TRACE_EVENT0("cobalt::renderer", "Pipeline::Clear()");
 
 #if defined(ENABLE_RASTERIZER_THREAD)
-  //rasterizer_thread_.message_loop()->task_runner()->PostBlockingTask(
+  rasterizer_thread_.task_runner()->PostBlockingTask(
   //rasterizer_thread_.task_runner()->PostTask( // TODO: TRY TO USE PostBlockingTask alternative!
       FROM_HERE,
       base::Bind(&Pipeline::ClearCurrentRenderTree, base::Unretained(this)));

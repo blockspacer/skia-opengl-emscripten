@@ -5,6 +5,9 @@ list(APPEND RENDERER_PUBLIC_DEFINES
   # see https://github.com/blockspacer/cobalt-clone-28052019/blob/master/src/cobalt/renderer/rasterizer/skia/skia/skia_cobalt.gypi#L47
   #
   COBALT_LOCAL_TYPEFACE_CACHE_SIZE_IN_BYTES=16777216 # 16.777216 Megabytes
+  #
+  # NOTE: disabled rasterizer thread (!!!) due to deadlocks on WASM MT
+  # (to reproduce bug - move mouse frequently over objects that are animated on hover)
   # ENABLE_RASTERIZER_THREAD=1
 )
 

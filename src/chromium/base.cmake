@@ -575,6 +575,7 @@ list(APPEND BASE_SOURCES
    ${BASE_DIR}sequenced_task_runner.h
    ${BASE_DIR}sequenced_task_runner_helpers.h
    ${BASE_DIR}single_thread_task_runner.h
+   ${BASE_DIR}single_thread_task_runner.cc
    ${BASE_DIR}stl_util.h
    ${BASE_DIR}strings/char_traits.h
    ${BASE_DIR}strings/latin1_string_conversions.cc
