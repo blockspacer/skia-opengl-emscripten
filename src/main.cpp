@@ -1194,6 +1194,7 @@ static const float FONT_SIZE_F = 22.0f;
 
 #ifdef ENABLE_BASE
 static base::Thread main_browser_thread_("Main_Browser_Thread");
+// TODO: remove main_browser_thread_wrapper_ or enable only on WASM MT
 static base::Thread main_browser_thread_wrapper_("Main_Browser_Thread_Wrapper");
 //static base::Thread input_device_thread_("Input_Device_Thread");
 static base::WaitableEvent main_thread_event_;
