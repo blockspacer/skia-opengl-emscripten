@@ -865,6 +865,14 @@ static int browser_height = height;//10000;
 #include "cobalt/dom/html_element_context.h"
 #include "cobalt/dom/named_node_map.h"
 
+#include "cobalt/dom/html_body_element.h"
+#include "cobalt/dom/html_collection.h"
+#include "cobalt/dom/html_element.h"
+#include "cobalt/dom/html_element_factory.h"
+#include "cobalt/dom/html_head_element.h"
+#include "cobalt/dom/html_html_element.h"
+#include "cobalt/dom/html_script_element.h"
+
 #include "cobalt/dom/attr.h"
 #include "cobalt/dom/comment.h"
 #include "cobalt/dom/document.h"
@@ -2359,6 +2367,7 @@ void CobaltTester::BrowserProcessRenderTreeSubmissionQueue() {
     //printf("BrowserProcessRenderTreeSubmissionQueue 1\n");
 
 #if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+   /// \note use emscripten_async* to prevent blocking of browser event loop
    emscripten_async_call_closure(
     base::BindOnce([](base::MessageQueue * queue_in) {
       DCHECK(queue_in);
@@ -2527,7 +2536,7 @@ void CobaltTester::OnRenderTreeProduced(const cobalt::layout::LayoutManager::Lay
     /// (otherwise we will block/hang single browser thread
     /// and browser will kill task/free resources)
     if(!isRenderTreeProducePending) {
-      printf("OnRenderTreeProduced 1.1\n");
+      //printf("OnRenderTreeProduced 1.1\n");
       isRenderTreeProducePending = true;
       /*pending_layout_results =
         cobalt::layout::LayoutManager::LayoutResults
@@ -3791,6 +3800,12 @@ static void animate() {
               && g_cobaltTester->window_->isStartedDocumentLoader()
               && g_cobaltTester->window_->isDocumentStartedLoading())
           {
+              /// \note SampleTimelineTime also used
+              /// in ForceReLayout / DoLayoutAndProduceRenderTree
+              if (g_cobaltTester->window_->document()->html()) {
+                g_cobaltTester->window_->document()->SampleTimelineTime();
+              }
+
               // TODO: use layout period, NOT isDebugPeriodReached (!!!)
               //if(isDebugPeriodReached()) printf("isDebugPeriodReached() render_browser_window \n");
               //if(isLayoutRefreshReached()) printf("isLayoutRefreshReached() render_browser_window \n");
@@ -3901,6 +3916,7 @@ static void updateBrowserMousePos() {
             //DCHECK_EQ(base::MessageLoopCurrent::Get().task_runner(), g_cobaltTester->self_task_runner_);
 
              if(!g_cobaltTester
+               || !g_cobaltTester->layout_manager_
                || g_cobaltTester->layout_manager_->IsRenderTreePending() // TODO
                || curScreenMouseX <= -1
                || curScreenMouseY <= -1) {
@@ -3914,6 +3930,7 @@ static void updateBrowserMousePos() {
           //#endif
 
             DCHECK(g_cobaltTester);
+            DCHECK(g_cobaltTester->layout_manager_);
             DCHECK(g_cobaltTester->system_window_);
             DCHECK(g_cobaltTester->self_task_runner_);
 

@@ -674,6 +674,7 @@ bool Pipeline::RasterizeSubmissionToRenderTarget(
 #if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
     DCHECK(submit_tree);
     DCHECK(render_target);
+   /// \note use emscripten_async* to prevent blocking of browser event loop
     emscripten_async_call_closure(
       base::BindOnce([](rasterizer::Rasterizer* rasterizer_in,
             const scoped_refptr<render_tree::Node>& render_tree_in,
@@ -783,6 +784,7 @@ void Pipeline::ShutdownRasterizerThread() {
   // a flicker behind the display.
   if (render_target_ && (clear_on_shutdown_mode_ == kClearToBlack)) {
 #if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+    /// \note use emscripten_async* to prevent blocking of browser event loop
     emscripten_async_call_closure(
       base::BindOnce([](std::unique_ptr<rasterizer::Rasterizer> rasterizer_,
             const scoped_refptr<backend::RenderTarget>& render_target)

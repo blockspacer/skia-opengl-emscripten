@@ -96,6 +96,7 @@ void TypefaceDecoder::Finish() {
   printf("TypefaceDecoder::Finish 2...\n");
   if (decoded_typeface) {
 #if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+    /// \note use emscripten_async* to prevent blocking of browser event loop
     emscripten_async_call_closure(
       base::BindOnce(typeface_available_callback_, decoded_typeface));
 
@@ -115,6 +116,7 @@ void TypefaceDecoder::Finish() {
       }, data, 10);
     }*/
 
+    /// \note use emscripten_async* to prevent blocking of browser event loop
     emscripten_async_call_closure(
       base::BindOnce(load_complete_callback_, base::nullopt));
 

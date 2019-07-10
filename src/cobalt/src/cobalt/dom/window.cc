@@ -293,6 +293,7 @@ bool Window::TryForceStartDocumentLoad() {
   DCHECK(!load_complete_callback_.is_null());
 
 #if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+    /// \note use emscripten_async* to prevent blocking of browser event loop
     emscripten_async_call_closure(
       base::BindOnce(&Window::StartDocumentLoad, base::Unretained(this),
                        html_element_context_->fetcher_factory(),

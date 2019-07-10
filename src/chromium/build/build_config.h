@@ -60,6 +60,10 @@
     return ""; \
   }()
 
+/// \note printing to console or emscripten terminal area may
+/// decrease performance drastically
+/// \note Webassembly worker thread may hang if printf is used in threads
+/// \see https://github.com/emscripten-core/emscripten/issues/8325
 #define EM_LOG(arg) \
   EM_ASM(console.log('EM_LOG: ' + UTF8ToString($0)), arg);
 
@@ -72,6 +76,8 @@
 #define EM_ERR_NUM(arg) \
   EM_ASM(console.error('EM_LOG: ' + $0), arg);
 
+/// \note use emscripten_async* to prevent blocking of browser event loop
+/// \note emscripten_async* may be delayed too much, use it only with async logic
 #define emscripten_async_call_closure(closureArg) \
 { \
   base::STClosure* stClosure = new base::STClosure(std::move( \
