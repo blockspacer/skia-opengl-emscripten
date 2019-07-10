@@ -37,6 +37,10 @@ void SingleThreadTaskRunner::PostBlockingTask(const base::Location& from_here,
       << from_here.ToString();
   DCHECK(!task.is_null()) << from_here.ToString();
 
+#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+  TRACE_EVENT0("task", "RunAndSignal");
+  task.Run();
+#else
   base::WaitableEvent task_finished(
       base::WaitableEvent::ResetPolicy::MANUAL,
       base::WaitableEvent::InitialState::NOT_SIGNALED);
@@ -45,6 +49,7 @@ void SingleThreadTaskRunner::PostBlockingTask(const base::Location& from_here,
 
   // Wait for the task to complete before proceeding.
   task_finished.Wait();
+#endif
 }
 #endif
 }  // namespace base
