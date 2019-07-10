@@ -65,7 +65,7 @@ if(ENABLE_KHRONOS)
   )
 endif(ENABLE_KHRONOS)
 # Blink platform
-set(ENABLE_BLINK FALSE) # TODO
+set(ENABLE_BLINK TRUE) # TODO
 # cobalt
 set(ENABLE_COBALT TRUE)#TRUE)
 # SKIA
