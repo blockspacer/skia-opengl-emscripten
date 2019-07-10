@@ -29,6 +29,10 @@
 #include "cobalt/dom/html_br_element.h"
 #include "cobalt/dom/html_element.h"
 #include "cobalt/dom/html_video_element.h"
+
+// not in spec
+#include "cobalt/dom/html_skottie_element.h"
+
 #include "cobalt/dom/text.h"
 #include "cobalt/layout/base_direction.h"
 #include "cobalt/layout/block_formatting_block_container_box.h"
@@ -44,6 +48,10 @@
 #include "cobalt/render_tree/image.h"
 #include "cobalt/web_animations/keyframe_effect_read_only.h"
 #include "starboard/decode_target.h"
+
+// not in spec
+#include "cobalt/layout/inline_level_skottie_box.h"
+#include "cobalt/layout/block_level_skottie_box.h"
 
 namespace cobalt {
 namespace layout {
@@ -149,7 +157,207 @@ void BoxGenerator::Visit(dom::Element* element) {
     return;
   }
 
+  // not in spec
+  scoped_refptr<dom::HTMLSkottieElement> skottie_element =
+      html_element->AsHTMLSkottieElement();
+  if (skottie_element) {
+    VisitSkottieElement(skottie_element.get());
+    return;
+  }
+
   VisitNonReplacedElement(html_element.get());
+}
+
+namespace {
+
+class SkottieBoxGenerator : public cssom::NotReachedPropertyValueVisitor {
+ public:
+  SkottieBoxGenerator(const scoped_refptr<cssom::CSSComputedStyleDeclaration>&
+                           css_computed_style_declaration,
+                       //const SkottieBox::SetBoundsCB& set_bounds_cb,
+                       const SkottieBox::GetSkottieAnimCB& replace_skottie_animation_cb,
+                       const scoped_refptr<Paragraph>& paragraph,
+                       int32 text_position,
+                       const base::Optional<LayoutUnit>& maybe_intrinsic_width,
+                       const base::Optional<LayoutUnit>& maybe_intrinsic_height,
+                       const base::Optional<float>& maybe_intrinsic_ratio,
+                       const BoxGenerator::Context* context,
+                       math::SizeF content_size)
+      : css_computed_style_declaration_(css_computed_style_declaration),
+       // set_bounds_cb_(set_bounds_cb),
+        replace_skottie_animation_cb_(replace_skottie_animation_cb),
+        paragraph_(paragraph),
+        text_position_(text_position),
+        maybe_intrinsic_width_(maybe_intrinsic_width),
+        maybe_intrinsic_height_(maybe_intrinsic_height),
+        maybe_intrinsic_ratio_(maybe_intrinsic_ratio),
+        context_(context),
+        content_size_(content_size) {}
+
+  void VisitKeyword(cssom::KeywordValue* keyword) override;
+
+  const scoped_refptr<SkottieBox>& skottie_box() { return skottie_box_; }
+
+ private:
+  const scoped_refptr<cssom::CSSComputedStyleDeclaration>
+      css_computed_style_declaration_;
+  //const SkottieBox::SetBoundsCB set_bounds_cb_;
+  const SkottieBox::GetSkottieAnimCB replace_skottie_animation_cb_;
+  const scoped_refptr<Paragraph> paragraph_;
+  const int32 text_position_;
+  const base::Optional<LayoutUnit> maybe_intrinsic_width_;
+  const base::Optional<LayoutUnit> maybe_intrinsic_height_;
+  const base::Optional<float> maybe_intrinsic_ratio_;
+  const BoxGenerator::Context* context_;
+  math::SizeF content_size_;
+
+  scoped_refptr<SkottieBox> skottie_box_;
+};
+
+void SkottieBoxGenerator::VisitKeyword(cssom::KeywordValue* keyword) {
+  switch (keyword->value()) {
+    case cssom::KeywordValue::kBlock:
+    case cssom::KeywordValue::kFlex:
+      skottie_box_ = WrapRefCounted(new BlockLevelSkottieBox(
+          css_computed_style_declaration_
+          //, replace_image_cb_, set_bounds_cb_,
+          , replace_skottie_animation_cb_
+          , paragraph_, text_position_, maybe_intrinsic_width_,
+          maybe_intrinsic_height_, maybe_intrinsic_ratio_,
+          context_->used_style_provider,
+          //, is_video_punched_out_
+          content_size_,
+          context_->layout_stat_tracker));
+      break;
+    case cssom::KeywordValue::kInline:
+    case cssom::KeywordValue::kInlineBlock:
+    case cssom::KeywordValue::kInlineFlex:
+      skottie_box_ = WrapRefCounted(new InlineLevelSkottieBox(
+          css_computed_style_declaration_,
+          replace_skottie_animation_cb_,
+          //set_bounds_cb_,
+          paragraph_, text_position_, maybe_intrinsic_width_,
+          maybe_intrinsic_height_, maybe_intrinsic_ratio_,
+          context_->used_style_provider, content_size_,
+          context_->layout_stat_tracker));
+      break;
+    // The element generates no boxes and has no effect on layout.
+    case cssom::KeywordValue::kNone:
+      // Leave |skottie_box_| NULL.
+      break;
+    case cssom::KeywordValue::kAbsolute:
+    case cssom::KeywordValue::kAlternate:
+    case cssom::KeywordValue::kAlternateReverse:
+    case cssom::KeywordValue::kAuto:
+    case cssom::KeywordValue::kBackwards:
+    case cssom::KeywordValue::kBaseline:
+    case cssom::KeywordValue::kBoth:
+    case cssom::KeywordValue::kBottom:
+    case cssom::KeywordValue::kBreakWord:
+    case cssom::KeywordValue::kCenter:
+    case cssom::KeywordValue::kClip:
+    case cssom::KeywordValue::kCollapse:
+    case cssom::KeywordValue::kColumn:
+    case cssom::KeywordValue::kColumnReverse:
+    case cssom::KeywordValue::kContain:
+    case cssom::KeywordValue::kContent:
+    case cssom::KeywordValue::kCover:
+    case cssom::KeywordValue::kCurrentColor:
+    case cssom::KeywordValue::kCursive:
+    case cssom::KeywordValue::kEllipsis:
+    case cssom::KeywordValue::kEnd:
+    case cssom::KeywordValue::kEquirectangular:
+    case cssom::KeywordValue::kFantasy:
+    case cssom::KeywordValue::kFixed:
+    case cssom::KeywordValue::kFlexEnd:
+    case cssom::KeywordValue::kFlexStart:
+    case cssom::KeywordValue::kForwards:
+    case cssom::KeywordValue::kHidden:
+    case cssom::KeywordValue::kInfinite:
+    case cssom::KeywordValue::kInherit:
+    case cssom::KeywordValue::kInitial:
+    case cssom::KeywordValue::kLeft:
+    case cssom::KeywordValue::kLineThrough:
+    case cssom::KeywordValue::kMiddle:
+    case cssom::KeywordValue::kMonoscopic:
+    case cssom::KeywordValue::kMonospace:
+    case cssom::KeywordValue::kNoRepeat:
+    case cssom::KeywordValue::kNormal:
+    case cssom::KeywordValue::kNowrap:
+    case cssom::KeywordValue::kPre:
+    case cssom::KeywordValue::kPreLine:
+    case cssom::KeywordValue::kPreWrap:
+    case cssom::KeywordValue::kRelative:
+    case cssom::KeywordValue::kRepeat:
+    case cssom::KeywordValue::kReverse:
+    case cssom::KeywordValue::kRight:
+    case cssom::KeywordValue::kRow:
+    case cssom::KeywordValue::kRowReverse:
+    case cssom::KeywordValue::kSansSerif:
+    case cssom::KeywordValue::kScroll:
+    case cssom::KeywordValue::kSerif:
+    case cssom::KeywordValue::kSolid:
+    case cssom::KeywordValue::kSpaceAround:
+    case cssom::KeywordValue::kSpaceBetween:
+    case cssom::KeywordValue::kStart:
+    case cssom::KeywordValue::kStatic:
+    case cssom::KeywordValue::kStereoscopicLeftRight:
+    case cssom::KeywordValue::kStereoscopicTopBottom:
+    case cssom::KeywordValue::kStretch:
+    case cssom::KeywordValue::kTop:
+    case cssom::KeywordValue::kUppercase:
+    case cssom::KeywordValue::kVisible:
+    case cssom::KeywordValue::kWrap:
+    case cssom::KeywordValue::kWrapReverse:
+      NOTREACHED();
+      break;
+  }
+}
+
+}  // namespace
+
+// not in spec
+void BoxGenerator::VisitSkottieElement(dom::HTMLSkottieElement* skottie_element) {
+  //   https://www.w3.org/TR/CSS21/visuren.html#inline-boxes
+  //   https://www.w3.org/TR/CSS21/visuren.html#propdef-unicode-bidi
+  //   https://www.w3.org/TR/css3-text/#line-break-details
+  int32 text_position =
+      (*paragraph_)
+          ->AppendCodePoint(Paragraph::kObjectReplacementCharacterCodePoint);
+
+  render_tree::ResourceProvider* resource_provider =
+      *skottie_element->node_document()
+           ->html_element_context()
+           ->resource_provider();
+
+  SkottieBoxGenerator skottie_box_generator(
+      skottie_element->css_computed_style_declaration(),
+      //skottie_element->GetSetBoundsCB(),
+      base::Bind(&dom::HTMLSkottieElement::GetSkottieAnim, base::Unretained(skottie_element)),
+      *paragraph_, text_position,
+      base::nullopt, base::nullopt, base::nullopt, context_,
+      skottie_element->GetSize());
+  skottie_element->computed_style()->display()->Accept(&skottie_box_generator);
+
+  printf("VisitSkottieElement with src: %s\n", skottie_element->src().c_str());
+
+  scoped_refptr<SkottieBox> skottie_box =
+      skottie_box_generator.skottie_box();
+  if (skottie_box.get() == NULL) {
+    // The element with "display: none" generates no boxes and has no effect
+    // on layout. Descendant elements do not generate any boxes either.
+    // This behavior cannot be overridden by setting the "display" property on
+    // the descendants.
+    //   https://www.w3.org/TR/CSS21/visuren.html#display-prop
+    return;
+  }
+
+#ifdef COBALT_BOX_DUMP_ENABLED
+  skottie_box->SetGeneratingNode(skottie_element);
+#endif  // COBALT_BOX_DUMP_ENABLED
+
+  skottie_box->SetUiNavItem(skottie_element->GetUiNavItem());
+  boxes_.push_back(skottie_box);
 }
 
 namespace {

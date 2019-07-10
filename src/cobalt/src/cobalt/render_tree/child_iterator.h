@@ -27,6 +27,9 @@
 #include "cobalt/render_tree/rect_shadow_node.h"
 #include "cobalt/render_tree/text_node.h"
 
+// not in spec
+#include "cobalt/render_tree/skottie_node.h"
+
 namespace cobalt {
 namespace render_tree {
 
@@ -36,6 +39,9 @@ class PunchThroughVideoNode;
 class RectNode;
 class RectShadowNode;
 class TextNode;
+
+// not in spec
+class SkottieNode;
 
 // The ChildIterator template provides a way to iterate over the children of
 // a node without concern for what type of node it is (though since it is a

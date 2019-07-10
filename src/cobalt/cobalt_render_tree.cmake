@@ -33,6 +33,7 @@ set(cobalt_render_tree_SOURCES
   ${COBALT_CORE_DIR}render_tree/node_visitor.h
   ${COBALT_CORE_DIR}render_tree/opacity_filter.h
   ${COBALT_CORE_DIR}render_tree/punch_through_video_node.cc
+  ${COBALT_CORE_DIR}render_tree/skottie_node.cc
   ${COBALT_CORE_DIR}render_tree/rect_node.cc
   ${COBALT_CORE_DIR}render_tree/rect_node.h
   ${COBALT_CORE_DIR}render_tree/rect_shadow_node.cc
@@ -70,6 +71,8 @@ target_link_libraries(cobalt_render_tree PUBLIC
   base # TODO
   modp_b64
   dynamic_annotations
+  SKIA # TODO
+  skottie # TODO
 )
 
 set_property(TARGET cobalt_render_tree PROPERTY CXX_STANDARD 17)

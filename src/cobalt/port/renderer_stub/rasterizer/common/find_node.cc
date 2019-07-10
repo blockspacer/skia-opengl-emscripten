@@ -54,6 +54,9 @@ class FinderNodeVisitor : public render_tree::NodeVisitor {
   void Visit(render_tree::PunchThroughVideoNode* punch_through) override {
     VisitNode(punch_through);
   }
+  void Visit(render_tree::SkottieNode* skottie) override {
+    VisitNode(skottie);
+  }
   void Visit(render_tree::RectNode* rect) override { VisitNode(rect); }
   void Visit(render_tree::RectShadowNode* rect) override { VisitNode(rect); }
   void Visit(render_tree::TextNode* text) override { VisitNode(text); }

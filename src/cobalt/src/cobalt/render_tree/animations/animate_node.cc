@@ -86,6 +86,9 @@ class AnimateNode::TraverseListBuilder : public NodeVisitor {
   void Visit(RectShadowNode* rect) override { VisitNode(rect); }
   void Visit(TextNode* text) override { VisitNode(text); }
 
+  // not in spec
+  void Visit(SkottieNode* skottie) override { VisitNode(skottie); }
+
  private:
   template <typename T>
   typename base::enable_if<!ChildIterator<T>::has_children>::type VisitNode(
@@ -260,6 +263,9 @@ class AnimateNode::BoundsVisitor : public NodeVisitor {
   void Visit(RectShadowNode* rect) override { VisitNode(rect); }
   void Visit(TextNode* text) override { VisitNode(text); }
 
+  // not in spec
+  void Visit(SkottieNode* skottie) override { VisitNode(skottie); }
+
   const math::RectF& bounds() const { return bounds_; }
 
  private:
@@ -414,6 +420,9 @@ class AnimateNode::ApplyVisitor : public NodeVisitor {
   void Visit(RectNode* rect) override { VisitNode(rect); }
   void Visit(RectShadowNode* rect) override { VisitNode(rect); }
   void Visit(TextNode* text) override { VisitNode(text); }
+
+  // not in spec
+  void Visit(SkottieNode* skottie) override { VisitNode(skottie); }
 
   // Returns the animated version of the node last visited.  This is how the
   // final animated result can be pulled from this visitor.

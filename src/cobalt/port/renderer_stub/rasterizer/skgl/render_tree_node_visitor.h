@@ -42,6 +42,9 @@
 ///#include "renderer_stub/rasterizer/skgl/offscreen_target_manager.h"
 #include "third_party/skia/include/core/SkCanvas.h"
 
+// not in spec
+#include "cobalt/render_tree/skottie_node.h"
+
 namespace cobalt {
 namespace renderer {
 namespace rasterizer {
@@ -82,6 +85,9 @@ class RenderTreeNodeVisitor : public render_tree::NodeVisitor {
   void Visit(render_tree::RectNode* rect_node) override;
   void Visit(render_tree::RectShadowNode* shadow_node) override;
   void Visit(render_tree::TextNode* text_node) override;
+
+  // not in spec
+  void Visit(render_tree::SkottieNode* skottie) override;
 
  private:
   void GetScratchTexture(scoped_refptr<render_tree::Node> node, float size

@@ -24,6 +24,7 @@
 namespace cobalt {
 namespace layout {
 
+// see https://en.wikipedia.org/wiki/Letterboxing_(filming)
 struct LetterboxDimensions {
   // The destination dimensions of the image such that its aspect ratio is
   // maintained.

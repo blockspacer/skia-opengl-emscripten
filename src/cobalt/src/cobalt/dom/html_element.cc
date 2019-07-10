@@ -59,6 +59,10 @@
 #include "cobalt/dom/html_title_element.h"
 #include "cobalt/dom/html_unknown_element.h"
 #include "cobalt/dom/html_video_element.h"
+
+// not in spec
+#include "cobalt/dom/html_skottie_element.h"
+
 #include "cobalt/dom/rule_matching.h"
 #include "cobalt/loader/image/animated_image_tracker.h"
 
@@ -638,6 +642,11 @@ scoped_refptr<HTMLUnknownElement> HTMLElement::AsHTMLUnknownElement() {
 }
 
 scoped_refptr<HTMLVideoElement> HTMLElement::AsHTMLVideoElement() {
+  return NULL;
+}
+
+// not in spec
+scoped_refptr<HTMLSkottieElement> HTMLElement::AsHTMLSkottieElement() {
   return NULL;
 }
 

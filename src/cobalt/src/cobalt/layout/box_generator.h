@@ -101,6 +101,9 @@ class BoxGenerator : public dom::NodeVisitor {
   void VisitBrElement(dom::HTMLBRElement* br_element);
   void VisitNonReplacedElement(dom::HTMLElement* html_element);
 
+  // not in spec
+  void VisitSkottieElement(dom::HTMLSkottieElement* skottie_element);
+
   void AppendChildBoxToLine(const scoped_refptr<Box>& child_box);
   void AppendPseudoElementToLine(dom::HTMLElement* html_element,
                                  dom::PseudoElementType pseudo_element_type);

@@ -246,28 +246,36 @@
   </head>
   <body class="exanim">
 
-    <div class="flip-card">
+    <div style="position:absolute;background-color:white;top:60px;right:200px;z-index:99;width:100px;height:100px">
+    </div>
+    <div style="position:absolute;background-color:black;top:80px;right:150px;z-index:1;width:100px;height:100px">
+    </div>
+
+    <div class="flip-card" style="z-index:999;">
       <div class="flip-card-inner">
         <div class="flip-card-front">
           <div style="background-image: url('file:///resources/images/mouse.jpeg'); width:300px; height:300px;">
           </div>
         </div>
         <div class="flip-card-back">
-          <h1>John Doe!</h1>
-          <p>Architect & Engineer</p>
-          <p>We love that guy</p>
+          <div>
+            <skottie width="100" height="100" src="./resources/animations/data.json" style="display:block;color:#CCC;width:100px;height:100px;z-index:999;">
+            </skottie>
+            kkk
+          </div>
         </div>
       </div>
     </div>
 
     <div>
-      jjj
+      <skottie width="300" height="300" src="./resources/animations/confetti.json" style="display:block;position:absolute;top:60px;left:200px;z-index:1;width:300px;height:300px">
     </div>
+
     <div>
-    <div>
-      <span>dddd</span>
-      <span class="testselector">sadsad 0</span>
-    </div>
+      <div>
+        <span>dddd</span>
+        <span class="testselector">sadsad 0</span>
+      </div>
     </div>
     <span>hhhhhh 1</span>
     <span class="testselector">sadsad 1</span>

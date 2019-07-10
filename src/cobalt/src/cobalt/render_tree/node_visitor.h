@@ -29,6 +29,9 @@ class RectNode;
 class RectShadowNode;
 class TextNode;
 
+// not in spec
+class SkottieNode;
+
 namespace animations {
 class AnimateNode;
 }  // namespace animations
@@ -49,6 +52,9 @@ class NodeVisitor {
   virtual void Visit(RectNode* rect) = 0;
   virtual void Visit(RectShadowNode* rect) = 0;
   virtual void Visit(TextNode* text) = 0;
+
+  // not in spec
+  virtual void Visit(SkottieNode* skottie) = 0;
 
  protected:
   ~NodeVisitor() {}

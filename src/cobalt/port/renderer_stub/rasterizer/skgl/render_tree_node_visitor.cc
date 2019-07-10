@@ -621,6 +621,13 @@ void RenderTreeNodeVisitor::Visit(render_tree::ImageNode* image_node) {
 }
 
 void RenderTreeNodeVisitor::Visit(
+    render_tree::SkottieNode* skottie) {
+  // TODO
+    NOTREACHED();
+    NOTIMPLEMENTED();
+}
+
+void RenderTreeNodeVisitor::Visit(
     render_tree::PunchThroughVideoNode* video_node) {
   if (!IsVisible(video_node->GetBounds())) {
     return;

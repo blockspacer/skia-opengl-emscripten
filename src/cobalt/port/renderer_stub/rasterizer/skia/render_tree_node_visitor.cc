@@ -38,6 +38,10 @@
 #include "cobalt/render_tree/rect_shadow_node.h"
 #include "cobalt/render_tree/rounded_corners.h"
 #include "cobalt/render_tree/text_node.h"
+
+// not in spec
+#include "cobalt/render_tree/skottie_node.h"
+
 #include "renderer_stub/rasterizer/common/offscreen_render_coordinate_mapping.h"
 #include "renderer_stub/rasterizer/common/utils.h"
 #include "renderer_stub/rasterizer/skia/cobalt_skia_type_conversions.h"
@@ -61,6 +65,12 @@
 #include "third_party/skia/include/effects/SkBlurMaskFilter.h"
 #include "third_party/skia/include/effects/SkDropShadowImageFilter.h"
 #include "third_party/skia/include/effects/SkGradientShader.h"
+
+#include <skia/modules/skottie/include/Skottie.h>
+#include <skia/modules/skottie/utils/SkottieUtils.h>
+#include <skia/include/core/SkSize.h>
+#include <skia/include/core/SkRefCnt.h>
+#include <skia/include/core/SkTime.h>
 
 // Setting this define to 1 will enable TRACE_EVENT calls to be made from
 // all render node visitations.  It is by default set to 0 because it generates
@@ -354,7 +364,8 @@ namespace {
 bool SourceCanRenderWithRoundedCorners(render_tree::Node* source) {
   // If we are filtering an image, which is a frequent scenario that is worth
   // optimizing for with a custom shader.
-  if (source->GetTypeId() == base::GetTypeId<render_tree::ImageNode>()) {
+  if (source->GetTypeId() == base::GetTypeId<render_tree::ImageNode>() /*||
+      source->GetTypeId() == base::GetTypeId<render_tree::SkottieNode>()*/) {
     return true;
   } else if (source->GetTypeId() ==
              base::GetTypeId<render_tree::CompositionNode>()) {
@@ -754,6 +765,73 @@ void RenderTreeNodeVisitor::Visit(
   matrix_transform_node->data().source->Accept(this);
 
   draw_state_.render_target->restore();
+
+#if ENABLE_FLUSH_AFTER_EVERY_NODE
+  draw_state_.render_target->flush();
+#endif
+}
+
+void RenderTreeNodeVisitor::Visit(
+    render_tree::SkottieNode* skottie) {
+#if ENABLE_RENDER_TREE_VISITOR_TRACING
+  TRACE_EVENT0("cobalt::renderer", "Visit(SkottieNode)");
+#endif
+
+  ///if (visitor_type_ == kType_SubVisitor) {
+  ///  DLOG(ERROR) << "Punch through alpha images cannot be rendered via "
+  ///                 "offscreen surfaces (since the offscreen surface will then "
+  ///                 "be composed using blending).  Unfortunately, you will have "
+  ///                 "to find another way to arrange your render tree if you "
+  ///                 "wish to use punch through alpha (e.g. ensure no opacity "
+  ///                 "filters exist as an ancestor to this node).";
+  ///  // We proceed anyway, just in case things happen to work out.
+  ///}
+
+  const math::RectF& math_rect = skottie->data().rect;
+
+  SkRect sk_rect = SkRect::MakeXYWH(math_rect.x(), math_rect.y(),
+                                    math_rect.width(), math_rect.height());
+  SkMatrix total_matrix = draw_state_.render_target->getTotalMatrix();
+
+  SkRect sk_rect_transformed;
+  total_matrix.mapRect(&sk_rect_transformed, sk_rect);
+
+  math::RectF transformed_rectf(
+      sk_rect_transformed.x(), sk_rect_transformed.y(),
+      sk_rect_transformed.width(), sk_rect_transformed.height());
+  math::Rect transformed_rect = math::Rect::RoundFromRectF(transformed_rectf);
+
+  // TODO
+  ///skottie->data().set_bounds_cb.Run(transformed_rect);
+
+  //DrawClearRect(draw_state_.render_target, math_rect,
+  //              render_tree::ColorRGBA(0.1, 0.1, 0.3, 0.5));
+
+  sk_sp<skottie::Animation> animation = skottie->data().animation;
+
+  if(animation) {
+
+    /*if (skottie->data().animation_time == 0) {
+      // Reset the animation time.
+      skottie->data().animation_time = SkTime::GetMSecs();
+    }*/
+
+    if (skottie->data().animation && skottie->data().animation->duration()) {
+      const SkMSec tElapsed = SkTime::GetMSecs() - skottie->data().animation_time;
+      //EM_LOG("animate 9\n");
+      const SkScalar duration = skottie->data().animation->duration() * 1000.0;
+      //EM_LOG("animate 10\n");
+      const double animPos = ::std::fmod(tElapsed, duration) / duration;
+      //EM_LOG("animate 11\n");
+      animation->seek(static_cast<SkScalar>(animPos));
+    }
+    const auto dstR = SkRect::MakeSize(
+      SkSize::Make(skottie->data().rect.width(), skottie->data().rect.height()));
+
+    //printf("fAnimation->render...\n");
+
+    animation->render(draw_state_.render_target, &dstR);
+  }
 
 #if ENABLE_FLUSH_AFTER_EVERY_NODE
   draw_state_.render_target->flush();

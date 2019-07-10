@@ -28,6 +28,9 @@
 #include "cobalt/render_tree/rect_shadow_node.h"
 #include "cobalt/render_tree/text_node.h"
 
+// not in spec
+#include "cobalt/render_tree/skottie_node.h"
+
 namespace cobalt {
 namespace render_tree {
 
@@ -51,6 +54,10 @@ class DebugTreePrinter : public NodeVisitor {
   void Visit(MatrixTransform3DNode* transform) override;
   void Visit(MatrixTransformNode* transform) override;
   void Visit(PunchThroughVideoNode* punch_through) override;
+
+  // not in spec
+  void Visit(SkottieNode* skottie) override;
+
   void Visit(RectNode* rect) override;
   void Visit(RectShadowNode* rect) override;
   void Visit(TextNode* text) override;
@@ -154,6 +161,12 @@ void DebugTreePrinter::Visit(MatrixTransformNode* transform) {
 
 void DebugTreePrinter::Visit(PunchThroughVideoNode* punch_through) {
   AddNamedNodeString(punch_through, "PunchThroughVideoNode");
+  result_ << "\n";
+}
+
+// not in spec
+void DebugTreePrinter::Visit(SkottieNode* skottie) {
+  AddNamedNodeString(skottie, "SkottieNode");
   result_ << "\n";
 }
 

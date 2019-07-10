@@ -15,6 +15,8 @@ set(cobalt_layout_SOURCES
   ${COBALT_CORE_DIR}layout/block_formatting_context.h
   ${COBALT_CORE_DIR}layout/block_level_replaced_box.cc
   ${COBALT_CORE_DIR}layout/block_level_replaced_box.h
+  ${COBALT_CORE_DIR}layout/block_level_skottie_box.cc
+  ${COBALT_CORE_DIR}layout/block_level_skottie_box.h
   ${COBALT_CORE_DIR}layout/box.cc
   ${COBALT_CORE_DIR}layout/box.h
   ${COBALT_CORE_DIR}layout/box_generator.cc
@@ -32,6 +34,8 @@ set(cobalt_layout_SOURCES
   ${COBALT_CORE_DIR}layout/inline_formatting_context.h
   ${COBALT_CORE_DIR}layout/inline_level_replaced_box.cc
   ${COBALT_CORE_DIR}layout/inline_level_replaced_box.h
+  ${COBALT_CORE_DIR}layout/inline_level_skottie_box.cc
+  ${COBALT_CORE_DIR}layout/inline_level_skottie_box.h
   ${COBALT_CORE_DIR}layout/insets_layout_unit.cc
   ${COBALT_CORE_DIR}layout/insets_layout_unit.h
   ${COBALT_CORE_DIR}layout/layout.cc
@@ -53,6 +57,8 @@ set(cobalt_layout_SOURCES
   ${COBALT_CORE_DIR}layout/point_layout_unit.h
   ${COBALT_CORE_DIR}layout/replaced_box.cc
   ${COBALT_CORE_DIR}layout/replaced_box.h
+  ${COBALT_CORE_DIR}layout/skottie_box.cc
+  ${COBALT_CORE_DIR}layout/skottie_box.h
   ${COBALT_CORE_DIR}layout/rect_layout_unit.cc
   ${COBALT_CORE_DIR}layout/rect_layout_unit.h
   ${COBALT_CORE_DIR}layout/render_tree_animations.h
@@ -101,6 +107,8 @@ target_link_libraries(cobalt_layout PUBLIC
   cobalt_render_tree
   cobalt_ui_navigation
   icu
+  SKIA # TODO
+  skottie # TODO
   #starboard_platform
   #starboard_core
   #starboard_eztime

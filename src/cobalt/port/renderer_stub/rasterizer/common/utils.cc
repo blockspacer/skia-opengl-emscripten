@@ -20,6 +20,9 @@
 #include "cobalt/render_tree/matrix_transform_node.h"
 #include "cobalt/render_tree/rect_node.h"
 
+// not in spec
+#include "cobalt/render_tree/skottie_node.h"
+
 namespace cobalt {
 namespace renderer {
 namespace rasterizer {
@@ -30,6 +33,7 @@ bool NodeCanRenderWithOpacity(render_tree::Node* node) {
   base::TypeId node_type = node->GetTypeId();
 
   if (node_type == base::GetTypeId<render_tree::ImageNode>() ||
+      //node_type == base::GetTypeId<render_tree::SkottieNode>() ||
       node_type == base::GetTypeId<render_tree::RectNode>()) {
     return true;
   } else if (node_type == base::GetTypeId<render_tree::MatrixTransformNode>()) {
