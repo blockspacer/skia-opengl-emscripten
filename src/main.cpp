@@ -2217,10 +2217,10 @@ class CobaltTester {
   // faster than the display's refresh rate, we set this to 60Hz.
 #if defined(__EMSCRIPTEN__)// && !defined(NDEBUG)
 #if defined(RELEASE_BUILD)
-  /// \note WASM DEBUG build may be too slow for high refresh rate
   const float kLayoutMaxRefreshFrequencyInHz = 60.0f;
 #else // !NDEBUG
-  const float kLayoutMaxRefreshFrequencyInHz = 40.0f;
+  /// \note WASM DEBUG build may be too slow for high refresh rate
+  const float kLayoutMaxRefreshFrequencyInHz = 29.0f;
 #endif // NDEBUG
 #else // !__EMSCRIPTEN__
   const float kLayoutMaxRefreshFrequencyInHz = 60.0f;
