@@ -171,7 +171,7 @@ class HTMLElementContext {
   base::WaitableEvent* synchronous_loader_interrupt_ = nullptr;
 
   base::Thread sync_load_thread_;
-  std::unique_ptr<HTMLElementFactory> html_element_factory_;
+  std::shared_ptr<HTMLElementFactory> html_element_factory_;
 
   DISALLOW_COPY_AND_ASSIGN(HTMLElementContext);
 };

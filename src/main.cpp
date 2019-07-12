@@ -367,6 +367,7 @@
 #include "base/numerics/safe_conversions.h"
 
 #include "base/stl_util.h"
+#include "base/strings/string_number_conversions.h"
 #include "base/base_switches.h"
 #include "base/command_line.h"
 #include "base/containers/small_map.h"
@@ -853,6 +854,8 @@ static int browser_height = height;//10000;
 
 #include "cobalt/src/cobalt/loader/decoder.h"
 
+#include "cobalt/dom/html_custom_element.h"
+
 #include "cobalt/dom_parser/html_decoder.h"
 #include "base/callback.h"
 ////#include "base/message_loop.h"
@@ -1114,6 +1117,24 @@ static int browser_height = height;//10000;
 #include "cobalt/dom/wheel_event_init.h"
 #include "cobalt/input/input_device_manager.h"
 #include "cobalt/layout/layout_manager.h"
+
+#include "cobalt/layout/box_generator.h"
+#include "cobalt/dom/text.h"
+#include "cobalt/layout/base_direction.h"
+#include "cobalt/layout/block_formatting_block_container_box.h"
+#include "cobalt/layout/block_level_replaced_box.h"
+#include "cobalt/layout/inline_container_box.h"
+#include "cobalt/layout/inline_level_replaced_box.h"
+#include "cobalt/layout/layout_boxes.h"
+#include "cobalt/layout/layout_stat_tracker.h"
+#include "cobalt/layout/text_box.h"
+#include "cobalt/layout/used_style.h"
+#include "cobalt/layout/white_space_processing.h"
+#include "cobalt/media/base/video_frame_provider.h"
+#include "cobalt/render_tree/image.h"
+#include "cobalt/web_animations/keyframe_effect_read_only.h"
+#include "starboard/decode_target.h"
+
 #include "cobalt/media/can_play_type_handler.h"
 #include "cobalt/media/media_module.h"
 //#include "cobalt/network/network_module.h"
@@ -1173,6 +1194,11 @@ static int browser_height = height;//10000;
 #include "renderer_stub/backend/graphics_context.h"
 #include "renderer_stub/backend/default_graphics_system.h"
 #include "renderer_stub/backend/graphics_system_stub.h"
+
+#include "block_level_input_box.h"
+#include "inline_level_input_box.h"
+#include "input_box.h"
+#include "input_node.h"
 
 typedef base::Callback<void(const cobalt::layout::LayoutManager::LayoutResults&)>
     OnRenderTreeProducedCallback;
@@ -2902,6 +2928,258 @@ void CobaltTester::OnWheelEventProduced(base::CobToken type,
   InjectInputEvent(scoped_refptr<dom::Element>(), wheel_event);
 }
 
+class HTMLInputElement : public HTMLCustomElement {
+ public:
+  static const char kTagName[];
+
+  explicit HTMLInputElement(Document* document);
+  ~HTMLInputElement() override;
+
+  math::SizeF GetSize() const;
+
+  uint32 width() const;
+
+  uint32 height() const;
+
+  void onBoxGeneratorVisit(cobalt::layout::BoxGenerator& box_gen, dom::HTMLCustomElement* custom_element) override;
+
+  // Custom, not in any spec.
+  scoped_refptr<HTMLCustomElement> AsHTMLCustomElement() override { return this; }
+
+  DISALLOW_COPY_AND_ASSIGN(HTMLInputElement);
+};
+
+
+namespace {
+
+class InputBoxGenerator : public cssom::NotReachedPropertyValueVisitor {
+ public:
+  InputBoxGenerator(const scoped_refptr<cssom::CSSComputedStyleDeclaration>&
+                           css_computed_style_declaration,
+                       //const InputBox::GetInputBoxAnimCB& replace_input_animation_cb,
+                       const scoped_refptr<Paragraph>& paragraph,
+                       int32 text_position,
+                       const base::Optional<LayoutUnit>& maybe_intrinsic_width,
+                       const base::Optional<LayoutUnit>& maybe_intrinsic_height,
+                       const base::Optional<float>& maybe_intrinsic_ratio,
+                       const BoxGenerator::Context* context,
+                       math::SizeF content_size)
+      : css_computed_style_declaration_(css_computed_style_declaration),
+        // set_bounds_cb_(set_bounds_cb),
+        //replace_input_animation_cb_(replace_input_animation_cb),
+        paragraph_(paragraph),
+        text_position_(text_position),
+        maybe_intrinsic_width_(maybe_intrinsic_width),
+        maybe_intrinsic_height_(maybe_intrinsic_height),
+        maybe_intrinsic_ratio_(maybe_intrinsic_ratio),
+        context_(context),
+        content_size_(content_size) {}
+
+  void VisitKeyword(cssom::KeywordValue* keyword) override;
+
+  const scoped_refptr<InputBox>& input_box() { return input_box_; }
+
+ private:
+  const scoped_refptr<cssom::CSSComputedStyleDeclaration>
+      css_computed_style_declaration_;
+  //const SkottieBox::SetBoundsCB set_bounds_cb_;
+  //const InputBox::GetInputAnimCB replace_input_animation_cb_;
+  const scoped_refptr<Paragraph> paragraph_;
+  const int32 text_position_;
+  const base::Optional<LayoutUnit> maybe_intrinsic_width_;
+  const base::Optional<LayoutUnit> maybe_intrinsic_height_;
+  const base::Optional<float> maybe_intrinsic_ratio_;
+  const BoxGenerator::Context* context_;
+  math::SizeF content_size_;
+
+  scoped_refptr<InputBox> input_box_;
+};
+
+void InputBoxGenerator::VisitKeyword(cssom::KeywordValue* keyword) {
+  switch (keyword->value()) {
+    case cssom::KeywordValue::kBlock:
+    case cssom::KeywordValue::kFlex:
+      input_box_ = WrapRefCounted(new BlockLevelInputBox(
+          css_computed_style_declaration_
+          //, replace_image_cb_, set_bounds_cb_,
+          //, replace_input_animation_cb_
+          , paragraph_, text_position_, maybe_intrinsic_width_,
+          maybe_intrinsic_height_, maybe_intrinsic_ratio_,
+          context_->used_style_provider,
+          //, is_video_punched_out_
+          content_size_,
+          context_->layout_stat_tracker));
+      break;
+    case cssom::KeywordValue::kInline:
+    case cssom::KeywordValue::kInlineBlock:
+    case cssom::KeywordValue::kInlineFlex:
+      input_box_ = WrapRefCounted(new InlineLevelInputBox(
+          css_computed_style_declaration_,
+          //replace_input_animation_cb_,
+          //set_bounds_cb_,
+          paragraph_, text_position_, maybe_intrinsic_width_,
+          maybe_intrinsic_height_, maybe_intrinsic_ratio_,
+          context_->used_style_provider, content_size_,
+          context_->layout_stat_tracker));
+      break;
+    // The element generates no boxes and has no effect on layout.
+    case cssom::KeywordValue::kNone:
+      // Leave |input_box_| NULL.
+      break;
+    case cssom::KeywordValue::kAbsolute:
+    case cssom::KeywordValue::kAlternate:
+    case cssom::KeywordValue::kAlternateReverse:
+    case cssom::KeywordValue::kAuto:
+    case cssom::KeywordValue::kBackwards:
+    case cssom::KeywordValue::kBaseline:
+    case cssom::KeywordValue::kBoth:
+    case cssom::KeywordValue::kBottom:
+    case cssom::KeywordValue::kBreakWord:
+    case cssom::KeywordValue::kCenter:
+    case cssom::KeywordValue::kClip:
+    case cssom::KeywordValue::kCollapse:
+    case cssom::KeywordValue::kColumn:
+    case cssom::KeywordValue::kColumnReverse:
+    case cssom::KeywordValue::kContain:
+    case cssom::KeywordValue::kContent:
+    case cssom::KeywordValue::kCover:
+    case cssom::KeywordValue::kCurrentColor:
+    case cssom::KeywordValue::kCursive:
+    case cssom::KeywordValue::kEllipsis:
+    case cssom::KeywordValue::kEnd:
+    case cssom::KeywordValue::kEquirectangular:
+    case cssom::KeywordValue::kFantasy:
+    case cssom::KeywordValue::kFixed:
+    case cssom::KeywordValue::kFlexEnd:
+    case cssom::KeywordValue::kFlexStart:
+    case cssom::KeywordValue::kForwards:
+    case cssom::KeywordValue::kHidden:
+    case cssom::KeywordValue::kInfinite:
+    case cssom::KeywordValue::kInherit:
+    case cssom::KeywordValue::kInitial:
+    case cssom::KeywordValue::kLeft:
+    case cssom::KeywordValue::kLineThrough:
+    case cssom::KeywordValue::kMiddle:
+    case cssom::KeywordValue::kMonoscopic:
+    case cssom::KeywordValue::kMonospace:
+    case cssom::KeywordValue::kNoRepeat:
+    case cssom::KeywordValue::kNormal:
+    case cssom::KeywordValue::kNowrap:
+    case cssom::KeywordValue::kPre:
+    case cssom::KeywordValue::kPreLine:
+    case cssom::KeywordValue::kPreWrap:
+    case cssom::KeywordValue::kRelative:
+    case cssom::KeywordValue::kRepeat:
+    case cssom::KeywordValue::kReverse:
+    case cssom::KeywordValue::kRight:
+    case cssom::KeywordValue::kRow:
+    case cssom::KeywordValue::kRowReverse:
+    case cssom::KeywordValue::kSansSerif:
+    case cssom::KeywordValue::kScroll:
+    case cssom::KeywordValue::kSerif:
+    case cssom::KeywordValue::kSolid:
+    case cssom::KeywordValue::kSpaceAround:
+    case cssom::KeywordValue::kSpaceBetween:
+    case cssom::KeywordValue::kStart:
+    case cssom::KeywordValue::kStatic:
+    case cssom::KeywordValue::kStereoscopicLeftRight:
+    case cssom::KeywordValue::kStereoscopicTopBottom:
+    case cssom::KeywordValue::kStretch:
+    case cssom::KeywordValue::kTop:
+    case cssom::KeywordValue::kUppercase:
+    case cssom::KeywordValue::kVisible:
+    case cssom::KeywordValue::kWrap:
+    case cssom::KeywordValue::kWrapReverse:
+      NOTREACHED();
+      break;
+  }
+}
+
+}  // namespace
+
+const char HTMLInputElement::kTagName[] = "input";
+
+HTMLInputElement::HTMLInputElement(Document* document)
+    : HTMLCustomElement(document, base::CobToken(kTagName)) {
+}
+
+HTMLInputElement::~HTMLInputElement() {
+}
+
+uint32 HTMLInputElement::width() const {
+  uint32 result = 0;
+  std::string value_in_string = GetAttribute("width").value_or("0");
+  if (!base::StringToUint32(value_in_string, &result)) {
+    LOG(WARNING) << "Invalid width attribute: \'" << value_in_string << "\'";
+  }
+
+  //printf("HTMLInputElement::width %d\n", result);
+
+  return result;
+}
+
+uint32 HTMLInputElement::height() const {
+  uint32 result = 0;
+  std::string value_in_string = GetAttribute("height").value_or("0");
+  if (!base::StringToUint32(value_in_string, &result)) {
+    LOG(WARNING) << "Invalid height attribute: \'" << value_in_string << "\'";
+  }
+
+  //printf("HTMLInputElement::height %d\n", result);
+
+  return result;
+}
+
+math::SizeF HTMLInputElement::GetSize() const {
+  return math::SizeF(width(), height());
+}
+
+void HTMLInputElement::onBoxGeneratorVisit(cobalt::layout::BoxGenerator& box_gen, cobalt::dom::HTMLCustomElement* custom_element) {
+  //DCHECK(box_gen);
+
+  //printf("box_gen size %zu\n", box_gen.boxes().size());
+
+  //   https://www.w3.org/TR/CSS21/visuren.html#inline-boxes
+  //   https://www.w3.org/TR/CSS21/visuren.html#propdef-unicode-bidi
+  //   https://www.w3.org/TR/css3-text/#line-break-details
+  int32 text_position =
+      (*box_gen.paragraph_)
+          ->AppendCodePoint(Paragraph::kObjectReplacementCharacterCodePoint);
+
+  render_tree::ResourceProvider* resource_provider =
+      *node_document()
+           ->html_element_context()
+           ->resource_provider();
+
+  InputBoxGenerator input_box_generator(
+      css_computed_style_declaration(),
+      //base::Bind(&HTMLInputElement::GetAnim, base::Unretained(this)),
+      *box_gen.paragraph_, text_position,
+      base::nullopt, base::nullopt, base::nullopt, box_gen.context_,
+      GetSize());
+  computed_style()->display()->Accept(&input_box_generator);
+
+  //printf("VisitInputElement with placeholder: %s\n", this->placeholder().c_str());
+
+  scoped_refptr<InputBox> input_box =
+      input_box_generator.input_box();
+  if (input_box.get() == NULL) {
+    // The element with "display: none" generates no boxes and has no effect
+    // on layout. Descendant elements do not generate any boxes either.
+    // This behavior cannot be overridden by setting the "display" property on
+    // the descendants.
+    //   https://www.w3.org/TR/CSS21/visuren.html#display-prop
+    return;
+  }
+
+#ifdef COBALT_BOX_DUMP_ENABLED
+  input_box->SetGeneratingNode(this);
+#endif  // COBALT_BOX_DUMP_ENABLED
+
+  input_box->SetUiNavItem(this->GetUiNavItem());
+  box_gen.boxes_.push_back(input_box);
+}
+
 #ifdef HAS_ICU
 //static const icu::Locale *t_icu_locale;
 
@@ -3203,6 +3481,7 @@ CobaltTester::CobaltTester()
 
   DCHECK(input_device_manager_);
   window_ = new cobalt::dom::Window(
+      /* autoStartDocumentLoad */ false,
       cssom::ViewportSize(browser_width, browser_height), //data.window_dimensions,
       1.0,//data.video_pixel_ratio,
       base::ApplicationState::kApplicationStateStarted,//data.initial_application_state,
@@ -3281,10 +3560,30 @@ CobaltTester::CobaltTester()
       );
   DCHECK(window_);
 
+  P_LOG("AddHTMLElementWithSingleTagName...\n");
+
+  DCHECK(window_);
+  DCHECK(window_->document());
+  scoped_refptr<Document> document_ = window_->document();
+  //scoped_refptr<HTMLElement> elem = new HTMLInputElement(document_.get());
+  DCHECK(document_->html_element_context());
+  DCHECK(document_->html_element_context()->html_element_factory());
+  HTMLElementFactory::CreateHTMLElementTCallback create_input_cb
+    = base::Bind([](Document* document) {
+        scoped_refptr<HTMLElement> elem = new HTMLInputElement(document);
+        return elem;
+      });
+  document_->html_element_context()->html_element_factory()->
+    AddHTMLElementWithSingleTagName(HTMLInputElement::kTagName, create_input_cb);
+
   P_LOG("Create window_weak_...\n");
 
   window_weak_ = base::AsWeakPtr(window_.get());
   DCHECK(window_weak_);
+
+  printf("document_->set_window...\n");
+  const bool document_load_started = window_->TryForceStartDocumentLoad();
+  DCHECK(document_load_started);
 
   printf("document_->set_window...\n");
 
@@ -3319,7 +3618,7 @@ CobaltTester::CobaltTester()
       base::Bind(&CobaltTester::HandlePointerEvents, base::Unretained(this)),
       layout_trigger,//data.options.layout_trigger,
       99,//data.dom_max_element_depth,
-      g_cobaltTester->layout_refresh_rate_,
+      layout_refresh_rate_,
       "en_US", //"data.network_module->preferred_language()",
       false, //data.options.enable_image_animations,
       layout_stat_tracker_.get(),//web_module_stat_tracker_->layout_stat_tracker(),
@@ -3342,6 +3641,10 @@ static void createCobaltTester() {
     DCHECK(g_cobaltTester);
     //DCHECK_EQ(base::MessageLoopCurrent::Get().task_runner(), g_cobaltTester->self_task_runner_);
     DCHECK(g_cobaltTester->thread_checker_.CalledOnValidThread());
+
+    /*scoped_refptr<Document> document_ = g_cobaltTester->window_->document();
+    document_->html_element_context()->html_element_factory()->
+      RegisterHTMLElementWithSingleTagName<HTMLCustomElement>();*/
 
     /// __TODO__
     {
@@ -3722,7 +4025,7 @@ static void animate() {
   //printf("animate 2\n");
 
   // see https://github.com/google/skia/blob/master/platform_tools/android/apps/skottie/src/main/cpp/native-lib.cpp
-  if (fAnimation && fAnimation->duration()) {
+  if (fAnimation && fAnimation->duration() > 0.0f) {
     const SkMSec tElapsed = SDL_GetTicks() - fTimeBase;
     //printf("animate 3\n");
     const SkScalar duration = fAnimation->duration() * 1000.0f;
@@ -3743,7 +4046,7 @@ static void animate() {
   }
   //EM_LOG("animate 8\n");
   // see https://github.com/google/skia/blob/master/platform_tools/android/apps/skottie/src/main/cpp/native-lib.cpp
-  if (fAnimation && fAnimation->duration()) {
+  if (fAnimation && fAnimation->duration() > 0.0f) {
     const SkMSec tElapsed = SkTime::GetMSecs() - fTimeBase;
     //EM_LOG("animate 9\n");
     const SkScalar duration = fAnimation->duration() * 1000.0f;

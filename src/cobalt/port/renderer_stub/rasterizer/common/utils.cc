@@ -22,6 +22,7 @@
 
 // not in spec
 #include "cobalt/render_tree/skottie_node.h"
+#include "cobalt/render_tree/custom_node.h"
 
 namespace cobalt {
 namespace renderer {
@@ -32,7 +33,11 @@ namespace utils {
 bool NodeCanRenderWithOpacity(render_tree::Node* node) {
   base::TypeId node_type = node->GetTypeId();
 
-  if (node_type == base::GetTypeId<render_tree::ImageNode>() ||
+  if (node_type == base::GetTypeId<render_tree::CustomNode>()) {
+    render_tree::CustomNode* custom_node =
+        base::polymorphic_downcast<render_tree::CustomNode*>(node);
+    return custom_node->NodeCanRenderWithOpacity();
+  } else if (node_type == base::GetTypeId<render_tree::ImageNode>() ||
       //node_type == base::GetTypeId<render_tree::SkottieNode>() ||
       node_type == base::GetTypeId<render_tree::RectNode>()) {
     return true;

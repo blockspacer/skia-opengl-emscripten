@@ -34,6 +34,7 @@ set(cobalt_render_tree_SOURCES
   ${COBALT_CORE_DIR}render_tree/opacity_filter.h
   ${COBALT_CORE_DIR}render_tree/punch_through_video_node.cc
   ${COBALT_CORE_DIR}render_tree/skottie_node.cc
+  ${COBALT_CORE_DIR}render_tree/custom_node.cc
   ${COBALT_CORE_DIR}render_tree/rect_node.cc
   ${COBALT_CORE_DIR}render_tree/rect_node.h
   ${COBALT_CORE_DIR}render_tree/rect_shadow_node.cc

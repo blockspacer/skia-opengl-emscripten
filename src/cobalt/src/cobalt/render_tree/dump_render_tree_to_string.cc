@@ -30,6 +30,7 @@
 
 // not in spec
 #include "cobalt/render_tree/skottie_node.h"
+#include "cobalt/render_tree/custom_node.h"
 
 namespace cobalt {
 namespace render_tree {
@@ -57,6 +58,7 @@ class DebugTreePrinter : public NodeVisitor {
 
   // not in spec
   void Visit(SkottieNode* skottie) override;
+  void Visit(CustomNode* skottie) override;
 
   void Visit(RectNode* rect) override;
   void Visit(RectShadowNode* rect) override;
@@ -167,6 +169,12 @@ void DebugTreePrinter::Visit(PunchThroughVideoNode* punch_through) {
 // not in spec
 void DebugTreePrinter::Visit(SkottieNode* skottie) {
   AddNamedNodeString(skottie, "SkottieNode");
+  result_ << "\n";
+}
+
+// not in spec
+void DebugTreePrinter::Visit(CustomNode* custom_node) {
+  AddNamedNodeString(custom_node, custom_node->DebugTreePrintName());
   result_ << "\n";
 }
 

@@ -81,6 +81,10 @@ class TextNode : public Node {
 
   const Builder& data() const { return data_; }
 
+  TextNode* CreateWithBuilder(TextNode::Builder builder) {
+    return new TextNode(builder);
+  }
+
  private:
   const Builder data_;
 };

@@ -62,6 +62,7 @@
 
 // not in spec
 #include "cobalt/dom/html_skottie_element.h"
+#include "cobalt/dom/html_custom_element.h"
 
 #include "cobalt/dom/rule_matching.h"
 #include "cobalt/loader/image/animated_image_tracker.h"
@@ -647,6 +648,11 @@ scoped_refptr<HTMLVideoElement> HTMLElement::AsHTMLVideoElement() {
 
 // not in spec
 scoped_refptr<HTMLSkottieElement> HTMLElement::AsHTMLSkottieElement() {
+  return NULL;
+}
+
+// not in spec
+scoped_refptr<HTMLCustomElement> HTMLElement::AsHTMLCustomElement() {
   return NULL;
 }
 

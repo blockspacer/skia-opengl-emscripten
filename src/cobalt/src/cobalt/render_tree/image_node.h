@@ -83,6 +83,10 @@ class ImageNode : public Node {
 
   const Builder& data() const { return data_; }
 
+  ImageNode* CreateWithBuilder(ImageNode::Builder builder) {
+    return new ImageNode(builder);
+  }
+
  private:
   const Builder data_;
 };

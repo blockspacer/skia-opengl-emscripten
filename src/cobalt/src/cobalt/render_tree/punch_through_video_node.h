@@ -68,6 +68,10 @@ class PunchThroughVideoNode : public Node {
 
   const Builder& data() const { return data_; }
 
+  PunchThroughVideoNode* CreateWithBuilder(PunchThroughVideoNode::Builder builder) {
+    return new PunchThroughVideoNode(builder);
+  }
+
  private:
   const Builder data_;
 };

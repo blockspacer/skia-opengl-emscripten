@@ -36,6 +36,7 @@
 
 // not in spec
 #include "cobalt/dom/html_skottie_element.h"
+#include "cobalt/dom/html_custom_element.h"
 
 #include "nb/memory_scope.h"
 
@@ -80,6 +81,9 @@ HTMLElementFactory::HTMLElementFactory() {
   // not in spec
   RegisterHTMLElementWithSingleTagName<HTMLSkottieElement>();
 
+  //RegisterHTMLElementWithSingleTagName<HTMLCustomElement>();
+
+
   // Register HTML elements that have multiple tag names in the map.
   RegisterHTMLElementWithMultipleTagName<HTMLHeadingElement>();
 }
@@ -97,6 +101,15 @@ scoped_refptr<HTMLElement> HTMLElementFactory::CreateHTMLElement(
     LOG(WARNING) << "Unknown HTML element: <" << tag_name << ">.";
     return new HTMLUnknownElement(document, tag_name);
   }
+}
+
+/*void HTMLElementFactory::addHTMLCustomElement(const std::string& tag_name) {
+  tag_name_to_create_html_element_t_callback_map_[base::CobToken(tag_name)] =
+      base::Bind(&CreateHTMLElementT<T>);
+}*/
+
+void HTMLElementFactory::AddHTMLElementWithSingleTagName(const char* tag_name, CreateHTMLElementTCallback create_cb) {
+  tag_name_to_create_html_element_t_callback_map_[base::CobToken(tag_name)] = create_cb;
 }
 
 template <typename T>

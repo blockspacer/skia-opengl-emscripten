@@ -96,13 +96,15 @@ class BoxGenerator : public dom::NodeVisitor {
 
   const Boxes& boxes() const { return boxes_; }
 
- private:
+// TODO
+// private:
   void VisitVideoElement(dom::HTMLVideoElement* video_element);
   void VisitBrElement(dom::HTMLBRElement* br_element);
   void VisitNonReplacedElement(dom::HTMLElement* html_element);
 
   // not in spec
   void VisitSkottieElement(dom::HTMLSkottieElement* skottie_element);
+  void VisitCustomElement(dom::HTMLCustomElement* custom_element);
 
   void AppendChildBoxToLine(const scoped_refptr<Box>& child_box);
   void AppendPseudoElementToLine(dom::HTMLElement* html_element,

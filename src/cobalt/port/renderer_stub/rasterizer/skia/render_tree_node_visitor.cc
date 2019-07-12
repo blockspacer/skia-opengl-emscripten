@@ -41,6 +41,7 @@
 
 // not in spec
 #include "cobalt/render_tree/skottie_node.h"
+#include "cobalt/render_tree/custom_node.h"
 
 #include "renderer_stub/rasterizer/common/offscreen_render_coordinate_mapping.h"
 #include "renderer_stub/rasterizer/common/utils.h"
@@ -765,6 +766,20 @@ void RenderTreeNodeVisitor::Visit(
   matrix_transform_node->data().source->Accept(this);
 
   draw_state_.render_target->restore();
+
+#if ENABLE_FLUSH_AFTER_EVERY_NODE
+  draw_state_.render_target->flush();
+#endif
+}
+
+void RenderTreeNodeVisitor::Visit(
+  render_tree::CustomNode* custom_node) {
+#if ENABLE_RENDER_TREE_VISITOR_TRACING
+  TRACE_EVENT0("cobalt::renderer", "Visit(CustomNode)");
+#endif
+
+  //custom_node->RenderTreeNodeVisit(draw_state_.render_target);
+  custom_node->RenderTreeNodeVisit(this);
 
 #if ENABLE_FLUSH_AFTER_EVERY_NODE
   draw_state_.render_target->flush();

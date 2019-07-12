@@ -108,6 +108,7 @@ const int64_t kPerformanceTimerMinResolutionInMicroseconds = 20;
 }  // namespace
 
 Window::Window(
+    const bool autoStartDocumentLoad,
     const ViewportSize& view_size, float device_pixel_ratio,
     base::ApplicationState initial_application_state,
     cssom::CSSParser* css_parser, Parser* dom_parser,
@@ -266,13 +267,15 @@ Window::Window(
   // Document load start is deferred from this constructor so that we can be
   // guaranteed that this Window object is fully constructed before document
   // loading begins.
+  if(autoStartDocumentLoad) {
 #if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
-  DCHECK(base::MessageLoopCurrent::Get()); // TODO
-  base::MessageLoopCurrent::Get()->task_runner()->PostTask(
-      FROM_HERE,
-      base::Bind(&Window::StartDocumentLoad, base::Unretained(this),
-                 fetcher_factory, url, dom_parser, load_complete_callback));
+    DCHECK(base::MessageLoopCurrent::Get()); // TODO
+    base::MessageLoopCurrent::Get()->task_runner()->PostTask(
+        FROM_HERE,
+        base::Bind(&Window::StartDocumentLoad, base::Unretained(this),
+                   fetcher_factory, url, dom_parser, load_complete_callback));
 #endif
+  }
 
   canStartDocumentLoad = true;
 

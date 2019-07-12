@@ -84,6 +84,10 @@ class RectShadowNode : public Node {
 
   const Builder& data() const { return data_; }
 
+  RectShadowNode* CreateWithBuilder(RectShadowNode::Builder builder) {
+    return new RectShadowNode(builder);
+  }
+
  private:
   void AssertValid() const;
 

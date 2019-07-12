@@ -37,15 +37,19 @@ class HTMLElementFactory {
   HTMLElementFactory();
   ~HTMLElementFactory();
 
+  //static void addHTMLCustomElement(const std::string& tag_name);
+
   scoped_refptr<HTMLElement> CreateHTMLElement(Document* document,
                                                base::CobToken tag_name);
 
- private:
   typedef base::Callback<scoped_refptr<HTMLElement>(Document* document)>
       CreateHTMLElementTCallback;
   typedef std::map<base::CobToken, CreateHTMLElementTCallback>
       TagNameToCreateHTMLElementTCallbackMap;
 
+  void AddHTMLElementWithSingleTagName(const char *tag_name, CreateHTMLElementTCallback create_cb);
+
+private:
   // Helper function templates for adding entries to the map below.
   template <typename T>
   void RegisterHTMLElementWithSingleTagName();

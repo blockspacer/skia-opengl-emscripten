@@ -72,6 +72,7 @@ class HTMLVideoElement;
 
 // not in spec
 class HTMLSkottieElement;
+class HTMLCustomElement;
 
 // The enum Directionality is used to track the explicit direction of the html
 // element:
@@ -222,6 +223,7 @@ class HTMLElement : public Element, public cssom::MutationObserver {
 
   // not in spec
   virtual scoped_refptr<HTMLSkottieElement> AsHTMLSkottieElement();
+  virtual scoped_refptr<HTMLCustomElement> AsHTMLCustomElement();
 
   // Returns the directionality of the element, which is based upon the
   // underlying "dir" attribute, and is updated when the attribute changes.

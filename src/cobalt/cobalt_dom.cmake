@@ -196,6 +196,8 @@ set(cobalt_dom_SOURCES
   ${COBALT_CORE_DIR}dom/html_video_element.h
   ${COBALT_CORE_DIR}dom/html_skottie_element.cc
   ${COBALT_CORE_DIR}dom/html_skottie_element.h
+  ${COBALT_CORE_DIR}dom/html_custom_element.cc
+  ${COBALT_CORE_DIR}dom/html_custom_element.h
   ${COBALT_CORE_DIR}dom/initial_computed_style.cc
   ${COBALT_CORE_DIR}dom/initial_computed_style.h
   ${COBALT_CORE_DIR}dom/input_event.cc

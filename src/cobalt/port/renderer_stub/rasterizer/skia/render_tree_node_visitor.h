@@ -118,9 +118,11 @@ class RenderTreeNodeVisitor : public render_tree::NodeVisitor {
   void Visit(render_tree::TextNode* text_node) override;
 
   // not in spec
+  void Visit(render_tree::CustomNode* custom_node) override;
   void Visit(render_tree::SkottieNode* skottie) override;
 
- private:
+/// TODO
+// private:
   // Helper function to render the filter's source to an offscreen surface and
   // then apply the filter to the offscreen surface.
   void RenderFilterViaOffscreenSurface(

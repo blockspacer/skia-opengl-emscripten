@@ -100,6 +100,10 @@ class FilterNode : public Node {
 
   const Builder& data() const { return data_; }
 
+  FilterNode* CreateWithBuilder(FilterNode::Builder builder) {
+    return new FilterNode(builder);
+  }
+
  private:
   void AssertValid() const;
 

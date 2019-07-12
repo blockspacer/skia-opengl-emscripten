@@ -58,6 +58,10 @@ class ClearRectNode : public Node {
 
   const Builder& data() const { return data_; }
 
+  ClearRectNode* CreateWithBuilder(ClearRectNode::Builder builder) {
+    return new ClearRectNode(builder);
+  }
+
  private:
   const Builder data_;
 };

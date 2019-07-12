@@ -140,6 +140,7 @@ class Window : public EventTarget,
   };
 
   Window(
+      const bool autoStartDocumentLoad,
       const cssom::ViewportSize& view_size, float device_pixel_ratio,
       base::ApplicationState initial_application_state,
       cssom::CSSParser* css_parser, Parser* dom_parser,

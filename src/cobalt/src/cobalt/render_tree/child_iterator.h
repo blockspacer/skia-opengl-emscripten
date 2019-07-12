@@ -29,6 +29,7 @@
 
 // not in spec
 #include "cobalt/render_tree/skottie_node.h"
+#include "cobalt/render_tree/custom_node.h"
 
 namespace cobalt {
 namespace render_tree {
@@ -42,6 +43,7 @@ class TextNode;
 
 // not in spec
 class SkottieNode;
+class CustomNode;
 
 // The ChildIterator template provides a way to iterate over the children of
 // a node without concern for what type of node it is (though since it is a

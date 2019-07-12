@@ -44,6 +44,7 @@
 
 // not in spec
 #include "cobalt/render_tree/skottie_node.h"
+#include "cobalt/render_tree/custom_node.h"
 
 namespace cobalt {
 namespace renderer {
@@ -88,6 +89,7 @@ class RenderTreeNodeVisitor : public render_tree::NodeVisitor {
 
   // not in spec
   void Visit(render_tree::SkottieNode* skottie) override;
+  void Visit(render_tree::CustomNode* skottie) override;
 
  private:
   void GetScratchTexture(scoped_refptr<render_tree::Node> node, float size

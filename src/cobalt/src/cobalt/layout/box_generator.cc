@@ -32,6 +32,7 @@
 
 // not in spec
 #include "cobalt/dom/html_skottie_element.h"
+#include "cobalt/dom/html_custom_element.h"
 
 #include "cobalt/dom/text.h"
 #include "cobalt/layout/base_direction.h"
@@ -162,6 +163,14 @@ void BoxGenerator::Visit(dom::Element* element) {
       html_element->AsHTMLSkottieElement();
   if (skottie_element) {
     VisitSkottieElement(skottie_element.get());
+    return;
+  }
+
+  // not in spec
+  scoped_refptr<dom::HTMLCustomElement> custom_element =
+      html_element->AsHTMLCustomElement();
+  if (custom_element) {
+    VisitCustomElement(custom_element.get());
     return;
   }
 
@@ -315,6 +324,11 @@ void SkottieBoxGenerator::VisitKeyword(cssom::KeywordValue* keyword) {
 }
 
 }  // namespace
+
+// not in spec
+void BoxGenerator::VisitCustomElement(dom::HTMLCustomElement* custom_element) {
+  custom_element->onBoxGeneratorVisit(*this, custom_element);
+}
 
 // not in spec
 void BoxGenerator::VisitSkottieElement(dom::HTMLSkottieElement* skottie_element) {

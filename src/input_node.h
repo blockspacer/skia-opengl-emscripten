@@ -21,9 +21,9 @@
 #include "cobalt/math/rect_f.h"
 #include "cobalt/render_tree/node.h"
 
-#include <skia/modules/skottie/include/Skottie.h>
-#include <skia/modules/skottie/utils/SkottieUtils.h>
-#include <skia/include/core/SkSize.h>
+#include "cobalt/base/polymorphic_downcast.h"
+
+#include "cobalt/render_tree/custom_node.h"
 
 namespace cobalt {
 namespace render_tree {
@@ -31,23 +31,30 @@ namespace render_tree {
 //static SkString fAnimPath = SkString("./resources/animations/data.json");
 
 // not in spec
-class SkottieNode : public Node {
+class InputNode : public CustomNode {
  public:
   //typedef base::Callback<bool(const math::Rect&)> SetBoundsCB;
-  typedef base::Callback<sk_sp<skottie::Animation>()> GetSkottieAnimCB;
+  //typedef base::Callback<sk_sp<skottie::Animation>()> GetSkottieAnimCB;
 
-  struct Builder {
-    Builder(const Builder&) = default;
-    Builder(const math::RectF& rect
+  struct Builder : public CustomNode::Builder {
+    explicit Builder(const Builder&) = default;
+    explicit Builder(const CustomNode::Builder& customNodeBuilder)
+      : CustomNode::Builder() {
+    }
+    explicit Builder(const math::RectF& rect
         //, const SetBoundsCB& set_bounds_cb
         //, sk_sp<skottie::Animation> animation
         //, SkMSec animation_time
         )
-        : rect(rect)
+        : CustomNode::Builder(), rect(rect)
         //, animation(animation)
         //, animation_time(animation_time)
         //, set_bounds_cb(set_bounds_cb)
         {}
+
+    bool operator==(const CustomNode::Builder& other) const override {
+      return rect == base::polymorphic_downcast<Builder>(other).rect /*&& set_bounds_cb.Equals(other.set_bounds_cb)*/;
+    }
 
     bool operator==(const Builder& other) const {
       return rect == other.rect /*&& set_bounds_cb.Equals(other.set_bounds_cb)*/;
@@ -55,34 +62,41 @@ class SkottieNode : public Node {
 
     // The destination rectangle (size includes border).
     math::RectF rect;
-
-    //const SetBoundsCB set_bounds_cb;
-
-    sk_sp<skottie::Animation> animation;
-
-    //skottie::Animation::Builder::Stats animation_stats;
-
-    SkMSec animation_time = 0;
-
-    // see image_node_builder->source = replace_image_cb.Run();
   };
 
   // Forwarding constructor to the set of Builder constructors.
   template <typename... Args>
-  SkottieNode(Args&&... args) : data_(std::forward<Args>(args)...) {}
+  explicit InputNode(Args&&... args) : data_(std::forward<Args>(args)...) {}
+
+  void RenderTreeNodeVisit(const render_tree::NodeVisitor* render_target) override;
 
   void Accept(NodeVisitor* visitor) override;
+
   math::RectF GetBounds() const override;
 
+  bool NodeCanRenderWithOpacity() override { return true; }
+
+  const char* DebugTreePrintName() override { return "InputNode"; }
+
+  CustomNode* CreateWithBuilder(CustomNode::Builder builder) override {
+    InputNode::Builder input_builder(builder);
+    printf("created InputNode\n");
+    return new InputNode(input_builder);
+  }
+
+  /*CustomNode* CreateWithBuilder(CustomNode::Builder builder) override {
+    return CreateInputNodeWithBuilder(builder);
+  }*/
+
   base::TypeId GetTypeId() const override {
-    return base::GetTypeId<SkottieNode>();
+    return base::GetTypeId<InputNode>();
   }
 
-  const Builder& data() const { return data_; }
+  const Builder& data() const override { return data_; }
 
-  SkottieNode* CreateWithBuilder(SkottieNode::Builder builder) {
-    return new SkottieNode(builder);
-  }
+  /*InputNode* CreateWithBuilder(InputNode::Builder builder) override {
+    return new InputNode(builder);
+  }*/
 
  private:
   const Builder data_;

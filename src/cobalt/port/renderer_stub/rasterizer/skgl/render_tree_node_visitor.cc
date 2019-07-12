@@ -628,6 +628,13 @@ void RenderTreeNodeVisitor::Visit(
 }
 
 void RenderTreeNodeVisitor::Visit(
+    render_tree::CustomNode* custom_node) {
+  // TODO
+    NOTREACHED();
+    NOTIMPLEMENTED();
+}
+
+void RenderTreeNodeVisitor::Visit(
     render_tree::PunchThroughVideoNode* video_node) {
   if (!IsVisible(video_node->GetBounds())) {
     return;

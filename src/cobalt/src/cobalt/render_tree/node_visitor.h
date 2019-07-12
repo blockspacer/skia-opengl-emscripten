@@ -31,6 +31,7 @@ class TextNode;
 
 // not in spec
 class SkottieNode;
+class CustomNode;
 
 namespace animations {
 class AnimateNode;
@@ -55,6 +56,7 @@ class NodeVisitor {
 
   // not in spec
   virtual void Visit(SkottieNode* skottie) = 0;
+  virtual void Visit(CustomNode* custom_node) = 0;
 
  protected:
   ~NodeVisitor() {}

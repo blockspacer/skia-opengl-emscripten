@@ -127,6 +127,10 @@ class CompositionNode : public Node {
 
   const Builder& data() const { return data_; }
 
+  CompositionNode* CreateWithBuilder(CompositionNode::Builder builder) {
+    return new CompositionNode(builder);
+  }
+
  private:
   // Computes the bounding rectangle (given our children) for this composition
   // node, which is what GetBounds() will subsequently return.

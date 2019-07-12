@@ -88,6 +88,10 @@ class RectNode : public Node {
 
   const Builder& data() const { return data_; }
 
+  RectNode* CreateWithBuilder(RectNode::Builder builder) {
+    return new RectNode(builder);
+  }
+
  private:
   void AssertValid() const;
 
