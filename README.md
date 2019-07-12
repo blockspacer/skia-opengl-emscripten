@@ -897,6 +897,9 @@ ls ${PROJ_ROOT}/resources/icu
 ```
 
 see:
+ > https://www.suninf.net/tags/chromium.html
+
+see:
  > https://gclxry.com/custom-chromium-icu-library/
  > https://github.com/unicode-org/icu/blob/master/docs/userguide/icu_data/buildtool.md#filtering-by-language-only
  > http://userguide.icu-project.org/howtouseicu#TOC-C-With-Your-Own-Build-System
