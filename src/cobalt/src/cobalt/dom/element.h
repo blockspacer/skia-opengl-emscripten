@@ -33,6 +33,11 @@
 #include "cobalt/script/exception_state.h"
 #include "cobalt/web_animations/animation_set.h"
 
+#include "cobalt/dom/event_target.h"
+
+#include "base/observer_list.h"
+#include "base/observer_list_types.h"
+
 namespace cobalt {
 namespace dom {
 
@@ -43,12 +48,189 @@ class HTMLCollection;
 class HTMLElement;
 class HTMLElementContext;
 class NamedNodeMap;
+class Element;
+
+/*namespace events {
+  class HoverEventObservers {
+   public:
+
+    class HoverObserver : public base::CheckedObserver {
+     public:
+      virtual void OnMutation(const Element* elem) = 0;
+
+     protected:
+      virtual ~HoverObserver() {}
+    };
+
+    explicit HoverEventObservers(
+        const HoverCallback& hover_cb_,
+        const Element* elem);
+
+    HoverCallback hover_cb() const {
+      return hover_cb_;
+    }
+
+    const Element* element() const {
+      return element_;
+    }
+
+    void SetCustomValue(const std::string& value);
+
+    void AddObserver(HoverObserver* observer) { observer_list_.AddObserver(observer); }
+
+    void RemoveObserver(HoverObserver* observer) {
+      observer_list_.RemoveObserver(observer);
+    }
+
+    bool HasObserver(HoverObserver* observer) const {
+      return observer_list_.HasObserver(observer);
+    }
+
+    void ClearObservers() { observer_list_.Clear(); }
+
+   private:
+    void RecordMutation();
+
+    // TODO: check if need ObserverListThreadSafe here
+    base::ObserverList<HoverObserver> observer_list_;
+
+    const Element* element_;
+
+    HoverCallback hover_cb_;
+  };
+}*/
+
+namespace customizer {
+  class CustomTokenToObservers;
+
+  typedef std::function<std::string(const std::string&, const std::string&,
+    const std::string&, cobalt::dom::Element& elem)> AttrLoadedCallback;
+
+  void create(std::shared_ptr<CustomTokenToObservers> customAttributeToObservers);
+
+  void create(const std::string& token, const std::string& initial_value);
+
+  //std::map<std::string, std::shared_ptr<CustomAttributeToObservers>>::iterator getAttrWithCallbacks(const std::string& key);
+
+  std::shared_ptr<CustomTokenToObservers> getCustomTokenToObservers(const std::string& token);
+
+  void set_prefix(const std::string& val);
+
+  void set_suffix(const std::string& val);
+
+  bool set(const std::string& key, const std::string& val);
+
+  base::Optional<std::string> get(const std::string& key);
+
+  class CustomTokenToObservers {
+   public:
+    class CustomTokenObserver : public base::CheckedObserver {
+     public:
+      virtual void OnMutation(const std::string& attr_val) = 0;
+
+     protected:
+      virtual ~CustomTokenObserver() {}
+    };
+
+    explicit CustomTokenToObservers(
+        const AttrLoadedCallback& loaded_callback_,
+        const std::string& initial_attr);
+
+    std::string processed_custom_token() const {
+      return processed_custom_token_;
+    }
+
+    std::string initial_custom_token() const {
+      return initial_custom_token_;
+    }
+
+    AttrLoadedCallback on_added_to_elem_cb() const {
+      return loaded_callback_;
+    }
+
+    void SetCustomValue(const std::string& value);
+
+    void AddObserver(CustomTokenObserver* observer) { observer_list_.AddObserver(observer); }
+
+    void RemoveObserver(CustomTokenObserver* observer) {
+      observer_list_.RemoveObserver(observer);
+    }
+
+    bool HasObserver(CustomTokenObserver* observer) const {
+      return observer_list_.HasObserver(observer);
+    }
+
+    void ClearObservers() { observer_list_.Clear(); }
+
+   private:
+    void RecordMutation();
+
+    std::string initial_custom_token_;
+
+    std::string processed_custom_token_;
+
+    // TODO: check if need ObserverListThreadSafe here
+    base::ObserverList<CustomTokenObserver> observer_list_;
+
+    AttrLoadedCallback loaded_callback_;
+  };
+
+  class CustomElementToken : public CustomTokenToObservers::CustomTokenObserver {
+   public:
+    enum class CustomTokenType {
+      ATTR_NAME = 1,
+      ATTR_VAL,
+      TOTAL
+    };
+
+    CustomElementToken(const CustomTokenType& custom_token_type,
+                       const std::string& initial_custom_attribute_name_,
+                       const std::string& initial_attr_name,
+                       const std::string& initial_attr_val,
+                       Element* elem);
+
+    void OnMutation(const std::string& initial_attr_val) override;
+
+    std::string initial_custom_attribute_name() const {
+      return initial_custom_attribute_name_;
+    }
+
+    std::string initial_attr_name() const {
+      return initial_attr_name_;
+    }
+
+    std::string initial_attr_val() const {
+      return initial_attr_val_;
+    }
+
+    Element* element() const {
+      return element_;
+    }
+
+    CustomTokenType custom_token_type() const {
+      return custom_token_type_;
+    }
+
+  private:
+    CustomTokenType custom_token_type_;
+
+    const std::string initial_attr_name_;
+
+    const std::string initial_attr_val_;
+
+    std::string initial_custom_attribute_name_;
+
+    Element* element_;
+  };
+}
 
 // The Element interface represents an object of a Document. This interface
 // describes methods and properties common to all kinds of elements.
 //   https://www.w3.org/TR/2014/WD-dom-20140710/#interface-element
 class Element : public Node {
  public:
+  typedef std::function<void(base::WeakPtr<cobalt::dom::HTMLElement> elem)> HoverCallback;
+
   // NOTE1: The array size of base::small_map and the decision to use
   // base::hash_map as the underlying container type are based on extensive
   // performance testing. Do not change these unless additional profiling data
@@ -64,6 +246,12 @@ class Element : public Node {
   explicit Element(Document* document);
   Element(Document* document, base::CobToken local_name);
 
+  void set_hover_cb(HoverCallback cb) {
+    hover_cb_ = cb;
+  }
+
+  Element::HoverCallback get_hover_cb() const;
+
   // Web API: Node
   //
   base::CobToken node_name() const override { return tag_name(); }
@@ -74,6 +262,10 @@ class Element : public Node {
       const base::Optional<std::string>& text_content) override;
 
   bool HasAttributes() const override;
+
+  void AddNewCustomElementToken(std::shared_ptr<customizer::CustomElementToken> elementAttribute);
+
+  std::shared_ptr<customizer::CustomElementToken> GetCustomElementToken(const std::string &token) const;
 
   // Web API: Element
   //
@@ -203,6 +395,8 @@ class Element : public Node {
   HTMLElementContext* html_element_context();
 
  private:
+  std::map<std::string, std::shared_ptr<customizer::CustomElementToken>> custom_attributes;
+
   // From EventTarget.
   std::string GetDebugName() override;
 
@@ -236,6 +430,11 @@ class Element : public Node {
 
   // A set of all animations currently applied to this element.
   scoped_refptr<web_animations::AnimationSet> animations_;
+
+  // List of document observers.
+  ///base::ObserverList<HoverObserver> hover_observers_;
+
+  HoverCallback hover_cb_;
 };
 
 }  // namespace dom

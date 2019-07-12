@@ -865,6 +865,11 @@ static int browser_height = height;//10000;
 #include "cobalt/dom/html_element_context.h"
 #include "cobalt/dom/named_node_map.h"
 
+#include "cobalt/dom/error_event.h"
+#include "cobalt/dom/error_event_init.h"
+#include "cobalt/dom/event.h"
+#include "base/trace_event/trace_event.h"
+
 #include "cobalt/dom/html_body_element.h"
 #include "cobalt/dom/html_collection.h"
 #include "cobalt/dom/html_element.h"
@@ -1974,6 +1979,7 @@ using namespace cobalt::css_parser;
 using namespace cobalt::layout;
 using namespace cobalt::loader;
 using namespace cobalt::dom;
+using namespace cobalt::dom::customizer;
 using namespace cobalt::input;
 using namespace cobalt::script;
 using namespace cobalt::network;
@@ -2095,7 +2101,7 @@ class CobaltTester {
   //dom::testing::StubScriptRunner stub_script_runner_;
   std::unique_ptr<cobalt::dom::DomStatTracker> dom_stat_tracker_;
 
-  scoped_refptr<render_tree::Node> render_tree_root_;
+  //scoped_refptr<render_tree::Node> render_tree_root_;
 
   std::unique_ptr<cobalt::dom::HTMLElementContext> html_element_context_;
   //std::unique_ptr<cobalt::dom::Element> root_;
@@ -3719,7 +3725,7 @@ static void animate() {
   if (fAnimation && fAnimation->duration()) {
     const SkMSec tElapsed = SDL_GetTicks() - fTimeBase;
     //printf("animate 3\n");
-    const SkScalar duration = fAnimation->duration() * 1000.0;
+    const SkScalar duration = fAnimation->duration() * 1000.0f;
     //printf("animate 4\n");
     const double animPos = ::std::fmod(tElapsed, duration) / duration;
     //printf("animate 5\n");
@@ -3740,7 +3746,7 @@ static void animate() {
   if (fAnimation && fAnimation->duration()) {
     const SkMSec tElapsed = SkTime::GetMSecs() - fTimeBase;
     //EM_LOG("animate 9\n");
-    const SkScalar duration = fAnimation->duration() * 1000.0;
+    const SkScalar duration = fAnimation->duration() * 1000.0f;
     //EM_LOG("animate 10\n");
     const double animPos = ::std::fmod(tElapsed, duration) / duration;
     //EM_LOG("animate 11\n");
@@ -3906,7 +3912,8 @@ static void updateBrowserMousePos() {
 
 //#ifdef __TODO__
   ///if (base::MessageLoopCurrent::Get().task_runner() != g_cobaltTester->self_task_runner_) {
-    main_browser_thread_.task_runner()->PostBlockingTask(
+    //main_browser_thread_.task_runner()->PostBlockingTask(
+  main_browser_thread_.task_runner()->PostTask(
   ///if (base::MessageLoopCurrent::Get().task_runner() != input_device_thread_.task_runner()) {
     //input_device_thread_.task_runner()->PostTask(
         FROM_HERE, base::Bind(
@@ -3966,8 +3973,29 @@ static void updateBrowserMousePos() {
 
             system_window::HandleInputEvent(event);
 
+            /*{
+              /// TODO: check thread safety for getAttrWithoutCallbacks e.t.c.
+              std::shared_ptr<CustomTokenToObservers> attr =
+                cobalt::dom::getCustomTokenToObservers("v-test-attr-val");
+              if(attr) {
+                if (base::Time::Now().ToDeltaSinceWindowsEpoch().InSeconds() % 10 < 5) {
+                  attr->SetCustomValue("color:#FFF;");
+                } else {
+                  attr->SetCustomValue("color:#00bcd4;border:1px solid #FFF;");
+                }
+              }
+            }*/
+
+            {
+              if (base::Time::Now().ToDeltaSinceWindowsEpoch().InSeconds() % 10 < 5) {
+                cobalt::dom::customizer::set("wh", "width");
+              } else {
+                cobalt::dom::customizer::set("wh", "height");
+              }
+            }
+
             ///printf("indicated_element...\n");
-            /*scoped_refptr<Document> document_ = g_cobaltTester->window_->document();
+            scoped_refptr<Document> document_ = g_cobaltTester->window_->document();
             scoped_refptr<HTMLElement> indicated_element = document_->indicated_element();
             if(indicated_element) {
               //printf("document->indicated_element() tag_name %s\n", indicated_element->tag_name().c_str());
@@ -4000,7 +4028,7 @@ static void updateBrowserMousePos() {
                 //div_element_3->AddEventListener("mouseover")
                 //document_->UpdateSelectorTree();
               }
-            }*/
+            }
           } , curScreenMouseX, curScreenMouseY));
   ///}
 //#endif // __TODO__
@@ -4346,9 +4374,127 @@ static std::unique_ptr<base::Thread> main_thread;
 std::unique_ptr<base::sequence_manager::SequenceManager> sequence_manager;
 */
 
+#if defined(ENABLE_COBALT)
+/*static std::map<std::string, std::string> attrVarsToValues;
+static std::map<std::string, std::string> attrVarsToValues;
+
+static void setv-test-attr-val() {
+  if (base::Time::Now().ToDeltaSinceWindowsEpoch().InSeconds() % 5 == 0) {
+    printf("base::Time::Now().ToDeltaSinceWindowsEpoch().InSeconds() mod 5 == 0\n");
+    //elem.SetAttribute("v-test-attr-val", "color:#000;"); /// TODO
+    attrVarsToValues["v-test-attr-val"] = "color:#FFF;";
+  }
+  attrVarsToValues["v-test-attr-val"] = "color:#CCC;";
+}*/
+
+static std::map<std::string, cobalt::dom::Element::HoverCallback> hoverCallbacks;
+
+static void addTestOnlyAttrCallbacks() {
+  hoverCallbacks["on-hover-cb"] = [](base::WeakPtr<cobalt::dom::HTMLElement> elem) {
+    printf("hover_cb for: %s, text_content: %s\n",
+      elem->tag_name().c_str(), elem->text_content().value_or("").c_str());
+  };
+
+  {
+    std::shared_ptr<CustomTokenToObservers> newCustomToken =
+          std::make_shared<CustomTokenToObservers>([](const std::string& custom_token,
+                                           const std::string& prev_attr_name_lower,
+                                           const std::string& prev_attr_val,
+                                           cobalt::dom::Element& elem) {
+      printf("called addAttrCallback v-test-attr-name\n");
+      return std::string("style");
+    }, base::ToLowerASCII("v-test-attr-name"));
+
+    cobalt::dom::customizer::create(newCustomToken);
+  }
+
+  {
+    std::shared_ptr<CustomTokenToObservers> newCustomToken =
+          std::make_shared<CustomTokenToObservers>([](const std::string& custom_token,
+                                           const std::string& prev_attr_name_lower,
+                                           const std::string& prev_attr_val,
+                                           cobalt::dom::Element& elem) {
+      printf("called addAttrCallback x-px\n");
+      return std::string("400");
+    }, base::ToLowerASCII("x-px"));
+
+    cobalt::dom::customizer::create(newCustomToken);
+  }
+
+  {
+    cobalt::dom::customizer::create("wh", "width");
+  }
+
+  {
+    std::shared_ptr<CustomTokenToObservers> newCustomToken =
+      std::make_shared<CustomTokenToObservers>([](const std::string& custom_token,
+                                       const std::string& prev_attr_name_lower,
+                                       const std::string& prev_attr_val,
+                                       cobalt::dom::Element& elem) {
+      printf("called addAttrCallback v-test-attr-val\n");
+      //attrValues[] = "color:#CCC;";
+      /*auto it = attrVarsToValues.find("v-test-attr-val");
+      if (it != attrVarsToValues.end()) {
+        return it->second;
+      }*/
+
+      //elem.AddObserver(relay_on_load_event_.get());
+
+      /*cobalt::dom::ErrorEventInit error_event_init;
+      error_event_init.set_message("Script error.");
+      scoped_refptr<cobalt::dom::ErrorEvent> error_event(
+        new cobalt::dom::ErrorEvent(base::Tokens::error(), error_event_init));
+      elem.DispatchEvent(error_event);
+
+      elem.SetAttributeEventListener(base::Tokens::error(), elem);
+      //elem.AddEventListener(base::Tokens::error(), elem);*/
+
+      return std::string("color:#CCC;");
+    }, base::ToLowerASCII("v-test-attr-val"));
+
+    cobalt::dom::customizer::create(newCustomToken);
+  }
+
+  {
+    std::shared_ptr<CustomTokenToObservers> newCustomToken =
+      std::make_shared<CustomTokenToObservers>([](const std::string& custom_token,
+                                       const std::string& prev_attr_name_lower,
+                                       const std::string& prev_attr_val,
+                                       cobalt::dom::Element& elem) {
+      printf("called addAttrCallback %s %s %s\n",
+        custom_token.c_str(), prev_attr_name_lower.c_str(), prev_attr_val.c_str());
+
+      auto it = hoverCallbacks.find(prev_attr_val);
+
+      if(it != hoverCallbacks.end()) {
+        cobalt::dom::Element::HoverCallback hover_cb = it->second;
+        elem.set_hover_cb(hover_cb);
+      } else {
+        DCHECK(false) << "WARNING: can`t find callback for" << prev_attr_val;
+      }
+
+      /*OnHoverCb hover_cb = []() {
+        printf("hovered\n");
+      };
+
+      elem.add_on_hover_cb();*/
+
+      return prev_attr_val;
+    }, base::ToLowerASCII("on-hover"));
+
+    cobalt::dom::customizer::create(newCustomToken);
+  }
+}
+#endif // ENABLE_COBALT
+
 /// \note don`t use int main(void)
 /// \see https://github.com/emscripten-core/emscripten/issues/8757
 int main(int argc, char** argv) {
+
+#if defined(ENABLE_COBALT)
+  addTestOnlyAttrCallbacks();
+#endif // ENABLE_COBALT
+
     printf("main 1...\n");
     //SbMemoryAllocateAligned();
     //SbMemoryDeallocateAligned();
@@ -4394,19 +4540,21 @@ main_browser_thread_wrapper_.task_runner()->PostTask(
 #if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
             DCHECK(base::MessageLoopCurrent::Get());
 #endif
-    base::Thread::Options options;
+          {
+            base::Thread::Options options;
 
-    //options.message_loop_type = base::MessageLoop::TYPE_IO;
-    main_browser_thread_.StartWithOptions(options);
-    //input_device_thread_.StartWithOptions(options);
-#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
-    /// \todo Reactor your code so that the waiting happens on another thread instead of the main thread
-    main_browser_thread_.WaitUntilThreadStarted();
-    //input_device_thread_.WaitUntilThreadStarted();
-#endif
-
+            //options.message_loop_type = base::MessageLoop::TYPE_IO;
+            main_browser_thread_.StartWithOptions(options);
+            //input_device_thread_.StartWithOptions(options);
+      #if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+            /// \todo Reactor your code so that the waiting happens on another thread instead of the main thread
+            main_browser_thread_.WaitUntilThreadStarted();
+            //input_device_thread_.WaitUntilThreadStarted();
+      #endif
+          }
           thread_event->Signal();
       }, &main_thread_event_));
+
   printf("Waiting for tests thread...\n");
 #if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   /// \todo Reactor your code so that the waiting happens on another thread instead of the main thread
@@ -4654,7 +4802,7 @@ main_browser_thread_wrapper_.task_runner()->PostTask(
       base::Bind(&SomeHardcoreAsyncTask,
                  &event,
                  base::Bind(AsyncTaskCb)),
-      base::TimeDelta::FromSeconds(3));
+      base::TimeDelta::FromMilliseconds(100));
 
     // ::std::cout << "thread testing PostTask 1..." << base::Time::Now() << "\n";
 
@@ -5267,7 +5415,8 @@ main_browser_thread_wrapper_.task_runner()->PostTask(
   /// \note we can use PostBlockingTask here only
   /// if parent thread is not browser (WASM) event loop,
   /// but better - use async logic
-  main_browser_thread_.task_runner()->PostBlockingTask(
+  //main_browser_thread_.task_runner()->PostBlockingTask(
+  main_browser_thread_.task_runner()->PostTask(
       FROM_HERE, base::Bind([](){
           DCHECK(base::MessageLoopCurrent::Get());
           printf("Starting g_cobaltTester...\n");

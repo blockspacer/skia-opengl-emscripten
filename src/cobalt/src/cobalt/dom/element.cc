@@ -15,6 +15,9 @@
 #include "cobalt/dom/element.h"
 
 #include <algorithm>
+#include <iostream>
+#include <string>
+#include <functional>
 
 #include "base/lazy_instance.h"
 #include "base/strings/string_util.h"
@@ -43,6 +46,255 @@
 namespace cobalt {
 namespace dom {
 
+namespace customizer {
+  static std::string custom_attr_prefix = "EXT__";
+
+  static std::string custom_attr_suffix = "__EXT";
+
+  static std::map<std::string, std::shared_ptr<CustomTokenToObservers>> token_to_observers;
+
+  void set_prefix(const std::string& val) {
+    custom_attr_prefix = val;
+  }
+
+  void set_suffix(const std::string& val) {
+    custom_attr_suffix = val;
+  }
+
+  bool set(const std::string& key, const std::string& val) {
+    /// TODO: check thread safety for getAttrWithoutCallbacks e.t.c.
+    std::shared_ptr<CustomTokenToObservers> attr =
+      cobalt::dom::customizer::getCustomTokenToObservers(key);
+    if(attr) {
+      attr->SetCustomValue(val);
+      return true;
+    }
+    return false;
+  }
+
+  base::Optional<std::string> get(const std::string& key) {
+    /// TODO: check thread safety for getAttrWithoutCallbacks e.t.c.
+    std::shared_ptr<CustomTokenToObservers> attr =
+      cobalt::dom::customizer::getCustomTokenToObservers(key);
+    if(attr) {
+      return attr->processed_custom_token();
+    }
+    return base::nullopt;
+  }
+
+  void create(std::shared_ptr<CustomTokenToObservers> customTokenToObservers) {
+    DCHECK(!customTokenToObservers->initial_custom_token().empty());
+    DCHECK(getCustomTokenToObservers(customTokenToObservers->initial_custom_token()) == nullptr)
+      << "custom attribute already created: " << customTokenToObservers->initial_custom_token();
+
+    token_to_observers[customTokenToObservers->initial_custom_token()] = customTokenToObservers;
+  }
+
+  void create(const std::string& token, const std::string& initial_value) {
+    DCHECK(!token.empty());
+    CHECK(base::ToLowerASCII(token) == token)
+      << "custom attribute must be lowercase: " << token;
+    DCHECK(getCustomTokenToObservers(token) == nullptr)
+      << "custom attribute already created: " << token;
+
+    std::shared_ptr<CustomTokenToObservers> newCustomToken =
+      std::make_shared<CustomTokenToObservers>([initial_value](const std::string& custom_token,
+                                       const std::string& prev_attr_name_lower,
+                                       const std::string& prev_attr_val,
+                                       cobalt::dom::Element& elem) {
+      printf("called addAttrCallback %s\n", custom_token.c_str());
+      return initial_value;
+    }, token);
+  }
+
+    /// TODO: check thread safety for getAttrWithoutCallbacks e.t.c.
+  std::shared_ptr<CustomTokenToObservers> getCustomTokenToObservers(const std::string& token) {
+    CHECK(base::ToLowerASCII(token) == token) << "custom attribute must be lowercase: " << token;
+    std::map<std::string, std::shared_ptr<CustomTokenToObservers>>::iterator attr_callback =
+      token_to_observers.find(token);
+    if (/*extendedKV.second == "@"
+        &&*/ attr_callback != token_to_observers.end()) {
+      return attr_callback->second;
+    }
+    return nullptr;
+  }
+
+  static base::Optional<std::string> LoadNewCustomToken(
+    const CustomElementToken::CustomTokenType& token_type,
+    const std::string& custom_token,
+    const std::string& prev_attr_name_lower,
+    const std::string& prev_attr_val,
+    cobalt::dom::Element& elem)
+  {
+    CHECK(base::ToLowerASCII(custom_token) == custom_token) << "custom token must be lowercase: " << custom_token;
+    CHECK(base::ToLowerASCII(prev_attr_name_lower) == prev_attr_name_lower) << "attribute must be lowercase: " << prev_attr_name_lower;
+
+    std::shared_ptr<CustomTokenToObservers> custom_token_to_observers =
+      customizer::getCustomTokenToObservers(custom_token);
+
+    printf("try callAttrCallback %s of %lu\n",
+      custom_token.c_str(), token_to_observers.size());
+
+    if (/*extendedKV.second == "@"
+        &&*/ custom_token_to_observers) {
+      DCHECK(custom_token_to_observers->initial_custom_token() == custom_token);
+
+      std::shared_ptr<CustomElementToken> elementToken
+        = elem.GetCustomElementToken(custom_token);
+      if(!elementToken) {
+        elementToken = std::make_shared<CustomElementToken>(
+          token_type, custom_token,
+          prev_attr_name_lower, prev_attr_val, &elem);
+
+        elem.AddNewCustomElementToken(elementToken);
+
+        // attr_callback->first->SetValue(callback_result);
+
+        custom_token_to_observers->AddObserver(elementToken.get());
+      }
+
+      DCHECK(elementToken);
+      DCHECK(!elementToken->initial_custom_attribute_name().empty());
+      DCHECK(!elementToken->initial_attr_name().empty());
+
+      const std::string callback_result =
+        custom_token_to_observers->on_added_to_elem_cb()(
+          elementToken->initial_custom_attribute_name(),
+          elementToken->initial_attr_name(),
+          elementToken->initial_attr_val(),
+          elem);
+
+      printf("added observer for tag %s with key %s and initial value %s\n",
+        elem.tag_name().c_str(), custom_token.c_str(), callback_result.c_str());
+
+      printf("callAttrCallback callback_result: %s\n", callback_result.c_str());
+
+      return std::move(callback_result);
+    }
+    return base::nullopt;
+  }
+
+  // TODO: use base::StartsWith
+  /*static bool startsWith(const std::string& s, const std::string& prefix) {
+      return s.size() >= prefix.size()
+        &&
+        //base::CompareCaseInsensitiveASCII(
+        //  base::StringPiece(s.begin(), s.begin() + prefix.length()),
+        //  base::StringPiece(prefix.begin(), prefix.begin() + prefix.length()));
+        s.compare(0, prefix.length(), prefix) == 0;
+  }
+
+  static bool endsWith(const std::string& s, const std::string& suffix) {
+    return s.size() >= suffix.size()
+      && s.compare(s.length() - suffix.length(), suffix.length(), suffix) == 0;
+  }*/
+
+  static bool isCustomAttr(const std::string& attr_without_whitespace) {
+    if (attr_without_whitespace.length() <= custom_attr_prefix.length() + custom_attr_suffix.length()) {
+      return false;
+    }
+    #if DCHECK_IS_ON()
+      if(attr_without_whitespace.length() > 512) {
+        printf("WARNING in isCustomdAttr: base::StartsWith/EndsWith uses substr (will copy data), "
+            "prefer string_view or std::string.compare() for large strings");
+      }
+    #endif
+    if (!base::StartsWith(attr_without_whitespace, custom_attr_prefix, base::CompareCase::INSENSITIVE_ASCII)
+        || !base::EndsWith(attr_without_whitespace, custom_attr_suffix, base::CompareCase::INSENSITIVE_ASCII)) {
+      return false;
+    }
+
+    return true;
+  }
+
+  static base::Optional<std::string> tryCustomizeToken(const std::string& attr) {
+    printf("toCustomAttr: %s\n", attr.c_str());
+
+    std::string attr_cleaned = attr;
+    // remove whitespace
+    attr_cleaned.erase(
+      std::remove(attr_cleaned.begin(), attr_cleaned.end(), ' '), attr_cleaned.end());
+    if (!isCustomAttr(attr_cleaned)) {
+      return base::nullopt;
+    }
+
+    // remove special prefix and suffix
+    printf("attr_cleaned: before %s\n", attr_cleaned.c_str());
+    attr_cleaned.erase(0, custom_attr_prefix.length());
+    attr_cleaned.erase(attr_cleaned.length() - custom_attr_prefix.length(), attr_cleaned.length());
+    printf("attr_cleaned: after %s\n", attr_cleaned.c_str());
+
+    return std::move(attr_cleaned);
+  }
+
+  static std::pair<std::string, std::string> tryParseCustomToken(const std::string& attr) {
+    const std::string split_delimiter = ":";
+    size_t split_pos = 0;
+    std::string token_model_key;
+    std::string token_model_val;
+    if ((split_pos = attr.find(split_delimiter)) != std::string::npos) {
+      token_model_key = split_delimiter.substr(0, split_pos);
+      token_model_val = split_delimiter.substr(split_pos - 1, split_delimiter.length());
+    } else {
+      token_model_key = "once";
+      token_model_val = attr;
+    }
+    return std::pair<std::string, std::string>(token_model_key, token_model_val);
+  }
+
+  // not in spec
+  static base::Optional<std::string> tryCustomizeAttrName(const std::string& prev_attr_name_lower,
+                                             const std::string& prev_attr_val,
+                                             cobalt::dom::Element& elem) {
+    printf("tryCustomizeAttrName for: %s %s\n", prev_attr_name_lower.c_str(), prev_attr_val.c_str());
+
+    base::Optional<std::string> customizedToken = tryCustomizeToken(prev_attr_name_lower);
+    if (!customizedToken.has_value()) {
+      return base::nullopt;
+    }
+
+    std::pair<std::string, std::string> parsedCustomToken = tryParseCustomToken(customizedToken.value());
+
+    printf("tryCustomizeAttrName token_model_key: %s\n", parsedCustomToken.first.c_str());
+    printf("tryCustomizeAttrName token_model_val: %s\n", parsedCustomToken.second.c_str());
+
+    base::Optional<std::string> res =
+      LoadNewCustomToken(CustomElementToken::CustomTokenType::ATTR_NAME,
+        parsedCustomToken.second, prev_attr_name_lower, prev_attr_val, elem);
+
+    printf("extendAttrName callback_result: %s\n", res.value_or("nothing").c_str());
+
+    return res;
+  }
+
+  // not in spec
+  base::Optional<std::string> tryCustomizeAttrValue(const std::string& prev_attr_name_lower,
+                                              const std::string& prev_attr_val,
+                                              cobalt::dom::Element& elem) {
+    printf("tryCustomizeAttrValue for: %s %s\n", prev_attr_name_lower.c_str(), prev_attr_val.c_str());
+
+    base::Optional<std::string> customizedToken = tryCustomizeToken(prev_attr_val);
+    if (!customizedToken.has_value()) {
+      return base::nullopt;
+    }
+
+    std::pair<std::string, std::string> parsedCustomToken = tryParseCustomToken(customizedToken.value());
+
+    printf("tryCustomizeAttrValue token_model_key: %s\n", parsedCustomToken.first.c_str());
+    printf("tryCustomizeAttrValue token_model_val: %s\n", parsedCustomToken.second.c_str());
+
+    base::Optional<std::string> res =
+      LoadNewCustomToken(CustomElementToken::CustomTokenType::ATTR_VAL,
+        parsedCustomToken.second, prev_attr_name_lower, prev_attr_val, elem);
+
+    printf("extendAttrValue callback_result: %s\n", res.value_or("nothing").c_str());
+
+    return res;
+  }
+} // namespace customizer
+
+using namespace cobalt::dom::customizer;
+
 namespace {
 
 const char kStyleAttributeName[] = "style";
@@ -69,6 +321,56 @@ base::LazyInstance<ElementCountLog>::DestructorAtExit element_count_log =
 
 }  // namespace
 
+CustomTokenToObservers::CustomTokenToObservers(
+      const AttrLoadedCallback& loaded_callback,
+      const std::string& initial_attr)
+    : initial_custom_token_(initial_attr), processed_custom_token_(""), loaded_callback_(loaded_callback) {
+  DLOG(INFO) << __FUNCTION__
+             << ": initial custom token=" << initial_custom_token_
+             << ": processed custom token_=" << processed_custom_token_;
+}
+
+void CustomTokenToObservers::RecordMutation() {
+  TRACE_EVENT0("cobalt::dom", "CustomTokenToObservers::RecordMutation()");
+
+  printf("RecordMutation %s for %s\n", processed_custom_token_.c_str(), initial_custom_token_.c_str());
+
+  FOR_EACH_OBSERVER(CustomTokenObserver, observer_list_, OnMutation(processed_custom_token_));
+}
+
+void CustomTokenToObservers::SetCustomValue(const std::string& value) {
+  if (processed_custom_token_ == value) {
+    return;
+  }
+
+  printf("SetCustomValue %s for %s\n", processed_custom_token_.c_str(), initial_custom_token_.c_str());
+
+  processed_custom_token_ = value;
+
+  RecordMutation();
+}
+
+CustomElementToken::CustomElementToken(const CustomTokenType& custom_token_type,
+                   const std::string& initial_custom_attribute_name,
+                   const std::string& initial_attr_name,
+                   const std::string& initial_attr_val, Element* elem)
+                   : custom_token_type_(custom_token_type),
+                     initial_attr_name_(initial_attr_name),
+                     initial_attr_val_(initial_attr_val),
+                     initial_custom_attribute_name_(initial_custom_attribute_name)
+{
+  DCHECK(elem);
+  DCHECK(!initial_attr_name_.empty());
+  DCHECK(!initial_custom_attribute_name_.empty());
+  element_ = elem;
+}
+
+void CustomElementToken::OnMutation(const std::string& attr_val)
+{
+  printf("OnMutation name %s val %s\n", initial_attr_name_.c_str(), attr_val.c_str());
+  element_->SetAttribute(initial_attr_name_, attr_val);
+}
+
 Element::Element(Document* document)
     : Node(document), animations_(new web_animations::AnimationSet()) {
   ++(element_count_log.Get().count);
@@ -79,6 +381,10 @@ Element::Element(Document* document, base::CobToken local_name)
       local_name_(local_name),
       animations_(new web_animations::AnimationSet()) {
   ++(element_count_log.Get().count);
+}
+
+Element::HoverCallback Element::get_hover_cb() const {
+  return hover_cb_;
 }
 
 base::Optional<std::string> Element::text_content() const {
@@ -114,6 +420,31 @@ void Element::set_text_content(
 }
 
 bool Element::HasAttributes() const { return !attribute_map_.empty(); }
+
+void Element::AddNewCustomElementToken(std::shared_ptr<CustomElementToken> elementAttribute)
+{
+  printf("AddNewCustomElementAttribute %s\n", elementAttribute->initial_custom_attribute_name().c_str());
+  DCHECK(!elementAttribute->initial_custom_attribute_name().empty());
+  CHECK(base::ToLowerASCII(elementAttribute->initial_custom_attribute_name()) == elementAttribute->initial_custom_attribute_name())
+    << "custom attribute must be lowercase: " << elementAttribute->initial_custom_attribute_name();
+
+  DCHECK(custom_attributes.find(elementAttribute->initial_custom_attribute_name()) == custom_attributes.end());
+  custom_attributes[elementAttribute->initial_custom_attribute_name()] = elementAttribute;
+}
+
+std::shared_ptr<CustomElementToken> Element::GetCustomElementToken(const std::string& key) const
+{
+  CHECK(base::ToLowerASCII(key) == key)
+    << "custom attribute must be lowercase: " << key;
+
+  std::shared_ptr<CustomElementToken> res = nullptr;
+
+  auto it = custom_attributes.find(key);
+  if(it != custom_attributes.end()) {
+    res = it->second;
+  }
+  return res;
+}
 
 base::Optional<std::string> Element::GetAttributeNS(
     const std::string& namespace_uri, const std::string& name) const {
@@ -162,29 +493,51 @@ base::Optional<std::string> Element::GetAttribute(
 
   // 1. If the context object is in the HTML namespace and its node document is
   //    an HTML document, let name be converted to ASCII lowercase.
-  std::string attr_name = name;
+  std::string attr_name_lower = name;
   if (document && !document->IsXMLDocument()) {
-    attr_name = base::ToLowerASCII(attr_name);
+    attr_name_lower = base::ToLowerASCII(attr_name_lower);
   }
+
+  // not in spec
+  std::string attr_name_ext = attr_name_lower;
+  /*{
+    base::Optional<std::string> extName = extendAttrName(attr_name_lower, "", *this);
+    if (extName.has_value()) {
+      attr_name_ext = extName.value();
+      printf("extended attr to %s\n", attr_name_ext.c_str());
+    }
+  }*/
+
+  base::Optional<std::string> originalVal = base::nullopt;
 
   // 2. Return the value of the attribute in element's attribute list whose
   //    namespace is namespace and local name is localName, if it has one, and
   //    null otherwise.
-  switch (attr_name.size()) {
+  switch (attr_name_ext.size()) {
     case 5:
-      if (attr_name == kStyleAttributeName) {
-        return GetStyleAttribute();
+      if (attr_name_ext == kStyleAttributeName) {
+        originalVal = GetStyleAttribute();
       }
     // fall-through if not style attribute name
     default: {
-      AttributeMap::const_iterator iter = attribute_map_.find(attr_name);
+      AttributeMap::const_iterator iter = attribute_map_.find(attr_name_ext);
       if (iter != attribute_map_.end()) {
-        return iter->second;
+        originalVal = iter->second;
       }
     }
   }
 
-  return base::nullopt;
+  /*// not in spec
+  base::Optional<std::string> extVal = base::nullopt;
+  if (originalVal.has_value()) {
+    extVal = extendAttrValue(attr_name_lower, originalVal.value(), *this);
+    if (extVal.has_value()) {
+      printf("extended val to %s\n", extVal.value().c_str());
+      return extVal;
+    }
+  }*/
+
+  return originalVal;
 }
 
 // Algorithm for SetAttribute:
@@ -199,9 +552,29 @@ void Element::SetAttribute(const std::string& name, const std::string& value) {
 
   // 2. If the context object is in the HTML namespace and its node document is
   //    an HTML document, let name be converted to ASCII lowercase.
-  std::string attr_name = name;
+  std::string attr_name_lower = name;
   if (document && !document->IsXMLDocument()) {
-    attr_name = base::ToLowerASCII(attr_name);
+    attr_name_lower = base::ToLowerASCII(attr_name_lower);
+  }
+
+  // not in spec
+  std::string attr_name_ext = attr_name_lower;
+  {
+    base::Optional<std::string> extName = tryCustomizeAttrName(attr_name_lower, value, *this);
+    if (extName.has_value()) {
+      attr_name_ext = extName.value();
+      printf("extended attr to %s\n", attr_name_ext.c_str());
+    }
+  }
+
+  // not in spec
+  std::string extended_value = value;
+  {
+    base::Optional<std::string> extVal = tryCustomizeAttrValue(attr_name_lower, value, *this);
+    if (extVal.has_value()) {
+      extended_value = extVal.value();
+      printf("extended val to %s\n", extended_value.c_str());
+    }
   }
 
   // 3. Let attribute be the first attribute in the context object's attribute
@@ -211,18 +584,18 @@ void Element::SetAttribute(const std::string& name, const std::string& value) {
   //    terminate these steps.
   // 5. Change attribute from context object to value.
 
-  base::Optional<std::string> old_value = GetAttribute(attr_name);
+  base::Optional<std::string> old_value = GetAttribute(attr_name_ext);
   MutationReporter mutation_reporter(this, GatherInclusiveAncestorsObservers());
-  mutation_reporter.ReportAttributesMutation(attr_name, old_value);
+  mutation_reporter.ReportAttributesMutation(attr_name_ext, old_value);
 
-  switch (attr_name.size()) {
+  switch (attr_name_ext.size()) {
     case 5:
-      if (attr_name == kStyleAttributeName) {
-        SetStyleAttribute(value);
+      if (attr_name_ext == kStyleAttributeName) {
+        SetStyleAttribute(extended_value);
         if (named_node_map_) {
-          named_node_map_->SetAttributeInternal(attr_name, value);
+          named_node_map_->SetAttributeInternal(attr_name_ext, extended_value);
         }
-        OnSetAttribute(name, value);
+        OnSetAttribute(/* not lowercase name */ attr_name_ext, extended_value);
         // Return now as SetStyleAttribute() will call OnDOMMutation() when
         // necessary.
         return;
@@ -230,13 +603,13 @@ void Element::SetAttribute(const std::string& name, const std::string& value) {
     // fall-through if not style attribute name
     default: {
       AttributeMap::iterator attribute_iterator =
-          attribute_map_.find(attr_name);
+          attribute_map_.find(attr_name_ext);
       if (attribute_iterator != attribute_map_.end() &&
-          attribute_iterator->second == value) {
+          attribute_iterator->second == extended_value) {
         // Attribute did not change.
         return;
       }
-      attribute_map_[attr_name] = value;
+      attribute_map_[attr_name_ext] = extended_value;
       break;
     }
   }
@@ -244,27 +617,27 @@ void Element::SetAttribute(const std::string& name, const std::string& value) {
   // Custom, not in any spec.
   // Check for specific attributes that require additional caching and update
   // logic.
-  switch (attr_name.size()) {
+  switch (attr_name_ext.size()) {
     case 2:
-      if (attr_name == "id") {
-        id_attribute_ = base::CobToken(value);
+      if (attr_name_ext == "id") {
+        id_attribute_ = base::CobToken(extended_value);
       }
       break;
     case 5:
-      if (attr_name == "class") {
+      if (attr_name_ext == "class") {
         // Changing the class name may affect the contents of proxy objects.
         UpdateGenerationForNodeAndAncestors();
       }
       break;
   }
   if (named_node_map_) {
-    named_node_map_->SetAttributeInternal(attr_name, value);
+    named_node_map_->SetAttributeInternal(attr_name_ext, extended_value);
   }
 
   if (document && GetRootNode() == document) {
     document->OnDOMMutation();
   }
-  OnSetAttribute(name, value);
+  OnSetAttribute(/* not lowercase name */ attr_name_ext, extended_value);
 }
 
 // Algorithm for RemoveAttribute:

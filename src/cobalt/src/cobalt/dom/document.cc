@@ -582,6 +582,12 @@ void Document::SetIndicatedElement(HTMLElement* indicated_element) {
     } else {
       indicated_element_.reset();
     }
+
+    // not in spec
+    Element::HoverCallback hover_cb = indicated_element_->get_hover_cb();
+    if(hover_cb) {
+      hover_cb(indicated_element_);
+    }
   }
 }
 
