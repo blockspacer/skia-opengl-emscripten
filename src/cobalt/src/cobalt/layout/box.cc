@@ -1677,7 +1677,7 @@ scoped_refptr<render_tree::Node> Box::RenderAndAnimateOverflow(
     const scoped_refptr<render_tree::Node>& content_node,
     AnimateNode::Builder* animate_node_builder,
     const math::Vector2dF& border_node_offset) {
-  DCHECK(IsOverflowHidden());
+  // DCHECK(IsOverflowHidden()); /// TODO
 
   // The "overflow" property specifies whether a box is clipped to its padding
   // edge.  Use a render_tree viewport filter to implement it.
