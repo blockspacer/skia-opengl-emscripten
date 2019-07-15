@@ -803,7 +803,7 @@ sk_sp<const GrGLInterface> emscripten_GrGLMakeNativeInterface() {
 }
 #endif
 
-static bool render_browser_window = true;
+static bool render_browser_window = false;
 
 // must be POT
 static int width = 1920;//1024;//512;
@@ -1673,8 +1673,23 @@ public:
       gfx::RenderText* render_text = render_text_ptr.get();
       WTF::String render_test_string = String::FromUTF8("r\xC3\xA9sum\xC3\xA9");
       render_text->SetText(render_test_string.Characters16());
-      render_text->Draw(&gfx_canvas);
+      render_text->set_focused(true);
+      // see https://github.com/chromium/chromium/blob/master/chrome/browser/vr/elements/text.cc#L384
+      int selection_start_ = 0;
+      int selection_end_ = 2;
+      gfx::Range range(selection_start_, selection_end_);
+      render_text->SetSelection(gfx::SelectionModel(
+          range, gfx::LogicalCursorDirection::CURSOR_FORWARD));
+      render_text->set_selection_background_focused_color(
+          SkColorSetARGB(150, 0, 188, 112));
+      render_text->set_selection_color(SkColorSetARGB(150, 0, 188, 182));
+      render_text->SetCursorPosition(selection_end_);
+      render_text->Draw(&gfx_canvas); // calls DrawSelection if focused
     }
+
+    // TODO: textfield
+    // https://github.com/chromium/chromium/blob/master/ui/views/controls/textfield/textfield.cc
+
 #endif // ENABLE_HARFBUZZ
     {
       //views::Label* zoom_label_;
