@@ -60,6 +60,8 @@ void InputNode::RenderTreeNodeVisit(const NodeVisitor *render_target) {
 
   skia_visitor->draw_state_.render_target->drawRect(sk_rect, paint);
 
+  //skia_visitor->draw_state_.render_target->drawOval(sk_rect, paint);
+
 #if ENABLE_FLUSH_AFTER_EVERY_NODE
   skia_visitor->draw_state_.render_target->flush();
 #endif

@@ -178,12 +178,20 @@ namespace customizer {
   class CustomElementToken : public CustomTokenToObservers::CustomTokenObserver {
    public:
     enum class CustomTokenType {
-      ATTR_NAME = 1,
-      ATTR_VAL,
+      NAME = 1,
+      VAL,
+      TOTAL
+    };
+
+    enum class CustomTokenAttrType {
+      SINGLE = 1,
+      // attribute that supports multiple values, like "style" attribute
+      MULTI,
       TOTAL
     };
 
     CustomElementToken(const CustomTokenType& custom_token_type,
+                       const CustomTokenAttrType& custom_token_attr_type,
                        const std::string& initial_custom_attribute_name_,
                        const std::string& initial_attr_name,
                        const std::string& initial_attr_val,
@@ -211,8 +219,14 @@ namespace customizer {
       return custom_token_type_;
     }
 
+    CustomTokenAttrType custom_token_attr_type() const {
+      return custom_token_attr_type_;
+    }
+
   private:
     CustomTokenType custom_token_type_;
+
+    CustomTokenAttrType custom_token_attr_type_;
 
     const std::string initial_attr_name_;
 
@@ -288,6 +302,11 @@ class Element : public Node {
   void SetAttribute(const std::string& name, const std::string& value);
   void RemoveAttribute(const std::string& name);
   bool HasAttribute(const std::string& name) const;
+
+  // not in spec
+  void AppendToAttribute(const std::string &name, const std::string &value,
+    const bool needToMergeKeys = true);
+  void AppendStyle(const std::string &value);
 
   base::Optional<std::string> GetAttributeNS(const std::string& namespace_uri,
                                              const std::string& name) const;

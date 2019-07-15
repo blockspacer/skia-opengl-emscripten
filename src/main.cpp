@@ -4184,8 +4184,8 @@ static void animate() {
     //printf("animate end\n");
 }
 
-static int prevScreenMouseX = -1;
-static int prevScreenMouseY = -1;
+static int prevBrowserScreenMouseX = -1;
+static int prevBrowserScreenMouseY = -1;
 // TODO: threading & mutexes / checks
 static int curScreenMouseX = -1;
 static int curScreenMouseY = -1;
@@ -4193,18 +4193,18 @@ static int curScreenMouseY = -1;
 static void updateGlobalMousePos(const int screenMouseX, const int screenMouseY) {
   curScreenMouseX = screenMouseX;
   curScreenMouseY = screenMouseY;
-
-  // https://github.com/blockspacer/cobalt-clone-28052019/blob/89664d116629734759176d820e9923257717e09c/src/starboard/shared/linux/dev_input/dev_input.cc#L910
-  // https://github.com/blockspacer/cobalt-clone-28052019/blob/master/src/starboard/android/shared/input_events_generator.cc#L703
-  if(prevScreenMouseX == curScreenMouseX && prevScreenMouseY == curScreenMouseY) {
-    return;
-  }
-
-  prevScreenMouseX = curScreenMouseX;
-  prevScreenMouseY = curScreenMouseY;
 }
 
 static void updateBrowserMousePos() {
+  // https://github.com/blockspacer/cobalt-clone-28052019/blob/89664d116629734759176d820e9923257717e09c/src/starboard/shared/linux/dev_input/dev_input.cc#L910
+  // https://github.com/blockspacer/cobalt-clone-28052019/blob/master/src/starboard/android/shared/input_events_generator.cc#L703
+  if(prevBrowserScreenMouseX == curScreenMouseX && prevBrowserScreenMouseY == curScreenMouseY) {
+    return;
+  }
+
+  prevBrowserScreenMouseX = curScreenMouseX;
+  prevBrowserScreenMouseY = curScreenMouseY;
+
 //#if defined(__EMSCRIPTEN__)
 //  EM_LOG("updateBrowserMousePos 1!");
 //  EM_LOG_NUM(screenMouseX);
@@ -4290,12 +4290,32 @@ static void updateBrowserMousePos() {
             }*/
 
             {
+              std::string testScrollY;
+              testScrollY += "transform: translateY(";
+              testScrollY += std::to_string(curScreenMouseY);
+              testScrollY += "px);";
+              //testScrollY += "border-radius:50px;width:50px;height:50px;";
+              //printf("testScrollY=%s\n", testScrollY.c_str());
+              cobalt::dom::customizer::set("test-y-scroll", testScrollY);
+            }
+
+            {
+              if (base::Time::Now().ToDeltaSinceWindowsEpoch().InSeconds() % 10 < 5) {
+                cobalt::dom::customizer::set("test-background", "background-color:#2a00d4;");
+              } else {
+                cobalt::dom::customizer::set("test-background", "background-color:#315fd6;");
+              }
+            }
+
+            {
               if (base::Time::Now().ToDeltaSinceWindowsEpoch().InSeconds() % 10 < 5) {
                 cobalt::dom::customizer::set("wh", "width");
               } else {
                 cobalt::dom::customizer::set("wh", "height");
               }
             }
+
+            // TODO: active_element
 
             ///printf("indicated_element...\n");
             scoped_refptr<Document> document_ = g_cobaltTester->window_->document();
@@ -4718,14 +4738,36 @@ static void addTestOnlyAttrCallbacks() {
                                            const std::string& prev_attr_val,
                                            cobalt::dom::Element& elem) {
       printf("called addAttrCallback x-px\n");
-      return std::string("400");
-    }, base::ToLowerASCII("x-px"));
+      return std::string("height:40px");
+    }, base::ToLowerASCII("height-x-px"));
+
+    cobalt::dom::customizer::create(newCustomToken);
+  }
+
+  {
+    cobalt::dom::customizer::create("width-x-px", "width:40px");
+  }
+
+  {
+    std::shared_ptr<CustomTokenToObservers> newCustomToken =
+          std::make_shared<CustomTokenToObservers>([](const std::string& custom_token,
+                                           const std::string& prev_attr_name_lower,
+                                           const std::string& prev_attr_val,
+                                           cobalt::dom::Element& elem) {
+      printf("called addAttrCallback test-y-scroll\n");
+      //return std::string("transform: translateY(25px);border-radius:50px;width:50px;height:50px;");
+      return std::string("transform: translateY(25px);");
+    }, base::ToLowerASCII("test-y-scroll"));
 
     cobalt::dom::customizer::create(newCustomToken);
   }
 
   {
     cobalt::dom::customizer::create("wh", "width");
+  }
+
+  {
+    cobalt::dom::customizer::create("test-background", "background-color:#00bcd4;");
   }
 
   {

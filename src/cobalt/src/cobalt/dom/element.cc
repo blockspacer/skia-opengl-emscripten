@@ -22,6 +22,8 @@
 #include "base/lazy_instance.h"
 #include "base/strings/string_util.h"
 #include "base/trace_event/trace_event.h"
+#include "base/strings/string_split.h"
+#include "base/strings/string_util.h"
 #include "cobalt/base/tokens.h"
 #include "cobalt/base/user_log.h"
 #include "cobalt/cssom/css_style_rule.h"
@@ -105,6 +107,8 @@ namespace customizer {
       printf("called addAttrCallback %s\n", custom_token.c_str());
       return initial_value;
     }, token);
+
+    cobalt::dom::customizer::create(newCustomToken);
   }
 
     /// TODO: check thread safety for getAttrWithoutCallbacks e.t.c.
@@ -121,6 +125,7 @@ namespace customizer {
 
   static base::Optional<std::string> LoadNewCustomToken(
     const CustomElementToken::CustomTokenType& token_type,
+    const CustomElementToken::CustomTokenAttrType& custom_token_attr_type,
     const std::string& custom_token,
     const std::string& prev_attr_name_lower,
     const std::string& prev_attr_val,
@@ -132,7 +137,7 @@ namespace customizer {
     std::shared_ptr<CustomTokenToObservers> custom_token_to_observers =
       customizer::getCustomTokenToObservers(custom_token);
 
-    printf("try callAttrCallback %s of %lu\n",
+    printf("1 try callAttrCallback %s of %lu\n",
       custom_token.c_str(), token_to_observers.size());
 
     if (/*extendedKV.second == "@"
@@ -141,10 +146,25 @@ namespace customizer {
 
       std::shared_ptr<CustomElementToken> elementToken
         = elem.GetCustomElementToken(custom_token);
+
+      /*if(elementToken) {
+        printf("GetCustomElementToken 1 after %s %s %s\n",
+            elementToken->initial_custom_attribute_name().c_str(),
+            elementToken->initial_attr_name().c_str(),
+            elementToken->initial_attr_val().c_str()
+        );
+      }*/
+
       if(!elementToken) {
         elementToken = std::make_shared<CustomElementToken>(
-          token_type, custom_token,
+          token_type, custom_token_attr_type, custom_token,
           prev_attr_name_lower, prev_attr_val, &elem);
+
+        /*printf("GetCustomElementToken 2 after %s %s %s\n",
+            elementToken->initial_custom_attribute_name().c_str(),
+            elementToken->initial_attr_name().c_str(),
+            elementToken->initial_attr_val().c_str()
+        );*/
 
         elem.AddNewCustomElementToken(elementToken);
 
@@ -258,8 +278,16 @@ namespace customizer {
     printf("tryCustomizeAttrName token_model_key: %s\n", parsedCustomToken.first.c_str());
     printf("tryCustomizeAttrName token_model_val: %s\n", parsedCustomToken.second.c_str());
 
+    // TODO: support custom token in multiple attrs and remove
+    // observers when token removed
+    /*std::shared_ptr<CustomTokenToObservers> custom_token_to_observers =
+      customizer::getCustomTokenToObservers(parsedCustomToken.second);
+
+    custom_token_to_observers->ClearObserversForElemAttr(elem, prev_attr_val);*/
+
     base::Optional<std::string> res =
-      LoadNewCustomToken(CustomElementToken::CustomTokenType::ATTR_NAME,
+      LoadNewCustomToken(CustomElementToken::CustomTokenType::NAME,
+        CustomElementToken::CustomTokenAttrType::SINGLE,
         parsedCustomToken.second, prev_attr_name_lower, prev_attr_val, elem);
 
     printf("extendAttrName callback_result: %s\n", res.value_or("nothing").c_str());
@@ -283,11 +311,78 @@ namespace customizer {
     printf("tryCustomizeAttrValue token_model_key: %s\n", parsedCustomToken.first.c_str());
     printf("tryCustomizeAttrValue token_model_val: %s\n", parsedCustomToken.second.c_str());
 
+    // TODO: support custom token in multiple attrs and remove
+    // observers when token removed
+    /*std::shared_ptr<CustomTokenToObservers> custom_token_to_observers =
+      customizer::getCustomTokenToObservers(parsedCustomToken.second);
+
+    custom_token_to_observers->ClearObserversForElemAttr(elem, prev_attr_val);*/
+
     base::Optional<std::string> res =
-      LoadNewCustomToken(CustomElementToken::CustomTokenType::ATTR_VAL,
+      LoadNewCustomToken(CustomElementToken::CustomTokenType::VAL,
+        CustomElementToken::CustomTokenAttrType::SINGLE,
         parsedCustomToken.second, prev_attr_name_lower, prev_attr_val, elem);
 
     printf("extendAttrValue callback_result: %s\n", res.value_or("nothing").c_str());
+
+    return res;
+  }
+
+  // not in spec
+  base::Optional<std::string> tryCustomizeStyleAttrValue(const std::string& prev_attr_name_lower,
+                                              const std::string& prev_attr_val,
+                                              cobalt::dom::Element& elem) {
+    printf("tryCustomizeStyleAttrValue for: %s %s\n", prev_attr_name_lower.c_str(), prev_attr_val.c_str());
+
+    std::vector<std::string> cssTokens = SplitStringUsingSubstr(
+      prev_attr_val,
+      ";",
+      base::WhitespaceHandling::TRIM_WHITESPACE,
+      base::SplitResult::SPLIT_WANT_ALL);
+
+    base::Optional<std::string> res = base::nullopt;
+
+    for(size_t i = 0; i < cssTokens.size(); i++) {
+      if(cssTokens.at(i).empty()) {
+        continue;
+      }
+
+      printf("tryCustomizeStyleAttrValue token: %s\n", cssTokens.at(i).c_str());
+
+      base::Optional<std::string> customizedToken = tryCustomizeToken(cssTokens.at(i));
+      if (customizedToken.has_value()) {
+        std::pair<std::string, std::string> parsedCustomToken = tryParseCustomToken(customizedToken.value());
+
+        printf("tryCustomizeStyleAttrValue token_model_key: %s\n", parsedCustomToken.first.c_str());
+        printf("tryCustomizeStyleAttrValue token_model_val: %s\n", parsedCustomToken.second.c_str());
+
+        // TODO: support custom token in multiple attrs and remove
+        // observers when token removed
+        /*std::shared_ptr<CustomTokenToObservers> custom_token_to_observers =
+          customizer::getCustomTokenToObservers(parsedCustomToken.second);
+
+        custom_token_to_observers->ClearObserversForElemAttr(elem, cssTokens.at(i));*/
+
+        base::Optional<std::string> resAppendant = LoadNewCustomToken(
+          CustomElementToken::CustomTokenType::VAL,
+          CustomElementToken::CustomTokenAttrType::MULTI,
+          parsedCustomToken.second,
+          prev_attr_name_lower,
+          //cssTokens.at(i),
+          prev_attr_val,
+          elem);
+
+        if(resAppendant.has_value()) {
+          res = res.value_or("") + ";" + resAppendant.value_or("");
+        }
+      } else {
+        if(!cssTokens.at(i).empty()) {
+          res = res.value_or("") + ";" + cssTokens.at(i);
+        }
+      }
+
+      printf("tryCustomizeStyleAttrValue callback_result: %s\n", res.value_or("nothing").c_str());
+    }
 
     return res;
   }
@@ -351,10 +446,12 @@ void CustomTokenToObservers::SetCustomValue(const std::string& value) {
 }
 
 CustomElementToken::CustomElementToken(const CustomTokenType& custom_token_type,
+                   const CustomTokenAttrType& custom_token_attr_type,
                    const std::string& initial_custom_attribute_name,
                    const std::string& initial_attr_name,
                    const std::string& initial_attr_val, Element* elem)
                    : custom_token_type_(custom_token_type),
+                     custom_token_attr_type_(custom_token_attr_type),
                      initial_attr_name_(initial_attr_name),
                      initial_attr_val_(initial_attr_val),
                      initial_custom_attribute_name_(initial_custom_attribute_name)
@@ -365,10 +462,59 @@ CustomElementToken::CustomElementToken(const CustomTokenType& custom_token_type,
   element_ = elem;
 }
 
+/*static void replaceAll(std::string& str, const std::string& from, const std::string& to) {
+    if(from.empty())
+        return;
+    size_t start_pos = 0;
+    while((start_pos = str.find(from, start_pos)) != std::string::npos) {
+        str.replace(start_pos, from.length(), to);
+         // In case 'to' contains 'from', like replacing 'x' with 'yx'
+        start_pos += to.length();
+    }
+}*/
+
 void CustomElementToken::OnMutation(const std::string& attr_val)
 {
-  printf("OnMutation name %s val %s\n", initial_attr_name_.c_str(), attr_val.c_str());
-  element_->SetAttribute(initial_attr_name_, attr_val);
+  DCHECK(element_);
+
+  if(custom_token_type() == CustomTokenType::VAL
+     && custom_token_attr_type() == CustomTokenAttrType::MULTI) {
+    /*printf("OnMutation 1 name %s val %s\n", initial_attr_name_.c_str(), attr_val.c_str());
+    base::Optional<std::string> old_value = element_->GetAttribute(initial_attr_name_.c_str());
+    printf("OnMutation old_value %s \n", old_value.value_or("").c_str());
+    if(!old_value) {
+      element_->SetAttribute(initial_attr_name_, attr_val);
+      return;
+    }
+
+    std::string multi_replaces = old_value.value_or("");
+    /// \note may not contain custom name at all
+    replaceAll(multi_replaces, initial_custom_attribute_name_, attr_val);
+    printf("OnMutation 3 name %s multi_replaces %s\n", initial_attr_name_.c_str(), multi_replaces.c_str());
+    /// \note overrides old value by appending data at the end
+    multi_replaces += attr_val;
+    element_->SetAttribute(initial_attr_name_, multi_replaces);*/
+
+    /// \note overrides old value by appending data at the end
+    element_->AppendToAttribute(initial_attr_name_, attr_val);
+  } else {
+    //printf("OnMutation 2 name %s val %s\n", initial_attr_name_.c_str(), attr_val.c_str());
+    element_->SetAttribute(initial_attr_name_, attr_val);
+  }
+
+  /*printf("OnMutation 1 name %s val %s\n", initial_attr_name_.c_str(), attr_val.c_str());
+  base::Optional<std::string> curAttr = element_->GetAttribute(initial_attr_name_);
+  printf("OnMutation 2 name %s curAttr %s\n", initial_attr_name_.c_str(), curAttr.value_or("").c_str());
+
+  element_->RemoveAttribute(initial_attr_name_);
+  element_->SetAttribute(initial_attr_name_, curAttr.value_or(""));
+
+  //base::Optional<std::string> old_value = element_->GetAttribute(initial_attr_name_.c_str());
+  //MutationReporter mutation_reporter(element_, element_->GatherInclusiveAncestorsObservers());
+  //mutation_reporter.ReportAttributesMutation(initial_attr_name_.c_str(), old_value);
+
+  //element_->SetAttribute(initial_attr_name_, attr_val);
+*/
 }
 
 Element::Element(Document* document)
@@ -423,6 +569,7 @@ bool Element::HasAttributes() const { return !attribute_map_.empty(); }
 
 void Element::AddNewCustomElementToken(std::shared_ptr<CustomElementToken> elementAttribute)
 {
+  DCHECK(elementAttribute);
   printf("AddNewCustomElementAttribute %s\n", elementAttribute->initial_custom_attribute_name().c_str());
   DCHECK(!elementAttribute->initial_custom_attribute_name().empty());
   CHECK(base::ToLowerASCII(elementAttribute->initial_custom_attribute_name()) == elementAttribute->initial_custom_attribute_name())
@@ -540,6 +687,145 @@ base::Optional<std::string> Element::GetAttribute(
   return originalVal;
 }
 
+void Element::AppendToAttribute(const std::string& name, const std::string& value,
+                                const bool needToMergeKeys) {
+  //std::cout << "AppendToAttribute " << name << " " << value << std::endl;
+  if(name.empty() || value.empty()) {
+    return;
+  }
+
+  using StringPair = std::pair<std::string, std::string>;
+
+  auto key_comp = [](StringPair lhs,
+                     StringPair rhs) {
+    return lhs.first < rhs.first;
+  };
+
+  /// \note sorted using lexical comparison,
+  /// comparing only first elements to prevent key duplication
+  using key_set = std::set<StringPair, decltype(key_comp)>;
+
+  base::Optional<std::string> old_value = GetAttribute(name);
+  if(!old_value.has_value() || old_value.value().empty()) {
+    SetAttribute(name, value);
+    return;
+  }
+
+  if(!needToMergeKeys) {
+    DCHECK(old_value.has_value() && !old_value.value().empty());
+    SetAttribute(name, old_value.value() + ";" + value);
+    return;
+  }
+
+  base::StringPairs newCSSTokensUnsorted;
+  base::SplitStringIntoKeyValuePairs(
+    value,
+    ':', // Key-value delimiter
+    ';', // Key-value pair delimiter
+    &newCSSTokensUnsorted);
+
+  /*std::cout << "newCSSTokensUnsorted start " << std::endl;
+  for (const StringPair& val : newCSSTokensUnsorted) {
+    std::cout << " " << val.first + ":" + val.second + ";" << std::endl;;
+  }
+  std::cout << "newCSSTokensUnsorted end " << std::endl;*/
+
+  base::StringPairs oldCSSTokensUnsorted;
+  base::SplitStringIntoKeyValuePairs(
+    old_value.value(),
+    ':', // Key-value delimiter
+    ';', // Key-value pair delimiter
+    &oldCSSTokensUnsorted);
+
+  /*std::cout << "oldCSSTokensUnsorted start " << std::endl;
+  for (const StringPair& val : oldCSSTokensUnsorted) {
+    std::cout << " " << val.first + ":" + val.second + ";" << std::endl;;
+  }
+  std::cout << "oldCSSTokensUnsorted end " << std::endl;*/
+
+  // remove duplicate keys
+  const key_set oldCSSTokens(oldCSSTokensUnsorted.begin(), oldCSSTokensUnsorted.end(), key_comp);
+
+  /*std::cout << "oldCSSTokens start " << std::endl;
+  for (const StringPair& val : oldCSSTokens) {
+    std::cout << " " << val.first + ":" + val.second + ";" << std::endl;;
+  }
+  std::cout << "oldCSSTokens end " << std::endl;*/
+
+  // remove duplicate keys
+  const key_set newCSSTokens(newCSSTokensUnsorted.begin(), newCSSTokensUnsorted.end(), key_comp);
+
+  /*std::cout << "newCSSTokens start " << std::endl;
+  for (const StringPair& val : newCSSTokens) {
+    std::cout << " " << val.first + ":" + val.second + ";" << std::endl;;
+  }
+  std::cout << "newCSSTokens end " << std::endl;*/
+
+  //base::Optional<std::string> res = base::nullopt;
+
+  // copy new values
+  /// \note new values must be inserted before old values because
+  /// of key-only comparison (key_set will not insert/replace data if key exists)
+  key_set resultCSSTokens(newCSSTokens.begin(), newCSSTokens.end(), key_comp);
+
+  /*std::cout << "resultCSSTokens 1 start " << std::endl;
+  for (const StringPair& val : resultCSSTokens) {
+    std::cout << " " << val.first + ":" + val.second + ";" << std::endl;;
+  }
+  std::cout << "resultCSSTokens 1 end " << std::endl;*/
+
+  // merge old values with new values
+  resultCSSTokens.insert(oldCSSTokens.begin(), oldCSSTokens.end());
+
+  /*std::cout << "resultCSSTokens 2 start " << std::endl;
+  for (const StringPair& val : resultCSSTokens) {
+    std::cout << " " << val.first + ":" + val.second + ";" << std::endl;;
+  }
+  std::cout << "resultCSSTokens 2 end " << std::endl;*/
+
+  // serialize
+  std::string result;
+  for (const StringPair& val : resultCSSTokens) {
+    result += val.first + ":" + val.second + ";";
+  }
+
+  /*std::cout << "result start " << std::endl;
+  std::cout << result << std::endl;
+  std::cout << "result end " << std::endl;*/
+
+  /*std::string multi_replaces = old_value.value_or("");
+  /// \note may not contain custom name at all
+  replaceAll(multi_replaces, initial_custom_attribute_name_, attr_val);
+  printf("OnMutation 3 name %s multi_replaces %s\n", initial_attr_name_.c_str(), multi_replaces.c_str());
+  /// \note overrides old value by appending data at the end
+  multi_replaces += attr_val;
+  element_->SetAttribute(initial_attr_name_, multi_replaces);*/
+
+  // save old tokens with updated values
+  /*for(size_t i = 0; i < oldCSSTokensUnsorted.size(); i++) {
+    result += oldCSSTokensUnsorted.at(i).first + ":" + oldCSSTokensUnsorted.at(i).second + ";";
+  }
+
+  // append fresh tokens
+  for(size_t i = 0; i < newCSSTokensIntesectedWithOld.size(); i++) {
+    const std::string& newCSSTokenKey = newCSSTokensUnsorted.at(i).first;
+    const std::string& newCSSTokenVal = newCSSTokensUnsorted.at(i).second;
+    if(newCSSTokenKey.empty() || newCSSTokenVal.empty()) {
+      continue;
+    }
+    const bool& flag = newCSSTokensIntesectedWithOld.at(i);
+    if(!flag) {
+      result += newCSSTokensUnsorted.at(i).first + ":" + newCSSTokensUnsorted.at(i).second + ";";
+    }
+  }*/
+
+  SetAttribute(name, result);
+}
+
+void Element::AppendStyle(const std::string& value) {
+  AppendToAttribute(kStyleAttributeName, value);
+}
+
 // Algorithm for SetAttribute:
 //   https://www.w3.org/TR/2014/WD-dom-20140710/#dom-element-setattribute
 void Element::SetAttribute(const std::string& name, const std::string& value) {
@@ -567,16 +853,6 @@ void Element::SetAttribute(const std::string& name, const std::string& value) {
     }
   }
 
-  // not in spec
-  std::string extended_value = value;
-  {
-    base::Optional<std::string> extVal = tryCustomizeAttrValue(attr_name_lower, value, *this);
-    if (extVal.has_value()) {
-      extended_value = extVal.value();
-      printf("extended val to %s\n", extended_value.c_str());
-    }
-  }
-
   // 3. Let attribute be the first attribute in the context object's attribute
   //    list whose name is name, or null if there is no such attribute.
   // 4. If attribute is null, create an attribute whose local name is name and
@@ -584,13 +860,26 @@ void Element::SetAttribute(const std::string& name, const std::string& value) {
   //    terminate these steps.
   // 5. Change attribute from context object to value.
 
-  base::Optional<std::string> old_value = GetAttribute(attr_name_ext);
-  MutationReporter mutation_reporter(this, GatherInclusiveAncestorsObservers());
-  mutation_reporter.ReportAttributesMutation(attr_name_ext, old_value);
+  // not in spec
+  std::string extended_value = value;
 
   switch (attr_name_ext.size()) {
     case 5:
       if (attr_name_ext == kStyleAttributeName) {
+        // not in spec
+        {
+          base::Optional<std::string> extVal = tryCustomizeStyleAttrValue(attr_name_lower, value, *this);
+          //base::Optional<std::string> extVal = tryCustomizeAttrValue(attr_name_lower, value, *this);
+          if (extVal.has_value()) {
+            extended_value = extVal.value();
+            printf("extended val to %s\n", extended_value.c_str());
+          }
+        }
+
+        base::Optional<std::string> old_value = GetAttribute(attr_name_ext);
+        MutationReporter mutation_reporter(this, GatherInclusiveAncestorsObservers());
+        mutation_reporter.ReportAttributesMutation(attr_name_ext, old_value);
+
         SetStyleAttribute(extended_value);
         if (named_node_map_) {
           named_node_map_->SetAttributeInternal(attr_name_ext, extended_value);
@@ -602,6 +891,19 @@ void Element::SetAttribute(const std::string& name, const std::string& value) {
       }
     // fall-through if not style attribute name
     default: {
+      // not in spec
+      {
+        base::Optional<std::string> extVal = tryCustomizeAttrValue(attr_name_lower, value, *this);
+        if (extVal.has_value()) {
+          extended_value = extVal.value();
+          printf("extended val to %s\n", extended_value.c_str());
+        }
+      }
+
+      base::Optional<std::string> old_value = GetAttribute(attr_name_ext);
+      MutationReporter mutation_reporter(this, GatherInclusiveAncestorsObservers());
+      mutation_reporter.ReportAttributesMutation(attr_name_ext, old_value);
+
       AttributeMap::iterator attribute_iterator =
           attribute_map_.find(attr_name_ext);
       if (attribute_iterator != attribute_map_.end() &&
