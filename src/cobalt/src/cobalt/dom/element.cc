@@ -53,17 +53,19 @@ namespace customizer {
 
   static std::string custom_attr_suffix = "__EXT";
 
+  static std::string custom_event_prefix = "on-";
+
   static std::map<std::string, std::shared_ptr<CustomTokenToObservers>> token_to_observers;
 
-  void set_prefix(const std::string& val) {
+  void set_attr_prefix(const std::string& val) {
     custom_attr_prefix = val;
   }
 
-  void set_suffix(const std::string& val) {
+  void set_attr_suffix(const std::string& val) {
     custom_attr_suffix = val;
   }
 
-  bool set(const std::string& key, const std::string& val) {
+  bool set_attr(const std::string& key, const std::string& val) {
     /// TODO: check thread safety for getAttrWithoutCallbacks e.t.c.
     std::shared_ptr<CustomTokenToObservers> attr =
       cobalt::dom::customizer::getCustomTokenToObservers(key);
@@ -74,7 +76,7 @@ namespace customizer {
     return false;
   }
 
-  base::Optional<std::string> get(const std::string& key) {
+  base::Optional<std::string> get_attr(const std::string& key) {
     /// TODO: check thread safety for getAttrWithoutCallbacks e.t.c.
     std::shared_ptr<CustomTokenToObservers> attr =
       cobalt::dom::customizer::getCustomTokenToObservers(key);
@@ -84,31 +86,31 @@ namespace customizer {
     return base::nullopt;
   }
 
-  void create(std::shared_ptr<CustomTokenToObservers> customTokenToObservers) {
+  void create_attr(std::shared_ptr<CustomTokenToObservers> customTokenToObservers) {
     DCHECK(!customTokenToObservers->initial_custom_token().empty());
     DCHECK(getCustomTokenToObservers(customTokenToObservers->initial_custom_token()) == nullptr)
-      << "custom attribute already created: " << customTokenToObservers->initial_custom_token();
+      << "custom attribute already exists: " << customTokenToObservers->initial_custom_token();
 
     token_to_observers[customTokenToObservers->initial_custom_token()] = customTokenToObservers;
   }
 
-  void create(const std::string& token, const std::string& initial_value) {
+  void create_attr(const std::string& token, const std::string& initial_value) {
     DCHECK(!token.empty());
     CHECK(base::ToLowerASCII(token) == token)
       << "custom attribute must be lowercase: " << token;
     DCHECK(getCustomTokenToObservers(token) == nullptr)
-      << "custom attribute already created: " << token;
+      << "custom attribute already exists: " << token;
 
     std::shared_ptr<CustomTokenToObservers> newCustomToken =
       std::make_shared<CustomTokenToObservers>([initial_value](const std::string& custom_token,
                                        const std::string& prev_attr_name_lower,
                                        const std::string& prev_attr_val,
                                        cobalt::dom::Element& elem) {
-      printf("called addAttrCallback %s\n", custom_token.c_str());
+      //printf("called addAttrCallback %s\n", custom_token.c_str());
       return initial_value;
     }, token);
 
-    cobalt::dom::customizer::create(newCustomToken);
+    cobalt::dom::customizer::create_attr(newCustomToken);
   }
 
     /// TODO: check thread safety for getAttrWithoutCallbacks e.t.c.
@@ -137,8 +139,8 @@ namespace customizer {
     std::shared_ptr<CustomTokenToObservers> custom_token_to_observers =
       customizer::getCustomTokenToObservers(custom_token);
 
-    printf("1 try callAttrCallback %s of %lu\n",
-      custom_token.c_str(), token_to_observers.size());
+    /*printf("1 try callAttrCallback %s of %lu\n",
+      custom_token.c_str(), token_to_observers.size());*/
 
     if (/*extendedKV.second == "@"
         &&*/ custom_token_to_observers) {
@@ -184,10 +186,10 @@ namespace customizer {
           elementToken->initial_attr_val(),
           elem);
 
-      printf("added observer for tag %s with key %s and initial value %s\n",
-        elem.tag_name().c_str(), custom_token.c_str(), callback_result.c_str());
+      /*printf("added observer for tag %s with key %s and initial value %s\n",
+        elem.tag_name().c_str(), custom_token.c_str(), callback_result.c_str());*/
 
-      printf("callAttrCallback callback_result: %s\n", callback_result.c_str());
+      //printf("callAttrCallback callback_result: %s\n", callback_result.c_str());
 
       return std::move(callback_result);
     }
@@ -228,7 +230,7 @@ namespace customizer {
   }
 
   static base::Optional<std::string> tryCustomizeToken(const std::string& attr) {
-    printf("toCustomAttr: %s\n", attr.c_str());
+    //printf("toCustomAttr: %s\n", attr.c_str());
 
     std::string attr_cleaned = attr;
     // remove whitespace
@@ -239,10 +241,10 @@ namespace customizer {
     }
 
     // remove special prefix and suffix
-    printf("attr_cleaned: before %s\n", attr_cleaned.c_str());
+    //printf("attr_cleaned: before %s\n", attr_cleaned.c_str());
     attr_cleaned.erase(0, custom_attr_prefix.length());
     attr_cleaned.erase(attr_cleaned.length() - custom_attr_prefix.length(), attr_cleaned.length());
-    printf("attr_cleaned: after %s\n", attr_cleaned.c_str());
+    //printf("attr_cleaned: after %s\n", attr_cleaned.c_str());
 
     return std::move(attr_cleaned);
   }
@@ -266,7 +268,7 @@ namespace customizer {
   static base::Optional<std::string> tryCustomizeAttrName(const std::string& prev_attr_name_lower,
                                              const std::string& prev_attr_val,
                                              cobalt::dom::Element& elem) {
-    printf("tryCustomizeAttrName for: %s %s\n", prev_attr_name_lower.c_str(), prev_attr_val.c_str());
+    //printf("tryCustomizeAttrName for: %s %s\n", prev_attr_name_lower.c_str(), prev_attr_val.c_str());
 
     base::Optional<std::string> customizedToken = tryCustomizeToken(prev_attr_name_lower);
     if (!customizedToken.has_value()) {
@@ -275,8 +277,8 @@ namespace customizer {
 
     std::pair<std::string, std::string> parsedCustomToken = tryParseCustomToken(customizedToken.value());
 
-    printf("tryCustomizeAttrName token_model_key: %s\n", parsedCustomToken.first.c_str());
-    printf("tryCustomizeAttrName token_model_val: %s\n", parsedCustomToken.second.c_str());
+    //printf("tryCustomizeAttrName token_model_key: %s\n", parsedCustomToken.first.c_str());
+    //printf("tryCustomizeAttrName token_model_val: %s\n", parsedCustomToken.second.c_str());
 
     // TODO: support custom token in multiple attrs and remove
     // observers when token removed
@@ -290,7 +292,7 @@ namespace customizer {
         CustomElementToken::CustomTokenAttrType::SINGLE,
         parsedCustomToken.second, prev_attr_name_lower, prev_attr_val, elem);
 
-    printf("extendAttrName callback_result: %s\n", res.value_or("nothing").c_str());
+    //printf("extendAttrName callback_result: %s\n", res.value_or("nothing").c_str());
 
     return res;
   }
@@ -299,7 +301,7 @@ namespace customizer {
   base::Optional<std::string> tryCustomizeAttrValue(const std::string& prev_attr_name_lower,
                                               const std::string& prev_attr_val,
                                               cobalt::dom::Element& elem) {
-    printf("tryCustomizeAttrValue for: %s %s\n", prev_attr_name_lower.c_str(), prev_attr_val.c_str());
+    //printf("tryCustomizeAttrValue for: %s %s\n", prev_attr_name_lower.c_str(), prev_attr_val.c_str());
 
     base::Optional<std::string> customizedToken = tryCustomizeToken(prev_attr_val);
     if (!customizedToken.has_value()) {
@@ -308,8 +310,8 @@ namespace customizer {
 
     std::pair<std::string, std::string> parsedCustomToken = tryParseCustomToken(customizedToken.value());
 
-    printf("tryCustomizeAttrValue token_model_key: %s\n", parsedCustomToken.first.c_str());
-    printf("tryCustomizeAttrValue token_model_val: %s\n", parsedCustomToken.second.c_str());
+    //printf("tryCustomizeAttrValue token_model_key: %s\n", parsedCustomToken.first.c_str());
+    //printf("tryCustomizeAttrValue token_model_val: %s\n", parsedCustomToken.second.c_str());
 
     // TODO: support custom token in multiple attrs and remove
     // observers when token removed
@@ -323,7 +325,7 @@ namespace customizer {
         CustomElementToken::CustomTokenAttrType::SINGLE,
         parsedCustomToken.second, prev_attr_name_lower, prev_attr_val, elem);
 
-    printf("extendAttrValue callback_result: %s\n", res.value_or("nothing").c_str());
+    //printf("extendAttrValue callback_result: %s\n", res.value_or("nothing").c_str());
 
     return res;
   }
@@ -332,7 +334,7 @@ namespace customizer {
   base::Optional<std::string> tryCustomizeStyleAttrValue(const std::string& prev_attr_name_lower,
                                               const std::string& prev_attr_val,
                                               cobalt::dom::Element& elem) {
-    printf("tryCustomizeStyleAttrValue for: %s %s\n", prev_attr_name_lower.c_str(), prev_attr_val.c_str());
+    //printf("tryCustomizeStyleAttrValue for: %s %s\n", prev_attr_name_lower.c_str(), prev_attr_val.c_str());
 
     std::vector<std::string> cssTokens = SplitStringUsingSubstr(
       prev_attr_val,
@@ -347,14 +349,14 @@ namespace customizer {
         continue;
       }
 
-      printf("tryCustomizeStyleAttrValue token: %s\n", cssTokens.at(i).c_str());
+      //printf("tryCustomizeStyleAttrValue token: %s\n", cssTokens.at(i).c_str());
 
       base::Optional<std::string> customizedToken = tryCustomizeToken(cssTokens.at(i));
       if (customizedToken.has_value()) {
         std::pair<std::string, std::string> parsedCustomToken = tryParseCustomToken(customizedToken.value());
 
-        printf("tryCustomizeStyleAttrValue token_model_key: %s\n", parsedCustomToken.first.c_str());
-        printf("tryCustomizeStyleAttrValue token_model_val: %s\n", parsedCustomToken.second.c_str());
+        //printf("tryCustomizeStyleAttrValue token_model_key: %s\n", parsedCustomToken.first.c_str());
+        //printf("tryCustomizeStyleAttrValue token_model_val: %s\n", parsedCustomToken.second.c_str());
 
         // TODO: support custom token in multiple attrs and remove
         // observers when token removed
@@ -381,11 +383,36 @@ namespace customizer {
         }
       }
 
-      printf("tryCustomizeStyleAttrValue callback_result: %s\n", res.value_or("nothing").c_str());
+      //printf("tryCustomizeStyleAttrValue callback_result: %s\n", res.value_or("nothing").c_str());
     }
 
     return res;
   }
+
+  void pair_event_to_attr(const std::string &event_name, EventCallback cb)
+  {
+    auto wrapperCb = [cb](const std::string& custom_token,
+                                       const std::string& prev_attr_name_lower,
+                                       const std::string& prev_attr_val,
+                                       cobalt::dom::Element& elem) {
+      /*printf("called pair_event_to_attr %s %s %s\n",
+        custom_token.c_str(), prev_attr_name_lower.c_str(), prev_attr_val.c_str());*/
+
+      DCHECK(cb);
+      elem.add_event_cb(custom_token, cb);
+
+      return custom_token;
+    };
+
+    CHECK(base::ToLowerASCII(event_name) == event_name)
+      << "custom event must be lowercase: " << event_name;
+
+    std::shared_ptr<CustomTokenToObservers> token =
+      std::make_shared<CustomTokenToObservers>(wrapperCb, event_name);
+
+    cobalt::dom::customizer::create_attr(token);
+  }
+
 } // namespace customizer
 
 using namespace cobalt::dom::customizer;
@@ -428,7 +455,7 @@ CustomTokenToObservers::CustomTokenToObservers(
 void CustomTokenToObservers::RecordMutation() {
   TRACE_EVENT0("cobalt::dom", "CustomTokenToObservers::RecordMutation()");
 
-  printf("RecordMutation %s for %s\n", processed_custom_token_.c_str(), initial_custom_token_.c_str());
+  //printf("RecordMutation %s for %s\n", processed_custom_token_.c_str(), initial_custom_token_.c_str());
 
   FOR_EACH_OBSERVER(CustomTokenObserver, observer_list_, OnMutation(processed_custom_token_));
 }
@@ -438,7 +465,7 @@ void CustomTokenToObservers::SetCustomValue(const std::string& value) {
     return;
   }
 
-  printf("SetCustomValue %s for %s\n", processed_custom_token_.c_str(), initial_custom_token_.c_str());
+  //printf("SetCustomValue %s for %s\n", processed_custom_token_.c_str(), initial_custom_token_.c_str());
 
   processed_custom_token_ = value;
 
@@ -529,8 +556,37 @@ Element::Element(Document* document, base::CobToken local_name)
   ++(element_count_log.Get().count);
 }
 
-Element::HoverCallback Element::get_hover_cb() const {
-  return hover_cb_;
+bool Element::DispatchEvent(const scoped_refptr<Event> &event)
+{
+  HandleCustomEvent(event);
+
+  return Node::DispatchEvent(event);
+}
+
+void Element::add_event_cb(const std::string &custom_token, EventCallback cb)
+{
+  if(!cb || custom_token.length() <= custom_event_prefix.length()) {
+    return;
+  }
+
+  const std::string custom_token_prefix = custom_token.substr(0, custom_event_prefix.length());
+  if(custom_token_prefix != custom_event_prefix) {
+    return;
+  }
+
+  const std::string to_event_name = custom_token.substr(custom_event_prefix.length(), custom_token.length());
+  eventCallbacks_[to_event_name] = cb;
+
+  //printf("added event callback for %s into %s (text_content = %s)\n", to_event_name.c_str(), tag_name().c_str(), text_content().value_or("").c_str());
+}
+
+base::Optional<EventCallback> Element::get_event_cb(const std::string &custom_token)
+{
+  auto it = eventCallbacks_.find(custom_token);
+  if (it == eventCallbacks_.end()) {
+    return base::nullopt;
+  }
+  return it->second;
 }
 
 base::Optional<std::string> Element::text_content() const {
@@ -570,13 +626,13 @@ bool Element::HasAttributes() const { return !attribute_map_.empty(); }
 void Element::AddNewCustomElementToken(std::shared_ptr<CustomElementToken> elementAttribute)
 {
   DCHECK(elementAttribute);
-  printf("AddNewCustomElementAttribute %s\n", elementAttribute->initial_custom_attribute_name().c_str());
+  //printf("AddNewCustomElementAttribute %s\n", elementAttribute->initial_custom_attribute_name().c_str());
   DCHECK(!elementAttribute->initial_custom_attribute_name().empty());
   CHECK(base::ToLowerASCII(elementAttribute->initial_custom_attribute_name()) == elementAttribute->initial_custom_attribute_name())
     << "custom attribute must be lowercase: " << elementAttribute->initial_custom_attribute_name();
 
-  DCHECK(custom_attributes.find(elementAttribute->initial_custom_attribute_name()) == custom_attributes.end());
-  custom_attributes[elementAttribute->initial_custom_attribute_name()] = elementAttribute;
+  DCHECK(custom_attributes_.find(elementAttribute->initial_custom_attribute_name()) == custom_attributes_.end());
+  custom_attributes_[elementAttribute->initial_custom_attribute_name()] = elementAttribute;
 }
 
 std::shared_ptr<CustomElementToken> Element::GetCustomElementToken(const std::string& key) const
@@ -586,8 +642,8 @@ std::shared_ptr<CustomElementToken> Element::GetCustomElementToken(const std::st
 
   std::shared_ptr<CustomElementToken> res = nullptr;
 
-  auto it = custom_attributes.find(key);
-  if(it != custom_attributes.end()) {
+  auto it = custom_attributes_.find(key);
+  if(it != custom_attributes_.end()) {
     res = it->second;
   }
   return res;
@@ -687,23 +743,18 @@ base::Optional<std::string> Element::GetAttribute(
   return originalVal;
 }
 
-void Element::AppendToAttribute(const std::string& name, const std::string& value,
-                                const bool needToMergeKeys) {
-  //std::cout << "AppendToAttribute " << name << " " << value << std::endl;
+/*std::function<bool(Element::StringPair, Element::StringPair)> Element::key_comp =
+  [](StringPair lhs, StringPair rhs) {
+    return lhs.first < rhs.first;
+  };*/
+
+void Element::AppendToAttribute(const std::string& name, const std::string& value/*,
+                                const bool needToMergeKeys*/) {
+  //std::cout << "AppendToAttribute at " << name << " " << value << std::endl;
+
   if(name.empty() || value.empty()) {
     return;
   }
-
-  using StringPair = std::pair<std::string, std::string>;
-
-  auto key_comp = [](StringPair lhs,
-                     StringPair rhs) {
-    return lhs.first < rhs.first;
-  };
-
-  /// \note sorted using lexical comparison,
-  /// comparing only first elements to prevent key duplication
-  using key_set = std::set<StringPair, decltype(key_comp)>;
 
   base::Optional<std::string> old_value = GetAttribute(name);
   if(!old_value.has_value() || old_value.value().empty()) {
@@ -711,112 +762,106 @@ void Element::AppendToAttribute(const std::string& name, const std::string& valu
     return;
   }
 
-  if(!needToMergeKeys) {
+  std::string result;
+
+  if(name == kStyleAttributeName) {
+    scoped_refptr<cobalt::cssom::CSSDeclaredStyleData> declaration =
+      node_document()->html_element_context()->css_parser()->ParseStyleDeclarationList(
+         /// \note new data must be after old data (to override it)
+         old_value.value() + ";" + value,
+        base::SourceLocation("[Element::AppendToAttribute]", 1, 1));
+
+    /// \note we parsed & serialized css to merge & unify inputs
+    /// \note value may be synonym to current value,
+    /// example (synonym): "color: rgb(0, 128, 0)" vs "color:green;" (also note space)
+    /// example (one-to-many): "border-radius:40px;" vs
+    ///  "border-bottom-left-radius: 40px;border-bottom-right-radius: 40px;..."
+    result = declaration->SerializeCSSDeclarationBlock();
+
+    /*printf("SerializeCSSDeclarationBlock old_value = %s ; value = %s\n",
+      old_value.value().c_str(), value.c_str());
+    printf("SerializeCSSDeclarationBlock result = %s\n",
+      result.c_str());*/
+
+  } else {
+    NOTIMPLEMENTED();
+  }
+
+  /*if(!needToMergeKeys) {
     DCHECK(old_value.has_value() && !old_value.value().empty());
     SetAttribute(name, old_value.value() + ";" + value);
     return;
   }
 
-  base::StringPairs newCSSTokensUnsorted;
+  base::StringPairs newTokensUnsorted;
   base::SplitStringIntoKeyValuePairs(
     value,
     ':', // Key-value delimiter
     ';', // Key-value pair delimiter
-    &newCSSTokensUnsorted);
+    &newTokensUnsorted);
 
-  /*std::cout << "newCSSTokensUnsorted start " << std::endl;
-  for (const StringPair& val : newCSSTokensUnsorted) {
-    std::cout << " " << val.first + ":" + val.second + ";" << std::endl;;
-  }
-  std::cout << "newCSSTokensUnsorted end " << std::endl;*/
-
-  base::StringPairs oldCSSTokensUnsorted;
+#if DCHECK_IS_ON()
+  base::StringPairs oldTokensUnsorted;
+  CHECK(old_value.has_value());
   base::SplitStringIntoKeyValuePairs(
     old_value.value(),
     ':', // Key-value delimiter
     ';', // Key-value pair delimiter
-    &oldCSSTokensUnsorted);
-
-  /*std::cout << "oldCSSTokensUnsorted start " << std::endl;
-  for (const StringPair& val : oldCSSTokensUnsorted) {
-    std::cout << " " << val.first + ":" + val.second + ";" << std::endl;;
-  }
-  std::cout << "oldCSSTokensUnsorted end " << std::endl;*/
+    &oldTokensUnsorted);
 
   // remove duplicate keys
-  const key_set oldCSSTokens(oldCSSTokensUnsorted.begin(), oldCSSTokensUnsorted.end(), key_comp);
-
-  /*std::cout << "oldCSSTokens start " << std::endl;
-  for (const StringPair& val : oldCSSTokens) {
-    std::cout << " " << val.first + ":" + val.second + ";" << std::endl;;
-  }
-  std::cout << "oldCSSTokens end " << std::endl;*/
+  const key_set oldTokens(oldTokensUnsorted.begin(), oldTokensUnsorted.end(), key_comp);
+#endif
 
   // remove duplicate keys
-  const key_set newCSSTokens(newCSSTokensUnsorted.begin(), newCSSTokensUnsorted.end(), key_comp);
-
-  /*std::cout << "newCSSTokens start " << std::endl;
-  for (const StringPair& val : newCSSTokens) {
-    std::cout << " " << val.first + ":" + val.second + ";" << std::endl;;
-  }
-  std::cout << "newCSSTokens end " << std::endl;*/
-
-  //base::Optional<std::string> res = base::nullopt;
+  const key_set newTokens(newTokensUnsorted.begin(), newTokensUnsorted.end(), key_comp);
 
   // copy new values
   /// \note new values must be inserted before old values because
   /// of key-only comparison (key_set will not insert/replace data if key exists)
-  key_set resultCSSTokens(newCSSTokens.begin(), newCSSTokens.end(), key_comp);
+  key_set resultTokens(newTokens.begin(), newTokens.end(), key_comp);
 
-  /*std::cout << "resultCSSTokens 1 start " << std::endl;
-  for (const StringPair& val : resultCSSTokens) {
-    std::cout << " " << val.first + ":" + val.second + ";" << std::endl;;
-  }
-  std::cout << "resultCSSTokens 1 end " << std::endl;*/
+#if DCHECK_IS_ON()
+  key_set checkTokens(newTokens.begin(), newTokens.end(), key_comp);
+#endif
 
   // merge old values with new values
-  resultCSSTokens.insert(oldCSSTokens.begin(), oldCSSTokens.end());
-
-  /*std::cout << "resultCSSTokens 2 start " << std::endl;
-  for (const StringPair& val : resultCSSTokens) {
-    std::cout << " " << val.first + ":" + val.second + ";" << std::endl;;
+  auto it = attrToCachedSet_.find(name);
+  if(it != attrToCachedSet_.end()) {
+    resultTokens.insert(it->second.begin(), it->second.end());
   }
-  std::cout << "resultCSSTokens 2 end " << std::endl;*/
+
+#if DCHECK_IS_ON()
+  checkTokens.insert(oldTokens.begin(), oldTokens.end());
+  std::string checkTokensToStr;
+  std::set<std::string> checkTokensKeys;
+  for (const StringPair& val : checkTokens) {
+    checkTokensToStr += val.first + ":" + val.second + ";";
+    checkTokensKeys.insert(val.first);
+  }
+  std::string resultTokensToStr;
+  std::set<std::string> resultTokensKeys;
+  for (const StringPair& val : resultTokens) {
+    resultTokensToStr += val.first + ":" + val.second + ";";
+    resultTokensKeys.insert(val.first);
+  }
+  // cached data must be same as current
+  /// \note cached value may be synonym to current value,
+  /// example: "color: rgb(0, 128, 0)" vs "color:green;" (also note space)
+  /// example: "border-radius:40px;" vs "border-bottom-left-radius: 40px;border-bottom-right-radius: 40px;border-top-left-radius: 40px;border-top-right-radius: 40px;"
+  CHECK(checkTokens.size() == resultTokens.size()
+        && checkTokensKeys == resultTokensKeys)
+    << "cache mismatch in AppendToAttribute(" << name << ", " << value << ")\n"
+    << "for element = " << tag_name() << " with text_content = "
+    << text_content().value_or("") << ")\n"
+    << "checkCSSTokens = " << checkTokensToStr << "\n"
+    << "resultCSSTokens = " << resultTokensToStr << "\n";
+#endif
 
   // serialize
   std::string result;
-  for (const StringPair& val : resultCSSTokens) {
+  for (const StringPair& val : resultTokens) {
     result += val.first + ":" + val.second + ";";
-  }
-
-  /*std::cout << "result start " << std::endl;
-  std::cout << result << std::endl;
-  std::cout << "result end " << std::endl;*/
-
-  /*std::string multi_replaces = old_value.value_or("");
-  /// \note may not contain custom name at all
-  replaceAll(multi_replaces, initial_custom_attribute_name_, attr_val);
-  printf("OnMutation 3 name %s multi_replaces %s\n", initial_attr_name_.c_str(), multi_replaces.c_str());
-  /// \note overrides old value by appending data at the end
-  multi_replaces += attr_val;
-  element_->SetAttribute(initial_attr_name_, multi_replaces);*/
-
-  // save old tokens with updated values
-  /*for(size_t i = 0; i < oldCSSTokensUnsorted.size(); i++) {
-    result += oldCSSTokensUnsorted.at(i).first + ":" + oldCSSTokensUnsorted.at(i).second + ";";
-  }
-
-  // append fresh tokens
-  for(size_t i = 0; i < newCSSTokensIntesectedWithOld.size(); i++) {
-    const std::string& newCSSTokenKey = newCSSTokensUnsorted.at(i).first;
-    const std::string& newCSSTokenVal = newCSSTokensUnsorted.at(i).second;
-    if(newCSSTokenKey.empty() || newCSSTokenVal.empty()) {
-      continue;
-    }
-    const bool& flag = newCSSTokensIntesectedWithOld.at(i);
-    if(!flag) {
-      result += newCSSTokensUnsorted.at(i).first + ":" + newCSSTokensUnsorted.at(i).second + ";";
-    }
   }*/
 
   SetAttribute(name, result);
@@ -824,6 +869,27 @@ void Element::AppendToAttribute(const std::string& name, const std::string& valu
 
 void Element::AppendStyle(const std::string& value) {
   AppendToAttribute(kStyleAttributeName, value);
+}
+
+bool Element::HandleCustomEvent(const scoped_refptr<dom::Event> &event)
+{
+  //printf("Element::HandleCustomEvent type %s on tag %s\n", event->type().c_str(), tag_name().c_str());
+  std::string eventAttrKey;
+  //eventToHandlerKey += custom_attr_prefix;
+  eventAttrKey += custom_event_prefix;
+  eventAttrKey += event->type().c_str();
+  //eventToHandlerKey += custom_attr_suffix;
+  const std::string attrVal = GetAttribute(eventAttrKey.c_str()).value_or("");
+  //printf("Element::HandleCustomEvent callback name = %s by %s\n", attrVal.c_str(), eventAttrKey.c_str());
+
+  //if(!eventToCallbackName.empty()) {
+  const base::Optional<EventCallback> cb = get_event_cb(event->type().c_str());
+  if(cb.has_value()) {
+    DCHECK(cb.value());
+    cb.value()(event, this, attrVal);
+  }
+  //}
+  return false;
 }
 
 // Algorithm for SetAttribute:
@@ -849,7 +915,7 @@ void Element::SetAttribute(const std::string& name, const std::string& value) {
     base::Optional<std::string> extName = tryCustomizeAttrName(attr_name_lower, value, *this);
     if (extName.has_value()) {
       attr_name_ext = extName.value();
-      printf("extended attr to %s\n", attr_name_ext.c_str());
+      //printf("extended attr to %s\n", attr_name_ext.c_str());
     }
   }
 
@@ -872,7 +938,7 @@ void Element::SetAttribute(const std::string& name, const std::string& value) {
           //base::Optional<std::string> extVal = tryCustomizeAttrValue(attr_name_lower, value, *this);
           if (extVal.has_value()) {
             extended_value = extVal.value();
-            printf("extended val to %s\n", extended_value.c_str());
+            //printf("extended val to %s\n", extended_value.c_str());
           }
         }
 
@@ -884,7 +950,9 @@ void Element::SetAttribute(const std::string& name, const std::string& value) {
         if (named_node_map_) {
           named_node_map_->SetAttributeInternal(attr_name_ext, extended_value);
         }
+        //printf("OnSetAttribute 0 at %s\n", attr_name_ext.c_str());
         OnSetAttribute(/* not lowercase name */ attr_name_ext, extended_value);
+        //RegenAttrPairs(attr_name_ext, extended_value);
         // Return now as SetStyleAttribute() will call OnDOMMutation() when
         // necessary.
         return;
@@ -896,7 +964,7 @@ void Element::SetAttribute(const std::string& name, const std::string& value) {
         base::Optional<std::string> extVal = tryCustomizeAttrValue(attr_name_lower, value, *this);
         if (extVal.has_value()) {
           extended_value = extVal.value();
-          printf("extended val to %s\n", extended_value.c_str());
+          //printf("extended val to %s\n", extended_value.c_str());
         }
       }
 
@@ -939,7 +1007,10 @@ void Element::SetAttribute(const std::string& name, const std::string& value) {
   if (document && GetRootNode() == document) {
     document->OnDOMMutation();
   }
+
+  //printf("OnSetAttribute 1 at %s\n", attr_name_ext.c_str());
   OnSetAttribute(/* not lowercase name */ attr_name_ext, extended_value);
+  //RegenAttrPairs(attr_name_ext, extended_value);
 }
 
 // Algorithm for RemoveAttribute:
@@ -1002,6 +1073,7 @@ void Element::RemoveAttribute(const std::string& name) {
     document->OnDOMMutation();
   }
   OnRemoveAttribute(name);
+  //ClearAttrPairs(name);
 }
 
 // Algorithm for tag_name:
@@ -1366,6 +1438,27 @@ std::string Element::GetDebugName() {
   }
   return name;
 }
+
+/*void Element::ClearAttrPairs(const std::string &key) {
+  attrToCachedSet_.erase(key);
+}
+
+void Element::RegenAttrPairs(const std::string &key, const std::string &val) {
+  if(key.empty()) {
+    return;
+  }
+
+  base::StringPairs unsorted;
+  base::SplitStringIntoKeyValuePairs(
+    val,
+    ':', // Key-value delimiter
+    ';', // Key-value pair delimiter
+    &unsorted);
+
+  // remove duplicate keys
+  attrToCachedSet_[key] = key_set(unsorted.begin(), unsorted.end(), key_comp);
+  std::cout << "regenerated attrToTokens_ at " << key << std::endl;
+}*/
 
 void Element::HTMLParseError(const std::string& error) {
   // TODO: Report line / column number.

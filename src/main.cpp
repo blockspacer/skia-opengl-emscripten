@@ -803,7 +803,7 @@ sk_sp<const GrGLInterface> emscripten_GrGLMakeNativeInterface() {
 }
 #endif
 
-static bool render_browser_window = false;
+static bool render_browser_window = true;
 
 // must be POT
 static int width = 1920;//1024;//512;
@@ -1671,7 +1671,7 @@ public:
       // https://github.com/chromium/chromium/blob/422f901782f0a5f274a6065fbff3983279ef3c0b/chrome/browser/vr/elements/text.cc#L424
       ::std::unique_ptr<gfx::RenderText> render_text_ptr = gfx::RenderText::CreateHarfBuzzInstance();
       gfx::RenderText* render_text = render_text_ptr.get();
-      WTF::String render_test_string = String::FromUTF8("r\xC3\xA9sum\xC3\xA9");
+      WTF::String render_test_string = String::FromUTF8("some very long text here r\xC3\xA9sum\xC3\xA9");
       render_text->SetText(render_test_string.Characters16());
       render_text->set_focused(true);
       // see https://github.com/chromium/chromium/blob/master/chrome/browser/vr/elements/text.cc#L384
@@ -4311,22 +4311,22 @@ static void updateBrowserMousePos() {
               testScrollY += "px);";
               //testScrollY += "border-radius:50px;width:50px;height:50px;";
               //printf("testScrollY=%s\n", testScrollY.c_str());
-              cobalt::dom::customizer::set("test-y-scroll", testScrollY);
+              cobalt::dom::customizer::set_attr("test-y-scroll", testScrollY);
             }
 
             {
               if (base::Time::Now().ToDeltaSinceWindowsEpoch().InSeconds() % 10 < 5) {
-                cobalt::dom::customizer::set("test-background", "background-color:#2a00d4;");
+                cobalt::dom::customizer::set_attr("test-background", "background-color:#2a00d4;");
               } else {
-                cobalt::dom::customizer::set("test-background", "background-color:#315fd6;");
+                cobalt::dom::customizer::set_attr("test-background", "background-color:#315fd6;");
               }
             }
 
             {
               if (base::Time::Now().ToDeltaSinceWindowsEpoch().InSeconds() % 10 < 5) {
-                cobalt::dom::customizer::set("wh", "width");
+                cobalt::dom::customizer::set_attr("wh", "width");
               } else {
-                cobalt::dom::customizer::set("wh", "height");
+                cobalt::dom::customizer::set_attr("wh", "height");
               }
             }
 
@@ -4713,24 +4713,26 @@ std::unique_ptr<base::sequence_manager::SequenceManager> sequence_manager;
 */
 
 #if defined(ENABLE_COBALT)
-/*static std::map<std::string, std::string> attrVarsToValues;
-static std::map<std::string, std::string> attrVarsToValues;
-
-static void setv-test-attr-val() {
-  if (base::Time::Now().ToDeltaSinceWindowsEpoch().InSeconds() % 5 == 0) {
-    printf("base::Time::Now().ToDeltaSinceWindowsEpoch().InSeconds() mod 5 == 0\n");
-    //elem.SetAttribute("v-test-attr-val", "color:#000;"); /// TODO
-    attrVarsToValues["v-test-attr-val"] = "color:#FFF;";
-  }
-  attrVarsToValues["v-test-attr-val"] = "color:#CCC;";
-}*/
-
-static std::map<std::string, cobalt::dom::Element::HoverCallback> hoverCallbacks;
+static std::map<std::string, cobalt::dom::EventCallback> eventCallbacks;
 
 static void addTestOnlyAttrCallbacks() {
-  hoverCallbacks["on-hover-cb"] = [](base::WeakPtr<cobalt::dom::HTMLElement> elem) {
-    printf("hover_cb for: %s, text_content: %s\n",
-      elem->tag_name().c_str(), elem->text_content().value_or("").c_str());
+  eventCallbacks["on-mousemove-event"] = [](const scoped_refptr<dom::Event> &event,
+      const cobalt::dom::Element* elem, const std::string& attrVal) {
+    const dom::PointerEvent* const pointerEvent =
+      base::polymorphic_downcast<const dom::PointerEvent* const>(event.get());
+    const dom::MouseEvent* const mouseEvent =
+      base::polymorphic_downcast<const dom::MouseEvent* const>(event.get());
+    CHECK(pointerEvent || mouseEvent);
+    float x = pointerEvent ? pointerEvent->x() : mouseEvent->x();
+    float y = pointerEvent ? pointerEvent->y() : mouseEvent->y();
+    printf("mousemove at (%f;%f) event %s for tag: %s, "
+           "attrVal: %s, text_content: %s\n",
+            x,
+            y,
+            event->type().c_str(),
+            elem->tag_name().c_str(),
+            attrVal.c_str(),
+            elem->text_content().value_or("").c_str());
   };
 
   {
@@ -4743,7 +4745,7 @@ static void addTestOnlyAttrCallbacks() {
       return std::string("style");
     }, base::ToLowerASCII("v-test-attr-name"));
 
-    cobalt::dom::customizer::create(newCustomToken);
+    cobalt::dom::customizer::create_attr(newCustomToken);
   }
 
   {
@@ -4756,11 +4758,11 @@ static void addTestOnlyAttrCallbacks() {
       return std::string("height:40px");
     }, base::ToLowerASCII("height-x-px"));
 
-    cobalt::dom::customizer::create(newCustomToken);
+    cobalt::dom::customizer::create_attr(newCustomToken);
   }
 
   {
-    cobalt::dom::customizer::create("width-x-px", "width:40px");
+    cobalt::dom::customizer::create_attr("width-x-px", "width:40px");
   }
 
   {
@@ -4774,15 +4776,15 @@ static void addTestOnlyAttrCallbacks() {
       return std::string("transform: translateY(25px);");
     }, base::ToLowerASCII("test-y-scroll"));
 
-    cobalt::dom::customizer::create(newCustomToken);
+    cobalt::dom::customizer::create_attr(newCustomToken);
   }
 
   {
-    cobalt::dom::customizer::create("wh", "width");
+    cobalt::dom::customizer::create_attr("wh", "width");
   }
 
   {
-    cobalt::dom::customizer::create("test-background", "background-color:#00bcd4;");
+    cobalt::dom::customizer::create_attr("test-background", "background-color:#00bcd4;");
   }
 
   {
@@ -4792,57 +4794,59 @@ static void addTestOnlyAttrCallbacks() {
                                        const std::string& prev_attr_val,
                                        cobalt::dom::Element& elem) {
       printf("called addAttrCallback v-test-attr-val\n");
-      //attrValues[] = "color:#CCC;";
-      /*auto it = attrVarsToValues.find("v-test-attr-val");
-      if (it != attrVarsToValues.end()) {
-        return it->second;
-      }*/
-
-      //elem.AddObserver(relay_on_load_event_.get());
-
-      /*cobalt::dom::ErrorEventInit error_event_init;
-      error_event_init.set_message("Script error.");
-      scoped_refptr<cobalt::dom::ErrorEvent> error_event(
-        new cobalt::dom::ErrorEvent(base::Tokens::error(), error_event_init));
-      elem.DispatchEvent(error_event);
-
-      elem.SetAttributeEventListener(base::Tokens::error(), elem);
-      //elem.AddEventListener(base::Tokens::error(), elem);*/
 
       return std::string("color:#CCC;");
     }, base::ToLowerASCII("v-test-attr-val"));
 
-    cobalt::dom::customizer::create(newCustomToken);
+    cobalt::dom::customizer::create_attr(newCustomToken);
   }
 
   {
-    std::shared_ptr<CustomTokenToObservers> newCustomToken =
-      std::make_shared<CustomTokenToObservers>([](const std::string& custom_token,
+    auto mousemoveCb = [](const std::string& custom_token,
                                        const std::string& prev_attr_name_lower,
                                        const std::string& prev_attr_val,
                                        cobalt::dom::Element& elem) {
-      printf("called addAttrCallback %s %s %s\n",
+      printf("called addAttrCallback mousemove %s %s %s\n",
         custom_token.c_str(), prev_attr_name_lower.c_str(), prev_attr_val.c_str());
 
-      auto it = hoverCallbacks.find(prev_attr_val);
-
-      if(it != hoverCallbacks.end()) {
-        cobalt::dom::Element::HoverCallback hover_cb = it->second;
-        elem.set_hover_cb(hover_cb);
-      } else {
-        DCHECK(false) << "WARNING: can`t find callback for" << prev_attr_val;
+      {
+        auto it = eventCallbacks.find(prev_attr_val);
+        if(it != eventCallbacks.end()) {
+          cobalt::dom::EventCallback mousemove_cb = it->second;
+          // TODO: remove_event_cb ?
+          elem.add_event_cb(custom_token, mousemove_cb);
+        } else {
+          DCHECK(false) << "WARNING: can`t find callback for" << prev_attr_val;
+        }
       }
 
-      /*OnHoverCb hover_cb = []() {
-        printf("hovered\n");
-      };
+      return custom_token;
+    };
 
-      elem.add_on_hover_cb();*/
+    std::shared_ptr<CustomTokenToObservers> mousemoveToken =
+      std::make_shared<CustomTokenToObservers>(mousemoveCb, base::ToLowerASCII("on-mousemove"));
 
-      return prev_attr_val;
-    }, base::ToLowerASCII("on-hover"));
+    cobalt::dom::customizer::create_attr(mousemoveToken);
 
-    cobalt::dom::customizer::create(newCustomToken);
+    cobalt::dom::customizer::pair_event_to_attr("on-mouseleave",
+      [](const scoped_refptr<dom::Event> &event,
+          const cobalt::dom::Element* elem, const std::string& attrVal) {
+        const dom::PointerEvent* const pointerEvent =
+          base::polymorphic_downcast<const dom::PointerEvent* const>(event.get());
+        const dom::MouseEvent* const mouseEvent =
+          base::polymorphic_downcast<const dom::MouseEvent* const>(event.get());
+        CHECK(pointerEvent || mouseEvent);
+        float x = pointerEvent ? pointerEvent->x() : mouseEvent->x();
+        float y = pointerEvent ? pointerEvent->y() : mouseEvent->y();
+        printf("mouseleave at (%f;%f) event %s for tag: %s, "
+               "attrVal: %s, text_content: %s\n",
+                x,
+                y,
+                event->type().c_str(),
+                elem->tag_name().c_str(),
+                attrVal.c_str(),
+                elem->text_content().value_or("").c_str());
+      });
   }
 }
 #endif // ENABLE_COBALT

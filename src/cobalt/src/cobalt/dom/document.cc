@@ -582,12 +582,6 @@ void Document::SetIndicatedElement(HTMLElement* indicated_element) {
     } else {
       indicated_element_.reset();
     }
-
-    // not in spec
-    Element::HoverCallback hover_cb = indicated_element_->get_hover_cb();
-    if(hover_cb) {
-      hover_cb(indicated_element_);
-    }
   }
 }
 
@@ -727,8 +721,6 @@ void Document::OnTypefaceLoadEvent() {
 
 void Document::OnElementInlineStyleMutation() {
   is_computed_style_dirty_ = true;
-
-  //return; /// TODO
 
   RecordMutation();
 }

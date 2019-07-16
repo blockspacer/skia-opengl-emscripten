@@ -16,6 +16,8 @@
 #define COBALT_DOM_ELEMENT_H_
 
 #include <string>
+#include <set>
+#include <functional>
 
 //#include "base/containers/hash_tables.h"
 #include <map>
@@ -50,55 +52,9 @@ class HTMLElementContext;
 class NamedNodeMap;
 class Element;
 
-/*namespace events {
-  class HoverEventObservers {
-   public:
+typedef std::function<void(base::WeakPtr<cobalt::dom::HTMLElement> elem)> HoverCallback;
 
-    class HoverObserver : public base::CheckedObserver {
-     public:
-      virtual void OnMutation(const Element* elem) = 0;
-
-     protected:
-      virtual ~HoverObserver() {}
-    };
-
-    explicit HoverEventObservers(
-        const HoverCallback& hover_cb_,
-        const Element* elem);
-
-    HoverCallback hover_cb() const {
-      return hover_cb_;
-    }
-
-    const Element* element() const {
-      return element_;
-    }
-
-    void SetCustomValue(const std::string& value);
-
-    void AddObserver(HoverObserver* observer) { observer_list_.AddObserver(observer); }
-
-    void RemoveObserver(HoverObserver* observer) {
-      observer_list_.RemoveObserver(observer);
-    }
-
-    bool HasObserver(HoverObserver* observer) const {
-      return observer_list_.HasObserver(observer);
-    }
-
-    void ClearObservers() { observer_list_.Clear(); }
-
-   private:
-    void RecordMutation();
-
-    // TODO: check if need ObserverListThreadSafe here
-    base::ObserverList<HoverObserver> observer_list_;
-
-    const Element* element_;
-
-    HoverCallback hover_cb_;
-  };
-}*/
+typedef std::function<void(const scoped_refptr<dom::Event> &event, const cobalt::dom::Element* elem, const std::string& attrVal)> EventCallback;
 
 namespace customizer {
   class CustomTokenToObservers;
@@ -106,21 +62,23 @@ namespace customizer {
   typedef std::function<std::string(const std::string&, const std::string&,
     const std::string&, cobalt::dom::Element& elem)> AttrLoadedCallback;
 
-  void create(std::shared_ptr<CustomTokenToObservers> customAttributeToObservers);
+  void pair_event_to_attr(const std::string& event_name, EventCallback cb);
 
-  void create(const std::string& token, const std::string& initial_value);
+  void create_attr(std::shared_ptr<CustomTokenToObservers> customAttributeToObservers);
+
+  void create_attr(const std::string& token, const std::string& initial_value);
 
   //std::map<std::string, std::shared_ptr<CustomAttributeToObservers>>::iterator getAttrWithCallbacks(const std::string& key);
 
   std::shared_ptr<CustomTokenToObservers> getCustomTokenToObservers(const std::string& token);
 
-  void set_prefix(const std::string& val);
+  void set_attr_prefix(const std::string& val);
 
-  void set_suffix(const std::string& val);
+  void set_attr_suffix(const std::string& val);
 
-  bool set(const std::string& key, const std::string& val);
+  bool set_attr(const std::string& key, const std::string& val);
 
-  base::Optional<std::string> get(const std::string& key);
+  base::Optional<std::string> get_attr(const std::string& key);
 
   class CustomTokenToObservers {
    public:
@@ -243,7 +201,11 @@ namespace customizer {
 //   https://www.w3.org/TR/2014/WD-dom-20140710/#interface-element
 class Element : public Node {
  public:
-  typedef std::function<void(base::WeakPtr<cobalt::dom::HTMLElement> elem)> HoverCallback;
+  //typedef std::pair<std::string, std::string> StringPair;
+
+  /// \note sorted using lexical comparison,
+  /// comparing only first elements to prevent key duplication
+  //typedef std::set<StringPair, std::function<bool(StringPair, StringPair)>> key_set;
 
   // NOTE1: The array size of base::small_map and the decision to use
   // base::hash_map as the underlying container type are based on extensive
@@ -260,11 +222,11 @@ class Element : public Node {
   explicit Element(Document* document);
   Element(Document* document, base::CobToken local_name);
 
-  void set_hover_cb(HoverCallback cb) {
-    hover_cb_ = cb;
-  }
+  bool DispatchEvent(const scoped_refptr<Event>& event) override;
 
-  Element::HoverCallback get_hover_cb() const;
+  void add_event_cb(const std::string& custom_token, EventCallback cb);
+
+  base::Optional<EventCallback> get_event_cb(const std::string &custom_token);
 
   // Web API: Node
   //
@@ -304,9 +266,11 @@ class Element : public Node {
   bool HasAttribute(const std::string& name) const;
 
   // not in spec
-  void AppendToAttribute(const std::string &name, const std::string &value,
-    const bool needToMergeKeys = true);
+  void AppendToAttribute(const std::string &name, const std::string &value/*,
+    const bool needToMergeKeys = true*/);
   void AppendStyle(const std::string &value);
+
+  bool HandleCustomEvent(const scoped_refptr<dom::Event>& event);
 
   base::Optional<std::string> GetAttributeNS(const std::string& namespace_uri,
                                              const std::string& name) const;
@@ -401,8 +365,10 @@ class Element : public Node {
   DEFINE_WRAPPABLE_TYPE(Element);
   void TraceMembers(script::Tracer* tracer) override;
 
- protected:
+protected:
   ~Element() override;
+
+  //static std::function<bool(StringPair, StringPair)> key_comp;
 
   // Getting and setting boolean attribute.
   //   https://www.w3.org/TR/html5/infrastructure.html#boolean-attribute
@@ -414,7 +380,9 @@ class Element : public Node {
   HTMLElementContext* html_element_context();
 
  private:
-  std::map<std::string, std::shared_ptr<customizer::CustomElementToken>> custom_attributes;
+  /*void RegenAttrPairs(const std::string &key, const std::string &val);
+
+  void ClearAttrPairs(const std::string &key);*/
 
   // From EventTarget.
   std::string GetDebugName() override;
@@ -431,6 +399,9 @@ class Element : public Node {
 
   // Callback for error when parsing inner / outer HTML.
   void HTMLParseError(const std::string& error);
+
+  std::map<std::string, std::shared_ptr<customizer::CustomElementToken>>
+    custom_attributes_;
 
   // Local name of the element.
   base::CobToken local_name_;
@@ -453,7 +424,9 @@ class Element : public Node {
   // List of document observers.
   ///base::ObserverList<HoverObserver> hover_observers_;
 
-  HoverCallback hover_cb_;
+  std::map<std::string, EventCallback> eventCallbacks_;
+
+  //std::map<std::string, key_set> attrToCachedSet_;
 };
 
 }  // namespace dom
