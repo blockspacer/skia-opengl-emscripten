@@ -1195,10 +1195,10 @@ static int browser_height = height;//10000;
 #include "renderer_stub/backend/default_graphics_system.h"
 #include "renderer_stub/backend/graphics_system_stub.h"
 
-#include "block_level_input_box.h"
-#include "inline_level_input_box.h"
-#include "input_box.h"
-#include "input_node.h"
+#include "extended_html/input_box/block_level_input_box.h"
+#include "extended_html/input_box/inline_level_input_box.h"
+#include "extended_html/input_box/input_box.h"
+#include "extended_html/input_box/input_node.h"
 
 typedef base::Callback<void(const cobalt::layout::LayoutManager::LayoutResults&)>
     OnRenderTreeProducedCallback;

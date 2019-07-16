@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "input_box.h"
+#include "extended_html/input_box/input_box.h"
 
 #include <algorithm>
 #include <memory>

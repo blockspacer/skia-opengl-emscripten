@@ -26,7 +26,7 @@
 #include "cobalt/math/size_f.h"
 #include "cobalt/render_tree/image.h"
 
-#include "input_node.h"
+#include "extended_html/input_box/input_node.h"
 
 namespace cobalt {
 namespace layout {

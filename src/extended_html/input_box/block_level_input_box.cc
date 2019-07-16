@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "block_level_input_box.h"
+#include "extended_html/input_box/block_level_input_box.h"
 
 #include "cobalt/layout/used_style.h"
 #include "cobalt/math/size_f.h"

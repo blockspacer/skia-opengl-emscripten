@@ -12,14 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "input_node.h"
+#include "extended_html/input_box/input_node.h"
 
 #include "cobalt/render_tree/node_visitor.h"
 
 #include "cobalt/base/polymorphic_downcast.h"
 
 #include "renderer_stub/rasterizer/skia/render_tree_node_visitor.h"
-
 
 namespace cobalt {
 namespace render_tree {

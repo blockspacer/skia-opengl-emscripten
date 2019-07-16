@@ -1945,14 +1945,14 @@ list(APPEND PROJECT_SRC
 if(ENABLE_COBALT)
   list(APPEND PROJECT_SRC
     src/render_tree_combiner.cc
-    src/block_level_input_box.cc
-    src/block_level_input_box.h
-    src/inline_level_input_box.cc
-    src/inline_level_input_box.h
-    src/input_box.cc
-    src/input_box.h
-    src/input_node.cc
-    src/input_node.h
+    src/extended_html/input_box/block_level_input_box.cc
+    src/extended_html/input_box/block_level_input_box.h
+    src/extended_html/input_box/inline_level_input_box.cc
+    src/extended_html/input_box/inline_level_input_box.h
+    src/extended_html/input_box/input_box.cc
+    src/extended_html/input_box/input_box.h
+    src/extended_html/input_box/input_node.cc
+    src/extended_html/input_box/input_node.h
   )
 endif(ENABLE_COBALT)
 
@@ -2198,7 +2198,7 @@ if(TARGET_EMSCRIPTEN)
   target_include_directories(${PROJECT_NAME} PRIVATE
     ${GEN_COMBINED_DIR}
     ${COBALT_COMMON_INCLUDES}
-    #${CMAKE_CURRENT_SOURCE_DIR}/src # to ./cobalt
+    ${CMAKE_CURRENT_SOURCE_DIR}/src
   )
   # link order is top down:
   # Top is the executable, followed by directly used libraries.
@@ -2304,7 +2304,7 @@ else()
   target_include_directories(${PROJECT_NAME} PRIVATE
     ${GEN_COMBINED_DIR}
     ${COBALT_COMMON_INCLUDES}
-    #${CMAKE_CURRENT_SOURCE_DIR}/src # to ./cobalt
+    ${CMAKE_CURRENT_SOURCE_DIR}/src
   )
   # link order is top down:
   # Top is the executable, followed by directly used libraries.
