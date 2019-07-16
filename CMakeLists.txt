@@ -983,6 +983,9 @@ if(ENABLE_SKOTTIE)
 endif(ENABLE_SKOTTIE)
 
 if(TARGET_EMSCRIPTEN)
+  # "#window" deprecated, use EMSCRIPTEN_EVENT_TARGET_WINDOW in new versions
+  set(USE_DEPRECATED_FIND_EVENT_TARGET TRUE)
+
   # https://github.com/emscripten-core/emscripten/pull/7977
   # https://github.com/emscripten-ports/SDL2/pull/75
   # (new since 1.38.27) — leads to minor code size savings
@@ -992,7 +995,12 @@ if(TARGET_EMSCRIPTEN)
   if ("${EMSCRIPTEN_VERSION}" VERSION_GREATER 1.38.27)
     # see https://github.com/emscripten-core/emscripten/blob/incoming/ChangeLog.md#v13827-02102019
     set(EMCC_COMMON "${EMCC_COMMON} -s DISABLE_DEPRECATED_FIND_EVENT_TARGET_BEHAVIOR=0")
+    set(USE_DEPRECATED_FIND_EVENT_TARGET FALSE)
   endif()
+
+  if(USE_DEPRECATED_FIND_EVENT_TARGET)
+    list(APPEND APP_DEFINITIONS USE_DEPRECATED_FIND_EVENT_TARGET=1)
+  endif(USE_DEPRECATED_FIND_EVENT_TARGET)
 
   set(EMCC_COMMON "${EMCC_COMMON} -DTARGET_EMSCRIPTEN")
   #

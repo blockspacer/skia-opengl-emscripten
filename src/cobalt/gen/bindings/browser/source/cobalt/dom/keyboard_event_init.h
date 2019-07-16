@@ -46,6 +46,7 @@ class KeyboardEventInit : public cobalt::dom::EventModifierInit {
     is_composing_ = false;
     char_code_ = 0;
     key_code_ = 0;
+    keysym_ = 0;
     which_ = 0;
   }
 
@@ -58,6 +59,7 @@ class KeyboardEventInit : public cobalt::dom::EventModifierInit {
     is_composing_ = other.is_composing_;
     char_code_ = other.char_code_;
     key_code_ = other.key_code_;
+    keysym_ = other.keysym_;
     which_ = other.which_;
   }
 
@@ -70,6 +72,7 @@ class KeyboardEventInit : public cobalt::dom::EventModifierInit {
     is_composing_ = other.is_composing_;
     char_code_ = other.char_code_;
     key_code_ = other.key_code_;
+    keysym_ = other.keysym_;
     which_ = other.which_;
     return *this;
   }
@@ -144,6 +147,17 @@ class KeyboardEventInit : public cobalt::dom::EventModifierInit {
     key_code_ = value;
   }
 
+
+  bool has_keysym() const {
+    return true;
+  }
+  wchar_t keysym() const {
+    return keysym_;
+  }
+  void set_keysym(int32_t keysym) {
+    keysym_ = keysym;
+  }
+
   bool has_which() const {
     return true;
   }
@@ -163,6 +177,10 @@ class KeyboardEventInit : public cobalt::dom::EventModifierInit {
   bool is_composing_;
   uint32_t char_code_;
   uint32_t key_code_;
+
+  // not in spec
+  int32_t keysym_;
+
   uint32_t which_;
 };
 

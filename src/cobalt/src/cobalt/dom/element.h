@@ -54,7 +54,8 @@ class Element;
 
 typedef std::function<void(base::WeakPtr<cobalt::dom::HTMLElement> elem)> HoverCallback;
 
-typedef std::function<void(const scoped_refptr<dom::Event> &event, const cobalt::dom::Element* elem, const std::string& attrVal)> EventCallback;
+typedef std::function<void(const scoped_refptr<dom::Event> &event,
+  scoped_refptr<cobalt::dom::Element>, const std::string& attrVal)> EventCallback;
 
 namespace customizer {
   class CustomTokenToObservers;
@@ -63,6 +64,9 @@ namespace customizer {
     const std::string&, cobalt::dom::Element& elem)> AttrLoadedCallback;
 
   void pair_event_to_attr(const std::string& event_name, EventCallback cb);
+
+  void pair_event_to_attr(const std::string &attr_name,
+    const std::string &attr_event_name, EventCallback cb);
 
   void create_attr(std::shared_ptr<CustomTokenToObservers> customAttributeToObservers);
 

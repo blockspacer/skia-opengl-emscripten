@@ -31,6 +31,7 @@ KeyboardEvent::KeyboardEvent(const std::string& type)
     : UIEventWithKeyState(base::CobToken(type), kBubbles, kCancelable, NULL),
       key_location_(kDomKeyLocationStandard),
       key_code_(0),
+      keysym_(0),
       char_code_(0),
       repeat_(false) {}
 
@@ -41,6 +42,7 @@ KeyboardEvent::KeyboardEvent(const std::string& type,
                           init_dict.view(), init_dict),
       key_location_(static_cast<KeyLocationCode>(init_dict.location())),
       key_code_(init_dict.key_code()),
+      keysym_(init_dict.keysym()),
       char_code_(init_dict.char_code()),
       repeat_(init_dict.repeat()) {}
 
@@ -50,6 +52,7 @@ KeyboardEvent::KeyboardEvent(base::CobToken type,
     : UIEventWithKeyState(type, kBubbles, kCancelable, view, init_dict),
       key_location_(static_cast<KeyLocationCode>(init_dict.location())),
       key_code_(init_dict.key_code()),
+      keysym_(init_dict.keysym()),
       char_code_(init_dict.char_code()),
       repeat_(init_dict.repeat()) {}
 
@@ -57,6 +60,7 @@ KeyboardEvent::KeyboardEvent(UninitializedFlag uninitialized_flag)
     : UIEventWithKeyState(uninitialized_flag),
       key_location_(kDomKeyLocationStandard),
       key_code_(0),
+      keysym_(0),
       char_code_(0),
       repeat_(false) {}
 

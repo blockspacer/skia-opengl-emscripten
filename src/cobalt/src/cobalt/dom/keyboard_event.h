@@ -68,6 +68,10 @@ class KeyboardEvent : public UIEventWithKeyState {
   uint32 key_code() const;
   uint32 char_code() const;
 
+  wchar_t keysym() const {
+    return keysym_;
+  }
+
   // Web API: UIEvent
   // This holds a system- and implementation-dependent numerical code signifying
   // the unmodified identifier associated with the key pressed. In most cases,
@@ -100,6 +104,10 @@ class KeyboardEvent : public UIEventWithKeyState {
 
   KeyLocationCode key_location_;
   uint32_t key_code_;
+
+  // not in spec
+  int32_t keysym_;
+
   uint32_t char_code_;
   bool repeat_;
 };

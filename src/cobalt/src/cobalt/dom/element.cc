@@ -389,28 +389,37 @@ namespace customizer {
     return res;
   }
 
-  void pair_event_to_attr(const std::string &event_name, EventCallback cb)
+  void pair_event_to_attr(const std::string &attr_name,
+    const std::string &attr_event_name, EventCallback cb)
   {
-    auto wrapperCb = [cb](const std::string& custom_token,
+    auto wrapperCb = [cb, attr_event_name](const std::string& custom_token_cleaned_original,
                                        const std::string& prev_attr_name_lower,
                                        const std::string& prev_attr_val,
                                        cobalt::dom::Element& elem) {
-      /*printf("called pair_event_to_attr %s %s %s\n",
-        custom_token.c_str(), prev_attr_name_lower.c_str(), prev_attr_val.c_str());*/
+      //printf("called pair_event_to_attr %s %s %s\n",
+      //  custom_token_cleaned_original.c_str(), prev_attr_name_lower.c_str(), prev_attr_val.c_str());
 
       DCHECK(cb);
-      elem.add_event_cb(custom_token, cb);
+      elem.add_event_cb(attr_event_name, cb);
 
-      return custom_token;
+      return attr_event_name;
     };
 
-    CHECK(base::ToLowerASCII(event_name) == event_name)
-      << "custom event must be lowercase: " << event_name;
+    CHECK(base::ToLowerASCII(attr_name) == attr_name)
+      << "custom attribute must be lowercase: " << attr_name;
+
+    CHECK(base::ToLowerASCII(attr_event_name) == attr_event_name)
+      << "custom event must be lowercase: " << attr_event_name;
 
     std::shared_ptr<CustomTokenToObservers> token =
-      std::make_shared<CustomTokenToObservers>(wrapperCb, event_name);
+      std::make_shared<CustomTokenToObservers>(wrapperCb, attr_name);
 
     cobalt::dom::customizer::create_attr(token);
+  }
+
+  void pair_event_to_attr(const std::string &event_name, EventCallback cb)
+  {
+    pair_event_to_attr(event_name, event_name, cb);
   }
 
 } // namespace customizer
@@ -558,6 +567,8 @@ Element::Element(Document* document, base::CobToken local_name)
 
 bool Element::DispatchEvent(const scoped_refptr<Event> &event)
 {
+  //printf("Element DispatchEvent %s\n", event->type().c_str());
+
   HandleCustomEvent(event);
 
   return Node::DispatchEvent(event);
@@ -577,7 +588,7 @@ void Element::add_event_cb(const std::string &custom_token, EventCallback cb)
   const std::string to_event_name = custom_token.substr(custom_event_prefix.length(), custom_token.length());
   eventCallbacks_[to_event_name] = cb;
 
-  //printf("added event callback for %s into %s (text_content = %s)\n", to_event_name.c_str(), tag_name().c_str(), text_content().value_or("").c_str());
+  printf("added event callback for %s into %s (text_content = %s)\n", to_event_name.c_str(), tag_name().c_str(), text_content().value_or("").c_str());
 }
 
 base::Optional<EventCallback> Element::get_event_cb(const std::string &custom_token)
@@ -874,6 +885,7 @@ void Element::AppendStyle(const std::string& value) {
 bool Element::HandleCustomEvent(const scoped_refptr<dom::Event> &event)
 {
   //printf("Element::HandleCustomEvent type %s on tag %s\n", event->type().c_str(), tag_name().c_str());
+
   std::string eventAttrKey;
   //eventToHandlerKey += custom_attr_prefix;
   eventAttrKey += custom_event_prefix;

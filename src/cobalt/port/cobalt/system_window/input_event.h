@@ -60,7 +60,7 @@ class InputEvent : public base::Event {
   };
 
   InputEvent(SbTimeMonotonic timestamp, Type type, int device_id, int key_code,
-             uint32 modifiers, bool is_repeat,
+             int32_t keysym, uint32 modifiers, bool is_repeat,
              const math::PointF& position = math::PointF(),
              const math::PointF& delta = math::PointF()
 #if SB_API_VERSION >= 6
@@ -77,6 +77,7 @@ class InputEvent : public base::Event {
         type_(type),
         device_id_(device_id),
         key_code_(key_code),
+        keysym_(keysym),
         modifiers_(modifiers),
         is_repeat_(is_repeat),
         position_(position),
@@ -100,6 +101,7 @@ class InputEvent : public base::Event {
   SbTimeMonotonic timestamp() const { return timestamp_; }
   Type type() const { return type_; }
   int key_code() const { return key_code_; }
+  int32_t keysym() const { return keysym_; }
   int device_id() const { return device_id_; }
   uint32 modifiers() const { return modifiers_; }
   bool is_repeat() const { return is_repeat_; }
@@ -122,6 +124,10 @@ class InputEvent : public base::Event {
   Type type_;
   int device_id_;
   int key_code_;
+
+  // not in spec
+  int32_t keysym_;
+
   uint32 modifiers_;
   bool is_repeat_;
   math::PointF position_;

@@ -161,7 +161,7 @@ void SystemWindow::DispatchInputEvent(const SbInputData& data,
 
 #if SB_HAS(ON_SCREEN_KEYBOARD)
   std::unique_ptr<InputEvent> input_event(
-      new InputEvent(timestamp, type, data.device_id, key_code, modifiers,
+      new InputEvent(timestamp, type, data.device_id, key_code, data.keysym, modifiers,
                      is_repeat, math::PointF(data.position.x, data.position.y),
                      math::PointF(data.delta.x, data.delta.y), pressure,
                      math::PointF(data.size.x, data.size.y),
@@ -170,7 +170,7 @@ void SystemWindow::DispatchInputEvent(const SbInputData& data,
                      data.is_composing ? data.is_composing : false));
 #else   // SB_HAS(ON_SCREEN_KEYBOARD)
   std::unique_ptr<InputEvent> input_event(
-      new InputEvent(timestamp, type, data.device_id, key_code, modifiers,
+      new InputEvent(timestamp, type, data.device_id, key_code, data.keysym, modifiers,
                      is_repeat, math::PointF(data.position.x, data.position.y),
                      math::PointF(data.delta.x, data.delta.y), pressure,
                      math::PointF(data.size.x, data.size.y),
@@ -238,8 +238,6 @@ void SystemWindow::HandlePointerInputEvent(const SbInputData& data) {
 }
 
 void SystemWindow::HandleInputEvent(const SbInputData& data) {
-  ///printf("SystemWindow::HandleInputEvent\n");
-
   DCHECK_EQ(window_, data.window);
   // Handle supported pointer device types.
   if ((kSbInputDeviceTypeMouse == data.device_type) ||
@@ -252,11 +250,13 @@ void SystemWindow::HandleInputEvent(const SbInputData& data) {
   // Handle all other input device types.
   switch (data.type) {
     case kSbInputEventTypePress: {
+      printf("SystemWindow::HandleInputEvent kSbInputEventTypePress\n");
       DispatchInputEvent(data, InputEvent::kKeyDown, key_down_);
       key_down_ = true;
       break;
     }
     case kSbInputEventTypeUnpress: {
+      printf("SystemWindow::HandleInputEvent kSbInputEventTypeUnpress\n");
       DispatchInputEvent(data, InputEvent::kKeyUp, false /* is_repeat */);
       key_down_ = false;
       break;

@@ -179,6 +179,9 @@ typedef struct SbInputData {
   // is no corresponding character.
   wchar_t character;
 
+  // not in spec
+  int32_t keysym;
+
   // The location of the specified key, in cases where there are multiple
   // instances of the button on the keyboard. For example, some keyboards have
   // more than one "shift" key.

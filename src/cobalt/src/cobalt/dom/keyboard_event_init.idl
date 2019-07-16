@@ -25,4 +25,6 @@ dictionary KeyboardEventInit : EventModifierInit {
   unsigned long charCode = 0;
   unsigned long keyCode = 0;
   unsigned long which = 0;
+
+  int32_t keysym = 0;
 };

@@ -634,7 +634,7 @@ bool Window::HasPendingAnimationFrameCallbacks() const {
 }
 
 void Window::InjectEvent(const scoped_refptr<Event>& event) {
-  ///printf("Window::InjectEvent\n");
+  printf("Window::InjectEvent %s\n", event->type().c_str());
 
   TRACE_EVENT1("cobalt::dom", "Window::InjectEvent()", "event",
                event->type().c_str());
