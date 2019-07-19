@@ -26,7 +26,9 @@
 #include "cobalt/loader/image/png_image_decoder.h"
 #endif
 #include "cobalt/loader/image/stub_image_decoder.h"
+#if defined(ENABLE_LIBWEBP)
 #include "cobalt/loader/image/webp_image_decoder.h"
+#endif // ENABLE_LIBWEBP
 #include "cobalt/loader/switches.h"
 
 #if defined(ENABLE_GNET)
@@ -341,9 +343,11 @@ std::unique_ptr<ImageDataDecoder> CreateImageDecoderFromImageType(
     return std::unique_ptr<ImageDataDecoder>(
         new PNGImageDecoder(resource_provider));
 #endif
+#if defined(ENABLE_LIBWEBP)
   } else if (image_type == ImageDecoder::kImageTypeWebP) {
     return std::unique_ptr<ImageDataDecoder>(
-        new WEBPImageDecoder(resource_provider));
+      new WEBPImageDecoder(resource_provider));
+#endif // ENABLE_LIBWEBP
   } else if (image_type == ImageDecoder::kImageTypeGIF) {
     return std::unique_ptr<ImageDataDecoder>(
         new DummyGIFImageDecoder(resource_provider));

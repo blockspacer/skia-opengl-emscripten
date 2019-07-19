@@ -262,6 +262,8 @@ void HTMLElement::Focus() {
 // Algorithm for Blur:
 //   https://www.w3.org/TR/html5/editing.html#dom-blur
 void HTMLElement::Blur() {
+  //printf("HTMLElement::Blur\n");
+
   // The blur() method, when invoked, should run the unfocusing steps for the
   // element on which the method was called instead. User agents may selectively
   // or uniformly ignore calls to this method for usability reasons.
@@ -932,10 +934,14 @@ void HTMLElement::InvalidateLayoutBoxes() {
 }
 
 void HTMLElement::OnUiNavBlur() {
+  // printf("HTMLElement::OnUiNavBlur\n");
+
   Blur();
 }
 
 void HTMLElement::OnUiNavFocus() {
+  //printf("HTMLElement::OnUiNavFocus()\n");
+
   // Ensure the focusing steps do not trigger the UI navigation item to
   // force focus again.
   scoped_refptr<ui_navigation::NavItem> temp_item = ui_nav_item_;
@@ -945,7 +951,8 @@ void HTMLElement::OnUiNavFocus() {
 }
 
 void HTMLElement::OnUiNavScroll() {
-  printf("HTMLElement::OnUiNavScroll\n");
+  //printf("HTMLElement::OnUiNavScroll\n");
+
   Document* document = node_document();
   scoped_refptr<Window> window(document ? document->window() : nullptr);
   DispatchEvent(new UIEvent(base::Tokens::scroll(),
@@ -1004,6 +1011,8 @@ void HTMLElement::OnInsertedIntoDocument() {
 }
 
 void HTMLElement::OnRemovedFromDocument() {
+  // printf("HTMLElement::OnRemovedFromDocument()\n");
+
   Node::OnRemovedFromDocument();
   dom_stat_tracker_->OnHtmlElementRemovedFromDocument();
 
@@ -1086,7 +1095,8 @@ bool HTMLElement::IsBeingRendered() {
 // Algorithm for RunFocusingSteps:
 //   https://www.w3.org/TR/html5/editing.html#focusing-steps
 void HTMLElement::RunFocusingSteps() {
-  printf("HTMLElement::RunFocusingSteps()\n");
+  // printf("HTMLElement::RunFocusingSteps()\n");
+
   // 1. If the element is not in a Document, or if the element's Document has
   // no browsing context, or if the element's Document's browsing context has no
   // top-level browsing context, or if the element is not focusable, or if the
@@ -1144,6 +1154,8 @@ void HTMLElement::RunFocusingSteps() {
 // Algorithm for RunUnFocusingSteps:
 //   https://www.w3.org/TR/html5/editing.html#unfocusing-steps
 void HTMLElement::RunUnFocusingSteps() {
+  // printf("HTMLElement::RunUnFocusingSteps()\n");
+
   // 1. Not needed by Cobalt.
 
   // focusout: A user agent MUST dispatch this event when an event target is
@@ -1159,6 +1171,7 @@ void HTMLElement::RunUnFocusingSteps() {
 
   // 2. Unfocus the element.
   if (document && document->active_element().get() == this->AsElement()) {
+    // printf("HTMLElement::RunUnFocusingSteps() Unfocus the element\n");
     document->SetActiveElement(NULL);
   }
 
@@ -1645,7 +1658,7 @@ void HTMLElement::UpdateUiNavigationType() {
 }
 
 void HTMLElement::RegisterUiNavigationParent() {
-  //printf("HTMLElement::RegisterUiNavigationParent()\n");
+  // printf("HTMLElement::RegisterUiNavigationParent()\n");
   if (!ui_nav_item_) {
     return;
   }

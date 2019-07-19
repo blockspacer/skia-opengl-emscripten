@@ -21,7 +21,10 @@
 #include "cobalt/renderer/test/jpeg_utils/jpeg_encode.h"
 #include "cobalt/renderer/test/png_utils/png_encode.h"
 #endif // ENABLE_COBALT_RENDERER_TEST
+
+#if defined(ENABLE_LIBWEBP)
 #include "third_party/libwebp/src/webp/encode.h"
+#endif // ENABLE_LIBWEBP
 
 namespace cobalt {
 namespace loader {

@@ -569,9 +569,7 @@ bool Element::DispatchEvent(const scoped_refptr<Event> &event)
 {
   //printf("Element DispatchEvent %s\n", event->type().c_str());
 
-  HandleCustomEvent(event);
-
-  return Node::DispatchEvent(event);
+  return Node::DispatchEvent(event) && HandleCustomEvent(event);;
 }
 
 void Element::add_event_cb(const std::string &custom_token, EventCallback cb)
@@ -588,13 +586,18 @@ void Element::add_event_cb(const std::string &custom_token, EventCallback cb)
   const std::string to_event_name = custom_token.substr(custom_event_prefix.length(), custom_token.length());
   eventCallbacks_[to_event_name] = cb;
 
-  printf("added event callback for %s into %s (text_content = %s)\n", to_event_name.c_str(), tag_name().c_str(), text_content().value_or("").c_str());
+  //printf("added event callback for %s into %s (text_content = %s)\n", to_event_name.c_str(), tag_name().c_str(), text_content().value_or("").c_str());
 }
 
-base::Optional<EventCallback> Element::get_event_cb(const std::string &custom_token)
+base::Optional<EventCallback> Element::get_event_cb(const std::string &key)
 {
-  auto it = eventCallbacks_.find(custom_token);
+  const std::string text_contents =
+    (tag_name() == "BODY" || tag_name() == "HTML")
+    ? "(BODY/HTML)" : text_content().value_or("").c_str();
+  //printf("get_event_cb %s into %s (text_contents = %s)\n", key.c_str(), tag_name().c_str(), text_contents.c_str());
+  auto it = eventCallbacks_.find(key);
   if (it == eventCallbacks_.end()) {
+    //printf("get_event_cb not found %s into %s\n", key.c_str(), tag_name().c_str());
     return base::nullopt;
   }
   return it->second;
@@ -896,12 +899,13 @@ bool Element::HandleCustomEvent(const scoped_refptr<dom::Event> &event)
 
   //if(!eventToCallbackName.empty()) {
   const base::Optional<EventCallback> cb = get_event_cb(event->type().c_str());
+  bool res = false;
   if(cb.has_value()) {
     DCHECK(cb.value());
-    cb.value()(event, this, attrVal);
+    res = cb.value()(event, this, attrVal);
   }
   //}
-  return false;
+  return res;
 }
 
 // Algorithm for SetAttribute:

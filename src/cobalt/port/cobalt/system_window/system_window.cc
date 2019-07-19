@@ -250,13 +250,13 @@ void SystemWindow::HandleInputEvent(const SbInputData& data) {
   // Handle all other input device types.
   switch (data.type) {
     case kSbInputEventTypePress: {
-      printf("SystemWindow::HandleInputEvent kSbInputEventTypePress\n");
+      //printf("SystemWindow::HandleInputEvent kSbInputEventTypePress\n");
       DispatchInputEvent(data, InputEvent::kKeyDown, key_down_);
       key_down_ = true;
       break;
     }
     case kSbInputEventTypeUnpress: {
-      printf("SystemWindow::HandleInputEvent kSbInputEventTypeUnpress\n");
+      //printf("SystemWindow::HandleInputEvent kSbInputEventTypeUnpress\n");
       DispatchInputEvent(data, InputEvent::kKeyUp, false /* is_repeat */);
       key_down_ = false;
       break;

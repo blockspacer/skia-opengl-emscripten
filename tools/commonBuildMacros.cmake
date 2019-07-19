@@ -44,6 +44,7 @@ macro(mkdir_with_rm_condition ARG_CLEAN ARG_MAKE_DIR ARG_WORKING_DIR)
   execute_process(
     COMMAND ${CMAKE_COMMAND} "-E" "make_directory" "${ARG_MAKE_DIR}"
     WORKING_DIRECTORY ${ARG_WORKING_DIR}
+    TIMEOUT 7200 # sec
     RESULT_VARIABLE retcode
     ERROR_VARIABLE _ERROR_VARIABLE
   )
@@ -66,6 +67,7 @@ macro(conditional_remove ARG_DO_REMOVE ARG_DIR ARG_WORKING_DIR)
       execute_process(
         COMMAND ${CMAKE_COMMAND} "-E" "remove_directory" "${ARG_DIR}"
         WORKING_DIRECTORY ${ARG_WORKING_DIR}
+        TIMEOUT 7200 # sec
       )
       colored_notify("removed old directory ${ARG_DIR}" --yellow --bold)
       if (EXISTS ${ARG_DIR})
@@ -75,6 +77,7 @@ macro(conditional_remove ARG_DO_REMOVE ARG_DIR ARG_WORKING_DIR)
       execute_process(
         COMMAND ${CMAKE_COMMAND} "-E" "remove" "${ARG_DIR}"
         WORKING_DIRECTORY ${ARG_WORKING_DIR}
+        TIMEOUT 7200 # sec
       )
       colored_notify("removed old file ${ARG_DIR}" --yellow --bold)
       if (EXISTS ${ARG_DIR})
@@ -99,6 +102,7 @@ macro(wasm_opt_metrics ARG_WASM_FILE_PATH ARG_DIR)
     ${COLORED_OUTPUT_ENABLER}
       ${EMSCRIPTEN_WASM_OPT} ${ARG_WASM_FILE_PATH} "--metrics"
     WORKING_DIRECTORY ${ARG_DIR}
+    TIMEOUT 7200 # sec
     RESULT_VARIABLE retcode
     ERROR_VARIABLE _ERROR_VARIABLE
   )

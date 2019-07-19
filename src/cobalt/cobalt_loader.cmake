@@ -62,7 +62,7 @@ set(cobalt_loader_origin_SOURCES
 #  '<(DEPTH)/third_party/libwebp/libwebp.gyp:libwebp',
 #  'embed_resources_as_header_files',
 #],
-set(cobalt_loader_SOURCES
+list(APPEND cobalt_loader_SOURCES
   ${COBALT_CORE_DIR}loader/blob_fetcher.cc
   ${COBALT_CORE_DIR}loader/blob_fetcher.h
   ${COBALT_CORE_DIR}loader/cobalt_url_fetcher_string_writer.cc
@@ -90,8 +90,6 @@ set(cobalt_loader_SOURCES
   ${COBALT_CORE_DIR}loader/font/typeface_decoder.h
   ${COBALT_CORE_DIR}loader/image/animated_image_tracker.cc
   ${COBALT_CORE_DIR}loader/image/animated_image_tracker.h
-  ${COBALT_CORE_DIR}loader/image/animated_webp_image.cc
-  ${COBALT_CORE_DIR}loader/image/animated_webp_image.h
   ${COBALT_CORE_DIR}loader/image/dummy_gif_image_decoder.cc
   ${COBALT_CORE_DIR}loader/image/dummy_gif_image_decoder.h
   ${COBALT_CORE_DIR}loader/image/image_cache.h
@@ -114,8 +112,18 @@ set(cobalt_loader_SOURCES
   ${COBALT_CORE_DIR}loader/image/stub_image_decoder.h
   ${COBALT_CORE_DIR}loader/image/threaded_image_decoder_proxy.cc
   ${COBALT_CORE_DIR}loader/image/threaded_image_decoder_proxy.h
-  ${COBALT_CORE_DIR}loader/image/webp_image_decoder.cc
-  ${COBALT_CORE_DIR}loader/image/webp_image_decoder.h
+)
+
+if(ENABLE_LIBWEBP)
+    list(APPEND cobalt_loader_SOURCES
+      ${COBALT_CORE_DIR}loader/image/webp_image_decoder.cc
+      ${COBALT_CORE_DIR}loader/image/webp_image_decoder.h
+      ${COBALT_CORE_DIR}loader/image/animated_webp_image.cc
+      ${COBALT_CORE_DIR}loader/image/animated_webp_image.h
+    )
+endif(ENABLE_LIBWEBP)
+
+list(APPEND cobalt_loader_SOURCES
   ${COBALT_CORE_DIR}loader/loader_factory.cc
   ${COBALT_CORE_DIR}loader/loader_factory.h
   ${COBALT_CORE_DIR}loader/loader_types.h
@@ -163,7 +171,7 @@ target_link_libraries(cobalt_loader PUBLIC
   icu
   ced
   glm
-  libwebp # requires libpng
+  ${WEBP_LIB} # requires libpng
   #${libjpeg_LIB}
   ${libjpeg_TURBO_LIB}
   #GLIBJPEG_TURBO

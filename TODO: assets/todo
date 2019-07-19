@@ -1,13 +1,19 @@
-﻿runtime DOM modification
+﻿links between pages
 runtime navigation (link href=file:///)
+native network & https
+REST API for WASM & native
+runtime navigation (link href=http:///)
+dynamic asset loading (wasm)
 multiple 3D "tabs"
 WASM ST: TODO: make file proxy async
 WASM ST: TODO: fix support of PostDelayedTask (allow delay)
 TODO: merge base from chromium & cobalt, merge build_config.h
-https://visualstudiomagazine.com/articles/2017/01/25/26-web-desktop-ui-tools.aspx
+web-desktop-ui-tools
+ > https://visualstudiomagazine.com/articles/2017/01/25/26-web-desktop-ui-tools.aspx
 https://github.com/LWJGL/lwjgl3/issues/101#issuecomment-289821751
 reduce std size https://blog.magnum.graphics/backstage/forward-declaring-stl-container-types/
-dom components
+smaller package size
+dom components (innerhtml)
 PDF support (PDFium)
 > https://github.com/flutter/flutter/issues/15406
 Video support
@@ -16,11 +22,37 @@ SIDE MODULE WASM: load the WASM module using the standard JavaScript APIs:
 runtime/compile-time feature enabler/disabler VISUAL TOOL & disable dom elements/widgets
 project creator VISUAL TOOL & assets viewer
 zipped file system support (native, not wasm)
-links between pages
+packaging / archivation on native (virtual FS)
 UI thread & WASM ST (don`t block UI!)
-REST API
 startup time
 load indicator without hangs (WASM ST)
+SPA constructor / landing page generator
+Split into smaller libs
+Alternative library for C++ (like base/WTF)
+ > https://github.com/markazmierczak/Polonite
+ > https://opensource.google.com/projects/search?q=language:c%2B%2B
+ > (UE4) https://github.com/save7502/youkyoung/tree/39dacb55c623b26b07544f1ea5a150c9e878ce23/Engine/Source/Runtime/Core/Public
+ > Boost
+ > http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2007/n2271.html
+ > (tensorflow) https://github.com/tensorflow/tensorflow/tree/master/tensorflow/core/lib
+ > https://github.com/fffaraz/awesome-cpp#frameworks
+ > IPC
+ > SharedMemory
+ > Language extentions (SugarCpp)
+ > C++ <-> JSON serialisation
+ > Lock-free data structures
+ > sigslot
+ > RxCpp
+ > abseil
+ > folly
+ > LibSourcey
+ > Type safety / Safe Numerics (overflow e.t.c.)
+   https://foonathan.net/blog/2016/10/11/type-safe.html
+   https://github.com/martinmoene/type-lite#other-implementations-of-strong-types
+ > docs & examples & tuts / articles
+simple expressions in dom attrs
+WIX
+PSD import / PSD to skia converter
 dom visual editor
  > https://designmodo.com/startup/
  > https://webflow.com/ecommerce
@@ -63,21 +95,26 @@ mobile UI & UX
  > https://play.google.com/store/apps/details?id=com.usablenet.mobile.walgreen&hl=en
  > https://ui8.net/products/wala
 animation editor a.k.a Spine
-LTR & RTL fonts
+ > https://github.com/search?q=Spine+godot
+LTR & RTL (RightToLeft) fonts
 dom node effects / shaders (flashlight e.t.c.)
-text Stroking / gradients / DrawLooper https://peach.oschina.io/post/c++_skia%E5%AD%A6%E4%B9%A0drawlooper/e.t.c.
-Zoom on wheel
-Settings / config sustem
-flexbox / yoga / QT Anchor Layout
+text Stroking / gradients / DrawLooper
+ > https://peach.oschina.io/post/c++_skia%E5%AD%A6%E4%B9%A0drawlooper/e.t.c.
+Zoom on wheel / ctrl+
+ > see Camera3D
+Settings / config system
+flexbox / css grid / yoga / QT Anchor Layout
  > https://github.com/flutter/flutter_web/blob/master/packages/flutter_web/lib/src/rendering/flex.dart
+css grid
+ > https://www.joomlashack.com/blog/tutorials/determining-the-size-of-the-tracks-in-css-grid/
+ > https://cloudfour.com/thinks/breaking-out-with-css-grid-layout/
 icon fonts: FontAwesome, Emoji, UTF symbols e.t.c.
-smaller package size
 timers on WASM ST
-native network & https
 faster build time
-dynamic asset loading (wasm)
 save data to native filesystem (wasm)
 hot reload & cling
+ > https://github.com/hfinkel/llvm-project-cxxjit/wiki
+ > https://arxiv.org/pdf/1904.08555.pdf
  > https://github.com/RuntimeCompiledCPlusPlus/RuntimeCompiledCPlusPlus/wiki/Alternatives
  > https://github.com/topcoder-platform/cpp-mm-scoring/blob/master/README.md#install-dependencies-notes-for-ubuntu
  > https://root.cern.ch/root/htmldoc/guides/users-guide/Cling.html
@@ -116,12 +153,11 @@ performance chart (browser dev tools)
 fix tests
 create benchmark
 godot support
-packaging / archivation on native (virtual FS)
 multiple tabs on same canvas / different 3D textures
 multiple canvases
 dom reactive bindings
 i18n & dynamic language switch & poedit support
-GPU (GLES2/WEBGL2) rendering
+GPU (GLES2/WEBGL2) dom rendering
 dynamic dom changes
 ui/views https://chromium.googlesource.com/chromium/src/+/master/docs/ui/views/overview.md
 widgets system (aka flutter clip shape/qt tabs/qt tree-table with Sort&Filter/qt Calendar/file tree/Color picker/text Completer e.t.c)
@@ -135,31 +171,40 @@ SCSS vars modifications in dev-tools / final app / app settings page
 theming system (aka material design e.t.c.) & designer/color/settings tool https://www.primefaces.org/designer-ng/
 scrollers
 custom dom elements/widgets as dom elements
-dom inputs
-dom hover/click/e.t.c events
+dom input elements
+input text filter pattern https://www.primefaces.org/primeng/#/keyfilter
 resize dom on window resize
 dom cache/reload only on changes
 repaint only on changes
-https://blog.kowalczyk.info/article/e4132d5a44014b2aad81d8158c803ad1/ideas
-https://blog.kowalczyk.info/article/86727062379748ca854aba0e328260a9/log-for-ideas.html
+ > https://blog.kowalczyk.info/article/e4132d5a44014b2aad81d8158c803ad1/ideas
+ > https://blog.kowalczyk.info/article/86727062379748ca854aba0e328260a9/log-for-ideas.html
+browser pause / suspend
+browser screenshot to static opengl texture
+WEBGL/GLES texture to skia texture
+in-browser dom to skia/webgl texture capturer
+in-browser text to texture
 windows support
 dialogs / popups & inner closable windows with own event propagation
 android support
+ > https://github.com/blockspacer/cpp-crossplatform-minimal-sample
 android market & payment support
 ios support
+ > https://github.com/blockspacer/cpp-crossplatform-minimal-sample
 ios market & payment support
 refactor
 docs
 CI & CD + Building and testing on multiple platforms https://blog.qt.io/blog/2019/06/04/introducing-minicoin/
 CSS extentions
-tuts portal
-slot system
-extended C++ & serialisation & IDE integration (aka https://github.com/curimit/SugarCpp)
-html dom <-> C++ transpiler
-JS lib a.k.a. google amp/react.js = html compatability layer
+tuts portal / community forum
+dev forum
+html dom <-> C++ transpiler (remove initial parsing step)
+html dom to C++ tranpiler (remove first interpretation)
+css to C++ tranpiler (remove first interpretation)
+JS lib a.k.a. google amp/react.js = html compatability layer (own JS framework for browser with WASM bindings)
 Multimedia: audio
 Multimedia: video
 asmdom support https://github.com/mbasso/asm-dom
+Graph/diagram system aka d3.js
 charts module & zoom/scroll/select & gantt chart aka https://doc.qt.io/qt-5/qtcharts-index.html
  > https://github.com/emweb/wt/blob/master/src/Wt/Chart/WAxisSliderWidget.C
  > https://www.reddit.com/r/cpp/comments/b2yryh/decent_charts_library_that_is_not_qt/
@@ -193,27 +238,25 @@ Pictorials (Any SVG path can be used as a shape for your chart)
 css chart styling & html tooltips / labels
 audio waveforms e.t.c. https://docs.juce.com/master/tutorial_audio_thumbnail.html
 accessibility / screen reader / Color Blindness / e.t.c.
-PickList https://www.primefaces.org/primeng/#/picklist
+dom keyboard navigation (focus on tab, arrows, ESC)
+PickList (table widget) https://www.primefaces.org/primeng/#/picklist
 Camera support
 Mobile widgets https://blog.qt.io/blog/2017/06/14/mobile-app-development-qt-part-1-top-considerations-choosing-app-development-framework/
 event Calendar https://www.primefaces.org/primeng/#/fullcalendar
-Lazy Loading
+asset Lazy Loading
  > https://css-tricks.com/snippets/javascript/lazy-loading-images/
+component (innerhtml) Lazy Loading
 Skia based image editor (vector/raster/pixel art) https://blog.qt.io/blog/2018/03/06/slate-basic-pixel-art-editor-built-qt-quick/
 Atlas fonts & Distance Field Generator https://blog.qt.io/dev/page/12/
-WEBGL/GLES texture to skia texture
-input text filter pattern https://www.primefaces.org/primeng/#/keyfilter
 BBcode editor https://www.primefaces.org/primeng/#/editor
 horizontal slideshow & effects
 Drag and Drop & 2D Colliding/Box2D
 file upload & native file chooser dialog
 Touch Interaction & gestures https://developer.xamarin.com/samples/monotouch/Touches_GestureRecognizers/
-in-browser dom to skia/webgl texture capturer
-in-browser text to texture
-text selection
-in-browser text to renderered layout (1-to-1)
 webrtc & websockets support
 SCSS
+text selection
+in-browser text to renderered layout (1-to-1 browser font to skia font)
 Text is not selectable
  > https://github.com/flutter/flutter/issues/32246
 TODO http://jwu.github.io/wiki/gamedev-libs/
@@ -223,30 +266,30 @@ Houdini CSS painter
  > Houdini CSS & WebGL
  > https://caniuse.com/#search=Houdini
  > https://github.com/flutter/flutter/issues/34249
-dynamic dom props from css (calc, attr) for any elem https://stackoverflow.com/a/46213559/10904212
-css grid
- > https://www.joomlashack.com/blog/tutorials/determining-the-size-of-the-tracks-in-css-grid/
- > https://cloudfour.com/thinks/breaking-out-with-css-grid-layout/
-A curated list of commonly frustrating HTML and CSS quandaries https://github.com/mdo/wtf-html-css
-css to C++ tranpiler (remove first interpretation)
-html dom to C++ tranpiler (remove first interpretation)
-custom mouse & mouse effects on hover https://www.romainavalle.dev/
-meterial design & video & parallax support https://store.google.com/us/product/stadia_founders_edition?hl=en-US
+dynamic dom props from css (calc, attr) for any elem
+ > https://stackoverflow.com/a/46213559/10904212
+A curated list of commonly frustrating HTML and CSS quandaries
+ > https://github.com/mdo/wtf-html-css
+custom mouse & mouse effects on hover
+ > https://www.romainavalle.dev/
+meterial design & video & parallax support
+ > https://store.google.com/us/product/stadia_founders_edition?hl=en-US
 caching in localstorage
 multi-resolution image bundle (for image preload)
-animated effects https://cloud.withgoogle.com/infrastructure/explore/step-1
+animated effects
+ > https://cloud.withgoogle.com/infrastructure/explore/step-1
 Constraint CSS
-preloader
  > .logo { width: { #logo-img:width * 2.0 - $somevar + :next[left] }; }
  > https://gss.github.io/guides/ccss
  > https://gss.github.io/demos/hello-world
+preloader
 A free visual guide to CSS https://cssreference.io/
 @media for detecting device size
 Model/View/Provider/Mapper e.t.c
  > QT MVC
  > Flutter https://medium.com/fluttery/what-even-are-flutter-widgets-ce537a048a7d
+signal & slot system
 Particles / Emmiters
-Graph/diagram system aka d3.js
 Text Editor & Code highlighing / Infinite text scroll
 Wearable / embedded / tv / raspberri support
 reactive form validator
@@ -263,1321 +306,150 @@ google Maps with custom markers/overlay
 geopositioning
 Source Code Analyzer
 License
-wasm dynamic loading
+wasm dynamic loading (wasm dll)
 native dll
 Scripting / luajit
-blockchain app platform
-SPA constructor / landing page generator
+blockchain app platform & WASM to app API bindings
 backend & code reuse: C++ WEB CMS, game servers e.t.c.
 Push Notifications e.t.c.
 App analytics
 memory sanitizer
-AI helper
+AI helper (suggestions e.t.c.)
 assets minifier
-web widget gallery portal/fiddles with live edit https://bit.dev
+web widget gallery portal/fiddles with live edit https://bit.dev (like jsfiddle)
 ratings portal / awwwards
 freelance portal
+Create roadmap & bug portal
+Support portal & paid support
 JS bindings
 QT bindings
+extra selectors
+ > https://css-tricks.com/almanac/selectors/f/focus-within/
 support VS Code / XCode
-remote UI https://blog.qt.io/blog/2018/06/12/remote-uis-webgl-webassembly/
+remote UI
+ > https://blog.qt.io/blog/2018/06/12/remote-uis-webgl-webassembly/
 make multiple demo apps using same lib
  > https://sketch.cloud/s/3bppr
-RightToLeft text & fonts
-dev forum
 layer system
-python/go/e.t.c. bingings
-ClangFormat & clang tools (iwyu e.t.c.)
-Faster Builds https://slides.com/onqtam/faster_builds
-wasm-snip https://rustwasm.github.io/book/reference/code-size.html#use-the-wasm-snip-tool
+python/go/rust/e.t.c. bindings
+clang tools
+ > IWYU
+ > ClangFormat
+ > ...
+Faster Builds
+ > https://slides.com/onqtam/faster_builds
+wasm-snip
+ > https://rustwasm.github.io/book/reference/code-size.html#use-the-wasm-snip-tool
 Security & Memory attacks & SSL & e.t.c.
-Dude, desktop applications are so last decade! https://blog.qt.io/blog/2019/03/21/dude-desktop-applications-last-decade/
-Docker images
-Create roadmap & bug portal
+blog.qt.io: Dude, desktop applications are so last decade!
+ > https://blog.qt.io/blog/2019/03/21/dude-desktop-applications-last-decade/
+Docker / vagrant images
 Create LTS supportd versions
 https://chromium.googlesource.com/chromium/src/base/+/master/third_party/xdg_user_dirs
 Installer for every platform (both for sdk & resulting apps)
 Build server integration & github & jenkins & e.t.c.
 API & dom migration tool
 Style guide / Review policy / Community chats e.t.c.
-Support portal & paid support
 GTEST / ui test (both for apps & engine) e.t.c.
-WIX
-PSD import / skia converter
 adMob integration
-Cloud Services API integration / JWT
+Cloud Services API integration
+JWT
+ > https://github.com/tensorflow/tensorflow/blob/master/tensorflow/core/platform/cloud/oauth_client.cc#L45
+ > https://github.com/chromium/chromium/blob/master/components/gcm_driver/web_push_sender.cc#L49
 Text Path/Arc
  > https://developer.xamarin.com/samples/mac/CoreTextArcMonoMac/
 SVG Text Path/Arc
  > https://css-tricks.com/snippets/svg/curved-text-along-path/
-@font-face {
-    font-family: "myFirstFont";
-    src: url("/resources/fonts/FreeSans.ttf");
-}
-body {
-  background:yellow;
-  font-size: 22px;
-  font-family: "myFirstFont";
-}
-
-/usr/bin/ld: src/cobalt/libcobalt_dom.a(window.cc.o): in function
-`cobalt::script::Handle<cobalt::script::Promise<scoped_refptr<cobalt::script::Wrappable>
-> >
-cobalt::script::ScriptValueFactory::CreateInterfacePromise<cobalt::dom::Screenshot>()':
-
-
-
-/home/denis/workspace/skia-opengl-emscripten/src/cobalt/src/cobalt/script/script_value_factory.h:45:
-undefined reference to
-`cobalt::script::Handle<cobalt::script::Promise<scoped_refptr<cobalt::script::Wrappable>
-> >
-cobalt::script::ScriptValueFactory::CreatePromise<scoped_refptr<cobalt::script::Wrappable>
->()'
-
-/usr/bin/ld: src/cobalt/libcobalt_dom.a(html_media_element.cc.o): in
-function `cobalt::script::Handle<cobalt::script::Promise<void> >
-cobalt::script::ScriptValueFactory::CreateBasicPromise<void>()':
-
-
-/home/denis/workspace/skia-opengl-emscripten/src/cobalt/src/cobalt/script/script_value_factory.h:33:
-undefined reference to
-`cobalt::script::Handle<cobalt::script::Promise<void> >
-cobalt::script::ScriptValueFactory::CreatePromise<void>()'
-
-/usr/bin/ld: src/cobalt/libcobalt_media.a(video_decoder_config.cc.o): in
-function `VideoDecoderConfig':
-
-
-/home/denis/workspace/skia-opengl-emscripten/src/cobalt/src/cobalt/media/base/video_decoder_config.cc:58:
-undefined reference to
-`cobalt::media::WebMColorMetadata::WebMColorMetadata()'
-
-/usr/bin/ld:
-/home/denis/workspace/skia-opengl-emscripten/src/cobalt/src/cobalt/media/base/video_decoder_config.cc:63:
-undefined reference to
-`cobalt::media::WebMColorMetadata::WebMColorMetadata()'
-
-/usr/bin/ld: src/cobalt/libcobalt_media.a(video_decoder_config.cc.o): in
-function
-`cobalt::media::VideoDecoderConfig::Matches(cobalt::media::VideoDecoderConfig
-const&) const':
-
-
-/home/denis/workspace/skia-opengl-emscripten/src/cobalt/src/cobalt/media/base/video_decoder_config.cc:122:
-undefined reference to
-`cobalt::media::WebMColorMetadata::operator==(cobalt::media::WebMColorMetadata
-const&) const'
-
-/usr/bin/ld: src/cobalt/libcobalt_media.a(stream_parser_factory.cc.o): in
-function
-`cobalt::media::BuildWebMParser(cobalt::media::DecoderBuffer::Allocator*,
-std::vector<std::__cxx11::basic_string<char, std::char_traits<char>,
-std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char,
-std::char_traits<char>, std::allocator<char> > > > const&,
-scoped_refptr<cobalt::media::MediaLog> const&)':
-
-
-/home/denis/workspace/skia-opengl-emscripten/src/cobalt/src/cobalt/media/filters/stream_parser_factory.cc:98:
-undefined reference to
-`cobalt::media::WebMStreamParser::WebMStreamParser(cobalt::media::DecoderBuffer::Allocator*)'
-
-
-/usr/bin/ld: src/cobalt/libcobalt_media.a(stream_parser_factory.cc.o): in
-function
-`cobalt::media::BuildADTSParser(cobalt::media::DecoderBuffer::Allocator*,
-std::vector<std::__cxx11::basic_string<char, std::char_traits<char>,
-std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char,
-std::char_traits<char>, std::allocator<char> > > > const&,
-scoped_refptr<cobalt::media::MediaLog> const&)':
-
-
-/home/denis/workspace/skia-opengl-emscripten/src/cobalt/src/cobalt/media/filters/stream_parser_factory.cc:243:
-undefined reference to
-`cobalt::media::ADTSStreamParser::ADTSStreamParser(cobalt::media::DecoderBuffer::Allocator*)'
-
-
-/usr/bin/ld: src/cobalt/libcobalt_media.a(stream_parser_factory.cc.o): in
-function
-`cobalt::media::BuildMP3Parser(cobalt::media::DecoderBuffer::Allocator*,
-std::vector<std::__cxx11::basic_string<char, std::char_traits<char>,
-std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char,
-std::char_traits<char>, std::allocator<char> > > > const&,
-scoped_refptr<cobalt::media::MediaLog> const&)':
-
-
-/home/denis/workspace/skia-opengl-emscripten/src/cobalt/src/cobalt/media/filters/stream_parser_factory.cc:233:
-undefined reference to
-`cobalt::media::MPEG1AudioStreamParser::MPEG1AudioStreamParser(cobalt::media::DecoderBuffer::Allocator*)'
-
-/usr/bin/ld: src/cobalt/libcobalt_media.a(stream_parser_factory.cc.o): in
-function
-`cobalt::media::BuildMP4Parser(cobalt::media::DecoderBuffer::Allocator*,
-std::vector<std::__cxx11::basic_string<char, std::char_traits<char>,
-std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char,
-std::char_traits<char>, std::allocator<char> > > > const&,
-scoped_refptr<cobalt::media::MediaLog> const&)':
-
-
-/home/denis/workspace/skia-opengl-emscripten/src/cobalt/src/cobalt/media/filters/stream_parser_factory.cc:221:
-undefined reference to
-`cobalt::media::mp4::MP4StreamParser::MP4StreamParser(cobalt::media::DecoderBuffer::Allocator*,
-std::set<int, std::less<int>, std::allocator<int> > const&, bool)'
-
-/usr/bin/ld: src/cobalt/libcobalt_dom.a(navigator.cc.o): in function
-`cobalt::script::Handle<cobalt::script::Promise<scoped_refptr<cobalt::script::Wrappable>
-> >
-cobalt::script::ScriptValueFactory::CreateInterfacePromise<scoped_refptr<cobalt::dom::eme::MediaKeySystemAccess>
->()':
-
-
-/home/denis/workspace/skia-opengl-emscripten/src/cobalt/src/cobalt/script/script_value_factory.h:45:
-undefined reference to
-`cobalt::script::Handle<cobalt::script::Promise<scoped_refptr<cobalt::script::Wrappable>
-> >
-cobalt::script::ScriptValueFactory::CreatePromise<scoped_refptr<cobalt::script::Wrappable>
->()'
-
-/usr/bin/ld: src/cobalt/libcobalt_dom.a(media_key_system_access.cc.o): in
-function
-`cobalt::script::Handle<cobalt::script::Promise<scoped_refptr<cobalt::script::Wrappable>
-> >
-cobalt::script::ScriptValueFactory::CreateInterfacePromise<scoped_refptr<cobalt::dom::eme::MediaKeys>
->()':
-
-
-/home/denis/workspace/skia-opengl-emscripten/src/cobalt/src/cobalt/script/script_value_factory.h:45:
-undefined reference to
-`cobalt::script::Handle<cobalt::script::Promise<scoped_refptr<cobalt::script::Wrappable>
-> >
-cobalt::script::ScriptValueFactory::CreatePromise<scoped_refptr<cobalt::script::Wrappable>
->()'
-
-/usr/bin/ld: src/cobalt/libcobalt_dom.a(media_keys.cc.o): in function
-`cobalt::script::Handle<cobalt::script::Promise<bool> >
-cobalt::script::ScriptValueFactory::CreateBasicPromise<bool>()':
-
-
-/home/denis/workspace/skia-opengl-emscripten/src/cobalt/src/cobalt/script/script_value_factory.h:33:
-undefined reference to
-`cobalt::script::Handle<cobalt::script::Promise<bool> >
-cobalt::script::ScriptValueFactory::CreatePromise<bool>()'
-
-/usr/bin/ld: src/chromium/libbase.a(xdg_util.cc.o): in function
-`base::nix::GetXDGUserDirectory(char const*, char const*)':
-
-
-/home/denis/workspace/skia-opengl-emscripten/src/chromium/base/nix/xdg_util.cc:46:
-undefined reference to `xdg_user_dir_lookup(char const*)'
-
-/usr/bin/ld:
-src/cobalt/libstarboard_platform.a(decode_target_internal.cc.o): in
-function `starboard::shared::(anonymous
-namespace)::CreateTargetFromVideoFrameWithContextRunner(void*)':
-
-
-/home/denis/workspace/skia-opengl-emscripten/src/cobalt/port/starboard/linux/shared/decode_target_internal.cc:89:
-undefined reference to
-`starboard::shared::starboard::player::filter::CpuVideoFrame::GetPlane(int)
-const'
-
-/usr/bin/ld:
-src/cobalt/libstarboard_platform.a(decode_target_internal.cc.o): in
-function
-`starboard::RefCountedThreadSafe<starboard::shared::starboard::player::filter::VideoFrame,
-starboard::DefaultRefCountedThreadSafeTraits<starboard::shared::starboard::player::filter::VideoFrame>
->::Release() const':
-
-
-/home/denis/workspace/skia-opengl-emscripten/src/cobalt/port/starboard/common/ref_counted.h:128:
-undefined reference to
-`starboard::subtle::RefCountedThreadSafeBase::Release() const'
-
-/usr/bin/ld:
-src/cobalt/libstarboard_platform.a(decode_target_internal.cc.o): in
-function
-`starboard::RefCountedThreadSafe<starboard::shared::starboard::player::filter::VideoFrame,
-starboard::DefaultRefCountedThreadSafeTraits<starboard::shared::starboard::player::filter::VideoFrame>
->::AddRef() const':
-
-
-/home/denis/workspace/skia-opengl-emscripten/src/cobalt/port/starboard/common/ref_counted.h:125:
-undefined reference to
-`starboard::subtle::RefCountedThreadSafeBase::AddRef() const'
-
-clang: error: linker command failed with exit code 1 (use -v to see
-invocation)
-
-make[2]: *** [CMakeFiles/skemgl.dir/build.make:221: skemgl] Error 1
-
-make[1]: *** [CMakeFiles/Makefile2:424: CMakeFiles/skemgl.dir/all] Error 2
-
-make: *** [Makefile:130: all] Error 2
-
-
-/home/denis/workspace/skia-opengl-emscripten/src/chromium/tcmalloc_wrapper/third_party/tcmalloc/chromium/src/tcmalloc.cc:1960:
- multiple definition of `operator delete[](void*)';
- src/cobalt/libstarboard_common.a(new.cc.o):/home/denis/workspace/skia-opengl-emscripten/src/cobalt/port/starboard/common/new.cc:41:
- first defined here
-
- /usr/bin/ld: src/chromium/libtcmalloc.a(tcmalloc.cc.o): in function
- `operator delete[](void*)':
-
-
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/tcmalloc_wrapper/third_party/tcmalloc/chromium/src/tcmalloc.cc:1960:
- multiple definition of `operator delete(void*)';
- src/cobalt/libstarboard_common.a(new.cc.o):/home/denis/workspace/skia-opengl-emscripten/src/cobalt/port/starboard/common/new.cc:25:
- first defined here
-
- /usr/bin/ld: src/chromium/libtcmalloc.a(tcmalloc.cc.o): in function
- `operator delete[](void*)':
-
-
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/tcmalloc_wrapper/third_party/tcmalloc/chromium/src/tcmalloc.cc:1960:
- multiple definition of `operator delete(void*, std::nothrow_t const&)';
- src/cobalt/libstarboard_common.a(new.cc.o):/home/denis/workspace/skia-opengl-emscripten/src/cobalt/port/starboard/common/new.cc:33:
- first defined here
-
- /usr/bin/ld: src/chromium/libtcmalloc.a(tcmalloc.cc.o): in function
- `operator new[](unsigned long)':
-
-
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/tcmalloc_wrapper/third_party/tcmalloc/chromium/src/tcmalloc.cc:2042:
- multiple definition of `operator new[](unsigned long)';
- src/cobalt/libstarboard_common.a(new.cc.o):/home/denis/workspace/skia-opengl-emscripten/src/cobalt/port/starboard/common/new.cc:37:
- first defined here
-
- /usr/bin/ld: src/chromium/libtcmalloc.a(tcmalloc.cc.o): in function
- `operator new[](unsigned long)':
-
-
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/tcmalloc_wrapper/third_party/tcmalloc/chromium/src/tcmalloc.cc:2042:
- multiple definition of `operator new(unsigned long)';
- src/cobalt/libstarboard_common.a(new.cc.o):/home/denis/workspace/skia-opengl-emscripten/src/cobalt/port/starboard/common/new.cc:21:
- first defined here
-
- /usr/bin/ld: src/chromium/libtcmalloc.a(tcmalloc.cc.o): in function
- `operator new[](unsigned long, std::nothrow_t const&)':
-
-
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/tcmalloc_wrapper/third_party/tcmalloc/chromium/src/tcmalloc.cc:2047:
- multiple definition of `operator new(unsigned long, std::nothrow_t
- const&)';
- src/cobalt/libstarboard_common.a(new.cc.o):/home/denis/workspace/skia-opengl-emscripten/src/cobalt/port/starboard/common/new.cc:29:
- first defined here
-
- /usr/bin/ld: CMakeFiles/skemgl.dir/src/main.cpp.o: in function `main':
-
- /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:4064: undefined
- reference to `GLES2Disable'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:4065: undefined
- reference to `GLES2Viewport'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:4067: undefined
- reference to `GLES2ClearColor'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:4068: undefined
- reference to `GLES2ClearStencil'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:4069: undefined
- reference to `GLES2Clear'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:4445: undefined
- reference to `GLES2DeleteTextures'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:4448: undefined
- reference to `GLES2DeleteBuffers'
-
- /usr/bin/ld: CMakeFiles/skemgl.dir/src/main.cpp.o: in function
- `CheckOpenGLError(char const*, char const*, int)':
-
- /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:673: undefined
- reference to `GLES2GetError'
-
- /usr/bin/ld: CMakeFiles/skemgl.dir/src/main.cpp.o: in function `InitGL()':
-
- /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:1861: undefined
- reference to `GLES2CreateProgram'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:1872: undefined
- reference to `GLES2AttachShader'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:1873: undefined
- reference to `GLES2AttachShader'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:1875: undefined
- reference to `GLES2BindAttribLocation'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:1876: undefined
- reference to `GLES2BindAttribLocation'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:1878: undefined
- reference to `GLES2LinkProgram'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:1879: undefined
- reference to `GLES2GetProgramInfoLog'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:1880: undefined
- reference to `GLES2GetProgramiv'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:1894: undefined
- reference to `GLES2GetProgramiv'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:1897: undefined
- reference to `GLES2GetUniformLocation'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:1899: undefined
- reference to `GLES2GetProgramiv'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:1902: undefined
- reference to `GLES2GetProgramiv'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:1905: undefined
- reference to `GLES2GetProgramInfoLog'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:1909: undefined
- reference to `GLES2DeleteProgram'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:1914: undefined
- reference to `GLES2GenTextures'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:1918: undefined
- reference to `GLES2GenBuffers'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:1919: undefined
- reference to `GLES2BindBuffer'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:1920: undefined
- reference to `GLES2BufferData'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:1921: undefined
- reference to `GLES2BindBuffer'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:1923: undefined
- reference to `GLES2ClearColor'
-
- /usr/bin/ld: CMakeFiles/skemgl.dir/src/main.cpp.o: in function
- `LoadShader(unsigned int, char const*)':
-
- /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:1799: undefined
- reference to `GLES2CreateShader'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:1806: undefined
- reference to `GLES2ShaderSource'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:1807: undefined
- reference to `GLES2CompileShader'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:1808: undefined
- reference to `GLES2GetShaderiv'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:1811: undefined
- reference to `GLES2GetShaderiv'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:1814: undefined
- reference to `GLES2GetShaderInfoLog'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:1818: undefined
- reference to `GLES2DeleteShader'
-
- /usr/bin/ld: CMakeFiles/skemgl.dir/src/main.cpp.o: in function `Draw()':
-
- /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:1933: undefined
- reference to `GLES2Viewport'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:1934: undefined
- reference to `GLES2Clear'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:1936: undefined
- reference to `GLES2UseProgram'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:1937: undefined
- reference to `GLES2ActiveTexture'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:1974: undefined
- reference to `GLES2BindTexture'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:1975: undefined
- reference to `GLES2TexParameteri'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:1976: undefined
- reference to `GLES2TexParameteri'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:1977: undefined
- reference to `GLES2TexParameteri'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:1978: undefined
- reference to `GLES2TexParameteri'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:1979: undefined
- reference to `GLES2TexImage2D'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:1985: undefined
- reference to `GLES2Uniform1i'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:1990: undefined
- reference to `GLES2BindBuffer'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:1992: undefined
- reference to `GLES2VertexAttribPointer'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:1993: undefined
- reference to `GLES2EnableVertexAttribArray'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:1995: undefined
- reference to `GLES2VertexAttribPointer'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:1997: undefined
- reference to `GLES2EnableVertexAttribArray'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:2012: undefined
- reference to `GLES2BindBuffer'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:2014: undefined
- reference to `GLES2DrawArrays'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:2016: undefined
- reference to `GLES2DisableVertexAttribArray'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/main.cpp:2017: undefined
- reference to `GLES2DisableVertexAttribArray'
-
- /usr/bin/ld: src/cobalt/libcobalt_dom.a(window.cc.o): in function
- `cobalt::script::Handle<cobalt::script::Promise<scoped_refptr<cobalt::script::Wrappable>
- > >
- cobalt::script::ScriptValueFactory::CreateInterfacePromise<cobalt::dom::Screenshot>()':
-
-
-
- /home/denis/workspace/skia-opengl-emscripten/src/cobalt/src/cobalt/script/script_value_factory.h:45:
- undefined reference to
- `cobalt::script::Handle<cobalt::script::Promise<scoped_refptr<cobalt::script::Wrappable>
- > >
- cobalt::script::ScriptValueFactory::CreatePromise<scoped_refptr<cobalt::script::Wrappable>
- >()'
-
- /usr/bin/ld: src/cobalt/libcobalt_dom.a(html_media_element.cc.o): in
- function `cobalt::script::Handle<cobalt::script::Promise<void> >
- cobalt::script::ScriptValueFactory::CreateBasicPromise<void>()':
-
-
- /home/denis/workspace/skia-opengl-emscripten/src/cobalt/src/cobalt/script/script_value_factory.h:33:
- undefined reference to
- `cobalt::script::Handle<cobalt::script::Promise<void> >
- cobalt::script::ScriptValueFactory::CreatePromise<void>()'
-
- /usr/bin/ld: src/cobalt/libcobalt_media.a(video_decoder_config.cc.o): in
- function `VideoDecoderConfig':
-
-
- /home/denis/workspace/skia-opengl-emscripten/src/cobalt/src/cobalt/media/base/video_decoder_config.cc:58:
- undefined reference to
- `cobalt::media::WebMColorMetadata::WebMColorMetadata()'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/cobalt/src/cobalt/media/base/video_decoder_config.cc:63:
- undefined reference to
- `cobalt::media::WebMColorMetadata::WebMColorMetadata()'
-
- /usr/bin/ld: src/cobalt/libcobalt_media.a(video_decoder_config.cc.o): in
- function
- `cobalt::media::VideoDecoderConfig::Matches(cobalt::media::VideoDecoderConfig
- const&) const':
-
-
- /home/denis/workspace/skia-opengl-emscripten/src/cobalt/src/cobalt/media/base/video_decoder_config.cc:122:
- undefined reference to
- `cobalt::media::WebMColorMetadata::operator==(cobalt::media::WebMColorMetadata
- const&) const'
-
- /usr/bin/ld: src/cobalt/libcobalt_media.a(stream_parser_factory.cc.o): in
- function
- `cobalt::media::BuildWebMParser(cobalt::media::DecoderBuffer::Allocator*,
- std::vector<std::__cxx11::basic_string<char, std::char_traits<char>,
- std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char,
- std::char_traits<char>, std::allocator<char> > > > const&,
- scoped_refptr<cobalt::media::MediaLog> const&)':
-
-
- /home/denis/workspace/skia-opengl-emscripten/src/cobalt/src/cobalt/media/filters/stream_parser_factory.cc:98:
- undefined reference to
- `cobalt::media::WebMStreamParser::WebMStreamParser(cobalt::media::DecoderBuffer::Allocator*)'
-
-
- /usr/bin/ld: src/cobalt/libcobalt_media.a(stream_parser_factory.cc.o): in
- function
- `cobalt::media::BuildADTSParser(cobalt::media::DecoderBuffer::Allocator*,
- std::vector<std::__cxx11::basic_string<char, std::char_traits<char>,
- std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char,
- std::char_traits<char>, std::allocator<char> > > > const&,
- scoped_refptr<cobalt::media::MediaLog> const&)':
-
-
- /home/denis/workspace/skia-opengl-emscripten/src/cobalt/src/cobalt/media/filters/stream_parser_factory.cc:243:
- undefined reference to
- `cobalt::media::ADTSStreamParser::ADTSStreamParser(cobalt::media::DecoderBuffer::Allocator*)'
-
-
- /usr/bin/ld: src/cobalt/libcobalt_media.a(stream_parser_factory.cc.o): in
- function
- `cobalt::media::BuildMP3Parser(cobalt::media::DecoderBuffer::Allocator*,
- std::vector<std::__cxx11::basic_string<char, std::char_traits<char>,
- std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char,
- std::char_traits<char>, std::allocator<char> > > > const&,
- scoped_refptr<cobalt::media::MediaLog> const&)':
-
-
- /home/denis/workspace/skia-opengl-emscripten/src/cobalt/src/cobalt/media/filters/stream_parser_factory.cc:233:
- undefined reference to
- `cobalt::media::MPEG1AudioStreamParser::MPEG1AudioStreamParser(cobalt::media::DecoderBuffer::Allocator*)'
-
-
- /usr/bin/ld: src/cobalt/libcobalt_media.a(stream_parser_factory.cc.o): in
- function
- `cobalt::media::BuildMP4Parser(cobalt::media::DecoderBuffer::Allocator*,
- std::vector<std::__cxx11::basic_string<char, std::char_traits<char>,
- std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char,
- std::char_traits<char>, std::allocator<char> > > > const&,
- scoped_refptr<cobalt::media::MediaLog> const&)':
-
-
- /home/denis/workspace/skia-opengl-emscripten/src/cobalt/src/cobalt/media/filters/stream_parser_factory.cc:221:
- undefined reference to
- `cobalt::media::mp4::MP4StreamParser::MP4StreamParser(cobalt::media::DecoderBuffer::Allocator*,
- std::set<int, std::less<int>, std::allocator<int> > const&, bool)'
-
- /usr/bin/ld: src/cobalt/libcobalt_dom.a(navigator.cc.o): in function
- `cobalt::script::Handle<cobalt::script::Promise<scoped_refptr<cobalt::script::Wrappable>
- > >
- cobalt::script::ScriptValueFactory::CreateInterfacePromise<scoped_refptr<cobalt::dom::eme::MediaKeySystemAccess>
- >()':
-
-
- /home/denis/workspace/skia-opengl-emscripten/src/cobalt/src/cobalt/script/script_value_factory.h:45:
- undefined reference to
- `cobalt::script::Handle<cobalt::script::Promise<scoped_refptr<cobalt::script::Wrappable>
- > >
- cobalt::script::ScriptValueFactory::CreatePromise<scoped_refptr<cobalt::script::Wrappable>
- >()'
-
- /usr/bin/ld: src/cobalt/libcobalt_dom.a(media_key_system_access.cc.o): in
- function
- `cobalt::script::Handle<cobalt::script::Promise<scoped_refptr<cobalt::script::Wrappable>
- > >
- cobalt::script::ScriptValueFactory::CreateInterfacePromise<scoped_refptr<cobalt::dom::eme::MediaKeys>
- >()':
-
-
- /home/denis/workspace/skia-opengl-emscripten/src/cobalt/src/cobalt/script/script_value_factory.h:45:
- undefined reference to
- `cobalt::script::Handle<cobalt::script::Promise<scoped_refptr<cobalt::script::Wrappable>
- > >
- cobalt::script::ScriptValueFactory::CreatePromise<scoped_refptr<cobalt::script::Wrappable>
- >()'
-
- /usr/bin/ld: src/cobalt/libcobalt_dom.a(media_keys.cc.o): in function
- `cobalt::script::Handle<cobalt::script::Promise<bool> >
- cobalt::script::ScriptValueFactory::CreateBasicPromise<bool>()':
-
-
- /home/denis/workspace/skia-opengl-emscripten/src/cobalt/src/cobalt/script/script_value_factory.h:33:
- undefined reference to
- `cobalt::script::Handle<cobalt::script::Promise<bool> >
- cobalt::script::ScriptValueFactory::CreatePromise<bool>()'
-
- /usr/bin/ld:
- src/cobalt/libcobalt_loader.a(cors_preflight.cc.o):(.rodata+0x10):
- undefined reference to
- `net::URLFetcherDelegate::OnURLFetchResponseStarted(net::URLFetcher
- const*)'
-
- /usr/bin/ld: src/chromium/libGNET.a(http_response_info.cc.o): in function
- `net::(anonymous namespace)::KeyExchangeGroupIsValid(int)':
-
-
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/http/http_response_info.cc:38:
- undefined reference to `SSL_get_cipher_by_value'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/http/http_response_info.cc:40:
- undefined reference to `SSL_CIPHER_get_kx_nid'
-
- /usr/bin/ld: src/chromium/libGNET.a(network_change_notifier_linux.cc.o): in
- function `BlockingThreadObjects':
-
-
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/base/network_change_notifier_linux.cc:51:
- undefined reference to
- `net::internal::DnsConfigServicePosix::DnsConfigServicePosix()'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/base/network_change_notifier_linux.cc:62:
- undefined reference to
- `net::internal::DnsConfigServicePosix::~DnsConfigServicePosix()'
-
- /usr/bin/ld: src/chromium/libGNET.a(network_change_notifier_linux.cc.o): in
- function `~BlockingThreadObjects':
-
-
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/base/network_change_notifier_linux.cc:22:
- undefined reference to
- `net::internal::DnsConfigServicePosix::~DnsConfigServicePosix()'
-
- /usr/bin/ld: src/chromium/libGNET.a(ssl_client_session_cache.cc.o): in
- function
- `net::SSLClientSessionCache::Lookup(std::__cxx11::basic_string<char,
- std::char_traits<char>, std::allocator<char> > const&)':
-
-
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/ssl/ssl_client_session_cache.cc:73:
- undefined reference to `SSL_SESSION_get_time'
-
- /usr/bin/ld: src/chromium/libGNET.a(ssl_client_session_cache.cc.o): in
- function `net::SSLClientSessionCache::Entry::Pop()':
-
-
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/ssl/ssl_client_session_cache.cc:192:
- undefined reference to `SSL_SESSION_should_be_single_use'
-
- /usr/bin/ld: src/chromium/libGNET.a(ssl_client_session_cache.cc.o): in
- function `net::SSLClientSessionCache::IsExpired(ssl_session_st*, long)':
-
-
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/ssl/ssl_client_session_cache.cc:118:
- undefined reference to `SSL_SESSION_get_time'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/ssl/ssl_client_session_cache.cc:120:
- undefined reference to `SSL_SESSION_get_time'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/ssl/ssl_client_session_cache.cc:120:
- undefined reference to `SSL_SESSION_get_timeout'
-
- /usr/bin/ld: src/chromium/libGNET.a(ssl_client_session_cache.cc.o): in
- function `net::(anonymous namespace)::IsTLS13(ssl_session_st const*)':
-
-
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/ssl/ssl_client_session_cache.cc:22:
- undefined reference to `SSL_SESSION_get_protocol_version'
-
- /usr/bin/ld: src/chromium/libGNET.a(ssl_client_session_cache.cc.o): in
- function
- `net::SSLClientSessionCache::Insert(std::__cxx11::basic_string<char,
- std::char_traits<char>, std::allocator<char> > const&,
- std::unique_ptr<ssl_session_st, bssl::internal::Deleter<ssl_session_st>
- >)':
-
-
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/ssl/ssl_client_session_cache.cc:94:
- undefined reference to `SSL_SESSION_get_timeout'
-
- /usr/bin/ld: src/chromium/libGNET.a(ssl_client_session_cache.cc.o): in
- function
- `net::SSLClientSessionCache::Entry::Push(std::unique_ptr<ssl_session_st,
- bssl::internal::Deleter<ssl_session_st> >)':
-
-
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/ssl/ssl_client_session_cache.cc:182:
- undefined reference to `SSL_SESSION_should_be_single_use'
-
- /usr/bin/ld: src/chromium/libGNET.a(ssl_client_session_cache.cc.o): in
- function
- `net::SSLClientSessionCache::DumpMemoryStats(base::trace_event::ProcessMemoryDump*,
- std::__cxx11::basic_string<char, std::char_traits<char>,
- std::allocator<char> > const&) const':
-
-
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/ssl/ssl_client_session_cache.cc:138:
- undefined reference to `SSL_SESSION_get0_peer_certificates'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/ssl/ssl_client_session_cache.cc:149:
- undefined reference to `SSL_SESSION_get0_peer_certificates'
-
- /usr/bin/ld: src/chromium/libGNET.a(ssl_client_session_cache.cc.o): in
- function `bssl::UpRef(ssl_session_st*)':
-
-
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/third_party/boringssl/src/include/openssl/ssl.h:4695:
- undefined reference to `SSL_SESSION_up_ref'
-
- /usr/bin/ld: src/chromium/libGNET.a(ssl_client_session_cache.cc.o): in
- function `bssl::internal::DeleterImpl<ssl_session_st,
- void>::Free(ssl_session_st*)':
-
-
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/third_party/boringssl/src/include/openssl/ssl.h:4694:
- undefined reference to `SSL_SESSION_free'
-
- /usr/bin/ld: src/chromium/libGNET.a(ssl_client_socket_impl.cc.o): in
- function
- `net::SSLClientSocketImpl::ExportKeyingMaterial(base::BasicStringPiece<std::__cxx11::basic_string<char,
- std::char_traits<char>, std::allocator<char> > > const&, bool,
- base::BasicStringPiece<std::__cxx11::basic_string<char,
- std::char_traits<char>, std::allocator<char> > > const&, unsigned char*,
- unsigned int)':
-
-
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:475:
- undefined reference to `SSL_export_keying_material'
-
- /usr/bin/ld: src/chromium/libGNET.a(ssl_client_socket_impl.cc.o): in
- function `net::SSLClientSocketImpl::Connect(base::OnceCallback<void
- (int)>)':
-
-
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:507:
- undefined reference to `SSL_set_connect_state'
-
- /usr/bin/ld: src/chromium/libGNET.a(ssl_client_socket_impl.cc.o): in
- function `net::SSLClientSocketImpl::Init()':
-
-
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:813:
- undefined reference to `SSL_new'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:824:
- undefined reference to `SSL_set_tlsext_host_name'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:832:
- undefined reference to `SSL_set_session'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:841:
- undefined reference to `SSL_set0_rbio'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:844:
- undefined reference to `SSL_set0_wbio'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:848:
- undefined reference to `SSL_set_min_proto_version'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:849:
- undefined reference to `SSL_set_max_proto_version'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:853:
- undefined reference to `SSL_set_early_data_enabled'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:857:
- undefined reference to `SSL_set_ignore_tls13_downgrade'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:868:
- undefined reference to `SSL_set_options'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:869:
- undefined reference to `SSL_clear_options'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:880:
- undefined reference to `SSL_set_mode'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:881:
- undefined reference to `SSL_clear_mode'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:892:
- undefined reference to `SSL_get_cipher_by_value'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:895:
- undefined reference to `SSL_CIPHER_get_name'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:899:
- undefined reference to `SSL_set_strict_cipher_list'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:907:
- undefined reference to `SSL_set_alpn_protos'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:912:
- undefined reference to `SSL_enable_signed_cert_timestamps'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:913:
- undefined reference to `SSL_enable_ocsp_stapling'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:919:
- undefined reference to `SSL_set_renegotiate_mode'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:921:
- undefined reference to `SSL_set_shed_handshake_config'
-
- /usr/bin/ld: src/chromium/libGNET.a(ssl_client_socket_impl.cc.o): in
- function
- `net::SSLClientSocketImpl::ConfirmHandshake(base::OnceCallback<void
- (int)>)':
-
-
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:549:
- undefined reference to `SSL_in_early_data'
-
- /usr/bin/ld: src/chromium/libGNET.a(ssl_client_socket_impl.cc.o): in
- function `net::SSLClientSocketImpl::GetSSLInfo(net::SSLInfo*)':
-
-
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:646:
- undefined reference to `SSL_get_current_cipher'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:649:
- undefined reference to `SSL_get_curve_id'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:651:
- undefined reference to `SSL_get_peer_signature_algorithm'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:654:
- undefined reference to `SSL_CIPHER_get_id'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:659:
- undefined reference to `SSL_session_reused'
-
- /usr/bin/ld: src/chromium/libGNET.a(ssl_client_socket_impl.cc.o): in
- function
- `net::SSLClientSocketImpl::DumpMemoryStats(net::StreamSocket::SocketMemoryStats*)
- const':
-
-
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:680:
- undefined reference to `SSL_get0_peer_certificates'
-
- /usr/bin/ld: src/chromium/libGNET.a(ssl_client_socket_impl.cc.o): in
- function
- `net::SSLClientSocketImpl::GetSSLCertRequestInfo(net::SSLCertRequestInfo*)
- const':
-
-
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:703:
- undefined reference to `SSL_get0_server_requested_CAs'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:713:
- undefined reference to `SSL_get0_certificate_types'
-
- /usr/bin/ld: src/chromium/libGNET.a(ssl_client_socket_impl.cc.o): in
- function `net::SSLClientSocketImpl::DoPayloadRead(net::IOBuffer*, int)':
-
-
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:1358:
- undefined reference to `SSL_read'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:1371:
- undefined reference to `SSL_get_error'
-
- /usr/bin/ld: src/chromium/libGNET.a(ssl_client_socket_impl.cc.o): in
- function `net::SSLClientSocketImpl::DoPayloadWrite()':
-
-
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:1432:
- undefined reference to `SSL_write'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:1437:
- undefined reference to `SSL_is_init_finished'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:1439:
- undefined reference to `SSL_version'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:1440:
- undefined reference to `SSL_key_update'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:1448:
- undefined reference to `SSL_get_error'
-
- /usr/bin/ld: src/chromium/libGNET.a(ssl_client_socket_impl.cc.o): in
- function `net::SSLClientSocketImpl::DoHandshake()':
-
-
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:950:
- undefined reference to `SSL_do_handshake'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:953:
- undefined reference to `SSL_get_error'
-
- /usr/bin/ld: src/chromium/libGNET.a(ssl_client_socket_impl.cc.o): in
- function `net::SSLClientSocketImpl::DoHandshakeComplete(int)':
-
-
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:1008:
- undefined reference to `SSL_get0_alpn_selected'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:1019:
- undefined reference to `SSL_get0_ocsp_response'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:1024:
- undefined reference to `SSL_get0_signed_cert_timestamp_list'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:1028:
- undefined reference to `SSL_set_renegotiate_mode'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:1030:
- undefined reference to `SSL_get_peer_signature_algorithm'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:1044:
- undefined reference to `SSL_get_current_cipher'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:1067:
- undefined reference to `SSL_is_tls13_downgrade'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:1091:
- undefined reference to `SSL_get_current_cipher'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:1091:
- undefined reference to `SSL_CIPHER_get_kx_nid'
-
- /usr/bin/ld: src/chromium/libGNET.a(ssl_client_socket_impl.cc.o): in
- function `net::(anonymous namespace)::CheckRSAKeyUsage(net::X509Certificate
- const*, ssl_cipher_st const*)':
-
-
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:187:
- undefined reference to `SSL_CIPHER_get_kx_nid'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:192:
- undefined reference to `SSL_CIPHER_get_auth_nid'
-
- /usr/bin/ld: src/chromium/libGNET.a(ssl_client_socket_impl.cc.o): in
- function `net::SSLClientSocketImpl::VerifyCert()':
-
-
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:1149:
- undefined reference to `SSL_get0_peer_certificates'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:1178:
- undefined reference to `SSL_get0_ocsp_response'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:1195:
- undefined reference to `SSL_set_enforce_rsa_key_usage'
-
- /usr/bin/ld: src/chromium/libGNET.a(ssl_client_socket_impl.cc.o): in
- function `net::SSLClientSocketImpl::VerifyCT()':
-
-
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:1510:
- undefined reference to `SSL_get0_signed_cert_timestamp_list'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:1516:
- undefined reference to `SSL_get0_ocsp_response'
-
- /usr/bin/ld: src/chromium/libGNET.a(ssl_client_socket_impl.cc.o): in
- function `net::SSLClientSocketImpl::ClientCertRequestCallback(ssl_st*)':
-
-
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:1606:
- undefined reference to `SSL_certs_clear'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:1637:
- undefined reference to `SSL_set_signing_algorithm_prefs'
-
- /usr/bin/ld: src/chromium/libGNET.a(ssl_client_socket_impl.cc.o): in
- function `net::(anonymous
- namespace)::NetLogPrivateKeyOperationCallback(unsigned short,
- net::SSLPrivateKey*, net::NetLogCaptureMode)':
-
-
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:91:
- undefined reference to `SSL_get_signature_algorithm_name'
-
- /usr/bin/ld: src/chromium/libGNET.a(ssl_client_socket_impl.cc.o): in
- function `net::SSLClientSocketImpl::InfoCallback(int, int)':
-
-
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:1765:
- undefined reference to `SSL_get_secure_renegotiation_support'
-
- /usr/bin/ld: src/chromium/libGNET.a(ssl_client_socket_impl.cc.o): in
- function
- `net::SSLClientSocketImpl::SSLContext::SetSSLKeyLogger(std::unique_ptr<net::SSLKeyLogger,
- std::default_delete<net::SSLKeyLogger> >)':
-
-
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:301:
- undefined reference to `SSL_CTX_set_keylog_callback'
-
- /usr/bin/ld: src/chromium/libGNET.a(ssl_client_socket_impl.cc.o): in
- function
- `net::SSLClientSocketImpl::SSLContext::SetClientSocketForSSL(ssl_st*,
- net::SSLClientSocketImpl*)':
-
-
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:295:
- undefined reference to `SSL_set_ex_data'
-
- /usr/bin/ld: src/chromium/libGNET.a(ssl_client_socket_impl.cc.o): in
- function
- `net::SSLClientSocketImpl::SSLContext::GetClientSocketFromSSL(ssl_st
- const*)':
-
-
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:289:
- undefined reference to `SSL_get_ex_data'
-
- /usr/bin/ld: src/chromium/libGNET.a(ssl_client_socket_impl.cc.o): in
- function `SSLContext':
-
-
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:312:
- undefined reference to `SSL_get_ex_new_index'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:314:
- undefined reference to `TLS_with_buffers_method'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:314:
- undefined reference to `SSL_CTX_new'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:315:
- undefined reference to `SSL_CTX_set_cert_cb'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:318:
- undefined reference to `SSL_CTX_set_reverify_on_resume'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:319:
- undefined reference to `SSL_CTX_set_custom_verify'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:323:
- undefined reference to `SSL_CTX_set_session_cache_mode'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:325:
- undefined reference to `SSL_CTX_sess_set_new_cb'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:326:
- undefined reference to `SSL_CTX_set_timeout'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:328:
- undefined reference to `SSL_CTX_set_grease_enabled'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:331:
- undefined reference to `SSL_CTX_set0_buffer_pool'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:333:
- undefined reference to `SSL_CTX_set_info_callback'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:334:
- undefined reference to `SSL_CTX_set_msg_callback'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/socket/ssl_client_socket_impl.cc:345:
- undefined reference to `SSL_CTX_set1_curves'
-
- /usr/bin/ld: src/chromium/libGNET.a(ssl_client_socket_impl.cc.o): in
- function `bssl::internal::DeleterImpl<ssl_ctx_st,
- void>::Free(ssl_ctx_st*)':
-
-
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/third_party/boringssl/src/include/openssl/ssl.h:4692:
- undefined reference to `SSL_CTX_free'
-
- /usr/bin/ld: src/chromium/libGNET.a(ssl_client_socket_impl.cc.o): in
- function `bssl::internal::DeleterImpl<ssl_st, void>::Free(ssl_st*)':
-
-
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/third_party/boringssl/src/include/openssl/ssl.h:4691:
- undefined reference to `SSL_free'
-
- /usr/bin/ld: src/chromium/libGNET.a(openssl_ssl_util.cc.o): in function
- `net::GetNetSSLVersion(ssl_st*)':
-
-
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/ssl/openssl_ssl_util.cc:222:
- undefined reference to `SSL_version'
-
- /usr/bin/ld: src/chromium/libGNET.a(openssl_ssl_util.cc.o): in function
- `net::SetSSLChainAndKey(ssl_st*, net::X509Certificate*, evp_pkey_st*,
- ssl_private_key_method_st const*)':
-
-
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/ssl/openssl_ssl_util.cc:247:
- undefined reference to `SSL_set_chain_and_key'
-
- /usr/bin/ld: src/chromium/libGNET.a(ssl_cipher_suite_names.cc.o): in
- function `net::SSLCipherSuiteToStrings(char const**, char const**, char
- const**, bool*, bool*, unsigned short)':
-
-
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/ssl/ssl_cipher_suite_names.cc:69:
- undefined reference to `SSL_get_cipher_by_value'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/ssl/ssl_cipher_suite_names.cc:73:
- undefined reference to `SSL_CIPHER_get_kx_nid'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/ssl/ssl_cipher_suite_names.cc:82:
- undefined reference to `SSL_CIPHER_get_auth_nid'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/ssl/ssl_cipher_suite_names.cc:93:
- undefined reference to `SSL_CIPHER_get_cipher_nid'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/ssl/ssl_cipher_suite_names.cc:114:
- undefined reference to `SSL_CIPHER_is_aead'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/ssl/ssl_cipher_suite_names.cc:118:
- undefined reference to `SSL_CIPHER_get_digest_nid'
-
- /usr/bin/ld: src/chromium/libGNET.a(ssl_cipher_suite_names.cc.o): in
- function `net::(anonymous
- namespace)::ObsoleteSSLStatusForCipherSuite(unsigned short)':
-
-
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/ssl/ssl_cipher_suite_names.cc:27:
- undefined reference to `SSL_get_cipher_by_value'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/ssl/ssl_cipher_suite_names.cc:35:
- undefined reference to `SSL_CIPHER_get_kx_nid'
-
- /usr/bin/ld:
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/net/ssl/ssl_cipher_suite_names.cc:39:
- undefined reference to `SSL_CIPHER_is_aead'
-
- /usr/bin/ld: src/chromium/libbase.a(xdg_util.cc.o): in function
- `base::nix::GetXDGUserDirectory(char const*, char const*)':
-
-
- /home/denis/workspace/skia-opengl-emscripten/src/chromium/base/nix/xdg_util.cc:46:
- undefined reference to `xdg_user_dir_lookup(char const*)'
-
- /usr/bin/ld:
- src/cobalt/libstarboard_platform.a(decode_target_internal.cc.o): in
- function `starboard::shared::(anonymous
- namespace)::CreateTargetFromVideoFrameWithContextRunner(void*)':
-
-
- /home/denis/workspace/skia-opengl-emscripten/src/cobalt/port/starboard/linux/shared/decode_target_internal.cc:89:
- undefined reference to
- `starboard::shared::starboard::player::filter::CpuVideoFrame::GetPlane(int)
- const'
-
- /usr/bin/ld:
- src/cobalt/libstarboard_platform.a(decode_target_internal.cc.o): in
- function
- `starboard::RefCountedThreadSafe<starboard::shared::starboard::player::filter::VideoFrame,
- starboard::DefaultRefCountedThreadSafeTraits<starboard::shared::starboard::player::filter::VideoFrame>
- >::Release() const':
-
-
- /home/denis/workspace/skia-opengl-emscripten/src/cobalt/port/starboard/common/ref_counted.h:128:
- undefined reference to
- `starboard::subtle::RefCountedThreadSafeBase::Release() const'
-
- /usr/bin/ld:
- src/cobalt/libstarboard_platform.a(decode_target_internal.cc.o): in
- function
- `starboard::RefCountedThreadSafe<starboard::shared::starboard::player::filter::VideoFrame,
- starboard::DefaultRefCountedThreadSafeTraits<starboard::shared::starboard::player::filter::VideoFrame>
- >::AddRef() const':
-
-
- /home/denis/workspace/skia-opengl-emscripten/src/cobalt/port/starboard/common/ref_counted.h:125:
- undefined reference to
- `starboard::subtle::RefCountedThreadSafeBase::AddRef() const'
-
- clang: error: linker command failed with exit code 1 (use -v to see
- invocation)
-
- make[2]: *** [CMakeFiles/skemgl.dir/build.make:294: skemgl] Error 1
-
- make[1]: *** [CMakeFiles/Makefile2:460: CMakeFiles/skemgl.dir/all] Error 2
-
- make: *** [Makefile:130: all] Error 2
-
+emscripten webidl_binder.py
+ > https://github.com/google/draco/blob/master/CMakeLists.txt#L715
+SDF fonts
+ > https://github.com/google/flatui/blob/2e363fa18228664a06d8279ab07e514f3a3f51af/src/flatui.cpp#L202
+pimpl
+dependency injection
+ > https://boost-experimental.github.io/di/concepts-driven-design-with-di
+ > https://github.com/modern-cpp-examples/match3
+ > https://stackoverflow.com/a/44087398
+ > Anti-Pattern? https://blog.ploeh.dk/2010/02/03/ServiceLocatorisanAnti-Pattern/
+ > https://github.com/google/fruit/wiki/tutorial:-simple-system
+ > https://justin.abrah.ms/misc/an-overview-of-guice-java-dependency-injection.html
+ > https://dzone.com/articles/constructor-injection-vs-0
+ > http://www.javacreed.com/why-should-we-use-dependency-injection/
+ > https://boost-experimental.github.io/di/
+ > https://www.fluentcpp.com/2019/06/07/write-your-own-dependency-injection-container/
+
+extended C++ & serialisation & IDE integration
+ > https://github.com/curimit/SugarCpp
+ > named arguments & script for name refactoring
+   see (NamedType) https://www.fluentcpp.com/2019/03/22/generalizing-unordered-named-arguments/
+   see https://www.fluentcpp.com/2018/12/14/named-arguments-cpp/
+   https://www.fluentcpp.com/2017/05/05/news-strong-types-are-free/
+ > header injection
+ > checked types
+   https://foonathan.net/blog/2016/10/11/type-safe.html
+   https://github.com/martinmoene/type-lite#other-implementations-of-strong-types
+   https://github.com/martinmoene/type-lite
+   https://github.com/boostorg/safe_numerics
+   https://github.com/foonathan/type_safe
+ > Hot code reloading https://github.com/vlang/v/tree/master/examples/hot_code_reloading
+ > serialisation
+-ftime-report. If you’re using clang, definitely check out Aras’s blog post, time-trace: timeline / flame chart profile for Clang
+ > USE Templight! https://danielleamethyst.org/work_blog/templates/
+ > https://aras-p.info/blog/2019/01/12/Investigating-compile-times-and-Clang-ftime-report/
+ > https://aras-p.info/blog/2019/01/16/time-trace-timeline-flame-chart-profiler-for-Clang/
+ > http://virtuallyrandom.com/c-compilation-fixing-it/
+ > enum bitmasks
+   https://gist.github.com/blockspacer/8c2c87a079e53eb46d62fcf43a88667e
+ > fixed_point
+   http://www.stablecoder.ca/2017/06/25/fixed-point-type.html
+   base
+ > extra operators
+   https://foonathan.net/blog/2018/10/13/spaceship-proposals.html
+ > Error handling (nothrow)
+   see "Error handling in Rust" https://foonathan.net/blog/2017/12/04/exceptions-vs-expected.html
+ > String View
+   https://foonathan.net/blog/2017/03/22/string_view-temporary.html
+ > function_ref
+   https://foonathan.net/blog/2017/01/20/function-ref-implementation.html
+
+Sanitizers (LLVM/clang)
+ > http://www.stablecoder.ca/2018/10/30/full-cmake-helper-suite.html
+ > http://www.stablecoder.ca/2018/02/01/analyzer-build-types.html
+
+clang-format & clang-tidy
+ > http://www.stablecoder.ca/2018/01/01/cmake-clang-tools.html
+
+dependency graph (graphviz)
+ > http://www.stablecoder.ca/2019/03/15/sorting-you-dependency-graph.html
+
+Precompiled headers?
+ > http://llunak.blogspot.com/2019/05/why-precompiled-headers-do-not-improve.html
+ > https://blog.knatten.org/2010/10/29/what-i-have-against-precompiled-headers/
+ > https://github.com/larsch/cmake-precompiled-header/blob/master/PrecompiledHeader.cmake#L191
+ > https://github.com/modern-cpp-examples/match3/blob/bb1f4de11db9e92b6ebdf80f1afe9245e6f86b7e/CMakeLists.txt#L35
+
+C++ modules
+ > https://blog.magnum.graphics/backstage/lightweight-stl-compatible-unique-pointer/#but-but-modules
+ > https://www.modernescpp.com/index.php/c-20-modules
+ > https://gracicot.github.io/modules/2018/11/04/modules-are-not-precompiled-headers.html
+ > https://build2.org/doc/modules-cppcon2017.pdf
+ > https://www.modernescpp.com/index.php/c-20-more-details-to-modules
+ > https://www.reddit.com/r/cpp/comments/640szr/trying_out_clang_5_modules_in_a_70k_loc_project/
+
+Use iosfwd
+ > https://blog.magnum.graphics/backstage/forward-declaring-stl-container-types/
+
+polymorphic_downcast ?
+ > https://www.bogotobogo.com/cplusplus/upcasting_downcasting.php
+ > https://unclejimbo.github.io/2017/02/22/RTTI-in-C++/
+ > https://www.boost.org/doc/libs/1_65_0/doc/html/conversion/polymorphic_casts.html
+ > dynamic_cast ? https://stackoverflow.com/a/16247859
+
+C++ ranges
+ > (compile time! SIC! pch.h? AND SLOOOW ?!?!) https://aras-p.info/blog/2018/12/28/Modern-C-Lamentations/
+ > https://ericniebler.github.io/range-v3/
+ > https://www.fluentcpp.com/?s=ranges
+ > https://github.com/ericniebler/range-v3/blob/master/test/view/concat.cpp
+
+Boost.SML
+ > https://boost-experimental.github.io/sml/tutorial/index.html
+ > https://github.com/modern-cpp-examples/match3/blob/master/include/controller/player.hpp

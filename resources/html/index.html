@@ -19,6 +19,7 @@
       html {
         width:100%;
         height:100%;
+        overflow: hidden;
       }
 
       body {
@@ -27,6 +28,17 @@
         font-family: "Ubuntu";
         width:100%;
         height:100%;
+        overflow: hidden;
+      }
+
+      div:focus {
+        border: 5px solid #f1f1f1;
+        background-color:rgb(255, 255, 255) !important;
+      }
+
+      div:hover {
+        border: 5px solid #ffff87 !important;
+        background-color:rgb(100, 100, 0);
       }
 
       .showbox2 {
@@ -253,6 +265,16 @@
   </head>
   <body class="exanim">
 
+
+    <div style="width:500px; height:150px; overflow:scroll; border: 3px solid grey">
+      <div style="width:100px; height:50px; overflow:hidden; border: 3px solid #CCC">
+        Line 1<br>Line 2<br> Line 3<br> Line 4<br> Line 5<br> Line 6<br>:Line 7<br>
+      </div>
+      <div style="width:150px; height:100px; overflow:auto; border: 3px solid #FFF">
+        Line 1<br>Line 2<br> Line 3<br> Line 4<br> Line 5<br> Line 6<br>:Line 7<br>
+      </div>
+    </div>
+
     <div style="width:100px;height:100px;overflow:hidden;background-color:white;">
       <div style="width:50px;height:50px;border-radius:40px;EXT__test-background__EXT;EXT__test-y-scroll__EXT;">
       </div>
@@ -285,7 +307,7 @@
       on-mouseleave!
     </div>
 
-    <div style="background-color:rgb(0, 30, 128);" EXT__on-wheel__EXT="your args here wheel">
+    <div style="background-color:rgb(0, 30, 128);" EXT__on-wheel-print__EXT="your args here wheel 1">
       on-wheel!
     </div>
 
@@ -297,9 +319,14 @@
       no on-keydown! need tabindex & focus!
     </div>
 
-    <div style="background-color:rgb(20, 153, 53);" tabindex="0" id="example" EXT__on-mouseover-focus__EXT="" EXT__on-mouseout-blur__EXT="" EXT__on-keyup-print__EXT=""  EXT__on-keydown-print__EXT="" EXT__on-keypress-print__EXT="">
+    <div style="background-color:rgb(20, 153, 53);" tabindex="0" id="example" EXT__on-mouseover-focus__EXT="" EXT__on-mouseout-blur__EXT="" EXT__on-keyup-print__EXT=""  EXT__on-keydown-print__EXT="" EXT__on-keypress-print__EXT="" EXT__on-wheel-print__EXT="your args here wheel 2" EXT__on-click-print__EXT="your args here click 2">
       A div by default cannot be given focus. However, you can change that by adding a tabindex attribute to the div
       You can then give the div focus, and also blur it with the hover event
+      see https://javascript.info/mousemove-mouseover-mouseout-mouseenter-mouseleave#mouseover-mouseout-relatedtarget
+    </div>
+
+    <div style="background-color:rgb(76, 67, 23);" tabindex="0" id="example2" EXT__on-mouseover-focus__EXT="" EXT__on-mouseout-blur__EXT="" EXT__on-keyup-print__EXT=""  EXT__on-keydown-print__EXT="" EXT__on-keypress-print__EXT="" EXT__on-wheel-print__EXT="your args here wheel 2" EXT__on-click-print__EXT="your args here click 2">
+      example2
       see https://javascript.info/mousemove-mouseover-mouseout-mouseenter-mouseleave#mouseover-mouseout-relatedtarget
     </div>
 

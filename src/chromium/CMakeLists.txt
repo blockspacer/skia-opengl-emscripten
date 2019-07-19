@@ -263,8 +263,10 @@ include(GCRYPTO.cmake)
 #
 include(base.cmake)
 
-# WTF
-include(BLINK_WTF.cmake)
+if(ENABLE_WTF)
+  # WTF
+  include(BLINK_WTF.cmake)
+endif(ENABLE_WTF)
 
 if(ENABLE_GNET)
   # GNET: Net helper library.

@@ -70,7 +70,7 @@ target_link_libraries(cobalt_csp PUBLIC
   #BASE_CC
   #PAINT_CC
   #SERVICES_NETWORK_PUBLIC_CPP
-  #libwebp # requires libpng
+  #${WEBP_LIB} # requires libpng
   #${libjpeg_LIB}
   #${libjpeg_TURBO_LIB}
   #${libpng_LIB}

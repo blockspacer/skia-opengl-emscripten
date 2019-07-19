@@ -65,7 +65,7 @@ if(ENABLE_KHRONOS)
   )
 endif(ENABLE_KHRONOS)
 # Blink platform
-set(ENABLE_BLINK TRUE CACHE BOOL "ENABLE_BLINK")
+set(ENABLE_BLINK FALSE CACHE BOOL "ENABLE_BLINK")
 # cobalt
 set(ENABLE_COBALT TRUE CACHE BOOL "ENABLE_COBALT")
 # SKIA
@@ -96,17 +96,29 @@ endif(NOT ENABLE_WASM)
 #set(ENABLE_SIMD TRUE)
 set(ENABLE_SIMD FALSE CACHE BOOL "ENABLE_SIMD")
 # PTHREADS
-set(ENABLE_WEB_PTHREADS FALSE CACHE BOOL "ENABLE_WEB_PTHREADS")
+set(ENABLE_WEB_PTHREADS TRUE CACHE BOOL "ENABLE_WEB_PTHREADS")
 #
 set(ENABLE_WEBGL2 TRUE CACHE BOOL "ENABLE_WEB_PTHREADS")
 #set(ENABLE_WEBGL1 TRUE) # TODO
 set(ENABLE_WEBGL_DEBUG_CHECKS TRUE CACHE BOOL "ENABLE_WEBGL_DEBUG_CHECKS") # only in debug
-set(ENABLE_WTF TRUE CACHE BOOL "ENABLE_WTF")
+set(ENABLE_WTF FALSE CACHE BOOL "ENABLE_WTF")
+if(ENABLE_BLINK AND NOT ENABLE_WTF)
+  message(FATAL_ERROR "BLINK requires LIBWTF")
+endif()
 set(ENABLE_GRE2 TRUE CACHE BOOL "ENABLE_GRE2")
+if(ENABLE_BLINK AND NOT ENABLE_GRE2)
+  message(FATAL_ERROR "BLINK requires GRE2")
+endif()
 set(ENABLE_GLIBXML TRUE CACHE BOOL "ENABLE_GLIBXML")
+if(ENABLE_BLINK AND NOT ENABLE_GLIBXML)
+  message(FATAL_ERROR "BLINK requires GLIBXML")
+endif()
 set(ENABLE_LIBYUV TRUE CACHE BOOL "ENABLE_LIBYUV")
 set(ENABLE_ICCJPEG TRUE CACHE BOOL "ENABLE_ICCJPEG")
 set(ENABLE_LIBWEBP TRUE CACHE BOOL "ENABLE_LIBWEBP")
+if(ENABLE_BLINK AND NOT ENABLE_LIBWEBP)
+  message(FATAL_ERROR "BLINK requires LIBWEBP")
+endif()
 set(USE_ICU TRUE CACHE BOOL "USE_ICU")
 set(USE_LIBJPEG_TURBO TRUE CACHE BOOL "USE_LIBJPEG_TURBO")
 ### Find Libraries
@@ -416,6 +428,15 @@ if (ENABLE_SKIA)
   )
 endif(ENABLE_SKIA)
 
+if(ENABLE_COBALT)
+  list(APPEND COBALT_LIBS
+    base
+    ced
+    GCRYPTO
+    GURL
+  )
+endif(ENABLE_COBALT)
+
 if(ENABLE_BLINK)
   if(NOT ENABLE_SKIA)
     message(FATAL_ERROR "BLINK requires SKIA")
@@ -460,6 +481,20 @@ if(ENABLE_BLINK)
     ${BLINK_GFX_LIBS}
     COMPONENTS_SCHEDULING_METRICS
   )
+  list(APPEND BLINK_LIBS
+    base
+    ced
+    GCRYPTO
+    GURL
+  )
+  if(NOT TARGET_EMSCRIPTEN)
+    list(APPEND BLINK_LIBS
+      # tcmalloc only for posix/linux/e.t.c.
+      tcmalloc
+      # libevent only for posix/linux/e.t.c.
+      libevent
+    )
+  endif(NOT TARGET_EMSCRIPTEN)
   if(ENABLE_GNET)
     set(SERVICES_SERVICE_MANAGER_PUBLIC_CPP_LIB
         SERVICES_SERVICE_MANAGER_PUBLIC_CPP
@@ -600,6 +635,11 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
 set(COMMON_CXX_FLAGS "${COMMON_CXX_FLAGS} -std=c++17") # use target options
 
+# see https://github.com/chromium/chromium/blob/master/build/config/compiler/BUILD.gn#L683
+#set(COMMON_CXX_FLAGS "${COMMON_CXX_FLAGS} -ftime-trace")
+# see https://aras-p.info/blog/2019/01/12/Investigating-compile-times-and-Clang-ftime-report/
+#set(COMMON_CXX_FLAGS "${COMMON_CXX_FLAGS} -ftime-report")
+
 # TODO
 set(COMMON_CXX_FLAGS "${COMMON_CXX_FLAGS} -DCODEC_IMPLEMENTATION=1")
 
@@ -710,7 +750,7 @@ if(ENABLE_COBALT)
   set(COBALT_GEN_DOM_PARSER_PARENT_DIR
     ${COBALT_GEN_DIR}cobalt/
   )
-  set(COBALT_COMMON_DEFINES
+  list(APPEND COBALT_COMMON_DEFINES
     OS_STARBOARD=1
     STARBOARD=1
     COBALT=1
@@ -1772,11 +1812,13 @@ else(EMSCRIPTEN)
 endif(TARGET_EMSCRIPTEN)
 
 # custom flags
-if(ENABLE_WTF)
+if(ENABLE_WTF OR ENABLE_COBALT OR ENABLE_BLINK)
   list(APPEND APP_DEFINITIONS ENABLE_BASE=1)
+endif()
+if(ENABLE_WTF)
   # NOTE: WTF requires BASE
   list(APPEND APP_DEFINITIONS ENABLE_WTF=1)
-endif(ENABLE_WTF)
+endif()
 
 # NOTE: header from SKIA_EXT
 #set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_USER_CONFIG_HEADER=\\\"${SKIA_EXT_DIR}config/SkUserConfig.h\\\"")
@@ -1883,6 +1925,9 @@ endif(ENABLE_ICCJPEG)
 #endif()
 if(ENABLE_LIBWEBP)
   include(${CHROMIUM_DIR}libwebp.cmake)
+  set(WEBP_LIB libwebp)
+  list(APPEND APP_DEFINITIONS ENABLE_LIBWEBP=1)
+  list(APPEND COBALT_COMMON_DEFINES ENABLE_LIBWEBP=1)
 endif(ENABLE_LIBWEBP)
 
 if(TARGET_LINUX)
@@ -1916,13 +1961,15 @@ endif(USE_CUSTOM_HARFBUZZ)
 #
 # WTF
 #
-if(ENABLE_WTF)
+if(ENABLE_WTF OR ENABLE_BLINK OR ENABLE_COBALT)
   add_subdirectory(src/chromium) # requires skia above
+endif()
+if(ENABLE_WTF)
   set(WTF_LIBRARY_NAME wtf)
   #message(FATAL_ERROR ${WTF_LIBRARY_NAME})
   set(WTF_LIBS
     ${WTF_LIBRARY_NAME}
-    #base
+    base
     #libevent
     #icu
   )
@@ -2279,13 +2326,6 @@ if(TARGET_EMSCRIPTEN)
     #GFX_SWITCHES
     #GFX_RANGE
     ${BLINK_LIBS}
-    ##
-    #SKIA_EXT
-    ##
-    #GNET
-    #GURL
-    #GCRYPTO
-    #BORINGSSL
     #
     ${LINK_OPTIONS}
   )
@@ -2325,13 +2365,7 @@ else()
     #${COBALT_LIBRARY_NAME}
     ${WTF_LIBS}
     #BORINGSSL
-    GCRYPTO
-    GURL
     ${GNET_LIBS}
-    # tcmalloc only for posix/linux/e.t.c.
-    tcmalloc
-    # libevent only for posix/linux/e.t.c.
-    libevent
     #
     ${SKIA_LIBS}
     #SKIA
@@ -2359,9 +2393,6 @@ else()
     #
     #${libpng_LIB}
     #GLIBPNG
-    GURL
-    ${GNET_LIBS}
-    GCRYPTO
     # services/service_manager
     # services/ws/public/cpp/gpu
     #BLINK_WTF
@@ -2373,13 +2404,11 @@ else()
     # "//third_party:freetype_harfbuzz",
     #  "//third_party/blink/public/common",
     #MOJO
-    ced
     # emoji-segmenter
     ${HARFBUZZ_LIBRARIES}
     ${CUSTOM_ICU_LIB}
     ${libZLIB_LIB}
     # webrtc
-    base
     #public_deps = [
     #  ":bindings_buildflags",
     #  ":make_platform_generated",

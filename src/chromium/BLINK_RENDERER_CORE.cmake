@@ -5562,7 +5562,7 @@ target_link_libraries(BLINK_RENDERER_CORE PUBLIC
   BASE_CC
   PAINT_CC
   ${SERVICES_NETWORK_PUBLIC_CPP_LIB}
-  libwebp # requires libpng
+  ${WEBP_LIB} # requires libpng
   #${libjpeg_LIB}
   ${libjpeg_TURBO_LIB}
   #${libpng_LIB}

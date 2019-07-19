@@ -51,6 +51,7 @@ if (BUILD_APP)
       ${COLORED_OUTPUT_ENABLER}
         ${EMSCRIPTEN_CMAKE} "cmake" ".." ${CMAKE_OPTS} ${EXTRA_EMCMAKE_OPTS}
     WORKING_DIRECTORY ${BUILD_DIR}
+    TIMEOUT 7200 # sec
     RESULT_VARIABLE retcode
     ERROR_VARIABLE _ERROR_VARIABLE
   )
@@ -70,6 +71,7 @@ if (BUILD_APP)
     ${COLORED_OUTPUT_ENABLER}
       ${EMSCRIPTEN_MAKE} "make" ${MAKE_OPTS} ${EXTRA_EMMAKE_OPTS}
     WORKING_DIRECTORY ${BUILD_DIR}
+    TIMEOUT 7200 # sec
     RESULT_VARIABLE retcode
     ERROR_VARIABLE _ERROR_VARIABLE
   )
@@ -106,6 +108,7 @@ if (BUILD_APP)
       ${COLORED_OUTPUT_ENABLER}
         ${GZIP} "--best" "--keep" "--force" "--suffix=.gz" "${WASM_FILE_PATH}"
       WORKING_DIRECTORY ${BUILD_DIR}
+      TIMEOUT 7200 # sec
       RESULT_VARIABLE retcode
       ERROR_VARIABLE _ERROR_VARIABLE
     )
@@ -121,6 +124,7 @@ if (BUILD_APP)
       ${COLORED_OUTPUT_ENABLER}
         ${BROTLI} "--best" "--keep" "--force" "--lgwin=24" "--suffix=.br" "${WASM_FILE_PATH}"
       WORKING_DIRECTORY ${BUILD_DIR}
+      TIMEOUT 7200 # sec
       RESULT_VARIABLE retcode
       ERROR_VARIABLE _ERROR_VARIABLE
     )
@@ -151,6 +155,7 @@ if(RUN_APP)
   execute_process(
     COMMAND "emrun" "--port" "9090" "--serve_root" "/" "."
     WORKING_DIRECTORY ${BUILD_DIR}
+    TIMEOUT 7200 # sec
     RESULT_VARIABLE retcode
     ERROR_VARIABLE _ERROR_VARIABLE
   )

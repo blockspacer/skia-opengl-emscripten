@@ -25,6 +25,8 @@
 /// \note defined by CMAKE
 //#define ENABLE_SKIA 1
 
+#define ENABLE_OPENGL 1
+
 #if defined(ENABLE_SKIA)
 // high quality: anialias, e.t.c.
 #define ENABLE_SKIA_HQ 1
@@ -123,8 +125,10 @@
 #undef ENABLE_SK_EFFECTS
 #endif
 
+#if defined(ENABLE_SKIA)
 #define ENABLE_SK_UI 1
 #define ENABLE_IMAGES 1
+#endif
 
 //#undef ENABLE_SKOTTIE
 //#undef ENABLE_CUSTOM_FONTS
@@ -171,42 +175,50 @@
 //#undef WEBGL2_SUPPORT
 
 #if defined(ENABLE_HTML5_SDL) || !defined(__EMSCRIPTEN__)
+#include <SDL2/SDL.h>
+#if defined(ENABLE_OPENGL)
+#include <SDL2/SDL_opengles2.h>
+#endif // ENABLE_OPENGL
+#include <SDL2/SDL_video.h>
 //#include <SDL.h>
 //#include <SDL_opengles2.h>
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_opengles2.h>
 //#include <SDL2/SDL_thread.h>
 //#include <SDL2/SDL_syswm.h>
-#include <SDL2/SDL_video.h>
 //#include "SDL_opengles2.h"
 //#include <SDL_opengles2_gl2.h>
 //#include <SDL_opengles2_gl2ext.h>
 #endif
 
+#if defined(ENABLE_OPENGL)
 #if defined(WEBGL2_SUPPORT)
 #include <GLES3/gl3.h>
 #else
 #include <GLES2/gl2.h>
 #endif
+#endif // ENABLE_OPENGL
 
 #include <emscripten.h>
 #include <emscripten/html5.h>
 #include <emscripten/key_codes.h>
 
+#if defined(ENABLE_OPENGL)
 // TODO
 //#define GL_RGBA8 0x8058
-#include <EGL/egl.h>
-#include <GL/gl.h>
+//#include <EGL/egl.h>
 //#include <OpenGL/gl.h>
 //#include <SDL/SDL_ttf.h>
 //#include <SDL2/SDL_image.h>
 #include <GL/gl.h>
 #include <GL/glext.h>
+#endif // ENABLE_OPENGL
+
 #else
 #include "SDL2/SDL.h"
+#if defined(ENABLE_OPENGL)
 #include <GL/glew.h>
 #include <SDL_opengl.h>
 #include <SDL_opengl_glext.h>
+#endif // ENABLE_OPENGL
 #endif
 
 // __EMSCRIPTEN_PTHREADS__ can be used to detect whether Emscripten is currently targeting pthreads.
@@ -341,6 +353,7 @@
 #include <cmath>
 #include <functional>
 #include <iostream>
+#include <cstdlib>
 #include <map>
 #include <sstream>
 #include <string>
@@ -357,6 +370,11 @@
 
 #ifdef ENABLE_BASE
 
+#include "base/memory/ptr_util.h"
+#include "base/macros.h"
+#include "base/strings/stringprintf.h"
+#include "base/stl_util.h"
+#include "base/strings/utf_string_conversions.h"
 //#include "base/task/sequence_manager/thread_controller_with_message_pump_impl.h"
 #include "base/bind.h"
 #include "base/bind_helpers.h"
@@ -396,6 +414,38 @@
 #include "base/synchronization/waitable_event.h"
 
 //#include "base/task/sequence_manager/sequence_manager.h"
+
+#include "base/observer_list.h"
+#include "base/synchronization/lock.h"
+#include "base/synchronization/waitable_event.h"
+#include "base/threading/thread.h"
+#include "base/timer/timer.h"
+
+#include "base/callback.h"
+//#include "base/containers/hash_tables.h"
+#include "base/bind.h"
+#include "base/callback.h"
+#include "base/command_line.h"
+#include "base/logging.h"
+#include "base/memory/weak_ptr.h"
+#include "base/message_loop/message_loop.h"
+#include "base/optional.h"
+#include "base/strings/stringprintf.h"
+#include "base/synchronization/waitable_event.h"
+//#include "base/trace_event/trace_event.h"
+#include "base/bind.h"
+#include "base/strings/stringprintf.h"
+#include "base/trace_event/trace_event.h"
+#include "base/callback.h"
+////#include "base/message_loop.h"
+
+#include "base/files/file_path.h"
+#include "base/message_loop/message_loop.h"
+#include "base/synchronization/waitable_event.h"
+#include "base/threading/thread.h"
+#include "base/threading/thread_checker.h"
+
+#include "base/feature_list.h"
 
 // Create a TYPE_DEFAULT message-loop.
 
@@ -437,12 +487,10 @@
 #endif // ENABLE_WTF
 
 #if defined(ENABLE_SKIA) && defined(ENABLE_BLINK)
-#define ENABLE_UI 1
+#define ENABLE_BLINK_UI 1
 #endif
 
-#ifdef ENABLE_UI
-#include "base/stl_util.h"
-#include "base/strings/utf_string_conversions.h"
+#ifdef ENABLE_BLINK_UI
 #include "ui/gfx/canvas.h"
 #include "ui/gfx/font_list.h"
 //#include "ui/views/border.h"
@@ -487,9 +535,6 @@
 #include "ui/gfx/image/image_skia_operations.h"
 #include "ui/gfx/image/image_util.h"
 
-#include "base/macros.h"
-#include "base/strings/stringprintf.h"
-#include "base/strings/utf_string_conversions.h"
 #include "cc/paint/paint_flags.h"
 #include "ui/gfx/canvas.h"
 #include "ui/gfx/color_utils.h"
@@ -512,7 +557,6 @@
 #include "ui/gfx/geometry/rect_conversions.h"
 #include "ui/gfx/geometry/vector3d_f.h"
 
-#include "base/memory/ptr_util.h"
 #include "cc/animation/animation_host.h"
 #include "cc/animation/animation_id_provider.h"
 #include "cc/animation/element_animations.h"
@@ -713,6 +757,7 @@ void vprintf_stderr_common(const char* format, va_list args) {
   vfprintf(stderr, format, args);
 }*/
 
+#if defined(ENABLE_OPENGL)
 static void CheckOpenGLError(const char* stmt, const char* fname, int line)
 {
     GLenum err = glGetError();
@@ -734,6 +779,7 @@ static void CheckOpenGLError(const char* stmt, const char* fname, int line)
     #define GL_CHECK(stmt) stmt
     #define GL_CHECK_WITH_MESSAGE(stmt) (void)(0);
 #endif
+#endif // ENABLE_OPENGL
 
 #if defined(ENABLE_SKIA) && defined(SKIA_GR_CONTEXT)
 
@@ -834,9 +880,6 @@ static int browser_height = height;//10000;
 #include "renderer_stub/rasterizer/skgl/software_rasterizer.h"
 
 #include "render_tree_combiner.h"
-
-#include "cobalt/base/message_queue.h"
-#include "cobalt/base/event_dispatcher.h"
 #include "starboard/event.h"
 
 #include "cobalt/base/init_cobalt.h"
@@ -845,7 +888,6 @@ static int browser_height = height;//10000;
 
 #include "cobalt/cssom/selector_tree.h"
 
-#include "cobalt/base/version_compatibility.h"
 #include "cobalt/css_parser/parser.h"
 #include "cobalt/cssom/css_style_rule.h"
 #include "cobalt/cssom/specificity.h"
@@ -863,8 +905,6 @@ static int browser_height = height;//10000;
 #include "cobalt/dom/html_custom_element.h"
 
 #include "cobalt/dom_parser/html_decoder.h"
-#include "base/callback.h"
-////#include "base/message_loop.h"
 #include "cobalt/dom/attr.h"
 #include "cobalt/dom/font_cache.h"
 #include "cobalt/dom/document.h"
@@ -877,7 +917,6 @@ static int browser_height = height;//10000;
 #include "cobalt/dom/error_event.h"
 #include "cobalt/dom/error_event_init.h"
 #include "cobalt/dom/event.h"
-#include "base/trace_event/trace_event.h"
 
 #include "cobalt/dom/html_body_element.h"
 #include "cobalt/dom/html_collection.h"
@@ -919,8 +958,6 @@ static int browser_height = height;//10000;
 #include <string>
 #include <vector>
 
-#include "base/bind.h"
-#include "base/strings/stringprintf.h"
 #include "cobalt/cssom/active_pseudo_class.h"
 #include "cobalt/cssom/after_pseudo_element.h"
 #include "cobalt/cssom/attribute_selector.h"
@@ -984,21 +1021,6 @@ static int browser_height = height;//10000;
 #include "cobalt/cssom/url_value.h"
 #include "cobalt/cssom/viewport_size.h"
 
-#include "base/bind.h"
-#include "base/callback.h"
-#include "base/command_line.h"
-#include "base/logging.h"
-#include "base/memory/weak_ptr.h"
-#include "base/message_loop/message_loop.h"
-#include "base/optional.h"
-#include "base/strings/stringprintf.h"
-#include "base/synchronization/waitable_event.h"
-//#include "base/trace_event/trace_event.h"
-#include "cobalt/base/c_val.h"
-#include "cobalt/base/language.h"
-#include "cobalt/base/startup_timer.h"
-#include "cobalt/base/tokens.h"
-#include "cobalt/base/type_id.h"
 //#include "cobalt/browser/splash_screen_cache.h"
 //#include "cobalt/browser/stack_size_constants.h"
 //#include "cobalt/browser/switches.h"
@@ -1040,18 +1062,17 @@ static int browser_height = height;//10000;
 #include <string>
 #include <vector>
 
-#include "base/callback.h"
-//#include "base/containers/hash_tables.h"
-#include <map>
-
-#include "base/files/file_path.h"
-#include "base/message_loop/message_loop.h"
-#include "base/synchronization/waitable_event.h"
-#include "base/threading/thread.h"
-#include "base/threading/thread_checker.h"
-//#include "cobalt/accessibility/tts_engine.h"
+#include "cobalt/base/c_val.h"
+#include "cobalt/base/language.h"
+#include "cobalt/base/startup_timer.h"
+#include "cobalt/base/tokens.h"
+#include "cobalt/base/type_id.h"
+#include "cobalt/base/version_compatibility.h"
+#include "cobalt/base/message_queue.h"
+#include "cobalt/base/event_dispatcher.h"
 #include "cobalt/base/address_sanitizer.h"
 #include "cobalt/base/source_location.h"
+//#include "cobalt/accessibility/tts_engine.h"
 ///#include "cobalt/browser/lifecycle_observer.h"
 //#include "cobalt/browser/screen_shot_writer.h"
 ///#include "cobalt/browser/splash_screen_cache.h"
@@ -1090,12 +1111,6 @@ static int browser_height = height;//10000;
 #include "cobalt/ui_navigation/nav_item.h"
 //#include "cobalt/webdriver/session_driver.h"
 #include "url/gurl.h"
-
-#include "base/observer_list.h"
-#include "base/synchronization/lock.h"
-#include "base/synchronization/waitable_event.h"
-#include "base/threading/thread.h"
-#include "base/timer/timer.h"
 //#include "cobalt/account/account_manager.h"
 #include "cobalt/base/accessibility_caption_settings_changed_event.h"
 #include "cobalt/base/application_state.h"
@@ -1209,6 +1224,8 @@ static int browser_height = height;//10000;
 typedef base::Callback<void(const cobalt::layout::LayoutManager::LayoutResults&)>
     OnRenderTreeProducedCallback;
 #endif // ENABLE_COBALT
+
+static const float dpi_scale = 1.0f;
 
 #if defined(ENABLE_IMAGES)
 //#if defined(ENABLE_SKIA) && (defined(USE_LIBJPEG) || defined(USE_LIBJPEG_TURBO))
@@ -1376,12 +1393,9 @@ static SkSurface* sSurface = nullptr;
 
 #endif // ENABLE_SKIA
 
-static GLint uniformTex;
-
-//static GLint uniformRedClrTint;
-
 #if defined(ENABLE_HTML5_SDL) || !defined(__EMSCRIPTEN__)
 static SDL_Window* window;
+static SDL_Renderer* sdl_ren;
 #endif
 
 #ifdef __EMSCRIPTEN__
@@ -1417,7 +1431,9 @@ static EM_BOOL enableSwapControl = EM_FALSE;
 // @see enableExtensionsByDefault
 static EM_BOOL enableEmscriptenExtensionsByDefault = EM_TRUE;
 #else
+#if defined(ENABLE_OPENGL)
 static SDL_GLContext glContext;
+#endif // ENABLE_OPENGL
 #endif
 
 #if defined(ENABLE_HTML5_SDL) || !defined(__EMSCRIPTEN__)
@@ -1428,6 +1444,11 @@ static SDL_Event e;
 // Main loop flag
 static bool quitApp = false;
 
+#if defined(ENABLE_OPENGL)
+//static GLint uniformRedClrTint;
+
+static GLint uniformTex;
+
 static GLuint vertexPosObject;
 static GLuint vertexArrayObject;
 
@@ -1435,6 +1456,7 @@ static GLuint programObject;
 
 static GLfloat const kVertexData[] = {1.0f, 1.0f,  1.0f, 0.0f, -1.0f, 1.0f,  0.0f, 0.0f,
                                       1.0f, -1.0f, 1.0f, 1.0f, -1.0f, -1.0f, 0.0f, 1.0f};
+#endif // ENABLE_OPENGL
 
 // TODO https://kapadia.github.io/emscripten/2013/09/13/emscripten-pointers-and-pointers.html
 // TODO https://github.com/bakerstu/openmrn/blob/5f6bb8934fe13b2897d5f52ec6b358bd87dd886a/src/utils/FileUtils.cxx#L44
@@ -1628,8 +1650,8 @@ public:
     sk_canvas->drawCircle(m_pos.x(), m_pos.y(), m_size, paint);
       //printf("onDraw() 2.1\n");*/
 
-    //printf("ENABLE_UI 1\n");
-#ifdef ENABLE_UI
+    //printf("ENABLE_BLINK_UI 1\n");
+#ifdef ENABLE_BLINK_UI
     //printf("ENABLE_UI 2\n");
     cc::SkiaPaintCanvas paint_canvas(sk_canvas);
     gfx::Canvas gfx_canvas(&paint_canvas, 1.0f);
@@ -1645,7 +1667,7 @@ public:
     {
       // see https://github.com/codebyravi/electron/blob/master/atom/common/api/atom_api_native_image.cc#L115
       //gfx_canvas.DrawImageInt(*imageSkia.get(), 330, 330);
-#if defined(ENABLE_UI)/// && defined(__TODO__)
+#if defined(ENABLE_BLINK_UI)/// && defined(__TODO__)
       DCHECK(gfxImageSkia);
       gfx_canvas.DrawImageInt(gfx::ImageSkia(gfxImageSkia->GetRepresentation(10.0f)), 630, 30);
 #endif
@@ -1941,7 +1963,7 @@ public:
     clipped_edges);
   //printf("FillRect 9\n");
 
-#if defined(ENABLE_UI) ///&& defined(__TODO__)
+#if defined(ENABLE_BLINK_UI) ///&& defined(__TODO__)
 #if defined(ENABLE_IMAGES)
   if (!sStaticBitmapImage || sStaticBitmapImage->IsNull() || !sStaticBitmapImage->IsValid()) {
     printf("Invalid StaticBitmapImage\n");
@@ -1986,6 +2008,7 @@ public:
 
 #endif // ENABLE_SKIA
 
+#if defined(ENABLE_OPENGL)
 static GLuint LoadShader(GLenum type, const char* shaderSrc) {
   GLuint shader;
   GLint compiled;
@@ -2014,8 +2037,7 @@ static GLuint LoadShader(GLenum type, const char* shaderSrc) {
   }
   return shader;
 }
-
-
+#endif // ENABLE_OPENGL
 
 #ifdef ENABLE_COBALT
 using namespace cobalt;
@@ -3689,6 +3711,7 @@ void CobaltTester::run() {
 }
 #endif // ENABLE_COBALT
 
+#if defined(ENABLE_OPENGL)
 static int InitGL() {
   char vShaderStr[] = "attribute vec2 vPosition;                \n"
                       "attribute vec2 vUV;                \n"
@@ -3819,9 +3842,12 @@ static void drawGLTexture(const int texWidth, const int texHeight, const void* t
     GL_CHECK( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR) );
     GL_CHECK( glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texWidth, texHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, texData) );
 }
+#endif // ENABLE_OPENGL
 
 #if defined(ENABLE_SK_UI)
 static void drawUIDemo() {
+  //printf("drawUIDemo\n");
+
   //DCHECK(g_cobaltTester);
   //DCHECK_EQ(base::MessageLoopCurrent::Get().task_runner(), g_cobaltTester->self_task_runner_);
   //DCHECK(g_cobaltTester->thread_checker_.CalledOnValidThread());
@@ -3904,14 +3930,19 @@ static void onResize(int widthIn, int heightIn)
 {
   drawingBufferWidth = std::min(widthIn, maxDrawingBufferWidth);
   drawingBufferHeight = std::min(heightIn, maxDrawingBufferHeight);
+#if defined(ENABLE_OPENGL)
   glViewport(0, 0, drawingBufferWidth, drawingBufferHeight);
+#endif // ENABLE_OPENGL
 }
 
 ///
 // Draw a triangle using the shader pair created in Init()
 //
+#if defined(ENABLE_OPENGL)
 static void Draw() {
-    ///if (isDebugPeriodReached()) printf("Draw() 1\n");
+  //printf("Draw\n");
+
+  //if (isDebugPeriodReached()) printf("Draw() 1\n");
 
   GL_CHECK( glClear(GL_COLOR_BUFFER_BIT) );
 
@@ -3990,6 +4021,7 @@ static void Draw() {
   //GL_CHECK( glDisableVertexAttribArray(1) );
       //printf("Draw() 7\n");
 }
+#endif // ENABLE_OPENGL
 
 static void animate() {
   //redClrTintAnim += 0.01f;
@@ -4195,6 +4227,7 @@ static void updateGlobalMousePos(const int screenMouseX, const int screenMouseY)
   prevBrowserScreenMouseY = curScreenMouseY;
 }
 
+#if defined(ENABLE_COBALT)
 static void sendBrowserInputEvent(std::unique_ptr<SbEvent> event) {
   ///if (base::MessageLoopCurrent::Get().task_runner() != g_cobaltTester->self_task_runner_) {
     //main_browser_thread_.task_runner()->PostBlockingTask(
@@ -4326,7 +4359,7 @@ static std::unique_ptr<SbInputData> createEmptySbEventData() {
 }
 
 static std::unique_ptr<SbInputData> setMouseSbEventData(std::unique_ptr<SbInputData> data,
-                              const int screenMouseX, const int  screenMouseY,
+                              const double screenMouseX, const double screenMouseY,
                               const SbInputEventType& event_type,
                               unsigned int key_modifiers, const SbKey& key) {
   data->device_type = SbInputDeviceType::kSbInputDeviceTypeMouse;
@@ -4339,19 +4372,25 @@ static std::unique_ptr<SbInputData> setMouseSbEventData(std::unique_ptr<SbInputD
 }
 
 static std::unique_ptr<SbInputData> setWheelSbEventData(std::unique_ptr<SbInputData> data,
-                              const int wheelX, const int wheelY,
+                              const double screenMouseX, const double screenMouseY,
+                              const double wheelX, const double wheelY, const double wheelZ,
                               const SbInputEventType& event_type,
                               unsigned int key_modifiers, const SbKey& key) {
   data->device_type = SbInputDeviceType::kSbInputDeviceTypeMouse;
   data->type = event_type;
   data->key_modifiers = key_modifiers;
-  data->delta.x = wheelX;
-  data->delta.y = wheelY;
-  data->key = key;
+  data->position.x = static_cast<float>(screenMouseX);
+  data->position.y = static_cast<float>(screenMouseY);
+  data->delta.x = static_cast<float>(wheelX);
+  data->delta.y = static_cast<float>(wheelY);
+  // data->delta.z = wheelZ; // TODO
+  //data->key = key;
+  data->key = kSbKeyUnknown;
   return data;
 }
+#endif // ENABLE_COBALT
 
-#ifdef __EMSCRIPTEN__
+#if defined(ENABLE_COBALT) && defined(__EMSCRIPTEN__)
 static unsigned int EmscModifiersEventToSbKeyModifiers(const bool altKey,
     const bool ctrlKey, const bool metaKey, const bool shiftKey) {
   unsigned int modifiers = kSbKeyModifiersNone;
@@ -4394,15 +4433,18 @@ static unsigned int EmscMouseEventToSbButtonModifiers(unsigned short button) {
 }
 
 static SbKey EmscMouseEventToSbKey(unsigned short button) {
-  SbKey key;
+  SbKey key = kSbKeyUnknown;
   unsigned int modifiers = kSbKeyModifiersNone;
   if (button == 0) { // left
+    //printf("kSbKeyMouse1\n");
     return kSbKeyMouse1;
   }
-  if (button == 1) { // right
+  if (button == 1) { // middle
+    //printf("kSbKeyMouse2\n");
     return kSbKeyMouse2;
   }
-  if (button == 2) { // middle
+  if (button == 2) { // right
+    //printf("kSbKeyMouse3\n");
     return kSbKeyMouse3;
   }
   if (button == 3) {
@@ -4416,10 +4458,8 @@ static SbKey EmscMouseEventToSbKey(unsigned short button) {
 
 static void handleEmscriptenMouseEvent(int emsc_type, const EmscriptenMouseEvent* emsc_event, void* user_data) {
   DCHECK(emsc_event);
-  float dpi_scale = 1.0f;
-  DCHECK(emsc_event);
-  float mouse_x = (emsc_event->canvasX * dpi_scale);
-  float mouse_y = (emsc_event->canvasY * dpi_scale);
+  const float mouse_x = (emsc_event->canvasX * dpi_scale);
+  const float mouse_y = (emsc_event->canvasY * dpi_scale);
 
   updateGlobalMousePos(static_cast<int>(mouse_x), static_cast<int>(mouse_y));
 
@@ -4438,23 +4478,26 @@ static void handleEmscriptenMouseEvent(int emsc_type, const EmscriptenMouseEvent
   const SbKey key = EmscMouseEventToSbKey(emsc_event->button);
 
   const int MAX_MOUSEBUTTONS = 3;
-  if ((emsc_event->button >= 0) && (emsc_event->button < MAX_MOUSEBUTTONS)) {
+  if (emsc_event->button < MAX_MOUSEBUTTONS) {
       bool is_button_event = false;
       switch (emsc_type) {
           case EMSCRIPTEN_EVENT_MOUSEDOWN:
               is_button_event = true;
-              data = setMouseSbEventData(std::move(data), mouse_x, mouse_y,
+              data = setMouseSbEventData(std::move(data),
+                                         mouse_x, mouse_y,
                                          SbInputEventType::kSbInputEventTypePress,
                                          key_modifiers, key);
               break;
           case EMSCRIPTEN_EVENT_MOUSEUP:
               is_button_event = true;
-              data = setMouseSbEventData(std::move(data), mouse_x, mouse_y,
+              data = setMouseSbEventData(std::move(data),
+                                         mouse_x, mouse_y,
                                          SbInputEventType::kSbInputEventTypeUnpress,
                                          key_modifiers, key);
               break;
           case EMSCRIPTEN_EVENT_MOUSEMOVE:
-              data = setMouseSbEventData(std::move(data), mouse_x, mouse_y,
+              data = setMouseSbEventData(std::move(data),
+                                         mouse_x, mouse_y,
                                          SbInputEventType::kSbInputEventTypeMove,
                                          key_modifiers, key);
               break;
@@ -4474,76 +4517,6 @@ static void handleEmscriptenMouseEvent(int emsc_type, const EmscriptenMouseEvent
               sendBrowserInputEvent(std::move(event));
             }, base::Passed(&event)));
   }
-}
-
-static EM_BOOL emsc_mouse_down_cb(int emsc_type, const EmscriptenMouseEvent* emsc_event, void* user_data) {
-  DCHECK(emsc_event);
-  handleEmscriptenMouseEvent(emsc_type, emsc_event, user_data);
-
-  // Return true for events we want to suppress default web browser handling for.
-  return true;
-}
-
-static EM_BOOL emsc_mouse_up_cb(int emsc_type, const EmscriptenMouseEvent* emsc_event, void* user_data) {
-  DCHECK(emsc_event);
-  handleEmscriptenMouseEvent(emsc_type, emsc_event, user_data);
-
-  // Return true for events we want to suppress default web browser handling for.
-  return true;
-}
-
-static EM_BOOL emsc_mouse_move_cb(int emsc_type, const EmscriptenMouseEvent* emsc_event, void* user_data) {
-  DCHECK(emsc_event);
-  handleEmscriptenMouseEvent(emsc_type, emsc_event, user_data);
-
-  // Return true for events we want to suppress default web browser handling for.
-  return true;
-}
-
-static EM_BOOL emsc_mouse_wheel_cb(int emsc_type, const EmscriptenWheelEvent* emsc_event, void* user_data) {
-  DCHECK(emsc_event);
-
-  const float SpinFactor = 1 / 120.0f;
-
-  std::unique_ptr<SbEvent> event = std::make_unique<SbEvent>();
-  event->type = SbEventType::kSbEventTypeInput;
-  std::unique_ptr<SbInputData> data = nullptr;
-  data = createEmptySbEventData();
-  DCHECK(data);
-
-  unsigned int key_modifiers = kSbKeyModifiersNone;
-
-  /* TODO: EmscriptenWheelEvent
-   * key_modifiers = EmscMouseEventToSbButtonModifiers(emsc_event->button);
-   * key_modifiers |= EmscModifiersEventToSbKeyModifiers(emsc_event->altKey,
-      emsc_event->ctrlKey,
-      emsc_event->metaKey,
-      emsc_event->shiftKey);
-  const SbKey key = EmscMouseEventToSbKey(emsc_event->button);
-  */
-
-  const SbKey key = kSbKeyUnknown;
-
-  switch(emsc_type)
-  {
-    case EMSCRIPTEN_EVENT_WHEEL:
-    {
-      data = setWheelSbEventData(std::move(data), emsc_event->deltaX, emsc_event->deltaY,
-                                 SbInputEventType::kSbInputEventTypeWheel,
-                                 key_modifiers, key);
-      break;
-    }
-  }
-
-  event->data = data.release();
-  main_browser_thread_wrapper_.task_runner()->PostTask(
-      FROM_HERE, base::Bind(
-        [](std::unique_ptr<SbEvent> event) {
-          sendBrowserInputEvent(std::move(event));
-        }, base::Passed(&event)));
-
-  // Return true for events we want to suppress default web browser handling for.
-  return true;
 }
 
 // In browsers, KeyDown events do not carry a "character code" for most characters, but KeyPresses do.
@@ -4592,7 +4565,7 @@ static inline const char *emscripten_event_type_to_string(int eventType) {
     "batterychargingchange", "batterylevelchange", "webglcontextlost", "webglcontextrestored", "mouseenter", "mouseleave", "mouseover", "mouseout", "(invalid)" };
   ++eventType;
   if (eventType < 0) eventType = 0;
-  if (eventType >= sizeof(events)/sizeof(events[0])) eventType = sizeof(events)/sizeof(events[0])-1;
+  if (static_cast<unsigned long>(eventType) >= sizeof(events)/sizeof(events[0])) eventType = sizeof(events)/sizeof(events[0])-1;
   return events[eventType];
 }
 
@@ -4646,7 +4619,7 @@ static SbKeyLocation EmscKeycodeToSbKeyLocation(const int keysum) {
 // see https://github.com/blockspacer/cobalt-clone-28052019/blob/89664d116629734759176d820e9923257717e09c/src/starboard/android/shared/input_events_generator.cc#L117
 // see https://github.com/libretro/RetroArch/blob/master/input/input_keymaps.c#L1223
 static SbKey EmscKeycodeToSbKey(const int keysum) {
-  SbKey key;
+  SbKey key = kSbKeyUnknown;
   if (keysum == DOM_PK_ALT_LEFT) {
     return kSbKeyMenu;
   }
@@ -4703,6 +4676,19 @@ static SbKey EmscKeycodeToSbKey(const int keysum) {
   }
   if (keysum == DOM_PK_END) {
     return kSbKeyEnd;
+  }
+
+  if (keysum == DOM_PK_ARROW_UP) {
+    return kSbKeyUp;
+  }
+  if (keysum == DOM_PK_ARROW_LEFT) {
+    return kSbKeyLeft;
+  }
+  if (keysum == DOM_PK_ARROW_RIGHT) {
+    return kSbKeyRight;
+  }
+  if (keysum == DOM_PK_ARROW_DOWN) {
+    return kSbKeyDown;
   }
 
   // Dpad
@@ -5098,7 +5084,7 @@ static void handleEmscriptenKeyboardEvent(int emsc_type, const EmscriptenKeyboar
   const int keyCode = emsc_event->keyCode;
   const int dom_pk_code = emscripten_compute_dom_pk_code(emsc_event->code);
   const int CharCode = InterpretCharCode(emsc_type, emsc_event);
-  unsigned int Character = Utf8CharToUtf32((unsigned char*)emsc_event->key);
+  unsigned int Character = Utf8CharToUtf32((const unsigned char*)emsc_event->key);
 
   printf("%s, key: \"%s\" (printable: %s), code: \"%s\" = %s (%d), "
          "location: %lu,%s%s%s%s repeat: %d, locale: \"%s\", "
@@ -5184,11 +5170,16 @@ static void handleEmscriptenKeyboardEvent(int emsc_type, const EmscriptenKeyboar
           sendBrowserInputEvent(std::move(event));
         }, base::Passed(&event)));
 }
+#endif
 
+#if defined(__EMSCRIPTEN__)
 static EM_BOOL emsc_keydown_cb(int emsc_type, const EmscriptenKeyboardEvent* emsc_event, void* user_data) {
   printf("emsc_keydown_cb\n");
   DCHECK(emsc_event);
+
+#if defined(ENABLE_COBALT)
   handleEmscriptenKeyboardEvent(emsc_type, emsc_event, user_data);
+#endif // ENABLE_COBALT
 
   // Return true for events we want to suppress default web browser handling for.
   return true;
@@ -5197,7 +5188,10 @@ static EM_BOOL emsc_keydown_cb(int emsc_type, const EmscriptenKeyboardEvent* ems
 static EM_BOOL emsc_keypress_cb(int emsc_type, const EmscriptenKeyboardEvent* emsc_event, void* user_data) {
   printf("emsc_keypress_cb\n");
   DCHECK(emsc_event);
+
+#if defined(ENABLE_COBALT)
   handleEmscriptenKeyboardEvent(emsc_type, emsc_event, user_data);
+#endif // ENABLE_COBALT
 
   // Return true for events we want to suppress default web browser handling for.
   return true;
@@ -5206,14 +5200,100 @@ static EM_BOOL emsc_keypress_cb(int emsc_type, const EmscriptenKeyboardEvent* em
 static EM_BOOL emsc_keyup_cb(int emsc_type, const EmscriptenKeyboardEvent* emsc_event, void* user_data) {
   printf("emsc_keyup_cb\n");
   DCHECK(emsc_event);
+
+#if defined(ENABLE_COBALT)
   handleEmscriptenKeyboardEvent(emsc_type, emsc_event, user_data);
+#endif // ENABLE_COBALT
 
   // Return true for events we want to suppress default web browser handling for.
   return true;
 }
-#endif
 
-#if defined(ENABLE_HTML5_SDL) || !defined(__EMSCRIPTEN__)
+static EM_BOOL emsc_mouse_down_cb(int emsc_type, const EmscriptenMouseEvent* emsc_event, void* user_data) {
+  DCHECK(emsc_event);
+
+#if defined(ENABLE_COBALT)
+  handleEmscriptenMouseEvent(emsc_type, emsc_event, user_data);
+#endif // ENABLE_COBALT
+
+  // Return true for events we want to suppress default web browser handling for.
+  return true;
+}
+
+static EM_BOOL emsc_mouse_up_cb(int emsc_type, const EmscriptenMouseEvent* emsc_event, void* user_data) {
+  DCHECK(emsc_event);
+
+#if defined(ENABLE_COBALT)
+  handleEmscriptenMouseEvent(emsc_type, emsc_event, user_data);
+#endif // ENABLE_COBALT
+
+  // Return true for events we want to suppress default web browser handling for.
+  return true;
+}
+
+static EM_BOOL emsc_mouse_move_cb(int emsc_type, const EmscriptenMouseEvent* emsc_event, void* user_data) {
+  DCHECK(emsc_event);
+
+#if defined(ENABLE_COBALT)
+  handleEmscriptenMouseEvent(emsc_type, emsc_event, user_data);
+#endif // ENABLE_COBALT
+
+  // Return true for events we want to suppress default web browser handling for.
+  return true;
+}
+
+static EM_BOOL emsc_mouse_wheel_cb(int emsc_type, const EmscriptenWheelEvent* emsc_event, void* user_data) {
+  DCHECK(emsc_event);
+
+  const float SpinFactor = 1 / 120.0f;
+
+#if defined(ENABLE_COBALT)
+  std::unique_ptr<SbEvent> event = std::make_unique<SbEvent>();
+  event->type = SbEventType::kSbEventTypeInput;
+  std::unique_ptr<SbInputData> data = nullptr;
+  data = createEmptySbEventData();
+  DCHECK(data);
+
+  unsigned int key_modifiers = EmscMouseEventToSbButtonModifiers(emsc_event->mouse.button);
+  key_modifiers |= EmscModifiersEventToSbKeyModifiers(emsc_event->mouse.altKey,
+      emsc_event->mouse.ctrlKey,
+      emsc_event->mouse.metaKey,
+      emsc_event->mouse.shiftKey);
+
+  const SbKey key = EmscMouseEventToSbKey(emsc_event->mouse.button);
+
+  switch(emsc_type)
+  {
+    case EMSCRIPTEN_EVENT_WHEEL:
+    {
+      const float mouse_x = (emsc_event->mouse.canvasX * dpi_scale);
+      const float mouse_y = (emsc_event->mouse.canvasY * dpi_scale);
+      data = setWheelSbEventData(std::move(data),
+                                 mouse_x, mouse_y,
+                                 emsc_event->deltaX,
+                                 emsc_event->deltaY,
+                                 0.0, // TODO: wheel.z
+                                 SbInputEventType::kSbInputEventTypeWheel,
+                                 key_modifiers, key);
+      break;
+    }
+  }
+
+  event->data = data.release();
+  main_browser_thread_wrapper_.task_runner()->PostTask(
+      FROM_HERE, base::Bind(
+        [](std::unique_ptr<SbEvent> event) {
+          sendBrowserInputEvent(std::move(event));
+        }, base::Passed(&event)));
+#endif // ENABLE_COBALT
+
+  // Return true for events we want to suppress default web browser handling for.
+  return true;
+}
+#endif // __EMSCRIPTEN__
+
+#if defined(ENABLE_COBALT) && \
+    (defined(ENABLE_HTML5_SDL) || !defined(__EMSCRIPTEN__))
 static unsigned int SDL2ModStateToSbKeyModifiers(const SDL_Keymod& modState) {
   unsigned int modifiers = kSbKeyModifiersNone;
   if (modState & KMOD_ALT) {
@@ -5257,17 +5337,20 @@ static unsigned int SDL2MouseEventToSbButtonModifiers(const Uint8& button) {
 }
 
 static SbKey SDL2MouseEventToSbKey(const Uint8& button) {
-  SbKey key;
+  SbKey key = kSbKeyUnknown;
   unsigned int modifiers = kSbKeyModifiersNone;
   //const SDL_MouseButtonEvent& button = event.button.button;
   if (button == SDL_BUTTON_LEFT) { // left
+    //printf("kSbKeyMouse1\n");
     return kSbKeyMouse1;
   }
   if (button == SDL_BUTTON_RIGHT) { // right
-    return kSbKeyMouse2;
+    //printf("kSbKeyMouse3\n");
+    return kSbKeyMouse3;
   }
   if (button == SDL_BUTTON_MIDDLE) { // middle
-    return kSbKeyMouse3;
+    //printf("kSbKeyMouse2\n");
+    return kSbKeyMouse2;
   }
   if (button == SDL_BUTTON_X1) {
     NOTIMPLEMENTED();
@@ -5303,7 +5386,7 @@ static SbKeyLocation SDL2KeycodeToSbKeyLocation(const SDL_Keycode& keysum) {
 // see https://github.com/blockspacer/cobalt-clone-28052019/blob/89664d116629734759176d820e9923257717e09c/src/starboard/android/shared/input_events_generator.cc#L117
 // see https://github.com/libretro/RetroArch/blob/master/input/input_keymaps.c#L1223
 static SbKey SDL2ScancodeToSbKey(const SDL_Scancode& keysum) {
-  SbKey key;
+  SbKey key = kSbKeyUnknown;
   if (keysum == SDL_SCANCODE_LALT) {
     return kSbKeyMenu;
   }
@@ -5360,6 +5443,20 @@ static SbKey SDL2ScancodeToSbKey(const SDL_Scancode& keysum) {
   }
   if (keysum == SDL_SCANCODE_END) {
     return kSbKeyEnd;
+  }
+
+  if (keysum == SDL_SCANCODE_UP) {
+    return kSbKeyUp;
+  }
+  if (keysum == SDL_SCANCODE_LEFT) {
+    return kSbKeyLeft;
+  }
+  if (keysum == SDL_SCANCODE_RIGHT) {
+    return kSbKeyRight;
+  }
+  if (keysum == SDL_SCANCODE_DOWN) {
+    //printf("SDL_SCANCODE_DOWN\n");
+    return kSbKeyDown;
   }
 
   // Dpad
@@ -5735,7 +5832,7 @@ static SbKey SDL2ScancodeToSbKey(const SDL_Scancode& keysum) {
 // see https://github.com/blockspacer/cobalt-clone-28052019/blob/89664d116629734759176d820e9923257717e09c/src/starboard/android/shared/input_events_generator.cc#L117
 // see https://github.com/libretro/RetroArch/blob/master/input/input_keymaps.c#L1223
 static SbKey SDL2KeycodeToSbKey(const SDL_Keycode& keysum) {
-  SbKey key;
+  SbKey key = kSbKeyUnknown;
   if (keysum == SDLK_LALT) {
     return kSbKeyMenu;
   }
@@ -5792,6 +5889,20 @@ static SbKey SDL2KeycodeToSbKey(const SDL_Keycode& keysum) {
   }
   if (keysum == SDLK_END) {
     return kSbKeyEnd;
+  }
+
+  if (keysum == SDLK_UP) {
+    return kSbKeyUp;
+  }
+  if (keysum == SDLK_LEFT) {
+    return kSbKeyLeft;
+  }
+  if (keysum == SDLK_RIGHT) {
+    return kSbKeyRight;
+  }
+  if (keysum == SDLK_DOWN) {
+    //printf("SDLK_DOWN\n");
+    return kSbKeyDown;
   }
 
   // Dpad
@@ -6203,7 +6314,9 @@ static void mainLoop() {
   ///if (isDebugPeriodReached()) printf("draw...\n");
 
   // Render
+#if defined(ENABLE_OPENGL)
   Draw();
+#endif // ENABLE_OPENGL
 
 /*
 #if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
@@ -6251,11 +6364,6 @@ static void mainLoop() {
 
   ///if (isDebugPeriodReached()) printf("mainLoop 4\n");
 
-  // Update screen
-#if defined(ENABLE_HTML5_SDL) || !defined(__EMSCRIPTEN__)
-  SDL_GL_SwapWindow(window);
-#endif
-
   ///if (isDebugPeriodReached()) printf("mainLoop 5\n");
 
 #endif
@@ -6265,9 +6373,9 @@ static void mainLoop() {
   int screenMouseX, screenMouseY;
 
 #if defined(ENABLE_HTML5_SDL) || !defined(__EMSCRIPTEN__)
-  Uint32 SDL2_last_keyboard_event_type = -1;
-
   while (SDL_PollEvent(&e) != 0) {
+
+#if defined(ENABLE_COBALT)
     bool isSbEvent = false;
     bool isSbKeyEvent = false;
     // TODO: free mem
@@ -6276,6 +6384,7 @@ static void mainLoop() {
     std::unique_ptr<SbInputData> data = nullptr;
     data = createEmptySbEventData();
     DCHECK(data);
+#endif
 
     const SDL_Keymod modState = SDL_GetModState();
 
@@ -6295,57 +6404,84 @@ static void mainLoop() {
         break;
       }
       case SDL_MOUSEMOTION: {
-        isSbEvent = true;
+        //printf("SDL_MOUSEMOTION\n");
         SDL_GetMouseState(&screenMouseX, &screenMouseY);
         updateGlobalMousePos(static_cast<int>(screenMouseX), static_cast<int>(screenMouseY));
+#if defined(ENABLE_COBALT)
+        isSbEvent = true;
         unsigned int button_modifiers = SDL2MouseEventToSbButtonModifiers(e.button.button);
         unsigned int key_modifiers = button_modifiers | SDL2ModStateToSbKeyModifiers(modState);
-        data = setMouseSbEventData(std::move(data), screenMouseX, screenMouseY,
+        data = setMouseSbEventData(std::move(data),
+                                   static_cast<double>(screenMouseX),
+                                   static_cast<double>(screenMouseY),
                                    SbInputEventType::kSbInputEventTypeMove,
-                                   key_modifiers, SDL2MouseEventToSbKey(e.button.button));
+                                   key_modifiers,
+                                   SDL2MouseEventToSbKey(e.button.button));
         //SDL_GetGlobalMouseState(&screenMouseX, &screenMouseY);
         //SDL_GetMouseState(&screenMouseX, &screenMouseY);
 
         // printf("SDL_MOUSEMOTION %d %d\n", screenMouseX, screenMouseY);
+#endif
         break;
       }
       case SDL_MOUSEBUTTONDOWN: {
-        isSbEvent = true;
+        //printf("SDL_MOUSEBUTTONDOWN\n");
         SDL_GetMouseState(&screenMouseX, &screenMouseY);
         updateGlobalMousePos(static_cast<int>(screenMouseX), static_cast<int>(screenMouseY));
+#if defined(ENABLE_COBALT)
+        isSbEvent = true;
         unsigned int button_modifiers = SDL2MouseEventToSbButtonModifiers(e.button.button);
         unsigned int key_modifiers = button_modifiers | SDL2ModStateToSbKeyModifiers(modState);
-        data = setMouseSbEventData(std::move(data), screenMouseX, screenMouseY,
+        data = setMouseSbEventData(std::move(data),
+                                   static_cast<double>(screenMouseX),
+                                   static_cast<double>(screenMouseY),
                                    SbInputEventType::kSbInputEventTypePress,
-                                   key_modifiers, SDL2MouseEventToSbKey(e.button.button));
+                                   key_modifiers,
+                                   SDL2MouseEventToSbKey(e.button.button));
+#endif
         break;
       }
       case SDL_MOUSEBUTTONUP: {
-        isSbEvent = true;
+        //printf("SDL_MOUSEBUTTONUP\n");
         SDL_GetMouseState(&screenMouseX, &screenMouseY);
         updateGlobalMousePos(static_cast<int>(screenMouseX), static_cast<int>(screenMouseY));
+#if defined(ENABLE_COBALT)
+        isSbEvent = true;
         unsigned int button_modifiers = SDL2MouseEventToSbButtonModifiers(e.button.button);
         unsigned int key_modifiers = button_modifiers | SDL2ModStateToSbKeyModifiers(modState);
-        data = setMouseSbEventData(std::move(data), screenMouseX, screenMouseY,
+        data = setMouseSbEventData(std::move(data),
+                                   static_cast<double>(screenMouseX),
+                                   static_cast<double>(screenMouseY),
                                    SbInputEventType::kSbInputEventTypeUnpress,
-                                   key_modifiers, SDL2MouseEventToSbKey(e.button.button));
+                                   key_modifiers,
+                                   SDL2MouseEventToSbKey(e.button.button));
+#endif
         break;
       }
       case SDL_MOUSEWHEEL: {
-        isSbEvent = true;
+        //printf("SDL_MOUSEWHEEL\n");
         SDL_GetMouseState(&screenMouseX, &screenMouseY);
         updateGlobalMousePos(static_cast<int>(screenMouseX), static_cast<int>(screenMouseY));
+#if defined(ENABLE_COBALT)
+        isSbEvent = true;
         unsigned int button_modifiers = SDL2MouseEventToSbButtonModifiers(e.button.button);
         unsigned int key_modifiers = button_modifiers | SDL2ModStateToSbKeyModifiers(modState);
-        data = setWheelSbEventData(std::move(data), e.wheel.x, e.wheel.y,
+        data = setWheelSbEventData(std::move(data),
+                                   static_cast<double>(screenMouseX),
+                                   static_cast<double>(screenMouseY),
+                                   static_cast<double>(e.wheel.x),
+                                   static_cast<double>(e.wheel.y),
+                                   0.0, // TODO: wheel.z
                                    SbInputEventType::kSbInputEventTypeWheel,
-                                   key_modifiers, SDL2MouseEventToSbKey(e.button.button));
+                                   key_modifiers,
+                                   SDL2MouseEventToSbKey(e.button.button));
+#endif
         break;
       }
       case SDL_KEYDOWN:
       {
-        printf("SDL_KEYDOWN %s\n", e.text.text);
-        SDL2_last_keyboard_event_type = SDL_KEYDOWN;
+        //printf("SDL_KEYDOWN %s\n", e.text.text);
+#if defined(ENABLE_COBALT)
         isSbEvent = true;
         isSbKeyEvent = true;
 
@@ -6383,12 +6519,13 @@ static void mainLoop() {
 
         //unicode input
         //std::cout << keyboard->keysym.unicode << std::endl;
+#endif // ENABLE_COBALT
         break;
       }
       case SDL_KEYUP:
       {
-        printf("SDL_KEYUP %s\n", e.text.text);
-        SDL2_last_keyboard_event_type = SDL_KEYUP;
+        //printf("SDL_KEYUP %s\n", e.text.text);
+#if defined(ENABLE_COBALT)
         isSbEvent = true;
         isSbKeyEvent = true;
 
@@ -6419,7 +6556,7 @@ static void mainLoop() {
 
         data->keysym = e.key.keysym.sym;
         data->character = e.key.keysym.sym;
-
+#endif // ENABLE_COBALT
         break;
       }
       //case SDL_TEXTINPUT:
@@ -6469,9 +6606,10 @@ static void mainLoop() {
         break;
     }
 
+#if defined(ENABLE_COBALT)
     if(isSbKeyEvent) {
       DCHECK(isSbEvent);
-      if(data->device_type == SbInputDeviceType::kSbInputDeviceTypeKeyboard) {
+      /*if(data->device_type == SbInputDeviceType::kSbInputDeviceTypeKeyboard) {
         std::cout << std::endl << "INPUT: type=" << data->type
                   << ", window=" << data->window
                   << ", device_type=" << data->device_type
@@ -6484,7 +6622,7 @@ static void mainLoop() {
         printf("ВВОД: Physical %s key acting as %s key\n",
                SDL_GetScancodeName(e.key.keysym.scancode),
                SDL_GetKeyName(e.key.keysym.sym)); // calls SDL_UCS4ToUTF8
-      }
+      }*/
     }
 
     if (isSbEvent) {
@@ -6495,7 +6633,26 @@ static void mainLoop() {
                        sendBrowserInputEvent(std::move(event));
                      }, base::Passed(&event)));
     }
+#endif // ENABLE_COBALT
   }
+
+  // Update screen
+#if defined(ENABLE_HTML5_SDL) || !defined(__EMSCRIPTEN__)
+#if defined(ENABLE_OPENGL)
+  SDL_GL_SwapWindow(window);
+#else // ENABLE_OPENGL
+  SDL_SetRenderDrawColor(sdl_ren, 255, 255, 255, 255);
+  SDL_RenderClear(sdl_ren);
+  // the rect color (solid red)
+  SDL_SetRenderDrawColor(sdl_ren, 255, 0, 0, 255);
+  SDL_Rect rect{0, 0, 100, 50};
+  //rect.x = 0;
+  //(0, 0, 100, 50); // the rectangle
+  SDL_RenderFillRect(sdl_ren, &rect);
+  SDL_RenderPresent(sdl_ren);
+#endif // ENABLE_OPENGL
+#endif
+
 #elif defined(__EMSCRIPTEN__)
   // nothing
 #else
@@ -6616,6 +6773,7 @@ static void addTestOnlyAttrCallbacks() {
             elem->tag_name().c_str(),
             attrVal.c_str(),
             elem->text_content().value_or("").c_str());
+    return true;
   };
 
   {
@@ -6729,6 +6887,50 @@ static void addTestOnlyAttrCallbacks() {
               elem->tag_name().c_str(),
               attrVal.c_str(),
               elem->text_content().value_or("").c_str());
+      return true;
+    });
+
+    cobalt::dom::customizer::pair_event_to_attr("on-wheel-print", "on-wheel",
+      [](const scoped_refptr<dom::Event> &event,
+          scoped_refptr<cobalt::dom::Element> elem, const std::string& attrVal) {
+        printf("on-wheel-print 1\n");
+        CHECK(elem);
+        const dom::WheelEvent* const wheelEvent =
+          base::polymorphic_downcast<const dom::WheelEvent* const>(event.get());
+        CHECK(wheelEvent);
+        float x = wheelEvent->delta_x();
+        float y = wheelEvent->delta_y();
+        float z = wheelEvent->delta_z();
+        printf("on-wheel-print at (%f;%f;%f) event %s for tag: %s, "
+               "attrVal: %s, text_content: %s\n",
+                x,
+                y,
+                z,
+                event->type().c_str(),
+                elem->tag_name().c_str(),
+                attrVal.c_str(),
+                elem->text_content().value_or("").c_str());
+      return true;
+    });
+
+  cobalt::dom::customizer::pair_event_to_attr("on-click-print", "on-click",
+    [](const scoped_refptr<dom::Event> &event,
+        scoped_refptr<cobalt::dom::Element> elem, const std::string& attrVal) {
+      CHECK(elem);
+      const dom::MouseEvent* const mouseEvent =
+        base::polymorphic_downcast<const dom::MouseEvent* const>(event.get());
+      CHECK(mouseEvent);
+      float x = mouseEvent->x();
+      float y = mouseEvent->y();
+      printf("on-click-print at (%f;%f) event %s for tag: %s, "
+             "attrVal: %s, text_content: %s\n",
+              x,
+              y,
+              event->type().c_str(),
+              elem->tag_name().c_str(),
+              attrVal.c_str(),
+              elem->text_content().value_or("").c_str());
+      return true;
     });
 
   cobalt::dom::customizer::pair_event_to_attr("on-test-mouseleave", "on-mouseleave",
@@ -6748,6 +6950,7 @@ static void addTestOnlyAttrCallbacks() {
               elem->tag_name().c_str(),
               attrVal.c_str(),
               elem->text_content().value_or("").c_str());
+      return true;
     });
 
   cobalt::dom::customizer::pair_event_to_attr("on-mouseover-focus", "on-mouseover",
@@ -6773,12 +6976,17 @@ static void addTestOnlyAttrCallbacks() {
       CHECK(elementHTML);
       //elementHTML->GetUiNavItem()->Focus();
       elementHTML->Focus();
+      return true;
     });
 
   cobalt::dom::customizer::pair_event_to_attr("on-mouseout-blur", "on-mouseout",
     [](const scoped_refptr<dom::Event> &event,
         scoped_refptr<cobalt::dom::Element> elem, const std::string& attrVal) {
       CHECK(elem);
+      Document* document = elem->node_document();
+      CHECK(document);
+      scoped_refptr<HTMLElement> indicated_element = document->indicated_element();
+      CHECK(indicated_element);
       const dom::MouseEvent* const mouseEvent =
         base::polymorphic_downcast<const dom::MouseEvent* const>(event.get());
       CHECK(mouseEvent);
@@ -6795,8 +7003,15 @@ static void addTestOnlyAttrCallbacks() {
       dom::HTMLElement* elementHTML =
         base::polymorphic_downcast<dom::HTMLElement*>(elem.get());
       CHECK(elementHTML);
-      //elementHTML->GetUiNavItem()->Blur();
       elementHTML->Blur();
+      /*//elementHTML->GetUiNavItem()->Blur();
+      if(indicated_element == elementHTML) {
+        printf("indicated_element == elementHTML\n");
+        //elementHTML->Blur();
+      } else {
+        //elementHTML->Blur();
+      }*/
+      return true;
     });
 
   cobalt::dom::customizer::pair_event_to_attr("on-keyup-print", "on-keyup",
@@ -6843,6 +7058,7 @@ static void addTestOnlyAttrCallbacks() {
       dom::HTMLElement* elementHTML =
         base::polymorphic_downcast<dom::HTMLElement*>(elem.get());
       CHECK(elementHTML);
+      return true;
     });
 
   cobalt::dom::customizer::pair_event_to_attr("on-keypress-print", "on-keypress",
@@ -6893,6 +7109,7 @@ static void addTestOnlyAttrCallbacks() {
       dom::HTMLElement* elementHTML =
         base::polymorphic_downcast<dom::HTMLElement*>(elem.get());
       CHECK(elementHTML);
+      return true;
     });
 
   cobalt::dom::customizer::pair_event_to_attr("on-keydown-print", "on-keydown",
@@ -6915,6 +7132,7 @@ static void addTestOnlyAttrCallbacks() {
       dom::HTMLElement* elementHTML =
         base::polymorphic_downcast<dom::HTMLElement*>(elem.get());
       CHECK(elementHTML);
+      return true;
     });
 }
 #endif // ENABLE_COBALT
@@ -7067,7 +7285,7 @@ main_browser_thread_wrapper_.task_runner()->PostTask(
   //base::MessageLoopCurrent::Get()->SetTaskRunner(main_thread->task_runner());
   */
 
-#if defined(ENABLE_UI) && defined(ENABLE_SKIA) && defined(ENABLE_BLINK)
+#if defined(ENABLE_BLINK_UI) && defined(ENABLE_SKIA) && defined(ENABLE_BLINK)
   printf("Init FontList ...\n");
   // Use a single default font as the default font list.
   gfx::FontList::SetDefaultFontDescription(::std::string());
@@ -7146,7 +7364,7 @@ main_browser_thread_wrapper_.task_runner()->PostTask(
   // https://github.com/chromium/chromium/blob/master/third_party/blink/renderer/platform/exported/platform.cc#L119
   WTF::Partitions::Initialize(nullptr); // TODO
 
-#if defined(ENABLE_UI) //&& defined(__TODO__)
+#if defined(ENABLE_BLINK_UI) //&& defined(__TODO__)
     //base::Thread ui_thread("render");
     //blink::ThreadCreationParams params(blink::WebThreadType::kMainThread);
 
@@ -7485,7 +7703,9 @@ main_browser_thread_wrapper_.task_runner()->PostTask(
   printf("Starting ...\n");
 
 #ifdef __EMSCRIPTEN__
+#ifdef ENABLE_COBALT
   EM_LOG("EMSCRIPTEN DETECTED!\n");
+#endif // ENABLE_COBALT
 
   //https://github.com/Becavalier/Book-DISO-WebAssembly/issues/10
   double dpr = emscripten_get_device_pixel_ratio();
@@ -7693,21 +7913,38 @@ main_browser_thread_wrapper_.task_runner()->PostTask(
 
 #if defined(__EMSCRIPTEN__)
   /// \note we don`t use SDL_WINDOW_OPENGL, see emscripten_webgl_create_context
-  window = SDL_CreateWindow("skemgl", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width,
-                            // height, SDL_WINDOW_SHOWN); // TODO
+  window = SDL_CreateWindow("skemgl", 0, 0, width,
+#if defined(ENABLE_OPENGL)
                             height, SDL_WINDOW_OPENGL); // TODO
+#else // ENABLE_OPENGL
+                             height, SDL_WINDOW_SHOWN); // TODO
+#endif // ENABLE_OPENGL
 #else
-  window = SDL_CreateWindow("skemgl", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width,
-                            height, SDL_WINDOW_OPENGL);
+  window = SDL_CreateWindow("skemgl", 0, 0, width,
+#if defined(ENABLE_OPENGL)
+                            height, SDL_WINDOW_OPENGL); // TODO
+#else // ENABLE_OPENGL
+                             height, SDL_WINDOW_SHOWN); // TODO
+#endif // ENABLE_OPENGL
 #endif
 
   if (!window) {
     printf("Unable to create window: %s\n", SDL_GetError());
     return 1;
   }
+
+#if !defined(ENABLE_OPENGL)
+    sdl_ren = SDL_CreateRenderer(window, -1,
+      SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+    if (sdl_ren == nullptr) {
+        std::cout << "SDL_CreateRenderer Error" << SDL_GetError() << std::endl;
+        return EXIT_FAILURE;
+    }
+#endif // ENABLE_OPENGL
 #endif // ENABLE_HTML5_SDL
 
 #ifndef __EMSCRIPTEN__
+#if defined(ENABLE_OPENGL)
   printf("SDL_GL_CreateContext ...\n");
 
   glContext = SDL_GL_CreateContext(window);
@@ -7732,8 +7969,10 @@ main_browser_thread_wrapper_.task_runner()->PostTask(
     SDL_ClearError();
     return success;
   }
+#endif // ENABLE_OPENGL
 #endif
 
+#if defined(ENABLE_OPENGL)
 /// \todo WEBGL1_SUPPORT
 #if defined(PRINT_GL_EXT) && (defined(WEBGL2_SUPPORT) || !defined(__EMSCRIPTEN__))
   int numExtensions = 0;
@@ -7797,6 +8036,7 @@ main_browser_thread_wrapper_.task_runner()->PostTask(
   printf("Initializing opengl subsystem...\n");
 
   InitGL();
+#endif // ENABLE_OPENGL
 
   onResize(width, height);
 
@@ -7898,7 +8138,7 @@ main_browser_thread_wrapper_.task_runner()->PostTask(
 
   std::cout << std::endl; // flush
 
-#if defined(ENABLE_UI) //&& defined(__TODO__)
+#if defined(ENABLE_BLINK_UI) //&& defined(__TODO__)
 #if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   //base::Thread ui_thread("render");
         //blink::ThreadCreationParams params(blink::WebThreadType::kMainThread);
@@ -8235,11 +8475,16 @@ main_browser_thread_wrapper_.task_runner()->PostTask(
   emscripten_set_main_loop(mainLoop, 0, 1);
   //emscripten_set_main_loop(mainLoop, 60, 1);
 #else
+#if defined(ENABLE_OPENGL)
   printf("running with glew\n");
+#else
+  printf("running without GL\n");
+#endif // ENABLE_OPENGL
   DCHECK(quitApp == false);
   while (!quitApp) {
     mainLoop();
   }
+  printf("running quit...\n");
 #endif
 
   printf("Running cleanup...\n");
@@ -8251,9 +8496,11 @@ main_browser_thread_wrapper_.task_runner()->PostTask(
 
 #endif // ENABLE_SKIA
 
+#if defined(ENABLE_OPENGL)
   GL_CHECK( glDeleteVertexArrays(1, &vertexArrayObject) );
 
   GL_CHECK( glDeleteBuffers(1, &vertexPosObject) );
+#endif // ENABLE_OPENGL
 
 #ifdef __EMSCRIPTEN__
   {
@@ -8271,9 +8518,11 @@ main_browser_thread_wrapper_.task_runner()->PostTask(
     }
   }
 #else
+#if defined(ENABLE_OPENGL)
   if (glContext) {
     SDL_GL_DeleteContext(glContext);
   }
+#endif // ENABLE_OPENGL
 #endif
 
   /*if (ttfFont) {
@@ -8286,6 +8535,9 @@ main_browser_thread_wrapper_.task_runner()->PostTask(
 #endif
 
 #if defined(ENABLE_HTML5_SDL) || !defined(__EMSCRIPTEN__)
+#if !defined(ENABLE_OPENGL)
+  SDL_DestroyRenderer(sdl_ren);
+#endif // ENABLE_OPENGL
   SDL_DestroyWindow(window);
   window = nullptr;
 #endif
@@ -8302,5 +8554,5 @@ main_browser_thread_wrapper_.task_runner()->PostTask(
   SDL_Quit();
 #endif
 
-  return 0;
+  return EXIT_SUCCESS;
 }

@@ -63,6 +63,7 @@ if (BUILD_APP)
       ${COLORED_OUTPUT_ENABLER}
         ${CMAKE_COMMAND} "-E" "time" "cmake" ".." "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON" ${CMAKE_OPTS} ${EXTRA_CMAKE_OPTS}
     WORKING_DIRECTORY ${BUILD_DIR}
+    TIMEOUT 7200 # sec
     RESULT_VARIABLE retcode
   )
   if(NOT "${retcode}" STREQUAL "0")
@@ -73,8 +74,9 @@ if (BUILD_APP)
   execute_process(
     COMMAND
       ${COLORED_OUTPUT_ENABLER}
-        ${CMAKE_COMMAND} "--build" "." ${CMAKE_CLEAN_FIRST} "--" ${MAKE_OPTS} ${EXTRA_MAKE_OPTS}
+        ${CMAKE_COMMAND} "-E" "time" "cmake" "--build" "." ${CMAKE_CLEAN_FIRST} "--" ${MAKE_OPTS} ${EXTRA_MAKE_OPTS}
     WORKING_DIRECTORY ${BUILD_DIR}
+    TIMEOUT 7200 # sec
     RESULT_VARIABLE retcode
     ERROR_VARIABLE _ERROR_VARIABLE
   )
@@ -93,6 +95,7 @@ if(RUN_APP)
   execute_process(
     COMMAND "${BUILD_DIR}/skemgl"
     WORKING_DIRECTORY ${BUILD_DIR}
+    TIMEOUT 7200 # sec
     RESULT_VARIABLE retcode
     ERROR_VARIABLE _ERROR_VARIABLE
   )

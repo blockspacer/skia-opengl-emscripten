@@ -1877,7 +1877,7 @@ target_link_libraries(BLINK_RENDERER_PLATFORM PRIVATE
   CC
   ${SERVICES_NETWORK_PUBLIC_CPP_LIB}
   ${SERVICES_SERVICE_MANAGER_PUBLIC_CPP_LIB}
-  libwebp # requires libpng
+  ${WEBP_LIB} # requires libpng
   #${libjpeg_LIB}
   ${libjpeg_TURBO_LIB}
   #${libpng_LIB}

@@ -54,7 +54,7 @@ class Element;
 
 typedef std::function<void(base::WeakPtr<cobalt::dom::HTMLElement> elem)> HoverCallback;
 
-typedef std::function<void(const scoped_refptr<dom::Event> &event,
+typedef std::function<bool(const scoped_refptr<dom::Event> &event,
   scoped_refptr<cobalt::dom::Element>, const std::string& attrVal)> EventCallback;
 
 namespace customizer {
@@ -230,7 +230,7 @@ class Element : public Node {
 
   void add_event_cb(const std::string& custom_token, EventCallback cb);
 
-  base::Optional<EventCallback> get_event_cb(const std::string &custom_token);
+  base::Optional<EventCallback> get_event_cb(const std::string &key);
 
   // Web API: Node
   //
