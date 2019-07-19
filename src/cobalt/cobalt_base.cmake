@@ -96,7 +96,7 @@ target_link_libraries(cobalt_base PUBLIC
   starboard_common
   modp_b64
   dynamic_annotations
-  GLIBXML
+  ${GLIBXML_LIB}
   icu
   ced
   glm

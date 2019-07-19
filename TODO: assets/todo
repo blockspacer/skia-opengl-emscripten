@@ -1,4 +1,7 @@
 ﻿links between pages
+FIXME: skottie elem resets timer on hover
+opengl font atlas (see SK_SUPPORT_ATLAS_TEXT)
+ICU/harfbuzz replacement
 runtime navigation (link href=file:///)
 native network & https
 REST API for WASM & native
@@ -17,6 +20,7 @@ dom components (innerhtml)
 PDF support (PDFium)
 > https://github.com/flutter/flutter/issues/15406
 Video support
+Use SKIA GrContext (enable SK_GPU) for native & WASM (see SKIA_GR_CONTEXT)
 SIDE MODULE WASM: load the WASM module using the standard JavaScript APIs:
  > https://blog.scottlogic.com/2017/10/17/wasm-mandelbrot.html
 runtime/compile-time feature enabler/disabler VISUAL TOOL & disable dom elements/widgets
@@ -453,3 +457,66 @@ C++ ranges
 Boost.SML
  > https://boost-experimental.github.io/sml/tutorial/index.html
  > https://github.com/modern-cpp-examples/match3/blob/master/include/controller/player.hpp
+
+===
+lscpu:i7-4790@3.60GHz -j6
+===
+Release build size (stripped unused code)
+WASM MT: 1.5Mib
+WASM MT GZIP: 540Kib (gzip --best --keep --force --suffix=.gz build-wasm-mt-rel/skemgl.wasm)
+-DENABLE_COBALT=FALSE;
+-DENABLE_LIBWEBP=FALSE;
+-DUSE_ICU=FALSE;
+-DENABLE_GLIBXML=FALSE;
+-DENABLE_HARFBUZZ=FALSE;
+-DENABLE_SKSG=FALSE;
+-DENABLE_SKSHAPER=FALSE;
+-DENABLE_SKOTTIE=FALSE;
+-DENABLE_SKIA_UTILS=FALSE;
+-DFORCE_DISABLE_SK_GPU=TRUE;
+NOTE:
+UBUNTU WITH SK_GPU=TRUE: (rebuild time 179s.=~3m.): 5.7Mib
+UBUNTU WITH SK_GPU=FALSE: (rebuild time 96s.=~2m.): 3.0Mib
+===
+Release build size (stripped unused code)
+WASM MT: 1.5Mib
+UBUNTU: (rebuild time 255s.=~5m.): 3.0Mib
+-DENABLE_COBALT=FALSE;
+-DENABLE_LIBWEBP=FALSE;
+-DUSE_ICU=TRUE;
+-DENABLE_GLIBXML=TRUE;
+-DENABLE_HARFBUZZ=FALSE;
+-DENABLE_SKSG=FALSE;
+-DENABLE_SKSHAPER=FALSE;
+-DENABLE_SKOTTIE=FALSE;
+-DENABLE_SKIA_UTILS=FALSE;
+-DFORCE_DISABLE_SK_GPU=TRUE;
+===
+Release build size (stripped unused code)
+WASM MT: 4.8Mib (~30fps)
+UBUNTU: (rebuild time 474s.=~8m.): 13Mib
+-DENABLE_COBALT=TRUE;
+-DENABLE_LIBWEBP=FALSE;
+-DUSE_ICU=TRUE;
+-DENABLE_GLIBXML=TRUE;
+-DENABLE_HARFBUZZ=TRUE;
+-DENABLE_SKSG=FALSE;
+-DENABLE_SKSHAPER=FALSE;
+-DENABLE_SKOTTIE=FALSE;
+-DENABLE_SKIA_UTILS=FALSE;
+-DFORCE_DISABLE_SK_GPU=TRUE;
+===
+Release build size (stripped unused code)
+WASM MT: 5.2Mib (~30fps)
+WASM MT GZIP: 1.6Mib (gzip --best --keep --force --suffix=.gz build-wasm-mt-rel/skemgl.wasm)
+UBUNTU: (rebuild time 457s.=~8m.): 13.4Mib
+-DENABLE_COBALT=TRUE;
+-DENABLE_LIBWEBP=FALSE;
+-DUSE_ICU=TRUE;
+-DENABLE_GLIBXML=TRUE;
+-DENABLE_HARFBUZZ=TRUE;
+-DENABLE_SKSG=TRUE;
+-DENABLE_SKSHAPER=TRUE;
+-DENABLE_SKOTTIE=TRUE;
+-DENABLE_SKIA_UTILS=TRUE;
+-DFORCE_DISABLE_SK_GPU=TRUE;

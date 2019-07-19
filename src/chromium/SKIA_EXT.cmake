@@ -91,7 +91,7 @@ add_library(SKIA_EXT STATIC
 target_link_libraries(SKIA_EXT PUBLIC
   ${SKIA_LIBS}
   #SKIA
-  #skottie
+  #${skottie_LIB}
   #${sksg_LIB}
   #skshaper
   #particles

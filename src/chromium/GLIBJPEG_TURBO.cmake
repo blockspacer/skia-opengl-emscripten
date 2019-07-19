@@ -185,14 +185,14 @@ if (EMSCRIPTEN)
     #base
     #${ZLIB_LIBRARIES}
     #GZLIB
-    GLIBXML
+    ${GLIBXML_LIB}
     #freetype
     # todo sudo apt-get install libjpeg-dev
   )
 else()
   target_link_libraries(GLIBJPEG_TURBO PUBLIC
     ${libZLIB_LIB}
-    GLIBXML
+    ${GLIBXML_LIB}
   )
 endif()
 

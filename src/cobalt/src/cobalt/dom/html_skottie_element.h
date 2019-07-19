@@ -50,8 +50,10 @@ class HTMLSkottieElement : public HTMLElement/*, public HTMLMediaElement*/ {
   // Custom, not in any spec.
   scoped_refptr<HTMLSkottieElement> AsHTMLSkottieElement() override { return this; }
 
+#if defined(ENABLE_SKOTTIE)
   //cobalt::render_tree::SkottieNode::GetSkottieAnimCB GetSkottieAnim();
   sk_sp<skottie::Animation> GetSkottieAnim();
+#endif // ENABLE_SKOTTIE
 
   //cobalt::render_tree::SkottieNode::SetBoundsCB GetSetBoundsCB();
 
@@ -63,7 +65,9 @@ class HTMLSkottieElement : public HTMLElement/*, public HTMLMediaElement*/ {
 
   const std::string src();
 
+#if defined(ENABLE_SKOTTIE)
   sk_sp<skottie::Animation> animation;
+#endif // ENABLE_SKOTTIE
 
   DISALLOW_COPY_AND_ASSIGN(HTMLSkottieElement);
 };

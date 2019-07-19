@@ -34,6 +34,10 @@ include(${CURRENT_SCRIPT_DIR}/commonBuildMacros.cmake)
 include(${CURRENT_SCRIPT_DIR}/commonBuildVars.cmake)
 include(${CURRENT_SCRIPT_DIR}/unixBuildVars.cmake)
 
+if(EXTRA_EMCMAKE_OPTS)
+  message(FATAL_ERROR "Use EXTRA_CMAKE_OPTS, not EXTRA_EMCMAKE_OPTS in web builds")
+endif(EXTRA_EMCMAKE_OPTS)
+
 # --- vars ---
 set(BUILD_DIR "${CMAKE_CURRENT_SOURCE_DIR}/build-linux/" CACHE STRING "output directory")
 

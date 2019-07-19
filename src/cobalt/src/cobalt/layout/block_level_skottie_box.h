@@ -32,8 +32,10 @@ class BlockLevelSkottieBox : public SkottieBox {
   BlockLevelSkottieBox(
       const scoped_refptr<cssom::CSSComputedStyleDeclaration>&
           css_computed_style_declaration,
+#if defined(ENABLE_SKOTTIE)
       //const ReplaceImageCB& replace_image_cb, const SetBoundsCB& set_bounds_cb,
       const SkottieBox::GetSkottieAnimCB& replace_skottie_animation_cb,
+#endif // ENABLE_SKOTTIE
       const scoped_refptr<Paragraph>& paragraph, int32 text_position,
       const base::Optional<LayoutUnit>& maybe_intrinsic_width,
       const base::Optional<LayoutUnit>& maybe_intrinsic_height,

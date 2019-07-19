@@ -107,18 +107,8 @@ target_link_libraries(cobalt_layout PUBLIC
   cobalt_render_tree
   cobalt_ui_navigation
   icu
-  SKIA # TODO
-  skottie # TODO
-  #starboard_platform
-  #starboard_core
-  #starboard_eztime
-  #starboard_common
-  #modp_b64
-  #dynamic_annotations
-  #GLIBXML
-  #icu
-  #ced
-  #glm
+  ${SKIA_LIB} # TODO
+  ${skottie_LIB} # TODO
 )
 
 set_property(TARGET cobalt_layout PROPERTY CXX_STANDARD 17)

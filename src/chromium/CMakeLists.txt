@@ -322,7 +322,7 @@ if(ENABLE_SKIA AND ENABLE_BLINK)
     #${sksg_LIB}
     #skshaper
     #particles
-    #skottie
+    #${skottie_LIB}
     #dynamic_annotations
     #libjpeg
     #libpng

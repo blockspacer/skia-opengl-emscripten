@@ -67,11 +67,13 @@
 #include "third_party/skia/include/effects/SkDropShadowImageFilter.h"
 #include "third_party/skia/include/effects/SkGradientShader.h"
 
+#if defined(ENABLE_SKOTTIE)
 #include <skia/modules/skottie/include/Skottie.h>
 #include <skia/modules/skottie/utils/SkottieUtils.h>
 #include <skia/include/core/SkSize.h>
 #include <skia/include/core/SkRefCnt.h>
 #include <skia/include/core/SkTime.h>
+#endif // ENABLE_SKOTTIE
 
 // Setting this define to 1 will enable TRACE_EVENT calls to be made from
 // all render node visitations.  It is by default set to 0 because it generates
@@ -822,6 +824,7 @@ void RenderTreeNodeVisitor::Visit(
   //DrawClearRect(draw_state_.render_target, math_rect,
   //              render_tree::ColorRGBA(0.1, 0.1, 0.3, 0.5));
 
+#if defined(ENABLE_SKOTTIE)
   sk_sp<skottie::Animation> animation = skottie->data().animation;
 
   if(animation) {
@@ -847,6 +850,7 @@ void RenderTreeNodeVisitor::Visit(
 
     animation->render(draw_state_.render_target, &dstR);
   }
+#endif // ENABLE_SKOTTIE
 
 #if ENABLE_FLUSH_AFTER_EVERY_NODE
   draw_state_.render_target->flush();

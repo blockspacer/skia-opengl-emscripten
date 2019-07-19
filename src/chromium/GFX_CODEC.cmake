@@ -53,7 +53,7 @@ target_link_libraries(GFX_CODEC PRIVATE
   ${SKIA_LIBS}
   #SKIA
   #
-  #skottie
+  #${skottie_LIB}
   #${sksg_LIB}
   #skshaper
   #particles

@@ -26,14 +26,6 @@ target_link_libraries(cobalt_system_window PUBLIC
   #starboard_core
   #starboard_eztime
   starboard_common
-  #modp_b64
-  #dynamic_annotations
-  #GLIBXML
-  #icu
-  #ced
-  #glm
-  #SKIA
-  #${HARFBUZZ_LIBRARIES}
 )
 
 set_property(TARGET cobalt_system_window PROPERTY CXX_STANDARD 17)

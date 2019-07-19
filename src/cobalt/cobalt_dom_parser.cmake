@@ -34,24 +34,7 @@ target_link_libraries(cobalt_dom_parser PUBLIC
   cobalt_dom
   cobalt_loader
   ${GNET_LIBS}
-  GLIBXML
-  #cobalt_nanobase
-  #${COBALT_CSP_LIB_NAME}
-  #${COBALT_LOADER_LIB_NAME}
-  #${COBALT_MEDIA_LIB}
-  #cobalt_page_visibility
-  #cobalt_script
-  #v8_stub
-  #cobalt_ui_navigation
-  #cobalt_web_animations
-  ##cobalt_browser ## TODO ##
-  #modp_b64
-  #dynamic_annotations
-  #GURL
-  #GLIBXML
-  #icu
-  #ced
-  #glm
+  ${GLIBXML_LIB}
 )
 
 set_property(TARGET cobalt_dom_parser PROPERTY CXX_STANDARD 17)

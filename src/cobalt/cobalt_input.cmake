@@ -61,20 +61,6 @@ target_link_libraries(cobalt_input PUBLIC
   #${COBALT_LOADER_LIB_NAME}
   #${COBALT_MEDIA_LIB}
   cobalt_system_window
-  #cobalt_page_visibility
-  #cobalt_script
-  #${COBALT_V8_STUB_LIB}
-  #cobalt_ui_navigation
-  #cobalt_web_animations
-  #cobalt_browser ## TODO ##
-  #modp_b64
-  #dynamic_annotations
-  #GURL
-  #${GNET_LIBS}
-  #GLIBXML
-  #icu
-  #ced
-  #glm
 )
 
 set_property(TARGET cobalt_input PROPERTY CXX_STANDARD 17)

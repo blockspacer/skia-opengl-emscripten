@@ -23,7 +23,7 @@ target_link_libraries(cobalt_page_visibility PUBLIC
   base # TODO
   modp_b64
   dynamic_annotations
-  GLIBXML
+  ${GLIBXML_LIB}
   icu
   ced
   glm

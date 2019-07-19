@@ -72,8 +72,8 @@ target_link_libraries(cobalt_render_tree PUBLIC
   base # TODO
   modp_b64
   dynamic_annotations
-  SKIA # TODO
-  skottie # TODO
+  ${SKIA_LIB} # TODO
+  ${skottie_LIB} # TODO
 )
 
 set_property(TARGET cobalt_render_tree PROPERTY CXX_STANDARD 17)

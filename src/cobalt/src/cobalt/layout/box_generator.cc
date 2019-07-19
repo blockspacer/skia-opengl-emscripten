@@ -184,7 +184,9 @@ class SkottieBoxGenerator : public cssom::NotReachedPropertyValueVisitor {
   SkottieBoxGenerator(const scoped_refptr<cssom::CSSComputedStyleDeclaration>&
                            css_computed_style_declaration,
                        //const SkottieBox::SetBoundsCB& set_bounds_cb,
+#if defined(ENABLE_SKOTTIE)
                        const SkottieBox::GetSkottieAnimCB& replace_skottie_animation_cb,
+#endif // ENABLE_SKOTTIE
                        const scoped_refptr<Paragraph>& paragraph,
                        int32 text_position,
                        const base::Optional<LayoutUnit>& maybe_intrinsic_width,
@@ -194,7 +196,9 @@ class SkottieBoxGenerator : public cssom::NotReachedPropertyValueVisitor {
                        math::SizeF content_size)
       : css_computed_style_declaration_(css_computed_style_declaration),
        // set_bounds_cb_(set_bounds_cb),
+#if defined(ENABLE_SKOTTIE)
         replace_skottie_animation_cb_(replace_skottie_animation_cb),
+#endif // ENABLE_SKOTTIE
         paragraph_(paragraph),
         text_position_(text_position),
         maybe_intrinsic_width_(maybe_intrinsic_width),
@@ -211,7 +215,9 @@ class SkottieBoxGenerator : public cssom::NotReachedPropertyValueVisitor {
   const scoped_refptr<cssom::CSSComputedStyleDeclaration>
       css_computed_style_declaration_;
   //const SkottieBox::SetBoundsCB set_bounds_cb_;
+#if defined(ENABLE_SKOTTIE)
   const SkottieBox::GetSkottieAnimCB replace_skottie_animation_cb_;
+#endif // ENABLE_SKOTTIE
   const scoped_refptr<Paragraph> paragraph_;
   const int32 text_position_;
   const base::Optional<LayoutUnit> maybe_intrinsic_width_;
@@ -230,7 +236,9 @@ void SkottieBoxGenerator::VisitKeyword(cssom::KeywordValue* keyword) {
       skottie_box_ = WrapRefCounted(new BlockLevelSkottieBox(
           css_computed_style_declaration_
           //, replace_image_cb_, set_bounds_cb_,
+#if defined(ENABLE_SKOTTIE)
           , replace_skottie_animation_cb_
+#endif // ENABLE_SKOTTIE
           , paragraph_, text_position_, maybe_intrinsic_width_,
           maybe_intrinsic_height_, maybe_intrinsic_ratio_,
           context_->used_style_provider,
@@ -243,7 +251,9 @@ void SkottieBoxGenerator::VisitKeyword(cssom::KeywordValue* keyword) {
     case cssom::KeywordValue::kInlineFlex:
       skottie_box_ = WrapRefCounted(new InlineLevelSkottieBox(
           css_computed_style_declaration_,
+#if defined(ENABLE_SKOTTIE)
           replace_skottie_animation_cb_,
+#endif // ENABLE_SKOTTIE
           //set_bounds_cb_,
           paragraph_, text_position_, maybe_intrinsic_width_,
           maybe_intrinsic_height_, maybe_intrinsic_ratio_,
@@ -347,7 +357,9 @@ void BoxGenerator::VisitSkottieElement(dom::HTMLSkottieElement* skottie_element)
   SkottieBoxGenerator skottie_box_generator(
       skottie_element->css_computed_style_declaration(),
       //skottie_element->GetSetBoundsCB(),
+#if defined(ENABLE_SKOTTIE)
       base::Bind(&dom::HTMLSkottieElement::GetSkottieAnim, base::Unretained(skottie_element)),
+#endif // ENABLE_SKOTTIE
       *paragraph_, text_position,
       base::nullopt, base::nullopt, base::nullopt, context_,
       skottie_element->GetSize());

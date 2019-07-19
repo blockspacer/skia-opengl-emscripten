@@ -84,6 +84,7 @@ math::SizeF HTMLSkottieElement::GetSize() const {
   return math::SizeF(width(), height());
 }
 
+#if defined(ENABLE_SKOTTIE)
 sk_sp<skottie::Animation> HTMLSkottieElement::GetSkottieAnim() {
   // TODO
   printf("TODO: HTMLSkottieElement::GetSetBoundsCB\n");
@@ -93,6 +94,7 @@ sk_sp<skottie::Animation> HTMLSkottieElement::GetSkottieAnim() {
   }
   return animation;
 }
+#endif // ENABLE_SKOTTIE
 
 /*cobalt::render_tree::SkottieNode::SetBoundsCB HTMLSkottieElement::GetSetBoundsCB() {
   // TODO

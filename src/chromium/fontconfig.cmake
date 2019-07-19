@@ -53,7 +53,7 @@ message(STATUS "LibUUID_LIBRARIES=${LibUUID_LIBRARIES}")
 
 target_link_libraries(fontconfig PUBLIC
   base
-  GLIBXML
+  ${GLIBXML_LIB}
   #GZLIB
   ${libZLIB_LIB}
   #freetype

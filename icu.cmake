@@ -892,8 +892,10 @@ set(ICU_SOURCES
     ICU_UTIL_DATA_IMPL=ICU_UTIL_DATA_FILE
     #ICU_UTIL_DATA_IMPL=ICU_UTIL_DATA_STATIC
     LIB_ICU_I18N_STATIC=1
+    # see http://site.icu-project.org/repository/tips/linux
     U_CHARSET_IS_UTF8=1
     U_HAVE_STD_STRING=1 # obsolete (ICU-12736)
+    # see http://userguide.icu-project.org/packaging
     UCONFIG_NO_LEGACY_CONVERSION=1
     # UCONFIG_ONLY_COLLATION=1 # NOTE: also disables break iteration!
     UCONFIG_NO_FILE_IO=1
@@ -914,7 +916,6 @@ set(ICU_SOURCES
     # see http://icu-project.org/apiref/icu4c561/uconfig_8h.html
     #
     #UCONFIG_ONLY_HTML_CONVERSION=1
-    U_CHARSET_IS_UTF8=1
     # custom
     HAVE_DLFCN_H=0
   )
@@ -965,7 +966,6 @@ set(ICU_SOURCES
     ${WTF_EMCC_DEFINITIONS}
     ${WTF_COMMON_DEFINITIONS}
     LIB_ICU_I18N_STATIC=1
-    U_CHARSET_IS_UTF8=1
     #U_NO_DEFAULT_INCLUDE_UTF_HEADERS=0
     #U_NO_DEFAULT_INCLUDE_UTF_HEADERS
     #U_ATTRIBUTE_DEPRECATED

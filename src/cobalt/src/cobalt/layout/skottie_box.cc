@@ -104,7 +104,9 @@ SkottieBox::SkottieBox(
     const scoped_refptr<cssom::CSSComputedStyleDeclaration>&
         css_computed_style_declaration,
     //const SetBoundsCB& set_bounds_cb,
+#if defined(ENABLE_SKOTTIE)
     const SkottieBox::GetSkottieAnimCB& replace_skottie_animation_cb,
+#endif // ENABLE_SKOTTIE
     const scoped_refptr<Paragraph>& paragraph, int32 text_position,
     const base::Optional<LayoutUnit>& maybe_intrinsic_width,
     const base::Optional<LayoutUnit>& maybe_intrinsic_height,
@@ -121,7 +123,9 @@ SkottieBox::SkottieBox(
       // https://www.w3.org/TR/CSS21/visudet.html#inline-replaced-width.
       intrinsic_ratio_(maybe_intrinsic_ratio.value_or(kFallbackIntrinsicRatio)),
       //set_bounds_cb_(set_bounds_cb),
+#if defined(ENABLE_SKOTTIE)
       replace_skottie_animation_cb_(replace_skottie_animation_cb),
+#endif // ENABLE_SKOTTIE
       paragraph_(paragraph),
       text_position_(text_position),
       content_size_(content_size) {}
@@ -218,14 +222,18 @@ namespace {
 void AddLetterboxedSkottieToRenderTree(
     const LetterboxDimensions& dimensions,
     //const SkottieBox::SetBoundsCB& set_bounds_cb,
+#if defined(ENABLE_SKOTTIE)
     const SkottieBox::GetSkottieAnimCB& replace_skottie_animation_cb,
+#endif // ENABLE_SKOTTIE
     CompositionNode::Builder* border_node_builder) {
   if (dimensions.image_rect) {
     SkottieNode::Builder builder(*(dimensions.image_rect)
                                            //, set_bounds_cb
                                            );
 
+#if defined(ENABLE_SKOTTIE)
     builder.animation = replace_skottie_animation_cb.Run();
+#endif // ENABLE_SKOTTIE
 
     if (builder.animation_time == 0) {
       // Reset the animation time.
@@ -564,7 +572,9 @@ void SkottieBox::RenderAndAnimateContentWithLetterboxing(
       GetLetterboxDimensions(content_size_, content_box_size());
   AddLetterboxedSkottieToRenderTree(
       letterbox_dims
+#if defined(ENABLE_SKOTTIE)
       , replace_skottie_animation_cb_
+#endif // ENABLE_SKOTTIE
       //, set_bounds_cb_
       , border_node_builder);
 }

@@ -154,7 +154,7 @@ target_link_libraries(cobalt_renderer_stub_skia PUBLIC
   starboard_common
   modp_b64
   dynamic_annotations
-  GLIBXML
+  ${GLIBXML_LIB}
   icu
   ced
   glm
@@ -248,7 +248,7 @@ target_link_libraries(cobalt_renderer_stub_skgl PUBLIC
   starboard_common
   modp_b64
   dynamic_annotations
-  GLIBXML
+  ${GLIBXML_LIB}
   icu
   ced
   glm
@@ -399,7 +399,7 @@ target_link_libraries(cobalt_renderer_stub PUBLIC
   starboard_common
   modp_b64
   dynamic_annotations
-  GLIBXML
+  ${GLIBXML_LIB}
   icu
   ced
   glm

@@ -82,6 +82,11 @@
 
 // see https://github.com/emscripten-core/emscripten/pull/8430#issuecomment-486635898
 // #define SKIA_GR_CONTEXT 1
+#if SK_SUPPORT_GPU
+#if defined(SKIA_GR_CONTEXT)
+#error "SKIA_GR_CONTEXT requires SK_SUPPORT_GPU"
+#endif // SKIA_GR_CONTEXT
+#endif // SK_SUPPORT_GPU
 
 /// \note defined by CMAKE
 // #define ENABLE_SKOTTIE 1
@@ -239,9 +244,9 @@
 #include <skia/include/core/SkPictureRecorder.h>
 #include <skia/include/core/SkStream.h>
 #include <skia/include/core/SkSurface.h>
-#include "third_party/skia/include/core/SkBitmap.h"
-#include "third_party/skia/include/core/SkCanvas.h"
-#include "third_party/skia/include/core/SkShader.h"
+#include <skia/include/core/SkBitmap.h>
+#include <skia/include/core/SkCanvas.h>
+#include <skia/include/core/SkShader.h>
 #if defined(ENABLE_SKOTTIE)
 #include <skia/modules/skottie/include/Skottie.h>
 #include <skia/modules/skottie/utils/SkottieUtils.h>
@@ -255,10 +260,6 @@
 
 #include <skia/include/core/SkMaskFilter.h>
 #include <skia/include/core/SkTextBlob.h>
-
-#include <skia/include/gpu/gl/GrGLAssembleInterface.h>
-#include <skia/include/gpu/gl/GrGLInterface.h>
-#include <skia/src/gpu/gl/GrGLUtil.h>
 
 #include <skia/include/core/SkTypeface.h>
 #include <skia/include/core/SkTextBlob.h>
@@ -295,23 +296,33 @@
 //#include "SkUnPreMultiply.h"
 //#include "SkStream.h"
 //
-#include "skia/include/gpu/GrContext.h"
+#if SK_SUPPORT_GPU
+#include <skia/include/gpu/GrContext.h>
 //
-#include "skia/include/gpu/GrTypes.h"
-//#include "skia/include/gpu/GrTypesPriv.h"
+#include <skia/include/gpu/GrTypes.h>
+//#include <skia/include/gpu/GrTypesPriv.h>
+#include <skia/src/gpu/GrGpu.h>
+////#include <skia/src/gpu/GrDirectContext.h>
+#include <skia/src/gpu/gl/GrGLGpu.h>
+#include <skia/src/gpu/GrContextPriv.h>
+#include <skia/src/gpu/GrContextThreadSafeProxyPriv.h>
+//#include <skia/src/gpu/gl/GrGLDefines.h>
+#include <skia/include/gpu/gl/GrGLAssembleHelpers.h>
+#include <skia/include/gpu/gl/GrGLAssembleInterface.h>
+#include <skia/src/gpu/gl/GrGLUtil.h>
+#include <skia/include/gpu/gl/GrGLAssembleInterface.h>
+#include <skia/include/gpu/gl/GrGLInterface.h>
+#include <skia/src/gpu/gl/GrGLUtil.h>
+#endif // SK_SUPPORT_GPU
+//
 #include "skia/include/core/SkRefCnt.h"
 #include "skia/include/core/SkTime.h"
 //
 //#include "GrContextPriv.h"
-#include "skia/src/gpu/GrGpu.h"
-////#include "src/gpu/GrDirectContext.h"
-#include "skia/src/gpu/gl/GrGLGpu.h"
 //
 //#include "GrAHardwareBufferUtils.h"
 //#include "GrBackendSurface.h"
 //#include "GrCaps.h"
-#include "skia/src/gpu/GrContextPriv.h"
-#include "skia/src/gpu/GrContextThreadSafeProxyPriv.h"
 //#include "GrRecordingContext.h"
 //#include "GrRecordingContextPriv.h"
 //#include "GrRenderTarget.h"
@@ -328,11 +339,12 @@
 //#include "SkSurface_Base.h"
 //#include "SkSurface_Gpu.h"
 //
+//#if SK_SUPPORT_GPU
 //#include "gl/GrGLConfig.h"
 //#include "gl/GrGLInterface.h"
 //#include "gl/GrGLUtil.h"
+//#endif // SK_SUPPORT_GPU
 //
-//#include "src/gpu/gl/GrGLDefines.h"
 //
 //#include "GrBackendSurface.h"
 //#include "GrContext.h"
@@ -815,10 +827,6 @@ static GrGLFuncPtr emscripten_get_gl_proc(void* ctx, const char name[]) {
 }
 
 // extern void* emscripten_GetProcAddress(const char *x);
-
-#include "include/gpu/gl/GrGLAssembleHelpers.h"
-#include "include/gpu/gl/GrGLAssembleInterface.h"
-#include "src/gpu/gl/GrGLUtil.h"
 
 sk_sp<const GrGLInterface> emscripten_GrGLMakeNativeInterface() {
   void* ctx = nullptr;
@@ -3268,6 +3276,8 @@ CobaltTester::CobaltTester()
   //:  self_task_runner_(base::MessageLoopCurrent::Get().task_runner())
   :  self_task_runner_(main_browser_thread_.task_runner())
 {
+  ::std::cout << "CobaltTester() at " << base::Time::Now() << "\n";
+
   DCHECK(self_task_runner_);
   //DCHECK_EQ(base::MessageLoopCurrent::Get().task_runner(), self_task_runner_);
   DCHECK(thread_checker_.CalledOnValidThread());
@@ -5174,7 +5184,7 @@ static void handleEmscriptenKeyboardEvent(int emsc_type, const EmscriptenKeyboar
 
 #if defined(__EMSCRIPTEN__)
 static EM_BOOL emsc_keydown_cb(int emsc_type, const EmscriptenKeyboardEvent* emsc_event, void* user_data) {
-  printf("emsc_keydown_cb\n");
+  //printf("emsc_keydown_cb\n");
   DCHECK(emsc_event);
 
 #if defined(ENABLE_COBALT)
@@ -5186,7 +5196,7 @@ static EM_BOOL emsc_keydown_cb(int emsc_type, const EmscriptenKeyboardEvent* ems
 }
 
 static EM_BOOL emsc_keypress_cb(int emsc_type, const EmscriptenKeyboardEvent* emsc_event, void* user_data) {
-  printf("emsc_keypress_cb\n");
+  //printf("emsc_keypress_cb\n");
   DCHECK(emsc_event);
 
 #if defined(ENABLE_COBALT)
@@ -5198,7 +5208,7 @@ static EM_BOOL emsc_keypress_cb(int emsc_type, const EmscriptenKeyboardEvent* em
 }
 
 static EM_BOOL emsc_keyup_cb(int emsc_type, const EmscriptenKeyboardEvent* emsc_event, void* user_data) {
-  printf("emsc_keyup_cb\n");
+  //printf("emsc_keyup_cb\n");
   DCHECK(emsc_event);
 
 #if defined(ENABLE_COBALT)
@@ -8260,16 +8270,17 @@ main_browser_thread_wrapper_.task_runner()->PostTask(
 #if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
               thread_event->Signal();
           }, &ui_sync_event, &main_browser_thread_/*ui_thread*//*.get()*/));
-  ::std::cout << "thread rendering start Wait 1..." << base::Time::Now() << "\n";
-    std::cout << std::endl; // flush
+    ::std::cout << "thread rendering start Wait 1..." << base::Time::Now() << "\n";
+    ::std::cout << std::endl; // flush
 #endif
 #if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
     /// \todo Reactor your code so that the waiting happens on another thread instead of the main thread
     ui_sync_event.Wait();
     ui_sync_event.Reset();
 #endif
-        ::std::cout << "thread rendering start Wait 2..." << base::Time::Now() << "\n";
-    std::cout << std::endl; // flush
+
+    ::std::cout << "thread rendering start Wait 2..." << base::Time::Now() << "\n";
+    ::std::cout << std::endl; // flush
     //ui_thread->Scheduler()->Shutdown();
     //ui_thread.Stop();
     // blink::Thread's destructor blocks until all the tasks are processed.
@@ -8299,6 +8310,8 @@ main_browser_thread_wrapper_.task_runner()->PostTask(
     printf("failed SkData::MakeFromMalloc for font %s\n", fontPath);
   }
 
+  // TODO: Initialize font data in thread
+  /// \note SkTypeface sharable between threads
   printf("Initializing font data...\n");
 
   /// \note SkTypeface::MakeFromFile don`t support wasm pthreads,

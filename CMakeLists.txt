@@ -64,15 +64,20 @@ if(ENABLE_KHRONOS)
     khronos
   )
 endif(ENABLE_KHRONOS)
+set(USE_LIBPNG TRUE CACHE BOOL "USE_LIBPNG")
 # Blink platform
 set(ENABLE_BLINK FALSE CACHE BOOL "ENABLE_BLINK")
 # cobalt
 set(ENABLE_COBALT TRUE CACHE BOOL "ENABLE_COBALT")
 # SKIA
 set(ENABLE_SKIA TRUE CACHE BOOL "ENABLE_SKIA")
-set(USE_LIBPNG TRUE CACHE BOOL "USE_LIBPNG")
+set(ENABLE_SKSG TRUE CACHE BOOL "ENABLE_SKSG")
+set(ENABLE_SKIA_UTILS TRUE CACHE BOOL "ENABLE_SKIA_UTILS") # required by skottie
+set(ENABLE_SKOTTIE TRUE CACHE BOOL "ENABLE_SKOTTIE") # requires sksg
+# see https://github.com/google/skia/blob/81abc43e6f0b1a789e1bf116820c8ede68d778ab/modules/skshaper/BUILD.gn#L23
+set(ENABLE_SKSHAPER TRUE CACHE BOOL "ENABLE_SKSHAPER")
 if(TARGET_EMSCRIPTEN)
-  if(ENABLE_BLINK OR ENABLE_COBALT)
+  if(ENABLE_BLINK OR ENABLE_COBALT OR ENABLE_SKIA_UTILS)
     set(USE_SK_GPU TRUE)
   else()
     set(USE_SK_GPU FALSE) # TODO
@@ -80,13 +85,13 @@ if(TARGET_EMSCRIPTEN)
 else()
   set(USE_SK_GPU TRUE)
 endif()
+# TODO Use SKIA GrContext (enable SK_GPU) for native & WASM
+# NOTE: SK_GPU takes +3Mib
+set(FORCE_DISABLE_SK_GPU TRUE CACHE BOOL "FORCE_DISABLE_SK_GPU")
+if(FORCE_DISABLE_SK_GPU)
+  set(USE_SK_GPU FALSE)
+endif(FORCE_DISABLE_SK_GPU)
 message(STATUS "USE_SK_GPU=${USE_SK_GPU}")
-set(ENABLE_SKSG TRUE CACHE BOOL "ENABLE_SKSG")
-# NOTE: always FALSE here (change below)
-set(ENABLE_SKIA_UTILS TRUE CACHE BOOL "ENABLE_SKIA_UTILS") # required by skottie
-set(ENABLE_SKOTTIE TRUE CACHE BOOL "ENABLE_SKOTTIE") # requires sksg
-# see https://github.com/google/skia/blob/81abc43e6f0b1a789e1bf116820c8ede68d778ab/modules/skshaper/BUILD.gn#L23
-set(ENABLE_SKSHAPER TRUE CACHE BOOL "ENABLE_SKSHAPER")
 # WebAssembly
 set(ENABLE_WASM TRUE CACHE BOOL "ENABLE_WASM")
 if(NOT ENABLE_WASM)
@@ -115,7 +120,7 @@ if(ENABLE_BLINK AND NOT ENABLE_GLIBXML)
 endif()
 set(ENABLE_LIBYUV TRUE CACHE BOOL "ENABLE_LIBYUV")
 set(ENABLE_ICCJPEG TRUE CACHE BOOL "ENABLE_ICCJPEG")
-set(ENABLE_LIBWEBP TRUE CACHE BOOL "ENABLE_LIBWEBP")
+set(ENABLE_LIBWEBP FALSE CACHE BOOL "ENABLE_LIBWEBP")
 if(ENABLE_BLINK AND NOT ENABLE_LIBWEBP)
   message(FATAL_ERROR "BLINK requires LIBWEBP")
 endif()
@@ -416,6 +421,9 @@ endif(ENABLE_SKSHAPER)
 
 # NOTE: Place after all skia libs
 if (ENABLE_SKIA)
+  set(SKIA_LIB
+    SKIA
+  )
   set(SKIA_LIBS
     SKIA
     ${sksg_LIB}
@@ -999,7 +1007,9 @@ set(COMMON_FLAGS "${COMMON_FLAGS} -DNVALGRIND=1")
 
 if(USE_SK_GPU)
   set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_SUPPORT_GPU=1") # skia_enable_gpu
-  set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_SUPPORT_GPU") # skia_enable_gpu
+  #set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_SUPPORT_GPU") # skia_enable_gpu
+else()
+ set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_SUPPORT_GPU=0") # skia_enable_gpu
 endif(USE_SK_GPU)
 
 set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_DISABLE_READBUFFER=1")
@@ -1389,9 +1399,11 @@ endif(NOT RELEASE_BUILD)
   #set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_DISABLE_LEGACY_SHADERCONTEXT=1")
   #set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_DISABLE_LOWP_RASTER_PIPELINE=1")
   #set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_FORCE_RASTER_PIPELINE_BLITTER=1")
-  set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_ASSUME_WEBGL=1") # see skia_gl_standard
-  #set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_ASSUME_GL_ES=1") # see skia_gl_standard
-  #set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_ASSUME_GL=1") # see skia_gl_standard
+  if(USE_SK_GPU)
+    set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_ASSUME_WEBGL=1") # see skia_gl_standard
+    #set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_ASSUME_GL_ES=1") # see skia_gl_standard
+    #set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_ASSUME_GL=1") # see skia_gl_standard
+  endif(USE_SK_GPU)
   set(EMCC_COMMON "${EMCC_COMMON} -DIS_WEBGL=1")
   # see https://github.com/xzwang2005/Prelude/blob/master/third_party/skia/src/pathops/SkPathOpsTypes.cpp#L106
   #if(ENABLE_SKOTTIE)
@@ -1487,6 +1499,7 @@ endif(NOT RELEASE_BUILD)
     set(DEBUG_LEVEL "${DEBUG_LEVEL} -g0")
   endif(NOT RELEASE_BUILD)
   # see above
+  message(STATUS "DEBUG_LEVEL=${DEBUG_LEVEL}")
   set(EMCC_COMMON "${EMCC_COMMON} ${DEBUG_LEVEL}")
 
   # TODO EMCC_LINKER_FLAGS
@@ -1527,8 +1540,6 @@ endif(NOT RELEASE_BUILD)
       set(EMCC_COMMON "${EMCC_COMMON} --profiling-funcs")
     endif(RELEASE_BUILD)
     #
-    message(STATUS "OPTIMIZE_LEVEL=${OPTIMIZE_LEVEL}")
-    #
     ## see https://emscripten.org/docs/tools_reference/emcc.html#emcc-compiler-optimization-options
     #set(EMCC_COMMON "${EMCC_COMMON} --tracing")
     #
@@ -1554,6 +1565,7 @@ endif(NOT RELEASE_BUILD)
     #set(EMCC_COMMON "${EMCC_COMMON} -DPATHKIT_TESTING") # TODO
   endif(RELEASE_BUILD)
   # see above
+  message(STATUS "OPTIMIZE_LEVEL=${OPTIMIZE_LEVEL}")
   set(EMCC_COMMON "${EMCC_COMMON} ${OPTIMIZE_LEVEL}")
   #
   # TODO: remove some DEAD FUNCTIONS to improve skia webassembly size
@@ -1700,7 +1712,9 @@ else(EMSCRIPTEN)
     set(libDL_LIB LIBDL::LIBDL)
   endif()
 
-  set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_ASSUME_GL=1")
+  if(USE_SK_GPU)
+    set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_ASSUME_GL=1")
+  endif(USE_SK_GPU)
 
   # set -DCMAKE_BUILD_TYPE=Debug
   # see https://stackoverflow.com/a/25199377/10904212
@@ -1716,10 +1730,15 @@ else(EMSCRIPTEN)
     if(NOT OPTIMIZE_LEVEL)
       set(OPTIMIZE_LEVEL "${OPTIMIZE_LEVEL} -O3")
     endif(NOT OPTIMIZE_LEVEL)
-    set(COMMON_FLAGS "${COMMON_FLAGS} -O3")
+    if(NOT DEBUG_LEVEL)
+      # Use -s to strip debug info from the binary (and don't use -g).
+      # set(DEBUG_LEVEL "${DEBUG_LEVEL} -s") # see LINK_FLAGS_RELEASE
+    endif(NOT DEBUG_LEVEL)
   endif(NOT RELEASE_BUILD)
   # see above
+  message(STATUS "OPTIMIZE_LEVEL=${OPTIMIZE_LEVEL}")
   set(COMMON_FLAGS "${COMMON_FLAGS} ${OPTIMIZE_LEVEL}")
+  message(STATUS "DEBUG_LEVEL=${DEBUG_LEVEL}")
   set(COMMON_FLAGS "${COMMON_FLAGS} ${DEBUG_LEVEL}")
 
   if(USE_OPENGL_LIB)
@@ -1876,6 +1895,9 @@ if(ENABLE_GLIBXML)
     ${GLIBXML_PARENT_DIR}libxml/
   )
   include(${CHROMIUM_DIR}GLIBXML.cmake)
+  set(GLIBXML_LIB
+    GLIBXML
+  )
 endif(ENABLE_GLIBXML)
 
 if (USE_LIBPNG AND USE_CUSTOM_LIBPNG)
@@ -2001,13 +2023,14 @@ if(ENABLE_COBALT)
   list(APPEND PROJECT_SRC
     src/render_tree_combiner.cc
     src/extended_html/input_box/block_level_input_box.cc
-    src/extended_html/input_box/block_level_input_box.h
     src/extended_html/input_box/inline_level_input_box.cc
-    src/extended_html/input_box/inline_level_input_box.h
     src/extended_html/input_box/input_box.cc
-    src/extended_html/input_box/input_box.h
     src/extended_html/input_box/input_node.cc
+    # TODO: group headers into IDE folder
     src/extended_html/input_box/input_node.h
+    src/extended_html/input_box/input_box.h
+    src/extended_html/input_box/inline_level_input_box.h
+    src/extended_html/input_box/block_level_input_box.h
   )
 endif(ENABLE_COBALT)
 
@@ -2026,7 +2049,7 @@ if (ENABLE_SKIA)
   )
   if(ENABLE_SKOTTIE)
     list(APPEND PROJECT_SRC
-      # skottie
+      # ${skottie_LIB}
       # https://github.com/klzgrad/naiveproxy/blob/master/src/third_party/skia/modules/skottie/BUILD.gn#L45
       ${SKIA_DIR}/modules/skottie/utils/SkottieUtils.cpp
     )
@@ -2187,6 +2210,17 @@ endif(ENABLE_SKIA)
 #  "-s FORCE_FILESYSTEM=1"
 #)
 
+if(RELEASE_BUILD AND NOT TARGET_EMSCRIPTEN)
+  # same as set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS_RELEASE -s)
+  # see https://stackoverflow.com/a/53692364
+  if(NOT CMAKE_STRIP)
+    message(WARNING "NOT FOUND CMAKE_STRIP=${CMAKE_STRIP}")
+  endif(NOT CMAKE_STRIP)
+  add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+          COMMAND ${CMAKE_STRIP} -g -S -d --strip-debug --verbose ${PROJECT_NAME}
+          COMMENT "Strip debug symbols done on final binary.")
+endif(RELEASE_BUILD AND NOT TARGET_EMSCRIPTEN)
+
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 17)
 
 if(TARGET_EMSCRIPTEN)
@@ -2300,7 +2334,7 @@ if(TARGET_EMSCRIPTEN)
     #
     ${SKIA_LIBS}
     #
-    #skottie
+    #${skottie_LIB}
     #${sksg_LIB}
     #${skshaper_LIB}
     #particles
@@ -2370,7 +2404,7 @@ else()
     ${SKIA_LIBS}
     #SKIA
     #${libpng_LIB}
-    #skottie
+    #${skottie_LIB}
     #${sksg_LIB}
     #${skshaper_LIB}
     #particles

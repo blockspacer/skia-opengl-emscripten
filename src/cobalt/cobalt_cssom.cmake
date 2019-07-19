@@ -264,7 +264,7 @@ target_link_libraries(cobalt_cssom PUBLIC
   dynamic_annotations
   GURL
   ${GNET_LIBS}
-  GLIBXML
+  ${GLIBXML_LIB}
   icu
   ced
   glm

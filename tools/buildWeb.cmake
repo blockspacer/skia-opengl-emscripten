@@ -29,6 +29,10 @@ include(${CURRENT_SCRIPT_DIR}/commonBuildMacros.cmake)
 include(${CURRENT_SCRIPT_DIR}/commonBuildVars.cmake)
 include(${CURRENT_SCRIPT_DIR}/emscriptenBuildVars.cmake)
 
+if(EXTRA_CMAKE_OPTS)
+  message(FATAL_ERROR "Use EXTRA_EMCMAKE_OPTS, not EXTRA_CMAKE_OPTS in web builds")
+endif(EXTRA_CMAKE_OPTS)
+
 # --- vars ---
 set(BUILD_DIR "${CMAKE_CURRENT_SOURCE_DIR}/build-emscripten/" CACHE STRING "output directory")
 
