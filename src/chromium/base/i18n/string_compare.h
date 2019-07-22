@@ -16,11 +16,13 @@
 namespace base {
 namespace i18n {
 
+#if !UCONFIG_NO_COLLATION
 // Compares the two strings using the specified collator.
 BASE_I18N_EXPORT UCollationResult
 CompareString16WithCollator(const icu::Collator& collator,
                             const string16& lhs,
                             const string16& rhs);
+#endif // UCONFIG_NO_COLLATION
 
 }  // namespace i18n
 }  // namespace base

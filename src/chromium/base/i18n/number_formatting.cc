@@ -36,11 +36,16 @@ struct NumberFormatWrapper {
     // This can cause problems if a different allocator is used by this file
     // than by ICU.
     UErrorCode status = U_ZERO_ERROR;
+#if !UCONFIG_NO_FORMATTING
     number_format.reset(icu::NumberFormat::createInstance(status));
+#else
+  NOTIMPLEMENTED();
+#endif
     DCHECK(U_SUCCESS(status));
   }
-
+#if !UCONFIG_NO_FORMATTING
   std::unique_ptr<icu::NumberFormat> number_format;
+#endif
 };
 
 LazyInstance<NumberFormatWrapper>::DestructorAtExit g_number_format_int =
@@ -51,6 +56,7 @@ LazyInstance<NumberFormatWrapper>::DestructorAtExit g_number_format_float =
 }  // namespace
 
 string16 FormatNumber(int64_t number) {
+#if !UCONFIG_NO_FORMATTING
   icu::NumberFormat* number_format =
       g_number_format_int.Get().number_format.get();
 
@@ -62,9 +68,14 @@ string16 FormatNumber(int64_t number) {
   number_format->format(number, ustr);
 
   return i18n::UnicodeStringToString16(ustr);
+#else
+  NOTIMPLEMENTED();
+  return string16();
+#endif // UCONFIG_NO_FORMATTING
 }
 
 string16 FormatDouble(double number, int fractional_digits) {
+#if !UCONFIG_NO_FORMATTING
   icu::NumberFormat* number_format =
       g_number_format_float.Get().number_format.get();
 
@@ -78,6 +89,10 @@ string16 FormatDouble(double number, int fractional_digits) {
   number_format->format(number, ustr);
 
   return i18n::UnicodeStringToString16(ustr);
+#else
+  NOTIMPLEMENTED();
+  return string16();
+#endif // UCONFIG_NO_FORMATTING
 }
 
 string16 FormatPercent(int number) {

@@ -25,37 +25,72 @@ UnicodeString UnicodeStringFromStringPiece(StringPiece str) {
 }  // anonymous namespace
 
 namespace internal {
-MessageArg::MessageArg() : formattable(nullptr) {}
+MessageArg::MessageArg()
+#if !UCONFIG_NO_FORMATTING
+: formattable(nullptr)
+#endif // UCONFIG_NO_FORMATTING
+   {}
 
 MessageArg::MessageArg(const char* s)
-    : formattable(new icu::Formattable(UnicodeStringFromStringPiece(s))) {}
+#if !UCONFIG_NO_FORMATTING
+    : formattable(new icu::Formattable(UnicodeStringFromStringPiece(s)))
+#endif // UCONFIG_NO_FORMATTING
+   {}
 
 MessageArg::MessageArg(StringPiece s)
-    : formattable(new icu::Formattable(UnicodeStringFromStringPiece(s))) {}
+#if !UCONFIG_NO_FORMATTING
+    : formattable(new icu::Formattable(UnicodeStringFromStringPiece(s)))
+#endif // UCONFIG_NO_FORMATTING
+   {}
 
 MessageArg::MessageArg(const std::string& s)
-    : formattable(new icu::Formattable(UnicodeString::fromUTF8(s))) {}
+#if !UCONFIG_NO_FORMATTING
+    : formattable(new icu::Formattable(UnicodeString::fromUTF8(s)))
+#endif // UCONFIG_NO_FORMATTING
+   {}
 
 MessageArg::MessageArg(const string16& s)
-    : formattable(new icu::Formattable(UnicodeString(s.data(), s.size()))) {}
+#if !UCONFIG_NO_FORMATTING
+    : formattable(new icu::Formattable(UnicodeString(s.data(), s.size())))
+#endif // UCONFIG_NO_FORMATTING
+   {}
 
-MessageArg::MessageArg(int i) : formattable(new icu::Formattable(i)) {}
+MessageArg::MessageArg(int i)
+#if !UCONFIG_NO_FORMATTING
+    : formattable(new icu::Formattable(i))
+#endif // UCONFIG_NO_FORMATTING
+   {}
 
-MessageArg::MessageArg(int64_t i) : formattable(new icu::Formattable(i)) {}
+MessageArg::MessageArg(int64_t i)
+#if !UCONFIG_NO_FORMATTING
+    : formattable(new icu::Formattable(i))
+#endif // UCONFIG_NO_FORMATTING
+   {}
 
-MessageArg::MessageArg(double d) : formattable(new icu::Formattable(d)) {}
+MessageArg::MessageArg(double d)
+#if !UCONFIG_NO_FORMATTING
+    : formattable(new icu::Formattable(d))
+#endif // UCONFIG_NO_FORMATTING
+   {}
 
 MessageArg::MessageArg(const Time& t)
-    : formattable(new icu::Formattable(static_cast<UDate>(t.ToJsTime()))) {}
+#if !UCONFIG_NO_FORMATTING
+    : formattable(new icu::Formattable(static_cast<UDate>(t.ToJsTime())))
+#endif // UCONFIG_NO_FORMATTING
+   {}
 
 MessageArg::~MessageArg() = default;
 
 // Tests if this argument has a value, and if so increments *count.
 bool MessageArg::has_value(int *count) const {
+#if !UCONFIG_NO_FORMATTING
   if (formattable == nullptr)
     return false;
 
   ++*count;
+#else
+  NOTIMPLEMENTED();
+#endif // UCONFIG_NO_FORMATTING
   return true;
 }
 
@@ -70,6 +105,7 @@ string16 MessageFormatter::FormatWithNumberedArgs(
     const internal::MessageArg& arg4,
     const internal::MessageArg& arg5,
     const internal::MessageArg& arg6) {
+#if !UCONFIG_NO_FORMATTING
   int32_t args_count = 0;
   icu::Formattable args[] = {
       arg0.has_value(&args_count) ? *arg0.formattable : icu::Formattable(),
@@ -93,6 +129,10 @@ string16 MessageFormatter::FormatWithNumberedArgs(
     return string16();
   }
   return i18n::UnicodeStringToString16(formatted);
+#else
+  NOTIMPLEMENTED();
+  return string16();
+#endif // UCONFIG_NO_FORMATTING
 }
 
 string16 MessageFormatter::FormatWithNamedArgs(
@@ -104,6 +144,7 @@ string16 MessageFormatter::FormatWithNamedArgs(
     StringPiece name4, const internal::MessageArg& arg4,
     StringPiece name5, const internal::MessageArg& arg5,
     StringPiece name6, const internal::MessageArg& arg6) {
+#if !UCONFIG_NO_FORMATTING
   icu::UnicodeString names[] = {
       UnicodeStringFromStringPiece(name0),
       UnicodeStringFromStringPiece(name1),
@@ -136,6 +177,10 @@ string16 MessageFormatter::FormatWithNamedArgs(
     return string16();
   }
   return i18n::UnicodeStringToString16(formatted);
+#else
+  NOTIMPLEMENTED();
+  return string16();
+#endif // UCONFIG_NO_FORMATTING
 }
 
 }  // namespace i18n

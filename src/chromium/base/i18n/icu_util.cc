@@ -412,16 +412,21 @@ printf("InitializeICU() 1\n");
   // The ICU data is statically linked.
   result = true;
 #elif (ICU_UTIL_DATA_IMPL == ICU_UTIL_DATA_FILE)
-printf("loading ICU_UTIL_DATA_FILE 1...\n");
+
+  //printf("loading ICU_UTIL_DATA_FILE 1...\n");
+
   // If the ICU data directory is set, ICU won't actually load the data until
   // it is needed.  This can fail if the process is sandboxed at that time.
   // Instead, we map the file in and hand off the data so the sandbox won't
   // cause any problems.
   LazyInitIcuDataFile();
-printf("loading ICU_UTIL_DATA_FILE 2...\n");
+
+  //printf("loading ICU_UTIL_DATA_FILE 2...\n");
+
   result =
       InitializeICUWithFileDescriptorInternal(g_icudtl_pf, g_icudtl_region);
-printf("loading ICU_UTIL_DATA_FILE 3...\n");
+
+  //printf("loading ICU_UTIL_DATA_FILE 3...\n");
 
   // TODO: ICU_initLocaleDataImpl https://github.com/PhungXuanAnh91/mza-v3.0-bsp/blob/ddfa13450bb0dfdaf424265d70dfcd7cd28591ba/libcore/luni/src/main/native/libcore_icu_ICU.cpp#L364
 
@@ -446,11 +451,15 @@ printf("loading ICU_UTIL_DATA_FILE 3...\n");
 // TODO(jungshik): Some callers do not care about tz at all. If necessary,
 // add a boolean argument to this function to init'd the default tz only
 // when requested.
-#if (defined(OS_LINUX) && !defined(OS_CHROMEOS)) || defined(OS_EMSCRIPTEN)
+#if !UCONFIG_NO_FORMATTING \
+    && ((defined(OS_LINUX) && !defined(OS_CHROMEOS)) \
+    || defined(OS_EMSCRIPTEN))
   if (result)
     std::unique_ptr<icu::TimeZone> zone(icu::TimeZone::createDefault());
 #endif
-printf("InitializeICU() 2\n");
+
+  //printf("InitializeICU() 2\n");
+
   UErrorCode status = U_ZERO_ERROR;
 
 /**
@@ -482,9 +491,13 @@ printf("InitializeICU() 2\n");
  /// \see https://github.com/abergmeier/emscripten-icu/blob/master/readme.html#L1464
  /// \see https://github.com/blockspacer/cobalt-clone-28052019/blob/master/src/third_party/icu/source/common/uinit.cpp
    u_init(&status); /// __TODO__
-   //DCHECK((status == U_ZERO_ERROR)); /// __TODO__
-    printf("ICU Initialized: u_init() returned %s\n", u_errorName(status));
-printf("InitializeICU() 3\n");
+
+  //DCHECK((status == U_ZERO_ERROR)); /// __TODO__
+
+  printf("ICU Initialized: u_init() returned %s\n", u_errorName(status));
+
+  //printf("InitializeICU() 3\n");
+
   //printf("Milliseconds since Epoch: %.0f\n", uprv_getUTCtime());
 
   union {

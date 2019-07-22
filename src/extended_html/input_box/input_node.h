@@ -53,7 +53,7 @@ class InputNode : public CustomNode {
         {}
 
     bool operator==(const CustomNode::Builder& other) const override {
-      return rect == base::polymorphic_downcast<Builder>(other).rect /*&& set_bounds_cb.Equals(other.set_bounds_cb)*/;
+      return rect == base::polymorphic_downcast<const Builder&>(other).rect /*&& set_bounds_cb.Equals(other.set_bounds_cb)*/;
     }
 
     bool operator==(const Builder& other) const {

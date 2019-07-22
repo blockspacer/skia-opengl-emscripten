@@ -178,7 +178,9 @@ scoped_refptr<render_tree::Typeface> SoftwareResourceProvider::GetLocalTypeface(
 
   if(fontManagerSkTypeface) {
       sk_sp<SkTypeface_Cobalt> typeface(
-          base::polymorphic_downcast<SkTypeface_Cobalt*>(
+          // TODO: base::polymorphic_downcast
+          // Check failed: dynamic_cast<Derived>(base) == base.
+          static_cast<SkTypeface_Cobalt*>(
               fontManagerSkTypeface));
       res = scoped_refptr<render_tree::Typeface>(new SkiaTypeface(typeface));
   }
@@ -188,9 +190,16 @@ scoped_refptr<render_tree::Typeface> SoftwareResourceProvider::GetLocalTypeface(
 
   /// __TODO__
   if (!fontManagerSkTypeface || !res) {
-      sk_sp<SkTypeface_Cobalt> fallbackTypeface(
-          base::polymorphic_downcast<SkTypeface_Cobalt*>(Font::getDefaultTypeface()->makeClone(SkFontArguments()).release()));
-      res = scoped_refptr<render_tree::Typeface>(new SkiaTypeface(fallbackTypeface));
+    sk_sp<SkTypeface> defaultTypeface = Font::getDefaultTypeface();
+    DCHECK(defaultTypeface);
+
+    sk_sp<SkTypeface_Cobalt> fallbackTypeface(
+        // TODO: base::polymorphic_downcast
+        // Check failed: dynamic_cast<Derived>(base) == base.
+        static_cast<SkTypeface_Cobalt*>(Font::getDefaultTypeface()->makeClone(SkFontArguments()).release()));
+
+    DCHECK(fallbackTypeface);
+    res = scoped_refptr<render_tree::Typeface>(new SkiaTypeface(fallbackTypeface));
   }
 
   return res;
@@ -203,18 +212,14 @@ SoftwareResourceProvider::GetLocalTypefaceByFaceNameIfAvailable(
   TRACE_EVENT0("cobalt::renderer",
                "SoftwareResourceProvider::GetLocalTypefaceIfAvailable()");
 
-  /*sk_sp<SkFontMgr> font_manager(SkFontMgr::RefDefault());
-  //font_manager->
-  sk_sp<SkTypeface_Cobalt> typeface(
-      base::polymorphic_downcast<SkTypeface_Cobalt*>(Font::getDefaultTypeface()->makeClone(SkFontArguments()).release()));
-  return scoped_refptr<render_tree::Typeface>(new SkiaTypeface(typeface));*/
-
   sk_sp<SkFontMgr> font_manager(SkFontMgr::RefDefault());
   SkFontMgr_Cobalt* cobalt_font_manager =
       base::polymorphic_downcast<SkFontMgr_Cobalt*>(font_manager.get());
 
   sk_sp<SkTypeface_Cobalt> typeface(
-      base::polymorphic_downcast<SkTypeface_Cobalt*>(
+      // TODO: base::polymorphic_downcast
+      // Check failed: dynamic_cast<Derived>(base) == base.
+      static_cast<SkTypeface_Cobalt*>(
           cobalt_font_manager->MatchFaceName(font_face_name)));
 
   if (!typeface) {
@@ -233,16 +238,12 @@ SoftwareResourceProvider::GetCharacterFallbackTypeface(
                "SoftwareResourceProvider::GetCharacterFallbackTypeface()");
   printf("SoftwareResourceProvider::GetCharacterFallbackTypeface %s\n", language.c_str());
 
-  /*sk_sp<SkFontMgr> font_manager(SkFontMgr::RefDefault());
-  //font_manager->
-  sk_sp<SkTypeface_Cobalt> typeface(
-      base::polymorphic_downcast<SkTypeface_Cobalt*>(Font::getDefaultTypeface()->makeClone(SkFontArguments()).release()));
-  return scoped_refptr<render_tree::Typeface>(new SkiaTypeface(typeface));*/
-
   sk_sp<SkFontMgr> font_manager(SkFontMgr::RefDefault());
   const char* language_cstr = language.c_str();
   sk_sp<SkTypeface_Cobalt> typeface(
-      base::polymorphic_downcast<SkTypeface_Cobalt*>(
+      // TODO: base::polymorphic_downcast
+      // Check failed: dynamic_cast<Derived>(base) == base.
+      static_cast<SkTypeface_Cobalt*>(
           font_manager->matchFamilyStyleCharacter(
               NULL, CobaltFontStyleToSkFontStyle(font_style), &language_cstr, 1,
               character)));
@@ -265,23 +266,6 @@ SoftwareResourceProvider::CreateTypefaceFromRawData(
     *error_string = "No data to process";
     return NULL;
   }
-
-  /*/// \note SkData::MakeFromFileName don`t support wasm pthreads,
-  /// so we use MakeFromMalloc
-  sk_sp<SkData> data = SkData::MakeFromMalloc(fileData1, fsize1);
-  //sk_sp<SkData> data = SkData::MakeFromFileName(fontPath);
-  //if (!data) {
-  //  printf("failed SkData::MakeFromMalloc for font %s\n", fontPath);
-  //}
-
-  /// \note SkTypeface::MakeFromFile don`t support wasm pthreads,
-  /// so we use MakeFromData
-  const int index = 0;
-
-  sk_sp<SkTypeface> sktp = SkTypeface::MakeFromData(data, index);
-  sk_sp<SkTypeface_Cobalt> typeface(
-     base::polymorphic_downcast<SkTypeface_Cobalt*>(
-         SkTypeface::MakeFromStream(stream.release()).release()));*/
 
   /// \TODO __TODO__
   ///ots::ExpandingMemoryStream sanitized_data(
@@ -309,13 +293,17 @@ SoftwareResourceProvider::CreateTypefaceFromRawData(
   printf("SoftwareResourceProvider::CreateTypefaceFromRawData 2...\n");
 
   sk_sp<SkTypeface_Cobalt> typeface(
-      base::polymorphic_downcast<SkTypeface_Cobalt*>(
+      // TODO: base::polymorphic_downcast
+      // Check failed: dynamic_cast<Derived>(base) == base.
+      static_cast<SkTypeface_Cobalt*>(
           SkTypeface::MakeFromStream(std::move(stream)).release()));
 
   if(!typeface) {
       //printf("SoftwareResourceProvider::CreateTypefaceFromRawData no typeface...\n");
       typeface.reset(
-          base::polymorphic_downcast<SkTypeface_Cobalt*>(
+          // TODO: base::polymorphic_downcast
+          // Check failed: dynamic_cast<Derived>(base) == base.
+          static_cast<SkTypeface_Cobalt*>(
               Font::getDefaultTypeface()->makeClone(SkFontArguments()).release())); // TODO
   }
 

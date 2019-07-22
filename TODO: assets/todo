@@ -461,7 +461,7 @@ Boost.SML
 ===
 lscpu:i7-4790@3.60GHz -j6
 ===
-Release build size (stripped unused code)
+Release build size (stripped unused code, ENABLE_BLINK=FALSE)
 WASM MT: 1.5Mib
 WASM MT GZIP: 540Kib (gzip --best --keep --force --suffix=.gz build-wasm-mt-rel/skemgl.wasm)
 -DENABLE_COBALT=FALSE;
@@ -478,7 +478,7 @@ NOTE:
 UBUNTU WITH SK_GPU=TRUE: (rebuild time 179s.=~3m.): 5.7Mib
 UBUNTU WITH SK_GPU=FALSE: (rebuild time 96s.=~2m.): 3.0Mib
 ===
-Release build size (stripped unused code)
+Release build size (stripped unused code, ENABLE_BLINK=FALSE)
 WASM MT: 1.5Mib
 UBUNTU: (rebuild time 255s.=~5m.): 3.0Mib
 -DENABLE_COBALT=FALSE;
@@ -492,7 +492,7 @@ UBUNTU: (rebuild time 255s.=~5m.): 3.0Mib
 -DENABLE_SKIA_UTILS=FALSE;
 -DFORCE_DISABLE_SK_GPU=TRUE;
 ===
-Release build size (stripped unused code)
+Release build size (stripped unused code, ENABLE_BLINK=FALSE)
 WASM MT: 4.8Mib (~30fps)
 UBUNTU: (rebuild time 474s.=~8m.): 13Mib
 -DENABLE_COBALT=TRUE;
@@ -506,7 +506,7 @@ UBUNTU: (rebuild time 474s.=~8m.): 13Mib
 -DENABLE_SKIA_UTILS=FALSE;
 -DFORCE_DISABLE_SK_GPU=TRUE;
 ===
-Release build size (stripped unused code)
+Release build size (stripped unused code, ENABLE_BLINK=FALSE)
 WASM MT: 5.2Mib (~30fps)
 WASM MT GZIP: 1.6Mib (gzip --best --keep --force --suffix=.gz build-wasm-mt-rel/skemgl.wasm)
 UBUNTU: (rebuild time 457s.=~8m.): 13.4Mib
@@ -520,3 +520,5 @@ UBUNTU: (rebuild time 457s.=~8m.): 13.4Mib
 -DENABLE_SKOTTIE=TRUE;
 -DENABLE_SKIA_UTILS=TRUE;
 -DFORCE_DISABLE_SK_GPU=TRUE;
+
+NOTE: ~2Mib = UCONFIG_NO_COLLATION, UCONFIG_ONLY_HTML_CONVERSION, UCONFIG_NO_IDNA

@@ -11,6 +11,7 @@
 namespace base {
 namespace i18n {
 
+#if !UCONFIG_NO_COLLATION
 // Compares the character data stored in two different string16 strings by
 // specified Collator instance.
 UCollationResult CompareString16WithCollator(const icu::Collator& collator,
@@ -24,6 +25,7 @@ UCollationResult CompareString16WithCollator(const icu::Collator& collator,
   DCHECK(U_SUCCESS(error));
   return result;
 }
+#endif // UCONFIG_NO_COLLATION
 
 }  // namespace i18n
 }  // namespace base

@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 #include "base/i18n/timezone.h"
+#include "base/logging.h"
 
 #include <memory>
 #include <string>
@@ -13,6 +14,7 @@
 namespace base {
 
 std::string CountryCodeForCurrentTimezone() {
+#if !UCONFIG_NO_FORMATTING
   std::unique_ptr<icu::TimeZone> zone(icu::TimeZone::createDefault());
   icu::UnicodeString id;
   // ICU returns '001' (world) for Etc/GMT. Preserve the old behavior
@@ -29,6 +31,10 @@ std::string CountryCodeForCurrentTimezone() {
   return (U_SUCCESS(status) && length == 2)
              ? std::string(region_code, static_cast<size_t>(length))
              : std::string();
+#else
+  NOTIMPLEMENTED();
+  return "";
+#endif // UCONFIG_NO_FORMATTING
 }
 
 }  // namespace base

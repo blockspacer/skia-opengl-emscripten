@@ -142,6 +142,10 @@ void ReplaceIllegalCharactersInPath(FilePath::StringType* file_name,
 }
 
 bool LocaleAwareCompareFilenames(const FilePath& a, const FilePath& b) {
+#if !UCONFIG_NO_COLLATION
+  NOTIMPLEMENTED();
+  return false;
+#else
   UErrorCode error_code = U_ZERO_ERROR;
   // Use the default collator. The default locale should have been properly
   // set by the time this constructor is called.
@@ -162,6 +166,7 @@ bool LocaleAwareCompareFilenames(const FilePath& a, const FilePath& b) {
              *collator, WideToUTF16(SysNativeMBToWide(a.value())),
              WideToUTF16(SysNativeMBToWide(b.value()))) == UCOL_LESS;
 #endif
+#endif // UCONFIG_NO_COLLATION
 }
 
 void NormalizeFileNameEncoding(FilePath* file_name) {

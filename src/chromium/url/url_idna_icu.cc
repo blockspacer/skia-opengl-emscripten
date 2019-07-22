@@ -12,7 +12,9 @@
 #include "base/logging.h"
 
 //#if defined(USE_CUSTOM_ICU)
+#if !UCONFIG_NO_IDNA
 #include "third_party/icu/source/common/unicode/uidna.h"
+#endif
 #include "third_party/icu/source/common/unicode/utypes.h"
 //#endif
 
@@ -47,6 +49,7 @@ namespace {
 // for more details.
 struct UIDNAWrapper {
   UIDNAWrapper() {
+#if !UCONFIG_NO_IDNA
     UErrorCode err = U_ZERO_ERROR;
     // TODO(jungshik): Change options as different parties (browsers,
     // registrars, search engines) converge toward a consensus.
@@ -59,9 +62,14 @@ struct UIDNAWrapper {
                    << "tables for libicu. See https://crbug.com/778929.";
       value = NULL;
     }
+#else
+  NOTIMPLEMENTED();
+#endif
   }
 
+#if !UCONFIG_NO_IDNA
   UIDNA* value;
+#endif
 };
 
 }  // namespace
@@ -86,6 +94,7 @@ static base::LazyInstance<UIDNAWrapper>::Leaky g_uidna =
 bool IDNToASCII(const base::char16* src, int src_len, CanonOutputW* output) {
   DCHECK(output->length() == 0);  // Output buffer is assumed empty.
 
+#if !UCONFIG_NO_IDNA
   UIDNA* uidna = g_uidna.Get().value;
   DCHECK(uidna != NULL);
   while (true) {
@@ -106,6 +115,10 @@ bool IDNToASCII(const base::char16* src, int src_len, CanonOutputW* output) {
     // Not enough room in our buffer, expand.
     output->Resize(output_length);
   }
+#else
+  NOTIMPLEMENTED();
+  return false;
+#endif
 }
 
 }  // namespace url
