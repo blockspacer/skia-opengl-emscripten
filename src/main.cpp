@@ -355,6 +355,7 @@
 //#include "SkSurface.h"
 //#include "SkSurface_Gpu.h"
 
+static sk_sp<SkTypeface> sktp;
 #endif // ENABLE_SKIA
 
 #include <stdio.h>
@@ -412,6 +413,9 @@
 #include "base/allocator/partition_allocator/page_allocator.h"
 
 #include "base/memory/scoped_refptr.h"
+
+#include "base/i18n/rtl.h"
+#include "base/stl_util.h"
 
 #include "base/memory/ref_counted_memory.h"
 #include "base/memory/read_only_shared_memory_region.h"
@@ -503,8 +507,17 @@
 #endif
 
 #ifdef ENABLE_BLINK_UI
+#include "skiafy_icons.h"
+
 #include "ui/gfx/canvas.h"
 #include "ui/gfx/font_list.h"
+#include "ui/gfx/font.h"
+#include "ui/gfx/font_render_params.h"
+#include "ui/gfx/skia_font_delegate.h"
+#include "ui/gfx/text_utils.h"
+#include "ui/gfx/paint_vector_icon.h"
+#include "ui/gfx/vector_icon_types.h"
+#include "ui/gfx/platform_font_skia.h"
 //#include "ui/views/border.h"
 //#include "ui/views/controls/button/checkbox.h"
 //#include "ui/views/controls/combobox/combobox.h"
@@ -540,6 +553,7 @@
 #include "ui/gfx/shadow_value.h"
 #include "ui/gfx/text_elider.h"
 
+#include "ui/gfx/image/image_skia_source.h"
 #include "ui/gfx/codec/jpeg_codec.h"
 #include "ui/gfx/codec/png_codec.h"
 #include "ui/gfx/geometry/size.h"
@@ -863,7 +877,7 @@ sk_sp<const GrGLInterface> emscripten_GrGLMakeNativeInterface() {
 }
 #endif
 
-static bool render_browser_window = true;
+static bool render_browser_window = false;
 
 // must be POT
 static int width = 1920;//1024;//512;
@@ -1267,6 +1281,7 @@ static base::Thread main_browser_thread_("Main_Browser_Thread");
 // TODO: remove main_browser_thread_wrapper_ or enable only on WASM MT
 static base::Thread main_browser_thread_wrapper_("Main_Browser_Thread_Wrapper");
 //static base::Thread input_device_thread_("Input_Device_Thread");
+static base::Thread ui_draw_thread_("UI_Draw_Thread");
 static base::WaitableEvent main_thread_event_;
 #endif
 
@@ -1517,7 +1532,7 @@ static bool incDebugPeriodicCounter() {
 
 #if defined(ENABLE_SKIA)
 // see https://github.com/flutter/engine/blob/master/shell/gpu/gpu_surface_gl.cc#L125
-static void initSkiaSurface(int /*w*/, int /*h*/) {
+static void initUiSkiaSurface(int /*w*/, int /*h*/) {
 #ifdef SKIA_GR_CONTEXT
   {
     auto sInterface =
@@ -1614,7 +1629,7 @@ static void initSkiaSurface(int /*w*/, int /*h*/) {
   }
 }
 
-static void cleanup_skia() {
+static void cleanup_skia_ui() {
   if (sRasterSurface.get())
     delete sRasterSurface.release();
 }
@@ -1646,91 +1661,17 @@ public:
 #endif
     paint.setColor(SK_ColorRED);
     /// paint.setColor(0xffeeeeee);
-      //printf("onDraw() 2\n");
+      printf("onDraw() 2\n");
 
     paint.setColor(SK_ColorGREEN);
-    /*sk_canvas->drawRect({ 1000, 1700, 50, 50 }, paint);
+    sk_canvas->drawRect({ 1000, 1700, 50, 50 }, paint);
 
-    paint.setColor(SK_ColorBLUE);
+    /*paint.setColor(SK_ColorBLUE);
     sk_canvas->drawRect({ 500, 700, 300, 500 }, paint);
 
     paint.setColor(SK_ColorWHITE);
     sk_canvas->drawCircle(m_pos.x(), m_pos.y(), m_size, paint);
       //printf("onDraw() 2.1\n");*/
-
-    //printf("ENABLE_BLINK_UI 1\n");
-#ifdef ENABLE_BLINK_UI
-    //printf("ENABLE_UI 2\n");
-    cc::SkiaPaintCanvas paint_canvas(sk_canvas);
-    gfx::Canvas gfx_canvas(&paint_canvas, 1.0f);
-    /*{
-      cc::PaintFlags flags;
-      flags.setAntiAlias(true);
-      paint.setColor(SK_ColorDKGRAY);
-      paint.setStrokeWidth(2);
-      gfx_canvas.DrawCircle(gfx::Point(200,200), 100, flags);
-      paint.setColor(SK_ColorMAGENTA);
-      gfx_canvas.DrawRoundRect(gfx::Rect(550, 550, 200, 200), 50, flags);
-    }*/
-    {
-      // see https://github.com/codebyravi/electron/blob/master/atom/common/api/atom_api_native_image.cc#L115
-      //gfx_canvas.DrawImageInt(*imageSkia.get(), 330, 330);
-#if defined(ENABLE_BLINK_UI)/// && defined(__TODO__)
-      DCHECK(gfxImageSkia);
-      gfx_canvas.DrawImageInt(gfx::ImageSkia(gfxImageSkia->GetRepresentation(10.0f)), 630, 30);
-#endif
-    }
-    {
-      cc::PaintFlags flags;
-      flags.setShader(
-          gfx::CreateGradientShader(0, 500, SK_ColorRED, SK_ColorGREEN));
-      flags.setStyle(cc::PaintFlags::kFill_Style);
-      flags.setAntiAlias(true);
-      gfx_canvas.DrawRoundRect(gfx::Rect(350, 350, 200, 400), 50, flags);
-    }
-    {
-      cc::TransformOperations operations_from;
-      operations_from.AppendIdentity();
-      cc::TransformOperations operations_to;
-      operations_to.AppendIdentity();
-      gfx::BoxF box(1.f, 2.f, 3.f);
-      gfx::BoxF bounds;
-      SkMScalar min_progress = 0.f;
-      SkMScalar max_progress = 1.f;
-      const bool bres = operations_to.BlendedBoundsForBox(
-        box, operations_from, min_progress, max_progress, &bounds);
-      // 1 box 0.000000,0.000000,0.000000 1.000000x2.000000x3.000000 bounds 0.000000,0.000000,0.000000 1.000000x2.000000x3.000000
-      //printf("%i box %s bounds %s\n", bres, box.ToString().c_str(), bounds.ToString().c_str());
-    }
-#ifdef ENABLE_HARFBUZZ
-    {
-      // https://github.com/chromium/chromium/blob/422f901782f0a5f274a6065fbff3983279ef3c0b/chrome/browser/vr/elements/text.cc#L424
-      ::std::unique_ptr<gfx::RenderText> render_text_ptr = gfx::RenderText::CreateHarfBuzzInstance();
-      gfx::RenderText* render_text = render_text_ptr.get();
-      WTF::String render_test_string = String::FromUTF8("some very long text here r\xC3\xA9sum\xC3\xA9");
-      render_text->SetText(render_test_string.Characters16());
-      render_text->set_focused(true);
-      // see https://github.com/chromium/chromium/blob/master/chrome/browser/vr/elements/text.cc#L384
-      int selection_start_ = 0;
-      int selection_end_ = 2;
-      gfx::Range range(selection_start_, selection_end_);
-      render_text->SetSelection(gfx::SelectionModel(
-          range, gfx::LogicalCursorDirection::CURSOR_FORWARD));
-      render_text->set_selection_background_focused_color(
-          SkColorSetARGB(150, 0, 188, 112));
-      render_text->set_selection_color(SkColorSetARGB(150, 0, 188, 182));
-      render_text->SetCursorPosition(selection_end_);
-      render_text->Draw(&gfx_canvas); // calls DrawSelection if focused
-    }
-
-    // TODO: textfield
-    // https://github.com/chromium/chromium/blob/master/ui/views/controls/textfield/textfield.cc
-
-#endif // ENABLE_HARFBUZZ
-    {
-      //views::Label* zoom_label_;
-    }
-#endif
 
 #ifdef ENABLE_SK_EFFECTS
     {
@@ -1744,7 +1685,7 @@ public:
       //printf("onDraw() 2.4\n");
     }
 #endif
-      //printf("onDraw() 3\n");
+      printf("onDraw() 3\n");
 
     // canvas->drawLine(m_pos.x(), m_pos.y(), m_prev.x(), m_prev.y(), paint);
 
@@ -1804,7 +1745,7 @@ public:
                 printf("empty hb_buffer_get_length\n");
                 return;
             }
-            DrawGlyphs(current_x, current_y, glyph_paint, *skFont1, sk_canvas, hb_buffer);
+            ///DrawGlyphs(current_x, current_y, glyph_paint, *skFont1, sk_canvas, hb_buffer);
 
             hb_buffer_destroy (hb_buffer);
 
@@ -1832,7 +1773,7 @@ public:
 
         // test again without hb
         auto blob3 = SkTextBlob::MakeFromString("blob3blob3blob3", *skFont2);
-        sk_canvas->drawTextBlob(blob3.get(), 500, 500, glyph_paint);
+        ///sk_canvas->drawTextBlob(blob3.get(), 500, 500, glyph_paint);
 #endif // ENABLE_HARFBUZZ
 
 #ifdef ENABLE_SK_EFFECTS
@@ -1851,20 +1792,20 @@ public:
       blur.setAlpha(blurAlpha);
       blur.setMaskFilter(SkMaskFilter::MakeBlur(kNormal_SkBlurStyle, sigma, 0));
       // canvas->drawColor(SK_ColorWHITE);
-      sk_canvas->drawTextBlob(blob1.get(), x + xDrop, y + yDrop, blur);
-      sk_canvas->drawTextBlob(blob1.get(), x, y, paint);
+      ///sk_canvas->drawTextBlob(blob1.get(), x + xDrop, y + yDrop, blur);
+      ///sk_canvas->drawTextBlob(blob1.get(), x, y, paint);
 
-      sk_canvas->drawTextBlob(blob2.get(), x + xDrop, 50 + y + yDrop, blur);
+      ///sk_canvas->drawTextBlob(blob2.get(), x + xDrop, 50 + y + yDrop, blur);
 
       SkPaint strokePaint(paint);
       strokePaint.setStyle(SkPaint::kStroke_Style);
       strokePaint.setStrokeWidth(3.0f);
-      sk_canvas->drawTextBlob(blob2.get(), x, 80 + y, strokePaint);
+      ///sk_canvas->drawTextBlob(blob2.get(), x, 80 + y, strokePaint);
     }
 #endif // ENABLE_SK_EFFECTS
 #endif // ENABLE_CUSTOM_FONTS
 
-      //printf("onDraw() 5\n");
+      printf("onDraw() 5\n");
 
 #ifdef ENABLE_SKOTTIE
       //printf("onDraw() 6\n");
@@ -1891,6 +1832,13 @@ public:
 #endif // ENABLE_SKOTTIE
 
     //std::cout << std::endl; // flush
+
+    //printf("ENABLE_BLINK_UI 1\n");
+#ifdef ENABLE_BLINK_UI
+    cc::SkiaPaintCanvas paint_canvas(sk_canvas);
+#endif // ENABLE_BLINK_UI
+
+      printf("onDraw() x1\n");
 
 #ifdef ENABLE_BLINK_PLATFORM
   // see https://chromium.googlesource.com/chromium/src/+/master/third_party/blink/renderer/platform/graphics/paint/README.md
@@ -1935,7 +1883,7 @@ public:
   //
   //printf("FillRect 4\n");
   // Clip to the left edge of the opaque area.
-  context.Clip(blink::IntRect(100, 80, 500, 400));
+  ////context.Clip(blink::IntRect(100, 80, 500, 400));
   //
   // Draw a path that gets clipped. This should destroy the opaque area, but
   // only inside the clip.
@@ -1971,6 +1919,8 @@ public:
     clipped_edges);
   //printf("FillRect 9\n");
 
+      printf("onDraw() x2\n");
+
 #if defined(ENABLE_BLINK_UI) ///&& defined(__TODO__)
 #if defined(ENABLE_IMAGES)
   if (!sStaticBitmapImage || sStaticBitmapImage->IsNull() || !sStaticBitmapImage->IsValid()) {
@@ -2001,6 +1951,10 @@ public:
   paint_canvas.drawPicture(rr);
 
 #endif // ENABLE_UI
+
+
+      printf("onDraw() x3\n");
+
   // Must be called when a painting is finished. Updates the current paint
   // artifact with the new paintings.
   paint_controller->CommitNewDisplayItems();
@@ -2008,7 +1962,119 @@ public:
   //printf("FillRect 91\n");
 #endif // ENABLE_BLINK_PLATFORM
 
-      //printf("onDraw() 7\n");
+    //printf("ENABLE_BLINK_UI 1\n");
+#ifdef ENABLE_BLINK_UI
+    //printf("ENABLE_UI 2\n");
+    gfx::Canvas gfx_canvas(&paint_canvas, 1.0f);
+    /*{
+      cc::PaintFlags flags;
+      flags.setAntiAlias(true);
+      paint.setColor(SK_ColorDKGRAY);
+      paint.setStrokeWidth(2);
+      gfx_canvas.DrawCircle(gfx::Point(200,200), 100, flags);
+      paint.setColor(SK_ColorMAGENTA);
+      gfx_canvas.DrawRoundRect(gfx::Rect(550, 550, 200, 200), 50, flags);
+    }*/
+    {
+      // see https://github.com/codebyravi/electron/blob/master/atom/common/api/atom_api_native_image.cc#L115
+      //gfx_canvas.DrawImageInt(*imageSkia.get(), 330, 330);
+      DCHECK(gfxImageSkia);
+      gfx_canvas.DrawImageInt(gfx::ImageSkia(gfxImageSkia->GetRepresentation(10.0f)), 630, 30);
+    }
+    {
+      cc::PaintFlags flags;
+      flags.setShader(
+          gfx::CreateGradientShader(0, 500, SK_ColorRED, SK_ColorGREEN));
+      flags.setStyle(cc::PaintFlags::kFill_Style);
+      flags.setAntiAlias(true);
+      gfx_canvas.DrawRoundRect(gfx::Rect(350, 350, 200, 400), 50, flags);
+    }
+    {
+      cc::TransformOperations operations_from;
+      operations_from.AppendIdentity();
+      cc::TransformOperations operations_to;
+      operations_to.AppendIdentity();
+      gfx::BoxF box(1.f, 2.f, 3.f);
+      gfx::BoxF bounds;
+      SkMScalar min_progress = 0.f;
+      SkMScalar max_progress = 1.f;
+      const bool bres = operations_to.BlendedBoundsForBox(
+        box, operations_from, min_progress, max_progress, &bounds);
+      // 1 box 0.000000,0.000000,0.000000 1.000000x2.000000x3.000000 bounds 0.000000,0.000000,0.000000 1.000000x2.000000x3.000000
+      //printf("%i box %s bounds %s\n", bres, box.ToString().c_str(), bounds.ToString().c_str());
+    }
+
+#ifdef __TODO__
+      printf("onDraw() x4\n");
+
+#ifdef ENABLE_HARFBUZZ
+    {
+      // https://github.com/chromium/chromium/blob/422f901782f0a5f274a6065fbff3983279ef3c0b/chrome/browser/vr/elements/text.cc#L424
+      ::std::unique_ptr<gfx::RenderText> render_text_ptr = gfx::RenderText::CreateHarfBuzzInstance();
+      //auto render_text_ptr = std::make_unique<gfx::RenderTextHarfBuzz>();
+      gfx::RenderText* render_text = render_text_ptr.get();
+      render_text->SetDisplayRect(gfx::Rect(0, 0, 9999, 100));
+      //WTF::String render_test_string = String::FromUTF8("some very long text here r\xC3\xA9sum\xC3\xA9");
+      //render_text->SetText(render_test_string.Characters16());
+      gfx::FontRenderParams fontRenderParams;
+      fontRenderParams.antialiasing = true;
+      DCHECK(sktp);
+      gfx::PlatformFont* customPlatformFont = new gfx::PlatformFontSkia(
+        sktp, /*family*/ "Arial", /*size_pixels*/ 22,
+        /*style*/ gfx::Font::NORMAL,
+        /*weight*/ gfx::Font::Weight::NORMAL,
+        /*params*/ fontRenderParams);
+      gfx::Font defaultFont(customPlatformFont);
+      //defaultFont = gfx::Font("Arial", 10);
+
+      gfx::FontList font_list(defaultFont);
+      render_text->SetText(base::UTF8ToUTF16("x render_text x render_text x"));
+      render_text->SetFontList(font_list);
+      render_text->set_focused(true);
+      render_text->SetElideBehavior(gfx::ELIDE_TAIL);
+      // see https://github.com/chromium/chromium/blob/master/chrome/browser/vr/elements/text.cc#L384
+      int selection_start_ = 0;
+      int selection_end_ = 2;
+      gfx::Range range(selection_start_, selection_end_);
+      render_text->SetSelection(gfx::SelectionModel(
+          range, gfx::LogicalCursorDirection::CURSOR_FORWARD));
+      render_text->set_selection_background_focused_color(
+          SkColorSetARGB(150, 0, 188, 112));
+      render_text->set_selection_color(SkColorSetARGB(150, 0, 188, 182));
+      render_text->SelectRange({0, 1});
+      render_text->SetObscured(false);
+      render_text->SetMultiline(true);
+      render_text->SetHorizontalAlignment(gfx::ALIGN_TO_HEAD);
+      render_text->SetWordWrapBehavior(gfx::WRAP_LONG_WORDS);
+      render_text->set_clip_to_display_rect(false);
+      render_text->SetCursorPosition(selection_end_);
+      render_text->Draw(&gfx_canvas); // calls DrawSelection if focused
+    }
+
+    // TODO: textfield
+    // https://github.com/chromium/chromium/blob/master/ui/views/controls/textfield/textfield.cc
+#endif // ENABLE_HARFBUZZ
+    {
+      //views::Label* zoom_label_;
+    }
+    {
+      using namespace ::gfx;
+      // using ::gfx::CommandType;
+      const VectorIconRep rep_list[] = {{tiger_icon_elements, base::size(tiger_icon_elements)}};
+      const VectorIcon icon_src = {rep_list, 1u};
+      const SkColor icon_color = SK_ColorRED;
+      // see https://skia.org/user/api/SkCanvas_Reference
+      gfx_canvas.Save();
+      gfx_canvas.Translate(gfx::Vector2d((browser_width / 2) - (tiger_icon_dip_size / 2),
+                                      (browser_height / 2) - (tiger_icon_dip_size / 2)));
+      gfx::PaintVectorIcon(&gfx_canvas, icon_src, tiger_icon_dip_size, icon_color);
+      gfx_canvas.Restore();
+      //gfx::Image icon =
+      //  gfx::CreateVectorIcon(kFooBarIcon, 32, color_utils::DeriveDefaultIconColor(text_color));
+    }
+#endif // ENABLE_BLINK_UI
+#endif // __TODO__
+      printf("onDraw() 7\n");
   }
 
   SkPainter(SkColor color, SkScalar size) : m_color(color), m_size(size) {}
@@ -3668,7 +3734,7 @@ static void createCobaltTester() {
     {
         //g_cobaltTester->run();
     }
-    printf("Finishing g_cobaltTester...\n");
+    printf("Finishing createCobaltTester...\n");
     //main_thread_event_->Signal();
     ///} else if (!g_cobaltTester->isLoadComplete_) {
     ///  /// wait
@@ -3854,184 +3920,6 @@ static void drawGLTexture(const int texWidth, const int texHeight, const void* t
 }
 #endif // ENABLE_OPENGL
 
-#if defined(ENABLE_SK_UI)
-static void drawUIDemo() {
-  //printf("drawUIDemo\n");
-
-  //DCHECK(g_cobaltTester);
-  //DCHECK_EQ(base::MessageLoopCurrent::Get().task_runner(), g_cobaltTester->self_task_runner_);
-  //DCHECK(g_cobaltTester->thread_checker_.CalledOnValidThread());
-
-  sk_sp<SkImage> pImage = nullptr;
-  // Draw to the surface via its SkCanvas.
-  // We don't manage this pointer's lifetime.
-  SkCanvas* canvas =
-      //  getRasterizerSkSurface()->getCanvas();
-      sRasterSurface->getCanvas();
-
-  canvas->clear(SkColorSetARGB(255, 255, 255, 255));
-  ///if (isDebugPeriodReached()) printf("Draw() 3\n");
-
-  myView->onDraw(canvas);
-  //if (isDebugPeriodReached()) printf("Draw() 4\n");
-
-  sRasterSurface->flush();
-  //if (isDebugPeriodReached()) printf("Draw() 5\n");
-
-  pImage = sRasterSurface->makeImageSnapshot();
-  //const sk_sp<SkImage> pImage = getRasterizerSkSurface()->makeImageSnapshot();
-  if(pImage/* && !pImage->isAlphaOnly()
-&& pImage->width() > 0 && pImage->height() > 0*/) {
-      ///if (isDebugPeriodReached()) printf("Draw() 7\n");
-      SkPixmap pixmap;
-      if (!pImage->peekPixels(&pixmap)) {
-          ///if (isDebugPeriodReached())
-          printf("can`t peekPixels\n");
-      }
-      DCHECK(!pixmap.bounds().isEmpty());
-      ///if (isDebugPeriodReached()) printf("Draw() 7.1\n");
-      drawGLTexture(pixmap.width(), pixmap.height(), pixmap.addr(), skia_texture);
-  }
-
-  if (nullptr == pImage) {
-      ///if (isDebugPeriodReached())
-      printf("can`t get pImage\n");
-  }
-}
-#endif
-
-#if defined(ENABLE_COBALT)
-static void drawBrowserDemo() {
-    //using cobalt::renderer::rasterizer::egl::getRasterizerSkSurface;
-    using cobalt::renderer::rasterizer::egl::getRasterizerSkImage;
-    ///using cobalt::renderer::rasterizer::egl::getRasterizerSkPixmap;
-
-    ///if (isDebugPeriodReached()) printf("Draw() 7\n");
-    sk_sp<SkImage> pImage = getRasterizerSkImage();
-    if(pImage) {
-        SkPixmap pixmap;// = getRasterizerSkPixmap();
-        if (!pImage->peekPixels(&pixmap)) {
-            ///if (isDebugPeriodReached())
-            printf("can`t peekPixels\n");
-        }
-        if(!pixmap.bounds().isEmpty()) {
-            DCHECK(!pixmap.bounds().isEmpty());
-            ///if (isDebugPeriodReached()) printf("Draw() 7.1\n");
-
-            drawGLTexture(pixmap.width(), pixmap.height(), pixmap.addr(), skia_texture);
-        } else {
-            ///if (isDebugPeriodReached())
-            printf("pixmap.bounds().isEmpty()\n");
-        }
-    } else {
-#if defined(ENABLE_SK_UI)
-        //drawUIDemo();
-#endif
-    }
-
-    //if (nullptr == pImage) {
-    //    ///if (isDebugPeriodReached())
-    //    printf("can`t get pImage\n");
-    //}
-}
-#endif
-
-static void onResize(int widthIn, int heightIn)
-{
-  drawingBufferWidth = std::min(widthIn, maxDrawingBufferWidth);
-  drawingBufferHeight = std::min(heightIn, maxDrawingBufferHeight);
-#if defined(ENABLE_OPENGL)
-  glViewport(0, 0, drawingBufferWidth, drawingBufferHeight);
-#endif // ENABLE_OPENGL
-}
-
-///
-// Draw a triangle using the shader pair created in Init()
-//
-#if defined(ENABLE_OPENGL)
-static void Draw() {
-  //printf("Draw\n");
-
-  //if (isDebugPeriodReached()) printf("Draw() 1\n");
-
-  GL_CHECK( glClear(GL_COLOR_BUFFER_BIT) );
-
-//#if defined(__TODO__)
-  GL_CHECK( glUseProgram(programObject) );
-  GL_CHECK( glActiveTexture(GL_TEXTURE0) );
-  ///if (isDebugPeriodReached()) printf("Draw() 2\n");
-
-#if defined(ENABLE_SKIA)
-
-#if defined(ENABLE_COBALT)
-  if (render_browser_window
-      /*&& g_cobaltTester
-      && g_cobaltTester->window_->isDocumentStartedLoading()
-      && g_cobaltTester->window_->isStartedDocumentLoader()*/)
-  {
-      drawBrowserDemo();
-  } else
-#endif
-#if defined(ENABLE_SK_UI)
-  {
-      drawUIDemo();
-  }
-#else
-  {
-    // nothing
-  }
-#endif
-
-  // Draw to the surface via its SkCanvas.
-  // We don't manage this pointer's lifetime.
-  //SkCanvas* canvas =
-  //  getRasterizerSkSurface()->getCanvas();
-  //sRasterSurface->getCanvas();
-
-  //const sk_sp<SkImage> pImage = sRasterSurface->makeImageSnapshot();
-  /*const sk_sp<SkImage> pImage = getRasterizerSkSurface()->makeImageSnapshot();
-  if (nullptr == pImage) {
-    //printf("can`t makeImageSnapshot\n");
-  }*/
-  //if (isDebugPeriodReached()) printf("Draw() 8\n");
-
-#endif // ENABLE_SKIA
-
-  GL_CHECK( glUniform1i(uniformTex, 0) );
-
-  //printf("redClrTintAnim %f\n", redClrTintAnim);
-  //GL_CHECK( glUniform1f(uniformRedClrTint, (sin(redClrTintAnim) / 2.0f + 0.5f)) );
-
-  int w, h;//, fs;
-#ifdef __EMSCRIPTEN__
-  // see
-  // https://github.com/floooh/oryol/blob/master/code/Modules/Gfx/private/emsc/emscDisplayMgr.cc#L174
-  emscripten_get_canvas_element_size("#canvas", &w, &h); //, &fs); // width, height, isFullscreen
-#else
-  w = width;
-  h = height;
-#endif
-  //float xs = (float)h / w;
-  //float ys = 1.0f;
-  //float mat[] = {xs, 0, 0, 0, 0, ys, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1};
-
-  //GL_CHECK( glBindBuffer(GL_ARRAY_BUFFER, 0) );
-
-  GL_CHECK( glBindVertexArray(vertexArrayObject) );
-
-  GL_CHECK( glDrawArrays(GL_TRIANGLE_STRIP, 0, 4) );
-
-  GL_CHECK( glBindVertexArray(0) );
-
-  GL_CHECK( glUseProgram(0) );
-
-//#endif
-
-  //GL_CHECK( glDisableVertexAttribArray(0) );
-  //GL_CHECK( glDisableVertexAttribArray(1) );
-      //printf("Draw() 7\n");
-}
-#endif // ENABLE_OPENGL
 
 static void animate() {
   //redClrTintAnim += 0.01f;
@@ -4211,6 +4099,237 @@ static void animate() {
     ///if (isDebugPeriodReached()) printf("animate end\n");
     //printf("animate end\n");
 }
+
+#if defined(ENABLE_SK_UI)
+static sk_sp<SkImage> UIDemoImage;
+//static std::mutex UIDemoImageMutex;
+
+sk_sp<SkImage> getUiSkImage() {
+  //std::lock_guard<std::mutex> lock(mutexRasterizerSkImage);
+  //std::scoped_lock lock(UIDemoImageMutex);
+  return UIDemoImage;
+}
+
+static int testRed = 0;
+
+static void refreshUIDemo() {
+  ///if (isDebugPeriodReached()) printf("refreshUIDemo...\n");
+
+  printf("refreshUIDemo 1...\n");
+
+  animate();
+
+  printf("refreshUIDemo 2...\n");
+
+  //DCHECK(g_cobaltTester);
+  //DCHECK_EQ(base::MessageLoopCurrent::Get().task_runner(), g_cobaltTester->self_task_runner_);
+  //DCHECK(g_cobaltTester->thread_checker_.CalledOnValidThread());
+
+  // Draw to the surface via its SkCanvas.
+  // We don't manage this pointer's lifetime.
+  SkCanvas* uicanvas =
+      //  getRasterizerSkSurface()->getCanvas();
+      sRasterSurface->getCanvas();
+
+  if(testRed++ > 255) {
+    testRed = 0;
+  }
+  uicanvas->clear(SkColorSetARGB(testRed, 255, 255, 255));
+
+  ///if (isDebugPeriodReached()) printf("Draw() 3\n");
+
+  printf("refreshUIDemo 2.1...\n");
+  myView->onDraw(uicanvas);
+  printf("refreshUIDemo 2.2...\n");
+
+  //if (isDebugPeriodReached()) printf("Draw() 4\n");
+
+  sRasterSurface->flush();
+  //if (isDebugPeriodReached()) printf("Draw() 5\n");
+
+  //if(!UIDemoImage)
+  {
+    //std::scoped_lock lock(UIDemoImageMutex);
+    UIDemoImage = sRasterSurface->makeImageSnapshot();
+    if (nullptr == UIDemoImage) {
+      printf("UIDemoImage can`t makeImageSnapshot\n");
+    }
+  }
+
+  printf("refreshUIDemo 3...\n");
+}
+
+static void drawUIDemo() {
+  ///if (isDebugPeriodReached()) printf("drawUIDemo...\n");
+
+  SkPixmap uiPixmap;
+  {
+    //std::scoped_lock lock(UIDemoImageMutex);
+    sk_sp<SkImage> res = getUiSkImage();
+    if (nullptr == res) {
+        ///if (isDebugPeriodReached())
+        printf("can`t get UIDemoImage\n");
+    }
+    //const sk_sp<SkImage> res = getRasterizerSkSurface()->makeImageSnapshot();
+    if(res /*&& !res->isAlphaOnly()
+  && res->width() > 0 && res->height() > 0*/) {
+        ///if (isDebugPeriodReached()) printf("Draw() 7\n");
+        ///res->flush(nullptr);
+        //DCHECK(res->isValid());
+        //SkPixmap pixmap;
+        if (!res->peekPixels(&uiPixmap)) {
+            ///if (isDebugPeriodReached())
+            printf("can`t peekPixels\n");
+        }
+        if(uiPixmap.bounds().isEmpty()) {
+          ///if (isDebugPeriodReached()) printf("Draw() 7.1\n");
+          ///if (isDebugPeriodReached())
+          printf("can`t get UIDemoImage pixmap\n");
+        } else {
+          //uiPixmap = pixmap;
+        }
+    }
+    // TODO: move GL* out of scoped_lock
+    drawGLTexture(uiPixmap.width(), uiPixmap.height(), uiPixmap.addr(), skia_texture);
+  }
+}
+#endif
+
+#if defined(ENABLE_COBALT)
+static void drawBrowserDemo() {
+    //using cobalt::renderer::rasterizer::egl::getRasterizerSkSurface;
+    using cobalt::renderer::rasterizer::egl::getRasterizerSkImage;
+    ///using cobalt::renderer::rasterizer::egl::getRasterizerSkPixmap;
+
+    ///if (isDebugPeriodReached()) printf("Draw() 7\n");
+    sk_sp<SkImage> pImage = getRasterizerSkImage();
+    if(pImage) {
+        SkPixmap pixmap;// = getRasterizerSkPixmap();
+        if (!pImage->peekPixels(&pixmap)) {
+            ///if (isDebugPeriodReached())
+            printf("can`t peekPixels\n");
+        }
+        if(!pixmap.bounds().isEmpty()) {
+            DCHECK(!pixmap.bounds().isEmpty());
+            ///if (isDebugPeriodReached()) printf("Draw() 7.1\n");
+
+            drawGLTexture(pixmap.width(), pixmap.height(), pixmap.addr(), skia_texture);
+        } else {
+            ///if (isDebugPeriodReached())
+            printf("pixmap.bounds().isEmpty()\n");
+        }
+    } else {
+#if defined(ENABLE_SK_UI)
+        //drawUIDemo();
+#endif
+    }
+
+    //if (nullptr == pImage) {
+    //    ///if (isDebugPeriodReached())
+    //    printf("can`t get pImage\n");
+    //}
+}
+#endif
+
+static void onResize(int widthIn, int heightIn)
+{
+  drawingBufferWidth = std::min(widthIn, maxDrawingBufferWidth);
+  drawingBufferHeight = std::min(heightIn, maxDrawingBufferHeight);
+#if defined(ENABLE_OPENGL)
+  glViewport(0, 0, drawingBufferWidth, drawingBufferHeight);
+#endif // ENABLE_OPENGL
+}
+
+///
+// Draw a triangle using the shader pair created in Init()
+//
+#if defined(ENABLE_OPENGL)
+static void Draw() {
+  //printf("Draw\n");
+
+  //if (isDebugPeriodReached()) printf("Draw() 1\n");
+
+  GL_CHECK( glClear(GL_COLOR_BUFFER_BIT) );
+
+//#if defined(__TODO__)
+  GL_CHECK( glUseProgram(programObject) );
+  GL_CHECK( glActiveTexture(GL_TEXTURE0) );
+  ///if (isDebugPeriodReached()) printf("Draw() 2\n");
+
+#if defined(ENABLE_SKIA)
+
+#if defined(ENABLE_COBALT)
+  if (render_browser_window
+      /*&& g_cobaltTester
+      && g_cobaltTester->window_->isDocumentStartedLoading()
+      && g_cobaltTester->window_->isStartedDocumentLoader()*/)
+  {
+      drawBrowserDemo();
+  } else
+#endif
+#if defined(ENABLE_SK_UI)
+  {
+#if (defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__))
+    refreshUIDemo();
+#endif
+    drawUIDemo();
+  }
+#else
+  {
+    // nothing
+  }
+#endif
+
+  // Draw to the surface via its SkCanvas.
+  // We don't manage this pointer's lifetime.
+  //SkCanvas* canvas =
+  //  getRasterizerSkSurface()->getCanvas();
+  //sRasterSurface->getCanvas();
+
+  //const sk_sp<SkImage> pImage = sRasterSurface->makeImageSnapshot();
+  /*const sk_sp<SkImage> pImage = getRasterizerSkSurface()->makeImageSnapshot();
+  if (nullptr == pImage) {
+    //printf("can`t makeImageSnapshot\n");
+  }*/
+  //if (isDebugPeriodReached()) printf("Draw() 8\n");
+
+#endif // ENABLE_SKIA
+
+  GL_CHECK( glUniform1i(uniformTex, 0) );
+
+  //printf("redClrTintAnim %f\n", redClrTintAnim);
+  //GL_CHECK( glUniform1f(uniformRedClrTint, (sin(redClrTintAnim) / 2.0f + 0.5f)) );
+
+  int w, h;//, fs;
+#ifdef __EMSCRIPTEN__
+  // see
+  // https://github.com/floooh/oryol/blob/master/code/Modules/Gfx/private/emsc/emscDisplayMgr.cc#L174
+  emscripten_get_canvas_element_size("#canvas", &w, &h); //, &fs); // width, height, isFullscreen
+#else
+  w = width;
+  h = height;
+#endif
+  //float xs = (float)h / w;
+  //float ys = 1.0f;
+  //float mat[] = {xs, 0, 0, 0, 0, ys, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1};
+
+  //GL_CHECK( glBindBuffer(GL_ARRAY_BUFFER, 0) );
+
+  GL_CHECK( glBindVertexArray(vertexArrayObject) );
+
+  GL_CHECK( glDrawArrays(GL_TRIANGLE_STRIP, 0, 4) );
+
+  GL_CHECK( glBindVertexArray(0) );
+
+  GL_CHECK( glUseProgram(0) );
+
+//#endif
+
+  //GL_CHECK( glDisableVertexAttribArray(0) );
+  //GL_CHECK( glDisableVertexAttribArray(1) );
+      //printf("Draw() 7\n");
+}
+#endif // ENABLE_OPENGL
 
 static int prevBrowserScreenMouseX = -1;
 static int prevBrowserScreenMouseY = -1;
@@ -6308,10 +6427,6 @@ static void mainLoop() {
   DCHECK(emscripten_webgl_get_current_context() == em_ctx);*/
 #endif
 
-  ///if (isDebugPeriodReached()) printf("animate...\n");
-
-  animate();
-
 // __EMSCRIPTEN_PTHREADS__ can be used to detect whether Emscripten is currently targeting pthreads.
 // At runtime, you can use the emscripten_has_threading_support()
 // see https://emscripten.org/docs/porting/pthreads.html
@@ -6320,13 +6435,6 @@ static void mainLoop() {
   // printf("emscripten_current_thread_process_queued_calls...\n");
   // emscripten_current_thread_process_queued_calls();
 #endif
-
-  ///if (isDebugPeriodReached()) printf("draw...\n");
-
-  // Render
-#if defined(ENABLE_OPENGL)
-  Draw();
-#endif // ENABLE_OPENGL
 
 /*
 #if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
@@ -6645,6 +6753,13 @@ static void mainLoop() {
     }
 #endif // ENABLE_COBALT
   }
+
+  ///if (isDebugPeriodReached()) printf("draw...\n");
+
+  // Render
+#if defined(ENABLE_OPENGL)
+  Draw();
+#endif // ENABLE_OPENGL
 
   // Update screen
 #if defined(ENABLE_HTML5_SDL) || !defined(__EMSCRIPTEN__)
@@ -7206,10 +7321,12 @@ main_browser_thread_wrapper_.task_runner()->PostTask(
             //options.message_loop_type = base::MessageLoop::TYPE_IO;
             main_browser_thread_.StartWithOptions(options);
             //input_device_thread_.StartWithOptions(options);
+            ui_draw_thread_.StartWithOptions(options);
       #if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
             /// \todo Reactor your code so that the waiting happens on another thread instead of the main thread
             main_browser_thread_.WaitUntilThreadStarted();
             //input_device_thread_.WaitUntilThreadStarted();
+            ui_draw_thread_.WaitUntilThreadStarted();
       #endif
           }
           thread_event->Signal();
@@ -7221,7 +7338,6 @@ main_browser_thread_wrapper_.task_runner()->PostTask(
   main_thread_event_.Wait();
 #endif
   main_thread_event_.Reset();
-
 #endif // ENABLE_BASE
 
 #ifdef ENABLE_BLINK_PLATFORM
@@ -7932,7 +8048,7 @@ main_browser_thread_wrapper_.task_runner()->PostTask(
 #else
   window = SDL_CreateWindow("skemgl", 0, 0, width,
 #if defined(ENABLE_OPENGL)
-                            height, SDL_WINDOW_OPENGL); // TODO
+                            height, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN); // TODO
 #else // ENABLE_OPENGL
                              height, SDL_WINDOW_SHOWN); // TODO
 #endif // ENABLE_OPENGL
@@ -8115,9 +8231,10 @@ main_browser_thread_wrapper_.task_runner()->PostTask(
   main_browser_thread_.task_runner()->PostTask(
       FROM_HERE, base::Bind([](){
           DCHECK(base::MessageLoopCurrent::Get());
-          printf("Starting g_cobaltTester...\n");
+          printf("Starting g_cobaltTester 1...\n");
           /// __TODO__
           createCobaltTester();
+          printf("Starting g_cobaltTester 2...\n");
           createLayoutManager();
           //g_cobaltTester->run();
           printf("Finishing g_cobaltTester...\n");
@@ -8185,10 +8302,12 @@ main_browser_thread_wrapper_.task_runner()->PostTask(
   //ui_thread.task_runner()
   //blink::Thread* uithread = ui_thread.get();
   //task_runner->PostTask(
+
+  //ui_draw_thread_
   main_browser_thread_.task_runner()->PostTask(
       FROM_HERE,
       base::BindOnce(
-          [](base::WaitableEvent* thread_event, /*blink::Thread**/ base::Thread* thread) {
+          [](base::WaitableEvent* thread_event) {
               printf("rendering Draw 1\n");
               std::cout << std::endl; // flush
 #endif
@@ -8269,7 +8388,7 @@ main_browser_thread_wrapper_.task_runner()->PostTask(
 
 #if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
               thread_event->Signal();
-          }, &ui_sync_event, &main_browser_thread_/*ui_thread*//*.get()*/));
+          }, &ui_sync_event));
     ::std::cout << "thread rendering start Wait 1..." << base::Time::Now() << "\n";
     ::std::cout << std::endl; // flush
 #endif
@@ -8320,10 +8439,10 @@ main_browser_thread_wrapper_.task_runner()->PostTask(
   //sk_sp<SkTypeface> sktp = SkTypeface::MakeFromFile("./resources/fonts/FreeSans.ttf");
 
 #ifdef ENABLE_HARFBUZZ
-  sk_sp<SkTypeface> sktp = SkTypeface::MakeFromData(data, index);
+  sktp = SkTypeface::MakeFromData(data, index);
 #else
   /// \note use ::std::move only if data will not be used any more
-  sk_sp<SkTypeface> sktp = SkTypeface::MakeFromData(::std::move(data), index);
+  sktp = SkTypeface::MakeFromData(::std::move(data), index);
 #endif
 
   //sk_sp<SkTypeface> sktp = SkTypeface::MakeFromStream(new SkMemoryStream(data), index);
@@ -8384,83 +8503,92 @@ main_browser_thread_wrapper_.task_runner()->PostTask(
 
   printf("Initializing skia...\n");
 
-  initSkiaSurface(width, height);
+  //ui_draw_thread_
+  main_browser_thread_.task_runner()->PostTask(
+      FROM_HERE, base::Bind([](base::WaitableEvent* thread_event) {
+        initUiSkiaSurface(width, height);
 
-  printf("Initializing skia view...\n");
+        printf("Initializing skia view...\n");
 
-  myView = new SkPainter(SK_ColorRED, 200);
+        myView = new SkPainter(SK_ColorRED, 200);
 
 #ifdef ENABLE_SKOTTIE
-  {
-    printf("Initializing skottie animations...\n");
+        {
+          printf("Initializing skottie animations...\n");
 
-    //
-    // sk_sp<skottie_utils::FileResourceProvider> frp
-    //  = skottie_utils::FileResourceProvider::Make(SkOSPath::Dirname(fPath.c_str()));
-    // frp->load(fPath.c_str(), "data.json");
-    //
+          //
+          // sk_sp<skottie_utils::FileResourceProvider> frp
+          //  = skottie_utils::FileResourceProvider::Make(SkOSPath::Dirname(fPath.c_str()));
+          // frp->load(fPath.c_str(), "data.json");
+          //
 
-    skottie::Animation::Builder builder;
-    /*fAnimation      = builder
-              //.setLogger(logger)
-              .setResourceProvider(
-                  skottie_utils::FileResourceProvider::Make(SkOSPath::Dirname(fPath.c_str())))
-              .makeFromFile(fPath.c_str());*/
-    /*
-    defined(ENABLE_HTML5_SDL) || !defined(__EMSCRIPTEN__)
-    SDL_RWops* fileHandle = SDL_RWFromFile(fPath.c_str(), "r");
-    if (fileHandle == nullptr) {
-        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Can't find the file!\n");
-    }*/
+          skottie::Animation::Builder builder;
+          /*fAnimation      = builder
+                    //.setLogger(logger)
+                    .setResourceProvider(
+                        skottie_utils::FileResourceProvider::Make(SkOSPath::Dirname(fPath.c_str())))
+                    .makeFromFile(fPath.c_str());*/
+          /*
+          defined(ENABLE_HTML5_SDL) || !defined(__EMSCRIPTEN__)
+          SDL_RWops* fileHandle = SDL_RWFromFile(fPath.c_str(), "r");
+          if (fileHandle == nullptr) {
+              SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Can't find the file!\n");
+          }*/
 
-    printf("Reading skottie animations...\n");
+          printf("Reading skottie animations...\n");
 
-    char* fileString = nullptr;
-    long int fsize;
-    int readRes = read_file(fAnimPath.c_str(), fileString, fsize, true);
-    if (readRes != 0) {
-      printf("can`t read skottie anim %s\n", fAnimPath.c_str());
-      return 1;
-    }
-    DCHECK(fileString != nullptr);
+          char* fileString = nullptr;
+          long int fsize;
+          int readRes = read_file(fAnimPath.c_str(), fileString, fsize, true);
+          if (readRes != 0) {
+            printf("can`t read skottie anim %s\n", fAnimPath.c_str());
+          }
+          DCHECK(fileString != nullptr);
 
-    /*FILE* f = fopen(fPath.c_str(), "rb");
-    if (!f) {
-      printf("failed to open file: %s\n", fPath.c_str());
-      return 1;
-    }
-    fseek(f, 0, SEEK_END);
-    long int fsize = ftell(f);
-    fseek(f, 0, SEEK_SET);
-    char* fileString = new char[fsize + 1];
-    fread(fileString, 1, fsize, f);
-    fclose(f);
-    fileString[fsize] = 0;*/
+          /*FILE* f = fopen(fPath.c_str(), "rb");
+          if (!f) {
+            printf("failed to open file: %s\n", fPath.c_str());
+            return 1;
+          }
+          fseek(f, 0, SEEK_END);
+          long int fsize = ftell(f);
+          fseek(f, 0, SEEK_SET);
+          char* fileString = new char[fsize + 1];
+          fread(fileString, 1, fsize, f);
+          fclose(f);
+          fileString[fsize] = 0;*/
 
-    printf("Building skottie animations...\n");
+          printf("Building skottie animations...\n");
 
-    // see https://github.com/google/skia/blob/master/modules/skottie/src/Skottie.cpp#L459
-    fAnimation = builder.make(fileString, static_cast<size_t>(fsize));
-    printf("Built skottie animations...\n");
+          // see https://github.com/google/skia/blob/master/modules/skottie/src/Skottie.cpp#L459
+          fAnimation = builder.make(fileString, static_cast<size_t>(fsize));
+          printf("Built skottie animations...\n");
 
-    printf("Get skottie stats...\n");
-    fAnimationStats = builder.getStats();
-    fTimeBase = 0; // force a time reset
-    if (fAnimation) {
-      fAnimation->setShowInval(fShowAnimationInval);
-      printf("Loaded Bodymovin animation v: %s, size: [%f %f]\n", fAnimation->version().c_str(),
-             static_cast<double>(fAnimation->size().width()),
-             static_cast<double>(fAnimation->size().height()));
-    } else {
-      printf("failed to load Bodymovin animation: %s\n", fAnimPath.c_str());
-      return 1;
-    }
-    printf("Got skottie stats...\n");
+          printf("Get skottie stats...\n");
+          fAnimationStats = builder.getStats();
+          fTimeBase = 0; // force a time reset
+          if (fAnimation) {
+            fAnimation->setShowInval(fShowAnimationInval);
+            printf("Loaded Bodymovin animation v: %s, size: [%f %f]\n", fAnimation->version().c_str(),
+                   static_cast<double>(fAnimation->size().width()),
+                   static_cast<double>(fAnimation->size().height()));
+          } else {
+            printf("failed to load Bodymovin animation: %s\n", fAnimPath.c_str());
+          }
+          printf("Got skottie stats...\n");
 
-    delete[] fileString; // TODO
-    printf("skottie animations are ready...\n");
-  }
+          delete[] fileString; // TODO
+          printf("skottie animations are ready...\n");
+        }
+
+        thread_event->Signal();
 #endif // ENABLE_SKOTTIE
+      }, &ui_sync_event));
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+    /// \todo Reactor your code so that the waiting happens on another thread instead of the main thread
+    ui_sync_event.Wait();
+    ui_sync_event.Reset();
+#endif
 
 #endif // ENABLE_SKIA
 
@@ -8477,6 +8605,15 @@ main_browser_thread_wrapper_.task_runner()->PostTask(
 
 #if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
   printf("emscripten in singlethreaded mode\n");
+#endif
+
+#if !(defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__))
+  ui_draw_thread_.task_runner()->PostTask(
+      FROM_HERE, base::Bind([]() {
+        while(!quitApp) { // TODO: lock for quitApp
+          refreshUIDemo();
+        }
+      }));
 #endif
 
 /// \note emscripten_set_main_loop async, so
@@ -8503,7 +8640,11 @@ main_browser_thread_wrapper_.task_runner()->PostTask(
   printf("Running cleanup...\n");
 
 #if defined(ENABLE_SKIA)
-  cleanup_skia();
+  {
+    ui_draw_thread_.Stop();
+    /// \note stop ui_draw_thread before skia_ui cleanup
+    cleanup_skia_ui();
+  }
 
   GL_CHECK( glDeleteTextures(1, &skia_texture) );
 

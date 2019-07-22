@@ -75,7 +75,7 @@ namespace egl {
 
 static sk_sp<SkSurface> sRasterSurface;
 
-// TODO: remove pImageMutex cause sk_sp<SkImage> is thread safe (check it!)
+// TODO
 static std::mutex pImageMutex;
 
 static sk_sp<SkImage> pImage;

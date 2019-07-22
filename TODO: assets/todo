@@ -462,7 +462,7 @@ Boost.SML
 lscpu:i7-4790@3.60GHz -j6
 ===
 Release build size (stripped unused code, ENABLE_BLINK=FALSE)
-WASM MT: 1.5Mib
+WASM MT: 1.5MiB
 WASM MT GZIP: 540Kib (gzip --best --keep --force --suffix=.gz build-wasm-mt-rel/skemgl.wasm)
 -DENABLE_COBALT=FALSE;
 -DENABLE_LIBWEBP=FALSE;
@@ -475,12 +475,12 @@ WASM MT GZIP: 540Kib (gzip --best --keep --force --suffix=.gz build-wasm-mt-rel/
 -DENABLE_SKIA_UTILS=FALSE;
 -DFORCE_DISABLE_SK_GPU=TRUE;
 NOTE:
-UBUNTU WITH SK_GPU=TRUE: (rebuild time 179s.=~3m.): 5.7Mib
-UBUNTU WITH SK_GPU=FALSE: (rebuild time 96s.=~2m.): 3.0Mib
+UBUNTU WITH SK_GPU=TRUE: (rebuild time 179s.=~3m.): 5.7MiB
+UBUNTU WITH SK_GPU=FALSE: (rebuild time 96s.=~2m.): 3.0MiB
 ===
 Release build size (stripped unused code, ENABLE_BLINK=FALSE)
-WASM MT: 1.5Mib
-UBUNTU: (rebuild time 255s.=~5m.): 3.0Mib
+WASM MT: 1.5MiB
+UBUNTU: (rebuild time 255s.=~5m.): 3.0MiB
 -DENABLE_COBALT=FALSE;
 -DENABLE_LIBWEBP=FALSE;
 -DUSE_ICU=TRUE;
@@ -493,8 +493,8 @@ UBUNTU: (rebuild time 255s.=~5m.): 3.0Mib
 -DFORCE_DISABLE_SK_GPU=TRUE;
 ===
 Release build size (stripped unused code, ENABLE_BLINK=FALSE)
-WASM MT: 4.8Mib (~30fps)
-UBUNTU: (rebuild time 474s.=~8m.): 13Mib
+WASM MT: 4.8MiB (~30fps)
+UBUNTU: (rebuild time 474s.=~8m.): 13MiB
 -DENABLE_COBALT=TRUE;
 -DENABLE_LIBWEBP=FALSE;
 -DUSE_ICU=TRUE;
@@ -507,9 +507,9 @@ UBUNTU: (rebuild time 474s.=~8m.): 13Mib
 -DFORCE_DISABLE_SK_GPU=TRUE;
 ===
 Release build size (stripped unused code, ENABLE_BLINK=FALSE)
-WASM MT: 5.2Mib (~30fps)
-WASM MT GZIP: 1.6Mib (gzip --best --keep --force --suffix=.gz build-wasm-mt-rel/skemgl.wasm)
-UBUNTU: (rebuild time 457s.=~8m.): 13.4Mib
+WASM MT: 5.2MiB (~30fps)
+WASM MT GZIP: 1.6MiB (gzip --best --keep --force --suffix=.gz build-wasm-mt-rel/skemgl.wasm)
+UBUNTU: (rebuild time 457s.=~8m.): 13.4MiB
 -DENABLE_COBALT=TRUE;
 -DENABLE_LIBWEBP=FALSE;
 -DUSE_ICU=TRUE;
@@ -521,4 +521,6 @@ UBUNTU: (rebuild time 457s.=~8m.): 13.4Mib
 -DENABLE_SKIA_UTILS=TRUE;
 -DFORCE_DISABLE_SK_GPU=TRUE;
 
-NOTE: ~2Mib = UCONFIG_NO_COLLATION, UCONFIG_ONLY_HTML_CONVERSION, UCONFIG_NO_IDNA
+NOTE: (~2MiB UNIX || 0.1MiB WASM) = UCONFIG_NO_COLLATION, UCONFIG_ONLY_HTML_CONVERSION, UCONFIG_NO_IDNA
+
+NOTE: WITH BLINK: ~20MiB UNIX || 7.1MiB WASM

@@ -261,10 +261,48 @@
     )*/
   }
 }
+
+.bg-grad {
+  max-width: 1150px;
+  position: relative;
+  background: linear-gradient(to right, red, purple);
+  padding: 3px;
+}
+
+.border-grad {
+  max-width: 1050px;
+  padding: 1rem;
+  border-width: 3px;
+  border-style: solid;
+  border-image:
+    linear-gradient(
+      to bottom,
+      red,
+      rgba(0, 0, 0, 0)
+    ) 1 100%;
+}
+
+.border-img-slice {
+  border: 20px solid;
+  border-image-source: url('file:///resources/images/mouse.jpeg');
+  border-image-slice: 60 30;
+}
     </style>
   </head>
   <body class="exanim">
 
+    <div class="border-grad">
+      Lorem ipsum dolor sit amet consectetur.
+      <div class="bg-grad">
+        Lorem ipsum dolor sit amet!
+      </div>
+      <div class="border-img-slice">
+        Lorem ipsum dolor sit amet consectetur...
+        <div class="bg-grad">
+          Lorem ipsum dolor sit amet consectetur!
+        </div>
+      </div>
+    </div>
 
     <div style="width:500px; height:150px; overflow:scroll; border: 3px solid grey">
       <div style="width:100px; height:50px; overflow:hidden; border: 3px solid #CCC">
