@@ -1011,3 +1011,6 @@ mv bin/*.wasm bin/*.wasm.old
 npm run-script run
 open localhost:3000/*.html
 ```
+
+# How to profile code size?
+nm -CSr --size-sort "build-linux-rel/skemgl" | head -50

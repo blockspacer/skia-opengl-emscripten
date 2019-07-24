@@ -449,7 +449,7 @@ polymorphic_downcast ?
  > dynamic_cast ? https://stackoverflow.com/a/16247859
 
 C++ ranges
- > (compile time! SIC! pch.h? AND SLOOOW ?!?!) https://aras-p.info/blog/2018/12/28/Modern-C-Lamentations/
+ > (compile time! SIC! pch.h? AND SLOOOW ?!?!) https://aras-p.info/blog/2018/12/28/Modern-C-Lamentations/ vs http://nibblestew.blogspot.com/2015/11/build-speed-comparison-on-raspberry-pi-2.html
  > https://ericniebler.github.io/range-v3/
  > https://www.fluentcpp.com/?s=ranges
  > https://github.com/ericniebler/range-v3/blob/master/test/view/concat.cpp
@@ -524,3 +524,7 @@ UBUNTU: (rebuild time 457s.=~8m.): 13.4MiB
 NOTE: (~2MiB UNIX || 0.1MiB WASM) = UCONFIG_NO_COLLATION, UCONFIG_ONLY_HTML_CONVERSION, UCONFIG_NO_IDNA
 
 NOTE: WITH BLINK: ~20MiB UNIX || 7.1MiB WASM
+
+TODO: use tmpfs for build https://github.com/CppCon/CppCon2017/blob/master/Presentations/Practical%20Techniques%20for%20Improving%20C%2B%2B%20Build%20Times/Practical%20Techniques%20for%20Improving%20C%2B%2B%20Build%20Times%20-%20Dmitry%20Panin%20-%20CppCon%202017.pdf
+
+TODO: support gold linker http://www.bitsnbites.eu/faster-c-builds/

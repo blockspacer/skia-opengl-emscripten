@@ -114,14 +114,21 @@ void EventTarget::DispatchEventAndRunCallback(
 
 void EventTarget::DispatchEventNameAndRunCallback(
     base::CobToken event_name, const base::Closure& dispatched_callback) {
-    printf("DispatchEventNameAndRunCallback 1\n");
+
+  printf("DispatchEventNameAndRunCallback 1 %s\n", event_name.c_str());
+
   DispatchEvent(base::WrapRefCounted(new Event(event_name)));
-    printf("DispatchEventNameAndRunCallback 2\n");
+
+  printf("DispatchEventNameAndRunCallback 2 %s\n", event_name.c_str());
+
   if (!dispatched_callback.is_null()) {
-    printf("DispatchEventNameAndRunCallback 3\n");
+
+    printf("DispatchEventNameAndRunCallback 3 %s\n", event_name.c_str());
+
     dispatched_callback.Run();
   }
-    printf("DispatchEventNameAndRunCallback 4\n");
+
+  printf("DispatchEventNameAndRunCallback 4 %s\n", event_name.c_str());
 }
 
 void EventTarget::PostToDispatchEventName(const base::Location& location,
@@ -163,7 +170,8 @@ void EventTarget::PostToDispatchEventNameAndRunCallback(
     const base::Location& location, base::CobToken event_name,
     const base::Closure& callback) {
 
-    printf("PostToDispatchEventNameAndRunCallback 1\n");
+    printf("PostToDispatchEventNameAndRunCallback 1 %s\n",
+      event_name.c_str());
 #if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   std::move(
     base::Bind(

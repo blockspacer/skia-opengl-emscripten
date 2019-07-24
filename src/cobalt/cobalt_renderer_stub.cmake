@@ -7,13 +7,19 @@ list(APPEND RENDERER_PUBLIC_DEFINES
   COBALT_LOCAL_TYPEFACE_CACHE_SIZE_IN_BYTES=16777216 # 16.777216 Megabytes
 )
 
-if(TARGET_LINUX)
+if(TARGET_EMSCRIPTEN)
   list(APPEND RENDERER_PUBLIC_DEFINES
     #
     # NOTE: disabled rasterizer thread (!!!) due to deadlocks on WASM MT
     # (to reproduce bug - move mouse frequently over objects that are animated on hover)
     ENABLE_RASTERIZER_THREAD=1
   )
+elseif(TARGET_LINUX)
+  list(APPEND RENDERER_PUBLIC_DEFINES
+    ENABLE_RASTERIZER_THREAD=1
+  )
+else()
+  message(FATAL_ERROR "platform not supported")
 endif(TARGET_LINUX)
 
 list(APPEND RENDERER_PRIVATE_DEFINES

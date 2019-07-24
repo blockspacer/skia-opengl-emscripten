@@ -444,6 +444,7 @@ endif(ENABLE_SKSHAPER)
 
 list(APPEND SKIA_CMAKE_ONLY_HEADERS
   #src/chromium/third_party/
+  ${SKIA_PARENT_DIR}
   ${SKIA_EXT_PARENT_DIR}
   ${SKIA_EXT_DIR}
   ${SKIA_SRC_DIR}

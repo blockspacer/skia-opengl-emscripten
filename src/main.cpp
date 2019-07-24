@@ -100,7 +100,7 @@
 #warning "TODO: PORT SKOTTIE & PTHREADS"
 #endif
 
-#define ENABLE_CUSTOM_FONTS 1
+//#define ENABLE_CUSTOM_FONTS 1
 #if defined(ENABLE_CUSTOM_FONTS) && !defined(ENABLE_SKIA)
 #warning "ENABLE_CUSTOM_FONTS requires SKIA"
 #undef ENABLE_CUSTOM_FONTS
@@ -876,8 +876,8 @@ sk_sp<const GrGLInterface> emscripten_GrGLMakeNativeInterface() {
 #endif
 
 // TODO >>>
-//static bool render_browser_window = true;
-static bool render_browser_window = false;
+static bool render_browser_window = true;
+//static bool render_browser_window = false;
 
 // must be POT
 static int width = 1920;//1024;//512;
@@ -1357,26 +1357,32 @@ static void prepareUIFonts() {
 #ifdef ENABLE_BASE
 static base::Thread main_browser_thread_("Main_Browser_Thread");
 // TODO: remove main_browser_thread_wrapper_ or enable only on WASM MT
+
 static base::Thread main_browser_thread_wrapper_("Main_Browser_Thread_Wrapper");
 //static base::Thread input_device_thread_("Input_Device_Thread");
 
+static base::Thread* input_browser_thread = &main_browser_thread_;
+//static base::Thread* input_browser_thread = nullptr;//&main_browser_thread_;
+
 #if !(defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__))
-
-// TODO: causes hangs on WASM MT (even in render_browser_window mode)
+// TODO: causes hangs on WASM MT (even in render_browser_window mode!)
 //#define SEPARATE_UI_THREAD 1
-
+//#define SEPARATE_UI_THREAD_WRAPPER 1
 #endif // __EMSCRIPTEN__ && __EMSCRIPTEN_PTHREADS__
 
 #if defined(SEPARATE_UI_THREAD)
 static base::Thread ui_draw_thread_("UI_Draw_Thread");
+
+#if defined(SEPARATE_UI_THREAD_WRAPPER)
 // TODO: remove ui_draw_thread_wrapper_ or enable only on WASM MT
 static base::Thread ui_draw_thread_wrapper_("UI_Draw_Thread_Wrapper");
+#endif // SEPARATE_UI_THREAD_WRAPPER
 #endif // SEPARATE_UI_THREAD
 
 static base::WaitableEvent main_thread_event_;
 #endif // ENABLE_BASE
 
-#ifdef ENABLE_HARFBUZZ
+#if defined(ENABLE_CUSTOM_FONTS) && defined(ENABLE_HARFBUZZ)
 /// \note see SkShaper_harfbuzz.cpp if you want shaping in rectangle
 /// \see https://github.com/skui-org/skia/blob/f577133e703ea6a81602426aea879857cfd0b2e1/experimental/canvaskit/canvaskit_bindings.cpp#L477
 /// \see https://github.com/skui-org/skia/blob/f577133e703ea6a81602426aea879857cfd0b2e1/modules/skshaper/src/SkShaper_harfbuzz.cpp#L888
@@ -1455,7 +1461,7 @@ static bool DrawGlyphs(double current_x, double current_y,
     hb_buffer_clear_contents(buffer);
     return (SkScalar)x;
 }*/
-#endif // ENABLE_HARFBUZZ
+#endif // ENABLE_CUSTOM_FONTS && ENABLE_HARFBUZZ
 
 // static ::std::string input    = "Input .json file.";//);
 ////static ::std::string(writePath, w, nullptr, "Output directory.  Frames are names [0-9]{6}.png.");
@@ -1608,110 +1614,6 @@ static bool incDebugPeriodicCounter() {
         return false;
     }
     return true;
-}
-
-#if defined(ENABLE_SKIA)
-// see https://github.com/flutter/engine/blob/master/shell/gpu/gpu_surface_gl.cc#L125
-static void initUiSkiaSurface(int /*w*/, int /*h*/) {
-#ifdef SKIA_GR_CONTEXT
-  {
-    auto sInterface =
-        emscripten_GrGLMakeNativeInterface(); // sk_sp<const
-                                              // GrGLInterface>(GrGLCreateNativeInterface());
-    if (sInterface == nullptr) {
-      printf("Error while creating GrGLInterface\n");
-      abort();
-    }
-    // Validates that the GrGLInterface supports its advertised standard. This means the necessary
-    // function pointers have been initialized for both the GL version and any advertised
-    // extensions.
-    if (!sInterface->validate()) {
-      printf("Error while validating GrGLInterface\n");
-      abort();
-    }
-
-    printf("create GrContext...\n");
-
-    GrContextOptions options;
-    grContext = GrContext::MakeGL(::std::move(sInterface), options).release();
-    if (!grContext) {
-      printf("failed to create grContext.\n");
-    }
-    SkASSERT(grContext);
-
-    printf("created GrContext...\n");
-
-    GrGLint bufferID;
-    // Wrap the frame buffer object attached to the screen in a Skia render target so Skia can
-    // render to it
-    GR_GL_GetIntegerv(sInterface.get(), GR_GL_FRAMEBUFFER_BINDING, &bufferID);
-    GrGLFramebufferInfo info;
-    info.fFBOID = (GrGLuint)bufferID;
-    SkColorType colorType;
-
-// TODO: we use em_ctx for now
-//#if defined(ENABLE_HTML5_SDL) || !defined(__EMSCRIPTEN__)
-//    printf("SDL_GetWindowPixelFormat...\n");
-//
-//    uint32_t windowFormat = SDL_GetWindowPixelFormat(window);
-//    int contextType;
-//
-//    // TODO: use em_ctx
-//    //em_ctx
-//    SDL_GL_GetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, &contextType);
-//
-//    printf("get windowFormat...\n");
-//
-//    // SkDebugf("%s", SDL_GetPixelFormatName(windowFormat));
-//    // TODO: the windowFormat is never any of these?
-//    if (SDL_PIXELFORMAT_RGBA8888 == windowFormat) {
-//      info.fFormat = GR_GL_RGBA8;
-//      colorType = kRGBA_8888_SkColorType;
-//    } else {
-//      colorType = kBGRA_8888_SkColorType;
-//      // TODO: use em_ctx
-//      //em_ctx
-//      if (SDL_GL_CONTEXT_PROFILE_ES == contextType) {
-//        info.fFormat = GR_GL_BGRA8;
-//      } else {
-//        // We assume the internal format is RGBA8 on desktop GL
-//        info.fFormat = GR_GL_RGBA8;
-//      }
-//    }
-//#endif // ENABLE_HTML5_SDL || !__EMSCRIPTEN__
-
-    // TODO: we use em_ctx for now
-    info.fFormat = GR_GL_BGRA8; //  TODO
-    colorType = kBGRA_8888_SkColorType;
-
-    printf("create GrBackendRenderTarget...\n");
-
-    GrBackendRenderTarget target(width, height, kMsaaSampleCount, kStencilBits, info);
-
-    // setup SkSurface
-    // To use distance field text, use commented out SkSurfaceProps instead
-    // SkSurfaceProps props(SkSurfaceProps::kUseDeviceIndependentFonts_Flag,
-    //                      SkSurfaceProps::kLegacyFontHost_InitType);
-    SkSurfaceProps props(SkSurfaceProps::kLegacyFontHost_InitType);
-
-    sk_sp<SkSurface> surface(SkSurface::MakeFromBackendRenderTarget(
-        grContext, target, kBottomLeft_GrSurfaceOrigin, colorType, nullptr, &props));
-    if (!surface) {
-      printf("failed to create surface.\n");
-    }
-  }
-#endif // SKIA_GR_CONTEXT
-  // see https://github.com/midasitdev/aliceui/blob/master/example/OpenGLExample/OpenGLExample/main.cpp#L391
-  const SkImageInfo info = SkImageInfo::MakeN32(width, height, kPremul_SkAlphaType);
-  sRasterSurface = SkSurface::MakeRaster(info);
-  if (!sRasterSurface) {
-    printf("failed to create raster surface\n");
-  }
-}
-
-static void cleanup_skia_ui() {
-  if (sRasterSurface.get())
-    delete sRasterSurface.release();
 }
 
 class SkPainter {
@@ -2123,7 +2025,7 @@ public:
 
     //printf("onDraw() x4\n");
 
-#ifdef ENABLE_HARFBUZZ
+#if defined(ENABLE_CUSTOM_FONTS) && defined(ENABLE_HARFBUZZ)
     {
       // https://github.com/chromium/chromium/blob/422f901782f0a5f274a6065fbff3983279ef3c0b/chrome/browser/vr/elements/text.cc#L424
       ::std::unique_ptr<gfx::RenderText> render_text_ptr = gfx::RenderText::CreateHarfBuzzInstance();
@@ -2169,7 +2071,7 @@ public:
 
     // TODO: textfield
     // https://github.com/chromium/chromium/blob/master/ui/views/controls/textfield/textfield.cc
-#endif // ENABLE_HARFBUZZ
+#endif // ENABLE_CUSTOM_FONTS && ENABLE_HARFBUZZ
     {
       //views::Label* zoom_label_;
     }
@@ -2194,6 +2096,186 @@ public:
 
   SkPainter(SkColor color, SkScalar size) : m_color(color), m_size(size) {}
 };
+
+#if defined(ENABLE_SKIA)
+// see https://github.com/flutter/engine/blob/master/shell/gpu/gpu_surface_gl.cc#L125
+static void initUiSkiaSurface(int /*w*/, int /*h*/) {
+#ifdef SKIA_GR_CONTEXT
+  {
+    auto sInterface =
+        emscripten_GrGLMakeNativeInterface(); // sk_sp<const
+                                              // GrGLInterface>(GrGLCreateNativeInterface());
+    if (sInterface == nullptr) {
+      printf("Error while creating GrGLInterface\n");
+      abort();
+    }
+    // Validates that the GrGLInterface supports its advertised standard. This means the necessary
+    // function pointers have been initialized for both the GL version and any advertised
+    // extensions.
+    if (!sInterface->validate()) {
+      printf("Error while validating GrGLInterface\n");
+      abort();
+    }
+
+    printf("create GrContext...\n");
+
+    GrContextOptions options;
+    grContext = GrContext::MakeGL(::std::move(sInterface), options).release();
+    if (!grContext) {
+      printf("failed to create grContext.\n");
+    }
+    SkASSERT(grContext);
+
+    printf("created GrContext...\n");
+
+    GrGLint bufferID;
+    // Wrap the frame buffer object attached to the screen in a Skia render target so Skia can
+    // render to it
+    GR_GL_GetIntegerv(sInterface.get(), GR_GL_FRAMEBUFFER_BINDING, &bufferID);
+    GrGLFramebufferInfo info;
+    info.fFBOID = (GrGLuint)bufferID;
+    SkColorType colorType;
+
+// TODO: we use em_ctx for now
+//#if defined(ENABLE_HTML5_SDL) || !defined(__EMSCRIPTEN__)
+//    printf("SDL_GetWindowPixelFormat...\n");
+//
+//    uint32_t windowFormat = SDL_GetWindowPixelFormat(window);
+//    int contextType;
+//
+//    // TODO: use em_ctx
+//    //em_ctx
+//    SDL_GL_GetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, &contextType);
+//
+//    printf("get windowFormat...\n");
+//
+//    // SkDebugf("%s", SDL_GetPixelFormatName(windowFormat));
+//    // TODO: the windowFormat is never any of these?
+//    if (SDL_PIXELFORMAT_RGBA8888 == windowFormat) {
+//      info.fFormat = GR_GL_RGBA8;
+//      colorType = kRGBA_8888_SkColorType;
+//    } else {
+//      colorType = kBGRA_8888_SkColorType;
+//      // TODO: use em_ctx
+//      //em_ctx
+//      if (SDL_GL_CONTEXT_PROFILE_ES == contextType) {
+//        info.fFormat = GR_GL_BGRA8;
+//      } else {
+//        // We assume the internal format is RGBA8 on desktop GL
+//        info.fFormat = GR_GL_RGBA8;
+//      }
+//    }
+//#endif // ENABLE_HTML5_SDL || !__EMSCRIPTEN__
+
+    // TODO: we use em_ctx for now
+    info.fFormat = GR_GL_BGRA8; //  TODO
+    colorType = kBGRA_8888_SkColorType;
+
+    printf("create GrBackendRenderTarget...\n");
+
+    GrBackendRenderTarget target(width, height, kMsaaSampleCount, kStencilBits, info);
+
+    // setup SkSurface
+    // To use distance field text, use commented out SkSurfaceProps instead
+    // SkSurfaceProps props(SkSurfaceProps::kUseDeviceIndependentFonts_Flag,
+    //                      SkSurfaceProps::kLegacyFontHost_InitType);
+    SkSurfaceProps props(SkSurfaceProps::kLegacyFontHost_InitType);
+
+    sk_sp<SkSurface> surface(SkSurface::MakeFromBackendRenderTarget(
+        grContext, target, kBottomLeft_GrSurfaceOrigin, colorType, nullptr, &props));
+    if (!surface) {
+      printf("failed to create surface.\n");
+    }
+  }
+#endif // SKIA_GR_CONTEXT
+  // see https://github.com/midasitdev/aliceui/blob/master/example/OpenGLExample/OpenGLExample/main.cpp#L391
+  const SkImageInfo info = SkImageInfo::MakeN32(width, height, kPremul_SkAlphaType);
+  sRasterSurface = SkSurface::MakeRaster(info);
+  if (!sRasterSurface) {
+    printf("failed to create raster surface\n");
+  }
+
+        printf("Initializing skia view...\n");
+
+        myView = new SkPainter(SK_ColorRED, 200);
+
+#ifdef ENABLE_SKOTTIE
+        {
+          printf("Initializing skottie animations...\n");
+
+          //
+          // sk_sp<skottie_utils::FileResourceProvider> frp
+          //  = skottie_utils::FileResourceProvider::Make(SkOSPath::Dirname(fPath.c_str()));
+          // frp->load(fPath.c_str(), "data.json");
+          //
+
+          skottie::Animation::Builder builder;
+          /*fAnimation      = builder
+                    //.setLogger(logger)
+                    .setResourceProvider(
+                        skottie_utils::FileResourceProvider::Make(SkOSPath::Dirname(fPath.c_str())))
+                    .makeFromFile(fPath.c_str());*/
+          /*
+          defined(ENABLE_HTML5_SDL) || !defined(__EMSCRIPTEN__)
+          SDL_RWops* fileHandle = SDL_RWFromFile(fPath.c_str(), "r");
+          if (fileHandle == nullptr) {
+              SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Can't find the file!\n");
+          }*/
+
+          printf("Reading skottie animations...\n");
+
+          char* fileString = nullptr;
+          long int fsize;
+          int readRes = read_file(fAnimPath.c_str(), fileString, fsize, true);
+          if (readRes != 0) {
+            printf("can`t read skottie anim %s\n", fAnimPath.c_str());
+            NOTREACHED();
+          }
+          DCHECK(fileString != nullptr);
+
+          /*FILE* f = fopen(fPath.c_str(), "rb");
+          if (!f) {
+            printf("failed to open file: %s\n", fPath.c_str());
+            return 1;
+          }
+          fseek(f, 0, SEEK_END);
+          long int fsize = ftell(f);
+          fseek(f, 0, SEEK_SET);
+          char* fileString = new char[fsize + 1];
+          fread(fileString, 1, fsize, f);
+          fclose(f);
+          fileString[fsize] = 0;*/
+
+          printf("Building skottie animations...\n");
+
+          // see https://github.com/google/skia/blob/master/modules/skottie/src/Skottie.cpp#L459
+          fAnimation = builder.make(fileString, static_cast<size_t>(fsize));
+          printf("Built skottie animations...\n");
+
+          printf("Get skottie stats...\n");
+          fAnimationStats = builder.getStats();
+          fTimeBase = 0; // force a time reset
+          if (fAnimation) {
+            fAnimation->setShowInval(fShowAnimationInval);
+            printf("Loaded Bodymovin animation v: %s, size: [%f %f]\n", fAnimation->version().c_str(),
+                   static_cast<double>(fAnimation->size().width()),
+                   static_cast<double>(fAnimation->size().height()));
+          } else {
+            printf("failed to load Bodymovin animation: %s\n", fAnimPath.c_str());
+            NOTREACHED();
+          }
+          printf("Got skottie stats...\n");
+
+          delete[] fileString; // TODO
+          printf("skottie animations are ready...\n");
+        }
+#endif // ENABLE_SKOTTIE
+}
+
+static void cleanup_skia_ui() {
+  if (sRasterSurface.get())
+    delete sRasterSurface.release();
+}
 
 #endif // ENABLE_SKIA
 
@@ -2595,7 +2677,7 @@ void CobaltTester::OnRanAnimationFrameCallbacks() {
 void CobaltTester::OnRenderTreeRasterized(
     scoped_refptr<base::SingleThreadTaskRunner> /*web_module_message_loop*/,
     const base::TimeTicks& /*produced_time*/) {
-    //printf("OnRenderTreeRasterized\n");
+    ///printf("OnRenderTreeRasterized\n");
 
     //DCHECK(g_cobaltTester);
     //DCHECK_EQ(base::MessageLoopCurrent::Get().task_runner(), g_cobaltTester->self_task_runner_);
@@ -2628,7 +2710,7 @@ void CobaltTester::BrowserProcessRenderTreeSubmissionQueue() {
     DCHECK_EQ(base::MessageLoopCurrent::Get().task_runner(), g_cobaltTester->self_task_runner_);
     DCHECK(g_cobaltTester->thread_checker_.CalledOnValidThread());
 
-    //printf("BrowserProcessRenderTreeSubmissionQueue 1\n");
+    printf("BrowserProcessRenderTreeSubmissionQueue 1\n");
 
 #if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
    /// \note use emscripten_async* to prevent blocking of browser event loop
@@ -2647,7 +2729,7 @@ void CobaltTester::BrowserProcessRenderTreeSubmissionQueue() {
 renderer::Submission CobaltTester::CreateSubmissionFromLayoutResults(
     const cobalt::layout::LayoutManager::LayoutResults& layout_results) {
 
-    //printf("CreateSubmissionFromLayoutResults 1\n");
+    printf("CreateSubmissionFromLayoutResults 1\n");
 
     renderer::Submission renderer_submission(layout_results.render_tree,
                                              layout_results.layout_time);
@@ -2659,7 +2741,8 @@ renderer::Submission CobaltTester::CreateSubmissionFromLayoutResults(
 }
 
 void CobaltTester::OnRendererSubmissionRasterized() {
-        //printf("OnRendererSubmissionRasterized 1\n");
+    ///printf("OnRendererSubmissionRasterized 1\n");
+
     TRACE_EVENT0("cobalt::browser",
                  "CobaltTester::OnRendererSubmissionRasterized()");
 
@@ -2679,7 +2762,8 @@ void CobaltTester::SubmitCurrentRenderTreeToRenderer() {
     DCHECK(g_cobaltTester);
     DCHECK(g_cobaltTester->thread_checker_.CalledOnValidThread());
 
-    //printf("SubmitCurrentRenderTreeToRenderer 1\n");
+    printf("SubmitCurrentRenderTreeToRenderer 1\n");
+
     if (!renderer_module_) {
         return;
     }
@@ -2707,7 +2791,7 @@ void CobaltTester::OnBrowserRenderTreeProduced(
     DCHECK(g_cobaltTester);
     DCHECK(g_cobaltTester->thread_checker_.CalledOnValidThread());
 
-    //printf("OnBrowserRenderTreeProduced 1\n");
+    printf("OnBrowserRenderTreeProduced 1\n");
 
     //if (splash_screen_) {
     //    if (on_screen_keyboard_show_called_) {
@@ -2737,19 +2821,21 @@ void CobaltTester::OnBrowserRenderTreeProduced(
         &CobaltTester::OnRendererSubmissionRasterized,
         base::Unretained(this)));
 
+    printf("OnBrowserRenderTreeProduced 1.1\n");
     //if (!splash_screen_) {
         render_tree_combiner_.SetTimelineLayer(main_web_module_layer_.get());
     //}
     main_web_module_layer_->Submit(renderer_submission);
 
     SubmitCurrentRenderTreeToRenderer();
-    //printf("OnBrowserRenderTreeProduced 2\n");
+    printf("OnBrowserRenderTreeProduced 2\n");
 }
 
 void CobaltTester::QueueOnRenderTreeProduced(
     int main_web_module_generation,
     const cobalt::layout::LayoutManager::LayoutResults& layout_results) {
-        //printf("QueueOnRenderTreeProduced 1\n");
+
+    printf("QueueOnRenderTreeProduced 1\n");
     TRACE_EVENT0("cobalt::browser", "CobaltTester::QueueOnRenderTreeProduced()");
 
   DCHECK(g_cobaltTester);
@@ -2813,7 +2899,7 @@ void CobaltTester::OnRenderTreeProduced(const cobalt::layout::LayoutManager::Lay
     isRenderTreeProducePending = false;
 #endif
 
-    //printf("OnRenderTreeProduced 1.2\n");
+    printf("OnRenderTreeProduced 1.2\n");
 
     DCHECK(g_cobaltTester);
 
@@ -2845,14 +2931,14 @@ void CobaltTester::navigationCallback(const GURL&) {
 }
 
 void CobaltTester::OnStartDispatchEvent(const scoped_refptr<dom::Event>& event) {
-    //printf("OnStartDispatchEvent %s\n", event->type().c_str());
+    printf("OnStartDispatchEvent %s\n", event->type().c_str());
     /*if (!on_start_dispatch_event_callback_.is_null()) {
         on_start_dispatch_event_callback_.Run(event);
     }*/
 }
 
 void CobaltTester::OnStopDispatchEvent(const scoped_refptr<dom::Event>& event) {
-    //printf("OnStopDispatchEvent %s\n", event->type().c_str());
+    printf("OnStopDispatchEvent %s\n", event->type().c_str());
     /*if (!on_stop_dispatch_event_callback_.is_null()) {
         on_stop_dispatch_event_callback_.Run(event);
     }*/
@@ -2861,13 +2947,17 @@ void CobaltTester::OnStopDispatchEvent(const scoped_refptr<dom::Event>& event) {
 void CobaltTester::HandlePointerEvents() {
 #if defined(__EMSCRIPTEN__)
   //EM_LOG("HandlePointerEvents 1!\n");
-  //printf("HandlePointerEvents 1!\n");
 #endif
+  //printf("HandlePointerEvents 1!\n");
+
+  // TODO >>>
+  //return;
 
   //DCHECK(g_cobaltTester);
   //DCHECK_EQ(base::MessageLoopCurrent::Get().task_runner(), g_cobaltTester->self_task_runner_);
   //DCHECK(g_cobaltTester->thread_checker_.CalledOnValidThread());
 
+  DCHECK(base::MessageLoopCurrent::Get().task_runner() == main_browser_thread_.task_runner());
   if (base::MessageLoopCurrent::Get().task_runner() != main_browser_thread_.task_runner()) {
   //if (base::MessageLoopCurrent::Get().task_runner() != input_device_thread_.task_runner()) {
     //input_device_thread_.task_runner()->PostTask(
@@ -2879,8 +2969,8 @@ void CobaltTester::HandlePointerEvents() {
 
 #if defined(__EMSCRIPTEN__)
     //EM_LOG("HandlePointerEvents 2\n");
-    //printf("HandlePointerEvents 2!\n");
 #endif
+    //printf("HandlePointerEvents 2!\n");
 
   ///TRACE_EVENT0("cobalt::browser", "WebModule::Impl::HandlePointerEvents");
   const scoped_refptr<dom::Document>& document = window_->document();
@@ -2889,9 +2979,10 @@ void CobaltTester::HandlePointerEvents() {
 
   int i = 0;
   do {
+    //printf("HandlePointerEvents 2.1\n");
     event = document->pointer_state()->GetNextQueuedPointerEvent();
     if (event) {
-      //printf("CobaltTester::HandlePointerEvents %s\n", event->type().c_str());
+      //printf("CobaltTester::HandlePointerEvents 2.2 %s\n", event->type().c_str());
       SB_DCHECK(
           window_ ==
           base::polymorphic_downcast<const dom::UIEvent* const>(event.get())
@@ -2903,14 +2994,15 @@ void CobaltTester::HandlePointerEvents() {
       i++;
       if(i > 1000) {
         printf("WARNING: too many iterations in HandlePointerEvents!\n");
+        DCHECK(false);
         break;
       }
     }
   } while (event && !layout_manager_->IsRenderTreePending());
 #if defined(__EMSCRIPTEN__)
   //EM_LOG("HandlePointerEvents 3\n");
-  //printf("HandlePointerEvents 3!\n");
 #endif
+  //printf("HandlePointerEvents 3!\n");
 }
 
 // Called when the WebModule's Window.onload event is fired.
@@ -2964,10 +3056,11 @@ void CobaltTester::InjectInputEvent(scoped_refptr<cobalt::dom::Element> element,
 //  }
 //#endif
 
-  //printf("InjectInputEvent %s\n", event->type().c_str());
+  printf("InjectInputEvent 1 %s\n", event->type().c_str());
 
+  DCHECK(base::MessageLoopCurrent::Get().task_runner() == main_browser_thread_.task_runner());
   //if (base::MessageLoopCurrent::Get().task_runner() != input_device_thread_.task_runner()) {
-  //  input_device_thread_.task_runner()->PostTask(
+  //  input_device_thread_.task_runner()->PostTask(DCHECK(base::MessageLoopCurrent::Get().task_runner() == main_browser_thread_.task_runner());
   if (base::MessageLoopCurrent::Get().task_runner() != main_browser_thread_.task_runner()) {
     main_browser_thread_.task_runner()->PostTask(
         FROM_HERE, base::Bind(&CobaltTester::InjectInputEvent,
@@ -3035,11 +3128,12 @@ void CobaltTester::InjectInputEvent(scoped_refptr<cobalt::dom::Element> element,
   //  EM_LOG(str.c_str());
   //}
 #endif
+  printf("InjectInputEvent 2 %s\n", event->type().c_str());
 }
 
 void CobaltTester::OnKeyEventProduced(base::CobToken type,
                                        const dom::KeyboardEventInit& event) {
-  //printf("OnKeyEventProduced %s\n", type.c_str());
+  printf("OnKeyEventProduced 1 %s\n", type.c_str());
 
   //DCHECK(g_cobaltTester);
   //DCHECK_EQ(base::MessageLoopCurrent::Get().task_runner(), g_cobaltTester->self_task_runner_);
@@ -3051,6 +3145,7 @@ void CobaltTester::OnKeyEventProduced(base::CobToken type,
 
   TRACE_EVENT0("cobalt::browser", "CobaltTester::OnKeyEventProduced()");
   DCHECK(self_task_runner_);
+  DCHECK(base::MessageLoopCurrent::Get().task_runner() == main_browser_thread_.task_runner());
   if (base::MessageLoopCurrent::Get().task_runner() != main_browser_thread_.task_runner()) {
   //if (base::MessageLoopCurrent::Get().task_runner() != input_device_thread_.task_runner()) {
     main_browser_thread_.task_runner()->PostTask(
@@ -3079,11 +3174,13 @@ void CobaltTester::OnKeyEventProduced(base::CobToken type,
   scoped_refptr<dom::KeyboardEvent> keyboard_event(
       new dom::KeyboardEvent(type, window_, event));
   InjectInputEvent(scoped_refptr<dom::Element>(), keyboard_event);
+
+  printf("OnKeyEventProduced 1 %s\n", type.c_str());
 }
 
 void CobaltTester::OnPointerEventProduced(base::CobToken type,
                                            const dom::PointerEventInit& event) {
-  //printf("OnPointerEventProduced %s\n", type.c_str());
+  printf("OnPointerEventProduced 1 %s\n", type.c_str());
 
   //DCHECK(g_cobaltTester);
   //DCHECK_EQ(base::MessageLoopCurrent::Get().task_runner(), g_cobaltTester->self_task_runner_);
@@ -3093,9 +3190,19 @@ void CobaltTester::OnPointerEventProduced(base::CobToken type,
   TRACE_EVENT0("cobalt::browser", "CobaltTester::OnPointerEventProduced()");
   DCHECK(system_window_);
   DCHECK(self_task_runner_);
-  //if (base::MessageLoopCurrent::Get().task_runner() != input_device_thread_.task_runner()) {
-  //  input_device_thread_.task_runner()->PostTask(
-  if (base::MessageLoopCurrent::Get().task_runner() != main_browser_thread_.task_runner()) {
+  bool repipeThreads = false;
+  if(base::MessageLoopCurrent::IsSet() && base::MessageLoopCurrent::Get())
+  {
+    DCHECK(base::MessageLoopCurrent::Get().task_runner() == main_browser_thread_.task_runner());
+    //if (base::MessageLoopCurrent::Get().task_runner() != input_device_thread_.task_runner()) {
+    if (base::MessageLoopCurrent::Get().task_runner() != main_browser_thread_.task_runner()) {
+      repipeThreads = true;
+    }
+  } else {
+    repipeThreads = true;
+  }
+  if (repipeThreads) {
+   //  input_device_thread_.task_runner()->PostTask(
     main_browser_thread_.task_runner()->PostTask(
         FROM_HERE, base::Bind(&CobaltTester::OnPointerEventProduced,
                               base::Unretained(this), type, event));
@@ -3119,11 +3226,13 @@ void CobaltTester::OnPointerEventProduced(base::CobToken type,
   scoped_refptr<dom::PointerEvent> pointer_event(
       new dom::PointerEvent(type, window_, event));
   InjectInputEvent(scoped_refptr<dom::Element>(), pointer_event);
+
+  printf("OnPointerEventProduced 2 %s\n", type.c_str());
 }
 
 void CobaltTester::OnWheelEventProduced(base::CobToken type,
                                          const dom::WheelEventInit& event) {
-  //printf("OnWheelEventProduced %s\n", type.c_str());
+  printf("OnWheelEventProduced 1 %s\n", type.c_str());
 
   DCHECK(g_cobaltTester);
   DCHECK_EQ(base::MessageLoopCurrent::Get().task_runner(), g_cobaltTester->self_task_runner_);
@@ -3136,6 +3245,7 @@ void CobaltTester::OnWheelEventProduced(base::CobToken type,
 
   DCHECK(system_window_);
   DCHECK(self_task_runner_);
+  DCHECK(base::MessageLoopCurrent::Get().task_runner() == main_browser_thread_.task_runner());
   if (base::MessageLoopCurrent::Get().task_runner() != self_task_runner_) {
     self_task_runner_->PostTask(
         FROM_HERE, base::Bind(&CobaltTester::OnWheelEventProduced,
@@ -3167,6 +3277,8 @@ void CobaltTester::OnWheelEventProduced(base::CobToken type,
   scoped_refptr<dom::WheelEvent> wheel_event(
       new dom::WheelEvent(type, window_, event));
   InjectInputEvent(scoped_refptr<dom::Element>(), wheel_event);
+
+  printf("OnWheelEventProduced 2 %s\n", type.c_str());
 }
 
 class HTMLInputElement : public HTMLCustomElement {
@@ -4042,7 +4154,6 @@ static void animate() {
   //  redClrTintAnim = 0.0f;
   //}
 
-
   //printf("animate start\n");
 
 #if defined(ENABLE_SKIA) && defined(ENABLE_SKOTTIE)
@@ -4099,7 +4210,7 @@ static void animate() {
       /// we use extra variable: don`t call "if (!g_cobaltTester)" here
       //createdCobaltTester = true;
       if (!g_cobaltTester) {
-          printf("Creating g_cobaltTester...\n");
+          printf("Creating g_cobaltTester (wasm ST)...\n");
           //emscripten_pause_main_loop();
           createCobaltTester();
           //emscripten_resume_main_loop();
@@ -4218,21 +4329,99 @@ static void animate() {
 #if defined(ENABLE_SK_UI)
 static sk_sp<SkImage> UIDemoImage;
 // TODO: replace with task queue
-//static std::mutex UIDemoImageMutex;
+
+#define ENABLE_UI_IMG_LOCKS 1
+
+// TODO: use PostTask
+#if defined(ENABLE_UI_IMG_LOCKS)
+static std::mutex UIDemoImageMutex;
+#endif // ENABLE_UI_IMG_LOCKS)
 
 sk_sp<SkImage> getUiSkImage() {
-  //std::scoped_lock lock(UIDemoImageMutex);
+#if defined(ENABLE_UI_IMG_LOCKS)
+  std::scoped_lock lock(UIDemoImageMutex);
+#endif // ENABLE_UI_IMG_LOCKS)
   return UIDemoImage;
 }
 
 static int testRed = 0;
 
+static void loadUIAssets() {
+#if defined(ENABLE_IMAGES)
+  ///DCHECK(thread->IsCurrentThread());
+  ///
+  ///blink::ThreadState::AttachCurrentThread();
+  {
+      SkImageInfo skImageInfo = SkImageInfo::Make(
+          100,
+          100,
+          SkColorType::kRGBA_8888_SkColorType,
+          SkAlphaType::kPremul_SkAlphaType, // alpha type can also be opaque if there is no alpha information
+          SkColorSpace::MakeSRGBLinear()
+          );
+      //SkBitmap::Config config = SkImageInfoToBitmapConfig(info, &isOpaque);
+      //SkBitmap fetched_bitmap;
+      void* pixels = nullptr;
+      char* fileData = nullptr;
+      long int fsize;
+      //size_t fsize;
+      int readRes = read_file(fImagePath.c_str(), fileData, fsize, true);
+      if (readRes != 0) {
+          printf("can`t read file %s\n", fImagePath.c_str());
+      }
+      DCHECK(fileData != nullptr);
+      ::std::unique_ptr<SkBitmap> decoded(new SkBitmap());
+      /*
+static bool Decode(const unsigned char* input, size_t input_size,
+         ColorFormat format, ::std::vector<unsigned char>* output,
+         int* w, int* h);
+static bool Decode(const unsigned char* input, size_t input_size,
+         SkBitmap* bitmap);
+*/
+      const unsigned char* data =
+          reinterpret_cast<const unsigned char*>(fileData);
+      if (!gfx::PNGCodec::Decode(data, static_cast<size_t>(fsize), decoded.get())) {
+          printf("can`t decode png file %s\n", fImagePath.c_str());
+          decoded = gfx::JPEGCodec::Decode(data, static_cast<size_t>(fsize));
+          if (!decoded) {
+              printf("can`t decode JPEG file %s\n", fImagePath.c_str());
+          }
+      }
+      //fetched_bitmap.setPixels(pixels);
+      //fetched_bitmap.setIsOpaque(isOpaque);
+      //gfx::ImageSkia imageSkia(gfx::ImageSkiaRep(*decoded, /*scale=*/1.0));
+      gfx::ImageSkiaRep rep = gfx::ImageSkiaRep(*decoded, /*scale=*/1.0);
+      gfxImageSkia = ::std::make_unique<gfx::ImageSkia>(rep);
+      if (!gfxImageSkia || gfxImageSkia->isNull()) {
+          printf("can`t get gfxImageSkia\n");
+      }
+      //skImageSp = SkImage::MakeFromBitmap(
+      //  gfxImageSkia->GetRepresentation(/*scale=*/1.0).GetBitmap());
+      /// \note requires parent thread (TLS)
+      skImageSp = SkImage::MakeFromBitmap(rep.GetBitmap());
+      if (!skImageSp || !skImageSp->isValid(nullptr)) {
+          printf("can`t get skImageSp\n");
+      }
+      DCHECK(skImageSp);
+      std::cout << std::endl; // flush
+
+//#ifdef __TODO__
+      base::WeakPtr<blink::WebGraphicsContext3DProviderWrapper> wptr = nullptr;
+      DCHECK(skImageSp);
+      sStaticBitmapImage =
+          blink::StaticBitmapImage::Create(skImageSp, ::std::move(wptr));
+//#endif
+      // Shutdown the thread (via its scheduler).
+      //thread_->Scheduler()->Shutdown();
+
+      ///
+      ///blink::ThreadState::DetachCurrentThread();
+  }
+#endif // ENABLE_IMAGES
+}
+
 static void refreshUIDemo() {
   if (isDebugPeriodReached()) printf("refreshUIDemo...\n");
-
-  //printf("refreshUIDemo 1...\n");
-
-  animate();
 
   //printf("refreshUIDemo 2...\n");
 
@@ -4265,7 +4454,9 @@ static void refreshUIDemo() {
 
   //if(!UIDemoImage)
   {
-    //std::scoped_lock lock(UIDemoImageMutex);
+#if defined(ENABLE_UI_IMG_LOCKS)
+    std::scoped_lock lock(UIDemoImageMutex);
+#endif // ENABLE_UI_IMG_LOCKS
     UIDemoImage = sRasterSurface->makeImageSnapshot();
     if (nullptr == UIDemoImage) {
       printf("UIDemoImage can`t makeImageSnapshot\n");
@@ -4379,14 +4570,14 @@ static void Draw() {
       && g_cobaltTester->window_->isDocumentStartedLoading()
       && g_cobaltTester->window_->isStartedDocumentLoader()*/)
   {
-      printf("drawBrowserDemo!\n");
+      if (isDebugPeriodReached()) printf("drawBrowserDemo!\n");
       drawBrowserDemo();
   } else
 #endif
 #if defined(ENABLE_SK_UI)
   {
 #if !defined(SEPARATE_UI_THREAD)
-    //printf("refreshUIDemo!\n");
+    if (isDebugPeriodReached()) printf("refreshUIDemo (ST)!\n");
     refreshUIDemo();
 #endif // SEPARATE_UI_THREAD
     drawUIDemo();
@@ -4478,10 +4669,8 @@ static void updateGlobalMousePos(const int screenMouseX, const int screenMouseY)
 static void sendBrowserInputEvent(std::unique_ptr<SbEvent> event) {
   ///if (base::MessageLoopCurrent::Get().task_runner() != g_cobaltTester->self_task_runner_) {
     //main_browser_thread_.task_runner()->PostBlockingTask(
-  main_browser_thread_.task_runner()->PostTask(
-  ///if (base::MessageLoopCurrent::Get().task_runner() != input_device_thread_.task_runner()) {
-    //input_device_thread_.task_runner()->PostTask(
-        FROM_HERE, base::Bind(
+
+  base::OnceClosure func = base::Bind(
           [](std::unique_ptr<SbEvent> event) {
             ///printf("PostTask InputEvent\n");
 
@@ -4489,6 +4678,8 @@ static void sendBrowserInputEvent(std::unique_ptr<SbEvent> event) {
 
              if(!g_cobaltTester
                || !g_cobaltTester->layout_manager_
+               || !g_cobaltTester->window_
+               || !g_cobaltTester->window_->document()
                || g_cobaltTester->layout_manager_->IsRenderTreePending() // TODO
                || curScreenMouseX <= -1
                || curScreenMouseY <= -1) {
@@ -4547,6 +4738,9 @@ static void sendBrowserInputEvent(std::unique_ptr<SbEvent> event) {
             // TODO: active_element
 
             ///printf("indicated_element...\n");
+            DCHECK(g_cobaltTester);
+            DCHECK(g_cobaltTester->window_);
+            DCHECK(g_cobaltTester->window_->document());
             scoped_refptr<Document> document_ = g_cobaltTester->window_->document();
             scoped_refptr<HTMLElement> indicated_element = document_->indicated_element();
             if(indicated_element) {
@@ -4581,8 +4775,25 @@ static void sendBrowserInputEvent(std::unique_ptr<SbEvent> event) {
                 //document_->UpdateSelectorTree();
               }
             }
-          }, base::Passed(&event)));
-  ///}
+          }, base::Passed(&event));
+
+  if(input_browser_thread) {
+    DCHECK(input_browser_thread);
+    DCHECK(input_browser_thread->IsRunning());
+    DCHECK(input_browser_thread->task_runner() == main_browser_thread_.task_runner());
+
+    if(base::MessageLoopCurrent::Get().task_runner() != main_browser_thread_.task_runner()) {
+      main_browser_thread_.task_runner()->PostTask(
+      ///if (base::MessageLoopCurrent::Get().task_runner() != input_device_thread_.task_runner()) {
+        //input_device_thread_.task_runner()->PostTask(
+            FROM_HERE, std::move(func));
+      ///}
+    } else {
+      std::move(func).Run();
+    }
+  } else {
+    std::move(func).Run();
+  }
 }
 
 static std::unique_ptr<SbInputData> createEmptySbEventData() {
@@ -4760,11 +4971,17 @@ static void handleEmscriptenMouseEvent(int emsc_type, const EmscriptenMouseEvent
       }
 
       event->data = data.release();
-      main_browser_thread_wrapper_.task_runner()->PostTask(
+      if(!input_browser_thread) {
+        sendBrowserInputEvent(std::move(event));
+      } else {
+        DCHECK(input_browser_thread);
+        DCHECK(input_browser_thread->IsRunning());
+        input_browser_thread->task_runner()->PostTask(
           FROM_HERE, base::Bind(
-            [](std::unique_ptr<SbEvent> event) {
-              sendBrowserInputEvent(std::move(event));
-            }, base::Passed(&event)));
+                       [](std::unique_ptr<SbEvent> event) {
+                         sendBrowserInputEvent(std::move(event));
+                       }, base::Passed(&event)));
+      }
   }
 }
 
@@ -5413,11 +5630,17 @@ static void handleEmscriptenKeyboardEvent(int emsc_type, const EmscriptenKeyboar
   }
 
   event->data = data.release();
-  main_browser_thread_wrapper_.task_runner()->PostTask(
+  if(!input_browser_thread) {
+    sendBrowserInputEvent(std::move(event));
+  } else {
+    DCHECK(input_browser_thread);
+    DCHECK(input_browser_thread->IsRunning());
+    input_browser_thread->task_runner()->PostTask(
       FROM_HERE, base::Bind(
-        [](std::unique_ptr<SbEvent> event) {
-          sendBrowserInputEvent(std::move(event));
-        }, base::Passed(&event)));
+                   [](std::unique_ptr<SbEvent> event) {
+                     sendBrowserInputEvent(std::move(event));
+                   }, base::Passed(&event)));
+  }
 }
 #endif
 
@@ -5529,11 +5752,17 @@ static EM_BOOL emsc_mouse_wheel_cb(int emsc_type, const EmscriptenWheelEvent* em
   }
 
   event->data = data.release();
-  main_browser_thread_wrapper_.task_runner()->PostTask(
+  if(!input_browser_thread) {
+    sendBrowserInputEvent(std::move(event));
+  } else {
+    DCHECK(input_browser_thread);
+    DCHECK(input_browser_thread->IsRunning());
+    input_browser_thread->task_runner()->PostTask(
       FROM_HERE, base::Bind(
-        [](std::unique_ptr<SbEvent> event) {
-          sendBrowserInputEvent(std::move(event));
-        }, base::Passed(&event)));
+                   [](std::unique_ptr<SbEvent> event) {
+                     sendBrowserInputEvent(std::move(event));
+                   }, base::Passed(&event)));
+  }
 #endif // ENABLE_COBALT
 
   // Return true for events we want to suppress default web browser handling for.
@@ -6525,7 +6754,7 @@ static SbKey SDL2KeycodeToSbKey(const SDL_Keycode& keysum) {
 }
 #endif
 
-static void mainLoop() {
+static void mainLockFreeLoop() {
 #if defined(__EMSCRIPTEN__)
 
   //browser_loop.task_runner()->
@@ -6865,11 +7094,17 @@ static void mainLoop() {
 
     if (isSbEvent) {
       event->data = data.release();
-      main_browser_thread_wrapper_.task_runner()->PostTask(
-        FROM_HERE, base::Bind(
-                     [](std::unique_ptr<SbEvent> event) {
-                       sendBrowserInputEvent(std::move(event));
-                     }, base::Passed(&event)));
+      if(!input_browser_thread) {
+        sendBrowserInputEvent(std::move(event));
+      } else {
+        DCHECK(input_browser_thread);
+        DCHECK(input_browser_thread->IsRunning());
+        input_browser_thread->task_runner()->PostTask(
+          FROM_HERE, base::Bind(
+                       [](std::unique_ptr<SbEvent> event) {
+                         sendBrowserInputEvent(std::move(event));
+                       }, base::Passed(&event)));
+      }
     }
 #endif // ENABLE_COBALT
   }
@@ -6878,6 +7113,7 @@ static void mainLoop() {
 
   // Render
 #if defined(ENABLE_OPENGL)
+  animate();
   Draw();
 #endif // ENABLE_OPENGL
 
@@ -6902,6 +7138,7 @@ static void mainLoop() {
 
   // Render
 #if defined(ENABLE_OPENGL)
+  animate();
   Draw();
 #endif // ENABLE_OPENGL
 
@@ -7234,7 +7471,7 @@ static void addTestOnlyAttrCallbacks() {
       //event->target()
       dom::HTMLElement* elementHTML =
         // TODO: polymorphic_downcast Check failed: dynamic_cast<Derived>(base) == base.
-        static_cast<dom::HTMLElement*>(elem.get());
+        base::polymorphic_downcast<dom::HTMLElement*>(elem.get());
       CHECK(elementHTML);
       //elementHTML->GetUiNavItem()->Focus();
       elementHTML->Focus();
@@ -7265,7 +7502,7 @@ static void addTestOnlyAttrCallbacks() {
               elem->text_content().value_or("").c_str());
       dom::HTMLElement* elementHTML =
         // TODO: polymorphic_downcast Check failed: dynamic_cast<Derived>(base) == base.
-        static_cast<dom::HTMLElement*>(elem.get());
+        base::polymorphic_downcast<dom::HTMLElement*>(elem.get());
       CHECK(elementHTML);
       elementHTML->Blur();
       /*//elementHTML->GetUiNavItem()->Blur();
@@ -7322,7 +7559,7 @@ static void addTestOnlyAttrCallbacks() {
 
       dom::HTMLElement* elementHTML =
         // TODO: polymorphic_downcast Check failed: dynamic_cast<Derived>(base) == base.
-        static_cast<dom::HTMLElement*>(elem.get());
+        base::polymorphic_downcast<dom::HTMLElement*>(elem.get());
       CHECK(elementHTML);
       return true;
     });
@@ -7375,7 +7612,7 @@ static void addTestOnlyAttrCallbacks() {
 
       dom::HTMLElement* elementHTML =
         // TODO: polymorphic_downcast Check failed: dynamic_cast<Derived>(base) == base.
-        static_cast<dom::HTMLElement*>(elem.get());
+        base::polymorphic_downcast<dom::HTMLElement*>(elem.get());
       CHECK(elementHTML);
       return true;
     });
@@ -7401,7 +7638,7 @@ static void addTestOnlyAttrCallbacks() {
       //event->target()
       dom::HTMLElement* elementHTML =
         // TODO: polymorphic_downcast Check failed: dynamic_cast<Derived>(base) == base.
-        static_cast<dom::HTMLElement*>(elem.get());
+        base::polymorphic_downcast<dom::HTMLElement*>(elem.get());
       CHECK(elementHTML);
       return true;
     });
@@ -7451,15 +7688,15 @@ int main(int argc, char** argv) {
     base::Thread::Options options;
 
     main_browser_thread_wrapper_.StartWithOptions(options);
-    #if defined(SEPARATE_UI_THREAD)
+    #if defined(SEPARATE_UI_THREAD_WRAPPER)
       ui_draw_thread_wrapper_.StartWithOptions(options);
-    #endif // SEPARATE_UI_THREAD
+    #endif // SEPARATE_UI_THREAD_WRAPPER
 #if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
     /// \todo Reactor your code so that the waiting happens on another thread instead of the main thread
     main_browser_thread_wrapper_.WaitUntilThreadStarted();
-    #if defined(SEPARATE_UI_THREAD)
+    #if defined(SEPARATE_UI_THREAD_WRAPPER)
       ui_draw_thread_wrapper_.WaitUntilThreadStarted();
-    #endif // SEPARATE_UI_THREAD
+    #endif // SEPARATE_UI_THREAD_WRAPPER
 #endif
   DCHECK(main_browser_thread_wrapper_.IsRunning());
 
@@ -7496,7 +7733,7 @@ int main(int argc, char** argv) {
   DCHECK(main_browser_thread_.IsRunning());
 
   {
-    #if defined(SEPARATE_UI_THREAD)
+    #if defined(SEPARATE_UI_THREAD_WRAPPER)
     ui_draw_thread_wrapper_.task_runner()->PostTask(
     #else
     main_browser_thread_wrapper_.task_runner()->PostTask(
@@ -8380,104 +8617,32 @@ int main(int argc, char** argv) {
   main_thread_event_.Reset();
 #endif // ENABLE_BASE
 
-#ifdef ENABLE_COBALT
-  printf("Initializing COBALT tests...\n");
-  /// \see https://github.com/blockspacer/cobalt-clone-28052019/blob/master/src/cobalt/base/init_cobalt.cc
-  cobalt::InitCobalt(argc, argv, nullptr);
-
-  printf("Starting COBALT tests...\n");
-
-#ifdef HAS_ICU
-  printf("Starting ICU tests...\n");
-    //icu::BreakIterator::getAvailableLocales(); // init
-
-    int32_t locales_count;
-    const icu::Locale* locales =
-        icu::Locale::getAvailableLocales(locales_count);
-        //icu::BreakIterator::getAvailableLocales(locales_count);
-
-    printf("locales_count %d\n", locales_count);
-    /// \see http://userguide.icu-project.org/locale/examples
-    for (int32_t locale = 0; locale < locales_count; locale++) {
-      printf("getLanguage %s getName %s getScript %s\n",
-        locales[locale].getLanguage(),
-        locales[locale].getName(),
-        locales[locale].getScript());
-    }
-
-    // TODO
-    /**/
-    listWordBoundaries(
-      icu::UnicodeString(u8"string asd asd 1"));
-#endif // HAS_ICU
-
-    printf("Creating g_cobaltTester...\n");
-    /// __TODO__
-    //g_cobaltTester = std::make_unique<CobaltTester>();
-
-#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS)) \
-    && defined(ENABLE_COBALT)//&& defined(__TODO__)
-  // Make sure the thread started.
-
-  /// \note we can use PostBlockingTask here only
-  /// if parent thread is not browser (WASM) event loop,
-  /// but better - use async logic
-  //main_browser_thread_.task_runner()->PostBlockingTask(
-  main_browser_thread_.task_runner()->PostTask(
-      FROM_HERE, base::Bind([](){
-          DCHECK(base::MessageLoopCurrent::Get());
-          printf("Starting g_cobaltTester 1...\n");
-          /// __TODO__
-          createCobaltTester();
-          printf("Starting g_cobaltTester 2...\n");
-          createLayoutManager();
-          //g_cobaltTester->run();
-          printf("Finishing g_cobaltTester...\n");
-          //main_thread_event_->Signal();
-      }));
-
-  //createCobaltTester();
-  //createLayoutManager();
-#endif
-
-// TODO >>>>>>>>>>>>>>>>>>
-//    DCHECK(g_cobaltTester);
-//    DCHECK_EQ(base::MessageLoopCurrent::Get().task_runner(), g_cobaltTester->self_task_runner_);
-//    DCHECK(g_cobaltTester->thread_checker_.CalledOnValidThread());
-
-  printf("Waiting COBALT tests...\n");
-  //// \NOTE: DON`T BLOCK MAIN WASM THREAD
-  /// WAITING FOR INFINITE THREAD!
-#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
-  /// \todo Reactor your code so that the waiting happens on another thread instead of the main thread
-  //main_thread_event_.Wait();
-#endif
-  //main_thread_event_.Reset();
-#endif // ENABLE_COBALT
-
 #if defined(ENABLE_SKIA)
   printf("Starting SKIA tests...\n");
 
   std::cout << std::endl; // flush
 
 #if defined(ENABLE_BLINK_UI) //&& defined(__TODO__)
+
+  base::WaitableEvent ui_sync_event(base::WaitableEvent::ResetPolicy::MANUAL,
+                            base::WaitableEvent::InitialState::NOT_SIGNALED);
+
+#if 1
+
 #if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   //base::Thread ui_thread("render");
         //blink::ThreadCreationParams params(blink::WebThreadType::kMainThread);
 
+//#if DCHECK_IS_ON()
+//  WTF::WillCreateThread();
+//#endif
 
-#if DCHECK_IS_ON()
-  WTF::WillCreateThread();
-#endif
         //params.thread_priority = base::ThreadPriority::DISPLAY;
   /// TODO: UpdateThreadTLSAndWait
   //blink::Thread::CreateAndSetCompositorThread();
       //std::unique_ptr<blink::Thread> ui_thread = blink::Thread::CreateThread(params);
   //blink::Thread* ui_thread = blink::Thread::CompositorThread();
 
-
-  base::WaitableEvent ui_sync_event(base::WaitableEvent::ResetPolicy::MANUAL,
-                            base::WaitableEvent::InitialState::NOT_SIGNALED);
 
   //base::Thread::Options ui_thread_options;
   //options.message_loop_type = base::MessageLoop::TYPE_IO;
@@ -8500,8 +8665,8 @@ int main(int argc, char** argv) {
 
 #if defined(SEPARATE_UI_THREAD)
   DCHECK(ui_draw_thread_.IsRunning());
-//  ui_draw_thread_.task_runner()->PostTask(
-  main_browser_thread_.task_runner()->PostTask(
+  ui_draw_thread_.task_runner()->PostTask(
+  //main_browser_thread_.task_runner()->PostTask(
 #else
   DCHECK(main_browser_thread_.IsRunning());
   main_browser_thread_.task_runner()->PostTask(
@@ -8509,83 +8674,20 @@ int main(int argc, char** argv) {
       FROM_HERE,
       base::BindOnce(
           [](base::WaitableEvent* thread_event) {
-              printf("rendering Draw 1\n");
-              std::cout << std::endl; // flush
+
+              //printf("rendering Draw 1\n");
+              //std::cout << std::endl; // flush
 #endif // !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
 
-#if defined(ENABLE_IMAGES)
-              ///DCHECK(thread->IsCurrentThread());
-              ///
-              ///blink::ThreadState::AttachCurrentThread();
-              {
-                  SkImageInfo skImageInfo = SkImageInfo::Make(
-                      100,
-                      100,
-                      SkColorType::kRGBA_8888_SkColorType,
-                      SkAlphaType::kPremul_SkAlphaType, // alpha type can also be opaque if there is no alpha information
-                      SkColorSpace::MakeSRGBLinear()
-                      );
-                  //SkBitmap::Config config = SkImageInfoToBitmapConfig(info, &isOpaque);
-                  //SkBitmap fetched_bitmap;
-                  void* pixels = nullptr;
-                  char* fileData = nullptr;
-                  long int fsize;
-                  //size_t fsize;
-                  int readRes = read_file(fImagePath.c_str(), fileData, fsize, true);
-                  if (readRes != 0) {
-                      printf("can`t read file %s\n", fImagePath.c_str());
-                  }
-                  DCHECK(fileData != nullptr);
-                  ::std::unique_ptr<SkBitmap> decoded(new SkBitmap());
-                  /*
-  static bool Decode(const unsigned char* input, size_t input_size,
-                     ColorFormat format, ::std::vector<unsigned char>* output,
-                     int* w, int* h);
-  static bool Decode(const unsigned char* input, size_t input_size,
-                     SkBitmap* bitmap);
-     */
-                  const unsigned char* data =
-                      reinterpret_cast<const unsigned char*>(fileData);
-                  if (!gfx::PNGCodec::Decode(data, static_cast<size_t>(fsize), decoded.get())) {
-                      printf("can`t decode png file %s\n", fImagePath.c_str());
-                      decoded = gfx::JPEGCodec::Decode(data, static_cast<size_t>(fsize));
-                      if (!decoded) {
-                          printf("can`t decode JPEG file %s\n", fImagePath.c_str());
-                      }
-                  }
-                  //fetched_bitmap.setPixels(pixels);
-                  //fetched_bitmap.setIsOpaque(isOpaque);
-                  //gfx::ImageSkia imageSkia(gfx::ImageSkiaRep(*decoded, /*scale=*/1.0));
-                  gfx::ImageSkiaRep rep = gfx::ImageSkiaRep(*decoded, /*scale=*/1.0);
-                  gfxImageSkia = ::std::make_unique<gfx::ImageSkia>(rep);
-                  if (!gfxImageSkia || gfxImageSkia->isNull()) {
-                      printf("can`t get gfxImageSkia\n");
-                  }
-                  //skImageSp = SkImage::MakeFromBitmap(
-                  //  gfxImageSkia->GetRepresentation(/*scale=*/1.0).GetBitmap());
-                  /// \note requires parent thread (TLS)
-                  skImageSp = SkImage::MakeFromBitmap(rep.GetBitmap());
-                  if (!skImageSp || !skImageSp->isValid(nullptr)) {
-                      printf("can`t get skImageSp\n");
-                  }
-                  DCHECK(skImageSp);
-                  std::cout << std::endl; // flush
+              /*blink::ThreadCreationParams params(blink::WebThreadType::kUnspecifiedWorkerThread);
+              std::unique_ptr<blink::Thread> toBlinkThread =
+                blink::Thread::CreateThread(params);*/
+              //blink::Thread::CreateAndSetCompositorThread();
+              blink::ThreadState::AttachCurrentThread();
 
-//#ifdef __TODO__
-                  base::WeakPtr<blink::WebGraphicsContext3DProviderWrapper> wptr = nullptr;
-                  DCHECK(skImageSp);
-                  sStaticBitmapImage =
-                      blink::StaticBitmapImage::Create(skImageSp, ::std::move(wptr));
-//#endif
+              loadUIAssets();
 
-                  // Shutdown the thread (via its scheduler).
-                  //thread_->Scheduler()->Shutdown();
-
-                  ///
-                  ///blink::ThreadState::DetachCurrentThread();
-              }
-#endif // ENABLE_IMAGES
-
+              // blink::ThreadState::DetachCurrentThread(); // <<< TODO
 
 #if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
               thread_event->Signal();
@@ -8605,6 +8707,10 @@ int main(int argc, char** argv) {
     //ui_thread.Stop();
     // blink::Thread's destructor blocks until all the tasks are processed.
     ///ui_thread.reset();
+
+#else // 0
+  loadUIAssets();
+#endif // 0
 
 #endif // ENABLE_UI
 
@@ -8673,6 +8779,8 @@ int main(int argc, char** argv) {
 
   printf("Initializing skia...\n");
 
+#if 1
+
 #if defined(SEPARATE_UI_THREAD)
   DCHECK(ui_draw_thread_.IsRunning());
   ui_draw_thread_.task_runner()->PostTask(
@@ -8683,89 +8791,17 @@ int main(int argc, char** argv) {
       FROM_HERE, base::Bind([](base::WaitableEvent* thread_event) {
         initUiSkiaSurface(width, height);
 
-        printf("Initializing skia view...\n");
-
-        myView = new SkPainter(SK_ColorRED, 200);
-
-#ifdef ENABLE_SKOTTIE
-        {
-          printf("Initializing skottie animations...\n");
-
-          //
-          // sk_sp<skottie_utils::FileResourceProvider> frp
-          //  = skottie_utils::FileResourceProvider::Make(SkOSPath::Dirname(fPath.c_str()));
-          // frp->load(fPath.c_str(), "data.json");
-          //
-
-          skottie::Animation::Builder builder;
-          /*fAnimation      = builder
-                    //.setLogger(logger)
-                    .setResourceProvider(
-                        skottie_utils::FileResourceProvider::Make(SkOSPath::Dirname(fPath.c_str())))
-                    .makeFromFile(fPath.c_str());*/
-          /*
-          defined(ENABLE_HTML5_SDL) || !defined(__EMSCRIPTEN__)
-          SDL_RWops* fileHandle = SDL_RWFromFile(fPath.c_str(), "r");
-          if (fileHandle == nullptr) {
-              SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Can't find the file!\n");
-          }*/
-
-          printf("Reading skottie animations...\n");
-
-          char* fileString = nullptr;
-          long int fsize;
-          int readRes = read_file(fAnimPath.c_str(), fileString, fsize, true);
-          if (readRes != 0) {
-            printf("can`t read skottie anim %s\n", fAnimPath.c_str());
-            NOTREACHED();
-          }
-          DCHECK(fileString != nullptr);
-
-          /*FILE* f = fopen(fPath.c_str(), "rb");
-          if (!f) {
-            printf("failed to open file: %s\n", fPath.c_str());
-            return 1;
-          }
-          fseek(f, 0, SEEK_END);
-          long int fsize = ftell(f);
-          fseek(f, 0, SEEK_SET);
-          char* fileString = new char[fsize + 1];
-          fread(fileString, 1, fsize, f);
-          fclose(f);
-          fileString[fsize] = 0;*/
-
-          printf("Building skottie animations...\n");
-
-          // see https://github.com/google/skia/blob/master/modules/skottie/src/Skottie.cpp#L459
-          fAnimation = builder.make(fileString, static_cast<size_t>(fsize));
-          printf("Built skottie animations...\n");
-
-          printf("Get skottie stats...\n");
-          fAnimationStats = builder.getStats();
-          fTimeBase = 0; // force a time reset
-          if (fAnimation) {
-            fAnimation->setShowInval(fShowAnimationInval);
-            printf("Loaded Bodymovin animation v: %s, size: [%f %f]\n", fAnimation->version().c_str(),
-                   static_cast<double>(fAnimation->size().width()),
-                   static_cast<double>(fAnimation->size().height()));
-          } else {
-            printf("failed to load Bodymovin animation: %s\n", fAnimPath.c_str());
-            NOTREACHED();
-          }
-          printf("Got skottie stats...\n");
-
-          delete[] fileString; // TODO
-          printf("skottie animations are ready...\n");
-        }
-
         thread_event->Signal();
-#endif // ENABLE_SKOTTIE
+
       }, &ui_sync_event));
 #if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
     /// \todo Reactor your code so that the waiting happens on another thread instead of the main thread
     ui_sync_event.Wait();
     ui_sync_event.Reset();
 #endif
+#else // 0
+  initUiSkiaSurface(width, height);
+#endif // 0
 
 #endif // ENABLE_SKIA
 
@@ -8796,14 +8832,97 @@ int main(int argc, char** argv) {
       }));
 #endif // SEPARATE_UI_THREAD
 
+#ifdef ENABLE_COBALT
+  printf("Initializing COBALT tests...\n");
+  /// \see https://github.com/blockspacer/cobalt-clone-28052019/blob/master/src/cobalt/base/init_cobalt.cc
+  cobalt::InitCobalt(argc, argv, nullptr);
+
+  printf("Starting COBALT tests...\n");
+
+#ifdef HAS_ICU
+  printf("Starting ICU tests...\n");
+    //icu::BreakIterator::getAvailableLocales(); // init
+
+    int32_t locales_count;
+    const icu::Locale* locales =
+        icu::Locale::getAvailableLocales(locales_count);
+        //icu::BreakIterator::getAvailableLocales(locales_count);
+
+    printf("locales_count %d\n", locales_count);
+    /// \see http://userguide.icu-project.org/locale/examples
+    for (int32_t locale = 0; locale < locales_count; locale++) {
+      printf("getLanguage %s getName %s getScript %s\n",
+        locales[locale].getLanguage(),
+        locales[locale].getName(),
+        locales[locale].getScript());
+    }
+
+    // TODO
+    /**/
+    listWordBoundaries(
+      icu::UnicodeString(u8"string asd asd 1"));
+#endif // HAS_ICU
+
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS)) \
+    && defined(ENABLE_COBALT)//&& defined(__TODO__)
+  // Make sure the thread started.
+
+    printf("Creating g_cobaltTester (MT)...\n");
+    /// __TODO__
+    //g_cobaltTester = std::make_unique<CobaltTester>();
+
+#if 1
+
+  /// \note we can use PostBlockingTask here only
+  /// if parent thread is not browser (WASM) event loop,
+  /// but better - use async logic
+  //main_browser_thread_.task_runner()->PostBlockingTask(
+  main_browser_thread_.task_runner()->PostTask(
+      FROM_HERE, base::Bind([](){
+          DCHECK(base::MessageLoopCurrent::Get());
+          printf("Starting g_cobaltTester 1...\n");
+          /// __TODO__
+          createCobaltTester();
+          printf("Starting g_cobaltTester 2...\n");
+          createLayoutManager();
+          //g_cobaltTester->run();
+          printf("Finishing g_cobaltTester...\n");
+          //main_thread_event_->Signal();
+      }));
+#else
+    printf("Starting g_cobaltTester 1...\n");
+    createCobaltTester();
+    printf("Starting g_cobaltTester 2...\n");
+    createLayoutManager();
+    //g_cobaltTester->run();
+    printf("Finishing g_cobaltTester...\n");
+#endif // 0
+
+#endif // #if !(OS_EMSCRIPTEN && DISABLE_PTHREADS) && ENABLE_COBALT
+
+// TODO >>>>>>>>>>>>>>>>>>
+//    DCHECK(g_cobaltTester);
+//    DCHECK_EQ(base::MessageLoopCurrent::Get().task_runner(), g_cobaltTester->self_task_runner_);
+//    DCHECK(g_cobaltTester->thread_checker_.CalledOnValidThread());
+
+  printf("Waiting COBALT tests...\n");
+  //// \NOTE: DON`T BLOCK MAIN WASM THREAD
+  /// WAITING FOR INFINITE THREAD!
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+  /// \todo Reactor your code so that the waiting happens on another thread instead of the main thread
+  //main_thread_event_.Wait();
+#endif // !(OS_EMSCRIPTEN && DISABLE_PTHREADS) && ENABLE_COBALT
+  //main_thread_event_.Reset();
+#endif // ENABLE_COBALT
+
 /// \note emscripten_set_main_loop async, so
 /// don`t declare vars above it (or them will be lost)!
 /// Use member/static variables!
 #ifdef __EMSCRIPTEN__
   printf("running with __EMSCRIPTEN__\n");
   // If using own main loop, must use explicit context swapping (explicitSwapControl and OFFSCREENCANVAS_SUPPORT)
-  emscripten_set_main_loop(mainLoop, 0, 1);
-  //emscripten_set_main_loop(mainLoop, 60, 1);
+  //emscripten_set_main_loop(mainLockFreeLoop, 0, 1);
+  emscripten_set_main_loop(mainLockFreeLoop, 60, 1);
 #else
 #if defined(ENABLE_OPENGL)
   printf("running with glew\n");
@@ -8812,7 +8931,7 @@ int main(int argc, char** argv) {
 #endif // ENABLE_OPENGL
   DCHECK(quitApp == false);
   while (!quitApp) {
-    mainLoop();
+    mainLockFreeLoop();
   }
   printf("running quit...\n");
 #endif

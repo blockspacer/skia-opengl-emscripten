@@ -24,12 +24,9 @@
 
 #include "cobalt/render_tree/resource_provider_stub.h"
 
-#include <skia/include/core/SkCanvas.h>
-#include <skia/include/core/SkFont.h>
-#include <skia/include/core/SkGraphics.h>
-#include <skia/include/core/SkPictureRecorder.h>
-#include <skia/include/core/SkStream.h>
-#include <skia/include/core/SkSurface.h>
+#include <skia/include/core/SkRefCnt.h>
+
+class SkImage;
 
 namespace cobalt {
 namespace renderer {

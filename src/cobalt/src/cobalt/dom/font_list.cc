@@ -191,7 +191,7 @@ float FontList::GetSpaceWidth() {
 
 const scoped_refptr<render_tree::Font>& FontList::GetCharacterFont(
     int32 utf32_character, render_tree::GlyphIndex* glyph_index) {
-  printf("FontList::GetCharacterFont 1");
+  //printf("FontList::GetCharacterFont 1");
   // Walk the list of fonts, requesting any encountered that are in an
   // unrequested state. The first font encountered that has the character is the
   // character font.
