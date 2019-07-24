@@ -237,14 +237,18 @@ FontCache::GetCharacterFallbackTypefaceMap(
 const scoped_refptr<render_tree::Typeface>&
 FontCache::GetCharacterFallbackTypeface(int32 utf32_character,
                                         const render_tree::FontStyle& style) {
-  //printf("FontCache::GetCharacterFallbackTypefaceMap 1\n");
+  printf("FontCache::GetCharacterFallbackTypefaceMap 1\n");
   DCHECK(thread_checker_.CalledOnValidThread());
+  printf("FontCache::GetCharacterFallbackTypefaceMap 2\n");
   DCHECK(resource_provider());
-    DCHECK(resource_provider()->GetCharacterFallbackTypeface(utf32_character, style,
-                                                        language_script_));
+  DCHECK(resource_provider()->
+    GetCharacterFallbackTypeface(utf32_character, style,
+      language_script_));
+  printf("FontCache::GetCharacterFallbackTypefaceMap 3\n");
   return GetCachedLocalTypeface(
-      resource_provider()->GetCharacterFallbackTypeface(utf32_character, style,
-                                                        language_script_));
+      resource_provider()->
+        GetCharacterFallbackTypeface(utf32_character, style,
+          language_script_));
 }
 
 scoped_refptr<render_tree::GlyphBuffer> FontCache::CreateGlyphBuffer(

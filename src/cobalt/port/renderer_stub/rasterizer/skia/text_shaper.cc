@@ -78,8 +78,10 @@ bool ShouldFakeBoldText(const render_tree::FontProvider* font_provider,
   // https://www.w3.org/TR/css-fonts-3/#font-weight-prop
   // https://www.w3.org/TR/css-fonts-3/#font-style-matching
   if (font_provider->style().weight > 500) {
-    const sk_sp<SkTypeface_Cobalt>& typeface(font->GetSkTypeface());
-    return typeface->synthesizes_bold();
+    const sk_sp</*SkTypeface_Cobalt*/SkTypeface>& typeface(
+      //font->GetSkTypeface());
+      font->prepareFallbackTypeface());
+    return typeface->isBold()/*synthesizes_bold()*/;
   }
   return false;
 }
@@ -354,7 +356,8 @@ void TextShaper::ShapeComplexRun(const base::char16* text_buffer,
     //const SkFont* fnt = script_run.font->GetSkFont();//GetDefaultFont();
     //DCHECK(fnt);
 
-    DCHECK(script_run.font->GetSkTypeface());
+    //DCHECK(script_run.font->GetSkTypeface());
+    DCHECK(script_run.font->prepareFallbackTypeface());
     SkFont tmpFont = script_run.font->GetSkFont();
         //new SkFont(script_run.font->GetSkTypeface(), script_run.font->size(), 1.0f, 0.0f); /// __TODO__
 
@@ -536,9 +539,10 @@ void TextShaper::AddFontRunToGlyphBuffer(
   //DCHECK(font->GetDefaultFont());
   //printf("TextShaper::AddFontRunToGlyphBuffer 2\n");
 
-  DCHECK(font->GetSkTypeface());
+  //DCHECK(font->GetSkTypeface());
+  DCHECK(font->prepareFallbackTypeface());
   SkFont tmpFont = font->GetSkFont();
-      new SkFont(font->GetSkTypeface(), font->size(), 1.0f, 0.0f); /// __TODO__
+      new SkFont(font->prepareFallbackTypeface()/*GetSkTypeface()*/, font->size(), 1.0f, 0.0f); /// __TODO__
 
   const SkTextBlobBuilder::RunBuffer& buffer =
       builder->allocRunPosH(tmpFont, glyph_count, 0); // TODO: GetDefaultFont

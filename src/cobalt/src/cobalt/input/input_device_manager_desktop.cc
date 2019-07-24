@@ -35,7 +35,7 @@
 #include "cobalt/input/create_default_camera_3d.h"
 #include "cobalt/input/input_poller_impl.h"
 
-#define ENABLE_OVERLAY_INFO 1 /// TODO: make optional
+//#define ENABLE_OVERLAY_INFO 1 /// TODO: make optional
 
 #if defined(ENABLE_OVERLAY_INFO)
 #include "cobalt/overlay_info/overlay_info_registry.h"

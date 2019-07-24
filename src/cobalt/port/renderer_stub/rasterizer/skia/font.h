@@ -43,7 +43,11 @@ class Font : public render_tree::Font {
 
   ~Font();
 
-  const sk_sp<SkTypeface_Cobalt>& GetSkTypeface() const;
+  static sk_sp<SkTypeface> prepareFallbackTypeface();
+
+  /*static sk_sp<SkTypeface_Cobalt> prepareFallbackSkTypeface();
+
+  const sk_sp<SkTypeface_Cobalt>& GetSkTypeface() const;*/
 
   // Returns the pixel size described by this font.
   SkScalar size() const { return size_; }
@@ -82,7 +86,7 @@ class Font : public render_tree::Font {
 
   static sk_sp<SkTypeface> getDefaultTypeface();
 
-  static sk_sp<SkTypeface_Cobalt> GetDefaultSkTypeface();
+  //static sk_sp<SkTypeface_Cobalt> GetDefaultSkTypeface();
 
   //const SkFont* GetSkFont() const;
 

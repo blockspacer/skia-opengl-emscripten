@@ -137,7 +137,6 @@
 
 //#undef ENABLE_SKOTTIE
 //#undef ENABLE_CUSTOM_FONTS
-//#undef ENABLE_COBALT
 
 //#if defined(ENABLE_COBALT_RENDERER_STUB)
 //#include "renderer_stub/renderer_module.h"
@@ -354,8 +353,6 @@
 //#include "SkRandom.h"
 //#include "SkSurface.h"
 //#include "SkSurface_Gpu.h"
-
-static sk_sp<SkTypeface> sktp;
 #endif // ENABLE_SKIA
 
 #include <stdio.h>
@@ -794,6 +791,7 @@ static void CheckOpenGLError(const char* stmt, const char* fname, int line)
 }
 
 #ifndef NDEBUG
+    #warning "CheckOpenGLError enabled"
     #define GL_CHECK_WITH_MESSAGE(msg) do { \
             CheckOpenGLError(msg, __FILE__, __LINE__); \
         } while (0)
@@ -877,6 +875,8 @@ sk_sp<const GrGLInterface> emscripten_GrGLMakeNativeInterface() {
 }
 #endif
 
+// TODO >>>
+//static bool render_browser_window = true;
 static bool render_browser_window = false;
 
 // must be POT
@@ -900,6 +900,7 @@ static int browser_height = height;//10000;
 //#undef ENABLE_COBALT
 #ifdef ENABLE_COBALT
 #include "renderer_stub/rasterizer/skgl/software_rasterizer.h"
+#include "renderer_stub/rasterizer/skia/font.h"
 
 #include "render_tree_combiner.h"
 #include "starboard/event.h"
@@ -1247,6 +1248,11 @@ typedef base::Callback<void(const cobalt::layout::LayoutManager::LayoutResults&)
     OnRenderTreeProducedCallback;
 #endif // ENABLE_COBALT
 
+// TODO >>>
+//#ifdef ENABLE_COBALT
+//#undef ENABLE_COBALT
+//#endif
+
 static const float dpi_scale = 1.0f;
 
 #if defined(ENABLE_IMAGES)
@@ -1270,21 +1276,6 @@ static bool fShowAnimationInval = false;
 //static bool fShowAnimationStats = false;
 #endif // ENABLE_SKOTTIE
 
-#if defined(ENABLE_SKIA) && defined(ENABLE_CUSTOM_FONTS)
-static SkFont* skFont1 = nullptr;
-static SkFont* skFont2 = nullptr;
-static const float FONT_SIZE_F = 22.0f;
-#endif
-
-#ifdef ENABLE_BASE
-static base::Thread main_browser_thread_("Main_Browser_Thread");
-// TODO: remove main_browser_thread_wrapper_ or enable only on WASM MT
-static base::Thread main_browser_thread_wrapper_("Main_Browser_Thread_Wrapper");
-//static base::Thread input_device_thread_("Input_Device_Thread");
-static base::Thread ui_draw_thread_("UI_Draw_Thread");
-static base::WaitableEvent main_thread_event_;
-#endif
-
 #ifdef ENABLE_HARFBUZZ
 // see https://github.com/sam8dec/skia/blob/master/tools/using_skia_and_harfbuzz.cpp#L140
 // see https://github.com/chromium/chromium/blob/master/third_party/blink/renderer/platform/fonts/shaping/harfbuzz_face.cc#L68
@@ -1296,12 +1287,101 @@ struct HBFontDel {
 static ::std::unique_ptr<hb_font_t, HBFontDel> fHarfBuzzFont;
 static const int FONT_SIZE_SCALE = 512;
 //static SkPaint glyph_paint;
+#endif // ENABLE_HARFBUZZ
 
+#if defined(ENABLE_SKIA) && defined(ENABLE_CUSTOM_FONTS)
+//static SkFont* skFont1 = nullptr;
+//static SkFont* skFont2 = nullptr;
+static const float FONT_SIZE_F = 22.0f;
+//static sk_sp<SkTypeface> sktp;
+static sk_sp<SkTypeface> sktpForUI;
+const char* fontPath = "./resources/fonts/FreeSans.ttf";
+
+static void prepareUIFonts() {
+  // SkFont font;//(nullptr, 24);//SkFont::kA8_MaskType, flags);
+  if(!sktpForUI) {
+    sk_sp<SkData> data = SkData::MakeFromFileName(fontPath);
+    if (!data) {
+      printf("failed SkData::MakeFromMalloc for font %s\n", fontPath);
+      NOTREACHED();
+    }
+    const int index = 0;
+    sktpForUI = SkTypeface::MakeFromData(data, index);
+
+    printf("Creating harfbuzz fonts...\n");
+
+    #ifdef ENABLE_HARFBUZZ
+      auto destroy = [](void *d) { static_cast<SkData*>(d)->unref(); };
+      const char* bytes = static_cast<const char*>(data->data());
+      unsigned int size = static_cast<unsigned int>(data->size());
+      hb_blob_t* blob = hb_blob_create(bytes,
+                                       size,
+                                       HB_MEMORY_MODE_READONLY,
+                                       data.release(),
+                                       destroy);
+      assert(blob);
+      hb_blob_make_immutable(blob);
+      hb_face_t* face = hb_face_create(blob, static_cast<unsigned>(index));
+      hb_blob_destroy(blob);
+      //assert(face);
+      DCHECK(sktpForUI);
+      if (!face) {
+        printf("Can`t create harfbuzz face...\n");
+        sktpForUI.reset();
+        NOTREACHED();
+      }
+      hb_face_set_index(face, static_cast<unsigned>(index));
+      hb_face_set_upem(face, static_cast<unsigned>(sktpForUI->getUnitsPerEm()));
+      fHarfBuzzFace.reset(face);
+
+      // see https://chromium.googlesource.com/skia/+/chrome/m56/tools/SkShaper_harfbuzz.cpp
+      fHarfBuzzFont.reset(hb_font_create(fHarfBuzzFace.get()));
+      if (!fHarfBuzzFont.get()) {
+        printf("Can`t create harfbuzz font...\n");
+        sktpForUI.reset();
+        NOTREACHED();
+      }
+
+      // see https://github.com/aam/skiaex/blob/master/app/main.cpp#L177
+      // see https://github.com/harfbuzz/harfbuzz-tutorial/blob/master/hello-harfbuzz-opentype.c#L31
+      DCHECK(fHarfBuzzFont);
+      hb_font_set_scale(fHarfBuzzFont.get(),
+        static_cast<int>(FONT_SIZE_SCALE * FONT_SIZE_F),
+        static_cast<int>(FONT_SIZE_SCALE * FONT_SIZE_F));
+      hb_ot_font_set_funcs(fHarfBuzzFont.get());
+    #endif // ENABLE_HARFBUZZ
+  }
+}
+#endif // ENABLE_SKIA && ENABLE_CUSTOM_FONTS
+
+#ifdef ENABLE_BASE
+static base::Thread main_browser_thread_("Main_Browser_Thread");
+// TODO: remove main_browser_thread_wrapper_ or enable only on WASM MT
+static base::Thread main_browser_thread_wrapper_("Main_Browser_Thread_Wrapper");
+//static base::Thread input_device_thread_("Input_Device_Thread");
+
+#if !(defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__))
+
+// TODO: causes hangs on WASM MT (even in render_browser_window mode)
+//#define SEPARATE_UI_THREAD 1
+
+#endif // __EMSCRIPTEN__ && __EMSCRIPTEN_PTHREADS__
+
+#if defined(SEPARATE_UI_THREAD)
+static base::Thread ui_draw_thread_("UI_Draw_Thread");
+// TODO: remove ui_draw_thread_wrapper_ or enable only on WASM MT
+static base::Thread ui_draw_thread_wrapper_("UI_Draw_Thread_Wrapper");
+#endif // SEPARATE_UI_THREAD
+
+static base::WaitableEvent main_thread_event_;
+#endif // ENABLE_BASE
+
+#ifdef ENABLE_HARFBUZZ
 /// \note see SkShaper_harfbuzz.cpp if you want shaping in rectangle
 /// \see https://github.com/skui-org/skia/blob/f577133e703ea6a81602426aea879857cfd0b2e1/experimental/canvaskit/canvaskit_bindings.cpp#L477
 /// \see https://github.com/skui-org/skia/blob/f577133e703ea6a81602426aea879857cfd0b2e1/modules/skshaper/src/SkShaper_harfbuzz.cpp#L888
 static bool DrawGlyphs(double current_x, double current_y,
-                       SkPaint& glyph_paint, SkFont& sfont,
+                       SkPaint& glyph_paint, const SkFont& sfont,
                        SkCanvas* canvas, hb_buffer_t *hb_buffer) {
     SkTextBlobBuilder textBlobBuilder;
     unsigned len = hb_buffer_get_length (hb_buffer);
@@ -1412,7 +1492,7 @@ static GLuint skia_texture = 0;
 static GrContext* grContext = nullptr;
 // static sk_sp<SkSurface> sSurface = nullptr;
 static SkSurface* sSurface = nullptr;
-#endif
+#endif // SKIA_GR_CONTEXT
 
 #endif // ENABLE_SKIA
 
@@ -1421,7 +1501,7 @@ static SDL_Window* window;
 static SDL_Renderer* sdl_ren;
 #endif
 
-#ifdef __EMSCRIPTEN__
+#if defined(__EMSCRIPTEN__)
 EM_BOOL context_lost(int eventType, const void *reserved, void *userData)
 {
     printf("C code received a signal for WebGL context lost! This should not happen!\n");
@@ -1447,22 +1527,22 @@ static EmscriptenWebGLContextAttributes attr;
 // @see explicitSwapControl
 #if defined(HAVE_SWAP_CONTROL)
 static EM_BOOL enableSwapControl = EM_TRUE;
-#else
+#else // HAVE_SWAP_CONTROL
 static EM_BOOL enableSwapControl = EM_FALSE;
-#endif
+#endif // HAVE_SWAP_CONTROL
 
 // @see enableExtensionsByDefault
 static EM_BOOL enableEmscriptenExtensionsByDefault = EM_TRUE;
-#else
+#else // __EMSCRIPTEN__
 #if defined(ENABLE_OPENGL)
 static SDL_GLContext glContext;
 #endif // ENABLE_OPENGL
-#endif
+#endif // __EMSCRIPTEN__
 
 #if defined(ENABLE_HTML5_SDL) || !defined(__EMSCRIPTEN__)
 // Event handler
 static SDL_Event e;
-#endif
+#endif // ENABLE_HTML5_SDL || !__EMSCRIPTEN__
 
 // Main loop flag
 static bool quitApp = false;
@@ -1620,7 +1700,7 @@ static void initUiSkiaSurface(int /*w*/, int /*h*/) {
       printf("failed to create surface.\n");
     }
   }
-#endif
+#endif // SKIA_GR_CONTEXT
   // see https://github.com/midasitdev/aliceui/blob/master/example/OpenGLExample/OpenGLExample/main.cpp#L391
   const SkImageInfo info = SkImageInfo::MakeN32(width, height, kPremul_SkAlphaType);
   sRasterSurface = SkSurface::MakeRaster(info);
@@ -1655,13 +1735,14 @@ public:
 #ifdef ENABLE_SKIA_HQ
     paint.setAntiAlias(true);
     paint.setFilterQuality( SkFilterQuality::kMedium_SkFilterQuality );
-#else
+#else // ENABLE_SKIA_HQ
     paint.setAntiAlias(false);
     paint.setFilterQuality( SkFilterQuality::kNone_SkFilterQuality );
-#endif
+#endif // ENABLE_SKIA_HQ
     paint.setColor(SK_ColorRED);
     /// paint.setColor(0xffeeeeee);
-      printf("onDraw() 2\n");
+
+    //printf("onDraw() 2\n");
 
     paint.setColor(SK_ColorGREEN);
     sk_canvas->drawRect({ 1000, 1700, 50, 50 }, paint);
@@ -1684,8 +1765,9 @@ public:
       paint.setShader(shdr);
       //printf("onDraw() 2.4\n");
     }
-#endif
-      printf("onDraw() 3\n");
+#endif // ENABLE_SK_EFFECTS
+
+    //printf("onDraw() 3\n");
 
     // canvas->drawLine(m_pos.x(), m_pos.y(), m_prev.x(), m_prev.y(), paint);
 
@@ -1693,10 +1775,29 @@ public:
     paint.setStyle(SkPaint::kFill_Style);
       //printf("onDraw() 4\n");
 
+    // TODO >>>
+    //return;
+
 #ifdef ENABLE_CUSTOM_FONTS
-    // SkFont font;//(nullptr, 24);//SkFont::kA8_MaskType, flags);
-    sk_canvas->drawString("1 Skia Test 1 Skia Test 1 Skia Test 1", 60, 32, *skFont1, paint);
-    sk_canvas->drawString("2 Skia Test 2 Skia Test 2 Skia Test 2", 20, 97, *skFont2, paint);
+    prepareUIFonts();
+    DCHECK(sktpForUI);
+    SkFont skFont1ForUI(sktpForUI, FONT_SIZE_F, 1.0f, 0.0f);
+    skFont1ForUI.setEdging(SkFont::Edging::kAntiAlias);
+    DCHECK(sktpForUI);
+    SkFont skFont2ForUI(sktpForUI, 30.0f, 1.5f, 0.0f);
+    skFont2ForUI.setEdging(SkFont::Edging::kAntiAlias);
+
+    // TODO >>>
+    //return;
+
+    sk_canvas->drawString("1!1 Skia Test 1 Skia Test 1 "
+                          "Skia Test 1!", 60, 32, skFont1ForUI, paint);
+
+    sk_canvas->drawString("2!2 Skia Test 2 Skia Test 2 "
+                          "Skia Test 2!", 20, 97, skFont2ForUI, paint);
+
+    // TODO >>> !!! <<<
+    //return;
 
 // see https://github.com/google/skia/blob/master/modules/skshaper/src/SkShaper_harfbuzz.cpp#L1221
 #ifdef ENABLE_HARFBUZZ
@@ -1719,8 +1820,11 @@ public:
         double current_y = 400.0;
         double line_spacing_ratio = 1.5;
         double font_size = static_cast<double>(FONT_SIZE_F);
+        DCHECK(font_size > 0);
 
-        auto WriteLine = [&current_x, &current_y, &line_spacing_ratio, &font_size, &glyph_paint, &sk_canvas](const char *text) {
+        auto WriteLine = [&skFont1ForUI,
+          &current_x, &current_y, &line_spacing_ratio,
+          &font_size, &glyph_paint, &sk_canvas](const char *text) {
             /* Create hb-buffer and populate. */
             hb_buffer_t *hb_buffer = hb_buffer_create ();
 
@@ -1729,23 +1833,24 @@ public:
             hb_buffer_set_script(hb_buffer, HB_SCRIPT_CYRILLIC);
             //hb_buffer_set_language(hb_buffer, hb_language_from_string("ru", 2));
             hb_buffer_set_language(hb_buffer, hb_language_from_string("en", 2));
-#else
+#else // HARFBUZZ_UNICODE
             hb_buffer_set_script(hb_buffer, HB_SCRIPT_LATIN);
             hb_buffer_set_language(hb_buffer, hb_language_from_string("en", 2));
-#endif
+#endif // HARFBUZZ_UNICODE
             //hb_buffer_add_latin1(hb_buffer, text, -1, 0, -1);
             hb_buffer_add_utf8 (hb_buffer, text, -1, 0, -1);
 
             //hb_buffer_add_utf8 (hb_buffer, text, strlen(text), 0, -1);
             hb_buffer_guess_segment_properties (hb_buffer);
             /* Shape it! */
+            DCHECK(fHarfBuzzFont);
             hb_shape (fHarfBuzzFont.get(), hb_buffer, nullptr, 0);
             unsigned len = hb_buffer_get_length(hb_buffer);
             if (len == 0) {
                 printf("empty hb_buffer_get_length\n");
                 return;
             }
-            ///DrawGlyphs(current_x, current_y, glyph_paint, *skFont1, sk_canvas, hb_buffer);
+            DrawGlyphs(current_x, current_y, glyph_paint, skFont1ForUI, sk_canvas, hb_buffer);
 
             hb_buffer_destroy (hb_buffer);
 
@@ -1761,20 +1866,23 @@ public:
         const char *textLine1 = "harfbuzz_skia_ex1 РУССКИЙ ТЕКСТ";
         const char *textLine2 = "2 РУССКИЙ ТЕКСТ";
         const char *textLine3 = "2 РУССКИЙ ТЕКСТ";
-#else
+#else // HARFBUZZ_UNICODE
         const char *textLine1 = "harfbuzz_skia_ex1 ENGLISH TEXT";
         const char *textLine2 = "2 ENGLISH TEXT";
         const char *textLine3 = "3 ENGLISH TEXT";
-#endif
+#endif // HARFBUZZ_UNICODE
 
         WriteLine(textLine1);
         WriteLine(textLine2);
         WriteLine(textLine3);
 
         // test again without hb
-        auto blob3 = SkTextBlob::MakeFromString("blob3blob3blob3", *skFont2);
-        ///sk_canvas->drawTextBlob(blob3.get(), 500, 500, glyph_paint);
+        auto blob3 = SkTextBlob::MakeFromString("blob3blob3blob3", skFont2ForUI);
+        sk_canvas->drawTextBlob(blob3.get(), 500, 500, glyph_paint);
 #endif // ENABLE_HARFBUZZ
+
+    // TODO >>>
+    //return;
 
 #ifdef ENABLE_SK_EFFECTS
     // see https://skia.org/user/api/skpaint_overview
@@ -1786,8 +1894,8 @@ public:
       const SkScalar y = 52.0f;
       //const SkScalar textSize = 48.0f;
       const uint8_t blurAlpha = 127;
-      auto blob1 = SkTextBlob::MakeFromString("?123Skia! skFont1", *skFont1);
-      auto blob2 = SkTextBlob::MakeFromString("skFont2 !!! skFont2", *skFont2);
+      auto blob1 = SkTextBlob::MakeFromString("?123Skia! skFont1UIThread", skFont1ForUI);
+      auto blob2 = SkTextBlob::MakeFromString("dfsdf !!! skFont2UIThread", skFont2ForUI);
       SkPaint blur(paint);
       blur.setAlpha(blurAlpha);
       blur.setMaskFilter(SkMaskFilter::MakeBlur(kNormal_SkBlurStyle, sigma, 0));
@@ -1805,7 +1913,10 @@ public:
 #endif // ENABLE_SK_EFFECTS
 #endif // ENABLE_CUSTOM_FONTS
 
-      printf("onDraw() 5\n");
+      //printf("onDraw() 5\n");
+
+    // TODO >>>
+    //return;
 
 #ifdef ENABLE_SKOTTIE
       //printf("onDraw() 6\n");
@@ -1816,10 +1927,10 @@ public:
 #ifdef ENABLE_SKIA_HQ
       paint.setAntiAlias(true);
       paint.setFilterQuality( SkFilterQuality::kMedium_SkFilterQuality );
-#else
+#else // ENABLE_SKIA_HQ
       paint.setAntiAlias(false);
       paint.setFilterQuality( SkFilterQuality::kNone_SkFilterQuality );
-#endif
+#endif // ENABLE_SKIA_HQ
       //printf("SkRect::MakeSize...\n");
       const auto dstR = SkRect::MakeSize(fWinSize);
       //printf("fAnimation->render...\n");
@@ -1838,7 +1949,10 @@ public:
     cc::SkiaPaintCanvas paint_canvas(sk_canvas);
 #endif // ENABLE_BLINK_UI
 
-      printf("onDraw() x1\n");
+    //printf("onDraw() x1\n");
+
+    // TODO >>>
+    //return;
 
 #ifdef ENABLE_BLINK_PLATFORM
   // see https://chromium.googlesource.com/chromium/src/+/master/third_party/blink/renderer/platform/graphics/paint/README.md
@@ -1855,13 +1969,13 @@ public:
     flags.setFilterQuality(SkFilterQuality::kMedium_SkFilterQuality);
     context.SetShouldAntialias(true);
     context.SetImageInterpolationQuality(blink::InterpolationQuality::kInterpolationMedium);
-#else
+#else // ENABLE_SKIA_HQ
     flags.setAntiAlias(false);
     flags.setFilterQuality(SkFilterQuality::kNone_SkFilterQuality);
     context.SetShouldAntialias(false);
     // SetImageInterpolationQuality calls setFilterQuality
     context.SetImageInterpolationQuality(blink::InterpolationQuality::kInterpolationNone);
-#endif
+#endif // ENABLE_SKIA_HQ
   //context.SetMiterLimit(1);
   context.SetStrokeThickness(5);
   context.SetLineCap(blink::kSquareCap);
@@ -1919,9 +2033,9 @@ public:
     clipped_edges);
   //printf("FillRect 9\n");
 
-      printf("onDraw() x2\n");
+  //printf("onDraw() x2\n");
 
-#if defined(ENABLE_BLINK_UI) ///&& defined(__TODO__)
+#if defined(ENABLE_BLINK_UI)
 #if defined(ENABLE_IMAGES)
   if (!sStaticBitmapImage || sStaticBitmapImage->IsNull() || !sStaticBitmapImage->IsValid()) {
     printf("Invalid StaticBitmapImage\n");
@@ -1953,7 +2067,7 @@ public:
 #endif // ENABLE_UI
 
 
-      printf("onDraw() x3\n");
+  //printf("onDraw() x3\n");
 
   // Must be called when a painting is finished. Updates the current paint
   // artifact with the new paintings.
@@ -1961,6 +2075,9 @@ public:
 
   //printf("FillRect 91\n");
 #endif // ENABLE_BLINK_PLATFORM
+
+    // TODO >>>
+    //return;
 
     //printf("ENABLE_BLINK_UI 1\n");
 #ifdef ENABLE_BLINK_UI
@@ -2004,8 +2121,7 @@ public:
       //printf("%i box %s bounds %s\n", bres, box.ToString().c_str(), bounds.ToString().c_str());
     }
 
-#ifdef __TODO__
-      printf("onDraw() x4\n");
+    //printf("onDraw() x4\n");
 
 #ifdef ENABLE_HARFBUZZ
     {
@@ -2018,9 +2134,9 @@ public:
       //render_text->SetText(render_test_string.Characters16());
       gfx::FontRenderParams fontRenderParams;
       fontRenderParams.antialiasing = true;
-      DCHECK(sktp);
+      DCHECK(sktpForUI);
       gfx::PlatformFont* customPlatformFont = new gfx::PlatformFontSkia(
-        sktp, /*family*/ "Arial", /*size_pixels*/ 22,
+        sktpForUI, /*family*/ "Arial", /*size_pixels*/ 22,
         /*style*/ gfx::Font::NORMAL,
         /*weight*/ gfx::Font::Weight::NORMAL,
         /*params*/ fontRenderParams);
@@ -2073,8 +2189,7 @@ public:
       //  gfx::CreateVectorIcon(kFooBarIcon, 32, color_utils::DeriveDefaultIconColor(text_color));
     }
 #endif // ENABLE_BLINK_UI
-#endif // __TODO__
-      printf("onDraw() 7\n");
+    //printf("onDraw() 7\n");
   }
 
   SkPainter(SkColor color, SkScalar size) : m_color(color), m_size(size) {}
@@ -4102,10 +4217,10 @@ static void animate() {
 
 #if defined(ENABLE_SK_UI)
 static sk_sp<SkImage> UIDemoImage;
+// TODO: replace with task queue
 //static std::mutex UIDemoImageMutex;
 
 sk_sp<SkImage> getUiSkImage() {
-  //std::lock_guard<std::mutex> lock(mutexRasterizerSkImage);
   //std::scoped_lock lock(UIDemoImageMutex);
   return UIDemoImage;
 }
@@ -4113,13 +4228,13 @@ sk_sp<SkImage> getUiSkImage() {
 static int testRed = 0;
 
 static void refreshUIDemo() {
-  ///if (isDebugPeriodReached()) printf("refreshUIDemo...\n");
+  if (isDebugPeriodReached()) printf("refreshUIDemo...\n");
 
-  printf("refreshUIDemo 1...\n");
+  //printf("refreshUIDemo 1...\n");
 
   animate();
 
-  printf("refreshUIDemo 2...\n");
+  //printf("refreshUIDemo 2...\n");
 
   //DCHECK(g_cobaltTester);
   //DCHECK_EQ(base::MessageLoopCurrent::Get().task_runner(), g_cobaltTester->self_task_runner_);
@@ -4131,16 +4246,17 @@ static void refreshUIDemo() {
       //  getRasterizerSkSurface()->getCanvas();
       sRasterSurface->getCanvas();
 
-  if(testRed++ > 255) {
+  if(++testRed >= 255) {
     testRed = 0;
   }
+  DCHECK_LE(testRed, 255);
   uicanvas->clear(SkColorSetARGB(testRed, 255, 255, 255));
 
   ///if (isDebugPeriodReached()) printf("Draw() 3\n");
 
-  printf("refreshUIDemo 2.1...\n");
+  //printf("refreshUIDemo 2.1...\n");
   myView->onDraw(uicanvas);
-  printf("refreshUIDemo 2.2...\n");
+  //printf("refreshUIDemo 2.2...\n");
 
   //if (isDebugPeriodReached()) printf("Draw() 4\n");
 
@@ -4156,15 +4272,14 @@ static void refreshUIDemo() {
     }
   }
 
-  printf("refreshUIDemo 3...\n");
+  //printf("refreshUIDemo 3...\n");
 }
 
 static void drawUIDemo() {
-  ///if (isDebugPeriodReached()) printf("drawUIDemo...\n");
+  if (isDebugPeriodReached()) printf("drawUIDemo...\n");
 
   SkPixmap uiPixmap;
   {
-    //std::scoped_lock lock(UIDemoImageMutex);
     sk_sp<SkImage> res = getUiSkImage();
     if (nullptr == res) {
         ///if (isDebugPeriodReached())
@@ -4221,7 +4336,7 @@ static void drawBrowserDemo() {
     } else {
 #if defined(ENABLE_SK_UI)
         //drawUIDemo();
-#endif
+#endif // ENABLE_SK_UI
     }
 
     //if (nullptr == pImage) {
@@ -4229,7 +4344,7 @@ static void drawBrowserDemo() {
     //    printf("can`t get pImage\n");
     //}
 }
-#endif
+#endif // ENABLE_COBALT
 
 static void onResize(int widthIn, int heightIn)
 {
@@ -4245,7 +4360,7 @@ static void onResize(int widthIn, int heightIn)
 //
 #if defined(ENABLE_OPENGL)
 static void Draw() {
-  //printf("Draw\n");
+  //printf("Draw!\n");
 
   //if (isDebugPeriodReached()) printf("Draw() 1\n");
 
@@ -4264,18 +4379,21 @@ static void Draw() {
       && g_cobaltTester->window_->isDocumentStartedLoading()
       && g_cobaltTester->window_->isStartedDocumentLoader()*/)
   {
+      printf("drawBrowserDemo!\n");
       drawBrowserDemo();
   } else
 #endif
 #if defined(ENABLE_SK_UI)
   {
-#if (defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__))
+#if !defined(SEPARATE_UI_THREAD)
+    //printf("refreshUIDemo!\n");
     refreshUIDemo();
-#endif
+#endif // SEPARATE_UI_THREAD
     drawUIDemo();
   }
 #else
   {
+    printf("draw nothing!\n");
     // nothing
   }
 #endif
@@ -4472,7 +4590,9 @@ static std::unique_ptr<SbInputData> createEmptySbEventData() {
     std::unique_ptr<SbInputData> data(new SbInputData());
     SbMemorySet(data.get(), 0, sizeof(*data));
      // TODO: free mem
-    data->window = g_cobaltTester->system_window_->GetSbWindow();
+    if(g_cobaltTester && g_cobaltTester->system_window_) {
+      data->window = g_cobaltTester->system_window_->GetSbWindow();
+    }
     data->device_id = 0; // kGamepadDeviceId
     data->key_location = kSbKeyLocationUnspecified;
     //data->character = "k";
@@ -6484,7 +6604,7 @@ static void mainLoop() {
 
   ///if (isDebugPeriodReached()) printf("mainLoop 5\n");
 
-#endif
+#endif // defined(__EMSCRIPTEN__) && defined(HAVE_SWAP_CONTROL)
 
   ///if (isDebugPeriodReached()) printf("mainLoop 6\n");
 
@@ -6502,7 +6622,7 @@ static void mainLoop() {
     std::unique_ptr<SbInputData> data = nullptr;
     data = createEmptySbEventData();
     DCHECK(data);
-#endif
+#endif // ENABLE_COBALT
 
     const SDL_Keymod modState = SDL_GetModState();
 
@@ -6539,7 +6659,7 @@ static void mainLoop() {
         //SDL_GetMouseState(&screenMouseX, &screenMouseY);
 
         // printf("SDL_MOUSEMOTION %d %d\n", screenMouseX, screenMouseY);
-#endif
+#endif // ENABLE_COBALT
         break;
       }
       case SDL_MOUSEBUTTONDOWN: {
@@ -6556,7 +6676,7 @@ static void mainLoop() {
                                    SbInputEventType::kSbInputEventTypePress,
                                    key_modifiers,
                                    SDL2MouseEventToSbKey(e.button.button));
-#endif
+#endif // ENABLE_COBALT
         break;
       }
       case SDL_MOUSEBUTTONUP: {
@@ -6573,7 +6693,7 @@ static void mainLoop() {
                                    SbInputEventType::kSbInputEventTypeUnpress,
                                    key_modifiers,
                                    SDL2MouseEventToSbKey(e.button.button));
-#endif
+#endif // ENABLE_COBALT
         break;
       }
       case SDL_MOUSEWHEEL: {
@@ -6593,7 +6713,7 @@ static void mainLoop() {
                                    SbInputEventType::kSbInputEventTypeWheel,
                                    key_modifiers,
                                    SDL2MouseEventToSbKey(e.button.button));
-#endif
+#endif // ENABLE_COBALT
         break;
       }
       case SDL_KEYDOWN:
@@ -6776,20 +6896,25 @@ static void mainLoop() {
   SDL_RenderFillRect(sdl_ren, &rect);
   SDL_RenderPresent(sdl_ren);
 #endif // ENABLE_OPENGL
-#endif
+#endif // ENABLE_HTML5_SDL || !__EMSCRIPTEN__
 
-#elif defined(__EMSCRIPTEN__)
-  // nothing
+#elif defined(__EMSCRIPTEN__) // EMSCRIPTEN without SDL2
+
+  // Render
+#if defined(ENABLE_OPENGL)
+  Draw();
+#endif // ENABLE_OPENGL
+
 #else
   #error "TODO: port SDL_PollEvent"
-#endif
+#endif // ENABLE_HTML5_SDL || !__EMSCRIPTEN__
 
 #ifdef __EMSCRIPTEN__
-    if (quitApp) {
-        printf("quitting main loop 1\n");
-        emscripten_cancel_main_loop();
-        printf("quitting main loop 2\n");
-    }
+  if (quitApp) {
+    printf("quitting main loop 1\n");
+    emscripten_cancel_main_loop();
+    printf("quitting main loop 2\n");
+  }
 #endif
 
     ///if (isDebugPeriodReached()) printf("mainLoop 7\n");
@@ -6883,13 +7008,19 @@ static void addTestOnlyAttrCallbacks() {
   eventCallbacks["on-mousemove-event"] = [](const scoped_refptr<dom::Event> &event,
       scoped_refptr<cobalt::dom::Element> elem, const std::string& attrVal) {
     CHECK(elem);
-    const dom::PointerEvent* const pointerEvent =
-      base::polymorphic_downcast<const dom::PointerEvent* const>(event.get());
-    const dom::MouseEvent* const mouseEvent =
-      base::polymorphic_downcast<const dom::MouseEvent* const>(event.get());
-    CHECK(pointerEvent || mouseEvent);
-    float x = pointerEvent ? pointerEvent->x() : mouseEvent->x();
-    float y = pointerEvent ? pointerEvent->y() : mouseEvent->y();
+    //const dom::PointerEvent* pointerEvent;
+    const dom::MouseEvent* mouseEvent;
+    /*if(event->type() == base::Tokens::povisibilitychange()) {
+      pointerEvent =
+        // TODO: polymorphic_downcast Check failed: dynamic_cast<Derived>(base) == base.
+        base::polymorphic_downcast<const dom::PointerEvent*>(event.get());
+    }*/
+    mouseEvent =
+      // TODO: base::polymorphic_downcast Check failed: dynamic_cast<Derived>(base) == base.
+      base::polymorphic_downcast<const dom::MouseEvent*>(event.get());
+    CHECK(/*pointerEvent ||*/ mouseEvent);
+    float x = /*pointerEvent ? pointerEvent->x() :*/ mouseEvent->x();
+    float y = /*pointerEvent ? pointerEvent->y() :*/ mouseEvent->y();
     printf("mousemove at (%f;%f) event %s for tag: %s, "
            "attrVal: %s, text_content: %s\n",
             x,
@@ -7000,6 +7131,7 @@ static void addTestOnlyAttrCallbacks() {
         scoped_refptr<cobalt::dom::Element> elem, const std::string& attrVal) {
       CHECK(elem);
       const dom::MouseEvent* const mouseEvent =
+        // TODO: polymorphic_downcast Check failed: dynamic_cast<Derived>(base) == base.
         base::polymorphic_downcast<const dom::MouseEvent* const>(event.get());
       CHECK(mouseEvent);
       float x = mouseEvent->x();
@@ -7021,6 +7153,7 @@ static void addTestOnlyAttrCallbacks() {
         printf("on-wheel-print 1\n");
         CHECK(elem);
         const dom::WheelEvent* const wheelEvent =
+          // TODO: polymorphic_downcast Check failed: dynamic_cast<Derived>(base) == base.
           base::polymorphic_downcast<const dom::WheelEvent* const>(event.get());
         CHECK(wheelEvent);
         float x = wheelEvent->delta_x();
@@ -7043,6 +7176,7 @@ static void addTestOnlyAttrCallbacks() {
         scoped_refptr<cobalt::dom::Element> elem, const std::string& attrVal) {
       CHECK(elem);
       const dom::MouseEvent* const mouseEvent =
+        // TODO: polymorphic_downcast Check failed: dynamic_cast<Derived>(base) == base.
         base::polymorphic_downcast<const dom::MouseEvent* const>(event.get());
       CHECK(mouseEvent);
       float x = mouseEvent->x();
@@ -7063,6 +7197,7 @@ static void addTestOnlyAttrCallbacks() {
         scoped_refptr<cobalt::dom::Element> elem, const std::string& attrVal) {
       CHECK(elem);
       const dom::MouseEvent* const mouseEvent =
+        // TODO: polymorphic_downcast Check failed: dynamic_cast<Derived>(base) == base.
         base::polymorphic_downcast<const dom::MouseEvent* const>(event.get());
       CHECK(mouseEvent);
       float x = mouseEvent->x();
@@ -7083,6 +7218,7 @@ static void addTestOnlyAttrCallbacks() {
         scoped_refptr<cobalt::dom::Element> elem, const std::string& attrVal) {
       CHECK(elem);
       const dom::MouseEvent* const mouseEvent =
+        // TODO: polymorphic_downcast Check failed: dynamic_cast<Derived>(base) == base.
         base::polymorphic_downcast<const dom::MouseEvent* const>(event.get());
       CHECK(mouseEvent);
       float x = mouseEvent->x();
@@ -7097,7 +7233,8 @@ static void addTestOnlyAttrCallbacks() {
               elem->text_content().value_or("").c_str());
       //event->target()
       dom::HTMLElement* elementHTML =
-        base::polymorphic_downcast<dom::HTMLElement*>(elem.get());
+        // TODO: polymorphic_downcast Check failed: dynamic_cast<Derived>(base) == base.
+        static_cast<dom::HTMLElement*>(elem.get());
       CHECK(elementHTML);
       //elementHTML->GetUiNavItem()->Focus();
       elementHTML->Focus();
@@ -7113,6 +7250,7 @@ static void addTestOnlyAttrCallbacks() {
       scoped_refptr<HTMLElement> indicated_element = document->indicated_element();
       CHECK(indicated_element);
       const dom::MouseEvent* const mouseEvent =
+        // TODO: polymorphic_downcast Check failed: dynamic_cast<Derived>(base) == base.
         base::polymorphic_downcast<const dom::MouseEvent* const>(event.get());
       CHECK(mouseEvent);
       float x = mouseEvent->x();
@@ -7126,7 +7264,8 @@ static void addTestOnlyAttrCallbacks() {
               attrVal.c_str(),
               elem->text_content().value_or("").c_str());
       dom::HTMLElement* elementHTML =
-        base::polymorphic_downcast<dom::HTMLElement*>(elem.get());
+        // TODO: polymorphic_downcast Check failed: dynamic_cast<Derived>(base) == base.
+        static_cast<dom::HTMLElement*>(elem.get());
       CHECK(elementHTML);
       elementHTML->Blur();
       /*//elementHTML->GetUiNavItem()->Blur();
@@ -7144,6 +7283,7 @@ static void addTestOnlyAttrCallbacks() {
         scoped_refptr<cobalt::dom::Element> elem, const std::string& attrVal) {
       CHECK(elem);
       const dom::KeyboardEvent* const keyboardEvent =
+        // TODO: polymorphic_downcast Check failed: dynamic_cast<Derived>(base) == base.
         base::polymorphic_downcast<const dom::KeyboardEvent* const>(event.get());
       CHECK(keyboardEvent);
       printf("on-test-keyup key %s event %s for tag: %s, "
@@ -7181,7 +7321,8 @@ static void addTestOnlyAttrCallbacks() {
       printf("SbSystemGetLocaleId %s\n", sbSystemGetLocaleId);
 
       dom::HTMLElement* elementHTML =
-        base::polymorphic_downcast<dom::HTMLElement*>(elem.get());
+        // TODO: polymorphic_downcast Check failed: dynamic_cast<Derived>(base) == base.
+        static_cast<dom::HTMLElement*>(elem.get());
       CHECK(elementHTML);
       return true;
     });
@@ -7191,6 +7332,7 @@ static void addTestOnlyAttrCallbacks() {
         scoped_refptr<cobalt::dom::Element> elem, const std::string& attrVal) {
       CHECK(elem);
       const dom::KeyboardEvent* const keyboardEvent =
+        // TODO: polymorphic_downcast Check failed: dynamic_cast<Derived>(base) == base.
         base::polymorphic_downcast<const dom::KeyboardEvent* const>(event.get());
       CHECK(keyboardEvent);
       printf("on-test-keypress key %s event %s for tag: %s, "
@@ -7232,7 +7374,8 @@ static void addTestOnlyAttrCallbacks() {
       printf("SbSystemGetLocaleId %s\n", sbSystemGetLocaleId);
 
       dom::HTMLElement* elementHTML =
-        base::polymorphic_downcast<dom::HTMLElement*>(elem.get());
+        // TODO: polymorphic_downcast Check failed: dynamic_cast<Derived>(base) == base.
+        static_cast<dom::HTMLElement*>(elem.get());
       CHECK(elementHTML);
       return true;
     });
@@ -7242,8 +7385,10 @@ static void addTestOnlyAttrCallbacks() {
         scoped_refptr<cobalt::dom::Element> elem, const std::string& attrVal) {
       CHECK(elem);
       /*const dom::PointerEvent* const pointerEvent =
-        base::polymorphic_downcast<const dom::PointerEvent* const>(event.get());*/
+        // TODO: polymorphic_downcast Check failed: dynamic_cast<Derived>(base) == base.
+        static_cast<const dom::PointerEvent* const>(event.get());*/
       const dom::KeyboardEvent* const keyboardEvent =
+        // TODO: polymorphic_downcast Check failed: dynamic_cast<Derived>(base) == base.
         base::polymorphic_downcast<const dom::KeyboardEvent* const>(event.get());
       CHECK(keyboardEvent);
       printf("on-test-keydown key %s event %s for tag: %s, "
@@ -7255,7 +7400,8 @@ static void addTestOnlyAttrCallbacks() {
               elem->text_content().value_or("").c_str());
       //event->target()
       dom::HTMLElement* elementHTML =
-        base::polymorphic_downcast<dom::HTMLElement*>(elem.get());
+        // TODO: polymorphic_downcast Check failed: dynamic_cast<Derived>(base) == base.
+        static_cast<dom::HTMLElement*>(elem.get());
       CHECK(elementHTML);
       return true;
     });
@@ -7305,39 +7451,88 @@ int main(int argc, char** argv) {
     base::Thread::Options options;
 
     main_browser_thread_wrapper_.StartWithOptions(options);
+    #if defined(SEPARATE_UI_THREAD)
+      ui_draw_thread_wrapper_.StartWithOptions(options);
+    #endif // SEPARATE_UI_THREAD
 #if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
     /// \todo Reactor your code so that the waiting happens on another thread instead of the main thread
     main_browser_thread_wrapper_.WaitUntilThreadStarted();
+    #if defined(SEPARATE_UI_THREAD)
+      ui_draw_thread_wrapper_.WaitUntilThreadStarted();
+    #endif // SEPARATE_UI_THREAD
 #endif
+  DCHECK(main_browser_thread_wrapper_.IsRunning());
 
-main_browser_thread_wrapper_.task_runner()->PostTask(
-      FROM_HERE, base::Bind([](base::WaitableEvent* thread_event) {
-#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
-            DCHECK(base::MessageLoopCurrent::Get());
-#endif
-          {
-            base::Thread::Options options;
+  {
+    main_browser_thread_wrapper_.task_runner()->PostTask(
+          FROM_HERE, base::Bind([](base::WaitableEvent* thread_event) {
+    #if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+                DCHECK(base::MessageLoopCurrent::Get());
+    #endif
+              {
+                base::Thread::Options options;
 
-            //options.message_loop_type = base::MessageLoop::TYPE_IO;
-            main_browser_thread_.StartWithOptions(options);
-            //input_device_thread_.StartWithOptions(options);
-            ui_draw_thread_.StartWithOptions(options);
-      #if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
-            /// \todo Reactor your code so that the waiting happens on another thread instead of the main thread
-            main_browser_thread_.WaitUntilThreadStarted();
-            //input_device_thread_.WaitUntilThreadStarted();
-            ui_draw_thread_.WaitUntilThreadStarted();
-      #endif
-          }
-          thread_event->Signal();
-      }, &main_thread_event_));
+                //options.message_loop_type = base::MessageLoop::TYPE_IO;
+                main_browser_thread_.StartWithOptions(options);
+                //input_device_thread_.StartWithOptions(options);
 
-  printf("Waiting for tests thread...\n");
-#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
-  /// \todo Reactor your code so that the waiting happens on another thread instead of the main thread
-  main_thread_event_.Wait();
-#endif
-  main_thread_event_.Reset();
+          #if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+                /// \todo Reactor your code so that the waiting happens on another thread instead of the main thread
+                main_browser_thread_.WaitUntilThreadStarted();
+                //input_device_thread_.WaitUntilThreadStarted();
+                printf("main_browser_thread_ Started...\n");
+          #endif
+              }
+              thread_event->Signal();
+          }, &main_thread_event_));
+
+      printf("Waiting for main_browser_thread_wrapper_...\n");
+    #if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+      /// \todo Reactor your code so that the waiting happens on another thread instead of the main thread
+      main_thread_event_.Wait();
+    #endif
+      main_thread_event_.Reset();
+  }
+  DCHECK(main_browser_thread_.IsRunning());
+
+  {
+    #if defined(SEPARATE_UI_THREAD)
+    ui_draw_thread_wrapper_.task_runner()->PostTask(
+    #else
+    main_browser_thread_wrapper_.task_runner()->PostTask(
+    #endif // SEPARATE_UI_THREAD
+          FROM_HERE, base::Bind([](base::WaitableEvent* thread_event) {
+    #if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+                DCHECK(base::MessageLoopCurrent::Get());
+    #endif
+              {
+                base::Thread::Options options;
+
+    #if defined(SEPARATE_UI_THREAD)
+                ui_draw_thread_.StartWithOptions(options);
+    #endif // SEPARATE_UI_THREAD
+
+          #if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+                /// \todo Reactor your code so that the waiting happens on another thread instead of the main thread
+    #if defined(SEPARATE_UI_THREAD)
+                ui_draw_thread_.WaitUntilThreadStarted();
+                printf("ui_draw_thread_ Started...\n");
+    #endif // SEPARATE_UI_THREAD
+          #endif
+              }
+              thread_event->Signal();
+          }, &main_thread_event_));
+
+      printf("Waiting for ui_draw_thread_wrapper_...\n");
+    #if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+      /// \todo Reactor your code so that the waiting happens on another thread instead of the main thread
+      main_thread_event_.Wait();
+    #endif
+      main_thread_event_.Reset();
+  }
+  #if defined(SEPARATE_UI_THREAD)
+    DCHECK(ui_draw_thread_.IsRunning());
+  #endif // SEPARATE_UI_THREAD
 #endif // ENABLE_BASE
 
 #ifdef ENABLE_BLINK_PLATFORM
@@ -8221,7 +8416,7 @@ main_browser_thread_wrapper_.task_runner()->PostTask(
     //g_cobaltTester = std::make_unique<CobaltTester>();
 
 #if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS)) \
-    && defined(ENABLE_COBALT)
+    && defined(ENABLE_COBALT)//&& defined(__TODO__)
   // Make sure the thread started.
 
   /// \note we can use PostBlockingTask here only
@@ -8303,14 +8498,20 @@ main_browser_thread_wrapper_.task_runner()->PostTask(
   //blink::Thread* uithread = ui_thread.get();
   //task_runner->PostTask(
 
-  //ui_draw_thread_
+#if defined(SEPARATE_UI_THREAD)
+  DCHECK(ui_draw_thread_.IsRunning());
+//  ui_draw_thread_.task_runner()->PostTask(
   main_browser_thread_.task_runner()->PostTask(
+#else
+  DCHECK(main_browser_thread_.IsRunning());
+  main_browser_thread_.task_runner()->PostTask(
+#endif // SEPARATE_UI_THREAD
       FROM_HERE,
       base::BindOnce(
           [](base::WaitableEvent* thread_event) {
               printf("rendering Draw 1\n");
               std::cout << std::endl; // flush
-#endif
+#endif // !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
 
 #if defined(ENABLE_IMAGES)
               ///DCHECK(thread->IsCurrentThread());
@@ -8410,8 +8611,6 @@ main_browser_thread_wrapper_.task_runner()->PostTask(
 #ifdef ENABLE_CUSTOM_FONTS
   printf("Reading fonts...\n");
 
-  const char* fontPath = "./resources/fonts/FreeSans.ttf";
-
   /*char* fileData1 = nullptr;
   long int fsize1;
   int readRes = read_file(fontPath, fileData1, fsize1, true);
@@ -8424,78 +8623,49 @@ main_browser_thread_wrapper_.task_runner()->PostTask(
   /// \note SkData::MakeFromFileName don`t support wasm pthreads,
   /// so we use MakeFromMalloc
   //sk_sp<SkData> data = SkData::MakeFromMalloc(fileData1, fsize1);
-  sk_sp<SkData> data = SkData::MakeFromFileName(fontPath);
+  /*sk_sp<SkData> data = SkData::MakeFromFileName(fontPath);
   if (!data) {
     printf("failed SkData::MakeFromMalloc for font %s\n", fontPath);
-  }
+  }*/
 
   // TODO: Initialize font data in thread
   /// \note SkTypeface sharable between threads
   printf("Initializing font data...\n");
+#ifdef ENABLE_COBALT
+  sk_sp<SkTypeface> fallbackTypeface
+    = cobalt::renderer::rasterizer::skia::Font::prepareFallbackTypeface();
+  DCHECK(fallbackTypeface);
+#endif // ENABLE_COBALT
+  prepareUIFonts();
 
   /// \note SkTypeface::MakeFromFile don`t support wasm pthreads,
   /// so we use MakeFromData
   const int index = 0;
   //sk_sp<SkTypeface> sktp = SkTypeface::MakeFromFile("./resources/fonts/FreeSans.ttf");
 
-#ifdef ENABLE_HARFBUZZ
-  sktp = SkTypeface::MakeFromData(data, index);
-#else
+//#ifdef ENABLE_HARFBUZZ
+  //sktp = SkTypeface::MakeFromData(data, index);
+  //if(!sktpUIThread) {
+  //  sktpUIThread = SkTypeface::MakeFromData(data, index);
+  //}
+/*#else
   /// \note use ::std::move only if data will not be used any more
   sktp = SkTypeface::MakeFromData(::std::move(data), index);
-#endif
+  sktpUIThread = SkTypeface::MakeFromData(::std::move(data), index);
+#endif*/
 
   //sk_sp<SkTypeface> sktp = SkTypeface::MakeFromStream(new SkMemoryStream(data), index);
 
-  printf("Creating harfbuzz fonts...\n");
-
-#ifdef ENABLE_HARFBUZZ
-  auto destroy = [](void *d) { static_cast<SkData*>(d)->unref(); };
-  const char* bytes = static_cast<const char*>(data->data());
-  unsigned int size = static_cast<unsigned int>(data->size());
-  hb_blob_t* blob = hb_blob_create(bytes,
-                                   size,
-                                   HB_MEMORY_MODE_READONLY,
-                                   data.release(),
-                                   destroy);
-  assert(blob);
-  hb_blob_make_immutable(blob);
-  hb_face_t* face = hb_face_create(blob, static_cast<unsigned>(index));
-  hb_blob_destroy(blob);
-  //assert(face);
-  if (!face) {
-      printf("Can`t create harfbuzz face...\n");
-      sktp.reset();
-      return 1;
-  }
-  hb_face_set_index(face, static_cast<unsigned>(index));
-  hb_face_set_upem(face, static_cast<unsigned>(sktp->getUnitsPerEm()));
-  fHarfBuzzFace.reset(face);
-
-  // see https://chromium.googlesource.com/skia/+/chrome/m56/tools/SkShaper_harfbuzz.cpp
-  fHarfBuzzFont.reset(hb_font_create(fHarfBuzzFace.get()));
-  if (!fHarfBuzzFont.get()) {
-      printf("Can`t create harfbuzz font...\n");
-      sktp.reset();
-      return 1;
-  }
-
-  // see https://github.com/aam/skiaex/blob/master/app/main.cpp#L177
-  // see https://github.com/harfbuzz/harfbuzz-tutorial/blob/master/hello-harfbuzz-opentype.c#L31
-  hb_font_set_scale(fHarfBuzzFont.get(),
-    static_cast<int>(FONT_SIZE_SCALE * FONT_SIZE_F),
-    static_cast<int>(FONT_SIZE_SCALE * FONT_SIZE_F));
-  hb_ot_font_set_funcs(fHarfBuzzFont.get());
-#endif // ENABLE_HARFBUZZ
-
   printf("Creating fonts...\n");
 
+  /*DCHECK(sktp);
   skFont1 =
       new SkFont(sktp, FONT_SIZE_F, 1.0f, 0.0f);
   skFont1->setEdging(SkFont::Edging::kAntiAlias);
+  DCHECK(sktp);
   skFont2 =
       new SkFont(sktp, 30.0f, 1.5f, 0.0f);
-  skFont2->setEdging(SkFont::Edging::kAntiAlias);
+  skFont2->setEdging(SkFont::Edging::kAntiAlias);*/
 
   //delete[] fileData1;
 
@@ -8503,8 +8673,13 @@ main_browser_thread_wrapper_.task_runner()->PostTask(
 
   printf("Initializing skia...\n");
 
-  //ui_draw_thread_
+#if defined(SEPARATE_UI_THREAD)
+  DCHECK(ui_draw_thread_.IsRunning());
+  ui_draw_thread_.task_runner()->PostTask(
+#else
+  DCHECK(main_browser_thread_.IsRunning());
   main_browser_thread_.task_runner()->PostTask(
+#endif // SEPARATE_UI_THREAD
       FROM_HERE, base::Bind([](base::WaitableEvent* thread_event) {
         initUiSkiaSurface(width, height);
 
@@ -8542,6 +8717,7 @@ main_browser_thread_wrapper_.task_runner()->PostTask(
           int readRes = read_file(fAnimPath.c_str(), fileString, fsize, true);
           if (readRes != 0) {
             printf("can`t read skottie anim %s\n", fAnimPath.c_str());
+            NOTREACHED();
           }
           DCHECK(fileString != nullptr);
 
@@ -8574,6 +8750,7 @@ main_browser_thread_wrapper_.task_runner()->PostTask(
                    static_cast<double>(fAnimation->size().height()));
           } else {
             printf("failed to load Bodymovin animation: %s\n", fAnimPath.c_str());
+            NOTREACHED();
           }
           printf("Got skottie stats...\n");
 
@@ -8607,14 +8784,17 @@ main_browser_thread_wrapper_.task_runner()->PostTask(
   printf("emscripten in singlethreaded mode\n");
 #endif
 
-#if !(defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__))
+#if defined(SEPARATE_UI_THREAD)
   ui_draw_thread_.task_runner()->PostTask(
       FROM_HERE, base::Bind([]() {
         while(!quitApp) { // TODO: lock for quitApp
           refreshUIDemo();
+          // TODO: https://stackoverflow.com/a/28008588
+          base::PlatformThread::Sleep(
+            base::TimeDelta::FromMilliseconds(16));
         }
       }));
-#endif
+#endif // SEPARATE_UI_THREAD
 
 /// \note emscripten_set_main_loop async, so
 /// don`t declare vars above it (or them will be lost)!
@@ -8641,7 +8821,9 @@ main_browser_thread_wrapper_.task_runner()->PostTask(
 
 #if defined(ENABLE_SKIA)
   {
+#if defined(SEPARATE_UI_THREAD)
     ui_draw_thread_.Stop();
+#endif // SEPARATE_UI_THREAD
     /// \note stop ui_draw_thread before skia_ui cleanup
     cleanup_skia_ui();
   }
@@ -8697,8 +8879,8 @@ main_browser_thread_wrapper_.task_runner()->PostTask(
 #endif
 
 #if defined(ENABLE_SKIA) && defined(ENABLE_CUSTOM_FONTS)
-  delete skFont1;
-  delete skFont2;
+  /*delete skFont1;
+  delete skFont2;*/
 #endif
 
   // Quit SDL subsystems

@@ -31,6 +31,9 @@ list(APPEND RENDERER_PRIVATE_DEFINES
   COBALT_EGL_SWAP_INTERVAL=1
   #
   ${OPENGLES2_DEFINITIONS}
+  #
+  # see software_resource_provider.cc
+  # ENABLE_DYNAMIC_FONT_LOADING=1
 )
 
 # TODO: WASM ST: fix rasterizer performance issues

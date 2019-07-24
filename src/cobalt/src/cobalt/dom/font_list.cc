@@ -191,7 +191,7 @@ float FontList::GetSpaceWidth() {
 
 const scoped_refptr<render_tree::Font>& FontList::GetCharacterFont(
     int32 utf32_character, render_tree::GlyphIndex* glyph_index) {
-  //printf("FontList::GetCharacterFont 1");
+  printf("FontList::GetCharacterFont 1");
   // Walk the list of fonts, requesting any encountered that are in an
   // unrequested state. The first font encountered that has the character is the
   // character font.
@@ -217,14 +217,17 @@ const scoped_refptr<render_tree::Font>& FontList::GetCharacterFont(
 
 const scoped_refptr<render_tree::Font>& FontList::GetFallbackCharacterFont(
     int32 utf32_character, render_tree::GlyphIndex* glyph_index) {
-  //printf("FontList::GetFallbackCharacterFont 1\n");
+  printf("FontList::GetFallbackCharacterFont 1\n");
+
   scoped_refptr<render_tree::Typeface>& fallback_typeface =
       character_fallback_typeface_map_[utf32_character];
   if (fallback_typeface.get() == NULL) {
     fallback_typeface =
         font_cache_->GetCharacterFallbackTypeface(utf32_character, style_);
   }
+  printf("FontList::GetFallbackCharacterFont 1.1\n");
 
+  DCHECK(fallback_typeface);
   *glyph_index = fallback_typeface->GetGlyphForCharacter(utf32_character);
 
   // Check to see if the typeface id already maps to a specific font. If it does
@@ -235,7 +238,10 @@ const scoped_refptr<render_tree::Font>& FontList::GetFallbackCharacterFont(
     fallback_font = fallback_typeface_to_font_map_[fallback_typeface->GetId()] =
         font_cache_->GetFontFromTypefaceAndSize(fallback_typeface, size_);
   }
-  //printf("FontList::GetFallbackCharacterFont 2\n");
+  printf("FontList::GetFallbackCharacterFont 2\n");
+
+  // TODO >>>
+  //return nullptr;
 
   return fallback_font;
 }

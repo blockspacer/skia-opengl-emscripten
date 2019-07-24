@@ -88,5 +88,8 @@ target_compile_definitions(cobalt_input PRIVATE
   #
   #COBALT_ENABLE_VERSION_COMPATIBILITY_VALIDATIONS=1
   #
+  # see input_device_manager_desktop.cc
+  #ENABLE_OVERLAY_INFO=1
+  #
   ${COBALT_COMMON_DEFINES}
 )

@@ -1367,6 +1367,15 @@ if (ENABLE_WEBGL2 OR ENABLE_WEBGL1)
     # debug printing of WebGL related operations
     # set(EMCC_COMMON "${EMCC_COMMON} -s GL_DEBUG=1")
     #
+    # print out socket,network data transfer
+    # set(EMCC_COMMON "${EMCC_COMMON} -s SOCKET_DEBUG=1")
+    #
+    # print out sys calls, verbose
+    # set(EMCC_COMMON "${EMCC_COMMON} -s SYSCALL_DEBUG=1")
+    #
+    # print out library calls, verbose
+    # set(EMCC_COMMON "${EMCC_COMMON} -s LIBRARY_DEBUG=1")
+    #
     #set(EMCC_COMMON "${EMCC_COMMON} -s TRACE_WEBGL_CALLS=1")
     #
     # Adds extra checks for error situations in the GL library.
@@ -1597,7 +1606,9 @@ endif(NOT RELEASE_BUILD)
   #set(EMCC_COMMON "${EMCC_COMMON} --preload-file resources --use-preload-plugins")
   # https://emscripten.org/docs/getting_started/FAQ.html#why-does-my-code-break-and-gives-odd-errors-when-using-o2-closure-1
   #set(EMCC_COMMON "${EMCC_COMMON} --closure 1") # UNSAFE optimization
+  #
   # Enables LLVM link-time optimizations (LTO)
+  # SEE: https://emscripten.org/docs/optimizing/Optimizing-Code.html#lto
   # --llvm-lto N: this controls LLVM’s LTO (Link-Time-Optimization) pass,
   # 1 seems to produce the best tradeoff between size and speed for my code.
   # Bigger values seem to do more inlining
@@ -1692,6 +1703,16 @@ endif(NOT RELEASE_BUILD)
   # when main() exits on the main thread, otherwise they will be terminated
   # as the C runtime closes at the end of main().
   set(EMCC_COMMON "${EMCC_COMMON} -s NO_EXIT_RUNTIME=1")
+
+  # WASM_OBJECT_FILES=1 may speed up link time
+  # NOTE: Link Time Optimization (LTO) requires WASM_OBJECT_FILES=0
+  # NOTE: LTO is UNSAFE, but WASM_OBJECT_FILES is SAFE
+  # see http://qtandeverything.blogspot.com/2019/06/faster-link-time-for-qt-webassembly.html
+  # see https://emscripten.org/docs/optimizing/Optimizing-Code.html#lto
+  # see https://emscripten.org/docs/optimizing/Optimizing-Code.html?highlight=wasm_object_files#unsafe-optimizations
+  # Btw WASM_OBJECT_FILES=1 is the default so that is not needed.
+  # see https://github.com/emscripten-core/emscripten/blob/incoming/src/settings.js#L1003
+  # set(EMCC_COMMON "${EMCC_COMMON} -s WASM_OBJECT_FILES=1")
 
   # Warn at compile time about instructions that LLVM tells us are not fully
   # aligned.  This is useful to find places in your code where you might refactor

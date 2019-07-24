@@ -28,14 +28,14 @@ namespace rasterizer {
 namespace skia {
 
 /// \note called for each character
-SkiaTypeface::SkiaTypeface(const sk_sp<SkTypeface_Cobalt>& typeface)
+SkiaTypeface::SkiaTypeface(const sk_sp</*SkTypeface_Cobalt*/SkTypeface>& typeface)
     : typeface_(typeface) {
     //printf("SkiaTypeface 1\n");
     /// __TODO__
     DCHECK(typeface_);
     if(!typeface_) {
         //printf("Fall back to default typeface\n");
-        typeface_ = Font::GetDefaultSkTypeface();
+        typeface_ = Font::prepareFallbackTypeface();/*Sk*/
     }
     //printf("SkiaTypeface 2\n");
 #if !defined(OS_EMSCRIPTEN)
@@ -45,7 +45,7 @@ SkiaTypeface::SkiaTypeface(const sk_sp<SkTypeface_Cobalt>& typeface)
   //printf("SkiaTypeface 4\n");
 }
 
-const sk_sp<SkTypeface_Cobalt>& SkiaTypeface::GetSkTypeface() const {
+const sk_sp<SkTypeface/*SkTypeface_Cobalt*/>& SkiaTypeface::GetSkTypeface() const {
   return typeface_;
 }
 

@@ -26,6 +26,7 @@
 
 #include "third_party/skia/include/core/SkPaint.h"
 #include "third_party/skia/include/core/SkRefCnt.h"
+#include "third_party/skia/include/core/SkTypeface.h"
 
 namespace cobalt {
 namespace renderer {
@@ -38,9 +39,13 @@ namespace skia {
 // than the thread making the character glyph queries.
 class SkiaTypeface : public render_tree::Typeface {
  public:
-  explicit SkiaTypeface(const sk_sp<SkTypeface_Cobalt>& typeface);
+  //explicit SkiaTypeface(const sk_sp<SkTypeface_Cobalt>& typeface);
 
-  const sk_sp<SkTypeface_Cobalt>& GetSkTypeface() const;
+  //const sk_sp<SkTypeface_Cobalt>& GetSkTypeface() const;
+
+  explicit SkiaTypeface(const sk_sp<SkTypeface>& typeface);
+
+  const sk_sp<SkTypeface>& GetSkTypeface() const;
 
   // From render_tree::Typeface
 
@@ -67,7 +72,8 @@ class SkiaTypeface : public render_tree::Typeface {
   typedef std::map<int32, render_tree::GlyphIndex> CharacterToGlyphMap;
 
   // The underlying SkTypeface that was used to create this typeface.
-  sk_sp<SkTypeface_Cobalt> typeface_;
+  //sk_sp<SkTypeface_Cobalt> typeface_;
+  sk_sp<SkTypeface> typeface_;
 
   // The glyphs for characters are lazily computed and cached to speed up later
   // lookups. The page containing indices 0-255 is optimized within an array.

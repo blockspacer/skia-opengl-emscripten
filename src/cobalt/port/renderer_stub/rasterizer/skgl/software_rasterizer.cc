@@ -119,6 +119,9 @@ void SoftwareRasterizer::Submit(
   ///printf("SoftwareRasterizer::Submit( 1\n");
   DCHECK(render_target);
 
+  // TODO >>
+  //return;
+
   int width = render_target->GetSize().width();
   int height = render_target->GetSize().height();
 

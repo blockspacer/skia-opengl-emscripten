@@ -41,12 +41,12 @@ class HarfBuzzFontProvider {
     HarfBuzzFace();
     ~HarfBuzzFace();
 
-    void Init(const sk_sp<SkTypeface_Cobalt>& skia_face);
+    void Init(const sk_sp</*SkTypeface_Cobalt*/SkTypeface>& skia_face);
 
     hb_face_t* get();
 
    private:
-    sk_sp<SkTypeface_Cobalt> typeface_;
+    sk_sp</*SkTypeface_Cobalt*/SkTypeface> typeface_;
     hb_face_t* face_;
   };
 

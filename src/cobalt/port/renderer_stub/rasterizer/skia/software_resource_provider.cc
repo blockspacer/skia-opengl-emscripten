@@ -33,6 +33,9 @@
 #include "third_party/skia/include/core/SkStream.h"
 #include "third_party/skia/include/core/SkTypeface.h"
 
+// TODO
+// #define ENABLE_DYNAMIC_FONT_LOADING 1
+
 using cobalt::render_tree::ImageData;
 
 namespace cobalt {
@@ -145,16 +148,15 @@ bool SoftwareResourceProvider::HasLocalFontFamily(
   TRACE_EVENT0("cobalt::renderer",
                "SoftwareResourceProvider::HasLocalFontFamily()");
 
-
-  //return true;
-
-
-
-
+#if defined(ENABLE_DYNAMIC_FONT_LOADING)
   sk_sp<SkFontMgr> font_manager(SkFontMgr::RefDefault());
-  sk_sp<SkFontStyleSet> style_set(font_manager->matchFamily(font_family_name));
+  SkFontStyleSet* skFontStyleSet = font_manager->matchFamily(font_family_name);
+  DCHECK(skFontStyleSet);
+  sk_sp<SkFontStyleSet> style_set(skFontStyleSet);
   return style_set->count() > 0;
-  //return false;
+#else // ENABLE_DYNAMIC_FONT_LOADING
+  return true;
+#endif // ENABLE_DYNAMIC_FONT_LOADING
 }
 
 scoped_refptr<render_tree::Typeface> SoftwareResourceProvider::GetLocalTypeface(
@@ -163,7 +165,7 @@ scoped_refptr<render_tree::Typeface> SoftwareResourceProvider::GetLocalTypeface(
   TRACE_EVENT0("cobalt::renderer",
                "SoftwareResourceProvider::GetLocalTypeface()");
 
-
+#if defined(ENABLE_DYNAMIC_FONT_LOADING)
   /*sk_sp<SkFontMgr> font_manager(SkFontMgr::RefDefault());
   //font_manager->
   sk_sp<SkTypeface_Cobalt> typeface(
@@ -177,10 +179,9 @@ scoped_refptr<render_tree::Typeface> SoftwareResourceProvider::GetLocalTypeface(
   scoped_refptr<render_tree::Typeface> res;
 
   if(fontManagerSkTypeface) {
-      sk_sp<SkTypeface_Cobalt> typeface(
-          // TODO: base::polymorphic_downcast
-          // Check failed: dynamic_cast<Derived>(base) == base.
-          static_cast<SkTypeface_Cobalt*>(
+      sk_sp</*SkTypeface_Cobalt*/SkTypeface> typeface(
+          // TODO: polymorphic_downcast Check failed: dynamic_cast<Derived>(base) == base.
+          reinterpret_cast</*SkTypeface_Cobalt*/SkTypeface*>(
               fontManagerSkTypeface));
       res = scoped_refptr<render_tree::Typeface>(new SkiaTypeface(typeface));
   }
@@ -193,16 +194,22 @@ scoped_refptr<render_tree::Typeface> SoftwareResourceProvider::GetLocalTypeface(
     sk_sp<SkTypeface> defaultTypeface = Font::getDefaultTypeface();
     DCHECK(defaultTypeface);
 
-    sk_sp<SkTypeface_Cobalt> fallbackTypeface(
-        // TODO: base::polymorphic_downcast
+    /*sk_sp<SkTypeface_Cobalt> fallbackTypeface(
         // Check failed: dynamic_cast<Derived>(base) == base.
         static_cast<SkTypeface_Cobalt*>(Font::getDefaultTypeface()->makeClone(SkFontArguments()).release()));
-
+   */
+    sk_sp</*SkTypeface_Cobalt*/SkTypeface> fallbackTypeface =
+      Font::prepareFallbackTypeface();/*Sk*/
     DCHECK(fallbackTypeface);
-    res = scoped_refptr<render_tree::Typeface>(new SkiaTypeface(fallbackTypeface));
+    res = scoped_refptr<render_tree::Typeface>(
+      new SkiaTypeface(fallbackTypeface));
   }
 
   return res;
+#else // ENABLE_DYNAMIC_FONT_LOADING
+  return scoped_refptr<render_tree::Typeface>(
+    new SkiaTypeface(Font::prepareFallbackTypeface()));/*Sk*/
+#endif // ENABLE_DYNAMIC_FONT_LOADING
 }
 
 scoped_refptr<render_tree::Typeface>
@@ -215,12 +222,15 @@ SoftwareResourceProvider::GetLocalTypefaceByFaceNameIfAvailable(
   sk_sp<SkFontMgr> font_manager(SkFontMgr::RefDefault());
   SkFontMgr_Cobalt* cobalt_font_manager =
       base::polymorphic_downcast<SkFontMgr_Cobalt*>(font_manager.get());
+  DCHECK(cobalt_font_manager);
 
-  sk_sp<SkTypeface_Cobalt> typeface(
-      // TODO: base::polymorphic_downcast
-      // Check failed: dynamic_cast<Derived>(base) == base.
-      static_cast<SkTypeface_Cobalt*>(
-          cobalt_font_manager->MatchFaceName(font_face_name)));
+  SkTypeface* skTypeface = cobalt_font_manager->
+    MatchFaceName(font_face_name);
+  DCHECK(skTypeface);
+
+  sk_sp</*SkTypeface_Cobalt*/SkTypeface> typeface(
+      // TODO: polymorphic_downcast Check failed: dynamic_cast<Derived>(base) == base.
+      reinterpret_cast</*SkTypeface_Cobalt*/SkTypeface*>(skTypeface));
 
   if (!typeface) {
     return nullptr;
@@ -236,17 +246,21 @@ SoftwareResourceProvider::GetCharacterFallbackTypeface(
     const std::string& language) {
   TRACE_EVENT0("cobalt::renderer",
                "SoftwareResourceProvider::GetCharacterFallbackTypeface()");
-  printf("SoftwareResourceProvider::GetCharacterFallbackTypeface %s\n", language.c_str());
+  printf("SoftwareResourceProvider::GetCharacterFallbackTypeface 1!!! %s\n", language.c_str());
 
   sk_sp<SkFontMgr> font_manager(SkFontMgr::RefDefault());
   const char* language_cstr = language.c_str();
-  sk_sp<SkTypeface_Cobalt> typeface(
+  /*sk_sp<SkTypeface_Cobalt> typeface(
       // TODO: base::polymorphic_downcast
       // Check failed: dynamic_cast<Derived>(base) == base.
       static_cast<SkTypeface_Cobalt*>(
           font_manager->matchFamilyStyleCharacter(
               NULL, CobaltFontStyleToSkFontStyle(font_style), &language_cstr, 1,
-              character)));
+              character)));*/
+  sk_sp</*SkTypeface_Cobalt*/SkTypeface> typeface =
+    Font::prepareFallbackTypeface();/*Sk*/
+  printf("SoftwareResourceProvider::GetCharacterFallbackTypeface 2!!! %s\n", language.c_str());
+  DCHECK(typeface);
   return scoped_refptr<render_tree::Typeface>(new SkiaTypeface(typeface));
   //return base::WrapRefCounted(new cobalt::render_tree::TypefaceStub(NULL));
 }
@@ -292,20 +306,25 @@ SoftwareResourceProvider::CreateTypefaceFromRawData(
 
   printf("SoftwareResourceProvider::CreateTypefaceFromRawData 2...\n");
 
-  sk_sp<SkTypeface_Cobalt> typeface(
+  sk_sp</*SkTypeface_Cobalt*/SkTypeface> typeface(
       // TODO: base::polymorphic_downcast
       // Check failed: dynamic_cast<Derived>(base) == base.
-      static_cast<SkTypeface_Cobalt*>(
+      // TODO: polymorphic_downcast Check failed: dynamic_cast<Derived>(base) == base.
+      reinterpret_cast</*SkTypeface_Cobalt*/SkTypeface*>(
           SkTypeface::MakeFromStream(std::move(stream)).release()));
 
   if(!typeface) {
+      typeface = Font::prepareFallbackTypeface();/*Sk*/
+      DCHECK(typeface);
       //printf("SoftwareResourceProvider::CreateTypefaceFromRawData no typeface...\n");
-      typeface.reset(
+      /*typeface.reset(
           // TODO: base::polymorphic_downcast
           // Check failed: dynamic_cast<Derived>(base) == base.
           static_cast<SkTypeface_Cobalt*>(
-              Font::getDefaultTypeface()->makeClone(SkFontArguments()).release())); // TODO
+              Font::getDefaultTypeface()->makeClone(SkFontArguments()).release())); // TODO*/
   }
+
+  printf("SoftwareResourceProvider::CreateTypefaceFromRawData 1.2...\n");
 
   if (typeface) {
       //printf("SoftwareResourceProvider::CreateTypefaceFromRawData 3...\n");
@@ -314,6 +333,7 @@ SoftwareResourceProvider::CreateTypefaceFromRawData(
   } else {
       //printf("SoftwareResourceProvider::CreateTypefaceFromRawData 4...\n");
     *error_string = "Skia unable to create typeface";
+    NOTREACHED();
     return NULL;
   }
 
@@ -363,7 +383,8 @@ float SoftwareResourceProvider::GetTextWidth(
     const std::string& language, bool is_rtl,
     render_tree::FontProvider* font_provider,
     render_tree::FontVector* maybe_used_fonts) {
-  return text_shaper_.GetTextWidth(text_buffer, text_length, language, is_rtl,
+  return text_shaper_.GetTextWidth(text_buffer, text_length,
+                                   language, is_rtl,
                                    font_provider, maybe_used_fonts);
   //return 20.0;
   /*render_tree::GlyphIndex glyph_index;

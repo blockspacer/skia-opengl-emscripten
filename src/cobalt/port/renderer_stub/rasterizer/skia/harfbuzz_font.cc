@@ -100,7 +100,8 @@ hb_bool_t GetGlyphHorizontalOrigin(hb_font_t* font, void* data,
 
 hb_position_t GetGlyphKerning(Font* font_data, hb_codepoint_t first_glyph,
                               hb_codepoint_t second_glyph) {
-  const sk_sp<SkTypeface_Cobalt>& typeface(font_data->GetSkTypeface());
+  const sk_sp<SkTypeface/*SkTypeface_Cobalt*/>& typeface(
+    font_data->prepareFallbackTypeface()/*GetSkTypeface()*/);
   const uint16_t glyphs[2] = {static_cast<uint16_t>(first_glyph),
                               static_cast<uint16_t>(second_glyph)};
   int32_t kerning_adjustments[1] = {0};
@@ -170,8 +171,8 @@ base::LazyInstance<FontFuncs>::Leaky g_font_funcs = LAZY_INSTANCE_INITIALIZER;
 
 // Returns the raw data of the font table |tag|.
 hb_blob_t* GetFontTable(hb_face_t* face, hb_tag_t tag, void* user_data) {
-  auto* skia_face = reinterpret_cast<sk_sp<SkTypeface_Cobalt>*>(user_data);
-  SkTypeface_Cobalt* typeface = skia_face->get();
+  auto* skia_face = reinterpret_cast<sk_sp</*SkTypeface_Cobalt*/SkTypeface>*>(user_data);
+  /*SkTypeface_Cobalt*/SkTypeface* typeface = skia_face->get();
 
   const size_t table_size = typeface->getTableSize(tag);
   if (!table_size) {
@@ -193,7 +194,7 @@ hb_blob_t* GetFontTable(hb_face_t* face, hb_tag_t tag, void* user_data) {
 }
 
 void ResetSkiaFace(void* data) {
-  auto* skia_face = reinterpret_cast<sk_sp<SkTypeface_Cobalt>*>(data);
+  auto* skia_face = reinterpret_cast<sk_sp</*SkTypeface_Cobalt*/SkTypeface>*>(data);
   skia_face->reset();
 }
 
@@ -208,7 +209,7 @@ HarfBuzzFontProvider::HarfBuzzFace::~HarfBuzzFace() {
 }
 
 void HarfBuzzFontProvider::HarfBuzzFace::Init(
-    const sk_sp<SkTypeface_Cobalt>& skia_face) {
+    const sk_sp</*SkTypeface_Cobalt*/SkTypeface>& skia_face) {
   DCHECK(!typeface_);
   typeface_ = skia_face;
   face_ = hb_face_create_for_tables(GetFontTable, &typeface_, ResetSkiaFace);
@@ -223,7 +224,8 @@ hb_font_t* HarfBuzzFontProvider::GetHarfBuzzFont(Font* skia_font) {
 
   HarfBuzzFace& face = face_cache_[skia_font->GetTypefaceId()];
   if (face.get() == NULL) {
-    const sk_sp<SkTypeface_Cobalt>& typeface = skia_font->GetSkTypeface();
+    const sk_sp</*SkTypeface_Cobalt*/SkTypeface>& typeface =
+      skia_font->prepareFallbackTypeface()/*GetSkTypeface()*/;
     face.Init(typeface);
   }
 

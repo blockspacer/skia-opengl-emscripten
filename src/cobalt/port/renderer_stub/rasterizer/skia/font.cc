@@ -32,23 +32,44 @@
 static const char* fallbackFontPath = "./resources/fonts/FreeSans.ttf";
 static SkFont* fallbackFont;
 static sk_sp<SkTypeface> fallbackFontTypeface;
+static bool fallbackFontTypeface_Created = false;
 //static const float FONT_SIZE_F = 22.0;
-static sk_sp<SkTypeface_Cobalt> fallbackSkTypeface_Cobalt;
+/*static sk_sp<SkTypeface_Cobalt> fallbackSkTypeface_Cobalt;
+static bool fallbackSkTypeface_Cobalt_Created = false;*/
 
 static sk_sp<SkTypeface> getOrCreateFallbackTypeface() {
-    if (!fallbackFontTypeface) {
-        /*sk_sp<SkData> data = SkData::MakeFromFileName(fallbackFontPath);
-        if (!data) {
-            printf("failed SkData::MakeFromMalloc for font %s\n", fallbackFontPath);
-        }
-        DCHECK(data);*/
-        const int index = 0;
-        //fallbackFontTypeface = SkTypeface::MakeFromData(::std::move(data), index);
-        printf("reading file %s\n", fallbackFontPath);
-        fallbackFontTypeface = SkTypeface::MakeFromFile(fallbackFontPath, index);
+  printf("getOrCreateFallbackTypeface 1...\n");
+
+  if (!fallbackFontTypeface) {
+    DCHECK(!fallbackFontTypeface_Created);
+    fallbackFontTypeface_Created = true;
+    sk_sp<SkData> skia_data = SkData::MakeFromFileName(fallbackFontPath);
+    if (!skia_data) {
+        printf("failed SkData::MakeFromMalloc for font %s\n", fallbackFontPath);
     }
-    DCHECK(fallbackFontTypeface);
-    return fallbackFontTypeface;
+    DCHECK(skia_data);
+    DCHECK(!skia_data->isEmpty());
+    const int index = 0;
+    //fallbackFontTypeface = SkTypeface::MakeFromData(::std::move(data), index);
+    printf("reading file %s\n", fallbackFontPath);
+    //fallbackFontTypeface = SkTypeface::MakeFromFile(fallbackFontPath, index);
+
+    std::unique_ptr<SkStreamAsset> stream;
+    {
+        //sk_sp<SkData> skia_data(SkData::MakeFromMalloc(
+        ///sk_sp<SkData> skia_data(SkData::MakeWithCopy(
+        ///    sanitized_data.get(), static_cast<size_t>(sanitized_data.Tell())));
+        stream.reset(new SkMemoryStream(skia_data));
+    }
+    DCHECK(stream->hasLength());
+
+    fallbackFontTypeface = SkTypeface::MakeFromStream(std::move(stream));
+  }
+  DCHECK(fallbackFontTypeface);
+
+  printf("getOrCreateFallbackTypeface 2...\n");
+
+  return fallbackFontTypeface;
 }
 
 /*static SkFont* getOrCreateFallbackFont() {
@@ -60,24 +81,40 @@ static sk_sp<SkTypeface> getOrCreateFallbackTypeface() {
   return fallbackFont;
 }*/
 
+#ifdef __TODO__
 static sk_sp<SkTypeface_Cobalt> getOrCreateFallbackSkTypeface() {
 #if defined(__EMSCRIPTEN__)
   //EM_LOG("getOrCreateFallbackSkTypeface 1");
 #endif
+    printf("getOrCreateFallbackSkTypeface 1...\n");
     if (!fallbackSkTypeface_Cobalt) {
+        DCHECK(!fallbackSkTypeface_Cobalt_Created);
+        fallbackSkTypeface_Cobalt_Created = true;
+        sk_sp<SkTypeface> fontTypeface = getOrCreateFallbackTypeface();
+        DCHECK(fontTypeface);
+        DCHECK(fontTypeface->countGlyphs() > 0);
+        DCHECK(!fontTypeface->getBounds().isEmpty());
         fallbackSkTypeface_Cobalt =
-            sk_sp<SkTypeface_Cobalt>(base::polymorphic_downcast<SkTypeface_Cobalt*>(
-        getOrCreateFallbackTypeface()->makeClone(SkFontArguments()).release()));
+            sk_sp<SkTypeface_Cobalt>(
+              // TODO: polymorphic_downcast Check failed: dynamic_cast<Derived>(base) == base.
+              reinterpret_cast<SkTypeface_Cobalt*>(
+              //base::polymorphic_downcast<SkTypeface_Cobalt*>(
+                fontTypeface.get()
+                /*->makeClone(SkFontArguments()).release()*/));
 #if defined(__EMSCRIPTEN__)
   //EM_LOG("getOrCreateFallbackSkTypeface 2");
 #endif
     }
     DCHECK(fallbackSkTypeface_Cobalt);
+    DCHECK(fallbackSkTypeface_Cobalt->countGlyphs() > 0);
+    DCHECK(!fallbackSkTypeface_Cobalt->getBounds().isEmpty());
 #if defined(__EMSCRIPTEN__)
   //EM_LOG("getOrCreateFallbackSkTypeface 3");
 #endif
+    printf("getOrCreateFallbackSkTypeface 2...\n");
     return fallbackSkTypeface_Cobalt;
 }
+#endif // TODO
 
 namespace {
 const float kXHeightEstimateFactor = 0.56f;
@@ -132,6 +169,14 @@ Font::Font(SkiaTypeface* typeface, SkScalar size)
 #endif
 }
 
+sk_sp<SkTypeface> Font::prepareFallbackTypeface() {
+  return getOrCreateFallbackTypeface();
+}
+
+/*sk_sp<SkTypeface_Cobalt> Font::prepareFallbackSkTypeface() {
+  return getOrCreateFallbackSkTypeface();
+}*/
+
 Font::~Font()
 {
 /*
@@ -141,12 +186,12 @@ Font::~Font()
 */
 }
 
-const sk_sp<SkTypeface_Cobalt>& Font::GetSkTypeface() const {
+/*const sk_sp<SkTypeface_Cobalt>& Font::GetSkTypeface() const {
     DCHECK(typeface_);
   return typeface_->GetSkTypeface();
 
   ///return getOrCreateFallbackSkTypeface();
-}
+}*/
 
 
 render_tree::TypefaceId Font::GetTypefaceId() const {
@@ -322,11 +367,11 @@ SkPaint Font::GetSkPaint() const {
   return paint;
 }
 
-sk_sp<SkTypeface_Cobalt> Font::GetDefaultSkTypeface() {
+/*sk_sp<SkTypeface_Cobalt> Font::GetDefaultSkTypeface() {
     ///return typeface_->GetSkTypeface();
 
     return getOrCreateFallbackSkTypeface();
-}
+}*/
 
 const SkPaint& Font::GetDefaultSkPaint() {
   return non_trivial_static_fields.Get().default_paint;
