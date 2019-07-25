@@ -72,6 +72,7 @@ void TryAddFontToUsedFonts(Font* font,
 
 bool ShouldFakeBoldText(const render_tree::FontProvider* font_provider,
                         const Font* font) {
+  printf("ShouldFakeBoldText 1\n");
   // A font-weight greater than 500 indicates bold if it is available. Use
   // synthetic bolding if this is a bold weight and the selected font
   // synthesizes bold.
@@ -79,8 +80,9 @@ bool ShouldFakeBoldText(const render_tree::FontProvider* font_provider,
   // https://www.w3.org/TR/css-fonts-3/#font-style-matching
   if (font_provider->style().weight > 500) {
     const sk_sp</*SkTypeface_Cobalt*/SkTypeface>& typeface(
-      //font->GetSkTypeface());
-      font->prepareFallbackTypeface());
+      // TODO
+      //font_data->GetTypeface());
+      font->getDefaultTypeface());
     return typeface->isBold()/*synthesizes_bold()*/;
   }
   return false;
@@ -357,8 +359,8 @@ void TextShaper::ShapeComplexRun(const base::char16* text_buffer,
     //DCHECK(fnt);
 
     //DCHECK(script_run.font->GetSkTypeface());
-    DCHECK(script_run.font->prepareFallbackTypeface());
-    SkFont tmpFont = script_run.font->GetSkFont();
+    DCHECK(script_run.font->getDefaultTypeface());
+    const SkFont& tmpFont = script_run.font->GetSkFont();
         //new SkFont(script_run.font->GetSkTypeface(), script_run.font->size(), 1.0f, 0.0f); /// __TODO__
 
     run_buffer = &(maybe_builder->allocRunPos(tmpFont, glyph_count));
@@ -525,10 +527,11 @@ void TextShaper::ShapeSimpleRun(const base::char16* text_buffer,
 void TextShaper::AddFontRunToGlyphBuffer(
     const render_tree::FontProvider* font_provider, const Font* font,
     const int glyph_count, SkTextBlobBuilder* builder) {
-    //printf("TextShaper::AddFontRunToGlyphBuffer 1\n");
-    DCHECK(font);
-    DCHECK(builder);
-    DCHECK(font_provider);
+  printf("AddFontRunToGlyphBuffer 1\n");
+  //printf("TextShaper::AddFontRunToGlyphBuffer 1\n");
+  DCHECK(font);
+  DCHECK(builder);
+  DCHECK(font_provider);
   ///SkPaint paint = font->GetSkPaint();
   //const SkFont* fnt = Font::GetDefaultFont();
   ///paint.setTextEncoding(SkFont::kGlyphID_TextEncoding);
@@ -540,9 +543,9 @@ void TextShaper::AddFontRunToGlyphBuffer(
   //printf("TextShaper::AddFontRunToGlyphBuffer 2\n");
 
   //DCHECK(font->GetSkTypeface());
-  DCHECK(font->prepareFallbackTypeface());
-  SkFont tmpFont = font->GetSkFont();
-      new SkFont(font->prepareFallbackTypeface()/*GetSkTypeface()*/, font->size(), 1.0f, 0.0f); /// __TODO__
+  DCHECK(font->getDefaultTypeface());
+  const SkFont& tmpFont = font->GetSkFont();
+      //new SkFont(font->getDefaultTypeface()/*GetSkTypeface()*/, font->size(), 1.0f, 0.0f); /// __TODO__
 
   const SkTextBlobBuilder::RunBuffer& buffer =
       builder->allocRunPosH(tmpFont, glyph_count, 0); // TODO: GetDefaultFont

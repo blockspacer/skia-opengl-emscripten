@@ -13,7 +13,7 @@ namespace WTF {
 StringView::StringView(const UChar* chars)
     : StringView(chars, chars ? LengthOfNullTerminatedString(chars) : 0) {}
 
-#if DCHECK_IS_ON() && !defined(OS_EMSCRIPTEN)
+#if DCHECK_IS_ON() /*&& !defined(OS_EMSCRIPTEN)*/
 StringView::~StringView() {
   DCHECK(impl_);
 

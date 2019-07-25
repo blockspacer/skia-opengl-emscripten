@@ -299,11 +299,15 @@ void PlatformThread::Sleep(TimeDelta duration) {
   sleep_time.tv_nsec = duration.InMicroseconds() * 1000;  // nanoseconds
 
 #if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS)) && !defined(HAS_ASYNC)
-  // todo
+  // TODO
+  NOTIMPLEMENTED();
 #elif (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS)) && defined(HAS_ASYNC)
+  // TODO
+  NOTIMPLEMENTED();
   HTML5_ASYNC_SLEEP(duration.InMilliseconds());
 #elif defined(OS_EMSCRIPTEN) // have thread support
-  #warning "base TODO: port sleep() on wasm!"
+  //#warning "base TODO: port sleep() on wasm!"
+
   // // see https://github.com/h-s-c/libKD/blob/master/source/kd_threads.c#L861
   // // see https://emscripten.org/docs/api_reference/emscripten.h.html?highlight=emscripten_sleep#c.emscripten_sleep
   // // Sleep for ms milliseconds. blocks all other operations while it runs

@@ -34,11 +34,12 @@ SkiaTypeface::SkiaTypeface(const sk_sp</*SkTypeface_Cobalt*/SkTypeface>& typefac
     /// __TODO__
     DCHECK(typeface_);
     if(!typeface_) {
-        //printf("Fall back to default typeface\n");
-        typeface_ = Font::prepareFallbackTypeface();/*Sk*/
+        printf("SkiaTypeface: Fall back to default typeface\n");
+        typeface_ = Font::getDefaultTypeface();/*Sk*/
+        NOTREACHED();
     }
     //printf("SkiaTypeface 2\n");
-#if !defined(OS_EMSCRIPTEN)
+#if !(defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__))
     //printf("SkiaTypeface 3\n");
   character_glyph_thread_checker_.DetachFromThread();
 #endif
@@ -63,13 +64,14 @@ uint32 SkiaTypeface::GetEstimatedSizeInBytes() const {
 
 scoped_refptr<render_tree::Font> SkiaTypeface::CreateFontWithSize(
     float font_size) {
-  //printf("SkiaTypeface::CreateFontWithSize size %f", font_size);
+  printf("SkiaTypeface::CreateFontWithSize size %f\n", font_size);
   return scoped_refptr<render_tree::Font>(new Font(this, font_size));
 }
 
 render_tree::GlyphIndex SkiaTypeface::GetGlyphForCharacter(
     int32 utf32_character) {
-#if !defined(OS_EMSCRIPTEN)
+  //printf("SkiaTypeface::GetGlyphForCharacter 1\n");
+#if !(defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__))
   DCHECK(character_glyph_thread_checker_.CalledOnValidThread());
 #endif
 
@@ -106,6 +108,7 @@ render_tree::GlyphIndex SkiaTypeface::GetGlyphForCharacter(
                            &glyph, 1);*/
 
   //typeface_->unicharsToGlyphs(&utf32_character, 1, &glyph);
+  DCHECK(typeface_);
   glyph = typeface_->unicharToGlyph(utf32_character);
   /*int res = Font::GetDefaultFont()->textToGlyphs(&utf32_character,
                                        sizeof(render_tree::GlyphIndex),

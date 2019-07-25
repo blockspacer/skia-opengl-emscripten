@@ -80,10 +80,16 @@ XFERMODE_AA(Plus) {  // [ clamp( (1-AA)D + (AA)(S+D) ) == clamp(D + AA*S) ]
 // For those modes, just lie to MSAN that dst is always intialized.
 template <typename Xfermode> static void mark_dst_initialized_if_safe(void*, void*) {}
 template <> void mark_dst_initialized_if_safe<Src>(void* dst, void* end) {
+#if !defined(__EMSCRIPTEN__)
+    /// \note no sk_msan_* on EMSCRIPTEN
     sk_msan_mark_initialized(dst, end, "Src doesn't read dst.");
+#endif // __EMSCRIPTEN__
 }
 template <> void mark_dst_initialized_if_safe<Clear>(void* dst, void* end) {
+#if !defined(__EMSCRIPTEN__)
+    /// \note no sk_msan_* on EMSCRIPTEN
     sk_msan_mark_initialized(dst, end, "Clear doesn't read dst.");
+#endif // __EMSCRIPTEN__
 }
 
 template <typename Xfermode>

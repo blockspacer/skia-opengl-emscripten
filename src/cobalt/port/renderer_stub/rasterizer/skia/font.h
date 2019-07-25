@@ -43,7 +43,7 @@ class Font : public render_tree::Font {
 
   ~Font();
 
-  static sk_sp<SkTypeface> prepareFallbackTypeface();
+  //static sk_sp<SkTypeface> prepareFallbackTypeface();
 
   /*static sk_sp<SkTypeface_Cobalt> prepareFallbackSkTypeface();
 
@@ -94,6 +94,7 @@ class Font : public render_tree::Font {
 
   const SkFont GetSkFont() const;
 
+  scoped_refptr<SkiaTypeface> GetTypeface();
 private:
   // Usually covers Latin-1 in a single page.
   static const int kPrimaryPageSize = 256;

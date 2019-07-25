@@ -101,6 +101,7 @@ SkFontStyle SkTypeface::FromOldStyle(Style oldStyle) {
 }
 
 SkTypeface* SkTypeface::GetDefaultTypeface(Style style) {
+    printf("SkTypeface::GetDefaultTypeface 0.0.1\n");
     static SkOnce once[4];
     static sk_sp<SkTypeface> defaults[4];
 
@@ -110,7 +111,9 @@ SkTypeface* SkTypeface::GetDefaultTypeface(Style style) {
         auto t = fm->legacyMakeTypeface(nullptr, FromOldStyle(style));
         defaults[style] = t ? t : SkEmptyTypeface::Make();
     });
-    return defaults[style].get();
+    SkTypeface* res = defaults[style].get();
+    printf("SkTypeface::GetDefaultTypeface 0.0.2\n");
+    return res;
 }
 
 sk_sp<SkTypeface> SkTypeface::MakeDefault() {
@@ -132,6 +135,7 @@ bool SkTypeface::Equal(const SkTypeface* facea, const SkTypeface* faceb) {
 
 sk_sp<SkTypeface> SkTypeface::MakeFromName(const char name[],
                                            SkFontStyle fontStyle) {
+    //printf("SkTypeface::MakeFromName 0.0.1\n");
     if (nullptr == name && (fontStyle.slant() == SkFontStyle::kItalic_Slant ||
                             fontStyle.slant() == SkFontStyle::kUpright_Slant) &&
                            (fontStyle.weight() == SkFontStyle::kBold_Weight ||
@@ -142,6 +146,7 @@ sk_sp<SkTypeface> SkTypeface::MakeFromName(const char name[],
             (fontStyle.weight() == SkFontStyle::kBold_Weight ? SkTypeface::kBold :
                                                                SkTypeface::kNormal))));
     }
+    //printf("SkTypeface::MakeFromName 0.0.2\n");
     return SkFontMgr::RefDefault()->legacyMakeTypeface(name, fontStyle);
 }
 
@@ -372,6 +377,7 @@ SkRect SkTypeface::getBounds() const {
 }
 
 bool SkTypeface::onComputeBounds(SkRect* bounds) const {
+    printf("SkTypeface::onComputeBounds 1\n");
     // we use a big size to ensure lots of significant bits from the scalercontext.
     // then we scale back down to return our final answer (at 1-pt)
     const SkScalar textSize = 2048;
@@ -383,16 +389,27 @@ bool SkTypeface::onComputeBounds(SkRect* bounds) const {
     font.setLinearMetrics(true);
 
     SkScalerContextRec rec;
-    SkScalerContextEffects effects;
 
+    // TODO >>>
+    SkScalerContextEffects effects;
+    //SkScalerContextEffects* effects;
+
+    printf("SkTypeface::onComputeBounds 1.1\n");
+    // TODO >>>
     SkScalerContext::MakeRecAndEffectsFromFont(font, &rec, &effects);
+    //SkScalerContext::MakeRecAndEffectsFromFont(font, &rec, effects);
+
+    printf("SkTypeface::onComputeBounds 2\n");
 
     SkAutoDescriptor ad;
     SkScalerContextEffects noeffects;
     SkScalerContext::AutoDescriptorGivenRecAndEffects(rec, noeffects, &ad);
 
+    printf("SkTypeface::onComputeBounds 3\n");
+
     std::unique_ptr<SkScalerContext> ctx = this->createScalerContext(noeffects, ad.getDesc(), true);
     if (!ctx) {
+        printf("SkTypeface::onComputeBounds 3.1\n");
         return false;
     }
 
@@ -400,6 +417,7 @@ bool SkTypeface::onComputeBounds(SkRect* bounds) const {
     ctx->getFontMetrics(&fm);
     bounds->set(fm.fXMin * invTextSize, fm.fTop * invTextSize,
                 fm.fXMax * invTextSize, fm.fBottom * invTextSize);
+    printf("SkTypeface::onComputeBounds 4\n");
     return true;
 }
 

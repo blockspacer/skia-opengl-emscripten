@@ -117,7 +117,7 @@ bool EzTimeValueExplode(const EzTimeValue* SB_RESTRICT value,
   SB_DCHECK(value);
   SB_DCHECK(out_exploded);
   UErrorCode status = U_ZERO_ERROR;
-#if !defined(__EMSCRIPTEN__) && !defined(USE_CUSTOM_ICU)
+#if !UCONFIG_NO_FORMATTING /*!defined(__EMSCRIPTEN__) && !defined(USE_CUSTOM_ICU)*/
   // Always query the time using a gregorian calendar.  This is
   // implied in opengroup documentation for tm struct, even though it is not
   // specified.  E.g. in gmtime's documentation, it states that UTC time is
@@ -170,7 +170,7 @@ EzTimeValue EzTimeValueImplode(EzTimeExploded* SB_RESTRICT exploded,
   SB_DCHECK(exploded);
   UErrorCode status = U_ZERO_ERROR;
 
-#if !defined(__EMSCRIPTEN__) && !defined(USE_CUSTOM_ICU)
+#if !UCONFIG_NO_FORMATTING /*!defined(__EMSCRIPTEN__) && !defined(USE_CUSTOM_ICU)*/
   // Always query the time using a gregorian calendar.  This is
   // implied in opengroup documentation for tm struct, even though it is not
   // specified.  E.g. in gmtime's documentation, it states that UTC time is

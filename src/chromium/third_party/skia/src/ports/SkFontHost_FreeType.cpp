@@ -263,6 +263,7 @@ static int gFTCount;
 
 // Caller must lock gFTMutex before calling this function.
 static bool ref_ft_library() {
+    printf("ref_ft_library 1\n");
     gFTMutex.assertHeld();
     SkASSERT(gFTCount >= 0);
 
@@ -271,11 +272,13 @@ static bool ref_ft_library() {
         gFTLibrary = new FreeTypeLibrary;
     }
     ++gFTCount;
+    printf("ref_ft_library 2\n");
     return gFTLibrary->library();
 }
 
 // Caller must lock gFTMutex before calling this function.
 static void unref_ft_library() {
+    printf("unref_ft_library 1\n");
     gFTMutex.assertHeld();
     SkASSERT(gFTCount > 0);
 
@@ -286,6 +289,7 @@ static void unref_ft_library() {
         delete gFTLibrary;
         SkDEBUGCODE(gFTLibrary = nullptr;)
     }
+    printf("unref_ft_library 2\n");
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -389,6 +393,7 @@ static void ft_face_setup_axes(SkFaceRec* rec, const SkFontData& data) {
 // Will return nullptr on failure
 // Caller must lock gFTMutex before calling this function.
 static SkFaceRec* ref_ft_face(const SkTypeface* typeface) {
+    printf("ref_ft_face 1\n");
     gFTMutex.assertHeld();
 
     const SkFontID fontID = typeface->uniqueID();
@@ -446,12 +451,14 @@ static SkFaceRec* ref_ft_face(const SkTypeface* typeface) {
 
     rec->fNext = gFaceRecHead;
     gFaceRecHead = rec.get();
+    printf("ref_ft_face 2\n");
     return rec.release();
 }
 
 // Caller must lock gFTMutex before calling this function.
 // Marked extern because vc++ does not support internal linkage template parameters.
 extern /*static*/ void unref_ft_face(SkFaceRec* faceRec) {
+    printf("unref_ft_face 1\n");
     gFTMutex.assertHeld();
 
     SkFaceRec*  rec = gFaceRecHead;
@@ -473,22 +480,27 @@ extern /*static*/ void unref_ft_face(SkFaceRec* faceRec) {
         rec = next;
     }
     SkDEBUGFAIL("shouldn't get here, face not in list");
+    printf("unref_ft_face 2\n");
 }
 
 class AutoFTAccess {
 public:
     AutoFTAccess(const SkTypeface* tf) : fFaceRec(nullptr) {
+        printf("AutoFTAccess 1\n");
         gFTMutex.acquire();
         SkASSERT_RELEASE(ref_ft_library());
         fFaceRec = ref_ft_face(tf);
+        printf("AutoFTAccess 2\n");
     }
 
     ~AutoFTAccess() {
+        printf("~AutoFTAccess 1\n");
         if (fFaceRec) {
             unref_ft_face(fFaceRec);
         }
         unref_ft_library();
         gFTMutex.release();
+        printf("~AutoFTAccess 2\n");
     }
 
     FT_Face face() { return fFaceRec ? fFaceRec->fFace.get() : nullptr; }
@@ -694,12 +706,17 @@ static bool isAxisAligned(const SkScalerContextRec& rec) {
 
 SkScalerContext* SkTypeface_FreeType::onCreateScalerContext(const SkScalerContextEffects& effects,
                                                             const SkDescriptor* desc) const {
+    printf("SkTypeface_FreeType::onCreateScalerContext 1\n");
     auto c = skstd::make_unique<SkScalerContext_FreeType>(
             sk_ref_sp(const_cast<SkTypeface_FreeType*>(this)), effects, desc);
+    printf("SkTypeface_FreeType::onCreateScalerContext 1.1\n");
     if (!c->success()) {
+        printf("SkTypeface_FreeType::onCreateScalerContext 1.2\n");
         return nullptr;
     }
-    return c.release();
+    SkScalerContext* res = c.release();
+    printf("SkTypeface_FreeType::onCreateScalerContext 2\n");
+    return res;
 }
 
 std::unique_ptr<SkFontData> SkTypeface_FreeType::cloneFontData(
@@ -732,6 +749,7 @@ void SkTypeface_FreeType::onFilterRec(SkScalerContextRec* rec) const {
     }
 
     if (isLCD(*rec)) {
+        printf("SkScalerContext_FreeType::onFilterRec 2\n");
         // TODO: re-work so that FreeType is set-up and selected by the SkFontMgr.
         SkAutoMutexAcquire ama(gFTMutex);
         ref_ft_library();
@@ -740,6 +758,7 @@ void SkTypeface_FreeType::onFilterRec(SkScalerContextRec* rec) const {
             rec->fMaskFormat = SkMask::kA8_Format;
         }
         unref_ft_library();
+        printf("SkScalerContext_FreeType::onFilterRec 3\n");
     }
 
     SkFontHinting h = rec->getHinting();
@@ -844,7 +863,9 @@ SkScalerContext_FreeType::SkScalerContext_FreeType(sk_sp<SkTypeface> typeface,
     , fFTSize(nullptr)
     , fStrikeIndex(-1)
 {
-    SkAutoMutexAcquire  ac(gFTMutex);
+    printf("SkScalerContext_FreeType::SkScalerContext_FreeType 1\n");
+    // TODO: deadlocks on WASM MT
+    SkAutoMutexAcquire ac(gFTMutex);
     SkASSERT_RELEASE(ref_ft_library());
 
     fFaceRec.reset(ref_ft_face(this->getTypeface()));
@@ -1019,9 +1040,11 @@ SkScalerContext_FreeType::SkScalerContext_FreeType(sk_sp<SkTypeface> typeface,
     fFTSize = ftSize.release();
     fFace = fFaceRec->fFace.get();
     fDoLinearMetrics = linearMetrics;
+    printf("SkScalerContext_FreeType::SkScalerContext_FreeType 2\n");
 }
 
 SkScalerContext_FreeType::~SkScalerContext_FreeType() {
+    printf("SkScalerContext_FreeType::~SkScalerContext_FreeType 1\n");
     SkAutoMutexAcquire  ac(gFTMutex);
 
     if (fFTSize != nullptr) {
@@ -1031,18 +1054,21 @@ SkScalerContext_FreeType::~SkScalerContext_FreeType() {
     fFaceRec = nullptr;
 
     unref_ft_library();
+    printf("SkScalerContext_FreeType::~SkScalerContext_FreeType 2\n");
 }
 
 /*  We call this before each use of the fFace, since we may be sharing
     this face with other context (at different sizes).
 */
 FT_Error SkScalerContext_FreeType::setupSize() {
+    printf("SkScalerContext_FreeType::setupSize 1\n");
     gFTMutex.assertHeld();
     FT_Error err = FT_Activate_Size(fFTSize);
     if (err != 0) {
         return err;
     }
     FT_Set_Transform(fFace, &fMatrix22, nullptr);
+    printf("SkScalerContext_FreeType::setupSize 2\n");
     return 0;
 }
 
@@ -1051,6 +1077,7 @@ unsigned SkScalerContext_FreeType::generateGlyphCount() {
 }
 
 bool SkScalerContext_FreeType::generateAdvance(SkGlyph* glyph) {
+    printf("SkScalerContext_FreeType::generateAdvance 1\n");
    /* unhinted and light hinted text have linearly scaled advances
     * which are very cheap to compute with some font formats...
     */
@@ -1079,6 +1106,8 @@ bool SkScalerContext_FreeType::generateAdvance(SkGlyph* glyph) {
     const SkScalar advanceScalar = SkFT_FixedToScalar(advance);
     glyph->fAdvanceX = SkScalarToFloat(fMatrix22Scalar.getScaleX() * advanceScalar);
     glyph->fAdvanceY = SkScalarToFloat(fMatrix22Scalar.getSkewY() * advanceScalar);
+
+    printf("SkScalerContext_FreeType::generateAdvance 2\n");
     return true;
 }
 
@@ -1163,6 +1192,7 @@ bool SkScalerContext_FreeType::shouldSubpixelBitmap(const SkGlyph& glyph, const 
 }
 
 void SkScalerContext_FreeType::generateMetrics(SkGlyph* glyph) {
+    printf("SkScalerContext_FreeType::generateMetrics 1\n");
     SkAutoMutexAcquire  ac(gFTMutex);
 
     glyph->fMaskFormat = fRec.fMaskFormat;
@@ -1312,6 +1342,7 @@ void SkScalerContext_FreeType::generateMetrics(SkGlyph* glyph) {
 #ifdef ENABLE_GLYPH_SPEW
     LOG_INFO("Metrics(glyph:%d flags:0x%x) w:%d\n", glyph->getGlyphID(), fLoadGlyphFlags, glyph->fWidth);
 #endif
+    printf("SkScalerContext_FreeType::generateMetrics 2\n");
 }
 
 static void clear_glyph_image(const SkGlyph& glyph) {
@@ -1319,6 +1350,8 @@ static void clear_glyph_image(const SkGlyph& glyph) {
 }
 
 void SkScalerContext_FreeType::generateImage(const SkGlyph& glyph) {
+    printf("SkScalerContext_FreeType::generateImage 1\n");
+    // deadlocks >>
     SkAutoMutexAcquire  ac(gFTMutex);
 
     if (this->setupSize()) {
@@ -1346,10 +1379,12 @@ void SkScalerContext_FreeType::generateImage(const SkGlyph& glyph) {
         bitmapMatrix = &subpixelBitmapMatrix;
     }
     generateGlyphImage(fFace, glyph, *bitmapMatrix);
+    printf("SkScalerContext_FreeType::generateImage 2\n");
 }
 
 
 bool SkScalerContext_FreeType::generatePath(SkGlyphID glyphID, SkPath* path) {
+    printf("SkScalerContext_FreeType::generatePath 1\n");
     SkASSERT(path);
 
     SkAutoMutexAcquire  ac(gFTMutex);
@@ -1385,10 +1420,12 @@ bool SkScalerContext_FreeType::generatePath(SkGlyphID glyphID, SkPath* path) {
         FT_Vector_Transform(&vector, &fMatrix22);
         path->offset(SkFDot6ToScalar(vector.x), -SkFDot6ToScalar(vector.y));
     }
+    printf("SkScalerContext_FreeType::generatePath 2\n");
     return true;
 }
 
 void SkScalerContext_FreeType::generateFontMetrics(SkFontMetrics* metrics) {
+    printf("SkScalerContext_FreeType::generateFontMetrics 1\n");
     if (nullptr == metrics) {
         return;
     }
@@ -1523,6 +1560,7 @@ void SkScalerContext_FreeType::generateFontMetrics(SkFontMetrics* metrics) {
     metrics->fUnderlinePosition = underlinePosition * fScale.y();
     metrics->fStrikeoutThickness = strikeoutThickness * fScale.y();
     metrics->fStrikeoutPosition = strikeoutPosition * fScale.y();
+    printf("SkScalerContext_FreeType::generateFontMetrics 2\n");
 }
 
 ///////////////////////////////////////////////////////////////////////////////

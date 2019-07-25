@@ -1600,6 +1600,7 @@ void SkGpuDevice::drawAtlas(const SkImage* atlas, const SkRSXform xform[],
 ///////////////////////////////////////////////////////////////////////////////
 
 void SkGpuDevice::drawGlyphRunList(const SkGlyphRunList& glyphRunList) {
+    //printf("SkGpuDevice::drawGlyphRunList 0.1\n");
     ASSERT_SINGLE_OWNER
     GR_CREATE_TRACE_MARKER_CONTEXT("SkGpuDevice", "drawGlyphRunList", fContext.get());
 
@@ -1610,6 +1611,8 @@ void SkGpuDevice::drawGlyphRunList(const SkGlyphRunList& glyphRunList) {
     }
 
     fRenderTargetContext->drawGlyphRunList(this->clip(), ctm, glyphRunList);
+
+    //printf("SkGpuDevice::drawGlyphRunList 0.2\n");
 }
 
 ///////////////////////////////////////////////////////////////////////////////

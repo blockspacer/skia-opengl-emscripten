@@ -81,7 +81,7 @@ class SkiaTypeface : public render_tree::Typeface {
   // modified on a single thread.
   std::unique_ptr<render_tree::GlyphIndex[]> primary_page_character_glyphs_;
   CharacterToGlyphMap character_to_glyph_map_;
-#if !defined(OS_EMSCRIPTEN)
+#if !(defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__))
     base::ThreadChecker character_glyph_thread_checker_;
 #endif
 };

@@ -58,9 +58,9 @@ SK_API extern void sk_abort_no_print(void);
     #define SkDEBUGF(...)               SkDebugf(__VA_ARGS__)
     #define SkAssertResult(cond)        SkASSERT(cond)
 
-#if (defined(OS_EMSCRIPTEN) || defined(__EMSCRIPTEN__))
-#error "EMSCRIPTEN/WASM platform supports only skia release builds"
-#endif
+//#if (defined(OS_EMSCRIPTEN) || defined(__EMSCRIPTEN__))
+//#error "EMSCRIPTEN/WASM platform supports only skia release builds"
+//#endif
 
 #else
     #define SkASSERT(cond)            static_cast<void>(0)

@@ -85,7 +85,7 @@
 
 namespace blink {
 
-#if !defined(__EMSCRIPTEN__)
+#if !(defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__))
 WTF::ThreadSpecific<ThreadState*>* ThreadState::thread_specific_ = nullptr;
 uint8_t ThreadState::main_thread_state_storage_[sizeof(ThreadState)];
 #endif
@@ -125,7 +125,7 @@ ThreadState::ThreadState()
       disabled_static_persistent_registration_(0),
 #endif
       reported_memory_to_v8_(0) {
-#if !defined(__EMSCRIPTEN__)
+#if !(defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__))
   DCHECK(CheckThread());
   DCHECK(!**thread_specific_);
   **thread_specific_ = this;
@@ -149,7 +149,7 @@ void ThreadState::OnRAILModeChanged(RAILMode new_mode) {
 }
 
 ThreadState::~ThreadState() {
-#if !defined(__EMSCRIPTEN__)
+#if !(defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__))
   DCHECK(CheckThread());
   if (IsMainThread())
     DCHECK_EQ(0u, Heap().stats_collector()->allocated_space_bytes());
@@ -160,7 +160,7 @@ ThreadState::~ThreadState() {
 }
 
 void ThreadState::AttachMainThread() {
-#if !defined(__EMSCRIPTEN__)
+#if !(defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__))
   thread_specific_ = new WTF::ThreadSpecific<ThreadState*>();
   new (main_thread_state_storage_) ThreadState();
 

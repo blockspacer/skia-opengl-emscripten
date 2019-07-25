@@ -823,7 +823,7 @@ void ResourceCache<CacheType>::NotifyResourceLoadingComplete(
     CachedResourceType* cached_resource, CallbackType callback_type) {
   DCHECK(resource_cache_thread_checker_.CalledOnValidThread());
   const std::string& url = cached_resource->url().spec();
-  printf("ResourceCache<CacheType>::NotifyResourceLoadingComplete 1 \n");
+  printf("ResourceCache<CacheType>::NotifyResourceLoadingComplete 1 for %s\n", url.c_str());
 
   if (cached_resource->TryGetResource()) {
     printf("ResourceCache<CacheType>::NotifyResourceLoadingComplete 2 \n");

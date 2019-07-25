@@ -21,6 +21,7 @@
 #if defined(_MSC_VER)
     #define TRACE_FUNC __FUNCSIG__
 #else
+    // TODO: check func name on EMSCRIPTEN
     #define TRACE_FUNC __PRETTY_FUNCTION__
 #endif
 
@@ -79,6 +80,9 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 
+/// \note std::atomic<T> variable may acquire lock,
+/// lock may deadlock main browser loop!
+/// \see https://github.com/emscripten-core/emscripten/issues/8325
 #ifdef __EMSCRIPTEN__
 
 /// \note trace events may cause freeze on WASM with pthreads support

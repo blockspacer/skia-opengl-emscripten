@@ -550,7 +550,9 @@ void SkBitmapDevice::drawSprite(const SkBitmap& bitmap, int x, int y, const SkPa
 }
 
 void SkBitmapDevice::drawGlyphRunList(const SkGlyphRunList& glyphRunList) {
+    //printf("SkBitmapDevice::drawGlyphRunList 0.1\n");
     LOOP_TILER( drawGlyphRunList(glyphRunList, &fGlyphPainter), nullptr )
+    //printf("SkBitmapDevice::drawGlyphRunList 0.2\n");
 }
 
 void SkBitmapDevice::drawVertices(const SkVertices* vertices, const SkVertices::Bone bones[],

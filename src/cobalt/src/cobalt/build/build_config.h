@@ -149,6 +149,9 @@
     return ""; \
   }()
 
+#define EM_IS_MAIN_THREAD() \
+  (emscripten_has_threading_support() ? emscripten_is_main_runtime_thread() : true)
+
 /// \note printing to console or emscripten terminal area may
 /// decrease performance drastically
 /// \note Webassembly worker thread may hang if printf is used in threads

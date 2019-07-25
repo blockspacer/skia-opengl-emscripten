@@ -38,6 +38,7 @@ list(APPEND RENDERER_PRIVATE_DEFINES
   #
   ${OPENGLES2_DEFINITIONS}
   #
+  # TODO
   # see software_resource_provider.cc
   # ENABLE_DYNAMIC_FONT_LOADING=1
 )

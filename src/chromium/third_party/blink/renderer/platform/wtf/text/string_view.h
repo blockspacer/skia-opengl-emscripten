@@ -7,9 +7,9 @@
 
 #include "third_party/blink/renderer/platform/wtf/allocator.h"
 #include "third_party/blink/renderer/platform/wtf/get_ptr.h"
-#if DCHECK_IS_ON() && !defined(OS_EMSCRIPTEN)
+//#if DCHECK_IS_ON() && !defined(OS_EMSCRIPTEN)
 #include "base/memory/scoped_refptr.h"
-#endif
+//#endif
 #include <cstring>
 #include "base/containers/span.h"
 #include "third_party/blink/renderer/platform/wtf/std_lib_extras.h"
@@ -90,7 +90,7 @@ class WTF_EXPORT StringView {
   StringView(const char16_t* chars)
       : StringView(reinterpret_cast<const UChar*>(chars)) {}
 
-#if DCHECK_IS_ON() && !defined(OS_EMSCRIPTEN)
+#if DCHECK_IS_ON() /*&& !defined(OS_EMSCRIPTEN)*/
   ~StringView();
 #endif
 
@@ -169,7 +169,7 @@ class WTF_EXPORT StringView {
 // We use the StringImpl to mark for 8bit or 16bit, even for strings where
 // we were constructed from a char pointer. So m_impl->bytes() might have
 // nothing to do with this view's bytes().
-#if DCHECK_IS_ON() && !defined(OS_EMSCRIPTEN)
+#if DCHECK_IS_ON() /*&& !defined(OS_EMSCRIPTEN)*/
   scoped_refptr<StringImpl> impl_;
 #else
   StringImpl* impl_;

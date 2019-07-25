@@ -195,7 +195,7 @@ class PLATFORM_EXPORT ThreadState final : private RAILModeObserver {
   static void DetachCurrentThread();
 
   static ThreadState* Current() {
-#if defined(__EMSCRIPTEN__)
+#if (defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__))
   return nullptr;
 #else
   return **thread_specific_;
@@ -203,7 +203,7 @@ class PLATFORM_EXPORT ThreadState final : private RAILModeObserver {
   }
 
   static ThreadState* MainThreadState() {
-#if defined(__EMSCRIPTEN__)
+#if (defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__))
   return nullptr;
 #else
     return reinterpret_cast<ThreadState*>(main_thread_state_storage_);
@@ -438,7 +438,7 @@ class PLATFORM_EXPORT ThreadState final : private RAILModeObserver {
   // Stores whether some ThreadState is currently in incremental marking.
   static AtomicEntryFlag incremental_marking_flag_;
 
-#if !defined(__EMSCRIPTEN__)
+#if !(defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__))
   static WTF::ThreadSpecific<ThreadState*>* thread_specific_;
 
   // We can't create a static member of type ThreadState here because it will

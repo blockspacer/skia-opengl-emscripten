@@ -34,6 +34,8 @@
 #include "src/utils/SkMatrix22.h"
 #include <new>
 
+#include <iostream>
+
 ///////////////////////////////////////////////////////////////////////////////
 
 #ifdef SK_DEBUG
@@ -853,15 +855,21 @@ extern SkScalerContext* SkCreateColorScalerContext(const SkDescriptor* desc);
 std::unique_ptr<SkScalerContext> SkTypeface::createScalerContext(
     const SkScalerContextEffects& effects, const SkDescriptor* desc, bool allowFailure) const
 {
+    printf("SkTypeface::createScalerContext 1.1.1.1.1.1\n");
     std::unique_ptr<SkScalerContext> c(this->onCreateScalerContext(effects, desc));
+
+    printf("SkTypeface::createScalerContext 1.1.1.1.1.2\n");
     if (!c && !allowFailure) {
+        printf("SkTypeface::createScalerContext 1.1.1.1.1.3\n");
         c = skstd::make_unique<SkScalerContext_Empty>(sk_ref_sp(const_cast<SkTypeface*>(this)),
                                                       effects, desc);
     }
 
+    printf("SkTypeface::createScalerContext 1.1.1.1.1.4\n");
     // !allowFailure implies c != nullptr
     SkASSERT(c || allowFailure);
 
+    printf("SkTypeface::createScalerContext 1.1.1.1.1.5\n");
     return c;
 }
 
@@ -915,6 +923,7 @@ void SkScalerContext::MakeRecAndEffects(const SkFont& font, const SkPaint& paint
                                         const SkMatrix& deviceMatrix,
                                         SkScalerContextRec* rec,
                                         SkScalerContextEffects* effects) {
+    printf("SkScalerContext::MakeRecAndEffects 1\n");
     SkASSERT(!deviceMatrix.hasPerspective());
 
     sk_bzero(rec, sizeof(SkScalerContextRec));
@@ -1058,7 +1067,26 @@ void SkScalerContext::MakeRecAndEffects(const SkFont& font, const SkPaint& paint
         rec->setContrast(0);
     }
 
-    new (effects) SkScalerContextEffects{paint};
+    printf("SkScalerContext::MakeRecAndEffects 2\n");
+
+    /// \note FIXME: UB ON WASM MT
+    /// Placement new allows you to construct an object
+    /// in memory that's already allocated.
+    /// UB (from https://stackoverflow.com/a/43001282):
+    /// "cause you cannot use var to refer to the state
+    /// of the Immutable(1) you stored within it after the placement new"
+    //new (effects) SkScalerContextEffects{paint};
+    //effects = new SkScalerContextEffects{paint};
+    if(effects) {
+      effects->fPathEffect = paint.getPathEffect();
+      effects->fMaskFilter = paint.getMaskFilter();
+    } else {
+      printf("WARNING: Invalid effects* in SkScalerContext\n");
+    }
+
+    printf("SkScalerContext::MakeRecAndEffects 3\n");
+    std::cout << std::endl; // flush
+    printf("SkScalerContext::MakeRecAndEffects 3.1\n");
 }
 
 SkDescriptor* SkScalerContext::MakeDescriptorForPaths(SkFontID typefaceID,
@@ -1076,14 +1104,20 @@ SkDescriptor* SkScalerContext::CreateDescriptorAndEffectsUsingPaint(
     SkScalerContextFlags scalerContextFlags, const SkMatrix& deviceMatrix, SkAutoDescriptor* ad,
     SkScalerContextEffects* effects)
 {
+    printf("CreateDescriptorAndEffectsUsingPaint 1\n");
     SkScalerContextRec rec;
+    printf("CreateDescriptorAndEffectsUsingPaint 2\n");
     MakeRecAndEffects(font, paint, surfaceProps, scalerContextFlags, deviceMatrix, &rec, effects);
-    return AutoDescriptorGivenRecAndEffects(rec, *effects, ad);
+    printf("CreateDescriptorAndEffectsUsingPaint 3\n");
+    SkDescriptor* res = AutoDescriptorGivenRecAndEffects(rec, *effects, ad);
+    printf("CreateDescriptorAndEffectsUsingPaint 4\n");
+    return res;
 }
 
 static size_t calculate_size_and_flatten(const SkScalerContextRec& rec,
                                          const SkScalerContextEffects& effects,
                                          SkBinaryWriteBuffer* effectBuffer) {
+    printf("calculate_size_and_flatten 1\n");
     size_t descSize = sizeof(rec);
     int entryCount = 1;
 
@@ -1095,22 +1129,27 @@ static size_t calculate_size_and_flatten(const SkScalerContextRec& rec,
     }
 
     descSize += SkDescriptor::ComputeOverhead(entryCount);
+    printf("calculate_size_and_flatten 2\n");
     return descSize;
 }
 
 static void generate_descriptor(const SkScalerContextRec& rec,
                                 const SkBinaryWriteBuffer& effectBuffer,
                                 SkDescriptor* desc) {
+    printf("generate_descriptor 1\n");
     desc->init();
     desc->addEntry(kRec_SkDescriptorTag, sizeof(rec), &rec);
 
     if (effectBuffer.bytesWritten() > 0) {
+        printf("generate_descriptor 1.1\n");
         effectBuffer.writeToMemory(desc->addEntry(kEffects_SkDescriptorTag,
                                                   effectBuffer.bytesWritten(),
                                                   nullptr));
     }
+    printf("generate_descriptor 2\n");
 
     desc->computeChecksum();
+    printf("generate_descriptor 3\n");
 }
 
 SkDescriptor* SkScalerContext::AutoDescriptorGivenRecAndEffects(
@@ -1118,12 +1157,17 @@ SkDescriptor* SkScalerContext::AutoDescriptorGivenRecAndEffects(
     const SkScalerContextEffects& effects,
     SkAutoDescriptor* ad)
 {
+    printf("AutoDescriptorGivenRecAndEffects 1\n");
     SkBinaryWriteBuffer buf;
 
     ad->reset(calculate_size_and_flatten(rec, effects, &buf));
+    printf("AutoDescriptorGivenRecAndEffects 1.1\n");
     generate_descriptor(rec, buf, ad->getDesc());
 
-    return ad->getDesc();
+    printf("AutoDescriptorGivenRecAndEffects 2\n");
+    SkDescriptor* res = ad->getDesc();
+    printf("AutoDescriptorGivenRecAndEffects 3\n");
+    return res;
 }
 
 std::unique_ptr<SkDescriptor> SkScalerContext::DescriptorGivenRecAndEffects(

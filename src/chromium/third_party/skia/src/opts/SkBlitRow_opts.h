@@ -115,7 +115,10 @@ static inline uint8x8_t SkPMSrcOver_neon2(uint8x8_t dst, uint8x8_t src) {
 /*not static*/ inline
 void blit_row_s32a_opaque(SkPMColor* dst, const SkPMColor* src, int len, U8CPU alpha) {
     SkASSERT(alpha == 0xFF);
+#if !defined(__EMSCRIPTEN__)
+    /// \note no sk_msan_* on EMSCRIPTEN
     sk_msan_assert_initialized(src, src+len);
+#endif // __EMSCRIPTEN__
 
 #if SK_CPU_SSE_LEVEL >= SK_CPU_SSE_LEVEL_SSE41
     while (len >= 16) {

@@ -2568,6 +2568,7 @@ void SkCanvas::onDrawBitmapLattice(const SkBitmap& bitmap, const Lattice& lattic
 
 void SkCanvas::onDrawTextBlob(const SkTextBlob* blob, SkScalar x, SkScalar y,
                               const SkPaint& paint) {
+    //printf("SkCanvas::onDrawTextBlob 1\n");
     SkRect storage;
     const SkRect* bounds = nullptr;
     if (paint.canComputeFastBounds()) {
@@ -2578,34 +2579,59 @@ void SkCanvas::onDrawTextBlob(const SkTextBlob* blob, SkScalar x, SkScalar y,
         }
         bounds = &storage;
     }
+    //printf("SkCanvas::onDrawTextBlob 2\n");
+
+    SkASSERT(bounds->isFinite());
+
+    // TODO >>>
+    SkASSERT(bounds->width() > 0);
+    SkASSERT(bounds->height() > 0);
+    SkASSERT(bounds->width() < 9999);
+    SkASSERT(bounds->height() < 9999);
 
     // We cannot filter in the looper as we normally do, because the paint is
     // incomplete at this point (text-related attributes are embedded within blob run paints).
     LOOPER_BEGIN(paint, bounds)
 
     while (iter.next()) {
+        //printf("SkCanvas::onDrawTextBlob 2.1\n");
         fScratchGlyphRunBuilder->drawTextBlob(looper.paint(), *blob, {x, y}, iter.fDevice);
     }
 
     LOOPER_END
+    //printf("SkCanvas::onDrawTextBlob 3\n");
 }
 
 // These call the (virtual) onDraw... method
 void SkCanvas::drawSimpleText(const void* text, size_t byteLength, SkTextEncoding encoding,
                               SkScalar x, SkScalar y, const SkFont& font, const SkPaint& paint) {
+    //printf("SkCanvas::drawSimpleText 1\n");
     TRACE_EVENT0("skia", TRACE_FUNC);
+    //printf("SkCanvas::drawSimpleText 2\n");
     if (byteLength) {
+        //printf("SkCanvas::drawSimpleText 2.1\n");
+#if !defined(__EMSCRIPTEN__)
+        /// \note no SkTAddOffset cast on EMSCRIPTEN
         sk_msan_assert_initialized(text, SkTAddOffset<const void>(text, byteLength));
-        this->drawTextBlob(SkTextBlob::MakeFromText(text, byteLength, font, encoding), x, y, paint);
+#endif // __EMSCRIPTEN__
+        //printf("SkCanvas::drawSimpleText 2.2\n");
+        sk_sp<SkTextBlob> blob =
+          SkTextBlob::MakeFromText(text, byteLength, font, encoding);
+        //printf("SkCanvas::drawSimpleText 2.3\n");
+        this->drawTextBlob(blob, x, y, paint);
     }
+    //printf("SkCanvas::drawSimpleText 3\n");
 }
 
 void SkCanvas::drawTextBlob(const SkTextBlob* blob, SkScalar x, SkScalar y,
                             const SkPaint& paint) {
+    //printf("SkCanvas::drawTextBlob 1\n");
     TRACE_EVENT0("skia", TRACE_FUNC);
     RETURN_ON_NULL(blob);
     RETURN_ON_FALSE(blob->bounds().makeOffset(x, y).isFinite());
+    //printf("SkCanvas::drawTextBlob 2\n");
     this->onDrawTextBlob(blob, x, y, paint);
+    //printf("SkCanvas::drawTextBlob 3\n");
 }
 
 void SkCanvas::onDrawVerticesObject(const SkVertices* vertices, const SkVertices::Bone bones[],

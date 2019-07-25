@@ -161,7 +161,7 @@ bool SoftwareResourceProvider::HasLocalFontFamily(
 
 scoped_refptr<render_tree::Typeface> SoftwareResourceProvider::GetLocalTypeface(
     const char* font_family_name, render_tree::FontStyle font_style) {
-  //printf("SoftwareResourceProvider::GetLocalTypeface %s\n", font_family_name);
+  printf("SoftwareResourceProvider::GetLocalTypeface 1 %s\n", font_family_name);
   TRACE_EVENT0("cobalt::renderer",
                "SoftwareResourceProvider::GetLocalTypeface()");
 
@@ -199,7 +199,7 @@ scoped_refptr<render_tree::Typeface> SoftwareResourceProvider::GetLocalTypeface(
         static_cast<SkTypeface_Cobalt*>(Font::getDefaultTypeface()->makeClone(SkFontArguments()).release()));
    */
     sk_sp</*SkTypeface_Cobalt*/SkTypeface> fallbackTypeface =
-      Font::prepareFallbackTypeface();/*Sk*/
+      Font::getDefaultTypeface();/*Sk*/
     DCHECK(fallbackTypeface);
     res = scoped_refptr<render_tree::Typeface>(
       new SkiaTypeface(fallbackTypeface));
@@ -207,8 +207,10 @@ scoped_refptr<render_tree::Typeface> SoftwareResourceProvider::GetLocalTypeface(
 
   return res;
 #else // ENABLE_DYNAMIC_FONT_LOADING
-  return scoped_refptr<render_tree::Typeface>(
-    new SkiaTypeface(Font::prepareFallbackTypeface()));/*Sk*/
+  scoped_refptr<render_tree::Typeface> res = scoped_refptr<render_tree::Typeface>(
+    new SkiaTypeface(Font::getDefaultTypeface()));/*Sk*/
+  printf("SoftwareResourceProvider::GetLocalTypeface 2 %s\n", font_family_name);
+  return res;
 #endif // ENABLE_DYNAMIC_FONT_LOADING
 }
 
@@ -258,7 +260,7 @@ SoftwareResourceProvider::GetCharacterFallbackTypeface(
               NULL, CobaltFontStyleToSkFontStyle(font_style), &language_cstr, 1,
               character)));*/
   sk_sp</*SkTypeface_Cobalt*/SkTypeface> typeface =
-    Font::prepareFallbackTypeface();/*Sk*/
+    Font::getDefaultTypeface();/*Sk*/
   printf("SoftwareResourceProvider::GetCharacterFallbackTypeface 2!!! %s\n", language.c_str());
   DCHECK(typeface);
   return scoped_refptr<render_tree::Typeface>(new SkiaTypeface(typeface));
@@ -314,9 +316,9 @@ SoftwareResourceProvider::CreateTypefaceFromRawData(
           SkTypeface::MakeFromStream(std::move(stream)).release()));
 
   if(!typeface) {
-      typeface = Font::prepareFallbackTypeface();/*Sk*/
+      printf("WARNING: SoftwareResourceProvider::CreateTypefaceFromRawData no typeface...\n");
+      typeface = Font::getDefaultTypeface();/*Sk*/
       DCHECK(typeface);
-      //printf("SoftwareResourceProvider::CreateTypefaceFromRawData no typeface...\n");
       /*typeface.reset(
           // TODO: base::polymorphic_downcast
           // Check failed: dynamic_cast<Derived>(base) == base.

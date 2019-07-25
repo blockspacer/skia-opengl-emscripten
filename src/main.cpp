@@ -100,7 +100,7 @@
 #warning "TODO: PORT SKOTTIE & PTHREADS"
 #endif
 
-//#define ENABLE_CUSTOM_FONTS 1
+#define ENABLE_CUSTOM_FONTS 1
 #if defined(ENABLE_CUSTOM_FONTS) && !defined(ENABLE_SKIA)
 #warning "ENABLE_CUSTOM_FONTS requires SKIA"
 #undef ENABLE_CUSTOM_FONTS
@@ -135,7 +135,9 @@
 #define ENABLE_IMAGES 1
 #endif
 
+// TODO >>>
 //#undef ENABLE_SKOTTIE
+
 //#undef ENABLE_CUSTOM_FONTS
 
 //#if defined(ENABLE_COBALT_RENDERER_STUB)
@@ -373,6 +375,13 @@
 #include <utility>
 #include <memory>
 #include <utility>
+#include <cmath>
+#include <memory>
+#include <string>
+#include <vector>
+#include <memory>
+#include <string>
+#include <vector>
 
 #ifdef ENABLE_GFX_GEOMETRY
 #include "ui/gfx/geometry/rect.h"
@@ -500,7 +509,8 @@
 #endif // ENABLE_WTF
 
 #if defined(ENABLE_SKIA) && defined(ENABLE_BLINK)
-#define ENABLE_BLINK_UI 1
+// TODO >>
+//#define ENABLE_BLINK_UI 1
 #endif
 
 #ifdef ENABLE_BLINK_UI
@@ -634,7 +644,8 @@ static sk_sp<SkImage> skImageSp;
 //#define ENABLE_BLINK_PLATFORM 1
 //#endif
 
-//#undef ENABLE_BLINK_PLATFORM
+// TODO >>
+#undef ENABLE_BLINK_PLATFORM
 
 #ifdef ENABLE_BLINK_PLATFORM
 
@@ -875,9 +886,13 @@ sk_sp<const GrGLInterface> emscripten_GrGLMakeNativeInterface() {
 }
 #endif
 
+#if defined(ENABLE_COBALT)
 // TODO >>>
 static bool render_browser_window = true;
 //static bool render_browser_window = false;
+#else // ENABLE_COBALT
+static bool render_browser_window = false;
+#endif // ENABLE_COBALT
 
 // must be POT
 static int width = 1920;//1024;//512;
@@ -975,11 +990,6 @@ static int browser_height = height;//10000;
 //#include "cobalt/loader/fetcher_factory.h"
 
 #include "cobalt/css_parser/parser.h"
-
-#include <cmath>
-#include <memory>
-#include <string>
-#include <vector>
 
 #include "cobalt/cssom/active_pseudo_class.h"
 #include "cobalt/cssom/after_pseudo_element.h"
@@ -1079,11 +1089,6 @@ static int browser_height = height;//10000;
 //#include "cobalt/storage/storage_manager.h"
 #include "starboard/accessibility.h"
 #include "starboard/log.h"
-
-
-#include <memory>
-#include <string>
-#include <vector>
 
 #include "cobalt/base/c_val.h"
 #include "cobalt/base/language.h"
@@ -1295,11 +1300,15 @@ static const int FONT_SIZE_SCALE = 512;
 static const float FONT_SIZE_F = 22.0f;
 //static sk_sp<SkTypeface> sktp;
 static sk_sp<SkTypeface> sktpForUI;
+static bool sktpForUICreated = false;
 const char* fontPath = "./resources/fonts/FreeSans.ttf";
 
 static void prepareUIFonts() {
   // SkFont font;//(nullptr, 24);//SkFont::kA8_MaskType, flags);
   if(!sktpForUI) {
+    DCHECK(!sktpForUICreated);
+    sktpForUICreated = true;
+
     sk_sp<SkData> data = SkData::MakeFromFileName(fontPath);
     if (!data) {
       printf("failed SkData::MakeFromMalloc for font %s\n", fontPath);
@@ -1366,12 +1375,13 @@ static base::Thread* input_browser_thread = &main_browser_thread_;
 
 #if !(defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__))
 // TODO: causes hangs on WASM MT (even in render_browser_window mode!)
-//#define SEPARATE_UI_THREAD 1
-//#define SEPARATE_UI_THREAD_WRAPPER 1
+#define SEPARATE_UI_THREAD 1
+#define SEPARATE_UI_THREAD_WRAPPER 1
 #endif // __EMSCRIPTEN__ && __EMSCRIPTEN_PTHREADS__
 
 #if defined(SEPARATE_UI_THREAD)
 static base::Thread ui_draw_thread_("UI_Draw_Thread");
+static bool canRefreshUI = true;
 
 #if defined(SEPARATE_UI_THREAD_WRAPPER)
 // TODO: remove ui_draw_thread_wrapper_ or enable only on WASM MT
@@ -1402,6 +1412,7 @@ static bool DrawGlyphs(double current_x, double current_y,
 
     double x = 0;
     double y = 0;
+    DCHECK(len < 99999);
     for (unsigned int i = 0; i < len; i++)
     {
         runBuffer.glyphs[i] =
@@ -1624,12 +1635,15 @@ public:
   SkScalar m_size = 200;
 
   void onDraw(SkCanvas* sk_canvas) {
+    if (isDebugPeriodReached()) printf("onDraw() 1\n");
+
+    DCHECK(sk_canvas);
+    if(!sk_canvas) return;
+
     // TODO: needs SKIA_GR_CONTEXT
     /*if (!canvas->getGrContext()) {
       return;
     }*/
-
-    ///if (isDebugPeriodReached()) printf("onDraw() 1\n");
 
     SkPaint paint;
 
@@ -1681,25 +1695,33 @@ public:
     //return;
 
 #ifdef ENABLE_CUSTOM_FONTS
-    prepareUIFonts();
-    DCHECK(sktpForUI);
+    CHECK(sktpForUICreated) << "sktpForUICreated required";
+    CHECK(sktpForUI) << "sktpForUI required";
+    //prepareUIFonts(); // see DCHECK(sktpForUI);
+
     SkFont skFont1ForUI(sktpForUI, FONT_SIZE_F, 1.0f, 0.0f);
     skFont1ForUI.setEdging(SkFont::Edging::kAntiAlias);
     DCHECK(sktpForUI);
+    DCHECK(skFont1ForUI.getTypeface());
     SkFont skFont2ForUI(sktpForUI, 30.0f, 1.5f, 0.0f);
     skFont2ForUI.setEdging(SkFont::Edging::kAntiAlias);
+    DCHECK(skFont2ForUI.getTypeface());
 
     // TODO >>>
     //return;
+    //printf("onDraw z1\n");
 
     sk_canvas->drawString("1!1 Skia Test 1 Skia Test 1 "
                           "Skia Test 1!", 60, 32, skFont1ForUI, paint);
 
+    //printf("onDraw z2\n");
     sk_canvas->drawString("2!2 Skia Test 2 Skia Test 2 "
                           "Skia Test 2!", 20, 97, skFont2ForUI, paint);
+    //printf("onDraw z3\n");
 
     // TODO >>> !!! <<<
     //return;
+    //printf("onDraw y1\n");
 
 // see https://github.com/google/skia/blob/master/modules/skshaper/src/SkShaper_harfbuzz.cpp#L1221
 #ifdef ENABLE_HARFBUZZ
@@ -1728,13 +1750,14 @@ public:
           &current_x, &current_y, &line_spacing_ratio,
           &font_size, &glyph_paint, &sk_canvas](const char *text) {
             /* Create hb-buffer and populate. */
-            hb_buffer_t *hb_buffer = hb_buffer_create ();
+            hb_buffer_t *hb_buffer = hb_buffer_create();
 
             hb_buffer_set_direction(hb_buffer, HB_DIRECTION_LTR);
 #ifdef HARFBUZZ_UNICODE
             hb_buffer_set_script(hb_buffer, HB_SCRIPT_CYRILLIC);
             //hb_buffer_set_language(hb_buffer, hb_language_from_string("ru", 2));
-            hb_buffer_set_language(hb_buffer, hb_language_from_string("en", 2));
+            hb_buffer_set_language(hb_buffer,
+              hb_language_from_string("en", 2));
 #else // HARFBUZZ_UNICODE
             hb_buffer_set_script(hb_buffer, HB_SCRIPT_LATIN);
             hb_buffer_set_language(hb_buffer, hb_language_from_string("en", 2));
@@ -1752,7 +1775,8 @@ public:
                 printf("empty hb_buffer_get_length\n");
                 return;
             }
-            DrawGlyphs(current_x, current_y, glyph_paint, skFont1ForUI, sk_canvas, hb_buffer);
+            DrawGlyphs(current_x, current_y, glyph_paint,
+                       skFont1ForUI, sk_canvas, hb_buffer);
 
             hb_buffer_destroy (hb_buffer);
 
@@ -1779,9 +1803,13 @@ public:
         WriteLine(textLine3);
 
         // test again without hb
+        DCHECK(skFont2ForUI.getTypeface());
         auto blob3 = SkTextBlob::MakeFromString("blob3blob3blob3", skFont2ForUI);
         sk_canvas->drawTextBlob(blob3.get(), 500, 500, glyph_paint);
+
+        //printf("onDraw y2\n");
 #endif // ENABLE_HARFBUZZ
+
 
     // TODO >>>
     //return;
@@ -1796,8 +1824,12 @@ public:
       const SkScalar y = 52.0f;
       //const SkScalar textSize = 48.0f;
       const uint8_t blurAlpha = 127;
-      auto blob1 = SkTextBlob::MakeFromString("?123Skia! skFont1UIThread", skFont1ForUI);
-      auto blob2 = SkTextBlob::MakeFromString("dfsdf !!! skFont2UIThread", skFont2ForUI);
+      DCHECK(skFont1ForUI.getTypeface());
+      auto blob1 = SkTextBlob::MakeFromString("?123Skia! skFont1UIThread",
+         skFont1ForUI);
+      DCHECK(skFont2ForUI.getTypeface());
+      auto blob2 = SkTextBlob::MakeFromString("dfsdf !!! skFont2UIThread",
+         skFont2ForUI);
       SkPaint blur(paint);
       blur.setAlpha(blurAlpha);
       blur.setMaskFilter(SkMaskFilter::MakeBlur(kNormal_SkBlurStyle, sigma, 0));
@@ -1836,6 +1868,7 @@ public:
       //printf("SkRect::MakeSize...\n");
       const auto dstR = SkRect::MakeSize(fWinSize);
       //printf("fAnimation->render...\n");
+      // TODO: SkSGRenderNode.cpp:19: fatal error: "assert(!this->hasInval())"
       fAnimation->render(sk_canvas, &dstR);
       //printf("fAnimation->rendered\n");
       /*if (fShowAnimationStats) {
@@ -2260,6 +2293,8 @@ static void initUiSkiaSurface(int /*w*/, int /*h*/) {
             printf("Loaded Bodymovin animation v: %s, size: [%f %f]\n", fAnimation->version().c_str(),
                    static_cast<double>(fAnimation->size().width()),
                    static_cast<double>(fAnimation->size().height()));
+            DCHECK(fAnimation->size().width() > 0);
+            DCHECK(fAnimation->size().height() > 0);
           } else {
             printf("failed to load Bodymovin animation: %s\n", fAnimPath.c_str());
             NOTREACHED();
@@ -2515,6 +2550,8 @@ class CobaltTester {
   // thread that it is created in.
   base::ThreadChecker thread_checker_;
 
+  bool isLoadComplete = false;
+
   // Cache a WeakPtr in the WebModule that is bound to the Window's message loop
   // so we can ensure that all subsequently created WeakPtr's are also bound to
   // the same loop.
@@ -2652,6 +2689,7 @@ void CobaltTester::OnLoadComplete(const base::Optional<std::string>& error) {
     DCHECK(g_cobaltTester);
     DCHECK_EQ(base::MessageLoopCurrent::Get().task_runner(), g_cobaltTester->self_task_runner_);
     DCHECK(g_cobaltTester->thread_checker_.CalledOnValidThread());
+    g_cobaltTester->isLoadComplete = true;
 }
 
 void CobaltTester::OnCspPolicyChanged() {
@@ -4245,7 +4283,7 @@ static void animate() {
           //emscripten_resume_main_loop();
       }
       /// __TODO__
-      else if (render_browser_window)
+      else /*if (render_browser_window)*/
       {
           if(g_cobaltTester
               && g_cobaltTester->window_->isStartedDocumentLoader()
@@ -4328,8 +4366,8 @@ static void animate() {
 
 #if defined(ENABLE_SK_UI)
 static sk_sp<SkImage> UIDemoImage;
-// TODO: replace with task queue
 
+// TODO: replace mutex with task queue/emscripten_async_run_in_main_runtime_thread
 #define ENABLE_UI_IMG_LOCKS 1
 
 // TODO: use PostTask
@@ -4347,7 +4385,7 @@ sk_sp<SkImage> getUiSkImage() {
 static int testRed = 0;
 
 static void loadUIAssets() {
-#if defined(ENABLE_IMAGES)
+#if defined(ENABLE_IMAGES) && defined(ENABLE_BLINK_UI)
   ///DCHECK(thread->IsCurrentThread());
   ///
   ///blink::ThreadState::AttachCurrentThread();
@@ -4420,8 +4458,20 @@ static bool Decode(const unsigned char* input, size_t input_size,
 #endif // ENABLE_IMAGES
 }
 
+// TODO
+/// \note debug-check only for MT WASM (MultiThreaded WebAssembly)
+static void DCHECK_RUNS_IN_THEAD_ON_MT_WASM() {
+#if defined(OS_EMSCRIPTEN) && !defined(DISABLE_PTHREADS)
+  if(emscripten_has_threading_support()) {
+    DCHECK(!EM_IS_MAIN_THREAD());
+  }
+#endif
+}
+
 static void refreshUIDemo() {
   if (isDebugPeriodReached()) printf("refreshUIDemo...\n");
+
+  DCHECK_RUNS_IN_THEAD_ON_MT_WASM();
 
   //printf("refreshUIDemo 2...\n");
 
@@ -4579,6 +4629,39 @@ static void Draw() {
 #if !defined(SEPARATE_UI_THREAD)
     if (isDebugPeriodReached()) printf("refreshUIDemo (ST)!\n");
     refreshUIDemo();
+#else
+  // TODO post_task_and_reply_impl.cc(150)] Check failed: has_sequenced_context || !post_task_success.
+#if 0
+  if (canRefreshUI
+        /*&& !ui_draw_thread_.task_runner()->RunsTasksInCurrentSequence()*/) {
+    canRefreshUI = false;
+    ui_draw_thread_.task_runner()->PostTaskAndReply(
+        FROM_HERE, base::Bind([]() {
+          //while(!quitApp) { // TODO: lock for quitApp
+            refreshUIDemo();
+            // TODO: https://stackoverflow.com/a/28008588
+            //base::PlatformThread::Sleep(
+            //  base::TimeDelta::FromMilliseconds(17));
+          //}
+        }),
+        base::Bind([]() {
+          if (isDebugPeriodReached()) printf("done refreshUIDemo\n");
+          canRefreshUI = true;
+        }));
+  }
+#endif // 0
+  if (canRefreshUI
+      /*&& !ui_draw_thread_.task_runner()->RunsTasksInCurrentSequence()*/) {
+    ui_draw_thread_.task_runner()->PostTask(
+        FROM_HERE, base::Bind([]() {
+          //while(!quitApp) { // TODO: lock for quitApp
+            refreshUIDemo();
+            // TODO: https://stackoverflow.com/a/28008588
+            //base::PlatformThread::Sleep(
+            //  base::TimeDelta::FromMilliseconds(17));
+          //}
+        }));
+  }
 #endif // SEPARATE_UI_THREAD
     drawUIDemo();
   }
@@ -8622,11 +8705,10 @@ int main(int argc, char** argv) {
 
   std::cout << std::endl; // flush
 
-#if defined(ENABLE_BLINK_UI) //&& defined(__TODO__)
-
   base::WaitableEvent ui_sync_event(base::WaitableEvent::ResetPolicy::MANUAL,
                             base::WaitableEvent::InitialState::NOT_SIGNALED);
 
+#if defined(ENABLE_BLINK_UI) //&& defined(__TODO__)
 #if 1
 
 #if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
@@ -8679,11 +8761,13 @@ int main(int argc, char** argv) {
               //std::cout << std::endl; // flush
 #endif // !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
 
+#if defined(SEPARATE_UI_THREAD)
               /*blink::ThreadCreationParams params(blink::WebThreadType::kUnspecifiedWorkerThread);
               std::unique_ptr<blink::Thread> toBlinkThread =
                 blink::Thread::CreateThread(params);*/
               //blink::Thread::CreateAndSetCompositorThread();
               blink::ThreadState::AttachCurrentThread();
+#endif // SEPARATE_UI_THREAD
 
               loadUIAssets();
 
@@ -8737,16 +8821,21 @@ int main(int argc, char** argv) {
   // TODO: Initialize font data in thread
   /// \note SkTypeface sharable between threads
   printf("Initializing font data...\n");
-#ifdef ENABLE_COBALT
-  sk_sp<SkTypeface> fallbackTypeface
-    = cobalt::renderer::rasterizer::skia::Font::prepareFallbackTypeface();
-  DCHECK(fallbackTypeface);
-#endif // ENABLE_COBALT
+
+  // TODO >>>
+//#ifdef ENABLE_COBALT
+//  sk_sp<SkTypeface> fallbackTypeface
+//    = cobalt::renderer::rasterizer::skia::Font::getDefaultTypeface();
+//  DCHECK(fallbackTypeface);
+//  DCHECK(fallbackTypeface->getBounds().isFinite());
+//#endif // ENABLE_COBALT
+
+  printf("Creating fonts...\n");
   prepareUIFonts();
 
   /// \note SkTypeface::MakeFromFile don`t support wasm pthreads,
   /// so we use MakeFromData
-  const int index = 0;
+  //const int index = 0;
   //sk_sp<SkTypeface> sktp = SkTypeface::MakeFromFile("./resources/fonts/FreeSans.ttf");
 
 //#ifdef ENABLE_HARFBUZZ
@@ -8761,8 +8850,6 @@ int main(int argc, char** argv) {
 #endif*/
 
   //sk_sp<SkTypeface> sktp = SkTypeface::MakeFromStream(new SkMemoryStream(data), index);
-
-  printf("Creating fonts...\n");
 
   /*DCHECK(sktp);
   skFont1 =
@@ -8820,17 +8907,17 @@ int main(int argc, char** argv) {
   printf("emscripten in singlethreaded mode\n");
 #endif
 
-#if defined(SEPARATE_UI_THREAD)
+/*#if defined(SEPARATE_UI_THREAD)
   ui_draw_thread_.task_runner()->PostTask(
       FROM_HERE, base::Bind([]() {
         while(!quitApp) { // TODO: lock for quitApp
           refreshUIDemo();
           // TODO: https://stackoverflow.com/a/28008588
           base::PlatformThread::Sleep(
-            base::TimeDelta::FromMilliseconds(16));
+            base::TimeDelta::FromMilliseconds(17));
         }
       }));
-#endif // SEPARATE_UI_THREAD
+#endif // SEPARATE_UI_THREAD*/
 
 #ifdef ENABLE_COBALT
   printf("Initializing COBALT tests...\n");
@@ -8941,6 +9028,7 @@ int main(int argc, char** argv) {
 #if defined(ENABLE_SKIA)
   {
 #if defined(SEPARATE_UI_THREAD)
+    //ui_draw_thread_.task_runner()->WaitForFence();
     ui_draw_thread_.Stop();
 #endif // SEPARATE_UI_THREAD
     /// \note stop ui_draw_thread before skia_ui cleanup

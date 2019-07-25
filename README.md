@@ -1014,3 +1014,28 @@ open localhost:3000/*.html
 
 # How to profile code size?
 nm -CSr --size-sort "build-linux-rel/skemgl" | head -50
+
+# Can web worker be killed off by browser silently?
+Yes, see
+> https://stackoverflow.com/a/38976243
+
+# Can web worker be garbage collected or drop queued messages?
+Yes, see
+> https://stackoverflow.com/q/37099465
+
+# Can web worker performance sharply decline?
+Yes, see
+> https://stackoverflow.com/questions/24708649/why-does-web-worker-performance-sharply-decline-after-30-seconds#comment78838143_24717408
+
+# WASM: Switch to latest-upstream, not latest
+llvm backend = latest-upstream
+fastcomp = latest
+```
+emsdk install latest-upstream
+```
+> https://github.com/emscripten-core/emscripten/issues/8929#issuecomment-509594670
+> https://github.com/emscripten-core/emscripten/issues/8789
+
+# TODO: support offscreencanvas
+> https://github.com/emscripten-core/emscripten/issues/8903
+> https://github.com/emscripten-core/emscripten/issues/8852

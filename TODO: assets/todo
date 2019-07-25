@@ -528,3 +528,17 @@ NOTE: WITH BLINK: ~20MiB UNIX || 7.1MiB WASM
 TODO: use tmpfs for build https://github.com/CppCon/CppCon2017/blob/master/Presentations/Practical%20Techniques%20for%20Improving%20C%2B%2B%20Build%20Times/Practical%20Techniques%20for%20Improving%20C%2B%2B%20Build%20Times%20-%20Dmitry%20Panin%20-%20CppCon%202017.pdf
 
 TODO: support gold linker http://www.bitsnbites.eu/faster-c-builds/
+
+Failed to load resource: net::ERR_INSUFFICIENT_RESOURCES
+(index):1227 pthread sent an error! http://localhost:9090/home/avakimov_am/skia-opengl-emscripten/build-wasm-mt-rel/pthread-main.js:190: Uncaught NetworkError: Failed to execute 'importScripts' on 'WorkerGlobalScope': The script at 'http://localhost:9090/home/avakimov_am/skia-opengl-emscripten/build-wasm-mt-rel/skemgl.js' failed to load.
+printErr @ (index):1227
+pthread-main.js:190 Uncaught DOMException: Failed to execute 'importScripts' on 'WorkerGlobalScope': The script at 'http://localhost:9090/home/avakimov_am/skia-opengl-emscripten/build-wasm-mt-rel/skemgl.js' failed to load.
+    at onmessage (http://localhost:9090/home/avakimov_am/skia-opengl-emscripten/build-wasm-mt-rel/pthread-main.js:107:9)
+3:9090/home/avakimov_am/skia-opengl-emscripten/build-wasm-mt-rel/stdio.html:1 Failed to load resource: net::ERR_INSUFFICIENT_RESOURCES
+
+===
+WASM MT: deadlock in SkScalerContext_FreeType::generateImage (WASM MT DEB with render_browser_window & ENABLE_RASTERIZER_THREAD=1, but without ENABLE_DYNAMIC_FONT_LOADING)
+deadlocks after SkTypeface::createScalerContext
+move mouse frequently over dom elements while page is loading
+clear && clear ; cmake -DRUN_APP=ON -DBUILD_APP=ON -DEXTRA_EMMAKE_OPTS="-j;6" -DBUILD_TYPE="Debug" -DCLEAN_BUILD=ON -DENABLE_EMCMAKE_CLEAN_FIRST=ON -DBUILD_DIR=$(pwd)/build-wasm-mt-deb/ -DEXTRA_EMCMAKE_OPTS="-DENABLE_WEB_PTHREADS=TRUE;-DENABLE_LIBWEBP=TRUE;-DENABLE_BLINK=FALSE;-DENABLE_COBALT=TRUE;-DENABLE_WTF=TRUE;-DDISABLE_FORMATTING=FALSE;-DENABLE_SKOTTIE=FALSE;-DFORCE_DISABLE_SK_GPU=TRUE" -P tools/buildWeb.cmake
+===

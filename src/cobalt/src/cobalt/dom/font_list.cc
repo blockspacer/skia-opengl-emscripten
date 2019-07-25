@@ -293,7 +293,7 @@ void FontList::RequestFont(size_t index) {
     // same typeface.
     render_tree::TypefaceId typeface_id = render_tree_font->GetTypefaceId();
     for (size_t i = 0; i < index; ++i) {
-      //printf("FontList::RequestFont 4\n");
+      printf("FontList::RequestFont 4\n");
       FontListFont& check_font = fonts_[i];
       if (check_font.state() == FontListFont::kLoadedState &&
           check_font.font()->GetTypefaceId() == typeface_id) {
@@ -305,12 +305,12 @@ void FontList::RequestFont(size_t index) {
     // If this font wasn't a duplicate, then its time to initialize its font
     // data. This font is now available to use.
     if (font_list_font.state() != FontListFont::kDuplicateState) {
-      //printf("FontList::RequestFont 5\n");
+      printf("FontList::RequestFont 5\n");
       font_list_font.set_state(FontListFont::kLoadedState);
       font_list_font.set_font(render_tree_font);
     }
   } else {
-    //printf("FontList::RequestFont 6\n");
+    printf("FontList::RequestFont 6\n");
     font_list_font.set_state(state);
   }
 }

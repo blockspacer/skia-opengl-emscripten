@@ -173,6 +173,7 @@ void SkGlyphRunBuilder::drawTextUTF8(const SkPaint& paint, const SkFont& font, c
 
 void SkGlyphRunBuilder::drawTextBlob(const SkPaint& paint, const SkTextBlob& blob, SkPoint origin,
                                      SkBaseDevice* device) {
+    //printf("SkGlyphRunBuilder::drawTextBlob 1\n");
     // Figure out all the storage needed to pre-size everything below.
     size_t totalGlyphs = 0;
     for (SkTextBlobRunIterator it(&blob); !it.done(); it.next()) {
@@ -185,6 +186,8 @@ void SkGlyphRunBuilder::drawTextBlob(const SkPaint& paint, const SkTextBlob& blo
     SkPoint* positions = fPositions;
 
     for (SkTextBlobRunIterator it(&blob); !it.done(); it.next()) {
+        //printf("SkGlyphRunBuilder::drawTextBlob 1.1.1\n");
+
         // applyFontToPaint() always overwrites the exact same attributes,
         // so it is safe to not re-seed the paint for this reason.
         size_t runSize = it.glyphCount();
@@ -226,11 +229,13 @@ void SkGlyphRunBuilder::drawTextBlob(const SkPaint& paint, const SkTextBlob& blo
 
         positions += runSize;
     }
+    //printf("SkGlyphRunBuilder::drawTextBlob 1.1.2\n");
 
     if (!this->empty()) {
         this->makeGlyphRunList(paint, &blob, origin);
         device->drawGlyphRunList(this->useGlyphRunList());
     }
+    //printf("SkGlyphRunBuilder::drawTextBlob 1.1.3\n");
 }
 
 void SkGlyphRunBuilder::drawGlyphsWithPositions(const SkPaint& paint, const SkFont& font,

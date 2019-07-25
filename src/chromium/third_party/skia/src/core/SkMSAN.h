@@ -19,7 +19,7 @@ extern "C" {
 // Code that requires initialized inputs can call this to make it clear that
 // the blame for use of uninitialized data belongs further up the call stack.
 static inline void sk_msan_assert_initialized(const void* begin, const void* end) {
-#if defined(__has_feature)
+#if defined(__has_feature) && !defined(__EMSCRIPTEN__)
     #if __has_feature(memory_sanitizer)
         __msan_check_mem_is_initialized(begin, (const char*)end - (const char*)begin);
     #endif
@@ -30,7 +30,7 @@ static inline void sk_msan_assert_initialized(const void* begin, const void* end
 // This can hide serious problems if overused.  Every use of this should refer to a bug.
 static inline void sk_msan_mark_initialized(const void* begin, const void* end, const char* skbug) {
     SkASSERT(skbug && 0 != strcmp(skbug, ""));
-#if defined(__has_feature)
+#if defined(__has_feature) && !defined(__EMSCRIPTEN__)
     #if __has_feature(memory_sanitizer)
         __msan_unpoison(begin, (const char*)end - (const char*)begin);
     #endif

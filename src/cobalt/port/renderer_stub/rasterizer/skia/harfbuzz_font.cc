@@ -100,8 +100,12 @@ hb_bool_t GetGlyphHorizontalOrigin(hb_font_t* font, void* data,
 
 hb_position_t GetGlyphKerning(Font* font_data, hb_codepoint_t first_glyph,
                               hb_codepoint_t second_glyph) {
+  printf("GetGlyphKerning 1\n");
   const sk_sp<SkTypeface/*SkTypeface_Cobalt*/>& typeface(
-    font_data->prepareFallbackTypeface()/*GetSkTypeface()*/);
+    // TODO
+    //font_data->GetTypeface());
+    font_data->getDefaultTypeface()/*GetSkTypeface()*/);
+  DCHECK(typeface);
   const uint16_t glyphs[2] = {static_cast<uint16_t>(first_glyph),
                               static_cast<uint16_t>(second_glyph)};
   int32_t kerning_adjustments[1] = {0};
@@ -112,6 +116,9 @@ hb_position_t GetGlyphKerning(Font* font_data, hb_codepoint_t first_glyph,
 
   SkScalar size = font_data->size();
   SkScalar upm = SkIntToScalar(typeface->getUnitsPerEm());
+
+  printf("GetGlyphKerning 2\n");
+
   // Similar to
   // https://github.com/flutter/engine/pull/3430/commits/e40447c475cdc2154139c39aecf3d40a5e681f72
   return SkScalarToFixed(kerning_adjustments[0] * size / upm);
@@ -225,7 +232,7 @@ hb_font_t* HarfBuzzFontProvider::GetHarfBuzzFont(Font* skia_font) {
   HarfBuzzFace& face = face_cache_[skia_font->GetTypefaceId()];
   if (face.get() == NULL) {
     const sk_sp</*SkTypeface_Cobalt*/SkTypeface>& typeface =
-      skia_font->prepareFallbackTypeface()/*GetSkTypeface()*/;
+      skia_font->getDefaultTypeface()/*GetSkTypeface()*/;
     face.Init(typeface);
   }
 

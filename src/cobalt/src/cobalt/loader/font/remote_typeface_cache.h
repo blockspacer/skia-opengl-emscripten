@@ -62,7 +62,7 @@ inline static std::unique_ptr<RemoteTypefaceCache> CreateRemoteTypefaceCache(
   return std::unique_ptr<RemoteTypefaceCache>(new RemoteTypefaceCache(
       name, cache_capacity,
 #if defined(OS_EMSCRIPTEN)
-      false,
+      false, /*are_loading_retries_enabled*/
 #else
       true /*are_loading_retries_enabled*/,
 #endif

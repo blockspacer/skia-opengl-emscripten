@@ -23,6 +23,9 @@
 
 #include "cobalt/base/polymorphic_downcast.h"
 
+#include <mutex>
+#include <memory>
+
 #if defined(__EMSCRIPTEN__)
 #include "emscripten/emscripten.h"
 #include "emscripten/html5.h"
@@ -30,7 +33,8 @@
 
 // TODO: free memory
 static const char* fallbackFontPath = "./resources/fonts/FreeSans.ttf";
-static SkFont* fallbackFont;
+//static SkFont* fallbackFont;
+static std::mutex fallbackFontTypefaceMutex;
 static sk_sp<SkTypeface> fallbackFontTypeface;
 static bool fallbackFontTypeface_Created = false;
 //static const float FONT_SIZE_F = 22.0;
@@ -40,7 +44,11 @@ static bool fallbackSkTypeface_Cobalt_Created = false;*/
 static sk_sp<SkTypeface> getOrCreateFallbackTypeface() {
   printf("getOrCreateFallbackTypeface 1...\n");
 
+  // TODO >>
+  std::scoped_lock lock(fallbackFontTypefaceMutex);
+
   if (!fallbackFontTypeface) {
+    printf("creating fallback typeface...\n");
     DCHECK(!fallbackFontTypeface_Created);
     fallbackFontTypeface_Created = true;
     sk_sp<SkData> skia_data = SkData::MakeFromFileName(fallbackFontPath);
@@ -51,7 +59,7 @@ static sk_sp<SkTypeface> getOrCreateFallbackTypeface() {
     DCHECK(!skia_data->isEmpty());
     const int index = 0;
     //fallbackFontTypeface = SkTypeface::MakeFromData(::std::move(data), index);
-    printf("reading file %s\n", fallbackFontPath);
+    printf("getOrCreateFallbackTypeface: reading file %s\n", fallbackFontPath);
     //fallbackFontTypeface = SkTypeface::MakeFromFile(fallbackFontPath, index);
 
     std::unique_ptr<SkStreamAsset> stream;
@@ -169,9 +177,9 @@ Font::Font(SkiaTypeface* typeface, SkScalar size)
 #endif
 }
 
-sk_sp<SkTypeface> Font::prepareFallbackTypeface() {
+/*sk_sp<SkTypeface> Font::prepareFallbackTypeface() {
   return getOrCreateFallbackTypeface();
-}
+}*/
 
 /*sk_sp<SkTypeface_Cobalt> Font::prepareFallbackSkTypeface() {
   return getOrCreateFallbackSkTypeface();
@@ -206,7 +214,7 @@ render_tree::FontMetrics Font::GetFontMetrics() const {
     //DCHECK(font_metrics_);
   //SkPaint paint = GetSkPaint();
 
-  SkFont tmpFont = GetSkFont();
+  const SkFont& tmpFont = GetSkFont();
     //(typeface_->GetSkTypeface(), size_, 1.0f, 0.0f); /// __TODO__
 
   //SkPaint::FontMetrics font_metrics;
@@ -308,7 +316,7 @@ const math::RectF& Font::GetGlyphBounds(render_tree::GlyphIndex glyph) {
   //DCHECK(fnt);
   float width;
 
-  SkFont tmpFont = GetSkFont();
+  const SkFont& tmpFont = GetSkFont();
       //new SkFont(typeface_->GetSkTypeface(), size_, 1.0f, 0.0f); /// __TODO__
 
   width = tmpFont.measureText(
@@ -384,6 +392,10 @@ const SkPaint& Font::GetDefaultSkPaint() {
 
 const SkFont Font::GetSkFont() const {
   return GetSkFont(size_, 1.0f, 0.0f);
+}
+
+scoped_refptr<SkiaTypeface> Font::GetTypeface() {
+  return typeface_;
 }
 
 const SkFont Font::GetSkFont(SkScalar size, SkScalar scaleX, SkScalar skewX, sk_sp<SkTypeface> typeface) const {

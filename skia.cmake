@@ -11,17 +11,48 @@
 #
 
 # case-insensitive match TODO: is debug, Debug, DEBUG all valid?
-if (CMAKE_BUILD_TYPE MATCHES "[dD][eE][bB][uU][gG]")
-  set(IS_DEBUG_BUILD ON)
-else()
-  set(IS_DEBUG_BUILD OFF)
-  set(EXT_SKIA_OFFICIAL_BUILD "true")
-endif ()
+#if (CMAKE_BUILD_TYPE MATCHES "[dD][eE][bB][uU][gG]")
+#  set(IS_DEBUG_BUILD ON)
+#else()
+#  set(IS_DEBUG_BUILD OFF)
+#  set(EXT_SKIA_OFFICIAL_BUILD "true")
+#endif ()
+
+option(SKIA_FORCE_BUILD_MODE "" "") # TODO
 
 # force OFFICIAL_BUILD
 if(RELEASE_BUILD)
+  message(STATUS "building SKIA in RELEASE mode")
   set(IS_DEBUG_BUILD OFF)
   set(EXT_SKIA_OFFICIAL_BUILD "true")
+  set(SKIA_EXTRA_CFLAGS
+    "${SKIA_EXTRA_CFLAGS}\"-fno-rtti\", "
+  )
+  # If you're using our GYP files to build Skia,
+  # you're using build scripts mostly designed for development
+  # (even Release) where we don't pay much attention to
+  # library structure or size.
+  # They're all built with -g,
+  # which bloats the file size considerably.
+  # https://groups.google.com/forum/#!topic/skia-discuss/5hNRcmERVSI
+  set(SKIA_EXTRA_CFLAGS
+    "${SKIA_EXTRA_CFLAGS}\"-g0\", "
+  )
+  set(SKIA_EXTRA_CFLAGS
+    "${SKIA_EXTRA_CFLAGS}\"-DNDEBUG=1\", "
+  )
+  set(SKIA_EXTRA_CFLAGS
+    "${SKIA_EXTRA_CFLAGS}\"-DSK_RELEASE=1\", "
+  )
+else()
+  message(STATUS "building SKIA in DEBUG mode")
+  set(IS_DEBUG_BUILD ON)
+  set(SKIA_EXTRA_CFLAGS
+    "${SKIA_EXTRA_CFLAGS}\"-frtti\", "
+  )
+  set(SKIA_EXTRA_CFLAGS
+    "${SKIA_EXTRA_CFLAGS}\"-DSK_DEBUG=1\", "
+  )
 endif(RELEASE_BUILD)
 
 # I wanted to expose (almost) all Skia options as CMake options but sadly
@@ -116,7 +147,7 @@ if(USE_SK_GPU)
   set(SK_IS_GPU "true")
 else(USE_SK_GPU)
   set(SK_IS_GPU "false")
-  message(WARNING "SKIA build without GPU support.")
+  message(STATUS "SKIA build without GPU support.")
 endif(USE_SK_GPU)
 
 if (EMSCRIPTEN)
@@ -223,37 +254,6 @@ if(USE_LIBJPEG_TURBO)
 else()
   set(SK_IS_libjpeg_turbo "false")
 endif(USE_LIBJPEG_TURBO)
-
-if(RELEASE_BUILD)
-  set(SKIA_EXTRA_CFLAGS
-    "${SKIA_EXTRA_CFLAGS}\"-fno-rtti\", "
-  )
-else()
-  set(SKIA_EXTRA_CFLAGS
-    "${SKIA_EXTRA_CFLAGS}\"-frtti\", "
-  )
-endif(RELEASE_BUILD)
-
-if(RELEASE_BUILD)
-  # If you're using our GYP files to build Skia,
-  # you're using build scripts mostly designed for development
-  # (even Release) where we don't pay much attention to
-  # library structure or size.
-  # They're all built with -g,
-  # which bloats the file size considerably.
-  # https://groups.google.com/forum/#!topic/skia-discuss/5hNRcmERVSI
-  set(SKIA_EXTRA_CFLAGS
-    "${SKIA_EXTRA_CFLAGS}\"-g0\", "
-  )
-  set(SKIA_EXTRA_CFLAGS
-    "${SKIA_EXTRA_CFLAGS}\"-DNDEBUG=1\", "
-  )
-  set(SKIA_EXTRA_CFLAGS
-    "${SKIA_EXTRA_CFLAGS}\"-DSK_RELEASE=1\", "
-  )
-else(RELEASE_BUILD)
-  message(WARNING "building SKIA in DEBUG mode")
-endif(RELEASE_BUILD)
 
 # NOTE: in skia HARFBUZZ requires icui18n (unicode/uscript.h)
 if(FORCE_USE_SKIA_HARFBUZZ)
@@ -413,7 +413,7 @@ ExternalProject_Add(SKIA_build
 #endif(PRINT_ALL_GN_ARGS)
 
 if (EXT_SKIA_ALWAYS_BUILD)
-  message(WARNING "Forced skia rebuild")
+  message(STATUS "Forced skia rebuild")
   # Make sure the target is always rebuilt.
   # Without this changing Skia sources doesn't trigger a ninja build. With this
   # ninja build is always triggered. This is not needed if you never touch the
