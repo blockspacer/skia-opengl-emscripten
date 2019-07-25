@@ -1027,7 +1027,7 @@ Yes, see
 Yes, see
 > https://stackoverflow.com/questions/24708649/why-does-web-worker-performance-sharply-decline-after-30-seconds#comment78838143_24717408
 
-# WASM: Switch to latest-upstream, not latest
+# TODO: WASM: Switch to latest-upstream, not latest (check issues below)
 llvm backend = latest-upstream
 fastcomp = latest
 ```
@@ -1039,3 +1039,10 @@ emsdk install latest-upstream
 # TODO: support offscreencanvas
 > https://github.com/emscripten-core/emscripten/issues/8903
 > https://github.com/emscripten-core/emscripten/issues/8852
+
+# TODO: can use SKIA only from one thread on WASM MT
+NOTE: disabled rasterizer thread (!!!) due to deadlocks on WASM MT
+(to reproduce bug - move mouse frequently over objects that are animated on hover)
+NOTE: related to locks in SkScalerContext_FreeType::generateImage
+see 'TODO' file in commit 0e4faf to reproduce
+ENABLE_RASTERIZER_THREAD=1

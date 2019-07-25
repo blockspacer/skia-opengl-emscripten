@@ -257,7 +257,7 @@ SkTextBlobBuilder::~SkTextBlobBuilder() {
 }
 
 SkRect SkTextBlobBuilder::TightRunBounds(const SkTextBlob::RunRecord& run) {
-    printf("SkTextBlobBuilder::TightRunBounds 1.2.1\n");
+    //printf("SkTextBlobBuilder::TightRunBounds 1.2.1\n");
     const SkFont& font = run.font();
     SkRect bounds;
 
@@ -294,7 +294,7 @@ SkRect SkTextBlobBuilder::TightRunBounds(const SkTextBlob::RunRecord& run) {
 
     //printf("SkTextBlobBuilder::TightRunBounds 1.2.2\n");
     SkRect res = bounds.makeOffset(run.offset().x(), run.offset().y());
-    printf("SkTextBlobBuilder::TightRunBounds 1.2.3\n");
+    //printf("SkTextBlobBuilder::TightRunBounds 1.2.3\n");
     return res;
 }
 
@@ -303,16 +303,16 @@ static SkRect map_quad_to_rect(const SkRSXform& xform, const SkRect& rect) {
 }
 
 SkRect SkTextBlobBuilder::ConservativeRunBounds(const SkTextBlob::RunRecord& run) {
-    printf("SkTextBlobBuilder::ConservativeRunBounds 1.2.1\n");
+    //printf("SkTextBlobBuilder::ConservativeRunBounds 1.2.1\n");
     // TODO >>>
     SkASSERT(run.glyphCount() > 0);
     SkASSERT(SkTextBlob::kFull_Positioning == run.positioning() ||
              SkTextBlob::kHorizontal_Positioning == run.positioning() ||
              SkTextBlob::kRSXform_Positioning == run.positioning());
 
-    printf("SkTextBlobBuilder::ConservativeRunBounds 1.2.1.0\n");
+    //printf("SkTextBlobBuilder::ConservativeRunBounds 1.2.1.0\n");
     const SkRect fontBounds = SkFontPriv::GetFontBounds(run.font());
-    printf("SkTextBlobBuilder::ConservativeRunBounds 1.2.1.1\n");
+    //printf("SkTextBlobBuilder::ConservativeRunBounds 1.2.1.1\n");
     if (fontBounds.isEmpty()) {
         // Empty font bounds are likely a font bug.  TightBounds has a better chance of
         // producing useful results in this case.
@@ -363,9 +363,9 @@ SkRect SkTextBlobBuilder::ConservativeRunBounds(const SkTextBlob::RunRecord& run
     }
 
     // Offset by run position.
-    printf("SkTextBlobBuilder::ConservativeRunBounds 1.2.2\n");
+    //printf("SkTextBlobBuilder::ConservativeRunBounds 1.2.2\n");
     SkRect res = bounds.makeOffset(run.offset().x(), run.offset().y());
-    printf("SkTextBlobBuilder::ConservativeRunBounds 1.2.2\n");
+    //printf("SkTextBlobBuilder::ConservativeRunBounds 1.2.2\n");
     return res;
 }
 
@@ -382,16 +382,16 @@ void SkTextBlobBuilder::updateDeferredBounds() {
     SkTextBlob::RunRecord* run = reinterpret_cast<SkTextBlob::RunRecord*>(fStorage.get() +
                                                                           fLastRun);
 
-    printf("SkTextBlobBuilder::updateDeferredBounds 1.1.3\n");
+    //printf("SkTextBlobBuilder::updateDeferredBounds 1.1.3\n");
 
     // FIXME: we should also use conservative bounds for kDefault_Positioning.
     SkRect runBounds = SkTextBlob::kDefault_Positioning == run->positioning() ?
                        TightRunBounds(*run) : ConservativeRunBounds(*run);
-    printf("SkTextBlobBuilder::updateDeferredBounds 1.1.4\n");
+    //printf("SkTextBlobBuilder::updateDeferredBounds 1.1.4\n");
     fBounds.join(runBounds);
-    printf("SkTextBlobBuilder::updateDeferredBounds 1.1.5\n");
+    //printf("SkTextBlobBuilder::updateDeferredBounds 1.1.5\n");
     fDeferredBounds = false;
-    printf("SkTextBlobBuilder::updateDeferredBounds 1.1.6\n");
+    //printf("SkTextBlobBuilder::updateDeferredBounds 1.1.6\n");
 }
 
 void SkTextBlobBuilder::reserve(size_t size) {
@@ -597,7 +597,7 @@ sk_sp<SkTextBlob> SkTextBlobBuilder::make() {
 //#error "SK_DEBUG && __EMSCRIPTEN__"
 //#endif
 
-    printf("SkTextBlobBuilder::make 1\n");
+    //printf("SkTextBlobBuilder::make 1\n");
     if (!fRunCount) {
         //printf("SkTextBlobBuilder::make 2\n");
         // We don't instantiate empty blobs.
@@ -608,10 +608,10 @@ sk_sp<SkTextBlob> SkTextBlobBuilder::make() {
         SkASSERT(fBounds.isEmpty());
         return nullptr;
     }
-    printf("SkTextBlobBuilder::make 3\n");
+    //printf("SkTextBlobBuilder::make 3\n");
 
     this->updateDeferredBounds();
-    printf("SkTextBlobBuilder::make 3.1\n");
+    //printf("SkTextBlobBuilder::make 3.1\n");
 
     // Tag the last run as such.
     auto* lastRun = reinterpret_cast<SkTextBlob::RunRecord*>(fStorage.get() + fLastRun);
@@ -644,7 +644,7 @@ sk_sp<SkTextBlob> SkTextBlobBuilder::make() {
     fLastRun = 0;
     fBounds.setEmpty();
 
-    printf("SkTextBlobBuilder::make 5\n");
+    //printf("SkTextBlobBuilder::make 5\n");
 
     return sk_sp<SkTextBlob>(blob);
 }

@@ -27,9 +27,10 @@
 
 #define ENABLE_OPENGL 1
 
+/// \note defined by CMAKE
 #if defined(ENABLE_SKIA)
 // high quality: anialias, e.t.c.
-#define ENABLE_SKIA_HQ 1
+//#define ENABLE_SKIA_HQ 1
 #endif
 
 /// \note defined by CMAKE
@@ -510,7 +511,7 @@
 
 #if defined(ENABLE_SKIA) && defined(ENABLE_BLINK)
 // TODO >>
-//#define ENABLE_BLINK_UI 1
+#define ENABLE_BLINK_UI 1
 #endif
 
 #ifdef ENABLE_BLINK_UI
@@ -645,7 +646,7 @@ static sk_sp<SkImage> skImageSp;
 //#endif
 
 // TODO >>
-#undef ENABLE_BLINK_PLATFORM
+// #undef ENABLE_BLINK_PLATFORM
 
 #ifdef ENABLE_BLINK_PLATFORM
 
@@ -886,7 +887,11 @@ sk_sp<const GrGLInterface> emscripten_GrGLMakeNativeInterface() {
 }
 #endif
 
-#if defined(ENABLE_COBALT)
+#if defined(OS_EMSCRIPTEN) && !defined(DISABLE_PTHREADS)
+/// \todo render_browser_window must be true ON WASM MT
+/// due to deadlock, see commit 0e4faf
+static bool render_browser_window = true;
+#elif defined(ENABLE_COBALT)
 // TODO >>>
 static bool render_browser_window = true;
 //static bool render_browser_window = false;
@@ -1375,8 +1380,8 @@ static base::Thread* input_browser_thread = &main_browser_thread_;
 
 #if !(defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__))
 // TODO: causes hangs on WASM MT (even in render_browser_window mode!)
-#define SEPARATE_UI_THREAD 1
-#define SEPARATE_UI_THREAD_WRAPPER 1
+//#define SEPARATE_UI_THREAD 1
+//#define SEPARATE_UI_THREAD_WRAPPER 1
 #endif // __EMSCRIPTEN__ && __EMSCRIPTEN_PTHREADS__
 
 #if defined(SEPARATE_UI_THREAD)
@@ -1834,15 +1839,15 @@ public:
       blur.setAlpha(blurAlpha);
       blur.setMaskFilter(SkMaskFilter::MakeBlur(kNormal_SkBlurStyle, sigma, 0));
       // canvas->drawColor(SK_ColorWHITE);
-      ///sk_canvas->drawTextBlob(blob1.get(), x + xDrop, y + yDrop, blur);
-      ///sk_canvas->drawTextBlob(blob1.get(), x, y, paint);
+      sk_canvas->drawTextBlob(blob1.get(), x + xDrop, y + yDrop, blur);
+      sk_canvas->drawTextBlob(blob1.get(), x, y, paint);
 
-      ///sk_canvas->drawTextBlob(blob2.get(), x + xDrop, 50 + y + yDrop, blur);
+      sk_canvas->drawTextBlob(blob2.get(), x + xDrop, 50 + y + yDrop, blur);
 
       SkPaint strokePaint(paint);
       strokePaint.setStyle(SkPaint::kStroke_Style);
       strokePaint.setStrokeWidth(3.0f);
-      ///sk_canvas->drawTextBlob(blob2.get(), x, 80 + y, strokePaint);
+      sk_canvas->drawTextBlob(blob2.get(), x, 80 + y, strokePaint);
     }
 #endif // ENABLE_SK_EFFECTS
 #endif // ENABLE_CUSTOM_FONTS
@@ -2748,7 +2753,7 @@ void CobaltTester::BrowserProcessRenderTreeSubmissionQueue() {
     DCHECK_EQ(base::MessageLoopCurrent::Get().task_runner(), g_cobaltTester->self_task_runner_);
     DCHECK(g_cobaltTester->thread_checker_.CalledOnValidThread());
 
-    printf("BrowserProcessRenderTreeSubmissionQueue 1\n");
+    //printf("BrowserProcessRenderTreeSubmissionQueue 1\n");
 
 #if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
    /// \note use emscripten_async* to prevent blocking of browser event loop
@@ -2767,7 +2772,7 @@ void CobaltTester::BrowserProcessRenderTreeSubmissionQueue() {
 renderer::Submission CobaltTester::CreateSubmissionFromLayoutResults(
     const cobalt::layout::LayoutManager::LayoutResults& layout_results) {
 
-    printf("CreateSubmissionFromLayoutResults 1\n");
+    //printf("CreateSubmissionFromLayoutResults 1\n");
 
     renderer::Submission renderer_submission(layout_results.render_tree,
                                              layout_results.layout_time);
@@ -2800,7 +2805,7 @@ void CobaltTester::SubmitCurrentRenderTreeToRenderer() {
     DCHECK(g_cobaltTester);
     DCHECK(g_cobaltTester->thread_checker_.CalledOnValidThread());
 
-    printf("SubmitCurrentRenderTreeToRenderer 1\n");
+    //printf("SubmitCurrentRenderTreeToRenderer 1\n");
 
     if (!renderer_module_) {
         return;
@@ -2829,7 +2834,19 @@ void CobaltTester::OnBrowserRenderTreeProduced(
     DCHECK(g_cobaltTester);
     DCHECK(g_cobaltTester->thread_checker_.CalledOnValidThread());
 
-    printf("OnBrowserRenderTreeProduced 1\n");
+    /// \note WASM MT don`t have platform fonts,
+    /// rendering without custom fonts may cause deadlock
+    //g_cobaltTester->window_->document()->font_cache()->TryGetFont()
+    /*if(g_cobaltTester->window_->document()->hasLoadedTypefaces()) {
+      /// \note tree must be produced on typeface load event
+      //DCHECK(false) << "hasLoadedTypefaces";
+    } else {
+      //DCHECK(false) << "!hasLoadedTypefaces";
+      printf("!hasLoadedTypefaces\n");
+      return;
+    }*/
+
+    //printf("OnBrowserRenderTreeProduced 1\n");
 
     //if (splash_screen_) {
     //    if (on_screen_keyboard_show_called_) {
@@ -2859,22 +2876,35 @@ void CobaltTester::OnBrowserRenderTreeProduced(
         &CobaltTester::OnRendererSubmissionRasterized,
         base::Unretained(this)));
 
-    printf("OnBrowserRenderTreeProduced 1.1\n");
+    //printf("OnBrowserRenderTreeProduced 1.1\n");
     //if (!splash_screen_) {
         render_tree_combiner_.SetTimelineLayer(main_web_module_layer_.get());
     //}
     main_web_module_layer_->Submit(renderer_submission);
 
     SubmitCurrentRenderTreeToRenderer();
-    printf("OnBrowserRenderTreeProduced 2\n");
+    //printf("OnBrowserRenderTreeProduced 2\n");
 }
 
 void CobaltTester::QueueOnRenderTreeProduced(
     int main_web_module_generation,
     const cobalt::layout::LayoutManager::LayoutResults& layout_results) {
 
-    printf("QueueOnRenderTreeProduced 1\n");
+    // printf("QueueOnRenderTreeProduced 1\n");
+
     TRACE_EVENT0("cobalt::browser", "CobaltTester::QueueOnRenderTreeProduced()");
+
+    /// \note WASM MT don`t have platform fonts,
+    /// rendering without custom fonts may cause deadlock
+    //g_cobaltTester->window_->document()->font_cache()->TryGetFont()
+    /*if(g_cobaltTester->window_->document()->hasLoadedTypefaces()) {
+      /// \note tree must be produced on typeface load event
+      //DCHECK(false) << "hasLoadedTypefaces";
+    } else {
+      //DCHECK(false) << "!hasLoadedTypefaces";
+      printf("!hasLoadedTypefaces\n");
+      return;
+    }*/
 
   DCHECK(g_cobaltTester);
   DCHECK(g_cobaltTester->thread_checker_.CalledOnValidThread());
@@ -2907,6 +2937,18 @@ static base::TimeDelta pending_layout_time;
 // specified in the constructor, |render_tree_produced_callback_|.
 void CobaltTester::OnRenderTreeProduced(const cobalt::layout::LayoutManager::LayoutResults& layout_results) {
 
+  /// \note WASM MT don`t have platform fonts,
+  /// rendering without custom fonts may cause deadlock
+  //g_cobaltTester->window_->document()->font_cache()->TryGetFont()
+  /*if(g_cobaltTester->window_->document()->hasLoadedTypefaces()) {
+    /// \note tree must be produced on typeface load event
+    //DCHECK(false) << "hasLoadedTypefaces";
+  } else {
+    //DCHECK(false) << "!hasLoadedTypefaces";
+    printf("!hasLoadedTypefaces\n");
+    return;
+  }*/
+
   // TODO: remove IsRenderTreePending
   //if(g_cobaltTester->layout_manager_->IsRenderTreePending()) {
   //  return;
@@ -2937,7 +2979,7 @@ void CobaltTester::OnRenderTreeProduced(const cobalt::layout::LayoutManager::Lay
     isRenderTreeProducePending = false;
 #endif
 
-    printf("OnRenderTreeProduced 1.2\n");
+    //printf("OnRenderTreeProduced 1.2\n");
 
     DCHECK(g_cobaltTester);
 
@@ -3094,7 +3136,7 @@ void CobaltTester::InjectInputEvent(scoped_refptr<cobalt::dom::Element> element,
 //  }
 //#endif
 
-  printf("InjectInputEvent 1 %s\n", event->type().c_str());
+  // printf("InjectInputEvent 1 %s\n", event->type().c_str());
 
   DCHECK(base::MessageLoopCurrent::Get().task_runner() == main_browser_thread_.task_runner());
   //if (base::MessageLoopCurrent::Get().task_runner() != input_device_thread_.task_runner()) {
@@ -3166,7 +3208,7 @@ void CobaltTester::InjectInputEvent(scoped_refptr<cobalt::dom::Element> element,
   //  EM_LOG(str.c_str());
   //}
 #endif
-  printf("InjectInputEvent 2 %s\n", event->type().c_str());
+  // printf("InjectInputEvent 2 %s\n", event->type().c_str());
 }
 
 void CobaltTester::OnKeyEventProduced(base::CobToken type,
@@ -3218,7 +3260,7 @@ void CobaltTester::OnKeyEventProduced(base::CobToken type,
 
 void CobaltTester::OnPointerEventProduced(base::CobToken type,
                                            const dom::PointerEventInit& event) {
-  printf("OnPointerEventProduced 1 %s\n", type.c_str());
+  // printf("OnPointerEventProduced 1 %s\n", type.c_str());
 
   //DCHECK(g_cobaltTester);
   //DCHECK_EQ(base::MessageLoopCurrent::Get().task_runner(), g_cobaltTester->self_task_runner_);
@@ -3770,6 +3812,7 @@ CobaltTester::CobaltTester()
 
   remote_typeface_cache_ = loader::font::CreateRemoteTypefaceCache(
       base::StringPrintf("%s.RemoteTypefaceCache", "name_.c_str()"),
+      // 4Mb, see memory_tuning.md
       static_cast<uint32>(4 * 1024 * 1024/*data.options.remote_typeface_cache_capacity*/),
       loader_factory_.get());
   DCHECK(remote_typeface_cache_);
@@ -4289,6 +4332,7 @@ static void animate() {
               && g_cobaltTester->window_->isStartedDocumentLoader()
               && g_cobaltTester->window_->isDocumentStartedLoading())
           {
+
               /// \note SampleTimelineTime also used
               /// in ForceReLayout / DoLayoutAndProduceRenderTree
               if (g_cobaltTester->window_->document()->html()) {
@@ -4631,6 +4675,7 @@ static void Draw() {
     refreshUIDemo();
 #else
   // TODO post_task_and_reply_impl.cc(150)] Check failed: has_sequenced_context || !post_task_success.
+
 #if 0
   if (canRefreshUI
         /*&& !ui_draw_thread_.task_runner()->RunsTasksInCurrentSequence()*/) {
@@ -4650,6 +4695,8 @@ static void Draw() {
         }));
   }
 #endif // 0
+
+  /// FIXME: spammed queue stops app from closing
   if (canRefreshUI
       /*&& !ui_draw_thread_.task_runner()->RunsTasksInCurrentSequence()*/) {
     ui_draw_thread_.task_runner()->PostTask(
@@ -4663,6 +4710,7 @@ static void Draw() {
         }));
   }
 #endif // SEPARATE_UI_THREAD
+
     drawUIDemo();
   }
 #else

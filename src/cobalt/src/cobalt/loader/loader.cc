@@ -65,7 +65,8 @@ class Loader::FetcherToDecoderAdapter : public Fetcher::Handler {
     decoder_->DecodeChunkPassed(std::move(data));
   }
   void OnDone(Fetcher* fetcher) override {
-    printf("FetcherToDecoderAdapter OnDone 1...\n");
+    printf("FetcherToDecoderAdapter OnDone 1 %s...\n",
+      fetcher->last_url_origin().SerializedOrigin().c_str());
 //#ifdef __TODO__
     DCHECK(fetcher);
     decoder_->SetLastURLOrigin(fetcher->last_url_origin());
@@ -74,8 +75,10 @@ class Loader::FetcherToDecoderAdapter : public Fetcher::Handler {
     printf("FetcherToDecoderAdapter OnDone 3...\n");
 //#endif
   }
-  void OnError(Fetcher* /*fetcher*/, const std::string& error) override {
-    printf("FetcherToDecoderAdapter OnError 1...\n");
+  void OnError(Fetcher* fetcher, const std::string& error) override {
+    printf("FetcherToDecoderAdapter OnError 1 %s %s...\n",
+      fetcher->last_url_origin().SerializedOrigin().c_str(),
+      error.c_str());
     load_complete_callback_.Run(error);
   }
 

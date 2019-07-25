@@ -379,6 +379,7 @@ class ResourceProviderStub : public ResourceProvider {
     const scoped_refptr<render_tree::Font>& font =
         font_provider->GetCharacterFont(Internal::kDefaultCharacter,
                                         &glyph_index);
+    DCHECK(font);
     if (maybe_used_fonts) {
       maybe_used_fonts->push_back(font);
     }

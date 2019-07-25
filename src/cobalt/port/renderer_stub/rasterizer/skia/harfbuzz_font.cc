@@ -57,6 +57,10 @@ void GetGlyphWidthAndExtents(Font* skia_font, hb_codepoint_t codepoint,
 
   uint16_t glyph = static_cast<uint16_t>(codepoint);
   const math::RectF& bounds = skia_font->GetGlyphBounds(glyph);
+  DCHECK(bounds.width() > 0);
+  if(bounds.width() <= 0) {
+    return;
+  }
 
   if (width) {
     *width = SkScalarToFixed(bounds.width());
@@ -101,11 +105,18 @@ hb_bool_t GetGlyphHorizontalOrigin(hb_font_t* font, void* data,
 hb_position_t GetGlyphKerning(Font* font_data, hb_codepoint_t first_glyph,
                               hb_codepoint_t second_glyph) {
   printf("GetGlyphKerning 1\n");
+#if defined(ENABLE_DYNAMIC_FONT_LOADING)
+  const sk_sp<SkTypeface> typeface
+    = font_data->GetTypeface()->GetSkTypeface();
+  DCHECK(typeface);
+#else
   const sk_sp<SkTypeface/*SkTypeface_Cobalt*/>& typeface(
     // TODO
     //font_data->GetTypeface());
     font_data->getDefaultTypeface()/*GetSkTypeface()*/);
-  DCHECK(typeface);
+  DCHECK(font_data->GetTypeface());
+  DCHECK(font_data->GetTypeface()->GetSkTypeface());
+#endif // ENABLE_DYNAMIC_FONT_LOADING
   const uint16_t glyphs[2] = {static_cast<uint16_t>(first_glyph),
                               static_cast<uint16_t>(second_glyph)};
   int32_t kerning_adjustments[1] = {0};
@@ -231,6 +242,7 @@ hb_font_t* HarfBuzzFontProvider::GetHarfBuzzFont(Font* skia_font) {
 
   HarfBuzzFace& face = face_cache_[skia_font->GetTypefaceId()];
   if (face.get() == NULL) {
+    NOTREACHED();
     const sk_sp</*SkTypeface_Cobalt*/SkTypeface>& typeface =
       skia_font->getDefaultTypeface()/*GetSkTypeface()*/;
     face.Init(typeface);

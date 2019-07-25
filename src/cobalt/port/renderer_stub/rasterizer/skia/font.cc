@@ -49,6 +49,9 @@ static sk_sp<SkTypeface> getOrCreateFallbackTypeface() {
 
   if (!fallbackFontTypeface) {
     printf("creating fallback typeface...\n");
+
+    //DCHECK(false);
+
     DCHECK(!fallbackFontTypeface_Created);
     fallbackFontTypeface_Created = true;
     sk_sp<SkData> skia_data = SkData::MakeFromFileName(fallbackFontPath);
@@ -71,9 +74,19 @@ static sk_sp<SkTypeface> getOrCreateFallbackTypeface() {
     }
     DCHECK(stream->hasLength());
 
+#if defined(ENABLE_DYNAMIC_FONT_LOADING)
+    sk_sp<SkFontMgr> font_manager(SkFontMgr::RefDefault());
+    DCHECK(font_manager);
+    //fallbackFontTypeface = font_manager->makeFromStream(std::move(stream));
     fallbackFontTypeface = SkTypeface::MakeFromStream(std::move(stream));
+#else
+    fallbackFontTypeface = SkTypeface::MakeFromStream(std::move(stream));
+#endif
   }
   DCHECK(fallbackFontTypeface);
+  DCHECK(!fallbackFontTypeface->getBounds().isEmpty());
+  DCHECK(fallbackFontTypeface->getBounds().isFinite());
+  DCHECK(fallbackFontTypeface->countGlyphs() > 0);
 
   printf("getOrCreateFallbackTypeface 2...\n");
 
@@ -330,6 +343,10 @@ const math::RectF& Font::GetGlyphBounds(render_tree::GlyphIndex glyph) {
           //, &paint
       );
   DCHECK(width > 0);
+  if(width <= 0) {
+    printf("Font::GetGlyphBounds: measureText width <= 0\n");
+    return std::move(math::RectF());
+  }
 
   //delete tmpFont; /// __TODO__
 
@@ -394,7 +411,7 @@ const SkFont Font::GetSkFont() const {
   return GetSkFont(size_, 1.0f, 0.0f);
 }
 
-scoped_refptr<SkiaTypeface> Font::GetTypeface() {
+scoped_refptr<SkiaTypeface> Font::GetTypeface() const {
   return typeface_;
 }
 

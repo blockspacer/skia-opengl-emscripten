@@ -5,6 +5,10 @@ list(APPEND RENDERER_PUBLIC_DEFINES
   # see https://github.com/blockspacer/cobalt-clone-28052019/blob/master/src/cobalt/renderer/rasterizer/skia/skia/skia_cobalt.gypi#L47
   #
   COBALT_LOCAL_TYPEFACE_CACHE_SIZE_IN_BYTES=16777216 # 16.777216 Megabytes
+  #
+  # TODO
+  # see software_resource_provider.cc
+  ENABLE_DYNAMIC_FONT_LOADING=1
 )
 
 if(TARGET_EMSCRIPTEN)
@@ -12,7 +16,9 @@ if(TARGET_EMSCRIPTEN)
     #
     # NOTE: disabled rasterizer thread (!!!) due to deadlocks on WASM MT
     # (to reproduce bug - move mouse frequently over objects that are animated on hover)
-    ENABLE_RASTERIZER_THREAD=1
+    # NOTE: related to locks in SkScalerContext_FreeType::generateImage
+    # see 'TODO' file in commit 0e4faf to reproduce
+    # ENABLE_RASTERIZER_THREAD=1
   )
 elseif(TARGET_LINUX)
   list(APPEND RENDERER_PUBLIC_DEFINES
@@ -37,10 +43,6 @@ list(APPEND RENDERER_PRIVATE_DEFINES
   COBALT_EGL_SWAP_INTERVAL=1
   #
   ${OPENGLES2_DEFINITIONS}
-  #
-  # TODO
-  # see software_resource_provider.cc
-  # ENABLE_DYNAMIC_FONT_LOADING=1
 )
 
 # TODO: WASM ST: fix rasterizer performance issues

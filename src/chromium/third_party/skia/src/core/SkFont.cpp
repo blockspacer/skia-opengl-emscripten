@@ -466,46 +466,46 @@ void SkFontPriv::ScaleFontMetrics(SkFontMetrics* metrics, SkScalar scale) {
 }
 
 SkRect SkFontPriv::GetFontBounds(const SkFont& font) {
-    printf("SkFontPriv::GetFontBounds 0.0.1\n");
+    //printf("SkFontPriv::GetFontBounds 0.0.1\n");
     SkMatrix m;
     m.setScale(font.getSize() * font.getScaleX(), font.getSize());
     m.postSkew(font.getSkewX(), 0);
-    printf("SkFontPriv::GetFontBounds 0.0.2\n");
+    //printf("SkFontPriv::GetFontBounds 0.0.2\n");
 
     SkTypeface* typeface = font.getTypefaceOrDefault();
-    printf("SkFontPriv::GetFontBounds 0.0.3\n");
+    //printf("SkFontPriv::GetFontBounds 0.0.3\n");
 
     if(!typeface) {
-      printf("ERROR: no typeface in SkFontPriv::GetFontBounds\n");
+      //printf("ERROR: no typeface in SkFontPriv::GetFontBounds\n");
       SkASSERT(false);
     }
 
-    printf("SkFontPriv::GetFontBounds 0.0.3.0.0\n");
+    //printf("SkFontPriv::GetFontBounds 0.0.3.0.0\n");
 
     if(!typeface->getBounds().isFinite()) {
-      printf("ERROR: typeface with infinite bounds\n");
+      //printf("ERROR: typeface with infinite bounds\n");
       SkASSERT(false);
     }
 
-    printf("SkFontPriv::GetFontBounds 0.0.3.0.1\n");
+    //printf("SkFontPriv::GetFontBounds 0.0.3.0.1\n");
 
     if(typeface->getBounds().width() < 0 || typeface->getBounds().width() > 99999) {
-      printf("ERROR: typeface with incorrect bounds width\n");
+      //printf("ERROR: typeface with incorrect bounds width\n");
       SkASSERT(false);
     }
 
     if(typeface->getBounds().height() < 0 || typeface->getBounds().height() > 99999) {
-      printf("ERROR: typeface with incorrect bounds height\n");
+      //printf("ERROR: typeface with incorrect bounds height\n");
       SkASSERT(false);
     }
 
     // TODO >>>
     SkRect bounds;
-    printf("SkFontPriv::GetFontBounds 0.0.3.1\n");
+    //printf("SkFontPriv::GetFontBounds 0.0.3.1\n");
     SkRect typefaceBounds = typeface->getBounds();
-    printf("SkFontPriv::GetFontBounds 0.0.3.2\n");
+    //printf("SkFontPriv::GetFontBounds 0.0.3.2\n");
     m.mapRect(&bounds, typefaceBounds);
-    printf("SkFontPriv::GetFontBounds 0.0.4\n");
+    //printf("SkFontPriv::GetFontBounds 0.0.4\n");
     return bounds;
 }
 

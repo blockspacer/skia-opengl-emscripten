@@ -172,6 +172,7 @@ namespace customizer {
 
         // attr_callback->first->SetValue(callback_result);
 
+        /// \todo RemoveObserver
         custom_token_to_observers->AddObserver(elementToken.get());
       }
 
@@ -400,6 +401,7 @@ namespace customizer {
       //  custom_token_cleaned_original.c_str(), prev_attr_name_lower.c_str(), prev_attr_val.c_str());
 
       DCHECK(cb);
+      /// \todo support multiple event callbacks (for each attribute)
       elem.add_event_cb(attr_event_name, cb);
 
       return attr_event_name;

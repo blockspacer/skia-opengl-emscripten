@@ -79,11 +79,16 @@ bool ShouldFakeBoldText(const render_tree::FontProvider* font_provider,
   // https://www.w3.org/TR/css-fonts-3/#font-weight-prop
   // https://www.w3.org/TR/css-fonts-3/#font-style-matching
   if (font_provider->style().weight > 500) {
+#if 0
     const sk_sp</*SkTypeface_Cobalt*/SkTypeface>& typeface(
       // TODO
       //font_data->GetTypeface());
       font->getDefaultTypeface());
-    return typeface->isBold()/*synthesizes_bold()*/;
+    return typeface->synthesizes_bold();
+#endif // 0
+    DCHECK(font->GetTypeface());
+    DCHECK(font->GetTypeface()->GetSkTypeface());
+    return font->GetTypeface()->GetSkTypeface()->isBold();
   }
   return false;
 }
@@ -501,23 +506,25 @@ void TextShaper::ShapeSimpleRun(const base::char16* text_buffer,
     DCHECK(current_font);
     //DCHECK(current_font->GetSkFont());
     const math::RectF& glyph_bounds = current_font->GetGlyphBounds(glyph);
-    *total_width += glyph_bounds.width();
+    //if(glyph_bounds.width() > 0) {
+      *total_width += glyph_bounds.width();
 
-    // If |maybe_vertical_bounds| has been provided, then we're updating it with
-    // the vertical bounds of all of the shaped glyphs.
-    if (maybe_vertical_bounds) {
-      maybe_vertical_bounds->IncludeRange(glyph_bounds.y(),
-                                          glyph_bounds.bottom());
-    }
+      // If |maybe_vertical_bounds| has been provided, then we're updating it with
+      // the vertical bounds of all of the shaped glyphs.
+      if (maybe_vertical_bounds) {
+        maybe_vertical_bounds->IncludeRange(glyph_bounds.y(),
+                                            glyph_bounds.bottom());
+      }
 
-    ++glyph_count;
-    last_font = current_font;
+      ++glyph_count;
+      last_font = current_font;
+    //}
   }
 
   // If there's a builder (meaning that a glyph buffer is being generated), and
   // at least one glyph was generated, then we need to add the final font run
   // into the glyph buffer.
-  if (maybe_builder && glyph_count > 0) {
+  if (/*last_font && font_provider &&*/ maybe_builder && glyph_count > 0) {
     TryAddFontToUsedFonts(last_font, maybe_used_fonts);
     AddFontRunToGlyphBuffer(font_provider, last_font, glyph_count,
                             maybe_builder);
@@ -527,8 +534,8 @@ void TextShaper::ShapeSimpleRun(const base::char16* text_buffer,
 void TextShaper::AddFontRunToGlyphBuffer(
     const render_tree::FontProvider* font_provider, const Font* font,
     const int glyph_count, SkTextBlobBuilder* builder) {
-  printf("AddFontRunToGlyphBuffer 1\n");
   //printf("TextShaper::AddFontRunToGlyphBuffer 1\n");
+
   DCHECK(font);
   DCHECK(builder);
   DCHECK(font_provider);
@@ -543,7 +550,7 @@ void TextShaper::AddFontRunToGlyphBuffer(
   //printf("TextShaper::AddFontRunToGlyphBuffer 2\n");
 
   //DCHECK(font->GetSkTypeface());
-  DCHECK(font->getDefaultTypeface());
+  //DCHECK(font->getDefaultTypeface());
   const SkFont& tmpFont = font->GetSkFont();
       //new SkFont(font->getDefaultTypeface()/*GetSkTypeface()*/, font->size(), 1.0f, 0.0f); /// __TODO__
 

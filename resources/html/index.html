@@ -7,12 +7,12 @@
     <link rel="splashscreen" href="file:///resources/html/index_hello.html">
     <style>
       @font-face {
-          font-family: "Ubuntu";
+          font-family: "UbuntuCustom";
           src: url("file:///resources/fonts/Ubuntu-Regular.ttf");
       }
 
       @font-face {
-          font-family: "FreeSans";
+          font-family: "FreeSansCustom";
           src: url("file:///resources/fonts/FreeSans.ttf");
       }
 
@@ -25,7 +25,7 @@
       body {
         background:yellow;
         font-size: 22px;
-        font-family: "Ubuntu";
+        font-family: "UbuntuCustom";
         width:100%;
         height:100%;
         overflow: hidden;
@@ -368,27 +368,6 @@
       see https://javascript.info/mousemove-mouseover-mouseout-mouseenter-mouseleave#mouseover-mouseout-relatedtarget
     </div>
 
-    <div style="background-color:rgb(84, 208, 212);width:50px;EXT__width-x-px__EXT;width:800px;">
-      800px width
-    </div>
-
-    <div style="background-color:rgb(20, 153, 53);" tabindex="0" id="example" EXT__on-mouseover-focus__EXT="" EXT__on-mouseout-blur__EXT="" EXT__on-keyup-print__EXT=""  EXT__on-keydown-print__EXT="" EXT__on-keypress-print__EXT="">
-      Test keys 2
-    </div>
-
-    <div>
-      <input width="10" height="10" style="width:10px;height:10px;">
-      </input>
-    </div>
-
-    <div style="background-color:rgb(143, 201, 50);EXT__height-x-px__EXT;">
-      40px height
-    </div>
-
-    <div style="background-color:green;EXT__height-x-px__EXT;EXT__width-x-px__EXT;">
-      40px h & w
-    </div>
-
     <div style="position:absolute;background-color:white;top:60px;right:200px;z-index:99;width:100px;height:100px">
     </div>
     <div style="position:absolute;background-color:black;top:80px;right:150px;z-index:1;width:100px;height:100px">
@@ -414,21 +393,10 @@
       <skottie width="300" height="300" src="./resources/animations/confetti.json" style="display:block;position:absolute;top:60px;left:200px;z-index:1;width:300px;height:300px">
     </div>
 
-    <div>
-      <div>
-        <span>dddd</span>
-        <span class="testselector">sadsad 0</span>
-      </div>
-    </div>
-    <span>hhhhhh 1</span>
-    <span class="testselector">sadsad 1</span>
-    <span>hhhhhh 2</span>
-    <span class="testselector">sadsad 2</span>
-
-    <div style="font-family: 'Ubuntu'; font-size: 12px;" class='bounceInDiv'>bbb div font-family: 'Ubuntu'</div>
-    <div style="font-family: 'FreeSans'; font-size: 18px;">bbb div font-family: 'FreeSans'</div>
+    <div style="font-family: 'UbuntuCustom'; font-size: 12px;" class='bounceInDiv'>bbb div font-family: 'Ubuntu'</div>
+    <div style="font-family: 'FreeSansCustom'; font-size: 18px;">bbb div font-family: 'FreeSans'</div>
     <div style="animation: MotionScale 2s alternate linear infinite;">MotionScale 2s alternate linear infinite</div>
-    <div style="font-family: 'Ubuntu'; font-size: 18px;">(RU) 18 пикселей</div>
+    <div style="font-family: 'UbuntuCustom'; font-size: 18px;">(RU) 18 пикселей</div>
     <div class="hovertest">hovertest</div>
     <!-- TODO: https://cobalt.foo/development/reference/supported-features.html
     img1<br>
@@ -440,6 +408,38 @@
     img3<br>
     <div style="background-image: url('file:///resources/images/owl.png'); width:200px; height:200px; border: 5px solid gray;animation: slidein 3s ease-in 1s infinite;">
     </div><br>
+
+    <div style="background-color:rgb(84, 208, 212);width:50px;EXT__width-x-px__EXT;width:800px;">
+      800px width
+    </div>
+
+    <div style="background-color:rgb(20, 153, 53);" tabindex="0" id="example" EXT__on-mouseover-focus__EXT="" EXT__on-mouseout-blur__EXT="" EXT__on-keyup-print__EXT=""  EXT__on-keydown-print__EXT="" EXT__on-keypress-print__EXT="">
+      Test keys 2
+    </div>
+
+    <div>
+      <input width="10" height="10" style="width:10px;height:10px;">
+      </input>
+    </div>
+
+    <div style="background-color:rgb(143, 201, 50);EXT__height-x-px__EXT;">
+      40px height
+    </div>
+
+    <div style="background-color:green;EXT__height-x-px__EXT;EXT__width-x-px__EXT;">
+      40px h & w
+    </div>
+
+    <div>
+      <div>
+        <span>dddd</span>
+        <span class="testselector">sadsad 0</span>
+      </div>
+    </div>
+    <span>hhhhhh 1</span>
+    <span class="testselector">sadsad 1</span>
+    <span>hhhhhh 2</span>
+    <span class="testselector">sadsad 2</span>
 
     <div class="view_port">
       <div class="polling_message">

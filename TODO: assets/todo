@@ -541,4 +541,5 @@ WASM MT: deadlock in SkScalerContext_FreeType::generateImage (WASM MT DEB with r
 deadlocks after SkTypeface::createScalerContext
 move mouse frequently over dom elements while page is loading
 clear && clear ; cmake -DRUN_APP=ON -DBUILD_APP=ON -DEXTRA_EMMAKE_OPTS="-j;6" -DBUILD_TYPE="Debug" -DCLEAN_BUILD=ON -DENABLE_EMCMAKE_CLEAN_FIRST=ON -DBUILD_DIR=$(pwd)/build-wasm-mt-deb/ -DEXTRA_EMCMAKE_OPTS="-DENABLE_WEB_PTHREADS=TRUE;-DENABLE_LIBWEBP=TRUE;-DENABLE_BLINK=FALSE;-DENABLE_COBALT=TRUE;-DENABLE_WTF=TRUE;-DDISABLE_FORMATTING=FALSE;-DENABLE_SKOTTIE=FALSE;-DFORCE_DISABLE_SK_GPU=TRUE" -P tools/buildWeb.cmake
+https://my.oschina.net/jxt1234and2010/blog/517707
 ===

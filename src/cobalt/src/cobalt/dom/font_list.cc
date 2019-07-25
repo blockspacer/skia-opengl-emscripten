@@ -195,9 +195,10 @@ const scoped_refptr<render_tree::Font>& FontList::GetCharacterFont(
   // Walk the list of fonts, requesting any encountered that are in an
   // unrequested state. The first font encountered that has the character is the
   // character font.
+  DCHECK(fonts_.size() > 0 && fonts_.size() < 99999);
   for (size_t i = 0; i < fonts_.size(); ++i) {
-    //printf("FontList::GetCharacterFont 2");
     FontListFont& font_list_font = fonts_[i];
+    //printf("FontList::GetCharacterFont %lu %s\n", i, font_list_font.family_name().c_str());
 
     if (font_list_font.state() == FontListFont::kUnrequestedState) {
       RequestFont(i);
@@ -212,12 +213,14 @@ const scoped_refptr<render_tree::Font>& FontList::GetCharacterFont(
     }
   }
 
-  return GetFallbackCharacterFont(utf32_character, glyph_index);
+  scoped_refptr<render_tree::Font> res = GetFallbackCharacterFont(utf32_character, glyph_index);
+  DCHECK(res);
+  return std::move(res);
 }
 
 const scoped_refptr<render_tree::Font>& FontList::GetFallbackCharacterFont(
     int32 utf32_character, render_tree::GlyphIndex* glyph_index) {
-  printf("FontList::GetFallbackCharacterFont 1\n");
+  //printf("FontList::GetFallbackCharacterFont 1\n");
 
   scoped_refptr<render_tree::Typeface>& fallback_typeface =
       character_fallback_typeface_map_[utf32_character];
@@ -225,7 +228,7 @@ const scoped_refptr<render_tree::Font>& FontList::GetFallbackCharacterFont(
     fallback_typeface =
         font_cache_->GetCharacterFallbackTypeface(utf32_character, style_);
   }
-  printf("FontList::GetFallbackCharacterFont 1.1\n");
+  //printf("FontList::GetFallbackCharacterFont 1.1\n");
 
   DCHECK(fallback_typeface);
   *glyph_index = fallback_typeface->GetGlyphForCharacter(utf32_character);
@@ -238,7 +241,8 @@ const scoped_refptr<render_tree::Font>& FontList::GetFallbackCharacterFont(
     fallback_font = fallback_typeface_to_font_map_[fallback_typeface->GetId()] =
         font_cache_->GetFontFromTypefaceAndSize(fallback_typeface, size_);
   }
-  printf("FontList::GetFallbackCharacterFont 2\n");
+  DCHECK(fallback_font);
+  //printf("FontList::GetFallbackCharacterFont 2\n");
 
   // TODO >>>
   //return nullptr;
@@ -276,7 +280,8 @@ const scoped_refptr<render_tree::Font>& FontList::GetPrimaryFont() {
 void FontList::RequestFont(size_t index) {
   FontListFont& font_list_font = fonts_[index];
   FontListFont::State state;
-  //printf("FontList::RequestFont 1\n");
+  printf("FontList::RequestFont 1 %s\n", font_list_font.family_name().c_str());
+
   // Request the font from the font cache; the state of the font will be set
   // during the call.
   scoped_refptr<render_tree::Font> render_tree_font = font_cache_->TryGetFont(
@@ -298,6 +303,8 @@ void FontList::RequestFont(size_t index) {
       if (check_font.state() == FontListFont::kLoadedState &&
           check_font.font()->GetTypefaceId() == typeface_id) {
         font_list_font.set_state(FontListFont::kDuplicateState);
+        printf("FontList::RequestFont 4.0 (kDuplicateState)\n");
+        //DCHECK(false);
         break;
       }
     }
@@ -305,12 +312,12 @@ void FontList::RequestFont(size_t index) {
     // If this font wasn't a duplicate, then its time to initialize its font
     // data. This font is now available to use.
     if (font_list_font.state() != FontListFont::kDuplicateState) {
-      printf("FontList::RequestFont 5\n");
+      printf("FontList::RequestFont 5 (kLoadedState)\n");
       font_list_font.set_state(FontListFont::kLoadedState);
       font_list_font.set_font(render_tree_font);
     }
   } else {
-    printf("FontList::RequestFont 6\n");
+    printf("FontList::RequestFont 6 (not FontListFont::kLoadedState)\n");
     font_list_font.set_state(state);
   }
 }
@@ -321,7 +328,8 @@ void FontList::GenerateEllipsisInfo() {
     ellipsis_font_ = GetCharacterFont(GetEllipsisValue(), &ellipsis_glyph);
     ellipsis_width_ = ellipsis_font_->GetGlyphWidth(ellipsis_glyph);
 
-    is_ellipsis_info_set_ = true;
+    is_ellipsis_info_set_ = ellipsis_font_ && ellipsis_width_ > 0;
+    DCHECK(is_ellipsis_info_set_);
   }
 }
 
@@ -335,7 +343,8 @@ void FontList::GenerateSpaceWidth() {
       DLOG(WARNING) << "Font being used with space width of 0!";
     }
 
-    is_space_width_set_ = true;
+    is_space_width_set_ = space_width_ > 0;
+    DCHECK(is_space_width_set_);
   }
 }
 

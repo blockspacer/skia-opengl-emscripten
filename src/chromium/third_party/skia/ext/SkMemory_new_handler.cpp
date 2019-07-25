@@ -31,6 +31,8 @@ static inline void* throw_on_failure(size_t size, void* p) {
 }
 
 void sk_abort_no_print() {
+    printf("sk_abort_no_print\n");
+
     // Linker's ICF feature may merge this function with other functions with
     // the same definition (e.g. any function whose sole job is to call abort())
     // and it may confuse the crash report processing system.

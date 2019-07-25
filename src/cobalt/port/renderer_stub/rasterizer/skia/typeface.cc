@@ -35,8 +35,8 @@ SkiaTypeface::SkiaTypeface(const sk_sp</*SkTypeface_Cobalt*/SkTypeface>& typefac
     DCHECK(typeface_);
     if(!typeface_) {
         printf("SkiaTypeface: Fall back to default typeface\n");
-        typeface_ = Font::getDefaultTypeface();/*Sk*/
         NOTREACHED();
+        typeface_ = Font::getDefaultTypeface();/*Sk*/
     }
     //printf("SkiaTypeface 2\n");
 #if !(defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__))

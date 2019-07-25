@@ -94,7 +94,7 @@ class Font : public render_tree::Font {
 
   const SkFont GetSkFont() const;
 
-  scoped_refptr<SkiaTypeface> GetTypeface();
+  scoped_refptr<SkiaTypeface> GetTypeface() const;
 private:
   // Usually covers Latin-1 in a single page.
   static const int kPrimaryPageSize = 256;

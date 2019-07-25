@@ -361,6 +361,10 @@ class Document : public Node,
   // Called when a new typeface has been loaded.
   void OnTypefaceLoadEvent();
 
+  bool hasLoadedTypefaces() const {
+    return hasLoadedTypefaces_;
+  }
+
   // Called when the inline style of an element is modified.
   void OnElementInlineStyleMutation();
 
@@ -601,6 +605,8 @@ class Document : public Node,
 
   // Whether or not rendering is currently postponed.
   bool render_postponed_;
+
+  bool hasLoadedTypefaces_ = false;
 };
 
 }  // namespace dom

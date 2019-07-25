@@ -377,7 +377,7 @@ SkRect SkTypeface::getBounds() const {
 }
 
 bool SkTypeface::onComputeBounds(SkRect* bounds) const {
-    printf("SkTypeface::onComputeBounds 1\n");
+    //printf("SkTypeface::onComputeBounds 1\n");
     // we use a big size to ensure lots of significant bits from the scalercontext.
     // then we scale back down to return our final answer (at 1-pt)
     const SkScalar textSize = 2048;
@@ -394,22 +394,22 @@ bool SkTypeface::onComputeBounds(SkRect* bounds) const {
     SkScalerContextEffects effects;
     //SkScalerContextEffects* effects;
 
-    printf("SkTypeface::onComputeBounds 1.1\n");
+    //printf("SkTypeface::onComputeBounds 1.1\n");
     // TODO >>>
     SkScalerContext::MakeRecAndEffectsFromFont(font, &rec, &effects);
     //SkScalerContext::MakeRecAndEffectsFromFont(font, &rec, effects);
 
-    printf("SkTypeface::onComputeBounds 2\n");
+    //printf("SkTypeface::onComputeBounds 2\n");
 
     SkAutoDescriptor ad;
     SkScalerContextEffects noeffects;
     SkScalerContext::AutoDescriptorGivenRecAndEffects(rec, noeffects, &ad);
 
-    printf("SkTypeface::onComputeBounds 3\n");
+    //printf("SkTypeface::onComputeBounds 3\n");
 
     std::unique_ptr<SkScalerContext> ctx = this->createScalerContext(noeffects, ad.getDesc(), true);
     if (!ctx) {
-        printf("SkTypeface::onComputeBounds 3.1\n");
+        //printf("SkTypeface::onComputeBounds 3.1\n");
         return false;
     }
 
@@ -417,7 +417,7 @@ bool SkTypeface::onComputeBounds(SkRect* bounds) const {
     ctx->getFontMetrics(&fm);
     bounds->set(fm.fXMin * invTextSize, fm.fTop * invTextSize,
                 fm.fXMax * invTextSize, fm.fBottom * invTextSize);
-    printf("SkTypeface::onComputeBounds 4\n");
+    //printf("SkTypeface::onComputeBounds 4\n");
     return true;
 }
 

@@ -184,6 +184,8 @@ scoped_refptr<render_tree::Typeface> SoftwareResourceProvider::GetLocalTypeface(
           reinterpret_cast</*SkTypeface_Cobalt*/SkTypeface*>(
               fontManagerSkTypeface));
       res = scoped_refptr<render_tree::Typeface>(new SkiaTypeface(typeface));
+      DCHECK(res);
+      return res;
   }
 
   //return nullptr;
@@ -191,6 +193,8 @@ scoped_refptr<render_tree::Typeface> SoftwareResourceProvider::GetLocalTypeface(
 
   /// __TODO__
   if (!fontManagerSkTypeface || !res) {
+    NOTIMPLEMENTED();
+
     sk_sp<SkTypeface> defaultTypeface = Font::getDefaultTypeface();
     DCHECK(defaultTypeface);
 
@@ -203,7 +207,11 @@ scoped_refptr<render_tree::Typeface> SoftwareResourceProvider::GetLocalTypeface(
     DCHECK(fallbackTypeface);
     res = scoped_refptr<render_tree::Typeface>(
       new SkiaTypeface(fallbackTypeface));
+    DCHECK(res);
+    return res;
   }
+
+  NOTREACHED() << font_family_name;
 
   return res;
 #else // ENABLE_DYNAMIC_FONT_LOADING
@@ -250,6 +258,35 @@ SoftwareResourceProvider::GetCharacterFallbackTypeface(
                "SoftwareResourceProvider::GetCharacterFallbackTypeface()");
   printf("SoftwareResourceProvider::GetCharacterFallbackTypeface 1!!! %s\n", language.c_str());
 
+#if defined(ENABLE_DYNAMIC_FONT_LOADING)
+  sk_sp<SkFontMgr> font_manager(SkFontMgr::RefDefault());
+  const char* language_cstr = language.c_str();
+  /*sk_sp<SkTypeface_Cobalt> typeface(
+      base::polymorphic_downcast<SkTypeface_Cobalt*>(
+          font_manager->matchFamilyStyleCharacter(
+              NULL, CobaltFontStyleToSkFontStyle(font_style), &language_cstr, 1,
+              character)));*/
+  // TODO: sk_sp<SkTypeface> on pointer
+  sk_sp<SkTypeface> typeface(font_manager->matchFamilyStyleCharacter(
+              NULL, CobaltFontStyleToSkFontStyle(font_style), &language_cstr, 1,
+              character));
+  /*if(!typeface) {
+    typeface = getPrimaryTypeface();
+  }*/
+
+  //printf("language_cstr %s\n", language_cstr);
+  //DCHECK(false);
+  if(!typeface) {
+//#if defined(OS_EMSCRIPTEN)
+//    HTML5_STACKTRACE();
+//#endif // OS_EMSCRIPTEN
+//    NOTREACHED();
+    printf("SoftwareResourceProvider::GetCharacterFallbackTypeface %s\n", language_cstr);
+    typeface = Font::getDefaultTypeface();
+  }
+  DCHECK(typeface);
+  return scoped_refptr<render_tree::Typeface>(new SkiaTypeface(typeface));
+#else
   sk_sp<SkFontMgr> font_manager(SkFontMgr::RefDefault());
   const char* language_cstr = language.c_str();
   /*sk_sp<SkTypeface_Cobalt> typeface(
@@ -265,6 +302,7 @@ SoftwareResourceProvider::GetCharacterFallbackTypeface(
   DCHECK(typeface);
   return scoped_refptr<render_tree::Typeface>(new SkiaTypeface(typeface));
   //return base::WrapRefCounted(new cobalt::render_tree::TypefaceStub(NULL));
+#endif // ENABLE_DYNAMIC_FONT_LOADING
 }
 
 scoped_refptr<render_tree::Typeface>
@@ -294,6 +332,7 @@ SoftwareResourceProvider::CreateTypefaceFromRawData(
 
   std::unique_ptr<SkStreamAsset> stream;
   {
+      DCHECK(raw_data->size() > 0);
       //sk_sp<SkData> skia_data(SkData::MakeFromMalloc(
       sk_sp<SkData> skia_data(SkData::MakeWithCopy(
           &((*raw_data)[0]), raw_data->size()
@@ -308,15 +347,27 @@ SoftwareResourceProvider::CreateTypefaceFromRawData(
 
   printf("SoftwareResourceProvider::CreateTypefaceFromRawData 2...\n");
 
+#if 1
   sk_sp</*SkTypeface_Cobalt*/SkTypeface> typeface(
       // TODO: base::polymorphic_downcast
       // Check failed: dynamic_cast<Derived>(base) == base.
       // TODO: polymorphic_downcast Check failed: dynamic_cast<Derived>(base) == base.
       reinterpret_cast</*SkTypeface_Cobalt*/SkTypeface*>(
           SkTypeface::MakeFromStream(std::move(stream)).release()));
+#else
+  sk_sp<SkTypeface> typeface =
+    SkTypeface::MakeFromStream(std::move(stream));
+#endif // 1
+
+  DCHECK(typeface);
+  DCHECK(!typeface->getBounds().isEmpty());
+  DCHECK(typeface->getBounds().isFinite());
+  DCHECK(typeface->countGlyphs() > 0);
 
   if(!typeface) {
       printf("WARNING: SoftwareResourceProvider::CreateTypefaceFromRawData no typeface...\n");
+      NOTIMPLEMENTED();
+
       typeface = Font::getDefaultTypeface();/*Sk*/
       DCHECK(typeface);
       /*typeface.reset(

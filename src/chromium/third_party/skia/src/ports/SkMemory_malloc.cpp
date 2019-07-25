@@ -46,6 +46,7 @@ void sk_abort_no_print() {
     _set_abort_behavior(0, _WRITE_ABORT_MSG);
 #endif
 #if defined(__EMSCRIPTEN__)
+  printf("sk_abort_no_print!\n");
   EM_ASM({ debugger; });
 #elif defined(SK_DEBUG) && defined(SK_BUILD_FOR_WIN)
     __debugbreak();

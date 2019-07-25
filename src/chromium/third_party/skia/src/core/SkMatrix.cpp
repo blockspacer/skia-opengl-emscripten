@@ -1141,11 +1141,11 @@ void SkMatrix::mapRectScaleTranslate(SkRect* dst, const SkRect& src) const {
 }
 
 bool SkMatrix::mapRect(SkRect* dst, const SkRect& src) const {
-    printf("SkMatrix::mapRect 1\n");
+    //printf("SkMatrix::mapRect 1\n");
     SkASSERT(dst);
 
     if (this->getType() <= kTranslate_Mask) {
-        printf("SkMatrix::mapRect 2\n");
+        //printf("SkMatrix::mapRect 2\n");
         SkScalar tx = fMat[kMTransX];
         SkScalar ty = fMat[kMTransY];
         Sk4f trans(tx, ty, tx, ty);
@@ -1153,11 +1153,11 @@ bool SkMatrix::mapRect(SkRect* dst, const SkRect& src) const {
         return true;
     }
     if (this->isScaleTranslate()) {
-        printf("SkMatrix::mapRect 3\n");
+        //printf("SkMatrix::mapRect 3\n");
         this->mapRectScaleTranslate(dst, src);
         return true;
     } else {
-        printf("SkMatrix::mapRect 4\n");
+        //printf("SkMatrix::mapRect 4\n");
         SkPoint quad[4];
 
         src.toQuad(quad);
@@ -1165,7 +1165,7 @@ bool SkMatrix::mapRect(SkRect* dst, const SkRect& src) const {
         dst->setBoundsNoCheck(quad, 4);
         return this->rectStaysRect();   // might still return true if rotated by 90, etc.
     }
-    printf("SkMatrix::mapRect 5\n");
+    //printf("SkMatrix::mapRect 5\n");
 }
 
 SkScalar SkMatrix::mapRadius(SkScalar radius) const {
