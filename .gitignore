@@ -97,3 +97,7 @@ thirdparty/glew/
 *.raw
 \cmake-build*
 \.idea/
+
+\.vscode/
+
+build/
