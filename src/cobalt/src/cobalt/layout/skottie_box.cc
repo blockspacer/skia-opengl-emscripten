@@ -226,6 +226,7 @@ void AddLetterboxedSkottieToRenderTree(
     const SkottieBox::GetSkottieAnimCB& replace_skottie_animation_cb,
 #endif // ENABLE_SKOTTIE
     CompositionNode::Builder* border_node_builder) {
+  printf("AddLetterboxedSkottieToRenderTree\n");
   if (dimensions.image_rect) {
     SkottieNode::Builder builder(*(dimensions.image_rect)
                                            //, set_bounds_cb

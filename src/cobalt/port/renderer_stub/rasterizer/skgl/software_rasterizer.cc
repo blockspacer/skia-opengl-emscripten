@@ -50,6 +50,10 @@
 #include <thread>
 #include <mutex>
 
+#if defined(OS_EMSCRIPTEN)
+#include <emscripten/threading.h>
+#endif  // OS_EMSCRIPTEN
+
 static SkFont* skFont = nullptr;
 static bool skFontCreated = false;
 static sk_sp<SkTypeface> sktp;
@@ -70,7 +74,10 @@ static sk_sp<SkSurface> sRasterSurface;
 static std::mutex pImageMutex;
 #endif // USE_PIMG_MUTEX
 
+/// \note sk_sp<SkImage> use thread-safe locks (check it),
+/// so don`t use it with WASM MT main browser thread
 static sk_sp<SkImage> pImage;
+static SkPixmap pixmap;
 
 /*sk_sp<SkSurface> getRasterizerSkSurface() {
   return sRasterSurface;
@@ -83,17 +90,51 @@ sk_sp<SkImage> getRasterizerSkImage() {
   return pImage;
 }
 
-/*SkPixmap getRasterizerSkPixmap() {
-    std::lock_guard<std::mutex> lock(mutexRasterizerSkImage); // <<<
-    SkPixmap pixmap;
-    if(pImage) {
-        if (!pImage->peekPixels(&pixmap)) {
-            printf("can`t peekPixels\n");
-        }
-        DCHECK(!pixmap.bounds().isEmpty());
-    }
+SkPixmap getRasterizerSkPixmap() {
+#if defined(USE_PIMG_MUTEX)
+  std::scoped_lock lock(pImageMutex);
+#endif // USE_PIMG_MUTEX
     return pixmap;
-}*/
+}
+
+#if defined(OS_EMSCRIPTEN)
+void *updateWASMPixmapAndFreeDataCb = nullptr;
+
+void setUpdateWASMPixmapAndFreeDataCb(void* func) {
+  DCHECK(func);
+  if(func) {
+    updateWASMPixmapAndFreeDataCb = func;
+  }
+}
+
+//#define ASYNC_WASM_PIXMAP_TRANSFER 1
+
+/// \note transfer data without locks in browser thread!
+/// \see https://github.com/emscripten-core/emscripten/blob/incoming/tests/pthread/test_pthread_run_on_main_thread.cpp#L96
+void tranferPixmapToMainWASMThread(const SkPixmap* pixmapCopy) {
+  //if (emscripten_has_threading_support()) {
+  //}
+
+#if defined(ASYNC_WASM_PIXMAP_TRANSFER)
+    /// \note emscripten_async_* executed in a fire and forget manner
+    /// on the main thread in call order
+    /// \note emscripten_async_* called from main thread may be sync,
+    /// see https://github.com/emscripten-core/emscripten/issues/9086
+    emscripten_async_run_in_main_runtime_thread(
+      EM_FUNC_SIG_VI /* args count */,
+      updateWASMPixmapAndFreeDataCb,
+      (void*)pixmapCopy);
+#else // ASYNC_WASM_PIXMAP_TRANSFER
+    /// \note emscripten_sync* will be proxied
+    /// to be called by the main thread
+    /*int retcode =*/ emscripten_sync_run_in_main_runtime_thread(
+      EM_FUNC_SIG_VI /* args count */,
+      updateWASMPixmapAndFreeDataCb,
+      (void*)pixmapCopy);
+    //DCHECK(retcode != 0);
+#endif // ASYNC_WASM_PIXMAP_TRANSFER
+}
+#endif // OS_EMSCRIPTEN
 
 SoftwareRasterizer::SoftwareRasterizer(
     ///backend::GraphicsContext* context,
@@ -245,8 +286,25 @@ void SoftwareRasterizer::Submit(
       pImage = sRasterSurface->makeImageSnapshot();
       if (nullptr == pImage) {
         printf("pImage can`t makeImageSnapshot\n");
+      } else {
+        DCHECK(!pImage->bounds().isEmpty());
+        DCHECK(pImage->bounds().width() > 0);
+        DCHECK(pImage->bounds().height() > 0);
+        DCHECK(pImage->bounds().width() < 999999);
+        DCHECK(pImage->bounds().height() < 999999);
+        if (!pImage->peekPixels(&pixmap)) {
+            printf("can`t peekPixels\n");
+        }
+        DCHECK(!pixmap.bounds().isEmpty());
       }
     }
+
+#if defined(OS_EMSCRIPTEN)
+  /// \note data must be freed in callback
+  const SkPixmap* pixmapCopy = new SkPixmap(pixmap);
+  /// \note tranfer data without locks
+  tranferPixmapToMainWASMThread(pixmapCopy);
+#endif // OS_EMSCRIPTEN
 
   //printf("SoftwareRasterizer::Submit( 8\n");
 

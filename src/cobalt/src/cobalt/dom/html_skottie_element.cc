@@ -50,6 +50,7 @@ HTMLSkottieElement::HTMLSkottieElement(Document* document)
     : HTMLElement(document, base::CobToken(kTagName)) {
     //: HTMLMediaElement(document, base::CobToken(kTagName)) {
   TRACE_EVENT0("cobalt::dom", "HTMLSkottieElement::HTMLSkottieElement()");
+  printf("Created new HTMLSkottieElement for %s\n", src().c_str());
 }
 
 HTMLSkottieElement::~HTMLSkottieElement() {
@@ -87,10 +88,10 @@ math::SizeF HTMLSkottieElement::GetSize() const {
 #if defined(ENABLE_SKOTTIE)
 sk_sp<skottie::Animation> HTMLSkottieElement::GetSkottieAnim() {
   // TODO
-  printf("TODO: HTMLSkottieElement::GetSetBoundsCB\n");
   if(!src().empty() && !animation) {
     skottie::Animation::Builder builder;
     animation = builder.makeFromFile(src().c_str());
+    printf("Created new skottie Animation for %s\n", src().c_str());
   }
   return animation;
 }

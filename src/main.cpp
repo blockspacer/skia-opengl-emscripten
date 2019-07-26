@@ -473,6 +473,9 @@
 // Create a TYPE_DEFAULT message-loop.
 
 #if defined(__EMSCRIPTEN__)
+
+#define ENABLE_EMSCRIPTEN_INPUT 1
+
 //static base::MessageLoop browser_loop;
 //base::RunLoop run_loop;
 //static scoped_refptr<base::SingleThreadTaskRunner> task_runner =
@@ -1299,6 +1302,21 @@ static const int FONT_SIZE_SCALE = 512;
 //static SkPaint glyph_paint;
 #endif // ENABLE_HARFBUZZ
 
+#if defined(OS_EMSCRIPTEN)
+static SkPixmap browserPixmapCache;
+void updateWASMPixmapAndFreeData(void* data)
+{
+  //printf("updatedWASMPixmap 1!\n");
+  DCHECK(data);
+  const SkPixmap* pixmapCopy = static_cast<SkPixmap*>(data);
+  DCHECK(!pixmapCopy->bounds().isEmpty());
+  DCHECK(emscripten_is_main_runtime_thread());
+  browserPixmapCache = *pixmapCopy;
+  delete data;
+  //printf("updatedWASMPixmap 2!\n");
+}
+#endif // OS_EMSCRIPTEN
+
 #if defined(ENABLE_SKIA) && defined(ENABLE_CUSTOM_FONTS)
 //static SkFont* skFont1 = nullptr;
 //static SkFont* skFont2 = nullptr;
@@ -1309,6 +1327,10 @@ static bool sktpForUICreated = false;
 const char* fontPath = "./resources/fonts/FreeSans.ttf";
 
 static void prepareUIFonts() {
+#if defined(OS_EMSCRIPTEN) && !defined(DISABLE_PTHREADS)
+  DCHECK(false) << "can`t prepareUIFonts on WASM MT";
+#endif
+
   // SkFont font;//(nullptr, 24);//SkFont::kA8_MaskType, flags);
   if(!sktpForUI) {
     DCHECK(!sktpForUICreated);
@@ -2138,6 +2160,10 @@ public:
 #if defined(ENABLE_SKIA)
 // see https://github.com/flutter/engine/blob/master/shell/gpu/gpu_surface_gl.cc#L125
 static void initUiSkiaSurface(int /*w*/, int /*h*/) {
+#if defined(OS_EMSCRIPTEN) && !defined(DISABLE_PTHREADS)
+  DCHECK(false) << "can`t initUiSkiaSurface on WASM MT";
+#endif
+
 #ifdef SKIA_GR_CONTEXT
   {
     auto sInterface =
@@ -2313,6 +2339,9 @@ static void initUiSkiaSurface(int /*w*/, int /*h*/) {
 }
 
 static void cleanup_skia_ui() {
+#if defined(OS_EMSCRIPTEN) && !defined(DISABLE_PTHREADS)
+  DCHECK(!sRasterSurface) << "can`t use sRasterSurface on WASM MT";
+#endif
   if (sRasterSurface.get())
     delete sRasterSurface.release();
 }
@@ -4228,14 +4257,10 @@ static void drawGLTexture(const int texWidth, const int texHeight, const void* t
 }
 #endif // ENABLE_OPENGL
 
-
-static void animate() {
-  //redClrTintAnim += 0.01f;
-  //if (redClrTintAnim > 360.0f) {
-  //  redClrTintAnim = 0.0f;
-  //}
-
-  //printf("animate start\n");
+static void animateUI() {
+#if defined(OS_EMSCRIPTEN) && !defined(DISABLE_PTHREADS)
+  DCHECK(false) << "can`t animateUI on WASM MT";
+#endif
 
 #if defined(ENABLE_SKIA) && defined(ENABLE_SKOTTIE)
 
@@ -4280,6 +4305,19 @@ static void animate() {
   }
   //EM_LOG("animate 12\n");
 #endif
+}
+
+static void animate() {
+  //redClrTintAnim += 0.01f;
+  //if (redClrTintAnim > 360.0f) {
+  //  redClrTintAnim = 0.0f;
+  //}
+
+  //printf("animate start\n");
+
+  if(!render_browser_window) {
+    animateUI();
+  }
 
   /// \note: (only wasm ST - wasm without pthreads)
 #if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__) \
@@ -4429,6 +4467,10 @@ sk_sp<SkImage> getUiSkImage() {
 static int testRed = 0;
 
 static void loadUIAssets() {
+#if defined(OS_EMSCRIPTEN) && !defined(DISABLE_PTHREADS)
+  DCHECK(false) << "can`t loadUIAssets on WASM MT";
+#endif
+
 #if defined(ENABLE_IMAGES) && defined(ENABLE_BLINK_UI)
   ///DCHECK(thread->IsCurrentThread());
   ///
@@ -4513,6 +4555,10 @@ static void DCHECK_RUNS_IN_THEAD_ON_MT_WASM() {
 }
 
 static void refreshUIDemo() {
+#if defined(OS_EMSCRIPTEN) && !defined(DISABLE_PTHREADS)
+  DCHECK(false) << "can`t refreshUI on WASM MT";
+#endif
+
   if (isDebugPeriodReached()) printf("refreshUIDemo...\n");
 
   DCHECK_RUNS_IN_THEAD_ON_MT_WASM();
@@ -4563,6 +4609,10 @@ static void refreshUIDemo() {
 static void drawUIDemo() {
   if (isDebugPeriodReached()) printf("drawUIDemo...\n");
 
+#if defined(OS_EMSCRIPTEN) && !defined(DISABLE_PTHREADS)
+  DCHECK(false) << "can`t drawUI on WASM MT";
+#endif
+
   SkPixmap uiPixmap;
   {
     sk_sp<SkImage> res = getUiSkImage();
@@ -4598,17 +4648,26 @@ static void drawUIDemo() {
 #if defined(ENABLE_COBALT)
 static void drawBrowserDemo() {
     //using cobalt::renderer::rasterizer::egl::getRasterizerSkSurface;
-    using cobalt::renderer::rasterizer::egl::getRasterizerSkImage;
-    ///using cobalt::renderer::rasterizer::egl::getRasterizerSkPixmap;
+    //using cobalt::renderer::rasterizer::egl::getRasterizerSkImage;
+    using cobalt::renderer::rasterizer::egl::getRasterizerSkPixmap;
 
     ///if (isDebugPeriodReached()) printf("Draw() 7\n");
-    sk_sp<SkImage> pImage = getRasterizerSkImage();
-    if(pImage) {
-        SkPixmap pixmap;// = getRasterizerSkPixmap();
-        if (!pImage->peekPixels(&pixmap)) {
-            ///if (isDebugPeriodReached())
-            printf("can`t peekPixels\n");
-        }
+#if !defined(OS_EMSCRIPTEN)
+    //sk_sp<SkImage> pImage = getRasterizerSkImage();
+#endif // OS_EMSCRIPTEN
+    //if(pImage) {
+        //SkPixmap pixmap;
+        //if (!pImage->peekPixels(&pixmap)) {
+        //    ///if (isDebugPeriodReached())
+        //    printf("can`t peekPixels\n");
+        //}
+
+#if defined(OS_EMSCRIPTEN)
+        const SkPixmap& pixmap = browserPixmapCache;
+#else // OS_EMSCRIPTEN
+        const SkPixmap& pixmap = getRasterizerSkPixmap();
+#endif // OS_EMSCRIPTEN
+
         if(!pixmap.bounds().isEmpty()) {
             DCHECK(!pixmap.bounds().isEmpty());
             ///if (isDebugPeriodReached()) printf("Draw() 7.1\n");
@@ -4618,11 +4677,11 @@ static void drawBrowserDemo() {
             ///if (isDebugPeriodReached())
             printf("pixmap.bounds().isEmpty()\n");
         }
-    } else {
+    //} else {
 #if defined(ENABLE_SK_UI)
         //drawUIDemo();
 #endif // ENABLE_SK_UI
-    }
+    //}
 
     //if (nullptr == pImage) {
     //    ///if (isDebugPeriodReached())
@@ -8032,8 +8091,10 @@ int main(int argc, char** argv) {
     /// @TODO don`t reserve much memory on WASM/EMSCRIPTEN platform
     // Try to reserve as much address space as we reasonably can.
     const size_t kMB = 1024 * 1024;
-    for (size_t size = 512 * kMB; size >= 32 * kMB; size -= 16 * kMB) {
+    // for (size_t size = 512 * kMB; size >= 32 * kMB; size -= 16 * kMB) {
     // for (size_t size = 128 * kMB; size >= 32 * kMB; size -= 16 * kMB) {
+    //for (size_t size = 64 * kMB; size >= 32 * kMB; size -= 16 * kMB) {
+    for (size_t size = 32 * kMB; size >= 32 * kMB; size -= 16 * kMB) {
       printf("ReserveAddressSpace...\n");
       if (base::ReserveAddressSpace(size)) {
         // Report successful reservation.
@@ -8563,6 +8624,7 @@ int main(int argc, char** argv) {
   #warning "see https://github.com/hongkk/urho/blob/master/Source/Urho3D/Input/Input.cpp for example"
   #warning "see https://github.com/h-s-c/libKD/blob/master/source/kd.c#L2658 for example"
 
+#if defined(ENABLE_EMSCRIPTEN_INPUT)
   emscripten_set_mousemove_callback("#canvas", 0, true, emsc_mouse_move_cb);
   emscripten_set_mousedown_callback("#canvas", 0, true, emsc_mouse_down_cb);
   emscripten_set_mouseup_callback("#canvas", 0, true, emsc_mouse_up_cb);
@@ -8572,14 +8634,17 @@ int main(int argc, char** argv) {
   emscripten_set_keydown_callback("#window", 0, true, emsc_keydown_cb);
   emscripten_set_keyup_callback("#window", 0, true, emsc_keyup_cb);
   emscripten_set_keypress_callback("#window", 0, true, emsc_keypress_cb);
-#else
+#else // USE_DEPRECATED_FIND_EVENT_TARGET
   emscripten_set_keydown_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, 0, true, emsc_keydown_cb);
   emscripten_set_keyup_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, 0, true, emsc_keyup_cb);
   emscripten_set_keypress_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, 0, true, emsc_keypress_cb);
-#endif
+#endif // USE_DEPRECATED_FIND_EVENT_TARGET
+
+#endif // ENABLE_EMSCRIPTEN_INPUT
+
   // TODO
   // emscripten_set_resize_callback
-#endif
+#endif // defined(__EMSCRIPTEN__) && !defined(ENABLE_HTML5_SDL)
 
 #if defined(ENABLE_HTML5_SDL) || !defined(__EMSCRIPTEN__)
   printf("SDL_Init ...\n");
@@ -8748,197 +8813,198 @@ int main(int argc, char** argv) {
   main_thread_event_.Reset();
 #endif // ENABLE_BASE
 
-#if defined(ENABLE_SKIA)
-  printf("Starting SKIA tests...\n");
+if(!render_browser_window) {
+  #if defined(ENABLE_SKIA)
+    printf("Starting SKIA tests...\n");
 
-  std::cout << std::endl; // flush
+    std::cout << std::endl; // flush
 
-  base::WaitableEvent ui_sync_event(base::WaitableEvent::ResetPolicy::MANUAL,
-                            base::WaitableEvent::InitialState::NOT_SIGNALED);
+    base::WaitableEvent ui_sync_event(base::WaitableEvent::ResetPolicy::MANUAL,
+                              base::WaitableEvent::InitialState::NOT_SIGNALED);
 
-#if defined(ENABLE_BLINK_UI) //&& defined(__TODO__)
-#if 1
+    #if defined(ENABLE_BLINK_UI) //&& defined(__TODO__)
+    #if 1
 
-#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
-  //base::Thread ui_thread("render");
-        //blink::ThreadCreationParams params(blink::WebThreadType::kMainThread);
+    #if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+      //base::Thread ui_thread("render");
+            //blink::ThreadCreationParams params(blink::WebThreadType::kMainThread);
 
-//#if DCHECK_IS_ON()
-//  WTF::WillCreateThread();
-//#endif
+    //#if DCHECK_IS_ON()
+    //  WTF::WillCreateThread();
+    //#endif
 
-        //params.thread_priority = base::ThreadPriority::DISPLAY;
-  /// TODO: UpdateThreadTLSAndWait
-  //blink::Thread::CreateAndSetCompositorThread();
-      //std::unique_ptr<blink::Thread> ui_thread = blink::Thread::CreateThread(params);
-  //blink::Thread* ui_thread = blink::Thread::CompositorThread();
+          //params.thread_priority = base::ThreadPriority::DISPLAY;
+    /// TODO: UpdateThreadTLSAndWait
+    //blink::Thread::CreateAndSetCompositorThread();
+        //std::unique_ptr<blink::Thread> ui_thread = blink::Thread::CreateThread(params);
+    //blink::Thread* ui_thread = blink::Thread::CompositorThread();
 
 
-  //base::Thread::Options ui_thread_options;
-  //options.message_loop_type = base::MessageLoop::TYPE_IO;
-  //ui_thread.StartWithOptions(ui_thread_options);
-  //ui_thread->Start();
+    //base::Thread::Options ui_thread_options;
+    //options.message_loop_type = base::MessageLoop::TYPE_IO;
+    //ui_thread.StartWithOptions(ui_thread_options);
+    //ui_thread->Start();
 
-  //base::SingleThreadTaskRunner*
-  //scoped_refptr<base::SingleThreadTaskRunner> task_runner =
-  //    //ui_thread->GetTaskRunner().get();
-  //    blink::Thread::MainThread()->GetTaskRunner();
-  //DCHECK(task_runner);
-  //DCHECK(ui_thread.task_runner());
-#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
-  //ui_thread.WaitUntilThreadStarted();
-#endif
-  /// \note StaticBitmapImage::Create & SkImage::MakeFromBitmap require parent thread (TLS)
-  //ui_thread.task_runner()
-  //blink::Thread* uithread = ui_thread.get();
-  //task_runner->PostTask(
+    //base::SingleThreadTaskRunner*
+    //scoped_refptr<base::SingleThreadTaskRunner> task_runner =
+    //    //ui_thread->GetTaskRunner().get();
+    //    blink::Thread::MainThread()->GetTaskRunner();
+    //DCHECK(task_runner);
+    //DCHECK(ui_thread.task_runner());
+  #if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+    //ui_thread.WaitUntilThreadStarted();
+  #endif
+    /// \note StaticBitmapImage::Create & SkImage::MakeFromBitmap require parent thread (TLS)
+    //ui_thread.task_runner()
+    //blink::Thread* uithread = ui_thread.get();
+    //task_runner->PostTask(
 
-#if defined(SEPARATE_UI_THREAD)
-  DCHECK(ui_draw_thread_.IsRunning());
-  ui_draw_thread_.task_runner()->PostTask(
-  //main_browser_thread_.task_runner()->PostTask(
-#else
-  DCHECK(main_browser_thread_.IsRunning());
-  main_browser_thread_.task_runner()->PostTask(
-#endif // SEPARATE_UI_THREAD
-      FROM_HERE,
-      base::BindOnce(
-          [](base::WaitableEvent* thread_event) {
+  #if defined(SEPARATE_UI_THREAD)
+    DCHECK(ui_draw_thread_.IsRunning());
+    ui_draw_thread_.task_runner()->PostTask(
+    //main_browser_thread_.task_runner()->PostTask(
+  #else
+    DCHECK(main_browser_thread_.IsRunning());
+    main_browser_thread_.task_runner()->PostTask(
+  #endif // SEPARATE_UI_THREAD
+        FROM_HERE,
+        base::BindOnce(
+            [](base::WaitableEvent* thread_event) {
 
-              //printf("rendering Draw 1\n");
-              //std::cout << std::endl; // flush
-#endif // !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+                //printf("rendering Draw 1\n");
+                //std::cout << std::endl; // flush
+  #endif // !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
 
-#if defined(SEPARATE_UI_THREAD)
-              /*blink::ThreadCreationParams params(blink::WebThreadType::kUnspecifiedWorkerThread);
-              std::unique_ptr<blink::Thread> toBlinkThread =
-                blink::Thread::CreateThread(params);*/
-              //blink::Thread::CreateAndSetCompositorThread();
-              blink::ThreadState::AttachCurrentThread();
-#endif // SEPARATE_UI_THREAD
+  #if defined(SEPARATE_UI_THREAD)
+                /*blink::ThreadCreationParams params(blink::WebThreadType::kUnspecifiedWorkerThread);
+                std::unique_ptr<blink::Thread> toBlinkThread =
+                  blink::Thread::CreateThread(params);*/
+                //blink::Thread::CreateAndSetCompositorThread();
+                blink::ThreadState::AttachCurrentThread();
+  #endif // SEPARATE_UI_THREAD
 
-              loadUIAssets();
+                loadUIAssets();
 
-              // blink::ThreadState::DetachCurrentThread(); // <<< TODO
+                // blink::ThreadState::DetachCurrentThread(); // <<< TODO
 
-#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
-              thread_event->Signal();
+  #if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+                thread_event->Signal();
+            }, &ui_sync_event));
+      ::std::cout << "thread rendering start Wait 1..." << base::Time::Now() << "\n";
+      ::std::cout << std::endl; // flush
+  #endif
+  #if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+      /// \todo Reactor your code so that the waiting happens on another thread instead of the main thread
+      ui_sync_event.Wait();
+      ui_sync_event.Reset();
+  #endif
+
+      ::std::cout << "thread rendering start Wait 2..." << base::Time::Now() << "\n";
+      ::std::cout << std::endl; // flush
+      //ui_thread->Scheduler()->Shutdown();
+      //ui_thread.Stop();
+      // blink::Thread's destructor blocks until all the tasks are processed.
+      ///ui_thread.reset();
+
+  #else // 0
+    loadUIAssets();
+  #endif // 0
+
+  #endif // ENABLE_UI
+
+  #ifdef ENABLE_CUSTOM_FONTS
+    printf("Reading fonts...\n");
+
+    /*char* fileData1 = nullptr;
+    long int fsize1;
+    int readRes = read_file(fontPath, fileData1, fsize1, true);
+    if (readRes != 0) {
+      printf("can`t read font %s\n", fontPath);
+    }*/
+
+    printf("Initializing fonts...\n");
+
+    /// \note SkData::MakeFromFileName don`t support wasm pthreads,
+    /// so we use MakeFromMalloc
+    //sk_sp<SkData> data = SkData::MakeFromMalloc(fileData1, fsize1);
+    /*sk_sp<SkData> data = SkData::MakeFromFileName(fontPath);
+    if (!data) {
+      printf("failed SkData::MakeFromMalloc for font %s\n", fontPath);
+    }*/
+
+    // TODO: Initialize font data in thread
+    /// \note SkTypeface sharable between threads
+    printf("Initializing font data...\n");
+
+    // TODO >>>
+  //#ifdef ENABLE_COBALT
+  //  sk_sp<SkTypeface> fallbackTypeface
+  //    = cobalt::renderer::rasterizer::skia::Font::getDefaultTypeface();
+  //  DCHECK(fallbackTypeface);
+  //  DCHECK(fallbackTypeface->getBounds().isFinite());
+  //#endif // ENABLE_COBALT
+
+    printf("Creating fonts...\n");
+    prepareUIFonts();
+
+    /// \note SkTypeface::MakeFromFile don`t support wasm pthreads,
+    /// so we use MakeFromData
+    //const int index = 0;
+    //sk_sp<SkTypeface> sktp = SkTypeface::MakeFromFile("./resources/fonts/FreeSans.ttf");
+
+  //#ifdef ENABLE_HARFBUZZ
+    //sktp = SkTypeface::MakeFromData(data, index);
+    //if(!sktpUIThread) {
+    //  sktpUIThread = SkTypeface::MakeFromData(data, index);
+    //}
+  /*#else
+    /// \note use ::std::move only if data will not be used any more
+    sktp = SkTypeface::MakeFromData(::std::move(data), index);
+    sktpUIThread = SkTypeface::MakeFromData(::std::move(data), index);
+  #endif*/
+
+    //sk_sp<SkTypeface> sktp = SkTypeface::MakeFromStream(new SkMemoryStream(data), index);
+
+    /*DCHECK(sktp);
+    skFont1 =
+        new SkFont(sktp, FONT_SIZE_F, 1.0f, 0.0f);
+    skFont1->setEdging(SkFont::Edging::kAntiAlias);
+    DCHECK(sktp);
+    skFont2 =
+        new SkFont(sktp, 30.0f, 1.5f, 0.0f);
+    skFont2->setEdging(SkFont::Edging::kAntiAlias);*/
+
+    //delete[] fileData1;
+
+  #endif // ENABLE_CUSTOM_FONTS
+
+    printf("Initializing skia...\n");
+
+    #if 1
+    #if defined(SEPARATE_UI_THREAD)
+      DCHECK(ui_draw_thread_.IsRunning());
+      ui_draw_thread_.task_runner()->PostTask(
+    #else
+      DCHECK(main_browser_thread_.IsRunning());
+      main_browser_thread_.task_runner()->PostTask(
+    #endif // SEPARATE_UI_THREAD
+          FROM_HERE, base::Bind([](base::WaitableEvent* thread_event) {
+            initUiSkiaSurface(width, height);
+
+            thread_event->Signal();
+
           }, &ui_sync_event));
-    ::std::cout << "thread rendering start Wait 1..." << base::Time::Now() << "\n";
-    ::std::cout << std::endl; // flush
-#endif
-#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
-    /// \todo Reactor your code so that the waiting happens on another thread instead of the main thread
-    ui_sync_event.Wait();
-    ui_sync_event.Reset();
-#endif
+    #if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+        /// \todo Reactor your code so that the waiting happens on another thread instead of the main thread
+        ui_sync_event.Wait();
+        ui_sync_event.Reset();
+    #endif
+    #else // 0
+      initUiSkiaSurface(width, height);
+    #endif // 0
 
-    ::std::cout << "thread rendering start Wait 2..." << base::Time::Now() << "\n";
-    ::std::cout << std::endl; // flush
-    //ui_thread->Scheduler()->Shutdown();
-    //ui_thread.Stop();
-    // blink::Thread's destructor blocks until all the tasks are processed.
-    ///ui_thread.reset();
-
-#else // 0
-  loadUIAssets();
-#endif // 0
-
-#endif // ENABLE_UI
-
-#ifdef ENABLE_CUSTOM_FONTS
-  printf("Reading fonts...\n");
-
-  /*char* fileData1 = nullptr;
-  long int fsize1;
-  int readRes = read_file(fontPath, fileData1, fsize1, true);
-  if (readRes != 0) {
-    printf("can`t read font %s\n", fontPath);
-  }*/
-
-  printf("Initializing fonts...\n");
-
-  /// \note SkData::MakeFromFileName don`t support wasm pthreads,
-  /// so we use MakeFromMalloc
-  //sk_sp<SkData> data = SkData::MakeFromMalloc(fileData1, fsize1);
-  /*sk_sp<SkData> data = SkData::MakeFromFileName(fontPath);
-  if (!data) {
-    printf("failed SkData::MakeFromMalloc for font %s\n", fontPath);
-  }*/
-
-  // TODO: Initialize font data in thread
-  /// \note SkTypeface sharable between threads
-  printf("Initializing font data...\n");
-
-  // TODO >>>
-//#ifdef ENABLE_COBALT
-//  sk_sp<SkTypeface> fallbackTypeface
-//    = cobalt::renderer::rasterizer::skia::Font::getDefaultTypeface();
-//  DCHECK(fallbackTypeface);
-//  DCHECK(fallbackTypeface->getBounds().isFinite());
-//#endif // ENABLE_COBALT
-
-  printf("Creating fonts...\n");
-  prepareUIFonts();
-
-  /// \note SkTypeface::MakeFromFile don`t support wasm pthreads,
-  /// so we use MakeFromData
-  //const int index = 0;
-  //sk_sp<SkTypeface> sktp = SkTypeface::MakeFromFile("./resources/fonts/FreeSans.ttf");
-
-//#ifdef ENABLE_HARFBUZZ
-  //sktp = SkTypeface::MakeFromData(data, index);
-  //if(!sktpUIThread) {
-  //  sktpUIThread = SkTypeface::MakeFromData(data, index);
-  //}
-/*#else
-  /// \note use ::std::move only if data will not be used any more
-  sktp = SkTypeface::MakeFromData(::std::move(data), index);
-  sktpUIThread = SkTypeface::MakeFromData(::std::move(data), index);
-#endif*/
-
-  //sk_sp<SkTypeface> sktp = SkTypeface::MakeFromStream(new SkMemoryStream(data), index);
-
-  /*DCHECK(sktp);
-  skFont1 =
-      new SkFont(sktp, FONT_SIZE_F, 1.0f, 0.0f);
-  skFont1->setEdging(SkFont::Edging::kAntiAlias);
-  DCHECK(sktp);
-  skFont2 =
-      new SkFont(sktp, 30.0f, 1.5f, 0.0f);
-  skFont2->setEdging(SkFont::Edging::kAntiAlias);*/
-
-  //delete[] fileData1;
-
-#endif // ENABLE_CUSTOM_FONTS
-
-  printf("Initializing skia...\n");
-
-#if 1
-
-#if defined(SEPARATE_UI_THREAD)
-  DCHECK(ui_draw_thread_.IsRunning());
-  ui_draw_thread_.task_runner()->PostTask(
-#else
-  DCHECK(main_browser_thread_.IsRunning());
-  main_browser_thread_.task_runner()->PostTask(
-#endif // SEPARATE_UI_THREAD
-      FROM_HERE, base::Bind([](base::WaitableEvent* thread_event) {
-        initUiSkiaSurface(width, height);
-
-        thread_event->Signal();
-
-      }, &ui_sync_event));
-#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
-    /// \todo Reactor your code so that the waiting happens on another thread instead of the main thread
-    ui_sync_event.Wait();
-    ui_sync_event.Reset();
-#endif
-#else // 0
-  initUiSkiaSurface(width, height);
-#endif // 0
-
-#endif // ENABLE_SKIA
+  #endif // ENABLE_SKIA
+} // render_browser_window
 
 // __EMSCRIPTEN_PTHREADS__ can be used to detect whether Emscripten is currently targeting pthreads.
 // At runtime, you can use the emscripten_has_threading_support()
@@ -9049,6 +9115,11 @@ int main(int argc, char** argv) {
 #endif // !(OS_EMSCRIPTEN && DISABLE_PTHREADS) && ENABLE_COBALT
   //main_thread_event_.Reset();
 #endif // ENABLE_COBALT
+
+#if defined(OS_EMSCRIPTEN)
+    using cobalt::renderer::rasterizer::egl::setUpdateWASMPixmapAndFreeDataCb;
+    setUpdateWASMPixmapAndFreeDataCb((void*)(updateWASMPixmapAndFreeData));
+#endif // OS_EMSCRIPTEN
 
 /// \note emscripten_set_main_loop async, so
 /// don`t declare vars above it (or them will be lost)!

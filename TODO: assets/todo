@@ -31,7 +31,7 @@ UI thread & WASM ST (don`t block UI!)
 startup time
 load indicator without hangs (WASM ST)
 SPA constructor / landing page generator
-Split into smaller libs
+Split into smaller libs (with own CmakeLists!)
 Alternative library for C++ (like base/WTF)
  > https://github.com/markazmierczak/Polonite
  > https://opensource.google.com/projects/search?q=language:c%2B%2B
@@ -543,3 +543,19 @@ move mouse frequently over dom elements while page is loading
 clear && clear ; cmake -DRUN_APP=ON -DBUILD_APP=ON -DEXTRA_EMMAKE_OPTS="-j;6" -DBUILD_TYPE="Debug" -DCLEAN_BUILD=ON -DENABLE_EMCMAKE_CLEAN_FIRST=ON -DBUILD_DIR=$(pwd)/build-wasm-mt-deb/ -DEXTRA_EMCMAKE_OPTS="-DENABLE_WEB_PTHREADS=TRUE;-DENABLE_LIBWEBP=TRUE;-DENABLE_BLINK=FALSE;-DENABLE_COBALT=TRUE;-DENABLE_WTF=TRUE;-DDISABLE_FORMATTING=FALSE;-DENABLE_SKOTTIE=FALSE;-DFORCE_DISABLE_SK_GPU=TRUE" -P tools/buildWeb.cmake
 https://my.oschina.net/jxt1234and2010/blog/517707
 ===
+
+Pthread aborting at Error
+    at abort (http://localhost:9090/home/avakimov_am/skia-opengl-emscripten/build-wasm-mt-rel/skemgl.js:1:413013)
+    at abortOnCannotGrowMemory (http://localhost:9090/home/avakimov_am/skia-opengl-emscripten/build-wasm-mt-rel/skemgl.js:1:20272)
+    at wasm-function[19079]:45
+    at wasm-function[18432]:3762
+    at wasm-function[18434]:45
+    at wasm-function[8495]:14
+    at wasm-function[7270]:184
+    at wasm-function[6822]:100
+    at wasm-function[6836]:39
+    at wasm-function[8291]:290
+abort @ skemgl.js:1
+skemgl.js:1 Cannot enlarge memory arrays. Either (1) compile with  -s TOTAL_MEMORY=X  with X higher than the current value 1073741824, (2) compile with  -s ALLOW_MEMORY_GROWTH=1  which allows increasing the size at runtime, or (3) if you want malloc to return NULL (0) instead of this abort, compile with  -s ABORTING_MALLOC=0
+
+TODO: Use MSan. Even minimal index.html without fonts: slow mem grow from 285.000K to 500.000K... (WASM MT REL ~40Fps)

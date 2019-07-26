@@ -27,6 +27,7 @@
 #include <skia/include/core/SkRefCnt.h>
 
 class SkImage;
+class SkPixmap;
 
 namespace cobalt {
 namespace renderer {
@@ -44,7 +45,11 @@ namespace egl {
 //sk_sp<SkSurface> getRasterizerSkSurface();
 sk_sp<SkImage> getRasterizerSkImage();
 
-///SkPixmap getRasterizerSkPixmap();
+SkPixmap getRasterizerSkPixmap();
+
+#if defined(OS_EMSCRIPTEN)
+void setUpdateWASMPixmapAndFreeDataCb(void* func);
+#endif // OS_EMSCRIPTEN
 
 // A software rasterizer which uses Skia to rasterize render trees on the CPU
 // and then uses EGL/GLES2 to transfer the result to the passed in given render

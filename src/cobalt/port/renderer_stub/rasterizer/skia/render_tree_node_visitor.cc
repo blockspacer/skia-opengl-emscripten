@@ -826,23 +826,23 @@ void RenderTreeNodeVisitor::Visit(
 
 #if defined(ENABLE_SKOTTIE)
   sk_sp<skottie::Animation> animation = skottie->data().animation;
+  DCHECK(animation);
 
-  if(animation) {
+  //if(animation) {
 
     /*if (skottie->data().animation_time == 0) {
       // Reset the animation time.
       skottie->data().animation_time = SkTime::GetMSecs();
     }*/
 
-    if (skottie->data().animation && skottie->data().animation->duration()) {
-      const SkMSec tElapsed = SkTime::GetMSecs() - skottie->data().animation_time;
-      //EM_LOG("animate 9\n");
-      const SkScalar duration = skottie->data().animation->duration() * 1000.0;
-      //EM_LOG("animate 10\n");
-      const double animPos = ::std::fmod(tElapsed, duration) / duration;
-      //EM_LOG("animate 11\n");
-      animation->seek(static_cast<SkScalar>(animPos));
-    }
+  if (animation && skottie->data().animation->duration()) {
+    const SkMSec tElapsed = SkTime::GetMSecs() - skottie->data().animation_time;
+    //EM_LOG("animate 9\n");
+    const SkScalar duration = skottie->data().animation->duration() * 1000.0;
+    //EM_LOG("animate 10\n");
+    const double animPos = ::std::fmod(tElapsed, duration) / duration;
+    //EM_LOG("animate 11\n");
+    animation->seek(static_cast<SkScalar>(animPos));
     const auto dstR = SkRect::MakeSize(
       SkSize::Make(skottie->data().rect.width(), skottie->data().rect.height()));
 
@@ -850,6 +850,7 @@ void RenderTreeNodeVisitor::Visit(
 
     animation->render(draw_state_.render_target, &dstR);
   }
+  //}
 #endif // ENABLE_SKOTTIE
 
 #if ENABLE_FLUSH_AFTER_EVERY_NODE

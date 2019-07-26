@@ -342,6 +342,7 @@ void BoxGenerator::VisitCustomElement(dom::HTMLCustomElement* custom_element) {
 
 // not in spec
 void BoxGenerator::VisitSkottieElement(dom::HTMLSkottieElement* skottie_element) {
+  printf("BoxGenerator::VisitSkottieElement\n");
   //   https://www.w3.org/TR/CSS21/visuren.html#inline-boxes
   //   https://www.w3.org/TR/CSS21/visuren.html#propdef-unicode-bidi
   //   https://www.w3.org/TR/css3-text/#line-break-details
