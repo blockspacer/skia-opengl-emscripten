@@ -4412,7 +4412,7 @@ static void animate() {
 static sk_sp<SkImage> UIDemoImage;
 
 // TODO: replace mutex with task queue/emscripten_async_run_in_main_runtime_thread
-#define ENABLE_UI_IMG_LOCKS 1
+//#define ENABLE_UI_IMG_LOCKS 1
 
 // TODO: use PostTask
 #if defined(ENABLE_UI_IMG_LOCKS)
