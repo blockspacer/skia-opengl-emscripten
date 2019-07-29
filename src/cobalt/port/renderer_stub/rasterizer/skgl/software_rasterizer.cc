@@ -60,7 +60,8 @@ static sk_sp<SkTypeface> sktp;
 static const float FONT_SIZE_F = 22.0f;
 
 // TODO: replace mutex with task queue/emscripten_async_run_in_main_runtime_thread
-//#define USE_PIMG_MUTEX 1
+// NOTE: surface "blinks" without mutex
+#define USE_PIMG_MUTEX 1
 
 namespace cobalt {
 namespace renderer {
