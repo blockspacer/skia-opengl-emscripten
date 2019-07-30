@@ -1046,3 +1046,79 @@ NOTE: disabled rasterizer thread (!!!) due to deadlocks on WASM MT
 NOTE: related to locks in SkScalerContext_FreeType::generateImage
 see 'TODO' file in commit 0e4faf to reproduce
 ENABLE_RASTERIZER_THREAD=1
+
+## clang 6
+wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key --no-check-certificate | sudo apt-key add -
+sudo apt-add-repository "deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial-5.0 main"
+sudo apt-add-repository "deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial-6.0 main"
+sudo apt-add-repository "deb http://apt.llvm.org/bionic/ llvm-toolchain-bionic-7 main"
+sudo apt-add-repository "deb http://apt.llvm.org/bionic/ llvm-toolchain-bionic-8 main"
+sudo -E apt-get update
+sudo -E apt-get install build-essential
+sudo -E apt-get install clang-6.0 python-lldb-6.0 lldb-6.0 lld-6.0 llvm-6.0-dev
+sudo -E apt-get install clang-tools-6.0
+sudo -E apt-get install libclang-common-6.0-dev libclang1-6.0 libclang-6.0-dev
+sudo -E apt-get install libc++abi-dev libc++-dev
+
+# must print 6 version:
+clang --version
+clang++ --version
+/usr/bin/ld.lld-6.0 --version
+
+# OPTIONAL:
+# Hack if you want to replace the default linker
+# cp /usr/bin/ld /usr/bin/ld.backup
+# sudo ln -sf /usr/bin/ld.lld-6.0 /usr/bin/ld
+# /usr/bin/ld --version
+
+# LLD 6.0.1 (compatible with GNU linkers)
+
+# OPTIONAL update-alternatives:
+sudo -E update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-6.0 1000
+sudo -E update-alternatives --install /usr/bin/clang clang /usr/bin/clang-6.0 1000
+sudo -E update-alternatives --config clang
+sudo -E update-alternatives --config clang++
+
+# build IWYU
+
+```
+sudo apt-get install zlib1g-dev
+# NOTE: change IWYU_LLVM_ROOT_PATH in build_iwyu_submodule.sh
+bash tools/build_iwyu_submodule.sh
+# check IWYU version
+submodules/build-iwyu/include-what-you-use -v
+```
+
+IWYU usage:
+```
+# build with -DENABLE_IWYU=1 in CMake options, replace CC and CXX below:
+CC="/usr/bin/clang-6.0" CXX="/usr/bin/clang++-6.0" \
+  cmake -DRUN_APP=OFF -DBUILD_APP=ON \
+    -DEXTRA_EMMAKE_OPTS="-j;6" \
+    -DBUILD_TYPE="Debug" \
+    -DCLEAN_BUILD=OFF \
+    -DENABLE_CMAKE_CLEAN_FIRST=OFF \
+    -DBUILD_DIR=$(pwd)/build-linux-deb/ \
+    -DEXTRA_CMAKE_OPTS="-DENABLE_IWYU=1;-DUSE_ICU=FALSE;-DENABLE_GLIBXML=FALSE;-DENABLE_HARFBUZZ=FALSE;-DFORCE_DISABLE_SK_GPU=FALSE;-DENABLE_LIBWEBP=FALSE;-DENABLE_BLINK=FALSE;-DENABLE_COBALT=FALSE;-DENABLE_WTF=FALSE;-DDISABLE_FORMATTING=TRUE;-DENABLE_SKIA=FALSE;-DENABLE_SKSG=FALSE;-DENABLE_SKSHAPER=FALSE;-DENABLE_SKIA_UTILS=FALSE;-DENABLE_SKOTTIE=FALSE;-DFORCE_DISABLE_SK_GPU=FALSE" \
+    -P tools/buildUnix.cmake
+```
+
+NOTE: For Clang on Windows read https://metricpanda.com/rival-fortress-update-27-compiling-with-clang-on-windows
+
+NOTE: don`t use "bits/" or "/details/*" includes, add them to IWYU mappings file (.imp)
+
+Read:
+ > https://llvm.org/devmtg/2010-11/Silverstein-IncludeWhatYouUse.pdf
+ > https://github.com/include-what-you-use/include-what-you-use/tree/master/docs
+ > https://github.com/hdclark/Ygor/blob/master/artifacts/20180225_include-what-you-use/iwyu_how-to.txt
+
+
+## IWYU (requires clang and built IWYU!)
+
+rm -rf ~/job/beast-example/build
+mkdir ~/job/beast-example/build
+cd ~/job/beast-example/build
+cmake.sdk .. -Udebug -DENABLE_IWYU=ON -DIWYU_LLVM_ROOT_PATH=/usr/lib/llvm-6.0 -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+# -DCMAKE_C_COMPILER_WORKS=1 -DCMAKE_CXX_COMPILER_WORKS=1 -DCMAKE_C_COMPILER=clang-6.0 -DCMAKE_CXX_COMPILER=clang++-6.0
+CC="/usr/bin/clang-6.0" CXX="/usr/bin/clang++-6.0" cmake --build . --clean-first
+

@@ -4,6 +4,15 @@
 set(PROJECT_NAME "skemgl")
 project(${PROJECT_NAME} CXX C)
 
+include( cmake/Utils.cmake )
+# set_cmake_module_paths from Utils.cmake
+set_cmake_module_paths( ${PROJECT_NAME}
+  "${CMAKE_CURRENT_SOURCE_DIR}/cmake;${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules" )
+# print_cmake_system_info from Utils.cmake
+print_cmake_system_info()
+# check_supported_os from Utils.cmake
+check_supported_os()
+
 # build mode. separated from CMAKE_BUILD_TYPE to provide custom debug level
 # for example, you may want build optimized wasm with debug stack trace support
 # NOTE: measure performace on RELEASE builds!
@@ -386,6 +395,21 @@ endif(ENABLE_GNET)
 if (RELEASE_BUILD)
   list(APPEND APP_DEFINITIONS RELEASE_BUILD=1)
 endif (RELEASE_BUILD)
+
+list(APPEND APP_DEFINITIONS ENABLE_OPENGL=1)
+list(APPEND APP_DEFINITIONS ENABLE_CUSTOM_FONTS=1)
+list(APPEND APP_DEFINITIONS HARFBUZZ_UNICODE=1)
+list(APPEND APP_DEFINITIONS ENABLE_SK_EFFECTS=1)
+
+if(ENABLE_SKIA)
+  list(APPEND APP_DEFINITIONS ENABLE_SK_UI=1)
+  list(APPEND APP_DEFINITIONS ENABLE_IMAGES=1)
+endif(ENABLE_SKIA)
+
+if(ENABLE_SKIA AND ENABLE_BLINK)
+  list(APPEND APP_DEFINITIONS ENABLE_BLINK_UI=1)
+endif(ENABLE_SKIA AND ENABLE_BLINK)
+
 
 if (ENABLE_SKIA)
   set(ENABLE_WUFFS FALSE)
@@ -2066,6 +2090,12 @@ endif(ENABLE_COBALT)
 #
 list(APPEND PROJECT_SRC
   src/main.cpp
+  src/skia_ui_demo.cc
+  src/skia_ui_demo.h
+  src/gl_helpers.cc
+  src/gl_helpers.h
+  src/utils.cc
+  src/utils.h
 )
 #
 if(ENABLE_COBALT)
@@ -2676,3 +2706,16 @@ add_custom_target(copy-runtime-files ALL
 )
 
 add_dependencies(${PROJECT_NAME} copy-runtime-files)
+
+# IWYU detects superfluous includes and when the include can be replaced with a forward declaration.
+# It can be obtained using "apt-get install iwyu" or from "github.com/include-what-you-use".
+# make sure it can find Clang built-in headers (stdarg.h and friends.)
+# see https://stackoverflow.com/a/30951493/10904212
+option(ENABLE_IWYU "ENABLE IWYU" OFF)
+if (ENABLE_IWYU)
+  set(IWYU_IMP "${CMAKE_SOURCE_DIR}/cmake/iwyu/iwyu.imp")
+  findPackageCrossPlatform(PythonInterp) # Required by iwyu
+  add_iwyu( ${PROJECT_NAME} ) # from Utils.cmake
+else()
+  message(WARNING "iwyu turned off")
+endif()

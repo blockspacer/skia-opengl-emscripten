@@ -1,3 +1,6 @@
+[submodule "submodules/include-what-you-use"]
+  path = submodules/include-what-you-use
+  url = https://github.com/include-what-you-use/include-what-you-use.git
 [submodule "thirdparty/SDL2"]
 	path = thirdparty/SDL2
 	url = https://github.com/spurious/SDL-mirror.git
