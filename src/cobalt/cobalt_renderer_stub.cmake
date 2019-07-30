@@ -26,7 +26,7 @@ elseif(TARGET_LINUX)
   )
 else()
   message(FATAL_ERROR "platform not supported")
-endif(TARGET_LINUX)
+endif()
 
 list(APPEND RENDERER_PRIVATE_DEFINES
   #FORCE_VIDEO_EXTERNAL_MESH=1
