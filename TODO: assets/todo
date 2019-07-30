@@ -559,3 +559,12 @@ abort @ skemgl.js:1
 skemgl.js:1 Cannot enlarge memory arrays. Either (1) compile with  -s TOTAL_MEMORY=X  with X higher than the current value 1073741824, (2) compile with  -s ALLOW_MEMORY_GROWTH=1  which allows increasing the size at runtime, or (3) if you want malloc to return NULL (0) instead of this abort, compile with  -s ABORTING_MALLOC=0
 
 TODO: Use MSan. Even minimal index.html without fonts: slow mem grow from 285.000K to 500.000K... (WASM MT REL ~40Fps)
+> https://genbattle.bitbucket.io/blog/2018/01/05/Dev-Santa-Claus-Part-1/
+
+TODO: add fresh cobalt features
+> https://cobalt.googlesource.com/cobalt/+/ac9ac065c5083565917b15e7a672a79599f2f00b
+
+add key callback thread
+> https://github.com/save7502/youkyoung/blob/master/Engine/Source/Runtime/ApplicationCore/Private/HTML5/HTML5Application.cpp#L196
+
+WASM key capture on canvas, not document
