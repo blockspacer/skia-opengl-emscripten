@@ -7,47 +7,56 @@ set(NUM_PROCESSORS ${NUM_PROCESSORS} CACHE STRING "Processor count")
 message("CMAKE_CTEST_COMMAND=${CMAKE_CTEST_COMMAND}")
 
 macro(add_compile_options target)
-# @see https://stackoverflow.com/a/46132078/10904212
-message( "CMAKE_CXX_COMPILER_ID=${CMAKE_CXX_COMPILER_ID}" )
-if( CMAKE_COMPILER_IS_GNUCXX OR MINGW )
-  target_compile_options( ${target} PRIVATE
-   "$<$<CONFIG:RELEASE>:-Werror>"
-    -Wall
-    -Wextra
-    -Wno-unused-variable
-    -Wno-unused-parameter
-    -Wno-deprecated
-    -Wno-reorder
-    "$<$<CONFIG:RELEASE>:-Wpedantic>"
-    "$<$<CONFIG:RELEASE>:-O3>"
-    -fdiagnostics-color=always
-    "$<$<CONFIG:DEBUG>:-g>"
-    "$<$<CONFIG:DEBUG>:-fno-omit-frame-pointer>" # https://github.com/google/sanitizers/wiki/AddressSanitizer#using-addresssanitizer
+  if(ENABLE_CMAKE_COMPILE_WARNINGS)
+    set(ENABLED_WARNINGS
+      -Wall
+      -Wextra
+      "$<$<CONFIG:RELEASE>:-Werror>"
+      "$<$<CONFIG:RELEASE>:-Wpedantic>"
     )
-  message( "detected compiler: UNIX OR MINGW" )
-elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang|AppleClang" )
-  target_compile_options( ${target} PRIVATE
-    -Wall
-    -Wextra
-    -Wthread-safety
-    -Wimplicit-fallthrough
-    -Wheader-hygiene
-    -Wstring-conversion
-    -Wtautological-overlap-compare
-    "$<$<CONFIG:RELEASE>:-Werror>"
-    -Wno-unused-variable
-    -Wno-unused-parameter
-    -Wno-deprecated
-    -Wno-reorder
-    "$<$<CONFIG:RELEASE>:-pedantic>"
-    "$<$<CONFIG:RELEASE>:-O3>"
+  else(ENABLE_CMAKE_COMPILE_WARNINGS)
+    set(ENABLED_WARNINGS
+      -Wno-error # clang
     )
-  message( "detected compiler: Clang" )
-elseif( CMAKE_CXX_COMPILER_ID MATCHES "MSVC" )
-  target_compile_options( ${PROJECT_NAME}_lib PRIVATE /W4 /WX )
-else()
-  message( FATAL_ERROR "unsupported compiler" )
-endif()
+  endif(ENABLE_CMAKE_COMPILE_WARNINGS)
+
+  # @see https://stackoverflow.com/a/46132078/10904212
+  message( "CMAKE_CXX_COMPILER_ID=${CMAKE_CXX_COMPILER_ID}" )
+  if( CMAKE_COMPILER_IS_GNUCXX OR MINGW )
+    target_compile_options( ${target} PRIVATE
+      -Wno-unused-variable
+      -Wno-unused-parameter
+      -Wno-deprecated
+      -Wno-reorder
+      -fdiagnostics-color=always
+      "$<$<CONFIG:RELEASE>:-O3>"
+      "$<$<CONFIG:DEBUG>:-g>"
+      "$<$<CONFIG:DEBUG>:-fno-omit-frame-pointer>" # https://github.com/google/sanitizers/wiki/AddressSanitizer#using-addresssanitizer
+      )
+    message( "detected compiler: UNIX OR MINGW" )
+  elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang|AppleClang" )
+    target_compile_options( ${target} PRIVATE
+      -Wall
+      -Wextra
+      -Wthread-safety
+      -Wimplicit-fallthrough
+      -Wheader-hygiene
+      -Wstring-conversion
+      -Wtautological-overlap-compare
+      "$<$<CONFIG:RELEASE>:-Werror>"
+      -Wno-unused-variable
+      -Wno-unused-parameter
+      -Wno-deprecated
+      -Wno-reorder
+      "$<$<CONFIG:RELEASE>:-pedantic>"
+      "$<$<CONFIG:RELEASE>:-O3>"
+      )
+    message( "detected compiler: Clang" )
+  elseif( CMAKE_CXX_COMPILER_ID MATCHES "MSVC" )
+    target_compile_options( ${PROJECT_NAME}_lib PRIVATE /W4 /WX )
+  else()
+    message( FATAL_ERROR "unsupported compiler" )
+  endif()
 endmacro()
 
 macro(add_test_command_targets target)

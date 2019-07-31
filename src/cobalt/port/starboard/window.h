@@ -242,13 +242,9 @@ struct SbWindowPrivate {
     float video_pixel_ratio;
 };
 
-struct SbWindowPrivateEmscripten : SbWindowPrivate {
+struct SbWindowPrivateEmscripten final : SbWindowPrivate {
     explicit SbWindowPrivateEmscripten(const SbWindowOptions* options);
     ~SbWindowPrivateEmscripten();
-
-    int width;
-    int height;
-    float video_pixel_ratio;
 };
 //#endif
 

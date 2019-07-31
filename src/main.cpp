@@ -225,134 +225,6 @@ static SkiaUiDemo skiaUiDemo;
 
 #include "utils.h"
 
-#ifdef ENABLE_GFX_GEOMETRY
-#include "ui/gfx/geometry/rect.h"
-#endif
-
-#ifdef ENABLE_BASE
-
-#include "base/memory/ptr_util.h"
-#include "base/macros.h"
-#include "base/strings/stringprintf.h"
-#include "base/stl_util.h"
-#include "base/strings/utf_string_conversions.h"
-//#include "base/task/sequence_manager/thread_controller_with_message_pump_impl.h"
-#include "base/bind.h"
-#include "base/bind_helpers.h"
-#include "base/memory/scoped_refptr.h"
-#include "base/single_thread_task_runner.h"
-#include "base/threading/thread_task_runner_handle.h"
-
-#include "base/numerics/checked_math.h"
-#include "base/numerics/clamped_math.h"
-#include "base/numerics/safe_conversions.h"
-
-#include "base/i18n/icu_string_conversions.h"
-#include "base/i18n/string_compare.h"
-
-#include "base/stl_util.h"
-#include "base/strings/string_number_conversions.h"
-#include "base/strings/sys_string_conversions.h"
-#include "base/base_switches.h"
-#include "base/command_line.h"
-#include "base/containers/small_map.h"
-#include "base/i18n/icu_util.h"
-#include "base/i18n/rtl.h"
-#include "base/allocator/partition_allocator/page_allocator.h"
-
-#include "base/memory/scoped_refptr.h"
-
-#include "base/i18n/rtl.h"
-#include "base/stl_util.h"
-
-#include "base/memory/ref_counted_memory.h"
-#include "base/memory/read_only_shared_memory_region.h"
-#include "base/stl_util.h"
-#include "base/bind.h"
-#include "base/memory/weak_ptr.h"
-//#include "base/test/gtest_util.h"
-#include "base/threading/thread.h"
-#include "base/logging.h"
-#include "base/system/sys_info.h"
-
-#include "base/synchronization/waitable_event.h"
-
-//#include "base/task/sequence_manager/sequence_manager.h"
-
-#include "base/observer_list.h"
-#include "base/synchronization/lock.h"
-#include "base/synchronization/waitable_event.h"
-#include "base/threading/thread.h"
-#include "base/timer/timer.h"
-
-#include "base/callback.h"
-//#include "base/containers/hash_tables.h"
-#include "base/bind.h"
-#include "base/callback.h"
-#include "base/command_line.h"
-#include "base/logging.h"
-#include "base/memory/weak_ptr.h"
-#include "base/message_loop/message_loop.h"
-#include "base/optional.h"
-#include "base/strings/stringprintf.h"
-#include "base/synchronization/waitable_event.h"
-//#include "base/trace_event/trace_event.h"
-#include "base/bind.h"
-#include "base/strings/stringprintf.h"
-#include "base/trace_event/trace_event.h"
-#include "base/callback.h"
-////#include "base/message_loop.h"
-
-#include "base/files/file_path.h"
-#include "base/message_loop/message_loop.h"
-#include "base/synchronization/waitable_event.h"
-#include "base/threading/thread.h"
-#include "base/threading/thread_checker.h"
-
-#include "base/feature_list.h"
-
-// Create a TYPE_DEFAULT message-loop.
-
-#if defined(__EMSCRIPTEN__)
-
-#define ENABLE_EMSCRIPTEN_INPUT 1
-
-//static base::MessageLoop browser_loop;
-//base::RunLoop run_loop;
-//static scoped_refptr<base::SingleThreadTaskRunner> task_runner =
-#endif // __EMSCRIPTEN__
-
-#endif // ENABLE_BASE
-
-#ifdef ENABLE_WTF
-#include "third_party/blink/renderer/platform/wtf/wtf.h"
-#include "third_party/blink/renderer/platform/wtf/vector.h"
-
-#include "third_party/blink/renderer/platform/wtf/text/wtf_string.h"
-#include "third_party/blink/renderer/platform/wtf/math_extras.h"
-#include "third_party/blink/renderer/platform/wtf/text/cstring.h"
-
-#include "third_party/blink/renderer/platform/wtf/text/string_impl.h"
-
-
-/// @note init allocator before executing any code.
-#include "third_party/blink/renderer/platform/wtf/allocator/partitions.h"
-//#include "testing/gmock/include/gmock/gmock.h"
-//#include "testing/gtest/include/gtest/gtest.h"
-
-#include "third_party/blink/renderer/platform/wtf/text/atomic_string.h"
-
-#include "third_party/blink/renderer/platform/wtf/dtoa/dtoa.h"
-
-#include "third_party/blink/renderer/platform/wtf/functional.h"
-//#include "testing/gtest/include/gtest/gtest.h"
-#include "third_party/blink/renderer/platform/wtf/allocator.h"
-#include "third_party/blink/renderer/platform/wtf/leak_annotations.h"
-#include "third_party/blink/renderer/platform/wtf/ref_counted.h"
-//#include "third_party/blink/renderer/platform/wtf/wtf_test_helper.h"
-
-#endif // ENABLE_WTF
-
 //#if defined(ENABLE_SKIA)
 //#define ENABLE_BLINK_PLATFORM 1
 //#endif
@@ -890,7 +762,7 @@ void updateWASMPixmapAndFreeData(void* data)
   DCHECK(!pixmapCopy->bounds().isEmpty());
   DCHECK(emscripten_is_main_runtime_thread());
   browserPixmapCache = *pixmapCopy;
-  delete data;
+  delete pixmapCopy;
   //printf("updatedWASMPixmap 2!\n");
 }
 #endif // OS_EMSCRIPTEN
@@ -3014,24 +2886,24 @@ static void animate() {
 #if defined(ENABLE_COBALT)
 static void drawBrowserDemo() {
     //using cobalt::renderer::rasterizer::egl::getRasterizerSkSurface;
-    //using cobalt::renderer::rasterizer::egl::getRasterizerSkImage;
-    using cobalt::renderer::rasterizer::egl::getRasterizerSkPixmap;
+    using cobalt::renderer::rasterizer::egl::getRasterizerSkImage;
+    //using cobalt::renderer::rasterizer::egl::getRasterizerSkPixmap;
 
     ///if (isDebugPeriodReached()) printf("Draw() 7\n");
 #if !defined(OS_EMSCRIPTEN)
-    //sk_sp<SkImage> pImage = getRasterizerSkImage();
+    sk_sp<SkImage> pImage = getRasterizerSkImage();
+    if(pImage) {
+        SkPixmap pixmap;
+        if (!pImage->peekPixels(&pixmap)) {
+            ///if (isDebugPeriodReached())
+            printf("can`t peekPixels\n");
+        }
 #endif // OS_EMSCRIPTEN
-    //if(pImage) {
-        //SkPixmap pixmap;
-        //if (!pImage->peekPixels(&pixmap)) {
-        //    ///if (isDebugPeriodReached())
-        //    printf("can`t peekPixels\n");
-        //}
 
 #if defined(OS_EMSCRIPTEN)
         const SkPixmap& pixmap = browserPixmapCache;
 #else // OS_EMSCRIPTEN
-        const SkPixmap& pixmap = getRasterizerSkPixmap();
+        //const SkPixmap& pixmap = getRasterizerSkPixmap();
 #endif // OS_EMSCRIPTEN
 
         if(!pixmap.bounds().isEmpty()) {
@@ -3043,11 +2915,18 @@ static void drawBrowserDemo() {
             ///if (isDebugPeriodReached())
             printf("pixmap.bounds().isEmpty()\n");
         }
-    //} else {
+
+#if !defined(OS_EMSCRIPTEN)
+    } else { // if(pImage)
+#endif // OS_EMSCRIPTEN
+
 #if defined(ENABLE_SK_UI)
         //skiaUiDemo.drawUIDemo();
 #endif // ENABLE_SK_UI
-    //}
+
+#if !defined(OS_EMSCRIPTEN)
+    } // if(pImage)
+#endif // OS_EMSCRIPTEN
 
     //if (nullptr == pImage) {
     //    ///if (isDebugPeriodReached())
@@ -3407,6 +3286,8 @@ static std::unique_ptr<SbInputData> setWheelSbEventData(std::unique_ptr<SbInputD
 #endif // ENABLE_COBALT
 
 #if defined(ENABLE_COBALT) && defined(__EMSCRIPTEN__)
+static const float dpi_scale = 1.0f;
+
 static unsigned int EmscModifiersEventToSbKeyModifiers(const bool altKey,
     const bool ctrlKey, const bool metaKey, const bool shiftKey) {
   unsigned int modifiers = kSbKeyModifiersNone;
@@ -4165,7 +4046,7 @@ static void handleEmscriptenKeyboardEvent(int emsc_type, const EmscriptenKeyboar
     {
       // Heuristic: Assume all printables are represented by
       // a string that has exactly one character, other are control characters.
-      if (NumCharsInUTF8String((unsigned char*)emsc_event->key) == 1)
+      if (NumCharsInUTF8String((const unsigned char*)emsc_event->key) == 1)
       {
         data->key_modifiers = key_modifiers;
         data->type = SbInputEventType::kSbInputEventTypePress;
@@ -4175,11 +4056,11 @@ static void handleEmscriptenKeyboardEvent(int emsc_type, const EmscriptenKeyboar
         data->keysym = Character;
         data->character = Character;
       } else {
-        unsigned int keyUtf32[64];
-        Utf8StringToUtf32(keyUtf32, sizeof(keyUtf32),
-          (unsigned char*)emsc_event->key);
-        printf("Ignored KeyChar on KeyPress, "
-          "since it is a non-printable: key: %u", keyUtf32);
+        //unsigned int keyUtf32[64];
+        //Utf8StringToUtf32(keyUtf32, sizeof(keyUtf32),
+        //  (const unsigned char*)emsc_event->key);
+        //printf("Ignored KeyChar on KeyPress, "
+        //  "since it is a non-printable: key: %u", keyUtf32);
       }
       break;
     }
@@ -4193,8 +4074,8 @@ static void handleEmscriptenKeyboardEvent(int emsc_type, const EmscriptenKeyboar
     DCHECK(input_browser_thread->IsRunning());
     input_browser_thread->task_runner()->PostTask(
       FROM_HERE, base::Bind(
-                   [](std::unique_ptr<SbEvent> event) {
-                     sendBrowserInputEvent(std::move(event));
+                   [](std::unique_ptr<SbEvent> inputEvent) {
+                     sendBrowserInputEvent(std::move(inputEvent));
                    }, base::Passed(&event)));
   }
 }
@@ -4315,8 +4196,8 @@ static EM_BOOL emsc_mouse_wheel_cb(int emsc_type, const EmscriptenWheelEvent* em
     DCHECK(input_browser_thread->IsRunning());
     input_browser_thread->task_runner()->PostTask(
       FROM_HERE, base::Bind(
-                   [](std::unique_ptr<SbEvent> event) {
-                     sendBrowserInputEvent(std::move(event));
+                   [](std::unique_ptr<SbEvent> inputEvent) {
+                     sendBrowserInputEvent(std::move(inputEvent));
                    }, base::Passed(&event)));
   }
 #endif // ENABLE_COBALT
@@ -5949,9 +5830,9 @@ static void addTestOnlyAttrCallbacks() {
           // TODO: polymorphic_downcast Check failed: dynamic_cast<Derived>(base) == base.
           base::polymorphic_downcast<const dom::WheelEvent* const>(event.get());
         CHECK(wheelEvent);
-        float x = wheelEvent->delta_x();
-        float y = wheelEvent->delta_y();
-        float z = wheelEvent->delta_z();
+        float x = static_cast<float>(wheelEvent->delta_x());
+        float y = static_cast<float>(wheelEvent->delta_y());
+        float z = static_cast<float>(wheelEvent->delta_z());
         printf("on-wheel-print at (%f;%f;%f) event %s for tag: %s, "
                "attrVal: %s, text_content: %s\n",
                 x,
@@ -6108,7 +5989,11 @@ static void addTestOnlyAttrCallbacks() {
       printf("key_identifier %s\n", keyboardEvent->key_identifier().c_str());
       printf("char_code %u\n", keyboardEvent->char_code());
       printf("key_code %u\n", keyboardEvent->key_code());
+#ifdef OS_EMSCRIPTEN
+      printf("time_stamp %llu\n", keyboardEvent->time_stamp());
+#else
       printf("time_stamp %lu\n", keyboardEvent->time_stamp());
+#endif
       // base::ReadUnicodeCharacter
       const char* sbSystemGetLocaleId = SbSystemGetLocaleId();
       printf("SbSystemGetLocaleId %s\n", sbSystemGetLocaleId);
@@ -6161,7 +6046,11 @@ static void addTestOnlyAttrCallbacks() {
       printf("key_identifier %s\n", keyboardEvent->key_identifier().c_str());
       printf("char_code %u\n", keyboardEvent->char_code());
       printf("key_code %u\n", keyboardEvent->key_code());
+#ifdef OS_EMSCRIPTEN
+      printf("time_stamp %llu\n", keyboardEvent->time_stamp());
+#else
       printf("time_stamp %lu\n", keyboardEvent->time_stamp());
+#endif
       // base::ReadUnicodeCharacter
       const char* sbSystemGetLocaleId = SbSystemGetLocaleId();
       printf("SbSystemGetLocaleId %s\n", sbSystemGetLocaleId);
@@ -6241,9 +6130,9 @@ int main(int argc, char** argv) {
 #endif
 
 #ifdef ENABLE_BASE
-    base::Thread::Options options;
+    base::Thread::Options thread_options;
 
-    main_browser_thread_wrapper_.StartWithOptions(options);
+    main_browser_thread_wrapper_.StartWithOptions(thread_options);
     #if defined(SEPARATE_UI_THREAD_WRAPPER)
       ui_draw_thread_wrapper_.StartWithOptions(options);
     #endif // SEPARATE_UI_THREAD_WRAPPER
@@ -6521,7 +6410,7 @@ int main(int argc, char** argv) {
 
 #if defined(__EMSCRIPTEN__) && defined(__EMSCRIPTEN_PTHREADS__)
   // TODO: causes skia/GL hang on WASM
-  #warning "TODO: port threads & support skia"
+  // #warning "TODO: port threads & support skia"
 #elif defined(__EMSCRIPTEN__) // wasm without PTHREAD support
   // TODO: error undefined pthread_setschedparam
   // see https://github.com/emscripten-core/emscripten/pull/8301
@@ -6823,8 +6712,8 @@ int main(int argc, char** argv) {
 
   //https://github.com/Becavalier/Book-DISO-WebAssembly/issues/10
   double dpr = emscripten_get_device_pixel_ratio();
-  emscripten_set_element_css_size("#canvas", width / dpr, height / dpr);
-  emscripten_set_canvas_element_size("#canvas", width, height);
+  emscripten_set_element_css_size("#canvas", DRAW_SURFACE_WIDTH / dpr, DRAW_SURFACE_HEIGHT / dpr);
+  emscripten_set_canvas_element_size("#canvas", DRAW_SURFACE_WIDTH, DRAW_SURFACE_HEIGHT);
 
   /// @note use EmscriptenWebGLContextAttributes, not SDL_GL
   /// @see https://github.com/emscripten-core/emscripten/issues/7684
@@ -6983,10 +6872,10 @@ int main(int argc, char** argv) {
 #endif
 
 #if defined(__EMSCRIPTEN__) && !defined(ENABLE_HTML5_SDL)
-  #warning "TODO: port SDL_PollEvent (emscripten_set_mousedown_callback, e.t.c.)"
-  #warning "see https://github.com/floooh/sokol/blob/master/sokol_app.h#L2403 for example"
-  #warning "see https://github.com/hongkk/urho/blob/master/Source/Urho3D/Input/Input.cpp for example"
-  #warning "see https://github.com/h-s-c/libKD/blob/master/source/kd.c#L2658 for example"
+  // port SDL_PollEvent (emscripten_set_mousedown_callback, e.t.c.)
+  // "see https://github.com/floooh/sokol/blob/master/sokol_app.h#L2403 for example"
+  // "see https://github.com/hongkk/urho/blob/master/Source/Urho3D/Input/Input.cpp for example"
+  // "see https://github.com/h-s-c/libKD/blob/master/source/kd.c#L2658 for example"
 
 #if defined(ENABLE_EMSCRIPTEN_INPUT)
   emscripten_set_mousemove_callback("#canvas", 0, true, emsc_mouse_move_cb);

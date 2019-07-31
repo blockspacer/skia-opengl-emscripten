@@ -37,6 +37,7 @@ bool UserLog::IsRegistrationSupported() {
 bool UserLog::Register(Index index, const char* label, const void* address,
                        size_t size) {
   DCHECK_LT(strlen(label), kMaxLabelSize);
+  // TODO: Reimplement with starboard core dump
 #if !defined(OS_EMSCRIPTEN)
   NOTIMPLEMENTED();
 #endif
@@ -44,6 +45,7 @@ bool UserLog::Register(Index index, const char* label, const void* address,
 }
 
 bool UserLog::Deregister(Index index) {
+  // TODO: Reimplement with starboard core dump
 #if !defined(OS_EMSCRIPTEN)
   NOTIMPLEMENTED();
 #endif

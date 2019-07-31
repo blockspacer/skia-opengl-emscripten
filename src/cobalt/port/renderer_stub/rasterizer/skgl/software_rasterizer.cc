@@ -78,7 +78,10 @@ static std::mutex pImageMutex;
 /// \note sk_sp<SkImage> use thread-safe locks (check it),
 /// so don`t use it with WASM MT main browser thread
 static sk_sp<SkImage> pImage;
+
+#if defined(OS_EMSCRIPTEN)
 static SkPixmap pixmap;
+#endif // OS_EMSCRIPTEN
 
 /*sk_sp<SkSurface> getRasterizerSkSurface() {
   return sRasterSurface;
@@ -91,12 +94,13 @@ sk_sp<SkImage> getRasterizerSkImage() {
   return pImage;
 }
 
-SkPixmap getRasterizerSkPixmap() {
+// blinks even with mutex
+/*SkPixmap getRasterizerSkPixmap() {
 #if defined(USE_PIMG_MUTEX)
   std::scoped_lock lock(pImageMutex);
 #endif // USE_PIMG_MUTEX
     return pixmap;
-}
+}*/
 
 #if defined(OS_EMSCRIPTEN)
 void *updateWASMPixmapAndFreeDataCb = nullptr;
@@ -293,10 +297,12 @@ void SoftwareRasterizer::Submit(
         DCHECK(pImage->bounds().height() > 0);
         DCHECK(pImage->bounds().width() < 999999);
         DCHECK(pImage->bounds().height() < 999999);
+#if defined(OS_EMSCRIPTEN)
         if (!pImage->peekPixels(&pixmap)) {
             printf("can`t peekPixels\n");
         }
         DCHECK(!pixmap.bounds().isEmpty());
+#endif // OS_EMSCRIPTEN
       }
     }
 

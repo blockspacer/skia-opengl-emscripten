@@ -1,5 +1,7 @@
 #include "utils.h"
 
+#include "gl_helpers.h"
+
 #include <cstdio>
 #include <algorithm>
 #include <cassert>
@@ -16,11 +18,23 @@
 #include <string>
 #include <cstring>
 #include <vector>
+#include <cassert>
 
-//int drawingBufferWidth = 1920;
 int DRAW_BUFFER_WIDTH = 1920;
-//int drawingBufferHeight = 1080;
+
 int DRAW_BUFFER_HEIGHT = 1080;
+
+int DRAW_SURFACE_WIDTH = 1920;
+
+int DRAW_SURFACE_HEIGHT = 1080;
+
+int MAX_DRAW_BUFFER_WIDTH = 1920;
+
+int MAX_DRAW_BUFFER_HEIGHT = 1080;
+
+int BROWSER_WIDTH = DRAW_SURFACE_WIDTH;
+
+int BROWSER_HEIGHT = DRAW_SURFACE_HEIGHT;
 
 // TODO https://kapadia.github.io/emscripten/2013/09/13/emscripten-pointers-and-pointers.html
 // TODO https://github.com/bakerstu/openmrn/blob/5f6bb8934fe13b2897d5f52ec6b358bd87dd886a/src/utils/FileUtils.cxx#L44
@@ -76,7 +90,16 @@ bool incDebugPeriodicCounter() {
 void DCHECK_RUNS_IN_THEAD_ON_MT_WASM() {
 #if defined(OS_EMSCRIPTEN) && !defined(DISABLE_PTHREADS)
   if(emscripten_has_threading_support()) {
+#if defined(ENABLE_BASE)
     DCHECK(!EM_IS_MAIN_THREAD());
+#else
+#if defined(NDEBUG)
+    printf("!DCHECK_RUNS_IN_THEAD_ON_MT_WASM");
+    std::exit(EXIT_FAILURE); // from <cstdlib>
+#else
+    assert(!EM_IS_MAIN_THREAD()); // from <cassert>
+#endif
+#endif // ENABLE_BASE
   }
 #endif // defined(OS_EMSCRIPTEN) && !defined(DISABLE_PTHREADS)
 }

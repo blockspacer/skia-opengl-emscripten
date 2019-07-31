@@ -33,6 +33,7 @@ class PolymorphicEquatable {
  public:
   virtual bool Equals(const PolymorphicEquatable& other) const = 0;
   virtual base::TypeId GetTypeId() const = 0;
+  virtual ~PolymorphicEquatable() {}
 };
 
 // Used to provide type-safe equality checking even when the exact

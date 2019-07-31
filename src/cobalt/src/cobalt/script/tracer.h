@@ -52,6 +52,8 @@ class Traceable {
 // reachable.
 class Tracer {
  public:
+  virtual ~Tracer() {}
+
   // Trace a |Traceable| by forwarding its wrapper (which is engine specific)
   // to the engine's internal tracer, or manually tracing reachable
   // |Traceable|s in the case where the wrapper did not exist.

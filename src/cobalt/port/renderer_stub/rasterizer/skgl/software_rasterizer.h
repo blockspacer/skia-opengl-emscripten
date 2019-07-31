@@ -45,7 +45,7 @@ namespace egl {
 //sk_sp<SkSurface> getRasterizerSkSurface();
 sk_sp<SkImage> getRasterizerSkImage();
 
-SkPixmap getRasterizerSkPixmap();
+//SkPixmap getRasterizerSkPixmap();
 
 #if defined(OS_EMSCRIPTEN)
 void setUpdateWASMPixmapAndFreeDataCb(void* func);

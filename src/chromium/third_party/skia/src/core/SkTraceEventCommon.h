@@ -54,7 +54,7 @@
 // The tracing UI will show these counters in a single graph, as a summed area chart.
 
 #if defined(TRACE_EVENT0)
-///#error "Another copy of this file has already been included."
+//#error "Another copy of this file has already been included."
 #warning "Another copy of this file has already been included." // __TODO__
 #endif
 

@@ -94,7 +94,8 @@
 
 #if defined(__EMSCRIPTEN__)
 
-#define ENABLE_EMSCRIPTEN_INPUT 1
+/// \note defined by CMAKE
+//#define ENABLE_EMSCRIPTEN_INPUT 1
 
 //static base::MessageLoop browser_loop;
 //base::RunLoop run_loop;
@@ -247,8 +248,6 @@ static std::unique_ptr<blink::Platform> g_platform;
 
 #include "blink_demo.h"
 
-static const float dpi_scale = 1.0f;
-
 #if defined(ENABLE_IMAGES)
 //#if defined(ENABLE_SKIA) && (defined(USE_LIBJPEG) || defined(USE_LIBJPEG_TURBO))
 //static SkString fImagePath = SkString("./resources/images/JPEG_example.jpg");
@@ -304,6 +303,10 @@ static SkMSec fTimeBase = 0;
 static bool fShowAnimationInval = false;
 //static bool fShowAnimationStats = false;
 #endif // ENABLE_SKOTTIE
+
+static inline bool WithinEpsilon(const double a, const double b) {
+  return std::abs(a - b) < std::numeric_limits<double>::epsilon();
+}
 
 #if defined(ENABLE_BLINK_UI)
 void SkiaUiDemo::initBlinkPlatform() {
@@ -860,13 +863,13 @@ public:
     //printf("ENABLE_UI 2\n");
     gfx::Canvas gfx_canvas(&paint_canvas, 1.0f);
     /*{
-      cc::PaintFlags flags;
-      flags.setAntiAlias(true);
+      cc::PaintFlags paintFlags;
+      paintFlags.setAntiAlias(true);
       paint.setColor(SK_ColorDKGRAY);
       paint.setStrokeWidth(2);
-      gfx_canvas.DrawCircle(gfx::Point(200,200), 100, flags);
+      gfx_canvas.DrawCircle(gfx::Point(200,200), 100, paintFlags);
       paint.setColor(SK_ColorMAGENTA);
-      gfx_canvas.DrawRoundRect(gfx::Rect(550, 550, 200, 200), 50, flags);
+      gfx_canvas.DrawRoundRect(gfx::Rect(550, 550, 200, 200), 50, paintFlags);
     }*/
     {
       // see https://github.com/codebyravi/electron/blob/master/atom/common/api/atom_api_native_image.cc#L115
@@ -875,12 +878,12 @@ public:
       gfx_canvas.DrawImageInt(gfx::ImageSkia(gfxImageSkia->GetRepresentation(10.0f)), 630, 30);
     }
     {
-      cc::PaintFlags flags;
-      flags.setShader(
+      cc::PaintFlags paintFlags;
+      paintFlags.setShader(
           gfx::CreateGradientShader(0, 500, SK_ColorRED, SK_ColorGREEN));
-      flags.setStyle(cc::PaintFlags::kFill_Style);
-      flags.setAntiAlias(true);
-      gfx_canvas.DrawRoundRect(gfx::Rect(350, 350, 200, 400), 50, flags);
+      paintFlags.setStyle(cc::PaintFlags::kFill_Style);
+      paintFlags.setAntiAlias(true);
+      gfx_canvas.DrawRoundRect(gfx::Rect(350, 350, 200, 400), 50, paintFlags);
     }
     {
       cc::TransformOperations operations_from;

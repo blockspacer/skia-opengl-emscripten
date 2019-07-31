@@ -568,3 +568,5 @@ add key callback thread
 > https://github.com/save7502/youkyoung/blob/master/Engine/Source/Runtime/ApplicationCore/Private/HTML5/HTML5Application.cpp#L196
 
 WASM key capture on canvas, not document
+
+TODO: use base::saturated_cast, see https://github.com/chromium/chromium/blob/master/base/numerics/README.md#performing-saturated-clamped-arithmetic-type-conversions

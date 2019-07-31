@@ -57,6 +57,8 @@ set(GEN_COMPONENTS_CONTENT_SETTINGS_CORE_COMMON_DIR ${GN_GEN_DIR}gen_components_
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+set(ENABLE_CMAKE_COMPILE_WARNINGS TRUE CACHE BOOL "ENABLE_CMAKE_COMPILE_WARNINGS")
+
 # == NOTE: place set(ENABLE_*) before all checks ==
 
 # khronos
@@ -400,6 +402,7 @@ list(APPEND APP_DEFINITIONS ENABLE_OPENGL=1)
 list(APPEND APP_DEFINITIONS ENABLE_CUSTOM_FONTS=1)
 list(APPEND APP_DEFINITIONS HARFBUZZ_UNICODE=1)
 list(APPEND APP_DEFINITIONS ENABLE_SK_EFFECTS=1)
+list(APPEND APP_DEFINITIONS ENABLE_EMSCRIPTEN_INPUT=1)
 
 if(ENABLE_SKIA)
   list(APPEND APP_DEFINITIONS ENABLE_SK_UI=1)
@@ -2617,15 +2620,24 @@ else()
   )
 endif() # EMSCRIPTEN
 
-target_compile_options(${PROJECT_NAME} PRIVATE
-  #-Wno-error
-  # always return on non-void functions to prevent UB
-  -Wreturn-type
-  # https://gist.github.com/morido/8637535
-  -Werror=return-type
-  -Wall
-  -Wextra
-  -Weverything # clang
+if(ENABLE_CMAKE_COMPILE_WARNINGS)
+  set(ENABLED_WARNINGS
+    #-Wno-error
+    # always return on non-void functions to prevent UB
+    -Wreturn-type
+    # https://gist.github.com/morido/8637535
+    -Werror=return-type
+    -Wall
+    -Wextra
+    -Weverything # clang
+  )
+else(ENABLE_CMAKE_COMPILE_WARNINGS)
+  set(ENABLED_WARNINGS
+    -Wno-error # clang
+  )
+endif(ENABLE_CMAKE_COMPILE_WARNINGS)
+
+set(DISABLED_WARNINGS
   -Wno-undef
   -Wno-switch
   #-pedantic-errors
@@ -2698,6 +2710,11 @@ target_compile_options(${PROJECT_NAME} PRIVATE
   -Wno-undefined-var-template
   # Do not warn about an implicit exception spec mismatch.
   -Wno-implicit-exception-spec-mismatch
+)
+
+target_compile_options(${PROJECT_NAME} PRIVATE
+  ${ENABLED_WARNINGS}
+  ${DISABLED_WARNINGS}
 )
 
 add_custom_target(copy-runtime-files ALL

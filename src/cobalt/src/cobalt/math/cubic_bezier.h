@@ -42,10 +42,7 @@ class CubicBezier {
   double x2() const { return x2_; }
   double y2() const { return y2_; }
 
-  bool operator==(const CubicBezier& other) const {
-    return x1_ == other.x1_ && y1_ == other.y1_ && x2_ == other.x2_ &&
-           y2_ == other.y2_;
-  }
+  bool operator==(const CubicBezier& other) const;
 
  private:
   double x1_;

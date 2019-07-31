@@ -46,6 +46,11 @@
 #include <GL/glext.h>
 #endif // ENABLE_OPENGL
 
+#if !defined(EM_IS_MAIN_THREAD)
+#define EM_IS_MAIN_THREAD() \
+  (emscripten_has_threading_support() ? emscripten_is_main_runtime_thread() : true)
+#endif // EM_IS_MAIN_THREAD
+
 #else
 #include "SDL2/SDL.h"
 #if defined(ENABLE_OPENGL)

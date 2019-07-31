@@ -31,15 +31,15 @@ namespace render_tree {
 //static SkString fAnimPath = SkString("./resources/animations/data.json");
 
 // not in spec
-class InputNode : public CustomNode {
+class InputNode final : public CustomNode {
  public:
   //typedef base::Callback<bool(const math::Rect&)> SetBoundsCB;
   //typedef base::Callback<sk_sp<skottie::Animation>()> GetSkottieAnimCB;
 
-  struct Builder : public CustomNode::Builder {
+  struct Builder final : public CustomNode::Builder {
     explicit Builder(const Builder&) = default;
     explicit Builder(const CustomNode::Builder& customNodeBuilder)
-      : CustomNode::Builder() {
+      : CustomNode::Builder(customNodeBuilder) {
     }
     explicit Builder(const math::RectF& rect
         //, const SetBoundsCB& set_bounds_cb

@@ -180,3 +180,8 @@ using cc::TransformKeyframe;
 //#include "ui/views/controls/menu/submenu_view.h"
 //#include "ui/views/widget/widget.h"
 #endif // ENABLE_UI
+
+
+#ifdef ENABLE_GFX_GEOMETRY
+#include "ui/gfx/geometry/rect.h"
+#endif
