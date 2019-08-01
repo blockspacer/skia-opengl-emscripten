@@ -925,24 +925,30 @@ public:
       gfx::FontList font_list(defaultFont);
       render_text->SetText(base::UTF8ToUTF16("x render_text x render_text x"));
       render_text->SetFontList(font_list);
-      render_text->set_focused(true);
+      render_text->SetColor(
+        blink::Color(0.0f, 1.0f, 0.0f, 0.5f).Rgb());
       render_text->SetElideBehavior(gfx::ELIDE_TAIL);
-      // see https://github.com/chromium/chromium/blob/master/chrome/browser/vr/elements/text.cc#L384
-      int selection_start_ = 0;
-      int selection_end_ = 2;
-      gfx::Range range(selection_start_, selection_end_);
-      render_text->SetSelection(gfx::SelectionModel(
-          range, gfx::LogicalCursorDirection::CURSOR_FORWARD));
       render_text->set_selection_background_focused_color(
           SkColorSetARGB(150, 0, 188, 112));
-      render_text->set_selection_color(SkColorSetARGB(150, 0, 188, 182));
-      render_text->SelectRange({0, 1});
+      render_text->set_selection_color(
+        //SkColorSetARGB(150, 0, 188, 182)
+        blink::Color(0.0f, 0.0f, 1.0f, 0.5f).Rgb()
+      );
       render_text->SetObscured(false);
+      // render_text->SetSelectionModel(); // see SelectRange
       render_text->SetMultiline(true);
       render_text->SetHorizontalAlignment(gfx::ALIGN_TO_HEAD);
       render_text->SetWordWrapBehavior(gfx::WRAP_LONG_WORDS);
       render_text->set_clip_to_display_rect(false);
+      render_text->set_focused(true);
+      // see https://github.com/chromium/chromium/blob/master/chrome/browser/vr/elements/text.cc#L384
+      int selection_start_ = 0;
+      int selection_end_ = 2;
       render_text->SetCursorPosition(selection_end_);
+      gfx::Range range(selection_start_, selection_end_);
+      render_text->SetSelection(gfx::SelectionModel(
+          range, gfx::LogicalCursorDirection::CURSOR_FORWARD));
+      render_text->SelectRange({0, 2});
       render_text->Draw(&gfx_canvas); // calls DrawSelection if focused
     }
 

@@ -1,0 +1,340 @@
+div:focus {
+  border: 5px solid #f1f1f1;
+  background-color:rgb(255, 255, 255) !important;
+}
+
+div:hover {
+  border: 5px solid #ffff87 !important;
+  background-color:rgb(100, 100, 0);
+}
+
+.showbox2 {
+  margin: 4em 1em;
+  width: 100px;
+  height: 40px;
+  border: 2px solid green;
+  background-color: #fff;
+  line-height: 40px;
+  text-align: center;
+  transition: 1s ease-in-out;
+}
+
+.showbox2.slideright:hover {
+  transform: translate(3em,0);
+}
+
+.showbox {
+  margin: 4em 1em;
+  width: 100px;
+  height: 40px;
+  border: 2px solid green;
+  background-color: #fff;
+  line-height: 40px;
+  text-align: center;
+}
+
+.polling_message {
+  color: white;
+  margin-right: 2%;
+}
+
+.view_port {
+  background-color: black;
+  height: 25px;
+  width: 100%;
+  overflow: hidden;
+}
+
+.cylon_eye {
+  background-color: red;
+  background-image: linear-gradient(to right,
+      rgba(0, 0, 0, .9) 25%,
+      rgba(0, 0, 0, .1) 50%,
+      rgba(0, 0, 0, .9) 75%);
+  color: white;
+  height: 100%;
+  width: 20%;
+  animation: 4s linear 0s infinite alternate move_eye;
+}
+
+@keyframes move_eye { from { margin-left: -20%; } to { margin-left: 100%; }  }
+
+@keyframes rotating {
+    from{
+        -webkit-transform: rotate(0deg);
+    }
+    to{
+        -webkit-transform: rotate(360deg);
+    }
+}
+
+.rotating {
+    -webkit-animation: rotating 2s linear infinite;
+}
+
+@keyframes bounceIn {
+  0% {
+    transform: scale(0.1);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.bounceInDiv {
+  animation: bounceIn 2s;
+  animation-delay: 5s;
+  animation-iteration-count: infinite;
+}
+
+@keyframes exanim {
+  from {background-color: red;}
+  to {background-color: yellow;}
+}
+
+.exanim {
+  background-color: red;
+  animation-name: exanim;
+  animation-duration: 10s;
+}
+
+@-webkit-keyframes slidein {
+    from {
+        margin-left: -20%;
+    }
+    to {
+        margin-left: 100%;
+    }
+}
+
+@keyframes slidein {
+    from {
+        margin-left: -20%;
+    }
+    to {
+        margin-left: 100%;
+    }
+}
+.hovertest:hover {
+  background-color: black;
+  color: green;
+}
+
+/* The flip card container - set the width and height to whatever you want. We have added the border property to demonstrate that the flip itself goes out of the box on hover (remove perspective if you don't want the 3D effect */
+.flip-card {
+  background-color: transparent;
+  width: 300px;
+  height: 200px;
+  border: 1px solid #f1f1f1;
+  /*perspective: 1000px;*/ /* Remove this if you don't want the 3D effect */
+  overflow: hidden;
+}
+
+/* This container is needed to position the front and back side */
+.flip-card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  transition: transform 0.8s;
+}
+
+
+/* Do an horizontal flip when you move the mouse over the flip box container */
+.flip-card:hover .flip-card-inner {
+  /*transform: rotateY(180deg);*/
+  /*filter: map-to-mesh(equirectangular, 2.5rad 3.14rad,
+                      matrix3d(1, 0, 0, 0,
+                               0, 1, 0, 0,
+                               0, 0, 1, 0,
+                               100, 100, 100, 1));*/
+
+  transform: matrix(1, 2, -1, 1, 80, 80);
+  overflow: scroll;
+
+  /*transform:
+    matrix3d(
+      1, 0, 0, 0,
+      0, 1, 0, 0,
+      0, 0, 1, 0,
+      0, 0, 0, -1
+    )
+    translateZ(-2px);
+    transform: translate(-3em,1em);*/
+}
+
+/* Position the front and back side */
+.flip-card-front, .flip-card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+/* Style the front side (fallback if image is missing) */
+.flip-card-front {
+  background-color: #bbb;
+  color: black;
+}
+
+/* Style the back side */
+.flip-card-back {
+  /*background-color: blue;*/
+  color: white;
+  /*transform: rotateY(180deg);*/
+}
+
+
+/* TODO 3D transform https://docs.microsoft.com/en-us/xamarin/xamarin-forms/user-interface/graphics/skiasharp/transforms/3d-rotation */
+/* TODO 3D transform https://github.com/math3d/Skia/blob/d4cafdc28bd86da5eb993471bcd9a5feafc3b618/README.md */
+/* TODO 3D https://dev.opera.com/articles/ru/understanding-the-css-transforms-matrix/ */
+@keyframes MotionScale {
+  from {
+    /*
+      Identity matrix is used as basis here.
+      The matrix below describes the
+      following transformations:
+        Translates every X point by -50px
+        Translates every Y point by -100px
+        Translates every Z point by 0
+        Scales down by 10%
+
+    transform: matrix3d(
+      1,0,0,0,
+      0,1,0,0,
+      0,0,1,0,
+      -50,-100,0,1.1
+    );*/
+
+  }
+  50% {
+    /*transform: matrix3d(
+      1,0,0,0,
+      0,1,0,0,
+      0,0,1,0,
+      0,0,0,0.9
+    );*/
+  }
+  to {
+     /*transform: matrix3d(
+      1,0,0,0,
+      0,1,0,0,
+      0,0,1,0,
+      50,100,0,1.1
+    )*/
+  }
+}
+
+.bg-grad {
+  max-width: 1150px;
+  position: relative;
+  background: linear-gradient(to right, red, purple);
+  padding: 3px;
+}
+
+.border-grad {
+  max-width: 1050px;
+  padding: 1rem;
+  border-width: 3px;
+  border-style: solid;
+}
+
+.border-img-slice {
+  border: 20px solid;
+}
+
+a {
+  text-decoration: none;
+}
+
+
+
+a {
+  text-decoration: none;
+}
+
+.navigation {
+  background: #ecec72;
+  margin: 0;
+  padding-left: 0;
+  width: 500px;
+  text-align: right
+}
+
+.navigation-item {
+  color: #fff;
+  background: rgb(187, 135, 72);
+  display: inline-block;
+  vertical-align: middle;
+  padding: 12px;
+  position: relative;
+  text-decoration: none;
+  transition-duration: 0.5s;
+  height: 20px;
+}
+
+.navigation-item a {
+  color: #fff;
+}
+
+.navigation-item:hover {
+  background: red;
+}
+
+.dropdown {
+  background: rgb(68, 121, 8);
+  position: relative;
+  transition: all 0.9s ease;
+  opacity: 0;
+  width: 100%;
+  z-index:999;
+  vertical-align: bottom;
+  display: inline-block;
+}
+
+.navigation-item:hover > .dropdown, .dropdown:hover  {
+  opacity: 1;
+}
+
+.dropbtn {
+  background-color: #4CAF50;
+  color: white;
+  padding: 16px;
+  font-size: 16px;
+  border: none;
+}
+
+.dropdownbtn {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdownbtn-content {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 999;
+}
+
+.dropdownbtn-content a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+.dropdownbtn-content a:hover {background-color: #f1f1f1}
+
+.dropdownbtn:hover .dropdownbtn-content {
+  display: block;
+}
+
+.dropdownbtn:hover .dropbtn {
+  background-color: #3e8e41;
+}

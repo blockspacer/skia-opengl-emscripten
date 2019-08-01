@@ -5855,10 +5855,11 @@ static void addTestOnlyAttrCallbacks() {
       CHECK(mouseEvent);
       float x = mouseEvent->x();
       float y = mouseEvent->y();
-      printf("on-click-print at (%f;%f) event %s for tag: %s, "
+      printf("on-click-print at (%f;%f) attr_val=%s event %s for tag: %s, "
              "attrVal: %s, text_content: %s\n",
               x,
               y,
+              elem->GetAttribute("on-click-print").value_or("").c_str(),
               event->type().c_str(),
               elem->tag_name().c_str(),
               attrVal.c_str(),

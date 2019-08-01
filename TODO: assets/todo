@@ -570,3 +570,6 @@ add key callback thread
 WASM key capture on canvas, not document
 
 TODO: use base::saturated_cast, see https://github.com/chromium/chromium/blob/master/base/numerics/README.md#performing-saturated-clamped-arithmetic-type-conversions
+
+support "cursor: pointer;" e.t.c.
+support custom mouse cursor

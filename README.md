@@ -1122,3 +1122,11 @@ cmake.sdk .. -Udebug -DENABLE_IWYU=ON -DIWYU_LLVM_ROOT_PATH=/usr/lib/llvm-6.0 -D
 # -DCMAKE_C_COMPILER_WORKS=1 -DCMAKE_CXX_COMPILER_WORKS=1 -DCMAKE_C_COMPILER=clang-6.0 -DCMAKE_CXX_COMPILER=clang++-6.0
 CC="/usr/bin/clang-6.0" CXX="/usr/bin/clang++-6.0" cmake --build . --clean-first
 
+# Cobalt has no support for CSS "float", use "display: inline-block" & vertical-align
+NOTE: for "float: right" effect apply "text-align: right" to parent div.
+
+see
+> https://iamsteve.me/blog/entry/inline_block
+> https://alligator.io/css/display-inline-vs-inline-block/
+> https://stackoverflow.com/a/15177860
+> https://stackoverflow.com/a/48244299
