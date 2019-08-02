@@ -101,3 +101,7 @@ thirdparty/glew/
 \.vscode/
 
 build/
+
+src/net/third_party/quiche_todo/
+
+src/chromium/third_party/boringssl_TODO/
