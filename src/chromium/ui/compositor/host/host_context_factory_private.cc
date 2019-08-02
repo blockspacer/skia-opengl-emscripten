@@ -7,7 +7,9 @@
 #include "base/command_line.h"
 #include "base/trace_event/trace_event.h"
 #include "build/build_config.h"
+#if !defined(COMPOSITOR_PORTED)
 #include "cc/mojo_embedder/async_layer_tree_frame_sink.h"
+#endif // COMPOSITOR_PORTED
 #include "components/viz/client/hit_test_data_provider_draw_quad.h"
 #include "components/viz/client/local_surface_id_provider.h"
 #include "components/viz/common/features.h"
@@ -15,9 +17,11 @@
 #include "components/viz/host/host_display_client.h"
 #include "components/viz/host/host_frame_sink_manager.h"
 #include "components/viz/host/renderer_settings_creation.h"
+#if !defined(COMPOSITOR_PORTED)
 #include "services/viz/privileged/interfaces/compositing/frame_sink_manager.mojom.h"
 #include "services/viz/privileged/interfaces/compositing/vsync_parameter_observer.mojom.h"
 #include "services/viz/public/interfaces/compositing/compositor_frame_sink.mojom.h"
+#endif // COMPOSITOR_PORTED
 #include "ui/compositor/host/external_begin_frame_controller_client_impl.h"
 #include "ui/compositor/reflector.h"
 
@@ -25,6 +29,7 @@
 #include "ui/gfx/win/rendering_window_manager.h"
 #endif
 
+#if !defined(COMPOSITOR_PORTED)
 namespace ui {
 
 namespace {
@@ -60,7 +65,7 @@ void HostContextFactoryPrivate::ConfigureCompositor(
 #endif
 
   auto& compositor_data = compositor_data_map_[compositor];
-
+#if !defined(COMPOSITOR_PORTED)
   auto root_params = viz::mojom::RootCompositorFrameSinkParams::New();
 
   // Create interfaces for a root CompositorFrameSink.
@@ -75,6 +80,7 @@ void HostContextFactoryPrivate::ConfigureCompositor(
   root_params->display_client =
       compositor_data.display_client->GetBoundPtr(resize_task_runner_)
           .PassInterface();
+#endif // COMPOSITOR_PORTED
 
   // Initialize ExternalBeginFrameController client if enabled.
   compositor_data.external_begin_frame_controller_client.reset();
@@ -82,14 +88,17 @@ void HostContextFactoryPrivate::ConfigureCompositor(
     compositor_data.external_begin_frame_controller_client =
         std::make_unique<ExternalBeginFrameControllerClientImpl>(
             compositor->external_begin_frame_client());
+#if !defined(COMPOSITOR_PORTED)
     root_params->external_begin_frame_controller =
         compositor_data.external_begin_frame_controller_client
             ->GetControllerRequest();
     root_params->external_begin_frame_controller_client =
         compositor_data.external_begin_frame_controller_client->GetBoundPtr()
             .PassInterface();
+#endif // COMPOSITOR_PORTED
   }
 
+#if !defined(COMPOSITOR_PORTED)
   root_params->frame_sink_id = compositor->frame_sink_id();
 #if defined(GPU_SURFACE_HANDLE_IS_ACCELERATED_WINDOW)
   root_params->widget = compositor->widget();
@@ -129,6 +138,7 @@ void HostContextFactoryPrivate::ConfigureCompositor(
       std::make_unique<cc::mojo_embedder::AsyncLayerTreeFrameSink>(
           std::move(context_provider), std::move(worker_context_provider),
           &params));
+#endif // COMPOSITOR_PORTED
 }
 
 void HostContextFactoryPrivate::UnconfigureCompositor(Compositor* compositor) {
@@ -197,8 +207,10 @@ void HostContextFactoryPrivate::DisableSwapUntilResize(Compositor* compositor) {
     // wrong size by Viz can cause the swapped content to get scaled.
     // TODO(crbug.com/859168): Investigate nonblocking ways for solving.
     TRACE_EVENT0("viz", "Blocked UI for DisableSwapUntilResize");
+#if !defined(COMPOSITOR_PORTED)
     mojo::SyncCallRestrictions::ScopedAllowSyncCall scoped_allow_sync_call;
     iter->second.display_private->DisableSwapUntilResize();
+#endif // COMPOSITOR_PORTED
   }
 }
 
@@ -206,9 +218,11 @@ void HostContextFactoryPrivate::SetDisplayColorMatrix(
     Compositor* compositor,
     const SkMatrix44& matrix) {
   auto iter = compositor_data_map_.find(compositor);
+#if !defined(COMPOSITOR_PORTED)
   if (iter == compositor_data_map_.end() || !iter->second.display_private)
     return;
   iter->second.display_private->SetDisplayColorMatrix(gfx::Transform(matrix));
+#endif // COMPOSITOR_PORTED
 }
 
 void HostContextFactoryPrivate::SetDisplayColorSpace(
@@ -216,10 +230,16 @@ void HostContextFactoryPrivate::SetDisplayColorSpace(
     const gfx::ColorSpace& blending_color_space,
     const gfx::ColorSpace& output_color_space) {
   auto iter = compositor_data_map_.find(compositor);
-  if (iter == compositor_data_map_.end() || !iter->second.display_private)
+  if (iter == compositor_data_map_.end()
+#if !defined(COMPOSITOR_PORTED)
+    || !iter->second.display_private
+#endif // COMPOSITOR_PORTED
+    )
     return;
+#if !defined(COMPOSITOR_PORTED)
   iter->second.display_private->SetDisplayColorSpace(blending_color_space,
                                                      output_color_space);
+#endif // COMPOSITOR_PORTED
 }
 
 void HostContextFactoryPrivate::SetDisplayVSyncParameters(
@@ -227,16 +247,27 @@ void HostContextFactoryPrivate::SetDisplayVSyncParameters(
     base::TimeTicks timebase,
     base::TimeDelta interval) {
   auto iter = compositor_data_map_.find(compositor);
-  if (iter == compositor_data_map_.end() || !iter->second.display_private)
+  if (iter == compositor_data_map_.end()
+#if !defined(COMPOSITOR_PORTED)
+      || !iter->second.display_private
+#endif // COMPOSITOR_PORTED
+      )
     return;
+#if !defined(COMPOSITOR_PORTED)
   iter->second.display_private->SetDisplayVSyncParameters(timebase, interval);
+#endif // COMPOSITOR_PORTED
 }
 
 void HostContextFactoryPrivate::IssueExternalBeginFrame(
     Compositor* compositor,
     const viz::BeginFrameArgs& args) {
   auto iter = compositor_data_map_.find(compositor);
-  if (iter == compositor_data_map_.end() || !iter->second.display_private)
+
+  if (iter == compositor_data_map_.end()
+#if !defined(COMPOSITOR_PORTED)
+    || !iter->second.display_private
+#endif // COMPOSITOR_PORTED
+    )
     return;
 
   DCHECK(iter->second.external_begin_frame_controller_client);
@@ -251,10 +282,13 @@ void HostContextFactoryPrivate::SetOutputIsSecure(Compositor* compositor,
     return;
   iter->second.output_is_secure = secure;
 
+#if !defined(COMPOSITOR_PORTED)
   if (iter->second.display_private)
     iter->second.display_private->SetOutputIsSecure(secure);
+#endif // COMPOSITOR_PORTED
 }
 
+#if !defined(COMPOSITOR_PORTED)
 void HostContextFactoryPrivate::AddVSyncParameterObserver(
     Compositor* compositor,
     viz::mojom::VSyncParameterObserverPtr observer) {
@@ -267,6 +301,7 @@ void HostContextFactoryPrivate::AddVSyncParameterObserver(
         std::move(observer));
   }
 }
+#endif // COMPOSITOR_PORTED
 
 viz::FrameSinkManagerImpl* HostContextFactoryPrivate::GetFrameSinkManager() {
   // When running with viz there is no FrameSinkManagerImpl in the browser
@@ -287,3 +322,4 @@ HostContextFactoryPrivate::CompositorData::operator=(CompositorData&& other) =
     default;
 
 }  // namespace ui
+#endif // COMPOSITOR_PORTED

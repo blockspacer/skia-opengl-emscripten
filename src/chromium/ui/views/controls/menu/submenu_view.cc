@@ -8,7 +8,9 @@
 #include <numeric>
 
 #include "base/compiler_specific.h"
+#if !defined(UI_VIEWS_NO_AX)
 #include "ui/accessibility/ax_node_data.h"
+#endif // UI_VIEWS_NO_AX
 #include "ui/base/ime/input_method.h"
 #include "ui/compositor/paint_recorder.h"
 #include "ui/events/event.h"
@@ -198,6 +200,7 @@ gfx::Size SubmenuView::CalculatePreferredSize() const {
   return gfx::Size(width, height + insets.height());
 }
 
+#if !defined(UI_VIEWS_NO_AX)
 void SubmenuView::GetAccessibleNodeData(ui::AXNodeData* node_data) {
   // Inherit most of the state from the parent menu item, except the role and
   // the orientation.
@@ -207,6 +210,7 @@ void SubmenuView::GetAccessibleNodeData(ui::AXNodeData* node_data) {
   // Menus in Chrome are always traversed in a vertical direction.
   node_data->AddState(ax::mojom::State::kVertical);
 }
+#endif // UI_VIEWS_NO_AX
 
 void SubmenuView::PaintChildren(const PaintInfo& paint_info) {
   View::PaintChildren(paint_info);
@@ -232,6 +236,7 @@ void SubmenuView::PaintChildren(const PaintInfo& paint_info) {
   }
 }
 
+#if !defined(UI_VIEWS_PORT)
 bool SubmenuView::GetDropFormats(
     int* formats,
     std::set<ui::ClipboardFormatType>* format_types) {
@@ -239,17 +244,22 @@ bool SubmenuView::GetDropFormats(
   return parent_menu_item_->GetMenuController()->GetDropFormats(this, formats,
                                                                 format_types);
 }
+#endif // UI_VIEWS_PORT
 
 bool SubmenuView::AreDropTypesRequired() {
   DCHECK(parent_menu_item_->GetMenuController());
   return parent_menu_item_->GetMenuController()->AreDropTypesRequired(this);
 }
 
+#if !defined(UI_VIEWS_PORT)
 bool SubmenuView::CanDrop(const OSExchangeData& data) {
   DCHECK(parent_menu_item_->GetMenuController());
   return parent_menu_item_->GetMenuController()->CanDrop(this, data);
 }
+#endif // UI_VIEWS_PORT
 
+
+#if !defined(UI_VIEWS_PORT)
 void SubmenuView::OnDragEntered(const ui::DropTargetEvent& event) {
   DCHECK(parent_menu_item_->GetMenuController());
   parent_menu_item_->GetMenuController()->OnDragEntered(this, event);
@@ -259,16 +269,19 @@ int SubmenuView::OnDragUpdated(const ui::DropTargetEvent& event) {
   DCHECK(parent_menu_item_->GetMenuController());
   return parent_menu_item_->GetMenuController()->OnDragUpdated(this, event);
 }
+#endif // UI_VIEWS_PORT
 
 void SubmenuView::OnDragExited() {
   DCHECK(parent_menu_item_->GetMenuController());
   parent_menu_item_->GetMenuController()->OnDragExited(this);
 }
 
+#if !defined(UI_VIEWS_PORT)
 int SubmenuView::OnPerformDrop(const ui::DropTargetEvent& event) {
   DCHECK(parent_menu_item_->GetMenuController());
   return parent_menu_item_->GetMenuController()->OnPerformDrop(this, event);
 }
+#endif // UI_VIEWS_PORT
 
 bool SubmenuView::OnMouseWheel(const ui::MouseWheelEvent& e) {
   gfx::Rect vis_bounds = GetVisibleBounds();
@@ -396,9 +409,11 @@ void SubmenuView::ShowAt(Widget* parent,
     host_->InitMenuHost(parent, bounds, scroll_view_container_, do_capture);
   }
 
+#if !defined(UI_VIEWS_NO_AX)
   GetScrollViewContainer()->NotifyAccessibilityEvent(
       ax::mojom::Event::kMenuStart, true);
   NotifyAccessibilityEvent(ax::mojom::Event::kMenuPopupStart, true);
+#endif // UI_VIEWS_NO_AX
 }
 
 void SubmenuView::Reposition(const gfx::Rect& bounds) {
@@ -408,9 +423,11 @@ void SubmenuView::Reposition(const gfx::Rect& bounds) {
 
 void SubmenuView::Close() {
   if (host_) {
+#if !defined(UI_VIEWS_NO_AX)
     NotifyAccessibilityEvent(ax::mojom::Event::kMenuPopupEnd, true);
     GetScrollViewContainer()->NotifyAccessibilityEvent(
         ax::mojom::Event::kMenuEnd, true);
+#endif // UI_VIEWS_NO_AX
 
     host_->DestroyMenuHost();
     host_ = nullptr;
@@ -420,7 +437,9 @@ void SubmenuView::Close() {
 void SubmenuView::Hide() {
   if (host_) {
     host_->HideMenuHost();
+#if !defined(UI_VIEWS_NO_AX)
     NotifyAccessibilityEvent(ax::mojom::Event::kMenuPopupHide, true);
+#endif // UI_VIEWS_NO_AX
   }
 
   if (scroll_animator_->is_scrolling())

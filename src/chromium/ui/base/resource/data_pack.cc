@@ -21,7 +21,10 @@
 #include "base/synchronization/lock.h"
 #include "base/sys_byteorder.h"
 #include "build/build_config.h"
+
+#if !defined(UI_BASE_PORT)
 #include "net/filter/gzip_header.h"
+#endif // UI_BASE_PORT
 
 // For details of the file layout, see
 // http://dev.chromium.org/developers/design-documents/linuxresourcesandlocalizedstrings
@@ -86,11 +89,15 @@ void MaybePrintResourceId(uint16_t resource_id) {
 }
 
 bool HasGzipHeader(base::StringPiece* data) {
+#if !defined(UI_BASE_PORT)
   net::GZipHeader header;
   const char* header_end = nullptr;
   net::GZipHeader::Status header_status =
       header.ReadMore(data->data(), data->length(), &header_end);
   return header_status == net::GZipHeader::COMPLETE_HEADER;
+#else
+  return false;
+#endif // UI_BASE_PORT
 }
 
 // Convenience class to write data to a file. Usage is the following:
@@ -390,6 +397,7 @@ bool DataPack::HasResource(uint16_t resource_id) const {
 }
 
 bool DataPack::IsGzipped(uint16_t resource_id, bool* is_gzipped) const {
+#if !defined(UI_BASE_PORT)
   DCHECK(is_gzipped);
   if (!HasResource(resource_id))
     return false;
@@ -398,6 +406,9 @@ bool DataPack::IsGzipped(uint16_t resource_id, bool* is_gzipped) const {
   CHECK(GetStringPiece(resource_id, &data));
   *is_gzipped = HasGzipHeader(&data);
   return true;
+#else
+  return false;
+#endif // UI_BASE_PORT
 }
 
 bool DataPack::GetStringPiece(uint16_t resource_id,

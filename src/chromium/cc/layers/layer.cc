@@ -1652,7 +1652,9 @@ void Layer::AddDrawableDescendants(int num) {
     parent()->AddDrawableDescendants(num);
 }
 
+#if defined(ENABLE_CC_BENCH)
 void Layer::RunMicroBenchmark(MicroBenchmark* benchmark) {}
+#endif // ENABLE_CC_BENCH
 
 void Layer::SetElementId(ElementId id) {
   DCHECK(IsPropertyChangeAllowed());

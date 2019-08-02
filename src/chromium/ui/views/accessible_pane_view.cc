@@ -6,7 +6,9 @@
 
 #include <memory>
 
+#if !defined(UI_VIEWS_NO_AX)
 #include "ui/accessibility/ax_node_data.h"
+#endif // UI_VIEWS_NO_AX
 #include "ui/views/focus/focus_search.h"
 #include "ui/views/view_tracker.h"
 #include "ui/views/widget/widget.h"
@@ -205,9 +207,11 @@ void AccessiblePaneView::SetVisible(bool flag) {
   View::SetVisible(flag);
 }
 
+#if !defined(UI_VIEWS_NO_AX)
 void AccessiblePaneView::GetAccessibleNodeData(ui::AXNodeData* node_data) {
   node_data->role = ax::mojom::Role::kPane;
 }
+#endif // UI_VIEWS_NO_AX
 
 void AccessiblePaneView::RequestFocus() {
   SetPaneFocusAndFocusDefault();

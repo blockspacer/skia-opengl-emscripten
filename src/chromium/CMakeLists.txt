@@ -16,6 +16,12 @@ set(MOJO_DIR ${MOJO_PARENT_DIR}mojo/)
 set(UI_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/)
 set(UI_DIR ${UI_PARENT_DIR}ui/)
 
+set(UI_COMPOSITOR_PARENT_DIR ${UI_DIR}/)
+set(UI_COMPOSITOR_DIR ${UI_COMPOSITOR_PARENT_DIR}compositor/)
+
+set(UI_VIEWS_PARENT_DIR ${UI_DIR}/)
+set(UI_VIEWS_DIR ${UI_VIEWS_PARENT_DIR}views/)
+
 set(UI_GFX_PARENT_DIR ${UI_DIR}/)
 set(UI_GFX_DIR ${UI_GFX_PARENT_DIR}gfx/)
 
@@ -400,8 +406,8 @@ if(ENABLE_SKIA AND ENABLE_BLINK)
   include(BASE_CC.cmake)
   include(DEBUG_CC.cmake)
   include(PAINT_CC.cmake)
-  include(ANIMATION_CC.cmake)
   include(CC.cmake)
+  include(ANIMATION_CC.cmake)
 endif(ENABLE_SKIA AND ENABLE_BLINK)
 
 if(ENABLE_GNET AND ENABLE_BLINK)
@@ -444,6 +450,13 @@ if(ENABLE_SKIA AND ENABLE_BLINK)
 
   # BLINK_RENDERER_CORE
   include(BLINK_RENDERER_CORE.cmake)
+
+  include(UI_COMPOSITOR.cmake)
+
+  if(ENABLE_BLINK_UI_VIEWS)
+    include(UI_VIEWS.cmake) # TODO
+  endif(ENABLE_BLINK_UI_VIEWS)
+
 endif(ENABLE_SKIA AND ENABLE_BLINK)
 
 #install(FILES ${WTF_HEADERS} DESTINATION include/wtf)

@@ -11,8 +11,10 @@
 #include "ui/base/models/simple_menu_model.h"
 #include "ui/events/event.h"
 #include "ui/events/event_constants.h"
+#if !defined(UI_VIEWS_PORT)
 #include "ui/resources/grit/ui_resources.h"
 #include "ui/strings/grit/ui_strings.h"
+#endif // UI_VIEWS_PORT
 #include "ui/views/controls/textfield/textfield.h"
 #include "ui/views/widget/widget.h"
 
@@ -34,21 +36,30 @@ ViewsTextServicesContextMenuBase::ViewsTextServicesContextMenuBase(
   // Not inserted on read-only fields or if the OS/version doesn't support it.
   if (!client_->read_only() && ui::IsEmojiPanelSupported()) {
     menu->InsertSeparatorAt(0, ui::NORMAL_SEPARATOR);
+#if !defined(UI_VIEWS_PORT)
     menu->InsertItemWithStringIdAt(0, IDS_CONTENT_CONTEXT_EMOJI,
                                    IDS_CONTENT_CONTEXT_EMOJI);
+#endif // UI_VIEWS_PORT
   }
 }
 
 ViewsTextServicesContextMenuBase::~ViewsTextServicesContextMenuBase() = default;
 
 bool ViewsTextServicesContextMenuBase::SupportsCommand(int command_id) const {
+#if defined(UI_VIEWS_PORT)
+  return false;
+#else
   return command_id == IDS_CONTENT_CONTEXT_EMOJI;
+#endif // UI_VIEWS_PORT
 }
 
 bool ViewsTextServicesContextMenuBase::GetAcceleratorForCommandId(
     int command_id,
     ui::Accelerator* accelerator) const {
-  if (command_id == IDS_CONTENT_CONTEXT_EMOJI) {
+#if !defined(UI_VIEWS_PORT)
+  if (command_id == IDS_CONTENT_CONTEXT_EMOJI)
+#endif // UI_VIEWS_PORT
+  {
 #if defined(OS_WIN)
     *accelerator = ui::Accelerator(ui::VKEY_OEM_PERIOD, ui::EF_COMMAND_DOWN);
     return true;
@@ -72,17 +83,21 @@ bool ViewsTextServicesContextMenuBase::IsCommandIdChecked(
 
 bool ViewsTextServicesContextMenuBase::IsCommandIdEnabled(
     int command_id) const {
+#if !defined(UI_VIEWS_PORT)
   if (command_id == IDS_CONTENT_CONTEXT_EMOJI)
     return true;
+#endif // UI_VIEWS_PORT
 
   return false;
 }
 
 void ViewsTextServicesContextMenuBase::ExecuteCommand(int command_id) {
+#if !defined(UI_VIEWS_PORT)
   if (command_id == IDS_CONTENT_CONTEXT_EMOJI) {
     client()->GetWidget()->ShowEmojiPanel();
     UMA_HISTOGRAM_BOOLEAN(kViewsTextServicesContextMenuEmoji, true);
   }
+#endif // UI_VIEWS_PORT
 }
 
 }  // namespace views

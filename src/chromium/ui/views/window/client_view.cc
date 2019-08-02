@@ -5,7 +5,9 @@
 #include "ui/views/window/client_view.h"
 
 #include "base/logging.h"
+#if !defined(UI_VIEWS_NO_AX)
 #include "ui/accessibility/ax_node_data.h"
+#endif // UI_VIEWS_NO_AX
 #include "ui/base/hit_test.h"
 #include "ui/views/widget/widget.h"
 #include "ui/views/widget/widget_delegate.h"
@@ -74,9 +76,11 @@ const char* ClientView::GetClassName() const {
   return kViewClassName;
 }
 
+#if !defined(UI_VIEWS_NO_AX)
 void ClientView::GetAccessibleNodeData(ui::AXNodeData* node_data) {
   node_data->role = ax::mojom::Role::kClient;
 }
+#endif // UI_VIEWS_NO_AX
 
 void ClientView::OnBoundsChanged(const gfx::Rect& previous_bounds) {
   // Overridden to do nothing. The NonClientView manually calls Layout on the

@@ -11,7 +11,9 @@
 #include "base/memory/ptr_util.h"
 #include "base/strings/utf_string_conversions.h"
 #include "build/build_config.h"
+#if !defined(UI_VIEWS_PORT)
 #include "ui/base/dragdrop/drag_drop_types.h"
+#endif // UI_VIEWS_PORT
 #include "ui/events/test/event_generator.h"
 #include "ui/views/animation/test/ink_drop_host_view_test_api.h"
 #include "ui/views/animation/test/test_ink_drop.h"

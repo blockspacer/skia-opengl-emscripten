@@ -30,7 +30,9 @@ namespace examples {
 
 ButtonExample::ButtonExample() : ExampleBase("Button") {
   ui::ResourceBundle& rb = ui::ResourceBundle::GetSharedInstance();
+#if !defined(UI_VIEWS_PORT)
   icon_ = rb.GetImageNamed(IDR_CLOSE_H).ToImageSkia();
+#endif // UI_VIEWS_PORT
 }
 
 ButtonExample::~ButtonExample() = default;
@@ -69,12 +71,14 @@ void ButtonExample::CreateExampleView(View* container) {
   image_button_ = new ImageButton(this);
   image_button_->SetFocusForPlatform();
   image_button_->set_request_focus_on_press(true);
+#if !defined(UI_VIEWS_PORT)
   image_button_->SetImage(ImageButton::STATE_NORMAL,
                           rb.GetImageNamed(IDR_CLOSE).ToImageSkia());
   image_button_->SetImage(ImageButton::STATE_HOVERED,
                           rb.GetImageNamed(IDR_CLOSE_H).ToImageSkia());
   image_button_->SetImage(ImageButton::STATE_PRESSED,
                           rb.GetImageNamed(IDR_CLOSE_P).ToImageSkia());
+#endif // UI_VIEWS_PORT
   container->AddChildView(image_button_);
 }
 

@@ -202,9 +202,12 @@ const char* NativeViewHost::GetClassName() const {
 void NativeViewHost::OnFocus() {
   if (native_view_)
     native_wrapper_->SetFocus();
+#if !defined(UI_VIEWS_NO_AX)
   NotifyAccessibilityEvent(ax::mojom::Event::kFocus, true);
+#endif // UI_VIEWS_NO_AX
 }
 
+#if !defined(UI_VIEWS_NO_AX)
 gfx::NativeViewAccessible NativeViewHost::GetNativeViewAccessible() {
   if (native_wrapper_.get()) {
     gfx::NativeViewAccessible accessible_view =
@@ -215,6 +218,7 @@ gfx::NativeViewAccessible NativeViewHost::GetNativeViewAccessible() {
 
   return View::GetNativeViewAccessible();
 }
+#endif // UI_VIEWS_NO_AX
 
 gfx::NativeCursor NativeViewHost::GetCursor(const ui::MouseEvent& event) {
   return native_wrapper_->GetCursor(event.x(), event.y());

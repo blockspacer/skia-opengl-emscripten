@@ -21,8 +21,10 @@
 #include "ui/gfx/geometry/vector2d.h"
 #include "ui/gfx/skia_util.h"
 #include "ui/native_theme/native_theme.h"
+#if !defined(UI_VIEWS_PORT)
 #include "ui/resources/grit/ui_resources.h"
 #include "ui/strings/grit/ui_strings.h"
+#endif // UI_VIEWS_PORT
 #include "ui/views/bubble/bubble_dialog_delegate_view.h"
 #include "ui/views/bubble/footnote_container_view.h"
 #include "ui/views/controls/button/image_button.h"
@@ -32,7 +34,9 @@
 #include "ui/views/layout/box_layout.h"
 #include "ui/views/layout/layout_provider.h"
 #include "ui/views/paint_info.h"
+#if !defined(UI_VIEWS_PORT)
 #include "ui/views/resources/grit/views_resources.h"
+#endif // UI_VIEWS_PORT
 #include "ui/views/view_class_properties.h"
 #include "ui/views/widget/widget.h"
 #include "ui/views/widget/widget_delegate.h"
@@ -117,7 +121,9 @@ std::unique_ptr<Button> BubbleFrameView::CreateCloseButton(
   SetImageFromVectorIconWithColor(
       close_button.get(), vector_icons::kCloseRoundedIcon,
       is_dark_mode ? SkColorSetA(SK_ColorWHITE, 0xDD) : gfx::kGoogleGrey700);
+#if !defined(UI_VIEWS_PORT)
   close_button->SetTooltipText(l10n_util::GetStringUTF16(IDS_APP_CLOSE));
+#endif // UI_VIEWS_PORT
   close_button->SizeToPreferredSize();
 
   // Let the close button use a circular inkdrop shape.

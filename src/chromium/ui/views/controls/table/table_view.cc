@@ -20,8 +20,10 @@
 #include "base/strings/utf_string_conversions.h"
 #include "build/build_config.h"
 #include "cc/paint/paint_flags.h"
+#if !defined(UI_VIEWS_NO_AX)
 #include "ui/accessibility/ax_action_data.h"
 #include "ui/accessibility/ax_node_data.h"
+#endif // UI_VIEWS_NO_AX
 #include "ui/events/event.h"
 #include "ui/gfx/canvas.h"
 #include "ui/gfx/geometry/rect_conversions.h"
@@ -30,8 +32,10 @@
 #include "ui/gfx/skia_util.h"
 #include "ui/gfx/text_utils.h"
 #include "ui/native_theme/native_theme.h"
+#if !defined(UI_VIEWS_NO_AX)
 #include "ui/views/accessibility/ax_virtual_view.h"
 #include "ui/views/accessibility/view_accessibility.h"
+#endif // UI_VIEWS_NO_AX
 #include "ui/views/controls/focus_ring.h"
 #include "ui/views/controls/scroll_view.h"
 #include "ui/views/controls/table/table_grouper.h"
@@ -158,8 +162,10 @@ TableView::TableView(ui::TableModel* model,
   // Always focusable, even on Mac (consistent with NSTableView).
   SetFocusBehavior(FocusBehavior::ALWAYS);
   SetModel(model);
+#if !defined(UI_VIEWS_NO_AX)
   if (model_)
     UpdateVirtualAccessibilityChildren();
+#endif // UI_VIEWS_NO_AX
 }
 
 TableView::~TableView() {
@@ -237,7 +243,9 @@ void TableView::SetColumnVisibility(int id, bool is_visible) {
   SchedulePaint();
   if (header_)
     header_->SchedulePaint();
+#if !defined(UI_VIEWS_NO_AX)
   UpdateVirtualAccessibilityChildren();
+#endif // UI_VIEWS_NO_AX
 }
 
 void TableView::ToggleSortOrder(int visible_column_index) {
@@ -551,6 +559,7 @@ base::string16 TableView::GetTooltipText(const gfx::Point& p) const {
   return model_->GetText(ViewToModel(row), visible_columns_[column].column.id);
 }
 
+#if !defined(UI_VIEWS_NO_AX)
 void TableView::GetAccessibleNodeData(ui::AXNodeData* node_data) {
   node_data->role = ax::mojom::Role::kListGrid;
   node_data->AddStringAttribute(ax::mojom::StringAttribute::kClassName,
@@ -625,6 +634,7 @@ bool TableView::HandleAccessibleAction(const ui::AXActionData& action_data) {
 
   return true;
 }
+#endif // UI_VIEWS_NO_AX
 
 void TableView::OnModelChanged() {
   selection_model_.Clear();
@@ -670,7 +680,9 @@ void TableView::OnItemsRemoved(int start, int length) {
     selection_model_.set_active(FirstSelectedRow());
   if (!selection_model_.empty() && selection_model_.anchor() == -1)
     selection_model_.set_anchor(FirstSelectedRow());
+#if !defined(UI_VIEWS_NO_AX)
   NotifyAccessibilityEvent(ax::mojom::Event::kSelection, true);
+#endif // UI_VIEWS_NO_AX
   if (observer_)
     observer_->OnSelectionChanged();
 }
@@ -805,7 +817,9 @@ void TableView::OnFocus() {
 
   SchedulePaintForSelection();
   ResetFocusIndicator();
+#if !defined(UI_VIEWS_NO_AX)
   UpdateAccessibilityFocus();
+#endif // UI_VIEWS_NO_AX
 }
 
 void TableView::OnBlur() {
@@ -814,7 +828,9 @@ void TableView::OnBlur() {
     scroll_view->SetHasFocusIndicator(false);
   SchedulePaintForSelection();
   ResetFocusIndicator();
+#if !defined(UI_VIEWS_NO_AX)
   UpdateAccessibilityFocus();
+#endif // UI_VIEWS_NO_AX
 }
 
 int TableView::GetCellMargin() const {
@@ -856,7 +872,9 @@ void TableView::SortItemsAndUpdateMapping(bool schedule_paint) {
       model_to_view_[view_to_model_[i]] = i;
     model_->ClearCollator();
   }
+#if !defined(UI_VIEWS_NO_AX)
   UpdateVirtualAccessibilityChildren();
+#endif // UI_VIEWS_NO_AX
   if (schedule_paint)
     SchedulePaint();
 }
@@ -907,7 +925,9 @@ void TableView::CreateHeaderIfNecessary(ScrollView* scroll_view) {
     return;
 
   header_ = scroll_view->SetHeader(std::make_unique<TableHeader>(this));
+#if !defined(UI_VIEWS_NO_AX)
   UpdateVirtualAccessibilityChildren();
+#endif // UI_VIEWS_NO_AX
 }
 
 void TableView::UpdateVisibleColumnSizes() {
@@ -1038,7 +1058,9 @@ void TableView::SetActiveVisibleColumnIndex(int index) {
   }
 
   ResetFocusIndicator();
+#if !defined(UI_VIEWS_NO_AX)
   UpdateAccessibilityFocus();
+#endif // UI_VIEWS_NO_AX
 }
 
 void TableView::SelectByViewIndex(int view_index) {
@@ -1078,8 +1100,10 @@ void TableView::SetSelectionModel(ui::ListSelectionModel new_selection) {
   }
 
   ResetFocusIndicator();
+#if !defined(UI_VIEWS_NO_AX)
   UpdateAccessibilityFocus();
   NotifyAccessibilityEvent(ax::mojom::Event::kSelection, true);
+#endif // UI_VIEWS_NO_AX
   if (observer_)
     observer_->OnSelectionChanged();
 }
@@ -1161,6 +1185,7 @@ GroupRange TableView::GetGroupRange(int model_index) const {
   return range;
 }
 
+#if !defined(UI_VIEWS_NO_AX)
 void TableView::UpdateVirtualAccessibilityChildren() {
   GetViewAccessibility().RemoveAllVirtualChildViews();
   if (!RowCount() || visible_columns_.empty()) {
@@ -1390,5 +1415,6 @@ AXVirtualView* TableView::GetVirtualAccessibilityCell(
                   "UpdateVirtualAccessibilityChildren()?";
   return nullptr;
 }
+#endif // UI_VIEWS_NO_AX
 
 }  // namespace views

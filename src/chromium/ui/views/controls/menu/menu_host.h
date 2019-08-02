@@ -95,10 +95,12 @@ class MenuHost : public Widget, public WidgetObserver {
   // If true and capture is lost we don't notify the delegate.
   bool ignore_capture_lost_;
 
+#if !defined(UI_VIEWS_PORT)
 #if !defined(OS_MACOSX)
   // Handles raw touch events at the moment.
   std::unique_ptr<internal::PreMenuEventDispatchHandler> pre_dispatch_handler_;
 #endif
+#endif // UI_VIEWS_PORT
 
   DISALLOW_COPY_AND_ASSIGN(MenuHost);
 };

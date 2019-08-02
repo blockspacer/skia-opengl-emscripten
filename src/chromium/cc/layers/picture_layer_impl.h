@@ -24,7 +24,9 @@
 namespace cc {
 
 class AppendQuadsData;
+#if defined(ENABLE_CC_BENCH)
 class MicroBenchmarkImpl;
+#endif // ENABLE_CC_BENCH
 class Tile;
 
 class CC_EXPORT PictureLayerImpl
@@ -92,7 +94,9 @@ class CC_EXPORT PictureLayerImpl
 
   size_t GPUMemoryUsageInBytes() const override;
 
+#if defined(ENABLE_CC_BENCH)
   void RunMicroBenchmark(MicroBenchmarkImpl* benchmark) override;
+#endif // ENABLE_CC_BENCH
 
   bool CanHaveTilings() const;
 

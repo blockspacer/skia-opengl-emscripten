@@ -15,14 +15,20 @@
 #include "base/strings/utf_string_conversions.h"
 #include "base/trace_event/trace_event.h"
 #include "build/build_config.h"
+#if !defined(UI_VIEWS_NO_AX)
 #include "ui/accessibility/ax_action_data.h"
 #include "ui/accessibility/ax_node_data.h"
+#endif // UI_VIEWS_NO_AX
 #include "ui/aura/client/aura_constants.h"
 #include "ui/aura/window.h"
+#if !defined(UI_VIEWS_PORT)
 #include "ui/base/clipboard/scoped_clipboard_writer.h"
+#endif // UI_VIEWS_PORT
 #include "ui/base/cursor/cursor.h"
 #include "ui/base/default_style.h"
+#if !defined(UI_VIEWS_PORT)
 #include "ui/base/dragdrop/drag_drop_types.h"
+#endif // UI_VIEWS_PORT
 #include "ui/base/ime/constants.h"
 #include "ui/base/ime/input_method.h"
 #include "ui/base/resource/resource_bundle.h"
@@ -39,8 +45,12 @@
 #include "ui/gfx/geometry/insets.h"
 #include "ui/gfx/selection_bound.h"
 #include "ui/native_theme/native_theme.h"
+#if !defined(UI_VIEWS_PORT)
 #include "ui/strings/grit/ui_strings.h"
+#endif // UI_VIEWS_PORT
+#if !defined(UI_VIEWS_NO_AX)
 #include "ui/views/accessibility/view_accessibility.h"
+#endif // UI_VIEWS_NO_AX
 #include "ui/views/background.h"
 #include "ui/views/controls/focus_ring.h"
 #include "ui/views/controls/focusable_border.h"
@@ -196,6 +206,7 @@ ui::TextEditCommand GetCommandForKeyEvent(const ui::KeyEvent& event) {
 // Keep in sync with UpdateContextMenu.
 ui::TextEditCommand GetTextEditCommandFromMenuCommand(int command_id,
                                                       bool has_selection) {
+#if !defined(UI_VIEWS_PORT)
   switch (command_id) {
     case IDS_APP_UNDO:
       return ui::TextEditCommand::UNDO;
@@ -213,6 +224,7 @@ ui::TextEditCommand GetTextEditCommandFromMenuCommand(int command_id,
     case IDS_APP_SELECT_ALL:
       return ui::TextEditCommand::SELECT_ALL;
   }
+#endif // UI_VIEWS_PORT
   return ui::TextEditCommand::INVALID_COMMAND;
 }
 
@@ -311,6 +323,7 @@ Textfield::~Textfield() {
 
 void Textfield::SetAssociatedLabel(View* labelling_view) {
   DCHECK(labelling_view);
+#if !defined(UI_VIEWS_NO_AX)
   label_ax_id_ = labelling_view->GetViewAccessibility().GetUniqueId().Get();
   ui::AXNodeData node_data;
   labelling_view->GetAccessibleNodeData(&node_data);
@@ -319,6 +332,7 @@ void Textfield::SetAssociatedLabel(View* labelling_view) {
   // associated label changes.
   SetAccessibleName(
       node_data.GetString16Attribute(ax::mojom::StringAttribute::kName));
+#endif // UI_VIEWS_NO_AX
 }
 
 void Textfield::SetReadOnly(bool read_only) {
@@ -349,7 +363,9 @@ void Textfield::SetText(const base::string16& new_text) {
   UpdateCursorViewPosition();
   UpdateCursorVisibility();
   SchedulePaint();
+#if !defined(UI_VIEWS_NO_AX)
   NotifyAccessibilityEvent(ax::mojom::Event::kValueChanged, true);
+#endif // UI_VIEWS_NO_AX
 }
 
 void Textfield::AppendText(const base::string16& new_text) {
@@ -358,7 +374,9 @@ void Textfield::AppendText(const base::string16& new_text) {
   model_->Append(new_text);
   OnCaretBoundsChanged();
   SchedulePaint();
+#if !defined(UI_VIEWS_NO_AX)
   NotifyAccessibilityEvent(ax::mojom::Event::kTextChanged, true);
+#endif // UI_VIEWS_NO_AX
 }
 
 void Textfield::InsertOrReplaceText(const base::string16& new_text) {
@@ -645,7 +663,11 @@ gfx::NativeCursor Textfield::GetCursor(const ui::MouseEvent& event) {
   bool drag_event = event.type() == ui::ET_MOUSE_DRAGGED;
   bool text_cursor =
       !initiating_drag_ && (drag_event || !in_selection || !platform_arrow);
+#if !defined(UI_VIEWS_PORT)
   return text_cursor ? GetNativeIBeamCursor() : gfx::kNullCursor;
+#else
+  return gfx::NativeCursor();
+#endif // UI_VIEWS_PORT
 }
 
 bool Textfield::OnMousePressed(const ui::MouseEvent& event) {
@@ -897,6 +919,7 @@ bool Textfield::SkipDefaultKeyEventProcessing(const ui::KeyEvent& event) {
   return (is_backspace && !read_only()) || event.IsUnicodeKeyCode();
 }
 
+#if !defined(UI_VIEWS_PORT)
 bool Textfield::GetDropFormats(
     int* formats,
     std::set<ui::ClipboardFormatType>* format_types) {
@@ -908,16 +931,29 @@ bool Textfield::GetDropFormats(
     controller_->AppendDropFormats(formats, format_types);
   return true;
 }
+#endif // UI_VIEWS_PORT
 
+#if !defined(UI_VIEWS_PORT)
 bool Textfield::CanDrop(const OSExchangeData& data) {
   int formats;
+#if !defined(UI_VIEWS_PORT)
   std::set<ui::ClipboardFormatType> format_types;
   GetDropFormats(&formats, &format_types);
-  return enabled() && !read_only() && data.HasAnyFormat(formats, format_types);
+#endif // UI_VIEWS_PORT
+  return enabled() && !read_only()
+#if !defined(UI_VIEWS_PORT)
+  && data.HasAnyFormat(formats, format_types)
+#endif // UI_VIEWS_PORT
+  ;
 }
+#endif // UI_VIEWS_PORT
 
+
+#if !defined(UI_VIEWS_PORT)
 int Textfield::OnDragUpdated(const ui::DropTargetEvent& event) {
+#if !defined(UI_VIEWS_PORT)
   DCHECK(CanDrop(event.data()));
+#endif // UI_VIEWS_PORT
   gfx::RenderText* render_text = GetRenderText();
   const gfx::Range& selection = render_text->selection();
   drop_cursor_position_ = render_text->FindCursorPosition(event.location());
@@ -939,6 +975,7 @@ int Textfield::OnDragUpdated(const ui::DropTargetEvent& event) {
   }
   return ui::DragDropTypes::DRAG_COPY | ui::DragDropTypes::DRAG_MOVE;
 }
+#endif // UI_VIEWS_PORT
 
 void Textfield::OnDragExited() {
   drop_cursor_visible_ = false;
@@ -947,15 +984,20 @@ void Textfield::OnDragExited() {
   SchedulePaint();
 }
 
+#if !defined(UI_VIEWS_PORT)
 int Textfield::OnPerformDrop(const ui::DropTargetEvent& event) {
+#if !defined(UI_VIEWS_PORT)
   DCHECK(CanDrop(event.data()));
+#endif // UI_VIEWS_PORT
   drop_cursor_visible_ = false;
 
+#if !defined(UI_VIEWS_PORT)
   if (controller_) {
     int drag_operation = controller_->OnDrop(event.data());
     if (drag_operation != ui::DragDropTypes::DRAG_NONE)
       return drag_operation;
   }
+#endif // UI_VIEWS_PORT
 
   gfx::RenderText* render_text = GetRenderText();
   DCHECK(!initiating_drag_ ||
@@ -986,12 +1028,14 @@ int Textfield::OnPerformDrop(const ui::DropTargetEvent& event) {
   OnAfterUserAction();
   return move ? ui::DragDropTypes::DRAG_MOVE : ui::DragDropTypes::DRAG_COPY;
 }
+#endif // UI_VIEWS_PORT
 
 void Textfield::OnDragDone() {
   initiating_drag_ = false;
   drop_cursor_visible_ = false;
 }
 
+#if !defined(UI_VIEWS_NO_AX)
 void Textfield::GetAccessibleNodeData(ui::AXNodeData* node_data) {
   node_data->role = ax::mojom::Role::kTextField;
   if (label_ax_id_) {
@@ -1050,6 +1094,7 @@ bool Textfield::HandleAccessibleAction(const ui::AXActionData& action_data) {
 
   return View::HandleAccessibleAction(action_data);
 }
+#endif // UI_VIEWS_NO_AX
 
 void Textfield::OnBoundsChanged(const gfx::Rect& previous_bounds) {
   // Textfield insets include a reasonable amount of whitespace on all sides of
@@ -1176,6 +1221,7 @@ void Textfield::ShowContextMenuForViewImpl(View* source,
 ////////////////////////////////////////////////////////////////////////////////
 // Textfield, DragController overrides:
 
+#if !defined(UI_VIEWS_PORT)
 void Textfield::WriteDragDataForView(View* sender,
                                      const gfx::Point& press_pt,
                                      OSExchangeData* data) {
@@ -1207,12 +1253,18 @@ void Textfield::WriteDragDataForView(View* sender,
       label.size()));
   constexpr gfx::Vector2d kOffset(-15, 0);
   gfx::ImageSkia image(gfx::ImageSkiaRep(bitmap, raster_scale));
+
+#if !defined(UI_VIEWS_PORT)
   data->provider().SetDragImage(image, kOffset);
+#endif // UI_VIEWS_PORT
+
   if (controller_)
     controller_->OnWriteDragData(data);
 }
+#endif // UI_VIEWS_PORT
 
 int Textfield::GetDragOperationsForView(View* sender, const gfx::Point& p) {
+#if !defined(UI_VIEWS_PORT)
   int drag_operations = ui::DragDropTypes::DRAG_COPY;
   if (!enabled() || text_input_type_ == ui::TEXT_INPUT_TYPE_PASSWORD ||
       !GetRenderText()->IsPointInSelection(p)) {
@@ -1224,6 +1276,9 @@ int Textfield::GetDragOperationsForView(View* sender, const gfx::Point& p) {
   if (controller_)
     controller_->OnGetDragOperationsForTextfield(&drag_operations);
   return drag_operations;
+#else
+  return 0;
+#endif // UI_VIEWS_PORT
 }
 
 bool Textfield::CanStartDragForView(View* sender,
@@ -1364,6 +1419,8 @@ bool Textfield::IsCommandIdEnabled(int command_id) const {
 bool Textfield::GetAcceleratorForCommandId(int command_id,
                                            ui::Accelerator* accelerator) const {
   switch (command_id) {
+
+#if !defined(UI_VIEWS_PORT)
     case IDS_APP_UNDO:
       *accelerator = ui::Accelerator(ui::VKEY_Z, ui::EF_PLATFORM_ACCELERATOR);
       return true;
@@ -1383,6 +1440,7 @@ bool Textfield::GetAcceleratorForCommandId(int command_id,
     case IDS_APP_SELECT_ALL:
       *accelerator = ui::Accelerator(ui::VKEY_A, ui::EF_PLATFORM_ACCELERATOR);
       return true;
+#endif // UI_VIEWS_PORT
 
     default:
       return text_services_context_menu_->GetAcceleratorForCommandId(
@@ -1697,8 +1755,10 @@ bool Textfield::IsTextEditCommandEnabled(ui::TextEditCommand command) const {
     case ui::TextEditCommand::COPY:
       return readable && model_->HasSelection();
     case ui::TextEditCommand::PASTE:
+#if !defined(UI_VIEWS_PORT)
       ui::Clipboard::GetForCurrentThread()->ReadText(
           ui::CLIPBOARD_TYPE_COPY_PASTE, &result);
+#endif // UI_VIEWS_PORT
       return editable && !result.empty();
     case ui::TextEditCommand::SELECT_ALL:
       return !text().empty() && GetSelectedRange().length() != text().length();
@@ -1737,11 +1797,13 @@ void Textfield::SetTextEditCommandForNextKeyEvent(ui::TextEditCommand command) {
   scheduled_text_edit_command_ = command;
 }
 
+#if defined(ENABLE_UKM)
 ukm::SourceId Textfield::GetClientSourceForMetrics() const {
   // TODO(shend): Implement this method.
   NOTIMPLEMENTED_LOG_ONCE();
   return ukm::SourceId();
 }
+#endif // ENABLE_UKM
 
 bool Textfield::ShouldDoLearning() {
   // TODO(https://crbug.com/311180): Implement this method.
@@ -1792,8 +1854,10 @@ gfx::Point Textfield::GetLastClickRootLocation() const {
 
 base::string16 Textfield::GetSelectionClipboardText() const {
   base::string16 selection_clipboard_text;
+#if !defined(UI_VIEWS_PORT)
   ui::Clipboard::GetForCurrentThread()->ReadText(ui::CLIPBOARD_TYPE_SELECTION,
                                                  &selection_clipboard_text);
+#endif // UI_VIEWS_PORT
   return selection_clipboard_text;
 }
 
@@ -2078,8 +2142,10 @@ bool Textfield::PasteSelectionClipboard() {
 void Textfield::UpdateSelectionClipboard() {
 #if defined(OS_LINUX) && !defined(OS_CHROMEOS)
   if (text_input_type_ != ui::TEXT_INPUT_TYPE_PASSWORD) {
+#if !defined(UI_VIEWS_PORT)
     ui::ScopedClipboardWriter(ui::CLIPBOARD_TYPE_SELECTION)
         .WriteText(GetSelectedText());
+#endif // UI_VIEWS_PORT
     if (controller_)
       controller_->OnAfterCutOrCopy(ui::CLIPBOARD_TYPE_SELECTION);
   }
@@ -2120,7 +2186,9 @@ void Textfield::UpdateAfterChange(bool text_changed, bool cursor_changed) {
   if (text_changed) {
     if (controller_)
       controller_->ContentsChanged(this, text());
+#if !defined(UI_VIEWS_NO_AX)
     NotifyAccessibilityEvent(ax::mojom::Event::kValueChanged, true);
+#endif // UI_VIEWS_NO_AX
   }
   if (cursor_changed) {
     UpdateCursorViewPosition();
@@ -2214,9 +2282,11 @@ void Textfield::OnCaretBoundsChanged() {
   if (touch_selection_controller_)
     touch_selection_controller_->SelectionChanged();
 
+#if !defined(UI_VIEWS_NO_AX)
   // Screen reader users don't expect notifications about unfocused textfields.
   if (HasFocus())
     NotifyAccessibilityEvent(ax::mojom::Event::kTextSelectionChanged, true);
+#endif // UI_VIEWS_NO_AX
 }
 
 void Textfield::OnBeforeUserAction() {
@@ -2269,6 +2339,8 @@ void Textfield::UpdateContextMenu() {
   context_menu_contents_.reset();
 
   context_menu_contents_ = std::make_unique<ui::SimpleMenuModel>(this);
+
+#if !defined(UI_VIEWS_PORT)
   context_menu_contents_->AddItemWithStringId(IDS_APP_UNDO, IDS_APP_UNDO);
   context_menu_contents_->AddSeparator(ui::NORMAL_SEPARATOR);
   context_menu_contents_->AddItemWithStringId(IDS_APP_CUT, IDS_APP_CUT);
@@ -2278,6 +2350,7 @@ void Textfield::UpdateContextMenu() {
   context_menu_contents_->AddSeparator(ui::NORMAL_SEPARATOR);
   context_menu_contents_->AddItemWithStringId(IDS_APP_SELECT_ALL,
                                               IDS_APP_SELECT_ALL);
+#endif // UI_VIEWS_PORT
 
   // If the controller adds menu commands, also override ExecuteCommand() and
   // IsCommandIdEnabled() as appropriate, for the commands added.

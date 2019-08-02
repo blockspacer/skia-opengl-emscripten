@@ -57,6 +57,7 @@ constexpr int kChangedButtonFlagMask =
     ui::EF_RIGHT_MOUSE_BUTTON | ui::EF_BACK_MOUSE_BUTTON |
     ui::EF_FORWARD_MOUSE_BUTTON;
 
+#if defined(ENABLE_LATENCY)
 SourceEventType EventTypeToLatencySourceEventType(EventType type) {
   switch (type) {
     case ET_UNKNOWN:
@@ -121,6 +122,7 @@ SourceEventType EventTypeToLatencySourceEventType(EventType type) {
   NOTREACHED();
   return SourceEventType::UNKNOWN;
 }
+#endif // ENABLE_LATENCY
 
 std::string MomentumPhaseToString(EventMomentumPhase phase) {
   switch (phase) {
@@ -320,8 +322,10 @@ Event::Event(EventType type, base::TimeTicks time_stamp, int flags)
       phase_(EP_PREDISPATCH),
       result_(ER_UNHANDLED),
       source_device_id_(ED_UNKNOWN_DEVICE) {
+#if defined(ENABLE_LATENCY)
   if (type_ < ET_LAST)
     latency()->set_source_event_type(EventTypeToLatencySourceEventType(type));
+#endif // ENABLE_LATENCY
 }
 
 Event::Event(const PlatformEvent& native_event, EventType type, int flags)
@@ -335,8 +339,10 @@ Event::Event(const PlatformEvent& native_event, EventType type, int flags)
       phase_(EP_PREDISPATCH),
       result_(ER_UNHANDLED),
       source_device_id_(ED_UNKNOWN_DEVICE) {
+#if defined(ENABLE_LATENCY)
   if (type_ < ET_LAST)
     latency()->set_source_event_type(EventTypeToLatencySourceEventType(type));
+#endif // ENABLE_LATENCY
   ComputeEventLatencyOS(native_event);
 
 #if defined(USE_X11)
@@ -355,7 +361,9 @@ Event::Event(const PlatformEvent& native_event, EventType type, int flags)
 Event::Event(const Event& copy)
     : type_(copy.type_),
       time_stamp_(copy.time_stamp_),
+#if defined(ENABLE_LATENCY)
       latency_(copy.latency_),
+#endif // ENABLE_LATENCY
       flags_(copy.flags_),
       native_event_(CopyNativeEvent(copy.native_event_)),
       delete_native_event_(true),
@@ -375,7 +383,9 @@ Event& Event::operator=(const Event& rhs) {
 
     type_ = rhs.type_;
     time_stamp_ = rhs.time_stamp_;
+#if defined(ENABLE_LATENCY)
     latency_ = rhs.latency_;
+#endif // ENABLE_LATENCY
     flags_ = rhs.flags_;
     native_event_ = CopyNativeEvent(rhs.native_event_);
     delete_native_event_ = true;
@@ -389,14 +399,18 @@ Event& Event::operator=(const Event& rhs) {
     else
       properties_.reset();
   }
+#if defined(ENABLE_LATENCY)
   latency_.set_source_event_type(ui::SourceEventType::OTHER);
+#endif // ENABLE_LATENCY
   return *this;
 }
 
 void Event::SetType(EventType type) {
   type_ = type;
+#if defined(ENABLE_LATENCY)
   if (type_ < ET_LAST)
     latency()->set_source_event_type(EventTypeToLatencySourceEventType(type));
+#endif // ENABLE_LATENCY
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -519,10 +533,12 @@ MouseEvent::MouseEvent(const PlatformEvent& native_event)
     : LocatedEvent(native_event),
       changed_button_flags_(GetChangedMouseButtonFlagsFromNative(native_event)),
       pointer_details_(GetMousePointerDetailsFromNative(native_event)) {
+#if defined(ENABLE_LATENCY)
   latency()->set_source_event_type(ui::SourceEventType::MOUSE);
   latency()->AddLatencyNumberWithTimestamp(
       INPUT_EVENT_LATENCY_ORIGINAL_COMPONENT, time_stamp(), 1);
   latency()->AddLatencyNumber(INPUT_EVENT_LATENCY_UI_COMPONENT);
+#endif // ENABLE_LATENCY
   if (type() == ET_MOUSE_PRESSED || type() == ET_MOUSE_RELEASED)
     SetClickCount(GetRepeatCount(*this));
 }
@@ -540,8 +556,10 @@ MouseEvent::MouseEvent(EventType type,
   DCHECK_NE(ET_MOUSEWHEEL, type);
   DCHECK_EQ(changed_button_flags_,
             changed_button_flags_ & kChangedButtonFlagMask);
+#if defined(ENABLE_LATENCY)
   latency()->set_source_event_type(ui::SourceEventType::MOUSE);
   latency()->AddLatencyNumber(INPUT_EVENT_LATENCY_UI_COMPONENT);
+#endif // ENABLE_LATENCY
   if (this->type() == ET_MOUSE_MOVED && IsAnyButton())
     SetType(ET_MOUSE_DRAGGED);
 }
@@ -758,9 +776,11 @@ TouchEvent::TouchEvent(const PlatformEvent& native_event)
       should_remove_native_touch_id_mapping_(false),
       hovering_(false),
       pointer_details_(GetTouchPointerDetailsFromNative(native_event)) {
+#if defined(ENABLE_LATENCY)
   latency()->AddLatencyNumberWithTimestamp(
       INPUT_EVENT_LATENCY_ORIGINAL_COMPONENT, time_stamp(), 1);
   latency()->AddLatencyNumber(INPUT_EVENT_LATENCY_UI_COMPONENT);
+#endif // ENABLE_LATENCY
 
   if (type() == ET_TOUCH_RELEASED || type() == ET_TOUCH_CANCELLED)
     should_remove_native_touch_id_mapping_ = true;
@@ -778,7 +798,9 @@ TouchEvent::TouchEvent(EventType type,
       should_remove_native_touch_id_mapping_(false),
       hovering_(false),
       pointer_details_(pointer_details) {
+#if defined(ENABLE_LATENCY)
   latency()->AddLatencyNumber(INPUT_EVENT_LATENCY_UI_COMPONENT);
+#endif // ENABLE_LATENCY
 }
 
 TouchEvent::TouchEvent(EventType type,
@@ -933,9 +955,11 @@ KeyEvent::KeyEvent(const PlatformEvent& native_event, int event_flags)
       key_code_(KeyboardCodeFromNative(native_event)),
       code_(CodeFromNative(native_event)),
       is_char_(IsCharFromNative(native_event)) {
+#if defined(ENABLE_LATENCY)
   latency()->AddLatencyNumberWithTimestamp(
       INPUT_EVENT_LATENCY_ORIGINAL_COMPONENT, time_stamp(), 1);
   latency()->AddLatencyNumber(INPUT_EVENT_LATENCY_UI_COMPONENT);
+#endif // ENABLE_LATENCY
 
   if (IsRepeated(*this))
     set_flags(flags() | ui::EF_IS_REPEAT);
@@ -1194,10 +1218,12 @@ ScrollEvent::ScrollEvent(const PlatformEvent& native_event)
     NOTREACHED() << "Unexpected event type " << type()
         << " when constructing a ScrollEvent.";
   }
+#if defined(ENABLE_LATENCY)
   if (IsScrollEvent())
     latency()->set_source_event_type(ui::SourceEventType::WHEEL);
   else
     latency()->set_source_event_type(ui::SourceEventType::TOUCH);
+#endif // ENABLE_LATENCY
 }
 
 ScrollEvent::ScrollEvent(EventType type,
@@ -1221,7 +1247,9 @@ ScrollEvent::ScrollEvent(EventType type,
       momentum_phase_(momentum_phase),
       scroll_event_phase_(scroll_event_phase) {
   CHECK(IsScrollEvent());
+#if defined(ENABLE_LATENCY)
   latency()->set_source_event_type(ui::SourceEventType::WHEEL);
+#endif // ENABLE_LATENCY
 }
 
 ScrollEvent::ScrollEvent(EventType type,
@@ -1286,11 +1314,15 @@ GestureEvent::GestureEvent(float x,
                    flags | EF_FROM_TOUCH),
       details_(details),
       unique_touch_event_id_(unique_touch_event_id) {
+#if defined(ENABLE_LATENCY)
   latency()->set_source_event_type(ui::SourceEventType::TOUCH);
+#endif // ENABLE_LATENCY
   // TODO(crbug.com/868056) Other touchpad gesture should report as TOUCHPAD.
   if (IsPinchEvent() &&
       details.device_type() == ui::GestureDeviceType::DEVICE_TOUCHPAD) {
+#if defined(ENABLE_LATENCY)
     latency()->set_source_event_type(ui::SourceEventType::TOUCHPAD);
+#endif // ENABLE_LATENCY
   }
 }
 

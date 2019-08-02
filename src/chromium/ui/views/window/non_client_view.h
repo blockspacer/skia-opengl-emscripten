@@ -88,7 +88,9 @@ class VIEWS_EXPORT NonClientFrameView : public View,
   virtual void PaintAsActiveChanged(bool active);
 
   // View:
+#if !defined(UI_VIEWS_NO_AX)
   void GetAccessibleNodeData(ui::AXNodeData* node_data) override;
+#endif // UI_VIEWS_NO_AX
   const char* GetClassName() const override;
   void OnThemeChanged() override;
 
@@ -216,7 +218,9 @@ class VIEWS_EXPORT NonClientView : public View, public ViewTargeterDelegate {
   gfx::Size GetMinimumSize() const override;
   gfx::Size GetMaximumSize() const override;
   void Layout() override;
+#if !defined(UI_VIEWS_NO_AX)
   void GetAccessibleNodeData(ui::AXNodeData* node_data) override;
+#endif // UI_VIEWS_NO_AX
   const char* GetClassName() const override;
 
   views::View* GetTooltipHandlerForPoint(const gfx::Point& point) override;

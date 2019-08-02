@@ -18,10 +18,14 @@
 #include "base/trace_event/trace_event.h"
 #include "build/build_config.h"
 #include "third_party/skia/include/core/SkRect.h"
+#if !defined(UI_VIEWS_NO_AX)
 #include "ui/accessibility/ax_action_data.h"
 #include "ui/accessibility/ax_enums.mojom.h"
+#endif // UI_VIEWS_NO_AX
 #include "ui/base/cursor/cursor.h"
+#if !defined(UI_VIEWS_PORT)
 #include "ui/base/dragdrop/drag_drop_types.h"
+#endif // UI_VIEWS_PORT
 #include "ui/base/ime/input_method.h"
 #include "ui/compositor/clip_recorder.h"
 #include "ui/compositor/compositor.h"
@@ -43,8 +47,10 @@
 #include "ui/gfx/skia_util.h"
 #include "ui/gfx/transform.h"
 #include "ui/native_theme/native_theme.h"
+#if !defined(UI_VIEWS_NO_AX)
 #include "ui/views/accessibility/ax_event_manager.h"
 #include "ui/views/accessibility/view_accessibility.h"
+#endif // UI_VIEWS_NO_AX
 #include "ui/views/background.h"
 #include "ui/views/border.h"
 #include "ui/views/context_menu_controller.h"
@@ -278,8 +284,10 @@ void View::SetBoundsRect(const gfx::Rect& bounds) {
   }
 
   OnBoundsChanged(prev);
+#if !defined(UI_VIEWS_NO_AX)
   if (bounds_ != prev)
     NotifyAccessibilityEvent(ax::mojom::Event::kLocationChanged, false);
+#endif // UI_VIEWS_NO_AX
 
   if (needs_layout_ || is_size_changed) {
     needs_layout_ = false;
@@ -435,11 +443,13 @@ void View::SetVisible(bool visible) {
     AdvanceFocusIfNecessary();
 
     // Notify the parent.
+#if !defined(UI_VIEWS_NO_AX)
     if (parent_) {
       parent_->ChildVisibilityChanged(this);
       parent_->NotifyAccessibilityEvent(ax::mojom::Event::kChildrenChanged,
                                         false);
     }
+#endif // UI_VIEWS_NO_AX
 
     // This notifies all sub-views recursively.
     PropagateVisibilityNotifications(this, visible_);
@@ -1008,7 +1018,11 @@ View* View::GetTooltipHandlerForPoint(const gfx::Point& point) {
   return this;
 }
 
+
 gfx::NativeCursor View::GetCursor(const ui::MouseEvent& event) {
+#if defined(UI_VIEWS_PORT)
+  return gfx::NativeCursor();
+#else
 #if defined(OS_WIN)
   static ui::Cursor arrow;
   if (!arrow.platform())
@@ -1017,6 +1031,7 @@ gfx::NativeCursor View::GetCursor(const ui::MouseEvent& event) {
 #else
   return gfx::kNullCursor;
 #endif
+#endif // UI_VIEWS_PORT
 }
 
 bool View::HitTestPoint(const gfx::Point& point) const {
@@ -1120,8 +1135,10 @@ void View::OnMouseEvent(ui::MouseEvent* event) {
       break;
 
     case ui::ET_MOUSE_ENTERED:
+#if !defined(UI_VIEWS_NO_AX)
       if (event->flags() & ui::EF_TOUCH_ACCESSIBILITY)
         NotifyAccessibilityEvent(ax::mojom::Event::kHover, true);
+#endif // UI_VIEWS_NO_AX
       OnMouseEntered(*event);
       break;
 
@@ -1371,34 +1388,41 @@ gfx::Point View::GetKeyboardContextMenuLocation() {
 }
 
 // Drag and drop ---------------------------------------------------------------
-
+#if !defined(UI_VIEWS_PORT)
 bool View::GetDropFormats(int* formats,
                           std::set<ui::ClipboardFormatType>* format_types) {
   return false;
 }
+#endif // UI_VIEWS_PORT
 
 bool View::AreDropTypesRequired() {
   return false;
 }
 
+#if !defined(UI_VIEWS_PORT)
 bool View::CanDrop(const OSExchangeData& data) {
   // TODO(sky): when I finish up migration, this should default to true.
   return false;
 }
+#endif // UI_VIEWS_PORT
 
+#if !defined(UI_VIEWS_PORT)
 void View::OnDragEntered(const ui::DropTargetEvent& event) {
 }
 
 int View::OnDragUpdated(const ui::DropTargetEvent& event) {
   return ui::DragDropTypes::DRAG_NONE;
 }
+#endif // UI_VIEWS_PORT
 
 void View::OnDragExited() {
 }
 
+#if !defined(UI_VIEWS_PORT)
 int View::OnPerformDrop(const ui::DropTargetEvent& event) {
   return ui::DragDropTypes::DRAG_NONE;
 }
+#endif // UI_VIEWS_PORT
 
 void View::OnDragDone() {
 }
@@ -1410,7 +1434,7 @@ bool View::ExceededDragThreshold(const gfx::Vector2d& delta) {
 }
 
 // Accessibility----------------------------------------------------------------
-
+#if !defined(UI_VIEWS_NO_AX)
 ViewAccessibility& View::GetViewAccessibility() {
   if (!view_accessibility_)
     view_accessibility_ = ViewAccessibility::Create(this);
@@ -1473,6 +1497,7 @@ void View::NotifyAccessibilityEvent(ax::mojom::Event event_type,
 }
 
 void View::OnAccessibilityEvent(ax::mojom::Event event_type) {}
+#endif // UI_VIEWS_NO_AX
 
 // Scrolling -------------------------------------------------------------------
 
@@ -1805,7 +1830,9 @@ void View::OnFocus() {
   // TODO(beng): Investigate whether it's possible for us to move this to
   //             Focus().
   // Notify assistive technologies of the focus change.
+#if !defined(UI_VIEWS_NO_AX)
   NotifyAccessibilityEvent(ax::mojom::Event::kFocus, true);
+#endif // UI_VIEWS_NO_AX
 }
 
 void View::OnBlur() {
@@ -1840,16 +1867,20 @@ void View::TooltipTextChanged() {
 
 // Drag and drop ---------------------------------------------------------------
 
+#if !defined(UI_VIEWS_PORT)
 int View::GetDragOperations(const gfx::Point& press_pt) {
   return drag_controller_ ?
       drag_controller_->GetDragOperationsForView(this, press_pt) :
       ui::DragDropTypes::DRAG_NONE;
 }
+#endif // UI_VIEWS_PORT
 
+#if !defined(UI_VIEWS_PORT)
 void View::WriteDragData(const gfx::Point& press_pt, OSExchangeData* data) {
   DCHECK(drag_controller_);
   drag_controller_->WriteDragDataForView(this, press_pt, data);
 }
+#endif // UI_VIEWS_PORT
 
 bool View::InDrag() const {
   const Widget* widget = GetWidget();
@@ -2504,11 +2535,13 @@ bool View::ProcessMousePressed(const ui::MouseEvent& event) {
     }
   }
 
+#if !defined(UI_VIEWS_PORT)
   // WARNING: we may have been deleted, don't use any View variables.
   if (drag_operations != ui::DragDropTypes::DRAG_NONE) {
     drag_info->PossibleDrag(event.location());
     return true;
   }
+#endif // UI_VIEWS_PORT
   return !!context_menu_controller || result;
 }
 
@@ -2522,11 +2555,13 @@ void View::ProcessMouseDragged(ui::MouseEvent* event) {
       (!drag_controller_ ||
        drag_controller_->CanStartDragForView(this, GetDragInfo()->start_pt,
                                              event->location()))) {
+#if !defined(UI_VIEWS_PORT)
     if (DoDrag(*event, GetDragInfo()->start_pt,
                ui::DragDropTypes::DRAG_EVENT_SOURCE_MOUSE)) {
       event->StopPropagation();
       return;
     }
+#endif // UI_VIEWS_PORT
   } else {
     if (OnMouseDragged(*event)) {
       event->SetHandled();
@@ -2698,6 +2733,7 @@ void View::UpdateTooltip() {
 
 // Drag and drop ---------------------------------------------------------------
 
+#if !defined(UI_VIEWS_PORT)
 bool View::DoDrag(const ui::LocatedEvent& event,
                   const gfx::Point& press_pt,
                   ui::DragDropTypes::DragEventSource source) {
@@ -2715,17 +2751,22 @@ bool View::DoDrag(const ui::LocatedEvent& event,
   if (widget->dragged_view())
     return false;
 
+#if !defined(UI_VIEWS_PORT)
   OSExchangeData data;
   WriteDragData(press_pt, &data);
+#endif // UI_VIEWS_PORT
 
   // Message the RootView to do the drag and drop. That way if we're removed
   // the RootView can detect it and avoid calling us back.
   gfx::Point widget_location(event.location());
   ConvertPointToWidget(this, &widget_location);
+#if !defined(UI_VIEWS_PORT)
   widget->RunShellDrag(this, data, widget_location, drag_operations, source);
+#endif // UI_VIEWS_PORT
   // WARNING: we may have been deleted.
   return true;
 }
+#endif // UI_VIEWS_PORT
 
 // This block requires the existence of METADATA_HEADER(View) in the class
 // declaration for View.

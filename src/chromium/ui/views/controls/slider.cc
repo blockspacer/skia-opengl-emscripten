@@ -16,7 +16,9 @@
 #include "third_party/skia/include/core/SkCanvas.h"
 #include "third_party/skia/include/core/SkColor.h"
 #include "third_party/skia/include/core/SkPaint.h"
+#if !defined(UI_VIEWS_NO_AX)
 #include "ui/accessibility/ax_node_data.h"
+#endif // UI_VIEWS_NO_AX
 #include "ui/base/resource/resource_bundle.h"
 #include "ui/events/event.h"
 #include "ui/gfx/canvas.h"
@@ -150,7 +152,9 @@ void Slider::SetValueInternal(float value, SliderChangeReason reason) {
   if (accessibility_events_enabled_) {
     if (GetWidget() && GetWidget()->IsVisible()) {
       DCHECK(!pending_accessibility_value_change_);
+#if !defined(UI_VIEWS_NO_AX)
       NotifyAccessibilityEvent(ax::mojom::Event::kValueChanged, true);
+#endif // UI_VIEWS_NO_AX
     } else {
       pending_accessibility_value_change_ = true;
     }
@@ -249,11 +253,13 @@ bool Slider::OnKeyPressed(const ui::KeyEvent& event) {
   return true;
 }
 
+#if !defined(UI_VIEWS_NO_AX)
 void Slider::GetAccessibleNodeData(ui::AXNodeData* node_data) {
   node_data->role = ax::mojom::Role::kSlider;
   node_data->SetValue(base::UTF8ToUTF16(
       base::StringPrintf("%d%%", static_cast<int>(value_ * 100 + 0.5))));
 }
+#endif // UI_VIEWS_NO_AX
 
 void Slider::OnPaint(gfx::Canvas* canvas) {
   // Paint the slider.
@@ -332,7 +338,9 @@ void Slider::NotifyPendingAccessibilityValueChanged() {
   if (!pending_accessibility_value_change_)
     return;
 
+#if !defined(UI_VIEWS_NO_AX)
   NotifyAccessibilityEvent(ax::mojom::Event::kValueChanged, true);
+#endif // UI_VIEWS_NO_AX
   pending_accessibility_value_change_ = false;
 }
 

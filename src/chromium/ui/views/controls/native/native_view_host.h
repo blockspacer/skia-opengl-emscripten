@@ -95,7 +95,9 @@ class VIEWS_EXPORT NativeViewHost : public View {
   void OnPaint(gfx::Canvas* canvas) override;
   void VisibilityChanged(View* starting_from, bool is_visible) override;
   void OnFocus() override;
+#if !defined(UI_VIEWS_NO_AX)
   gfx::NativeViewAccessible GetNativeViewAccessible() override;
+#endif // UI_VIEWS_NO_AX
   gfx::NativeCursor GetCursor(const ui::MouseEvent& event) override;
   void SetVisible(bool visible) override;
 

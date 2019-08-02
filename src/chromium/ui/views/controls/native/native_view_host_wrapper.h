@@ -89,7 +89,9 @@ class NativeViewHostWrapper {
 
   // Return the native view accessible corresponding to the wrapped native
   // view.
+#if !defined(UI_VIEWS_NO_AX)
   virtual gfx::NativeViewAccessible GetNativeViewAccessible() = 0;
+#endif // UI_VIEWS_NO_AX
 
   // Returns the native cursor corresponding to the point (x, y)
   // in the native view.

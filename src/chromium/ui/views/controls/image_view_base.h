@@ -52,7 +52,9 @@ class VIEWS_EXPORT ImageViewBase : public View {
 
   // Overridden from View:
   void OnPaint(gfx::Canvas* canvas) override = 0;
+#if !defined(UI_VIEWS_NO_AX)
   void GetAccessibleNodeData(ui::AXNodeData* node_data) override;
+#endif // UI_VIEWS_NO_AX
   const char* GetClassName() const override = 0;
   base::string16 GetTooltipText(const gfx::Point& p) const override;
   gfx::Size CalculatePreferredSize() const override;

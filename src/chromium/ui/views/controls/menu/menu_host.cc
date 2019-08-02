@@ -80,6 +80,7 @@ class PreMenuEventDispatchHandler : public ui::EventHandler,
 #endif  // OS_MACOSX
 
 void TransferGesture(Widget* source, Widget* target) {
+#if !defined(UI_VIEWS_PORT)
 #if defined(OS_MACOSX)
   NOTIMPLEMENTED();
 #else   // !defined(OS_MACOSX)
@@ -87,6 +88,7 @@ void TransferGesture(Widget* source, Widget* target) {
       source->GetNativeView(), target->GetNativeView(),
       ui::TransferTouchesBehavior::kDontCancel);
 #endif  // defined(OS_MACOSX)
+#endif // UI_VIEWS_PORT
 }
 
 }  // namespace internal
@@ -138,11 +140,13 @@ void MenuHost::InitMenuHost(Widget* parent,
 #endif
   Init(params);
 
+#if !defined(UI_VIEWS_PORT)
 #if !defined(OS_MACOSX)
   pre_dispatch_handler_ =
       std::make_unique<internal::PreMenuEventDispatchHandler>(
           menu_controller, submenu_, GetNativeView());
 #endif
+#endif // UI_VIEWS_PORT
 
   DCHECK(!owner_);
   owner_ = parent;
@@ -203,9 +207,13 @@ void MenuHost::DestroyMenuHost() {
   HideMenuHost();
   destroying_ = true;
   static_cast<MenuHostRootView*>(GetRootView())->ClearSubmenu();
+
+#if !defined(UI_VIEWS_PORT)
 #if !defined(OS_MACOSX)
   pre_dispatch_handler_.reset();
 #endif
+#endif // UI_VIEWS_PORT
+
   Close();
 }
 

@@ -9,8 +9,10 @@
 #include "base/bind.h"
 #include "base/logging.h"
 #include "build/build_config.h"
+#if !defined(UI_VIEWS_NO_AX)
 #include "ui/accessibility/ax_action_data.h"
 #include "ui/accessibility/ax_node_data.h"
+#endif // UI_VIEWS_NO_AX
 #include "ui/base/ime/input_method.h"
 #include "ui/base/models/combobox_model.h"
 #include "ui/base/models/combobox_model_observer.h"
@@ -491,6 +493,7 @@ void Combobox::OnBlur() {
   SchedulePaint();
 }
 
+#if !defined(UI_VIEWS_NO_AX)
 void Combobox::GetAccessibleNodeData(ui::AXNodeData* node_data) {
   // ax::mojom::Role::kComboBox is for UI elements with a dropdown and
   // an editable text field, which views::Combobox does not have. Use
@@ -522,6 +525,7 @@ bool Combobox::HandleAccessibleAction(const ui::AXActionData& action_data) {
   }
   return View::HandleAccessibleAction(action_data);
 }
+#endif // UI_VIEWS_NO_AX
 
 void Combobox::ButtonPressed(Button* sender, const ui::Event& event) {
   if (!enabled())
@@ -631,7 +635,9 @@ void Combobox::OnMenuClosed(Button::ButtonState original_button_state) {
 }
 
 void Combobox::OnPerformAction() {
+#if !defined(UI_VIEWS_NO_AX)
   NotifyAccessibilityEvent(ax::mojom::Event::kValueChanged, true);
+#endif // UI_VIEWS_NO_AX
   SchedulePaint();
 
   if (listener_)

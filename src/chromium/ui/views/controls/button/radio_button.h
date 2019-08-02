@@ -24,7 +24,9 @@ class VIEWS_EXPORT RadioButton : public Checkbox {
 
   // Overridden from View:
   const char* GetClassName() const override;
+#if !defined(UI_VIEWS_NO_AX)
   void GetAccessibleNodeData(ui::AXNodeData* node_data) override;
+#endif // UI_VIEWS_NO_AX
   View* GetSelectedViewForGroup(int group) override;
   bool IsGroupFocusTraversable() const override;
   void OnFocus() override;
@@ -38,7 +40,11 @@ class VIEWS_EXPORT RadioButton : public Checkbox {
 
   // Overridden from Checkbox:
   void SetChecked(bool checked) override;
+
+#if !defined(UI_VIEWS_PORT)
   const gfx::VectorIcon& GetVectorIcon() const override;
+#endif // UI_VIEWS_PORT
+
   SkPath GetFocusRingPath() const override;
 
  private:

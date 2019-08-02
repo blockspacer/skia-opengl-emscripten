@@ -230,7 +230,9 @@ class VIEWS_EXPORT Label : public View,
   View* GetTooltipHandlerForPoint(const gfx::Point& point) override;
   bool CanProcessEventsWithinSubtree() const override;
   WordLookupClient* GetWordLookupClient() override;
+#if !defined(UI_VIEWS_NO_AX)
   void GetAccessibleNodeData(ui::AXNodeData* node_data) override;
+#endif // UI_VIEWS_NO_AX
   base::string16 GetTooltipText(const gfx::Point& p) const override;
 
  protected:

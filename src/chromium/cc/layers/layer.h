@@ -18,7 +18,9 @@
 #include "base/memory/ref_counted.h"
 #include "base/observer_list.h"
 #include "cc/base/region.h"
+#if defined(ENABLE_CC_BENCH)
 #include "cc/benchmarks/micro_benchmark.h"
+#endif // ENABLE_CC_BENCH
 #include "cc/cc_export.h"
 #include "cc/input/input_handler.h"
 #include "cc/input/overscroll_behavior.h"
@@ -658,7 +660,9 @@ class CC_EXPORT Layer : public base::RefCounted<Layer> {
   // only exist for subclass layer types. For each subclass that the
   // MicroBenchmark supports, the class should override this method and run the
   // |benchmark| against this layer.
+#if defined(ENABLE_CC_BENCH)
   virtual void RunMicroBenchmark(MicroBenchmark* benchmark);
+#endif // ENABLE_CC_BENCH
 
   // Internal method to create the compositor thread type for this Layer.
   // Subclasses should override this method if they want to return their own

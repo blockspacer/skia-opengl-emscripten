@@ -77,7 +77,7 @@ struct COMPONENT_EXPORT(BASE_CLIPBOARD_TYPES) ClipboardFormatType {
 
 #if defined(OS_WIN)
   const FORMATETC& ToFormatEtc() const { return data_; }
-#elif defined(USE_AURA) || defined(OS_ANDROID) || defined(OS_FUCHSIA)
+#elif defined(USE_AURA) || defined(OS_ANDROID) || defined(OS_FUCHSIA) || defined(UI_BASE_PORT)
   const std::string& ToString() const { return data_; }
 #elif defined(OS_MACOSX)
   NSString* ToNSString() const { return data_; }
@@ -120,6 +120,10 @@ struct COMPONENT_EXPORT(BASE_CLIPBOARD_TYPES) ClipboardFormatType {
 #elif defined(OS_MACOSX)
   explicit ClipboardFormatType(NSString* native_format);
   NSString* data_;
+
+#elif defined(UI_BASE_PORT)
+explicit ClipboardFormatType(const std::string& native_format);
+  std::string data_;
 #else
 #error No ClipboardFormatType definition.
 #endif

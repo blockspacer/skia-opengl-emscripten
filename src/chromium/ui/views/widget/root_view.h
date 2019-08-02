@@ -118,7 +118,9 @@ class VIEWS_EXPORT RootView : public View,
   void OnMouseExited(const ui::MouseEvent& event) override;
   bool OnMouseWheel(const ui::MouseWheelEvent& event) override;
   void SetMouseHandler(View* new_mouse_handler) override;
+#if !defined(UI_VIEWS_NO_AX)
   void GetAccessibleNodeData(ui::AXNodeData* node_data) override;
+#endif // UI_VIEWS_NO_AX
   void UpdateParentLayer() override;
 
  protected:

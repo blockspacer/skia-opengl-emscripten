@@ -35,7 +35,9 @@
 #include "third_party/skia/include/core/SkUnPreMultiply.h"
 #include "ui/base/clipboard/clipboard.h"
 #include "ui/base/clipboard/clipboard_constants.h"
+#if !defined(UI_VIEWS_PORT)
 #include "ui/base/clipboard/scoped_clipboard_writer.h"
+#endif // UI_VIEWS_PORT
 #include "ui/base/clipboard/test/test_clipboard.h"
 #include "ui/gfx/geometry/size.h"
 #include "ui/gfx/half_float.h"

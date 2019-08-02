@@ -54,7 +54,9 @@ class VIEWS_EXPORT MenuButtonController : public ButtonController {
   bool OnKeyPressed(const ui::KeyEvent& event) override;
   bool OnKeyReleased(const ui::KeyEvent& event) override;
   void OnGestureEvent(ui::GestureEvent* event) override;
+#if !defined(UI_VIEWS_NO_AX)
   void UpdateAccessibleNodeData(ui::AXNodeData* node_data) override;
+#endif // UI_VIEWS_NO_AX
   void OnStateChanged(Button::ButtonState old_state) override;
   bool IsTriggerableEvent(const ui::Event& event) override;
 

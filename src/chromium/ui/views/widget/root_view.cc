@@ -9,9 +9,13 @@
 #include "base/logging.h"
 #include "base/macros.h"
 #include "build/build_config.h"
+#if !defined(UI_VIEWS_NO_AX)
 #include "ui/accessibility/ax_node_data.h"
+#endif // UI_VIEWS_NO_AX
 #include "ui/base/cursor/cursor.h"
+#if !defined(UI_VIEWS_PORT)
 #include "ui/base/dragdrop/drag_drop_types.h"
+#endif // UI_VIEWS_PORT
 #include "ui/base/ui_base_switches_util.h"
 #include "ui/compositor/layer.h"
 #include "ui/events/event.h"
@@ -117,11 +121,13 @@ class PostEventDispatchHandler : public ui::EventHandler {
         (!target->drag_controller() ||
          target->drag_controller()->CanStartDragForView(
              target, location, location))) {
+#if !defined(UI_VIEWS_PORT)
       if (target->DoDrag(*event, location,
           ui::DragDropTypes::DRAG_EVENT_SOURCE_TOUCH)) {
         event->StopPropagation();
         return;
       }
+#endif // UI_VIEWS_PORT
     }
 
     if (target->context_menu_controller() &&
@@ -554,8 +560,10 @@ void RootView::OnMouseMoved(const ui::MouseEvent& event) {
     // On Aura the non-client area extends slightly outside the root view for
     // some windows.  Let the non-client cursor handling code set the cursor
     // as we do above.
+#if !defined(UI_VIEWS_PORT)
     if (!(event.flags() & ui::EF_IS_NON_CLIENT))
       widget_->SetCursor(gfx::kNullCursor);
+#endif // UI_VIEWS_PORT
     mouse_move_handler_ = nullptr;
   }
 }
@@ -601,10 +609,12 @@ void RootView::SetMouseHandler(View* new_mh) {
   drag_info_.Reset();
 }
 
+#if !defined(UI_VIEWS_NO_AX)
 void RootView::GetAccessibleNodeData(ui::AXNodeData* node_data) {
   node_data->SetName(widget_->widget_delegate()->GetAccessibleWindowTitle());
   node_data->role = widget_->widget_delegate()->GetAccessibleWindowRole();
 }
+#endif // UI_VIEWS_NO_AX
 
 void RootView::UpdateParentLayer() {
   if (layer())

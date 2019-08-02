@@ -44,7 +44,9 @@
 #include "ui/events/test/event_generator.h"
 #include "ui/events/test/keyboard_layout.h"
 #include "ui/gfx/render_text.h"
+#if !defined(UI_VIEWS_PORT)
 #include "ui/strings/grit/ui_strings.h"
+#endif // UI_VIEWS_PORT
 #include "ui/views/controls/textfield/textfield_controller.h"
 #include "ui/views/controls/textfield/textfield_model.h"
 #include "ui/views/controls/textfield/textfield_test_api.h"

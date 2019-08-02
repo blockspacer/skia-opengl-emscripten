@@ -4,7 +4,9 @@
 
 #include "ui/views/controls/textfield/textfield_controller.h"
 
+#if !defined(UI_VIEWS_PORT)
 #include "ui/base/dragdrop/drag_drop_types.h"
+#endif // UI_VIEWS_PORT
 #include "ui/events/event.h"
 
 namespace views {
@@ -25,8 +27,10 @@ bool TextfieldController::HandleGestureEvent(
   return false;
 }
 
+#if !defined(UI_VIEWS_PORT)
 int TextfieldController::OnDrop(const ui::OSExchangeData& data) {
   return ui::DragDropTypes::DRAG_NONE;
 }
+#endif // UI_VIEWS_PORT
 
 }  // namespace views

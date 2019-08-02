@@ -14,8 +14,10 @@
 #include "base/i18n/case_conversion.h"
 #include "base/macros.h"
 #include "base/strings/utf_string_conversions.h"
+#if !defined(UI_VIEWS_NO_AX)
 #include "ui/accessibility/ax_action_data.h"
 #include "ui/accessibility/ax_node_data.h"
+#endif // UI_VIEWS_NO_AX
 #include "ui/base/l10n/l10n_util.h"
 #include "ui/base/models/menu_model.h"
 #include "ui/base/ui_base_features.h"
@@ -30,7 +32,9 @@
 #include "ui/gfx/paint_vector_icon.h"
 #include "ui/gfx/text_utils.h"
 #include "ui/native_theme/common_theme.h"
+#if !defined(UI_VIEWS_PORT)
 #include "ui/strings/grit/ui_strings.h"
+#endif // UI_VIEWS_PORT
 #include "ui/views/controls/button/menu_button.h"
 #include "ui/views/controls/image_view.h"
 #include "ui/views/controls/menu/menu_config.h"
@@ -59,7 +63,11 @@ class EmptyMenuMenuItem : public MenuItemView {
       : MenuItemView(parent, 0, EMPTY) {
     // Set this so that we're not identified as a normal menu item.
     SetID(kEmptyMenuItemViewID);
+
+#if !defined(UI_VIEWS_PORT)
     SetTitle(l10n_util::GetStringUTF16(IDS_APP_MENU_EMPTY_SUBMENU));
+#endif // UI_VIEWS_PORT
+
     SetEnabled(false);
   }
 
@@ -161,6 +169,7 @@ base::string16 MenuItemView::GetTooltipText(const gfx::Point& p) const {
   return delegate->GetTooltipText(command_, location);
 }
 
+#if !defined(UI_VIEWS_NO_AX)
 void MenuItemView::GetAccessibleNodeData(ui::AXNodeData* node_data) {
   // Set the role based on the type of menu item.
   switch (type_) {
@@ -231,6 +240,7 @@ bool MenuItemView::HandleAccessibleAction(const ui::AXActionData& action_data) {
   GetMenuController()->OnWillDispatchKeyEvent(&event);
   return true;
 }
+#endif // UI_VIEWS_NO_AX
 
 // static
 bool MenuItemView::IsBubble(MenuAnchorPosition anchor) {
@@ -1107,6 +1117,7 @@ void MenuItemView::PaintMinorIconAndText(
     render_text->Draw(canvas);
   }
 
+#if !defined(UI_VIEWS_PORT)
   if (minor_icon) {
     gfx::ImageSkia image = CreateVectorIcon(*minor_icon, style.foreground);
 
@@ -1120,6 +1131,7 @@ void MenuItemView::PaintMinorIconAndText(
     canvas->DrawImageInt(
         image, GetMirroredXWithWidthInView(image_x, image.width()), image_y);
   }
+#endif // UI_VIEWS_PORT
 }
 
 SkColor MenuItemView::GetTextColor(bool minor, bool render_selection) const {

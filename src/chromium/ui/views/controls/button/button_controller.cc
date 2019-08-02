@@ -4,7 +4,9 @@
 
 #include "ui/views/controls/button/button_controller.h"
 
+#if !defined(UI_VIEWS_NO_AX)
 #include "ui/accessibility/ax_node_data.h"
+#endif // UI_VIEWS_NO_AX
 #include "ui/views/animation/ink_drop.h"
 #include "ui/views/controls/button/button_controller_delegate.h"
 
@@ -131,7 +133,9 @@ void ButtonController::OnGestureEvent(ui::GestureEvent* event) {
   }
 }
 
+#if !defined(UI_VIEWS_NO_AX)
 void ButtonController::UpdateAccessibleNodeData(ui::AXNodeData* node_data) {}
+#endif // UI_VIEWS_NO_AX
 
 void ButtonController::OnStateChanged(Button::ButtonState old_state) {}
 

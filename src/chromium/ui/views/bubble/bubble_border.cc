@@ -18,10 +18,14 @@
 #include "ui/gfx/scoped_canvas.h"
 #include "ui/gfx/shadow_value.h"
 #include "ui/gfx/skia_paint_util.h"
+#if !defined(UI_VIEWS_PORT)
 #include "ui/resources/grit/ui_resources.h"
+#endif // UI_VIEWS_PORT
 #include "ui/views/layout/layout_provider.h"
 #include "ui/views/painter.h"
+#if !defined(UI_VIEWS_PORT)
 #include "ui/views/resources/grit/views_resources.h"
+#endif // UI_VIEWS_PORT
 #include "ui/views/view.h"
 
 namespace views {

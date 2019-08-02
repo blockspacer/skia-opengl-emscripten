@@ -193,7 +193,9 @@ class VIEWS_EXPORT Button : public InkDropHostView,
   // Instead of overriding this, subclasses that want custom painting should use
   // PaintButtonContents.
   void OnPaint(gfx::Canvas* canvas) final;
+#if !defined(UI_VIEWS_NO_AX)
   void GetAccessibleNodeData(ui::AXNodeData* node_data) override;
+#endif // UI_VIEWS_NO_AX
   void VisibilityChanged(View* starting_from, bool is_visible) override;
   void ViewHierarchyChanged(
       const ViewHierarchyChangedDetails& details) override;

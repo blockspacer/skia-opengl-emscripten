@@ -158,7 +158,9 @@ class VIEWS_EXPORT ToggleImageButton : public ImageButton {
 
   // Overridden from View:
   base::string16 GetTooltipText(const gfx::Point& p) const override;
+#if !defined(UI_VIEWS_NO_AX)
   void GetAccessibleNodeData(ui::AXNodeData* node_data) override;
+#endif // UI_VIEWS_NO_AX
 
   bool toggled_for_testing() const;
 

@@ -53,7 +53,9 @@ class VIEWS_EXPORT ToggleButton : public Button {
   bool CanAcceptEvent(const ui::Event& event) override;
   void OnBoundsChanged(const gfx::Rect& previous_bounds) override;
   void OnThemeChanged() override;
+#if !defined(UI_VIEWS_NO_AX)
   void GetAccessibleNodeData(ui::AXNodeData* node_data) override;
+#endif // UI_VIEWS_NO_AX
   void OnFocus() override;
   void OnBlur() override;
 

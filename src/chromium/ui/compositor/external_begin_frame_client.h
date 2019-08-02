@@ -5,7 +5,9 @@
 #ifndef UI_COMPOSITOR_EXTERNAL_BEGIN_FRAME_CLIENT_H_
 #define UI_COMPOSITOR_EXTERNAL_BEGIN_FRAME_CLIENT_H_
 
+#if defined(COMPOSITOR_PORTED)
 #include "components/viz/common/frame_sinks/begin_frame_args.h"
+#endif // COMPOSITOR_PORTED
 #include "ui/compositor/compositor_export.h"
 
 namespace ui {

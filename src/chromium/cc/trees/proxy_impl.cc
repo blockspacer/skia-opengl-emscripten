@@ -14,7 +14,9 @@
 #include "base/trace_event/trace_event.h"
 #include "base/trace_event/traced_value.h"
 #include "cc/base/devtools_instrumentation.h"
+#if defined(ENABLE_CC_BENCH)
 #include "cc/benchmarks/benchmark_instrumentation.h"
+#endif // ENABLE_CC_BENCH
 #include "cc/input/browser_controls_offset_manager.h"
 #include "cc/paint/paint_worklet_layer_painter.h"
 #include "cc/scheduler/compositor_timing_history.h"
@@ -28,7 +30,9 @@
 #include "components/viz/common/frame_sinks/delay_based_time_source.h"
 #include "components/viz/common/gpu/context_provider.h"
 #include "gpu/command_buffer/client/gles2_interface.h"
+#if defined(ENABLE_UKM)
 #include "services/metrics/public/cpp/ukm_recorder.h"
+#endif // ENABLE_UKM
 #include "ui/gfx/presentation_feedback.h"
 
 namespace cc {
@@ -394,11 +398,12 @@ void ProxyImpl::RenewTreePriority() {
       host_impl_->pinch_gesture_active() ||
       host_impl_->page_scale_animation_active() ||
       host_impl_->IsActivelyScrolling();
-
+#if defined(ENABLE_UKM)
   if (host_impl_->ukm_manager()) {
     host_impl_->ukm_manager()->SetUserInteractionInProgress(
         user_interaction_in_progress);
   }
+#endif // ENABLE_UKM
 
   // Schedule expiration if smoothness currently takes priority.
   if (user_interaction_in_progress)
@@ -543,8 +548,10 @@ void ProxyImpl::ScheduledActionSendBeginMainFrame(
     const viz::BeginFrameArgs& args) {
   DCHECK(IsImplThread());
   unsigned int begin_frame_id = nextBeginFrameId++;
+#if defined(ENABLE_CC_BENCH)
   benchmark_instrumentation::ScopedBeginFrameTask begin_frame_task(
       benchmark_instrumentation::kSendBeginFrame, begin_frame_id);
+#endif // ENABLE_CC_BENCH
   std::unique_ptr<BeginMainFrameAndCommitState> begin_main_frame_state(
       new BeginMainFrameAndCommitState);
   begin_main_frame_state->begin_frame_id = begin_frame_id;
@@ -745,10 +752,12 @@ base::SingleThreadTaskRunner* ProxyImpl::MainThreadTaskRunner() {
   return task_runner_provider_->MainThreadTaskRunner();
 }
 
+#if defined(ENABLE_UKM)
 void ProxyImpl::SetSourceURL(ukm::SourceId source_id, const GURL& url) {
   DCHECK(IsImplThread());
   host_impl_->SetActiveURL(url, source_id);
 }
+#endif // ENABLE_UKM
 
 void ProxyImpl::ClearHistory() {
   DCHECK(IsImplThread());

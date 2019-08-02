@@ -150,11 +150,13 @@ class VIEWS_EXPORT NativeWidgetMac : public internal::NativeWidgetPrivate {
   void SetOpacity(float opacity) override;
   void SetAspectRatio(const gfx::SizeF& aspect_ratio) override;
   void FlashFrame(bool flash_frame) override;
+#if !defined(UI_VIEWS_PORT)
   void RunShellDrag(View* view,
                     const ui::OSExchangeData& data,
                     const gfx::Point& location,
                     int operation,
                     ui::DragDropTypes::DragEventSource source) override;
+#endif // UI_VIEWS_PORT
   void SchedulePaintInRect(const gfx::Rect& rect) override;
   void ScheduleLayout() override;
   void SetCursor(gfx::NativeCursor cursor) override;

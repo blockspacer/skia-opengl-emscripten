@@ -44,7 +44,9 @@ class DefaultThemeProvider;
 class GestureRecognizer;
 class InputMethod;
 class Layer;
+#if !defined(UI_VIEWS_PORT)
 class OSExchangeData;
+#endif // UI_VIEWS_PORT
 class ThemeProvider;
 }  // namespace ui
 
@@ -625,6 +627,7 @@ class VIEWS_EXPORT Widget : public internal::NativeWidgetDelegate,
   // Returns the ui::InputMethod for this widget.
   ui::InputMethod* GetInputMethod();
 
+#if !defined(UI_VIEWS_PORT)
   // Starts a drag operation for the specified view. This blocks until the drag
   // operation completes. |view| can be NULL.
   // If the view is non-NULL it can be accessed during the drag by calling
@@ -636,6 +639,7 @@ class VIEWS_EXPORT Widget : public internal::NativeWidgetDelegate,
                     const gfx::Point& location,
                     int operation,
                     ui::DragDropTypes::DragEventSource source);
+#endif // UI_VIEWS_PORT
 
   // Returns the view that requested the current drag operation via
   // RunShellDrag(), or NULL if there is no such view or drag operation.

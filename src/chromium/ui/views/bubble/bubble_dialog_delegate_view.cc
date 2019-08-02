@@ -8,7 +8,9 @@
 #include "base/feature_list.h"
 #include "base/metrics/histogram_macros.h"
 #include "build/build_config.h"
+#if !defined(UI_VIEWS_NO_AX)
 #include "ui/accessibility/ax_node_data.h"
+#endif // UI_VIEWS_NO_AX
 #include "ui/base/default_style.h"
 #include "ui/base/resource/resource_bundle.h"
 #include "ui/gfx/color_utils.h"
@@ -348,6 +350,7 @@ gfx::Rect BubbleDialogDelegateView::GetBubbleBounds() {
       adjust_if_offscreen_ && !anchor_minimized && has_anchor);
 }
 
+#if !defined(UI_VIEWS_NO_AX)
 ax::mojom::Role BubbleDialogDelegateView::GetAccessibleWindowRole() {
   // If something in the dialog has initial focus, use the dialog role.
   // Screen readers understand what to announce when focus moves within one.
@@ -359,6 +362,7 @@ ax::mojom::Role BubbleDialogDelegateView::GetAccessibleWindowRole() {
   // as long as we also fire |ax::mojom::Event::kAlert|.
   return ax::mojom::Role::kAlertDialog;
 }
+#endif // UI_VIEWS_NO_AX
 
 void BubbleDialogDelegateView::OnPaintAsActiveChanged(bool paint_as_active) {
   if (!paint_as_active) {
@@ -496,6 +500,7 @@ void BubbleDialogDelegateView::HandleVisibilityChanged(Widget* widget,
   // ax::mojom::Role::kAlertDialog; this instructs accessibility tools to read
   // the bubble in its entirety rather than just its title and initially focused
   // view.  See http://crbug.com/474622 for details.
+#if !defined(UI_VIEWS_NO_AX)
   if (widget == GetWidget() && visible) {
     if (GetAccessibleWindowRole() == ax::mojom::Role::kAlert ||
         GetAccessibleWindowRole() == ax::mojom::Role::kAlertDialog) {
@@ -503,6 +508,7 @@ void BubbleDialogDelegateView::HandleVisibilityChanged(Widget* widget,
                                                       true);
     }
   }
+#endif // UI_VIEWS_NO_AX
 }
 
 void BubbleDialogDelegateView::OnDeactivate() {

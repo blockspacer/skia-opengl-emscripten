@@ -8,14 +8,19 @@
 
 #include <utility>
 
+#if !defined(UI_VIEWS_NO_AX)
 #include "ui/accessibility/ax_node_data.h"
+#endif // UI_VIEWS_NO_AX
+
 #include "ui/base/resource/resource_bundle.h"
 #include "ui/gfx/canvas.h"
 #include "ui/gfx/color_palette.h"
 #include "ui/gfx/color_utils.h"
 #include "ui/gfx/paint_vector_icon.h"
 #include "ui/native_theme/native_theme.h"
+#if !defined(UI_VIEWS_NO_AX)
 #include "ui/views/accessibility/view_accessibility.h"
+#endif // UI_VIEWS_NO_AX
 #include "ui/views/animation/ink_drop_impl.h"
 #include "ui/views/animation/ink_drop_mask.h"
 #include "ui/views/animation/ink_drop_ripple.h"
@@ -23,10 +28,14 @@
 #include "ui/views/controls/focus_ring.h"
 #include "ui/views/layout/layout_provider.h"
 #include "ui/views/painter.h"
+#if !defined(UI_VIEWS_PORT)
 #include "ui/views/resources/grit/views_resources.h"
+#endif // UI_VIEWS_PORT
 #include "ui/views/style/platform_style.h"
 #include "ui/views/style/typography.h"
+#if !defined(UI_VIEWS_PORT)
 #include "ui/views/vector_icons.h"
+#endif // UI_VIEWS_PORT
 
 namespace views {
 
@@ -56,7 +65,9 @@ Checkbox::~Checkbox() = default;
 void Checkbox::SetChecked(bool checked) {
   if (checked_ != checked) {
     checked_ = checked;
+#if !defined(UI_VIEWS_NO_AX)
     NotifyAccessibilityEvent(ax::mojom::Event::kCheckedStateChanged, true);
+#endif // UI_VIEWS_NO_AX
   }
   UpdateImage();
 }
@@ -66,6 +77,7 @@ void Checkbox::SetMultiLine(bool multi_line) {
 }
 
 void Checkbox::SetAssociatedLabel(View* labelling_view) {
+#if !defined(UI_VIEWS_NO_AX)
   DCHECK(labelling_view);
   label_ax_id_ = labelling_view->GetViewAccessibility().GetUniqueId().Get();
   ui::AXNodeData node_data;
@@ -75,12 +87,14 @@ void Checkbox::SetAssociatedLabel(View* labelling_view) {
   // associated label changes.
   SetAccessibleName(
       node_data.GetString16Attribute(ax::mojom::StringAttribute::kName));
+#endif // UI_VIEWS_NO_AX
 }
 
 const char* Checkbox::GetClassName() const {
   return kViewClassName;
 }
 
+#if !defined(UI_VIEWS_NO_AX)
 void Checkbox::GetAccessibleNodeData(ui::AXNodeData* node_data) {
   LabelButton::GetAccessibleNodeData(node_data);
   node_data->role = ax::mojom::Role::kCheckBox;
@@ -100,6 +114,7 @@ void Checkbox::GetAccessibleNodeData(ui::AXNodeData* node_data) {
                                    {label_ax_id_});
   }
 }
+#endif // UI_VIEWS_NO_AX
 
 void Checkbox::OnThemeChanged() {
   LabelButton::OnThemeChanged();
@@ -134,8 +149,13 @@ SkColor Checkbox::GetInkDropBaseColor() const {
 gfx::ImageSkia Checkbox::GetImage(ButtonState for_state) const {
   const int checked = checked_ ? IconState::CHECKED : 0;
   const int enabled = for_state != STATE_DISABLED ? IconState::ENABLED : 0;
+
+#if !defined(UI_VIEWS_PORT)
   return gfx::CreateVectorIcon(GetVectorIcon(), 16,
                                GetIconImageColor(checked | enabled));
+#else
+  return gfx::ImageSkia();
+#endif // UI_VIEWS_PORT
 }
 
 std::unique_ptr<LabelButtonBorder> Checkbox::CreateDefaultBorder() const {
@@ -160,9 +180,12 @@ SkPath Checkbox::GetFocusRingPath() const {
   return path;
 }
 
+#if !defined(UI_VIEWS_PORT)
 const gfx::VectorIcon& Checkbox::GetVectorIcon() const {
   return checked() ? kCheckboxActiveIcon : kCheckboxNormalIcon;
+  return gfx::VectorIcon();
 }
+#endif // UI_VIEWS_PORT
 
 SkColor Checkbox::GetIconImageColor(int icon_state) const {
   const SkColor active_color = GetNativeTheme()->GetSystemColor(

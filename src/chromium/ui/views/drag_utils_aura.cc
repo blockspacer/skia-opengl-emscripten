@@ -11,6 +11,7 @@
 
 namespace views {
 
+#if !defined(UI_VIEWS_PORT)
 void RunShellDrag(gfx::NativeView view,
                   const ui::OSExchangeData& data,
                   const gfx::Point& location,
@@ -24,5 +25,6 @@ void RunShellDrag(gfx::NativeView view,
         data, root_window, view, screen_location, operation, source);
   }
 }
+#endif // UI_VIEWS_PORT
 
 }  // namespace views

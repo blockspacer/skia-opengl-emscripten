@@ -18,7 +18,9 @@ class TabbedPaneListener;
 class TabStrip;
 
 namespace test {
+#if !defined(UI_VIEWS_NO_AX)
 class TabbedPaneAccessibilityMacTest;
+#endif // UI_VIEWS_NO_AX
 class TabbedPaneTest;
 }
 
@@ -88,7 +90,9 @@ class VIEWS_EXPORT TabbedPane : public View {
   friend class Tab;
   friend class TabStrip;
   friend class test::TabbedPaneTest;
+#if !defined(UI_VIEWS_NO_AX)
   friend class test::TabbedPaneAccessibilityMacTest;
+#endif // UI_VIEWS_NO_AX
 
   // Get the Tab (the tabstrip view, not its content) at the selected index.
   Tab* GetSelectedTab();
@@ -107,7 +111,9 @@ class VIEWS_EXPORT TabbedPane : public View {
   void ViewHierarchyChanged(
       const ViewHierarchyChangedDetails& details) override;
   bool AcceleratorPressed(const ui::Accelerator& accelerator) override;
+#if !defined(UI_VIEWS_NO_AX)
   void GetAccessibleNodeData(ui::AXNodeData* node_data) override;
+#endif // UI_VIEWS_NO_AX
 
   // A listener notified when tab selection changes. Weak, not owned.
   TabbedPaneListener* listener_ = nullptr;
@@ -141,8 +147,10 @@ class Tab : public View {
   void OnGestureEvent(ui::GestureEvent* event) override;
   gfx::Size CalculatePreferredSize() const override;
   const char* GetClassName() const override;
+#if !defined(UI_VIEWS_NO_AX)
   void GetAccessibleNodeData(ui::AXNodeData* node_data) override;
   bool HandleAccessibleAction(const ui::AXActionData& action_data) override;
+#endif // UI_VIEWS_NO_AX
   void OnFocus() override;
   void OnBlur() override;
   bool OnKeyPressed(const ui::KeyEvent& event) override;

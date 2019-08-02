@@ -9,7 +9,9 @@
 
 #include "cc/base/devtools_instrumentation.h"
 #include "cc/base/invalidation_region.h"
+#if defined(ENABLE_CC_BENCH)
 #include "cc/benchmarks/micro_benchmark_controller.h"
+#endif // ENABLE_CC_BENCH
 #include "cc/layers/layer.h"
 
 namespace cc {
@@ -46,7 +48,11 @@ class CC_EXPORT PictureLayer : public Layer {
   bool Update() override;
   bool HasSlowPaths() const override;
   bool HasNonAAPaint() const override;
+
+#if defined(ENABLE_CC_BENCH)
   void RunMicroBenchmark(MicroBenchmark* benchmark) override;
+#endif // ENABLE_CC_BENCH
+
   void CaptureContent(const gfx::Rect& rect,
                       std::vector<NodeHolder>* content) override;
 

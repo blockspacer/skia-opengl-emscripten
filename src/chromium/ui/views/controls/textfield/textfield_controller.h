@@ -8,9 +8,13 @@
 #include <set>
 
 #include "base/strings/string16.h"
+#if !defined(UI_VIEWS_PORT)
 #include "ui/base/clipboard/clipboard_format_type.h"
+#endif // UI_VIEWS_PORT
 #include "ui/base/clipboard/clipboard_types.h"
+#if !defined(UI_VIEWS_PORT)
 #include "ui/base/dragdrop/os_exchange_data.h"
+#endif // UI_VIEWS_PORT
 #include "ui/views/views_export.h"
 
 namespace ui {
@@ -67,14 +71,17 @@ class VIEWS_EXPORT TextfieldController {
   // Called after performing a Paste operation.
   virtual void OnAfterPaste() {}
 
+#if !defined(UI_VIEWS_PORT)
   // Called after the textfield has written drag data to give the controller a
   // chance to modify the drag data.
   virtual void OnWriteDragData(ui::OSExchangeData* data) {}
+#endif // UI_VIEWS_PORT
 
   // Called after the textfield has set default drag operations to give the
   // controller a chance to update them.
   virtual void OnGetDragOperationsForTextfield(int* drag_operations) {}
 
+#if !defined(UI_VIEWS_PORT)
   // Enables the controller to append to the accepted drop formats.
   virtual void AppendDropFormats(
       int* formats,
@@ -85,6 +92,7 @@ class VIEWS_EXPORT TextfieldController {
   // operation other than |ui::DragDropTypes::DRAG_NONE|, regular handling is
   // skipped.
   virtual int OnDrop(const ui::OSExchangeData& data);
+#endif // UI_VIEWS_PORT
 
   // Gives the controller a chance to modify the context menu contents.
   virtual void UpdateContextMenu(ui::SimpleMenuModel* menu_contents) {}

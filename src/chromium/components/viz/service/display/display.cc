@@ -15,7 +15,9 @@
 #include "build/build_config.h"
 #include "cc/base/math_util.h"
 #include "cc/base/simple_enclosed_region.h"
+#if defined(ENABLE_CC_BENCH)
 #include "cc/benchmarks/benchmark_instrumentation.h"
+#endif // ENABLE_CC_BENCH
 #include "components/viz/common/display/renderer_settings.h"
 #include "components/viz/common/frame_sinks/begin_frame_source.h"
 #include "components/viz/common/quads/compositor_frame.h"
@@ -499,10 +501,12 @@ bool Display::DrawAndSwap() {
     swapped_since_resize_ = true;
 
     if (scheduler_) {
+#if defined(ENABLE_LATENCY)
       frame.metadata.latency_info.emplace_back(ui::SourceEventType::FRAME);
       frame.metadata.latency_info.back().AddLatencyNumberWithTimestamp(
           ui::LATENCY_BEGIN_FRAME_DISPLAY_COMPOSITOR_COMPONENT,
           scheduler_->current_frame_time(), 1);
+#endif // ENABLE_LATENCY
     }
 
     std::vector<Surface::PresentedCallback> callbacks;

@@ -22,7 +22,9 @@
 #include "base/sequenced_task_runner.h"
 #include "base/time/time.h"
 #include "cc/base/synced_property.h"
+#if defined(ENABLE_CC_BENCH)
 #include "cc/benchmarks/micro_benchmark_controller_impl.h"
+#endif // ENABLE_CC_BENCH
 #include "cc/cc_export.h"
 #include "cc/input/browser_controls_offset_manager_client.h"
 #include "cc/input/input_handler.h"
@@ -57,7 +59,9 @@
 #include "components/viz/common/surfaces/surface_id.h"
 #include "components/viz/common/surfaces/surface_range.h"
 #include "ui/gfx/geometry/rect.h"
+#if defined(ENABLE_LATENCY)
 #include "ui/latency/frame_metrics.h"
+#endif // ENABLE_LATENCY
 
 namespace gfx {
 class ScrollOffset;
@@ -211,7 +215,10 @@ class CC_EXPORT LayerTreeHostImpl
   struct CC_EXPORT UIResourceData {
     UIResourceData();
     UIResourceData(const UIResourceData&) = delete;
-    UIResourceData(UIResourceData&&) noexcept;
+    /// \todo for emscripten/gcc:
+    /// exception specification of explicitly defaulted
+    /// move constructor does not match the calculated one
+    UIResourceData(UIResourceData&&) /*noexcept*/;
     ~UIResourceData();
 
     UIResourceData& operator=(const UIResourceData&) = delete;
@@ -293,8 +300,10 @@ class CC_EXPORT LayerTreeHostImpl
       TouchAction* out_touch_action) override;
   bool HasBlockingWheelEventHandlerAt(
       const gfx::Point& viewport_point) const override;
+#if defined(ENABLE_LATENCY)
   std::unique_ptr<SwapPromiseMonitor> CreateLatencyInfoSwapPromiseMonitor(
       ui::LatencyInfo* latency) override;
+#endif // ENABLE_LATENCY
   ScrollElasticityHelper* CreateScrollElasticityHelper() override;
   bool GetScrollOffsetForLayer(ElementId element_id,
                                gfx::ScrollOffset* offset) override;
@@ -657,7 +666,9 @@ class CC_EXPORT LayerTreeHostImpl
   gfx::Vector2dF ComputeScrollDelta(const ScrollNode& scroll_node,
                                     const gfx::Vector2dF& delta);
 
+#if defined(ENABLE_CC_BENCH)
   void ScheduleMicroBenchmark(std::unique_ptr<MicroBenchmarkImpl> benchmark);
+#endif // ENABLE_CC_BENCH
 
   viz::CompositorFrameMetadata MakeCompositorFrameMetadata();
   RenderFrameMetadata MakeRenderFrameMetadata(FrameData* frame);
@@ -1089,7 +1100,9 @@ class CC_EXPORT LayerTreeHostImpl
       scrollbar_animation_controllers_;
 
   RenderingStatsInstrumentation* rendering_stats_instrumentation_;
+#if defined(ENABLE_CC_BENCH)
   MicroBenchmarkControllerImpl micro_benchmark_controller_;
+#endif // ENABLE_CC_BENCH
   std::unique_ptr<SynchronousTaskGraphRunner>
       single_thread_synchronous_task_graph_runner_;
 
@@ -1200,8 +1213,10 @@ class CC_EXPORT LayerTreeHostImpl
   };
 
   base::circular_deque<FrameTokenInfo> frame_token_infos_;
+#if defined(ENABLE_CC_BENCH)
   ui::FrameMetrics frame_metrics_;
   ui::SkippedFrameTracker skipped_frame_tracker_;
+#endif // ENABLE_CC_BENCH
   int last_color_space_id_ = -1;
   bool is_animating_for_snap_;
 

@@ -35,7 +35,9 @@ class MenuScrollViewContainer : public View {
   gfx::Size CalculatePreferredSize() const override;
   void Layout() override;
   void OnPaintBackground(gfx::Canvas* canvas) override;
+#if !defined(UI_VIEWS_NO_AX)
   void GetAccessibleNodeData(ui::AXNodeData* node_data) override;
+#endif // UI_VIEWS_NO_AX
   void OnThemeChanged() override;
 
  protected:

@@ -24,13 +24,17 @@
 #include "base/macros.h"
 #include "build/build_config.h"
 #include "third_party/skia/include/core/SkPath.h"
+#if !defined(UI_VIEWS_NO_AX)
 #include "ui/accessibility/ax_enums.mojom.h"
+#endif // UI_VIEWS_NO_AX
 #include "ui/base/accelerators/accelerator.h"
 #include "ui/base/class_property.h"
+#if !defined(UI_VIEWS_PORT)
 #include "ui/base/clipboard/clipboard_format_type.h"
 #include "ui/base/dragdrop/drag_drop_types.h"
 #include "ui/base/dragdrop/drop_target_event.h"
 #include "ui/base/dragdrop/os_exchange_data.h"
+#endif // UI_VIEWS_PORT
 #include "ui/base/ui_base_types.h"
 #include "ui/compositor/layer_delegate.h"
 #include "ui/compositor/layer_owner.h"
@@ -51,7 +55,9 @@
 #include <wrl/client.h>
 #endif
 
+#if !defined(UI_VIEWS_PORT)
 using ui::OSExchangeData;
+#endif // UI_VIEWS_PORT
 
 namespace gfx {
 class Canvas;
@@ -80,7 +86,9 @@ class DragController;
 class FocusManager;
 class FocusTraversable;
 class LayoutManager;
+#if !defined(UI_VIEWS_NO_AX)
 class ViewAccessibility;
+#endif // UI_VIEWS_NO_AX
 class ScrollView;
 class ViewObserver;
 class Widget;
@@ -907,6 +915,7 @@ class VIEWS_EXPORT View : public ui::LayerDelegate,
   // responsible for managing the lifetime of the returned object, though that
   // lifetime may vary from platform to platform. On Windows and Aura,
   // the cursor is a shared resource.
+
   virtual gfx::NativeCursor GetCursor(const ui::MouseEvent& event);
 
   // A convenience function which calls HitTestRect() with a rect of size
@@ -1231,17 +1240,22 @@ class VIEWS_EXPORT View : public ui::LayerDelegate,
   // |formats| is a bitmask of the formats defined bye OSExchangeData::Format.
   // The default implementation returns false, which means the view doesn't
   // support dropping.
+#if !defined(UI_VIEWS_PORT)
   virtual bool GetDropFormats(int* formats,
                               std::set<ui::ClipboardFormatType>* format_types);
+#endif // UI_VIEWS_PORT
 
   // Override and return true if the data must be available before any drop
   // methods should be invoked. The default is false.
   virtual bool AreDropTypesRequired();
 
+#if !defined(UI_VIEWS_PORT)
   // A view that supports drag and drop must override this and return true if
   // data contains a type that may be dropped on this view.
   virtual bool CanDrop(const OSExchangeData& data);
+#endif // UI_VIEWS_PORT
 
+#if !defined(UI_VIEWS_PORT)
   // OnDragEntered is invoked when the mouse enters this view during a drag and
   // drop session and CanDrop returns true. This is immediately
   // followed by an invocation of OnDragUpdated, and eventually one of
@@ -1253,14 +1267,17 @@ class VIEWS_EXPORT View : public ui::LayerDelegate,
   // based on the location of the event. Return 0 to indicate the drop should
   // not be accepted.
   virtual int OnDragUpdated(const ui::DropTargetEvent& event);
+#endif // UI_VIEWS_PORT
 
   // Invoked during a drag and drop session when the mouse exits the views, or
   // when the drag session was canceled and the mouse was over the view.
   virtual void OnDragExited();
 
+#if !defined(UI_VIEWS_PORT)
   // Invoked during a drag and drop session when OnDragUpdated returns a valid
   // operation and the user release the mouse.
   virtual int OnPerformDrop(const ui::DropTargetEvent& event);
+#endif // UI_VIEWS_PORT
 
   // Invoked from DoDrag after the drag completes. This implementation does
   // nothing, and is intended for subclasses to do cleanup.
@@ -1272,6 +1289,7 @@ class VIEWS_EXPORT View : public ui::LayerDelegate,
 
   // Accessibility -------------------------------------------------------------
 
+#if !defined(UI_VIEWS_NO_AX)
   // Get the object managing the accessibility interface for this View.
   ViewAccessibility& GetViewAccessibility();
 
@@ -1283,9 +1301,11 @@ class VIEWS_EXPORT View : public ui::LayerDelegate,
   // not propagated to the client that requested the action, since the
   // request is sometimes asynchronous. The right way to send a response is
   // via NotifyAccessibilityEvent(), below.
+
   virtual bool HandleAccessibleAction(const ui::AXActionData& action_data);
 
   // Returns an instance of the native accessibility interface for this view.
+
   virtual gfx::NativeViewAccessible GetNativeViewAccessible();
 
   // Notifies assistive technology that an accessibility event has
@@ -1300,6 +1320,7 @@ class VIEWS_EXPORT View : public ui::LayerDelegate,
   // Views may override this function to know when an accessibility
   // event is fired. This will be called by NotifyAccessibilityEvent.
   virtual void OnAccessibilityEvent(ax::mojom::Event event_type);
+#endif // UI_VIEWS_NO_AX
 
   // Scrolling -----------------------------------------------------------------
   // TODO(beng): Figure out if this can live somewhere other than View, i.e.
@@ -1547,7 +1568,9 @@ class VIEWS_EXPORT View : public ui::LayerDelegate,
   // a DragController.
   // See DragController for a description of these methods.
   virtual int GetDragOperations(const gfx::Point& press_pt);
+#if !defined(UI_VIEWS_PORT)
   virtual void WriteDragData(const gfx::Point& press_pt, OSExchangeData* data);
+#endif // UI_VIEWS_PORT
 
   // Returns whether we're in the middle of a drag session that was initiated
   // by us.
@@ -1831,9 +1854,11 @@ class VIEWS_EXPORT View : public ui::LayerDelegate,
   // supported drag operations. When done, OnDragDone is invoked. |press_pt| is
   // in the view's coordinate system.
   // Returns true if a drag was started.
+#if !defined(UI_VIEWS_PORT)
   bool DoDrag(const ui::LocatedEvent& event,
               const gfx::Point& press_pt,
               ui::DragDropTypes::DragEventSource source);
+#endif // UI_VIEWS_PORT
 
   // Property support ----------------------------------------------------------
 
@@ -1997,9 +2022,10 @@ class VIEWS_EXPORT View : public ui::LayerDelegate,
   std::unique_ptr<ViewTargeter> targeter_;
 
   // Accessibility -------------------------------------------------------------
-
+#if !defined(UI_VIEWS_NO_AX)
   // Manages the accessibility interface for this View.
   std::unique_ptr<ViewAccessibility> view_accessibility_;
+#endif // UI_VIEWS_NO_AX
 
   // Observers -----------------------------------------------------------------
 

@@ -4,8 +4,12 @@
 
 #include "ui/views/controls/button/menu_button_controller.h"
 
+#if !defined(UI_VIEWS_NO_AX)
 #include "ui/accessibility/ax_node_data.h"
+#endif // UI_VIEWS_NO_AX
+#if !defined(UI_VIEWS_PORT)
 #include "ui/base/dragdrop/drag_drop_types.h"
+#endif // UI_VIEWS_PORT
 #include "ui/events/event_constants.h"
 #include "ui/views/animation/ink_drop.h"
 #include "ui/views/controls/button/button_controller_delegate.h"
@@ -135,12 +139,14 @@ bool MenuButtonController::OnKeyReleased(const ui::KeyEvent& event) {
   return false;
 }
 
+#if !defined(UI_VIEWS_NO_AX)
 void MenuButtonController::UpdateAccessibleNodeData(ui::AXNodeData* node_data) {
   node_data->role = ax::mojom::Role::kPopUpButton;
   node_data->SetHasPopup(ax::mojom::HasPopup::kMenu);
   if (button()->enabled())
     node_data->SetDefaultActionVerb(ax::mojom::DefaultActionVerb::kOpen);
 }
+#endif // UI_VIEWS_NO_AX
 
 void MenuButtonController::OnStateChanged(LabelButton::ButtonState old_state) {
   // State change occurs in IncrementPressedLocked() and
@@ -269,12 +275,14 @@ bool MenuButtonController::IsTriggerableEventType(const ui::Event& event) {
       return false;
     // If dragging is supported activate on release, otherwise activate on
     // pressed.
+#if !defined(UI_VIEWS_PORT)
     ui::EventType active_on =
         delegate()->GetDragOperations(mouse_event->location()) ==
                 ui::DragDropTypes::DRAG_NONE
             ? ui::ET_MOUSE_PRESSED
             : ui::ET_MOUSE_RELEASED;
     return event.type() == active_on;
+#endif // UI_VIEWS_PORT
   }
   return event.type() == ui::ET_GESTURE_TAP;
 }

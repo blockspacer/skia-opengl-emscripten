@@ -9,7 +9,9 @@
 #include "base/memory/ptr_util.h"
 #include "base/trace_event/trace_event.h"
 #include "cc/base/devtools_instrumentation.h"
+#if defined(ENABLE_CC_BENCH)
 #include "cc/benchmarks/benchmark_instrumentation.h"
+#endif // ENABLE_CC_BENCH
 #include "cc/input/browser_controls_offset_manager.h"
 #include "cc/paint/paint_worklet_layer_painter.h"
 #include "cc/resources/ui_resource_manager.h"
@@ -828,6 +830,7 @@ void SingleThreadProxy::BeginMainFrame(
     return;
   }
 
+#if defined(ENABLE_LATENCY)
   // Queue the LATENCY_BEGIN_FRAME_UI_MAIN_COMPONENT swap promise only once we
   // know we will commit since QueueSwapPromise itself requests a commit.
   ui::LatencyInfo new_latency_info(ui::SourceEventType::FRAME);
@@ -836,6 +839,7 @@ void SingleThreadProxy::BeginMainFrame(
       1);
   layer_tree_host_->QueueSwapPromise(
       std::make_unique<LatencyInfoSwapPromise>(new_latency_info));
+#endif // ENABLE_LATENCY
 
   DoPainting();
 }

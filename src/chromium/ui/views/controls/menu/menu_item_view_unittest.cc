@@ -18,7 +18,9 @@
 #include "ui/views/controls/menu/test_menu_item_view.h"
 #include "ui/views/test/menu_test_utils.h"
 #include "ui/views/test/views_test_base.h"
+#if !defined(UI_VIEWS_PORT)
 #include "ui/views/vector_icons.h"
+#endif // UI_VIEWS_PORT
 #include "ui/views/view_class_properties.h"
 
 namespace views {

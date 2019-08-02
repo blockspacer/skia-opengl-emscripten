@@ -93,8 +93,10 @@ class VIEWS_EXPORT Combobox : public View,
   void OnPaint(gfx::Canvas* canvas) override;
   void OnFocus() override;
   void OnBlur() override;
+#if !defined(UI_VIEWS_NO_AX)
   void GetAccessibleNodeData(ui::AXNodeData* node_data) override;
   bool HandleAccessibleAction(const ui::AXActionData& action_data) override;
+#endif // UI_VIEWS_NO_AX
   void Layout() override;
   void OnThemeChanged() override;
 

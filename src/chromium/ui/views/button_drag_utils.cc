@@ -5,14 +5,18 @@
 #include "ui/views/button_drag_utils.h"
 
 #include "base/strings/utf_string_conversions.h"
+#if !defined(UI_VIEWS_PORT)
 #include "ui/base/dragdrop/os_exchange_data.h"
+#endif // UI_VIEWS_PORT
 #include "ui/base/resource/resource_bundle.h"
 #include "ui/compositor/canvas_painter.h"
 #include "ui/gfx/canvas.h"
 #include "ui/gfx/geometry/point.h"
 #include "ui/gfx/geometry/vector2d.h"
 #include "ui/gfx/image/image.h"
+#if !defined(UI_VIEWS_PORT)
 #include "ui/resources/grit/ui_resources.h"
+#endif // UI_VIEWS_PORT
 #include "ui/views/background.h"
 #include "ui/views/border.h"
 #include "ui/views/controls/button/label_button.h"
@@ -27,6 +31,7 @@ namespace button_drag_utils {
 // Maximum width of the link drag image in pixels.
 static constexpr int kLinkDragImageMaxWidth = 150;
 
+#if !defined(UI_VIEWS_PORT)
 void SetURLAndDragImage(const GURL& url,
                         const base::string16& title,
                         const gfx::ImageSkia& icon,
@@ -64,9 +69,11 @@ void SetDragImage(const GURL& url,
   }
   button.SetMaxSize(gfx::Size(kLinkDragImageMaxWidth, 0));
   if (icon.isNull()) {
+#if !defined(UI_VIEWS_PORT)
     button.SetImage(views::Button::STATE_NORMAL,
                     *ui::ResourceBundle::GetSharedInstance().GetImageNamed(
                         IDR_DEFAULT_FAVICON).ToImageSkia());
+#endif // UI_VIEWS_PORT
   } else {
     button.SetImage(views::Button::STATE_NORMAL, icon);
   }
@@ -89,7 +96,11 @@ void SetDragImage(const GURL& url,
           .context(),
       size));
   gfx::ImageSkia image(gfx::ImageSkiaRep(bitmap, raster_scale));
+
+#if !defined(UI_VIEWS_PORT)
   data->provider().SetDragImage(image, press_point);
+#endif // UI_VIEWS_PORT
 }
+#endif // UI_VIEWS_PORT
 
 }  // namespace button_drag_utils

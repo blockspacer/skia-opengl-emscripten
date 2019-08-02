@@ -13,7 +13,9 @@
 
 #include "base/i18n/rtl.h"
 #include "base/strings/string_util.h"
+#if !defined(UI_VIEWS_NO_AX)
 #include "ui/accessibility/ax_node_data.h"
+#endif // UI_VIEWS_NO_AX
 #include "ui/gfx/font_list.h"
 #include "ui/gfx/text_elider.h"
 #include "ui/gfx/text_utils.h"
@@ -210,6 +212,7 @@ const char* StyledLabel::GetClassName() const {
   return kViewClassName;
 }
 
+#if !defined(UI_VIEWS_NO_AX)
 void StyledLabel::GetAccessibleNodeData(ui::AXNodeData* node_data) {
   if (text_context_ == style::CONTEXT_DIALOG_TITLE)
     node_data->role = ax::mojom::Role::kTitleBar;
@@ -218,6 +221,7 @@ void StyledLabel::GetAccessibleNodeData(ui::AXNodeData* node_data) {
 
   node_data->SetName(text());
 }
+#endif // UI_VIEWS_NO_AX
 
 gfx::Size StyledLabel::CalculatePreferredSize() const {
   return calculated_size_;

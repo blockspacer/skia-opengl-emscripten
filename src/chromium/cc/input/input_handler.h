@@ -25,9 +25,11 @@ class SizeF;
 class Vector2dF;
 }
 
+#if defined(ENABLE_LATENCY)
 namespace ui {
 class LatencyInfo;
 }
+#endif // ENABLE_LATENCY
 
 namespace cc {
 
@@ -258,8 +260,10 @@ class CC_EXPORT InputHandler {
   // LatencyInfoSwapPromiseMonitor, if SetNeedsRedraw() or SetNeedsRedrawRect()
   // is called on LayerTreeHostImpl, the original latency info will be turned
   // into a LatencyInfoSwapPromise.
+#if defined(ENABLE_LATENCY)
   virtual std::unique_ptr<SwapPromiseMonitor>
   CreateLatencyInfoSwapPromiseMonitor(ui::LatencyInfo* latency) = 0;
+#endif // ENABLE_LATENCY
 
   virtual ScrollElasticityHelper* CreateScrollElasticityHelper() = 0;
 

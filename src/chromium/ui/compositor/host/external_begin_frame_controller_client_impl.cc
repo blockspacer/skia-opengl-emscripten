@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#if !defined(COMPOSITOR_PORTED)
 #include "ui/compositor/host/external_begin_frame_controller_client_impl.h"
 
 #include "ui/compositor/compositor.h"
@@ -43,3 +44,4 @@ void ExternalBeginFrameControllerClientImpl::OnDisplayDidFinishFrame(
 }
 
 }  // namespace ui
+#endif // COMPOSITOR_PORTED

@@ -11,9 +11,11 @@ namespace gfx {
 class Point;
 }
 
+#if !defined(UI_VIEWS_PORT)
 namespace ui {
 class OSExchangeData;
 }
+#endif // UI_VIEWS_PORT
 
 namespace views {
 class View;
@@ -23,10 +25,12 @@ class View;
 // want to subclass.
 class VIEWS_EXPORT DragController {
  public:
+#if !defined(UI_VIEWS_PORT)
   // Writes the data for the drag.
   virtual void WriteDragDataForView(View* sender,
                                     const gfx::Point& press_pt,
                                     ui::OSExchangeData* data) = 0;
+#endif // UI_VIEWS_PORT
 
   // Returns the supported drag operations (see DragDropTypes for possible
   // values). A drag is only started if this returns a non-zero value.

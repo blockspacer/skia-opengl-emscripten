@@ -7,7 +7,9 @@
 #include "base/macros.h"
 #include "cc/paint/paint_flags.h"
 #include "third_party/skia/include/core/SkPath.h"
+#if !defined(UI_VIEWS_NO_AX)
 #include "ui/accessibility/ax_node_data.h"
+#endif // UI_VIEWS_NO_AX
 #include "ui/gfx/canvas.h"
 #include "ui/gfx/color_palette.h"
 #include "ui/views/border.h"
@@ -46,11 +48,14 @@ class MenuScrollButton : public View {
                      pref_height_);
   }
 
+#if !defined(UI_VIEWS_PORT)
   bool CanDrop(const OSExchangeData& data) override {
     DCHECK(host_->GetMenuItem()->GetMenuController());
     return true;  // Always return true so that drop events are targeted to us.
   }
+#endif // UI_VIEWS_PORT
 
+#if !defined(UI_VIEWS_PORT)
   void OnDragEntered(const ui::DropTargetEvent& event) override {
     DCHECK(host_->GetMenuItem()->GetMenuController());
     host_->GetMenuItem()->GetMenuController()->OnDragEnteredScrollButton(
@@ -60,15 +65,18 @@ class MenuScrollButton : public View {
   int OnDragUpdated(const ui::DropTargetEvent& event) override {
     return ui::DragDropTypes::DRAG_NONE;
   }
+#endif // UI_VIEWS_PORT
 
   void OnDragExited() override {
     DCHECK(host_->GetMenuItem()->GetMenuController());
     host_->GetMenuItem()->GetMenuController()->OnDragExitedScrollButton(host_);
   }
 
+#if !defined(UI_VIEWS_PORT)
   int OnPerformDrop(const ui::DropTargetEvent& event) override {
     return ui::DragDropTypes::DRAG_NONE;
   }
+#endif // UI_VIEWS_PORT
 
   void OnPaint(gfx::Canvas* canvas) override {
     const MenuConfig& config = MenuConfig::instance();
@@ -263,11 +271,13 @@ void MenuScrollViewContainer::OnPaintBackground(gfx::Canvas* canvas) {
       NativeTheme::kMenuPopupBackground, NativeTheme::kNormal, bounds, extra);
 }
 
+#if !defined(UI_VIEWS_NO_AX)
 void MenuScrollViewContainer::GetAccessibleNodeData(ui::AXNodeData* node_data) {
   // Get the name from the submenu view.
   content_view_->GetAccessibleNodeData(node_data);
   node_data->role = ax::mojom::Role::kMenuBar;
 }
+#endif // UI_VIEWS_NO_AX
 
 void MenuScrollViewContainer::OnBoundsChanged(
     const gfx::Rect& previous_bounds) {

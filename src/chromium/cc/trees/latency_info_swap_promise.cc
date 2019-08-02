@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#if defined(ENABLE_LATENCY)
 #include "cc/trees/latency_info_swap_promise.h"
 
 #include <stdint.h>
@@ -45,3 +46,4 @@ void LatencyInfoSwapPromise::OnCommit() {
 }
 
 }  // namespace cc
+#endif // ENABLE_LATENCY

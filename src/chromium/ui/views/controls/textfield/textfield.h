@@ -276,15 +276,21 @@ class VIEWS_EXPORT Textfield : public View,
   bool CanHandleAccelerators() const override;
   void AboutToRequestFocusFromTabTraversal(bool reverse) override;
   bool SkipDefaultKeyEventProcessing(const ui::KeyEvent& event) override;
+#if !defined(UI_VIEWS_PORT)
   bool GetDropFormats(int* formats,
                       std::set<ui::ClipboardFormatType>* format_types) override;
   bool CanDrop(const ui::OSExchangeData& data) override;
   int OnDragUpdated(const ui::DropTargetEvent& event) override;
+#endif // UI_VIEWS_PORT
   void OnDragExited() override;
+#if !defined(UI_VIEWS_PORT)
   int OnPerformDrop(const ui::DropTargetEvent& event) override;
+#endif // UI_VIEWS_PORT
   void OnDragDone() override;
+#if !defined(UI_VIEWS_NO_AX)
   void GetAccessibleNodeData(ui::AXNodeData* node_data) override;
   bool HandleAccessibleAction(const ui::AXActionData& action_data) override;
+#endif // UI_VIEWS_NO_AX
   void OnBoundsChanged(const gfx::Rect& previous_bounds) override;
   bool GetNeedsNotificationWhenVisibleBoundsChange() const override;
   void OnVisibleBoundsChanged() override;
@@ -303,9 +309,11 @@ class VIEWS_EXPORT Textfield : public View,
                                   ui::MenuSourceType source_type) override;
 
   // DragController overrides:
+#if !defined(UI_VIEWS_PORT)
   void WriteDragDataForView(View* sender,
                             const gfx::Point& press_pt,
                             ui::OSExchangeData* data) override;
+#endif // UI_VIEWS_PORT
   int GetDragOperationsForView(View* sender, const gfx::Point& p) override;
   bool CanStartDragForView(View* sender,
                            const gfx::Point& press_pt,

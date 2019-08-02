@@ -5,7 +5,9 @@
 #include "ui/views/controls/button/button.h"
 
 #include "base/strings/utf_string_conversions.h"
+#if !defined(UI_VIEWS_NO_AX)
 #include "ui/accessibility/ax_node_data.h"
+#endif // UI_VIEWS_NO_AX
 #include "ui/base/class_property.h"
 #include "ui/events/event.h"
 #include "ui/events/event_utils.h"
@@ -123,7 +125,9 @@ void Button::SetTooltipText(const base::string16& tooltip_text) {
 
 void Button::SetAccessibleName(const base::string16& name) {
   accessible_name_ = name;
+#if !defined(UI_VIEWS_NO_AX)
   NotifyAccessibilityEvent(ax::mojom::Event::kTextChanged, true);
+#endif // UI_VIEWS_NO_AX
 }
 
 const base::string16& Button::GetAccessibleName() const {
@@ -196,8 +200,10 @@ void Button::SetHotTracked(bool is_hot_tracked) {
   if (state_ != STATE_DISABLED)
     SetState(is_hot_tracked ? STATE_HOVERED : STATE_NORMAL);
 
+#if !defined(UI_VIEWS_NO_AX)
   if (is_hot_tracked)
     NotifyAccessibilityEvent(ax::mojom::Event::kHover, true);
+#endif // UI_VIEWS_NO_AX
 }
 
 bool Button::IsHotTracked() const {
@@ -343,6 +349,7 @@ void Button::OnPaint(gfx::Canvas* canvas) {
   Painter::PaintFocusPainter(this, canvas, focus_painter_.get());
 }
 
+#if !defined(UI_VIEWS_NO_AX)
 void Button::GetAccessibleNodeData(ui::AXNodeData* node_data) {
   node_data->role = ax::mojom::Role::kButton;
   node_data->SetName(GetAccessibleName());
@@ -369,6 +376,7 @@ void Button::GetAccessibleNodeData(ui::AXNodeData* node_data) {
 
   button_controller_->UpdateAccessibleNodeData(node_data);
 }
+#endif // UI_VIEWS_NO_AX
 
 void Button::VisibilityChanged(View* starting_from, bool visible) {
   InkDropHostView::VisibilityChanged(starting_from, visible);

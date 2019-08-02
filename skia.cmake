@@ -925,7 +925,6 @@ add_dependencies(SKIA SKIA_build ${CUSTOM_ICU_LIB} ${WUFFS_LIB_NAME} ${CUSTOM_IC
 target_link_libraries(SKIA INTERFACE
   ${CUSTOM_ICU_LIB}
   ${WUFFS_LIB_NAME}
-  ${CUSTOM_ICU_LIB}
   ${FREETYPE_LIBRARIES}
   ${HARFBUZZ_LIBRARIES}
   ${libpng_LIB}

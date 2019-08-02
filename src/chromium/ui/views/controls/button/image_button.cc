@@ -7,7 +7,9 @@
 #include <utility>
 
 #include "base/strings/utf_string_conversions.h"
+#if !defined(UI_VIEWS_NO_AX)
 #include "ui/accessibility/ax_node_data.h"
+#endif // UI_VIEWS_NO_AX
 #include "ui/gfx/animation/throb_animation.h"
 #include "ui/gfx/canvas.h"
 #include "ui/gfx/image/image_skia_operations.h"
@@ -234,7 +236,9 @@ void ToggleImageButton::SetToggled(bool toggled) {
   toggled_ = toggled;
   SchedulePaint();
 
+#if !defined(UI_VIEWS_NO_AX)
   NotifyAccessibilityEvent(ax::mojom::Event::kAriaAttributeChanged, true);
+#endif // UI_VIEWS_NO_AX
 }
 
 void ToggleImageButton::SetToggledImage(ButtonState image_state,
@@ -283,6 +287,7 @@ base::string16 ToggleImageButton::GetTooltipText(const gfx::Point& p) const {
              : toggled_tooltip_text_;
 }
 
+#if !defined(UI_VIEWS_NO_AX)
 void ToggleImageButton::GetAccessibleNodeData(ui::AXNodeData* node_data) {
   ImageButton::GetAccessibleNodeData(node_data);
   node_data->SetName(GetTooltipText(gfx::Point()));
@@ -296,6 +301,7 @@ void ToggleImageButton::GetAccessibleNodeData(ui::AXNodeData* node_data) {
                                         : ax::mojom::CheckedState::kFalse);
   }
 }
+#endif // UI_VIEWS_NO_AX
 
 bool ToggleImageButton::toggled_for_testing() const {
   return toggled_;

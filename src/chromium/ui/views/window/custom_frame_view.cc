@@ -17,9 +17,13 @@
 #include "ui/gfx/font.h"
 #include "ui/gfx/geometry/rect.h"
 #include "ui/gfx/image/image.h"
+#if !defined(UI_VIEWS_PORT)
 #include "ui/strings/grit/ui_strings.h"
+#endif // UI_VIEWS_PORT
 #include "ui/views/controls/button/image_button.h"
+#if !defined(UI_VIEWS_PORT)
 #include "ui/views/resources/grit/views_resources.h"
+#endif // UI_VIEWS_PORT
 #include "ui/views/views_delegate.h"
 #include "ui/views/widget/native_widget_private.h"
 #include "ui/views/widget/widget.h"
@@ -91,6 +95,7 @@ CustomFrameView::~CustomFrameView() = default;
 void CustomFrameView::Init(Widget* frame) {
   frame_ = frame;
 
+#if !defined(UI_VIEWS_PORT)
   close_button_ = InitWindowCaptionButton(IDS_APP_ACCNAME_CLOSE,
       IDR_CLOSE, IDR_CLOSE_H, IDR_CLOSE_P);
   minimize_button_ = InitWindowCaptionButton(IDS_APP_ACCNAME_MINIMIZE,
@@ -99,6 +104,7 @@ void CustomFrameView::Init(Widget* frame) {
       IDR_MAXIMIZE, IDR_MAXIMIZE_H, IDR_MAXIMIZE_P);
   restore_button_ = InitWindowCaptionButton(IDS_APP_ACCNAME_RESTORE,
       IDR_RESTORE, IDR_RESTORE_H, IDR_RESTORE_P);
+#endif // UI_VIEWS_PORT
 
   if (frame_->widget_delegate()->ShouldShowWindowIcon()) {
     window_icon_ = new ImageButton(this);
@@ -358,6 +364,7 @@ bool CustomFrameView::ShouldShowClientEdge() const {
 void CustomFrameView::PaintRestoredFrameBorder(gfx::Canvas* canvas) {
   ui::ResourceBundle& rb = ui::ResourceBundle::GetSharedInstance();
 
+#if !defined(UI_VIEWS_PORT)
   frame_background_->SetCornerImages(
       rb.GetImageNamed(IDR_WINDOW_TOP_LEFT_CORNER).ToImageSkia(),
       rb.GetImageNamed(IDR_WINDOW_TOP_RIGHT_CORNER).ToImageSkia(),
@@ -368,6 +375,7 @@ void CustomFrameView::PaintRestoredFrameBorder(gfx::Canvas* canvas) {
       rb.GetImageNamed(IDR_WINDOW_TOP_CENTER).ToImageSkia(),
       rb.GetImageNamed(IDR_WINDOW_RIGHT_SIDE).ToImageSkia(),
       rb.GetImageNamed(IDR_WINDOW_BOTTOM_CENTER).ToImageSkia());
+#endif // UI_VIEWS_PORT
 
   frame_background_->PaintRestored(canvas, this);
 }
@@ -377,6 +385,7 @@ void CustomFrameView::PaintMaximizedFrameBorder(gfx::Canvas* canvas) {
 
   ui::ResourceBundle& rb = ui::ResourceBundle::GetSharedInstance();
 
+#if !defined(UI_VIEWS_PORT)
   // TODO(jamescook): Migrate this into FrameBackground.
   // The bottom of the titlebar actually comes from the top of the Client Edge
   // graphic, with the actual client edge clipped off the bottom.
@@ -386,6 +395,7 @@ void CustomFrameView::PaintMaximizedFrameBorder(gfx::Canvas* canvas) {
       (ShouldShowClientEdge() ? kClientEdgeThickness : 0);
   canvas->TileImageInt(*titlebar_bottom, 0,
       frame_->client_view()->y() - edge_height, width(), edge_height);
+#endif // UI_VIEWS_PORT
 }
 
 void CustomFrameView::PaintTitleBar(gfx::Canvas* canvas) {
@@ -412,6 +422,7 @@ void CustomFrameView::PaintRestoredClientEdge(gfx::Canvas* canvas) {
 
   ui::ResourceBundle& rb = ui::ResourceBundle::GetSharedInstance();
 
+#if !defined(UI_VIEWS_PORT)
   // Top: left, center, right sides.
   const gfx::ImageSkia* top_left = rb.GetImageSkiaNamed(IDR_APP_TOP_LEFT);
   const gfx::ImageSkia* top_center = rb.GetImageSkiaNamed(IDR_APP_TOP_CENTER);
@@ -466,6 +477,7 @@ void CustomFrameView::PaintRestoredClientEdge(gfx::Canvas* canvas) {
                        shadowed_area_top,
                        left->width(),
                        shadowed_area_height);
+#endif // UI_VIEWS_PORT
 }
 
 SkColor CustomFrameView::GetFrameColor() const {
@@ -473,10 +485,14 @@ SkColor CustomFrameView::GetFrameColor() const {
 }
 
 gfx::ImageSkia CustomFrameView::GetFrameImage() const {
+#if !defined(UI_VIEWS_PORT)
   return *ui::ResourceBundle::GetSharedInstance()
               .GetImageNamed(frame_->IsActive() ? IDR_FRAME
                                                 : IDR_FRAME_INACTIVE)
               .ToImageSkia();
+#else
+  return gfx::ImageSkia();
+#endif // UI_VIEWS_PORT
 }
 
 void CustomFrameView::LayoutWindowControls() {

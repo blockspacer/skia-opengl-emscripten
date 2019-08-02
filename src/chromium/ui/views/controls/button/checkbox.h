@@ -44,7 +44,9 @@ class VIEWS_EXPORT Checkbox : public LabelButton {
   void SetAssociatedLabel(View* labelling_view);
 
   // LabelButton:
+#if !defined(UI_VIEWS_NO_AX)
   void GetAccessibleNodeData(ui::AXNodeData* node_data) override;
+#endif // UI_VIEWS_NO_AX
 
  protected:
   // LabelButton:
@@ -58,8 +60,10 @@ class VIEWS_EXPORT Checkbox : public LabelButton {
   std::unique_ptr<LabelButtonBorder> CreateDefaultBorder() const override;
   void Layout() override;
 
+#if !defined(UI_VIEWS_PORT)
   // Gets the vector icon to use based on the current state of |checked_|.
   virtual const gfx::VectorIcon& GetVectorIcon() const;
+#endif // UI_VIEWS_PORT
 
   // Returns the path to draw the focus ring around for this Checkbox.
   virtual SkPath GetFocusRingPath() const;

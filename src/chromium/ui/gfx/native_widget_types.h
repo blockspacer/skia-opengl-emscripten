@@ -51,6 +51,14 @@ class Event;
 }
 #endif  // defined(USE_AURA)
 
+#if defined(NO_CHROMIUM_WINDOW)
+namespace ui {
+class Cursor;
+enum class CursorType;
+class Event;
+}
+#endif // NO_CHROMIUM_WINDOW
+
 #if defined(OS_WIN)
 typedef struct HFONT__* HFONT;
 struct IAccessible;
@@ -224,6 +232,7 @@ typedef UnimplementedNativeViewAccessible* NativeViewAccessible;
 // A constant value to indicate that gfx::NativeCursor refers to no cursor.
 #if defined(NO_CHROMIUM_WINDOW)
   // nothing
+const ui::CursorType kNullCursor = static_cast<ui::CursorType>(0);
 #elif defined(USE_AURA)
 const ui::CursorType kNullCursor = static_cast<ui::CursorType>(0);
 #else

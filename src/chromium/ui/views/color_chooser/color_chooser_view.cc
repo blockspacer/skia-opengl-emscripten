@@ -20,7 +20,9 @@
 #include "ui/events/keycodes/keyboard_codes.h"
 #include "ui/gfx/canvas.h"
 #include "ui/gfx/geometry/insets.h"
+#if !defined(UI_VIEWS_PORT)
 #include "ui/strings/grit/ui_strings.h"
+#endif // UI_VIEWS_PORT
 #include "ui/views/background.h"
 #include "ui/views/border.h"
 #include "ui/views/color_chooser/color_chooser_listener.h"
@@ -391,8 +393,10 @@ ColorChooserView::ColorChooserView(ColorChooserListener* listener,
   textfield_ = new Textfield();
   textfield_->set_controller(this);
   textfield_->SetDefaultWidthInChars(kTextfieldLengthInChars);
+#if !defined(UI_VIEWS_PORT)
   textfield_->SetAccessibleName(
       l10n_util::GetStringUTF16(IDS_APP_ACCNAME_COLOR_CHOOSER_HEX_INPUT));
+#endif // UI_VIEWS_PORT
   layout->AddView(textfield_);
   selected_color_patch_ = new SelectedColorPatchView();
   layout->AddView(selected_color_patch_);

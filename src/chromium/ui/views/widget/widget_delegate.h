@@ -7,9 +7,10 @@
 
 #include <string>
 #include <vector>
-
 #include "base/macros.h"
+#if !defined(UI_VIEWS_NO_AX)
 #include "ui/accessibility/ax_enums.mojom.h"
+#endif // UI_VIEWS_NO_AX
 #include "ui/base/ui_base_types.h"
 #include "ui/views/view.h"
 #include "ui/views/widget/widget.h"
@@ -83,7 +84,9 @@ class VIEWS_EXPORT WidgetDelegate {
   // ui::MODAL_TYPE_NONE (not modal).
   virtual ui::ModalType GetModalType() const;
 
+#if !defined(UI_VIEWS_NO_AX)
   virtual ax::mojom::Role GetAccessibleWindowRole();
+#endif // UI_VIEWS_NO_AX
 
   // Returns the title to be read with screen readers.
   virtual base::string16 GetAccessibleWindowTitle() const;

@@ -25,7 +25,9 @@
 #include "cc/base/switches.h"
 #include "cc/input/input_handler.h"
 #include "cc/layers/layer.h"
+#if defined(ENABLE_LATENCY)
 #include "cc/trees/latency_info_swap_promise.h"
+#endif // ENABLE_LATENCY
 #include "cc/trees/layer_tree_host.h"
 #include "cc/trees/layer_tree_settings.h"
 #include "components/viz/common/features.h"
@@ -36,10 +38,12 @@
 #include "components/viz/common/resources/resource_settings.h"
 #include "components/viz/common/surfaces/child_local_surface_id_allocator.h"
 #include "components/viz/common/switches.h"
+#if !defined(COMPOSITOR_PORTED)
 #include "components/viz/host/host_frame_sink_manager.h"
 #include "components/viz/host/renderer_settings_creation.h"
 #include "components/viz/service/frame_sinks/frame_sink_manager_impl.h"
 #include "services/viz/privileged/interfaces/compositing/vsync_parameter_observer.mojom.h"
+#endif // COMPOSITOR_PORTED
 #include "third_party/skia/include/core/SkBitmap.h"
 #include "ui/base/ui_base_features.h"
 #include "ui/base/ui_base_switches.h"
@@ -85,6 +89,7 @@ Compositor::Compositor(
                                   ? trace_environment_name
                                   : kDefaultTraceEnvironmentName),
       context_creation_weak_ptr_factory_(this) {
+#if !defined(COMPOSITOR_PORTED)
   if (context_factory_private) {
     auto* host_frame_sink_manager =
         context_factory_private_->GetHostFrameSinkManager();
@@ -93,6 +98,7 @@ Compositor::Compositor(
     host_frame_sink_manager->SetFrameSinkDebugLabel(frame_sink_id_,
                                                     "Compositor");
   }
+#endif // COMPOSITOR_PORTED
   root_web_layer_ = cc::Layer::Create();
 
   base::CommandLine* command_line = base::CommandLine::ForCurrentProcess();
@@ -261,6 +267,7 @@ Compositor::~Compositor() {
   host_.reset();
 
   context_factory_->RemoveCompositor(this);
+#if !defined(COMPOSITOR_PORTED)
   if (context_factory_private_) {
     auto* host_frame_sink_manager =
         context_factory_private_->GetHostFrameSinkManager();
@@ -271,13 +278,16 @@ Compositor::~Compositor() {
     }
     host_frame_sink_manager->InvalidateFrameSinkId(frame_sink_id_);
   }
+#endif // COMPOSITOR_PORTED
 }
 
 void Compositor::AddChildFrameSink(const viz::FrameSinkId& frame_sink_id) {
   if (!context_factory_private_)
     return;
+#if !defined(COMPOSITOR_PORTED)
   context_factory_private_->GetHostFrameSinkManager()
       ->RegisterFrameSinkHierarchy(frame_sink_id_, frame_sink_id);
+#endif // COMPOSITOR_PORTED
 
   child_frame_sinks_.insert(frame_sink_id);
 }
@@ -288,8 +298,10 @@ void Compositor::RemoveChildFrameSink(const viz::FrameSinkId& frame_sink_id) {
   auto it = child_frame_sinks_.find(frame_sink_id);
   DCHECK(it != child_frame_sinks_.end());
   DCHECK(it->is_valid());
+#if !defined(COMPOSITOR_PORTED)
   context_factory_private_->GetHostFrameSinkManager()
       ->UnregisterFrameSinkHierarchy(frame_sink_id_, *it);
+#endif // COMPOSITOR_PORTED
   child_frame_sinks_.erase(it);
 }
 
@@ -364,11 +376,13 @@ void Compositor::ReenableSwap() {
   context_factory_private_->ResizeDisplay(this, size_);
 }
 
+#if defined(ENABLE_LATENCY)
 void Compositor::SetLatencyInfo(const ui::LatencyInfo& latency_info) {
   std::unique_ptr<cc::SwapPromise> swap_promise(
       new cc::LatencyInfoSwapPromise(latency_info));
   host_->QueueSwapPromise(std::move(swap_promise));
 }
+#endif // ENABLE_LATENCY
 
 void Compositor::SetScaleAndSize(
     float scale,
@@ -547,6 +561,7 @@ void Compositor::SetDisplayVSyncParameters(base::TimeTicks timebase,
   }
 }
 
+#if !defined(COMPOSITOR_PORTED)
 void Compositor::AddVSyncParameterObserver(
     viz::mojom::VSyncParameterObserverPtr observer) {
   if (context_factory_private_) {
@@ -554,6 +569,7 @@ void Compositor::AddVSyncParameterObserver(
                                                         std::move(observer));
   }
 }
+#endif // COMPOSITOR_PORTED
 
 void Compositor::SetAcceleratedWidget(gfx::AcceleratedWidget widget) {
   // This function should only get called once.
@@ -675,9 +691,11 @@ void Compositor::DidReceiveCompositorFrameAck() {
 void Compositor::DidPresentCompositorFrame(
     uint32_t frame_token,
     const gfx::PresentationFeedback& feedback) {
+#if !defined(COMPOSITOR_PORTED)
   TRACE_EVENT_MARK_WITH_TIMESTAMP1("cc,benchmark", "FramePresented",
                                    feedback.timestamp, "environment",
                                    trace_environment_name_);
+#endif // COMPOSITOR_PORTED
 }
 
 void Compositor::DidGenerateLocalSurfaceIdAllocation(

@@ -30,7 +30,9 @@ class VIEWS_EXPORT ResizeArea : public View {
   bool OnMouseDragged(const ui::MouseEvent& event) override;
   void OnMouseReleased(const ui::MouseEvent& event) override;
   void OnMouseCaptureLost() override;
+#if !defined(UI_VIEWS_NO_AX)
   void GetAccessibleNodeData(ui::AXNodeData* node_data) override;
+#endif // UI_VIEWS_NO_AX
 
  private:
   // Report the amount the user resized by to the delegate, accounting for

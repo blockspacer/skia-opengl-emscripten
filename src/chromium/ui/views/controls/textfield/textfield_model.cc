@@ -12,8 +12,10 @@
 #include "base/no_destructor.h"
 #include "base/strings/string_util.h"
 #include "base/strings/utf_string_conversions.h"
+#if !defined(UI_VIEWS_PORT)
 #include "ui/base/clipboard/clipboard.h"
 #include "ui/base/clipboard/scoped_clipboard_writer.h"
+#endif // UI_VIEWS_PORT
 #include "ui/gfx/range/range.h"
 #include "ui/gfx/utf16_indexing.h"
 #include "ui/views/style/platform_style.h"
@@ -523,8 +525,10 @@ bool TextfieldModel::Redo() {
 
 bool TextfieldModel::Cut() {
   if (!HasCompositionText() && HasSelection() && !render_text_->obscured()) {
+#if !defined(UI_VIEWS_PORT)
     ui::ScopedClipboardWriter(
         ui::CLIPBOARD_TYPE_COPY_PASTE).WriteText(GetSelectedText());
+#endif // UI_VIEWS_PORT
     // A trick to let undo/redo handle cursor correctly.
     // Undoing CUT moves the cursor to the end of the change rather
     // than beginning, unlike Delete/Backspace.
@@ -540,8 +544,10 @@ bool TextfieldModel::Cut() {
 
 bool TextfieldModel::Copy() {
   if (!HasCompositionText() && HasSelection() && !render_text_->obscured()) {
+#if !defined(UI_VIEWS_PORT)
     ui::ScopedClipboardWriter(
         ui::CLIPBOARD_TYPE_COPY_PASTE).WriteText(GetSelectedText());
+#endif // UI_VIEWS_PORT
     return true;
   }
   return false;
@@ -549,8 +555,10 @@ bool TextfieldModel::Copy() {
 
 bool TextfieldModel::Paste() {
   base::string16 text;
+#if !defined(UI_VIEWS_PORT)
   ui::Clipboard::GetForCurrentThread()->ReadText(ui::CLIPBOARD_TYPE_COPY_PASTE,
                                                  &text);
+#endif // UI_VIEWS_PORT
   if (text.empty())
     return false;
 

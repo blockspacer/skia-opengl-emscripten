@@ -12,8 +12,10 @@
 #include "build/build_config.h"
 #include "cc/paint/paint_flags.h"
 #include "third_party/skia/include/core/SkPath.h"
+#if !defined(UI_VIEWS_NO_AX)
 #include "ui/accessibility/ax_action_data.h"
 #include "ui/accessibility/ax_node_data.h"
+#endif // UI_VIEWS_NO_AX
 #include "ui/base/default_style.h"
 #include "ui/base/resource/resource_bundle.h"
 #include "ui/events/keycodes/keyboard_codes.h"
@@ -25,7 +27,9 @@
 #include "ui/gfx/font_list.h"
 #include "ui/gfx/geometry/insets.h"
 #include "ui/native_theme/native_theme.h"
+#if !defined(UI_VIEWS_NO_AX)
 #include "ui/views/accessibility/view_accessibility.h"
+#endif // UI_VIEWS_NO_AX
 #include "ui/views/border.h"
 #include "ui/views/controls/label.h"
 #include "ui/views/controls/tabbed_pane/tabbed_pane_listener.h"
@@ -161,7 +165,9 @@ Tab::Tab(TabbedPane* tabbed_pane, const base::string16& title, View* contents)
 
   // Use leaf so that name is spoken by screen reader without exposing the
   // children.
+#if !defined(UI_VIEWS_NO_AX)
   GetViewAccessibility().OverrideIsLeaf(true);
+#endif // UI_VIEWS_NO_AX
 }
 
 Tab::~Tab() = default;
@@ -188,7 +194,9 @@ void Tab::OnStateChanged() {
       // Notify assistive tools to update this tab's selected status.
       // The way Chrome OS accessibility is implemented right now, firing almost
       // any event will work, we just need to trigger its state to be refreshed.
+#if !defined(UI_VIEWS_NO_AX)
       NotifyAccessibilityEvent(ax::mojom::Event::kCheckedStateChanged, true);
+#endif // UI_VIEWS_NO_AX
       title_->SetEnabledColor(is_highlight_mode
                                   ? kTabTitleColor_InactiveHighlight
                                   : kTabTitleColor_InactiveBorder);
@@ -295,6 +303,7 @@ void Tab::OnPaint(gfx::Canvas* canvas) {
   canvas->DrawPath(path, fill_flags);
 }
 
+#if !defined(UI_VIEWS_NO_AX)
 void Tab::GetAccessibleNodeData(ui::AXNodeData* data) {
   data->role = ax::mojom::Role::kTab;
   data->SetName(title()->text());
@@ -309,6 +318,7 @@ bool Tab::HandleAccessibleAction(const ui::AXActionData& action_data) {
     action_data_copy.action = ax::mojom::Action::kDoDefault;
   return View::HandleAccessibleAction(action_data_copy);
 }
+#endif // UI_VIEWS_NO_AX
 
 void Tab::OnFocus() {
   OnStateChanged();
@@ -316,8 +326,10 @@ void Tab::OnFocus() {
   // contents are focused. When the tab loses focus, whichever new View ends up
   // with focus will send an ax::mojom::Event::kFocus of its own, so there's no
   // need to send one in OnBlur().
+#if !defined(UI_VIEWS_NO_AX)
   if (contents())
     contents()->NotifyAccessibilityEvent(ax::mojom::Event::kFocus, true);
+#endif // UI_VIEWS_NO_AX
   SchedulePaint();
 }
 
@@ -398,8 +410,10 @@ void MdTab::OnFocus() {
   // contents are focused. When the tab loses focus, whichever new View ends up
   // with focus will send an ax::mojom::Event::kFocus of its own, so there's no
   // need to send one in OnBlur().
+#if !defined(UI_VIEWS_NO_AX)
   if (contents())
     contents()->NotifyAccessibilityEvent(ax::mojom::Event::kFocus, true);
+#endif // UI_VIEWS_NO_AX
   SchedulePaint();
 }
 
@@ -434,8 +448,9 @@ TabStrip::TabStrip(TabbedPane::Orientation orientation,
   layout->set_main_axis_alignment(BoxLayout::MAIN_AXIS_ALIGNMENT_START);
   layout->SetDefaultFlex(0);
   SetLayoutManager(std::move(layout));
-
+#if !defined(UI_VIEWS_NO_AX)
   GetViewAccessibility().OverrideRole(ax::mojom::Role::kIgnored);
+#endif // UI_VIEWS_NO_AX
 }
 
 TabStrip::~TabStrip() = default;
@@ -827,8 +842,10 @@ const char* TabbedPane::GetClassName() const {
   return kViewClassName;
 }
 
+#if !defined(UI_VIEWS_NO_AX)
 void TabbedPane::GetAccessibleNodeData(ui::AXNodeData* node_data) {
   node_data->role = ax::mojom::Role::kTabList;
 }
+#endif // UI_VIEWS_NO_AX
 
 }  // namespace views

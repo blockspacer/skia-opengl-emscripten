@@ -296,4 +296,7 @@ if(NEED_GEN_BUILDFLAGS)
   # USE_MPRIS
   configure_file(${CHROMIUM_DIR}/mpris_buildflags.h.inc
     ${CHROMIUM_DIR}/ui/base/mpris/buildflags/buildflags.h COPYONLY)
+
+  configure_file(${CHROMIUM_DIR}/ui_views_buildflags.h.inc
+    ${CHROMIUM_DIR}ui/views/buildflags.h COPYONLY)
 endif(NEED_GEN_BUILDFLAGS)

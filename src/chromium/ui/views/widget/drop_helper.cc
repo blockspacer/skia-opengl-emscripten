@@ -7,7 +7,9 @@
 #include "base/callback.h"
 #include "base/no_destructor.h"
 #include "build/build_config.h"
+#if !defined(UI_VIEWS_PORT)
 #include "ui/base/dragdrop/drag_drop_types.h"
+#endif // UI_VIEWS_PORT
 #include "ui/views/view.h"
 #include "ui/views/widget/widget.h"
 
@@ -44,6 +46,7 @@ void DropHelper::ResetTargetViewIfEquals(View* view) {
     deepest_view_ = nullptr;
 }
 
+#if !defined(UI_VIEWS_PORT)
 int DropHelper::OnDragOver(const OSExchangeData& data,
                            const gfx::Point& root_view_location,
                            int drag_operation) {
@@ -69,12 +72,14 @@ int DropHelper::OnDragOver(const OSExchangeData& data,
 
   return NotifyDragOver(data, root_view_location, drag_operation);
 }
+#endif // UI_VIEWS_PORT
 
 void DropHelper::OnDragExit() {
   NotifyDragExit();
   deepest_view_ = target_view_ = nullptr;
 }
 
+#if !defined(UI_VIEWS_PORT)
 int DropHelper::OnDrop(const OSExchangeData& data,
                        const gfx::Point& root_view_location,
                        int drag_operation) {
@@ -119,6 +124,7 @@ View* DropHelper::CalculateTargetViewImpl(
   // TODO(sky): for the time being these are separate. Once I port chrome menu
   // I can switch to the #else implementation and nuke the OS_WIN
   // implementation.
+#if !defined(UI_VIEWS_PORT)
 #if defined(OS_WIN)
   // View under mouse changed, which means a new view may want the drop.
   // Walk the tree, stopping at target_view_ as we know it'll accept the
@@ -143,6 +149,7 @@ View* DropHelper::CalculateTargetViewImpl(
     view = view->parent();
   }
 #endif
+#endif // UI_VIEWS_PORT
   return view;
 }
 
@@ -173,6 +180,7 @@ int DropHelper::NotifyDragOver(const OSExchangeData& data,
                                   drag_operation);
   return target_view_->OnDragUpdated(enter_event);
 }
+#endif // UI_VIEWS_PORT
 
 void DropHelper::NotifyDragExit() {
   if (target_view_)

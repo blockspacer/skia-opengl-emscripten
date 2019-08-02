@@ -59,8 +59,10 @@
 #include "cc/trees/swap_promise_manager.h"
 #include "cc/trees/transform_node.h"
 #include "cc/trees/tree_synchronizer.h"
+#if defined(ENABLE_UKM)
 #include "cc/trees/ukm_manager.h"
 #include "services/metrics/public/cpp/ukm_recorder.h"
+#endif // ENABLE_UKM
 #include "ui/gfx/geometry/size_conversions.h"
 #include "ui/gfx/geometry/vector2d_conversions.h"
 #include "ui/gfx/presentation_feedback.h"
@@ -120,9 +122,14 @@ std::unique_ptr<LayerTreeHost> LayerTreeHost::CreateSingleThreaded(
 }
 
 LayerTreeHost::LayerTreeHost(InitParams params, CompositorMode mode)
-    : micro_benchmark_controller_(this),
+    :
+#if defined(ENABLE_CC_BENCH)
+      micro_benchmark_controller_(this),
+#endif // ENABLE_CC_BENCH
       image_worker_task_runner_(std::move(params.image_worker_task_runner)),
+#if defined(ENABLE_UKM)
       ukm_recorder_factory_(std::move(params.ukm_recorder_factory)),
+#endif // ENABLE_UKM
       compositor_mode_(mode),
       ui_resource_manager_(std::make_unique<UIResourceManager>()),
       client_(params.client),
@@ -382,7 +389,9 @@ void LayerTreeHost::FinishCommitOnImplThread(
   }
   queued_image_decodes_.clear();
 
+#if defined(ENABLE_CC_BENCH)
   micro_benchmark_controller_.ScheduleImplBenchmarks(host_impl);
+#endif // ENABLE_CC_BENCH
   property_trees_.ResetAllChangeTracking();
 
   // Dump property trees and layers if run with:
@@ -521,10 +530,12 @@ LayerTreeHost::CreateLayerTreeHostImpl(
       settings_, client, task_runner_provider_.get(),
       rendering_stats_instrumentation_.get(), task_graph_runner_,
       std::move(mutator_host_impl), id_, std::move(image_worker_task_runner_));
+#if defined(ENABLE_UKM)
   if (ukm_recorder_factory_) {
     host_impl->InitializeUkm(ukm_recorder_factory_->CreateRecorder());
     ukm_recorder_factory_.reset();
   }
+#endif // ENABLE_UKM
 
   host_impl->SetHasGpuRasterizationTrigger(has_gpu_rasterization_trigger_);
   host_impl->SetContentHasSlowPaths(content_has_slow_paths_);
@@ -691,7 +702,10 @@ bool LayerTreeHost::UpdateLayers() {
   client_->WillUpdateLayers();
   bool result = DoUpdateLayers();
   client_->DidUpdateLayers();
+
+#if defined(ENABLE_CC_BENCH)
   micro_benchmark_controller_.DidUpdateLayers();
+#endif // ENABLE_CC_BENCH
 
   if (const char* client_name = GetClientNameForMetrics()) {
     auto elapsed = timer.Elapsed().InMicroseconds();
@@ -1011,6 +1025,7 @@ void LayerTreeHost::AnimateLayers(base::TimeTicks monotonic_time) {
     property_trees_.needs_rebuild = true;
 }
 
+#if defined(ENABLE_CC_BENCH)
 int LayerTreeHost::ScheduleMicroBenchmark(
     const std::string& benchmark_name,
     std::unique_ptr<base::Value> value,
@@ -1018,11 +1033,16 @@ int LayerTreeHost::ScheduleMicroBenchmark(
   return micro_benchmark_controller_.ScheduleRun(
       benchmark_name, std::move(value), std::move(callback));
 }
+#endif // ENABLE_CC_BENCH
 
 bool LayerTreeHost::SendMessageToMicroBenchmark(
     int id,
     std::unique_ptr<base::Value> value) {
+#if defined(ENABLE_CC_BENCH)
   return micro_benchmark_controller_.SendMessage(id, std::move(value));
+#else
+  return false;
+#endif // ENABLE_CC_BENCH
 }
 
 void LayerTreeHost::SetLayerTreeMutator(
@@ -1892,9 +1912,11 @@ void LayerTreeHost::RequestBeginMainFrameNotExpected(bool new_state) {
   proxy_->RequestBeginMainFrameNotExpected(new_state);
 }
 
+#if defined(ENABLE_UKM)
 void LayerTreeHost::SetSourceURL(ukm::SourceId source_id, const GURL& url) {
   proxy_->SetSourceURL(source_id, url);
 }
+#endif // ENABLE_UKM
 
 void LayerTreeHost::SetRenderFrameObserver(
     std::unique_ptr<RenderFrameMetadataObserver> observer) {

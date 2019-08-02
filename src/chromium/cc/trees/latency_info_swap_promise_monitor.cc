@@ -14,6 +14,7 @@
 
 namespace {
 
+#if defined(ENABLE_LATENCY)
 bool AddRenderingScheduledComponent(ui::LatencyInfo* latency_info,
                                     bool on_main) {
   ui::LatencyComponentType type =
@@ -24,7 +25,9 @@ bool AddRenderingScheduledComponent(ui::LatencyInfo* latency_info,
   latency_info->AddLatencyNumber(type);
   return true;
 }
+#endif // ENABLE_LATENCY
 
+#if defined(ENABLE_LATENCY)
 bool AddForwardingScrollUpdateToMainComponent(ui::LatencyInfo* latency_info) {
   if (latency_info->FindLatency(
           ui::INPUT_EVENT_LATENCY_FORWARD_SCROLL_UPDATE_TO_MAIN_COMPONENT,
@@ -34,11 +37,12 @@ bool AddForwardingScrollUpdateToMainComponent(ui::LatencyInfo* latency_info) {
       ui::INPUT_EVENT_LATENCY_FORWARD_SCROLL_UPDATE_TO_MAIN_COMPONENT);
   return true;
 }
+#endif // ENABLE_LATENCY
 
 }  // namespace
 
 namespace cc {
-
+#if defined(ENABLE_LATENCY)
 LatencyInfoSwapPromiseMonitor::LatencyInfoSwapPromiseMonitor(
     ui::LatencyInfo* latency,
     SwapPromiseManager* swap_promise_manager,
@@ -82,5 +86,6 @@ void LatencyInfoSwapPromiseMonitor::OnForwardScrollUpdateToMainThreadOnImpl() {
         std::move(swap_promise));
   }
 }
+#endif // ENABLE_LATENCY
 
 }  // namespace cc

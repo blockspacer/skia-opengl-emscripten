@@ -14,7 +14,9 @@
 #include "cc/paint/paint_flags.h"
 #include "third_party/skia/include/core/SkPath.h"
 #include "third_party/skia/include/effects/SkGradientShader.h"
+#if !defined(UI_VIEWS_NO_AX)
 #include "ui/accessibility/ax_node_data.h"
+#endif // UI_VIEWS_NO_AX
 #include "ui/gfx/animation/linear_animation.h"
 #include "ui/gfx/canvas.h"
 #include "ui/gfx/color_utils.h"
@@ -53,9 +55,11 @@ ProgressBar::ProgressBar(int preferred_height, bool allow_round_corner)
 
 ProgressBar::~ProgressBar() = default;
 
+#if !defined(UI_VIEWS_NO_AX)
 void ProgressBar::GetAccessibleNodeData(ui::AXNodeData* node_data) {
   node_data->role = ax::mojom::Role::kProgressIndicator;
 }
+#endif // UI_VIEWS_NO_AX
 
 gfx::Size ProgressBar::CalculatePreferredSize() const {
   // The width will typically be ignored.

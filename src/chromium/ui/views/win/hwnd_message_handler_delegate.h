@@ -113,7 +113,9 @@ class VIEWS_EXPORT HWNDMessageHandlerDelegate {
 
   virtual void ResetWindowControls() = 0;
 
+#if !defined(UI_VIEWS_NO_AX)
   virtual gfx::NativeViewAccessible GetNativeViewAccessible() = 0;
+#endif // UI_VIEWS_NO_AX
 
   // TODO(beng): Investigate migrating these methods to On* prefixes once
   // HWNDMessageHandler is the WindowImpl.

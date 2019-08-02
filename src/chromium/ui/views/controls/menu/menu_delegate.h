@@ -11,15 +11,19 @@
 #include "base/logging.h"
 #include "base/strings/string16.h"
 #include "third_party/skia/include/core/SkColor.h"
+#if !defined(UI_VIEWS_PORT)
 #include "ui/base/dragdrop/drag_drop_types.h"
 #include "ui/base/dragdrop/os_exchange_data.h"
+#endif // UI_VIEWS_PORT
 #include "ui/base/ui_base_types.h"
 #include "ui/gfx/font_list.h"
 #include "ui/views/controls/menu/menu_runner.h"
 #include "ui/views/controls/menu/menu_types.h"
 #include "ui/views/views_export.h"
 
+#if !defined(UI_VIEWS_PORT)
 using ui::OSExchangeData;
+#endif // UI_VIEWS_PORT
 
 namespace gfx {
 class FontList;
@@ -146,13 +150,17 @@ class VIEWS_EXPORT MenuDelegate {
   // A, not B and C.
   //
 
+#if !defined(UI_VIEWS_PORT)
   // To restrict which children can be dropped on override GetDropOperation.
   virtual bool CanDrop(MenuItemView* menu, const OSExchangeData& data);
+#endif // UI_VIEWS_PORT
 
+#if !defined(UI_VIEWS_PORT)
   // See view for a description of this method.
   virtual bool GetDropFormats(MenuItemView* menu,
                               int* formats,
                               std::set<ui::ClipboardFormatType>* format_types);
+#endif // UI_VIEWS_PORT
 
   // See view for a description of this method.
   virtual bool AreDropTypesRequired(MenuItemView* menu);
@@ -163,26 +171,32 @@ class VIEWS_EXPORT MenuDelegate {
   // position.
   //
   // If a drop should not be allowed, returned ui::DragDropTypes::DRAG_NONE.
+#if !defined(UI_VIEWS_PORT)
   virtual int GetDropOperation(MenuItemView* item,
                                const ui::DropTargetEvent& event,
                                DropPosition* position);
+#endif // UI_VIEWS_PORT
 
   // Invoked to perform the drop operation. This is ONLY invoked if CanDrop()
   // returned true for the parent menu item, and GetDropOperation() returned an
   // operation other than ui::DragDropTypes::DRAG_NONE.
   //
   // |menu| is the menu the drop occurred on.
+#if !defined(UI_VIEWS_PORT)
   virtual int OnPerformDrop(MenuItemView* menu,
                             DropPosition position,
                             const ui::DropTargetEvent& event);
+#endif // UI_VIEWS_PORT
 
   // Invoked to determine if it is possible for the user to drag the specified
   // menu item.
   virtual bool CanDrag(MenuItemView* menu);
 
+#if !defined(UI_VIEWS_PORT)
   // Invoked to write the data for a drag operation to data. sender is the
   // MenuItemView being dragged.
   virtual void WriteDragData(MenuItemView* sender, OSExchangeData* data);
+#endif // UI_VIEWS_PORT
 
   // Invoked to determine the drag operations for a drag session of sender.
   // See DragDropTypes for possible values.

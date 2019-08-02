@@ -84,7 +84,9 @@ class VIZ_COMMON_EXPORT CompositorFrameMetadata {
   // it's too small to fill the box the parent reserved for it.
   SkColor root_background_color = SK_ColorWHITE;
 
+#if defined(ENABLE_LATENCY)
   std::vector<ui::LatencyInfo> latency_info;
+#endif // ENABLE_LATENCY
 
   // This is the set of surfaces that the client wants to keep alive. It is
   // guaranteed that the last activated surface in every SurfaceRange will be

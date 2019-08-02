@@ -15,10 +15,12 @@ namespace gfx {
 class Point;
 }  // namespace gfx
 
+#if !defined(UI_VIEWS_PORT)
 namespace ui {
 class OSExchangeData;
 }  // namespace ui
 using ui::OSExchangeData;
+#endif // UI_VIEWS_PORT
 
 namespace views {
 
@@ -55,9 +57,11 @@ class VIEWS_EXPORT DropHelper {
   // Invoked when a the mouse is dragged over the root view during a drag and
   // drop operation. This method returns a bitmask of the types in DragDropTypes
   // for the target view. If no view wants the drop, DRAG_NONE is returned.
+#if !defined(UI_VIEWS_PORT)
   int OnDragOver(const OSExchangeData& data,
                  const gfx::Point& root_view_location,
                  int drag_operation);
+#endif // UI_VIEWS_PORT
 
   // Invoked when a the mouse is dragged out of the root view during a drag and
   // drop operation.
@@ -68,22 +72,27 @@ class VIEWS_EXPORT DropHelper {
   //
   // NOTE: implementations must invoke OnDragOver before invoking this,
   // supplying the return value from OnDragOver as the drag_operation.
+#if !defined(UI_VIEWS_PORT)
   int OnDrop(const OSExchangeData& data,
              const gfx::Point& root_view_location,
              int drag_operation);
+#endif // UI_VIEWS_PORT
 
   // Calculates the target view for a drop given the specified location in
   // the coordinate system of the rootview. This tries to avoid continually
   // querying CanDrop by returning target_view_ if the mouse is still over
   // target_view_.
+#if !defined(UI_VIEWS_PORT)
   View* CalculateTargetView(const gfx::Point& root_view_location,
                             const OSExchangeData& data,
                             bool check_can_drop);
+#endif // UI_VIEWS_PORT
 
  private:
   // Implementation of CalculateTargetView. If |deepest_view| is non-NULL it is
   // set to the deepest descendant of the RootView that contains the point
   // |root_view_location|
+#if !defined(UI_VIEWS_PORT)
   View* CalculateTargetViewImpl(const gfx::Point& root_view_location,
                                 const OSExchangeData& data,
                                 bool check_can_drop,
@@ -97,6 +106,7 @@ class VIEWS_EXPORT DropHelper {
   int NotifyDragOver(const OSExchangeData& data,
                      const gfx::Point& root_view_location,
                      int drag_operation);
+#endif // UI_VIEWS_PORT
   void NotifyDragExit();
 
   // RootView we were created for.

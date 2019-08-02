@@ -291,12 +291,14 @@ set(CC_SOURCES
   ${CC_DIR}trees/layer_tree_frame_sink.cc
   #${CC_DIR}trees/layer_tree_frame_sink.h",
   #${CC_DIR}trees/layer_tree_frame_sink_client.h",
-  # TODO # ${CC_DIR}trees/layer_tree_host.cc
+  # TODO #
+  ${CC_DIR}trees/layer_tree_host.cc
   #${CC_DIR}trees/layer_tree_host.h",
   #${CC_DIR}trees/layer_tree_host_client.h",
   ${CC_DIR}trees/layer_tree_host_common.cc
   #${CC_DIR}trees/layer_tree_host_common.h",
-  # TODO # ${CC_DIR}trees/layer_tree_host_impl.cc
+  # TODO #
+  ${CC_DIR}trees/layer_tree_host_impl.cc
   #${CC_DIR}trees/layer_tree_host_impl.h",
   #${CC_DIR}trees/layer_tree_host_single_thread_client.h",
   ${CC_DIR}trees/layer_tree_impl.cc
@@ -323,10 +325,12 @@ set(CC_SOURCES
   ${CC_DIR}trees/proxy_common.cc
   #${CC_DIR}trees/proxy_common.h",
   # requires services/metrics/public/mojom/ukm_interface.mojom-forward.h
-  ## TODO ## ${CC_DIR}trees/proxy_impl.cc
+  ## TODO ##
+  ${CC_DIR}trees/proxy_impl.cc
   #${CC_DIR}trees/proxy_impl.h",
   # requires services/metrics/public/mojom/ukm_interface.mojom-forward.h
-  ## TODO ## ${CC_DIR}trees/proxy_main.cc
+  ## TODO ##
+  ${CC_DIR}trees/proxy_main.cc
   #${CC_DIR}trees/proxy_main.h",
   ${CC_DIR}trees/render_frame_metadata.cc
   #${CC_DIR}trees/render_frame_metadata.h",
@@ -364,7 +368,7 @@ target_link_libraries(CC PUBLIC
   BASE_CC
   DEBUG_CC
   PAINT_CC
-  ANIMATION_CC
+  #ANIMATION_CC
   #dynamic_annotations
   #${BASE_LIBRARIES}
   #GPU_COMMAND_BUFFER
@@ -378,6 +382,7 @@ target_link_libraries(CC PUBLIC
   GFX_RANGE
   SKIA
   base
+  GURL
 )
 
 target_link_libraries(CC PRIVATE

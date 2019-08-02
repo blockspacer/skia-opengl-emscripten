@@ -94,9 +94,11 @@ ui::ModalType WidgetDelegate::GetModalType() const {
   return ui::MODAL_TYPE_NONE;
 }
 
+#if !defined(UI_VIEWS_NO_AX)
 ax::mojom::Role WidgetDelegate::GetAccessibleWindowRole() {
   return ax::mojom::Role::kWindow;
 }
+#endif // UI_VIEWS_NO_AX
 
 base::string16 WidgetDelegate::GetAccessibleWindowTitle() const {
   return GetWindowTitle();

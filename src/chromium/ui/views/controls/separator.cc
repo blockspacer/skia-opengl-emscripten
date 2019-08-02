@@ -4,7 +4,9 @@
 
 #include "ui/views/controls/separator.h"
 
+#if !defined(UI_VIEWS_NO_AX)
 #include "ui/accessibility/ax_node_data.h"
+#endif // UI_VIEWS_NO_AX
 #include "ui/gfx/canvas.h"
 #include "ui/native_theme/native_theme.h"
 
@@ -40,9 +42,11 @@ gfx::Size Separator::CalculatePreferredSize() const {
   return size;
 }
 
+#if !defined(UI_VIEWS_NO_AX)
 void Separator::GetAccessibleNodeData(ui::AXNodeData* node_data) {
   node_data->role = ax::mojom::Role::kSplitter;
 }
+#endif // UI_VIEWS_NO_AX
 
 void Separator::OnPaint(gfx::Canvas* canvas) {
   SkColor color = overridden_color_

@@ -5,7 +5,9 @@
 #include "ui/views/controls/resize_area.h"
 
 #include "base/logging.h"
+#if !defined(UI_VIEWS_NO_AX)
 #include "ui/accessibility/ax_node_data.h"
+#endif // UI_VIEWS_NO_AX
 #include "ui/base/cursor/cursor.h"
 #include "ui/views/controls/resize_area_delegate.h"
 #include "ui/views/native_cursor.h"
@@ -26,8 +28,12 @@ const char* ResizeArea::GetClassName() const {
 }
 
 gfx::NativeCursor ResizeArea::GetCursor(const ui::MouseEvent& event) {
+#if !defined(UI_VIEWS_PORT)
   return enabled() ? GetNativeEastWestResizeCursor()
                    : gfx::kNullCursor;
+#else
+  return gfx::NativeCursor();
+#endif // UI_VIEWS_PORT
 }
 
 void ResizeArea::OnGestureEvent(ui::GestureEvent* event) {
@@ -68,9 +74,11 @@ void ResizeArea::OnMouseCaptureLost() {
   ReportResizeAmount(initial_position_, true);
 }
 
+#if !defined(UI_VIEWS_NO_AX)
 void ResizeArea::GetAccessibleNodeData(ui::AXNodeData* node_data) {
   node_data->role = ax::mojom::Role::kSplitter;
 }
+#endif // UI_VIEWS_NO_AX
 
 void ResizeArea::ReportResizeAmount(int resize_amount, bool last_update) {
   gfx::Point point(resize_amount, 0);

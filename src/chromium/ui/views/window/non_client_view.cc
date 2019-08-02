@@ -6,7 +6,9 @@
 
 #include <memory>
 
+#if !defined(UI_VIEWS_NO_AX)
 #include "ui/accessibility/ax_node_data.h"
+#endif // UI_VIEWS_NO_AX
 #include "ui/base/hit_test.h"
 #include "ui/gfx/geometry/rect_conversions.h"
 #include "ui/views/rect_based_targeting_utils.h"
@@ -190,10 +192,12 @@ void NonClientView::ViewHierarchyChanged(
   }
 }
 
+#if !defined(UI_VIEWS_NO_AX)
 void NonClientView::GetAccessibleNodeData(ui::AXNodeData* node_data) {
   node_data->role = ax::mojom::Role::kClient;
   node_data->SetName(accessible_name_);
 }
+#endif // UI_VIEWS_NO_AX
 
 const char* NonClientView::GetClassName() const {
   return kViewClassName;
@@ -304,9 +308,11 @@ int NonClientFrameView::GetHTComponentForFrame(const gfx::Point& point,
 
 void NonClientFrameView::PaintAsActiveChanged(bool active) {}
 
+#if !defined(UI_VIEWS_NO_AX)
 void NonClientFrameView::GetAccessibleNodeData(ui::AXNodeData* node_data) {
   node_data->role = ax::mojom::Role::kClient;
 }
+#endif // UI_VIEWS_NO_AX
 
 const char* NonClientFrameView::GetClassName() const {
   return kViewClassName;

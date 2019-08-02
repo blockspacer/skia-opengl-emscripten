@@ -156,11 +156,14 @@ bool PrefixSelector::IsTextEditCommandEnabled(
 void PrefixSelector::SetTextEditCommandForNextKeyEvent(
     ui::TextEditCommand command) {}
 
+
+#if defined(ENABLE_UKM)
 ukm::SourceId PrefixSelector::GetClientSourceForMetrics() const {
   // TODO(shend): Implement this method.
   NOTIMPLEMENTED_LOG_ONCE();
   return ukm::SourceId();
 }
+#endif // ENABLE_UKM
 
 bool PrefixSelector::ShouldDoLearning() {
   // TODO(https://crbug.com/311180): Implement this method.

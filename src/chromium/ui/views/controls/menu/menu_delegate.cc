@@ -74,42 +74,54 @@ bool MenuDelegate::IsTriggerableEvent(MenuItemView* source,
               (ui::EF_LEFT_MOUSE_BUTTON | ui::EF_RIGHT_MOUSE_BUTTON)));
 }
 
+#if !defined(UI_VIEWS_PORT)
 bool MenuDelegate::CanDrop(MenuItemView* menu, const OSExchangeData& data) {
   return false;
 }
+#endif // UI_VIEWS_PORT
 
+#if !defined(UI_VIEWS_PORT)
 bool MenuDelegate::GetDropFormats(
     MenuItemView* menu,
     int* formats,
     std::set<ui::ClipboardFormatType>* format_types) {
   return false;
 }
+#endif // UI_VIEWS_PORT
 
 bool MenuDelegate::AreDropTypesRequired(MenuItemView* menu) {
   return false;
 }
 
+
+#if !defined(UI_VIEWS_PORT)
 int MenuDelegate::GetDropOperation(MenuItemView* item,
                                    const ui::DropTargetEvent& event,
                                    DropPosition* position) {
   NOTREACHED() << "If you override CanDrop, you need to override this too";
   return ui::DragDropTypes::DRAG_NONE;
 }
+#endif // UI_VIEWS_PORT
 
+
+#if !defined(UI_VIEWS_PORT)
 int MenuDelegate::OnPerformDrop(MenuItemView* menu,
                                 DropPosition position,
                                 const ui::DropTargetEvent& event) {
   NOTREACHED() << "If you override CanDrop, you need to override this too";
   return ui::DragDropTypes::DRAG_NONE;
 }
+#endif // UI_VIEWS_PORT
 
 bool MenuDelegate::CanDrag(MenuItemView* menu) {
   return false;
 }
 
+#if !defined(UI_VIEWS_PORT)
 void MenuDelegate::WriteDragData(MenuItemView* sender, OSExchangeData* data) {
   NOTREACHED() << "If you override CanDrag, you must override this too.";
 }
+#endif // UI_VIEWS_PORT
 
 int MenuDelegate::GetDragOperations(MenuItemView* sender) {
   NOTREACHED() << "If you override CanDrag, you must override this too.";

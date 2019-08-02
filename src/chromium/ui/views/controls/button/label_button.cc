@@ -11,7 +11,9 @@
 #include "base/lazy_instance.h"
 #include "base/logging.h"
 #include "build/build_config.h"
+#if !defined(UI_VIEWS_NO_AX)
 #include "ui/accessibility/ax_node_data.h"
+#endif // UI_VIEWS_NO_AX
 #include "ui/gfx/animation/throb_animation.h"
 #include "ui/gfx/canvas.h"
 #include "ui/gfx/color_utils.h"
@@ -335,11 +337,13 @@ void LabelButton::EnableCanvasFlippingForRTLUI(bool flip) {
   image_->EnableCanvasFlippingForRTLUI(flip);
 }
 
+#if !defined(UI_VIEWS_NO_AX)
 void LabelButton::GetAccessibleNodeData(ui::AXNodeData* node_data) {
   if (GetIsDefault())
     node_data->AddState(ax::mojom::State::kDefault);
   Button::GetAccessibleNodeData(node_data);
 }
+#endif // UI_VIEWS_NO_AX
 
 ui::NativeTheme::Part LabelButton::GetThemePart() const {
   return ui::NativeTheme::kPushButton;

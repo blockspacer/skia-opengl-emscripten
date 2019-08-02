@@ -10,7 +10,9 @@
 #include "base/gtest_prod_util.h"
 #include "base/macros.h"
 #include "build/build_config.h"
+#if !defined(UI_VIEWS_NO_AX)
 #include "ui/accessibility/ax_enums.mojom.h"
+#endif // UI_VIEWS_NO_AX
 #include "ui/base/accelerators/accelerator.h"
 #include "ui/views/bubble/bubble_border.h"
 #include "ui/views/view_tracker.h"
@@ -147,7 +149,9 @@ class VIEWS_EXPORT BubbleDialogDelegateView : public DialogDelegateView,
   virtual gfx::Rect GetBubbleBounds();
 
   // DialogDelegateView:
+#if !defined(UI_VIEWS_NO_AX)
   ax::mojom::Role GetAccessibleWindowRole() override;
+#endif // UI_VIEWS_NO_AX
   void OnPaintAsActiveChanged(bool paint_as_active) override;
 
   // Disallow overrides of GetMinimumSize and GetMaximumSize(). These would only

@@ -15,9 +15,11 @@ class ImageSkia;
 class Point;
 }
 
+#if !defined(UI_VIEWS_PORT)
 namespace ui {
 class OSExchangeData;
 }
+#endif // UI_VIEWS_PORT
 
 namespace views {
 class Widget;
@@ -25,6 +27,7 @@ class Widget;
 
 namespace button_drag_utils {
 
+#if !defined(UI_VIEWS_PORT)
 // Sets url and title on data as well as setting a suitable image for dragging.
 // The image looks like that of the bookmark buttons. |press_pt| is optional
 // offset; otherwise, it centers the drag image.
@@ -42,6 +45,7 @@ VIEWS_EXPORT void SetDragImage(const GURL& url,
                                const gfx::Point* press_pt,
                                const views::Widget& widget,
                                ui::OSExchangeData* data);
+#endif // UI_VIEWS_PORT
 
 }  // namespace button_drag_utils
 

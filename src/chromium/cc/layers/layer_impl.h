@@ -57,7 +57,9 @@ namespace cc {
 
 class AppendQuadsData;
 class LayerTreeImpl;
+#if defined(ENABLE_CC_BENCH)
 class MicroBenchmarkImpl;
+#endif // ENABLE_CC_BENCH
 class PrioritizedTile;
 class ScrollbarLayerImplBase;
 class SimpleEnclosedRegion;
@@ -397,7 +399,9 @@ class CC_EXPORT LayerImpl {
   // on pending tree when syncing layers from main thread.
   void SetNeedsPushProperties();
 
+#if defined(ENABLE_CC_BENCH)
   virtual void RunMicroBenchmark(MicroBenchmarkImpl* benchmark);
+#endif // ENABLE_CC_BENCH
 
   void SetDebugInfo(std::unique_ptr<base::trace_event::TracedValue> debug_info);
 

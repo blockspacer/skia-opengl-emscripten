@@ -92,8 +92,10 @@ views::Widget* CreateTouchSelectionPopupWidget(
 gfx::Image* GetCenterHandleImage() {
   static gfx::Image* handle_image = nullptr;
   if (!handle_image) {
+#if !defined(UI_VIEWS_PORT)
     handle_image = &ui::ResourceBundle::GetSharedInstance().GetImageNamed(
         IDR_TEXT_SELECTION_HANDLE_CENTER);
+#endif // UI_VIEWS_PORT
   }
   return handle_image;
 }
@@ -101,8 +103,10 @@ gfx::Image* GetCenterHandleImage() {
 gfx::Image* GetLeftHandleImage() {
   static gfx::Image* handle_image = nullptr;
   if (!handle_image) {
+#if !defined(UI_VIEWS_PORT)
     handle_image = &ui::ResourceBundle::GetSharedInstance().GetImageNamed(
         IDR_TEXT_SELECTION_HANDLE_LEFT);
+#endif // UI_VIEWS_PORT
   }
   return handle_image;
 }
@@ -110,8 +114,10 @@ gfx::Image* GetLeftHandleImage() {
 gfx::Image* GetRightHandleImage() {
   static gfx::Image* handle_image = nullptr;
   if (!handle_image) {
+#if !defined(UI_VIEWS_PORT)
     handle_image = &ui::ResourceBundle::GetSharedInstance().GetImageNamed(
         IDR_TEXT_SELECTION_HANDLE_RIGHT);
+#endif // UI_VIEWS_PORT
   }
   return handle_image;
 }

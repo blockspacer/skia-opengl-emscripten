@@ -6,7 +6,9 @@
 
 #include "cc/paint/paint_flags.h"
 #include "third_party/skia/include/core/SkDrawLooper.h"
+#if !defined(UI_VIEWS_NO_AX)
 #include "ui/accessibility/ax_node_data.h"
+#endif // UI_VIEWS_NO_AX
 #include "ui/gfx/canvas.h"
 #include "ui/gfx/color_palette.h"
 #include "ui/gfx/color_utils.h"
@@ -216,6 +218,7 @@ void ToggleButton::OnThemeChanged() {
   SchedulePaint();
 }
 
+#if !defined(UI_VIEWS_NO_AX)
 void ToggleButton::GetAccessibleNodeData(ui::AXNodeData* node_data) {
   Button::GetAccessibleNodeData(node_data);
 
@@ -223,6 +226,7 @@ void ToggleButton::GetAccessibleNodeData(ui::AXNodeData* node_data) {
   node_data->SetCheckedState(GetIsOn() ? ax::mojom::CheckedState::kTrue
                                        : ax::mojom::CheckedState::kFalse);
 }
+#endif // UI_VIEWS_NO_AX
 
 void ToggleButton::OnFocus() {
   Button::OnFocus();

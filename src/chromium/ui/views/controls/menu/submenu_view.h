@@ -73,20 +73,29 @@ class VIEWS_EXPORT SubmenuView : public View,
   gfx::Size CalculatePreferredSize() const override;
 
   // Override from View.
+#if !defined(UI_VIEWS_NO_AX)
   void GetAccessibleNodeData(ui::AXNodeData* node_data) override;
+#endif // UI_VIEWS_NO_AX
 
   // Painting.
   void PaintChildren(const PaintInfo& paint_info) override;
 
+#if !defined(UI_VIEWS_PORT)
   // Drag and drop methods. These are forwarded to the MenuController.
   bool GetDropFormats(int* formats,
                       std::set<ui::ClipboardFormatType>* format_types) override;
+#endif // UI_VIEWS_PORT
   bool AreDropTypesRequired() override;
+#if !defined(UI_VIEWS_PORT)
   bool CanDrop(const OSExchangeData& data) override;
   void OnDragEntered(const ui::DropTargetEvent& event) override;
   int OnDragUpdated(const ui::DropTargetEvent& event) override;
+#endif // UI_VIEWS_PORT
   void OnDragExited() override;
+
+#if !defined(UI_VIEWS_PORT)
   int OnPerformDrop(const ui::DropTargetEvent& event) override;
+#endif // UI_VIEWS_PORT
 
   // Scrolls on menu item boundaries.
   bool OnMouseWheel(const ui::MouseWheelEvent& e) override;

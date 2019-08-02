@@ -8,12 +8,15 @@
 #include "base/compiler_specific.h"
 #include "cc/trees/swap_promise_monitor.h"
 
+#if defined(ENABLE_LATENCY)
 namespace ui {
 class LatencyInfo;
 }  // namespace ui
+#endif // ENABLE_LATENCY
 
 namespace cc {
 
+#if defined(ENABLE_LATENCY)
 // A LatencyInfoSwapPromiseMonitor queues a LatencyInfoSwapPromise into
 // LayerTreeHost or LayerTreeHostImpl if there is compositor state change
 // while it is being mointored.
@@ -31,6 +34,7 @@ class CC_EXPORT LatencyInfoSwapPromiseMonitor : public SwapPromiseMonitor {
  private:
   ui::LatencyInfo* latency_;
 };
+#endif // ENABLE_LATENCY
 
 }  // namespace cc
 

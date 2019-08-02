@@ -66,7 +66,9 @@ class VIEWS_EXPORT Link : public Label {
   bool OnKeyPressed(const ui::KeyEvent& event) override;
   void OnGestureEvent(ui::GestureEvent* event) override;
   bool SkipDefaultKeyEventProcessing(const ui::KeyEvent& event) override;
+#if !defined(UI_VIEWS_NO_AX)
   void GetAccessibleNodeData(ui::AXNodeData* node_data) override;
+#endif // UI_VIEWS_NO_AX
   void OnFocus() override;
   void OnBlur() override;
   void SetFontList(const gfx::FontList& font_list) override;

@@ -14,236 +14,236 @@
 
 set(UI_BASE_SOURCES
   ${UI_BASE_DIR}accelerators/media_keys_listener.cc
-  #${UI_BASE_DIR}accelerators/media_keys_listener.h",
+  #${UI_BASE_DIR}accelerators/media_keys_listener.h
   ${UI_BASE_DIR}accelerators/media_keys_util.cc
-  #${UI_BASE_DIR}accelerators/media_keys_util.h",
+  #${UI_BASE_DIR}accelerators/media_keys_util.h
   ${UI_BASE_DIR}accelerators/menu_label_accelerator_util.cc
-  #${UI_BASE_DIR}accelerators/menu_label_accelerator_util.h",
+  #${UI_BASE_DIR}accelerators/menu_label_accelerator_util.h
   ${UI_BASE_DIR}accelerators/menu_label_accelerator_util_linux.cc
-  #${UI_BASE_DIR}accelerators/menu_label_accelerator_util_linux.h",
-  #${UI_BASE_DIR}accelerators/platform_accelerator_cocoa.h",
+  #${UI_BASE_DIR}accelerators/menu_label_accelerator_util_linux.h
+  #${UI_BASE_DIR}accelerators/platform_accelerator_cocoa.h
   # TODO # ${UI_BASE_DIR}accelerators/platform_accelerator_cocoa.mm",
   ${UI_BASE_DIR}class_property.cc
-  #${UI_BASE_DIR}class_property.h",
-  #${UI_BASE_DIR}cocoa/accessibility_focus_overrider.h",
+  #${UI_BASE_DIR}class_property.h
+  #${UI_BASE_DIR}cocoa/accessibility_focus_overrider.h
   # TODO # ${UI_BASE_DIR}cocoa/accessibility_focus_overrider.mm",
-  #${UI_BASE_DIR}cocoa/animation_utils.h",
-  #${UI_BASE_DIR}cocoa/appkit_utils.h",
+  #${UI_BASE_DIR}cocoa/animation_utils.h
+  #${UI_BASE_DIR}cocoa/appkit_utils.h
   # TODO # ${UI_BASE_DIR}cocoa/appkit_utils.mm",
-  #${UI_BASE_DIR}cocoa/base_view.h",
+  #${UI_BASE_DIR}cocoa/base_view.h
   # TODO # ${UI_BASE_DIR}cocoa/base_view.mm",
-  #${UI_BASE_DIR}cocoa/cocoa_base_utils.h",
+  #${UI_BASE_DIR}cocoa/cocoa_base_utils.h
   # TODO # ${UI_BASE_DIR}cocoa/cocoa_base_utils.mm",
-  #${UI_BASE_DIR}cocoa/command_dispatcher.h",
+  #${UI_BASE_DIR}cocoa/command_dispatcher.h
   # TODO # ${UI_BASE_DIR}cocoa/command_dispatcher.mm",
-  #${UI_BASE_DIR}cocoa/constrained_window/constrained_window_animation.h",
+  #${UI_BASE_DIR}cocoa/constrained_window/constrained_window_animation.h
   # TODO # ${UI_BASE_DIR}cocoa/constrained_window/constrained_window_animation.mm",
-  #${UI_BASE_DIR}cocoa/controls/button_utils.h",
+  #${UI_BASE_DIR}cocoa/controls/button_utils.h
   # TODO # ${UI_BASE_DIR}cocoa/controls/button_utils.mm",
-  #${UI_BASE_DIR}cocoa/controls/textfield_utils.h",
+  #${UI_BASE_DIR}cocoa/controls/textfield_utils.h
   # TODO # ${UI_BASE_DIR}cocoa/controls/textfield_utils.mm",
-  #${UI_BASE_DIR}cocoa/defaults_utils.h",
+  #${UI_BASE_DIR}cocoa/defaults_utils.h
   # TODO # ${UI_BASE_DIR}cocoa/defaults_utils.mm",
-  #${UI_BASE_DIR}cocoa/find_pasteboard.h",
+  #${UI_BASE_DIR}cocoa/find_pasteboard.h
   # TODO # ${UI_BASE_DIR}cocoa/find_pasteboard.mm",
-  #${UI_BASE_DIR}cocoa/flipped_view.h",
+  #${UI_BASE_DIR}cocoa/flipped_view.h
   # TODO # ${UI_BASE_DIR}cocoa/flipped_view.mm",
-  #${UI_BASE_DIR}cocoa/focus_tracker.h",
+  #${UI_BASE_DIR}cocoa/focus_tracker.h
   # TODO # ${UI_BASE_DIR}cocoa/focus_tracker.mm",
-  #${UI_BASE_DIR}cocoa/focus_window_set.h",
+  #${UI_BASE_DIR}cocoa/focus_window_set.h
   # TODO # ${UI_BASE_DIR}cocoa/focus_window_set.mm",
-  #${UI_BASE_DIR}cocoa/menu_controller.h",
+  #${UI_BASE_DIR}cocoa/menu_controller.h
   # TODO # ${UI_BASE_DIR}cocoa/menu_controller.mm",
-  #${UI_BASE_DIR}cocoa/nib_loading.h",
+  #${UI_BASE_DIR}cocoa/nib_loading.h
   # TODO # ${UI_BASE_DIR}cocoa/nib_loading.mm",
-  #${UI_BASE_DIR}cocoa/ns_view_ids.h",
+  #${UI_BASE_DIR}cocoa/ns_view_ids.h
   # TODO # ${UI_BASE_DIR}cocoa/ns_view_ids.mm",
-  #${UI_BASE_DIR}cocoa/quartz_util.h",
+  #${UI_BASE_DIR}cocoa/quartz_util.h
   # TODO # ${UI_BASE_DIR}cocoa/quartz_util.mm",
-  #${UI_BASE_DIR}cocoa/remote_accessibility_api.h",
+  #${UI_BASE_DIR}cocoa/remote_accessibility_api.h
   # TODO # ${UI_BASE_DIR}cocoa/remote_accessibility_api.mm",
-  #${UI_BASE_DIR}cocoa/remote_layer_api.h",
+  #${UI_BASE_DIR}cocoa/remote_layer_api.h
   # TODO # ${UI_BASE_DIR}cocoa/remote_layer_api.mm",
-  #${UI_BASE_DIR}cocoa/remote_views_window.h",
+  #${UI_BASE_DIR}cocoa/remote_views_window.h
   # TODO # ${UI_BASE_DIR}cocoa/remote_views_window.mm",
-  #${UI_BASE_DIR}cocoa/secure_password_input.h",
+  #${UI_BASE_DIR}cocoa/secure_password_input.h
   # TODO # ${UI_BASE_DIR}cocoa/secure_password_input.mm",
   # TODO # ${UI_BASE_DIR}cocoa/text_services_context_menu.cc
-  #${UI_BASE_DIR}cocoa/text_services_context_menu.h",
-  #${UI_BASE_DIR}cocoa/tool_tip_base_view.h",
+  #${UI_BASE_DIR}cocoa/text_services_context_menu.h
+  #${UI_BASE_DIR}cocoa/tool_tip_base_view.h
   # TODO # ${UI_BASE_DIR}cocoa/tool_tip_base_view.mm",
-  #${UI_BASE_DIR}cocoa/touch_bar_forward_declarations.h",
+  #${UI_BASE_DIR}cocoa/touch_bar_forward_declarations.h
   # TODO # ${UI_BASE_DIR}cocoa/touch_bar_forward_declarations.mm",
-  #${UI_BASE_DIR}cocoa/touch_bar_util.h",
+  #${UI_BASE_DIR}cocoa/touch_bar_util.h
   # TODO # ${UI_BASE_DIR}cocoa/touch_bar_util.mm",
-  #${UI_BASE_DIR}cocoa/tracking_area.h",
+  #${UI_BASE_DIR}cocoa/tracking_area.h
   # TODO # ${UI_BASE_DIR}cocoa/tracking_area.mm",
-  #${UI_BASE_DIR}cocoa/underlay_opengl_hosting_window.h",
+  #${UI_BASE_DIR}cocoa/underlay_opengl_hosting_window.h
   # TODO # ${UI_BASE_DIR}cocoa/underlay_opengl_hosting_window.mm",
-  #${UI_BASE_DIR}cocoa/user_interface_item_command_handler.h",
-  #${UI_BASE_DIR}cocoa/views_hostable.h",
-  #${UI_BASE_DIR}cocoa/weak_ptr_nsobject.h",
+  #${UI_BASE_DIR}cocoa/user_interface_item_command_handler.h
+  #${UI_BASE_DIR}cocoa/views_hostable.h
+  #${UI_BASE_DIR}cocoa/weak_ptr_nsobject.h
   # TODO # ${UI_BASE_DIR}cocoa/weak_ptr_nsobject.mm",
-  #${UI_BASE_DIR}cocoa/window_size_constants.h",
+  #${UI_BASE_DIR}cocoa/window_size_constants.h
   # TODO # ${UI_BASE_DIR}cocoa/window_size_constants.mm",
   ${UI_BASE_DIR}cursor/cursor.cc
-  #${UI_BASE_DIR}cursor/cursor.h",
+  #${UI_BASE_DIR}cursor/cursor.h
   # TODO # ${UI_BASE_DIR}cursor/cursor_android.cc
-  #${UI_BASE_DIR}cursor/cursor_loader.h",
-  #${UI_BASE_DIR}cursor/cursor_type.h",
+  #${UI_BASE_DIR}cursor/cursor_loader.h
+  #${UI_BASE_DIR}cursor/cursor_type.h
   # TODO # ${UI_BASE_DIR}cursor/cursor_win.cc
-  #${UI_BASE_DIR}default_style.h",
-  #${UI_BASE_DIR}device_form_factor.h",
+  #${UI_BASE_DIR}default_style.h
+  #${UI_BASE_DIR}device_form_factor.h
   # TODO # ${UI_BASE_DIR}device_form_factor_android.cc
   # TODO # ${UI_BASE_DIR}device_form_factor_desktop.cc
   # TODO # ${UI_BASE_DIR}device_form_factor_ios.mm",
-  #${UI_BASE_DIR}dragdrop/download_file_interface.h",
-  #${UI_BASE_DIR}dragdrop/drag_drop_types.h",
+  #${UI_BASE_DIR}dragdrop/download_file_interface.h
+  #${UI_BASE_DIR}dragdrop/drag_drop_types.h
   # TODO # ${UI_BASE_DIR}dragdrop/drag_drop_types_mac.mm",
   # TODO # ${UI_BASE_DIR}dragdrop/drag_drop_types_win.cc
   # TODO # ${UI_BASE_DIR}dragdrop/drag_source_win.cc
-  #${UI_BASE_DIR}dragdrop/drag_source_win.h",
+  #${UI_BASE_DIR}dragdrop/drag_source_win.h
   ${UI_BASE_DIR}dragdrop/drop_target_event.cc
-  #${UI_BASE_DIR}dragdrop/drop_target_event.h",
+  #${UI_BASE_DIR}dragdrop/drop_target_event.h
   # TODO # ${UI_BASE_DIR}dragdrop/drop_target_win.cc
-  #${UI_BASE_DIR}dragdrop/drop_target_win.h",
+  #${UI_BASE_DIR}dragdrop/drop_target_win.h
   # TODO # ${UI_BASE_DIR}dragdrop/os_exchange_data.cc
-  #${UI_BASE_DIR}dragdrop/os_exchange_data.h",
-  #${UI_BASE_DIR}dragdrop/os_exchange_data_provider_builder_mac.h",
+  #${UI_BASE_DIR}dragdrop/os_exchange_data.h
+  #${UI_BASE_DIR}dragdrop/os_exchange_data_provider_builder_mac.h
   # TODO # ${UI_BASE_DIR}dragdrop/os_exchange_data_provider_builder_mac.mm",
   # TODO # ${UI_BASE_DIR}dragdrop/os_exchange_data_provider_factory.cc
-  #${UI_BASE_DIR}dragdrop/os_exchange_data_provider_factory.h",
-  #${UI_BASE_DIR}dragdrop/os_exchange_data_provider_mac.h",
+  #${UI_BASE_DIR}dragdrop/os_exchange_data_provider_factory.h
+  #${UI_BASE_DIR}dragdrop/os_exchange_data_provider_mac.h
   # TODO # ${UI_BASE_DIR}dragdrop/os_exchange_data_provider_mac.mm",
   #${UI_BASE_DIR}dragdrop/os_exchange_data_provider_win.cc
-  # TODO # ${UI_BASE_DIR}dragdrop/os_exchange_data_provider_win.h",
+  # TODO # ${UI_BASE_DIR}dragdrop/os_exchange_data_provider_win.h
   ${UI_BASE_DIR}hit_test.cc
-  #${UI_BASE_DIR}hit_test.h",
+  #${UI_BASE_DIR}hit_test.h
   # TODO # ${UI_BASE_DIR}l10n/formatter.cc
-  #${UI_BASE_DIR}l10n/formatter.h",
+  #${UI_BASE_DIR}l10n/formatter.h
   ${UI_BASE_DIR}l10n/l10n_font_util.cc
-  #${UI_BASE_DIR}l10n/l10n_font_util.h",
+  #${UI_BASE_DIR}l10n/l10n_font_util.h
   ${UI_BASE_DIR}l10n/l10n_util.cc
-  #${UI_BASE_DIR}l10n/l10n_util.h",
+  #${UI_BASE_DIR}l10n/l10n_util.h
   # TODO # ${UI_BASE_DIR}l10n/l10n_util_android.cc
-  #${UI_BASE_DIR}l10n/l10n_util_android.h",
-  #${UI_BASE_DIR}l10n/l10n_util_collator.h",
-  #${UI_BASE_DIR}l10n/l10n_util_mac.h",
+  #${UI_BASE_DIR}l10n/l10n_util_android.h
+  #${UI_BASE_DIR}l10n/l10n_util_collator.h
+  #${UI_BASE_DIR}l10n/l10n_util_mac.h
   # TODO # ${UI_BASE_DIR}l10n/l10n_util_mac.mm",
   # TODO # ${UI_BASE_DIR}l10n/l10n_util_win.cc
-  #${UI_BASE_DIR}l10n/l10n_util_win.h",
+  #${UI_BASE_DIR}l10n/l10n_util_win.h
   # requires 'ui/strings/grit/ui_strings.h'
   ${UI_BASE_DIR}l10n/time_format.cc
-  #${UI_BASE_DIR}l10n/time_format.h",
+  #${UI_BASE_DIR}l10n/time_format.h
   ${UI_BASE_DIR}layout.cc
-  #${UI_BASE_DIR}layout.h",
+  #${UI_BASE_DIR}layout.h
   ${UI_BASE_DIR}material_design/material_design_controller.cc
-  #${UI_BASE_DIR}material_design/material_design_controller.h",
-  #${UI_BASE_DIR}material_design/material_design_controller_observer.h",
+  #${UI_BASE_DIR}material_design/material_design_controller.h
+  #${UI_BASE_DIR}material_design/material_design_controller_observer.h
   ${UI_BASE_DIR}models/button_menu_item_model.cc
-  #${UI_BASE_DIR}models/button_menu_item_model.h",
+  #${UI_BASE_DIR}models/button_menu_item_model.h
   ${UI_BASE_DIR}models/combobox_model.cc
-  #${UI_BASE_DIR}models/combobox_model.h",
-  #${UI_BASE_DIR}models/combobox_model_observer.h",
-  #${UI_BASE_DIR}models/list_model.h",
-  #${UI_BASE_DIR}models/list_model_observer.h",
+  #${UI_BASE_DIR}models/combobox_model.h
+  #${UI_BASE_DIR}models/combobox_model_observer.h
+  #${UI_BASE_DIR}models/list_model.h
+  #${UI_BASE_DIR}models/list_model_observer.h
   ${UI_BASE_DIR}models/list_selection_model.cc
-  #${UI_BASE_DIR}models/list_selection_model.h",
+  #${UI_BASE_DIR}models/list_selection_model.h
   ${UI_BASE_DIR}models/menu_model.cc
-  #${UI_BASE_DIR}models/menu_model.h",
-  #${UI_BASE_DIR}models/menu_model_delegate.h",
-  #${UI_BASE_DIR}models/menu_separator_types.h",
+  #${UI_BASE_DIR}models/menu_model.h
+  #${UI_BASE_DIR}models/menu_model_delegate.h
+  #${UI_BASE_DIR}models/menu_separator_types.h
   ${UI_BASE_DIR}models/simple_combobox_model.cc
-  #${UI_BASE_DIR}models/simple_combobox_model.h",
+  #${UI_BASE_DIR}models/simple_combobox_model.h
   ${UI_BASE_DIR}models/simple_menu_model.cc
-  #${UI_BASE_DIR}models/simple_menu_model.h",
+  #${UI_BASE_DIR}models/simple_menu_model.h
   ${UI_BASE_DIR}models/table_model.cc
-  #${UI_BASE_DIR}models/table_model.h",
-  #${UI_BASE_DIR}models/table_model_observer.h",
+  #${UI_BASE_DIR}models/table_model.h
+  #${UI_BASE_DIR}models/table_model_observer.h
   ${UI_BASE_DIR}models/tree_model.cc
-  #${UI_BASE_DIR}models/tree_model.h",
-  #${UI_BASE_DIR}models/tree_node_iterator.h",
-  #${UI_BASE_DIR}models/tree_node_model.h",
+  #${UI_BASE_DIR}models/tree_model.h
+  #${UI_BASE_DIR}models/tree_node_iterator.h
+  #${UI_BASE_DIR}models/tree_node_model.h
   ${UI_BASE_DIR}nine_image_painter_factory.cc
-  #${UI_BASE_DIR}nine_image_painter_factory.h",
+  #${UI_BASE_DIR}nine_image_painter_factory.h
   ${UI_BASE_DIR}page_transition_types.cc
-  #${UI_BASE_DIR}page_transition_types.h",
+  #${UI_BASE_DIR}page_transition_types.h
   ${UI_BASE_DIR}platform_window_defaults.cc
-  #${UI_BASE_DIR}platform_window_defaults.h",
-  #${UI_BASE_DIR}property_data.h",
+  #${UI_BASE_DIR}platform_window_defaults.h
+  #${UI_BASE_DIR}property_data.h
   ${UI_BASE_DIR}resource/resource_bundle.cc
-  #${UI_BASE_DIR}resource/resource_bundle.h",
+  #${UI_BASE_DIR}resource/resource_bundle.h
   # TODO # ${UI_BASE_DIR}resource/resource_bundle_android.cc
-  # TODO # ${UI_BASE_DIR}resource/resource_bundle_android.h",
+  # TODO # ${UI_BASE_DIR}resource/resource_bundle_android.h
   # TODO # ${UI_BASE_DIR}resource/resource_bundle_auralinux.cc
   # TODO # ${UI_BASE_DIR}resource/resource_bundle_ios.mm",
   # TODO # ${UI_BASE_DIR}resource/resource_bundle_mac.mm",
   # TODO # ${UI_BASE_DIR}resource/resource_bundle_win.cc
-  # TODO # ${UI_BASE_DIR}resource/resource_bundle_win.h",
+  # TODO # ${UI_BASE_DIR}resource/resource_bundle_win.h
   # TODO # ${UI_BASE_DIR}resource/resource_data_dll_win.cc
-  # TODO # ${UI_BASE_DIR}resource/resource_data_dll_win.h",
-  #${UI_BASE_DIR}resource/whitelist.h",
+  # TODO # ${UI_BASE_DIR}resource/resource_data_dll_win.h
+  #${UI_BASE_DIR}resource/whitelist.h
   ${UI_BASE_DIR}template_expressions.cc
-  #${UI_BASE_DIR}template_expressions.h",
+  #${UI_BASE_DIR}template_expressions.h
   ${UI_BASE_DIR}theme_provider.cc
-  #${UI_BASE_DIR}theme_provider.h",
-  #${UI_BASE_DIR}ui_base_export.h",
+  #${UI_BASE_DIR}theme_provider.h
+  #${UI_BASE_DIR}ui_base_export.h
   ${UI_BASE_DIR}ui_base_exports.cc
   ${UI_BASE_DIR}ui_base_paths.cc
-  #${UI_BASE_DIR}ui_base_paths.h",
+  #${UI_BASE_DIR}ui_base_paths.h
   ${UI_BASE_DIR}ui_base_switches.cc
-  #${UI_BASE_DIR}ui_base_switches.h",
+  #${UI_BASE_DIR}ui_base_switches.h
   ${UI_BASE_DIR}ui_base_switches_util.cc
-  #${UI_BASE_DIR}ui_base_switches_util.h",
+  #${UI_BASE_DIR}ui_base_switches_util.h
   ${UI_BASE_DIR}ui_base_types.cc
-  #${UI_BASE_DIR}ui_base_types.h",
+  #${UI_BASE_DIR}ui_base_types.h
   ${UI_BASE_DIR}user_activity/user_activity_detector.cc
-  #${UI_BASE_DIR}user_activity/user_activity_detector.h",
-  #${UI_BASE_DIR}user_activity/user_activity_observer.h",
+  #${UI_BASE_DIR}user_activity/user_activity_detector.h
+  #${UI_BASE_DIR}user_activity/user_activity_observer.h
   #
   # view_prop.h is only for windows and aura builds
   # TODO # ${UI_BASE_DIR}view_prop.cc
-  #${UI_BASE_DIR}view_prop.h",
+  #${UI_BASE_DIR}view_prop.h
   #
   ${UI_BASE_DIR}webui/i18n_source_stream.cc
-  #${UI_BASE_DIR}webui/i18n_source_stream.h",
+  #${UI_BASE_DIR}webui/i18n_source_stream.h
   # TODO # ${UI_BASE_DIR}webui/jstemplate_builder.cc
-  #${UI_BASE_DIR}webui/jstemplate_builder.h",
+  #${UI_BASE_DIR}webui/jstemplate_builder.h
   # TODO # ${UI_BASE_DIR}webui/web_ui_util.cc
-  # TODO # #${UI_BASE_DIR}webui/web_ui_util.h",
+  # TODO # #${UI_BASE_DIR}webui/web_ui_util.h
   #
-  # TODO # # TODO # ${UI_BASE_DIR}win/accessibility_ids_win.h",
+  # TODO # # TODO # ${UI_BASE_DIR}win/accessibility_ids_win.h
   # TODO # ${UI_BASE_DIR}win/accessibility_misc_utils.cc
-  # TODO # #${UI_BASE_DIR}win/accessibility_misc_utils.h",
-  # TODO # #${UI_BASE_DIR}win/atl_module.h",
+  # TODO # #${UI_BASE_DIR}win/accessibility_misc_utils.h
+  # TODO # #${UI_BASE_DIR}win/atl_module.h
   # TODO # ${UI_BASE_DIR}win/foreground_helper.cc
-  # TODO # #${UI_BASE_DIR}win/foreground_helper.h",
+  # TODO # #${UI_BASE_DIR}win/foreground_helper.h
   # TODO # ${UI_BASE_DIR}win/hidden_window.cc
-  # TODO # #${UI_BASE_DIR}win/hidden_window.h",
+  # TODO # #${UI_BASE_DIR}win/hidden_window.h
   # TODO # # TODO # ${UI_BASE_DIR}win/hwnd_metrics.cc
-  # TODO # #${UI_BASE_DIR}win/hwnd_metrics.h",
+  # TODO # #${UI_BASE_DIR}win/hwnd_metrics.h
   # TODO # # TODO # ${UI_BASE_DIR}win/hwnd_subclass.cc
-  # TODO # #${UI_BASE_DIR}win/hwnd_subclass.h",
+  # TODO # #${UI_BASE_DIR}win/hwnd_subclass.h
   # TODO # ${UI_BASE_DIR}win/internal_constants.cc
-  # TODO # #${UI_BASE_DIR}win/internal_constants.h",
+  # TODO # #${UI_BASE_DIR}win/internal_constants.h
   # TODO # ${UI_BASE_DIR}win/lock_state.cc
-  # TODO # #${UI_BASE_DIR}win/lock_state.h",
+  # TODO # #${UI_BASE_DIR}win/lock_state.h
   # TODO # # TODO # ${UI_BASE_DIR}win/message_box_win.cc
-  # TODO # #${UI_BASE_DIR}win/message_box_win.h",
+  # TODO # #${UI_BASE_DIR}win/message_box_win.h
   # TODO # ${UI_BASE_DIR}win/mouse_wheel_util.cc
-  # TODO # #${UI_BASE_DIR}win/mouse_wheel_util.h",
+  # TODO # #${UI_BASE_DIR}win/mouse_wheel_util.h
   # TODO # ${UI_BASE_DIR}win/scoped_ole_initializer.cc
-  # TODO # #${UI_BASE_DIR}win/scoped_ole_initializer.h",
+  # TODO # #${UI_BASE_DIR}win/scoped_ole_initializer.h
   # TODO # ${UI_BASE_DIR}win/session_change_observer.cc
-  # TODO # #${UI_BASE_DIR}win/session_change_observer.h",
+  # TODO # #${UI_BASE_DIR}win/session_change_observer.h
   # TODO # ${UI_BASE_DIR}win/shell.cc
-  # TODO # #${UI_BASE_DIR}win/shell.h",
+  # TODO # #${UI_BASE_DIR}win/shell.h
   # TODO # ${UI_BASE_DIR}win/touch_input.cc
-  # TODO # #${UI_BASE_DIR}win/touch_input.h",
+  # TODO # #${UI_BASE_DIR}win/touch_input.h
   # TODO # ${UI_BASE_DIR}win/window_event_target.cc
-  #${UI_BASE_DIR}win/window_event_target.h",
+  #${UI_BASE_DIR}win/window_event_target.h
   ${UI_BASE_DIR}window_open_disposition.cc
-  #${UI_BASE_DIR}window_open_disposition.h",
+  #${UI_BASE_DIR}window_open_disposition.h
   #
   #if (is_posix) {
   #  sources += [ "l10n/l10n_util_posix.cc" ]
@@ -263,22 +263,22 @@ set(UI_BASE_SOURCES
   #if (is_mac) {
   #  sources += [
   #    "accelerators/media_keys_listener_mac.mm",
-  #    "accelerators/remote_command_media_keys_listener_mac.h",
+  #    "accelerators/remote_command_media_keys_listener_mac.h
   #    "accelerators/remote_command_media_keys_listener_mac.mm",
   #  ]
   #} else if (is_win) {
   #  sources += [
   #    "accelerators/global_media_keys_listener_win.cc
-  #    "accelerators/global_media_keys_listener_win.h",
+  #    "accelerators/global_media_keys_listener_win.h
   #    "accelerators/media_keys_listener_win.cc
   #    "accelerators/system_media_controls_media_keys_listener.cc
-  #    "accelerators/system_media_controls_media_keys_listener.h",
+  #    "accelerators/system_media_controls_media_keys_listener.h
   #  ]
   #} else if (use_mpris) {
   #  sources += [
   #    "accelerators/media_keys_listener_linux.cc
   #    "accelerators/mpris_media_keys_listener.cc
-  #    "accelerators/mpris_media_keys_listener.h",
+  #    "accelerators/mpris_media_keys_listener.h
   #  ]
   #} else {
   #  sources += [ "accelerators/media_keys_listener_stub.cc" ]
@@ -300,7 +300,44 @@ set(UI_BASE_SOURCES
   #
   # component("features")
   ${UI_BASE_DIR}ui_base_features.cc
-  #${UI_BASE_DIR}ui_base_features.h",
+  #${UI_BASE_DIR}ui_base_features.h
+  #
+  # if (!is_ios)
+  #
+  ${UI_BASE_DIR}accelerators/accelerator.cc
+  ${UI_BASE_DIR}accelerators/accelerator.h
+  ${UI_BASE_DIR}accelerators/accelerator_history.cc
+  ${UI_BASE_DIR}accelerators/accelerator_history.h
+  ${UI_BASE_DIR}accelerators/accelerator_manager.cc
+  ${UI_BASE_DIR}accelerators/accelerator_manager.h
+  ${UI_BASE_DIR}base_window.cc
+  ${UI_BASE_DIR}base_window.h
+  # TODO # ${UI_BASE_DIR}cocoa/bubble_closer.h
+  #${UI_BASE_DIR}cocoa/bubble_closer.mm",
+  ${UI_BASE_DIR}cursor/cursor_util.cc
+  ${UI_BASE_DIR}cursor/cursor_util.h
+  ${UI_BASE_DIR}default_theme_provider.cc
+  ${UI_BASE_DIR}default_theme_provider.h
+  ${UI_BASE_DIR}dragdrop/cocoa_dnd_util.h
+  #${UI_BASE_DIR}dragdrop/cocoa_dnd_util.mm",
+  ${UI_BASE_DIR}dragdrop/file_info.cc
+  ${UI_BASE_DIR}dragdrop/file_info.h
+  ${UI_BASE_DIR}emoji/emoji_panel_helper.h
+  ${UI_BASE_DIR}pointer/pointer_device.h
+  ${UI_BASE_DIR}pointer/pointer_device_util.cc
+  ${UI_BASE_DIR}pointer/touch_editing_controller.cc
+  ${UI_BASE_DIR}pointer/touch_editing_controller.h
+  ${UI_BASE_DIR}text/bytes_formatting.cc
+  ${UI_BASE_DIR}text/bytes_formatting.h
+  #
+  # component("ui_data_pack")
+  #
+  ${UI_BASE_DIR}resource/data_pack.cc
+  ${UI_BASE_DIR}resource/data_pack.h
+  ${UI_BASE_DIR}resource/data_pack_export.h
+  ${UI_BASE_DIR}resource/resource_handle.h
+  ${UI_BASE_DIR}resource/scale_factor.cc
+  ${UI_BASE_DIR}resource/scale_factor.h
 )
 
 add_library(UI_BASE STATIC
@@ -382,4 +419,7 @@ target_include_directories(UI_BASE PRIVATE
 target_compile_definitions(UI_BASE PRIVATE
   UI_BASE_IMPLEMENTATION=1
   IS_UI_BASE_FEATURES_IMPL=1
+  UI_DATA_PACK_IMPLEMENTATION=1
+  # custom
+  UI_BASE_PORT=1
 )

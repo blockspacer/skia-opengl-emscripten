@@ -6,7 +6,9 @@
 
 #include "base/timer/timer.h"
 #include "components/vector_icons/vector_icons.h"
+#if !defined(UI_VIEWS_NO_AX)
 #include "ui/accessibility/ax_node_data.h"
+#endif // UI_VIEWS_NO_AX
 #include "ui/gfx/paint_vector_icon.h"
 #include "ui/views/bubble/bubble_frame_view.h"
 #include "ui/views/bubble/info_bubble.h"
@@ -54,10 +56,12 @@ void TooltipIcon::OnGestureEvent(ui::GestureEvent* event) {
   }
 }
 
+#if !defined(UI_VIEWS_NO_AX)
 void TooltipIcon::GetAccessibleNodeData(ui::AXNodeData* node_data) {
   node_data->role = ax::mojom::Role::kTooltip;
   node_data->SetName(tooltip_);
 }
+#endif // UI_VIEWS_NO_AX
 
 void TooltipIcon::MouseMovedOutOfHost() {
   if (IsMouseHovered()) {
@@ -70,10 +74,12 @@ void TooltipIcon::MouseMovedOutOfHost() {
 }
 
 void TooltipIcon::SetDrawAsHovered(bool hovered) {
+#if !defined(UI_VIEWS_PORT)
   SetImage(
       gfx::CreateVectorIcon(vector_icons::kInfoOutlineIcon, tooltip_icon_size_,
                             hovered ? SkColorSetARGB(0xBD, 0, 0, 0)
                                     : SkColorSetARGB(0xBD, 0x44, 0x44, 0x44)));
+#endif // UI_VIEWS_PORT
 }
 
 void TooltipIcon::ShowBubble() {

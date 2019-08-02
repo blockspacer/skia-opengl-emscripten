@@ -24,8 +24,10 @@
 #include "base/optional.h"
 #include "base/single_thread_task_runner.h"
 #include "base/time/time.h"
+#if defined(ENABLE_CC_BENCH)
 #include "cc/benchmarks/micro_benchmark.h"
 #include "cc/benchmarks/micro_benchmark_controller.h"
+#endif // ENABLE_CC_BENCH
 #include "cc/cc_export.h"
 #include "cc/input/browser_controls_state.h"
 #include "cc/input/event_listener_properties.h"
@@ -80,6 +82,8 @@ class UkmRecorderFactory;
 #endif // ENABLE_UKM
 struct RenderingStats;
 struct ScrollAndScaleSet;
+
+class LayerTreeHost;
 
 // Returned from LayerTreeHost::DeferMainFrameUpdate. Automatically un-defers on
 // destruction.
@@ -296,10 +300,12 @@ class CC_EXPORT LayerTreeHost : public MutatorHostClient {
   void SetDebugState(const LayerTreeDebugState& debug_state);
   const LayerTreeDebugState& GetDebugState() const;
 
+#if defined(ENABLE_CC_BENCH)
   // Returns the id of the benchmark on success, 0 otherwise.
   int ScheduleMicroBenchmark(const std::string& benchmark_name,
                              std::unique_ptr<base::Value> value,
                              MicroBenchmark::DoneCallback callback);
+#endif // ENABLE_CC_BENCH
 
   // Returns true if the message was successfully delivered and handled.
   bool SendMessageToMicroBenchmark(int id, std::unique_ptr<base::Value> value);
@@ -729,7 +735,9 @@ class CC_EXPORT LayerTreeHost : public MutatorHostClient {
 
   void RecordGpuRasterizationHistogram(const LayerTreeHostImpl* host_impl);
 
+#if defined(ENABLE_CC_BENCH)
   MicroBenchmarkController micro_benchmark_controller_;
+#endif // ENABLE_CC_BENCH
 
   base::WeakPtr<InputHandler> input_handler_weak_ptr_;
 

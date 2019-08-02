@@ -16,8 +16,10 @@
 #include "content/public/browser/render_widget_host_view.h"
 #include "content/public/browser/web_contents.h"
 #include "ipc/ipc_message.h"
+#if !defined(UI_VIEWS_NO_AX)
 #include "ui/accessibility/ax_enums.mojom.h"
 #include "ui/accessibility/ax_node_data.h"
+#endif // UI_VIEWS_NO_AX
 #include "ui/events/event.h"
 #include "ui/views/controls/native/native_view_host.h"
 #include "ui/views/focus/focus_manager.h"
@@ -255,6 +257,7 @@ void WebView::GetAccessibleNodeData(ui::AXNodeData* node_data) {
   }
 }
 
+#if !defined(UI_VIEWS_NO_AX)
 gfx::NativeViewAccessible WebView::GetNativeViewAccessible() {
   if (web_contents() && !web_contents()->IsCrashed()) {
     content::RenderWidgetHostView* host_view =
@@ -264,6 +267,7 @@ gfx::NativeViewAccessible WebView::GetNativeViewAccessible() {
   }
   return View::GetNativeViewAccessible();
 }
+#endif // UI_VIEWS_NO_AX
 
 ////////////////////////////////////////////////////////////////////////////////
 // WebView, content::WebContentsDelegate implementation:
@@ -364,9 +368,11 @@ void WebView::AttachWebContents() {
 
   holder_->Attach(view_to_attach);
 
+#if !defined(UI_VIEWS_NO_AX)
   // We set the parent accessible of the native view to be our parent.
   if (parent())
     holder_->SetParentAccessible(parent()->GetNativeViewAccessible());
+#endif // UI_VIEWS_NO_AX
 
   // The WebContents is not focused automatically when attached, so we need to
   // tell the WebContents it has focus if this has focus.

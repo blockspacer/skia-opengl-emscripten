@@ -12,7 +12,9 @@
 #include "base/trace_event/traced_value.h"
 #include "cc/base/completion_event.h"
 #include "cc/base/devtools_instrumentation.h"
+#if defined(ENABLE_CC_BENCH)
 #include "cc/benchmarks/benchmark_instrumentation.h"
+#endif // ENABLE_CC_BENCH
 #include "cc/paint/paint_worklet_layer_painter.h"
 #include "cc/resources/ui_resource_manager.h"
 #include "cc/trees/latency_info_swap_promise.h"
@@ -23,7 +25,9 @@
 #include "cc/trees/render_frame_metadata_observer.h"
 #include "cc/trees/scoped_abort_remaining_swap_promises.h"
 #include "cc/trees/swap_promise.h"
+#if defined(ENABLE_UKM)
 #include "services/metrics/public/cpp/ukm_recorder.h"
+#endif // ENABLE_UKM
 
 namespace cc {
 
@@ -129,10 +133,11 @@ void ProxyMain::BeginMainFrame(
   DCHECK_EQ(NO_PIPELINE_STAGE, current_pipeline_stage_);
 
   base::TimeTicks begin_main_frame_start_time = base::TimeTicks::Now();
-
+#if defined(ENABLE_CC_BENCH)
   benchmark_instrumentation::ScopedBeginFrameTask begin_frame_task(
       benchmark_instrumentation::kDoBeginFrame,
       begin_main_frame_state->begin_frame_id);
+#endif // ENABLE_CC_BENCH
 
   // If the commit finishes, LayerTreeHost will transfer its swap promises to
   // LayerTreeImpl. The destructor of ScopedSwapPromiseChecker aborts the
@@ -309,6 +314,7 @@ void ProxyMain::BeginMainFrame(
     return;
   }
 
+#if defined(ENABLE_LATENCY)
   // Queue the LATENCY_BEGIN_FRAME_RENDERER_MAIN_COMPONENT swap promise only
   // once we know we will commit since QueueSwapPromise itself requests a
   // commit.
@@ -318,6 +324,7 @@ void ProxyMain::BeginMainFrame(
       begin_main_frame_state->begin_frame_args.frame_time, 1);
   layer_tree_host_->QueueSwapPromise(
       std::make_unique<LatencyInfoSwapPromise>(new_latency_info));
+#endif // ENABLE_LATENCY
 
   current_pipeline_stage_ = NO_PIPELINE_STAGE;
 
@@ -645,6 +652,7 @@ base::SingleThreadTaskRunner* ProxyMain::ImplThreadTaskRunner() {
   return task_runner_provider_->ImplThreadTaskRunner();
 }
 
+#if defined(ENABLE_UKM)
 void ProxyMain::SetSourceURL(ukm::SourceId source_id, const GURL& url) {
   DCHECK(IsMainThread());
   ImplThreadTaskRunner()->PostTask(
@@ -652,6 +660,7 @@ void ProxyMain::SetSourceURL(ukm::SourceId source_id, const GURL& url) {
                                 base::Unretained(proxy_impl_.get()),
                                 source_id, url));
 }
+#endif // ENABLE_UKM
 
 void ProxyMain::ClearHistory() {
   // Must only be called from the impl thread during commit.

@@ -30,7 +30,9 @@
 #include "ui/aura/window_observer.h"
 #include "ui/aura/window_tree_host.h"
 #include "ui/base/class_property.h"
+#if !defined(UI_VIEWS_PORT)
 #include "ui/base/dragdrop/os_exchange_data.h"
+#endif // UI_VIEWS_PORT
 #include "ui/base/ui_base_types.h"
 #include "ui/compositor/layer.h"
 #include "ui/display/display.h"
@@ -686,6 +688,7 @@ void NativeWidgetAura::FlashFrame(bool flash) {
     window_->SetProperty(aura::client::kDrawAttentionKey, flash);
 }
 
+#if !defined(UI_VIEWS_PORT)
 void NativeWidgetAura::RunShellDrag(View* view,
                                     const ui::OSExchangeData& data,
                                     const gfx::Point& location,
@@ -694,6 +697,7 @@ void NativeWidgetAura::RunShellDrag(View* view,
   if (window_)
     views::RunShellDrag(window_, data, location, operation, source);
 }
+#endif // UI_VIEWS_PORT
 
 void NativeWidgetAura::SchedulePaintInRect(const gfx::Rect& rect) {
   if (window_)

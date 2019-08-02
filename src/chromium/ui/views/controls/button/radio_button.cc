@@ -5,13 +5,19 @@
 #include "ui/views/controls/button/radio_button.h"
 
 #include "base/logging.h"
+#if !defined(UI_VIEWS_NO_AX)
 #include "ui/accessibility/ax_node_data.h"
+#endif // UI_VIEWS_NO_AX
 #include "ui/base/resource/resource_bundle.h"
 #include "ui/events/event_utils.h"
 #include "ui/gfx/canvas.h"
 #include "ui/gfx/paint_vector_icon.h"
+#if !defined(UI_VIEWS_PORT)
 #include "ui/views/resources/grit/views_resources.h"
+#endif // UI_VIEWS_PORT
+#if !defined(UI_VIEWS_PORT)
 #include "ui/views/vector_icons.h"
+#endif // UI_VIEWS_PORT
 #include "ui/views/widget/widget.h"
 
 namespace views {
@@ -30,10 +36,12 @@ const char* RadioButton::GetClassName() const {
   return kViewClassName;
 }
 
+#if !defined(UI_VIEWS_NO_AX)
 void RadioButton::GetAccessibleNodeData(ui::AXNodeData* node_data) {
   Checkbox::GetAccessibleNodeData(node_data);
   node_data->role = ax::mojom::Role::kRadioButton;
 }
+#endif // UI_VIEWS_NO_AX
 
 View* RadioButton::GetSelectedViewForGroup(int group) {
   Views views;
@@ -109,9 +117,11 @@ void RadioButton::SetChecked(bool checked) {
   Checkbox::SetChecked(checked);
 }
 
+#if !defined(UI_VIEWS_PORT)
 const gfx::VectorIcon& RadioButton::GetVectorIcon() const {
   return checked() ? kRadioButtonActiveIcon : kRadioButtonNormalIcon;
 }
+#endif // UI_VIEWS_PORT
 
 SkPath RadioButton::GetFocusRingPath() const {
   SkPath path;

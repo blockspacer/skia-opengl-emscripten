@@ -17,7 +17,9 @@
 #include "ui/views/controls/button/label_button.h"
 #include "ui/views/layout/layout_provider.h"
 #include "ui/views/native_theme_delegate.h"
+#if !defined(UI_VIEWS_PORT)
 #include "ui/views/resources/grit/views_resources.h"
+#endif // UI_VIEWS_PORT
 
 namespace views {
 
@@ -28,8 +30,10 @@ namespace {
 constexpr int kButtonInsets = 5;
 
 // The text-button hot and pushed image IDs; normal is unadorned by default.
+#if !defined(UI_VIEWS_PORT)
 constexpr int kTextHoveredImages[] = IMAGE_GRID(IDR_TEXTBUTTON_HOVER);
 constexpr int kTextPressedImages[] = IMAGE_GRID(IDR_TEXTBUTTON_PRESSED);
+#endif // UI_VIEWS_PORT
 
 // A helper function to paint the appropriate broder images.
 void PaintHelper(LabelButtonAssetBorder* border,
@@ -73,6 +77,7 @@ LabelButtonAssetBorder::LabelButtonAssetBorder(Button::ButtonStyle style) {
   ui::ResourceBundle& rb = ui::ResourceBundle::GetSharedInstance();
   const gfx::Insets insets(kButtonInsets);
   if (style == Button::STYLE_BUTTON) {
+#if !defined(UI_VIEWS_PORT)
     SetPainter(false, Button::STATE_NORMAL,
                Painter::CreateImagePainter(
                    *rb.GetImageSkiaNamed(IDR_BUTTON_NORMAL), insets));
@@ -97,11 +102,14 @@ LabelButtonAssetBorder::LabelButtonAssetBorder(Button::ButtonStyle style) {
     SetPainter(true, Button::STATE_DISABLED,
                Painter::CreateImagePainter(
                    *rb.GetImageSkiaNamed(IDR_BUTTON_DISABLED), insets));
+#endif // UI_VIEWS_PORT
   } else if (style == Button::STYLE_TEXTBUTTON) {
+#if !defined(UI_VIEWS_PORT)
     SetPainter(false, Button::STATE_HOVERED,
                Painter::CreateImageGridPainter(kTextHoveredImages));
     SetPainter(false, Button::STATE_PRESSED,
                Painter::CreateImageGridPainter(kTextPressedImages));
+#endif // UI_VIEWS_PORT
   }
 }
 

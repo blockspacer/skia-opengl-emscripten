@@ -15,7 +15,9 @@
 #include "base/strings/string16.h"
 #include "build/build_config.h"
 #include "third_party/skia/include/core/SkColor.h"
+#if !defined(UI_VIEWS_NO_AX)
 #include "ui/accessibility/ax_node_data.h"
+#endif // UI_VIEWS_NO_AX
 #include "ui/base/accelerators/accelerator.h"
 #include "ui/base/ime/text_input_type.h"
 #include "ui/base/models/combobox_model.h"
@@ -408,8 +410,10 @@ void EditableCombobox::OnItemSelected(int index) {
   // SetText does not actually notify the TextfieldController, so we call the
   // handling code directly.
   HandleNewContent(selected_item_text);
+#if !defined(UI_VIEWS_NO_AX)
   NotifyAccessibilityEvent(ax::mojom::Event::kValueChanged,
                            /*xsend_native_event=*/true);
+#endif // UI_VIEWS_NO_AX
 }
 
 void EditableCombobox::HandleNewContent(const base::string16& new_content) {

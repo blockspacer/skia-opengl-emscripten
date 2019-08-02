@@ -13,7 +13,9 @@
 #include "base/memory/scoped_refptr.h"
 #include "components/viz/common/display/renderer_settings.h"
 #include "components/viz/common/surfaces/frame_sink_id_allocator.h"
+#if !defined(COMPOSITOR_PORTED)
 #include "services/viz/privileged/interfaces/compositing/display_private.mojom.h"
+#endif // COMPOSITOR_PORTED
 #include "ui/compositor/compositor.h"
 
 namespace base {
@@ -26,6 +28,7 @@ class HostDisplayClient;
 class RasterContextProvider;
 }  // namespace viz
 
+#if !defined(COMPOSITOR_PORTED)
 namespace ui {
 
 class ExternalBeginFrameControllerClientImpl;
@@ -84,9 +87,11 @@ class HostContextFactoryPrivate : public ContextFactoryPrivate {
                                const viz::BeginFrameArgs& args) override;
   void SetOutputIsSecure(Compositor* compositor, bool secure) override;
   viz::FrameSinkManagerImpl* GetFrameSinkManager() override;
+#if !defined(COMPOSITOR_PORTED)
   void AddVSyncParameterObserver(
       Compositor* compositor,
       viz::mojom::VSyncParameterObserverPtr observer) override;
+#endif // COMPOSITOR_PORTED
 
  private:
   struct CompositorData {
@@ -97,7 +102,9 @@ class HostContextFactoryPrivate : public ContextFactoryPrivate {
 
     // Privileged interface that controls the display for a root
     // CompositorFrameSink.
+#if !defined(COMPOSITOR_PORTED)
     viz::mojom::DisplayPrivateAssociatedPtr display_private;
+#endif // COMPOSITOR_PORTED
     std::unique_ptr<viz::HostDisplayClient> display_client;
 
     // Controls external BeginFrames for the display. Only set if external
@@ -126,5 +133,6 @@ class HostContextFactoryPrivate : public ContextFactoryPrivate {
 };
 
 }  // namespace ui
+#endif // COMPOSITOR_PORTED
 
 #endif  // UI_COMPOSITOR_HOST_HOST_CONTEXT_FACTORY_PRIVATE_H_

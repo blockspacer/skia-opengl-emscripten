@@ -10,7 +10,9 @@
 #include "base/logging.h"
 #include "base/metrics/histogram_macros.h"
 #include "build/build_config.h"
+#if !defined(UI_VIEWS_NO_AX)
 #include "ui/accessibility/ax_node_data.h"
+#endif // UI_VIEWS_NO_AX
 #include "ui/base/l10n/l10n_util.h"
 #include "ui/gfx/color_palette.h"
 #include "ui/strings/grit/ui_strings.h"
@@ -107,6 +109,8 @@ int DialogDelegate::GetDefaultDialogButton() const {
 
 base::string16 DialogDelegate::GetDialogButtonLabel(
     ui::DialogButton button) const {
+
+#if !defined(UI_VIEWS_PORT)
   if (button == ui::DIALOG_BUTTON_OK)
     return l10n_util::GetStringUTF16(IDS_APP_OK);
   if (button == ui::DIALOG_BUTTON_CANCEL) {
@@ -115,6 +119,7 @@ base::string16 DialogDelegate::GetDialogButtonLabel(
     return l10n_util::GetStringUTF16(IDS_APP_CLOSE);
   }
   NOTREACHED();
+#endif // UI_VIEWS_PORT
   return base::string16();
 }
 
@@ -269,9 +274,11 @@ DialogDelegate::~DialogDelegate() {
                            base::TimeTicks::Now() - creation_time_);
 }
 
+#if !defined(UI_VIEWS_NO_AX)
 ax::mojom::Role DialogDelegate::GetAccessibleWindowRole() {
   return ax::mojom::Role::kDialog;
 }
+#endif // UI_VIEWS_NO_AX
 
 ////////////////////////////////////////////////////////////////////////////////
 // DialogDelegateView:
@@ -302,11 +309,13 @@ View* DialogDelegateView::GetContentsView() {
 
 void DialogDelegateView::ViewHierarchyChanged(
     const ViewHierarchyChangedDetails& details) {
+#if !defined(UI_VIEWS_NO_AX)
   if (details.is_add && details.child == this && GetWidget() &&
       (GetAccessibleWindowRole() == ax::mojom::Role::kAlert ||
        GetAccessibleWindowRole() == ax::mojom::Role::kAlertDialog)) {
     NotifyAccessibilityEvent(ax::mojom::Event::kAlert, true);
   }
+#endif // UI_VIEWS_NO_AX
 }
 
 }  // namespace views

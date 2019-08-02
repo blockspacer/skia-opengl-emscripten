@@ -17,8 +17,12 @@
 #include "base/strings/string_split.h"
 #include "base/strings/utf_string_conversions.h"
 #include "build/build_config.h"
+#if !defined(UI_VIEWS_NO_AX)
 #include "ui/accessibility/ax_node_data.h"
+#endif // UI_VIEWS_NO_AX
+#if !defined(UI_VIEWS_PORT)
 #include "ui/base/clipboard/scoped_clipboard_writer.h"
+#endif // UI_VIEWS_PORT
 #include "ui/base/cursor/cursor.h"
 #include "ui/base/default_style.h"
 #include "ui/gfx/canvas.h"
@@ -27,7 +31,9 @@
 #include "ui/gfx/text_elider.h"
 #include "ui/gfx/text_utils.h"
 #include "ui/native_theme/native_theme.h"
+#if !defined(UI_VIEWS_PORT)
 #include "ui/strings/grit/ui_strings.h"
+#endif // UI_VIEWS_PORT
 #include "ui/views/background.h"
 #include "ui/views/controls/menu/menu_runner.h"
 #include "ui/views/focus/focus_manager.h"
@@ -395,6 +401,7 @@ WordLookupClient* Label::GetWordLookupClient() {
   return this;
 }
 
+#if !defined(UI_VIEWS_NO_AX)
 void Label::GetAccessibleNodeData(ui::AXNodeData* node_data) {
   if (text_context_ == style::CONTEXT_DIALOG_TITLE)
     node_data->role = ax::mojom::Role::kTitleBar;
@@ -403,6 +410,7 @@ void Label::GetAccessibleNodeData(ui::AXNodeData* node_data) {
 
   node_data->SetName(full_text_->GetDisplayText());
 }
+#endif // UI_VIEWS_NO_AX
 
 base::string16 Label::GetTooltipText(const gfx::Point& p) const {
   if (handles_tooltips_) {
@@ -504,8 +512,12 @@ void Label::OnThemeChanged() {
 }
 
 gfx::NativeCursor Label::GetCursor(const ui::MouseEvent& event) {
+#if !defined(UI_VIEWS_PORT)
   return GetRenderTextForSelectionController() ? GetNativeIBeamCursor()
                                                : gfx::kNullCursor;
+#else
+  return gfx::NativeCursor();
+#endif // UI_VIEWS_PORT
 }
 
 void Label::OnFocus() {
@@ -731,8 +743,10 @@ bool Label::PasteSelectionClipboard() {
 void Label::UpdateSelectionClipboard() {
 #if defined(OS_LINUX) && !defined(OS_CHROMEOS)
   if (!obscured()) {
+#if !defined(UI_VIEWS_PORT)
     ui::ScopedClipboardWriter(ui::CLIPBOARD_TYPE_SELECTION)
         .WriteText(GetSelectedText());
+#endif // UI_VIEWS_PORT
   }
 #endif
 }
@@ -742,16 +756,21 @@ bool Label::IsCommandIdChecked(int command_id) const {
 }
 
 bool Label::IsCommandIdEnabled(int command_id) const {
+
+#if !defined(UI_VIEWS_PORT)
   switch (command_id) {
     case IDS_APP_COPY:
       return HasSelection() && !obscured();
     case IDS_APP_SELECT_ALL:
       return GetRenderTextForSelectionController() && !text().empty();
   }
+#endif // UI_VIEWS_PORT
+
   return false;
 }
 
 void Label::ExecuteCommand(int command_id, int event_flags) {
+#if !defined(UI_VIEWS_PORT)
   switch (command_id) {
     case IDS_APP_COPY:
       CopyToClipboard();
@@ -764,11 +783,13 @@ void Label::ExecuteCommand(int command_id, int event_flags) {
     default:
       NOTREACHED();
   }
+#endif // UI_VIEWS_PORT
 }
 
 bool Label::GetAcceleratorForCommandId(int command_id,
                                        ui::Accelerator* accelerator) const {
   switch (command_id) {
+#if !defined(UI_VIEWS_PORT)
     case IDS_APP_COPY:
       *accelerator = ui::Accelerator(ui::VKEY_C, ui::EF_CONTROL_DOWN);
       return true;
@@ -776,6 +797,7 @@ bool Label::GetAcceleratorForCommandId(int command_id,
     case IDS_APP_SELECT_ALL:
       *accelerator = ui::Accelerator(ui::VKEY_A, ui::EF_CONTROL_DOWN);
       return true;
+#endif // UI_VIEWS_PORT
 
     default:
       return false;
@@ -956,14 +978,18 @@ base::string16 Label::GetSelectedText() const {
 void Label::CopyToClipboard() {
   if (!HasSelection() || obscured())
     return;
+#if !defined(UI_VIEWS_PORT)
   ui::ScopedClipboardWriter(ui::CLIPBOARD_TYPE_COPY_PASTE)
       .WriteText(GetSelectedText());
+#endif // UI_VIEWS_PORT
 }
 
 void Label::BuildContextMenuContents() {
+#if !defined(UI_VIEWS_PORT)
   context_menu_contents_.AddItemWithStringId(IDS_APP_COPY, IDS_APP_COPY);
   context_menu_contents_.AddItemWithStringId(IDS_APP_SELECT_ALL,
                                              IDS_APP_SELECT_ALL);
+#endif // UI_VIEWS_PORT
 }
 
 }  // namespace views

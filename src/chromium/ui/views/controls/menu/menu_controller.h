@@ -34,9 +34,11 @@
 #include "ui/views/controls/menu/menu_cocoa_watcher_mac.h"
 #endif
 
+#if !defined(UI_VIEWS_PORT)
 namespace ui {
 class OSExchangeData;
 }
+#endif // UI_VIEWS_PORT
 namespace views {
 
 class Button;
@@ -171,16 +173,23 @@ class VIEWS_EXPORT MenuController
   View* GetTooltipHandlerForPoint(SubmenuView* source, const gfx::Point& point);
   void ViewHierarchyChanged(SubmenuView* source,
                             const ViewHierarchyChangedDetails& details);
-
+#if !defined(UI_VIEWS_PORT)
   bool GetDropFormats(SubmenuView* source,
                       int* formats,
                       std::set<ui::ClipboardFormatType>* format_types);
+#endif // UI_VIEWS_PORT
   bool AreDropTypesRequired(SubmenuView* source);
+#if !defined(UI_VIEWS_PORT)
   bool CanDrop(SubmenuView* source, const ui::OSExchangeData& data);
+#endif // UI_VIEWS_PORT
+#if !defined(UI_VIEWS_PORT)
   void OnDragEntered(SubmenuView* source, const ui::DropTargetEvent& event);
   int OnDragUpdated(SubmenuView* source, const ui::DropTargetEvent& event);
+#endif // UI_VIEWS_PORT
   void OnDragExited(SubmenuView* source);
+#if !defined(UI_VIEWS_PORT)
   int OnPerformDrop(SubmenuView* source, const ui::DropTargetEvent& event);
+#endif // UI_VIEWS_PORT
 
   // Invoked from the scroll buttons of the MenuScrollViewContainer.
   void OnDragEnteredScrollButton(SubmenuView* source, bool is_up);

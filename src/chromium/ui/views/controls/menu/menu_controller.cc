@@ -17,7 +17,9 @@
 #include "base/strings/utf_string_conversions.h"
 #include "base/time/time.h"
 #include "build/build_config.h"
+#if !defined(UI_VIEWS_PORT)
 #include "ui/base/dragdrop/os_exchange_data.h"
+#endif // UI_VIEWS_PORT
 #include "ui/display/screen.h"
 #include "ui/events/event.h"
 #include "ui/events/event_utils.h"
@@ -29,7 +31,9 @@
 #include "ui/gfx/image/image_skia_rep.h"
 #include "ui/gfx/native_widget_types.h"
 #include "ui/native_theme/native_theme.h"
+#if !defined(UI_VIEWS_NO_AX)
 #include "ui/views/accessibility/view_accessibility.h"
+#endif // UI_VIEWS_NO_AX
 #include "ui/views/controls/button/menu_button.h"
 #include "ui/views/controls/menu/menu_config.h"
 #include "ui/views/controls/menu/menu_controller_delegate.h"
@@ -63,7 +67,9 @@
 #endif
 
 using base::TimeDelta;
+#if !defined(UI_VIEWS_PORT)
 using ui::OSExchangeData;
+#endif // UI_VIEWS_PORT
 
 namespace views {
 
@@ -829,6 +835,7 @@ bool MenuController::OnMouseWheel(SubmenuView* source,
 
 void MenuController::OnGestureEvent(SubmenuView* source,
                                     ui::GestureEvent* event) {
+#if !defined(UI_VIEWS_PORT)
   if (owner_ && send_gesture_events_to_owner()) {
 #if defined(OS_MACOSX)
     NOTIMPLEMENTED();
@@ -896,6 +903,7 @@ void MenuController::OnGestureEvent(SubmenuView* source,
   if (!part.submenu)
     return;
   part.submenu->OnGestureEvent(event);
+#endif // UI_VIEWS_PORT
 }
 
 void MenuController::OnTouchEvent(SubmenuView* source, ui::TouchEvent* event) {
@@ -941,6 +949,7 @@ void MenuController::ViewHierarchyChanged(
   }
 }
 
+#if !defined(UI_VIEWS_PORT)
 bool MenuController::GetDropFormats(
     SubmenuView* source,
     int* formats,
@@ -948,12 +957,14 @@ bool MenuController::GetDropFormats(
   return source->GetMenuItem()->GetDelegate()->GetDropFormats(
       source->GetMenuItem(), formats, format_types);
 }
+#endif // UI_VIEWS_PORT
 
 bool MenuController::AreDropTypesRequired(SubmenuView* source) {
   return source->GetMenuItem()->GetDelegate()->AreDropTypesRequired(
       source->GetMenuItem());
 }
 
+#if !defined(UI_VIEWS_PORT)
 bool MenuController::CanDrop(SubmenuView* source, const OSExchangeData& data) {
   return source->GetMenuItem()->GetDelegate()->CanDrop(source->GetMenuItem(),
                                                        data);
@@ -963,7 +974,10 @@ void MenuController::OnDragEntered(SubmenuView* source,
                                    const ui::DropTargetEvent& event) {
   valid_drop_coordinates_ = false;
 }
+#endif // UI_VIEWS_PORT
 
+
+#if !defined(UI_VIEWS_PORT)
 int MenuController::OnDragUpdated(SubmenuView* source,
                                   const ui::DropTargetEvent& event) {
   StopCancelAllTimer();
@@ -1022,6 +1036,7 @@ int MenuController::OnDragUpdated(SubmenuView* source,
   last_drop_operation_ = drop_operation;
   return drop_operation;
 }
+#endif // UI_VIEWS_PORT
 
 void MenuController::OnDragExited(SubmenuView* source) {
   StartCancelAllTimer();
@@ -1032,6 +1047,7 @@ void MenuController::OnDragExited(SubmenuView* source) {
   }
 }
 
+#if !defined(UI_VIEWS_PORT)
 int MenuController::OnPerformDrop(SubmenuView* source,
                                   const ui::DropTargetEvent& event) {
   DCHECK(drop_target_);
@@ -1067,6 +1083,7 @@ int MenuController::OnPerformDrop(SubmenuView* source,
   return drop_target->GetDelegate()->OnPerformDrop(drop_target, drop_position,
                                                    event);
 }
+#endif // UI_VIEWS_PORT
 
 void MenuController::OnDragEnteredScrollButton(SubmenuView* source,
                                                bool is_up) {
@@ -1325,14 +1342,18 @@ void MenuController::SetSelection(MenuItemView* menu_item,
                     menu_item->GetType() != MenuItemView::SUBMENU ||
                     (menu_item->GetType() == MenuItemView::ACTIONABLE_SUBMENU &&
                      (selection_types & SELECTION_OPEN_SUBMENU) == 0))) {
+#if !defined(UI_VIEWS_NO_AX)
     menu_item->NotifyAccessibilityEvent(ax::mojom::Event::kSelection, true);
+#endif // UI_VIEWS_NO_AX
     // Notify an accessibility selected children changed event on the parent
     // submenu.
     if (menu_item->GetParentMenuItem() &&
         menu_item->GetParentMenuItem()->GetSubmenu()) {
+#if !defined(UI_VIEWS_NO_AX)
       menu_item->GetParentMenuItem()->GetSubmenu()->NotifyAccessibilityEvent(
           ax::mojom::Event::kSelectedChildrenChanged,
           true /* send_native_event */);
+#endif // UI_VIEWS_NO_AX
     }
   }
 }
@@ -1403,17 +1424,24 @@ void MenuController::StartDrag(SubmenuView* source,
   item->PaintButton(&canvas, MenuItemView::PB_FOR_DRAG);
   gfx::ImageSkia image(gfx::ImageSkiaRep(canvas.GetBitmap(), raster_scale));
 
+#if !defined(UI_VIEWS_PORT)
   OSExchangeData data;
   item->GetDelegate()->WriteDragData(item, &data);
+#endif // UI_VIEWS_PORT
+
+#if !defined(UI_VIEWS_PORT)
   data.provider().SetDragImage(image, press_loc.OffsetFromOrigin());
+#endif // UI_VIEWS_PORT
 
   StopScrolling();
   int drag_ops = item->GetDelegate()->GetDragOperations(item);
   did_initiate_drag_ = true;
   base::WeakPtr<MenuController> this_ref = AsWeakPtr();
+#if !defined(UI_VIEWS_PORT)
   // TODO(varunjain): Properly determine and send DRAG_EVENT_SOURCE below.
   item->GetWidget()->RunShellDrag(nullptr, data, widget_loc, drag_ops,
                                   ui::DragDropTypes::DRAG_EVENT_SOURCE_MOUSE);
+#endif // UI_VIEWS_PORT
   // MenuController may have been deleted so check before accessing member
   // variables.
   if (this_ref)
@@ -2505,12 +2533,13 @@ void MenuController::SetSelectionIndices(MenuItemView* parent) {
 
   if (ordering.empty())
     return;
-
+#if !defined(UI_VIEWS_NO_AX)
   const int set_size = ordering.size();
   for (int i = 0; i < set_size; ++i) {
     const int set_pos = i + 1;  // 1-indexed
     ordering[i]->GetViewAccessibility().OverridePosInSet(set_pos, set_size);
   }
+#endif // UI_VIEWS_NO_AX
 }
 
 void MenuController::MoveSelectionToFirstOrLastItem(
@@ -3031,7 +3060,9 @@ void MenuController::SetHotTrackedButton(Button* hot_button) {
     // Hot-tracked state may change outside of the MenuController. Correct it.
     if (hot_button && !hot_button->IsHotTracked()) {
       hot_button->SetHotTracked(true);
+#if !defined(UI_VIEWS_NO_AX)
       hot_button->NotifyAccessibilityEvent(ax::mojom::Event::kSelection, true);
+#endif // UI_VIEWS_NO_AX
     }
     return;
   }
@@ -3040,7 +3071,9 @@ void MenuController::SetHotTrackedButton(Button* hot_button) {
   hot_button_ = hot_button;
   if (hot_button) {
     hot_button->SetHotTracked(true);
+#if !defined(UI_VIEWS_NO_AX)
     hot_button->NotifyAccessibilityEvent(ax::mojom::Event::kSelection, true);
+#endif // UI_VIEWS_NO_AX
   }
 }
 

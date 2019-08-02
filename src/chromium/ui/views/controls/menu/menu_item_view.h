@@ -130,8 +130,10 @@ class VIEWS_EXPORT MenuItemView : public View {
 
   // Overridden from View:
   base::string16 GetTooltipText(const gfx::Point& p) const override;
+#if !defined(UI_VIEWS_NO_AX)
   void GetAccessibleNodeData(ui::AXNodeData* node_data) override;
   bool HandleAccessibleAction(const ui::AXActionData& action_data) override;
+#endif // UI_VIEWS_NO_AX
 
   // Returns the preferred height of menu items. This is only valid when the
   // menu is about to be shown.

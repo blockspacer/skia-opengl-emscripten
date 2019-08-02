@@ -9,6 +9,7 @@
 
 #include "base/compiler_specific.h"
 #include "cc/trees/swap_promise.h"
+#if defined(ENABLE_LATENCY)
 #include "ui/latency/latency_info.h"
 
 namespace cc {
@@ -37,5 +38,6 @@ class CC_EXPORT LatencyInfoSwapPromise : public SwapPromise {
 };
 
 }  // namespace cc
+#endif // ENABLE_LATENCY
 
 #endif  // CC_TREES_LATENCY_INFO_SWAP_PROMISE_H_

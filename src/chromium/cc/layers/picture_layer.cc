@@ -244,9 +244,11 @@ bool PictureLayer::HasDrawableContent() const {
   return picture_layer_inputs_.client && Layer::HasDrawableContent();
 }
 
+#if defined(ENABLE_CC_BENCH)
 void PictureLayer::RunMicroBenchmark(MicroBenchmark* benchmark) {
   benchmark->RunOnLayer(this);
 }
+#endif // ENABLE_CC_BENCH
 
 void PictureLayer::CaptureContent(const gfx::Rect& rect,
                                   std::vector<NodeHolder>* content) {

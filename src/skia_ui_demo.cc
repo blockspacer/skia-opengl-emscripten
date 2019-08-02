@@ -111,6 +111,155 @@ static ::std::unique_ptr<gfx::ImageSkia> gfxImageSkia;
 static sk_sp<SkImage> skImageSp;
 #endif // ENABLE_UI
 
+#if defined(ENABLE_BLINK_UI_VIEWS)
+#include "base/macros.h"
+#include "ui/views/controls/button/button.h"
+#include "ui/views/controls/combobox/combobox_listener.h"
+#include "ui/views/controls/textfield/textfield_controller.h"
+#include "ui/views/examples/example_base.h"
+#include "base/memory/ptr_util.h"
+#include "base/stl_util.h"
+#include "base/strings/utf_string_conversions.h"
+#include "ui/gfx/geometry/insets.h"
+#include "ui/gfx/geometry/vector2d.h"
+#include "ui/views/background.h"
+#include "ui/views/border.h"
+#include "ui/views/controls/button/checkbox.h"
+#include "ui/views/controls/combobox/combobox.h"
+#include "ui/views/controls/label.h"
+#include "ui/views/controls/textfield/textfield.h"
+#include "ui/views/examples/example_combobox_model.h"
+#include "ui/views/layout/box_layout.h"
+#include "ui/views/layout/grid_layout.h"
+#include "ui/views/view.h"
+#include "ui/views/layout/fill_layout.h"
+#include "ui/views/layout/grid_layout.h"
+#include "ui/views/widget/widget.h"
+#include "ui/views/widget/widget_delegate.h"
+#include "base/macros.h"
+#include "base/run_loop.h"
+#include "base/strings/utf_string_conversions.h"
+#include "ui/base/l10n/l10n_util.h"
+#include "ui/base/models/combobox_model.h"
+#include "ui/base/ui_base_paths.h"
+#include "ui/views/background.h"
+#include "ui/views/controls/combobox/combobox.h"
+#include "ui/views/controls/label.h"
+//#include "ui/gfx/native_widget_types.h"
+
+class ContainerView : public views::View {
+ public:
+  explicit ContainerView(/*ExampleBase* base*/)
+      : example_view_created_(false)/*,
+        example_base_(base)*/ {
+        SetBackground(views::CreateSolidBackground(
+          blink::Color(0.0f, 0.5f, 0.5f, 0.5f).Rgb()));
+
+        const gfx::FontList& font_list = GetTextFontList();
+
+        title_ = new views::Label();
+        title_->SetFontList(font_list);
+        title_->SetHorizontalAlignment(gfx::ALIGN_LEFT);
+        title_->SetEnabledColor(
+          blink::Color(1.0f, 1.0f, 0.0f, 0.5f).Rgb());
+        set_title(base::UTF8ToUTF16("title_ ! title_ ! title_ !"));
+        AddChildView(title_);
+
+        message_ = new views::Label();
+        message_->SetFontList(font_list);
+        message_->SetHorizontalAlignment(gfx::ALIGN_RIGHT);
+        message_->SetEnabledColor(
+          blink::Color(1.0f, 0.0f, 1.0f, 0.5f).Rgb());
+        set_message(base::UTF8ToUTF16("message_ ! message_ ! message_ !"));
+        AddChildView(message_);
+
+        // TODO:
+        // https://github.com/blockspacer/skia-opengl-emscripten/blob/master/src/chromium/ui/message_center/views/notification_view_md.cc
+        // AddPreTargetHandler(click_activator_.get());
+  }
+
+  void ForcePaint(gfx::Canvas* gfx_canvas) {
+    OnPaint(gfx_canvas);
+  }
+
+ private:
+  // View:
+  void ViewHierarchyChanged(
+      const views::ViewHierarchyChangedDetails& details) override {
+    views::View::ViewHierarchyChanged(details);
+    // We're not using child == this because a Widget may not be
+    // available when this is added to the hierarchy.
+    if (details.is_add
+        && views::View::GetWidget()
+        && !example_view_created_) {
+      example_view_created_ = true;
+      printf("OK example_base_->CreateExampleView\n");
+      /// example_base_->CreateExampleView(this);
+    } else {
+      printf("FAILED example_base_->CreateExampleView\n");
+    }
+  }
+
+  const char* GetClassName() const override;
+
+  gfx::Size CalculatePreferredSize() const override {
+    gfx::Size title_size = title_->GetPreferredSize();
+    gfx::Size message_size = message_->GetPreferredSize();
+    return gfx::Size(title_size.width() + message_size.width() +
+                         /*kCompactTitleMessageViewSpacing*/ 12,
+                     std::max(title_size.height(), message_size.height()));
+  }
+  void Layout() override {
+    // Elides title and message.
+    // * If the message is too long, the message occupies at most
+    //   kProgressNotificationMessageRatio of the width.
+    // * If the title is too long, the full content of the message is shown,
+    //   kCompactTitleMessageViewSpacing is added between them, and the elided
+    //   title is shown.
+    // * If they are short enough, the title is left-aligned and the message is
+    //   right-aligned.
+    const int message_width = std::min(
+        message_->GetPreferredSize().width(),
+        title_->GetPreferredSize().width() > 0
+            ? static_cast<int>(/*kProgressNotificationMessageRatio*/ 0.7 * width())
+            : width());
+    const int title_width =
+        std::max(0, width() - message_width - 12 /*kCompactTitleMessageViewSpacing*/);
+
+    title_->SetBounds(0, 0, title_width, height());
+    message_->SetBounds(width() - message_width, 0, message_width, height());
+  }
+
+  void set_title(const base::string16& title) {
+    title_->SetText(title);
+  }
+  void set_message(const base::string16& message) {
+    message_->SetText(message);
+  }
+
+  // True if the example view has already been created, or false otherwise.
+  bool example_view_created_;
+
+  //ExampleBase* example_base_;
+
+  views::Label* title_ = nullptr;
+  views::Label* message_ = nullptr;
+
+  DISALLOW_COPY_AND_ASSIGN(ContainerView);
+};
+
+// TODO:: free memory
+static ContainerView* container_ = nullptr;
+static views::Widget* widget_ = nullptr;
+static views::Textfield* textfield_ = nullptr;
+static views::Combobox* alignment_ = nullptr;
+static views::Combobox* elide_behavior_ = nullptr;
+static views::Checkbox* multiline_ = nullptr;
+static views::Checkbox* shadows_ = nullptr;
+static views::Checkbox* selectable_ = nullptr;
+static views::Label* custom_label_ = nullptr;
+#endif // ENABLE_BLINK_UI_VIEWS
+
 #if defined(ENABLE_BLINK_PLATFORM)
 #if defined(ENABLE_IMAGES)
 #include "third_party/blink/renderer/platform/graphics/accelerated_static_bitmap_image.h"
@@ -119,6 +268,17 @@ static sk_sp<SkImage> skImageSp;
 #include "third_party/blink/renderer/platform/image-decoders/image_decoder.h"
 //#include "third_party/blink/renderer/platform/image-decoders/image_decoder.h"
 static scoped_refptr<blink::StaticBitmapImage> sStaticBitmapImage;
+
+static gfx::Font* default_font = nullptr;
+
+// FontList for the texts except for the header.
+static gfx::FontList GetTextFontList() {
+  DCHECK(default_font);
+  const int size_delta = 0; // size in pixels to add
+  gfx::Font font = default_font->Derive(size_delta, gfx::Font::NORMAL,
+                                       gfx::Font::Weight::NORMAL);
+  return gfx::FontList(font);
+}
 #endif // ENABLE_IMAGES
 
 static std::unique_ptr<blink::Platform> g_platform;
@@ -919,10 +1079,15 @@ public:
         /*style*/ gfx::Font::NORMAL,
         /*weight*/ gfx::Font::Weight::NORMAL,
         /*params*/ fontRenderParams);
-      gfx::Font defaultFont(customPlatformFont);
+      //gfx::Font defaultFont(customPlatformFont);
+      if(!default_font) {
+        // TODO: free mem
+        default_font = new gfx::Font(customPlatformFont);
+      }
       //defaultFont = gfx::Font("Arial", 10);
 
-      gfx::FontList font_list(defaultFont);
+      //gfx::FontList font_list(defaultFont);
+      const gfx::FontList& font_list = GetTextFontList();
       render_text->SetText(base::UTF8ToUTF16("x render_text x render_text x"));
       render_text->SetFontList(font_list);
       render_text->SetColor(
@@ -975,6 +1140,30 @@ public:
       //  gfx::CreateVectorIcon(kFooBarIcon, 32, color_utils::DeriveDefaultIconColor(text_color));
     }
 #endif // ENABLE_BLINK_UI
+
+#if defined(ENABLE_BLINK_UI_VIEWS)
+  // see https://github.com/blockspacer/skia-opengl-emscripten/blob/master/src/chromium/ui/views/examples/examples_main.cc
+  // see https://github.com/blockspacer/skia-opengl-emscripten/blob/master/src/chromium/ui/views/examples/example_base.cc#L39
+  // TODO: ui::MaterialDesignController::Initialize();
+  if(!container_) {
+    container_ = new ContainerView();
+  }
+  //gfx::Canvas gfx_canvas(&paint_canvas, 1.0f);
+  container_->ForcePaint(&gfx_canvas);
+  /*if(!widget_) {
+    widget_ = new views::Widget;
+    views::Widget::InitParams params;
+    ///params.delegate =
+    ///    new ExamplesWindowContents(std::move(on_close), std::move(examples));
+    ///params.context = window_context;
+    widget_->Init(params);
+    widget_->Show();
+  }
+  ui::PaintContext context(list.get(), compositor->device_scale_factor(),
+                           gfx::Rect(compositor->size()), true);
+  widget_->OnNativeWidgetPaint(context);*/
+#endif // ENABLE_BLINK_UI_VIEWS
+
     //printf("onDraw() 7\n");
   }
 

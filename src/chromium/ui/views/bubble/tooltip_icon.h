@@ -37,7 +37,10 @@ class VIEWS_EXPORT TooltipIcon : public ImageView,
   void OnMouseExited(const ui::MouseEvent& event) override;
   bool OnMousePressed(const ui::MouseEvent& event) override;
   void OnGestureEvent(ui::GestureEvent* event) override;
+
+#if !defined(UI_VIEWS_NO_AX)
   void GetAccessibleNodeData(ui::AXNodeData* node_data) override;
+#endif // UI_VIEWS_NO_AX
 
   // MouseWatcherListener:
   void MouseMovedOutOfHost() override;

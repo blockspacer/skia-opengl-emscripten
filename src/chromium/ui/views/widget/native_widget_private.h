@@ -23,7 +23,9 @@ class Rect;
 namespace ui {
 class InputMethod;
 class GestureRecognizer;
+#if !defined(UI_VIEWS_PORT)
 class OSExchangeData;
+#endif // UI_VIEWS_PORT
 }
 
 namespace views {
@@ -207,11 +209,13 @@ class VIEWS_EXPORT NativeWidgetPrivate : public NativeWidget {
   virtual void SetOpacity(float opacity) = 0;
   virtual void SetAspectRatio(const gfx::SizeF& aspect_ratio) = 0;
   virtual void FlashFrame(bool flash) = 0;
+#if !defined(UI_VIEWS_PORT)
   virtual void RunShellDrag(View* view,
                             const ui::OSExchangeData& data,
                             const gfx::Point& location,
                             int operation,
                             ui::DragDropTypes::DragEventSource source) = 0;
+#endif // UI_VIEWS_PORT
   virtual void SchedulePaintInRect(const gfx::Rect& rect) = 0;
   virtual void ScheduleLayout() = 0;
   virtual void SetCursor(gfx::NativeCursor cursor) = 0;

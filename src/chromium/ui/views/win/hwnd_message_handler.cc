@@ -26,10 +26,12 @@
 #include "base/win/win_util.h"
 #include "base/win/windows_version.h"
 #include "third_party/skia/include/core/SkPath.h"
+#if !defined(UI_VIEWS_NO_AX)
 #include "ui/accessibility/accessibility_switches.h"
 #include "ui/accessibility/platform/ax_fragment_root_win.h"
 #include "ui/accessibility/platform/ax_platform_node_win.h"
 #include "ui/accessibility/platform/ax_system_caret_win.h"
+#endif // UI_VIEWS_NO_AX
 #include "ui/base/ime/input_method.h"
 #include "ui/base/ime/text_input_client.h"
 #include "ui/base/ime/text_input_type.h"

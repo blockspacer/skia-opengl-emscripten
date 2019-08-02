@@ -1130,3 +1130,15 @@ see
 > https://alligator.io/css/display-inline-vs-inline-block/
 > https://stackoverflow.com/a/15177860
 > https://stackoverflow.com/a/48244299
+
+TODO: aura
+native_theme_base.h - void PaintCheckbox(cc::PaintCanvas* canvas
+
+ui::NativeTheme::GetInstanceForNativeUi()
+
+void NativeWidgetAura::OnPaint(const ui::PaintContext& context) {
+  delegate_->OnNativeWidgetPaint(context);
+
+#if defined(USE_AURA)
+  using DesktopWindowTreeHostFactory =
+}

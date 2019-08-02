@@ -25,7 +25,9 @@
 #include "components/viz/common/surfaces/frame_sink_id.h"
 #include "components/viz/common/surfaces/local_surface_id_allocation.h"
 #include "components/viz/host/host_frame_sink_client.h"
+#if !defined(COMPOSITOR_PORTED)
 #include "services/viz/privileged/interfaces/compositing/vsync_parameter_observer.mojom-forward.h"
+#endif // COMPOSITOR_PORTED
 #include "third_party/skia/include/core/SkColor.h"
 #include "third_party/skia/include/core/SkMatrix44.h"
 #include "ui/compositor/compositor_animation_observer.h"
@@ -65,9 +67,13 @@ class GpuMemoryBufferManager;
 }
 
 namespace viz {
+#if defined(COMPOSITOR_PORTED)
 class FrameSinkManagerImpl;
+#endif // COMPOSITOR_PORTED
 class ContextProvider;
+#if defined(COMPOSITOR_PORTED)
 class HostFrameSinkManager;
+#endif // COMPOSITOR_PORTED
 class RasterContextProvider;
 }
 
@@ -75,7 +81,9 @@ namespace ui {
 
 class Compositor;
 class ExternalBeginFrameClient;
+#if defined(ENABLE_LATENCY)
 class LatencyInfo;
+#endif // ENABLE_LATENCY
 class Layer;
 class Reflector;
 class ScopedAnimationDurationScaleMode;
@@ -155,10 +163,12 @@ class COMPOSITOR_EXPORT ContextFactoryPrivate {
 
   virtual void SetOutputIsSecure(Compositor* compositor, bool secure) = 0;
 
+#if !defined(COMPOSITOR_PORTED)
   // Adds an observer for vsync parameter changes.
   virtual void AddVSyncParameterObserver(
       Compositor* compositor,
       viz::mojom::VSyncParameterObserverPtr observer) = 0;
+#endif // COMPOSITOR_PORTED
 };
 
 // This class abstracts the creation of the 3D context for the compositor. It is
@@ -279,7 +289,9 @@ class COMPOSITOR_EXPORT Compositor : public cc::LayerTreeHostClient,
   void DisableSwapUntilResize();
   void ReenableSwap();
 
+#if defined(ENABLE_LATENCY)
   void SetLatencyInfo(const LatencyInfo& latency_info);
+#endif // ENABLE_LATENCY
 
   // Sets the compositor's device scale factor and size.
   void SetScaleAndSize(
@@ -327,8 +339,11 @@ class COMPOSITOR_EXPORT Compositor : public cc::LayerTreeHostClient,
   // the GPU.
   void SetDisplayVSyncParameters(base::TimeTicks timebase,
                                  base::TimeDelta interval);
+
+#if !defined(COMPOSITOR_PORTED)
   void AddVSyncParameterObserver(
       viz::mojom::VSyncParameterObserverPtr observer);
+#endif // COMPOSITOR_PORTED
 
   // Sets the widget for the compositor to render into.
   void SetAcceleratedWidget(gfx::AcceleratedWidget widget);

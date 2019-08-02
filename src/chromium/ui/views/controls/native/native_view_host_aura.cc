@@ -254,9 +254,13 @@ gfx::NativeViewAccessible NativeViewHostAura::GetNativeViewAccessible() {
 }
 
 gfx::NativeCursor NativeViewHostAura::GetCursor(int x, int y) {
+#if !defined(UI_VIEWS_PORT)
   if (host_->native_view())
     return host_->native_view()->GetCursor(gfx::Point(x, y));
   return gfx::kNullCursor;
+#else
+  return gfx::NativeCursor();
+#endif // UI_VIEWS_PORT
 }
 
 void NativeViewHostAura::SetVisible(bool visible) {

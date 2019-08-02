@@ -7,7 +7,9 @@
 #include <utility>
 
 #include "base/logging.h"
+#if !defined(UI_VIEWS_NO_AX)
 #include "ui/accessibility/ax_node_data.h"
+#endif // UI_VIEWS_NO_AX
 #include "ui/gfx/geometry/insets.h"
 #include "ui/views/metadata/metadata_impl_macros.h"
 
@@ -31,10 +33,12 @@ void ImageViewBase::ResetImageSize() {
   PreferredSizeChanged();
 }
 
+#if !defined(UI_VIEWS_NO_AX)
 void ImageViewBase::GetAccessibleNodeData(ui::AXNodeData* node_data) {
   node_data->role = ax::mojom::Role::kImage;
   node_data->SetName(GetAccessibleName());
 }
+#endif // UI_VIEWS_NO_AX
 
 void ImageViewBase::SetHorizontalAlignment(Alignment alignment) {
   if (alignment != horizontal_alignment_) {

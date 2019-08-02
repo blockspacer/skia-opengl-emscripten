@@ -176,8 +176,12 @@ gfx::Size TableHeader::CalculatePreferredSize() const {
 }
 
 gfx::NativeCursor TableHeader::GetCursor(const ui::MouseEvent& event) {
+#if !defined(UI_VIEWS_PORT)
   return GetResizeColumn(GetMirroredXInView(event.x())) != -1 ?
       GetNativeColumnResizeCursor() : View::GetCursor(event);
+#else
+  return gfx::NativeCursor();
+#endif // UI_VIEWS_PORT
 }
 
 bool TableHeader::OnMousePressed(const ui::MouseEvent& event) {

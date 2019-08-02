@@ -18,7 +18,9 @@
 #include "base/trace_event/traced_value.h"
 #include "build/build_config.h"
 #include "cc/base/math_util.h"
+#if defined(ENABLE_CC_BENCH)
 #include "cc/benchmarks/micro_benchmark_impl.h"
+#endif // ENABLE_CC_BENCH
 #include "cc/debug/debug_colors.h"
 #include "cc/layers/append_quads_data.h"
 #include "cc/layers/solid_color_layer_impl.h"
@@ -1670,9 +1672,11 @@ size_t PictureLayerImpl::GPUMemoryUsageInBytes() const {
   return tilings_->GPUMemoryUsageInBytes();
 }
 
+#if defined(ENABLE_CC_BENCH)
 void PictureLayerImpl::RunMicroBenchmark(MicroBenchmarkImpl* benchmark) {
   benchmark->RunOnLayer(this);
 }
+#endif // ENABLE_CC_BENCH
 
 bool PictureLayerImpl::IsOnActiveOrPendingTree() const {
   return !layer_tree_impl()->IsRecycleTree();

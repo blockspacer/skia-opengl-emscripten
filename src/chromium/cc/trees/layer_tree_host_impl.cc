@@ -34,7 +34,9 @@
 #include "cc/base/devtools_instrumentation.h"
 #include "cc/base/histograms.h"
 #include "cc/base/math_util.h"
+#if defined(ENABLE_CC_BENCH)
 #include "cc/benchmarks/benchmark_instrumentation.h"
+#endif // ENABLE_CC_BENCH
 #include "cc/debug/rendering_stats_instrumentation.h"
 #include "cc/input/browser_controls_offset_manager.h"
 #include "cc/input/main_thread_scrolling_reason.h"
@@ -109,7 +111,9 @@
 #include "gpu/command_buffer/client/raster_interface.h"
 #include "gpu/command_buffer/client/shared_image_interface.h"
 #include "gpu/command_buffer/common/shared_image_usage.h"
+#if defined(ENABLE_UKM)
 #include "services/metrics/public/cpp/ukm_recorder.h"
+#endif // ENABLE_UKM
 #include "third_party/skia/include/gpu/GrContext.h"
 #include "ui/gfx/geometry/point_conversions.h"
 #include "ui/gfx/geometry/rect_conversions.h"
@@ -244,6 +248,7 @@ void RecordCompositorSlowScrollMetric(InputHandler::ScrollInputType type,
   }
 }
 
+#if defined(ENABLE_CC_BENCH)
 ui::FrameMetricsSettings LTHI_FrameMetricsSettings(
     const LayerTreeSettings& settings) {
   ui::FrameMetricsSource source =
@@ -262,6 +267,7 @@ ui::FrameMetricsSettings LTHI_FrameMetricsSettings(
                 : ui::FrameMetricsCompileTarget::Chromium;
   return ui::FrameMetricsSettings(source, source_thread, compile_target);
 }
+#endif // ENABLE_CC_BENCH
 
 }  // namespace
 
@@ -274,7 +280,7 @@ LayerTreeHostImpl::FrameData::FrameData() = default;
 LayerTreeHostImpl::FrameData::~FrameData() = default;
 LayerTreeHostImpl::UIResourceData::UIResourceData() = default;
 LayerTreeHostImpl::UIResourceData::~UIResourceData() = default;
-LayerTreeHostImpl::UIResourceData::UIResourceData(UIResourceData&&) noexcept =
+LayerTreeHostImpl::UIResourceData::UIResourceData(UIResourceData&&) /*noexcept*/ =
     default;
 LayerTreeHostImpl::UIResourceData& LayerTreeHostImpl::UIResourceData::operator=(
     UIResourceData&&) = default;
@@ -328,7 +334,9 @@ LayerTreeHostImpl::LayerTreeHostImpl(
       debug_rect_history_(DebugRectHistory::Create()),
       mutator_host_(std::move(mutator_host)),
       rendering_stats_instrumentation_(rendering_stats_instrumentation),
+#if defined(ENABLE_CC_BENCH)
       micro_benchmark_controller_(this),
+#endif // ENABLE_CC_BENCH
       task_graph_runner_(task_graph_runner),
       id_(id),
       consecutive_frame_with_damage_count_(settings.damaged_frame_limit),
@@ -337,13 +345,16 @@ LayerTreeHostImpl::LayerTreeHostImpl(
       image_animation_controller_(GetTaskRunner(),
                                   this,
                                   settings_.enable_image_animation_resync),
+#if defined(ENABLE_CC_BENCH)
       frame_metrics_(LTHI_FrameMetricsSettings(settings_)),
       skipped_frame_tracker_(&frame_metrics_),
+#endif // ENABLE_CC_BENCH
       is_animating_for_snap_(false),
       paint_image_generator_client_id_(PaintImage::GetNextGeneratorClientId()),
       scrollbar_controller_(std::make_unique<ScrollbarController>(this)),
       scroll_gesture_did_end_(false) {
   DCHECK(mutator_host_);
+
   mutator_host_->SetMutatorHostClient(this);
 
   DCHECK(task_runner_provider_->IsImplThread());
@@ -461,7 +472,9 @@ void LayerTreeHostImpl::CommitComplete() {
     AnimatePendingTreeAfterCommit();
 
   UpdateSyncTreeAfterCommitOrImplSideInvalidation();
+#if defined(ENABLE_CC_BENCH)
   micro_benchmark_controller_.DidCompleteCommit();
+#endif // ENABLE_CC_BENCH
 }
 
 void LayerTreeHostImpl::UpdateSyncTreeAfterCommitOrImplSideInvalidation() {
@@ -492,8 +505,11 @@ void LayerTreeHostImpl::UpdateSyncTreeAfterCommitOrImplSideInvalidation() {
   // and the updated data for the image from the main frame.
   PaintImageIdFlatSet images_to_invalidate =
       tile_manager_.TakeImagesToInvalidateOnSyncTree();
+
+#if defined(ENABLE_UKM)
   if (ukm_manager_)
     ukm_manager_->AddCheckerboardedImages(images_to_invalidate.size());
+#endif // ENABLE_UKM
 
   const auto& animated_images =
       image_animation_controller_.AnimateForSyncTree(CurrentBeginFrameArgs());
@@ -816,12 +832,14 @@ bool LayerTreeHostImpl::HasBlockingWheelEventHandlerAt(
   return layer_impl_with_wheel_event_handler;
 }
 
+#if defined(ENABLE_LATENCY)
 std::unique_ptr<SwapPromiseMonitor>
 LayerTreeHostImpl::CreateLatencyInfoSwapPromiseMonitor(
     ui::LatencyInfo* latency) {
   return base::WrapUnique(
       new LatencyInfoSwapPromiseMonitor(latency, nullptr, this));
 }
+#endif // ENABLE_LATENCY
 
 ScrollElasticityHelper* LayerTreeHostImpl::CreateScrollElasticityHelper() {
   DCHECK(!scroll_elasticity_helper_);
@@ -1220,12 +1238,14 @@ DrawResult LayerTreeHostImpl::CalculateRenderPasses(FrameData* frame) {
     active_tree()->set_needs_update_draw_properties();
   }
 
+#if defined(ENABLE_UKM)
   if (ukm_manager_) {
     ukm_manager_->AddCheckerboardStatsForFrame(
         checkerboarded_no_recording_content_area +
             checkerboarded_needs_raster_content_area,
         num_missing_tiles, total_visible_area);
   }
+#endif // ENABLE_UKM
 
   if (active_tree_->has_ever_been_drawn()) {
     UMA_HISTOGRAM_COUNTS_100(
@@ -1296,7 +1316,9 @@ void LayerTreeHostImpl::InvalidateLayerTreeFrameSink(bool needs_redraw) {
   DCHECK(layer_tree_frame_sink());
 
   layer_tree_frame_sink()->Invalidate(needs_redraw);
+#if defined(ENABLE_CC_BENCH)
   skipped_frame_tracker_.DidProduceFrame();
+#endif // ENABLE_CC_BENCH
 }
 
 DrawResult LayerTreeHostImpl::PrepareToDraw(FrameData* frame) {
@@ -1797,8 +1819,10 @@ void LayerTreeHostImpl::DidPresentCompositorFrame(
 
     // Update compositor frame latency and smoothness stats only for frames
     // that caused on-screen damage.
+#if defined(ENABLE_CC_BENCH)
     if (info->token == frame_token)
       frame_metrics_.AddFrameDisplayed(info->cc_frame_time, feedback.timestamp);
+#endif // ENABLE_CC_BENCH
 
     std::copy(std::make_move_iterator(info->callbacks.begin()),
               std::make_move_iterator(info->callbacks.end()),
@@ -1810,7 +1834,9 @@ void LayerTreeHostImpl::DidPresentCompositorFrame(
 }
 
 void LayerTreeHostImpl::DidNotNeedBeginFrame() {
+#if defined(ENABLE_CC_BENCH)
   skipped_frame_tracker_.WillNotProduceFrame();
+#endif // ENABLE_CC_BENCH
 }
 
 void LayerTreeHostImpl::ReclaimResources(
@@ -2051,7 +2077,9 @@ bool LayerTreeHostImpl::DrawLayers(FrameData* frame) {
   DCHECK(CanDraw());
   DCHECK_EQ(frame->has_no_damage, frame->render_passes.empty());
   ResetRequiresHighResToDraw();
+#if defined(ENABLE_CC_BENCH)
   skipped_frame_tracker_.DidProduceFrame();
+#endif // ENABLE_CC_BENCH
 
   if (frame->has_no_damage) {
     DCHECK(!resourceless_software_draw_);
@@ -2085,8 +2113,10 @@ bool LayerTreeHostImpl::DrawLayers(FrameData* frame) {
 
   active_tree_->set_has_ever_been_drawn(true);
   devtools_instrumentation::DidDrawFrame(id_);
+#if defined(ENABLE_CC_BENCH)
   benchmark_instrumentation::IssueImplThreadRenderingStatsEvent(
       rendering_stats_instrumentation_->TakeImplThreadRenderingStats());
+#endif // ENABLE_CC_BENCH
   return true;
 }
 
@@ -2168,6 +2198,7 @@ viz::CompositorFrame LayerTreeHostImpl::GenerateCompositorFrame(
         active_tree()->TakeForceSendMetadataRequest());
   }
 
+#if defined(ENABLE_LATENCY)
   metadata.latency_info.emplace_back(ui::SourceEventType::FRAME);
   ui::LatencyInfo& new_latency_info = metadata.latency_info.back();
   if (CommitToActiveTree()) {
@@ -2185,6 +2216,7 @@ viz::CompositorFrame LayerTreeHostImpl::GenerateCompositorFrame(
   }
   ui::LatencyInfo::TraceIntermediateFlowEvents(metadata.latency_info,
                                                "SwapBuffers");
+#endif // ENABLE_LATENCY
 
   // Collect all resource ids in the render passes into a single array.
   std::vector<viz::ResourceId> resources;
@@ -2453,7 +2485,9 @@ bool LayerTreeHostImpl::WillBeginImplFrame(const viz::BeginFrameArgs& args) {
   for (auto* it : video_frame_controllers_)
     it->OnBeginFrame(args);
 
+#if defined(ENABLE_CC_BENCH)
   skipped_frame_tracker_.BeginFrame(args.frame_time, args.interval);
+#endif // ENABLE_CC_BENCH
 
   bool recent_frame_had_no_damage =
       consecutive_frame_with_damage_count_ < settings_.damaged_frame_limit;
@@ -2478,7 +2512,9 @@ bool LayerTreeHostImpl::WillBeginImplFrame(const viz::BeginFrameArgs& args) {
 }
 
 void LayerTreeHostImpl::DidFinishImplFrame() {
+#if defined(ENABLE_CC_BENCH)
   skipped_frame_tracker_.FinishFrame();
+#endif // ENABLE_CC_BENCH
   impl_thread_phase_ = ImplThreadPhase::IDLE;
   current_begin_frame_tracker_.Finish();
 }
@@ -3045,8 +3081,10 @@ void LayerTreeHostImpl::SetNeedsOneBeginImplFrame() {
 void LayerTreeHostImpl::SetNeedsRedraw() {
   NotifySwapPromiseMonitorsOfSetNeedsRedraw();
   client_->SetNeedsRedrawOnImplThread();
+#if defined(ENABLE_CC_BENCH)
   if (CurrentlyScrollingNode())
     skipped_frame_tracker_.WillProduceFrame();
+#endif // ENABLE_CC_BENCH
 }
 
 ManagedMemoryPolicy LayerTreeHostImpl::ActualManagedMemoryPolicy() const {
@@ -5614,10 +5652,13 @@ void LayerTreeHostImpl::MarkUIResourceNotEvicted(UIResourceId uid) {
     client_->OnCanDrawStateChanged(CanDraw());
 }
 
+#if defined(ENABLE_CC_BENCH)
 void LayerTreeHostImpl::ScheduleMicroBenchmark(
     std::unique_ptr<MicroBenchmarkImpl> benchmark) {
   micro_benchmark_controller_.ScheduleRun(std::move(benchmark));
 }
+
+#endif // ENABLE_CC_BENCH
 
 void LayerTreeHostImpl::InsertSwapPromiseMonitor(SwapPromiseMonitor* monitor) {
   swap_promise_monitor_.insert(monitor);
@@ -5899,12 +5940,15 @@ void LayerTreeHostImpl::ShowScrollbarsForImplScroll(ElementId element_id) {
     animation_controller->DidScrollUpdate();
 }
 
+#if defined(ENABLE_UKM)
 void LayerTreeHostImpl::InitializeUkm(
     std::unique_ptr<ukm::UkmRecorder> recorder) {
   DCHECK(!ukm_manager_);
   ukm_manager_ = std::make_unique<UkmManager>(std::move(recorder));
 }
+#endif // ENABLE_UKM
 
+#if defined(ENABLE_UKM)
 void LayerTreeHostImpl::SetActiveURL(const GURL& url, ukm::SourceId source_id) {
   tile_manager_.set_active_url(url);
 
@@ -5919,6 +5963,7 @@ void LayerTreeHostImpl::SetActiveURL(const GURL& url, ukm::SourceId source_id) {
     ukm_manager_->SetSourceId(source_id);
   }
 }
+#endif // ENABLE_UKM
 
 void LayerTreeHostImpl::OnLayerTreeLocalSurfaceIdAllocationChanged() {
   if (!waiting_for_local_surface_id_)

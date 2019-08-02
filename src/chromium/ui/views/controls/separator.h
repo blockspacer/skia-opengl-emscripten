@@ -32,7 +32,9 @@ class VIEWS_EXPORT Separator : public View {
 
   // Overridden from View:
   gfx::Size CalculatePreferredSize() const override;
+#if !defined(UI_VIEWS_NO_AX)
   void GetAccessibleNodeData(ui::AXNodeData* node_data) override;
+#endif // UI_VIEWS_NO_AX
   void OnPaint(gfx::Canvas* canvas) override;
   const char* GetClassName() const override;
 

@@ -25,7 +25,9 @@
 #include "ui/gfx/render_text.h"
 #include "ui/gfx/text_constants.h"
 #include "ui/gfx/text_elider.h"
+#if !defined(UI_VIEWS_PORT)
 #include "ui/strings/grit/ui_strings.h"
+#endif // UI_VIEWS_PORT
 #include "ui/views/border.h"
 #include "ui/views/controls/link.h"
 #include "ui/views/style/typography.h"

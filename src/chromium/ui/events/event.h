@@ -27,7 +27,9 @@
 #include "ui/events/platform_event.h"
 #include "ui/gfx/geometry/point.h"
 #include "ui/gfx/geometry/point_conversions.h"
+#if defined(ENABLE_LATENCY)
 #include "ui/latency/latency_info.h"
+#endif // ENABLE_LATENCY
 
 namespace gfx {
 class Transform;
@@ -97,9 +99,11 @@ class EVENTS_EXPORT Event {
   EventPhase phase() const { return phase_; }
   EventResult result() const { return result_; }
 
+#if defined(ENABLE_LATENCY)
   LatencyInfo* latency() { return &latency_; }
   const LatencyInfo* latency() const { return &latency_; }
   void set_latency(const LatencyInfo& latency) { latency_ = latency; }
+#endif // ENABLE_LATENCY
 
   int source_device_id() const { return source_device_id_; }
   void set_source_device_id(int id) { source_device_id_ = id; }
@@ -321,7 +325,9 @@ class EVENTS_EXPORT Event {
 
   EventType type_;
   base::TimeTicks time_stamp_;
+#if defined(ENABLE_LATENCY)
   LatencyInfo latency_;
+#endif // ENABLE_LATENCY
   int flags_;
   PlatformEvent native_event_;
   bool delete_native_event_;

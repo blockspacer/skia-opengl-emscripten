@@ -8,7 +8,9 @@
 
 #include "base/logging.h"
 #include "base/strings/utf_string_conversions.h"
+#if !defined(UI_VIEWS_NO_AX)
 #include "ui/accessibility/ax_node_data.h"
+#endif // UI_VIEWS_NO_AX
 #include "ui/base/cursor/cursor.h"
 #include "ui/events/event.h"
 #include "ui/events/keycodes/keyboard_codes.h"
@@ -72,9 +74,13 @@ const char* Link::GetClassName() const {
 }
 
 gfx::NativeCursor Link::GetCursor(const ui::MouseEvent& event) {
+#if !defined(UI_VIEWS_PORT)
   if (!enabled())
     return gfx::kNullCursor;
   return GetNativeHandCursor();
+#else
+  return gfx::NativeCursor();
+#endif // UI_VIEWS_PORT
 }
 
 bool Link::CanProcessEventsWithinSubtree() const {
@@ -161,10 +167,12 @@ bool Link::SkipDefaultKeyEventProcessing(const ui::KeyEvent& event) {
           PlatformStyle::kReturnClicksFocusedControl);
 }
 
+#if !defined(UI_VIEWS_NO_AX)
 void Link::GetAccessibleNodeData(ui::AXNodeData* node_data) {
   Label::GetAccessibleNodeData(node_data);
   node_data->role = ax::mojom::Role::kLink;
 }
+#endif // UI_VIEWS_NO_AX
 
 void Link::OnFocus() {
   Label::OnFocus();

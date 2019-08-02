@@ -12,9 +12,11 @@
 #include "base/strings/sys_string_conversions.h"
 #include "base/strings/utf_string_conversions.h"
 #import "testing/gtest_mac.h"
+#if !defined(UI_VIEWS_NO_AX)
 #include "ui/accessibility/ax_enums.mojom.h"
 #include "ui/accessibility/ax_node_data.h"
 #import "ui/accessibility/platform/ax_platform_node_mac.h"
+#endif // UI_VIEWS_NO_AX
 #include "ui/base/ime/text_input_type.h"
 #include "ui/base/models/combobox_model.h"
 #import "ui/gfx/mac/coordinate_conversion.h"

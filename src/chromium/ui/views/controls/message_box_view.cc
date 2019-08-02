@@ -11,9 +11,13 @@
 #include "base/i18n/rtl.h"
 #include "base/strings/string_split.h"
 #include "base/strings/utf_string_conversions.h"
+#if !defined(UI_VIEWS_NO_AX)
 #include "ui/accessibility/ax_node_data.h"
+#endif // UI_VIEWS_NO_AX
+#if !defined(UI_VIEWS_PORT)
 #include "ui/base/clipboard/clipboard.h"
 #include "ui/base/clipboard/scoped_clipboard_writer.h"
+#endif // UI_VIEWS_PORT
 #include "ui/gfx/geometry/insets.h"
 #include "ui/views/border.h"
 #include "ui/views/controls/button/checkbox.h"
@@ -141,9 +145,11 @@ void MessageBoxView::SetLink(const base::string16& text,
     ResetLayoutManager();
 }
 
+#if !defined(UI_VIEWS_NO_AX)
 void MessageBoxView::GetAccessibleNodeData(ui::AXNodeData* node_data) {
   node_data->role = ax::mojom::Role::kAlertDialog;
 }
+#endif // UI_VIEWS_NO_AX
 
 ///////////////////////////////////////////////////////////////////////////////
 // MessageBoxView, View overrides:
@@ -154,7 +160,9 @@ void MessageBoxView::ViewHierarchyChanged(
     if (prompt_field_)
       prompt_field_->SelectAll(true);
 
+#if !defined(UI_VIEWS_NO_AX)
     NotifyAccessibilityEvent(ax::mojom::Event::kAlert, true);
+#endif // UI_VIEWS_NO_AX
   }
 }
 
@@ -171,10 +179,12 @@ bool MessageBoxView::AcceleratorPressed(const ui::Accelerator& accelerator) {
   if (message_labels_.size() == 1u && message_labels_[0]->selectable())
     return false;
 
+#if !defined(UI_VIEWS_PORT)
   ui::ScopedClipboardWriter scw(ui::CLIPBOARD_TYPE_COPY_PASTE);
   scw.WriteText(std::accumulate(
       message_labels_.cbegin(), message_labels_.cend(), base::string16(),
       [](base::string16& left, Label* right) { return left + right->text(); }));
+#endif // UI_VIEWS_PORT
   return true;
 }
 

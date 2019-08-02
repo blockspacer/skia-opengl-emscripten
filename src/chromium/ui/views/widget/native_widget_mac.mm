@@ -553,6 +553,7 @@ void NativeWidgetMac::FlashFrame(bool flash_frame) {
   NOTIMPLEMENTED();
 }
 
+#if !defined(UI_VIEWS_PORT)
 void NativeWidgetMac::RunShellDrag(View* view,
                                    const ui::OSExchangeData& data,
                                    const gfx::Point& location,
@@ -561,6 +562,7 @@ void NativeWidgetMac::RunShellDrag(View* view,
   bridge_host_->drag_drop_client()->StartDragAndDrop(view, data, operation,
                                                      source);
 }
+#endif // UI_VIEWS_PORT
 
 void NativeWidgetMac::SchedulePaintInRect(const gfx::Rect& rect) {
   // |rect| is relative to client area of the window.

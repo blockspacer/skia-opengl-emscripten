@@ -134,8 +134,10 @@ class WEBVIEW_EXPORT WebView : public View,
   bool OnMousePressed(const ui::MouseEvent& event) override;
   void OnFocus() override;
   void AboutToRequestFocusFromTabTraversal(bool reverse) override;
+#if !defined(UI_VIEWS_NO_AX)
   void GetAccessibleNodeData(ui::AXNodeData* node_data) override;
   gfx::NativeViewAccessible GetNativeViewAccessible() override;
+#endif // UI_VIEWS_NO_AX
 
   // Overridden from content::WebContentsDelegate:
   bool EmbedsFullscreenWidget() const override;
@@ -169,7 +171,9 @@ class WEBVIEW_EXPORT WebView : public View,
   void DetachWebContents();
   void ReattachForFullscreenChange(bool enter_fullscreen);
   void UpdateCrashedOverlayView();
+#if !defined(UI_VIEWS_NO_AX)
   void NotifyAccessibilityWebContentsChanged();
+#endif // UI_VIEWS_NO_AX
 
   // Registers for ResizeDueToAutoResize() notifications from the
   // RenderWidgetHostView whenever it is created or changes, if
@@ -202,9 +206,11 @@ class WEBVIEW_EXPORT WebView : public View,
   gfx::Size min_size_;
   gfx::Size max_size_;
 
+#if !defined(UI_VIEWS_NO_AX)
   // Tracks the child accessibility tree id which is associated with the
   // WebContents's main RenderFrameHost.
   ui::AXTreeID child_ax_tree_id_;
+#endif // UI_VIEWS_NO_AX
 
   DISALLOW_COPY_AND_ASSIGN(WebView);
 };

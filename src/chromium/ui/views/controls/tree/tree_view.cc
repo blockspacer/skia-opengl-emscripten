@@ -11,7 +11,9 @@
 #include "base/memory/ptr_util.h"
 #include "build/build_config.h"
 #include "components/vector_icons/vector_icons.h"
+#if !defined(UI_VIEWS_NO_AX)
 #include "ui/accessibility/ax_node_data.h"
+#endif // UI_VIEWS_NO_AX
 #include "ui/base/ime/input_method.h"
 #include "ui/base/resource/resource_bundle.h"
 #include "ui/events/event.h"
@@ -26,7 +28,9 @@
 #include "ui/gfx/paint_vector_icon.h"
 #include "ui/gfx/skia_util.h"
 #include "ui/native_theme/native_theme.h"
+#if !defined(UI_VIEWS_PORT)
 #include "ui/resources/grit/ui_resources.h"
+#endif // UI_VIEWS_PORT
 #include "ui/views/border.h"
 #include "ui/views/controls/focus_ring.h"
 #include "ui/views/controls/prefix_selector.h"
@@ -34,9 +38,13 @@
 #include "ui/views/controls/textfield/textfield.h"
 #include "ui/views/controls/tree/tree_view_controller.h"
 #include "ui/views/layout/layout_provider.h"
+#if !defined(UI_VIEWS_PORT)
 #include "ui/views/resources/grit/views_resources.h"
+#endif // UI_VIEWS_PORT
 #include "ui/views/style/platform_style.h"
+#if !defined(UI_VIEWS_PORT)
 #include "ui/views/vector_icons.h"
+#endif // UI_VIEWS_PORT
 
 using ui::TreeModel;
 using ui::TreeModelNode;
@@ -78,11 +86,16 @@ TreeView::TreeView()
   constexpr bool kUseMdIcons = false;
 #endif
   if (kUseMdIcons) {
+#if !defined(UI_VIEWS_PORT)
     closed_icon_ = open_icon_ =
         gfx::CreateVectorIcon(vector_icons::kFolderIcon, gfx::kChromeIconGrey);
+#else
+    closed_icon_ = open_icon_ = gfx::ImageSkia();
+#endif // UI_VIEWS_PORT
   } else {
     // TODO(ellyjones): if the pre-Harmony codepath goes away, merge
     // closed_icon_ and open_icon_.
+#if !defined(UI_VIEWS_PORT)
     closed_icon_ =
         *ui::ResourceBundle::GetSharedInstance()
              .GetImageNamed((base::i18n::IsRTL() ? IDR_FOLDER_CLOSED_RTL
@@ -92,6 +105,7 @@ TreeView::TreeView()
                       .GetImageNamed((base::i18n::IsRTL() ? IDR_FOLDER_OPEN_RTL
                                                           : IDR_FOLDER_OPEN))
                       .ToImageSkia();
+#endif // UI_VIEWS_PORT
   }
   text_offset_ = closed_icon_.width() + kImagePadding + kImagePadding +
       kArrowRegionSize;
@@ -269,10 +283,12 @@ void TreeView::SetSelectedNode(TreeModelNode* model_node) {
   if (controller_ && (changed || was_empty_selection))
     controller_->OnTreeViewSelectionChanged(this);
 
+#if !defined(UI_VIEWS_NO_AX)
   if (changed) {
     NotifyAccessibilityEvent(ax::mojom::Event::kTextChanged, true);
     NotifyAccessibilityEvent(ax::mojom::Event::kSelection, true);
   }
+#endif // UI_VIEWS_NO_AX
 }
 
 TreeModelNode* TreeView::GetSelectedNode() {
@@ -422,6 +438,7 @@ void TreeView::ShowContextMenu(const gfx::Point& p,
   View::ShowContextMenu(p, source_type);
 }
 
+#if !defined(UI_VIEWS_NO_AX)
 void TreeView::GetAccessibleNodeData(ui::AXNodeData* node_data) {
   node_data->role = ax::mojom::Role::kTree;
   node_data->SetRestriction(ax::mojom::Restriction::kReadOnly);
@@ -440,6 +457,7 @@ void TreeView::GetAccessibleNodeData(ui::AXNodeData* node_data) {
   node_data->role = ax::mojom::Role::kTreeItem;
   node_data->SetName(selected_node_->model_node()->GetTitle());
 }
+#endif // UI_VIEWS_NO_AX
 
 const char* TreeView::GetClassName() const {
   return kViewClassName;
@@ -848,10 +866,14 @@ void TreeView::PaintRow(gfx::Canvas* canvas,
 void TreeView::PaintExpandControl(gfx::Canvas* canvas,
                                   const gfx::Rect& node_bounds,
                                   bool expanded) {
+#if !defined(UI_VIEWS_PORT)
   gfx::ImageSkia arrow = gfx::CreateVectorIcon(
       kSubmenuArrowIcon,
       color_utils::DeriveDefaultIconColor(
           drawing_provider()->GetTextColorForNode(this, nullptr)));
+#else
+  gfx::ImageSkia arrow;
+#endif // UI_VIEWS_PORT
   if (expanded) {
     arrow = gfx::ImageSkiaOperations::CreateRotatedImage(
         arrow, base::i18n::IsRTL() ? SkBitmapOperations::ROTATION_270_CW

@@ -9,7 +9,9 @@
 #include "base/macros.h"
 #include "base/strings/string16.h"
 #include "base/time/time.h"
+#if !defined(UI_VIEWS_NO_AX)
 #include "ui/accessibility/ax_enums.mojom.h"
+#endif // UI_VIEWS_NO_AX
 #include "ui/base/ui_base_types.h"
 #include "ui/views/views_export.h"
 #include "ui/views/widget/widget.h"
@@ -149,7 +151,9 @@ class VIEWS_EXPORT DialogDelegate : public WidgetDelegate {
   ~DialogDelegate() override;
 
   // Overridden from WidgetDelegate:
+#if !defined(UI_VIEWS_NO_AX)
   ax::mojom::Role GetAccessibleWindowRole() override;
+#endif // UI_VIEWS_NO_AX
 
  private:
   // A flag indicating whether this dialog is able to use the custom frame

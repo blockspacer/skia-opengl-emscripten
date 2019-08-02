@@ -810,6 +810,7 @@ ui::InputMethod* Widget::GetInputMethod() {
   }
 }
 
+#if !defined(UI_VIEWS_PORT)
 void Widget::RunShellDrag(View* view,
                           const ui::OSExchangeData& data,
                           const gfx::Point& location,
@@ -839,6 +840,7 @@ void Widget::RunShellDrag(View* view,
   for (WidgetObserver& observer : observers_)
     observer.OnWidgetDragComplete(this);
 }
+#endif // UI_VIEWS_PORT
 
 void Widget::SchedulePaintInRect(const gfx::Rect& rect) {
   native_widget_->SchedulePaintInRect(rect);

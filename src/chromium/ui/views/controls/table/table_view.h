@@ -218,8 +218,10 @@ class VIEWS_EXPORT TableView
   bool OnMousePressed(const ui::MouseEvent& event) override;
   void OnGestureEvent(ui::GestureEvent* event) override;
   base::string16 GetTooltipText(const gfx::Point& p) const override;
+#if !defined(UI_VIEWS_NO_AX)
   void GetAccessibleNodeData(ui::AXNodeData* node_data) override;
   bool HandleAccessibleAction(const ui::AXActionData& action_data) override;
+#endif // UI_VIEWS_NO_AX
 
   // ui::TableModelObserver overrides:
   void OnModelChanged() override;
@@ -338,6 +340,7 @@ class VIEWS_EXPORT TableView
   // 1.
   GroupRange GetGroupRange(int model_index) const;
 
+#if !defined(UI_VIEWS_NO_AX)
   // Updates a set of accessibility views that expose the visible table contents
   // to assistive software.
   void UpdateVirtualAccessibilityChildren();
@@ -355,6 +358,7 @@ class VIEWS_EXPORT TableView
   // |row| should be a view index, not a model index.
   // |visible_column_index| indexes into |visible_columns_|.
   AXVirtualView* GetVirtualAccessibilityCell(int row, int visible_column_index);
+#endif // UI_VIEWS_NO_AX
 
   ui::TableModel* model_ = nullptr;
 

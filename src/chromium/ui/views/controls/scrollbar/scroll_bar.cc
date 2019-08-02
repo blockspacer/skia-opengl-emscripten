@@ -14,13 +14,17 @@
 #include "base/strings/string16.h"
 #include "base/strings/utf_string_conversions.h"
 #include "build/build_config.h"
+#if !defined(UI_VIEWS_NO_AX)
 #include "ui/accessibility/ax_node_data.h"
+#endif // UI_VIEWS_NO_AX
 #include "ui/base/l10n/l10n_util.h"
 #include "ui/events/event.h"
 #include "ui/events/keycodes/keyboard_codes.h"
 #include "ui/gfx/canvas.h"
 #include "ui/gfx/geometry/safe_integer_conversions.h"
+#if !defined(UI_VIEWS_PORT)
 #include "ui/strings/grit/ui_strings.h"
+#endif // UI_VIEWS_PORT
 #include "ui/views/controls/menu/menu_item_view.h"
 #include "ui/views/controls/menu/menu_runner.h"
 #include "ui/views/controls/scroll_view.h"
@@ -85,9 +89,11 @@ int ScrollBar::GetPosition() const {
 ///////////////////////////////////////////////////////////////////////////////
 // ScrollBar, View implementation:
 
+#if !defined(UI_VIEWS_NO_AX)
 void ScrollBar::GetAccessibleNodeData(ui::AXNodeData* node_data) {
   node_data->role = ax::mojom::Role::kScrollBar;
 }
+#endif // UI_VIEWS_NO_AX
 
 bool ScrollBar::OnMousePressed(const ui::MouseEvent& event) {
   if (event.IsOnlyLeftMouseButton())
@@ -208,9 +214,15 @@ void ScrollBar::ShowContextMenuForViewImpl(View* source,
 
   if (!menu_model_) {
     menu_model_ = std::make_unique<ui::SimpleMenuModel>(this);
+
+#if !defined(UI_VIEWS_PORT)
     menu_model_->AddItemWithStringId(ScrollBarContextMenuCommand_ScrollHere,
                                      IDS_APP_SCROLLBAR_CXMENU_SCROLLHERE);
+#endif // UI_VIEWS_PORT
+
     menu_model_->AddSeparator(ui::NORMAL_SEPARATOR);
+
+#if !defined(UI_VIEWS_PORT)
     menu_model_->AddItemWithStringId(
         ScrollBarContextMenuCommand_ScrollStart,
         IsHorizontal() ? IDS_APP_SCROLLBAR_CXMENU_SCROLLLEFTEDGE
@@ -219,12 +231,18 @@ void ScrollBar::ShowContextMenuForViewImpl(View* source,
         ScrollBarContextMenuCommand_ScrollEnd,
         IsHorizontal() ? IDS_APP_SCROLLBAR_CXMENU_SCROLLRIGHTEDGE
                        : IDS_APP_SCROLLBAR_CXMENU_SCROLLEND);
+#endif // UI_VIEWS_PORT
     menu_model_->AddSeparator(ui::NORMAL_SEPARATOR);
+
+#if !defined(UI_VIEWS_PORT)
     menu_model_->AddItemWithStringId(ScrollBarContextMenuCommand_ScrollPageUp,
                                      IDS_APP_SCROLLBAR_CXMENU_SCROLLPAGEUP);
     menu_model_->AddItemWithStringId(ScrollBarContextMenuCommand_ScrollPageDown,
                                      IDS_APP_SCROLLBAR_CXMENU_SCROLLPAGEDOWN);
+#endif // UI_VIEWS_PORT
     menu_model_->AddSeparator(ui::NORMAL_SEPARATOR);
+
+#if !defined(UI_VIEWS_PORT)
     menu_model_->AddItemWithStringId(ScrollBarContextMenuCommand_ScrollPrev,
                                      IsHorizontal()
                                          ? IDS_APP_SCROLLBAR_CXMENU_SCROLLLEFT
@@ -233,6 +251,7 @@ void ScrollBar::ShowContextMenuForViewImpl(View* source,
                                      IsHorizontal()
                                          ? IDS_APP_SCROLLBAR_CXMENU_SCROLLRIGHT
                                          : IDS_APP_SCROLLBAR_CXMENU_SCROLLDOWN);
+#endif // UI_VIEWS_PORT
   }
   menu_runner_ = std::make_unique<MenuRunner>(
       menu_model_.get(),
