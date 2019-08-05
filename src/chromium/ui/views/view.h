@@ -1568,6 +1568,7 @@ class VIEWS_EXPORT View : public ui::LayerDelegate,
   // a DragController.
   // See DragController for a description of these methods.
   virtual int GetDragOperations(const gfx::Point& press_pt);
+
 #if !defined(UI_VIEWS_PORT)
   virtual void WriteDragData(const gfx::Point& press_pt, OSExchangeData* data);
 #endif // UI_VIEWS_PORT

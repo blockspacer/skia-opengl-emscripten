@@ -918,9 +918,9 @@ set_target_properties(SKIA PROPERTIES
   INTERFACE_COMPILE_DEFINITIONS "${SKIA_DEFINES}"
   # https://stackoverflow.com/a/28102243/10904212
   #IMPORTED_LINK_INTERFACE_LIBRARIES "${SKIA_DEPENDENCIES}"
-  IMPORTED_LINK_INTERFACE_LIBRARIES "${wuffs_LIBRARY};${jpeg_LIBRARY};${SKIA_DEPENDENCIES}"
+  IMPORTED_LINK_INTERFACE_LIBRARIES "${wuffs_LIBRARY};${jpeg_LIBRARY};${iccjpeg_LIB};${SKIA_DEPENDENCIES}"
 )
-add_dependencies(SKIA SKIA_build ${CUSTOM_ICU_LIB} ${WUFFS_LIB_NAME} ${CUSTOM_ICU_LIB} ${HARFBUZZ_LIBRARIES} ${jpeg_LIBRARY})# jpeg)
+add_dependencies(SKIA SKIA_build ${CUSTOM_ICU_LIB} ${WUFFS_LIB_NAME} ${CUSTOM_ICU_LIB} ${HARFBUZZ_LIBRARIES} ${iccjpeg_LIB} ${jpeg_LIBRARY})
 # https://stackoverflow.com/a/53945809
 target_link_libraries(SKIA INTERFACE
   ${CUSTOM_ICU_LIB}
@@ -931,7 +931,9 @@ target_link_libraries(SKIA INTERFACE
   ${libZLIB_LIB}
   ${libDL_LIB}
   ${libjpeg_TURBO_LIB}
-  ${jpeg_LIBRARY})# jpeg)
+  ${jpeg_LIBRARY}
+  ${iccjpeg_LIB}
+)
 #
 #set_target_properties(pathkit PROPERTIES
 #  IMPORTED_LOCATION "${PATHKIT_LIBRARY}"

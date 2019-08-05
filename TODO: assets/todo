@@ -574,6 +574,9 @@ TODO: use base::saturated_cast, see https://github.com/chromium/chromium/blob/ma
 support "cursor: pointer;" e.t.c.
 support custom mouse cursor
 
+Use target_link_libraries private:
+> https://stackoverflow.com/questions/48570467/can-there-be-an-impact-on-build-time-when-include-link-libraries-public-or-priva
+
 TODO: textfield
 > https://github.com/chromium/chromium/blob/master/ui/views/controls/textfield/textfield.cc
 > GetTextInputClient (ui::IMEBridge::Get()-GetInputContextHandler-GetInputMethod-GetTextInputClient), GetEditableSelectionRange - SetEditableSelectionRange - SetSelectedRange

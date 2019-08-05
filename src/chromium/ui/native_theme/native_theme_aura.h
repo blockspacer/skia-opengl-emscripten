@@ -13,7 +13,9 @@ namespace ui {
 
 // Aura implementation of native theme support.
 class NATIVE_THEME_EXPORT NativeThemeAura : public NativeThemeBase {
- protected:
+ // TODO
+ public:
+ //protected:
   friend class NativeTheme;
   friend class NativeThemeAuraTest;
   friend class base::NoDestructor<NativeThemeAura>;

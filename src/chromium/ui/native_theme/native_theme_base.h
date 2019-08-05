@@ -37,7 +37,9 @@ class NATIVE_THEME_EXPORT NativeThemeBase : public NativeTheme {
   gfx::Size GetNinePatchCanvasSize(Part part) const override;
   gfx::Rect GetNinePatchAperture(Part part) const override;
 
- protected:
+ // TODO
+ public:
+ //protected:
   NativeThemeBase();
   ~NativeThemeBase() override;
 
@@ -163,7 +165,9 @@ class NATIVE_THEME_EXPORT NativeThemeBase : public NativeTheme {
 
   int scrollbar_width_;
 
- private:
+ // TODO
+ //private:
+ public:
   friend class NativeThemeAuraTest;
 
   SkPath PathForArrow(const gfx::Rect& rect, Part direction) const;

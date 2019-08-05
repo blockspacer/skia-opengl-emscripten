@@ -1867,13 +1867,17 @@ void View::TooltipTextChanged() {
 
 // Drag and drop ---------------------------------------------------------------
 
-#if !defined(UI_VIEWS_PORT)
 int View::GetDragOperations(const gfx::Point& press_pt) {
+#if !defined(UI_VIEWS_PORT)
   return drag_controller_ ?
       drag_controller_->GetDragOperationsForView(this, press_pt) :
       ui::DragDropTypes::DRAG_NONE;
-}
+#else
+  return drag_controller_ ?
+      drag_controller_->GetDragOperationsForView(this, press_pt) :
+      0;
 #endif // UI_VIEWS_PORT
+}
 
 #if !defined(UI_VIEWS_PORT)
 void View::WriteDragData(const gfx::Point& press_pt, OSExchangeData* data) {

@@ -210,6 +210,7 @@ MenuRunnerImpl::~MenuRunnerImpl() {
 bool MenuRunnerImpl::ShouldShowMnemonics(int32_t run_types) {
   bool show_mnemonics = run_types & MenuRunner::SHOULD_SHOW_MNEMONICS;
   // Show mnemonics if the button has focus or alt is pressed.
+#if !defined(UI_VIEWS_PORT)
 #if defined(OS_WIN)
   show_mnemonics |= ui::win::IsAltPressed();
 #elif defined(USE_X11)
@@ -217,6 +218,7 @@ bool MenuRunnerImpl::ShouldShowMnemonics(int32_t run_types) {
 #elif defined(OS_MACOSX)
   show_mnemonics = false;
 #endif
+#endif // UI_VIEWS_PORT
   return show_mnemonics;
 }
 

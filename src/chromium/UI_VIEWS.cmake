@@ -512,7 +512,9 @@ target_link_libraries(UI_VIEWS PUBLIC
   #"//ui/accessibility",
   #"//ui/base/clipboard",
   #"//ui/display",
+  UI_DISPLAY
   #"//ui/native_theme",
+  UI_NATIVE_THEME
   #"//ui/native_theme:native_theme_browser",
   #"//ui/resources",
   #"//ui/strings",

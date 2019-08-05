@@ -8,6 +8,10 @@
 
 #include <iostream>
 
+#ifdef ENABLE_COBALT
+#include "cobalt/base/polymorphic_downcast.h"
+#endif ENABLE_COBALT
+
 #ifdef ENABLE_BASE
 
 #include "base/memory/ptr_util.h"
@@ -107,6 +111,23 @@
 #include "blink_demo.h"
 
 #ifdef ENABLE_BLINK_UI
+#include "ui/display/display.h"
+#include "ui/display/display_switches.h"
+#include "ui/display/display_list.h"
+#include "ui/display/display_observer.h"
+#include "ui/gfx/geometry/insets.h"
+#include "ui/gfx/geometry/rect.h"
+#include "ui/gfx/geometry/size.h"
+#endif // ENABLE_UI
+
+#ifdef ENABLE_BLINK_UI_NATIVE_THEME
+#include "ui/native_theme/native_theme.h"
+#include "ui/native_theme/native_theme_aura.h"
+#include "third_party/skia/include/core/SkPath.h"
+#include "ui/gfx/geometry/rect.h"
+#endif // ENABLE_BLINK_UI_NATIVE_THEME
+
+#ifdef ENABLE_BLINK_UI
 static ::std::unique_ptr<gfx::ImageSkia> gfxImageSkia;
 static sk_sp<SkImage> skImageSp;
 #endif // ENABLE_UI
@@ -147,6 +168,9 @@ static sk_sp<SkImage> skImageSp;
 #include "ui/views/controls/label.h"
 //#include "ui/gfx/native_widget_types.h"
 
+static gfx::FontList GetTextFontList();
+
+// TODO: OnPaintLayer
 class ContainerView : public views::View {
  public:
   explicit ContainerView(/*ExampleBase* base*/)
@@ -200,7 +224,12 @@ class ContainerView : public views::View {
     }
   }
 
-  const char* GetClassName() const override;
+  //const char* GetClassName() const override;
+
+  bool OnMousePressed(const ui::MouseEvent& event) override {
+    printf("ContainerView OnMousePressed!\n");
+    return false;
+  }
 
   gfx::Size CalculatePreferredSize() const override {
     gfx::Size title_size = title_->GetPreferredSize();
@@ -209,6 +238,7 @@ class ContainerView : public views::View {
                          /*kCompactTitleMessageViewSpacing*/ 12,
                      std::max(title_size.height(), message_size.height()));
   }
+
   void Layout() override {
     // Elides title and message.
     // * If the message is too long, the message occupies at most
@@ -268,6 +298,7 @@ static views::Label* custom_label_ = nullptr;
 #include "third_party/blink/renderer/platform/image-decoders/image_decoder.h"
 //#include "third_party/blink/renderer/platform/image-decoders/image_decoder.h"
 static scoped_refptr<blink::StaticBitmapImage> sStaticBitmapImage;
+#endif // ENABLE_IMAGES
 
 static gfx::Font* default_font = nullptr;
 
@@ -279,7 +310,6 @@ static gfx::FontList GetTextFontList() {
                                        gfx::Font::Weight::NORMAL);
   return gfx::FontList(font);
 }
-#endif // ENABLE_IMAGES
 
 static std::unique_ptr<blink::Platform> g_platform;
 #endif // ENABLE_BLINK_PLATFORM
@@ -885,7 +915,7 @@ public:
 
     //printf("ENABLE_BLINK_UI 1\n");
 #ifdef ENABLE_BLINK_UI
-    cc::SkiaPaintCanvas paint_canvas(sk_canvas);
+    cc::SkiaPaintCanvas cc_skia_paint_canvas(sk_canvas);
 #endif // ENABLE_BLINK_UI
 
     //printf("onDraw() x1\n");
@@ -998,13 +1028,46 @@ public:
     SkBlendMode::kSrcOver);
 #endif // ENABLE_IMAGES
 
+
+#ifdef ENABLE_BLINK_UI_NATIVE_THEME
+  SkPath theme_path;
+  // Up arrow, sized for 1x.
+  ui::NativeThemeAura* nativeThemeAura =
+#ifdef ENABLE_COBALT
+     base::polymorphic_downcast<ui::NativeThemeAura*>(
+#else
+     static_cast<ui::NativeThemeAura*>(
+#endif // ENABLE_COBALT
+      ui::NativeTheme::GetInstanceForNativeUi());
+  DCHECK(nativeThemeAura);
+  theme_path =
+      //ui::NativeThemeAura::instance()->
+      nativeThemeAura->PathForArrow(gfx::Rect(100, 200, 170, 170),
+      ui::NativeTheme::kScrollbarUpArrow);
+  DCHECK(!theme_path.isEmpty());
+  context.DrawPath(path.GetSkPath(), flags);
+
+  //cc::PaintCanvas cc_paint_canvas(&cc_skia_paint_canvas);
+  ui::NativeTheme::ButtonExtraParams button;
+  button.checked = true;
+  button.has_border = true;
+  button.background_color = SkColorSetARGB(0, 0, 188, 112);
+  nativeThemeAura->PaintCheckbox(&cc_skia_paint_canvas,
+    ui::NativeTheme::State::kDisabled,
+    gfx::Rect(200, 200, 300, 300),
+    button);
+
+#endif // ENABLE_BLINK_UI_NATIVE_THEME
+
   //printf("FillRect 71\n");
+
+  /// \note I`ll get "Check failed: canvas_" (see graphics_context.cc)
+  /// if you will try to use same context again without BeginRecording
   auto rr = context.EndRecording();
   //printf("FillRect 81\n");
-  paint_canvas.drawPicture(rr);
+  cc_skia_paint_canvas.drawPicture(rr);
 
 #endif // ENABLE_UI
-
 
   //printf("onDraw() x3\n");
 
@@ -1021,7 +1084,7 @@ public:
     //printf("ENABLE_BLINK_UI 1\n");
 #ifdef ENABLE_BLINK_UI
     //printf("ENABLE_UI 2\n");
-    gfx::Canvas gfx_canvas(&paint_canvas, 1.0f);
+    gfx::Canvas gfx_canvas(&cc_skia_paint_canvas, 1.0f);
     /*{
       cc::PaintFlags paintFlags;
       paintFlags.setAntiAlias(true);
@@ -1148,7 +1211,7 @@ public:
   if(!container_) {
     container_ = new ContainerView();
   }
-  //gfx::Canvas gfx_canvas(&paint_canvas, 1.0f);
+  //gfx::Canvas gfx_canvas(&cc_skia_paint_canvas, 1.0f);
   container_->ForcePaint(&gfx_canvas);
   /*if(!widget_) {
     widget_ = new views::Widget;
@@ -1384,6 +1447,12 @@ sk_sp<SkImage> getUiSkImage() {
 static int testRed = 0;
 
 void SkiaUiDemo::loadUIAssets() {
+#ifdef ENABLE_BLINK_UI
+  display::Display display(0, gfx::Rect(0, 0, 1024, 1024));
+  std::cout << display.bounds().ToString().c_str() << std::endl;
+  std::cout << display.work_area().ToString().c_str() << std::endl;
+#endif // ENABLE_UI
+
 #if defined(OS_EMSCRIPTEN) && !defined(DISABLE_PTHREADS)
   DCHECK(false) << "can`t loadUIAssets on WASM MT";
 #endif // defined(OS_EMSCRIPTEN) && !defined(DISABLE_PTHREADS)

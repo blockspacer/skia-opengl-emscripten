@@ -98,6 +98,7 @@ target_link_libraries(UI_COMPOSITOR PUBLIC
   #"//ui/base",
   UI_BASE
   #"//ui/display",
+  UI_DISPLAY
   #"//ui/events",
   UI_EVENTS
   #"//ui/gfx",

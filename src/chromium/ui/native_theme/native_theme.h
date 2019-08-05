@@ -427,7 +427,9 @@ class NATIVE_THEME_EXPORT NativeTheme {
   // self.
   void SetDarkModeParent(NativeTheme* dark_mode_parent);
 
- protected:
+ // TODO
+ public:
+ //protected:
   NativeTheme();
   virtual ~NativeTheme();
 
