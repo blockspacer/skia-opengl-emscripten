@@ -383,6 +383,11 @@ if(ENABLE_SKIA AND ENABLE_BLINK)
   # * ozone (wayland) / x11, xcomposite, xext (x11)
   include(UI_GL.cmake)
 
+  # GPU_COMMAND_BUFFER: GPU command helper library.
+  # see https://www.chromium.org/developers/design-documents/gpu-command-buffer
+  # Depends on : base, (ui/gfx), (GPU_GLES2)
+  include(GPU_COMMAND_BUFFER.cmake)
+
   # "+ui/events",
   # "+ui/base/x",
   # "+ui/gfx",
@@ -391,6 +396,11 @@ if(ENABLE_SKIA AND ENABLE_BLINK)
   #+gpu/command_buffer/common",
   #+gpu/command_buffer/service",
   #+gpu/ipc/common",
+
+  # CC
+  include(BASE_CC.cmake)
+  include(DEBUG_CC.cmake)
+  include(PAINT_CC.cmake)
 
   # COMPONENTS_VIZ_COMMON
   include(COMPONENTS_VIZ_COMMON.cmake)
@@ -403,15 +413,7 @@ if(ENABLE_SKIA AND ENABLE_BLINK)
 
   # ui/gl
 
-  # GPU_COMMAND_BUFFER: GPU command helper library.
-  # see https://www.chromium.org/developers/design-documents/gpu-command-buffer
-  # Depends on : base, (ui/gfx), (GPU_GLES2)
-  include(GPU_COMMAND_BUFFER.cmake)
-
   # CC
-  include(BASE_CC.cmake)
-  include(DEBUG_CC.cmake)
-  include(PAINT_CC.cmake)
   include(CC.cmake)
   include(ANIMATION_CC.cmake)
 endif(ENABLE_SKIA AND ENABLE_BLINK)

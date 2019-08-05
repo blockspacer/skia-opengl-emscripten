@@ -68,6 +68,9 @@ class VIEWS_EXPORT Label : public View,
 
   ~Label() override;
 
+  // TODO
+  gfx::RenderText* GetRenderText() const;
+
   static const gfx::FontList& GetDefaultFontList();
 
   // Gets or sets the fonts used by this label.
@@ -235,7 +238,9 @@ class VIEWS_EXPORT Label : public View,
 #endif // UI_VIEWS_NO_AX
   base::string16 GetTooltipText(const gfx::Point& p) const override;
 
- protected:
+ // TODO
+ //protected:
+ public:
   // Create a single RenderText instance to actually be painted.
   virtual std::unique_ptr<gfx::RenderText> CreateRenderText() const;
 

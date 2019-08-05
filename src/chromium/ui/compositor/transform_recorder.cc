@@ -27,7 +27,9 @@ void TransformRecorder::Transform(const gfx::Transform& transform) {
   if (transform.IsIdentity())
     return;
 
+  DCHECK(context_.list_);
   context_.list_->StartPaint();
+  DCHECK(context_.list_);
   context_.list_->push<cc::SaveOp>();
   context_.list_->push<cc::ConcatOp>(static_cast<SkMatrix>(transform.matrix()));
   context_.list_->EndPaintOfPairedBegin();

@@ -255,3 +255,7 @@ target_compile_definitions(UI_EVENTS PRIVATE
   EVENTS_IMPLEMENTATION=1
   #GESTURE_DETECTION_IMPLEMENTATION=1
 )
+
+target_compile_definitions(UI_EVENTS PUBLIC
+  UI_EVENTS_PORT=1
+)

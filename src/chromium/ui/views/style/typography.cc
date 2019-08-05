@@ -8,6 +8,9 @@
 #include "ui/views/layout/layout_provider.h"
 #include "ui/views/style/typography_provider.h"
 
+#include "ui/gfx/font.h"
+#include "ui/gfx/font_list.h"
+
 namespace views {
 namespace style {
 namespace {
@@ -22,7 +25,11 @@ void ValidateContextAndStyle(int context, int style) {
 
 const gfx::FontList& GetFont(int context, int style) {
   ValidateContextAndStyle(context, style);
-  return LayoutProvider::Get()->GetTypographyProvider().GetFont(context, style);
+  DCHECK(LayoutProvider::Get());
+  DCHECK(LayoutProvider::Get()->
+    GetTypographyProvider().GetFont(context, style).GetFonts().size() > 0);
+  return LayoutProvider::Get()->
+    GetTypographyProvider().GetFont(context, style);
 }
 
 SkColor GetColor(const views::View& view, int context, int style) {

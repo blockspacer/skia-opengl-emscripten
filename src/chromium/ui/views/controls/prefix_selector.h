@@ -16,7 +16,11 @@
 #include "base/strings/string16.h"
 #include "base/time/time.h"
 #include "build/build_config.h"
+#if !defined(UI_VIEWS_PORT)
 #include "ui/base/ime/text_input_client.h"
+#else
+#include "ui/base/ime/dummy_text_input_client.h"
+#endif // UI_VIEWS_PORT
 #include "ui/views/views_export.h"
 
 namespace base {
@@ -30,7 +34,11 @@ class View;
 
 // PrefixSelector is used to change the selection in a view as the user
 // types characters.
+#if !defined(UI_VIEWS_PORT)
 class VIEWS_EXPORT PrefixSelector : public ui::TextInputClient {
+#else
+class VIEWS_EXPORT PrefixSelector : public ui::DummyTextInputClient {
+#endif // UI_VIEWS_PORT
  public:
   PrefixSelector(PrefixDelegate* delegate, View* host_view);
   ~PrefixSelector() override;

@@ -58,9 +58,12 @@ gfx::Font::Weight TypographyProvider::MediumWeightForUI() {
 
 const gfx::FontList& DefaultTypographyProvider::GetFont(int context,
                                                         int style) const {
+  printf("DefaultTypographyProvider::GetFont 1\n");
   int size_delta;
   gfx::Font::Weight font_weight;
+  printf("DefaultTypographyProvider::GetFont 2\n");
   GetDefaultFont(context, style, &size_delta, &font_weight);
+  printf("DefaultTypographyProvider::GetFont 3\n");
   return ui::ResourceBundle::GetSharedInstance().GetFontListWithDelta(
       size_delta, gfx::Font::NORMAL, font_weight);
 }
@@ -104,8 +107,9 @@ void DefaultTypographyProvider::GetDefaultFont(int context,
                                                int style,
                                                int* size_delta,
                                                gfx::Font::Weight* font_weight) {
+  printf("DefaultTypographyProvider::GetDefaultFont 1\n");
   *font_weight = gfx::Font::Weight::NORMAL;
-
+  printf("DefaultTypographyProvider::GetDefaultFont 2\n");
   switch (context) {
     case style::CONTEXT_BUTTON_MD:
       *size_delta = ui::kLabelFontSizeDelta;
@@ -121,7 +125,7 @@ void DefaultTypographyProvider::GetDefaultFont(int context,
       *size_delta = ui::kLabelFontSizeDelta;
       break;
   }
-
+  printf("DefaultTypographyProvider::GetDefaultFont 3\n");
   switch (style) {
     case style::STYLE_TAB_ACTIVE:
       *font_weight = gfx::Font::Weight::BOLD;
@@ -137,6 +141,7 @@ void DefaultTypographyProvider::GetDefaultFont(int context,
       }
       break;
   }
+  printf("DefaultTypographyProvider::GetDefaultFont 4\n");
 }
 
 }  // namespace views

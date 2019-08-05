@@ -260,6 +260,7 @@ bool IsLocaleAvailable(const std::string& locale) {
   if (!base::i18n::IsFilenameLegal(base::ASCIIToUTF16(locale)))
     return false;
 
+#if !defined(UI_BASE_PORT)
   // IsLocalePartiallyPopulated() can be called here for an early return w/o
   // checking the resource availability below. It'd help when Chrome is run
   // under a system locale Chrome is not localized to (e.g.Farsi on Linux),
@@ -267,6 +268,9 @@ bool IsLocaleAvailable(const std::string& locale) {
   // localized to. So, we don't call it here.
   if (!l10n_util::IsLocaleSupportedByOS(locale))
     return false;
+#else
+  NOTIMPLEMENTED();
+#endif
 
   return ui::ResourceBundle::LocaleDataPakExists(locale);
 }
@@ -304,8 +308,12 @@ struct AvailableLocalesTraits
       // and to which Chrome is not localized.
       if (IsLocalePartiallyPopulated(locale_name))
         continue;
+#if !defined(UI_BASE_PORT)
       if (!l10n_util::IsLocaleSupportedByOS(locale_name))
         continue;
+#else
+      NOTIMPLEMENTED();
+#endif
       // Normalize underscores to hyphens because that's what our locale files
       // use.
       std::replace(locale_name.begin(), locale_name.end(), '_', '-');

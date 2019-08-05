@@ -219,7 +219,9 @@ class VIEWS_EXPORT NativeWidgetPrivate : public NativeWidget {
   virtual void SchedulePaintInRect(const gfx::Rect& rect) = 0;
   virtual void ScheduleLayout() = 0;
   virtual void SetCursor(gfx::NativeCursor cursor) = 0;
+#if !defined(UI_VIEWS_PORT)
   virtual void ShowEmojiPanel();
+#endif // UI_VIEWS_PORT
   virtual bool IsMouseEventsEnabled() const = 0;
   // Returns true if any mouse button is currently down.
   virtual bool IsMouseButtonDown() const = 0;

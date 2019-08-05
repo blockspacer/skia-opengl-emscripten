@@ -12,8 +12,10 @@
 #include "build/build_config.h"
 #include "components/viz/common/resources/resource_format_utils.h"
 #include "components/viz/common/resources/resource_sizes.h"
+//#if !defined(VIZ_COMMON_PORT)
 #include "mojo/public/cpp/base/shared_memory_utils.h"
 #include "mojo/public/cpp/system/platform_handle.h"
+//#endif // VIZ_COMMON_PORT
 #include "ui/gfx/geometry/size.h"
 
 namespace viz {

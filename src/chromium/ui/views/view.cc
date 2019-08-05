@@ -26,7 +26,14 @@
 #if !defined(UI_VIEWS_PORT)
 #include "ui/base/dragdrop/drag_drop_types.h"
 #endif // UI_VIEWS_PORT
+#if !defined(UI_VIEWS_PORT)
 #include "ui/base/ime/input_method.h"
+#include "ui/base/ime/text_input_type.h"
+#else
+#include "ui/base/ime/dummy_input_method.h"
+#include "ui/base/ime/dummy_text_input_client.h"
+#include "ui/base/ime/text_input_type.h"
+#endif // UI_VIEWS_PORT
 #include "ui/compositor/clip_recorder.h"
 #include "ui/compositor/compositor.h"
 #include "ui/compositor/dip_util.h"
@@ -858,6 +865,8 @@ void View::Paint(const PaintInfo& parent_paint_info) {
   const ui::PaintContext& context = paint_info.context();
   bool is_invalidated = true;
   if (paint_info.context().CanCheckInvalid()) {
+
+  // TODO
 #if DCHECK_IS_ON()
     if (!context.is_pixel_canvas()) {
       gfx::Vector2d offset;
@@ -898,6 +907,7 @@ void View::Paint(const PaintInfo& parent_paint_info) {
     // into consideration whether or not the View uses a right-to-left layout so
     // that we paint the View in its mirrored position if need be.
     if (clip_path_.isEmpty()) {
+      // TODO
       clip_recorder.ClipRect(gfx::Rect(paint_info.paint_recording_size()) +
                              paint_info.offset_from_parent());
     } else {
@@ -917,6 +927,7 @@ void View::Paint(const PaintInfo& parent_paint_info) {
   }
 
   ui::TransformRecorder transform_recorder(context);
+  // TODO
   SetUpTransformRecorderForPainting(paint_info.offset_from_parent(),
                                     &transform_recorder);
 
@@ -2005,6 +2016,7 @@ void View::SetUpTransformRecorderForPainting(
   gfx::Transform transform_from_parent;
   transform_from_parent.Translate(offset_from_parent.x(),
                                   offset_from_parent.y());
+  DCHECK(recorder);
   recorder->Transform(transform_from_parent);
 }
 

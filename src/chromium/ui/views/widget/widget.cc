@@ -392,9 +392,11 @@ void Widget::Init(const InitParams& in_params) {
   native_widget_->OnWidgetInitDone();
 }
 
+#if !defined(UI_VIEWS_PORT)
 void Widget::ShowEmojiPanel() {
   native_widget_->ShowEmojiPanel();
 }
+#endif // UI_VIEWS_PORT
 
 // Unconverted methods (see header) --------------------------------------------
 

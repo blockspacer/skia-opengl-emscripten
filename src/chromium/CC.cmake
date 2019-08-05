@@ -1,6 +1,6 @@
 ﻿### --- CC ---###
 
-set(CC_SOURCES
+list(APPEND CC_SOURCES
   ${CC_DIR}cc_export.h
   #${CC_DIR}benchmarks/benchmark_instrumentation.cc
   #${CC_DIR}benchmarks/benchmark_instrumentation.h",
@@ -360,10 +360,19 @@ set(CC_SOURCES
   #${CC_DIR}trees/viewport_layers.h",
 )
 
+
+list(APPEND CC_STUB_SOURCES
+  ${CC_DIR}layers/layer_impl_test_properties.cc
+  ${CC_DIR}layers/layer_impl_test_properties.h
+)
+
 add_library(CC STATIC
   ${CC_SOURCES}
+  ${CC_STUB_SOURCES}
 )
+
 #message(FATAL_ERROR ${BASE_LIBRARIES})
+
 target_link_libraries(CC PUBLIC
   BASE_CC
   DEBUG_CC
@@ -383,6 +392,7 @@ target_link_libraries(CC PUBLIC
   SKIA
   base
   GURL
+  COMPONENTS_VIZ_CLIENT
 )
 
 target_link_libraries(CC PRIVATE

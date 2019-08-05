@@ -137,9 +137,11 @@ bool DummyTextInputClient::IsTextEditCommandEnabled(
 void DummyTextInputClient::SetTextEditCommandForNextKeyEvent(
     TextEditCommand command) {}
 
+#if defined(ENABLE_UKM)
 ukm::SourceId DummyTextInputClient::GetClientSourceForMetrics() const {
   return ukm::SourceId{};
 }
+#endif // ENABLE_UKM
 
 bool DummyTextInputClient::ShouldDoLearning() {
   return false;

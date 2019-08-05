@@ -675,8 +675,10 @@ class VIEWS_EXPORT Widget : public internal::NativeWidgetDelegate,
   // Tell the window to update its icon from the delegate.
   void UpdateWindowIcon();
 
+#if !defined(UI_VIEWS_PORT)
   // Shows the platform specific emoji picker for this widget.
   void ShowEmojiPanel();
+#endif // UI_VIEWS_PORT
 
   // Retrieves the focus traversable for this widget.
   FocusTraversable* GetFocusTraversable();

@@ -145,6 +145,17 @@ static sk_sp<SkImage> skImageSp;
 #include "ui/gfx/geometry/vector2d.h"
 #include "ui/views/background.h"
 #include "ui/views/border.h"
+#include "ui/views/paint_info.h"
+#include "ui/views/background.h"
+#include "ui/views/controls/native/native_view_host.h"
+#include "ui/views/controls/scroll_view.h"
+#include "ui/views/controls/textfield/textfield.h"
+#include "ui/views/metadata/metadata_types.h"
+#include "ui/views/view_observer.h"
+#include "ui/views/widget/native_widget.h"
+#include "ui/views/widget/root_view.h"
+#include "ui/views/window/dialog_client_view.h"
+#include "ui/views/window/dialog_delegate.h"
 #include "ui/views/controls/button/checkbox.h"
 #include "ui/views/controls/combobox/combobox.h"
 #include "ui/views/controls/label.h"
@@ -152,9 +163,10 @@ static sk_sp<SkImage> skImageSp;
 #include "ui/views/examples/example_combobox_model.h"
 #include "ui/views/layout/box_layout.h"
 #include "ui/views/layout/grid_layout.h"
-#include "ui/views/view.h"
 #include "ui/views/layout/fill_layout.h"
-#include "ui/views/layout/grid_layout.h"
+#include "ui/views/view.h"
+#include "ui/views/layout/layout_provider.h"
+#include "ui/views/views_delegate.h"
 #include "ui/views/widget/widget.h"
 #include "ui/views/widget/widget_delegate.h"
 #include "base/macros.h"
@@ -166,44 +178,106 @@ static sk_sp<SkImage> skImageSp;
 #include "ui/views/background.h"
 #include "ui/views/controls/combobox/combobox.h"
 #include "ui/views/controls/label.h"
+#include "ui/views/controls/button/checkbox.h"
+#include "ui/views/controls/scroll_view.h"
+#include "ui/views/controls/throbber.h"
 //#include "ui/gfx/native_widget_types.h"
+
+#include "ui/base/resource/data_pack.h"
+#include "ui/base/resource/resource_bundle.h"
+
+#include "ui/compositor/paint_recorder.h"
+#include "ui/compositor/canvas_painter.h"
 
 static gfx::FontList GetTextFontList();
 
 // TODO: OnPaintLayer
 class ContainerView : public views::View {
  public:
-  explicit ContainerView(/*ExampleBase* base*/)
+  std::unique_ptr<views::LayoutProvider> layout_provider_ =
+      std::make_unique<views::LayoutProvider>();
+
+  explicit ContainerView(/*ExampleBase* base,views::GridLayout* layout*/)
       : example_view_created_(false)/*,
         example_base_(base)*/ {
-        SetBackground(views::CreateSolidBackground(
-          blink::Color(0.0f, 0.5f, 0.5f, 0.5f).Rgb()));
+  }
 
-        const gfx::FontList& font_list = GetTextFontList();
+  void addChildren(views::GridLayout* layout) {
+    const gfx::FontList& font_list = GetTextFontList();
 
-        title_ = new views::Label();
-        title_->SetFontList(font_list);
-        title_->SetHorizontalAlignment(gfx::ALIGN_LEFT);
-        title_->SetEnabledColor(
-          blink::Color(1.0f, 1.0f, 0.0f, 0.5f).Rgb());
-        set_title(base::UTF8ToUTF16("title_ ! title_ ! title_ !"));
-        AddChildView(title_);
+    title_ = new views::Label();
+    title_->SetFontList(font_list);
+    title_->SetHorizontalAlignment(gfx::ALIGN_LEFT);
+    title_->SetEnabledColor(
+      blink::Color(1.0f, 1.0f, 0.0f, 0.5f).Rgb());
+    set_title(base::UTF8ToUTF16("title_ ! title_ ! title_ !"));
+    //AddChildView(title_);
 
-        message_ = new views::Label();
-        message_->SetFontList(font_list);
-        message_->SetHorizontalAlignment(gfx::ALIGN_RIGHT);
-        message_->SetEnabledColor(
-          blink::Color(1.0f, 0.0f, 1.0f, 0.5f).Rgb());
-        set_message(base::UTF8ToUTF16("message_ ! message_ ! message_ !"));
-        AddChildView(message_);
+    message_ = new views::Label();
+    message_->SetFontList(font_list);
+    message_->SetHorizontalAlignment(gfx::ALIGN_RIGHT);
+    message_->SetObscured(false);
+    message_->SetSelectable(true);
+    message_->SetSelectionBackgroundColor(
+      blink::Color(0.1f, 0.2f, 0.0f, 0.5f).Rgb());
+    message_->SetSelectionTextColor(
+      blink::Color(0.4f, 0.4f, 0.9f, 0.5f).Rgb());
+    message_->SetBackgroundColor(
+      blink::Color(0.9f, 0.0f, 0.9f, 0.5f).Rgb());
+    message_->SetElideBehavior(gfx::ELIDE_TAIL);
+    message_->SetEnabledColor(
+      blink::Color(1.0f, 0.0f, 1.0f, 0.5f).Rgb());
+    set_message(base::UTF8ToUTF16("message_ ! message_ ! message_ !"));
+    message_->SelectRange({0, 4});
+    //message_->RecalculateFont();
+    message_->SetBorder(views::CreateSolidBorder(2, SK_ColorCYAN));
+    message_->SetHorizontalAlignment(gfx::ALIGN_TO_HEAD);
+    //AddChildView(message_);
 
-        // TODO:
-        // https://github.com/blockspacer/skia-opengl-emscripten/blob/master/src/chromium/ui/message_center/views/notification_view_md.cc
-        // AddPreTargetHandler(click_activator_.get());
+    textfield_ = new views::Textfield();
+    textfield_->SetTextInputType(ui::TEXT_INPUT_TYPE_TEXT);
+    textfield_->set_placeholder_text(base::ASCIIToUTF16("TEXT_INPUT_TYPE_TEXT"));
+    //AddChildView(textfield_);
+
+    /*checkbox_ = new views::Checkbox(base::ASCIIToUTF16("Checkbox label"));
+    checkbox_->SetChecked(true);
+    checkbox_->SetBounds(0,0,100,100);
+    //AddChildView(checkbox_);*/
+
+    auto MakeRow = [layout](View* view1, View* view2) {
+      layout->StartRowWithPadding(0, 0, 0, 5);
+      layout->AddView(view1);
+      if (view2)
+        layout->AddView(view2);
+    };
+
+    MakeRow(title_, message_);
+    /*MakeRow(textfield_, checkbox_);*/
+    MakeRow(title_, textfield_);
+
+    /*views::View::OnFocus();
+    InvalidateLayout();
+    SchedulePaint();*/
+
+    // TODO:
+    // https://github.com/blockspacer/skia-opengl-emscripten/blob/master/src/chromium/ui/message_center/views/notification_view_md.cc
+    // AddPreTargetHandler(click_activator_.get());
   }
 
   void ForcePaint(gfx::Canvas* gfx_canvas) {
+    /*gfx::RenderText* msg_renderText = message_->GetRenderText();
+    DCHECK(msg_renderText);
+    msg_renderText->SetMultiline(true);
+    msg_renderText->SetWordWrapBehavior(gfx::WRAP_LONG_WORDS);
+    msg_renderText->set_clip_to_display_rect(false);
+    msg_renderText->set_focused(true);
+    const gfx::FontList& font_list = GetTextFontList();
+    msg_renderText->SetFontList(font_list);*/
+
+    // TODO: recursive
     OnPaint(gfx_canvas);
+
+    //message_->OnPaint(gfx_canvas);
   }
 
  private:
@@ -226,6 +300,7 @@ class ContainerView : public views::View {
 
   //const char* GetClassName() const override;
 
+#if 0
   bool OnMousePressed(const ui::MouseEvent& event) override {
     printf("ContainerView OnMousePressed!\n");
     return false;
@@ -258,7 +333,10 @@ class ContainerView : public views::View {
 
     title_->SetBounds(0, 0, title_width, height());
     message_->SetBounds(width() - message_width, 0, message_width, height());
+    std::cout << "message_->GetBoundsInScreen: " <<
+      message_->GetBoundsInScreen().ToString().c_str() << std::endl;
   }
+#endif // 0
 
   void set_title(const base::string16& title) {
     title_->SetText(title);
@@ -274,6 +352,8 @@ class ContainerView : public views::View {
 
   views::Label* title_ = nullptr;
   views::Label* message_ = nullptr;
+  views::Textfield* textfield_ = nullptr;
+  //views::Checkbox* checkbox_ = nullptr;
 
   DISALLOW_COPY_AND_ASSIGN(ContainerView);
 };
@@ -281,13 +361,13 @@ class ContainerView : public views::View {
 // TODO:: free memory
 static ContainerView* container_ = nullptr;
 static views::Widget* widget_ = nullptr;
-static views::Textfield* textfield_ = nullptr;
+/*static views::Textfield* textfield_ = nullptr;
 static views::Combobox* alignment_ = nullptr;
 static views::Combobox* elide_behavior_ = nullptr;
 static views::Checkbox* multiline_ = nullptr;
 static views::Checkbox* shadows_ = nullptr;
 static views::Checkbox* selectable_ = nullptr;
-static views::Label* custom_label_ = nullptr;
+static views::Label* custom_label_ = nullptr;*/
 #endif // ENABLE_BLINK_UI_VIEWS
 
 #if defined(ENABLE_BLINK_PLATFORM)
@@ -547,11 +627,12 @@ static bool DrawGlyphs(double current_x, double current_y,
         x += pos[i].x_advance / FONT_SIZE_SCALE;
         y += pos[i].y_advance / FONT_SIZE_SCALE;
     }
-
+#if 0
     canvas->drawTextBlob(textBlobBuilder.make(),
       static_cast<SkScalar>(current_x),
       static_cast<SkScalar>(current_y),
       glyph_paint);
+#endif // 0
     return true;
 } // end of DrawGlyphs
 
@@ -694,8 +775,10 @@ public:
 
     //printf("onDraw() 2\n");
 
+#if 0
     paint.setColor(SK_ColorGREEN);
     sk_canvas->drawRect({ 1000, 1700, 50, 50 }, paint);
+#endif // 0
 
     /*paint.setColor(SK_ColorBLUE);
     sk_canvas->drawRect({ 500, 700, 300, 500 }, paint);
@@ -745,6 +828,7 @@ public:
     //return;
     //printf("onDraw z1\n");
 
+#if 0
     sk_canvas->drawString("1!1 Skia Test 1 Skia Test 1 "
                           "Skia Test 1!", 60, 32, skFont1ForUI, paint);
 
@@ -752,6 +836,7 @@ public:
     sk_canvas->drawString("2!2 Skia Test 2 Skia Test 2 "
                           "Skia Test 2!", 20, 97, skFont2ForUI, paint);
     //printf("onDraw z3\n");
+#endif // 0
 
     // TODO >>> !!! <<<
     //return;
@@ -839,7 +924,9 @@ public:
         // test again without hb
         DCHECK(skFont2ForUI.getTypeface());
         auto blob3 = SkTextBlob::MakeFromString("blob3blob3blob3", skFont2ForUI);
+#if 0
         sk_canvas->drawTextBlob(blob3.get(), 500, 500, glyph_paint);
+#endif // 0
 
         //printf("onDraw y2\n");
 #endif // ENABLE_HARFBUZZ
@@ -868,6 +955,7 @@ public:
       blur.setAlpha(blurAlpha);
       blur.setMaskFilter(SkMaskFilter::MakeBlur(kNormal_SkBlurStyle, sigma, 0));
       // canvas->drawColor(SK_ColorWHITE);
+#if 0
       sk_canvas->drawTextBlob(blob1.get(), x + xDrop, y + yDrop, blur);
       sk_canvas->drawTextBlob(blob1.get(), x, y, paint);
 
@@ -877,6 +965,7 @@ public:
       strokePaint.setStyle(SkPaint::kStroke_Style);
       strokePaint.setStrokeWidth(3.0f);
       sk_canvas->drawTextBlob(blob2.get(), x, 80 + y, strokePaint);
+#endif // 0
     }
 #endif // ENABLE_SK_EFFECTS
 #endif // ENABLE_CUSTOM_FONTS
@@ -903,7 +992,11 @@ public:
       const auto dstR = SkRect::MakeSize(fWinSize);
       //printf("fAnimation->render...\n");
       // TODO: SkSGRenderNode.cpp:19: fatal error: "assert(!this->hasInval())"
+
+#if 0
       fAnimation->render(sk_canvas, &dstR);
+#endif // 0
+
       //printf("fAnimation->rendered\n");
       /*if (fShowAnimationStats) {
           draw_stats_box(canvas, fAnimationStats);
@@ -952,6 +1045,7 @@ public:
   //
   context.BeginRecording(blink::FloatRect(blink::LayoutRect::InfiniteIntRect()));
   //
+#if 0
   //printf("FillRect 1\n");
   context.FillRect(blink::FloatRect(0, 0, 50, 50),
     blink::Color(1.0f, 1.0f, 0.0f, 0.5f),
@@ -1003,6 +1097,7 @@ public:
   //printf("FillRect 9\n");
 
   //printf("onDraw() x2\n");
+#endif // 0
 
 #if defined(ENABLE_BLINK_UI)
 #if defined(ENABLE_IMAGES)
@@ -1019,6 +1114,7 @@ public:
 
   //printf("FillRect 70\n");
   DCHECK(sStaticBitmapImage);
+#if 0
   context.DrawImageTiled(sStaticBitmapImage.get(),
     blink::FloatRect(0, 0, 400, 400),
     blink::FloatRect(0, 0, 1000, 1000),
@@ -1026,8 +1122,8 @@ public:
     blink::FloatPoint{1.0, 1.0},
     blink::FloatSize(0.0, 0.0),
     SkBlendMode::kSrcOver);
+#endif // 0
 #endif // ENABLE_IMAGES
-
 
 #ifdef ENABLE_BLINK_UI_NATIVE_THEME
   SkPath theme_path;
@@ -1045,7 +1141,8 @@ public:
       nativeThemeAura->PathForArrow(gfx::Rect(100, 200, 170, 170),
       ui::NativeTheme::kScrollbarUpArrow);
   DCHECK(!theme_path.isEmpty());
-  context.DrawPath(path.GetSkPath(), flags);
+#if 0
+  context.DrawPath(theme_path, flags);
 
   //cc::PaintCanvas cc_paint_canvas(&cc_skia_paint_canvas);
   ui::NativeTheme::ButtonExtraParams button;
@@ -1056,6 +1153,7 @@ public:
     ui::NativeTheme::State::kDisabled,
     gfx::Rect(200, 200, 300, 300),
     button);
+#endif // 0
 
 #endif // ENABLE_BLINK_UI_NATIVE_THEME
 
@@ -1085,6 +1183,7 @@ public:
 #ifdef ENABLE_BLINK_UI
     //printf("ENABLE_UI 2\n");
     gfx::Canvas gfx_canvas(&cc_skia_paint_canvas, 1.0f);
+#if 0
     /*{
       cc::PaintFlags paintFlags;
       paintFlags.setAntiAlias(true);
@@ -1122,6 +1221,7 @@ public:
       // 1 box 0.000000,0.000000,0.000000 1.000000x2.000000x3.000000 bounds 0.000000,0.000000,0.000000 1.000000x2.000000x3.000000
       //printf("%i box %s bounds %s\n", bres, box.ToString().c_str(), bounds.ToString().c_str());
     }
+#endif // 0
 
     //printf("onDraw() x4\n");
 
@@ -1177,7 +1277,9 @@ public:
       render_text->SetSelection(gfx::SelectionModel(
           range, gfx::LogicalCursorDirection::CURSOR_FORWARD));
       render_text->SelectRange({0, 2});
+#if 0
       render_text->Draw(&gfx_canvas); // calls DrawSelection if focused
+#endif // 0
     }
 
     // TODO: textfield
@@ -1197,7 +1299,9 @@ public:
       gfx_canvas.Translate(gfx::Vector2d(
                             (BROWSER_WIDTH / 2) - (tiger_icon_dip_size / 2),
                             (BROWSER_HEIGHT / 2) - (tiger_icon_dip_size / 2)));
+#if 0
       gfx::PaintVectorIcon(&gfx_canvas, icon_src, tiger_icon_dip_size, icon_color);
+#endif // 0
       gfx_canvas.Restore();
       //gfx::Image icon =
       //  gfx::CreateVectorIcon(kFooBarIcon, 32, color_utils::DeriveDefaultIconColor(text_color));
@@ -1208,11 +1312,137 @@ public:
   // see https://github.com/blockspacer/skia-opengl-emscripten/blob/master/src/chromium/ui/views/examples/examples_main.cc
   // see https://github.com/blockspacer/skia-opengl-emscripten/blob/master/src/chromium/ui/views/examples/example_base.cc#L39
   // TODO: ui::MaterialDesignController::Initialize();
+
+  // TODO: CleanupSharedInstance
+  //ui::ResourceBundle::InitSharedInstance(&delegate);
+  // see https://github.com/blockspacer/skia-opengl-emscripten/blob/main/src/chromium/services/service_manager/embedder/main.cc#L205
+  if(!ui::ResourceBundle::HasSharedInstance()) {
+    ui::ResourceBundle::InitSharedInstanceWithLocale(
+        "en-US", NULL, ui::ResourceBundle::LOAD_COMMON_RESOURCES);
+  }
   if(!container_) {
     container_ = new ContainerView();
+    // see https://github.com/blockspacer/skia-opengl-emscripten/blob/master/src/chromium/ui/views/examples/textfield_example.cc
+    auto layout_manager = std::make_unique<views::GridLayout>(container_);
+    views::ColumnSet* column_set = layout_manager->AddColumnSet(0);
+    column_set->AddColumn(views::GridLayout::LEADING, views::GridLayout::FILL,
+                          0.2f, views::GridLayout::USE_PREF, 0, 0);
+    column_set->AddColumn(views::GridLayout::FILL, views::GridLayout::FILL,
+                          0.8f, views::GridLayout::USE_PREF, 0, 0);
+    container_->addChildren(layout_manager.get());
+
+    //container_->SetLayoutManager(std::make_unique<views::FillLayout>());
+    container_->SetLayoutManager(std::move(layout_manager));
   }
+
+  if(!widget_) {
+    widget_ = new views::Widget;
+    views::Widget::InitParams params(
+      views::Widget::InitParams::TYPE_POPUP/*TYPE_WINDOW_FRAMELESS*/);
+    params.bounds = gfx::Rect(800, 800);
+    params.ownership = views::Widget::InitParams::WIDGET_OWNS_NATIVE_WIDGET;
+    //params.delegate = container_;
+    ///params.delegate =
+    ///    new ExamplesWindowContents(std::move(on_close), std::move(examples));
+    ///params.context = window_context;
+    widget_->Init(params);
+    //widget_->Show();
+  }
+
+  DCHECK(widget_);
+  widget_->SetSize(gfx::Size(800, 800));
+  widget_->SetBounds(gfx::Rect(0, 0, 800, 800));
+  widget_->SetFullscreen(false);
+
+  DCHECK(container_);
+  ////widget_->SetContentsView(container_);
+
+  container_->SetVisible(true);
+  container_->SetEnabled(true);
+  container_->SetBounds(0, 0, 800, 800);
+  container_->SetSize(gfx::Size(800, 800));
+  container_->SetPreferredSize(gfx::Size(800, 800));
+  //container_->SetNativeTheme(nativeThemeAura);
+  container_->SetBackground(views::CreateSolidBackground(
+        blink::Color(0.9f, 0.0f, 0.0f, 0.5f).Rgb()));
+  container_->SetBorder(views::CreateSolidBorder(2, SK_ColorBLUE));
+  //container_->SetPaintToLayer(ui::LAYER_TEXTURED);
+
+  //blink::Path path;
+  //path.AddRect({0, 0, 800, 800});
+  //container_->set_clip_path(path.GetSkPath());
+  //container_->set_owned_by_client(); // prevents view_to_be_deleted
+
+  //container_->Layout();
+  container_->SchedulePaint();
+
+  ///DCHECK(container_->GetWidget());
+  DCHECK(!container_->size().IsEmpty());
+  DCHECK(!container_->GetPreferredSize().IsEmpty());
+  DCHECK(!container_->GetBoundsInScreen().IsEmpty());
+  DCHECK(!container_->GetLocalBounds().IsEmpty());
+
+  widget_->Show(); // TODO: widget_.Close();
+
+  // see https://github.com/blockspacer/skia-opengl-emscripten/blob/master/src/chromium/ui/views/controls/label_unittest.cc#L61
+  //gfx::Rect first_paint(1, 1);
+  SkBitmap bitmap;
+  auto raster_scale = 1.0f;
+  //auto list = base::MakeRefCounted<cc::DisplayItemList>();
+  gfx::Size container_size(800, 800/*container_->GetPreferredSize()*/);
+  DCHECK(!container_size.IsEmpty());
+
+  ui::CanvasPainter canvasPainter =
+    ui::CanvasPainter(&bitmap, container_size,
+    raster_scale, SK_ColorRED,//SK_ColorTRANSPARENT,
+     // is_pixel_canvas - if the paint commands are
+    // recorded at pixel size instead of DIP.
+    /*is_pixel_canvas()*/ false);
+
+  //canvasPainter.context().
+
+  /*views::PaintInfo container_paint_info = views::PaintInfo::CreateRootPaintInfo(
+      //ui::PaintContext(list.get(), 1.f, first_paint, false), first_paint.size()
+      //canvasPainter.context(),
+      canvasPainter.context(),
+      container_size);
+  DCHECK(!container_paint_info.paint_recording_bounds().IsEmpty());
+  DCHECK(container_);
+  container_->Paint(container_paint_info);
+  gfx::ImageSkia container_image(gfx::ImageSkiaRep(bitmap, raster_scale));
+  gfx_canvas.DrawImageInt(container_image, 500, 500);*/
+
   //gfx::Canvas gfx_canvas(&cc_skia_paint_canvas, 1.0f);
+
+  // TODO: make views paint recursive or FIX Paint via views::PaintInfo
   container_->ForcePaint(&gfx_canvas);
+  views::View::Views children = container_->GetChildrenInZOrder();
+  for (auto* child : children) {
+    if (!child->layer())
+      //(child->*func)(info);
+      child->OnPaint(&gfx_canvas);
+  }
+
+  /*ui::PaintCache paint_cache_;
+  ui::PaintRecorder recorder(paint_info.context(), paint_info.paint_recording_size(),
+                             paint_info.paint_recording_scale_x(),
+                             paint_info.paint_recording_scale_y(),
+                             &paint_cache_);
+  //auto record = recorder.finishRecordingAsPicture();
+  sk_sp<SkImage> imgRes = SkImage::MakeFromBitmap(recorder.canvas()->GetBitmap());
+  DCHECK(imgRes);
+  sRasterSurface->getCanvas()->drawImage(imgRes, 0, 0);*/
+
+  //context.DrawImage(imgRes.get(), );
+  //gfx_canvas.DrawImageInt(gfx::ImageSkia(imgRes.get()), 330, 330);
+  //recorder.canvas()->GetBitmap()
+  //pinf.context().
+
+  /*ui::PaintContext ui_context(list.get(),
+                           compositor->device_scale_factor(),
+                           gfx::Rect(compositor->size()), true);
+  container_->PaintFromPaintRoot(ui_context);*/
+
   /*if(!widget_) {
     widget_ = new views::Widget;
     views::Widget::InitParams params;
@@ -1222,8 +1452,6 @@ public:
     widget_->Init(params);
     widget_->Show();
   }
-  ui::PaintContext context(list.get(), compositor->device_scale_factor(),
-                           gfx::Rect(compositor->size()), true);
   widget_->OnNativeWidgetPaint(context);*/
 #endif // ENABLE_BLINK_UI_VIEWS
 

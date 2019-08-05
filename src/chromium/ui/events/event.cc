@@ -1065,7 +1065,11 @@ void KeyEvent::ApplyLayout() const {
 // Therefore, perform only the fallback action.
 #elif defined(USE_X11)
   if (native_event()) {
+#if !defined(UI_EVENTS_PORT)
     key_ = GetDomKeyFromXEvent(native_event());
+#else
+  NOTIMPLEMENTED();
+#endif
     return;
   }
 #elif defined(USE_OZONE)
@@ -1190,7 +1194,12 @@ uint16_t KeyEvent::GetConflatedWindowsKeyCode() const {
 }
 
 std::string KeyEvent::GetCodeString() const {
+#if !defined(UI_EVENTS_PORT)
   return KeycodeConverter::DomCodeToCodeString(code_);
+#else
+  NOTIMPLEMENTED();
+  return "KeyEvent::GetCodeString";
+#endif
 }
 
 ////////////////////////////////////////////////////////////////////////////////

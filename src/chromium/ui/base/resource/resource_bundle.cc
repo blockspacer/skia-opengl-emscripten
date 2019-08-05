@@ -185,9 +185,15 @@ std::string ResourceBundle::InitSharedInstanceWithLocale(
     Delegate* delegate,
     LoadResources load_resources) {
   InitSharedInstance(delegate);
+#if !defined(UI_BASE_PORT)
   if (load_resources == LOAD_COMMON_RESOURCES)
     g_shared_instance_->LoadCommonResources();
   std::string result = g_shared_instance_->LoadLocaleResources(pref_locale);
+#else
+  //#warning "TODO: port ResourceBundle::InitSharedInstanceWithLocale"
+  NOTIMPLEMENTED();
+  std::string result;
+#endif
   g_shared_instance_->InitDefaultFontList();
   return result;
 }

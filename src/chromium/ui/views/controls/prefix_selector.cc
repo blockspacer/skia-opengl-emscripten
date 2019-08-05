@@ -11,8 +11,14 @@
 #include "base/i18n/case_conversion.h"
 #include "base/time/default_tick_clock.h"
 #include "build/build_config.h"
+#if !defined(UI_VIEWS_PORT)
 #include "ui/base/ime/input_method.h"
 #include "ui/base/ime/text_input_type.h"
+#else
+#include "ui/base/ime/dummy_input_method.h"
+#include "ui/base/ime/dummy_text_input_client.h"
+#include "ui/base/ime/text_input_type.h"
+#endif // UI_VIEWS_PORT
 #include "ui/gfx/range/range.h"
 #include "ui/views/controls/prefix_delegate.h"
 #include "ui/views/view.h"

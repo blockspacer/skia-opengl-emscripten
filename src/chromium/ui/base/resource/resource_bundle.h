@@ -350,8 +350,10 @@ class UI_BASE_EXPORT ResourceBundle {
   // Free skia_images_.
   void FreeImages();
 
+#if !defined(UI_EVENTS_PORT)
   // Load the main resources.
   void LoadCommonResources();
+#endif
 
   // Loads the resource paks chrome_{100,200}_percent.pak.
   void LoadChromeResources();

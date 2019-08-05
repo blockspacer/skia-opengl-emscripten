@@ -229,6 +229,7 @@ ui::TextEditCommand GetTextEditCommandFromMenuCommand(int command_id,
 }
 
 base::TimeDelta GetPasswordRevealDuration(const ui::KeyEvent& event) {
+#if !defined(UI_VIEWS_PORT)
   // The key event may carries the property that indicates it was from the
   // virtual keyboard.
   // In that case, reveals the password characters for 1 second.
@@ -236,6 +237,9 @@ base::TimeDelta GetPasswordRevealDuration(const ui::KeyEvent& event) {
   bool from_vk =
       properties && properties->find(ui::kPropertyFromVK) != properties->end();
   return from_vk ? base::TimeDelta::FromSeconds(1) : base::TimeDelta();
+#else
+  return base::TimeDelta();
+#endif
 }
 
 bool IsControlKeyModifier(int flags) {
@@ -732,7 +736,7 @@ bool Textfield::OnKeyPressed(const ui::KeyEvent& event) {
   if (!textfield)
     return handled;
 
-#if defined(OS_LINUX) && !defined(OS_CHROMEOS)
+#if defined(OS_LINUX) && !defined(OS_CHROMEOS) && !defined(UI_VIEWS_PORT)
   ui::TextEditKeyBindingsDelegateAuraLinux* delegate =
       ui::GetTextEditKeyBindingsDelegate();
   std::vector<ui::TextEditCommandAuraLinux> commands;
@@ -901,7 +905,7 @@ void Textfield::AboutToRequestFocusFromTabTraversal(bool reverse) {
 }
 
 bool Textfield::SkipDefaultKeyEventProcessing(const ui::KeyEvent& event) {
-#if defined(OS_LINUX) && !defined(OS_CHROMEOS)
+#if defined(OS_LINUX) && !defined(OS_CHROMEOS) && !defined(UI_VIEWS_PORT)
   // Skip any accelerator handling that conflicts with custom keybindings.
   ui::TextEditKeyBindingsDelegateAuraLinux* delegate =
       ui::GetTextEditKeyBindingsDelegate();

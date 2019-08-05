@@ -76,6 +76,14 @@ Label::Label(const base::string16& text, const CustomFont& font)
   Init(text, font.font_list, gfx::DirectionalityMode::DIRECTIONALITY_FROM_TEXT);
 }
 
+gfx::RenderText* Label::GetRenderText() const
+{
+  MaybeBuildDisplayText();
+
+  // This may be null when the content bounds of the view are empty.
+  return display_text_.get();
+}
+
 Label::~Label() = default;
 
 // static
@@ -868,6 +876,7 @@ void Label::MaybeBuildDisplayText() const {
 
   rect.Inset(-gfx::ShadowValue::GetMargin(shadows()));
   display_text_ = CreateRenderText();
+  DCHECK(display_text_);
   display_text_->SetDisplayRect(rect);
   stored_selection_range_ = gfx::Range::InvalidRange();
   ApplyTextColors();

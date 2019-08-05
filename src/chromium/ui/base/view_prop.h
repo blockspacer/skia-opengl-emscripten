@@ -11,7 +11,7 @@
 #include "ui/base/ui_base_export.h"
 #include "ui/gfx/native_widget_types.h"
 
-#if !defined(OS_WIN) && !defined(USE_AURA)
+#if !defined(OS_WIN) && !defined(USE_AURA) && !defined(UI_BASE_PORT)
 #error view_prop.h is only for windows and aura builds.
 #endif
 

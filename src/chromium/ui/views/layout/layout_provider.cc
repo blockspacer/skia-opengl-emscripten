@@ -19,7 +19,9 @@ LayoutProvider* g_layout_delegate = nullptr;
 }  // namespace
 
 LayoutProvider::LayoutProvider() {
+  printf("LayoutProvider::LayoutProvider() 1\n");
   g_layout_delegate = this;
+  printf("LayoutProvider::LayoutProvider() 2\n");
 }
 
 LayoutProvider::~LayoutProvider() {

@@ -4,7 +4,9 @@
 
 #include "ui/views/widget/native_widget_private.h"
 
+#if !defined(UI_VIEWS_PORT)
 #include "ui/base/emoji/emoji_panel_helper.h"
+#endif // UI_VIEWS_PORT
 #include "ui/display/display.h"
 #include "ui/display/screen.h"
 
@@ -22,9 +24,11 @@ gfx::Rect NativeWidgetPrivate::ConstrainBoundsToDisplayWorkArea(
   return new_bounds;
 }
 
+#if !defined(UI_VIEWS_PORT)
 void NativeWidgetPrivate::ShowEmojiPanel() {
   ui::ShowEmojiPanel();
 }
+#endif // UI_VIEWS_PORT
 
 void NativeWidgetPrivate::OnCanActivateChanged() {}
 

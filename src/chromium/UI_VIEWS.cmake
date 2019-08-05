@@ -9,7 +9,7 @@ if(UI_VIEWS_NO_AX)
 endif(UI_VIEWS_NO_AX)
 
 if(NOT UI_VIEWS_NO_AX)
-  list(APPEND UI_VIEWS_SOURCES
+  list(APPEND UI_VIEWS_AX_SOURCES
     #
     # accessibility
     #
@@ -462,8 +462,211 @@ list(APPEND UI_VIEWS_SOURCES
   #${UI_VIEWS_DIR}word_lookup_client.h
 )
 
+list(APPEND UI_VIEWS_STUB_SOURCES
+  ${UI_VIEWS_DIR}controls/menu/stub/menu_pre_target_handler_stub.cc
+  ${UI_VIEWS_DIR}controls/menu/stub/menu_pre_target_handler_stub.h
+)
+
+list(APPEND UI_VIEWS_AURA_STUB_SOURCES
+  ${UI_VIEWS_DIR}metrics_aura.cc
+  ${UI_VIEWS_DIR}widget/stub/native_widget_stub.cc
+  ${UI_VIEWS_DIR}stub/views_touch_selection_controller_factory_stub.cc
+  # if (use_aura) {
+  #   public += [
+  #     "accessibility/accessibility_alert_window.h",
+  #     "accessibility/ax_aura_obj_cache.h",
+  #     "accessibility/ax_aura_obj_wrapper.h",
+  #     "accessibility/ax_root_obj_wrapper.h",
+  #     "accessibility/ax_tree_source_views.h",
+  #     "accessibility/ax_view_obj_wrapper.h",
+  #     "accessibility/ax_virtual_view_wrapper.h",
+  #     "accessibility/ax_widget_obj_wrapper.h",
+  #     "accessibility/ax_window_obj_wrapper.h",
+  #     "controls/native/native_view_host_aura.h",
+  #     "corewm/cursor_height_provider_win.h",
+  #     "corewm/tooltip.h",
+  #     "corewm/tooltip_aura.h",
+  #     "corewm/tooltip_controller.h",
+  #     "corewm/tooltip_win.h",
+  #     "event_monitor_aura.h",
+  #     "touchui/touch_selection_controller_impl.h",
+  #     "touchui/touch_selection_menu_runner_views.h",
+  #     "touchui/touch_selection_menu_views.h",
+  #     "view_constants_aura.h",
+  #     "widget/desktop_aura/desktop_capture_client.h",
+  #     "widget/desktop_aura/desktop_drop_target_win.h",
+  #     "widget/desktop_aura/desktop_event_client.h",
+  #     "widget/desktop_aura/desktop_focus_rules.h",
+  #     "widget/desktop_aura/desktop_native_cursor_manager.h",
+  #     "widget/desktop_aura/desktop_native_widget_aura.h",
+  #     "widget/desktop_aura/desktop_screen.h",
+  #     "widget/desktop_aura/desktop_screen_position_client.h",
+  #     "widget/desktop_aura/desktop_window_tree_host.h",
+  #     "widget/focus_manager_event_handler.h",
+  #     "widget/native_widget_aura.h",
+  #     "widget/tooltip_manager_aura.h",
+  #     "widget/window_reorderer.h",
+  #   ]
+  #
+  #   sources += [
+  #     "accessibility/accessibility_alert_window.cc",
+  #     "accessibility/ax_aura_obj_cache.cc",
+  #     "accessibility/ax_aura_obj_wrapper.cc",
+  #     "accessibility/ax_root_obj_wrapper.cc",
+  #     "accessibility/ax_tree_source_views.cc",
+  #     "accessibility/ax_view_obj_wrapper.cc",
+  #     "accessibility/ax_virtual_view_wrapper.cc",
+  #     "accessibility/ax_widget_obj_wrapper.cc",
+  #     "accessibility/ax_window_obj_wrapper.cc",
+  #     "controls/menu/menu_pre_target_handler_aura.cc",
+  #     "controls/menu/menu_pre_target_handler_aura.h",
+  #     "controls/native/native_view_host_aura.cc",
+  #     "corewm/cursor_height_provider_win.cc",
+  #     "corewm/tooltip_aura.cc",
+  #     "corewm/tooltip_controller.cc",
+  #     "corewm/tooltip_win.cc",
+  #     "drag_utils_aura.cc",
+  #     "event_monitor_aura.cc",
+  #     "metrics_aura.cc",
+  #     "native_cursor_aura.cc",
+  #     "touchui/touch_selection_controller_impl.cc",
+  #     "touchui/touch_selection_menu_runner_views.cc",
+  #     "touchui/touch_selection_menu_views.cc",
+  #     "view_constants_aura.cc",
+  #     "views_touch_selection_controller_factory_aura.cc",
+  #     "widget/desktop_aura/desktop_capture_client.cc",
+  #     "widget/desktop_aura/desktop_drop_target_win.cc",
+  #     "widget/desktop_aura/desktop_event_client.cc",
+  #     "widget/desktop_aura/desktop_focus_rules.cc",
+  #     "widget/desktop_aura/desktop_native_cursor_manager.cc",
+  #     "widget/desktop_aura/desktop_native_widget_aura.cc",
+  #     "widget/desktop_aura/desktop_screen.cc",
+  #     "widget/desktop_aura/desktop_screen_position_client.cc",
+  #     "widget/desktop_aura/desktop_window_tree_host.cc",
+  #     "widget/focus_manager_event_handler.cc",
+  #     "widget/native_widget_aura.cc",
+  #     "widget/tooltip_manager_aura.cc",
+  #     "widget/window_reorderer.cc",
+  #   ]
+  #   deps += [
+  #     "//services/ws/public/mojom",
+  #     "//ui/aura",
+  #     "//ui/events",
+  #     "//ui/platform_window",
+  #     "//ui/platform_window/platform_window_handler",
+  #     "//ui/touch_selection",
+  #     "//ui/wm",
+  #     "//ui/wm/public",
+  #   ]
+  #   if (!is_chromeos) {
+  #     if (use_x11) {
+  #       public += [
+  #         "widget/desktop_aura/desktop_drag_drop_client_aurax11.h",
+  #         "widget/desktop_aura/desktop_screen_x11.h",
+  #         "widget/desktop_aura/desktop_window_tree_host_observer_x11.h",
+  #         "widget/desktop_aura/desktop_window_tree_host_x11.h",
+  #         "widget/desktop_aura/x11_desktop_handler.h",
+  #         "widget/desktop_aura/x11_desktop_handler_observer.h",
+  #         "widget/desktop_aura/x11_desktop_window_move_client.h",
+  #         "widget/desktop_aura/x11_move_loop.h",
+  #         "widget/desktop_aura/x11_move_loop_delegate.h",
+  #         "widget/desktop_aura/x11_topmost_window_finder.h",
+  #         "widget/desktop_aura/x11_whole_screen_move_loop.h",
+  #         "widget/desktop_aura/x11_window_event_filter.h",
+  #       ]
+  #       sources += [
+  #         "widget/desktop_aura/desktop_drag_drop_client_aurax11.cc",
+  #         "widget/desktop_aura/desktop_screen_x11.cc",
+  #         "widget/desktop_aura/desktop_window_tree_host_x11.cc",
+  #         "widget/desktop_aura/x11_desktop_handler.cc",
+  #         "widget/desktop_aura/x11_desktop_window_move_client.cc",
+  #         "widget/desktop_aura/x11_topmost_window_finder.cc",
+  #         "widget/desktop_aura/x11_whole_screen_move_loop.cc",
+  #         "widget/desktop_aura/x11_window_event_filter.cc",
+  #       ]
+  #       if (use_atk) {
+  #         sources += [
+  #           "accessibility/view_ax_platform_node_delegate_auralinux.cc",
+  #           "accessibility/view_ax_platform_node_delegate_auralinux.h",
+  #         ]
+  #         configs += [ "//build/config/linux/atk" ]
+  #       }
+  #     } else if (is_win) {
+  #       public += [ "widget/desktop_aura/desktop_window_tree_host_win.h" ]
+  #       sources += [
+  #         "widget/desktop_aura/desktop_drag_drop_client_win.cc",
+  #         "widget/desktop_aura/desktop_drag_drop_client_win.h",
+  #         "widget/desktop_aura/desktop_screen_win.cc",
+  #         "widget/desktop_aura/desktop_screen_win.h",
+  #         "widget/desktop_aura/desktop_window_tree_host_win.cc",
+  #       ]
+  #       deps += [ "//ui/events:dom_keyboard_layout" ]
+  #     } else if (use_ozone) {
+  #       sources += [
+  #         "widget/desktop_aura/desktop_drag_drop_client_ozone.cc",
+  #         "widget/desktop_aura/desktop_drag_drop_client_ozone.h",
+  #         "widget/desktop_aura/desktop_screen_ozone.cc",
+  #         "widget/desktop_aura/desktop_screen_ozone.h",
+  #       ]
+  #     }
+  #     if (is_linux) {
+  #       sources += [
+  #         "style/platform_style_linux.cc",
+  #         "widget/desktop_aura/window_event_filter.cc",
+  #         "widget/desktop_aura/window_event_filter.h",
+  #       ]
+  #     }
+  #     if ((is_linux && !use_x11) || is_fuchsia) {
+  #       public += [ "widget/desktop_aura/desktop_window_tree_host_platform.h" ]
+  #       sources +=
+  #           [ "widget/desktop_aura/desktop_window_tree_host_platform.cc" ]
+  #     }
+  #   }
+  # }
+  #
+  # if (is_mac) {
+  #   sources -= [ "controls/views_text_services_context_menu.cc" ]
+  #   sources += [
+  #     "controls/menu/menu_pre_target_handler_mac.h",
+  #     "controls/menu/menu_pre_target_handler_mac.mm",
+  #   ]
+  #   deps += [
+  #     "//components/crash/core/common",
+  #     "//components/remote_cocoa/app_shim",
+  #     "//ui/accelerated_widget_mac",
+  #     "//ui/events:dom_keycode_converter",
+  #   ]
+  #   public_deps += [ "//components/remote_cocoa/common:mojo" ]
+  #   libs = [
+  #     "AppKit.framework",
+  #     "CoreGraphics.framework",
+  #     "Foundation.framework",
+  #     "IOSurface.framework",
+  #     "QuartzCore.framework",
+  #   ]
+  # }
+  #
+  # if (has_native_accessibility) {
+  #   sources += [
+  #     "accessibility/view_ax_platform_node_delegate.cc",
+  #     "accessibility/view_ax_platform_node_delegate.h",
+  #     "accessibility/view_ax_platform_node_delegate_mac.h",
+  #     "accessibility/view_ax_platform_node_delegate_mac.mm",
+  #     "accessibility/view_ax_platform_node_delegate_win.cc",
+  #     "accessibility/view_ax_platform_node_delegate_win.h",
+  #   ]
+  # }
+  #
+  # if (is_fuchsia) {
+  #   sources += [ "controls/menu/menu_config_fuchsia.cc" ]
+  # }
+  #
+)
 add_library(UI_VIEWS STATIC
   ${UI_VIEWS_SOURCES}
+  ${UI_VIEWS_AX_SOURCES}
+  ${UI_VIEWS_STUB_SOURCES}
+  ${UI_VIEWS_AURA_STUB_SOURCES}
 )
 
 target_link_libraries(UI_VIEWS PUBLIC
@@ -554,6 +757,8 @@ target_link_libraries(UI_VIEWS PUBLIC
   #if (use_x11) {
   #  deps += [ "//ui/display/util" ]
   #}
+  MOJO
+  BLINK_PUBLIC_MOJOM
 )
 
 set_property(TARGET UI_VIEWS PROPERTY CXX_STANDARD 17)

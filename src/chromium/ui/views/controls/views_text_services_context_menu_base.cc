@@ -7,7 +7,9 @@
 #include "base/metrics/histogram_macros.h"
 #include "build/build_config.h"
 #include "ui/base/accelerators/accelerator.h"
+#if !defined(UI_VIEWS_PORT)
 #include "ui/base/emoji/emoji_panel_helper.h"
+#endif // UI_VIEWS_PORT
 #include "ui/base/models/simple_menu_model.h"
 #include "ui/events/event.h"
 #include "ui/events/event_constants.h"
@@ -34,7 +36,11 @@ ViewsTextServicesContextMenuBase::ViewsTextServicesContextMenuBase(
   DCHECK(client);
   DCHECK(menu);
   // Not inserted on read-only fields or if the OS/version doesn't support it.
-  if (!client_->read_only() && ui::IsEmojiPanelSupported()) {
+  if (!client_->read_only()
+#if !defined(UI_VIEWS_PORT)
+      && ui::IsEmojiPanelSupported()
+#endif // UI_VIEWS_PORT
+      ) {
     menu->InsertSeparatorAt(0, ui::NORMAL_SEPARATOR);
 #if !defined(UI_VIEWS_PORT)
     menu->InsertItemWithStringIdAt(0, IDS_CONTENT_CONTEXT_EMOJI,

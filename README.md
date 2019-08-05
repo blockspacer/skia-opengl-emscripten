@@ -94,7 +94,7 @@ https://github.com/google/xrtl/blob/master/xrtl/port/emscripten/base/emscripten_
 https://webassemblycode.com/how-to-debug-webassemly/
 
 libwebrtc.js
-https://github.com/HumbleNet/HumbleNet/blob/master/src/humblenet/src/libwebrtc_asmjs.cppbrtc_asmjs.cpp
+> https://github.com/HumbleNet/HumbleNet/blob/master/src/humblenet/src/libwebrtc_asmjs.cpp
 
 RasterCache
 https://github.com/flutter/engine/blob/master/flow/raster_cache.cc
@@ -272,8 +272,6 @@ https://chromium.googlesource.com/chromium/src.git/+/62.0.3178.1/third_party/Web
 see https://github.com/skui-org/skia/blob/m74/CMakeLists.txt
 https://github.com/google/skia/blob/master/BUILD.gn#L1085
 https://github.com/google/skia/blob/master/gn/core.gni#L100
-
-with wtf & skia: 3.0M
 
 only skia without gpu & skottie & icu & harfbuzz & jpeg & wuffs: 1.9M
 

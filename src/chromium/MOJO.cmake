@@ -190,6 +190,46 @@ list(APPEND MOJO_PUBLIC_CPP_BASE_SOURCES
   #${MOJO_DIR}/public/cpp/base/shared_memory_utils.h
 )
 
+set(MOJO_PUBLIC_CPP_PLATFORM_SOURCES
+  ${MOJO_DIR}/public/cpp/platform/features.h
+  ${MOJO_DIR}/public/cpp/platform/platform_channel.h
+  ${MOJO_DIR}/public/cpp/platform/platform_channel_endpoint.h
+  ${MOJO_DIR}/public/cpp/platform/platform_channel_server_endpoint.h
+  ${MOJO_DIR}/public/cpp/platform/platform_handle.h
+  #
+  ${MOJO_DIR}/public/cpp/platform/features.cc
+  ## TODO ## ${MOJO_DIR}/public/cpp/platform/named_platform_channel_win.cc
+  ${MOJO_DIR}/public/cpp/platform/platform_channel.cc
+  ${MOJO_DIR}/public/cpp/platform/platform_channel_endpoint.cc
+  ${MOJO_DIR}/public/cpp/platform/platform_channel_server_endpoint.cc
+  ${MOJO_DIR}/public/cpp/platform/platform_handle.cc
+  #
+  #if (is_posix && (!is_nacl || is_nacl_nonsfi)) {
+  #  public += [ "socket_utils_posix.h" ]
+  #  sources += [ "socket_utils_posix.cc" ]
+  #}
+  #
+  #if (is_posix && !is_nacl) {
+  #  sources += [ "named_platform_channel_posix.cc" ]
+  #}
+  #
+  #if (is_mac) {
+  #  sources += [ "named_platform_channel_mac.cc" ]
+  #}
+  #
+  #if (is_fuchsia) {
+  #  public_deps += [
+  #    "//third_party/fuchsia-sdk/sdk:fdio",
+  #    "//third_party/fuchsia-sdk/sdk:zx",
+  #  ]
+  #}
+  #
+  #if (!is_fuchsia) {
+  #  sources += [ "named_platform_channel.cc" ]
+  #  public += [ "named_platform_channel.h" ]
+  #}
+)
+
 set(MOJO_PUBLIC_CPP_BINDINGS_SOURCES
   # component("bindings_base")
   #${MOJO_DIR}/public/cpp/bindings/array_data_view.h
@@ -392,6 +432,7 @@ add_library(MOJO STATIC
   ${MOJO_INTERFACES_GEN_SOURCES}
   ${MOJO_BASE_GEN_SOURCES}
   ${MOJO_PUBLIC_C_SYSTEM_SOURCES}
+  ${MOJO_PUBLIC_CPP_PLATFORM_SOURCES}
   ${MOJO_PUBLIC_CPP_SYSTEM_SOURCES}
 )
 
@@ -443,6 +484,7 @@ target_compile_definitions(MOJO PRIVATE
   IS_MOJO_CPP_BINDINGS_IMPL=1
   MOJO_SYSTEM_IMPLEMENTATION=1
   MOJO_CPP_SYSTEM_IMPLEMENTATION=1
+  IS_MOJO_CPP_PLATFORM_IMPL=1
   #
   #MOJO_COMMON_IMPLEMENTATION
   #MOJO_ENVIRONMENT_IMPL_IMPLEMENTATION

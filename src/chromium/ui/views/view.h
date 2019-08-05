@@ -1364,7 +1364,9 @@ class VIEWS_EXPORT View : public ui::LayerDelegate,
   void RemoveObserver(ViewObserver* observer);
   bool HasObserver(const ViewObserver* observer) const;
 
- protected:
+ // TODO
+ //protected:
+ public:
   // Used to track a drag. RootView passes this into
   // ProcessMousePressed/Dragged.
   struct DragInfo {

@@ -12,7 +12,7 @@
 
 ### --- UI_BASE ---###
 
-set(UI_BASE_SOURCES
+list(APPEND UI_BASE_SOURCES
   ${UI_BASE_DIR}accelerators/media_keys_listener.cc
   #${UI_BASE_DIR}accelerators/media_keys_listener.h
   ${UI_BASE_DIR}accelerators/media_keys_util.cc
@@ -103,7 +103,7 @@ set(UI_BASE_SOURCES
   # TODO # ${UI_BASE_DIR}dragdrop/drag_drop_types_win.cc
   # TODO # ${UI_BASE_DIR}dragdrop/drag_source_win.cc
   #${UI_BASE_DIR}dragdrop/drag_source_win.h
-  ${UI_BASE_DIR}dragdrop/drop_target_event.cc
+  # TODO # # TODO # # TODO # ${UI_BASE_DIR}dragdrop/drop_target_event.cc
   #${UI_BASE_DIR}dragdrop/drop_target_event.h
   # TODO # ${UI_BASE_DIR}dragdrop/drop_target_win.cc
   #${UI_BASE_DIR}dragdrop/drop_target_win.h
@@ -175,7 +175,7 @@ set(UI_BASE_SOURCES
   #${UI_BASE_DIR}resource/resource_bundle.h
   # TODO # ${UI_BASE_DIR}resource/resource_bundle_android.cc
   # TODO # ${UI_BASE_DIR}resource/resource_bundle_android.h
-  # TODO # ${UI_BASE_DIR}resource/resource_bundle_auralinux.cc
+  ${UI_BASE_DIR}resource/resource_bundle_auralinux.cc
   # TODO # ${UI_BASE_DIR}resource/resource_bundle_ios.mm",
   # TODO # ${UI_BASE_DIR}resource/resource_bundle_mac.mm",
   # TODO # ${UI_BASE_DIR}resource/resource_bundle_win.cc
@@ -202,7 +202,7 @@ set(UI_BASE_SOURCES
   #${UI_BASE_DIR}user_activity/user_activity_observer.h
   #
   # view_prop.h is only for windows and aura builds
-  # TODO # ${UI_BASE_DIR}view_prop.cc
+  ${UI_BASE_DIR}view_prop.cc
   #${UI_BASE_DIR}view_prop.h
   #
   ${UI_BASE_DIR}webui/i18n_source_stream.cc
@@ -318,11 +318,11 @@ set(UI_BASE_SOURCES
   ${UI_BASE_DIR}cursor/cursor_util.h
   ${UI_BASE_DIR}default_theme_provider.cc
   ${UI_BASE_DIR}default_theme_provider.h
-  ${UI_BASE_DIR}dragdrop/cocoa_dnd_util.h
+  # TODO # ${UI_BASE_DIR}dragdrop/cocoa_dnd_util.h
   #${UI_BASE_DIR}dragdrop/cocoa_dnd_util.mm",
-  ${UI_BASE_DIR}dragdrop/file_info.cc
-  ${UI_BASE_DIR}dragdrop/file_info.h
-  ${UI_BASE_DIR}emoji/emoji_panel_helper.h
+  # TODO # # TODO # # TODO # ${UI_BASE_DIR}dragdrop/file_info.cc
+  # TODO # ${UI_BASE_DIR}dragdrop/file_info.h
+  # TODO # ${UI_BASE_DIR}emoji/emoji_panel_helper.h
   ${UI_BASE_DIR}pointer/pointer_device.h
   ${UI_BASE_DIR}pointer/pointer_device_util.cc
   ${UI_BASE_DIR}pointer/touch_editing_controller.cc
@@ -340,8 +340,35 @@ set(UI_BASE_SOURCES
   ${UI_BASE_DIR}resource/scale_factor.h
 )
 
+list(APPEND UI_BASE_IME_SOURCES
+  # source_set("text_input_types")
+  ${UI_BASE_DIR}ime/text_input_flags.h
+  ${UI_BASE_DIR}ime/text_input_mode.h
+  ${UI_BASE_DIR}ime/text_input_type.h
+  # jumbo_component("ime_types")
+  ${UI_BASE_DIR}ime/candidate_window.cc
+  ${UI_BASE_DIR}ime/candidate_window.h
+  ${UI_BASE_DIR}ime/composition_text.cc
+  ${UI_BASE_DIR}ime/composition_text.h
+  ${UI_BASE_DIR}ime/ime_text_span.cc
+  ${UI_BASE_DIR}ime/ime_text_span.h
+  ${UI_BASE_DIR}ime/infolist_entry.cc
+  ${UI_BASE_DIR}ime/infolist_entry.h
+)
+
+list(APPEND UI_BASE_STUB_SOURCES
+  ${UI_BASE_DIR}ime/text_input_client.cc
+  #
+  ${UI_BASE_DIR}ime/dummy_input_method.cc
+  ${UI_BASE_DIR}ime/dummy_input_method.h
+  ${UI_BASE_DIR}ime/dummy_text_input_client.cc
+  ${UI_BASE_DIR}ime/dummy_text_input_client.h
+)
+
 add_library(UI_BASE STATIC
   ${UI_BASE_SOURCES}
+  ${UI_BASE_IME_SOURCES}
+  ${UI_BASE_STUB_SOURCES}
 )
 
 target_link_libraries(UI_BASE PUBLIC
@@ -401,6 +428,7 @@ target_link_libraries(UI_BASE PUBLIC
   #GFX_GEOMETRY
   #egl
   #GLESv2
+  GFX_RANGE
 )
 
 target_link_libraries(UI_BASE PRIVATE
@@ -420,6 +448,7 @@ target_compile_definitions(UI_BASE PRIVATE
   UI_BASE_IMPLEMENTATION=1
   IS_UI_BASE_FEATURES_IMPL=1
   UI_DATA_PACK_IMPLEMENTATION=1
+  IS_UI_BASE_IME_TYPES_IMPL=1
   # custom
   UI_BASE_PORT=1
 )
