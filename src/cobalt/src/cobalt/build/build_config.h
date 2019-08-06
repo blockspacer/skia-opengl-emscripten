@@ -135,8 +135,7 @@
 /// \see http://webassemblycode.com/using-browsers-debug-webassembly/
 #define HTML5_STACKTRACE() \
   printf("This message is in %s:%d:%s\n",  __FILE__, __LINE__, __func__); \
-  printf("Callstack:\n%s", emscripten_run_script_string("stackTrace();")); \
-  abort();
+  printf("Callstack:\n%s", emscripten_run_script_string("stackTrace();"));
 
 #define HTML5_STACKTRACE_IF(x) \
   if ((x)) { \

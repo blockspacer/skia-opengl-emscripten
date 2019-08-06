@@ -390,7 +390,7 @@ sk_sp<const GrGLInterface> emscripten_GrGLMakeNativeInterface() {
 }
 #endif
 
-#if defined(OS_EMSCRIPTEN) && !defined(DISABLE_PTHREADS)
+/*#if defined(OS_EMSCRIPTEN) && !defined(DISABLE_PTHREADS)
 /// \todo render_browser_window must be true ON WASM MT
 /// due to deadlock, see commit 0e4faf
 static bool render_browser_window = true;
@@ -398,6 +398,12 @@ static bool render_browser_window = true;
 // TODO >>>
 static bool render_browser_window = true;
 //static bool render_browser_window = false;
+#else // ENABLE_COBALT
+static bool render_browser_window = false;
+#endif // ENABLE_COBALT*/
+
+#if defined(ENABLE_COBALT)
+static bool render_browser_window = true;
 #else // ENABLE_COBALT
 static bool render_browser_window = false;
 #endif // ENABLE_COBALT
@@ -7370,7 +7376,7 @@ if(!render_browser_window) {
   //main_thread_event_.Reset();
 #endif // ENABLE_COBALT
 
-#if defined(OS_EMSCRIPTEN)
+#if defined(OS_EMSCRIPTEN) && defined(ENABLE_COBALT)
     using cobalt::renderer::rasterizer::egl::setUpdateWASMPixmapAndFreeDataCb;
     setUpdateWASMPixmapAndFreeDataCb((void*)(updateWASMPixmapAndFreeData));
 #endif // OS_EMSCRIPTEN

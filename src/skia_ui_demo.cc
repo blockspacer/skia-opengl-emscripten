@@ -191,6 +191,15 @@ static sk_sp<SkImage> skImageSp;
 
 static gfx::FontList GetTextFontList();
 
+static void recursivePaintHelper(views::View* view, gfx::Canvas* gfx_canvas) {
+  views::View::Views children = view->GetChildrenInZOrder();
+  view->OnPaint(gfx_canvas);
+  for (auto* child : children) {
+    if (!child->layer())
+      recursivePaintHelper(child, gfx_canvas);
+  }
+}
+
 // TODO: OnPaintLayer
 class ContainerView : public views::View {
  public:
@@ -275,7 +284,8 @@ class ContainerView : public views::View {
     msg_renderText->SetFontList(font_list);*/
 
     // TODO: recursive
-    OnPaint(gfx_canvas);
+    //OnPaint(gfx_canvas);
+    recursivePaintHelper(this, gfx_canvas);
 
     //message_->OnPaint(gfx_canvas);
   }
@@ -627,12 +637,12 @@ static bool DrawGlyphs(double current_x, double current_y,
         x += pos[i].x_advance / FONT_SIZE_SCALE;
         y += pos[i].y_advance / FONT_SIZE_SCALE;
     }
-#if 0
+//#if 0
     canvas->drawTextBlob(textBlobBuilder.make(),
       static_cast<SkScalar>(current_x),
       static_cast<SkScalar>(current_y),
       glyph_paint);
-#endif // 0
+//#endif // 0
     return true;
 } // end of DrawGlyphs
 
@@ -679,7 +689,7 @@ static bool DrawGlyphs(double current_x, double current_y,
 #endif // ENABLE_CUSTOM_FONTS && ENABLE_HARFBUZZ
 
 void SkiaUiDemo::prepareUIFonts() {
-#if defined(OS_EMSCRIPTEN) && !defined(DISABLE_PTHREADS)
+#if defined(OS_EMSCRIPTEN) && !defined(DISABLE_PTHREADS) && defined(ENABLE_COBALT)
   DCHECK(false) << "can`t prepareUIFonts on WASM MT";
 #endif
 
@@ -775,10 +785,10 @@ public:
 
     //printf("onDraw() 2\n");
 
-#if 0
+//#if 0
     paint.setColor(SK_ColorGREEN);
     sk_canvas->drawRect({ 1000, 1700, 50, 50 }, paint);
-#endif // 0
+//#endif // 0
 
     /*paint.setColor(SK_ColorBLUE);
     sk_canvas->drawRect({ 500, 700, 300, 500 }, paint);
@@ -828,7 +838,7 @@ public:
     //return;
     //printf("onDraw z1\n");
 
-#if 0
+//#if 0
     sk_canvas->drawString("1!1 Skia Test 1 Skia Test 1 "
                           "Skia Test 1!", 60, 32, skFont1ForUI, paint);
 
@@ -836,7 +846,7 @@ public:
     sk_canvas->drawString("2!2 Skia Test 2 Skia Test 2 "
                           "Skia Test 2!", 20, 97, skFont2ForUI, paint);
     //printf("onDraw z3\n");
-#endif // 0
+//#endif // 0
 
     // TODO >>> !!! <<<
     //return;
@@ -924,9 +934,9 @@ public:
         // test again without hb
         DCHECK(skFont2ForUI.getTypeface());
         auto blob3 = SkTextBlob::MakeFromString("blob3blob3blob3", skFont2ForUI);
-#if 0
+//#if 0
         sk_canvas->drawTextBlob(blob3.get(), 500, 500, glyph_paint);
-#endif // 0
+//#endif // 0
 
         //printf("onDraw y2\n");
 #endif // ENABLE_HARFBUZZ
@@ -1237,6 +1247,7 @@ public:
       gfx::FontRenderParams fontRenderParams;
       fontRenderParams.antialiasing = true;
       DCHECK(sktpForUI);
+      // TODO: free mem
       gfx::PlatformFont* customPlatformFont = new gfx::PlatformFontSkia(
         sktpForUI, /*family*/ "Arial", /*size_pixels*/ 22,
         /*style*/ gfx::Font::NORMAL,
@@ -1277,9 +1288,9 @@ public:
       render_text->SetSelection(gfx::SelectionModel(
           range, gfx::LogicalCursorDirection::CURSOR_FORWARD));
       render_text->SelectRange({0, 2});
-#if 0
+//#if 0
       render_text->Draw(&gfx_canvas); // calls DrawSelection if focused
-#endif // 0
+//#endif // 0
     }
 
     // TODO: textfield
@@ -1415,13 +1426,14 @@ public:
   //gfx::Canvas gfx_canvas(&cc_skia_paint_canvas, 1.0f);
 
   // TODO: make views paint recursive or FIX Paint via views::PaintInfo
-  container_->ForcePaint(&gfx_canvas);
+  /*container_->ForcePaint(&gfx_canvas);
   views::View::Views children = container_->GetChildrenInZOrder();
   for (auto* child : children) {
     if (!child->layer())
       //(child->*func)(info);
       child->OnPaint(&gfx_canvas);
-  }
+  }*/
+  recursivePaintHelper(container_, &gfx_canvas);
 
   /*ui::PaintCache paint_cache_;
   ui::PaintRecorder recorder(paint_info.context(), paint_info.paint_recording_size(),
@@ -1463,7 +1475,7 @@ public:
 
 // see https://github.com/flutter/engine/blob/master/shell/gpu/gpu_surface_gl.cc#L125
 void SkiaUiDemo::initUISkiaSurface(int /*w*/, int /*h*/) {
-#if defined(OS_EMSCRIPTEN) && !defined(DISABLE_PTHREADS)
+#if defined(OS_EMSCRIPTEN) && !defined(DISABLE_PTHREADS) && defined(ENABLE_COBALT)
   DCHECK(false) << "can`t initUiSkiaSurface on WASM MT";
 #endif
 
@@ -1646,7 +1658,7 @@ void SkiaUiDemo::initUISkiaSurface(int /*w*/, int /*h*/) {
 }
 
 void SkiaUiDemo::cleanup_skia_ui() {
-#if defined(OS_EMSCRIPTEN) && !defined(DISABLE_PTHREADS)
+#if defined(OS_EMSCRIPTEN) && !defined(DISABLE_PTHREADS) && defined(ENABLE_COBALT)
   DCHECK(!sRasterSurface) << "can`t use sRasterSurface on WASM MT";
 #endif
   if (sRasterSurface.get())
@@ -1681,7 +1693,7 @@ void SkiaUiDemo::loadUIAssets() {
   std::cout << display.work_area().ToString().c_str() << std::endl;
 #endif // ENABLE_UI
 
-#if defined(OS_EMSCRIPTEN) && !defined(DISABLE_PTHREADS)
+#if defined(OS_EMSCRIPTEN) && !defined(DISABLE_PTHREADS) && defined(ENABLE_COBALT)
   DCHECK(false) << "can`t loadUIAssets on WASM MT";
 #endif // defined(OS_EMSCRIPTEN) && !defined(DISABLE_PTHREADS)
 
@@ -1759,13 +1771,13 @@ static bool Decode(const unsigned char* input, size_t input_size,
 }
 
 void SkiaUiDemo::refreshUIDemo() {
-#if defined(OS_EMSCRIPTEN) && !defined(DISABLE_PTHREADS)
+#if defined(OS_EMSCRIPTEN) && !defined(DISABLE_PTHREADS) && defined(ENABLE_COBALT)
+  // TODO: support multiple skia threads on WASM
   DCHECK(false) << "can`t refreshUI on WASM MT";
+  DCHECK_RUNS_IN_THEAD_ON_MT_WASM();
 #endif
 
   if (isDebugPeriodReached()) printf("refreshUIDemo...\n");
-
-  DCHECK_RUNS_IN_THEAD_ON_MT_WASM();
 
   //printf("refreshUIDemo 2...\n");
 
@@ -1813,7 +1825,7 @@ void SkiaUiDemo::refreshUIDemo() {
 void SkiaUiDemo::drawUIDemo() {
   if (isDebugPeriodReached()) printf("drawUIDemo...\n");
 
-#if defined(OS_EMSCRIPTEN) && !defined(DISABLE_PTHREADS)
+#if defined(OS_EMSCRIPTEN) && !defined(DISABLE_PTHREADS) && defined(ENABLE_COBALT)
   DCHECK(false) << "can`t drawUI on WASM MT";
 #endif
 
@@ -1860,7 +1872,7 @@ void SkiaUiDemo::resetAssets() {
 }
 
 void SkiaUiDemo::animateUI() {
-#if defined(OS_EMSCRIPTEN) && !defined(DISABLE_PTHREADS)
+#if defined(OS_EMSCRIPTEN) && !defined(DISABLE_PTHREADS) && defined(ENABLE_COBALT)
   DCHECK(false) << "can`t animateUI on WASM MT";
 #endif
 

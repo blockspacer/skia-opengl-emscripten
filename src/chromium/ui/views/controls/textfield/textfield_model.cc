@@ -273,7 +273,9 @@ gfx::Range GetFirstEmphasizedRange(const ui::CompositionText& composition) {
 // the default kill ring size of 1 (i.e. a single buffer) is assumed.
 base::string16* GetKillBuffer() {
   static base::NoDestructor<base::string16> kill_buffer;
+#if !defined(OS_EMSCRIPTEN)
   DCHECK(base::MessageLoopCurrentForUI::IsSet());
+#endif
   return kill_buffer.get();
 }
 
