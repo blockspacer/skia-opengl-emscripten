@@ -858,9 +858,16 @@ void View::Paint(const PaintInfo& parent_paint_info) {
   const gfx::Rect& parent_bounds =
       !parent() ? GetMirroredBounds() : parent()->GetMirroredBounds();
 
+  //DCHECK(!GetMirroredBounds().IsEmpty());
+
+  // may be empty
+  //DCHECK(!parent_bounds.IsEmpty());
+
   PaintInfo paint_info = PaintInfo::CreateChildPaintInfo(
       parent_paint_info, GetMirroredBounds(), parent_bounds.size(),
       GetPaintScaleType(), !!layer());
+
+  //DCHECK(!paint_info.paint_recording_size().IsEmpty());
 
   const ui::PaintContext& context = paint_info.context();
   bool is_invalidated = true;
@@ -2000,6 +2007,7 @@ void View::SchedulePaintOnParent() {
 }
 
 bool View::ShouldPaint() const {
+  //return true;
   return visible_ && !size().IsEmpty();
 }
 
@@ -2025,6 +2033,7 @@ void View::RecursivePaintHelper(void (View::*func)(const PaintInfo&),
   View::Views children = GetChildrenInZOrder();
   DCHECK_EQ(children_.size(), children.size());
   for (auto* child : children) {
+    // calls child->Paint(info);
     if (!child->layer())
       (child->*func)(info);
   }

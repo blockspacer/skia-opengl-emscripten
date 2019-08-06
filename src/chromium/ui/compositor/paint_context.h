@@ -58,6 +58,7 @@ class COMPOSITOR_EXPORT PaintContext {
   // the local space with offsets up to the painting root in the PaintContext.
   bool IsRectInvalid(const gfx::Rect& bounds) const {
     DCHECK(CanCheckInvalid());
+    // TODO: check invalidation
     return invalidation_.Intersects(bounds + offset_);
   }
 
@@ -72,7 +73,9 @@ class COMPOSITOR_EXPORT PaintContext {
 
   const gfx::Rect& InvalidationForTesting() const { return invalidation_; }
 
- private:
+ // TODO
+ public:
+ //private:
   // The Recorder classes need access to the internal canvas and friends, but we
   // don't want to expose them on this class so that people must go through the
   // recorders to access them.

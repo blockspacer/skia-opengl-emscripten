@@ -2408,6 +2408,7 @@ const PaintOp* PaintOpBuffer::PlaybackFoldingIterator::NextUnfoldedOp() {
 void PaintOpBuffer::Playback(SkCanvas* canvas,
                              const PlaybackParams& params,
                              const std::vector<size_t>* offsets) const {
+  // TODO: check PaintOpBuffer
   if (!op_count_)
     return;
   if (offsets && offsets->empty())

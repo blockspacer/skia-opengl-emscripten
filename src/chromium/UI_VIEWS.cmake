@@ -220,20 +220,21 @@ list(APPEND UI_VIEWS_SOURCES
   ${UI_VIEWS_DIR}window/window_button_order_provider.cc
   ${UI_VIEWS_DIR}window/window_resize_utils.cc
   ${UI_VIEWS_DIR}window/window_shape.cc
- # #
- # # cocoa
- # #
- # #cocoa/bridge_factory_host.cc",
- # #cocoa/bridged_native_widget_host_impl.mm",
- # #cocoa/drag_drop_client_mac.h",
- # #cocoa/drag_drop_client_mac.mm",
- # #cocoa/text_input_host.h",
- # #cocoa/text_input_host.mm",
- # #cocoa/tooltip_manager_mac.h",
- # #cocoa/tooltip_manager_mac.mm",
- # #controls/button/label_button_label.cc",
- # #controls/button/label_button_label.h",
- # #controls/menu/menu_pre_target_handler.h",
+  # #
+  # # cocoa
+  # #
+  # #cocoa/bridge_factory_host.cc",
+  # #cocoa/bridged_native_widget_host_impl.mm",
+  # #cocoa/drag_drop_client_mac.h",
+  # #cocoa/drag_drop_client_mac.mm",
+  # #cocoa/text_input_host.h",
+  # #cocoa/text_input_host.mm",
+  # #cocoa/tooltip_manager_mac.h",
+  # #cocoa/tooltip_manager_mac.mm",
+  #
+  ${UI_VIEWS_DIR}controls/button/label_button_label.cc
+  ${UI_VIEWS_DIR}controls/button/label_button_label.h
+  ${UI_VIEWS_DIR}controls/menu/menu_pre_target_handler.h
   #
   # HEADERS
   #

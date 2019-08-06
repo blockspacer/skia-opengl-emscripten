@@ -13,9 +13,62 @@
 #include "ui/views/views_export.h"
 #include "ui/views/widget/native_widget_private.h"
 
+#include "base/compiler_specific.h"
+#include "base/containers/flat_set.h"
+#include "base/macros.h"
+#include "base/observer_list.h"
+#include "base/optional.h"
+#include "base/strings/string16.h"
+#include "base/time/time.h"
+#include "components/viz/common/surfaces/local_surface_id_allocation.h"
+#include "components/viz/common/surfaces/scoped_surface_id_allocator.h"
+#include "ui/base/class_property.h"
+#include "ui/compositor/layer_animator.h"
+#include "ui/compositor/layer_delegate.h"
+#include "ui/compositor/layer_owner.h"
+#include "ui/events/event_constants.h"
+#include "ui/events/event_target.h"
+#include "ui/events/event_targeter.h"
+#include "ui/events/gestures/gesture_types.h"
+#include "ui/gfx/geometry/rect.h"
+#include "ui/gfx/native_widget_types.h"
+#include "ui/gfx/canvas.h"
+#include "ui/gfx/scoped_canvas.h"
+#include "ui/base/ui_base_features.h"
+#include "ui/compositor/compositor.h"
+#include "ui/compositor/layer.h"
+#include "ui/compositor/layer_animator.h"
+#include "ui/display/display.h"
+#include "ui/display/screen.h"
+
+#include <stddef.h>
+
+#include <algorithm>
+#include <utility>
+
+#include "base/auto_reset.h"
+#include "base/bind.h"
+#include "base/bind_helpers.h"
+#include "base/callback.h"
+#include "base/logging.h"
+#include "base/macros.h"
+#include "base/stl_util.h"
+#include "base/strings/string_number_conversions.h"
+#include "base/strings/string_util.h"
+#include "base/strings/stringprintf.h"
+#include "cc/trees/layer_tree_frame_sink.h"
+#include "third_party/skia/include/core/SkPath.h"
+
 namespace views {
 
-class VIEWS_EXPORT NativeWidgetAura : public internal::NativeWidgetPrivate {
+class VIEWS_EXPORT NativeWidgetAura :
+  public internal::NativeWidgetPrivate,
+  public ui::LayerDelegate,
+  public ui::LayerOwner//,
+  //public ui::EventTarget,
+  //public ui::GestureConsumer,
+  //public ui::PropertyHandler
+  {
  public:
   // |is_parallel_widget_in_window_manager| is true only when this
   // NativeWidgetAura is created in the window manager to represent a client
@@ -36,6 +89,16 @@ class VIEWS_EXPORT NativeWidgetAura : public internal::NativeWidgetPrivate {
   // If necessary, sets the ShadowElevation of |window| from |params|.
   static void SetShadowElevationFromInitParams(
       const Widget::InitParams& params);
+
+  // Overridden from ui::LayerDelegate:
+  void OnPaintLayer(const ui::PaintContext& context) override;
+  void OnLayerBoundsChanged(const gfx::Rect& old_bounds,
+                            ui::PropertyChangeReason reason) override;
+  void OnLayerTransformed(const gfx::Transform& old_transform,
+                          ui::PropertyChangeReason reason) override;
+  void OnLayerOpacityChanged(ui::PropertyChangeReason reason) override;
+  void OnLayerAlphaShapeChanged() override;
+  void OnLayerFillsBoundsOpaquelyChanged() override;
 
   // Overridden from internal::NativeWidgetPrivate:
   void InitNativeWidget(const Widget::InitParams& params) override;
@@ -142,8 +205,8 @@ class VIEWS_EXPORT NativeWidgetAura : public internal::NativeWidgetPrivate {
   ///bool CanFocus() override;
   ///void OnCaptureLost() override;
   ///void OnPaint(const ui::PaintContext& context) override;
-  ///void OnDeviceScaleFactorChanged(float old_device_scale_factor,
-  ///                                float new_device_scale_factor) override;
+  void OnDeviceScaleFactorChanged(float old_device_scale_factor,
+                                  float new_device_scale_factor) override;
   ///void OnWindowDestroying() override;
   ///void OnWindowDestroyed() override;
   ///void OnWindowTargetVisibilityChanged(bool visible) override;
@@ -178,6 +241,8 @@ class VIEWS_EXPORT NativeWidgetAura : public internal::NativeWidgetPrivate {
   /////int OnDragUpdated(const ui::DropTargetEvent& event) override;
   ///void OnDragExited() override;
   /////int OnPerformDrop(const ui::DropTargetEvent& event) override;
+
+
 
  protected:
   ~NativeWidgetAura() override;

@@ -25,7 +25,7 @@
 namespace views {
 namespace {
 
-#if !defined(DESKTOP_LINUX)
+#if !defined(DESKTOP_LINUX) || defined(UI_VIEWS_PORT)
 // Default text and shadow colors for STYLE_BUTTON.
 const SkColor kStyleButtonTextColor = SK_ColorBLACK;
 const SkColor kStyleButtonShadowColor = SK_ColorWHITE;
@@ -87,12 +87,13 @@ gfx::Range PlatformStyle::RangeToDeleteBackwards(const base::string16& text,
 
 #endif  // OS_MACOSX
 
-#if !defined(DESKTOP_LINUX)
+#if !defined(DESKTOP_LINUX) || defined(UI_VIEWS_PORT)
 // static
 void PlatformStyle::ApplyLabelButtonTextStyle(
     Label* label,
     ButtonColorByState* color_by_state) {
   ButtonColorByState& colors = *color_by_state;
+
   colors[Button::STATE_NORMAL] = kStyleButtonTextColor;
   colors[Button::STATE_HOVERED] = kStyleButtonTextColor;
   colors[Button::STATE_PRESSED] = kStyleButtonTextColor;
@@ -102,7 +103,7 @@ void PlatformStyle::ApplyLabelButtonTextStyle(
 }
 #endif
 
-#if !defined(DESKTOP_LINUX)
+#if !defined(DESKTOP_LINUX) || defined(UI_VIEWS_PORT)
 // static
 std::unique_ptr<Border> PlatformStyle::CreateThemedLabelButtonBorder(
     LabelButton* button) {

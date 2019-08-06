@@ -90,6 +90,15 @@ void NativeWidgetAura::InitNativeWidget(const Widget::InitParams& params) {
 
   ownership_ = params.ownership;
 
+  SetLayer(std::make_unique<ui::Layer>(params.layer_type));
+  //port_->OnPreInit(this);
+  //layer()->SetColor(SK_ColorGREEN); // if type_ == LAYER_SOLID_COLOR
+  layer()->SetVisible(true);
+  layer()->set_delegate(this);
+  //UpdateLayerName();
+  layer()->SetFillsBoundsOpaquely(true);
+  //env_->NotifyWindowInitialized(this);
+
   delegate_->OnNativeWidgetCreated();
 
   gfx::Rect window_bounds = params.bounds;
@@ -113,7 +122,7 @@ NonClientFrameView* NativeWidgetAura::CreateNonClientFrameView() {
 
 bool NativeWidgetAura::ShouldUseNativeFrame() const {
   // There is only one frame type for aura.
-  return false;
+  return true;
 }
 
 bool NativeWidgetAura::ShouldWindowContentsBeTransparent() const {
@@ -149,11 +158,11 @@ Widget* NativeWidgetAura::GetTopLevelWidget() {
 }
 
 const ui::Compositor* NativeWidgetAura::GetCompositor() const {
-  return nullptr;
+  return layer()->GetCompositor();
 }
 
 const ui::Layer* NativeWidgetAura::GetLayer() const {
-  return nullptr;
+  return layer();
 }
 
 void NativeWidgetAura::ReorderNativeViews() {
@@ -180,7 +189,7 @@ void NativeWidgetAura::ReleaseCapture() {
 }
 
 bool NativeWidgetAura::HasCapture() const {
-  return false;
+  return true;
 }
 
 ui::InputMethod* NativeWidgetAura::GetInputMethod() {
@@ -285,6 +294,7 @@ bool NativeWidgetAura::IsAlwaysOnTop() const {
 
 void NativeWidgetAura::SetVisibleOnAllWorkspaces(bool always_visible) {
   // Not implemented on chromeos or for child widgets.
+  layer()->SetVisible(true);
 }
 
 bool NativeWidgetAura::IsVisibleOnAllWorkspaces() const {
@@ -338,10 +348,71 @@ void NativeWidgetAura::RunShellDrag(View* view,
 }
 #endif // UI_VIEWS_PORT
 
+
+void NativeWidgetAura::OnPaintLayer(const ui::PaintContext& context) {
+  //Paint(context);
+  // delegate_->OnPaint(context);
+  //delegate_->OnPaint(context);
+}
+
+void NativeWidgetAura::OnLayerBoundsChanged(const gfx::Rect& old_bounds,
+                                  ui::PropertyChangeReason reason) {
+  /*WindowOcclusionTracker::ScopedPause pause_occlusion_tracking(env_);
+
+  bounds_ = layer()->bounds();
+
+  // Use |bounds_| as that is the bounds before any animations, which is what
+  // mus wants.
+  port_->OnDidChangeBounds(old_bounds, bounds_);
+
+  if (layout_manager_)
+    layout_manager_->OnWindowResized();
+  if (delegate_)
+    delegate_->OnBoundsChanged(old_bounds, bounds_);
+  for (auto& observer : observers_)
+    observer.OnWindowBoundsChanged(this, old_bounds, bounds_, reason);
+  */
+}
+
+void NativeWidgetAura::OnLayerOpacityChanged(ui::PropertyChangeReason reason) {
+  /*WindowOcclusionTracker::ScopedPause pause_occlusion_tracking(env_);
+  for (WindowObserver& observer : observers_)
+    observer.OnWindowOpacitySet(this, reason);*/
+}
+
+void NativeWidgetAura::OnLayerAlphaShapeChanged() {
+  /*WindowOcclusionTracker::ScopedPause pause_occlusion_tracking(env_);
+  for (WindowObserver& observer : observers_)
+    observer.OnWindowAlphaShapeSet(this);*/
+}
+
+void NativeWidgetAura::OnLayerFillsBoundsOpaquelyChanged() {
+  // Let observers know that this window's transparent status has changed.
+  // Transparent status can affect the occlusion computed for windows.
+  /*WindowOcclusionTracker::ScopedPause pause_occlusion_tracking(env_);
+
+  // Non-transparent windows should not have opaque regions for occlusion set.
+  if (!transparent())
+    DCHECK(opaque_regions_for_occlusion_.empty());
+
+  for (WindowObserver& observer : observers_)
+    observer.OnWindowTransparentChanged(this);*/
+}
+
+void NativeWidgetAura::OnLayerTransformed(const gfx::Transform& old_transform,
+                                ui::PropertyChangeReason reason) {
+  /*port_->OnDidChangeTransform(old_transform, layer()->transform());
+  WindowOcclusionTracker::ScopedPause pause_occlusion_tracking(env_);
+  for (WindowObserver& observer : observers_)
+    observer.OnWindowTransformed(this, reason);*/
+}
+
 void NativeWidgetAura::SchedulePaintInRect(const gfx::Rect& rect) {
+  layer()->SchedulePaint(rect);
 }
 
 void NativeWidgetAura::ScheduleLayout() {
+  layer()->ScheduleDraw();
 }
 
 void NativeWidgetAura::SetCursor(gfx::NativeCursor cursor) {
@@ -366,7 +437,7 @@ Widget::MoveLoopResult NativeWidgetAura::RunMoveLoop(
     const gfx::Vector2d& drag_offset,
     Widget::MoveLoopSource source,
     Widget::MoveLoopEscapeBehavior escape_behavior) {
-  return Widget::MOVE_LOOP_CANCELED;
+  return Widget::MOVE_LOOP_SUCCESSFUL;
 }
 
 void NativeWidgetAura::EndMoveLoop() {
@@ -384,7 +455,7 @@ void NativeWidgetAura::SetVisibilityAnimationTransition(
 }
 
 bool NativeWidgetAura::IsTranslucentWindowOpacitySupported() const {
-  return true;
+  return false;
 }
 
 ui::GestureRecognizer* NativeWidgetAura::GetGestureRecognizer() {
@@ -420,6 +491,8 @@ void NativeWidgetAura::OnBoundsChanged(const gfx::Rect& old_bounds,
   }
   if (old_bounds.size() != new_bounds.size())
     delegate_->OnNativeWidgetSizeChanged(new_bounds.size());
+
+  layer()->SetBounds(new_bounds);
 }
 
 /*gfx::NativeCursor NativeWidgetAura::GetCursor(const gfx::Point& point) {
@@ -445,14 +518,15 @@ void NativeWidgetAura::OnCaptureLost() {
 
 /*void NativeWidgetAura::OnPaint(const ui::PaintContext& context) {
   delegate_->OnNativeWidgetPaint(context);
-}
+}*/
 
 void NativeWidgetAura::OnDeviceScaleFactorChanged(
     float old_device_scale_factor,
     float new_device_scale_factor) {
+  DCHECK(GetWidget());
   GetWidget()->DeviceScaleFactorChanged(old_device_scale_factor,
                                         new_device_scale_factor);
-}*/
+}
 
 /*void NativeWidgetAura::OnWindowDestroying() {
 }

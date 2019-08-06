@@ -1593,7 +1593,9 @@ class VIEWS_EXPORT View : public ui::LayerDelegate,
   void OnPropertyChanged(PropertyKey property,
                          PropertyEffects property_effects);
 
- private:
+ //TODO:
+ //private:
+ public:
   friend class internal::PreEventDispatchHandler;
   friend class internal::PostEventDispatchHandler;
   friend class internal::RootView;
