@@ -6,6 +6,71 @@ ProcessorCount(NUM_PROCESSORS)
 set(NUM_PROCESSORS ${NUM_PROCESSORS} CACHE STRING "Processor count")
 message("CMAKE_CTEST_COMMAND=${CMAKE_CTEST_COMMAND}")
 
+macro(prevent_in_source_builds)
+  if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
+    message(FATAL_ERROR "
+ERROR: CMake generation is not allowed within the source directory!
+You *MUST* remove the CMakeCache.txt file and try again from another
+directory..")
+  endif()
+endmacro()
+
+
+# see https://www.virag.si/2015/07/use-ccache-with-cmake-for-faster-compilation/
+# TODO: Xcode support https://stackoverflow.com/a/36515503
+# TODO: CMAKE_XCODE_ATTRIBUTE_CC https://crascit.com/2016/04/09/using-ccache-with-cmake/
+macro(add_ccache)
+  if(USE_CCACHE)
+    find_program(CCACHE_PROGRAM ccache)
+    #
+    if(CCACHE_PROGRAM)
+      set_property(GLOBAL PROPERTY
+        RULE_LAUNCH_COMPILE "${CCACHE_PROGRAM}")
+      set_property(GLOBAL PROPERTY
+        RULE_LAUNCH_LINK "${CCACHE_PROGRAM}")
+      message(STATUS "Using CCACHE. To see if ccache is really working, you can use ccache -s command, which will display ccache statistics.")
+      message(STATUS "CCACHE: On second and all subsequent compilations the “cache hit” values should increase and thus show that ccache is working.")
+    else()
+      message(WARNING "CCACHE not found, see https://askubuntu.com/a/470636 (also note /usr/sbin/update-ccache-symlinks).")
+    endif()
+  else(USE_CCACHE)
+    message(WARNING "CCACHE disabled.")
+  endif(USE_CCACHE)
+endmacro()
+
+function(target_ccache_summary TARGET)
+    if(USE_CCACHE AND CCACHE_PROGRAM)
+        message("cmake summary: add_custom_target: ccache -s")
+        # NOTE: clean old build dirs to get fresh ccache summary
+        add_custom_target(ccache_stats ALL
+            COMMAND ${CCACHE_PROGRAM} -s
+            WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+            COMMENT "!!!!!!!!!!!!!!!!!!!! getting ccache stats !!!!!!!!!!!!!!!!!!!!!!!!!!"
+            DEPENDS ${TARGET}
+        )
+    endif()
+endfunction()
+
+# see https://cristianadam.eu/20170709/speeding-up-cmake/
+# TODO: use with gold: "--threads", "--thread-count COUNT", "--preread-archive-symbols"
+# NOTE: gold not threaded by default, configure with "--enable-threads"
+# NOTE: lld threaded by default, may be faster than gold
+macro(add_gold_linker)
+  if(USE_LD_GOLD AND "${CMAKE_C_COMPILER_ID}" STREQUAL "GNU")
+    execute_process(COMMAND ${CMAKE_C_COMPILER} -fuse-ld=gold -Wl,--version OUTPUT_VARIABLE stdout ERROR_QUIET)
+    if("${stdout}" MATCHES "GNU gold")
+      set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fuse-ld=gold")
+      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fuse-ld=gold")
+      message(STATUS "Using GNU gold linker.")
+    else()
+      message(WARNING "GNU gold linker isn't available, using the default system linker.")
+      message(WARNING "To install gold linker: sudo apt-get install binutils-gold")
+    endif()
+  else()
+    message(WARNING "GNU gold linker disabled.")
+  endif()
+endmacro()
+
 macro(add_compile_options target)
   if(ENABLE_CMAKE_COMPILE_WARNINGS)
     set(ENABLED_WARNINGS
@@ -100,8 +165,12 @@ macro(add_test_command_targets target)
 endmacro()
 
 macro(print_cmake_system_info)
+  message(STATUS "cmake: CC:  " $ENV{CC})
+  message(STATUS "cmake: CXX: " $ENV{CXX})
+  message(STATUS "cmake: CXXFLAGS: " $ENV{CXXFLAGS})
+  message(STATUS "cmake: CMAKE_CXX_COMPILER: " ${CMAKE_CXX_COMPILER})
+  message(STATUS "cmake: CMAKE_CXX_FLAGS: " ${CMAKE_CXX_FLAGS})
   message(STATUS "Building ${PROJECT_NAME} project v${${PROJECT_NAME}_VERSION_MAJOR}.${${PROJECT_NAME}_VERSION_MINOR}.${${PROJECT_NAME}_VERSION_PATCH}")
-  #set(CMAKE_CXX_FLAGS "-fno-rtti")
   message(STATUS "System: " ${CMAKE_SYSTEM_NAME} " " ${CMAKE_SYSTEM_VERSION})
   message(STATUS "Processor: " ${CMAKE_HOST_SYSTEM_PROCESSOR})
   message(STATUS "CMake generates: " ${CMAKE_GENERATOR})

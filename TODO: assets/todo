@@ -20,6 +20,7 @@ dom components (innerhtml)
 PDF support (PDFium)
 > https://github.com/flutter/flutter/issues/15406
 Video support
+FORCE_DISABLE_SK_GPU support for BLINK on WASM
 Use SKIA GrContext (enable SK_GPU) for native & WASM (see SKIA_GR_CONTEXT)
 SIDE MODULE WASM: load the WASM module using the standard JavaScript APIs:
  > https://blog.scottlogic.com/2017/10/17/wasm-mandelbrot.html
@@ -317,7 +318,6 @@ blockchain app platform & WASM to app API bindings
 backend & code reuse: C++ WEB CMS, game servers e.t.c.
 Push Notifications e.t.c.
 App analytics
-memory sanitizer
 AI helper (suggestions e.t.c.)
 assets minifier
 web widget gallery portal/fiddles with live edit https://bit.dev (like jsfiddle)
@@ -416,8 +416,20 @@ extended C++ & serialisation & IDE integration
    https://foonathan.net/blog/2017/01/20/function-ref-implementation.html
 
 Sanitizers (LLVM/clang)
+ > NOTE: "MemoryWithOrigins" is LLVM build for sanitize-memory-track-origins, see https://clang.llvm.org/docs/MemorySanitizer.html#origin-tracking
+ > (!!!) https://github.com/cjdb/docker/blob/master/clang-8/xenial/Dockerfile#L126
+ > (!!!) https://github.com/cjdb/project_template/wiki/CMake-Options
+ > (!!!) https://github.com/gnzlbg/unix_env/blob/master/pool/install/libcxx.sh#L56
+ > see also LLVM_ENABLE_ASSERTIONS from https://llvm.org/docs/CMake.html
+ > https://github.com/gnzlbg/unix_env/blob/master/pool/install/libcxx.sh#L56
+ > script to build libc++ with memory sanitizer instrumentation https://github.com/rukkal/libcxx-msan
+ > https://github.com/google/sanitizers/wiki/MemorySanitizerBootstrappingClang
+ > https://hub.docker.com/r/dutow/mbt-ubuntu-artful/dockerfile/
  > http://www.stablecoder.ca/2018/10/30/full-cmake-helper-suite.html
  > http://www.stablecoder.ca/2018/02/01/analyzer-build-types.html
+ > memory sanitizer & gcc https://github.com/google/sanitizers/wiki/MemorySanitizerInstrumentingLibstdcxx
+ > https://github.com/derofim/boost_server_example/search?q=sanitize&unscoped_q=sanitize
+ > https://git.soundcontact.studio/enpinion/oiio/blob/742cf524d41cddf02869fc2936933e3587484c75/src/cmake/compiler.cmake#L261
 
 clang-format & clang-tidy
  > http://www.stablecoder.ca/2018/01/01/cmake-clang-tools.html
@@ -431,16 +443,17 @@ Precompiled headers?
  > https://github.com/larsch/cmake-precompiled-header/blob/master/PrecompiledHeader.cmake#L191
  > https://github.com/modern-cpp-examples/match3/blob/bb1f4de11db9e92b6ebdf80f1afe9245e6f86b7e/CMakeLists.txt#L35
 
-C++ modules
+C++ modules std=c++2a or fmodules-ts
+NOTE: modules currently do not scale in the same ways as traditional compilation. https://bfgroup.github.io/cpp_tooling_stats/modules/modules_perf_D1441R1.html
+ > http://melloware.blogspot.com/2019/03/c-modules.html
+ > Clang Flips On Modules Support With C++2A Switch https://www.phoronix.com/scan.php?page=news_item&px=Clang-Cpp20-Modules-Switch
  > https://blog.magnum.graphics/backstage/lightweight-stl-compatible-unique-pointer/#but-but-modules
  > https://www.modernescpp.com/index.php/c-20-modules
  > https://gracicot.github.io/modules/2018/11/04/modules-are-not-precompiled-headers.html
  > https://build2.org/doc/modules-cppcon2017.pdf
  > https://www.modernescpp.com/index.php/c-20-more-details-to-modules
  > https://www.reddit.com/r/cpp/comments/640szr/trying_out_clang_5_modules_in_a_70k_loc_project/
-
-Use iosfwd
- > https://blog.magnum.graphics/backstage/forward-declaring-stl-container-types/
+ > https://slides.com/onqtam/faster_builds#/79
 
 polymorphic_downcast ?
  > https://www.bogotobogo.com/cplusplus/upcasting_downcasting.php
@@ -526,6 +539,17 @@ NOTE: (~2MiB UNIX || 0.1MiB WASM) = UCONFIG_NO_COLLATION, UCONFIG_ONLY_HTML_CONV
 NOTE: WITH BLINK: ~20MiB UNIX || 7.1MiB WASM
 
 TODO: use tmpfs for build https://github.com/CppCon/CppCon2017/blob/master/Presentations/Practical%20Techniques%20for%20Improving%20C%2B%2B%20Build%20Times/Practical%20Techniques%20for%20Improving%20C%2B%2B%20Build%20Times%20-%20Dmitry%20Panin%20-%20CppCon%202017.pdf
+# NOTE: also put the compiler there!
+# mount tmpfs to RAM
+# Note: Be careful not too increase it too much! Your system will deadlock since the Out-Of-Memory handler can not free up that space if needed
+# https://www.marcobehler.com/2014/05/19/speed-up-that-build-now-part-1-ramdisk-and-filesystem-2
+sudo mkdir /build
+tmpfs    /build    tmpfs    noatime,nodev,nosuid,size=2G    0    0
+#
+sudo mount -a
+reboot
+# NOTE: also put the compiler there!
+# build output to RAM disk (most important - because of the link step)
 
 TODO: support gold linker http://www.bitsnbites.eu/faster-c-builds/
 
@@ -600,3 +624,80 @@ TODO: paint scrollbars
 clear && clear ; cmake -DRUN_APP=ON -DBUILD_APP=ON -DEXTRA_EMMAKE_OPTS="-j;6" -DBUILD_TYPE="Release" -DCLEAN_BUILD=OFF -DENABLE_EMCMAKE_CLEAN_FIRST=ON -DBUILD_DIR=$(pwd)/build-wasm-mt-rel/ -DEXTRA_EMCMAKE_OPTS="-DENABLE_WEB_PTHREADS=TRUE;-DENABLE_LIBWEBP=TRUE;-DENABLE_BLINK=TRUE;-DENABLE_COBALT=TRUE;-DENABLE_WTF=TRUE;-DDISABLE_FORMATTING=FALSE;-DENABLE_SKOTTIE=TRUE;-DFORCE_DISABLE_SK_GPU=FALSE;ENABLE_BLINK_UI_VIEWS=TRUE" -P tools/buildWeb.cmake
 
 cmake -DRUN_APP=OFF -DBUILD_APP=ON -DEXTRA_EMMAKE_OPTS="-j;6" -DBUILD_TYPE="Debug" -DCLEAN_BUILD=OFF -DENABLE_CMAKE_CLEAN_FIRST=OFF -DBUILD_DIR=$(pwd)/build-linux-deb/ -DEXTRA_CMAKE_OPTS="-DENABLE_WEB_PTHREADS=TRUE;-DENABLE_LIBWEBP=TRUE;-DENABLE_BLINK=TRUE;-DENABLE_COBALT=FALSE;-DENABLE_WTF=TRUE;-DDISABLE_FORMATTING=FALSE;-DENABLE_SKOTTIE=TRUE;-DFORCE_DISABLE_SK_GPU=FALSE;-DENABLE_BLINK_UI_VIEWS=TRUE" -P tools/buildUnix.cmake
+
+TODO: The Hitchhiker's Guide to Faster Builds
+> https://slides.com/onqtam/faster_builds
+
+TODO: cmake-checks-cache
+> https://github.com/cristianadam/cmake-checks-cache
+> https://cristianadam.eu/20170709/speeding-up-cmake/
+
+TODO: cpp-std-fwd.
+NOTE: adding declarations to std is undefined behavior, but po­ten­tial so­lu­tion that isn’t an un­de­fined be­hav­ior could be ex­tend­ing the stan­dard li­brary im­ple­men­ta­tion it­self with for­ward dec­la­ra­tions for ad­di­tion­al types.
+ > https://blog.magnum.graphics/backstage/forward-declaring-stl-container-types/
+ > https://github.com/Philip-Trettner/cpp-std-fwd
+ > https://stackoverflow.com/questions/4801411/forward-declaration-of-stdwstring
+ > GCC stl only: https://github.com/include-what-you-use/include-what-you-use/blob/master/gcc.stl.headers.imp
+
+TODO: extern-template-reduce-compile-times
+> https://arne-mertz.de/2019/02/extern-template-reduce-compile-times/
+
+TODO: OnceClosure better than std::function?
+37 percent of HyperRogue’s compilation time is due to std::function
+> https://quuxplusone.github.io/blog/2019/01/06/hyper-function/
+
+TODO: Support MVSC /d2cgsummary
+> https://aras-p.info/blog/2017/10/23/Best-unknown-MSVC-flag-d2cgsummary/
+/Bt - frontend & backend (optimizer/codegen)
+/time - for the linker
+/d2cgsummary - Anomalistic Compile Times for functions
+first advertised by Aras Pranckevičius - "Best-unknown-MSVC-flag"
+/d1reportTime - includes, classes, functions - times - blog post
+/d1templateStats
+
+ninja & ninjatracing support
+> https://github.com/nico/ninjatracing
+
+ditributed builds support
+
+dynamic linking support (linking step speedup) & -fvisibility=hidden & -fvisibility-inlines-hidden
+
+use with gold: "--threads", "--thread-count COUNT", "--preread-archive-symbols"
+NOTE: not threaded by default, configure with "--enable-threads"
+NOTE: lld threaded by default, may be faster than gold
+
+TODO: LINK_WHAT_YOU_USE
+https://cmake.org/cmake/help/latest/prop_tgt/LINK_WHAT_YOU_USE.html
+
+TODO: ccache on WIN clcache (MSVC), cclash (MSVC)
+
+TODO: http://fastbuild.org/ - straight out of the build system!
+
+TODO: graphviz
+https://stackoverflow.com/a/42577803
+
+Array view
+> https://blog.magnum.graphics/backstage/array-view-implementations/
+
+TODO: DISTCC
+> https://github.com/smartdevicelink/sdl_core/blob/master/CMakeLists.txt#L271
+
+Concepts TS
+> https://www.cjdb.com.au/sg20-and-videos
+> https://www.cjdb.com.au/blog/2018/05/15/prepping-yourself-to-conceptify-algorithms
+
+CMAKE use CMAKE_DEPENDENT_OPTION:
+project_template_enumerated_option
+  EXPECTS (see https://stackoverflow.com/a/47612735)
+  REQUIRES
+  DEPENDENTS (see https://github.com/liusong299/gromacs-2019-CWBSol/blob/master/cmake/gmxOptionUtilities.cmake#L163)
+  ...
+> https://github.com/liusong299/gromacs-2019-CWBSol/blob/master/cmake/gmxOptionUtilities.cmake#L163
+> https://stackoverflow.com/a/47612735
+> https://cmake.org/cmake/help/v3.0/module/CMakeDependentOption.html
+> https://github.com/cjdb/project_template/wiki/CMake-Options#adding-your-own-options
+> https://github.com/dev-cafe/cmake-cookbook/
+> https://github.com/chuckcoughlin/bert/blob/master/odroid/YARP/cmake/YarpFindDependencies.cmake#L32
+
+CMAKE use FeatureSummary
+> https://cliutils.gitlab.io/modern-cmake/chapters/features/modules.html

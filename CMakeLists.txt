@@ -10,8 +10,18 @@ set_cmake_module_paths( ${PROJECT_NAME}
   "${CMAKE_CURRENT_SOURCE_DIR}/cmake;${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules" )
 # print_cmake_system_info from Utils.cmake
 print_cmake_system_info()
+# prevent_in_source_builds from Utils.cmake
+prevent_in_source_builds()
 # check_supported_os from Utils.cmake
 check_supported_os()
+if(NOT EMSCRIPTEN)
+  option(USE_LD_GOLD "Use GNU gold linker" ON)
+  # add_gold_linker from Utils.cmake
+  add_gold_linker()
+  option(USE_CCACHE "Use CCACHE" ON)
+  # add_ccache from Utils.cmake
+  add_ccache()
+endif(NOT EMSCRIPTEN)
 
 # build mode. separated from CMAKE_BUILD_TYPE to provide custom debug level
 # for example, you may want build optimized wasm with debug stack trace support
@@ -2770,3 +2780,8 @@ if (ENABLE_IWYU)
 else()
   message(WARNING "iwyu turned off")
 endif()
+
+if(NOT EMSCRIPTEN)
+  # target_ccache_summary from Utils.cmake
+  target_ccache_summary(${PROJECT_NAME})
+endif(NOT EMSCRIPTEN)

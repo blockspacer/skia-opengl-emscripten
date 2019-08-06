@@ -1013,6 +1013,20 @@ open localhost:3000/*.html
 # How to profile code size?
 nm -CSr --size-sort "build-linux-rel/skemgl" | head -50
 
+* Bloaty McBloatface: a size profiler for ELF/Mach-O binaries
+https://github.com/google/bloaty
+* Sizer: Win32/64 executable size report utility
+https://github.com/aras-p/sizer
+* SymbolSort: measuring C++ code bloat in Windows binaries
+https://github.com/adrianstone55/SymbolSort
+* twiggy: call graph analyzer (wasm only, no ELF/Mach-O/PE/COFF yet)
+https://github.com/rustwasm/twiggy
+* nm - Unix tool to inspect the symbol table of binaries
+nm --print-size --size-sort --demangle --radix=d YOUR_BINARY
+* dumpbin: Microsoft COFF Binary File Dumper
+* common culprit: templates (because length of names matters!!!)
+demangling: undname.exe / c++filt / https://demangler.com
+
 # Can web worker be killed off by browser silently?
 Yes, see
 > https://stackoverflow.com/a/38976243
