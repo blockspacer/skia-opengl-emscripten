@@ -43,7 +43,11 @@ class TextfieldTestApi {
   }
 
   bool IsCursorBlinkTimerRunning() const {
+#if !defined(DISABLE_PTHREADS)
     return textfield_->cursor_blink_timer_.IsRunning();
+#else
+    return false;
+#endif // DISABLE_PTHREADS
   }
 
   gfx::Rect GetCursorViewRect() { return textfield_->cursor_view_.bounds(); }

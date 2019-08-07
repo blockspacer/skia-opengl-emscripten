@@ -678,6 +678,7 @@ void TouchSelectionControllerImpl::QuickMenuTimerFired() {
 }
 
 void TouchSelectionControllerImpl::StartQuickMenuTimer() {
+#if !defined(DISABLE_PTHREADS)
   if (quick_menu_timer_.IsRunning())
     return;
   quick_menu_timer_.Start(
@@ -685,6 +686,7 @@ void TouchSelectionControllerImpl::StartQuickMenuTimer() {
       base::TimeDelta::FromMilliseconds(kQuickMenuTimoutMs),
       this,
       &TouchSelectionControllerImpl::QuickMenuTimerFired);
+#endif // DISABLE_PTHREADS
 }
 
 void TouchSelectionControllerImpl::UpdateQuickMenu() {
@@ -696,7 +698,9 @@ void TouchSelectionControllerImpl::UpdateQuickMenu() {
 void TouchSelectionControllerImpl::HideQuickMenu() {
   if (ui::TouchSelectionMenuRunner::GetInstance()->IsRunning())
     ui::TouchSelectionMenuRunner::GetInstance()->CloseMenu();
+#if !defined(DISABLE_PTHREADS)
   quick_menu_timer_.Stop();
+#endif // DISABLE_PTHREADS
 }
 
 gfx::Rect TouchSelectionControllerImpl::GetQuickMenuAnchorRect() const {

@@ -34,14 +34,18 @@ class RepeatController {
   // Stop repeating.
   void Stop();
 
+#if !defined(DISABLE_PTHREADS)
   const base::OneShotTimer& timer_for_testing() const { return timer_; }
+#endif // DISABLE_PTHREADS
 
  private:
   // Called when the timer expires.
   void Run();
 
+#if !defined(DISABLE_PTHREADS)
   // The current timer.
   base::OneShotTimer timer_;
+#endif // DISABLE_PTHREADS
 
   base::RepeatingClosure callback_;
 

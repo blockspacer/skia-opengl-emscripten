@@ -358,6 +358,7 @@ ScrollBar::ScrollBar(bool is_horiz)
 ///////////////////////////////////////////////////////////////////////////////
 // ScrollBar, private:
 
+#if !defined(DISABLE_PTHREADS)
 #if !defined(OS_MACOSX)
 // static
 base::RetainingOneShotTimer* ScrollBar::GetHideTimerForTesting(
@@ -365,6 +366,7 @@ base::RetainingOneShotTimer* ScrollBar::GetHideTimerForTesting(
   return nullptr;
 }
 #endif
+#endif // DISABLE_PTHREADS
 
 int ScrollBar::GetThumbSizeForTesting() {
   return thumb_->GetSize();

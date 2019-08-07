@@ -38,17 +38,20 @@ void Throbber::Start() {
 
   start_time_ = base::TimeTicks::Now();
   constexpr int kFrameTimeMs = 30;
+#if !defined(DISABLE_PTHREADS)
   timer_.Start(
       FROM_HERE, base::TimeDelta::FromMilliseconds(kFrameTimeMs),
       base::BindRepeating(&Throbber::SchedulePaint, base::Unretained(this)));
+#endif // DISABLE_PTHREADS
   SchedulePaint();  // paint right away
 }
 
 void Throbber::Stop() {
   if (!IsRunning())
     return;
-
+#if !defined(DISABLE_PTHREADS)
   timer_.Stop();
+#endif // DISABLE_PTHREADS
   SchedulePaint();
 }
 
@@ -83,7 +86,11 @@ void Throbber::OnPaint(gfx::Canvas* canvas) {
 }
 
 bool Throbber::IsRunning() const {
+#if !defined(DISABLE_PTHREADS)
   return timer_.IsRunning();
+#else
+  return false;
+#endif // DISABLE_PTHREADS
 }
 
 // Smoothed throbber ---------------------------------------------------------
@@ -101,6 +108,7 @@ SmoothedThrobber::SmoothedThrobber()
 SmoothedThrobber::~SmoothedThrobber() = default;
 
 void SmoothedThrobber::Start() {
+#if !defined(DISABLE_PTHREADS)
   stop_timer_.Stop();
 
   if (!IsRunning() && !start_timer_.IsRunning()) {
@@ -108,6 +116,7 @@ void SmoothedThrobber::Start() {
                        base::TimeDelta::FromMilliseconds(start_delay_ms_), this,
                        &SmoothedThrobber::StartDelayOver);
   }
+#endif // DISABLE_PTHREADS
 }
 
 void SmoothedThrobber::StartDelayOver() {
@@ -115,6 +124,7 @@ void SmoothedThrobber::StartDelayOver() {
 }
 
 void SmoothedThrobber::Stop() {
+#if !defined(DISABLE_PTHREADS)
   if (!IsRunning())
     start_timer_.Stop();
 
@@ -122,6 +132,7 @@ void SmoothedThrobber::Stop() {
   stop_timer_.Start(FROM_HERE,
                     base::TimeDelta::FromMilliseconds(stop_delay_ms_), this,
                     &SmoothedThrobber::StopDelayOver);
+#endif // DISABLE_PTHREADS
 }
 
 void SmoothedThrobber::StopDelayOver() {

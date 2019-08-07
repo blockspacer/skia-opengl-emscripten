@@ -332,18 +332,22 @@ class MenuController::MenuScrollTask {
     submenu_ = new_menu;
     is_scrolling_up_ = new_is_up;
 
+#if !defined(DISABLE_PTHREADS)
     if (!scrolling_timer_.IsRunning()) {
       scrolling_timer_.Start(FROM_HERE,
                              TimeDelta::FromMilliseconds(kScrollTimerMS), this,
                              &MenuScrollTask::Run);
     }
+#endif // DISABLE_PTHREADS
   }
 
   void StopScrolling() {
+#if !defined(DISABLE_PTHREADS)
     if (scrolling_timer_.IsRunning()) {
       scrolling_timer_.Stop();
       submenu_ = nullptr;
     }
+#endif // DISABLE_PTHREADS
   }
 
   // The menu being scrolled. Returns null if not scrolling.
@@ -369,8 +373,10 @@ class MenuController::MenuScrollTask {
   // Direction scrolling.
   bool is_scrolling_up_ = false;
 
+#if !defined(DISABLE_PTHREADS)
   // Timer to periodically scroll.
   base::RepeatingTimer scrolling_timer_;
+#endif // DISABLE_PTHREADS
 
   // Time we started scrolling at.
   base::Time start_scroll_time_;
@@ -1241,7 +1247,11 @@ void MenuController::OnWidgetDestroying(Widget* widget) {
 }
 
 bool MenuController::IsCancelAllTimerRunningForTest() {
+#if !defined(DISABLE_PTHREADS)
   return cancel_all_timer_.IsRunning();
+#else
+  return false;
+#endif // DISABLE_PTHREADS
 }
 
 void MenuController::ClearStateForTest() {
@@ -2140,24 +2150,32 @@ void MenuController::BuildMenuItemPath(MenuItemView* item,
 }
 
 void MenuController::StartShowTimer() {
+#if !defined(DISABLE_PTHREADS)
   show_timer_.Start(
       FROM_HERE, TimeDelta::FromMilliseconds(MenuConfig::instance().show_delay),
       this, &MenuController::CommitPendingSelection);
+#endif // DISABLE_PTHREADS
 }
 
 void MenuController::StopShowTimer() {
+#if !defined(DISABLE_PTHREADS)
   show_timer_.Stop();
+#endif // DISABLE_PTHREADS
 }
 
 void MenuController::StartCancelAllTimer() {
+#if !defined(DISABLE_PTHREADS)
   cancel_all_timer_.Start(
       FROM_HERE, TimeDelta::FromMilliseconds(kCloseOnExitTime),
       base::BindOnce(&MenuController::Cancel, base::Unretained(this),
                      ExitType::kAll));
+#endif // DISABLE_PTHREADS
 }
 
 void MenuController::StopCancelAllTimer() {
+#if !defined(DISABLE_PTHREADS)
   cancel_all_timer_.Stop();
+#endif // DISABLE_PTHREADS
 }
 
 gfx::Rect MenuController::CalculateMenuBounds(MenuItemView* item,

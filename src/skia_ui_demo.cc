@@ -268,6 +268,8 @@ class ContainerView : public views::View {
   }
 
   void addChildren(views::GridLayout* layout) {
+    DCHECK(layout);
+
     const gfx::FontList& font_list = GetTextFontList();
 
     title_ = new views::Label();
@@ -480,6 +482,8 @@ static gfx::PlatformFont* customPlatformFont = nullptr;
 // FontList for the texts except for the header.
 static gfx::FontList GetTextFontList() {
   DCHECK(default_font);
+  DCHECK(default_font->platform_font());
+  DCHECK(default_font->platform_font()->GetFontSize());
   const int size_delta = 0; // size in pixels to add
   gfx::Font font = default_font->Derive(size_delta, gfx::Font::NORMAL,
                                        gfx::Font::Weight::NORMAL);
@@ -688,7 +692,10 @@ static const float FONT_SIZE_F = 22.0f;
 //static sk_sp<SkTypeface> sktp;
 static sk_sp<SkTypeface> sktpForUI;
 static bool sktpForUICreated = false;
-static const char* fontPath = "./resources/fonts/FreeSans.ttf";
+
+//static const char* fontPath = "./resources/fonts/Ubuntu-Regular.ttf";
+//static const char* fontPath = "./resources/fonts/FreeSans.ttf";
+static const char* fontPath = "./resources/fonts/arialuni.ttf";
 
 #if defined(ENABLE_CUSTOM_FONTS) && defined(ENABLE_HARFBUZZ)
 /// \note see SkShaper_harfbuzz.cpp if you want shaping in rectangle
@@ -782,6 +789,8 @@ void SkiaUiDemo::prepareUIFonts() {
 
   // SkFont font;//(nullptr, 24);//SkFont::kA8_MaskType, flags);
   if(!sktpForUI) {
+    printf("creating sktpForUI\n");
+
     DCHECK(!sktpForUICreated);
     sktpForUICreated = true;
 
@@ -805,6 +814,7 @@ void SkiaUiDemo::prepareUIFonts() {
                                        destroy);
       assert(blob);
       hb_blob_make_immutable(blob);
+      // TODO: free mem
       hb_face_t* face = hb_face_create(blob, static_cast<unsigned>(index));
       hb_blob_destroy(blob);
       //assert(face);
@@ -846,9 +856,10 @@ public:
   SkScalar m_size = 200;
 
   void onDraw(SkCanvas* sk_canvas) {
+    DCHECK(sk_canvas);
+
     if (isDebugPeriodReached()) printf("onDraw() 1\n");
 
-    DCHECK(sk_canvas);
     if(!sk_canvas) return;
 
     // TODO: needs SKIA_GR_CONTEXT
@@ -963,9 +974,9 @@ public:
 
         auto WriteLine = [&skFont1ForUI,
           &current_x, &current_y, &line_spacing_ratio,
-          &font_size, &glyph_paint, &sk_canvas](const char *text) {
+          &font_size, &glyph_paint, &sk_canvas](const char* text) {
             /* Create hb-buffer and populate. */
-            hb_buffer_t *hb_buffer = hb_buffer_create();
+            hb_buffer_t* hb_buffer = hb_buffer_create();
 
             hb_buffer_set_direction(hb_buffer, HB_DIRECTION_LTR);
 #ifdef HARFBUZZ_UNICODE
@@ -993,7 +1004,7 @@ public:
             DrawGlyphs(current_x, current_y, glyph_paint,
                        skFont1ForUI, sk_canvas, hb_buffer);
 
-            hb_buffer_destroy (hb_buffer);
+            hb_buffer_destroy(hb_buffer);
 
             // Advance to the next line.
             current_y += line_spacing_ratio * font_size;
@@ -1323,38 +1334,60 @@ public:
 
 #if defined(ENABLE_CUSTOM_FONTS) && defined(ENABLE_HARFBUZZ)
     {
+      //gfx::RenderText::CreateHarfBuzzInstance();
       // https://github.com/chromium/chromium/blob/422f901782f0a5f274a6065fbff3983279ef3c0b/chrome/browser/vr/elements/text.cc#L424
       ::std::unique_ptr<gfx::RenderText> render_text_ptr = gfx::RenderText::CreateHarfBuzzInstance();
       //auto render_text_ptr = std::make_unique<gfx::RenderTextHarfBuzz>();
       gfx::RenderText* render_text = render_text_ptr.get();
-      render_text->SetDisplayRect(gfx::Rect(0, 0, 9999, 100));
+      render_text->SetDisplayRect(gfx::Rect(0, 0, 500, 500));
+      render_text->SetHorizontalAlignment(gfx::ALIGN_TO_HEAD);
+      render_text->SetColor(SK_ColorBLACK);
+      render_text->SetMultiline(true);
+      render_text->SetStyle(gfx::TEXT_STYLE_UNDERLINE, true);
+      //render_text->SetBorder(views::CreateSolidBorder(2, SK_ColorGRAY));
       //WTF::String render_test_string = String::FromUTF8("some very long text here r\xC3\xA9sum\xC3\xA9");
       //render_text->SetText(render_test_string.Characters16());
       gfx::FontRenderParams fontRenderParams;
-      fontRenderParams.antialiasing = true;
+      //fontRenderParams.antialiasing = false;
+      //fontRenderParams.use_bitmaps = true;
       DCHECK(sktpForUI);
       // TODO: free mem
       if(!customPlatformFont) {
+        printf("creating customPlatformFont\n");
+
+        /*CHECK(sktpForUICreated) << "sktpForUICreated required";
+        CHECK(sktpForUI) << "sktpForUI required";
+        //prepareUIFonts(); // see DCHECK(sktpForUI);
+        SkFont skFont3ForUI(sktpForUI, FONT_SIZE_F, 1.0f, 0.0f);
+        skFont3ForUI.setEdging(SkFont::Edging::kAntiAlias);
+        DCHECK(sktpForUI);
+        DCHECK(skFont3ForUI.getTypeface());*/
+
+        //gfx::PlatformFontSkia::InitFromDetails
+
         customPlatformFont = new gfx::PlatformFontSkia(
           sktpForUI, /*family*/ "Arial", /*size_pixels*/ 22,
           /*style*/ gfx::Font::NORMAL,
           /*weight*/ gfx::Font::Weight::NORMAL,
           /*params*/ fontRenderParams);
-        if(!default_font) {
-          // TODO: free mem
-          default_font = new gfx::Font(customPlatformFont);
-        }
       }
 
-      gfx::Font defaultFont(customPlatformFont);
-      //defaultFont = gfx::Font("Arial", 10);
-      gfx::FontList font_list(defaultFont);
+      if(!default_font) {
+        printf("creating default_font\n");
+        // TODO: free mem
+        DCHECK(customPlatformFont);
+        default_font = new gfx::Font(customPlatformFont);
+      }
 
-      //const gfx::FontList& font_list = GetTextFontList();
+      //gfx::Font defaultFont(customPlatformFont);
+      //defaultFont = gfx::Font("Arial", 10);
+      //gfx::FontList font_list(defaultFont);
+
+      const gfx::FontList& font_list = GetTextFontList();
       render_text->SetText(base::UTF8ToUTF16("x render_text x render_text x"));
       render_text->SetFontList(font_list);
       render_text->SetColor(
-        blink::Color(0.0f, 1.0f, 0.0f, 0.5f).Rgb());
+        blink::Color(0.0f, 1.0f, 0.5f, 0.5f).Rgb());
       render_text->SetElideBehavior(gfx::ELIDE_TAIL);
       render_text->set_selection_background_focused_color(
           SkColorSetARGB(150, 0, 188, 112));
@@ -1380,6 +1413,12 @@ public:
 //#if 0
       render_text->Draw(&gfx_canvas); // calls DrawSelection if focused
 //#endif // 0
+
+      gfx_canvas.DrawStringRect(
+        base::UTF8ToUTF16("1 DrawStringRect ☎,☎,☎👶🏻 or 👩🏼‍🎨 🔍 💥 \uf08a ⚡💨 :) DrawStringRect 3"),
+        font_list,
+        SkColorSetARGB(150, 0, 188, 112),
+        gfx::Rect(500, 200, 500, 500));
     }
 
     // TODO: textfield
@@ -1417,6 +1456,7 @@ public:
   //ui::ResourceBundle::InitSharedInstance(&delegate);
   // see https://github.com/blockspacer/skia-opengl-emscripten/blob/main/src/chromium/services/service_manager/embedder/main.cc#L205
   if(!ui::ResourceBundle::HasSharedInstance()) {
+    printf("creating ui::ResourceBundle\n");
     ui::ResourceBundle::InitSharedInstanceWithLocale(
         "en-US", NULL, ui::ResourceBundle::LOAD_COMMON_RESOURCES);
   }
@@ -1427,6 +1467,7 @@ public:
   }*/
 
   if(!container_) {
+    printf("creating container\n");
     container_ = new ContainerView();
     // see https://github.com/blockspacer/skia-opengl-emscripten/blob/master/src/chromium/ui/views/examples/textfield_example.cc
     auto layout_manager = std::make_unique<views::GridLayout>(container_);
@@ -1442,6 +1483,7 @@ public:
   }
 
   if(!widget_) {
+    printf("creating widget\n");
     widget_ = new views::Widget;
     views::Widget::InitParams params(
       views::Widget::InitParams::TYPE_POPUP/*TYPE_WINDOW_FRAMELESS*/);
@@ -1475,8 +1517,9 @@ public:
         blink::Color(0.9f, 0.0f, 0.0f, 0.5f).Rgb()));
   container_->SetBorder(views::CreateSolidBorder(2, SK_ColorBLUE));
   const gfx::Insets child_margins(1, 1);
-  container_->SetProperty(views::kMarginsKey,
-    new gfx::Insets(child_margins));
+  // TODO: free mem?
+  //container_->SetProperty(views::kMarginsKey,
+  //  new gfx::Insets(child_margins));
 
   //cc::layer_tree_host()
 
@@ -1621,6 +1664,7 @@ public:
 #endif // 0
 
   if(!test_label) {
+    printf("creating test_label\n");
     const gfx::FontList gfxFontList = GetTextFontList();
     views::Label::CustomFont labelCustomFont{gfxFontList};
     test_label = new TestLabel(base::UTF8ToUTF16("test_label ! test_label ! test_label !"),
@@ -1806,7 +1850,10 @@ void SkiaUiDemo::initUISkiaSurface(int /*w*/, int /*h*/) {
         printf("Initializing skia view...\n");
 
 #ifdef ENABLE_SKIA
-        myView = new SkPainter(SK_ColorRED, 200);
+        if(!myView) {
+          printf("creating myView\n");
+          myView = new SkPainter(SK_ColorRED, 200);
+        }
 #endif // ENABLE_SKIA
 
 #ifdef ENABLE_SKOTTIE
@@ -1938,8 +1985,8 @@ void SkiaUiDemo::loadUIAssets() {
           );
       //SkBitmap::Config config = SkImageInfoToBitmapConfig(info, &isOpaque);
       //SkBitmap fetched_bitmap;
-      void* pixels = nullptr;
-      char* fileData = nullptr;
+      void* pixels = nullptr; // TODO: free mem
+      char* fileData = nullptr; // TODO: free mem
       long int fsize;
       //size_t fsize;
       int readRes = read_file(fImagePath.c_str(), fileData, fsize, true);

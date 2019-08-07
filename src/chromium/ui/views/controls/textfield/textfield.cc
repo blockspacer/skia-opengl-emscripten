@@ -2380,12 +2380,14 @@ void Textfield::RevealPasswordChar(int index, base::TimeDelta duration) {
   SchedulePaint();
   password_char_reveal_index_ = index;
 
+#if !defined(DISABLE_PTHREADS)
   if (index != -1) {
     password_reveal_timer_.Start(
         FROM_HERE, duration,
         base::BindOnce(&Textfield::RevealPasswordChar,
                        weak_ptr_factory_.GetWeakPtr(), -1, duration));
   }
+#endif // DISABLE_PTHREADS
 }
 
 void Textfield::CreateTouchSelectionControllerAndNotifyIt() {
@@ -2415,12 +2417,16 @@ bool Textfield::ShouldBlinkCursor() const {
 
 void Textfield::StartBlinkingCursor() {
   DCHECK(ShouldBlinkCursor());
+#if !defined(DISABLE_PTHREADS)
   cursor_blink_timer_.Start(FROM_HERE, Textfield::GetCaretBlinkInterval(), this,
                             &Textfield::OnCursorBlinkTimerFired);
+#endif // DISABLE_PTHREADS
 }
 
 void Textfield::StopBlinkingCursor() {
+#if !defined(DISABLE_PTHREADS)
   cursor_blink_timer_.Stop();
+#endif // DISABLE_PTHREADS
 }
 
 void Textfield::OnCursorBlinkTimerFired() {

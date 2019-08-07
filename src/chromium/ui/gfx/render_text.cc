@@ -211,6 +211,7 @@ void SkiaTextRenderer::SetFontRenderParams(const FontRenderParams& params,
 }
 
 void SkiaTextRenderer::SetTypeface(sk_sp<SkTypeface> typeface) {
+  DCHECK(typeface);
   font_.setTypeface(std::move(typeface));
 }
 
@@ -811,6 +812,8 @@ void RenderText::Draw(Canvas* canvas) {
     canvas->Save();
     canvas->ClipRect(clip_rect);
   }
+
+  //DCHECK(!text().empty() && focused());
 
   if (!text().empty() && focused())
     DrawSelection(canvas);

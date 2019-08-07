@@ -90,7 +90,9 @@ class VIEWS_EXPORT SelectionController {
   // A timer and point used to modify the selection when dragging. The
   // |first_drag_location_| field is used to store where the drag-to-select
   // started.
+#if !defined(DISABLE_PTHREADS)
   base::RepeatingTimer drag_selection_timer_;
+#endif // DISABLE_PTHREADS
   gfx::Point last_drag_location_;
   gfx::Point first_drag_location_;
 

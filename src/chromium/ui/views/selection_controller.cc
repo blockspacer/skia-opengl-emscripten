@@ -111,16 +111,23 @@ bool SelectionController::OnMouseDragged(const ui::MouseEvent& event) {
   const int width = delegate_->GetViewWidth();
   const int drag_selection_delay = delegate_->GetDragSelectionDelay();
   if ((x >= 0 && x <= width) || drag_selection_delay == 0) {
+#if !defined(DISABLE_PTHREADS)
     drag_selection_timer_.Stop();
+#endif // DISABLE_PTHREADS
     SelectThroughLastDragLocation();
-  } else if (!drag_selection_timer_.IsRunning()) {
+  } else
+#if !defined(DISABLE_PTHREADS)
+    if (!drag_selection_timer_.IsRunning())
+#endif // DISABLE_PTHREADS
+    {
     // Select through the edge of the visible text, then start the scroll timer.
     last_drag_location_.set_x(std::min(std::max(0, x), width));
     SelectThroughLastDragLocation();
-
+#if !defined(DISABLE_PTHREADS)
     drag_selection_timer_.Start(
         FROM_HERE, base::TimeDelta::FromMilliseconds(drag_selection_delay),
         this, &SelectionController::SelectThroughLastDragLocation);
+#endif // DISABLE_PTHREADS
   }
 
   return true;
@@ -130,7 +137,9 @@ void SelectionController::OnMouseReleased(const ui::MouseEvent& event) {
   gfx::RenderText* render_text = GetRenderText();
   DCHECK(render_text);
 
+#if !defined(DISABLE_PTHREADS)
   drag_selection_timer_.Stop();
+#endif // DISABLE_PTHREADS
 
   // Cancel suspected drag initiations, the user was clicking in the selection.
   if (delegate_->HasTextBeingDragged()) {
@@ -151,7 +160,9 @@ void SelectionController::OnMouseCaptureLost() {
   gfx::RenderText* render_text = GetRenderText();
   DCHECK(render_text);
 
+#if !defined(DISABLE_PTHREADS)
   drag_selection_timer_.Stop();
+#endif // DISABLE_PTHREADS
 
   if (handles_selection_clipboard_ && !render_text->selection().is_empty())
     delegate_->UpdateSelectionClipboard();

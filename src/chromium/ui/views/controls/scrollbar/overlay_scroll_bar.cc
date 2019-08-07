@@ -175,7 +175,9 @@ void OverlayScrollBar::OnMouseExited(const ui::MouseEvent& event) {
 
 void OverlayScrollBar::Show() {
   layer()->SetOpacity(1.0f);
+#if !defined(DISABLE_PTHREADS)
   hide_timer_.Stop();
+#endif // DISABLE_PTHREADS
 }
 
 void OverlayScrollBar::Hide() {
@@ -187,9 +189,11 @@ void OverlayScrollBar::Hide() {
 void OverlayScrollBar::StartHideCountdown() {
   if (IsMouseHovered())
     return;
+#if !defined(DISABLE_PTHREADS)
   hide_timer_.Start(
       FROM_HERE, ui::kOverlayScrollbarFadeDelay,
       base::BindOnce(&OverlayScrollBar::Hide, base::Unretained(this)));
+#endif // DISABLE_PTHREADS
 }
 
 }  // namespace views

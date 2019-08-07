@@ -611,8 +611,10 @@ class VIEWS_EXPORT Textfield : public View,
   // The input flags of this text field.
   int text_input_flags_ = 0;
 
+#if !defined(DISABLE_PTHREADS)
   // The timer to reveal the last typed password character.
   base::OneShotTimer password_reveal_timer_;
+#endif // DISABLE_PTHREADS
 
   // Tracks whether a user action is being performed which may change the
   // textfield; i.e. OnBeforeUserAction() has been called, but
@@ -622,8 +624,10 @@ class VIEWS_EXPORT Textfield : public View,
   // True if InputMethod::CancelComposition() should not be called.
   bool skip_input_method_cancel_composition_ = false;
 
+#if !defined(DISABLE_PTHREADS)
   // Insertion cursor repaint timer and visibility.
   base::RepeatingTimer cursor_blink_timer_;
+#endif // DISABLE_PTHREADS
 
   // The drop cursor is a visual cue for where dragged text will be dropped.
   bool drop_cursor_visible_ = false;

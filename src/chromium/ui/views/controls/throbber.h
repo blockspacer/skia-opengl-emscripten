@@ -39,7 +39,9 @@ class VIEWS_EXPORT Throbber : public View {
 
  private:
   base::TimeTicks start_time_;  // Time when Start was called.
+#if !defined(DISABLE_PTHREADS)
   base::RepeatingTimer timer_;  // Used to schedule Run calls.
+#endif // DISABLE_PTHREADS
 
   // Whether or not we should display a checkmark.
   bool checked_ = false;
@@ -77,8 +79,10 @@ class VIEWS_EXPORT SmoothedThrobber : public Throbber {
   // Delay after work stops before stopping, in milliseconds.
   int stop_delay_ms_;
 
+#if !defined(DISABLE_PTHREADS)
   base::OneShotTimer start_timer_;
   base::OneShotTimer stop_timer_;
+#endif // DISABLE_PTHREADS
 
   DISALLOW_COPY_AND_ASSIGN(SmoothedThrobber);
 };

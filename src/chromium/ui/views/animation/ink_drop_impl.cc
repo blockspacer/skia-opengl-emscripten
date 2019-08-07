@@ -6,7 +6,9 @@
 
 #include "base/auto_reset.h"
 #include "base/bind.h"
+#if !defined(DISABLE_PTHREADS)
 #include "base/timer/timer.h"
+#endif // DISABLE_PTHREADS
 #include "ui/compositor/layer.h"
 #include "ui/views/animation/ink_drop_highlight.h"
 #include "ui/views/animation/ink_drop_host_view.h"
@@ -285,9 +287,11 @@ class InkDropImpl::HideHighlightOnRippleHiddenState
   // a visible state if the ink drop should be highlighted.
   void HighlightAfterRippleTimerFired();
 
+#if !defined(DISABLE_PTHREADS)
   // The timer used to delay the highlight fade in after an ink drop ripple
   // animation.
   std::unique_ptr<base::OneShotTimer> highlight_after_ripple_timer_;
+#endif // DISABLE_PTHREADS
 
   DISALLOW_COPY_AND_ASSIGN(HideHighlightOnRippleHiddenState);
 };
@@ -316,8 +320,11 @@ InkDropImpl::HideHighlightOnRippleHiddenState::HideHighlightOnRippleHiddenState(
     bool explode)
     : InkDropImpl::NoAutoHighlightHiddenState(state_factory,
                                               animation_duration,
-                                              explode),
-      highlight_after_ripple_timer_(nullptr) {}
+                                              explode)
+#if !defined(DISABLE_PTHREADS)
+    , highlight_after_ripple_timer_(nullptr)
+#endif // DISABLE_PTHREADS
+    {}
 
 void InkDropImpl::HideHighlightOnRippleHiddenState::ShowOnHoverChanged() {
   if (GetInkDrop()->GetTargetInkDropState() != InkDropState::HIDDEN)
@@ -380,6 +387,7 @@ void InkDropImpl::HideHighlightOnRippleHiddenState::AnimationEnded(
 
 void InkDropImpl::HideHighlightOnRippleHiddenState::
     StartHighlightAfterRippleTimer() {
+#if !defined(DISABLE_PTHREADS)
   highlight_after_ripple_timer_ = std::make_unique<base::OneShotTimer>();
   highlight_after_ripple_timer_->Start(
       FROM_HERE,
@@ -387,11 +395,14 @@ void InkDropImpl::HideHighlightOnRippleHiddenState::
       base::BindOnce(&InkDropImpl::HideHighlightOnRippleHiddenState::
                          HighlightAfterRippleTimerFired,
                      base::Unretained(this)));
+#endif // DISABLE_PTHREADS
 }
 
 void InkDropImpl::HideHighlightOnRippleHiddenState::
     HighlightAfterRippleTimerFired() {
+#if !defined(DISABLE_PTHREADS)
   highlight_after_ripple_timer_.reset();
+#endif // DISABLE_PTHREADS
   if (GetInkDrop()->GetTargetInkDropState() == InkDropState::HIDDEN &&
       GetInkDrop()->ShouldHighlight()) {
     GetInkDrop()->SetHighlightState(state_factory()->CreateVisibleState(

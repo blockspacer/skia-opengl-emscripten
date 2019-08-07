@@ -668,8 +668,16 @@ sk_sp<SkTypeface> CreateSkiaTypeface(const Font& font,
   SkFontStyle skia_style(
       static_cast<int>(weight), SkFontStyle::kNormal_Width,
       italic ? SkFontStyle::kItalic_Slant : SkFontStyle::kUpright_Slant);
-  return sk_sp<SkTypeface>(SkTypeface::MakeFromName(
-      font.GetFontName().c_str(), skia_style));
+  // TODO
+  /*return sk_sp<SkTypeface>(SkTypeface::MakeFromName(
+      font.GetFontName().c_str(), skia_style));*/
+  sk_sp<SkData> data = SkData::MakeFromFileName("./resources/fonts/arialuni.ttf");
+  if (!data) {
+    printf("failed SkData::MakeFromMalloc for font in render_text_harfbuzz.cc\n");
+    NOTREACHED();
+  }
+  const int index = 0;
+  return SkTypeface::MakeFromData(data, index);
 }
 #endif
 
@@ -743,8 +751,10 @@ bool TextRunHarfBuzz::FontParams::SetFontAndRenderParams(
     const FontRenderParams& new_render_params) {
   sk_sp<SkTypeface> new_skia_face(
       internal::CreateSkiaTypeface(new_font, italic, weight));
-  if (!new_skia_face)
+  if (!new_skia_face) {
+    DCHECK(false);
     return false;
+  }
 
   skia_face = new_skia_face;
   font = new_font;
@@ -1568,6 +1578,8 @@ void RenderTextHarfBuzz::DrawVisualText(internal::SkiaTextRenderer* renderer) {
   DCHECK(!update_layout_run_list_);
   DCHECK(!update_display_run_list_);
   DCHECK(!update_display_text_);
+
+  DCHECK(!lines().empty());
   if (lines().empty())
     return;
 
@@ -1586,6 +1598,10 @@ void RenderTextHarfBuzz::DrawVisualText(internal::SkiaTextRenderer* renderer) {
         continue;
 
       const internal::TextRunHarfBuzz& run = *run_list->runs()[segment.run];
+
+      DCHECK(run.font_params.skia_face);
+      DCHECK(run.font_params.font_size > 0);
+
       renderer->SetTypeface(run.font_params.skia_face);
       renderer->SetTextSize(SkIntToScalar(run.font_params.font_size));
       renderer->SetFontRenderParams(run.font_params.render_params,

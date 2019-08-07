@@ -180,6 +180,13 @@
 #include "third_party/boringssl/src/crypto/internal.h"
 #endif // ENABLE_BORINGSSL
 
+#if defined(__EMSCRIPTEN__)
+#include <emscripten.h>
+#include <emscripten/html5.h>
+#include <emscripten/key_codes.h>
+#include <emscripten/threading.h>
+#endif // EMSCRIPTEN
+
 /// \note place before glext.h
 /// \note defined by CMAKE
 // #define GL_GLEXT_PROTOTYPES

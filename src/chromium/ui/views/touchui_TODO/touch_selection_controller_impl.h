@@ -124,10 +124,12 @@ class VIEWS_EXPORT TouchSelectionControllerImpl
   bool command_executed_ = false;
   base::TimeTicks selection_start_time_;
 
+#if !defined(DISABLE_PTHREADS)
   // Timer to trigger quick menu (Quick menu is not shown if the selection
   // handles are being updated. It appears only when the handles are stationary
   // for a certain amount of time).
   base::OneShotTimer quick_menu_timer_;
+#endif // DISABLE_PTHREADS
 
   // Pointer to the SelectionHandleView being dragged during a drag session.
   EditingHandleView* dragging_handle_ = nullptr;

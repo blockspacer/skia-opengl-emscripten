@@ -4,7 +4,9 @@
 
 #include "ui/views/bubble/tooltip_icon.h"
 
+#if !defined(DISABLE_PTHREADS)
 #include "base/timer/timer.h"
+#endif // DISABLE_PTHREADS
 #include "components/vector_icons/vector_icons.h"
 #if !defined(UI_VIEWS_NO_AX)
 #include "ui/accessibility/ax_node_data.h"
@@ -36,12 +38,16 @@ const char* TooltipIcon::GetClassName() const {
 
 void TooltipIcon::OnMouseEntered(const ui::MouseEvent& event) {
   mouse_inside_ = true;
+#if !defined(DISABLE_PTHREADS)
   show_timer_.Start(FROM_HERE, base::TimeDelta::FromMilliseconds(150), this,
                     &TooltipIcon::ShowBubble);
+#endif // DISABLE_PTHREADS
 }
 
 void TooltipIcon::OnMouseExited(const ui::MouseEvent& event) {
+#if !defined(DISABLE_PTHREADS)
   show_timer_.Stop();
+#endif // DISABLE_PTHREADS
 }
 
 bool TooltipIcon::OnMousePressed(const ui::MouseEvent& event) {

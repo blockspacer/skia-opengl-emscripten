@@ -87,8 +87,10 @@ class VIEWS_EXPORT TooltipIcon : public ImageView,
   // The width the tooltip prefers to be. Default is 0 (no preference).
   int preferred_width_;
 
+#if !defined(DISABLE_PTHREADS)
   // A timer to delay showing |bubble_|.
   base::OneShotTimer show_timer_;
+#endif // DISABLE_PTHREADS
 
   // A watcher that keeps |bubble_| open if the user's mouse enters it.
   std::unique_ptr<MouseWatcher> mouse_watcher_;

@@ -63,7 +63,7 @@
 // __EMSCRIPTEN_PTHREADS__ can be used to detect whether Emscripten is currently targeting pthreads.
 // At runtime, you can use the emscripten_has_threading_support()
 // see https://emscripten.org/docs/porting/pthreads.html
-#if defined(__EMSCRIPTEN__) && defined(__EMSCRIPTEN_PTHREADS__)
+#if defined(__EMSCRIPTEN__) //&& defined(__EMSCRIPTEN_PTHREADS__)
 #include <emscripten/threading.h>
 #endif // __EMSCRIPTEN__
 

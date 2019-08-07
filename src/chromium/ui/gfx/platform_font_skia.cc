@@ -61,13 +61,26 @@ sk_sp<SkTypeface> CreateSkTypeface(bool italic,
   {
     TRACE_EVENT1(TRACE_DISABLED_BY_DEFAULT("fonts"), "SkTypeface::MakeFromName",
                  "family", *family);
-    typeface = SkTypeface::MakeFromName(family->c_str(), sk_style);
+    // TODO
+    //typeface = SkTypeface::MakeFromName(family->c_str(), sk_style);
+    sk_sp<SkData> data = SkData::MakeFromFileName("./resources/fonts/arialuni.ttf");
+    if (!data) {
+      printf("failed SkData::MakeFromMalloc for font in render_text_harfbuzz.cc\n");
+      NOTREACHED();
+    }
+    const int index = 0;
+    typeface = SkTypeface::MakeFromData(data, index);
   }
+
+  // TODO
+  DCHECK(typeface);
+
   if (!typeface) {
     TRACE_EVENT1(TRACE_DISABLED_BY_DEFAULT("fonts"), "SkTypeface::MakeFromName",
                  "family", kFallbackFontFamilyName);
     // A non-scalable font such as .pcf is specified. Fall back to a default
     // scalable font.
+    // TODO
     typeface = sk_sp<SkTypeface>(
         SkTypeface::MakeFromName(kFallbackFontFamilyName, sk_style));
     if (!typeface) {
@@ -172,10 +185,14 @@ Font PlatformFontSkia::DeriveFont(int size_delta,
   // If the style changed, we may need to load a new face.
   std::string new_family = font_family_;
   bool success = true;
+
+  DCHECK(typeface_); // TODO
+
   sk_sp<SkTypeface> typeface =
       (weight == weight_ && style == style_)
           ? typeface_
           : CreateSkTypeface(style, weight, &new_family, &success);
+  DCHECK(typeface);
   if (!success) {
     LOG(ERROR) << "Could not find any font: " << new_family << ", "
                << kFallbackFontFamilyName << ". Falling back to the default";
@@ -226,6 +243,7 @@ const std::string& PlatformFontSkia::GetFontName() const {
 
 std::string PlatformFontSkia::GetActualFontNameForTesting() const {
   SkString family_name;
+  DCHECK(typeface_);
   typeface_->getFamilyName(&family_name);
   return family_name.c_str();
 }
@@ -273,13 +291,12 @@ void PlatformFontSkia::InitFromDetails(sk_sp<SkTypeface> typeface,
                                        const FontRenderParams& render_params) {
   TRACE_EVENT0("fonts", "PlatformFontSkia::InitFromDetails");
   DCHECK_GT(font_size_pixels, 0);
-
   font_family_ = font_family;
   bool success = true;
   typeface_ = typeface ? std::move(typeface)
                        : CreateSkTypeface(style & Font::ITALIC, weight,
                                           &font_family_, &success);
-
+  DCHECK(typeface_);
   if (!success) {
     LOG(ERROR) << "Could not find any font: " << font_family << ", "
                << kFallbackFontFamilyName << ". Falling back to the default";
@@ -298,6 +315,7 @@ void PlatformFontSkia::InitFromDetails(sk_sp<SkTypeface> typeface,
 void PlatformFontSkia::InitFromPlatformFont(const PlatformFontSkia* other) {
   TRACE_EVENT0("fonts", "PlatformFontSkia::InitFromPlatformFont");
   typeface_ = other->typeface_;
+  DCHECK(typeface_);
   font_family_ = other->font_family_;
   font_size_pixels_ = other->font_size_pixels_;
   style_ = other->style_;
@@ -320,6 +338,7 @@ void PlatformFontSkia::ComputeMetricsIfNecessary() {
 
     metrics_need_computation_ = false;
 
+    DCHECK(typeface_);
     SkFont font(typeface_, font_size_pixels_);
     font.setEdging(SkFont::Edging::kAlias);
     font.setEmbolden(weight_ >= Font::Weight::BOLD && !typeface_->isBold());

@@ -474,9 +474,10 @@ Boost.SML
 ===
 lscpu:i7-4790@3.60GHz -j6
 ===
-Release build size (stripped unused code, ENABLE_BLINK=FALSE)
+Release build size
 WASM MT: 1.5MiB
 WASM MT GZIP: 540Kib (gzip --best --keep --force --suffix=.gz build-wasm-mt-rel/skemgl.wasm)
+-DENABLE_BLINK=FALSE;
 -DENABLE_COBALT=FALSE;
 -DENABLE_LIBWEBP=FALSE;
 -DUSE_ICU=FALSE;
@@ -491,9 +492,10 @@ NOTE:
 UBUNTU WITH SK_GPU=TRUE: (rebuild time 179s.=~3m.): 5.7MiB
 UBUNTU WITH SK_GPU=FALSE: (rebuild time 96s.=~2m.): 3.0MiB
 ===
-Release build size (stripped unused code, ENABLE_BLINK=FALSE)
+Release build size
 WASM MT: 1.5MiB
 UBUNTU: (rebuild time 255s.=~5m.): 3.0MiB
+-DENABLE_BLINK=FALSE;
 -DENABLE_COBALT=FALSE;
 -DENABLE_LIBWEBP=FALSE;
 -DUSE_ICU=TRUE;
@@ -505,9 +507,10 @@ UBUNTU: (rebuild time 255s.=~5m.): 3.0MiB
 -DENABLE_SKIA_UTILS=FALSE;
 -DFORCE_DISABLE_SK_GPU=TRUE;
 ===
-Release build size (stripped unused code, ENABLE_BLINK=FALSE)
+Release build size
 WASM MT: 4.8MiB (~30fps)
 UBUNTU: (rebuild time 474s.=~8m.): 13MiB
+-DENABLE_BLINK=FALSE;
 -DENABLE_COBALT=TRUE;
 -DENABLE_LIBWEBP=FALSE;
 -DUSE_ICU=TRUE;
@@ -519,10 +522,11 @@ UBUNTU: (rebuild time 474s.=~8m.): 13MiB
 -DENABLE_SKIA_UTILS=FALSE;
 -DFORCE_DISABLE_SK_GPU=TRUE;
 ===
-Release build size (stripped unused code, ENABLE_BLINK=FALSE)
+Release build size
 WASM MT: 5.2MiB (~30fps)
 WASM MT GZIP: 1.6MiB (gzip --best --keep --force --suffix=.gz build-wasm-mt-rel/skemgl.wasm)
 UBUNTU: (rebuild time 457s.=~8m.): 13.4MiB
+-DENABLE_BLINK=FALSE;
 -DENABLE_COBALT=TRUE;
 -DENABLE_LIBWEBP=FALSE;
 -DUSE_ICU=TRUE;
@@ -533,6 +537,23 @@ UBUNTU: (rebuild time 457s.=~8m.): 13.4MiB
 -DENABLE_SKOTTIE=TRUE;
 -DENABLE_SKIA_UTILS=TRUE;
 -DFORCE_DISABLE_SK_GPU=TRUE;
+===
+Release build size
+WASM MT: 5.2MiB
+-DENABLE_BLINK=TRUE
+-DENABLE_COBALT=FALSE
+-DENABLE_BLINK_UI_VIEWS=FALSE
+-DENABLE_BLINK_UI_NATIVE_THEME=FALSE
+===
+Release build size (stripped unused code, ENABLE_BLINK=TRUE)
+WASM MT: 6.0MiB
+-DENABLE_BLINK=TRUE
+-DENABLE_COBALT=FALSE
+-DENABLE_BLINK_UI_VIEWS=TRUE
+-DENABLE_BLINK_UI_NATIVE_THEME=TRUE
+===
+Release build size
+WASM ST: 6.7MiB
 
 NOTE: (~2MiB UNIX || 0.1MiB WASM) = UCONFIG_NO_COLLATION, UCONFIG_ONLY_HTML_CONVERSION, UCONFIG_NO_IDNA
 
@@ -701,3 +722,79 @@ project_template_enumerated_option
 
 CMAKE use FeatureSummary
 > https://cliutils.gitlab.io/modern-cmake/chapters/features/modules.html
+
+TODO: update skia version
+
+TODO: measure optimized size with dead code elimination (both WASM MT/ST & native)
+
+TODO:
+ui::MaterialDesignController::Initialize();
+> https://github.com/blockspacer/skia-opengl-emscripten/blob/bb16ab108bc4018890f4ff3179250b76c0d9053b/src/chromium/ui/views/mus/aura_init.cc#L53
+
+TODO:
+ui::InitializeInputMethodForTesting();
+
+TODO:
+ui::RegisterPathProvider();
+
+TODO:
+base::i18n::InitializeICU();
+
+TODO:
+MdTextButton - A button class that implements the Material Design text button spec.
+> https://github.com/blockspacer/skia-opengl-emscripten/blob/master/src/chromium/ui/views/examples/button_example.cc#L60
+> https://github.com/blockspacer/skia-opengl-emscripten/blob/master/src/chromium/ui/views/controls/button/md_text_button.h#L18
+> https://github.com/dummas2008/chromium/blob/master/src/chrome/browser/ui/views/infobars/confirm_infobar.cc#L75
+
+TODO: more ui/views (see toolbar, panels, infobars, extensions), ui/message_center/views, ui/app_list/views, src/chrome/browser/chromeos/login/ui/views, src/chrome/browser/chromeos/options, chrome/browser/ui/views/download, content/shell/browser/shell_views.cc, chrome/ui/views/frame/
+> https://github.com/dummas2008/chromium/tree/master/src/chrome/browser/ui/views
+
+TODO:
+ui::ResourceBundle::CleanupSharedInstance();
+
+TODO: ui themes/framework
+> https://github.com/connors/photon
+> https://xel-toolkit.org/elements/x-checkbox
+
+TODO:
+ScrollView
+RadioButton
+md_text_button
+combobox
+link
+tabbed_pane
+progress_bar
+slider
+tabbed_pane
+table/table_grouper
+> https://github.com/elastos/Elastos.Trinity.Alpha.Android/blob/54c648b03108e246b853430e5d2b882a4a1d610f/src/ui/views/focus/focus_traversal_unittest.cc
+
+TODO: SetFlexForView
+> https://github.com/blockspacer/skia-opengl-emscripten/blob/master/src/chromium/ui/views/examples/animated_image_view_example.cc
+
+TODO: ui/base/animation & WASM Timers
+> https://github.com/blockspacer/skia-opengl-emscripten/blob/master/src/chromium/ui/views/animation/bounds_animator.cc
+
+TODO: keypress & WASM Timers
+
+TODO: AtExitManager
+
+ui/views articles:
+> https://www.chromium.org/developers/how-tos/getting-around-the-chrome-source-code
+> https://chromium.googlesource.com/chromium/src/+/lkgr/docs/ui/views/overview.md
+> https://www.chromium.org/developers/design-documents/aura
+> http://yolcy.blog.163.com/blog/static/105307937200911141223960
+> http://yolcy.blog.163.com/blog/#m=0&t=1&c=fks_087069083084083075084094085095085086084064084081095064083
+> https://meowni.ca/posts/chromium-101/
+> https://www.slideshare.net/cwdoh/overall-chromium-source-tree
+> https://groups.google.com/a/chromium.org/forum/#!topic/chromium-dev/77dIyhpgiso
+
+CSS material ripple effects
+> (!!!) https://dev.to/dhilipkmr/ripple-effect-in-react-3kl5
+> https://getmdl.io/components/#toggles-section
+> background: #47a7f5 radial-gradient(circle, transparent 1%, #47a7f5 1%) center/15000%;
+> how to start the ripple from different places on the button?
+> https://codepen.io/finnhvman/pen/jLXKJw
+> https://codeburst.io/create-a-material-design-ripple-effect-without-js-9d3cbee25b3e
+> https://blog.prototypr.io/common-material-design-bad-practices-to-avoid-b7995f251329
+> https://alligator.io/react/material-ui/

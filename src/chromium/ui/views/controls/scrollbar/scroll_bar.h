@@ -186,8 +186,10 @@ class VIEWS_EXPORT ScrollBar : public View,
   FRIEND_TEST_ALL_PREFIXES(ScrollBarViewsTest, ScrollBarFitsToBottom);
   FRIEND_TEST_ALL_PREFIXES(ScrollBarViewsTest, ThumbFullLengthOfTrack);
 
+#if !defined(DISABLE_PTHREADS)
   static base::RetainingOneShotTimer* GetHideTimerForTesting(
       ScrollBar* scroll_bar);
+#endif // DISABLE_PTHREADS
   int GetThumbSizeForTesting();
 
   // Changes to 'pushed' state and starts a timer to scroll repeatedly.

@@ -24,21 +24,27 @@ RepeatController::RepeatController(base::RepeatingClosure callback)
 RepeatController::~RepeatController() = default;
 
 void RepeatController::Start() {
+#if !defined(DISABLE_PTHREADS)
   // The first timer is slightly longer than subsequent repeats.
   timer_.Start(FROM_HERE, TimeDelta::FromMilliseconds(kInitialRepeatDelay),
                this, &RepeatController::Run);
+#endif // DISABLE_PTHREADS
 }
 
 void RepeatController::Stop() {
+#if !defined(DISABLE_PTHREADS)
   timer_.Stop();
+#endif // DISABLE_PTHREADS
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // RepeatController, private:
 
 void RepeatController::Run() {
+#if !defined(DISABLE_PTHREADS)
   timer_.Start(FROM_HERE, TimeDelta::FromMilliseconds(kRepeatDelay), this,
                &RepeatController::Run);
+#endif // DISABLE_PTHREADS
   callback_.Run();
 }
 

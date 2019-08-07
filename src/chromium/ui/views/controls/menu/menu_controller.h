@@ -676,6 +676,7 @@ class VIEWS_EXPORT MenuController
   // stacked delegates should be notified instead of |delegate_|.
   std::list<internal::MenuControllerDelegate*> delegate_stack_;
 
+#if !defined(DISABLE_PTHREADS)
   // As the mouse moves around submenus are not opened immediately. Instead
   // they open after this timer fires.
   base::OneShotTimer show_timer_;
@@ -685,6 +686,7 @@ class VIEWS_EXPORT MenuController
   // the lack of an ability to detect when the drag has completed from the drop
   // side.
   base::OneShotTimer cancel_all_timer_;
+#endif // DISABLE_PTHREADS
 
   // Drop target.
   MenuItemView* drop_target_ = nullptr;
