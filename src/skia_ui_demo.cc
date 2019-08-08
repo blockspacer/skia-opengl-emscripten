@@ -6,8 +6,6 @@
 
 #include "utils.h"
 
-#include <iostream>
-
 #ifdef ENABLE_COBALT
 #include "cobalt/base/polymorphic_downcast.h"
 #endif ENABLE_COBALT
@@ -358,7 +356,10 @@ bool HandleGestureEvent(
 
     DCHECK(!textfield_);
     textfield_ = new views::Textfield();
-    textfield_->SetFontList(font_list);
+    const int size_delta = std::abs(font_list.GetFontSize() - 15); // size in pixels to add
+    DCHECK(size_delta > 0);
+    textfield_->SetFontList(font_list.Derive(
+        -size_delta, gfx::Font::UNDERLINE, gfx::Font::Weight::BOLD));
     //textfield_->SetSize(gfx::Size(100, 100));
     textfield_->SetBorder(
       views::CreateSolidBorder(2, SK_ColorGRAY));
@@ -519,6 +520,8 @@ bool HandleGestureEvent(
   views::Textfield* textfield2_ = nullptr;
   views::Checkbox* checkbox_ = nullptr;
 
+  // TODO: AddStyleRange
+
   DISALLOW_COPY_AND_ASSIGN(ContainerView);
 };
 
@@ -573,6 +576,7 @@ static std::unique_ptr<blink::Platform> g_platform;
 #include <skia/include/core/SkPictureRecorder.h>
 #include <skia/include/core/SkStream.h>
 #include <skia/include/core/SkSurface.h>
+#include <skia/include/core/SkPixmap.h>
 #include <skia/include/core/SkBitmap.h>
 #include <skia/include/core/SkCanvas.h>
 #include <skia/include/core/SkShader.h>
@@ -855,7 +859,7 @@ static bool DrawGlyphs(double current_x, double current_y,
 
 void SkiaUiDemo::handleTestEvent(const char* text) {
   printf("handleTestEvent for %s\n", text);
-
+#if defined(ENABLE_BLINK_UI_VIEWS)
   if(std::string(text) == "A") {
       DCHECK(container_->textfield2_->IsFocusable());
       DCHECK(container_->textfield2_->GetEnabled());
@@ -1055,11 +1059,12 @@ void SkiaUiDemo::handleTestEvent(const char* text) {
       // TODO: OnMouseEvent OnScrollEvent
     }
   }
+#endif // ENABLE_BLINK_UI_VIEWS
 }
 
 void SkiaUiDemo::prepareUIFonts() {
 #if defined(OS_EMSCRIPTEN) && !defined(DISABLE_PTHREADS) && defined(ENABLE_COBALT)
-  DCHECK(false) << "can`t prepareUIFonts on WASM MT";
+  DCHECK(false);// << "can`t prepareUIFonts on WASM MT";
 #endif
 
   printf("Creating ui fonts...\n");
@@ -1196,8 +1201,8 @@ public:
     //return;
 
 #ifdef ENABLE_CUSTOM_FONTS
-    CHECK(sktpForUICreated) << "sktpForUICreated required";
-    CHECK(sktpForUI) << "sktpForUI required";
+    CHECK(sktpForUICreated);// << "sktpForUICreated required";
+    CHECK(sktpForUI);// << "sktpForUI required";
     //prepareUIFonts(); // see DCHECK(sktpForUI);
 
     SkFont skFont1ForUI(sktpForUI, FONT_SIZE_F, 1.0f, 0.0f);
@@ -1498,7 +1503,7 @@ public:
 
   //printf("FillRect 70\n");
   DCHECK(sStaticBitmapImage);
-#if 0
+//#if 0
   context.DrawImageTiled(sStaticBitmapImage.get(),
     blink::FloatRect(0, 0, 400, 400),
     blink::FloatRect(0, 0, 1000, 1000),
@@ -1506,27 +1511,31 @@ public:
     blink::FloatPoint{1.0, 1.0},
     blink::FloatSize(0.0, 0.0),
     SkBlendMode::kSrcOver);
-#endif // 0
+//#endif // 0
 #endif // ENABLE_IMAGES
 
 #ifdef ENABLE_BLINK_UI_NATIVE_THEME
-  SkPath theme_path;
-  // Up arrow, sized for 1x.
   ui::NativeThemeAura* nativeThemeAura =
+  // Up arrow, sized for 1x.
 #ifdef ENABLE_COBALT
      base::polymorphic_downcast<ui::NativeThemeAura*>(
 #else
      static_cast<ui::NativeThemeAura*>(
 #endif // ENABLE_COBALT
-      ui::NativeTheme::GetInstanceForNativeUi());
+        ui::NativeTheme::GetInstanceForNativeUi());
   DCHECK(nativeThemeAura);
+
+#if 0
+  SkPath theme_path;
   theme_path =
       //ui::NativeThemeAura::instance()->
       nativeThemeAura->PathForArrow(gfx::Rect(100, 200, 170, 170),
       ui::NativeTheme::kScrollbarUpArrow);
   DCHECK(!theme_path.isEmpty());
-#if 0
   context.DrawPath(theme_path, flags);
+#endif // 0
+
+//#if 0
 
   //cc::PaintCanvas cc_paint_canvas(&cc_skia_paint_canvas);
   ui::NativeTheme::ButtonExtraParams button;
@@ -1537,7 +1546,7 @@ public:
     ui::NativeTheme::State::kDisabled,
     gfx::Rect(200, 200, 300, 300),
     button);
-#endif // 0
+//#endif // 0
 
 #endif // ENABLE_BLINK_UI_NATIVE_THEME
 
@@ -1634,8 +1643,8 @@ public:
       if(!customPlatformFont) {
         printf("creating customPlatformFont\n");
 
-        /*CHECK(sktpForUICreated) << "sktpForUICreated required";
-        CHECK(sktpForUI) << "sktpForUI required";
+        /*CHECK(sktpForUICreated);// << "sktpForUICreated required";
+        CHECK(sktpForUI);// << "sktpForUI required";
         //prepareUIFonts(); // see DCHECK(sktpForUI);
         SkFont skFont3ForUI(sktpForUI, FONT_SIZE_F, 1.0f, 0.0f);
         skFont3ForUI.setEdging(SkFont::Edging::kAntiAlias);
@@ -1665,6 +1674,11 @@ public:
       const gfx::FontList& font_list = GetTextFontList();
       render_text->SetText(base::UTF8ToUTF16("x render_text x render_text x"));
       render_text->SetFontList(font_list);
+      gfx::ShadowValues shadows(1,
+                            gfx::ShadowValue(gfx::Vector2d(), 1, SK_ColorRED));
+      constexpr gfx::ShadowValue shadow(gfx::Vector2d(2, 2), 0, SK_ColorGRAY);
+      shadows.push_back(shadow);
+      render_text->set_shadows(shadows);
       render_text->SetColor(
         blink::Color(0.0f, 1.0f, 0.5f, 0.5f).Rgb());
       render_text->SetElideBehavior(gfx::ELIDE_TAIL);
@@ -2084,7 +2098,7 @@ public:
 // see https://github.com/flutter/engine/blob/master/shell/gpu/gpu_surface_gl.cc#L125
 void SkiaUiDemo::initUISkiaSurface(int /*w*/, int /*h*/) {
 #if defined(OS_EMSCRIPTEN) && !defined(DISABLE_PTHREADS) && defined(ENABLE_COBALT)
-  DCHECK(false) << "can`t initUiSkiaSurface on WASM MT";
+  DCHECK(false);// << "can`t initUiSkiaSurface on WASM MT";
 #endif
 
 #ifdef SKIA_GR_CONTEXT
@@ -2270,7 +2284,7 @@ void SkiaUiDemo::initUISkiaSurface(int /*w*/, int /*h*/) {
 
 void SkiaUiDemo::cleanup_skia_ui() {
 #if defined(OS_EMSCRIPTEN) && !defined(DISABLE_PTHREADS) && defined(ENABLE_COBALT)
-  DCHECK(!sRasterSurface) << "can`t use sRasterSurface on WASM MT";
+  DCHECK(!sRasterSurface);// << "can`t use sRasterSurface on WASM MT";
 #endif
   if (sRasterSurface.get())
     delete sRasterSurface.release();
@@ -2305,7 +2319,7 @@ void SkiaUiDemo::loadUIAssets() {
 #endif // ENABLE_UI
 
 #if defined(OS_EMSCRIPTEN) && !defined(DISABLE_PTHREADS) && defined(ENABLE_COBALT)
-  DCHECK(false) << "can`t loadUIAssets on WASM MT";
+  DCHECK(false);// << "can`t loadUIAssets on WASM MT";
 #endif // defined(OS_EMSCRIPTEN) && !defined(DISABLE_PTHREADS)
 
 #if defined(ENABLE_IMAGES) && defined(ENABLE_BLINK_UI)
@@ -2384,7 +2398,7 @@ static bool Decode(const unsigned char* input, size_t input_size,
 void SkiaUiDemo::refreshUIDemo() {
 #if defined(OS_EMSCRIPTEN) && !defined(DISABLE_PTHREADS) && defined(ENABLE_COBALT)
   // TODO: support multiple skia threads on WASM
-  DCHECK(false) << "can`t refreshUI on WASM MT";
+  DCHECK(false);// << "can`t refreshUI on WASM MT";
   DCHECK_RUNS_IN_THEAD_ON_MT_WASM();
 #endif
 
@@ -2437,7 +2451,7 @@ void SkiaUiDemo::drawUIDemo() {
   if (isDebugPeriodReached()) printf("drawUIDemo...\n");
 
 #if defined(OS_EMSCRIPTEN) && !defined(DISABLE_PTHREADS) && defined(ENABLE_COBALT)
-  DCHECK(false) << "can`t drawUI on WASM MT";
+  DCHECK(false);// << "can`t drawUI on WASM MT";
 #endif
 
   SkPixmap uiPixmap;
@@ -2484,7 +2498,7 @@ void SkiaUiDemo::resetAssets() {
 
 void SkiaUiDemo::animateUI() {
 #if defined(OS_EMSCRIPTEN) && !defined(DISABLE_PTHREADS) && defined(ENABLE_COBALT)
-  DCHECK(false) << "can`t animateUI on WASM MT";
+  DCHECK(false);// << "can`t animateUI on WASM MT";
 #endif
 
 #if defined(ENABLE_SKIA) && defined(ENABLE_SKOTTIE)

@@ -1,5 +1,31 @@
 #pragma once
 
+#include <stdio.h>
+#include <string>
+
+#include <algorithm>
+#include <cassert>
+#include <cmath>
+#include <functional>
+#include <iostream>
+#include <cstdlib>
+#include <map>
+#include <sstream>
+#include <string>
+#include <vector>
+#include <limits>
+#include <stdint.h>
+#include <utility>
+#include <memory>
+#include <utility>
+#include <cmath>
+#include <memory>
+#include <string>
+#include <vector>
+#include <memory>
+#include <string>
+#include <vector>
+
 #ifdef ENABLE_BASE
 
 #include "base/memory/ptr_util.h"

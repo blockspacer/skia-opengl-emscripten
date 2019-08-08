@@ -149,6 +149,7 @@ hot reload & cling
  > https://www.phoronix.com/forums/forum/software/programming-compilers/1095291-facebook-is-jit-ing-c-code-to-treat-it-like-a-crazy-fast-scripting-language
  > https://github.com/intel/wasm-micro-runtime
  > WASI https://rustwasm.github.io/2019/03/28/this-week-in-rust-and-wasm-015.html
+   > https://www.viva64.com/en/b/0324/
 visual IDE (aka photoshop/Figma/sketch.com/e.t.c.)
 dom debugger (aka chrome dev tools) with live editing/combined styles/display size change/loaded resources/animations & changes e.t.c.
 exe remote debugger aka gammaray https://www.kdab.com/development-resources/qt-tools/gammaray/
@@ -801,3 +802,31 @@ CSS material ripple effects
 
 TODO: websec or not websec?
 > https://seclab.stanford.edu/websec/chromium/
+
+TODO: WASM MT memory footprint vs WASM ST memory footprint
+ > NOTE: close dev tools https://github.com/emscripten-core/emscripten/issues/8126
+ > NOTE: disable browser extentions
+ > NOTE: resource bundle also takes memory
+ > NOTE: code bundle also takes memory
+ > NOTE: MT WASM DEB without SKIA (only BASE/WTF are ON) took ~200K mem... same as in ST WASM DEB, but with SKIA enabled
+ > NOTE: MT WASM DEB without SKIA/BASE ~160K mem
+ > NOTE: MT WASM REL without SKIA/BASE ~130K mem
+ > NOTE: MT WASM REL without SKIA/BASE/resources ~70K mem
+ > NOTE: MT WASM REL without SKIA/BASE/GRE2/ICU/WEBP/... ~130K mem (NOTE: WASM file size 96KiB, MEM file size 21KiB, data file size 4.8MiB)
+ > NOTE: MT WASM REL without SKIA/BASE/GRE2/ICU/WEBP/.../resources ~70K mem (NOTE: WASM file size 96KiB, MEM file size 21KiB, data file size 2B)
+ > NOTE: MT WASM REL 4.8MiB resources took ~100K mem (without libs and "return 0" in main)
+ > NOTE: MT WASM REL totally empty app (no resources/libs/empty main) took ~60K mem
+ > NOTE: ST WASM REL totally empty app (no resources/libs/empty main) took ~30K mem
+   > clear && clear ; cmake -DRUN_APP=ON -DBUILD_APP=ON -DEXTRA_EMMAKE_OPTS="-j;6" -DBUILD_TYPE="Release" -DCLEAN_BUILD=ON -DENABLE_EMCMAKE_CLEAN_FIRST=ON -DBUILD_DIR=$(pwd)/build-wasm-st-rel/ -DEXTRA_EMCMAKE_OPTS="-DENABLE_WEB_PTHREADS=FALSE;-DENABLE_LIBWEBP=TRUE;-DENABLE_BLINK=FALSE;-DENABLE_COBALT=FALSE;-DENABLE_BASE=FALSE;-DENABLE_WTF=FALSE;-DDISABLE_FORMATTING=FALSE;-DENABLE_SKIA=FALSE;-DENABLE_SKSG=FALSE;-DENABLE_SKIA_UTILS=FALSE;-DENABLE_SKOTTIE=FALSE;-DENABLE_SKSHAPER=FALSE;-DFORCE_DISABLE_SK_GPU=FALSE;-DENABLE_BLINK_UI_VIEWS=FALSE;-DENABLE_BLINK_UI_NATIVE_THEME=FALSE;-DENABLE_GRE2=FALSE;-DENABLE_GLIBXML=FALSE;-DENABLE_LIBYUV=FALSE;-DENABLE_ICCJPEG=FALSE;-DENABLE_LIBWEBP=FALSE;-DUSE_ICU=FALSE;-DUSE_LIBJPEG_TURBO=FALSE;-DENABLE_HARFBUZZ=FALSE;-DENABLE_MAIN=FALSE" -P tools/buildWeb.cmake
+ > NOTE: ST WASM REL empty app with some libs (no resources/empty main) took ~30K mem
+   > dead code may be eleminated, WASM 67KiB
+ > NOTE: MT WASM REL empty app with some libs & resources (empty main) took ~100K mem
+   > dead code may be eleminated, WASM 78KiB
+ > WASM MT with SKIA, but without BASE = 170K mem (!!!)
+ > WASM MT with SKIA, but with BASE = 200K mem (!!!), ~2MiB WASM
+   > clear && clear ; cmake -DRUN_APP=ON -DBUILD_APP=ON -DEXTRA_EMMAKE_OPTS="-j;6" -DBUILD_TYPE="Release" -DCLEAN_BUILD=OFF -DENABLE_EMCMAKE_CLEAN_FIRST=ON -DBUILD_DIR=$(pwd)/build-wasm-mt-rel/ -DEXTRA_EMCMAKE_OPTS="-DENABLE_WEB_PTHREADS=TRUE;-DENABLE_LIBWEBP=TRUE;-DENABLE_BLINK=FALSE;-DENABLE_COBALT=FALSE;-DENABLE_BASE=TRUE;-DENABLE_WTF=FALSE;-DDISABLE_FORMATTING=FALSE;-DENABLE_SKIA=TRUE;-DENABLE_SKSG=FALSE;-DENABLE_SKIA_UTILS=FALSE;-DENABLE_SKOTTIE=FALSE;-DENABLE_SKSHAPER=FALSE;-DFORCE_DISABLE_SK_GPU=FALSE;-DENABLE_BLINK_UI_VIEWS=FALSE;-DENABLE_BLINK_UI_NATIVE_THEME=FALSE;-DENABLE_MAIN=TRUE" -P tools/buildWeb.cmake
+ > WASM MT with SKIA, but with WTF = 220K mem (!!!), ~2MiB WASM
+ > ~300K mem OMG
+   > clear && clear ; cmake -DRUN_APP=ON -DBUILD_APP=ON -DEXTRA_EMMAKE_OPTS="-j;6" -DBUILD_TYPE="Release" -DCLEAN_BUILD=OFF -DENABLE_EMCMAKE_CLEAN_FIRST=ON -DBUILD_DIR=$(pwd)/build-wasm-mt-rel/ -DEXTRA_EMCMAKE_OPTS="-DENABLE_WEB_PTHREADS=TRUE;-DENABLE_LIBWEBP=TRUE;-DENABLE_BLINK=TRUE;-DENABLE_COBALT=FALSE;-DENABLE_BASE=TRUE;-DENABLE_WTF=TRUE;-DDISABLE_FORMATTING=FALSE;-DENABLE_SKIA=TRUE;-DENABLE_SKSG=TRUE;-DENABLE_SKIA_UTILS=TRUE;-DENABLE_SKOTTIE=TRUE;-DENABLE_SKSHAPER=TRUE;-DFORCE_DISABLE_SK_GPU=FALSE;-DENABLE_BLINK_UI_VIEWS=TRUE;-DENABLE_BLINK_UI_NATIVE_THEME=TRUE;-DENABLE_MAIN=TRUE" -P tools/buildWeb.cmake
+
+TODO: https://stackoverflow.com/a/28438479

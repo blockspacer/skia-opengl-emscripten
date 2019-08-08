@@ -1,5 +1,17 @@
 ﻿#pragma once
 
+#if !defined(ENABLE_BASE)
+#define TO_STRING(s) #s
+#define NOTREACHED(s)\
+  { std::cout << "NOTREACHED\n"; }
+#define CHECK(condition) \
+  if (!(condition)) { std::cerr << TO_STRING(condition); exit(1); }
+#define DCHECK(condition) \
+  { CHECK(condition); }
+#define DCHECK_LE(condition, val) \
+  if (!(condition < val)) { std::cerr << TO_STRING(condition); exit(1); }
+#endif // ENABLE_BASE
+
 #if defined(ENABLE_SKIA)
 
 class SkiaUiDemo {

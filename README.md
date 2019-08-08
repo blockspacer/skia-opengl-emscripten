@@ -67,16 +67,30 @@ notes
 
 # Features
 
+> cobalt.foo (chromium`s fork) ported to WASM (and other OS)
+  > updated cobalt.foo to new SKIA version
+  > updated cobalt.foo to new chromium`s base version (removed base duplicate)
+  > JS (V8) disabled. Use C++ for better speed and app size.
+  > added custom tags / controls (similar to React.js/Vue.js)
+> chromium ui/views (UI framework) from Blink ported to WASM (and other OS)
+  > window & widgets code modified. Use custom code to create window.
+> chromium base (libchrome) from Blink ported to WASM (and other OS)
+  > supports both threaded (MT) and single-threaded (ST) WASM
+  > see https://emscripten.org/docs/porting/pthreads.html
+  > see https://www.chromium.org/chromium-os/packages/libchrome
+> WTF (Web Template Framework) from Blink ported to WASM (and other OS)
+  > see https://github.com/endlessm/chromium-browser/tree/master/third_party/blink/renderer
 > skia compiled to wasm (emscripten)
 > skottie (Bodymovin animation / lottie), see https://skia.org/user/modules/skottie
 > custom fonts
 > unicode fonts & harfbuzz
 > uses SDL2 to create window
-> uses CMake
+> uses CMake (replaced chromium`s GN with CMake)
 > supports WASM with/without threads
+  > see https://emscripten.org/docs/porting/pthreads.html
 > supports WebGL 2 / GLSL 300 es as there really isn`t a reason to support WebGL 1 at this point
 > supports WASM as there really isn`t a reason to support ASM.js at this point
-> supports cobalt.foo HTML/CSS parser
+  > see https://emscripten.org/docs/compiling/WebAssembly.html?highlight=wasm
 
 ## TODO
 https://github.com/emscripten-core/emscripten/issues/5033
@@ -252,15 +266,6 @@ CreatePlatformCanvasWithPixels
 remove SK_CRASH
 
 13 remove skia debugcanvas lib
-
-## Experimental features
-
-> chromium base (libchrome) from Blink ported to WASM
-https://www.chromium.org/chromium-os/packages/libchrome
-> WTF (Web Template Framework) from Blink ported to WASM
-https://github.com/endlessm/chromium-browser/tree/master/third_party/blink/renderer
-> WTF (Web Template Framework) from WebKit ported to WASM
-https://chromium.googlesource.com/chromium/src.git/+/62.0.3178.1/third_party/WebKit/Source/platform/wtf/README.md
 
 ## TODO
 

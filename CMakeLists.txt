@@ -85,6 +85,8 @@ if(ENABLE_KHRONOS)
     khronos
   )
 endif(ENABLE_KHRONOS)
+# you can disable all logic to profile bundle size/memory for some OS
+set(ENABLE_MAIN TRUE CACHE BOOL "ENABLE_MAIN")
 set(USE_LIBPNG TRUE CACHE BOOL "USE_LIBPNG")
 # Blink platform
 set(ENABLE_BLINK TRUE CACHE BOOL "ENABLE_BLINK")
@@ -141,6 +143,7 @@ endif(TARGET_EMSCRIPTEN)
 set(ENABLE_WEBGL2 TRUE CACHE BOOL "ENABLE_WEB_PTHREADS")
 #set(ENABLE_WEBGL1 TRUE) # TODO
 set(ENABLE_WEBGL_DEBUG_CHECKS TRUE CACHE BOOL "ENABLE_WEBGL_DEBUG_CHECKS") # only in debug
+set(ENABLE_BASE TRUE CACHE BOOL "ENABLE_BASE")
 set(ENABLE_WTF TRUE CACHE BOOL "ENABLE_WTF")
 if(ENABLE_BLINK AND NOT ENABLE_WTF)
   message(FATAL_ERROR "BLINK requires LIBWTF")
@@ -181,6 +184,9 @@ if(NOT USE_OPENGL_LIB)
 endif()
 set(USE_SYSTEM_ZLIB TRUE CACHE BOOL "USE_SYSTEM_ZLIB")
 set(ENABLE_HARFBUZZ TRUE CACHE BOOL "ENABLE_HARFBUZZ")
+if(ENABLE_HARFBUZZ AND NOT USE_ICU)
+  message(FATAL_ERROR "HARFBUZZ requires ICU")
+endif()
 
 macro(add_mojo_prefixes_3 ARG_BASE_PATH ARG_WHERE_COLLECT)
   set(CUR_MOJO_TO_PREFIXES
@@ -517,6 +523,10 @@ if(ENABLE_COBALT)
     GURL
   )
 endif(ENABLE_COBALT)
+
+if(ENABLE_MAIN)
+  list(APPEND APP_DEFINITIONS ENABLE_MAIN=1)
+endif(ENABLE_MAIN)
 
 if(ENABLE_BLINK)
   if(NOT ENABLE_SKIA)
@@ -1312,6 +1322,7 @@ if (ENABLE_WEB_PTHREADS)
 else(ENABLE_WEB_PTHREADS)
   # custom defines
   set(EMCC_COMMON "${EMCC_COMMON} -DDISABLE_PTHREADS=1")
+  # Thread local storage
   set(EMCC_COMMON "${EMCC_COMMON} -DUSE_FAKE_THREAD_LS=1")
   set(EMCC_COMMON "${EMCC_COMMON} -DDISABLE_LOCKS=1")
   #
@@ -1951,9 +1962,21 @@ else(EMSCRIPTEN)
 endif(TARGET_EMSCRIPTEN)
 
 # custom flags
-if(ENABLE_WTF OR ENABLE_COBALT OR ENABLE_BLINK)
-  list(APPEND APP_DEFINITIONS ENABLE_BASE=1)
+if((ENABLE_WTF OR ENABLE_COBALT OR ENABLE_BLINK) AND NOT ENABLE_BASE)
+  message(FATAL_ERROR "BLINK/COBALT/WTF requires BASE")
 endif()
+if(ENABLE_BASE)
+  list(APPEND APP_DEFINITIONS ENABLE_BASE=1)
+  list(APPEND APP_DEFINITIONS ENABLE_BASE_PREALLOC=1)
+  set(BASE_LIB
+    base
+  )
+elseif(EMSCRIPTEN)
+  # NOTE: OS_EMSCRIPTEN defined by BASE otherwise
+  list(APPEND APP_DEFINITIONS OS_EMSCRIPTEN=1)
+endif(ENABLE_BASE)
+
+#
 if(ENABLE_WTF)
   # NOTE: WTF requires BASE
   list(APPEND APP_DEFINITIONS ENABLE_WTF=1)
@@ -2103,7 +2126,7 @@ endif(USE_CUSTOM_HARFBUZZ)
 #
 # WTF
 #
-if(ENABLE_WTF OR ENABLE_BLINK OR ENABLE_COBALT)
+if(ENABLE_WTF OR ENABLE_BLINK OR ENABLE_COBALT OR ENABLE_BASE)
   add_subdirectory(src/chromium) # requires skia above
 endif()
 if(ENABLE_WTF)
@@ -2420,6 +2443,8 @@ if(TARGET_EMSCRIPTEN)
   # Top is the executable, followed by directly used libraries.
   # see https://floooh.github.io/2016/01/12/cmake-dependency-juggling.html
   target_link_libraries(${PROJECT_NAME} PUBLIC
+    ${BASE_LIB}
+    #
     ${COBALT_LIBRARY_NAME}
     ${COBALT_LIBS}
     #
@@ -2519,6 +2544,8 @@ else()
   # Top is the executable, followed by directly used libraries.
   # see https://floooh.github.io/2016/01/12/cmake-dependency-juggling.html
   target_link_libraries(${PROJECT_NAME} PUBLIC
+    ${BASE_LIB}
+    #
     ${COBALT_LIBRARY_NAME}
     ${COBALT_LIBS}
     #cobalt_

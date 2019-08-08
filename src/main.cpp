@@ -202,33 +202,19 @@
 #ifdef ENABLE_SKIA
 #include "skia_ui_demo.h"
 static SkiaUiDemo skiaUiDemo;
+
+#include <skia/include/core/SkCanvas.h>
+#include <skia/include/core/SkString.h>
+#include <skia/include/core/SkFont.h>
+#include <skia/include/core/SkGraphics.h>
+#include <skia/include/core/SkPictureRecorder.h>
+#include <skia/include/core/SkStream.h>
+#include <skia/include/core/SkSurface.h>
+#include <skia/include/core/SkPixmap.h>
+#include <skia/include/core/SkBitmap.h>
+#include <skia/include/core/SkCanvas.h>
+#include <skia/include/core/SkShader.h>
 #endif // ENABLE_SKIA
-
-#include <stdio.h>
-#include <string>
-
-#include <algorithm>
-#include <cassert>
-#include <cmath>
-#include <functional>
-#include <iostream>
-#include <cstdlib>
-#include <map>
-#include <sstream>
-#include <string>
-#include <vector>
-#include <limits>
-#include <stdint.h>
-#include <utility>
-#include <memory>
-#include <utility>
-#include <cmath>
-#include <memory>
-#include <string>
-#include <vector>
-#include <memory>
-#include <string>
-#include <vector>
 
 #include "utils.h"
 
@@ -765,7 +751,7 @@ typedef base::Callback<void(const cobalt::layout::LayoutManager::LayoutResults&)
 //#undef ENABLE_COBALT
 //#endif
 
-#if defined(OS_EMSCRIPTEN)
+#if defined(OS_EMSCRIPTEN) && defined(ENABLE_SKIA)
 static SkPixmap browserPixmapCache;
 void updateWASMPixmapAndFreeData(void* data)
 {
@@ -790,7 +776,7 @@ static base::Thread main_browser_thread_wrapper_("Main_Browser_Thread_Wrapper");
 static base::Thread* input_browser_thread = &main_browser_thread_;
 //static base::Thread* input_browser_thread = nullptr;//&main_browser_thread_;
 
-#if !(defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__))
+#if !(defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)) && defined(ENABLE_BASE)
 // TODO: causes hangs on WASM MT (even in render_browser_window mode!)
 #define SEPARATE_UI_THREAD 1
 #define SEPARATE_UI_THREAD_WRAPPER 1
@@ -3314,8 +3300,6 @@ static std::unique_ptr<SbInputData> setWheelSbEventData(std::unique_ptr<SbInputD
 #endif // ENABLE_COBALT
 
 #if defined(ENABLE_COBALT) && defined(__EMSCRIPTEN__)
-static const float dpi_scale = 1.0f;
-
 static unsigned int EmscModifiersEventToSbKeyModifiers(const bool altKey,
     const bool ctrlKey, const bool metaKey, const bool shiftKey) {
   unsigned int modifiers = kSbKeyModifiersNone;
@@ -3379,148 +3363,6 @@ static SbKey EmscMouseEventToSbKey(unsigned short button) {
     NOTIMPLEMENTED();
   }
   return key;
-}
-
-static void handleEmscriptenMouseEvent(int emsc_type, const EmscriptenMouseEvent* emsc_event, void* user_data) {
-  DCHECK(emsc_event);
-  const float mouse_x = (emsc_event->canvasX * dpi_scale);
-  const float mouse_y = (emsc_event->canvasY * dpi_scale);
-
-  updateGlobalMousePos(static_cast<int>(mouse_x), static_cast<int>(mouse_y));
-
-  std::unique_ptr<SbEvent> event = std::make_unique<SbEvent>();
-  event->type = SbEventType::kSbEventTypeInput;
-  std::unique_ptr<SbInputData> data = nullptr;
-  data = createEmptySbEventData();
-  DCHECK(data);
-
-  unsigned int key_modifiers = EmscMouseEventToSbButtonModifiers(emsc_event->button);
-  key_modifiers |= EmscModifiersEventToSbKeyModifiers(emsc_event->altKey,
-      emsc_event->ctrlKey,
-      emsc_event->metaKey,
-      emsc_event->shiftKey);
-
-  const SbKey key = EmscMouseEventToSbKey(emsc_event->button);
-
-  const int MAX_MOUSEBUTTONS = 3;
-  if (emsc_event->button < MAX_MOUSEBUTTONS) {
-      bool is_button_event = false;
-      switch (emsc_type) {
-          case EMSCRIPTEN_EVENT_MOUSEDOWN:
-              is_button_event = true;
-              data = setMouseSbEventData(std::move(data),
-                                         mouse_x, mouse_y,
-                                         SbInputEventType::kSbInputEventTypePress,
-                                         key_modifiers, key);
-              break;
-          case EMSCRIPTEN_EVENT_MOUSEUP:
-              is_button_event = true;
-              data = setMouseSbEventData(std::move(data),
-                                         mouse_x, mouse_y,
-                                         SbInputEventType::kSbInputEventTypeUnpress,
-                                         key_modifiers, key);
-              break;
-          case EMSCRIPTEN_EVENT_MOUSEMOVE:
-              data = setMouseSbEventData(std::move(data),
-                                         mouse_x, mouse_y,
-                                         SbInputEventType::kSbInputEventTypeMove,
-                                         key_modifiers, key);
-              break;
-          case EMSCRIPTEN_EVENT_MOUSEENTER:
-          case EMSCRIPTEN_EVENT_MOUSELEAVE:
-          case EMSCRIPTEN_EVENT_CLICK:
-          case EMSCRIPTEN_EVENT_DBLCLICK:
-              break;
-          default:
-              break;
-      }
-
-      event->data = data.release();
-      if(!input_browser_thread) {
-        sendBrowserInputEvent(std::move(event));
-      } else {
-        DCHECK(input_browser_thread);
-        DCHECK(input_browser_thread->IsRunning());
-        input_browser_thread->task_runner()->PostTask(
-          FROM_HERE, base::Bind(
-                       [](std::unique_ptr<SbEvent> event) {
-                         sendBrowserInputEvent(std::move(event));
-                       }, base::Passed(&event)));
-      }
-  }
-}
-
-// In browsers, KeyDown events do not carry a "character code" for most characters, but KeyPresses do.
-// For WSAD input, we'd like to know the character code of the button press already at KeyDown time, so
-// use the following method to interpret it from the event structure already at KeyDown event.
-static int InterpretCharCode(int eventType, const EmscriptenKeyboardEvent *keyEvent)
-{
-  if (eventType == EMSCRIPTEN_EVENT_KEYPRESS && keyEvent->which) return keyEvent->which;
-  if (keyEvent->charCode) return keyEvent->charCode;
-  if (strlen(keyEvent->key) == 1) return (int)tolower(keyEvent->key[0]);
-  if (keyEvent->which) return keyEvent->which;
-  return keyEvent->keyCode;
-}
-
-// Converts a single UTF8 encoded character to a 32-bit Unicode codepoint.
-static unsigned int Utf8CharToUtf32(const unsigned char *utf8Char)
-{
-  if (((*utf8Char) & 0x80) == 0) return (unsigned int)*utf8Char;
-  if (((*utf8Char) & 0xE0) == 0xC0) return (((unsigned int)utf8Char[0] & 31) << 6) | ((unsigned int)utf8Char[1] & 63);
-  if (((*utf8Char) & 0xF0) == 0xE0) return (((unsigned int)utf8Char[0] & 15) << 12) | (((unsigned int)utf8Char[1] & 63) << 6) | ((unsigned int)utf8Char[2] & 63);
-  if (((*utf8Char) & 0xF8) == 0xF0) return (((unsigned int)utf8Char[0] & 7) << 18) | (((unsigned int)utf8Char[1] & 63) << 12) | (((unsigned int)utf8Char[2] & 63) << 6) | ((unsigned int)utf8Char[3] & 63);
-  if (((*utf8Char) & 0xFC) == 0xF8) return (((unsigned int)utf8Char[0] & 3) << 24) | (((unsigned int)utf8Char[1] & 63) << 18) | (((unsigned int)utf8Char[2] & 63) << 12) | (((unsigned int)utf8Char[3] & 63) << 6) | ((unsigned int)utf8Char[4] & 63);
-  return (((unsigned int)utf8Char[0] & 1) << 30) | (((unsigned int)utf8Char[1] & 63) << 24) | (((unsigned int)utf8Char[2] & 63) << 18) | (((unsigned int)utf8Char[3] & 63) << 12) | (((unsigned int)utf8Char[4] & 63) << 6) | ((unsigned int)utf8Char[5] & 63);
-}
-
-// Converts a UTF8 encoded string to a UTF32 string.
-static void Utf8StringToUtf32(unsigned int *dstUtf32, int maxBytesToWrite, const unsigned char *utf8)
-{
-  unsigned int *end = dstUtf32 + (maxBytesToWrite - 4)/4;
-  if (utf8)
-  {
-    while(*utf8 && dstUtf32 < end)
-    {
-      *dstUtf32++ = Utf8CharToUtf32(utf8++);
-      while(*utf8 && (*utf8 & 0xC0) == 0x80)
-        ++utf8; // Skip all continuation bytes
-    }
-  }
-  *dstUtf32 = 0;
-}
-
-static inline const char *emscripten_event_type_to_string(int eventType) {
-  const char *events[] = { "(invalid)", "(none)", "keypress", "keydown", "keyup", "click", "mousedown", "mouseup", "dblclick", "mousemove", "wheel", "resize",
-    "scroll", "blur", "focus", "focusin", "focusout", "deviceorientation", "devicemotion", "orientationchange", "fullscreenchange", "pointerlockchange",
-    "visibilitychange", "touchstart", "touchend", "touchmove", "touchcancel", "gamepadconnected", "gamepaddisconnected", "beforeunload",
-    "batterychargingchange", "batterylevelchange", "webglcontextlost", "webglcontextrestored", "mouseenter", "mouseleave", "mouseover", "mouseout", "(invalid)" };
-  ++eventType;
-  if (eventType < 0) eventType = 0;
-  if (static_cast<unsigned long>(eventType) >= sizeof(events)/sizeof(events[0])) eventType = sizeof(events)/sizeof(events[0])-1;
-  return events[eventType];
-}
-
-static int interpret_charcode_for_keyevent(int eventType, const EmscriptenKeyboardEvent *e)
-{
-  // Only KeyPress events carry a charCode. For KeyDown and KeyUp events, these don't seem to be present yet, until later when the KeyDown
-  // is transformed to KeyPress. Sometimes it can be useful to already at KeyDown time to know what the charCode of the resulting
-  // KeyPress will be. The following attempts to do this:
-  if (eventType == EMSCRIPTEN_EVENT_KEYPRESS && e->which) return e->which;
-  if (e->charCode) return e->charCode;
-  if (strlen(e->key) == 1) return (int)e->key[0];
-  if (e->which) return e->which;
-  return e->keyCode;
-}
-
-static int number_of_characters_in_utf8_string(const char *str)
-{
-  if (!str) return 0;
-  int num_chars = 0;
-  while(*str)
-  {
-    if ((*str++ & 0xC0) != 0x80) ++num_chars; // Skip all continuation bytes
-  }
-  return num_chars;
 }
 
 // see https://github.com/emscripten-core/emscripten/blob/master/system/include/emscripten/dom_pk_codes.h
@@ -3991,6 +3833,109 @@ static SbKey EmscKeycodeToSbKey(const int keysum) {
 
   return key;
 }
+#endif // EMSCRIPTEN && ENABLE_COBALT
+
+#ifdef ENABLE_BASE
+static void sendKeyEventToUI(base::Optional<const char*> ev_text) {
+#ifdef ENABLE_SKIA
+#if defined(SEPARATE_UI_THREAD)
+#if defined(ENABLE_COBALT) && defined(OS_EMSCRIPTEN)
+    if(!render_browser_window) {
+      printf("can`t use !render_browser_window wasm platform!");
+      HTML5_STACKTRACE();
+    }
+#endif // ENABLE_COBALT && OS_EMSCRIPTEN
+    if(!render_browser_window && ev_text) {
+      // from some blink thread (timers require a sequenced context)
+      // TODO: PostTask PostBlockingTask
+      // TODO: shedulePaintCommand
+      ui_draw_thread_.task_runner()->PostTask(
+          FROM_HERE, base::Bind([](base::Optional<const char*> ev_text) {
+            skiaUiDemo.handleTestEvent(ev_text.value());
+          }, ev_text));
+    }
+#else // SEPARATE_UI_THREAD
+    if(!render_browser_window && ev_text) {
+      skiaUiDemo.handleTestEvent(ev_text.value());
+    }
+#endif // SEPARATE_UI_THREAD
+#endif // ENABLE_SKIA
+}
+#endif // ENABLE_BASE
+
+#if defined(__EMSCRIPTEN__)
+// In browsers, KeyDown events do not carry a "character code" for most characters, but KeyPresses do.
+// For WSAD input, we'd like to know the character code of the button press already at KeyDown time, so
+// use the following method to interpret it from the event structure already at KeyDown event.
+static int InterpretCharCode(int eventType, const EmscriptenKeyboardEvent *keyEvent)
+{
+  if (eventType == EMSCRIPTEN_EVENT_KEYPRESS && keyEvent->which) return keyEvent->which;
+  if (keyEvent->charCode) return keyEvent->charCode;
+  if (strlen(keyEvent->key) == 1) return (int)tolower(keyEvent->key[0]);
+  if (keyEvent->which) return keyEvent->which;
+  return keyEvent->keyCode;
+}
+
+// Converts a single UTF8 encoded character to a 32-bit Unicode codepoint.
+static unsigned int Utf8CharToUtf32(const unsigned char *utf8Char)
+{
+  if (((*utf8Char) & 0x80) == 0) return (unsigned int)*utf8Char;
+  if (((*utf8Char) & 0xE0) == 0xC0) return (((unsigned int)utf8Char[0] & 31) << 6) | ((unsigned int)utf8Char[1] & 63);
+  if (((*utf8Char) & 0xF0) == 0xE0) return (((unsigned int)utf8Char[0] & 15) << 12) | (((unsigned int)utf8Char[1] & 63) << 6) | ((unsigned int)utf8Char[2] & 63);
+  if (((*utf8Char) & 0xF8) == 0xF0) return (((unsigned int)utf8Char[0] & 7) << 18) | (((unsigned int)utf8Char[1] & 63) << 12) | (((unsigned int)utf8Char[2] & 63) << 6) | ((unsigned int)utf8Char[3] & 63);
+  if (((*utf8Char) & 0xFC) == 0xF8) return (((unsigned int)utf8Char[0] & 3) << 24) | (((unsigned int)utf8Char[1] & 63) << 18) | (((unsigned int)utf8Char[2] & 63) << 12) | (((unsigned int)utf8Char[3] & 63) << 6) | ((unsigned int)utf8Char[4] & 63);
+  return (((unsigned int)utf8Char[0] & 1) << 30) | (((unsigned int)utf8Char[1] & 63) << 24) | (((unsigned int)utf8Char[2] & 63) << 18) | (((unsigned int)utf8Char[3] & 63) << 12) | (((unsigned int)utf8Char[4] & 63) << 6) | ((unsigned int)utf8Char[5] & 63);
+}
+
+// Converts a UTF8 encoded string to a UTF32 string.
+static void Utf8StringToUtf32(unsigned int *dstUtf32, int maxBytesToWrite, const unsigned char *utf8)
+{
+  unsigned int *end = dstUtf32 + (maxBytesToWrite - 4)/4;
+  if (utf8)
+  {
+    while(*utf8 && dstUtf32 < end)
+    {
+      *dstUtf32++ = Utf8CharToUtf32(utf8++);
+      while(*utf8 && (*utf8 & 0xC0) == 0x80)
+        ++utf8; // Skip all continuation bytes
+    }
+  }
+  *dstUtf32 = 0;
+}
+
+static inline const char *emscripten_event_type_to_string(int eventType) {
+  const char *events[] = { "(invalid)", "(none)", "keypress", "keydown", "keyup", "click", "mousedown", "mouseup", "dblclick", "mousemove", "wheel", "resize",
+    "scroll", "blur", "focus", "focusin", "focusout", "deviceorientation", "devicemotion", "orientationchange", "fullscreenchange", "pointerlockchange",
+    "visibilitychange", "touchstart", "touchend", "touchmove", "touchcancel", "gamepadconnected", "gamepaddisconnected", "beforeunload",
+    "batterychargingchange", "batterylevelchange", "webglcontextlost", "webglcontextrestored", "mouseenter", "mouseleave", "mouseover", "mouseout", "(invalid)" };
+  ++eventType;
+  if (eventType < 0) eventType = 0;
+  if (static_cast<unsigned long>(eventType) >= sizeof(events)/sizeof(events[0])) eventType = sizeof(events)/sizeof(events[0])-1;
+  return events[eventType];
+}
+
+static int interpret_charcode_for_keyevent(int eventType, const EmscriptenKeyboardEvent *e)
+{
+  // Only KeyPress events carry a charCode. For KeyDown and KeyUp events, these don't seem to be present yet, until later when the KeyDown
+  // is transformed to KeyPress. Sometimes it can be useful to already at KeyDown time to know what the charCode of the resulting
+  // KeyPress will be. The following attempts to do this:
+  if (eventType == EMSCRIPTEN_EVENT_KEYPRESS && e->which) return e->which;
+  if (e->charCode) return e->charCode;
+  if (strlen(e->key) == 1) return (int)e->key[0];
+  if (e->which) return e->which;
+  return e->keyCode;
+}
+
+static int number_of_characters_in_utf8_string(const char *str)
+{
+  if (!str) return 0;
+  int num_chars = 0;
+  while(*str)
+  {
+    if ((*str++ & 0xC0) != 0x80) ++num_chars; // Skip all continuation bytes
+  }
+  return num_chars;
+}
 
 static int emscripten_key_event_is_printable_character(const EmscriptenKeyboardEvent *keyEvent)
 {
@@ -4008,6 +3953,88 @@ static int NumCharsInUTF8String(const unsigned char *str)
     if ((*str++ & 0xC0) != 0x80) ++numChars; // Skip all continuation bytes
   }
   return numChars;
+}
+
+static const float wasm_dpi_scale = 1.0f;
+
+static void handleEmscriptenMouseEvent(int emsc_type, const EmscriptenMouseEvent* emsc_event, void* user_data) {
+  DCHECK(emsc_event);
+  const float mouse_x = (emsc_event->canvasX * wasm_dpi_scale);
+  const float mouse_y = (emsc_event->canvasY * wasm_dpi_scale);
+
+  updateGlobalMousePos(static_cast<int>(mouse_x), static_cast<int>(mouse_y));
+
+#if defined(ENABLE_COBALT)
+  std::unique_ptr<SbEvent> event = std::make_unique<SbEvent>();
+  event->type = SbEventType::kSbEventTypeInput;
+  std::unique_ptr<SbInputData> data = nullptr;
+  data = createEmptySbEventData();
+  DCHECK(data);
+
+  unsigned int key_modifiers = EmscMouseEventToSbButtonModifiers(emsc_event->button);
+  key_modifiers |= EmscModifiersEventToSbKeyModifiers(emsc_event->altKey,
+      emsc_event->ctrlKey,
+      emsc_event->metaKey,
+      emsc_event->shiftKey);
+
+  const SbKey key = EmscMouseEventToSbKey(emsc_event->button);
+#endif // ENABLE_COBALT
+
+  const int MAX_MOUSEBUTTONS = 3;
+  if (emsc_event->button < MAX_MOUSEBUTTONS) {
+      bool is_button_event = false;
+      switch (emsc_type) {
+          case EMSCRIPTEN_EVENT_MOUSEDOWN:
+#if defined(ENABLE_COBALT)
+              is_button_event = true;
+              data = setMouseSbEventData(std::move(data),
+                                         mouse_x, mouse_y,
+                                         SbInputEventType::kSbInputEventTypePress,
+                                         key_modifiers, key);
+#endif // ENABLE_COBALT
+              break;
+          case EMSCRIPTEN_EVENT_MOUSEUP: {
+#if defined(ENABLE_COBALT)
+              is_button_event = true;
+              data = setMouseSbEventData(std::move(data),
+                                         mouse_x, mouse_y,
+                                         SbInputEventType::kSbInputEventTypeUnpress,
+                                         key_modifiers, key);
+#endif // ENABLE_COBALT
+              break;
+          }
+          case EMSCRIPTEN_EVENT_MOUSEMOVE:
+#if defined(ENABLE_COBALT)
+              data = setMouseSbEventData(std::move(data),
+                                         mouse_x, mouse_y,
+                                         SbInputEventType::kSbInputEventTypeMove,
+                                         key_modifiers, key);
+#endif // ENABLE_COBALT
+              break;
+          case EMSCRIPTEN_EVENT_MOUSEENTER:
+          case EMSCRIPTEN_EVENT_MOUSELEAVE:
+          case EMSCRIPTEN_EVENT_CLICK:
+          case EMSCRIPTEN_EVENT_DBLCLICK:
+              break;
+          default:
+              break;
+      }
+
+#if defined(ENABLE_COBALT)
+      event->data = data.release();
+      if(!input_browser_thread) {
+        sendBrowserInputEvent(std::move(event));
+      } else {
+        DCHECK(input_browser_thread);
+        DCHECK(input_browser_thread->IsRunning());
+        input_browser_thread->task_runner()->PostTask(
+          FROM_HERE, base::Bind(
+                       [](std::unique_ptr<SbEvent> event) {
+                         sendBrowserInputEvent(std::move(event));
+                       }, base::Passed(&event)));
+      }
+#endif // ENABLE_COBALT
+  }
 }
 
 static void handleEmscriptenKeyboardEvent(int emsc_type, const EmscriptenKeyboardEvent* emsc_event, void* user_data) {
@@ -4033,6 +4060,7 @@ static void handleEmscriptenKeyboardEvent(int emsc_type, const EmscriptenKeyboar
     emscripten_dom_vk_to_string(emsc_event->keyCode), emsc_event->keyCode,
     emsc_event->which, CharCode, Character);
 
+#if defined(ENABLE_COBALT)
   std::unique_ptr<SbEvent> event = std::make_unique<SbEvent>();
   event->type = SbEventType::kSbEventTypeInput;
   std::unique_ptr<SbInputData> data = nullptr;
@@ -4045,11 +4073,13 @@ static void handleEmscriptenKeyboardEvent(int emsc_type, const EmscriptenKeyboar
       emsc_event->ctrlKey,
       emsc_event->metaKey,
       emsc_event->shiftKey);
+#endif // ENABLE_COBALT
 
   switch(emsc_type)
   {
     case EMSCRIPTEN_EVENT_KEYDOWN:
     {
+#if defined(ENABLE_COBALT)
       data->key_modifiers = key_modifiers;
       data->type = SbInputEventType::kSbInputEventTypePress;
       data->device_type = SbInputDeviceType::kSbInputDeviceTypeKeyboard;
@@ -4057,10 +4087,12 @@ static void handleEmscriptenKeyboardEvent(int emsc_type, const EmscriptenKeyboar
       data->key_location = EmscKeycodeToSbKeyLocation(dom_pk_code);
       data->keysym = Character;
       data->character = Character;
+#endif // ENABLE_COBALT
       break;
     }
     case EMSCRIPTEN_EVENT_KEYUP:
     {
+#if defined(ENABLE_COBALT)
       data->key_modifiers = key_modifiers;
       data->type = SbInputEventType::kSbInputEventTypeUnpress;
       data->device_type = SbInputDeviceType::kSbInputDeviceTypeKeyboard;
@@ -4068,10 +4100,29 @@ static void handleEmscriptenKeyboardEvent(int emsc_type, const EmscriptenKeyboar
       data->key_location = EmscKeycodeToSbKeyLocation(dom_pk_code);
       data->keysym = Character;
       data->character = Character;
+#endif // ENABLE_COBALT
+
+#if defined(ENABLE_BASE)
+      base::Optional<const char*> ev_text;
+
+      switch(dom_pk_code) {
+        case DOM_PK_A:
+        case DOM_PK_B:
+        case DOM_PK_C:
+        case DOM_PK_D:
+        {
+          ev_text = emsc_event->key;
+          printf("ev_text %s\n", ev_text.value());
+          break;
+        }
+      }
+      sendKeyEventToUI(ev_text);
+#endif // ENABLE_BASE
       break;
     }
     case EMSCRIPTEN_EVENT_KEYPRESS:
     {
+#if defined(ENABLE_COBALT)
       // Heuristic: Assume all printables are represented by
       // a string that has exactly one character, other are control characters.
       if (NumCharsInUTF8String((const unsigned char*)emsc_event->key) == 1)
@@ -4090,10 +4141,12 @@ static void handleEmscriptenKeyboardEvent(int emsc_type, const EmscriptenKeyboar
         //printf("Ignored KeyChar on KeyPress, "
         //  "since it is a non-printable: key: %u", keyUtf32);
       }
+#endif // ENABLE_COBALT
       break;
     }
   }
 
+#if defined(ENABLE_COBALT)
   event->data = data.release();
   if(!input_browser_thread) {
     sendBrowserInputEvent(std::move(event));
@@ -4106,17 +4159,16 @@ static void handleEmscriptenKeyboardEvent(int emsc_type, const EmscriptenKeyboar
                      sendBrowserInputEvent(std::move(inputEvent));
                    }, base::Passed(&event)));
   }
+#endif // ENABLE_COBALT
 }
-#endif
+#endif // EMSCRIPTEN
 
 #if defined(__EMSCRIPTEN__)
 static EM_BOOL emsc_keydown_cb(int emsc_type, const EmscriptenKeyboardEvent* emsc_event, void* user_data) {
   //printf("emsc_keydown_cb\n");
   DCHECK(emsc_event);
 
-#if defined(ENABLE_COBALT)
   handleEmscriptenKeyboardEvent(emsc_type, emsc_event, user_data);
-#endif // ENABLE_COBALT
 
   // Return true for events we want to suppress default web browser handling for.
   return true;
@@ -4126,9 +4178,7 @@ static EM_BOOL emsc_keypress_cb(int emsc_type, const EmscriptenKeyboardEvent* em
   //printf("emsc_keypress_cb\n");
   DCHECK(emsc_event);
 
-#if defined(ENABLE_COBALT)
   handleEmscriptenKeyboardEvent(emsc_type, emsc_event, user_data);
-#endif // ENABLE_COBALT
 
   // Return true for events we want to suppress default web browser handling for.
   return true;
@@ -4138,9 +4188,7 @@ static EM_BOOL emsc_keyup_cb(int emsc_type, const EmscriptenKeyboardEvent* emsc_
   //printf("emsc_keyup_cb\n");
   DCHECK(emsc_event);
 
-#if defined(ENABLE_COBALT)
   handleEmscriptenKeyboardEvent(emsc_type, emsc_event, user_data);
-#endif // ENABLE_COBALT
 
   // Return true for events we want to suppress default web browser handling for.
   return true;
@@ -4149,9 +4197,7 @@ static EM_BOOL emsc_keyup_cb(int emsc_type, const EmscriptenKeyboardEvent* emsc_
 static EM_BOOL emsc_mouse_down_cb(int emsc_type, const EmscriptenMouseEvent* emsc_event, void* user_data) {
   DCHECK(emsc_event);
 
-#if defined(ENABLE_COBALT)
   handleEmscriptenMouseEvent(emsc_type, emsc_event, user_data);
-#endif // ENABLE_COBALT
 
   // Return true for events we want to suppress default web browser handling for.
   return true;
@@ -4160,9 +4206,7 @@ static EM_BOOL emsc_mouse_down_cb(int emsc_type, const EmscriptenMouseEvent* ems
 static EM_BOOL emsc_mouse_up_cb(int emsc_type, const EmscriptenMouseEvent* emsc_event, void* user_data) {
   DCHECK(emsc_event);
 
-#if defined(ENABLE_COBALT)
   handleEmscriptenMouseEvent(emsc_type, emsc_event, user_data);
-#endif // ENABLE_COBALT
 
   // Return true for events we want to suppress default web browser handling for.
   return true;
@@ -4171,9 +4215,7 @@ static EM_BOOL emsc_mouse_up_cb(int emsc_type, const EmscriptenMouseEvent* emsc_
 static EM_BOOL emsc_mouse_move_cb(int emsc_type, const EmscriptenMouseEvent* emsc_event, void* user_data) {
   DCHECK(emsc_event);
 
-#if defined(ENABLE_COBALT)
   handleEmscriptenMouseEvent(emsc_type, emsc_event, user_data);
-#endif // ENABLE_COBALT
 
   // Return true for events we want to suppress default web browser handling for.
   return true;
@@ -4203,8 +4245,8 @@ static EM_BOOL emsc_mouse_wheel_cb(int emsc_type, const EmscriptenWheelEvent* em
   {
     case EMSCRIPTEN_EVENT_WHEEL:
     {
-      const float mouse_x = (emsc_event->mouse.canvasX * dpi_scale);
-      const float mouse_y = (emsc_event->mouse.canvasY * dpi_scale);
+      const float mouse_x = (emsc_event->mouse.canvasX * wasm_dpi_scale);
+      const float mouse_y = (emsc_event->mouse.canvasY * wasm_dpi_scale);
       data = setWheelSbEventData(std::move(data),
                                  mouse_x, mouse_y,
                                  emsc_event->deltaX,
@@ -5456,7 +5498,10 @@ static void mainLockFreeLoop() {
       }
       case SDL_KEYUP:
       {
+#ifdef ENABLE_BASE
         //printf("SDL_KEYUP %s\n", e.text.text);
+#if defined(ENABLE_BASE)
+
         base::Optional<const char*> ev_text;
 
         switch(e.key.keysym.scancode) {
@@ -5466,7 +5511,7 @@ static void mainLockFreeLoop() {
           case SDL_SCANCODE_D:
           {
             ev_text = SDL_GetKeyName(e.key.keysym.sym);
-            printf("SDL_KEYUP %s\n", ev_text.value());
+            printf("ev_text %s\n", ev_text.value());
             printf("Keycode: %s (%d) Scancode: %s (%d)\n",
                  SDL_GetKeyName(e.key.keysym.sym),
                  e.key.keysym.sym,
@@ -5475,17 +5520,8 @@ static void mainLockFreeLoop() {
             break;
           }
         }
-#ifdef ENABLE_SKIA
-    if(ev_text) {
-      // from some blink thread (timers require a sequenced context)
-      // TODO: PostTask PostBlockingTask
-      // TODO: shedulePaintCommand
-      ui_draw_thread_.task_runner()->PostTask(
-          FROM_HERE, base::Bind([](base::Optional<const char*> ev_text) {
-            skiaUiDemo.handleTestEvent(ev_text.value());
-          }, ev_text));
-    }
-#endif // ENABLE_SKIA
+        sendKeyEventToUI(ev_text);
+#endif // ENABLE_BASE
 
 #if defined(ENABLE_COBALT)
         isSbEvent = true;
@@ -5519,6 +5555,7 @@ static void mainLockFreeLoop() {
         data->keysym = e.key.keysym.sym;
         data->character = e.key.keysym.sym;
 #endif // ENABLE_COBALT
+#endif // ENABLE_BASE
         break;
       }
       //case SDL_TEXTINPUT:
@@ -6152,6 +6189,11 @@ static void addTestOnlyAttrCallbacks() {
 /// \note don`t use int main(void)
 /// \see https://github.com/emscripten-core/emscripten/issues/8757
 int main(int argc, char** argv) {
+    printf("main 0...\n");
+#if !defined(ENABLE_MAIN)
+  return EXIT_SUCCESS;
+#endif // ENABLE_MAIN
+
 
 #if defined(ENABLE_COBALT)
   addTestOnlyAttrCallbacks();
@@ -6398,6 +6440,7 @@ int main(int argc, char** argv) {
   ServiceMain(environment.TakeServiceRequestFromCommandLine());
   base::ThreadPool::GetInstance()->Shutdown();*/
 
+#if defined(ENABLE_BASE_PREALLOC)
   printf("Init alloc ...\n");
   // see
   // https://cs.chromium.org/chromium/src/third_party/blink/renderer/controller/blink_initializer.cc?sq=package:chromium&dr=C&g=0&l=88
@@ -6420,6 +6463,7 @@ int main(int argc, char** argv) {
       }
     }
   }
+#endif // 0
 #endif
 
 #ifdef ENABLE_WTF
@@ -7131,8 +7175,10 @@ if(!render_browser_window) {
 
     std::cout << std::endl; // flush
 
+    #ifdef ENABLE_BASE
     base::WaitableEvent ui_sync_event(base::WaitableEvent::ResetPolicy::MANUAL,
                               base::WaitableEvent::InitialState::NOT_SIGNALED);
+    #endif // ENABLE_BASE
 
     #if defined(ENABLE_BLINK_UI) //&& defined(__TODO__)
     #if 1
@@ -7199,13 +7245,13 @@ if(!render_browser_window) {
 
                 // blink::ThreadState::DetachCurrentThread(); // <<< TODO
 
-  #if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+  #if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS)) && defined(ENABLE_BASE)
                 thread_event->Signal();
             }, &ui_sync_event));
       ::std::cout << "thread rendering start Wait 1..." << base::Time::Now() << "\n";
       ::std::cout << std::endl; // flush
   #endif
-  #if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+  #if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS)) && defined(ENABLE_BASE)
       /// \todo Reactor your code so that the waiting happens on another thread instead of the main thread
       ui_sync_event.Wait();
       ui_sync_event.Reset();
@@ -7292,7 +7338,7 @@ if(!render_browser_window) {
 
     printf("Initializing skia...\n");
 
-    #if 1
+    #ifdef ENABLE_BASE
     #if defined(SEPARATE_UI_THREAD)
       DCHECK(ui_draw_thread_.IsRunning());
       ui_draw_thread_.task_runner()->PostTask(
@@ -7306,14 +7352,14 @@ if(!render_browser_window) {
             thread_event->Signal();
 
           }, &ui_sync_event));
-    #if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+    #if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS)) && defined(ENABLE_BASE)
         /// \todo Reactor your code so that the waiting happens on another thread instead of the main thread
         ui_sync_event.Wait();
         ui_sync_event.Reset();
     #endif
-    #else // 0
-      skiaUiDemo.initUISkiaSurface(width, height);
-    #endif // 0
+    #else // ENABLE_BASE
+      skiaUiDemo.initUISkiaSurface(DRAW_SURFACE_WIDTH, DRAW_SURFACE_HEIGHT);
+    #endif // ENABLE_BASE
 
   #endif // ENABLE_SKIA
 } // render_browser_window
