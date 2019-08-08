@@ -120,6 +120,7 @@ base::string16 DialogDelegate::GetDialogButtonLabel(
   }
   NOTREACHED();
 #endif // UI_VIEWS_PORT
+
   return base::string16();
 }
 

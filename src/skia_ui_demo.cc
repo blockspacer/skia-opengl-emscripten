@@ -164,6 +164,13 @@ static sk_sp<SkImage> skImageSp;
 #include "ui/views/view_observer.h"
 #include "ui/views/widget/native_widget.h"
 #include "ui/views/widget/root_view.h"
+#include "ui/base/ime/text_input_client.h"
+#include "ui/base/ime/input_method.h"
+#include "ui/base/l10n/l10n_font_util.h"
+#include "ui/events/event.h"
+#include "ui/events/event_utils.h"
+#include "ui/views/focus/focus_manager_factory.h"
+#include "ui/views/focus/widget_focus_manager.h"
 #include "ui/views/window/dialog_client_view.h"
 #include "ui/views/window/dialog_delegate.h"
 #include "ui/views/controls/button/checkbox.h"
@@ -349,16 +356,31 @@ bool HandleGestureEvent(
     message_->SetHorizontalAlignment(gfx::ALIGN_TO_HEAD);
     //AddChildView(message_);
 
+    DCHECK(!textfield_);
     textfield_ = new views::Textfield();
     textfield_->SetFontList(font_list);
-    textfield_->SetSize(gfx::Size(100, 100));
+    //textfield_->SetSize(gfx::Size(100, 100));
     textfield_->SetBorder(
       views::CreateSolidBorder(2, SK_ColorGRAY));
     textfield_->SetColor(
       blink::Color(1.0f, 0.0f, 1.0f, 0.5f).Rgb());
     textfield_->SetTextInputType(ui::TEXT_INPUT_TYPE_TEXT);
-    textfield_->set_placeholder_text(base::ASCIIToUTF16("TEXT_INPUT_TYPE_TEXT"));
+    textfield_->set_placeholder_text(base::ASCIIToUTF16("TEXT_1"));
+    textfield_->set_controller(this);
     //AddChildView(textfield_);
+
+    DCHECK(!textfield2_);
+    textfield2_ = new views::Textfield();
+    textfield2_->SetFontList(font_list);
+    //textfield2_->SetSize(gfx::Size(100, 100));
+    textfield2_->SetBorder(
+      views::CreateSolidBorder(2, SK_ColorGRAY));
+    textfield2_->SetColor(
+      blink::Color(1.0f, 0.0f, 1.0f, 0.5f).Rgb());
+    textfield2_->SetTextInputType(ui::TEXT_INPUT_TYPE_TEXT);
+    textfield2_->set_placeholder_text(base::ASCIIToUTF16("TEXT_2"));
+    textfield2_->set_controller(this);
+    //AddChildView(textfield2_);
 
     checkbox_ = new views::Checkbox(base::ASCIIToUTF16("Checkbox label"));
     //checkbox_->SetFocusntList(font_list);
@@ -374,16 +396,20 @@ bool HandleGestureEvent(
     auto MakeRow = [layout](View* view1, View* view2) {
       DCHECK(view1);
       DCHECK(view2);
-      layout->StartRowWithPadding(0, 0, 0, 5);
-      layout->AddView(view1);
+      layout->StartRowWithPadding(0, 0, 0, 0);
+      if (view1)
+        layout->AddView(view1);
       if (view2)
         layout->AddView(view2);
     };
 
-    MakeRow(title_, message_);
     //MakeRow(title_, textfield_);
-    MakeRow(checkbox_, textfield_);
+    //MakeRow(checkbox_, textfield_);
+    MakeRow(textfield_, textfield2_);
     //MakeRow(checkbox_, message_);
+    //MakeRow(nullptr, nullptr);
+    //MakeRow(nullptr, textfield2_);
+    MakeRow(title_, message_);
 
     /*views::View::OnFocus();
     InvalidateLayout();
@@ -490,6 +516,7 @@ bool HandleGestureEvent(
   views::Label* title_ = nullptr;
   views::Label* message_ = nullptr;
   views::Textfield* textfield_ = nullptr;
+  views::Textfield* textfield2_ = nullptr;
   views::Checkbox* checkbox_ = nullptr;
 
   DISALLOW_COPY_AND_ASSIGN(ContainerView);
@@ -829,10 +856,71 @@ static bool DrawGlyphs(double current_x, double current_y,
 void SkiaUiDemo::handleTestEvent(const char* text) {
   printf("handleTestEvent for %s\n", text);
 
-  if(std::string(text) == "a") {
+  if(std::string(text) == "A") {
+      DCHECK(container_->textfield2_->IsFocusable());
+      DCHECK(container_->textfield2_->GetEnabled());
+      DCHECK(container_->textfield2_->IsDrawn());
+      container_->textfield2_->SetCursorEnabled(true);
+      container_->textfield2_->RequestFocus();
+      container_->textfield2_->SetReadOnly(false);
+  }
+
+  if(std::string(text) == "B") {
+      DCHECK(container_->textfield_->IsFocusable());
+      DCHECK(container_->textfield_->GetEnabled());
+      DCHECK(container_->textfield_->IsDrawn());
+      container_->textfield_->SetCursorEnabled(true);
+      container_->textfield_->RequestFocus();
+      container_->textfield_->SetReadOnly(false);
+  }
+
+  if(std::string(text) == "C") {
+      DCHECK(widget_);
+      views::View* root_view = widget_->GetRootView();
+      DCHECK(root_view->Contains(container_));
+
+      const base::string16 inputText = base::UTF8ToUTF16("ф");
+      int flags = ui::EF_NONE;
+
+      for (base::string16::const_iterator i = inputText.begin();
+         i != inputText.end(); ++i) {
+        printf("sending OnKeyEvent(&press_event)\n");
+
+        ui::KeyEvent press_event(ui::ET_KEY_PRESSED,
+         ui::VKEY_PROCESSKEY, flags);
+        DCHECK(!press_event.stopped_propagation());
+        press_event.set_character(*i);
+        press_event.set_source_device_id(0);
+        DCHECK(!press_event.stopped_propagation());
+
+        ui::InputMethod* im = widget_->GetInputMethod();
+        im->DispatchKeyEvent(&press_event);
+      }
+
+      for (base::string16::const_iterator i = inputText.begin();
+         i != inputText.end(); ++i) {
+        printf("sending OnKeyEvent(&release_event)\n");
+        ui::KeyEvent release_event(ui::ET_KEY_RELEASED,
+          ui::VKEY_UNKNOWN, flags);
+        DCHECK(!release_event.stopped_propagation());
+        release_event.set_character(*i);
+        release_event.set_source_device_id(0);
+
+        DCHECK(!release_event.stopped_propagation());
+
+        ui::InputMethod* im = widget_->GetInputMethod();
+        im->DispatchKeyEvent(&release_event);
+      }
+  }
+
+  if(std::string(text) == "D") {
     if(container_) {
       DCHECK(widget_);
       views::View* root_view = widget_->GetRootView();
+
+      //views::internal::RootView* to_root_view =
+      //    static_cast<views::internal::RootView*>(widget_->GetRootView());
+
       DCHECK(root_view);
       if(!root_view->Contains(container_)) {
         root_view->AddChildView(container_);
@@ -842,7 +930,8 @@ void SkiaUiDemo::handleTestEvent(const char* text) {
       printf("handleTestEvent inject %s\n", text);
       container_->SetFocusBehavior(views::View::FocusBehavior::ALWAYS);
       DCHECK(container_->IsFocusable());
-      /*DCHECK(container_->GetWidget());
+/*
+      DCHECK(container_->GetWidget());
       DCHECK(container_->GetWidget()->GetTopLevelWidget() == container_->GetWidget());
       DCHECK(container_->GetWidget()->IsVisible());
       auto* focus_manager = container_->GetFocusManager();
@@ -867,10 +956,16 @@ void SkiaUiDemo::handleTestEvent(const char* text) {
       container_->textfield_->RequestFocus();
       container_->textfield_->SetReadOnly(false);
 
-      container_->textfield_->set_controller(container_);
       container_->textfield_->ChangeTextDirectionAndLayoutAlignment(base::i18n::RIGHT_TO_LEFT);
 
       container_->textfield_->SetEnabled(true);
+
+      DCHECK(root_view->GetInputMethod());
+      DCHECK(container_->GetInputMethod());
+      container_->textfield_->SetTextInputType(ui::TEXT_INPUT_TYPE_TEXT);
+      DCHECK(container_->textfield_->GetInputMethod()->GetTextInputType()
+              == ui::TEXT_INPUT_TYPE_TEXT);
+      DCHECK(container_->textfield_->GetInputMethod());
 
       DCHECK(container_->textfield_->HasFocus());
       //container_->textfield_->OnFocus();
@@ -886,7 +981,7 @@ void SkiaUiDemo::handleTestEvent(const char* text) {
 
       //int flags = ui::EF_IME_FABRICATED_KEY;
 
-      const base::string16 inputText = base::UTF8ToUTF16("k");
+      const base::string16 inputText = base::UTF8ToUTF16("y");
 
       //#include "ui/views/view_targeter.h"
       //views::ViewTargeter* view_targeter = new views::ViewTargeter(root_view);
@@ -896,40 +991,65 @@ void SkiaUiDemo::handleTestEvent(const char* text) {
 
       for (base::string16::const_iterator i = inputText.begin();
          i != inputText.end(); ++i) {
-       ui::KeyEvent press_event(ui::ET_KEY_PRESSED,
-        /*ui::VKEY_UNKNOWN*/ui::VKEY_PROCESSKEY, flags);
-       DCHECK(!press_event.stopped_propagation());
-       press_event.set_character(base::char16('k')/**i*/);
-       press_event.set_source_device_id(0);
-       //press_event.set_is_char(true);
-       ///focus_manager->OnKeyEvent(press_event);
-       //container_->OnEvent(&press_event);
-       //container_->textfield_->/*OnKeyEvent*/OnEvent(&press_event);
-       //ui::EventDispatchDetails details =
-       // root_view->OnEventFromSource(&press_event);
-       //widget_->SendEventToSink(&press_event);
-       DCHECK(!press_event.stopped_propagation());
-       widget_->OnKeyEvent(&press_event);
-       printf("sending OnKeyEvent(&press_event)\n");
+        ui::KeyEvent press_event(ui::ET_KEY_PRESSED,
+         /*ui::VKEY_UNKNOWN*/ui::VKEY_PROCESSKEY, flags);
+        DCHECK(!press_event.stopped_propagation());
+        press_event.set_character(*i);
+        press_event.set_source_device_id(0);
+        //press_event.set_is_char(true);
+        ///focus_manager->OnKeyEvent(press_event);
+        //container_->OnEvent(&press_event);
+        //container_->textfield_->/*OnKeyEvent*/OnEvent(&press_event);
+
+        //ui::EventDispatchDetails details =
+        // to_root_view->OnEventFromSource(&press_event);
+
+        //widget_->SendEventToSink(&press_event);
+        DCHECK(!press_event.stopped_propagation());
+        //widget_->OnKeyEvent(&press_event);
+
+        printf("sending OnKeyEvent(&press_event)\n");
+
+        //ui::KeyEvent event(ch, ui::VKEY_UNKNOWN, ui::DomCode::NONE, flags);
+        ui::InputMethod* im = widget_->GetInputMethod();
+        im->DispatchKeyEvent(&press_event);
+
+        ui::TextInputClient* client = im->GetTextInputClient();
+        DCHECK(client);
+        //client->InsertText(inputText);
       }
 
       for (base::string16::const_iterator i = inputText.begin();
          i != inputText.end(); ++i) {
-       ui::KeyEvent release_event(ui::ET_KEY_RELEASED,
+        ui::KeyEvent release_event(ui::ET_KEY_RELEASED,
         /*ui::VKEY_UNKNOWN*/ui::VKEY_UNKNOWN, flags);
-       DCHECK(!release_event.stopped_propagation());
-       release_event.set_character(base::char16('k')/**i*/);
-       release_event.set_source_device_id(0);
-       //release_event.set_is_char(true);
-       //set_async_callback
-       ///focus_manager->OnKeyEvent(release_event);
-       //container_->OnEvent(&release_event);
-       //container_->textfield_->OnEvent(&release_event);
-       DCHECK(!release_event.stopped_propagation());
-       widget_->OnKeyEvent(&release_event);
-       printf("sending OnKeyEvent(&release_event)\n");
+        DCHECK(!release_event.stopped_propagation());
+        release_event.set_character(*i);
+        release_event.set_source_device_id(0);
+        //release_event.set_is_char(true);
+        //set_async_callback
+        ///focus_manager->OnKeyEvent(release_event);
+        //container_->OnEvent(&release_event);
+        //container_->textfield_->OnEvent(&release_event);
+
+        //ui::EventDispatchDetails details =
+        // to_root_view->OnEventFromSource(&release_event);
+
+        DCHECK(!release_event.stopped_propagation());
+        //widget_->OnKeyEvent(&release_event);
+
+        printf("sending OnKeyEvent(&release_event)\n");
+
+        //ui::KeyEvent event(ch, ui::VKEY_UNKNOWN, ui::DomCode::NONE, flags);
+        ui::InputMethod* im = widget_->GetInputMethod();
+        im->DispatchKeyEvent(&release_event);
+
+        ui::TextInputClient* client = im->GetTextInputClient();
+        DCHECK(client);
+        //client->InsertText(inputText);
       }
-      container_->textfield_->AppendText(base::UTF8ToUTF16("з"));
+
+      //container_->textfield_->AppendText(base::UTF8ToUTF16("з"));
       //container_->textfield_->UpdateAfterChange(true, true);
 
       // TODO: OnMouseEvent OnScrollEvent
@@ -1461,7 +1581,9 @@ public:
       // see https://github.com/codebyravi/electron/blob/master/atom/common/api/atom_api_native_image.cc#L115
       //gfx_canvas.DrawImageInt(*imageSkia.get(), 330, 330);
       DCHECK(gfxImageSkia);
-      gfx_canvas.DrawImageInt(gfx::ImageSkia(gfxImageSkia->GetRepresentation(10.0f)), 630, 30);
+      gfx_canvas.DrawImageInt(
+        gfx::ImageSkia(gfxImageSkia->GetRepresentation(10.0f)),
+          10, 10);
     }
     {
       cc::PaintFlags paintFlags;
@@ -1629,10 +1751,14 @@ public:
     // see https://github.com/blockspacer/skia-opengl-emscripten/blob/master/src/chromium/ui/views/examples/textfield_example.cc
     auto layout_manager = std::make_unique<views::GridLayout>(container_);
     views::ColumnSet* column_set = layout_manager->AddColumnSet(0);
-    column_set->AddColumn(views::GridLayout::LEADING, views::GridLayout::FILL,
-                          0.2f, views::GridLayout::USE_PREF, 0, 0);
+    //column_set->AddColumn(views::GridLayout::LEADING, views::GridLayout::FILL,
+    //                      0.2f, views::GridLayout::USE_PREF, 0, 0);
+    //column_set->AddColumn(views::GridLayout::FILL, views::GridLayout::FILL,
+    //                      0.8f, views::GridLayout::USE_PREF, 0, 0);
     column_set->AddColumn(views::GridLayout::FILL, views::GridLayout::FILL,
-                          0.8f, views::GridLayout::USE_PREF, 0, 0);
+                          0.5f, views::GridLayout::USE_PREF, 0, 0);
+    column_set->AddColumn(views::GridLayout::FILL, views::GridLayout::FILL,
+                          0.5f, views::GridLayout::USE_PREF, 0, 0);
     container_->addChildren(layout_manager.get());
 
     //container_->SetLayoutManager(std::make_unique<views::FillLayout>());
@@ -1644,7 +1770,7 @@ public:
     widget_ = new views::Widget;
     views::Widget::InitParams params(
       views::Widget::InitParams::TYPE_POPUP/*TYPE_WINDOW_FRAMELESS*/);
-    params.bounds = gfx::Rect(800, 800);
+    //params.bounds = gfx::Rect(0, 0, 800, 800);
     params.ownership = views::Widget::InitParams::WIDGET_OWNS_NATIVE_WIDGET;
     //params.delegate = container_;
     ///params.delegate =
@@ -1655,8 +1781,8 @@ public:
   }
 
   DCHECK(widget_);
-  widget_->SetSize(gfx::Size(800, 800));
-  widget_->SetBounds(gfx::Rect(0, 0, 800, 800));
+  //widget_->SetSize(gfx::Size(800, 800));
+  //widget_->SetBounds(gfx::Rect(0, 0, 800, 800));
   widget_->SetFullscreen(false);
   widget_->SetVisibleOnAllWorkspaces(true);
 
@@ -1665,15 +1791,23 @@ public:
   ////
   widget_->SetContentsView(container_);
 
+  views::View* root_view = widget_->GetRootView();
+  DCHECK(root_view);
+  if(!root_view->Contains(container_)) {
+    root_view->AddChildView(container_);
+    printf("added container_ to root_view\n");
+  }
+  DCHECK(root_view->GetEffectiveViewTargeter());
+
   container_->SetVisible(true);
   container_->SetEnabled(true);
-  container_->SetBounds(0, 0, 800, 800);
-  container_->SetSize(gfx::Size(800, 800));
-  container_->SetPreferredSize(gfx::Size(800, 800));
+  //container_->SetBounds(0, 0, 800, 800);
+  //container_->SetSize(gfx::Size(800, 800));
+  //container_->SetPreferredSize(gfx::Size(800, 800));
   //container_->SetNativeTheme(nativeThemeAura);
   container_->SetBackground(views::CreateSolidBackground(
-        blink::Color(0.9f, 0.0f, 0.0f, 0.5f).Rgb()));
-  container_->SetBorder(views::CreateSolidBorder(2, SK_ColorBLUE));
+        blink::Color(0.9f, 1.0f, 1.0f, 0.9f).Rgb()));
+  //container_->SetBorder(views::CreateSolidBorder(2, SK_ColorBLUE));
   const gfx::Insets child_margins(1, 1);
   // TODO: free mem?
   //container_->SetProperty(views::kMarginsKey,
@@ -1681,27 +1815,27 @@ public:
 
   //cc::layer_tree_host()
 
-  container_->SetPaintToLayer(ui::LAYER_TEXTURED);
+  //container_->SetPaintToLayer(ui::LAYER_TEXTURED);
 
   //blink::Path path;
   //path.AddRect({0, 0, 800, 800});
   //container_->set_clip_path(path.GetSkPath());
-  //container_->set_owned_by_client(); // prevents view_to_be_deleted
 
-  container_->InvalidateLayout();
-  container_->Layout();
-  DCHECK(container_->GetLocalBounds() == gfx::Rect(0, 0, 800, 800));
+  container_->set_owned_by_client(); // prevents view_to_be_deleted by parent
+
+  //container_->InvalidateLayout();
+  //container_->SizeToPreferredSize();
+  //container_->Layout();
+  //DCHECK(container_->GetLocalBounds() == gfx::Rect(0, 0, 800, 800));
   container_->SchedulePaint();
+  container_->SetFocusBehavior(views::View::FocusBehavior::ALWAYS);
+  DCHECK(container_->IsFocusable());
 
-  views::View* root_view = widget_->GetRootView();
   //root_view->SetBoundsRect(container_->GetLocalBounds());
-  root_view->SetBounds(0, 0, 800, 800);
-  DCHECK(root_view);
-  if(!root_view->Contains(container_)) {
-    root_view->AddChildView(container_);
-    printf("added container_ to root_view\n");
-  }
-  DCHECK(root_view->GetEffectiveViewTargeter());
+  //root_view->SetBounds(0, 0, 800, 800);
+  root_view->InvalidateLayout();
+  root_view->SizeToPreferredSize();
+  root_view->Layout();
 
   /*widget->non_client_view()->SetFrameView(frame);  // Owns |frame|.
 
@@ -1717,31 +1851,40 @@ public:
   widget_->SetFullscreen(true);
   widget_->Maximize();
   widget_->Show(); // TODO: widget_.Close();
+  widget_->Activate(); // TODO: wait?
 
   DCHECK(widget_->GetContentsView());
 
-  widget_->LayoutRootViewIfNecessary();
+  //root_view->InvalidateLayout();
+  //root_view->Layout();
+  //widget_->LayoutRootViewIfNecessary();
   //DCHECK(!widget_->GetRootView()->GetLocalBounds().IsEmpty());
 
   ///DCHECK(container_->GetWidget());
-  DCHECK(!container_->size().IsEmpty());
-  DCHECK(!container_->GetPreferredSize().IsEmpty());
-  DCHECK(!container_->GetBoundsInScreen().IsEmpty());
-  DCHECK(!container_->GetLocalBounds().IsEmpty());
-  DCHECK(!container_->GetMirroredBounds().IsEmpty());
+  //DCHECK(!container_->size().IsEmpty());
+  //DCHECK(!container_->GetPreferredSize().IsEmpty());
+  //DCHECK(!container_->GetBoundsInScreen().IsEmpty());
+  //DCHECK(!container_->GetLocalBounds().IsEmpty());
+  //DCHECK(!container_->GetMirroredBounds().IsEmpty());
 
   // see https://github.com/blockspacer/skia-opengl-emscripten/blob/master/src/chromium/ui/views/controls/label_unittest.cc#L61
   gfx::Rect first_paint(1, 1);
   SkBitmap bitmap;
   auto raster_scale = 1.0f;
-  auto list = base::MakeRefCounted<cc::DisplayItemList>();
+  //auto list = base::MakeRefCounted<cc::DisplayItemList>();
+  scoped_refptr<cc::DisplayItemList> list =
+    base::MakeRefCounted<cc::DisplayItemList>(
+        cc::DisplayItemList::kToBeReleasedAsPaintOpBuffer);
   //gfx::Size container_size(800, 800/*container_->GetPreferredSize()*/);
-  gfx::Size container_size = container_->GetMirroredBounds().size();
+  gfx::Size container_size =
+    root_view->GetMirroredBounds().size();
+    //container_->GetMirroredBounds().size();
   DCHECK(!container_size.IsEmpty());
 
   ui::CanvasPainter canvasPainter =
     ui::CanvasPainter(&bitmap, container_size,
-    raster_scale, SK_ColorRED,//SK_ColorTRANSPARENT,
+    raster_scale, //SK_ColorRED,
+    SK_ColorTRANSPARENT,
      // is_pixel_canvas - if the paint commands are
     // recorded at pixel size instead of DIP.
     /*is_pixel_canvas()*/ true);
@@ -1759,9 +1902,11 @@ public:
   ui::PaintContext container_paint_context(
                              list.get(),
                              1.f,//compositor->device_scale_factor(),
-                             gfx::Rect(0, 0, 800, 800),//gfx::Rect(compositor->size()),
+                             //gfx::Rect(0, 0, 800, 800),//
+                             gfx::Rect(container_size),
                              true);
   container_->OnPaintLayer(container_paint_context);
+
   //container_->PaintDebugRects(container_paint_info);
   /*DCHECK(!bitmap.isNull());
   //canvasPainter.context().InvalidationForTesting();
@@ -1778,7 +1923,14 @@ public:
   //list->Finalize();
   sk_sp<cc::PaintRecord> paintRecord =
     list->ReleaseAsRecord();
-  cc_skia_paint_canvas.drawPicture(paintRecord);
+  //cc_skia_paint_canvas.save();
+  //cc_skia_paint_canvas.drawPicture(paintRecord);
+  //cc_skia_paint_canvas.restore();
+  gfx::ImageSkia tmp_image(gfx::ImageSkiaRep(paintRecord,
+    gfx::ScaleToCeiledSize(container_size, 1.0), 1.0));
+  DCHECK(!tmp_image.isNull());
+  gfx_canvas.DrawImageInt(tmp_image,
+    0, 0);
 //#endif // 0
 
 #if 0
@@ -1846,6 +1998,7 @@ public:
   //tmpRasterSurface.release();
 #endif // 0
 
+#if 0
   if(!test_label) {
     printf("creating test_label\n");
     const gfx::FontList gfxFontList = GetTextFontList();
@@ -1883,6 +2036,7 @@ public:
   gfx_canvas.Translate(gfx::Vector2d(200, 200));
   gfx_canvas.DrawImageInt(test_label_image, test_label->width(), test_label->height());
   gfx_canvas.Restore();
+#endif // 0
 
   /*ui::PaintCache paint_cache_;
   ui::PaintRecorder recorder(paint_info.context(), paint_info.paint_recording_size(),

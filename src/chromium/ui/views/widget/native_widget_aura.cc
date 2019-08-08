@@ -352,8 +352,12 @@ bool NativeWidgetAura::HasCapture() const {
 }
 
 ui::InputMethod* NativeWidgetAura::GetInputMethod() {
-  if (!window_)
+  printf("NativeWidgetAura::GetInputMethod 1\n");
+  if (!window_) {
+    printf("NativeWidgetAura::GetInputMethod 2\n");
     return nullptr;
+  }
+  printf("NativeWidgetAura::GetInputMethod 3\n");
   aura::Window* root_window = window_->GetRootWindow();
   return root_window ? root_window->GetHost()->GetInputMethod() : nullptr;
 }

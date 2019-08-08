@@ -3017,7 +3017,7 @@ static void Draw() {
 
   /// FIXME: spammed queue stops app from closing
   {
-    std::scoped_lock lock(canRefreshUIMutex);
+    std::scoped_lock ui_lock(canRefreshUIMutex);
     if (canRefreshUI
         /*&& !ui_draw_thread_.task_runner()->RunsTasksInCurrentSequence()*/)
     {
@@ -5457,15 +5457,33 @@ static void mainLockFreeLoop() {
       case SDL_KEYUP:
       {
         //printf("SDL_KEYUP %s\n", e.text.text);
+        base::Optional<const char*> ev_text;
+
+        switch(e.key.keysym.scancode) {
+          case SDL_SCANCODE_A:
+          case SDL_SCANCODE_B:
+          case SDL_SCANCODE_C:
+          case SDL_SCANCODE_D:
+          {
+            ev_text = SDL_GetKeyName(e.key.keysym.sym);
+            printf("SDL_KEYUP %s\n", ev_text.value());
+            printf("Keycode: %s (%d) Scancode: %s (%d)\n",
+                 SDL_GetKeyName(e.key.keysym.sym),
+                 e.key.keysym.sym,
+                 SDL_GetScancodeName(e.key.keysym.scancode),
+                 e.key.keysym.scancode);
+            break;
+          }
+        }
 #ifdef ENABLE_SKIA
-    if(e.key.keysym.scancode == SDL_SCANCODE_A) {
+    if(ev_text) {
       // from some blink thread (timers require a sequenced context)
       // TODO: PostTask PostBlockingTask
       // TODO: shedulePaintCommand
       ui_draw_thread_.task_runner()->PostTask(
-          FROM_HERE, base::Bind([]() {
-            skiaUiDemo.handleTestEvent("a");
-          }));
+          FROM_HERE, base::Bind([](base::Optional<const char*> ev_text) {
+            skiaUiDemo.handleTestEvent(ev_text.value());
+          }, ev_text));
     }
 #endif // ENABLE_SKIA
 

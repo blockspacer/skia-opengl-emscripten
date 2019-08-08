@@ -341,6 +341,33 @@ list(APPEND UI_BASE_SOURCES
 )
 
 list(APPEND UI_BASE_IME_SOURCES
+  # jumbo_component("ime")
+  ${UI_BASE_DIR}ime/constants.cc
+  ${UI_BASE_DIR}ime/constants.h
+  ${UI_BASE_DIR}ime/ime_bridge.cc
+  ${UI_BASE_DIR}ime/ime_bridge.h
+  ${UI_BASE_DIR}ime/ime_candidate_window_handler_interface.h
+  ${UI_BASE_DIR}ime/ime_engine_handler_interface.h
+  ${UI_BASE_DIR}ime/ime_input_context_handler_interface.h
+  ${UI_BASE_DIR}ime/input_method.h
+  ${UI_BASE_DIR}ime/input_method_base.cc
+  ${UI_BASE_DIR}ime/input_method_base.h
+  ${UI_BASE_DIR}ime/input_method_delegate.cc
+  ${UI_BASE_DIR}ime/input_method_delegate.h
+  ${UI_BASE_DIR}ime/input_method_keyboard_controller.h
+  ${UI_BASE_DIR}ime/input_method_keyboard_controller_observer.h
+  ${UI_BASE_DIR}ime/input_method_keyboard_controller_stub.cc
+  ${UI_BASE_DIR}ime/input_method_keyboard_controller_stub.h
+  ${UI_BASE_DIR}ime/input_method_minimal.cc
+  ${UI_BASE_DIR}ime/input_method_minimal.h
+  ${UI_BASE_DIR}ime/input_method_observer.h
+  ${UI_BASE_DIR}ime/mock_ime_input_context_handler.cc
+  ${UI_BASE_DIR}ime/mock_ime_input_context_handler.h
+  ${UI_BASE_DIR}ime/mock_input_method.cc
+  ${UI_BASE_DIR}ime/mock_input_method.h
+  ${UI_BASE_DIR}ime/text_edit_commands.h
+  ${UI_BASE_DIR}ime/text_input_client.cc
+  ${UI_BASE_DIR}ime/text_input_client.h
   # source_set("text_input_types")
   ${UI_BASE_DIR}ime/text_input_flags.h
   ${UI_BASE_DIR}ime/text_input_mode.h
@@ -354,22 +381,32 @@ list(APPEND UI_BASE_IME_SOURCES
   ${UI_BASE_DIR}ime/ime_text_span.h
   ${UI_BASE_DIR}ime/infolist_entry.cc
   ${UI_BASE_DIR}ime/infolist_entry.h
+  #if (is_chromeos || use_ozone) {
+  #  sources += [
+  #    "character_composer.cc
+  #    "character_composer.h
+  #  ]
+  # jumbo_component("init")
+  ${UI_BASE_DIR}ime/init/input_method_factory.cc
+  ${UI_BASE_DIR}ime/init/input_method_factory.h
+  ${UI_BASE_DIR}ime/init/input_method_initializer.cc
+  ${UI_BASE_DIR}ime/init/input_method_initializer.h
 )
 
-list(APPEND UI_BASE_STUB_SOURCES
-  ${UI_BASE_DIR}ime/text_input_client.cc
-  #
-  ${UI_BASE_DIR}ime/dummy_input_method.cc
-  ${UI_BASE_DIR}ime/dummy_input_method.h
-  ${UI_BASE_DIR}ime/dummy_text_input_client.cc
-  ${UI_BASE_DIR}ime/dummy_text_input_client.h
-  # TODO: https://github.com/blockspacer/skia-opengl-emscripten/blob/master/src/chromium/ui/base/ime/BUILD.gn
-)
+#list(APPEND UI_BASE_STUB_SOURCES
+#  ${UI_BASE_DIR}ime/text_input_client.cc
+#  #
+#  ${UI_BASE_DIR}ime/dummy_input_method.cc
+#  ${UI_BASE_DIR}ime/dummy_input_method.h
+#  ${UI_BASE_DIR}ime/dummy_text_input_client.cc
+#  ${UI_BASE_DIR}ime/dummy_text_input_client.h
+#  # TODO: https://github.com/blockspacer/skia-opengl-emscripten/blob/master/src/chromium/ui/base/ime/BUILD.gn
+#)
 
 add_library(UI_BASE STATIC
   ${UI_BASE_SOURCES}
   ${UI_BASE_IME_SOURCES}
-  ${UI_BASE_STUB_SOURCES}
+  #${UI_BASE_STUB_SOURCES}
 )
 
 target_link_libraries(UI_BASE PUBLIC
@@ -430,6 +467,10 @@ target_link_libraries(UI_BASE PUBLIC
   #egl
   #GLESv2
   GFX_RANGE
+  #"//base:i18n",
+  #"//ui/base/ime/mojo",
+  #"//ui/events:dom_keycode_converter",
+  #"//ui/gfx:native_widget_types",
 )
 
 target_link_libraries(UI_BASE PRIVATE
@@ -450,6 +491,8 @@ target_compile_definitions(UI_BASE PRIVATE
   IS_UI_BASE_FEATURES_IMPL=1
   UI_DATA_PACK_IMPLEMENTATION=1
   IS_UI_BASE_IME_TYPES_IMPL=1
+  IS_UI_BASE_IME_IMPL=1
+  IS_UI_BASE_IME_INIT_IMPL=1
   # custom
   UI_BASE_PORT=1
 )

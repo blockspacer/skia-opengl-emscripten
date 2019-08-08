@@ -35,6 +35,9 @@
 #include "ui/views/widget/widget_aura_utils.h"
 #include "ui/views/widget/widget_delegate.h"
 #include "ui/views/widget/window_reorderer.h"
+#include "ui/base/ime/init/input_method_factory.h"
+#include "ui/base/ime/input_method_delegate.h"
+#include "ui/base/ime/input_method.h"
 
 DEFINE_UI_CLASS_PROPERTY_TYPE(views::internal::NativeWidgetPrivate*)
 
@@ -192,9 +195,39 @@ bool NativeWidgetAura::HasCapture() const {
   return true;
 }
 
+// TODO
+ui::EventDispatchDetails NativeWidgetAura::DispatchKeyEventPostIME(
+    ui::KeyEvent* event,
+    DispatchKeyEventPostIMECallback callback) {
+  printf("NativeWidgetStub::DispatchKeyEventPostIME()\n");
+
+  // If dispatch to IME is already disabled we shouldn't reach here.
+  /*DCHECK(!dispatcher_->should_skip_ime());
+  dispatcher_->set_skip_ime(true);*/
+  // We should bypass event rewriters here as they've been tried before.
+  ui::EventDispatchDetails dispatch_details;
+  /*dispatch_details = event_sink()->OnEventFromSource(event);
+  if (!dispatch_details.dispatcher_destroyed)
+    dispatcher_->set_skip_ime(false);*/
+  RunDispatchKeyEventPostIMECallback(event, std::move(callback));
+  return dispatch_details;
+}
+
+// TODO: remove static
+ui::InputMethod* NativeWidgetAura::input_method_ = nullptr;
+
+// TODO
 ui::InputMethod* NativeWidgetAura::GetInputMethod() {
-  printf("NativeWidgetAura::GetInputMethod()\n");
-  return nullptr;
+  printf("NativeWidgetStub::GetInputMethod()\n");
+
+//#if 0
+  if (!input_method_) {
+    input_method_ =
+        ui::CreateInputMethod(this, (gfx::AcceleratedWidget)0/*GetAcceleratedWidget()*/).release();
+    owned_input_method_ = true;
+  }
+//#endif // 0
+  return input_method_;
 }
 
 void NativeWidgetAura::CenterWindow(const gfx::Size& size) {

@@ -13,6 +13,7 @@
 #include "ui/views/views_export.h"
 #include "ui/views/widget/native_widget_private.h"
 
+#include "ui/base/ime/input_method_delegate.h"
 #include "base/compiler_specific.h"
 #include "base/containers/flat_set.h"
 #include "base/macros.h"
@@ -59,9 +60,19 @@
 #include "cc/trees/layer_tree_frame_sink.h"
 #include "third_party/skia/include/core/SkPath.h"
 
+namespace ui {
+class Compositor;
+enum class DomCode;
+class EventSink;
+class InputMethod;
+class ViewProp;
+struct PlatformWindowInitProperties;
+}
+
 namespace views {
 
 class VIEWS_EXPORT NativeWidgetAura :
+  public ui::internal::InputMethodDelegate,
   public internal::NativeWidgetPrivate,
   public ui::LayerDelegate,
   public ui::LayerOwner//,
@@ -75,6 +86,11 @@ class VIEWS_EXPORT NativeWidgetAura :
   // window, in all other cases it's false.
   explicit NativeWidgetAura(internal::NativeWidgetDelegate* delegate,
                             bool is_parallel_widget_in_window_manager = false);
+
+  // Overridden from ui::internal::InputMethodDelegate:
+  ui::EventDispatchDetails DispatchKeyEventPostIME(
+      ui::KeyEvent* event,
+      DispatchKeyEventPostIMECallback callback) final;
 
   // Called internally by NativeWidgetAura and DesktopNativeWidgetAura to
   // associate |native_widget| with |window|.
@@ -288,6 +304,14 @@ class VIEWS_EXPORT NativeWidgetAura :
   base::WeakPtrFactory<NativeWidgetAura> close_widget_factory_;
 
   gfx::Rect bounds_;
+
+  // The InputMethod instance used to process key events.
+  // If owned it, it is created in GetInputMethod() method;
+  // If not owned it, it is passed in through SetSharedInputMethod() method.
+  static ui::InputMethod* input_method_; // TODO: free mem & remove static
+
+  // Whether the InputMethod instance is owned by this WindowTreeHost.
+  bool owned_input_method_;
 
   DISALLOW_COPY_AND_ASSIGN(NativeWidgetAura);
 };
