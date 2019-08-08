@@ -142,6 +142,35 @@ set(UI_EVENTS_SOURCES
   #    "//ui/gfx/x",
   #  ]
   #}
+  #if (use_ozone) {
+  #  sources += [ "events_default.cc" ]
+  #}
+  #
+  #if (is_win && use_ozone) {
+  #  sources -= [ "win/events_win.cc" ]
+  #}
+  #
+  #if (use_ozone) {
+  #  public += [ "ozone/events_ozone.h" ]
+  #  sources += [
+  #    "ozone/events_ozone.cc",
+  #    "ozone/keyboard_hook_ozone.cc",
+  #  ]
+  #  deps += [ "//ui/events/ozone:events_ozone_layout" ]
+  #}
+  #
+  #if (use_aura) {
+  #  public += [
+  #    "gestures/gesture_provider_aura.h",
+  #    "gestures/gesture_recognizer_impl.h",
+  #    "gestures/motion_event_aura.h",
+  #  ]
+  #  sources += [
+  #    "gestures/gesture_provider_aura.cc",
+  #    "gestures/gesture_recognizer_impl.cc",
+  #    "gestures/motion_event_aura.cc",
+  #  ]
+  #}
   #if (is_win || is_mac || use_x11 || use_ozone) {
   #  sources -= [ "events_stub.cc" ]
   #}

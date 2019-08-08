@@ -1098,6 +1098,7 @@ void DesktopNativeWidgetAura::UpdateVisualState() {
 // DesktopNativeWidgetAura, ui::EventHandler implementation:
 
 void DesktopNativeWidgetAura::OnKeyEvent(ui::KeyEvent* event) {
+  printf("DesktopNativeWidgetAura::OnKeyEvent 1 %s\n", event->GetName());
   if (event->is_char()) {
     // If a ui::InputMethod object is attached to the root window, character
     // events are handled inside the object and are not passed to this function.

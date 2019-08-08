@@ -44,6 +44,7 @@ FocusManager::~FocusManager() {
 }
 
 bool FocusManager::OnKeyEvent(const ui::KeyEvent& event) {
+  printf("FocusManager::OnKeyEvent 1 %s\n", event.GetName());
   const int key_code = event.key_code();
 
   if (event.type() != ui::ET_KEY_PRESSED && event.type() != ui::ET_KEY_RELEASED)

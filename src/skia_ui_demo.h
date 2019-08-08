@@ -18,6 +18,7 @@ class SkiaUiDemo {
   void cleanup_gl();
   void cleanup_skia_ui();
   void initBlinkPlatform();
+  void handleTestEvent(const char *text);
 };
 
 #endif // ENABLE_SKIA

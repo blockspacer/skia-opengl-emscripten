@@ -727,6 +727,8 @@ void TextfieldModel::ClearEditHistory() {
 
 void TextfieldModel::InsertTextInternal(const base::string16& new_text,
                                         bool mergeable) {
+  printf("TextfieldModel::InsertTextInternal() %s\n", new_text.c_str());
+
   using MergeType = internal::MergeType;
   if (HasCompositionText()) {
     CancelCompositionText();

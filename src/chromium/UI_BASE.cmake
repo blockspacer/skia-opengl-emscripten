@@ -363,6 +363,7 @@ list(APPEND UI_BASE_STUB_SOURCES
   ${UI_BASE_DIR}ime/dummy_input_method.h
   ${UI_BASE_DIR}ime/dummy_text_input_client.cc
   ${UI_BASE_DIR}ime/dummy_text_input_client.h
+  # TODO: https://github.com/blockspacer/skia-opengl-emscripten/blob/master/src/chromium/ui/base/ime/BUILD.gn
 )
 
 add_library(UI_BASE STATIC

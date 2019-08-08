@@ -145,6 +145,8 @@ static sk_sp<SkImage> skImageSp;
 #include "ui/views/controls/button/button.h"
 #include "ui/views/controls/combobox/combobox_listener.h"
 #include "ui/views/controls/textfield/textfield_controller.h"
+#include "ui/views/controls/button/image_button.h"
+#include "ui/views/controls/textfield/textfield_controller.h"
 #include "ui/views/examples/example_base.h"
 #include "base/memory/ptr_util.h"
 #include "base/stl_util.h"
@@ -246,7 +248,9 @@ class TestLabel : public views::Label {
 static TestLabel* test_label = nullptr;
 
 // TODO: OnPaintLayer
-class ContainerView : public views::View {
+class ContainerView :
+  public views::View,
+  public views::TextfieldController {
  public:
   std::unique_ptr<views::LayoutProvider> layout_provider_ =
       std::make_unique<views::LayoutProvider>();
@@ -255,6 +259,46 @@ class ContainerView : public views::View {
       : example_view_created_(false)/*,
         example_base_(base)*/ {
   }
+
+
+  // Overridden from views::TextfieldController:
+  /*void ContentsChanged(views::Textfield* sender,
+                       const base::string16& new_contents) override;
+  bool HandleMouseEvent(views::Textfield* sender,
+                        const ui::MouseEvent& mouse_event) override;
+  bool HandleGestureEvent(views::Textfield* sender,
+                          const ui::GestureEvent& gesture_event) override;
+*/
+
+void ContentsChanged(views::Textfield* sender,
+                                        const base::string16& new_contents) override {
+  printf("ContentsChanged %s\n", new_contents.c_str());
+  // Set search box focused when query changes.
+  ///search_box_->RequestFocus();
+  //UpdateModel(true);
+  ///NotifyQueryChanged();
+  ///if (!new_contents.empty())
+  ///  SetSearchBoxActive(true, ui::ET_KEY_PRESSED);
+  ///UpdateButtonsVisisbility();
+
+  SchedulePaint();
+}
+
+bool HandleMouseEvent(views::Textfield* sender,
+                                         const ui::MouseEvent& mouse_event) override {
+  //return OnTextfieldEvent(mouse_event.type());
+  SchedulePaint();
+  return true;
+}
+
+bool HandleGestureEvent(
+    views::Textfield* sender,
+    const ui::GestureEvent& gesture_event) override {
+  //return OnTextfieldEvent(gesture_event.type());
+
+  SchedulePaint();
+  return true;
+}
 
   std::unique_ptr<views::PaintInfo> last_paint_info_;
 
@@ -368,8 +412,10 @@ class ContainerView : public views::View {
 
     //message_->OnPaint(gfx_canvas);
   }
+ // TODO:
+ //private:
+ public:
 
- private:
   // View:
   void ViewHierarchyChanged(
       const views::ViewHierarchyChangedDetails& details) override {
@@ -694,8 +740,8 @@ static sk_sp<SkTypeface> sktpForUI;
 static bool sktpForUICreated = false;
 
 //static const char* fontPath = "./resources/fonts/Ubuntu-Regular.ttf";
-//static const char* fontPath = "./resources/fonts/FreeSans.ttf";
-static const char* fontPath = "./resources/fonts/arialuni.ttf";
+static const char* fontPath = "./resources/fonts/FreeSans.ttf";
+//static const char* fontPath = "./resources/fonts/arialuni.ttf";
 
 #if defined(ENABLE_CUSTOM_FONTS) && defined(ENABLE_HARFBUZZ)
 /// \note see SkShaper_harfbuzz.cpp if you want shaping in rectangle
@@ -779,6 +825,117 @@ static bool DrawGlyphs(double current_x, double current_y,
     return (SkScalar)x;
 }*/
 #endif // ENABLE_CUSTOM_FONTS && ENABLE_HARFBUZZ
+
+void SkiaUiDemo::handleTestEvent(const char* text) {
+  printf("handleTestEvent for %s\n", text);
+
+  if(std::string(text) == "a") {
+    if(container_) {
+      DCHECK(widget_);
+      views::View* root_view = widget_->GetRootView();
+      DCHECK(root_view);
+      if(!root_view->Contains(container_)) {
+        root_view->AddChildView(container_);
+      }
+      DCHECK(root_view->GetEffectiveViewTargeter());
+
+      printf("handleTestEvent inject %s\n", text);
+      container_->SetFocusBehavior(views::View::FocusBehavior::ALWAYS);
+      DCHECK(container_->IsFocusable());
+      /*DCHECK(container_->GetWidget());
+      DCHECK(container_->GetWidget()->GetTopLevelWidget() == container_->GetWidget());
+      DCHECK(container_->GetWidget()->IsVisible());
+      auto* focus_manager = container_->GetFocusManager();
+      DCHECK(focus_manager);
+      focus_manager->set_shortcut_handling_suspended(false);
+      focus_manager->set_arrow_key_traversal_enabled_for_widget(false);
+      container_->RequestFocus(); // requires FocusManager
+      focus_manager->SetFocusedView(container_);
+      DCHECK(focus_manager->ContainsView(container_));
+      DCHECK(focus_manager->GetFocusedView() == container_);
+      focus_manager->SetFocusedView(container_->textfield_);
+      DCHECK(focus_manager->ContainsView(container_->textfield_));
+      DCHECK(focus_manager->GetFocusedView() == container_->textfield_);
+*/
+      DCHECK(container_->textfield_->GetFocusManager());
+      DCHECK(container_->GetFocusManager());
+      container_->textfield_->SetFocusBehavior(views::View::FocusBehavior::ALWAYS);
+      DCHECK(container_->textfield_->IsFocusable());
+      DCHECK(container_->textfield_->GetEnabled());
+      DCHECK(container_->textfield_->IsDrawn());
+      container_->textfield_->SetCursorEnabled(true);
+      container_->textfield_->RequestFocus();
+      container_->textfield_->SetReadOnly(false);
+
+      container_->textfield_->set_controller(container_);
+      container_->textfield_->ChangeTextDirectionAndLayoutAlignment(base::i18n::RIGHT_TO_LEFT);
+
+      container_->textfield_->SetEnabled(true);
+
+      DCHECK(container_->textfield_->HasFocus());
+      //container_->textfield_->OnFocus();
+      DCHECK(container_->textfield_->ShouldShowCursor());
+      DCHECK(container_->textfield_->ShouldBlinkCursor());
+
+      int flags = ui::EF_NONE;
+
+      // Do not rewrite injected events. See crbug.com/136465.
+      //flags |= ui::EF_FINAL;
+
+      //pressed ? VKEY_PROCESSKEY : VKEY_UNKNOWN, EF_IME_FABRICATED_KEY
+
+      //int flags = ui::EF_IME_FABRICATED_KEY;
+
+      const base::string16 inputText = base::UTF8ToUTF16("k");
+
+      //#include "ui/views/view_targeter.h"
+      //views::ViewTargeter* view_targeter = new views::ViewTargeter(root_view);
+      //container_->SetEventTargeter(base::WrapUnique(view_targeter));
+
+      //ui::KeyEvent key_event(ui::ET_KEY_PRESSED, ui::VKEY_ESCAPE, ui::EF_NONE);
+
+      for (base::string16::const_iterator i = inputText.begin();
+         i != inputText.end(); ++i) {
+       ui::KeyEvent press_event(ui::ET_KEY_PRESSED,
+        /*ui::VKEY_UNKNOWN*/ui::VKEY_PROCESSKEY, flags);
+       DCHECK(!press_event.stopped_propagation());
+       press_event.set_character(base::char16('k')/**i*/);
+       press_event.set_source_device_id(0);
+       //press_event.set_is_char(true);
+       ///focus_manager->OnKeyEvent(press_event);
+       //container_->OnEvent(&press_event);
+       //container_->textfield_->/*OnKeyEvent*/OnEvent(&press_event);
+       //ui::EventDispatchDetails details =
+       // root_view->OnEventFromSource(&press_event);
+       //widget_->SendEventToSink(&press_event);
+       DCHECK(!press_event.stopped_propagation());
+       widget_->OnKeyEvent(&press_event);
+       printf("sending OnKeyEvent(&press_event)\n");
+      }
+
+      for (base::string16::const_iterator i = inputText.begin();
+         i != inputText.end(); ++i) {
+       ui::KeyEvent release_event(ui::ET_KEY_RELEASED,
+        /*ui::VKEY_UNKNOWN*/ui::VKEY_UNKNOWN, flags);
+       DCHECK(!release_event.stopped_propagation());
+       release_event.set_character(base::char16('k')/**i*/);
+       release_event.set_source_device_id(0);
+       //release_event.set_is_char(true);
+       //set_async_callback
+       ///focus_manager->OnKeyEvent(release_event);
+       //container_->OnEvent(&release_event);
+       //container_->textfield_->OnEvent(&release_event);
+       DCHECK(!release_event.stopped_propagation());
+       widget_->OnKeyEvent(&release_event);
+       printf("sending OnKeyEvent(&release_event)\n");
+      }
+      container_->textfield_->AppendText(base::UTF8ToUTF16("з"));
+      //container_->textfield_->UpdateAfterChange(true, true);
+
+      // TODO: OnMouseEvent OnScrollEvent
+    }
+  }
+}
 
 void SkiaUiDemo::prepareUIFonts() {
 #if defined(OS_EMSCRIPTEN) && !defined(DISABLE_PTHREADS) && defined(ENABLE_COBALT)
@@ -1505,7 +1662,8 @@ public:
 
   DCHECK(container_);
 
-  ////widget_->SetContentsView(container_);
+  ////
+  widget_->SetContentsView(container_);
 
   container_->SetVisible(true);
   container_->SetEnabled(true);
@@ -1535,6 +1693,33 @@ public:
   DCHECK(container_->GetLocalBounds() == gfx::Rect(0, 0, 800, 800));
   container_->SchedulePaint();
 
+  views::View* root_view = widget_->GetRootView();
+  //root_view->SetBoundsRect(container_->GetLocalBounds());
+  root_view->SetBounds(0, 0, 800, 800);
+  DCHECK(root_view);
+  if(!root_view->Contains(container_)) {
+    root_view->AddChildView(container_);
+    printf("added container_ to root_view\n");
+  }
+  DCHECK(root_view->GetEffectiveViewTargeter());
+
+  /*widget->non_client_view()->SetFrameView(frame);  // Owns |frame|.
+
+  WidgetAutoclosePtr widget(CreateTopLevelFramelessPlatformWidget());
+  widget->GetRootView()->AddChildView(view);
+
+  widget->SetBounds(gfx::Rect(0, 0, 100, 80));
+  widget->Show();
+  widget->SetFullscreen(true);
+  widget->Show();
+  widget->Maximize();*/
+
+  widget_->SetFullscreen(true);
+  widget_->Maximize();
+  widget_->Show(); // TODO: widget_.Close();
+
+  DCHECK(widget_->GetContentsView());
+
   widget_->LayoutRootViewIfNecessary();
   //DCHECK(!widget_->GetRootView()->GetLocalBounds().IsEmpty());
 
@@ -1544,8 +1729,6 @@ public:
   DCHECK(!container_->GetBoundsInScreen().IsEmpty());
   DCHECK(!container_->GetLocalBounds().IsEmpty());
   DCHECK(!container_->GetMirroredBounds().IsEmpty());
-
-  widget_->Show(); // TODO: widget_.Close();
 
   // see https://github.com/blockspacer/skia-opengl-emscripten/blob/master/src/chromium/ui/views/controls/label_unittest.cc#L61
   gfx::Rect first_paint(1, 1);

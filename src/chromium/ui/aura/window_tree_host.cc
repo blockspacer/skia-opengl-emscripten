@@ -242,6 +242,7 @@ void WindowTreeHost::MoveCursorToLocationInPixels(
   MoveCursorToInternal(root_location, location_in_pixels);
 }
 
+// TODO
 ui::InputMethod* WindowTreeHost::GetInputMethod() {
   if (!input_method_) {
     input_method_ =

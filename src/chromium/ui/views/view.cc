@@ -1106,10 +1106,12 @@ void View::SetMouseHandler(View* new_mouse_handler) {
 }
 
 bool View::OnKeyPressed(const ui::KeyEvent& event) {
+  printf("View::OnKeyPressed()\n");
   return false;
 }
 
 bool View::OnKeyReleased(const ui::KeyEvent& event) {
+  printf("View::OnKeyReleased() %us\n", event.GetText());
   return false;
 }
 
@@ -1118,6 +1120,7 @@ bool View::OnMouseWheel(const ui::MouseWheelEvent& event) {
 }
 
 void View::OnKeyEvent(ui::KeyEvent* event) {
+  printf("View::OnKeyEvent %us\n", event->GetText());
   bool consumed = (event->type() == ui::ET_KEY_PRESSED) ? OnKeyPressed(*event) :
                                                           OnKeyReleased(*event);
   if (consumed)
@@ -1857,6 +1860,7 @@ void View::OnBlur() {
 }
 
 void View::Focus() {
+  printf("View::Focus()\n");
   OnFocus();
   ScrollViewToVisible();
 

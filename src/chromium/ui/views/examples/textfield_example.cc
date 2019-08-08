@@ -82,6 +82,7 @@ void TextfieldExample::CreateExampleView(View* container) {
   MakeRow(set_style_, nullptr);
 }
 
+// TODO
 void TextfieldExample::ContentsChanged(Textfield* sender,
                                        const base::string16& new_contents) {
   if (sender == name_) {

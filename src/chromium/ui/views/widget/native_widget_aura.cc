@@ -952,6 +952,8 @@ void NativeWidgetAura::OnResizeLoopEnded(aura::Window* window) {
 // NativeWidgetAura, ui::EventHandler implementation:
 
 void NativeWidgetAura::OnKeyEvent(ui::KeyEvent* event) {
+  printf("NativeWidgetAura::OnKeyEvent 1 %s\n", event->GetName());
+
   DCHECK(window_);
   // Renderer may send a key event back to us if the key event wasn't handled,
   // and the window may be invisible by that time.

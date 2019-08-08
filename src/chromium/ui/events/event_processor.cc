@@ -14,6 +14,7 @@ EventProcessor::EventProcessor() : weak_ptr_factory_(this) {}
 EventProcessor::~EventProcessor() {}
 
 EventDispatchDetails EventProcessor::OnEventFromSource(Event* event) {
+  printf("EventProcessor::OnEventFromSource %s\n", event->GetName());
   base::WeakPtr<EventProcessor> weak_this = weak_ptr_factory_.GetWeakPtr();
   // If |event| is in the process of being dispatched or has already been
   // dispatched, then dispatch a copy of the event instead. We expect event

@@ -27,6 +27,7 @@ EventHandler::~EventHandler() {
 }
 
 void EventHandler::OnEvent(Event* event) {
+  printf("EventHandler::OnEvent 1 %s\n", event->GetName());
   if (event->IsKeyEvent())
     OnKeyEvent(event->AsKeyEvent());
   else if (event->IsMouseEvent())

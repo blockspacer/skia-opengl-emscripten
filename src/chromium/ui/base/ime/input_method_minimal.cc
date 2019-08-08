@@ -20,6 +20,7 @@ InputMethodMinimal::~InputMethodMinimal() {}
 
 ui::EventDispatchDetails InputMethodMinimal::DispatchKeyEvent(
     ui::KeyEvent* event) {
+  printf("InputMethodMinimal::DispatchKeyEvent\n");
   DCHECK(event->type() == ET_KEY_PRESSED || event->type() == ET_KEY_RELEASED);
 
   // If no text input client, do nothing.

@@ -74,11 +74,13 @@ class VIEWS_EXPORT TextfieldModel {
   // Inserts given |new_text| at the current cursor position.
   // The current composition text will be cleared.
   void InsertText(const base::string16& new_text) {
+    printf("TextfieldModel::InsertText\n");
     InsertTextInternal(new_text, false);
   }
 
   // Inserts a character at the current cursor position.
   void InsertChar(base::char16 c) {
+    printf("TextfieldModel::InsertChar\n");
     InsertTextInternal(base::string16(&c, 1), true);
   }
 

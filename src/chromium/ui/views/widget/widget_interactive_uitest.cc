@@ -2011,6 +2011,7 @@ TEST_F(WidgetInputMethodInteractiveTest, TwoWindows) {
   Textfield* textfield_parent = new Textfield;
   Textfield* textfield_child = new Textfield;
   textfield_parent->SetTextInputType(ui::TEXT_INPUT_TYPE_PASSWORD);
+
   parent->GetRootView()->AddChildView(textfield_parent);
   child->GetRootView()->AddChildView(textfield_child);
   ShowSync(parent);

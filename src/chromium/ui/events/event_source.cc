@@ -110,6 +110,7 @@ EventDispatchDetails EventSource::SendEventToSink(const Event* event) {
 EventDispatchDetails EventSource::DeliverEventToSink(Event* event) {
   EventSink* sink = GetEventSink();
   CHECK(sink);
+  printf("EventSource::DeliverEventToSink %s\n", event->GetName());
   return sink->OnEventFromSource(event);
 }
 

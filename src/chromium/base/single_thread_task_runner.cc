@@ -18,6 +18,8 @@
 #include "base/trace_event/trace_event.h"
 
 namespace base {
+
+// TODO
 #if defined(STARBOARD)
 namespace {
 
@@ -51,5 +53,6 @@ void SingleThreadTaskRunner::PostBlockingTask(const base::Location& from_here,
   task_finished.Wait();
 #endif
 }
-#endif
+#endif // STARBOARD
+
 }  // namespace base

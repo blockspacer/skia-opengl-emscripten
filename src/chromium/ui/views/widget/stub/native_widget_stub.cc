@@ -193,6 +193,7 @@ bool NativeWidgetAura::HasCapture() const {
 }
 
 ui::InputMethod* NativeWidgetAura::GetInputMethod() {
+  printf("NativeWidgetAura::GetInputMethod()\n");
   return nullptr;
 }
 

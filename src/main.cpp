@@ -792,13 +792,15 @@ static base::Thread* input_browser_thread = &main_browser_thread_;
 
 #if !(defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__))
 // TODO: causes hangs on WASM MT (even in render_browser_window mode!)
-//#define SEPARATE_UI_THREAD 1
-//#define SEPARATE_UI_THREAD_WRAPPER 1
+#define SEPARATE_UI_THREAD 1
+#define SEPARATE_UI_THREAD_WRAPPER 1
 #endif // __EMSCRIPTEN__ && __EMSCRIPTEN_PTHREADS__
 
+// TODO
 #if defined(SEPARATE_UI_THREAD)
 static base::Thread ui_draw_thread_("UI_Draw_Thread");
 static bool canRefreshUI = true;
+static std::mutex canRefreshUIMutex;
 
 #if defined(SEPARATE_UI_THREAD_WRAPPER)
 // TODO: remove ui_draw_thread_wrapper_ or enable only on WASM MT
@@ -3014,17 +3016,30 @@ static void Draw() {
 #endif // 0
 
   /// FIXME: spammed queue stops app from closing
-  if (canRefreshUI
-      /*&& !ui_draw_thread_.task_runner()->RunsTasksInCurrentSequence()*/) {
-    ui_draw_thread_.task_runner()->PostTask(
-        FROM_HERE, base::Bind([]() {
-          //while(!quitApp) { // TODO: lock for quitApp
-            skiaUiDemo.refreshUIDemo();
-            // TODO: https://stackoverflow.com/a/28008588
-            //base::PlatformThread::Sleep(
-            //  base::TimeDelta::FromMilliseconds(17));
-          //}
-        }));
+  {
+    std::scoped_lock lock(canRefreshUIMutex);
+    if (canRefreshUI
+        /*&& !ui_draw_thread_.task_runner()->RunsTasksInCurrentSequence()*/)
+    {
+      // TODO: PostTask PostBlockingTask
+      ui_draw_thread_.task_runner()->PostTask(
+          FROM_HERE, base::Bind([]() {
+            //while(!quitApp) { // TODO: lock for quitApp
+              {
+                canRefreshUI = false;
+                std::scoped_lock lock(canRefreshUIMutex);
+              }
+              skiaUiDemo.refreshUIDemo();
+              {
+                std::scoped_lock lock(canRefreshUIMutex);
+                canRefreshUI = true;
+              }
+              // TODO: https://stackoverflow.com/a/28008588
+              //base::PlatformThread::Sleep(
+              //  base::TimeDelta::FromMilliseconds(17));
+            //}
+          }));
+    }
   }
 #endif // SEPARATE_UI_THREAD
 
@@ -5442,6 +5457,18 @@ static void mainLockFreeLoop() {
       case SDL_KEYUP:
       {
         //printf("SDL_KEYUP %s\n", e.text.text);
+#ifdef ENABLE_SKIA
+    if(e.key.keysym.scancode == SDL_SCANCODE_A) {
+      // from some blink thread (timers require a sequenced context)
+      // TODO: PostTask PostBlockingTask
+      // TODO: shedulePaintCommand
+      ui_draw_thread_.task_runner()->PostTask(
+          FROM_HERE, base::Bind([]() {
+            skiaUiDemo.handleTestEvent("a");
+          }));
+    }
+#endif // ENABLE_SKIA
+
 #if defined(ENABLE_COBALT)
         isSbEvent = true;
         isSbKeyEvent = true;
@@ -6148,7 +6175,7 @@ int main(int argc, char** argv) {
 
     main_browser_thread_wrapper_.StartWithOptions(thread_options);
     #if defined(SEPARATE_UI_THREAD_WRAPPER)
-      ui_draw_thread_wrapper_.StartWithOptions(options);
+      ui_draw_thread_wrapper_.StartWithOptions(thread_options);
     #endif // SEPARATE_UI_THREAD_WRAPPER
 #if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
     /// \todo Reactor your code so that the waiting happens on another thread instead of the main thread

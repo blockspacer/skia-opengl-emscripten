@@ -1243,6 +1243,7 @@ int Widget::GetNonClientComponent(const gfx::Point& point) {
 }
 
 void Widget::OnKeyEvent(ui::KeyEvent* event) {
+  printf("Widget::OnKeyEvent %us\n", event->GetText());
   SendEventToSink(event);
   if (!event->handled() && GetFocusManager() &&
       !GetFocusManager()->OnKeyEvent(*event)) {

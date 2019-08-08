@@ -24,6 +24,7 @@ ScopedTargetHandler::~ScopedTargetHandler() {
 }
 
 void ScopedTargetHandler::OnEvent(Event* event) {
+  printf("ScopedTargetHandler::OnEvent 1 %s\n", event->GetName());
   if (original_handler_) {
     bool destroyed = false;
     bool* old_destroyed_flag = destroyed_flag_;

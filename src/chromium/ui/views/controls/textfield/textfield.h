@@ -429,7 +429,9 @@ class VIEWS_EXPORT Textfield : public View,
   // override this to customize when the placeholder text is shown.
   virtual bool ShouldShowPlaceholderText() const;
 
- private:
+ // TODO
+ //private:
+ public:
   friend class TextfieldTestApi;
 
   // View overrides:

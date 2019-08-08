@@ -724,6 +724,7 @@ WordLookupClient* Textfield::GetWordLookupClient() {
 }
 
 bool Textfield::OnKeyPressed(const ui::KeyEvent& event) {
+  printf("Textfield::OnKeyPressed() %us\n", event.GetText());
   ui::TextEditCommand edit_command = scheduled_text_edit_command_;
   scheduled_text_edit_command_ = ui::TextEditCommand::INVALID_COMMAND;
 
@@ -762,6 +763,7 @@ bool Textfield::OnKeyPressed(const ui::KeyEvent& event) {
 }
 
 bool Textfield::OnKeyReleased(const ui::KeyEvent& event) {
+  printf("Textfield::OnKeyReleased() %us\n", event.GetText());
   return controller_ && controller_->HandleKeyEvent(this, event);
 }
 
@@ -1134,6 +1136,7 @@ void Textfield::OnPaint(gfx::Canvas* canvas) {
 }
 
 void Textfield::OnFocus() {
+  printf("Textfield::OnFocus()\n");
   // Set focus reason if focused was gained without mouse or touch input.
   if (focus_reason_ == ui::TextInputClient::FOCUS_REASON_NONE)
     focus_reason_ = ui::TextInputClient::FOCUS_REASON_OTHER;
@@ -1503,6 +1506,7 @@ void Textfield::ClearCompositionText() {
 }
 
 void Textfield::InsertText(const base::string16& new_text) {
+  printf("Textfield::InsertText %s\n", new_text.c_str());
   // TODO(suzhe): Filter invalid characters.
   if (GetTextInputType() == ui::TEXT_INPUT_TYPE_NONE || new_text.empty())
     return;
@@ -1516,6 +1520,7 @@ void Textfield::InsertText(const base::string16& new_text) {
 }
 
 void Textfield::InsertChar(const ui::KeyEvent& event) {
+  printf("Textfield::InsertChar\n");
   if (read_only()) {
     OnEditFailed();
     return;
@@ -1839,6 +1844,7 @@ void Textfield::SetActiveCompositionForAccessibility(
 // Textfield, protected:
 
 void Textfield::DoInsertChar(base::char16 ch) {
+  printf("Textfield::DoInsertChar\n");
   OnBeforeUserAction();
   skip_input_method_cancel_composition_ = true;
   model_->InsertChar(ch);

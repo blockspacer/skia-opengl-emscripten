@@ -43,10 +43,13 @@ void DummyTextInputClient::ClearCompositionText() {
 }
 
 void DummyTextInputClient::InsertText(const base::string16& text) {
+  printf("DummyTextInputClient::InsertText\n");
   insert_text_history_.push_back(text);
 }
 
+// TODO
 void DummyTextInputClient::InsertChar(const KeyEvent& event) {
+  printf("DummyTextInputClient::InsertChar\n");
   ++insert_char_count_;
   last_insert_char_ = event.GetCharacter();
 }
@@ -131,11 +134,14 @@ void DummyTextInputClient::EnsureCaretNotInRect(const gfx::Rect& rect) {}
 
 bool DummyTextInputClient::IsTextEditCommandEnabled(
     TextEditCommand command) const {
+  printf("DummyTextInputClient::IsTextEditCommandEnabled\n");
   return false;
 }
 
 void DummyTextInputClient::SetTextEditCommandForNextKeyEvent(
-    TextEditCommand command) {}
+    TextEditCommand command) {
+  printf("DummyTextInputClient::SetTextEditCommandForNextKeyEvent\n");
+  }
 
 #if defined(ENABLE_UKM)
 ukm::SourceId DummyTextInputClient::GetClientSourceForMetrics() const {

@@ -68,12 +68,15 @@ void TextInputClientImpl::ClearCompositionText() {
   NotifyClientDataChanged();
 }
 
+// TODO
 void TextInputClientImpl::InsertText(const base::string16& text) {
+  printf("TextInputClientImpl::InsertText\n");
   text_input_client_->InsertText(text);
   NotifyClientDataChanged();
 }
 
 void TextInputClientImpl::InsertChar(std::unique_ptr<ui::Event> event) {
+  printf("TextInputClientImpl::InsertChar\n");
   DCHECK(event->IsKeyEvent());
   text_input_client_->InsertChar(*event->AsKeyEvent());
   NotifyClientDataChanged();

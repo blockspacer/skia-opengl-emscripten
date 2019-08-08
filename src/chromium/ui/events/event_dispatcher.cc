@@ -46,6 +46,8 @@ Event* EventDispatcherDelegate::current_event() {
 
 EventDispatchDetails EventDispatcherDelegate::DispatchEvent(EventTarget* target,
                                                             Event* event) {
+  printf("EventDispatcherDelegate::DispatchEvent %s\n", event->GetName());
+
   CHECK(target);
   Event::DispatcherApi dispatch_helper(event);
   dispatch_helper.set_phase(EP_PREDISPATCH);
@@ -115,8 +117,10 @@ void EventDispatcher::OnHandlerDestroyed(EventHandler* handler) {
 }
 
 void EventDispatcher::ProcessEvent(EventTarget* target, Event* event) {
+  printf("EventDispatcher::ProcessEvent 1 %s\n", event->GetName());
   if (!target || !target->CanAcceptEvent(*event))
     return;
+  printf("EventDispatcher::ProcessEvent 2 %s\n", event->GetName());
 
   ScopedDispatchHelper dispatch_helper(event);
   dispatch_helper.set_target(target);
@@ -161,6 +165,8 @@ void EventDispatcher::OnDispatcherDelegateDestroyed() {
 
 void EventDispatcher::DispatchEventToEventHandlers(EventHandlerList* list,
                                                    Event* event) {
+  printf("EventDispatcher::DispatchEventToEventHandlers 1 %s\n", event->GetName());
+
   // Let each EventHandler know this is about to make use of it. This way, if
   // during dispatch the EventHandler is destroyed it is removed from |list|
   // (OnHandlerDestroyed() is called, which removes from |list|).
@@ -176,12 +182,16 @@ void EventDispatcher::DispatchEventToEventHandlers(EventHandlerList* list,
     list->erase(list->begin());
 
     // A null |delegate| means no more events should be dispatched.
-    if (delegate_ && !event->stopped_propagation())
+    if (delegate_ && !event->stopped_propagation()) {
       DispatchEvent(handler, event);
+      printf("EventDispatcher::DispatchEventToEventHandlers 2 %s\n", event->GetName());
+    }
   }
 }
 
 void EventDispatcher::DispatchEvent(EventHandler* handler, Event* event) {
+  printf("EventDispatcher::DispatchEvent 1 %s\n", event->GetName());
+
   // If the target has been invalidated or deleted, don't dispatch the event.
   if (!delegate_->CanDispatchToTarget(event->target())) {
     if (event->cancelable())
@@ -189,6 +199,7 @@ void EventDispatcher::DispatchEvent(EventHandler* handler, Event* event) {
     return;
   }
 
+  printf("EventDispatcher::DispatchEvent 2 %s\n", event->GetName());
   base::AutoReset<Event*> event_reset(&current_event_, event);
   handler->OnEvent(event);
   if (!delegate_ && event->cancelable())
