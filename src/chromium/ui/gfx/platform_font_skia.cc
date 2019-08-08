@@ -25,6 +25,9 @@
 #include "ui/gfx/skia_font_delegate.h"
 #include "ui/gfx/text_utils.h"
 
+// TODO
+#include "ui/gfx/render_text_harfbuzz.h"
+
 namespace gfx {
 namespace {
 
@@ -63,13 +66,14 @@ sk_sp<SkTypeface> CreateSkTypeface(bool italic,
                  "family", *family);
     // TODO
     //typeface = SkTypeface::MakeFromName(family->c_str(), sk_style);
-    sk_sp<SkData> data = SkData::MakeFromFileName("./resources/fonts/arialuni.ttf");
+    /*sk_sp<SkData> data = SkData::MakeFromFileName("./resources/fonts/arialuni.ttf");
     if (!data) {
       printf("failed SkData::MakeFromMalloc for font in render_text_harfbuzz.cc\n");
       NOTREACHED();
     }
     const int index = 0;
-    typeface = SkTypeface::MakeFromData(data, index);
+    typeface = SkTypeface::MakeFromData(data, index);*/
+    typeface = RenderTextHarfBuzz::getDefaultTypeface();
   }
 
   // TODO

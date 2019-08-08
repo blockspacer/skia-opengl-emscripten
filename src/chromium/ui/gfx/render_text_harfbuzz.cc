@@ -671,13 +671,14 @@ sk_sp<SkTypeface> CreateSkiaTypeface(const Font& font,
   // TODO
   /*return sk_sp<SkTypeface>(SkTypeface::MakeFromName(
       font.GetFontName().c_str(), skia_style));*/
-  sk_sp<SkData> data = SkData::MakeFromFileName("./resources/fonts/arialuni.ttf");
+  /*sk_sp<SkData> data = SkData::MakeFromFileName("./resources/fonts/arialuni.ttf");
   if (!data) {
     printf("failed SkData::MakeFromMalloc for font in render_text_harfbuzz.cc\n");
     NOTREACHED();
   }
   const int index = 0;
-  return SkTypeface::MakeFromData(data, index);
+  return SkTypeface::MakeFromData(data, index);*/
+  return RenderTextHarfBuzz::getDefaultTypeface();
 }
 #endif
 
@@ -1191,6 +1192,24 @@ RenderTextHarfBuzz::RenderTextHarfBuzz()
 }
 
 RenderTextHarfBuzz::~RenderTextHarfBuzz() {}
+
+// TODO
+static sk_sp<SkTypeface> default_typeface;
+sk_sp<SkTypeface> RenderTextHarfBuzz::getDefaultTypeface() {
+  if(!default_typeface) {
+    printf("creating new typeface for RenderTextHarfBuzz...\n");
+    sk_sp<SkData> data =
+      SkData::MakeFromFileName("./resources/fonts/arialuni.ttf");
+    if (!data) {
+      printf("failed SkData::MakeFromMalloc for font in render_text_harfbuzz.cc\n");
+      NOTREACHED();
+    }
+    const int index = 0;
+    default_typeface = SkTypeface::MakeFromData(data, index);
+  }
+  DCHECK(default_typeface);
+  return default_typeface;
+}
 
 std::unique_ptr<RenderText> RenderTextHarfBuzz::CreateInstanceOfSameType()
     const {

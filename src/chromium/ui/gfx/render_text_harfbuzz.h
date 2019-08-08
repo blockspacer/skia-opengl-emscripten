@@ -205,6 +205,9 @@ class GFX_EXPORT RenderTextHarfBuzz : public RenderText {
   RenderTextHarfBuzz();
   ~RenderTextHarfBuzz() override;
 
+  // TODO
+  static sk_sp<SkTypeface> getDefaultTypeface();
+
   // RenderText:
   std::unique_ptr<RenderText> CreateInstanceOfSameType() const override;
   bool MultilineSupported() const override;
