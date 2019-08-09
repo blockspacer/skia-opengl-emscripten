@@ -164,6 +164,17 @@ static sk_sp<SkImage> skImageSp;
 #include "ui/views/controls/scroll_view.h"
 #include "ui/views/controls/textfield/textfield.h"
 #include "ui/views/controls/textfield/textfield_controller.h"
+#include "ui/views/controls/button/checkbox.h"
+#include "ui/views/controls/combobox/combobox.h"
+#include "ui/views/controls/label.h"
+#include "ui/views/controls/textfield/textfield.h"
+#include "ui/views/controls/combobox/combobox.h"
+#include "ui/views/controls/label.h"
+#include "ui/views/controls/button/checkbox.h"
+#include "ui/views/controls/scroll_view.h"
+#include "ui/views/controls/throbber.h"
+#include "ui/views/controls/tabbed_pane/tabbed_pane.h"
+#include "ui/views/controls/tabbed_pane/tabbed_pane_listener.h"
 #include "ui/views/examples/example_base.h"
 #include "base/memory/ptr_util.h"
 #include "base/stl_util.h"
@@ -185,10 +196,6 @@ static sk_sp<SkImage> skImageSp;
 #include "ui/views/focus/widget_focus_manager.h"
 #include "ui/views/window/dialog_client_view.h"
 #include "ui/views/window/dialog_delegate.h"
-#include "ui/views/controls/button/checkbox.h"
-#include "ui/views/controls/combobox/combobox.h"
-#include "ui/views/controls/label.h"
-#include "ui/views/controls/textfield/textfield.h"
 #include "ui/views/examples/example_combobox_model.h"
 #include "ui/views/layout/box_layout.h"
 #include "ui/views/layout/grid_layout.h"
@@ -205,11 +212,6 @@ static sk_sp<SkImage> skImageSp;
 #include "ui/base/models/combobox_model.h"
 #include "ui/base/ui_base_paths.h"
 #include "ui/views/background.h"
-#include "ui/views/controls/combobox/combobox.h"
-#include "ui/views/controls/label.h"
-#include "ui/views/controls/button/checkbox.h"
-#include "ui/views/controls/scroll_view.h"
-#include "ui/views/controls/throbber.h"
 #include "ui/views/view_class_properties.h"
 
 #include "ui/base/resource/data_pack.h"
@@ -343,7 +345,8 @@ class ScrollableView :
 class ContainerView :
   public views::View,
   public views::TextfieldController,
-  public views::ButtonListener {
+  public views::ButtonListener,
+  public views::TabbedPaneListener {
  public:
   std::unique_ptr<views::LayoutProvider> layout_provider_ =
       std::make_unique<views::LayoutProvider>();
@@ -402,6 +405,16 @@ bool HandleGestureEvent(
 
   std::unique_ptr<views::PaintInfo> GetLastPaintInfo() {
     return std::move(last_paint_info_);
+  }
+
+  void TabSelectedAt(int index) override {
+    // Just print the status when selection changes.
+    DCHECK(tabbed_pane_);
+    printf("TabSelectedAt %d "
+           "(GetTabCount %d GetSelectedTabIndex %d)\n",
+           index,
+           tabbed_pane_->GetTabCount(),
+           tabbed_pane_->GetSelectedTabIndex());
   }
 
   /*void OnPaintBackground(gfx::Canvas* canvas) override {
@@ -620,6 +633,16 @@ bool HandleGestureEvent(
     scroll_view_->SizeToPreferredSize();
     scroll_view_->Layout();
 
+
+    tabbed_pane_ = new views::TabbedPane();
+    tabbed_pane_->set_listener(this);
+    const base::string16 tabbed_label = base::ASCIIToUTF16("Added at 1");
+    tabbed_pane_->AddTab(tabbed_label,
+      new views::LabelButton(nullptr, tabbed_label));
+    const base::string16 tabbed_label_2 = base::ASCIIToUTF16("Added at 2");
+    tabbed_pane_->AddTab(tabbed_label_2,
+      new views::LabelButton(nullptr, tabbed_label_2));
+
     scroll_to_ = new views::LabelButton(
       this,
       base::ASCIIToUTF16("Scroll to"),
@@ -642,6 +665,7 @@ bool HandleGestureEvent(
     MakeRow(1, checkbox_, nullptr);
     //DCHECK(scrollable_);
     //MakeRow(1, scrollable_, nullptr);
+    MakeRow(1, tabbed_pane_, nullptr);
 
     // id 0
     //MakeRow(0, title_, textfield_);
@@ -792,6 +816,7 @@ bool HandleGestureEvent(
   views::Checkbox* checkbox_ = nullptr;
   views::ScrollView* scroll_view_;
   views::LabelButton* scroll_to_;
+  views::TabbedPane* tabbed_pane_ = nullptr;
 
   // The content of the scroll view.
   ScrollableView* scrollable_;
@@ -1184,6 +1209,9 @@ void SkiaUiDemo::handleTestEvent(const char* text) {
       container_->scroll_view_->Layout();
       container_->scroll_view_->SizeToPreferredSize();
       container_->scroll_view_->SchedulePaint();
+
+      DCHECK(container_->tabbed_pane_->GetTabCount() > 0);
+      container_->tabbed_pane_->SelectTabAt(0);
   }
 
   if(std::string(text) == "B") {
@@ -1212,6 +1240,9 @@ void SkiaUiDemo::handleTestEvent(const char* text) {
       container_->scroll_view_->Layout();
       container_->scroll_view_->SizeToPreferredSize();
       container_->scroll_view_->SchedulePaint();
+
+      DCHECK(container_->tabbed_pane_->GetTabCount() > 1);
+      container_->tabbed_pane_->SelectTabAt(1);
   }
 
   if(std::string(text) == "C") {

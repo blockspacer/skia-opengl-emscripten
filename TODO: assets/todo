@@ -834,3 +834,7 @@ TODO: https://stackoverflow.com/a/28438479
 TODO: https://archrometects.files.wordpress.com/2009/10/assignment-01-conceptual-architecture-of-google-chrome-archrometects.pdf
 
 TODO: https://medium.com/@egraether/why-working-on-chrome-made-me-develop-a-tool-for-reading-source-code-7111ba21a6f0
+
+TODO: browser (with events) view in ui/views / embed any SkBitmap
+ > https://github.com/blockspacer/skia-opengl-emscripten/blob/master/src/chromium/ui/views/examples/table_example.cc#L123
+ > https://github.com/blockspacer/skia-opengl-emscripten/blob/master/src/chromium/ui/views/examples/webview_example.cc
