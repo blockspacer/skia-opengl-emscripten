@@ -30,6 +30,7 @@ class SkiaUiDemo {
   void cleanup_gl();
   void cleanup_skia_ui();
   void initBlinkPlatform();
+  void SetCursorScreenPoint(int x, int y);
   void handleTestEvent(const char *text);
 };
 

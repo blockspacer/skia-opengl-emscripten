@@ -60,6 +60,9 @@ class VIEWS_EXPORT ScrollView : public View, public ScrollBarController {
   // is the view that needs to scroll.
   template <typename T>
   T* SetContents(std::unique_ptr<T> a_view) {
+    // TODO
+    DCHECK(a_view);
+    DCHECK(contents_viewport_);
     T* content_view = a_view.get();
     SetContentsImpl(std::move(a_view));
     return content_view;
@@ -139,7 +142,9 @@ class VIEWS_EXPORT ScrollView : public View, public ScrollBarController {
                          bool is_page,
                          bool is_positive) override;
 
- private:
+ // TODO
+ //private:
+ public:
   friend class test::ScrollViewTestApi;
 
   class Viewport;

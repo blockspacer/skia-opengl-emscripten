@@ -12,9 +12,20 @@ ScreenBase::ScreenBase() {}
 
 ScreenBase::~ScreenBase() {}
 
+#if defined(UI_DISPLAY_PORTED)
+void ScreenBase::SetCursorScreenPoint(const gfx::Point& point) {
+  cursor_screen_point_ = point;
+}
+#endif // UI_DISPLAY_PORTED
+
 gfx::Point ScreenBase::GetCursorScreenPoint() {
+#if defined(UI_DISPLAY_PORTED)
+  //printf("ScreenBase::GetCursorScreenPoint\n");
+  return cursor_screen_point_;
+#else
   NOTIMPLEMENTED_LOG_ONCE();
   return gfx::Point();
+#endif // UI_DISPLAY_PORTED
 }
 
 bool ScreenBase::IsWindowUnderCursor(gfx::NativeWindow window) {

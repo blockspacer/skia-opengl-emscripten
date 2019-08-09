@@ -65,6 +65,8 @@ int CheckScrollBounds(int viewport_size, int content_size, int current_pos) {
 void ConstrainScrollToBounds(View* viewport,
                              View* view,
                              bool scroll_with_layers_enabled) {
+  DCHECK(!scroll_with_layers_enabled); // TODO
+
   if (!view)
     return;
 
@@ -177,7 +179,11 @@ ScrollView::ScrollView()
           ::features::kUiCompositorScrollWithLayers)) {
   set_notify_enter_exit_on_child(true);
 
+  DCHECK(!scroll_with_layers_enabled_); // TODO
+  DCHECK(!layer()); // TODO
+  DCHECK(!contents_viewport_->layer()); // TODO
   AddChildView(contents_viewport_);
+  DCHECK(!contents_viewport_->layer()); // TODO
   AddChildView(header_viewport_);
 
   // Don't add the scrollbars as children until we discover we need them
@@ -201,6 +207,8 @@ ScrollView::ScrollView()
 
   // If we're scrolling with layers, paint the overflow indicators to the layer.
   if (ScrollsWithLayers()) {
+    //DCHECK(false); // TODO
+
     more_content_left_->SetPaintToLayer();
     more_content_top_->SetPaintToLayer();
     more_content_right_->SetPaintToLayer();
@@ -243,9 +251,14 @@ ScrollView* ScrollView::GetScrollViewForContents(View* contents) {
 }
 
 void ScrollView::SetContentsImpl(std::unique_ptr<View> a_view) {
+  //printf("ScrollView::SetContentsImpl 1\n");
   // Protect against clients passing a contents view that has its own Layer.
   DCHECK(!a_view->layer());
   if (ScrollsWithLayers()) {
+    //printf("ScrollView::SetContentsImpl 2\n");
+
+    //DCHECK(false); // TODO
+
     bool fills_opaquely = true;
     if (!a_view->background()) {
       // Contents views may not be aware they need to fill their entire bounds -
@@ -263,10 +276,18 @@ void ScrollView::SetContentsImpl(std::unique_ptr<View> a_view) {
     a_view->layer()->SetScrollable(contents_viewport_->bounds().size());
     a_view->layer()->SetFillsBoundsOpaquely(fills_opaquely);
   }
+
+  // TODO
+  DCHECK(contents_viewport_);
+  DCHECK(a_view);
+
   SetHeaderOrContents(contents_viewport_, std::move(a_view), &contents_);
 }
 
 void ScrollView::SetContents(std::nullptr_t) {
+  // TODO
+  //DCHECK(false);
+
   SetContentsImpl(nullptr);
 }
 
@@ -703,6 +724,10 @@ void ScrollView::SetHeaderOrContents(View* parent,
                                      std::unique_ptr<View> new_view,
                                      View** member) {
   delete *member;
+
+  DCHECK(new_view); // TODO
+  DCHECK(new_view.get()); // TODO
+
   if (new_view.get())
     *member = parent->AddChildView(std::move(new_view));
   else
@@ -789,8 +814,11 @@ void ScrollView::ComputeScrollBarsVisibility(const gfx::Size& vp_size,
 
 // Make sure that a single scrollbar is created and visible as needed
 void ScrollView::SetControlVisibility(View* control, bool should_show) {
+  //DCHECK(control); // TODO
   if (!control)
     return;
+  //DCHECK(should_show); // TODO
+  //DCHECK(!control->visible()); // TODO
   if (should_show) {
     if (!control->visible()) {
       AddChildView(control);
@@ -803,16 +831,27 @@ void ScrollView::SetControlVisibility(View* control, bool should_show) {
 }
 
 void ScrollView::UpdateScrollBarPositions() {
+  //printf("UpdateScrollBarPositions 1\n");
+  //DCHECK(contents_); // TODO
+
   if (!contents_)
     return;
 
+  //printf("UpdateScrollBarPositions 2\n");
+
   const gfx::ScrollOffset offset = CurrentOffset();
+
+  //DCHECK(horiz_sb_->visible()); // TODO
+  //DCHECK(vert_sb_->visible()); // TODO
+
   if (horiz_sb_->visible()) {
+    //printf("UpdateScrollBarPositions 3\n");
     int vw = contents_viewport_->width();
     int cw = contents_->width();
     horiz_sb_->Update(vw, cw, offset.x());
   }
   if (vert_sb_->visible()) {
+    //printf("UpdateScrollBarPositions 4\n");
     int vh = contents_viewport_->height();
     int ch = contents_->height();
     vert_sb_->Update(vh, ch, offset.y());
@@ -851,11 +890,17 @@ bool ScrollView::ScrollsWithLayers() const {
 }
 
 void ScrollView::EnableViewPortLayer() {
+  //DCHECK(false); // TODO
+  //return; // TODO
+
   if (DoesViewportOrScrollViewHaveLayer())
     return;
 
+#if !defined(UI_VIEWS_PORT)
   contents_viewport_->SetPaintToLayer();
   contents_viewport_->layer()->SetMasksToBounds(true);
+#endif // UI_VIEWS_PORT
+
   more_content_left_->SetPaintToLayer();
   more_content_top_->SetPaintToLayer();
   more_content_right_->SetPaintToLayer();
@@ -915,6 +960,8 @@ void ScrollView::UpdateBackground() {
 }
 
 SkColor ScrollView::GetBackgroundColor() const {
+  // TODO
+  /*return SK_ColorTRANSPARENT;*/
   return use_color_id_
              ? GetNativeTheme()->GetSystemColor(background_color_data_.color_id)
              : background_color_data_.color;

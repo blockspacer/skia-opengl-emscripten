@@ -1057,7 +1057,19 @@ bool View::HitTestPoint(const gfx::Point& point) const {
 }
 
 bool View::HitTestRect(const gfx::Rect& rect) const {
-  return GetEffectiveViewTargeter()->DoesIntersectRect(this, rect);
+  const bool is_hit =
+    GetEffectiveViewTargeter()->DoesIntersectRect(this, rect);
+  printf("View::HitTestRect (%i %i %i %i hit %i %i %i %i) %i\n",
+    rect.x(),
+    rect.y(),
+    rect.width(),
+    rect.height(),
+    GetLocalBounds().x(),
+    GetLocalBounds().y(),
+    GetLocalBounds().width(),
+    GetLocalBounds().height(),
+    is_hit);
+  return is_hit;
 }
 
 bool View::IsMouseHovered() const {
@@ -1071,8 +1083,14 @@ bool View::IsMouseHovered() const {
   if (!GetWidget()->IsMouseEventsEnabled())
     return false;
 
-  gfx::Point cursor_pos(display::Screen::GetScreen()->GetCursorScreenPoint());
-  ConvertPointFromScreen(this, &cursor_pos);
+  gfx::Point cursor_pos(0, 0);
+  // TODO
+  if(display::Screen::GetScreen()) {
+    DCHECK(display::Screen::GetScreen());
+    cursor_pos = gfx::Point(
+      display::Screen::GetScreen()->GetCursorScreenPoint());
+    ConvertPointFromScreen(this, &cursor_pos);
+  }
   return HitTestPoint(cursor_pos);
 }
 

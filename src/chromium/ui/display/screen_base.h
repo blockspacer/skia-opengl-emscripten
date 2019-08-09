@@ -35,6 +35,7 @@ class DISPLAY_EXPORT ScreenBase : public Screen {
   Display GetDisplayMatching(const gfx::Rect& match_rect) const override;
   void AddObserver(DisplayObserver* observer) override;
   void RemoveObserver(DisplayObserver* observer) override;
+  void SetCursorScreenPoint(const gfx::Point& point);
 
  protected:
   // Invoked when a display changed in some way, including being added.
@@ -43,6 +44,10 @@ class DISPLAY_EXPORT ScreenBase : public Screen {
 
  private:
   DisplayList display_list_;
+
+#if defined(UI_DISPLAY_PORTED)
+  gfx::Point cursor_screen_point_;
+#endif // UI_DISPLAY_PORTED
 
   DISALLOW_COPY_AND_ASSIGN(ScreenBase);
 };

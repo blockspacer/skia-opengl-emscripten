@@ -830,3 +830,7 @@ TODO: WASM MT memory footprint vs WASM ST memory footprint
    > clear && clear ; cmake -DRUN_APP=ON -DBUILD_APP=ON -DEXTRA_EMMAKE_OPTS="-j;6" -DBUILD_TYPE="Release" -DCLEAN_BUILD=OFF -DENABLE_EMCMAKE_CLEAN_FIRST=ON -DBUILD_DIR=$(pwd)/build-wasm-mt-rel/ -DEXTRA_EMCMAKE_OPTS="-DENABLE_WEB_PTHREADS=TRUE;-DENABLE_LIBWEBP=TRUE;-DENABLE_BLINK=TRUE;-DENABLE_COBALT=FALSE;-DENABLE_BASE=TRUE;-DENABLE_WTF=TRUE;-DDISABLE_FORMATTING=FALSE;-DENABLE_SKIA=TRUE;-DENABLE_SKSG=TRUE;-DENABLE_SKIA_UTILS=TRUE;-DENABLE_SKOTTIE=TRUE;-DENABLE_SKSHAPER=TRUE;-DFORCE_DISABLE_SK_GPU=FALSE;-DENABLE_BLINK_UI_VIEWS=TRUE;-DENABLE_BLINK_UI_NATIVE_THEME=TRUE;-DENABLE_MAIN=TRUE" -P tools/buildWeb.cmake
 
 TODO: https://stackoverflow.com/a/28438479
+
+TODO: https://archrometects.files.wordpress.com/2009/10/assignment-01-conceptual-architecture-of-google-chrome-archrometects.pdf
+
+TODO: https://medium.com/@egraether/why-working-on-chrome-made-me-develop-a-tool-for-reading-source-code-7111ba21a6f0

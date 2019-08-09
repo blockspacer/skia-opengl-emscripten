@@ -19,6 +19,12 @@
 #endif // UI_VIEWS_PORT
 #include "ui/base/ui_base_types.h"
 #include "ui/compositor/layer.h"
+#include "ui/compositor/compositor.h"
+#include "ui/compositor/layer.h"
+#include "ui/compositor/layer_animation_observer.h"
+#include "ui/compositor/layer_animator.h"
+#include "ui/compositor/scoped_animation_duration_scale_mode.h"
+#include "ui/compositor/scoped_layer_animation_settings.h"
 #include "ui/display/display.h"
 #include "ui/display/screen.h"
 #include "ui/events/event.h"
@@ -87,6 +93,9 @@ void NativeWidgetAura::SetShadowElevationFromInitParams(
 ////////////////////////////////////////////////////////////////////////////////
 // NativeWidgetAura, internal::NativeWidgetPrivate implementation:
 
+// TODO
+//static std::unique_ptr<ui::Compositor> compositor_;
+
 void NativeWidgetAura::InitNativeWidget(const Widget::InitParams& params) {
   // See Widget::InitParams::context for details.
   //DCHECK(params.parent || params.context);
@@ -101,6 +110,25 @@ void NativeWidgetAura::InitNativeWidget(const Widget::InitParams& params) {
   //UpdateLayerName();
   layer()->SetFillsBoundsOpaquely(true);
   //env_->NotifyWindowInitialized(this);
+
+  // NOTE: SetCompositor called from SetRootLayer
+  /*scoped_refptr<base::SingleThreadTaskRunner> task_runner =
+      new base::NullTaskRunner();
+
+  const bool enable_pixel_output = false;
+  context_factories_ =
+      std::make_unique<ui::TestContextFactories>(enable_pixel_output);
+
+  compositor_ = std::make_unique<ui::Compositor>(
+      context_factories_->GetContextFactoryPrivate()->AllocateFrameSinkId(),
+      context_factories_->GetContextFactory(),
+      context_factories_->GetContextFactoryPrivate(), task_runner,
+      false ); // enable_pixel_canvas
+  compositor_->SetAcceleratedWidget(gfx::kNullAcceleratedWidget);
+
+  compositor_->SetRootLayer(layer());
+  DCHECK(GetCompositor() == compositor_);
+  DCHECK(layer()->GetCompositor() == compositor_);*/
 
   delegate_->OnNativeWidgetCreated();
 

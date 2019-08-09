@@ -122,7 +122,15 @@
 #include "ui/native_theme/native_theme.h"
 #include "ui/native_theme/native_theme_aura.h"
 #include "third_party/skia/include/core/SkPath.h"
+
+#include "ui/gfx/geometry/size.h"
+#include "ui/gfx/skia_util.h"
+#include "ui/gfx/canvas.h"
+#include "ui/gfx/color_utils.h"
 #include "ui/gfx/geometry/rect.h"
+#include "ui/gfx/geometry/insets.h"
+#include "ui/gfx/geometry/vector2d.h"
+//#include "ui/gfx/native_widget_types.h"
 #endif // ENABLE_BLINK_UI_NATIVE_THEME
 
 #ifdef ENABLE_BLINK_UI
@@ -131,33 +139,39 @@ static sk_sp<SkImage> skImageSp;
 #endif // ENABLE_UI
 
 #if defined(ENABLE_BLINK_UI_VIEWS)
+#include "ui/display/manager/default_touch_transform_setter.h"
+#include "ui/display/manager/display_manager.h"
+#include "ui/display/manager/test/touch_device_manager_test_api.h"
+#include "ui/display/manager/touch_device_manager.h"
+#include "ui/display/screen_base.h"
+#include "ui/events/devices/device_data_manager.h"
+#include "base/strings/string_number_conversions.h"
+
 #include "ui/compositor/compositor.h"
 //#include "ui/compositor/test/test_context_factories.h"
-#include "ui/gfx/geometry/size.h"
-#include "ui/gfx/skia_util.h"
 
 #include "cc/layers/layer.h"
 #include "cc/trees/layer_tree_host.h"
 
 #include "base/macros.h"
 #include "ui/views/controls/button/button.h"
+#include "ui/views/controls/button/label_button.h"
+#include "ui/views/controls/button/radio_button.h"
 #include "ui/views/controls/combobox/combobox_listener.h"
 #include "ui/views/controls/textfield/textfield_controller.h"
 #include "ui/views/controls/button/image_button.h"
+#include "ui/views/controls/native/native_view_host.h"
+#include "ui/views/controls/scroll_view.h"
+#include "ui/views/controls/textfield/textfield.h"
 #include "ui/views/controls/textfield/textfield_controller.h"
 #include "ui/views/examples/example_base.h"
 #include "base/memory/ptr_util.h"
 #include "base/stl_util.h"
 #include "base/strings/utf_string_conversions.h"
-#include "ui/gfx/geometry/insets.h"
-#include "ui/gfx/geometry/vector2d.h"
 #include "ui/views/background.h"
 #include "ui/views/border.h"
 #include "ui/views/paint_info.h"
 #include "ui/views/background.h"
-#include "ui/views/controls/native/native_view_host.h"
-#include "ui/views/controls/scroll_view.h"
-#include "ui/views/controls/textfield/textfield.h"
 #include "ui/views/metadata/metadata_types.h"
 #include "ui/views/view_observer.h"
 #include "ui/views/widget/native_widget.h"
@@ -197,7 +211,6 @@ static sk_sp<SkImage> skImageSp;
 #include "ui/views/controls/scroll_view.h"
 #include "ui/views/controls/throbber.h"
 #include "ui/views/view_class_properties.h"
-//#include "ui/gfx/native_widget_types.h"
 
 #include "ui/base/resource/data_pack.h"
 #include "ui/base/resource/resource_bundle.h"
@@ -252,10 +265,85 @@ class TestLabel : public views::Label {
 // TODO: free mem
 static TestLabel* test_label = nullptr;
 
+static int testScrollY = 0;
+
+class ScrollableView :
+  public views::View
+ {
+ public:
+  ScrollableView() {
+    SetColor(SK_ColorRED, SK_ColorCYAN);
+    auto lb1 =
+      new views::LabelButton(nullptr,
+        base::ASCIIToUTF16("Button"),
+        views::style::CONTEXT_BUTTON);
+    AddChildView(lb1);
+    lb1->SetBounds(0, 0, 100, 100);
+    lb1->SetPreferredSize(gfx::Size(100, 100));
+    lb1->SetSize(gfx::Size(100, 100));
+    lb1->SetBorder(views::CreateSolidBorder(2, SK_ColorGRAY));
+    //lb1->SetVisible(true);
+    lb1->SetEnabled(true);
+
+    auto lb2 =
+      new views::RadioButton(base::ASCIIToUTF16("Radio Button"), 0);
+    AddChildView(lb2);
+    lb2->SetBounds(0, 50, 100, 100);
+    lb2->SetPreferredSize(gfx::Size(100, 100));
+    lb2->SetSize(gfx::Size(100, 100));
+    lb2->SetBorder(views::CreateSolidBorder(2, SK_ColorGRAY));
+    //lb2->SetVisible(true);
+    lb2->SetEnabled(true);
+
+    InvalidateLayout();
+    SizeToPreferredSize();
+    Layout();
+  }
+
+  void SetColor(SkColor from, SkColor to) {
+    from_color_ = from;
+    to_color_ = to;
+  }
+
+  /*void PlaceChildY(size_t index, int y) {
+    View* view = children()[index];
+    DCHECK(view);
+    gfx::Size size = view->GetPreferredSize();
+    view->SetBounds(0, y, size.width(), size.height());
+  }
+
+  // View
+  void Layout() override {
+    DCHECK(children().size() > 1);
+    PlaceChildY(0, 0);
+    PlaceChildY(1, height() / 2);
+    SizeToPreferredSize();
+  }*/
+
+  void OnPaintBackground(gfx::Canvas* canvas) override {
+    cc::PaintFlags flags;
+    flags.setShader(
+        gfx::CreateGradientShader(0, height(), from_color_, to_color_));
+    flags.setStyle(cc::PaintFlags::kFill_Style);
+    canvas->DrawRect(GetLocalBounds(), flags);
+  }
+
+  /*gfx::Size CalculatePreferredSize() const override {
+    return gfx::Size(200, 200);//gfx::Size(width(), height());
+  }*/
+
+ private:
+  SkColor from_color_;
+  SkColor to_color_;
+
+  DISALLOW_COPY_AND_ASSIGN(ScrollableView);
+};
+
 // TODO: OnPaintLayer
 class ContainerView :
   public views::View,
-  public views::TextfieldController {
+  public views::TextfieldController,
+  public views::ButtonListener {
  public:
   std::unique_ptr<views::LayoutProvider> layout_provider_ =
       std::make_unique<views::LayoutProvider>();
@@ -316,6 +404,25 @@ bool HandleGestureEvent(
     return std::move(last_paint_info_);
   }
 
+  /*void OnPaintBackground(gfx::Canvas* canvas) override {
+    cc::PaintFlags flags;
+    flags.setShader(
+        gfx::CreateGradientShader(0, height(), from_color_, to_color_));
+    flags.setStyle(cc::PaintFlags::kFill_Style);
+    canvas->DrawRect(GetLocalBounds(), flags);
+  }*/
+
+  void ButtonPressed(views::Button* sender, const ui::Event& event) override {
+    printf("ButtonPressed\n");
+    DCHECK(scroll_to_);
+    if (sender == scroll_to_) {
+      DCHECK(scroll_view_);
+      scroll_view_->contents()->ScrollRectToVisible(
+          gfx::Rect(20, 10, 10, 50));
+      scroll_view_->InvalidateLayout();
+    }
+  }
+
   void addChildren(views::GridLayout* layout) {
     DCHECK(layout);
 
@@ -366,7 +473,8 @@ bool HandleGestureEvent(
     textfield_->SetColor(
       blink::Color(1.0f, 0.0f, 1.0f, 0.5f).Rgb());
     textfield_->SetTextInputType(ui::TEXT_INPUT_TYPE_TEXT);
-    textfield_->set_placeholder_text(base::ASCIIToUTF16("TEXT_1"));
+    textfield_->set_placeholder_text(
+      base::ASCIIToUTF16("TEXT_1"));
     textfield_->set_controller(this);
     //AddChildView(textfield_);
 
@@ -379,11 +487,13 @@ bool HandleGestureEvent(
     textfield2_->SetColor(
       blink::Color(1.0f, 0.0f, 1.0f, 0.5f).Rgb());
     textfield2_->SetTextInputType(ui::TEXT_INPUT_TYPE_TEXT);
-    textfield2_->set_placeholder_text(base::ASCIIToUTF16("TEXT_2"));
+    textfield2_->set_placeholder_text(
+      base::ASCIIToUTF16("TEXT_2"));
     textfield2_->set_controller(this);
-    //AddChildView(textfield2_);
+    //
 
-    checkbox_ = new views::Checkbox(base::ASCIIToUTF16("Checkbox label"));
+    checkbox_ = new views::Checkbox(
+      base::ASCIIToUTF16("Checkbox label"));
     //checkbox_->SetFocusntList(font_list);
     checkbox_->SetBorder(
       views::CreateSolidBorder(2, SK_ColorBLACK));
@@ -394,23 +504,184 @@ bool HandleGestureEvent(
     checkbox_->SetBounds(0,0,100,100);
     //AddChildView(checkbox_);
 
-    auto MakeRow = [layout](View* view1, View* view2) {
-      DCHECK(view1);
-      DCHECK(view2);
-      layout->StartRowWithPadding(0, 0, 0, 0);
+    scroll_view_ = new views::ScrollView();
+    DCHECK(scroll_view_);
+
+    scrollable_ptr_ = std::make_unique<ScrollableView>();
+    scrollable_ = scrollable_ptr_.get();
+
+    DCHECK(scrollable_);
+    scrollable_->SetColor(SK_ColorYELLOW, SK_ColorCYAN);
+    scrollable_->SetBounds(0, 0, 300, 300);
+    scrollable_->SetPreferredSize(gfx::Size(300, 300));
+    scrollable_->SetSize(gfx::Size(300, 300));
+    scrollable_->SetBorder(views::CreateSolidBorder(2, SK_ColorGRAY));
+    //scrollable_->SetVisible(true);
+    scrollable_->SetEnabled(true);
+    scrollable_->InvalidateLayout();
+    scrollable_->SizeToPreferredSize();
+    scrollable_->Layout();
+    /*scrollable_->SetBounds(0, 0, 300, 300);
+    scrollable_->SetPreferredSize(gfx::Size(300, 300));
+    scrollable_->SetSize(gfx::Size(300, 300));
+    scrollable_->SetBorder(views::CreateSolidBorder(2, SK_ColorGRAY));*/
+
+    DCHECK(scrollable_ptr_);
+    auto scrollable_contents = scroll_view_->
+      SetContents(std::make_unique<View>());
+
+    /*auto scrollable_contents =
+      scroll_view_->SetContents(std::move(scrollable_ptr_));
+    DCHECK(scroll_view_->contents());*/
+
+    DCHECK(scrollable_contents);
+    DCHECK(scroll_view_->contents());
+    scrollable_contents->AddChildView(scrollable_);
+
+    DCHECK(!scrollable_->GetLocalBounds().IsEmpty());
+    scrollable_contents->SetBoundsRect(scrollable_->GetLocalBounds());
+    scrollable_contents->SetPreferredSize(scrollable_->size());
+    scrollable_contents->SetSize(scrollable_->size());
+    scrollable_contents->SetBorder(views::CreateSolidBorder(2, SK_ColorGRAY));
+    scrollable_contents->SetBackground(views::CreateSolidBackground(
+          blink::Color(0.9f, 0.1f, 0.3f, 0.2f).Rgb()));
+    scrollable_contents->SetEnabled(true);
+    scrollable_contents->InvalidateLayout();
+    scrollable_contents->SizeToPreferredSize();
+    scrollable_contents->Layout();
+
+    //scroll_view_->contents_viewport_ = scrollable_contents;
+      //->AddChildView(scrollable_contents);
+
+#if 0
+    auto scrollable_contents = //new views::Textfield();
+      scroll_view_->SetContents(std::make_unique<views::Textfield>());
+
+    scrollable_contents->SetFontList(font_list);
+    //scrollable_contents->SetSize(gfx::Size(300, 300));
+    scrollable_contents->SetBounds(0, 0, 300, 300);
+    scrollable_contents->SetPreferredSize(gfx::Size(300, 300));
+    scrollable_contents->SetBorder(
+      views::CreateSolidBorder(2, SK_ColorGRAY));
+    scrollable_contents->SetColor(
+      blink::Color(1.0f, 0.0f, 1.0f, 0.5f).Rgb());
+    scrollable_contents->SetTextInputType(ui::TEXT_INPUT_TYPE_TEXT);
+    scrollable_contents->set_placeholder_text(
+      base::ASCIIToUTF16("TEXT_scrollable_contents"));
+    scrollable_contents->SetBackground(views::CreateSolidBackground(
+          blink::Color(1.0f, 0.5f, 1.0f, 0.5f).Rgb()));
+    scrollable_contents->set_controller(this);
+#endif // 0
+
+    //scroll_view_->EnableViewPortLayer();
+    //scroll_view_->SetControlVisibility(scroll_view_, true);
+    //scroll_view_->SetControlVisibility(scrollable_, true);
+    //scroll_view_->SetHeaderOrContents(scrollable_, true);
+    DCHECK(!scroll_view_->ScrollsWithLayers());
+
+    // TODO
+    //scroll_view_->AddChildView(scrollable_);
+
+    // TODO
+    DCHECK(!scrollable_->layer());
+    //DCHECK(!scroll_view_->contents_viewport_->layer());
+
+    // TODO
+    //DCHECK(!scroll_view_->DoesViewportOrScrollViewHaveLayer());
+
+    DCHECK(scroll_view_->contents_viewport_);
+
+    // TODO
+    if(!scroll_view_->contents_viewport_->Contains(scrollable_)) {
+      scroll_view_->contents_viewport_->AddChildView(scrollable_);
+    }
+
+    DCHECK(scroll_view_->contents_viewport_->Contains(scrollable_));
+
+    //scrollable_->SetVisible(true);
+    scrollable_->SetEnabled(true);
+    scrollable_->InvalidateLayout();
+    scrollable_->SizeToPreferredSize();
+    scrollable_->Layout();
+    DCHECK(!scrollable_->GetLocalBounds().IsEmpty());
+
+    // TODO
+    //scroll_view_->ClipHeightTo(/*min_height*/ 0, /*max_height*/ 250);
+
+    scroll_view_->SetBounds(0, 0, 250, 250);
+    scroll_view_->SetPreferredSize(gfx::Size(250, 250));
+    scroll_view_->SetSize(gfx::Size(250, 250));
+    scroll_view_->SetBorder(views::CreateSolidBorder(2, SK_ColorGRAY));
+    scroll_view_->SetBackground(views::CreateSolidBackground(
+          blink::Color(0.9f, 0.1f, 0.3f, 0.2f).Rgb()));
+    //scroll_view_->SetVisible(true);
+    scroll_view_->SetEnabled(true);
+    scroll_view_->InvalidateLayout();
+    scroll_view_->SizeToPreferredSize();
+    scroll_view_->Layout();
+
+    scroll_to_ = new views::LabelButton(
+      this,
+      base::ASCIIToUTF16("Scroll to"),
+      views::style::CONTEXT_BUTTON);
+    //scroll_to_->set_controller(this);
+
+    auto MakeRow = [layout](int column_set_id, View* view1, View* view2) {
+      //DCHECK(view1);
+      //DCHECK(view2);
+      layout->StartRowWithPadding(0, column_set_id, 0, 0);
       if (view1)
         layout->AddView(view1);
       if (view2)
         layout->AddView(view2);
     };
 
-    //MakeRow(title_, textfield_);
-    //MakeRow(checkbox_, textfield_);
-    MakeRow(textfield_, textfield2_);
-    //MakeRow(checkbox_, message_);
-    //MakeRow(nullptr, nullptr);
-    //MakeRow(nullptr, textfield2_);
-    MakeRow(title_, message_);
+    // id 1
+    DCHECK(scroll_view_);
+    MakeRow(1, scroll_view_, nullptr);
+    MakeRow(1, checkbox_, nullptr);
+    //DCHECK(scrollable_);
+    //MakeRow(1, scrollable_, nullptr);
+
+    // id 0
+    //MakeRow(0, title_, textfield_);
+    MakeRow(0, textfield_, textfield2_);
+    //DCHECK(scroll_view_);
+    //MakeRow(0, scroll_view_, nullptr);
+    //MakeRow(0, checkbox_, message_);
+    //MakeRow(0, nullptr, nullptr);
+    //MakeRow(0, nullptr, textfield2_);
+    MakeRow(0, title_, message_);
+    DCHECK(scroll_to_);
+    MakeRow(0, scroll_to_, nullptr);
+    //DCHECK(scrollable_);
+    //MakeRow(0, scrollable_, nullptr);
+
+    DCHECK(scrollable_);
+    DCHECK(!scrollable_->size().IsEmpty());
+    DCHECK(!scrollable_->GetPreferredSize().IsEmpty());
+    DCHECK(!scrollable_->GetBoundsInScreen().IsEmpty());
+    DCHECK(!scrollable_->GetLocalBounds().IsEmpty());
+
+    //scrollable_->SetVisible(true);
+    scrollable_->SetEnabled(true);
+    scrollable_->SchedulePaint();
+    scrollable_->SetFocusBehavior(views::View::FocusBehavior::ALWAYS);
+    //scrollable_->SetPaintToLayer(ui::LAYER_TEXTURED);
+
+    //scroll_view_->SetVisible(true);
+    scroll_view_->SetEnabled(true);
+    scroll_view_->SchedulePaint();
+    scroll_view_->SetFocusBehavior(views::View::FocusBehavior::ALWAYS);
+    //scroll_view_->SetPaintToLayer(ui::LAYER_TEXTURED);
+
+    DCHECK(scroll_view_);
+    DCHECK(!scroll_view_->GetLocalBounds().IsEmpty());
+    /*scroll_view_->contents()->ScrollRectToVisible(
+        gfx::Rect(20, 20, 20, 20));*/
+    scroll_view_->InvalidateLayout();
+    scroll_view_->Layout();
+    scroll_view_->SizeToPreferredSize();
 
     /*views::View::OnFocus();
     InvalidateLayout();
@@ -519,6 +790,12 @@ bool HandleGestureEvent(
   views::Textfield* textfield_ = nullptr;
   views::Textfield* textfield2_ = nullptr;
   views::Checkbox* checkbox_ = nullptr;
+  views::ScrollView* scroll_view_;
+  views::LabelButton* scroll_to_;
+
+  // The content of the scroll view.
+  ScrollableView* scrollable_;
+  std::unique_ptr<ScrollableView> scrollable_ptr_; // TODO
 
   // TODO: AddStyleRange
 
@@ -755,10 +1032,32 @@ static inline bool WithinEpsilon(const double a, const double b) {
 }
 
 #if defined(ENABLE_BLINK_UI)
+static std::unique_ptr<display::ScreenBase> screen_;
+#endif // ENABLE_BLINK_UI
+
+void SkiaUiDemo::SetCursorScreenPoint(int x, int y) {
+#if defined(ENABLE_BLINK_UI)
+  DCHECK(screen_);
+  screen_->SetCursorScreenPoint(gfx::Point(x, y));
+#endif // ENABLE_BLINK_UI
+}
+
+#if defined(ENABLE_BLINK_UI)
 void SkiaUiDemo::initBlinkPlatform() {
   g_platform = std::make_unique<blink::Platform>();
   ///mojo::core::Init();
   blink::Platform::CreateMainThreadAndInitialize(g_platform.get());
+
+  // TODO >>>
+  //ui::DeviceDataManager::CreateInstance();
+
+  screen_ = std::make_unique<display::ScreenBase>();
+  display::Screen::SetScreenInstance(screen_.get());
+  DCHECK(screen_);
+
+  // TODO >>>
+  //  display::Screen::SetScreenInstance(nullptr);
+  //  ui::DeviceDataManager::DeleteInstance();
 }
 #endif // ENABLE_BLINK_UI
 
@@ -867,6 +1166,24 @@ void SkiaUiDemo::handleTestEvent(const char* text) {
       container_->textfield2_->SetCursorEnabled(true);
       container_->textfield2_->RequestFocus();
       container_->textfield2_->SetReadOnly(false);
+
+      testScrollY+=10;
+      DCHECK(container_->scroll_view_);
+      DCHECK(container_->scroll_view_->contents());
+      /*DCHECK(!container_->scroll_view_->contents()->
+        GetVisibleBounds().IsEmpty());*/
+
+      auto prev = container_->scroll_view_->CurrentOffset();
+      std::cout << "ScrollOffset" << prev.x() << prev.y() << std::endl;
+
+      /*container_->scroll_view_->contents()->ScrollRectToVisible(
+        gfx::Rect(20, testScrollY, 20, 20));*/
+      container_->scroll_view_->
+        ScrollToOffset(gfx::ScrollOffset(0, testScrollY));
+      container_->scroll_view_->InvalidateLayout();
+      container_->scroll_view_->Layout();
+      container_->scroll_view_->SizeToPreferredSize();
+      container_->scroll_view_->SchedulePaint();
   }
 
   if(std::string(text) == "B") {
@@ -876,6 +1193,25 @@ void SkiaUiDemo::handleTestEvent(const char* text) {
       container_->textfield_->SetCursorEnabled(true);
       container_->textfield_->RequestFocus();
       container_->textfield_->SetReadOnly(false);
+
+      testScrollY-=10;
+      DCHECK(container_->scroll_view_);
+      DCHECK(container_->scroll_view_->contents());
+      /*DCHECK(!container_->scroll_view_->contents()->
+        GetVisibleBounds().IsEmpty());*/
+
+      /*container_->scroll_view_->contents()->ScrollRectToVisible(
+        gfx::Rect(20, testScrollY, 20, 20));*/
+
+      auto prev = container_->scroll_view_->CurrentOffset();
+      std::cout << "ScrollOffset" << prev.x() << prev.y() << std::endl;
+
+      container_->scroll_view_->
+        ScrollToOffset(gfx::ScrollOffset(0, testScrollY));
+      container_->scroll_view_->InvalidateLayout();
+      container_->scroll_view_->Layout();
+      container_->scroll_view_->SizeToPreferredSize();
+      container_->scroll_view_->SchedulePaint();
   }
 
   if(std::string(text) == "C") {
@@ -1764,7 +2100,7 @@ public:
     container_ = new ContainerView();
     // see https://github.com/blockspacer/skia-opengl-emscripten/blob/master/src/chromium/ui/views/examples/textfield_example.cc
     auto layout_manager = std::make_unique<views::GridLayout>(container_);
-    views::ColumnSet* column_set = layout_manager->AddColumnSet(0);
+    views::ColumnSet* column_set = layout_manager->AddColumnSet(/* id */0);
     //column_set->AddColumn(views::GridLayout::LEADING, views::GridLayout::FILL,
     //                      0.2f, views::GridLayout::USE_PREF, 0, 0);
     //column_set->AddColumn(views::GridLayout::FILL, views::GridLayout::FILL,
@@ -1773,6 +2109,9 @@ public:
                           0.5f, views::GridLayout::USE_PREF, 0, 0);
     column_set->AddColumn(views::GridLayout::FILL, views::GridLayout::FILL,
                           0.5f, views::GridLayout::USE_PREF, 0, 0);
+    views::ColumnSet* column_set2 = layout_manager->AddColumnSet(/* id */ 1);
+    column_set2->AddColumn(views::GridLayout::FILL, views::GridLayout::FILL,
+                          1.0f, views::GridLayout::USE_PREF, 0, 1);
     container_->addChildren(layout_manager.get());
 
     //container_->SetLayoutManager(std::make_unique<views::FillLayout>());
@@ -1797,7 +2136,7 @@ public:
   DCHECK(widget_);
   //widget_->SetSize(gfx::Size(800, 800));
   //widget_->SetBounds(gfx::Rect(0, 0, 800, 800));
-  widget_->SetFullscreen(false);
+  widget_->SetFullscreen(/*true*/false);
   widget_->SetVisibleOnAllWorkspaces(true);
 
   DCHECK(container_);
@@ -1813,7 +2152,7 @@ public:
   }
   DCHECK(root_view->GetEffectiveViewTargeter());
 
-  container_->SetVisible(true);
+  //container_->SetVisible(true);
   container_->SetEnabled(true);
   //container_->SetBounds(0, 0, 800, 800);
   //container_->SetSize(gfx::Size(800, 800));
@@ -1858,11 +2197,11 @@ public:
 
   widget->SetBounds(gfx::Rect(0, 0, 100, 80));
   widget->Show();
-  widget->SetFullscreen(true);
+  widget->SetFullscreen(false);
   widget->Show();
   widget->Maximize();*/
 
-  widget_->SetFullscreen(true);
+  widget_->SetFullscreen(/*true*/false);
   widget_->Maximize();
   widget_->Show(); // TODO: widget_.Close();
   widget_->Activate(); // TODO: wait?
@@ -1901,10 +2240,10 @@ public:
     SK_ColorTRANSPARENT,
      // is_pixel_canvas - if the paint commands are
     // recorded at pixel size instead of DIP.
-    /*is_pixel_canvas()*/ true);
+    /*is_pixel_canvas()*/ false);
 
   views::PaintInfo container_paint_info = views::PaintInfo::CreateRootPaintInfo(
-      ui::PaintContext(list.get(), 1.f, /* invalidation */ first_paint, true),
+      ui::PaintContext(list.get(), 1.f, /* invalidation */ first_paint, /*true*/ false),
       //canvasPainter.context(),
       container_size);
   DCHECK(!container_paint_info.paint_recording_bounds().IsEmpty());
@@ -1918,10 +2257,37 @@ public:
                              1.f,//compositor->device_scale_factor(),
                              //gfx::Rect(0, 0, 800, 800),//
                              gfx::Rect(container_size),
-                             true);
-  container_->OnPaintLayer(container_paint_context);
+                             false /*true*/);
 
+  widget_->GetRootView()->SchedulePaint();
+  container_->SchedulePaint();
+  widget_->GetRootView()->SchedulePaint();
+  DCHECK(!container_->scroll_view_->GetLocalBounds().IsEmpty());
+  container_->scroll_view_->SchedulePaint();
+  DCHECK(!container_->scrollable_->GetLocalBounds().IsEmpty());
+  container_->scrollable_->SchedulePaint();
+
+  //widget_->GetRootView()->OnPaintLayer(container_paint_context);
+  //widget_->GetRootView()->OnPaint(&gfx_canvas);
+  //widget_->GetRootView()->PaintDebugRects(container_paint_info);
+
+  // TODO
+  // DCHECK(widget_->GetCompositor());
+
+  /*DCHECK(!container_->scroll_view_->contents()
+    ->GetLocalBounds().IsEmpty());*/
+
+  widget_->GetRootView()->PaintFromPaintRoot(container_paint_context);
+
+  //container_->scroll_view_->contents_viewport_->PaintFromPaintRoot(container_paint_context);
+
+  //container_->scroll_view_->PaintFromPaintRoot(container_paint_context);
+
+  //container_->scrollable_->PaintFromPaintRoot(container_paint_context);
+
+  //container_->OnPaintLayer(container_paint_context);
   //container_->PaintDebugRects(container_paint_info);
+
   /*DCHECK(!bitmap.isNull());
   //canvasPainter.context().InvalidationForTesting();
   gfx::ImageSkia container_image(
@@ -1961,8 +2327,8 @@ public:
   //gfx::Canvas gfx_canvas(&cc_skia_paint_canvas, 1.0f);
 
   // TODO: make views paint recursive or FIX Paint via views::PaintInfo
-  /*container_->ForcePaint(&gfx_canvas);
-  views::View::Views children = container_->GetChildrenInZOrder();
+  //container_->ForcePaint(&gfx_canvas);
+  /*views::View::Views children = container_->GetChildrenInZOrder();
   for (auto* child : children) {
     if (!child->layer())
       //(child->*func)(info);

@@ -3099,6 +3099,10 @@ static void updateGlobalMousePos(const int screenMouseX, const int screenMouseY)
   curScreenMouseX = screenMouseX;
   curScreenMouseY = screenMouseY;
 
+#ifdef ENABLE_SKIA
+  skiaUiDemo.SetCursorScreenPoint(curScreenMouseX, curScreenMouseY);
+#endif // ENABLE_SKIA
+
   DCHECK(curScreenMouseX > -1);
   DCHECK(curScreenMouseX <= DRAW_SURFACE_WIDTH);
   DCHECK(curScreenMouseY > -1);
