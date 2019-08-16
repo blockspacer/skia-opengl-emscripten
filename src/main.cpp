@@ -3003,6 +3003,7 @@ static void Draw() {
 
   /// FIXME: spammed queue stops app from closing
   {
+    /// FIXME: no locks in main browser thread
     std::scoped_lock ui_lock(canRefreshUIMutex);
     if (canRefreshUI
         /*&& !ui_draw_thread_.task_runner()->RunsTasksInCurrentSequence()*/)

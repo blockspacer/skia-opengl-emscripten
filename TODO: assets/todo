@@ -118,7 +118,8 @@ timers on WASM ST
 faster build time
 save data to native filesystem (wasm)
 hot reload & cling
- > https://github.com/hfinkel/llvm-project-cxxjit/wiki
+ > (**HOT**) https://github.com/hfinkel/llvm-project-cxxjit/wiki
+ > http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p1609r1.html#others
  > https://arxiv.org/pdf/1904.08555.pdf
  > https://github.com/RuntimeCompiledCPlusPlus/RuntimeCompiledCPlusPlus/wiki/Alternatives
  > https://github.com/topcoder-platform/cpp-mm-scoring/blob/master/README.md#install-dependencies-notes-for-ubuntu
@@ -831,6 +832,18 @@ TODO: WASM MT memory footprint vs WASM ST memory footprint
 
 TODO: https://stackoverflow.com/a/28438479
 
+TODO: https://www.cnblogs.com/huangguanyuan/p/9673772.html
+
+TODO: https://developers.google.com/web/updates/2018/09/inside-browser-part1
+      https://developers.google.com/web/updates/2018/09/inside-browser-part2
+      https://www.slideshare.net/cwdoh/overall-chromium-source-tree
+      https://medium.com/@joone/using-the-chrome-os-graphics-stack-on-intel-based-linux-desktops-38f56f2ed6e4
+
+TODO: https://www.chromium.org/developers/design-documents/gpu-accelerated-compositing-in-chrome
+      https://www.chromium.org/blink/slimming-paint
+
+TODO: http://www.brynnonpicard.com/skynet/
+
 TODO: https://archrometects.files.wordpress.com/2009/10/assignment-01-conceptual-architecture-of-google-chrome-archrometects.pdf
 
 TODO: https://medium.com/@egraether/why-working-on-chrome-made-me-develop-a-tool-for-reading-source-code-7111ba21a6f0
@@ -838,3 +851,78 @@ TODO: https://medium.com/@egraether/why-working-on-chrome-made-me-develop-a-tool
 TODO: browser (with events) view in ui/views / embed any SkBitmap
  > https://github.com/blockspacer/skia-opengl-emscripten/blob/master/src/chromium/ui/views/examples/table_example.cc#L123
  > https://github.com/blockspacer/skia-opengl-emscripten/blob/master/src/chromium/ui/views/examples/webview_example.cc
+
+WASM test_dylink_
+ > https://github.com/msorvig/qt-webassembly-examples/tree/master/emscripten_dynamic
+ > https://github.com/WebAssembly/tool-conventions/blob/c6a8afdc7aa2bcb062e65695fde1be6084f3df1e/DynamicLinking.md#L166
+ > https://bugreports.qt.io/browse/QTBUG-63925
+ > https://github.com/emscripten-core/emscripten/blob/be5f2b7d5548c18a0fdbd1f5db5a255f1bbe8cc8/tests/test_core.py#L3085
+ > NOTE: linkable modules are larger by default because we disable dead code elimination (since something might be used from something it is linked to)
+ > NOTE: SIDE_MODULE is not supported with USE_PTHREADS https://github.com/emscripten-core/emscripten/blob/incoming/emcc.py#L1367
+
+non-web-embeddings
+criteria: C++ API, mobile support, ability to add SDL/GL bindings
+ > IDL C bindings https://github.com/fastly/lucet/blob/2c3b08818d06b9bf48036b52dde28e19c5593168/lucet-idl/tests/example.idl
+ > (!!!) https://github.com/intel/wasm-micro-runtime/tree/master/samples/littlevgl
+ > (!!!) https://github.com/WAVM/WAVM/issues/157
+ > (!!!) https://github.com/project-oak/oak/issues/126
+ > (!!!) https://github.com/perlin-network/life/issues/64
+ > https://github.com/EOSIO/eos-vm
+ > https://eosio.stackexchange.com/questions/510/how-is-eos-wasm-virtual-machine-hardened/2280
+ > https://github.com/wasmerio/wasmer-c-api/blob/master/wasmer-c-api-example.c
+ > https://github.com/wasmerio/wasmer/tree/master/lib/runtime-c-api
+ > https://github.com/wasmerio/c-wasm-simd128-example?source=post_page-----13badb9bf1a8----------------------
+ > https://github.com/wasmerio/wasmer/pull/473
+ > https://github.com/wasmerio/wasmer/issues?utf8=%E2%9C%93&q=ios
+ > https://wiredforge.com/blog/wasmer-plugin-pt-4/index.html
+ > https://github.com/wasmerio/php-ext-wasm/blob/a6806deaaf4dd22dfd837e7c7ba448773beb5156/src/wasm.hh
+ > https://github.com/kanaka/wac
+ > https://github.com/mbasso/awesome-wasm#non-web-embeddings
+ > https://github.com/appcypher/awesome-wasm-runtimes
+ > https://www.reddit.com/r/gamedev/comments/9qi5fl/im_using_wasm_as_a_scripting_language_but_it_has/
+ > https://www.reddit.com/r/WebAssembly/comments/9qhujo/native_c_and_wasm_interop_ffi/
+
+Prop Compiler Compiler is a an augmented C++ to C++ translator.
+ > https://github.com/AaronNGray/prop-cc
+
+C++ JIT paper
+ > https://github.com/hfinkel/jit-in-cxx-paper/blob/master/jit-in-c%2B%2B.bs
+ > https://news.ycombinator.com/item?id=20659390
+
+C++ plugin system (dll)
+
+NativeJIT
+ > https://softwareengineering.stackexchange.com/questions/29344/jit-compiler-for-c-c-and-the-likes
+
+C++ plugin system (cling dll/ACLiC). ACLiC: Compiling Scripts Into Libraries
+ > https://github.com/topcoder-platform/cpp-mm-scoring/blob/0132b50de55d3ff817a901cd41bbe89de128dd78/scripts/setup.sh
+ > https://github.com/topcoder-platform/cpp-mm-scoring/blob/3995ac7583ccd5615f919034efed1838b22e2c69/src/Runner.cpp
+ > https://github.com/PDelak/cintent/blob/c8cdb4f66f2fb701d388984fd4c1cce54ef91316/tools/driver/CMakeLists.txt#L10
+ > https://github.com/magiruuvelvet/QAPI-IDE/blob/8ae875dd0a12334e12538b5b8b032e9c4edc0969/ScriptingInterface/CMakeLists.txt#L20
+ > https://github.com/magiruuvelvet/QAPI-IDE/blob/309e1728143e7ee59164fa5e9ae17f29d39d5141/ScriptingInterface/backends/cling/cling.cpp
+ > https://root.cern.ch/root/htmldoc/guides/users-guide/Cling.html#aclic-compiling-scripts-into-libraries
+ > https://root-forum.cern.ch/t/i-need-help-making-a-shared-object-edit-and-executing-them/20090/8
+ > https://mightynotes.wordpress.com/2019/06/27/how-fast-is-root-comparing-its-jit-to-real-compilers/
+ > https://root-forum.cern.ch/t/create-a-library-from-cling-script/24398
+ > https://root-forum.cern.ch/t/some-thoughts-about-c-script-ability-versus-project-generation-tools/31751/3
+ > https://github.com/QuantStack/xeus-cling/blob/master/CMakeLists.txt
+ > https://moodle2.units.it/pluginfile.php/146592/mod_resource/content/1/CPP2016.pdf
+
+LLVM compiled C++ code instead of an embedded scripting language.
+ > https://github.com/dcbishop/llvmscriptdemo
+ > https://github.com/andoma/vmir
+ > https://medium.com/graalvm/safe-and-sandboxed-execution-of-native-code-f6096b35c360
+ > https://stackoverflow.com/questions/3224485/any-tutorial-for-embedding-clang-as-script-interpreter-into-c-code
+ > https://github.com/jpoirier/picoc
+
+https://news.ycombinator.com/item?id=17525858
+ > w1nt3rmu4e on July 14, 2018 [-]
+ > WebAssembly isn't just a cross platform technology, it's also a way to target platforms that are currently walled gardens. Being able to run software on e.g., the iPad without paying Apple's 30% fee and being able to ship features / bug fixes without added delays is a big deal.
+ > "Write-once, run everywhere without paying someone for the privilege"
+ > I think the term's overused, but this could actually be a "game changer".
+
+gdscript call from C++ by name
+ > https://www.reddit.com/r/godot/comments/a7deys/call_gdscript_function_from_c/
+ > https://www.sisik.eu/blog/godot/gd-native-calling-gdscript-method-from-cpp-code
+
+TODO: https://godotengine.org/article/webassembly-godot-web
