@@ -2176,12 +2176,17 @@ if(ENABLE_COBALT)
     src/extended_html/input_box/inline_level_input_box.cc
     src/extended_html/input_box/input_box.cc
     src/extended_html/input_box/input_node.cc
+    src/extended_html/input_box/input_box_generator.cc
+    src/extended_html/input_box/HTMLInputElement.cc
     # TODO: group headers into IDE folder
     src/skiafy_icons.h
+    src/extended_html/input_box/block_level_input_box.h
+    src/extended_html/input_box/inline_level_input_box.h
     src/extended_html/input_box/input_node.h
     src/extended_html/input_box/input_box.h
-    src/extended_html/input_box/inline_level_input_box.h
-    src/extended_html/input_box/block_level_input_box.h
+    src/extended_html/input_box/input_box_generator.h
+    src/extended_html/input_box/HTMLInputElement.h
+    src/extended_html/input_box/common.h
   )
 endif(ENABLE_COBALT)
 

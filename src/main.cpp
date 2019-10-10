@@ -737,10 +737,7 @@ static bool render_browser_window = false;
 #include "renderer_stub/backend/default_graphics_system.h"
 #include "renderer_stub/backend/graphics_system_stub.h"
 
-#include "extended_html/input_box/block_level_input_box.h"
-#include "extended_html/input_box/inline_level_input_box.h"
-#include "extended_html/input_box/input_box.h"
-#include "extended_html/input_box/input_node.h"
+#include "extended_html/input_box/common.h"
 
 typedef base::Callback<void(const cobalt::layout::LayoutManager::LayoutResults&)>
     OnRenderTreeProducedCallback;
@@ -965,7 +962,9 @@ static int InitGL() {
   }
 
 #if defined(ENABLE_SKIA)
-  skiaUiDemo.prepare_gl();
+  //if(!render_browser_window) {
+    skiaUiDemo.prepare_gl();
+  //}
 #endif // ENABLE_SKIA
 
   // No clientside arrays, so do this in a webgl-friendly manner
@@ -1659,14 +1658,14 @@ void CobaltTester::navigationCallback(const GURL&) {
 }
 
 void CobaltTester::OnStartDispatchEvent(const scoped_refptr<dom::Event>& event) {
-    printf("OnStartDispatchEvent %s\n", event->type().c_str());
+    //printf("OnStartDispatchEvent %s\n", event->type().c_str());
     /*if (!on_start_dispatch_event_callback_.is_null()) {
         on_start_dispatch_event_callback_.Run(event);
     }*/
 }
 
 void CobaltTester::OnStopDispatchEvent(const scoped_refptr<dom::Event>& event) {
-    printf("OnStopDispatchEvent %s\n", event->type().c_str());
+    //printf("OnStopDispatchEvent %s\n", event->type().c_str());
     /*if (!on_stop_dispatch_event_callback_.is_null()) {
         on_stop_dispatch_event_callback_.Run(event);
     }*/
@@ -2007,258 +2006,6 @@ void CobaltTester::OnWheelEventProduced(base::CobToken type,
   InjectInputEvent(scoped_refptr<dom::Element>(), wheel_event);
 
   printf("OnWheelEventProduced 2 %s\n", type.c_str());
-}
-
-class HTMLInputElement : public HTMLCustomElement {
- public:
-  static const char kTagName[];
-
-  explicit HTMLInputElement(Document* document);
-  ~HTMLInputElement() override;
-
-  math::SizeF GetSize() const;
-
-  uint32 width() const;
-
-  uint32 height() const;
-
-  void onBoxGeneratorVisit(cobalt::layout::BoxGenerator& box_gen, dom::HTMLCustomElement* custom_element) override;
-
-  // Custom, not in any spec.
-  scoped_refptr<HTMLCustomElement> AsHTMLCustomElement() override { return this; }
-
-  DISALLOW_COPY_AND_ASSIGN(HTMLInputElement);
-};
-
-
-namespace {
-
-class InputBoxGenerator : public cssom::NotReachedPropertyValueVisitor {
- public:
-  InputBoxGenerator(const scoped_refptr<cssom::CSSComputedStyleDeclaration>&
-                           css_computed_style_declaration,
-                       //const InputBox::GetInputBoxAnimCB& replace_input_animation_cb,
-                       const scoped_refptr<Paragraph>& paragraph,
-                       int32 text_position,
-                       const base::Optional<LayoutUnit>& maybe_intrinsic_width,
-                       const base::Optional<LayoutUnit>& maybe_intrinsic_height,
-                       const base::Optional<float>& maybe_intrinsic_ratio,
-                       const BoxGenerator::Context* context,
-                       math::SizeF content_size)
-      : css_computed_style_declaration_(css_computed_style_declaration),
-        // set_bounds_cb_(set_bounds_cb),
-        //replace_input_animation_cb_(replace_input_animation_cb),
-        paragraph_(paragraph),
-        text_position_(text_position),
-        maybe_intrinsic_width_(maybe_intrinsic_width),
-        maybe_intrinsic_height_(maybe_intrinsic_height),
-        maybe_intrinsic_ratio_(maybe_intrinsic_ratio),
-        context_(context),
-        content_size_(content_size) {}
-
-  void VisitKeyword(cssom::KeywordValue* keyword) override;
-
-  const scoped_refptr<InputBox>& input_box() { return input_box_; }
-
- private:
-  const scoped_refptr<cssom::CSSComputedStyleDeclaration>
-      css_computed_style_declaration_;
-  //const SkottieBox::SetBoundsCB set_bounds_cb_;
-  //const InputBox::GetInputAnimCB replace_input_animation_cb_;
-  const scoped_refptr<Paragraph> paragraph_;
-  const int32 text_position_;
-  const base::Optional<LayoutUnit> maybe_intrinsic_width_;
-  const base::Optional<LayoutUnit> maybe_intrinsic_height_;
-  const base::Optional<float> maybe_intrinsic_ratio_;
-  const BoxGenerator::Context* context_;
-  math::SizeF content_size_;
-
-  scoped_refptr<InputBox> input_box_;
-};
-
-void InputBoxGenerator::VisitKeyword(cssom::KeywordValue* keyword) {
-  switch (keyword->value()) {
-    case cssom::KeywordValue::kBlock:
-    case cssom::KeywordValue::kFlex:
-      input_box_ = WrapRefCounted(new BlockLevelInputBox(
-          css_computed_style_declaration_
-          //, replace_image_cb_, set_bounds_cb_,
-          //, replace_input_animation_cb_
-          , paragraph_, text_position_, maybe_intrinsic_width_,
-          maybe_intrinsic_height_, maybe_intrinsic_ratio_,
-          context_->used_style_provider,
-          //, is_video_punched_out_
-          content_size_,
-          context_->layout_stat_tracker));
-      break;
-    case cssom::KeywordValue::kInline:
-    case cssom::KeywordValue::kInlineBlock:
-    case cssom::KeywordValue::kInlineFlex:
-      input_box_ = WrapRefCounted(new InlineLevelInputBox(
-          css_computed_style_declaration_,
-          //replace_input_animation_cb_,
-          //set_bounds_cb_,
-          paragraph_, text_position_, maybe_intrinsic_width_,
-          maybe_intrinsic_height_, maybe_intrinsic_ratio_,
-          context_->used_style_provider, content_size_,
-          context_->layout_stat_tracker));
-      break;
-    // The element generates no boxes and has no effect on layout.
-    case cssom::KeywordValue::kNone:
-      // Leave |input_box_| NULL.
-      break;
-    case cssom::KeywordValue::kAbsolute:
-    case cssom::KeywordValue::kAlternate:
-    case cssom::KeywordValue::kAlternateReverse:
-    case cssom::KeywordValue::kAuto:
-    case cssom::KeywordValue::kBackwards:
-    case cssom::KeywordValue::kBaseline:
-    case cssom::KeywordValue::kBoth:
-    case cssom::KeywordValue::kBottom:
-    case cssom::KeywordValue::kBreakWord:
-    case cssom::KeywordValue::kCenter:
-    case cssom::KeywordValue::kClip:
-    case cssom::KeywordValue::kCollapse:
-    case cssom::KeywordValue::kColumn:
-    case cssom::KeywordValue::kColumnReverse:
-    case cssom::KeywordValue::kContain:
-    case cssom::KeywordValue::kContent:
-    case cssom::KeywordValue::kCover:
-    case cssom::KeywordValue::kCurrentColor:
-    case cssom::KeywordValue::kCursive:
-    case cssom::KeywordValue::kEllipsis:
-    case cssom::KeywordValue::kEnd:
-    case cssom::KeywordValue::kEquirectangular:
-    case cssom::KeywordValue::kFantasy:
-    case cssom::KeywordValue::kFixed:
-    case cssom::KeywordValue::kFlexEnd:
-    case cssom::KeywordValue::kFlexStart:
-    case cssom::KeywordValue::kForwards:
-    case cssom::KeywordValue::kHidden:
-    case cssom::KeywordValue::kInfinite:
-    case cssom::KeywordValue::kInherit:
-    case cssom::KeywordValue::kInitial:
-    case cssom::KeywordValue::kLeft:
-    case cssom::KeywordValue::kLineThrough:
-    case cssom::KeywordValue::kMiddle:
-    case cssom::KeywordValue::kMonoscopic:
-    case cssom::KeywordValue::kMonospace:
-    case cssom::KeywordValue::kNoRepeat:
-    case cssom::KeywordValue::kNormal:
-    case cssom::KeywordValue::kNowrap:
-    case cssom::KeywordValue::kPre:
-    case cssom::KeywordValue::kPreLine:
-    case cssom::KeywordValue::kPreWrap:
-    case cssom::KeywordValue::kRelative:
-    case cssom::KeywordValue::kRepeat:
-    case cssom::KeywordValue::kReverse:
-    case cssom::KeywordValue::kRight:
-    case cssom::KeywordValue::kRow:
-    case cssom::KeywordValue::kRowReverse:
-    case cssom::KeywordValue::kSansSerif:
-    case cssom::KeywordValue::kScroll:
-    case cssom::KeywordValue::kSerif:
-    case cssom::KeywordValue::kSolid:
-    case cssom::KeywordValue::kSpaceAround:
-    case cssom::KeywordValue::kSpaceBetween:
-    case cssom::KeywordValue::kStart:
-    case cssom::KeywordValue::kStatic:
-    case cssom::KeywordValue::kStereoscopicLeftRight:
-    case cssom::KeywordValue::kStereoscopicTopBottom:
-    case cssom::KeywordValue::kStretch:
-    case cssom::KeywordValue::kTop:
-    case cssom::KeywordValue::kUppercase:
-    case cssom::KeywordValue::kVisible:
-    case cssom::KeywordValue::kWrap:
-    case cssom::KeywordValue::kWrapReverse:
-      NOTREACHED();
-      break;
-  }
-}
-
-}  // namespace
-
-const char HTMLInputElement::kTagName[] = "input";
-
-HTMLInputElement::HTMLInputElement(Document* document)
-    : HTMLCustomElement(document, base::CobToken(kTagName)) {
-}
-
-HTMLInputElement::~HTMLInputElement() {
-}
-
-uint32 HTMLInputElement::width() const {
-  uint32 result = 0;
-  std::string value_in_string = GetAttribute("width").value_or("0");
-  if (!base::StringToUint32(value_in_string, &result)) {
-    LOG(WARNING) << "Invalid width attribute: \'" << value_in_string << "\'";
-  }
-
-  //printf("HTMLInputElement::width %d\n", result);
-
-  return result;
-}
-
-uint32 HTMLInputElement::height() const {
-  uint32 result = 0;
-  std::string value_in_string = GetAttribute("height").value_or("0");
-  if (!base::StringToUint32(value_in_string, &result)) {
-    LOG(WARNING) << "Invalid height attribute: \'" << value_in_string << "\'";
-  }
-
-  //printf("HTMLInputElement::height %d\n", result);
-
-  return result;
-}
-
-math::SizeF HTMLInputElement::GetSize() const {
-  return math::SizeF(width(), height());
-}
-
-void HTMLInputElement::onBoxGeneratorVisit(cobalt::layout::BoxGenerator& box_gen, cobalt::dom::HTMLCustomElement* custom_element) {
-  //DCHECK(box_gen);
-
-  //printf("box_gen size %zu\n", box_gen.boxes().size());
-
-  //   https://www.w3.org/TR/CSS21/visuren.html#inline-boxes
-  //   https://www.w3.org/TR/CSS21/visuren.html#propdef-unicode-bidi
-  //   https://www.w3.org/TR/css3-text/#line-break-details
-  int32 text_position =
-      (*box_gen.paragraph_)
-          ->AppendCodePoint(Paragraph::kObjectReplacementCharacterCodePoint);
-
-  render_tree::ResourceProvider* resource_provider =
-      *node_document()
-           ->html_element_context()
-           ->resource_provider();
-
-  InputBoxGenerator input_box_generator(
-      css_computed_style_declaration(),
-      //base::Bind(&HTMLInputElement::GetAnim, base::Unretained(this)),
-      *box_gen.paragraph_, text_position,
-      base::nullopt, base::nullopt, base::nullopt, box_gen.context_,
-      GetSize());
-  computed_style()->display()->Accept(&input_box_generator);
-
-  //printf("VisitInputElement with placeholder: %s\n", this->placeholder().c_str());
-
-  scoped_refptr<InputBox> input_box =
-      input_box_generator.input_box();
-  if (input_box.get() == NULL) {
-    // The element with "display: none" generates no boxes and has no effect
-    // on layout. Descendant elements do not generate any boxes either.
-    // This behavior cannot be overridden by setting the "display" property on
-    // the descendants.
-    //   https://www.w3.org/TR/CSS21/visuren.html#display-prop
-    return;
-  }
-
-#ifdef COBALT_BOX_DUMP_ENABLED
-  input_box->SetGeneratingNode(this);
-#endif  // COBALT_BOX_DUMP_ENABLED
-
-  input_box->SetUiNavItem(this->GetUiNavItem());
-  box_gen.boxes_.push_back(input_box);
 }
 
 #ifdef HAS_ICU
@@ -2910,8 +2657,9 @@ static void drawBrowserDemo() {
         if(!pixmap.bounds().isEmpty()) {
             DCHECK(!pixmap.bounds().isEmpty());
             ///if (isDebugPeriodReached()) printf("Draw() 7.1\n");
-
-            skiaUiDemo.drawTexture(pixmap.width(), pixmap.height(), pixmap.addr());
+            //if(!render_browser_window) {
+              skiaUiDemo.drawTexture(pixmap.width(), pixmap.height(), pixmap.addr());
+            //}
         } else {
             ///if (isDebugPeriodReached())
             printf("pixmap.bounds().isEmpty()\n");
@@ -2920,10 +2668,6 @@ static void drawBrowserDemo() {
 #if !defined(OS_EMSCRIPTEN)
     } else { // if(pImage)
 #endif // OS_EMSCRIPTEN
-
-#if defined(ENABLE_SK_UI)
-        //skiaUiDemo.drawUIDemo();
-#endif // ENABLE_SK_UI
 
 #if !defined(OS_EMSCRIPTEN)
     } // if(pImage)
@@ -2977,29 +2721,12 @@ static void Draw() {
   {
 #if !defined(SEPARATE_UI_THREAD)
     if (isDebugPeriodReached()) printf("refreshUIDemo (ST)!\n");
-    skiaUiDemo.refreshUIDemo();
+
+    //if(!render_browser_window) {
+      skiaUiDemo.refreshUIDemo();
+    //}
 #else
   // TODO post_task_and_reply_impl.cc(150)] Check failed: has_sequenced_context || !post_task_success.
-
-#if 0
-  if (canRefreshUI
-        /*&& !ui_draw_thread_.task_runner()->RunsTasksInCurrentSequence()*/) {
-    canRefreshUI = false;
-    ui_draw_thread_.task_runner()->PostTaskAndReply(
-        FROM_HERE, base::Bind([]() {
-          //while(!quitApp) { // TODO: lock for quitApp
-            skiaUiDemo.refreshUIDemo();
-            // TODO: https://stackoverflow.com/a/28008588
-            //base::PlatformThread::Sleep(
-            //  base::TimeDelta::FromMilliseconds(17));
-          //}
-        }),
-        base::Bind([]() {
-          if (isDebugPeriodReached()) printf("done refreshUIDemo\n");
-          canRefreshUI = true;
-        }));
-  }
-#endif // 0
 
   /// FIXME: spammed queue stops app from closing
   {
@@ -3016,7 +2743,9 @@ static void Draw() {
                 canRefreshUI = false;
                 std::scoped_lock lock(canRefreshUIMutex);
               }
-              skiaUiDemo.refreshUIDemo();
+              //if(!render_browser_window) {
+                skiaUiDemo.refreshUIDemo();
+              //}
               {
                 std::scoped_lock lock(canRefreshUIMutex);
                 canRefreshUI = true;
@@ -3030,7 +2759,9 @@ static void Draw() {
   }
 #endif // SEPARATE_UI_THREAD
 
-    skiaUiDemo.drawUIDemo();
+    //if(!render_browser_window) {
+      skiaUiDemo.drawUIDemo();
+    //}
   }
 #else
   {
@@ -3101,7 +2832,9 @@ static void updateGlobalMousePos(const int screenMouseX, const int screenMouseY)
   curScreenMouseY = screenMouseY;
 
 #ifdef ENABLE_SKIA
-  skiaUiDemo.SetCursorScreenPoint(curScreenMouseX, curScreenMouseY);
+  //if(!render_browser_window) {
+    skiaUiDemo.SetCursorScreenPoint(curScreenMouseX, curScreenMouseY);
+  //}
 #endif // ENABLE_SKIA
 
   DCHECK(curScreenMouseX > -1);
@@ -6488,7 +6221,11 @@ int main(int argc, char** argv) {
 #if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
           DCHECK(base::MessageLoopCurrent::Get());
 #endif
-          skiaUiDemo.initBlinkPlatform();
+          //if(!render_browser_window) {
+          // TODO
+            skiaUiDemo.initBlinkPlatform();
+
+          //}
           printf("Main thread works...\n");
           thread_event->Signal();
       }, &main_thread_event_));
@@ -7246,7 +6983,9 @@ if(!render_browser_window) {
                 blink::ThreadState::AttachCurrentThread();
   #endif // SEPARATE_UI_THREAD
 
-                skiaUiDemo.loadUIAssets();
+                //if(!render_browser_window) {
+                  skiaUiDemo.loadUIAssets();
+                //}
 
                 // blink::ThreadState::DetachCurrentThread(); // <<< TODO
 
@@ -7270,7 +7009,9 @@ if(!render_browser_window) {
       ///ui_thread.reset();
 
   #else // 0
-    skiaUiDemo.loadUIAssets();
+    //if(!render_browser_window) {
+      skiaUiDemo.loadUIAssets();
+    //}
   #endif // 0
 
   #endif // ENABLE_UI
@@ -7308,7 +7049,9 @@ if(!render_browser_window) {
   //#endif // ENABLE_COBALT
 
     printf("Creating fonts...\n");
-    skiaUiDemo.prepareUIFonts();
+    //if(!render_browser_window) {
+      skiaUiDemo.prepareUIFonts();
+    //}
 
     /// \note SkTypeface::MakeFromFile don`t support wasm pthreads,
     /// so we use MakeFromData
@@ -7352,7 +7095,9 @@ if(!render_browser_window) {
       main_browser_thread_.task_runner()->PostTask(
     #endif // SEPARATE_UI_THREAD
           FROM_HERE, base::Bind([](base::WaitableEvent* thread_event) {
-            skiaUiDemo.initUISkiaSurface(DRAW_SURFACE_WIDTH, DRAW_SURFACE_HEIGHT);
+            //if(!render_browser_window) {
+              skiaUiDemo.initUISkiaSurface(DRAW_SURFACE_WIDTH, DRAW_SURFACE_HEIGHT);
+            //}
 
             thread_event->Signal();
 
@@ -7363,7 +7108,9 @@ if(!render_browser_window) {
         ui_sync_event.Reset();
     #endif
     #else // ENABLE_BASE
-      skiaUiDemo.initUISkiaSurface(DRAW_SURFACE_WIDTH, DRAW_SURFACE_HEIGHT);
+      //if(!render_browser_window) {
+        skiaUiDemo.initUISkiaSurface(DRAW_SURFACE_WIDTH, DRAW_SURFACE_HEIGHT);
+      //}
     #endif // ENABLE_BASE
 
   #endif // ENABLE_SKIA
@@ -7514,10 +7261,14 @@ if(!render_browser_window) {
     ui_draw_thread_.Stop();
 #endif // SEPARATE_UI_THREAD
     /// \note stop ui_draw_thread before skia_ui cleanup
-    skiaUiDemo.cleanup_skia_ui();
+    //if(!render_browser_window) {
+      skiaUiDemo.cleanup_skia_ui();
+    //}
   }
 
-  skiaUiDemo.cleanup_gl();
+  //if(!render_browser_window) {
+    skiaUiDemo.cleanup_gl();
+  //}
 
 #endif // ENABLE_SKIA
 
@@ -7556,7 +7307,9 @@ if(!render_browser_window) {
   }*/
 
 #if defined(ENABLE_SKIA)
-  skiaUiDemo.resetAssets();
+  //if(!render_browser_window) {
+    skiaUiDemo.resetAssets();
+  //}
 #endif
 
 #if defined(ENABLE_HTML5_SDL) || !defined(__EMSCRIPTEN__)
