@@ -1392,6 +1392,7 @@ if(TARGET_EMSCRIPTEN)
 elseif(TARGET_LINUX)
 
   # Check if libatomic is needed
+  # see https://github.com/HewlettPackard/foedus_code/blob/master/foedus-core/cmake/FindGccAtomic.cmake
   include(GNUInstallDirs)
   include(CMakePushCheckState)
   include(CheckCXXCompilerFlag)
@@ -1408,8 +1409,32 @@ elseif(TARGET_LINUX)
           return (int) x;
       }"
       atomic64)
-  if(NOT atomic64)
-      find_library(ATOMIC NAMES atomic libatomic.so.1)
+  #if(NOT atomic64)
+      # I'm also putting "atomic.so.1" because at least FC19 and Ubuntu's repo don't create
+      # "libatomic.so" symlink. They only have libatomic.so.1.0.0 and libatomic.so.1 symlink. No idea why.
+      find_library(ATOMIC
+        NAMES
+          atomic
+          atomic.so.1
+          libatomic.so
+          libatomic.so.1
+          libatomic.so.1.2.0
+        HINTS
+          $ENV{HOME}/local/lib64
+          $ENV{HOME}/local/lib
+          /usr/local/lib64
+          /usr/local/lib
+          /opt/local/lib64
+          /opt/local/lib
+          /usr/lib64
+          /usr/lib
+          /lib64
+          /lib
+          /usr/lib
+          /usr/lib/x86_64-linux-gnu
+          /opt/usr/lib
+          /opt/usr/lib64
+      )
       if(ATOMIC)
           set(LIBATOMIC ${ATOMIC})
           message(STATUS "Found libatomic: ${LIBATOMIC}")
@@ -1428,13 +1453,12 @@ elseif(TARGET_LINUX)
           if(atomic32)
               message(FATAL_ERROR "Failed to find libatomic!")
           endif()
-      endif()
-  endif()
+      endif(ATOMIC)
+  #endif(NOT atomic64)
   cmake_pop_check_state()
 
   list(APPEND EXTRA_CHROMIUM_BASE_LIBS
     tcmalloc
-    ${LIBATOMIC} # from system, no dep. for __atomic_is_lock_free
     ced
     ${CUSTOM_ICU_LIB}
     ${HARFBUZZ_LIBRARIES}
@@ -1444,7 +1468,6 @@ elseif(TARGET_LINUX)
   )
   add_dependencies(base
     tcmalloc
-    ${LIBATOMIC} # from system, no dep. for __atomic_is_lock_free
     ced
     ${CUSTOM_ICU_LIB}
     ${HARFBUZZ_LIBRARIES}
@@ -1486,6 +1509,7 @@ target_link_libraries(base PUBLIC
   #
   dynamic_annotations
   ${EXTRA_CHROMIUM_BASE_LIBS}
+  ${LIBATOMIC} # from system, no dep. for __atomic_is_lock_free
 )
 
 set_property(TARGET base PROPERTY CXX_STANDARD 17)
