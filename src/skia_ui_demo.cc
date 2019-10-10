@@ -539,6 +539,15 @@ bool HandleGestureEvent(
     scrollable_->SetSize(gfx::Size(300, 300));
     scrollable_->SetBorder(views::CreateSolidBorder(2, SK_ColorGRAY));*/
 
+    tabbed_pane_ = new views::TabbedPane();
+    tabbed_pane_->set_listener(this);
+    const base::string16 tabbed_label = base::ASCIIToUTF16("Added at 1");
+    tabbed_pane_->AddTab(tabbed_label,
+      new views::LabelButton(nullptr, tabbed_label));
+    const base::string16 tabbed_label_2 = base::ASCIIToUTF16("Added at 2");
+    tabbed_pane_->AddTab(tabbed_label_2,
+      new views::LabelButton(nullptr, tabbed_label_2));
+
     DCHECK(scrollable_ptr_);
     auto scrollable_contents = scroll_view_->
       SetContents(std::make_unique<View>());
@@ -633,15 +642,6 @@ bool HandleGestureEvent(
     scroll_view_->SizeToPreferredSize();
     scroll_view_->Layout();
 
-
-    tabbed_pane_ = new views::TabbedPane();
-    tabbed_pane_->set_listener(this);
-    const base::string16 tabbed_label = base::ASCIIToUTF16("Added at 1");
-    tabbed_pane_->AddTab(tabbed_label,
-      new views::LabelButton(nullptr, tabbed_label));
-    const base::string16 tabbed_label_2 = base::ASCIIToUTF16("Added at 2");
-    tabbed_pane_->AddTab(tabbed_label_2,
-      new views::LabelButton(nullptr, tabbed_label_2));
 
     scroll_to_ = new views::LabelButton(
       this,
@@ -1203,15 +1203,72 @@ void SkiaUiDemo::handleTestEvent(const char* text) {
 
       /*container_->scroll_view_->contents()->ScrollRectToVisible(
         gfx::Rect(20, testScrollY, 20, 20));*/
-      container_->scroll_view_->
-        ScrollToOffset(gfx::ScrollOffset(0, testScrollY));
+
+      /*container_->scroll_view_->
+        ScrollToOffset(gfx::ScrollOffset(0, testScrollY));*/
+
+      /*const*/ views::ScrollBar* scroll_bar = container_->scroll_view_->
+        vert_sb_;
+        //vertical_scroll_bar();
+      const gfx::Point location = scroll_bar->bounds().CenterPoint();
+
+      // see https://github.com/blockspacer/skia-opengl-emscripten/blob/24de863ed991dbb888a443138ae0780d0d514417/src/chromium/ui/views/controls/textfield/textfield_unittest.cc#L673
+      {
+        gfx::Point point(screen_->GetCursorScreenPoint());
+        ui::MouseEvent click(ui::ET_MOUSE_PRESSED, point, point,
+                             ui::EventTimeForNow(), ui::EF_LEFT_MOUSE_BUTTON,
+                             ui::EF_LEFT_MOUSE_BUTTON);
+        container_->OnMousePressed(click);
+
+        // TODO: event_generator_ https://github.com/blockspacer/skia-opengl-emscripten/blob/bb16ab108bc4018890f4ff3179250b76c0d9053b/src/chromium/ui/views/controls/combobox/combobox_unittest.cc#L228
+        DCHECK(widget_);
+        widget_->OnMouseEvent(&click);
+
+        ui::MouseEvent release(ui::ET_MOUSE_RELEASED, point, point,
+                               ui::EventTimeForNow(), ui::EF_LEFT_MOUSE_BUTTON,
+                               ui::EF_LEFT_MOUSE_BUTTON);
+        container_->OnMouseReleased(release);
+
+        // TODO: event_generator_ https://github.com/blockspacer/skia-opengl-emscripten/blob/bb16ab108bc4018890f4ff3179250b76c0d9053b/src/chromium/ui/views/controls/combobox/combobox_unittest.cc#L228
+        DCHECK(widget_);
+        widget_->OnMouseEvent(&release);
+    }
+
       container_->scroll_view_->InvalidateLayout();
       container_->scroll_view_->Layout();
       container_->scroll_view_->SizeToPreferredSize();
       container_->scroll_view_->SchedulePaint();
 
-      DCHECK(container_->tabbed_pane_->GetTabCount() > 0);
-      container_->tabbed_pane_->SelectTabAt(0);
+      //DCHECK(container_->tabbed_pane_->GetTabCount() > 0);
+      //container_->tabbed_pane_->SelectTabAt(0);
+
+      container_->tabbed_pane_->InvalidateLayout();
+      //container_->tabbed_pane_->Layout();
+      container_->tabbed_pane_->SizeToPreferredSize();
+      container_->tabbed_pane_->SchedulePaint();
+
+      container_->InvalidateLayout();
+      container_->Layout();
+      container_->SizeToPreferredSize();
+      container_->SchedulePaint();
+
+      /*{
+        int flags_ = 0;
+        flags_ &= ui::EF_LEFT_MOUSE_BUTTON;
+        gfx::Point enter_location(screen_->GetCursorScreenPoint());
+        //delegate()->ConvertPointToTarget(current_target_, &enter_location);
+        ui::MouseEvent mouseev(ui::ET_MOUSE_ENTERED, enter_location, enter_location,
+                               ui::EventTimeForNow(), flags_, 0);
+      }*/
+
+    /*{
+      gfx::Point where = container_->textfield_->GetRenderText()->GetUpdatedCursorBounds().origin();
+      ui::MouseEvent drag(ui::ET_MOUSE_DRAGGED, where, where,
+                          ui::EventTimeForNow(), ui::EF_LEFT_MOUSE_BUTTON, 0);
+      container_->textfield_->OnMouseDragged(drag);
+    }*/
+
+      //container_->tabbed_pane_->OnMousePressed();
   }
 
   if(std::string(text) == "B") {
@@ -1234,15 +1291,15 @@ void SkiaUiDemo::handleTestEvent(const char* text) {
       auto prev = container_->scroll_view_->CurrentOffset();
       std::cout << "ScrollOffset" << prev.x() << prev.y() << std::endl;
 
-      container_->scroll_view_->
-        ScrollToOffset(gfx::ScrollOffset(0, testScrollY));
+      /*container_->scroll_view_->
+        ScrollToOffset(gfx::ScrollOffset(0, testScrollY));*/
       container_->scroll_view_->InvalidateLayout();
       container_->scroll_view_->Layout();
       container_->scroll_view_->SizeToPreferredSize();
       container_->scroll_view_->SchedulePaint();
 
-      DCHECK(container_->tabbed_pane_->GetTabCount() > 1);
-      container_->tabbed_pane_->SelectTabAt(1);
+      //DCHECK(container_->tabbed_pane_->GetTabCount() > 1);
+      //container_->tabbed_pane_->SelectTabAt(1);
   }
 
   if(std::string(text) == "C") {
@@ -1340,8 +1397,8 @@ void SkiaUiDemo::handleTestEvent(const char* text) {
 
       DCHECK(container_->textfield_->HasFocus());
       //container_->textfield_->OnFocus();
-      DCHECK(container_->textfield_->ShouldShowCursor());
-      DCHECK(container_->textfield_->ShouldBlinkCursor());
+      //DCHECK(container_->textfield_->ShouldShowCursor());
+      //DCHECK(container_->textfield_->ShouldBlinkCursor());
 
       int flags = ui::EF_NONE;
 

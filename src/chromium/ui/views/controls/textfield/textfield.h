@@ -399,7 +399,8 @@ class VIEWS_EXPORT Textfield : public View,
       bool is_composition_committed) override;
 #endif
 
- protected:
+ //protected: // TODO
+ public:
   // Inserts or appends a character in response to an IME operation.
   virtual void DoInsertChar(base::char16 ch);
 

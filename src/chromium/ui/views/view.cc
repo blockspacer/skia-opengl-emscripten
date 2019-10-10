@@ -77,6 +77,12 @@
 #include "ui/native_theme/native_theme_win.h"
 #endif
 
+#include "ui/views/masked_targeter_delegate.h"
+
+#include "third_party/skia/include/core/SkPath.h"
+#include "ui/gfx/skia_util.h"
+#include "ui/views/view.h"
+
 namespace views {
 
 namespace {
@@ -1056,10 +1062,52 @@ bool View::HitTestPoint(const gfx::Point& point) const {
   return HitTestRect(gfx::Rect(point, gfx::Size(1, 1)));
 }
 
+static bool TODO_GetHitTestMask(const View* target,
+    SkPath* mask) /*const*/ {
+  DCHECK(mask);
+  SkScalar w = SkIntToScalar(target->width());
+  SkScalar h = SkIntToScalar(target->height());
+
+  // Create a triangular mask within the bounds of this View.
+  mask->moveTo(w / 2, 0);
+  mask->lineTo(w, h);
+  mask->lineTo(0, h);
+  mask->close();
+  //mask->addRect(RectToSkRect(mask_rect_));
+  return true;
+}
+
+static bool TODO_DoesIntersectRect(const View* target,
+     const gfx::Rect& rect) /*const*/ {
+  // Early return if |rect| does not even intersect the rectangular bounds
+  // of |target|.
+  /*if (!ViewTargeterDelegate::DoesIntersectRect(target, rect))
+    return false;*/
+
+  // Early return if |mask| is not a valid hit test mask.
+  SkPath mask;
+  if (!TODO_GetHitTestMask(target, &mask))
+    return false;
+
+  // Return whether or not |rect| intersects the custom hit test mask
+  // of |target|.
+  SkRegion clip_region;
+  clip_region.setRect(0, 0, target->width(), target->height());
+  SkRegion mask_region;
+  return mask_region.setPath(mask, clip_region) &&
+         mask_region.intersects(RectToSkIRect(rect));
+}
+
 bool View::HitTestRect(const gfx::Rect& rect) const {
+#if 1 //!defined(UI_DISPLAY_PORTED)
+  if(!GetEffectiveViewTargeter()) {
+    return false;
+  }
   const bool is_hit =
     GetEffectiveViewTargeter()->DoesIntersectRect(this, rect);
-  printf("View::HitTestRect (%i %i %i %i hit %i %i %i %i) %i\n",
+  printf("View::HitTestRect rect = (%i %i %i %i) "
+         "GetLocalBounds = (%i %i %i %i) "
+         "is_hit = %i\n",
     rect.x(),
     rect.y(),
     rect.width(),
@@ -1070,9 +1118,26 @@ bool View::HitTestRect(const gfx::Rect& rect) const {
     GetLocalBounds().height(),
     is_hit);
   return is_hit;
+#else
+  const bool is_hit = TODO_DoesIntersectRect(this, rect);
+  printf("View::HitTestRect rect = (%i %i %i %i) "
+         "GetLocalBounds = (%i %i %i %i) "
+         "is_hit = %i\n",
+    rect.x(),
+    rect.y(),
+    rect.width(),
+    rect.height(),
+    GetLocalBounds().x(),
+    GetLocalBounds().y(),
+    GetLocalBounds().width(),
+    GetLocalBounds().height(),
+    is_hit);
+  return is_hit;
+#endif
 }
 
 bool View::IsMouseHovered() const {
+#if 1 //!defined(UI_DISPLAY_PORTED)
   // If we haven't yet been placed in an onscreen view hierarchy, we can't be
   // hovered.
   if (!GetWidget())
@@ -1082,6 +1147,7 @@ bool View::IsMouseHovered() const {
   // is therefore not hovering over this button.
   if (!GetWidget()->IsMouseEventsEnabled())
     return false;
+#endif
 
   gfx::Point cursor_pos(0, 0);
   // TODO
@@ -1089,32 +1155,45 @@ bool View::IsMouseHovered() const {
     DCHECK(display::Screen::GetScreen());
     cursor_pos = gfx::Point(
       display::Screen::GetScreen()->GetCursorScreenPoint());
+    printf("View::IsMouseHovered cursor_pos = (%i %i)\n",
+      cursor_pos.x(),
+      cursor_pos.y());
     ConvertPointFromScreen(this, &cursor_pos);
+    printf("View::IsMouseHovered ConvertPointFromScreen = (%i %i)\n",
+      cursor_pos.x(),
+      cursor_pos.y());
   }
   return HitTestPoint(cursor_pos);
 }
 
 bool View::OnMousePressed(const ui::MouseEvent& event) {
+  printf("View::OnMousePressed\n");
   return false;
 }
 
 bool View::OnMouseDragged(const ui::MouseEvent& event) {
+  printf("View::OnMouseDragged\n");
   return false;
 }
 
 void View::OnMouseReleased(const ui::MouseEvent& event) {
+  printf("View::OnMouseReleased\n");
 }
 
 void View::OnMouseCaptureLost() {
+  printf("View::OnMouseCaptureLost\n");
 }
 
 void View::OnMouseMoved(const ui::MouseEvent& event) {
+  printf("View::OnMouseMoved\n");
 }
 
 void View::OnMouseEntered(const ui::MouseEvent& event) {
+  printf("View::OnMouseEntered\n");
 }
 
 void View::OnMouseExited(const ui::MouseEvent& event) {
+  printf("View::OnMouseExited\n");
 }
 
 void View::SetMouseHandler(View* new_mouse_handler) {
@@ -1214,12 +1293,24 @@ std::unique_ptr<ViewTargeter> View::SetEventTargeter(
 }
 
 ViewTargeter* View::GetEffectiveViewTargeter() const {
+#if 1//!defined(UI_DISPLAY_PORTED)
   DCHECK(GetWidget());
   ViewTargeter* view_targeter = targeter();
   if (!view_targeter)
     view_targeter = GetWidget()->GetRootView()->targeter();
   CHECK(view_targeter);
   return view_targeter;
+#else
+  //DCHECK(GetWidget());
+  ViewTargeter* view_targeter = targeter();
+  if (!view_targeter
+      && GetWidget())
+  {
+    view_targeter = GetWidget()->GetRootView()->targeter();
+  }
+  //CHECK(view_targeter);
+  return view_targeter;
+#endif
 }
 
 WordLookupClient* View::GetWordLookupClient() {

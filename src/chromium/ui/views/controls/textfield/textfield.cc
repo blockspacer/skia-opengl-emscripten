@@ -675,6 +675,7 @@ gfx::NativeCursor Textfield::GetCursor(const ui::MouseEvent& event) {
 }
 
 bool Textfield::OnMousePressed(const ui::MouseEvent& event) {
+  printf("Textfield::OnMousePressed\n");
   const bool had_focus = HasFocus();
   bool handled = controller_ && controller_->HandleMouseEvent(this, event);
 
@@ -704,18 +705,22 @@ bool Textfield::OnMousePressed(const ui::MouseEvent& event) {
 }
 
 bool Textfield::OnMouseDragged(const ui::MouseEvent& event) {
+  printf("Textfield::OnMouseDragged\n");
   return selection_controller_.OnMouseDragged(event);
 }
 
 void Textfield::OnMouseReleased(const ui::MouseEvent& event) {
+  printf("Textfield::OnMouseReleased\n");
   selection_controller_.OnMouseReleased(event);
 }
 
 void Textfield::OnMouseCaptureLost() {
+  printf("Textfield::OnMouseCaptureLost\n");
   selection_controller_.OnMouseCaptureLost();
 }
 
 bool Textfield::OnMouseWheel(const ui::MouseWheelEvent& event) {
+  printf("Textfield::OnMouseWheel\n");
   return controller_ && controller_->HandleMouseEvent(this, event);
 }
 
