@@ -49,9 +49,9 @@ namespace cobalt {
 namespace dom {
 
 namespace customizer {
-  static std::string custom_attr_prefix = "EXT__";
+  static std::string custom_attr_prefix = "I_";
 
-  static std::string custom_attr_suffix = "__EXT";
+  static std::string custom_attr_suffix = "_I";
 
   static std::string custom_event_prefix = "on-";
 
