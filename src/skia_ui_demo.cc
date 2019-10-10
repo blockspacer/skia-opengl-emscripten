@@ -1234,7 +1234,7 @@ void SkiaUiDemo::handleTestEvent(const char* text) {
         widget_->OnMouseEvent(&release);
     }
 
-      container_->scroll_view_->InvalidateLayout();
+      /*container_->scroll_view_->InvalidateLayout();
       container_->scroll_view_->Layout();
       container_->scroll_view_->SizeToPreferredSize();
       container_->scroll_view_->SchedulePaint();
@@ -1250,7 +1250,7 @@ void SkiaUiDemo::handleTestEvent(const char* text) {
       container_->InvalidateLayout();
       container_->Layout();
       container_->SizeToPreferredSize();
-      container_->SchedulePaint();
+      container_->SchedulePaint();*/
 
       /*{
         int flags_ = 0;
@@ -1293,10 +1293,11 @@ void SkiaUiDemo::handleTestEvent(const char* text) {
 
       /*container_->scroll_view_->
         ScrollToOffset(gfx::ScrollOffset(0, testScrollY));*/
-      container_->scroll_view_->InvalidateLayout();
+
+      /*container_->scroll_view_->InvalidateLayout();
       container_->scroll_view_->Layout();
       container_->scroll_view_->SizeToPreferredSize();
-      container_->scroll_view_->SchedulePaint();
+      container_->scroll_view_->SchedulePaint();*/
 
       //DCHECK(container_->tabbed_pane_->GetTabCount() > 1);
       //container_->tabbed_pane_->SelectTabAt(1);
@@ -2347,13 +2348,13 @@ public:
                              gfx::Rect(container_size),
                              false /*true*/);
 
-  widget_->GetRootView()->SchedulePaint();
+  /*widget_->GetRootView()->SchedulePaint();
   container_->SchedulePaint();
   widget_->GetRootView()->SchedulePaint();
   DCHECK(!container_->scroll_view_->GetLocalBounds().IsEmpty());
   container_->scroll_view_->SchedulePaint();
   DCHECK(!container_->scrollable_->GetLocalBounds().IsEmpty());
-  container_->scrollable_->SchedulePaint();
+  container_->scrollable_->SchedulePaint();*/
 
   //widget_->GetRootView()->OnPaintLayer(container_paint_context);
   //widget_->GetRootView()->OnPaint(&gfx_canvas);
@@ -2935,7 +2936,8 @@ void SkiaUiDemo::drawUIDemo() {
         }
     }
     // TODO: move GL* out of scoped_lock
-    drawGLTexture(uiPixmap.width(), uiPixmap.height(), uiPixmap.addr(), skia_texture);
+    drawGLTexture(uiPixmap.width(), uiPixmap.height(),
+      uiPixmap.addr(), skia_texture);
   }
 }
 #endif // ENABLE_SK_UI
