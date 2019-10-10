@@ -1390,8 +1390,8 @@ if(TARGET_EMSCRIPTEN)
 elseif(TARGET_LINUX)
   list(APPEND EXTRA_CHROMIUM_BASE_LIBS
     tcmalloc
-    # TODO: find_package for atomic
-    atomic # from system, no dep
+    # TODO: find_package for atomic https://stackoverflow.com/questions/30591313/why-does-g-still-require-latomic
+    #atomic # from system, no dep
     ced
     ${CUSTOM_ICU_LIB}
     ${HARFBUZZ_LIBRARIES}
