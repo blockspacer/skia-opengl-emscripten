@@ -185,6 +185,10 @@ else()
     ${TCMALLOC_PRIVATE_DEFINES}
   )
 
+  target_link_libraries(tcmalloc PUBLIC
+    dynamic_annotations
+  )
+
 #  target_compile_options(tcmalloc PRIVATE
 #    # if (is_linux || is_android)
 #    # Don't let linker rip this symbol out, otherwise the heap&cpu
