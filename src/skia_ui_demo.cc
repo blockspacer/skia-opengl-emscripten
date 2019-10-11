@@ -1395,7 +1395,8 @@ void SkiaUiDemo::handleTestEvent(const char* text) {
       container_->textfield_->RequestFocus();
       container_->textfield_->SetReadOnly(false);
 
-      container_->textfield_->ChangeTextDirectionAndLayoutAlignment(base::i18n::RIGHT_TO_LEFT);
+      //container_->textfield_->ChangeTextDirectionAndLayoutAlignment(
+      //  base::i18n::RIGHT_TO_LEFT);
 
       container_->textfield_->SetEnabled(true);
 
