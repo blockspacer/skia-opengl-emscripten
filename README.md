@@ -287,6 +287,7 @@ cmake -DRUN_APP=OFF -DBUILD_APP=ON -DEXTRA_EMMAKE_OPTS="-j;6" -DBUILD_TYPE="Debu
 ### Run example on Unix
 
 ```bash
+# (RUN_APP=ON, BUILD_APP=OFF)
 cmake -DRUN_APP=ON -DBUILD_APP=OFF -DBUILD_DIR=$(pwd)/build-linux-deb/ -DBUILD_TYPE="Debug" -DCLEAN_BUILD=OFF -P tools/buildUnix.cmake
 ```
 
@@ -305,6 +306,7 @@ cmake -DBUILD_TYPE="Debug" -DCLEAN_BUILD=OFF -P tools/buildWeb.cmake
 ### Run example on HTML5 platform / browser / WASM (needs '--emrun' cxx flag)
 
 ```bash
+# (RUN_APP=ON, BUILD_APP=OFF)
 cmake -DRUN_APP=ON -DBUILD_APP=OFF -P tools/buildWeb.cmake
 ```
 
