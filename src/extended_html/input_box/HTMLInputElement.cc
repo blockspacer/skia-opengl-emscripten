@@ -145,6 +145,7 @@ HTMLInputElement::HTMLInputElement(Document* document)
       {
         gfx::Point point(x, y);
         //gfx::Point point(screen_->GetCursorScreenPoint());
+        // see https://github.com/blockspacer/skia-opengl-emscripten/blob/24de863ed991dbb888a443138ae0780d0d514417/src/chromium/ui/events/event.h#L517
         ui::MouseEvent mEv(ui::ET_MOUSE_PRESSED,
                            point,
                            point,
@@ -156,7 +157,10 @@ HTMLInputElement::HTMLInputElement(Document* document)
         {
           std::scoped_lock lock(scheduledEventsMutex_);
           scheduledEvents_.scheduledMouseEvents_.
-            push_back(std::move(mEv));
+            push_back(ScheduledMouseEvent{
+              std::move(mEv),
+              elem->GetBoundingClientRect()
+            });
         }
 
       }
@@ -202,6 +206,7 @@ HTMLInputElement::HTMLInputElement(Document* document)
       {
         gfx::Point point(x, y);
         //gfx::Point point(screen_->GetCursorScreenPoint());
+        // see https://github.com/blockspacer/skia-opengl-emscripten/blob/24de863ed991dbb888a443138ae0780d0d514417/src/chromium/ui/events/event.h#L517
         ui::MouseEvent mEv(ui::ET_MOUSE_RELEASED,
                            point,
                            point,
@@ -213,7 +218,10 @@ HTMLInputElement::HTMLInputElement(Document* document)
         {
           std::scoped_lock lock(scheduledEventsMutex_);
           scheduledEvents_.scheduledMouseEvents_.
-            push_back(std::move(mEv));
+            push_back(ScheduledMouseEvent{
+              std::move(mEv),
+              elem->GetBoundingClientRect()
+            });
         }
       }
 
@@ -248,6 +256,7 @@ HTMLInputElement::HTMLInputElement(Document* document)
       {
         gfx::Point point(x, y);
         //gfx::Point point(screen_->GetCursorScreenPoint());
+        // see https://github.com/blockspacer/skia-opengl-emscripten/blob/24de863ed991dbb888a443138ae0780d0d514417/src/chromium/ui/events/event.h#L517
         ui::MouseEvent mEv(ui::ET_MOUSE_PRESSED,
                            point,
                            point,
@@ -259,13 +268,17 @@ HTMLInputElement::HTMLInputElement(Document* document)
         {
           std::scoped_lock lock(scheduledEventsMutex_);
           scheduledEvents_.scheduledMouseEvents_.
-            push_back(std::move(mEv));
+            push_back(ScheduledMouseEvent{
+              std::move(mEv),
+              elem->GetBoundingClientRect()
+            });
         }
       }
 
       {
         gfx::Point point(x, y);
         //gfx::Point point(screen_->GetCursorScreenPoint());
+        // see https://github.com/blockspacer/skia-opengl-emscripten/blob/24de863ed991dbb888a443138ae0780d0d514417/src/chromium/ui/events/event.h#L517
         ui::MouseEvent mEv(ui::ET_MOUSE_RELEASED,
                            point,
                            point,
@@ -277,7 +290,10 @@ HTMLInputElement::HTMLInputElement(Document* document)
         {
           std::scoped_lock lock(scheduledEventsMutex_);
           scheduledEvents_.scheduledMouseEvents_.
-            push_back(std::move(mEv));
+            push_back(ScheduledMouseEvent{
+              std::move(mEv),
+              elem->GetBoundingClientRect()
+            });
         }
       }
 
@@ -330,6 +346,7 @@ HTMLInputElement::HTMLInputElement(Document* document)
     {
       gfx::Point point(x, y);
       //gfx::Point point(screen_->GetCursorScreenPoint());
+      // see https://github.com/blockspacer/skia-opengl-emscripten/blob/24de863ed991dbb888a443138ae0780d0d514417/src/chromium/ui/events/event.h#L517
       ui::MouseEvent mEv(ui::ET_MOUSE_MOVED, // TODO: ET_MOUSE_DRAGGED
                          point,
                          point,
@@ -341,7 +358,10 @@ HTMLInputElement::HTMLInputElement(Document* document)
       {
         std::scoped_lock lock(scheduledEventsMutex_);
         scheduledEvents_.scheduledMouseEvents_.
-          push_back(std::move(mEv));
+          push_back(ScheduledMouseEvent{
+            std::move(mEv),
+            elem->GetBoundingClientRect()
+          });
       }
     }
 

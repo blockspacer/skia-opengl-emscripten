@@ -314,8 +314,25 @@ void InputNode::RenderTreeNodeVisit(const NodeVisitor *render_target) {
 
   const math::RectF math_rect = data().rect;
 
-  SkRect sk_rect =
-      SkRect::MakeXYWH(math_rect.x(), math_rect.y(), math_rect.width(), math_rect.height());
+  SkMatrix total_matrix
+    = skia_visitor->draw_state_.render_target->getTotalMatrix();
+
+  SkRect sk_rect = SkRect::MakeXYWH(math_rect.x(), math_rect.y(),
+                                      math_rect.width(), math_rect.height());
+  SkRect sk_rect_transformed;
+  total_matrix.mapRect(&sk_rect_transformed, sk_rect);
+
+  math::RectF transformed_rect(
+      sk_rect_transformed.x(), sk_rect_transformed.y(),
+      sk_rect_transformed.width(), sk_rect_transformed.height());
+
+  /*const math::RectF& transformed_rect =
+      skia_visitor->draw_state_.
+      transform.TransformRect(math_rect);*/
+
+  //SkRect sk_rect =
+  //    SkRect::MakeXYWH(transformed_rect.x(), transformed_rect.y(),
+  //      transformed_rect.width(), transformed_rect.height());
 
   cc::SkiaPaintCanvas cc_skia_paint_canvas(
     skia_visitor->draw_state_.render_target);
@@ -352,8 +369,9 @@ void InputNode::RenderTreeNodeVisit(const NodeVisitor *render_target) {
   if(!input_node_container_) {
     printf("input_node: creating container\n");
     input_node_container_ = std::make_unique<input_node_ContainerView>(this);
-    input_node_container_->SetBounds(0, 0,
-      sk_rect.width(), sk_rect.height());
+    /*input_node_container_->SetBounds(
+      sk_rect_transformed.x(), sk_rect_transformed.y(),
+      sk_rect_transformed.width(), sk_rect_transformed.height());*/
     input_node_container_->SetSize(
       gfx::Size(sk_rect.width(), sk_rect.height()));
     input_node_container_->SetPreferredSize(
@@ -403,8 +421,8 @@ void InputNode::RenderTreeNodeVisit(const NodeVisitor *render_target) {
     views::Widget::InitParams params(
       views::Widget::InitParams::TYPE_POPUP/*TYPE_WINDOW_FRAMELESS*/);
 
-    params.bounds = gfx::Rect(0, 0,
-      sk_rect.width(), sk_rect.height());
+    params.bounds = gfx::Rect(transformed_rect.x(), transformed_rect.y(),
+      transformed_rect.width(), transformed_rect.height());
 
     params.ownership = views::Widget::InitParams::WIDGET_OWNS_NATIVE_WIDGET;
     //params.delegate = input_node_container_;
@@ -426,9 +444,11 @@ void InputNode::RenderTreeNodeVisit(const NodeVisitor *render_target) {
   DCHECK(input_node_widget_);
 
   input_node_widget_->SetSize(
-    gfx::Size(sk_rect.width(), sk_rect.height()));
+    gfx::Size(transformed_rect.width(), transformed_rect.height()));
   input_node_widget_->SetBounds(
-    gfx::Rect(0, 0, sk_rect.width(), sk_rect.height()));
+    gfx::Rect(
+     sk_rect_transformed.x(), sk_rect_transformed.y(),
+     transformed_rect.width(), transformed_rect.height()));
 
   views::View* root_view = input_node_widget_->GetRootView();
   DCHECK(root_view);
@@ -444,10 +464,11 @@ void InputNode::RenderTreeNodeVisit(const NodeVisitor *render_target) {
   //input_node_container_->SetVisible(true);
   input_node_container_->SetEnabled(true);
 
-  input_node_container_->SetBounds(0, 0,
-    sk_rect.width(), sk_rect.height());
+  /*input_node_container_->SetBounds(
+    sk_rect_transformed.x(), sk_rect_transformed.y(),
+    sk_rect_transformed.width(), sk_rect_transformed.height());
   input_node_container_->SetSize(
-    gfx::Size(sk_rect.width(), sk_rect.height()));
+    gfx::Size(sk_rect_transformed.width(), sk_rect_transformed.height()));*/
   input_node_container_->SetPreferredSize(
     gfx::Size(sk_rect.width(), sk_rect.height()));
 
@@ -482,8 +503,9 @@ void InputNode::RenderTreeNodeVisit(const NodeVisitor *render_target) {
 
   //root_view->SetBoundsRect(input_node_container_->GetLocalBounds());
 
-  root_view->SetBounds(0, 0,
-    sk_rect.width(), sk_rect.height());
+  /*root_view->SetBounds(
+    sk_rect_transformed.x(), sk_rect_transformed.y(),
+    sk_rect_transformed.width(), sk_rect_transformed.height());*/
 
   root_view->InvalidateLayout();
   root_view->SizeToPreferredSize();
@@ -607,15 +629,27 @@ void InputNode::RenderTreeNodeVisit(const NodeVisitor *render_target) {
     std::scoped_lock lock(custom_generating_node_->scheduledEventsMutex_);
 
     /*if(custom_generating_node_->
-       custom_generating_node_->
        scheduledEvents_
        .scheduledKeyEvents_.size())
     {
-      printf("HTMLInputElementID_ = %i\n",
-          custom_generating_node_->
-          custom_generating_node_->
-          HTMLInputElementID_);
+      //printf("HTMLInputElementID_ = %i\n",
+      //    custom_generating_node_->
+      //    HTMLInputElementID_);
+
+      printf("math_rect %f , %f , %f , %f \n",
+        math_rect.x(),
+        math_rect.y(),
+        math_rect.width(),
+        math_rect.height()
+      );
+      printf("transformed_rect %f , %f , %f , %f \n",
+        transformed_rect.x(),
+        transformed_rect.y(),
+        transformed_rect.width(),
+        transformed_rect.height()
+      );
     }*/
+
     for(ui::KeyEvent& kEv :
           custom_generating_node_->
           scheduledEvents_
@@ -635,14 +669,48 @@ void InputNode::RenderTreeNodeVisit(const NodeVisitor *render_target) {
     // TODO: better mutex
     std::scoped_lock lock(custom_generating_node_->scheduledEventsMutex_);
 
-    for(ui::MouseEvent& mEv :
+    for(HTMLInputElement::ScheduledMouseEvent& mEv :
           custom_generating_node_->
           scheduledEvents_
           .scheduledMouseEvents_)
     {
       DCHECK(input_node_widget_);
       DCHECK(input_node_widget_->GetInputMethod());
-      input_node_widget_->OnMouseEvent(&mEv);
+
+      SkRect mEv_sk_rect = SkRect::MakeXYWH(
+        mEv.mouseEvent_.x(), mEv.mouseEvent_.y(), 1, 1);
+      SkRect mEv_sk_rect_transformed;
+      total_matrix.mapRect(&mEv_sk_rect_transformed, mEv_sk_rect);
+
+      SkRect boundingClientRect_sk_rect = SkRect::MakeXYWH(
+        mEv.boundingClientRect_->x(), mEv.boundingClientRect_->y(), 1, 1);
+
+      math::RectF boundingClientRect_transformed(
+          boundingClientRect_sk_rect.x(), boundingClientRect_sk_rect.y(),
+          boundingClientRect_sk_rect.width(), boundingClientRect_sk_rect.height());
+
+      float x = mEv_sk_rect_transformed.x()
+        - boundingClientRect_transformed.x();
+      if(x < 0) {
+        x = mEv.mouseEvent_.x() + x;
+      }
+      float y = mEv_sk_rect_transformed.y()
+        - boundingClientRect_transformed.y();
+      if(y < 0) {
+        y = mEv.mouseEvent_.y() + y;
+      }
+
+      // see https://github.com/blockspacer/skia-opengl-emscripten/blob/24de863ed991dbb888a443138ae0780d0d514417/src/chromium/ui/events/event.h#L517
+      gfx::Point point(x, y);
+      ui::MouseEvent mEvTransformed(
+                         mEv.mouseEvent_.type(),
+                         point,
+                         point,
+                         ui::EventTimeForNow(),
+                         mEv.mouseEvent_.button_flags(),
+                         mEv.mouseEvent_.button_flags());
+
+      input_node_widget_->OnMouseEvent(&mEvTransformed);
     }
     custom_generating_node_->
       scheduledEvents_.scheduledMouseEvents_.clear();

@@ -365,9 +365,15 @@
 
 class HTMLInputElement : public cobalt::dom::HTMLCustomElement {
  public:
+
+  struct ScheduledMouseEvent {
+    ui::MouseEvent mouseEvent_;
+    scoped_refptr<cobalt::dom::DOMRect> boundingClientRect_{};
+  };
+
   struct ScheduledEvents {
     std::vector<ui::KeyEvent> scheduledKeyEvents_{};
-    std::vector<ui::MouseEvent> scheduledMouseEvents_{};
+    std::vector<ScheduledMouseEvent> scheduledMouseEvents_{};
   };
 
   static const char kTagName[];

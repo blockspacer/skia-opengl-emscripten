@@ -103,12 +103,6 @@
       div and vTestStyle 2
     </div>
 
-    <div style="width:1000px;">
-      <input width="1000" height="50" style="width:100%;height:50px;" tabindex="0">
-        text 2
-      </input>
-    </div>
-
     <div I_v-test-attr-name_I="I_v-test-attr-val_I">
       div and vTestStyle 3
     </div>
@@ -124,6 +118,28 @@
     <div style="background-color:rgb(0, 30, 128);" I_on-wheel-print_I="your args here wheel 1">
       on-wheel!
     </div>
+
+    <div class="flip-card" style="z-index:999;">
+      <div class="flip-card-inner">
+        <div class="flip-card-front">
+          <div style="background-image: url('file:///resources/images/mouse.jpeg'); width:300px; height:300px;">
+          </div>
+        </div>
+        <div class="flip-card-back">
+          <div>
+            <div style="width:1000px;">
+              <input width="1000" height="50" style="width:100%;height:50px;" tabindex="0">
+                text 2
+              </input>
+            </div>
+            <skottie width="10" height="10" src="./resources/animations/data.json" style="display:block;color:#CCC;width:10px;height:10px;z-index:999;">
+            </skottie>
+            kkk
+          </div>
+        </div>
+      </div>
+    </div>
+
 
     <div style="background-color:rgb(122, 35, 180);" I_on-keyup_I="your args here keyup">
       no on-keyup! need tabindex & focus!
@@ -147,22 +163,6 @@
     <div style="position:absolute;background-color:white;top:60px;right:200px;z-index:99;width:100px;height:100px">
     </div>
     <div style="position:absolute;background-color:black;top:80px;right:150px;z-index:1;width:100px;height:100px">
-    </div>
-
-    <div class="flip-card" style="z-index:999;">
-      <div class="flip-card-inner">
-        <div class="flip-card-front">
-          <div style="background-image: url('file:///resources/images/mouse.jpeg'); width:300px; height:300px;">
-          </div>
-        </div>
-        <div class="flip-card-back">
-          <div>
-            <skottie width="10" height="10" src="./resources/animations/data.json" style="display:block;color:#CCC;width:10px;height:10px;z-index:999;">
-            </skottie>
-            kkk
-          </div>
-        </div>
-      </div>
     </div>
 
     <div>
