@@ -1969,7 +1969,7 @@ void View::OnBlur() {
 }
 
 void View::Focus() {
-  printf("View::Focus()\n");
+  //printf("View::Focus()\n");
   OnFocus();
   ScrollViewToVisible();
 
