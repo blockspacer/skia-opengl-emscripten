@@ -18,6 +18,11 @@ using Displays = std::vector<Display>;
 
 const Display* FindDisplayNearestPoint(const Displays& displays,
                                        const gfx::Point& point) {
+#if defined(UI_DISPLAY_PORTED)
+  NOTIMPLEMENTED_LOG_ONCE();
+  return nullptr;
+#endif
+
   DCHECK(!displays.empty());
   auto iter = FindDisplayContainingPoint(displays, point);
   if (iter != displays.end())
@@ -39,6 +44,11 @@ const Display* FindDisplayNearestPoint(const Displays& displays,
 
 const Display* FindDisplayWithBiggestIntersection(const Displays& displays,
                                                   const gfx::Rect& rect) {
+#if defined(UI_DISPLAY_PORTED)
+  NOTIMPLEMENTED_LOG_ONCE();
+  return nullptr;
+#endif
+
   DCHECK(!displays.empty());
   int max_area = 0;
   const Display* matching = nullptr;
