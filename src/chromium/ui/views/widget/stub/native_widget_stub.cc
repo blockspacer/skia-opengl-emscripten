@@ -242,11 +242,11 @@ ui::EventDispatchDetails NativeWidgetAura::DispatchKeyEventPostIME(
 }
 
 // TODO: remove static
-ui::InputMethod* NativeWidgetAura::input_method_ = nullptr;
+//ui::InputMethod* NativeWidgetAura::input_method_ = nullptr;
 
 // TODO
 ui::InputMethod* NativeWidgetAura::GetInputMethod() {
-  printf("NativeWidgetStub::GetInputMethod()\n");
+  //printf("NativeWidgetStub::GetInputMethod()\n");
 
 //#if 0
   if (!input_method_) {

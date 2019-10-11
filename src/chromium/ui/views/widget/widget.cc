@@ -389,11 +389,13 @@ void Widget::Init(const InitParams& in_params) {
   observer_manager_.Add(GetNativeTheme());
 #endif
   native_widget_initialized_ = true;
+  DCHECK(native_widget_);
   native_widget_->OnWidgetInitDone();
 }
 
 #if !defined(UI_VIEWS_PORT)
 void Widget::ShowEmojiPanel() {
+  DCHECK(native_widget_);
   native_widget_->ShowEmojiPanel();
 }
 #endif // UI_VIEWS_PORT
@@ -401,10 +403,12 @@ void Widget::ShowEmojiPanel() {
 // Unconverted methods (see header) --------------------------------------------
 
 gfx::NativeView Widget::GetNativeView() const {
+  DCHECK(native_widget_);
   return native_widget_->GetNativeView();
 }
 
 gfx::NativeWindow Widget::GetNativeWindow() const {
+  DCHECK(native_widget_);
   return native_widget_->GetNativeWindow();
 }
 
@@ -445,6 +449,7 @@ void Widget::ViewHierarchyChanged(const ViewHierarchyChangedDetails& details) {
     FocusManager* focus_manager = GetFocusManager();
     if (focus_manager)
       focus_manager->ViewRemoved(details.child);
+    DCHECK(native_widget_);
     native_widget_->ViewRemoved(details.child);
   }
 }
@@ -478,6 +483,7 @@ const Widget* Widget::GetTopLevelWidget() const {
   // property is gone after gobject gets deleted. Short circuit here
   // for toplevel so that InputMethod can remove itself from
   // focus manager.
+  DCHECK(native_widget_);
   return is_top_level() ? this : native_widget_->GetTopLevelWidget();
 }
 
@@ -511,46 +517,57 @@ View* Widget::GetContentsView() {
 }
 
 gfx::Rect Widget::GetWindowBoundsInScreen() const {
+  DCHECK(native_widget_);
   return native_widget_->GetWindowBoundsInScreen();
 }
 
 gfx::Rect Widget::GetClientAreaBoundsInScreen() const {
+  DCHECK(native_widget_);
   return native_widget_->GetClientAreaBoundsInScreen();
 }
 
 gfx::Rect Widget::GetRestoredBounds() const {
+  DCHECK(native_widget_);
   return native_widget_->GetRestoredBounds();
 }
 
 std::string Widget::GetWorkspace() const {
+  DCHECK(native_widget_);
   return native_widget_->GetWorkspace();
 }
 
 void Widget::SetBounds(const gfx::Rect& bounds) {
+  DCHECK(native_widget_);
   native_widget_->SetBounds(bounds);
 }
 
 void Widget::SetSize(const gfx::Size& size) {
+  DCHECK(native_widget_);
   native_widget_->SetSize(size);
 }
 
 void Widget::CenterWindow(const gfx::Size& size) {
+  DCHECK(native_widget_);
   native_widget_->CenterWindow(size);
 }
 
 void Widget::SetBoundsConstrained(const gfx::Rect& bounds) {
+  DCHECK(native_widget_);
   native_widget_->SetBoundsConstrained(bounds);
 }
 
 void Widget::SetVisibilityChangedAnimationsEnabled(bool value) {
+  DCHECK(native_widget_);
   native_widget_->SetVisibilityChangedAnimationsEnabled(value);
 }
 
 void Widget::SetVisibilityAnimationDuration(const base::TimeDelta& duration) {
+  DCHECK(native_widget_);
   native_widget_->SetVisibilityAnimationDuration(duration);
 }
 
 void Widget::SetVisibilityAnimationTransition(VisibilityTransition transition) {
+  DCHECK(native_widget_);
   native_widget_->SetVisibilityAnimationTransition(transition);
 }
 
@@ -558,26 +575,32 @@ Widget::MoveLoopResult Widget::RunMoveLoop(
     const gfx::Vector2d& drag_offset,
     MoveLoopSource source,
     MoveLoopEscapeBehavior escape_behavior) {
+  DCHECK(native_widget_);
   return native_widget_->RunMoveLoop(drag_offset, source, escape_behavior);
 }
 
 void Widget::EndMoveLoop() {
+  DCHECK(native_widget_);
   native_widget_->EndMoveLoop();
 }
 
 void Widget::StackAboveWidget(Widget* widget) {
+  DCHECK(native_widget_);
   native_widget_->StackAbove(widget->GetNativeView());
 }
 
 void Widget::StackAbove(gfx::NativeView native_view) {
+  DCHECK(native_widget_);
   native_widget_->StackAbove(native_view);
 }
 
 void Widget::StackAtTop() {
+  DCHECK(native_widget_);
   native_widget_->StackAtTop();
 }
 
 void Widget::SetShape(std::unique_ptr<ShapeRects> shape) {
+  DCHECK(native_widget_);
   native_widget_->SetShape(std::move(shape));
 }
 
@@ -613,6 +636,7 @@ void Widget::CloseWithReason(ClosedReason closed_reason) {
   for (WidgetObserver& observer : observers_)
     observer.OnWidgetClosing(this);
 
+  DCHECK(native_widget_);
   native_widget_->Close();
 }
 
@@ -623,6 +647,7 @@ void Widget::Close() {
 void Widget::CloseNow() {
   for (WidgetObserver& observer : observers_)
     observer.OnWidgetClosing(this);
+  DCHECK(native_widget_);
   native_widget_->CloseNow();
 }
 
@@ -631,6 +656,7 @@ bool Widget::IsClosed() const {
 }
 
 void Widget::Show() {
+  DCHECK(native_widget_);
   const ui::Layer* layer = GetLayer();
   TRACE_EVENT1("views", "Widget::Show", "layer",
                layer ? layer->name() : "none");
@@ -659,6 +685,7 @@ void Widget::Show() {
 }
 
 void Widget::Hide() {
+  DCHECK(native_widget_);
   native_widget_->Hide();
 }
 
@@ -672,55 +699,69 @@ void Widget::ShowInactive() {
     SetBounds(initial_restored_bounds_);
     saved_show_state_ = ui::SHOW_STATE_NORMAL;
   }
+  DCHECK(native_widget_);
   native_widget_->Show(ui::SHOW_STATE_INACTIVE, gfx::Rect());
 }
 
 void Widget::Activate() {
-  if (CanActivate())
+  if (CanActivate()) {
+    DCHECK(native_widget_);
     native_widget_->Activate();
+  }
 }
 
 void Widget::Deactivate() {
+  DCHECK(native_widget_);
   native_widget_->Deactivate();
 }
 
 bool Widget::IsActive() const {
+  DCHECK(native_widget_);
   return native_widget_->IsActive();
 }
 
 void Widget::SetAlwaysOnTop(bool on_top) {
+  DCHECK(native_widget_);
   native_widget_->SetAlwaysOnTop(on_top);
 }
 
 bool Widget::IsAlwaysOnTop() const {
+  DCHECK(native_widget_);
   return native_widget_->IsAlwaysOnTop();
 }
 
 void Widget::SetVisibleOnAllWorkspaces(bool always_visible) {
+  DCHECK(native_widget_);
   native_widget_->SetVisibleOnAllWorkspaces(always_visible);
 }
 
 bool Widget::IsVisibleOnAllWorkspaces() const {
+  DCHECK(native_widget_);
   return native_widget_->IsVisibleOnAllWorkspaces();
 }
 
 void Widget::Maximize() {
+  DCHECK(native_widget_);
   native_widget_->Maximize();
 }
 
 void Widget::Minimize() {
+  DCHECK(native_widget_);
   native_widget_->Minimize();
 }
 
 void Widget::Restore() {
+  DCHECK(native_widget_);
   native_widget_->Restore();
 }
 
 bool Widget::IsMaximized() const {
+  DCHECK(native_widget_);
   return native_widget_->IsMaximized();
 }
 
 bool Widget::IsMinimized() const {
+  DCHECK(native_widget_);
   return native_widget_->IsMinimized();
 }
 
@@ -728,6 +769,7 @@ void Widget::SetFullscreen(bool fullscreen) {
   if (IsFullscreen() == fullscreen)
     return;
 
+  DCHECK(native_widget_);
   native_widget_->SetFullscreen(fullscreen);
 
   if (non_client_view_)
@@ -735,11 +777,13 @@ void Widget::SetFullscreen(bool fullscreen) {
 }
 
 bool Widget::IsFullscreen() const {
+  DCHECK(native_widget_);
   return native_widget_->IsFullscreen();
 }
 
 void Widget::SetCanAppearInExistingFullscreenSpaces(
     bool can_appear_in_existing_fullscreen_spaces) {
+  DCHECK(native_widget_);
   native_widget_->SetCanAppearInExistingFullscreenSpaces(
       can_appear_in_existing_fullscreen_spaces);
 }
@@ -747,14 +791,17 @@ void Widget::SetCanAppearInExistingFullscreenSpaces(
 void Widget::SetOpacity(float opacity) {
   DCHECK(opacity >= 0.0f);
   DCHECK(opacity <= 1.0f);
+  DCHECK(native_widget_);
   native_widget_->SetOpacity(opacity);
 }
 
 void Widget::SetAspectRatio(const gfx::SizeF& aspect_ratio) {
+  DCHECK(native_widget_);
   native_widget_->SetAspectRatio(aspect_ratio);
 }
 
 void Widget::FlashFrame(bool flash) {
+  DCHECK(native_widget_);
   native_widget_->FlashFrame(flash);
 }
 
@@ -767,6 +814,7 @@ const View* Widget::GetRootView() const {
 }
 
 bool Widget::IsVisible() const {
+  DCHECK(native_widget_);
   return native_widget_->IsVisible();
 }
 
@@ -825,6 +873,7 @@ void Widget::RunShellDrag(View* view,
     observer.OnWidgetDragWillStart(this);
 
   WidgetDeletionObserver widget_deletion_observer(this);
+  DCHECK(native_widget_);
   native_widget_->RunShellDrag(view, data, location, operation, source);
 
   // The widget may be destroyed during the drag operation.
@@ -845,26 +894,32 @@ void Widget::RunShellDrag(View* view,
 #endif // UI_VIEWS_PORT
 
 void Widget::SchedulePaintInRect(const gfx::Rect& rect) {
+  DCHECK(native_widget_);
   native_widget_->SchedulePaintInRect(rect);
 }
 
 void Widget::ScheduleLayout() {
+  DCHECK(native_widget_);
   native_widget_->ScheduleLayout();
 }
 
 void Widget::SetCursor(gfx::NativeCursor cursor) {
+  DCHECK(native_widget_);
   native_widget_->SetCursor(cursor);
 }
 
 bool Widget::IsMouseEventsEnabled() const {
+  DCHECK(native_widget_);
   return native_widget_->IsMouseEventsEnabled();
 }
 
 void Widget::SetNativeWindowProperty(const char* name, void* value) {
+  DCHECK(native_widget_);
   native_widget_->SetNativeWindowProperty(name, value);
 }
 
 void* Widget::GetNativeWindowProperty(const char* name) const {
+  DCHECK(native_widget_);
   return native_widget_->GetNativeWindowProperty(name);
 }
 
@@ -876,6 +931,7 @@ void Widget::UpdateWindowTitle() {
   // the native frame is being used, since this also updates the taskbar, etc.
   base::string16 window_title = widget_delegate_->GetWindowTitle();
   base::i18n::AdjustStringForLocaleDirection(&window_title);
+  DCHECK(native_widget_);
   if (!native_widget_->SetWindowTitle(window_title))
     return;
 
@@ -885,6 +941,7 @@ void Widget::UpdateWindowTitle() {
 void Widget::UpdateWindowIcon() {
   if (non_client_view_)
     non_client_view_->UpdateWindowIcon();
+  DCHECK(native_widget_);
   native_widget_->SetWindowIcons(widget_delegate_->GetWindowIcon(),
                                  widget_delegate_->GetWindowAppIcon());
 }
@@ -912,14 +969,17 @@ void Widget::SetFocusTraversableParentView(View* parent_view) {
 }
 
 void Widget::ClearNativeFocus() {
+  DCHECK(native_widget_);
   native_widget_->ClearNativeFocus();
 }
 
 NonClientFrameView* Widget::CreateNonClientFrameView() {
   NonClientFrameView* frame_view =
       widget_delegate_->CreateNonClientFrameView(this);
-  if (!frame_view)
+  if (!frame_view) {
+    DCHECK(native_widget_);
     frame_view = native_widget_->CreateNonClientFrameView();
+  }
   if (!frame_view && ViewsDelegate::GetInstance()) {
     frame_view =
         ViewsDelegate::GetInstance()->CreateDefaultNonClientFrameView(this);
@@ -935,10 +995,12 @@ NonClientFrameView* Widget::CreateNonClientFrameView() {
 bool Widget::ShouldUseNativeFrame() const {
   if (frame_type_ != FRAME_TYPE_DEFAULT)
     return frame_type_ == FRAME_TYPE_FORCE_NATIVE;
+  DCHECK(native_widget_);
   return native_widget_->ShouldUseNativeFrame();
 }
 
 bool Widget::ShouldWindowContentsBeTransparent() const {
+  DCHECK(native_widget_);
   return native_widget_->ShouldWindowContentsBeTransparent();
 }
 
@@ -954,18 +1016,22 @@ void Widget::DebugToggleFrameType() {
 }
 
 void Widget::FrameTypeChanged() {
+  DCHECK(native_widget_);
   native_widget_->FrameTypeChanged();
 }
 
 const ui::Compositor* Widget::GetCompositor() const {
+  DCHECK(native_widget_);
   return native_widget_->GetCompositor();
 }
 
 const ui::Layer* Widget::GetLayer() const {
+  DCHECK(native_widget_);
   return native_widget_->GetLayer();
 }
 
 void Widget::ReorderNativeViews() {
+  DCHECK(native_widget_);
   native_widget_->ReorderNativeViews();
 }
 
@@ -985,6 +1051,7 @@ NativeWidget* Widget::native_widget() {
 }
 
 void Widget::SetCapture(View* view) {
+  DCHECK(native_widget_);
   if (!native_widget_->HasCapture()) {
     native_widget_->SetCapture();
 
@@ -999,23 +1066,28 @@ void Widget::SetCapture(View* view) {
 }
 
 void Widget::ReleaseCapture() {
+  DCHECK(native_widget_);
   if (native_widget_->HasCapture())
     native_widget_->ReleaseCapture();
 }
 
 bool Widget::HasCapture() {
+  DCHECK(native_widget_);
   return native_widget_->HasCapture();
 }
 
 TooltipManager* Widget::GetTooltipManager() {
+  DCHECK(native_widget_);
   return native_widget_->GetTooltipManager();
 }
 
 const TooltipManager* Widget::GetTooltipManager() const {
+  DCHECK(native_widget_);
   return native_widget_->GetTooltipManager();
 }
 
 gfx::Rect Widget::GetWorkAreaBoundsInScreen() const {
+  DCHECK(native_widget_);
   return native_widget_->GetWorkAreaBoundsInScreen();
 }
 
@@ -1040,14 +1112,17 @@ void Widget::SynthesizeMouseMoveEvent() {
 }
 
 bool Widget::IsTranslucentWindowOpacitySupported() const {
+  DCHECK(native_widget_);
   return native_widget_->IsTranslucentWindowOpacitySupported();
 }
 
 ui::GestureRecognizer* Widget::GetGestureRecognizer() {
+  DCHECK(native_widget_);
   return native_widget_->GetGestureRecognizer();
 }
 
 void Widget::OnSizeConstraintsChanged() {
+  DCHECK(native_widget_);
   native_widget_->OnSizeConstraintsChanged();
   if (non_client_view_)
     non_client_view_->SizeConstraintsChanged();
@@ -1061,6 +1136,7 @@ void Widget::OnCanActivateChanged() {
 }
 
 std::string Widget::GetName() const {
+  DCHECK(native_widget_);
   return native_widget_->GetName();
 }
 
@@ -1150,6 +1226,7 @@ void Widget::OnNativeWidgetCreated() {
   if (is_top_level())
     focus_manager_ = FocusManagerFactory::Create(this);
 
+  DCHECK(native_widget_);
   native_widget_->InitModalType(widget_delegate_->GetModalType());
 
   for (WidgetObserver& observer : observers_)
@@ -1551,6 +1628,7 @@ void Widget::SaveWindowPlacement() {
 
   ui::WindowShowState show_state = ui::SHOW_STATE_NORMAL;
   gfx::Rect bounds;
+  DCHECK(native_widget_);
   native_widget_->GetWindowPlacement(&bounds, &show_state);
   widget_delegate_->SaveWindowPlacement(bounds, show_state);
 }

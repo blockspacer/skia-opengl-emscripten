@@ -308,7 +308,11 @@ class VIEWS_EXPORT NativeWidgetAura :
   // The InputMethod instance used to process key events.
   // If owned it, it is created in GetInputMethod() method;
   // If not owned it, it is passed in through SetSharedInputMethod() method.
-  static ui::InputMethod* input_method_; // TODO: free mem & remove static
+  //static ui::InputMethod* input_method_; // TODO: free mem & remove static
+  ui::InputMethod* input_method_ = nullptr;
+
+  // TODO: remove static
+  //ui::InputMethod* NativeWidgetAura::input_method_ = nullptr;
 
   // Whether the InputMethod instance is owned by this WindowTreeHost.
   bool owned_input_method_;
