@@ -119,11 +119,13 @@
 
 #include <memory>
 
-namespace cobalt {
+class HTMLInputElement;
+
+/*namespace cobalt {
 namespace layout {
 class InputBox;
 } // cobalt
-} // layout
+} // layout*/
 
 namespace cobalt {
 namespace render_tree {
@@ -196,10 +198,11 @@ class InputNode final : public CustomNode {
     return new InputNode(builder);
   }*/
 
-  void SetCustomGeneratingNode(cobalt::layout::InputBox* custom_generating_node);
+  void SetCustomGeneratingNode(HTMLInputElement* custom_generating_node);
 
  public: // TODO
-  cobalt::layout::InputBox* custom_generating_node_;
+  //cobalt::layout::InputBox* custom_generating_node_ = nullptr;
+  HTMLInputElement* custom_generating_node_ = nullptr;
 
   //std::unique_ptr<render_tree::input_node_ContainerView>
   //  input_node_container_;

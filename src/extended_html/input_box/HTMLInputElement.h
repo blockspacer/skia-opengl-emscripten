@@ -323,6 +323,13 @@
 
 #include <algorithm>
 #include <memory>
+#include <mutex>
+#include <thread>
+#include <iostream>
+#include <vector>
+#include <functional>
+#include <chrono>
+#include <string>
 
 #include "base/bind.h"
 #include "base/logging.h"
@@ -359,7 +366,8 @@
 class HTMLInputElement : public cobalt::dom::HTMLCustomElement {
  public:
   struct ScheduledEvents {
-    std::vector<ui::KeyEvent> scheduledKeyEvents_;
+    std::vector<ui::KeyEvent> scheduledKeyEvents_{};
+    std::vector<ui::MouseEvent> scheduledMouseEvents_{};
   };
 
   static const char kTagName[];
@@ -396,7 +404,8 @@ class HTMLInputElement : public cobalt::dom::HTMLCustomElement {
   // TODO: thread safety
   std::unique_ptr<cobalt::render_tree::input_node_ContainerView> input_node_container_;
 
-  ScheduledEvents scheduledEvents_;
+  std::mutex scheduledEventsMutex_;
+  ScheduledEvents scheduledEvents_{};
 
   int HTMLInputElementID_ = 0;
 

@@ -278,6 +278,8 @@ class InputBox : public Box {
   //typedef render_tree::SkottieNode::SetBoundsCB SetBoundsCB;
   //typedef render_tree::InputNode::GetInputAnimCB GetInputAnimCB;
 
+  ~InputBox();
+
   InputBox(const scoped_refptr<cssom::CSSComputedStyleDeclaration>&
                   css_computed_style_declaration,
               //const SetBoundsCB& set_bounds_cb,
@@ -349,7 +351,7 @@ class InputBox : public Box {
   //      scoped_refptr<cobalt::dom::Element> elem);
 
  public: // TODO
-  HTMLInputElement* custom_generating_node_;
+  HTMLInputElement* custom_generating_node_ = nullptr;
 
   // TODO
   //std::unique_ptr<render_tree::input_node_ContainerView>

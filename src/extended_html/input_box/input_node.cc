@@ -1,6 +1,6 @@
 #include "extended_html/input_box/input_node.h"
 
-#include "extended_html/input_box/input_box.h"
+//#include "extended_html/input_box/input_box.h"
 
 #include "extended_html/input_box/HTMLInputElement.h"
 
@@ -301,6 +301,12 @@ namespace render_tree {
 using namespace cobalt::renderer::rasterizer::skia;
 
 void InputNode::RenderTreeNodeVisit(const NodeVisitor *render_target) {
+  if(!custom_generating_node_) {
+    //NOTREACHED
+    NOTIMPLEMENTED_LOG_ONCE();
+    return;
+  }
+
   DCHECK(render_target);
   /// TODO
   const RenderTreeNodeVisitor* skia_visitor =
@@ -334,7 +340,6 @@ void InputNode::RenderTreeNodeVisit(const NodeVisitor *render_target) {
 
 
   DCHECK(custom_generating_node_);
-  DCHECK(custom_generating_node_->custom_generating_node_);
 
   // TODO
   //std::unique_ptr<cobalt::render_tree::input_node_ContainerView>
@@ -342,7 +347,7 @@ void InputNode::RenderTreeNodeVisit(const NodeVisitor *render_target) {
   //auto& input_node_container_
   //  = custom_generating_node_->input_node_container_;
   auto& input_node_container_
-    = custom_generating_node_->custom_generating_node_->input_node_container_;
+    = custom_generating_node_->input_node_container_;
 
   if(!input_node_container_) {
     printf("input_node: creating container\n");
@@ -390,7 +395,7 @@ void InputNode::RenderTreeNodeVisit(const NodeVisitor *render_target) {
   // TODO
   //std::unique_ptr<views::Widget> input_node_widget_;
   auto& input_node_widget_
-    = custom_generating_node_->custom_generating_node_->input_node_widget_;
+    = custom_generating_node_->input_node_widget_;
 
   if(!input_node_widget_) {
     printf("input_node: creating widget\n");
@@ -502,10 +507,10 @@ void InputNode::RenderTreeNodeVisit(const NodeVisitor *render_target) {
 
   DCHECK(input_node_container_);
   DCHECK(custom_generating_node_);
-  DCHECK(custom_generating_node_->custom_generating_node_);
+  DCHECK(custom_generating_node_);
   if(!input_node_container_->has_children) {
     input_node_container_->addChildren(
-      custom_generating_node_->custom_generating_node_->placeholder_text_);
+      custom_generating_node_->placeholder_text_);
     input_node_container_->has_children = true;
   }
 
@@ -515,6 +520,40 @@ void InputNode::RenderTreeNodeVisit(const NodeVisitor *render_target) {
   input_node_container_->textfield_->
     SetFontList(font_list.Derive(
       -size_delta, gfx::Font::UNDERLINE, gfx::Font::Weight::BOLD));
+
+  input_node_container_->textfield_->SetColor(
+    blink::Color(0.0f, 1.0f, 0.5f, 0.5f).Rgb());
+  /*input_node_container_->textfield_->GetRenderTextForSelectionController()->
+    SetElideBehavior(gfx::ELIDE_TAIL);*/
+  input_node_container_->textfield_->GetRenderTextForSelectionController()->
+    set_selection_background_focused_color(
+      SkColorSetARGB(150, 0, 188, 112));
+  input_node_container_->textfield_->GetRenderTextForSelectionController()->
+    set_selection_color(
+      blink::Color(0.0f, 0.0f, 1.0f, 0.5f).Rgb()
+  );
+  //input_node_container_->textfield_->GetRenderTextForSelectionController()->
+  //  SetSelectable(true);
+  input_node_container_->textfield_->SetSelectionBackgroundColor(
+    blink::Color(0.1f, 0.2f, 0.0f, 0.5f).Rgb());
+  input_node_container_->textfield_->SetSelectionTextColor(
+    blink::Color(0.4f, 0.4f, 0.9f, 0.5f).Rgb());
+
+  input_node_container_->textfield_->ChangeTextDirectionAndLayoutAlignment(
+    base::i18n::LEFT_TO_RIGHT);
+
+  /*gfx::Range text_range, selection_range;
+  base::string16 text;
+  if (input_node_container_->textfield_->
+        GetTextRange(&text_range) &&
+      input_node_container_->textfield_->
+        GetTextFromRange(text_range, &text) &&
+      input_node_container_->textfield_->
+        GetEditableSelectionRange(&selection_range))
+  {
+    // Select some text such that one handle is hidden.
+    input_node_container_->textfield_->SelectRange(text_range);
+  }*/
 
   /// TODO
   //printf("draw rect %s\n", math_rect.ToString().c_str());
@@ -539,10 +578,10 @@ void InputNode::RenderTreeNodeVisit(const NodeVisitor *render_target) {
   failed: (sequence_checker_).CalledOnValidSequence().  WeakPtrs must be
   checked on the same sequenced thread*/
   /*cobalt::dom::Document* document
-    = custom_generating_node_->custom_generating_node_->
+    = custom_generating_node_->
         AsElement()->node_document();
   if (document->active_element().get()
-      == custom_generating_node_->custom_generating_node_->AsElement())
+      == custom_generating_node_->AsElement())
   {
     paint.setColor(SK_ColorRED); // TODO
 #if ENABLE_FLUSH_AFTER_EVERY_NODE
@@ -562,8 +601,12 @@ void InputNode::RenderTreeNodeVisit(const NodeVisitor *render_target) {
 
   DCHECK(input_node_widget_->GetContentsView());
 
+  DCHECK(custom_generating_node_);
   {
-    if(custom_generating_node_->
+    // TODO: better mutex
+    std::scoped_lock lock(custom_generating_node_->scheduledEventsMutex_);
+
+    /*if(custom_generating_node_->
        custom_generating_node_->
        scheduledEvents_
        .scheduledKeyEvents_.size())
@@ -572,9 +615,8 @@ void InputNode::RenderTreeNodeVisit(const NodeVisitor *render_target) {
           custom_generating_node_->
           custom_generating_node_->
           HTMLInputElementID_);
-    }
-    for(ui::KeyEvent& ke :
-          custom_generating_node_->
+    }*/
+    for(ui::KeyEvent& kEv :
           custom_generating_node_->
           scheduledEvents_
           .scheduledKeyEvents_)
@@ -583,11 +625,27 @@ void InputNode::RenderTreeNodeVisit(const NodeVisitor *render_target) {
       DCHECK(input_node_widget_->GetInputMethod());
       ui::InputMethod* im =
           input_node_widget_->GetInputMethod();
-      im->DispatchKeyEvent(&ke);
+      im->DispatchKeyEvent(&kEv);
     }
     custom_generating_node_->
-      custom_generating_node_->
-        scheduledEvents_.scheduledKeyEvents_.clear();
+      scheduledEvents_.scheduledKeyEvents_.clear();
+  }
+
+  {
+    // TODO: better mutex
+    std::scoped_lock lock(custom_generating_node_->scheduledEventsMutex_);
+
+    for(ui::MouseEvent& mEv :
+          custom_generating_node_->
+          scheduledEvents_
+          .scheduledMouseEvents_)
+    {
+      DCHECK(input_node_widget_);
+      DCHECK(input_node_widget_->GetInputMethod());
+      input_node_widget_->OnMouseEvent(&mEv);
+    }
+    custom_generating_node_->
+      scheduledEvents_.scheduledMouseEvents_.clear();
   }
 
       /*// see https://github.com/blockspacer/skia-opengl-emscripten/blob/24de863ed991dbb888a443138ae0780d0d514417/src/chromium/ui/views/controls/textfield/textfield_unittest.cc#L673
@@ -701,8 +759,10 @@ void InputNode::Accept(NodeVisitor* visitor) {
 
 math::RectF InputNode::GetBounds() const { return data_.rect; }
 
-void cobalt::render_tree::InputNode::SetCustomGeneratingNode(cobalt::layout::InputBox *custom_generating_node)
+void cobalt::render_tree::InputNode::SetCustomGeneratingNode(
+  HTMLInputElement* custom_generating_node)
 {
+  DCHECK(custom_generating_node);
   custom_generating_node_ = custom_generating_node;
 }
 

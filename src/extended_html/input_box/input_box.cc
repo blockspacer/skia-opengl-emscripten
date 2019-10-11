@@ -507,6 +507,8 @@ void AddLetterboxedInputToRenderTree(
     //const InputBox::SetBoundsCB& set_bounds_cb,
     //const InputBox::GetInputAnimCB& replace_input_animation_cb,
     CompositionNode::Builder* border_node_builder) {
+  DCHECK(input_box);
+
   if (dimensions.image_rect) {
     InputNode::Builder builder(*(dimensions.image_rect)
                                            //, set_bounds_cb
@@ -540,7 +542,9 @@ void AddLetterboxedInputToRenderTree(
 
     /// \note will be called on every style change, etc.
     InputNode* newNode = new InputNode(builder);
-    newNode->SetCustomGeneratingNode(input_box);
+    DCHECK(input_box);
+    DCHECK(input_box->custom_generating_node_);
+    newNode->SetCustomGeneratingNode(input_box->custom_generating_node_);
     border_node_builder->AddChild(newNode);
 
 
@@ -859,6 +863,10 @@ void cobalt::layout::InputBox::SetCustomGeneratingNode(HTMLInputElement *custom_
 {
   DCHECK(custom_generating_node);
   custom_generating_node_ = custom_generating_node;
+}
+
+cobalt::layout::InputBox::~InputBox(){
+  printf("destroyed InputBox\n");
 }
 
 #if 0
