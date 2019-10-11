@@ -1,111 +1,8 @@
-#pragma once
+﻿#include "extended_html/input_box/input_node.h"
 
-#include "base/callback.h"
-#include "base/compiler_specific.h"
-#include "cobalt/base/type_id.h"
-#include "cobalt/math/rect.h"
-#include "cobalt/math/rect_f.h"
-#include "cobalt/render_tree/node.h"
-#include "cobalt/base/polymorphic_downcast.h"
-#include "cobalt/render_tree/custom_node.h"
-#include "cobalt/css_parser/parser.h"
-#include "cobalt/cssom/selector_tree.h"
-#include "cobalt/cssom/css_style_rule.h"
-#include "cobalt/cssom/specificity.h"
-#include "cobalt/cssom/css_rule_list.h"
-#include "cobalt/cssom/css_font_face_rule.h"
-#include "cobalt/cssom/css_media_rule.h"
-#include "cobalt/cssom/css_rule_style_declaration.h"
-#include "cobalt/cssom/css_style_rule.h"
-#include "cobalt/cssom/media_list.h"
+#include "extended_html/input_box/input_box.h"
 
-#include "cobalt/cssom/active_pseudo_class.h"
-#include "cobalt/cssom/after_pseudo_element.h"
-#include "cobalt/cssom/attribute_selector.h"
-#include "cobalt/cssom/before_pseudo_element.h"
-#include "cobalt/cssom/child_combinator.h"
-#include "cobalt/cssom/class_selector.h"
-#include "cobalt/cssom/cobalt_ui_nav_focus_transform_function.h"
-#include "cobalt/cssom/cobalt_ui_nav_spotlight_transform_function.h"
-#include "cobalt/cssom/complex_selector.h"
-#include "cobalt/cssom/compound_selector.h"
-#include "cobalt/cssom/css_declared_style_data.h"
-#include "cobalt/cssom/css_font_face_declaration_data.h"
-#include "cobalt/cssom/css_font_face_rule.h"
-#include "cobalt/cssom/css_keyframe_rule.h"
-#include "cobalt/cssom/css_keyframes_rule.h"
-#include "cobalt/cssom/css_rule_list.h"
-#include "cobalt/cssom/css_style_rule.h"
-#include "cobalt/cssom/css_style_sheet.h"
-#include "cobalt/cssom/descendant_combinator.h"
-#include "cobalt/cssom/empty_pseudo_class.h"
-#include "cobalt/cssom/filter_function_list_value.h"
-#include "cobalt/cssom/focus_pseudo_class.h"
-#include "cobalt/cssom/following_sibling_combinator.h"
-#include "cobalt/cssom/font_style_value.h"
-#include "cobalt/cssom/font_weight_value.h"
-#include "cobalt/cssom/hover_pseudo_class.h"
-#include "cobalt/cssom/id_selector.h"
-#include "cobalt/cssom/integer_value.h"
-#include "cobalt/cssom/keyword_value.h"
-#include "cobalt/cssom/length_value.h"
-#include "cobalt/cssom/linear_gradient_value.h"
-#include "cobalt/cssom/local_src_value.h"
-#include "cobalt/cssom/map_to_mesh_function.h"
-#include "cobalt/cssom/matrix_function.h"
-#include "cobalt/cssom/media_list.h"
-#include "cobalt/cssom/media_query.h"
-#include "cobalt/cssom/next_sibling_combinator.h"
-#include "cobalt/cssom/not_pseudo_class.h"
-#include "cobalt/cssom/number_value.h"
-#include "cobalt/cssom/percentage_value.h"
-#include "cobalt/cssom/property_definitions.h"
-#include "cobalt/cssom/property_key_list_value.h"
-#include "cobalt/cssom/property_list_value.h"
-#include "cobalt/cssom/property_value_visitor.h"
-#include "cobalt/cssom/radial_gradient_value.h"
-#include "cobalt/cssom/rgba_color_value.h"
-#include "cobalt/cssom/rotate_function.h"
-#include "cobalt/cssom/scale_function.h"
-#include "cobalt/cssom/shadow_value.h"
-#include "cobalt/cssom/simple_selector.h"
-#include "cobalt/cssom/string_value.h"
-#include "cobalt/cssom/time_list_value.h"
-#include "cobalt/cssom/timing_function.h"
-#include "cobalt/cssom/timing_function_list_value.h"
-#include "cobalt/cssom/transform_function_list_value.h"
-#include "cobalt/cssom/translate_function.h"
-#include "cobalt/cssom/type_selector.h"
-#include "cobalt/cssom/unicode_range_value.h"
-#include "cobalt/cssom/universal_selector.h"
-#include "cobalt/cssom/url_src_value.h"
-#include "cobalt/cssom/url_value.h"
-#include "cobalt/cssom/viewport_size.h"
-#include "cobalt/cssom/viewport_size.h"
-#include "cobalt/dom/input_event_init.h"
-#include "cobalt/dom/keyboard_event_init.h"
-#include "cobalt/dom/on_screen_keyboard_bridge.h"
-#include "cobalt/dom/pointer_event_init.h"
-#include "cobalt/dom/wheel_event_init.h"
-#include "cobalt/input/input_device_manager.h"
-#include "cobalt/layout/layout_manager.h"
-#include "cobalt/dom/html_custom_element.h"
-
-
-#include "base/basictypes.h"
-#include "base/callback.h"
-#include "base/memory/ref_counted.h"
-#include "base/optional.h"
-#include "base/time/time.h"
-#include "cobalt/cssom/map_to_mesh_function.h"
-#include "cobalt/layout/box.h"
-#include "cobalt/layout/paragraph.h"
-#include "cobalt/math/rect.h"
-#include "cobalt/math/size_f.h"
-#include "cobalt/render_tree/image.h"
-
-#include "ui/views/controls/textfield/textfield_controller.h"
-#include "ui/views/controls/textfield/textfield_model.h"
+#include "extended_html/input_box/HTMLInputElement.h"
 
 #include "cobalt/render_tree/node_visitor.h"
 
@@ -321,92 +218,140 @@
 #include "ui/compositor/paint_recorder.h"
 #include "ui/compositor/canvas_painter.h"
 
-#include <algorithm>
-#include <memory>
+namespace cobalt {
+namespace render_tree {
 
-#include "base/bind.h"
-#include "base/logging.h"
-#include "base/trace_event/trace_event.h"
-#include "cobalt/base/polymorphic_downcast.h"
-#include "cobalt/cssom/filter_function_list_value.h"
-#include "cobalt/cssom/keyword_value.h"
-#include "cobalt/cssom/map_to_mesh_function.h"
-#include "cobalt/layout/container_box.h"
-#include "cobalt/layout/letterboxed_image.h"
-#include "cobalt/layout/used_style.h"
-#include "cobalt/layout/white_space_processing.h"
-#include "cobalt/loader/mesh/mesh_projection.h"
-#include "cobalt/math/transform_2d.h"
-#include "cobalt/math/vector2d_f.h"
-#include "cobalt/render_tree/brush.h"
-#include "cobalt/render_tree/color_rgba.h"
-#include "cobalt/render_tree/filter_node.h"
-#include "cobalt/render_tree/image_node.h"
-#include "cobalt/render_tree/map_to_mesh_filter.h"
-#include "cobalt/render_tree/punch_through_video_node.h"
-#include "cobalt/render_tree/rect_node.h"
-#include "cobalt/render_tree/resource_provider.h"
+using namespace cobalt::renderer::rasterizer::skia;
 
-#include "skia/include/core/SkRefCnt.h"
-#include "skia/include/core/SkTime.h"
+void input_node_ContainerView::addChildren(
+  const std::string& placeholder_text)
+{
+  //DCHECK(!textfield_);
+  DCHECK(m_inputNode);
+  if(!textfield_) {
+    textfield_ = new views::Textfield();
 
-#include "extended_html/input_box/block_level_input_box.h"
-#include "extended_html/input_box/inline_level_input_box.h"
-#include "extended_html/input_box/input_box.h"
-#include "extended_html/input_box/input_node.h"
-#include "extended_html/input_box/input_box_generator.h"
+    //textfield_->SetSize(gfx::Size(800, 60));
 
-class HTMLInputElement : public cobalt::dom::HTMLCustomElement {
- public:
-  struct ScheduledEvents {
-    std::vector<ui::KeyEvent> scheduledKeyEvents_;
-  };
-
-  static const char kTagName[];
-
-  explicit HTMLInputElement(cobalt::dom::Document* document);
-  ~HTMLInputElement() override;
-
-  cobalt::math::SizeF GetSize() const;
-
-  uint32 width() const;
-
-  uint32 height() const;
-
-  void onBoxGeneratorVisit(cobalt::layout::BoxGenerator& box_gen,
-    cobalt::dom::HTMLCustomElement* custom_element) override;
-
-  // Custom, not in any spec.
-  scoped_refptr<HTMLCustomElement> AsHTMLCustomElement() override {
-    return this;
+    textfield_->SetBorder(
+          views::CreateSolidBorder(2, SK_ColorGRAY));
+    textfield_->SetColor(
+          blink::Color(1.0f, 0.0f, 1.0f, 0.5f).Rgb());
+    textfield_->SetTextInputType(ui::TEXT_INPUT_TYPE_TEXT);
+    if(!placeholder_text.empty()) {
+      DCHECK(base::IsStringASCII(placeholder_text));
+      textfield_->set_placeholder_text(
+            base::ASCIIToUTF16(placeholder_text));
+    }
+    textfield_->set_controller(this);
+    //AddChildView(textfield_);
   }
 
-  //if (document->active_element().get() == this->AsElement()) {}
-  //void Blur() override {
-  //  cobalt::dom::HTMLCustomElement::Blur();
-  //}
- public: // TODO
-  // TODO
-  //std::unique_ptr<render_tree::input_node_ContainerView>
-  //  input_node_container_;
+#if 0
+  title_ = new views::Label();
+  title_->SetFontList(font_list);
+  title_->SetHorizontalAlignment(gfx::ALIGN_LEFT);
+  title_->SetEnabledColor(
+        blink::Color(1.0f, 0.5f, 0.5f, 0.5f).Rgb());
+  title_->SelectRange({0, 4});
+  title_->SetBackgroundColor(
+        blink::Color(1.0f, 1.0f, 1.0f, 1.0f).Rgb());
+  title_->SetBorder(views::CreateSolidBorder(2, SK_ColorWHITE));
+  set_title(base::UTF8ToUTF16("title_ ! title_ ! title_ !"));
+  //AddChildView(title_);
 
-  // TODO: thread safety
-  std::unique_ptr<views::Widget> input_node_widget_;
+  message_ = new views::Label();
+  message_->SetFontList(font_list);
+  message_->SetHorizontalAlignment(gfx::ALIGN_RIGHT);
+  message_->SetObscured(false);
+  message_->SetSelectable(true);
+  message_->SetSelectionBackgroundColor(
+        blink::Color(0.1f, 0.2f, 0.0f, 0.5f).Rgb());
+  message_->SetSelectionTextColor(
+        blink::Color(0.4f, 0.4f, 0.9f, 0.5f).Rgb());
+  message_->SetBackgroundColor(
+        blink::Color(0.9f, 0.0f, 0.9f, 0.5f).Rgb());
+  message_->SetElideBehavior(gfx::ELIDE_TAIL);
+  message_->SetEnabledColor(
+        blink::Color(1.0f, 0.0f, 1.0f, 0.5f).Rgb());
+  set_message(base::UTF8ToUTF16("message_ ! message_ ! message_ !"));
+  message_->SelectRange({0, 4});
+  //message_->RecalculateFont();
+  message_->SetBorder(views::CreateSolidBorder(2, SK_ColorCYAN));
+  message_->SetHorizontalAlignment(gfx::ALIGN_TO_HEAD);
+  //AddChildView(message_);
 
-  // TODO: thread safety
-  std::unique_ptr<cobalt::render_tree::input_node_ContainerView> input_node_container_;
+  DCHECK(!textfield2_);
+  textfield2_ = new views::Textfield();
+  textfield2_->SetFontList(font_list);
 
-  ScheduledEvents scheduledEvents_;
+  //textfield2_->SetSize(gfx::Size(100, 100));
 
-  int HTMLInputElementID_ = 0;
+  textfield2_->SetBorder(
+        views::CreateSolidBorder(2, SK_ColorGRAY));
+  textfield2_->SetColor(
+        blink::Color(1.0f, 0.0f, 1.0f, 0.5f).Rgb());
+  textfield2_->SetTextInputType(ui::TEXT_INPUT_TYPE_TEXT);
+  textfield2_->set_placeholder_text(
+        base::ASCIIToUTF16("TEXT_2"));
+  textfield2_->set_controller(this);
+  //
 
-  // TODO: thread safety
-  std::string placeholder_text_ = "";
+  auto MakeRow = [layout](int column_set_id, View* view1) {
+    //DCHECK(view1);
+    //DCHECK(view2);
+    // GridLayout |resize_percent| constants.
+    const float kFixed = 0.f;
+    const float kStretchy = 1.f;
+    layout->StartRowWithPadding(
+          /* vertical_resize */ kFixed,
+          /* column_set_id */ column_set_id,
+          /* padding_resize */ kFixed,
+          /* padding */ 0);
+    if (view1)
+      layout->AddView(view1);
+  };
 
-  //std::unique_ptr<TextfieldModel> model_;
-  //views::TextfieldModel* model_ = nullptr;
-  //views::Textfield* textfield_ = nullptr;
+  // id 0
+  //MakeRow(0, title_, textfield_);
+  MakeRow(0, textfield_);
+  MakeRow(0, textfield2_);
+  //MakeRow(0, nullptr, nullptr);
+  //MakeRow(0, nullptr, textfield2_);
+  MakeRow(0, title_);
+  MakeRow(0, message_);
+#endif // 0
 
-  DISALLOW_COPY_AND_ASSIGN(HTMLInputElement);
-};
+  DCHECK(m_inputNode);
+  DCHECK(m_inputNode->custom_generating_node_);
+  DCHECK(textfield_);
+  AddChildView(textfield_);
 
+  //views::View* root_view = input_node_widget_->GetRootView();
+  //DCHECK(root_view);
+  //DCHECK(root_view->GetInputMethod());
+  DCHECK(GetInputMethod());
+  textfield_->SetTextInputType(ui::TEXT_INPUT_TYPE_TEXT);
+  DCHECK(textfield_->GetTextInputType()
+          == ui::TEXT_INPUT_TYPE_TEXT);
+  /*DCHECK(textfield_->GetInputMethod()->GetTextInputType()
+          == ui::TEXT_INPUT_TYPE_TEXT);*/
+  DCHECK(textfield_->GetInputMethod());
+  DCHECK(textfield_->IsFocusable());
+  DCHECK(textfield_->GetEnabled());
+  DCHECK(textfield_->IsDrawn());
+  textfield_->SetCursorEnabled(true);
+  textfield_->RequestFocus();
+  textfield_->SetReadOnly(false);
+
+  //views::View::OnFocus();
+  //InvalidateLayout();
+  //SchedulePaint();
+
+  // TODO:
+  // https://github.com/blockspacer/skia-opengl-emscripten/blob/master/src/chromium/ui/message_center/views/notification_view_md.cc
+  // AddPreTargetHandler(click_activator_.get());
+}
+
+}  // namespace render_tree
+}  // namespace cobalt

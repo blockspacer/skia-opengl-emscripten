@@ -1,7 +1,5 @@
 #pragma once
 
-#include "extended_html/input_box/input_node_ContainerView.h"
-
 #include "base/callback.h"
 #include "base/compiler_specific.h"
 #include "cobalt/base/type_id.h"
@@ -128,86 +126,133 @@ class InputBox;
 namespace cobalt {
 namespace render_tree {
 
-// not in spec
-class InputNode final : public CustomNode {
+class InputNode;
+
+// TODO: OnPaintLayer
+class input_node_ContainerView :
+  public views::View,
+  public views::TextfieldController,
+  public views::ButtonListener {
  public:
-  //typedef base::Callback<bool(const math::Rect&)> SetBoundsCB;
-  //typedef base::Callback<sk_sp<skottie::Animation>()> GetSkottieAnimCB;
+  std::unique_ptr<views::LayoutProvider> layout_provider_ =
+      std::make_unique<views::LayoutProvider>();
 
-  struct Builder final : public CustomNode::Builder {
-    explicit Builder(const Builder&) = default;
-    explicit Builder(const CustomNode::Builder& customNodeBuilder)
-      : CustomNode::Builder(customNodeBuilder) {
-    }
-    explicit Builder(const math::RectF& rect
-        //, const SetBoundsCB& set_bounds_cb
-        //, sk_sp<skottie::Animation> animation
-        //, SkMSec animation_time
-        )
-        : CustomNode::Builder(), rect(rect)
-        //, animation(animation)
-        //, animation_time(animation_time)
-        //, set_bounds_cb(set_bounds_cb)
-        {}
-
-    bool operator==(const CustomNode::Builder& other) const override {
-      return rect == base::polymorphic_downcast<const Builder&>(other).rect /*&& set_bounds_cb.Equals(other.set_bounds_cb)*/;
-    }
-
-    bool operator==(const Builder& other) const {
-      return rect == other.rect /*&& set_bounds_cb.Equals(other.set_bounds_cb)*/;
-    }
-
-    // The destination rectangle (size includes border).
-    math::RectF rect;
-  };
-
-  // Forwarding constructor to the set of Builder constructors.
-  template <typename... Args>
-  explicit InputNode(Args&&... args) : data_(std::forward<Args>(args)...) {}
-
-  void RenderTreeNodeVisit(const render_tree::NodeVisitor* render_target) override;
-
-  void Accept(NodeVisitor* visitor) override;
-
-  math::RectF GetBounds() const override;
-
-  bool NodeCanRenderWithOpacity() override { return true; }
-
-  const char* DebugTreePrintName() override { return "InputNode"; }
-
-  CustomNode* CreateWithBuilder(CustomNode::Builder builder) override {
-    InputNode::Builder input_builder(builder);
-    printf("created InputNode\n");
-    return new InputNode(input_builder);
+  explicit input_node_ContainerView(
+      InputNode* inputNode
+      /*ExampleBase* base,views::GridLayout* layout*/)
+      : example_view_created_(false)/*,
+        example_base_(base)*/
+  {
+    m_inputNode = inputNode;
   }
 
-  /*CustomNode* CreateWithBuilder(CustomNode::Builder builder) override {
-    return CreateInputNodeWithBuilder(builder);
-  }*/
+  void ContentsChanged(views::Textfield* sender,
+                                          const base::string16& new_contents) override {
+    printf("ContentsChanged %s\n", new_contents.c_str());
+    // Set search box focused when query changes.
+    ///search_box_->RequestFocus();
+    //UpdateModel(true);
+    ///NotifyQueryChanged();
+    ///if (!new_contents.empty())
+    ///  SetSearchBoxActive(true, ui::ET_KEY_PRESSED);
+    ///UpdateButtonsVisisbility();
 
-  base::TypeId GetTypeId() const override {
-    return base::GetTypeId<InputNode>();
+    SchedulePaint();
   }
 
-  const Builder& data() const override { return data_; }
+  bool HandleMouseEvent(views::Textfield* sender,
+                                           const ui::MouseEvent& mouse_event) override {
+    //return OnTextfieldEvent(mouse_event.type());
+    SchedulePaint();
+    return true;
+  }
 
-  /*InputNode* CreateWithBuilder(InputNode::Builder builder) override {
-    return new InputNode(builder);
+  bool HandleGestureEvent(
+      views::Textfield* sender,
+      const ui::GestureEvent& gesture_event) override {
+    //return OnTextfieldEvent(gesture_event.type());
+
+    SchedulePaint();
+    return true;
+  }
+
+  std::unique_ptr<views::PaintInfo> last_paint_info_;
+
+  void PaintChildren(const views::PaintInfo& info) override {
+    last_paint_info_ = std::make_unique<views::PaintInfo>(info);
+    View::PaintChildren(info);
+  }
+
+  std::unique_ptr<views::PaintInfo> GetLastPaintInfo() {
+    return std::move(last_paint_info_);
+  }
+
+  /*void OnPaintBackground(gfx::Canvas* canvas) override {
+    cc::PaintFlags flags;
+    flags.setShader(
+        gfx::CreateGradientShader(0, height(), from_color_, to_color_));
+    flags.setStyle(cc::PaintFlags::kFill_Style);
+    canvas->DrawRect(GetLocalBounds(), flags);
   }*/
 
-  void SetCustomGeneratingNode(cobalt::layout::InputBox* custom_generating_node);
+  void ButtonPressed(views::Button* sender, const ui::Event& event) override {
+    printf("ButtonPressed\n");
+  }
 
- public: // TODO
-  cobalt::layout::InputBox* custom_generating_node_;
+  void addChildren(const std::string& placeholder_text/*views::GridLayout* layout*/);
 
-  //std::unique_ptr<render_tree::input_node_ContainerView>
-  //  input_node_container_;
+ // TODO:
+ //private:
+ public:
 
-  //std::unique_ptr<views::Widget> input_node_widget_;
+  // View:
+  void ViewHierarchyChanged(
+      const views::ViewHierarchyChangedDetails& details) override {
+    views::View::ViewHierarchyChanged(details);
+    // We're not using child == this because a Widget may not be
+    // available when this is added to the hierarchy.
+    if (details.is_add
+        && views::View::GetWidget()
+        && !example_view_created_) {
+      example_view_created_ = true;
+      //printf("ViewHierarchyChanged: OK example_base_->CreateExampleView\n");
+      /// example_base_->CreateExampleView(this);
+    } else {
+      //printf("ViewHierarchyChanged: FAILED example_base_->CreateExampleView\n");
+    }
+  }
 
- private:
-  const Builder data_;
+  //const char* GetClassName() const override;
+
+  /*void set_title(const base::string16& title) {
+    DCHECK(title_);
+    title_->SetText(title);
+  }
+
+  void set_message(const base::string16& message) {
+    DCHECK(message_);
+    message_->SetText(message);
+  }*/
+
+  // True if the example view has already been created, or false otherwise.
+  bool example_view_created_;
+
+  //ExampleBase* example_base_;
+
+  //views::Label* title_ = nullptr;
+  //views::Label* message_ = nullptr;
+
+  views::Textfield* textfield_ = nullptr;
+
+  //views::Textfield* textfield2_ = nullptr;
+
+  bool has_children = false;
+
+  InputNode* m_inputNode = nullptr;
+
+  // TODO: AddStyleRange
+
+  DISALLOW_COPY_AND_ASSIGN(input_node_ContainerView);
 };
 
 }  // namespace render_tree
