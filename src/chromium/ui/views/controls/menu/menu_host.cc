@@ -81,6 +81,7 @@ class PreMenuEventDispatchHandler : public ui::EventHandler,
 
 void TransferGesture(Widget* source, Widget* target) {
 #if !defined(UI_VIEWS_PORT)
+
 #if defined(OS_MACOSX)
   NOTIMPLEMENTED();
 #else   // !defined(OS_MACOSX)
@@ -88,6 +89,11 @@ void TransferGesture(Widget* source, Widget* target) {
       source->GetNativeView(), target->GetNativeView(),
       ui::TransferTouchesBehavior::kDontCancel);
 #endif  // defined(OS_MACOSX)
+
+#else
+
+  // TODO...
+
 #endif // UI_VIEWS_PORT
 }
 
@@ -175,13 +181,29 @@ void MenuHost::ShowMenuHost(bool do_capture) {
       // gesture events instead of being dropped.
       internal::TransferGesture(owner_, this);
     } else {
+#if !defined(UI_VIEWS_PORT)
       GetGestureRecognizer()->CancelActiveTouchesExcept(nullptr);
+#else
+      if(GetGestureRecognizer()) {
+        GetGestureRecognizer()->CancelActiveTouchesExcept(nullptr);
+      }
+#endif
     }
+
 #if defined(MACOSX)
     // Cancel existing touches, so we don't miss some touch release/cancel
     // events due to the menu taking capture.
-    GetGestureRecognizer()->CancelActiveTouchesExcept(nullptr);
+
+#if !defined(UI_VIEWS_PORT)
+      GetGestureRecognizer()->CancelActiveTouchesExcept(nullptr);
+#else
+      if(GetGestureRecognizer()) {
+        GetGestureRecognizer()->CancelActiveTouchesExcept(nullptr);
+      }
+#endif
+
 #endif  // defined (OS_MACOSX)
+
     // If MenuHost has no parent widget, it needs to call Show to get focus,
     // so that it will get keyboard events.
     if (owner_ == nullptr)

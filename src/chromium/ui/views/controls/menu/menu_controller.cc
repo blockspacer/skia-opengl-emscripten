@@ -1648,6 +1648,9 @@ void MenuController::UpdateInitialLocation(const gfx::Rect& bounds,
     pending_state_.anchor = position;
   }
 
+#if defined(UI_DISPLAY_PORTED)
+  NOTIMPLEMENTED_LOG_ONCE();
+#else
   // Calculate the bounds of the monitor we'll show menus on. Do this once to
   // avoid repeated system queries for the info.
   pending_state_.monitor_bounds = display::Screen::GetScreen()
@@ -1663,6 +1666,7 @@ void MenuController::UpdateInitialLocation(const gfx::Rect& bounds,
     if (monitor_area.Contains(bounds))
       pending_state_.monitor_bounds = monitor_area;
   }
+#endif // UI_DISPLAY_PORTED
 }
 
 void MenuController::Accept(MenuItemView* item, int event_flags) {
