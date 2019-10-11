@@ -220,7 +220,25 @@ static sk_sp<SkImage> skImageSp;
 #include "ui/compositor/paint_recorder.h"
 #include "ui/compositor/canvas_painter.h"
 
-static gfx::FontList GetTextFontList();
+#if defined(ENABLE_BLINK_PLATFORM)
+// TODO: free mem
+static gfx::Font* demo_default_font = nullptr;
+static gfx::PlatformFont* demoCustomPlatformFont = nullptr;
+
+/// \todo use fontsRegistry
+// FontList for the texts except for the header.
+static gfx::FontList DemoGetTextFontList() {
+  DCHECK(demo_default_font);
+  DCHECK(demo_default_font->platform_font());
+  DCHECK(demo_default_font->platform_font()->GetFontSize());
+  const int size_delta = 0; // size in pixels to add
+  gfx::Font font = demo_default_font->Derive(size_delta, gfx::Font::NORMAL,
+                                       gfx::Font::Weight::NORMAL);
+  return gfx::FontList(font);
+}
+#endif // ENABLE_BLINK_PLATFORM
+
+static gfx::FontList DemoGetTextFontList();
 
 static void recursivePaintHelper(views::View* view, gfx::Canvas* gfx_canvas) {
   views::View::Views children = view->GetChildrenInZOrder();
@@ -439,7 +457,8 @@ bool HandleGestureEvent(
   void addChildren(views::GridLayout* layout) {
     DCHECK(layout);
 
-    const gfx::FontList& font_list = GetTextFontList();
+    DCHECK(demo_default_font);
+    const gfx::FontList& font_list = DemoGetTextFontList();
 
     title_ = new views::Label();
     title_->SetFontList(font_list);
@@ -652,7 +671,13 @@ bool HandleGestureEvent(
     auto MakeRow = [layout](int column_set_id, View* view1, View* view2) {
       //DCHECK(view1);
       //DCHECK(view2);
-      layout->StartRowWithPadding(0, column_set_id, 0, 0);
+      const float kFixed = 0.f;
+      const float kStretchy = 1.f;
+      layout->StartRowWithPadding(
+        /* vertical_resize */ kFixed,
+        /* column_set_id */ column_set_id,
+        /* padding_resize */ kFixed,
+        /* padding */ 0);
       if (view1)
         layout->AddView(view1);
       if (view2)
@@ -725,7 +750,8 @@ bool HandleGestureEvent(
     msg_renderText->SetWordWrapBehavior(gfx::WRAP_LONG_WORDS);
     msg_renderText->set_clip_to_display_rect(false);
     msg_renderText->set_focused(true);
-    const gfx::FontList& font_list = GetTextFontList();
+    DCHECK(demo_default_font);
+    const gfx::FontList& font_list = DemoGetTextFontList();
     msg_renderText->SetFontList(font_list);*/
 
     // TODO: recursive
@@ -748,10 +774,10 @@ bool HandleGestureEvent(
         && views::View::GetWidget()
         && !example_view_created_) {
       example_view_created_ = true;
-      printf("OK example_base_->CreateExampleView\n");
+      printf("ViewHierarchyChanged: OK example_base_->CreateExampleView\n");
       /// example_base_->CreateExampleView(this);
     } else {
-      printf("FAILED example_base_->CreateExampleView\n");
+      printf("ViewHierarchyChanged: FAILED example_base_->CreateExampleView\n");
     }
   }
 
@@ -852,23 +878,7 @@ static views::Label* custom_label_ = nullptr;*/
 //#include "third_party/blink/renderer/platform/image-decoders/image_decoder.h"
 static scoped_refptr<blink::StaticBitmapImage> sStaticBitmapImage;
 #endif // ENABLE_IMAGES
-
-// TODO: free mem
-static gfx::Font* default_font = nullptr;
-static gfx::PlatformFont* customPlatformFont = nullptr;
-
-// FontList for the texts except for the header.
-static gfx::FontList GetTextFontList() {
-  DCHECK(default_font);
-  DCHECK(default_font->platform_font());
-  DCHECK(default_font->platform_font()->GetFontSize());
-  const int size_delta = 0; // size in pixels to add
-  gfx::Font font = default_font->Derive(size_delta, gfx::Font::NORMAL,
-                                       gfx::Font::Weight::NORMAL);
-  return gfx::FontList(font);
-}
-
-static std::unique_ptr<blink::Platform> g_platform;
+static std::unique_ptr<blink::Platform> demo_g_platform;
 #endif // ENABLE_BLINK_PLATFORM
 
 #include <skia/include/core/SkCanvas.h>
@@ -1069,9 +1079,9 @@ void SkiaUiDemo::SetCursorScreenPoint(int x, int y) {
 
 #if defined(ENABLE_BLINK_UI)
 void SkiaUiDemo::initBlinkPlatform() {
-  g_platform = std::make_unique<blink::Platform>();
+  demo_g_platform = std::make_unique<blink::Platform>();
   ///mojo::core::Init();
-  blink::Platform::CreateMainThreadAndInitialize(g_platform.get());
+  blink::Platform::CreateMainThreadAndInitialize(demo_g_platform.get());
 
   // TODO >>>
   //ui::DeviceDataManager::CreateInstance();
@@ -1563,6 +1573,8 @@ public:
   SkScalar m_size = 200;
 
   void onDraw(SkCanvas* sk_canvas) {
+    //DCHECK(false); // TODO <<<<<<<<<<<<<<<<<<<<<<<
+
     DCHECK(sk_canvas);
 
     if (isDebugPeriodReached()) printf("onDraw() 1\n");
@@ -1769,17 +1781,6 @@ public:
       blur.setAlpha(blurAlpha);
       blur.setMaskFilter(SkMaskFilter::MakeBlur(kNormal_SkBlurStyle, sigma, 0));
       // canvas->drawColor(SK_ColorWHITE);
-#if 0
-      sk_canvas->drawTextBlob(blob1.get(), x + xDrop, y + yDrop, blur);
-      sk_canvas->drawTextBlob(blob1.get(), x, y, paint);
-
-      sk_canvas->drawTextBlob(blob2.get(), x + xDrop, 50 + y + yDrop, blur);
-
-      SkPaint strokePaint(paint);
-      strokePaint.setStyle(SkPaint::kStroke_Style);
-      strokePaint.setStrokeWidth(3.0f);
-      sk_canvas->drawTextBlob(blob2.get(), x, 80 + y, strokePaint);
-#endif // 0
     }
 #endif // ENABLE_SK_EFFECTS
 #endif // ENABLE_CUSTOM_FONTS
@@ -1806,10 +1807,6 @@ public:
       const auto dstR = SkRect::MakeSize(fWinSize);
       //printf("fAnimation->render...\n");
       // TODO: SkSGRenderNode.cpp:19: fatal error: "assert(!this->hasInval())"
-
-#if 0
-      fAnimation->render(sk_canvas, &dstR);
-#endif // 0
 
       //printf("fAnimation->rendered\n");
       /*if (fShowAnimationStats) {
@@ -1859,59 +1856,6 @@ public:
   //
   context.BeginRecording(blink::FloatRect(blink::LayoutRect::InfiniteIntRect()));
   //
-#if 0
-  //printf("FillRect 1\n");
-  context.FillRect(blink::FloatRect(0, 0, 50, 50),
-    blink::Color(1.0f, 1.0f, 0.0f, 0.5f),
-    SkBlendMode::kSrcOver);
-  //printf("FillRect 2\n");
-  context.FillRect(blink::FloatRect(40, 40, 150, 550),
-    blink::Color(0.0f, 1.0f, 1.0f, 0.5f),
-    SkBlendMode::kSrcOver);
-  //printf("FillRect 3\n");
-  context.DrawOval(blink::FloatRect(40, 40, 150, 550),
-    flags);
-  //
-  //printf("FillRect 4\n");
-  // Clip to the left edge of the opaque area.
-  ////context.Clip(blink::IntRect(100, 80, 500, 400));
-  //
-  // Draw a path that gets clipped. This should destroy the opaque area, but
-  // only inside the clip.
-  //printf("FillRect 5\n");
-  blink::Path path;
-  path.MoveTo(blink::FloatPoint(10, 10));
-  path.AddLineTo(blink::FloatPoint(40, 40));
-  flags.setColor(blink::Color(0.0f, 1.0f, 0.0f, 0.5f).Rgb());
-  flags.setBlendMode(SkBlendMode::kSrcOver);
-  context.DrawPath(path.GetSkPath(), flags);
-
-  //printf("FillRect 6\n");
-  // Make skia unable to compute fast bounds for our paths.
-  DashArray dash_array;
-  dash_array.push_back(1);
-  dash_array.push_back(0);
-  context.SetLineDash(dash_array, 0);
-
-  //printf("FillRect 7\n");
-  // Make the device opaque in 10,10 40x40.
-  context.FillRoundedRect(blink::FloatRoundedRect(400, 400, 600, 600),
-    blink::Color(0.0f, 1.0f, 0.5f, 0.5f));
-
-
-  //printf("FillRect 8\n");
-  // The inset shadow case.
-  blink::GraphicsContext::Edges clipped_edges = blink::GraphicsContext::kNoEdge;
-  context.DrawInnerShadow(blink::FloatRoundedRect(510, 510, 640, 640),
-    blink::Color(0.0f, 1.0f, 0.5f, 0.5f),
-    blink::FloatSize(10, 10),
-    5.0f,
-    5.0f,
-    clipped_edges);
-  //printf("FillRect 9\n");
-
-  //printf("onDraw() x2\n");
-#endif // 0
 
 #if defined(ENABLE_BLINK_UI)
 #if defined(ENABLE_IMAGES)
@@ -2065,8 +2009,8 @@ public:
       //fontRenderParams.use_bitmaps = true;
       DCHECK(sktpForUI);
       // TODO: free mem
-      if(!customPlatformFont) {
-        printf("creating customPlatformFont\n");
+      if(!demoCustomPlatformFont) {
+        printf("creating demoCustomPlatformFont\n");
 
         /*CHECK(sktpForUICreated);// << "sktpForUICreated required";
         CHECK(sktpForUI);// << "sktpForUI required";
@@ -2078,25 +2022,26 @@ public:
 
         //gfx::PlatformFontSkia::InitFromDetails
 
-        customPlatformFont = new gfx::PlatformFontSkia(
+        demoCustomPlatformFont = new gfx::PlatformFontSkia(
           sktpForUI, /*family*/ "Arial", /*size_pixels*/ 22,
           /*style*/ gfx::Font::NORMAL,
           /*weight*/ gfx::Font::Weight::NORMAL,
           /*params*/ fontRenderParams);
       }
 
-      if(!default_font) {
-        printf("creating default_font\n");
+      if(!demo_default_font) {
+        printf("creating demo_default_font\n");
         // TODO: free mem
-        DCHECK(customPlatformFont);
-        default_font = new gfx::Font(customPlatformFont);
+        DCHECK(demoCustomPlatformFont);
+        demo_default_font = new gfx::Font(demoCustomPlatformFont);
       }
 
-      //gfx::Font defaultFont(customPlatformFont);
+      //gfx::Font defaultFont(demoCustomPlatformFont);
       //defaultFont = gfx::Font("Arial", 10);
       //gfx::FontList font_list(defaultFont);
 
-      const gfx::FontList& font_list = GetTextFontList();
+      DCHECK(demo_default_font);
+      const gfx::FontList& font_list = DemoGetTextFontList();
       render_text->SetText(base::UTF8ToUTF16("x render_text x render_text x"));
       render_text->SetFontList(font_list);
       gfx::ShadowValues shadows(1,
@@ -2190,6 +2135,12 @@ public:
     // see https://github.com/blockspacer/skia-opengl-emscripten/blob/master/src/chromium/ui/views/examples/textfield_example.cc
     auto layout_manager = std::make_unique<views::GridLayout>(container_);
     views::ColumnSet* column_set = layout_manager->AddColumnSet(/* id */0);
+    //column_set->AddColumn(/* h_align */ views::GridLayout::FILL,
+    //                      /* v_align */ views::GridLayout::FILL,
+    //                      /*resize weight*/ 1.0f,
+    //                      /*fixed_width*/ views::GridLayout::USE_PREF, // OR views::GridLayout::FIXED
+    //                      /*min_width*/ 0,
+    //                      /*is_padding*/ 0);
     //column_set->AddColumn(views::GridLayout::LEADING, views::GridLayout::FILL,
     //                      0.2f, views::GridLayout::USE_PREF, 0, 0);
     //column_set->AddColumn(views::GridLayout::FILL, views::GridLayout::FILL,
@@ -2423,89 +2374,6 @@ public:
       //(child->*func)(info);
       child->OnPaint(&gfx_canvas);
   }*/
-
-#if 0
-  DCHECK(container_->width() > 0);
-  DCHECK(container_->height() > 0);
-  /*sk_sp<SkSurface> tmpRasterSurface = SkSurface::MakeRaster(SkImageInfo::MakeN32(
-    container_->width(), container_->height(),
-    kPremul_SkAlphaType)); // TODO);
-  DCHECK(tmpRasterSurface);
-  cc::SkiaPaintCanvas tmpSkiaPaintCanvas(tmpRasterSurface->getCanvas());
-  */
-
-  ///SkBitmap tmpbitmap;
-  /*SkImageInfo info = SkImageInfo::MakeN32Premul(
-    container_->width(), container_->height());
-  // TODO: width() * 4?
-  bitmap.allocPixels(info, container_->width() * 4);
-  bitmap.eraseColor(SK_AlphaTRANSPARENT);*/
-  //SkBitmap tmpbitmap = AllocBitmap(container_->width(), container_->height());
-  ///tmpbitmap.allocN32Pixels(container_->width(), container_->height());
-  ///cc::SkiaPaintCanvas tmpSkiaPaintCanvas(tmpbitmap);
-  ///gfx::Canvas tmp_gfx_canvas(&tmpSkiaPaintCanvas, 1.0f);
-  gfx::Canvas tmp_gfx_canvas(
-    gfx::Size(container_->width(), container_->height()),
-    1.0f,
-    /*opaque*/ true);
-  //tmp_gfx_canvas.Save();
-  //tmpRasterSurface->getCanvas()->clear(
-  //  SkColorSetARGB(255, 255, 255, 255));
-  recursivePaintHelper(container_, &tmp_gfx_canvas);
-  //tmp_gfx_canvas.GetBitmap();
-  ///tmpSkiaPaintCanvas.flush();
-  //tmpRasterSurface->getCanvas()->flush();
-  ///DCHECK(!tmp_gfx_canvas.GetBitmap().isNull());
-  ///DCHECK(!tmpbitmap.isNull());
-  DCHECK(!tmp_gfx_canvas.GetBitmap().isNull());
-  gfx::ImageSkia tmp_image(
-    gfx::ImageSkiaRep(/*tmpbitmap*/
-      tmp_gfx_canvas.GetBitmap(), raster_scale));
-  //DCHECK(!tmp_image.isNull());
-  gfx_canvas.DrawImageInt(tmp_image, container_->width(), container_->height());
-  //tmp_gfx_canvas.Restore();
-  //tmpRasterSurface.release();
-#endif // 0
-
-#if 0
-  if(!test_label) {
-    printf("creating test_label\n");
-    const gfx::FontList gfxFontList = GetTextFontList();
-    views::Label::CustomFont labelCustomFont{gfxFontList};
-    test_label = new TestLabel(base::UTF8ToUTF16("test_label ! test_label ! test_label !"),
-                               labelCustomFont);
-  }
-  DCHECK(test_label);
-  //test_label->SetFontList(GetTextFontList());
-  test_label->SetHorizontalAlignment(gfx::ALIGN_RIGHT);
-  test_label->SetObscured(false);
-  test_label->SetSelectable(true);
-  test_label->SetSelectionBackgroundColor(
-    blink::Color(0.1f, 0.2f, 0.0f, 0.5f).Rgb());
-  test_label->SetSelectionTextColor(
-    blink::Color(0.4f, 0.4f, 0.9f, 0.5f).Rgb());
-  test_label->SetBackgroundColor(
-    blink::Color(0.9f, 0.0f, 0.9f, 0.5f).Rgb());
-  test_label->SetElideBehavior(gfx::ELIDE_TAIL);
-  test_label->SetEnabledColor(
-    blink::Color(1.0f, 0.0f, 1.0f, 0.5f).Rgb());
-  //test_label->SetText();
-  test_label->SelectRange({0, 4});
-  //message_->RecalculateFont();
-  test_label->SetBorder(views::CreateSolidBorder(2, SK_ColorCYAN));
-  test_label->SetHorizontalAlignment(gfx::ALIGN_TO_HEAD);
-  //AddChildView(message_);
-  test_label->SimulatePaint();
-  DCHECK(!test_label->bitmap.isNull());
-  //canvasPainter.context().InvalidationForTesting();
-  gfx::ImageSkia test_label_image(
-    gfx::ImageSkiaRep(test_label->bitmap, raster_scale));
-  DCHECK(!test_label_image.isNull());
-  gfx_canvas.Save();
-  gfx_canvas.Translate(gfx::Vector2d(200, 200));
-  gfx_canvas.DrawImageInt(test_label_image, test_label->width(), test_label->height());
-  gfx_canvas.Restore();
-#endif // 0
 
   /*ui::PaintCache paint_cache_;
   ui::PaintRecorder recorder(paint_info.context(), paint_info.paint_recording_size(),
