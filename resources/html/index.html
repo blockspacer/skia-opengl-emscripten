@@ -78,35 +78,15 @@
      <div I_on-click-print_I="mi">Maori</div>
     </div>
 
-    <div class="border-grad">
-      Lorem ipsum dolor sit amet consectetur.
-      <div class="bg-grad">
-        Lorem ipsum dolor sit amet!
-      </div>
-      <div class="border-img-slice">
-        Lorem ipsum dolor sit amet consectetur...
-        <div class="bg-grad">
-          Lorem ipsum dolor sit amet consectetur!
-        </div>
-      </div>
-    </div>
-
-    <div style="width:500px; height:150px; overflow:scroll; border: 3px solid #CCC">
-      <div style="width:100px; height:50px; overflow:hidden; border: 3px solid #CCC">
-        Line 1<br>Line 2<br> Line 3<br> Line 4<br> Line 5<br> Line 6<br>:Line 7<br>
-      </div>
-      <div style="width:150px; height:100px; overflow:auto; border: 3px solid #FFF">
-        Line 1<br>Line 2<br> Line 3<br> Line 4<br> Line 5<br> Line 6<br>:Line 7<br>
-      </div>
-    </div>
-
     <div style="width:100px;height:100px;overflow:hidden;background-color:white;">
       <div style="width:10px;height:10px;border-radius:4px;I_test-y-scroll_I;I_test-background_I;border: 3px solid #CCC;position:fixed;">
         fixed
       </div>
       <div style="width:50px;height:50px;border-radius:40px;I_test-background_I;I_test-y-scroll_I;">
       </div>
-      <input width="20" height="20" style="height:20px;I_test-y-scroll_I;width:20px;"/>
+      <input width="100" height="100" style="width:100%;height:100px;" tabindex="0">
+      text 0
+      </input>
     </div>
 
     <div I_v-test-attr-name_I="I_v-test-attr-val_I" I_on-mousemove_I="on-mousemove-event" I_on-mouseleave_I="your args here 1">
@@ -117,17 +97,24 @@
       div and vTestStyle 2
     </div>
 
+    <div style="width:100px;">
+      <input width="100" height="100" style="width:100%;height:100px;" tabindex="0">
+      text 1
+      </input>
+    </div>
+
+    <div style="width:1000px;">
+      <input width="1000" height="50" style="width:100%;height:50px;" tabindex="0">
+        text 2
+      </input>
+    </div>
+
     <div I_v-test-attr-name_I="I_v-test-attr-val_I">
       div and vTestStyle 3
     </div>
 
     <div style="color:green;I_test-background_I;" >
       color:green;I_test-background_I;
-    </div>
-
-    <div>
-      <input width="30" height="30" style="width:30px;height:30px;">
-      </input>
     </div>
 
     <div style="background-color:rgb(240, 214, 99);" I_on-mouseleave_I="your args here 2">
@@ -170,7 +157,7 @@
         </div>
         <div class="flip-card-back">
           <div>
-            <skottie width="100" height="100" src="./resources/animations/data.json" style="display:block;color:#CCC;width:100px;height:100px;z-index:999;">
+            <skottie width="10" height="10" src="./resources/animations/data.json" style="display:block;color:#CCC;width:10px;height:10px;z-index:999;">
             </skottie>
             kkk
           </div>
@@ -179,7 +166,13 @@
     </div>
 
     <div>
-      <skottie width="300" height="300" src="./resources/animations/confetti.json" style="display:block;position:absolute;top:60px;left:200px;z-index:1;width:300px;height:300px">
+      <skottie width="30" height="30" src="./resources/animations/confetti.json" style="display:block;position:absolute;top:60px;left:200px;z-index:1;width:30px;height:30px">
+    </div>
+
+    <div>
+      <input width="10" height="10" style="width:10px;height:10px;">
+        text 3
+      </input>
     </div>
 
     <div style="font-family: 'UbuntuCustom'; font-size: 12px;" class='bounceInDiv'>bbb div font-family: 'Ubuntu'</div>
@@ -206,11 +199,6 @@
       Test keys 2
     </div>
 
-    <div>
-      <input width="10" height="10" style="width:10px;height:10px;">
-      </input>
-    </div>
-
     <div style="background-color:rgb(143, 201, 50);I_height-x-px_I;">
       40px height
     </div>
@@ -235,6 +223,28 @@
         Listening for dispatches
       </div>
       <div class="cylon_eye"></div>
+    </div>
+
+    <div class="border-grad">
+      Lorem ipsum dolor sit amet consectetur.
+      <div class="bg-grad">
+        Lorem ipsum dolor sit amet!
+      </div>
+      <div class="border-img-slice">
+        Lorem ipsum dolor sit amet consectetur...
+        <div class="bg-grad">
+          Lorem ipsum dolor sit amet consectetur!
+        </div>
+      </div>
+    </div>
+
+    <div style="width:500px; height:150px; overflow:scroll; border: 3px solid #CCC">
+      <div style="width:100px; height:50px; overflow:hidden; border: 3px solid #CCC">
+        Line 1<br>Line 2<br> Line 3<br> Line 4<br> Line 5<br> Line 6<br>:Line 7<br>
+      </div>
+      <div style="width:150px; height:100px; overflow:auto; border: 3px solid #FFF">
+        Line 1<br>Line 2<br> Line 3<br> Line 4<br> Line 5<br> Line 6<br>:Line 7<br>
+      </div>
     </div>
 
     <div class="showbox2 slideright">box 1</div>
