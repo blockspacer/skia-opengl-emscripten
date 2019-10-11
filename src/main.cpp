@@ -2720,11 +2720,10 @@ static void Draw() {
 #if defined(ENABLE_SK_UI)
   {
 #if !defined(SEPARATE_UI_THREAD)
-    if (isDebugPeriodReached()) printf("refreshUIDemo (ST)!\n");
-
-    //if(!render_browser_window) {
+    if(!render_browser_window) {
+      if (isDebugPeriodReached()) printf("refreshUIDemo (ST)!\n");
       skiaUiDemo.refreshUIDemo();
-    //}
+    }
 #else
   // TODO post_task_and_reply_impl.cc(150)] Check failed: has_sequenced_context || !post_task_success.
 
@@ -2743,9 +2742,9 @@ static void Draw() {
                 canRefreshUI = false;
                 std::scoped_lock lock(canRefreshUIMutex);
               }
-              //if(!render_browser_window) {
+              if(!render_browser_window) {
                 skiaUiDemo.refreshUIDemo();
-              //}
+              }
               {
                 std::scoped_lock lock(canRefreshUIMutex);
                 canRefreshUI = true;
@@ -2759,9 +2758,9 @@ static void Draw() {
   }
 #endif // SEPARATE_UI_THREAD
 
-    //if(!render_browser_window) {
+    if(!render_browser_window) {
       skiaUiDemo.drawUIDemo();
-    //}
+    }
   }
 #else
   {
@@ -7130,18 +7129,6 @@ if(!render_browser_window) {
 #if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
   printf("emscripten in singlethreaded mode\n");
 #endif
-
-/*#if defined(SEPARATE_UI_THREAD)
-  ui_draw_thread_.task_runner()->PostTask(
-      FROM_HERE, base::Bind([]() {
-        while(!quitApp) { // TODO: lock for quitApp
-          refreshUIDemo();
-          // TODO: https://stackoverflow.com/a/28008588
-          base::PlatformThread::Sleep(
-            base::TimeDelta::FromMilliseconds(17));
-        }
-      }));
-#endif // SEPARATE_UI_THREAD*/
 
 #ifdef ENABLE_COBALT
   printf("Initializing COBALT tests...\n");
