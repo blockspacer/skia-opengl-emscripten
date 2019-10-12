@@ -1,4 +1,14 @@
-﻿# FAQ
+﻿&nbsp;
+<p align="center">
+  <a href="https://github.com/blockspacer/skia-opengl-emscripten">
+    <img src="logo/logo.svg" width="100px" alt="skg" />
+  </a>
+</p>
+<h3 align="center">Add custom features to C++ language, like <a href="https://www.fluentcpp.com/2018/03/09/c-metaclasses-proposal-less-5-minutes/">metaclasses</a>, <a href="https://twitter.com/TartanLlama/status/1159457033441165313">Rust-like traits</a>, reflection and many more</h3>
+<p align="center">A fully open source, powerful solution for modification and generation of C++ source code. Reduce the amount of boilerplate code in your C++ projects.</p>
+<hr />
+
+# FAQ
 
 - WHY?
 
@@ -39,6 +49,12 @@ Also see:
 - https://news.ycombinator.com/item?id=17733515
 
 - Can't build? - Check readme & issues. Don't forget to replace files based on `TODO: patches`.
+
+- Project name? SKG? SKEMGL?
+
+* skia - Skia is an open source 2D graphics library
+* opengl - cross-language, cross-platform application programming interface (API) for rendering 2D and 3D vector graphics
+* emscripten - Emscripten is a toolchain for compiling to asm.js and WebAssembly, built using LLVM, that lets you run C and C++ on the web at near-native speed
 
 ## Features
 
