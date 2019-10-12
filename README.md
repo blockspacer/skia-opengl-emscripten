@@ -301,13 +301,18 @@ clear && clear ; gdb build-linux-deb/skemgl -ex "run" -ex "set pagination off" -
 
 ```bash
 cmake -DBUILD_TYPE="Debug" -DCLEAN_BUILD=OFF -P tools/buildWeb.cmake
+
+# OR
+cmake -DRUN_APP=OFF -DBUILD_APP=ON -DEXTRA_EMMAKE_OPTS="-j;6" -DBUILD_TYPE="Debug" -DCLEAN_BUILD=OFF -DENABLE_EMCMAKE_CLEAN_FIRST=OFF -DBUILD_DIR=$(pwd)/build-wasm-mt-deb/ -DEXTRA_EMCMAKE_OPTS="-DENABLE_WEB_PTHREADS=TRUE;-DENABLE_LIBWEBP=TRUE;-DENABLE_BLINK=TRUE;-DENABLE_COBALT=TRUE;-DENABLE_BASE=TRUE;-DENABLE_WTF=TRUE;-DDISABLE_FORMATTING=FALSE;-DENABLE_SKIA=TRUE;-DENABLE_SKSG=TRUE;-DENABLE_SKIA_UTILS=TRUE;-DENABLE_SKOTTIE=TRUE;-DENABLE_SKSHAPER=TRUE;-DFORCE_DISABLE_SK_GPU=FALSE;-DENABLE_BLINK_UI_VIEWS=TRUE;-DENABLE_BLINK_UI_NATIVE_THEME=TRUE;-DENABLE_MAIN=TRUE" -P tools/buildWeb.cmake
+
+# NOTE: build in release mode if you want good performance in browser
 ```
 
 ### Run example on HTML5 platform / browser / WASM (needs '--emrun' cxx flag)
 
 ```bash
 # (RUN_APP=ON, BUILD_APP=OFF)
-cmake -DRUN_APP=ON -DBUILD_APP=OFF -P tools/buildWeb.cmake
+cmake -DRUN_APP=ON -DBUILD_APP=OFF -DBUILD_DIR=$(pwd)/build-wasm-mt-deb/  -P tools/buildWeb.cmake
 ```
 
 - see http://webassemblycode.com/using-browsers-debug-webassembly/

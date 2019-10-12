@@ -1,96 +1,10 @@
 ﻿#pragma once
 
-#include "base/callback.h"
-#include "base/compiler_specific.h"
-#include "cobalt/base/type_id.h"
-#include "cobalt/math/rect.h"
-#include "cobalt/math/rect_f.h"
-#include "cobalt/render_tree/node.h"
-#include "cobalt/base/polymorphic_downcast.h"
-#include "cobalt/render_tree/custom_node.h"
-#include "cobalt/css_parser/parser.h"
-#include "cobalt/cssom/selector_tree.h"
-#include "cobalt/cssom/css_style_rule.h"
-#include "cobalt/cssom/specificity.h"
-#include "cobalt/cssom/css_rule_list.h"
-#include "cobalt/cssom/css_font_face_rule.h"
-#include "cobalt/cssom/css_media_rule.h"
-#include "cobalt/cssom/css_rule_style_declaration.h"
-#include "cobalt/cssom/css_style_rule.h"
-#include "cobalt/cssom/media_list.h"
+#if 0
 
-#include "cobalt/cssom/active_pseudo_class.h"
-#include "cobalt/cssom/after_pseudo_element.h"
-#include "cobalt/cssom/attribute_selector.h"
-#include "cobalt/cssom/before_pseudo_element.h"
-#include "cobalt/cssom/child_combinator.h"
-#include "cobalt/cssom/class_selector.h"
-#include "cobalt/cssom/cobalt_ui_nav_focus_transform_function.h"
-#include "cobalt/cssom/cobalt_ui_nav_spotlight_transform_function.h"
-#include "cobalt/cssom/complex_selector.h"
-#include "cobalt/cssom/compound_selector.h"
-#include "cobalt/cssom/css_declared_style_data.h"
-#include "cobalt/cssom/css_font_face_declaration_data.h"
-#include "cobalt/cssom/css_font_face_rule.h"
-#include "cobalt/cssom/css_keyframe_rule.h"
-#include "cobalt/cssom/css_keyframes_rule.h"
-#include "cobalt/cssom/css_rule_list.h"
-#include "cobalt/cssom/css_style_rule.h"
-#include "cobalt/cssom/css_style_sheet.h"
-#include "cobalt/cssom/descendant_combinator.h"
-#include "cobalt/cssom/empty_pseudo_class.h"
-#include "cobalt/cssom/filter_function_list_value.h"
-#include "cobalt/cssom/focus_pseudo_class.h"
-#include "cobalt/cssom/following_sibling_combinator.h"
-#include "cobalt/cssom/font_style_value.h"
-#include "cobalt/cssom/font_weight_value.h"
-#include "cobalt/cssom/hover_pseudo_class.h"
-#include "cobalt/cssom/id_selector.h"
-#include "cobalt/cssom/integer_value.h"
-#include "cobalt/cssom/keyword_value.h"
-#include "cobalt/cssom/length_value.h"
-#include "cobalt/cssom/linear_gradient_value.h"
-#include "cobalt/cssom/local_src_value.h"
-#include "cobalt/cssom/map_to_mesh_function.h"
-#include "cobalt/cssom/matrix_function.h"
-#include "cobalt/cssom/media_list.h"
-#include "cobalt/cssom/media_query.h"
-#include "cobalt/cssom/next_sibling_combinator.h"
-#include "cobalt/cssom/not_pseudo_class.h"
-#include "cobalt/cssom/number_value.h"
-#include "cobalt/cssom/percentage_value.h"
-#include "cobalt/cssom/property_definitions.h"
-#include "cobalt/cssom/property_key_list_value.h"
-#include "cobalt/cssom/property_list_value.h"
-#include "cobalt/cssom/property_value_visitor.h"
-#include "cobalt/cssom/radial_gradient_value.h"
-#include "cobalt/cssom/rgba_color_value.h"
-#include "cobalt/cssom/rotate_function.h"
-#include "cobalt/cssom/scale_function.h"
-#include "cobalt/cssom/shadow_value.h"
-#include "cobalt/cssom/simple_selector.h"
-#include "cobalt/cssom/string_value.h"
-#include "cobalt/cssom/time_list_value.h"
-#include "cobalt/cssom/timing_function.h"
-#include "cobalt/cssom/timing_function_list_value.h"
-#include "cobalt/cssom/transform_function_list_value.h"
-#include "cobalt/cssom/translate_function.h"
-#include "cobalt/cssom/type_selector.h"
-#include "cobalt/cssom/unicode_range_value.h"
-#include "cobalt/cssom/universal_selector.h"
-#include "cobalt/cssom/url_src_value.h"
-#include "cobalt/cssom/url_value.h"
-#include "cobalt/cssom/viewport_size.h"
-#include "cobalt/cssom/viewport_size.h"
-#include "cobalt/dom/input_event_init.h"
-#include "cobalt/dom/keyboard_event_init.h"
-#include "cobalt/dom/on_screen_keyboard_bridge.h"
-#include "cobalt/dom/pointer_event_init.h"
-#include "cobalt/dom/wheel_event_init.h"
-#include "cobalt/input/input_device_manager.h"
-#include "cobalt/layout/layout_manager.h"
-#include "cobalt/dom/html_custom_element.h"
+#include "extended_html/component/component_node.h"
 
+#include "extended_html/component/component_node_ContainerView.h"
 
 #include "base/basictypes.h"
 #include "base/callback.h"
@@ -323,13 +237,6 @@
 
 #include <algorithm>
 #include <memory>
-#include <mutex>
-#include <thread>
-#include <iostream>
-#include <vector>
-#include <functional>
-#include <chrono>
-#include <string>
 
 #include "base/bind.h"
 #include "base/logging.h"
@@ -357,71 +264,120 @@
 #include "skia/include/core/SkRefCnt.h"
 #include "skia/include/core/SkTime.h"
 
-#include "extended_html/input_box/block_level_input_box.h"
-#include "extended_html/input_box/inline_level_input_box.h"
-#include "extended_html/input_box/input_box.h"
-#include "extended_html/input_box/input_node.h"
-#include "extended_html/input_box/input_box_generator.h"
+class HTMLComponentElement;
 
-class HTMLInputElement : public cobalt::dom::HTMLCustomElement {
+namespace cobalt {
+namespace layout {
+
+// The class represents a Replaced element in the layout tree. It is used to
+// render elements like embed, iframe or video. Currently it renders the element
+// as an image retrieved from a callback passed into its ctor.
+//   https://www.w3.org/TR/html5/rendering.html#replaced-elements
+//
+// TODO: Make ReplacedBox support elements other than media element.
+class Component : public Box {
  public:
+  //typedef render_tree::SkottieNode::SetBoundsCB SetBoundsCB;
+  //typedef render_tree::ComponentNode::GetInputAnimCB GetInputAnimCB;
 
-  struct ScheduledMouseEvent {
-    ui::MouseEvent mouseEvent_;
-    scoped_refptr<cobalt::dom::DOMRect> boundingClientRect_{};
-  };
+  ~Component();
 
-  struct ScheduledEvents {
-    std::vector<ui::KeyEvent> scheduledKeyEvents_{};
-    std::vector<ScheduledMouseEvent> scheduledMouseEvents_{};
-  };
+  Component(const scoped_refptr<cssom::CSSComputedStyleDeclaration>&
+                  css_computed_style_declaration,
+              //const SetBoundsCB& set_bounds_cb,
+              //const Component::GetInputAnimCB& replace_input_animation_cb,
+              const scoped_refptr<Paragraph>& paragraph, int32 text_position,
+              const base::Optional<LayoutUnit>& maybe_intrinsic_width,
+              const base::Optional<LayoutUnit>& maybe_intrinsic_height,
+              const base::Optional<float>& maybe_intrinsic_ratio,
+              UsedStyleProvider* used_style_provider,
+              const math::SizeF& content_size,
+              LayoutStatTracker* layout_stat_tracker);
 
-  static const char kTagName[];
+  void SetCustomGeneratingNode(HTMLComponentElement* custom_generating_node);
 
-  explicit HTMLInputElement(cobalt::dom::Document* document);
-  ~HTMLInputElement() override;
+  // From |Box|.
+  WrapResult TryWrapAt(WrapAtPolicy wrap_at_policy,
+                       WrapOpportunityPolicy wrap_opportunity_policy,
+                       bool is_line_existence_justified,
+                       LayoutUnit available_width,
+                       bool should_collapse_trailing_white_space) override;
 
-  cobalt::math::SizeF GetSize() const;
+  void SplitBidiLevelRuns() override;
+  bool TrySplitAtSecondBidiLevelRun() override;
+  base::Optional<int> GetBidiLevel() const override;
 
-  uint32 width() const;
+  void SetShouldCollapseLeadingWhiteSpace(
+      bool should_collapse_leading_white_space) override;
+  void SetShouldCollapseTrailingWhiteSpace(
+      bool should_collapse_trailing_white_space) override;
+  bool HasLeadingWhiteSpace() const override;
+  bool HasTrailingWhiteSpace() const override;
+  bool IsCollapsed() const override;
 
-  uint32 height() const;
+  bool JustifiesLineExistence() const override;
+  bool AffectsBaselineInBlockFormattingContext() const override;
+  LayoutUnit GetBaselineOffsetFromTopMarginEdge() const override;
 
-  void onBoxGeneratorVisit(cobalt::layout::BoxGenerator& box_gen,
-    cobalt::dom::HTMLCustomElement* custom_element) override;
+ protected:
+  // From |Box|.
+  void UpdateContentSizeAndMargins(const LayoutParams& layout_params) override;
 
-  // Custom, not in any spec.
-  scoped_refptr<HTMLCustomElement> AsHTMLCustomElement() override {
-    return this;
-  }
+  void RenderAndAnimateContent(
+      render_tree::CompositionNode::Builder* border_node_builder,
+      ContainerBox* stacking_context) const override;
 
-  //if (document->active_element().get() == this->AsElement()) {}
-  //void Blur() override {
-  //  cobalt::dom::HTMLCustomElement::Blur();
-  //}
+  bool IsTransformable() const override { return true; }
+
+#ifdef COBALT_BOX_DUMP_ENABLED
+  void DumpProperties(std::ostream* stream) const override;
+#endif  // COBALT_BOX_DUMP_ENABLED
+
+  // Rest of the protected methods.
+
+  // Updates used values of "margin-left" and "margin-right" properties based on
+  // https://www.w3.org/TR/CSS21/visudet.html#block-replaced-width and
+  // https://www.w3.org/TR/CSS21/visudet.html#inline-replaced-width.
+  virtual void UpdateHorizontalMargins(
+      LayoutUnit containing_block_width, LayoutUnit border_box_width,
+      const base::Optional<LayoutUnit>& maybe_margin_left,
+      const base::Optional<LayoutUnit>& maybe_margin_right) = 0;
+
+  // TODO: Make private.
+  const base::Optional<LayoutUnit> maybe_intrinsic_width_;
+  const base::Optional<LayoutUnit> maybe_intrinsic_height_;
+  const float intrinsic_ratio_;
+
  public: // TODO
+  //bool keyup(const scoped_refptr<cobalt::dom::Event> &event,
+  //      scoped_refptr<cobalt::dom::Element> elem);
+
+ public: // TODO
+  HTMLComponentElement* custom_generating_node_ = nullptr;
+
   // TODO
   //std::unique_ptr<render_tree::input_node_ContainerView>
   //  input_node_container_;
 
-  // TODO: thread safety
-  std::unique_ptr<views::Widget> input_node_widget_;
-
-  // TODO: thread safety
-  std::unique_ptr<cobalt::render_tree::input_node_ContainerView> input_node_container_;
-
-  std::mutex scheduledEventsMutex_;
-  ScheduledEvents scheduledEvents_{};
-
-  int HTMLInputElementID_ = 0;
-
-  // TODO: thread safety
-  std::string placeholder_text_ = "";
-
+  // TODO
+  //std::unique_ptr<views::Widget> input_node_widget_;
   //std::unique_ptr<TextfieldModel> model_;
   //views::TextfieldModel* model_ = nullptr;
   //views::Textfield* textfield_ = nullptr;
 
-  DISALLOW_COPY_AND_ASSIGN(HTMLInputElement);
+ private:
+  void RenderAndAnimateContentWithLetterboxing(
+      render_tree::CompositionNode::Builder* border_node_builder) const;
+
+  //const SetBoundsCB set_bounds_cb_;
+  //const Component::GetInputAnimCB replace_input_animation_cb_;
+
+  const scoped_refptr<Paragraph> paragraph_;
+  int32 text_position_;
+  math::SizeF content_size_;
 };
 
+}  // namespace layout
+}  // namespace cobalt
+
+#endif // 0

@@ -17,6 +17,28 @@
           src: url("file:///resources/fonts/FreeSans.ttf");
       }
 
+      #input_1 {
+        background:yellow;
+        font-size: 22px;
+        font-family: "UbuntuCustom";
+        width:100%;
+        height:100%;
+        overflow: visible;
+        border: 5px solid #ffff87 !important;
+        background-color:rgb(100, 100, 0);
+        margin: 4em 1em;
+        width: 100px;
+        height: 40px;
+        border: 2px solid green;
+        background-color: #fff;
+        line-height: 40px;
+        text-align: center;
+        transition: 1s ease-in-out;
+        display: block;
+        padding-bottom: 9px;
+        width: 288px;
+      }
+
       html {
         width:100%;
         height:100%;
@@ -35,34 +57,26 @@
   </head>
   <body class="exanim">
 
-    <div style="width:100px;">
-      <input width="100" height="100" style="width:100%;height:100px;" tabindex="0">
-      text 1
-      </input>
-    </div>
+   <div class="dropdownbtn">
+     <div class="dropbtn">Dropdown</div>
+     <div class="dropdownbtn-content">
+     <a href="#">Link 1</a>
+     <a href="#">Link 2</a>
+     <a href="#">Link 3</a>
+     </div>
+   </div>
 
-    <div class="dropdownbtn">
-      <div class="dropbtn">Dropdown</div>
-      <div class="dropdownbtn-content">
-      <a href="#">Link 1</a>
-      <a href="#">Link 2</a>
-      <a href="#">Link 3</a>
-      </div>
-    </div>
-
-    <div class="navigation">
-      <div class="navigation-root">
-        <div class="navigation-item"><a href="#">One</a></div>
-        <div class="navigation-item"><div><a href="#">Two</a></div>
-          <div class="dropdown">
-            <div><a href="#">Sub-1</a></div>
-            <div><a href="#">Sub-2</a></div>
-            <div><a href="#">Sub-3</a></div>
-          </div>
-        </div>
-        <div class="navigation-item"><a href="#">Three</a></div>
-      </div>
-    </div>
+   <div style="width:1000px;">
+     <component data_source="ex1" style="display:block;overflow:hidden;width:auto;height:auto;">
+       component 1 not loaded
+       <component data_source="ex2" style="display:block;overflow:hidden;width:auto;height:auto;">
+         component 2 not loaded
+         <component data_source="ex3" style="display:block;overflow:hidden;width:auto;height:auto;">
+           component 3 not loaded
+         </component>
+       </component>
+     </component>
+   </div>
 
     <div class="columns-test">
       <div class="left-column-wrap">
@@ -75,24 +89,15 @@
       </div>
     </div>
 
-    <div id="change-localization-menu">
-     <h3>Select language:</h3></br>
-     <div I_on-click-print_I="en">English</div>
-     <div I_on-click-print_I="fr">Français (French)</div>
-     <div I_on-click-print_I="bg">Български (Bulgarian)</div>
-     <div I_on-click-print_I="ch">中国 (Mandarin)</div>
-     <div I_on-click-print_I="mi">Maori</div>
-    </div>
-
     <div style="width:100px;height:100px;overflow:hidden;background-color:white;">
       <div style="width:10px;height:10px;border-radius:4px;I_test-y-scroll_I;I_test-background_I;border: 3px solid #CCC;position:fixed;">
         fixed
       </div>
       <div style="width:50px;height:50px;border-radius:40px;I_test-background_I;I_test-y-scroll_I;">
       </div>
-      <input width="100" height="100" style="width:100%;height:100px;" tabindex="0">
+      <sk_input width="100" height="100" style="width:100%;height:100px;" tabindex="0">
       text 0
-      </input>
+      </sk_input>
     </div>
 
     <div I_v-test-attr-name_I="I_v-test-attr-val_I" I_on-mousemove_I="on-mousemove-event" I_on-mouseleave_I="your args here 1">
@@ -128,9 +133,9 @@
         <div class="flip-card-back">
           <div>
             <div style="width:1000px;">
-              <input width="1000" height="50" style="width:100%;height:50px;" tabindex="0">
+              <sk_input width="1000" height="50" style="width:100%;height:50px;" tabindex="0">
                 text 2
-              </input>
+              </sk_input>
             </div>
             <skottie width="10" height="10" src="./resources/animations/data.json" style="display:block;color:#CCC;width:10px;height:10px;z-index:999;">
             </skottie>
@@ -170,9 +175,9 @@
     </div>
 
     <div>
-      <input width="10" height="10" style="width:10px;height:10px;">
+      <sk_input width="10" height="10" style="width:10px;height:10px;">
         text 3
-      </input>
+      </sk_input>
     </div>
 
     <div style="font-family: 'UbuntuCustom'; font-size: 12px;" class='bounceInDiv'>bbb div font-family: 'Ubuntu'</div>

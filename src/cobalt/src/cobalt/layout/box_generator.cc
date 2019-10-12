@@ -1,4 +1,4 @@
-// Copyright 2014 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2014 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -342,6 +342,13 @@ void BoxGenerator::VisitCustomElement(dom::HTMLCustomElement* custom_element) {
 
 // not in spec
 void BoxGenerator::VisitSkottieElement(dom::HTMLSkottieElement* skottie_element) {
+  DCHECK(skottie_element);
+  if(!skottie_element->computed_style()) {
+    NOTIMPLEMENTED_LOG_ONCE(); // TODO: fix web components init order
+    return;
+  }
+  DCHECK(skottie_element->computed_style());
+
   printf("BoxGenerator::VisitSkottieElement\n");
   //   https://www.w3.org/TR/CSS21/visuren.html#inline-boxes
   //   https://www.w3.org/TR/CSS21/visuren.html#propdef-unicode-bidi
@@ -539,6 +546,13 @@ void ReplacedBoxGenerator::VisitKeyword(cssom::KeywordValue* keyword) {
 }  // namespace
 
 void BoxGenerator::VisitVideoElement(dom::HTMLVideoElement* video_element) {
+  DCHECK(video_element);
+  if(!video_element->computed_style()) {
+    NOTIMPLEMENTED_LOG_ONCE(); // TODO: fix web components init order
+    return;
+  }
+  DCHECK(video_element->computed_style());
+
   // For video elements, create a replaced box.
 
   // A replaced box is formatted as an atomic inline element. It is treated
@@ -602,6 +616,13 @@ void BoxGenerator::VisitVideoElement(dom::HTMLVideoElement* video_element) {
 }
 
 void BoxGenerator::VisitBrElement(dom::HTMLBRElement* br_element) {
+  DCHECK(br_element);
+  if(!br_element->computed_style()) {
+    NOTIMPLEMENTED_LOG_ONCE(); // TODO: fix web components init order
+    return;
+  }
+  DCHECK(br_element->computed_style());
+
   // If the br element has "display: none", then it has no effect on the layout.
   if (br_element->computed_style()->display() ==
       cssom::KeywordValue::GetNone()) {
@@ -1084,6 +1105,12 @@ void BoxGenerator::AppendPseudoElementToLine(
   // them now.
   pseudo_element->reset_layout_boxes();
 
+  DCHECK(html_element);
+  if(!html_element->computed_style()) {
+    return; // TODO: fix web components init order
+  }
+  DCHECK(html_element->computed_style());
+
   ContainerBoxGenerator pseudo_element_box_generator(
       dom::kNoExplicitDirectionality,
       pseudo_element->css_computed_style_declaration(), paragraph_, context_);
@@ -1167,16 +1194,27 @@ scoped_refptr<cssom::CSSComputedStyleDeclaration> StripBackground(
 }  // namespace
 
 void BoxGenerator::VisitNonReplacedElement(dom::HTMLElement* html_element) {
+  DCHECK(html_element);
   const scoped_refptr<cssom::CSSComputedStyleDeclaration>& element_style(
       html_element->css_computed_style_declaration());
 
+  DCHECK(html_element);
   ContainerBoxGenerator container_box_generator(
       html_element->directionality(),
       html_element == context_->ignore_background_element
           ? StripBackground(element_style)
           : element_style,
       paragraph_, context_);
+
+  DCHECK(html_element);
+  if(!html_element->computed_style()) {
+    return; // TODO: fix web components init order
+  }
+  DCHECK(html_element->computed_style());
+
+  DCHECK(html_element->computed_style()->display());
   html_element->computed_style()->display()->Accept(&container_box_generator);
+
   scoped_refptr<ContainerBox> container_box_before_split =
       container_box_generator.container_box();
   if (container_box_before_split.get() == NULL) {

@@ -2167,11 +2167,20 @@ list(APPEND PROJECT_SRC
   src/gl_helpers.h
   src/utils.cc
   src/utils.h
+  src/custom_atts.cpp
+  src/custom_atts.h
+  src/cobalt_common.h
+  src/blink_demo.h
+  src/custom_web_components.cc
+  src/custom_web_components.h
 )
 #
 if(ENABLE_COBALT)
   list(APPEND PROJECT_SRC
     src/render_tree_combiner.cc
+    # TODO: group headers into IDE folder
+    src/skiafy_icons.h
+    # input_box src
     src/extended_html/input_box/block_level_input_box.cc
     src/extended_html/input_box/inline_level_input_box.cc
     src/extended_html/input_box/input_box.cc
@@ -2179,8 +2188,7 @@ if(ENABLE_COBALT)
     src/extended_html/input_box/input_box_generator.cc
     src/extended_html/input_box/HTMLInputElement.cc
     src/extended_html/input_box/input_node_ContainerView.cc
-    # TODO: group headers into IDE folder
-    src/skiafy_icons.h
+    # input_box headers
     src/extended_html/input_box/block_level_input_box.h
     src/extended_html/input_box/inline_level_input_box.h
     src/extended_html/input_box/input_node.h
@@ -2189,6 +2197,23 @@ if(ENABLE_COBALT)
     src/extended_html/input_box/HTMLInputElement.h
     src/extended_html/input_box/input_node_ContainerView.h
     src/extended_html/input_box/common.h
+    # component src
+    src/extended_html/component/block_level_component.cc
+    src/extended_html/component/inline_level_component.cc
+    src/extended_html/component/component.cc
+    src/extended_html/component/component_node.cc
+    src/extended_html/component/component_generator.cc
+    src/extended_html/component/HTMLComponentElement.cc
+    src/extended_html/component/component_node_ContainerView.cc
+    # component headers
+    src/extended_html/component/block_level_component.h
+    src/extended_html/component/inline_level_component.h
+    src/extended_html/component/component_node.h
+    src/extended_html/component/component.h
+    src/extended_html/component/component_generator.h
+    src/extended_html/component/HTMLComponentElement.h
+    src/extended_html/component/component_node_ContainerView.h
+    src/extended_html/component/common.h
   )
 endif(ENABLE_COBALT)
 

@@ -77,8 +77,6 @@ using cobalt::media_session::MediaSession;
 namespace cobalt {
 namespace dom {
 
-static bool canStartDocumentLoad = false;
-
 // This class fires the window's load event when the document is loaded.
 class Window::RelayLoadEvent : public DocumentObserver {
  public:
@@ -277,13 +275,13 @@ Window::Window(
 #endif
   }
 
-  canStartDocumentLoad = true;
+  canStartDocumentLoad_ = true;
 
 //#endif
 }
 
 bool Window::TryForceStartDocumentLoad() {
-  if(!canStartDocumentLoad) {
+  if(!canStartDocumentLoad_) {
     return false;
   }
 

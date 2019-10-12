@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include "custom_web_components.h"
+
 #include "base/callback.h"
 #include "base/compiler_specific.h"
 #include "cobalt/base/type_id.h"
@@ -244,7 +246,7 @@
 #include "ui/gfx/geometry/rect.h"
 #include "ui/gfx/geometry/insets.h"
 #include "ui/gfx/geometry/vector2d.h"
-//#include "ui/gfx/native_input_node_widget_types.h"
+//#include "ui/gfx/native_component_node_widget_types.h"
 #endif // ENABLE_BLINK_UI_NATIVE_THEME
 
 #include "ui/display/manager/default_touch_transform_setter.h"
@@ -295,7 +297,7 @@
 #include "ui/events/event.h"
 #include "ui/events/event_utils.h"
 #include "ui/views/focus/focus_manager_factory.h"
-//#include "ui/views/focus/input_node_widget_focus_manager.h"
+//#include "ui/views/focus/component_node_widget_focus_manager.h"
 #include "ui/views/window/dialog_client_view.h"
 #include "ui/views/window/dialog_delegate.h"
 #include "ui/views/examples/example_combobox_model.h"
@@ -357,13 +359,13 @@
 #include "skia/include/core/SkRefCnt.h"
 #include "skia/include/core/SkTime.h"
 
-#include "extended_html/input_box/block_level_input_box.h"
-#include "extended_html/input_box/inline_level_input_box.h"
-#include "extended_html/input_box/input_box.h"
-#include "extended_html/input_box/input_node.h"
-#include "extended_html/input_box/input_box_generator.h"
+#include "extended_html/component/block_level_component.h"
+#include "extended_html/component/inline_level_component.h"
+#include "extended_html/component/component.h"
+#include "extended_html/component/component_node.h"
+#include "extended_html/component/component_generator.h"
 
-class HTMLInputElement : public cobalt::dom::HTMLCustomElement {
+class HTMLComponentElement : public cobalt::dom::HTMLCustomElement {
  public:
 
   struct ScheduledMouseEvent {
@@ -378,14 +380,16 @@ class HTMLInputElement : public cobalt::dom::HTMLCustomElement {
 
   static const char kTagName[];
 
-  explicit HTMLInputElement(cobalt::dom::Document* document);
-  ~HTMLInputElement() override;
+  explicit HTMLComponentElement(cobalt::dom::Document* document);
+  ~HTMLComponentElement() override;
 
   cobalt::math::SizeF GetSize() const;
 
   uint32 width() const;
 
   uint32 height() const;
+
+  std::string data_source() const;
 
   void onBoxGeneratorVisit(cobalt::layout::BoxGenerator& box_gen,
     cobalt::dom::HTMLCustomElement* custom_element) override;
@@ -401,27 +405,30 @@ class HTMLInputElement : public cobalt::dom::HTMLCustomElement {
   //}
  public: // TODO
   // TODO
-  //std::unique_ptr<render_tree::input_node_ContainerView>
-  //  input_node_container_;
+  //std::unique_ptr<render_tree::component_node_ContainerView>
+  //  component_node_container_;
 
   // TODO: thread safety
-  std::unique_ptr<views::Widget> input_node_widget_;
+  std::unique_ptr<views::Widget> component_node_widget_;
+
+  std::string current_data_source_{};
+  std::shared_ptr<skemgl::WebComponent> loaded_web_component_ = nullptr;
 
   // TODO: thread safety
-  std::unique_ptr<cobalt::render_tree::input_node_ContainerView> input_node_container_;
+  /*std::unique_ptr<cobalt::render_tree::component_node_ContainerView> component_node_container_;
 
   std::mutex scheduledEventsMutex_;
   ScheduledEvents scheduledEvents_{};
-
-  int HTMLInputElementID_ = 0;
+*/
+  int HTMLComponentElementID_ = 0;
 
   // TODO: thread safety
-  std::string placeholder_text_ = "";
+  std::string placeholder_text_{};
 
   //std::unique_ptr<TextfieldModel> model_;
   //views::TextfieldModel* model_ = nullptr;
   //views::Textfield* textfield_ = nullptr;
 
-  DISALLOW_COPY_AND_ASSIGN(HTMLInputElement);
+  DISALLOW_COPY_AND_ASSIGN(HTMLComponentElement);
 };
 

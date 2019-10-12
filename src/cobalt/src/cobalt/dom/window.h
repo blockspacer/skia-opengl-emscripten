@@ -1,4 +1,4 @@
-// Copyright 2015 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2015 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -516,6 +516,8 @@ private:
   // This UI navigation root container should contain all active UI navigation
   // items for this window.
   scoped_refptr<ui_navigation::NavItem> ui_nav_root_;
+
+  bool canStartDocumentLoad_ = false;
 
   DISALLOW_COPY_AND_ASSIGN(Window);
 };

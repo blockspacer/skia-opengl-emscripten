@@ -1,4 +1,4 @@
-﻿#include "extended_html/input_box/HTMLInputElement.h"
+﻿#include "extended_html/component/HTMLComponentElement.h"
 
 #include <algorithm>
 #include <memory>
@@ -83,6 +83,9 @@
 #include "skia/include/core/SkRefCnt.h"
 #include "skia/include/core/SkTime.h"
 
+#include <string>
+#include <map>
+#include <functional>
 #include <memory>
 
 #include "base/memory/ptr_util.h"
@@ -96,26 +99,29 @@ using namespace cobalt::css_parser;
 using namespace cobalt::layout;
 using namespace cobalt::dom;
 
-static int gHTMLInputElementID = 0;
+static int gHTMLComponentElementID = 0;
 
-const char HTMLInputElement::kTagName[] = "sk_input";
+const char HTMLComponentElement::kTagName[] = "component";
 
-HTMLInputElement::HTMLInputElement(Document* document)
+HTMLComponentElement::HTMLComponentElement(Document* document)
     : HTMLCustomElement(document, base::CobToken(kTagName)) {
-  printf("created new HTMLInputElement\n");
-  gHTMLInputElementID++;
-  HTMLInputElementID_ = gHTMLInputElementID;
-  placeholder_text_ = std::to_string(HTMLInputElementID_);
+  printf("created new HTMLComponentElement\n");
+  gHTMLComponentElementID++;
+  HTMLComponentElementID_ = gHTMLComponentElementID;
+  placeholder_text_ = std::to_string(HTMLComponentElementID_);
 
+  //set_inner_html("it->second");
+
+#if 0
   /// \todo add cb once
   this->add_event_cb("on-mousedown",
-    [HTMLInputElementID = gHTMLInputElementID, this/*, newNode*/](const scoped_refptr<dom::Event> &event,
+    [HTMLComponentElementID = gHTMLComponentElementID, this/*, newNode*/](const scoped_refptr<dom::Event> &event,
         scoped_refptr<cobalt::dom::Element> elem, const std::string& attrVal) {
       CHECK(elem);
       //CHECK(newNode);
-      //CHECK(input_box);
-      //input_box->mousedown(event, elem);
-      printf("HTMLInputElementID %i\n", HTMLInputElementID);
+      //CHECK(component);
+      //component->mousedown(event, elem);
+      printf("HTMLComponentElementID %i\n", HTMLComponentElementID);
 
       const dom::MouseEvent* const mouseEvent =
         // TODO: polymorphic_downcast Check failed: dynamic_cast<Derived>(base) == base.
@@ -123,7 +129,7 @@ HTMLInputElement::HTMLInputElement(Document* document)
       CHECK(mouseEvent);
       float x = mouseEvent->client_x() - elem->GetBoundingClientRect()->x();
       float y = mouseEvent->client_y() - elem->GetBoundingClientRect()->y();
-      printf("InputBox on-mousedown "
+      printf("Component on-mousedown "
              "at (%f;%f) kSbKeyMouse1: %d , kSbKeyMouse2: %d , kSbKeyMouse3: %d \n",
               x,
               y,
@@ -173,8 +179,8 @@ HTMLInputElement::HTMLInputElement(Document* document)
         scoped_refptr<cobalt::dom::Element> elem, const std::string& attrVal) {
       CHECK(elem);
       //CHECK(newNode);
-      //CHECK(input_box);
-      //input_box->mouseup(event, elem);
+      //CHECK(component);
+      //component->mouseup(event, elem);
 
       const dom::MouseEvent* const mouseEvent =
         // TODO: polymorphic_downcast Check failed: dynamic_cast<Derived>(base) == base.
@@ -182,7 +188,7 @@ HTMLInputElement::HTMLInputElement(Document* document)
       CHECK(mouseEvent);
       float x = mouseEvent->client_x() - elem->GetBoundingClientRect()->x();
       float y = mouseEvent->client_y() - elem->GetBoundingClientRect()->y();
-      printf("InputBox on-mouseup at (%f;%f) attr_val=%s event %s for tag: %s, "
+      printf("Component on-mouseup at (%f;%f) attr_val=%s event %s for tag: %s, "
              "attrVal: %s, text_content: %s\n",
               x,
               y,
@@ -229,13 +235,13 @@ HTMLInputElement::HTMLInputElement(Document* document)
     });
 
   this->add_event_cb("on-click",
-    [HTMLInputElementID = gHTMLInputElementID, this/*, newNode*/](const scoped_refptr<dom::Event> &event,
+    [HTMLComponentElementID = gHTMLComponentElementID, this/*, newNode*/](const scoped_refptr<dom::Event> &event,
         scoped_refptr<cobalt::dom::Element> elem, const std::string& attrVal) {
       CHECK(elem);
-      printf("HTMLInputElementID %i\n", HTMLInputElementID);
+      printf("HTMLComponentElementID %i\n", HTMLComponentElementID);
       //CHECK(newNode);
-      //CHECK(input_box);
-      //input_box->click(event, elem);
+      //CHECK(component);
+      //component->click(event, elem);
 
       const dom::MouseEvent* const mouseEvent =
         // TODO: polymorphic_downcast Check failed: dynamic_cast<Derived>(base) == base.
@@ -243,7 +249,7 @@ HTMLInputElement::HTMLInputElement(Document* document)
       CHECK(mouseEvent);
       float x = mouseEvent->client_x() - elem->GetBoundingClientRect()->x();
       float y = mouseEvent->client_y() - elem->GetBoundingClientRect()->y();
-      printf("InputBox on-click-print at (%f;%f) attr_val=%s event %s for tag: %s, "
+      printf("Component on-click-print at (%f;%f) attr_val=%s event %s for tag: %s, "
              "attrVal: %s, text_content: %s\n",
               x,
               y,
@@ -305,8 +311,8 @@ HTMLInputElement::HTMLInputElement(Document* document)
       scoped_refptr<cobalt::dom::Element> elem, const std::string& attrVal) {
     CHECK(elem);
     //CHECK(newNode);
-    //CHECK(input_box);
-    //input_box->mousemove(event, elem);
+    //CHECK(component);
+    //component->mousemove(event, elem);
 
     //const dom::PointerEvent* pointerEvent;
     const dom::MouseEvent* mouseEvent;
@@ -323,7 +329,7 @@ HTMLInputElement::HTMLInputElement(Document* document)
     //float y = /*pointerEvent ? pointerEvent->y() :*/ mouseEvent->client_y();
     float x = mouseEvent->client_x() - elem->GetBoundingClientRect()->x();
     float y = mouseEvent->client_y() - elem->GetBoundingClientRect()->y();
-    printf("InputBox mousemove at (%f;%f) event %s for tag: %s, "
+    printf("Component mousemove at (%f;%f) event %s for tag: %s, "
            "attrVal: %s, text_content: %s\n",
             x,
             y,
@@ -373,8 +379,8 @@ HTMLInputElement::HTMLInputElement(Document* document)
         scoped_refptr<cobalt::dom::Element> elem, const std::string& attrVal) {
       CHECK(elem);
       //CHECK(newNode);
-      //CHECK(input_box);
-      //input_box->mouseover(event, elem);
+      //CHECK(component);
+      //component->mouseover(event, elem);
 
       const dom::MouseEvent* const mouseEvent =
         // TODO: polymorphic_downcast Check failed: dynamic_cast<Derived>(base) == base.
@@ -382,7 +388,7 @@ HTMLInputElement::HTMLInputElement(Document* document)
       CHECK(mouseEvent);
       float x = mouseEvent->client_x() - elem->GetBoundingClientRect()->x();
       float y = mouseEvent->client_y() - elem->GetBoundingClientRect()->y();
-      printf("InputBox on-test-mouseover at (%f;%f) event %s for tag: %s, "
+      printf("Component on-test-mouseover at (%f;%f) event %s for tag: %s, "
              "attrVal: %s, text_content: %s\n",
               x,
               y,
@@ -405,8 +411,8 @@ HTMLInputElement::HTMLInputElement(Document* document)
         scoped_refptr<cobalt::dom::Element> elem, const std::string& attrVal) {
       CHECK(elem);
       //CHECK(newNode);
-      //CHECK(input_box);
-      //input_box->mouseout(event, elem);
+      //CHECK(component);
+      //component->mouseout(event, elem);
 
       dom::Document* document = elem->node_document();
       CHECK(document);
@@ -418,7 +424,7 @@ HTMLInputElement::HTMLInputElement(Document* document)
       CHECK(mouseEvent);
       float x = mouseEvent->client_x() - elem->GetBoundingClientRect()->x();
       float y = mouseEvent->client_y() - elem->GetBoundingClientRect()->y();
-      printf("InputBox on-test-mouseout at (%f;%f) event %s for tag: %s, "
+      printf("Component on-test-mouseout at (%f;%f) event %s for tag: %s, "
              "attrVal: %s, text_content: %s\n",
               x,
               y,
@@ -446,13 +452,13 @@ HTMLInputElement::HTMLInputElement(Document* document)
         scoped_refptr<cobalt::dom::Element> elem, const std::string& attrVal) {
       CHECK(elem);
       //CHECK(newNode);
-      //CHECK(input_box);
+      //CHECK(component);
       //return keyup(event, elem);
       const dom::KeyboardEvent* const keyboardEvent =
         // TODO: polymorphic_downcast Check failed: dynamic_cast<Derived>(base) == base.
         base::polymorphic_downcast<const dom::KeyboardEvent* const>(event.get());
       CHECK(keyboardEvent);
-      printf("InputBox on-test-keyup key %s event %s for tag: %s, "
+      printf("Component on-test-keyup key %s event %s for tag: %s, "
              "text_content: %s\n",
               keyboardEvent->key().c_str(),
               event->type().c_str(),
@@ -544,11 +550,11 @@ HTMLInputElement::HTMLInputElement(Document* document)
               push_back(std::move(release_event));
           }
 
-          /*if(input_node_widget_) {
-            DCHECK(input_node_widget_);
-            DCHECK(input_node_widget_->GetInputMethod());
+          /*if(component_node_widget_) {
+            DCHECK(component_node_widget_);
+            DCHECK(component_node_widget_->GetInputMethod());
             ui::InputMethod* im =
-                input_node_widget_->GetInputMethod();
+                component_node_widget_->GetInputMethod();
             im->DispatchKeyEvent(&release_event);
           }*/
         }
@@ -562,14 +568,14 @@ HTMLInputElement::HTMLInputElement(Document* document)
         scoped_refptr<cobalt::dom::Element> elem, const std::string& attrVal) {
       CHECK(elem);
       //CHECK(newNode);
-      //CHECK(input_box);
-      //input_box->keypress(event, elem);
+      //CHECK(component);
+      //component->keypress(event, elem);
 
       const dom::KeyboardEvent* const keyboardEvent =
         // TODO: polymorphic_downcast Check failed: dynamic_cast<Derived>(base) == base.
         base::polymorphic_downcast<const dom::KeyboardEvent* const>(event.get());
       CHECK(keyboardEvent);
-      printf("InputBox on-test-keypress key %s event %s for tag: %s, "
+      printf("Component on-test-keypress key %s event %s for tag: %s, "
              "attrVal: %s, text_content: %s\n",
               keyboardEvent->key().c_str(),
               event->type().c_str(),
@@ -666,10 +672,10 @@ HTMLInputElement::HTMLInputElement(Document* document)
           }
 
           //DCHECK(newNode);
-          //DCHECK(newNode->input_node_widget_);
-          /*if(input_node_widget_) {
-            DCHECK(input_node_widget_->GetInputMethod());
-            ui::InputMethod* im = input_node_widget_->GetInputMethod();
+          //DCHECK(newNode->component_node_widget_);
+          /*if(component_node_widget_) {
+            DCHECK(component_node_widget_->GetInputMethod());
+            ui::InputMethod* im = component_node_widget_->GetInputMethod();
             im->DispatchKeyEvent(&press_event);
           }*/
         }
@@ -683,7 +689,7 @@ HTMLInputElement::HTMLInputElement(Document* document)
         scoped_refptr<cobalt::dom::Element> elem, const std::string& attrVal) {
       CHECK(elem);
       //CHECK(newNode);
-      //CHECK(input_box);
+      //CHECK(component);
       //return keydown(event, elem);
 
       /*const dom::PointerEvent* const pointerEvent =
@@ -693,7 +699,7 @@ HTMLInputElement::HTMLInputElement(Document* document)
         // TODO: polymorphic_downcast Check failed: dynamic_cast<Derived>(base) == base.
         base::polymorphic_downcast<const dom::KeyboardEvent* const>(event.get());
       CHECK(keyboardEvent);
-      printf("InputBox on-test-keydown key %s event %s for tag: %s, "
+      printf("Component on-test-keydown key %s event %s for tag: %s, "
              "attrVal: %s, text_content: %s\n",
               keyboardEvent->key().c_str(),
               event->type().c_str(),
@@ -707,41 +713,68 @@ HTMLInputElement::HTMLInputElement(Document* document)
       CHECK(elementHTML);
       return true;
     });
+#endif
 }
 
-HTMLInputElement::~HTMLInputElement() {
-  printf("destroyed HTMLInputElement\n");
+HTMLComponentElement::~HTMLComponentElement() {
+  printf("destroyed HTMLComponentElement\n");
+  if(loaded_web_component_) {
+    loaded_web_component_->unloaded_cb();
+  }
 }
 
-uint32 HTMLInputElement::width() const {
+uint32 HTMLComponentElement::width() const {
   uint32 result = 0;
   std::string value_in_string = GetAttribute("width").value_or("0");
   if (!base::StringToUint32(value_in_string, &result)) {
     LOG(WARNING) << "Invalid width attribute: \'" << value_in_string << "\'";
   }
 
-  //printf("HTMLInputElement::width %d\n", result);
+  //printf("HTMLComponentElement::width %d\n", result);
 
   return result;
 }
 
-uint32 HTMLInputElement::height() const {
+uint32 HTMLComponentElement::height() const {
   uint32 result = 0;
   std::string value_in_string = GetAttribute("height").value_or("0");
   if (!base::StringToUint32(value_in_string, &result)) {
     LOG(WARNING) << "Invalid height attribute: \'" << value_in_string << "\'";
   }
 
-  //printf("HTMLInputElement::height %d\n", result);
+  //printf("HTMLComponentElement::height %d\n", result);
 
   return result;
 }
 
-math::SizeF HTMLInputElement::GetSize() const {
+std::string HTMLComponentElement::data_source() const {
+    std::string value_in_string = GetAttribute("data_source").value_or("");
+    return value_in_string;
+}
+
+math::SizeF HTMLComponentElement::GetSize() const {
   return math::SizeF(width(), height());
 }
 
-void HTMLInputElement::onBoxGeneratorVisit(cobalt::layout::BoxGenerator& box_gen, cobalt::dom::HTMLCustomElement* custom_element) {
+void HTMLComponentElement::onBoxGeneratorVisit(cobalt::layout::BoxGenerator& box_gen, cobalt::dom::HTMLCustomElement* custom_element)
+{
+  if(!data_source().empty() && data_source() != current_data_source_) {
+    std::shared_ptr<skemgl::WebComponent> component
+      = skemgl::get_web_component(data_source());
+    if(component && !component->data().empty()) {
+      set_inner_html(component->data());
+      current_data_source_ = data_source();
+      if(component->loaded_cb()) {
+        component->loaded_cb()(
+            base::polymorphic_downcast<HTMLComponentElement*>(custom_element));
+      }
+      loaded_web_component_ = component;
+    } else {
+        // TODO: print warning if empty component html or ...?
+        NOTIMPLEMENTED_LOG_ONCE();
+    }
+  }
+
   //DCHECK(box_gen);
 
   //printf("box_gen size %zu\n", box_gen.boxes().size());
@@ -758,13 +791,14 @@ void HTMLInputElement::onBoxGeneratorVisit(cobalt::layout::BoxGenerator& box_gen
            ->html_element_context()
            ->resource_provider();
 
-  InputBoxGenerator input_box_generator(
+  ComponentGenerator component_generator(
+      directionality(),
       css_computed_style_declaration(),
-      //base::Bind(&HTMLInputElement::GetAnim, base::Unretained(this)),
-      *box_gen.paragraph_, text_position,
+      //base::Bind(&HTMLComponentElement::GetAnim, base::Unretained(this)),
+      box_gen.paragraph_, text_position,
       base::nullopt, base::nullopt, base::nullopt, box_gen.context_,
       GetSize());
-  computed_style()->display()->Accept(&input_box_generator);
+  computed_style()->display()->Accept(&component_generator);
 
   //printf("VisitInputElement with placeholder: %s\n", this->placeholder().c_str());
 
@@ -790,9 +824,9 @@ void HTMLInputElement::onBoxGeneratorVisit(cobalt::layout::BoxGenerator& box_gen
       return true;
     });*/
 
-  scoped_refptr<InputBox> input_box =
-      input_box_generator.input_box();
-  if (input_box.get() == NULL) {
+  auto component =
+      component_generator.component();
+  if (component.get() == NULL) {
     // The element with "display: none" generates no boxes and has no effect
     // on layout. Descendant elements do not generate any boxes either.
     // This behavior cannot be overridden by setting the "display" property on
@@ -801,13 +835,35 @@ void HTMLInputElement::onBoxGeneratorVisit(cobalt::layout::BoxGenerator& box_gen
     return;
   }
 
-  input_box->SetCustomGeneratingNode(this);
+  //component->SetCustomGeneratingNode(this);
 
 #ifdef COBALT_BOX_DUMP_ENABLED
-  input_box->SetGeneratingNode(this);
+  component->SetGeneratingNode(this);
 #endif  // COBALT_BOX_DUMP_ENABLED
 
-  input_box->SetUiNavItem(this->GetUiNavItem());
+  component->SetUiNavItem(this->GetUiNavItem());
 
-  box_gen.boxes_.push_back(input_box);
+  box_gen.boxes_.push_back(component);
+
+  box_gen.AppendPseudoElementToLine(this, dom::kBeforePseudoElementType);
+
+  // Generate child boxes.
+  for (dom::Node* child_node = this->first_child(); child_node;
+       child_node = child_node->next_sibling()) {
+      if(!child_node){
+          continue;
+      }
+      BoxGenerator child_box_generator(
+          this->css_computed_style_declaration(),
+          this->css_computed_style_declaration()->animations(),
+          box_gen.paragraph_, box_gen.dom_element_depth_ + 1, box_gen.context_);
+      child_node->Accept(&child_box_generator);
+      const Boxes& child_boxes = child_box_generator.boxes();
+      for (Boxes::const_iterator child_box_iterator = child_boxes.begin();
+           child_box_iterator != child_boxes.end(); ++child_box_iterator) {
+          box_gen.AppendChildBoxToLine(*child_box_iterator);
+      }
+  }
+
+  box_gen.AppendPseudoElementToLine(this, dom::kAfterPseudoElementType);
 }
