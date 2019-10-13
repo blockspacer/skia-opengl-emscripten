@@ -1,5 +1,9 @@
 ﻿#pragma once
 
+#if defined(ENABLE_HTML5_SDL) || !defined(__EMSCRIPTEN__)
+#include <SDL2/SDL.h>
+#endif // defined(ENABLE_HTML5_SDL) || !defined(__EMSCRIPTEN__)
+
 #if !defined(ENABLE_BASE)
 #define TO_STRING(s) #s
 #define NOTREACHED(s)\
@@ -32,6 +36,9 @@ class SkiaUiDemo {
   void initBlinkPlatform();
   void SetCursorScreenPoint(int x, int y);
   void handleTestEvent(const char *text);
+#if defined(ENABLE_HTML5_SDL) || !defined(__EMSCRIPTEN__)
+  void handleSDLEvent(SDL_Event* e);
+#endif // defined(ENABLE_HTML5_SDL) || !defined(__EMSCRIPTEN__)
 };
 
 #endif // ENABLE_SKIA

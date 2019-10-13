@@ -1,4 +1,4 @@
-// Copyright (c) 2012 The Chromium Authors. All rights reserved.
+﻿// Copyright (c) 2012 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -189,7 +189,7 @@ class Tab : public View {
 class TabStrip : public View {
  public:
   // The return value of GetSelectedTabIndex() when no tab is selected.
-  static constexpr size_t kNoSelectedTab = size_t{-1};
+  static constexpr size_t kNoSelectedTab = static_cast<size_t>(-1);
 
   // Internal class name.
   static const char kViewClassName[];

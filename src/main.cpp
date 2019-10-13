@@ -4789,6 +4789,10 @@ static void mainLockFreeLoop() {
 
     wprintf(L"%s", L"Unicode -- English -- Русский -- Ελληνικά -- Español.\n");*/
 
+    if(!render_browser_window) {
+      skiaUiDemo.handleSDLEvent(&e);//SDL_Event * event
+    }
+
     switch (e.type) {
       case SDL_QUIT: {
         quitApp = true;

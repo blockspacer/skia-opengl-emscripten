@@ -1,5 +1,7 @@
 ﻿#include "custom_web_components.h"
 
+#ifdef ENABLE_COBALT
+
 #include "base/logging.h"
 
 #include "extended_html/component/HTMLComponentElement.h"
@@ -96,3 +98,5 @@ void preload_web_components()
 }
 
 } // namespace skemgl
+
+#endif // ENABLE_COBALT

@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#ifdef ENABLE_COBALT
+
 #include <string>
 #include <map>
 #include <functional>
@@ -53,3 +55,5 @@ WebComponentsMap& get_web_components();
 void preload_web_components();
 
 } // namespace skemgl
+
+#endif // ENABLE_COBALT
