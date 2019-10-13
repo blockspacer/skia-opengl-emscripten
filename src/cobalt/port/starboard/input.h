@@ -1,4 +1,4 @@
-// Copyright 2015 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2015 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,6 +25,8 @@
 #include "starboard/time.h"
 #include "starboard/types.h"
 #include "starboard/window.h"
+
+#include <string>
 
 #ifdef __cplusplus
 extern "C" {
@@ -181,6 +183,12 @@ typedef struct SbInputData {
 
   // not in spec
   int32_t keysym;
+
+  // not in spec
+  bool is_printable;
+
+  // not in spec
+  std::string text;
 
   // The location of the specified key, in cases where there are multiple
   // instances of the button on the keyboard. For example, some keyboards have

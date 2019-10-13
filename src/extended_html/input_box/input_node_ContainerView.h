@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "base/callback.h"
 #include "base/compiler_specific.h"
@@ -199,7 +199,8 @@ class input_node_ContainerView :
     printf("ButtonPressed\n");
   }
 
-  void addChildren(const std::string& placeholder_text/*views::GridLayout* layout*/);
+  void addChildren(const std::string& placeholder_text/*views::GridLayout* layout*/,
+                   const std::string& initial_text);
 
  // TODO:
  //private:

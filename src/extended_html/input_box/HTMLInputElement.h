@@ -417,6 +417,7 @@ class HTMLInputElement : public cobalt::dom::HTMLCustomElement {
 
   // TODO: thread safety
   std::string placeholder_text_ = "";
+  std::string initial_text_ = "";
 
   //std::unique_ptr<TextfieldModel> model_;
   //views::TextfieldModel* model_ = nullptr;

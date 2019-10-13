@@ -1,4 +1,4 @@
-// Copyright 2019 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2019 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -47,7 +47,9 @@ class KeyboardEventInit : public cobalt::dom::EventModifierInit {
     char_code_ = 0;
     key_code_ = 0;
     keysym_ = 0;
+    is_printable_ = true;
     which_ = 0;
+    text_ = "";
   }
 
   KeyboardEventInit(const KeyboardEventInit& other)
@@ -60,7 +62,9 @@ class KeyboardEventInit : public cobalt::dom::EventModifierInit {
     char_code_ = other.char_code_;
     key_code_ = other.key_code_;
     keysym_ = other.keysym_;
+    is_printable_ = other.is_printable_;
     which_ = other.which_;
+    text_ = other.text_;
   }
 
   KeyboardEventInit& operator=(const KeyboardEventInit& other) {
@@ -73,7 +77,9 @@ class KeyboardEventInit : public cobalt::dom::EventModifierInit {
     char_code_ = other.char_code_;
     key_code_ = other.key_code_;
     keysym_ = other.keysym_;
+    is_printable_ = other.is_printable_;
     which_ = other.which_;
+    text_ = other.text_;
     return *this;
   }
 
@@ -158,6 +164,26 @@ class KeyboardEventInit : public cobalt::dom::EventModifierInit {
     keysym_ = keysym;
   }
 
+  bool has_is_printable() const {
+    return true;
+  }
+  bool is_printable() const {
+    return is_printable_;
+  }
+  void set_is_printable(bool is_printable) {
+    is_printable_ = is_printable;
+  }
+
+  bool has_text() const {
+    return true;
+  }
+  std::string text() const {
+    return text_;
+  }
+  void set_text(const std::string& text) {
+    text_ = text;
+  }
+
   bool has_which() const {
     return true;
   }
@@ -180,6 +206,12 @@ class KeyboardEventInit : public cobalt::dom::EventModifierInit {
 
   // not in spec
   int32_t keysym_;
+
+  // not in spec
+  bool is_printable_;
+
+  // not in spec
+  std::string text_;
 
   uint32_t which_;
 };

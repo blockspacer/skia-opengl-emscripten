@@ -224,7 +224,8 @@ namespace render_tree {
 using namespace cobalt::renderer::rasterizer::skia;
 
 void input_node_ContainerView::addChildren(
-  const std::string& placeholder_text)
+  const std::string& placeholder_text,
+  const std::string& initial_text)
 {
   //DCHECK(!textfield_);
   DCHECK(m_inputNode);
@@ -239,11 +240,25 @@ void input_node_ContainerView::addChildren(
           blink::Color(1.0f, 0.0f, 1.0f, 0.5f).Rgb());
     textfield_->SetTextInputType(ui::TEXT_INPUT_TYPE_TEXT);
     if(!placeholder_text.empty()) {
-      DCHECK(base::IsStringASCII(placeholder_text));
       textfield_->set_placeholder_text(
-            base::ASCIIToUTF16(placeholder_text));
+            base::UTF8ToUTF16(placeholder_text));
     }
+    //textfield_->SetSize(gfx::Size(100, 100));
+    textfield_->SetBorder(
+        views::CreateSolidBorder(2, SK_ColorGRAY));
+    textfield_->SetColor(
+        blink::Color(1.0f, 0.0f, 1.0f, 0.5f).Rgb());
+    textfield_->SetTextInputType(ui::TEXT_INPUT_TYPE_TEXT);
+    if(!initial_text.empty()) {
+      textfield_->SetText(base::UTF8ToUTF16(initial_text));
+    }
+    textfield_->SetReadOnly(false);
+    textfield_->SetEnabled(true);
+    textfield_->SetVisible(true);
+    textfield_->UseDefaultSelectionBackgroundColor();
+#if 0
     textfield_->set_controller(this);
+#endif // 0
     //AddChildView(textfield_);
   }
 

@@ -1,4 +1,4 @@
-// Copyright 2015 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2015 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -161,7 +161,7 @@ void SystemWindow::DispatchInputEvent(const SbInputData& data,
 
 #if SB_HAS(ON_SCREEN_KEYBOARD)
   std::unique_ptr<InputEvent> input_event(
-      new InputEvent(timestamp, type, data.device_id, key_code, data.keysym, modifiers,
+      new InputEvent(timestamp, type, data.device_id, key_code, data.is_printable, data.keysym, data.text, modifiers,
                      is_repeat, math::PointF(data.position.x, data.position.y),
                      math::PointF(data.delta.x, data.delta.y), pressure,
                      math::PointF(data.size.x, data.size.y),
@@ -170,7 +170,7 @@ void SystemWindow::DispatchInputEvent(const SbInputData& data,
                      data.is_composing ? data.is_composing : false));
 #else   // SB_HAS(ON_SCREEN_KEYBOARD)
   std::unique_ptr<InputEvent> input_event(
-      new InputEvent(timestamp, type, data.device_id, key_code, data.keysym, modifiers,
+      new InputEvent(timestamp, type, data.device_id, key_code, data.is_printable, data.keysym, data.text, modifiers,
                      is_repeat, math::PointF(data.position.x, data.position.y),
                      math::PointF(data.delta.x, data.delta.y), pressure,
                      math::PointF(data.size.x, data.size.y),
@@ -178,7 +178,7 @@ void SystemWindow::DispatchInputEvent(const SbInputData& data,
 #endif  // SB_HAS(ON_SCREEN_KEYBOARD)
 #else
   std::unique_ptr<InputEvent> input_event(new InputEvent(
-      timestamp, type, data.device_id, key_code, data.key_modifiers, is_repeat,
+      timestamp, type, data.device_id, key_code, data.is_printable, data.keysym, data.text, data.key_modifiers, is_repeat,
       math::PointF(data.position.x, data.position.y),
       math::PointF(data.delta.x, data.delta.y)));
 #endif

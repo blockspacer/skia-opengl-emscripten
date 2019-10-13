@@ -3499,6 +3499,7 @@ static void handleEmscriptenKeyboardEvent(int emsc_type, const EmscriptenKeyboar
     {
 #if defined(ENABLE_COBALT)
       data->key_modifiers = key_modifiers;
+      data->is_printable = emscripten_key_event_is_printable_character(emsc_event);
       data->type = SbInputEventType::kSbInputEventTypePress;
       data->device_type = SbInputDeviceType::kSbInputDeviceTypeKeyboard;
       data->key = EmscKeycodeToSbKey(dom_pk_code);
@@ -3513,6 +3514,7 @@ static void handleEmscriptenKeyboardEvent(int emsc_type, const EmscriptenKeyboar
 #if defined(ENABLE_COBALT)
       data->key_modifiers = key_modifiers;
       data->type = SbInputEventType::kSbInputEventTypeUnpress;
+      data->is_printable = emscripten_key_event_is_printable_character(emsc_event);
       data->device_type = SbInputDeviceType::kSbInputDeviceTypeKeyboard;
       data->key = EmscKeycodeToSbKey(dom_pk_code);
       data->key_location = EmscKeycodeToSbKeyLocation(dom_pk_code);
@@ -3520,22 +3522,6 @@ static void handleEmscriptenKeyboardEvent(int emsc_type, const EmscriptenKeyboar
       data->character = Character;
 #endif // ENABLE_COBALT
 
-#if defined(ENABLE_BASE)
-      base::Optional<const char*> ev_text;
-
-      switch(dom_pk_code) {
-        case DOM_PK_A:
-        case DOM_PK_B:
-        case DOM_PK_C:
-        case DOM_PK_D:
-        {
-          ev_text = emsc_event->key;
-          printf("ev_text %s\n", ev_text.value());
-          break;
-        }
-      }
-      sendKeyEventToUI(ev_text);
-#endif // ENABLE_BASE
       break;
     }
     case EMSCRIPTEN_EVENT_KEYPRESS:
@@ -3547,6 +3533,7 @@ static void handleEmscriptenKeyboardEvent(int emsc_type, const EmscriptenKeyboar
       {
         data->key_modifiers = key_modifiers;
         data->type = SbInputEventType::kSbInputEventTypePress;
+        data->is_printable = emscripten_key_event_is_printable_character(emsc_event);
         data->device_type = SbInputDeviceType::kSbInputDeviceTypeKeyboard;
         data->key = EmscKeycodeToSbKey(dom_pk_code);
         data->key_location = EmscKeycodeToSbKeyLocation(dom_pk_code);
@@ -4793,6 +4780,10 @@ static void mainLockFreeLoop() {
       skiaUiDemo.handleSDLEvent(&e);//SDL_Event * event
     }
 
+    bool isTextInput = false;
+
+    //SDL_WaitEvent(&e);
+
     switch (e.type) {
       case SDL_QUIT: {
         quitApp = true;
@@ -4874,78 +4865,82 @@ static void mainLockFreeLoop() {
 #endif // ENABLE_COBALT
         break;
       }
+
+//#if 0
       case SDL_KEYDOWN:
       {
-        //printf("SDL_KEYDOWN %s\n", e.text.text);
 #if defined(ENABLE_COBALT)
-        isSbEvent = true;
-        isSbKeyEvent = true;
+        /// \note SDL_KEYDOWN NOT for text input!
+        /// Use SDL_KEYDOWN only for special keys!
+        if(SDL2KeycodeToSbKey(e.key.keysym.sym) != kSbKeyUnknown
+            && SDL2ScancodeToSbKey(e.key.keysym.scancode) != kSbKeyUnknown
+            && !base::IsAsciiPrintable(e.key.keysym.sym)
+            && e.key.repeat == 0)
+        {
+          printf("SDL_KEYDOWN %s\n", SDL_GetKeyName(e.key.keysym.sym));
 
-        data->key_modifiers = SDL2ModStateToSbKeyModifiers(modState);
+          isSbEvent = true;
+          isSbKeyEvent = true;
 
-        data->type = SbInputEventType::kSbInputEventTypePress;
-        data->device_type = SbInputDeviceType::kSbInputDeviceTypeKeyboard;
-        /*int key = _event.key.keysym.scancode;
-        assert(key < 512);
-        _keys[key] = (_event.type == SDL_KEYDOWN);
-        _keyShift = ((SDL_GetModState() & KMOD_SHIFT) != 0);
-        _keyCtrl = ((SDL_GetModState() & KMOD_CTRL) != 0);
-        _keyAlt = ((SDL_GetModState() & KMOD_ALT) != 0);
-        _keySuper = ((SDL_GetModState() & KMOD_GUI) != 0);*/
+          data->key_modifiers = SDL2ModStateToSbKeyModifiers(modState);
 
-        //data->key = SDL2KeycodeToSbKey(e.key.keysym.sym);
-        data->key = SDL2ScancodeToSbKey(e.key.keysym.scancode);
+          data->type = SbInputEventType::kSbInputEventTypePress;
+          data->device_type = SbInputDeviceType::kSbInputDeviceTypeKeyboard;
 
-        data->key_location = SDL2KeycodeToSbKeyLocation(e.key.keysym.sym);
+          data->is_printable = true; // TODO
 
-        //data->character = e.key.keysym.sym;
+          data->key = SDL2KeycodeToSbKey(e.key.keysym.sym);
+          //data->key = SDL2ScancodeToSbKey(e.key.keysym.scancode);
 
-        data->keysym = e.key.keysym.sym;
-        data->character = e.key.keysym.sym;
+          data->key_location = SDL2KeycodeToSbKeyLocation(e.key.keysym.sym);
 
-        //SDL_KeyboardEvent* keyboard = (reinterpret_cast<SDL_KeyboardEvent*> (&event));
+          // std::string input_str = e.text.text;
+          // base::string16 normalized_str = base::UTF8ToUTF16(input_str);
+          // //base::ConvertToUtf8AndNormalize(input_str, base::kCodepageUTF8,
+          //  //                               &normalized_str);
+          // if (!normalized_str.empty()) {
+          //   std::cout << "normalized_str_value " << normalized_str << std::endl;
+          //   /*printf("SDL_TEXTINPUT normalized_str %s\n", normalized_str.c_str());
+          //   std::wstring wide_value = base::SysUTF8ToWide(normalized_str);
+          //   std::wcout << "SDL_TEXTINPUT wide_value " << wide_value << std::endl;*/
+          // }
 
-        /*if (e.key.keysym.sym == SDLK_x) {
+          //data->character = e.key.keysym.sym;
+
+          //data->text = e.text.text;
+          data->keysym = e.key.keysym.sym; // scancode
+          data->character = e.key.keysym.sym; // scancode
+
+          //SDL_KeyboardEvent* keyboard = (reinterpret_cast<SDL_KeyboardEvent*> (&event));
+
+          /*if (e.key.keysym.sym == SDLK_x) {
           printf("(1) detected SDLK_x\n");
         }
 
-        if (e.key.keysym.scancode == SDL_SCANCODE_X) {
-          printf("(1) detected SDL_SCANCODE_X\n");
-        }*/
+          if (e.key.keysym.scancode == SDL_SCANCODE_X) {
+            printf("(1) detected SDL_SCANCODE_X\n");
+          }*/
 
-        //unicode input
-        //std::cout << keyboard->keysym.unicode << std::endl;
+          //unicode input
+          //std::cout << keyboard->keysym.unicode << std::endl;
+        }
 #endif // ENABLE_COBALT
         break;
       }
       case SDL_KEYUP:
       {
 #ifdef ENABLE_BASE
-        //printf("SDL_KEYUP %s\n", e.text.text);
-#if defined(ENABLE_BASE)
-
-        base::Optional<const char*> ev_text;
-
-        switch(e.key.keysym.scancode) {
-          case SDL_SCANCODE_A:
-          case SDL_SCANCODE_B:
-          case SDL_SCANCODE_C:
-          case SDL_SCANCODE_D:
-          {
-            ev_text = SDL_GetKeyName(e.key.keysym.sym);
-            printf("ev_text %s\n", ev_text.value());
-            printf("Keycode: %s (%d) Scancode: %s (%d)\n",
-                 SDL_GetKeyName(e.key.keysym.sym),
-                 e.key.keysym.sym,
-                 SDL_GetScancodeName(e.key.keysym.scancode),
-                 e.key.keysym.scancode);
-            break;
-          }
-        }
-        sendKeyEventToUI(ev_text);
-#endif // ENABLE_BASE
 
 #if defined(ENABLE_COBALT)
+      /// \note SDL_KEYUP NOT for text input!
+      /// Use SDL_KEYUP only for special keys!
+      if(SDL2KeycodeToSbKey(e.key.keysym.sym) != kSbKeyUnknown
+          && SDL2ScancodeToSbKey(e.key.keysym.scancode) != kSbKeyUnknown
+          && !base::IsAsciiPrintable(e.key.keysym.sym)
+          && e.key.repeat == 0)
+      {
+        printf("SDL_KEYUP %s\n",SDL_GetKeyName(e.key.keysym.sym));
+
         isSbEvent = true;
         isSbKeyEvent = true;
 
@@ -4953,16 +4948,11 @@ static void mainLockFreeLoop() {
 
         data->type = SbInputEventType::kSbInputEventTypeUnpress;
         data->device_type = SbInputDeviceType::kSbInputDeviceTypeKeyboard;
-        /*int key = _event.key.keysym.scancode;
-        assert(key < 512);
-        _keys[key] = (_event.type == SDL_KEYDOWN);
-        _keyShift = ((SDL_GetModState() & KMOD_SHIFT) != 0);
-        _keyCtrl = ((SDL_GetModState() & KMOD_CTRL) != 0);
-        _keyAlt = ((SDL_GetModState() & KMOD_ALT) != 0);
-        _keySuper = ((SDL_GetModState() & KMOD_GUI) != 0);*/
 
-        //data->key = SDL2KeycodeToSbKey(e.key.keysym.sym);
-        data->key = SDL2ScancodeToSbKey(e.key.keysym.scancode);
+        data->is_printable = true; // TODO
+
+        data->key = SDL2KeycodeToSbKey(e.key.keysym.sym);
+        //data->key = SDL2ScancodeToSbKey(e.key.keysym.scancode);
 
         /*if (e.key.keysym.sym == SDLK_x) {
           printf("(2) detected SDLK_x\n");
@@ -4972,44 +4962,160 @@ static void mainLockFreeLoop() {
           printf("(2) detected SDL_SCANCODE_X\n");
         }*/
 
-        data->key_location = SDL2KeycodeToSbKeyLocation(e.key.keysym.sym);
+            data->key_location = SDL2KeycodeToSbKeyLocation(e.key.keysym.sym);
 
-        data->keysym = e.key.keysym.sym;
-        data->character = e.key.keysym.sym;
+        // std::string input_str = e.text.text;
+        // base::string16 normalized_str = base::UTF8ToUTF16(input_str);
+        // //base::ConvertToUtf8AndNormalize(input_str, base::kCodepageUTF8,
+        // //                               &normalized_str);
+        // if (!normalized_str.empty()) {
+        //   std::cout << "normalized_str_value " << normalized_str << std::endl;
+        //   /*printf("SDL_TEXTINPUT normalized_str %s\n", normalized_str.c_str());
+        //   std::wstring wide_value = base::SysUTF8ToWide(normalized_str);
+        //   std::wcout << "SDL_TEXTINPUT wide_value " << wide_value << std::endl;*/
+        // }
+
+        /*std::string input_str = e.text.text;
+        std::string normalized_str;
+        if (base::ConvertToUtf8AndNormalize(input_str, base::kCodepageUTF8,
+                                      &normalized_str) &&
+            !normalized_str.empty()) {
+          printf("SDL_TEXTINPUT normalized_str %s\n", normalized_str.c_str());
+          std::wstring wide_value = base::SysUTF8ToWide(normalized_str);
+          std::wcout << "SDL_TEXTINPUT wide_value " << wide_value << std::endl;
+        }*/
+
+        // TODO: e.text.text
+        data->keysym = e.key.keysym.sym; // scancode
+        data->character = e.key.keysym.sym; // scancode
+      }
 #endif // ENABLE_COBALT
 #endif // ENABLE_BASE
-        break;
-      }
-      //case SDL_TEXTINPUT:
-      //{
-      //  //isSbEvent = true;
-      //  //isSbKeyEvent = true;
-      //  data->key = SDL2KeycodeToSbKey(e.key.keysym.sym);
-      //  data->key_location = SDL2KeycodeToSbKeyLocation(e.key.keysym.sym);
-      //  data->device_type = SbInputDeviceType::kSbInputDeviceTypeKeyboard;
-      //  data->character = e.key.keysym.sym; // wchar_t
-      //
-      //  //if(SDL2_last_keyboard_event_type == SDL_KEYUP) {
-      //  //  data->type = SbInputEventType::kSbInputEventTypeUnpress;
-      //  //} else {
-      //  data->type = SbInputEventType::kSbInputEventTypePress;
-      //  //}
-      //
-      //  printf("SDL_TEXTINPUT %s\n", e.text.text);
-      //
-      //  /*std::string input_str = e.text.text;
-      //  std::string normalized_str;
-      //  if (base::ConvertToUtf8AndNormalize(input_str, base::kCodepageUTF8,
-      //                                &normalized_str) &&
-      //      !normalized_str.empty()) {
-      //    printf("SDL_TEXTINPUT normalized_str %s\n", normalized_str.c_str());
-      //    std::wstring wide_value = base::SysUTF8ToWide(normalized_str);
-      //    std::wcout << "SDL_TEXTINPUT wide_value " << wide_value << std::endl;
-      //  }*/
-      //
-      //  // ConvertToUtf8AndNormalize kCodepageUTF8
-      //  break;
-      //}
+      break;
+    }
+//#endif // 0
+//#if 0
+      case SDL_TEXTINPUT: // use SDL_StartTextInput();
+      {
+        printf("SDL_TEXTINPUT1 text %s\n", e.text.text);
+        /// \note SDL_TEXTINPUT NOT for special keys!
+        /// Use SDL_TEXTINPUT only for text input!
+        /*if(SDL2KeycodeToSbKey(e.key.keysym.sym) == kSbKeyUnknown
+            && (base::IsAsciiPrintable(e.key.keysym.sym)
+                || !base::IsStringASCII(e.text.text))
+            && e.key.repeat == 0)*/
+        {
+          isTextInput = true;
+          printf("SDL_TEXTINPUT2 text %s\n", e.text.text);
+
+          {
+            std::unique_ptr<SbEvent> event1 = std::make_unique<SbEvent>();
+            event1->type = SbEventType::kSbEventTypeInput;
+            std::unique_ptr<SbInputData> data1 = nullptr;
+            data1 = createEmptySbEventData();
+            DCHECK(data1);
+            data1->key_modifiers = SDL2ModStateToSbKeyModifiers(modState);
+            data1->type = SbInputEventType::kSbInputEventTypePress;
+            data1->device_type = SbInputDeviceType::kSbInputDeviceTypeKeyboard;
+            data1->is_printable = true; // TODO
+            data1->key = SDL2KeycodeToSbKey(e.key.keysym.sym);
+            data1->key_location = SDL2KeycodeToSbKeyLocation(e.key.keysym.sym);
+            data1->text = e.text.text;
+            data1->keysym = e.key.keysym.sym; // scancode
+            data1->character = e.key.keysym.sym; // scancode
+            event1->data = data1.release();
+            DCHECK(input_browser_thread);
+            DCHECK(input_browser_thread->IsRunning());
+            input_browser_thread->task_runner()->PostTask(
+                FROM_HERE, base::Bind(
+                               [](std::unique_ptr<SbEvent> event1) {
+                                 sendBrowserInputEvent(std::move(event1));
+                               }, base::Passed(&event1)));
+          }
+          {
+            std::unique_ptr<SbEvent> event1 = std::make_unique<SbEvent>();
+            event1->type = SbEventType::kSbEventTypeInput;
+            std::unique_ptr<SbInputData> data1 = nullptr;
+            data1 = createEmptySbEventData();
+            DCHECK(data1);
+            data1->key_modifiers = SDL2ModStateToSbKeyModifiers(modState);
+            data1->type = SbInputEventType::kSbInputEventTypeUnpress;
+            data1->device_type = SbInputDeviceType::kSbInputDeviceTypeKeyboard;
+            data1->is_printable = true; // TODO
+            data1->key = SDL2KeycodeToSbKey(e.key.keysym.sym);
+            data1->key_location = SDL2KeycodeToSbKeyLocation(e.key.keysym.sym);
+            data1->text = e.text.text;
+            data1->keysym = e.key.keysym.sym; // scancode
+            data1->character = e.key.keysym.sym; // scancode
+            event1->data = data1.release();
+            DCHECK(input_browser_thread);
+            DCHECK(input_browser_thread->IsRunning());
+            input_browser_thread->task_runner()->PostTask(
+                FROM_HERE, base::Bind(
+                               [](std::unique_ptr<SbEvent> event1) {
+                                 sendBrowserInputEvent(std::move(event1));
+                               }, base::Passed(&event1)));
+          }
+        }
+
+#if 0
+#ifdef ENABLE_BASE
+
+#if defined(ENABLE_COBALT)
+      isSbEvent = true;
+      isSbKeyEvent = true;
+
+      data->key_modifiers = SDL2ModStateToSbKeyModifiers(modState);
+
+      data->type = SbInputEventType::kSbInputEventTypePress;
+      data->device_type = SbInputDeviceType::kSbInputDeviceTypeKeyboard;
+      data->is_printable = true; // TODO
+
+      data->key = SDL2KeycodeToSbKey(e.key.keysym.sym);
+      //data->key = SDL2ScancodeToSbKey(e.key.keysym.scancode);
+
+      /*if (e.key.keysym.sym == SDLK_x) {
+          printf("(2) detected SDLK_x\n");
+        }
+
+      if (e.key.keysym.scancode == SDL_SCANCODE_X) {
+        printf("(2) detected SDL_SCANCODE_X\n");
+      }*/
+
+      data->key_location = SDL2KeycodeToSbKeyLocation(e.key.keysym.sym);
+
+      //std::string input_str = e.text.text;
+      //base::string16 normalized_str = base::UTF8ToUTF16(input_str);
+
+      // //base::ConvertToUtf8AndNormalize(input_str, base::kCodepageUTF8,
+      // //                               &normalized_str);
+      // if (!normalized_str.empty()) {
+      //   std::cout << "normalized_str_value " << normalized_str << std::endl;
+      //   /*printf("SDL_TEXTINPUT normalized_str %s\n", normalized_str.c_str());
+      //   std::wstring wide_value = base::SysUTF8ToWide(normalized_str);
+      //   std::wcout << "SDL_TEXTINPUT wide_value " << wide_value << std::endl;*/
+      // }
+
+      /*std::string input_str = e.text.text;
+        std::string normalized_str;
+        if (base::ConvertToUtf8AndNormalize(input_str, base::kCodepageUTF8,
+                                      &normalized_str) &&
+            !normalized_str.empty()) {
+          printf("SDL_TEXTINPUT normalized_str %s\n", normalized_str.c_str());
+          std::wstring wide_value = base::SysUTF8ToWide(normalized_str);
+          std::wcout << "SDL_TEXTINPUT wide_value " << wide_value << std::endl;
+        }*/
+
+      // TODO: e.text.text
+      data->text = e.text.text;
+      data->keysym = e.key.keysym.sym; // scancode
+      data->character = e.key.keysym.sym; // scancode
+#endif // ENABLE_COBALT
+#endif // ENABLE_BASE
+#endif // 0
+      break;
+    }
+//#endif // 0
       case SDL_JOYBUTTONDOWN:
         printf("SDL_JOYBUTTONDOWN dev %d button %d state %d\n",
             (int)e.jbutton.which, (int)e.jbutton.button, (int)e.jbutton.state);
@@ -5045,20 +5151,51 @@ static void mainLockFreeLoop() {
                SDL_GetKeyName(e.key.keysym.sym)); // calls SDL_UCS4ToUTF8
       }*/
     }
-
     if (isSbEvent) {
-      event->data = data.release();
-      if(!input_browser_thread) {
-        sendBrowserInputEvent(std::move(event));
-      } else {
-        DCHECK(input_browser_thread);
-        DCHECK(input_browser_thread->IsRunning());
-        input_browser_thread->task_runner()->PostTask(
-          FROM_HERE, base::Bind(
-                       [](std::unique_ptr<SbEvent> event) {
-                         sendBrowserInputEvent(std::move(event));
-                       }, base::Passed(&event)));
+#if 0
+      std::unique_ptr<SbEvent> evUnpress = std::make_unique<SbEvent>();
+      if(isTextInput) {
+        std::unique_ptr<SbInputData> dataUnpress = nullptr;
+        dataUnpress = createEmptySbEventData();
+        DCHECK(dataUnpress);
+        *dataUnpress = *data;
+        dataUnpress->type = SbInputEventType::kSbInputEventTypeUnpress;
+        evUnpress->data = dataUnpress.release();
+        evUnpress->type = event->type;
       }
+#endif // 0
+//#if 0
+      //if(!isTextInput)
+      {
+        event->data = data.release();
+        if(!input_browser_thread) {
+          sendBrowserInputEvent(std::move(event));
+        } else {
+          DCHECK(input_browser_thread);
+          DCHECK(input_browser_thread->IsRunning());
+          input_browser_thread->task_runner()->PostTask(
+            FROM_HERE, base::Bind(
+                         [](std::unique_ptr<SbEvent> event) {
+                           sendBrowserInputEvent(std::move(event));
+                         }, base::Passed(&event)));
+        }
+      }
+//#endif // 0
+#if 0
+      if(isTextInput) {
+        if(!input_browser_thread) {
+          sendBrowserInputEvent(std::move(evUnpress));
+        } else {
+          DCHECK(input_browser_thread);
+          DCHECK(input_browser_thread->IsRunning());
+          input_browser_thread->task_runner()->PostTask(
+              FROM_HERE, base::Bind(
+                             [](std::unique_ptr<SbEvent> event) {
+                               sendBrowserInputEvent(std::move(event));
+                             }, base::Passed(&evUnpress)));
+        }
+      }
+#endif // 0
     }
 #endif // ENABLE_COBALT
   }
@@ -6133,6 +6270,8 @@ int main(int argc, char** argv) {
   if (SDL_GL_SetSwapInterval(1) < 0) {
     printf("Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError());
   }
+
+  SDL_StartTextInput(); // see https://stackoverflow.com/a/41575856/10904212
 #endif
 
   /*// Initialize PNG loading
@@ -6569,6 +6708,9 @@ if(!render_browser_window) {
 #endif
 
 #if defined(ENABLE_HTML5_SDL) || !defined(__EMSCRIPTEN__)
+  //Disable text input
+  SDL_StopTextInput();
+
 #if !defined(ENABLE_OPENGL)
   SDL_DestroyRenderer(sdl_ren);
 #endif // ENABLE_OPENGL

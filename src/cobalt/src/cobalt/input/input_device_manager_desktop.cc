@@ -1,4 +1,4 @@
-// Copyright 2015 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2015 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -267,6 +267,8 @@ void InputDeviceManagerDesktop::HandleKeyboardEvent(
   keyboard_event.set_char_code(key_code);
   keyboard_event.set_key_code(key_code);
   keyboard_event.set_keysym(input_event->keysym());
+  keyboard_event.set_is_printable(input_event->is_printable());
+  keyboard_event.set_text(input_event->text());
   keypress_generator_filter_.HandleKeyboardEvent(type, keyboard_event);
 
   int32_t key_code_in_int32 = static_cast<int32_t>(key_code);

@@ -1,4 +1,4 @@
-// Copyright 2015 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2015 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -72,6 +72,14 @@ class KeyboardEvent : public UIEventWithKeyState {
     return keysym_;
   }
 
+  bool is_printable() const {
+    return is_printable_;
+  }
+
+  std::string text() const {
+    return text_;
+  }
+
   // Web API: UIEvent
   // This holds a system- and implementation-dependent numerical code signifying
   // the unmodified identifier associated with the key pressed. In most cases,
@@ -108,7 +116,14 @@ class KeyboardEvent : public UIEventWithKeyState {
   // not in spec
   int32_t keysym_;
 
+  // not in spec
+  bool is_printable_;
+
+  // not in spec
+  std::string text_;
+
   uint32_t char_code_;
+
   bool repeat_;
 };
 

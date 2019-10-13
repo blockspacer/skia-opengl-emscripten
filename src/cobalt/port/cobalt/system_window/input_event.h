@@ -1,4 +1,4 @@
-// Copyright 2017 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2017 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -60,7 +60,7 @@ class InputEvent : public base::Event {
   };
 
   InputEvent(SbTimeMonotonic timestamp, Type type, int device_id, int key_code,
-             int32_t keysym, uint32 modifiers, bool is_repeat,
+             bool is_printable, int32_t keysym, std::string text, uint32 modifiers, bool is_repeat,
              const math::PointF& position = math::PointF(),
              const math::PointF& delta = math::PointF()
 #if SB_API_VERSION >= 6
@@ -77,7 +77,9 @@ class InputEvent : public base::Event {
         type_(type),
         device_id_(device_id),
         key_code_(key_code),
+        is_printable_(is_printable),
         keysym_(keysym),
+        text_(text),
         modifiers_(modifiers),
         is_repeat_(is_repeat),
         position_(position),
@@ -102,6 +104,8 @@ class InputEvent : public base::Event {
   Type type() const { return type_; }
   int key_code() const { return key_code_; }
   int32_t keysym() const { return keysym_; }
+  bool is_printable() const { return is_printable_; }
+  std::string text() const { return text_; }
   int device_id() const { return device_id_; }
   uint32 modifiers() const { return modifiers_; }
   bool is_repeat() const { return is_repeat_; }
@@ -127,6 +131,12 @@ class InputEvent : public base::Event {
 
   // not in spec
   int32_t keysym_;
+
+  // not in spec
+  bool is_printable_;
+
+  // not in spec
+  std::string text_;
 
   uint32 modifiers_;
   bool is_repeat_;

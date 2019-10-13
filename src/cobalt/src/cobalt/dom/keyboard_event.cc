@@ -1,4 +1,4 @@
-// Copyright 2015 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2015 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -32,6 +32,8 @@ KeyboardEvent::KeyboardEvent(const std::string& type)
       key_location_(kDomKeyLocationStandard),
       key_code_(0),
       keysym_(0),
+      is_printable_(true),
+      text_(""),
       char_code_(0),
       repeat_(false) {}
 
@@ -43,6 +45,8 @@ KeyboardEvent::KeyboardEvent(const std::string& type,
       key_location_(static_cast<KeyLocationCode>(init_dict.location())),
       key_code_(init_dict.key_code()),
       keysym_(init_dict.keysym()),
+      is_printable_(init_dict.is_printable()),
+      text_(init_dict.text()),
       char_code_(init_dict.char_code()),
       repeat_(init_dict.repeat()) {}
 
@@ -53,6 +57,8 @@ KeyboardEvent::KeyboardEvent(base::CobToken type,
       key_location_(static_cast<KeyLocationCode>(init_dict.location())),
       key_code_(init_dict.key_code()),
       keysym_(init_dict.keysym()),
+      is_printable_(init_dict.is_printable()),
+      text_(init_dict.text()),
       char_code_(init_dict.char_code()),
       repeat_(init_dict.repeat()) {}
 
@@ -61,6 +67,8 @@ KeyboardEvent::KeyboardEvent(UninitializedFlag uninitialized_flag)
       key_location_(kDomKeyLocationStandard),
       key_code_(0),
       keysym_(0),
+      is_printable_(true),
+      text_(""),
       char_code_(0),
       repeat_(false) {}
 

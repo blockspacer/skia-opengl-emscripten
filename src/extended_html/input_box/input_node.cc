@@ -1,4 +1,4 @@
-#include "extended_html/input_box/input_node.h"
+﻿#include "extended_html/input_box/input_node.h"
 
 //#include "extended_html/input_box/input_box.h"
 
@@ -243,7 +243,8 @@ static const float FONT_SIZE_F = 22.0f;
 static sk_sp<SkTypeface> sktpForUI;
 static bool sktpForUICreated = false;
 
-static void input_node_prepareUIFonts() {
+static bool input_node_prepareUIFonts() {
+  bool firstInit = !sktpForUI;
   if(!sktpForUI) {
     printf("creating sktpForUI\n");
 
@@ -291,6 +292,7 @@ static void input_node_prepareUIFonts() {
   }
 
   DCHECK(input_node_default_font);
+  return firstInit;
 }
 
 }
@@ -338,14 +340,10 @@ void InputNode::RenderTreeNodeVisit(const NodeVisitor *render_target) {
     skia_visitor->draw_state_.render_target);
   gfx::Canvas gfx_canvas(&cc_skia_paint_canvas, 1.0f);
 
-  input_node_prepareUIFonts(); // see DCHECK(sktpForUI);
+  bool needReinitFont = input_node_prepareUIFonts(); // see DCHECK(sktpForUI);
   DCHECK(input_node_default_font);
-
   const gfx::FontList& font_list = input_node_GetTextFontList();
   DCHECK(input_node_default_font);
-  const int size_delta = std::abs(font_list.GetFontSize() - 15); // size in pixels to add
-  DCHECK(size_delta > 0);
-
   //
 
 
@@ -532,17 +530,24 @@ void InputNode::RenderTreeNodeVisit(const NodeVisitor *render_target) {
   DCHECK(custom_generating_node_);
   if(!input_node_container_->has_children) {
     input_node_container_->addChildren(
-      custom_generating_node_->placeholder_text_);
+      custom_generating_node_->placeholder_text_,
+      custom_generating_node_->initial_text_);
     input_node_container_->has_children = true;
   }
 
   DCHECK(input_node_container_);
   DCHECK(input_node_container_->m_inputNode);
   DCHECK(input_node_container_->textfield_);
-  input_node_container_->textfield_->
-    SetFontList(font_list.Derive(
-      -size_delta, gfx::Font::UNDERLINE, gfx::Font::Weight::BOLD));
 
+  if(needReinitFont) {
+    const int size_delta = std::abs(font_list.GetFontSize() - 15); // size in pixels to add
+    DCHECK(size_delta > 0);
+    input_node_container_->textfield_->
+        SetFontList(font_list.Derive(
+            -size_delta, gfx::Font::UNDERLINE, gfx::Font::Weight::BOLD));
+  }
+
+#if 0
   input_node_container_->textfield_->SetColor(
     blink::Color(0.0f, 1.0f, 0.5f, 0.5f).Rgb());
   /*input_node_container_->textfield_->GetRenderTextForSelectionController()->
@@ -563,6 +568,7 @@ void InputNode::RenderTreeNodeVisit(const NodeVisitor *render_target) {
 
   input_node_container_->textfield_->ChangeTextDirectionAndLayoutAlignment(
     base::i18n::LEFT_TO_RIGHT);
+#endif // 0
 
   /*gfx::Range text_range, selection_range;
   base::string16 text;
@@ -659,7 +665,7 @@ void InputNode::RenderTreeNodeVisit(const NodeVisitor *render_target) {
       DCHECK(input_node_widget_->GetInputMethod());
       ui::InputMethod* im =
           input_node_widget_->GetInputMethod();
-      im->DispatchKeyEvent(&kEv);
+      im->DispatchKeyEvent(&kEv); // TODO: SendEventToSink
     }
     custom_generating_node_->
       scheduledEvents_.scheduledKeyEvents_.clear();

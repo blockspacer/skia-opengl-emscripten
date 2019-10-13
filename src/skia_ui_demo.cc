@@ -509,6 +509,7 @@ bool HandleGestureEvent(
     textfield_->SetReadOnly(false);
     textfield_->SetEnabled(true);
     textfield_->SetVisible(true);
+    textfield_->UseDefaultSelectionBackgroundColor();
 
 #if 0
     textfield_->set_placeholder_text(
@@ -2628,7 +2629,6 @@ void SkiaUiDemo::handleSDLEvent(SDL_Event *e)
           DCHECK(container_->textfield_->IsFocusable());
           DCHECK(container_->textfield_->GetEnabled());
           DCHECK(container_->textfield_->IsDrawn());
-          container_->textfield_->UseDefaultSelectionBackgroundColor();
           //container_->textfield_->SetCursorEnabled(true);
           container_->textfield_->RequestFocus();
           container_->textfield_->SetReadOnly(false);
@@ -2686,7 +2686,9 @@ void SkiaUiDemo::handleSDLEvent(SDL_Event *e)
                   ui::KeyEvent kEv(type,
                                    ui::VKEY_UNKNOWN, flags);
                   DCHECK(!kEv.stopped_propagation());
-                  kEv.set_character(*i);
+
+                  kEv.set_character(*i); // TODO: is_printable
+
                   kEv.set_source_device_id(0);
 
                   DCHECK(!kEv.stopped_propagation());

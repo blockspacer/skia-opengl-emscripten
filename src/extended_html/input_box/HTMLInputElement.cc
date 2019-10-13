@@ -13,6 +13,10 @@
 #include "base/strings/string_number_conversions.h"
 #include "base/strings/stringprintf.h"
 #include "base/strings/utf_string_conversions.h"
+#include "base/strings/string_split.h"
+#include "base/strings/string_util.h"
+#include "base/strings/utf_string_conversion_utils.h"
+#include "base/strings/string16.h"
 
 #include "cobalt/base/polymorphic_downcast.h"
 #include "cobalt/cssom/filter_function_list_value.h"
@@ -35,10 +39,7 @@
 #include "cobalt/render_tree/resource_provider.h"
 
 #include "base/lazy_instance.h"
-#include "base/strings/string_util.h"
 #include "base/trace_event/trace_event.h"
-#include "base/strings/string_split.h"
-#include "base/strings/string_util.h"
 #include "cobalt/base/tokens.h"
 #include "cobalt/base/user_log.h"
 #include "cobalt/cssom/css_style_rule.h"
@@ -79,6 +80,7 @@
 #include "cobalt/dom/mouse_event.h"
 #include "cobalt/dom/keyboard_event.h"
 #include "cobalt/dom/event.h"
+#include "cobalt/dom/keycode.h"
 
 #include "skia/include/core/SkRefCnt.h"
 #include "skia/include/core/SkTime.h"
@@ -90,6 +92,24 @@
 #include "ui/events/keycodes/dom/keycode_converter.h"
 #include "ui/events/keycodes/keyboard_code_conversion.h"
 
+#include "base/memory/ptr_util.h"
+#include "base/metrics/histogram.h"
+#include "base/metrics/histogram_macros.h"
+#include "base/strings/string_number_conversions.h"
+#include "base/strings/stringprintf.h"
+#include "build/build_config.h"
+#include "ui/events/base_event_utils.h"
+#include "ui/events/event_utils.h"
+#include "ui/events/keycodes/dom/dom_code.h"
+#include "ui/events/keycodes/dom/dom_key.h"
+#include "ui/events/keycodes/dom/keycode_converter.h"
+#include "ui/events/keycodes/keyboard_code_conversion.h"
+#include "ui/gfx/geometry/point3_f.h"
+#include "ui/gfx/geometry/point_conversions.h"
+#include "ui/gfx/geometry/safe_integer_conversions.h"
+#include "ui/gfx/transform.h"
+#include "ui/gfx/transform_util.h"
+
 using namespace cobalt;
 using namespace cobalt::cssom;
 using namespace cobalt::css_parser;
@@ -99,6 +119,699 @@ using namespace cobalt::dom;
 static int gHTMLInputElementID = 0;
 
 const char HTMLInputElement::kTagName[] = "sk_input";
+
+// see cobalt/src/cobalt/dom/keycode.h and KeyCodeToSbKey
+static ui::KeyboardCode keyFromKeyCode(uint32_t key_code) {
+  // Key events with key code of VKEY_PROCESSKEY, usually created by virtual
+  // keyboard (like handwriting input), have no effect on accelerator and
+  // they may disturb the accelerator history. So filter them out. (see
+  // https://crbug.com/918317)
+  ui::KeyboardCode result = ui::VKEY_PROCESSKEY;
+  using namespace cobalt::dom::keycode;
+  switch(key_code) {
+    case kUnknown: {
+      result = ui::VKEY_UNKNOWN;
+      break;
+    }
+    case kCancel: {
+      result = ui::VKEY_CANCEL;
+      break;
+    }
+    case kBack: {
+      result = ui::VKEY_BACK;
+      break;
+    }
+    case kTab: {
+      result = ui::VKEY_TAB;
+      break;
+    }
+    case kBacktab: {
+      result = ui::VKEY_BACKTAB;
+      break;
+    }
+    case kClear: {
+      result = ui::VKEY_CLEAR;
+      break;
+    }
+    case kReturn: {
+      result = ui::VKEY_RETURN;
+      break;
+    }
+    case kShift: {
+      result = ui::VKEY_SHIFT;
+      break;
+    }
+    case kControl: {
+      result = ui::VKEY_CONTROL;
+      break;
+    }
+    case kMenu: {
+      result = ui::VKEY_MENU;
+      break;
+    }
+    case kPause: {
+      result = ui::VKEY_PAUSE;
+      break;
+    }
+    case kCapital: {
+      result = ui::VKEY_CAPITAL;
+      break;
+    }
+    case kKana: {
+      result = ui::VKEY_KANA;
+      break;
+    }
+    /*case kHangul: {
+      result = ui::VKEY_UNKNOWN;
+      break;
+    }*/
+    case kJunja: {
+      result = ui::VKEY_JUNJA;
+      break;
+    }
+    case kFinal: {
+      result = ui::VKEY_FINAL;
+      break;
+    }
+    case kHanja: {
+      result = ui::VKEY_HANJA;
+      break;
+    }
+    /*case kKanji: {
+      result = ui::VKEY_KANJI;
+      break;
+    }*/
+    case kEscape: {
+      result = ui::VKEY_ESCAPE;
+      break;
+    }
+    case kConvert: {
+      result = ui::VKEY_CONVERT;
+      break;
+    }
+    case kNonconvert: {
+      result = ui::VKEY_NONCONVERT;
+      break;
+    }
+    case kAccept: {
+      result = ui::VKEY_ACCEPT;
+      break;
+    }
+    case kModechange: {
+      result = ui::VKEY_MODECHANGE;
+      break;
+    }
+    case kSpace: {
+      result = ui::VKEY_SPACE;
+      break;
+    }
+    case kPrior: {
+      result = ui::VKEY_PRIOR;
+      break;
+    }
+    case kNext: {
+      result = ui::VKEY_NEXT;
+      break;
+    }
+    case kEnd: {
+      result = ui::VKEY_END;
+      break;
+    }
+    case kHome: {
+      result = ui::VKEY_HOME;
+      break;
+    }
+    case kLeft: {
+      result = ui::VKEY_LEFT;
+      break;
+    }
+    case kUp: {
+      result = ui::VKEY_UP;
+      break;
+    }
+    case kRight: {
+      result = ui::VKEY_RIGHT;
+      break;
+    }
+    case kDown: {
+      result = ui::VKEY_DOWN;
+      break;
+    }
+    case kSelect: {
+      result = ui::VKEY_SELECT;
+      break;
+    }
+    case kPrint: {
+      result = ui::VKEY_PRINT;
+      break;
+    }
+    case kExecute: {
+      result = ui::VKEY_EXECUTE;
+      break;
+    }
+    case kSnapshot: {
+      result = ui::VKEY_SNAPSHOT;
+      break;
+    }
+    case kInsert: {
+      result = ui::VKEY_INSERT;
+      break;
+    }
+    case kDelete: {
+      result = ui::VKEY_DELETE;
+      break;
+    }
+    case kHelp: {
+      result = ui::VKEY_HELP;
+      break;
+    }
+    case k0: {
+      result = ui::VKEY_0;
+      break;
+    }
+    case k1: {
+      result = ui::VKEY_1;
+      break;
+    }
+    case k2: {
+      result = ui::VKEY_2;
+      break;
+    }
+    case k3: {
+      result = ui::VKEY_3;
+      break;
+    }
+    case k4: {
+      result = ui::VKEY_4;
+      break;
+    }
+    case k5: {
+      result = ui::VKEY_5;
+      break;
+    }
+    case k6: {
+      result = ui::VKEY_6;
+      break;
+    }
+    case k7: {
+      result = ui::VKEY_7;
+      break;
+    }
+    case k8: {
+      result = ui::VKEY_8;
+      break;
+    }
+    case k9: {
+      result = ui::VKEY_9;
+      break;
+    }
+    case kA: {
+      result = ui::VKEY_A;
+      break;
+    }
+    case kB: {
+      result = ui::VKEY_B;
+      break;
+    }
+    case kC: {
+      result = ui::VKEY_C;
+      break;
+    }
+    case kD: {
+      result = ui::VKEY_D;
+      break;
+    }
+    case kE: {
+      result = ui::VKEY_E;
+      break;
+    }
+    case kF: {
+      result = ui::VKEY_F;
+      break;
+    }
+    case kG: {
+      result = ui::VKEY_G;
+      break;
+    }
+    case kH: {
+      result = ui::VKEY_H;
+      break;
+    }
+    case kI: {
+      result = ui::VKEY_I;
+      break;
+    }
+    case kJ: {
+      result = ui::VKEY_J;
+      break;
+    }
+    case kK: {
+      result = ui::VKEY_K;
+      break;
+    }
+    case kL: {
+      result = ui::VKEY_L;
+      break;
+    }
+    case kM: {
+      result = ui::VKEY_M;
+      break;
+    }
+    case kN: {
+      result = ui::VKEY_N;
+      break;
+    }
+    case kO: {
+      result = ui::VKEY_O;
+      break;
+    }
+    case kP: {
+      result = ui::VKEY_P;
+      break;
+    }
+    case kQ: {
+      result = ui::VKEY_Q;
+      break;
+    }
+    case kR: {
+      result = ui::VKEY_R;
+      break;
+    }
+    case kS: {
+      result = ui::VKEY_S;
+      break;
+    }
+    case kT: {
+      result = ui::VKEY_T;
+      break;
+    }
+    case kU: {
+      result = ui::VKEY_U;
+      break;
+    }
+    case kV: {
+      result = ui::VKEY_V;
+      break;
+    }
+    case kW: {
+      result = ui::VKEY_W;
+      break;
+    }
+    case kX: {
+      result = ui::VKEY_X;
+      break;
+    }
+    case kY: {
+      result = ui::VKEY_Y;
+      break;
+    }
+    case kZ: {
+      result = ui::VKEY_Z;
+      break;
+    }
+    /*case kLwin: {
+      result = ui::VKEY_UNKNOWN;
+      break;
+    }*/
+    case kCommand: {
+      result = ui::VKEY_COMMAND;
+      break;
+    }
+    case kRwin: {
+      result = ui::VKEY_RWIN;
+      break;
+    }
+    case kApps: {
+      result = ui::VKEY_APPS;
+      break;
+    }
+    case kSleep: {
+      result = ui::VKEY_SLEEP;
+      break;
+    }
+    case kNumpad0: {
+      result = ui::VKEY_NUMPAD0;
+      break;
+    }
+    case kNumpad1: {
+      result = ui::VKEY_NUMPAD1;
+      break;
+    }
+    case kNumpad2: {
+      result = ui::VKEY_NUMPAD2;
+      break;
+    }
+    case kNumpad3: {
+      result = ui::VKEY_NUMPAD3;
+      break;
+    }
+    case kNumpad4: {
+      result = ui::VKEY_NUMPAD4;
+      break;
+    }
+    case kNumpad5: {
+      result = ui::VKEY_NUMPAD5;
+      break;
+    }
+    case kNumpad6: {
+      result = ui::VKEY_NUMPAD6;
+      break;
+    }
+    case kNumpad7: {
+      result = ui::VKEY_NUMPAD7;
+      break;
+    }
+    case kNumpad8: {
+      result = ui::VKEY_NUMPAD8;
+      break;
+    }
+    case kNumpad9: {
+      result = ui::VKEY_NUMPAD9;
+      break;
+    }
+    case kMultiply: {
+      result = ui::VKEY_MULTIPLY;
+      break;
+    }
+    case kAdd: {
+      result = ui::VKEY_ADD;
+      break;
+    }
+    case kSeparator: {
+      result = ui::VKEY_SEPARATOR;
+      break;
+    }
+    case kSubtract: {
+      result = ui::VKEY_SUBTRACT;
+      break;
+    }
+    case kDecimal: {
+      result = ui::VKEY_DECIMAL;
+      break;
+    }
+    case kDivide: {
+      result = ui::VKEY_DIVIDE;
+      break;
+    }
+    case kF1: {
+      result = ui::VKEY_F1;
+      break;
+    }
+    case kF2: {
+      result = ui::VKEY_F2;
+      break;
+    }
+    case kF3: {
+      result = ui::VKEY_F3;
+      break;
+    }
+    case kF4: {
+      result = ui::VKEY_F4;
+      break;
+    }
+    case kF5: {
+      result = ui::VKEY_F5;
+      break;
+    }
+    case kF6: {
+      result = ui::VKEY_F6;
+      break;
+    }
+    case kF7: {
+      result = ui::VKEY_F7;
+      break;
+    }
+    case kF8: {
+      result = ui::VKEY_F8;
+      break;
+    }
+    case kF9: {
+      result = ui::VKEY_F9;
+      break;
+    }
+    case kF10: {
+      result = ui::VKEY_F10;
+      break;
+    }
+    case kF11: {
+      result = ui::VKEY_F11;
+      break;
+    }
+    case kF12: {
+      result = ui::VKEY_F12;
+      break;
+    }
+    case kF13: {
+      result = ui::VKEY_F13;
+      break;
+    }
+    case kF14: {
+      result = ui::VKEY_F14;
+      break;
+    }
+    case kF15: {
+      result = ui::VKEY_F15;
+      break;
+    }
+    case kF16: {
+      result = ui::VKEY_F16;
+      break;
+    }
+    case kF17: {
+      result = ui::VKEY_F17;
+      break;
+    }
+    case kF18: {
+      result = ui::VKEY_F18;
+      break;
+    }
+    case kF19: {
+      result = ui::VKEY_F19;
+      break;
+    }
+    case kF20: {
+      result = ui::VKEY_F20;
+      break;
+    }
+    case kF21: {
+      result = ui::VKEY_F21;
+      break;
+    }
+    case kF22: {
+      result = ui::VKEY_F22;
+      break;
+    }
+    case kF23: {
+      result = ui::VKEY_F23;
+      break;
+    }
+    case kF24: {
+      result = ui::VKEY_F24;
+      break;
+    }
+    case kNumlock: {
+      result = ui::VKEY_NUMLOCK;
+      break;
+    }
+    case kScroll: {
+      result = ui::VKEY_SCROLL;
+      break;
+    }
+    case kWlan: {
+      result = ui::VKEY_WLAN;
+      break;
+    }
+    case kPower: {
+      result = ui::VKEY_POWER;
+      break;
+    }
+    case kLshift: {
+      result = ui::VKEY_LSHIFT;
+      break;
+    }
+    case kRshift: {
+      result = ui::VKEY_RSHIFT;
+      break;
+    }
+    case kLcontrol: {
+      result = ui::VKEY_LCONTROL;
+      break;
+    }
+    case kRcontrol: {
+      result = ui::VKEY_RCONTROL;
+      break;
+    }
+    case kLmenu: {
+      result = ui::VKEY_LMENU;
+      break;
+    }
+    case kRmenu: {
+      result = ui::VKEY_RMENU;
+      break;
+    }
+    case kBrowserBack: {
+      result = ui::VKEY_BROWSER_BACK;
+      break;
+    }
+    case kBrowserForward: {
+      result = ui::VKEY_BROWSER_FORWARD;
+      break;
+    }
+    case kBrowserRefresh: {
+      result = ui::VKEY_BROWSER_REFRESH;
+      break;
+    }
+    case kBrowserStop: {
+      result = ui::VKEY_BROWSER_STOP;
+      break;
+    }
+    case kBrowserSearch: {
+      result = ui::VKEY_BROWSER_SEARCH;
+      break;
+    }
+    case kBrowserFavorites: {
+      result = ui::VKEY_BROWSER_FAVORITES;
+      break;
+    }
+    case kBrowserHome: {
+      result = ui::VKEY_BROWSER_HOME;
+      break;
+    }
+    case kVolumeMute: {
+      result = ui::VKEY_VOLUME_MUTE;
+      break;
+    }
+    case kVolumeDown: {
+      result = ui::VKEY_VOLUME_DOWN;
+      break;
+    }
+    case kVolumeUp: {
+      result = ui::VKEY_VOLUME_UP;
+      break;
+    }
+    case kMediaNextTrack: {
+      result = ui::VKEY_MEDIA_NEXT_TRACK;
+      break;
+    }
+    case kMediaPrevTrack: {
+      result = ui::VKEY_MEDIA_PREV_TRACK;
+      break;
+    }
+    case kMediaStop: {
+      result = ui::VKEY_MEDIA_STOP;
+      break;
+    }
+    case kMediaPlayPause: {
+      result = ui::VKEY_MEDIA_PLAY_PAUSE;
+      break;
+    }
+    case kMediaLaunchMail: {
+      result = ui::VKEY_MEDIA_LAUNCH_MAIL;
+      break;
+    }
+    case kMediaLaunchMediaSelect: {
+      result = ui::VKEY_MEDIA_LAUNCH_MEDIA_SELECT;
+      break;
+    }
+    case kMediaLaunchApp1: {
+      result = ui::VKEY_MEDIA_LAUNCH_APP1;
+      break;
+    }
+    case kMediaLaunchApp2: {
+      result = ui::VKEY_MEDIA_LAUNCH_APP2;
+      break;
+    }
+    case kOem1: {
+      result = ui::VKEY_OEM_1;
+      break;
+    }
+    case kOemPlus: {
+      result = ui::VKEY_OEM_PLUS;
+      break;
+    }
+    case kOemComma: {
+      result = ui::VKEY_OEM_COMMA;
+      break;
+    }
+    case kOemMinus: {
+      result = ui::VKEY_OEM_MINUS;
+      break;
+    }
+    case kOemPeriod: {
+      result = ui::VKEY_OEM_PERIOD;
+      break;
+    }
+    case kOem2: {
+      result = ui::VKEY_OEM_2;
+      break;
+    }
+    case kOem3: {
+      result = ui::VKEY_OEM_3;
+      break;
+    }
+    case kBrightnessDown: {
+      result = ui::VKEY_BRIGHTNESS_DOWN;
+      break;
+    }
+    case kBrightnessUp: {
+      result = ui::VKEY_BRIGHTNESS_UP;
+      break;
+    }
+    case kKbdBrightnessDown: {
+      result = ui::VKEY_KBD_BRIGHTNESS_DOWN;
+      break;
+    }
+    case kOem4: {
+      result = ui::VKEY_OEM_4;
+      break;
+    }
+    case kOem5: {
+      result = ui::VKEY_OEM_5;
+      break;
+    }
+    case kOem6: {
+      result = ui::VKEY_OEM_6;
+      break;
+    }
+    case kOem7: {
+      result = ui::VKEY_OEM_7;
+      break;
+    }
+    case kOem8: {
+      result = ui::VKEY_OEM_8;
+      break;
+    }
+    case kOem102: {
+      result = ui::VKEY_OEM_102;
+      break;
+    }
+    case kKbdBrightnessUp: {
+      result = ui::VKEY_KBD_BRIGHTNESS_UP;
+      break;
+    }
+    case kDbeSbcschar: {
+      result = ui::VKEY_DBE_SBCSCHAR;
+      break;
+    }
+    case kDbeDbcschar: {
+      result = ui::VKEY_DBE_DBCSCHAR;
+      break;
+    }
+    case kPlay: {
+      result = ui::VKEY_PLAY;
+      break;
+    }
+    case kMediaRewind: {
+      result = ui::VKEY_OEM_103;
+      break;
+    }
+    case kMediaFastForward: {
+      result = ui::VKEY_OEM_104;
+      break;
+    }
+  }
+  return result;
+}
 
 HTMLInputElement::HTMLInputElement(Document* document)
     : HTMLCustomElement(document, base::CobToken(kTagName)) {
@@ -131,16 +844,30 @@ HTMLInputElement::HTMLInputElement(Document* document)
               (bool)(mouseEvent->buttons() & kSbKeyMouse2),
               (bool)(mouseEvent->buttons() & kSbKeyMouse3));
       //(screen_->GetCursorScreenPoint());
-      int buttons_flags = 0;
+      int changed_button_flags = ui::EF_NONE;
       if(mouseEvent->buttons() & kSbKeyMouse2) { // left
-        buttons_flags |= ui::EF_LEFT_MOUSE_BUTTON;
+        changed_button_flags |= ui::EF_LEFT_MOUSE_BUTTON;
       }
       // TODO
       /*if(mouseEvent->buttons() & kSbKeyMouse2) { // middle
-        buttons_flags |= ui::EF_MIDDLE_MOUSE_BUTTON;
+        changed_button_flags |= ui::EF_MIDDLE_MOUSE_BUTTON;
       }*/
       if(mouseEvent->buttons() & kSbKeyMouse3) { // right
-        buttons_flags |= ui::EF_RIGHT_MOUSE_BUTTON;
+        changed_button_flags |= ui::EF_RIGHT_MOUSE_BUTTON;
+      }
+      int flags = ui::EF_NONE;
+      flags |= changed_button_flags;
+      if(mouseEvent->ctrl_key()) {
+        flags |= ui::EF_CONTROL_DOWN;
+      }
+      if(mouseEvent->shift_key()) {
+        flags |= ui::EF_SHIFT_DOWN;
+      }
+      if(mouseEvent->alt_key()) {
+        flags |= ui::EF_ALT_DOWN;
+      }
+      if(mouseEvent->meta_key()) {
+        flags |= ui::EF_COMMAND_DOWN;
       }
       {
         gfx::Point point(x, y);
@@ -150,8 +877,8 @@ HTMLInputElement::HTMLInputElement(Document* document)
                            point,
                            point,
                            ui::EventTimeForNow(),
-                           buttons_flags,
-                           buttons_flags);
+                           flags,
+                           changed_button_flags);
 
         // TODO: event_generator_ https://github.com/blockspacer/skia-opengl-emscripten/blob/bb16ab108bc4018890f4ff3179250b76c0d9053b/src/chromium/ui/views/controls/combobox/combobox_unittest.cc#L228
         {
@@ -192,16 +919,30 @@ HTMLInputElement::HTMLInputElement(Document* document)
               attrVal.c_str(),
               elem->text_content().value_or("").c_str());
 
-      int buttons_flags = 0;
+      int changed_button_flags = ui::EF_NONE;
       if(mouseEvent->buttons() & kSbKeyMouse2) { // left
-        buttons_flags |= ui::EF_LEFT_MOUSE_BUTTON;
+        changed_button_flags |= ui::EF_LEFT_MOUSE_BUTTON;
       }
       // TODO
       /*if(mouseEvent->buttons() & kSbKeyMouse2) { // middle
-        buttons_flags |= ui::EF_MIDDLE_MOUSE_BUTTON;
+        changed_button_flags |= ui::EF_MIDDLE_MOUSE_BUTTON;
       }*/
       if(mouseEvent->buttons() & kSbKeyMouse3) { // right
-        buttons_flags |= ui::EF_RIGHT_MOUSE_BUTTON;
+        changed_button_flags |= ui::EF_RIGHT_MOUSE_BUTTON;
+      }
+      int flags = ui::EF_NONE;
+      flags |= changed_button_flags;
+      if(mouseEvent->ctrl_key()) {
+        flags |= ui::EF_CONTROL_DOWN;
+      }
+      if(mouseEvent->shift_key()) {
+        flags |= ui::EF_SHIFT_DOWN;
+      }
+      if(mouseEvent->alt_key()) {
+        flags |= ui::EF_ALT_DOWN;
+      }
+      if(mouseEvent->meta_key()) {
+        flags |= ui::EF_COMMAND_DOWN;
       }
       {
         gfx::Point point(x, y);
@@ -211,8 +952,8 @@ HTMLInputElement::HTMLInputElement(Document* document)
                            point,
                            point,
                            ui::EventTimeForNow(),
-                           buttons_flags,
-                           buttons_flags);
+                           flags,
+                           changed_button_flags);
 
         // TODO: event_generator_ https://github.com/blockspacer/skia-opengl-emscripten/blob/bb16ab108bc4018890f4ff3179250b76c0d9053b/src/chromium/ui/views/controls/combobox/combobox_unittest.cc#L228
         {
@@ -237,6 +978,12 @@ HTMLInputElement::HTMLInputElement(Document* document)
       //CHECK(input_box);
       //input_box->click(event, elem);
 
+      dom::HTMLElement* elementHTML =
+          // TODO: polymorphic_downcast Check failed: dynamic_cast<Derived>(base) == base.
+          base::polymorphic_downcast<dom::HTMLElement*>(elem.get());
+      CHECK(elementHTML);
+      elementHTML->Focus();
+
       const dom::MouseEvent* const mouseEvent =
         // TODO: polymorphic_downcast Check failed: dynamic_cast<Derived>(base) == base.
         base::polymorphic_downcast<const dom::MouseEvent* const>(event.get());
@@ -253,6 +1000,7 @@ HTMLInputElement::HTMLInputElement(Document* document)
               attrVal.c_str(),
               elem->text_content().value_or("").c_str());
 
+#if 0
       {
         gfx::Point point(x, y);
         //gfx::Point point(screen_->GetCursorScreenPoint());
@@ -296,6 +1044,7 @@ HTMLInputElement::HTMLInputElement(Document* document)
             });
         }
       }
+#endif // 0
 
       return true;
     });
@@ -332,16 +1081,30 @@ HTMLInputElement::HTMLInputElement(Document* document)
             attrVal.c_str(),
             elem->text_content().value_or("").c_str());
 
-    int buttons_flags = 0;
+    int changed_button_flags = ui::EF_NONE;
       if(mouseEvent->buttons() & kSbKeyMouse2) { // left
-        buttons_flags |= ui::EF_LEFT_MOUSE_BUTTON;
+        changed_button_flags |= ui::EF_LEFT_MOUSE_BUTTON;
       }
       // TODO
       /*if(mouseEvent->buttons() & kSbKeyMouse2) { // middle
-        buttons_flags |= ui::EF_MIDDLE_MOUSE_BUTTON;
+        changed_button_flags |= ui::EF_MIDDLE_MOUSE_BUTTON;
       }*/
       if(mouseEvent->buttons() & kSbKeyMouse3) { // right
-        buttons_flags |= ui::EF_RIGHT_MOUSE_BUTTON;
+        changed_button_flags |= ui::EF_RIGHT_MOUSE_BUTTON;
+      }
+      int flags = ui::EF_NONE;
+      flags |= changed_button_flags;
+      if(mouseEvent->ctrl_key()) {
+        flags |= ui::EF_CONTROL_DOWN;
+      }
+      if(mouseEvent->shift_key()) {
+        flags |= ui::EF_SHIFT_DOWN;
+      }
+      if(mouseEvent->alt_key()) {
+        flags |= ui::EF_ALT_DOWN;
+      }
+      if(mouseEvent->meta_key()) {
+        flags |= ui::EF_COMMAND_DOWN;
       }
     {
       gfx::Point point(x, y);
@@ -351,8 +1114,8 @@ HTMLInputElement::HTMLInputElement(Document* document)
                          point,
                          point,
                          ui::EventTimeForNow(),
-                         buttons_flags,
-                         buttons_flags);
+                         flags,
+                         changed_button_flags);
 
       // TODO: event_generator_ https://github.com/blockspacer/skia-opengl-emscripten/blob/bb16ab108bc4018890f4ff3179250b76c0d9053b/src/chromium/ui/views/controls/combobox/combobox_unittest.cc#L228
       {
@@ -396,7 +1159,9 @@ HTMLInputElement::HTMLInputElement(Document* document)
         base::polymorphic_downcast<dom::HTMLElement*>(elem.get());
       CHECK(elementHTML);
       //elementHTML->GetUiNavItem()->Focus();
-      elementHTML->Focus();
+
+      //elementHTML->Focus();
+
       return true;
     });
 
@@ -430,7 +1195,11 @@ HTMLInputElement::HTMLInputElement(Document* document)
         // TODO: polymorphic_downcast Check failed: dynamic_cast<Derived>(base) == base.
         base::polymorphic_downcast<dom::HTMLElement*>(elem.get());
       CHECK(elementHTML);
-      elementHTML->Blur();
+
+
+      // elementHTML->Blur(); // TODO
+
+
       /*//elementHTML->GetUiNavItem()->Blur();
       if(indicated_element == elementHTML) {
         printf("indicated_element == elementHTML\n");
@@ -472,6 +1241,8 @@ HTMLInputElement::HTMLInputElement(Document* document)
         = base::WideToUTF8(wchar_src, 1, &utf8_str) && !utf8_str.empty();
       if (isUTF8) {
         printf("keyup normalized_str %s\n", utf8_str.c_str());
+      } else {
+        utf8_str.clear();
       }
 
       wprintf(L"keysym character, %s", keyboardEvent->keysym());
@@ -513,23 +1284,74 @@ HTMLInputElement::HTMLInputElement(Document* document)
         flags |= ui::EF_COMMAND_DOWN;
       }
       base::string16 utf16_str;
-      bool isUTF16 =
-        base::WideToUTF16(wchar_src, 1, &utf16_str) && !utf16_str.empty();
-      //DCHECK(isUTF16);
-      if(!isUTF16) {
-        if(isUTF8) {
-          utf16_str = base::UTF8ToUTF16(utf8_str);
+      if(utf16_str.empty()
+          && !keyboardEvent->text().empty()
+          /*&& !base::IsStringASCII(keyboardEvent->text())*/) {
+        std::cout << "keyboardEvent->text() " << keyboardEvent->text() << std::endl;
+        utf16_str = base::UTF8ToUTF16(keyboardEvent->text());
+        std::cout << "keyboardEvent->text() utf16_str " << utf16_str << std::endl;
+      }
+      if(utf16_str.empty()) {
+        utf16_str = base::UTF8ToUTF16(utf8_str);
+      }
+      /*if(utf16_str.empty() && keyboardEvent->char_code()) {
+        utf16_str.push_back(static_cast<base::char16>(keyboardEvent->char_code()));
+      }*/
+      if(utf16_str.empty()) {
+        bool isUTF16 =
+            base::WideToUTF16(wchar_src, 1, &utf16_str) && !utf16_str.empty();
+        //DCHECK(isUTF16);
+        if (isUTF16) {
+          std::cout << "keyup normalized_str16" << utf16_str << std::endl;
+        } else {
+          utf16_str.clear();
         }
       }
+      ui::KeyboardCode keyboardCode = ui::VKEY_UNKNOWN;
+      //if(keyboardEvent->text().empty()
+      //    /*&& base::IsStringASCII(keyboardEvent->text())*/)
+      {
+        keyboardCode = keyFromKeyCode(keyboardEvent->key_code());
+      }
+      if(utf16_str.empty() && keyboardCode != ui::VKEY_UNKNOWN) {
+        //utf16_str = base::UTF8ToUTF16(keyboardEvent->key());
+        //utf16_str.push_back(static_cast<base::char16>(keyboardCode));
+        //utf16_str.push_back(static_cast<base::char16>(keyboardEvent->char_code()));
+      }
+      std::cout << "utf16_str utf16_str " << utf16_str << std::endl;
       // TODO: VKEY_NUMPAD4 https://github.com/blockspacer/skia-opengl-emscripten/blob/bb16ab108bc4018890f4ff3179250b76c0d9053b/src/chromium/ui/events/keycodes/keyboard_code_conversion.cc#L159
       if(!utf16_str.empty()) {
+        std::cout << "utf16_str utf16_str utf16_str" << utf16_str << std::endl;
         for (base::string16::const_iterator i = utf16_str.begin();
            i != utf16_str.end(); ++i) {
           printf("sending OnKeyEvent(&release_event)\n");
           ui::KeyEvent release_event(ui::ET_KEY_RELEASED,
-            ui::VKEY_UNKNOWN, flags);
+            // Key events with key code of VKEY_PROCESSKEY, usually created by virtual
+            // keyboard (like handwriting input), have no effect on accelerator and
+            // they may disturb the accelerator history. So filter them out. (see
+            // https://crbug.com/918317)
+            keyboardCode,
+            ui::DomCode::NONE,
+            flags);
           DCHECK(!release_event.stopped_propagation());
-          release_event.set_character(*i);
+
+          //release_event.set_character(static_cast<base::char16>(wchar_src[0]));
+          //release_event.set_character(static_cast<base::char16>(keyboardEvent->char_code()));
+
+          //if(keyboardCode == ui::VKEY_UNKNOWN)
+          base::string16 char_str;
+          char_str.push_back(static_cast<base::char16>(*i));
+          bool is_printable
+              = keyboardEvent->is_printable()
+              && (!base::IsStringASCII(char_str)
+                  || base::IsAsciiPrintable(*i));
+          std::cout << "keyup is_printable 1" << (keyboardEvent->is_printable() ? "true" : "false") << std::endl;
+          std::cout << "keyup is_printable 2" << (is_printable ? "true" : "false") << std::endl;
+          if(is_printable)
+          {
+            release_event.set_character(*i);
+          }
+          //release_event.set_character(base::UTF8ToUTF16("Ф").at(0));
           release_event.set_source_device_id(0);
 
           DCHECK(!release_event.stopped_propagation());
@@ -557,6 +1379,7 @@ HTMLInputElement::HTMLInputElement(Document* document)
       return true;
     });
 
+#if 0
   this->add_event_cb("on-keypress",
     [this/*, newNode*/](const scoped_refptr<dom::Event> &event,
         scoped_refptr<cobalt::dom::Element> elem, const std::string& attrVal) {
@@ -577,7 +1400,7 @@ HTMLInputElement::HTMLInputElement(Document* document)
               attrVal.c_str(),
               elem->text_content().value_or("").c_str());
       printf("which %d\n", keyboardEvent->which());
-      printf("character %d\n", keyboardEvent->keysym());
+      printf("keypress character %d\n", keyboardEvent->keysym());
       wprintf(L"wprintf character %s\n", keyboardEvent->keysym());
 /*#if defined(ENABLE_HTML5_SDL) || !defined(__EMSCRIPTEN__)
       printf("printf character SDL_GetKeyName %s\n", SDL_GetKeyName(keyboardEvent->keysym()));
@@ -592,7 +1415,9 @@ HTMLInputElement::HTMLInputElement(Document* document)
       bool isUTF8
         = base::WideToUTF8(wchar_src, 1, &utf8_str) && !utf8_str.empty();
       if (isUTF8) {
-        printf("keyup normalized_str %s\n", utf8_str.c_str());
+        printf("keypress normalized_str %s\n", utf8_str.c_str());
+      } else {
+        utf8_str.clear();
       }
 
       wprintf(L"keysym character, %s", keyboardEvent->keysym());
@@ -633,29 +1458,80 @@ HTMLInputElement::HTMLInputElement(Document* document)
       if(keyboardEvent->meta_key()) {
         flags |= ui::EF_COMMAND_DOWN;
       }
-      base::string16 utf16_str;
       /// \todo EF_CONTROL_DOWN
       /// https://github.com/blockspacer/skia-opengl-emscripten/blob/bb16ab108bc4018890f4ff3179250b76c0d9053b/src/chromium/ui/events/keycodes/keyboard_code_conversion.cc#L266
-      bool isUTF16 =
-        base::WideToUTF16(wchar_src, 1, &utf16_str) && !utf16_str.empty();
+      base::string16 utf16_str;
+      if(utf16_str.empty()
+          && !keyboardEvent->text().empty()
+          /*&& !base::IsStringASCII(keyboardEvent->text())*/) {
+        std::cout << "keyboardEvent->text() " << keyboardEvent->text() << std::endl;
+        utf16_str = base::UTF8ToUTF16(keyboardEvent->text());
+        std::cout << "keyboardEvent->text() utf16_str " << utf16_str << std::endl;
+      }
+      if(utf16_str.empty()) {
+        utf16_str = base::UTF8ToUTF16(utf8_str);
+      }
+      /*if(utf16_str.empty() && keyboardEvent->char_code()) {
+        utf16_str.push_back(static_cast<base::char16>(keyboardEvent->char_code()));
+      }*/
+      if(utf16_str.empty()) {
+        bool isUTF16 =
+            base::WideToUTF16(wchar_src, 1, &utf16_str) && !utf16_str.empty();
+        //DCHECK(isUTF16);
+        if (isUTF16) {
+          std::cout << "keypress normalized_str16" << utf16_str << std::endl;
+        } else {
+          utf16_str.clear();
+        }
+      }
       //const base::string16 inputText = base::UTF8ToUTF16("�");
       //DCHECK(isUTF16);
       //const base::string16 inputText = utf8_str;
-      if(!isUTF16) {
-        if(isUTF8) {
-          utf16_str = base::UTF8ToUTF16(utf8_str);
-        }
+      ui::KeyboardCode keyboardCode = ui::VKEY_UNKNOWN;
+      //if(keyboardEvent->text().empty()
+      //    /*&& base::IsStringASCII(keyboardEvent->text())*/)
+      {
+        keyboardCode = keyFromKeyCode(keyboardEvent->key_code());
       }
+      if(utf16_str.empty() && keyboardCode != ui::VKEY_UNKNOWN) {
+        //utf16_str = base::UTF8ToUTF16(keyboardEvent->key());
+        //utf16_str.push_back(static_cast<base::char16>(keyboardCode));
+        //utf16_str.push_back(static_cast<base::char16>(keyboardEvent->char_code()));
+      }
+      std::cout << "utf16_str utf16_str " << utf16_str << std::endl;
       // TODO: VKEY_NUMPAD4 https://github.com/blockspacer/skia-opengl-emscripten/blob/bb16ab108bc4018890f4ff3179250b76c0d9053b/src/chromium/ui/events/keycodes/keyboard_code_conversion.cc#L159
       if(!utf16_str.empty()) {
+        std::cout << "utf16_str utf16_str utf16_str" << utf16_str << std::endl;
         for (base::string16::const_iterator i = utf16_str.begin();
            i != utf16_str.end(); ++i) {
           printf("sending OnKeyEvent(&press_event)\n");
 
           ui::KeyEvent press_event(ui::ET_KEY_PRESSED,
-           ui::VKEY_PROCESSKEY, flags);
+            // Key events with key code of VKEY_PROCESSKEY, usually created by virtual
+            // keyboard (like handwriting input), have no effect on accelerator and
+            // they may disturb the accelerator history. So filter them out. (see
+            // https://crbug.com/918317)
+            keyboardCode,
+            ui::DomCode::NONE,
+            flags);
           DCHECK(!press_event.stopped_propagation());
-          press_event.set_character(*i);
+          //press_event.set_character(static_cast<base::char16>(wchar_src[0]));
+          //press_event.set_character(static_cast<base::char16>(keyboardEvent->char_code()));
+
+          //if(keyboardCode == ui::VKEY_UNKNOWN)
+          base::string16 char_str;
+          char_str.push_back(static_cast<base::char16>(*i));
+          bool is_printable
+              = keyboardEvent->is_printable()
+              && (!base::IsStringASCII(char_str)
+                  || base::IsAsciiPrintable(*i));
+               std::cout << "keypress is_printable 1" << (keyboardEvent->is_printable() ? "true" : "false") << std::endl;
+               std::cout << "keypress is_printable 2" << (is_printable ? "true" : "false") << std::endl;
+          if(is_printable)
+          {
+            press_event.set_character(*i);
+          }
+          //press_event.set_character(base::UTF8ToUTF16("Ф").at(0));
           press_event.set_source_device_id(0);
           DCHECK(!press_event.stopped_propagation());
 
@@ -677,34 +1553,178 @@ HTMLInputElement::HTMLInputElement(Document* document)
 
       return true;
     });
+#endif // 0
 
   this->add_event_cb("on-keydown",
     [this/*, newNode*/](const scoped_refptr<dom::Event> &event,
         scoped_refptr<cobalt::dom::Element> elem, const std::string& attrVal) {
-      CHECK(elem);
-      //CHECK(newNode);
-      //CHECK(input_box);
-      //return keydown(event, elem);
+           CHECK(elem);
+           //CHECK(newNode);
+           //CHECK(input_box);
+           //input_box->keypress(event, elem);
 
-      /*const dom::PointerEvent* const pointerEvent =
-        // TODO: polymorphic_downcast Check failed: dynamic_cast<Derived>(base) == base.
-        static_cast<const dom::PointerEvent* const>(event.get());*/
-      const dom::KeyboardEvent* const keyboardEvent =
-        // TODO: polymorphic_downcast Check failed: dynamic_cast<Derived>(base) == base.
-        base::polymorphic_downcast<const dom::KeyboardEvent* const>(event.get());
-      CHECK(keyboardEvent);
-      printf("InputBox on-test-keydown key %s event %s for tag: %s, "
-             "attrVal: %s, text_content: %s\n",
-              keyboardEvent->key().c_str(),
-              event->type().c_str(),
-              elem->tag_name().c_str(),
-              attrVal.c_str(),
-              elem->text_content().value_or("").c_str());
-      //event->target()
-      dom::HTMLElement* elementHTML =
-        // TODO: polymorphic_downcast Check failed: dynamic_cast<Derived>(base) == base.
-        base::polymorphic_downcast<dom::HTMLElement*>(elem.get());
-      CHECK(elementHTML);
+           const dom::KeyboardEvent* const keyboardEvent =
+               // TODO: polymorphic_downcast Check failed: dynamic_cast<Derived>(base) == base.
+               base::polymorphic_downcast<const dom::KeyboardEvent* const>(event.get());
+           CHECK(keyboardEvent);
+           printf("InputBox on-test-keydown key %s event %s for tag: %s, "
+                  "attrVal: %s, text_content: %s\n",
+                  keyboardEvent->key().c_str(),
+                  event->type().c_str(),
+                  elem->tag_name().c_str(),
+                  attrVal.c_str(),
+                  elem->text_content().value_or("").c_str());
+           printf("which %d\n", keyboardEvent->which());
+           printf("keydown character %d\n", keyboardEvent->keysym());
+           wprintf(L"wprintf character %s\n", keyboardEvent->keysym());
+           /*#if defined(ENABLE_HTML5_SDL) || !defined(__EMSCRIPTEN__)
+  printf("printf character SDL_GetKeyName %s\n", SDL_GetKeyName(keyboardEvent->keysym()));
+  #endif*/
+           //printf("keydown str %s\n", keyboardEvent->keysym());
+
+           /// \note allows to get localized text
+           const wchar_t* wchar_src = new wchar_t[1] {
+               keyboardEvent->keysym()
+           };
+           std::string utf8_str;
+           bool isUTF8
+               = base::WideToUTF8(wchar_src, 1, &utf8_str) && !utf8_str.empty();
+           if (isUTF8) {
+             printf("keydown normalized_str %s\n", utf8_str.c_str());
+           } else {
+             utf8_str.clear();
+           }
+
+           wprintf(L"keysym character, %s", keyboardEvent->keysym());
+           printf("ctrl_key %d\n", keyboardEvent->ctrl_key());
+           printf("shift_key %d\n", keyboardEvent->shift_key());
+           printf("alt_key %d\n", keyboardEvent->alt_key());
+           printf("meta_key %d\n", keyboardEvent->meta_key());
+           printf("code %s\n", keyboardEvent->code().c_str());
+           printf("key_identifier %s\n", keyboardEvent->key_identifier().c_str());
+           printf("char_code %u\n", keyboardEvent->char_code());
+           printf("key_code %u\n", keyboardEvent->key_code());
+  #ifdef OS_EMSCRIPTEN
+           printf("time_stamp %llu\n", keyboardEvent->time_stamp());
+  #else
+           printf("time_stamp %lu\n", keyboardEvent->time_stamp());
+  #endif
+           // base::ReadUnicodeCharacter
+           const char* sbSystemGetLocaleId = SbSystemGetLocaleId();
+           printf("SbSystemGetLocaleId %s\n", sbSystemGetLocaleId);
+
+           dom::HTMLElement* elementHTML =
+               // TODO: polymorphic_downcast Check failed: dynamic_cast<Derived>(base) == base.
+               base::polymorphic_downcast<dom::HTMLElement*>(elem.get());
+           CHECK(elementHTML);
+
+           /// \todo EF_CONTROL_DOWN
+           /// https://github.com/blockspacer/skia-opengl-emscripten/blob/bb16ab108bc4018890f4ff3179250b76c0d9053b/src/chromium/ui/events/keycodes/keyboard_code_conversion.cc#L266
+           int flags = ui::EF_NONE;
+           if(keyboardEvent->ctrl_key()) {
+             flags |= ui::EF_CONTROL_DOWN;
+           }
+           if(keyboardEvent->shift_key()) {
+             flags |= ui::EF_SHIFT_DOWN;
+           }
+           if(keyboardEvent->alt_key()) {
+             flags |= ui::EF_ALT_DOWN;
+           }
+           if(keyboardEvent->meta_key()) {
+             flags |= ui::EF_COMMAND_DOWN;
+           }
+           /// \todo EF_CONTROL_DOWN
+           /// https://github.com/blockspacer/skia-opengl-emscripten/blob/bb16ab108bc4018890f4ff3179250b76c0d9053b/src/chromium/ui/events/keycodes/keyboard_code_conversion.cc#L266
+           base::string16 utf16_str;
+           if(utf16_str.empty()
+               && !keyboardEvent->text().empty()
+               /*&& !base::IsStringASCII(keyboardEvent->text())*/) {
+             std::cout << "keyboardEvent->text() " << keyboardEvent->text() << std::endl;
+             utf16_str = base::UTF8ToUTF16(keyboardEvent->text());
+             std::cout << "keyboardEvent->text() utf16_str " << utf16_str << std::endl;
+           }
+           if(utf16_str.empty()) {
+             utf16_str = base::UTF8ToUTF16(utf8_str);
+           }
+           /*if(utf16_str.empty() && keyboardEvent->char_code()) {
+             utf16_str.push_back(static_cast<base::char16>(keyboardEvent->char_code()));
+           }*/
+           if(utf16_str.empty()) {
+             bool isUTF16 =
+                 base::WideToUTF16(wchar_src, 1, &utf16_str) && !utf16_str.empty();
+             //DCHECK(isUTF16);
+             if (isUTF16) {
+               std::cout << "keydown normalized_str16" << utf16_str << std::endl;
+             } else {
+               utf16_str.clear();
+             }
+           }
+           //const base::string16 inputText = base::UTF8ToUTF16("�");
+           //DCHECK(isUTF16);
+           //const base::string16 inputText = utf8_str;
+           ui::KeyboardCode keyboardCode = ui::VKEY_UNKNOWN;
+           //if(keyboardEvent->text().empty()
+           //    /*&& base::IsStringASCII(keyboardEvent->text())*/)
+           {
+             keyboardCode = keyFromKeyCode(keyboardEvent->key_code());
+           }
+           if(utf16_str.empty() && keyboardCode != ui::VKEY_UNKNOWN) {
+             //utf16_str = base::UTF8ToUTF16(keyboardEvent->key());
+             //utf16_str.push_back(static_cast<base::char16>(keyboardCode));
+             //utf16_str.push_back(static_cast<base::char16>(keyboardEvent->char_code()));
+           }
+           std::cout << "utf16_str utf16_str " << utf16_str << std::endl;
+           // TODO: VKEY_NUMPAD4 https://github.com/blockspacer/skia-opengl-emscripten/blob/bb16ab108bc4018890f4ff3179250b76c0d9053b/src/chromium/ui/events/keycodes/keyboard_code_conversion.cc#L159
+           if(!utf16_str.empty()) {
+             std::cout << "utf16_str utf16_str utf16_str" << utf16_str << std::endl;
+             for (base::string16::const_iterator i = utf16_str.begin();
+                  i != utf16_str.end(); ++i) {
+               printf("sending OnKeyEvent(&press_event)\n");
+
+               ui::KeyEvent press_event(ui::ET_KEY_PRESSED,
+                 // Key events with key code of VKEY_PROCESSKEY, usually created by virtual
+                 // keyboard (like handwriting input), have no effect on accelerator and
+                 // they may disturb the accelerator history. So filter them out. (see
+                 // https://crbug.com/918317)
+                 keyboardCode,
+                 ui::DomCode::NONE,
+                 flags);
+               DCHECK(!press_event.stopped_propagation());
+               //press_event.set_character(static_cast<base::char16>(wchar_src[0]));
+               //press_event.set_character(static_cast<base::char16>(keyboardEvent->char_code()));
+
+               //if(keyboardCode == ui::VKEY_UNKNOWN)
+               base::string16 char_str;
+               char_str.push_back(static_cast<base::char16>(*i));
+               bool is_printable
+                   = keyboardEvent->is_printable()
+                   && (!base::IsStringASCII(char_str)
+                       || base::IsAsciiPrintable(*i));
+               std::cout << "keydown is_printable 1" << (keyboardEvent->is_printable() ? "true" : "false") << std::endl;
+               std::cout << "keydown is_printable 2" << (is_printable ? "true" : "false") << std::endl;
+               if(is_printable)
+               {
+                 press_event.set_character(*i);
+               }
+               //press_event.set_character(base::UTF8ToUTF16("Ф").at(0));
+               press_event.set_source_device_id(0);
+               DCHECK(!press_event.stopped_propagation());
+
+               {
+                 std::scoped_lock lock(scheduledEventsMutex_);
+                 scheduledEvents_.scheduledKeyEvents_.
+                     push_back(std::move(press_event));
+               }
+
+               //DCHECK(newNode);
+               //DCHECK(newNode->input_node_widget_);
+               /*if(input_node_widget_) {
+  DCHECK(input_node_widget_->GetInputMethod());
+  ui::InputMethod* im = input_node_widget_->GetInputMethod();
+  im->DispatchKeyEvent(&press_event);
+  }*/
+             }
+           }
       return true;
     });
 }
