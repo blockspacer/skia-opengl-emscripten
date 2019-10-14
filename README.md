@@ -145,6 +145,8 @@ ls ${PWD}/thirdparty/depot_tools
 export PATH="${PWD}/thirdparty/depot_tools:${PATH}"
 ```
 
+clone SKIA using depot_tools as in `skia` section.
+
 Used deps:
 
 - https://github.com/nigels-com/glew.git
@@ -261,7 +263,11 @@ make
 sudo make install
 # You can also set HARFBUZZ_DIR,
 # see https://github.com/SFTtech/openage/blob/master/buildsystem/modules/FindHarfBuzz.cmake#L30
+``
+
 ## skia
+
+``bash
 # see https://github.com/google/skia/blob/master/site/user/build.md
 # see https://github.com/google/skia/blob/master/modules/pathkit/README.md
 ls ${PWD}/thirdparty/depot_tools
