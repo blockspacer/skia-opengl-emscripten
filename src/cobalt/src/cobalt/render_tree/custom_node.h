@@ -38,12 +38,20 @@ namespace render_tree {
 // not in spec
 class CustomNode : public Node {
  public:
+  typedef base::Callback<
+    void(render_tree::NodeVisitor*,
+      render_tree::CustomNode* custom_node)> onDrawCB;
+
   struct Builder {
-    Builder() = default;
+    Builder(const onDrawCB& on_draw_cb)
+      : on_draw_cb_(on_draw_cb)
+    {};
 
     virtual bool operator==(const Builder& other) const {
       return true;
     };
+
+    onDrawCB on_draw_cb_;
   };
 
   // Forwarding constructor to the set of Builder constructors.

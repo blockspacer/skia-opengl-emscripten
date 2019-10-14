@@ -68,7 +68,7 @@ void ComponentGenerator::VisitKeyword(cssom::KeywordValue* keyword) {
         CreateScopedParagraph(kCloseParagraph);
 
         container_box_ = base::WrapRefCounted(new BlockLevelBlockContainerBox(
-            css_computed_style_declaration_, (*paragraph_)->GetBaseDirection(),
+            /*on_draw_cb,*/ css_computed_style_declaration_, (*paragraph_)->GetBaseDirection(),
             context_->used_style_provider, context_->layout_stat_tracker));
         break;
     // Generate one or more inline boxes. Note that more inline boxes may be
@@ -107,7 +107,7 @@ void ComponentGenerator::VisitKeyword(cssom::KeywordValue* keyword) {
         }
 
         container_box_ = base::WrapRefCounted(new InlineContainerBox(
-            css_computed_style_declaration_, context_->used_style_provider,
+            /*on_draw_cb,*/ css_computed_style_declaration_, context_->used_style_provider,
             context_->layout_stat_tracker));
         break;
     // Generate an inline-level block container box. The inside of
@@ -133,7 +133,7 @@ void ComponentGenerator::VisitKeyword(cssom::KeywordValue* keyword) {
         CreateScopedParagraph(kDoNotCloseParagraph);
 
         container_box_ = base::WrapRefCounted(new InlineLevelBlockContainerBox(
-            css_computed_style_declaration_, (*paragraph_)->GetBaseDirection(),
+            /*on_draw_cb,*/ css_computed_style_declaration_, (*paragraph_)->GetBaseDirection(),
             prior_paragraph, text_position, context_->used_style_provider,
             context_->layout_stat_tracker));
     } break;

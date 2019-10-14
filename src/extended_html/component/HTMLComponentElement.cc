@@ -794,7 +794,6 @@ void HTMLComponentElement::onBoxGeneratorVisit(cobalt::layout::BoxGenerator& box
   ComponentGenerator component_generator(
       directionality(),
       css_computed_style_declaration(),
-      //base::Bind(&HTMLComponentElement::GetAnim, base::Unretained(this)),
       box_gen.paragraph_, text_position,
       base::nullopt, base::nullopt, base::nullopt, box_gen.context_,
       GetSize());

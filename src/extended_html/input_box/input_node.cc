@@ -310,9 +310,13 @@ void InputNode::RenderTreeNodeVisit(const NodeVisitor *render_target) {
   }
 
   DCHECK(render_target);
+
+  // TODO: data().onDraw(skottie);
+
   /// TODO
   const RenderTreeNodeVisitor* skia_visitor =
-  base::polymorphic_downcast<const RenderTreeNodeVisitor*>(render_target);
+    base::polymorphic_downcast<
+      const RenderTreeNodeVisitor*>(render_target);
 
   const math::RectF math_rect = data().rect;
 

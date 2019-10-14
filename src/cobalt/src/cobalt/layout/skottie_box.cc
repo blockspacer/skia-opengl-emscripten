@@ -547,6 +547,8 @@ void SkottieBox::RenderAndAnimateContentWithLetterboxing(
   scoped_refptr<CompositionNode> composition_node =
       new CompositionNode(composition_node_builder);
 
+  // TODO: onRenderAndAnimate
+
   LetterboxDimensions letterbox_dims =
       GetLetterboxDimensions(content_size_, content_box_size());
   AddLetterboxedSkottieToRenderTree(

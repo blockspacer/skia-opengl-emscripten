@@ -780,6 +780,13 @@ void RenderTreeNodeVisitor::Visit(
   TRACE_EVENT0("cobalt::renderer", "Visit(CustomNode)");
 #endif
 
+  // TODO:
+  if(custom_node->data().on_draw_cb_) {
+    custom_node->data().on_draw_cb_.Run(
+      const_cast<RenderTreeNodeVisitor*>(this),
+      custom_node);
+  }
+
   //custom_node->RenderTreeNodeVisit(draw_state_.render_target);
   custom_node->RenderTreeNodeVisit(this);
 
@@ -827,6 +834,11 @@ void RenderTreeNodeVisitor::Visit(
 #if defined(ENABLE_SKOTTIE)
   sk_sp<skottie::Animation> animation = skottie->data().animation;
   DCHECK(animation);
+
+  // TODO:
+  //skottie->data().on_draw_cb_.Run(
+  //  const_cast<RenderTreeNodeVisitor*>(this),
+  //  skottie);
 
   std::pair<SkMSec, SkMSec&> animation_time
     = skottie->data().skottie_animation_time_cb.Run(); // TODO

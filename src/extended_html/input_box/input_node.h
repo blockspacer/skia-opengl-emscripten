@@ -141,12 +141,12 @@ class InputNode final : public CustomNode {
     explicit Builder(const CustomNode::Builder& customNodeBuilder)
       : CustomNode::Builder(customNodeBuilder) {
     }
-    explicit Builder(const math::RectF& rect
+    explicit Builder(const onDrawCB& on_draw_cb, const math::RectF& rect
         //, const SetBoundsCB& set_bounds_cb
         //, sk_sp<skottie::Animation> animation
         //, SkMSec animation_time
         )
-        : CustomNode::Builder(), rect(rect)
+        : CustomNode::Builder(on_draw_cb), rect(rect)
         //, animation(animation)
         //, animation_time(animation_time)
         //, set_bounds_cb(set_bounds_cb)

@@ -10,6 +10,10 @@
 
 #include "renderer_stub/rasterizer/skia/render_tree_node_visitor.h"
 
+#include "cobalt/render_tree/custom_node.h"
+
+#include "cobalt/port/renderer_stub/rasterizer/skia/render_tree_node_visitor.h"
+
 #ifdef ENABLE_COBALT
 #include "cobalt/base/polymorphic_downcast.h"
 #endif ENABLE_COBALT
@@ -501,6 +505,15 @@ LayoutUnit InputBox::GetBaselineOffsetFromTopMarginEdge() const {
 
 namespace {
 
+static void onInputBoxDraw(
+  render_tree::NodeVisitor* renderer,
+  render_tree::CustomNode* custom_node) {
+  //printf("onInputBoxDraw\n");
+  renderer::rasterizer::skia::RenderTreeNodeVisitor* sk_renderer
+    = base::polymorphic_downcast<
+        renderer::rasterizer::skia::RenderTreeNodeVisitor*>(renderer);
+}
+
 void AddLetterboxedInputToRenderTree(
     InputBox* input_box,
     const LetterboxDimensions& dimensions,
@@ -508,7 +521,10 @@ void AddLetterboxedInputToRenderTree(
   DCHECK(input_box);
 
   if (dimensions.image_rect) {
-    InputNode::Builder builder(*(dimensions.image_rect));
+    InputNode::Builder builder(
+      base::Bind(&onInputBoxDraw),
+      *(dimensions.image_rect)
+    );
     /// \note will be called on every style change, etc.
     InputNode* newNode = new InputNode(builder);
     DCHECK(input_box);
