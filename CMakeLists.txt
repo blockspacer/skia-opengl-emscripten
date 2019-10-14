@@ -2173,6 +2173,8 @@ list(APPEND PROJECT_SRC
   src/blink_demo.h
   src/custom_web_components.cc
   src/custom_web_components.h
+  src/custom_controllers.cc
+  src/custom_controllers.h
 )
 #
 if(ENABLE_COBALT)

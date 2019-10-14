@@ -130,22 +130,16 @@ class InputNode;
 
 // TODO: OnPaintLayer
 class input_node_ContainerView :
-  public views::View,
+  public views::View
+#if 0
+  ,
   public views::TextfieldController,
-  public views::ButtonListener {
- public:
-  std::unique_ptr<views::LayoutProvider> layout_provider_ =
-      std::make_unique<views::LayoutProvider>();
-
-  explicit input_node_ContainerView(
-      InputNode* inputNode
-      /*ExampleBase* base,views::GridLayout* layout*/)
-      : example_view_created_(false)/*,
-        example_base_(base)*/
+  public views::ButtonListener
+#endif // 0
   {
-    m_inputNode = inputNode;
-  }
+ public:
 
+#if 0
   void ContentsChanged(views::Textfield* sender,
                                           const base::string16& new_contents) override {
     printf("ContentsChanged %s\n", new_contents.c_str());
@@ -176,6 +170,23 @@ class input_node_ContainerView :
     return true;
   }
 
+  void ButtonPressed(views::Button* sender, const ui::Event& event) override {
+    printf("ButtonPressed\n");
+  }
+#endif // 0
+
+  std::unique_ptr<views::LayoutProvider> layout_provider_ =
+      std::make_unique<views::LayoutProvider>();
+
+  explicit input_node_ContainerView(
+      InputNode* inputNode
+      /*ExampleBase* base,views::GridLayout* layout*/)
+      : example_view_created_(false)/*,
+        example_base_(base)*/
+  {
+    inputNode_ = inputNode;
+  }
+
   std::unique_ptr<views::PaintInfo> last_paint_info_;
 
   void PaintChildren(const views::PaintInfo& info) override {
@@ -185,18 +196,6 @@ class input_node_ContainerView :
 
   std::unique_ptr<views::PaintInfo> GetLastPaintInfo() {
     return std::move(last_paint_info_);
-  }
-
-  /*void OnPaintBackground(gfx::Canvas* canvas) override {
-    cc::PaintFlags flags;
-    flags.setShader(
-        gfx::CreateGradientShader(0, height(), from_color_, to_color_));
-    flags.setStyle(cc::PaintFlags::kFill_Style);
-    canvas->DrawRect(GetLocalBounds(), flags);
-  }*/
-
-  void ButtonPressed(views::Button* sender, const ui::Event& event) override {
-    printf("ButtonPressed\n");
   }
 
   void addChildren(const std::string& placeholder_text/*views::GridLayout* layout*/,
@@ -249,7 +248,7 @@ class input_node_ContainerView :
 
   bool has_children = false;
 
-  InputNode* m_inputNode = nullptr;
+  InputNode* inputNode_ = nullptr;
 
   // TODO: AddStyleRange
 

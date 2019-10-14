@@ -295,7 +295,7 @@ static bool input_node_prepareUIFonts() {
   return firstInit;
 }
 
-}
+} // namespace
 
 namespace cobalt {
 namespace render_tree {
@@ -350,13 +350,11 @@ void InputNode::RenderTreeNodeVisit(const NodeVisitor *render_target) {
   DCHECK(input_node_default_font);
   //
 
-
   if(!ui::ResourceBundle::HasSharedInstance()) {
     printf("input_node: creating ui::ResourceBundle\n");
     ui::ResourceBundle::InitSharedInstanceWithLocale(
         "en-US", NULL, ui::ResourceBundle::LOAD_COMMON_RESOURCES);
   }
-
 
   DCHECK(custom_generating_node_);
 
@@ -463,14 +461,8 @@ void InputNode::RenderTreeNodeVisit(const NodeVisitor *render_target) {
   }
   DCHECK(root_view->GetEffectiveViewTargeter());
 
-  //input_node_container_->SetVisible(true);
   input_node_container_->SetEnabled(true);
 
-  /*input_node_container_->SetBounds(
-    sk_rect_transformed.x(), sk_rect_transformed.y(),
-    sk_rect_transformed.width(), sk_rect_transformed.height());
-  input_node_container_->SetSize(
-    gfx::Size(sk_rect_transformed.width(), sk_rect_transformed.height()));*/
   input_node_container_->SetPreferredSize(
     gfx::Size(sk_rect.width(), sk_rect.height()));
 
@@ -480,47 +472,19 @@ void InputNode::RenderTreeNodeVisit(const NodeVisitor *render_target) {
 
   //input_node_container_->SetBorder(views::CreateSolidBorder(2, SK_ColorBLUE));
   const gfx::Insets child_margins(1, 1);
+
   // TODO: free mem?
-  //input_node_container_->SetProperty(views::kMarginsKey,
-  //  new gfx::Insets(child_margins));
-
-  //cc::layer_tree_host()
-
-  //input_node_container_->SetPaintToLayer(ui::LAYER_TEXTURED);
-
-  //blink::Path path;
-  //path.AddRect({0, 0, 800, 800});
-  //input_node_container_->set_clip_path(path.GetSkPath());
 
   input_node_container_->set_owned_by_client(); // prevents view_to_be_deleted by parent
 
-  //input_node_container_->InvalidateLayout();
-  //input_node_container_->SizeToPreferredSize();
-  //input_node_container_->Layout();
-  //DCHECK(input_node_container_->GetLocalBounds() == gfx::Rect(0, 0, 800, 800));
   input_node_container_->SchedulePaint();
   input_node_container_->
     SetFocusBehavior(views::View::FocusBehavior::ALWAYS);
   DCHECK(input_node_container_->IsFocusable());
 
-  //root_view->SetBoundsRect(input_node_container_->GetLocalBounds());
-
-  /*root_view->SetBounds(
-    sk_rect_transformed.x(), sk_rect_transformed.y(),
-    sk_rect_transformed.width(), sk_rect_transformed.height());*/
-
   root_view->InvalidateLayout();
   root_view->SizeToPreferredSize();
   root_view->Layout();
-
-  /*widget->non_client_view()->SetFrameView(frame);  // Owns |frame|.
-  WidgetAutoclosePtr widget(CreateTopLevelFramelessPlatformWidget());
-  widget->GetRootView()->AddChildView(view);
-  widget->SetBounds(gfx::Rect(0, 0, 100, 80));
-  widget->Show();
-  widget->SetFullscreen(false);
-  widget->Show();
-  widget->Maximize();*/
 
   input_node_widget_->SetFullscreen(/*true*/false);
   input_node_widget_->Maximize();
@@ -532,15 +496,21 @@ void InputNode::RenderTreeNodeVisit(const NodeVisitor *render_target) {
   DCHECK(input_node_container_);
   DCHECK(custom_generating_node_);
   DCHECK(custom_generating_node_);
+
+  //std::shared_ptr<HTMLInputElement::NodeInitData>
+  HTMLInputElement::NodeInitData init_data
+    = custom_generating_node_->node_init_data();
+  //DCHECK(init_data);
+
   if(!input_node_container_->has_children) {
     input_node_container_->addChildren(
-      custom_generating_node_->placeholder_text_,
-      custom_generating_node_->initial_text_);
+      init_data.placeholder_text_,
+      init_data.initial_text_);
     input_node_container_->has_children = true;
   }
 
   DCHECK(input_node_container_);
-  DCHECK(input_node_container_->m_inputNode);
+  DCHECK(input_node_container_->inputNode_);
   DCHECK(input_node_container_->textfield_);
 
   if(needReinitFont) {
@@ -552,84 +522,44 @@ void InputNode::RenderTreeNodeVisit(const NodeVisitor *render_target) {
   }
 
 #if 0
-  input_node_container_->textfield_->SetColor(
-    blink::Color(0.0f, 1.0f, 0.5f, 0.5f).Rgb());
-  /*input_node_container_->textfield_->GetRenderTextForSelectionController()->
-    SetElideBehavior(gfx::ELIDE_TAIL);*/
-  input_node_container_->textfield_->GetRenderTextForSelectionController()->
-    set_selection_background_focused_color(
-      SkColorSetARGB(150, 0, 188, 112));
-  input_node_container_->textfield_->GetRenderTextForSelectionController()->
-    set_selection_color(
-      blink::Color(0.0f, 0.0f, 1.0f, 0.5f).Rgb()
-  );
-  //input_node_container_->textfield_->GetRenderTextForSelectionController()->
-  //  SetSelectable(true);
-  input_node_container_->textfield_->SetSelectionBackgroundColor(
-    blink::Color(0.1f, 0.2f, 0.0f, 0.5f).Rgb());
-  input_node_container_->textfield_->SetSelectionTextColor(
-    blink::Color(0.4f, 0.4f, 0.9f, 0.5f).Rgb());
-
-  input_node_container_->textfield_->ChangeTextDirectionAndLayoutAlignment(
-    base::i18n::LEFT_TO_RIGHT);
-#endif // 0
-
-  /*gfx::Range text_range, selection_range;
-  base::string16 text;
-  if (input_node_container_->textfield_->
-        GetTextRange(&text_range) &&
-      input_node_container_->textfield_->
-        GetTextFromRange(text_range, &text) &&
-      input_node_container_->textfield_->
-        GetEditableSelectionRange(&selection_range))
-  {
-    // Select some text such that one handle is hidden.
-    input_node_container_->textfield_->SelectRange(text_range);
-  }*/
-
-  /// TODO
-  //printf("draw rect %s\n", math_rect.ToString().c_str());
-
-  /*SkRect sk_rect = SkRect::MakeXYWH(math_rect.x(), math_rect.y(),
-                                    math_rect.width(), math_rect.height());
-  SkMatrix total_matrix = skia_visitor->draw_state_.render_target->getTotalMatrix();
-
-  SkRect sk_rect_transformed;
-  total_matrix.mapRect(&sk_rect_transformed, sk_rect);
-
-  math::RectF transformed_rectf(
-      sk_rect_transformed.x(), sk_rect_transformed.y(),
-      sk_rect_transformed.width(), sk_rect_transformed.height());
-  math::Rect transformed_rect = math::Rect::RoundFromRectF(transformed_rectf);
-  //data().set_bounds_cb.Run(transformed_rect);*/
-
-  //SkPaint paint;
-
-  // TODO:
-  /*[520:577:1010/170521.733238:1804929624749:FATAL:weak_ptr.cc(28)] Check
-  failed: (sequence_checker_).CalledOnValidSequence().  WeakPtrs must be
-  checked on the same sequenced thread*/
-  /*cobalt::dom::Document* document
-    = custom_generating_node_->
-        AsElement()->node_document();
-  if (document->active_element().get()
-      == custom_generating_node_->AsElement())
-  {
-    paint.setColor(SK_ColorRED); // TODO
-#if ENABLE_FLUSH_AFTER_EVERY_NODE
-  skia_visitor->draw_state_.render_target->flush();
+  printf("init_data.controller_text_ %s\n", init_data.controller_text_.c_str());
+  if(/*current_controller_id_ != init_data.controller_text_
+      &&*/ !init_data.controller_text_.empty()) {
+    printf("controller_text_ = %s\n", init_data.controller_text_.c_str());
+    if(!custom_generating_node_->input1_controller_) {
+      custom_generating_node_->input1_controller_ = std::make_unique<Input1_controller>(this);
+      DCHECK(custom_generating_node_->input1_controller_);
+    }
+    DCHECK(custom_generating_node_->input1_controller_);
+    input_node_container_->textfield_->
+      set_controller(custom_generating_node_->input1_controller_.get()); // TODO: check memory management
+  }
 #endif
-    //return; // TODO <<<
+  if(custom_generating_node_->current_controller_id_ != init_data.controller_text_
+      && !init_data.controller_text_.empty()) {
+    skemgl::TextfieldControllerCreator textfieldControllerCreator
+      = skemgl::get_textfield_controller_creator(init_data.controller_text_);
+    if(textfieldControllerCreator.create_textfield_controller_cb_) {
+      if(!custom_generating_node_->input1_controller_) {
+        custom_generating_node_->input1_controller_
+          = textfieldControllerCreator.create_textfield_controller_cb_(
+              custom_generating_node_, this);
+          //= std::make_unique<Input1_controller>(
+              //custom_generating_node_, this);
+      }
+      DCHECK(custom_generating_node_->input1_controller_);
+      input_node_container_->textfield_->
+        set_controller(custom_generating_node_->input1_controller_.get());
+      custom_generating_node_->current_controller_id_
+        = init_data.controller_text_;
+      printf("current_controller_id_ %s\n",
+        custom_generating_node_->current_controller_id_.c_str());
+    } else {
+      NOTIMPLEMENTED_LOG_ONCE();
+    }
   } else {
-    paint.setColor(SK_ColorBLUE); // TODO
-  }*/
-  //paint.setColor(SkAlpha);
-
-  //skia_visitor->draw_state_.render_target->drawRect(sk_rect, paint);
-
-  //animation->render(/*SkCanvas*/draw_state_.render_target, &dstR);
-
-  //skia_visitor->draw_state_.render_target->drawOval(sk_rect, paint);
+    NOTIMPLEMENTED_LOG_ONCE();
+  }
 
   DCHECK(input_node_widget_->GetContentsView());
 
@@ -637,28 +567,6 @@ void InputNode::RenderTreeNodeVisit(const NodeVisitor *render_target) {
   {
     // TODO: better mutex
     std::scoped_lock lock(custom_generating_node_->scheduledEventsMutex_);
-
-    /*if(custom_generating_node_->
-       scheduledEvents_
-       .scheduledKeyEvents_.size())
-    {
-      //printf("HTMLInputElementID_ = %i\n",
-      //    custom_generating_node_->
-      //    HTMLInputElementID_);
-
-      printf("math_rect %f , %f , %f , %f \n",
-        math_rect.x(),
-        math_rect.y(),
-        math_rect.width(),
-        math_rect.height()
-      );
-      printf("transformed_rect %f , %f , %f , %f \n",
-        transformed_rect.x(),
-        transformed_rect.y(),
-        transformed_rect.width(),
-        transformed_rect.height()
-      );
-    }*/
 
     for(ui::KeyEvent& kEv :
           custom_generating_node_->

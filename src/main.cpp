@@ -2099,6 +2099,7 @@ CobaltTester::CobaltTester()
         window_->document()->AddObserver(document_load_observer_.get());
     }*/
 
+  skemgl::preload_textfield_controller_creators();
   skemgl::preload_web_components();
 }
 

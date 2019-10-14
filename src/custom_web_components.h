@@ -15,7 +15,8 @@ class WebComponent;
 
 typedef std::function<void(HTMLComponentElement*)> WebComponentLoadedCb;
 typedef std::function<void(void)> WebComponentUnloadedCb;
-typedef std::map<std::string, std::shared_ptr<skemgl::WebComponent>> WebComponentsMap;
+typedef std::map<std::string, std::shared_ptr<skemgl::WebComponent>>
+  WebComponentsMap;
 
 class WebComponent {
   public:
@@ -46,9 +47,11 @@ class WebComponent {
     WebComponentUnloadedCb unloaded_cb_;
 };
 
-std::shared_ptr<skemgl::WebComponent> get_web_component(const std::string& component_name);
+std::shared_ptr<skemgl::WebComponent> get_web_component(
+  const std::string& name);
 
-void add_web_component(const std::string& component_name, const std::shared_ptr<skemgl::WebComponent> component);
+void add_web_component(const std::string& name,
+  const std::shared_ptr<skemgl::WebComponent> component);
 
 WebComponentsMap& get_web_components();
 

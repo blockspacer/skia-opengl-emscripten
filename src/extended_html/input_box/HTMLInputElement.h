@@ -364,14 +364,42 @@
 #include "extended_html/input_box/input_node.h"
 #include "extended_html/input_box/input_box_generator.h"
 
-class HTMLInputElement : public cobalt::dom::HTMLCustomElement {
+class HTMLInputElement;
+
+class InputElementController :
+  public views::TextfieldController {
  public:
 
+  explicit InputElementController(HTMLInputElement* inputElem,
+      cobalt::render_tree::InputNode* inputNode);
+
+  virtual ~InputElementController();
+
+  cobalt::render_tree::InputNode* inputNode_ = nullptr;
+
+  /// \note prefer HTMLInputElement to InputNode cause
+  /// InputNode may be freed
+  HTMLInputElement* inputElem_ = nullptr;
+
+  DISALLOW_COPY_AND_ASSIGN(InputElementController);
+};
+
+class HTMLInputElement : public cobalt::dom::HTMLCustomElement {
+ public:
+  /// \note always constant data, must be thread safe
+  struct NodeInitData {
+    std::string placeholder_text_;
+    std::string initial_text_;
+    std::string controller_text_;
+  };
+
+  /// \note dynamic data, must be thread safe
   struct ScheduledMouseEvent {
     ui::MouseEvent mouseEvent_;
     scoped_refptr<cobalt::dom::DOMRect> boundingClientRect_{};
   };
 
+  /// \note dynamic data, must be thread safe
   struct ScheduledEvents {
     std::vector<ui::KeyEvent> scheduledKeyEvents_{};
     std::vector<ScheduledMouseEvent> scheduledMouseEvents_{};
@@ -379,14 +407,45 @@ class HTMLInputElement : public cobalt::dom::HTMLCustomElement {
 
   static const char kTagName[];
 
+  static const char kAttrNameController[];
+
+  static const char kAttrNameInitialText[];
+
+  static const char kAttrNamePlaceholder[];
+
+  static const char kAttrNameWidth[];
+
+  static const char kAttrNameHeight[];
+
   explicit HTMLInputElement(cobalt::dom::Document* document);
   ~HTMLInputElement() override;
+
+  std::string initial_text() const;
+
+  void set_initial_text(const std::string& value);
+
+  std::string controller() const;
+
+  void set_controller(const std::string& value);
+
+  std::string placeholder() const;
+
+  void set_placeholder(const std::string& value);
 
   cobalt::math::SizeF GetSize() const;
 
   uint32 width() const;
 
   uint32 height() const;
+
+//#if 0
+  // From Element.
+  void OnSetAttribute(const std::string& name,
+                      const std::string& value) override;
+
+  // From Element.
+  void OnRemoveAttribute(const std::string& name) override;
+//#endif // 0
 
   void onBoxGeneratorVisit(cobalt::layout::BoxGenerator& box_gen,
     cobalt::dom::HTMLCustomElement* custom_element) override;
@@ -395,6 +454,12 @@ class HTMLInputElement : public cobalt::dom::HTMLCustomElement {
   scoped_refptr<HTMLCustomElement> AsHTMLCustomElement() override {
     return this;
   }
+
+  // TODO: font/ui loading events for remote data source
+  //  as in https://github.com/blockspacer/skia-opengl-emscripten/blob/bb16ab108bc4018890f4ff3179250b76c0d9053b/src/cobalt/src/cobalt/dom/html_image_element.h#L64
+
+  /// \note returns data copy
+  HTMLInputElement::NodeInitData node_init_data() const;
 
   //if (document->active_element().get() == this->AsElement()) {}
   //void Blur() override {
@@ -416,13 +481,14 @@ class HTMLInputElement : public cobalt::dom::HTMLCustomElement {
 
   int HTMLInputElementID_ = 0;
 
-  // TODO: thread safety
-  std::string placeholder_text_ = "";
-  std::string initial_text_ = "";
+  HTMLInputElement::NodeInitData node_init_data_;
 
   //std::unique_ptr<TextfieldModel> model_;
   //views::TextfieldModel* model_ = nullptr;
   //views::Textfield* textfield_ = nullptr;
+
+  std::string current_controller_id_;
+  std::unique_ptr<InputElementController> input1_controller_;
 
   DISALLOW_COPY_AND_ASSIGN(HTMLInputElement);
 };

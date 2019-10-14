@@ -68,26 +68,26 @@ static void add_component_ex3() {
 namespace skemgl {
 
 std::shared_ptr<skemgl::WebComponent> get_web_component(
-    const std::string & component_name)
+    const std::string& name)
 {
-  const auto it = web_components.find(component_name);
+  const auto it = web_components.find(name);
   if(it != web_components.end()) {
       return it->second;
   }
   return nullptr;
 }
 
-void add_web_component(const std::string &component_name,
+void add_web_component(const std::string&name,
     const std::shared_ptr<skemgl::WebComponent> component)
 {
-  if(web_components.find(component_name) != web_components.end()) {
+  if(web_components.find(name) != web_components.end()) {
     // TODO: print warning on component redefinition or ...?
     NOTIMPLEMENTED_LOG_ONCE();
   }
-  web_components[component_name] = component;
+  web_components[name] = component;
 }
 
-WebComponentsMap &get_web_components()
+WebComponentsMap& get_web_components()
 {
   return web_components;
 }

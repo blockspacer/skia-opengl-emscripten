@@ -120,6 +120,16 @@ static int gHTMLInputElementID = 0;
 
 const char HTMLInputElement::kTagName[] = "sk_input";
 
+const char HTMLInputElement::kAttrNameController[] = "controller";
+
+const char HTMLInputElement::kAttrNameInitialText[] = "text";
+
+const char HTMLInputElement::kAttrNamePlaceholder[] = "placeholder";
+
+const char HTMLInputElement::kAttrNameWidth[] = "width";
+
+const char HTMLInputElement::kAttrNameHeight[] = "height";
+
 // see cobalt/src/cobalt/dom/keycode.h and KeyCodeToSbKey
 static ui::KeyboardCode keyFromKeyCode(uint32_t key_code) {
   // Key events with key code of VKEY_PROCESSKEY, usually created by virtual
@@ -818,7 +828,17 @@ HTMLInputElement::HTMLInputElement(Document* document)
   printf("created new HTMLInputElement\n");
   gHTMLInputElementID++;
   HTMLInputElementID_ = gHTMLInputElementID;
-  placeholder_text_ = std::to_string(HTMLInputElementID_);
+
+  /*DCHECK(!node_init_data_);
+  node_init_data_ =
+    std::make_shared<HTMLInputElement::NodeInitData>(
+      HTMLInputElement::NodeInitData{
+        std::to_string(HTMLInputElementID_), // placeholder_text_
+        "", // initial_text_
+        controller() // controller_text_
+      });*/
+
+  //node_init_data_.placeholder_text_ = std::to_string(HTMLInputElementID_);
 
   /// \todo add cb once
   this->add_event_cb("on-mousedown",
@@ -1733,9 +1753,94 @@ HTMLInputElement::~HTMLInputElement() {
   printf("destroyed HTMLInputElement\n");
 }
 
+//#if 0
+void HTMLInputElement::OnSetAttribute(const std::string& name,
+                                      const std::string& value) {
+
+  //printf("HTMLInputElement::OnSetAttribute 1 %s\n", name.c_str());
+
+  //node_init_data_.placeholder_text_ = std::to_string(HTMLInputElementID_);
+
+  if (name == HTMLInputElement::kAttrNamePlaceholder) {
+    //printf("changed node_init_data_.placeholder_text_ %s\n", name.c_str());
+    //node_init_data_.placeholder_text_ = value;
+    set_placeholder(value);
+  }
+
+  if (name == HTMLInputElement::kAttrNameController) {
+    //printf("changed node_init_data_.controller_text_ %s\n", name.c_str());
+    //node_init_data_.controller_text_ = value;
+    set_controller(value);
+  }
+
+  if (name == HTMLInputElement::kAttrNameInitialText) {
+    set_initial_text(value);
+  }
+
+  // calls ClearRuleMatchingState, SetDirectionality and SetTabIndex
+  // Always clear the matching state when an attribute changes. Any attribute
+  // changing can potentially impact the matching rules.
+  HTMLElement::OnSetAttribute(name, value);
+
+  // // From HTMLElement::OnSetAttribute
+  // if (name == "dir") {
+  //   SetDirectionality(value);
+  // } else if (name == "tabindex") {
+  //   SetTabIndex(value);
+  // }
+  //
+  // // A user agent that obtains images immediately must synchronously update the
+  // // image data of an img element whenever that element is created with a src
+  // // attribute. A user agent that obtains images immediately must also
+  // // synchronously update the image data of an img element whenever that element
+  // // has its src or crossorigin attribute set, changed, or removed.
+  // //if (name == "src") {
+  // //  UpdateImageData();
+  // //}
+  //
+  // // From HTMLElement::OnSetAttribute
+  // // Always clear the matching state when an attribute changes. Any attribute
+  // // changing can potentially impact the matching rules.
+  // ClearRuleMatchingState();
+}
+
+void HTMLInputElement::OnRemoveAttribute(const std::string& name) {
+  //printf("HTMLInputElement::OnRemoveAttribute 1 %s\n", name.c_str());
+
+  // A user agent that obtains images immediately must synchronously update the
+  // image data of an img element whenever that element is created with a src
+  // attribute. A user agent that obtains images immediately must also
+  // synchronously update the image data of an img element whenever that element
+  // has its src or crossorigin attribute set, changed, or removed.
+  //if (name == "src") {
+  //  UpdateImageData();
+  //}
+
+  // calls ClearRuleMatchingState, SetDirectionality and SetTabIndex
+  // Always clear the matching state when an attribute changes. Any attribute
+  // changing can potentially impact the matching rules.
+  HTMLElement::OnRemoveAttribute(name);
+
+  // // From HTMLElement::OnRemoveAttribute
+  // if (name == "dir") {
+  //   SetDirectionality("");
+  // } else if (name == "tabindex") {
+  //   SetTabIndex("");
+  // }
+  //
+  // // From HTMLElement::OnRemoveAttribute
+  // // Always clear the matching state when an attribute changes. Any attribute
+  // // changing can potentially impact the matching rules.
+  // ClearRuleMatchingState();
+}
+//#endif // 0
+
 uint32 HTMLInputElement::width() const {
+  //DCHECK(HasAttribute(kAttrNameWidth));
+
   uint32 result = 0;
-  std::string value_in_string = GetAttribute("width").value_or("0");
+  std::string value_in_string
+    = GetAttribute(HTMLInputElement::kAttrNameWidth).value_or("0");
   if (!base::StringToUint32(value_in_string, &result)) {
     LOG(WARNING) << "Invalid width attribute: \'" << value_in_string << "\'";
   }
@@ -1746,8 +1851,11 @@ uint32 HTMLInputElement::width() const {
 }
 
 uint32 HTMLInputElement::height() const {
+  //DCHECK(HasAttribute(HTMLInputElement::kAttrNameHeight));
+
   uint32 result = 0;
-  std::string value_in_string = GetAttribute("height").value_or("0");
+  std::string value_in_string
+    = GetAttribute(HTMLInputElement::kAttrNameHeight).value_or("0");
   if (!base::StringToUint32(value_in_string, &result)) {
     LOG(WARNING) << "Invalid height attribute: \'" << value_in_string << "\'";
   }
@@ -1755,6 +1863,67 @@ uint32 HTMLInputElement::height() const {
   //printf("HTMLInputElement::height %d\n", result);
 
   return result;
+}
+
+std::string HTMLInputElement::placeholder() const {
+  //DCHECK(HasAttribute(HTMLInputElement::kAttrNamePlaceholder));
+
+  std::string value_in_string;
+  if(HasAttribute(HTMLInputElement::kAttrNamePlaceholder)) {
+    value_in_string
+      = GetAttribute(HTMLInputElement::kAttrNamePlaceholder).value_or("");
+  }
+
+  //printf("HTMLInputElement::placeholder %s\n", value_in_string);
+
+  return value_in_string;
+}
+
+void HTMLInputElement::set_placeholder(const std::string& value) {
+  node_init_data_.placeholder_text_ = value;
+  SetAttribute(HTMLInputElement::kAttrNamePlaceholder, value);
+}
+
+std::string HTMLInputElement::initial_text() const {
+  //DCHECK(HasAttribute(HTMLInputElement::kAttrNameInitialText));
+
+  std::string value_in_string;
+  if(HasAttribute(HTMLInputElement::kAttrNameInitialText)) {
+    value_in_string
+      = GetAttribute(HTMLInputElement::kAttrNameInitialText).value_or("");
+  }
+
+  //printf("HTMLInputElement::initial_text %s\n", value_in_string);
+
+  return value_in_string;
+}
+
+void HTMLInputElement::set_initial_text(const std::string& value) {
+  node_init_data_.initial_text_ = value;
+  SetAttribute(HTMLInputElement::kAttrNameInitialText, value);
+}
+
+std::string HTMLInputElement::controller() const {
+  //DCHECK(HasAttribute(HTMLInputElement::kAttrNameController));
+
+  std::string value_in_string;
+  if(HasAttribute(HTMLInputElement::kAttrNameController)) {
+    value_in_string
+      = GetAttribute(HTMLInputElement::kAttrNameController).value_or("");
+  }
+
+  //printf("HTMLInputElement::controller %s\n", value_in_string);
+
+  return value_in_string;
+}
+
+void HTMLInputElement::set_controller(const std::string& value) {
+  node_init_data_.controller_text_ = value;
+  SetAttribute(HTMLInputElement::kAttrNameController, value);
+}
+
+HTMLInputElement::NodeInitData HTMLInputElement::node_init_data() const {
+  return node_init_data_;
 }
 
 math::SizeF HTMLInputElement::GetSize() const {
@@ -1830,4 +1999,16 @@ void HTMLInputElement::onBoxGeneratorVisit(cobalt::layout::BoxGenerator& box_gen
   input_box->SetUiNavItem(this->GetUiNavItem());
 
   box_gen.boxes_.push_back(input_box);
+
+  printf("controller() %s\n", controller().c_str());
+}
+
+InputElementController::InputElementController(
+  HTMLInputElement *inputElem, cobalt::render_tree::InputNode *inputNode)
+    : inputElem_(inputElem), inputNode_(inputNode)
+{
+}
+
+InputElementController::~InputElementController()
+{
 }

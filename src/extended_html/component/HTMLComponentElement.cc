@@ -103,6 +103,12 @@ static int gHTMLComponentElementID = 0;
 
 const char HTMLComponentElement::kTagName[] = "component";
 
+const char HTMLComponentElement::kAttrNameDataSource[] = "data_source";
+
+const char HTMLComponentElement::kAttrNameWidth[] = "width";
+
+const char HTMLComponentElement::kAttrNameHeight[] = "height";
+
 HTMLComponentElement::HTMLComponentElement(Document* document)
     : HTMLCustomElement(document, base::CobToken(kTagName)) {
   printf("created new HTMLComponentElement\n");
@@ -716,6 +722,43 @@ HTMLComponentElement::HTMLComponentElement(Document* document)
 #endif
 }
 
+void HTMLComponentElement::OnSetAttribute(const std::string& name,
+                                      const std::string& value) {
+  //printf("HTMLComponentElement::OnSetAttribute 1 %s", name.c_str());
+
+  // calls ClearRuleMatchingState, SetDirectionality and SetTabIndex
+  // Always clear the matching state when an attribute changes. Any attribute
+  // changing can potentially impact the matching rules.
+  HTMLElement::OnSetAttribute(name, value);
+
+  // A user agent that obtains images immediately must synchronously update the
+  // image data of an img element whenever that element is created with a src
+  // attribute. A user agent that obtains images immediately must also
+  // synchronously update the image data of an img element whenever that element
+  // has its src or crossorigin attribute set, changed, or removed.
+  //if (name == "src") {
+  //  UpdateImageData();
+  //}
+}
+
+void HTMLComponentElement::OnRemoveAttribute(const std::string& name) {
+  //printf("HTMLComponentElement::OnRemoveAttribute 1 %s", name.c_str());
+
+  // calls ClearRuleMatchingState, SetDirectionality and SetTabIndex
+  // Always clear the matching state when an attribute changes. Any attribute
+  // changing can potentially impact the matching rules.
+  HTMLElement::OnRemoveAttribute(name);
+
+  // A user agent that obtains images immediately must synchronously update the
+  // image data of an img element whenever that element is created with a src
+  // attribute. A user agent that obtains images immediately must also
+  // synchronously update the image data of an img element whenever that element
+  // has its src or crossorigin attribute set, changed, or removed.
+  //if (name == "src") {
+  //  UpdateImageData();
+  //}
+}
+
 HTMLComponentElement::~HTMLComponentElement() {
   printf("destroyed HTMLComponentElement\n");
   if(loaded_web_component_) {
@@ -724,8 +767,10 @@ HTMLComponentElement::~HTMLComponentElement() {
 }
 
 uint32 HTMLComponentElement::width() const {
+  //DCHECK(HasAttribute(kAttrNameWidth));
+
   uint32 result = 0;
-  std::string value_in_string = GetAttribute("width").value_or("0");
+  std::string value_in_string = GetAttribute(kAttrNameWidth).value_or("0");
   if (!base::StringToUint32(value_in_string, &result)) {
     LOG(WARNING) << "Invalid width attribute: \'" << value_in_string << "\'";
   }
@@ -736,8 +781,10 @@ uint32 HTMLComponentElement::width() const {
 }
 
 uint32 HTMLComponentElement::height() const {
+  //DCHECK(HasAttribute(kAttrNameHeight));
+
   uint32 result = 0;
-  std::string value_in_string = GetAttribute("height").value_or("0");
+  std::string value_in_string = GetAttribute(kAttrNameHeight).value_or("0");
   if (!base::StringToUint32(value_in_string, &result)) {
     LOG(WARNING) << "Invalid height attribute: \'" << value_in_string << "\'";
   }
@@ -748,8 +795,9 @@ uint32 HTMLComponentElement::height() const {
 }
 
 std::string HTMLComponentElement::data_source() const {
-    std::string value_in_string = GetAttribute("data_source").value_or("");
-    return value_in_string;
+  DCHECK(HasAttribute(kAttrNameDataSource));
+  std::string value_in_string = GetAttribute(kAttrNameDataSource).value_or("");
+  return value_in_string;
 }
 
 math::SizeF HTMLComponentElement::GetSize() const {

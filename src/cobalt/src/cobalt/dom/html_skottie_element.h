@@ -71,6 +71,9 @@ class HTMLSkottieElement : public HTMLElement/*, public HTMLMediaElement*/ {
 
   const std::string src();
 
+  // TODO: loading events for remote data source
+  //  as in https://github.com/blockspacer/skia-opengl-emscripten/blob/bb16ab108bc4018890f4ff3179250b76c0d9053b/src/cobalt/src/cobalt/dom/html_image_element.h#L64
+
 #if defined(ENABLE_SKOTTIE)
   sk_sp<skottie::Animation> animation;
 #endif // ENABLE_SKOTTIE

@@ -355,7 +355,8 @@ class HTMLElement : public Element, public cssom::MutationObserver {
   // deleted. This is protected because some derived classes need access to it.
   DomStatTracker* const dom_stat_tracker_;
 
- private:
+ //private:
+ protected: // __TODO__
   // From Node.
   void OnMutation() override;
 

@@ -228,7 +228,7 @@ void input_node_ContainerView::addChildren(
   const std::string& initial_text)
 {
   //DCHECK(!textfield_);
-  DCHECK(m_inputNode);
+  DCHECK(inputNode_);
   if(!textfield_) {
     textfield_ = new views::Textfield();
 
@@ -337,8 +337,8 @@ void input_node_ContainerView::addChildren(
   MakeRow(0, message_);
 #endif // 0
 
-  DCHECK(m_inputNode);
-  DCHECK(m_inputNode->custom_generating_node_);
+  DCHECK(inputNode_);
+  DCHECK(inputNode_->custom_generating_node_);
   DCHECK(textfield_);
   AddChildView(textfield_);
 

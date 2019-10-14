@@ -2,6 +2,8 @@
 
 #include "extended_html/input_box/input_node_ContainerView.h"
 
+#include "custom_controllers.h"
+
 #include "base/callback.h"
 #include "base/compiler_specific.h"
 #include "cobalt/base/type_id.h"

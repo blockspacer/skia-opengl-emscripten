@@ -380,6 +380,12 @@ class HTMLComponentElement : public cobalt::dom::HTMLCustomElement {
 
   static const char kTagName[];
 
+  static const char kAttrNameDataSource[];
+
+  static const char kAttrNameWidth[];
+
+  static const char kAttrNameHeight[];
+
   explicit HTMLComponentElement(cobalt::dom::Document* document);
   ~HTMLComponentElement() override;
 
@@ -398,6 +404,13 @@ class HTMLComponentElement : public cobalt::dom::HTMLCustomElement {
   scoped_refptr<HTMLCustomElement> AsHTMLCustomElement() override {
     return this;
   }
+
+  // From Element.
+  void OnSetAttribute(const std::string& name,
+                      const std::string& value) override;
+
+  // From Element.
+  void OnRemoveAttribute(const std::string& name) override;
 
   //if (document->active_element().get() == this->AsElement()) {}
   //void Blur() override {
@@ -428,6 +441,9 @@ class HTMLComponentElement : public cobalt::dom::HTMLCustomElement {
   //std::unique_ptr<TextfieldModel> model_;
   //views::TextfieldModel* model_ = nullptr;
   //views::Textfield* textfield_ = nullptr;
+
+  // TODO: loading events for remote data source
+  //  as in https://github.com/blockspacer/skia-opengl-emscripten/blob/bb16ab108bc4018890f4ff3179250b76c0d9053b/src/cobalt/src/cobalt/dom/html_image_element.h#L64
 
   DISALLOW_COPY_AND_ASSIGN(HTMLComponentElement);
 };
