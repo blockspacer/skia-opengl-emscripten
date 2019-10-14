@@ -34,6 +34,7 @@ class BlockLevelSkottieBox : public SkottieBox {
           css_computed_style_declaration,
 #if defined(ENABLE_SKOTTIE)
       //const ReplaceImageCB& replace_image_cb, const SetBoundsCB& set_bounds_cb,
+      const SkottieBox::GetSkottieTimeCB& skottie_animation_time_cb,
       const SkottieBox::GetSkottieAnimCB& replace_skottie_animation_cb,
 #endif // ENABLE_SKOTTIE
       const scoped_refptr<Paragraph>& paragraph, int32 text_position,

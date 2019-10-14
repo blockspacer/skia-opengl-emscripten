@@ -185,6 +185,7 @@ class SkottieBoxGenerator : public cssom::NotReachedPropertyValueVisitor {
                            css_computed_style_declaration,
                        //const SkottieBox::SetBoundsCB& set_bounds_cb,
 #if defined(ENABLE_SKOTTIE)
+                       const SkottieBox::GetSkottieTimeCB& skottie_animation_time_cb,
                        const SkottieBox::GetSkottieAnimCB& replace_skottie_animation_cb,
 #endif // ENABLE_SKOTTIE
                        const scoped_refptr<Paragraph>& paragraph,
@@ -197,6 +198,7 @@ class SkottieBoxGenerator : public cssom::NotReachedPropertyValueVisitor {
       : css_computed_style_declaration_(css_computed_style_declaration),
        // set_bounds_cb_(set_bounds_cb),
 #if defined(ENABLE_SKOTTIE)
+        skottie_animation_time_cb_(skottie_animation_time_cb),
         replace_skottie_animation_cb_(replace_skottie_animation_cb),
 #endif // ENABLE_SKOTTIE
         paragraph_(paragraph),
@@ -216,6 +218,7 @@ class SkottieBoxGenerator : public cssom::NotReachedPropertyValueVisitor {
       css_computed_style_declaration_;
   //const SkottieBox::SetBoundsCB set_bounds_cb_;
 #if defined(ENABLE_SKOTTIE)
+  const SkottieBox::GetSkottieTimeCB skottie_animation_time_cb_;
   const SkottieBox::GetSkottieAnimCB replace_skottie_animation_cb_;
 #endif // ENABLE_SKOTTIE
   const scoped_refptr<Paragraph> paragraph_;
@@ -237,6 +240,7 @@ void SkottieBoxGenerator::VisitKeyword(cssom::KeywordValue* keyword) {
           css_computed_style_declaration_
           //, replace_image_cb_, set_bounds_cb_,
 #if defined(ENABLE_SKOTTIE)
+          , skottie_animation_time_cb_
           , replace_skottie_animation_cb_
 #endif // ENABLE_SKOTTIE
           , paragraph_, text_position_, maybe_intrinsic_width_,
@@ -252,6 +256,7 @@ void SkottieBoxGenerator::VisitKeyword(cssom::KeywordValue* keyword) {
       skottie_box_ = WrapRefCounted(new InlineLevelSkottieBox(
           css_computed_style_declaration_,
 #if defined(ENABLE_SKOTTIE)
+          skottie_animation_time_cb_,
           replace_skottie_animation_cb_,
 #endif // ENABLE_SKOTTIE
           //set_bounds_cb_,
@@ -366,6 +371,7 @@ void BoxGenerator::VisitSkottieElement(dom::HTMLSkottieElement* skottie_element)
       skottie_element->css_computed_style_declaration(),
       //skottie_element->GetSetBoundsCB(),
 #if defined(ENABLE_SKOTTIE)
+      base::Bind(&dom::HTMLSkottieElement::GetSkottieTime, base::Unretained(skottie_element)),
       base::Bind(&dom::HTMLSkottieElement::GetSkottieAnim, base::Unretained(skottie_element)),
 #endif // ENABLE_SKOTTIE
       *paragraph_, text_position,

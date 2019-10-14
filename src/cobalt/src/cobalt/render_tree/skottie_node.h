@@ -24,7 +24,10 @@
 #if defined(ENABLE_SKOTTIE)
 #include <skia/modules/skottie/include/Skottie.h>
 #include <skia/modules/skottie/utils/SkottieUtils.h>
+
 #include <skia/include/core/SkSize.h>
+#include "skia/include/core/SkRefCnt.h"
+#include "skia/include/core/SkTime.h"
 #endif // ENABLE_SKOTTIE
 
 namespace cobalt {
@@ -36,21 +39,15 @@ namespace render_tree {
 class SkottieNode : public Node {
  public:
 #if defined(ENABLE_SKOTTIE)
-  //typedef base::Callback<bool(const math::Rect&)> SetBoundsCB;
+  typedef base::Callback<SkMSec()> GetSkottieTimeCB;
+
   typedef base::Callback<sk_sp<skottie::Animation>()> GetSkottieAnimCB;
 #endif // ENABLE_SKOTTIE
 
   struct Builder {
     Builder(const Builder&) = default;
-    Builder(const math::RectF& rect
-        //, const SetBoundsCB& set_bounds_cb
-        //, sk_sp<skottie::Animation> animation
-        //, SkMSec animation_time
-        )
+    Builder(const math::RectF& rect)
         : rect(rect)
-        //, animation(animation)
-        //, animation_time(animation_time)
-        //, set_bounds_cb(set_bounds_cb)
         {}
 
     bool operator==(const Builder& other) const {
@@ -64,15 +61,11 @@ class SkottieNode : public Node {
 
 #if defined(ENABLE_SKOTTIE)
     sk_sp<skottie::Animation> animation;
+    GetSkottieTimeCB skottie_animation_time_cb;
+    //GetSkottieAnimCB replace_skottie_animation_cb;
 #endif // ENABLE_SKOTTIE
 
     //skottie::Animation::Builder::Stats animation_stats;
-
-#if defined(ENABLE_SKOTTIE)
-    SkMSec animation_time = 0;
-#else
-    uint32_t animation_time = 0;
-#endif // ENABLE_SKOTTIE
 
     // see image_node_builder->source = replace_image_cb.Run();
   };

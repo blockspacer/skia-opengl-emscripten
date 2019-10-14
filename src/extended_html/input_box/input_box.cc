@@ -504,53 +504,17 @@ namespace {
 void AddLetterboxedInputToRenderTree(
     InputBox* input_box,
     const LetterboxDimensions& dimensions,
-    //const InputBox::SetBoundsCB& set_bounds_cb,
-    //const InputBox::GetInputAnimCB& replace_input_animation_cb,
     CompositionNode::Builder* border_node_builder) {
   DCHECK(input_box);
 
   if (dimensions.image_rect) {
-    InputNode::Builder builder(*(dimensions.image_rect)
-                                           //, set_bounds_cb
-                                           );
-
-    /*builder.animation = replace_input_animation_cb.Run();
-
-    if (builder.animation_time == 0) {
-      // Reset the animation time.
-      builder.animation_time = SkTime::GetMSecs();
-    }*/
-
-   /*if (builder.animation && builder.animation->duration()) {
-      const SkMSec tElapsed = SkTime::GetMSecs() - builder.animation_time;
-      //EM_LOG("animate 9\n");
-      const SkScalar duration = builder.animation->duration() * 1000.0;
-      //EM_LOG("animate 10\n");
-      const double animPos = ::std::fmod(tElapsed, duration) / duration;
-      //EM_LOG("animate 11\n");
-      builder.animation->seek(static_cast<SkScalar>(animPos));
-    }*/
-
-    /*DCHECK(!replace_image_cb.is_null());
-    DCHECK(image_node_builder);
-
-    image_node_builder->source = replace_image_cb.Run();
-    if (image_node_builder->source) {
-      image_node_builder->destination_rect =
-          math::RectF(image_node_builder->source->GetSize());
-    }*/
-
+    InputNode::Builder builder(*(dimensions.image_rect));
     /// \note will be called on every style change, etc.
     InputNode* newNode = new InputNode(builder);
     DCHECK(input_box);
     DCHECK(input_box->custom_generating_node_);
     newNode->SetCustomGeneratingNode(input_box->custom_generating_node_);
     border_node_builder->AddChild(newNode);
-
-
-
-
-
   }
 }
 

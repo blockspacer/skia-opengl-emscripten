@@ -35,6 +35,11 @@
 
 #include "cobalt/render_tree/skottie_node.h"
 
+#if defined(ENABLE_SKOTTIE)
+#include "skia/include/core/SkRefCnt.h"
+#include "skia/include/core/SkTime.h"
+#endif // ENABLE_SKOTTIE
+
 namespace cobalt {
 namespace dom {
 
@@ -51,7 +56,7 @@ class HTMLSkottieElement : public HTMLElement/*, public HTMLMediaElement*/ {
   scoped_refptr<HTMLSkottieElement> AsHTMLSkottieElement() override { return this; }
 
 #if defined(ENABLE_SKOTTIE)
-  //cobalt::render_tree::SkottieNode::GetSkottieAnimCB GetSkottieAnim();
+  SkMSec GetSkottieTime();
   sk_sp<skottie::Animation> GetSkottieAnim();
 #endif // ENABLE_SKOTTIE
 
@@ -67,6 +72,12 @@ class HTMLSkottieElement : public HTMLElement/*, public HTMLMediaElement*/ {
 
 #if defined(ENABLE_SKOTTIE)
   sk_sp<skottie::Animation> animation;
+#endif // ENABLE_SKOTTIE
+
+#if defined(ENABLE_SKOTTIE)
+    SkMSec animation_time_ = 0;
+#else
+    uint32_t animation_time_ = 0;
 #endif // ENABLE_SKOTTIE
 
   DISALLOW_COPY_AND_ASSIGN(HTMLSkottieElement);

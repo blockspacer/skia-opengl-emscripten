@@ -40,6 +40,7 @@ class SkottieBox : public Box {
  public:
   //typedef render_tree::SkottieNode::SetBoundsCB SetBoundsCB;
 #if defined(ENABLE_SKOTTIE)
+  typedef render_tree::SkottieNode::GetSkottieTimeCB GetSkottieTimeCB;
   typedef render_tree::SkottieNode::GetSkottieAnimCB GetSkottieAnimCB;
 #endif // ENABLE_SKOTTIE
 
@@ -47,6 +48,7 @@ class SkottieBox : public Box {
                   css_computed_style_declaration,
               //const SetBoundsCB& set_bounds_cb,
 #if defined(ENABLE_SKOTTIE)
+              const SkottieBox::GetSkottieTimeCB& skottie_animation_time_cb,
               const SkottieBox::GetSkottieAnimCB& replace_skottie_animation_cb,
 #endif // ENABLE_SKOTTIE
               const scoped_refptr<Paragraph>& paragraph, int32 text_position,
@@ -115,6 +117,8 @@ class SkottieBox : public Box {
 
   //const SetBoundsCB set_bounds_cb_;
 #if defined(ENABLE_SKOTTIE)
+  const SkottieBox::GetSkottieTimeCB skottie_animation_time_cb_;
+
   const SkottieBox::GetSkottieAnimCB replace_skottie_animation_cb_;
 #endif // ENABLE_SKOTTIE
 

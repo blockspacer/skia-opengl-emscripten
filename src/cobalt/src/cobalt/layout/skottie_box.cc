@@ -105,6 +105,7 @@ SkottieBox::SkottieBox(
         css_computed_style_declaration,
     //const SetBoundsCB& set_bounds_cb,
 #if defined(ENABLE_SKOTTIE)
+    const SkottieBox::GetSkottieTimeCB& skottie_animation_time_cb,
     const SkottieBox::GetSkottieAnimCB& replace_skottie_animation_cb,
 #endif // ENABLE_SKOTTIE
     const scoped_refptr<Paragraph>& paragraph, int32 text_position,
@@ -124,6 +125,7 @@ SkottieBox::SkottieBox(
       intrinsic_ratio_(maybe_intrinsic_ratio.value_or(kFallbackIntrinsicRatio)),
       //set_bounds_cb_(set_bounds_cb),
 #if defined(ENABLE_SKOTTIE)
+      skottie_animation_time_cb_(skottie_animation_time_cb),
       replace_skottie_animation_cb_(replace_skottie_animation_cb),
 #endif // ENABLE_SKOTTIE
       paragraph_(paragraph),
@@ -223,42 +225,18 @@ void AddLetterboxedSkottieToRenderTree(
     const LetterboxDimensions& dimensions,
     //const SkottieBox::SetBoundsCB& set_bounds_cb,
 #if defined(ENABLE_SKOTTIE)
+    const SkottieBox::GetSkottieTimeCB& skottie_animation_time_cb,
     const SkottieBox::GetSkottieAnimCB& replace_skottie_animation_cb,
 #endif // ENABLE_SKOTTIE
     CompositionNode::Builder* border_node_builder) {
   printf("AddLetterboxedSkottieToRenderTree\n");
   if (dimensions.image_rect) {
-    SkottieNode::Builder builder(*(dimensions.image_rect)
-                                           //, set_bounds_cb
-                                           );
+    SkottieNode::Builder builder(*(dimensions.image_rect));
 
 #if defined(ENABLE_SKOTTIE)
+    builder.skottie_animation_time_cb = skottie_animation_time_cb;
     builder.animation = replace_skottie_animation_cb.Run();
 #endif // ENABLE_SKOTTIE
-
-    if (builder.animation_time == 0) {
-      // Reset the animation time.
-      builder.animation_time = SkTime::GetMSecs();
-    }
-
-   /*if (builder.animation && builder.animation->duration()) {
-      const SkMSec tElapsed = SkTime::GetMSecs() - builder.animation_time;
-      //EM_LOG("animate 9\n");
-      const SkScalar duration = builder.animation->duration() * 1000.0;
-      //EM_LOG("animate 10\n");
-      const double animPos = ::std::fmod(tElapsed, duration) / duration;
-      //EM_LOG("animate 11\n");
-      builder.animation->seek(static_cast<SkScalar>(animPos));
-    }*/
-
-    /*DCHECK(!replace_image_cb.is_null());
-    DCHECK(image_node_builder);
-
-    image_node_builder->source = replace_image_cb.Run();
-    if (image_node_builder->source) {
-      image_node_builder->destination_rect =
-          math::RectF(image_node_builder->source->GetSize());
-    }*/
 
     border_node_builder->AddChild(new SkottieNode(builder));
   }
@@ -574,6 +552,7 @@ void SkottieBox::RenderAndAnimateContentWithLetterboxing(
   AddLetterboxedSkottieToRenderTree(
       letterbox_dims
 #if defined(ENABLE_SKOTTIE)
+      , skottie_animation_time_cb_
       , replace_skottie_animation_cb_
 #endif // ENABLE_SKOTTIE
       //, set_bounds_cb_

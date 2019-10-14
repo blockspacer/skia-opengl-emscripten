@@ -25,6 +25,7 @@ InlineLevelSkottieBox::InlineLevelSkottieBox(
         css_computed_style_declaration,
     //const SetBoundsCB& set_bounds_cb,
 #if defined(ENABLE_SKOTTIE)
+    const SkottieBox::GetSkottieTimeCB& skottie_animation_time_cb,
     const SkottieBox::GetSkottieAnimCB& replace_skottie_animation_cb,
 #endif // ENABLE_SKOTTIE
     const scoped_refptr<Paragraph>& paragraph, int32 text_position,
@@ -37,6 +38,7 @@ InlineLevelSkottieBox::InlineLevelSkottieBox(
     : SkottieBox(css_computed_style_declaration,
                   //set_bounds_cb,
 #if defined(ENABLE_SKOTTIE)
+                  skottie_animation_time_cb,
                   replace_skottie_animation_cb,
 #endif // ENABLE_SKOTTIE
                   paragraph, text_position,
