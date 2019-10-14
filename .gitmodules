@@ -46,3 +46,6 @@
 [submodule "/mnt/data/skemgl/src/chromium/third_party/skia"]
 	path = /mnt/data/skemgl/src/chromium/third_party/skia
 	url = https://github.com/google/skia.git
+[submodule "src/chromium/third_party/skia"]
+	path = src/chromium/third_party/skia
+	url = ../../google/skia.git
