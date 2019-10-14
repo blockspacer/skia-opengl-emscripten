@@ -43,3 +43,6 @@
 [submodule "src/chromium/third_party/emoji-segmenter/src"]
 	path = src/chromium/third_party/emoji-segmenter/src
 	url = https://chromium.googlesource.com/external/github.com/googlei18n/emoji-segmenter.git
+[submodule "/mnt/data/skemgl/src/chromium/third_party/skia"]
+	path = /mnt/data/skemgl/src/chromium/third_party/skia
+	url = https://github.com/google/skia.git
