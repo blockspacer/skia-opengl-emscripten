@@ -273,11 +273,21 @@ sudo make install
 ls ${PWD}/thirdparty/depot_tools
 export PATH="${PWD}/thirdparty/depot_tools:${PATH}"
 cd src/chromium/third_party/skia
+# from https://chromium.googlesource.com/chromium/src.git/+/589d8ec2fcaab6f5e48af84d703a1eb430ee9716/DEPS#136
+git checkout f5ca01a69ab6f427c515bb3b4a9748047f04cb13
 tools/git-sync-deps
 # If some header files are missing, install the corresponding dependencies
 tools/install_dependencies.sh
 # see https://github.com/google/skia/blob/master/src/sksl/README#L77
 bin/fetch-clang-format
+```
+
+(optional) validate skia deps:
+
+```bash
+# from https://github.com/blockspacer/skia-opengl-emscripten/blob/bb16ab108bc4018890f4ff3179250b76c0d9053b/src/chromium/third_party/skia/DEPS
+# cd src/chromium/third_party/skia/third_party/externals/harfbuzz/
+# git checkout 4f37ab63de9705d7bf74ee75364747e41b7c06a1
 ```
 
 - pip
@@ -304,6 +314,24 @@ sudo dpkg -i libpng12-dev_1.2.54-1ubuntu1.1_amd64.deb
 sudo apt-get -f install
 ```
 
+### Apply patches
+
+```bash
+# see https://chromium.googlesource.com/chromium/src.git/+/589d8ec2fcaab6f5e48af84d703a1eb430ee9716/skia/ext/SkDiscardableMemory_chrome.cc?autodive=0%2F%2F%2F%2F%2F%2F
+
+# The -a option is an improved recursive option, that preserve all file attributes, and also preserve symlinks.
+# The . at end of the source path is a specific cp syntax that allow to copy all files and folders, included hidden ones.
+cp -a "patches/skia_to_copy/." src/chromium/third_party/skia/
+cp -a "patches/skia/." src/chromium/third_party/skia/
+cp -a "patches/skia/." src/chromium/third_party/skia/
+
+cp -a "patches/libjpeg_turbo/." src/chromium/third_party/libjpeg_turbo/
+
+# OR
+# cp -a "patches/libjpeg_turbo/." src/chromium/third_party/libjpeg/
+
+```
+
 ### Compile example on Linux
 
 ```bash
@@ -311,14 +339,6 @@ cmake -DBUILD_TYPE="Debug" -DCLEAN_BUILD=OFF -P tools/buildUnix.cmake
 
 # OR~
 cmake -DRUN_APP=ON -DBUILD_APP=ON -DEXTRA_EMMAKE_OPTS="-j;6" -DBUILD_TYPE="Debug" -DCLEAN_BUILD=OFF -DENABLE_CMAKE_CLEAN_FIRST=OFF -DBUILD_DIR=$(pwd)/build-linux-deb/ -DEXTRA_CMAKE_OPTS="-DENABLE_WEB_PTHREADS=TRUE;-DENABLE_LIBWEBP=TRUE;-DENABLE_BLINK=TRUE;-DENABLE_COBALT=TRUE;-DENABLE_WTF=TRUE;-DDISABLE_FORMATTING=FALSE;-DENABLE_SKOTTIE=TRUE;-DFORCE_DISABLE_SK_GPU=FALSE;-DENABLE_BLINK_UI_VIEWS=TRUE" -P tools/buildUnix.cmake
-```
-
-### Apply patches
-
-```bash
-# see https://chromium.googlesource.com/chromium/src.git/+/589d8ec2fcaab6f5e48af84d703a1eb430ee9716/skia/ext/SkDiscardableMemory_chrome.cc?autodive=0%2F%2F%2F%2F%2F%2F
-cp -r "patches/skia_to_copy/*" src/chromium/third_party/skia/
-cp -r "patches/skia/*" src/chromium/third_party/skia/
 ```
 
 ### Run example on Unix
