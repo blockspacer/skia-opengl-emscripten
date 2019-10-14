@@ -50,7 +50,7 @@ Also see:
 
 - Can't build?
 
-Check readme & issues. Don't forget to replace files based on `TODO: patches`.
+Check readme & issues. Don't forget to replace files based on `patches`.
 
 - Project name? SKG? SKEMGL?
 
@@ -317,7 +317,8 @@ cmake -DRUN_APP=ON -DBUILD_APP=ON -DEXTRA_EMMAKE_OPTS="-j;6" -DBUILD_TYPE="Debug
 
 ```bash
 # see https://chromium.googlesource.com/chromium/src.git/+/589d8ec2fcaab6f5e48af84d703a1eb430ee9716/skia/ext/SkDiscardableMemory_chrome.cc?autodive=0%2F%2F%2F%2F%2F%2F
-cp -r "TODO: patches/skia_to_copy/*" src/chromium/third_party/skia/
+cp -r "patches/skia_to_copy/*" src/chromium/third_party/skia/
+cp -r "patches/skia/*" src/chromium/third_party/skia/
 ```
 
 ### Run example on Unix
