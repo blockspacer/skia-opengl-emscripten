@@ -828,24 +828,21 @@ void RenderTreeNodeVisitor::Visit(
   sk_sp<skottie::Animation> animation = skottie->data().animation;
   DCHECK(animation);
 
-  /*auto animation_time
+  std::pair<SkMSec, SkMSec&> animation_time
     = skottie->data().skottie_animation_time_cb.Run(); // TODO
 
-  if (animation_time_ == 0) {
-    // Reset the animation time.
-    animation_time_ = SkTime::GetMSecs();
-  }*/
-
-  // TODO: support animation_time for skottie
-  const SkMSec tElapsed = SkTime::GetMSecs() /*- animation_time*/;
+  const SkMSec tElapsed
+    = animation_time.first /*timer_msecs*/
+      - animation_time.second /*base*/;
   //EM_LOG("animate 9\n");
   const SkScalar duration = animation->duration() * 1000.0;
   //EM_LOG("animate 10\n");
   const double animPos = ::std::fmod(tElapsed, duration) / duration;
   //EM_LOG("animate 11\n");
-  animation->seek(static_cast<SkScalar>(animPos));
 
-  if (animation) {
+  if(tElapsed) {
+    animation->seek(static_cast<SkScalar>(animPos));
+
     const auto dstR = SkRect::MakeSize(
       SkSize::Make(skottie->data().rect.width(), skottie->data().rect.height()));
 

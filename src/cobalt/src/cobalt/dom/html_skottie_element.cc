@@ -86,8 +86,8 @@ math::SizeF HTMLSkottieElement::GetSize() const {
 }
 
 #if defined(ENABLE_SKOTTIE)
-SkMSec HTMLSkottieElement::GetSkottieTime() {
-  return animation_time_;
+std::pair<SkMSec, SkMSec&> HTMLSkottieElement::GetSkottieTime() {
+  return std::make_pair(SkTime::GetMSecs(), std::ref(animation_time_));
 }
 
 sk_sp<skottie::Animation> HTMLSkottieElement::GetSkottieAnim() {
@@ -97,11 +97,13 @@ sk_sp<skottie::Animation> HTMLSkottieElement::GetSkottieAnim() {
     animation = builder.makeFromFile(src().c_str());
     printf("Created new skottie Animation for %s\n", src().c_str());
   }
+
   /*if (animation_time_ == 0) {
     // Reset the animation time.
     animation_time_ = SkTime::GetMSecs();
   }*/
-  const SkMSec tElapsed = SkTime::GetMSecs() - animation_time_;
+
+  /*const SkMSec tElapsed = SkTime::GetMSecs() - animation_time_;
   //EM_LOG("animate 9\n");
   const SkScalar duration = animation->duration() * 1000.0;
   //EM_LOG("animate 10\n");
@@ -109,6 +111,7 @@ sk_sp<skottie::Animation> HTMLSkottieElement::GetSkottieAnim() {
   //EM_LOG("animate 11\n");
   animation->seek(static_cast<SkScalar>(animPos));
   //animation_time_ = SkTime::GetMSecs();
+  */
 
   return animation;
 }

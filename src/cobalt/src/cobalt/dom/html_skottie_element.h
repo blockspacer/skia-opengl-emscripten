@@ -16,6 +16,7 @@
 
 #include <memory>
 #include <string>
+#include <utility>
 
 #include "base/memory/ref_counted.h"
 #include "base/optional.h"
@@ -56,7 +57,7 @@ class HTMLSkottieElement : public HTMLElement/*, public HTMLMediaElement*/ {
   scoped_refptr<HTMLSkottieElement> AsHTMLSkottieElement() override { return this; }
 
 #if defined(ENABLE_SKOTTIE)
-  SkMSec GetSkottieTime();
+  std::pair<SkMSec, SkMSec&> GetSkottieTime();
   sk_sp<skottie::Animation> GetSkottieAnim();
 #endif // ENABLE_SKOTTIE
 

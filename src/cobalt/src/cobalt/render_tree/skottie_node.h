@@ -14,6 +14,8 @@
 
 #pragma once
 
+#include <utility>
+
 #include "base/callback.h"
 #include "base/compiler_specific.h"
 #include "cobalt/base/type_id.h"
@@ -39,7 +41,7 @@ namespace render_tree {
 class SkottieNode : public Node {
  public:
 #if defined(ENABLE_SKOTTIE)
-  typedef base::Callback<SkMSec()> GetSkottieTimeCB;
+  typedef base::Callback<std::pair<SkMSec, SkMSec&>()> GetSkottieTimeCB;
 
   typedef base::Callback<sk_sp<skottie::Animation>()> GetSkottieAnimCB;
 #endif // ENABLE_SKOTTIE
