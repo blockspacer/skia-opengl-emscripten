@@ -290,6 +290,7 @@ sudo -E pip2 install ply Jinja2 --index-url=https://pypi.python.org/simple/ --tr
 # pip2 install *.whl
 ```
 - libpng12-0
+
 ```bash
 # see https://askubuntu.com/a/840268
 # NOTE: intel or amd!
@@ -310,6 +311,13 @@ cmake -DBUILD_TYPE="Debug" -DCLEAN_BUILD=OFF -P tools/buildUnix.cmake
 
 # OR~
 cmake -DRUN_APP=ON -DBUILD_APP=ON -DEXTRA_EMMAKE_OPTS="-j;6" -DBUILD_TYPE="Debug" -DCLEAN_BUILD=OFF -DENABLE_CMAKE_CLEAN_FIRST=OFF -DBUILD_DIR=$(pwd)/build-linux-deb/ -DEXTRA_CMAKE_OPTS="-DENABLE_WEB_PTHREADS=TRUE;-DENABLE_LIBWEBP=TRUE;-DENABLE_BLINK=TRUE;-DENABLE_COBALT=TRUE;-DENABLE_WTF=TRUE;-DDISABLE_FORMATTING=FALSE;-DENABLE_SKOTTIE=TRUE;-DFORCE_DISABLE_SK_GPU=FALSE;-DENABLE_BLINK_UI_VIEWS=TRUE" -P tools/buildUnix.cmake
+```
+
+### Apply patches
+
+```bash
+# see https://chromium.googlesource.com/chromium/src.git/+/589d8ec2fcaab6f5e48af84d703a1eb430ee9716/skia/ext/SkDiscardableMemory_chrome.cc?autodive=0%2F%2F%2F%2F%2F%2F
+cp -r "TODO: patches/skia_to_copy/*" src/chromium/third_party/skia/
 ```
 
 ### Run example on Unix
