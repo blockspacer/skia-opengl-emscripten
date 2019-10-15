@@ -53,13 +53,13 @@ static std::vector<cobalt::web_animations::Keyframe::Data>
   CreateKeyframeEffectWithTwoNumberKeyframes(
     //cobalt::cssom::PropertyKey target_property,
     double offset1,
-    int widthStart,
-    int heightStart,
-    double opacityStart,
+    /*int widthStart,
+    int heightStart,*/
+    float opacityStart,
     double offset2,
-    int widthEnd,
-    int heightEnd,
-    double opacityEnd)
+    /*int widthEnd,
+    int heightEnd,*/
+    float opacityEnd)
 {
   std::vector<cobalt::web_animations::Keyframe::Data> keyframes;
 
@@ -163,39 +163,12 @@ static void HandleAnimationEnterAfterPhase(
 // https://github.com/blockspacer/skia-opengl-emscripten/blob/bb16ab108bc4018890f4ff3179250b76c0d9053b/src/cobalt/src/cobalt/dom/css_animations_adapter.cc#L157
 static void addRippleAnimationOnce(
     const cobalt::math::Vector2dF& elementLocalPos,
-    cobalt::dom::HTMLElement* elementHTML) {
+    cobalt::dom::HTMLElement* elementHTML)
+{
+  std::cout << "addRippleAnimationOnce" << std::endl;
+
   DCHECK(elementHTML);
   CHECK(elementHTML->animations_adapter_.animatable_);
-
-/*
-<div
- class="bn ripple-button"
- id="ripple_button_1"
- style="opacity:0.5"
- I_on-keypress-print_I=""
- I_on-wheel-print_I="your args here wheel 2">
-  ripple button
-  <div
-   I_on-click-print_I="your args here ripple-effect-layer"
-   class='ripple-effect-layer'>
-    <div
-     I_on-click-print_I="your args here ripple-effect"
-     class='ripple-effect'
-     style="width:100px;height:100px;top:40px;left:50px;opacity:0.7;">
-    </div>
-    <div
-     I_on-click-print_I="your args here ripple-effect"
-     class='ripple-effect'
-     style="width:60px;height:60px;top:70px;left:30px;opacity:0.7;">
-    </div>
-  </div>
-  <div
-   I_on-click-print_I="your args here ripple-content"
-   class="ripple-content">
-     ripple content
-   </div>
-</div>
-*/
 
   scoped_refptr<cobalt::dom::HTMLElement> ripple_layer;
   scoped_refptr<cobalt::dom::HTMLCollection> found_ripple_layers
@@ -212,19 +185,9 @@ static void addRippleAnimationOnce(
     ripple_layer->set_class_name("ripple-effect-layer");
   }
 
-  // calls ClearRuleMatchingState, SetDirectionality and SetTabIndex
-  // Always clear the matching state when an attribute changes. Any attribute
-  // changing can potentially impact the matching rules.
-  /// \todo do we need it here?
+  /// \note Always clear the matching state when an attribute changes.
+  /// Any attribute changing can potentially impact the matching rules.
   elementHTML->ClearRuleMatchingState();
-
-  /// \todo do we need it here?
-  elementHTML->OnCSSMutation();
-
-  /// \todo ugly HACK to repaint element
-  /// calls HTMLElement::UpdateComputedStyleRecursively
-  elementHTML->node_document()->SampleTimelineTime();
-  elementHTML->node_document()->UpdateComputedStyles();
 
   DCHECK(ripple_layer);
   scoped_refptr<cobalt::dom::HTMLElement> ripple_effect =
@@ -235,55 +198,30 @@ static void addRippleAnimationOnce(
         ->AsHTMLElement();
   ripple_effect->set_class_name("ripple-effect");
 
-  //ripple_effect->style()->RemoveProperty("width", nullptr);
-  //ripple_effect->style()->RemoveProperty("height", nullptr);
-  //ripple_effect->style()->RemoveProperty("opacity", nullptr);
+  /// \note Always clear the matching state when an attribute changes.
+  /// Any attribute changing can potentially impact the matching rules.
+  elementHTML->ClearRuleMatchingState();
+  ripple_layer->ClearRuleMatchingState();
 
-  //ripple_effect->style()->set_width("100px", nullptr);
-  //ripple_effect->style()->set_height("100px", nullptr);
-
-  /*ripple_effect->style()->set_top(
-    "40px", nullptr);
-  ripple_effect->style()->set_left(
-    "50px", nullptr);*/
+  float maxSize = std::fmax(elementHTML->GetBoundingClientRect()->width(),
+                            elementHTML->GetBoundingClientRect()->height());
+  ripple_effect->style()->set_width(
+      std::to_string(maxSize) + "px",
+      nullptr);
+  ripple_effect->style()->set_height(
+      std::to_string(maxSize) + "px",
+      nullptr);
 
   ripple_effect->style()->set_left(
     std::to_string(elementLocalPos.x()) + "px", nullptr);
   ripple_effect->style()->set_top(
     std::to_string(elementLocalPos.y()) + "px", nullptr);
 
-  // calls ClearRuleMatchingState, SetDirectionality and SetTabIndex
-  // Always clear the matching state when an attribute changes. Any attribute
-  // changing can potentially impact the matching rules.
-  /// \todo do we need it here?
+  /// \note Always clear the matching state when an attribute changes.
+  /// Any attribute changing can potentially impact the matching rules.
+  elementHTML->ClearRuleMatchingState();
   ripple_layer->ClearRuleMatchingState();
-
-  /// \todo do we need it here?
-  ripple_layer->OnCSSMutation();
-
-  /// \todo ugly HACK to repaint element
-  /// calls HTMLElement::UpdateComputedStyleRecursively
-  ripple_layer->node_document()->SampleTimelineTime();
-  ripple_layer->node_document()->UpdateComputedStyles();
-
-/*
-    <div
-   I_on-click-print_I="your args here ripple-effect-layer"
-   class='ripple-effect-layer'>
-    ripple layer
-    <div
-     I_on-click-print_I="your args here ripple-effect"
-     class='ripple-effect'
-     style="width:100px;height:100px;top:40px;left:50px;">
-       ripple effect
-    </div>
-  </div>
-  <div
-   I_on-click-print_I="your args here ripple-content"
-   class="ripple-content">
-     ripple content
-   </div>
-*/
+  ripple_effect->ClearRuleMatchingState();
 
   scoped_refptr<cobalt::web_animations::AnimationEffectTimingReadOnly>
     timing_input;
@@ -313,7 +251,7 @@ static void addRippleAnimationOnce(
               AnimationEffectTimingReadOnly::kForwards, //CSSToWebFillMode(css_animation.fill_mode()),
             0.0, // iteration_start
             1.0, //std::numeric_limits<double>::infinity(), // css_animation.iteration_count(),
-            base::TimeDelta::FromSeconds(4), //css_animation.duration(),
+            base::TimeDelta::FromMilliseconds(800), //css_animation.duration(),
             cobalt::web_animations::AnimationEffectTimingReadOnly::
               kNormal, //CSSToWebDirection(css_animation.direction()),
             //cobalt::cssom::TimingFunction::GetLinear()
@@ -327,51 +265,10 @@ static void addRippleAnimationOnce(
       effectData =
         CreateKeyframeEffectWithTwoNumberKeyframes(
           0.0, // offset1
-          10, // std::to_string(10.0) + "px", // widthStart
-          10, // std::to_string(10.0) + "px", // heightStart
           0.9f, // opacityStart
           0.0, // offset2
-          600, // std::to_string(1000.0) + "px", // widthEnd
-          600, // std::to_string(1000.0) + "px", // heightEnd
           0.0f // opacityEnd
       );
-
-#if 0
-      std::vector<cobalt::web_animations::KeyframeEffectReadOnly::Data>
-        keyframe_effect_checker;
-
-      keyframe_effect_checker.push_back(
-        cobalt::web_animations::KeyframeEffectReadOnly::Data{effectData});
-      DCHECK(keyframe_effect_checker.size() == 1);
-      /*DCHECK(keyframe_effect_checker.at(0).
-        IsPropertyAnimated(cobalt::cssom::kOpacityProperty));
-      DCHECK(keyframe_effect_checker.at(0).
-        IsPropertyAnimated(cobalt::cssom::kHeightProperty));*/
-      DCHECK(keyframe_effect_checker.at(0).
-        IsPropertyAnimated(cobalt::cssom::kWidthProperty));
-#endif
-
-          //cobalt::cssom::kOpacityProperty,
-          //0.0, // offset1
-          //0.9f, // value1
-          //0.0, // offset2
-          //0.0f); // value2
-
-    /*auto vector1 = CreateKeyframeEffectWithTwoNumberKeyframes(
-       cobalt::cssom::kWidthProperty,
-       0.0, // offset1
-       10.0f, // value1
-       0.0, // offset2
-       1000.0f); // value2
-   effectData.insert( effectData.end(), vector1.begin(), vector1.end() );
-
-   auto vector2 = CreateKeyframeEffectWithTwoNumberKeyframes(
-     cobalt::cssom::kHeightProperty,
-     0.0, // offset1
-     10.0f, // value1
-     0.0, // offset2
-     1000.0f); // value2
-   effectData.insert( effectData.end(), vector2.begin(), vector2.end() );*/
 
     // Construct the web_animations keyframe data from the CSS Animations keyframe
     // data.
@@ -455,10 +352,61 @@ static void addRippleAnimationOnce(
     printf("created custom animation!\n");
   }
 
+  /// \todo ugly HACK to repaint element
+  DCHECK(elementHTML);
+  //DCHECK(elementHTML->IsFocusable());
+  if(elementHTML->IsDisplayed()) { /// \todo do we IsDisplayed here?
+    if(elementHTML->node_document()->active_element() == elementHTML) {
+      elementHTML->Blur();
+      elementHTML->Focus();
+    } else {
+      elementHTML->Focus();
+      elementHTML->Blur();
+    }
+  }
+
+  /// \todo ugly HACK to repaint element
+  DCHECK(ripple_layer);
+  //DCHECK(ripple_layer->IsFocusable());
+  if(ripple_layer->IsDisplayed()) { /// \todo do we IsDisplayed here?
+    if(ripple_layer->node_document()->active_element() == ripple_layer) {
+      ripple_layer->Blur();
+      ripple_layer->Focus();
+    } else {
+      ripple_layer->Focus();
+      ripple_layer->Blur();
+    }
+  }
+
+  /// \todo ugly HACK to repaint element
+  DCHECK(ripple_effect);
+  //DCHECK(ripple_effect->IsFocusable());
+  if(ripple_effect->IsDisplayed()) { /// \todo do we IsDisplayed here?
+    if(ripple_effect->node_document()->active_element() == ripple_effect) {
+      ripple_effect->Blur();
+      ripple_effect->Focus();
+    } else {
+      ripple_effect->Focus();
+      ripple_effect->Blur();
+    }
+  }
+
+  /// \note Always clear the matching state when an attribute changes.
+  /// Any attribute changing can potentially impact the matching rules.
+  elementHTML->ClearRuleMatchingState();
+  ripple_layer->ClearRuleMatchingState();
+  ripple_effect->ClearRuleMatchingState();
+
+  /*/// \todo ugly HACK to repaint element, works with event propagation
+  elementHTML->style()->set_visibility("visible", nullptr); // <<<
 
   /// \todo ugly HACK to repaint element, works with event propagation
-  ripple_effect->style()->set_visibility("visible", nullptr); // <<<
-  //ripple_effect->style()->set_width("100px", nullptr); // <<<
+  ripple_layer->style()->set_visibility("visible", nullptr); // <<<
+
+  /// \todo ugly HACK to repaint element, works with event propagation
+  ripple_effect->style()->set_visibility("visible", nullptr); // <<<*/
+
+  /*//ripple_effect->style()->set_width("100px", nullptr); // <<<
   //ripple_effect->style()->set_height("100px", nullptr); // <<<
 
   // calls ClearRuleMatchingState, SetDirectionality and SetTabIndex
@@ -472,25 +420,13 @@ static void addRippleAnimationOnce(
   elementHTML->OnCSSMutation();
 
   /// \todo ugly HACK to repaint element
-  //DCHECK(elementHTML->IsFocusable());
-  if(elementHTML->IsDisplayed()) { /// \todo do we IsDisplayed here?
-    if(elementHTML->node_document()->active_element() == elementHTML) {
-      elementHTML->Blur();
-      elementHTML->Focus();
-    } else {
-      elementHTML->Focus();
-      elementHTML->Blur();
-    }
-  }
-
-  /// \todo ugly HACK to repaint element
   /// calls HTMLElement::UpdateComputedStyleRecursively
   elementHTML->node_document()->SampleTimelineTime();
   elementHTML->node_document()->UpdateComputedStyles();
 
   /// \todo do we need it here?
   elementHTML->UpdateMatchingRules();
-  ripple_effect->UpdateMatchingRules();
+  ripple_effect->UpdateMatchingRules();*/
 }
 
 void addTestOnlyAttrCallbacks() {
@@ -734,10 +670,10 @@ void addTestOnlyAttrCallbacks() {
                   const cobalt::dom::MouseEvent* const>(event.get());
             CHECK(mouseEvent);
 
-            DCHECK(event->target());
+            DCHECK(event->current_target());
             cobalt::dom::HTMLElement* targetHTML =
               base::polymorphic_downcast<
-                  cobalt::dom::HTMLElement*>(event->target().get());
+                  cobalt::dom::HTMLElement*>(event->current_target().get());
             DCHECK(targetHTML);
 
             cobalt::dom::HTMLElement* elementHTML =
@@ -758,23 +694,14 @@ void addTestOnlyAttrCallbacks() {
                    attrVal.c_str(),
                    elem->text_content().value_or("").c_str());
 
+            float maxSize = std::fmax(targetHTML->offset_width(),
+                                      targetHTML->offset_height());
             /// \note style with `position:absolute` relative to parent.
-            /// Used offset in the X coordinate of the mouse pointer
-            /// between that event and the padding edge
-            /// of the target node.
             cobalt::math::Vector2dF elementLocalPos{
-              //mouseEvent->offset_x(),
-              //mouseEvent->offset_y()
-              targetHTML->client_left()
-              //targetHTML->offset_left()
-                //+ targetHTML->client_left()
-                + mouseEvent->client_x()
-                - elementHTML->GetBoundingClientRect()->left(),
-              targetHTML->client_top()
-              //targetHTML->offset_top()
-                //+ targetHTML->client_top()
-                + mouseEvent->client_y()
-                - elementHTML->GetBoundingClientRect()->top()
+                mouseEvent->client_x()
+                - elementHTML->GetBoundingClientRect()->left() - maxSize / 2.0f,
+                mouseEvent->client_y()
+                - elementHTML->GetBoundingClientRect()->top() - maxSize / 2.0f
             };
 
             ///\todo

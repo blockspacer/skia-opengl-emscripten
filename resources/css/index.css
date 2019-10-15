@@ -1,4 +1,4 @@
-/*div:focus {
+﻿/*div:focus {
   border: 5px solid #f1f1f1;
   background-color:rgb(255, 255, 255) !important;
 }
@@ -479,9 +479,15 @@ a {
   color:#fff;
   display: inline-block;
   text-decoration:none;
+  box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
 }
 
 /* Ripple Styling */
+@keyframes rippleDrop {
+  100% {
+    transform: scale(2);
+  }
+}
 .ripple-button {
   position: relative;
 }
@@ -497,9 +503,11 @@ a {
 .ripple-button .ripple-effect {
   position: absolute;
   border-radius: 50%;
-  transform: translate(-50%, -50%);
-  width: 50px;
-  height: 50px;
+  transform: scale(0);
+  animation: rippleDrop 800.0ms linear;
+  animation-fill-mode: forwards;
+  width: 0px;
+  height: 0px;
 }
 .ripple-button .ripple-content {
   position: relative;
@@ -508,18 +516,15 @@ a {
 
 @keyframes widthanimIn {
   0% {
-    transform: scaleX(1);
-    transform: scaleY(1);
+    transform: scaleX(1) scaleY(1);
     opacity: 0;
   }
   60% {
-    transform: scaleX(5);
-    transform: scaleY(5);
+    transform: scaleX(2) scaleY(2);
     opacity: 1;
   }
   100% {
-    transform: scaleX(10);
-    transform: scaleY(10);
+    transform: scaleX(3) scaleY(3);
   }
 }
 
