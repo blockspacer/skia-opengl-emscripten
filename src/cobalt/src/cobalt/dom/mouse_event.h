@@ -71,7 +71,7 @@ class MouseEvent : public UIEventWithKeyState {
   float page_y() const;
   float x() const { return static_cast<float>(client_x_); }
   float y() const { return static_cast<float>(client_y_); }
-  float offset_x();
+  float offset_x() const; /// \note added missing `const`
   float offset_y() const;
 
   int16_t button() const { return button_; }

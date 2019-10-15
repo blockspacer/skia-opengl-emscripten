@@ -117,7 +117,7 @@
 
 #ifdef ENABLE_COBALT
 #include "cobalt/base/polymorphic_downcast.h"
-#endif ENABLE_COBALT
+#endif // ENABLE_COBALT
 
 #ifdef ENABLE_BASE
 

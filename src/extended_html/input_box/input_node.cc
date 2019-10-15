@@ -596,12 +596,18 @@ void InputNode::RenderTreeNodeVisit(const NodeVisitor *render_target) {
       DCHECK(input_node_widget_->GetInputMethod());
 
       SkRect mEv_sk_rect = SkRect::MakeXYWH(
-        mEv.mouseEvent_.x(), mEv.mouseEvent_.y(), 1, 1);
+        mEv.mouseEvent_.x(),
+        mEv.mouseEvent_.y(),
+        1,
+        1);
       SkRect mEv_sk_rect_transformed;
       total_matrix.mapRect(&mEv_sk_rect_transformed, mEv_sk_rect);
 
       SkRect boundingClientRect_sk_rect = SkRect::MakeXYWH(
-        mEv.boundingClientRect_->x(), mEv.boundingClientRect_->y(), 1, 1);
+        mEv.boundingClientRect_->left(),
+        mEv.boundingClientRect_->top(),
+        1,
+        1);
 
       math::RectF boundingClientRect_transformed(
           boundingClientRect_sk_rect.x(), boundingClientRect_sk_rect.y(),

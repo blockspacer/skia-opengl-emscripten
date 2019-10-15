@@ -46,7 +46,9 @@ class CSSTransitionsAdapter : public cssom::TransitionSet::EventHandler {
   void OnTransitionRemoved(const cssom::Transition& transition,
                            cssom::Transition::IsCanceled is_canceled) override;
 
- private:
+ ///\todo
+ //private:
+
   // The AnimationWithEventHandler struct maintains a reference to the Animation
   // object and also owns an Animation::EventHandler that connects animation
   // events to this CSSTransitionsAdapter object.

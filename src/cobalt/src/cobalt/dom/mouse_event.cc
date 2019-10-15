@@ -127,7 +127,7 @@ float MouseEvent::page_y() const {
   return static_cast<float>(client_y());
 }
 
-float MouseEvent::offset_x() {
+float MouseEvent::offset_x() const {
   // Algorithm for offsetX
   //  https://www.w3.org/TR/2013/WD-cssom-view-20131217/#dom-mouseevent-offsetx
 

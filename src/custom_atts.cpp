@@ -16,6 +16,8 @@
 #include "cobalt/cssom/timing_function_list_value.h"
 #include "cobalt/dom/animation_event.h"
 #include "cobalt/dom/dom_animatable.h"
+#include "cobalt/dom/css_animations_adapter.h"
+#include "cobalt/dom/css_transitions_adapter.h"
 #include "cobalt/web_animations/keyframe.h"
 #include "cobalt/web_animations/keyframe_effect_read_only.h"
 #include "cobalt/web_animations/animation_effect_timing_read_only.h"
@@ -49,20 +51,67 @@ static std::map<std::string, cobalt::dom::EventCallback> eventCallbacks;
 //static cobalt::web_animations::KeyframeEffectReadOnly::Data
 static std::vector<cobalt::web_animations::Keyframe::Data>
   CreateKeyframeEffectWithTwoNumberKeyframes(
-    cobalt::cssom::PropertyKey target_property, bool add_noise_keyframes,
-    double offset1, float value1, double offset2, float value2) {
-  SB_UNREFERENCED_PARAMETER(add_noise_keyframes);
+    //cobalt::cssom::PropertyKey target_property,
+    double offset1,
+    double widthStart,
+    double heightStart,
+    double opacityStart,
+    double offset2,
+    double widthEnd,
+    double heightEnd,
+    double opacityEnd)
+{
   std::vector<cobalt::web_animations::Keyframe::Data> keyframes;
 
   cobalt::web_animations::Keyframe::Data frame1(offset1);
-  frame1.AddPropertyValue(target_property,
-    new cobalt::cssom::NumberValue(value1));
+
+  frame1.AddPropertyValue(cobalt::cssom::kOpacityProperty,
+    new cobalt::cssom::NumberValue(opacityStart));
+
+  frame1.AddPropertyValue(cobalt::cssom::kWidthProperty,
+    new cobalt::cssom::LengthValue(widthStart,
+      cobalt::cssom::kPixelsUnit));
+
+  /*frame1.AddPropertyValue(cobalt::cssom::kHeightProperty,
+    new cobalt::cssom::LengthValue(heightStart,
+      cobalt::cssom::kPixelsUnit));
+
+  std::string scaleStart;
+  scaleStart += "scaleX(";
+  scaleStart += heightStart;
+  scaleStart += ")";
+  frame1.AddPropertyValue(cobalt::cssom::kTransformProperty,
+    new cobalt::cssom::StringValue(scaleStart
+      //widthStart, heightStart
+    ));*/
+
   keyframes.push_back(frame1);
 
   cobalt::web_animations::Keyframe::Data frame2(offset2);
-  frame2.AddPropertyValue(target_property,
-    new cobalt::cssom::NumberValue(value2));
+
+  frame2.AddPropertyValue(cobalt::cssom::kOpacityProperty,
+    new cobalt::cssom::NumberValue(opacityEnd));
+
+  frame2.AddPropertyValue(cobalt::cssom::kWidthProperty,
+    new cobalt::cssom::LengthValue(widthEnd,
+      cobalt::cssom::kPixelsUnit));
+
+  frame2.AddPropertyValue(cobalt::cssom::kHeightProperty,
+    new cobalt::cssom::LengthValue(heightEnd,
+      cobalt::cssom::kPixelsUnit));
+
+  /*std::string scaleEnd;
+  scaleEnd += "scaleX(";
+  scaleEnd += heightEnd;
+  scaleEnd += ")";
+  frame2.AddPropertyValue(cobalt::cssom::kTransformProperty,
+    new cobalt::cssom::StringValue(scaleEnd
+      //widthEnd, heightEnd
+    ));*/
+
   keyframes.push_back(frame2);
+
+  //set_easing
 
   return keyframes;
 
@@ -70,23 +119,17 @@ static std::vector<cobalt::web_animations::Keyframe::Data>
   //    /*add_noise_keyframes ? AddNoiseKeyframes(keyframes) :*/ keyframes);
 }
 
-static scoped_refptr<cobalt::web_animations::AnimationEffectTimingReadOnly>
-    timing_input;
-
-static scoped_refptr<cobalt::web_animations::KeyframeEffectReadOnly>
-    keyframe_effect;
-
-static scoped_refptr<cobalt::web_animations::Animation>
-    web_animation;
-
-static std::unique_ptr<cobalt::web_animations::Animation::EventHandler>
-    event_handler;
-
 //static bool created_web_anim = false;
 
 /// \todo hangle intermidate phases, not only finish
 static void HandleAnimationEnterAfterPhase(
-    cobalt::dom::HTMLElement* elementHTML) {
+    cobalt::dom::HTMLElement* elementHTML,
+    cobalt::dom::HTMLElement* ripple_effect_parent,
+    cobalt::dom::HTMLElement* ripple_effect,
+    cobalt::web_animations::AnimationEffectTimingReadOnly* timing_input,
+    cobalt::web_animations::KeyframeEffectReadOnly* keyframe_effect,
+    cobalt::web_animations::Animation* web_animation)
+{
   std::cout << "custom_atts.cpp: HandleAnimationEnterAfterPhase" << std::endl;
 
   DCHECK(elementHTML);
@@ -94,8 +137,13 @@ static void HandleAnimationEnterAfterPhase(
   DCHECK(elementHTML->animations_adapter_.animatable_->
     GetDefaultTimeline()->current_time());
 
+  DCHECK(ripple_effect);
+  DCHECK(ripple_effect->animations_adapter_.animatable_);
+  DCHECK(ripple_effect->animations_adapter_.animatable_->
+    GetDefaultTimeline()->current_time());
+
   base::TimeDelta current_time = base::TimeDelta::FromMillisecondsD(
-      elementHTML->animations_adapter_.animatable_->
+      ripple_effect->animations_adapter_.animatable_->
         GetDefaultTimeline()->current_time().value_or(0));
 
   //animation_set->Update(
@@ -110,105 +158,77 @@ static void HandleAnimationEnterAfterPhase(
 
   printf("timing_input->iterations %f\n", timing_input->iterations());
   printf("timing_input->duration %f\n", timing_input->duration());
-  printf("current_time InSeconds %f\n", current_time.InSeconds());
+  printf("current_time InSeconds %ld\n", current_time.InSeconds());
   printf("iteration_progress %f\n", progress.iteration_progress.value_or(0.0));
-  printf("current_iteration %f\n", progress.current_iteration);
+  printf("current_iteration %f\n", progress.current_iteration.value_or(0.0f));
 
   //elementHTML->SetStyleAttribute();
+
+  const float kEpsilon = 0.01f;
+  bool finalIteration
+   = std::fabs(timing_input->iterations()
+     - progress.current_iteration.value_or(0.0)) < kEpsilon;
+  if(finalIteration) {
+    // TODO: remove here
+  }
+
+  DCHECK(ripple_effect_parent->RemoveChild(ripple_effect));
 }
 
+
+///\todo just use set_transition_property, not addRippleAnimationOnce
 // see OnAnimationStarted
 // https://github.com/blockspacer/skia-opengl-emscripten/blob/bb16ab108bc4018890f4ff3179250b76c0d9053b/src/cobalt/src/cobalt/dom/css_animations_adapter.cc#L157
-static void addRippleAnimationOnce(cobalt::dom::HTMLElement* elementHTML) {
+static void addRippleAnimationOnce(
+    const cobalt::math::Vector2dF& elementLocalPos,
+    cobalt::dom::HTMLElement* elementHTML) {
   DCHECK(elementHTML);
   CHECK(elementHTML->animations_adapter_.animatable_);
 
-  if(web_animation) {
-    return; // TODO: used add once
+/*
+<div
+ class="bn ripple-button"
+ id="ripple_button_1"
+ style="opacity:0.5"
+ I_on-keypress-print_I=""
+ I_on-wheel-print_I="your args here wheel 2">
+  ripple button
+  <div
+   I_on-click-print_I="your args here ripple-effect-layer"
+   class='ripple-effect-layer'>
+    <div
+     I_on-click-print_I="your args here ripple-effect"
+     class='ripple-effect'
+     style="width:100px;height:100px;top:40px;left:50px;opacity:0.7;">
+    </div>
+    <div
+     I_on-click-print_I="your args here ripple-effect"
+     class='ripple-effect'
+     style="width:60px;height:60px;top:70px;left:30px;opacity:0.7;">
+    </div>
+  </div>
+  <div
+   I_on-click-print_I="your args here ripple-content"
+   class="ripple-content">
+     ripple content
+   </div>
+</div>
+*/
+
+  scoped_refptr<cobalt::dom::HTMLElement> ripple_layer;
+  scoped_refptr<cobalt::dom::HTMLCollection> found_ripple_layers
+    = elementHTML->GetElementsByClassName("ripple-effect-layer");
+  if(found_ripple_layers && found_ripple_layers->length()) {
+    ripple_layer = found_ripple_layers->Item(0)->AsHTMLElement();
+  } else {
+    ripple_layer =
+      elementHTML->AppendChild(
+        new cobalt::dom::HTMLDivElement(
+          elementHTML->node_document()))
+          ->AsElement()
+          ->AsHTMLElement();
+    ripple_layer->set_class_name("ripple-effect-layer");
   }
-
-  // Transfer the CSS Animation timing information into a Web Animations
-  // AnimationEffectTimingReadOnly object.
-  // https://drafts.csswg.org/date/2015-03-02/web-animations-css-integration/#web-animations-instantiation
-  timing_input
-    = new cobalt::web_animations::AnimationEffectTimingReadOnly(
-          base::TimeDelta(), //css_animation.delay(),
-          base::TimeDelta(), // end_delay
-          cobalt::web_animations::AnimationEffectTimingReadOnly::kForwards, //CSSToWebFillMode(css_animation.fill_mode()),
-          0.0, // iteration_start
-          10,//std::numeric_limits<double>::infinity(), //100, // css_animation.iteration_count(),
-          base::TimeDelta::FromSeconds(1), //css_animation.duration(),
-          cobalt::web_animations::AnimationEffectTimingReadOnly::kNormal, //CSSToWebDirection(css_animation.direction()),
-          cobalt::cssom::TimingFunction::GetLinear());
-
-  // TODO elementHTML->set_ontransitionend();
-
-  //static cobalt::web_animations::KeyframeEffectReadOnly::Data
-  std::vector<cobalt::web_animations::Keyframe::Data>
-                      effectData =
-                        CreateKeyframeEffectWithTwoNumberKeyframes(
-                          cobalt::cssom::kOpacityProperty,
-                          //cobalt::cssom::kWidthProperty
-                          false,
-                          0.0, // offset1
-                          0.9f, // value1
-                          0.0, // offset2
-                          0.9f); // value2
-
-  // Construct the web_animations keyframe data from the CSS Animations keyframe
-  // data.
-  DCHECK(timing_input);
-  keyframe_effect =
-    new cobalt::web_animations::KeyframeEffectReadOnly(
-        timing_input,
-        elementHTML->animations_adapter_.animatable_, //animatable_,
-        effectData
-        //ConvertCSSKeyframesToWebAnimationsKeyframes(
-        //    *css_animation.keyframes(),
-        //    css_animation.timing_function())
-   );
-
-  // Finally setup and play our animation.
-  DCHECK(keyframe_effect);
-  web_animation =
-    new cobalt::web_animations::Animation(
-      keyframe_effect,
-      elementHTML->animations_adapter_.animatable_->GetDefaultTimeline()
-    );//animatable_->GetDefaultTimeline()));
-
-   //animation.set_effect(effect);
-   //animation.set_timeline(elem->node_document()->timeline());
-
-   /*web_animation->
-    set_start_time(base::Time::Now().ToDoubleT());
-    //Delta::FromSeconds(2));
-   web_animation->
-    set_playback_rate(1.0);*/
-
-  // Setup an event handler on the animation so we can watch for when it enters
-  // the after phase, allowing us to then trigger the animation events.
-  base::Callback<void()> cb =
-          base::Bind(&HandleAnimationEnterAfterPhase,
-                     /*base::Unretained(this),*/ base::Unretained(elementHTML));
-
-  //base::Bind(&MyFunc, 23);
-
-  event_handler =
-    web_animation->AttachEventHandler(std::move(cb));
-
-  elementHTML->animations()->AddAnimation(web_animation.get());
-
-  web_animation->Play();
-
-  printf("created custom animation!\n");
-
-  /// \todo ugly HACK to repaint element, works with event propagation
-  elementHTML->style()->set_visibility("visible", nullptr);
-
-  /*/// \todo ugly HACK to repaint element
-  elementHTML->style()->set_display("block", nullptr);
-
-  // MarkDisplayNoneOnNodeAndDescendants
 
   // calls ClearRuleMatchingState, SetDirectionality and SetTabIndex
   // Always clear the matching state when an attribute changes. Any attribute
@@ -224,160 +244,247 @@ static void addRippleAnimationOnce(cobalt::dom::HTMLElement* elementHTML) {
   elementHTML->node_document()->SampleTimelineTime();
   elementHTML->node_document()->UpdateComputedStyles();
 
+  DCHECK(ripple_layer);
+  scoped_refptr<cobalt::dom::HTMLElement> ripple_effect =
+    ripple_layer->AppendChild(
+      new cobalt::dom::HTMLDivElement(
+        elementHTML->node_document()))
+        ->AsElement()
+        ->AsHTMLElement();
+  ripple_effect->set_class_name("ripple-effect");
+
+  //ripple_effect->style()->RemoveProperty("width", nullptr);
+  //ripple_effect->style()->RemoveProperty("height", nullptr);
+  //ripple_effect->style()->RemoveProperty("opacity", nullptr);
+
+  //ripple_effect->style()->set_width("100px", nullptr);
+  //ripple_effect->style()->set_height("100px", nullptr);
+
+  /*ripple_effect->style()->set_top(
+    "40px", nullptr);
+  ripple_effect->style()->set_left(
+    "50px", nullptr);*/
+
+  ripple_effect->style()->set_left(
+    std::to_string(elementLocalPos.x()) + "px", nullptr);
+  ripple_effect->style()->set_top(
+    std::to_string(elementLocalPos.y()) + "px", nullptr);
+
+  // calls ClearRuleMatchingState, SetDirectionality and SetTabIndex
+  // Always clear the matching state when an attribute changes. Any attribute
+  // changing can potentially impact the matching rules.
+  /// \todo do we need it here?
+  ripple_layer->ClearRuleMatchingState();
+
+  /// \todo do we need it here?
+  ripple_layer->OnCSSMutation();
+
   /// \todo ugly HACK to repaint element
-  //DCHECK(elementHTML->IsFocusable());
-  if(elementHTML->IsDisplayed()) { /// \todo do we IsDisplayed here?
-    if(elementHTML->node_document()->active_element() == elementHTML) {
-      elementHTML->Blur();
-      elementHTML->Focus();
-    } else {
-      elementHTML->Focus();
-      elementHTML->Blur();
-    }
-  }*/
-}
+  /// calls HTMLElement::UpdateComputedStyleRecursively
+  ripple_layer->node_document()->SampleTimelineTime();
+  ripple_layer->node_document()->UpdateComputedStyles();
+
+/*
+    <div
+   I_on-click-print_I="your args here ripple-effect-layer"
+   class='ripple-effect-layer'>
+    ripple layer
+    <div
+     I_on-click-print_I="your args here ripple-effect"
+     class='ripple-effect'
+     style="width:100px;height:100px;top:40px;left:50px;">
+       ripple effect
+    </div>
+  </div>
+  <div
+   I_on-click-print_I="your args here ripple-content"
+   class="ripple-content">
+     ripple content
+   </div>
+*/
+
+  scoped_refptr<cobalt::web_animations::AnimationEffectTimingReadOnly>
+    timing_input;
+
+  scoped_refptr<cobalt::web_animations::KeyframeEffectReadOnly>
+    keyframe_effect;
+
+  scoped_refptr<cobalt::web_animations::Animation>
+    web_animation;
+
+  std::unique_ptr<cobalt::web_animations::Animation::EventHandler>
+    event_handler;
+
+  DCHECK(!web_animation);
+  //if(!web_animation)
+  {
+    //return; // TODO: used add once
+
+    // Transfer the CSS Animation timing information into a Web Animations
+    // AnimationEffectTimingReadOnly object.
+    // https://drafts.csswg.org/date/2015-03-02/web-animations-css-integration/#web-animations-instantiation
+    timing_input
+      = new cobalt::web_animations::AnimationEffectTimingReadOnly(
+            base::TimeDelta(), //css_animation.delay(),
+            base::TimeDelta(), // end_delay
+            cobalt::web_animations::
+              AnimationEffectTimingReadOnly::kForwards, //CSSToWebFillMode(css_animation.fill_mode()),
+            0.0, // iteration_start
+            1.0, //std::numeric_limits<double>::infinity(), // css_animation.iteration_count(),
+            base::TimeDelta::FromSeconds(4), //css_animation.duration(),
+            cobalt::web_animations::AnimationEffectTimingReadOnly::
+              kNormal, //CSSToWebDirection(css_animation.direction()),
+            //cobalt::cssom::TimingFunction::GetLinear()
+            cobalt::cssom::TimingFunction::GetEaseInOut()
+        );
+
+    // TODO elementHTML->set_ontransitionend();
+
+    //static cobalt::web_animations::KeyframeEffectReadOnly::Data
+    std::vector<cobalt::web_animations::Keyframe::Data>
+      effectData =
+        CreateKeyframeEffectWithTwoNumberKeyframes(
+          0.0, // offset1
+          10, // std::to_string(10.0) + "px", // widthStart
+          10, // std::to_string(10.0) + "px", // heightStart
+          0.9f, // opacityStart
+          0.0, // offset2
+          600, // std::to_string(1000.0) + "px", // widthEnd
+          600, // std::to_string(1000.0) + "px", // heightEnd
+          0.0f // opacityEnd
+      );
 
 #if 0
-static base::TimeDelta ScaleTimeDelta(
-  const base::TimeDelta& time_delta, float scale)
-{
-  return base::TimeDelta::FromMicroseconds(
-    static_cast<int64>(
-      time_delta.InSecondsF()
-      * scale
-      * base::Time::kMicrosecondsPerSecond));
-}
+      std::vector<cobalt::web_animations::KeyframeEffectReadOnly::Data>
+        keyframe_effect_checker;
 
-// Given that a new transition has started on a CSS value that had an active old
-// transition occurring on it, this function creates a new transition based on
-// the old transition's values (so that we can smoothly transition out of the
-// middle of an old transition).
-static cobalt::cssom::Transition CreateTransitionOverOldTransition(
-    cobalt::cssom::PropertyKey property,
-    const base::TimeDelta& current_time,
-    const cobalt::cssom::Transition&
-    old_transition,
-    const base::TimeDelta& duration,
-    const base::TimeDelta& delay,
-    const scoped_refptr<TimingFunction>& timing_function,
-    const scoped_refptr<cobalt::cssom::PropertyValue>& end_value)
-{
-  // Since we're updating an old transtion, we'll need to know the animated
-  // CSS style value from the old transition at this point in time.
-  scoped_refptr<cobalt::cssom::PropertyValue>
-    current_value_within_old_transition =
-      old_transition.Evaluate(current_time);
+      keyframe_effect_checker.push_back(
+        cobalt::web_animations::KeyframeEffectReadOnly::Data{effectData});
+      DCHECK(keyframe_effect_checker.size() == 1);
+      /*DCHECK(keyframe_effect_checker.at(0).
+        IsPropertyAnimated(cobalt::cssom::kOpacityProperty));
+      DCHECK(keyframe_effect_checker.at(0).
+        IsPropertyAnimated(cobalt::cssom::kScaleYProperty));*/
+      DCHECK(keyframe_effect_checker.at(0).
+        IsPropertyAnimated(cobalt::cssom::kScaleXProperty));
+#endif
 
-  // If the new transition is a reversal fo the old transition, we need to
-  // setup reversing_adjusted_start_value and reversing_shortening_factor so
-  // that they can be used to reduce the new transition's duration.
-  scoped_refptr<cobalt::cssom::PropertyValue> new_reversing_adjusted_start_value;
-  float new_reversing_shortening_factor;
-  SetReversingValues(current_time, old_transition,
-                     current_value_within_old_transition, end_value,
-                     &new_reversing_adjusted_start_value,
-                     &new_reversing_shortening_factor);
+          //cobalt::cssom::kOpacityProperty,
+          //0.0, // offset1
+          //0.9f, // value1
+          //0.0, // offset2
+          //0.0f); // value2
 
-  base::TimeDelta with_reversing_delay =
-      delay < base::TimeDelta()
-          ? ScaleTimeDelta(delay, new_reversing_shortening_factor)
-          : delay;
+    /*auto vector1 = CreateKeyframeEffectWithTwoNumberKeyframes(
+       cobalt::cssom::kWidthProperty,
+       0.0, // offset1
+       10.0f, // value1
+       0.0, // offset2
+       1000.0f); // value2
+   effectData.insert( effectData.end(), vector1.begin(), vector1.end() );
 
-  return cobalt::cssom::Transition(
-      property, current_value_within_old_transition, end_value, current_time,
-      ScaleTimeDelta(duration, new_reversing_shortening_factor),
-      with_reversing_delay, timing_function, new_reversing_adjusted_start_value,
-      new_reversing_shortening_factor);
-}
+   auto vector2 = CreateKeyframeEffectWithTwoNumberKeyframes(
+     cobalt::cssom::kHeightProperty,
+     0.0, // offset1
+     10.0f, // value1
+     0.0, // offset2
+     1000.0f); // value2
+   effectData.insert( effectData.end(), vector2.begin(), vector2.end() );*/
 
-// see OnAnimationStarted
-// https://github.com/blockspacer/skia-opengl-emscripten/blob/bb16ab108bc4018890f4ff3179250b76c0d9053b/src/cobalt/src/cobalt/dom/css_animations_adapter.cc#L157
-static void addRippleTransitionOnce(cobalt::dom::HTMLElement* elementHTML) {
-  DCHECK(elementHTML);
-  CHECK(elementHTML->animations_adapter_.animatable_);
+    // Construct the web_animations keyframe data from the CSS Animations keyframe
+    // data.
+    DCHECK(timing_input);
+    keyframe_effect =
+      new cobalt::web_animations::KeyframeEffectReadOnly(
+          timing_input,
+          ripple_effect->animations_adapter_.animatable_, //animatable_,
+          //keyframe_effect_checker
+          effectData
+          //ConvertCSSKeyframesToWebAnimationsKeyframes(
+          //    *css_animation.keyframes(),
+          //    css_animation.timing_function())
+     );
 
-  if(web_animation) {
-    return; // TODO: used add once
+    // Finally setup and play our animation.
+    DCHECK(keyframe_effect);
+    DCHECK(ripple_effect);
+    web_animation =
+      new cobalt::web_animations::Animation(
+        keyframe_effect,
+        ripple_effect->animations_adapter_.animatable_->
+          GetDefaultTimeline()
+      );//animatable_->GetDefaultTimeline()));
+
+     //animation.set_effect(effect);
+     //animation.set_timeline(elem->node_document()->timeline());
+
+     /*web_animation->
+      set_start_time(base::Time::Now().ToDoubleT());
+      //Delta::FromSeconds(2));
+     web_animation->
+      set_playback_rate(1.0);*/
+
+    //base::Bind(&MyFunc, 23);
+
+    DCHECK(web_animation);
+    ripple_effect->animations()->AddAnimation(web_animation.get());
+
+    /// \todo free memory binded to handler via RetainedRef
+    // RemoveEventHandler called when the EventHandler object is destructed, this "deregisters"
+    // the event handler from the Animation's event handler set.
+    //event_handler =
+    //  web_animation->RemoveEventHandler(std::move(cb));
+
+    // Setup an event handler on the animation so we can watch for when it enters
+    // the after phase, allowing us to then trigger the animation events.
+    DCHECK(timing_input);
+    DCHECK(keyframe_effect);
+    DCHECK(web_animation);
+    base::Callback<void()> cb =
+            // see https://chromium.googlesource.com/chromium/src.git/+/master/docs/callback.md
+            base::Bind(&HandleAnimationEnterAfterPhase,
+              /*base::Unretained(this),*/
+              base::Unretained(elementHTML),
+              base::Unretained(ripple_layer.get()),
+              base::Unretained(ripple_effect.get()),
+              base::Unretained(timing_input.get()),
+              base::Unretained(keyframe_effect.get()),
+              /// \note refcounted stored in animation_map_
+              base::Unretained(web_animation.get())
+            );
+
+    DCHECK(cb);
+    event_handler =
+      web_animation->AttachEventHandler(std::move(cb));
+
+    DCHECK(event_handler);
+    DCHECK(ripple_effect);
+    DCHECK(web_animation);
+    ripple_effect->animations_adapter_.animation_map_.insert(
+      std::make_pair(
+        //std::string, AnimationWithEventHandler*
+        cobalt::cssom::GetPropertyName(cobalt::cssom::kWidthProperty),
+        new cobalt::dom::CSSAnimationsAdapter::
+          AnimationWithEventHandler(
+            web_animation, std::move(event_handler))));
+
+    web_animation->Play();
+
+    printf("created custom animation!\n");
   }
 
-  // Transfer the CSS Animation timing information into a Web Animations
-  // AnimationEffectTimingReadOnly object.
-  // https://drafts.csswg.org/date/2015-03-02/web-animations-css-integration/#web-animations-instantiation
-  timing_input
-    = new cobalt::web_animations::AnimationEffectTimingReadOnly(
-          base::TimeDelta(), //css_animation.delay(),
-          base::TimeDelta(), // end_delay
-          cobalt::web_animations::AnimationEffectTimingReadOnly::kForwards, //CSSToWebFillMode(css_animation.fill_mode()),
-          0.0, // iteration_start
-          10,//std::numeric_limits<double>::infinity(), //100, // css_animation.iteration_count(),
-          base::TimeDelta::FromSeconds(1), //css_animation.duration(),
-          cobalt::web_animations::AnimationEffectTimingReadOnly::kNormal, //CSSToWebDirection(css_animation.direction()),
-          cobalt::cssom::TimingFunction::GetLinear());
 
-  //static cobalt::web_animations::KeyframeEffectReadOnly::Data
-  std::vector<cobalt::web_animations::Keyframe::Data>
-                      effectData =
-                        CreateKeyframeEffectWithTwoNumberKeyframes(
-                          cobalt::cssom::kOpacityProperty,
-                          //cobalt::cssom::kWidthProperty
-                          false,
-                          0.0, // offset1
-                          0.9f, // value1
-                          0.0, // offset2
-                          0.9f); // value2
-
-  // Construct the web_animations keyframe data from the CSS Animations keyframe
-  // data.
-  DCHECK(timing_input);
-  keyframe_effect =
-    new cobalt::web_animations::KeyframeEffectReadOnly(
-        timing_input,
-        elementHTML->animations_adapter_.animatable_, //animatable_,
-        effectData
-        //ConvertCSSKeyframesToWebAnimationsKeyframes(
-        //    *css_animation.keyframes(),
-        //    css_animation.timing_function())
-   );
-
-  // Finally setup and play our animation.
-  DCHECK(keyframe_effect);
-  web_animation =
-    new cobalt::web_animations::Animation(
-      keyframe_effect,
-      elementHTML->animations_adapter_.animatable_->GetDefaultTimeline()
-    );//animatable_->GetDefaultTimeline()));
-
-   //animation.set_effect(effect);
-   //animation.set_timeline(elem->node_document()->timeline());
-
-   /*web_animation->
-    set_start_time(base::Time::Now().ToDoubleT());
-    //Delta::FromSeconds(2));
-   web_animation->
-    set_playback_rate(1.0);*/
-
-  // Setup an event handler on the animation so we can watch for when it enters
-  // the after phase, allowing us to then trigger the animation events.
-  base::Callback<void()> cb =
-          base::Bind(&HandleAnimationEnterAfterPhase,
-                     /*base::Unretained(this),*/ base::Unretained(elementHTML));
-
-  //base::Bind(&MyFunc, 23);
-
-  event_handler =
-    web_animation->AttachEventHandler(std::move(cb));
-
-  web_animation->Play();
-
-  elementHTML->animations()->AddAnimation(web_animation.get());
-
-  printf("created custom animation!\n");
+  /// \todo ugly HACK to repaint element, works with event propagation
+  ripple_effect->style()->set_visibility("visible", nullptr); // <<<
+  //ripple_effect->style()->set_width("100px", nullptr); // <<<
+  //ripple_effect->style()->set_height("100px", nullptr); // <<<
 
   // calls ClearRuleMatchingState, SetDirectionality and SetTabIndex
   // Always clear the matching state when an attribute changes. Any attribute
   // changing can potentially impact the matching rules.
   /// \todo do we need it here?
   elementHTML->ClearRuleMatchingState();
+  ripple_effect->ClearRuleMatchingState();
 
   /// \todo do we need it here?
   elementHTML->OnCSSMutation();
@@ -398,8 +505,11 @@ static void addRippleTransitionOnce(cobalt::dom::HTMLElement* elementHTML) {
   /// calls HTMLElement::UpdateComputedStyleRecursively
   elementHTML->node_document()->SampleTimelineTime();
   elementHTML->node_document()->UpdateComputedStyles();
+
+  /// \todo do we need it here?
+  elementHTML->UpdateMatchingRules();
+  ripple_effect->UpdateMatchingRules();
 }
-#endif // 0
 
 void addTestOnlyAttrCallbacks() {
     eventCallbacks["on-mousemove-event"]
@@ -642,6 +752,12 @@ void addTestOnlyAttrCallbacks() {
                   const cobalt::dom::MouseEvent* const>(event.get());
             CHECK(mouseEvent);
 
+            DCHECK(event->target());
+            cobalt::dom::HTMLElement* targetHTML =
+              base::polymorphic_downcast<
+                  cobalt::dom::HTMLElement*>(event->target().get());
+            DCHECK(targetHTML);
+
             cobalt::dom::HTMLElement* elementHTML =
                 // TODO: polymorphic_downcast Check failed: dynamic_cast<Derived>(base) == base.
                 base::polymorphic_downcast<
@@ -660,42 +776,44 @@ void addTestOnlyAttrCallbacks() {
                    attrVal.c_str(),
                    elem->text_content().value_or("").c_str());
 
-                   addRippleAnimationOnce(elementHTML);
+            /// \note style with `position:absolute` relative to parent.
+            /// Used offset in the X coordinate of the mouse pointer
+            /// between that event and the padding edge
+            /// of the target node.
+            cobalt::math::Vector2dF elementLocalPos{
+              //mouseEvent->offset_x(),
+              //mouseEvent->offset_y()
+              targetHTML->client_left()
+              //targetHTML->offset_left()
+                //+ targetHTML->client_left()
+                + mouseEvent->client_x()
+                - elementHTML->GetBoundingClientRect()->left(),
+              targetHTML->client_top()
+              //targetHTML->offset_top()
+                //+ targetHTML->client_top()
+                + mouseEvent->client_y()
+                - elementHTML->GetBoundingClientRect()->top()
+            };
 
-                   //addRippleTransitionOnce(elementHTML);
+            ///\todo
+            /// just use set_transition_property,
+            /// not addRippleAnimationOnce
+            /// BUT HOW TO BIND CALLBACK to set_transition_property
+            /// set_mutation_observer without ready detection!? https://github.com/blockspacer/skia-opengl-emscripten/blob/bb16ab108bc4018890f4ff3179250b76c0d9053b/src/cobalt/src/cobalt/cssom/css_declared_style_declaration_test.cc#L1345
+            ///
+            ///initial_data->set_transform(KeywordValue::GetNone());
+            ///initial_data->set_transition_delay(MakeTimeListWithSingleTime(0.0f));
+            ///initial_data->set_transition_duration(MakeTimeListWithSingleTime(0.0f));
+            ///initial_data->set_transition_property(
+            ///    MakePropertyNameListWithSingleProperty(kAllProperty));
+            ///initial_data->set_transition_timing_function(
+            ///    MakeTimingFunctionWithSingleProperty(TimingFunction::GetLinear()));
 
-                   // see OnAnimationStarted
-                   // https://github.com/blockspacer/skia-opengl-emscripten/blob/bb16ab108bc4018890f4ff3179250b76c0d9053b/src/cobalt/src/cobalt/dom/css_animations_adapter.cc#L157
-#if 0
-                   static cobalt::web_animations::KeyframeEffectReadOnly::Data
-                    effectData =
-                      CreateKeyframeEffectWithTwoNumberKeyframes(
-                        cobalt::cssom::kOpacityProperty,
-                        false, 0.0, 0.2f, 0.0, 0.0f);
-
-                   const scoped_refptr<
-                    cobalt::web_animations::AnimationEffectReadOnly>
-                      effect
-                        = cobalt::web_animations::KeyframeEffectReadOnly(
-                          effectData);
-
-                   static scoped_refptr<
-                    cobalt::web_animations::Animation> animation;
-                  if(!animation) {
-                    animation
-                      = new cobalt::web_animations::Animation(
-                          effect, elem->node_document()->timeline());
-                   //animation.set_effect(effect);
-                   //animation.set_timeline(elem->node_document()->timeline());
-                   animation->
-                    set_start_time(base::Time::Now().ToDoubleT());
-                    //Delta::FromSeconds(2));
-                   animation->
-                    set_playback_rate(1.0);
-                  }
-
-                   elem->animations()->AddAnimation(animation);
-#endif // 0
+            // see OnAnimationStarted
+            // https://github.com/blockspacer/skia-opengl-emscripten/blob/bb16ab108bc4018890f4ff3179250b76c0d9053b/src/cobalt/src/cobalt/dom/css_animations_adapter.cc#L157
+            addRippleAnimationOnce(
+              elementLocalPos,
+              elementHTML);
 
             return base::nullopt;
         });

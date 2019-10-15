@@ -133,8 +133,10 @@ HTMLComponentElement::HTMLComponentElement(Document* document)
         // TODO: polymorphic_downcast Check failed: dynamic_cast<Derived>(base) == base.
         base::polymorphic_downcast<const dom::MouseEvent* const>(event.get());
       CHECK(mouseEvent);
-      float x = mouseEvent->client_x() - elem->GetBoundingClientRect()->x();
-      float y = mouseEvent->client_y() - elem->GetBoundingClientRect()->y();
+      float x = mouseEvent->client_x()
+        - elem->GetBoundingClientRect()->left();
+      float y = mouseEvent->client_y()
+        - elem->GetBoundingClientRect()->top();
       printf("Component on-mousedown "
              "at (%f;%f) kSbKeyMouse1: %d , kSbKeyMouse2: %d , kSbKeyMouse3: %d \n",
               x,
@@ -177,7 +179,7 @@ HTMLComponentElement::HTMLComponentElement(Document* document)
 
       }
 
-      return true;
+      return base::nullopt;
     });
 
   this->add_event_cb("on-mouseup",
@@ -192,8 +194,10 @@ HTMLComponentElement::HTMLComponentElement(Document* document)
         // TODO: polymorphic_downcast Check failed: dynamic_cast<Derived>(base) == base.
         base::polymorphic_downcast<const dom::MouseEvent* const>(event.get());
       CHECK(mouseEvent);
-      float x = mouseEvent->client_x() - elem->GetBoundingClientRect()->x();
-      float y = mouseEvent->client_y() - elem->GetBoundingClientRect()->y();
+      float x = mouseEvent->client_x()
+        - elem->GetBoundingClientRect()->left();
+      float y = mouseEvent->client_y()
+        - elem->GetBoundingClientRect()->top();
       printf("Component on-mouseup at (%f;%f) attr_val=%s event %s for tag: %s, "
              "attrVal: %s, text_content: %s\n",
               x,
@@ -237,7 +241,7 @@ HTMLComponentElement::HTMLComponentElement(Document* document)
         }
       }
 
-      return true;
+      return base::nullopt;
     });
 
   this->add_event_cb("on-click",
@@ -253,8 +257,10 @@ HTMLComponentElement::HTMLComponentElement(Document* document)
         // TODO: polymorphic_downcast Check failed: dynamic_cast<Derived>(base) == base.
         base::polymorphic_downcast<const dom::MouseEvent* const>(event.get());
       CHECK(mouseEvent);
-      float x = mouseEvent->client_x() - elem->GetBoundingClientRect()->x();
-      float y = mouseEvent->client_y() - elem->GetBoundingClientRect()->y();
+      float x = mouseEvent->client_x()
+        - elem->GetBoundingClientRect()->left();
+      float y = mouseEvent->client_y()
+        - elem->GetBoundingClientRect()->top();
       printf("Component on-click-print at (%f;%f) attr_val=%s event %s for tag: %s, "
              "attrVal: %s, text_content: %s\n",
               x,
@@ -309,7 +315,7 @@ HTMLComponentElement::HTMLComponentElement(Document* document)
         }
       }
 
-      return true;
+      return base::nullopt;
     });
 
   this->add_event_cb("on-mousemove",
@@ -333,8 +339,10 @@ HTMLComponentElement::HTMLComponentElement(Document* document)
     CHECK(/*pointerEvent ||*/ mouseEvent);
     //float x = /*pointerEvent ? pointerEvent->x() :*/ mouseEvent->client_x();
     //float y = /*pointerEvent ? pointerEvent->y() :*/ mouseEvent->client_y();
-    float x = mouseEvent->client_x() - elem->GetBoundingClientRect()->x();
-    float y = mouseEvent->client_y() - elem->GetBoundingClientRect()->y();
+    float x = mouseEvent->client_x()
+      - elem->GetBoundingClientRect()->left();
+    float y = mouseEvent->client_y()
+      - elem->GetBoundingClientRect()->top();
     printf("Component mousemove at (%f;%f) event %s for tag: %s, "
            "attrVal: %s, text_content: %s\n",
             x,
@@ -377,7 +385,7 @@ HTMLComponentElement::HTMLComponentElement(Document* document)
       }
     }
 
-    return true;
+    return base::nullopt;
   });
 
   this->add_event_cb("on-mouseover",
@@ -392,8 +400,10 @@ HTMLComponentElement::HTMLComponentElement(Document* document)
         // TODO: polymorphic_downcast Check failed: dynamic_cast<Derived>(base) == base.
         base::polymorphic_downcast<const dom::MouseEvent* const>(event.get());
       CHECK(mouseEvent);
-      float x = mouseEvent->client_x() - elem->GetBoundingClientRect()->x();
-      float y = mouseEvent->client_y() - elem->GetBoundingClientRect()->y();
+      float x = mouseEvent->client_x()
+        - elem->GetBoundingClientRect()->left();
+      float y = mouseEvent->client_y()
+        - elem->GetBoundingClientRect()->top();
       printf("Component on-test-mouseover at (%f;%f) event %s for tag: %s, "
              "attrVal: %s, text_content: %s\n",
               x,
@@ -409,7 +419,7 @@ HTMLComponentElement::HTMLComponentElement(Document* document)
       CHECK(elementHTML);
       //elementHTML->GetUiNavItem()->Focus();
       elementHTML->Focus();
-      return true;
+      return base::nullopt;
     });
 
   this->add_event_cb("on-mouseout",
@@ -428,8 +438,10 @@ HTMLComponentElement::HTMLComponentElement(Document* document)
         // TODO: polymorphic_downcast Check failed: dynamic_cast<Derived>(base) == base.
         base::polymorphic_downcast<const dom::MouseEvent* const>(event.get());
       CHECK(mouseEvent);
-      float x = mouseEvent->client_x() - elem->GetBoundingClientRect()->x();
-      float y = mouseEvent->client_y() - elem->GetBoundingClientRect()->y();
+      float x = mouseEvent->client_x()
+        - elem->GetBoundingClientRect()->left();
+      float y = mouseEvent->client_y()
+       - elem->GetBoundingClientRect()->top();
       printf("Component on-test-mouseout at (%f;%f) event %s for tag: %s, "
              "attrVal: %s, text_content: %s\n",
               x,
@@ -450,7 +462,7 @@ HTMLComponentElement::HTMLComponentElement(Document* document)
       } else {
         //elementHTML->Blur();
       }*/
-      return true;
+      return base::nullopt;
     });
 
   this->add_event_cb("on-keyup",
@@ -566,7 +578,7 @@ HTMLComponentElement::HTMLComponentElement(Document* document)
         }
       }
 
-      return true;
+      return base::nullopt;
     });
 
   this->add_event_cb("on-keypress",
@@ -687,7 +699,7 @@ HTMLComponentElement::HTMLComponentElement(Document* document)
         }
       }
 
-      return true;
+      return base::nullopt;
     });
 
   this->add_event_cb("on-keydown",
@@ -717,7 +729,7 @@ HTMLComponentElement::HTMLComponentElement(Document* document)
         // TODO: polymorphic_downcast Check failed: dynamic_cast<Derived>(base) == base.
         base::polymorphic_downcast<dom::HTMLElement*>(elem.get());
       CHECK(elementHTML);
-      return true;
+      return base::nullopt;
     });
 #endif
 }
@@ -868,7 +880,7 @@ void HTMLComponentElement::onBoxGeneratorVisit(cobalt::layout::BoxGenerator& box
               elem->tag_name().c_str(),
               attrVal.c_str(),
               elem->text_content().value_or("").c_str());
-      return true;
+      return base::nullopt;
     });*/
 
   auto component =

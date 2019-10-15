@@ -624,7 +624,10 @@ base::Optional<bool> CustomEventListener::HandleEvent(
     res = cb.value()(event, this, attrVal);
   }*/
   DCHECK(elem_);
+  DCHECK(callback_this);
+  /// \todo return elem_->HandleCustomEvent(callback_this, event, had_exception)
   return elem_->HandleCustomEvent(event);
+  ;
 }
 
 void Element::add_event_cb(const std::string &custom_token, EventCallback cb)

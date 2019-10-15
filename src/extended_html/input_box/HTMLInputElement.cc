@@ -854,8 +854,10 @@ HTMLInputElement::HTMLInputElement(Document* document)
         // TODO: polymorphic_downcast Check failed: dynamic_cast<Derived>(base) == base.
         base::polymorphic_downcast<const dom::MouseEvent* const>(event.get());
       CHECK(mouseEvent);
-      float x = mouseEvent->client_x() - elem->GetBoundingClientRect()->x();
-      float y = mouseEvent->client_y() - elem->GetBoundingClientRect()->y();
+      float x = mouseEvent->client_x()
+        - elem->GetBoundingClientRect()->left();
+      float y = mouseEvent->client_y()
+        - elem->GetBoundingClientRect()->top();
       printf("InputBox on-mousedown "
              "at (%f;%f) kSbKeyMouse1: %d , kSbKeyMouse2: %d , kSbKeyMouse3: %d \n",
               x,
@@ -912,7 +914,7 @@ HTMLInputElement::HTMLInputElement(Document* document)
 
       }
 
-      return true;
+      return base::nullopt;
     });
 
   this->add_event_cb("on-mouseup",
@@ -927,8 +929,10 @@ HTMLInputElement::HTMLInputElement(Document* document)
         // TODO: polymorphic_downcast Check failed: dynamic_cast<Derived>(base) == base.
         base::polymorphic_downcast<const dom::MouseEvent* const>(event.get());
       CHECK(mouseEvent);
-      float x = mouseEvent->client_x() - elem->GetBoundingClientRect()->x();
-      float y = mouseEvent->client_y() - elem->GetBoundingClientRect()->y();
+      float x = mouseEvent->client_x()
+        - elem->GetBoundingClientRect()->left();
+      float y = mouseEvent->client_y()
+        - elem->GetBoundingClientRect()->top();
       printf("InputBox on-mouseup at (%f;%f) attr_val=%s event %s for tag: %s, "
              "attrVal: %s, text_content: %s\n",
               x,
@@ -986,7 +990,7 @@ HTMLInputElement::HTMLInputElement(Document* document)
         }
       }
 
-      return true;
+      return base::nullopt;
     });
 
   this->add_event_cb("on-click",
@@ -1008,8 +1012,10 @@ HTMLInputElement::HTMLInputElement(Document* document)
         // TODO: polymorphic_downcast Check failed: dynamic_cast<Derived>(base) == base.
         base::polymorphic_downcast<const dom::MouseEvent* const>(event.get());
       CHECK(mouseEvent);
-      float x = mouseEvent->client_x() - elem->GetBoundingClientRect()->x();
-      float y = mouseEvent->client_y() - elem->GetBoundingClientRect()->y();
+      float x = mouseEvent->client_x()
+        - elem->GetBoundingClientRect()->left();
+      float y = mouseEvent->client_y()
+        - elem->GetBoundingClientRect()->top();
       printf("InputBox on-click-print at (%f;%f) attr_val=%s event %s for tag: %s, "
              "attrVal: %s, text_content: %s\n",
               x,
@@ -1066,7 +1072,7 @@ HTMLInputElement::HTMLInputElement(Document* document)
       }
 #endif // 0
 
-      return true;
+      return base::nullopt;
     });
 
   this->add_event_cb("on-mousemove",
@@ -1090,8 +1096,10 @@ HTMLInputElement::HTMLInputElement(Document* document)
     CHECK(/*pointerEvent ||*/ mouseEvent);
     //float x = /*pointerEvent ? pointerEvent->x() :*/ mouseEvent->client_x();
     //float y = /*pointerEvent ? pointerEvent->y() :*/ mouseEvent->client_y();
-    float x = mouseEvent->client_x() - elem->GetBoundingClientRect()->x();
-    float y = mouseEvent->client_y() - elem->GetBoundingClientRect()->y();
+    float x = mouseEvent->client_x()
+      - elem->GetBoundingClientRect()->left();
+    float y = mouseEvent->client_y()
+      - elem->GetBoundingClientRect()->top();
     printf("InputBox mousemove at (%f;%f) event %s for tag: %s, "
            "attrVal: %s, text_content: %s\n",
             x,
@@ -1148,7 +1156,7 @@ HTMLInputElement::HTMLInputElement(Document* document)
       }
     }
 
-    return true;
+    return base::nullopt;
   });
 
   this->add_event_cb("on-mouseover",
@@ -1163,8 +1171,10 @@ HTMLInputElement::HTMLInputElement(Document* document)
         // TODO: polymorphic_downcast Check failed: dynamic_cast<Derived>(base) == base.
         base::polymorphic_downcast<const dom::MouseEvent* const>(event.get());
       CHECK(mouseEvent);
-      float x = mouseEvent->client_x() - elem->GetBoundingClientRect()->x();
-      float y = mouseEvent->client_y() - elem->GetBoundingClientRect()->y();
+      float x = mouseEvent->client_x()
+        - elem->GetBoundingClientRect()->left();
+      float y = mouseEvent->client_y()
+        - elem->GetBoundingClientRect()->top();
       printf("InputBox on-test-mouseover at (%f;%f) event %s for tag: %s, "
              "attrVal: %s, text_content: %s\n",
               x,
@@ -1182,7 +1192,7 @@ HTMLInputElement::HTMLInputElement(Document* document)
 
       //elementHTML->Focus();
 
-      return true;
+      return base::nullopt;
     });
 
   this->add_event_cb("on-mouseout",
@@ -1201,8 +1211,10 @@ HTMLInputElement::HTMLInputElement(Document* document)
         // TODO: polymorphic_downcast Check failed: dynamic_cast<Derived>(base) == base.
         base::polymorphic_downcast<const dom::MouseEvent* const>(event.get());
       CHECK(mouseEvent);
-      float x = mouseEvent->client_x() - elem->GetBoundingClientRect()->x();
-      float y = mouseEvent->client_y() - elem->GetBoundingClientRect()->y();
+      float x = mouseEvent->client_x()
+        - elem->GetBoundingClientRect()->left();
+      float y = mouseEvent->client_y()
+        - elem->GetBoundingClientRect()->top();
       printf("InputBox on-test-mouseout at (%f;%f) event %s for tag: %s, "
              "attrVal: %s, text_content: %s\n",
               x,
@@ -1227,7 +1239,7 @@ HTMLInputElement::HTMLInputElement(Document* document)
       } else {
         //elementHTML->Blur();
       }*/
-      return true;
+      return base::nullopt;
     });
 
   this->add_event_cb("on-keyup",
@@ -1396,7 +1408,7 @@ HTMLInputElement::HTMLInputElement(Document* document)
         }
       }
 
-      return true;
+      return base::nullopt;
     });
 
 #if 0
@@ -1571,7 +1583,7 @@ HTMLInputElement::HTMLInputElement(Document* document)
         }
       }
 
-      return true;
+      return base::nullopt;
     });
 #endif // 0
 
@@ -1745,7 +1757,7 @@ HTMLInputElement::HTMLInputElement(Document* document)
   }*/
              }
            }
-      return true;
+      return base::nullopt;
     });
 }
 

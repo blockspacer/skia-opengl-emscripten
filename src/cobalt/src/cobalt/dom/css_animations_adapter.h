@@ -47,7 +47,9 @@ class CSSAnimationsAdapter : public cssom::AnimationSet::EventHandler {
   void OnAnimationRemoved(const cssom::Animation& css_animation,
                           cssom::Animation::IsCanceled is_canceled) override;
 
- private:
+///\todo
+// private:
+public:
   // The AnimationWithEventHandler struct maintains a reference to the Animation
   // object and also owns an Animation::EventHandler that connects animation
   // events to this CSSTransitionsAdapter object.
@@ -67,10 +69,12 @@ class CSSAnimationsAdapter : public cssom::AnimationSet::EventHandler {
   // web animation enters the after phase, we fire the animationend event.
   void HandleAnimationEnterAfterPhase(cssom::AnimationSet* animation_set);
 
-public: // TODO
+ ///\todo
+ public:
   scoped_refptr<dom::DOMAnimatable> animatable_;
 
- private:
+ ///\todo
+ //private:
   AnimationMap animation_map_;
 
   DISALLOW_COPY_AND_ASSIGN(CSSAnimationsAdapter);

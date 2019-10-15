@@ -495,7 +495,7 @@ NonTrivialGlobalVariables::NonTrivialGlobalVariables() {
                         FontWeightValue::GetNormalAka400());
 
   // https://www.w3.org/TR/CSS21/visudet.html#the-height-property
-  SetPropertyDefinition(kHeightProperty, "height", kInheritedNo, kAnimatableNo,
+  SetPropertyDefinition(kHeightProperty, "height", kInheritedNo, kAnimatableYes, // TODO kAnimatableYes
                         kImpactsChildComputedStyleYes, kImpactsBoxGenerationNo,
                         kImpactsBoxSizesYes, kImpactsBoxCrossReferencesNo,
                         KeywordValue::GetAuto());
@@ -789,7 +789,7 @@ NonTrivialGlobalVariables::NonTrivialGlobalVariables() {
                         KeywordValue::GetNormal());
 
   // https://www.w3.org/TR/CSS21/visudet.html#the-width-property
-  SetPropertyDefinition(kWidthProperty, "width", kInheritedNo, kAnimatableNo,
+  SetPropertyDefinition(kWidthProperty, "width", kInheritedNo, kAnimatableYes, // TODO kAnimatableYes
                         kImpactsChildComputedStyleYes, kImpactsBoxGenerationNo,
                         kImpactsBoxSizesYes, kImpactsBoxCrossReferencesNo,
                         KeywordValue::GetAuto());
