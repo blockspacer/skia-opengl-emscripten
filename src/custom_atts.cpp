@@ -53,12 +53,12 @@ static std::vector<cobalt::web_animations::Keyframe::Data>
   CreateKeyframeEffectWithTwoNumberKeyframes(
     //cobalt::cssom::PropertyKey target_property,
     double offset1,
-    double widthStart,
-    double heightStart,
+    int widthStart,
+    int heightStart,
     double opacityStart,
     double offset2,
-    double widthEnd,
-    double heightEnd,
+    int widthEnd,
+    int heightEnd,
     double opacityEnd)
 {
   std::vector<cobalt::web_animations::Keyframe::Data> keyframes;
@@ -68,22 +68,13 @@ static std::vector<cobalt::web_animations::Keyframe::Data>
   frame1.AddPropertyValue(cobalt::cssom::kOpacityProperty,
     new cobalt::cssom::NumberValue(opacityStart));
 
-  frame1.AddPropertyValue(cobalt::cssom::kWidthProperty,
-    new cobalt::cssom::LengthValue(widthStart,
-      cobalt::cssom::kPixelsUnit));
-
   /*frame1.AddPropertyValue(cobalt::cssom::kHeightProperty,
     new cobalt::cssom::LengthValue(heightStart,
       cobalt::cssom::kPixelsUnit));
 
-  std::string scaleStart;
-  scaleStart += "scaleX(";
-  scaleStart += heightStart;
-  scaleStart += ")";
-  frame1.AddPropertyValue(cobalt::cssom::kTransformProperty,
-    new cobalt::cssom::StringValue(scaleStart
-      //widthStart, heightStart
-    ));*/
+  frame1.AddPropertyValue(cobalt::cssom::kWidthProperty,
+    new cobalt::cssom::LengthValue(widthStart,
+      cobalt::cssom::kPixelsUnit));*/
 
   keyframes.push_back(frame1);
 
@@ -92,22 +83,13 @@ static std::vector<cobalt::web_animations::Keyframe::Data>
   frame2.AddPropertyValue(cobalt::cssom::kOpacityProperty,
     new cobalt::cssom::NumberValue(opacityEnd));
 
-  frame2.AddPropertyValue(cobalt::cssom::kWidthProperty,
-    new cobalt::cssom::LengthValue(widthEnd,
-      cobalt::cssom::kPixelsUnit));
-
-  frame2.AddPropertyValue(cobalt::cssom::kHeightProperty,
+  /*frame2.AddPropertyValue(cobalt::cssom::kHeightProperty,
     new cobalt::cssom::LengthValue(heightEnd,
       cobalt::cssom::kPixelsUnit));
 
-  /*std::string scaleEnd;
-  scaleEnd += "scaleX(";
-  scaleEnd += heightEnd;
-  scaleEnd += ")";
-  frame2.AddPropertyValue(cobalt::cssom::kTransformProperty,
-    new cobalt::cssom::StringValue(scaleEnd
-      //widthEnd, heightEnd
-    ));*/
+  frame2.AddPropertyValue(cobalt::cssom::kWidthProperty,
+    new cobalt::cssom::LengthValue(widthEnd,
+      cobalt::cssom::kPixelsUnit));*/
 
   keyframes.push_back(frame2);
 
@@ -364,9 +346,9 @@ static void addRippleAnimationOnce(
       /*DCHECK(keyframe_effect_checker.at(0).
         IsPropertyAnimated(cobalt::cssom::kOpacityProperty));
       DCHECK(keyframe_effect_checker.at(0).
-        IsPropertyAnimated(cobalt::cssom::kScaleYProperty));*/
+        IsPropertyAnimated(cobalt::cssom::kHeightProperty));*/
       DCHECK(keyframe_effect_checker.at(0).
-        IsPropertyAnimated(cobalt::cssom::kScaleXProperty));
+        IsPropertyAnimated(cobalt::cssom::kWidthProperty));
 #endif
 
           //cobalt::cssom::kOpacityProperty,
@@ -463,7 +445,7 @@ static void addRippleAnimationOnce(
     ripple_effect->animations_adapter_.animation_map_.insert(
       std::make_pair(
         //std::string, AnimationWithEventHandler*
-        cobalt::cssom::GetPropertyName(cobalt::cssom::kWidthProperty),
+        cobalt::cssom::GetPropertyName(cobalt::cssom::kOpacityProperty),
         new cobalt::dom::CSSAnimationsAdapter::
           AnimationWithEventHandler(
             web_animation, std::move(event_handler))));
