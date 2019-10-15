@@ -567,11 +567,64 @@ Element::Element(Document* document, base::CobToken local_name)
   ++(element_count_log.Get().count);
 }
 
+template <class T>
+class CustomScriptValue : public cobalt::script::ScriptValue<T> {
+ public:
+  typedef cobalt::script::ScriptValue<T> BaseClass;
+
+  explicit CustomScriptValue(T* listener) : value_(listener) {}
+
+  bool EqualTo(const BaseClass& other) const override {
+    const CustomScriptValue* other_script_object =
+        base::polymorphic_downcast<const CustomScriptValue*>(&other);
+    return value_ == other_script_object->value_;
+  }
+
+  void RegisterOwner(script::Wrappable*) override {}
+  void DeregisterOwner(script::Wrappable*) override {}
+  void PreventGarbageCollection() override {}
+  void AllowGarbageCollection() override {}
+  T* GetValue() override { return value_; }
+  const T* GetValue() const override { return value_; }
+  std::unique_ptr<BaseClass> MakeCopy() const override {
+    return std::unique_ptr<BaseClass>(new CustomScriptValue(value_));
+  }
+
+ private:
+  T* value_;
+};
+
 bool Element::DispatchEvent(const scoped_refptr<Event> &event)
 {
-  //printf("Element DispatchEvent %s\n", event->type().c_str());
+  /*if(event->type() == "click"
+     || event->type() == "mouseup"
+     || event->type() == "mousedown"
+     || event->type() == "pointerup"
+     || event->type() == "pointerdown")
+  printf("Element DispatchEvent %s inner_html %s\n",
+    event->type().c_str(),
+    inner_html().c_str());*/
 
-  return Node::DispatchEvent(event) && HandleCustomEvent(event);;
+  return Node::DispatchEvent(event) ;//&& HandleCustomEvent(event);
+}
+
+CustomEventListener::CustomEventListener(Element *elem) {
+  elem_ = elem;
+}
+
+base::Optional<bool> CustomEventListener::HandleEvent(
+    const scoped_refptr<script::Wrappable>& callback_this,
+  const scoped_refptr<cobalt::dom::Event>& event, bool* had_exception) const
+{
+  printf("CustomEventListener::HandleEvent \n");
+  /*const base::Optional<EventCallback> cb = get_event_cb(event->type().c_str());
+  bool res = true;
+  if(cb.has_value()) {
+    DCHECK(cb.value());
+    res = cb.value()(event, this, attrVal);
+  }*/
+  DCHECK(elem_);
+  return elem_->HandleCustomEvent(event);
 }
 
 void Element::add_event_cb(const std::string &custom_token, EventCallback cb)
@@ -587,6 +640,44 @@ void Element::add_event_cb(const std::string &custom_token, EventCallback cb)
 
   const std::string to_event_name = custom_token.substr(custom_event_prefix.length(), custom_token.length());
   eventCallbacks_[to_event_name] = cb;
+
+  //std::unique_ptr<GenericEventHandlerReference> listener_reference(
+  //    new GenericEventHandlerReference(this, listener));
+  //AddEventListener(to_event_name, eventCallbacks_,
+  //  false /* true -executed in the capturing phase
+  //           false- Default. executed in the bubbling phase */);
+
+  eventListeners_[to_event_name] =
+      CustomEventListener::Create(const_cast<Element*>(this));
+
+#if 0
+  AddEventListener("click",
+    //EventListenerScriptValue::Reference(this, *utterance->onboundary())
+    //      .referenced_value(),
+    CustomScriptValue<EventListener>(eventListeners_[to_event_name].get()),
+    false /* true - executed in the capturing phase
+             false - Default. executed in the bubbling phase */);
+
+  AddEventListener(to_event_name,
+    //EventListenerScriptValue::Reference(this, *utterance->onboundary())
+    //      .referenced_value(),
+    CustomScriptValue<EventListener>(eventListeners_[to_event_name].get()),
+    true /* true - executed in the capturing phase
+             false - Default. executed in the bubbling phase */);
+#endif // 0
+
+  AddEventListener(to_event_name,
+    //EventListenerScriptValue::Reference(this, *utterance->onboundary())
+    //      .referenced_value(),
+    CustomScriptValue<EventListener>(
+      eventListeners_[to_event_name].get()),
+    false /* true - executed in the capturing phase.
+               the event is first captured by
+               the outermost element and propagated to the inner elements.
+             false - Default. executed in the bubbling phase.
+               the event is first captured and handled by
+               the innermost element and then propagated
+               to outer elements. */);
 
   //printf("added event callback for %s into %s (text_content = %s)\n", to_event_name.c_str(), tag_name().c_str(), text_content().value_or("").c_str());
 }
@@ -887,7 +978,7 @@ void Element::AppendStyle(const std::string& value) {
   AppendToAttribute(kStyleAttributeName, value);
 }
 
-bool Element::HandleCustomEvent(const scoped_refptr<dom::Event> &event)
+base::Optional<bool> Element::HandleCustomEvent(const scoped_refptr<dom::Event> &event)
 {
   //printf("Element::HandleCustomEvent type %s on tag %s\n", event->type().c_str(), tag_name().c_str());
 
@@ -901,12 +992,20 @@ bool Element::HandleCustomEvent(const scoped_refptr<dom::Event> &event)
 
   //if(!eventToCallbackName.empty()) {
   const base::Optional<EventCallback> cb = get_event_cb(event->type().c_str());
-  bool res = false;
+  base::Optional<bool> res = base::nullopt;
   if(cb.has_value()) {
     DCHECK(cb.value());
     res = cb.value()(event, this, attrVal);
   }
   //}
+
+  /*
+    from https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/dispatchEvent
+    The return value is false if event is cancelable and
+    at least one of the event handlers which handled this
+    event called Event.preventDefault().
+    Otherwise it returns true.
+   */
   return res;
 }
 

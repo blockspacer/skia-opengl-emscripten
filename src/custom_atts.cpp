@@ -248,7 +248,7 @@ void addTestOnlyAttrCallbacks() {
                elem->tag_name().c_str(),
                attrVal.c_str(),
                elem->text_content().value_or("").c_str());
-        return true;
+        return base::nullopt;
     };
 
     {
@@ -391,7 +391,7 @@ void addTestOnlyAttrCallbacks() {
                    elem->tag_name().c_str(),
                    attrVal.c_str(),
                    elem->text_content().value_or("").c_str());
-            return true;
+            return base::nullopt;
         });
 
     cobalt::dom::customizer::
@@ -419,7 +419,7 @@ void addTestOnlyAttrCallbacks() {
                    elem->tag_name().c_str(),
                    attrVal.c_str(),
                    elem->text_content().value_or("").c_str());
-            return true;
+            return base::nullopt;
         });
 
     cobalt::dom::customizer::
@@ -445,7 +445,7 @@ void addTestOnlyAttrCallbacks() {
                    elem->tag_name().c_str(),
                    attrVal.c_str(),
                    elem->text_content().value_or("").c_str());
-            return true;
+            return base::nullopt;
         });
 
     cobalt::dom::customizer::
@@ -514,7 +514,7 @@ void addTestOnlyAttrCallbacks() {
                    elem->animations()->AddAnimation(animation);
 #endif // 0
 
-            return true;
+            return base::nullopt;
         });
 
     cobalt::dom::customizer::
@@ -539,7 +539,7 @@ void addTestOnlyAttrCallbacks() {
                    elem->tag_name().c_str(),
                    attrVal.c_str(),
                    elem->text_content().value_or("").c_str());
-            return true;
+            return base::nullopt;
         });
 
     cobalt::dom::customizer::
@@ -572,7 +572,7 @@ void addTestOnlyAttrCallbacks() {
             CHECK(elementHTML);
             //elementHTML->GetUiNavItem()->Focus();
             elementHTML->Focus();
-            return true;
+            return base::nullopt;
         });
 
     cobalt::dom::customizer::
@@ -615,7 +615,7 @@ printf("indicated_element == elementHTML\n");
 } else {
 //elementHTML->Blur();
 }*/
-            return true;
+            return base::nullopt;
         });
 
     cobalt::dom::customizer::
@@ -676,7 +676,7 @@ printf("indicated_element == elementHTML\n");
                 base::polymorphic_downcast<
                   cobalt::dom::HTMLElement*>(elem.get());
             CHECK(elementHTML);
-            return true;
+            return base::nullopt;
         });
 
     cobalt::dom::customizer::
@@ -743,7 +743,7 @@ printf("indicated_element == elementHTML\n");
               base::polymorphic_downcast<
                 cobalt::dom::HTMLElement*>(elem.get());
             CHECK(elementHTML);
-            return true;
+            return base::nullopt;
         });
 
     cobalt::dom::customizer::
@@ -774,7 +774,7 @@ printf("indicated_element == elementHTML\n");
               base::polymorphic_downcast<
                 cobalt::dom::HTMLElement*>(elem.get());
             CHECK(elementHTML);
-            return true;
+            return base::nullopt;
         });
 }
 #endif // ENABLE_COBALT

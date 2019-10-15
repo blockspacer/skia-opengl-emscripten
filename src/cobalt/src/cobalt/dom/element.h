@@ -52,9 +52,33 @@ class HTMLElementContext;
 class NamedNodeMap;
 class Element;
 
-typedef std::function<void(base::WeakPtr<cobalt::dom::HTMLElement> elem)> HoverCallback;
+// The EventListener interface represents a callable object that will be called
+// when an event is fired.
+//   https://www.w3.org/TR/2014/WD-dom-20140710/#eventtarget
+class CustomEventListener : public EventListener {
+ public:
+  CustomEventListener(Element* elem);
 
-typedef std::function<bool(const scoped_refptr<dom::Event> &event,
+  // Web API: EventListener
+  //
+  // Cobalt's implementation of callback interfaces requires the 'callback this'
+  // to be explicitly passed in.
+  base::Optional<bool> HandleEvent(
+      const scoped_refptr<script::Wrappable>& callback_this,
+      const scoped_refptr<cobalt::dom::Event>& event,
+      bool* had_exception) const override;
+
+  static std::unique_ptr<CustomEventListener> Create(Element* elem) {
+    return std::unique_ptr<CustomEventListener>(
+        new CustomEventListener(elem));
+  }
+
+  Element* elem_;
+};
+
+//typedef std::function<void(base::WeakPtr<cobalt::dom::HTMLElement> elem)> HoverCallback;
+
+typedef std::function<base::Optional<bool>(const scoped_refptr<dom::Event> &event,
   scoped_refptr<cobalt::dom::Element>, const std::string& attrVal)> EventCallback;
 
 namespace customizer {
@@ -274,7 +298,7 @@ class Element : public Node {
     const bool needToMergeKeys = true*/);
   void AppendStyle(const std::string &value);
 
-  bool HandleCustomEvent(const scoped_refptr<dom::Event>& event);
+  base::Optional<bool> HandleCustomEvent(const scoped_refptr<dom::Event>& event);
 
   base::Optional<std::string> GetAttributeNS(const std::string& namespace_uri,
                                              const std::string& name) const;
@@ -406,6 +430,9 @@ protected:
 
   std::map<std::string, std::shared_ptr<customizer::CustomElementToken>>
     custom_attributes_;
+
+  std::map<std::string, std::unique_ptr<CustomEventListener>>
+    eventListeners_;
 
   // Local name of the element.
   base::CobToken local_name_;
