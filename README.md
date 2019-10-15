@@ -329,7 +329,6 @@ cp -a "patches/libjpeg_turbo/." src/chromium/third_party/libjpeg_turbo/
 
 # OR
 # cp -a "patches/libjpeg_turbo/." src/chromium/third_party/libjpeg/
-
 ```
 
 ### Compile example on Linux

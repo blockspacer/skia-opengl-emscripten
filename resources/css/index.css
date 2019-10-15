@@ -338,3 +338,169 @@ a {
 .dropdownbtn:hover .dropbtn {
   background-color: #3e8e41;
 }
+
+
+
+
+
+
+
+.share-container {
+  top: 110;
+  position: fixed;
+  margin: 1em;
+  right: 50px;
+}
+
+.share-button {
+  box-shadow: 0px 5px 11px -2px rgba(0, 0, 0, 0.18),
+              0px 4px 12px -7px rgba(0, 0, 0, 0.15);
+  border-radius: 50%;
+  display: block;
+  width: 56px;
+  height: 56px;
+  margin: 20px auto 0;
+  position: relative;
+          transition: all .1s ease-out;
+}
+
+.share-button:active,
+.share-button:focus,
+.share-button:hover {
+  box-shadow: 0 0 4px rgba(0,0,0,.14),
+    0 4px 8px rgba(0,0,0,.28);
+}
+
+/* TODO: :not(:last-child) */
+.share-buttons-entry {
+  width: 40px;
+  height: 40px;
+  margin: 20px auto 0;
+  opacity: 0;
+          transform: translateY(50px);
+}
+
+/* TODO: :not(:last-child) */
+.share-container:hover
+.share-buttons-entry {
+  opacity: 1;
+          transform: none;
+  margin: 15px auto 0;
+}
+
+/* Unessential styling for sliding up buttons at differnt speeds */
+
+.share-buttons-1 {
+          transition-delay: 25ms;
+  background-image: url('file:///resources/images/mouse.jpeg');
+  background-size: contain;
+}
+
+.share-buttons-1:before {
+  content: "tooltip 1";
+}
+
+.share-buttons-2 {
+          transition-delay: 20ms;
+  background-image: url('file:///resources/images/mouse.jpeg');
+  background-size: contain;
+}
+
+.share-buttons-2:before {
+  content: "tooltip 2";
+}
+
+.share-buttons-3 {
+          transition-delay: 40ms;
+  background-image: url('file:///resources/images/mouse.jpeg');
+  background-size: contain;
+}
+
+.share-buttons-3:before {
+  content: "tooltip 3";
+}
+
+.share-buttons-4 {
+          transition-delay: 60ms;
+  background-image: url('file:///resources/images/mouse.jpeg');
+  background-size: contain;
+}
+
+.share-buttons-4:before {
+  content: "tooltip 4";
+}
+
+/* Show tooltip content on hover */
+
+.share-button:before {
+  bottom: 25%;
+  font-weight: 600;
+  border-radius: 2px;
+  background: #585858;
+  color: #fff;
+  font-size: 12px;
+  visibility: hidden;
+  opacity: 0;
+  padding: 5px 7px;
+  margin-right: 12px;
+  position: absolute;
+  right: 100%;
+  white-space: nowrap;
+}
+
+.share-button:hover:before,
+.share-button:hover:after {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* Set the colour of the effect */
+.bn .ripple-effect {
+  background: #206aae;
+}
+
+/* Some default button styling */
+.bn {
+  padding: 1em 2em;
+  background: #2e85d6;
+  color:#fff;
+  display: inline-block;
+  text-decoration:none;
+}
+
+.btn .ripple-effect {
+  background: #206aae;
+}
+
+/* Some default button styling */
+.btn {
+  padding: 1em 2em;
+  background: #2e85d6;
+  color:#fff;
+  display: inline-block;
+  text-decoration:none;
+}
+
+/* Ripple Styling */
+.ripple-button {
+  position: relative;
+}
+.ripple-button .ripple-effect-layer {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top:0;
+  left: 0;
+  z-index: 0;
+  overflow: hidden;
+}
+.ripple-button .ripple-effect {
+  position: absolute;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+.ripple-button .ripple-content {
+  position: relative;
+  z-index: 1;
+}
+

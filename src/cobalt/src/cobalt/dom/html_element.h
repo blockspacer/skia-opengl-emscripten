@@ -462,10 +462,13 @@ class HTMLElement : public Element, public cssom::MutationObserver {
   scoped_refptr<cssom::CSSComputedStyleDeclaration>
       css_computed_style_declaration_;
 
+public: // TODO
   dom::CSSTransitionsAdapter transitions_adapter_;
   cssom::TransitionSet css_transitions_;
 
   dom::CSSAnimationsAdapter animations_adapter_;
+
+private: // TODO
   cssom::AnimationSet css_animations_;
 
   // The following fields are used in rule matching.
