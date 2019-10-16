@@ -1,4 +1,4 @@
-// Copyright 2014 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2014 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -81,7 +81,7 @@ class LayoutManager::Impl : public dom::DocumentObserver {
   void DirtyLayout(const bool changeComputedStyles = true, const bool changePendingRenderTree = true);
   void setLayoutPending(const bool isPending);
   void StartLayoutTimer();
-  void DoLayoutAndProduceRenderTree();
+  void DoLayoutAndProduceRenderTree(const bool forceReLayout = false);
 
 #if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   bool isLayoutRefreshReached();
@@ -301,7 +301,7 @@ LayoutManager::Impl::DoSynchronousLayoutAndGetRenderTree() {
   return results.animated->source();
 }
 
-void LayoutManager::Impl::DoSynchronousLayout() {
+void LayoutManager::Impl::DoSynchronousLayout(const bool forceReLayout) {
   TRACE_EVENT0("cobalt::layout", "LayoutManager::Impl::DoSynchronousLayout()");
   if (suspended_) {
     DLOG(WARNING) << "Skipping layout since Cobalt is in a suspended state.";
@@ -309,7 +309,7 @@ void LayoutManager::Impl::DoSynchronousLayout() {
   }
 
   DCHECK(window_);
-  if (are_computed_styles_and_box_tree_dirty_) {
+  if (are_computed_styles_and_box_tree_dirty_ || forceReLayout) {
     DCHECK(!locale_.isBogus());
     DCHECK(window_);
     DCHECK(window_->document());
@@ -430,7 +430,7 @@ void LayoutManager::Impl::StartLayoutTimer() {
 #endif
 }
 
-void LayoutManager::Impl::DoLayoutAndProduceRenderTree() {
+void LayoutManager::Impl::DoLayoutAndProduceRenderTree(const bool forceReLayout) {
   TRACE_EVENT0("cobalt::layout",
                "LayoutManager::Impl::DoLayoutAndProduceRenderTree()");
 

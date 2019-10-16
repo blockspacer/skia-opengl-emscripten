@@ -1,4 +1,4 @@
-// Copyright 2017 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2017 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -344,7 +344,7 @@ void TopmostEventTarget::MaybeSendPointerEvents(
         }
         if (html_element) {
           pointer_state->SetPendingPointerCaptureTargetOverride(
-              pointer_event->pointer_id(), html_element);
+              pointer_event->pointer_id(), html_element.get());
         }
       }
     } else {
@@ -400,7 +400,7 @@ void TopmostEventTarget::MaybeSendPointerEvents(
   }
 
   scoped_refptr<dom::HTMLElement> previous_html_element(
-      previous_html_element_weak_);
+      previous_html_element_weak_.get());
 
   SendStateChangeEvents(pointer_event, previous_html_element, target_element,
                         &event_init);

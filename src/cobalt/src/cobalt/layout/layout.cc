@@ -1,4 +1,4 @@
-// Copyright 2014 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2014 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -101,7 +101,7 @@ void UpdateComputedStylesAndLayoutBoxTree(
     // If the implicit root is a root for any observers, the initial containing
     // block should reference the corresponding IntersectionObserverRoots.
     dom::HTMLElement* html_element =
-        document->document_element()->AsHTMLElement();
+        document->document_element()->AsHTMLElement().get();
     BoxIntersectionObserverModule::IntersectionObserverRootVector roots =
         html_element->GetLayoutIntersectionObserverRoots();
     BoxIntersectionObserverModule::IntersectionObserverTargetVector targets =
