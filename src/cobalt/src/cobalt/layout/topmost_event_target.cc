@@ -69,7 +69,7 @@ scoped_refptr<dom::HTMLElement> TopmostEventTarget::FindTopmostEventTarget(
 namespace {
 
 LayoutBoxes* GetLayoutBoxesIfNotEmpty(dom::Element* element) {
-  dom::HTMLElement* html_element = element->AsHTMLElement();
+  dom::HTMLElement* html_element = element->AsHTMLElement().get();
   if (html_element && html_element->computed_style()) {
     dom::LayoutBoxes* dom_layout_boxes = html_element->layout_boxes();
     if (dom_layout_boxes &&
@@ -101,7 +101,7 @@ void TopmostEventTarget::ConsiderElement(dom::Element* element,
       }
     }
 
-    scoped_refptr<dom::HTMLElement> html_element = element->AsHTMLElement();
+    scoped_refptr<dom::HTMLElement> html_element = element->AsHTMLElement().get();
     if (html_element && html_element->CanbeDesignatedByPointerIfDisplayed()) {
       ConsiderBoxes(html_element, layout_boxes, element_coordinate);
     }

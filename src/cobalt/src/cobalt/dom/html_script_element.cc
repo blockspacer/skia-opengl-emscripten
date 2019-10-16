@@ -403,12 +403,11 @@ void HTMLScriptElement::Prepare() {
       // once the resource has been fetched (defined above) has been run.
       document_->IncreaseLoadingCounter();
 
+#ifdef ENABLE_LOADER
       // The element must be added to the set of scripts that will execute as
       // soon as possible of the Document of the script element at the time the
       // prepare a script algorithm started.
       DCHECK(!loader_);
-
-#ifdef ENABLE_LOADER
       loader::Origin origin = document_->location()
                                   ? document_->location()->GetOriginAsObject()
                                   : loader::Origin();

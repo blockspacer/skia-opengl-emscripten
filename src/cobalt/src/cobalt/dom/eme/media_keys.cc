@@ -26,7 +26,9 @@ namespace eme {
 MediaKeys::MediaKeys(const scoped_refptr<media::DrmSystem>& drm_system,
                      script::ScriptValueFactory* script_value_factory)
     : script_value_factory_(script_value_factory), drm_system_(drm_system) {
+#if ENABLE_DRM
   SB_DCHECK(drm_system_->is_valid()) << "DrmSystem provided on initialization is invalid.";
+#endif
 }
 
 // See https://www.w3.org/TR/encrypted-media/#dom-mediakeys-createsession.

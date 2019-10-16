@@ -1,4 +1,4 @@
-﻿// Copyright 2014 The Cobalt Authors. All Rights Reserved.
+// Copyright 2014 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -46,6 +46,7 @@
 #include "cobalt/dom/node.h"
 #include "cobalt/dom/pointer_state.h"
 #include "cobalt/math/size.h"
+#include "cobalt/dom/intersection_observer_task_manager.h"
 
 #if !defined(__EMSCRIPTEN__) && defined(__TODO__)
 #include "cobalt/network_bridge/cookie_jar.h"
@@ -472,6 +473,10 @@ class Document : public Node,
     return font_cache_.get();
   }
 
+  IntersectionObserverTaskManager* intersection_observer_task_manager() const {
+    return intersection_observer_task_manager_.get();
+  }
+
   DEFINE_WRAPPABLE_TYPE(Document);
   void TraceMembers(script::Tracer* tracer) override;
 
@@ -607,6 +612,9 @@ class Document : public Node,
   bool render_postponed_;
 
   bool hasLoadedTypefaces_ = false;
+
+  scoped_refptr<IntersectionObserverTaskManager>
+      intersection_observer_task_manager_;
 };
 
 }  // namespace dom

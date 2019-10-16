@@ -25,7 +25,7 @@ namespace cobalt {
 namespace dom {
 
 KeyboardEvent::KeyboardEvent(const std::string& type)
-    : UIEventWithKeyState(base::CobToken(type), kBubbles, kCancelable, NULL),
+    : UIEventWithKeyState(base::Token(type), kBubbles, kCancelable, NULL),
       key_location_(kDomKeyLocationStandard),
       key_code_(0),
       keysym_(0),
@@ -37,7 +37,7 @@ KeyboardEvent::KeyboardEvent(const std::string& type)
 // TODO: Initialize from init_dict.key() or init_dict.code() when not empty.
 KeyboardEvent::KeyboardEvent(const std::string& type,
                              const KeyboardEventInit& init_dict)
-    : UIEventWithKeyState(base::CobToken(type), kBubbles, kCancelable,
+    : UIEventWithKeyState(base::Token(type), kBubbles, kCancelable,
                           init_dict.view(), init_dict),
       key_location_(static_cast<KeyLocationCode>(init_dict.location())),
       key_code_(init_dict.key_code()),
@@ -47,7 +47,7 @@ KeyboardEvent::KeyboardEvent(const std::string& type,
       char_code_(init_dict.char_code()),
       repeat_(init_dict.repeat()) {}
 
-KeyboardEvent::KeyboardEvent(base::CobToken type,
+KeyboardEvent::KeyboardEvent(base::Token type,
                              const scoped_refptr<Window>& view,
                              const KeyboardEventInit& init_dict)
     : UIEventWithKeyState(type, kBubbles, kCancelable, view, init_dict),

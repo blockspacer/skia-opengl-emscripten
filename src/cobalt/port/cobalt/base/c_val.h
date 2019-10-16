@@ -26,8 +26,8 @@
 
 #include "base/compiler_specific.h"
 
-//#include "base/containers/hash_tables.h"
-#include <map>
+#include "base/containers/hash_tables.h"
+//#include <map>
 
 #include "port/base/basictypes.h"
 #include "port/starboard/configuration.h"

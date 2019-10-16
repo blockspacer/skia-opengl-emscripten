@@ -223,7 +223,7 @@ class scoped_refptr {
 //#if defined(STARBOARD)
 //  // TODO[johnx]: remove this implicit convertor and replace all occurances of
 //  // necessary implicit conversion with scoped_refptr.get().
-//  operator T*() const { return ptr_; }
+  //operator T*() const { return ptr_; }
 //#endif
 
   T& operator*() const {
@@ -262,10 +262,10 @@ class scoped_refptr {
 
 // TODO
 //#if defined(STARBOARD)
-//  template <typename U>
-//  bool operator!=(U* rhs) const {
-//    return ptr_ != rhs;
-//  }
+  template <typename U>
+  bool operator!=(U* rhs) const {
+    return ptr_ != rhs;
+  }
 //#endif
 
   template <typename U>

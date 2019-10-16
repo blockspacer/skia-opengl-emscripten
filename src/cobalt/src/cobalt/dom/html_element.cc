@@ -27,7 +27,8 @@
 #include "cobalt/base/user_log.h"
 
 #include "base/lazy_instance.h"
-#include "base/message_loop/message_loop_task_runner.h"
+#include "base/message_loop/message_loop.h"
+//#include "base/message_loop/message_loop_task_runner.h"
 #include "base/strings/string_number_conversions.h"
 #include "cobalt/base/tokens.h"
 #include "cobalt/cssom/absolute_url_value.h"
@@ -636,7 +637,7 @@ Element* HTMLElement::offset_parent() {
     if (!ancestor_element) {
       continue;
     }
-    HTMLElement* ancestor_html_element = ancestor_element->AsHTMLElement();
+    HTMLElement* ancestor_html_element = ancestor_element->AsHTMLElement().get();
     if (!ancestor_html_element) {
       continue;
     }
@@ -681,7 +682,7 @@ float HTMLElement::offset_top() {
   // block origin, ignoring any transforms that apply to the element and its
   // ancestors.
   scoped_refptr<HTMLElement> offset_parent_html_element =
-      offset_parent_element->AsHTMLElement();
+      offset_parent_element->AsHTMLElement().get();
   if (!offset_parent_html_element) {
     return layout_boxes_->GetBorderEdgeTop();
   }
@@ -720,7 +721,7 @@ float HTMLElement::offset_left() {
   // block origin, ignoring any transforms that apply to the element and its
   // ancestors.
   scoped_refptr<HTMLElement> offset_parent_html_element =
-      offset_parent_element->AsHTMLElement();
+      offset_parent_element->AsHTMLElement().get();
   if (!offset_parent_html_element) {
     return layout_boxes_->GetBorderEdgeLeft();
   }
@@ -915,7 +916,7 @@ void HTMLElement::ClearRuleMatchingStateOnElementAndAncestors(
     bool invalidate_matching_rules) {
   Element* parent_element = this->parent_element();
   HTMLElement* parent_html_element =
-      parent_element ? parent_element->AsHTMLElement() : NULL;
+      parent_element ? parent_element->AsHTMLElement().get() : NULL;
   if (parent_html_element) {
     parent_html_element->ClearRuleMatchingStateOnElementAndAncestors(
         invalidate_matching_rules);
@@ -928,7 +929,7 @@ void HTMLElement::ClearRuleMatchingStateOnElementAndDescendants() {
   ClearRuleMatchingStateInternal(false /* invalidate_descendants*/);
   for (Element* element = first_element_child(); element;
        element = element->next_element_sibling()) {
-    HTMLElement* html_element = element->AsHTMLElement();
+    HTMLElement* html_element = element->AsHTMLElement().get();
     if (html_element) {
       html_element->ClearRuleMatchingStateOnElementAndDescendants();
     }
@@ -939,14 +940,14 @@ void HTMLElement::ClearRuleMatchingStateOnElementAndSiblingsAndDescendants() {
   HTMLElement::ClearRuleMatchingStateOnElementAndDescendants();
   for (Element* element = previous_element_sibling(); element;
        element = element->previous_element_sibling()) {
-    HTMLElement* html_element = element->AsHTMLElement();
+    HTMLElement* html_element = element->AsHTMLElement().get();
     if (html_element) {
       html_element->ClearRuleMatchingStateOnElementAndDescendants();
     }
   }
   for (Element* element = next_element_sibling(); element;
        element = element->next_element_sibling()) {
-    HTMLElement* html_element = element->AsHTMLElement();
+    HTMLElement* html_element = element->AsHTMLElement().get();
     if (html_element) {
       html_element->ClearRuleMatchingStateOnElementAndDescendants();
     }
@@ -964,7 +965,7 @@ void HTMLElement::InvalidateMatchingRulesRecursivelyInternal(
   // Invalidate matching rules on all children.
   for (Element* element = first_element_child(); element;
        element = element->next_element_sibling()) {
-    HTMLElement* html_element = element->AsHTMLElement();
+    HTMLElement* html_element = element->AsHTMLElement().get();
     if (html_element) {
       html_element->InvalidateMatchingRulesRecursivelyInternal(
           false /*is_initial_element*/);
@@ -978,7 +979,7 @@ void HTMLElement::InvalidateMatchingRulesRecursivelyInternal(
       node_document()->selector_tree()->has_sibling_combinators()) {
     for (Element* element = next_element_sibling(); element;
          element = element->next_element_sibling()) {
-      HTMLElement* html_element = element->AsHTMLElement();
+      HTMLElement* html_element = element->AsHTMLElement().get();
       if (html_element) {
         html_element->InvalidateMatchingRulesRecursivelyInternal(
             false /*is_initial_element*/);
@@ -993,7 +994,7 @@ void HTMLElement::UpdateMatchingRulesRecursively() {
   UpdateMatchingRules();
   for (Element* element = first_element_child(); element;
        element = element->next_element_sibling()) {
-    HTMLElement* html_element = element->AsHTMLElement();
+    HTMLElement* html_element = element->AsHTMLElement().get();
     if (html_element) {
       html_element->UpdateMatchingRulesRecursively();
     }
@@ -1045,7 +1046,7 @@ void HTMLElement::UpdateComputedStyleRecursively(
   // on all children.
   for (Element* element = first_element_child(); element;
        element = element->next_element_sibling()) {
-    HTMLElement* html_element = element->AsHTMLElement();
+    HTMLElement* html_element = element->AsHTMLElement().get();
     if (html_element) {
       html_element->UpdateComputedStyleRecursively(
           css_computed_style_declaration(), root_computed_style,
@@ -1335,7 +1336,7 @@ void HTMLElement::RunFocusingSteps() {
 
   // 2. If focusing the element will remove the focus from another element,
   // then run the unfocusing steps for that element.
-  if (old_active_element && old_active_element->AsHTMLElement()) {
+  if (old_active_element && old_active_element->AsHTMLElement().get()) {
     old_active_element->AsHTMLElement()->RunUnFocusingSteps();
   }
 
@@ -1729,7 +1730,7 @@ void HTMLElement::UpdateComputedStyle(
         document->viewport_size(), computed_style(), style_change_event_time,
         &css_transitions_, &css_animations_, document->keyframes_map(),
         ancestors_are_displayed_, ancestors_are_displayed, kIsNotPseudoElement,
-        &invalidation_flags, css_computed_style_declaration_);
+        &invalidation_flags, css_computed_style_declaration_.get());
 
     // Update cached background images after resolving the urls in
     // background_image CSS property of the computed style, so we have all the
@@ -1765,7 +1766,7 @@ void HTMLElement::UpdateComputedStyle(
                              : kAncestorsAreNotDisplayed,
             IsDisplayed() ? kAncestorsAreDisplayed : kAncestorsAreNotDisplayed,
             kIsPseudoElement, &invalidation_flags,
-            type_pseudo_element->css_computed_style_declaration());
+            type_pseudo_element->css_computed_style_declaration().get());
         type_pseudo_element->clear_computed_style_invalid();
       } else {
         // Update the inherited data if a new style was not generated. The

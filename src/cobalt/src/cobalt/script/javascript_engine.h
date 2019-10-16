@@ -21,12 +21,11 @@
 #include "base/callback.h"
 #include "base/memory/ref_counted.h"
 #include "cobalt/base/source_location.h"
-#include "cobalt/script/global_environment.h"
 
 namespace cobalt {
 namespace script {
 
-//class GlobalEnvironment;
+class GlobalEnvironment;
 
 // https://webplatform.github.io/docs/apis/timing/properties/memory/
 struct HeapStatistics {

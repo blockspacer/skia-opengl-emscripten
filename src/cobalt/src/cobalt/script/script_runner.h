@@ -21,12 +21,10 @@
 #include "base/memory/ref_counted.h"
 #include "cobalt/base/source_location.h"
 
-#include "cobalt/script/global_environment.h"
-
 namespace cobalt {
 namespace script {
 
-//class GlobalEnvironment;
+class GlobalEnvironment;
 
 // Maintains a handle to a JavaScript global object, and provides an interface
 // to execute JavaScript code.

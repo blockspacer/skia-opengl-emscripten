@@ -296,7 +296,7 @@ void IntersectionObserver::UntrackObservationTarget(
       it = observation_targets_.erase(it);
       continue;
     }
-    if (*it == target) {
+    if ((*it).get() == target) {
       observation_targets_.erase(it);
       return;
     }

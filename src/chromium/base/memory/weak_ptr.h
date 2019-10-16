@@ -206,6 +206,26 @@ class SupportsWeakPtrBase {
 
 }  // namespace internal
 
+/*//#if !defined(STARBOARD)
+// Allow callers to compare WeakPtrs against nullptr to test validity.
+template <class T>
+bool operator!=(const WeakPtr<T>& weak_ptr, std::nullptr_t) {
+  return !(weak_ptr == nullptr);
+}
+template <class T>
+bool operator!=(std::nullptr_t, const WeakPtr<T>& weak_ptr) {
+  return weak_ptr != nullptr;
+}
+template <class T>
+bool operator==(const WeakPtr<T>& weak_ptr, std::nullptr_t) {
+  return weak_ptr.get() == nullptr;
+}
+template <class T>
+bool operator==(std::nullptr_t, const WeakPtr<T>& weak_ptr) {
+  return weak_ptr == nullptr;
+}
+//#endif*/
+
 template <typename T> class WeakPtrFactory;
 
 // The WeakPtr class holds a weak reference to |T*|.
@@ -243,6 +263,11 @@ class WeakPtr : public internal::WeakPtrBase {
     T* t = reinterpret_cast<U*>(other.ptr_);
     ptr_ = reinterpret_cast<uintptr_t>(t);
   }
+
+//#if defined(STARBOARD)
+  // TODO[johnx]: Remove the implicit convertor.
+  //operator T*() const { return get(); }
+//#endif
 
   T* get() const {
     return ref_.IsValid() ? reinterpret_cast<T*>(ptr_) : nullptr;

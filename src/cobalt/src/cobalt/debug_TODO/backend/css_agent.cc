@@ -63,7 +63,7 @@ void CSSAgent::Disable(const Command& command) { command.SendResponse(); }
 CSSAgent::CSSStyleRuleSequence CSSAgent::GetMatchingCSSRules(
     const scoped_refptr<dom::Element>& element) {
   CSSStyleRuleSequence css_rules;
-  auto html_element = element->AsHTMLElement();
+  auto html_element = element->AsHTMLElement().get();
   if (html_element) {
     html_element->UpdateMatchingRules();
     for (const auto& matching_rule : *html_element->matching_rules()) {

@@ -12,30 +12,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef COBALT_SCRIPT_EXECUTION_STATE_H_
-#define COBALT_SCRIPT_EXECUTION_STATE_H_
+#ifndef COBALT_BASE_POLYMORPHIC_DOWNCAST_H_
+#define COBALT_BASE_POLYMORPHIC_DOWNCAST_H_
 
-#include <memory>
-#include <string>
+#include "base/logging.h"
 
-#include "base/memory/ref_counted.h"
+namespace base {
 
-namespace cobalt {
-namespace script {
+// This function is designed to model the behavior of polymorphic_downcast from
+// http://www.boost.org/doc/libs/1_56_0/libs/conversion/cast.htm
 
-class GlobalEnvironment;
+template <typename Derived, typename Base>
+Derived polymorphic_downcast(Base base) {
+#if defined(COBALT_BUILD_TYPE_DEBUG) || defined(COBALT_BUILD_TYPE_DEVEL)
+  DCHECK(dynamic_cast<Derived>(base) == base);
+#endif
+  return static_cast<Derived>(base);
+}
 
-// Provides access to the state of JavaScript execution.
-class ExecutionState {
- public:
-  static std::unique_ptr<ExecutionState> CreateExecutionState(
-      const scoped_refptr<GlobalEnvironment>& global_environment);
+}  // namespace base
 
-  virtual std::string GetStackTrace() const = 0;
-  virtual ~ExecutionState() {}
-};
-
-}  // namespace script
-}  // namespace cobalt
-
-#endif  // COBALT_SCRIPT_EXECUTION_STATE_H_
+#endif  // COBALT_BASE_POLYMORPHIC_DOWNCAST_H_

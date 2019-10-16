@@ -939,7 +939,7 @@ scoped_refptr<Element> QuerySelector(Node* node, const std::string& selectors,
   while (child) {
     if (child->IsElement()) {
       scoped_refptr<Element> element = child->AsElement();
-      if (MatchRuleAndElement(css_style_rule, element)) {
+      if (MatchRuleAndElement(css_style_rule.get(), element)) {
         return element;
       }
     }
@@ -985,7 +985,7 @@ scoped_refptr<NodeList> QuerySelectorAll(Node* node,
   while (child) {
     if (child->IsElement()) {
       scoped_refptr<Element> element = child->AsElement();
-      if (MatchRuleAndElement(css_style_rule, element)) {
+      if (MatchRuleAndElement(css_style_rule.get(), element)) {
         node_list->AppendNode(element);
       }
     }

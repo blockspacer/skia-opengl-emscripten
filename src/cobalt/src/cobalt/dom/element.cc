@@ -51,6 +51,12 @@
 #include "cobalt/math/rect_f.h"
 #include "nb/memory_scope.h"
 
+namespace {
+
+const char kStyleAttributeName[] = "style";
+
+}  // namespace
+
 namespace cobalt {
 namespace dom {
 
@@ -771,12 +777,6 @@ base::Optional<bool> Element::HandleCustomEvent(const scoped_refptr<dom::Event> 
   return res;
 }
 
-namespace {
-
-const char kStyleAttributeName[] = "style";
-
-}  // namespace
-
 Element::Element(Document* document)
     : Node(document), animations_(new web_animations::AnimationSet()) {}
 
@@ -862,7 +862,7 @@ bool Element::Matches(const std::string& selectors,
   // 3. Return true if the result of match a selector against an element,
   //    using s, element, and :scope element context object, returns success,
   //    and false otherwise.
-  return MatchRuleAndElement(css_style_rule, this);
+  return MatchRuleAndElement(css_style_rule.get(), this);
 }
 
 scoped_refptr<NamedNodeMap> Element::attributes() {

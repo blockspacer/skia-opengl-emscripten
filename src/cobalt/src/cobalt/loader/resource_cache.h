@@ -497,7 +497,7 @@ class ResourceCache {
   // |unreference_cached_resource_map_|, creates a CachedResource with a loader
   // for it. If the CachedResource is in the cache map, return the
   // CachedResource or wrap the resource if necessary.
-  scoped_refptr<CachedResourceType> CreateCachedResource(const GURL& url,
+  scoped_refptr<CachedResourceType> GetOrCreateCachedResource(const GURL& url,
                                                          const Origin& origin);
 #if defined(ENABLE_COBALT_CSP)
   // Set a callback that the loader will query to determine if the URL is safe
@@ -691,7 +691,7 @@ ResourceCache<CacheType>::ResourceCache(
 
 template <typename CacheType>
 scoped_refptr<CachedResource<CacheType>>
-ResourceCache<CacheType>::CreateCachedResource(const GURL& url,
+ResourceCache<CacheType>::GetOrCreateCachedResource(const GURL& url,
                                                const Origin& origin) {
   //printf("CreateCachedResource %s %s\n", url.path().c_str(), origin.SerializedOrigin().c_str());
   DCHECK(resource_cache_thread_checker_.CalledOnValidThread());

@@ -24,12 +24,10 @@
 #include "cobalt/script/call_frame.h"
 #include "cobalt/script/source_provider.h"
 
-#include "cobalt/script/global_environment.h"
-
 namespace cobalt {
 namespace script {
 
-//class GlobalEnvironment;
+class GlobalEnvironment;
 
 // Engine-independent pure virtual interface to a JavaScript debugger.
 // Used as an opaque interface to the specific debugger implementation,
@@ -129,6 +127,26 @@ class ScriptDebugger {
 
   virtual PauseOnExceptionsState SetPauseOnExceptions(
       PauseOnExceptionsState state) = 0;  // Returns the previous state.
+
+  // Record the JavaScript stack on the WebModule thread at the point a task is
+  // initiated that will run at a later time (on the same thread), allowing it
+  // to be seen as the originator when breaking in the asynchronous task.
+  virtual void AsyncTaskScheduled(void* task, const std::string& name,
+                                  bool recurring) = 0;
+
+  // A scheduled task is starting to run.
+  virtual void AsyncTaskStarted(void* task) = 0;
+
+  // A scheduled task has finished running.
+  virtual void AsyncTaskFinished(void* task) = 0;
+
+  // A scheduled task will no longer be run, and resources associated with it
+  // may be released.
+  virtual void AsyncTaskCanceled(void* task) = 0;
+
+  // All scheduled tasks will no longer be run, and resources associated with
+  // them may be released.
+  virtual void AllAsyncTasksCanceled() = 0;
 
  protected:
   virtual ~ScriptDebugger() {}

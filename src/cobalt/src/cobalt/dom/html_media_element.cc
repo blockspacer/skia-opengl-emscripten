@@ -254,7 +254,8 @@ std::string HTMLMediaElement::CanPlayType(const std::string& mime_type,
   const bool kIsProgressive = true;
   auto support_type =
       html_element_context()->can_play_type_handler()->CanPlayType(
-          mime_type, key_system, kIsProgressive);
+          kIsProgressive,
+          mime_type, key_system);
   std::string result = "";
   switch (support_type) {
     case kSbMediaSupportTypeNotSupported:

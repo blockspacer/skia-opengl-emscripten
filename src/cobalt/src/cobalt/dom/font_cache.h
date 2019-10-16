@@ -23,11 +23,8 @@
 
 #include "base/callback.h"
 #include "base/containers/hash_tables.h"
-#include <map>
 #include "base/threading/thread_checker.h"
-#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
 #include "base/timer/timer.h"
-#endif
 #include "cobalt/dom/font_face.h"
 #include "cobalt/dom/font_list.h"
 #include "cobalt/dom/location.h"
@@ -154,25 +151,25 @@ class FontCache {
   };
 
   // Font-face related
-  typedef base::hash_map<std::string, FontFaceStyleSet> FontFaceMap;
-  typedef base::hash_map<GURL, scoped_refptr<RequestedRemoteTypefaceInfo> >
+  typedef std::map<std::string, FontFaceStyleSet> FontFaceMap;
+  typedef std::map<GURL, scoped_refptr<RequestedRemoteTypefaceInfo> >
       RequestedRemoteTypefaceMap;
 
   // Font list related
-  typedef base::hash_map<FontListKey, FontListInfo> FontListMap;
+  typedef std::map<FontListKey, FontListInfo> FontListMap;
 
   // Typeface/Font related
   typedef base::small_map<
-      base::hash_map<render_tree::TypefaceId, scoped_refptr<render_tree::Typeface> >,
+      std::map<render_tree::TypefaceId, scoped_refptr<render_tree::Typeface> >,
       7>
       TypefaceMap;
-  typedef base::hash_map<FontKey, FontInfo> FontMap;
-  typedef base::hash_set<InactiveFontKey> InactiveFontSet;
+  typedef std::map<FontKey, FontInfo> FontMap;
+  typedef std::set<InactiveFontKey> InactiveFontSet;
 
   // Character fallback related
   typedef base::hash_map<int32, scoped_refptr<render_tree::Typeface> >
       CharacterFallbackTypefaceMap;
-  typedef base::hash_map<CharacterFallbackKey, CharacterFallbackTypefaceMap>
+  typedef std::map<CharacterFallbackKey, CharacterFallbackTypefaceMap>
       CharacterFallbackTypefaceMaps;
 
   FontCache(render_tree::ResourceProvider** resource_provider,

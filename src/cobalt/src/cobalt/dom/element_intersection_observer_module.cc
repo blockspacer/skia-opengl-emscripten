@@ -194,7 +194,7 @@ void ElementIntersectionObserverModule::RemoveLayoutTargetForObserver(
 }
 
 void ElementIntersectionObserverModule::InvalidateLayoutBoxesForElement() {
-  HTMLElement* html_element = element_->AsHTMLElement();
+  HTMLElement* html_element = element_->AsHTMLElement().get();
   if (!html_element) {
     NOTREACHED();
     return;

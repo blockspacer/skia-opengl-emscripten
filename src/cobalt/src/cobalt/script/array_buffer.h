@@ -22,8 +22,6 @@
 #include "cobalt/script/script_exception.h"
 #include "cobalt/script/script_value.h"
 
-#include "starboard/memory.h"
-
 namespace cobalt {
 namespace script {
 

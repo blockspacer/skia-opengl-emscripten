@@ -48,6 +48,7 @@ MediaKeySystemAccess::CreateMediaKeys() const {
 
   // 2.9. If any of the preceding steps failed, reject promise with a new
   // DOMException whose name is the appropriate error name.
+#if ENABLE_DRM
   if (!drm_system->is_valid()) {
     drm_system.reset();
     promise->Reject(new DOMException(
@@ -55,6 +56,7 @@ MediaKeySystemAccess::CreateMediaKeys() const {
         "Failed to load and initialize the Key System implementation."));
     return promise;
   }
+#endif
 
   // 2.10. Let media keys be a new MediaKeys object.
   // 2.10.5. Let the cdm instance value be instance.

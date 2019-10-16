@@ -45,13 +45,13 @@ Animation::FillMode GetFillMode(size_t index, PropertyValue* list_value) {
           ->get_item_modulo_size(static_cast<int>(index))
           .get();
 
-  if (value == KeywordValue::GetNone()) {
+  if (value == KeywordValue::GetNone().get()) {
     return Animation::kNone;
-  } else if (value == KeywordValue::GetForwards()) {
+  } else if (value == KeywordValue::GetForwards().get()) {
     return Animation::kForwards;
-  } else if (value == KeywordValue::GetBackwards()) {
+  } else if (value == KeywordValue::GetBackwards().get()) {
     return Animation::kBackwards;
-  } else if (value == KeywordValue::GetBoth()) {
+  } else if (value == KeywordValue::GetBoth().get()) {
     return Animation::kBoth;
   } else {
     NOTREACHED();
@@ -66,13 +66,13 @@ Animation::PlaybackDirection GetDirection(size_t index,
           ->get_item_modulo_size(static_cast<int>(index))
           .get();
 
-  if (value == KeywordValue::GetNormal()) {
+  if (value == KeywordValue::GetNormal().get()) {
     return Animation::kNormal;
-  } else if (value == KeywordValue::GetReverse()) {
+  } else if (value == KeywordValue::GetReverse().get()) {
     return Animation::kReverse;
-  } else if (value == KeywordValue::GetAlternate()) {
+  } else if (value == KeywordValue::GetAlternate().get()) {
     return Animation::kAlternate;
-  } else if (value == KeywordValue::GetAlternateReverse()) {
+  } else if (value == KeywordValue::GetAlternateReverse().get()) {
     return Animation::kAlternateReverse;
   } else {
     NOTREACHED();
@@ -86,7 +86,7 @@ float GetIterationCount(size_t index, PropertyValue* list_value) {
           ->get_item_modulo_size(static_cast<int>(index))
           .get();
 
-  if (value == KeywordValue::GetInfinite()) {
+  if (value == KeywordValue::GetInfinite().get()) {
     return std::numeric_limits<float>::infinity();
   } else {
     return base::polymorphic_downcast<NumberValue*>(value)->value();

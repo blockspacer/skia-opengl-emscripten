@@ -152,7 +152,7 @@ void EventTarget::PostToDispatchEventAndRunCallback(
 }
 
 void EventTarget::PostToDispatchEventNameAndRunCallback(
-    const base::Location& location, base::CobToken event_name,
+    const base::Location& location, base::Token event_name,
     const base::Closure& callback) {
 
 #if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))

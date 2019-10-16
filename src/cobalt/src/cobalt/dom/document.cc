@@ -1,4 +1,4 @@
-﻿// Copyright 2014 The Cobalt Authors. All Rights Reserved.
+// Copyright 2014 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,14 +19,13 @@
 
 #include "base/bind.h"
 #include "base/bind_helpers.h"
+#include "base/callback.h"
 #include "base/compiler_specific.h"
 #include "base/message_loop/message_loop.h"
 #include "base/strings/string_util.h"
 #include "base/trace_event/trace_event.h"
 #include "base/memory/weak_ptr.h"
-
 #include "cobalt/base/token.h"
-
 #include "cobalt/base/tokens.h"
 #include "cobalt/cssom/css_media_rule.h"
 #include "cobalt/cssom/css_rule.h"
@@ -1008,7 +1007,7 @@ void Document::UpdateSelectorTree() {
 
     scoped_refptr<HTMLHtmlElement> current_html = html();
     if (current_html) {
-      current_html->ClearRuleMatchingStateOnElementAndDescendants();
+      current_html->ClearRuleMatchingStateOnElementAndSiblingsAndDescendants();
     }
 
     is_selector_tree_dirty_ = false;
@@ -1101,11 +1100,11 @@ void Document::DispatchOnLoadEvent() {
   // finished loading.  Performing this update and firing the readystatechange
   // event before the load event matches Chromium's behavior.
   ready_state_ = kDocumentReadyStateComplete;
-///#ifdef __TODO__
+
   // Dispatch the readystatechange event (before the load event), since we
   // have changed the document ready state.
   DispatchEvent(new Event(base::Tokens::readystatechange()));
-//#ifdef __TODO__
+
   // Dispatch the document's onload event.
   DispatchEvent(new Event(base::Tokens::load()));
 
