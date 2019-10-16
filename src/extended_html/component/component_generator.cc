@@ -33,6 +33,7 @@
 #include "cobalt/layout/base_direction.h"
 #include "cobalt/layout/block_formatting_block_container_box.h"
 #include "cobalt/layout/block_level_replaced_box.h"
+#include "cobalt/layout/flex_container_box.h"
 #include "cobalt/layout/inline_container_box.h"
 #include "cobalt/layout/inline_level_replaced_box.h"
 #include "cobalt/layout/layout_boxes.h"
@@ -60,7 +61,6 @@ void ComponentGenerator::VisitKeyword(cssom::KeywordValue* keyword) {
     switch (keyword->value()) {
     // Generate a block-level block container box.
     case cssom::KeywordValue::kBlock:
-    case cssom::KeywordValue::kFlex:
         // The block ends the current paragraph and begins a new one that ends
         // with the block, so close the current paragraph, and create a new
         // paragraph that will close when the container box generator is
@@ -68,9 +68,14 @@ void ComponentGenerator::VisitKeyword(cssom::KeywordValue* keyword) {
         CreateScopedParagraph(kCloseParagraph);
 
         container_box_ = base::WrapRefCounted(new BlockLevelBlockContainerBox(
-            /*on_draw_cb,*/ css_computed_style_declaration_, (*paragraph_)->GetBaseDirection(),
+            /*on_draw_cb,*/ css_computed_style_declaration_, (*paragraph_)->base_direction(),
             context_->used_style_provider, context_->layout_stat_tracker));
         break;
+    case cssom::KeywordValue::kFlex:
+      container_box_ = base::WrapRefCounted(new BlockLevelFlexContainerBox(
+          css_computed_style_declaration_, (*paragraph_)->base_direction(),
+          context_->used_style_provider, context_->layout_stat_tracker));
+      break;
     // Generate one or more inline boxes. Note that more inline boxes may be
     // generated when the original inline box is split due to participation
     // in the formatting context.
@@ -133,7 +138,7 @@ void ComponentGenerator::VisitKeyword(cssom::KeywordValue* keyword) {
         CreateScopedParagraph(kDoNotCloseParagraph);
 
         container_box_ = base::WrapRefCounted(new InlineLevelBlockContainerBox(
-            /*on_draw_cb,*/ css_computed_style_declaration_, (*paragraph_)->GetBaseDirection(),
+            /*on_draw_cb,*/ css_computed_style_declaration_, (*paragraph_)->base_direction(),
             prior_paragraph, text_position, context_->used_style_provider,
             context_->layout_stat_tracker));
     } break;

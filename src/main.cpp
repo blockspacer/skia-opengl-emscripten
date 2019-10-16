@@ -1856,7 +1856,10 @@ CobaltTester::CobaltTester()
   new base::SourceLocation("[object HTMLDecoderTest]", 1, 1));*/
 
   loader_factory_.reset(
-      new loader::LoaderFactory(fetcher_factory_.get(), resource_provider_,
+      new loader::LoaderFactory("MainLoaderFactory",
+                                fetcher_factory_.get(),
+                                resource_provider_,
+                                /* encoded_image_cache_capacity */ 10,
                                 /*data.options.loader_thread_priority*/ base::ThreadPriority::NORMAL));
 
   //DCHECK_LE(0, data.options.image_cache_capacity);
