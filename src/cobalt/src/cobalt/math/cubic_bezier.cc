@@ -6,7 +6,6 @@
 
 #include <algorithm>
 #include <cmath>
-#include <limits>
 
 #include "base/logging.h"
 
@@ -14,10 +13,6 @@ namespace cobalt {
 namespace math {
 
 namespace {
-
-static inline bool WithinEpsilon(const double a, const double b) {
-  return std::abs(a - b) < std::numeric_limits<double>::epsilon();
-}
 
 static const double kBezierEpsilon = 1e-7;
 static const int MAX_STEPS = 30;
@@ -138,13 +133,6 @@ void CubicBezier::Range(double* min, double* max) const {
 
   *min = std::min(std::min(*min, sol_1), sol_2);
   *max = std::max(std::max(*max, sol_1), sol_2);
-}
-
-bool CubicBezier::operator==(const CubicBezier &other) const {
-  return WithinEpsilon(x1_, other.x1_)
-      && WithinEpsilon(y1_, other.y1_)
-      && WithinEpsilon(x2_, other.x2_)
-      && WithinEpsilon(y2_, other.y2_);
 }
 
 }  // namespace math
