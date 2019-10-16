@@ -110,8 +110,9 @@ list(APPEND starboard_platform_SOURCES
   ${COBALT_PORT_DIR}/starboard/shared/posix/time_get_monotonic_thread_now.cc
   ${COBALT_PORT_DIR}/starboard/shared/posix/time_get_now.cc
   ${COBALT_PORT_DIR}/starboard/shared/posix/time_zone_get_current.cc
-  ${COBALT_PORT_DIR}/starboard/shared/posix/time_zone_get_dst_name.cc
-  ${COBALT_PORT_DIR}/starboard/shared/posix/time_zone_get_name.cc
+  # deprecated with SB_API_VERSION 6
+  #${COBALT_PORT_DIR}/starboard/shared/posix/time_zone_get_dst_name.cc
+  #${COBALT_PORT_DIR}/starboard/shared/posix/time_zone_get_name.cc
   ${COBALT_PORT_DIR}/starboard/shared/pthread/condition_variable_broadcast.cc
   ${COBALT_PORT_DIR}/starboard/shared/pthread/condition_variable_create.cc
   ${COBALT_PORT_DIR}/starboard/shared/pthread/condition_variable_destroy.cc
@@ -152,6 +153,8 @@ list(APPEND starboard_platform_SOURCES
   ${COBALT_PORT_DIR}/starboard/shared/starboard/file_storage/storage_open_record.cc
   ${COBALT_PORT_DIR}/starboard/shared/starboard/file_storage/storage_read_record.cc
   ${COBALT_PORT_DIR}/starboard/shared/starboard/log_message.cc
+  ${COBALT_PORT_DIR}/starboard/shared/starboard/log_mutex.cc
+  ${COBALT_PORT_DIR}/starboard/shared/starboard/log_mutex.h
   ${COBALT_PORT_DIR}/starboard/shared/starboard/log_raw_dump_stack.cc
   ${COBALT_PORT_DIR}/starboard/shared/starboard/log_raw_format.cc
   ${COBALT_PORT_DIR}/starboard/shared/stub/media_can_play_mime_and_key_system.cc
@@ -355,6 +358,7 @@ list(APPEND starboard_platform_SOURCES
   # TODO
   ${COBALT_PORT_DIR}/starboard/shared/stub/accessibility_get_display_settings.cc
   ${COBALT_PORT_DIR}/starboard/shared/stub/accessibility_get_text_to_speech_settings.cc
+  ${COBALT_PORT_DIR}/starboard/shared/stub/cpu_features_get.cc
   ${COBALT_PORT_DIR}/starboard/shared/stub/cryptography_create_transformer.cc
   ${COBALT_PORT_DIR}/starboard/shared/stub/cryptography_destroy_transformer.cc
   ${COBALT_PORT_DIR}/starboard/shared/stub/cryptography_get_tag.cc
@@ -376,6 +380,7 @@ list(APPEND starboard_platform_SOURCES
   ${COBALT_PORT_DIR}/starboard/shared/stub/system_get_used_gpu_memory.cc
   ${COBALT_PORT_DIR}/starboard/shared/stub/system_hide_splash_screen.cc
   ${COBALT_PORT_DIR}/starboard/shared/stub/system_raise_platform_error.cc
+  ${COBALT_PORT_DIR}/starboard/shared/stub/system_sign_with_certification_secret_key.cc
   ${COBALT_PORT_DIR}/starboard/shared/stub/ui_nav_get_interface.cc
   ${COBALT_PORT_DIR}/starboard/shared/stub/window_get_diagonal_size_in_inches.cc
   #
