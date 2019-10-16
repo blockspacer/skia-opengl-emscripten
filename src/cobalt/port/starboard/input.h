@@ -26,6 +26,8 @@
 #include "starboard/types.h"
 #include "starboard/window.h"
 
+#include <string>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -176,6 +178,15 @@ typedef struct SbInputData {
   // character also depends on the keyboard language. The value is |0| if there
   // is no corresponding character.
   wchar_t character;
+
+  // not in spec
+  int32_t keysym;
+
+  // not in spec
+  bool is_printable;
+
+  // not in spec
+  std::string text;
 
   // The location of the specified key, in cases where there are multiple
   // instances of the button on the keyboard. For example, some keyboards have

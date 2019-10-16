@@ -5,9 +5,15 @@
 #ifndef BASE_STRINGS_CHAR_TRAITS_H_
 #define BASE_STRINGS_CHAR_TRAITS_H_
 
+#include "base/compiler_specific.h"
+
+//#include "base/cpp14oncpp11.h"
+
 #include <stddef.h>
 
-#include "base/compiler_specific.h"
+#if defined(STARBOARD)
+#include "starboard/types.h"
+#endif
 
 namespace base {
 
@@ -23,7 +29,6 @@ struct CharTraits {
   // |s2|. Returns 0 if equal, -1 if |s1| is less than |s2|, and 1 if |s1| is
   // greater than |s2|.
   static constexpr int compare(const T* s1, const T* s2, size_t n) noexcept;
-
   // Returns the length of |s|, assuming null termination (and not including the
   // terminating null).
   static constexpr size_t length(const T* s) noexcept;
@@ -52,6 +57,29 @@ constexpr size_t CharTraits<T>::length(const T* s) noexcept {
 
 // char specialization of CharTraits that can use clang's constexpr instrinsics,
 // where available.
+#if defined(STARBOARD)
+template <>
+struct CharTraits<char> {
+  constexpr static int compare(const char* s1,
+                               const char* s2,
+                               size_t n) noexcept {
+    for (; n; --n, ++s1, ++s2) {
+      if (*s1 < *s2)
+        return -1;
+      if (*s1 > *s2)
+        return 1;
+    }
+    return 0;
+  }
+
+  constexpr static size_t length(const char* s) noexcept {
+    size_t i = 0;
+    for (; *s; ++s)
+      ++i;
+    return i;
+  }
+};
+#else
 template <>
 struct CharTraits<char> {
   static constexpr int compare(const char* s1,
@@ -86,6 +114,7 @@ constexpr size_t CharTraits<char>::length(const char* s) noexcept {
   return i;
 #endif
 }
+#endif
 
 }  // namespace base
 

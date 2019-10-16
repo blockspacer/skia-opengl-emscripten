@@ -16,8 +16,8 @@
 
 #include "base/logging.h"
 #include "base/memory/singleton.h"
-#include "starboard/mutex.h"
-#include "starboard/string.h"
+#include "starboard/common/mutex.h"
+#include "starboard/common/string.h"
 
 namespace cobalt {
 namespace overlay_info {
@@ -86,7 +86,6 @@ void OverlayInfoRegistryImpl::Register(const char* category, const void* data,
   starboard::ScopedLock scoped_lock(mutex_);
   // Use |kMaxNumberOfPendingOverlayInfo + 0| to avoid link error caused by
   // DCHECK_LE.
-  // TODO: Check may be failed
   DCHECK_LE(infos_.size() + total_size,
             OverlayInfoRegistry::kMaxNumberOfPendingOverlayInfo + 0);
   if (enabled_) {
