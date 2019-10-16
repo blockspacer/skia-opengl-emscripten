@@ -446,9 +446,10 @@ class AnimateNode::ApplyVisitor : public NodeVisitor {
   typename base::enable_if<ChildIterator<T>::has_children>::type VisitNode(
       T* node);
   template <typename T>
-  scoped_refptr<T> ApplyAnimations(T* old_node,
-                                   const TraverseListEntry& entry,
-                                   typename T::Builder* builder);
+  scoped_refptr<T> ApplyAnimations(
+    T* old_node, /// \notr custom
+    const TraverseListEntry& entry,
+    typename T::Builder* builder);
   TraverseListEntry AdvanceIterator(Node* node);
 
   // The time offset to be passed in to individual animations.
@@ -486,12 +487,16 @@ AnimateNode::ApplyVisitor::ApplyVisitor(
 template <typename T>
 typename base::enable_if<!ChildIterator<T>::has_children>::type
 AnimateNode::ApplyVisitor::VisitNode(T* node) {
+  DCHECK(node);
+
   TraverseListEntry current_entry = AdvanceIterator(node);
   // If we don't have any children, then for this node to be visited, we must
   // have animations.
   DCHECK(current_entry.animations);
   typename T::Builder builder(node->data());
-  scoped_refptr<T> animated = ApplyAnimations<T>(node, current_entry, &builder);
+  scoped_refptr<T> animated = ApplyAnimations<T>(
+    node,  /// \note custom
+    current_entry, &builder);
   // If nothing ends up getting animated, then just re-use the existing node.
   bool did_animate = false;
   if (animated->data() == node->data()) {
@@ -508,8 +513,6 @@ AnimateNode::ApplyVisitor::VisitNode(T* node) {
 template <typename T>
 typename base::enable_if<ChildIterator<T>::has_children>::type
 AnimateNode::ApplyVisitor::VisitNode(T* node) {
-  DCHECK(node);
-
   TraverseListEntry current_entry = AdvanceIterator(node);
 
   size_t animated_traverse_list_index = animated_traverse_list_.size();
@@ -561,7 +564,9 @@ AnimateNode::ApplyVisitor::VisitNode(T* node) {
       builder.emplace(node->data());
     }
     typename T::Builder original_builder(*builder);
-    scoped_refptr<T> animated = ApplyAnimations<T>(node, current_entry, &(*builder));
+    scoped_refptr<T> animated = ApplyAnimations<T>(
+      node,  /// \note custom
+      current_entry, &(*builder));
     if (!(original_builder == *builder)) {
       did_animate = true;
     }
@@ -573,6 +578,7 @@ AnimateNode::ApplyVisitor::VisitNode(T* node) {
     // need to be animated if its children are animated, which will be the
     // case if |builder| is populated.
     if (builder) {
+      /// \note custom
       animated_ = node->CreateWithBuilder(std::move(*builder));
       // TODO: remove
       ///animated_ = new T(std::move(*builder));
@@ -588,7 +594,8 @@ AnimateNode::ApplyVisitor::VisitNode(T* node) {
 
 template <typename T>
 scoped_refptr<T> AnimateNode::ApplyVisitor::ApplyAnimations(
-    T* old_node, const TraverseListEntry& entry, typename T::Builder* builder) {
+    T* old_node, /// \note custom
+    const TraverseListEntry& entry, typename T::Builder* builder) {
   TRACE_EVENT0("cobalt::renderer",
                "AnimateNode::ApplyVisitor::ApplyAnimations()");
   // Cast to the specific type we expect these animations to have.
@@ -608,6 +615,7 @@ scoped_refptr<T> AnimateNode::ApplyVisitor::ApplyAnimations(
     }
   }
 
+  /// \note custom
   return old_node->CreateWithBuilder(*builder);
 
   // TODO: remove

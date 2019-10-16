@@ -68,7 +68,7 @@ BlockFormattingBlockContainerBox::UpdateRectOfInFlowChildBoxes(
       new BlockFormattingContext(child_layout_params));
   for (Boxes::const_iterator child_box_iterator = child_boxes().begin();
        child_box_iterator != child_boxes().end(); ++child_box_iterator) {
-    Box* child_box = *child_box_iterator;
+    Box* child_box = (*child_box_iterator).get();
     if (child_box->IsAbsolutelyPositioned()) {
       block_formatting_context->EstimateStaticPosition(child_box);
     } else {

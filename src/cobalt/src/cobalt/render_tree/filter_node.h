@@ -100,7 +100,8 @@ class FilterNode : public Node {
 
   const Builder& data() const { return data_; }
 
-  FilterNode* CreateWithBuilder(FilterNode::Builder builder) {
+  /// \note custom
+  FilterNode* CreateWithBuilder(const FilterNode::Builder& builder) {
     return new FilterNode(builder);
   }
 

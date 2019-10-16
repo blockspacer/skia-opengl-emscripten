@@ -83,7 +83,8 @@ class ImageNode : public Node {
 
   const Builder& data() const { return data_; }
 
-  ImageNode* CreateWithBuilder(ImageNode::Builder builder) {
+  /// \note custom
+  ImageNode* CreateWithBuilder(const ImageNode::Builder& builder) {
     return new ImageNode(builder);
   }
 

@@ -85,7 +85,8 @@ class SkottieNode : public Node {
 
   const Builder& data() const { return data_; }
 
-  SkottieNode* CreateWithBuilder(SkottieNode::Builder builder) {
+  /// \note custom
+  SkottieNode* CreateWithBuilder(const SkottieNode::Builder& builder) {
     return new SkottieNode(builder);
   }
 

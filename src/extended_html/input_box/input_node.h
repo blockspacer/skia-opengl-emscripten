@@ -180,13 +180,13 @@ class InputNode final : public CustomNode {
 
   const char* DebugTreePrintName() override { return "InputNode"; }
 
-  CustomNode* CreateWithBuilder(CustomNode::Builder builder) override {
+  CustomNode* CreateWithBuilder(const CustomNode::Builder& builder) override {
     InputNode::Builder input_builder(builder);
     printf("created InputNode\n");
     return new InputNode(input_builder);
   }
 
-  /*CustomNode* CreateWithBuilder(CustomNode::Builder builder) override {
+  /*CustomNode* CreateWithBuilder(const CustomNode::Builder& builder) override {
     return CreateInputNodeWithBuilder(builder);
   }*/
 

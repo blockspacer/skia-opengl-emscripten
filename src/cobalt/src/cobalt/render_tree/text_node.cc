@@ -22,9 +22,8 @@ namespace render_tree {
 TextNode::Builder::Builder(
     const math::Vector2dF& offset,
     const scoped_refptr<render_tree::GlyphBuffer>& glyph_buffer,
-    const ColorRGBA& color,
-    const base::string16& text)
-    : offset(offset), glyph_buffer(glyph_buffer), color(color), text(text) {}
+    const ColorRGBA& color)
+    : offset(offset), glyph_buffer(glyph_buffer), color(color) {}
 
 void TextNode::Accept(NodeVisitor* visitor) { visitor->Visit(this); }
 

@@ -60,7 +60,8 @@ class MatrixTransformNode : public Node {
 
   const Builder& data() const { return data_; }
 
-  MatrixTransformNode* CreateWithBuilder(MatrixTransformNode::Builder builder) {
+  /// \note custom
+  MatrixTransformNode* CreateWithBuilder(const MatrixTransformNode::Builder& builder) {
     return new MatrixTransformNode(builder);
   }
 

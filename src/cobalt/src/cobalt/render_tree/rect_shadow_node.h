@@ -84,7 +84,8 @@ class RectShadowNode : public Node {
 
   const Builder& data() const { return data_; }
 
-  RectShadowNode* CreateWithBuilder(RectShadowNode::Builder builder) {
+  /// \note custom
+  RectShadowNode* CreateWithBuilder(const RectShadowNode::Builder& builder) {
     return new RectShadowNode(builder);
   }
 

@@ -88,7 +88,8 @@ class RectNode : public Node {
 
   const Builder& data() const { return data_; }
 
-  RectNode* CreateWithBuilder(RectNode::Builder builder) {
+  /// \note custom
+  RectNode* CreateWithBuilder(const RectNode::Builder& builder) {
     return new RectNode(builder);
   }
 

@@ -71,7 +71,8 @@ class CustomNode : public Node {
 
   virtual const char* DebugTreePrintName() = 0;
 
-  virtual CustomNode* CreateWithBuilder(CustomNode::Builder builder) = 0;
+  /// \note custom
+  virtual CustomNode* CreateWithBuilder(const CustomNode::Builder& builder) = 0;
 
   virtual const Builder& data() const = 0;
 };

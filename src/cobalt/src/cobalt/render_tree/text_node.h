@@ -45,15 +45,12 @@ class TextNode : public Node {
     Builder(const Builder&) = default;
     Builder(const math::Vector2dF& offset,
             const scoped_refptr<GlyphBuffer>& glyph_buffer,
-            const ColorRGBA& color,
-            const base::string16& text);
+            const ColorRGBA& color);
 
     bool operator==(const Builder& other) const {
       return offset == other.offset && glyph_buffer == other.glyph_buffer &&
              color == other.color && shadows == other.shadows;
     }
-
-    base::string16 text;
 
     math::Vector2dF offset;
 
@@ -81,7 +78,8 @@ class TextNode : public Node {
 
   const Builder& data() const { return data_; }
 
-  TextNode* CreateWithBuilder(TextNode::Builder builder) {
+  /// \note custom
+  TextNode* CreateWithBuilder(const TextNode::Builder& builder) {
     return new TextNode(builder);
   }
 

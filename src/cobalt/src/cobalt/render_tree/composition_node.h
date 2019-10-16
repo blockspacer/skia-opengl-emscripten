@@ -127,7 +127,8 @@ class CompositionNode : public Node {
 
   const Builder& data() const { return data_; }
 
-  CompositionNode* CreateWithBuilder(CompositionNode::Builder builder) {
+  /// \note custom
+  CompositionNode* CreateWithBuilder(const CompositionNode::Builder& builder) {
     return new CompositionNode(builder);
   }
 

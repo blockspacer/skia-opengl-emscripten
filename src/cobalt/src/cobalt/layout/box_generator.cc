@@ -134,7 +134,7 @@ void BoxGenerator::Visit(dom::Element* element) {
       boxes_ = layout_boxes->boxes();
       for (Boxes::const_iterator box_iterator = boxes_.begin();
            box_iterator != boxes_.end(); ++box_iterator) {
-        Box* box = *box_iterator;
+        Box* box = (*box_iterator).get();
         do {
           box->InvalidateParent();
           box = box->GetSplitSibling();
@@ -147,14 +147,14 @@ void BoxGenerator::Visit(dom::Element* element) {
   scoped_refptr<dom::HTMLVideoElement> video_element =
       html_element->AsHTMLVideoElement();
   if (video_element) {
-    VisitVideoElement(video_element);
+    VisitVideoElement(video_element.get());
     return;
   }
 
   scoped_refptr<dom::HTMLBRElement> br_element =
       html_element->AsHTMLBRElement();
   if (br_element) {
-    VisitBrElement(br_element);
+    VisitBrElement(br_element.get());
     return;
   }
 
@@ -162,7 +162,7 @@ void BoxGenerator::Visit(dom::Element* element) {
   scoped_refptr<dom::HTMLSkottieElement> skottie_element =
       html_element->AsHTMLSkottieElement();
   if (skottie_element) {
-    VisitSkottieElement(skottie_element);
+    VisitSkottieElement(skottie_element.get());
     return;
   }
 
@@ -170,11 +170,11 @@ void BoxGenerator::Visit(dom::Element* element) {
   scoped_refptr<dom::HTMLCustomElement> custom_element =
       html_element->AsHTMLCustomElement();
   if (custom_element) {
-    VisitCustomElement(custom_element);
+    VisitCustomElement(custom_element.get());
     return;
   }
 
-  VisitNonReplacedElement(html_element);
+  VisitNonReplacedElement(html_element.get());
 }
 
 namespace {

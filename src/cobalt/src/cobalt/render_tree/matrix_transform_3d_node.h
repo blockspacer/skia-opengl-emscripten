@@ -63,7 +63,8 @@ class MatrixTransform3DNode : public Node {
 
   const Builder& data() const { return data_; }
 
-  MatrixTransform3DNode* CreateWithBuilder(MatrixTransform3DNode::Builder builder) {
+  /// \note custom
+  MatrixTransform3DNode* CreateWithBuilder(const MatrixTransform3DNode::Builder& builder) {
     return new MatrixTransform3DNode(builder);
   }
 

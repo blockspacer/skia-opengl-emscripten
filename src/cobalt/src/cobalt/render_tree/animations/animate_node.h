@@ -1,4 +1,4 @@
-﻿// Copyright 2016 The Cobalt Authors. All Rights Reserved.
+// Copyright 2016 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -182,7 +182,6 @@ class AnimateNode : public Node {
 
   // Returns the sub-tree for which the animations apply to.
   const scoped_refptr<Node> source() const {
-    DCHECK(source_.get());
     DCHECK(source_);
     return source_;
   }
