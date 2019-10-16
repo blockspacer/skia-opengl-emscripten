@@ -1,4 +1,4 @@
-// Copyright 2014 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2014 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -40,7 +40,8 @@ class HTMLElementFactory {
   scoped_refptr<HTMLElement> CreateHTMLElement(Document* document,
                                                base::Token tag_name);
 
- private:
+ ///\todo
+ //private:
   typedef base::Callback<scoped_refptr<HTMLElement>(Document* document)>
       CreateHTMLElementTCallback;
   typedef base::hash_map<base::Token, CreateHTMLElementTCallback>

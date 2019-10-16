@@ -1,4 +1,4 @@
-// Copyright 2015 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2015 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -47,7 +47,10 @@ class CSSAnimationsAdapter : public cssom::AnimationSet::EventHandler {
   void OnAnimationEnded(const cssom::Animation& css_animation) override;
   void OnAnimationRemoved(const cssom::Animation& css_animation) override;
 
- private:
+  ///\todo
+  // private:
+  public:
+
   // The AnimationWithEventHandler struct maintains a reference to the Animation
   // object and also owns an Animation::EventHandler that connects animation
   // events to this CSSTransitionsAdapter object.
