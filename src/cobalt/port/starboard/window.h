@@ -1,4 +1,4 @@
-﻿// Copyright 2015 The Cobalt Authors. All Rights Reserved.
+// Copyright 2015 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -109,7 +109,7 @@ SB_EXPORT SbWindow SbWindowCreate(const SbWindowOptions* options);
 //
 // A return value of 0 means that starboard does not know what the
 // screen diagonal is.
-#if SB_API_VERSION >= SB_HAS_SCREEN_DIAGONAL_API_VERSION
+#if SB_API_VERSION >= 11
 SB_EXPORT float SbWindowGetDiagonalSizeInInches(SbWindow window);
 #endif
 
@@ -139,7 +139,7 @@ SB_EXPORT bool SbWindowGetSize(SbWindow window, SbWindowSize* size);
 // |window|: The SbWindow to retrieve the platform handle for.
 SB_EXPORT void* SbWindowGetPlatformHandle(SbWindow window);
 
-/*#if SB_HAS(ON_SCREEN_KEYBOARD)
+#if SB_HAS(ON_SCREEN_KEYBOARD)
 
 // System-triggered OnScreenKeyboard events have ticket value
 // kSbEventOnScreenKeyboardInvalidTicket.
@@ -206,7 +206,7 @@ SB_EXPORT void SbWindowFocusOnScreenKeyboard(SbWindow window, int ticket);
 // is not showing does nothing and does not fire any event.
 SB_EXPORT void SbWindowBlurOnScreenKeyboard(SbWindow window, int ticket);
 
-#if SB_API_VERSION >= SB_ON_SCREEN_KEYBOARD_SUGGESTIONS_VERSION
+#if SB_API_VERSION >= 11
 // Update the on screen keyboard custom suggestions. Fire
 // kSbEventTypeOnScreenKeyboardSuggestionsUpdated.
 // kSbEventTypeOnScreenKeyboardSuggestionsUpdated has data |ticket|. The
@@ -222,30 +222,12 @@ SB_EXPORT void SbWindowUpdateOnScreenKeyboardSuggestions(
 // returns false, then calling SbWindowUpdateOnScreenKeyboardSuggestions() will
 // be undefined.
 SB_EXPORT bool SbWindowOnScreenKeyboardSuggestionsSupported(SbWindow window);
-#endif  // SB_API_VERSION >= SB_ON_SCREEN_KEYBOARD_SUGGESTIONS_VERSION
+#endif  // SB_API_VERSION >= 11
 
-#endif  // SB_HAS(ON_SCREEN_KEYBOARD)*/
+#endif  // SB_HAS(ON_SCREEN_KEYBOARD)
 
 #ifdef __cplusplus
 }  // extern "C"
 #endif
-
-// TODO: move to "starboard/shared/emscripten/window_internal.h"
-//#if defined(__EMSCRIPTEN__)
-struct SbWindowPrivate {
-    explicit SbWindowPrivate(const SbWindowOptions* options);
-    virtual ~SbWindowPrivate();
-
-    // The width, height, pixel ratio of this window.
-    int width;
-    int height;
-    float video_pixel_ratio;
-};
-
-struct SbWindowPrivateEmscripten final : SbWindowPrivate {
-    explicit SbWindowPrivateEmscripten(const SbWindowOptions* options);
-    ~SbWindowPrivateEmscripten();
-};
-//#endif
 
 #endif  // STARBOARD_WINDOW_H_

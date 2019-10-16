@@ -114,8 +114,8 @@ typedef int64_t ssize_t;
 // Simulate needed portions of limits.h for platforms that don't provide it.
 
 // Assume int is 32-bits until we find a platform for which that fails.
-//SB_COMPILE_ASSERT(sizeof(int) == sizeof(int32_t),  // NOLINT[runtime/int]
-//                  starboard_int_is_32_bits);
+SB_COMPILE_ASSERT(sizeof(int) == sizeof(int32_t),  // NOLINT[runtime/int]
+                  starboard_int_is_32_bits);
 #if !defined(UINT_MAX)
 #define UINT_MAX 0xFFFFFFFFU
 #endif
@@ -130,8 +130,8 @@ typedef int64_t ssize_t;
 
 #if SB_HAS(32_BIT_LONG)
 
-//SB_COMPILE_ASSERT(sizeof(long) == sizeof(int32_t),  // NOLINT[runtime/int]
-//                  starboard_long_is_32_bits);
+SB_COMPILE_ASSERT(sizeof(long) == sizeof(int32_t),  // NOLINT[runtime/int]
+                  starboard_long_is_32_bits);
 #if !defined(LONG_MIN)
 #define LONG_MIN INT_MIN
 #endif
@@ -146,8 +146,8 @@ typedef int64_t ssize_t;
 
 #else  // SB_HAS(32_BIT_LONG)
 
-//SB_COMPILE_ASSERT(sizeof(long) == sizeof(int64_t),  // NOLINT[runtime/int]
-//                  starboard_long_is_64_bits);
+SB_COMPILE_ASSERT(sizeof(long) == sizeof(int64_t),  // NOLINT[runtime/int]
+                  starboard_long_is_64_bits);
 #if !defined(LONG_MIN)
 #define LONG_MIN SB_INT64_C(0x8000000000000000)
 #endif

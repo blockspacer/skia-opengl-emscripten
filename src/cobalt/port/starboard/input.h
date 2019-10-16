@@ -1,4 +1,4 @@
-﻿// Copyright 2015 The Cobalt Authors. All Rights Reserved.
+// Copyright 2015 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,8 +25,6 @@
 #include "starboard/time.h"
 #include "starboard/types.h"
 #include "starboard/window.h"
-
-#include <string>
 
 #ifdef __cplusplus
 extern "C" {
@@ -131,10 +129,8 @@ typedef enum SbInputEventType {
   // event is sent when the key or button being pressed is released.
   kSbInputEventTypeUnpress,
 
-#if SB_API_VERSION >= 6
   // Wheel movement. Provides relative movements of the |Mouse| wheel.
   kSbInputEventTypeWheel,
-#endif
 
 #if SB_HAS(ON_SCREEN_KEYBOARD)
   // https://w3c.github.io/uievents/#event-type-input
@@ -181,15 +177,6 @@ typedef struct SbInputData {
   // is no corresponding character.
   wchar_t character;
 
-  // not in spec
-  int32_t keysym;
-
-  // not in spec
-  bool is_printable;
-
-  // not in spec
-  std::string text;
-
   // The location of the specified key, in cases where there are multiple
   // instances of the button on the keyboard. For example, some keyboards have
   // more than one "shift" key.
@@ -209,7 +196,6 @@ typedef struct SbInputData {
   // not applicable.
   SbInputVector delta;
 
-#if SB_API_VERSION >= 6
   // The normalized pressure of the pointer input in the range of [0,1], where 0
   // and 1 represent the minimum and maximum pressure the hardware is capable of
   // detecting, respectively. Use NaN for devices that do not report pressure.
@@ -227,7 +213,6 @@ typedef struct SbInputData {
   // towards the user (y). Use (NaN, NaN) for devices that do not report tilt.
   // This value is used for input events with device type mouse or touch screen.
   SbInputVector tilt;
-#endif
 #if SB_HAS(ON_SCREEN_KEYBOARD)
   // The text to input for events of type |Input|.
   const char* input_text;

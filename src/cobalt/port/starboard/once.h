@@ -24,8 +24,6 @@
 #include "starboard/thread_types.h"
 #include "starboard/types.h"
 
-#include "starboard/configuration.h"
-
 #ifdef __cplusplus
 extern "C" {
 #endif
