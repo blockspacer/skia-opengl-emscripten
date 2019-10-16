@@ -1,4 +1,4 @@
-// Copyright 2014 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2014 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -43,9 +43,6 @@
 #include "skia/include/core/SkRefCnt.h"
 #include "skia/include/core/SkTime.h"
 
-// TODO
-static constexpr bool kSottieEnabled = true;
-
 namespace cobalt {
 namespace layout {
 
@@ -60,6 +57,9 @@ using render_tree::SolidColorBrush;
 using render_tree::animations::AnimateNode;
 
 namespace {
+
+// TODO
+static constexpr bool kSottieEnabled = true;
 
 // Used when intrinsic ratio cannot be determined,
 // as per https://www.w3.org/TR/CSS21/visudet.html#inline-replaced-width.
@@ -103,7 +103,6 @@ render_tree::StereoMode ReadStereoMode(
 SkottieBox::SkottieBox(
     const scoped_refptr<cssom::CSSComputedStyleDeclaration>&
         css_computed_style_declaration,
-    //const SetBoundsCB& set_bounds_cb,
 #if defined(ENABLE_SKOTTIE)
     const SkottieBox::GetSkottieTimeCB& skottie_animation_time_cb,
     const SkottieBox::GetSkottieAnimCB& replace_skottie_animation_cb,
@@ -123,7 +122,6 @@ SkottieBox::SkottieBox(
       // ratio, although technically it's a spec violation. For details see
       // https://www.w3.org/TR/CSS21/visudet.html#inline-replaced-width.
       intrinsic_ratio_(maybe_intrinsic_ratio.value_or(kFallbackIntrinsicRatio)),
-      //set_bounds_cb_(set_bounds_cb),
 #if defined(ENABLE_SKOTTIE)
       skottie_animation_time_cb_(skottie_animation_time_cb),
       replace_skottie_animation_cb_(replace_skottie_animation_cb),
@@ -158,7 +156,7 @@ WrapResult SkottieBox::TryWrapAt(
   }
 
   bool style_allows_break_word = parent()->computed_style()->overflow_wrap() ==
-                                 cssom::KeywordValue::GetBreakWord();
+      cssom::KeywordValue::GetBreakWord();
 
   if (!ShouldProcessWrapOpportunityPolicy(wrap_opportunity_policy,
                                           style_allows_break_word)) {
@@ -181,8 +179,8 @@ WrapResult SkottieBox::TryWrapAt(
       Paragraph::GetBreakPolicyFromWrapOpportunityPolicy(
           wrap_opportunity_policy, style_allows_break_word);
   return paragraph_->IsBreakPosition(text_position_, break_policy)
-             ? kWrapResultWrapBefore
-             : kWrapResultNoWrap;
+      ? kWrapResultWrapBefore
+      : kWrapResultNoWrap;
 }
 
 void SkottieBox::SplitBidiLevelRuns() {}
@@ -220,10 +218,9 @@ LayoutUnit SkottieBox::GetBaselineOffsetFromTopMarginEdge() const {
 }
 
 namespace {
-
 void AddLetterboxedSkottieToRenderTree(
     const LetterboxDimensions& dimensions,
-    //const SkottieBox::SetBoundsCB& set_bounds_cb,
+//const SkottieBox::SetBoundsCB& set_bounds_cb,
 #if defined(ENABLE_SKOTTIE)
     const SkottieBox::GetSkottieTimeCB& skottie_animation_time_cb,
     const SkottieBox::GetSkottieAnimCB& replace_skottie_animation_cb,
@@ -266,7 +263,7 @@ void SkottieBox::RenderAndAnimateContent(
           computed_style()->filter().get());
 
   if (mtm_filter_function && mtm_filter_function->mesh_spec().mesh_type() !=
-                                 cssom::MapToMeshFunction::kRectangular) {
+          cssom::MapToMeshFunction::kRectangular) {
     DCHECK(false)
         << "We currently do not support skottie with map-to-mesh "
            "filters.";
@@ -280,7 +277,15 @@ void SkottieBox::UpdateContentSizeAndMargins(
   base::Optional<LayoutUnit> maybe_width = GetUsedWidthIfNotAuto(
       computed_style(), layout_params.containing_block_size, NULL);
   base::Optional<LayoutUnit> maybe_height = GetUsedHeightIfNotAuto(
-      computed_style(), layout_params.containing_block_size);
+      computed_style(), layout_params.containing_block_size, NULL);
+
+  if (layout_params.freeze_width) {
+    maybe_width = width();
+  }
+  if (layout_params.freeze_height) {
+    maybe_height = height();
+  }
+
   base::Optional<LayoutUnit> maybe_left = GetUsedLeftIfNotAuto(
       computed_style(), layout_params.containing_block_size);
   base::Optional<LayoutUnit> maybe_top = GetUsedTopIfNotAuto(
@@ -372,12 +377,16 @@ void SkottieBox::UpdateContentSizeAndMargins(
 
     base::Optional<LayoutUnit> maybe_max_width = GetUsedMaxWidthIfNotNone(
         computed_style(), layout_params.containing_block_size, NULL);
-    LayoutUnit min_width = GetUsedMinWidth(
-        computed_style(), layout_params.containing_block_size, NULL);
+    LayoutUnit min_width =
+        GetUsedMinWidthIfNotAuto(computed_style(),
+                                 layout_params.containing_block_size, NULL)
+            .value_or(LayoutUnit());
     base::Optional<LayoutUnit> maybe_max_height = GetUsedMaxHeightIfNotNone(
-        computed_style(), layout_params.containing_block_size, NULL);
-    LayoutUnit min_height = GetUsedMinHeight(
-        computed_style(), layout_params.containing_block_size, NULL);
+        computed_style(), layout_params.containing_block_size);
+    LayoutUnit min_height =
+        GetUsedMinHeightIfNotAuto(computed_style(),
+                                  layout_params.containing_block_size)
+            .value_or(LayoutUnit());
 
     // The values w and h stand for the results of the width and height
     // computations ignoring the 'min-width', 'min-height', 'max-width' and
@@ -547,7 +556,6 @@ void SkottieBox::RenderAndAnimateContentWithLetterboxing(
   scoped_refptr<CompositionNode> composition_node =
       new CompositionNode(composition_node_builder);
 
-  // TODO: onRenderAndAnimate
 
   LetterboxDimensions letterbox_dims =
       GetLetterboxDimensions(content_size_, content_box_size());
