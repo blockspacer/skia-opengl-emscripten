@@ -26,7 +26,7 @@
 #include "cobalt/input/input_poller.h"
 #include "cobalt/system_window/input_event.h"
 #include "starboard/input.h"
-#include "starboard/mutex.h"
+#include "starboard/common/mutex.h"
 #include "starboard/window.h"
 
 namespace cobalt {

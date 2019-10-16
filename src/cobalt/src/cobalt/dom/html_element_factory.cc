@@ -64,7 +64,10 @@ scoped_refptr<HTMLElement> CreateHTMLElementWithTagNameT(
 HTMLElementFactory::HTMLElementFactory() {
   // Register HTML elements that have only one tag name in the map.
   RegisterHTMLElementWithSingleTagName<HTMLAnchorElement>();
-  RegisterHTMLElementWithSingleTagName<HTMLAudioElement>();
+
+  /// \todo
+  //RegisterHTMLElementWithSingleTagName<HTMLAudioElement>();
+
   RegisterHTMLElementWithSingleTagName<HTMLBodyElement>();
   RegisterHTMLElementWithSingleTagName<HTMLBRElement>();
   RegisterHTMLElementWithSingleTagName<HTMLDivElement>();
@@ -78,7 +81,9 @@ HTMLElementFactory::HTMLElementFactory() {
   RegisterHTMLElementWithSingleTagName<HTMLSpanElement>();
   RegisterHTMLElementWithSingleTagName<HTMLStyleElement>();
   RegisterHTMLElementWithSingleTagName<HTMLTitleElement>();
-  RegisterHTMLElementWithSingleTagName<HTMLVideoElement>();
+
+  /// \todo
+  //RegisterHTMLElementWithSingleTagName<HTMLVideoElement>();
 
   // Register HTML elements that have multiple tag names in the map.
   RegisterHTMLElementWithMultipleTagName<HTMLHeadingElement>();
