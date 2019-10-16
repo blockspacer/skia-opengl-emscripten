@@ -84,6 +84,12 @@ inline std::string Int32ToString(int32_t value) {
 inline std::string Uint64ToString(int64_t value) {
   return NumberToString(value);
 }
+inline std::string Int64ToString(int64_t value) {
+  return NumberToString(value);
+}
+inline string16 Int64ToString16(int64_t value) {
+  return NumberToString16(value);
+}
 
 //#define IntToString NumberToString
 #endif
