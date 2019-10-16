@@ -1,4 +1,4 @@
-// Copyright 2015 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2015 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -113,6 +113,7 @@ std::ostream& operator<<(std::ostream& out, const Stack& stack_token) {
   return out;
 }
 
+#if !defined(__EMSCRIPTEN__)
 std::ostream& operator<<(std::ostream& out, const wchar_t* wstr) {
   // We don't have any good cross-platform wide character to UTF8 converter at
   // this level in the stack, so just throwing out non-ASCII characters.
@@ -134,6 +135,7 @@ std::ostream& operator<<(std::ostream& out, const wchar_t* wstr) {
 std::ostream& operator<<(std::ostream& out, const std::wstring& wstr) {
   return out << wstr.c_str();
 }
+#endif // __EMSCRIPTEN__
 
 #if defined(__cplusplus_winrt)
 std::ostream& operator<<(std::ostream& out, ::Platform::String ^ str) {

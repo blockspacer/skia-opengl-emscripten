@@ -16,6 +16,7 @@ list(APPEND starboard_platform_SOURCES
   ${COBALT_PORT_DIR}/starboard/linux/shared/configuration_public.h
   ## TODO ## requires RefCounted from starboard_common
   ${COBALT_PORT_DIR}/starboard/linux/shared/decode_target_get_info.cc
+  ${COBALT_PORT_DIR}/starboard/linux/shared/audio_sink_type_dispatcher.cc
   ## TODO ## requires RefCounted from starboard_common
   ${COBALT_PORT_DIR}/starboard/linux/shared/decode_target_internal.cc
   ## TODO ## requires RefCounted from starboard_common
@@ -25,6 +26,9 @@ list(APPEND starboard_platform_SOURCES
   ${COBALT_PORT_DIR}/starboard/linux/shared/system_get_connection_type.cc
   ${COBALT_PORT_DIR}/starboard/linux/shared/system_get_device_type.cc
   ${COBALT_PORT_DIR}/starboard/shared/stub/system_get_path.cc
+  #${COBALT_PORT_DIR}/starboard/shared/stub/audio_sink_type_dispatcher.cc
+  ${COBALT_PORT_DIR}/starboard/shared/stub/media_is_audio_supported.cc
+  #${COBALT_PORT_DIR}/starboard/shared/stub/alsa_audio_sink_type.cc
   ${COBALT_PORT_DIR}/starboard/linux/shared/system_has_capability.cc
   ${COBALT_PORT_DIR}/starboard/shared/iso/character_is_alphanumeric.cc
   ${COBALT_PORT_DIR}/starboard/shared/iso/character_is_digit.cc
@@ -124,6 +128,8 @@ list(APPEND starboard_platform_SOURCES
   ${COBALT_PORT_DIR}/starboard/shared/pthread/mutex_create.cc
   ${COBALT_PORT_DIR}/starboard/shared/pthread/mutex_destroy.cc
   ${COBALT_PORT_DIR}/starboard/shared/pthread/mutex_release.cc
+  ${COBALT_PORT_DIR}/starboard/shared/pthread/thread_context_get_pointer.cc
+  ${COBALT_PORT_DIR}/starboard/shared/pthread/thread_context_internal.h
   ${COBALT_PORT_DIR}/starboard/shared/pthread/once.cc
   ${COBALT_PORT_DIR}/starboard/shared/pthread/thread_create.cc
   ${COBALT_PORT_DIR}/starboard/shared/pthread/thread_create_local_key.cc
@@ -134,6 +140,14 @@ list(APPEND starboard_platform_SOURCES
   ${COBALT_PORT_DIR}/starboard/shared/pthread/thread_get_local_value.cc
   ${COBALT_PORT_DIR}/starboard/shared/pthread/thread_is_equal.cc
   ${COBALT_PORT_DIR}/starboard/shared/pthread/thread_join.cc
+  ${COBALT_PORT_DIR}/starboard/shared/pthread/thread_sampler_create.cc
+  ${COBALT_PORT_DIR}/starboard/shared/pthread/thread_sampler_destroy.cc
+  ${COBALT_PORT_DIR}/starboard/shared/pthread/thread_sampler_freeze.cc
+  ${COBALT_PORT_DIR}/starboard/shared/pthread/thread_sampler_internal.cc
+  ${COBALT_PORT_DIR}/starboard/shared/pthread/thread_sampler_internal.h
+  ${COBALT_PORT_DIR}/starboard/shared/pthread/thread_sampler_is_supported.cc
+  ${COBALT_PORT_DIR}/starboard/shared/pthread/thread_sampler_is_supported.h
+  ${COBALT_PORT_DIR}/starboard/shared/pthread/thread_sampler_thaw.cc
   ${COBALT_PORT_DIR}/starboard/shared/pthread/thread_set_local_value.cc
   ${COBALT_PORT_DIR}/starboard/shared/pthread/thread_yield.cc
   ${COBALT_PORT_DIR}/starboard/shared/signal/crash_signals.h
@@ -161,21 +175,21 @@ list(APPEND starboard_platform_SOURCES
   ${COBALT_PORT_DIR}/starboard/shared/stub/media_get_audio_buffer_budget.cc
   ${COBALT_PORT_DIR}/starboard/shared/stub/media_get_audio_configuration.cc
   ${COBALT_PORT_DIR}/starboard/shared/stub/media_get_audio_output_count.cc
-  ${COBALT_PORT_DIR}/starboard/shared/stub/media_get_buffer_alignment.cc
-  ${COBALT_PORT_DIR}/starboard/shared/stub/media_get_buffer_allocation_unit.cc
-  ${COBALT_PORT_DIR}/starboard/shared/stub/media_get_buffer_garbage_collection_duration_threshold.cc
-  ${COBALT_PORT_DIR}/starboard/shared/stub/media_get_buffer_padding.cc
-  ${COBALT_PORT_DIR}/starboard/shared/stub/media_get_buffer_storage_type.cc
-  ${COBALT_PORT_DIR}/starboard/shared/stub/media_get_initial_buffer_capacity.cc
-  ${COBALT_PORT_DIR}/starboard/shared/stub/media_get_max_buffer_capacity.cc
-  ${COBALT_PORT_DIR}/starboard/shared/stub/media_get_progressive_buffer_budget.cc
-  ${COBALT_PORT_DIR}/starboard/shared/stub/media_get_video_buffer_budget.cc
-  ${COBALT_PORT_DIR}/starboard/shared/stub/media_is_audio_supported.cc
-  ${COBALT_PORT_DIR}/starboard/shared/stub/media_is_buffer_pool_allocate_on_demand.cc
-  ${COBALT_PORT_DIR}/starboard/shared/stub/media_is_buffer_using_memory_pool.cc
-  ${COBALT_PORT_DIR}/starboard/shared/stub/media_is_output_protected.cc
-  ${COBALT_PORT_DIR}/starboard/shared/stub/media_is_supported.cc
-  ${COBALT_PORT_DIR}/starboard/shared/stub/media_is_transfer_characteristics_supported.cc
+  #${COBALT_PORT_DIR}/starboard/shared/stub/media_get_buffer_alignment.cc
+  #${COBALT_PORT_DIR}/starboard/shared/stub/media_get_buffer_allocation_unit.cc
+  #${COBALT_PORT_DIR}/starboard/shared/stub/media_get_buffer_garbage_collection_duration_threshold.cc
+  #${COBALT_PORT_DIR}/starboard/shared/stub/media_get_buffer_padding.cc
+  #${COBALT_PORT_DIR}/starboard/shared/stub/media_get_buffer_storage_type.cc
+  #${COBALT_PORT_DIR}/starboard/shared/stub/media_get_initial_buffer_capacity.cc
+  #${COBALT_PORT_DIR}/starboard/shared/stub/media_get_max_buffer_capacity.cc
+  #${COBALT_PORT_DIR}/starboard/shared/stub/media_get_progressive_buffer_budget.cc
+  #${COBALT_PORT_DIR}/starboard/shared/stub/media_get_video_buffer_budget.cc
+  #${COBALT_PORT_DIR}/starboard/shared/stub/media_is_audio_supported.cc
+  #${COBALT_PORT_DIR}/starboard/shared/stub/media_is_buffer_pool_allocate_on_demand.cc
+  #${COBALT_PORT_DIR}/starboard/shared/stub/media_is_buffer_using_memory_pool.cc
+  #${COBALT_PORT_DIR}/starboard/shared/stub/media_is_output_protected.cc
+  #${COBALT_PORT_DIR}/starboard/shared/stub/media_is_supported.cc
+  #${COBALT_PORT_DIR}/starboard/shared/stub/media_is_transfer_characteristics_supported.cc
   ${COBALT_PORT_DIR}/starboard/shared/stub/media_is_video_supported.cc
   ${COBALT_PORT_DIR}/starboard/shared/stub/media_set_audio_write_duration.cc
   ${COBALT_PORT_DIR}/starboard/shared/stub/media_set_output_protection.cc
@@ -323,14 +337,19 @@ if(TARGET_LINUX)
     ${COBALT_PORT_DIR}/starboard/shared/starboard/player/input_buffer_internal.h
     ${COBALT_PORT_DIR}/starboard/shared/starboard/player/job_queue.cc
     ${COBALT_PORT_DIR}/starboard/shared/starboard/player/job_queue.h
+    ${COBALT_PORT_DIR}/starboard/shared/starboard/player/job_thread.cc
+    ${COBALT_PORT_DIR}/starboard/shared/starboard/player/job_thread.h
     ${COBALT_PORT_DIR}/starboard/shared/starboard/player/player_create.cc
     ${COBALT_PORT_DIR}/starboard/shared/starboard/player/player_destroy.cc
     ${COBALT_PORT_DIR}/starboard/shared/starboard/player/player_get_current_frame.cc
     ${COBALT_PORT_DIR}/starboard/shared/starboard/player/player_get_info.cc
+    ${COBALT_PORT_DIR}/starboard/shared/starboard/player/player_get_info2.cc
     ${COBALT_PORT_DIR}/starboard/shared/starboard/player/player_internal.cc
     ${COBALT_PORT_DIR}/starboard/shared/starboard/player/player_internal.h
     ${COBALT_PORT_DIR}/starboard/shared/starboard/player/player_output_mode_supported.cc
+    ${COBALT_PORT_DIR}/starboard/shared/starboard/player/player_output_mode_supported.cc
     ${COBALT_PORT_DIR}/starboard/shared/starboard/player/player_seek.cc
+    ${COBALT_PORT_DIR}/starboard/shared/starboard/player/player_seek2.cc
     ${COBALT_PORT_DIR}/starboard/shared/starboard/player/player_set_bounds.cc
     ${COBALT_PORT_DIR}/starboard/shared/starboard/player/player_set_playback_rate.cc
     ${COBALT_PORT_DIR}/starboard/shared/starboard/player/player_set_volume.cc
@@ -338,6 +357,7 @@ if(TARGET_LINUX)
     ${COBALT_PORT_DIR}/starboard/shared/starboard/player/player_worker.h
     ${COBALT_PORT_DIR}/starboard/shared/starboard/player/player_write_end_of_stream.cc
     ${COBALT_PORT_DIR}/starboard/shared/starboard/player/player_write_sample.cc
+    ${COBALT_PORT_DIR}/starboard/shared/starboard/player/player_write_sample2.cc
   )
 endif(TARGET_LINUX)
 
@@ -353,6 +373,7 @@ list(APPEND starboard_platform_SOURCES
   ${COBALT_PORT_DIR}/starboard/shared/starboard/system_request_stop.cc
   ${COBALT_PORT_DIR}/starboard/shared/starboard/system_request_suspend.cc
   ${COBALT_PORT_DIR}/starboard/shared/starboard/system_request_unpause.cc
+  ${COBALT_PORT_DIR}/starboard/shared/starboard/system_supports_resume.cc
   ${COBALT_PORT_DIR}/starboard/shared/starboard/system_supports_resume.cc
   ${COBALT_PORT_DIR}/starboard/shared/starboard/window_set_default_options.cc
   # TODO

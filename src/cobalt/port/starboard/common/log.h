@@ -1,4 +1,4 @@
-// Copyright 2015 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2015 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -58,9 +58,9 @@ std::ostream& operator<<(std::ostream& out, const Stack& stack);
 
 #if !defined(__EMSCRIPTEN__)
 std::ostream& operator<<(std::ostream& out, const wchar_t* wstr);
-inline std::ostream& operator<<(std::ostream& out, const std::wstring& wstr) {
+inline std::ostream& operator<<(std::ostream& out, const std::wstring& wstr);/* {
   return out << wstr.c_str();
-}
+}*/
 #endif
 std::ostream& operator<<(std::ostream& out, const std::wstring& wstr);
 
