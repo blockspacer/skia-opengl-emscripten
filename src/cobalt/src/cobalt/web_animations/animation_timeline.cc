@@ -56,36 +56,17 @@ base::Optional<double> AnimationTimeline::current_time() const {
 }
 
 void AnimationTimeline::Sample() {
-#if defined(__EMSCRIPTEN__)
-  //EM_LOG("AnimationTimeline::Sample 1\n");
-#endif
   if (clock_) {
-#if defined(__EMSCRIPTEN__)
-  //EM_LOG("AnimationTimeline::Sample 1.1\n");
-#endif
     sampled_clock_time_ = clock_->Now();
-#if defined(__EMSCRIPTEN__)
-  //EM_LOG("AnimationTimeline::Sample 1.2\n");
-#endif
     event_queue_.UpdateTime(*sampled_clock_time_);
   } else {
-#if defined(__EMSCRIPTEN__)
-  //EM_LOG("AnimationTimeline::Sample 2.0\n");
-#endif
     sampled_clock_time_ = base::nullopt;
   }
-#if defined(__EMSCRIPTEN__)
-  //EM_LOG("AnimationTimeline::Sample 2.1\n");
-#endif
   UpdateNextEventTimer();
-#if defined(__EMSCRIPTEN__)
-  //EM_LOG("AnimationTimeline::Sample 2\n");
-#endif
 }
 
 std::unique_ptr<TimedTaskQueue::Task> AnimationTimeline::QueueTask(
     base::TimeDelta fire_time, const base::Closure& closure) {
-  //printf("AnimationTimeline::QueueTask\n");
   std::unique_ptr<TimedTaskQueue::Task> task =
       event_queue_.QueueTask(fire_time, closure);
 
@@ -97,11 +78,6 @@ std::unique_ptr<TimedTaskQueue::Task> AnimationTimeline::QueueTask(
 }
 
 void AnimationTimeline::UpdateNextEventTimer() {
-  //printf("AnimationTimeline::UpdateNextEventTimer\n");
-#if defined(__EMSCRIPTEN__)
-  //EM_LOG("AnimationTimeline::UpdateNextEventTimer 1\n");
-#endif
-
   if (event_queue_.empty() || !sampled_clock_time_ || !clock_) {
 #if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
     next_event_timer_.Stop();
@@ -110,11 +86,8 @@ void AnimationTimeline::UpdateNextEventTimer() {
 #endif
   } else {
     base::TimeDelta delay = event_queue_.next_fire_time() - clock_->Now();
-    //printf("AnimationTimeline delay ms: %d\n", delay.InMilliseconds());
-    const bool isTimeExpired = delay < base::TimeDelta();
-    //printf("AnimationTimeline isTimeExpired: %b\n", isTimeExpired);
 #if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
-    //printf("scheduled AnimationTimeline::Sample after %d\n", delay.InMilliseconds());
+    const bool isTimeExpired = delay < base::TimeDelta();
     next_event_timer_.Start(
         FROM_HERE, isTimeExpired ? base::TimeDelta() : delay,
         base::Bind(&AnimationTimeline::Sample, base::Unretained(this)));
@@ -133,10 +106,6 @@ void AnimationTimeline::UpdateNextEventTimer() {
     }
 #endif
   }
-
-#if defined(__EMSCRIPTEN__)
-  //EM_LOG("AnimationTimeline::UpdateNextEventTimer 2\n");
-#endif
 }
 
 }  // namespace web_animations

@@ -1926,7 +1926,8 @@ scoped_refptr<render_tree::Node> Box::RenderAndAnimateUiNavigationContainer(
     composition_node = base::polymorphic_downcast<CompositionNode*>(
         node_to_animate.get());
   } else {
-    composition_node = new CompositionNode(node_to_animate, math::Vector2dF());
+    composition_node = new CompositionNode(node_to_animate.get(),
+      math::Vector2dF());
   }
 
   animate_node_builder->Add(

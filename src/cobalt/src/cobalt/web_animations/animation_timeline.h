@@ -24,6 +24,7 @@
 #if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
 #include "base/timer/timer.h"
 #endif
+#include "base/timer/timer.h"
 #include "cobalt/base/clock.h"
 #include "cobalt/script/wrappable.h"
 #include "cobalt/web_animations/timed_task_queue.h"
