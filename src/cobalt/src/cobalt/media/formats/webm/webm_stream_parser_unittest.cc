@@ -1,4 +1,4 @@
-// Copyright 2016 The Chromium Authors. All rights reserved.
+﻿// Copyright 2016 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -172,10 +172,10 @@ TEST_F(WebMStreamParserTest, ColourElement) {
   const VideoDecoderConfig& video_config =
       media_tracks_->getVideoConfig(video_track->bytestream_track_id());
 
-  gfx::ColorSpace expected_color_space(gfx::ColorSpace::PrimaryID::SMPTEST428_1,
-                                       gfx::ColorSpace::TransferID::LOG,
-                                       gfx::ColorSpace::MatrixID::RGB,
-                                       gfx::ColorSpace::RangeID::FULL);
+  gfx::CbColorSpace expected_color_space(gfx::CbColorSpace::PrimaryID::SMPTEST428_1,
+                                       gfx::CbColorSpace::TransferID::LOG,
+                                       gfx::CbColorSpace::MatrixID::RGB,
+                                       gfx::CbColorSpace::RangeID::FULL);
   EXPECT_EQ(video_config.color_space_info(), expected_color_space);
 
   base::Optional<HDRMetadata> hdr_metadata = video_config.hdr_metadata();

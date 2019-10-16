@@ -1,4 +1,4 @@
-// Copyright 2012 The Chromium Authors. All rights reserved.
+﻿// Copyright 2012 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -99,7 +99,7 @@ std::string MEDIA_EXPORT GetProfileName(VideoCodecProfile profile);
 MEDIA_EXPORT bool ParseAv1CodecId(const std::string& codec_id,
                                   VideoCodecProfile* profile,
                                   uint8_t* level_idc,
-                                  gfx::ColorSpace* color_space);
+                                  gfx::CbColorSpace* color_space);
 
 // Handle parsing AVC/H.264 codec ids as outlined in RFC 6381 and ISO-14496-10.
 MEDIA_EXPORT bool ParseAVCCodecId(const std::string& codec_id,

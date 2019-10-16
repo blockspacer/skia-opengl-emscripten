@@ -1,4 +1,4 @@
-// Copyright 2015 The Chromium Authors. All rights reserved.
+﻿// Copyright 2015 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -110,7 +110,7 @@ std::string GetProfileName(VideoCodecProfile profile) {
 }
 
 bool ParseAv1CodecId(const std::string& codec_id, VideoCodecProfile* profile,
-                     uint8_t* level_idc, gfx::ColorSpace* color_space) {
+                     uint8_t* level_idc, gfx::CbColorSpace* color_space) {
   // The codecs parameter string for the AOM AV1 codec is as follows:
   // See https://aomediacodec.github.io/av1-isobmff/#codecsparam.
   //
@@ -150,7 +150,7 @@ bool ParseAv1CodecId(const std::string& codec_id, VideoCodecProfile* profile,
   // transferCharacteristics  1 (ITU-R BT.709)
   // matrixCoefficients       1 (ITU-R BT.709)
   // videoFullRangeFlag       0 (studio swing representation)
-  *color_space = gfx::ColorSpace::CreateREC709();
+  *color_space = gfx::CbColorSpace::CreateREC709();
 
   if (fields[0] != "av01") {
     DVLOG(3) << __func__ << " Invalid AV1 4CC (" << fields[0] << ")";
@@ -265,26 +265,26 @@ bool ParseAv1CodecId(const std::string& codec_id, VideoCodecProfile* profile,
   // fields in the Sequence Header, if color_description_present_flag is set to
   // 1, otherwise they SHOULD not be set, defaulting to the values below. The
   // videoFullRangeFlag is represented by a single digit.
-  auto primaries = gfx::ColorSpace::PrimaryIDFromInt(values[6]);
+  auto primaries = gfx::CbColorSpace::PrimaryIDFromInt(values[6]);
   if (fields[6].size() != 2 ||
-      primaries == gfx::ColorSpace::kPrimaryIdReserved0) {
+      primaries == gfx::CbColorSpace::kPrimaryIdReserved0) {
     DVLOG(3) << __func__ << " Invalid color primaries (" << fields[6] << ")";
     return false;
   }
 
   if (values.size() <= 7) return true;
 
-  auto transfer = gfx::ColorSpace::TransferIDFromInt(values[7]);
+  auto transfer = gfx::CbColorSpace::TransferIDFromInt(values[7]);
   if (fields[7].size() != 2 ||
-      transfer == gfx::ColorSpace::kTransferIdReserved0) {
+      transfer == gfx::CbColorSpace::kTransferIdReserved0) {
     DVLOG(3) << __func__ << " Invalid transfer function (" << fields[7] << ")";
     return false;
   }
 
   if (values.size() <= 8) return true;
 
-  auto matrix = gfx::ColorSpace::MatrixIDFromInt(values[8]);
-  if (fields[8].size() != 2 || matrix == gfx::ColorSpace::kMatrixIdUnknown) {
+  auto matrix = gfx::CbColorSpace::MatrixIDFromInt(values[8]);
+  if (fields[8].size() != 2 || matrix == gfx::CbColorSpace::kMatrixIdUnknown) {
     // TODO: AV1 allows a few matrices we don't support yet.
     //       https://crbug.com/854290
     if (values[8] == 12 || values[8] == 13 || values[8] == 14) {
@@ -304,9 +304,9 @@ bool ParseAv1CodecId(const std::string& codec_id, VideoCodecProfile* profile,
     DVLOG(3) << __func__ << " Invalid full range flag (" << fields[9] << ")";
     return false;
   }
-  auto range = video_full_range_flag == 1 ? gfx::ColorSpace::kRangeIdFull
-                                          : gfx::ColorSpace::kRangeIdLimited;
-  *color_space = gfx::ColorSpace(primaries, transfer, matrix, range);
+  auto range = video_full_range_flag == 1 ? gfx::CbColorSpace::kRangeIdFull
+                                          : gfx::CbColorSpace::kRangeIdLimited;
+  *color_space = gfx::CbColorSpace(primaries, transfer, matrix, range);
   return true;
 }
 
@@ -521,7 +521,7 @@ VideoCodec StringToVideoCodec(const std::string& codec_id) {
   if (codec_id.substr(0, 5) == "vp09.") {
     return kCodecVP9;
   }
-  gfx::ColorSpace color_space;
+  gfx::CbColorSpace color_space;
   if (ParseAv1CodecId(codec_id, &profile, &level, &color_space))
     return kCodecAV1;
   if (codec_id == "theora") return kCodecTheora;

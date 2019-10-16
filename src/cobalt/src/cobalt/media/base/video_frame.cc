@@ -1,4 +1,4 @@
-// Copyright (c) 2012 The Chromium Authors. All rights reserved.
+﻿// Copyright (c) 2012 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -584,18 +584,18 @@ bool VideoFrame::HasTextures() const {
   return !mailbox_holders_[0].mailbox.IsZero();
 }
 
-gfx::ColorSpace VideoFrame::ColorSpace() const {
-  if (color_space_ == gfx::ColorSpace()) {
+gfx::CbColorSpace VideoFrame::ColorSpace() const {
+  if (color_space_ == gfx::CbColorSpace()) {
     int videoframe_color_space;
     if (metadata()->GetInteger(media::VideoFrameMetadata::COLOR_SPACE,
                                &videoframe_color_space)) {
       switch (videoframe_color_space) {
         case media::COLOR_SPACE_JPEG:
-          return gfx::ColorSpace::CreateJpeg();
+          return gfx::CbColorSpace::CreateJpeg();
         case media::COLOR_SPACE_HD_REC709:
-          return gfx::ColorSpace::CreateREC709();
+          return gfx::CbColorSpace::CreateREC709();
         case media::COLOR_SPACE_SD_REC601:
-          return gfx::ColorSpace::CreateREC601();
+          return gfx::CbColorSpace::CreateREC601();
         default:
           break;
       }
@@ -604,7 +604,7 @@ gfx::ColorSpace VideoFrame::ColorSpace() const {
   return color_space_;
 }
 
-void VideoFrame::set_color_space(const gfx::ColorSpace& color_space) {
+void VideoFrame::set_color_space(const gfx::CbColorSpace& color_space) {
   color_space_ = color_space;
 }
 

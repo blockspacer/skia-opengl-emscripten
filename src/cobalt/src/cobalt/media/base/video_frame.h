@@ -1,4 +1,4 @@
-// Copyright (c) 2012 The Chromium Authors. All rights reserved.
+﻿// Copyright (c) 2012 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -269,8 +269,8 @@ class MEDIA_EXPORT VideoFrame : public base::RefCountedThreadSafe<VideoFrame> {
   bool HasTextures() const;
 
   // Returns the color space of this frame's content.
-  gfx::ColorSpace ColorSpace() const;
-  void set_color_space(const gfx::ColorSpace& color_space);
+  gfx::CbColorSpace ColorSpace() const;
+  void set_color_space(const gfx::CbColorSpace& color_space);
 
   VideoPixelFormat format() const { return format_; }
   StorageType storage_type() const { return storage_type_; }
@@ -505,7 +505,7 @@ class MEDIA_EXPORT VideoFrame : public base::RefCountedThreadSafe<VideoFrame> {
   // Generated at construction time.
   const int unique_id_;
 
-  gfx::ColorSpace color_space_;
+  gfx::CbColorSpace color_space_;
 
   DISALLOW_IMPLICIT_CONSTRUCTORS(VideoFrame);
 };

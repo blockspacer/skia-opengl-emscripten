@@ -1,4 +1,4 @@
-// Copyright 2017 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2017 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@
 
 namespace gfx {
 
-ColorSpace::PrimaryID ColorSpace::PrimaryIDFromInt(int primary_id) {
+CbColorSpace::PrimaryID CbColorSpace::PrimaryIDFromInt(int primary_id) {
   if (primary_id < 0 || primary_id > static_cast<int>(kPrimaryIdLast))
     return kPrimaryIdUnknown;
   if (primary_id > static_cast<int>(kPrimaryIdLastStandardValue) &&
@@ -27,7 +27,7 @@ ColorSpace::PrimaryID ColorSpace::PrimaryIDFromInt(int primary_id) {
   return static_cast<PrimaryID>(primary_id);
 }
 
-ColorSpace::TransferID ColorSpace::TransferIDFromInt(int transfer_id) {
+CbColorSpace::TransferID CbColorSpace::TransferIDFromInt(int transfer_id) {
   if (transfer_id < 0 || transfer_id > static_cast<int>(kTransferIdLast))
     return kTransferIdUnknown;
   if (transfer_id > static_cast<int>(kTransferIdLastStandardValue) &&
@@ -36,7 +36,7 @@ ColorSpace::TransferID ColorSpace::TransferIDFromInt(int transfer_id) {
   return static_cast<TransferID>(transfer_id);
 }
 
-ColorSpace::MatrixID ColorSpace::MatrixIDFromInt(int matrix_id) {
+CbColorSpace::MatrixID CbColorSpace::MatrixIDFromInt(int matrix_id) {
   if (matrix_id < 0 || matrix_id > static_cast<int>(kMatrixIdLast))
     return kMatrixIdUnknown;
   if (matrix_id > static_cast<int>(kMatrixIdLastStandardValue) &&
@@ -45,7 +45,7 @@ ColorSpace::MatrixID ColorSpace::MatrixIDFromInt(int matrix_id) {
   return static_cast<MatrixID>(matrix_id);
 }
 
-ColorSpace::ColorSpace()
+CbColorSpace::CbColorSpace()
     : primaries_(kPrimaryIdUnspecified),
       transfer_(kTransferIdUnspecified),
       matrix_(kMatrixIdUnspecified),
@@ -53,7 +53,7 @@ ColorSpace::ColorSpace()
   SbMemorySet(custom_primary_matrix_, 0, sizeof(custom_primary_matrix_));
 }
 
-ColorSpace::ColorSpace(PrimaryID primaries, TransferID transfer,
+CbColorSpace::CbColorSpace(PrimaryID primaries, TransferID transfer,
                        MatrixID matrix, RangeID range)
     : primaries_(primaries),
       transfer_(transfer),
@@ -62,7 +62,7 @@ ColorSpace::ColorSpace(PrimaryID primaries, TransferID transfer,
   SbMemorySet(custom_primary_matrix_, 0, sizeof(custom_primary_matrix_));
 }
 
-ColorSpace::ColorSpace(int primaries, int transfer, int matrix, RangeID range)
+CbColorSpace::CbColorSpace(int primaries, int transfer, int matrix, RangeID range)
     : primaries_(PrimaryIDFromInt(primaries)),
       transfer_(TransferIDFromInt(transfer)),
       matrix_(MatrixIDFromInt(matrix)),
@@ -70,7 +70,7 @@ ColorSpace::ColorSpace(int primaries, int transfer, int matrix, RangeID range)
   SbMemorySet(custom_primary_matrix_, 0, sizeof(custom_primary_matrix_));
 }
 
-ColorSpace::ColorSpace(const ColorSpace& other)
+CbColorSpace::CbColorSpace(const CbColorSpace& other)
     : primaries_(other.primaries_),
       transfer_(other.transfer_),
       matrix_(other.matrix_),
@@ -79,33 +79,33 @@ ColorSpace::ColorSpace(const ColorSpace& other)
                sizeof(custom_primary_matrix_));
 }
 
-ColorSpace::~ColorSpace() {}
+CbColorSpace::~CbColorSpace() {}
 
 // Static
-ColorSpace ColorSpace::CreateXYZD50() {
-  return ColorSpace(kPrimaryIdXyzD50, kTransferIdLinear, kMatrixIdRgb,
+CbColorSpace CbColorSpace::CreateXYZD50() {
+  return CbColorSpace(kPrimaryIdXyzD50, kTransferIdLinear, kMatrixIdRgb,
                     kRangeIdFull);
 }
 
 // static
-ColorSpace ColorSpace::CreateJpeg() {
-  return ColorSpace(kPrimaryIdBt709, kTransferIdIec6196621, kMatrixIdBt709,
+CbColorSpace CbColorSpace::CreateJpeg() {
+  return CbColorSpace(kPrimaryIdBt709, kTransferIdIec6196621, kMatrixIdBt709,
                     kRangeIdFull);
 }
 
 // static
-ColorSpace ColorSpace::CreateREC601() {
-  return ColorSpace(kPrimaryIdSmpte170M, kTransferIdSmpte170M,
+CbColorSpace CbColorSpace::CreateREC601() {
+  return CbColorSpace(kPrimaryIdSmpte170M, kTransferIdSmpte170M,
                     kMatrixIdSmpte170M, kRangeIdLimited);
 }
 
 // static
-ColorSpace ColorSpace::CreateREC709() {
-  return ColorSpace(kPrimaryIdBt709, kTransferIdBt709, kMatrixIdBt709,
+CbColorSpace CbColorSpace::CreateREC709() {
+  return CbColorSpace(kPrimaryIdBt709, kTransferIdBt709, kMatrixIdBt709,
                     kRangeIdLimited);
 }
 
-bool ColorSpace::operator==(const ColorSpace& other) const {
+bool CbColorSpace::operator==(const CbColorSpace& other) const {
   if (primaries_ != other.primaries_ || transfer_ != other.transfer_ ||
       matrix_ != other.matrix_ || range_ != other.range_)
     return false;
@@ -116,11 +116,11 @@ bool ColorSpace::operator==(const ColorSpace& other) const {
   return true;
 }
 
-bool ColorSpace::operator!=(const ColorSpace& other) const {
+bool CbColorSpace::operator!=(const CbColorSpace& other) const {
   return !(*this == other);
 }
 
-bool ColorSpace::operator<(const ColorSpace& other) const {
+bool CbColorSpace::operator<(const CbColorSpace& other) const {
   if (primaries_ < other.primaries_) return true;
   if (primaries_ > other.primaries_) return false;
   if (transfer_ < other.transfer_) return true;

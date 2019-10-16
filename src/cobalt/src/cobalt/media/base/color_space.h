@@ -1,4 +1,4 @@
-// Copyright 2017 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2017 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 
 #include "base/logging.h"
 
-// This is a modified version of gfx::ColorSpace with Skia dependency removed.
+// This is a modified version of gfx::CbColorSpace with Skia dependency removed.
 // It is tentatively put inside media to avoid introducing new code into
 // ui/gfx.  It will be further simplified and merged into media in follow up
 // refactors.
@@ -26,7 +26,7 @@ namespace gfx {
 // Used to represet a color space for the purpose of color conversion.
 // This is designed to be safe and compact enough to send over IPC
 // between any processes.
-class ColorSpace {
+class CbColorSpace {
  public:
   typedef float CustomPrimaryMatrix[12];
 
@@ -138,27 +138,27 @@ class ColorSpace {
     kRangeIdLast = kRangeIdDerived
   };
 
-  ColorSpace();
-  ColorSpace(PrimaryID primaries, TransferID transfer, MatrixID matrix,
+  CbColorSpace();
+  CbColorSpace(PrimaryID primaries, TransferID transfer, MatrixID matrix,
              RangeID full_range);
-  ColorSpace(const ColorSpace& other);
-  ColorSpace(int primaries, int transfer, int matrix, RangeID full_range);
-  ~ColorSpace();
+  CbColorSpace(const CbColorSpace& other);
+  CbColorSpace(int primaries, int transfer, int matrix, RangeID full_range);
+  ~CbColorSpace();
 
   static PrimaryID PrimaryIDFromInt(int primary_id);
   static TransferID TransferIDFromInt(int transfer_id);
   static MatrixID MatrixIDFromInt(int matrix_id);
 
-  static ColorSpace CreateXYZD50();
+  static CbColorSpace CreateXYZD50();
 
   // TODO: Remove these, and replace with more generic constructors.
-  static ColorSpace CreateJpeg();
-  static ColorSpace CreateREC601();
-  static ColorSpace CreateREC709();
+  static CbColorSpace CreateJpeg();
+  static CbColorSpace CreateREC601();
+  static CbColorSpace CreateREC709();
 
-  bool operator==(const ColorSpace& other) const;
-  bool operator!=(const ColorSpace& other) const;
-  bool operator<(const ColorSpace& other) const;
+  bool operator==(const CbColorSpace& other) const;
+  bool operator!=(const CbColorSpace& other) const;
+  bool operator<(const CbColorSpace& other) const;
 
   PrimaryID primaries() const { return primaries_; }
   TransferID transfer() const { return transfer_; }
