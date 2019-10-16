@@ -22,7 +22,24 @@
 #ifndef STARBOARD_LINUX_X64X11_CONFIGURATION_PUBLIC_H_
 #define STARBOARD_LINUX_X64X11_CONFIGURATION_PUBLIC_H_
 
+/// \note custom
 #define HAS_PORT_CONF 1
+
+// Whether the current platform is expected to have many cores (> 6), or a
+// wildly varying number of cores.
+#define SB_HAS_MANY_CORES 1
+
+// Whether the current platform is expected to have exactly 1 core.
+#define SB_HAS_1_CORE 0
+
+// Whether the current platform is expected to have exactly 2 cores.
+#define SB_HAS_2_CORES 0
+
+// Whether the current platform is expected to have exactly 4 cores.
+#define SB_HAS_4_CORES 0
+
+// Whether the current platform is expected to have exactly 6 cores.
+#define SB_HAS_6_CORES 0
 
 // --- Architecture Configuration --------------------------------------------
 
@@ -81,22 +98,6 @@
 // available on this platform. For a definitive measure, the application should
 // still call SbSystemGetNumberOfProcessors at runtime.
 
-// Whether the current platform is expected to have many cores (> 6), or a
-// wildly varying number of cores.
-#define SB_HAS_MANY_CORES 1
-
-// Whether the current platform is expected to have exactly 1 core.
-#define SB_HAS_1_CORE 0
-
-// Whether the current platform is expected to have exactly 2 cores.
-#define SB_HAS_2_CORES 0
-
-// Whether the current platform is expected to have exactly 4 cores.
-#define SB_HAS_4_CORES 0
-
-// Whether the current platform is expected to have exactly 6 cores.
-#define SB_HAS_6_CORES 0
-
 // Whether the current platform's thread scheduler will automatically balance
 // threads between cores, as opposed to systems where threads will only ever run
 // on the specifically pinned core.
@@ -113,9 +114,14 @@
 // Include the Linux configuration that's common between all Desktop Linuxes.
 #include "starboard/linux/shared/configuration_public.h"
 
-// The current platform has microphone supported.
-#undef SB_HAS_MICROPHONE
+// Starboard API versions 11 and earlier must define this variable, and have
+// microphone supported.
+#if defined(__EMSCRIPTEN__)
+#define SB_HAS_MICROPHONE 0
+#if SB_API_VERSION < 12
 #define SB_HAS_MICROPHONE 1
+#endif  // SB_API_VERSION < 12
+#endif  // EMSCRIPTEN
 
 // Whether the current platform has speech synthesis.
 #undef SB_HAS_SPEECH_SYNTHESIS

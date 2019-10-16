@@ -14,9 +14,7 @@
 
 #include "starboard/client_porting/eztime/eztime.h"
 
-//#if defined(USE_CUSTOM_ICU)
 #include <unicode/ucal.h>
-//#endif
 #include <unicode/udata.h>
 #include <unicode/uloc.h>
 #include <unicode/ustring.h>
@@ -24,7 +22,7 @@
 #include <string>
 
 #include "starboard/client_porting/icu_init/icu_init.h"
-#include "starboard/log.h"
+#include "starboard/common/log.h"
 #include "starboard/once.h"
 #include "starboard/system.h"
 #include "starboard/time.h"
@@ -117,7 +115,7 @@ bool EzTimeValueExplode(const EzTimeValue* SB_RESTRICT value,
   SB_DCHECK(value);
   SB_DCHECK(out_exploded);
   UErrorCode status = U_ZERO_ERROR;
-#if !UCONFIG_NO_FORMATTING /*!defined(__EMSCRIPTEN__) && !defined(USE_CUSTOM_ICU)*/
+
   // Always query the time using a gregorian calendar.  This is
   // implied in opengroup documentation for tm struct, even though it is not
   // specified.  E.g. in gmtime's documentation, it states that UTC time is
@@ -154,7 +152,6 @@ bool EzTimeValueExplode(const EzTimeValue* SB_RESTRICT value,
   }
 
   ucal_close(calendar);
-#endif
   return U_SUCCESS(status);
 }
 
@@ -170,7 +167,6 @@ EzTimeValue EzTimeValueImplode(EzTimeExploded* SB_RESTRICT exploded,
   SB_DCHECK(exploded);
   UErrorCode status = U_ZERO_ERROR;
 
-#if !UCONFIG_NO_FORMATTING /*!defined(__EMSCRIPTEN__) && !defined(USE_CUSTOM_ICU)*/
   // Always query the time using a gregorian calendar.  This is
   // implied in opengroup documentation for tm struct, even though it is not
   // specified.  E.g. in gmtime's documentation, it states that UTC time is
@@ -201,7 +197,6 @@ EzTimeValue EzTimeValueImplode(EzTimeExploded* SB_RESTRICT exploded,
   if (status <= U_ZERO_ERROR) {
     return EzTimeValueFromSbTime(UDateToSbTime(udate));
   }
-#endif
 
   EzTimeValue zero_time = {};
   return zero_time;

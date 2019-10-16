@@ -18,8 +18,8 @@
 
 #include "starboard/android/shared/jni_env_ext.h"
 #include "starboard/android/shared/jni_utils.h"
-#include "starboard/log.h"
-#include "starboard/string.h"
+#include "starboard/common/log.h"
+#include "starboard/common/string.h"
 
 // We can't #include "base/stringize_macros.h" in Starboard
 #define STRINGIZE_NO_EXPANSION(x) #x
@@ -93,7 +93,7 @@ bool SbSystemGetProperty(SbSystemPropertyId property_id,
 
   switch (property_id) {
     case kSbSystemPropertyBrandName:
-      return GetAndroidSystemProperty("ro.product.manufacturer", out_value,
+      return GetAndroidSystemProperty("ro.product.brand", out_value,
                                       value_length, kUnknownValue);
     case kSbSystemPropertyModelName:
       return GetAndroidSystemProperty("ro.product.model", out_value,
@@ -105,8 +105,11 @@ bool SbSystemGetProperty(SbSystemPropertyId property_id,
       return GetAndroidSystemProperty("ro.board.platform", out_value,
                                       value_length, kUnknownValue);
     case kSbSystemPropertyModelYear:
+       return false;
     case kSbSystemPropertyOriginalDesignManufacturerName:
-      return false;
+      return GetAndroidSystemProperty("ro.product.manufacturer", out_value,
+                                      value_length, kUnknownValue);
+
 
     case kSbSystemPropertyFriendlyName:
       return CopyStringAndTestIfSuccess(out_value, value_length, kFriendlyName);

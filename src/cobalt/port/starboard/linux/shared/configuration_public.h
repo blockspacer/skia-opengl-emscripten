@@ -50,9 +50,6 @@
 // Whether the current platform provides the standard header sys/types.h.
 #define SB_HAS_SYS_TYPES_H 1
 
-// Whether the current platform provides the standard header wchar.h.
-#define SB_HAS_WCHAR_H 1
-
 // Whether the current platform provides the standard header limits.h.
 #define SB_HAS_LIMITS_H 1
 
@@ -201,9 +198,6 @@
 #define SB_MUST_FREQUENTLY_FLIP_DISPLAY_BUFFER 0
 
 // --- I/O Configuration -----------------------------------------------------
-
-// Whether the current platform has microphone supported.
-#define SB_HAS_MICROPHONE 0
 
 // Whether the current platform has speech recognizer.
 #define SB_HAS_SPEECH_RECOGNIZER 0

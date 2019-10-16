@@ -20,17 +20,16 @@
 #ifndef STARBOARD_COMMON_LOG_H_
 #define STARBOARD_COMMON_LOG_H_
 
-#ifdef __cplusplus
-extern "C++" {
-#include <sstream>
-#include <string>
-}  // extern "C++"
-#endif
-
 #include "starboard/configuration.h"
-#include "starboard/export.h"
 #include "starboard/log.h"
 #include "starboard/system.h"
+
+#ifdef __cplusplus
+
+extern "C++" {
+
+#include <sstream>
+#include <string>
 
 #if defined(COBALT_BUILD_TYPE_GOLD)
 #define SB_LOGGING_IS_OFFICIAL_BUILD 1
@@ -38,22 +37,21 @@ extern "C++" {
 #define SB_LOGGING_IS_OFFICIAL_BUILD 0
 #endif
 
-#ifdef __cplusplus
-// If we are a C++ program, then we provide a selected subset of base/logging
-// macros and assertions. See that file for more comments.
+// This file provides a selected subset of the //base/logging/ macros and
+// assertions. See those files for more comments and details.
 
-extern "C++" {
 namespace starboard {
 namespace logging {
 
 void SetMinLogLevel(SbLogPriority level);
 SbLogPriority GetMinLogLevel();
+SbLogPriority StringToLogLevel(const std::string& log_level);
 void Break();
 
 // An object which will dumps the stack to the given ostream, without adding any
 // frames of its own. |skip_frames| is the number of frames to skip in the dump.
 struct Stack {
-  explicit Stack(int skip_frames) : skip_frames(skip_frames) {}
+  explicit Stack(int skip_frames);
   int skip_frames;
 };
 std::ostream& operator<<(std::ostream& out, const Stack& stack);
@@ -64,11 +62,10 @@ inline std::ostream& operator<<(std::ostream& out, const std::wstring& wstr) {
   return out << wstr.c_str();
 }
 #endif
+std::ostream& operator<<(std::ostream& out, const std::wstring& wstr);
 
 #if defined(__cplusplus_winrt)
-inline std::ostream& operator<<(std::ostream& out, ::Platform::String ^ str) {
-  return out << std::wstring(str->Begin(), str->End());
-}
+inline std::ostream& operator<<(std::ostream& out, ::Platform::String ^ str);
 #endif
 
 const SbLogPriority SB_LOG_INFO = kSbLogPriorityInfo;
@@ -85,7 +82,7 @@ class LogMessage {
   LogMessage(const char* file, int line, SbLogPriority priority);
   ~LogMessage();
 
-  std::ostream& stream() { return stream_; }
+  std::ostream& stream();
 
  private:
   void Init(const char* file, int line);
@@ -101,15 +98,14 @@ class LogMessage {
 
 class LogMessageVoidify {
  public:
-  LogMessageVoidify() {}
+  LogMessageVoidify();
   // This has to be an operator with a precedence lower than << but
   // higher than ?:
-  void operator&(std::ostream&) {}
+  void operator&(std::ostream&);
 };
 
 }  // namespace logging
 }  // namespace starboard
-}  // extern "C++"
 
 #define SB_LOG_MESSAGE_INFO                            \
   ::starboard::logging::LogMessage(__FILE__, __LINE__, \
@@ -132,9 +128,19 @@ class LogMessageVoidify {
 #define SB_LAZY_STREAM(stream, condition) \
   !(condition) ? (void)0 : ::starboard::logging::LogMessageVoidify() & (stream)
 
+#if SB_LOGGING_IS_OFFICIAL_BUILD
+#define SB_LOG_IS_ON(severity)                        \
+  (::starboard::logging::SB_LOG_##severity >=         \
+   ::starboard::logging::SB_LOG_FATAL)                \
+      ? ((::starboard::logging::SB_LOG_##severity) >= \
+         ::starboard::logging::GetMinLogLevel())      \
+      : false
+#else  // SB_LOGGING_IS_OFFICIAL_BUILD
 #define SB_LOG_IS_ON(severity)                  \
   ((::starboard::logging::SB_LOG_##severity) >= \
-    ::starboard::logging::GetMinLogLevel())
+   ::starboard::logging::GetMinLogLevel())
+#endif  // SB_LOGGING_IS_OFFICIAL_BUILD
+
 #define SB_LOG_IF(severity, condition) \
   SB_LAZY_STREAM(SB_LOG_STREAM(severity), SB_LOG_IS_ON(severity) && (condition))
 #define SB_LOG(severity) SB_LOG_IF(severity, true)
@@ -203,9 +209,11 @@ class LogMessageVoidify {
   SB_EAT_STREAM_PARAMETERS
 #endif
 
-#else  // __cplusplus
-// We also provide a very small subset for straight-C users.
+}  // extern "C++"
 
+#else   // !__cplusplus
+
+// Provide a very small subset for straight-C users.
 #define SB_NOTIMPLEMENTED_IN(X) "Not implemented reached in " #X
 #define SB_NOTIMPLEMENTED_MSG SB_NOTIMPLEMENTED_IN(SB_FUNCTION)
 
@@ -232,7 +240,6 @@ class LogMessageVoidify {
 #endif
 
 #define SB_NOTREACHED() SB_DCHECK(false)
-
 #endif  // __cplusplus
 
 #endif  // STARBOARD_COMMON_LOG_H_

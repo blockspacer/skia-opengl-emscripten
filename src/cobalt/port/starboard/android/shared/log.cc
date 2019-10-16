@@ -22,34 +22,17 @@
 #include "starboard/android/shared/jni_env_ext.h"
 #include "starboard/android/shared/jni_utils.h"
 #include "starboard/android/shared/log_internal.h"
-#include "starboard/log.h"
-#include "starboard/shared/starboard/command_line.h"
-#include "starboard/string.h"
+#include "starboard/common/log.h"
+#include "starboard/common/string.h"
+#include "starboard/configuration.h"
 #include "starboard/thread.h"
+
+#if SB_API_VERSION >= 11
+#include "starboard/shared/starboard/log_mutex.h"
+#endif  // SB_API_VERSION >= 11
 
 using starboard::android::shared::JniEnvExt;
 using starboard::android::shared::ScopedLocalJavaRef;
-
-namespace {
-  const char kLogSleepTimeSwitch[] = "android_log_sleep_time";
-  SbTime g_log_sleep_time = 0;
-}
-
-namespace starboard {
-namespace android {
-namespace shared {
-
-void LogInit(const starboard::shared::starboard::CommandLine& command_line) {
-  if (command_line.HasSwitch(kLogSleepTimeSwitch)) {
-    g_log_sleep_time =
-        SbStringAToL(command_line.GetSwitchValue(kLogSleepTimeSwitch).c_str());
-    SB_LOG(INFO) << "Android log sleep time: " << g_log_sleep_time;
-  }
-}
-
-}  // namespace shared
-}  // namespace android
-}  // namespace starboard
 
 void SbLog(SbLogPriority priority, const char* message) {
   int android_priority;
@@ -73,31 +56,16 @@ void SbLog(SbLogPriority priority, const char* message) {
       android_priority = ANDROID_LOG_INFO;
       break;
   }
+
+#if SB_API_VERSION < 11
   __android_log_write(android_priority, "starboard", message);
+#else   // SB_API_VERSION >= 11
+  starboard::shared::starboard::GetLoggingMutex()->Acquire();
+  __android_log_write(android_priority, "starboard", message);
+  starboard::shared::starboard::GetLoggingMutex()->Release();
+#endif  // SB_API_VERSION < 11
 
   // In unit tests the logging is too fast for the android log to be read out
   // and we end up losing crucial logs. The test runner specifies a sleep time.
-  SbThreadSleep(g_log_sleep_time);
-}
-
-// Helper to write messages to logcat even when Android non-warning/non-error
-// logging is stripped from the app with Proguard.
-extern "C" SB_EXPORT_PLATFORM jint
-Java_dev_cobalt_util_Log_nativeWrite(JniEnvExt* env,
-                                     jobject unused_clazz,
-                                     jchar priority,
-                                     jstring tag,
-                                     jstring msg,
-                                     jobject throwable) {
-  char log_method_name[2] = {static_cast<char>(priority), '\0'};
-  if (throwable == nullptr) {
-    return env->CallStaticIntMethodOrAbort(
-        "android.util.Log", log_method_name,
-        "(Ljava/lang/String;Ljava/lang/String;)I", tag, msg);
-  } else {
-    return env->CallStaticIntMethodOrAbort(
-        "android.util.Log", log_method_name,
-        "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)I",
-        tag, msg, throwable);
-  }
+  SbThreadSleep(::starboard::android::shared::GetLogSleepTime());
 }

@@ -1,4 +1,4 @@
-﻿// Copyright 2016 The Cobalt Authors. All Rights Reserved.
+// Copyright 2016 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,9 +16,9 @@
 // Windows. I think Starboard can do this through GYP when the time comes.
 
 #include <new>
+
 #include "starboard/memory.h"
 
-#if defined(__EMSCRIPTEN__) // TODO: tcmalloc on unix
 void* operator new(size_t size) {
   return SbMemoryAllocate(size);
 }
@@ -27,11 +27,11 @@ void operator delete(void* pointer) noexcept {
   SbMemoryDeallocate(pointer);
 }
 
-void* operator new (size_t size, const std::nothrow_t& nothrow_tag) {
+void* operator new(size_t size, const std::nothrow_t& nothrow_tag) {
   return SbMemoryAllocate(size);
 }
 
-void operator delete (void* pointer, const std::nothrow_t& nothrow_tag) {
+void operator delete(void* pointer, const std::nothrow_t& nothrow_tag) {
   SbMemoryDeallocate(pointer);
 }
 
@@ -42,4 +42,3 @@ void* operator new[](size_t size) {
 void operator delete[](void* pointer) noexcept {
   SbMemoryDeallocate(pointer);
 }
-#endif

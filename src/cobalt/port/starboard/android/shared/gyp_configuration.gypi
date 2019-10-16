@@ -20,9 +20,18 @@
     'target_os': 'android',
     'final_executable_type': 'shared_library',
     'gtest_target_type': 'shared_library',
+    'sb_widevine_platform' : 'android',
 
     'gl_type': 'system_gles2',
     'enable_remote_debugging': 0,
+
+    'linker_flags': [
+      # The NDK default "ld" is actually the gold linker for all architectures
+      # except arm64 (aarch64) where it's the bfd linker. Don't use either of
+      # those, rather use lld everywhere. See release notes for NDK 19:
+      # https://developer.android.com/ndk/downloads/revision_history
+      '-fuse-ld=lld',
+    ],
 
     # Define platform specific compiler and linker flags.
     # Refer to base.gypi for a list of all available variables.
@@ -39,13 +48,23 @@
     ],
     'compiler_flags_qa': [
       '-fno-rtti',
-      '-O2',
       '-gline-tables-only',
+    ],
+    'compiler_flags_qa_size': [
+      '-Os',
+    ],
+    'compiler_flags_qa_speed': [
+      '-O2',
     ],
     'compiler_flags_gold': [
       '-fno-rtti',
-      '-O2',
       '-gline-tables-only',
+    ],
+    'compiler_flags_gold_size': [
+      '-Os',
+    ],
+    'compiler_flags_gold_speed': [
+      '-O2',
     ],
     'platform_libraries': [
       '-lEGL',

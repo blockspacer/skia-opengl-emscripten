@@ -14,8 +14,8 @@
 
 #include "starboard/system.h"
 
-#include "starboard/log.h"
-#include "starboard/string.h"
+#include "starboard/common/log.h"
+#include "starboard/common/string.h"
 
 namespace {
 
@@ -60,7 +60,7 @@ bool SbSystemGetProperty(SbSystemPropertyId property_id,
       return CopyStringAndTestIfSuccess(out_value, value_length, kModelName);
     case kSbSystemPropertyModelYear:
       return CopyStringAndTestIfSuccess(out_value, value_length, kModelYear);
-#if SB_API_VERSION >= SB_ODM_VERSION
+#if SB_API_VERSION >= 11
     case kSbSystemPropertyOriginalDesignManufacturerName:
 #else
     case kSbSystemPropertyNetworkOperatorName:
@@ -72,10 +72,6 @@ bool SbSystemGetProperty(SbSystemPropertyId property_id,
 
     case kSbSystemPropertyPlatformName:
       return CopyStringAndTestIfSuccess(out_value, value_length, kPlatformName);
-
-    case kSbSystemPropertyPlatformUuid:
-      SB_NOTIMPLEMENTED();
-      return CopyStringAndTestIfSuccess(out_value, value_length, "N/A");
 
     default:
       SB_DLOG(WARNING) << __FUNCTION__

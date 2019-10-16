@@ -25,14 +25,13 @@
 #include "starboard/android/shared/jni_env_ext.h"
 #include "starboard/android/shared/jni_utils.h"
 #include "starboard/android/shared/media_common.h"
-#include "starboard/android/shared/video_window.h"
 #include "starboard/android/shared/window_internal.h"
+#include "starboard/common/string.h"
 #include "starboard/configuration.h"
 #include "starboard/decode_target.h"
 #include "starboard/drm.h"
 #include "starboard/memory.h"
 #include "starboard/shared/starboard/player/filter/video_frame_internal.h"
-#include "starboard/string.h"
 #include "starboard/thread.h"
 
 namespace starboard {
@@ -62,9 +61,6 @@ class VideoFrameImpl : public VideoFrame {
     if (!released_) {
       media_codec_bridge_->ReleaseOutputBuffer(dequeue_output_result_.index,
                                                false);
-      if (is_end_of_stream()) {
-        media_codec_bridge_->Flush();
-      }
     }
   }
 
@@ -167,10 +163,8 @@ VideoDecoder::VideoDecoder(SbMediaVideoCodec video_codec,
       output_mode_(output_mode),
       decode_target_graphics_context_provider_(
           decode_target_graphics_context_provider),
-      decode_target_(kSbDecodeTargetInvalid),
-      frame_width_(0),
-      frame_height_(0),
-      first_buffer_received_(false) {
+      has_new_texture_available_(false),
+      surface_condition_variable_(surface_destroy_mutex_) {
   if (!InitializeCodec()) {
     SB_LOG(ERROR) << "Failed to initialize video decoder.";
     TeardownCodec();
@@ -221,6 +215,7 @@ SbTime VideoDecoder::GetPrerollTimeout() const {
 void VideoDecoder::WriteInputBuffer(
     const scoped_refptr<InputBuffer>& input_buffer) {
   SB_DCHECK(input_buffer);
+  SB_DCHECK(input_buffer->sample_type() == kSbMediaTypeVideo);
   SB_DCHECK(decoder_status_cb_);
 
   if (!first_buffer_received_) {
@@ -229,12 +224,12 @@ void VideoDecoder::WriteInputBuffer(
 
     // If color metadata is present and is not an identity mapping, then
     // teardown the codec so it can be reinitalized with the new metadata.
-    auto* color_metadata = input_buffer->video_sample_info()->color_metadata;
-    if (color_metadata && !IsIdentity(*color_metadata)) {
+    auto& color_metadata = input_buffer->video_sample_info().color_metadata;
+    if (!IsIdentity(color_metadata)) {
       SB_DCHECK(!color_metadata_) << "Unexpected residual color metadata.";
       SB_LOG(INFO) << "Reinitializing codec with HDR color metadata.";
       TeardownCodec();
-      color_metadata_ = *color_metadata;
+      color_metadata_ = color_metadata;
     }
 
     // Re-initialize the codec now if it was torn down either in |Reset| or
@@ -244,11 +239,17 @@ void VideoDecoder::WriteInputBuffer(
         SB_LOG(ERROR) << "Failed to reinitialize codec.";
         TeardownCodec();
         error_cb_(kSbPlayerErrorDecode, "Cannot initialize codec.");
+        return;
       }
     }
   }
-
+  // There's a race condition when suspending the app. If surface view is
+  // destroyed before video decoder stopped, |media_decoder_| could be null
+  // here. And error_cb_() could be handled asynchronously. It's possible
+  // that WriteInputBuffer() is called again when the first WriteInputBuffer()
+  // fails, in such case is_valid() will also return false.
   if (!is_valid()) {
+    SB_LOG(INFO) << "Trying to write input buffer when codec is not available.";
     return;
   }
   media_decoder_->WriteInputBuffer(input_buffer);
@@ -261,11 +262,22 @@ void VideoDecoder::WriteEndOfStream() {
   SB_DCHECK(decoder_status_cb_);
 
   if (!first_buffer_received_) {
+    // In this case, |media_decoder_|'s decoder thread is not initialized.
+    // Return EOS frame directly.
     first_buffer_received_ = true;
     first_buffer_timestamp_ = 0;
+    decoder_status_cb_(kBufferFull, VideoFrame::CreateEOSFrame());
+    return;
   }
 
+  // There's a race condition when suspending the app. If surface view is
+  // destroyed before video decoder stopped, |media_decoder_| could be null
+  // here. And error_cb_() could be handled asynchronously. It's possible
+  // that WriteEndOfStream() is called immediately after the first
+  // WriteInputBuffer() fails, in such case is_valid() will also return false.
   if (!is_valid()) {
+    SB_LOG(INFO)
+        << "Trying to write end of stream when codec is not available.";
     return;
   }
   media_decoder_->WriteEndOfStream();
@@ -278,6 +290,7 @@ void VideoDecoder::Reset() {
 }
 
 bool VideoDecoder::InitializeCodec() {
+  SB_DCHECK(BelongsToCurrentThread());
   // Setup the output surface object.  If we are in punch-out mode, target
   // the passed in Android video surface.  If we are in decode-to-texture
   // mode, create a surface from a new texture target and use that as the
@@ -285,7 +298,10 @@ bool VideoDecoder::InitializeCodec() {
   jobject j_output_surface = NULL;
   switch (output_mode_) {
     case kSbPlayerOutputModePunchOut: {
-      j_output_surface = GetVideoSurface();
+      j_output_surface = AcquireVideoSurface();
+      if (j_output_surface) {
+        owns_video_surface_ = true;
+      }
     } break;
     case kSbPlayerOutputModeDecodeToTexture: {
       // A width and height of (0, 0) is provided here because Android doesn't
@@ -301,6 +317,10 @@ bool VideoDecoder::InitializeCodec() {
       }
       j_output_surface = decode_target->data->surface;
 
+      JniEnvExt* env = JniEnvExt::Get();
+      env->CallVoidMethodOrAbort(decode_target->data->surface_texture,
+                                 "setOnFrameAvailableListener", "(J)V", this);
+
       starboard::ScopedLock lock(decode_target_mutex_);
       decode_target_ = decode_target;
     } break;
@@ -313,14 +333,12 @@ bool VideoDecoder::InitializeCodec() {
     return false;
   }
 
-  ANativeWindow* video_window = GetVideoWindow();
-  if (!video_window) {
+  int width, height;
+  if (!GetVideoWindowSize(&width, &height)) {
     SB_LOG(ERROR)
         << "Can't initialize the codec since we don't have a video window.";
     return false;
   }
-  int width = ANativeWindow_getWidth(video_window);
-  int height = ANativeWindow_getHeight(video_window);
 
   jobject j_media_crypto = drm_system_ ? drm_system_->GetMediaCrypto() : NULL;
   SB_DCHECK(!drm_system_ || j_media_crypto);
@@ -338,14 +356,42 @@ bool VideoDecoder::InitializeCodec() {
 }
 
 void VideoDecoder::TeardownCodec() {
+  SB_DCHECK(BelongsToCurrentThread());
+  if (owns_video_surface_) {
+    ReleaseVideoSurface();
+    owns_video_surface_ = false;
+  }
   media_decoder_.reset();
   color_metadata_ = starboard::nullopt;
 
-  starboard::ScopedLock lock(decode_target_mutex_);
-  if (SbDecodeTargetIsValid(decode_target_)) {
+  SbDecodeTarget decode_target_to_release = kSbDecodeTargetInvalid;
+  {
+    starboard::ScopedLock lock(decode_target_mutex_);
+    if (SbDecodeTargetIsValid(decode_target_)) {
+      // Remove OnFrameAvailableListener to make sure the callback
+      // would not be called.
+      JniEnvExt* env = JniEnvExt::Get();
+      env->CallVoidMethodOrAbort(decode_target_->data->surface_texture,
+                                 "removeOnFrameAvailableListener", "()V");
+
+      decode_target_to_release = decode_target_;
+      decode_target_ = kSbDecodeTargetInvalid;
+      first_texture_received_ = false;
+      has_new_texture_available_.store(false);
+    } else {
+      // If |decode_target_| is not created, |first_texture_received_| and
+      // |has_new_texture_available_| should always be false.
+      SB_DCHECK(!first_texture_received_);
+      SB_DCHECK(!has_new_texture_available_.load());
+    }
+  }
+  // Release SbDecodeTarget on renderer thread. As |decode_target_mutex_| may
+  // be required in renderer thread, SbDecodeTargetReleaseInGlesContext() must
+  // be called when |decode_target_mutex_| is not locked, or we may get
+  // deadlock.
+  if (SbDecodeTargetIsValid(decode_target_to_release)) {
     SbDecodeTargetReleaseInGlesContext(decode_target_graphics_context_provider_,
-                                       decode_target_);
-    decode_target_ = kSbDecodeTargetInvalid;
+                                       decode_target_to_release);
   }
 }
 
@@ -473,34 +519,73 @@ SbDecodeTarget VideoDecoder::GetCurrentDecodeTarget() {
   // We must take a lock here since this function can be called from a separate
   // thread.
   starboard::ScopedLock lock(decode_target_mutex_);
-
   if (SbDecodeTargetIsValid(decode_target_)) {
-    updateTexImage(decode_target_->data->surface_texture);
+    bool has_new_texture = has_new_texture_available_.exchange(false);
+    if (has_new_texture) {
+      updateTexImage(decode_target_->data->surface_texture);
 
-    float matrix4x4[16];
-    getTransformMatrix(decode_target_->data->surface_texture, matrix4x4);
-    SetDecodeTargetContentRegionFromMatrix(
-        &decode_target_->data->info.planes[0].content_region, 1, 1, matrix4x4);
+      float matrix4x4[16];
+      getTransformMatrix(decode_target_->data->surface_texture, matrix4x4);
+      SetDecodeTargetContentRegionFromMatrix(
+          &decode_target_->data->info.planes[0].content_region, 1, 1,
+          matrix4x4);
 
-    // Mark the decode target's width and height as 1, so that the
-    // |content_region|'s coordinates will be interpreted as normalized
-    // coordinates.  This is nice because on Android we're never explicitly
-    // told the texture width/height, and we are only provided the content
-    // region via normalized coordinates.
-    decode_target_->data->info.planes[0].width = 1;
-    decode_target_->data->info.planes[0].height = 1;
-    decode_target_->data->info.width = 1;
-    decode_target_->data->info.height = 1;
+      // Mark the decode target's width and height as 1, so that the
+      // |content_region|'s coordinates will be interpreted as normalized
+      // coordinates.  This is nice because on Android we're never explicitly
+      // told the texture width/height, and we are only provided the content
+      // region via normalized coordinates.
+      decode_target_->data->info.planes[0].width = 1;
+      decode_target_->data->info.planes[0].height = 1;
+      decode_target_->data->info.width = 1;
+      decode_target_->data->info.height = 1;
 
-    SbDecodeTarget out_decode_target = new SbDecodeTargetPrivate;
-    out_decode_target->data = decode_target_->data;
+      if (!first_texture_received_) {
+        first_texture_received_ = true;
+      }
+    }
 
-    return out_decode_target;
-  } else {
-    return kSbDecodeTargetInvalid;
+    if (first_texture_received_) {
+      SbDecodeTarget out_decode_target = new SbDecodeTargetPrivate;
+      out_decode_target->data = decode_target_->data;
+      return out_decode_target;
+    }
   }
+  return kSbDecodeTargetInvalid;
+}
+
+void VideoDecoder::OnNewTextureAvailable() {
+  has_new_texture_available_.store(true);
+}
+
+void VideoDecoder::OnSurfaceDestroyed() {
+  if (!BelongsToCurrentThread()) {
+    // Wait until codec is stoped.
+    ScopedLock lock(surface_destroy_mutex_);
+    Schedule(std::bind(&VideoDecoder::OnSurfaceDestroyed, this));
+    surface_condition_variable_.WaitTimed(kSbTimeSecond);
+    return;
+  }
+  // When this function is called, the decoder no longer owns the surface.
+  owns_video_surface_ = false;
+  TeardownCodec();
+  ScopedLock lock(surface_destroy_mutex_);
+  surface_condition_variable_.Signal();
 }
 
 }  // namespace shared
 }  // namespace android
 }  // namespace starboard
+
+extern "C" SB_EXPORT_PLATFORM void
+Java_dev_cobalt_media_VideoSurfaceTexture_nativeOnFrameAvailable(
+    JNIEnv* env,
+    jobject unused_this,
+    jlong native_video_decoder) {
+  using starboard::android::shared::VideoDecoder;
+
+  VideoDecoder* video_decoder =
+      reinterpret_cast<VideoDecoder*>(native_video_decoder);
+  SB_DCHECK(video_decoder);
+  video_decoder->OnNewTextureAvailable();
+}

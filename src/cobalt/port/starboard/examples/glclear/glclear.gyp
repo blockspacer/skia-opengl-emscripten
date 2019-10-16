@@ -17,12 +17,18 @@
     {
       'target_name': 'starboard_glclear_example',
       'type': '<(final_executable_type)',
+      'conditions': [
+        ['sb_evergreen != 1', {
+          'dependencies': [
+            '<(DEPTH)/starboard/egl_and_gles/egl_and_gles.gyp:egl_and_gles',
+          ],
+        }],
+      ],
       'sources': [
         'main.cc',
       ],
       'dependencies': [
         '<(DEPTH)/starboard/starboard.gyp:starboard',
-        '<(DEPTH)/starboard/egl_and_gles/egl_and_gles.gyp:egl_and_gles',
       ],
     },
     {

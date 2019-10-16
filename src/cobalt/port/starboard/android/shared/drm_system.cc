@@ -36,7 +36,37 @@ const jint MEDIA_DRM_KEY_STATUS_OUTPUT_NOT_ALLOWED = 2;
 const jint MEDIA_DRM_KEY_STATUS_PENDING = 3;
 const jint MEDIA_DRM_KEY_STATUS_USABLE = 0;
 
+// They must have the same values as defined in MediaDrm.KeyRequest.
+const jint REQUEST_TYPE_INITIAL = 0;
+const jint REQUEST_TYPE_RENEWAL = 1;
+const jint REQUEST_TYPE_RELEASE = 2;
+
+SbDrmSessionRequestType SbDrmSessionRequestTypeFromMediaDrmKeyRequestType(
+    jint request_type) {
+  if (request_type == REQUEST_TYPE_INITIAL) {
+    return kSbDrmSessionRequestTypeLicenseRequest;
+  }
+  if (request_type == REQUEST_TYPE_RENEWAL) {
+    return kSbDrmSessionRequestTypeLicenseRenewal;
+  }
+  if (request_type == REQUEST_TYPE_RELEASE) {
+    return kSbDrmSessionRequestTypeLicenseRelease;
+  }
+  SB_NOTREACHED();
+  return kSbDrmSessionRequestTypeLicenseRequest;
+}
+
 }  // namespace
+
+// This has to be defined outside the above anonymous namespace to be picked up
+// by the comparison of std::vector<SbDrmKeyId>.
+bool operator==(const SbDrmKeyId& left, const SbDrmKeyId& right) {
+  if (left.identifier_size != right.identifier_size) {
+    return false;
+  }
+  return SbMemoryCompare(left.identifier, right.identifier,
+                         left.identifier_size) == 0;
+}
 
 extern "C" SB_EXPORT_PLATFORM void
 Java_dev_cobalt_media_MediaDrmBridge_nativeOnSessionMessage(
@@ -58,9 +88,10 @@ Java_dev_cobalt_media_MediaDrmBridge_nativeOnSessionMessage(
 
   DrmSystem* drm_system = reinterpret_cast<DrmSystem*>(native_media_drm_bridge);
   SB_DCHECK(drm_system);
-  drm_system->CallUpdateRequestCallback(ticket, session_id_elements,
-                                        session_id_size, message_elements,
-                                        message_size, kNoUrl);
+  drm_system->CallUpdateRequestCallback(
+      ticket, SbDrmSessionRequestTypeFromMediaDrmKeyRequestType(request_type),
+      session_id_elements, session_id_size, message_elements, message_size,
+      kNoUrl);
   env->ReleaseByteArrayElements(j_session_id, session_id_elements, JNI_ABORT);
   env->ReleaseByteArrayElements(j_message, message_elements, JNI_ABORT);
 }
@@ -204,13 +235,22 @@ void DrmSystem::UpdateSession(int ticket,
       ByteArrayFromRaw(session_id, session_id_size));
   ScopedLocalJavaRef<jbyteArray> j_response(ByteArrayFromRaw(key, key_size));
 
-  jboolean status = JniEnvExt::Get()->CallBooleanMethodOrAbort(
-      j_media_drm_bridge_, "updateSession", "([B[B)Z", j_session_id.Get(),
-      j_response.Get());
-  session_updated_callback_(
-      this, context_, ticket,
-      status == JNI_TRUE ? kSbDrmStatusSuccess : kSbDrmStatusUnknownError, NULL,
-      session_id, session_id_size);
+  auto env = JniEnvExt::Get();
+  ScopedLocalJavaRef<jobject> update_result(env->CallObjectMethodOrAbort(
+      j_media_drm_bridge_, "updateSession",
+      "(I[B[B)Ldev/cobalt/media/MediaDrmBridge$UpdateSessionResult;",
+      static_cast<jint>(ticket), j_session_id.Get(), j_response.Get()));
+  jboolean update_success =
+      env->CallBooleanMethodOrAbort(update_result.Get(), "isSuccess", "()Z");
+  ScopedLocalJavaRef<jstring> error_msg_java(env->CallObjectMethodOrAbort(
+      update_result.Get(), "getErrorMessage", "()Ljava/lang/String;"));
+  std::string error_msg =
+      env->GetStringStandardUTFOrAbort(error_msg_java.Get());
+  session_updated_callback_(this, context_, ticket,
+                            update_success == JNI_TRUE
+                                ? kSbDrmStatusSuccess
+                                : kSbDrmStatusUnknownError,
+                            error_msg.c_str(), session_id, session_id_size);
 }
 
 void DrmSystem::CloseSession(const void* session_id, int session_id_size) {
@@ -245,15 +285,15 @@ DrmSystem::DecryptStatus DrmSystem::Decrypt(InputBuffer* buffer) {
 }
 
 void DrmSystem::CallUpdateRequestCallback(int ticket,
+                                          SbDrmSessionRequestType request_type,
                                           const void* session_id,
                                           int session_id_size,
                                           const void* content,
                                           int content_size,
                                           const char* url) {
   update_request_callback_(this, context_, ticket, kSbDrmStatusSuccess,
-                           kSbDrmSessionRequestTypeLicenseRequest, NULL,
-                           session_id, session_id_size, content, content_size,
-                           url);
+                           request_type, NULL, session_id, session_id_size,
+                           content, content_size, url);
 }
 
 void DrmSystem::CallDrmSessionKeyStatusesChangedCallback(
@@ -267,16 +307,15 @@ void DrmSystem::CallDrmSessionKeyStatusesChangedCallback(
       static_cast<const char*>(session_id),
       static_cast<const char*>(session_id) + session_id_size);
 
-  bool hdcp_lost = false;
   {
     ScopedLock scoped_lock(mutex_);
-    cached_drm_key_ids_[session_id_as_string] = drm_key_ids;
-    hdcp_lost = hdcp_lost_;
-  }
-
-  if (hdcp_lost) {
-    OnInsufficientOutputProtection();
-    return;
+    if (cached_drm_key_ids_[session_id_as_string] != drm_key_ids) {
+      cached_drm_key_ids_[session_id_as_string] = drm_key_ids;
+      if (hdcp_lost_) {
+        CallKeyStatusesChangedCallbackWithKeyStatusRestricted_Locked();
+        return;
+      }
+    }
   }
 
   key_statuses_changed_callback_(this, context_, session_id, session_id_size,
@@ -288,7 +327,16 @@ void DrmSystem::OnInsufficientOutputProtection() {
   // HDCP has lost, update the statuses of all keys in all known sessions to be
   // restricted.
   ScopedLock scoped_lock(mutex_);
+  if (hdcp_lost_) {
+    return;
+  }
   hdcp_lost_ = true;
+  CallKeyStatusesChangedCallbackWithKeyStatusRestricted_Locked();
+}
+
+void DrmSystem::CallKeyStatusesChangedCallbackWithKeyStatusRestricted_Locked() {
+  mutex_.DCheckAcquired();
+
   for (auto& iter : cached_drm_key_ids_) {
     const std::string& session_id = iter.first;
     const std::vector<SbDrmKeyId>& drm_key_ids = iter.second;

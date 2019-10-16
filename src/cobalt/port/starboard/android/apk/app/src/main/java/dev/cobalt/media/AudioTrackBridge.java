@@ -16,6 +16,7 @@ package dev.cobalt.media;
 
 import static dev.cobalt.media.Log.TAG;
 
+import android.annotation.TargetApi;
 import android.media.AudioAttributes;
 import android.media.AudioFormat;
 import android.media.AudioManager;
@@ -35,7 +36,8 @@ public class AudioTrackBridge {
   private AudioTimestamp audioTimestamp = new AudioTimestamp();
   private long maxFramePositionSoFar = 0;
 
-  public AudioTrackBridge(int sampleType, int sampleRate, int channelCount, int framesPerChannel) {
+  public AudioTrackBridge(
+      int sampleType, int sampleRate, int channelCount, int preferredBufferSizeInBytes) {
     int channelConfig;
     switch (channelCount) {
       case 1:
@@ -63,34 +65,16 @@ public class AudioTrackBridge {
             .setChannelMask(channelConfig)
             .build();
 
-    int minBufferSizeBytes = AudioTrack.getMinBufferSize(sampleRate, channelConfig, sampleType);
-    int audioTrackBufferSize = minBufferSizeBytes;
-    // Use framesPerChannel to determine the buffer size.  To use a large buffer on a small
-    // framesPerChannel may lead to audio playback not able to start.
-    while (audioTrackBufferSize < framesPerChannel) {
-      audioTrackBufferSize *= 2;
-    }
+    int audioTrackBufferSize = preferredBufferSizeInBytes;
     while (audioTrackBufferSize > 0) {
       try {
-        if (Build.VERSION.SDK_INT >= 26) {
-          audioTrack =
-              new AudioTrack.Builder()
-                  .setAudioAttributes(attributes)
-                  .setAudioFormat(format)
-                  .setBufferSizeInBytes(audioTrackBufferSize)
-                  .setTransferMode(AudioTrack.MODE_STREAM)
-                  .setSessionId(AudioManager.AUDIO_SESSION_ID_GENERATE)
-                  .setPerformanceMode(AudioTrack.PERFORMANCE_MODE_LOW_LATENCY)
-                  .build();
-        } else {
-          audioTrack =
-              new AudioTrack(
-                  attributes,
-                  format,
-                  audioTrackBufferSize,
-                  AudioTrack.MODE_STREAM,
-                  AudioManager.AUDIO_SESSION_ID_GENERATE);
-        }
+        audioTrack =
+            new AudioTrack(
+                attributes,
+                format,
+                audioTrackBufferSize,
+                AudioTrack.MODE_STREAM,
+                AudioManager.AUDIO_SESSION_ID_GENERATE);
       } catch (Exception e) {
         audioTrack = null;
       }
@@ -104,8 +88,11 @@ public class AudioTrackBridge {
     Log.i(
         TAG,
         String.format(
-            "AudioTrack created with buffer size %d.  The minimum buffer size is %d.",
-            audioTrackBufferSize, minBufferSizeBytes));
+            "AudioTrack created with buffer size %d (prefered: %d).  The minimum buffer size is"
+                + " %d.",
+            audioTrackBufferSize,
+            preferredBufferSizeInBytes,
+            AudioTrack.getMinBufferSize(sampleRate, channelConfig, sampleType)));
   }
 
   public Boolean isAudioTrackValid() {
@@ -197,7 +184,7 @@ public class AudioTrackBridge {
       // This conversion is safe, as only the lower bits will be set, since we
       // called |getTimestamp| without a timebase.
       // https://developer.android.com/reference/android/media/AudioTimestamp.html#framePosition
-      audioTimestamp.framePosition = (int) audioTimestamp.framePosition;
+      audioTimestamp.framePosition &= 0x7FFFFFFF;
     } else {
       // Time stamps haven't been updated yet, assume playback hasn't started.
       audioTimestamp.framePosition = 0;
@@ -214,5 +201,24 @@ public class AudioTrackBridge {
     maxFramePositionSoFar = audioTimestamp.framePosition;
 
     return audioTimestamp;
+  }
+
+  @SuppressWarnings("unused")
+  @UsedByNative
+  private int getUnderrunCount() {
+    if (Build.VERSION.SDK_INT >= 24) {
+      return getUnderrunCountV24();
+    }
+    // The funtion getUnderrunCount() is added in API level 24.
+    return 0;
+  }
+
+  @TargetApi(24)
+  private int getUnderrunCountV24() {
+    if (audioTrack == null) {
+      Log.e(TAG, "Unable to call getUnderrunCount() with NULL audio track.");
+      return 0;
+    }
+    return audioTrack.getUnderrunCount();
   }
 }

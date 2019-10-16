@@ -66,22 +66,6 @@
 // available on this platform. For a definitive measure, the application should
 // still call SbSystemGetNumberOfProcessors at runtime.
 
-// Whether the current platform is expected to have many cores (> 6), or a
-// wildly varying number of cores.
-#define SB_HAS_MANY_CORES 0
-
-// Whether the current platform is expected to have exactly 1 core.
-#define SB_HAS_1_CORE 0
-
-// Whether the current platform is expected to have exactly 2 cores.
-#define SB_HAS_2_CORES 1
-
-// Whether the current platform is expected to have exactly 4 cores.
-#define SB_HAS_4_CORES 0
-
-// Whether the current platform is expected to have exactly 6 cores.
-#define SB_HAS_6_CORES 0
-
 // Whether the current platform's thread scheduler will automatically balance
 // threads between cores, as opposed to systems where threads will only ever run
 // on the specifically pinned core.
@@ -109,9 +93,6 @@
 
 // Whether the current platform provides the standard header inttypes.h.
 #define SB_HAS_INTTYPES_H 1
-
-// Whether the current platform provides the standard header wchar.h.
-#define SB_HAS_WCHAR_H 1
 
 // Whether the current platform provides the standard header limits.h.
 #define SB_HAS_LIMITS_H 1
@@ -270,9 +251,6 @@
 
 // --- I/O Configuration -----------------------------------------------------
 
-// Whether the current platform has microphone supported.
-#define SB_HAS_MICROPHONE 0
-
 // Whether the current platform has speech recognizer.
 #define SB_HAS_SPEECH_RECOGNIZER 0
 
@@ -294,27 +272,6 @@
 // synchronized audio/video. If a player is defined, it must choose one of the
 // supported composition methods below.
 #define SB_HAS_PLAYER 1
-
-#if SB_API_VERSION < 4
-// Specifies whether this platform's player will produce an OpenGL texture that
-// the client must draw every frame with its graphics rendering. It may be that
-// we get a texture handle, but cannot perform operations like GlReadPixels on
-// it if it is DRM-protected.
-#define SB_IS_PLAYER_PRODUCING_TEXTURE 0
-
-// Specifies whether this platform's player is composited with a formal
-// compositor, where the client must specify how video is to be composited into
-// the graphicals scene.
-#define SB_IS_PLAYER_COMPOSITED 0
-
-// Specifies whether this platform's player uses a "punch-out" model, where
-// video is rendered to the far background, and the graphics plane is
-// automatically composited on top of the video by the platform. The client must
-// punch an alpha hole out of the graphics plane for video to show through.  In
-// this case, changing the video bounds must be tightly synchronized between the
-// player and the graphics plane.
-#define SB_IS_PLAYER_PUNCHED_OUT 1
-#endif  // SB_API_VERSION < 4
 
 // The maximum audio bitrate the platform can decode.  The following value
 // equals to 5M bytes per seconds which is more than enough for compressed
