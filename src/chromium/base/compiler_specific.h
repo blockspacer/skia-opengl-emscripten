@@ -9,6 +9,24 @@
 
 #if defined(COMPILER_MSVC)
 
+// For _Printf_format_string_.
+#include <sal.h>
+
+// Macros for suppressing and disabling warnings on MSVC.
+//
+// Warning numbers are enumerated at:
+// http://msdn.microsoft.com/en-us/library/8x5x43k7(VS.80).aspx
+//
+// The warning pragma:
+// http://msdn.microsoft.com/en-us/library/2c8f766e(VS.80).aspx
+//
+// Using __pragma instead of #pragma inside macros:
+// http://msdn.microsoft.com/en-us/library/d9x1s805.aspx
+
+// MSVC_SUPPRESS_WARNING disables warning |n| for the remainder of the line and
+// for the next line of the source file.
+#define MSVC_SUPPRESS_WARNING(n) __pragma(warning(suppress:n))
+
 // Macros for suppressing and disabling warnings on MSVC.
 //
 // Warning numbers are enumerated at:
@@ -45,6 +63,7 @@
 
 #else  // Not MSVC
 
+#define MSVC_SUPPRESS_WARNING(n)
 #define MSVC_PUSH_DISABLE_WARNING(n)
 #define MSVC_POP_WARNING()
 #define MSVC_DISABLE_OPTIMIZE()
