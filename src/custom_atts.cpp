@@ -352,6 +352,7 @@ static void addRippleAnimationOnce(
     printf("created custom animation!\n");
   }
 
+#if 0
   /// \todo ugly HACK to repaint element
   DCHECK(elementHTML);
   //DCHECK(elementHTML->IsFocusable());
@@ -406,8 +407,12 @@ static void addRippleAnimationOnce(
   /// \todo ugly HACK to repaint element, works with event propagation
   ripple_effect->style()->set_visibility("visible", nullptr); // <<<*/
 
-  /*//ripple_effect->style()->set_width("100px", nullptr); // <<<
+  //ripple_effect->style()->set_width("100px", nullptr); // <<<
   //ripple_effect->style()->set_height("100px", nullptr); // <<<
+
+  ripple_effect->SetAttribute("display", "none");
+  ripple_layer->SetAttribute("display", "none");
+  elementHTML->SetAttribute("display", "none");
 
   // calls ClearRuleMatchingState, SetDirectionality and SetTabIndex
   // Always clear the matching state when an attribute changes. Any attribute
@@ -426,7 +431,31 @@ static void addRippleAnimationOnce(
 
   /// \todo do we need it here?
   elementHTML->UpdateMatchingRules();
-  ripple_effect->UpdateMatchingRules();*/
+  ripple_effect->UpdateMatchingRules();
+
+  ripple_effect->SetAttribute("display", "block");
+  ripple_layer->SetAttribute("display", "block");
+  elementHTML->SetAttribute("display", "block");
+
+  // calls ClearRuleMatchingState, SetDirectionality and SetTabIndex
+  // Always clear the matching state when an attribute changes. Any attribute
+  // changing can potentially impact the matching rules.
+  /// \todo do we need it here?
+  elementHTML->ClearRuleMatchingState();
+  ripple_effect->ClearRuleMatchingState();
+
+  /// \todo do we need it here?
+  elementHTML->OnCSSMutation();
+
+  /// \todo ugly HACK to repaint element
+  /// calls HTMLElement::UpdateComputedStyleRecursively
+  elementHTML->node_document()->SampleTimelineTime();
+  elementHTML->node_document()->UpdateComputedStyles();
+
+  /// \todo do we need it here?
+  elementHTML->UpdateMatchingRules();
+  ripple_effect->UpdateMatchingRules();
+#endif // 0
 }
 
 void addTestOnlyAttrCallbacks() {
