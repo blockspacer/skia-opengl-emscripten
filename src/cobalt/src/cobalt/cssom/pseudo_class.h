@@ -16,10 +16,7 @@
 #define COBALT_CSSOM_PSEUDO_CLASS_H_
 
 #include "base/compiler_specific.h"
-
 #include "cobalt/base/token.h"
-
-
 #include "cobalt/base/tokens.h"
 #include "cobalt/cssom/simple_selector.h"
 #include "cobalt/cssom/specificity.h"

@@ -19,10 +19,7 @@
 
 #include "base/basictypes.h"
 #include "base/compiler_specific.h"
-
-//#include "base/containers/hash_tables.h"
-#include <map>
-
+#include "base/containers/hash_tables.h"
 #include "base/memory/ref_counted.h"
 #include "base/memory/weak_ptr.h"
 #include "base/optional.h"

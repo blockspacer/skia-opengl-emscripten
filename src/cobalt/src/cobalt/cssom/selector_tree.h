@@ -22,16 +22,10 @@
 #include <vector>
 
 #include "base/basictypes.h"
-
 #include "base/containers/hash_tables.h"
-#include <map>
-
 #include "base/containers/small_map.h"
 #include "base/memory/weak_ptr.h"
-
 #include "cobalt/base/token.h"
-
-
 #include "cobalt/cssom/combinator.h"
 #include "cobalt/cssom/pseudo_class_type.h"
 #include "cobalt/cssom/simple_selector_type.h"
@@ -95,7 +89,7 @@ class SelectorTree {
   // selectors. However, they occasionally can number in the hundreds. Using
   // a SmallMap with an array size of 4, allows both cases to be handled
   // quickly.
-  typedef base::small_map<std::map<base::Token, SimpleSelectorNodes>, 4>
+  typedef base::small_map<base::hash_map<base::Token, SimpleSelectorNodes>, 4>
       SelectorTextToNodesMap;
 
   class Node {

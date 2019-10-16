@@ -22,7 +22,6 @@
 #include <vector>
 
 #include "base/containers/hash_tables.h"
-#include <map>
 #include "base/containers/small_map.h"
 #include "base/memory/ref_counted.h"
 #include "cobalt/cssom/property_value.h"
@@ -252,7 +251,7 @@ typedef std::bitset<kNumLonghandProperties> LonghandPropertiesBitset;
 
 // Make PropertyKey usable as key in base::hash_map.
 
-#if 0
+#if 0 // TODO
 namespace BASE_HASH_NAMESPACE {
 
 //

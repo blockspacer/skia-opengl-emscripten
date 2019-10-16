@@ -18,7 +18,6 @@
 #include <string>
 
 #include "cobalt/base/token.h"
-
 #include "cobalt/cssom/combinator_visitor.h"
 #include "cobalt/cssom/selector.h"
 #include "cobalt/cssom/selector_visitor.h"
