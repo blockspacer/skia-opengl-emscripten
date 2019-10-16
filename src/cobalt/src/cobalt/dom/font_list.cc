@@ -1,4 +1,4 @@
-﻿// Copyright 2015 The Cobalt Authors. All Rights Reserved.
+// Copyright 2015 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -191,14 +191,12 @@ float FontList::GetSpaceWidth() {
 
 const scoped_refptr<render_tree::Font>& FontList::GetCharacterFont(
     int32 utf32_character, render_tree::GlyphIndex* glyph_index) {
-  //printf("FontList::GetCharacterFont 1");
   // Walk the list of fonts, requesting any encountered that are in an
   // unrequested state. The first font encountered that has the character is the
   // character font.
   DCHECK(fonts_.size() > 0 && fonts_.size() < 99999);
   for (size_t i = 0; i < fonts_.size(); ++i) {
     FontListFont& font_list_font = fonts_[i];
-    //printf("FontList::GetCharacterFont %lu %s\n", i, font_list_font.family_name().c_str());
 
     if (font_list_font.state() == FontListFont::kUnrequestedState) {
       RequestFont(i);
@@ -213,22 +211,20 @@ const scoped_refptr<render_tree::Font>& FontList::GetCharacterFont(
     }
   }
 
-  scoped_refptr<render_tree::Font> res = GetFallbackCharacterFont(utf32_character, glyph_index);
+  scoped_refptr<render_tree::Font> res
+    = GetFallbackCharacterFont(utf32_character, glyph_index);
   DCHECK(res);
   return std::move(res);
 }
 
 const scoped_refptr<render_tree::Font>& FontList::GetFallbackCharacterFont(
     int32 utf32_character, render_tree::GlyphIndex* glyph_index) {
-  //printf("FontList::GetFallbackCharacterFont 1\n");
-
   scoped_refptr<render_tree::Typeface>& fallback_typeface =
       character_fallback_typeface_map_[utf32_character];
   if (fallback_typeface.get() == NULL) {
     fallback_typeface =
         font_cache_->GetCharacterFallbackTypeface(utf32_character, style_);
   }
-  //printf("FontList::GetFallbackCharacterFont 1.1\n");
 
   DCHECK(fallback_typeface);
   *glyph_index = fallback_typeface->GetGlyphForCharacter(utf32_character);
@@ -242,16 +238,11 @@ const scoped_refptr<render_tree::Font>& FontList::GetFallbackCharacterFont(
         font_cache_->GetFontFromTypefaceAndSize(fallback_typeface, size_);
   }
   DCHECK(fallback_font);
-  //printf("FontList::GetFallbackCharacterFont 2\n");
-
-  // TODO >>>
-  //return nullptr;
 
   return fallback_font;
 }
 
 const scoped_refptr<render_tree::Font>& FontList::GetPrimaryFont() {
-  //printf("FontList::GetPrimaryFont 1\n");
   // The primary font is lazily generated. If it hasn't been set yet, then it's
   // time to do it now.
   if (!primary_font_) {
@@ -259,7 +250,6 @@ const scoped_refptr<render_tree::Font>& FontList::GetPrimaryFont() {
     // unrequested state. The first font encountered that is loaded is
     // the primary font.
     for (size_t i = 0; i < fonts_.size(); ++i) {
-      //printf("FontList::GetPrimaryFont 2\n");
       FontListFont& font_list_font = fonts_[i];
 
       if (font_list_font.state() == FontListFont::kUnrequestedState) {
@@ -280,31 +270,25 @@ const scoped_refptr<render_tree::Font>& FontList::GetPrimaryFont() {
 void FontList::RequestFont(size_t index) {
   FontListFont& font_list_font = fonts_[index];
   FontListFont::State state;
-  printf("FontList::RequestFont 1 %s\n", font_list_font.family_name().c_str());
 
   // Request the font from the font cache; the state of the font will be set
   // during the call.
   scoped_refptr<render_tree::Font> render_tree_font = font_cache_->TryGetFont(
       font_list_font.family_name(), style_, size_, &state);
 
-  //printf("FontList::RequestFont 2\n");
   if (state == FontListFont::kLoadedState) {
     DCHECK(render_tree_font.get() != NULL);
 
-    //printf("FontList::RequestFont 3\n");
     // Walk all of the fonts in the list preceding the loaded font. If they have
     // the same typeface as the loaded font, then set the font list font as a
     // duplicate. There's no reason to have multiple fonts in the list with the
     // same typeface.
     render_tree::TypefaceId typeface_id = render_tree_font->GetTypefaceId();
     for (size_t i = 0; i < index; ++i) {
-      printf("FontList::RequestFont 4\n");
       FontListFont& check_font = fonts_[i];
       if (check_font.state() == FontListFont::kLoadedState &&
           check_font.font()->GetTypefaceId() == typeface_id) {
         font_list_font.set_state(FontListFont::kDuplicateState);
-        printf("FontList::RequestFont 4.0 (kDuplicateState)\n");
-        //DCHECK(false);
         break;
       }
     }
@@ -312,12 +296,10 @@ void FontList::RequestFont(size_t index) {
     // If this font wasn't a duplicate, then its time to initialize its font
     // data. This font is now available to use.
     if (font_list_font.state() != FontListFont::kDuplicateState) {
-      printf("FontList::RequestFont 5 (kLoadedState)\n");
       font_list_font.set_state(FontListFont::kLoadedState);
       font_list_font.set_font(render_tree_font);
     }
   } else {
-    printf("FontList::RequestFont 6 (not FontListFont::kLoadedState)\n");
     font_list_font.set_state(state);
   }
 }
@@ -328,6 +310,7 @@ void FontList::GenerateEllipsisInfo() {
     ellipsis_font_ = GetCharacterFont(GetEllipsisValue(), &ellipsis_glyph);
     ellipsis_width_ = ellipsis_font_->GetGlyphWidth(ellipsis_glyph);
 
+    /// \todo is_ellipsis_info_set_ = true;
     is_ellipsis_info_set_ = ellipsis_font_ && ellipsis_width_ > 0;
     DCHECK(is_ellipsis_info_set_);
   }
@@ -343,6 +326,7 @@ void FontList::GenerateSpaceWidth() {
       DLOG(WARNING) << "Font being used with space width of 0!";
     }
 
+    /// \todo is_space_width_set_ = true;
     is_space_width_set_ = space_width_ > 0;
     DCHECK(is_space_width_set_);
   }

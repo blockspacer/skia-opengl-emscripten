@@ -39,14 +39,14 @@ namespace eme {
 
 class MediaKeySystemConfiguration {
  public:
-  MediaKeySystemConfiguration() {
-    label_ = "";
-    has_init_data_types_ = false;
-    init_data_types_ = ::cobalt::script::Sequence< std::string >();
-    has_audio_capabilities_ = false;
-    audio_capabilities_ = ::cobalt::script::Sequence< MediaKeySystemMediaCapability >();
-    has_video_capabilities_ = false;
-    video_capabilities_ = ::cobalt::script::Sequence< MediaKeySystemMediaCapability >();
+  MediaKeySystemConfiguration()
+    : label_(""),
+      has_init_data_types_(false),
+      init_data_types_(::cobalt::script::Sequence< std::string >()),
+      has_audio_capabilities_(false),
+      audio_capabilities_(::cobalt::script::Sequence< MediaKeySystemMediaCapability >()),
+      has_video_capabilities_(false),
+      video_capabilities_(::cobalt::script::Sequence< MediaKeySystemMediaCapability >()) {
   }
 
   MediaKeySystemConfiguration(const MediaKeySystemConfiguration& other) {

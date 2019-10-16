@@ -41,7 +41,7 @@ class ErrorEvent : public Event {
         colno_(init_dict.colno()) {
     InitError(init_dict);
   }
-  ErrorEvent(base::CobToken type, const ErrorEventInit& init_dict)
+  ErrorEvent(base::Token type, const ErrorEventInit& init_dict)
       : Event(type, init_dict),
         message_(init_dict.message()),
         filename_(init_dict.filename()),

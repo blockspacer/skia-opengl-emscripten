@@ -20,7 +20,7 @@
 #include "base/basictypes.h"
 #include "cobalt/base/polymorphic_downcast.h"
 #include "cobalt/dom/dom_settings.h"
-#include "starboard/string.h"
+#include "starboard/common/string.h"
 
 namespace {
 const char* const kResponseTypes[] = {"text", "blob", "arraybuffer"};
@@ -63,6 +63,7 @@ MessageEvent::ResponseType MessageEvent::data() const {
     data_length = data_->size();
   }
 #endif
+
   auto* global_environment =
       base::polymorphic_downcast<DOMSettings*>(settings_)->global_environment();
   script::Handle<script::ArrayBuffer> response_buffer;

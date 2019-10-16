@@ -41,10 +41,10 @@ namespace eme {
 
 class MediaKeyMessageEventInit : public cobalt::dom::EventInit {
  public:
-  MediaKeyMessageEventInit() {
-    has_message_type_ = false;
-    message_type_ = MediaKeyMessageType();
-    has_message_ = false;
+  MediaKeyMessageEventInit()
+    : has_message_type_(false),
+      message_type_(MediaKeyMessageType()),
+      has_message_(false) {
   }
 
   MediaKeyMessageEventInit(const MediaKeyMessageEventInit& other)

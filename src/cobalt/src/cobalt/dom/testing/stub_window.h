@@ -23,6 +23,9 @@
 #include "base/message_loop/message_loop.h"
 #include "base/optional.h"
 #include "base/threading/platform_thread.h"
+#if defined(ENABLE_DEBUGGER_HOOKS)
+#include "cobalt/base/debugger_hooks.h"
+#endif // ENABLE_DEBUGGER_HOOKS
 #include "cobalt/css_parser/parser.h"
 #include "cobalt/cssom/viewport_size.h"
 #include "cobalt/dom/dom_settings.h"
@@ -54,8 +57,9 @@ class StubWindow {
         dom_parser_(
             new dom_parser::Parser(base::Bind(&StubLoadCompleteCallback))),
         fetcher_factory_(new loader::FetcherFactory(NULL)),
-        loader_factory_(new loader::LoaderFactory(
-            fetcher_factory_.get(), NULL, base::ThreadPriority::DEFAULT)),
+        loader_factory_(
+            new loader::LoaderFactory("Test", fetcher_factory_.get(), NULL, 0,
+                                      base::ThreadPriority::DEFAULT)),
         local_storage_database_(NULL),
         url_("about:blank"),
         dom_stat_tracker_(new dom::DomStatTracker("StubWindow")) {
@@ -77,7 +81,12 @@ class StubWindow {
         base::Closure() /* window_minimize */, NULL, NULL, NULL,
         dom::Window::OnStartDispatchEventCallback(),
         dom::Window::OnStopDispatchEventCallback(),
-        dom::ScreenshotManager::ProvideScreenshotFunctionCallback(), NULL);
+        dom::ScreenshotManager::ProvideScreenshotFunctionCallback(), NULL
+#if defined(ENABLE_DEBUGGER_HOOKS)
+        ,
+        null_debugger_hooks_
+#endif // ENABLE_DEBUGGER_HOOKS
+        );
     environment_settings_ =
         environment_settings.get()
             ? std::move(environment_settings)
@@ -115,6 +124,11 @@ class StubWindow {
   std::unique_ptr<script::EnvironmentSettings> environment_settings_;
   std::unique_ptr<script::JavaScriptEngine> engine_;
   scoped_refptr<script::GlobalEnvironment> global_environment_;
+
+#if defined(ENABLE_DEBUGGER_HOOKS)
+  base::NullDebuggerHooks null_debugger_hooks_;
+#endif // ENABLE_DEBUGGER_HOOKS
+
   scoped_refptr<dom::Window> window_;
 };
 

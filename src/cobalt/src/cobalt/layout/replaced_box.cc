@@ -308,7 +308,7 @@ void ReplacedBox::RenderAndAnimateContent(
 
   const cssom::MapToMeshFunction* mtm_filter_function =
       cssom::MapToMeshFunction::ExtractFromFilterList(
-          computed_style()->filter().get());
+          computed_style()->filter());
 
   if (mtm_filter_function && mtm_filter_function->mesh_spec().mesh_type() !=
                                  cssom::MapToMeshFunction::kRectangular) {
@@ -349,7 +349,15 @@ void ReplacedBox::UpdateContentSizeAndMargins(
   base::Optional<LayoutUnit> maybe_width = GetUsedWidthIfNotAuto(
       computed_style(), layout_params.containing_block_size, NULL);
   base::Optional<LayoutUnit> maybe_height = GetUsedHeightIfNotAuto(
-      computed_style(), layout_params.containing_block_size);
+      computed_style(), layout_params.containing_block_size, NULL);
+
+  if (layout_params.freeze_width) {
+    maybe_width = width();
+  }
+  if (layout_params.freeze_height) {
+    maybe_height = height();
+  }
+
   base::Optional<LayoutUnit> maybe_left = GetUsedLeftIfNotAuto(
       computed_style(), layout_params.containing_block_size);
   base::Optional<LayoutUnit> maybe_top = GetUsedTopIfNotAuto(
@@ -441,12 +449,16 @@ void ReplacedBox::UpdateContentSizeAndMargins(
 
     base::Optional<LayoutUnit> maybe_max_width = GetUsedMaxWidthIfNotNone(
         computed_style(), layout_params.containing_block_size, NULL);
-    LayoutUnit min_width = GetUsedMinWidth(
-        computed_style(), layout_params.containing_block_size, NULL);
+    LayoutUnit min_width =
+        GetUsedMinWidthIfNotAuto(computed_style(),
+                                 layout_params.containing_block_size, NULL)
+            .value_or(LayoutUnit());
     base::Optional<LayoutUnit> maybe_max_height = GetUsedMaxHeightIfNotNone(
-        computed_style(), layout_params.containing_block_size, NULL);
-    LayoutUnit min_height = GetUsedMinHeight(
-        computed_style(), layout_params.containing_block_size, NULL);
+        computed_style(), layout_params.containing_block_size);
+    LayoutUnit min_height =
+        GetUsedMinHeightIfNotAuto(computed_style(),
+                                  layout_params.containing_block_size)
+            .value_or(LayoutUnit());
 
     // The values w and h stand for the results of the width and height
     // computations ignoring the 'min-width', 'min-height', 'max-width' and

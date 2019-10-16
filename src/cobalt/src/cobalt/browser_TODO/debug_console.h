@@ -25,8 +25,7 @@
 #include "base/callback.h"
 #include "base/logging.h"
 
-#include "cobalt/base/cobalt_token.h"
-//#include "base/token.h"
+#include "cobalt/base/token.h"
 
 
 #include "cobalt/browser/lifecycle_observer.h"
@@ -60,23 +59,23 @@ class DebugConsole : public LifecycleObserver {
   // Filters a key event.
   // Returns true if the event should be passed on to other handlers,
   // false if it was consumed within this function.
-  bool FilterKeyEvent(base::CobToken type, const dom::KeyboardEventInit& event);
+  bool FilterKeyEvent(base::Token type, const dom::KeyboardEventInit& event);
 
   // Filters a pointer event.
   // Returns true if the event should be passed on to other handlers,
   // false if it was consumed within this function.
-  bool FilterPointerEvent(base::CobToken type, const dom::PointerEventInit& event);
+  bool FilterPointerEvent(base::Token type, const dom::PointerEventInit& event);
 
   // Filters a wheel event.
   // Returns true if the event should be passed on to other handlers,
   // false if it was consumed within this function.
-  bool FilterWheelEvent(base::CobToken type, const dom::WheelEventInit& event);
+  bool FilterWheelEvent(base::Token type, const dom::WheelEventInit& event);
 
 #if SB_HAS(ON_SCREEN_KEYBOARD)
   // Inject an on screen keyboard input event.
   // Returns true if the event should be passed on to other handlers,
   // false if it was consumed within this function.
-  bool InjectOnScreenKeyboardInputEvent(base::CobToken type,
+  bool InjectOnScreenKeyboardInputEvent(base::Token type,
                                         const dom::InputEventInit& event);
 #endif  // SB_HAS(ON_SCREEN_KEYBOARD)
 

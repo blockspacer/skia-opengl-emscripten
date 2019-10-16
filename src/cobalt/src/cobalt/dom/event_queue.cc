@@ -22,8 +22,11 @@ namespace dom {
 
 EventQueue::EventQueue(EventTarget* event_target)
     : event_target_(event_target),
-      //message_loop_(base::MessageLoop::current()->task_runner()) {
+#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
       message_loop_() {
+#else
+      message_loop_(base::MessageLoopCurrent::Get()->task_runner()) {
+#endif
   DCHECK(event_target_);
   DCHECK(message_loop_);
 }
@@ -38,7 +41,7 @@ void EventQueue::Enqueue(const scoped_refptr<Event>& event) {
 
   // Clear the target if it is the same as the stored one to avoid circular
   // reference.
-  if (event->target().get() == event_target_) {
+  if (event->target() == event_target_) {
     event->set_target(NULL);
   }
 

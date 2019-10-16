@@ -95,7 +95,7 @@ bool MapToMeshFunction::ResolutionMatchedMesh::operator!=(
 
 const MapToMeshFunction* MapToMeshFunction::ExtractFromFilterList(
     PropertyValue* filter_value) {
-  if (filter_value && filter_value != cssom::KeywordValue::GetNone().get()) {
+  if (filter_value && filter_value != cssom::KeywordValue::GetNone()) {
     const cssom::FilterFunctionListValue::Builder& filter_list =
         base::polymorphic_downcast<cssom::FilterFunctionListValue*>(
             filter_value)

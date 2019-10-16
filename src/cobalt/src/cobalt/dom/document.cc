@@ -25,8 +25,7 @@
 #include "base/trace_event/trace_event.h"
 #include "base/memory/weak_ptr.h"
 
-//#include "cobalt/base/token.h"
-#include "cobalt/base/cobalt_token.h"
+#include "cobalt/base/token.h"
 
 #include "cobalt/base/tokens.h"
 #include "cobalt/cssom/css_media_rule.h"
@@ -189,7 +188,7 @@ Document::Document(HTMLElementContext* html_element_context,
   OnInsertedIntoDocument();
 }
 
-base::CobToken Document::node_name() const {
+base::Token Document::node_name() const {
   return base::Tokens::document_name();
 }
 
@@ -241,12 +240,12 @@ scoped_refptr<HTMLCollection> Document::GetElementsByClassName(
 
 scoped_refptr<Element> Document::CreateElement(const std::string& local_name) {
   if (IsXMLDocument()) {
-    return new Element(this, base::CobToken(local_name));
+    return new Element(this, base::Token(local_name));
   } else {
     std::string lower_local_name = base::ToLowerASCII(local_name);
     DCHECK(html_element_context_->html_element_factory());
     return html_element_context_->html_element_factory()->CreateHTMLElement(
-        this, base::CobToken(lower_local_name));
+        this, base::Token(lower_local_name));
   }
 }
 
@@ -607,7 +606,7 @@ void Document::DecreaseLoadingCounterAndMaybeDispatchLoadEvent() {
 #else
     DCHECK(base::MessageLoopCurrent::Get());
 
-    /*base::MessageLoop::current()->task_runner()->PostTask(
+    /*base::MessageLoopCurrent::Get()->task_runner()->PostTask(
         FROM_HERE, base::Bind(&Document::DispatchOnLoadEvent,
                               base::AsWeakPtr<Document>(this)));*/
     base::MessageLoopCurrent::Get()->task_runner()->PostTask(

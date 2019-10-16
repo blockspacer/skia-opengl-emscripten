@@ -1,4 +1,4 @@
-﻿// Copyright 2014 The Cobalt Authors. All Rights Reserved.
+// Copyright 2014 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -87,9 +87,7 @@ LayoutUnit TextBox::GetInlineLevelTopMargin() const {
 }
 
 void TextBox::UpdateContentSizeAndMargins(const LayoutParams& layout_params) {
-  //printf("UpdateContentSizeAndMargins 1\n");
   // Anonymous boxes do not have margins.
-//#if !defined(OS_EMSCRIPTEN)
   DCHECK(GetUsedMarginLeftIfNotAuto(computed_style(),
                                     layout_params.containing_block_size)
              ->EqualOrNaN(LayoutUnit()));
@@ -102,8 +100,6 @@ void TextBox::UpdateContentSizeAndMargins(const LayoutParams& layout_params) {
   DCHECK(GetUsedMarginBottomIfNotAuto(computed_style(),
                                       layout_params.containing_block_size)
              ->EqualOrNaN(LayoutUnit()));
-//#endif
-  //printf("UpdateContentSizeAndMargins 2\n");
 
   // The non-collapsible content size only needs to be calculated if
   // |non_collapsible_text_width_| is unset. This indicates that either the
@@ -230,7 +226,7 @@ WrapResult TextBox::TryWrapAt(WrapAtPolicy wrap_at_policy,
   return wrap_result;
 }
 
-Box* TextBox::GetSplitSibling() const { return split_sibling_.get(); }
+Box* TextBox::GetSplitSibling() const { return split_sibling_; }
 
 bool TextBox::DoesFulfillEllipsisPlacementRequirement() const {
   // This box has non-collapsed text and fulfills the requirement that the first
@@ -372,18 +368,12 @@ void AddTextShadows(render_tree::TextNode::Builder* builder,
 void TextBox::RenderAndAnimateContent(
     render_tree::CompositionNode::Builder* border_node_builder,
     ContainerBox* /*stacking_context*/) const {
-  //printf("RenderAndAnimateContent 1\n");
   if (computed_style()->visibility() != cssom::KeywordValue::GetVisible()) {
     return;
   }
 
-  // Anonymous boxes do not have margins.
-//#if !defined(OS_EMSCRIPTEN)
   DCHECK((border_left_width() + padding_left()).EqualOrNaN(LayoutUnit()));
   DCHECK((border_top_width() + padding_top()).EqualOrNaN(LayoutUnit()));
-//#endif
-
-  //printf("RenderAndAnimateContent 2\n");
 
   // Only add the text node to the render tree if it actually has visible
   // content that isn't simply collapsible whitespace and a font isn't loading.
@@ -415,13 +405,18 @@ void TextBox::RenderAndAnimateContent(
               paragraph_->GetTextBuffer() + text_start_position, text_length,
               paragraph_->IsRTL(text_start_position));
 
-      const base::char16* text_buffer_res =
+      /*const base::char16* text_buffer_res =
         paragraph_->GetTextBuffer() + text_start_position;
       base::string16 text_res = text_buffer_res;
 
       render_tree::TextNode::Builder text_node_builder(
           math::Vector2dF(truncated_text_offset_from_left_, ascent_),
           glyph_buffer, used_color, text_buffer_res);
+      */
+
+      render_tree::TextNode::Builder text_node_builder(
+          math::Vector2dF(truncated_text_offset_from_left_, ascent_),
+          glyph_buffer, used_color);
 
       if (text_shadow != cssom::KeywordValue::GetNone()) {
         cssom::PropertyListValue* shadow_list =

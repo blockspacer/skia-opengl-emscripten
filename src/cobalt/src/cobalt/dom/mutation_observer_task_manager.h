@@ -17,7 +17,7 @@
 
 #include <utility>
 
-//#include "base/containers/hash_tables.h"
+#include "base/containers/hash_tables.h"
 #include <map>
 #include <set>
 #include "base/threading/thread_checker.h"
@@ -50,12 +50,12 @@ class MutationObserverTaskManager : public script::Traceable {
   void TraceMembers(script::Tracer* tracer) override;
 
  private:
-  typedef std::set<MutationObserver*> MutationObserverSet;
+  typedef base::hash_set<MutationObserver*> MutationObserverSet;
 
   // Notify all mutation observers.
   void NotifyMutationObservers();
 
-  base::ThreadChecker thread_checker_;
+  THREAD_CHECKER(thread_checker_);
   MutationObserverSet observers_;
   bool task_posted_;
 };

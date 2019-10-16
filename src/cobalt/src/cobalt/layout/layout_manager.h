@@ -78,9 +78,11 @@ class LayoutManager {
                 bool clear_window_with_background_color);
   ~LayoutManager();
 
+  /// \note for WASM support
+  void ForceReLayout();
+
   void Suspend();
   void Resume();
-  void ForceReLayout();
   void Purge();
 
   bool IsRenderTreePending() const;

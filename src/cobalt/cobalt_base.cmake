@@ -31,6 +31,8 @@ set(COBALT_base_SOURCES
   ${COBALT_PORT_DIR}/cobalt/base/event.h
   ${COBALT_PORT_DIR}/cobalt/base/event_dispatcher.cc
   ${COBALT_PORT_DIR}/cobalt/base/event_dispatcher.h
+  ${COBALT_PORT_DIR}/cobalt/base/token.cc
+  ${COBALT_PORT_DIR}/cobalt/base/token.h
   ${COBALT_PORT_DIR}/cobalt/base/get_application_key.cc
   ${COBALT_PORT_DIR}/cobalt/base/get_application_key.h
   ${COBALT_PORT_DIR}/cobalt/base/init_cobalt.cc
@@ -59,8 +61,8 @@ set(COBALT_base_SOURCES
   #
   ## ${COBALT_PORT_DIR}/cobalt/base/token.cc
   ## ${COBALT_PORT_DIR}/cobalt/base/token.h
-  ${COBALT_PORT_DIR}/cobalt/base/cobalt_token.cc
-  ${COBALT_PORT_DIR}/cobalt/base/cobalt_token.h
+  #${COBALT_PORT_DIR}/cobalt/base/cobalt_token.cc
+  #${COBALT_PORT_DIR}/cobalt/base/cobalt_token.h
   #
   ${COBALT_PORT_DIR}/cobalt/base/tokens.cc
   ${COBALT_PORT_DIR}/cobalt/base/tokens.h

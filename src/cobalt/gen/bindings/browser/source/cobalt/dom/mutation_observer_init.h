@@ -36,19 +36,19 @@ namespace dom {
 
 class MutationObserverInit {
  public:
-  MutationObserverInit() {
-    child_list_ = false;
-    has_attributes_ = false;
-    attributes_ = bool();
-    has_character_data_ = false;
-    character_data_ = bool();
-    subtree_ = false;
-    has_attribute_old_value_ = false;
-    attribute_old_value_ = bool();
-    has_character_data_old_value_ = false;
-    character_data_old_value_ = bool();
-    has_attribute_filter_ = false;
-    attribute_filter_ = ::cobalt::script::Sequence< std::string >();
+  MutationObserverInit()
+    : child_list_(false),
+      has_attributes_(false),
+      attributes_(bool()),
+      has_character_data_(false),
+      character_data_(bool()),
+      subtree_(false),
+      has_attribute_old_value_(false),
+      attribute_old_value_(bool()),
+      has_character_data_old_value_(false),
+      character_data_old_value_(bool()),
+      has_attribute_filter_(false),
+      attribute_filter_(::cobalt::script::Sequence< std::string >()) {
   }
 
   MutationObserverInit(const MutationObserverInit& other) {

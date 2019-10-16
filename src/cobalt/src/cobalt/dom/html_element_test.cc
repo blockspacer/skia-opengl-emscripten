@@ -68,6 +68,11 @@ ACTION_P(InvokeCallback0, callback) {
 
 const char kFooBarDeclarationString[] = "foo: bar;";
 const char kDisplayInlineDeclarationString[] = "display: inline;";
+const char* kHtmlElementTagNames[] = {
+  // "audio", "script", and "video" are excluded since they need more setup.
+  "a", "body", "br", "div", "head", "h1", "html", "img", "link",
+  "meta", "p", "span", "style", "title"
+};
 
 class MockLayoutBoxes : public LayoutBoxes {
  public:
@@ -80,6 +85,7 @@ class MockLayoutBoxes : public LayoutBoxes {
   MOCK_CONST_METHOD0(GetBorderEdgeTop, float());
   MOCK_CONST_METHOD0(GetBorderEdgeWidth, float());
   MOCK_CONST_METHOD0(GetBorderEdgeHeight, float());
+  MOCK_CONST_METHOD0(GetBorderEdgeOffsetFromContainingBlock, math::Vector2dF());
 
   MOCK_CONST_METHOD0(GetBorderLeftWidth, float());
   MOCK_CONST_METHOD0(GetBorderTopWidth, float());
@@ -87,10 +93,19 @@ class MockLayoutBoxes : public LayoutBoxes {
   MOCK_CONST_METHOD0(GetMarginEdgeWidth, float());
   MOCK_CONST_METHOD0(GetMarginEdgeHeight, float());
 
-  MOCK_CONST_METHOD0(GetPaddingEdgeLeft, float());
-  MOCK_CONST_METHOD0(GetPaddingEdgeTop, float());
+  MOCK_CONST_METHOD0(GetPaddingEdgeOffset, math::Vector2dF());
   MOCK_CONST_METHOD0(GetPaddingEdgeWidth, float());
   MOCK_CONST_METHOD0(GetPaddingEdgeHeight, float());
+  MOCK_CONST_METHOD0(GetPaddingEdgeOffsetFromContainingBlock,
+                     math::Vector2dF());
+
+  MOCK_CONST_METHOD0(GetContentEdgeOffset, math::Vector2dF());
+  MOCK_CONST_METHOD0(GetContentEdgeWidth, float());
+  MOCK_CONST_METHOD0(GetContentEdgeHeight, float());
+  MOCK_CONST_METHOD0(GetContentEdgeOffsetFromContainingBlock,
+                     math::Vector2dF());
+
+  MOCK_CONST_METHOD1(GetScrollArea, math::RectF(dom::Directionality));
 
   MOCK_METHOD0(InvalidateSizes, void());
   MOCK_METHOD0(InvalidateCrossReferences, void());
@@ -194,31 +209,48 @@ HTMLElementTest::CreateHTMLElementTreeWithMockLayoutBoxes(
 }
 
 TEST_F(HTMLElementTest, Dir) {
-  scoped_refptr<HTMLElement> html_element =
-      document_->CreateElement("div")->AsHTMLElement();
-  EXPECT_EQ("", html_element->dir());
+  for (size_t i = 0; i < arraysize(kHtmlElementTagNames); ++i) {
+    scoped_refptr<HTMLElement> html_element =
+        document_->CreateElement(kHtmlElementTagNames[i])->AsHTMLElement();
+    EXPECT_EQ("", html_element->dir());
 
-  html_element->set_dir("invalid");
-  EXPECT_EQ("", html_element->dir());
+    html_element->set_dir("invalid");
+    EXPECT_EQ("", html_element->dir());
 
-  html_element->set_dir("ltr");
-  EXPECT_EQ("ltr", html_element->dir());
+    html_element->set_dir("ltr");
+    EXPECT_EQ("ltr", html_element->dir());
 
-  html_element->set_dir("rtl");
-  EXPECT_EQ("rtl", html_element->dir());
+    html_element->set_dir("rtl");
+    EXPECT_EQ("rtl", html_element->dir());
 
-  // Value "auto" is not supported.
-  html_element->set_dir("auto");
-  EXPECT_EQ("", html_element->dir());
+    // Value "auto" is not supported.
+    html_element->set_dir("auto");
+    EXPECT_EQ("", html_element->dir());
+
+    html_element->SetAttribute("Dir", "rtl");
+    EXPECT_EQ("rtl", html_element->dir());
+
+    html_element->RemoveAttribute("diR");
+    EXPECT_EQ("", html_element->dir());
+  }
 }
 
 TEST_F(HTMLElementTest, TabIndex) {
-  scoped_refptr<HTMLElement> html_element =
-      document_->CreateElement("div")->AsHTMLElement();
-  EXPECT_EQ(0, html_element->tab_index());
+  for (size_t i = 0; i < arraysize(kHtmlElementTagNames); ++i) {
+    scoped_refptr<HTMLElement> html_element =
+        document_->CreateElement(kHtmlElementTagNames[i])->AsHTMLElement();
 
-  html_element->set_tab_index(-1);
-  EXPECT_EQ(-1, html_element->tab_index());
+    EXPECT_EQ(0, html_element->tab_index());
+
+    html_element->set_tab_index(-1);
+    EXPECT_EQ(-1, html_element->tab_index());
+
+    html_element->SetAttribute("tabIndex", "-2");
+    EXPECT_EQ(-2, html_element->tab_index());
+
+    html_element->RemoveAttribute("Tabindex");
+    EXPECT_EQ(0, html_element->tab_index());
+  }
 }
 
 TEST_F(HTMLElementTest, Focus) {
@@ -609,8 +641,8 @@ TEST_F(HTMLElementTest, OffsetTop) {
   // ancestors.
   EXPECT_CALL(*base::polymorphic_downcast<MockLayoutBoxes*>(
                   GetFirstChildAtDepth(root_html_element, 1)->layout_boxes()),
-              GetPaddingEdgeTop())
-      .WillOnce(Return(20.0f));
+              GetPaddingEdgeOffset())
+      .WillOnce(Return(math::Vector2d(20.0f, 20.0f)));
   EXPECT_CALL(*base::polymorphic_downcast<MockLayoutBoxes*>(
                   GetFirstChildAtDepth(root_html_element, 2)->layout_boxes()),
               GetBorderEdgeTop())
@@ -658,8 +690,8 @@ TEST_F(HTMLElementTest, OffsetLeft) {
   // ancestors.
   EXPECT_CALL(*base::polymorphic_downcast<MockLayoutBoxes*>(
                   GetFirstChildAtDepth(root_html_element, 1)->layout_boxes()),
-              GetPaddingEdgeLeft())
-      .WillOnce(Return(20.0f));
+              GetPaddingEdgeOffset())
+      .WillOnce(Return(math::Vector2dF(20.0f, 20.0f)));
   EXPECT_CALL(*base::polymorphic_downcast<MockLayoutBoxes*>(
                   GetFirstChildAtDepth(root_html_element, 2)->layout_boxes()),
               GetBorderEdgeLeft())

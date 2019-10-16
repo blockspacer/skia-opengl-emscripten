@@ -19,13 +19,17 @@
 #include <string>
 #include <functional>
 
+#include "base/strings/string_split.h"
+#include "base/strings/string_util.h"
+#include "cobalt/base/user_log.h"
+
+#include "cobalt/dom/node.h"
+#include "cobalt/dom/rule_matching.h"
+
 #include "base/lazy_instance.h"
 #include "base/strings/string_util.h"
 #include "base/trace_event/trace_event.h"
-#include "base/strings/string_split.h"
-#include "base/strings/string_util.h"
 #include "cobalt/base/tokens.h"
-#include "cobalt/base/user_log.h"
 #include "cobalt/cssom/css_style_rule.h"
 #include "cobalt/cssom/selector.h"
 #include "cobalt/dom/document.h"
@@ -38,8 +42,10 @@
 #include "cobalt/dom/html_element_context.h"
 #include "cobalt/dom/mutation_reporter.h"
 #include "cobalt/dom/named_node_map.h"
+#include "cobalt/dom/node.h"
 #include "cobalt/dom/parser.h"
 #include "cobalt/dom/pointer_state.h"
+#include "cobalt/dom/rule_matching.h"
 #include "cobalt/dom/serializer.h"
 #include "cobalt/dom/text.h"
 #include "cobalt/math/rect_f.h"
@@ -428,32 +434,6 @@ namespace customizer {
 
 using namespace cobalt::dom::customizer;
 
-namespace {
-
-const char kStyleAttributeName[] = "style";
-
-// This struct manages the user log information for Node count.
-struct ElementCountLog {
- public:
-  ElementCountLog() : count(0) {
-    base::UserLog::Register(base::UserLog::kElementCountIndex, "ElementCnt",
-                            &count, sizeof(count));
-  }
-  ~ElementCountLog() {
-    base::UserLog::Deregister(base::UserLog::kElementCountIndex);
-  }
-
-  int count;
-
- private:
-  DISALLOW_COPY_AND_ASSIGN(ElementCountLog);
-};
-
-base::LazyInstance<ElementCountLog>::DestructorAtExit element_count_log =
-    LAZY_INSTANCE_INITIALIZER;
-
-}  // namespace
-
 CustomTokenToObservers::CustomTokenToObservers(
       const AttrLoadedCallback& loaded_callback,
       const std::string& initial_attr)
@@ -553,18 +533,6 @@ void CustomElementToken::OnMutation(const std::string& attr_val)
 
   //element_->SetAttribute(initial_attr_name_, attr_val);
 */
-}
-
-Element::Element(Document* document)
-    : Node(document), animations_(new web_animations::AnimationSet()) {
-  ++(element_count_log.Get().count);
-}
-
-Element::Element(Document* document, base::CobToken local_name)
-    : Node(document),
-      local_name_(local_name),
-      animations_(new web_animations::AnimationSet()) {
-  ++(element_count_log.Get().count);
 }
 
 template <class T>
@@ -699,40 +667,6 @@ base::Optional<EventCallback> Element::get_event_cb(const std::string &key)
   return it->second;
 }
 
-base::Optional<std::string> Element::text_content() const {
-  TRACK_MEMORY_SCOPE("DOM");
-  std::string content;
-
-  const Node* child = first_child();
-  while (child) {
-    if (child->IsText() || child->IsElement()) {
-      content.append(child->text_content().value());
-    }
-    child = child->next_sibling();
-  }
-
-  return content;
-}
-
-void Element::set_text_content(
-    const base::Optional<std::string>& text_content) {
-  TRACK_MEMORY_SCOPE("DOM");
-  // https://www.w3.org/TR/dom/#dom-node-textcontent
-  // 1. Let node be null.
-  scoped_refptr<Node> new_node;
-
-  // 2. If new value is not the empty string, set node to a new Text node whose
-  //    data is new value.
-  std::string new_text_content = text_content.value_or("");
-  if (!new_text_content.empty()) {
-    new_node = new Text(node_document(), new_text_content);
-  }
-  // 3. Replace all with node within the context object.
-  ReplaceAll(new_node);
-}
-
-bool Element::HasAttributes() const { return !attribute_map_.empty(); }
-
 void Element::AddNewCustomElementToken(std::shared_ptr<CustomElementToken> elementAttribute)
 {
   DCHECK(elementAttribute);
@@ -758,105 +692,6 @@ std::shared_ptr<CustomElementToken> Element::GetCustomElementToken(const std::st
   }
   return res;
 }
-
-base::Optional<std::string> Element::GetAttributeNS(
-    const std::string& namespace_uri, const std::string& name) const {
-  // TODO: Implement namespaces, if we actually need this.
-  NOTIMPLEMENTED();
-  SB_UNREFERENCED_PARAMETER(namespace_uri);
-  return GetAttribute(name);
-}
-
-bool Element::HasAttributeNS(const std::string& namespace_uri,
-                             const std::string& name) const {
-  // TODO: Implement namespaces, if we actually need this.
-  NOTIMPLEMENTED();
-  SB_UNREFERENCED_PARAMETER(namespace_uri);
-  return HasAttribute(name);
-}
-
-scoped_refptr<NamedNodeMap> Element::attributes() {
-  TRACK_MEMORY_SCOPE("DOM");
-  scoped_refptr<NamedNodeMap> named_node_map = named_node_map_.get();
-  if (!named_node_map) {
-    // Create a new instance and store a weak reference.
-    named_node_map = new NamedNodeMap(this);
-    named_node_map_ = named_node_map->AsWeakPtr();
-  }
-  return named_node_map;
-}
-
-const scoped_refptr<DOMTokenList>& Element::class_list() {
-  TRACK_MEMORY_SCOPE("DOM");
-  if (!class_list_) {
-    // Create a new instance and store a reference to it. Because of the
-    // negative performance impact of having to constantly recreate DomTokenList
-    // objects, they are being kept in memory.
-    class_list_ = new DOMTokenList(this, "class");
-  }
-  return class_list_;
-}
-
-// Algorithm for GetAttribute:
-//   https://www.w3.org/TR/2014/WD-dom-20140710/#dom-element-getattribute
-base::Optional<std::string> Element::GetAttribute(
-    const std::string& name) const {
-  TRACK_MEMORY_SCOPE("DOM");
-  Document* document = node_document();
-
-  // 1. If the context object is in the HTML namespace and its node document is
-  //    an HTML document, let name be converted to ASCII lowercase.
-  std::string attr_name_lower = name;
-  if (document && !document->IsXMLDocument()) {
-    attr_name_lower = base::ToLowerASCII(attr_name_lower);
-  }
-
-  // not in spec
-  std::string attr_name_ext = attr_name_lower;
-  /*{
-    base::Optional<std::string> extName = extendAttrName(attr_name_lower, "", *this);
-    if (extName.has_value()) {
-      attr_name_ext = extName.value();
-      printf("extended attr to %s\n", attr_name_ext.c_str());
-    }
-  }*/
-
-  base::Optional<std::string> originalVal = base::nullopt;
-
-  // 2. Return the value of the attribute in element's attribute list whose
-  //    namespace is namespace and local name is localName, if it has one, and
-  //    null otherwise.
-  switch (attr_name_ext.size()) {
-    case 5:
-      if (attr_name_ext == kStyleAttributeName) {
-        originalVal = GetStyleAttribute();
-      }
-    // fall-through if not style attribute name
-    default: {
-      AttributeMap::const_iterator iter = attribute_map_.find(attr_name_ext);
-      if (iter != attribute_map_.end()) {
-        originalVal = iter->second;
-      }
-    }
-  }
-
-  /*// not in spec
-  base::Optional<std::string> extVal = base::nullopt;
-  if (originalVal.has_value()) {
-    extVal = extendAttrValue(attr_name_lower, originalVal.value(), *this);
-    if (extVal.has_value()) {
-      printf("extended val to %s\n", extVal.value().c_str());
-      return extVal;
-    }
-  }*/
-
-  return originalVal;
-}
-
-/*std::function<bool(Element::StringPair, Element::StringPair)> Element::key_comp =
-  [](StringPair lhs, StringPair rhs) {
-    return lhs.first < rhs.first;
-  };*/
 
 void Element::AppendToAttribute(const std::string& name, const std::string& value/*,
                                 const bool needToMergeKeys*/) {
@@ -895,84 +730,8 @@ void Element::AppendToAttribute(const std::string& name, const std::string& valu
 
   } else {
     NOTIMPLEMENTED();
+    DCHECK(false);
   }
-
-  /*if(!needToMergeKeys) {
-    DCHECK(old_value.has_value() && !old_value.value().empty());
-    SetAttribute(name, old_value.value() + ";" + value);
-    return;
-  }
-
-  base::StringPairs newTokensUnsorted;
-  base::SplitStringIntoKeyValuePairs(
-    value,
-    ':', // Key-value delimiter
-    ';', // Key-value pair delimiter
-    &newTokensUnsorted);
-
-#if DCHECK_IS_ON()
-  base::StringPairs oldTokensUnsorted;
-  CHECK(old_value.has_value());
-  base::SplitStringIntoKeyValuePairs(
-    old_value.value(),
-    ':', // Key-value delimiter
-    ';', // Key-value pair delimiter
-    &oldTokensUnsorted);
-
-  // remove duplicate keys
-  const key_set oldTokens(oldTokensUnsorted.begin(), oldTokensUnsorted.end(), key_comp);
-#endif
-
-  // remove duplicate keys
-  const key_set newTokens(newTokensUnsorted.begin(), newTokensUnsorted.end(), key_comp);
-
-  // copy new values
-  /// \note new values must be inserted before old values because
-  /// of key-only comparison (key_set will not insert/replace data if key exists)
-  key_set resultTokens(newTokens.begin(), newTokens.end(), key_comp);
-
-#if DCHECK_IS_ON()
-  key_set checkTokens(newTokens.begin(), newTokens.end(), key_comp);
-#endif
-
-  // merge old values with new values
-  auto it = attrToCachedSet_.find(name);
-  if(it != attrToCachedSet_.end()) {
-    resultTokens.insert(it->second.begin(), it->second.end());
-  }
-
-#if DCHECK_IS_ON()
-  checkTokens.insert(oldTokens.begin(), oldTokens.end());
-  std::string checkTokensToStr;
-  std::set<std::string> checkTokensKeys;
-  for (const StringPair& val : checkTokens) {
-    checkTokensToStr += val.first + ":" + val.second + ";";
-    checkTokensKeys.insert(val.first);
-  }
-  std::string resultTokensToStr;
-  std::set<std::string> resultTokensKeys;
-  for (const StringPair& val : resultTokens) {
-    resultTokensToStr += val.first + ":" + val.second + ";";
-    resultTokensKeys.insert(val.first);
-  }
-  // cached data must be same as current
-  /// \note cached value may be synonym to current value,
-  /// example: "color: rgb(0, 128, 0)" vs "color:green;" (also note space)
-  /// example: "border-radius:40px;" vs "border-bottom-left-radius: 40px;border-bottom-right-radius: 40px;border-top-left-radius: 40px;border-top-right-radius: 40px;"
-  CHECK(checkTokens.size() == resultTokens.size()
-        && checkTokensKeys == resultTokensKeys)
-    << "cache mismatch in AppendToAttribute(" << name << ", " << value << ")\n"
-    << "for element = " << tag_name() << " with text_content = "
-    << text_content().value_or("") << ")\n"
-    << "checkCSSTokens = " << checkTokensToStr << "\n"
-    << "resultCSSTokens = " << resultTokensToStr << "\n";
-#endif
-
-  // serialize
-  std::string result;
-  for (const StringPair& val : resultTokens) {
-    result += val.first + ":" + val.second + ";";
-  }*/
 
   SetAttribute(name, result);
 }
@@ -1012,6 +771,158 @@ base::Optional<bool> Element::HandleCustomEvent(const scoped_refptr<dom::Event> 
   return res;
 }
 
+namespace {
+
+const char kStyleAttributeName[] = "style";
+
+}  // namespace
+
+Element::Element(Document* document)
+    : Node(document), animations_(new web_animations::AnimationSet()) {}
+
+Element::Element(Document* document, base::Token local_name)
+    : Node(document),
+      local_name_(local_name),
+      animations_(new web_animations::AnimationSet()) {}
+
+base::Optional<std::string> Element::text_content() const {
+  TRACK_MEMORY_SCOPE("DOM");
+  std::string content;
+
+  const Node* child = first_child();
+  while (child) {
+    if (child->IsText() || child->IsElement()) {
+      content.append(child->text_content().value());
+    }
+    child = child->next_sibling();
+  }
+
+  return content;
+}
+
+void Element::set_text_content(
+    const base::Optional<std::string>& text_content) {
+  TRACK_MEMORY_SCOPE("DOM");
+  // https://www.w3.org/TR/dom/#dom-node-textcontent
+  // 1. Let node be null.
+  scoped_refptr<Node> new_node;
+
+  // 2. If new value is not the empty string, set node to a new Text node whose
+  //    data is new value.
+  std::string new_text_content = text_content.value_or("");
+  if (!new_text_content.empty()) {
+    new_node = new Text(node_document(), new_text_content);
+  }
+  // 3. Replace all with node within the context object.
+  ReplaceAll(new_node);
+}
+
+bool Element::HasAttributes() const { return !attribute_map_.empty(); }
+
+base::Optional<std::string> Element::GetAttributeNS(
+    const std::string& namespace_uri, const std::string& name) const {
+  // TODO: Implement namespaces, if we actually need this.
+  NOTIMPLEMENTED();
+  SB_UNREFERENCED_PARAMETER(namespace_uri);
+  return GetAttribute(name);
+}
+
+bool Element::HasAttributeNS(const std::string& namespace_uri,
+                             const std::string& name) const {
+  // TODO: Implement namespaces, if we actually need this.
+  NOTIMPLEMENTED();
+  SB_UNREFERENCED_PARAMETER(namespace_uri);
+  return HasAttribute(name);
+}
+
+bool Element::Matches(const std::string& selectors,
+                             script::ExceptionState* exception_state) {
+  TRACK_MEMORY_SCOPE("DOM");
+  // Referenced from:
+  // https://dom.spec.whatwg.org/#dom-element-matches
+
+  // 1. Let s be the result of parse a selector from selectors.
+  cssom::CSSParser* css_parser =
+      this->node_document()->html_element_context()->css_parser();
+  scoped_refptr<cssom::CSSRule> css_rule =
+      css_parser->ParseRule(selectors + " {}", this->GetInlineSourceLocation());
+
+  // 2. If s is failure, throw a "SyntaxError" DOMException.
+  if (!css_rule) {
+    DOMException::Raise(dom::DOMException::kSyntaxErr, exception_state);
+    return false;
+  }
+  scoped_refptr<cssom::CSSStyleRule> css_style_rule =
+      css_rule->AsCSSStyleRule();
+  if (!css_style_rule) {
+    DOMException::Raise(dom::DOMException::kSyntaxErr, exception_state);
+    return false;
+  }
+
+  // 3. Return true if the result of match a selector against an element,
+  //    using s, element, and :scope element context object, returns success,
+  //    and false otherwise.
+  return MatchRuleAndElement(css_style_rule, this);
+}
+
+scoped_refptr<NamedNodeMap> Element::attributes() {
+  TRACK_MEMORY_SCOPE("DOM");
+  scoped_refptr<NamedNodeMap> named_node_map = named_node_map_.get();
+  if (!named_node_map) {
+    // Create a new instance and store a weak reference.
+    named_node_map = new NamedNodeMap(this);
+    named_node_map_ = named_node_map->AsWeakPtr();
+  }
+  return named_node_map;
+}
+
+const scoped_refptr<DOMTokenList>& Element::class_list() {
+  TRACK_MEMORY_SCOPE("DOM");
+  if (!class_list_) {
+    // Create a new instance and store a reference to it. Because of the
+    // negative performance impact of having to constantly recreate DomTokenList
+    // objects, they are being kept in memory.
+    class_list_ = new DOMTokenList(this, "class");
+  }
+  return class_list_;
+}
+
+// Algorithm for GetAttribute:
+//   https://www.w3.org/TR/2014/WD-dom-20140710/#dom-element-getattribute
+base::Optional<std::string> Element::GetAttribute(
+    const std::string& name) const {
+  TRACK_MEMORY_SCOPE("DOM");
+  Document* document = node_document();
+
+  // 1. If the context object is in the HTML namespace and its node document is
+  //    an HTML document, let name be converted to ASCII lowercase.
+  std::string attr_name = name;
+  if (document && !document->IsXMLDocument()) {
+    attr_name = base::ToLowerASCII(attr_name);
+  }
+
+  // 2. Return the value of the attribute in element's attribute list whose
+  //    namespace is namespace and local name is localName, if it has one, and
+  //    null otherwise.
+  switch (attr_name.size()) {
+    case 5:
+      if (attr_name == kStyleAttributeName) {
+        return GetStyleAttribute();
+      }
+    // fall-through if not style attribute name
+    default: {
+      AttributeMap::const_iterator iter = attribute_map_.find(attr_name);
+      if (iter != attribute_map_.end()) {
+        return iter->second;
+      }
+    }
+  }
+
+  return base::nullopt;
+}
+
+// Algorithm for SetAttribute:
+//   https://www.w3.org/TR/2014/WD-dom-20140710/#dom-element-setattribute
 // Algorithm for SetAttribute:
 //   https://www.w3.org/TR/2014/WD-dom-20140710/#dom-element-setattribute
 void Element::SetAttribute(const std::string& name, const std::string& value) {
@@ -1110,7 +1021,7 @@ void Element::SetAttribute(const std::string& name, const std::string& value) {
   switch (attr_name_ext.size()) {
     case 2:
       if (attr_name_ext == "id") {
-        id_attribute_ = base::CobToken(extended_value);
+        id_attribute_ = base::Token(extended_value);
       }
       break;
     case 5:
@@ -1175,7 +1086,7 @@ void Element::RemoveAttribute(const std::string& name) {
   switch (attr_name.size()) {
     case 2:
       if (attr_name == "id") {
-        id_attribute_ = base::CobToken("");
+        id_attribute_ = base::Token("");
       }
       break;
     case 5:
@@ -1192,13 +1103,12 @@ void Element::RemoveAttribute(const std::string& name) {
   if (document && GetRootNode() == document) {
     document->OnDOMMutation();
   }
-  OnRemoveAttribute(name);
-  //ClearAttrPairs(name);
+  OnRemoveAttribute(attr_name);
 }
 
 // Algorithm for tag_name:
 //   https://www.w3.org/TR/dom/#dom-element-tagname
-base::CobToken Element::tag_name() const {
+base::Token Element::tag_name() const {
   // 1. If context object's namespace prefix is not null, let qualified name be
   // its namespace prefix, followed by a ":" (U+003A), followed by its local
   // name. Otherwise, let qualified name be its local name.
@@ -1212,7 +1122,7 @@ base::CobToken Element::tag_name() const {
   }
 
   // 3. Return qualified name.
-  return base::CobToken(qualified_name);
+  return base::Token(qualified_name);
 }
 
 // Algorithm for HasAttribute:
@@ -1487,7 +1397,7 @@ bool Element::IsEmpty() {
 
 bool Element::HasFocus() {
   Document* document = node_document();
-  return document ? (document->active_element().get() == this) : false;
+  return document ? (document->active_element() == this) : false;
 }
 
 base::Optional<std::string> Element::GetStyleAttribute() const {
@@ -1516,15 +1426,73 @@ void Element::CollectStyleSheetsOfElementAndDescendants(
   }
 }
 
+void Element::RegisterIntersectionObserverRoot(IntersectionObserver* observer) {
+  EnsureIntersectionObserverModuleInitialized();
+  element_intersection_observer_module_->RegisterIntersectionObserverForRoot(
+      observer);
+}
+
+void Element::UnregisterIntersectionObserverRoot(
+    IntersectionObserver* observer) {
+  if (element_intersection_observer_module_) {
+    element_intersection_observer_module_
+        ->UnregisterIntersectionObserverForRoot(observer);
+  }
+}
+
+void Element::RegisterIntersectionObserverTarget(
+    IntersectionObserver* observer) {
+  EnsureIntersectionObserverModuleInitialized();
+  element_intersection_observer_module_->RegisterIntersectionObserverForTarget(
+      observer);
+}
+
+void Element::UnregisterIntersectionObserverTarget(
+    IntersectionObserver* observer) {
+  if (element_intersection_observer_module_) {
+    element_intersection_observer_module_
+        ->UnregisterIntersectionObserverForTarget(observer);
+  }
+}
+
+ElementIntersectionObserverModule::LayoutIntersectionObserverRootVector
+Element::GetLayoutIntersectionObserverRoots() {
+  ElementIntersectionObserverModule::LayoutIntersectionObserverRootVector
+      layout_roots;
+  if (element_intersection_observer_module_) {
+    layout_roots = element_intersection_observer_module_
+                       ->GetLayoutIntersectionObserverRootsForElement();
+  }
+  return layout_roots;
+}
+
+ElementIntersectionObserverModule::LayoutIntersectionObserverTargetVector
+Element::GetLayoutIntersectionObserverTargets() {
+  ElementIntersectionObserverModule::LayoutIntersectionObserverTargetVector
+      layout_targets;
+  if (element_intersection_observer_module_) {
+    layout_targets = element_intersection_observer_module_
+                         ->GetLayoutIntersectionObserverTargetsForElement();
+  }
+  return layout_targets;
+}
+
 scoped_refptr<HTMLElement> Element::AsHTMLElement() { return NULL; }
 
-Element::~Element() { --(element_count_log.Get().count); }
+// Explicitly defined because DOMTokenList is forward declared and held by
+// scoped_refptr in Element's header.
+Element::~Element() {
+  // Reset the ElementIntersectionObserverModule so that functions such as
+  // UnregisterIntersectionRoot/Target will not be called on deleted objects.
+  element_intersection_observer_module_.reset();
+}
 
 void Element::TraceMembers(script::Tracer* tracer) {
   Node::TraceMembers(tracer);
 
   tracer->Trace(named_node_map_);
   tracer->Trace(class_list_);
+  tracer->Trace(element_intersection_observer_module_);
 }
 
 bool Element::GetBooleanAttribute(const std::string& name) const {
@@ -1559,30 +1527,17 @@ std::string Element::GetDebugName() {
   return name;
 }
 
-/*void Element::ClearAttrPairs(const std::string &key) {
-  attrToCachedSet_.erase(key);
-}
-
-void Element::RegenAttrPairs(const std::string &key, const std::string &val) {
-  if(key.empty()) {
-    return;
-  }
-
-  base::StringPairs unsorted;
-  base::SplitStringIntoKeyValuePairs(
-    val,
-    ':', // Key-value delimiter
-    ';', // Key-value pair delimiter
-    &unsorted);
-
-  // remove duplicate keys
-  attrToCachedSet_[key] = key_set(unsorted.begin(), unsorted.end(), key_comp);
-  std::cout << "regenerated attrToTokens_ at " << key << std::endl;
-}*/
-
 void Element::HTMLParseError(const std::string& error) {
   // TODO: Report line / column number.
   LOG(WARNING) << "Error when parsing inner HTML or outer HTML: " << error;
+}
+
+void Element::EnsureIntersectionObserverModuleInitialized() {
+  if (!element_intersection_observer_module_) {
+    element_intersection_observer_module_ =
+        std::unique_ptr<ElementIntersectionObserverModule>(
+            new ElementIntersectionObserverModule(this));
+  }
 }
 
 }  // namespace dom

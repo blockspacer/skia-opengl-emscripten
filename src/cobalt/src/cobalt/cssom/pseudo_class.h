@@ -17,8 +17,7 @@
 
 #include "base/compiler_specific.h"
 
-#include "cobalt/base/cobalt_token.h"
-//#include "base/token.h"
+#include "cobalt/base/token.h"
 
 
 #include "cobalt/base/tokens.h"
@@ -40,7 +39,7 @@ class NotPseudoClass;
 //   https://www.w3.org/TR/selectors4/#pseudo-classes
 class PseudoClass : public SimpleSelector {
  public:
-  explicit PseudoClass(base::CobToken text)
+  explicit PseudoClass(base::Token text)
       : SimpleSelector(kPseudoClass,
                        base::Tokens::pseudo_class_selector_prefix(), text) {}
   ~PseudoClass() override {}

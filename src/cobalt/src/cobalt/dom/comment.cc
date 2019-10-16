@@ -34,7 +34,7 @@ Comment::Comment(script::EnvironmentSettings* env_settings,
 Comment::Comment(Document* document, const base::StringPiece& comment)
     : CharacterData(document, comment) {}
 
-base::CobToken Comment::node_name() const {
+base::Token Comment::node_name() const {
   return base::Tokens::comment_node_name();
 }
 

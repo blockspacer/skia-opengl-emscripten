@@ -12,16 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "cobalt/build/build_config.h"
+#include "cobalt/build/build_config.h" /// \note must be first include
 
 #include "cobalt/layout/topmost_event_target.h"
 
 #include "base/optional.h"
 #include "base/trace_event/trace_event.h"
-
-//#include "cobalt/base/token.h"
-#include "cobalt/base/cobalt_token.h"
-
+#include "cobalt/base/token.h"
 #include "cobalt/base/tokens.h"
 #include "cobalt/cssom/keyword_value.h"
 #include "cobalt/dom/document.h"
@@ -38,10 +35,10 @@
 #include "cobalt/math/vector2d.h"
 #include "cobalt/math/vector2d_f.h"
 
-#if defined(__EMSCRIPTEN__)
+/*#if defined(__EMSCRIPTEN__)
 #include "emscripten/emscripten.h"
 #include "emscripten/html5.h"
-#endif
+#endif*/
 
 namespace cobalt {
 namespace layout {
@@ -59,10 +56,10 @@ scoped_refptr<dom::HTMLElement> TopmostEventTarget::FindTopmostEventTarget(
   document->DoSynchronousLayout();
 
   html_element_ = document->html();
-  ConsiderElement(html_element_.get(), coordinate);
+  ConsiderElement(html_element_, coordinate);
   box_ = NULL;
   render_sequence_.clear();
-  document->SetIndicatedElement(html_element_.get());
+  document->SetIndicatedElement(html_element_);
   scoped_refptr<dom::HTMLElement> topmost_element;
   topmost_element.swap(html_element_);
   DCHECK(!html_element_);
@@ -72,7 +69,7 @@ scoped_refptr<dom::HTMLElement> TopmostEventTarget::FindTopmostEventTarget(
 namespace {
 
 LayoutBoxes* GetLayoutBoxesIfNotEmpty(dom::Element* element) {
-  dom::HTMLElement* html_element = element->AsHTMLElement().get();
+  dom::HTMLElement* html_element = element->AsHTMLElement();
   if (html_element && html_element->computed_style()) {
     dom::LayoutBoxes* dom_layout_boxes = html_element->layout_boxes();
     if (dom_layout_boxes &&
@@ -94,7 +91,7 @@ void TopmostEventTarget::ConsiderElement(dom::Element* element,
   math::Vector2dF element_coordinate(coordinate);
   LayoutBoxes* layout_boxes = GetLayoutBoxesIfNotEmpty(element);
   if (layout_boxes) {
-    const Box* box = layout_boxes->boxes().front().get();
+    const Box* box = layout_boxes->boxes().front();
     if (box->computed_style() && box->IsTransformed()) {
       // Early out if the transform cannot be applied. This can occur if the
       // transform matrix is not invertible.
@@ -124,7 +121,7 @@ void TopmostEventTarget::ConsiderBoxes(
                                        LayoutUnit(coordinate.y()));
   for (Boxes::const_iterator box_iterator = boxes.begin();
        box_iterator != boxes.end(); ++box_iterator) {
-    Box* box = (*box_iterator).get();
+    Box* box = *box_iterator;
     do {
       if (box->IsUnderCoordinate(layout_coordinate)) {
         Box::RenderSequence render_sequence = box->GetRenderSequence();
@@ -144,21 +141,9 @@ void SendStateChangeEvents(bool is_pointer_event,
                            scoped_refptr<dom::HTMLElement> previous_element,
                            scoped_refptr<dom::HTMLElement> target_element,
                            dom::PointerEventInit* event_init) {
-  //printf("SendStateChangeEvents is_pointer_event %d\n", is_pointer_event);
-
-  //if(previous_element) {
-  //  printf("SendStateChangeEvents previous_element %s\n", previous_element->tag_name().c_str());
-  //}
-
-  //if(target_element) {
-  //  printf("SendStateChangeEvents target_element %s\n", target_element->tag_name().c_str());
-  //}
-
   // Send enter/leave/over/out (status change) events when needed.
   if (previous_element != target_element) {
     const scoped_refptr<dom::Window>& view = event_init->view();
-
-    //printf("SendStateChangeEvents view->screen_x %f\n", view->screen_x());
 
     // The enter/leave status change events apply to all ancestors up to the
     // nearest common ancestor between the previous and current element.
@@ -245,7 +230,7 @@ void SendCompatibilityMappingMouseEvent(
   // Send compatibility mapping mouse event if needed.
   //   https://www.w3.org/TR/2015/REC-pointerevents-20150224/#compatibility-mapping-with-mouse-events
   bool has_compatibility_mouse_event = true;
-  base::CobToken type = pointer_event->type();
+  base::Token type = pointer_event->type();
   if (type == base::Tokens::pointerdown()) {
     // If the pointer event dispatched was pointerdown and the event was
     // canceled, then set the PREVENT MOUSE EVENT flag for this pointerType.
@@ -303,8 +288,6 @@ void InitializePointerEventInitFromEvent(
   event_init->set_buttons(mouse_event->buttons());
   event_init->set_related_target(mouse_event->related_target());
   if (pointer_event) {
-    //printf("InitializePointerEventInitFromEvent pointer_event x %f y %f\n", pointer_event->x(), pointer_event->y());
-
     // For PointerEventInit
     event_init->set_pointer_id(pointer_event->pointer_id());
     event_init->set_width(pointer_event->width());
@@ -320,10 +303,6 @@ void InitializePointerEventInitFromEvent(
 
 void TopmostEventTarget::MaybeSendPointerEvents(
     const scoped_refptr<dom::Event>& event) {
-  ///printf("TopmostEventTarget::MaybeSendPointerEvents\n");
-
-  //return; /// TODO
-
   TRACE_EVENT0("cobalt::layout",
                "TopmostEventTarget::MaybeSendPointerEvents()");
 
@@ -351,8 +330,6 @@ void TopmostEventTarget::MaybeSendPointerEvents(
   }
   dom::PointerState* pointer_state = view->document()->pointer_state();
   if (pointer_event) {
-    //printf("MaybeSendPointerEvents pointer_event x %f y %f\n", pointer_event->x(), pointer_event->y());
-
     pointer_state->SetActiveButtonsState(pointer_event->pointer_id(),
                                          pointer_event->buttons());
     is_touchpad_event = pointer_event->pointer_type() == "touchpad";
@@ -367,7 +344,7 @@ void TopmostEventTarget::MaybeSendPointerEvents(
         }
         if (html_element) {
           pointer_state->SetPendingPointerCaptureTargetOverride(
-              pointer_event->pointer_id(), html_element.get());
+              pointer_event->pointer_id(), html_element);
         }
       }
     } else {
@@ -387,22 +364,9 @@ void TopmostEventTarget::MaybeSendPointerEvents(
     target_element = FindTopmostEventTarget(view->document(), coordinate);
   }
 
-//#if defined(__EMSCRIPTEN__)
-//  if(target_element) {
-//    std::string str;
-//    str += "MaybeSendPointerEvents target_element: ";
-//    str += target_element->tag_name().c_str();
-//    EM_LOG(str.c_str());
-//  } else {
-//    EM_LOG("MaybeSendPointerEvents no target_element\n");
-//  }
-//#endif
-
   if (target_element) {
     target_element->DispatchEvent(event);
   }
-
-  //return; /// TODO
 
   if (pointer_event) {
     if (pointer_event->type() == base::Tokens::pointerup()) {
@@ -435,10 +399,8 @@ void TopmostEventTarget::MaybeSendPointerEvents(
     }
   }
 
-  //return; /// TODO
-
   scoped_refptr<dom::HTMLElement> previous_html_element(
-      previous_html_element_weak_.get());
+      previous_html_element_weak_);
 
   SendStateChangeEvents(pointer_event, previous_html_element, target_element,
                         &event_init);

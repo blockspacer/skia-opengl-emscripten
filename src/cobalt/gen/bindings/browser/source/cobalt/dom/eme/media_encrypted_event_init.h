@@ -39,8 +39,8 @@ namespace eme {
 
 class MediaEncryptedEventInit : public cobalt::dom::EventInit {
  public:
-  MediaEncryptedEventInit() {
-    init_data_type_ = "";
+  MediaEncryptedEventInit()
+    : init_data_type_("") {
   }
 
   MediaEncryptedEventInit(const MediaEncryptedEventInit& other)

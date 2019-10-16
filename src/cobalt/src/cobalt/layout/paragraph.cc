@@ -1,4 +1,4 @@
-﻿// Copyright 2015 The Cobalt Authors. All Rights Reserved.
+// Copyright 2015 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -200,7 +200,7 @@ int32 Paragraph::GetNextBreakPosition(int32 position,
                                       BreakPolicy break_policy) {
   icu::BreakIterator* break_iterator = GetBreakIterator(break_policy);
   if (!break_iterator) {
-    return position;
+    return position; /// \note custom
   }
   break_iterator->setText(unicode_text_);
   return break_iterator->following(position);
@@ -210,7 +210,7 @@ int32 Paragraph::GetPreviousBreakPosition(int32 position,
                                           BreakPolicy break_policy) {
   icu::BreakIterator* break_iterator = GetBreakIterator(break_policy);
   if (!break_iterator) {
-    return position;
+    return position; /// \note custom
   }
   break_iterator->setText(unicode_text_);
   return break_iterator->preceding(position);
@@ -219,7 +219,7 @@ int32 Paragraph::GetPreviousBreakPosition(int32 position,
 bool Paragraph::IsBreakPosition(int32 position, BreakPolicy break_policy) {
   icu::BreakIterator* break_iterator = GetBreakIterator(break_policy);
   if (!break_iterator) {
-    return false;
+    return position; /// \note custom
   }
   break_iterator->setText(unicode_text_);
   return break_iterator->isBoundary(position) == TRUE;
@@ -253,17 +253,11 @@ std::string Paragraph::RetrieveUtf8SubString(int32 start_position,
 }
 
 const base::char16* Paragraph::GetTextBuffer() const {
-/*#if defined(OS_EMSCRIPTEN)
+  //return unicode_text_.getBuffer();
   return reinterpret_cast<const uint16_t*>(unicode_text_.getBuffer());
-#else*/
-  // TODO https://bugs.chromium.org/p/v8/issues/detail?id=6487
-  return reinterpret_cast<const uint16_t*>(unicode_text_.getBuffer());
-//#endif
 }
 
 const icu::Locale& Paragraph::GetLocale() const { return locale_; }
-
-BaseDirection Paragraph::GetBaseDirection() const { return base_direction_; }
 
 BaseDirection Paragraph::GetDirectionalEmbeddingStackDirection() const {
   size_t stack_size = directional_embedding_stack_.size();
@@ -366,7 +360,8 @@ void Paragraph::FindIteratorBreakPosition(
   // position. Continue until TryIncludeSegmentWithinAvailableWidth() returns
   // false, indicating that no more segments can be included.
   if (!break_iterator) {
-    return;
+    NOTIMPLEMENTED_LOG_ONCE();
+    return; /// \note custom
   }
   break_iterator->setText(unicode_text_);
   for (int32 segment_end = break_iterator->following(start_position);
@@ -390,18 +385,12 @@ bool Paragraph::TryIncludeSegmentWithinAvailableWidth(
   // that causes the available width to be exceeded. The previous break position
   // is the last usable one. However, if overflow is allowed and no segment has
   // been found, then the first overflowing segment is accepted.
-/*#if defined(OS_EMSCRIPTEN)
-  LayoutUnit segment_width = LayoutUnit(used_font->GetTextWidth(
-      reinterpret_cast<const uint16_t*>(unicode_text_.getBuffer()) + segment_start, segment_end - segment_start,
-      IsRTL(segment_start), NULL));
-#else*/
   DCHECK(unicode_text_.getBuffer());
   // TODO https://bugs.chromium.org/p/v8/issues/detail?id=6487
   LayoutUnit segment_width = LayoutUnit(used_font->GetTextWidth(
-      reinterpret_cast<const uint16_t*>(unicode_text_.getBuffer()) + segment_start, segment_end - segment_start,
+      reinterpret_cast<const uint16_t*>(unicode_text_.getBuffer()) + segment_start,
+      segment_end - segment_start,
       IsRTL(segment_start), NULL));
-//#endif
-
   // If trailing white space is being collapsed, then it will not be included
   // when determining if the segment can fit within the available width.
   // However, it is still added to |break_width|, as it will impact the
@@ -461,16 +450,13 @@ void Paragraph::GenerateBidiLevelRuns() {
   if (U_FAILURE(error)) {
     return;
   }
-/*#if defined(OS_EMSCRIPTEN)
-  ubidi_setPara(ubidi.get(), reinterpret_cast<const uint16_t*>(unicode_text_.getBuffer()), unicode_text_.length(),
+
+  ubidi_setPara(ubidi.get(),
+                reinterpret_cast<const uint16_t*>(unicode_text_.getBuffer()),
+                unicode_text_.length(),
                 UBiDiLevel(ConvertBaseDirectionToBidiLevel(base_direction_)),
                 NULL, &error);
-#else*/
-  // TODO https://bugs.chromium.org/p/v8/issues/detail?id=6487
-  ubidi_setPara(ubidi.get(), reinterpret_cast<const uint16_t*>(unicode_text_.getBuffer()), unicode_text_.length(),
-                UBiDiLevel(ConvertBaseDirectionToBidiLevel(base_direction_)),
-                NULL, &error);
-//#endif
+
   if (U_FAILURE(error)) {
     return;
   }

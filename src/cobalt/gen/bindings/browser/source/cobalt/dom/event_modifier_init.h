@@ -38,21 +38,21 @@ namespace dom {
 
 class EventModifierInit : public cobalt::dom::UIEventInit {
  public:
-  EventModifierInit() {
-    ctrl_key_ = false;
-    shift_key_ = false;
-    alt_key_ = false;
-    meta_key_ = false;
-    modifier_alt_graph_ = false;
-    modifier_caps_lock_ = false;
-    modifier_fn_ = false;
-    modifier_fn_lock_ = false;
-    modifier_hyper_ = false;
-    modifier_num_lock_ = false;
-    modifier_scroll_lock_ = false;
-    modifier_super_ = false;
-    modifier_symbol_ = false;
-    modifier_symbol_lock_ = false;
+  EventModifierInit()
+    : ctrl_key_(false),
+      shift_key_(false),
+      alt_key_(false),
+      meta_key_(false),
+      modifier_alt_graph_(false),
+      modifier_caps_lock_(false),
+      modifier_fn_(false),
+      modifier_fn_lock_(false),
+      modifier_hyper_(false),
+      modifier_num_lock_(false),
+      modifier_scroll_lock_(false),
+      modifier_super_(false),
+      modifier_symbol_(false),
+      modifier_symbol_lock_(false) {
   }
 
   EventModifierInit(const EventModifierInit& other)

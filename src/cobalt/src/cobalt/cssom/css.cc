@@ -32,8 +32,8 @@ bool CSS::Supports(script::EnvironmentSettings* settings,
         base::polymorphic_downcast<dom::DOMSettings*>(settings);
     cssom::CSSParser* css_parser =
         dom_settings->window()->html_element_context()->css_parser();
-    return css_parser->ParsePropertyValue(
-        property, value, base::SourceLocation("[object CSS]", 1, 1)).get();
+    return (bool)css_parser->ParsePropertyValue(
+        property, value, base::SourceLocation("[object CSS]", 1, 1));
   }
 
   return false;

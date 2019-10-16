@@ -130,7 +130,7 @@ CspViolationReporter::CspViolationReporter(
 #if !defined(__EMSCRIPTEN__) && defined(__TODO__)
     post_sender_(post_sender),
 #endif
-      //message_loop_(base::MessageLoop::current()),
+      //message_loop_(base::MessageLoopCurrent::Get()),
       message_loop_(),
       document_(document) {}
 
@@ -139,7 +139,7 @@ CspViolationReporter::~CspViolationReporter() {}
 // https://www.w3.org/TR/CSP2/#violation-reports
 void CspViolationReporter::Report(const csp::ViolationInfo& violation_info) {
   /*DCHECK(message_loop_);
-  if (base::MessageLoop::current()->task_runner() !=
+  if (base::MessageLoopCurrent::Get()->task_runner() !=
       message_loop_->task_runner()) {
     message_loop_->task_runner()->PostTask(
         FROM_HERE, base::Bind(&CspViolationReporter::Report,

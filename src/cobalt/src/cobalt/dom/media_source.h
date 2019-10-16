@@ -49,10 +49,7 @@
 
 #include "base/memory/ref_counted.h"
 #include "base/memory/weak_ptr.h"
-
-#include "cobalt/base/cobalt_token.h"
-//#include "base/token.h"
-
+#include "cobalt/base/token.h"
 #include "cobalt/dom/audio_track.h"
 #include "cobalt/dom/event_queue.h"
 #include "cobalt/dom/event_target.h"
@@ -91,7 +88,8 @@ class MediaSource : public EventTarget {
   double duration(script::ExceptionState* exception_state) const;
   void set_duration(double duration, script::ExceptionState* exception_state);
   scoped_refptr<SourceBuffer> AddSourceBuffer(
-      const std::string& type, script::ExceptionState* exception_state);
+      script::EnvironmentSettings* settings, const std::string& type,
+      script::ExceptionState* exception_state);
   void RemoveSourceBuffer(const scoped_refptr<SourceBuffer>& source_buffer,
                           script::ExceptionState* exception_state);
 
@@ -130,7 +128,7 @@ class MediaSource : public EventTarget {
  private:
   void SetReadyState(MediaSourceReadyState ready_state);
   bool IsUpdating() const;
-  void ScheduleEvent(base::CobToken event_name);
+  void ScheduleEvent(base::Token event_name);
 
   media::ChunkDemuxer* chunk_demuxer_;
   MediaSourceReadyState ready_state_;

@@ -34,7 +34,7 @@ WheelEvent::WheelEvent(const std::string& type, const WheelEventInit& init_dict)
       delta_z_(init_dict.delta_z()),
       delta_mode_(init_dict.delta_mode()) {}
 
-WheelEvent::WheelEvent(base::CobToken type, const scoped_refptr<Window>& view,
+WheelEvent::WheelEvent(base::Token type, const scoped_refptr<Window>& view,
                        const WheelEventInit& init_dict)
     : MouseEvent(type, kBubbles, kCancelable, view, init_dict),
       delta_x_(init_dict.delta_x()),

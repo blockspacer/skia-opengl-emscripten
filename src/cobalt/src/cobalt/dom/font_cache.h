@@ -1,4 +1,4 @@
-﻿// Copyright 2015 The Cobalt Authors. All Rights Reserved.
+// Copyright 2015 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@
 #include <utility>
 
 #include "base/callback.h"
-//#include "base/containers/hash_tables.h"
+#include "base/containers/hash_tables.h"
 #include <map>
 #include "base/threading/thread_checker.h"
 #if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
@@ -68,13 +68,8 @@ class FontCache {
             cached_remote_typeface,
         const base::Closure& font_load_event_callback);
 
-    bool HasActiveRequestTimer() const {
-      return request_timer_ != NULL;
-      //return false;
-    }
-    void ClearRequestTimer() {
-      request_timer_.reset();
-    }
+    bool HasActiveRequestTimer() const { return request_timer_ != NULL; }
+    void ClearRequestTimer() { request_timer_.reset(); }
 
    private:
     // The request timer delay, after which the requesting font list's fallback
@@ -98,7 +93,6 @@ class FontCache {
     // the text while waiting for it to load is considered non-conformant
     // behavior by the spec, so after the timer expires, the fallback font
     // becomes visible (https://www.w3.org/TR/css3-fonts/#font-face-loading).
-    ///
     std::unique_ptr<base::OneShotTimer> request_timer_;
   };
 
@@ -160,25 +154,25 @@ class FontCache {
   };
 
   // Font-face related
-  typedef std::map<std::string, FontFaceStyleSet> FontFaceMap;
-  typedef std::map<GURL, scoped_refptr<RequestedRemoteTypefaceInfo> >
+  typedef base::hash_map<std::string, FontFaceStyleSet> FontFaceMap;
+  typedef base::hash_map<GURL, scoped_refptr<RequestedRemoteTypefaceInfo> >
       RequestedRemoteTypefaceMap;
 
   // Font list related
-  typedef std::map<FontListKey, FontListInfo> FontListMap;
+  typedef base::hash_map<FontListKey, FontListInfo> FontListMap;
 
   // Typeface/Font related
   typedef base::small_map<
-      std::map<render_tree::TypefaceId, scoped_refptr<render_tree::Typeface> >,
+      base::hash_map<render_tree::TypefaceId, scoped_refptr<render_tree::Typeface> >,
       7>
       TypefaceMap;
-  typedef std::map<FontKey, FontInfo> FontMap;
-  typedef std::set<InactiveFontKey> InactiveFontSet;
+  typedef base::hash_map<FontKey, FontInfo> FontMap;
+  typedef base::hash_set<InactiveFontKey> InactiveFontSet;
 
   // Character fallback related
-  typedef std::map<int32, scoped_refptr<render_tree::Typeface> >
+  typedef base::hash_map<int32, scoped_refptr<render_tree::Typeface> >
       CharacterFallbackTypefaceMap;
-  typedef std::map<CharacterFallbackKey, CharacterFallbackTypefaceMap>
+  typedef base::hash_map<CharacterFallbackKey, CharacterFallbackTypefaceMap>
       CharacterFallbackTypefaceMaps;
 
   FontCache(render_tree::ResourceProvider** resource_provider,
@@ -246,7 +240,7 @@ class FontCache {
                      bool is_rtl, FontList* font_list,
                      render_tree::FontVector* maybe_used_fonts);
 
- ///private:
+ ///\ todo private:
  public:
   render_tree::ResourceProvider* resource_provider() const {
     return *resource_provider_;
@@ -336,7 +330,7 @@ class FontCache {
   base::TimeTicks last_inactive_process_time_;
 
   // Thread checker used to verify safe thread usage of the font cache.
-  base::ThreadChecker thread_checker_;
+  THREAD_CHECKER(thread_checker_);
 
   // Font cache's corresponding document's location object. It can provide
   // document's origin.

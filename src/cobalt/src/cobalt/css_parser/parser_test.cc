@@ -1260,6 +1260,8 @@ TEST_F(ParserTest, ParsesLonghandPropertyKeywords) {
       "inherit", "initial", "bold", nullptr,
     "height",
       "inherit", "initial", "auto", nullptr,
+    "intersection-observer-root-margin",
+      nullptr,
     "justify-content",
       "inherit", "initial", "flex-start", "flex-end", "center", "space-between",
       "space-around", nullptr,
@@ -5048,8 +5050,6 @@ TEST_F(ParserTest, ParsesFlexOneTwo) {
   scoped_refptr<cssom::CSSDeclaredStyleData> style =
       parser_.ParseStyleDeclarationList("flex: 1 2;", source_location_);
 
-  // The keyword none expands to 0 0 auto.
-  //   https://www.w3.org/TR/css-flexbox-1/#valdef-flex-none
   ASSERT_TRUE(style->IsDeclared(cssom::kFlexGrowProperty));
   scoped_refptr<cssom::NumberValue> flex_grow =
       dynamic_cast<cssom::NumberValue*>(
@@ -5064,17 +5064,20 @@ TEST_F(ParserTest, ParsesFlexOneTwo) {
   ASSERT_TRUE(flex_shrink);
   EXPECT_FLOAT_EQ(2, flex_shrink->value());
 
+  // When omitted from the flex shorthand, flex-basis specified value is 0.
+  //   https://www.w3.org/TR/css-flexbox-1/#valdef-flex-flex-basis
   ASSERT_TRUE(style->IsDeclared(cssom::kFlexBasisProperty));
-  EXPECT_EQ(cssom::KeywordValue::GetInitial(),
-            style->GetPropertyValue(cssom::kFlexBasisProperty));
+  scoped_refptr<cssom::LengthValue> flex_basis =
+      dynamic_cast<cssom::LengthValue*>(
+          style->GetPropertyValue(cssom::kFlexBasisProperty).get());
+  ASSERT_TRUE(flex_basis);
+  EXPECT_FLOAT_EQ(0, flex_basis->value());
 }
 
 TEST_F(ParserTest, ParsesFlexOneTwoZero) {
   scoped_refptr<cssom::CSSDeclaredStyleData> style =
       parser_.ParseStyleDeclarationList("flex: 1 2 0;", source_location_);
 
-  // The keyword none expands to 0 0 auto.
-  //   https://www.w3.org/TR/css-flexbox-1/#valdef-flex-none
   ASSERT_TRUE(style->IsDeclared(cssom::kFlexGrowProperty));
   scoped_refptr<cssom::NumberValue> flex_grow =
       dynamic_cast<cssom::NumberValue*>(
@@ -5101,8 +5104,6 @@ TEST_F(ParserTest, ParsesFlexZeroBasis) {
   scoped_refptr<cssom::CSSDeclaredStyleData> style =
       parser_.ParseStyleDeclarationList("flex: 0 100px;", source_location_);
 
-  // The keyword none expands to 0 0 auto.
-  //   https://www.w3.org/TR/css-flexbox-1/#valdef-flex-none
   ASSERT_TRUE(style->IsDeclared(cssom::kFlexGrowProperty));
   scoped_refptr<cssom::NumberValue> flex_grow =
       dynamic_cast<cssom::NumberValue*>(
@@ -5156,8 +5157,6 @@ TEST_F(ParserTest, ParsesFlexAbsoluteBasisZero) {
   scoped_refptr<cssom::CSSDeclaredStyleData> style =
       parser_.ParseStyleDeclarationList("flex: 100px 0;", source_location_);
 
-  // The keyword none expands to 0 0 auto.
-  //   https://www.w3.org/TR/css-flexbox-1/#valdef-flex-none
   ASSERT_TRUE(style->IsDeclared(cssom::kFlexGrowProperty));
   scoped_refptr<cssom::NumberValue> flex_grow =
       dynamic_cast<cssom::NumberValue*>(
@@ -5182,8 +5181,6 @@ TEST_F(ParserTest, ParsesFlexAbsoluteBasisOneTwo) {
   scoped_refptr<cssom::CSSDeclaredStyleData> style =
       parser_.ParseStyleDeclarationList("flex: 100px 1 2;", source_location_);
 
-  // The keyword none expands to 0 0 auto.
-  //   https://www.w3.org/TR/css-flexbox-1/#valdef-flex-none
   ASSERT_TRUE(style->IsDeclared(cssom::kFlexGrowProperty));
   scoped_refptr<cssom::NumberValue> flex_grow =
       dynamic_cast<cssom::NumberValue*>(
@@ -5949,6 +5946,153 @@ TEST_F(ParserTest, ParsesHeight) {
   EXPECT_EQ(cssom::kPixelsUnit, height->unit());
 }
 
+TEST_F(ParserTest, ParsesIntersectionObserverRootMarginWith1Value) {
+  scoped_refptr<cssom::CSSDeclaredStyleData> style =
+      parser_.ParseStyleDeclarationList(
+          "intersection-observer-root-margin: 10px;", source_location_);
+
+  scoped_refptr<cssom::PropertyListValue> root_margin_list =
+      dynamic_cast<cssom::PropertyListValue*>(
+          style
+              ->GetPropertyValue(cssom::kIntersectionObserverRootMarginProperty)
+              .get());
+  ASSERT_TRUE(root_margin_list);
+  EXPECT_EQ(4, root_margin_list->value().size());
+
+  scoped_refptr<cssom::LengthValue> root_margin_top =
+      dynamic_cast<cssom::LengthValue*>(root_margin_list->value()[0].get());
+  ASSERT_TRUE(root_margin_top);
+  EXPECT_FLOAT_EQ(10, root_margin_top->value());
+  EXPECT_EQ(cssom::kPixelsUnit, root_margin_top->unit());
+
+  scoped_refptr<cssom::LengthValue> root_margin_right =
+      dynamic_cast<cssom::LengthValue*>(root_margin_list->value()[1].get());
+  ASSERT_TRUE(root_margin_right);
+  EXPECT_FLOAT_EQ(10, root_margin_right->value());
+  EXPECT_EQ(cssom::kPixelsUnit, root_margin_right->unit());
+
+  scoped_refptr<cssom::LengthValue> root_margin_bottom =
+      dynamic_cast<cssom::LengthValue*>(root_margin_list->value()[2].get());
+  ASSERT_TRUE(root_margin_bottom);
+  EXPECT_FLOAT_EQ(10, root_margin_bottom->value());
+  EXPECT_EQ(cssom::kPixelsUnit, root_margin_bottom->unit());
+
+  scoped_refptr<cssom::LengthValue> root_margin_left =
+      dynamic_cast<cssom::LengthValue*>(root_margin_list->value()[3].get());
+  ASSERT_TRUE(root_margin_left);
+  EXPECT_FLOAT_EQ(10, root_margin_left->value());
+  EXPECT_EQ(cssom::kPixelsUnit, root_margin_left->unit());
+}
+
+TEST_F(ParserTest, ParsesIntersectionObserverRootMarginWith2Values) {
+  scoped_refptr<cssom::CSSDeclaredStyleData> style =
+      parser_.ParseStyleDeclarationList(
+          "intersection-observer-root-margin: 5px 20%;", source_location_);
+
+  scoped_refptr<cssom::PropertyListValue> root_margin_list =
+      dynamic_cast<cssom::PropertyListValue*>(
+          style
+              ->GetPropertyValue(cssom::kIntersectionObserverRootMarginProperty)
+              .get());
+  ASSERT_TRUE(root_margin_list);
+  EXPECT_EQ(4, root_margin_list->value().size());
+
+  scoped_refptr<cssom::LengthValue> root_margin_top =
+      dynamic_cast<cssom::LengthValue*>(root_margin_list->value()[0].get());
+  ASSERT_TRUE(root_margin_top);
+  EXPECT_FLOAT_EQ(5, root_margin_top->value());
+  EXPECT_EQ(cssom::kPixelsUnit, root_margin_top->unit());
+
+  scoped_refptr<cssom::PercentageValue> root_margin_right =
+      dynamic_cast<cssom::PercentageValue*>(root_margin_list->value()[1].get());
+  ASSERT_TRUE(root_margin_right);
+  EXPECT_FLOAT_EQ(0.2f, root_margin_right->value());
+
+  scoped_refptr<cssom::LengthValue> root_margin_bottom =
+      dynamic_cast<cssom::LengthValue*>(root_margin_list->value()[2].get());
+  ASSERT_TRUE(root_margin_bottom);
+  EXPECT_FLOAT_EQ(5, root_margin_bottom->value());
+  EXPECT_EQ(cssom::kPixelsUnit, root_margin_bottom->unit());
+
+  scoped_refptr<cssom::PercentageValue> root_margin_left =
+      dynamic_cast<cssom::PercentageValue*>(root_margin_list->value()[3].get());
+  ASSERT_TRUE(root_margin_left);
+  EXPECT_FLOAT_EQ(0.2f, root_margin_left->value());
+}
+
+TEST_F(ParserTest, ParsesIntersectionObserverRootMarginWith3Values) {
+  scoped_refptr<cssom::CSSDeclaredStyleData> style =
+      parser_.ParseStyleDeclarationList(
+          "intersection-observer-root-margin: 15% 15px 30%;", source_location_);
+
+  scoped_refptr<cssom::PropertyListValue> root_margin_list =
+      dynamic_cast<cssom::PropertyListValue*>(
+          style
+              ->GetPropertyValue(cssom::kIntersectionObserverRootMarginProperty)
+              .get());
+  ASSERT_TRUE(root_margin_list);
+  EXPECT_EQ(4, root_margin_list->value().size());
+
+  scoped_refptr<cssom::PercentageValue> root_margin_top =
+      dynamic_cast<cssom::PercentageValue*>(root_margin_list->value()[0].get());
+  ASSERT_TRUE(root_margin_top);
+  EXPECT_FLOAT_EQ(0.15f, root_margin_top->value());
+
+  scoped_refptr<cssom::LengthValue> root_margin_right =
+      dynamic_cast<cssom::LengthValue*>(root_margin_list->value()[1].get());
+  ASSERT_TRUE(root_margin_right);
+  EXPECT_FLOAT_EQ(15, root_margin_right->value());
+  EXPECT_EQ(cssom::kPixelsUnit, root_margin_right->unit());
+
+  scoped_refptr<cssom::PercentageValue> root_margin_bottom =
+      dynamic_cast<cssom::PercentageValue*>(root_margin_list->value()[2].get());
+  ASSERT_TRUE(root_margin_bottom);
+  EXPECT_FLOAT_EQ(0.3f, root_margin_bottom->value());
+
+  scoped_refptr<cssom::LengthValue> root_margin_left =
+      dynamic_cast<cssom::LengthValue*>(root_margin_list->value()[3].get());
+  ASSERT_TRUE(root_margin_left);
+  EXPECT_FLOAT_EQ(15, root_margin_left->value());
+  EXPECT_EQ(cssom::kPixelsUnit, root_margin_left->unit());
+}
+
+TEST_F(ParserTest, ParsesIntersectionObserverRootMarginWith4Values) {
+  scoped_refptr<cssom::CSSDeclaredStyleData> style =
+      parser_.ParseStyleDeclarationList(
+          "intersection-observer-root-margin: 20px 5% 10% 15px;",
+          source_location_);
+
+  scoped_refptr<cssom::PropertyListValue> root_margin_list =
+      dynamic_cast<cssom::PropertyListValue*>(
+          style
+              ->GetPropertyValue(cssom::kIntersectionObserverRootMarginProperty)
+              .get());
+  ASSERT_TRUE(root_margin_list);
+  EXPECT_EQ(4, root_margin_list->value().size());
+
+  scoped_refptr<cssom::LengthValue> root_margin_top =
+      dynamic_cast<cssom::LengthValue*>(root_margin_list->value()[0].get());
+  ASSERT_TRUE(root_margin_top);
+  EXPECT_FLOAT_EQ(20, root_margin_top->value());
+  EXPECT_EQ(cssom::kPixelsUnit, root_margin_top->unit());
+
+  scoped_refptr<cssom::PercentageValue> root_margin_right =
+      dynamic_cast<cssom::PercentageValue*>(root_margin_list->value()[1].get());
+  ASSERT_TRUE(root_margin_right);
+  EXPECT_FLOAT_EQ(0.05f, root_margin_right->value());
+
+  scoped_refptr<cssom::PercentageValue> root_margin_bottom =
+      dynamic_cast<cssom::PercentageValue*>(root_margin_list->value()[2].get());
+  ASSERT_TRUE(root_margin_bottom);
+  EXPECT_FLOAT_EQ(0.1f, root_margin_bottom->value());
+
+  scoped_refptr<cssom::LengthValue> root_margin_left =
+      dynamic_cast<cssom::LengthValue*>(root_margin_list->value()[3].get());
+  ASSERT_TRUE(root_margin_left);
+  EXPECT_FLOAT_EQ(15, root_margin_left->value());
+  EXPECT_EQ(cssom::kPixelsUnit, root_margin_left->unit());
+}
+
 TEST_F(ParserTest, ParsesLineHeightInEm) {
   scoped_refptr<cssom::CSSDeclaredStyleData> style =
       parser_.ParseStyleDeclarationList("line-height: 1.2em;",
@@ -6197,6 +6341,20 @@ TEST_F(ParserTest, ParsesMinHeight) {
   EXPECT_EQ(cssom::kPixelsUnit, min_height->unit());
 }
 
+TEST_F(ParserTest, ParsesMinHeightAuto) {
+  // 'auto' is also the initial value for min-height in CSS3. It is set to a
+  // length value first, to ensure that the property does not have the initial
+  // value for the test.
+  //   https://www.w3.org/TR/css-sizing-3/#min-size-properties
+  scoped_refptr<cssom::CSSDeclaredStyleData> style =
+      parser_.ParseStyleDeclarationList("min-height: 100px; min-height: auto;",
+                                        source_location_);
+
+  ASSERT_TRUE(style->IsDeclared(cssom::kMinHeightProperty));
+  EXPECT_EQ(cssom::KeywordValue::GetAuto(),
+            style->GetPropertyValue(cssom::kMinHeightProperty));
+}
+
 TEST_F(ParserTest, ParsesMinWidth) {
   scoped_refptr<cssom::CSSDeclaredStyleData> style =
       parser_.ParseStyleDeclarationList("min-width: 100px;", source_location_);
@@ -6208,6 +6366,20 @@ TEST_F(ParserTest, ParsesMinWidth) {
   ASSERT_TRUE(min_width);
   EXPECT_FLOAT_EQ(100, min_width->value());
   EXPECT_EQ(cssom::kPixelsUnit, min_width->unit());
+}
+
+TEST_F(ParserTest, ParsesMinWidthAuto) {
+  // 'auto' is also the initial value for min-width in CSS3. It is set to a
+  // length value first, to ensure that the property does not have the initial
+  // value for the test.
+  //   https://www.w3.org/TR/css-sizing-3/#min-size-properties
+  scoped_refptr<cssom::CSSDeclaredStyleData> style =
+      parser_.ParseStyleDeclarationList("min-width: 100px; min-width: auto;",
+                                        source_location_);
+
+  ASSERT_TRUE(style->IsDeclared(cssom::kMinWidthProperty));
+  EXPECT_EQ(cssom::KeywordValue::GetAuto(),
+            style->GetPropertyValue(cssom::kMinWidthProperty));
 }
 
 TEST_F(ParserTest, ParsesOpacity) {

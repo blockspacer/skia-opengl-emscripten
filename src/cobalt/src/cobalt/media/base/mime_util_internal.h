@@ -10,7 +10,7 @@
 #include <vector>
 
 #include "base/basictypes.h"
-//#include "base/containers/hash_tables.h"
+#include "base/containers/hash_tables.h"
 #include <map>
 #include <set>
 #include "cobalt/media/base/media_export.h"

@@ -16,10 +16,13 @@
 // This header file is deprecated. Use the corresponding C++11 type
 // instead. https://crbug.com/576864
 
+#if defined(OS_STARBOARD)
+#include "starboard/configuration.h"
+#endif // OS_STARBOARD
+
 // Chromium has moved away from compiler specific hash methods and instead uses
 // std::hashes unconditionally. Starboard sadly does not guarantee std::hash.
-#if defined(OS_STARBOARD) || defined(OS_EMSCRIPTEN)
-#include "starboard/configuration.h"
+#if defined(OS_STARBOARD) || defined(OS_EMSCRIPTEN) || 1 // TODO
 //#if SB_HAS(STD_UNORDERED_HASH)
 #define BASE_HASH_DEFINE_LONG_LONG_HASHES 0
 #define BASE_HASH_DEFINE_STRING_HASHES 0

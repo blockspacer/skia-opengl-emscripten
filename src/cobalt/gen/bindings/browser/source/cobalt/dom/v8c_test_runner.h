@@ -21,10 +21,8 @@
 #ifndef V8cTestRunner_h
 #define V8cTestRunner_h
 
-
-// This must be included above the check for ENABLE_TEST_RUNNER, since
-// ENABLE_TEST_RUNNER may be defined within.
 #include "cobalt/bindings/shared/idl_conditional_macros.h"
+
 
 #if defined(ENABLE_TEST_RUNNER)
 

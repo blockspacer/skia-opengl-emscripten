@@ -26,8 +26,7 @@
 #include "cobalt/base/compiler.h"
 #include "cobalt/base/enable_if.h"
 
-#include "cobalt/base/cobalt_token.h"
-//#include "base/token.h"
+#include "cobalt/base/token.h"
 
 #include "cobalt/script/mozjs-45/mozjs_array_buffer.h"
 #include "cobalt/script/mozjs-45/mozjs_array_buffer_view.h"
@@ -124,7 +123,7 @@ inline void ToJSValue(JSContext* context, const std::vector<uint8_t>& in_data,
 }
 
 // base::Token -> JSValue
-inline void ToJSValue(JSContext* context, const base::CobToken& token,
+inline void ToJSValue(JSContext* context, const base::Token& token,
                       JS::MutableHandleValue out_value) {
   TRACK_MEMORY_SCOPE("Javascript");
   ToJSValue(context, std::string(token.c_str()), out_value);

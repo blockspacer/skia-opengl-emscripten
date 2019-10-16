@@ -38,11 +38,11 @@ namespace dom {
 
 class DeviceOrientationEventInit : public cobalt::dom::EventInit {
  public:
-  DeviceOrientationEventInit() {
-    alpha_ = base::nullopt;
-    beta_ = base::nullopt;
-    gamma_ = base::nullopt;
-    absolute_ = false;
+  DeviceOrientationEventInit()
+    : alpha_(base::nullopt),
+      beta_(base::nullopt),
+      gamma_(base::nullopt),
+      absolute_(false) {
   }
 
   DeviceOrientationEventInit(const DeviceOrientationEventInit& other)

@@ -63,7 +63,7 @@ void SelectorTree::RemoveRule(CSSStyleRule* rule) {
     Node* node = GetOrCreateNodeForComplexSelector((*it)->AsComplexSelector());
     for (Rules::iterator remove_it = node->rules().begin();
          remove_it != node->rules().end(); ++remove_it) {
-      if (remove_it->get() == rule) {
+      if ((*remove_it).get() == rule) {
         node->rules().erase(remove_it);
         break;
       }

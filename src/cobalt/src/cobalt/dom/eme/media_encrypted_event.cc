@@ -22,12 +22,12 @@ namespace eme {
 
 // See step 5 in https://www.w3.org/TR/encrypted-media/#initdata-encountered.
 MediaEncryptedEvent::MediaEncryptedEvent(const std::string& type)
-    : Event(base::CobToken(type), kNotBubbles, kNotCancelable) {}
+    : Event(base::Token(type), kNotBubbles, kNotCancelable) {}
 
 // See step 5 in https://www.w3.org/TR/encrypted-media/#initdata-encountered.
 MediaEncryptedEvent::MediaEncryptedEvent(
     const std::string& type, const MediaEncryptedEventInit& event_init_dict)
-    : Event(base::CobToken(type), kNotBubbles, kNotCancelable),
+    : Event(base::Token(type), kNotBubbles, kNotCancelable),
       init_data_type_(event_init_dict.init_data_type()) {
   if (event_init_dict.init_data() && !event_init_dict.init_data()->IsNull()) {
     init_data_reference_.reset(

@@ -38,11 +38,11 @@ namespace dom {
 
 class WheelEventInit : public cobalt::dom::MouseEventInit {
  public:
-  WheelEventInit() {
-    delta_x_ = 0;
-    delta_y_ = 0;
-    delta_z_ = 0;
-    delta_mode_ = 0;
+  WheelEventInit()
+    : delta_x_(0),
+      delta_y_(0),
+      delta_z_(0),
+      delta_mode_(0) {
   }
 
   WheelEventInit(const WheelEventInit& other)

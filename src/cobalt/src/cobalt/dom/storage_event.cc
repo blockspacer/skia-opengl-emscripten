@@ -14,9 +14,7 @@
 
 #include "cobalt/dom/storage_event.h"
 
-//#include "cobalt/base/token.h"
-#include "cobalt/base/cobalt_token.h"
-
+#include "cobalt/base/token.h"
 #include "cobalt/base/tokens.h"
 #include "cobalt/dom/storage.h"
 

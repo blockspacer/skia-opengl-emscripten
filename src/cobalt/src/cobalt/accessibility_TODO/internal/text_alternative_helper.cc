@@ -26,7 +26,7 @@ namespace cobalt {
 namespace accessibility {
 namespace internal {
 namespace {
-// Helper class that inserts a base::CobToken into a base::hash_set during the
+// Helper class that inserts a base::Token into a base::hash_set during the
 // class's lifetime.
 class ScopedIdSetMember {
  public:
@@ -40,8 +40,8 @@ class ScopedIdSetMember {
   // set using this helper class, so that the ID will be popped back out of the
   // set which allows us to re-visit that element in a non-recursive manner, if
   // necessary.
-  ScopedIdSetMember(base::hash_set<base::CobToken>* hash_set,
-                    const base::CobToken& token)
+  ScopedIdSetMember(base::hash_set<base::Token>* hash_set,
+                    const base::Token& token)
       : hash_set_(hash_set) {
     // Ignore empty tokens.
     if (SbStringGetLength(token.c_str()) > 0) {
@@ -60,8 +60,8 @@ class ScopedIdSetMember {
   }
 
  private:
-  base::hash_set<base::CobToken>* hash_set_;
-  std::pair<base::hash_set<base::CobToken>::iterator, bool> iterator_pair_;
+  base::hash_set<base::Token>* hash_set_;
+  std::pair<base::hash_set<base::Token>::iterator, bool> iterator_pair_;
 };
 
 // Look up an element whose id is |id| in the document that |element| is in.
@@ -120,7 +120,7 @@ void TextAlternativeHelper::AppendTextAlternative(
   // recursive aria-labelledby declaration.
   if (!in_labelled_by_or_described_by_) {
     if (TryAppendFromLabelledByOrDescribedBy(element,
-                                             base::CobTokens::aria_labelledby())) {
+                                             base::Tokens::aria_labelledby())) {
       return;
     }
   }
@@ -189,7 +189,7 @@ void TextAlternativeHelper::AppendTextAlternative(
   // for the referenced nodes are computed using a number of methods.
   if (!in_labelled_by_or_described_by_) {
     TryAppendFromLabelledByOrDescribedBy(element,
-                                         base::CobTokens::aria_describedby());
+                                         base::Tokens::aria_describedby());
   }
 }
 
@@ -203,15 +203,15 @@ bool TextAlternativeHelper::IsAriaHidden(
     return false;
   }
   base::Optional<std::string> aria_hidden_attribute =
-      element->GetAttribute(base::CobTokens::aria_hidden().c_str());
-  if (aria_hidden_attribute.value_or("") == base::CobTokens::true_token()) {
+      element->GetAttribute(base::Tokens::aria_hidden().c_str());
+  if (aria_hidden_attribute.value_or("") == base::Tokens::true_token()) {
     return true;
   }
   return IsAriaHidden(element->parent_element());
 }
 
 bool TextAlternativeHelper::TryAppendFromLabelledByOrDescribedBy(
-    const scoped_refptr<dom::Element>& element, const base::CobToken& token) {
+    const scoped_refptr<dom::Element>& element, const base::Token& token) {
   DCHECK(!in_labelled_by_or_described_by_);
   base::Optional<std::string> attributes = element->GetAttribute(token.c_str());
   // If aria-labelledby is empty or undefined, the aria-label attribute ... is
@@ -223,7 +223,7 @@ bool TextAlternativeHelper::TryAppendFromLabelledByOrDescribedBy(
   if (!ids.empty()) {
     in_labelled_by_or_described_by_ = true;
     for (int i = 0; i < ids.size(); ++i) {
-      if (visited_element_ids_.find(base::CobToken(ids[i])) !=
+      if (visited_element_ids_.find(base::Token(ids[i])) !=
           visited_element_ids_.end()) {
         DLOG(WARNING) << "Skipping reference to ID: " << ids[i]
                       << " to prevent reference loop.";
@@ -248,7 +248,7 @@ bool TextAlternativeHelper::TryAppendFromLabelledByOrDescribedBy(
 bool TextAlternativeHelper::TryAppendFromLabel(
     const scoped_refptr<dom::Element>& element) {
   base::Optional<std::string> label_attribute =
-      element->GetAttribute(base::CobTokens::aria_label().c_str());
+      element->GetAttribute(base::Tokens::aria_label().c_str());
   return AppendTextIfNonEmpty(label_attribute.value_or(""));
 }
 
@@ -260,7 +260,7 @@ bool TextAlternativeHelper::TryAppendFromAltProperty(
   if (element->AsHTMLElement() &&
       element->AsHTMLElement()->AsHTMLImageElement()) {
     base::Optional<std::string> alt_attribute =
-        element->GetAttribute(base::CobTokens::alt().c_str());
+        element->GetAttribute(base::Tokens::alt().c_str());
     if (alt_attribute) {
       return AppendTextIfNonEmpty(*alt_attribute);
     }

@@ -17,8 +17,7 @@
 
 #include "base/compiler_specific.h"
 
-#include "cobalt/base/cobalt_token.h"
-//#include "base/token.h"
+#include "cobalt/base/token.h"
 
 
 #include "cobalt/cssom/combinator.h"
@@ -43,7 +42,7 @@ class UniversalSelector;
 //   https://www.w3.org/TR/selectors4/#simple
 class SimpleSelector : public Selector {
  public:
-  SimpleSelector(SimpleSelectorType type, base::CobToken prefix, base::CobToken text)
+  SimpleSelector(SimpleSelectorType type, base::Token prefix, base::Token text)
       : type_(type), prefix_(prefix), text_(text) {}
   ~SimpleSelector() override {}
 
@@ -56,8 +55,8 @@ class SimpleSelector : public Selector {
   SimpleSelectorType type() const { return type_; }
 
   // Returns token representation of the selector.
-  base::CobToken prefix() const { return prefix_; }
-  base::CobToken text() const { return text_; }
+  base::Token prefix() const { return prefix_; }
+  base::Token text() const { return text_; }
 
   virtual PseudoElement* AsPseudoElement() { return NULL; }
   virtual UniversalSelector* AsUniversalSelector() { return NULL; }
@@ -77,8 +76,8 @@ class SimpleSelector : public Selector {
 
  private:
   SimpleSelectorType type_;
-  base::CobToken prefix_;
-  base::CobToken text_;
+  base::Token prefix_;
+  base::Token text_;
 };
 
 }  // namespace cssom

@@ -64,8 +64,8 @@ class Navigator : public script::Wrappable {
   // Web API: NavigatorPlugins
   bool cookie_enabled() const;
 
-#if defined(ENABLE_COBALT_MEDIA_CAPTURE)
   // Web API: MediaDevices
+#if defined(ENABLE_COBALT_MEDIA_CAPTURE)
   scoped_refptr<media_capture::MediaDevices> media_devices();
 #endif // ENABLE_COBALT_MEDIA_CAPTURE
 
@@ -80,7 +80,7 @@ class Navigator : public script::Wrappable {
   // Web API: extension defined in Encrypted Media Extensions (16 March 2017).
   using InterfacePromise = script::Promise<scoped_refptr<script::Wrappable>>;
   script::Handle<InterfacePromise> RequestMediaKeySystemAccess(
-      const std::string& key_system,
+      script::EnvironmentSettings* settings, const std::string& key_system,
       const script::Sequence<eme::MediaKeySystemConfiguration>&
           supported_configurations);
 
@@ -91,9 +91,7 @@ class Navigator : public script::Wrappable {
   void TraceMembers(script::Tracer* tracer) override;
 
   void SetEnvironmentSettings(script::EnvironmentSettings* settings) {
-#if defined(ENABLE_COBALT_MEDIA_CAPTURE)
     media_devices_->SetEnvironmentSettings(settings);
-#endif // ENABLE_COBALT_MEDIA_CAPTURE
   }
 
  private:

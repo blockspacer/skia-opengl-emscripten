@@ -21,9 +21,8 @@
 #include <string>
 #include <vector>
 
-//#include "base/containers/hash_tables.h"
+#include "base/containers/hash_tables.h"
 #include <map>
-
 #include "base/containers/small_map.h"
 #include "base/memory/ref_counted.h"
 #include "cobalt/cssom/property_value.h"
@@ -90,6 +89,7 @@ enum PropertyKey {
   kFontStyleProperty,
   kFontWeightProperty,
   kHeightProperty,
+  kIntersectionObserverRootMarginProperty,
   kJustifyContentProperty,
   kLeftProperty,
   kLineHeightProperty,
@@ -251,27 +251,26 @@ typedef std::bitset<kNumLonghandProperties> LonghandPropertiesBitset;
 }  // namespace cobalt
 
 // Make PropertyKey usable as key in base::hash_map.
-/*
-//namespace BASE_HASH_NAMESPACE {
+
+#if 0
+namespace BASE_HASH_NAMESPACE {
 
 //
 // GCC-flavored hash functor.
 //
 #if defined(BASE_HASH_USE_HASH_STRUCT)
 
-//#include <hash_fun.h>
-
 // Forward declaration in case <hash_fun.h> is not #include'd.
 template <>
-struct std::hash<cobalt::cssom::PropertyKey>;
+struct hash<cobalt::cssom::PropertyKey>;
 
 template <>
-struct std::hash<cobalt::cssom::PropertyKey> {
+struct hash<cobalt::cssom::PropertyKey> {
   size_t operator()(const cobalt::cssom::PropertyKey& key) const {
     return base_hash(key);
   }
 
-  std::hash<intptr_t> base_hash;
+  hash<intptr_t> base_hash;
 };
 
 //
@@ -311,6 +310,7 @@ class hash_compare<cobalt::cssom::PropertyKey, Predicate> {
 };
 
 #endif
-//}  // namespace BASE_HASH_NAMESPACE
-*/
+}  // namespace BASE_HASH_NAMESPACE
+#endif // 0
+
 #endif  // COBALT_CSSOM_PROPERTY_DEFINITIONS_H_

@@ -38,15 +38,15 @@ namespace dom {
 
 class PointerEventInit : public cobalt::dom::MouseEventInit {
  public:
-  PointerEventInit() {
-    pointer_id_ = 0;
-    width_ = 0;
-    height_ = 0;
-    pressure_ = 0;
-    tilt_x_ = 0;
-    tilt_y_ = 0;
-    pointer_type_ = "";
-    is_primary_ = false;
+  PointerEventInit()
+    : pointer_id_(0),
+      width_(0),
+      height_(0),
+      pressure_(0),
+      tilt_x_(0),
+      tilt_y_(0),
+      pointer_type_(""),
+      is_primary_(false) {
   }
 
   PointerEventInit(const PointerEventInit& other)

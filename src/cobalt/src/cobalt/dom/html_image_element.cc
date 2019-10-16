@@ -1,4 +1,4 @@
-﻿// Copyright 2015 The Cobalt Authors. All Rights Reserved.
+// Copyright 2015 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -39,11 +39,19 @@ HTMLImageElement::HTMLImageElement(script::EnvironmentSettings* env_settings)
                       ->window()
                       ->document()
                       .get(),
-                  base::CobToken(kTagName)) {}
+                  base::Token(kTagName)) {}
+
+void HTMLImageElement::PurgeCachedBackgroundImagesOfNodeAndDescendants() {
+  if (!cached_image_loaded_callback_handler_) {
+    return;
+  }
+
+  // While we are still loading, treat this as an error.
+  OnLoadingError();
+}
 
 void HTMLImageElement::OnSetAttribute(const std::string& name,
-                                      const std::string& /* value */) {
-  printf("HTMLImageElement::OnSetAttribute 1 %s", name.c_str());
+                                      const std::string& value) {
   // A user agent that obtains images immediately must synchronously update the
   // image data of an img element whenever that element is created with a src
   // attribute. A user agent that obtains images immediately must also
@@ -51,11 +59,12 @@ void HTMLImageElement::OnSetAttribute(const std::string& name,
   // has its src or crossorigin attribute set, changed, or removed.
   if (name == "src") {
     UpdateImageData();
+  } else {
+    HTMLElement::OnSetAttribute(name, value);
   }
 }
 
 void HTMLImageElement::OnRemoveAttribute(const std::string& name) {
-  printf("HTMLImageElement::OnRemoveAttribute 1 %s", name.c_str());
   // A user agent that obtains images immediately must synchronously update the
   // image data of an img element whenever that element is created with a src
   // attribute. A user agent that obtains images immediately must also
@@ -63,13 +72,14 @@ void HTMLImageElement::OnRemoveAttribute(const std::string& name) {
   // has its src or crossorigin attribute set, changed, or removed.
   if (name == "src") {
     UpdateImageData();
+  } else {
+    HTMLElement::OnRemoveAttribute(name);
   }
 }
 
 // Algorithm for UpdateTheImageData:
 //   https://www.w3.org/TR/html5/embedded-content-0.html#update-the-image-data
 void HTMLImageElement::UpdateImageData() {
-  printf("HTMLImageElement::UpdateImageData 1\n");
   DCHECK(base::MessageLoopCurrent::Get());
   DCHECK(node_document());
   TRACE_EVENT0("cobalt::dom", "HTMLImageElement::UpdateImageData()");
@@ -86,6 +96,11 @@ void HTMLImageElement::UpdateImageData() {
     node_document()->DecreaseLoadingCounter();
   }
 
+  // Keep the old weak cached image reference (if it exists) alive until after
+  // we're done updating to the new one.
+  std::unique_ptr<loader::image::WeakCachedImage> old_weak_cached_image =
+      std::move(weak_cached_image_);
+
   // 4. If the user agent cannot support images, or its support for images has
   // been disabled, then abort these steps.
   // 5. Otherwise, if the element has a src attribute specified and its value is
@@ -99,16 +114,12 @@ void HTMLImageElement::UpdateImageData() {
   // 7. If selected source is not null, run these substeps:
   scoped_refptr<loader::image::CachedImage> cached_image;
 
-  printf("HTMLImageElement::UpdateImageData 2\n");
-
   if (!src.empty()) {
-    printf("HTMLImageElement::UpdateImageData 2.1\n");
     // 7.1. Resolve selected source, relative to the element. If that is not
     // successful, abort these steps.
     const GURL& base_url = node_document()->url_as_gurl();
     const GURL selected_source = base_url.Resolve(src);
     if (!selected_source.is_valid()) {
-      printf("HTMLImageElement::UpdateImageData 2.2\n");
       LOG(WARNING) << src << " cannot be resolved based on " << base_url << ".";
       return;
     }
@@ -120,21 +131,18 @@ void HTMLImageElement::UpdateImageData() {
     // the img element to the completely available state, update the
     // presentation of the image appropriately, queue a task to fire a simple
     // event named load at the img element, and abort these steps.
-    cached_image =
-        node_document()
-            ->html_element_context()
-            ->image_cache()
-            ->CreateCachedResource(selected_source, loader::Origin());
-    printf("HTMLImageElement::UpdateImageData 2.3\n");
+    auto image_cache = node_document()->html_element_context()->image_cache();
+    cached_image = image_cache->GetOrCreateCachedResource(selected_source,
+                                                          loader::Origin());
+    DCHECK(cached_image);
+    weak_cached_image_ = image_cache->CreateWeakCachedResource(cached_image);
+    DCHECK(weak_cached_image_);
+
     if (cached_image->TryGetResource()) {
-      printf("HTMLImageElement::UpdateImageData 2.4\n");
       PreventGarbageCollectionUntilEventIsDispatched(base::Tokens::load());
-      printf("HTMLImageElement::UpdateImageData 2.5 %s\n", cached_image->url().path().c_str());
       return;
     }
-    printf("HTMLImageElement::UpdateImageData 2.6 %s\n", cached_image->url().path().c_str());
   } else {
-    printf("HTMLImageElement::UpdateImageData 2.6\n");
     // 8. 9. Not needed by Cobalt.
     // 10. If selected source is null, then set the element to the broken state,
     // queue a task to fire a simple event named error at the img element, and
@@ -142,8 +150,6 @@ void HTMLImageElement::UpdateImageData() {
     PreventGarbageCollectionUntilEventIsDispatched(base::Tokens::error());
     return;
   }
-
-  printf("HTMLImageElement::UpdateImageData 3\n");
 
   // 11. Not needed by Cobalt.
 
@@ -167,12 +173,9 @@ void HTMLImageElement::UpdateImageData() {
                                    base::Unretained(this)),
           base::Bind(&HTMLImageElement::OnLoadingError,
                      base::Unretained(this))));
-
-  printf("HTMLImageElement::UpdateImageData 4\n");
 }
 
 void HTMLImageElement::OnLoadingSuccess() {
-  P_LOG("HTMLImageElement::OnLoadingSuccess\n");
   TRACE_EVENT0("cobalt::dom", "HTMLImageElement::OnLoadingSuccess()");
   AllowGarbageCollectionAfterEventIsDispatched(
       base::Tokens::load(), std::move(prevent_gc_until_load_complete_));
@@ -183,7 +186,6 @@ void HTMLImageElement::OnLoadingSuccess() {
 }
 
 void HTMLImageElement::OnLoadingError() {
-  P_LOG("HTMLImageElement::OnLoadingError\n");
   TRACE_EVENT0("cobalt::dom", "HTMLImageElement::OnLoadingError()");
   AllowGarbageCollectionAfterEventIsDispatched(
       base::Tokens::error(), std::move(prevent_gc_until_load_complete_));
@@ -194,8 +196,7 @@ void HTMLImageElement::OnLoadingError() {
 }
 
 void HTMLImageElement::PreventGarbageCollectionUntilEventIsDispatched(
-    base::CobToken event_name) {
-  P_LOG("HTMLImageElement::PreventGarbageCollectionUntilEventIsDispatched\n");
+    base::Token event_name) {
   std::unique_ptr<script::GlobalEnvironment::ScopedPreventGarbageCollection>
       prevent_gc_until_event_dispatch(
           new script::GlobalEnvironment::ScopedPreventGarbageCollection(
@@ -206,10 +207,9 @@ void HTMLImageElement::PreventGarbageCollectionUntilEventIsDispatched(
 }
 
 void HTMLImageElement::AllowGarbageCollectionAfterEventIsDispatched(
-    base::CobToken event_name,
+    base::Token event_name,
     std::unique_ptr<script::GlobalEnvironment::ScopedPreventGarbageCollection>
         scoped_prevent_gc) {
-  P_LOG("HTMLImageElement::AllowGarbageCollectionAfterEventIsDispatched\n");
   PostToDispatchEventNameAndRunCallback(
       FROM_HERE, event_name,
       base::Bind(&HTMLImageElement::DestroyScopedPreventGC,
@@ -220,7 +220,6 @@ void HTMLImageElement::AllowGarbageCollectionAfterEventIsDispatched(
 void HTMLImageElement::DestroyScopedPreventGC(
     std::unique_ptr<script::GlobalEnvironment::ScopedPreventGarbageCollection>
         scoped_prevent_gc) {
-  P_LOG("HTMLImageElement::DestroyScopedPreventGC\n");
   scoped_prevent_gc.reset();
 }
 

@@ -19,7 +19,7 @@
 
 #include <map>
 
-//#include "base/containers/hash_tables.h"
+#include "base/containers/hash_tables.h"
 #include <map>
 #include <set>
 #include "base/containers/small_map.h"

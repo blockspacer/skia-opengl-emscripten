@@ -24,10 +24,7 @@
 #include "base/memory/weak_ptr.h"
 #include "base/optional.h"
 #include "base/strings/string_piece.h"
-
-#include "cobalt/base/cobalt_token.h"
-//#include "base/token.h"
-
+#include "cobalt/base/token.h"
 #include "cobalt/cssom/animation_set.h"
 #include "cobalt/cssom/css_computed_style_declaration.h"
 #include "cobalt/cssom/css_declared_style_declaration.h"
@@ -39,6 +36,7 @@
 #include "cobalt/cssom/style_sheet_list.h"
 #include "cobalt/dom/css_animations_adapter.h"
 #include "cobalt/dom/css_transitions_adapter.h"
+#include "cobalt/dom/directionality.h"
 #include "cobalt/dom/dom_rect_list.h"
 #include "cobalt/dom/dom_stat_tracker.h"
 #include "cobalt/dom/element.h"
@@ -52,6 +50,7 @@ namespace dom {
 
 class DOMStringMap;
 class HTMLAnchorElement;
+class HTMLAudioElement;
 class HTMLBodyElement;
 class HTMLBRElement;
 class HTMLDivElement;
@@ -73,16 +72,6 @@ class HTMLVideoElement;
 // not in spec
 class HTMLSkottieElement;
 class HTMLCustomElement;
-
-// The enum Directionality is used to track the explicit direction of the html
-// element:
-// https://dev.w3.org/html5/spec-preview/global-attributes.html#the-directionality
-// NOTE: Value "auto" is not supported.
-enum Directionality {
-  kNoExplicitDirectionality,
-  kLeftToRightDirectionality,
-  kRightToLeftDirectionality,
-};
 
 // The enum PseudoElementType is used to track the type of pseudo element
 enum PseudoElementType {
@@ -177,6 +166,18 @@ class HTMLElement : public Element, public cssom::MutationObserver {
   float client_width() override;
   float client_height() override;
 
+  // Updated version of the CSSOM View Module extensions:
+  //   https://www.w3.org/TR/cssom-view-1/#extension-to-the-element-interface
+  int32 scroll_width() override;
+  int32 scroll_height() override;
+
+  // These attributes are only partially implemented. They will only work with
+  // elements associated with UI navigation containers.
+  float scroll_left() override;
+  float scroll_top() override;
+  void set_scroll_left(float x) override;
+  void set_scroll_top(float y) override;
+
   // Web API: CSSOM View Module: Extensions to the HTMLElement Interface
   // (partial interface)
   //   https://www.w3.org/TR/2013/WD-cssom-view-20131217/#extensions-to-the-htmlelement-interface
@@ -204,6 +205,7 @@ class HTMLElement : public Element, public cssom::MutationObserver {
   // Safe type conversion methods that will downcast to the required type if
   // possible or return NULL otherwise.
   virtual scoped_refptr<HTMLAnchorElement> AsHTMLAnchorElement();
+  virtual scoped_refptr<HTMLAudioElement> AsHTMLAudioElement();
   virtual scoped_refptr<HTMLBodyElement> AsHTMLBodyElement();
   virtual scoped_refptr<HTMLBRElement> AsHTMLBRElement();
   virtual scoped_refptr<HTMLDivElement> AsHTMLDivElement();
@@ -239,6 +241,7 @@ class HTMLElement : public Element, public cssom::MutationObserver {
   void ClearRuleMatchingStateOnElementAndAncestors(
       bool invalidate_tree_matching_rules);
   void ClearRuleMatchingStateOnElementAndDescendants();
+  void ClearRuleMatchingStateOnElementAndSiblingsAndDescendants();
 
   // Returns the cached matching rules of this element.
   cssom::RulesWithCascadePrecedence* matching_rules() {
@@ -284,7 +287,7 @@ class HTMLElement : public Element, public cssom::MutationObserver {
       const base::TimeDelta& style_change_event_time,
       AncestorsAreDisplayed ancestor_is_displayed);
 
-  void MarkDisplayNoneOnNodeAndDescendants() override;
+  void MarkNotDisplayedOnNodeAndDescendants() override;
   void PurgeCachedBackgroundImagesOfNodeAndDescendants() override;
   void InvalidateComputedStylesOfNodeAndDescendants() override;
   void InvalidateLayoutBoxesOfNodeAndAncestors() override;
@@ -339,31 +342,32 @@ class HTMLElement : public Element, public cssom::MutationObserver {
     return ui_nav_item_;
   }
 
+  // Returns true if the element is the root element as defined in
+  // https://www.w3.org/TR/html5/semantics.html#the-root-element.
+  bool IsRootElement();
+
   DEFINE_WRAPPABLE_TYPE(HTMLElement);
 
- protected:
-  HTMLElement(Document* document, base::CobToken local_name);
+ //private:
+ public: // __TODO__
+  HTMLElement(Document* document, base::Token local_name);
   ~HTMLElement() override;
 
   void OnInsertedIntoDocument() override;
   void OnRemovedFromDocument() override;
 
-  void CopyDirectionality(const HTMLElement& other);
+  // From Element.
+  void OnSetAttribute(const std::string& name,
+                      const std::string& value) override;
+  void OnRemoveAttribute(const std::string& name) override;
 
   // HTMLElement keeps a pointer to the dom stat tracker to ensure that it can
   // make stat updates even after its weak pointer to its document has been
   // deleted. This is protected because some derived classes need access to it.
   DomStatTracker* const dom_stat_tracker_;
 
- //private:
- protected: // __TODO__
   // From Node.
   void OnMutation() override;
-
-  // From Element.
-  void OnSetAttribute(const std::string& name,
-                      const std::string& value) override;
-  void OnRemoveAttribute(const std::string& name) override;
 
   bool IsFocusable();
   bool HasTabindexFocusFlag() const;
@@ -395,10 +399,6 @@ class HTMLElement : public Element, public cssom::MutationObserver {
   // Update the UI navigation item type for this element.
   void UpdateUiNavigationType();
 
-  // Register this element's UI navigation item as a content of its parent
-  // element's UI navigation item.
-  void RegisterUiNavigationParent();
-
   // Clear the list of active background images, and notify the animated image
   // tracker to stop the animations.
   void ClearActiveBackgroundImages();
@@ -408,10 +408,6 @@ class HTMLElement : public Element, public cssom::MutationObserver {
   // This will be called when the image data associated with this element's
   // computed style's background-image property is loaded.
   void OnBackgroundImageLoaded();
-
-  // Returns true if the element is the root element as defined in
-  // https://www.w3.org/TR/html5/semantics.html#the-root-element.
-  bool IsRootElement();
 
   // Purge the cached background images on only this node.
   void PurgeCachedBackgroundImages();
@@ -462,13 +458,10 @@ class HTMLElement : public Element, public cssom::MutationObserver {
   scoped_refptr<cssom::CSSComputedStyleDeclaration>
       css_computed_style_declaration_;
 
-public: // TODO
   dom::CSSTransitionsAdapter transitions_adapter_;
   cssom::TransitionSet css_transitions_;
 
   dom::CSSAnimationsAdapter animations_adapter_;
-
-private: // TODO
   cssom::AnimationSet css_animations_;
 
   // The following fields are used in rule matching.

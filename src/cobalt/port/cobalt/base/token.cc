@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "cobalt/base/cobalt_token.h"
+#include "cobalt/base/token.h"
 
 #include <set>
 #include <vector>
@@ -44,7 +44,7 @@ class TokenStorage {
   friend struct base::DefaultSingletonTraits<TokenStorage>;
 
   TokenStorage()
-      : hash_table_(CobToken::kHashSlotCount * CobToken::kStringsPerSlot) {}
+      : hash_table_(Token::kHashSlotCount * Token::kStringsPerSlot) {}
 
   std::vector<std::string> hash_table_;
   // The collision table contains Tokens whose hash values collide with one of
@@ -54,11 +54,7 @@ class TokenStorage {
   base::Lock lock_;
 };
 
-uint32 hash(const char* str) {
-  return std::hash<std::string>()(std::string(str));
-}
-
-/*#if defined(BASE_HASH_USE_HASH_STRUCT)
+#if defined(BASE_HASH_USE_HASH_STRUCT)
 
 uint32 hash(const char* str) {
   return BASE_HASH_NAMESPACE::hash<std::string>()(std::string(str));
@@ -70,7 +66,7 @@ uint32 hash(const char* str) {
   return BASE_HASH_NAMESPACE::hash_value(std::string(str));
 }
 
-#endif  // COMPILER*/
+#endif  // COMPILER
 
 }  // namespace
 
@@ -78,12 +74,12 @@ uint32 hash(const char* str) {
 bool Token::sort_alphabetically_ = false;
 #endif  // ENABLE_TOKEN_TEXT_SORTING
 
-CobToken::CobToken() : str_(TokenStorage::GetInstance()->GetStorage("")) {}
+Token::Token() : str_(TokenStorage::GetInstance()->GetStorage("")) {}
 
-CobToken::CobToken(const char* str)
+Token::Token(const char* str)
     : str_(TokenStorage::GetInstance()->GetStorage(str)) {}
 
-CobToken::CobToken(const std::string& str)
+Token::Token(const std::string& str)
     : str_(TokenStorage::GetInstance()->GetStorage(str.c_str())) {}
 
 const char* TokenStorage::GetStorage(const char* str) {
@@ -93,10 +89,10 @@ const char* TokenStorage::GetStorage(const char* str) {
     return empty_.c_str();
   }
 
-  uint32 slot = hash(str) % CobToken::kHashSlotCount;
+  uint32 slot = hash(str) % Token::kHashSlotCount;
   // First check if we already have this token.
-  for (uint32 i = 0; i < CobToken::kStringsPerSlot; ++i) {
-    uint32 index = slot * CobToken::kStringsPerSlot + i;
+  for (uint32 i = 0; i < Token::kStringsPerSlot; ++i) {
+    uint32 index = slot * Token::kStringsPerSlot + i;
     if (hash_table_[index].empty()) {
       break;
     }
@@ -107,8 +103,8 @@ const char* TokenStorage::GetStorage(const char* str) {
 
   base::AutoLock auto_lock(lock_);
   // Now try to create this token in the table.
-  for (uint32 i = 0; i < CobToken::kStringsPerSlot; ++i) {
-    uint32 index = slot * CobToken::kStringsPerSlot + i;
+  for (uint32 i = 0; i < Token::kStringsPerSlot; ++i) {
+    uint32 index = slot * Token::kStringsPerSlot + i;
     if (hash_table_[index].empty()) {
       hash_table_[index] = str;
       return hash_table_[index].c_str();

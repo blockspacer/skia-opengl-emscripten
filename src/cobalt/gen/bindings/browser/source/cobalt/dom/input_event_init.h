@@ -38,9 +38,9 @@ namespace dom {
 
 class InputEventInit : public cobalt::dom::EventModifierInit {
  public:
-  InputEventInit() {
-    data_ = "";
-    is_composing_ = false;
+  InputEventInit()
+    : data_(""),
+      is_composing_(false) {
   }
 
   InputEventInit(const InputEventInit& other)

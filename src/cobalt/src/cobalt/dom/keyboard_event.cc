@@ -1,4 +1,4 @@
-﻿// Copyright 2015 The Cobalt Authors. All Rights Reserved.
+// Copyright 2015 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,10 +17,7 @@
 #include <string>
 
 #include "base/logging.h"
-
-//#include "cobalt/base/token.h"
-#include "cobalt/base/cobalt_token.h"
-
+#include "cobalt/base/token.h"
 #include "cobalt/base/tokens.h"
 #include "cobalt/dom/keycode.h"
 

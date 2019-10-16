@@ -40,14 +40,14 @@ namespace dom {
 
 class MouseEventInit : public cobalt::dom::EventModifierInit {
  public:
-  MouseEventInit() {
-    screen_x_ = 0;
-    screen_y_ = 0;
-    client_x_ = 0;
-    client_y_ = 0;
-    button_ = 0;
-    buttons_ = 0;
-    related_target_ = NULL;
+  MouseEventInit()
+    : screen_x_(0),
+      screen_y_(0),
+      client_x_(0),
+      client_y_(0),
+      button_(0),
+      buttons_(0),
+      related_target_(NULL) {
   }
 
   MouseEventInit(const MouseEventInit& other)

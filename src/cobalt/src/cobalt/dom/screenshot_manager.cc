@@ -39,7 +39,6 @@ void ScreenshotManager::Screenshot(
   DLOG(INFO) << "Will take a screenshot asynchronously";
   DCHECK(!screenshot_function_callback_.is_null());
 
-  DCHECK(base::MessageLoopCurrent::Get()); // TODO
   // We want to ScreenshotManager::FillScreenshot, on this thread.
   base::Callback<void(std::unique_ptr<uint8[]>, const math::Size&)>
       fill_screenshot = base::Bind(&ScreenshotManager::FillScreenshot,
@@ -64,19 +63,18 @@ void ScreenshotManager::SetEnvironmentSettings(
 
 void ScreenshotManager::FillScreenshot(
     int64_t token,
-    scoped_refptr<base::SingleThreadTaskRunner> expected_message_loop,
+    scoped_refptr<base::SingleThreadTaskRunner> expected_task_runner,
     loader::image::EncodedStaticImage::ImageFormat desired_format,
     std::unique_ptr<uint8[]> image_data, const math::Size& image_dimensions) {
-  DCHECK(base::MessageLoopCurrent::Get()); // TODO
-  if (base::MessageLoopCurrent::Get()->task_runner() != expected_message_loop) {
-    expected_message_loop->PostTask(
+  if (expected_task_runner && !expected_task_runner->BelongsToCurrentThread()) {
+    expected_task_runner->PostTask(
         FROM_HERE,
         base::Bind(&ScreenshotManager::FillScreenshot, base::Unretained(this),
-                   token, expected_message_loop, desired_format,
+                   token, expected_task_runner, desired_format,
                    base::Passed(&image_data), image_dimensions));
     return;
   }
-  DCHECK(thread_checker_.CalledOnValidThread());
+  DCHECK_CALLED_ON_VALID_THREAD(thread_checker_);
   DCHECK(environment_settings_);
 
   auto iterator = ticket_to_screenshot_promise_map_.find(token);

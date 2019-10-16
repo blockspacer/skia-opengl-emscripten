@@ -18,8 +18,7 @@
 
 #include "base/i18n/char_iterator.h"
 
-//#include "cobalt/base/token.h"
-#include "cobalt/base/cobalt_token.h"
+#include "cobalt/base/token.h"
 
 #include "cobalt/base/tokens.h"
 #include "cobalt/dom/keycode.h"

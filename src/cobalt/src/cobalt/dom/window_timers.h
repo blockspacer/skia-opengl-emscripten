@@ -17,12 +17,17 @@
 
 #include <memory>
 
-//#include "base/containers/hash_tables.h"
+#include "base/containers/hash_tables.h"
 #include <map>
 #include "base/memory/ref_counted.h"
 #if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
 #include "base/timer/timer.h"
 #endif
+
+#if defined(ENABLE_DEBUGGER_HOOKS)
+#include "cobalt/base/debugger_hooks.h"
+#endif // ENABLE_DEBUGGER_HOOKS
+
 #include "cobalt/script/callback_function.h"
 #include "cobalt/script/script_value.h"
 #include "cobalt/script/wrappable.h"
@@ -34,8 +39,19 @@ class WindowTimers {
  public:
   typedef script::CallbackFunction<void()> TimerCallback;
   typedef script::ScriptValue<TimerCallback> TimerCallbackArg;
-  explicit WindowTimers(script::Wrappable* const owner)
-      : current_timer_index_(0), owner_(owner) {}
+  explicit WindowTimers(script::Wrappable* const owner
+#if defined(ENABLE_DEBUGGER_HOOKS)
+                        ,
+                        const base::DebuggerHooks& debugger_hooks
+#endif // ENABLE_DEBUGGER_HOOKS
+                        )
+      : current_timer_index_(0),
+        owner_(owner)
+#if defined(ENABLE_DEBUGGER_HOOKS)
+        ,
+        debugger_hooks_(debugger_hooks)
+#endif // ENABLE_DEBUGGER_HOOKS
+        {}
   ~WindowTimers() {}
 
   int SetTimeout(const TimerCallbackArg& handler, int timeout);
@@ -60,7 +76,7 @@ class WindowTimers {
     TimerInfo(script::Wrappable* const owner,
 #if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
               std::unique_ptr<base::internal::TimerBase> timer,
-#endif
+#endif // TODO
               const TimerCallbackArg& callback)
         :
 #if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
@@ -72,6 +88,7 @@ class WindowTimers {
 #if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
     base::internal::TimerBase* timer() { return timer_.get(); }
 #endif
+
     TimerCallbackArg::Reference& callback_reference() { return callback_; }
 
    private:
@@ -83,7 +100,7 @@ class WindowTimers {
 
     friend class base::RefCounted<TimerInfo>;
   };
-  typedef std::map<int, scoped_refptr<TimerInfo> > Timers;
+  typedef base::hash_map<int, scoped_refptr<TimerInfo> > Timers;
 
   // Returns a positive interger timer handle that hasn't been assigned, or 0
   // if none can be found.
@@ -96,6 +113,9 @@ class WindowTimers {
   Timers timers_;
   int current_timer_index_;
   script::Wrappable* const owner_;
+#if defined(ENABLE_DEBUGGER_HOOKS)
+  const base::DebuggerHooks& debugger_hooks_;
+#endif // ENABLE_DEBUGGER_HOOKS
 
   // Set to false when we're about to shutdown, to ensure that no new JavaScript
   // is fired as we are waiting for it to drain.

@@ -1,4 +1,4 @@
-﻿// Copyright 2014 The Cobalt Authors. All Rights Reserved.
+// Copyright 2014 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -72,14 +72,14 @@ loader::RequestMode GetRequestMode(
 const char HTMLScriptElement::kTagName[] = "script";
 
 HTMLScriptElement::HTMLScriptElement(Document* document)
-    : HTMLElement(document, base::CobToken(kTagName)),
+    : HTMLElement(document, base::Token(kTagName)),
       is_already_started_(false),
       is_parser_inserted_(false),
       is_ready_(false),
       load_option_(0),
       inline_script_location_(GetSourceLocationName(), 1, 1),
       is_sync_load_successful_(false),
-      should_execute_(true)
+      should_execute_(true),
 #if defined(ENABLE_LOADER)
       ,
       synchronous_loader_interrupt_(
@@ -166,8 +166,7 @@ HTMLScriptElement::~HTMLScriptElement() {
 void HTMLScriptElement::Prepare() {
   TRACK_MEMORY_SCOPE("DOM");
   // Custom, not in any spec.
-  DCHECK(thread_checker_.CalledOnValidThread());
-  //DCHECK(base::MessageLoop::current());
+  DCHECK_CALLED_ON_VALID_THREAD(thread_checker_);
   DCHECK(base::MessageLoopCurrent::Get());
 #ifdef ENABLE_LOADER
   DCHECK(!loader_ || is_already_started_);
@@ -297,7 +296,7 @@ void HTMLScriptElement::Prepare() {
         base::Bind(&CspDelegate::CanLoad, base::Unretained(csp_delegate),
                    CspDelegate::kScript);
   }
-#endif
+#endif // ENABLE_COBALT_CSP
 
 #ifdef ENABLE_LOADER
   // Clear fetched resource's origin before start.
@@ -305,7 +304,7 @@ void HTMLScriptElement::Prepare() {
 
   // Determine request mode from crossorigin attribute.
   request_mode_ = GetRequestMode(GetAttribute("crossOrigin"));
-#endif
+#endif // ENABLE_LOADER
 
   switch (load_option_) {
     case 2: {
@@ -324,8 +323,8 @@ void HTMLScriptElement::Prepare() {
 
 #ifdef ENABLE_LOADER
       loader::LoadSynchronously(
-          //html_element_context()->sync_load_thread()->task_runner()->,
-          base::MessageLoopCurrent::Get(),
+          // TODO: WASM support
+          html_element_context()->sync_load_thread()->message_loop(),
           synchronous_loader_interrupt_,
           base::Bind(
               &loader::FetcherFactory::CreateSecureFetcher,
@@ -339,7 +338,8 @@ void HTMLScriptElement::Prepare() {
                      loader::Decoder::OnCompleteFunction()),
           base::Bind(&HTMLScriptElement::OnSyncLoadingComplete,
                      base::Unretained(this)));
-#endif
+#endif // ENABLE_LOADER
+
 #if defined(ENABLE_SCRIPT_RUNNER)
       if (is_sync_load_successful_) {
         script::GlobalEnvironment::ScopedPreventGarbageCollection
@@ -350,7 +350,7 @@ void HTMLScriptElement::Prepare() {
         // Release the content string now that we're finished with it.
         content_.reset();
       } else
-#endif
+#endif // ENABLE_SCRIPT_RUNNER
       {
         // Executing the script block must just consist of firing a simple event
         // named error at the element.
@@ -388,7 +388,7 @@ void HTMLScriptElement::Prepare() {
                      base::Unretained(this)),
           base::Bind(&HTMLScriptElement::OnLoadingComplete,
                      base::Unretained(this)));
-#endif
+#endif // ENABLE_LOADER
 
     } break;
     case 5: {
@@ -403,12 +403,12 @@ void HTMLScriptElement::Prepare() {
       // once the resource has been fetched (defined above) has been run.
       document_->IncreaseLoadingCounter();
 
-#ifdef ENABLE_LOADER
       // The element must be added to the set of scripts that will execute as
       // soon as possible of the Document of the script element at the time the
       // prepare a script algorithm started.
       DCHECK(!loader_);
 
+#ifdef ENABLE_LOADER
       loader::Origin origin = document_->location()
                                   ? document_->location()->GetOriginAsObject()
                                   : loader::Origin();
@@ -419,7 +419,7 @@ void HTMLScriptElement::Prepare() {
                      base::Unretained(this)),
           base::Bind(&HTMLScriptElement::OnLoadingComplete,
                      base::Unretained(this)));
-#endif
+#endif // ENABLE_LOADER
 
     } break;
     case 6: {
@@ -434,11 +434,11 @@ void HTMLScriptElement::Prepare() {
           csp_delegate->AllowInline(CspDelegate::kScript,
                                     inline_script_location_,
                                     text))
-#endif
+#endif // ENABLE_COBALT_CSP
                                     {
 #ifdef ENABLE_LOADER
         fetched_last_url_origin_ = document_->location()->GetOriginAsObject();
-#endif
+#endif // ENABLE_LOADER
         ExecuteInternal();
       }
 #if defined(ENABLE_COBALT_CSP)
@@ -447,7 +447,7 @@ void HTMLScriptElement::Prepare() {
             FROM_HERE, base::Tokens::error(),
             &prevent_gc_until_error_event_dispatch_);
       }
-#endif
+#endif // ENABLE_COBALT_CSP
     } break;
     default: { NOTREACHED(); }
   }
@@ -462,7 +462,7 @@ void HTMLScriptElement::OnSyncContentProduced(
   content_ = std::move(content);
   is_sync_load_successful_ = true;
 }
-#endif
+#endif // ENABLE_LOADER
 
 void HTMLScriptElement::OnSyncLoadingComplete(
     const base::Optional<std::string>& error) {
@@ -478,7 +478,7 @@ void HTMLScriptElement::OnSyncLoadingComplete(
 void HTMLScriptElement::OnContentProduced(
     const loader::Origin& last_url_origin,
     std::unique_ptr<std::string> content) {
-  DCHECK(thread_checker_.CalledOnValidThread());
+  DCHECK_CALLED_ON_VALID_THREAD(thread_checker_);
   DCHECK(load_option_ == 4 || load_option_ == 5);
   DCHECK(content);
   TRACE_EVENT0("cobalt::dom", "HTMLScriptElement::OnContentProduced()");
@@ -571,21 +571,18 @@ void HTMLScriptElement::OnContentProduced(
   content_.reset();
 
   // Post a task to release the loader.
-  DCHECK(base::MessageLoopCurrent::Get()); // TODO
-  //base::MessageLoop::current()->task_runner()->PostTask(
   base::MessageLoopCurrent::Get()->task_runner()->PostTask(
       FROM_HERE, base::Bind(&HTMLScriptElement::ReleaseLoader, this));
 }
-#endif
+#endif // ENABLE_LOADER
 
 // Algorithm for OnLoadingComplete:
 //   https://www.w3.org/TR/html5/scripting-1.html#prepare-a-script
 void HTMLScriptElement::OnLoadingComplete(
     const base::Optional<std::string>& error) {
-  P_LOG("HTMLScriptElement::OnLoadingComplete\n");
   if (!error) return;
 
-  DCHECK(thread_checker_.CalledOnValidThread());
+  DCHECK_CALLED_ON_VALID_THREAD(thread_checker_);
   DCHECK(load_option_ == 4 || load_option_ == 5);
   TRACE_EVENT0("cobalt::dom", "HTMLScriptElement::OnLoadingComplete()");
 
@@ -625,8 +622,6 @@ void HTMLScriptElement::OnLoadingComplete(
   document_->DecreaseLoadingCounterAndMaybeDispatchLoadEvent();
 
   // Post a task to release the loader.
-  DCHECK(base::MessageLoopCurrent::Get()); // TODO
-  //base::MessageLoop::current()->task_runner()->PostTask(
   base::MessageLoopCurrent::Get()->task_runner()->PostTask(
       FROM_HERE, base::Bind(&HTMLScriptElement::ReleaseLoader, this));
 }
@@ -676,11 +671,12 @@ void HTMLScriptElement::Execute(const std::string& content,
       fetched_last_url_origin_ != document_->location()->GetOriginAsObject();
 #else
       false;
-#endif
+#endif // ENABLE_LOADER
+
 #if defined(ENABLE_SCRIPT_RUNNER)
   html_element_context()->script_runner()->Execute(
       content, script_location, mute_errors, NULL /*out_succeeded*/);
-#endif
+#endif // ENABLE_SCRIPT_RUNNER
 
   // 5. 6. Not needed by Cobalt.
 
@@ -709,7 +705,7 @@ void HTMLScriptElement::Execute(const std::string& content,
 }
 
 void HTMLScriptElement::PreventGarbageCollectionAndPostToDispatchEvent(
-    const base::Location& location, const base::CobToken& token,
+    const base::Location& location, const base::Token& token,
     std::unique_ptr<script::GlobalEnvironment::ScopedPreventGarbageCollection>*
         scoped_prevent_gc) {
   // Ensure that this HTMLScriptElement is not garbage collected until the event
@@ -740,7 +736,7 @@ void HTMLScriptElement::PreventGCUntilLoadComplete() {
       new script::GlobalEnvironment::ScopedPreventGarbageCollection(
           html_element_context()->script_runner()->GetGlobalEnvironment(),
           this));
-#endif
+#endif // ENABLE_SCRIPT_RUNNER
 }
 
 void HTMLScriptElement::AllowGCAfterLoadComplete() {
@@ -749,10 +745,10 @@ void HTMLScriptElement::AllowGCAfterLoadComplete() {
 
 void HTMLScriptElement::ReleaseLoader() {
 #ifdef ENABLE_LOADER
-  DCHECK(thread_checker_.CalledOnValidThread());
+  DCHECK_CALLED_ON_VALID_THREAD(thread_checker_);
   DCHECK(loader_);
   loader_.reset();
-#endif
+#endif // ENABLE_LOADER
 }
 
 }  // namespace dom

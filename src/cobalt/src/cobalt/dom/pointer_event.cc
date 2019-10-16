@@ -41,7 +41,7 @@ PointerEvent::PointerEvent(const std::string& type,
       pointer_type_(init_dict.pointer_type()),
       is_primary_(init_dict.is_primary()) {}
 
-PointerEvent::PointerEvent(base::CobToken type, const scoped_refptr<Window>& view,
+PointerEvent::PointerEvent(base::Token type, const scoped_refptr<Window>& view,
                            const PointerEventInit& init_dict)
     : MouseEvent(type, view, init_dict),
       pointer_id_(init_dict.pointer_id()),
@@ -53,7 +53,7 @@ PointerEvent::PointerEvent(base::CobToken type, const scoped_refptr<Window>& vie
       pointer_type_(init_dict.pointer_type()),
       is_primary_(init_dict.is_primary()) {}
 
-PointerEvent::PointerEvent(base::CobToken type, Bubbles bubbles,
+PointerEvent::PointerEvent(base::Token type, Bubbles bubbles,
                            Cancelable cancelable,
                            const scoped_refptr<Window>& view,
                            const PointerEventInit& init_dict)

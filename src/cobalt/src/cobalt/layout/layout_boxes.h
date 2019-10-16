@@ -15,9 +15,11 @@
 #ifndef COBALT_LAYOUT_LAYOUT_BOXES_H_
 #define COBALT_LAYOUT_LAYOUT_BOXES_H_
 
+#include <utility>
 #include <vector>
 
 #include "base/memory/ref_counted.h"
+#include "base/optional.h"
 #include "cobalt/dom/dom_rect_list.h"
 #include "cobalt/dom/layout_boxes.h"
 #include "cobalt/layout/box.h"
@@ -50,10 +52,11 @@ class LayoutBoxes : public dom::LayoutBoxes {
   float GetMarginEdgeWidth() const override;
   float GetMarginEdgeHeight() const override;
 
-  float GetPaddingEdgeLeft() const override;
-  float GetPaddingEdgeTop() const override;
+  math::Vector2dF GetPaddingEdgeOffset() const override;
   float GetPaddingEdgeWidth() const override;
   float GetPaddingEdgeHeight() const override;
+
+  math::RectF GetScrollArea(dom::Directionality dir) const override;
 
   void InvalidateSizes() override;
   void InvalidateCrossReferences() override;
@@ -70,6 +73,9 @@ class LayoutBoxes : public dom::LayoutBoxes {
   void GetClientRectBoxes(const Boxes& boxes, Boxes* client_rect_boxes) const;
 
   Boxes boxes_;
+
+  mutable base::Optional<std::pair<dom::Directionality, math::RectF>>
+      scroll_area_cache_;
 };
 
 }  // namespace layout

@@ -7,7 +7,7 @@
 #include <memory>
 
 #include "base/basictypes.h"
-//#include "base/containers/hash_tables.h"
+#include "base/containers/hash_tables.h"
 #include <map>
 #include "base/lazy_instance.h"
 #include "base/logging.h"

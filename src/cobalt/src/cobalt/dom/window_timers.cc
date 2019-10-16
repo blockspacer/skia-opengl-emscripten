@@ -36,7 +36,6 @@ int WindowTimers::SetTimeout(const TimerCallbackArg& handler, int timeout) {
     return 0;
   }
 
-  /// TODO: !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
 #if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   if (callbacks_active_) {
     auto* timer = new base::OneShotTimer();
@@ -45,10 +44,13 @@ int WindowTimers::SetTimeout(const TimerCallbackArg& handler, int timeout) {
                             base::Unretained(this), handle));
     timers_[handle] = new TimerInfo(
         owner_, std::unique_ptr<base::internal::TimerBase>(timer), handler);
+#if defined(ENABLE_DEBUGGER_HOOKS)
+    debugger_hooks_.AsyncTaskScheduled(timers_[handle], "SetTimeout");
+#endif // ENABLE_DEBUGGER_HOOKS
   } else {
     timers_[handle] = nullptr;
   }
-#endif
+#endif // TODO
 
   return handle;
 }
@@ -56,7 +58,7 @@ int WindowTimers::SetTimeout(const TimerCallbackArg& handler, int timeout) {
 void WindowTimers::ClearTimeout(int handle) {
 #if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   timers_.erase(handle);
-#endif
+#endif // TODO
 }
 
 int WindowTimers::SetInterval(const TimerCallbackArg& handler, int timeout) {
@@ -76,10 +78,13 @@ int WindowTimers::SetInterval(const TimerCallbackArg& handler, int timeout) {
                             base::Unretained(this), handle));
     timers_[handle] = new TimerInfo(
         owner_, std::unique_ptr<base::internal::TimerBase>(timer), handler);
+#if defined(ENABLE_DEBUGGER_HOOKS)
+    debugger_hooks_.AsyncTaskScheduled(timers_[handle], "SetInterval");
+#endif // ENABLE_DEBUGGER_HOOKS
   } else {
     timers_[handle] = nullptr;
   }
-#endif
+#endif // TODO
 
   return handle;
 }
@@ -87,10 +92,23 @@ int WindowTimers::SetInterval(const TimerCallbackArg& handler, int timeout) {
 void WindowTimers::ClearInterval(int handle) {
 #if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   timers_.erase(handle);
-#endif
+#endif // TODO
+
+  if (timer != timers_.end()) {
+#if defined(ENABLE_DEBUGGER_HOOKS)
+    debugger_hooks_.AsyncTaskCanceled(timer->second);
+#endif // ENABLE_DEBUGGER_HOOKS
+    timers_.erase(timer);
+  }
 }
 
 void WindowTimers::ClearAllIntervalsAndTimeouts() {
+#if defined(ENABLE_DEBUGGER_HOOKS)
+  for (auto& timer_entry : timers_) {
+    debugger_hooks_.AsyncTaskCanceled(timer_entry.second);
+  }
+#endif // ENABLE_DEBUGGER_HOOKS
+
 #if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   timers_.clear();
 #endif
@@ -98,12 +116,18 @@ void WindowTimers::ClearAllIntervalsAndTimeouts() {
 
 void WindowTimers::DisableCallbacks() {
   callbacks_active_ = false;
-#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+
   // Immediately cancel any pending timers.
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   for (auto& timer_entry : timers_) {
+#if defined(ENABLE_DEBUGGER_HOOKS)
+    debugger_hooks_.AsyncTaskCanceled(timer_entry.second);
+#endif // ENABLE_DEBUGGER_HOOKS
+
     timer_entry.second = nullptr;
   }
-#endif
+#endif // TODO
+
 }
 
 int WindowTimers::GetFreeTimerHandle() {
@@ -123,7 +147,7 @@ int WindowTimers::GetFreeTimerHandle() {
       break;
     }
   }
-#endif
+#endif // TODO
   DLOG(INFO) << "No available timer handle.";
   return 0;
 }
@@ -139,19 +163,32 @@ void WindowTimers::RunTimerCallback(int handle) {
   // The callback is now being run. Track it in the global stats.
   GlobalStats::GetInstance()->StartJavaScriptEvent();
 
-  // Keep a |TimerInfo| reference, so it won't be released when running the
-  // callback.
-  scoped_refptr<TimerInfo> timer_info = timer->second;
-  timer_info->callback_reference().value().Run();
+  {
+    // Keep a |TimerInfo| reference, so it won't be released when running the
+    // callback.
+    scoped_refptr<TimerInfo> timer_info = timer->second;
+    base::ScopedAsyncTask async_task(
+#if defined(ENABLE_DEBUGGER_HOOKS)
+    debugger_hooks_,
+#endif // ENABLE_DEBUGGER_HOOKS
+    timer_info);
+    timer_info->callback_reference().value().Run();
+  }
+
   // After running the callback, double check whether the timer is still there
   // since it might be deleted inside the callback.
   timer = timers_.find(handle);
   // If the timer is not deleted and is not running, it means it is an oneshot
   // timer and has just fired the shot, and it should be deleted now.
   if (timer != timers_.end() && !timer->second->timer()->IsRunning()) {
+
+#if defined(ENABLE_DEBUGGER_HOOKS)
+    debugger_hooks_.AsyncTaskCanceled(timer->second);
+#endif // ENABLE_DEBUGGER_HOOKS
+
     timers_.erase(timer);
   }
-#endif
+#endif // TODO
 
   // The callback has finished running. Stop tracking it in the global stats.
   GlobalStats::GetInstance()->StopJavaScriptEvent();

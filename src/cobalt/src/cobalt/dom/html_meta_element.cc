@@ -16,9 +16,7 @@
 
 #include "base/memory/ref_counted.h"
 #include "base/strings/string_util.h"
-#if defined(ENABLE_COBALT_CSP)
 #include "cobalt/csp/content_security_policy.h"
-#endif
 #include "cobalt/dom/csp_delegate.h"
 #include "cobalt/dom/document.h"
 #include "cobalt/dom/html_head_element.h"

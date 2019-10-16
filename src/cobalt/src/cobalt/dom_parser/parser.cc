@@ -1,4 +1,4 @@
-﻿// Copyright 2015 The Cobalt Authors. All Rights Reserved.
+// Copyright 2015 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -96,8 +96,6 @@ std::unique_ptr<loader::Decoder> Parser::ParseDocumentAsync(
     const base::SourceLocation& input_location,
     const loader::Decoder::OnCompleteFunction& load_complete_callback) {
 
-//#ifdef __TODO__
-  printf("ParseDocumentAsync %s\n", document->text_content().value_or("empty").c_str());
   return std::unique_ptr<loader::Decoder>(new HTMLDecoder(
       document, document, NULL, dom_max_element_depth_, input_location,
       load_complete_callback, true
@@ -105,9 +103,6 @@ std::unique_ptr<loader::Decoder> Parser::ParseDocumentAsync(
       , require_csp_
 #endif
       ));
-//#else
-//  return nullptr;
-//#endif
 }
 
 std::unique_ptr<loader::Decoder> Parser::ParseXMLDocumentAsync(

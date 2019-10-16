@@ -23,12 +23,12 @@ namespace dom {
 
 Event::Event(UninitializedFlag /* uninitialized_flag */)
     : event_phase_(kNone), time_stamp_(GetEventTime(SbTimeGetMonotonicNow())) {
-  InitEventInternal(base::CobToken(), false, false);
+  InitEventInternal(base::Token(), false, false);
 }
 
 Event::Event(const std::string& type)
     : event_phase_(kNone), time_stamp_(GetEventTime(SbTimeGetMonotonicNow())) {
-  InitEventInternal(base::CobToken(type), false, false);
+  InitEventInternal(base::Token(type), false, false);
 }
 
 Event::Event(const std::string& type, const EventInit& init_dict)
@@ -38,21 +38,21 @@ Event::Event(const std::string& type, const EventInit& init_dict)
   if (init_dict.time_stamp() != 0) {
     time_stamp_ = init_dict.time_stamp();
   }
-  InitEventInternal(base::CobToken(type), init_dict.bubbles(),
+  InitEventInternal(base::Token(type), init_dict.bubbles(),
                     init_dict.cancelable());
 }
 
-Event::Event(base::CobToken type)
+Event::Event(base::Token type)
     : event_phase_(kNone), time_stamp_(GetEventTime(SbTimeGetMonotonicNow())) {
   InitEventInternal(type, false, false);
 }
 
-Event::Event(base::CobToken type, Bubbles bubbles, Cancelable cancelable)
+Event::Event(base::Token type, Bubbles bubbles, Cancelable cancelable)
     : event_phase_(kNone), time_stamp_(GetEventTime(SbTimeGetMonotonicNow())) {
   InitEventInternal(type, bubbles == kBubbles, cancelable == kCancelable);
 }
 
-Event::Event(base::CobToken type, const EventInit& init_dict)
+Event::Event(base::Token type, const EventInit& init_dict)
     : event_phase_(kNone), time_stamp_(GetEventTime(SbTimeGetMonotonicNow())) {
   SB_DCHECK(init_dict.has_bubbles());
   SB_DCHECK(init_dict.has_cancelable());
@@ -79,7 +79,7 @@ void Event::InitEvent(const std::string& type, bool bubbles, bool cancelable) {
     return;
   }
 
-  InitEventInternal(base::CobToken(type), bubbles, cancelable);
+  InitEventInternal(base::Token(type), bubbles, cancelable);
 }
 
 void Event::set_target(const scoped_refptr<EventTarget>& target) {
@@ -90,7 +90,7 @@ void Event::set_current_target(const scoped_refptr<EventTarget>& target) {
   current_target_ = target;
 }
 
-void Event::InitEventInternal(base::CobToken type, bool bubbles, bool cancelable) {
+void Event::InitEventInternal(base::Token type, bool bubbles, bool cancelable) {
   type_ = type;
   bubbles_ = bubbles;
   cancelable_ = cancelable;

@@ -18,7 +18,7 @@
 #include <string>
 #include <vector>
 
-//#include "base/containers/hash_tables.h"
+#include "base/containers/hash_tables.h"
 #include <map>
 #include "base/memory/ref_counted.h"
 #include "base/memory/weak_ptr.h"
@@ -77,7 +77,7 @@ class NamedNodeMap : public script::Wrappable,
 
   scoped_refptr<Attr> GetOrCreateAttr(const std::string& name) const;
 
-  typedef std::map<std::string, base::WeakPtr<Attr> > NameToAttrMap;
+  typedef base::hash_map<std::string, base::WeakPtr<Attr> > NameToAttrMap;
 
   // The element that contains the actual attributes.
   scoped_refptr<Element> element_;

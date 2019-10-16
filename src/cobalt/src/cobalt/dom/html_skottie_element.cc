@@ -47,8 +47,8 @@ namespace dom {
 const char HTMLSkottieElement::kTagName[] = "skottie";
 
 HTMLSkottieElement::HTMLSkottieElement(Document* document)
-    : HTMLElement(document, base::CobToken(kTagName)) {
-    //: HTMLMediaElement(document, base::CobToken(kTagName)) {
+    : HTMLElement(document, base::Token(kTagName)) {
+    //: HTMLMediaElement(document, base::Token(kTagName)) {
   TRACE_EVENT0("cobalt::dom", "HTMLSkottieElement::HTMLSkottieElement()");
   printf("Created new HTMLSkottieElement for %s\n", src().c_str());
 }

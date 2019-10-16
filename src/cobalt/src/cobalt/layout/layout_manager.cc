@@ -1,4 +1,4 @@
-﻿// Copyright 2014 The Cobalt Authors. All Rights Reserved.
+// Copyright 2014 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -66,11 +66,8 @@ class LayoutManager::Impl : public dom::DocumentObserver {
   void OnFocusChanged() override {}
 
   // Called to perform a synchronous layout.
-//#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
-//  void DoSynchronousLayout(const bool forceReLayout = true);
-//#else
   void DoSynchronousLayout(const bool forceReLayout = false);
-//#endif
+
   scoped_refptr<render_tree::Node> DoSynchronousLayoutAndGetRenderTree();
 
   void Suspend();
@@ -84,11 +81,7 @@ class LayoutManager::Impl : public dom::DocumentObserver {
   void DirtyLayout(const bool changeComputedStyles = true, const bool changePendingRenderTree = true);
   void setLayoutPending(const bool isPending);
   void StartLayoutTimer();
-//#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
-//  void DoLayoutAndProduceRenderTree(const bool forceReLayout = true);
-//#else
-  void DoLayoutAndProduceRenderTree(const bool forceReLayout = false);
-//#endif
+  void DoLayoutAndProduceRenderTree();
 
 #if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   bool isLayoutRefreshReached();
@@ -215,10 +208,10 @@ LayoutManager::Impl::Impl(
       layout_stat_tracker_(layout_stat_tracker),
       suspended_(false),
       clear_window_with_background_color_(clear_window_with_background_color) {
-
-  //printf("LayoutManager::Impl::Impl::LayoutManager::Impl::Impl()...%s\n", locale_.getName());
   DCHECK(window_);
   window_->document()->AddObserver(this);
+  /*window_->SetSynchronousLayoutCallback(
+      base::Bind(&Impl::DoSynchronousLayout, base::Unretained(this)));*/
   window_->SetSynchronousLayoutCallback(
       base::Bind(&Impl::DoSynchronousLayout, base::Unretained(this),
       /* forceReLayout*/ false));
@@ -226,17 +219,13 @@ LayoutManager::Impl::Impl(
       &Impl::DoSynchronousLayoutAndGetRenderTree, base::Unretained(this)));
 
   UErrorCode status = U_ZERO_ERROR;
-  //printf("1 createLineInstance locale_ %s\n", locale_.getName());
   line_break_iterator_ =
       base::WrapUnique(icu::BreakIterator::createLineInstance(locale_, status));
-  CHECK(U_SUCCESS(status)) << "createLineInstance locale_=" << locale_.getName();
-  //DCHECK(line_break_iterator_);
-  //printf("2 BreakIterator createLineInstance locale_ %s\n", locale_.getName());
+  CHECK(U_SUCCESS(status));
   status = U_ZERO_ERROR;
   character_break_iterator_ = base::WrapUnique(
       icu::BreakIterator::createCharacterInstance(locale_, status));
   CHECK(U_SUCCESS(status));
-  //DCHECK(character_break_iterator_);
 
 #if defined(ENABLE_TEST_RUNNER)
   if (layout_trigger_ == kTestRunnerMode) {
@@ -275,20 +264,15 @@ void LayoutManager::Impl::OnLoad() {
 }
 
 void LayoutManager::Impl::OnMutation() {
-
-  //
-  //return; // TODO
-
-
+#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   /// TODO: check if need IsRenderTreePending here
   if(IsRenderTreePending()) {
     return;
   }
+#endif
 
   if (layout_trigger_ == kOnDocumentMutation) {
-    /// TODO
     DirtyLayout();
-    /// DirtyLayout(/*changeComputedStyles*/ true, /*changePendingRenderTree*/ false);
   }
 }
 
@@ -296,14 +280,8 @@ scoped_refptr<render_tree::Node>
 LayoutManager::Impl::DoSynchronousLayoutAndGetRenderTree() {
   TRACE_EVENT0("cobalt::layout",
                "LayoutManager::Impl::DoSynchronousLayoutAndGetRenderTree()");
-
-//#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
-//  DoSynchronousLayout(/* forceReLayout*/ true);
-//#else
   DoSynchronousLayout(/* forceReLayout*/ false);
-//#endif
 
-  //DCHECK(initial_containing_block_);
   scoped_refptr<render_tree::Node> render_tree_root =
       layout::GenerateRenderTreeFromBoxTree(used_style_provider_.get(),
                                             layout_stat_tracker_,
@@ -323,16 +301,15 @@ LayoutManager::Impl::DoSynchronousLayoutAndGetRenderTree() {
   return results.animated->source();
 }
 
-void LayoutManager::Impl::DoSynchronousLayout(const bool forceReLayout) {
+void LayoutManager::Impl::DoSynchronousLayout() {
   TRACE_EVENT0("cobalt::layout", "LayoutManager::Impl::DoSynchronousLayout()");
   if (suspended_) {
     DLOG(WARNING) << "Skipping layout since Cobalt is in a suspended state.";
     return;
   }
 
-  //DCHECK(line_break_iterator_);
   DCHECK(window_);
-  if (are_computed_styles_and_box_tree_dirty_ || forceReLayout) {
+  if (are_computed_styles_and_box_tree_dirty_) {
     DCHECK(!locale_.isBogus());
     DCHECK(window_);
     DCHECK(window_->document());
@@ -341,19 +318,13 @@ void LayoutManager::Impl::DoSynchronousLayout(const bool forceReLayout) {
     //DCHECK(layout_stat_tracker_);
     DCHECK(line_break_iterator_);
     DCHECK(character_break_iterator_);
-    //DCHECK(initial_containing_block_);
+
     layout::UpdateComputedStylesAndLayoutBoxTree(
         locale_, window_->document(), dom_max_element_depth_,
         used_style_provider_.get(), layout_stat_tracker_,
         line_break_iterator_.get(), character_break_iterator_.get(),
         &initial_containing_block_, clear_window_with_background_color_);
-
-//#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
-//    /// \todo always dirty for now.
-//    DCHECK(are_computed_styles_and_box_tree_dirty_);
-//#else
     are_computed_styles_and_box_tree_dirty_ = false;
-//#endif
   }
 }
 
@@ -406,8 +377,6 @@ void LayoutManager::Impl::DoTestRunnerLayoutCallback() {
 #endif  // ENABLE_TEST_RUNNER
 
 void LayoutManager::Impl::DirtyLayout(const bool changeComputedStyles, const bool changePendingRenderTree) {
-  ///are_computed_styles_and_box_tree_dirty_ = true;
-
   if (changeComputedStyles) {
     are_computed_styles_and_box_tree_dirty_ = true;
   }
@@ -437,14 +406,12 @@ bool LayoutManager::Impl::isLayoutRefreshReached() {
 #endif
 
 void LayoutManager::Impl::StartLayoutTimer() {
-  printf("layout_refresh_rate_ %f\n", layout_refresh_rate_);
   // TODO: Eventually we would like to instead base our layouts off of a
   //       "refresh" signal generated by the rasterizer, instead of trying to
   //       match timers to the graphics' refresh rate, which is error prone.
   const int64_t timer_interval_in_microseconds =
       static_cast<int64_t>(base::Time::kMicrosecondsPerSecond * 1.0f /
                            (layout_refresh_rate_ + 1.0f));
-
   timer_interval_ = base::TimeDelta::FromMicroseconds(timer_interval_in_microseconds);
 
   printf("LayoutManager timer_interval_.InMilliseconds() = %d\n", timer_interval_.InMilliseconds());
@@ -463,14 +430,9 @@ void LayoutManager::Impl::StartLayoutTimer() {
 #endif
 }
 
-void LayoutManager::Impl::DoLayoutAndProduceRenderTree(const bool forceReLayout) {
+void LayoutManager::Impl::DoLayoutAndProduceRenderTree() {
   TRACE_EVENT0("cobalt::layout",
                "LayoutManager::Impl::DoLayoutAndProduceRenderTree()");
-#if defined(__EMSCRIPTEN__)
-  //EM_LOG("LayoutManager::Impl::DoLayoutAndProduceRenderTree 1\n");
-#endif
-
-  //P_LOG("LayoutManager::Impl::DoLayoutAndProduceRenderTree 1\n");
 
   if (suspended_) return;
 
@@ -483,10 +445,6 @@ void LayoutManager::Impl::DoLayoutAndProduceRenderTree(const bool forceReLayout)
     return;
   }
 
-#if defined(__EMSCRIPTEN__)
-  //EM_LOG("LayoutManager::Impl::DoLayoutAndProduceRenderTree 1.1\n");
-#endif
-
 #if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   if (!isLayoutRefreshReached()) {
     return;
@@ -495,22 +453,8 @@ void LayoutManager::Impl::DoLayoutAndProduceRenderTree(const bool forceReLayout)
   layoutProducedTime_ = base::Time::Now();
 #endif
 
-//P_LOG("LayoutManager::Impl::DoLayoutAndProduceRenderTree 2\n");
-
-//#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
-//    emscripten_async_call_closure(
-//      base::BindOnce([](scoped_refptr<dom::Window> window_) {
-//    DCHECK(window_);
-//    window_->document()->SampleTimelineTime();
-//  }, window_));
-//#else
   // Update the document's sample time, used for updating animations.
   document->SampleTimelineTime();
-//#endif
-
-#if defined(__EMSCRIPTEN__)
-  //EM_LOG("LayoutManager::Impl::DoLayoutAndProduceRenderTree 1.2\n");
-#endif
 
   bool has_layout_processing_started = false;
   if (window_->HasPendingAnimationFrameCallbacks()) {
@@ -520,39 +464,16 @@ void LayoutManager::Impl::DoLayoutAndProduceRenderTree(const bool forceReLayout)
       // Update our computed style before running animation callbacks, so that
       // any transitioning elements adjusted during the animation callback will
       // transition from their previously set value.
-//#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
-//    emscripten_async_call_closure(
-//      base::BindOnce([](scoped_refptr<dom::Window> window_) {
-//        DCHECK(window_);
-//        window_->document()->UpdateComputedStyles();
-//      }, window_)
-//    );
-//#else
       document->UpdateComputedStyles();
-//#endif
     }
-
-#if defined(__EMSCRIPTEN__)
-  //EM_LOG("LayoutManager::Impl::DoLayoutAndProduceRenderTree 1.3\n");
-#endif
 
     // Note that according to:
     //     https://www.w3.org/TR/2015/WD-web-animations-1-20150707/#model-liveness,
     // "The time passed to a requestAnimationFrame callback will be equal to
     // document.timeline.currentTime".  In our case,
     // document.timeline.currentTime is derived from the latest sample time.
-//#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
-//    emscripten_async_call_closure(
-//      base::BindOnce([](scoped_refptr<dom::Window> window_) {
-//        DCHECK(window_);
-//        window_->RunAnimationFrameCallbacks();
-//      }, window_)
-//    );
-//#else
     window_->RunAnimationFrameCallbacks();
-//#endif
   }
-//P_LOG("LayoutManager::Impl::DoLayoutAndProduceRenderTree 3\n");
 
   // It should never be possible for for the computed styles and box tree to
   // be dirty when a render tree is not pending.
@@ -567,11 +488,6 @@ void LayoutManager::Impl::DoLayoutAndProduceRenderTree(const bool forceReLayout)
     }
 
     DoSynchronousLayout(forceReLayout);
-//P_LOG("LayoutManager::Impl::DoLayoutAndProduceRenderTree 4\n");
-
-#if defined(__EMSCRIPTEN__)
-  //EM_LOG("LayoutManager::Impl::DoLayoutAndProduceRenderTree 1.4\n");
-#endif
 
     // If no render tree has been produced yet, check if html display
     // should prevent the first render tree.
@@ -579,7 +495,6 @@ void LayoutManager::Impl::DoLayoutAndProduceRenderTree(const bool forceReLayout)
         !produced_render_tree_ && !document->html()->IsDisplayed();
 
     if (!document->render_postponed() && !display_none_prevents_render) {
-      //DCHECK(initial_containing_block_);
       scoped_refptr<render_tree::Node> render_tree_root =
           layout::GenerateRenderTreeFromBoxTree(used_style_provider_.get(),
                                                 layout_stat_tracker_,
@@ -592,61 +507,23 @@ void LayoutManager::Impl::DoLayoutAndProduceRenderTree(const bool forceReLayout)
         run_on_render_tree_produced_callback = false;
       }
 #endif  // ENABLE_TEST_RUNNER
-//P_LOG("LayoutManager::Impl::DoLayoutAndProduceRenderTree 5\n");
-
-#if defined(__EMSCRIPTEN__)
-  //EM_LOG("LayoutManager::Impl::DoLayoutAndProduceRenderTree 1.5\n");
-#endif
 
       if (run_on_render_tree_produced_callback) {
-//#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
-//    emscripten_async_call_closure(
-//      base::BindOnce(on_render_tree_produced_callback_, LayoutResults(
-//            render_tree_root, base::TimeDelta::FromMillisecondsD(
-//                                  *document->timeline()->current_time()))));
-//#else
         on_render_tree_produced_callback_.Run(LayoutResults(
             render_tree_root, base::TimeDelta::FromMillisecondsD(
                                   *document->timeline()->current_time())));
-//#endif
       }
-//P_LOG("LayoutManager::Impl::DoLayoutAndProduceRenderTree 6\n");
 
-//#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
-//     /// \todo always pending for now.
-//     //is_render_tree_pending_ = false;
-////
-////    emscripten_async_call_closure(
-////      base::BindOnce(&LayoutManager::Impl::setLayoutPending,
-////        base::Unretained(this), false)
-////    );
-//#else
       is_render_tree_pending_ = false;
-//#endif
     }
-    TRACE_EVENT_END0("cobalt::layout", kBenchmarkStatLayout);
 
-    //layout_timer_.Stop(); // TODO: remove line
+    TRACE_EVENT_END0("cobalt::layout", kBenchmarkStatLayout);
   }
 
-#if defined(__EMSCRIPTEN__)
-  //EM_LOG("LayoutManager::Impl::DoLayoutAndProduceRenderTree 2.0\n");
-#endif
-
-//P_LOG("LayoutManager::Impl::DoLayoutAndProduceRenderTree 7\n");
-//#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
-//    emscripten_async_call_closure(
-//      base::BindOnce(on_layout_callback_));
-//#else
   DCHECK(on_layout_callback_);
   DCHECK(!on_layout_callback_.is_null());
-  on_layout_callback_.Run();
-//#endif
-//P_LOG("LayoutManager::Impl::DoLayoutAndProduceRenderTree 8\n");
 
-#if defined(__EMSCRIPTEN__)
-  //EM_LOG("LayoutManager::Impl::DoLayoutAndProduceRenderTree 2.1\n");
-#endif
+  on_layout_callback_.Run();
 }
 
 LayoutManager::LayoutManager(
@@ -660,19 +537,15 @@ LayoutManager::LayoutManager(
     : impl_(new Impl(name, window, on_render_tree_produced, on_layout,
                      layout_trigger, dom_max_element_depth, layout_refresh_rate,
                      language, enable_image_animations, layout_stat_tracker,
-                     clear_window_with_background_color)) {
-    printf("LayoutManager::LayoutManager()...\n");
-  }
+                     clear_window_with_background_color)) {}
 
 LayoutManager::~LayoutManager() {}
 
 void LayoutManager::ForceReLayout() {
   //printf("LayoutManager::ForceReLayout...\n");
-
-  //impl_->OnMutation(); // TODO
-  //are_computed_styles_and_box_tree_dirty_ = true;
   impl_->DoLayoutAndProduceRenderTree(/* ForceReLayout */ false);
 }
+
 
 void LayoutManager::Suspend() { impl_->Suspend(); }
 void LayoutManager::Resume() { impl_->Resume(); }

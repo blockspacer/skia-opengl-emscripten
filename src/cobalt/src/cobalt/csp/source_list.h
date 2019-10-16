@@ -20,7 +20,7 @@
 #include <vector>
 
 #include "base/basictypes.h"
-//#include "base/containers/hash_tables.h"
+#include "base/containers/hash_tables.h"
 #include <map>
 #include "base/gtest_prod_util.h"
 #include "cobalt/csp/content_security_policy.h"
@@ -95,10 +95,10 @@ class SourceList {
   bool allow_insecure_connections_to_local_network_;
   bool allow_insecure_connections_to_localhost_;
   bool allow_insecure_connections_to_private_range_;
-  std::set<std::string> nonces_;
+  base::hash_set<std::string> nonces_;
   // TODO: This is a hash_set in blink. Need to implement
   // a hash for HashValue.
-  std::set<HashValue> hashes_;
+  base::hash_set<HashValue> hashes_;
   uint8 hash_algorithms_used_;
 
   const LocalNetworkCheckerInterface* local_network_checker_;

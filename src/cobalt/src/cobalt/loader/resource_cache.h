@@ -22,7 +22,7 @@
 #include <string>
 
 #include "base/bind.h"
-//#include "base/containers/hash_tables.h"
+#include "base/containers/hash_tables.h"
 #include <map>
 #include "base/memory/ref_counted.h"
 #include "base/optional.h"
@@ -524,10 +524,10 @@ class ResourceCache {
  private:
   friend class CachedResource<CacheType>;
 
-  typedef std::map<std::string, CachedResourceType*> CachedResourceMap;
+  typedef base::hash_map<std::string, CachedResourceType*> CachedResourceMap;
   typedef typename CachedResourceMap::iterator CachedResourceMapIterator;
 
-  typedef std::set<std::string> ResourceSet;
+  typedef base::hash_set<std::string> ResourceSet;
   typedef net::linked_hash_map<std::string, ResourceCallbackInfo>
       ResourceCallbackMap;
 

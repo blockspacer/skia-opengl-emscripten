@@ -17,10 +17,7 @@
 
 #include <string>
 
-
-#include "cobalt/base/cobalt_token.h"
-//#include "base/token.h"
-
+#include "cobalt/base/token.h"
 #include "cobalt/cssom/property_definitions.h"
 #include "cobalt/dom/event.h"
 
@@ -32,11 +29,11 @@ namespace dom {
 class TransitionEvent : public Event {
  public:
   explicit TransitionEvent(const std::string& type)
-      : Event(base::CobToken(type), kBubbles, kCancelable),
+      : Event(base::Token(type), kBubbles, kCancelable),
         property_(cssom::kNoneProperty),
         elapsed_time_(0) {}
 
-  TransitionEvent(base::CobToken type, cssom::PropertyKey property,
+  TransitionEvent(base::Token type, cssom::PropertyKey property,
                   float elapsed_time)
       : Event(type, kBubbles, kCancelable),
         property_(property),

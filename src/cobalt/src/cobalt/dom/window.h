@@ -1,4 +1,4 @@
-﻿// Copyright 2015 The Cobalt Authors. All Rights Reserved.
+// Copyright 2015 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@
 #include <vector>
 
 #include "base/callback.h"
-//#include "base/containers/hash_tables.h"
+#include "base/containers/hash_tables.h"
 #include <map>
 #include "base/memory/ref_counted.h"
 #include "base/memory/weak_ptr.h"
@@ -30,6 +30,9 @@
 #endif
 #include "cobalt/base/application_state.h"
 #include "cobalt/base/clock.h"
+#if defined(ENABLE_DEBUGGER_HOOKS)
+#include "cobalt/base/debugger_hooks.h"
+#endif // ENABLE_DEBUGGER_HOOKS
 #include "cobalt/cssom/css_parser.h"
 #include "cobalt/cssom/css_style_declaration.h"
 #include "cobalt/cssom/viewport_size.h"
@@ -64,10 +67,10 @@
 #include "cobalt/loader/mesh/mesh_cache.h"
 #include "cobalt/media/can_play_type_handler.h"
 #include "cobalt/media/web_media_player_factory.h"
-#if !defined(__EMSCRIPTEN__) && defined(__TODO__)
+#if defined(ENABLE_GNET)//!defined(__EMSCRIPTEN__) && defined(__TODO__)
 #include "cobalt/network_bridge/cookie_jar.h"
 #include "cobalt/network_bridge/net_poster.h"
-#endif
+#endif // ENABLE_GNET
 #include "cobalt/page_visibility/page_visibility_state.h"
 #include "cobalt/script/callback_function.h"
 #include "cobalt/script/environment_settings.h"
@@ -165,15 +168,13 @@ class Window : public EventTarget,
       const std::string& font_language_script,
       const base::Callback<void(const GURL&)> navigation_callback,
       const loader::Decoder::OnCompleteFunction& load_complete_callback,
-
-#if !defined(__EMSCRIPTEN__) && defined(__TODO__)
+#if defined(ENABLE_GNET)//!defined(__EMSCRIPTEN__) && defined(__TODO__)
       network_bridge::CookieJar* cookie_jar,
       const network_bridge::PostSender& post_sender,
-#endif
-
+#endif // ENABLE_GNET
 #if defined(ENABLE_COBALT_CSP)
       csp::CSPHeaderPolicy require_csp,
-#endif
+#endif // ENABLE_COBALT_CSP
       dom::CspEnforcementType csp_enforcement_mode,
       const base::Closure& csp_policy_changed_callback,
       const base::Closure& ran_animation_frame_callbacks_callback,
@@ -190,6 +191,9 @@ class Window : public EventTarget,
       const ScreenshotManager::ProvideScreenshotFunctionCallback&
           screenshot_function_callback,
       base::WaitableEvent* synchronous_loader_interrupt,
+#if defined(ENABLE_DEBUGGER_HOOKS)
+      const base::DebuggerHooks& debugger_hooks,
+#endif // ENABLE_DEBUGGER_HOOKS
       const scoped_refptr<ui_navigation::NavItem>& ui_nav_root = nullptr,
       int csp_insecure_allowed_token = 0, int dom_max_element_depth = 0,
       float video_playback_rate_multiplier = 1.f,
@@ -324,11 +328,13 @@ class Window : public EventTarget,
   //   https://dvcs.w3.org/hg/webperf/raw-file/tip/specs/NavigationTiming/Overview.html#sec-window.performance-attribute
   const scoped_refptr<Performance>& performance() const;
 
+  // Web API: SpeechSynthesisGetter (implements)
+  //   https://dvcs.w3.org/hg/speech-api/raw-file/4f41ea1126bb/webspeechapi.html#tts-section
 #if defined(ENABLE_SPEECH)
   // Web API: SpeechSynthesisGetter (implements)
   //   https://dvcs.w3.org/hg/speech-api/raw-file/4f41ea1126bb/webspeechapi.html#tts-section
   scoped_refptr<speech::SpeechSynthesis> speech_synthesis() const;
-#endif
+#endif // ENABLE_SPEECH
 
   // Custom, not in any spec.
   //
@@ -401,7 +407,7 @@ class Window : public EventTarget,
   const scoped_refptr<loader::CORSPreflightCache> get_preflight_cache() {
     return preflight_cache_;
   }
-#endif
+#endif // ENABLE_GNET
 
   // Custom on screen keyboard.
   const scoped_refptr<OnScreenKeyboard>& on_screen_keyboard() const;
@@ -435,7 +441,8 @@ class Window : public EventTarget,
   void ForceStartDocumentLoader();
 
   DEFINE_WRAPPABLE_TYPE(Window);
-private:
+
+ private:
   void StartDocumentLoad(
       loader::FetcherFactory* fetcher_factory, const GURL& url,
       Parser* dom_parser,
@@ -449,6 +456,7 @@ private:
 
   // From EventTarget.
   std::string GetDebugName() override { return "Window"; }
+
   void FireHashChangeEvent();
 
   cssom::ViewportSize viewport_size_;
@@ -485,7 +493,8 @@ private:
   scoped_refptr<Crypto> crypto_;
 #if defined(ENABLE_SPEECH)
   scoped_refptr<speech::SpeechSynthesis> speech_synthesis_;
-#endif
+#endif // ENABLE_SPEECH
+
   scoped_refptr<Storage> local_storage_;
   scoped_refptr<Storage> session_storage_;
 
@@ -494,7 +503,7 @@ private:
 #if defined(ENABLE_GNET)
   // Global preflight cache.
   scoped_refptr<loader::CORSPreflightCache> preflight_cache_;
-#endif
+#endif // ENABLE_GNET
 
   const base::Closure ran_animation_frame_callbacks_callback_;
   const CloseCallback window_close_callback_;
@@ -508,6 +517,8 @@ private:
 
   bool isDocumentStartedLoading_ = false;
 
+  bool canStartDocumentLoad_ = false;
+
   OnStartDispatchEventCallback on_start_dispatch_event_callback_;
   OnStopDispatchEventCallback on_stop_dispatch_event_callback_;
 
@@ -516,8 +527,6 @@ private:
   // This UI navigation root container should contain all active UI navigation
   // items for this window.
   scoped_refptr<ui_navigation::NavItem> ui_nav_root_;
-
-  bool canStartDocumentLoad_ = false;
 
   DISALLOW_COPY_AND_ASSIGN(Window);
 };

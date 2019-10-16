@@ -38,11 +38,11 @@ namespace dom {
 
 class ErrorEventInit : public cobalt::dom::EventInit {
  public:
-  ErrorEventInit() {
-    message_ = "";
-    filename_ = "";
-    lineno_ = 0;
-    colno_ = 0;
+  ErrorEventInit()
+    : message_(""),
+      filename_(""),
+      lineno_(0),
+      colno_(0) {
   }
 
   ErrorEventInit(const ErrorEventInit& other)

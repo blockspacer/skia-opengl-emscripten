@@ -120,7 +120,7 @@ class HTMLScriptElement : public HTMLElement {
                const base::SourceLocation& script_location, bool is_external);
 
   void PreventGarbageCollectionAndPostToDispatchEvent(
-      const base::Location& location, const base::CobToken& token,
+      const base::Location& location, const base::Token& token,
       std::unique_ptr<
           script::GlobalEnvironment::ScopedPreventGarbageCollection>*
           scoped_prevent_gc);
@@ -145,10 +145,9 @@ class HTMLScriptElement : public HTMLElement {
 
   // Thread checker ensures all calls to DOM element are made from the same
   // thread that it is created in.
-  base::ThreadChecker thread_checker_;
+  THREAD_CHECKER(thread_checker_);
   // Weak reference to the document at the time Prepare() started.
   base::WeakPtr<Document> document_;
-
 #ifdef ENABLE_LOADER
   // The loader that is used for asynchronous loads.
   std::unique_ptr<loader::Loader> loader_;

@@ -17,7 +17,7 @@
 
 #include <memory>
 
-//#include "base/containers/hash_tables.h"
+#include "base/containers/hash_tables.h"
 #include <map>
 #include "base/threading/thread_checker.h"
 #include "cobalt/render_tree/font.h"
@@ -69,7 +69,7 @@ class SkiaTypeface : public render_tree::Typeface {
  private:
   // Usually covers Latin-1 in a single page.
   static const int kPrimaryPageSize = 256;
-  typedef std::map<int32, render_tree::GlyphIndex> CharacterToGlyphMap;
+  typedef base::hash_map<int32, render_tree::GlyphIndex> CharacterToGlyphMap;
 
   // The underlying SkTypeface that was used to create this typeface.
   //sk_sp<SkTypeface_Cobalt> typeface_;

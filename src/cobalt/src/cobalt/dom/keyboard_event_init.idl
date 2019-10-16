@@ -26,5 +26,12 @@ dictionary KeyboardEventInit : EventModifierInit {
   unsigned long keyCode = 0;
   unsigned long which = 0;
 
-  int32_t keysym = 0;
+  // not in spec
+  int32_t keysym_;
+
+  // not in spec
+  bool is_printable_;
+
+  // not in spec
+  std::string text_;
 };

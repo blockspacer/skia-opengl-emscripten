@@ -204,7 +204,7 @@ DebugConsole::DebugConsole(
 
 DebugConsole::~DebugConsole() {}
 
-bool DebugConsole::FilterKeyEvent(base::CobToken type,
+bool DebugConsole::FilterKeyEvent(base::Token type,
                                   const dom::KeyboardEventInit& event) {
   // Assume here the full debug console is visible - pass all events to its
   // web module, and return false to indicate the event has been consumed.
@@ -212,7 +212,7 @@ bool DebugConsole::FilterKeyEvent(base::CobToken type,
   return false;
 }
 
-bool DebugConsole::FilterWheelEvent(base::CobToken type,
+bool DebugConsole::FilterWheelEvent(base::Token type,
                                     const dom::WheelEventInit& event) {
   // Assume here the full debug console is visible - pass all events to its
   // web module, and return false to indicate the event has been consumed.
@@ -220,7 +220,7 @@ bool DebugConsole::FilterWheelEvent(base::CobToken type,
   return false;
 }
 
-bool DebugConsole::FilterPointerEvent(base::CobToken type,
+bool DebugConsole::FilterPointerEvent(base::Token type,
                                       const dom::PointerEventInit& event) {
   // Assume here the full debug console is visible - pass all events to its
   // web module, and return false to indicate the event has been consumed.
@@ -230,7 +230,7 @@ bool DebugConsole::FilterPointerEvent(base::CobToken type,
 
 #if SB_HAS(ON_SCREEN_KEYBOARD)
 bool DebugConsole::InjectOnScreenKeyboardInputEvent(
-    base::CobToken type, const dom::InputEventInit& event) {
+    base::Token type, const dom::InputEventInit& event) {
   // Assume here the full debug console is visible - pass all events to its
   // web module, and return false to indicate the event has been consumed.
   web_module_->InjectOnScreenKeyboardInputEvent(type, event);

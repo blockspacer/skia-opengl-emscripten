@@ -1,4 +1,4 @@
-﻿// Copyright 2015 The Cobalt Authors. All Rights Reserved.
+// Copyright 2015 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -39,7 +39,7 @@ class KeyboardEvent : public UIEventWithKeyState {
   };
   explicit KeyboardEvent(const std::string& type);
   KeyboardEvent(const std::string& type, const KeyboardEventInit& init_dict);
-  KeyboardEvent(base::CobToken type, const scoped_refptr<Window>& view,
+  KeyboardEvent(base::Token type, const scoped_refptr<Window>& view,
                 const KeyboardEventInit& init_dict);
 
   // Creates an event with its "initialized flag" unset.
@@ -110,9 +110,6 @@ class KeyboardEvent : public UIEventWithKeyState {
   ~KeyboardEvent() override {}
   std::string NonPrintableKey(int32_t key_code) const;
 
-  KeyLocationCode key_location_;
-  uint32_t key_code_;
-
   // not in spec
   int32_t keysym_;
 
@@ -122,8 +119,9 @@ class KeyboardEvent : public UIEventWithKeyState {
   // not in spec
   std::string text_;
 
+  KeyLocationCode key_location_;
+  uint32_t key_code_;
   uint32_t char_code_;
-
   bool repeat_;
 };
 

@@ -56,8 +56,6 @@ void UpdateComputedStylesAndLayoutBoxTree(
     icu::BreakIterator* character_break_iterator,
     scoped_refptr<BlockLevelBlockContainerBox>* initial_containing_block,
     bool clear_window_with_background_color) {
-//printf("UpdateComputedStylesAndLayoutBoxTree 1\n");
-  //DCHECK(line_break_iterator);
   TRACE_EVENT0("cobalt::layout", "UpdateComputedStylesAndLayoutBoxTree()");
   // Layout-related cleanup is performed on the UsedStyleProvider in this
   // object's destructor.
@@ -66,11 +64,13 @@ void UpdateComputedStylesAndLayoutBoxTree(
 
   // Update the computed style of all elements in the DOM, if necessary.
   document->UpdateComputedStyles();
+
 #if !defined(OS_EMSCRIPTEN)
   base::StopWatch stop_watch_layout_box_tree(
       LayoutStatTracker::kStopWatchTypeLayoutBoxTree,
       base::StopWatch::kAutoStartOn, layout_stat_tracker);
 #endif
+
   // Create initial containing block.
   InitialContainingBlockCreationResults
       initial_containing_block_creation_results = CreateInitialContainingBlock(
@@ -78,23 +78,40 @@ void UpdateComputedStylesAndLayoutBoxTree(
           used_style_provider, layout_stat_tracker);
   *initial_containing_block = initial_containing_block_creation_results.box;
 
-//printf("UpdateComputedStylesAndLayoutBoxTree 2\n");
   if (clear_window_with_background_color) {
     (*initial_containing_block)->set_blend_background_color(false);
+  }
+
+  // Associate the UI navigation root with the initial containing block.
+  if (document->window()) {
+    (*initial_containing_block)->SetUiNavItem(
+        document->window()->GetUiNavRoot());
   }
 
   // Generate boxes.
   if (document->html()) {
     TRACE_EVENT0("cobalt::layout", kBenchmarkStatBoxGeneration);
+
 #if !defined(OS_EMSCRIPTEN)
     base::StopWatch stop_watch_box_generation(
         LayoutStatTracker::kStopWatchTypeBoxGeneration,
         base::StopWatch::kAutoStartOn, layout_stat_tracker);
 #endif
 
-  //DCHECK(line_break_iterator);
+    // If the implicit root is a root for any observers, the initial containing
+    // block should reference the corresponding IntersectionObserverRoots.
+    dom::HTMLElement* html_element =
+        document->document_element()->AsHTMLElement();
+    BoxIntersectionObserverModule::IntersectionObserverRootVector roots =
+        html_element->GetLayoutIntersectionObserverRoots();
+    BoxIntersectionObserverModule::IntersectionObserverTargetVector targets =
+        html_element->GetLayoutIntersectionObserverTargets();
+    (*initial_containing_block)
+        ->AddIntersectionObserverRootsAndTargets(std::move(roots),
+                                                 std::move(targets));
+
     ScopedParagraph scoped_paragraph(
-        new Paragraph(locale, (*initial_containing_block)->GetBaseDirection(),
+        new Paragraph(locale, (*initial_containing_block)->base_direction(),
                       Paragraph::DirectionalEmbeddingStack(),
                       line_break_iterator, character_break_iterator));
     BoxGenerator::Context context(
@@ -128,6 +145,7 @@ void UpdateComputedStylesAndLayoutBoxTree(
   // Layout.
   {
     TRACE_EVENT0("cobalt::layout", kBenchmarkStatUpdateUsedSizes);
+
 #if !defined(OS_EMSCRIPTEN)
     base::StopWatch stop_watch_update_used_sizes(
         LayoutStatTracker::kStopWatchTypeUpdateUsedSizes,
@@ -138,7 +156,6 @@ void UpdateComputedStylesAndLayoutBoxTree(
     (*initial_containing_block)->set_top(LayoutUnit());
     (*initial_containing_block)->UpdateSize(LayoutParams());
   }
-//printf("UpdateComputedStylesAndLayoutBoxTree 3\n");
 }
 
 scoped_refptr<render_tree::Node> GenerateRenderTreeFromBoxTree(
@@ -148,19 +165,12 @@ scoped_refptr<render_tree::Node> GenerateRenderTreeFromBoxTree(
   TRACE_EVENT0("cobalt::layout", "GenerateRenderTreeFromBoxTree()");
   render_tree::CompositionNode::Builder render_tree_root_builder;
   {
-#if defined(__EMSCRIPTEN__)
-  //EM_LOG("GenerateRenderTreeFromBoxTree 1\n");
-#endif
-
     TRACE_EVENT0("cobalt::layout", kBenchmarkStatRenderAndAnimate);
+
 #if !defined(OS_EMSCRIPTEN)
     base::StopWatch stop_watch_render_and_animate(
         LayoutStatTracker::kStopWatchTypeRenderAndAnimate,
         base::StopWatch::kAutoStartOn, layout_stat_tracker);
-#endif
-
-#if defined(__EMSCRIPTEN__)
-  //EM_LOG("GenerateRenderTreeFromBoxTree 2\n");
 #endif
 
     (*initial_containing_block)
@@ -180,10 +190,6 @@ scoped_refptr<render_tree::Node> GenerateRenderTreeFromBoxTree(
   // root to merge any sub-AnimateNodes.
   render_tree::animations::AnimateNode* animate_node =
       new render_tree::animations::AnimateNode(static_root_node);
-
-#if defined(__EMSCRIPTEN__)
-  //EM_LOG("GenerateRenderTreeFromBoxTree 3\n");
-#endif
 
   return animate_node;
 }

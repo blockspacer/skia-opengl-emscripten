@@ -89,7 +89,7 @@ void CSSKeyframesRule::UpdateSortedKeyframes() {
     for (unsigned int j = 0; j < offsets.size(); ++j) {
       KeyframeInfo keyframe;
       keyframe.offset = offsets[j];
-      keyframe.style = keyframe_rule->style()->data().get();
+      keyframe.style = keyframe_rule->style()->data();
       sorted_keyframe_set.insert(keyframe);
     }
   }

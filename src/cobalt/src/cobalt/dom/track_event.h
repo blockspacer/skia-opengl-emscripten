@@ -17,10 +17,7 @@
 
 #include <string>
 
-
-#include "cobalt/base/cobalt_token.h"
-//#include "base/token.h"
-
+#include "cobalt/base/token.h"
 #include "cobalt/dom/audio_track.h"
 #include "cobalt/dom/event.h"
 #include "cobalt/dom/video_track.h"
@@ -36,10 +33,10 @@ class TrackEvent : public Event {
  public:
   // Custom, not in any spec.
   //
-  explicit TrackEvent(const std::string& type) : Event(base::CobToken(type)) {}
-  TrackEvent(base::CobToken type, const scoped_refptr<AudioTrack>& audio_track)
+  explicit TrackEvent(const std::string& type) : Event(base::Token(type)) {}
+  TrackEvent(base::Token type, const scoped_refptr<AudioTrack>& audio_track)
       : Event(type), track_(audio_track) {}
-  TrackEvent(base::CobToken type, const scoped_refptr<VideoTrack>& video_track)
+  TrackEvent(base::Token type, const scoped_refptr<VideoTrack>& video_track)
       : Event(type), track_(video_track) {}
 
   // Web API: TrackEvent

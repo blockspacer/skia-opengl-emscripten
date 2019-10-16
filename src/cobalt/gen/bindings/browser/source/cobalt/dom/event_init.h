@@ -36,10 +36,10 @@ namespace dom {
 
 class EventInit {
  public:
-  EventInit() {
-    bubbles_ = false;
-    cancelable_ = false;
-    time_stamp_ = 0;
+  EventInit()
+    : bubbles_(false),
+      cancelable_(false),
+      time_stamp_(0) {
   }
 
   EventInit(const EventInit& other) {

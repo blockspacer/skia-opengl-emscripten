@@ -43,14 +43,14 @@ class UIEventWithKeyState : public UIEvent {
   bool GetModifierState(const std::string& keyArg) const;
 
  protected:
-  UIEventWithKeyState(base::CobToken type, Bubbles bubbles, Cancelable cancelable,
+  UIEventWithKeyState(base::Token type, Bubbles bubbles, Cancelable cancelable,
                       const scoped_refptr<Window>& view)
       : UIEvent(type, bubbles, cancelable, view),
         ctrl_key_(false),
         shift_key_(false),
         alt_key_(false),
         meta_key_(false) {}
-  UIEventWithKeyState(base::CobToken type, Bubbles bubbles, Cancelable cancelable,
+  UIEventWithKeyState(base::Token type, Bubbles bubbles, Cancelable cancelable,
                       const scoped_refptr<Window>& view,
                       const EventModifierInit& init_dict)
       : UIEvent(type, bubbles, cancelable, view, init_dict) {

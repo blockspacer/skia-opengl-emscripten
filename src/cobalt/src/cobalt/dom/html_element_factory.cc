@@ -16,6 +16,7 @@
 
 #include "base/bind.h"
 #include "cobalt/dom/html_anchor_element.h"
+#include "cobalt/dom/html_audio_element.h"
 #include "cobalt/dom/html_body_element.h"
 #include "cobalt/dom/html_br_element.h"
 #include "cobalt/dom/html_div_element.h"
@@ -55,7 +56,7 @@ scoped_refptr<HTMLElement> CreateHTMLElementT(Document* document) {
 template <typename T>
 scoped_refptr<HTMLElement> CreateHTMLElementWithTagNameT(
     const std::string& local_name, Document* document) {
-  return new T(document, base::CobToken(local_name));
+  return new T(document, base::Token(local_name));
 }
 
 }  // namespace
@@ -63,6 +64,7 @@ scoped_refptr<HTMLElement> CreateHTMLElementWithTagNameT(
 HTMLElementFactory::HTMLElementFactory() {
   // Register HTML elements that have only one tag name in the map.
   RegisterHTMLElementWithSingleTagName<HTMLAnchorElement>();
+  RegisterHTMLElementWithSingleTagName<HTMLAudioElement>();
   RegisterHTMLElementWithSingleTagName<HTMLBodyElement>();
   RegisterHTMLElementWithSingleTagName<HTMLBRElement>();
   RegisterHTMLElementWithSingleTagName<HTMLDivElement>();
@@ -78,20 +80,21 @@ HTMLElementFactory::HTMLElementFactory() {
   RegisterHTMLElementWithSingleTagName<HTMLTitleElement>();
   RegisterHTMLElementWithSingleTagName<HTMLVideoElement>();
 
+  // Register HTML elements that have multiple tag names in the map.
+  RegisterHTMLElementWithMultipleTagName<HTMLHeadingElement>();
+
   // not in spec
   RegisterHTMLElementWithSingleTagName<HTMLSkottieElement>();
 
+  /// \note lazy loaded
   //RegisterHTMLElementWithSingleTagName<HTMLCustomElement>();
 
-
-  // Register HTML elements that have multiple tag names in the map.
-  RegisterHTMLElementWithMultipleTagName<HTMLHeadingElement>();
 }
 
 HTMLElementFactory::~HTMLElementFactory() {}
 
 scoped_refptr<HTMLElement> HTMLElementFactory::CreateHTMLElement(
-    Document* document, base::CobToken tag_name) {
+    Document* document, base::Token tag_name) {
   TRACK_MEMORY_SCOPE("DOM");
   TagNameToCreateHTMLElementTCallbackMap::const_iterator iter =
       tag_name_to_create_html_element_t_callback_map_.find(tag_name);
@@ -103,18 +106,14 @@ scoped_refptr<HTMLElement> HTMLElementFactory::CreateHTMLElement(
   }
 }
 
-/*void HTMLElementFactory::addHTMLCustomElement(const std::string& tag_name) {
-  tag_name_to_create_html_element_t_callback_map_[base::CobToken(tag_name)] =
-      base::Bind(&CreateHTMLElementT<T>);
-}*/
-
+// custom
 void HTMLElementFactory::AddHTMLElementWithSingleTagName(const char* tag_name, CreateHTMLElementTCallback create_cb) {
-  tag_name_to_create_html_element_t_callback_map_[base::CobToken(tag_name)] = create_cb;
+  tag_name_to_create_html_element_t_callback_map_[base::Token(tag_name)] = create_cb;
 }
 
 template <typename T>
 void HTMLElementFactory::RegisterHTMLElementWithSingleTagName() {
-  tag_name_to_create_html_element_t_callback_map_[base::CobToken(T::kTagName)] =
+  tag_name_to_create_html_element_t_callback_map_[base::Token(T::kTagName)] =
       base::Bind(&CreateHTMLElementT<T>);
 }
 
@@ -122,7 +121,7 @@ template <typename T>
 void HTMLElementFactory::RegisterHTMLElementWithMultipleTagName() {
   for (int i = 0; i < T::kTagNameCount; i++) {
     std::string tag_name = T::kTagNames[i];
-    tag_name_to_create_html_element_t_callback_map_[base::CobToken(tag_name)] =
+    tag_name_to_create_html_element_t_callback_map_[base::Token(tag_name)] =
         base::Bind(&CreateHTMLElementWithTagNameT<T>, tag_name);
   }
 }

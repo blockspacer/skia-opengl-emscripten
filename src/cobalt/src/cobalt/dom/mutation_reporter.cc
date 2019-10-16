@@ -16,7 +16,7 @@
 
 #include "cobalt/dom/mutation_reporter.h"
 
-//#include "base/containers/hash_tables.h"
+#include "base/containers/hash_tables.h"
 #include <map>
 #include <set>
 #include "base/trace_event/trace_event.h"
@@ -159,7 +159,7 @@ void ReportToInterestedObservers(
     MutationReporter::RegisteredObserverVector* registered_observers,
     MutationRecordBuilder* record_builder) {
   TRACE_EVENT0("cobalt::dom", "ReportToInterestedObservers()");
-  typedef std::set<MutationObserver*> MutationObserverSet;
+  typedef base::hash_set<MutationObserver*> MutationObserverSet;
   MutationObserverSet reported_observers;
   for (size_t i = 0; i < registered_observers->size(); ++i) {
     const RegisteredObserver& registered_observer = registered_observers->at(i);

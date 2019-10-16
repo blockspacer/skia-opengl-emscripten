@@ -18,7 +18,7 @@
 #include <memory>
 #include <string>
 
-//#include "base/containers/hash_tables.h"
+#include "base/containers/hash_tables.h"
 #include <map>
 #include "base/optional.h"
 #include "base/synchronization/waitable_event.h"
@@ -35,7 +35,7 @@ class Storage;
 // by the Storage node.
 class StorageArea {
  public:
-  typedef std::map<std::string, std::string> StorageMap;
+  typedef base::hash_map<std::string, std::string> StorageMap;
 
   // storage_node is the DOM node that owns this storage area.
   // db_interface is either NULL for SessionStorage, or a pointer to a
@@ -67,7 +67,6 @@ class StorageArea {
   int size_bytes_;
   LocalStorageDatabase* db_interface_;
   bool initialized_;
-  bool completed_ = false;
 
   DISALLOW_COPY_AND_ASSIGN(StorageArea);
 };

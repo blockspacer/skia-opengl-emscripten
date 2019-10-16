@@ -45,14 +45,14 @@ class AttributeSelector : public SimpleSelector {
   };
 
   explicit AttributeSelector(const std::string& attribute_name)
-      : SimpleSelector(kAttributeSelector, base::CobToken(),
-                       base::CobToken(attribute_name)),
+      : SimpleSelector(kAttributeSelector, base::Token(),
+                       base::Token(attribute_name)),
         value_match_type_(kNoMatch) {}
   AttributeSelector(const std::string& attribute_name,
                     ValueMatchType value_match_type,
                     const std::string& attribute_value)
-      : SimpleSelector(kAttributeSelector, base::CobToken(),
-                       base::CobToken(attribute_name)),
+      : SimpleSelector(kAttributeSelector, base::Token(),
+                       base::Token(attribute_name)),
         value_match_type_(value_match_type),
         value_(attribute_value) {}
   ~AttributeSelector() override {}
@@ -71,7 +71,7 @@ class AttributeSelector : public SimpleSelector {
                              CombinatorType combinator) override;
 
   // Rest of public methods.
-  base::CobToken attribute_name() const { return text(); }
+  base::Token attribute_name() const { return text(); }
   ValueMatchType value_match_type() const { return value_match_type_; }
   const std::string& attribute_value() const { return value_; }
 

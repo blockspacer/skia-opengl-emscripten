@@ -52,13 +52,12 @@
 #include "base/compiler_specific.h"
 #include "base/memory/ref_counted.h"
 #include "base/optional.h"
+
 #if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
 #include "base/timer/timer.h"
 #endif
 
-#include "cobalt/base/cobalt_token.h"
-//#include "base/token.h"
-
+#include "cobalt/base/token.h"
 #include "cobalt/dom/audio_track_list.h"
 #include "cobalt/dom/event_queue.h"
 #include "cobalt/dom/event_target.h"
@@ -145,7 +144,7 @@ class SourceBuffer : public dom::EventTarget {
   typedef media::MediaTracks MediaTracks;
 
   void InitSegmentReceived(std::unique_ptr<MediaTracks> tracks);
-  void ScheduleEvent(base::CobToken event_name);
+  void ScheduleEvent(base::Token event_name);
   bool PrepareAppend(size_t new_data_size,
                      script::ExceptionState* exception_state);
   bool EvictCodedFrames(size_t new_data_size);
@@ -186,6 +185,7 @@ class SourceBuffer : public dom::EventTarget {
 
   /// TODO: !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   base::OneShotTimer append_timer_;
+
   bool first_initialization_segment_received_;
   std::vector<uint8_t> pending_append_data_;
   size_t pending_append_data_offset_;

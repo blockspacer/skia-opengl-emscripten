@@ -36,8 +36,8 @@ namespace dom {
 
 class BlobPropertyBag {
  public:
-  BlobPropertyBag() {
-    type_ = "";
+  BlobPropertyBag()
+    : type_("") {
   }
 
   BlobPropertyBag(const BlobPropertyBag& other) {

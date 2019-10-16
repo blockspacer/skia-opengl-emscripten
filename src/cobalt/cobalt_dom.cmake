@@ -30,7 +30,23 @@
 #  }],
 #],
 set(cobalt_dom_SOURCES
+  ${COBALT_CORE_DIR}dom/abort_controller.h
+  ${COBALT_CORE_DIR}dom/abort_controller.cc
+  ${COBALT_CORE_DIR}dom/abort_signal.h
+  ${COBALT_CORE_DIR}dom/abort_signal.cc
   ${COBALT_CORE_DIR}dom/animation_event.h
+  ${COBALT_CORE_DIR}dom/element_intersection_observer_module.cc
+  ${COBALT_CORE_DIR}dom/element_intersection_observer_module.h
+  ${COBALT_CORE_DIR}dom/html_audio_element.cc
+  ${COBALT_CORE_DIR}dom/html_audio_element.h
+  ${COBALT_CORE_DIR}dom/intersection_observer.cc
+  ${COBALT_CORE_DIR}dom/intersection_observer.h
+  ${COBALT_CORE_DIR}dom/intersection_observer_entry.cc
+  ${COBALT_CORE_DIR}dom/intersection_observer_entry.h
+  ${COBALT_GEN_DIR}bindings/browser/source/cobalt/dom/intersection_observer_init.h
+  ${COBALT_CORE_DIR}dom/intersection_observer_task_manager.cc
+  ${COBALT_CORE_DIR}dom/intersection_observer_task_manager.h
+  ${COBALT_GEN_DIR}bindings/browser/source/cobalt/dom/intersection_observer_entry_init.h
   ${COBALT_CORE_DIR}dom/animation_frame_request_callback_list.cc
   ${COBALT_CORE_DIR}dom/animation_frame_request_callback_list.h
   ${COBALT_CORE_DIR}dom/attr.cc

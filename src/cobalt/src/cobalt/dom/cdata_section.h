@@ -37,7 +37,7 @@ class CDATASection : public Text {
 
   // Web API: Node
   //
-  base::CobToken node_name() const override;
+  base::Token node_name() const override;
   NodeType node_type() const override { return Node::kCdataSectionNode; }
 
   // Custom, not in any spec: Node.

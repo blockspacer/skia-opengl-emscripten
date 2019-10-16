@@ -17,10 +17,7 @@
 
 #include <string>
 
-
-#include "cobalt/base/cobalt_token.h"
-//#include "base/token.h"
-
+#include "cobalt/base/token.h"
 #include "cobalt/dom/event_target.h"
 #include "cobalt/dom/mouse_event_init.h"
 #include "cobalt/dom/ui_event_with_key_state.h"
@@ -35,9 +32,9 @@ class MouseEvent : public UIEventWithKeyState {
  public:
   explicit MouseEvent(const std::string& type);
   MouseEvent(const std::string& type, const MouseEventInit& init_dict);
-  MouseEvent(base::CobToken type, const scoped_refptr<Window>& view,
+  MouseEvent(base::Token type, const scoped_refptr<Window>& view,
              const MouseEventInit& init_dict);
-  MouseEvent(base::CobToken type, Bubbles bubbles, Cancelable cancelable,
+  MouseEvent(base::Token type, Bubbles bubbles, Cancelable cancelable,
              const scoped_refptr<Window>& view,
              const MouseEventInit& init_dict);
 
@@ -71,7 +68,7 @@ class MouseEvent : public UIEventWithKeyState {
   float page_y() const;
   float x() const { return static_cast<float>(client_x_); }
   float y() const { return static_cast<float>(client_y_); }
-  float offset_x() const; /// \note added missing `const`
+  float offset_x() const;  /// \note added missing `const`
   float offset_y() const;
 
   int16_t button() const { return button_; }

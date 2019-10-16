@@ -12,8 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//#include "cobalt/base/token.h"
-#include "cobalt/base/cobalt_token.h"
+#include "cobalt/base/token.h"
 
 #include <algorithm>
 #include <vector>

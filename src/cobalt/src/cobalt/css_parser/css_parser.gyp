@@ -35,7 +35,7 @@
       'type': 'none',
       'sources': [
         'grammar.h',
-	'grammar.y'
+        'grammar.y'
       ],
       # Generated header files are stored in the intermediate directory
       # under their module sub-directory.

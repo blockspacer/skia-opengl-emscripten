@@ -16,16 +16,14 @@
 
 #include <string>
 
-//#include "cobalt/base/token.h"
-#include "cobalt/base/cobalt_token.h"
-
+#include "cobalt/base/token.h"
 #include "cobalt/dom/html_element.h"
 
 namespace cobalt {
 namespace dom {
 
 MouseEvent::MouseEvent(const std::string& type)
-    : UIEventWithKeyState(base::CobToken(type), kBubbles, kCancelable, NULL),
+    : UIEventWithKeyState(base::Token(type), kBubbles, kCancelable, NULL),
       screen_x_(0),
       screen_y_(0),
       client_x_(0),
@@ -34,7 +32,7 @@ MouseEvent::MouseEvent(const std::string& type)
       buttons_(0) {}
 
 MouseEvent::MouseEvent(const std::string& type, const MouseEventInit& init_dict)
-    : UIEventWithKeyState(base::CobToken(type), kBubbles, kCancelable,
+    : UIEventWithKeyState(base::Token(type), kBubbles, kCancelable,
                           init_dict.view(), init_dict),
       screen_x_(static_cast<float>(init_dict.screen_x())),
       screen_y_(static_cast<float>(init_dict.screen_y())),
@@ -44,19 +42,18 @@ MouseEvent::MouseEvent(const std::string& type, const MouseEventInit& init_dict)
       buttons_(init_dict.buttons()),
       related_target_(init_dict.related_target()) {}
 
-MouseEvent::MouseEvent(base::CobToken type, const scoped_refptr<Window>& view,
+MouseEvent::MouseEvent(base::Token type, const scoped_refptr<Window>& view,
                        const MouseEventInit& init_dict)
     : UIEventWithKeyState(type, kBubbles, kCancelable, view, init_dict),
       screen_x_(static_cast<float>(init_dict.screen_x())),
-      screen_y_(static_cast<float>(
-      init_dict.screen_y())),
+      screen_y_(static_cast<float>(init_dict.screen_y())),
       client_x_(static_cast<float>(init_dict.client_x())),
       client_y_(static_cast<float>(init_dict.client_y())),
       button_(init_dict.button()),
       buttons_(init_dict.buttons()),
       related_target_(init_dict.related_target()) {}
 
-MouseEvent::MouseEvent(base::CobToken type, Bubbles bubbles, Cancelable cancelable,
+MouseEvent::MouseEvent(base::Token type, Bubbles bubbles, Cancelable cancelable,
                        const scoped_refptr<Window>& view,
                        const MouseEventInit& init_dict)
     : UIEventWithKeyState(type, bubbles, cancelable, view, init_dict),
@@ -145,7 +142,7 @@ float MouseEvent::offset_x() const {
           node->AsElement()->AsHTMLElement();
       if (html_element && html_element->layout_boxes()) {
         target_node_padding_edge =
-            html_element->layout_boxes()->GetPaddingEdgeLeft();
+            html_element->layout_boxes()->GetPaddingEdgeOffset().x();
       }
     }
     return client_x() - target_node_padding_edge;
@@ -173,7 +170,7 @@ float MouseEvent::offset_y() const {
           node->AsElement()->AsHTMLElement();
       if (html_element && html_element->layout_boxes()) {
         target_node_padding_edge =
-            html_element->layout_boxes()->GetPaddingEdgeTop();
+            html_element->layout_boxes()->GetPaddingEdgeOffset().y();
       }
     }
     return client_y() - target_node_padding_edge;

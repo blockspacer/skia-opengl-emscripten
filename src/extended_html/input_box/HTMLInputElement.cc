@@ -824,7 +824,7 @@ static ui::KeyboardCode keyFromKeyCode(uint32_t key_code) {
 }
 
 HTMLInputElement::HTMLInputElement(Document* document)
-    : HTMLCustomElement(document, base::CobToken(kTagName)) {
+    : HTMLCustomElement(document, base::Token(kTagName)) {
   printf("created new HTMLInputElement\n");
   gHTMLInputElementID++;
   HTMLInputElementID_ = gHTMLInputElementID;

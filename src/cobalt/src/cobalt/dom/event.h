@@ -18,13 +18,7 @@
 #include <string>
 
 #include "base/memory/weak_ptr.h"
-
-#include "cobalt/base/cobalt_token.h"
-//#include "base/token.h"
-
-#include "starboard/configuration.h"
-#include "starboard/time.h"
-
+#include "cobalt/base/token.h"
 #include "cobalt/dom/event_init.h"
 #include "cobalt/script/wrappable.h"
 
@@ -67,16 +61,16 @@ class Event : public script::Wrappable {
 
   // Creates an event that cannot be bubbled and cancelled.
   explicit Event(const std::string& type);
-  explicit Event(base::CobToken type);
+  explicit Event(base::Token type);
   Event(const std::string& type, const EventInit& init_dict);
-  Event(base::CobToken type, Bubbles bubbles, Cancelable cancelable);
-  Event(base::CobToken type, const EventInit& init_dict);
+  Event(base::Token type, Bubbles bubbles, Cancelable cancelable);
+  Event(base::Token type, const EventInit& init_dict);
 
   ~Event() override;
 
   // Web API: Event
   //
-  base::CobToken type() const { return type_; }
+  base::Token type() const { return type_; }
   const scoped_refptr<EventTarget>& target() const;
   const scoped_refptr<EventTarget>& current_target() const;
   EventPhase event_phase() const { return event_phase_; }
@@ -143,9 +137,9 @@ class Event : public script::Wrappable {
   void TraceMembers(script::Tracer* tracer) override;
 
  private:
-  void InitEventInternal(base::CobToken type, bool bubbles, bool cancelable);
+  void InitEventInternal(base::Token type, bool bubbles, bool cancelable);
 
-  base::CobToken type_;
+  base::Token type_;
 
   scoped_refptr<EventTarget> target_;
   scoped_refptr<EventTarget> current_target_;

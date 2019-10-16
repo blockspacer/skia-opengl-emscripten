@@ -68,7 +68,7 @@ BlockFormattingBlockContainerBox::UpdateRectOfInFlowChildBoxes(
       new BlockFormattingContext(child_layout_params));
   for (Boxes::const_iterator child_box_iterator = child_boxes().begin();
        child_box_iterator != child_boxes().end(); ++child_box_iterator) {
-    Box* child_box = (*child_box_iterator).get();
+    Box* child_box = *child_box_iterator;
     if (child_box->IsAbsolutelyPositioned()) {
       block_formatting_context->EstimateStaticPosition(child_box);
     } else {
@@ -102,9 +102,8 @@ BlockFormattingBlockContainerBox::GetOrAddAnonymousBlockBox() {
     new_computed_style_declaration->set_animations(
         new web_animations::AnimationSet());
     scoped_refptr<AnonymousBlockBox> new_anonymous_block_box(
-        new AnonymousBlockBox(new_computed_style_declaration,
-                              GetBaseDirection(), used_style_provider(),
-                              layout_stat_tracker()));
+        new AnonymousBlockBox(new_computed_style_declaration, base_direction(),
+                              used_style_provider(), layout_stat_tracker()));
     anonymous_block_box = new_anonymous_block_box.get();
     PushBackDirectChild(new_anonymous_block_box);
   }

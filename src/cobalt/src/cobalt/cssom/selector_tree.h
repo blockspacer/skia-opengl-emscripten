@@ -23,14 +23,13 @@
 
 #include "base/basictypes.h"
 
-//#include "base/containers/hash_tables.h"
+#include "base/containers/hash_tables.h"
 #include <map>
 
 #include "base/containers/small_map.h"
 #include "base/memory/weak_ptr.h"
 
-#include "cobalt/base/cobalt_token.h"
-//#include "base/token.h"
+#include "cobalt/base/token.h"
 
 
 #include "cobalt/cssom/combinator.h"
@@ -96,7 +95,7 @@ class SelectorTree {
   // selectors. However, they occasionally can number in the hundreds. Using
   // a SmallMap with an array size of 4, allows both cases to be handled
   // quickly.
-  typedef base::small_map<std::map<base::CobToken, SimpleSelectorNodes>, 4>
+  typedef base::small_map<std::map<base::Token, SimpleSelectorNodes>, 4>
       SelectorTextToNodesMap;
 
   class Node {
@@ -137,7 +136,7 @@ class SelectorTree {
       return (selector_mask_ & (1u << (simple_selector_type * kCombinatorCount +
                                        combinator_type))) != 0;
     }
-    void AppendSimpleSelector(base::CobToken name,
+    void AppendSimpleSelector(base::Token name,
                               SimpleSelectorType simple_selector_type,
                               CombinatorType combinator_type, Node* node) {
       // Create the SelectorTextToNodesMap if this is the first simple selector

@@ -24,8 +24,7 @@
 #include "base/message_loop/message_loop.h"
 #include "base/threading/thread_checker.h"
 
-#include "cobalt/base/cobalt_token.h"
-//#include "base/token.h"
+#include "cobalt/base/token.h"
 
 #include "cobalt/dom/element.h"
 #include "cobalt/dom/keyboard_event_init.h"
@@ -55,10 +54,10 @@ class WindowDriver;
 // will map to a method on this class.
 class ElementDriver {
  public:
-  typedef base::Callback<void(scoped_refptr<dom::Element>, const base::CobToken,
+  typedef base::Callback<void(scoped_refptr<dom::Element>, const base::Token,
                               const dom::KeyboardEventInit&)>
       KeyboardEventInjector;
-  typedef base::Callback<void(scoped_refptr<dom::Element>, const base::CobToken,
+  typedef base::Callback<void(scoped_refptr<dom::Element>, const base::Token,
                               const dom::PointerEventInit&)>
       PointerEventInjector;
 

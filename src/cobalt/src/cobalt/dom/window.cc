@@ -1,4 +1,4 @@
-﻿// Copyright 2015 The Cobalt Authors. All Rights Reserved.
+// Copyright 2015 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -52,24 +52,27 @@
 #include "cobalt/dom/storage.h"
 #include "cobalt/dom/wheel_event.h"
 #include "cobalt/dom/window_timers.h"
+
 #if defined(ENABLE_COBALT_MEDIA_SESSION)
 #include "cobalt/media_session/media_session_client.h"
 #endif // ENABLE_COBALT_MEDIA_SESSION
+
 #include "cobalt/script/environment_settings.h"
 #include "cobalt/script/javascript_engine.h"
 
 #if defined(ENABLE_SPEECH)
 #include "cobalt/speech/speech_synthesis.h"
-#endif
+#endif // ENABLE_SPEECH
 
 #include "starboard/file.h"
 
 #if defined(OS_EMSCRIPTEN)
 #include <emscripten/emscripten.h>
 static bool window_initialized = false;
-#endif
+#endif // OS_EMSCRIPTEN
 
 using cobalt::cssom::ViewportSize;
+
 #if defined(ENABLE_COBALT_MEDIA_SESSION)
 using cobalt::media_session::MediaSession;
 #endif // ENABLE_COBALT_MEDIA_SESSION
@@ -80,18 +83,16 @@ namespace dom {
 // This class fires the window's load event when the document is loaded.
 class Window::RelayLoadEvent : public DocumentObserver {
  public:
-  explicit RelayLoadEvent(/*scoped_refptr<Window>&*/Window* window) : window_(window) {}
+  explicit RelayLoadEvent(Window* window) : window_(window) {}
 
   // From DocumentObserver.
   void OnLoad() override {
-    DCHECK(window_);
     window_->PostToDispatchEventName(FROM_HERE, base::Tokens::load());
   }
   void OnMutation() override {}
   void OnFocusChanged() override {}
 
  private:
-  ///scoped_refptr<Window> window_;
   Window* window_;
 
   DISALLOW_COPY_AND_ASSIGN(RelayLoadEvent);
@@ -132,14 +133,15 @@ Window::Window(
     const base::Callback<void(const GURL&)> navigation_callback,
     const loader::Decoder::OnCompleteFunction& load_complete_callback,
 
-#if !defined(__EMSCRIPTEN__) && defined(__TODO__)
+#if defined(ENABLE_GNET)//!defined(__EMSCRIPTEN__) && defined(__TODO__)
     network_bridge::CookieJar* cookie_jar,
     const network_bridge::PostSender& post_sender,
-#endif
+#endif // __TODO__
 
 #if defined(ENABLE_COBALT_CSP)
     csp::CSPHeaderPolicy require_csp,
-#endif
+#endif // ENABLE_COBALT_CSP
+
     CspEnforcementType csp_enforcement_mode,
     const base::Closure& csp_policy_changed_callback,
     const base::Closure& ran_animation_frame_callbacks_callback,
@@ -155,6 +157,9 @@ Window::Window(
     const ScreenshotManager::ProvideScreenshotFunctionCallback&
         screenshot_function_callback,
     base::WaitableEvent* synchronous_loader_interrupt,
+#if defined(ENABLE_DEBUGGER_HOOKS)
+    const base::DebuggerHooks& debugger_hooks,
+#endif // ENABLE_DEBUGGER_HOOKS
     const scoped_refptr<ui_navigation::NavItem>& ui_nav_root,
     int csp_insecure_allowed_token, int dom_max_element_depth,
     float video_playback_rate_multiplier, ClockType clock_type,
@@ -190,14 +195,13 @@ Window::Window(
               performance_->timing()->GetNavigationStartClock(),
               navigation_callback, ParseUserAgentStyleSheet(css_parser),
               view_size,
-#if !defined(__EMSCRIPTEN__) && defined(__TODO__)
+#if defined(ENABLE_GNET)//!defined(__EMSCRIPTEN__) && defined(__TODO__)
               cookie_jar, post_sender,
 #endif
 #if defined(ENABLE_COBALT_CSP)
               require_csp,
 #endif
-              csp_enforcement_mode,
-              csp_policy_changed_callback,
+              csp_enforcement_mode, csp_policy_changed_callback,
               csp_insecure_allowed_token, dom_max_element_depth)))),
       document_loader_(nullptr),
       history_(new History()),
@@ -205,18 +209,23 @@ Window::Window(
 #if defined(ENABLE_COBALT_MEDIA_SESSION)
       , media_session
 #endif // ENABLE_COBALT_MEDIA_SESSION
-      , captions,
-                               script_value_factory)),
+      , captions
+      , script_value_factory)),
       ALLOW_THIS_IN_INITIALIZER_LIST(
           relay_on_load_event_(new RelayLoadEvent(this))),
       console_(new Console(execution_state)),
-      ALLOW_THIS_IN_INITIALIZER_LIST(window_timers_(new WindowTimers(this))),
+      ALLOW_THIS_IN_INITIALIZER_LIST(
+          window_timers_(new WindowTimers(this
+#if defined(ENABLE_DEBUGGER_HOOKS)
+          , debugger_hooks
+#endif // ENABLE_DEBUGGER_HOOKS
+          ))),
       ALLOW_THIS_IN_INITIALIZER_LIST(animation_frame_request_callback_list_(
           new AnimationFrameRequestCallbackList(this))),
       crypto_(new Crypto()),
 #if defined(ENABLE_SPEECH)
       speech_synthesis_(new speech::SpeechSynthesis(navigator_, log_tts)),
-#endif
+#endif // ENABLE_SPEECH
       ALLOW_THIS_IN_INITIALIZER_LIST(local_storage_(
           new Storage(this, Storage::kLocalStorage, local_storage_database))),
       ALLOW_THIS_IN_INITIALIZER_LIST(
@@ -224,7 +233,7 @@ Window::Window(
       screen_(new Screen(view_size)),
 #if defined(ENABLE_GNET)
       preflight_cache_(new loader::CORSPreflightCache()),
-#endif
+#endif // ENABLE_GNET
       ran_animation_frame_callbacks_callback_(
           ran_animation_frame_callbacks_callback),
       window_close_callback_(window_close_callback),
@@ -240,7 +249,6 @@ Window::Window(
       on_stop_dispatch_event_callback_(on_stop_dispatch_event_callback),
       screenshot_manager_(screenshot_function_callback),
       ui_nav_root_(ui_nav_root) {
-
 #if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   if(window_initialized)
     printf("can`t init Window twice wasm ST platform!");
@@ -257,10 +265,8 @@ Window::Window(
   SetCamera3D(camera_3d);
 
   if (ui_nav_root_) {
-    ui_nav_root_->SetEnabled(true);
+    ui_nav_root_->SetEnabled(true); // TODO
   }
-
-//#ifdef __TODO__
 
   // Document load start is deferred from this constructor so that we can be
   // guaranteed that this Window object is fully constructed before document
@@ -276,8 +282,6 @@ Window::Window(
   }
 
   canStartDocumentLoad_ = true;
-
-//#endif
 }
 
 bool Window::TryForceStartDocumentLoad() {
@@ -318,25 +322,18 @@ void Window::StartDocumentLoad(
     Parser* dom_parser,
     const loader::Decoder::OnCompleteFunction& load_complete_callback) {
   isDocumentStartedLoading_ = true;
-
-  P_LOG("StartDocumentLoad 1\n");
   document_loader_.reset(new loader::Loader(
       base::Bind(&loader::FetcherFactory::CreateFetcher,
                  base::Unretained(fetcher_factory), url),
       base::Bind(&Parser::ParseDocumentAsync, base::Unretained(dom_parser),
                  document_, base::SourceLocation(url.spec(), 1, 1)),
       load_complete_callback
-      /*base::Bind([](){
-
-      },*/
-      /// \note: (only wasm ST - wasm without pthreads)
 #if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
       , loader::Loader::OnDestructionFunction()
       /// \note start suspended
       , true
 #endif
       ));
-  P_LOG("StartDocumentLoad 2\n");
 }
 
 scoped_refptr<base::BasicClock> Window::MakePerformanceClock(
@@ -425,7 +422,7 @@ scoped_refptr<cssom::CSSStyleDeclaration> Window::GetComputedStyle(
 
   // 1. Let doc be the Document associated with the Window object on which the
   // method was invoked.
-  DCHECK_EQ(document_.get(), elt->node_document())
+  DCHECK_EQ(document_, elt->node_document())
       << "getComputedStyle not supported for elements outside of the document";
 
   scoped_refptr<HTMLElement> html_element = elt->AsHTMLElement();
@@ -572,7 +569,7 @@ const scoped_refptr<Performance>& Window::performance() const {
 scoped_refptr<speech::SpeechSynthesis> Window::speech_synthesis() const {
   return speech_synthesis_;
 }
-#endif
+#endif // ENABLE_SPEECH
 
 const scoped_refptr<Console>& Window::console() const { return console_; }
 
@@ -600,12 +597,12 @@ void Window::RunAnimationFrameCallbacks() {
   // Scope the StopWatch. It should not include any processing from
   // |ran_animation_frame_callbacks_callback_|.
   {
-#if !defined(OS_EMSCRIPTEN)
+#if !defined(OS_EMSCRIPTEN) // TODO
     base::StopWatch stop_watch_run_animation_frame_callbacks(
         DomStatTracker::kStopWatchTypeRunAnimationFrameCallbacks,
         base::StopWatch::kAutoStartOn,
         html_element_context()->dom_stat_tracker());
-#endif
+#endif // OS_EMSCRIPTEN
 
     // First grab the current list of frame request callbacks and hold on to it
     // here locally.
@@ -632,8 +629,6 @@ bool Window::HasPendingAnimationFrameCallbacks() const {
 }
 
 void Window::InjectEvent(const scoped_refptr<Event>& event) {
-  //printf("Window::InjectEvent %s\n", event->type().c_str());
-
   TRACE_EVENT1("cobalt::dom", "Window::InjectEvent()", "event",
                event->type().c_str());
 
@@ -782,31 +777,18 @@ void Window::OnDocumentRootElementUnableToProvideOffsetDimensions() {
 }
 
 void Window::OnStartDispatchEvent(const scoped_refptr<dom::Event>& event) {
-  //P_LOG("Window::OnStartDispatchEvent 1\n");
-
-//#ifdef __TODO__
   if (!on_start_dispatch_event_callback_.is_null()) {
-    //P_LOG("Window::OnStartDispatchEvent 2\n");
-    DCHECK(!on_start_dispatch_event_callback_.IsCancelled());
-    //P_LOG("Window::OnStartDispatchEvent 2.1\n");
     on_start_dispatch_event_callback_.Run(event);
-    //P_LOG("Window::OnStartDispatchEvent 3\n");
   }
-//#endif
-
 }
 
 void Window::OnStopDispatchEvent(const scoped_refptr<dom::Event>& event) {
-  //P_LOG("Window::OnStopDispatchEvent 1\n");
   if (!on_stop_dispatch_event_callback_.is_null()) {
-    //P_LOG("Window::OnStopDispatchEvent 2\n");
     on_stop_dispatch_event_callback_.Run(event);
-    //P_LOG("Window::OnStopDispatchEvent 3\n");
   }
 }
 
 void Window::ClearPointerStateForShutdown() {
-  ///printf("Window::ClearPointerStateForShutdown\n");
   document_->pointer_state()->ClearForShutdown();
 }
 
@@ -825,16 +807,11 @@ void Window::TraceMembers(script::Tracer* tracer) {
   tracer->Trace(crypto_);
 #if defined(ENABLE_SPEECH)
   tracer->Trace(speech_synthesis_);
-#endif
+#endif // ENABLE_SPEECH
   tracer->Trace(local_storage_);
   tracer->Trace(session_storage_);
   tracer->Trace(screen_);
   tracer->Trace(on_screen_keyboard_);
-}
-
-void Window::SetEnvironmentSettings(script::EnvironmentSettings* settings) {
-  screenshot_manager_.SetEnvironmentSettings(settings);
-  navigator_->SetEnvironmentSettings(settings);
 }
 
 bool Window::isStartedDocumentLoader() const {
@@ -845,6 +822,11 @@ void Window::ForceStartDocumentLoader() {
   DCHECK(document_loader_);
   document_loader_->Resume(nullptr);
   //document_loader_->Start();
+}
+
+void Window::SetEnvironmentSettings(script::EnvironmentSettings* settings) {
+  screenshot_manager_.SetEnvironmentSettings(settings);
+  navigator_->SetEnvironmentSettings(settings);
 }
 
 void Window::CacheSplashScreen(const std::string& content) {
@@ -862,7 +844,6 @@ const scoped_refptr<OnScreenKeyboard>& Window::on_screen_keyboard() const {
 void Window::ReleaseOnScreenKeyboard() { on_screen_keyboard_ = nullptr; }
 
 Window::~Window() {
-  ///printf("Window::~Window\n");
 #if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   printf("can`t destroy Window on wasm ST platform!");
   HTML5_STACKTRACE();

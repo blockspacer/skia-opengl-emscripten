@@ -37,8 +37,8 @@ namespace eme {
 
 class MediaKeySystemMediaCapability {
  public:
-  MediaKeySystemMediaCapability() {
-    content_type_ = "";
+  MediaKeySystemMediaCapability()
+    : content_type_("") {
   }
 
   MediaKeySystemMediaCapability(const MediaKeySystemMediaCapability& other) {

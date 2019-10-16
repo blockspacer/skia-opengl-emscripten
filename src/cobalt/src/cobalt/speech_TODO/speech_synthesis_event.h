@@ -34,7 +34,7 @@ class SpeechSynthesisUtterance;
 class SpeechSynthesisEvent : public dom::Event {
  public:
   SpeechSynthesisEvent(
-      base::CobToken event_name,
+      base::Token event_name,
       const scoped_refptr<SpeechSynthesisUtterance>& utterance);
 
   ~SpeechSynthesisEvent();

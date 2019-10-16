@@ -1,4 +1,4 @@
-﻿// Copyright 2014 The Cobalt Authors. All Rights Reserved.
+// Copyright 2014 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -45,7 +45,7 @@ CspDelegate::ResourceType GetCspResourceTypeForRel(const std::string& rel) {
     return CspDelegate::kImage;
   }
 }
-#endif
+#endif // ENABLE_COBALT_CSP
 
 bool IsRelContentCriticalResource(const std::string& rel) {
   return rel == "stylesheet";
@@ -131,7 +131,7 @@ void HTMLLinkElement::Obtain() {
   TRACK_MEMORY_SCOPE("DOM");
   TRACE_EVENT0("cobalt::dom", "HTMLLinkElement::Obtain()");
   // Custom, not in any spec.
-  DCHECK(thread_checker_.CalledOnValidThread());
+  DCHECK_CALLED_ON_VALID_THREAD(thread_checker_);
 
   Document* document = node_document();
 
@@ -144,6 +144,7 @@ void HTMLLinkElement::Obtain() {
 #if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
   DCHECK(base::MessageLoopCurrent::Get());
 #endif
+
   DCHECK(!loader_);
 
   // 1. If the href attribute's value is the empty string, then abort these
@@ -168,7 +169,7 @@ void HTMLLinkElement::Obtain() {
   csp::SecurityCallback csp_callback = base::Bind(
       &CspDelegate::CanLoad, base::Unretained(document->csp_delegate()),
       GetCspResourceTypeForRel(rel()));
-#endif
+#endif //  ENABLE_COBALT_CSP
 
   fetched_last_url_origin_ = loader::Origin();
 
@@ -190,7 +191,7 @@ void HTMLLinkElement::Obtain() {
       absolute_url_, origin
 #if defined(ENABLE_COBALT_CSP)
       , csp_callback
-#endif
+#endif //  ENABLE_COBALT_CSP
       , request_mode_,
       base::Bind(&HTMLLinkElement::OnContentProduced, base::Unretained(this)),
       base::Bind(&HTMLLinkElement::OnLoadingComplete, base::Unretained(this)));
@@ -198,8 +199,7 @@ void HTMLLinkElement::Obtain() {
 
 void HTMLLinkElement::OnContentProduced(const loader::Origin& last_url_origin,
                                         std::unique_ptr<std::string> content) {
-  P_LOG("HTMLLinkElement::OnContentProduced\n");
-  DCHECK(thread_checker_.CalledOnValidThread());
+  DCHECK_CALLED_ON_VALID_THREAD(thread_checker_);
   DCHECK(content);
   TRACK_MEMORY_SCOPE("DOM");
   TRACE_EVENT0("cobalt::dom", "HTMLLinkElement::OnContentProduced()");
@@ -235,8 +235,6 @@ void HTMLLinkElement::OnContentProduced(const loader::Origin& last_url_origin,
 
 void HTMLLinkElement::OnLoadingComplete(
     const base::Optional<std::string>& error) {
-  P_LOG("HTMLLinkElement::OnLoadingComplete\n");
-
 #if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
     DCHECK(base::MessageLoopCurrent::Get()); // TODO
   base::MessageLoopCurrent::Get()->task_runner()->PostTask(
@@ -247,7 +245,7 @@ void HTMLLinkElement::OnLoadingComplete(
 
   if (!error) return;
 
-  DCHECK(thread_checker_.CalledOnValidThread());
+  DCHECK_CALLED_ON_VALID_THREAD(thread_checker_);
   TRACE_EVENT0("cobalt::dom", "HTMLLinkElement::OnLoadingComplete()");
 
   LOG(ERROR) << *error;
@@ -271,9 +269,7 @@ void HTMLLinkElement::OnLoadingComplete(
 
 void HTMLLinkElement::OnSplashscreenLoaded(Document* document,
                                            const std::string& content) {
-  printf("HTMLLinkElement::OnSplashscreenLoaded()\n");
   scoped_refptr<Window> window = document->window();
-  //Window* window = document->window();
   window->CacheSplashScreen(content);
 }
 
@@ -290,12 +286,12 @@ void HTMLLinkElement::OnStylesheetLoaded(Document* document,
       (fetched_last_url_origin_ == document->location()->GetOriginAsObject())) {
     css_style_sheet->SetOriginClean(true);
   }
-  style_sheet_ = css_style_sheet.get();
+  style_sheet_ = css_style_sheet;
   document->OnStyleSheetsModified();
 }
 
 void HTMLLinkElement::ReleaseLoader() {
-  DCHECK(thread_checker_.CalledOnValidThread());
+  DCHECK_CALLED_ON_VALID_THREAD(thread_checker_);
   DCHECK(loader_);
   loader_.reset();
 }

@@ -98,8 +98,7 @@ void AnonymousBlockBox::RenderAndAnimateContent(
         // The render tree API considers text coordinates to be a position of
         // a baseline, offset the text node accordingly.
         border_node_builder->AddChild(new render_tree::TextNode(
-            ellipsis_coordinates, glyph_buffer, used_color,
-            base::string16(&ellipsis_value)));
+            ellipsis_coordinates, glyph_buffer, used_color));
       }
     }
   }
@@ -147,8 +146,8 @@ AnonymousBlockBox::UpdateRectOfInFlowChildBoxes(
   std::unique_ptr<InlineFormattingContext> inline_formatting_context(
       new InlineFormattingContext(
           computed_style()->line_height(), used_font_->GetFontMetrics(),
-          child_layout_params, GetBaseDirection(),
-          computed_style()->text_align(), computed_style()->font_size(),
+          child_layout_params, base_direction(), computed_style()->text_align(),
+          computed_style()->font_size(),
           GetUsedLength(computed_style()->text_indent()),
           LayoutUnit(ellipsis_width)));
 

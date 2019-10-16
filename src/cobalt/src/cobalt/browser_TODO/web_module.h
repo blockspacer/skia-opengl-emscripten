@@ -286,7 +286,7 @@ class WebModule : public LifecycleObserver {
 #if SB_HAS(ON_SCREEN_KEYBOARD)
   // Injects an on screen keyboard input event into the web module. The value
   // for type represents beforeinput or input.
-  void InjectOnScreenKeyboardInputEvent(base::CobToken type,
+  void InjectOnScreenKeyboardInputEvent(base::Token type,
                                         const dom::InputEventInit& event);
   // Injects an on screen keyboard shown event into the web module.
   void InjectOnScreenKeyboardShownEvent(int ticket);
@@ -305,16 +305,16 @@ class WebModule : public LifecycleObserver {
 
   // Injects a keyboard event into the web module. The value for type
   // represents the event name, for example 'keydown' or 'keyup'.
-  void InjectKeyboardEvent(base::CobToken type,
+  void InjectKeyboardEvent(base::Token type,
                            const dom::KeyboardEventInit& event);
 
   // Injects a pointer event into the web module. The value for type represents
   // the event name, for example 'pointerdown', 'pointerup', or 'pointermove'.
-  void InjectPointerEvent(base::CobToken type, const dom::PointerEventInit& event);
+  void InjectPointerEvent(base::Token type, const dom::PointerEventInit& event);
 
   // Injects a wheel event into the web module. The value for type represents
   // the event name, for example 'wheel'.
-  void InjectWheelEvent(base::CobToken type, const dom::WheelEventInit& event);
+  void InjectWheelEvent(base::Token type, const dom::WheelEventInit& event);
 
   // Injects a beforeunload event into the web module. If this event is not
   // handled by the web application, |on_before_unload_fired_but_not_handled_|

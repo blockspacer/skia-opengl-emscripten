@@ -20,9 +20,8 @@
 
 #include "base/basictypes.h"
 #include "base/containers/hash_tables.h"
-#include <map>
 #include "base/logging.h"
-#include "starboard/string.h"
+#include "starboard/common/string.h"
 
 namespace base {
 
@@ -32,18 +31,18 @@ namespace base {
 // Token is fully multi-thread safe.
 // Note that as the Token object is small in size, it should be passed by value
 // instead of by reference.
-class CobToken {
+class Token {
  public:
   static const uint32 kHashSlotCount = 4 * 1024;
   static const uint32 kStringsPerSlot = 4;
 
-  CobToken();
-  explicit CobToken(const char* str);
-  explicit CobToken(const std::string& str);
+  Token();
+  explicit Token(const char* str);
+  explicit Token(const std::string& str);
 
   const char* c_str() const { return str_; }
 
-  bool operator==(const CobToken& that) const { return str_ == that.str_; }
+  bool operator==(const Token& that) const { return str_ == that.str_; }
 
  private:
   void Initialize(const char* str);
@@ -76,36 +75,36 @@ class CobToken {
 #endif  // ENABLE_TOKEN_ALPHABETICAL_SORTING
 };
 
-inline bool operator==(const CobToken& lhs, const std::string& rhs) {
+inline bool operator==(const Token& lhs, const std::string& rhs) {
   return SbStringCompareAll(lhs.c_str(), rhs.c_str()) == 0;
 }
 
-inline bool operator==(const std::string& lhs, const CobToken& rhs) {
+inline bool operator==(const std::string& lhs, const Token& rhs) {
   return SbStringCompareAll(lhs.c_str(), rhs.c_str()) == 0;
 }
 
-inline bool operator!=(const CobToken& lhs, const CobToken& rhs) {
+inline bool operator!=(const Token& lhs, const Token& rhs) {
   return !(lhs == rhs);
 }
 
-inline bool operator!=(const CobToken& lhs, const std::string& rhs) {
+inline bool operator!=(const Token& lhs, const std::string& rhs) {
   return !(lhs == rhs);
 }
 
-inline bool operator!=(const std::string& lhs, const CobToken& rhs) {
+inline bool operator!=(const std::string& lhs, const Token& rhs) {
   return !(lhs == rhs);
 }
 
-inline bool operator<(const CobToken& lhs, const CobToken& rhs) {
+inline bool operator<(const Token& lhs, const Token& rhs) {
 #ifdef ENABLE_TOKEN_ALPHABETICAL_SORTING
-  if (CobToken::sort_alphabetically()) {
+  if (Token::sort_alphabetically()) {
     return SbStringCompareAll(lhs.c_str(), rhs.c_str()) < 0;
   }
 #endif  // ENABLE_TOKEN_ALPHABETICAL_SORTING
   return lhs.c_str() < rhs.c_str();
 }
 
-inline bool operator>(const CobToken& lhs, const CobToken& rhs) {
+inline bool operator>(const Token& lhs, const Token& rhs) {
 #ifdef ENABLE_TOKEN_ALPHABETICAL_SORTING
   if (Token::sort_alphabetically()) {
     return SbStringCompareAll(lhs.c_str(), rhs.c_str()) > 0;
@@ -114,7 +113,7 @@ inline bool operator>(const CobToken& lhs, const CobToken& rhs) {
   return lhs.c_str() > rhs.c_str();
 }
 
-inline std::ostream& operator<<(std::ostream& os, base::CobToken token) {
+inline std::ostream& operator<<(std::ostream& os, base::Token token) {
   os << token.c_str();
   return os;
 }
@@ -125,8 +124,8 @@ inline std::ostream& operator<<(std::ostream& os, base::CobToken token) {
 //#if defined(BASE_HASH_USE_HASH_STRUCT)
 
 template <>
-struct std::hash<base::CobToken> {
-  std::size_t operator()(const base::CobToken& token) const {
+struct std::hash<base::Token> {
+  std::size_t operator()(const base::Token& token) const {
     return reinterpret_cast<size_t>(token.c_str());
   }
 };

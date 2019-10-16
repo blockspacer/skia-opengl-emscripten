@@ -41,7 +41,7 @@ class HTMLLinkElement : public HTMLElement {
   static const std::vector<std::string> kSupportedRelValues;
 
   explicit HTMLLinkElement(Document* document)
-      : HTMLElement(document, base::CobToken(kTagName)) {}
+      : HTMLElement(document, base::Token(kTagName)) {}
 
   // Web API: HTMLLinkElement
   //
@@ -87,7 +87,7 @@ class HTMLLinkElement : public HTMLElement {
 
   // Thread checker ensures all calls to DOM element are made from the same
   // thread that it is created in.
-  base::ThreadChecker thread_checker_;
+  THREAD_CHECKER(thread_checker_);
   // The loader.
   std::unique_ptr<loader::Loader> loader_;
 

@@ -38,6 +38,19 @@ set(cobalt_layout_SOURCES
   ${COBALT_CORE_DIR}layout/inline_level_skottie_box.h
   ${COBALT_CORE_DIR}layout/insets_layout_unit.cc
   ${COBALT_CORE_DIR}layout/insets_layout_unit.h
+  ${COBALT_CORE_DIR}layout/intersection_observer_root.h
+  ${COBALT_CORE_DIR}layout/intersection_observer_target.cc
+  ${COBALT_CORE_DIR}layout/intersection_observer_target.h
+  ${COBALT_CORE_DIR}layout/flex_container_box.cc
+  ${COBALT_CORE_DIR}layout/flex_container_box.h
+  ${COBALT_CORE_DIR}layout/flex_formatting_context.cc
+  ${COBALT_CORE_DIR}layout/flex_formatting_context.h
+  ${COBALT_CORE_DIR}layout/flex_item.cc
+  ${COBALT_CORE_DIR}layout/flex_item.h
+  ${COBALT_CORE_DIR}layout/flex_line.cc
+  ${COBALT_CORE_DIR}layout/flex_line.h
+  ${COBALT_CORE_DIR}layout/box_intersection_observer_module.cc
+  ${COBALT_CORE_DIR}layout/box_intersection_observer_module.h
   ${COBALT_CORE_DIR}layout/layout.cc
   ${COBALT_CORE_DIR}layout/layout.h
   ${COBALT_CORE_DIR}layout/layout_unit.h
@@ -121,7 +134,7 @@ target_include_directories(cobalt_layout PRIVATE
 )
 
 target_compile_definitions(cobalt_layout PRIVATE
-  #FORCE_VIDEO_EXTERNAL_MESH=1
+  #FORCE_VIDEO_EXTERNAL_MESH=1 # if cobalt_enable_lib == 1
   #
   ${COBALT_COMMON_DEFINES}
 )

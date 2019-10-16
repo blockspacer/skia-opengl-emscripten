@@ -96,7 +96,7 @@ class BoxGenerator : public dom::NodeVisitor {
 
   const Boxes& boxes() const { return boxes_; }
 
-// TODO
+/// \todo private:
 // private:
   void VisitVideoElement(dom::HTMLVideoElement* video_element);
   void VisitBrElement(dom::HTMLBRElement* br_element);

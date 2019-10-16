@@ -19,8 +19,7 @@
 
 #include "base/time/time.h"
 
-//#include "cobalt/base/token.h"
-#include "cobalt/base/cobalt_token.h"
+#include "cobalt/base/token.h"
 
 #include "cobalt/base/tokens.h"
 #include "cobalt/dom/event.h"
@@ -255,7 +254,7 @@ float value_or(float value, float default_value) {
 void InputDeviceManagerDesktop::HandleKeyboardEvent(
     bool is_key_down, const system_window::InputEvent* input_event,
     int key_code) {
-  base::CobToken type =
+  base::Token type =
       is_key_down ? base::Tokens::keydown() : base::Tokens::keyup();
   dom::KeyboardEvent::KeyLocationCode location =
       dom::KeyboardEvent::KeyCodeToKeyLocation(key_code);
@@ -279,7 +278,7 @@ void InputDeviceManagerDesktop::HandleKeyboardEvent(
 }
 
 void InputDeviceManagerDesktop::HandlePointerEvent(
-    base::CobToken type, const system_window::InputEvent* input_event) {
+    base::Token type, const system_window::InputEvent* input_event) {
   ///printf("InputDeviceManagerDesktop HandlePointerEvent 1\n");
 
   dom::PointerEventInit pointer_event;
@@ -341,7 +340,7 @@ void InputDeviceManagerDesktop::HandlePointerEvent(
 
 void InputDeviceManagerDesktop::HandleWheelEvent(
     const system_window::InputEvent* input_event) {
-  base::CobToken type = base::Tokens::wheel();
+  base::Token type = base::Tokens::wheel();
   dom::WheelEventInit wheel_event;
   UpdateEventInit(input_event, &wheel_event);
   UpdateMouseEventInit(input_event, &wheel_event);
@@ -400,7 +399,7 @@ void InputDeviceManagerDesktop::HandleSystemWindowInputEvent(
             input_event->type() == system_window::InputEvent::kPointerDown,
             input_event, key_code);
       } else {
-        base::CobToken type =
+        base::Token type =
             input_event->type() == system_window::InputEvent::kPointerDown
                 ? base::Tokens::pointerdown()
                 : base::Tokens::pointerup();

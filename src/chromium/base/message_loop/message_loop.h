@@ -168,6 +168,8 @@ class BASE_EXPORT MessageLoop {
   void AddTaskObserver(TaskObserver* task_observer);
   void RemoveTaskObserver(TaskObserver* task_observer);
 
+  static MessageLoopCurrent current();
+
   // Returns true if this is the active MessageLoop for the current thread.
   bool IsBoundToCurrentThread() const;
 

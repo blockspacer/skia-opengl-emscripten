@@ -19,18 +19,17 @@
 #include <set>
 #include <functional>
 
-//#include "base/containers/hash_tables.h"
 #include <map>
+#include "base/containers/hash_tables.h"
 #include "base/containers/small_map.h"
 #include "base/memory/weak_ptr.h"
 #include "base/optional.h"
 #include "base/strings/string_piece.h"
-
-#include "cobalt/base/cobalt_token.h"
-//#include "base/token.h"
-
+#include "cobalt/base/token.h"
 #include "cobalt/cssom/style_sheet_list.h"
 #include "cobalt/dom/dom_exception.h"
+#include "cobalt/dom/element_intersection_observer_module.h"
+#include "cobalt/dom/intersection_observer.h"
 #include "cobalt/dom/node.h"
 #include "cobalt/script/exception_state.h"
 #include "cobalt/web_animations/animation_set.h"
@@ -229,12 +228,6 @@ namespace customizer {
 //   https://www.w3.org/TR/2014/WD-dom-20140710/#interface-element
 class Element : public Node {
  public:
-  //typedef std::pair<std::string, std::string> StringPair;
-
-  /// \note sorted using lexical comparison,
-  /// comparing only first elements to prevent key duplication
-  //typedef std::set<StringPair, std::function<bool(StringPair, StringPair)>> key_set;
-
   // NOTE1: The array size of base::small_map and the decision to use
   // base::hash_map as the underlying container type are based on extensive
   // performance testing. Do not change these unless additional profiling data
@@ -248,7 +241,7 @@ class Element : public Node {
       AttributeMap;
 
   explicit Element(Document* document);
-  Element(Document* document, base::CobToken local_name);
+  Element(Document* document, base::Token local_name);
 
   bool DispatchEvent(const scoped_refptr<Event>& event) override;
 
@@ -258,7 +251,7 @@ class Element : public Node {
 
   // Web API: Node
   //
-  base::CobToken node_name() const override { return tag_name(); }
+  base::Token node_name() const override { return tag_name(); }
   NodeType node_type() const override { return Node::kElementNode; }
 
   base::Optional<std::string> text_content() const override;
@@ -267,17 +260,24 @@ class Element : public Node {
 
   bool HasAttributes() const override;
 
+  // not in spec
+  void AppendToAttribute(const std::string &name, const std::string &value/*,
+    const bool needToMergeKeys = true*/);
+  void AppendStyle(const std::string &value);
+
+  base::Optional<bool> HandleCustomEvent(const scoped_refptr<dom::Event>& event);
+
   void AddNewCustomElementToken(std::shared_ptr<customizer::CustomElementToken> elementAttribute);
 
   std::shared_ptr<customizer::CustomElementToken> GetCustomElementToken(const std::string &token) const;
 
   // Web API: Element
   //
-  base::CobToken local_name() const { return local_name_; }
+  base::Token local_name() const { return local_name_; }
 
-  base::CobToken tag_name() const;
+  base::Token tag_name() const;
 
-  base::CobToken id() const { return id_attribute_; }
+  base::Token id() const { return id_attribute_; }
   void set_id(const std::string& value) { SetAttribute("id", value); }
 
   std::string class_name() const { return GetAttribute("class").value_or(""); }
@@ -293,17 +293,11 @@ class Element : public Node {
   void RemoveAttribute(const std::string& name);
   bool HasAttribute(const std::string& name) const;
 
-  // not in spec
-  void AppendToAttribute(const std::string &name, const std::string &value/*,
-    const bool needToMergeKeys = true*/);
-  void AppendStyle(const std::string &value);
-
-  base::Optional<bool> HandleCustomEvent(const scoped_refptr<dom::Event>& event);
-
   base::Optional<std::string> GetAttributeNS(const std::string& namespace_uri,
                                              const std::string& name) const;
   bool HasAttributeNS(const std::string& namespace_uri,
                       const std::string& name) const;
+  bool Matches(const std::string& selectors,script::ExceptionState* exception_state);
 
   scoped_refptr<HTMLCollection> GetElementsByTagName(
       const std::string& local_name) const;
@@ -319,6 +313,20 @@ class Element : public Node {
   virtual float client_left();
   virtual float client_width();
   virtual float client_height();
+
+  // Updated version of the CSSOM View Module extensions:
+  //   https://www.w3.org/TR/cssom-view-1/#extension-to-the-element-interface
+  // If the element does not have any associated CSS layout box return zero.
+  virtual int32 scroll_width() { return 0; }
+  virtual int32 scroll_height() { return 0; }
+  virtual float scroll_left() { return 0.0f; }
+  virtual float scroll_top() { return 0.0f; }
+
+  // If the element does not have any associated CSS layout box, the element
+  // has no associated scrolling box, or the element has no overflow, terminate
+  // these steps.
+  virtual void set_scroll_left(float /* x */) {}
+  virtual void set_scroll_top(float /* y */) {}
 
   // Web API: DOM Parsing and Serialization (partial interface)
   //   https://www.w3.org/TR/DOM-Parsing/#extensions-to-the-element-interface
@@ -390,13 +398,20 @@ class Element : public Node {
     return animations_;
   }
 
+  void RegisterIntersectionObserverRoot(IntersectionObserver* observer);
+  void UnregisterIntersectionObserverRoot(IntersectionObserver* observer);
+  void RegisterIntersectionObserverTarget(IntersectionObserver* observer);
+  void UnregisterIntersectionObserverTarget(IntersectionObserver* observer);
+  ElementIntersectionObserverModule::LayoutIntersectionObserverRootVector
+  GetLayoutIntersectionObserverRoots();
+  ElementIntersectionObserverModule::LayoutIntersectionObserverTargetVector
+  GetLayoutIntersectionObserverTargets();
+
   DEFINE_WRAPPABLE_TYPE(Element);
   void TraceMembers(script::Tracer* tracer) override;
 
-protected:
+ protected:
   ~Element() override;
-
-  //static std::function<bool(StringPair, StringPair)> key_comp;
 
   // Getting and setting boolean attribute.
   //   https://www.w3.org/TR/html5/infrastructure.html#boolean-attribute
@@ -408,10 +423,6 @@ protected:
   HTMLElementContext* html_element_context();
 
  private:
-  /*void RegenAttrPairs(const std::string &key, const std::string &val);
-
-  void ClearAttrPairs(const std::string &key);*/
-
   // From EventTarget.
   std::string GetDebugName() override;
 
@@ -428,19 +439,23 @@ protected:
   // Callback for error when parsing inner / outer HTML.
   void HTMLParseError(const std::string& error);
 
+  void EnsureIntersectionObserverModuleInitialized();
+
   std::map<std::string, std::shared_ptr<customizer::CustomElementToken>>
     custom_attributes_;
 
   std::map<std::string, std::unique_ptr<CustomEventListener>>
     eventListeners_;
 
+  std::map<std::string, EventCallback> eventCallbacks_;
+
   // Local name of the element.
-  base::CobToken local_name_;
+  base::Token local_name_;
   // A map that holds the actual element attributes.
   AttributeMap attribute_map_;
   // The "id" attribute for this element. Stored here in addition to being
   // stored in |attribute_map_| as an optimization for id().
-  base::CobToken id_attribute_;
+  base::Token id_attribute_;
   // A weak pointer to a NamedNodeMap that proxies the actual attributes.
   // This heavy weight object is kept in memory only when needed by the user.
   base::WeakPtr<NamedNodeMap> named_node_map_;
@@ -452,12 +467,8 @@ protected:
   // A set of all animations currently applied to this element.
   scoped_refptr<web_animations::AnimationSet> animations_;
 
-  // List of document observers.
-  ///base::ObserverList<HoverObserver> hover_observers_;
-
-  std::map<std::string, EventCallback> eventCallbacks_;
-
-  //std::map<std::string, key_set> attrToCachedSet_;
+  std::unique_ptr<ElementIntersectionObserverModule>
+      element_intersection_observer_module_;
 };
 
 }  // namespace dom

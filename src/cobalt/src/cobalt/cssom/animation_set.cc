@@ -45,13 +45,13 @@ Animation::FillMode GetFillMode(size_t index, PropertyValue* list_value) {
           ->get_item_modulo_size(static_cast<int>(index))
           .get();
 
-  if (value == KeywordValue::GetNone().get()) {
+  if (value == KeywordValue::GetNone()) {
     return Animation::kNone;
-  } else if (value == KeywordValue::GetForwards().get()) {
+  } else if (value == KeywordValue::GetForwards()) {
     return Animation::kForwards;
-  } else if (value == KeywordValue::GetBackwards().get()) {
+  } else if (value == KeywordValue::GetBackwards()) {
     return Animation::kBackwards;
-  } else if (value == KeywordValue::GetBoth().get()) {
+  } else if (value == KeywordValue::GetBoth()) {
     return Animation::kBoth;
   } else {
     NOTREACHED();
@@ -66,13 +66,13 @@ Animation::PlaybackDirection GetDirection(size_t index,
           ->get_item_modulo_size(static_cast<int>(index))
           .get();
 
-  if (value == KeywordValue::GetNormal().get()) {
+  if (value == KeywordValue::GetNormal()) {
     return Animation::kNormal;
-  } else if (value == KeywordValue::GetReverse().get()) {
+  } else if (value == KeywordValue::GetReverse()) {
     return Animation::kReverse;
-  } else if (value == KeywordValue::GetAlternate().get()) {
+  } else if (value == KeywordValue::GetAlternate()) {
     return Animation::kAlternate;
-  } else if (value == KeywordValue::GetAlternateReverse().get()) {
+  } else if (value == KeywordValue::GetAlternateReverse()) {
     return Animation::kAlternateReverse;
   } else {
     NOTREACHED();
@@ -86,7 +86,7 @@ float GetIterationCount(size_t index, PropertyValue* list_value) {
           ->get_item_modulo_size(static_cast<int>(index))
           .get();
 
-  if (value == KeywordValue::GetInfinite().get()) {
+  if (value == KeywordValue::GetInfinite()) {
     return std::numeric_limits<float>::infinity();
   } else {
     return base::polymorphic_downcast<NumberValue*>(value)->value();
@@ -160,22 +160,21 @@ bool AnimationSet::Update(const base::TimeDelta& current_time,
 
     // Create the animation and insert it into our map of currently active
     // animations.
-    InternalAnimationMap::iterator inserted =
-        animations_
-            .insert(std::make_pair(
-                name_string,
-                Animation(name_string, keyframes, current_time,
-                          GetTimeValue(i, style.animation_delay().get()),
-                          GetTimeValue(i, style.animation_duration().get()),
-                          GetFillMode(i, style.animation_fill_mode().get()),
-                          GetIterationCount(
-                              i, style.animation_iteration_count().get()),
-                          GetDirection(i, style.animation_direction().get()),
-                          GetTimingFunction(
-                              i, style.animation_timing_function().get()))))
-            .first;
+    InternalAnimationMap::iterator inserted = animations_.insert(
+        std::make_pair(
+            name_string,
+            AnimationEntry(Animation(name_string, keyframes, current_time,
+                GetTimeValue(i, style.animation_delay().get()),
+                GetTimeValue(i, style.animation_duration().get()),
+                GetFillMode(i, style.animation_fill_mode().get()),
+                GetIterationCount(
+                    i, style.animation_iteration_count().get()),
+                GetDirection(i, style.animation_direction().get()),
+                GetTimingFunction(
+                    i, style.animation_timing_function().get())))))
+        .first;
     if (event_handler_) {
-      event_handler_->OnAnimationStarted(inserted->second, this);
+      event_handler_->OnAnimationStarted(inserted->second.animation, this);
     }
 
     animations_modified = true;
@@ -185,28 +184,31 @@ bool AnimationSet::Update(const base::TimeDelta& current_time,
   std::vector<std::string> animations_to_end;
   for (InternalAnimationMap::iterator iter = animations_.begin();
        iter != animations_.end(); ++iter) {
+    // If the animation is playing, but the current time is past the end time,
+    // then we should signal to the event handler that it has ended.
+    bool animation_has_ended =
+        current_time >= iter->second.animation.start_time() +
+                        iter->second.animation.duration();
+    if (animation_has_ended && !iter->second.ended) {
+      iter->second.ended = true;
+      if (event_handler_) {
+        event_handler_->OnAnimationEnded(iter->second.animation);
+      }
+    }
+
     // If the animation used to be playing, but it no longer appears in the
     // list of declared animations, then it has ended and we should mark it
     // as such.
     bool animation_is_removed = declared_animation_set.find(iter->first) ==
                                 declared_animation_set.end();
     if (animation_is_removed) {
+      if (event_handler_) {
+        event_handler_->OnAnimationRemoved(iter->second.animation);
+      }
       animations_to_end.push_back(iter->first);
     }
-
-    if (event_handler_) {
-      // If the animation is playing, but the current time is past the end time,
-      // then we should signal to the event handler that it has ended but is not
-      // canceled.
-      bool animation_has_ended =
-          current_time >= iter->second.start_time() + iter->second.duration();
-      if (animation_is_removed || animation_has_ended) {
-        event_handler_->OnAnimationRemoved(
-            iter->second, animation_has_ended ? cssom::Animation::kIsNotCanceled
-                                              : cssom::Animation::kIsCanceled);
-      }
-    }
   }
+
   if (!animations_to_end.empty()) {
     for (std::vector<std::string>::iterator iter = animations_to_end.begin();
          iter != animations_to_end.end(); ++iter) {
@@ -220,9 +222,10 @@ bool AnimationSet::Update(const base::TimeDelta& current_time,
 }
 
 void AnimationSet::Clear() {
-  for (auto& animation : animations_) {
-    event_handler_->OnAnimationRemoved(animation.second,
-                                       cssom::Animation::kIsCanceled);
+  for (auto& iter : animations_) {
+    if (event_handler_) {
+      event_handler_->OnAnimationRemoved(iter.second.animation);
+    }
   }
   animations_.clear();
 }

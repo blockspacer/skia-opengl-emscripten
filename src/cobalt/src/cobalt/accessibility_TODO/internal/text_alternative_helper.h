@@ -21,8 +21,7 @@
 //#include "base/containers/hash_tables.h"
 #include <map>
 
-#include "cobalt/base/cobalt_token.h"
-//#include "base/token.h"
+#include "cobalt/base/token.h""
 
 #include "cobalt/dom/element.h"
 #include "cobalt/dom/node.h"
@@ -44,7 +43,7 @@ class TextAlternativeHelper {
   // Append the text alternative from a aria-labelledby or aria-describedby
   // property. Returns true if text alternative(s) were successfully appended.
   bool TryAppendFromLabelledByOrDescribedBy(
-      const scoped_refptr<dom::Element>& element, const base::CobToken& token);
+      const scoped_refptr<dom::Element>& element, const base::Token& token);
 
   // Append the text alternative from a aria-label property. Returns true
   // if the aria-label property exists and has a non-empty value.
@@ -66,7 +65,7 @@ class TextAlternativeHelper {
   static bool IsAriaHidden(const scoped_refptr<dom::Element>& element);
 
  private:
-  typedef std::set<base::CobToken> TokenSet;
+  typedef std::set<base::Token> TokenSet;
 
   bool in_labelled_by_or_described_by_;
   std::vector<std::string> alternatives_;

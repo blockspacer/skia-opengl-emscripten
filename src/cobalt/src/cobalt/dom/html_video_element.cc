@@ -30,7 +30,7 @@ using media::WebMediaPlayer;
 const char HTMLVideoElement::kTagName[] = "video";
 
 HTMLVideoElement::HTMLVideoElement(Document* document)
-    : HTMLMediaElement(document, base::CobToken(kTagName)) {}
+    : HTMLMediaElement(document, base::Token(kTagName)) {}
 
 uint32 HTMLVideoElement::width() const {
   uint32 result = 0;
@@ -95,7 +95,7 @@ scoped_refptr<VideoPlaybackQuality> HTMLVideoElement::GetVideoPlaybackQuality(
 }
 
 scoped_refptr<VideoFrameProvider> HTMLVideoElement::GetVideoFrameProvider() {
-  DCHECK(thread_checker_.CalledOnValidThread());
+  DCHECK_CALLED_ON_VALID_THREAD(thread_checker_);
   return player() ? player()->GetVideoFrameProvider() : NULL;
 }
 

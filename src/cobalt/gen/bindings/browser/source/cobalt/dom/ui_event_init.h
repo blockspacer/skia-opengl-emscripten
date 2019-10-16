@@ -40,10 +40,10 @@ namespace dom {
 
 class UIEventInit : public cobalt::dom::EventInit {
  public:
-  UIEventInit() {
-    view_ = NULL;
-    detail_ = 0;
-    which_ = 0;
+  UIEventInit()
+    : view_(NULL),
+      detail_(0),
+      which_(0) {
   }
 
   UIEventInit(const UIEventInit& other)

@@ -110,7 +110,7 @@ const char HTMLComponentElement::kAttrNameWidth[] = "width";
 const char HTMLComponentElement::kAttrNameHeight[] = "height";
 
 HTMLComponentElement::HTMLComponentElement(Document* document)
-    : HTMLCustomElement(document, base::CobToken(kTagName)) {
+    : HTMLCustomElement(document, base::Token(kTagName)) {
   printf("created new HTMLComponentElement\n");
   gHTMLComponentElementID++;
   HTMLComponentElementID_ = gHTMLComponentElementID;

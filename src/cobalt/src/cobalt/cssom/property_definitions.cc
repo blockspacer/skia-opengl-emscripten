@@ -495,10 +495,19 @@ NonTrivialGlobalVariables::NonTrivialGlobalVariables() {
                         FontWeightValue::GetNormalAka400());
 
   // https://www.w3.org/TR/CSS21/visudet.html#the-height-property
-  SetPropertyDefinition(kHeightProperty, "height", kInheritedNo, kAnimatableYes, // TODO kAnimatableYes
+  SetPropertyDefinition(kHeightProperty, "height", kInheritedNo, kAnimatableNo,
                         kImpactsChildComputedStyleYes, kImpactsBoxGenerationNo,
                         kImpactsBoxSizesYes, kImpactsBoxCrossReferencesNo,
                         KeywordValue::GetAuto());
+
+  // https://www.w3.org/TR/intersection-observer/#parse-a-root-margin
+  // Not actually a new CSS property but we need it to parse an
+  // IntersectionObserver's root margin
+  SetPropertyDefinition(kIntersectionObserverRootMarginProperty,
+                        "intersection-observer-root-margin", kInheritedNo,
+                        kAnimatableNo, kImpactsChildComputedStyleNo,
+                        kImpactsBoxGenerationNo, kImpactsBoxSizesNo,
+                        kImpactsBoxCrossReferencesNo, KeywordValue::GetAuto());
 
   // https://www.w3.org/TR/css-flexbox-1/#justify-content-property
   SetPropertyDefinition(kJustifyContentProperty, "justify-content",
@@ -561,18 +570,18 @@ NonTrivialGlobalVariables::NonTrivialGlobalVariables() {
                         kImpactsBoxCrossReferencesNo, KeywordValue::GetNone());
 
   // https://www.w3.org/TR/CSS2/visudet.html#propdef-min-height
+  // https://www.w3.org/TR/css-sizing-3/#min-size-properties
   SetPropertyDefinition(kMinHeightProperty, "min-height", kInheritedNo,
                         kAnimatableNo, kImpactsChildComputedStyleNo,
                         kImpactsBoxGenerationNo, kImpactsBoxSizesYes,
-                        kImpactsBoxCrossReferencesNo,
-                        new LengthValue(0, kPixelsUnit));
+                        kImpactsBoxCrossReferencesNo, KeywordValue::GetAuto());
 
   // https://www.w3.org/TR/CSS2/visudet.html#propdef-min-width
+  // https://www.w3.org/TR/css-sizing-3/#min-size-properties
   SetPropertyDefinition(kMinWidthProperty, "min-width", kInheritedNo,
                         kAnimatableNo, kImpactsChildComputedStyleNo,
                         kImpactsBoxGenerationNo, kImpactsBoxSizesYes,
-                        kImpactsBoxCrossReferencesNo,
-                        new LengthValue(0, kPixelsUnit));
+                        kImpactsBoxCrossReferencesNo, KeywordValue::GetAuto());
 
   // https://www.w3.org/TR/css3-color/#opacity
   SetPropertyDefinition(kOpacityProperty, "opacity", kInheritedNo,
@@ -789,7 +798,7 @@ NonTrivialGlobalVariables::NonTrivialGlobalVariables() {
                         KeywordValue::GetNormal());
 
   // https://www.w3.org/TR/CSS21/visudet.html#the-width-property
-  SetPropertyDefinition(kWidthProperty, "width", kInheritedNo, kAnimatableYes, // TODO kAnimatableYes
+  SetPropertyDefinition(kWidthProperty, "width", kInheritedNo, kAnimatableNo,
                         kImpactsChildComputedStyleYes, kImpactsBoxGenerationNo,
                         kImpactsBoxSizesYes, kImpactsBoxCrossReferencesNo,
                         KeywordValue::GetAuto());
@@ -1628,6 +1637,14 @@ PropertyKey GetPropertyKey(const std::string& property_name) {
               property_name,
               GetPropertyName(kTransitionTimingFunctionProperty))) {
         return kTransitionTimingFunctionProperty;
+      }
+      return kNoneProperty;
+
+    case 33:
+      if (base::LowerCaseEqualsASCII(
+              property_name,
+              GetPropertyName(kIntersectionObserverRootMarginProperty))) {
+        return kIntersectionObserverRootMarginProperty;
       }
       return kNoneProperty;
 

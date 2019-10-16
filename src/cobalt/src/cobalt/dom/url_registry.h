@@ -17,9 +17,8 @@
 
 #include <string>
 
-//#include "base/containers/hash_tables.h"
+#include "base/containers/hash_tables.h"
 #include <map>
-
 #include "base/memory/ref_counted.h"
 #include "cobalt/script/tracer.h"
 
@@ -48,7 +47,7 @@ class UrlRegistry : public script::Traceable {
   }
 
  private:
-  typedef std::map<std::string, scoped_refptr<ObjectType> > UrlMap;
+  typedef base::hash_map<std::string, scoped_refptr<ObjectType> > UrlMap;
   UrlMap object_registry_;
 };
 

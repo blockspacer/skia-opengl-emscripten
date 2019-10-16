@@ -21,6 +21,9 @@
 #include "base/callback.h"
 #include "base/optional.h"
 #include "base/threading/platform_thread.h"
+#if defined(ENABLE_DEBUGGER_HOOKS)
+#include "cobalt/base/debugger_hooks.h"
+#endif // ENABLE_DEBUGGER_HOOKS
 #include "cobalt/css_parser/parser.h"
 #include "cobalt/cssom/viewport_size.h"
 #include "cobalt/dom/error_event_init.h"
@@ -63,8 +66,9 @@ class ErrorEventTest : public ::testing::Test {
         css_parser_(css_parser::Parser::Create()),
         dom_parser_(new dom_parser::Parser(mock_load_complete_callback_)),
         fetcher_factory_(new loader::FetcherFactory(NULL)),
-        loader_factory_(new loader::LoaderFactory(
-            fetcher_factory_.get(), NULL, base::ThreadPriority::DEFAULT)),
+        loader_factory_(
+            new loader::LoaderFactory("Test", fetcher_factory_.get(), NULL, 0,
+                                      base::ThreadPriority::DEFAULT)),
         local_storage_database_(NULL),
         url_("about:blank") {
     engine_ = script::JavaScriptEngine::CreateEngine();
@@ -86,7 +90,12 @@ class ErrorEventTest : public ::testing::Test {
         base::Closure() /* window_minimize */, NULL, NULL, NULL,
         dom::Window::OnStartDispatchEventCallback(),
         dom::Window::OnStopDispatchEventCallback(),
-        dom::ScreenshotManager::ProvideScreenshotFunctionCallback(), NULL);
+        dom::ScreenshotManager::ProvideScreenshotFunctionCallback(), NULL
+#if defined(ENABLE_DEBUGGER_HOOKS)
+        ,
+        null_debugger_hooks_
+#endif // ENABLE_DEBUGGER_HOOKS
+        );
 
     global_environment_->CreateGlobalObject(window_,
                                             environment_settings_.get());
@@ -106,6 +115,9 @@ class ErrorEventTest : public ::testing::Test {
   std::unique_ptr<loader::LoaderFactory> loader_factory_;
   dom::LocalStorageDatabase local_storage_database_;
   GURL url_;
+#if defined(ENABLE_DEBUGGER_HOOKS)
+  base::NullDebuggerHooks null_debugger_hooks_;
+#endif // ENABLE_DEBUGGER_HOOKS
   scoped_refptr<Window> window_;
 };
 

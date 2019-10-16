@@ -40,8 +40,8 @@ namespace dom {
 
 class FocusEventInit : public cobalt::dom::UIEventInit {
  public:
-  FocusEventInit() {
-    related_target_ = NULL;
+  FocusEventInit()
+    : related_target_(NULL) {
   }
 
   FocusEventInit(const FocusEventInit& other)

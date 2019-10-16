@@ -26,11 +26,11 @@ namespace websocket {
 
 class CloseEvent : public dom::Event {
  public:
-  explicit CloseEvent(const base::CobToken type)
+  explicit CloseEvent(const base::Token type)
       : Event(type), was_clean_(true), code_(net::kWebSocketNormalClosure) {}
   explicit CloseEvent(const std::string& type)
       : Event(type), was_clean_(true), code_(net::kWebSocketNormalClosure) {}
-  CloseEvent(const base::CobToken type, const CloseEventInit& init_dict)
+  CloseEvent(const base::Token type, const CloseEventInit& init_dict)
       : Event(type, init_dict),
         was_clean_(true),
         code_(net::kWebSocketNormalClosure) {

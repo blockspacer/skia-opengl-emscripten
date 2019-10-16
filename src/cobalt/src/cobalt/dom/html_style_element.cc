@@ -28,7 +28,7 @@ namespace dom {
 const char HTMLStyleElement::kTagName[] = "style";
 
 HTMLStyleElement::HTMLStyleElement(Document* document)
-    : HTMLElement(document, base::CobToken(kTagName)),
+    : HTMLElement(document, base::Token(kTagName)),
       is_parser_inserted_(false),
       inline_style_location_(GetSourceLocationName(), 1, 1) {}
 

@@ -36,7 +36,7 @@ class Comment : public CharacterData {
 
   // Web API: Node
   //
-  base::CobToken node_name() const override;
+  base::Token node_name() const override;
   NodeType node_type() const override { return Node::kCommentNode; }
 
   // Custom, not in any spec: Node.

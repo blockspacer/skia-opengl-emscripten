@@ -35,7 +35,7 @@ class HTMLImageElement : public HTMLElement {
   static const char kTagName[];
 
   explicit HTMLImageElement(Document* document)
-      : HTMLElement(document, base::CobToken(kTagName)) {}
+      : HTMLElement(document, base::Token(kTagName)) {}
 
   explicit HTMLImageElement(script::EnvironmentSettings* env_settings);
 
@@ -53,6 +53,9 @@ class HTMLImageElement : public HTMLElement {
  private:
   ~HTMLImageElement() override {}
 
+  // From Node.
+  void PurgeCachedBackgroundImagesOfNodeAndDescendants() override;
+
   // From Element.
   void OnSetAttribute(const std::string& name,
                       const std::string& value) override;
@@ -64,15 +67,16 @@ class HTMLImageElement : public HTMLElement {
   void OnLoadingSuccess();
   void OnLoadingError();
 
-  void PreventGarbageCollectionUntilEventIsDispatched(base::CobToken event_name);
+  void PreventGarbageCollectionUntilEventIsDispatched(base::Token event_name);
   void AllowGarbageCollectionAfterEventIsDispatched(
-      base::CobToken event_name,
+      base::Token event_name,
       std::unique_ptr<script::GlobalEnvironment::ScopedPreventGarbageCollection>
           scoped_prevent_gc);
   void DestroyScopedPreventGC(
       std::unique_ptr<script::GlobalEnvironment::ScopedPreventGarbageCollection>
           scoped_prevent_gc);
 
+  std::unique_ptr<loader::image::WeakCachedImage> weak_cached_image_;
   std::unique_ptr<loader::image::CachedImage::OnLoadedCallbackHandler>
       cached_image_loaded_callback_handler_;
 

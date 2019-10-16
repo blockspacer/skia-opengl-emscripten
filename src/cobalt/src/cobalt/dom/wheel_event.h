@@ -17,9 +17,7 @@
 
 #include <string>
 
-#include "cobalt/base/cobalt_token.h"
-//#include "base/token.h"
-
+#include "cobalt/base/token.h"
 #include "cobalt/dom/mouse_event.h"
 #include "cobalt/dom/wheel_event_init.h"
 
@@ -45,7 +43,7 @@ class WheelEvent : public MouseEvent {
 
   explicit WheelEvent(const std::string& type);
   WheelEvent(const std::string& type, const WheelEventInit& init_dict);
-  WheelEvent(base::CobToken type, const scoped_refptr<Window>& view,
+  WheelEvent(base::Token type, const scoped_refptr<Window>& view,
              const WheelEventInit& init_dict);
 
   // Creates an event with its "initialized flag" unset.

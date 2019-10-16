@@ -18,12 +18,12 @@
 #include <string>
 
 #include "base/callback.h"
-//#include "base/containers/hash_tables.h"
-#include <map>
-#include "base/memory/ref_counted.h"
 
-#include "cobalt/base/cobalt_token.h"
-//#include "base/token.h"
+#include "base/containers/hash_tables.h"
+#include <map>
+
+#include "base/memory/ref_counted.h"
+#include "cobalt/base/token.h"
 
 namespace cobalt {
 namespace dom {
@@ -37,24 +37,23 @@ class HTMLElementFactory {
   HTMLElementFactory();
   ~HTMLElementFactory();
 
-  //static void addHTMLCustomElement(const std::string& tag_name);
-
   scoped_refptr<HTMLElement> CreateHTMLElement(Document* document,
-                                               base::CobToken tag_name);
+                                               base::Token tag_name);
 
+ private:
   typedef base::Callback<scoped_refptr<HTMLElement>(Document* document)>
       CreateHTMLElementTCallback;
-  typedef std::map<base::CobToken, CreateHTMLElementTCallback>
+  typedef base::hash_map<base::Token, CreateHTMLElementTCallback>
       TagNameToCreateHTMLElementTCallbackMap;
 
-  void AddHTMLElementWithSingleTagName(const char *tag_name, CreateHTMLElementTCallback create_cb);
-
-private:
   // Helper function templates for adding entries to the map below.
   template <typename T>
   void RegisterHTMLElementWithSingleTagName();
   template <typename T>
   void RegisterHTMLElementWithMultipleTagName();
+
+  // custom
+  void AddHTMLElementWithSingleTagName(const char *tag_name, CreateHTMLElementTCallback create_cb);
 
   TagNameToCreateHTMLElementTCallbackMap
       tag_name_to_create_html_element_t_callback_map_;

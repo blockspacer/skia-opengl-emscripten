@@ -39,7 +39,7 @@ HTMLElementContext::HTMLElementContext()
       page_visibility_state_weak_ptr_factory_(&page_visibility_state_),
       video_playback_rate_multiplier_(1.f),
       sync_load_thread_("Synchronous Load"),
-      html_element_factory_(std::make_shared<HTMLElementFactory>()) {
+      html_element_factory_(new HTMLElementFactory()) {
   sync_load_thread_.Start();
 }
 

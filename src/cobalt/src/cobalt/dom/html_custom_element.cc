@@ -46,8 +46,8 @@ namespace dom {
 // not in spec
 //const char HTMLCustomElement::kTagName[] = "Custom";
 
-HTMLCustomElement::HTMLCustomElement(Document* document, const base::CobToken& token)
-    //: HTMLElement(document, base::CobToken(kTagName)) {
+HTMLCustomElement::HTMLCustomElement(Document* document, const base::Token& token)
+    //: HTMLElement(document, base::Token(kTagName)) {
     : HTMLElement(document, token) {
 }
 

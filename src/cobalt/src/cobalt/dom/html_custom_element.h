@@ -51,7 +51,7 @@ class HTMLCustomElement : public HTMLElement/*, public HTMLMediaElement*/ {
 
   //static const char kTagName[];
 
-  explicit HTMLCustomElement(Document* document, const base::CobToken& token);
+  explicit HTMLCustomElement(Document* document, const base::Token& token);
   virtual ~HTMLCustomElement() override;
 
   // Custom, not in any spec.

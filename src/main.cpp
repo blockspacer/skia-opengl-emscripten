@@ -754,9 +754,9 @@ class CobaltTester {
 #ifdef HAS_ICU
     void listWordBoundaries(const icu::UnicodeString& s);
 #endif
-  void OnKeyEventProduced(base::CobToken type, const dom::KeyboardEventInit &event);
-  void OnPointerEventProduced(base::CobToken type, const dom::PointerEventInit &event);
-  void OnWheelEventProduced(base::CobToken type, const dom::WheelEventInit &event);
+  void OnKeyEventProduced(base::Token type, const dom::KeyboardEventInit &event);
+  void OnPointerEventProduced(base::Token type, const dom::PointerEventInit &event);
+  void OnWheelEventProduced(base::Token type, const dom::WheelEventInit &event);
   void InjectInputEvent(scoped_refptr<cobalt::dom::Element> element, const scoped_refptr<cobalt::dom::Event> &event);
 
   public:
@@ -1408,7 +1408,7 @@ void CobaltTester::OnLoad() {
 
 #if SB_HAS(ON_SCREEN_KEYBOARD)
 void CobaltTester::OnOnScreenKeyboardInputEventProduced(
-    base::CobToken type, const dom::InputEventInit& event) {
+    base::Token type, const dom::InputEventInit& event) {
   DCHECK(g_cobaltTester);
   DCHECK_EQ(base::MessageLoopCurrent::Get().task_runner(), g_cobaltTester->self_task_runner_);
   DCHECK(g_cobaltTester->thread_checker_.CalledOnValidThread());
@@ -1524,7 +1524,7 @@ void CobaltTester::InjectInputEvent(scoped_refptr<cobalt::dom::Element> element,
   // printf("InjectInputEvent 2 %s\n", event->type().c_str());
 }
 
-void CobaltTester::OnKeyEventProduced(base::CobToken type,
+void CobaltTester::OnKeyEventProduced(base::Token type,
                                        const dom::KeyboardEventInit& event) {
   printf("OnKeyEventProduced 1 %s\n", type.c_str());
 
@@ -1571,7 +1571,7 @@ void CobaltTester::OnKeyEventProduced(base::CobToken type,
   printf("OnKeyEventProduced 1 %s\n", type.c_str());
 }
 
-void CobaltTester::OnPointerEventProduced(base::CobToken type,
+void CobaltTester::OnPointerEventProduced(base::Token type,
                                            const dom::PointerEventInit& event) {
   // printf("OnPointerEventProduced 1 %s\n", type.c_str());
 
@@ -1623,7 +1623,7 @@ void CobaltTester::OnPointerEventProduced(base::CobToken type,
   printf("OnPointerEventProduced 2 %s\n", type.c_str());
 }
 
-void CobaltTester::OnWheelEventProduced(base::CobToken type,
+void CobaltTester::OnWheelEventProduced(base::Token type,
                                          const dom::WheelEventInit& event) {
   printf("OnWheelEventProduced 1 %s\n", type.c_str());
 
@@ -2114,7 +2114,7 @@ static void createCobaltTester() {
 
     /*scoped_refptr<Document> document_ = g_cobaltTester->window_->document();
     document_->html_element_context()->html_element_factory()->
-      RegisterHTMLElementWithSingleTagName<HTMLCustomElement>();*/
+      AddHTMLElementWithSingleTagName<HTMLCustomElement>();*/
 
     /// __TODO__
     {

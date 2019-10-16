@@ -23,7 +23,7 @@
 #include <string>
 
 #include "base/bind.h"
-//#include "base/containers/hash_tables.h"
+#include "base/containers/hash_tables.h"
 #include <map>
 #include "base/lazy_instance.h"
 #include "base/optional.h"
@@ -245,8 +245,8 @@ class ParserImpl {
 namespace {
 
 struct NonTrivialStaticFields {
-  ::std::set<std::string> properties_warned_about;
-  ::std::set<std::string> pseudo_classes_warned_about;
+  ::base::hash_set<std::string> properties_warned_about;
+  ::base::hash_set<std::string> pseudo_classes_warned_about;
   ::base::Lock lock;
 };
 

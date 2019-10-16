@@ -823,7 +823,7 @@ url/mojom
 - Streaming Instantiation: Combining Download and Instantiation https://pspdfkit.com/blog/2018/optimize-webassembly-startup-performance/
 - Prefer WebIDL as bindings toolchain to embind https://github.com/emscripten-core/emscripten/issues/8476
 
-## NOTE: Use latest chromium
+## How to update `Chromium`
 
 1 parent 9178b0a commit 2d57e5b8afc6d01b344a8d95d3470d46b35845c5 deskop-pwa: Try to reinstall placeholders on startup
 Tue Apr 16 07:10:46 2019
@@ -879,6 +879,7 @@ gclient runhooks
 
 ## NOTE: Use latest skia
 
+```bash
 Commit: Update SKP version
 
 Automatic commit by the RecreateSKPs bot.
@@ -890,10 +891,9 @@ Change-Id: Ic0a9fe4225fca395f1b72f450f3efd18199094b5
 Reviewed-on: https://skia-review.googlesource.com/c/skia/+/213360
 Reviewed-by: <skia-recreate-skps@skia-swarming-bots.iam.gserviceaccount.com>
 Commit-Queue: <skia-recreate-skps@skia-swarming-bots.iam.gserviceaccount.com>
+```
 
-## Cobalt
-
-commit: aaf5d17afa24e6fba020b52139ab9cd80aeceea8
+## How to update `Cobalt`
 
 see https://cobalt.foo/development/setup-linux.html
 
@@ -901,8 +901,21 @@ git clone https://cobalt.googlesource.com/cobalt
 
 ## (choose from 'debug', 'devel', 'qa', 'gold')
 
+```bash
+sudo apt-get install bison build-essential coreutils git gperf \
+       libasound2-dev libavformat-dev libavresample-dev \
+       libdirectfb-dev libdirectfb-extra libpulse-dev \
+       libgl1-mesa-dev libgles2-mesa-dev libvpx-dev libx11-dev \
+       libxcomposite-dev libxcomposite1 libxrender-dev libxrender1 \
+       libxpm-dev m4 python ruby tar xserver-xephyr xz-utils yasm
+sudo apt-get install libstdc++-4.8-dev
+export PATH=${PATH}:/path/to/depot_tools
 cobalt/build/gyp_cobalt -C devel linux-x64x11
 autoninja -C out/linux-x64x11_devel cobalt
+see folder out/linux-x64x11_devel/gen/
+```
+
+Don`t forget to replace generated files.
 
 ## FOUND CHROMIUM BUGS
 

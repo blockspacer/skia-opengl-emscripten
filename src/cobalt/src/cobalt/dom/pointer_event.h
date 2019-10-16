@@ -17,10 +17,7 @@
 
 #include <string>
 
-
-#include "cobalt/base/cobalt_token.h"
-//#include "base/token.h"
-
+#include "cobalt/base/token.h"
 #include "cobalt/dom/mouse_event.h"
 #include "cobalt/dom/pointer_event_init.h"
 
@@ -36,9 +33,9 @@ class PointerEvent : public MouseEvent {
  public:
   explicit PointerEvent(const std::string& type);
   PointerEvent(const std::string& type, const PointerEventInit& init_dict);
-  PointerEvent(base::CobToken type, const scoped_refptr<Window>& view,
+  PointerEvent(base::Token type, const scoped_refptr<Window>& view,
                const PointerEventInit& init_dict);
-  PointerEvent(base::CobToken type, Bubbles bubbles, Cancelable cancelable,
+  PointerEvent(base::Token type, Bubbles bubbles, Cancelable cancelable,
                const scoped_refptr<Window>& view,
                const PointerEventInit& init_dict);
 

@@ -14,6 +14,7 @@
 
 {
   'variables': {
+    'optimize_target_for_speed': 1,
     'sb_pedantic_warnings': 1,
   },
   'targets': [
@@ -59,6 +60,7 @@
         'compound_selector.h',
         'computed_style.cc',
         'computed_style.h',
+        'computed_style_utils.h',
         'css.cc',
         'css.h',
         'css_computed_style_data.cc',

@@ -144,7 +144,6 @@ void StorageArea::Init() {
     read_event_.Wait();
 #else
   DCHECK(storage_map_);
-  DCHECK(completed_);
 #endif
   } else {
     // SessionStorage. Create a new, empty StorageMap.
@@ -156,7 +155,6 @@ void StorageArea::Init() {
 void StorageArea::OnInitComplete(std::unique_ptr<StorageMap> data) {
   storage_map_.reset(data.release());
   read_event_.Signal();
-  completed_ = true;
 }
 
 }  // namespace dom

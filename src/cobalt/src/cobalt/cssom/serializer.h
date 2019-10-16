@@ -17,10 +17,7 @@
 
 #include <string>
 
-
-#include "cobalt/base/cobalt_token.h"
-//#include "base/token.h"
-
+#include "cobalt/base/token.h"
 
 #include "cobalt/cssom/combinator_visitor.h"
 #include "cobalt/cssom/selector.h"
@@ -42,7 +39,7 @@ class Serializer : public SelectorVisitor, public CombinatorVisitor {
 
   explicit Serializer(std::string* output);
 
-  void SerializeIdentifier(base::CobToken identifier);
+  void SerializeIdentifier(base::Token identifier);
   void SerializeString(const std::string& string);
   void SerializeSelectors(const Selectors& selectors);
   void SerializeSelector(const Selector& selector);

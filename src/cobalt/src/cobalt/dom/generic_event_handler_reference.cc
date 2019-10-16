@@ -61,8 +61,6 @@ void GenericEventHandlerReference::HandleEvent(
   bool had_exception;
   base::Optional<bool> result;
 
-  // event handling here
-
   // Forward the HandleEvent() call to the appropriate internal object.
   if (event_listener_reference_) {
     // Non-onerror event handlers cannot have their parameters unpacked.

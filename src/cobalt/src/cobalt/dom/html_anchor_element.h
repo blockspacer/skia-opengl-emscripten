@@ -35,7 +35,7 @@ class HTMLAnchorElement : public HTMLElement {
   static const char kTagName[];
 
   explicit HTMLAnchorElement(Document* document)
-      : HTMLElement(document, base::CobToken(kTagName)),
+      : HTMLElement(document, base::Token(kTagName)),
         ALLOW_THIS_IN_INITIALIZER_LIST(url_utils_(base::Bind(
             &HTMLAnchorElement::UpdateSteps, base::Unretained(this)))) {}
 

@@ -48,7 +48,7 @@ typedef media::WebMediaPlayerClient WebMediaPlayerClient;
 //   https://www.w3.org/TR/html5/embedded-content-0.html#media-element
 class HTMLMediaElement : public HTMLElement, private WebMediaPlayerClient {
  public:
-  HTMLMediaElement(Document* document, base::CobToken tag_name);
+  HTMLMediaElement(Document* document, base::Token tag_name);
   ~HTMLMediaElement() override;
 
   // Web API: HTMLMediaElement
@@ -140,6 +140,10 @@ class HTMLMediaElement : public HTMLElement, private WebMediaPlayerClient {
   // function won't modify the target of the |event| passed in.
   void ScheduleEvent(const scoped_refptr<Event>& event);
 
+  // Set max video capabilities.
+  void SetMaxVideoCapabilities(const std::string& max_video_capabilities,
+                               script::ExceptionState* exception_state);
+
   DEFINE_WRAPPABLE_TYPE(HTMLMediaElement);
   void TraceMembers(script::Tracer* tracer) override;
 
@@ -173,7 +177,7 @@ class HTMLMediaElement : public HTMLElement, private WebMediaPlayerClient {
 
   // Events
   void ScheduleTimeupdateEvent(bool periodic_event);
-  void ScheduleOwnEvent(base::CobToken event_name);
+  void ScheduleOwnEvent(base::Token event_name);
   void CancelPendingEventsAndCallbacks();
   bool ProcessingMediaPlayerCallback() const {
     return processing_media_player_callback_ > 0;
@@ -224,6 +228,9 @@ class HTMLMediaElement : public HTMLElement, private WebMediaPlayerClient {
   float Volume() const override;
   void SourceOpened(ChunkDemuxer* chunk_demuxer) override;
   std::string SourceURL() const override;
+
+  // std::string MaxVideoCapabilities() const override; // TODO
+
   bool PreferDecodeToTexture() override;
   void EncryptedMediaInitDataEncountered(
       media::EmeInitDataType init_data_type, const unsigned char* init_data,
@@ -233,6 +240,9 @@ class HTMLMediaElement : public HTMLElement, private WebMediaPlayerClient {
   std::unique_ptr<WebMediaPlayer> player_;
 
   std::string current_src_;
+
+  std::string max_video_capabilities_;
+
   // Loading state.
   enum LoadState { kWaitingForSource, kLoadingFromSrcAttr };
   LoadState load_state_;

@@ -21,10 +21,8 @@
 #ifndef V8cOnScreenKeyboard_h
 #define V8cOnScreenKeyboard_h
 
-
-// This must be included above the check for COBALT_ENABLE_ON_SCREEN_KEYBOARD, since
-// COBALT_ENABLE_ON_SCREEN_KEYBOARD may be defined within.
 #include "cobalt/bindings/shared/idl_conditional_macros.h"
+
 
 #if defined(COBALT_ENABLE_ON_SCREEN_KEYBOARD)
 

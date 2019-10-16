@@ -365,7 +365,7 @@ void SourceBuffer::InitSegmentReceived(std::unique_ptr<MediaTracks> tracks) {
   // TODO: Implement track support.
 }
 
-void SourceBuffer::ScheduleEvent(base::CobToken event_name) {
+void SourceBuffer::ScheduleEvent(base::Token event_name) {
   scoped_refptr<Event> event = new Event(event_name);
   event->set_target(this);
   event_queue_->Enqueue(event);

@@ -19,7 +19,7 @@
 #include <string>
 #include <vector>
 
-//#include "base/containers/hash_tables.h"
+#include "base/containers/hash_tables.h"
 #include <map>
 #include "base/containers/small_map.h"
 #include "base/memory/ref_counted.h"
@@ -109,9 +109,9 @@ class FontList : public render_tree::FontProvider,
                  public base::RefCounted<FontList> {
  public:
   typedef base::small_map<
-      std::map<render_tree::TypefaceId, scoped_refptr<render_tree::Font> >, 7>
+      base::hash_map<render_tree::TypefaceId, scoped_refptr<render_tree::Font> >, 7>
       FallbackTypefaceToFontMap;
-  typedef std::map<int32, scoped_refptr<render_tree::Typeface> >
+  typedef base::hash_map<int32, scoped_refptr<render_tree::Typeface> >
       CharacterFallbackTypefaceMap;
   typedef std::vector<FontListFont> FontListFonts;
 
