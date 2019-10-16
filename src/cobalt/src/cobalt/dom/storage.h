@@ -72,6 +72,7 @@ class Storage : public script::Wrappable {
   DEFINE_WRAPPABLE_TYPE(Storage);
 
  protected:
+  // TODO
   Window* window_;
   std::unique_ptr<StorageArea> area_;
 

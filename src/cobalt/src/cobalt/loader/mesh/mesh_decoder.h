@@ -1,4 +1,4 @@
-﻿// Copyright 2016 The Cobalt Authors. All Rights Reserved.
+// Copyright 2016 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@
 #include "base/callback.h"
 #include "cobalt/loader/decoder.h"
 #include "cobalt/loader/mesh/mesh_projection.h"
-
 #include "cobalt/render_tree/resource_provider.h"
 
 namespace cobalt {
@@ -71,4 +70,5 @@ class MeshDecoder : public Decoder {
 }  // namespace mesh
 }  // namespace loader
 }  // namespace cobalt
+
 #endif  // COBALT_LOADER_MESH_MESH_DECODER_H_

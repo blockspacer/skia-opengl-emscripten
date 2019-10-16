@@ -8,7 +8,7 @@
 #include <string>
 
 #include "base/component_export.h"
-#include "base/token.h"
+#include "base/base_token.h"
 
 namespace service_manager {
 
@@ -20,7 +20,7 @@ namespace service_manager {
 //
 // |name| is the name of the service, as specified in the service's manifest.
 //
-// |instance_group| is a base::Token representing the identity of an isolated
+// |instance_group| is a base::BaseToken representing the identity of an isolated
 // group of instances running in the system.
 //
 // |instance_id| identifies a more specific instance within the instance's
@@ -35,9 +35,9 @@ class COMPONENT_EXPORT(SERVICE_MANAGER_CPP_TYPES) Identity {
  public:
   Identity();
   explicit Identity(const std::string& name,
-                    const base::Token& instance_group,
-                    const base::Token& instance_id,
-                    const base::Token& globally_unique_id);
+                    const base::BaseToken& instance_group,
+                    const base::BaseToken& instance_id,
+                    const base::BaseToken& globally_unique_id);
   Identity(const Identity& other);
   ~Identity();
 
@@ -51,15 +51,15 @@ class COMPONENT_EXPORT(SERVICE_MANAGER_CPP_TYPES) Identity {
   std::string ToString() const;
 
   const std::string& name() const { return name_; }
-  const base::Token& instance_group() const { return instance_group_; }
-  const base::Token& instance_id() const { return instance_id_; }
-  const base::Token& globally_unique_id() const { return globally_unique_id_; }
+  const base::BaseToken& instance_group() const { return instance_group_; }
+  const base::BaseToken& instance_id() const { return instance_id_; }
+  const base::BaseToken& globally_unique_id() const { return globally_unique_id_; }
 
  private:
   std::string name_;
-  base::Token instance_group_;
-  base::Token instance_id_;
-  base::Token globally_unique_id_;
+  base::BaseToken instance_group_;
+  base::BaseToken instance_id_;
+  base::BaseToken globally_unique_id_;
 };
 
 }  // namespace service_manager

@@ -24,9 +24,7 @@
 #include "base/timer/timer.h"
 #endif
 
-#if defined(ENABLE_DEBUGGER_HOOKS)
 #include "cobalt/base/debugger_hooks.h"
-#endif // ENABLE_DEBUGGER_HOOKS
 
 #include "cobalt/script/callback_function.h"
 #include "cobalt/script/script_value.h"

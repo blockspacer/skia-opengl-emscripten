@@ -10,7 +10,7 @@
 #include <string>
 
 #include "base/macros.h"
-#include "base/token.h"
+#include "base/base_token.h"
 #include "mojo/public/cpp/bindings/associated_binding_set.h"
 #include "services/service_manager/public/cpp/connector.h"
 #include "services/service_manager/public/mojom/connector.mojom.h"
@@ -61,7 +61,7 @@ class TestConnectorFactory : public mojom::ServiceControl {
   // simulated events from this object.
   mojom::ServiceRequest RegisterInstance(const std::string& service_name);
 
-  const base::Token& test_instance_group() const {
+  const base::BaseToken& test_instance_group() const {
     return test_instance_group_;
   }
 
@@ -95,7 +95,7 @@ class TestConnectorFactory : public mojom::ServiceControl {
   void RequestQuit() override;
 
   std::unique_ptr<mojom::Connector> impl_;
-  base::Token test_instance_group_;
+  base::BaseToken test_instance_group_;
   std::unique_ptr<Connector> default_connector_;
 
   // Mapping used only in the default-constructed case where Service instances

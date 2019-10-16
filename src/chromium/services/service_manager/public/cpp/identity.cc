@@ -13,9 +13,9 @@ namespace service_manager {
 Identity::Identity() = default;
 
 Identity::Identity(const std::string& name,
-                   const base::Token& instance_group,
-                   const base::Token& instance_id,
-                   const base::Token& globally_unique_id)
+                   const base::BaseToken& instance_group,
+                   const base::BaseToken& instance_id,
+                   const base::BaseToken& globally_unique_id)
     : name_(name),
       instance_group_(instance_group),
       instance_id_(instance_id),

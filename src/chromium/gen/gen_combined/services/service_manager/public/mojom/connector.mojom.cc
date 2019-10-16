@@ -53,9 +53,9 @@ Identity::Identity()
 
 Identity::Identity(
     const std::string& name_in,
-    const base::Token& instance_group_in,
-    const base::Token& instance_id_in,
-    const base::Token& globally_unique_id_in)
+    const base::BaseToken& instance_group_in,
+    const base::BaseToken& instance_id_in,
+    const base::BaseToken& globally_unique_id_in)
     : name(std::move(name_in)),
       instance_group(std::move(instance_group_in)),
       instance_id(std::move(instance_id_in)),

@@ -6,11 +6,11 @@
 #define SERVICES_SERVICE_MANAGER_PUBLIC_CPP_CONSTANTS_H_
 
 #include "base/component_export.h"
-#include "base/token.h"
+#include "base/base_token.h"
 
 namespace service_manager {
 
-extern COMPONENT_EXPORT(SERVICE_MANAGER_CPP) const base::Token
+extern COMPONENT_EXPORT(SERVICE_MANAGER_CPP) const base::BaseToken
     kSystemInstanceGroup;
 
 }  // namespace service_manager

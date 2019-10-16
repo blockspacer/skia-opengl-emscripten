@@ -2,8 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef BASE_TOKEN_H_
-#define BASE_TOKEN_H_
+#pragma once
 
 #include <stdint.h>
 
@@ -21,17 +20,17 @@ namespace base {
 // similar in spirit and purpose to UUIDs, without many of the constraints and
 // expectations (such as byte layout and string representation) clasically
 // associated with UUIDs.
-class BASE_EXPORT Token {
+class BASE_EXPORT BaseToken {
  public:
   // Constructs a zero Token.
-  constexpr Token() : high_(0), low_(0) {}
+  constexpr BaseToken() : high_(0), low_(0) {}
 
   // Constructs a Token with |high| and |low| as its contents.
-  constexpr Token(uint64_t high, uint64_t low) : high_(high), low_(low) {}
+  constexpr BaseToken(uint64_t high, uint64_t low) : high_(high), low_(low) {}
 
   // Constructs a new Token with random |high| and |low| values taken from a
   // cryptographically strong random source.
-  static Token CreateRandom();
+  static BaseToken CreateRandom();
 
   // The high and low 64 bits of this Token.
   uint64_t high() const { return high_; }
@@ -39,13 +38,13 @@ class BASE_EXPORT Token {
 
   bool is_zero() const { return high_ == 0 && low_ == 0; }
 
-  bool operator==(const Token& other) const {
+  bool operator==(const BaseToken& other) const {
     return high_ == other.high_ && low_ == other.low_;
   }
 
-  bool operator!=(const Token& other) const { return !(*this == other); }
+  bool operator!=(const BaseToken& other) const { return !(*this == other); }
 
-  bool operator<(const Token& other) const {
+  bool operator<(const BaseToken& other) const {
     return std::tie(high_, low_) < std::tie(other.high_, other.low_);
   }
 
@@ -62,11 +61,9 @@ class BASE_EXPORT Token {
 
 // For use in std::unordered_map.
 struct TokenHash {
-  size_t operator()(const base::Token& token) const {
+  size_t operator()(const base::BaseToken& token) const {
     return base::HashInts64(token.high(), token.low());
   }
 };
 
 }  // namespace base
-
-#endif  // BASE_TOKEN_H_

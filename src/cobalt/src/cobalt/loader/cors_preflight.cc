@@ -20,14 +20,12 @@
 #include <string>
 #include <vector>
 
+#if defined(ENABLE_GNET)
 #include "base/basictypes.h"
 #include "base/strings/string_split.h"
 #include "base/strings/string_util.h"
 #include "cobalt/loader/cors_preflight.h"
-#include "starboard/string.h"
-
-#if defined(ENABLE_GNET)
-#include "net/http/http_util.h"
+#include "starboard/common/string.h"
 
 namespace cobalt {
 namespace loader {
@@ -144,10 +142,7 @@ bool HasFieldValue(const std::vector<std::string>& field_values,
 }  // namespace
 
 CORSPreflight::CORSPreflight(GURL url, net::URLFetcher::RequestType method,
-
-#if !defined(__EMSCRIPTEN__) && defined(__TODO__)
                              const network::NetworkModule* network_module,
-#endif
                              base::Closure success_callback, std::string origin,
                              base::Closure error_callback,
                              scoped_refptr<CORSPreflightCache> preflight_cache)
@@ -155,10 +150,7 @@ CORSPreflight::CORSPreflight(GURL url, net::URLFetcher::RequestType method,
       force_preflight_(false),
       url_(url),
       method_(method),
-
-#if !defined(__EMSCRIPTEN__) && defined(__TODO__)
       network_module_(network_module),
- #endif
       origin_(origin),
       error_callback_(error_callback),
       success_callback_(success_callback),
@@ -277,7 +269,7 @@ bool CORSPreflight::Send() {
   if (!IsPreflightNeeded()) {
     return false;
   }
-  DCHECK(thread_checker_.CalledOnValidThread());
+  DCHECK_CALLED_ON_VALID_THREAD(thread_checker_);
   // https://fetch.spec.whatwg.org/#cors-preflight-fetch-0
 
   // 1. Let preflight be a new request whose method is 'OPTIONS', url is
@@ -286,11 +278,8 @@ bool CORSPreflight::Send() {
   //    request's origin, referrer is request's referrer, and referrer
   //    policy is request's referrer policy.
   url_fetcher_ = net::URLFetcher::Create(url_, net::URLFetcher::OPTIONS, this);
-
-#if !defined(__EMSCRIPTEN__) && defined(__TODO__)
   url_fetcher_->SetRequestContext(
       network_module_->url_request_context_getter().get());
-#endif
   url_fetcher_->AddExtraRequestHeader(kOriginheadername + origin_);
   // 3. Let headers be the names of request's header list's headers,
   //    excluding CORS-safelisted request-headers and duplicates, sorted
@@ -322,14 +311,14 @@ bool CORSPreflight::Send() {
 }
 
 void CORSPreflight::Start() {
-  DCHECK(thread_checker_.CalledOnValidThread());
+  DCHECK_CALLED_ON_VALID_THREAD(thread_checker_);
   // Preflight does not allow redirect, status 300+ should not fail
   url_fetcher_->SetStopOnRedirect(true);
   url_fetcher_->Start();
 }
 
 void CORSPreflight::OnURLFetchComplete(const net::URLFetcher* source) {
-  DCHECK(thread_checker_.CalledOnValidThread());
+  DCHECK_CALLED_ON_VALID_THREAD(thread_checker_);
   if (source->GetStatus().status() != net::URLRequestStatus::SUCCESS) {
     error_callback_.Run();
     return;
@@ -477,4 +466,4 @@ bool CORSPreflight::CORSCheck(const net::HttpResponseHeaders& response_headers,
 
 }  // namespace loader
 }  // namespace cobalt
-#endif
+#endif // ENABLE_GNET

@@ -1,4 +1,4 @@
-﻿// Copyright 2015 The Cobalt Authors. All Rights Reserved.
+// Copyright 2015 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -51,8 +51,6 @@ class FileFetcher : public Fetcher {
       message_loop_proxy = (base::MessageLoopCurrent::Get()->task_runner());
       DCHECK(message_loop_proxy);
 #endif
-      //#ifdef __TODO__
-      //#endif
     }
 
     int32 buffer_size;
@@ -94,7 +92,7 @@ class FileFetcher : public Fetcher {
 
   // Thread checker ensures all calls to the FileFetcher are made from the same
   // thread that it is created in.
-  base::ThreadChecker thread_checker_;
+  THREAD_CHECKER(thread_checker_);
   // Size of the buffer that FileFetcher will use to load data.
   int32 buffer_size_;
   // Handle of the input file.

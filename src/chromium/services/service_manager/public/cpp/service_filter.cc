@@ -31,14 +31,14 @@ ServiceFilter ServiceFilter::ByName(const std::string& service_name) {
 
 // static
 ServiceFilter ServiceFilter::ByNameWithId(const std::string& service_name,
-                                          const base::Token& instance_id) {
+                                          const base::BaseToken& instance_id) {
   return ServiceFilter(service_name, base::nullopt /* instance_group */,
                        instance_id, base::nullopt /* globally_unique_id */);
 }
 
 // static
 ServiceFilter ServiceFilter::ByNameInGroup(const std::string& service_name,
-                                           const base::Token& instance_group) {
+                                           const base::BaseToken& instance_group) {
   return ServiceFilter(service_name, instance_group,
                        base::nullopt /* instance_id */,
                        base::nullopt /* globally_unique_id */);
@@ -47,8 +47,8 @@ ServiceFilter ServiceFilter::ByNameInGroup(const std::string& service_name,
 // static
 ServiceFilter ServiceFilter::ByNameWithIdInGroup(
     const std::string& service_name,
-    const base::Token& instance_id,
-    const base::Token& instance_group) {
+    const base::BaseToken& instance_id,
+    const base::BaseToken& instance_group) {
   return ServiceFilter(service_name, instance_group, instance_id,
                        base::nullopt /* globally_unique_id */);
 }
@@ -69,9 +69,9 @@ bool ServiceFilter::operator<(const ServiceFilter& other) const {
 
 ServiceFilter::ServiceFilter(
     const std::string& service_name,
-    const base::Optional<base::Token>& instance_group,
-    const base::Optional<base::Token>& instance_id,
-    const base::Optional<base::Token>& globally_unique_id)
+    const base::Optional<base::BaseToken>& instance_group,
+    const base::Optional<base::BaseToken>& instance_id,
+    const base::Optional<base::BaseToken>& globally_unique_id)
     : service_name_(service_name),
       instance_group_(instance_group),
       instance_id_(instance_id),

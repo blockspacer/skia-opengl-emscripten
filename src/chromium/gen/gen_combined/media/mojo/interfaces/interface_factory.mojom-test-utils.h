@@ -19,7 +19,7 @@ class  InterfaceFactoryInterceptorForTesting : public InterfaceFactory {
   void CreateDefaultRenderer(const std::string& audio_device_id, ::media::mojom::RendererRequest renderer) override;
   void CreateCdm(const std::string& key_system, ::media::mojom::ContentDecryptionModuleRequest cdm) override;
   void CreateDecryptor(int32_t cdm_id, ::media::mojom::DecryptorRequest decryptor) override;
-  void CreateCdmProxy(const base::Token& cdm_guid, ::media::mojom::CdmProxyRequest cdm_proxy) override;
+  void CreateCdmProxy(const base::BaseToken& cdm_guid, ::media::mojom::CdmProxyRequest cdm_proxy) override;
 };
 class  InterfaceFactoryAsyncWaiter {
  public:

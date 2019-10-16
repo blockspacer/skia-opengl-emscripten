@@ -16,6 +16,8 @@
 
 #include "cobalt/dom/navigator.h"
 
+#include "cobalt/script/environment_settings.h"
+
 #include "base/optional.h"
 #include "cobalt/dom/captions/system_caption_settings.h"
 #include "cobalt/dom/dom_exception.h"
@@ -166,6 +168,7 @@ TryGetSupportedCapabilities(
     //       playback of encrypted media data for the combination of container,
     //       media types [...]:
     const bool kIsProgressive = false;
+#if ENABLE_MEDIA
     if (can_play_type_handler->CanPlayType(
             content_type.c_str(), key_system.c_str(), kIsProgressive) ==
         kSbMediaSupportTypeProbably) {
@@ -177,6 +180,9 @@ TryGetSupportedCapabilities(
       LOG(INFO) << "Navigator::RequestMediaKeySystemAccess(" << content_type
                 << ", " << key_system << ") -> not supported";
     }
+#else
+NOTIMPLEMENTED_LOG_ONCE();
+#endif
   }
   // 4. If supported media capabilities is empty, return null.
   if (supported_media_capabilities.empty()) {

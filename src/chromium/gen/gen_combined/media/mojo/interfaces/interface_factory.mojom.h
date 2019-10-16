@@ -108,7 +108,7 @@ class  InterfaceFactory
   virtual void CreateDecryptor(int32_t cdm_id, ::media::mojom::DecryptorRequest decryptor) = 0;
 
   
-  virtual void CreateCdmProxy(const base::Token& cdm_guid, ::media::mojom::CdmProxyRequest cdm_proxy) = 0;
+  virtual void CreateCdmProxy(const base::BaseToken& cdm_guid, ::media::mojom::CdmProxyRequest cdm_proxy) = 0;
 };
 
 class  InterfaceFactoryProxy
@@ -122,7 +122,7 @@ class  InterfaceFactoryProxy
   void CreateDefaultRenderer(const std::string& audio_device_id, ::media::mojom::RendererRequest renderer) final;
   void CreateCdm(const std::string& key_system, ::media::mojom::ContentDecryptionModuleRequest cdm) final;
   void CreateDecryptor(int32_t cdm_id, ::media::mojom::DecryptorRequest decryptor) final;
-  void CreateCdmProxy(const base::Token& cdm_guid, ::media::mojom::CdmProxyRequest cdm_proxy) final;
+  void CreateCdmProxy(const base::BaseToken& cdm_guid, ::media::mojom::CdmProxyRequest cdm_proxy) final;
 
  private:
   mojo::MessageReceiverWithResponder* receiver_;

@@ -1,4 +1,4 @@
-﻿// Copyright 2016 The Cobalt Authors. All Rights Reserved.
+// Copyright 2016 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -46,7 +46,7 @@ struct RemoteTypefaceResourceCacheType {
 };
 
 typedef CachedResource<RemoteTypefaceResourceCacheType> CachedRemoteTypeface;
-typedef CachedResourceReferenceWithCallbacks<RemoteTypefaceResourceCacheType>
+typedef CachedResourceReferenceWithCallbacks
     CachedRemoteTypefaceReferenceWithCallbacks;
 typedef CachedRemoteTypefaceReferenceWithCallbacks::
     CachedResourceReferenceVector CachedRemoteTypefaceReferenceVector;
@@ -58,10 +58,6 @@ typedef ResourceCache<RemoteTypefaceResourceCacheType> RemoteTypefaceCache;
 inline static std::unique_ptr<RemoteTypefaceCache> CreateRemoteTypefaceCache(
     const std::string& name, uint32 cache_capacity,
     loader::LoaderFactory* loader_factory) {
-  printf("CreateRemoteTypefaceCache\n");
-
-  /// \note see FontCache::OnRemoteTypefaceLoadEvent for load callbacks
-
   return std::unique_ptr<RemoteTypefaceCache>(new RemoteTypefaceCache(
       name, cache_capacity,
 #if defined(OS_EMSCRIPTEN)

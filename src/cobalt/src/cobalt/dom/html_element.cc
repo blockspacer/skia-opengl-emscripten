@@ -196,7 +196,7 @@ void HTMLElement::set_dir(const std::string& value) {
 }
 
 scoped_refptr<DOMStringMap> HTMLElement::dataset() {
-  scoped_refptr<DOMStringMap> dataset(dataset_);
+  scoped_refptr<DOMStringMap> dataset(dataset_.get());
   if (!dataset) {
     // Create a new instance and store a weak reference.
     dataset = new DOMStringMap(this);
@@ -1329,7 +1329,7 @@ void HTMLElement::RunFocusingSteps() {
   if (!document || !document->HasBrowsingContext() || !IsFocusable()) {
     return;
   }
-  Element* old_active_element = document->active_element();
+  Element* old_active_element = document->active_element().get();
   if (old_active_element == this) {
     return;
   }

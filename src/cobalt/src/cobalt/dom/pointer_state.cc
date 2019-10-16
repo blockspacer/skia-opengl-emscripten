@@ -103,7 +103,7 @@ scoped_refptr<HTMLElement> PointerState::GetPointerCaptureOverrideElement(
 
   if (pending_override != pending_target_override_.end() &&
       pending_override->second &&
-      pending_override->second->node_document() != view->document()) {
+      pending_override->second->node_document() != view->document().get()) {
     // When the pointer capture target override is removed from its
     // ownerDocument's tree, clear the pending pointer capture target override
     // and pointer capture target override nodes and fire a PointerEvent named
@@ -118,7 +118,7 @@ scoped_refptr<HTMLElement> PointerState::GetPointerCaptureOverrideElement(
   // override node.
   if (override != target_override_.end() && override->second &&
       (pending_override == pending_target_override_.end() ||
-       pending_override->second != override->second)) {
+       pending_override->second.get() != override->second.get())) {
     override->second->DispatchEvent(
         new PointerEvent(base::Tokens::lostpointercapture(), Event::kBubbles,
                          Event::kNotCancelable, view, *event_init));
@@ -131,7 +131,7 @@ scoped_refptr<HTMLElement> PointerState::GetPointerCaptureOverrideElement(
   if (pending_override != pending_target_override_.end() &&
       pending_override->second &&
       (override == target_override_.end() ||
-       pending_override->second != override->second)) {
+       pending_override->second.get() != override->second.get())) {
     pending_override->second->DispatchEvent(
         new PointerEvent(base::Tokens::gotpointercapture(), Event::kBubbles,
                          Event::kNotCancelable, view, *event_init));

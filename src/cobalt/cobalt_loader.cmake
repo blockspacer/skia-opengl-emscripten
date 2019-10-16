@@ -83,6 +83,8 @@ list(APPEND cobalt_loader_SOURCES
   ${COBALT_CORE_DIR}loader/fetcher_factory.h
   ${COBALT_CORE_DIR}loader/fetcher.cc
   ${COBALT_CORE_DIR}loader/fetcher.h
+  ${COBALT_CORE_DIR}loader/fetcher_cache.cc
+  ${COBALT_CORE_DIR}loader/fetcher_cache.h
   ${COBALT_CORE_DIR}loader/file_fetcher.cc
   ${COBALT_CORE_DIR}loader/file_fetcher.h
   ${COBALT_CORE_DIR}loader/font/remote_typeface_cache.h
@@ -140,6 +142,7 @@ list(APPEND cobalt_loader_SOURCES
   ${COBALT_CORE_DIR}loader/mesh/projection_codec/projection_decoder.h
   ${COBALT_CORE_DIR}loader/net_fetcher.cc
   ${COBALT_CORE_DIR}loader/net_fetcher.h
+  ${COBALT_CORE_DIR}loader/resource_cache.cc
   ${COBALT_CORE_DIR}loader/resource_cache.h
   ${COBALT_CORE_DIR}loader/switches.cc
   ${COBALT_CORE_DIR}loader/switches.h

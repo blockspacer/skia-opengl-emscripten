@@ -205,7 +205,7 @@ void InterfaceFactoryImpl::CreateDecryptor(int cdm_id,
                                  std::move(request));
 }
 
-void InterfaceFactoryImpl::CreateCdmProxy(const base::Token& cdm_guid,
+void InterfaceFactoryImpl::CreateCdmProxy(const base::BaseToken& cdm_guid,
                                           mojom::CdmProxyRequest request) {
   DVLOG(2) << __func__;
 #if BUILDFLAG(ENABLE_LIBRARY_CDMS)

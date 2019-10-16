@@ -11,18 +11,18 @@ namespace mojo_base {
 namespace token_unittest {
 
 TEST(TokenTest, Token) {
-  base::Token in;
-  base::Token out;
+  base::BaseToken in;
+  base::BaseToken out;
   ASSERT_TRUE(mojo::test::SerializeAndDeserialize<mojom::Token>(&in, &out));
   EXPECT_EQ(in, out);
 
   constexpr uint64_t kTestHigh = 0x0123456789abcdefull;
   constexpr uint64_t kTestLow = 0x5a5a5a5aa5a5a5a5ull;
-  in = base::Token{kTestHigh, kTestLow};
+  in = base::BaseToken{kTestHigh, kTestLow};
   ASSERT_TRUE(mojo::test::SerializeAndDeserialize<mojom::Token>(&in, &out));
   EXPECT_EQ(in, out);
 
-  in = base::Token::CreateRandom();
+  in = base::BaseToken::CreateRandom();
   ASSERT_TRUE(mojo::test::SerializeAndDeserialize<mojom::Token>(&in, &out));
   EXPECT_EQ(in, out);
 }

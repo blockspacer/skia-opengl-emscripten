@@ -191,8 +191,8 @@ class LifecycleTest : public testing::Test {
         test_service_binding_(
             &test_service_,
             test_service_manager_.RegisterInstance(
-                Identity{kTestName, kSystemInstanceGroup, base::Token{},
-                         base::Token::CreateRandom()})) {}
+                Identity{kTestName, kSystemInstanceGroup, base::BaseToken{},
+                         base::BaseToken::CreateRandom()})) {}
 
   ~LifecycleTest() override {}
 

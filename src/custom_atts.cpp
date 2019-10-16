@@ -28,8 +28,7 @@
 #include "base/optional.h"
 #include "base/strings/string_piece.h"
 
-#include "cobalt/base/cobalt_token.h"
-//#include "base/token.h"
+#include "cobalt/base/token.h"
 
 #include "cobalt/cssom/style_sheet_list.h"
 #include "cobalt/dom/dom_exception.h"

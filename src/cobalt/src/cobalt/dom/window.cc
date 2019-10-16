@@ -422,7 +422,7 @@ scoped_refptr<cssom::CSSStyleDeclaration> Window::GetComputedStyle(
 
   // 1. Let doc be the Document associated with the Window object on which the
   // method was invoked.
-  DCHECK_EQ(document_, elt->node_document())
+  DCHECK_EQ(document_.get(), elt->node_document())
       << "getComputedStyle not supported for elements outside of the document";
 
   scoped_refptr<HTMLElement> html_element = elt->AsHTMLElement();
@@ -814,10 +814,12 @@ void Window::TraceMembers(script::Tracer* tracer) {
   tracer->Trace(on_screen_keyboard_);
 }
 
+/// \note custom
 bool Window::isStartedDocumentLoader() const {
   return document_loader_ && document_loader_->isStarted();
 }
 
+/// \note custom
 void Window::ForceStartDocumentLoader() {
   DCHECK(document_loader_);
   document_loader_->Resume(nullptr);

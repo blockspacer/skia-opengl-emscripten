@@ -30,7 +30,7 @@ AboutFetcher::AboutFetcher(Handler* handler)
 }
 
 void AboutFetcher::Fetch() { handler()->OnDone(this); }
-#endif
 
 }  // namespace loader
 }  // namespace cobalt
+#endif // ENABLE_ABOUT_SCHEME

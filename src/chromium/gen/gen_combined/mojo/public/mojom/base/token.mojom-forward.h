@@ -30,6 +30,6 @@ using TokenPtr = mojo::InlinedStructPtr<Token>;
 
 }  // namespace mojom
 }  // namespace mojo_base
-#include "base/token.h"
+#include "base/base_token.h"
 
 #endif  // MOJO_PUBLIC_MOJOM_BASE_TOKEN_MOJOM_FORWARD_H_

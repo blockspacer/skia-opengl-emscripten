@@ -292,12 +292,12 @@ void LibxmlParserWrapper::OnCharacters(const std::string& value) {
     data.append(value.data(), value.size());
     text->set_data(data);
   } else {
-    node_stack_.top()->AppendChild(new dom::Text(document_, value));
+    node_stack_.top()->AppendChild(new dom::Text(document_.get(), value));
   }
 }
 
 void LibxmlParserWrapper::OnComment(const std::string& comment) {
-  node_stack_.top()->AppendChild(new dom::Comment(document_, comment));
+  node_stack_.top()->AppendChild(new dom::Comment(document_.get(), comment));
 }
 
 void LibxmlParserWrapper::OnParsingIssue(IssueSeverity severity,
@@ -330,7 +330,7 @@ void LibxmlParserWrapper::OnParsingIssue(IssueSeverity severity,
 }
 
 void LibxmlParserWrapper::OnCDATABlock(const std::string& value) {
-  node_stack_.top()->AppendChild(new dom::CDATASection(document_, value));
+  node_stack_.top()->AppendChild(new dom::CDATASection(document_.get(), value));
 }
 
 void LibxmlParserWrapper::PreprocessChunk(const char* data, size_t size,

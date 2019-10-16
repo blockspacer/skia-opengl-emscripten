@@ -1,4 +1,4 @@
-﻿// Copyright 2015 The Cobalt Authors. All Rights Reserved.
+// Copyright 2015 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -51,7 +51,7 @@ class TextDecoder : public Decoder {
 
   // From Decoder.
   void DecodeChunk(const char* data, size_t size) override {
-    DCHECK(thread_checker_.CalledOnValidThread());
+    DCHECK_CALLED_ON_VALID_THREAD(thread_checker_);
     if (suspended_) {
       return;
     }
@@ -62,7 +62,7 @@ class TextDecoder : public Decoder {
   }
 
   void DecodeChunkPassed(std::unique_ptr<std::string> data) override {
-    DCHECK(thread_checker_.CalledOnValidThread());
+    DCHECK_CALLED_ON_VALID_THREAD(thread_checker_);
     DCHECK(data);
     if (suspended_) {
       return;
@@ -76,9 +76,7 @@ class TextDecoder : public Decoder {
   }
 
   void Finish() override {
-    printf("TextDecoder Finish 1...\n");
-//#ifdef __TODO__
-    DCHECK(thread_checker_.CalledOnValidThread());
+    DCHECK_CALLED_ON_VALID_THREAD(thread_checker_);
 
     if (suspended_) return;
 
@@ -88,8 +86,6 @@ class TextDecoder : public Decoder {
     if (!load_complete_callback_.is_null()) {
       load_complete_callback_.Run(base::nullopt);
     }
-    printf("TextDecoder Finish 2...\n");
-//#endif
   }
 
   bool Suspend() override {
@@ -114,7 +110,7 @@ class TextDecoder : public Decoder {
         load_complete_callback_(load_complete_callback),
         suspended_(false) {}
 
-  base::ThreadChecker thread_checker_;
+  THREAD_CHECKER(thread_checker_);
   TextAvailableCallback text_available_callback_;
   loader::Decoder::OnCompleteFunction load_complete_callback_;
   loader::Origin last_url_origin_;

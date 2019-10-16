@@ -153,7 +153,7 @@ class MEDIA_EXPORT CdmProxy {
 };
 
 using CdmProxyFactoryCB = base::RepeatingCallback<std::unique_ptr<CdmProxy>(
-    const base::Token& cdm_guid)>;
+    const base::BaseToken& cdm_guid)>;
 
 }  // namespace media
 

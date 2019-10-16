@@ -17,7 +17,7 @@
 #include "base/path_service.h"
 #include "base/process/process.h"
 #include "base/process/process_handle.h"
-#include "base/token.h"
+#include "base/base_token.h"
 #include "base/trace_event/trace_event.h"
 #include "build/build_config.h"
 #include "services/service_manager/public/cpp/connector.h"
@@ -59,8 +59,8 @@ base::ProcessId GetCurrentPid() {
 
 const Identity& GetServiceManagerInstanceIdentity() {
   static base::NoDestructor<Identity> id{service_manager::mojom::kServiceName,
-                                         kSystemInstanceGroup, base::Token{},
-                                         base::Token::CreateRandom()};
+                                         kSystemInstanceGroup, base::BaseToken{},
+                                         base::BaseToken::CreateRandom()};
   return *id;
 }
 
@@ -219,7 +219,7 @@ ServiceInstance* ServiceManager::FindOrCreateMatchingTargetInstance(
   if (!target_filter.instance_id()) {
     // Assume the default (zero) instance ID if none was specified by the
     // caller's provided filter.
-    target_filter.set_instance_id(base::Token());
+    target_filter.set_instance_id(base::BaseToken());
   }
 
   // Use an existing instance if possible.
@@ -240,25 +240,25 @@ ServiceInstance* ServiceManager::FindOrCreateMatchingTargetInstance(
   // New instances to be shared globally or across instance groups are assigned
   // their own random instance group. Packaged service instances also retain
   // the target filter group regardless of sharing policy.
-  const base::Token target_group =
+  const base::BaseToken target_group =
       manifest->options.instance_sharing_policy ==
                   Manifest::InstanceSharingPolicy::kNoSharing ||
               parent_manifest
           ? *target_filter.instance_group()
-          : base::Token::CreateRandom();
+          : base::BaseToken::CreateRandom();
 
   // New singleton instances are always forced to instance ID zero.
-  const base::Token target_instance_id =
+  const base::BaseToken target_instance_id =
       manifest->options.instance_sharing_policy ==
               Manifest::InstanceSharingPolicy::kSingleton
-          ? base::Token()
+          ? base::BaseToken()
           : *target_filter.instance_id();
 
   DCHECK(!target_instance);
   target_instance = CreateServiceInstance(
       Identity(target_filter.service_name(), target_group, target_instance_id,
                target_filter.globally_unique_id().value_or(
-                   base::Token::CreateRandom())),
+                   base::BaseToken::CreateRandom())),
       *manifest);
 
   if (parent_manifest) {
@@ -308,7 +308,7 @@ void ServiceManager::StartService(const std::string& service_name) {
 }
 
 bool ServiceManager::QueryCatalog(const std::string& service_name,
-                                  const base::Token& instance_group,
+                                  const base::BaseToken& instance_group,
                                   std::string* sandbox_type) {
   const Manifest* manifest = catalog_.GetManifest(service_name);
   if (!manifest)

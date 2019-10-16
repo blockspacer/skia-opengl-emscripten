@@ -1,4 +1,4 @@
-﻿// Copyright 2016 The Cobalt Authors. All Rights Reserved.
+// Copyright 2016 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -30,13 +30,18 @@ const size_t kLoadThreadStackSize = 0;
 
 }  // namespace
 
-LoaderFactory::LoaderFactory(FetcherFactory* fetcher_factory,
+LoaderFactory::LoaderFactory(const char* name, FetcherFactory* fetcher_factory,
                              render_tree::ResourceProvider* resource_provider,
+                             size_t encoded_image_cache_capacity,
                              base::ThreadPriority loader_thread_priority)
     : fetcher_factory_(fetcher_factory),
       resource_provider_(resource_provider),
       load_thread_("ResourceLoader"),
       is_suspended_(false) {
+  if (encoded_image_cache_capacity > 0) {
+    fetcher_cache_.reset(new FetcherCache(name, encoded_image_cache_capacity));
+  }
+
   base::Thread::Options options(base::MessageLoop::TYPE_DEFAULT,
                                 kLoadThreadStackSize);
   options.priority = loader_thread_priority;
@@ -50,31 +55,113 @@ std::unique_ptr<Loader> LoaderFactory::CreateImageLoader(
 #endif
     const image::ImageDecoder::ImageAvailableCallback& image_available_callback,
     const Loader::OnCompleteFunction& load_complete_callback) {
-  DCHECK(thread_checker_.CalledOnValidThread());
+  DCHECK_CALLED_ON_VALID_THREAD(thread_checker_);
 
   Loader::FetcherCreator fetcher_creator =
-      MakeFetcherCreator(url
+      MakeCachedFetcherCreator(url,
 #if defined(ENABLE_COBALT_CSP)
-      , url_security_callback
+      url_security_callback,
 #endif
-      ,
       kNoCORSMode, origin);
 
-//#if defined(__TODO__)
-  scoped_refptr<base::SingleThreadTaskRunner> load_message_loop_ =  load_thread_.task_runner();
+  /// \todo
+  scoped_refptr<base::SingleThreadTaskRunner> load_message_loop_
+    =  load_thread_.task_runner();
+
   std::unique_ptr<Loader> loader(new Loader(
       fetcher_creator,
       base::Bind(&image::ThreadedImageDecoderProxy::Create, resource_provider_,
-      //           image_available_callback, load_thread_.message_loop()),
                  image_available_callback, load_message_loop_),
       load_complete_callback,
       base::Bind(&LoaderFactory::OnLoaderDestroyed, base::Unretained(this)),
       is_suspended_));
+
   OnLoaderCreated(loader.get());
   return loader;
-//#else
-//  return nullptr;
-//#endif
+}
+
+std::unique_ptr<Loader> LoaderFactory::CreateLinkLoader(
+    const GURL& url, const Origin& origin,
+#if defined(ENABLE_COBALT_CSP)
+    const csp::SecurityCallback& url_security_callback,
+#endif
+    const loader::RequestMode cors_mode,
+    const TextDecoder::TextAvailableCallback& link_available_callback,
+    const Loader::OnCompleteFunction& load_complete_callback) {
+  DCHECK_CALLED_ON_VALID_THREAD(thread_checker_);
+
+  Loader::FetcherCreator fetcher_creator =
+      MakeFetcherCreator(url,
+#if defined(ENABLE_COBALT_CSP)
+      url_security_callback,
+#endif
+      cors_mode, origin);
+
+  std::unique_ptr<Loader> loader(new Loader(
+      fetcher_creator,
+      base::Bind(&loader::TextDecoder::Create, link_available_callback),
+      load_complete_callback,
+      base::Bind(&LoaderFactory::OnLoaderDestroyed, base::Unretained(this)),
+      is_suspended_));
+
+  OnLoaderCreated(loader.get());
+  return loader;
+}
+
+// Creates a loader that fetches and decodes a Mesh.
+std::unique_ptr<Loader> LoaderFactory::CreateMeshLoader(
+    const GURL& url, const Origin& origin,
+#if defined(ENABLE_COBALT_CSP)
+    const csp::SecurityCallback& url_security_callback,
+#endif
+    const mesh::MeshDecoder::MeshAvailableCallback& mesh_available_callback,
+    const Loader::OnCompleteFunction& load_complete_callback) {
+  DCHECK_CALLED_ON_VALID_THREAD(thread_checker_);
+
+  Loader::FetcherCreator fetcher_creator =
+      MakeFetcherCreator(url,
+#if defined(ENABLE_COBALT_CSP)
+      url_security_callback,
+#endif
+       kNoCORSMode, origin);
+
+  std::unique_ptr<Loader> loader(new Loader(
+      fetcher_creator,
+      base::Bind(&mesh::MeshDecoder::Create, resource_provider_,
+                 mesh_available_callback),
+      load_complete_callback,
+      base::Bind(&LoaderFactory::OnLoaderDestroyed, base::Unretained(this)),
+      is_suspended_));
+
+  OnLoaderCreated(loader.get());
+  return loader;
+}
+
+std::unique_ptr<Loader> LoaderFactory::CreateScriptLoader(
+    const GURL& url, const Origin& origin,
+#if defined(ENABLE_COBALT_CSP)
+    const csp::SecurityCallback& url_security_callback,
+#endif
+    const TextDecoder::TextAvailableCallback& script_available_callback,
+    const Loader::OnCompleteFunction& load_complete_callback) {
+  DCHECK_CALLED_ON_VALID_THREAD(thread_checker_);
+
+  Loader::FetcherCreator fetcher_creator =
+      MakeFetcherCreator(url,
+#if defined(ENABLE_COBALT_CSP)
+      url_security_callback,
+#endif
+       kNoCORSMode, origin);
+
+  std::unique_ptr<Loader> loader(new Loader(
+      fetcher_creator,
+      base::Bind(&loader::TextDecoder::Create, script_available_callback),
+      load_complete_callback,
+      base::Bind(&LoaderFactory::OnLoaderDestroyed, base::Unretained(this)),
+      is_suspended_));
+
+  OnLoaderCreated(loader.get());
+  return loader;
 }
 
 std::unique_ptr<Loader> LoaderFactory::CreateTypefaceLoader(
@@ -85,8 +172,7 @@ std::unique_ptr<Loader> LoaderFactory::CreateTypefaceLoader(
     const font::TypefaceDecoder::TypefaceAvailableCallback&
         typeface_available_callback,
     const Loader::OnCompleteFunction& load_complete_callback) {
-  printf("CreateTypefaceLoader\n");
-  DCHECK(thread_checker_.CalledOnValidThread());
+  DCHECK_CALLED_ON_VALID_THREAD(thread_checker_);
 
   Loader::FetcherCreator fetcher_creator = MakeFetcherCreator(
       url,
@@ -107,88 +193,10 @@ std::unique_ptr<Loader> LoaderFactory::CreateTypefaceLoader(
   return loader;
 }
 
-// Creates a loader that fetches and decodes a Mesh.
-std::unique_ptr<Loader> LoaderFactory::CreateMeshLoader(
-    const GURL& url, const Origin& origin,
-#if defined(ENABLE_COBALT_CSP)
-    const csp::SecurityCallback& url_security_callback,
-#endif
-    const mesh::MeshDecoder::MeshAvailableCallback& mesh_available_callback,
-    const Loader::OnCompleteFunction& load_complete_callback) {
-  DCHECK(thread_checker_.CalledOnValidThread());
-
-  Loader::FetcherCreator fetcher_creator =
-      MakeFetcherCreator(url,
-#if defined(ENABLE_COBALT_CSP)
-      url_security_callback,
-#endif
-      kNoCORSMode, origin);
-
-  std::unique_ptr<Loader> loader(new Loader(
-      fetcher_creator,
-      base::Bind(&mesh::MeshDecoder::Create, resource_provider_,
-                 mesh_available_callback),
-      load_complete_callback,
-      base::Bind(&LoaderFactory::OnLoaderDestroyed, base::Unretained(this)),
-      is_suspended_));
-
-  OnLoaderCreated(loader.get());
-  return loader;
-}
-
-std::unique_ptr<Loader> LoaderFactory::CreateLinkLoader(
-    const GURL& url, const Origin& origin,
-#if defined(ENABLE_COBALT_CSP)
-    const csp::SecurityCallback& url_security_callback,
-#endif
-    const loader::RequestMode cors_mode,
-    const TextDecoder::TextAvailableCallback& link_available_callback,
-    const Loader::OnCompleteFunction& load_complete_callback) {
-  DCHECK(thread_checker_.CalledOnValidThread());
-
-  Loader::FetcherCreator fetcher_creator =
-      MakeFetcherCreator(url,
-#if defined(ENABLE_COBALT_CSP)
-      url_security_callback,
-#endif
-      cors_mode, origin);
-
-  std::unique_ptr<Loader> loader(new Loader(
-      fetcher_creator,
-      base::Bind(&loader::TextDecoder::Create, link_available_callback),
-      load_complete_callback,
-      base::Bind(&LoaderFactory::OnLoaderDestroyed, base::Unretained(this)),
-      is_suspended_));
-
-  OnLoaderCreated(loader.get());
-  return loader;
-}
-
-std::unique_ptr<Loader> LoaderFactory::CreateScriptLoader(
-    const GURL& url, const Origin& origin,
-#if defined(ENABLE_COBALT_CSP)
-    const csp::SecurityCallback& url_security_callback,
-#endif
-    const TextDecoder::TextAvailableCallback& script_available_callback,
-    const Loader::OnCompleteFunction& load_complete_callback) {
-  DCHECK(thread_checker_.CalledOnValidThread());
-
-  Loader::FetcherCreator fetcher_creator =
-      MakeFetcherCreator(url,
-#if defined(ENABLE_COBALT_CSP)
-      url_security_callback,
-#endif
-      kNoCORSMode, origin);
-
-  std::unique_ptr<Loader> loader(new Loader(
-      fetcher_creator,
-      base::Bind(&loader::TextDecoder::Create, script_available_callback),
-      load_complete_callback,
-      base::Bind(&LoaderFactory::OnLoaderDestroyed, base::Unretained(this)),
-      is_suspended_));
-
-  OnLoaderCreated(loader.get());
-  return loader;
+void LoaderFactory::NotifyResourceRequested(const std::string& url) {
+  if (fetcher_cache_) {
+    fetcher_cache_->NotifyResourceRequested(url);
+  }
 }
 
 Loader::FetcherCreator LoaderFactory::MakeFetcherCreator(
@@ -197,40 +205,59 @@ Loader::FetcherCreator LoaderFactory::MakeFetcherCreator(
     const csp::SecurityCallback& url_security_callback,
 #endif
     RequestMode request_mode, const Origin& origin) {
-  DCHECK(thread_checker_.CalledOnValidThread());
+  DCHECK_CALLED_ON_VALID_THREAD(thread_checker_);
 
   return base::Bind(&FetcherFactory::CreateSecureFetcher,
                     base::Unretained(fetcher_factory_), url,
 #if defined(ENABLE_COBALT_CSP)
-                    url_security_callback,
+      url_security_callback,
 #endif
-                    request_mode, origin);
+       request_mode, origin);
+}
+
+Loader::FetcherCreator LoaderFactory::MakeCachedFetcherCreator(
+    const GURL& url,
+#if defined(ENABLE_COBALT_CSP)
+    const csp::SecurityCallback& url_security_callback,
+#endif
+    RequestMode request_mode, const Origin& origin) {
+  DCHECK_CALLED_ON_VALID_THREAD(thread_checker_);
+
+  auto fetcher_creator =
+      MakeFetcherCreator(url,
+#if defined(ENABLE_COBALT_CSP)
+      url_security_callback,
+#endif
+      request_mode, origin);
+
+  if (fetcher_cache_) {
+    return fetcher_cache_->GetFetcherCreator(url, fetcher_creator);
+  }
+  return fetcher_creator;
 }
 
 void LoaderFactory::Suspend() {
-  DCHECK(thread_checker_.CalledOnValidThread());
+  DCHECK_CALLED_ON_VALID_THREAD(thread_checker_);
   DCHECK(resource_provider_);
   DCHECK(!is_suspended_);
 
   is_suspended_ = true;
   resource_provider_ = NULL;
-  printf("LoaderFactory::Suspend 1\n");
+
   for (LoaderSet::const_iterator iter = active_loaders_.begin();
        iter != active_loaders_.end(); ++iter) {
     (*iter)->Suspend();
   }
 
-  printf("LoaderFactory::Suspend 2\n");
-
   // Wait for all loader thread messages to be flushed before returning.
-  ///load_thread_.task_runner()->WaitForFence();
-  ///
+  /// \todo
   load_thread_.task_runner()->RunsTasksInCurrentSequence();
+  //load_thread_.message_loop()->task_runner()->WaitForFence();
 
 }
 
 void LoaderFactory::Resume(render_tree::ResourceProvider* resource_provider) {
-  DCHECK(thread_checker_.CalledOnValidThread());
+  DCHECK_CALLED_ON_VALID_THREAD(thread_checker_);
   DCHECK(resource_provider);
 
   is_suspended_ = false;
@@ -243,15 +270,13 @@ void LoaderFactory::Resume(render_tree::ResourceProvider* resource_provider) {
 }
 
 void LoaderFactory::OnLoaderCreated(Loader* loader) {
-  printf(" LoaderFactory::OnLoaderCreated\n");
-  DCHECK(thread_checker_.CalledOnValidThread());
+  DCHECK_CALLED_ON_VALID_THREAD(thread_checker_);
   DCHECK(active_loaders_.find(loader) == active_loaders_.end());
   active_loaders_.insert(loader);
 }
 
 void LoaderFactory::OnLoaderDestroyed(Loader* loader) {
-  printf(" LoaderFactory::OnLoaderDestroyed\n");
-  DCHECK(thread_checker_.CalledOnValidThread());
+  DCHECK_CALLED_ON_VALID_THREAD(thread_checker_);
   DCHECK(active_loaders_.find(loader) != active_loaders_.end());
   active_loaders_.erase(loader);
 }

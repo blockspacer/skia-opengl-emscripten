@@ -9,7 +9,7 @@
 #include <string>
 
 #include "base/macros.h"
-#include "base/token.h"
+#include "base/base_token.h"
 #include "services/service_manager/public/cpp/identity.h"
 #include "services/service_manager/public/cpp/service_filter.h"
 
@@ -52,18 +52,18 @@ class ServiceInstanceRegistry {
  private:
   // An entry in any of the mappings owned by this object.
   struct Entry {
-    Entry(const base::Token& guid, ServiceInstance* instance);
+    Entry(const base::BaseToken& guid, ServiceInstance* instance);
     Entry(const Entry&);
     ~Entry();
 
-    base::Token guid;
+    base::BaseToken guid;
     ServiceInstance* instance = nullptr;
   };
 
   struct RegularInstanceKey {
     RegularInstanceKey(const std::string& service_name,
-                       const base::Token& instance_group,
-                       const base::Token& instance_id);
+                       const base::BaseToken& instance_group,
+                       const base::BaseToken& instance_id);
     RegularInstanceKey(const RegularInstanceKey&);
     ~RegularInstanceKey();
 
@@ -71,13 +71,13 @@ class ServiceInstanceRegistry {
     bool operator<(const RegularInstanceKey& other) const;
 
     const std::string service_name;
-    const base::Token instance_group;
-    const base::Token instance_id;
+    const base::BaseToken instance_group;
+    const base::BaseToken instance_id;
   };
 
   struct SharedInstanceKey {
     SharedInstanceKey(const std::string& service_name,
-                      const base::Token& instance_id);
+                      const base::BaseToken& instance_id);
     SharedInstanceKey(const SharedInstanceKey&);
     ~SharedInstanceKey();
 
@@ -85,7 +85,7 @@ class ServiceInstanceRegistry {
     bool operator<(const SharedInstanceKey& other) const;
 
     const std::string service_name;
-    const base::Token instance_id;
+    const base::BaseToken instance_id;
   };
 
   // Maps a 3-tuple of (service name, instance group, instance ID) to a list of
@@ -101,8 +101,8 @@ class ServiceInstanceRegistry {
 
   ServiceInstance* FindMatchInEntries(
       const std::vector<Entry>& entries,
-      const base::Optional<base::Token>& guid) const;
-  bool EraseEntry(const base::Token& guid, std::vector<Entry>* entries);
+      const base::Optional<base::BaseToken>& guid) const;
+  bool EraseEntry(const base::BaseToken& guid, std::vector<Entry>* entries);
 
   RegularInstanceMap regular_instances_;
   SharedInstanceMap shared_instances_;

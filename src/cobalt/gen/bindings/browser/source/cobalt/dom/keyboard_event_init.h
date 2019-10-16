@@ -38,15 +38,18 @@ namespace dom {
 
 class KeyboardEventInit : public cobalt::dom::EventModifierInit {
  public:
-  KeyboardEventInit()
-    : key_(""),
-      code_(""),
-      location_(0),
-      repeat_(false),
-      is_composing_(false),
-      char_code_(0),
-      key_code_(0),
-      which_(0) {
+  KeyboardEventInit() {
+    key_ = "";
+    code_ = "";
+    location_ = 0;
+    repeat_ = false;
+    is_composing_ = false;
+    char_code_ = 0;
+    key_code_ = 0;
+    keysym_ = 0;
+    is_printable_ = true;
+    which_ = 0;
+    text_ = "";
   }
 
   KeyboardEventInit(const KeyboardEventInit& other)
@@ -58,7 +61,10 @@ class KeyboardEventInit : public cobalt::dom::EventModifierInit {
     is_composing_ = other.is_composing_;
     char_code_ = other.char_code_;
     key_code_ = other.key_code_;
+    keysym_ = other.keysym_;
+    is_printable_ = other.is_printable_;
     which_ = other.which_;
+    text_ = other.text_;
   }
 
   KeyboardEventInit& operator=(const KeyboardEventInit& other) {
@@ -70,7 +76,10 @@ class KeyboardEventInit : public cobalt::dom::EventModifierInit {
     is_composing_ = other.is_composing_;
     char_code_ = other.char_code_;
     key_code_ = other.key_code_;
+    keysym_ = other.keysym_;
+    is_printable_ = other.is_printable_;
     which_ = other.which_;
+    text_ = other.text_;
     return *this;
   }
 
@@ -144,6 +153,37 @@ class KeyboardEventInit : public cobalt::dom::EventModifierInit {
     key_code_ = value;
   }
 
+
+  bool has_keysym() const {
+    return true;
+  }
+  wchar_t keysym() const {
+    return keysym_;
+  }
+  void set_keysym(int32_t keysym) {
+    keysym_ = keysym;
+  }
+
+  bool has_is_printable() const {
+    return true;
+  }
+  bool is_printable() const {
+    return is_printable_;
+  }
+  void set_is_printable(bool is_printable) {
+    is_printable_ = is_printable;
+  }
+
+  bool has_text() const {
+    return true;
+  }
+  std::string text() const {
+    return text_;
+  }
+  void set_text(const std::string& text) {
+    text_ = text;
+  }
+
   bool has_which() const {
     return true;
   }
@@ -163,6 +203,16 @@ class KeyboardEventInit : public cobalt::dom::EventModifierInit {
   bool is_composing_;
   uint32_t char_code_;
   uint32_t key_code_;
+
+  // not in spec
+  int32_t keysym_;
+
+  // not in spec
+  bool is_printable_;
+
+  // not in spec
+  std::string text_;
+
   uint32_t which_;
 };
 

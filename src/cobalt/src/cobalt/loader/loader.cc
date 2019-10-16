@@ -1,4 +1,4 @@
-﻿// Copyright 2015 The Cobalt Authors. All Rights Reserved.
+// Copyright 2015 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,15 +25,15 @@ namespace cobalt {
 namespace loader {
 
 //////////////////////////////////////////////////////////////////
-// Loader::FetcherToDecoderAdapter
+// Loader::FetcherHandlerToDecoderAdapter
 //////////////////////////////////////////////////////////////////
 
 // This class is responsible for passing chunks of data from fetcher to
 // decoder and notifying fetching is done or aborted on error.
-class Loader::FetcherToDecoderAdapter : public Fetcher::Handler {
+class Loader::FetcherHandlerToDecoderAdapter : public Fetcher::Handler {
  public:
-  FetcherToDecoderAdapter(Decoder* decoder,
-                          OnCompleteFunction load_complete_callback)
+  FetcherHandlerToDecoderAdapter(Decoder* decoder,
+                                 OnCompleteFunction load_complete_callback)
       : decoder_(decoder), load_complete_callback_(load_complete_callback) {}
 
   // From Fetcher::Handler.
@@ -44,7 +44,6 @@ class Loader::FetcherToDecoderAdapter : public Fetcher::Handler {
       const scoped_refptr<net::HttpResponseHeaders>& headers
 #endif
       ) override {
-
 #if defined(ENABLE_GNET)
     if (headers) {
       return decoder_->OnResponseStarted(fetcher, headers);
@@ -65,20 +64,11 @@ class Loader::FetcherToDecoderAdapter : public Fetcher::Handler {
     decoder_->DecodeChunkPassed(std::move(data));
   }
   void OnDone(Fetcher* fetcher) override {
-    printf("FetcherToDecoderAdapter OnDone 1 %s...\n",
-      fetcher->last_url_origin().SerializedOrigin().c_str());
-//#ifdef __TODO__
     DCHECK(fetcher);
     decoder_->SetLastURLOrigin(fetcher->last_url_origin());
-    printf("FetcherToDecoderAdapter OnDone 2...\n");
     decoder_->Finish();
-    printf("FetcherToDecoderAdapter OnDone 3...\n");
-//#endif
   }
-  void OnError(Fetcher* fetcher, const std::string& error) override {
-    printf("FetcherToDecoderAdapter OnError 1 %s %s...\n",
-      fetcher->last_url_origin().SerializedOrigin().c_str(),
-      error.c_str());
+  void OnError(Fetcher* /*fetcher*/, const std::string& error) override {
     load_complete_callback_.Run(error);
   }
 
@@ -120,7 +110,7 @@ Loader::Loader(const FetcherCreator& fetcher_creator,
 }
 
 Loader::~Loader() {
-  DCHECK(thread_checker_.CalledOnValidThread());
+  DCHECK_CALLED_ON_VALID_THREAD(thread_checker_);
 
   if (!on_destruction_.is_null()) {
     on_destruction_.Run(this);
@@ -130,7 +120,7 @@ Loader::~Loader() {
 }
 
 void Loader::Suspend() {
-  DCHECK(thread_checker_.CalledOnValidThread());
+  DCHECK_CALLED_ON_VALID_THREAD(thread_checker_);
   DCHECK(!is_suspended_);
 
   is_suspended_ = true;
@@ -140,7 +130,7 @@ void Loader::Suspend() {
     fetcher_.reset();
   }
 
-  fetcher_to_decoder_adaptor_.reset();
+  fetcher_handler_to_decoder_adaptor_.reset();
   fetcher_creator_error_closure_.Cancel();
 
   if (!suspendable) {
@@ -149,7 +139,7 @@ void Loader::Suspend() {
 }
 
 void Loader::Resume(render_tree::ResourceProvider* resource_provider) {
-  DCHECK(thread_checker_.CalledOnValidThread());
+  DCHECK_CALLED_ON_VALID_THREAD(thread_checker_);
   DCHECK(is_suspended_);
 
   is_suspended_ = false;
@@ -159,42 +149,34 @@ void Loader::Resume(render_tree::ResourceProvider* resource_provider) {
 }
 
 bool Loader::DidFailFromTransientError() const {
-  DCHECK(thread_checker_.CalledOnValidThread());
+  DCHECK_CALLED_ON_VALID_THREAD(thread_checker_);
   return fetcher_ && fetcher_->did_fail_from_transient_error();
-  ///return true;
 }
 
 void Loader::LoadComplete(const base::Optional<std::string>& error) {
-//#ifdef __TODO__
   is_load_complete_ = true;
-  DCHECK(on_load_complete_);
-  DCHECK(!on_load_complete_.is_null());
   on_load_complete_.Run(error);
-//#endif
 }
 
 void Loader::Start() {
-  printf("Loader::Start\n");
+  /// \note custom
   isStarted_ = true;
 
-  DCHECK(thread_checker_.CalledOnValidThread());
+  DCHECK_CALLED_ON_VALID_THREAD(thread_checker_);
   DCHECK(!is_suspended_);
 
-  fetcher_to_decoder_adaptor_.reset(new FetcherToDecoderAdapter(
+  fetcher_handler_to_decoder_adaptor_.reset(new FetcherHandlerToDecoderAdapter(
       decoder_.get(),
       base::Bind(&Loader::LoadComplete, base::Unretained(this))));
-//#ifdef __TODO__
-  fetcher_ = fetcher_creator_.Run(fetcher_to_decoder_adaptor_.get());
-//#endif
+  fetcher_ = fetcher_creator_.Run(fetcher_handler_to_decoder_adaptor_.get());
+
   // Post the error callback on the current message loop in case the loader is
   // destroyed in the callback.
   if (!fetcher_) {
     fetcher_creator_error_closure_.Reset(
         base::Bind(base::Bind(&Loader::LoadComplete, base::Unretained(this)),
                    std::string("Fetcher was not created.")));
-
-    DCHECK(base::MessageLoopCurrent::Get()); // TODO
-    base::MessageLoopCurrent::Get()->task_runner()->PostTask(
+    base::MessageLoop::current()->task_runner()->PostTask(
         FROM_HERE, fetcher_creator_error_closure_.callback());
   }
 }

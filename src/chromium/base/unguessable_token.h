@@ -13,7 +13,7 @@
 #include "base/base_export.h"
 #include "base/hash/hash.h"
 #include "base/logging.h"
-#include "base/token.h"
+#include "base/base_token.h"
 
 namespace base {
 
@@ -95,9 +95,9 @@ class BASE_EXPORT UnguessableToken {
 
  private:
   friend struct UnguessableTokenHash;
-  explicit UnguessableToken(const Token& token);
+  explicit UnguessableToken(const BaseToken& token);
 
-  base::Token token_;
+  base::BaseToken token_;
 };
 
 BASE_EXPORT std::ostream& operator<<(std::ostream& out,

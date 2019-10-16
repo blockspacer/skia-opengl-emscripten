@@ -193,7 +193,7 @@ class MediaServiceTest : public testing::Test {
                     int cdm_id));
 
   // Returns the CDM ID associated with the CdmProxy.
-  int InitializeCdmProxy(const base::Token& cdm_guid) {
+  int InitializeCdmProxy(const base::BaseToken& cdm_guid) {
     base::RunLoop run_loop;
     interface_factory_->CreateCdmProxy(cdm_guid,
                                        mojo::MakeRequest(&cdm_proxy_));

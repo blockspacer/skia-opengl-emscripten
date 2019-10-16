@@ -17,11 +17,10 @@
 
 #include <memory>
 
+#if defined(ENABLE_GNET)
 #include "base/callback.h"
 #include "base/synchronization/lock.h"
 #include "base/task_runner.h"
-
-#if defined(ENABLE_GNET)
 #include "net/base/io_buffer.h"
 #include "net/url_request/url_fetcher_response_writer.h"
 
@@ -55,6 +54,6 @@ class CobaltURLFetcherStringWriter : public net::URLFetcherResponseWriter {
 };
 
 }  // namespace cobalt
-#endif
+#endif  // ENABLE_GNET
 
 #endif  // COBALT_URL_FETCHER_RESPONSE_WRITER_H_

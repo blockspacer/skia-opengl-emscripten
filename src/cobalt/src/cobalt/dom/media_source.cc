@@ -314,6 +314,7 @@ bool MediaSource::IsTypeSupported(script::EnvironmentSettings* settings,
   DOMSettings* dom_settings =
       base::polymorphic_downcast<DOMSettings*>(settings);
   DCHECK(dom_settings->can_play_type_handler());
+#if ENABLE_MEDIA
   const bool kIsProgressive = false;
   SbMediaSupportType support_type =
       dom_settings->can_play_type_handler()->CanPlayType(type.c_str(), "",
@@ -332,6 +333,9 @@ bool MediaSource::IsTypeSupported(script::EnvironmentSettings* settings,
               << ") -> probably/true";
     return true;
   }
+#else
+  NOTIMPLEMENTED_LOG_ONCE();
+#endif
   NOTREACHED();
   return false;
 }
@@ -447,9 +451,13 @@ void MediaSource::OnAudioTrackChanged(AudioTrack* audio_track) {
   DCHECK(source_buffers_->Contains(source_buffer));
   source_buffer->audio_tracks()->ScheduleChangeEvent();
 
+#if ENABLE_MEDIA
   bool is_active = (source_buffer->video_tracks()->selected_index() != -1) ||
                    source_buffer->audio_tracks()->HasEnabledTrack();
   SetSourceBufferActive(source_buffer, is_active);
+#else
+NOTIMPLEMENTED_LOG_ONCE();
+#endif
 }
 
 void MediaSource::OnVideoTrackChanged(VideoTrack* video_track) {
@@ -468,7 +476,11 @@ void MediaSource::OnVideoTrackChanged(VideoTrack* video_track) {
   bool is_active = source_buffer->video_tracks()->selected_index() != -1 ||
                    source_buffer->audio_tracks()->HasEnabledTrack();
 
+#if ENABLE_MEDIA
   SetSourceBufferActive(source_buffer, is_active);
+#else
+NOTIMPLEMENTED_LOG_ONCE();
+#endif
 }
 
 void MediaSource::OpenIfInEndedState() {
@@ -513,7 +525,7 @@ void MediaSource::SetSourceBufferActive(SourceBuffer* source_buffer,
 }
 
 HTMLMediaElement* MediaSource::GetMediaElement() const {
-  return attached_element_;
+  return attached_element_.get();
 }
 
 void MediaSource::TraceMembers(script::Tracer* tracer) {

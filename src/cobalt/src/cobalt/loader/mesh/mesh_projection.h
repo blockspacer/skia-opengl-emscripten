@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Copyright 2017 The Cobalt Authors. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,7 +23,6 @@
 #include "base/basictypes.h"
 #include "base/logging.h"
 #include "cobalt/render_tree/mesh.h"
-#include "base/memory/ref_counted.h"
 #include "starboard/types.h"
 
 namespace cobalt {

@@ -24,8 +24,7 @@ ErrorFetcher::ErrorFetcher(Handler* handler, const std::string& error_message)
     : Fetcher(handler),
       error_message_(error_message),
       ALLOW_THIS_IN_INITIALIZER_LIST(weak_ptr_factory_(this)) {
-  DCHECK(base::MessageLoopCurrent::Get()); // TODO
-  base::MessageLoopCurrent::Get()->task_runner()->PostTask(
+  base::MessageLoop::current()->task_runner()->PostTask(
       FROM_HERE,
       base::Bind(&ErrorFetcher::Fetch, weak_ptr_factory_.GetWeakPtr()));
 }

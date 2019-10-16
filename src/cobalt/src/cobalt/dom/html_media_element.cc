@@ -252,11 +252,12 @@ std::string HTMLMediaElement::CanPlayType(const std::string& mime_type,
       << "CanPlayType() only accepts one parameter but (" << key_system
       << ") is passed as a second parameter.";
   const bool kIsProgressive = true;
+  std::string result = "";
+#if ENABLE_MEDIA
   auto support_type =
       html_element_context()->can_play_type_handler()->CanPlayType(
           kIsProgressive,
           mime_type, key_system);
-  std::string result = "";
   switch (support_type) {
     case kSbMediaSupportTypeNotSupported:
       result = "";
@@ -273,6 +274,9 @@ std::string HTMLMediaElement::CanPlayType(const std::string& mime_type,
   MLOG() << "(" << mime_type << ", " << key_system << ") => " << result;
   LOG(INFO) << "HTMLMediaElement::canPlayType(" << mime_type << ", "
             << key_system << ") -> " << result;
+#else
+  NOTIMPLEMENTED_LOG_ONCE();
+#endif
   return result;
 }
 

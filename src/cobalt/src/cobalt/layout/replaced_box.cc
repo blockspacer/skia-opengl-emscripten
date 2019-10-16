@@ -308,7 +308,7 @@ void ReplacedBox::RenderAndAnimateContent(
 
   const cssom::MapToMeshFunction* mtm_filter_function =
       cssom::MapToMeshFunction::ExtractFromFilterList(
-          computed_style()->filter());
+          computed_style()->filter().get());
 
   if (mtm_filter_function && mtm_filter_function->mesh_spec().mesh_type() !=
                                  cssom::MapToMeshFunction::kRectangular) {

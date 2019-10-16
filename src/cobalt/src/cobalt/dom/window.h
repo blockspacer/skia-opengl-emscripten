@@ -436,8 +436,10 @@ class Window : public EventTarget,
     return isDocumentStartedLoading_;
   }
 
+  /// \note custom
   bool isStartedDocumentLoader() const;
 
+  /// \note custom
   void ForceStartDocumentLoader();
 
   DEFINE_WRAPPABLE_TYPE(Window);

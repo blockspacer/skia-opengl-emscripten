@@ -6,17 +6,17 @@
 #define MOJO_PUBLIC_CPP_BASE_TOKEN_MOJOM_TRAITS_H_
 
 #include "base/component_export.h"
-#include "base/token.h"
+#include "base/base_token.h"
 #include "mojo/public/mojom/base/token.mojom-shared.h"
 
 namespace mojo {
 
 template <>
 struct COMPONENT_EXPORT(MOJO_BASE_SHARED_TRAITS)
-    StructTraits<mojo_base::mojom::TokenDataView, base::Token> {
-  static uint64_t high(const base::Token& token) { return token.high(); }
-  static uint64_t low(const base::Token& token) { return token.low(); }
-  static bool Read(mojo_base::mojom::TokenDataView data, base::Token* out);
+    StructTraits<mojo_base::mojom::TokenDataView, base::BaseToken> {
+  static uint64_t high(const base::BaseToken& token) { return token.high(); }
+  static uint64_t low(const base::BaseToken& token) { return token.low(); }
+  static bool Read(mojo_base::mojom::TokenDataView data, base::BaseToken* out);
 };
 
 }  // namespace mojo

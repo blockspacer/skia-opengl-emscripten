@@ -50,9 +50,9 @@ ServiceFilter::ServiceFilter()
 
 ServiceFilter::ServiceFilter(
     const std::string& service_name_in,
-    const base::Optional<base::Token>& instance_group_in,
-    const base::Optional<base::Token>& instance_id_in,
-    const base::Optional<base::Token>& globally_unique_id_in)
+    const base::Optional<base::BaseToken>& instance_group_in,
+    const base::Optional<base::BaseToken>& instance_id_in,
+    const base::Optional<base::BaseToken>& globally_unique_id_in)
     : service_name(std::move(service_name_in)),
       instance_group(std::move(instance_group_in)),
       instance_id(std::move(instance_id_in)),

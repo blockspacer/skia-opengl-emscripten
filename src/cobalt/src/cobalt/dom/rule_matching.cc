@@ -673,11 +673,11 @@ bool UpdateElementRuleMatchingState(HTMLElement* element) {
 
   // Retrieve the parent and previous sibling of the current element.
   HTMLElement* parent = element->parent_element()
-                            ? element->parent_element()->AsHTMLElement()
+                            ? element->parent_element()->AsHTMLElement().get()
                             : NULL;
   HTMLElement* previous_sibling =
       sibling_matching_active && element->previous_element_sibling()
-          ? element->previous_element_sibling()->AsHTMLElement()
+          ? element->previous_element_sibling()->AsHTMLElement().get()
           : NULL;
 
   // Retrieve the rule matching state of this element, its parent, and its
@@ -939,7 +939,7 @@ scoped_refptr<Element> QuerySelector(Node* node, const std::string& selectors,
   while (child) {
     if (child->IsElement()) {
       scoped_refptr<Element> element = child->AsElement();
-      if (MatchRuleAndElement(css_style_rule.get(), element)) {
+      if (MatchRuleAndElement(css_style_rule.get(), element.get())) {
         return element;
       }
     }
@@ -985,7 +985,7 @@ scoped_refptr<NodeList> QuerySelectorAll(Node* node,
   while (child) {
     if (child->IsElement()) {
       scoped_refptr<Element> element = child->AsElement();
-      if (MatchRuleAndElement(css_style_rule.get(), element)) {
+      if (MatchRuleAndElement(css_style_rule.get(), element.get())) {
         node_list->AppendNode(element);
       }
     }

@@ -7,10 +7,10 @@
 namespace mojo {
 
 // static
-bool StructTraits<mojo_base::mojom::TokenDataView, base::Token>::Read(
+bool StructTraits<mojo_base::mojom::TokenDataView, base::BaseToken>::Read(
     mojo_base::mojom::TokenDataView data,
-    base::Token* out) {
-  *out = base::Token{data.high(), data.low()};
+    base::BaseToken* out) {
+  *out = base::BaseToken{data.high(), data.low()};
   return true;
 }
 

@@ -18,15 +18,15 @@ bool StructTraits<service_manager::mojom::IdentityDataView,
   if (!data.ReadName(&name) || name.empty())
     return false;
 
-  base::Token instance_group;
+  base::BaseToken instance_group;
   if (!data.ReadInstanceGroup(&instance_group) || instance_group.is_zero())
     return false;
 
-  base::Token instance_id;
+  base::BaseToken instance_id;
   if (!data.ReadInstanceId(&instance_id))
     return false;
 
-  base::Token globally_unique_id;
+  base::BaseToken globally_unique_id;
   if (!data.ReadGloballyUniqueId(&globally_unique_id) ||
       globally_unique_id.is_zero()) {
     return false;

@@ -132,8 +132,7 @@ LoadResponseType ImageDecoder::OnResponseStarted(
   }
 
   bool success = headers->GetMimeType(&mime_type_);
-  //if (!success || !net::IsSupportedImageMimeType(mime_type_)) {
-  if (!success || !net::IsValidTopLevelMimeType(mime_type_)) {
+  if (!success || !net::IsSupportedImageMimeType(mime_type_)) {
     state_ = kNotApplicable;
     CacheMessage(&error_message_, "Not an image mime type.");
   }
@@ -346,7 +345,7 @@ std::unique_ptr<ImageDataDecoder> CreateImageDecoderFromImageType(
 #if defined(ENABLE_LIBWEBP)
   } else if (image_type == ImageDecoder::kImageTypeWebP) {
     return std::unique_ptr<ImageDataDecoder>(
-      new WEBPImageDecoder(resource_provider));
+        new WEBPImageDecoder(resource_provider));
 #endif // ENABLE_LIBWEBP
   } else if (image_type == ImageDecoder::kImageTypeGIF) {
     return std::unique_ptr<ImageDataDecoder>(

@@ -81,8 +81,8 @@ TEST(BackgroundServiceManagerTest, MAYBE_Basic) {
   mojom::ServicePtr service;
   ServiceImpl service_impl(mojo::MakeRequest(&service));
   background_service_manager.RegisterService(
-      Identity(kTestName, kSystemInstanceGroup, base::Token{},
-               base::Token::CreateRandom()),
+      Identity(kTestName, kSystemInstanceGroup, base::BaseToken{},
+               base::BaseToken::CreateRandom()),
       service.PassInterface(), mojo::NullReceiver() /* metadata_receiver */);
 
   mojom::TestServicePtr test_service;

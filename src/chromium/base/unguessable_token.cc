@@ -11,11 +11,11 @@
 
 namespace base {
 
-UnguessableToken::UnguessableToken(const base::Token& token) : token_(token) {}
+UnguessableToken::UnguessableToken(const base::BaseToken& token) : token_(token) {}
 
 // static
 UnguessableToken UnguessableToken::Create() {
-  return UnguessableToken(Token::CreateRandom());
+  return UnguessableToken(BaseToken::CreateRandom());
 }
 
 // static
@@ -29,7 +29,7 @@ UnguessableToken UnguessableToken::Deserialize(uint64_t high, uint64_t low) {
   // Receiving a zeroed out UnguessableToken from another process means that it
   // was never initialized via Create(). Treat this case as a security issue.
   DCHECK(!(high == 0 && low == 0));
-  return UnguessableToken(Token{high, low});
+  return UnguessableToken(BaseToken{high, low});
 }
 
 std::ostream& operator<<(std::ostream& out, const UnguessableToken& token) {

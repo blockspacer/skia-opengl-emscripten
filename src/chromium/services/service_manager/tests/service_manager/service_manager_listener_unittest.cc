@@ -130,8 +130,8 @@ class ServiceManagerListenerTest : public testing::Test, public Service {
     auto receiver = service.InitWithNewPipeAndPassReceiver();
     mojo::Remote<mojom::ProcessMetadata> metadata;
     service_manager_.RegisterService(
-        Identity(service_name, kSystemInstanceGroup, base::Token{},
-                 base::Token::CreateRandom()),
+        Identity(service_name, kSystemInstanceGroup, base::BaseToken{},
+                 base::BaseToken::CreateRandom()),
         std::move(service), metadata.BindNewPipeAndPassReceiver());
     metadata->SetPID(fake_pid);
     return receiver;

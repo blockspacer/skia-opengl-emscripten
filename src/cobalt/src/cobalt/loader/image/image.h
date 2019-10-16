@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Copyright 2017 The Cobalt Authors. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,16 +23,8 @@
 #include "base/time/time.h"
 #include "cobalt/math/size_f.h"
 #include "cobalt/math/transform_2d.h"
-
 #include "cobalt/render_tree/image.h"
 #include "cobalt/render_tree/image_node.h"
-
-#include "starboard/types.h"
-#include "base/basictypes.h"
-#include "base/logging.h"
-#include "base/memory/ref_counted.h"
-#include "base/optional.h"
-#include "cobalt/math/size.h"
 
 namespace cobalt {
 namespace loader {

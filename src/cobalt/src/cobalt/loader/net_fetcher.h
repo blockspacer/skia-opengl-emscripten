@@ -38,6 +38,7 @@
 #include "net/url_request/url_fetcher_delegate.h"
 #include "url/gurl.h"
 
+
 namespace cobalt {
 namespace loader {
 
@@ -71,12 +72,27 @@ class NetFetcher : public Fetcher, public net::URLFetcherDelegate {
                                   int64_t current, int64_t total,
                                   int64_t current_network_bytes) override;
 
+  ~NetFetcher() override;
+
+  // net::URLFetcherDelegate interface
+  void OnURLFetchResponseStarted(const net::URLFetcher* source) override;
+  void OnURLFetchComplete(const net::URLFetcher* source) override;
+  void OnURLFetchDownloadProgress(const net::URLFetcher* source,
+                                  int64_t current, int64_t total,
+                                  int64_t current_network_bytes) override;
+
   net::URLFetcher* url_fetcher() const {
-    DCHECK(thread_checker_.CalledOnValidThread());
+    DCHECK_CALLED_ON_VALID_THREAD(thread_checker_);
     return url_fetcher_.get();
   }
 
  private:
+  // Fetcher interface
+  Origin last_url_origin() const override { return last_url_origin_; }
+  bool did_fail_from_transient_error() const override {
+    return did_fail_from_transient_error_;
+  }
+
   void Start();
 
   // Empty struct to ensure the caller of |HandleError()| knows that |this|
@@ -96,8 +112,9 @@ class NetFetcher : public Fetcher, public net::URLFetcherDelegate {
 
   // Thread checker ensures all calls to the NetFetcher are made from the same
   // thread that it is created in.
-  base::ThreadChecker thread_checker_;
+  THREAD_CHECKER(thread_checker_);
   std::unique_ptr<net::URLFetcher> url_fetcher_;
+
 #if defined(ENABLE_COBALT_CSP)
   csp::SecurityCallback security_callback_;
 #endif
@@ -112,11 +129,18 @@ class NetFetcher : public Fetcher, public net::URLFetcherDelegate {
   // The request's origin.
   Origin origin_;
 
+  // Indicates whether the resource is cross-origin.
+  Origin last_url_origin_;
+
+  // Whether or not the fetcher failed from an error that is considered
+  // transient, indicating that the same fetch may later succeed.
+  bool did_fail_from_transient_error_ = false;
+
   DISALLOW_COPY_AND_ASSIGN(NetFetcher);
 };
 
 }  // namespace loader
 }  // namespace cobalt
-#endif
+#endif // ENABLE_GNET
 
 #endif  // COBALT_LOADER_NET_FETCHER_H_

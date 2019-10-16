@@ -153,7 +153,7 @@ class PlatformTestHelperMus::ServiceManagerConnection {
     background_service_manager_->RegisterService(
         service_manager::Identity(kServiceName,
                                   service_manager::kSystemInstanceGroup,
-                                  base::Token{}, base::Token::CreateRandom()),
+                                  base::BaseToken{}, base::BaseToken::CreateRandom()),
         std::move(service), mojo::NullReceiver());
     service_manager_connector_ =
         default_service_binding_.GetConnector()->Clone();

@@ -91,15 +91,14 @@ int WindowTimers::SetInterval(const TimerCallbackArg& handler, int timeout) {
 
 void WindowTimers::ClearInterval(int handle) {
 #if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
-  timers_.erase(handle);
-#endif // TODO
-
+  Timers::iterator timer = timers_.find(handle);
   if (timer != timers_.end()) {
 #if defined(ENABLE_DEBUGGER_HOOKS)
     debugger_hooks_.AsyncTaskCanceled(timer->second);
 #endif // ENABLE_DEBUGGER_HOOKS
     timers_.erase(timer);
   }
+#endif // TODO
 }
 
 void WindowTimers::ClearAllIntervalsAndTimeouts() {
@@ -163,17 +162,17 @@ void WindowTimers::RunTimerCallback(int handle) {
   // The callback is now being run. Track it in the global stats.
   GlobalStats::GetInstance()->StartJavaScriptEvent();
 
+#if defined(ENABLE_DEBUGGER_HOOKS)
   {
     // Keep a |TimerInfo| reference, so it won't be released when running the
     // callback.
     scoped_refptr<TimerInfo> timer_info = timer->second;
     base::ScopedAsyncTask async_task(
-#if defined(ENABLE_DEBUGGER_HOOKS)
     debugger_hooks_,
-#endif // ENABLE_DEBUGGER_HOOKS
     timer_info);
     timer_info->callback_reference().value().Run();
   }
+#endif // ENABLE_DEBUGGER_HOOKS
 
   // After running the callback, double check whether the timer is still there
   // since it might be deleted inside the callback.

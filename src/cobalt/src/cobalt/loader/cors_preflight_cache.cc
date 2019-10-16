@@ -49,7 +49,7 @@ void CORSPreflightCache::AppendEntry(
     const std::string& url_str, const std::string& origin, int max_age,
     bool has_credentials, const std::vector<std::string>& methods_vec,
     const std::vector<std::string>& headernames_vec) {
-  DCHECK(thread_checker_.CalledOnValidThread());
+  DCHECK_CALLED_ON_VALID_THREAD(thread_checker_);
   if (max_age <= 0) {
     return;
   }
@@ -95,7 +95,7 @@ bool CORSPreflightCache::HaveEntry(
     bool credentials_mode_is_include,
     const net::URLFetcher::RequestType& new_request_method,
     const std::vector<std::string>& unsafe_headernames) {
-  DCHECK(thread_checker_.CalledOnValidThread());
+  DCHECK_CALLED_ON_VALID_THREAD(thread_checker_);
   if (url_str.empty() || origin.empty()) {
     return false;
   }
@@ -169,4 +169,4 @@ void CORSPreflightCache::ClearObsoleteEntries() {
 
 }  // namespace loader
 }  // namespace cobalt
-#endif
+#endif // ENABLE_GNET

@@ -1,4 +1,4 @@
-﻿// Copyright 2015 The Cobalt Authors. All Rights Reserved.
+// Copyright 2015 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -54,6 +54,7 @@ class Loader {
 
   ~Loader();
 
+  /// \note custom
   bool isStarted() const {
     return isStarted_;
   }
@@ -61,7 +62,6 @@ class Loader {
   // Suspends the load of this resource, expecting it to be resumed or destroyed
   // later.
   void Suspend();
-
 
   // Resumes the load of this resource. Suspend must have been previously
   // called.
@@ -71,21 +71,22 @@ class Loader {
 
   void LoadComplete(const base::Optional<std::string>& status);
 
+ private:
+  class FetcherHandlerToDecoderAdapter;
+
   // Starts the fetch-and-decode.
   void Start();
-
- private:
-  class FetcherToDecoderAdapter;
 
   const FetcherCreator fetcher_creator_;
   const DecoderCreator decoder_creator_;
 
   std::unique_ptr<Decoder> decoder_;
-  std::unique_ptr<FetcherToDecoderAdapter> fetcher_to_decoder_adaptor_;
+  std::unique_ptr<FetcherHandlerToDecoderAdapter>
+      fetcher_handler_to_decoder_adaptor_;
   std::unique_ptr<Fetcher> fetcher_;
 
   base::CancelableClosure fetcher_creator_error_closure_;
-  base::ThreadChecker thread_checker_;
+  THREAD_CHECKER(thread_checker_);
 
   const OnCompleteFunction on_load_complete_;
   const OnDestructionFunction on_destruction_;
@@ -93,6 +94,7 @@ class Loader {
   bool is_suspended_;
   bool is_load_complete_ = false;
 
+  /// \note custom
   bool isStarted_ = false;
 
   DISALLOW_COPY_AND_ASSIGN(Loader);

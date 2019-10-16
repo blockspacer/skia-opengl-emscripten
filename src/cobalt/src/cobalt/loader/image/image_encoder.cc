@@ -17,6 +17,7 @@
 #include "cobalt/loader/image/image_encoder.h"
 
 #include "base/trace_event/trace_event.h"
+
 #if defined(ENABLE_COBALT_RENDERER_TEST)
 #include "cobalt/renderer/test/jpeg_utils/jpeg_encode.h"
 #include "cobalt/renderer/test/png_utils/png_encode.h"
@@ -49,12 +50,16 @@ scoped_refptr<loader::image::EncodedStaticImage> CompressRGBAImage(
           kPitchSizeInBytes, &num_bytes);
       break;
     }
+
+#if !defined(COBALT_BUILD_TYPE_GOLD)
     case ImageFormat::kJPEG: {
       compressed_data = renderer::test::jpeg_utils::EncodeRGBAToBuffer(
           image_data, dimensions.width(), dimensions.height(),
           kPitchSizeInBytes, &num_bytes);
       break;
     }
+#endif
+
     case ImageFormat::kWEBP:
       NOTIMPLEMENTED();
       return nullptr;

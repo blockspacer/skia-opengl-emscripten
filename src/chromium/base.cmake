@@ -836,8 +836,10 @@ list(APPEND BASE_SOURCES
    ${BASE_DIR}timer/lap_timer.h
    ${BASE_DIR}timer/timer.cc
    ${BASE_DIR}timer/timer.h
-   ${BASE_DIR}token.cc
-   ${BASE_DIR}token.h
+   #${BASE_DIR}token.cc
+   #${BASE_DIR}token.h
+   ${BASE_DIR}base_token.cc
+   ${BASE_DIR}base_token.h
    ${BASE_DIR}trace_event/auto_open_close_event.h
    ${BASE_DIR}trace_event/blame_context.cc
    ${BASE_DIR}trace_event/blame_context.h

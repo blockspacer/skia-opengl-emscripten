@@ -1,4 +1,4 @@
-﻿// Copyright 2016 The Cobalt Authors. All Rights Reserved.
+// Copyright 2016 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,22 +17,22 @@
 
 #include <memory>
 #include <set>
+#include <string>
 
 #include "base/threading/thread.h"
 #if defined(ENABLE_COBALT_CSP)
 #include "cobalt/csp/content_security_policy.h"
 #endif
 #include "cobalt/loader/fetcher.h"
+#include "cobalt/loader/fetcher_cache.h"
 #include "cobalt/loader/fetcher_factory.h"
 #include "cobalt/loader/font/typeface_decoder.h"
 #include "cobalt/loader/image/image_decoder.h"
 #include "cobalt/loader/loader.h"
 #include "cobalt/loader/mesh/mesh_decoder.h"
 #include "cobalt/loader/text_decoder.h"
-
 #include "cobalt/render_tree/resource_provider.h"
 #include "url/gurl.h"
-
 
 namespace cobalt {
 namespace loader {
@@ -42,8 +42,9 @@ namespace loader {
 // maintains all context necessary to create the various resource types.
 class LoaderFactory {
  public:
-  LoaderFactory(FetcherFactory* fetcher_factory,
+  LoaderFactory(const char* name, FetcherFactory* fetcher_factory,
                 render_tree::ResourceProvider* resource_provider,
+                size_t encoded_image_cache_capacity,
                 base::ThreadPriority loader_thread_priority);
 
   // Creates a loader that fetches and decodes an image.
@@ -56,14 +57,14 @@ class LoaderFactory {
           image_available_callback,
       const Loader::OnCompleteFunction& load_complete_callback);
 
-  // Creates a loader that fetches and decodes a render_tree::Typeface.
-  std::unique_ptr<Loader> CreateTypefaceLoader(
-      const GURL& url, const Origin& orgin,
+  // Creates a loader that fetches and decodes a link resources.
+  std::unique_ptr<Loader> CreateLinkLoader(
+      const GURL& url, const Origin& origin,
 #if defined(ENABLE_COBALT_CSP)
       const csp::SecurityCallback& url_security_callback,
 #endif
-      const font::TypefaceDecoder::TypefaceAvailableCallback&
-          typeface_available_callback,
+      const loader::RequestMode cors_mode,
+      const TextDecoder::TextAvailableCallback& link_available_callback,
       const Loader::OnCompleteFunction& load_complete_callback);
 
   // Creates a loader that fetches and decodes a Mesh.
@@ -84,15 +85,19 @@ class LoaderFactory {
       const TextDecoder::TextAvailableCallback& script_available_callback,
       const Loader::OnCompleteFunction& load_complete_callback);
 
-  // Creates a loader that fetches and decodes a link resources.
-  std::unique_ptr<Loader> CreateLinkLoader(
+  // Creates a loader that fetches and decodes a render_tree::Typeface.
+  std::unique_ptr<Loader> CreateTypefaceLoader(
       const GURL& url, const Origin& origin,
 #if defined(ENABLE_COBALT_CSP)
       const csp::SecurityCallback& url_security_callback,
 #endif
-      const loader::RequestMode cors_mode,
-      const TextDecoder::TextAvailableCallback& link_available_callback,
+      const font::TypefaceDecoder::TypefaceAvailableCallback&
+          typeface_available_callback,
       const Loader::OnCompleteFunction& load_complete_callback);
+
+  // Notify the LoaderFactory that the resource identified by "url" is being
+  // requested again.
+  void NotifyResourceRequested(const std::string& url);
 
   // Clears out the loader factory's resource provider, aborting any in-progress
   // loads.
@@ -113,12 +118,24 @@ class LoaderFactory {
 #endif
       RequestMode request_mode, const Origin& origin);
 
+  Loader::FetcherCreator MakeCachedFetcherCreator(
+      const GURL& url,
+#if defined(ENABLE_COBALT_CSP)
+      const csp::SecurityCallback& url_security_callback,
+#endif
+      RequestMode request_mode, const Origin& origin);
+
   // Ensures that the LoaderFactory methods are only called from the same
   // thread.
-  base::ThreadChecker thread_checker_;
+  THREAD_CHECKER(thread_checker_);
 
   // Used to create the Fetcher component of the loaders.
   FetcherFactory* fetcher_factory_;
+
+  // Used to cache the fetched raw data.  Note that currently the cache is only
+  // used to cache Image data.  We may introduce more caches once we want to
+  // cache fetched data for other resource types.
+  std::unique_ptr<FetcherCache> fetcher_cache_;
 
   // Used to create render_tree resources.
   render_tree::ResourceProvider* resource_provider_;

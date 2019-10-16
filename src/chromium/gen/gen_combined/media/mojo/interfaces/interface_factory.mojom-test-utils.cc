@@ -55,7 +55,7 @@ void InterfaceFactoryInterceptorForTesting::CreateCdm(const std::string& key_sys
 void InterfaceFactoryInterceptorForTesting::CreateDecryptor(int32_t cdm_id, ::media::mojom::DecryptorRequest decryptor) {
   GetForwardingInterface()->CreateDecryptor(std::move(cdm_id), std::move(decryptor));
 }
-void InterfaceFactoryInterceptorForTesting::CreateCdmProxy(const base::Token& cdm_guid, ::media::mojom::CdmProxyRequest cdm_proxy) {
+void InterfaceFactoryInterceptorForTesting::CreateCdmProxy(const base::BaseToken& cdm_guid, ::media::mojom::CdmProxyRequest cdm_proxy) {
   GetForwardingInterface()->CreateCdmProxy(std::move(cdm_guid), std::move(cdm_proxy));
 }
 InterfaceFactoryAsyncWaiter::InterfaceFactoryAsyncWaiter(

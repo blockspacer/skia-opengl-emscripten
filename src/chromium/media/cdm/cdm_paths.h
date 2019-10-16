@@ -8,7 +8,7 @@
 #include <string>
 
 #include "base/files/file_path.h"
-#include "base/token.h"
+#include "base/base_token.h"
 
 namespace media {
 
@@ -21,11 +21,11 @@ extern const char kClearKeyCdmBaseDirectory[];
 extern const char kClearKeyCdmDisplayName[];
 
 // The default GUID for Clear Key Cdm.
-extern const base::Token kClearKeyCdmGuid;
+extern const base::BaseToken kClearKeyCdmGuid;
 
 // A different GUID for Clear Key Cdm for testing running different types of
 // CDMs in the system.
-extern const base::Token kClearKeyCdmDifferentGuid;
+extern const base::BaseToken kClearKeyCdmDifferentGuid;
 
 // Identifier used by the PluginPrivateFileSystem to identify the files stored
 // for the Clear Key CDM.

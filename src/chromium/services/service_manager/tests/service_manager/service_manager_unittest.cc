@@ -21,7 +21,7 @@
 #include "base/run_loop.h"
 #include "base/strings/string_number_conversions.h"
 #include "base/test/scoped_task_environment.h"
-#include "base/token.h"
+#include "base/base_token.h"
 #include "build/build_config.h"
 #include "mojo/public/cpp/bindings/binding_set.h"
 #include "mojo/public/cpp/bindings/remote.h"
@@ -271,7 +271,7 @@ class ServiceManagerTest : public testing::Test,
     mojo::Remote<service_manager::mojom::ProcessMetadata> metadata;
     connector()->RegisterServiceInstance(
         service_manager::Identity(kTestTargetName, kSystemInstanceGroup,
-                                  base::Token{}, base::Token::CreateRandom()),
+                                  base::BaseToken{}, base::BaseToken::CreateRandom()),
         client.PassInterface(), metadata.BindNewPipeAndPassReceiver());
 
     target_ = base::LaunchProcess(child_command_line, options);
@@ -442,12 +442,12 @@ TEST_F(ServiceManagerTest, CreatePackagedRegularInstances) {
 
   // Starting with a different instance group creates a new service.
   auto other_group_filter = ServiceFilter::ByNameInGroup(
-      kTestRegularServiceName, base::Token::CreateRandom());
+      kTestRegularServiceName, base::BaseToken::CreateRandom());
   StartService(other_group_filter, /*expect_service_started=*/true);
 
   // Starting with a different instance ID creates a new service as well.
   auto other_id_filter =
-      ServiceFilter::ByNameWithId(kTestRegularServiceName, base::Token{1, 2});
+      ServiceFilter::ByNameWithId(kTestRegularServiceName, base::BaseToken{1, 2});
   StartService(other_id_filter, /*expect_service_started=*/true);
 }
 
@@ -466,13 +466,13 @@ TEST_F(ServiceManagerTest, CreatePackagedSharedAcrossGroupsInstances) {
   // Start again with a different instance group. The existing service should be
   // reused.
   auto other_group_filter = ServiceFilter::ByNameInGroup(
-      kTestSharedServiceName, base::Token::CreateRandom());
+      kTestSharedServiceName, base::BaseToken::CreateRandom());
   StartService(other_group_filter, /*expect_service_started=*/false);
 
   // Start again with a difference instance ID. In that case a new service
   // should get created.
   auto other_id_filter = ServiceFilter::ByNameWithIdInGroup(
-      kTestSharedServiceName, base::Token{1, 2}, base::Token::CreateRandom());
+      kTestSharedServiceName, base::BaseToken{1, 2}, base::BaseToken::CreateRandom());
   StartService(other_id_filter, /*expect_service_started=*/true);
 }
 
@@ -490,13 +490,13 @@ TEST_F(ServiceManagerTest, CreatePackagedSingletonInstances) {
   // Start again with a different instance group. The existing service should be
   // reused.
   auto other_group_filter = ServiceFilter::ByNameInGroup(
-      kTestSingletonServiceName, base::Token::CreateRandom());
+      kTestSingletonServiceName, base::BaseToken::CreateRandom());
   StartService(other_group_filter, /*expect_service_started=*/false);
 
   // Start again with the same instance group but a difference instance ID. The
   // existing service should still be reused.
   auto other_id_filter =
-      ServiceFilter::ByNameWithId(kTestSingletonServiceName, base::Token{3, 4});
+      ServiceFilter::ByNameWithId(kTestSingletonServiceName, base::BaseToken{3, 4});
   StartService(other_id_filter, /*expect_service_started=*/false);
 }
 
@@ -527,9 +527,9 @@ TEST_F(ServiceManagerTest, ClientProcessCapabilityEnforced) {
 
   const std::string kTestService = kTestTargetName;
   const Identity kInstance1Id(kTestService, kSystemInstanceGroup,
-                              base::Token{1, 2}, base::Token::CreateRandom());
+                              base::BaseToken{1, 2}, base::BaseToken::CreateRandom());
   const Identity kInstance2Id(kTestService, kSystemInstanceGroup,
-                              base::Token{3, 4}, base::Token::CreateRandom());
+                              base::BaseToken{3, 4}, base::BaseToken::CreateRandom());
 
   // Introduce a new service instance for service_manager_unittest_target,
   // which should be allowed because the test service has

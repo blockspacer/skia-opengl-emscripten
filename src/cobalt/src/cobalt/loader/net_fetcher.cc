@@ -14,16 +14,14 @@
 
 #include "cobalt/loader/net_fetcher.h"
 
+#if defined(ENABLE_GNET)
 #include <memory>
 #include <string>
 
 #include "base/strings/stringprintf.h"
 #include "cobalt/base/polymorphic_downcast.h"
 #include "cobalt/loader/cors_preflight.h"
-
-#if defined(ENABLE_GNET)
 #include "cobalt/network/network_module.h"
-
 #include "net/url_request/url_fetcher.h"
 #if defined(OS_STARBOARD)
 #include "starboard/configuration.h"
@@ -76,32 +74,20 @@ bool IsResponseCodeSuccess(int response_code) {
 }  // namespace
 
 NetFetcher::NetFetcher(const GURL& url,
-#if defined(ENABLE_COBALT_CSP)
                        const csp::SecurityCallback& security_callback,
-#endif
                        Handler* handler,
-
-#if !defined(__EMSCRIPTEN__) && defined(__TODO__)
                        const network::NetworkModule* network_module,
-#endif
-
                        const Options& options, RequestMode request_mode,
                        const Origin& origin)
     : Fetcher(handler),
-#if defined(ENABLE_COBALT_CSP)
       security_callback_(security_callback),
-#endif
       ALLOW_THIS_IN_INITIALIZER_LIST(start_callback_(
           base::Bind(&NetFetcher::Start, base::Unretained(this)))),
       request_cross_origin_(false),
       origin_(origin) {
   url_fetcher_ = net::URLFetcher::Create(url, options.request_method, this);
-
-#if !defined(__EMSCRIPTEN__) && defined(__TODO__)
   url_fetcher_->SetRequestContext(
       network_module->url_request_context_getter().get());
-#endif
-
   auto* download_data_writer = new CobaltURLFetcherStringWriter();
   url_fetcher_->SaveResponseWithWriter(
       std::unique_ptr<CobaltURLFetcherStringWriter>(download_data_writer));
@@ -113,48 +99,36 @@ NetFetcher::NetFetcher(const GURL& url,
   if ((request_cross_origin_ &&
        (request_mode == kCORSModeSameOriginCredentials)) ||
       request_mode == kCORSModeOmitCredentials) {
-
-#if !defined(__EMSCRIPTEN__) && defined(__TODO__)
     const uint32 kDisableCookiesLoadFlags =
         net::LOAD_NORMAL | net::LOAD_DO_NOT_SAVE_COOKIES |
         net::LOAD_DO_NOT_SEND_COOKIES | net::LOAD_DO_NOT_SEND_AUTH_DATA;
     url_fetcher_->SetLoadFlags(kDisableCookiesLoadFlags);
-#endif
-
   }
-
-  DCHECK(base::MessageLoopCurrent::Get()); // TODO
 
   // Delay the actual start until this function is complete. Otherwise we might
   // call handler's callbacks at an unexpected time- e.g. receiving OnError()
   // while a loader is still being constructed.
-  base::MessageLoopCurrent::Get()->task_runner()->PostTask(
+  base::MessageLoop::current()->task_runner()->PostTask(
       FROM_HERE, start_callback_.callback());
 }
 
 void NetFetcher::Start() {
-  DCHECK(thread_checker_.CalledOnValidThread());
+  DCHECK_CALLED_ON_VALID_THREAD(thread_checker_);
   const GURL& original_url = url_fetcher_->GetOriginalURL();
-#if defined(ENABLE_COBALT_CSP)
   if (security_callback_.is_null() ||
       security_callback_.Run(original_url, false /* did not redirect */)) {
     url_fetcher_->Start();
-  }
-  else {
+  } else {
     std::string msg(base::StringPrintf("URL %s rejected by security policy.",
                                        original_url.spec().c_str()));
     return HandleError(msg).InvalidateThis();
   }
-#else
-  url_fetcher_->Start();
-#endif
 }
 
 void NetFetcher::OnURLFetchResponseStarted(const net::URLFetcher* source) {
-  DCHECK(thread_checker_.CalledOnValidThread());
+  DCHECK_CALLED_ON_VALID_THREAD(thread_checker_);
   if (source->GetURL() != source->GetOriginalURL()) {
     // A redirect occured. Re-check the security policy.
-#if defined(ENABLE_COBALT_CSP)
     if (!security_callback_.is_null() &&
         !security_callback_.Run(source->GetURL(), true /* did redirect */)) {
       std::string msg(base::StringPrintf(
@@ -163,7 +137,6 @@ void NetFetcher::OnURLFetchResponseStarted(const net::URLFetcher* source) {
           source->GetOriginalURL().spec().c_str()));
       return HandleError(msg).InvalidateThis();
     }
-#endif
   }
 
   if (IsResponseCodeSuccess(source->GetResponseCode())) {
@@ -188,11 +161,11 @@ void NetFetcher::OnURLFetchResponseStarted(const net::URLFetcher* source) {
     return HandleError(msg).InvalidateThis();
   }
 
-  SetLastUrlOrigin(Origin(source->GetURL()));
+  last_url_origin_ = Origin(source->GetURL());
 }
 
 void NetFetcher::OnURLFetchComplete(const net::URLFetcher* source) {
-  DCHECK(thread_checker_.CalledOnValidThread());
+  DCHECK_CALLED_ON_VALID_THREAD(thread_checker_);
   const net::URLRequestStatus& status = source->GetStatus();
   const int response_code = source->GetResponseCode();
   if (status.is_success() && IsResponseCodeSuccess(response_code)) {
@@ -217,7 +190,7 @@ void NetFetcher::OnURLFetchComplete(const net::URLFetcher* source) {
         status.error() == net::ERR_CONNECTION_RESET ||
         status.error() == net::ERR_CONNECTION_CLOSED ||
         status.error() == net::ERR_CONNECTION_ABORTED) {
-      SetFailedFromTransientError();
+      did_fail_from_transient_error_ = true;
     }
 
     std::string msg(base::StringPrintf(
@@ -249,7 +222,7 @@ void NetFetcher::OnURLFetchDownloadProgress(const net::URLFetcher* source,
 }
 
 NetFetcher::~NetFetcher() {
-  DCHECK(thread_checker_.CalledOnValidThread());
+  DCHECK_CALLED_ON_VALID_THREAD(thread_checker_);
   start_callback_.Cancel();
 }
 
@@ -261,4 +234,4 @@ NetFetcher::ReturnWrapper NetFetcher::HandleError(const std::string& message) {
 
 }  // namespace loader
 }  // namespace cobalt
-#endif
+#endif // ENABLE_GNET

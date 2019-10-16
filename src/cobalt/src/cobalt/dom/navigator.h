@@ -33,6 +33,12 @@
 #include "cobalt/script/wrappable.h"
 
 namespace cobalt {
+namespace script {
+class EnvironmentSettings;
+} // namespace cobalt
+} // namespace script
+
+namespace cobalt {
 namespace dom {
 
 // The Navigator object represents the identity and state of the user agent (the
@@ -91,7 +97,9 @@ class Navigator : public script::Wrappable {
   void TraceMembers(script::Tracer* tracer) override;
 
   void SetEnvironmentSettings(script::EnvironmentSettings* settings) {
+#if defined(ENABLE_COBALT_MEDIA_CAPTURE)
     media_devices_->SetEnvironmentSettings(settings);
+#endif
   }
 
  private:

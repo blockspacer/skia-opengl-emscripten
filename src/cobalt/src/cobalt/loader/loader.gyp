@@ -14,6 +14,7 @@
 
 {
   'variables': {
+    'optimize_target_for_speed': 1,
     'sb_pedantic_warnings': 1,
   },
   'targets': [
@@ -40,6 +41,8 @@
         'fetcher_factory.h',
         'fetcher.cc',
         'fetcher.h',
+        'fetcher_cache.cc',
+        'fetcher_cache.h',
         'file_fetcher.cc',
         'file_fetcher.h',
         'font/remote_typeface_cache.h',
@@ -86,6 +89,7 @@
         'mesh/projection_codec/projection_decoder.h',
         'net_fetcher.cc',
         'net_fetcher.h',
+        'resource_cache.cc',
         'resource_cache.h',
         'switches.cc',
         'switches.h',
@@ -102,7 +106,6 @@
         '<(DEPTH)/cobalt/loader/origin.gyp:origin',
         '<(DEPTH)/cobalt/network/network.gyp:network',
         '<(DEPTH)/cobalt/render_tree/render_tree.gyp:render_tree',
-        '<(DEPTH)/cobalt/renderer/test/jpeg_utils/jpeg_utils.gyp:jpeg_utils',
         '<(DEPTH)/cobalt/renderer/test/png_utils/png_utils.gyp:png_utils',
         '<(DEPTH)/url/url.gyp:url',
         '<(DEPTH)/third_party/libjpeg/libjpeg.gyp:libjpeg',
@@ -111,6 +114,11 @@
         'embed_resources_as_header_files',
       ],
       'conditions': [
+        ['cobalt_config != "gold"', {
+          'dependencies': [
+            '<(DEPTH)/cobalt/renderer/test/jpeg_utils/jpeg_utils.gyp:jpeg_utils',
+          ],
+        }],
         ['enable_about_scheme == 1', {
           'defines': [ 'ENABLE_ABOUT_SCHEME' ],
           'sources': [
@@ -202,6 +210,7 @@
         '<(input_directory)/black_splash_screen.html',
         '<(input_directory)/cobalt_splash_screen.css',
         '<(input_directory)/cobalt_splash_screen.html',
+        '<(input_directory)/cobalt_word_logo_356.png',
         '<(input_directory)/dialog.css',
         '<(input_directory)/dialog.js',
         '<(input_directory)/equirectangular_40_40.msh',

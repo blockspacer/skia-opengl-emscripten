@@ -11,7 +11,7 @@
 
 namespace service_manager {
 
-ServiceInstanceRegistry::Entry::Entry(const base::Token& guid,
+ServiceInstanceRegistry::Entry::Entry(const base::BaseToken& guid,
                                       ServiceInstance* instance)
     : guid(guid), instance(instance) {
   DCHECK(!guid.is_zero());
@@ -24,8 +24,8 @@ ServiceInstanceRegistry::Entry::~Entry() = default;
 
 ServiceInstanceRegistry::RegularInstanceKey::RegularInstanceKey(
     const std::string& service_name,
-    const base::Token& instance_group,
-    const base::Token& instance_id)
+    const base::BaseToken& instance_group,
+    const base::BaseToken& instance_id)
     : service_name(service_name),
       instance_group(instance_group),
       instance_id(instance_id) {}
@@ -50,7 +50,7 @@ bool ServiceInstanceRegistry::RegularInstanceKey::operator<(
 
 ServiceInstanceRegistry::SharedInstanceKey::SharedInstanceKey(
     const std::string& service_name,
-    const base::Token& instance_id)
+    const base::BaseToken& instance_id)
     : service_name(service_name), instance_id(instance_id) {}
 
 ServiceInstanceRegistry::SharedInstanceKey::SharedInstanceKey(
@@ -180,7 +180,7 @@ ServiceInstance* ServiceInstanceRegistry::FindMatching(
 
 ServiceInstance* ServiceInstanceRegistry::FindMatchInEntries(
     const std::vector<Entry>& entries,
-    const base::Optional<base::Token>& guid) const {
+    const base::Optional<base::BaseToken>& guid) const {
   DCHECK(!entries.empty());
   if (!guid.has_value())
     return entries.front().instance;
@@ -193,7 +193,7 @@ ServiceInstance* ServiceInstanceRegistry::FindMatchInEntries(
   return nullptr;
 }
 
-bool ServiceInstanceRegistry::EraseEntry(const base::Token& guid,
+bool ServiceInstanceRegistry::EraseEntry(const base::BaseToken& guid,
                                          std::vector<Entry>* entries) {
   auto it =
       std::find_if(entries->begin(), entries->end(),

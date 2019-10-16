@@ -79,7 +79,7 @@ HTMLScriptElement::HTMLScriptElement(Document* document)
       load_option_(0),
       inline_script_location_(GetSourceLocationName(), 1, 1),
       is_sync_load_successful_(false),
-      should_execute_(true),
+      should_execute_(true)
 #if defined(ENABLE_LOADER)
       ,
       synchronous_loader_interrupt_(

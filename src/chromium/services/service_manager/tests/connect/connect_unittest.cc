@@ -21,7 +21,7 @@
 #include "base/test/gtest_util.h"
 #include "base/test/scoped_task_environment.h"
 #include "base/test/test_suite.h"
-#include "base/token.h"
+#include "base/base_token.h"
 #include "mojo/public/cpp/bindings/binding_set.h"
 #include "services/service_manager/public/cpp/binder_registry.h"
 #include "services/service_manager/public/cpp/constants.h"
@@ -267,9 +267,9 @@ class ConnectTest : public testing::Test,
   void CompareConnectionState(
       const std::string& connection_local_name,
       const std::string& connection_remote_name,
-      const base::Optional<base::Token>& connection_remote_instance_group,
+      const base::Optional<base::BaseToken>& connection_remote_instance_group,
       const std::string& initialize_local_name,
-      const base::Optional<base::Token>& initialize_local_instance_group) {
+      const base::Optional<base::BaseToken>& initialize_local_instance_group) {
     EXPECT_EQ(connection_remote_name,
               connection_state_->connection_remote_name);
     EXPECT_EQ(connection_remote_instance_group,
@@ -283,7 +283,7 @@ class ConnectTest : public testing::Test,
       const std::string& service_name) {
     return test_service_manager_.RegisterInstance(
         Identity{service_name, service_binding_.identity().instance_group(),
-                 base::Token{}, base::Token::CreateRandom()});
+                 base::BaseToken{}, base::BaseToken::CreateRandom()});
   }
 
  private:
@@ -338,16 +338,16 @@ TEST_F(ConnectTest, BindInterface) {
 }
 
 TEST_F(ConnectTest, Instances) {
-  const base::Token kInstanceIdA{1, 2};
-  const base::Token kInstanceIdB{3, 4};
+  const base::BaseToken kInstanceIdA{1, 2};
+  const base::BaseToken kInstanceIdB{3, 4};
   auto filter_a = ServiceFilter::ByNameWithId(kTestAppName, kInstanceIdA);
-  base::Token instance_a1, instance_a2;
+  base::BaseToken instance_a1, instance_a2;
   test::mojom::ConnectTestServicePtr service_a1;
   {
     connector()->BindInterface(filter_a, &service_a1);
     base::RunLoop loop;
     service_a1->GetInstanceId(
-        base::BindLambdaForTesting([&](const base::Token& instance_id) {
+        base::BindLambdaForTesting([&](const base::BaseToken& instance_id) {
           instance_a1 = instance_id;
           loop.Quit();
         }));
@@ -358,7 +358,7 @@ TEST_F(ConnectTest, Instances) {
     connector()->BindInterface(filter_a, &service_a2);
     base::RunLoop loop;
     service_a2->GetInstanceId(
-        base::BindLambdaForTesting([&](const base::Token& instance_id) {
+        base::BindLambdaForTesting([&](const base::BaseToken& instance_id) {
           instance_a2 = instance_id;
           loop.Quit();
         }));
@@ -367,13 +367,13 @@ TEST_F(ConnectTest, Instances) {
   EXPECT_EQ(instance_a1, instance_a2);
 
   auto filter_b = ServiceFilter::ByNameWithId(kTestAppName, kInstanceIdB);
-  base::Token instance_b;
+  base::BaseToken instance_b;
   test::mojom::ConnectTestServicePtr service_b;
   {
     connector()->BindInterface(filter_b, &service_b);
     base::RunLoop loop;
     service_b->GetInstanceId(
-        base::BindLambdaForTesting([&](const base::Token& instance_id) {
+        base::BindLambdaForTesting([&](const base::BaseToken& instance_id) {
           instance_b = instance_id;
           loop.Quit();
         }));
@@ -608,7 +608,7 @@ TEST_F(ConnectTest, ConnectToDifferentGroup_Allowed) {
                              &identity_test);
   mojom::ConnectResult result;
   auto filter = ServiceFilter::ByNameInGroup(kTestClassAppName,
-                                             base::Token::CreateRandom());
+                                             base::BaseToken::CreateRandom());
   base::Optional<Identity> result_identity;
   {
     base::RunLoop loop;
@@ -631,7 +631,7 @@ TEST_F(ConnectTest, ConnectToDifferentGroup_Blocked) {
                              &identity_test);
   mojom::ConnectResult result;
   auto filter = ServiceFilter::ByNameInGroup(kTestClassAppName,
-                                             base::Token::CreateRandom());
+                                             base::BaseToken::CreateRandom());
   base::Optional<Identity> result_identity;
   {
     base::RunLoop loop;
@@ -651,7 +651,7 @@ TEST_F(ConnectTest, ConnectWithDifferentInstanceId_Blocked) {
 
   mojom::ConnectResult result;
   auto filter = ServiceFilter::ByNameWithId(kTestClassAppName,
-                                            base::Token::CreateRandom());
+                                            base::BaseToken::CreateRandom());
   base::Optional<Identity> result_identity;
   base::RunLoop loop;
   identity_test->ConnectToClassAppWithFilter(
@@ -674,7 +674,7 @@ TEST_F(ConnectTest, ConnectToClientProcess_Blocked) {
           kTestExeName,
 #endif
           service_manager::Identity(kTestExeName, kSystemInstanceGroup,
-                                    base::Token{}, base::Token::CreateRandom()),
+                                    base::BaseToken{}, base::BaseToken::CreateRandom()),
           connector(), &process);
   EXPECT_EQ(result, mojom::ConnectResult::ACCESS_DENIED);
 }
@@ -686,7 +686,7 @@ TEST_F(ConnectTest, AllUsersSingleton) {
   base::Optional<Identity> first_resolved_identity;
   {
     base::RunLoop loop;
-    const base::Token singleton_instance_group = base::Token::CreateRandom();
+    const base::BaseToken singleton_instance_group = base::BaseToken::CreateRandom();
     // Connect to an instance with an explicit different instance group. This
     // supplied group should be ignored by the Service Manager because the
     // target service is a singleton, and the Service Manager always generates a

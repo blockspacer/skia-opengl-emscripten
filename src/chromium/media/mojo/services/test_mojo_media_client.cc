@@ -99,7 +99,7 @@ std::unique_ptr<CdmFactory> TestMojoMediaClient::CreateCdmFactory(
 
 #if BUILDFLAG(ENABLE_LIBRARY_CDMS)
 std::unique_ptr<CdmProxy> TestMojoMediaClient::CreateCdmProxy(
-    const base::Token& cdm_guid) {
+    const base::BaseToken& cdm_guid) {
   DVLOG(1) << __func__ << ": cdm_guid = " << cdm_guid.ToString();
   if (cdm_guid == kClearKeyCdmGuid)
     return std::make_unique<ClearKeyCdmProxy>();

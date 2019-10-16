@@ -226,7 +226,7 @@ WrapResult TextBox::TryWrapAt(WrapAtPolicy wrap_at_policy,
   return wrap_result;
 }
 
-Box* TextBox::GetSplitSibling() const { return split_sibling_; }
+Box* TextBox::GetSplitSibling() const { return split_sibling_.get(); }
 
 bool TextBox::DoesFulfillEllipsisPlacementRequirement() const {
   // This box has non-collapsed text and fulfills the requirement that the first

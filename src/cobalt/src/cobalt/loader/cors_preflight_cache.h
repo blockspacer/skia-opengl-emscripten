@@ -111,19 +111,19 @@ class CORSPreflightCache : public base::RefCounted<CORSPreflightCache> {
 
   // TODO: Replace scoped_refptr with std::unique_ptr when possible or replace
   // the map as a 'scoped_map'.
-  std::map<
+  base::hash_map<
       std::string,
-      std::map<std::string, scoped_refptr<CORSPreflightCacheEntry> > >
+      base::hash_map<std::string, scoped_refptr<CORSPreflightCacheEntry> > >
       content_;
 
   std::priority_queue<ExpirationHeapEntry, std::vector<ExpirationHeapEntry>,
                       ExpirationMinHeapComparator>
       expiration_time_heap_;
-  base::ThreadChecker thread_checker_;
+  THREAD_CHECKER(thread_checker_);
 };
 
 }  // namespace loader
 }  // namespace cobalt
-#endif
+#endif // ENABLE_GNET
 
 #endif  // COBALT_LOADER_CORS_PREFLIGHT_CACHE_H_

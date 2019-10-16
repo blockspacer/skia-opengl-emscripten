@@ -13,10 +13,9 @@
 // limitations under the License.
 
 #include "cobalt/loader/cobalt_url_fetcher_string_writer.h"
-
-#if defined(ENABLE_GNET)
 #include "net/base/net_errors.h"
 
+#if defined(ENABLE_GNET)
 namespace cobalt {
 // CobaltURLFetcherStringWriter::CobaltURLFetcherStringWriter(OnWriteCallback
 // callback, base::TaskRunner* consumer_task_runner) :
@@ -61,4 +60,4 @@ int CobaltURLFetcherStringWriter::Finish(
 }
 
 }  // namespace cobalt
-#endif
+#endif  // ENABLE_GNET

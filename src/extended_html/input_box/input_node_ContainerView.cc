@@ -95,7 +95,7 @@
 #include "base/threading/thread_checker.h"
 
 #include "base/feature_list.h"
-#include "cobalt/base/cobalt_token.h"
+#include "cobalt/base/token.h"
 
 #include "cobalt/base/tokens.h"
 #include "cobalt/cssom/keyword_value.h"

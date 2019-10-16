@@ -42,7 +42,7 @@
 
 #include "mojo/public/cpp/bindings/lib/native_enum_serialization.h"
 #include "mojo/public/cpp/bindings/lib/native_struct_serialization.h"
-#include "base/token.h"
+#include "base/base_token.h"
 #include "base/component_export.h"
 
 

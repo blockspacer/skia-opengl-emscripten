@@ -85,9 +85,9 @@ class COMPONENT_EXPORT(SERVICE_MANAGER_MOJOM) ServiceFilter {
 
   ServiceFilter(
       const std::string& service_name,
-      const base::Optional<base::Token>& instance_group,
-      const base::Optional<base::Token>& instance_id,
-      const base::Optional<base::Token>& globally_unique_id);
+      const base::Optional<base::BaseToken>& instance_group,
+      const base::Optional<base::BaseToken>& instance_id,
+      const base::Optional<base::BaseToken>& globally_unique_id);
 
   ~ServiceFilter();
 
@@ -162,11 +162,11 @@ class COMPONENT_EXPORT(SERVICE_MANAGER_MOJOM) ServiceFilter {
   
   std::string service_name;
   
-  base::Optional<base::Token> instance_group;
+  base::Optional<base::BaseToken> instance_group;
   
-  base::Optional<base::Token> instance_id;
+  base::Optional<base::BaseToken> instance_id;
   
-  base::Optional<base::Token> globally_unique_id;
+  base::Optional<base::BaseToken> globally_unique_id;
 
  private:
   static bool Validate(const void* data,

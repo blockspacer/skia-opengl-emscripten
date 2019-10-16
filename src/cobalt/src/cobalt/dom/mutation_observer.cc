@@ -170,7 +170,7 @@ void MutationObserver::TrackObservedNode(const scoped_refptr<dom::Node>& node) {
       it = observed_nodes_.erase(it);
       continue;
     }
-    if (*it == node) {
+    if ((*it).get() == node.get()) {
       return;
     }
     ++it;

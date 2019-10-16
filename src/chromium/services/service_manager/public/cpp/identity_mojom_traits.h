@@ -19,15 +19,15 @@ struct COMPONENT_EXPORT(SERVICE_MANAGER_MOJOM_TRAITS)
     DCHECK(!identity.name().empty());
     return identity.name();
   }
-  static const base::Token& instance_group(
+  static const base::BaseToken& instance_group(
       const service_manager::Identity& identity) {
     return identity.instance_group();
   }
-  static const base::Token& instance_id(
+  static const base::BaseToken& instance_id(
       const service_manager::Identity& identity) {
     return identity.instance_id();
   }
-  static const base::Token& globally_unique_id(
+  static const base::BaseToken& globally_unique_id(
       const service_manager::Identity& identity) {
     return identity.globally_unique_id();
   }

@@ -417,9 +417,9 @@ class COMPONENT_EXPORT(SERVICE_MANAGER_MOJOM) Identity {
 
   Identity(
       const std::string& name,
-      const base::Token& instance_group,
-      const base::Token& instance_id,
-      const base::Token& globally_unique_id);
+      const base::BaseToken& instance_group,
+      const base::BaseToken& instance_id,
+      const base::BaseToken& globally_unique_id);
 
   ~Identity();
 
@@ -494,11 +494,11 @@ class COMPONENT_EXPORT(SERVICE_MANAGER_MOJOM) Identity {
   
   std::string name;
   
-  base::Token instance_group;
+  base::BaseToken instance_group;
   
-  base::Token instance_id;
+  base::BaseToken instance_id;
   
-  base::Token globally_unique_id;
+  base::BaseToken globally_unique_id;
 
  private:
   static bool Validate(const void* data,

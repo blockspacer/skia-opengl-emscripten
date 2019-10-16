@@ -245,7 +245,7 @@ std::unique_ptr<CdmFactory> GpuMojoMediaClient::CreateCdmFactory(
 
 #if BUILDFLAG(ENABLE_LIBRARY_CDMS)
 std::unique_ptr<CdmProxy> GpuMojoMediaClient::CreateCdmProxy(
-    const base::Token& cdm_guid) {
+    const base::BaseToken& cdm_guid) {
   if (cdm_proxy_factory_cb_)
     return cdm_proxy_factory_cb_.Run(cdm_guid);
 

@@ -56,10 +56,10 @@ scoped_refptr<dom::HTMLElement> TopmostEventTarget::FindTopmostEventTarget(
   document->DoSynchronousLayout();
 
   html_element_ = document->html();
-  ConsiderElement(html_element_, coordinate);
+  ConsiderElement(html_element_.get(), coordinate);
   box_ = NULL;
   render_sequence_.clear();
-  document->SetIndicatedElement(html_element_);
+  document->SetIndicatedElement(html_element_.get());
   scoped_refptr<dom::HTMLElement> topmost_element;
   topmost_element.swap(html_element_);
   DCHECK(!html_element_);
@@ -91,7 +91,7 @@ void TopmostEventTarget::ConsiderElement(dom::Element* element,
   math::Vector2dF element_coordinate(coordinate);
   LayoutBoxes* layout_boxes = GetLayoutBoxesIfNotEmpty(element);
   if (layout_boxes) {
-    const Box* box = layout_boxes->boxes().front();
+    const Box* box = layout_boxes->boxes().front().get();
     if (box->computed_style() && box->IsTransformed()) {
       // Early out if the transform cannot be applied. This can occur if the
       // transform matrix is not invertible.
@@ -121,7 +121,7 @@ void TopmostEventTarget::ConsiderBoxes(
                                        LayoutUnit(coordinate.y()));
   for (Boxes::const_iterator box_iterator = boxes.begin();
        box_iterator != boxes.end(); ++box_iterator) {
-    Box* box = *box_iterator;
+    Box* box = (*box_iterator).get();
     do {
       if (box->IsUnderCoordinate(layout_coordinate)) {
         Box::RenderSequence render_sequence = box->GetRenderSequence();

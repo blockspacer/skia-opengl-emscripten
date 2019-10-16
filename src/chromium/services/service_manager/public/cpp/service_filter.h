@@ -10,7 +10,7 @@
 #include "base/component_export.h"
 #include "base/macros.h"
 #include "base/optional.h"
-#include "base/token.h"
+#include "base/base_token.h"
 #include "services/service_manager/public/cpp/identity.h"
 
 namespace service_manager {
@@ -55,7 +55,7 @@ class COMPONENT_EXPORT(SERVICE_MANAGER_CPP_TYPES) ServiceFilter {
   // |can_connect_to_other_services_with_any_instance_name| option set in its
   // manifest.
   static ServiceFilter ByNameWithId(const std::string& service_name,
-                                    const base::Token& instance_id);
+                                    const base::BaseToken& instance_id);
 
   // Returns a new ServiceFilter which only matches service instances with the
   // the service name |service_name| running in instance group |instance_group|.
@@ -64,15 +64,15 @@ class COMPONENT_EXPORT(SERVICE_MANAGER_CPP_TYPES) ServiceFilter {
   // this kind of filter unless |instance_group| matches the caller's own (in
   // which case using |ByName()| above would be equivalent).
   static ServiceFilter ByNameInGroup(const std::string& service_name,
-                                     const base::Token& instance_group);
+                                     const base::BaseToken& instance_group);
 
   // Returns a new ServiceFilter which only matches service instances with the
   // service name |service_name| running in instance group |instance_group| with
   // instance ID |instance_id|. The same caveats which apply to |ByNameWithId()|
   // and |ByNameInGroup()| apply to these filters as well.
   static ServiceFilter ByNameWithIdInGroup(const std::string& service_name,
-                                           const base::Token& instance_id,
-                                           const base::Token& instance_group);
+                                           const base::BaseToken& instance_id,
+                                           const base::BaseToken& instance_group);
 
   // Returns a new ServiceFilter which matches a specific, singular service
   // instance in the system. All fields of |identity| must be valid, including
@@ -87,28 +87,28 @@ class COMPONENT_EXPORT(SERVICE_MANAGER_CPP_TYPES) ServiceFilter {
     service_name_ = service_name;
   }
 
-  const base::Optional<base::Token>& instance_group() const {
+  const base::Optional<base::BaseToken>& instance_group() const {
     return instance_group_;
   }
 
-  void set_instance_group(const base::Optional<base::Token>& instance_group) {
+  void set_instance_group(const base::Optional<base::BaseToken>& instance_group) {
     instance_group_ = instance_group;
   }
 
-  const base::Optional<base::Token>& instance_id() const {
+  const base::Optional<base::BaseToken>& instance_id() const {
     return instance_id_;
   }
 
-  void set_instance_id(const base::Optional<base::Token>& instance_id) {
+  void set_instance_id(const base::Optional<base::BaseToken>& instance_id) {
     instance_id_ = instance_id;
   }
 
-  const base::Optional<base::Token>& globally_unique_id() const {
+  const base::Optional<base::BaseToken>& globally_unique_id() const {
     return globally_unique_id_;
   }
 
   void set_globally_unique_id(
-      const base::Optional<base::Token>& globally_unique_id) {
+      const base::Optional<base::BaseToken>& globally_unique_id) {
     globally_unique_id_ = globally_unique_id;
   }
 
@@ -116,14 +116,14 @@ class COMPONENT_EXPORT(SERVICE_MANAGER_CPP_TYPES) ServiceFilter {
 
  private:
   ServiceFilter(const std::string& service_name,
-                const base::Optional<base::Token>& instance_group,
-                const base::Optional<base::Token>& instance_id,
-                const base::Optional<base::Token>& globally_unique_id);
+                const base::Optional<base::BaseToken>& instance_group,
+                const base::Optional<base::BaseToken>& instance_id,
+                const base::Optional<base::BaseToken>& globally_unique_id);
 
   std::string service_name_;
-  base::Optional<base::Token> instance_group_;
-  base::Optional<base::Token> instance_id_;
-  base::Optional<base::Token> globally_unique_id_;
+  base::Optional<base::BaseToken> instance_group_;
+  base::Optional<base::BaseToken> instance_id_;
+  base::Optional<base::BaseToken> globally_unique_id_;
 };
 
 }  // namespace service_manager

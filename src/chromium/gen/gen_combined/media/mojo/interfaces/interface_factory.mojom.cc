@@ -255,7 +255,7 @@ void InterfaceFactoryProxy::CreateDecryptor(
 }
 
 void InterfaceFactoryProxy::CreateCdmProxy(
-    const base::Token& in_cdm_guid, ::media::mojom::CdmProxyRequest in_cdm_proxy) {
+    const base::BaseToken& in_cdm_guid, ::media::mojom::CdmProxyRequest in_cdm_proxy) {
 #if BUILDFLAG(MOJO_TRACE_ENABLED)
   TRACE_EVENT0("mojom", "<class 'jinja2::utils::Namespace'>::InterfaceFactory::CreateCdmProxy");
 #endif
@@ -521,7 +521,7 @@ std::move(p_decryptor));
       mojo::internal::SerializationContext serialization_context;
       serialization_context.TakeHandlesFromMessage(message);
       bool success = true;
-      base::Token p_cdm_guid{};
+      base::BaseToken p_cdm_guid{};
       ::media::mojom::CdmProxyRequest p_cdm_proxy{};
       InterfaceFactory_CreateCdmProxy_ParamsDataView input_data_view(params, &serialization_context);
       

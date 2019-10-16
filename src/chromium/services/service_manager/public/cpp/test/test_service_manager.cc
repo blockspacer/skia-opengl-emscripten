@@ -21,8 +21,8 @@ TestServiceManager::~TestServiceManager() = default;
 
 mojom::ServiceRequest TestServiceManager::RegisterTestInstance(
     const std::string& service_name) {
-  return RegisterInstance(Identity{service_name, base::Token::CreateRandom(),
-                                   base::Token{}, base::Token::CreateRandom()});
+  return RegisterInstance(Identity{service_name, base::BaseToken::CreateRandom(),
+                                   base::BaseToken{}, base::BaseToken::CreateRandom()});
 }
 
 mojom::ServiceRequest TestServiceManager::RegisterInstance(
