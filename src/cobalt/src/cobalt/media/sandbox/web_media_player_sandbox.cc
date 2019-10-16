@@ -14,6 +14,7 @@
 
 #include <algorithm>
 #include <memory>
+#include <sstream>
 #include <string>
 #include <vector>
 
@@ -31,6 +32,7 @@
 #include "cobalt/render_tree/image.h"
 #include "starboard/event.h"
 #include "starboard/file.h"
+#include "starboard/log.h"
 #include "starboard/system.h"
 
 namespace cobalt {
@@ -52,25 +54,40 @@ void PrintUsage(const char* executable_path_name) {
   const char kExampleProgressiveUrl[] =
       "https://storage.googleapis.com/yt-cobalt-media-element-demo/"
       "progressive.mp4";
-  LOG(ERROR) << "\n\n\n"  // Extra empty lines to separate from other messages
-             << "Usage: " << executable_file_name
-             << " [OPTIONS] <adaptive audio file path>\n"
-             << "   or: " << executable_file_name
-             << " [OPTIONS] <adaptive video file path>\n"
-             << "   or: " << executable_file_name
-             << " [OPTIONS] <adaptive audio file path> "
-             << " <adaptive video file path>\n"
-             << "   or: " << executable_file_name
-             << " [OPTIONS] <progressive video path or url>\n"
-             << "Play adaptive audio/video or progressive video\n\n"
-             << "For example:\n"
-             << executable_file_name << " " << kExampleAdaptiveAudioPathName
-             << "\n"
-             << executable_file_name << " " << kExampleAdaptiveVideoPathName
-             << "\n"
-             << executable_file_name << " " << kExampleAdaptiveAudioPathName
-             << " " << kExampleAdaptiveVideoPathName << "\n"
-             << executable_file_name << " " << kExampleProgressiveUrl << "\n\n";
+  std::stringstream ss;
+  // Head
+  ss << "\n\n"
+     << "======================== " << executable_file_name
+     << " ========================\n";
+
+  // Basic usage
+  ss << "Usage: " << executable_file_name
+     << " [OPTIONS] <adaptive audio file path>\n"
+     << "   or: " << executable_file_name
+     << " [OPTIONS] <adaptive video file path>\n"
+     << "   or: " << executable_file_name
+     << " [OPTIONS] <adaptive audio file path> "
+     << " <adaptive video file path>\n"
+     << "   or: " << executable_file_name
+     << " [OPTIONS] <progressive video path or url>\n"
+     << "Play adaptive audio/video or progressive video\n\n";
+
+  // Options
+  ss << "OPTIONS:\n"
+     << "  --dump_video_data: Dump video data into .dmp files\n"
+     << "  --use_stub_audio_decoder: Use stub audio decoder to play the video\n"
+     << "  --use_stub_audio_sink: Use stub audio sink to play the video\n"
+     << "  --use_stub_video_decoder: Use stub video decoder to play the video\n"
+     << "\n";
+
+  // Usage examples
+  ss << "For example:\n  " << executable_file_name << " --dump_video_data "
+     << kExampleAdaptiveAudioPathName << "\n  " << executable_file_name << " "
+     << kExampleAdaptiveVideoPathName << "\n  " << executable_file_name << " "
+     << kExampleAdaptiveAudioPathName << " " << kExampleAdaptiveVideoPathName
+     << "\n  " << executable_file_name << " " << kExampleProgressiveUrl
+     << "\n\n";
+  SbLogRaw(ss.str().c_str());
 }
 
 std::string MakeCodecParameter(const std::string& string) { return string; }
@@ -131,6 +148,7 @@ class Application {
     PrintUsage(argv[0]);
     SbSystemRequestStop(0);
   }
+  ~Application() { media_sandbox_.RegisterFrameCB(MediaSandbox::FrameCB()); }
 
  private:
   void InitializeAdaptivePlayback(const FormatGuesstimator& guesstimator) {
@@ -308,11 +326,18 @@ class Application {
       }
       int64 bytes_to_append =
           std::min(kMaxBytesToAppend, file->GetSize() - *offset);
+
+      auto current_time = player_ ? player_->GetCurrentTime() : 0;
+      auto evicted = chunk_demuxer_->EvictCodedFrames(
+          id, base::TimeDelta::FromSecondsD(current_time), bytes_to_append);
+      SB_DCHECK(evicted);
+
       file->Read(reinterpret_cast<char*>(buffer.data()), bytes_to_append);
       base::TimeDelta timestamp_offset;
-      chunk_demuxer_->AppendData(id, buffer.data(),
-                                 bytes_to_append, base::TimeDelta(),
-                                 media::kInfiniteDuration, &timestamp_offset);
+      auto appended = chunk_demuxer_->AppendData(
+          id, buffer.data(), bytes_to_append, base::TimeDelta(),
+          media::kInfiniteDuration, &timestamp_offset);
+      SB_DCHECK(appended);
 
       *offset += bytes_to_append;
     }
@@ -365,6 +390,11 @@ void SbEventHandle(const SbEvent* event) {
     case kSbEventTypeStart: {
       SbEventStartData* data = static_cast<SbEventStartData*>(event->data);
       DCHECK(!s_application);
+      if (data->argument_count == 1) {
+        cobalt::media::sandbox::PrintUsage(data->argument_values[0]);
+        SbSystemRequestStop(0);
+        return;
+      }
       s_application =
           new Application(data->argument_count, data->argument_values);
       break;
