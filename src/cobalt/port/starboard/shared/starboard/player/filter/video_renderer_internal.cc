@@ -119,6 +119,9 @@ void VideoRenderer::WriteSample(
 
   if (!first_input_written_) {
     first_input_written_ = true;
+#if SB_PLAYER_FILTER_ENABLE_STATE_CHECK
+    first_input_written_at_ = SbTimeGetMonotonicNow();
+#endif  // SB_PLAYER_FILTER_ENABLE_STATE_CHECK
     absolute_time_of_first_input_ = SbTimeGetMonotonicNow();
   }
 
@@ -179,6 +182,8 @@ void VideoRenderer::Seek(SbTime seek_to_time) {
   buffering_state_ = kWaitForBuffer;
   end_of_stream_decoded_.store(false);
 #endif  // SB_PLAYER_FILTER_ENABLE_STATE_CHECK
+
+  algorithm_->Reset();  // This is also guarded by sink_frames_mutex_.
 }
 
 bool VideoRenderer::CanAcceptMoreData() const {
@@ -270,13 +275,21 @@ void VideoRenderer::OnDecoderStatus(VideoDecoder::Status status,
       }
 #endif  // SB_PLAYER_FILTER_ENABLE_STATE_CHECK
       ScopedLock scoped_lock(decoder_frames_mutex_);
-      decoder_frames_.push_back(frame);
-      number_of_frames_.increment();
+      if (decoder_frames_.empty() || frame->is_end_of_stream() ||
+          frame->timestamp() > decoder_frames_.back()->timestamp()) {
+        decoder_frames_.push_back(frame);
+        number_of_frames_.increment();
+      }
     }
 
     if (number_of_frames_.load() >=
             static_cast<int32_t>(decoder_->GetPrerollFrameCount()) &&
         seeking_.exchange(false)) {
+#if SB_PLAYER_FILTER_ENABLE_STATE_CHECK
+      SB_LOG(INFO) << "Video preroll takes "
+                   << SbTimeGetMonotonicNow() - first_input_written_at_
+                   << " microseconds.";
+#endif  // SB_PLAYER_FILTER_ENABLE_STATE_CHECK
       Schedule(prerolled_cb_);
     }
   }

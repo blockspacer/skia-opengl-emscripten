@@ -20,7 +20,10 @@
 #include <string>
 #include <vector>
 
+#include "starboard/atomic.h"
+#include "starboard/common/optional.h"
 #include "starboard/common/scoped_ptr.h"
+#include "starboard/mutex.h"
 #include "starboard/shared/starboard/drm/drm_system_internal.h"
 #include "starboard/shared/starboard/thread_checker.h"
 #include "starboard/thread.h"
@@ -41,11 +44,8 @@ class DrmSystemWidevine : public SbDrmSystemPrivate,
   DrmSystemWidevine(
       void* context,
       SbDrmSessionUpdateRequestFunc update_request_callback,
-      SbDrmSessionUpdatedFunc session_updated_callback
-#if SB_HAS(DRM_KEY_STATUSES)
-      ,
+      SbDrmSessionUpdatedFunc session_updated_callback,
       SbDrmSessionKeyStatusesChangedFunc key_statuses_changed_callback
-#endif  // SB_HAS(DRM_KEY_STATUSES)
 #if SB_API_VERSION >= 10
       ,
       SbDrmServerCertificateUpdatedFunc server_certificate_updated_callback
@@ -61,6 +61,7 @@ class DrmSystemWidevine : public SbDrmSystemPrivate,
   ~DrmSystemWidevine() override;
 
   static bool IsKeySystemSupported(const char* key_system);
+  static bool IsDrmSystemWidevine(SbDrmSystem drm_system);
 
   // From |SbDrmSystemPrivate|.
   void GenerateSessionUpdateRequest(int ticket,
@@ -80,6 +81,8 @@ class DrmSystemWidevine : public SbDrmSystemPrivate,
   DecryptStatus Decrypt(InputBuffer* buffer) override;
 
 #if SB_API_VERSION >= 10
+  bool IsServerCertificateUpdatable() override { return true; }
+
   // This function is called by the app to explicitly set the server
   // certificate.  For an app that supports this feature, it should call this
   // function before calling any other functions like
@@ -135,8 +138,9 @@ class DrmSystemWidevine : public SbDrmSystemPrivate,
   int GetAndResetTicket(const std::string& sb_drm_session_id);
   std::string WvdmSessionIdToSbDrmSessionId(
       const std::string& wvcdm_session_id);
-  std::string SbDrmSessionIdToWvdmSessionId(const void* sb_drm_session_id,
-                                            int sb_drm_session_id_size);
+  bool SbDrmSessionIdToWvdmSessionId(const void* sb_drm_session_id,
+                                     int sb_drm_session_id_size,
+                                     std::string* wvcdm_session_id);
 
   // Generates a special key message to ask for the server certificate.  When
   // the license server receives the request, it will send back the server
@@ -159,9 +163,7 @@ class DrmSystemWidevine : public SbDrmSystemPrivate,
   void* const context_;
   const SbDrmSessionUpdateRequestFunc session_update_request_callback_;
   const SbDrmSessionUpdatedFunc session_updated_callback_;
-#if SB_HAS(DRM_KEY_STATUSES)
   const SbDrmSessionKeyStatusesChangedFunc key_statuses_changed_callback_;
-#endif  // SB_HAS(DRM_KEY_STATUSES)
 #if SB_API_VERSION >= 10
   const SbDrmServerCertificateUpdatedFunc server_certificate_updated_callback_;
 #endif  // SB_API_VERSION >= 10
@@ -200,10 +202,15 @@ class DrmSystemWidevine : public SbDrmSystemPrivate,
 
   volatile bool quitting_ = false;
 
+  Mutex unblock_key_retry_mutex_;
+  optional<SbTimeMonotonic> unblock_key_retry_start_time_;
+
 #if !defined(COBALT_BUILD_TYPE_GOLD)
   int number_of_session_updates_sent_ = 0;
   int maximum_number_of_session_updates_ = std::numeric_limits<int>::max();
 #endif  // !defined(COBALT_BUILD_TYPE_GOLD)
+
+  atomic_bool first_update_session_received_{false};
 };
 
 }  // namespace widevine

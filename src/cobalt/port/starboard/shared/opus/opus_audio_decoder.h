@@ -24,7 +24,7 @@
 #include "starboard/shared/starboard/player/decoded_audio_internal.h"
 #include "starboard/shared/starboard/player/filter/audio_decoder_internal.h"
 #include "starboard/shared/starboard/player/job_queue.h"
-#include "third_party/opus/include/opus.h"
+#include "third_party/opus/include/opus_multistream.h"
 
 namespace starboard {
 namespace shared {
@@ -34,7 +34,7 @@ class OpusAudioDecoder
     : public ::starboard::shared::starboard::player::filter::AudioDecoder,
       private starboard::player::JobQueue::JobOwner {
  public:
-  explicit OpusAudioDecoder(const SbMediaAudioHeader& audio_header);
+  explicit OpusAudioDecoder(const SbMediaAudioSampleInfo& audio_sample_info);
   ~OpusAudioDecoder() override;
 
   bool is_valid() const;
@@ -54,10 +54,10 @@ class OpusAudioDecoder
   OutputCB output_cb_;
   ErrorCB error_cb_;
 
-  OpusDecoder* decoder_ = NULL;
+  OpusMSDecoder* decoder_ = NULL;
   bool stream_ended_ = false;
   std::queue<scoped_refptr<DecodedAudio> > decoded_audios_;
-  SbMediaAudioHeader audio_header_;
+  SbMediaAudioSampleInfo audio_sample_info_;
   std::vector<uint8_t> working_buffer_;
 };
 

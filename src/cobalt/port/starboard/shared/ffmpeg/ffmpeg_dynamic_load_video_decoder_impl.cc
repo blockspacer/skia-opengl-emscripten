@@ -34,7 +34,6 @@ VideoDecoder* VideoDecoder::Create(
         decode_target_graphics_context_provider) {
   FFMPEGDispatch* ffmpeg = FFMPEGDispatch::GetInstance();
   if (!ffmpeg || !ffmpeg->is_valid()) {
-    SB_NOTREACHED();
     return NULL;
   }
 
@@ -53,9 +52,13 @@ VideoDecoder* VideoDecoder::Create(
       video_decoder = VideoDecoderImpl<571>::Create(
           video_codec, output_mode, decode_target_graphics_context_provider);
       break;
+    case 581:
+      video_decoder = VideoDecoderImpl<581>::Create(
+          video_codec, output_mode, decode_target_graphics_context_provider);
+      break;
     default:
-      SB_NOTREACHED() << "Unsupported FFMPEG version " << std::hex
-                      << ffmpeg->avutil_version();
+      SB_LOG(WARNING) << "Unsupported FFMPEG version "
+                      << ffmpeg->specialization_version();
       break;
   }
   return video_decoder;

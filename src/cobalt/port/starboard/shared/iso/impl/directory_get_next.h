@@ -20,8 +20,8 @@
 #include <dirent.h>
 #include <errno.h>
 
+#include "starboard/common/string.h"
 #include "starboard/file.h"
-#include "starboard/string.h"
 
 #include "starboard/shared/internal_only.h"
 #include "starboard/shared/iso/impl/directory_impl.h"
@@ -36,12 +36,23 @@ bool SbDirectoryGetNext(SbDirectory directory, SbDirectoryEntry* out_entry) {
     return false;
   }
 
+  // Look for the first directory that isn't current or parent.
   struct dirent dirent_buffer;
   struct dirent* dirent;
-  int result = readdir_r(directory->directory, &dirent_buffer, &dirent);
-  if (result || !dirent) {
-    return false;
-  }
+  int result;
+  do {
+    result = readdir_r(directory->directory, &dirent_buffer, &dirent);
+    if (!result && dirent) {
+      if ((SbStringCompareAll(dirent->d_name, ".") == 0) ||
+          (SbStringCompareAll(dirent->d_name, "..") == 0)) {
+        continue;
+      } else {
+        break;
+      }
+    } else {
+      return false;
+    }
+  } while (true);
 
   SbStringCopy(out_entry->name, dirent->d_name,
                SB_ARRAY_SIZE_INT(out_entry->name));

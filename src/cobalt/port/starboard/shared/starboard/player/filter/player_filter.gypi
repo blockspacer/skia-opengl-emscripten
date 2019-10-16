@@ -14,6 +14,8 @@
 {
   'variables': {
     'filter_based_player_sources': [
+      '<(DEPTH)/starboard/shared/starboard/player/filter/adaptive_audio_decoder_internal.cc',
+      '<(DEPTH)/starboard/shared/starboard/player/filter/adaptive_audio_decoder_internal.h',
       '<(DEPTH)/starboard/shared/starboard/player/filter/audio_decoder_internal.h',
       '<(DEPTH)/starboard/shared/starboard/player/filter/audio_frame_tracker.cc',
       '<(DEPTH)/starboard/shared/starboard/player/filter/audio_frame_tracker.h',
@@ -40,6 +42,7 @@
       '<(DEPTH)/starboard/shared/starboard/player/filter/media_time_provider_impl.h',
       '<(DEPTH)/starboard/shared/starboard/player/filter/mock_audio_decoder.h',
       '<(DEPTH)/starboard/shared/starboard/player/filter/mock_audio_renderer_sink.h',
+      '<(DEPTH)/starboard/shared/starboard/player/filter/player_components.cc',
       '<(DEPTH)/starboard/shared/starboard/player/filter/player_components.h',
       '<(DEPTH)/starboard/shared/starboard/player/filter/punchout_video_renderer_sink.cc',
       '<(DEPTH)/starboard/shared/starboard/player/filter/punchout_video_renderer_sink.h',
@@ -48,7 +51,11 @@
       '<(DEPTH)/starboard/shared/starboard/player/filter/stub_video_decoder.cc',
       '<(DEPTH)/starboard/shared/starboard/player/filter/stub_video_decoder.h',
       '<(DEPTH)/starboard/shared/starboard/player/filter/video_decoder_internal.h',
+      '<(DEPTH)/starboard/shared/starboard/player/filter/video_frame_cadence_pattern_generator.cc',
+      '<(DEPTH)/starboard/shared/starboard/player/filter/video_frame_cadence_pattern_generator.h',
       '<(DEPTH)/starboard/shared/starboard/player/filter/video_frame_internal.h',
+      '<(DEPTH)/starboard/shared/starboard/player/filter/video_frame_rate_estimator.cc',
+      '<(DEPTH)/starboard/shared/starboard/player/filter/video_frame_rate_estimator.h',
       '<(DEPTH)/starboard/shared/starboard/player/filter/video_render_algorithm.h',
       '<(DEPTH)/starboard/shared/starboard/player/filter/video_render_algorithm_impl.cc',
       '<(DEPTH)/starboard/shared/starboard/player/filter/video_render_algorithm_impl.h',

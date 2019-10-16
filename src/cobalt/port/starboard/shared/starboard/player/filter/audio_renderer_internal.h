@@ -19,11 +19,11 @@
 #include <vector>
 
 #include "starboard/atomic.h"
+#include "starboard/common/log.h"
+#include "starboard/common/mutex.h"
 #include "starboard/common/optional.h"
 #include "starboard/common/scoped_ptr.h"
-#include "starboard/log.h"
 #include "starboard/media.h"
-#include "starboard/mutex.h"
 #include "starboard/shared/internal_only.h"
 #include "starboard/shared/starboard/player/decoded_audio_internal.h"
 #include "starboard/shared/starboard/player/filter/audio_decoder_internal.h"
@@ -65,7 +65,7 @@ class AudioRenderer : public MediaTimeProvider,
   // tries to append to the sink buffer at once.
   AudioRenderer(scoped_ptr<AudioDecoder> decoder,
                 scoped_ptr<AudioRendererSink> audio_renderer_sink,
-                const SbMediaAudioHeader& audio_header,
+                const SbMediaAudioSampleInfo& audio_sample_info,
                 int max_cached_frames,
                 int max_frames_per_append);
   ~AudioRenderer();
@@ -104,6 +104,9 @@ class AudioRenderer : public MediaTimeProvider,
 
   const int max_cached_frames_;
   const int max_frames_per_append_;
+  // |buffered_frames_to_start_| would be initialized in OnFirstOutput().
+  // Before it's initialized, set it to a large number.
+  int buffered_frames_to_start_ = 48 * 1024;
 
   ErrorCB error_cb_;
   PrerolledCB prerolled_cb_;
