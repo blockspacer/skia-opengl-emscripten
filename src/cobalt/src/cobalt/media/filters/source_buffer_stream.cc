@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2012 The Chromium Authors. All rights reserved.
+// Copyright (c) 2012 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -669,11 +669,11 @@ bool SourceBufferStream::IsMonotonicallyIncreasing(const BufferQueue& buffers) {
       if (current_timestamp == prev_timestamp &&
           SourceBufferRange::IsUncommonSameTimestampSequence(
               prev_is_keyframe, current_is_keyframe)) {
-        /*LIMITED_MEDIA_LOG(DEBUG, media_log_, num_strange_same_timestamps_logs_,
+        LIMITED_MEDIA_LOG(DEBUG, media_log_, num_strange_same_timestamps_logs_,
                           kMaxStrangeSameTimestampsLogs)
             << "Detected an append sequence with keyframe following a "
                "non-keyframe, both with the same decode timestamp of "
-            << current_timestamp.InSecondsF();*/
+            << current_timestamp.InSecondsF();
       }
     }
 

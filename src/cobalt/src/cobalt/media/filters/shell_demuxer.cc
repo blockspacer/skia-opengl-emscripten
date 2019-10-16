@@ -1,4 +1,4 @@
-﻿// Copyright 2012 The Cobalt Authors. All Rights Reserved.
+// Copyright 2012 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -26,7 +26,6 @@
 #include "base/trace_event/trace_event.h"
 #include "cobalt/media/base/bind_to_current_loop.h"
 #include "cobalt/media/base/data_source.h"
-#include "cobalt/media/base/shell_media_platform.h"
 #include "cobalt/media/base/starboard_utils.h"
 #include "cobalt/media/base/timestamp_constants.h"
 #include "starboard/types.h"
@@ -69,9 +68,7 @@ void ShellDemuxerStream::Read(const ReadCB& read_cb) {
       --total_buffer_count_;
       buffer_queue_.pop_front();
     }
-    read_cb.Run(
-        DemuxerStream::kOk,
-        ShellMediaPlatform::Instance()->ProcessBeforeLeavingDemuxer(buffer));
+    read_cb.Run(DemuxerStream::kOk, buffer);
   } else {
     TRACE_EVENT0("media_stack", "ShellDemuxerStream::Read() request queued.");
     read_queue_.push_back(read_cb);
@@ -127,9 +124,7 @@ void ShellDemuxerStream::EnqueueBuffer(scoped_refptr<DecoderBuffer> buffer) {
     DCHECK_EQ(buffer_queue_.size(), 0);
     ReadCB read_cb(read_queue_.front());
     read_queue_.pop_front();
-    read_cb.Run(
-        DemuxerStream::kOk,
-        ShellMediaPlatform::Instance()->ProcessBeforeLeavingDemuxer(buffer));
+    read_cb.Run(DemuxerStream::kOk, buffer);
   } else {
     // save the buffer for next read request
     buffer_queue_.push_back(buffer);
@@ -394,7 +389,7 @@ void ShellDemuxer::AllocateBuffer() {
         total_buffer_count > progressive_buffer_count_cap) {
       // Retry after 100 milliseconds.
       const base::TimeDelta kDelay = base::TimeDelta::FromMilliseconds(100);
-      blocking_thread_.task_runner()->PostDelayedTask(
+      blocking_thread_./*.message_loop()->*/task_runner()->PostDelayedTask(
           FROM_HERE,
           base::Bind(&ShellDemuxer::AllocateBuffer, base::Unretained(this)),
           kDelay);
@@ -412,7 +407,7 @@ void ShellDemuxer::AllocateBuffer() {
       // As the buffer is full of media data, it is safe to delay 100
       // milliseconds.
       const base::TimeDelta kDelay = base::TimeDelta::FromMilliseconds(100);
-      blocking_thread_.task_runner()->PostDelayedTask(
+      blocking_thread_./*.message_loop()->*/task_runner()->PostDelayedTask(
           FROM_HERE,
           base::Bind(&ShellDemuxer::AllocateBuffer, base::Unretained(this)),
           kDelay);
@@ -564,7 +559,7 @@ bool ShellDemuxer::HasStopCalled() {
 }
 
 void ShellDemuxer::Seek(base::TimeDelta time, const PipelineStatusCB& cb) {
-  blocking_thread_.task_runner()->PostTask(
+  blocking_thread_./*.message_loop()->*/task_runner()->PostTask(
       FROM_HERE, base::Bind(&ShellDemuxer::SeekTask, base::Unretained(this),
                             time, BindToCurrentLoop(cb)));
 }

@@ -19,7 +19,7 @@ struct PipelineMetadata {
 
   bool has_audio;
   bool has_video;
-  gfx::Size natural_size;
+  cobalt::math::Size natural_size;
   VideoRotation video_rotation;
   base::Time timeline_offset;
 };

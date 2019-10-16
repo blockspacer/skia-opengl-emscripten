@@ -174,8 +174,8 @@ struct MEDIA_EXPORT H264SPS {
   // Helpers to compute frequently-used values. These methods return
   // base::nullopt if they encounter integer overflow. They do not verify that
   // the results are in-spec for the given profile or level.
-  base::Optional<gfx::Size> GetCodedSize() const;
-  base::Optional<gfx::Rect> GetVisibleRect() const;
+  base::Optional<cobalt::math::Size> GetCodedSize() const;
+  base::Optional<cobalt::math::Rect> GetVisibleRect() const;
 };
 
 struct MEDIA_EXPORT H264PPS {

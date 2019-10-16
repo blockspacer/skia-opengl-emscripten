@@ -41,10 +41,10 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size) {
         if (!sps) break;
         // Also test the SPS helper methods. We make sure that the results are
         // used so that the calls are not optimized away.
-        base::Optional<gfx::Size> coded_size = sps->GetCodedSize();
-        volatile_sink = coded_size.value_or(gfx::Size()).ToString().length();
-        base::Optional<gfx::Rect> visible_rect = sps->GetVisibleRect();
-        volatile_sink = visible_rect.value_or(gfx::Rect()).ToString().length();
+        base::Optional<cobalt::math::Size> coded_size = sps->GetCodedSize();
+        volatile_sink = coded_size.value_or(cobalt::math::Size()).ToString().length();
+        base::Optional<cobalt::math::Rect> visible_rect = sps->GetVisibleRect();
+        volatile_sink = visible_rect.value_or(cobalt::math::Rect()).ToString().length();
         break;
       }
 

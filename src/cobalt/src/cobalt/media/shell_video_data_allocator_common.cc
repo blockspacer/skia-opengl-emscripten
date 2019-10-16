@@ -88,7 +88,7 @@ scoped_refptr<VideoFrame> ShellVideoDataAllocatorCommon::CreateYV12Frame(
   // TODO: Ensure it work with visible_rect with non-zero left and
   // top.  Note that simply add offset to the image buffer may cause alignment
   // issues.
-  gfx::Size plane_size(param.visible_rect().size());
+  cobalt::math::Size plane_size(param.visible_rect().size());
 
   // Create image data descriptor for the frame in I420.
   MultiPlaneImageDataDescriptor descriptor(
@@ -111,7 +111,7 @@ scoped_refptr<VideoFrame> ShellVideoDataAllocatorCommon::CreateYV12Frame(
       resource_provider_->CreateMultiPlaneImageFromRawMemory(
           frame_buffer_common->DetachRawImageMemory(), descriptor);
 
-  gfx::Size visible_size(param.visible_rect().size());
+  cobalt::math::Size visible_size(param.visible_rect().size());
   // The reference of the image is held by the closure that binds ReleaseImage,
   // so it won't be freed before the ReleaseImage is called.
   scoped_refptr<VideoFrame> video_frame = VideoFrame::WrapNativeTexture(
@@ -130,7 +130,7 @@ scoped_refptr<VideoFrame> ShellVideoDataAllocatorCommon::CreateNV12Frame(
   // TODO: Ensure it work with visible_rect with non-zero left and
   // top.  Note that simply add offset to the image buffer may cause alignment
   // issues.
-  gfx::Size plane_size(param.visible_rect().size());
+  cobalt::math::Size plane_size(param.visible_rect().size());
 
   // When plane_size.height() is only aligned to 2, the height of U/V plane
   // will be odd, which is not supported on most platforms.  Align height to 4
@@ -162,7 +162,7 @@ scoped_refptr<VideoFrame> ShellVideoDataAllocatorCommon::CreateNV12Frame(
       resource_provider_->CreateMultiPlaneImageFromRawMemory(
           frame_buffer_common->DetachRawImageMemory(), descriptor);
 
-  gfx::Size visible_size(param.visible_rect().size());
+  cobalt::math::Size visible_size(param.visible_rect().size());
   // The reference of the image is held by the closure that binds ReleaseImage,
   // so it won't be freed before the ReleaseImage is called.
   scoped_refptr<VideoFrame> video_frame = VideoFrame::WrapNativeTexture(

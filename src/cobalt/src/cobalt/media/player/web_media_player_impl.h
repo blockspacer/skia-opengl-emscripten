@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2012 The Chromium Authors. All rights reserved.
+// Copyright (c) 2012 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -84,7 +84,7 @@ class MediaLog;
 class WebMediaPlayerProxy;
 
 class WebMediaPlayerImpl : public WebMediaPlayer,
-                           ///public base::MessageLoop::DestructionObserver,
+                           //public base::MessageLoop::DestructionObserver,
                            public base::SupportsWeakPtr<WebMediaPlayerImpl> {
  public:
   // Construct a WebMediaPlayerImpl with reference to the client, and media
@@ -105,7 +105,10 @@ class WebMediaPlayerImpl : public WebMediaPlayer,
   // When calling this, the |audio_source_provider| and
   // |audio_renderer_sink| arguments should be the same object.
 
-  WebMediaPlayerImpl(PipelineWindow window, WebMediaPlayerClient* client,
+  WebMediaPlayerImpl(PipelineWindow window,
+                     const Pipeline::GetDecodeTargetGraphicsContextProviderFunc&
+                         get_decode_target_graphics_context_provider_func,
+                     WebMediaPlayerClient* client,
                      WebMediaPlayerDelegate* delegate,
                      DecoderBuffer::Allocator* buffer_allocator,
                      bool allow_resume_after_suspend,
@@ -144,6 +147,7 @@ class WebMediaPlayerImpl : public WebMediaPlayer,
   bool HasAudio() const override;
 
   // Dimensions of the video.
+  //cobalt::math::Size GetNaturalSize() const override;
   cobalt::math::Size GetNaturalSize() const override;
 
   // Getters of playback state.
@@ -154,6 +158,7 @@ class WebMediaPlayerImpl : public WebMediaPlayer,
   base::Time GetStartDate() const override;
 #endif  // SB_HAS(PLAYER_WITH_URL)
   float GetCurrentTime() const override;
+  float GetPlaybackRate() const override;
 
   // Get rate of loading the resource.
   int32 GetDataRate() const override;
@@ -181,14 +186,15 @@ class WebMediaPlayerImpl : public WebMediaPlayer,
   // even before this object gets destructed, so we need to know when
   // |main_loop_| is being destroyed and we can stop posting repaint task
   // to it.
-  ///void WillDestroyCurrentMessageLoop() override;
+  /// \todo
+  //void WillDestroyCurrentMessageLoop() override;
 
   bool GetDebugReportDataAddress(void** out_address, size_t* out_size) override;
 
   void SetDrmSystem(const scoped_refptr<media::DrmSystem>& drm_system) override;
   void SetDrmSystemReadyCB(const DrmSystemReadyCB& drm_system_ready_cb);
 
-  void OnPipelineSeek(PipelineStatus status);
+  void OnPipelineSeek(PipelineStatus status, bool is_initial_preroll);
   void OnPipelineEnded(PipelineStatus status);
   void OnPipelineError(PipelineStatus error, const std::string& message);
   void OnPipelineBufferingState(Pipeline::BufferingState buffering_state);

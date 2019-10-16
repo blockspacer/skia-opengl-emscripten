@@ -30,12 +30,12 @@ class MEDIA_EXPORT SurfaceManager {
   // existing surface will be returned. The client should ensure that the
   // previous consumer is no longer using the surface.
   virtual void CreateFullscreenSurface(
-      const gfx::Size& video_natural_size,
+      const cobalt::math::Size& video_natural_size,
       const SurfaceCreatedCB& surface_created_cb) = 0;
 
   // Call this when the natural size of the fullscreen video changes. The
   // surface will be resized to match the aspect ratio.
-  virtual void NaturalSizeChanged(const gfx::Size& size) = 0;
+  virtual void NaturalSizeChanged(const cobalt::math::Size& size) = 0;
 
  private:
   DISALLOW_COPY_AND_ASSIGN(SurfaceManager);

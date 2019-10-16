@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2012 The Chromium Authors. All rights reserved.
+// Copyright (c) 2012 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -22,8 +22,10 @@
 #include "cobalt/media/base/video_frame_provider.h"
 #include "cobalt/media/filters/chunk_demuxer.h"
 #include "cobalt/media/player/buffered_data_source.h"
+//#include "ui/gfx/rect.h"
+//#include "ui/gfx/size.h"
 #include "cobalt/math/rect.h"
-#include "ui/gfx/size.h"
+#include "cobalt/math/size.h"
 #include "url/gurl.h"
 
 namespace cobalt {
@@ -35,7 +37,7 @@ class WebMediaPlayer {
  public:
   // Return true if the punch through box should be rendered.  Return false if
   // no punch through box should be rendered.
-  typedef base::Callback<bool(const math::Rect&)> SetBoundsCB;
+  typedef base::Callback<bool(const cobalt::math::Rect&)> SetBoundsCB;
 
   enum NetworkState {
     kNetworkStateEmpty,
@@ -132,6 +134,7 @@ class WebMediaPlayer {
   virtual base::Time GetStartDate() const = 0;
 #endif  // SB_HAS(PLAYER_WITH_URL)
   virtual float GetCurrentTime() const = 0;
+  virtual float GetPlaybackRate() const = 0;
 
   // Get rate of loading the resource.
   virtual int GetDataRate() const = 0;
@@ -218,6 +221,8 @@ class WebMediaPlayerClient {
   virtual float Volume() const = 0;
   virtual void SourceOpened(ChunkDemuxer* chunk_demuxer) = 0;
   virtual std::string SourceURL() const = 0;
+  virtual std::string MaxVideoCapabilities() const = 0;
+
   // Clients should implement this in order to indicate a preference for whether
   // a video should be decoded to a texture or through a punch out system.  If
   // the preferred output mode is not supported, the player will fallback to

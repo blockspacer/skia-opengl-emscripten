@@ -11,7 +11,7 @@
 #  '<(DEPTH)/starboard/starboard.gyp:starboard',
 #],
 list(APPEND cobalt_media_SOURCES
-  ${COBALT_CORE_DIR}media/media_module_starboard.cc
+  #${COBALT_CORE_DIR}media/media_module_starboard.cc
   #
   ${COBALT_CORE_DIR}media/decoder_buffer_allocator.cc
   ${COBALT_CORE_DIR}media/decoder_buffer_allocator.h
@@ -75,8 +75,8 @@ list(APPEND cobalt_media_SOURCES
   ${COBALT_CORE_DIR}media/base/shell_audio_bus.h
   ${COBALT_CORE_DIR}media/base/shell_data_source_reader.cc
   ${COBALT_CORE_DIR}media/base/shell_data_source_reader.h
-  ${COBALT_CORE_DIR}media/base/shell_media_platform.cc
-  ${COBALT_CORE_DIR}media/base/shell_media_platform.h
+  #${COBALT_CORE_DIR}media/base/shell_media_platform.cc
+  #${COBALT_CORE_DIR}media/base/shell_media_platform.h
   ${COBALT_CORE_DIR}media/base/starboard_player.cc
   ${COBALT_CORE_DIR}media/base/starboard_player.h
   ${COBALT_CORE_DIR}media/base/starboard_utils.cc
@@ -124,7 +124,7 @@ if(TARGET_LINUX)
     ${COBALT_CORE_DIR}media/filters/shell_rbsp_stream.h
     ${COBALT_CORE_DIR}media/fetcher_buffered_data_source.cc
     ${COBALT_CORE_DIR}media/fetcher_buffered_data_source.h
-    ${COBALT_CORE_DIR}media/media_module_starboard.cc
+    #${COBALT_CORE_DIR}media/media_module_starboard.cc
     ${COBALT_CORE_DIR}media/base/sbplayer_pipeline.cc
     ${COBALT_CORE_DIR}media/base/sbplayer_set_bounds_helper.cc
     ${COBALT_CORE_DIR}media/base/sbplayer_set_bounds_helper.h

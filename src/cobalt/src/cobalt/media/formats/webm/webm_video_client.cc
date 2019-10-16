@@ -1,4 +1,4 @@
-﻿// Copyright 2014 The Chromium Authors. All rights reserved.
+// Copyright 2014 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -83,10 +83,10 @@ bool WebMVideoClient::InitializeConfig(
   if (display_unit_ == -1) display_unit_ = 0;
 
   cobalt::math::Size coded_size(pixel_width_, pixel_height_);
-  cobalt::math::RectF visible_rect_float(crop_top_, crop_left_,
+  math::RectF visible_rect_float(crop_top_, crop_left_,
                                 pixel_width_ - (crop_left_ + crop_right_),
                                 pixel_height_ - (crop_top_ + crop_bottom_));
-  cobalt::math::Rect visible_rect = math::Rect::RoundFromRectF(visible_rect_float);
+  math::Rect visible_rect = math::Rect::RoundFromRectF(visible_rect_float);
   if (display_unit_ == 0) {
     if (display_width_ <= 0) display_width_ = visible_rect.width();
     if (display_height_ <= 0) display_height_ = visible_rect.height();

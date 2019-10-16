@@ -33,7 +33,7 @@ class RendererClient {
 
   // Executed for the first video frame and whenever natural size changes.
   // Only used if media stream contains video track.
-  virtual void OnVideoNaturalSizeChange(const gfx::Size& size) = 0;
+  virtual void OnVideoNaturalSizeChange(const cobalt::math::Size& size) = 0;
 
   // Executed for the first video frame and whenever opacity changes.
   // Only used if media stream contains video track.

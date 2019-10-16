@@ -63,7 +63,7 @@ void FakeDemuxerStream::Initialize() {
   current_timestamp_ = base::TimeDelta::FromMilliseconds(kStartTimestampMs);
   duration_ = base::TimeDelta::FromMilliseconds(kDurationMs);
   splice_timestamp_ = kNoTimestamp;
-  next_coded_size_ = gfx::Size(kStartWidth, kStartHeight);
+  next_coded_size_ = cobalt::math::Size(kStartWidth, kStartHeight);
   next_read_num_ = 0;
 }
 
@@ -158,7 +158,7 @@ void FakeDemuxerStream::SeekToEndOfStream() {
 }
 
 void FakeDemuxerStream::UpdateVideoDecoderConfig() {
-  const gfx::Rect kVisibleRect(kStartWidth, kStartHeight);
+  const cobalt::math::Rect kVisibleRect(kStartWidth, kStartHeight);
   video_decoder_config_.Initialize(
       kCodecVP8, VIDEO_CODEC_PROFILE_UNKNOWN, PIXEL_FORMAT_YV12,
       COLOR_SPACE_UNSPECIFIED, next_coded_size_, kVisibleRect, next_coded_size_,

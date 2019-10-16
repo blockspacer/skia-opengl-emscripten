@@ -93,8 +93,8 @@ class TestVideoConfig {
   static VideoDecoderConfig LargeEncrypted();
 
   // Returns coded size for Normal and Large config.
-  static gfx::Size NormalCodedSize();
-  static gfx::Size LargeCodedSize();
+  static cobalt::math::Size NormalCodedSize();
+  static cobalt::math::Size LargeCodedSize();
 
  private:
   DISALLOW_COPY_AND_ASSIGN(TestVideoConfig);

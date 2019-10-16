@@ -64,12 +64,14 @@ SbMediaVideoCodec MediaVideoCodecToSbMediaVideoCodec(VideoCodec codec) {
       return kSbMediaVideoCodecVp8;
     case kCodecVP9:
       return kSbMediaVideoCodecVp9;
+    case kCodecHEVC:
+      return kSbMediaVideoCodecH265;
     case kCodecAV1:
-#if SB_API_VERSION >= SB_HAS_AV1_VERSION
+#if SB_API_VERSION >= 11
       return kSbMediaVideoCodecAv1;
-#else  // SB_API_VERSION >= SB_HAS_AV1_VERSION
+#else  // SB_API_VERSION >= 11
       return kSbMediaVideoCodecVp10;
-#endif  // SB_API_VERSION >= SB_HAS_AV1_VERSION
+#endif  // SB_API_VERSION >= 11
     default:
       // Cobalt only supports a subset of video codecs defined by Chromium.
       DLOG(ERROR) << "Unsupported video codec "
@@ -80,39 +82,34 @@ SbMediaVideoCodec MediaVideoCodecToSbMediaVideoCodec(VideoCodec codec) {
   return kSbMediaVideoCodecNone;
 }
 
-SbMediaAudioHeader MediaAudioConfigToSbMediaAudioHeader(
+SbMediaAudioSampleInfo MediaAudioConfigToSbMediaAudioSampleInfo(
     const AudioDecoderConfig& audio_decoder_config) {
-  SbMediaAudioHeader audio_header;
+  SbMediaAudioSampleInfo audio_sample_info;
 
+#if SB_API_VERSION >= 11
+  audio_sample_info.codec =
+      MediaAudioCodecToSbMediaAudioCodec(audio_decoder_config.codec());
+#endif  // SB_API_VERSION >= 11
   // TODO: Make this work with non AAC audio.
-  audio_header.format_tag = 0x00ff;
-  audio_header.number_of_channels =
+  audio_sample_info.format_tag = 0x00ff;
+  audio_sample_info.number_of_channels =
       ChannelLayoutToChannelCount(audio_decoder_config.channel_layout());
-  audio_header.samples_per_second = audio_decoder_config.samples_per_second();
-  audio_header.average_bytes_per_second = 1;
-  audio_header.block_alignment = 4;
-  audio_header.bits_per_sample = audio_decoder_config.bits_per_channel();
+  audio_sample_info.samples_per_second =
+      audio_decoder_config.samples_per_second();
+  audio_sample_info.average_bytes_per_second = 1;
+  audio_sample_info.block_alignment = 4;
+  audio_sample_info.bits_per_sample = audio_decoder_config.bits_per_channel();
 
-#if SB_HAS(AUDIO_SPECIFIC_CONFIG_AS_POINTER)
-  audio_header.audio_specific_config_size =
+  audio_sample_info.audio_specific_config_size =
       static_cast<uint16_t>(audio_decoder_config.extra_data().size());
-  if (audio_header.audio_specific_config_size == 0) {
-    audio_header.audio_specific_config = NULL;
+  if (audio_sample_info.audio_specific_config_size == 0) {
+    audio_sample_info.audio_specific_config = NULL;
   } else {
-    audio_header.audio_specific_config = &audio_decoder_config.extra_data()[0];
+    audio_sample_info.audio_specific_config =
+        &audio_decoder_config.extra_data()[0];
   }
-#else   // SB_HAS(AUDIO_SPECIFIC_CONFIG_AS_POINTER)
-  audio_header.audio_specific_config_size = static_cast<uint16_t>(
-      std::min(audio_decoder_config.extra_data().size(),
-               sizeof(audio_header.audio_specific_config)));
-  if (audio_header.audio_specific_config_size > 0) {
-    SbMemoryCopy(audio_header.audio_specific_config,
-                 &audio_decoder_config.extra_data()[0],
-                 audio_header.audio_specific_config_size);
-  }
-#endif  // SB_HAS(AUDIO_SPECIFIC_CONFIG_AS_POINTER)
 
-  return audio_header;
+  return audio_sample_info;
 }
 
 DemuxerStream::Type SbMediaTypeToDemuxerStreamType(SbMediaType type) {
@@ -180,86 +177,86 @@ void FillDrmSampleInfo(const scoped_refptr<DecoderBuffer>& buffer,
   }
 }
 
-// Ensure that the enums in starboard/media.h match enums in gfx::CbColorSpace.
+// Ensure that the enums in starboard/media.h match enums in gfx::ColorSpace.
 #define ENUM_EQ(a, b) \
   COMPILE_ASSERT(static_cast<int>(a) == static_cast<int>(b), mismatching_enums)
 
 // Ensure PrimaryId enums convert correctly.
-ENUM_EQ(kSbMediaPrimaryIdReserved0, gfx::CbColorSpace::kPrimaryIdReserved0);
-ENUM_EQ(kSbMediaPrimaryIdBt709, gfx::CbColorSpace::kPrimaryIdBt709);
-ENUM_EQ(kSbMediaPrimaryIdUnspecified, gfx::CbColorSpace::kPrimaryIdUnspecified);
-ENUM_EQ(kSbMediaPrimaryIdReserved, gfx::CbColorSpace::kPrimaryIdReserved);
-ENUM_EQ(kSbMediaPrimaryIdBt470M, gfx::CbColorSpace::kPrimaryIdBt470M);
-ENUM_EQ(kSbMediaPrimaryIdBt470Bg, gfx::CbColorSpace::kPrimaryIdBt470Bg);
-ENUM_EQ(kSbMediaPrimaryIdSmpte170M, gfx::CbColorSpace::kPrimaryIdSmpte170M);
-ENUM_EQ(kSbMediaPrimaryIdSmpte240M, gfx::CbColorSpace::kPrimaryIdSmpte240M);
-ENUM_EQ(kSbMediaPrimaryIdFilm, gfx::CbColorSpace::kPrimaryIdFilm);
-ENUM_EQ(kSbMediaPrimaryIdBt2020, gfx::CbColorSpace::kPrimaryIdBt2020);
-ENUM_EQ(kSbMediaPrimaryIdSmpteSt4281, gfx::CbColorSpace::kPrimaryIdSmpteSt4281);
-ENUM_EQ(kSbMediaPrimaryIdSmpteSt4312, gfx::CbColorSpace::kPrimaryIdSmpteSt4312);
-ENUM_EQ(kSbMediaPrimaryIdSmpteSt4321, gfx::CbColorSpace::kPrimaryIdSmpteSt4321);
+ENUM_EQ(kSbMediaPrimaryIdReserved0, gfx::ColorSpace::kPrimaryIdReserved0);
+ENUM_EQ(kSbMediaPrimaryIdBt709, gfx::ColorSpace::kPrimaryIdBt709);
+ENUM_EQ(kSbMediaPrimaryIdUnspecified, gfx::ColorSpace::kPrimaryIdUnspecified);
+ENUM_EQ(kSbMediaPrimaryIdReserved, gfx::ColorSpace::kPrimaryIdReserved);
+ENUM_EQ(kSbMediaPrimaryIdBt470M, gfx::ColorSpace::kPrimaryIdBt470M);
+ENUM_EQ(kSbMediaPrimaryIdBt470Bg, gfx::ColorSpace::kPrimaryIdBt470Bg);
+ENUM_EQ(kSbMediaPrimaryIdSmpte170M, gfx::ColorSpace::kPrimaryIdSmpte170M);
+ENUM_EQ(kSbMediaPrimaryIdSmpte240M, gfx::ColorSpace::kPrimaryIdSmpte240M);
+ENUM_EQ(kSbMediaPrimaryIdFilm, gfx::ColorSpace::kPrimaryIdFilm);
+ENUM_EQ(kSbMediaPrimaryIdBt2020, gfx::ColorSpace::kPrimaryIdBt2020);
+ENUM_EQ(kSbMediaPrimaryIdSmpteSt4281, gfx::ColorSpace::kPrimaryIdSmpteSt4281);
+ENUM_EQ(kSbMediaPrimaryIdSmpteSt4312, gfx::ColorSpace::kPrimaryIdSmpteSt4312);
+ENUM_EQ(kSbMediaPrimaryIdSmpteSt4321, gfx::ColorSpace::kPrimaryIdSmpteSt4321);
 ENUM_EQ(kSbMediaPrimaryIdLastStandardValue,
-        gfx::CbColorSpace::kPrimaryIdLastStandardValue);
-ENUM_EQ(kSbMediaPrimaryIdUnknown, gfx::CbColorSpace::kPrimaryIdUnknown);
-ENUM_EQ(kSbMediaPrimaryIdXyzD50, gfx::CbColorSpace::kPrimaryIdXyzD50);
-ENUM_EQ(kSbMediaPrimaryIdCustom, gfx::CbColorSpace::kPrimaryIdCustom);
-ENUM_EQ(kSbMediaPrimaryIdLast, gfx::CbColorSpace::kPrimaryIdLast);
+        gfx::ColorSpace::kPrimaryIdLastStandardValue);
+ENUM_EQ(kSbMediaPrimaryIdUnknown, gfx::ColorSpace::kPrimaryIdUnknown);
+ENUM_EQ(kSbMediaPrimaryIdXyzD50, gfx::ColorSpace::kPrimaryIdXyzD50);
+ENUM_EQ(kSbMediaPrimaryIdCustom, gfx::ColorSpace::kPrimaryIdCustom);
+ENUM_EQ(kSbMediaPrimaryIdLast, gfx::ColorSpace::kPrimaryIdLast);
 
 // Ensure TransferId enums convert correctly.
-ENUM_EQ(kSbMediaTransferIdReserved0, gfx::CbColorSpace::kTransferIdReserved0);
-ENUM_EQ(kSbMediaTransferIdBt709, gfx::CbColorSpace::kTransferIdBt709);
-ENUM_EQ(kSbMediaTransferIdUnspecified, gfx::CbColorSpace::kTransferIdUnspecified);
-ENUM_EQ(kSbMediaTransferIdReserved, gfx::CbColorSpace::kTransferIdReserved);
-ENUM_EQ(kSbMediaTransferIdGamma22, gfx::CbColorSpace::kTransferIdGamma22);
-ENUM_EQ(kSbMediaTransferIdGamma28, gfx::CbColorSpace::kTransferIdGamma28);
-ENUM_EQ(kSbMediaTransferIdSmpte170M, gfx::CbColorSpace::kTransferIdSmpte170M);
-ENUM_EQ(kSbMediaTransferIdSmpte240M, gfx::CbColorSpace::kTransferIdSmpte240M);
-ENUM_EQ(kSbMediaTransferIdLinear, gfx::CbColorSpace::kTransferIdLinear);
-ENUM_EQ(kSbMediaTransferIdLog, gfx::CbColorSpace::kTransferIdLog);
-ENUM_EQ(kSbMediaTransferIdLogSqrt, gfx::CbColorSpace::kTransferIdLogSqrt);
-ENUM_EQ(kSbMediaTransferIdIec6196624, gfx::CbColorSpace::kTransferIdIec6196624);
-ENUM_EQ(kSbMediaTransferIdBt1361Ecg, gfx::CbColorSpace::kTransferIdBt1361Ecg);
-ENUM_EQ(kSbMediaTransferIdIec6196621, gfx::CbColorSpace::kTransferIdIec6196621);
-ENUM_EQ(kSbMediaTransferId10BitBt2020, gfx::CbColorSpace::kTransferId10BitBt2020);
-ENUM_EQ(kSbMediaTransferId12BitBt2020, gfx::CbColorSpace::kTransferId12BitBt2020);
-ENUM_EQ(kSbMediaTransferIdSmpteSt2084, gfx::CbColorSpace::kTransferIdSmpteSt2084);
-ENUM_EQ(kSbMediaTransferIdSmpteSt4281, gfx::CbColorSpace::kTransferIdSmpteSt4281);
-ENUM_EQ(kSbMediaTransferIdAribStdB67, gfx::CbColorSpace::kTransferIdAribStdB67);
+ENUM_EQ(kSbMediaTransferIdReserved0, gfx::ColorSpace::kTransferIdReserved0);
+ENUM_EQ(kSbMediaTransferIdBt709, gfx::ColorSpace::kTransferIdBt709);
+ENUM_EQ(kSbMediaTransferIdUnspecified, gfx::ColorSpace::kTransferIdUnspecified);
+ENUM_EQ(kSbMediaTransferIdReserved, gfx::ColorSpace::kTransferIdReserved);
+ENUM_EQ(kSbMediaTransferIdGamma22, gfx::ColorSpace::kTransferIdGamma22);
+ENUM_EQ(kSbMediaTransferIdGamma28, gfx::ColorSpace::kTransferIdGamma28);
+ENUM_EQ(kSbMediaTransferIdSmpte170M, gfx::ColorSpace::kTransferIdSmpte170M);
+ENUM_EQ(kSbMediaTransferIdSmpte240M, gfx::ColorSpace::kTransferIdSmpte240M);
+ENUM_EQ(kSbMediaTransferIdLinear, gfx::ColorSpace::kTransferIdLinear);
+ENUM_EQ(kSbMediaTransferIdLog, gfx::ColorSpace::kTransferIdLog);
+ENUM_EQ(kSbMediaTransferIdLogSqrt, gfx::ColorSpace::kTransferIdLogSqrt);
+ENUM_EQ(kSbMediaTransferIdIec6196624, gfx::ColorSpace::kTransferIdIec6196624);
+ENUM_EQ(kSbMediaTransferIdBt1361Ecg, gfx::ColorSpace::kTransferIdBt1361Ecg);
+ENUM_EQ(kSbMediaTransferIdIec6196621, gfx::ColorSpace::kTransferIdIec6196621);
+ENUM_EQ(kSbMediaTransferId10BitBt2020, gfx::ColorSpace::kTransferId10BitBt2020);
+ENUM_EQ(kSbMediaTransferId12BitBt2020, gfx::ColorSpace::kTransferId12BitBt2020);
+ENUM_EQ(kSbMediaTransferIdSmpteSt2084, gfx::ColorSpace::kTransferIdSmpteSt2084);
+ENUM_EQ(kSbMediaTransferIdSmpteSt4281, gfx::ColorSpace::kTransferIdSmpteSt4281);
+ENUM_EQ(kSbMediaTransferIdAribStdB67, gfx::ColorSpace::kTransferIdAribStdB67);
 ENUM_EQ(kSbMediaTransferIdLastStandardValue,
-        gfx::CbColorSpace::kTransferIdLastStandardValue);
-ENUM_EQ(kSbMediaTransferIdUnknown, gfx::CbColorSpace::kTransferIdUnknown);
-ENUM_EQ(kSbMediaTransferIdGamma24, gfx::CbColorSpace::kTransferIdGamma24);
+        gfx::ColorSpace::kTransferIdLastStandardValue);
+ENUM_EQ(kSbMediaTransferIdUnknown, gfx::ColorSpace::kTransferIdUnknown);
+ENUM_EQ(kSbMediaTransferIdGamma24, gfx::ColorSpace::kTransferIdGamma24);
 ENUM_EQ(kSbMediaTransferIdSmpteSt2084NonHdr,
-        gfx::CbColorSpace::kTransferIdSmpteSt2084NonHdr);
-ENUM_EQ(kSbMediaTransferIdCustom, gfx::CbColorSpace::kTransferIdCustom);
-ENUM_EQ(kSbMediaTransferIdLast, gfx::CbColorSpace::kTransferIdLast);
+        gfx::ColorSpace::kTransferIdSmpteSt2084NonHdr);
+ENUM_EQ(kSbMediaTransferIdCustom, gfx::ColorSpace::kTransferIdCustom);
+ENUM_EQ(kSbMediaTransferIdLast, gfx::ColorSpace::kTransferIdLast);
 
 // Ensure MatrixId enums convert correctly.
-ENUM_EQ(kSbMediaMatrixIdRgb, gfx::CbColorSpace::kMatrixIdRgb);
-ENUM_EQ(kSbMediaMatrixIdBt709, gfx::CbColorSpace::kMatrixIdBt709);
-ENUM_EQ(kSbMediaMatrixIdUnspecified, gfx::CbColorSpace::kMatrixIdUnspecified);
-ENUM_EQ(kSbMediaMatrixIdReserved, gfx::CbColorSpace::kMatrixIdReserved);
-ENUM_EQ(kSbMediaMatrixIdFcc, gfx::CbColorSpace::kMatrixIdFcc);
-ENUM_EQ(kSbMediaMatrixIdBt470Bg, gfx::CbColorSpace::kMatrixIdBt470Bg);
-ENUM_EQ(kSbMediaMatrixIdSmpte170M, gfx::CbColorSpace::kMatrixIdSmpte170M);
-ENUM_EQ(kSbMediaMatrixIdSmpte240M, gfx::CbColorSpace::kMatrixIdSmpte240M);
-ENUM_EQ(kSbMediaMatrixIdYCgCo, gfx::CbColorSpace::kMatrixIdYCgCo);
+ENUM_EQ(kSbMediaMatrixIdRgb, gfx::ColorSpace::kMatrixIdRgb);
+ENUM_EQ(kSbMediaMatrixIdBt709, gfx::ColorSpace::kMatrixIdBt709);
+ENUM_EQ(kSbMediaMatrixIdUnspecified, gfx::ColorSpace::kMatrixIdUnspecified);
+ENUM_EQ(kSbMediaMatrixIdReserved, gfx::ColorSpace::kMatrixIdReserved);
+ENUM_EQ(kSbMediaMatrixIdFcc, gfx::ColorSpace::kMatrixIdFcc);
+ENUM_EQ(kSbMediaMatrixIdBt470Bg, gfx::ColorSpace::kMatrixIdBt470Bg);
+ENUM_EQ(kSbMediaMatrixIdSmpte170M, gfx::ColorSpace::kMatrixIdSmpte170M);
+ENUM_EQ(kSbMediaMatrixIdSmpte240M, gfx::ColorSpace::kMatrixIdSmpte240M);
+ENUM_EQ(kSbMediaMatrixIdYCgCo, gfx::ColorSpace::kMatrixIdYCgCo);
 ENUM_EQ(kSbMediaMatrixIdBt2020NonconstantLuminance,
-        gfx::CbColorSpace::kMatrixIdBt2020NonconstantLuminance);
+        gfx::ColorSpace::kMatrixIdBt2020NonconstantLuminance);
 ENUM_EQ(kSbMediaMatrixIdBt2020ConstantLuminance,
-        gfx::CbColorSpace::kMatrixIdBt2020ConstantLuminance);
-ENUM_EQ(kSbMediaMatrixIdYDzDx, gfx::CbColorSpace::kMatrixIdYDzDx);
+        gfx::ColorSpace::kMatrixIdBt2020ConstantLuminance);
+ENUM_EQ(kSbMediaMatrixIdYDzDx, gfx::ColorSpace::kMatrixIdYDzDx);
 ENUM_EQ(kSbMediaMatrixIdLastStandardValue,
-        gfx::CbColorSpace::kMatrixIdLastStandardValue);
-ENUM_EQ(kSbMediaMatrixIdUnknown, gfx::CbColorSpace::kMatrixIdUnknown);
-ENUM_EQ(kSbMediaMatrixIdLast, gfx::CbColorSpace::kMatrixIdLast);
+        gfx::ColorSpace::kMatrixIdLastStandardValue);
+ENUM_EQ(kSbMediaMatrixIdUnknown, gfx::ColorSpace::kMatrixIdUnknown);
+ENUM_EQ(kSbMediaMatrixIdLast, gfx::ColorSpace::kMatrixIdLast);
 
 // Ensure RangeId enums convert correctly.
-ENUM_EQ(kSbMediaRangeIdUnspecified, gfx::CbColorSpace::kRangeIdUnspecified);
-ENUM_EQ(kSbMediaRangeIdLimited, gfx::CbColorSpace::kRangeIdLimited);
-ENUM_EQ(kSbMediaRangeIdFull, gfx::CbColorSpace::kRangeIdFull);
-ENUM_EQ(kSbMediaRangeIdDerived, gfx::CbColorSpace::kRangeIdDerived);
-ENUM_EQ(kSbMediaRangeIdLast, gfx::CbColorSpace::kRangeIdLast);
+ENUM_EQ(kSbMediaRangeIdUnspecified, gfx::ColorSpace::kRangeIdUnspecified);
+ENUM_EQ(kSbMediaRangeIdLimited, gfx::ColorSpace::kRangeIdLimited);
+ENUM_EQ(kSbMediaRangeIdFull, gfx::ColorSpace::kRangeIdFull);
+ENUM_EQ(kSbMediaRangeIdDerived, gfx::ColorSpace::kRangeIdDerived);
+ENUM_EQ(kSbMediaRangeIdLast, gfx::ColorSpace::kRangeIdLast);
 
 SbMediaColorMetadata MediaToSbMediaColorMetadata(
     const WebMColorMetadata& webm_color_metadata) {
@@ -313,7 +310,7 @@ SbMediaColorMetadata MediaToSbMediaColorMetadata(
   sb_media_color_metadata.max_fall = hdr_metadata.max_fall;
 
   // Copy the color space below.
-  gfx::CbColorSpace color_space = webm_color_metadata.color_space;
+  gfx::ColorSpace color_space = webm_color_metadata.color_space;
   sb_media_color_metadata.primaries =
       static_cast<SbMediaPrimaryId>(color_space.primaries());
   sb_media_color_metadata.transfer =

@@ -46,7 +46,7 @@ inline VideoResolution GetVideoResolution(int width, int height) {
   return kVideoResolutionInvalid;
 }
 
-inline VideoResolution GetVideoResolution(const gfx::Size& size) {
+inline VideoResolution GetVideoResolution(const cobalt::math::Size& size) {
   return GetVideoResolution(size.width(), size.height());
 }
 

@@ -97,9 +97,9 @@ static bool AreValidPixelFormatsForWrap(VideoPixelFormat source_format,
 // static
 bool VideoFrame::IsValidConfig(VideoPixelFormat format,
                                StorageType storage_type,
-                               const gfx::Size& coded_size,
-                               const gfx::Rect& visible_rect,
-                               const gfx::Size& natural_size) {
+                               const cobalt::math::Size& coded_size,
+                               const cobalt::math::Rect& visible_rect,
+                               const cobalt::math::Size& natural_size) {
   // Check maximum limits for all formats.
   int coded_size_area = coded_size.GetCheckedArea().ValueOrDefault(INT_MAX);
   int natural_size_area = natural_size.GetCheckedArea().ValueOrDefault(INT_MAX);
@@ -134,9 +134,9 @@ bool VideoFrame::IsValidConfig(VideoPixelFormat format,
 
 // static
 scoped_refptr<VideoFrame> VideoFrame::CreateFrame(VideoPixelFormat format,
-                                                  const gfx::Size& coded_size,
-                                                  const gfx::Rect& visible_rect,
-                                                  const gfx::Size& natural_size,
+                                                  const cobalt::math::Size& coded_size,
+                                                  const cobalt::math::Rect& visible_rect,
+                                                  const cobalt::math::Size& natural_size,
                                                   base::TimeDelta timestamp) {
   return CreateFrameInternal(format, coded_size, visible_rect, natural_size,
                              timestamp, false);
@@ -144,8 +144,8 @@ scoped_refptr<VideoFrame> VideoFrame::CreateFrame(VideoPixelFormat format,
 
 // static
 scoped_refptr<VideoFrame> VideoFrame::CreateZeroInitializedFrame(
-    VideoPixelFormat format, const gfx::Size& coded_size,
-    const gfx::Rect& visible_rect, const gfx::Size& natural_size,
+    VideoPixelFormat format, const cobalt::math::Size& coded_size,
+    const cobalt::math::Rect& visible_rect, const cobalt::math::Size& natural_size,
     base::TimeDelta timestamp) {
   return CreateFrameInternal(format, coded_size, visible_rect, natural_size,
                              timestamp, true);
@@ -156,8 +156,8 @@ scoped_refptr<VideoFrame> VideoFrame::WrapNativeTextures(
     VideoPixelFormat format,
     const gpu::MailboxHolder (&mailbox_holders)[kMaxPlanes],
     const ReleaseMailboxCB& mailbox_holder_release_cb,
-    const gfx::Size& coded_size, const gfx::Rect& visible_rect,
-    const gfx::Size& natural_size, base::TimeDelta timestamp) {
+    const cobalt::math::Size& coded_size, const cobalt::math::Rect& visible_rect,
+    const cobalt::math::Size& natural_size, base::TimeDelta timestamp) {
   if (format != PIXEL_FORMAT_ARGB && format != PIXEL_FORMAT_XRGB &&
       format != PIXEL_FORMAT_UYVY && format != PIXEL_FORMAT_NV12 &&
       format != PIXEL_FORMAT_I420) {
@@ -179,8 +179,8 @@ scoped_refptr<VideoFrame> VideoFrame::WrapNativeTextures(
 
 // static
 scoped_refptr<VideoFrame> VideoFrame::WrapExternalData(
-    VideoPixelFormat format, const gfx::Size& coded_size,
-    const gfx::Rect& visible_rect, const gfx::Size& natural_size, uint8_t* data,
+    VideoPixelFormat format, const cobalt::math::Size& coded_size,
+    const cobalt::math::Rect& visible_rect, const cobalt::math::Size& natural_size, uint8_t* data,
     size_t data_size, base::TimeDelta timestamp) {
   return WrapExternalStorage(format, STORAGE_UNOWNED_MEMORY, coded_size,
                              visible_rect, natural_size, data, data_size,
@@ -189,8 +189,8 @@ scoped_refptr<VideoFrame> VideoFrame::WrapExternalData(
 
 // static
 scoped_refptr<VideoFrame> VideoFrame::WrapExternalSharedMemory(
-    VideoPixelFormat format, const gfx::Size& coded_size,
-    const gfx::Rect& visible_rect, const gfx::Size& natural_size, uint8_t* data,
+    VideoPixelFormat format, const cobalt::math::Size& coded_size,
+    const cobalt::math::Rect& visible_rect, const cobalt::math::Size& natural_size, uint8_t* data,
     size_t data_size, base::SharedMemoryHandle handle, size_t data_offset,
     base::TimeDelta timestamp) {
   return WrapExternalStorage(format, STORAGE_SHMEM, coded_size, visible_rect,
@@ -200,8 +200,8 @@ scoped_refptr<VideoFrame> VideoFrame::WrapExternalSharedMemory(
 
 // static
 scoped_refptr<VideoFrame> VideoFrame::WrapExternalYuvData(
-    VideoPixelFormat format, const gfx::Size& coded_size,
-    const gfx::Rect& visible_rect, const gfx::Size& natural_size,
+    VideoPixelFormat format, const cobalt::math::Size& coded_size,
+    const cobalt::math::Rect& visible_rect, const cobalt::math::Size& natural_size,
     int32_t y_stride, int32_t u_stride, int32_t v_stride, uint8_t* y_data,
     uint8_t* u_data, uint8_t* v_data, base::TimeDelta timestamp) {
   const StorageType storage = STORAGE_UNOWNED_MEMORY;
@@ -225,8 +225,8 @@ scoped_refptr<VideoFrame> VideoFrame::WrapExternalYuvData(
 
 // static
 scoped_refptr<VideoFrame> VideoFrame::WrapExternalYuvGpuMemoryBuffers(
-    VideoPixelFormat format, const gfx::Size& coded_size,
-    const gfx::Rect& visible_rect, const gfx::Size& natural_size,
+    VideoPixelFormat format, const cobalt::math::Size& coded_size,
+    const cobalt::math::Rect& visible_rect, const cobalt::math::Size& natural_size,
     int32_t y_stride, int32_t u_stride, int32_t v_stride, uint8_t* y_data,
     uint8_t* u_data, uint8_t* v_data,
     const gfx::GpuMemoryBufferHandle& y_handle,
@@ -256,8 +256,8 @@ scoped_refptr<VideoFrame> VideoFrame::WrapExternalYuvGpuMemoryBuffers(
 
 // static
 scoped_refptr<VideoFrame> VideoFrame::WrapExternalYuvaData(
-    VideoPixelFormat format, const gfx::Size& coded_size,
-    const gfx::Rect& visible_rect, const gfx::Size& natural_size,
+    VideoPixelFormat format, const cobalt::math::Size& coded_size,
+    const cobalt::math::Rect& visible_rect, const cobalt::math::Size& natural_size,
     int32_t y_stride, int32_t u_stride, int32_t v_stride, int32_t a_stride,
     uint8_t* y_data, uint8_t* u_data, uint8_t* v_data, uint8_t* a_data,
     base::TimeDelta timestamp) {
@@ -291,8 +291,8 @@ scoped_refptr<VideoFrame> VideoFrame::WrapExternalYuvaData(
 #if defined(OS_LINUX)
 // static
 scoped_refptr<VideoFrame> VideoFrame::WrapExternalDmabufs(
-    VideoPixelFormat format, const gfx::Size& coded_size,
-    const gfx::Rect& visible_rect, const gfx::Size& natural_size,
+    VideoPixelFormat format, const cobalt::math::Size& coded_size,
+    const cobalt::math::Rect& visible_rect, const cobalt::math::Size& natural_size,
     const std::vector<int>& dmabuf_fds, base::TimeDelta timestamp) {
   const StorageType storage = STORAGE_DMABUFS;
   if (!IsValidConfig(format, storage, coded_size, visible_rect, natural_size)) {
@@ -337,9 +337,9 @@ scoped_refptr<VideoFrame> VideoFrame::WrapCVPixelBuffer(
     return NULL;
   }
 
-  const gfx::Size coded_size(CVImageBufferGetEncodedSize(cv_pixel_buffer));
-  const gfx::Rect visible_rect(CVImageBufferGetCleanRect(cv_pixel_buffer));
-  const gfx::Size natural_size(CVImageBufferGetDisplaySize(cv_pixel_buffer));
+  const cobalt::math::Size coded_size(CVImageBufferGetEncodedSize(cv_pixel_buffer));
+  const cobalt::math::Rect visible_rect(CVImageBufferGetCleanRect(cv_pixel_buffer));
+  const cobalt::math::Size natural_size(CVImageBufferGetDisplaySize(cv_pixel_buffer));
   const StorageType storage = STORAGE_UNOWNED_MEMORY;
 
   if (!IsValidConfig(format, storage, coded_size, visible_rect, natural_size)) {
@@ -360,7 +360,7 @@ scoped_refptr<VideoFrame> VideoFrame::WrapCVPixelBuffer(
 // static
 scoped_refptr<VideoFrame> VideoFrame::WrapVideoFrame(
     const scoped_refptr<VideoFrame>& frame, VideoPixelFormat format,
-    const gfx::Rect& visible_rect, const gfx::Size& natural_size) {
+    const cobalt::math::Rect& visible_rect, const cobalt::math::Size& natural_size) {
   // Frames with textures need mailbox info propagated, and there's no support
   // for that here yet, see http://crbug/362521.
   CHECK(!frame->HasTextures());
@@ -416,24 +416,24 @@ scoped_refptr<VideoFrame> VideoFrame::WrapVideoFrame(
 // static
 scoped_refptr<VideoFrame> VideoFrame::CreateEOSFrame() {
   scoped_refptr<VideoFrame> frame =
-      new VideoFrame(PIXEL_FORMAT_UNKNOWN, STORAGE_UNKNOWN, gfx::Size(),
-                     gfx::Rect(), gfx::Size(), kNoTimestamp);
+      new VideoFrame(PIXEL_FORMAT_UNKNOWN, STORAGE_UNKNOWN, cobalt::math::Size(),
+                     cobalt::math::Rect(), cobalt::math::Size(), kNoTimestamp);
   frame->metadata()->SetBoolean(VideoFrameMetadata::END_OF_STREAM, true);
   return frame;
 }
 
 // static
 scoped_refptr<VideoFrame> VideoFrame::CreateColorFrame(
-    const gfx::Size& size, uint8_t y, uint8_t u, uint8_t v,
+    const cobalt::math::Size& size, uint8_t y, uint8_t u, uint8_t v,
     base::TimeDelta timestamp) {
   scoped_refptr<VideoFrame> frame =
-      CreateFrame(PIXEL_FORMAT_YV12, size, gfx::Rect(size), size, timestamp);
+      CreateFrame(PIXEL_FORMAT_YV12, size, cobalt::math::Rect(size), size, timestamp);
   FillYUV(frame.get(), y, u, v);
   return frame;
 }
 
 // static
-scoped_refptr<VideoFrame> VideoFrame::CreateBlackFrame(const gfx::Size& size) {
+scoped_refptr<VideoFrame> VideoFrame::CreateBlackFrame(const cobalt::math::Size& size) {
   const uint8_t kBlackY = 0x00;
   const uint8_t kBlackUV = 0x80;
   const base::TimeDelta kZero;
@@ -442,13 +442,13 @@ scoped_refptr<VideoFrame> VideoFrame::CreateBlackFrame(const gfx::Size& size) {
 
 // static
 scoped_refptr<VideoFrame> VideoFrame::CreateTransparentFrame(
-    const gfx::Size& size) {
+    const cobalt::math::Size& size) {
   const uint8_t kBlackY = 0x00;
   const uint8_t kBlackUV = 0x00;
   const uint8_t kTransparentA = 0x00;
   const base::TimeDelta kZero;
   scoped_refptr<VideoFrame> frame =
-      CreateFrame(PIXEL_FORMAT_YV12A, size, gfx::Rect(size), size, kZero);
+      CreateFrame(PIXEL_FORMAT_YV12A, size, cobalt::math::Rect(size), size, kZero);
   FillYUVA(frame.get(), kBlackY, kBlackUV, kBlackUV, kTransparentA);
   return frame;
 }
@@ -495,7 +495,7 @@ size_t VideoFrame::NumPlanes(VideoPixelFormat format) {
 
 // static
 size_t VideoFrame::AllocationSize(VideoPixelFormat format,
-                                  const gfx::Size& coded_size) {
+                                  const cobalt::math::Size& coded_size) {
   size_t total = 0;
   for (size_t i = 0; i < NumPlanes(format); ++i)
     total += PlaneSize(format, i, coded_size).GetArea();
@@ -503,8 +503,8 @@ size_t VideoFrame::AllocationSize(VideoPixelFormat format,
 }
 
 // static
-gfx::Size VideoFrame::PlaneSize(VideoPixelFormat format, size_t plane,
-                                const gfx::Size& coded_size) {
+cobalt::math::Size VideoFrame::PlaneSize(VideoPixelFormat format, size_t plane,
+                                const cobalt::math::Size& coded_size) {
   DCHECK(IsValidPlane(plane, format));
 
   int width = coded_size.width();
@@ -517,10 +517,10 @@ gfx::Size VideoFrame::PlaneSize(VideoPixelFormat format, size_t plane,
     height = RoundUp(height, 2);
   }
 
-  const gfx::Size subsample = SampleSize(format, plane);
+  const cobalt::math::Size subsample = SampleSize(format, plane);
   DCHECK_EQ(width % subsample.width(), 0);
   DCHECK_EQ(height % subsample.height(), 0);
-  return gfx::Size(BytesPerElement(format, plane) * width / subsample.width(),
+  return cobalt::math::Size(BytesPerElement(format, plane) * width / subsample.width(),
                    height / subsample.height());
 }
 
@@ -638,11 +638,11 @@ const uint8_t* VideoFrame::visible_data(size_t plane) const {
   DCHECK(IsMappable());
 
   // Calculate an offset that is properly aligned for all planes.
-  const gfx::Size alignment = CommonAlignment(format_);
+  const cobalt::math::Size alignment = CommonAlignment(format_);
   const gfx::Point offset(RoundDown(visible_rect_.x(), alignment.width()),
                           RoundDown(visible_rect_.y(), alignment.height()));
 
-  const gfx::Size subsample = SampleSize(format_, plane);
+  const cobalt::math::Size subsample = SampleSize(format_, plane);
   DCHECK_EQ(offset.x() % subsample.width(), 0);
   DCHECK_EQ(offset.y() % subsample.height(), 0);
   return data(plane) +
@@ -757,8 +757,8 @@ std::string VideoFrame::AsHumanReadableString() {
 // static
 scoped_refptr<VideoFrame> VideoFrame::WrapExternalStorage(
     VideoPixelFormat format, StorageType storage_type,
-    const gfx::Size& coded_size, const gfx::Rect& visible_rect,
-    const gfx::Size& natural_size, uint8_t* data, size_t data_size,
+    const cobalt::math::Size& coded_size, const cobalt::math::Rect& visible_rect,
+    const cobalt::math::Size& natural_size, uint8_t* data, size_t data_size,
     base::TimeDelta timestamp, base::SharedMemoryHandle handle,
     size_t data_offset) {
   DCHECK(IsStorageTypeMappable(storage_type));
@@ -801,9 +801,9 @@ scoped_refptr<VideoFrame> VideoFrame::WrapExternalStorage(
 }
 
 VideoFrame::VideoFrame(VideoPixelFormat format, StorageType storage_type,
-                       const gfx::Size& coded_size,
-                       const gfx::Rect& visible_rect,
-                       const gfx::Size& natural_size, base::TimeDelta timestamp)
+                       const cobalt::math::Size& coded_size,
+                       const cobalt::math::Rect& visible_rect,
+                       const cobalt::math::Size& natural_size, base::TimeDelta timestamp)
     : format_(format),
       storage_type_(storage_type),
       coded_size_(coded_size),
@@ -838,9 +838,9 @@ VideoFrame::~VideoFrame() {
 // static
 std::string VideoFrame::ConfigToString(const VideoPixelFormat format,
                                        const StorageType storage_type,
-                                       const gfx::Size& coded_size,
-                                       const gfx::Rect& visible_rect,
-                                       const gfx::Size& natural_size) {
+                                       const cobalt::math::Size& coded_size,
+                                       const cobalt::math::Rect& visible_rect,
+                                       const cobalt::math::Size& natural_size) {
   return base::StringPrintf(
       "format:%s storage_type:%s coded_size:%s visible_rect:%s natural_size:%s",
       VideoPixelFormatToString(format).c_str(),
@@ -855,11 +855,11 @@ bool VideoFrame::IsValidPlane(size_t plane, VideoPixelFormat format) {
 }
 
 // static
-gfx::Size VideoFrame::DetermineAlignedSize(VideoPixelFormat format,
-                                           const gfx::Size& dimensions) {
-  const gfx::Size alignment = CommonAlignment(format);
-  const gfx::Size adjusted =
-      gfx::Size(RoundUp(dimensions.width(), alignment.width()),
+cobalt::math::Size VideoFrame::DetermineAlignedSize(VideoPixelFormat format,
+                                           const cobalt::math::Size& dimensions) {
+  const cobalt::math::Size alignment = CommonAlignment(format);
+  const cobalt::math::Size adjusted =
+      cobalt::math::Size(RoundUp(dimensions.width(), alignment.width()),
                 RoundUp(dimensions.height(), alignment.height()));
   DCHECK((adjusted.width() % alignment.width() == 0) &&
          (adjusted.height() % alignment.height() == 0));
@@ -879,9 +879,9 @@ void VideoFrame::set_stride(size_t plane, int stride) {
 }
 
 VideoFrame::VideoFrame(VideoPixelFormat format, StorageType storage_type,
-                       const gfx::Size& coded_size,
-                       const gfx::Rect& visible_rect,
-                       const gfx::Size& natural_size, base::TimeDelta timestamp,
+                       const cobalt::math::Size& coded_size,
+                       const cobalt::math::Rect& visible_rect,
+                       const cobalt::math::Size& natural_size, base::TimeDelta timestamp,
                        base::SharedMemoryHandle handle,
                        size_t shared_memory_offset)
     : VideoFrame(format, storage_type, coded_size, visible_rect, natural_size,
@@ -892,9 +892,9 @@ VideoFrame::VideoFrame(VideoPixelFormat format, StorageType storage_type,
 }
 
 VideoFrame::VideoFrame(VideoPixelFormat format, StorageType storage_type,
-                       const gfx::Size& coded_size,
-                       const gfx::Rect& visible_rect,
-                       const gfx::Size& natural_size,
+                       const cobalt::math::Size& coded_size,
+                       const cobalt::math::Rect& visible_rect,
+                       const cobalt::math::Size& natural_size,
                        const gpu::MailboxHolder (&mailbox_holders)[kMaxPlanes],
                        const ReleaseMailboxCB& mailbox_holder_release_cb,
                        base::TimeDelta timestamp)
@@ -906,8 +906,8 @@ VideoFrame::VideoFrame(VideoPixelFormat format, StorageType storage_type,
 
 // static
 scoped_refptr<VideoFrame> VideoFrame::CreateFrameInternal(
-    VideoPixelFormat format, const gfx::Size& coded_size,
-    const gfx::Rect& visible_rect, const gfx::Size& natural_size,
+    VideoPixelFormat format, const cobalt::math::Size& coded_size,
+    const cobalt::math::Rect& visible_rect, const cobalt::math::Size& natural_size,
     base::TimeDelta timestamp, bool zero_initialize_memory) {
   if (!IsYuvPlanar(format)) {
     NOTIMPLEMENTED();
@@ -918,7 +918,7 @@ scoped_refptr<VideoFrame> VideoFrame::CreateFrameInternal(
   // ourselves), we can pad the requested |coded_size| if necessary if the
   // request does not line up on sample boundaries. See discussion at
   // http://crrev.com/1240833003
-  const gfx::Size new_coded_size = DetermineAlignedSize(format, coded_size);
+  const cobalt::math::Size new_coded_size = DetermineAlignedSize(format, coded_size);
   const StorageType storage = STORAGE_OWNED_MEMORY;
   if (!IsValidConfig(format, storage, new_coded_size, visible_rect,
                      natural_size)) {
@@ -935,13 +935,13 @@ scoped_refptr<VideoFrame> VideoFrame::CreateFrameInternal(
 }
 
 // static
-gfx::Size VideoFrame::SampleSize(VideoPixelFormat format, size_t plane) {
+cobalt::math::Size VideoFrame::SampleSize(VideoPixelFormat format, size_t plane) {
   DCHECK(IsValidPlane(plane, format));
 
   switch (plane) {
     case kYPlane:  // and kARGBPlane:
     case kAPlane:
-      return gfx::Size(1, 1);
+      return cobalt::math::Size(1, 1);
 
     case kUPlane:  // and kUVPlane:
     case kVPlane:
@@ -950,13 +950,13 @@ gfx::Size VideoFrame::SampleSize(VideoPixelFormat format, size_t plane) {
         case PIXEL_FORMAT_YUV444P9:
         case PIXEL_FORMAT_YUV444P10:
         case PIXEL_FORMAT_YUV444P12:
-          return gfx::Size(1, 1);
+          return cobalt::math::Size(1, 1);
 
         case PIXEL_FORMAT_YV16:
         case PIXEL_FORMAT_YUV422P9:
         case PIXEL_FORMAT_YUV422P10:
         case PIXEL_FORMAT_YUV422P12:
-          return gfx::Size(2, 1);
+          return cobalt::math::Size(2, 1);
 
         case PIXEL_FORMAT_YV12:
         case PIXEL_FORMAT_I420:
@@ -967,7 +967,7 @@ gfx::Size VideoFrame::SampleSize(VideoPixelFormat format, size_t plane) {
         case PIXEL_FORMAT_YUV420P9:
         case PIXEL_FORMAT_YUV420P10:
         case PIXEL_FORMAT_YUV420P12:
-          return gfx::Size(2, 2);
+          return cobalt::math::Size(2, 2);
 
         case PIXEL_FORMAT_UNKNOWN:
         case PIXEL_FORMAT_UYVY:
@@ -983,7 +983,7 @@ gfx::Size VideoFrame::SampleSize(VideoPixelFormat format, size_t plane) {
       }
   }
   NOTREACHED();
-  return gfx::Size();
+  return cobalt::math::Size();
 }
 
 // static
@@ -1033,15 +1033,15 @@ int VideoFrame::BytesPerElement(VideoPixelFormat format, size_t plane) {
 }
 
 // static
-gfx::Size VideoFrame::CommonAlignment(VideoPixelFormat format) {
+cobalt::math::Size VideoFrame::CommonAlignment(VideoPixelFormat format) {
   int max_sample_width = 0;
   int max_sample_height = 0;
   for (size_t plane = 0; plane < NumPlanes(format); ++plane) {
-    const gfx::Size sample_size = SampleSize(format, plane);
+    const cobalt::math::Size sample_size = SampleSize(format, plane);
     max_sample_width = std::max(max_sample_width, sample_size.width());
     max_sample_height = std::max(max_sample_height, sample_size.height());
   }
-  return gfx::Size(max_sample_width, max_sample_height);
+  return cobalt::math::Size(max_sample_width, max_sample_height);
 }
 
 void VideoFrame::AllocateYUV(bool zero_initialize_memory) {

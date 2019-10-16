@@ -126,10 +126,10 @@ void Waitablebase::MessageLoopEvent::OnTimeout() {
   run_loop_->Quit();
 }
 
-static VideoDecoderConfig GetTestConfig(VideoCodec codec, gfx::Size coded_size,
+static VideoDecoderConfig GetTestConfig(VideoCodec codec, cobalt::math::Size coded_size,
                                         bool is_encrypted) {
-  gfx::Rect visible_rect(coded_size.width(), coded_size.height());
-  gfx::Size natural_size = coded_size;
+  cobalt::math::Rect visible_rect(coded_size.width(), coded_size.height());
+  cobalt::math::Size natural_size = coded_size;
 
   return VideoDecoderConfig(
       codec, VIDEO_CODEC_PROFILE_UNKNOWN, PIXEL_FORMAT_YV12,
@@ -138,8 +138,8 @@ static VideoDecoderConfig GetTestConfig(VideoCodec codec, gfx::Size coded_size,
       is_encrypted ? AesCtrEncryptionScheme() : Unencrypted());
 }
 
-static const gfx::Size kNormalSize(320, 240);
-static const gfx::Size kLargeSize(640, 480);
+static const cobalt::math::Size kNormalSize(320, 240);
+static const cobalt::math::Size kLargeSize(640, 480);
 
 // static
 VideoDecoderConfig TestVideoConfig::Invalid() {
@@ -167,10 +167,10 @@ VideoDecoderConfig TestVideoConfig::LargeEncrypted() {
 }
 
 // static
-gfx::Size TestVideoConfig::NormalCodedSize() { return kNormalSize; }
+cobalt::math::Size TestVideoConfig::NormalCodedSize() { return kNormalSize; }
 
 // static
-gfx::Size TestVideoConfig::LargeCodedSize() { return kLargeSize; }
+cobalt::math::Size TestVideoConfig::LargeCodedSize() { return kLargeSize; }
 
 // static
 AudioParameters TestAudioParameters::Normal() {

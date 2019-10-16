@@ -26,29 +26,23 @@ namespace media {
 
 DrmSystem::Session::Session(
     DrmSystem* drm_system
-#if SB_HAS(DRM_KEY_STATUSES)
     ,
     SessionUpdateKeyStatusesCallback update_key_statuses_callback
 #if SB_HAS(DRM_SESSION_CLOSED)
     ,
     SessionClosedCallback session_closed_callback
 #endif  // SB_HAS(DRM_SESSION_CLOSED)
-#endif  // SB_HAS(DRM_KEY_STATUSES)
     )
     : drm_system_(drm_system),
-#if SB_HAS(DRM_KEY_STATUSES)
       update_key_statuses_callback_(update_key_statuses_callback),
 #if SB_HAS(DRM_SESSION_CLOSED)
       session_closed_callback_(session_closed_callback),
 #endif  // SB_HAS(DRM_SESSION_CLOSED)
-#endif  // SB_HAS(DRM_KEY_STATUSES)
       closed_(false) {
-#if SB_HAS(DRM_KEY_STATUSES)
   DCHECK(!update_key_statuses_callback_.is_null());
 #if SB_HAS(DRM_SESSION_CLOSED)
   DCHECK(!session_closed_callback_.is_null());
 #endif  // SB_HAS(DRM_SESSION_CLOSED)
-#endif  // SB_HAS(DRM_KEY_STATUSES)
 }
 
 DrmSystem::Session::~Session() {
@@ -94,10 +88,8 @@ DrmSystem::DrmSystem(const char* key_system)
     : wrapped_drm_system_(SbDrmCreateSystem(key_system, this,
                                             OnSessionUpdateRequestGeneratedFunc,
                                             OnSessionUpdatedFunc
-#if SB_HAS(DRM_KEY_STATUSES)
                                             ,
                                             OnSessionKeyStatusesChangedFunc
-#endif  // SB_HAS(DRM_KEY_STATUSES)
 #if SB_API_VERSION >= 10
                                             ,
                                             OnServerCertificateUpdatedFunc
@@ -107,35 +99,32 @@ DrmSystem::DrmSystem(const char* key_system)
                                             OnSessionClosedFunc
 #endif                                           // SB_HAS(DRM_SESSION_CLOSED)
                                             )),  // NOLINT(whitespace/parens)
-      //message_loop_(base::MessageLoop::current()->task_runner()),
-      message_loop_(),
+      message_loop_(base::MessageLoop::current()->task_runner()),
       ALLOW_THIS_IN_INITIALIZER_LIST(weak_ptr_factory_(this)),
       weak_this_(weak_ptr_factory_.GetWeakPtr()) {
-  DCHECK_NE(kSbDrmSystemInvalid, wrapped_drm_system_);
+  if (!is_valid()) {
+    SB_LOG(ERROR) << "Failed to initialize the underlying wrapped DrmSystem.";
+  }
 }
 
 DrmSystem::~DrmSystem() { SbDrmDestroySystem(wrapped_drm_system_); }
 
 std::unique_ptr<DrmSystem::Session> DrmSystem::CreateSession(
-#if SB_HAS(DRM_KEY_STATUSES)
     SessionUpdateKeyStatusesCallback session_update_key_statuses_callback
 #if SB_HAS(DRM_SESSION_CLOSED)
     ,
     SessionClosedCallback session_closed_callback
 #endif   // SB_HAS(DRM_SESSION_CLOSED)
-#endif   // SB_HAS(DRM_KEY_STATUSES)
     ) {  // NOLINT(whitespace/parens)
   DCHECK(message_loop_->BelongsToCurrentThread());
   return std::unique_ptr<DrmSystem::Session>(new Session(
       this
-#if SB_HAS(DRM_KEY_STATUSES)
       ,
       session_update_key_statuses_callback
 #if SB_HAS(DRM_SESSION_CLOSED)
       ,
       session_closed_callback
 #endif     // SB_HAS(DRM_SESSION_CLOSED)
-#endif     // SB_HAS(DRM_KEY_STATUSES)
       ));  // NOLINT(whitespace/parens)
 }
 
@@ -305,7 +294,6 @@ void DrmSystem::OnSessionUpdated(int ticket, SbDrmStatus status,
   ticket_to_session_update_map_.erase(session_update_iterator);
 }
 
-#if SB_HAS(DRM_KEY_STATUSES)
 void DrmSystem::OnSessionKeyStatusChanged(
     const std::string& session_id, const std::vector<std::string>& key_ids,
     const std::vector<SbDrmKeyStatus>& key_statuses) {
@@ -320,7 +308,6 @@ void DrmSystem::OnSessionKeyStatusChanged(
 
   session->update_key_statuses_callback().Run(key_ids, key_statuses);
 }
-#endif  // SB_HAS(DRM_KEY_STATUSES)
 
 #if SB_HAS(DRM_SESSION_CLOSED)
 void DrmSystem::OnSessionClosed(const std::string& session_id) {
@@ -419,7 +406,6 @@ void DrmSystem::OnSessionUpdatedFunc(SbDrmSystem wrapped_drm_system,
                  status, error_message ? std::string(error_message) : ""));
 }
 
-#if SB_HAS(DRM_KEY_STATUSES)
 // static
 void DrmSystem::OnSessionKeyStatusesChangedFunc(
     SbDrmSystem wrapped_drm_system, void* context, const void* session_id,
@@ -451,7 +437,6 @@ void DrmSystem::OnSessionKeyStatusesChangedFunc(
       base::Bind(&DrmSystem::OnSessionKeyStatusChanged, drm_system->weak_this_,
                  session_id_copy, key_ids_copy, key_statuses_copy));
 }
-#endif  // SB_HAS(DRM_KEY_STATUSES)
 
 #if SB_API_VERSION >= 10
 // static

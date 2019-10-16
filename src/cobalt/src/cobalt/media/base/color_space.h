@@ -26,7 +26,7 @@ namespace gfx {
 // Used to represet a color space for the purpose of color conversion.
 // This is designed to be safe and compact enough to send over IPC
 // between any processes.
-class CbColorSpace {
+class ColorSpace {
  public:
   typedef float CustomPrimaryMatrix[12];
 
@@ -138,27 +138,27 @@ class CbColorSpace {
     kRangeIdLast = kRangeIdDerived
   };
 
-  CbColorSpace();
-  CbColorSpace(PrimaryID primaries, TransferID transfer, MatrixID matrix,
+  ColorSpace();
+  ColorSpace(PrimaryID primaries, TransferID transfer, MatrixID matrix,
              RangeID full_range);
-  CbColorSpace(const CbColorSpace& other);
-  CbColorSpace(int primaries, int transfer, int matrix, RangeID full_range);
-  ~CbColorSpace();
+  ColorSpace(const ColorSpace& other);
+  ColorSpace(int primaries, int transfer, int matrix, RangeID full_range);
+  ~ColorSpace();
 
   static PrimaryID PrimaryIDFromInt(int primary_id);
   static TransferID TransferIDFromInt(int transfer_id);
   static MatrixID MatrixIDFromInt(int matrix_id);
 
-  static CbColorSpace CreateXYZD50();
+  static ColorSpace CreateXYZD50();
 
   // TODO: Remove these, and replace with more generic constructors.
-  static CbColorSpace CreateJpeg();
-  static CbColorSpace CreateREC601();
-  static CbColorSpace CreateREC709();
+  static ColorSpace CreateJpeg();
+  static ColorSpace CreateREC601();
+  static ColorSpace CreateREC709();
 
-  bool operator==(const CbColorSpace& other) const;
-  bool operator!=(const CbColorSpace& other) const;
-  bool operator<(const CbColorSpace& other) const;
+  bool operator==(const ColorSpace& other) const;
+  bool operator!=(const ColorSpace& other) const;
+  bool operator<(const ColorSpace& other) const;
 
   PrimaryID primaries() const { return primaries_; }
   TransferID transfer() const { return transfer_; }

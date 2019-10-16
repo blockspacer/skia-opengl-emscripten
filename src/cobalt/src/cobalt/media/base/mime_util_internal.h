@@ -11,8 +11,6 @@
 
 #include "base/basictypes.h"
 #include "base/containers/hash_tables.h"
-#include <map>
-#include <set>
 #include "cobalt/media/base/media_export.h"
 #include "cobalt/media/base/mime_util.h"
 #include "cobalt/media/base/video_codecs.h"
@@ -85,7 +83,7 @@ class MEDIA_EXPORT MimeUtil {
       const PlatformInfo& platform_info);
 
  private:
-  typedef std::set<int> CodecSet;
+  typedef base::hash_set<int> CodecSet;
   typedef std::map<std::string, CodecSet> MediaFormatMappings;
   struct CodecEntry {
     CodecEntry() : codec(INVALID_CODEC), is_ambiguous(true) {}
