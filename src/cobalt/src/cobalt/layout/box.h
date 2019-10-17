@@ -617,7 +617,9 @@ class Box : public base::RefCounted<Box> {
   void InvalidateParent() { parent_ = NULL; }
 
   // Returns true if the box is positioned under the passed in coordinate.
-  bool IsUnderCoordinate(const Vector2dLayoutUnit& coordinate) const;
+  bool IsUnderCoordinate(const Vector2dLayoutUnit& original_coordinate,
+    const Vector2dLayoutUnit& prev_coordinate,
+    const Vector2dLayoutUnit& coordinate) const;
 
   // Returns a data structure that can be used by Box::IsRenderedLater().
   RenderSequence GetRenderSequence() const;

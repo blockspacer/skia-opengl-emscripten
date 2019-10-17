@@ -1144,11 +1144,35 @@ int Box::GetOrder() const {
       ->value();
 }
 
-bool Box::IsUnderCoordinate(const Vector2dLayoutUnit& coordinate) const {
+bool Box::IsUnderCoordinate(const Vector2dLayoutUnit& original_coordinate,
+    const Vector2dLayoutUnit& prev_coordinate,
+    const Vector2dLayoutUnit& coordinate) const {
   RectLayoutUnit rect = GetBorderBoxFromRoot(true /*transform_forms_root*/);
-  bool res =
-      coordinate.x() >= rect.x() && coordinate.x() <= rect.x() + rect.width() &&
-      coordinate.y() >= rect.y() && coordinate.y() <= rect.y() + rect.height();
+  const scoped_refptr<cssom::PropertyValue>& position_property =
+      computed_style()->position();
+  /*const bool is_positioned =
+      position_property != cssom::KeywordValue::GetStatic();*/
+  bool res = false;
+  res = coordinate.x() >= rect.x() && coordinate.x() <= rect.x() + rect.width() &&
+        coordinate.y() >= rect.y() && coordinate.y() <= rect.y() + rect.height();
+
+#if 0
+  if(position_property == cssom::KeywordValue::GetFixed()) {
+    res = original_coordinate.x() >= rect.x() && original_coordinate.x() <= rect.x() + rect.width() &&
+          original_coordinate.y() >= rect.y() && original_coordinate.y() <= rect.y() + rect.height();
+  }
+  if(position_property == cssom::KeywordValue::GetStatic()
+     ||
+     position_property == cssom::KeywordValue::GetAbsolute()
+     ) {
+    res = prev_coordinate.x() >= rect.x() && prev_coordinate.x() <= rect.x() + rect.width() &&
+          prev_coordinate.y() >= rect.y() && prev_coordinate.y() <= rect.y() + rect.height();
+  } else {
+    res = coordinate.x() >= rect.x() && coordinate.x() <= rect.x() + rect.width() &&
+          coordinate.y() >= rect.y() && coordinate.y() <= rect.y() + rect.height();
+  }
+#endif
+
   return res;
 }
 

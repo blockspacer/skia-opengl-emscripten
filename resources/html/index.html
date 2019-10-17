@@ -77,14 +77,20 @@
           font-size: 50px;
         }
       }
-      .scroll_container {
+      .body_scroll_container {
         height: 100%;
         width: 100%;
         border: 1px solid black;
         overflow: scroll;
       }
 
-      .scroll_container > p {
+      .nested_scroll_container {
+        height: 100px;
+        width: 100px;
+        border: 1px solid black;
+        overflow: scroll;
+      }
+      .nested_scroll_container > p {
           height: 80px;
       }
       .scroll_element_1 {
@@ -101,8 +107,12 @@
       }
     </style>
   </head>
-  <body class="exanim" id="scrollable_body">
-<div class="scroll_container"
+  <body class="exanim">
+  <div class="nested_scroll_container"
+       I_on-wheel-scroll_I="scrollable_body">
+    scroll scrollable_body
+  </div>
+<div class="body_scroll_container" id="scrollable_body"
      I_on-wheel-scroll_I="">
 
    <div class="dropdownbtn">
@@ -133,6 +143,22 @@
     tabindex="0">
   text input2_controller
   </sk_input>
+
+<div class="nested_scroll_container"
+     I_on-wheel-scroll_I="">
+  nested scroll. TODO: stop event propogation and use bubbling here!
+  <p class="scroll_element_1">A</p>
+  <p>B</p>
+  <p class="scroll_element_2">C</p>
+  <p class="scroll_element_3">D</p>
+  <p>E</p>
+  <div class="nested_scroll_container"
+       I_on-wheel-scroll_I="scrollable_body">
+    scroll other
+  </div>
+  <p>F</p>
+</div>
+
 
 <div
  class="bn ripple-button"
@@ -836,14 +862,6 @@
   <div class="right">
   </div>
   -->
-
-
-  <p class="scroll_element_1">A</p>
-  <p>B</p>
-  <p class="scroll_element_2">C</p>
-  <p class="scroll_element_3">D</p>
-  <p>E</p>
-  <p>F</p>
 </div>
   </body>
 </html>

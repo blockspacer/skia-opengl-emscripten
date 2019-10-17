@@ -2614,7 +2614,7 @@ static void sendBrowserInputEvent(std::unique_ptr<SbEvent> event) {
                         ->AsHTMLElement();
                 div_element_3->SetAttribute("style", "height: 120px;");
                 div_element_3->AsHTMLElement()->
-                  style()->set_width("210px", nullptr);
+                  style()->set_width("210px", /*todo*/nullptr);
 
                 /*
                  // TODO kAnimationProperty

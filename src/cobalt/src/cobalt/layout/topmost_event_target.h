@@ -42,9 +42,12 @@ class TopmostEventTarget {
       const math::Vector2dF& coordinate);
 
   void ConsiderElement(dom::Element* element,
+                       const math::Vector2dF& original_coordinate,
                        const math::Vector2dF& coordinate);
   void ConsiderBoxes(const scoped_refptr<dom::HTMLElement>& html_element,
                      LayoutBoxes* layout_boxes,
+                     const math::Vector2dF& original_coordinate,
+                     const math::Vector2dF& prev_coordinate,
                      const math::Vector2dF& coordinate);
 
   base::WeakPtr<dom::HTMLElement> previous_html_element_weak_;

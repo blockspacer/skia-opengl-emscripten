@@ -56,7 +56,7 @@ scoped_refptr<dom::HTMLElement> TopmostEventTarget::FindTopmostEventTarget(
   document->DoSynchronousLayout();
 
   html_element_ = document->html();
-  ConsiderElement(html_element_.get(), coordinate);
+  ConsiderElement(html_element_.get(), coordinate, coordinate);
   box_ = NULL;
   render_sequence_.clear();
   document->SetIndicatedElement(html_element_.get());
@@ -86,9 +86,53 @@ LayoutBoxes* GetLayoutBoxesIfNotEmpty(dom::Element* element) {
 
 }  // namespace
 void TopmostEventTarget::ConsiderElement(dom::Element* element,
+                                         const math::Vector2dF& original_coordinate,
                                          const math::Vector2dF& coordinate) {
   if (!element) return;
-  math::Vector2dF element_coordinate(coordinate);
+  math::Vector2dF original_element_coordinate(
+    original_coordinate.x(),
+    original_coordinate.y());
+  math::Vector2dF element_prev_scroll_coordinate(coordinate);
+  math::Vector2dF element_scroll_coordinate(coordinate);
+
+  element_scroll_coordinate.set_x(coordinate.x()
+  + element->scroll_left());
+  element_scroll_coordinate.set_y(coordinate.y()
+  + element->scroll_top());
+
+  /*element_scroll_coordinate.set_x(element_scroll_coordinate.x()
+  + element->scroll_left());
+  element_scroll_coordinate.set_y(element_scroll_coordinate.y()
+  + element->scroll_top());*/
+
+  //  coordinate.x() + element->scroll_left(),
+  //  coordinate.y() + element->scroll_top());
+
+  DCHECK(element->AsHTMLElement()); /// \ todo
+
+#if 0
+    /// \ todo
+  if(element->AsHTMLElement()->style()->position(/*todo*/nullptr)
+      == cssom::kStaticKeywordName){
+   element_scroll_coordinate.set_x(coordinate.x());
+    //+ element->scroll_left());
+   element_scroll_coordinate.set_y(coordinate.y());
+    //+ element->scroll_top());
+  } else if(element->AsHTMLElement()->style()->position(/*todo*/nullptr)
+      == cssom::kAbsoluteKeywordName) {
+   element_scroll_coordinate.set_x(coordinate.x());
+    //+ element->scroll_left());
+   element_scroll_coordinate.set_y(coordinate.y());
+    //+ element->scroll_top());
+  } else if(element->AsHTMLElement()->style()->position(/*todo*/nullptr)
+      == cssom::kFixedKeywordName) {
+   element_scroll_coordinate.set_x(original_coordinate.x());
+    //+ element->scroll_left());
+   element_scroll_coordinate.set_y(original_coordinate.y());
+    //+ element->scroll_top());
+  }
+#endif
+
   LayoutBoxes* layout_boxes = GetLayoutBoxesIfNotEmpty(element);
   if (layout_boxes) {
     const Box* box = layout_boxes->boxes().front().get();
@@ -96,34 +140,82 @@ void TopmostEventTarget::ConsiderElement(dom::Element* element,
       // Early out if the transform cannot be applied. This can occur if the
       // transform matrix is not invertible.
       if (!box->ApplyTransformActionToCoordinate(Box::kEnterTransform,
-                                                 &element_coordinate)) {
+                                                 &original_element_coordinate)) {
+        return;
+      }
+      if (!box->ApplyTransformActionToCoordinate(Box::kEnterTransform,
+                                                 &element_scroll_coordinate)) {
+        return;
+      }
+      if (!box->ApplyTransformActionToCoordinate(Box::kEnterTransform,
+                                                 &element_prev_scroll_coordinate)) {
         return;
       }
     }
 
-    scoped_refptr<dom::HTMLElement> html_element = element->AsHTMLElement().get();
-    if (html_element && html_element->CanbeDesignatedByPointerIfDisplayed()) {
-      ConsiderBoxes(html_element, layout_boxes, element_coordinate);
+    if(element->AsHTMLElement()->style()->position(/*todo*/nullptr)
+        == cssom::kFixedKeywordName) {
+      scoped_refptr<dom::HTMLElement> html_element = element->AsHTMLElement().get();
+      if (html_element && html_element->CanbeDesignatedByPointerIfDisplayed()) {
+        ConsiderBoxes(html_element, layout_boxes,
+          original_element_coordinate, element_prev_scroll_coordinate, element_prev_scroll_coordinate);
+      }
+    } else {
+      scoped_refptr<dom::HTMLElement> html_element = element->AsHTMLElement().get();
+      if (html_element && html_element->CanbeDesignatedByPointerIfDisplayed()) {
+        if(element->AsHTMLElement()->style()->position(/*todo*/nullptr)
+            == cssom::kFixedKeywordName) {
+          ConsiderBoxes(html_element, layout_boxes,
+            original_element_coordinate, element_prev_scroll_coordinate, element_prev_scroll_coordinate);
+        } else {
+          ConsiderBoxes(html_element, layout_boxes,
+            original_element_coordinate, element_prev_scroll_coordinate, element_scroll_coordinate);
+        }
+      }
     }
   }
 
-  for (dom::Element* child_element = element->first_element_child();
-       child_element; child_element = child_element->next_element_sibling()) {
-    ConsiderElement(child_element, element_coordinate);
+  if(element->AsHTMLElement()->style()->position(/*todo*/nullptr)
+      == cssom::kFixedKeywordName) {
+    for (dom::Element* child_element = element->first_element_child();
+         child_element; child_element = child_element->next_element_sibling()) {
+      ConsiderElement(child_element,
+        original_element_coordinate, original_element_coordinate);
+    }
+  } else {
+    for (dom::Element* child_element = element->first_element_child();
+         child_element; child_element = child_element->next_element_sibling()) {
+        if(element->AsHTMLElement()->style()->position(/*todo*/nullptr)
+            == cssom::kFixedKeywordName) {
+          ConsiderElement(child_element,
+            original_element_coordinate, original_element_coordinate);
+        } else {
+          ConsiderElement(child_element,
+            original_element_coordinate, element_scroll_coordinate);
+        }
+    }
   }
 }
 
 void TopmostEventTarget::ConsiderBoxes(
     const scoped_refptr<dom::HTMLElement>& html_element,
-    LayoutBoxes* layout_boxes, const math::Vector2dF& coordinate) {
+    LayoutBoxes* layout_boxes,
+    const math::Vector2dF& original_coordinate,
+    const math::Vector2dF& prev_coordinate,
+    const math::Vector2dF& coordinate) {
   const Boxes& boxes = layout_boxes->boxes();
+  Vector2dLayoutUnit original_layout_coordinate(LayoutUnit(original_coordinate.x()),
+                                       LayoutUnit(original_coordinate.y()));
+  Vector2dLayoutUnit prev_layout_coordinate(LayoutUnit(prev_coordinate.x()),
+                                       LayoutUnit(prev_coordinate.y()));
   Vector2dLayoutUnit layout_coordinate(LayoutUnit(coordinate.x()),
                                        LayoutUnit(coordinate.y()));
   for (Boxes::const_iterator box_iterator = boxes.begin();
        box_iterator != boxes.end(); ++box_iterator) {
     Box* box = (*box_iterator).get();
     do {
-      if (box->IsUnderCoordinate(layout_coordinate)) {
+      if (box->IsUnderCoordinate(
+            original_layout_coordinate, prev_layout_coordinate, layout_coordinate)) {
         Box::RenderSequence render_sequence = box->GetRenderSequence();
         if (Box::IsRenderedLater(render_sequence, render_sequence_)) {
           html_element_ = html_element;
@@ -262,6 +354,7 @@ void SendCompatibilityMappingMouseEvent(
 }
 
 void InitializePointerEventInitFromEvent(
+    base::WeakPtr<dom::HTMLElement> previous_html_element_weak_,
     const dom::MouseEvent* const mouse_event,
     const dom::PointerEvent* pointer_event, dom::PointerEventInit* event_init) {
   // For EventInit
@@ -280,10 +373,29 @@ void InitializePointerEventInitFromEvent(
   event_init->set_meta_key(mouse_event->meta_key());
 
   // For MouseEventInit
-  event_init->set_screen_x(mouse_event->screen_x());
-  event_init->set_screen_y(mouse_event->screen_y());
-  event_init->set_client_x(mouse_event->screen_x());
-  event_init->set_client_y(mouse_event->screen_y());
+
+  scoped_refptr<dom::HTMLElement> previous_html_element(
+      previous_html_element_weak_.get());
+  if(previous_html_element) {
+    event_init->set_screen_x(mouse_event->screen_x()
+    );
+      //+ previous_html_element->scroll_left());
+    event_init->set_screen_y(mouse_event->screen_y()
+    );
+      //+ previous_html_element->scroll_top());
+    event_init->set_client_x(mouse_event->screen_x()
+    );
+      //+ previous_html_element->scroll_left());
+    event_init->set_client_y(mouse_event->screen_y()
+    );
+      //+ previous_html_element->scroll_top());
+  } else {
+    event_init->set_screen_x(mouse_event->screen_x());
+    event_init->set_screen_y(mouse_event->screen_y());
+    event_init->set_client_x(mouse_event->screen_x());
+    event_init->set_client_y(mouse_event->screen_y());
+  }
+
   event_init->set_button(mouse_event->button());
   event_init->set_buttons(mouse_event->buttons());
   event_init->set_related_target(mouse_event->related_target());
@@ -323,7 +435,8 @@ void TopmostEventTarget::MaybeSendPointerEvents(
 
   // Store the data for the status change and pointer capture event(s).
   dom::PointerEventInit event_init;
-  InitializePointerEventInitFromEvent(mouse_event, pointer_event, &event_init);
+  InitializePointerEventInitFromEvent(previous_html_element_weak_,
+    mouse_event, pointer_event, &event_init);
   const scoped_refptr<dom::Window>& view = event_init.view();
   if (!view) {
     return;
@@ -350,18 +463,34 @@ void TopmostEventTarget::MaybeSendPointerEvents(
     } else {
       pointer_state->SetActive(pointer_event->pointer_id());
     }
-    target_override_element = pointer_state->GetPointerCaptureOverrideElement(
-        pointer_event->pointer_id(), &event_init);
+    target_override_element
+      = pointer_state->GetPointerCaptureOverrideElement(
+          pointer_event->pointer_id(), &event_init);
   }
 
   scoped_refptr<dom::HTMLElement> target_element;
   if (target_override_element) {
     target_element = target_override_element;
   } else {
+    scoped_refptr<dom::HTMLElement> previous_html_element(
+      previous_html_element_weak_.get());
     // Do a hit test if there is no target override element.
-    math::Vector2dF coordinate(static_cast<float>(event_init.client_x()),
-                               static_cast<float>(event_init.client_y()));
-    target_element = FindTopmostEventTarget(view->document(), coordinate);
+    if(previous_html_element) {
+      if(previous_html_element->scroll_top()) {
+        printf("previous_html_element scroll_left %f %f \n",
+          previous_html_element->scroll_left(),
+          previous_html_element->scroll_top());
+      }
+      math::Vector2dF coordinate(static_cast<float>(event_init.client_x()),
+                                  //+ previous_html_element->scroll_left(),
+                                 static_cast<float>(event_init.client_y()));
+                                  //+ previous_html_element->scroll_top());
+      target_element = FindTopmostEventTarget(view->document(), coordinate);
+    } else {
+      math::Vector2dF coordinate(static_cast<float>(event_init.client_x()),
+                                 static_cast<float>(event_init.client_y()));
+      target_element = FindTopmostEventTarget(view->document(), coordinate);
+    }
   }
 
   if (target_element) {

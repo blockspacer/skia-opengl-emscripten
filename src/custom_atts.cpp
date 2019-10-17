@@ -206,15 +206,15 @@ static void addRippleAnimationOnce(
                             elementHTML->GetBoundingClientRect()->height());
   ripple_effect->style()->set_width(
       std::to_string(maxSize) + "px",
-      nullptr);
+      /*todo*/nullptr);
   ripple_effect->style()->set_height(
       std::to_string(maxSize) + "px",
-      nullptr);
+      /*todo*/nullptr);
 
   ripple_effect->style()->set_left(
-    std::to_string(elementLocalPos.x()) + "px", nullptr);
+    std::to_string(elementLocalPos.x()) + "px", /*todo*/nullptr);
   ripple_effect->style()->set_top(
-    std::to_string(elementLocalPos.y()) + "px", nullptr);
+    std::to_string(elementLocalPos.y()) + "px", /*todo*/nullptr);
 
   /// \note Always clear the matching state when an attribute changes.
   /// Any attribute changing can potentially impact the matching rules.
@@ -398,16 +398,16 @@ static void addRippleAnimationOnce(
   ripple_effect->ClearRuleMatchingState();
 
   /*/// \todo ugly HACK to repaint element, works with event propagation
-  elementHTML->style()->set_visibility("visible", nullptr); // <<<
+  elementHTML->style()->set_visibility("visible", /*todo*/nullptr); // <<<
 
   /// \todo ugly HACK to repaint element, works with event propagation
-  ripple_layer->style()->set_visibility("visible", nullptr); // <<<
+  ripple_layer->style()->set_visibility("visible", /*todo*/nullptr); // <<<
 
   /// \todo ugly HACK to repaint element, works with event propagation
-  ripple_effect->style()->set_visibility("visible", nullptr); // <<<*/
+  ripple_effect->style()->set_visibility("visible", /*todo*/nullptr); // <<<*/
 
-  //ripple_effect->style()->set_width("100px", nullptr); // <<<
-  //ripple_effect->style()->set_height("100px", nullptr); // <<<
+  //ripple_effect->style()->set_width("100px", /*todo*/nullptr); // <<<
+  //ripple_effect->style()->set_height("100px", /*todo*/nullptr); // <<<
 
   ripple_effect->SetAttribute("display", "none");
   ripple_layer->SetAttribute("display", "none");

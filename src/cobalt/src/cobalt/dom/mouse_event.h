@@ -93,7 +93,9 @@ class MouseEvent : public UIEventWithKeyState {
  protected:
   ~MouseEvent() override {}
 
- private:
+ /// \todo
+ //private:
+ public:
   float screen_x_;
   float screen_y_;
   float client_x_;
