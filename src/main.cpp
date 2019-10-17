@@ -759,6 +759,9 @@ class CobaltTester {
   void OnWheelEventProduced(base::Token type, const dom::WheelEventInit &event);
   void InjectInputEvent(scoped_refptr<cobalt::dom::Element> element, const scoped_refptr<cobalt::dom::Event> &event);
 
+  void OnOnScreenKeyboardInputEventProduced(
+      base::Token type, const dom::InputEventInit& event);
+
   public:
   //private:
     // Keeps track of all messages containing render tree submissions that will
@@ -1405,7 +1408,6 @@ void CobaltTester::OnLoad() {
   // see https://github.com/blockspacer/cobalt-clone-28052019/blob/master/src/cobalt/browser/browser_module.cc#L625
 }
 
-
 #if SB_HAS(ON_SCREEN_KEYBOARD)
 void CobaltTester::OnOnScreenKeyboardInputEventProduced(
     base::Token type, const dom::InputEventInit& event) {
@@ -1413,27 +1415,9 @@ void CobaltTester::OnOnScreenKeyboardInputEventProduced(
   DCHECK_EQ(base::MessageLoopCurrent::Get().task_runner(), g_cobaltTester->self_task_runner_);
   DCHECK(g_cobaltTester->thread_checker_.CalledOnValidThread());
 
-  /*TRACE_EVENT0("cobalt::browser",
-               "CobaltTester::OnOnScreenKeyboardInputEventProduced()");
-  if (base::MessageLoop::current() != self_message_loop_) {
-    self_message_loop_->task_runner()->PostTask(
-        FROM_HERE,
-        base::Bind(&CobaltTester::OnOnScreenKeyboardInputEventProduced,
-                   weak_this_, type, event));
-    return;
-  }
-
-#if defined(ENABLE_DEBUGGER)
-  // If the debug console is fully visible, it gets the next chance to handle
-  // input events.
-  if (debug_console_->GetMode() >= debug::console::DebugHub::kDebugConsoleOn) {
-    if (!debug_console_->InjectOnScreenKeyboardInputEvent(type, event)) {
-      return;
-    }
-  }
-#endif  // defined(ENABLE_DEBUGGER)
-
-  InjectOnScreenKeyboardInputEventToMainWebModule(type, event);*/
+  /// \todo
+  NOTIMPLEMENTED();
+  DCHECK(false);
 }
 #endif  // SB_HAS(ON_SCREEN_KEYBOARD)
 

@@ -73,6 +73,8 @@ list(APPEND starboard_platform_SOURCES
   ${COBALT_PORT_DIR}/starboard/shared/stub/thread_get_id.cc
   ${COBALT_PORT_DIR}/starboard/shared/stub/thread_get_local_value.cc
   ${COBALT_PORT_DIR}/starboard/shared/stub/thread_get_name.cc
+  ${COBALT_PORT_DIR}/starboard/shared/stub/thread_set_name.cc
+  ${COBALT_PORT_DIR}/starboard/shared/stub/socket_get_interface_address.cc
   ${COBALT_PORT_DIR}/starboard/shared/nouser/user_get_current.cc
   ${COBALT_PORT_DIR}/starboard/shared/nouser/user_get_property.cc
   ${COBALT_PORT_DIR}/starboard/shared/nouser/user_get_signed_in.cc
@@ -146,7 +148,7 @@ list(APPEND starboard_platform_SOURCES
   ${COBALT_PORT_DIR}/starboard/shared/pthread/thread_sampler_internal.cc
   ${COBALT_PORT_DIR}/starboard/shared/pthread/thread_sampler_internal.h
   ${COBALT_PORT_DIR}/starboard/shared/pthread/thread_sampler_is_supported.cc
-  ${COBALT_PORT_DIR}/starboard/shared/pthread/thread_sampler_is_supported.h
+  #${COBALT_PORT_DIR}/starboard/shared/pthread/thread_sampler_is_supported.h
   ${COBALT_PORT_DIR}/starboard/shared/pthread/thread_sampler_thaw.cc
   ${COBALT_PORT_DIR}/starboard/shared/pthread/thread_set_local_value.cc
   ${COBALT_PORT_DIR}/starboard/shared/pthread/thread_yield.cc
@@ -175,24 +177,24 @@ list(APPEND starboard_platform_SOURCES
   ${COBALT_PORT_DIR}/starboard/shared/stub/media_get_audio_buffer_budget.cc
   ${COBALT_PORT_DIR}/starboard/shared/stub/media_get_audio_configuration.cc
   ${COBALT_PORT_DIR}/starboard/shared/stub/media_get_audio_output_count.cc
-  #${COBALT_PORT_DIR}/starboard/shared/stub/media_get_buffer_alignment.cc
-  #${COBALT_PORT_DIR}/starboard/shared/stub/media_get_buffer_allocation_unit.cc
-  #${COBALT_PORT_DIR}/starboard/shared/stub/media_get_buffer_garbage_collection_duration_threshold.cc
-  #${COBALT_PORT_DIR}/starboard/shared/stub/media_get_buffer_padding.cc
-  #${COBALT_PORT_DIR}/starboard/shared/stub/media_get_buffer_storage_type.cc
-  #${COBALT_PORT_DIR}/starboard/shared/stub/media_get_initial_buffer_capacity.cc
-  #${COBALT_PORT_DIR}/starboard/shared/stub/media_get_max_buffer_capacity.cc
-  #${COBALT_PORT_DIR}/starboard/shared/stub/media_get_progressive_buffer_budget.cc
-  #${COBALT_PORT_DIR}/starboard/shared/stub/media_get_video_buffer_budget.cc
-  #${COBALT_PORT_DIR}/starboard/shared/stub/media_is_audio_supported.cc
-  #${COBALT_PORT_DIR}/starboard/shared/stub/media_is_buffer_pool_allocate_on_demand.cc
-  #${COBALT_PORT_DIR}/starboard/shared/stub/media_is_buffer_using_memory_pool.cc
-  #${COBALT_PORT_DIR}/starboard/shared/stub/media_is_output_protected.cc
-  #${COBALT_PORT_DIR}/starboard/shared/stub/media_is_supported.cc
-  #${COBALT_PORT_DIR}/starboard/shared/stub/media_is_transfer_characteristics_supported.cc
+  ${COBALT_PORT_DIR}/starboard/shared/stub/media_get_buffer_alignment.cc
+  ${COBALT_PORT_DIR}/starboard/shared/stub/media_get_buffer_allocation_unit.cc
+  ${COBALT_PORT_DIR}/starboard/shared/stub/media_get_buffer_garbage_collection_duration_threshold.cc
+  ${COBALT_PORT_DIR}/starboard/shared/stub/media_get_buffer_padding.cc
+  ${COBALT_PORT_DIR}/starboard/shared/stub/media_get_buffer_storage_type.cc
+  ${COBALT_PORT_DIR}/starboard/shared/stub/media_get_initial_buffer_capacity.cc
+  ${COBALT_PORT_DIR}/starboard/shared/stub/media_get_max_buffer_capacity.cc
+  ${COBALT_PORT_DIR}/starboard/shared/stub/media_get_progressive_buffer_budget.cc
+  ${COBALT_PORT_DIR}/starboard/shared/stub/media_get_video_buffer_budget.cc
+  ${COBALT_PORT_DIR}/starboard/shared/stub/media_is_audio_supported.cc
+  ${COBALT_PORT_DIR}/starboard/shared/stub/media_is_buffer_pool_allocate_on_demand.cc
+  ${COBALT_PORT_DIR}/starboard/shared/stub/media_is_output_protected.cc
+  ${COBALT_PORT_DIR}/starboard/shared/stub/media_is_supported.cc
+  ${COBALT_PORT_DIR}/starboard/shared/stub/media_is_transfer_characteristics_supported.cc
   ${COBALT_PORT_DIR}/starboard/shared/stub/media_is_video_supported.cc
   ${COBALT_PORT_DIR}/starboard/shared/stub/media_set_audio_write_duration.cc
   ${COBALT_PORT_DIR}/starboard/shared/stub/media_set_output_protection.cc
+  ${COBALT_PORT_DIR}/starboard/shared/stub/media_is_buffer_using_memory_pool.cc
   ${COBALT_PORT_DIR}/starboard/shared/starboard/new.cc
 )
 
@@ -302,6 +304,7 @@ if(TARGET_LINUX)
     ## TODO ## ${COBALT_PORT_DIR}/starboard/shared/starboard/media/media_util.h
     ## TODO ## ${COBALT_PORT_DIR}/starboard/shared/starboard/media/mime_type.cc
     ## TODO ## ${COBALT_PORT_DIR}/starboard/shared/starboard/media/mime_type.h
+    ## TODO ## ${COBALT_PORT_DIR}/starboard/shared/starboard/media/media_is_buffer_using_memory_pool.cc
     ${COBALT_PORT_DIR}/starboard/shared/starboard/player/decoded_audio_internal.cc
     ${COBALT_PORT_DIR}/starboard/shared/starboard/player/decoded_audio_internal.h
     ${COBALT_PORT_DIR}/starboard/shared/starboard/player/filter/audio_decoder_internal.h
@@ -358,6 +361,7 @@ if(TARGET_LINUX)
     ${COBALT_PORT_DIR}/starboard/shared/starboard/player/player_write_end_of_stream.cc
     ${COBALT_PORT_DIR}/starboard/shared/starboard/player/player_write_sample.cc
     ${COBALT_PORT_DIR}/starboard/shared/starboard/player/player_write_sample2.cc
+    ${COBALT_PORT_DIR}/starboard/shared/starboard/player/player_get_maximum_number_of_samples_per_write.cc
   )
 endif(TARGET_LINUX)
 

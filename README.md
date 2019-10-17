@@ -897,7 +897,10 @@ Commit-Queue: <skia-recreate-skps@skia-swarming-bots.iam.gserviceaccount.com>
 
 see https://cobalt.foo/development/setup-linux.html
 
+```bash
 git clone https://cobalt.googlesource.com/cobalt
+# (used cab7770533804d582eaa66c713a1582f361182d3)
+```
 
 ## (choose from 'debug', 'devel', 'qa', 'gold')
 
