@@ -1,4 +1,4 @@
-﻿// Copyright 2015 The Cobalt Authors. All Rights Reserved.
+// Copyright 2015 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -76,7 +76,7 @@ math::Size SystemWindow::GetWindowSize() const {
 }
 
 float SystemWindow::GetDiagonalSizeInches() const {
-#if SB_API_VERSION >= SB_HAS_SCREEN_DIAGONAL_API_VERSION
+#if SB_API_VERSION >= 11
   return SbWindowGetDiagonalSizeInInches(window_);
 #else
   return 0.f;
@@ -106,8 +106,6 @@ void* SystemWindow::GetWindowHandle() {
 
 void SystemWindow::DispatchInputEvent(const SbInputData& data,
                                       InputEvent::Type type, bool is_repeat) {
-  ///printf("SystemWindow::DispatchInputEvent\n");
-
   // Use the current time unless it was overridden.
   SbTimeMonotonic timestamp = 0;
 
@@ -126,7 +124,6 @@ void SystemWindow::DispatchInputEvent(const SbInputData& data,
   // Starboard handily uses the Microsoft key mapping, which is also what Cobalt
   // uses.
   int key_code = static_cast<int>(data.key);
-#if SB_API_VERSION >= 6
   float pressure = data.pressure;
   uint32 modifiers = data.key_modifiers;
   if (((data.device_type == kSbInputDeviceTypeTouchPad) ||
@@ -176,15 +173,6 @@ void SystemWindow::DispatchInputEvent(const SbInputData& data,
                      math::PointF(data.size.x, data.size.y),
                      math::PointF(data.tilt.x, data.tilt.y)));
 #endif  // SB_HAS(ON_SCREEN_KEYBOARD)
-#else
-  std::unique_ptr<InputEvent> input_event(new InputEvent(
-      timestamp, type, data.device_id, key_code, data.is_printable, data.keysym, data.text, data.key_modifiers, is_repeat,
-      math::PointF(data.position.x, data.position.y),
-      math::PointF(data.delta.x, data.delta.y)));
-#endif
-
-  // printf("DispatchInputEvent %s \n\n\n", input_event->position().ToString().c_str());
-
   event_dispatcher()->DispatchEvent(
       std::unique_ptr<base::Event>(input_event.release()));
 }
@@ -214,12 +202,10 @@ void SystemWindow::HandlePointerInputEvent(const SbInputData& data) {
       DispatchInputEvent(data, input_event_type, false /* is_repeat */);
       break;
     }
-#if SB_API_VERSION >= 6
     case kSbInputEventTypeWheel: {
       DispatchInputEvent(data, InputEvent::kWheel, false /* is_repeat */);
       break;
     }
-#endif
     case kSbInputEventTypeMove: {
       if (data.device_type == kSbInputDeviceTypeTouchPad) {
         input_event_type = InputEvent::kTouchpadMove;
@@ -250,13 +236,11 @@ void SystemWindow::HandleInputEvent(const SbInputData& data) {
   // Handle all other input device types.
   switch (data.type) {
     case kSbInputEventTypePress: {
-      //printf("SystemWindow::HandleInputEvent kSbInputEventTypePress\n");
       DispatchInputEvent(data, InputEvent::kKeyDown, key_down_);
       key_down_ = true;
       break;
     }
     case kSbInputEventTypeUnpress: {
-      //printf("SystemWindow::HandleInputEvent kSbInputEventTypeUnpress\n");
       DispatchInputEvent(data, InputEvent::kKeyUp, false /* is_repeat */);
       key_down_ = false;
       break;
