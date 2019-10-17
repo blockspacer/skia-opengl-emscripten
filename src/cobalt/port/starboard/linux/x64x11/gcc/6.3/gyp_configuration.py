@@ -27,12 +27,14 @@ class LinuxX64X11Gcc63Configuration(shared_configuration.LinuxConfiguration):
     super(LinuxX64X11Gcc63Configuration, self).__init__(
         platform, asan_enabled_by_default, goma_supports_compiler=False)
 
+    self.toolchain_dir = os.path.join(build.GetToolchainsDir(),
+                                      'x86_64-linux-gnu-gcc-6.3.0', 'gcc')
+
+  def SetupPlatformTools(self, build_number):
     # Run the script that ensures gcc 6.3.0 is installed.
     script_path = os.path.dirname(os.path.realpath(__file__))
     subprocess.call(
         os.path.join(script_path, 'download_gcc.sh'), cwd=script_path)
-    self.toolchain_dir = os.path.join(build.GetToolchainsDir(),
-                                      'x86_64-linux-gnu-gcc-6.3.0', 'gcc')
 
   def GetVariables(self, configuration):
     variables = super(LinuxX64X11Gcc63Configuration,
@@ -47,13 +49,13 @@ class LinuxX64X11Gcc63Configuration(shared_configuration.LinuxConfiguration):
     return variables
 
   def GetEnvironmentVariables(self):
-    env_variables = super(LinuxX64X11Gcc63Configuration,
-                          self).GetEnvironmentVariables()
     toolchain_bin_dir = os.path.join(self.toolchain_dir, 'bin')
-    env_variables.update({
+    env_variables = {
         'CC': os.path.join(toolchain_bin_dir, 'gcc'),
         'CXX': os.path.join(toolchain_bin_dir, 'g++'),
-    })
+        'CC_HOST': os.path.join(toolchain_bin_dir, 'gcc'),
+        'CXX_HOST': os.path.join(toolchain_bin_dir, 'g++'),
+    }
     return env_variables
 
 

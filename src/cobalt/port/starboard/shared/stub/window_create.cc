@@ -14,6 +14,30 @@
 
 #include "starboard/window.h"
 
-SbWindow SbWindowCreate(const SbWindowOptions* /*options*/) {
-  return kSbWindowInvalid;
+// TODO: move to "starboard/shared/emscripten/window_internal.h"
+//#if defined(__EMSCRIPTEN__)
+SbWindowPrivate::SbWindowPrivate(const SbWindowOptions* options)
+{
+    width = options->size.width;
+    height = options->size.height;
+    video_pixel_ratio = options->size.video_pixel_ratio;
+}
+
+SbWindowPrivate:: ~SbWindowPrivate()
+{}
+
+SbWindowPrivateEmscripten::SbWindowPrivateEmscripten(const SbWindowOptions* options)
+    : SbWindowPrivate(options)
+{}
+
+SbWindowPrivateEmscripten:: ~SbWindowPrivateEmscripten()
+{}
+//#endif
+
+SbWindow SbWindowCreate(const SbWindowOptions* options) {
+  //return kSbWindowInvalid;
+
+  /// \todo
+  SbWindow window = new SbWindowPrivateEmscripten(options);
+  return window;
 }

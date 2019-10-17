@@ -230,4 +230,22 @@ SB_EXPORT bool SbWindowOnScreenKeyboardSuggestionsSupported(SbWindow window);
 }  // extern "C"
 #endif
 
+// TODO: move to "starboard/shared/emscripten/window_internal.h"
+//#if defined(__EMSCRIPTEN__)
+struct SbWindowPrivate {
+    explicit SbWindowPrivate(const SbWindowOptions* options);
+    virtual ~SbWindowPrivate();
+
+    // The width, height, pixel ratio of this window.
+    int width;
+    int height;
+    float video_pixel_ratio;
+};
+
+struct SbWindowPrivateEmscripten final : SbWindowPrivate {
+    explicit SbWindowPrivateEmscripten(const SbWindowOptions* options);
+    ~SbWindowPrivateEmscripten();
+};
+//#endif
+
 #endif  // STARBOARD_WINDOW_H_

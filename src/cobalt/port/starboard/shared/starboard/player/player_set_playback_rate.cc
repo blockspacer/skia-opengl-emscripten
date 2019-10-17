@@ -24,6 +24,7 @@ using starboard::shared::media_session::
     UpdateActiveSessionPlatformPlaybackState;
 
 bool SbPlayerSetPlaybackRate(SbPlayer player, double playback_rate) {
+#if defined(ENABLE_MEDIA)
   if (!SbPlayerIsValid(player)) {
     SB_DLOG(WARNING) << "player is invalid.";
     return false;
@@ -37,4 +38,7 @@ bool SbPlayerSetPlaybackRate(SbPlayer player, double playback_rate) {
   bool paused = (playback_rate == 0.0);
   UpdateActiveSessionPlatformPlaybackState(paused ? kPaused : kPlaying);
   return true;
+#else
+  return false;
+#endif // ENABLE_MEDIA
 }

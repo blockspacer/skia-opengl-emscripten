@@ -14,20 +14,26 @@
 
 #include "starboard/player.h"
 
+#if ENABLE_MEDIA_SESSION
 #include "starboard/shared/media_session/playback_state.h"
 #include "starboard/shared/starboard/player/player_internal.h"
 #if SB_PLAYER_ENABLE_VIDEO_DUMPER && SB_HAS(PLAYER_FILTER_TESTS)
 #include "starboard/shared/starboard/player/video_dmp_writer.h"
 #endif  // SB_PLAYER_ENABLE_VIDEO_DUMPER && SB_HAS(PLAYER_FILTER_TESTS)
+#endif // ENABLE_MEDIA_SESSION
 
+#if ENABLE_MEDIA_SESSION
 using starboard::shared::media_session::kNone;
 using starboard::shared::media_session::
     UpdateActiveSessionPlatformPlaybackState;
+#endif // ENABLE_MEDIA_SESSION
 
 void SbPlayerDestroy(SbPlayer player) {
+#if ENABLE_MEDIA_SESSION
   if (!SbPlayerIsValid(player)) {
     return;
   }
+
   UpdateActiveSessionPlatformPlaybackState(kNone);
 
 #if SB_PLAYER_ENABLE_VIDEO_DUMPER && SB_HAS(PLAYER_FILTER_TESTS)
@@ -36,4 +42,5 @@ void SbPlayerDestroy(SbPlayer player) {
 #endif  // SB_PLAYER_ENABLE_VIDEO_DUMPER && SB_HAS(PLAYER_FILTER_TESTS)
 
   delete player;
+#endif // ENABLE_MEDIA_SESSION
 }

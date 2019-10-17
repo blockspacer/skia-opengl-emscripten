@@ -21,7 +21,11 @@
 bool SbPlayerOutputModeSupported(SbPlayerOutputMode output_mode,
                                  SbMediaVideoCodec codec,
                                  SbDrmSystem drm_system) {
+#if defined(ENABLE_MEDIA)
   return starboard::shared::starboard::player::filter::VideoDecoder::
       OutputModeSupported(output_mode, codec, drm_system);
+#else
+  return false;
+#endif // ENABLE_MEDIA
 }
 

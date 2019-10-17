@@ -69,22 +69,6 @@
 // available on this platform. For a definitive measure, the application should
 // still call SbSystemGetNumberOfProcessors at runtime.
 
-// Whether the current platform is expected to have many cores (> 6), or a
-// wildly varying number of cores.
-#define SB_HAS_MANY_CORES 1
-
-// Whether the current platform is expected to have exactly 1 core.
-#define SB_HAS_1_CORE 0
-
-// Whether the current platform is expected to have exactly 2 cores.
-#define SB_HAS_2_CORES 0
-
-// Whether the current platform is expected to have exactly 4 cores.
-#define SB_HAS_4_CORES 0
-
-// Whether the current platform is expected to have exactly 6 cores.
-#define SB_HAS_6_CORES 0
-
 // Whether the current platform's thread scheduler will automatically balance
 // threads between cores, as opposed to systems where threads will only ever run
 // on the specifically pinned core.
@@ -114,9 +98,6 @@
 
 // Whether the current platform provides the standard header inttypes.h.
 #define SB_HAS_INTTYPES_H 1
-
-// Whether the current platform provides the standard header wchar.h.
-#define SB_HAS_WCHAR_H 1
 
 // Whether the current platform provides the standard header limits.h.
 #define SB_HAS_LIMITS_H 1
@@ -177,8 +158,7 @@
 // --- Extensions Configuration ----------------------------------------------
 
 // Do not use <unordered_map> and <unordered_set> for the hash table types.
-//#define SB_HAS_STD_UNORDERED_HASH 0
-#define SB_HAS_STD_UNORDERED_HASH 1
+#define SB_HAS_STD_UNORDERED_HASH 0
 
 // GCC/Clang doesn't define a long long hash function, except for Android and
 // Game consoles.
@@ -287,9 +267,6 @@
 #define SB_HAS_VIRTUAL_REALITY 0
 
 // --- I/O Configuration -----------------------------------------------------
-
-// Whether the current platform has microphone supported.
-#define SB_HAS_MICROPHONE 1
 
 // Whether the current platform has speech recognizer.
 #define SB_HAS_SPEECH_RECOGNIZER 1

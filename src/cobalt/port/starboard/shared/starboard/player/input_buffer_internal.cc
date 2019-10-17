@@ -112,6 +112,7 @@ void InputBuffer::SetDecryptedContent(const void* buffer, int size) {
 
 std::string InputBuffer::ToString() const {
   std::stringstream ss;
+#if defined(ENABLE_MEDIA)
   ss << "========== " << (has_drm_info_ ? "encrypted " : "clear ")
      << (sample_type() == kSbMediaTypeAudio ? "audio" : "video")
      << " sample @ timestamp: " << timestamp() << " in " << size()
@@ -143,6 +144,7 @@ std::string InputBuffer::ToString() const {
        << '\n';
   }
   ss << GetMixedRepresentation(data(), size(), 16) << '\n';
+#endif // ENABLE_MEDIA
   return ss.str();
 }
 

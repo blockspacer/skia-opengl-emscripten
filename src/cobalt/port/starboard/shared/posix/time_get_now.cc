@@ -21,6 +21,7 @@
 
 SbTime SbTimeGetNow() {
   struct timeval time;
+  /// \todo WASM support
   if (gettimeofday(&time, NULL) != 0) {
     SB_NOTREACHED() << "Could not determine time of day.";
     return 0;
