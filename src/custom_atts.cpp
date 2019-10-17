@@ -620,10 +620,65 @@ void addTestOnlyAttrCallbacks() {
             CHECK(mouseEvent);
             float x = mouseEvent->x();
             float y = mouseEvent->y();
+
             printf("mouseleave at (%f;%f) event %s for tag: %s, "
                    "attrVal: %s, text_content: %s\n",
                    x,
                    y,
+                   event->type().c_str(),
+                   elem->tag_name().c_str(),
+                   attrVal.c_str(),
+                   elem->text_content().value_or("").c_str());
+            return base::nullopt;
+        });
+
+    cobalt::dom::customizer::
+      pair_event_to_attr("on-wheel-scroll", "on-wheel",
+        [](const scoped_refptr<cobalt::dom::Event> &event,
+           scoped_refptr<cobalt::dom::Element> elem,
+           const std::string& attrVal)
+        {
+            printf("on-wheel-scroll 1\n");
+            CHECK(elem);
+            const cobalt::dom::WheelEvent* const wheelEvent =
+                // TODO: polymorphic_downcast Check failed: dynamic_cast<Derived>(base) == base.
+                base::polymorphic_downcast<
+                  const cobalt::dom::WheelEvent* const>(event.get());
+            CHECK(wheelEvent);
+            float x = static_cast<float>(wheelEvent->delta_x());
+            float y = static_cast<float>(wheelEvent->delta_y());
+            float z = static_cast<float>(wheelEvent->delta_z());
+
+            DCHECK(event->current_target());
+            cobalt::dom::HTMLElement* targetHTML =
+              base::polymorphic_downcast<
+                cobalt::dom::HTMLElement*>(event->current_target().get());
+            DCHECK(targetHTML);
+
+            CHECK(elem);
+            cobalt::dom::Document* document = elem->node_document();
+            if(!attrVal.empty()) {
+              if(document->GetElementById(attrVal)) {
+                targetHTML = base::polymorphic_downcast<
+                  cobalt::dom::HTMLElement*>(document->GetElementById(attrVal).get());
+              }
+            }
+
+            DCHECK(targetHTML);
+
+            const float scrollSpeed = 10.0f;
+            if(y) {
+              targetHTML->set_scroll_top(targetHTML->scroll_top() - y * scrollSpeed);
+            }
+            if(x) {
+              targetHTML->set_scroll_left(targetHTML->scroll_top() - x * scrollSpeed);
+            }
+
+            printf("on-wheel-scroll at (%f;%f;%f) event %s for tag: %s, "
+                   "attrVal: %s, text_content: %s\n",
+                   x,
+                   y,
+                   z,
                    event->type().c_str(),
                    elem->tag_name().c_str(),
                    attrVal.c_str(),
@@ -647,6 +702,13 @@ void addTestOnlyAttrCallbacks() {
             float x = static_cast<float>(wheelEvent->delta_x());
             float y = static_cast<float>(wheelEvent->delta_y());
             float z = static_cast<float>(wheelEvent->delta_z());
+
+            DCHECK(event->current_target());
+            cobalt::dom::HTMLElement* targetHTML =
+              base::polymorphic_downcast<
+                  cobalt::dom::HTMLElement*>(event->current_target().get());
+            DCHECK(targetHTML);
+
             printf("on-wheel-print at (%f;%f;%f) event %s for tag: %s, "
                    "attrVal: %s, text_content: %s\n",
                    x,
