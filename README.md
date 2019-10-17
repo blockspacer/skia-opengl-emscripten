@@ -679,11 +679,14 @@ Yes, see
 
 - https://stackoverflow.com/questions/24708649/why-does-web-worker-performance-sharply-decline-after-30-seconds#comment78838143_24717408
 
-## Cobalt has no support for CSS "float", use "display: inline-block" & vertical-align
+## Cobalt has no support for CSS `float`, use flexbox or `display: inline-block` with vertical-align
 
 NOTE: for "float: right" effect apply "text-align: right" to parent div.
 
-see
+see about `flexbox`:
+- https://www.freecodecamp.org/news/the-ultimate-guide-to-flexbox-learning-through-examples-8c90248d4676/
+
+see about `display: inline-block`:
 - https://iamsteve.me/blog/entry/inline_block
 - https://alligator.io/css/display-inline-vs-inline-block/
 - https://stackoverflow.com/a/15177860

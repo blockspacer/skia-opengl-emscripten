@@ -47,15 +47,194 @@
 
       body {
         background:yellow;
-        font-size: 22px;
+
+        /*
+           calc unsupported
+             see https://css-tricks.com/fun-viewport-units/
+             Minimum 16x, and grows more slowly
+             (half the rate of screen growth)
+           font-size: calc(16px + 0.5vw);
+             see https://css-tricks.com/fun-viewport-units/
+             Line-height based on font-size,
+             with addition viewport-relative growth
+           line-height: calc(1.1em + 0.5vw);
+        */
+
         font-family: "UbuntuCustom";
+        font-size: 20px;
         width:100%;
         height:100%;
         overflow: hidden;
       }
+
+      /*h1 {
+        calc unsupported
+          font-size: calc(1.2em + 3vw);
+      }*/
+
+      @media (min-width: 50em) {
+        h1 {
+          font-size: 50px;
+        }
+      }
     </style>
   </head>
   <body class="exanim">
+
+<div class="FlexDemoContainer">
+  <div class="FlexDemoItem">
+    FlexDemoItem 1
+  </div>
+  <div class="FlexDemoItem">
+    FlexDemoItem 2
+  </div>
+  <div class="FlexDemoItem">
+    FlexDemoItem 3
+  </div>
+</div>
+
+<div class="flexCards">
+  <section class="flexCard">
+  <div class="flexHeader"></div>
+  <div class="flexUL">
+    <div class="flexLI"></div>
+    <div class="flexLI"></div>
+    <div class="flexLI"></div>
+  </div>
+  <div class="flexBtn"></div>
+</section>
+
+  <section class="flexCard flexCard--big">
+  <div class="flexHeader"></div>
+  <div class="flexUL">
+    <div class="flexLI"></div>
+    <div class="flexLI"></div>
+    <div class="flexLI"></div>
+    <div class="flexLI"></div>
+    <div class="flexLI"></div>
+    <div class="flexLI"></div>
+  </div>
+  <div class="flexBtn"></div>
+</section>
+
+  <div class="flexCard">
+  <div class="flexHeader"></div>
+  <div class="flexUL">
+    <div class="flexLI"></div>
+    <div class="flexLI"></div>
+    <div class="flexLI"></div>
+  </div>
+  <div class="flexBtn"></div>
+</div>
+</div>
+
+<h4>Basic Grids</h4>
+<div class="row">
+  <div class="row_cell">1</div>
+</div>
+
+<div class="row">
+  <div class="row_cell">1/3</div>
+  <div class="row_cell">1/3
+    <h6> This one is got more text than the other. Yet, the height remains the same accross the separate columns <h6>
+  </div>
+  <div class="row_cell">1/3</div>
+</div>
+
+<div class="row">
+  <div class="row_cell">1/3</div>
+  <div class="row_cell">1/3</div>
+  <div class="row_cell">1/3</div>
+</div>
+
+
+<h4> Cells with specific sizes </h4>
+<div class="row">
+  <div class="row_cell--2">2x</div>
+  <div class="row_cell">1x</div>
+</div>
+
+<div class="row">
+  <div class="row_cell--3">3x</div>
+  <div class="row_cell">1x</div>
+  <div class="row_cell">1x</div>
+</div>
+
+<h4>Specific alignments</h4>
+<div class="row">
+  <div class="row_cell row_cell--top">top</div>
+  <div class="row_cell">1/3
+    <h6> This one is got more text than the other. Yet, the height remains the same accross the separate columns <br/>
+      It's got even more text like this one. Why does it have so much text? Nothing really. Just so it's easier to see the alignment options of the other cells...<h6>
+  </div>
+  <div class="row_cell">1/3</div>
+</div>
+
+<div class="row">
+  <div class="row_cell">1/3</div>
+  <div class="row_cell">1/3
+    <h6> This one is got more text than the other. Yet, the height remains the same accross the separate columns <br/>
+      It's got even more text like this one. Why does it have so much text? Nothing really. Just so it's easier to see the alignment options of the other cells...<h6>
+  </div>
+  <div class="row_cell row_cell--bottom">bottom</div>
+</div>
+
+<div class="row">
+  <div class="row_cell row_cell--center">center</div>
+  <div class="row_cell">1/3
+    <h6> This one is got more text than the other. Yet, the height remains the same accross the separate columns <br/>
+      It's got even more text like this one. Why does it have so much text? Nothing really. Just so it's easier to see the alignment options of the other cells...<h6>
+  </div>
+  <div class="row_cell">1/3</div>
+</div>
+
+<h4>entire row alignment</h4>
+
+<div class="row row--top">
+  <div class="row_cell">top</div>
+  <div class="row_cell">top
+    <h6> This one is got more text than the other. Yet, the height remains the same accross the separate columns <br/>
+      It's got even more text like this one. Why does it have so much text? Nothing really. Just so it's easier to see the alignment options of the other cells...<h6>
+  </div>
+  <div class="row_cell">top</div>
+</div>
+
+
+<div class="row row--center">
+  <div class="row_cell">center</div>
+  <div class="row_cell">center
+    <h6> This one is got more text than the other. Yet, the height remains the same accross the separate columns <br/>
+      It's got even more text like this one. Why does it have so much text? Nothing really. Just so it's easier to see the alignment options of the other cells...<h6>
+  </div>
+  <div class="row_cell">center</div>
+</div>
+
+
+
+<div class="row row--bottom">
+  <div class="row_cell">bottom</div>
+  <div class="row_cell">bottom
+    <h6> This one is got more text than the other. Yet, the height remains the same accross the separate columns <br/>
+      It's got even more text like this one. Why does it have so much text? Nothing really. Just so it's easier to see the alignment options of the other cells...<h6>
+  </div>
+  <div class="row_cell">bottom</div>
+</div>
+
+
+<h4>Nested Rows</h4>
+<div class="row">
+  <div class="row_cell--2">2x
+  <div class="row row--center">
+  <div class="row_cell">center</div>
+  <div class="row_cell">center
+    <h6> This one is got more text than the other<h6>
+  </div>
+  <div class="row_cell">center</div>
+</div>
+  </div>
+  <div class="row_cell">1x</div>
+</div>
+
 
    <div class="dropdownbtn">
      <div class="dropbtn">Dropdown</div>

@@ -346,7 +346,7 @@ a {
 
 
 .share-container {
-  top: 110;
+  top: 110px;
   position: fixed;
   margin: 1em;
   right: 50px;
@@ -495,7 +495,7 @@ a {
   position: absolute;
   width: 100%;
   height: 100%;
-  top:0;
+  top: 0;
   left: 0;
   z-index: 0;
   overflow: hidden;
@@ -554,4 +554,140 @@ a {
   width: 300px;
   height: 300px;
   background: #FFF;
+}
+
+.fillEntireScreen {
+  min-height: 100vh;
+}
+
+.FlexDemoContainer {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.FlexDemoItem {
+  width: 50px;
+  height: 50px;
+  margin: 10px;
+  box-shadow: 4px 7px 45px -10px rgba(0,0,0,0.7);
+  border-radius: 7px;
+  background: #CCC;
+}
+
+/*
+ = ======== flexbox ========
+*/
+.flexCards {
+   display: flex;
+   flex-wrap: wrap;
+   justify-content: center;
+   align-items: center;
+}
+
+.flexCard {
+  flex: 0 0 250px;
+}
+
+
+/*
+ = ====== visuals =========
+*/
+
+.flexCard {
+  margin: 12px;
+  background: #CCC;
+  border-radius: 7px;
+  padding: 0 0 10px 0
+}
+.flexCard > .flexHeader {
+  background: #808080;
+  height: 20px;
+  border-radius:  7px 7px 0 0;
+}
+.flexCard > .flexUL {
+  /*
+   <li></li> unsupported
+     list-style: none;
+  */
+  padding: 0;
+}
+.flexCard > .flexUL .flexLI {
+  height: 10px;
+  width: 90%;
+  margin: 5px auto;
+  background: rgba(155,155,155, 0.8);
+}
+.flexCard .flexBtn {
+  width: 50%;
+  height: 15px;
+  border: 0;
+  margin-left: 15px;
+  border-radius: 7px;
+  background: #808080;
+}
+.flexCard--big {
+  transform: scaleX(1.2);
+}
+.flexCard--big:hover {
+  transform: scaleX(2.2) scaleY(2.2);
+}
+
+/* = =====
+FLexbox Grids
+=========*/
+.row {
+   display: flex;
+   flex-wrap: wrap;
+}
+
+
+.row_cell {
+   flex: 1
+}
+.row_cell--2 {
+   flex: 2
+}
+.row_cell--3 {
+   flex: 3
+}
+
+
+.row_cell--top {
+  align-self: flex-start
+}
+.row_cell--bottom {
+  align-self: flex-end
+}
+.row_cell--center {
+  align-self: center
+}
+
+
+.row--top {
+   align-items: flex-start
+}
+.row--bottom {
+   align-items: flex-end
+}
+.row--center {
+   align-items: center
+}
+
+
+/*= ======
+visuals
+=======*/
+.row {
+  padding: 15px;
+  background: rgba(0,0,0,0.08);
+  margin: 8px 0;
+}
+.row_cell,
+.row_cell--2,
+.row_cell--3 {
+  background: rgba(0,0,0,0.13);
+  padding: 10px;
+  margin: 5px;
 }
