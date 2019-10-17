@@ -95,10 +95,12 @@ void TopmostEventTarget::ConsiderElement(dom::Element* element,
   math::Vector2dF element_prev_scroll_coordinate(coordinate);
   math::Vector2dF element_scroll_coordinate(coordinate);
 
+  DCHECK(element->AsHTMLElement()); /// \ todo
+
   element_scroll_coordinate.set_x(coordinate.x()
-  + element->scroll_left());
+    + element->scroll_left());
   element_scroll_coordinate.set_y(coordinate.y()
-  + element->scroll_top());
+    + element->scroll_top());
 
   /*element_scroll_coordinate.set_x(element_scroll_coordinate.x()
   + element->scroll_left());
@@ -107,8 +109,6 @@ void TopmostEventTarget::ConsiderElement(dom::Element* element,
 
   //  coordinate.x() + element->scroll_left(),
   //  coordinate.y() + element->scroll_top());
-
-  DCHECK(element->AsHTMLElement()); /// \ todo
 
 #if 0
     /// \ todo

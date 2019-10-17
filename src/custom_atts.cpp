@@ -671,7 +671,7 @@ void addTestOnlyAttrCallbacks() {
               targetHTML->set_scroll_top(targetHTML->scroll_top() - y * scrollSpeed);
             }
             if(x) {
-              targetHTML->set_scroll_left(targetHTML->scroll_top() - x * scrollSpeed);
+              targetHTML->set_scroll_left(targetHTML->scroll_left() - x * scrollSpeed);
             }
 
             printf("on-wheel-scroll at (%f;%f;%f) event %s for tag: %s, "
@@ -789,8 +789,10 @@ void addTestOnlyAttrCallbacks() {
             /// \note style with `position:absolute` relative to parent.
             cobalt::math::Vector2dF elementLocalPos{
                 mouseEvent->client_x()
+                //+ elementHTML->offset_left()
                 - elementHTML->GetBoundingClientRect()->left() - maxSize / 2.0f,
                 mouseEvent->client_y()
+                //+ elementHTML->offset_top()
                 - elementHTML->GetBoundingClientRect()->top() - maxSize / 2.0f
             };
 
