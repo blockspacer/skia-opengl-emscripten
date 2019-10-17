@@ -27,10 +27,22 @@
 
 // Whether the current platform is expected to have many cores (> 6), or a
 // wildly varying number of cores.
+#if defined(__EMSCRIPTEN__) && defined(__EMSCRIPTEN_PTHREADS__) /// \todo move to emscripten platform header
 #define SB_HAS_MANY_CORES 1
+#elif defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+#define SB_HAS_MANY_CORES 0
+#else
+#define SB_HAS_MANY_CORES 1
+#endif
 
 // Whether the current platform is expected to have exactly 1 core.
+#if defined(__EMSCRIPTEN__) && defined(__EMSCRIPTEN_PTHREADS__) /// \todo move to emscripten platform header
 #define SB_HAS_1_CORE 0
+#elif defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+#define SB_HAS_1_CORE 1
+#else
+#define SB_HAS_1_CORE 0
+#endif
 
 // Whether the current platform is expected to have exactly 2 cores.
 #define SB_HAS_2_CORES 0
@@ -60,14 +72,14 @@
 #define SB_IS_ARCH_X86 1
 
 // Whether the current platform is a 32-bit architecture.
-#if defined(__i386__) || defined(__EMSCRIPTEN__)
+#if defined(__i386__) || defined(__EMSCRIPTEN__) /// \todo move to emscripten platform header
 #define SB_IS_32_BIT 1
 #else
 #define SB_IS_32_BIT 0
 #endif
 
 // Whether the current platform is a 64-bit architecture.
-#if defined(__x86_64__)
+#if defined(__x86_64__) && !defined(__EMSCRIPTEN__) /// \todo move to emscripten platform header
 #define SB_IS_64_BIT 1
 #else
 #define SB_IS_64_BIT 0
@@ -116,7 +128,7 @@
 
 // Starboard API versions 11 and earlier must define this variable, and have
 // microphone supported.
-#if defined(__EMSCRIPTEN__)
+#if defined(__EMSCRIPTEN__) /// \todo move to emscripten platform header
 #define SB_HAS_MICROPHONE 0
 #if SB_API_VERSION < 12
 #define SB_HAS_MICROPHONE 1
@@ -127,7 +139,7 @@
 #undef SB_HAS_SPEECH_SYNTHESIS
 #define SB_HAS_SPEECH_SYNTHESIS 0
 
-/// \todo
+/// \todo we need std::string in event data for SDL_TEXTINPUT
 #define SB_HAS_ON_SCREEN_KEYBOARD 1
 /*#if SB_API_VERSION >= 8
 // Whether the current platform implements the on screen keyboard interface.

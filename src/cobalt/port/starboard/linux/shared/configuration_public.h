@@ -44,6 +44,12 @@
 // Whether the current platform provides the standard header stdint.h.
 #define SB_HAS_STDINT_H 1
 
+#if defined(__EMSCRIPTEN__) /// \todo move to emscripten platform header
+#if !defined(SB_HAS_STDINT_H) || !SB_HAS_STDINT_H
+#error "EMSCRIPTEN: need SB_HAS_STDINT_H in configuration_public.h"
+#endif
+#endif
+
 // Whether the current platform provides the standard header inttypes.h.
 #define SB_HAS_INTTYPES_H 1
 
@@ -99,7 +105,7 @@
 
 // --- Extensions Configuration ----------------------------------------------
 
-// Do not use <unordered_map> and <unordered_set> for the hash table types.
+// <unordered_map> and <unordered_set> for the hash table types.
 #define SB_HAS_STD_UNORDERED_HASH 1 /// \note custom
 
 // GCC/Clang doesn't define a long long hash function, except for Android and

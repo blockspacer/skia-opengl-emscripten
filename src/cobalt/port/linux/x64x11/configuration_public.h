@@ -43,14 +43,14 @@
 #define SB_IS_ARCH_X86 1
 
 // Whether the current platform is a 32-bit architecture.
-#if defined(__i386__)
+#if defined(__i386__) || defined(__EMSCRIPTEN__) /// \todo move to emscripten platform header
 #define SB_IS_32_BIT 1
 #else
 #define SB_IS_32_BIT 0
 #endif
 
 // Whether the current platform is a 64-bit architecture.
-#if defined(__x86_64__)
+#if defined(__x86_64__) && !defined(__EMSCRIPTEN__) /// \todo move to emscripten platform header
 #define SB_IS_64_BIT 1
 #else
 #define SB_IS_64_BIT 0
@@ -83,10 +83,22 @@
 
 // Whether the current platform is expected to have many cores (> 6), or a
 // wildly varying number of cores.
+#if defined(__EMSCRIPTEN__) && defined(__EMSCRIPTEN_PTHREADS__) /// \todo move to emscripten platform header
 #define SB_HAS_MANY_CORES 1
+#elif defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+#define SB_HAS_MANY_CORES 0
+#else
+#define SB_HAS_MANY_CORES 1
+#endif
 
 // Whether the current platform is expected to have exactly 1 core.
+#if defined(__EMSCRIPTEN__) && defined(__EMSCRIPTEN_PTHREADS__) /// \todo move to emscripten platform header
 #define SB_HAS_1_CORE 0
+#elif defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+#define SB_HAS_1_CORE 1
+#else
+#define SB_HAS_1_CORE 0
+#endif
 
 // Whether the current platform is expected to have exactly 2 cores.
 #define SB_HAS_2_CORES 0

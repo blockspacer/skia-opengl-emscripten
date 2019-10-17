@@ -132,7 +132,6 @@ class LayoutManager::Impl : public dom::DocumentObserver {
   base::TimeDelta timer_interval_ = base::TimeDelta::Max();
 
 #if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
-
   base::Time layoutProducedTime_ = base::Time::Max();
 #endif
 

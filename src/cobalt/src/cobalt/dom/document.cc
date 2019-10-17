@@ -69,7 +69,7 @@
 #if defined(OS_EMSCRIPTEN)
 #include <emscripten/emscripten.h>
 static bool document_initialized = false;
-#endif
+#endif // OS_EMSCRIPTEN
 
 using cobalt::cssom::ViewportSize;
 
@@ -114,7 +114,7 @@ Document::Document(HTMLElementContext* html_element_context,
   DCHECK(!document_initialized);
   document_initialized = true;
   //HTML5_STACKTRACE();
-#endif
+#endif // OS_EMSCRIPTEN && DISABLE_PTHREADS
 
   DCHECK(html_element_context_);
   DCHECK(options.url.is_empty() || options.url.is_valid());
@@ -128,20 +128,20 @@ Document::Document(HTMLElementContext* html_element_context,
   std::unique_ptr<CspViolationReporter> violation_reporter(
       new CspViolationReporter(this
 
-#if !defined(__EMSCRIPTEN__) && defined(__TODO__)
+#if defined(ENABLE_NETWORK_BRIDGE)
       ,
       options.post_sender
-#endif
+#endif // ENABLE_NETWORK_BRIDGE
       ));
   csp_delegate_ = CspDelegateFactory::GetInstance()->Create(
       options.csp_enforcement_mode, std::move(violation_reporter), options.url,
       options.require_csp, options.csp_policy_changed_callback,
       options.csp_insecure_allowed_token);
-#endif
+#endif // ENABLE_COBALT_CSP
 
-#if !defined(__EMSCRIPTEN__) && defined(__TODO__)
+#if defined(ENABLE_NETWORK_BRIDGE)
   cookie_jar_ = options.cookie_jar;
-#endif
+#endif // ENABLE_NETWORK_BRIDGE
 
   location_ = new Location(
       options.url, options.hashchange_callback, options.navigation_callback
@@ -149,7 +149,7 @@ Document::Document(HTMLElementContext* html_element_context,
       ,
       base::Bind(&CspDelegate::CanLoad, base::Unretained(csp_delegate_.get()),
                  CspDelegate::kLocation)
-#endif
+#endif // ENABLE_COBALT_CSP
                  );
 
   font_cache_.reset(new FontCache(
@@ -165,7 +165,7 @@ Document::Document(HTMLElementContext* html_element_context,
           base::Bind(&CspDelegate::CanLoad,
                      base::Unretained(csp_delegate_.get()),
                      CspDelegate::kFont));
-#endif
+#endif // ENABLE_COBALT_CSP
     }
 
     if (html_element_context_->image_cache()) {
@@ -173,7 +173,7 @@ Document::Document(HTMLElementContext* html_element_context,
       html_element_context_->image_cache()->set_security_callback(base::Bind(
           &CspDelegate::CanLoad, base::Unretained(csp_delegate_.get()),
           CspDelegate::kImage));
-#endif
+#endif // ENABLE_COBALT_CSP
     }
 
     ready_state_ = kDocumentReadyStateLoading;
@@ -447,11 +447,11 @@ void Document::set_cookie(const std::string& cookie,
     return;
   }
 
-#if !defined(__EMSCRIPTEN__) && defined(__TODO__)
+#if defined(ENABLE_NETWORK_BRIDGE)
   if (cookie_jar_) {
     cookie_jar_->SetCookie(url_as_gurl(), cookie);
   }
-#endif
+#endif // ENABLE_NETWORK_BRIDGE
 
 }
 
@@ -468,12 +468,12 @@ std::string Document::cookie(script::ExceptionState* exception_state) const {
                         exception_state);
     return "";
   }
-#if !defined(__EMSCRIPTEN__) && defined(__TODO__)
+#if defined(ENABLE_NETWORK_BRIDGE)
   if (cookie_jar_) {
     return net::CanonicalCookie::BuildCookieLine(
         cookie_jar_->GetCookies(url_as_gurl()));
   } else
-#endif
+#endif // ENABLE_NETWORK_BRIDGE
   {
     DLOG(WARNING) << "Document has no cookie jar";
     return "";
@@ -491,11 +491,11 @@ void Document::set_cookie(const std::string& cookie) {
     return;
   }
 
-#if !defined(__EMSCRIPTEN__) && defined(__TODO__)
+#if defined(ENABLE_NETWORK_BRIDGE)
   if (cookie_jar_) {
     cookie_jar_->SetCookie(url_as_gurl(), cookie);
   }
-#endif
+#endif // ENABLE_NETWORK_BRIDGE
 }
 
 std::string Document::cookie() const {
@@ -509,12 +509,12 @@ std::string Document::cookie() const {
     return "";
   }
 
-#if !defined(__EMSCRIPTEN__) && defined(__TODO__)
+#if defined(ENABLE_NETWORK_BRIDGE)
   if (cookie_jar_) {
     return net::CanonicalCookie::BuildCookieLine(
         cookie_jar_->GetCookies(url_as_gurl()));
   } else
-#endif
+#endif // ENABLE_NETWORK_BRIDGE
   {
     DLOG(WARNING) << "Document has no cookie jar";
     return "";
@@ -611,18 +611,16 @@ void Document::DecreaseLoadingCounterAndMaybeDispatchLoadEvent() {
     base::MessageLoopCurrent::Get()->task_runner()->PostTask(
         FROM_HERE, base::Bind(&Document::DispatchOnLoadEvent,
                               base::AsWeakPtr<Document>(this)));
-#endif
+#endif // OS_EMSCRIPTEN && DISABLE_PTHREADS
 
 
-  P_LOG("DecreaseLoadingCounterAndMaybeDispatchLoadEvent 2\n");
-//#ifdef __TODO__
+  //P_LOG("DecreaseLoadingCounterAndMaybeDispatchLoadEvent 2\n");
     HTMLBodyElement* body_element = body().get();
     if (body_element) {
       body_element->PostToDispatchEventName(FROM_HERE, base::Tokens::load());
     }
-//#endif
   }
-  P_LOG("DecreaseLoadingCounterAndMaybeDispatchLoadEvent 3\n");
+  //P_LOG("DecreaseLoadingCounterAndMaybeDispatchLoadEvent 3\n");
 }
 
 void Document::AddObserver(DocumentObserver* observer) {
@@ -671,7 +669,7 @@ void Document::NotifyUrlChanged(const GURL& url) {
   location_->set_url(url);
 #if defined(ENABLE_COBALT_CSP)
   csp_delegate_->NotifyUrlChanged(url);
-#endif
+#endif // ENABLE_COBALT_CSP
 }
 
 void Document::OnFocusChange() {
@@ -805,7 +803,7 @@ void Document::UpdateComputedStyles() {
         DomStatTracker::kStopWatchTypeUpdateComputedStyle,
         base::StopWatch::kAutoStartOn,
         html_element_context_->dom_stat_tracker());
-#endif
+#endif // !OS_EMSCRIPTEN
     // Determine the official time that this style change event took place. This
     // is needed (as opposed to repeatedly calling base::Time::Now()) because
     // all animations that may be triggered here must start at the exact same
@@ -1111,7 +1109,6 @@ void Document::DispatchOnLoadEvent() {
   // After all JavaScript OnLoad event handlers have executed, signal to let
   // any Document observers know that a load event has occurred.
   SignalOnLoadToObservers();
-//#endif
 }
 
 void Document::UpdateStyleSheets() {

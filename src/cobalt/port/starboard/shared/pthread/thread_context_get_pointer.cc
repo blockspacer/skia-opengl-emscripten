@@ -22,7 +22,7 @@
 #include "starboard/shared/pthread/thread_context_internal.h"
 
 // TODO: Implement for e.g. Mac OSX, BSD flavors, QNX - maybe in another file.
-#if !defined(__gnu_linux__)  // Note: __linux__ is undef'd for Starboard builds.
+#if !defined(__gnu_linux__) && !defined(__EMSCRIPTEN__) // Note: __linux__ is undef'd for Starboard builds.
 #error "SbThreadContext is only implemented for Linux"
 #endif
 
@@ -36,7 +36,7 @@
 // clang-format off
 #if SB_IS_ARCH_X86
 # if SB_IS_32_BIT
-#  error("TODO: Validate UCONTEXT macros on 32-bit X86")
+#  warning("TODO: Validate UCONTEXT macros on 32-bit X86") /// \todo
 #  define UCONTEXT_IP(ucontext) ((ucontext)->uc_mcontext.gregs[REG_EIP])
 #  define UCONTEXT_SP(ucontext) ((ucontext)->uc_mcontext.gregs[REG_ESP])
 #  define UCONTEXT_FP(ucontext) ((ucontext)->uc_mcontext.gregs[REG_EBP])
@@ -48,7 +48,7 @@
 #elif SB_IS_ARCH_ARM
 # if SB_IS_32_BIT
 #  if SB_IS_GLIBC && ((__GLIBC__ * 100 + __GLIBC_MINOR__) < 204)
-#   error("TODO: Validate UCONTEXT macros on 32-bit ARM w/ old GLIBC")
+#   warning("TODO: Validate UCONTEXT macros on 32-bit ARM w/ old GLIBC")
 #   define UCONTEXT_IP(ucontext) ((ucontext)->uc_mcontext.gregs[R15])
 #   define UCONTEXT_SP(ucontext) ((ucontext)->uc_mcontext.gregs[R13])
 #   define UCONTEXT_FP(ucontext) ((ucontext)->uc_mcontext.gregs[R11])
@@ -58,24 +58,24 @@
 #   define UCONTEXT_FP(ucontext) ((ucontext)->uc_mcontext.arm_fp)
 #  endif  // SB_IS_GLIBC < 2.04
 # elif SB_IS_64_BIT
-#  error("TODO: Validate UCONTEXT macros on 64-bit ARM")
+#  warning("TODO: Validate UCONTEXT macros on 64-bit ARM") /// \todo
 #  define UCONTEXT_IP(ucontext) ((ucontext)->uc_mcontext.pc)
 #  define UCONTEXT_SP(ucontext) ((ucontext)->uc_mcontext.sp)
 #  define UCONTEXT_FP(ucontext) ((ucontext)->uc_mcontext.regs[29])
 # endif
 #elif SB_IS_ARCH_MIPS
-#  error("TODO: Validate UCONTEXT macros on MIPS")
+#  warning("TODO: Validate UCONTEXT macros on MIPS") /// \todo
 #  define UCONTEXT_IP(ucontext) ((ucontext)->uc_mcontext.pc)
 #  define UCONTEXT_SP(ucontext) ((ucontext)->uc_mcontext.gregs[29])
 #  define UCONTEXT_FP(ucontext) ((ucontext)->uc_mcontext.gregs[30])
 #elif SB_IS_ARCH_PPC
 # if SB_IS_GLIBC
-#  error("TODO: Validate UCONTEXT macros on PPC w/ GLIBC")
+#  warning("TODO: Validate UCONTEXT macros on PPC w/ GLIBC") /// \todo
 #  define UCONTEXT_IP(ucontext) ((ucontext)->uc_mcontext.regs->nip)
 #  define UCONTEXT_SP(ucontext) ((ucontext)->uc_mcontext.regs->gpr[PT_R1])
 #  define UCONTEXT_FP(ucontext) ((ucontext)->uc_mcontext.regs->gpr[PT_R31])
 # else  // SB_IS_GLIBC
-#  error("TODO: Validate UCONTEXT macros on PPC")
+#  warning("TODO: Validate UCONTEXT macros on PPC") /// \todo
 #  define UCONTEXT_IP(ucontext) ((ucontext)->uc_mcontext.gp_regs[32])
 #  define UCONTEXT_SP(ucontext) ((ucontext)->uc_mcontext.gp_regs[1])
 #  define UCONTEXT_FP(ucontext) ((ucontext)->uc_mcontext.gp_regs[31])

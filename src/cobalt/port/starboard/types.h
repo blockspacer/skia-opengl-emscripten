@@ -29,13 +29,31 @@
 #include <stdbool.h>
 #endif  // SB_HAS(STDBOOL_H) && !defined(__cplusplus)
 
+#if defined(__EMSCRIPTEN__)
+#if !defined(SB_HAS_STDINT_H) || !SB_HAS_STDINT_H
+#error "EMSCRIPTEN: need SB_HAS_STDINT_H in configuration_public.h"
+#endif
+#endif
+
 #if SB_HAS(STDINT_H)
 #include <stdint.h>
+#endif
+
+#if defined(__EMSCRIPTEN__)
+#if !defined(SB_HAS_INTTYPES_H) || !SB_HAS_INTTYPES_H
+#error "EMSCRIPTEN: need SB_HAS_INTTYPES_H in configuration_public.h"
+#endif
 #endif
 
 #if SB_HAS(INTTYPES_H)
 #include <inttypes.h>
 #endif  // SB_HAS(STDINT_H)
+
+#if defined(__EMSCRIPTEN__)
+#if !defined(SB_HAS_SYS_TYPES_H) || !SB_HAS_INTTYPES_H
+#error "EMSCRIPTEN: need SB_HAS_SYS_TYPES_H in configuration_public.h"
+#endif
+#endif
 
 #if SB_HAS(SYS_TYPES_H)
 #include <sys/types.h>

@@ -45,8 +45,13 @@
 #define SB_IS_ARCH_X86 1
 
 // Assume a 64-bit architecture.
+#if defined(__EMSCRIPTEN__) /// \todo move to emscripten platform header
+#define SB_IS_32_BIT 1
+#define SB_IS_64_BIT 0
+#else
 #define SB_IS_32_BIT 0
 #define SB_IS_64_BIT 1
+#endif
 
 // Whether the current platform's pointers are 32-bit.
 // Whether the current platform's longs are 32-bit.
@@ -106,6 +111,12 @@
 
 // Whether the current platform provides the standard header stdint.h.
 #define SB_HAS_STDINT_H 1
+
+#if defined(__EMSCRIPTEN__)
+#if !defined(SB_HAS_STDINT_H) || !SB_HAS_STDINT_H
+#error "EMSCRIPTEN: need SB_HAS_STDINT_H in configuration_public.h"
+#endif
+#endif
 
 // Whether the current platform provides the standard header inttypes.h.
 #define SB_HAS_INTTYPES_H 1

@@ -18,7 +18,8 @@
 #include <new>
 #include "starboard/memory.h"
 
-#if defined(__EMSCRIPTEN__) // TODO: tcmalloc on unix
+/// \todo tcmalloc only for unix, use malloc on EMSCRIPTEN
+#if defined(__EMSCRIPTEN__)
 void* operator new(size_t size) {
   return SbMemoryAllocate(size);
 }
