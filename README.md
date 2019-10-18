@@ -4,11 +4,59 @@
     <img src="logo/logo.svg" width="100px" alt="skg" />
   </a>
 </p>
-<h3 align="center">SKIA/opengl/emscripten based C++ UI</h3>
-<p align="center">A fully open source, powerful solution for UI. Supports subset of HTML/CSS. Based on chromium/cobalt.foo without JavaScript overhead.</p>
+<h3 align="center">SKIA based C++ HTML/CSS UI</h3>
+<p align="center">A fully open source, powerful solution for HTML/CSS UI. Supports subset of HTML/CSS. Based on chromium/cobalt.foo without JavaScript overhead.</p>
 <hr />
 
+![](docs/img/demo1.gif)
+
+## Features
+
+- CSS animations from cobalt.foo
+- CSS Flexbox from cobalt.foo
+- Lottie animation format (skottie /Bodymovin animation) see https://skia.org/user/modules/skottie
+- Modified cobalt.foo to support mouse events propogation with ScrollTop/ScrollLeft
+- skia compiled to browser (emscripten WASM)
+- cobalt.foo (chromium`s fork) ported to browser (emscripten WASM).
+  - updated cobalt.foo to new SKIA version
+  - updated cobalt.foo to new chromium`s base version (removed `base` folder duplication)
+  - JS (V8) disabled. Use C++ for better speed and app size.
+  - added custom tags / controls (similar to React.js/Vue.js)
+- chromium ui/views (widget based UI framework) from Blink ported to WASM (and other OS)
+  - window & widgets code modified to use custom code for window creation.
+- chromium `base` (libchrome) from Blink ported to WASM (and other OS)
+  - supports threaded (MT) browser (emscripten WASM)
+  - supports single-threaded (ST) browser (emscripten WASM)
+  - see https://emscripten.org/docs/porting/pthreads.html
+  - see https://www.chromium.org/chromium-os/packages/libchrome
+- WTF (Web Template Framework) from Blink ported to WASM (and other OS)
+  - see https://github.com/endlessm/chromium-browser/tree/master/third_party/blink/renderer
+- custom fonts
+- unicode fonts and harfbuzz
+- uses SDL2 to create window on Unix
+- uses `emscripten.h` to handle window on browser (emscripten WASM)
+- uses CMake (replaced chromium`s GN with CMake)
+- supports WebGL 2 / GLSL 300 es as there really isn`t a reason to support WebGL 1 at this point
+- supports WASM as there really isn`t a reason to support ASM.js at this point
+  - see https://emscripten.org/docs/compiling/WebAssembly.html?highlight=wasm
+- Most features from cobalt.foo/chromium can be turned on/off via CMake options. Useful for platforms what require small resulting app size (browser WASM, mobile, etc.)
+
 # FAQ
+
+- What is it?
+
+Lightweight HTML/CSS rendering engine for apps, games and single-page web application (SPA)
+
+Because SKIA is cross-platform, project can support wide range of platforms, including Linux, Windows, MacOS, Android, iOS, browser (WASM) and many more.
+
+Tested platforms:
+- Linux
+- Browser with threading support (WASM MT). Prefer WASM MT because it is more stable.
+- Browser without threading support (WASM ST)
+
+It can be integrated into games or game engines using render-to-texture or SKIA `GrBackendRenderTarget`, real-time 3D applications, fullscreen applications, embedded applications and many more.
+
+Contributions are welcome.
 
 - WHY?
 
@@ -41,6 +89,8 @@ Inspired by:
 - electron
 - livecode https://github.com/livecode/livecode/blob/develop/libgraphics/src/context.cpp
 - chromium-lite
+- Pesto https://github.com/marcj/Pesto
+- LCUI https://github.com/lc-soft/LCUI
 - blink
 
 Let`s combine best of them all together.
@@ -58,36 +108,35 @@ Check readme & issues. Don't forget to replace files based on `patches`.
   * opengl - cross-language, cross-platform application programming interface (API) for rendering 2D and 3D vector graphics
   * emscripten - Emscripten is a toolchain for compiling to asm.js and WebAssembly, built using LLVM, that lets you run C and C++ on the web at near-native speed
 
+- C++?
+
+C++ can be bound to many languages. Feel free to add any third-party bindings.
+
+- C++ on Web?
+
+Modern C++ can use sanitizers and lifetime checkers to prevent memory and threading issues ( see lifetime branch of https://github.com/mgehre/llvm-project )
+
+For hot-code reload (edit running app without recompile) in C++ you can use Cling ( see https://github.com/derofim/cling-cmake )
+
+Use code generators to reduce the amount of boilerplate code in your C++ projects, for example https://github.com/blockspacer/CXXCTP
+
+Use customizable template engine to generate CSS/HTML, for example https://github.com/blockspacer/CXTPL
+
+SKIA uses WASM and canvas/WebGL to draw on web. In theory, it is possible to add https://github.com/mbasso/asm-dom support or houdini bindings (CSS Paint API).
+
 - Alternatives?
 
 See https://github.com/blockspacer/skia-opengl-emscripten/issues/6
 
-## Features
+- Limitations
 
-- cobalt.foo (chromium`s fork) ported to WASM (and other OS)
-  - updated cobalt.foo to new SKIA version
-  - updated cobalt.foo to new chromium`s base version (removed base duplicate)
-  - JS (V8) disabled. Use C++ for better speed and app size.
-  - added custom tags / controls (similar to React.js/Vue.js)
-- chromium ui/views (UI framework) from Blink ported to WASM (and other OS)
-  - window & widgets code modified. Use custom code to create window.
-- chromium base (libchrome) from Blink ported to WASM (and other OS)
-  - supports both threaded (MT) and single-threaded (ST) WASM
-  - see https://emscripten.org/docs/porting/pthreads.html
-  - see https://www.chromium.org/chromium-os/packages/libchrome
-- WTF (Web Template Framework) from Blink ported to WASM (and other OS)
-  - see https://github.com/endlessm/chromium-browser/tree/master/third_party/blink/renderer
-- skia compiled to wasm (emscripten)
-- skottie (Bodymovin animation / lottie), see https://skia.org/user/modules/skottie
-- custom fonts
-- unicode fonts & harfbuzz
-- uses SDL2 to create window
-- uses CMake (replaced chromium`s GN with CMake)
-- supports WASM with/without threads
-  - see https://emscripten.org/docs/porting/pthreads.html
-- supports WebGL 2 / GLSL 300 es as there really isn`t a reason to support WebGL 1 at this point
-- supports WASM as there really isn`t a reason to support ASM.js at this point
-  - see https://emscripten.org/docs/compiling/WebAssembly.html?highlight=wasm
+  * Prefer CSS flexbox for laybout. No `float:right`.
+  * Scrolling in HTML is experimental.
+  * It is opensource project: you can participate to add more features and fix issues.
+
+- LICENSE?
+
+Need to review opensource `LICENSE`-s used by thirdparty libs. Any help wanted. See issues: https://github.com/blockspacer/skia-opengl-emscripten/issues/4
 
 ## Clone with --recursive
 
@@ -112,7 +161,8 @@ Download, build and install the desired version from the terminal (you can check
 You should set the CMAKE_VERSION and CMAKE_BUILD variables as needed:
 
 ```bash
-export CMAKE_VERSION=3.11
+# see https://github.com/blockspacer/CXXCTP/blob/master/scripts/install_cmake.sh
+export CMAKE_VERSION=3.15
 export CMAKE_BUILD=3
 mkdir -p ~/3rdparty
 cd ~/3rdparty
@@ -145,7 +195,7 @@ ls ${PWD}/thirdparty/depot_tools
 export PATH="${PWD}/thirdparty/depot_tools:${PATH}"
 ```
 
-clone SKIA using depot_tools as in `skia` section.
+Clone SKIA using depot_tools as in `skia` section.
 
 Used deps:
 
@@ -333,10 +383,12 @@ cp -a "patches/libjpeg_turbo/." src/chromium/third_party/libjpeg_turbo/
 
 ### Compile example on Linux
 
+NOTE: We use `cmake -P` to run helper `.cmake` script that performs configure and build steps.
+
 ```bash
 cmake -DBUILD_TYPE="Debug" -DCLEAN_BUILD=OFF -P tools/buildUnix.cmake
 
-# OR~
+# OR
 cmake -DRUN_APP=ON -DBUILD_APP=ON -DEXTRA_EMMAKE_OPTS="-j;6" -DBUILD_TYPE="Debug" -DCLEAN_BUILD=OFF -DENABLE_CMAKE_CLEAN_FIRST=OFF -DBUILD_DIR=$(pwd)/build-linux-deb/ -DEXTRA_CMAKE_OPTS="-DENABLE_WEB_PTHREADS=TRUE;-DENABLE_LIBWEBP=TRUE;-DENABLE_BLINK=TRUE;-DENABLE_COBALT=TRUE;-DENABLE_WTF=TRUE;-DDISABLE_FORMATTING=FALSE;-DENABLE_SKOTTIE=TRUE;-DFORCE_DISABLE_SK_GPU=FALSE;-DENABLE_BLINK_UI_VIEWS=TRUE" -P tools/buildUnix.cmake
 ```
 
@@ -362,8 +414,12 @@ cmake -DBUILD_TYPE="Debug" -DCLEAN_BUILD=OFF -P tools/buildWeb.cmake
 cmake -DRUN_APP=OFF -DBUILD_APP=ON -DEXTRA_EMMAKE_OPTS="-j;6" -DBUILD_TYPE="Debug" -DCLEAN_BUILD=OFF -DENABLE_EMCMAKE_CLEAN_FIRST=OFF -DBUILD_DIR=$(pwd)/build-wasm-mt-deb/ -DEXTRA_EMCMAKE_OPTS="-DENABLE_WEB_PTHREADS=TRUE;-DENABLE_LIBWEBP=TRUE;-DENABLE_BLINK=TRUE;-DENABLE_COBALT=TRUE;-DENABLE_BASE=TRUE;-DENABLE_WTF=TRUE;-DDISABLE_FORMATTING=FALSE;-DENABLE_SKIA=TRUE;-DENABLE_SKSG=TRUE;-DENABLE_SKIA_UTILS=TRUE;-DENABLE_SKOTTIE=TRUE;-DENABLE_SKSHAPER=TRUE;-DFORCE_DISABLE_SK_GPU=FALSE;-DENABLE_BLINK_UI_VIEWS=TRUE;-DENABLE_BLINK_UI_NATIVE_THEME=TRUE;-DENABLE_MAIN=TRUE" -P tools/buildWeb.cmake
 
 # OR
-# NOTE: build in release mode if you want good performance in browser
+# NOTE: MT build in release mode if you want good performance in browser
 cmake -DRUN_APP=ON -DBUILD_APP=ON -DEXTRA_EMMAKE_OPTS="-j;6" -DBUILD_TYPE="Release" -DCLEAN_BUILD=OFF -DENABLE_EMCMAKE_CLEAN_FIRST=OFF -DBUILD_DIR=$(pwd)/build-wasm-mt-rel/ -DEXTRA_EMCMAKE_OPTS="-DENABLE_WEB_PTHREADS=TRUE;-DENABLE_LIBWEBP=TRUE;-DENABLE_BLINK=TRUE;-DENABLE_COBALT=TRUE;-DENABLE_BASE=TRUE;-DENABLE_WTF=TRUE;-DDISABLE_FORMATTING=FALSE;-DENABLE_SKIA=TRUE;-DENABLE_SKSG=TRUE;-DENABLE_SKIA_UTILS=TRUE;-DENABLE_SKOTTIE=TRUE;-DENABLE_SKSHAPER=TRUE;-DFORCE_DISABLE_SK_GPU=FALSE;-DENABLE_BLINK_UI_VIEWS=TRUE;-DENABLE_BLINK_UI_NATIVE_THEME=TRUE;-DENABLE_MAIN=TRUE" -P tools/buildWeb.cmake
+
+# OR
+# NOTE: ST build in release mode if you want good performance in browser
+cmake -DRUN_APP=ON -DBUILD_APP=ON -DEXTRA_EMMAKE_OPTS="-j;6" -DBUILD_TYPE="Release" -DCLEAN_BUILD=OFF -DENABLE_EMCMAKE_CLEAN_FIRST=OFF -DBUILD_DIR=$(pwd)/build-wasm-st-rel/ -DEXTRA_EMCMAKE_OPTS="-DENABLE_WEB_PTHREADS=FALSE;-DENABLE_LIBWEBP=TRUE;-DENABLE_BLINK=TRUE;-DENABLE_COBALT=TRUE;-DENABLE_BASE=TRUE;-DENABLE_WTF=TRUE;-DDISABLE_FORMATTING=FALSE;-DENABLE_SKIA=TRUE;-DENABLE_SKSG=TRUE;-DENABLE_SKIA_UTILS=TRUE;-DENABLE_SKOTTIE=TRUE;-DENABLE_SKSHAPER=TRUE;-DFORCE_DISABLE_SK_GPU=FALSE;-DENABLE_BLINK_UI_VIEWS=TRUE;-DENABLE_BLINK_UI_NATIVE_THEME=TRUE;-DENABLE_MAIN=TRUE" -P tools/buildWeb.cmake
 ```
 
 ### Run example on HTML5 platform / browser / WASM (needs '--emrun' cxx flag)
