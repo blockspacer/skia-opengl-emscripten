@@ -35,6 +35,93 @@
 #include "cobalt/math/vector2d.h"
 #include "cobalt/math/vector2d_f.h"
 
+#include <memory>
+#include <string>
+#include <vector>
+
+#include "base/compiler_specific.h"
+#include "base/memory/ref_counted.h"
+#include "base/memory/weak_ptr.h"
+#include "base/optional.h"
+#include "base/strings/string_piece.h"
+#include "cobalt/base/token.h"
+#include "cobalt/cssom/animation_set.h"
+#include "cobalt/cssom/css_computed_style_declaration.h"
+#include "cobalt/cssom/css_declared_style_declaration.h"
+#include "cobalt/cssom/css_style_declaration.h"
+#include "cobalt/cssom/css_style_rule.h"
+#include "cobalt/cssom/css_transition_set.h"
+#include "cobalt/cssom/mutation_observer.h"
+#include "cobalt/cssom/selector_tree.h"
+#include "cobalt/cssom/style_sheet_list.h"
+#include "cobalt/dom/css_animations_adapter.h"
+#include "cobalt/dom/css_transitions_adapter.h"
+#include "cobalt/dom/directionality.h"
+#include "cobalt/dom/dom_rect_list.h"
+#include "cobalt/dom/dom_stat_tracker.h"
+#include "cobalt/dom/element.h"
+#include "cobalt/dom/layout_boxes.h"
+#include "cobalt/dom/pseudo_element.h"
+#include "cobalt/loader/image/image_cache.h"
+#include "cobalt/ui_navigation/nav_item.h"
+
+
+#include "cobalt/dom/html_element.h"
+
+// not in spec
+#include "cobalt/dom/html_skottie_element.h"
+#include "cobalt/dom/html_custom_element.h"
+
+#include <algorithm>
+#include <map>
+#include <memory>
+
+#include "base/message_loop/message_pump.h"
+#include "base/task/sequence_manager/task_queue.h"
+#include "cobalt/base/user_log.h"
+
+#include "base/lazy_instance.h"
+#include "base/message_loop/message_loop.h"
+//#include "base/message_loop/message_loop_task_runner.h"
+#include "base/strings/string_number_conversions.h"
+#include "cobalt/base/tokens.h"
+#include "cobalt/cssom/absolute_url_value.h"
+#include "cobalt/cssom/cascaded_style.h"
+#include "cobalt/cssom/computed_style.h"
+#include "cobalt/cssom/css_parser.h"
+#include "cobalt/cssom/css_style_sheet.h"
+#include "cobalt/cssom/keyword_value.h"
+#include "cobalt/cssom/property_list_value.h"
+#include "cobalt/cssom/selector_tree.h"
+#include "cobalt/cssom/viewport_size.h"
+#include "cobalt/dom/csp_delegate.h"
+#include "cobalt/dom/document.h"
+#include "cobalt/dom/dom_animatable.h"
+#include "cobalt/dom/dom_string_map.h"
+#include "cobalt/dom/focus_event.h"
+#include "cobalt/dom/html_anchor_element.h"
+#include "cobalt/dom/html_audio_element.h"
+#include "cobalt/dom/html_body_element.h"
+#include "cobalt/dom/html_br_element.h"
+#include "cobalt/dom/html_div_element.h"
+#include "cobalt/dom/html_element_context.h"
+#include "cobalt/dom/html_element_factory.h"
+#include "cobalt/dom/html_head_element.h"
+#include "cobalt/dom/html_heading_element.h"
+#include "cobalt/dom/html_html_element.h"
+#include "cobalt/dom/html_image_element.h"
+#include "cobalt/dom/html_link_element.h"
+#include "cobalt/dom/html_meta_element.h"
+#include "cobalt/dom/html_paragraph_element.h"
+#include "cobalt/dom/html_script_element.h"
+#include "cobalt/dom/html_span_element.h"
+#include "cobalt/dom/html_style_element.h"
+#include "cobalt/dom/html_title_element.h"
+#include "cobalt/dom/html_unknown_element.h"
+#include "cobalt/dom/html_video_element.h"
+#include "cobalt/dom/rule_matching.h"
+#include "cobalt/loader/image/animated_image_tracker.h"
+
 /*#if defined(__EMSCRIPTEN__)
 #include "emscripten/emscripten.h"
 #include "emscripten/html5.h"
@@ -88,19 +175,143 @@ LayoutBoxes* GetLayoutBoxesIfNotEmpty(dom::Element* element) {
 void TopmostEventTarget::ConsiderElement(dom::Element* element,
                                          const math::Vector2dF& original_coordinate,
                                          const math::Vector2dF& coordinate) {
+  using namespace cobalt::dom;
+
   if (!element) return;
+
   math::Vector2dF original_element_coordinate(
     original_coordinate.x(),
     original_coordinate.y());
-  math::Vector2dF element_prev_scroll_coordinate(coordinate);
+  //math::Vector2dF element_prev_scroll_coordinate(coordinate);
   math::Vector2dF element_scroll_coordinate(coordinate);
 
   DCHECK(element->AsHTMLElement()); /// \ todo
 
-  element_scroll_coordinate.set_x(coordinate.x()
-    + element->scroll_left());
-  element_scroll_coordinate.set_y(coordinate.y()
-    + element->scroll_top());
+  float offsetX = 0.0f;
+  float offsetY = 0.0f;
+  float scrollX = 0.0f;
+  float scrollY = 0.0f;
+
+  element->AsHTMLElement()->node_document()->DoSynchronousLayout();
+
+#if 0
+  for (Node* ancestor_node = element->AsHTMLElement()->parent_node(); ancestor_node;
+       ancestor_node = ancestor_node->parent_node()) {
+    Element* ancestor_element = ancestor_node->AsElement();
+    if (!ancestor_element) {
+      continue;
+    }
+    HTMLElement* ancestor_html_element = ancestor_element->AsHTMLElement().get();
+    if (!ancestor_html_element) {
+      continue;
+    }
+    DCHECK(ancestor_html_element->computed_style());
+    /*if (ancestor_html_element->AsHTMLBodyElement() ||
+        ancestor_html_element->computed_style()->position() !=
+            cssom::KeywordValue::GetStatic()) {
+      return ancestor_element;
+    }*/
+  }
+#endif
+
+  /*if(element->AsHTMLElement()->offset_parent())
+  {
+    element_scroll_coordinate.set_x(coordinate.x() -
+      element->AsHTMLElement()->scroll_left()
+    );
+    element_scroll_coordinate.set_y(coordinate.y() -
+      element->AsHTMLElement()->scroll_top()
+    );
+  }*/
+
+  /*if(element->AsHTMLElement()->offset_parent()) {
+    if(auto scrElm
+        = element->AsHTMLElement()->node_document()->GetElementById("scrollable_body")) {
+      auto scrHTMLElm = scrElm->AsHTMLElement();
+      if(scrHTMLElm) {
+        element_scroll_coordinate.set_x(original_coordinate.x() +
+          scrHTMLElm->scroll_left()
+        );
+        element_scroll_coordinate.set_y(original_coordinate.y() +
+          scrHTMLElm->scroll_top()
+        );
+      }
+    }
+  }*/
+
+  /*auto offsetNode = element->AsHTMLElement()->offset_parent();
+  while(offsetNode) {
+    offsetX += offsetNode->AsHTMLElement()->offset_left();
+    offsetY += offsetNode->AsHTMLElement()->offset_top();
+    offsetNode = offsetNode->AsHTMLElement()->offset_parent();
+  }
+  if(offsetNode) {
+    offsetX += offsetNode->AsHTMLElement()->offset_left();
+    offsetY += offsetNode->AsHTMLElement()->offset_top();
+  }
+
+  auto scrollNode = element->AsHTMLElement()->offset_parent();
+  while(scrollNode) {
+    scrollX += scrollNode->AsHTMLElement()->scroll_left();
+    scrollY += scrollNode->AsHTMLElement()->scroll_top();
+    scrollNode = scrollNode->AsHTMLElement()->offset_parent();
+  }
+  if(scrollNode) {
+    scrollX += scrollNode->AsHTMLElement()->scroll_left();
+    scrollY += scrollNode->AsHTMLElement()->scroll_top();
+  }*/
+
+#if 0
+  if(element->AsHTMLElement()->offset_parent()) {
+    if(element->AsHTMLElement()->offset_parent()->AsHTMLElement()->style()->position(/*todo*/nullptr)
+        == cssom::kFixedKeywordName) {
+      element_scroll_coordinate.set_x(coordinate.x() +
+        element->AsHTMLElement()->offset_parent()->scroll_left()
+      );
+      element_scroll_coordinate.set_y(coordinate.y() +
+        element->AsHTMLElement()->offset_parent()->scroll_top()
+      );
+    } else {
+      element_scroll_coordinate.set_x(coordinate.x() +
+        element->AsHTMLElement()->scroll_left()
+      );
+      element_scroll_coordinate.set_y(coordinate.y() +
+        element->AsHTMLElement()->scroll_top()
+      );
+    }
+  } else {
+    element_scroll_coordinate.set_x(coordinate.x() +
+      element->AsHTMLElement()->scroll_left()
+    );
+    element_scroll_coordinate.set_y(coordinate.y() +
+      element->AsHTMLElement()->scroll_top()
+    );
+  }
+#endif
+
+  //scrollX += element->AsHTMLElement()->scroll_left();
+  //scrollY += element->AsHTMLElement()->scroll_top();
+
+  /*element_scroll_coordinate.set_x(
+    original_coordinate.x()
+    + offsetX
+    + scrollX);
+  element_scroll_coordinate.set_y(
+    original_coordinate.y()
+    + offsetY
+    + scrollY);*/
+
+  /*if(element->AsHTMLElement()->offset_parent()) {
+    element_scroll_coordinate.set_x(coordinate.x() -
+      element->AsHTMLElement()->offset_left());
+    element_scroll_coordinate.set_y(coordinate.x() -
+      element->AsHTMLElement()->offset_top());
+  } else {
+    element_scroll_coordinate.set_x(coordinate.x()
+      + element->scroll_left());
+    element_scroll_coordinate.set_y(coordinate.y()
+      + element->scroll_top());
+  }*/
 
   /*element_scroll_coordinate.set_x(element_scroll_coordinate.x()
   + element->scroll_left());
@@ -109,6 +320,168 @@ void TopmostEventTarget::ConsiderElement(dom::Element* element,
 
   //  coordinate.x() + element->scroll_left(),
   //  coordinate.y() + element->scroll_top());
+
+
+  LayoutBoxes* layout_boxes = GetLayoutBoxesIfNotEmpty(element);
+  if (layout_boxes) {
+    const Box* box = layout_boxes->boxes().front().get();
+    if (box->computed_style() && box->IsTransformed()) {
+      // Early out if the transform cannot be applied. This can occur if the
+      // transform matrix is not invertible.
+      if (!box->ApplyTransformActionToCoordinate(Box::kEnterTransform,
+                                                 &original_element_coordinate)) {
+        return;
+      }
+      /*if (!box->ApplyTransformActionToCoordinate(Box::kEnterTransform,
+                                                 &element_prev_scroll_coordinate)) {
+        return;
+      }*/
+      if (!box->ApplyTransformActionToCoordinate(Box::kEnterTransform,
+                                                 &element_scroll_coordinate)) {
+        return;
+      }
+    }
+
+    if (!element->AsHTMLElement()->layout_boxes_
+        || element->AsHTMLElement()->IsRootElement()
+        || element->AsHTMLElement()->AsHTMLBodyElement() ||
+        !element->AsHTMLElement()->computed_style() ||
+        element->AsHTMLElement()->computed_style()->position()
+          == cssom::KeywordValue::GetFixed()) {
+      ///...
+    } else {
+      //scrollX += element->AsHTMLElement()->scroll_left();
+      //scrollY += element->AsHTMLElement()->scroll_top();
+
+      for (Node* ancestor_node =  element->AsHTMLElement()->parent_node(); ancestor_node;
+           ancestor_node = ancestor_node->parent_node()) {
+        Element* ancestor_element = ancestor_node->AsElement();
+        if (!ancestor_element) {
+          continue;
+        }
+        HTMLElement* ancestor_html_element = ancestor_element->AsHTMLElement().get();
+        if (!ancestor_html_element) {
+          continue;
+        }
+        DCHECK(ancestor_html_element->computed_style());
+        if (ancestor_html_element->AsHTMLBodyElement()) {
+          continue;
+        }
+        if (ancestor_html_element->computed_style()->position() ==
+                cssom::KeywordValue::GetFixed()) {
+          scrollX = 0.0f;
+          scrollY = 0.0f;
+          break;
+        }
+        //if (ancestor_html_element->computed_style()->position() ==
+        //        cssom::KeywordValue::GetAbsolute()) {
+        //  scrollX = 0.0f;
+        //  scrollY = 0.0f;
+        //  continue;
+        //}
+        scrollX += ancestor_html_element
+          //->offset_left();
+          ->scroll_left();
+        scrollY += ancestor_html_element
+          //->offset_top();
+          ->scroll_top();
+        //if (ancestor_html_element->computed_style()->position() ==
+        //        cssom::KeywordValue::GetStatic()
+        //    || ancestor_html_element->computed_style()->position() ==
+        //        cssom::KeywordValue::GetAbsolute()) {
+        //  scrollX += ancestor_html_element
+        //    //->offset_left();
+        //    ->scroll_left();
+        //  scrollY += ancestor_html_element
+        //    //->offset_top();
+        //    ->scroll_top();
+        //}
+      }
+    }
+
+    //scrollX += element->AsHTMLElement()
+    //  ->offset_left();
+    //scrollY += element->AsHTMLElement()
+    //  ->offset_top();
+
+    /*auto scrollNode = element->AsHTMLElement()->offset_parent();
+    while(scrollNode) {
+      scrollX += scrollNode->AsHTMLElement()
+        //->offset_left();
+        ->scroll_left();
+      scrollY += scrollNode->AsHTMLElement()
+        //->offset_top();
+        ->scroll_top();
+      scrollNode = scrollNode->AsHTMLElement()->offset_parent();
+    }
+    if(scrollNode) {
+      scrollX += scrollNode->AsHTMLElement()
+        //->offset_left();
+        ->scroll_left();
+      scrollY += scrollNode->AsHTMLElement()
+        //->offset_top();
+        ->scroll_top();
+    }*/
+
+    /*auto scrollNode = element->AsHTMLElement()->offset_parent();
+    while(scrollNode) {
+      scrollX += scrollNode->AsHTMLElement()
+        //->offset_left();
+        ->scroll_left();
+      scrollY += scrollNode->AsHTMLElement()
+        //->offset_top();
+        ->scroll_top();
+      scrollNode = scrollNode->AsHTMLElement()->offset_parent();
+    }
+    if(scrollNode) {
+      scrollX += scrollNode->AsHTMLElement()
+        //->offset_left();
+        ->scroll_left();
+      scrollY += scrollNode->AsHTMLElement()
+        //->offset_top();
+        ->scroll_top();
+    }*/
+
+    //offsetX += element->AsHTMLElement()->scroll_left();
+    //offsetY += element->AsHTMLElement()->scroll_top();
+    /*auto offsetNode = element->AsHTMLElement()->offset_parent();
+    while(offsetNode) {
+      offsetX += offsetNode->AsHTMLElement()->scroll_left();
+      offsetY += offsetNode->AsHTMLElement()->scroll_top();
+      offsetNode = offsetNode->AsHTMLElement()->offset_parent();
+    }
+    if(offsetNode) {
+      offsetX += offsetNode->AsHTMLElement()->scroll_left();
+      offsetY += offsetNode->AsHTMLElement()->scroll_top();
+    }*/
+
+    element_scroll_coordinate.set_x(
+      element_scroll_coordinate.x()
+      + offsetX
+      + scrollX);
+    element_scroll_coordinate.set_y(
+      element_scroll_coordinate.y()
+      + offsetY
+      + scrollY);
+
+
+    scoped_refptr<dom::HTMLElement> html_element = element->AsHTMLElement().get();
+    if (html_element && html_element->CanbeDesignatedByPointerIfDisplayed()) {
+      ConsiderBoxes(html_element, layout_boxes,
+        original_element_coordinate,
+        element_scroll_coordinate, //element_prev_scroll_coordinate,
+        element_scroll_coordinate);
+    }
+  }
+
+  for (dom::Element* child_element = element->first_element_child();
+       child_element; child_element = child_element->next_element_sibling()) {
+    ConsiderElement(child_element,
+      //original_coordinate,
+      //original_coordinate); // TODO <<<
+      original_element_coordinate,
+      original_element_coordinate); // TODO <<<
+  }
 
 #if 0
     /// \ todo
@@ -131,7 +504,6 @@ void TopmostEventTarget::ConsiderElement(dom::Element* element,
    element_scroll_coordinate.set_y(original_coordinate.y());
     //+ element->scroll_top());
   }
-#endif
 
   LayoutBoxes* layout_boxes = GetLayoutBoxesIfNotEmpty(element);
   if (layout_boxes) {
@@ -195,6 +567,7 @@ void TopmostEventTarget::ConsiderElement(dom::Element* element,
         }
     }
   }
+#endif
 }
 
 void TopmostEventTarget::ConsiderBoxes(
@@ -215,7 +588,9 @@ void TopmostEventTarget::ConsiderBoxes(
     Box* box = (*box_iterator).get();
     do {
       if (box->IsUnderCoordinate(
-            original_layout_coordinate, prev_layout_coordinate, layout_coordinate)) {
+            original_layout_coordinate,
+            prev_layout_coordinate,
+            layout_coordinate)) {
         Box::RenderSequence render_sequence = box->GetRenderSequence();
         if (Box::IsRenderedLater(render_sequence, render_sequence_)) {
           html_element_ = html_element;

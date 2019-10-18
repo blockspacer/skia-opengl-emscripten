@@ -387,7 +387,7 @@ math::Matrix3F Box::GetMarginBoxTransformFromContainingBlock(
         containing_block_offset.x().toFloat(),
         containing_block_offset.y().toFloat()) * transform;
 
-    box = container;
+    box = container; // <<<
   }
 
   return transform;
@@ -1147,6 +1147,7 @@ int Box::GetOrder() const {
 bool Box::IsUnderCoordinate(const Vector2dLayoutUnit& original_coordinate,
     const Vector2dLayoutUnit& prev_coordinate,
     const Vector2dLayoutUnit& coordinate) const {
+  // >>>
   RectLayoutUnit rect = GetBorderBoxFromRoot(true /*transform_forms_root*/);
   const scoped_refptr<cssom::PropertyValue>& position_property =
       computed_style()->position();
