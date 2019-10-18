@@ -789,11 +789,11 @@ void addTestOnlyAttrCallbacks() {
             /// \note style with `position:absolute` relative to parent.
             cobalt::math::Vector2dF elementLocalPos{
                 mouseEvent->client_x()
-                //+ elementHTML->offset_left()
-                - elementHTML->GetBoundingClientRect()->left() - maxSize / 2.0f,
+                - elementHTML->GetBoundingClientRect()->left()
+                - maxSize / 2.0f,
                 mouseEvent->client_y()
-                //+ elementHTML->offset_top()
-                - elementHTML->GetBoundingClientRect()->top() - maxSize / 2.0f
+                - elementHTML->GetBoundingClientRect()->top()
+                - maxSize / 2.0f
             };
 
             ///\todo

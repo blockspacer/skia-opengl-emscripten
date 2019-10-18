@@ -39,11 +39,13 @@ class TopmostEventTarget {
  private:
   scoped_refptr<dom::HTMLElement> FindTopmostEventTarget(
       const scoped_refptr<dom::Document>& document,
-      const math::Vector2dF& coordinate);
+      const math::Vector2dF& coordinate,
+      math::Vector2dF* override_coordinate);
 
   void ConsiderElement(dom::Element* element,
                        const math::Vector2dF& original_coordinate,
-                       const math::Vector2dF& coordinate);
+                       const math::Vector2dF& coordinate,
+                       math::Vector2dF* override_coordinate);
   void ConsiderBoxes(const scoped_refptr<dom::HTMLElement>& html_element,
                      LayoutBoxes* layout_boxes,
                      const math::Vector2dF& original_coordinate,

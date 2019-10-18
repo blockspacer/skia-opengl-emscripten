@@ -80,13 +80,13 @@
       .body_scroll_container {
         height: 100%;
         width: 100%;
-        border: 1px solid black;
+        border: 1px solid white;
         overflow: scroll;
       }
 
       .nested_scroll_container {
         height: 100px;
-        width: 100px;
+        width: 100%;
         border: 1px solid black;
         overflow: scroll;
       }
@@ -108,10 +108,11 @@
     </style>
   </head>
   <body class="exanim">
-  <div class="nested_scroll_container"
-       I_on-wheel-scroll_I="scrollable_body">
-    scroll scrollable_body
-  </div>
+<div class="nested_scroll_container"
+     I_on-wheel-scroll_I="scrollable_body">
+  scroll scrollable_body
+</div>
+
 <div class="body_scroll_container" id="scrollable_body"
      I_on-wheel-scroll_I="">
 
@@ -862,6 +863,11 @@
   <div class="right">
   </div>
   -->
+</div>
+
+<div class="nested_scroll_container"
+     I_on-wheel-scroll_I="scrollable_body">
+  scroll scrollable_body
 </div>
   </body>
 </html>

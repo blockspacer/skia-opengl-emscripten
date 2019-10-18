@@ -132,18 +132,22 @@ namespace layout {
 
 scoped_refptr<dom::HTMLElement> TopmostEventTarget::FindTopmostEventTarget(
     const scoped_refptr<dom::Document>& document,
-    const math::Vector2dF& coordinate) {
+    const math::Vector2dF& coordinate,
+    math::Vector2dF* override_coordinate) {
   TRACE_EVENT0("cobalt::layout",
                "TopmostEventTarget::FindTopmostEventTarget()");
   DCHECK(document);
   DCHECK(!box_);
   DCHECK(render_sequence_.empty());
 
+  DCHECK(override_coordinate);
+
   // Make sure the document's layout box tree is up-to-date.
   document->DoSynchronousLayout();
 
   html_element_ = document->html();
-  ConsiderElement(html_element_.get(), coordinate, coordinate);
+  ConsiderElement(html_element_.get(), coordinate, coordinate,
+    override_coordinate);
   box_ = NULL;
   render_sequence_.clear();
   document->SetIndicatedElement(html_element_.get());
@@ -174,8 +178,11 @@ LayoutBoxes* GetLayoutBoxesIfNotEmpty(dom::Element* element) {
 }  // namespace
 void TopmostEventTarget::ConsiderElement(dom::Element* element,
                                          const math::Vector2dF& original_coordinate,
-                                         const math::Vector2dF& coordinate) {
+                                         const math::Vector2dF& coordinate,
+                                         math::Vector2dF* override_coordinate) {
   using namespace cobalt::dom;
+
+  DCHECK(override_coordinate);
 
   if (!element) return;
 
@@ -342,6 +349,7 @@ void TopmostEventTarget::ConsiderElement(dom::Element* element,
       }
     }
 
+    /// \todo dirty HACK to imitate scrolling support
     if (!element->AsHTMLElement()->layout_boxes_
         || element->AsHTMLElement()->IsRootElement()
         || element->AsHTMLElement()->AsHTMLBodyElement() ||
@@ -353,6 +361,7 @@ void TopmostEventTarget::ConsiderElement(dom::Element* element,
       //scrollX += element->AsHTMLElement()->scroll_left();
       //scrollY += element->AsHTMLElement()->scroll_top();
 
+      /// \todo dirty HACK to imitate scrolling support
       for (Node* ancestor_node =  element->AsHTMLElement()->parent_node(); ancestor_node;
            ancestor_node = ancestor_node->parent_node()) {
         Element* ancestor_element = ancestor_node->AsElement();
@@ -474,13 +483,70 @@ void TopmostEventTarget::ConsiderElement(dom::Element* element,
     }
   }
 
+  /// \todo dirty HACK to imitate scrolling support
+  /// \todo obscure nested children
   for (dom::Element* child_element = element->first_element_child();
        child_element; child_element = child_element->next_element_sibling()) {
+    scoped_refptr<dom::HTMLElement> child_html_element = child_element->AsHTMLElement().get();
+    DCHECK(child_html_element);
+
+    const bool isObscurable
+      = element->AsHTMLElement()->computed_style()->overflow()
+          == cssom::KeywordValue::GetHidden()
+        || element->AsHTMLElement()->computed_style()->overflow()
+          == cssom::KeywordValue::GetScroll()
+        || element->AsHTMLElement()->computed_style()->overflow()
+          == cssom::KeywordValue::GetAuto();
+
+    /// \note The upper-left corner has the coordinates (0,0)
+    /// \see https://developer.mozilla.org/en-US/docs/Web/API/Element/getBoundingClientRect
+    if(/*element->AsHTMLElement()->GetUiNavItem()
+       &&*/ isObscurable)
+    {
+      bool isFixed = child_html_element->computed_style()->position() ==
+                cssom::KeywordValue::GetFixed();
+      bool IsChildTopAboveParentBottom =
+        child_html_element->GetBoundingClientRect()->top()
+        - (isFixed ? 0 : element->AsHTMLElement()->scroll_top())
+        - element->AsHTMLElement()->GetBoundingClientRect()->bottom()
+        >= 0;
+      bool IsChildBottomBelowParentTop =
+        child_html_element->GetBoundingClientRect()->bottom()
+        - (isFixed ? 0 : element->AsHTMLElement()->scroll_top())
+        - element->AsHTMLElement()->GetBoundingClientRect()->top()
+        < 0;
+      bool IsChildRightBelowParentLeft =
+        child_html_element->GetBoundingClientRect()->right()
+        - (isFixed ? 0 : element->AsHTMLElement()->scroll_left())
+        - element->AsHTMLElement()->GetBoundingClientRect()->left()
+        < 0;
+      bool IsChildLeftAboveParentRight =
+        child_html_element->GetBoundingClientRect()->left()
+        - (isFixed ? 0 : element->AsHTMLElement()->scroll_left())
+        - element->AsHTMLElement()->GetBoundingClientRect()->right()
+        >= 0;
+      bool isChildFullyObsuredByScroll
+        = IsChildTopAboveParentBottom
+        || IsChildBottomBelowParentTop
+        || IsChildRightBelowParentLeft
+        || IsChildLeftAboveParentRight;
+      if(isChildFullyObsuredByScroll
+        || !child_html_element->IsBeingRendered()) {
+        //printf("fully obscured element %s\n",
+        //  element->AsHTMLElement()->text_content().value_or("").c_str());
+        continue; /// \note skip element obscured by scroll area
+      }
+    }
+
+    /// \todo dirty HACK to imitate scrolling support
+    *override_coordinate = element_scroll_coordinate;
+
     ConsiderElement(child_element,
       //original_coordinate,
       //original_coordinate); // TODO <<<
       original_element_coordinate,
-      original_element_coordinate); // TODO <<<
+      original_element_coordinate,
+      override_coordinate); // TODO <<<
   }
 
 #if 0
@@ -860,11 +926,23 @@ void TopmostEventTarget::MaybeSendPointerEvents(
                                   //+ previous_html_element->scroll_left(),
                                  static_cast<float>(event_init.client_y()));
                                   //+ previous_html_element->scroll_top());
-      target_element = FindTopmostEventTarget(view->document(), coordinate);
+      math::Vector2dF override_coordinate;
+      target_element = FindTopmostEventTarget(view->document(),
+        coordinate, &override_coordinate);
+      event_init.set_screen_x(override_coordinate.x());
+      event_init.set_screen_y(override_coordinate.y());
+      event_init.set_client_x(override_coordinate.x());
+      event_init.set_client_y(override_coordinate.y());
     } else {
       math::Vector2dF coordinate(static_cast<float>(event_init.client_x()),
                                  static_cast<float>(event_init.client_y()));
-      target_element = FindTopmostEventTarget(view->document(), coordinate);
+      math::Vector2dF override_coordinate;
+      target_element = FindTopmostEventTarget(view->document(),
+        coordinate, &override_coordinate);
+      event_init.set_screen_x(override_coordinate.x());
+      event_init.set_screen_y(override_coordinate.y());
+      event_init.set_client_x(override_coordinate.x());
+      event_init.set_client_y(override_coordinate.y());
     }
   }
 
