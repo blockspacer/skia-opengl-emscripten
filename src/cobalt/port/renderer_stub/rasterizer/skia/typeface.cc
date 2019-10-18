@@ -72,7 +72,7 @@ render_tree::GlyphIndex SkiaTypeface::GetGlyphForCharacter(
     int32 utf32_character) {
   //printf("SkiaTypeface::GetGlyphForCharacter 1\n");
 #if !(defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__))
-  DCHECK(character_glyph_thread_checker_.CalledOnValidThread());
+  DCHECK_CALLED_ON_VALID_THREAD(character_glyph_thread_checker_);
 #endif
 
   // If the character falls within the first 256 characters (Latin-1), then

@@ -502,7 +502,7 @@ AddressTrackerLinux::AddressTrackerAutoLock::AddressTrackerAutoLock(
   if (tracker_.tracking_) {
     lock_.Acquire();
   } else {
-    DCHECK(tracker_.thread_checker_.CalledOnValidThread());
+    DCHECK_CALLED_ON_VALID_THREAD(tracker_.thread_checker_);
   }
 }
 

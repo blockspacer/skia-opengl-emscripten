@@ -24,7 +24,9 @@
 #include "base/callback.h"
 #include "base/containers/hash_tables.h"
 #include "base/threading/thread_checker.h"
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
 #include "base/timer/timer.h"
+#endif
 #include "cobalt/dom/font_face.h"
 #include "cobalt/dom/font_list.h"
 #include "cobalt/dom/location.h"

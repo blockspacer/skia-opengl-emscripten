@@ -371,7 +371,7 @@ void Pipeline::SetNewRenderTree(const Submission& render_tree_submission) {
   //printf("Pipeline::SetNewRenderTree 1\n");
 
 #if defined(ENABLE_RASTERIZER_THREAD)
-  DCHECK(rasterizer_thread_checker_.CalledOnValidThread());
+  DCHECK_CALLED_ON_VALID_THREAD(rasterizer_thread_checker_);
 #endif
 
   DCHECK(render_tree_submission.render_tree.get());
@@ -433,7 +433,7 @@ void Pipeline::SetNewRenderTree(const Submission& render_tree_submission) {
 
 void Pipeline::ClearCurrentRenderTree() {
 #if defined(ENABLE_RASTERIZER_THREAD)
-  DCHECK(rasterizer_thread_checker_.CalledOnValidThread());
+  DCHECK_CALLED_ON_VALID_THREAD(rasterizer_thread_checker_);
 #endif
   TRACE_EVENT0("cobalt::renderer", "Pipeline::ClearCurrentRenderTree()");
 
@@ -466,7 +466,7 @@ void Pipeline::RasterizeCurrentTree() {
 
   TRACK_MEMORY_SCOPE("Renderer");
 #if defined(ENABLE_RASTERIZER_THREAD)
-  DCHECK(rasterizer_thread_checker_.CalledOnValidThread());
+  DCHECK_CALLED_ON_VALID_THREAD(rasterizer_thread_checker_);
 #endif
   TRACE_EVENT0("cobalt::renderer", "Pipeline::RasterizeCurrentTree()");
 
@@ -709,7 +709,7 @@ void Pipeline::InitializeRasterizerThread(
   TRACE_EVENT0("cobalt::renderer", "Pipeline::InitializeRasterizerThread");
 
 #if defined(ENABLE_RASTERIZER_THREAD)
-  DCHECK(rasterizer_thread_checker_.CalledOnValidThread());
+  DCHECK_CALLED_ON_VALID_THREAD(rasterizer_thread_checker_);
 #endif
 
   rasterizer_ = create_rasterizer_function.Run();
@@ -740,7 +740,7 @@ void Pipeline::ShutdownSubmissionQueue() {
   TRACE_EVENT0("cobalt::renderer", "Pipeline::ShutdownSubmissionQueue()");
 
 #if defined(ENABLE_RASTERIZER_THREAD)
-  DCHECK(rasterizer_thread_checker_.CalledOnValidThread());
+  DCHECK_CALLED_ON_VALID_THREAD(rasterizer_thread_checker_);
 #endif
 
   // Clear out our time fence data, especially |post_fence_submission_| which
@@ -772,7 +772,7 @@ void Pipeline::ShutdownSubmissionQueue() {
 void Pipeline::ShutdownRasterizerThread() {
   TRACE_EVENT0("cobalt::renderer", "Pipeline::ShutdownRasterizerThread()");
 #if defined(ENABLE_RASTERIZER_THREAD)
-  DCHECK(rasterizer_thread_checker_.CalledOnValidThread());
+  DCHECK_CALLED_ON_VALID_THREAD(rasterizer_thread_checker_);
 #endif
 
   // Shutdown the FPS overlay which may reference render trees.
@@ -941,7 +941,7 @@ void PrintFPS(const base::CValCollectionTimerStatsFlushResults& results) {
 void Pipeline::FrameStatsOnFlushCallback(
     const base::CValCollectionTimerStatsFlushResults& flush_results) {
 #if defined(ENABLE_RASTERIZER_THREAD)
-  DCHECK(rasterizer_thread_checker_.CalledOnValidThread());
+  DCHECK_CALLED_ON_VALID_THREAD(rasterizer_thread_checker_);
 #endif
 
   if (enable_fps_overlay_) {

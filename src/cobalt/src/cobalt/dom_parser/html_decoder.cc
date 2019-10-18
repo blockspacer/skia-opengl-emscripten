@@ -86,7 +86,7 @@ loader::LoadResponseType HTMLDecoder::OnResponseStarted(
 #endif // ENABLE_NET_FETCHER
 
 void HTMLDecoder::DecodeChunk(const char* data, size_t size) {
-  DCHECK(thread_checker_.CalledOnValidThread());
+  DCHECK_CALLED_ON_VALID_THREAD(thread_checker_);
   libxml_html_parser_wrapper_->DecodeChunk(data, size);
 }
 

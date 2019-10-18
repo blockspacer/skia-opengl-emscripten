@@ -266,7 +266,7 @@ const math::RectF& Font::GetGlyphBounds(render_tree::GlyphIndex glyph) {
     //DCHECK(skFont_);
     DCHECK(typeface_);
     //DCHECK(font_metrics_);
-  DCHECK(glyph_bounds_thread_checker_.CalledOnValidThread());
+  DCHECK_CALLED_ON_VALID_THREAD(glyph_bounds_thread_checker_);
   //printf("GetGlyphBounds 2\n");
   // Check to see if the glyph falls within the the first 256 glyphs. These
   // characters are part of the primary page and are stored within an array as

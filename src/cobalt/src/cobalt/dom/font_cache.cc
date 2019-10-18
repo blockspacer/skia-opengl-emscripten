@@ -212,7 +212,7 @@ const scoped_refptr<render_tree::Typeface>&
 FontCache::GetCharacterFallbackTypeface(int32 utf32_character,
                                         const render_tree::FontStyle& style) {
   printf("FontCache::GetCharacterFallbackTypefaceMap 1\n");
-  DCHECK(thread_checker_.CalledOnValidThread());
+  DCHECK_CALLED_ON_VALID_THREAD(thread_checker_);
   printf("FontCache::GetCharacterFallbackTypefaceMap 2\n");
   DCHECK(resource_provider());
   scoped_refptr<render_tree::Typeface> typeface =

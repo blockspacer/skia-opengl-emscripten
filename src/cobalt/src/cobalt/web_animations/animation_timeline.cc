@@ -86,8 +86,8 @@ void AnimationTimeline::UpdateNextEventTimer() {
 #endif
   } else {
     base::TimeDelta delay = event_queue_.next_fire_time() - clock_->Now();
-#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
     const bool isTimeExpired = delay < base::TimeDelta();
+#if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
     next_event_timer_.Start(
         FROM_HERE, isTimeExpired ? base::TimeDelta() : delay,
         base::Bind(&AnimationTimeline::Sample, base::Unretained(this)));
