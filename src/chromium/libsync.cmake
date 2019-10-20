@@ -28,8 +28,12 @@ target_include_directories(libsync PUBLIC
   ${libsync_DIR}src/include
 )
 
-target_compile_options(libsync PRIVATE
-  -Wno-implicit-function-declaration)
+if(MSVC) 
+  # TODO
+else()
+  target_compile_options(libsync PRIVATE
+    -Wno-implicit-function-declaration)
+endif()
 
 #target_compile_definitions(libsync PRIVATE
 #  # IS_IPC_IMPL=1

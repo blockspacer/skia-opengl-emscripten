@@ -101,7 +101,11 @@ target_compile_definitions(fontconfig PRIVATE
   "FC_ATTRIBUTE_VISIBILITY_EXPORT=__attribute((visibility(\"hidden\")))"
 )
 
-target_compile_options(fontconfig PRIVATE
-  -Wno-non-literal-null-conversion
-  -Wno-pointer-bool-conversion
-)
+if(MSVC) 
+  # TODO
+else()
+  target_compile_options(fontconfig PRIVATE
+    -Wno-non-literal-null-conversion
+    -Wno-pointer-bool-conversion
+  )
+endif()

@@ -221,7 +221,11 @@ target_compile_definitions(COMPONENTS_VIZ_COMMON PUBLIC
   VIZ_COMMON_PORT=1
 )
 
-target_compile_options(COMPONENTS_VIZ_COMMON PRIVATE
-  -Wno-error
-  -Wno-c++11-narrowing
-)
+if(MSVC) 
+  # TODO
+else()
+  target_compile_options(COMPONENTS_VIZ_COMMON PRIVATE
+    -Wno-error
+    -Wno-c++11-narrowing
+  )
+endif()

@@ -172,8 +172,6 @@ list(APPEND BASE_SOURCES
    ${BASE_DIR}export_template.h
    ${BASE_DIR}feature_list.cc
    ${BASE_DIR}feature_list.h
-   ${BASE_DIR}file_descriptor_store.cc
-   ${BASE_DIR}file_descriptor_store.h
    ${BASE_DIR}file_version_info.h
    #${BASE_DIR}file_version_info_mac.h
    #${BASE_DIR}file_version_info_mac.mm
@@ -359,8 +357,6 @@ list(APPEND BASE_SOURCES
    ${BASE_DIR}memory/shared_memory.h
    ${BASE_DIR}memory/shared_memory_handle.cc
    ${BASE_DIR}memory/shared_memory_handle.h
-   ${BASE_DIR}memory/shared_memory_helper.cc
-   ${BASE_DIR}memory/shared_memory_helper.h
    ${BASE_DIR}memory/shared_memory_hooks.h
    ${BASE_DIR}memory/shared_memory_mapping.cc
    ${BASE_DIR}memory/shared_memory_mapping.h
@@ -582,7 +578,6 @@ list(APPEND BASE_SOURCES
    ${BASE_DIR}strings/safe_sprintf.h
    ${BASE_DIR}strings/strcat.cc
    ${BASE_DIR}strings/strcat.h
-   ${BASE_DIR}strings/string16.cc
    ${BASE_DIR}strings/string16.h
    ${BASE_DIR}strings/string_number_conversions.cc
    ${BASE_DIR}strings/string_number_conversions.h
@@ -920,134 +915,9 @@ list(APPEND BASE_SOURCES
    ${BASE_DIR}version.h
    ${BASE_DIR}vlog.cc
    ${BASE_DIR}vlog.h
-   #${BASE_DIR}win/async_operation.h
-   #${BASE_DIR}win/atl.h
-   #${BASE_DIR}win/com_init_check_hook.cc
-   #${BASE_DIR}win/com_init_check_hook.h
-   #${BASE_DIR}win/com_init_util.cc
-   #${BASE_DIR}win/com_init_util.h
-   #${BASE_DIR}win/core_winrt_util.cc
-   #${BASE_DIR}win/core_winrt_util.h
-   #${BASE_DIR}win/current_module.h
-   #${BASE_DIR}win/embedded_i18n/language_selector.cc
-   #${BASE_DIR}win/embedded_i18n/language_selector.h
-   #${BASE_DIR}win/enum_variant.cc
-   #${BASE_DIR}win/enum_variant.h
-   #${BASE_DIR}win/event_trace_consumer.h
-   #${BASE_DIR}win/event_trace_controller.cc
-   #${BASE_DIR}win/event_trace_controller.h
-   #${BASE_DIR}win/event_trace_provider.cc
-   #${BASE_DIR}win/event_trace_provider.h
-   #${BASE_DIR}win/hstring_reference.cc
-   #${BASE_DIR}win/hstring_reference.h
-   #${BASE_DIR}win/i18n.cc
-   #${BASE_DIR}win/i18n.h
-   #${BASE_DIR}win/iat_patch_function.cc
-   #${BASE_DIR}win/iat_patch_function.h
-   #${BASE_DIR}win/iunknown_impl.cc
-   #${BASE_DIR}win/iunknown_impl.h
-   #${BASE_DIR}win/message_window.cc
-   #${BASE_DIR}win/message_window.h
-   #${BASE_DIR}win/object_watcher.cc
-   #${BASE_DIR}win/object_watcher.h
-   #${BASE_DIR}win/patch_util.cc
-   #${BASE_DIR}win/patch_util.h
-   #${BASE_DIR}win/post_async_results.h
-   #${BASE_DIR}win/process_startup_helper.cc
-   #${BASE_DIR}win/process_startup_helper.h
-   #${BASE_DIR}win/propvarutil.h
-   #${BASE_DIR}win/reference.h
-   #${BASE_DIR}win/registry.cc
-   #${BASE_DIR}win/registry.h
-   #${BASE_DIR}win/resource_util.cc
-   #${BASE_DIR}win/resource_util.h
-   #${BASE_DIR}win/scoped_bstr.cc
-   #${BASE_DIR}win/scoped_bstr.h
-   #${BASE_DIR}win/scoped_co_mem.h
-   #${BASE_DIR}win/scoped_com_initializer.cc
-   #${BASE_DIR}win/scoped_com_initializer.h
-   #${BASE_DIR}win/scoped_gdi_object.h
-   #${BASE_DIR}win/scoped_handle.cc
-   #${BASE_DIR}win/scoped_handle.h
-   #${BASE_DIR}win/scoped_handle_verifier.cc
-   #${BASE_DIR}win/scoped_handle_verifier.h
-   #${BASE_DIR}win/scoped_hdc.h
-   #${BASE_DIR}win/scoped_hglobal.h
-   #${BASE_DIR}win/scoped_hstring.cc
-   #${BASE_DIR}win/scoped_hstring.h
-   #${BASE_DIR}win/scoped_process_information.cc
-   #${BASE_DIR}win/scoped_process_information.h
-   #${BASE_DIR}win/scoped_propvariant.h
-   #${BASE_DIR}win/scoped_safearray.h
-   #${BASE_DIR}win/scoped_select_object.h
-   #${BASE_DIR}win/scoped_variant.cc
-   #${BASE_DIR}win/scoped_variant.h
-   #${BASE_DIR}win/scoped_windows_thread_environment.h
-   #${BASE_DIR}win/scoped_winrt_initializer.cc
-   #${BASE_DIR}win/scoped_winrt_initializer.h
-   #${BASE_DIR}win/shlwapi.h
-   #${BASE_DIR}win/shortcut.cc
-   #${BASE_DIR}win/shortcut.h
-   #${BASE_DIR}win/sphelper.h
-   #${BASE_DIR}win/startup_information.cc
-   #${BASE_DIR}win/startup_information.h
-   #${BASE_DIR}win/typed_event_handler.h
-   #${BASE_DIR}win/vector.cc
-   #${BASE_DIR}win/vector.h
-   #${BASE_DIR}win/win_util.cc
-   #${BASE_DIR}win/win_util.h
-   #${BASE_DIR}win/wincrypt_shim.h
-   #${BASE_DIR}win/windows_defines.inc
-   #${BASE_DIR}win/windows_types.h
-   #${BASE_DIR}win/windows_undefines.inc
-   #${BASE_DIR}win/windows_version.cc
-   #${BASE_DIR}win/windows_version.h
-   #${BASE_DIR}win/windowsx_shim.h
-   #${BASE_DIR}win/winrt_storage_util.cc
-   #${BASE_DIR}win/winrt_storage_util.h
-   #${BASE_DIR}win/wmi.cc
-   #${BASE_DIR}win/wmi.h
-   #${BASE_DIR}win/wrapped_window_proc.cc
-   #${BASE_DIR}win/wrapped_window_proc.h
    # base_static ###
    ${BASE_DIR}base_switches.cc
    ${BASE_DIR}base_switches.h
-   # https://github.com/chromium/chromium/blob/master/base/BUILD.gn#L1633
-   ${BASE_DIR}allocator/partition_allocator/address_space_randomization.cc
-   ${BASE_DIR}allocator/partition_allocator/address_space_randomization.h
-   ${BASE_DIR}allocator/partition_allocator/oom.h
-   ${BASE_DIR}allocator/partition_allocator/oom_callback.cc
-   ${BASE_DIR}allocator/partition_allocator/oom_callback.h
-   ${BASE_DIR}allocator/partition_allocator/page_allocator.cc
-   ${BASE_DIR}allocator/partition_allocator/page_allocator.h
-   ${BASE_DIR}allocator/partition_allocator/page_allocator_internal.h
-   ${BASE_DIR}allocator/partition_allocator/partition_alloc.cc
-   ${BASE_DIR}allocator/partition_allocator/partition_alloc.h
-   ${BASE_DIR}allocator/partition_allocator/partition_alloc_constants.h
-   ${BASE_DIR}allocator/partition_allocator/partition_bucket.cc
-   ${BASE_DIR}allocator/partition_allocator/partition_bucket.h
-   ${BASE_DIR}allocator/partition_allocator/partition_cookie.h
-   ${BASE_DIR}allocator/partition_allocator/partition_direct_map_extent.h
-   ${BASE_DIR}allocator/partition_allocator/partition_freelist_entry.h
-   ${BASE_DIR}allocator/partition_allocator/partition_oom.cc
-   ${BASE_DIR}allocator/partition_allocator/partition_oom.h
-   ${BASE_DIR}allocator/partition_allocator/partition_page.cc
-   ${BASE_DIR}allocator/partition_allocator/partition_page.h
-   ${BASE_DIR}allocator/partition_allocator/partition_root_base.cc
-   ${BASE_DIR}allocator/partition_allocator/partition_root_base.h
-   ${BASE_DIR}allocator/partition_allocator/spin_lock.cc
-   ${BASE_DIR}allocator/partition_allocator/spin_lock.h
-   # https://github.com/chromium/chromium/blob/master/base/BUILD.gn#L1665
-   ${BASE_DIR}allocator/partition_allocator/page_allocator_internals_posix.h
-   # https://github.com/chromium/chromium/blob/master/base/BUILD.gn#L1903
-   ${BASE_DIR}memory/platform_shared_memory_region_posix.cc
-   ${BASE_DIR}memory/shared_memory_handle_posix.cc
-   # https://github.com/chromium/chromium/blob/master/base/BUILD.gn#L1910
-   ${BASE_DIR}memory/shared_memory_posix.cc
-   # https://github.com/chromium/chromium/blob/master/base/BUILD.gn#L1914
-   ${BASE_DIR}time/time_conversion_posix.cc
-   ${BASE_DIR}time/time_exploded_posix.cc
-   ${BASE_DIR}time/time_now_posix.cc
    # https://github.com/chromium/chromium/blob/master/base/BUILD.gn#L1929
    ## "power_monitor/power_monitor_device_source_stub.cc"
    # https://github.com/chromium/chromium/blob/master/base/BUILD.gn#L2747
@@ -1063,6 +933,37 @@ list(APPEND BASE_SOURCES
 
 if(TARGET_EMSCRIPTEN OR TARGET_LINUX)
   list(APPEND BASE_SOURCES
+    # https://github.com/chromium/chromium/blob/master/base/BUILD.gn#L1633
+    ${BASE_DIR}allocator/partition_allocator/address_space_randomization.cc
+    ${BASE_DIR}allocator/partition_allocator/address_space_randomization.h
+    ${BASE_DIR}allocator/partition_allocator/oom.h
+    ${BASE_DIR}allocator/partition_allocator/oom_callback.cc
+    ${BASE_DIR}allocator/partition_allocator/oom_callback.h
+    ${BASE_DIR}allocator/partition_allocator/page_allocator.cc
+    ${BASE_DIR}allocator/partition_allocator/page_allocator.h
+    ${BASE_DIR}allocator/partition_allocator/page_allocator_internal.h
+    ${BASE_DIR}allocator/partition_allocator/partition_alloc.cc
+    ${BASE_DIR}allocator/partition_allocator/partition_alloc.h
+    ${BASE_DIR}allocator/partition_allocator/partition_alloc_constants.h
+    ${BASE_DIR}allocator/partition_allocator/partition_bucket.cc
+    ${BASE_DIR}allocator/partition_allocator/partition_bucket.h
+    ${BASE_DIR}allocator/partition_allocator/partition_cookie.h
+    ${BASE_DIR}allocator/partition_allocator/partition_direct_map_extent.h
+    ${BASE_DIR}allocator/partition_allocator/partition_freelist_entry.h
+    ${BASE_DIR}allocator/partition_allocator/partition_oom.cc
+    ${BASE_DIR}allocator/partition_allocator/partition_oom.h
+    ${BASE_DIR}allocator/partition_allocator/partition_page.cc
+    ${BASE_DIR}allocator/partition_allocator/partition_page.h
+    ${BASE_DIR}allocator/partition_allocator/partition_root_base.cc
+    ${BASE_DIR}allocator/partition_allocator/partition_root_base.h
+    ${BASE_DIR}allocator/partition_allocator/spin_lock.cc
+    ${BASE_DIR}allocator/partition_allocator/spin_lock.h
+    # see https://github.com/chromium/chromium/blob/9db0b5162b8648833c3a6b1af044cebd9d7d3855/base/BUILD.gn#L1772
+    ${BASE_DIR}strings/string16.cc
+    ${BASE_DIR}memory/shared_memory_helper.cc
+    ${BASE_DIR}memory/shared_memory_helper.h
+    ${BASE_DIR}file_descriptor_store.cc
+    ${BASE_DIR}file_descriptor_store.h
     #${BASE_DIR}atomicops_internals_portable.h
     #${BASE_DIR}critical_closure_internal_ios.mm
     ${BASE_DIR}debug/activity_analyzer.cc
@@ -1105,6 +1006,17 @@ if(TARGET_EMSCRIPTEN OR TARGET_LINUX)
     ${BASE_DIR}posix/can_lower_nice_to.h
     # https://github.com/chromium/chromium/blob/master/base/BUILD.gn#L1929
     ${BASE_DIR}power_monitor/power_monitor_device_source_stub.cc
+    # https://github.com/chromium/chromium/blob/master/base/BUILD.gn#L1665
+    ${BASE_DIR}allocator/partition_allocator/page_allocator_internals_posix.h
+    # https://github.com/chromium/chromium/blob/master/base/BUILD.gn#L1903
+    ${BASE_DIR}memory/platform_shared_memory_region_posix.cc
+    ${BASE_DIR}memory/shared_memory_handle_posix.cc
+    # https://github.com/chromium/chromium/blob/master/base/BUILD.gn#L1910
+    ${BASE_DIR}memory/shared_memory_posix.cc
+    # https://github.com/chromium/chromium/blob/master/base/BUILD.gn#L1914
+    ${BASE_DIR}time/time_conversion_posix.cc
+    ${BASE_DIR}time/time_exploded_posix.cc
+    ${BASE_DIR}time/time_now_posix.cc
     # https://github.com/chromium/chromium/blob/master/base/BUILD.gn#L2747
     ###${BASE_DIR}files/dir_reader_posix_unittest.cc
     ###${BASE_DIR}files/file_descriptor_watcher_posix_unittest.cc
@@ -1255,8 +1167,98 @@ elseif(TARGET_WINDOWS)
     ${BASE_DIR}win/pe_image.cc
     ${BASE_DIR}win/pe_image.h
     #
-    ${BASE_DIR}win/static_constants.cc
-    ${BASE_DIR}win/static_constants.h
+    #${BASE_DIR}win/static_constants.cc
+    #${BASE_DIR}win/static_constants.h
+    #
+    ${BASE_DIR}win/async_operation.h
+    ${BASE_DIR}win/atl.h
+    ${BASE_DIR}win/com_init_check_hook.cc
+    ${BASE_DIR}win/com_init_check_hook.h
+    ${BASE_DIR}win/com_init_util.cc
+    ${BASE_DIR}win/com_init_util.h
+    ${BASE_DIR}win/core_winrt_util.cc
+    ${BASE_DIR}win/core_winrt_util.h
+    ${BASE_DIR}win/current_module.h
+    ${BASE_DIR}win/embedded_i18n/language_selector.cc
+    ${BASE_DIR}win/embedded_i18n/language_selector.h
+    ${BASE_DIR}win/enum_variant.cc
+    ${BASE_DIR}win/enum_variant.h
+    ${BASE_DIR}win/event_trace_consumer.h
+    ${BASE_DIR}win/event_trace_controller.cc
+    ${BASE_DIR}win/event_trace_controller.h
+    ${BASE_DIR}win/event_trace_provider.cc
+    ${BASE_DIR}win/event_trace_provider.h
+    ${BASE_DIR}win/hstring_reference.cc
+    ${BASE_DIR}win/hstring_reference.h
+    ${BASE_DIR}win/i18n.cc
+    ${BASE_DIR}win/i18n.h
+    ${BASE_DIR}win/iat_patch_function.cc
+    ${BASE_DIR}win/iat_patch_function.h
+    ${BASE_DIR}win/iunknown_impl.cc
+    ${BASE_DIR}win/iunknown_impl.h
+    ${BASE_DIR}win/message_window.cc
+    ${BASE_DIR}win/message_window.h
+    ${BASE_DIR}win/object_watcher.cc
+    ${BASE_DIR}win/object_watcher.h
+    ${BASE_DIR}win/patch_util.cc
+    ${BASE_DIR}win/patch_util.h
+    ${BASE_DIR}win/post_async_results.h
+    ${BASE_DIR}win/process_startup_helper.cc
+    ${BASE_DIR}win/process_startup_helper.h
+    ${BASE_DIR}win/propvarutil.h
+    ${BASE_DIR}win/reference.h
+    ${BASE_DIR}win/registry.cc
+    ${BASE_DIR}win/registry.h
+    ${BASE_DIR}win/resource_util.cc
+    ${BASE_DIR}win/resource_util.h
+    ${BASE_DIR}win/scoped_bstr.cc
+    ${BASE_DIR}win/scoped_bstr.h
+    ${BASE_DIR}win/scoped_co_mem.h
+    ${BASE_DIR}win/scoped_com_initializer.cc
+    ${BASE_DIR}win/scoped_com_initializer.h
+    ${BASE_DIR}win/scoped_gdi_object.h
+    ${BASE_DIR}win/scoped_handle.cc
+    ${BASE_DIR}win/scoped_handle.h
+    ${BASE_DIR}win/scoped_handle_verifier.cc
+    ${BASE_DIR}win/scoped_handle_verifier.h
+    ${BASE_DIR}win/scoped_hdc.h
+    ${BASE_DIR}win/scoped_hglobal.h
+    ${BASE_DIR}win/scoped_hstring.cc
+    ${BASE_DIR}win/scoped_hstring.h
+    ${BASE_DIR}win/scoped_process_information.cc
+    ${BASE_DIR}win/scoped_process_information.h
+    ${BASE_DIR}win/scoped_propvariant.h
+    ${BASE_DIR}win/scoped_safearray.h
+    ${BASE_DIR}win/scoped_select_object.h
+    ${BASE_DIR}win/scoped_variant.cc
+    ${BASE_DIR}win/scoped_variant.h
+    ${BASE_DIR}win/scoped_windows_thread_environment.h
+    ${BASE_DIR}win/scoped_winrt_initializer.cc
+    ${BASE_DIR}win/scoped_winrt_initializer.h
+    ${BASE_DIR}win/shlwapi.h
+    ${BASE_DIR}win/shortcut.cc
+    ${BASE_DIR}win/shortcut.h
+    ${BASE_DIR}win/sphelper.h
+    ${BASE_DIR}win/startup_information.cc
+    ${BASE_DIR}win/startup_information.h
+    ${BASE_DIR}win/typed_event_handler.h
+    ${BASE_DIR}win/vector.cc
+    ${BASE_DIR}win/vector.h
+    ${BASE_DIR}win/win_util.cc
+    ${BASE_DIR}win/win_util.h
+    ${BASE_DIR}win/wincrypt_shim.h
+    ${BASE_DIR}win/windows_defines.inc
+    ${BASE_DIR}win/windows_types.h
+    ${BASE_DIR}win/windows_undefines.inc
+    ${BASE_DIR}win/windows_version.cc
+    ${BASE_DIR}win/windows_version.h
+    ${BASE_DIR}win/windowsx_shim.h
+    ${BASE_DIR}win/winrt_storage_util.cc
+    ${BASE_DIR}win/winrt_storage_util.h
+    ${BASE_DIR}win/wmi.cc
+    ${BASE_DIR}win/wmi.h
+    ${BASE_DIR}win/wrapped_window_proc.cc
+    ${BASE_DIR}win/wrapped_window_proc.h
     # https://github.com/chromium/chromium/blob/master/base/BUILD.gn#L1894
     ${BASE_DIR}message_loop/message_pump_win.cc
     ${BASE_DIR}message_loop/message_pump_win.h
@@ -1290,8 +1292,8 @@ elseif(TARGET_WINDOWS)
     ${BASE_DIR}profiler/native_unwinder_win.cc
     ${BASE_DIR}profiler/native_unwinder_win.h
     ${BASE_DIR}profiler/stack_sampler_win.cc
-    ${BASE_DIR}profiler/suspendable_thread_delegate_win.cc
-    ${BASE_DIR}profiler/suspendable_thread_delegate_win.h
+    #${BASE_DIR}profiler/suspendable_thread_delegate_win.cc
+    #${BASE_DIR}profiler/suspendable_thread_delegate_win.h
     ${BASE_DIR}sampling_heap_profiler/module_cache_win.cc
     ${BASE_DIR}scoped_clear_last_error_win.cc
     ${BASE_DIR}strings/string_util_win.h
@@ -1311,11 +1313,11 @@ elseif(TARGET_WINDOWS)
     ${BASE_DIR}trace_event/trace_event_etw_export_win.h
     ${BASE_DIR}base_paths_win.cc
     ${BASE_DIR}base_paths_win.h
-    ${BASE_DIR}allocator/allocator_shim_default_dispatch_to_winheap.cc
-    ${BASE_DIR}allocator/allocator_shim_override_ucrt_symbols_win.h
-    ${BASE_DIR}allocator/winheap_stubs_win.cc
-    ${BASE_DIR}allocator/winheap_stubs_win.h
-    ${BASE_DIR}allocator/partition_allocator/page_allocator_internals_win.h
+    # ${BASE_DIR}allocator/allocator_shim_default_dispatch_to_winheap.cc # if (use_allocator_shim)
+    # ${BASE_DIR}allocator/allocator_shim_override_ucrt_symbols_win.h # if (use_allocator_shim)
+    # ${BASE_DIR}allocator/winheap_stubs_win.cc # if (use_allocator_shim)
+    # ${BASE_DIR}allocator/winheap_stubs_win.h # if (use_allocator_shim)
+    # ${BASE_DIR}allocator/partition_allocator/page_allocator_internals_win.h # if (use_allocator_shim)
     ${BASE_DIR}files/file_enumerator_win.cc
     ${BASE_DIR}memory/platform_shared_memory_region_win.cc
     ${BASE_DIR}memory/shared_memory_handle_win.cc
@@ -1332,21 +1334,6 @@ else()
 endif()
 
 list(APPEND BASE_SOURCES
-  ${BASE_DIR}debug/stack_trace_posix.cc
-  #if (!is_nacl) {
-  #  sources += [
-  #    "base_paths.cc",
-  #    "base_paths.h",
-  #    "base_paths_android.cc",
-  #    "base_paths_android.h",
-  #    "base_paths_mac.h",
-  #    "base_paths_mac.mm",
-  #    "base_paths_posix.h",
-  #    "base_paths_win.cc",
-  #    "base_paths_win.h",
-  #    "metrics/persistent_histogram_storage.cc",
-  #    "metrics/persistent_histogram_storage.h",
-  #  ]
   ${BASE_DIR}base_paths.cc
   #if (is_linux) {
   #  sources += [
@@ -1355,12 +1342,27 @@ list(APPEND BASE_SOURCES
   #    "debug/elf_reader_linux.h",
   #  ]
   #}
-  ${BASE_DIR}base_paths_posix.cc
-  ${BASE_DIR}files/file_util_posix.cc
 )
 
 if(TARGET_LINUX)
   list(APPEND BASE_SOURCES
+    ${BASE_DIR}debug/stack_trace_posix.cc
+    #if (!is_nacl) {
+    #  sources += [
+    #    "base_paths.cc",
+    #    "base_paths.h",
+    #    "base_paths_android.cc",
+    #    "base_paths_android.h",
+    #    "base_paths_mac.h",
+    #    "base_paths_mac.mm",
+    #    "base_paths_posix.h",
+    #    "base_paths_win.cc",
+    #    "base_paths_win.h",
+    #    "metrics/persistent_histogram_storage.cc",
+    #    "metrics/persistent_histogram_storage.h",
+    #  ]
+    ${BASE_DIR}base_paths_posix.cc
+    ${BASE_DIR}files/file_util_posix.cc
     ##${BASE_DIR}process/process_metrics_posix.cc
     ## TODO ##
     ##${BASE_DIR}debug/stack_trace_posix.cc
@@ -1544,72 +1546,6 @@ elseif(TARGET_LINUX)
     modp_b64
   )
 elseif(TARGET_WINDOWS)
-  # Check if libatomic is needed
-  # see https://github.com/HewlettPackard/foedus_code/blob/master/foedus-core/cmake/FindGccAtomic.cmake
-  include(GNUInstallDirs)
-  include(CMakePushCheckState)
-  include(CheckCXXCompilerFlag)
-  include(CheckCXXSourceCompiles)
-  include(CMakePackageConfigHelpers)
-  cmake_push_check_state()
-  check_cxx_source_compiles("
-      #include <atomic>
-      #include <stdint.h>
-      int main() {
-          std::atomic<int64_t> x;
-          x = 1;
-          x--;
-          return (int) x;
-      }"
-      atomic64)
-  #if(NOT atomic64)
-      # I'm also putting "atomic.so.1" because at least FC19 and Ubuntu's repo don't create
-      # "libatomic.so" symlink. They only have libatomic.so.1.0.0 and libatomic.so.1 symlink. No idea why.
-      find_library(ATOMIC
-        NAMES
-          atomic
-          atomic.so.1
-          libatomic.so
-          libatomic.so.1
-          libatomic.so.1.2.0
-        HINTS
-          $ENV{HOME}/local/lib64
-          $ENV{HOME}/local/lib
-          /usr/local/lib64
-          /usr/local/lib
-          /opt/local/lib64
-          /opt/local/lib
-          /usr/lib64
-          /usr/lib
-          /lib64
-          /lib
-          /usr/lib
-          /usr/lib/x86_64-linux-gnu
-          /opt/usr/lib
-          /opt/usr/lib64
-      )
-      if(ATOMIC)
-          set(LIBATOMIC ${ATOMIC})
-          message(STATUS "Found libatomic: ${LIBATOMIC}")
-      else()
-          check_cxx_source_compiles("
-              #include <atomic>
-              #include <stdint.h>
-              int main() {
-                  std::atomic<int32_t> x;
-                  x = 1;
-                  x--;
-                  return (int) x;
-              }"
-              atomic32)
-
-          if(atomic32)
-              message(FATAL_ERROR "Failed to find libatomic!")
-          endif()
-      endif(ATOMIC)
-  #endif(NOT atomic64)
-  cmake_pop_check_state()
-
   list(APPEND EXTRA_CHROMIUM_BASE_LIBS
     #tcmalloc
     ced
@@ -1642,6 +1578,19 @@ add_dependencies(base
 )
 
 #message(FATAL_ERROR EXTRA_CHROMIUM_BASE_LIBS=${EXTRA_CHROMIUM_BASE_LIBS})
+
+if(TARGET_WINDOWS)
+  # see https://github.com/chromium/chromium/blob/9db0b5162b8648833c3a6b1af044cebd9d7d3855/base/BUILD.gn#L1799
+  list(APPEND EXTRA_CHROMIUM_BASE_LIBS
+    cfgmgr32.lib
+    powrprof.lib
+    propsys.lib
+    setupapi.lib
+    userenv.lib
+    wbemuuid.lib
+    winmm.lib
+  )
+endif(TARGET_WINDOWS)
 
 #'dependencies': [
 #  '<(DEPTH)/nb/nb.gyp:nb',
@@ -1704,6 +1653,10 @@ if(TARGET_LINUX)
   list(APPEND EXTRA_DEFINITIONS
     HAVE_MMAP=1
   )
+elseif(TARGET_WINDOWS)
+  list(APPEND EXTRA_DEFINITIONS
+    COM_INIT_CHECK_HOOK_DISABLED=1
+  )
 endif()
 
 target_compile_definitions(base PRIVATE
@@ -1719,6 +1672,10 @@ target_compile_definitions(base PUBLIC
   #${COBALT_COMMON_DEFINES}
 )
 
-target_compile_options(base PUBLIC
-  -Wno-c++11-narrowing
-)
+if(MSVC) 
+  # TODO
+else()
+  target_compile_options(base PUBLIC
+    -Wno-c++11-narrowing
+  )
+endif()

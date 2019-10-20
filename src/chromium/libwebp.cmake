@@ -275,9 +275,13 @@ target_compile_definitions(libwebp PRIVATE
   #-frename-registers # use_dsp_neon
 )
 
-target_compile_options(libwebp PRIVATE
-  -Wno-incompatible-pointer-types
-)
+if(MSVC) 
+  # TODO
+else()
+  target_compile_options(libwebp PRIVATE
+    -Wno-incompatible-pointer-types
+  )
+endif()
 
 target_compile_options(libwebp PUBLIC
   ${EXTRA_OPTIONS}

@@ -624,13 +624,16 @@ endif(DISABLE_FORMATTING)
     #MALLOC_WRAPPER_LIB=\"${shlib_prefix}malloc_wrapper${shlib_extension}\"
     #MEMORY_TOOL_REPLACES_ALLOCATOR=1
   )
-
-  target_compile_options(icu PRIVATE
-    -Wno-error
-    # TODO: remove rtti from icu
-    # https://bugs.chromium.org/p/chromium/issues/detail?id=463085
-    -frtti
-  )
+  if(MSVC) 
+    # TODO
+  else()
+    target_compile_options(icu PRIVATE
+      -Wno-error
+      # TODO: remove rtti from icu
+      # https://bugs.chromium.org/p/chromium/issues/detail?id=463085
+      -frtti
+    )
+  endif()
 #endif(USE_OWN_ICU)
 
 #if(TARGET_EMSCRIPTEN)

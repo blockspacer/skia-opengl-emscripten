@@ -148,6 +148,13 @@ sudo -E apt-get install build-essential --reinstall
 git clone --recursive {repourl_here}
 ```
 
+## Can`t clone with git?
+
+```bash
+# see https://stackoverflow.com/a/21423542
+git config --global url."https://".insteadOf git://
+```
+
 ## Ubuntu - Build and install CMake manually (recommended)
 
 Uninstall any previous version (if needed):
@@ -326,6 +333,7 @@ cd src/chromium/third_party/skia
 # from https://chromium.googlesource.com/chromium/src.git/+/589d8ec2fcaab6f5e48af84d703a1eb430ee9716/DEPS#136
 git checkout f5ca01a69ab6f427c515bb3b4a9748047f04cb13
 tools/git-sync-deps
+# OR py -2 tools/git-sync-deps
 # If some header files are missing, install the corresponding dependencies
 tools/install_dependencies.sh
 # see https://github.com/google/skia/blob/master/src/sksl/README#L77

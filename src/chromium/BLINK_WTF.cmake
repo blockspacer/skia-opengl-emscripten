@@ -255,6 +255,8 @@ set(WTF_LIBRARIES
   base
 )
 
+message(STATUS "HARFBUZZ_LIBRARIES=${HARFBUZZ_LIBRARIES}")
+
 if(TARGET_EMSCRIPTEN OR TARGET_WINDOWS)
   # skip
 elseif(TARGET_LINUX)
@@ -345,17 +347,23 @@ target_compile_definitions(${WTF_LIBRARY_NAME} PRIVATE
   #MEMORY_TOOL_REPLACES_ALLOCATOR=1
 )
 
-target_compile_options(${WTF_LIBRARY_NAME} PRIVATE
-  # always return on non-void functions to prevent UB
-  -Wreturn-type
-  #-Wno-error
-  -Wall
-  -Wextra
-  #-pedantic-errors
-  -Wno-nested-anon-types
-  -Wno-expansion-to-defined
-  -Wno-gnu-zero-variadic-macro-arguments
-  -Wno-unused-parameter
-  -Wno-unused-variable
-  -Wno-unused-lambda-capture
-)
+if(MSVC) # TODO
+  target_compile_options(${WTF_LIBRARY_NAME} PRIVATE
+    /W0
+  )
+else()
+  target_compile_options(${WTF_LIBRARY_NAME} PRIVATE
+    # always return on non-void functions to prevent UB
+    -Wreturn-type
+    #-Wno-error
+    -Wall
+    -Wextra
+    #-pedantic-errors
+    -Wno-nested-anon-types
+    -Wno-expansion-to-defined
+    -Wno-gnu-zero-variadic-macro-arguments
+    -Wno-unused-parameter
+    -Wno-unused-variable
+    -Wno-unused-lambda-capture
+  )
+endif()

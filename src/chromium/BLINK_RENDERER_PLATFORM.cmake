@@ -1946,8 +1946,12 @@ target_compile_definitions(BLINK_RENDERER_PLATFORM PRIVATE
   #USING_V8_SHARED
 )
 
-target_compile_options(BLINK_RENDERER_PLATFORM PUBLIC # NOTE: PUBLIC
-  -Wno-implicit-function-declaration
-  -Wno-c++11-narrowing
-  -Wno-macro-redefined
-)
+if(MSVC) 
+  # TODO
+else()
+  target_compile_options(BLINK_RENDERER_PLATFORM PUBLIC # NOTE: PUBLIC
+    -Wno-implicit-function-declaration
+    -Wno-c++11-narrowing
+    -Wno-macro-redefined
+  )
+endif()

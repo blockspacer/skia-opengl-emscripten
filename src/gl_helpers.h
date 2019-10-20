@@ -54,7 +54,7 @@
 #else
 #include "SDL2/SDL.h"
 #if defined(ENABLE_OPENGL)
-#include <GL/glew.h>
+//#include <GL/glew.h>
 #include <SDL_opengl.h>
 #include <SDL_opengl_glext.h>
 #endif // ENABLE_OPENGL

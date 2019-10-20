@@ -6217,11 +6217,11 @@ int main(int argc, char** argv) {
   }
 
   // Initialize GLEW
-  glewExperimental = GL_TRUE;
+  /*glewExperimental = GL_TRUE;
   GLenum glewError = glewInit();
   if (glewError != GLEW_OK) {
     printf("Error initializing GLEW! %s\n", glewGetErrorString(glewError));
-  }
+  }*/
 
   printf("SDL_GL_MakeCurrent ...\n");
 
@@ -6641,7 +6641,7 @@ if(!render_browser_window) {
   emscripten_set_main_loop(mainLockFreeLoop, 60, 1);
 #else
 #if defined(ENABLE_OPENGL)
-  printf("running with glew\n");
+  printf("running with opengl\n");
 #else
   printf("running without GL\n");
 #endif // ENABLE_OPENGL

@@ -257,10 +257,12 @@ endif(DEBUG_LEVEL)
 
 set(COMMON_THIRDPARTY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/)
 
-# always return on non-void functions to prevent UB
-set(COMMON_FLAGS "${COMMON_FLAGS} -Wreturn-type")
-# https://gist.github.com/morido/8637535
-set(COMMON_FLAGS "${COMMON_FLAGS} -Werror=return-type")
+if(NOT TARGET_WINDOWS) # TODO
+  # always return on non-void functions to prevent UB
+  set(COMMON_FLAGS "${COMMON_FLAGS} -Wreturn-type")
+  # https://gist.github.com/morido/8637535
+  set(COMMON_FLAGS "${COMMON_FLAGS} -Werror=return-type")
+endif(NOT TARGET_WINDOWS)
 
 if(USE_ICU)
   set(COMMON_FLAGS "${COMMON_FLAGS} -DHAS_ICU=1")
@@ -397,8 +399,13 @@ if(ENABLE_HARFBUZZ)
   #
   if(USE_CUSTOM_HARFBUZZ)
     #
-    set(HARFBUZZ_LIBRARIES harfbuzz)
-    set(HARFBUZZ_INCLUDE_DIRS ${harfbuzz_FULL_DIR}/src)
+    if(TARGET_WINDOWS)
+      # NOTE: HarfBuzz from skia on WINDOWS
+      #set(HARFBUZZ_LIBRARIES SKIA)
+    else()
+      set(HARFBUZZ_LIBRARIES harfbuzz)
+      set(HARFBUZZ_INCLUDE_DIRS ${harfbuzz_FULL_DIR}/src)
+    endif(TARGET_WINDOWS)
   else(USE_CUSTOM_HARFBUZZ)
     set(EMCC_COMMON "${EMCC_COMMON} -s USE_HARFBUZZ=1")
     # see find_package below for linux
@@ -758,7 +765,11 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}
 
 # -fno-exceptions
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
-set(COMMON_CXX_FLAGS "${COMMON_CXX_FLAGS} -std=c++17") # use target options
+if(MSVC)
+  set(COMMON_CXX_FLAGS "${COMMON_CXX_FLAGS} /std:c++17") # use target options
+else()
+  set(COMMON_CXX_FLAGS "${COMMON_CXX_FLAGS} -std=c++17") # use target options
+endif()
 
 # see https://github.com/chromium/chromium/blob/master/build/config/compiler/BUILD.gn#L683
 #set(COMMON_CXX_FLAGS "${COMMON_CXX_FLAGS} -ftime-trace")
@@ -768,15 +779,155 @@ set(COMMON_CXX_FLAGS "${COMMON_CXX_FLAGS} -std=c++17") # use target options
 # TODO
 set(COMMON_CXX_FLAGS "${COMMON_CXX_FLAGS} -DCODEC_IMPLEMENTATION=1")
 
+if(MSVC) # TODO
+
+    # see https://github.com/chromium/chromium/blob/8e82c6ab1bc2223fa25f1a127b65071d2d58ae36/build/config/win/BUILD.gn#L276
+    set(COMMON_FLAGS "${COMMON_FLAGS} -DNTDDI_VERSION=NTDDI_WIN10_RS2")
+    set(COMMON_FLAGS "${COMMON_FLAGS} -D_WIN32_WINNT=0x0A00")
+    set(COMMON_FLAGS "${COMMON_FLAGS} -DWINVER=0x0A00")
+
+    # Exceptions in allocator shim are not supported!
+    # see https://github.com/chromium/chromium/blob/5514bb10d8770fea460152d278f105895067aa38/build/config/compiler/BUILD.gn#L1775
+    # TODO: /EHsc- # Disabling Exceptions for MSVC
+    set(COMMON_FLAGS "${COMMON_FLAGS} -D_HAS_EXCEPTIONS=0")
+
+    # see https://github.com/jarro2783/cxxopts/issues/49
+    # see https://github.com/chromium/chromium/blob/8e82c6ab1bc2223fa25f1a127b65071d2d58ae36/build/config/win/BUILD.gn#L601
+    set(COMMON_FLAGS "${COMMON_FLAGS} -DNOMINMAX=1")
+    
+    set(COMMON_FLAGS "${COMMON_FLAGS} -DHB_NO_MT=1") # TODO
+
+    set(COMMON_FLAGS "${COMMON_FLAGS} -D_CRT_NONSTDC_NO_WARNINGS=1") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} -D_CRT_NONSTDC_NO_DEPRECATE=1") # TODO
+    
+    # see https://github.com/chromium/chromium/blob/5514bb10d8770fea460152d278f105895067aa38/build/config/compiler/BUILD.gn#L1093
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4117") # TODO
+    
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4800") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4267") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4996") # TODO
+
+    # see https://github.com/chromium/chromium/blob/5514bb10d8770fea460152d278f105895067aa38/build/config/compiler/BUILD.gn#L1093
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4091") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4127") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4251") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4275") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4312") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4324") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4351") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4355") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4589") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4611") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4100") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4121") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4244") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4505") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4510") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4512") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4610") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4838") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4995") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4996") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4456") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4457") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4458") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4459") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4200") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4201") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4204") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4221") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4245") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4267") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4305") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4389") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4702") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4701") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4703") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4661") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4706") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4715") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4577") # TODO
+endif(MSVC)
+
 if(RELEASE_BUILD)
-  set(COMMON_FLAGS "${COMMON_FLAGS} -fno-rtti")
-  set(COMMON_FLAGS "${COMMON_FLAGS} -fno-exceptions")
-  set(COMMON_FLAGS "${COMMON_FLAGS} -DNDEBUG=1")
+  if(MSVC) # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /GR-")
+    set(COMMON_FLAGS "${COMMON_FLAGS} -fno-exceptions")
+    set(COMMON_FLAGS "${COMMON_FLAGS} -DNDEBUG=1")
+  else()
+    set(COMMON_FLAGS "${COMMON_FLAGS} -fno-rtti")
+    set(COMMON_FLAGS "${COMMON_FLAGS} -fno-exceptions")
+    set(COMMON_FLAGS "${COMMON_FLAGS} -DNDEBUG=1")
+  endif()
 else()
-  # https://stackoverflow.com/a/4184877/10904212
-  # see DCHECK in base::polymorphic_downcast, dynamic_cast
-  set(COMMON_FLAGS "${COMMON_FLAGS} -frtti")
+  if(MSVC) # TODO
+    # https://stackoverflow.com/a/4184877/10904212
+    # see DCHECK in base::polymorphic_downcast, dynamic_cast
+    set(COMMON_FLAGS "${COMMON_FLAGS} /GR")
+
+    set(COMMON_FLAGS "${COMMON_FLAGS} -DHB_NO_MT=1") # TODO
+
+    set(COMMON_FLAGS "${COMMON_FLAGS} -D_WIN32=1") # TODO
+  else()
+    # https://stackoverflow.com/a/4184877/10904212
+    # see DCHECK in base::polymorphic_downcast, dynamic_cast
+    set(COMMON_FLAGS "${COMMON_FLAGS} -frtti")
+  endif()
 endif(RELEASE_BUILD)
+
+if(MSVC) # TODO
+  # see https://software.intel.com/en-us/forums/intel-c-compiler/topic/733662
+  # see https://unicode-org.atlassian.net/browse/ICU-13251?page=com.atlassian.jira.plugin.system.issuetabpanels%3Aall-tabpanel
+  set(COMMON_FLAGS "${COMMON_FLAGS} /utf-8")
+
+  # see https://github.com/chromium/chromium/blob/8e82c6ab1bc2223fa25f1a127b65071d2d58ae36/build/config/win/BUILD.gn#L60
+  set(COMMON_FLAGS "${COMMON_FLAGS} /Gy") 
+
+  # see https://github.com/chromium/chromium/blob/8e82c6ab1bc2223fa25f1a127b65071d2d58ae36/build/config/win/BUILD.gn#L60
+  set(COMMON_FLAGS "${COMMON_FLAGS} /FS")
+  
+  # see https://github.com/chromium/chromium/blob/8e82c6ab1bc2223fa25f1a127b65071d2d58ae36/build/config/win/BUILD.gn#L60
+  set(COMMON_FLAGS "${COMMON_FLAGS} /bigobj")
+
+  # see https://docs.microsoft.com/en-us/cpp/build/reference/zc-cplusplus?view=vs-2019
+  set(COMMON_FLAGS "${COMMON_FLAGS} /Zc:__cplusplus")
+
+  # see https://github.com/chromium/chromium/blob/8e82c6ab1bc2223fa25f1a127b65071d2d58ae36/build/config/win/BUILD.gn#L60
+  set(COMMON_FLAGS "${COMMON_FLAGS} /Zc:sizedDealloc-")
+
+  # see https://github.com/chromium/chromium/blob/8e82c6ab1bc2223fa25f1a127b65071d2d58ae36/build/config/win/BUILD.gn#L60
+  set(COMMON_FLAGS "${COMMON_FLAGS} -D__STD_C")
+
+  # see https://github.com/chromium/chromium/blob/8e82c6ab1bc2223fa25f1a127b65071d2d58ae36/build/config/win/BUILD.gn#L60
+  set(COMMON_FLAGS "${COMMON_FLAGS} -D_CRT_RAND_S")
+
+  # see https://github.com/chromium/chromium/blob/8e82c6ab1bc2223fa25f1a127b65071d2d58ae36/build/config/win/BUILD.gn#L60
+  set(COMMON_FLAGS "${COMMON_FLAGS} -D_CRT_SECURE_NO_DEPRECATE")
+
+  # see https://github.com/chromium/chromium/blob/8e82c6ab1bc2223fa25f1a127b65071d2d58ae36/build/config/win/BUILD.gn#L60
+  set(COMMON_FLAGS "${COMMON_FLAGS} -D_SCL_SECURE_NO_DEPRECATE")
+
+  # see https://github.com/chromium/chromium/blob/8e82c6ab1bc2223fa25f1a127b65071d2d58ae36/build/config/win/BUILD.gn#L60
+  #set(COMMON_FLAGS "${COMMON_FLAGS} -D_ATL_NO_OPENGL")
+
+  # see https://github.com/chromium/chromium/blob/8e82c6ab1bc2223fa25f1a127b65071d2d58ae36/build/config/win/BUILD.gn#L60
+  set(COMMON_FLAGS "${COMMON_FLAGS} -D_WINDOWS")
+
+  # see https://github.com/chromium/chromium/blob/8e82c6ab1bc2223fa25f1a127b65071d2d58ae36/build/config/win/BUILD.gn#L60
+  set(COMMON_FLAGS "${COMMON_FLAGS} -DCERT_CHAIN_PARA_HAS_EXTRA_FIELDS")
+
+  # see https://github.com/chromium/chromium/blob/8e82c6ab1bc2223fa25f1a127b65071d2d58ae36/build/config/win/BUILD.gn#L60
+  set(COMMON_FLAGS "${COMMON_FLAGS} -DPSAPI_VERSION=2")
+
+  # see https://github.com/chromium/chromium/blob/8e82c6ab1bc2223fa25f1a127b65071d2d58ae36/build/config/win/BUILD.gn#L60
+  set(COMMON_FLAGS "${COMMON_FLAGS} -DWIN32")
+
+  # see https://github.com/chromium/chromium/blob/8e82c6ab1bc2223fa25f1a127b65071d2d58ae36/build/config/win/BUILD.gn#L60
+  set(COMMON_FLAGS "${COMMON_FLAGS} -D_SECURE_ATL")
+
+  # see https://github.com/chromium/chromium/blob/8e82c6ab1bc2223fa25f1a127b65071d2d58ae36/build/config/win/BUILD.gn#L60
+  set(COMMON_FLAGS "${COMMON_FLAGS} -D_USING_V110_SDK71_")
+endif()
 
 if(ENABLE_COBALT AND NOT RELEASE_BUILD)
   list(APPEND COBALT_COMMON_DEFINES COBALT_BUILD_TYPE_DEBUG=1)
@@ -807,7 +958,10 @@ elseif(TARGET_LINUX)
   # custom define
   set(COMMON_FLAGS "${COMMON_FLAGS} -DNO_CHROMIUM_WINDOW=1")
 elseif(TARGET_WINDOWS)
-  set(COMMON_FLAGS "${COMMON_FLAGS} -DUSE_X11=1") # TODO <<<
+  #set(COMMON_FLAGS "${COMMON_FLAGS} -DUSE_X11=1") # TODO <<<
+  set(COMMON_FLAGS "${COMMON_FLAGS} -D_UNICODE=1") # TODO <<<
+  set(COMMON_FLAGS "${COMMON_FLAGS} -DUNICODE=1") # TODO <<<
+  set(COMMON_FLAGS "${COMMON_FLAGS} -DNO_TCMALLOC=1") # TODO <<<
   # custom define
   set(COMMON_FLAGS "${COMMON_FLAGS} -DNO_CHROMIUM_WINDOW=1")
 else()
@@ -1147,8 +1301,11 @@ endif(PORT_OWN_DLOG)
 # https://github.com/emscripten-core/emscripten/issues/4932
 # https://github.com/kosh04/newlisp/blob/master/newlisp.h#L164
 # TODO
-set(COMMON_FLAGS "${COMMON_FLAGS} -D_FILE_OFFSET_BITS=64")
-set(COMMON_FLAGS "${COMMON_FLAGS} -D_LARGEFILE_SOURCE=1")
+if(TARGET_EMSCRIPTEN OR TARGET_LINUX)
+  set(COMMON_FLAGS "${COMMON_FLAGS} -D_FILE_OFFSET_BITS=64")
+  set(COMMON_FLAGS "${COMMON_FLAGS} -D_LARGEFILE_SOURCE=1")
+endif()
+
 if(TARGET_EMSCRIPTEN)
   # TODO: -mnontrapping-fptoint
 elseif(TARGET_LINUX)
@@ -1159,8 +1316,8 @@ elseif(TARGET_LINUX)
   # user-defined synchronization mechanisms.
   set(COMMON_FLAGS "${COMMON_FLAGS} -DDYNAMIC_ANNOTATIONS_ENABLED=1")
 elseif(TARGET_WINDOWS)
-  set(COMMON_FLAGS "${COMMON_FLAGS} -D_LARGEFILE64_SOURCE=1")
-  set(COMMON_FLAGS "${COMMON_FLAGS} -DHAVE_PTHREAD=1")
+  #set(COMMON_FLAGS "${COMMON_FLAGS} -D_LARGEFILE64_SOURCE=1")
+  #set(COMMON_FLAGS "${COMMON_FLAGS} -DHAVE_PTHREAD=1")
   # Annotations useful when implementing condition variables such as CondVar,
   # using conditional critical sections (Await/LockWhen) and when constructing
   # user-defined synchronization mechanisms.
@@ -1916,14 +2073,28 @@ else(EMSCRIPTEN)
   if(NOT RELEASE_BUILD)
 
     if(NOT DEBUG_LEVEL)
-      set(DEBUG_LEVEL "${DEBUG_LEVEL} -g")
+      if(MSVC)
+        set(DEBUG_LEVEL "${DEBUG_LEVEL} /DEBUG")
+      else()
+        set(DEBUG_LEVEL "${DEBUG_LEVEL} -g")
+      endif()
     endif(NOT DEBUG_LEVEL)
     if(NOT OPTIMIZE_LEVEL)
-      set(OPTIMIZE_LEVEL "${OPTIMIZE_LEVEL} -O0")
+      if(MSVC)
+        # TODO
+        #set(OPTIMIZE_LEVEL "${OPTIMIZE_LEVEL} -O0")
+      else()
+        set(OPTIMIZE_LEVEL "${OPTIMIZE_LEVEL} -O0")
+      endif()
     endif(NOT OPTIMIZE_LEVEL)
   else()
     if(NOT OPTIMIZE_LEVEL)
-      set(OPTIMIZE_LEVEL "${OPTIMIZE_LEVEL} -O3")
+      if(MSVC)
+        # TODO
+        set(OPTIMIZE_LEVEL "${OPTIMIZE_LEVEL} /RELEASE")
+      else()
+        set(OPTIMIZE_LEVEL "${OPTIMIZE_LEVEL} -O3")
+      endif()
     endif(NOT OPTIMIZE_LEVEL)
     if(NOT DEBUG_LEVEL)
       # Use -s to strip debug info from the binary (and don't use -g).
@@ -2012,10 +2183,19 @@ else(EMSCRIPTEN)
     # harfbuzz
     set(USE_SHARED_HARFBUZZ "true")
     if(USE_SHARED_HARFBUZZ)
-      find_package(HarfBuzz REQUIRED)
+      if(TARGET_WINDOWS OR MSVC)
+        # skip
+      else()
+        find_package(HarfBuzz REQUIRED)
+      endif()
     else()
-      set(HARFBUZZ_LIBRARIES harfbuzz)
-      set(HARFBUZZ_INCLUDE_DIRS ${harfbuzz_FULL_DIR}/src)
+      if(TARGET_WINDOWS OR MSVC)
+        # NOTE: HarfBuzz from skia on WINDOWS
+        #set(HARFBUZZ_LIBRARIES SKIA)
+      else()
+        set(HARFBUZZ_LIBRARIES harfbuzz)
+        set(HARFBUZZ_INCLUDE_DIRS ${harfbuzz_FULL_DIR}/src)
+      endif()
     endif()
     message(STATUS "HARFBUZZ_LIBRARIES=${HARFBUZZ_LIBRARIES}")
     message(STATUS "HARFBUZZ_INCLUDE_DIRS=${HARFBUZZ_INCLUDE_DIRS}")
@@ -2187,9 +2367,14 @@ endif(USE_CUSTOM_ICU)
 #
 # HARFBUZZ
 #
-if(USE_CUSTOM_HARFBUZZ)
-  include(harfbuzz.cmake)
-endif(USE_CUSTOM_HARFBUZZ)
+if(TARGET_EMSCRIPTEN OR TARGET_LINUX)
+  if(USE_CUSTOM_HARFBUZZ)
+    include(harfbuzz.cmake)
+  endif(USE_CUSTOM_HARFBUZZ)
+else()
+  # NOTE: harfbuzz from skia on WINDOWS
+  #add_library(harfbuzz ALIAS SKIA)
+endif()
 
 #
 # WTF
@@ -2794,101 +2979,115 @@ else()
 endif() # EMSCRIPTEN
 
 if(ENABLE_CMAKE_COMPILE_WARNINGS)
-  set(ENABLED_WARNINGS
-    #-Wno-error
-    # always return on non-void functions to prevent UB
-    -Wreturn-type
-    # https://gist.github.com/morido/8637535
-    -Werror=return-type
-    -Wall
-    -Wextra
-    -Weverything # clang
-  )
+  if(MSVC) # TODO
+    set(ENABLED_WARNINGS "/W0") # TODO
+  else()
+    set(ENABLED_WARNINGS
+      #-Wno-error
+      # always return on non-void functions to prevent UB
+      -Wreturn-type
+      # https://gist.github.com/morido/8637535
+      -Werror=return-type
+      -Wall
+      -Wextra
+      -Weverything # clang
+    )
+  endif()
 else(ENABLE_CMAKE_COMPILE_WARNINGS)
-  set(ENABLED_WARNINGS
-    -Wno-error # clang
-  )
+  if(MSVC) # TODO
+    set(ENABLED_WARNINGS "/W0") # TODO
+  else()
+    set(ENABLED_WARNINGS
+      -Wno-error # clang
+    )
+  endif()
 endif(ENABLE_CMAKE_COMPILE_WARNINGS)
 
-set(DISABLED_WARNINGS
-  -Wno-undef
-  -Wno-switch
-  #-pedantic-errors
-  -Wno-pedantic
-  -Wno-duplicate-enum
-  -Wno-newline-eof
-  -Wno-disabled-macro-expansion
-  -Wno-c++98-compat-pedantic
-  -Wno-c++98-compat-local-type-template-args
-  -Wno-c++98-compat
-  -Wno-weak-vtables
-  -Wno-missing-prototypes
-  #-Wno-shadow # TODO
-  #-Wnocast-align # TODO
-  -Wno-extra-semi
-  #-Wno-thread-safety-negative # TODO
-  -Wno-documentation
-  #-Wno-double-promotion # TODO
-  #-Wno-float-equal # TODO
-  -Wno-missing-noreturn
-  -Wno-exit-time-destructors
-  -Wno-inconsistent-missing-destructor-override
-  -Wno-global-constructors
-  -Wno-documentation-unknown-command
-  -Wno-zero-as-null-pointer-constant
-  -Wno-shadow-field-in-constructor
-  -Wno-padded
-  -Wno-old-style-cast
-  -Wno-nested-anon-types
-  -Wno-deprecated-declarations
-  -Wno-deprecated
-  -Wno-expansion-to-defined
-  -Wno-gnu-zero-variadic-macro-arguments
-  -Wno-double-promotion
-  -Wno-unused-value
-  -Wno-unused-template
-  -Wno-unused-parameter
-  -Wno-unused-variable
-  -Wno-unused-function
-  -Wno-unused-member-function
-  -Wno-unused-lambda-capture
-  -Wno-reserved-id-macro
-  -Wno-macro-redefined
-  -Wno-implicit-function-declaration
-  -Wno-c++11-narrowing
-  -Wno-macro-redefined
-  #-Wno-undef
-  #-Wno-unknown-pragmas
-  #-Wno-nonportable-include-path
-  #-Wno-unknown-argument
-  # Warn for implicit type conversions that may change a value.
-  #-Wconversion
-  -Wno-c++11-compat
-  # This complains about "override", which we use heavily.
-  -Wno-c++11-extensions
-  # Warns on switches on enums that cover all enum values but
-  # also contain a default: branch. Chrome is full of that.
-  -Wno-covered-switch-default
-  # protobuf uses hash_map.
-  -Wno-deprecated
-  # Don't warn about the "struct foo f = {0};" initialization pattern.
-  -Wno-missing-field-initializers
-  # Do not warn for implicit sign conversions.
-  -Wno-sign-conversion
-  -Wno-unnamed-type-template-args
-  # Triggered by the COMPILE_ASSERT macro.
-  -Wno-unused-local-typedef
-  # Do not warn if a function or variable cannot be implicitly
-  # instantiated.
-  -Wno-undefined-var-template
-  # Do not warn about an implicit exception spec mismatch.
-  -Wno-implicit-exception-spec-mismatch
-)
+if(MSVC) 
+  # TODO
+else()
+  set(DISABLED_WARNINGS
+    -Wno-undef
+    -Wno-switch
+    #-pedantic-errors
+    -Wno-pedantic
+    -Wno-duplicate-enum
+    -Wno-newline-eof
+    -Wno-disabled-macro-expansion
+    -Wno-c++98-compat-pedantic
+    -Wno-c++98-compat-local-type-template-args
+    -Wno-c++98-compat
+    -Wno-weak-vtables
+    -Wno-missing-prototypes
+    #-Wno-shadow # TODO
+    #-Wnocast-align # TODO
+    -Wno-extra-semi
+    #-Wno-thread-safety-negative # TODO
+    -Wno-documentation
+    #-Wno-double-promotion # TODO
+    #-Wno-float-equal # TODO
+    -Wno-missing-noreturn
+    -Wno-exit-time-destructors
+    -Wno-inconsistent-missing-destructor-override
+    -Wno-global-constructors
+    -Wno-documentation-unknown-command
+    -Wno-zero-as-null-pointer-constant
+    -Wno-shadow-field-in-constructor
+    -Wno-padded
+    -Wno-old-style-cast
+    -Wno-nested-anon-types
+    -Wno-deprecated-declarations
+    -Wno-deprecated
+    -Wno-expansion-to-defined
+    -Wno-gnu-zero-variadic-macro-arguments
+    -Wno-double-promotion
+    -Wno-unused-value
+    -Wno-unused-template
+    -Wno-unused-parameter
+    -Wno-unused-variable
+    -Wno-unused-function
+    -Wno-unused-member-function
+    -Wno-unused-lambda-capture
+    -Wno-reserved-id-macro
+    -Wno-macro-redefined
+    -Wno-implicit-function-declaration
+    -Wno-c++11-narrowing
+    -Wno-macro-redefined
+    #-Wno-undef
+    #-Wno-unknown-pragmas
+    #-Wno-nonportable-include-path
+    #-Wno-unknown-argument
+    # Warn for implicit type conversions that may change a value.
+    #-Wconversion
+    -Wno-c++11-compat
+    # This complains about "override", which we use heavily.
+    -Wno-c++11-extensions
+    # Warns on switches on enums that cover all enum values but
+    # also contain a default: branch. Chrome is full of that.
+    -Wno-covered-switch-default
+    # protobuf uses hash_map.
+    -Wno-deprecated
+    # Don't warn about the "struct foo f = {0};" initialization pattern.
+    -Wno-missing-field-initializers
+    # Do not warn for implicit sign conversions.
+    -Wno-sign-conversion
+    -Wno-unnamed-type-template-args
+    # Triggered by the COMPILE_ASSERT macro.
+    -Wno-unused-local-typedef
+    # Do not warn if a function or variable cannot be implicitly
+    # instantiated.
+    -Wno-undefined-var-template
+    # Do not warn about an implicit exception spec mismatch.
+    -Wno-implicit-exception-spec-mismatch
+  )
+endif()
 
-target_compile_options(${PROJECT_NAME} PRIVATE
-  ${ENABLED_WARNINGS}
-  ${DISABLED_WARNINGS}
-)
+if(NOT TARGET_WINDOWS) # TODO
+  target_compile_options(${PROJECT_NAME} PRIVATE
+    ${ENABLED_WARNINGS}
+    ${DISABLED_WARNINGS}
+  )
+endif(NOT TARGET_WINDOWS)
 
 add_custom_target(copy-runtime-files ALL
   COMMAND cmake -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/resources ${CMAKE_CURRENT_BINARY_DIR}/resources

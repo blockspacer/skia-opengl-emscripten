@@ -62,9 +62,9 @@ if(ENABLE_HARFBUZZ)
       ${SKIA_EXT_DIR}ext/fontmgr_default_linux.cc
     )
   elseif(TARGET_WINDOWS)
-    list(APPEND SKIA_EXT_COMMON_SOURCES
-      ${SKIA_EXT_DIR}ext/fontmgr_default_win.cc
-    )
+    #list(APPEND SKIA_EXT_COMMON_SOURCES
+    #  ${SKIA_EXT_DIR}ext/fontmgr_default_win.cc
+    #)
   else()
     message(FATAL_ERROR "platform not supported")
   endif()

@@ -225,7 +225,7 @@ elseif(TARGET_LINUX)
   endif(ENABLE_KHRONOS)
   # libsync
   set(libsync_LIB
-    libsync
+    libsync # is_linux || is_android
   )
   include(libsync.cmake)
   # zlib
@@ -237,7 +237,7 @@ elseif(TARGET_LINUX)
     # fontconfig
     include(fontconfig.cmake)
   endif(ENABLE_HARFBUZZ)
-  
+
   # libevent
   include(libevent.cmake)
 
@@ -250,10 +250,10 @@ elseif(TARGET_WINDOWS)
     include(khronos.cmake)
   endif(ENABLE_KHRONOS)
   # libsync
-  set(libsync_LIB
-    libsync
-  )
-  include(libsync.cmake)
+  #set(libsync_LIB
+  #  libsync # is_linux || is_android
+  #)
+  #include(libsync.cmake)
   # zlib
   include(GZLIB.cmake)
   # zlib

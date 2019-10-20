@@ -25,19 +25,36 @@ if(RELEASE_BUILD)
   message(STATUS "building SKIA in RELEASE mode")
   set(IS_DEBUG_BUILD OFF)
   set(EXT_SKIA_OFFICIAL_BUILD "true")
-  set(SKIA_EXTRA_CFLAGS
-    "${SKIA_EXTRA_CFLAGS}\"-fno-rtti\", "
-  )
-  # If you're using our GYP files to build Skia,
-  # you're using build scripts mostly designed for development
-  # (even Release) where we don't pay much attention to
-  # library structure or size.
-  # They're all built with -g,
-  # which bloats the file size considerably.
-  # https://groups.google.com/forum/#!topic/skia-discuss/5hNRcmERVSI
-  set(SKIA_EXTRA_CFLAGS
-    "${SKIA_EXTRA_CFLAGS}\"-g0\", "
-  )
+  if(MSVC) # TODO
+    # /GR- disables run-time type information.
+    set(SKIA_EXTRA_CFLAGS
+      "${SKIA_EXTRA_CFLAGS}\"/GR-\", "
+    )
+    # If you're using our GYP files to build Skia,
+    # you're using build scripts mostly designed for development
+    # (even Release) where we don't pay much attention to
+    # library structure or size.
+    # They're all built with -g,
+    # which bloats the file size considerably.
+    # https://groups.google.com/forum/#!topic/skia-discuss/5hNRcmERVSI
+    set(SKIA_EXTRA_CFLAGS
+      "${SKIA_EXTRA_CFLAGS}\"/RELEASE\", "
+    )
+  else()
+    set(SKIA_EXTRA_CFLAGS
+      "${SKIA_EXTRA_CFLAGS}\"-fno-rtti\", "
+    )
+    # If you're using our GYP files to build Skia,
+    # you're using build scripts mostly designed for development
+    # (even Release) where we don't pay much attention to
+    # library structure or size.
+    # They're all built with -g,
+    # which bloats the file size considerably.
+    # https://groups.google.com/forum/#!topic/skia-discuss/5hNRcmERVSI
+    set(SKIA_EXTRA_CFLAGS
+      "${SKIA_EXTRA_CFLAGS}\"-g0\", "
+    )
+  endif()
   set(SKIA_EXTRA_CFLAGS
     "${SKIA_EXTRA_CFLAGS}\"-DNDEBUG=1\", "
   )
@@ -47,9 +64,16 @@ if(RELEASE_BUILD)
 else()
   message(STATUS "building SKIA in DEBUG mode")
   set(IS_DEBUG_BUILD ON)
-  set(SKIA_EXTRA_CFLAGS
-    "${SKIA_EXTRA_CFLAGS}\"-frtti\", "
-  )
+  if(MSVC) # TODO
+    # When /GR is on, the compiler defines the _CPPRTTI preprocessor macro. By default, /GR is on. 
+    set(SKIA_EXTRA_CFLAGS
+      "${SKIA_EXTRA_CFLAGS}\"/GR\", "
+    )
+  else()
+    set(SKIA_EXTRA_CFLAGS
+      "${SKIA_EXTRA_CFLAGS}\"-rtti\", "
+    )
+  endif()
   set(SKIA_EXTRA_CFLAGS
     "${SKIA_EXTRA_CFLAGS}\"-DSK_DEBUG=1\", "
   )
@@ -86,7 +110,11 @@ set(SKIA_BUILD_DIR "${CMAKE_CURRENT_BINARY_DIR}/skia")
 # Skia comes with -Werror on by default. That's a cool feature for release...
 set(NEW_CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
 
-set(NEW_CMAKE_C_FLAGS "${NEW_CMAKE_C_FLAGS} -Wno-error")
+if(MSVC) # TODO
+  set(NEW_CMAKE_C_FLAGS "${NEW_CMAKE_C_FLAGS} /W0")
+else()
+  set(NEW_CMAKE_C_FLAGS "${NEW_CMAKE_C_FLAGS} -Wno-error")
+endif()
 
 STRING(REGEX REPLACE " " "\",\"" NEW_CMAKE_C_FLAGS "${NEW_CMAKE_C_FLAGS}")
 set(SKIA_C_FLAGS "\"${NEW_CMAKE_C_FLAGS}\"")
@@ -109,7 +137,11 @@ if(TARGET_EMSCRIPTEN)
   #set(NEW_CMAKE_CXX_FLAGS "${NEW_CMAKE_CXX_FLAGS} -s STRICT=1")
 endif() # EMSCRIPTEN
 
-set(NEW_CMAKE_CXX_FLAGS "${NEW_CMAKE_CXX_FLAGS} -Wno-error")
+if(MSVC) # TODO
+  set(NEW_CMAKE_CXX_FLAGS "${NEW_CMAKE_CXX_FLAGS} /W0")
+else()
+  set(NEW_CMAKE_CXX_FLAGS "${NEW_CMAKE_CXX_FLAGS} -Wno-error")
+endif()
 
 # The string literal "\\\\" represents "\\" in memory which is a valid regex (representing a single backslash).
 STRING(REGEX REPLACE " " "\",\"" NEW_CMAKE_CXX_FLAGS "${NEW_CMAKE_CXX_FLAGS}")
@@ -119,7 +151,12 @@ message(STATUS "SKIA_CXX_FLAGS=${SKIA_CXX_FLAGS}")
 # NOTE: header from SKIA_EXT
 # set(SKIA_CXX_FLAGS "${SKIA_CXX_FLAGS},\"-DSK_USER_CONFIG_HEADER=\"${CMAKE_CURRENT_SOURCE_DIR}/src/chromium/skia/config/SkUserConfig.h\"\"") # skia_use_libpng
 
-set(SKIA_LDFLAGS "\"-Wno-error\"")
+if(MSVC)
+  set(SKIA_LDFLAGS "\"/W0\"")
+else()
+  set(SKIA_LDFLAGS "\"-Wno-error\"")
+endif()
+
 #set(SKIA_LDFLAGS "\"\"")
 
 function(SET_SKIA_CONFIG_OPTION OPT_NAME OPT_VALUE)
@@ -172,7 +209,17 @@ if (EMSCRIPTEN)
   set(SK_GL_STANDARD "skia_gl_standard=\"webgl\"") # SK_ASSUME_WEBGL
   #set(SK_GL_STANDARD "skia_gl_standard=\"gles\"") # SK_ASSUME_GL_ES
   #set(SK_GL_STANDARD "skia_gl_standard=\"gl\"") # SK_ASSUME_GL
-else(EMSCRIPTEN)
+elseif(TARGET_WINDOWS)
+  set(SK_IS_x11 "false")
+  set(SK_IS_EGL "false")
+
+  set(SK_IS_processors "false") # see SKSL_STANDALONE
+  set(SK_IS_workarounds "false")
+  set(SK_IS_ccpr "true")
+
+  set(SK_TARGET_CPU "")
+  set(SK_GL_STANDARD "") # default
+else()
   set(SK_IS_x11 "true")
   set(SK_IS_EGL "false")
 
@@ -182,7 +229,7 @@ else(EMSCRIPTEN)
 
   set(SK_TARGET_CPU "")
   set(SK_GL_STANDARD "") # default
-endif (EMSCRIPTEN)
+endif ()
 
 # TODO: target_cpu=\"wasm\" \
 # skia_use_system_zlib=true \
@@ -219,13 +266,26 @@ if(TARGET_EMSCRIPTEN)
     set(SK_USE_SYSTEM_LIBPNG TRUE) # TODO: path to png.h (SkPngCodec.cpp)
   endif()
   set(SK_USE_SYSTEM_ZLIB FALSE) # TODO
+  set(SK_system_freetype2
+    "skia_use_system_freetype2=true"
+  )
+elseif(TARGET_WINDOWS)
+  # TODO
+  set(SK_USE_SYSTEM_LIBPNG FALSE)
+  set(SK_USE_SYSTEM_ZLIB FALSE) # TODO
+  set(SK_system_freetype2
+    "skia_use_system_freetype2=false"
+  )
 else()
   # TODO
   if(USE_SYSTEM_PNG)
     set(SK_USE_SYSTEM_LIBPNG TRUE)
   endif()
   set(SK_USE_SYSTEM_ZLIB FALSE) # TODO
-endif(TARGET_EMSCRIPTEN)
+  set(SK_system_freetype2
+    "skia_use_system_freetype2=true"
+  )
+endif()
 
 if(SK_USE_SYSTEM_LIBPNG)
   set(SK_system_libpng
@@ -260,15 +320,27 @@ if(FORCE_USE_SKIA_HARFBUZZ)
   if(ENABLE_SKSHAPER) # harfbuzz used only by skshaper
     set(SK_IS_harfbuzz "true")
     #
-    set(SK_system_harfbuzz
-      "skia_use_system_harfbuzz=true"
-    )
+    if(TARGET_WINDOWS)
+      set(SK_system_harfbuzz
+        "skia_use_system_harfbuzz=false"
+      )
+    else()
+      set(SK_system_harfbuzz
+        "skia_use_system_harfbuzz=true"
+      )
+    endif(TARGET_WINDOWS)
     #
     set(SK_IS_icu "true")
     #
-    set(SK_system_icu
-      "skia_use_system_icu=true"
-    )
+    if(TARGET_WINDOWS)
+      set(SK_system_icu
+        "skia_use_system_icu=false"
+      )
+    else()
+      set(SK_system_icu
+        "skia_use_system_icu=true"
+      )
+    endif(TARGET_WINDOWS)
   else(ENABLE_SKSHAPER)
     set(SK_IS_harfbuzz "false")
     set(SK_IS_icu "false")
@@ -348,7 +420,7 @@ skia_use_sfntly=false \
 skia_enable_atlas_text=false \
 skia_use_fontconfig=false \
 skia_use_freetype=true \
-skia_use_system_freetype2=true \
+${SK_system_freetype2} \
 skia_enable_tools=false \
 skia_use_lua=false \
 skia_use_piex=false \
@@ -480,7 +552,7 @@ list(APPEND SKIA_CMAKE_ONLY_HEADERS
 #  ${SKIA_SRC_DIR}/third_party/externals
   ${SKIA_SRC_DIR}/third_party/freetype2
 #  ${SKIA_SRC_DIR}/third_party/gif
-#  ${SKIA_SRC_DIR}/third_party/harfbuzz
+  ${SKIA_SRC_DIR}/third_party/harfbuzz
 #  ${SKIA_SRC_DIR}/third_party/icu # see USE_CUSTOM_ICU
 #  ${SKIA_SRC_DIR}/third_party/imgui
 #  ${SKIA_SRC_DIR}/third_party/libjpeg-turbo
@@ -558,6 +630,12 @@ endif(ENABLE_WUFFS)
   #EGL_EGLEXT_PROTOTYPES
   #LIBEGL_IMPLEMENTATION
 
+if(MSVC) # TODO
+  list(APPEND SKIA_DEFINES
+    HB_NO_MT=1
+  )
+endif()
+
 if(USE_SK_GPU)
   list(APPEND SKIA_DEFINES
     SK_SUPPORT_GPU=1 # skia_enable_gpu
@@ -569,13 +647,20 @@ else()
   )
 endif(USE_SK_GPU)
 
+#if(NOT TARGET_WINDOWS) # TODO
+#  list(APPEND SKIA_DEFINES
+#    # see https://skia.org/user/api/skcanvas_creation
+#    SK_HAS_PNG_LIBRARY=1 # skia_use_libpng
+#  )
+#endif(NOT TARGET_WINDOWS)
+
 list(APPEND SKIA_DEFINES
+  # see https://skia.org/user/api/skcanvas_creation
+  SK_HAS_PNG_LIBRARY=1 # skia_use_libpng
   SKIA_IMPLEMENTATION
   SK_SUPPORT_OPENCL=0
   SK_SAMPLES_FOR_X=1 # always set for linux, even if there's no X used
   #SK_SAMPLES_FOR_X
-  # see https://skia.org/user/api/skcanvas_creation
-  SK_HAS_PNG_LIBRARY=1 # skia_use_libpng
   #SK_HAS_PNG_LIBRARY
   # SK_HAS_GIF_LIBRARY
   # SK_HAS_WEBP_LIBRARY
