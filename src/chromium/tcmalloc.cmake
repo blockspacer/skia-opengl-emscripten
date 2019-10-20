@@ -1,4 +1,10 @@
-﻿### --- tcmalloc ---###
+﻿if(TARGET_EMSCRIPTEN OR TARGET_LINUX)
+  # skip
+else()
+  message(FATAL_ERROR "platform not supported")
+endif()
+
+### --- tcmalloc ---###
 
 #function(find_static_library LIB_NAME OUT)
 #    if (WIN32 OR MSVC)

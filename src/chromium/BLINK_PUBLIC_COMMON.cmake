@@ -1,4 +1,6 @@
-﻿### --- BLINK_PUBLIC_COMMON ---###
+﻿# see BLINK_COMMON.cmake
+
+### --- BLINK_PUBLIC_COMMON ---###
 
 # INTERFACE LIB
 

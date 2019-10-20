@@ -57,10 +57,13 @@ set(CED_LIBRARY_SOURCES
 add_library(ced STATIC ${CED_LIBRARY_SOURCES})
 
 # https://stackoverflow.com/a/28294859/10904212
-string(REPLACE " " ";" CED_REPLACED_FLAGS ${CED_CMAKE_CXX_FLAGS})
-target_compile_options(ced PRIVATE
-  ${CED_REPLACED_FLAGS}
-)
+message(STATUS "CED_CMAKE_CXX_FLAGS=${CED_CMAKE_CXX_FLAGS}")
+if(CED_CMAKE_CXX_FLAGS)
+  string(REPLACE " " ";" CED_REPLACED_FLAGS ${CED_CMAKE_CXX_FLAGS})
+  target_compile_options(ced PRIVATE
+    ${CED_REPLACED_FLAGS}
+  )
+endif(CED_CMAKE_CXX_FLAGS)
 
 set(EXTRA_TARGET_LINK_LIBRARIES)
 
@@ -71,10 +74,13 @@ if(WIN32)
     STRICT
     NOMINMAX)
   set(CED_THREADING threadwin)
-else()
+elseif(TARGET_EMSCRIPTEN OR TARGET_LINUX)
   set(CED_THREADING thread)
   list(APPEND EXTRA_TARGET_LINK_LIBRARIES -pthread)
+else()
+  message(FATAL_ERROR "platform not supported")
 endif()
+
 
 #set(CED_CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 #set(CED_CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)

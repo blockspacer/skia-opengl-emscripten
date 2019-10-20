@@ -84,7 +84,6 @@ target_include_directories(cobalt_script PRIVATE
 )
 
 target_compile_definitions(cobalt_script PRIVATE
-  # starboard/linux/shared/BUILD.gn
   #STARBOARD_IMPLEMENTATION=1
   #
   #BASE_IMPLEMENTATION=1

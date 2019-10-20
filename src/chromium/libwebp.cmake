@@ -106,7 +106,7 @@ list(APPEND libwebp_SOURCES
   #
 )
 
-if(TARGET_LINUX)
+if(TARGET_LINUX OR TARGET_WINDOWS)
   list(APPEND libwebp_SOURCES
     # static_library("libwebp_dsp_sse2")
     #
@@ -123,6 +123,8 @@ if(TARGET_LINUX)
     ${libwebp_DIR}src/dsp/upsampling_sse2.c
     ${libwebp_DIR}src/dsp/yuv_sse2.c
   )
+else()
+  message(FATAL_ERROR "platform not supported")
 endif()
 
 list(APPEND libwebp_SOURCES
@@ -236,8 +238,7 @@ target_include_directories(libwebp PUBLIC
 #target_compile_options(libwebp PRIVATE
 #  -Wno-implicit-function-declaration)
 
-
-if(TARGET_LINUX)
+if(TARGET_LINUX OR TARGET_WINDOWS)
   list(APPEND EXTRA_DEFINES
     WEBP_HAVE_SSE2=1
   )
@@ -246,6 +247,8 @@ if(TARGET_LINUX)
     -msse2
     -msse3
   )
+else()
+  message(FATAL_ERROR "platform not supported")
 endif()
 
 target_compile_definitions(libwebp PRIVATE

@@ -12,6 +12,29 @@
 
 ### --- UI_BASE ---###
 
+if(TARGET_EMSCRIPTEN OR TARGET_LINUX)
+  list(APPEND UI_BASE_SOURCES
+    ${UI_BASE_DIR}accelerators/menu_label_accelerator_util_linux.cc
+    #${UI_BASE_DIR}accelerators/menu_label_accelerator_util_linux.h
+    ${UI_BASE_DIR}resource/resource_bundle_auralinux.cc
+    # TODO # ${UI_BASE_DIR}resource/resource_bundle_ios.mm",
+    # TODO # ${UI_BASE_DIR}resource/resource_bundle_mac.mm",
+    # TODO # ${UI_BASE_DIR}resource/resource_bundle_win.cc
+    # TODO # ${UI_BASE_DIR}resource/resource_bundle_win.h
+    # TODO # ${UI_BASE_DIR}resource/resource_data_dll_win.cc
+    # TODO # ${UI_BASE_DIR}resource/resource_data_dll_win.h
+
+    # TODO
+    # pointer_device_linux
+  )
+elseif(TARGET_WINDOWS)
+  list(APPEND UI_BASE_SOURCES
+    ${UI_BASE_DIR}resource/resource_bundle_win.cc
+  )
+else()
+  message(FATAL_ERROR "platform not supported")
+endif()
+
 list(APPEND UI_BASE_SOURCES
   ${UI_BASE_DIR}accelerators/media_keys_listener.cc
   #${UI_BASE_DIR}accelerators/media_keys_listener.h
@@ -19,8 +42,6 @@ list(APPEND UI_BASE_SOURCES
   #${UI_BASE_DIR}accelerators/media_keys_util.h
   ${UI_BASE_DIR}accelerators/menu_label_accelerator_util.cc
   #${UI_BASE_DIR}accelerators/menu_label_accelerator_util.h
-  ${UI_BASE_DIR}accelerators/menu_label_accelerator_util_linux.cc
-  #${UI_BASE_DIR}accelerators/menu_label_accelerator_util_linux.h
   #${UI_BASE_DIR}accelerators/platform_accelerator_cocoa.h
   # TODO # ${UI_BASE_DIR}accelerators/platform_accelerator_cocoa.mm",
   ${UI_BASE_DIR}class_property.cc
@@ -175,13 +196,6 @@ list(APPEND UI_BASE_SOURCES
   #${UI_BASE_DIR}resource/resource_bundle.h
   # TODO # ${UI_BASE_DIR}resource/resource_bundle_android.cc
   # TODO # ${UI_BASE_DIR}resource/resource_bundle_android.h
-  ${UI_BASE_DIR}resource/resource_bundle_auralinux.cc
-  # TODO # ${UI_BASE_DIR}resource/resource_bundle_ios.mm",
-  # TODO # ${UI_BASE_DIR}resource/resource_bundle_mac.mm",
-  # TODO # ${UI_BASE_DIR}resource/resource_bundle_win.cc
-  # TODO # ${UI_BASE_DIR}resource/resource_bundle_win.h
-  # TODO # ${UI_BASE_DIR}resource/resource_data_dll_win.cc
-  # TODO # ${UI_BASE_DIR}resource/resource_data_dll_win.h
   #${UI_BASE_DIR}resource/whitelist.h
   ${UI_BASE_DIR}template_expressions.cc
   #${UI_BASE_DIR}template_expressions.h

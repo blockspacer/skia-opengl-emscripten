@@ -126,9 +126,13 @@ set(MOJO_CORE_SOURCES
   #${MOJO_DIR}/core/watcher_dispatcher.h
   ${MOJO_DIR}/core/watcher_set.cc
   #${MOJO_DIR}/core/watcher_set.h
+
+  # TODO
   # if (is_posix) && !is_nacl || is_nacl_nonsfi
   ## TODO ## ${MOJO_DIR}/core/broker_posix.cc
   ## TODO ## ${MOJO_DIR}/core/channel_posix.cc
+  
+  # TODO
   #if (!is_nacl || is_nacl_nonsfi)
   ###${MOJO_DIR}/core/broker_host.cc
   ###${MOJO_DIR}/core/broker_host.h
@@ -203,27 +207,32 @@ set(MOJO_PUBLIC_CPP_PLATFORM_SOURCES
   ${MOJO_DIR}/public/cpp/platform/platform_channel_endpoint.cc
   ${MOJO_DIR}/public/cpp/platform/platform_channel_server_endpoint.cc
   ${MOJO_DIR}/public/cpp/platform/platform_handle.cc
-  #
+
+  # TODO
   #if (is_posix && (!is_nacl || is_nacl_nonsfi)) {
   #  public += [ "socket_utils_posix.h" ]
   #  sources += [ "socket_utils_posix.cc" ]
   #}
-  #
+
+  # TODO
   #if (is_posix && !is_nacl) {
   #  sources += [ "named_platform_channel_posix.cc" ]
   #}
-  #
+
+  # TODO
   #if (is_mac) {
   #  sources += [ "named_platform_channel_mac.cc" ]
   #}
-  #
+
+  # TODO
   #if (is_fuchsia) {
   #  public_deps += [
   #    "//third_party/fuchsia-sdk/sdk:fdio",
   #    "//third_party/fuchsia-sdk/sdk:zx",
   #  ]
   #}
-  #
+
+  # TODO
   #if (!is_fuchsia) {
   #  sources += [ "named_platform_channel.cc" ]
   #  public += [ "named_platform_channel.h" ]

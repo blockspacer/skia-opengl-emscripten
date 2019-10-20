@@ -373,7 +373,6 @@ sudo apt-get -f install
 # The . at end of the source path is a specific cp syntax that allow to copy all files and folders, included hidden ones.
 cp -a "patches/skia_to_copy/." src/chromium/third_party/skia/
 cp -a "patches/skia/." src/chromium/third_party/skia/
-cp -a "patches/skia/." src/chromium/third_party/skia/
 
 cp -a "patches/libjpeg_turbo/." src/chromium/third_party/libjpeg_turbo/
 

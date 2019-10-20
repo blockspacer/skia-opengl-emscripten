@@ -125,7 +125,9 @@ if (EMSCRIPTEN)
     #
   )
 elseif(TARGET_LINUX)
-  #
+  # skip
+elseif(TARGET_WINDOWS)
+  # skip
 else()
   message(FATAL_ERROR "unknown platform")
 endif()
@@ -167,7 +169,9 @@ if (EMSCRIPTEN)
     #
   )
 elseif(TARGET_LINUX)
-  #
+  # skip
+elseif(TARGET_WINDOWS)
+  # skip
 else()
   message(FATAL_ERROR "unknown platform")
 endif()
@@ -395,7 +399,9 @@ if (EMSCRIPTEN)
   #    defines += [ "EGLAPI=__attribute__((visibility(\"default\")))" ]
   #  }
 elseif(TARGET_LINUX)
-  #
+  # skip
+elseif(TARGET_WINDOWS)
+  # skip
 else()
   message(FATAL_ERROR "unknown platform")
 endif()

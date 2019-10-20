@@ -1,4 +1,13 @@
-﻿## --- GNET ---###
+﻿
+if(TARGET_EMSCRIPTEN)
+  # skip
+elseif(TARGET_LINUX)
+  # skip
+else()
+  message(FATAL_ERROR "platform not supported")
+endif()
+
+## --- GNET ---###
 
 # TODO https://github.com/Tarnyko/chromium-lite/blob/master/03a-net/CMakeLists.txt
 

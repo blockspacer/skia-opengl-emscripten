@@ -1,4 +1,6 @@
-﻿### --- UI_GFX ---###
+﻿# see https://github.com/chromium/chromium/blob/87f2e0fdc7004e428e4e6216e79bf6938fe0e23f/ui/gfx/BUILD.gn
+
+### --- UI_GFX ---###
 
 set(UI_GFX_SOURCES
   #${UI_GFX_DIR}gfx_export.h
@@ -29,10 +31,19 @@ set(UI_GFX_SOURCES
 
 #if(TARGET_LINUX AND ENABLE_HARFBUZZ)
 if(ENABLE_HARFBUZZ)# AND TARGET_LINUX)
-  list(APPEND UI_GFX_SOURCES
-    ${UI_GFX_DIR}font_render_params_linux.cc # requires fontconfig
-    ${UI_GFX_DIR}font_fallback_linux.cc # requires fontconfig
-  )
+  if(TARGET_EMSCRIPTEN OR TARGET_LINUX)
+    list(APPEND UI_GFX_SOURCES
+      ${UI_GFX_DIR}font_render_params_linux.cc # requires fontconfig
+      ${UI_GFX_DIR}font_fallback_linux.cc # requires fontconfig
+    )
+  elseif(TARGET_WINDOWS)
+    list(APPEND UI_GFX_SOURCES
+      ${UI_GFX_DIR}font_render_params_win.cc # requires fontconfig
+      ${UI_GFX_DIR}font_fallback_win.cc # requires fontconfig
+    )
+  else()
+    message(FATAL_ERROR "platform not supported")
+  endif()
 endif(ENABLE_HARFBUZZ)# AND TARGET_LINUX)
 
 list(APPEND UI_GFX_SOURCES

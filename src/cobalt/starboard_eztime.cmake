@@ -35,7 +35,6 @@ target_include_directories(starboard_eztime PRIVATE
 )
 
 target_compile_definitions(starboard_eztime PRIVATE
-  # starboard/linux/shared/BUILD.gn
   STARBOARD_IMPLEMENTATION=1
   #
   #BASE_IMPLEMENTATION=1

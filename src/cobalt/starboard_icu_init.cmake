@@ -31,7 +31,6 @@ target_include_directories(starboard_icu_init PRIVATE
 )
 
 target_compile_definitions(starboard_icu_init PRIVATE
-  # starboard/linux/shared/BUILD.gn
   STARBOARD_IMPLEMENTATION=1
   #
   #BASE_IMPLEMENTATION=1

@@ -57,9 +57,17 @@ list(APPEND SKIA_EXT_COMMON_SOURCES
 
 #if(TARGET_LINUX)
 if(ENABLE_HARFBUZZ)
-  list(APPEND SKIA_EXT_COMMON_SOURCES
-    ${SKIA_EXT_DIR}ext/fontmgr_default_linux.cc
-  )
+  if(TARGET_EMSCRIPTEN OR TARGET_LINUX)
+    list(APPEND SKIA_EXT_COMMON_SOURCES
+      ${SKIA_EXT_DIR}ext/fontmgr_default_linux.cc
+    )
+  elseif(TARGET_WINDOWS)
+    list(APPEND SKIA_EXT_COMMON_SOURCES
+      ${SKIA_EXT_DIR}ext/fontmgr_default_win.cc
+    )
+  else()
+    message(FATAL_ERROR "platform not supported")
+  endif()
 endif(ENABLE_HARFBUZZ)
 
 list(APPEND SKIA_EXT_COMMON_SOURCES
@@ -75,7 +83,8 @@ list(APPEND SKIA_EXT_COMMON_SOURCES
 # !is_ios && (current_cpu == "x86" || current_cpu == "x64")
 #
 if(TARGET_EMSCRIPTEN)
-elseif(TARGET_LINUX)
+  # skip
+elseif(TARGET_LINUX OR TARGET_WINDOWS)
   list(APPEND SKIA_EXT_COMMON_SOURCES
     ${SKIA_EXT_DIR}ext/convolver_SSE2.cc
     ${SKIA_EXT_DIR}ext/convolver_SSE2.h

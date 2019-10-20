@@ -1,5 +1,22 @@
 ### --- UI_VIEWS ---###
 
+if(TARGET_EMSCRIPTEN OR TARGET_LINUX)
+  list(APPEND UI_VIEWS_SOURCES
+    ${UI_VIEWS_DIR}controls/menu/menu_config_chromeos.cc
+    ${UI_VIEWS_DIR}controls/menu/menu_config_linux.cc
+    #
+    # linux_ui
+    #
+    ${UI_VIEWS_DIR}linux_ui/linux_ui.cc
+    ${UI_VIEWS_DIR}linux_ui/status_icon_linux.cc
+    ${UI_VIEWS_DIR}linux_ui/window_button_order_provider.cc
+  )
+elseif(TARGET_WINDOWS)
+  # TODO
+else()
+  message(FATAL_ERROR "platform not supported")
+endif()
+
 set(UI_VIEWS_NO_AX TRUE)
 
 if(UI_VIEWS_NO_AX)
@@ -81,8 +98,6 @@ list(APPEND UI_VIEWS_SOURCES
   #${UI_VIEWS_DIR}controls/menu/menu_closure_animation_mac.mm",
   #${UI_VIEWS_DIR}controls/menu/menu_cocoa_watcher_mac.mm",
   ${UI_VIEWS_DIR}controls/menu/menu_config.cc
-  ${UI_VIEWS_DIR}controls/menu/menu_config_chromeos.cc
-  ${UI_VIEWS_DIR}controls/menu/menu_config_linux.cc
   #${UI_VIEWS_DIR}controls/menu/menu_config_mac.mm",
   #${UI_VIEWS_DIR}controls/menu/menu_config_win.cc
   ${UI_VIEWS_DIR}controls/menu/menu_controller.cc
@@ -149,12 +164,6 @@ list(APPEND UI_VIEWS_SOURCES
   ${UI_VIEWS_DIR}layout/grid_layout.cc
   ${UI_VIEWS_DIR}layout/layout_manager.cc
   ${UI_VIEWS_DIR}layout/layout_provider.cc
-  #
-  # linux_ui
-  #
-  ${UI_VIEWS_DIR}linux_ui/linux_ui.cc
-  ${UI_VIEWS_DIR}linux_ui/status_icon_linux.cc
-  ${UI_VIEWS_DIR}linux_ui/window_button_order_provider.cc
   #
   #
   #

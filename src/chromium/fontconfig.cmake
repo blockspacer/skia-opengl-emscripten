@@ -1,4 +1,6 @@
-﻿### --- fontconfig ---###
+﻿# see https://github.com/chromium/chromium/blob/5603ac3ddfc5c8f9357aeef99e6086e64cbe0daa/third_party/fontconfig/BUILD.gn
+
+### --- fontconfig ---###
 
 set(fontconfig_DIR
   third_party/fontconfig/
@@ -43,13 +45,19 @@ add_library(fontconfig STATIC
 
 find_package(Freetype REQUIRED)
 
-# sudo apt-get install uuid-dev uuid-dev uuid-runtime
-# LibUUID::LibUUID
-# LibUUID_FOUND, LibUUID_INCLUDE_DIRS, LibUUID_LIBRARIES
-# https://gitlab.kitware.com/cmake/cmake/blob/master/Source/Modules/FindLibUUID.cmake
-find_package(LibUUID REQUIRED)
-message(STATUS "LibUUID_INCLUDE_DIRS=${LibUUID_INCLUDE_DIRS}")
-message(STATUS "LibUUID_LIBRARIES=${LibUUID_LIBRARIES}")
+if(TARGET_LINUX OR TARGET_EMSCRIPTEN)
+  # sudo apt-get install uuid-dev uuid-dev uuid-runtime
+  # LibUUID::LibUUID
+  # LibUUID_FOUND, LibUUID_INCLUDE_DIRS, LibUUID_LIBRARIES
+  # https://gitlab.kitware.com/cmake/cmake/blob/master/Source/Modules/FindLibUUID.cmake
+  find_package(LibUUID REQUIRED)
+  message(STATUS "LibUUID_INCLUDE_DIRS=${LibUUID_INCLUDE_DIRS}")
+  message(STATUS "LibUUID_LIBRARIES=${LibUUID_LIBRARIES}")
+elseif(TARGET_WINDOWS)
+  # TODO
+else()
+  message(FATAL_ERROR "platform not supported")
+endif()
 
 target_link_libraries(fontconfig PUBLIC
   base

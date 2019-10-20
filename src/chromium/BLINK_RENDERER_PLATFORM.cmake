@@ -38,6 +38,10 @@ if(TARGET_LINUX)
   list(APPEND EXTRA_DEFINES
     -DENABLE_BLINK_FONTS=1)
   endif(ENABLE_BLINK_FONTS)
+elseif(TARGET_WINDOWS OR TARGET_EMSCRIPTEN)
+  # skip
+else()
+  message(FATAL_ERROR "platform not supported")
 endif()
 
 list(APPEND BLINK_RENDERER_PLATFORM_ANIMATION_SOURCES
@@ -591,6 +595,10 @@ if(TARGET_LINUX)
     ${BLINK_RENDERER_PLATFORM_DIR}exported/web_media_stream_source.cc
     ${BLINK_RENDERER_PLATFORM_DIR}exported/web_media_stream_track.cc
   )
+elseif(TARGET_WINDOWS OR TARGET_EMSCRIPTEN)
+  # skip
+else()
+  message(FATAL_ERROR "platform not supported")
 endif()
 
 # see https://github.com/chromium/chromium/blob/master/third_party/blink/renderer/platform/BUILD.gn
@@ -776,7 +784,11 @@ if(TARGET_LINUX)
     ${CUR_SRC_DIR}scheduler/worker/worker_thread_scheduler.cc
     #${CUR_SRC_DIR}scheduler/worker/worker_thread_scheduler.h
   )
-endif() # CMAKE_SYSTEM_NAME
+elseif(TARGET_WINDOWS OR TARGET_EMSCRIPTEN)
+  # skip
+else()
+  message(FATAL_ERROR "platform not supported")
+endif()
 
 if(ENABLE_GNET)
   list(APPEND BLINK_RENDERER_PLATFORM_NETWORK_SOURCES
@@ -1268,6 +1280,20 @@ list(APPEND BLINK_RENDERER_PLATFORM_SPEECH_SOURCES
 )
 
 if(ENABLE_HARFBUZZ)
+  if(TARGET_LINUX)
+  list(APPEND BLINK_RENDERER_PLATFORM_FONTS_SOURCES
+    ${BLINK_RENDERER_PLATFORM_DIR}fonts/linux/font_cache_linux.cc
+    ${BLINK_RENDERER_PLATFORM_DIR}fonts/linux/font_unique_name_lookup_linux.cc
+    #${BLINK_RENDERER_PLATFORM_DIR}fonts/linux/font_unique_name_lookup_linux.h
+  )
+  list(APPEND BLINK_RENDERER_PLATFORM_TEXT_SOURCES
+    ${BLINK_RENDERER_PLATFORM_DIR}text/linux/hyphenation_linux.cc
+  )
+  elseif(TARGET_WINDOWS OR TARGET_EMSCRIPTEN)
+    # skip
+  else()
+    message(FATAL_ERROR "platform not supported")
+  endif()
   list(APPEND BLINK_RENDERER_PLATFORM_FONTS_SOURCES
       #${BLINK_RENDERER_PLATFORM_DIR}fonts/alternate_font_family.h
   #  ## TODO ##${BLINK_RENDERER_PLATFORM_DIR}fonts/android/font_cache_android.cc
@@ -1336,9 +1362,6 @@ if(ENABLE_HARFBUZZ)
     ${BLINK_RENDERER_PLATFORM_DIR}fonts/generic_font_family_settings.cc
     #${BLINK_RENDERER_PLATFORM_DIR}fonts/generic_font_family_settings.h
     #${BLINK_RENDERER_PLATFORM_DIR}fonts/glyph_metrics_map.h
-    ${BLINK_RENDERER_PLATFORM_DIR}fonts/linux/font_cache_linux.cc
-    ${BLINK_RENDERER_PLATFORM_DIR}fonts/linux/font_unique_name_lookup_linux.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}fonts/linux/font_unique_name_lookup_linux.h
     # TODO #${BLINK_RENDERER_PLATFORM_DIR}fonts/mac/core_text_font_format_support.cc
     #${BLINK_RENDERER_PLATFORM_DIR}fonts/mac/core_text_font_format_support.h
     # TODO #${BLINK_RENDERER_PLATFORM_DIR}fonts/mac/font_cache_mac.mm",
@@ -1461,7 +1484,6 @@ if(ENABLE_HARFBUZZ)
     #${BLINK_RENDERER_PLATFORM_DIR}text/icu_error.h
     ${BLINK_RENDERER_PLATFORM_DIR}text/layout_locale.cc
     #${BLINK_RENDERER_PLATFORM_DIR}text/layout_locale.h
-    ${BLINK_RENDERER_PLATFORM_DIR}text/linux/hyphenation_linux.cc
     ${BLINK_RENDERER_PLATFORM_DIR}text/locale_icu.cc
     #${BLINK_RENDERER_PLATFORM_DIR}text/locale_icu.h
     #${BLINK_RENDERER_PLATFORM_DIR}text/locale_mac.h
@@ -1747,7 +1769,7 @@ if(SUPPORTS_JPEG)
     #set(libjpeg_LIB GLIBJPEG)
     #set(libjpeg_TURBO_LIB GLIBJPEG_TURBO)
     set(iccjpeg_LIB iccjpeg)
-  elseif(TARGET_LINUX)
+  elseif(TARGET_LINUX OR TARGET_WINDOWS)
     #set(libjpeg_LIB GLIBJPEG)
     #set(libjpeg_TURBO_LIB GLIBJPEG_TURBO)
     set(iccjpeg_LIB iccjpeg)

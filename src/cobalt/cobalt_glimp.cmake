@@ -26,7 +26,7 @@ if (TARGET_EMSCRIPTEN)
   list(APPEND cobalt_glimp_SOURCES
    ${COBALT_ROOT_DIR}glimp/entry_points/egl_webgl2.cc
   )
-elseif(TARGET_LINUX)
+elseif(TARGET_LINUX OR TARGET_WINDOWS)
   list(APPEND cobalt_glimp_SOURCES
    ${COBALT_ROOT_DIR}glimp/entry_points/egl.cc
    ${COBALT_ROOT_DIR}glimp/entry_points/egl_ext.cc
@@ -106,12 +106,16 @@ add_library(cobalt_glimp STATIC
 #  ${OPENGL_LIBRARIES}
 #  ${OPENGLES2_LIBRARIES})
 
-if(TARGET_LINUX)
+if(TARGET_LINUX OR TARGET_WINDOWS)
   list(APPEND EXTRA_cobalt_glimp_LIBS
     ${OPENGL_LIBRARIES}
     #OpenGL::EGL
   )
-endif(TARGET_LINUX)
+elseif(TARGET_EMSCRIPTEN)
+  # skip
+else()
+  message(FATAL_ERROR "platform not supported")
+endif()
 
 target_link_libraries(cobalt_glimp PUBLIC
   base # TODO
@@ -144,11 +148,15 @@ target_link_libraries(cobalt_glimp PUBLIC
 
 set_property(TARGET cobalt_glimp PROPERTY CXX_STANDARD 17)
 
-if(TARGET_LINUX)
+if(TARGET_LINUX OR TARGET_WINDOWS)
   target_include_directories(cobalt_glimp PUBLIC
     ${COBALT_ROOT_DIR}/glimp/port/include
   )
-endif(TARGET_LINUX)
+elseif(TARGET_EMSCRIPTEN)
+  # skip
+else()
+  message(FATAL_ERROR "platform not supported")
+endif()
 
 target_include_directories(cobalt_glimp PRIVATE
   #${UI_PARENT_DIR}

@@ -1,4 +1,4 @@
-if(TARGET_LINUX)
+if(TARGET_LINUX OR TARGET_WINDOWS)
   # nothing
 else()
   message(FATAL_ERROR "platform not supported")

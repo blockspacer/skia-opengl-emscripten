@@ -1,4 +1,4 @@
-﻿# see platform
+﻿# see BLINK_RENDERER_PLATFORM.cmake
 
 #### --- BLINK_RENDERER_NETWORK ---###
 #

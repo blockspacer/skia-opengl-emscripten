@@ -57,12 +57,13 @@ set(GLIBJPEG_TURBO_SOURCES
   ${GLIBJPEG_TURBO_DIR}jversion.h
 )
 
-if(TARGET_EMSCRIPTEN OR TARGET_LINUX)
+if(TARGET_EMSCRIPTEN OR TARGET_LINUX OR TARGET_WINDOWS)
   list(APPEND GLIBJPEG_TURBO_SOURCES # static_library("simd")
-    ${GLIBJPEG_TURBO_DIR}jsimd_none.c
+    ${GLIBJPEG_TURBO_DIR}jsimd_none.c # TODO
   )
 else()
-  # TODO port for TARGET_LINUX
+  message(FATAL_ERROR "platform not supported") # TODO port for TARGET_LINUX and TARGET_WINDOWS
+
   # https://github.com/blockspacer/cobalt-clone-28052019/blob/master/src/third_party/libjpeg-turbo/libjpeg.gyp
 
   #
@@ -180,7 +181,7 @@ add_library(GLIBJPEG_TURBO STATIC
 #  find_package(ZLIB)
 #endif()
 
-if (EMSCRIPTEN)
+if(TARGET_EMSCRIPTEN)
   target_link_libraries(GLIBJPEG_TURBO PUBLIC
     #base
     #${ZLIB_LIBRARIES}
@@ -189,11 +190,13 @@ if (EMSCRIPTEN)
     #freetype
     # todo sudo apt-get install libjpeg-dev
   )
-else()
+elseif(TARGET_LINUX OR TARGET_WINDOWS)
   target_link_libraries(GLIBJPEG_TURBO PUBLIC
     ${libZLIB_LIB}
     ${GLIBXML_LIB}
   )
+else()
+  message(FATAL_ERROR "platform not supported")
 endif()
 
 set_property(TARGET GLIBJPEG_TURBO PROPERTY CXX_STANDARD 17)

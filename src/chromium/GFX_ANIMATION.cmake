@@ -1,4 +1,14 @@
-﻿### --- GFX_ANIMATION ---###
+﻿# see https://github.com/chromium/chromium/blob/06c9513ba20f85908b376865d0777633a29740ea/ui/gfx/animation/BUILD.gn
+
+if(TARGET_WINDOWS)
+  # skip
+elseif(TARGET_LINUX OR TARGET_EMSCRIPTEN)
+  # skip
+else()
+  message(FATAL_ERROR "platform not supported")
+endif()
+
+### --- GFX_ANIMATION ---###
 
 set(GFX_ANIMATION_SOURCES
   ${GFX_ANIMATION_DIR}animation.cc

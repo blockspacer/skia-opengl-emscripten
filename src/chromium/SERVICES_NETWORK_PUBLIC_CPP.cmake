@@ -102,7 +102,7 @@ if(TARGET_EMSCRIPTEN)
   #list(APPEND SERVICES_NETWORK_PUBLIC_CPP_OS_PUBLIC_DIRS
   #  ${CHROMIUM_DIR}/web_ports/libxml_wrapper/emscripten/include # requires "libxml/xmlversion.h"
   #)
-elseif(TARGET_LINUX)
+elseif(TARGET_LINUX) # TODO: WIN
   #if(CMAKE_CL_64)
   #  #
   #else(CMAKE_CL_64)

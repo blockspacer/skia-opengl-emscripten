@@ -54,7 +54,6 @@ target_compile_definitions(cobalt_overlay_info PRIVATE
   #  }],
   #],
   #
-  # starboard/linux/shared/BUILD.gn
   #STARBOARD_IMPLEMENTATION=1
   #
   #BASE_IMPLEMENTATION=1

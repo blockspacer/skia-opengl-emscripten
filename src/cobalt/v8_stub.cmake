@@ -32,7 +32,6 @@ target_include_directories(v8_stub PRIVATE
 )
 
 target_compile_definitions(v8_stub PRIVATE
-  # starboard/linux/shared/BUILD.gn
   #STARBOARD_IMPLEMENTATION=1
   #
   #BASE_IMPLEMENTATION=1

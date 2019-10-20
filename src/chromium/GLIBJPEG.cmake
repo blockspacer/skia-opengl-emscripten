@@ -65,11 +65,12 @@ add_library(GLIBJPEG STATIC
 #  find_package(ZLIB)
 #endif()
 
-if (EMSCRIPTEN)
+if(TARGET_EMSCRIPTEN)
   target_link_libraries(GLIBJPEG PUBLIC
     GLIBXML
   )
-else()
+elseif(TARGET_LINUX OR TARGET_WINDOWS)
+  # skip
   target_link_libraries(GLIBJPEG PUBLIC
     #${BASE_LIBRARIES}
     #base
@@ -79,6 +80,8 @@ else()
     #freetype
     # todo sudo apt-get install libjpeg-dev
   )
+else()
+  message(FATAL_ERROR "platform not supported")
 endif()
 
 set_property(TARGET GLIBJPEG PROPERTY CXX_STANDARD 17)

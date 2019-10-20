@@ -88,7 +88,6 @@ target_include_directories(cobalt_math PRIVATE
 )
 
 target_compile_definitions(cobalt_math PRIVATE
-  # starboard/linux/shared/BUILD.gn
   #STARBOARD_IMPLEMENTATION=1
   #
   #BASE_IMPLEMENTATION=1

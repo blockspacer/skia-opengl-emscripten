@@ -1,4 +1,6 @@
-﻿### --- COMPONENTS_SCHEDULING_METRICS ---###
+﻿# see https://github.com/chromium/chromium/blob/c619e7874a19e5d09b753a8891d336f96eef6b2a/components/scheduling_metrics/BUILD.gn
+
+### --- COMPONENTS_SCHEDULING_METRICS ---###
 
 set(COMPONENTS_SCHEDULING_METRICS_DIR
   components/scheduling_metrics/

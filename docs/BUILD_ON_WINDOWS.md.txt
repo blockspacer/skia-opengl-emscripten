@@ -1,0 +1,172 @@
+## Windows specific
+
+Prefer file paths with lowercase english characters without spaces
+
+Use Visual Studio with `English Language pack`
+
+## Install `Build Tools for Visual Studio` with `English Language pack`
+
+Tested with VS 2017, you can find it here https://visualstudio.microsoft.com/ru/vs/older-downloads/
+
+Go to https://visualstudio.microsoft.com/ru/downloads/
+
+Download "Build Tools for Visual Studio"
+
+Run "Build Tools for Visual Studio", choise "Language packs" and add "English".
+
+You can select language in (running Visual Studio) Tools -> Options -> International Settings in Environment
+
+## Install latest cmake from https://cmake.org/download/
+
+See https://cmake.org/download/
+
+## Install https://github.com/Microsoft/vcpkg/
+
+See https://devblogs.microsoft.com/cppblog/vcpkg-a-tool-to-acquire-and-build-c-open-source-libraries-on-windows/
+
+```cmd
+D:
+mkdir D:\src
+cd D:\src
+git clone --recursive https://github.com/Microsoft/vcpkg
+cd vcpkg
+.\bootstrap-vcpkg.bat
+```
+
+## Install cmder from https://cmder.net/  as Admin
+
+See https://medium.com/@alikingravi/installing-cmder-as-an-alternative-windows-command-line-tool-202b866115d9
+
+NOTE: If you want to work with UTF-8 encoding you have to select UTF-8 as active console codepage. Just run `chcp 65001`
+
+## Install https://chocolatey.org/ from PowerShell v3+ as Admin
+
+```cmd
+Set-ExecutionPolicy Bypass -Scope Process -Force; iwr https://chocolatey.org/install.ps1 -UseBasicParsing | iex
+```
+
+## Build zlib
+
+Get sources from https://www.zlib.net/ or https://www.zlib.net/zlib1211.zip
+
+```cmd
+cmake -E remove_directory build
+cmake -E make_directory build
+cd build
+cmake -DCMAKE_BUILD_TYPE=Release ..
+cmake --build . --config Release -- -j 3
+cmake --build . --config Release --target install
+```
+
+Note what you may want to copy `.dll` files from ` C:/Program Files (x86)/zlib/bin/zlib.dll` to your app folder.
+
+## Build libpng
+
+Get sources from http://www.libpng.org/pub/png/libpng.html or http://prdownloads.sourceforge.net/libpng/lpng1637.zip?download
+
+```cmd
+cmake -E remove_directory build
+cmake -E make_directory build
+cd build
+cmake -DCMAKE_BUILD_TYPE=Release -DPNG_STATIC=ON ..
+cmake --build . --config Release -- -j 3
+cmake --build . --config Release --target install
+```
+
+Note that you must append install path to DCMAKE_PREFIX_PATH, like so: "-DCMAKE_PREFIX_PATH=C:/Program Files (x86)/;C:/Program Files (x86)/libpng/"
+
+Note what you may want to copy `.dll` files from `C:/Program Files (x86)/libpng/bin/libpng16.dll` to your app folder.
+
+See https://gitlab.kitware.com/cmake/cmake/issues/19270
+
+## Build SDL2 from https://www.libsdl.org/download-2.0.php
+
+Download https://www.libsdl.org/release/SDL2-2.0.10.zip
+
+```cmd
+cmake -E remove_directory build
+cmake -E make_directory build
+cd build
+cmake -DCMAKE_BUILD_TYPE=Release ..
+cmake --build . --config Release -- -j 3
+cmake --build . --config Release --target install
+```
+
+Note that you must append install path to DCMAKE_PREFIX_PATH, like so: "-DCMAKE_PREFIX_PATH=C:/Program Files (x86)/;C:/Program Files (x86)/SDL2/"
+
+Note what you may want to copy `.dll` files from `C:/Program Files (x86)/SDL2/bin/SDL2.dll` to your app folder.
+
+## Build BZip2 from https://github.com/philr/bzip2-windows/releases
+
+optional step
+
+## Build Freetype2 from https://www.freetype.org/download.html
+
+Download https://download.savannah.gnu.org/releases/freetype/freetype-2.10.0.tar.bz2
+
+```cmd
+cmake -E remove_directory build
+cmake -E make_directory build
+cd build
+# NOTE: you can use -DFT_WITH_HARFBUZZ=OFF -DFT_WITH_PNG=OFF
+cmake -DCMAKE_BUILD_TYPE=Release -DFT_WITH_HARFBUZZ=OFF -DCMAKE_DISABLE_FIND_PACKAGE_HarfBuzz=TRUE -DFT_WITH_PNG=OFF -DCMAKE_DISABLE_FIND_PACKAGE_PNG=TRUE  -DFT_WITH_ZLIB=OFF -DCMAKE_DISABLE_FIND_PACKAGE_ZLIB=TRUE -DFT_WITH_BZIP2=OFF -DCMAKE_DISABLE_FIND_PACKAGE_BZip2=TRUE "-DCMAKE_PREFIX_PATH=C:/Program Files (x86)/;C:/Program Files (x86)/libpng/;C:/Program Files (x86)/harfbuzz/" ..
+cmake --build . --config Release -- -j 3
+cmake --build . --config Release --target install
+```
+
+## Build ICU
+
+Option 1:
+
+```cmd
+.\vcpkg install icu
+```
+
+Option 2:
+
+Download https://github.com/unicode-org/icu/releases/download/release-65-1/icu4c-65_1-Win64-MSVC2017.zip from https://github.com/unicode-org/icu/releases/tag/release-65-1
+
+## Build gzip
+
+## Build harfbuzz with `-DHB_HAVE_FREETYPE=ON` and `HB_HAVE_ICU=ON`
+
+```cmd
+git clone --recursive https://github.com/harfbuzz/harfbuzz.git
+cd harfbuzz
+cmake -E remove_directory build
+cmake -E make_directory build
+cd build
+# NOTE: change CMAKE_TOOLCHAIN_FILE for ICU path from vcpkg
+cmake -DCMAKE_TOOLCHAIN_FILE=D:\den\coding\vcpkg\scripts\buildsystems\vcpkg.cmake -DCMAKE_BUILD_TYPE=Release -DHB_HAVE_GLIB=OFF -DHB_HAVE_ICU=ON -DHB_HAVE_FREETYPE=ON "-DCMAKE_PREFIX_PATH=D:/den/coding/vcpkg/packages/icu_x86-windows/;C:/Program Files (x86)/;C:/Program Files (x86)/libpng/;C:/Program Files (x86)/freetype2/;C:/Program Files (x86)/freetype/include/freetype2/;C:/Program Files (x86)/freetype/lib/;C:/Program Files (x86)/freetype/lib/cmake/" ..
+cmake --build . --config Release -- -j 3
+cmake --build . --config Release --target install
+```
+
+## Re-build Freetype2 again with harfbuzz and libpng
+
+optional step
+
+Use 
+- `-DFT_WITH_HARFBUZZ=ON` and `-DCMAKE_DISABLE_FIND_PACKAGE_HarfBuzz=FALSE`
+- `-DFT_WITH_PNG=OFF` and `-DCMAKE_DISABLE_FIND_PACKAGE_PNG=FALSE`
+- proper `-DCMAKE_PREFIX_PATH`
+
+## Build expat
+
+```cmd
+.\vcpkg install expat
+```
+
+## Build fontconfig
+
+```cmd
+.\vcpkg install fontconfig
+```
+
+## Create VS solution
+
+cmake -E remove_directory build
+cmake -E make_directory build
+cd build
+cmake -G "Visual Studio 15 2017 Win64" "-DCMAKE_PREFIX_PATH=D:/den/coding/vcpkg/packages/libuuid_x86-windows/;D:/den/coding/vcpkg/packages/fontconfig_x86-windows/;D:/den/coding/vcpkg/packages/icu_x86-windows/;D:/den/coding/vcpkg/packages/expat_x86-windows/;C:/Program Files (x86)/harfbuzz/;C:/Program Files (x86)/;C:/Program Files (x86)/;C:/Program Files (x86)/libpng/;C:/Program Files (x86)/SDL2/;C:/Program Files (x86)/freetype2/;C:/Program Files (x86)/freetype/include/freetype2/;C:/Program Files (x86)/freetype/lib/;C:/Program Files (x86)/freetype/lib/cmake/" ..
+

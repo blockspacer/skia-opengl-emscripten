@@ -430,7 +430,6 @@ target_compile_definitions(cobalt_dom PRIVATE
   #  }],
   #],
   #
-  # starboard/linux/shared/BUILD.gn
   #STARBOARD_IMPLEMENTATION=1
   #
   #BASE_IMPLEMENTATION=1

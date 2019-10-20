@@ -1,4 +1,6 @@
-﻿### --- CC ---###
+﻿# see https://github.com/chromium/chromium/blob/d9b4f45e42611660d87c402e796ec5015f3a9756/cc/BUILD.gn
+
+### --- CC ---###
 
 list(APPEND CC_SOURCES
   ${CC_DIR}cc_export.h

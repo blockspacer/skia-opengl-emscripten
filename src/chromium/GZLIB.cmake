@@ -35,7 +35,7 @@ set(GZLIB_SOURCES
 )
 
 # if (current_cpu == "x86" || current_cpu == "x64")
-if(TARGET_LINUX)
+if(TARGET_LINUX) # TODO
   #list(APPEND zlib_SOURCES
   #  ${GZLIB_DIR}intel/filter_sse2_intrinsics.c
   #  ${GZLIB_DIR}intel/intel_init.c
@@ -80,5 +80,7 @@ target_compile_definitions(GZLIB PRIVATE
   #INFLATE_CHUNK_READ_64LE
   #INFLATE_CHUNK_SIMD_NEON
   #CRC32_SIMD_SSE42_PCLMUL
+
+  # TODO
   USE_FILE32API=1 # if (is_mac || is_ios || is_android || is_nacl)
 )

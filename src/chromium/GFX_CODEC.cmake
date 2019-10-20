@@ -1,4 +1,6 @@
-﻿### --- GFX_CODEC ---###
+﻿# see https://github.com/chromium/chromium/blob/2ca8c5037021c9d2ecc00b787d58a31ed8fc8bcb/ui/gfx/codec/BUILD.gn
+
+### --- GFX_CODEC ---###
 
 set(GFX_CODEC_SOURCES
   #${GFX_CODEC_DIR}codec_export.h

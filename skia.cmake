@@ -701,8 +701,8 @@ if (NOT EXT_SKIA_SHARED)
 
   if(TARGET_EMSCRIPTEN)
     message(STATUS "building skia for EMSCRIPTEN")
-  elseif(TARGET_LINUX)
-    message(STATUS "building skia for LINUX")
+  elseif(TARGET_LINUX OR TARGET_WINDOWS)
+    message(STATUS "building skia for ${CMAKE_SYSTEM_NAME}")
 
     # seem to be always required...
     #ADD_SKIA_LIBRARY_DEPENDENCY("dl")

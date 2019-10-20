@@ -86,7 +86,6 @@ target_include_directories(cobalt_render_tree PRIVATE
 )
 
 target_compile_definitions(cobalt_render_tree PRIVATE
-  # starboard/linux/shared/BUILD.gn
   #STARBOARD_IMPLEMENTATION=1
   #
   #BASE_IMPLEMENTATION=1

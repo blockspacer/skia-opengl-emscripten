@@ -1,4 +1,6 @@
-﻿cmake_minimum_required(VERSION 3.4)
+﻿# see https://github.com/chromium/chromium/blob/9db0b5162b8648833c3a6b1af044cebd9d7d3855/base/BUILD.gn
+
+cmake_minimum_required(VERSION 3.4)
 
 ### --- base ---###
 
@@ -178,7 +180,6 @@ list(APPEND BASE_SOURCES
    #${BASE_DIR}file_version_info_win.cc
    #${BASE_DIR}file_version_info_win.h
    ${BASE_DIR}files/dir_reader_fallback.h
-   ${BASE_DIR}files/dir_reader_linux.h
    ${BASE_DIR}files/file.cc
    ${BASE_DIR}files/file.h
    ${BASE_DIR}files/file_enumerator.cc
@@ -188,7 +189,6 @@ list(APPEND BASE_SOURCES
    ${BASE_DIR}files/file_path_constants.cc
    ${BASE_DIR}files/file_path_watcher.cc
    ${BASE_DIR}files/file_path_watcher.h
-   ${BASE_DIR}files/file_path_watcher_linux.cc
    #${BASE_DIR}files/file_path_watcher_mac.cc
    #${BASE_DIR}files/file_path_watcher_win.cc
    ${BASE_DIR}files/file_proxy.cc
@@ -253,8 +253,6 @@ list(APPEND BASE_SOURCES
    ${BASE_DIR}lazy_instance.h
    ${BASE_DIR}lazy_instance_helpers.cc
    ${BASE_DIR}lazy_instance_helpers.h
-   ${BASE_DIR}linux_util.cc
-   ${BASE_DIR}linux_util.h
    ${BASE_DIR}location.cc
    ${BASE_DIR}location.h
    ${BASE_DIR}logging.cc
@@ -483,8 +481,6 @@ list(APPEND BASE_SOURCES
    ${BASE_DIR}power_monitor/power_observer.h
    ${BASE_DIR}process/environment_internal.cc
    ${BASE_DIR}process/environment_internal.h
-   ${BASE_DIR}process/internal_linux.cc
-   ${BASE_DIR}process/internal_linux.h
    ${BASE_DIR}process/kill.cc
    ${BASE_DIR}process/kill.h
    #${BASE_DIR}process/kill_mac.cc
@@ -509,10 +505,6 @@ list(APPEND BASE_SOURCES
    #${BASE_DIR}process/process_info_win.cc
    ${BASE_DIR}process/process_iterator.cc
    ${BASE_DIR}process/process_iterator.h
-   ${BASE_DIR}process/process_iterator_linux.cc
-   #${BASE_DIR}process/process_iterator_mac.cc
-   #${BASE_DIR}process/process_iterator_win.cc
-   ${BASE_DIR}process/process_linux.cc
    #${BASE_DIR}process/process_mac.cc
    ${BASE_DIR}process/process_metrics.cc
    ${BASE_DIR}process/process_metrics.h
@@ -1020,38 +1012,6 @@ list(APPEND BASE_SOURCES
    # base_static ###
    ${BASE_DIR}base_switches.cc
    ${BASE_DIR}base_switches.h
-   # posix
-   ${BASE_DIR}file_descriptor_posix.h
-   ${BASE_DIR}files/dir_reader_posix.h
-   ##${BASE_DIR}files/file_util_posix.cc
-   ${BASE_DIR}files/memory_mapped_file_posix.cc
-   ${BASE_DIR}memory/protected_memory_posix.cc
-   ${BASE_DIR}message_loop/watchable_io_message_pump_posix.cc
-   ${BASE_DIR}message_loop/watchable_io_message_pump_posix.h
-   ${BASE_DIR}native_library_posix.cc
-   ${BASE_DIR}posix/safe_strerror.cc
-   ${BASE_DIR}posix/safe_strerror.h
-   ${BASE_DIR}process/kill_posix.cc
-   ${BASE_DIR}process/process_handle_posix.cc
-   ${BASE_DIR}process/process_posix.cc
-   ${BASE_DIR}profiler/stack_sampler_posix.cc
-   ${BASE_DIR}rand_util_posix.cc
-   ${BASE_DIR}sampling_heap_profiler/module_cache_posix.cc
-   ${BASE_DIR}strings/string_util_posix.h
-   ${BASE_DIR}strings/sys_string_conversions_posix.cc
-   ${BASE_DIR}sync_socket_posix.cc
-   ${BASE_DIR}synchronization/condition_variable_posix.cc
-   ${BASE_DIR}synchronization/lock_impl_posix.cc
-   ${BASE_DIR}synchronization/waitable_event_posix.cc
-   ${BASE_DIR}synchronization/waitable_event_watcher_posix.cc
-   ${BASE_DIR}system/sys_info_posix.cc
-   ${BASE_DIR}threading/platform_thread_internal_posix.cc
-   ${BASE_DIR}threading/platform_thread_internal_posix.h
-   ${BASE_DIR}threading/platform_thread_posix.cc
-   ${BASE_DIR}threading/thread_local_storage_posix.cc
-   ${BASE_DIR}timer/hi_res_timer_manager_posix.cc
-   # https://github.com/chromium/chromium/blob/master/base/BUILD.gn#L1185
-   ${BASE_DIR}base_paths_posix.h
    # https://github.com/chromium/chromium/blob/master/base/BUILD.gn#L1633
    ${BASE_DIR}allocator/partition_allocator/address_space_randomization.cc
    ${BASE_DIR}allocator/partition_allocator/address_space_randomization.h
@@ -1088,9 +1048,6 @@ list(APPEND BASE_SOURCES
    ${BASE_DIR}time/time_conversion_posix.cc
    ${BASE_DIR}time/time_exploded_posix.cc
    ${BASE_DIR}time/time_now_posix.cc
-   # https://github.com/chromium/chromium/blob/master/base/BUILD.gn#L1922
-   ##"posix/can_lower_nice_to.cc
-   ##"posix/can_lower_nice_to.h
    # https://github.com/chromium/chromium/blob/master/base/BUILD.gn#L1929
    ## "power_monitor/power_monitor_device_source_stub.cc"
    # https://github.com/chromium/chromium/blob/master/base/BUILD.gn#L2747
@@ -1104,7 +1061,7 @@ list(APPEND BASE_SOURCES
    build/build_config.h
 )
 
-if(TARGET_EMSCRIPTEN)
+if(TARGET_EMSCRIPTEN OR TARGET_LINUX)
   list(APPEND BASE_SOURCES
     #${BASE_DIR}atomicops_internals_portable.h
     #${BASE_DIR}critical_closure_internal_ios.mm
@@ -1139,25 +1096,11 @@ if(TARGET_EMSCRIPTEN)
     #${BASE_DIR}debug/stack_trace_win.cc
     ${BASE_DIR}debug/task_trace.cc
     ${BASE_DIR}debug/task_trace.h
-    #
-    ${BASE_DIR}threading/platform_thread_linux.cc
-    #
-    ${BASE_DIR}files/file_util_linux.cc
-    ${BASE_DIR}process/memory_linux.cc
-    ${BASE_DIR}process/process_handle_linux.cc
-    #
-    ${BASE_DIR}debug/debugger_posix.cc
-    ${BASE_DIR}files/file_enumerator_posix.cc
-    ${BASE_DIR}files/file_posix.cc
     ${BASE_DIR}posix/eintr_wrapper.h
     ${BASE_DIR}posix/file_descriptor_shuffle.cc
     ${BASE_DIR}posix/file_descriptor_shuffle.h
     ${BASE_DIR}posix/global_descriptors.cc
     ${BASE_DIR}posix/global_descriptors.h
-    ${BASE_DIR}posix/unix_domain_socket.cc
-    ${BASE_DIR}posix/unix_domain_socket.h
-    ${BASE_DIR}process/launch_posix.cc
-    ${BASE_DIR}base_paths_posix.h
     ${BASE_DIR}posix/can_lower_nice_to.cc
     ${BASE_DIR}posix/can_lower_nice_to.h
     # https://github.com/chromium/chromium/blob/master/base/BUILD.gn#L1929
@@ -1169,9 +1112,65 @@ if(TARGET_EMSCRIPTEN)
     ###${BASE_DIR}posix/file_descriptor_shuffle_unittest.cc
     ###${BASE_DIR}posix/unix_domain_socket_unittest.cc
     ###${BASE_DIR}task/thread_pool/task_tracker_posix_unittest.cc
+    ${BASE_DIR}debug/debugger_posix.cc
+    ${BASE_DIR}files/file_enumerator_posix.cc
+    ${BASE_DIR}files/file_posix.cc
+    ${BASE_DIR}posix/unix_domain_socket.cc
+    ${BASE_DIR}posix/unix_domain_socket.h
+    ${BASE_DIR}process/launch_posix.cc
+    ${BASE_DIR}base_paths_posix.h
+    # posix
+    ${BASE_DIR}file_descriptor_posix.h
+    ${BASE_DIR}files/dir_reader_posix.h
+    ##${BASE_DIR}files/file_util_posix.cc
+    ${BASE_DIR}files/memory_mapped_file_posix.cc
+    ${BASE_DIR}memory/protected_memory_posix.cc
+    ${BASE_DIR}message_loop/watchable_io_message_pump_posix.cc
+    ${BASE_DIR}message_loop/watchable_io_message_pump_posix.h
+    ${BASE_DIR}native_library_posix.cc
+    ${BASE_DIR}posix/safe_strerror.cc
+    ${BASE_DIR}posix/safe_strerror.h
+    ${BASE_DIR}process/kill_posix.cc
+    ${BASE_DIR}process/process_handle_posix.cc
+    ${BASE_DIR}process/process_posix.cc
+    ${BASE_DIR}profiler/stack_sampler_posix.cc
+    ${BASE_DIR}rand_util_posix.cc
+    ${BASE_DIR}sampling_heap_profiler/module_cache_posix.cc
+    ${BASE_DIR}strings/string_util_posix.h
+    ${BASE_DIR}strings/sys_string_conversions_posix.cc
+    ${BASE_DIR}sync_socket_posix.cc
+    ${BASE_DIR}synchronization/condition_variable_posix.cc
+    ${BASE_DIR}synchronization/lock_impl_posix.cc
+    ${BASE_DIR}synchronization/waitable_event_posix.cc
+    ${BASE_DIR}synchronization/waitable_event_watcher_posix.cc
+    ${BASE_DIR}system/sys_info_posix.cc
+    ${BASE_DIR}threading/platform_thread_internal_posix.cc
+    ${BASE_DIR}threading/platform_thread_internal_posix.h
+    ${BASE_DIR}threading/platform_thread_posix.cc
+    ${BASE_DIR}threading/thread_local_storage_posix.cc
+    ${BASE_DIR}timer/hi_res_timer_manager_posix.cc
+    # https://github.com/chromium/chromium/blob/master/base/BUILD.gn#L1185
+    ${BASE_DIR}base_paths_posix.h
   )
 elseif(TARGET_LINUX)
   list(APPEND BASE_SOURCES
+    #
+    ${BASE_DIR}threading/platform_thread_linux.cc
+    #
+    ${BASE_DIR}files/file_util_linux.cc
+    ${BASE_DIR}process/memory_linux.cc
+    ${BASE_DIR}process/process_handle_linux.cc
+    #
+    ${BASE_DIR}process/process_iterator_linux.cc
+    #${BASE_DIR}process/process_iterator_mac.cc
+    #${BASE_DIR}process/process_iterator_win.cc
+    ${BASE_DIR}process/process_linux.cc
+    ${BASE_DIR}process/internal_linux.cc
+    ${BASE_DIR}process/internal_linux.h
+    ${BASE_DIR}linux_util.cc
+    ${BASE_DIR}linux_util.h
+    ${BASE_DIR}files/file_path_watcher_linux.cc
+    ${BASE_DIR}files/dir_reader_linux.h
     #${BASE_DIR}critical_closure_internal_ios.mm
     ${BASE_DIR}debug/activity_analyzer.cc
     ${BASE_DIR}debug/activity_analyzer.h
@@ -1214,7 +1213,7 @@ elseif(TARGET_LINUX)
     ${BASE_DIR}process/process_handle_linux.cc
     ${BASE_DIR}process/process_metrics_linux.cc
     #
-    ${BASE_DIR}debug/debugger_posix.cc
+    #${BASE_DIR}debug/debugger_posix.cc
     # requires mojo::StructTraits<mojo_base::mojom::ProcessIdDataView,
     #
     ##${BASE_DIR}debug/stack_trace_posix.cc
@@ -1230,8 +1229,6 @@ elseif(TARGET_LINUX)
     ${BASE_DIR}process/launch_posix.cc
     ${BASE_DIR}process/process_metrics_posix.cc
     ${BASE_DIR}base_paths_posix.h
-    ${BASE_DIR}posix/can_lower_nice_to.cc
-    ${BASE_DIR}posix/can_lower_nice_to.h
     # https://github.com/chromium/chromium/blob/master/base/BUILD.gn#L1929
     ${BASE_DIR}power_monitor/power_monitor_device_source_stub.cc
     # https://github.com/chromium/chromium/blob/master/base/BUILD.gn#L2747
@@ -1242,23 +1239,94 @@ elseif(TARGET_LINUX)
     ###${BASE_DIR}posix/unix_domain_socket_unittest.cc
     ###${BASE_DIR}task/thread_pool/task_tracker_posix_unittest.cc
   )
-
-  if(TARGET_EMSCRIPTEN)
-    # nothing
-  elseif(TARGET_LINUX)
-    list(APPEND BASE_SOURCES
-     # https://github.com/chromium/chromium/blob/master/base/BUILD.gn#L1894
-     ${BASE_DIR}message_loop/message_pump_libevent.cc
-     #${BASE_DIR}message_loop/message_pump_libevent.h
-     ${BASE_DIR}task/thread_pool/task_tracker_posix.cc
-     #${BASE_DIR}task/thread_pool/task_tracker_posix.h
-     ${BASE_DIR}files/file_descriptor_watcher_posix.cc
-     #${BASE_DIR}files/file_descriptor_watcher_posix.h
-    )
-  else()
-    message(FATAL_ERROR "base platform not supported")
-  endif()
-
+  list(APPEND BASE_SOURCES
+    # https://github.com/chromium/chromium/blob/master/base/BUILD.gn#L1894
+    ${BASE_DIR}message_loop/message_pump_libevent.cc
+    #${BASE_DIR}message_loop/message_pump_libevent.h
+    ${BASE_DIR}task/thread_pool/task_tracker_posix.cc
+    #${BASE_DIR}task/thread_pool/task_tracker_posix.h
+    ${BASE_DIR}files/file_descriptor_watcher_posix.cc
+    #${BASE_DIR}files/file_descriptor_watcher_posix.h
+  )
+elseif(TARGET_WINDOWS)
+  list(APPEND BASE_SOURCES
+    # static_library("pe_image")
+    ${BASE_DIR}win/current_module.h
+    ${BASE_DIR}win/pe_image.cc
+    ${BASE_DIR}win/pe_image.h
+    #
+    ${BASE_DIR}win/static_constants.cc
+    ${BASE_DIR}win/static_constants.h
+    # https://github.com/chromium/chromium/blob/master/base/BUILD.gn#L1894
+    ${BASE_DIR}message_loop/message_pump_win.cc
+    ${BASE_DIR}message_loop/message_pump_win.h
+    ${BASE_DIR}debug/close_handle_hook_win.cc
+    ${BASE_DIR}debug/close_handle_hook_win.h
+    ${BASE_DIR}debug/debugger_win.cc
+    ${BASE_DIR}debug/gdi_debug_util_win.cc
+    ${BASE_DIR}debug/gdi_debug_util_win.h
+    ${BASE_DIR}debug/invalid_access_win.cc
+    ${BASE_DIR}debug/invalid_access_win.h
+    ${BASE_DIR}debug/stack_trace_win.cc
+    ${BASE_DIR}enterprise_util_win.cc
+    ${BASE_DIR}file_version_info_win.cc
+    ${BASE_DIR}file_version_info_win.h
+    ${BASE_DIR}files/file_path_watcher_win.cc
+    ${BASE_DIR}files/file_util_win.cc
+    ${BASE_DIR}files/file_win.cc
+    ${BASE_DIR}files/memory_mapped_file_win.cc
+    ${BASE_DIR}logging_win.cc
+    ${BASE_DIR}logging_win.h
+    ${BASE_DIR}memory/protected_memory_win.cc
+    ${BASE_DIR}native_library_win.cc
+    ${BASE_DIR}process/kill_win.cc
+    ${BASE_DIR}process/launch_win.cc
+    ${BASE_DIR}process/memory_win.cc
+    ${BASE_DIR}process/process_handle_win.cc
+    ${BASE_DIR}process/process_info_win.cc
+    ${BASE_DIR}process/process_iterator_win.cc
+    ${BASE_DIR}process/process_metrics_win.cc
+    ${BASE_DIR}process/process_win.cc
+    ${BASE_DIR}profiler/native_unwinder_win.cc
+    ${BASE_DIR}profiler/native_unwinder_win.h
+    ${BASE_DIR}profiler/stack_sampler_win.cc
+    ${BASE_DIR}profiler/suspendable_thread_delegate_win.cc
+    ${BASE_DIR}profiler/suspendable_thread_delegate_win.h
+    ${BASE_DIR}sampling_heap_profiler/module_cache_win.cc
+    ${BASE_DIR}scoped_clear_last_error_win.cc
+    ${BASE_DIR}strings/string_util_win.h
+    ${BASE_DIR}strings/sys_string_conversions_win.cc
+    ${BASE_DIR}sync_socket_win.cc
+    ${BASE_DIR}synchronization/condition_variable_win.cc
+    ${BASE_DIR}synchronization/lock_impl_win.cc
+    ${BASE_DIR}synchronization/waitable_event_watcher_win.cc
+    ${BASE_DIR}synchronization/waitable_event_win.cc
+    ${BASE_DIR}task/thread_pool/thread_group_native_win.cc
+    ${BASE_DIR}task/thread_pool/thread_group_native_win.h
+    ${BASE_DIR}threading/platform_thread_win.cc
+    ${BASE_DIR}threading/platform_thread_win.h
+    ${BASE_DIR}threading/thread_local_storage_win.cc
+    ${BASE_DIR}timer/hi_res_timer_manager_win.cc
+    ${BASE_DIR}trace_event/trace_event_etw_export_win.cc
+    ${BASE_DIR}trace_event/trace_event_etw_export_win.h
+    ${BASE_DIR}base_paths_win.cc
+    ${BASE_DIR}base_paths_win.h
+    ${BASE_DIR}allocator/allocator_shim_default_dispatch_to_winheap.cc
+    ${BASE_DIR}allocator/allocator_shim_override_ucrt_symbols_win.h
+    ${BASE_DIR}allocator/winheap_stubs_win.cc
+    ${BASE_DIR}allocator/winheap_stubs_win.h
+    ${BASE_DIR}allocator/partition_allocator/page_allocator_internals_win.h
+    ${BASE_DIR}files/file_enumerator_win.cc
+    ${BASE_DIR}memory/platform_shared_memory_region_win.cc
+    ${BASE_DIR}memory/shared_memory_handle_win.cc
+    ${BASE_DIR}memory/shared_memory_win.cc
+    ${BASE_DIR}power_monitor/power_monitor_device_source_win.cc
+    ${BASE_DIR}profiler/win32_stack_frame_unwinder.cc
+    ${BASE_DIR}profiler/win32_stack_frame_unwinder.h
+    ${BASE_DIR}rand_util_win.cc
+    ${BASE_DIR}system/sys_info_win.cc
+    ${BASE_DIR}time/time_win.cc
+  )
 else()
   message(FATAL_ERROR "TODO: port base")
 endif()
@@ -1307,8 +1375,8 @@ if(TARGET_LINUX)
     ${BASE_DIR}linux_util.cc # if (!is_android)
     #${BASE_DIR}linux_util.h # if (!is_android)
     #
-    ${BASE_DIR}debug/elf_reader.cc
-    ${BASE_DIR}debug/elf_reader.h
+    ${BASE_DIR}debug/elf_reader.cc # only for linux
+    ${BASE_DIR}debug/elf_reader.h # only for linux
     #
     ${BASE_DIR}files/file_descriptor_watcher_posix.cc
     ${BASE_DIR}files/file_descriptor_watcher_posix.h
@@ -1470,6 +1538,89 @@ elseif(TARGET_LINUX)
   )
   add_dependencies(base
     tcmalloc
+    ced
+    ${CUSTOM_ICU_LIB}
+    ${HARFBUZZ_LIBRARIES}
+    modp_b64
+  )
+elseif(TARGET_WINDOWS)
+  # Check if libatomic is needed
+  # see https://github.com/HewlettPackard/foedus_code/blob/master/foedus-core/cmake/FindGccAtomic.cmake
+  include(GNUInstallDirs)
+  include(CMakePushCheckState)
+  include(CheckCXXCompilerFlag)
+  include(CheckCXXSourceCompiles)
+  include(CMakePackageConfigHelpers)
+  cmake_push_check_state()
+  check_cxx_source_compiles("
+      #include <atomic>
+      #include <stdint.h>
+      int main() {
+          std::atomic<int64_t> x;
+          x = 1;
+          x--;
+          return (int) x;
+      }"
+      atomic64)
+  #if(NOT atomic64)
+      # I'm also putting "atomic.so.1" because at least FC19 and Ubuntu's repo don't create
+      # "libatomic.so" symlink. They only have libatomic.so.1.0.0 and libatomic.so.1 symlink. No idea why.
+      find_library(ATOMIC
+        NAMES
+          atomic
+          atomic.so.1
+          libatomic.so
+          libatomic.so.1
+          libatomic.so.1.2.0
+        HINTS
+          $ENV{HOME}/local/lib64
+          $ENV{HOME}/local/lib
+          /usr/local/lib64
+          /usr/local/lib
+          /opt/local/lib64
+          /opt/local/lib
+          /usr/lib64
+          /usr/lib
+          /lib64
+          /lib
+          /usr/lib
+          /usr/lib/x86_64-linux-gnu
+          /opt/usr/lib
+          /opt/usr/lib64
+      )
+      if(ATOMIC)
+          set(LIBATOMIC ${ATOMIC})
+          message(STATUS "Found libatomic: ${LIBATOMIC}")
+      else()
+          check_cxx_source_compiles("
+              #include <atomic>
+              #include <stdint.h>
+              int main() {
+                  std::atomic<int32_t> x;
+                  x = 1;
+                  x--;
+                  return (int) x;
+              }"
+              atomic32)
+
+          if(atomic32)
+              message(FATAL_ERROR "Failed to find libatomic!")
+          endif()
+      endif(ATOMIC)
+  #endif(NOT atomic64)
+  cmake_pop_check_state()
+
+  list(APPEND EXTRA_CHROMIUM_BASE_LIBS
+    #tcmalloc
+    ced
+    ${CUSTOM_ICU_LIB}
+    ${HARFBUZZ_LIBRARIES}
+    # libevent only for posix/linux/e.t.c.
+    #libevent
+    modp_b64
+  )
+  add_dependencies(base
+    #tcmalloc
     ced
     ${CUSTOM_ICU_LIB}
     ${HARFBUZZ_LIBRARIES}

@@ -87,10 +87,14 @@ add_library(cobalt_base STATIC
 
 if(TARGET_LINUX)
   list(APPEND EXTRA_COBALT_BASE_LIBS
-    xdg_mime
-    xdg_user_dirs
+  xdg_mime
+  xdg_user_dirs
   )
-endif(TARGET_LINUX)
+elseif(TARGET_WINDOWS OR TARGET_EMSCRIPTEN)
+  # TODO
+else()
+  message(FATAL_ERROR "platform not supported")
+endif()
 
 target_link_libraries(cobalt_base PUBLIC
   base # TODO

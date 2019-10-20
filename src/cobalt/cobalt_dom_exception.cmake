@@ -32,7 +32,6 @@ target_include_directories(cobalt_dom_exception PRIVATE
 )
 
 target_compile_definitions(cobalt_dom_exception PRIVATE
-  # starboard/linux/shared/BUILD.gn
   #STARBOARD_IMPLEMENTATION=1
   #
   #BASE_IMPLEMENTATION=1

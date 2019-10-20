@@ -1,4 +1,6 @@
-﻿### --- BLINK_RENDERER_CORE ---###
+﻿# see https://github.com/chromium/chromium/blob/2ca8c5037021c9d2ecc00b787d58a31ed8fc8bcb/third_party/blink/renderer/core/BUILD.gn
+
+### --- BLINK_RENDERER_CORE ---###
 
 set(CUR_SRC_DIR ${BLINK_RENDERER_CORE_DIR})
 
@@ -18,6 +20,7 @@ list(APPEND BLINK_RENDERER_CORE_SOURCES
   #
 #endif(ENABLE_HARFBUZZ)
 
+# see https://github.com/chromium/chromium/blob/2ca8c5037021c9d2ecc00b787d58a31ed8fc8bcb/third_party/blink/renderer/core/typed_arrays/BUILD.gn
 list(APPEND BLINK_RENDERER_CORE_TYPED_ARRAYS_SOURCES
   #${CUR_SRC_DIR}typed_arrays/array_buffer_view_helpers.h
   ${CUR_SRC_DIR}typed_arrays/dom_array_buffer.cc
@@ -1228,6 +1231,7 @@ list(APPEND BLINK_RENDERER_CORE_INPUT_SOURCES
   #${CUR_SRC_DIR}input/touch_list.h
 )
 
+# see https://github.com/chromium/chromium/blob/2ca8c5037021c9d2ecc00b787d58a31ed8fc8bcb/third_party/blink/renderer/core/inspector/BUILD.gn
 list(APPEND BLINK_RENDERER_CORE_INSPECTOR_SOURCES
   ${CUR_SRC_DIR}inspector/console_message.cc
   #${CUR_SRC_DIR}inspector/console_message.h
@@ -1320,6 +1324,7 @@ list(APPEND BLINK_RENDERER_CORE_INSPECTOR_SOURCES
   #${CUR_SRC_DIR}inspector/worker_thread_debugger.h
 )
 
+# see https://github.com/chromium/chromium/blob/2ca8c5037021c9d2ecc00b787d58a31ed8fc8bcb/third_party/blink/renderer/core/intersection_observer/BUILD.gn
 list(APPEND BLINK_RENDERER_CORE_INTERSECTION_OBSERVER_SOURCES
   ${CUR_SRC_DIR}intersection_observer/element_intersection_observer_data.cc
   #${CUR_SRC_DIR}intersection_observer/element_intersection_observer_data.h
@@ -1343,6 +1348,7 @@ list(APPEND BLINK_RENDERER_CORE_INVISIBLE_DOM_SOURCES
   #${CUR_SRC_DIR}invisible_dom/invisible_dom.h
 )
 
+# see https://github.com/chromium/chromium/blob/2ca8c5037021c9d2ecc00b787d58a31ed8fc8bcb/third_party/blink/renderer/core/layout/BUILD.gn
 list(APPEND BLINK_RENDERER_CORE_LAYOUT_SOURCES
   #${CUR_SRC_DIR}layout/api/hit_test_action.h
   #${CUR_SRC_DIR}layout/api/line_layout_api_shim.h
@@ -1859,6 +1865,8 @@ list(APPEND BLINK_RENDERER_CORE_LAYOUT_SOURCES
   ${CUR_SRC_DIR}layout/view_fragmentation_context.cc
   #${CUR_SRC_DIR}layout/view_fragmentation_context.h
   #
+
+  # TODO
   #if (is_win) {
   #  sources += [
   #    "layout_theme_font_provider_win.cc
@@ -1870,13 +1878,17 @@ list(APPEND BLINK_RENDERER_CORE_LAYOUT_SOURCES
   #  sources += [ "layout_theme_font_provider_default.cc" ]
   #}
   #
-  #if (is_linux) {
+
+  # TODO
+  #if (is_linux) { 
   #  sources += [
   #    "layout_theme_linux.cc
   #    "layout_theme_linux.h
   #  ]
   #}
   #
+
+  # TODO
   #if (is_android) {
   #  if (notouch_build) {
   #    sources += [
@@ -1891,6 +1903,8 @@ list(APPEND BLINK_RENDERER_CORE_LAYOUT_SOURCES
   #  }
   #}
   #
+  
+  # TODO
   #if (is_fuchsia) {
   #  sources += [ "layout_theme_fuchsia.cc" ]
   #}

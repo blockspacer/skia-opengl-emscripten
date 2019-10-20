@@ -1,4 +1,6 @@
-﻿### --- COMPONENTS_VIZ_CLIENT ---###
+﻿# see https://github.com/chromium/chromium/blob/d6896cd3506743a6853723fa8841003c850c1d66/components/viz/client/BUILD.gn
+
+### --- COMPONENTS_VIZ_CLIENT ---###
 
 set(COMPONENTS_VIZ_CLIENT_SOURCES
   #

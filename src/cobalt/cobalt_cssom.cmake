@@ -286,7 +286,6 @@ target_include_directories(cobalt_cssom PRIVATE
 )
 
 target_compile_definitions(cobalt_cssom PRIVATE
-  # starboard/linux/shared/BUILD.gn
   #STARBOARD_IMPLEMENTATION=1
   #
   #BASE_IMPLEMENTATION=1

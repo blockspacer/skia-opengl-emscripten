@@ -1,3 +1,5 @@
+# see https://github.com/chromium/chromium/blob/db47b3e7cc3b539b2cfdeb625dc6ee278fd0a569/cc/base/BUILD.gn
+
 ## --- BASE_CC ---###
 
 set(BASE_CC_COMMON_SOURCES

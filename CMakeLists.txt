@@ -38,9 +38,11 @@ if(EMSCRIPTEN)
   set(TARGET_EMSCRIPTEN TRUE)
 elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
   set(TARGET_LINUX TRUE)
+elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+  set(TARGET_WINDOWS TRUE)
 else()
   set(TARGET_UNKNOWN TRUE)
-  message(FATAL_ERROR "platform not supported")
+  message(FATAL_ERROR "platform not supported: ${CMAKE_SYSTEM_NAME}")
 endif()
 
 set(CHROMIUM_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src/chromium/)
@@ -75,6 +77,8 @@ set(ENABLE_CMAKE_COMPILE_WARNINGS TRUE CACHE BOOL "ENABLE_CMAKE_COMPILE_WARNINGS
 if (TARGET_EMSCRIPTEN)
   set(ENABLE_KHRONOS FALSE) # TODO
 elseif(TARGET_LINUX)
+  set(ENABLE_KHRONOS TRUE) # TODO
+elseif(TARGET_WINDOWS)
   set(ENABLE_KHRONOS TRUE) # TODO
 else()
   message(FATAL_ERROR "platform not supported")
@@ -114,8 +118,10 @@ if(TARGET_EMSCRIPTEN)
   else()
     set(USE_SK_GPU FALSE) # TODO
   endif()
-else()
+elseif(TARGET_LINUX OR TARGET_WINDOWS)
   set(USE_SK_GPU TRUE)
+else()
+message(FATAL_ERROR "platform not supported")
 endif()
 # TODO Use SKIA GrContext (enable SK_GPU) for native & WASM
 # NOTE: SK_GPU takes +3Mib
@@ -168,15 +174,19 @@ set(USE_LIBJPEG_TURBO TRUE CACHE BOOL "USE_LIBJPEG_TURBO")
 ### Find Libraries
 if(TARGET_EMSCRIPTEN)
   set(USE_OPENGL_LIB FALSE) # no system OPENGL for wasm
-else()
+elseif(TARGET_WINDOWS OR TARGET_LINUX)
   set(USE_OPENGL_LIB TRUE)
+else()
+message(FATAL_ERROR "platform not supported")
 endif()
 if(TARGET_EMSCRIPTEN)
   set(USE_OPENGLES2_LIB FALSE) # no system OPENGLES for wasm
   set(USE_OPENGL_LIB FALSE)
-else()
+elseif(TARGET_LINUX OR TARGET_WINDOWS)
   set(USE_OPENGLES2_LIB FALSE) # TODO
   set(USE_OPENGL_LIB TRUE)
+else()
+message(FATAL_ERROR "platform not supported")
 endif()
 if(NOT USE_OPENGL_LIB)
   # make OpenGL optional
@@ -291,8 +301,10 @@ endif(USE_ICU)
 
 if(TARGET_EMSCRIPTEN)
   set(USE_CUSTOM_LIBPNG FALSE)
-else()
+elseif(TARGET_LINUX OR TARGET_WINDOWS)
   set(USE_CUSTOM_LIBPNG FALSE)
+else()
+  message(FATAL_ERROR "platform not supported")
 endif()
 if(USE_LIBPNG)
   set(COMMON_FLAGS "${COMMON_FLAGS} -DHAS_LIBPNG=1")
@@ -304,19 +316,23 @@ if(USE_LIBPNG)
     if(TARGET_EMSCRIPTEN)
       set(USE_SYSTEM_PNG TRUE) # TODO
       #message(FATAL_ERROR "wasm: only custom LIBPNG is supported for now")
-    else()
+    elseif(TARGET_LINUX OR TARGET_WINDOWS)
       set(USE_SYSTEM_PNG TRUE)
-    endif(TARGET_EMSCRIPTEN)
+    else()
+      message(FATAL_ERROR "platform not supported")
+    endif()
   endif(USE_CUSTOM_LIBPNG)
   #
   if(USE_SYSTEM_PNG)
     #message(FATAL_ERROR "NOT SUPPORTED: SYSTEM PNG")
     if(TARGET_EMSCRIPTEN)
       set(EMCC_COMMON "${EMCC_COMMON} -s USE_LIBPNG=1")
-    else()
+    elseif(TARGET_LINUX OR TARGET_WINDOWS)
       find_package(PNG REQUIRED) # PNG::PNG
       set(libpng_LIB PNG::PNG)
       #set(libpng_LIB GLIBPNG)
+    else()
+      message(FATAL_ERROR "platform not supported")
     endif()
   else()
     if(USE_CUSTOM_LIBPNG)
@@ -393,6 +409,8 @@ if(TARGET_EMSCRIPTEN)
   set(ENABLE_BORINGSSL FALSE)
 elseif(TARGET_LINUX)
   set(ENABLE_BORINGSSL FALSE) # TODO: add src/chromium/third_party/boringssl/src/ssl/CMakeLists.txt
+elseif(TARGET_WINDOWS)
+  set(ENABLE_BORINGSSL FALSE) # TODO: add src/chromium/third_party/boringssl/src/ssl/CMakeLists.txt
 else()
   message(FATAL_ERROR "platform not supported")
 endif()
@@ -406,6 +424,8 @@ endif(ENABLE_BORINGSSL)
 if(TARGET_EMSCRIPTEN)
   set(ENABLE_GNET FALSE)
 elseif(TARGET_LINUX)
+  set(ENABLE_GNET FALSE) # TODO
+elseif(TARGET_WINDOWS)
   set(ENABLE_GNET FALSE) # TODO
 else()
   message(FATAL_ERROR "platform not supported")
@@ -585,12 +605,18 @@ if(ENABLE_BLINK)
     GURL
   )
   if(NOT TARGET_EMSCRIPTEN)
-    list(APPEND BLINK_LIBS
-      # tcmalloc only for posix/linux/e.t.c.
-      tcmalloc
-      # libevent only for posix/linux/e.t.c.
-      libevent
-    )
+    if(TARGET_LINUX)
+        list(APPEND BLINK_LIBS
+          # tcmalloc only for posix/linux/e.t.c.
+          tcmalloc
+          # libevent only for posix/linux/e.t.c.
+          libevent
+        )
+    elseif(TARGET_WINDOWS)
+      # skip
+    else()
+    message(FATAL_ERROR "platform not supported")
+    endif()
   endif(NOT TARGET_EMSCRIPTEN)
   if(ENABLE_GNET)
     set(SERVICES_SERVICE_MANAGER_PUBLIC_CPP_LIB
@@ -625,8 +651,10 @@ endif(TARGET_EMSCRIPTEN)
 
 if(TARGET_EMSCRIPTEN)
   set(ENABLE_UKM FALSE) # keep wasm build as small as possible
-else()
+elseif(TARGET_LINUX OR TARGET_WINDOWS)
   set(ENABLE_UKM FALSE) # TODO: UKM NOT SUPPORTED FOR NOW
+else()
+  message(FATAL_ERROR "platform not supported")
 endif()
 if(ENABLE_UKM)
   set(COMMON_FLAGS "${COMMON_FLAGS} -DENABLE_UKM=1")
@@ -778,6 +806,10 @@ elseif(TARGET_LINUX)
   set(COMMON_FLAGS "${COMMON_FLAGS} -DUSE_X11=1")
   # custom define
   set(COMMON_FLAGS "${COMMON_FLAGS} -DNO_CHROMIUM_WINDOW=1")
+elseif(TARGET_WINDOWS)
+  set(COMMON_FLAGS "${COMMON_FLAGS} -DUSE_X11=1") # TODO <<<
+  # custom define
+  set(COMMON_FLAGS "${COMMON_FLAGS} -DNO_CHROMIUM_WINDOW=1")
 else()
   message(FATAL_ERROR "platform not supported")
 endif()
@@ -807,6 +839,8 @@ if(USE_LIBJPEG)
   if(TARGET_EMSCRIPTEN)
     set(libjpeg_LIB GLIBJPEG)
   elseif(TARGET_LINUX)
+    set(libjpeg_LIB GLIBJPEG)
+  elseif(TARGET_WINDOWS)
     set(libjpeg_LIB GLIBJPEG)
   else()
     message(FATAL_ERROR "platform not supported")
@@ -842,6 +876,8 @@ if(USE_LIBJPEG_TURBO)
     set(libjpeg_TURBO_LIB GLIBJPEG_TURBO)
   elseif(TARGET_LINUX)
     set(libjpeg_TURBO_LIB GLIBJPEG_TURBO)
+  elseif(TARGET_WINDOWS)
+    set(libjpeg_TURBO_LIB GLIBJPEG_TURBO)
   else()
     message(FATAL_ERROR "platform not supported")
   endif()
@@ -868,19 +904,28 @@ if(ENABLE_COBALT)
   set(COBALT_GEN_DOM_PARSER_PARENT_DIR
     ${COBALT_GEN_DIR}cobalt/
   )
+  if(TARGET_EMSCRIPTEN)
+	set(COBALT_OS_DEFINE COBALT_LINUX=1)
+  elseif(TARGET_LINUX)
+    set(COBALT_OS_DEFINE COBALT_LINUX=1)
+  elseif(TARGET_WINDOWS)
+    set(COBALT_OS_DEFINE COBALT_WINDOWS=1)
+  else()
+    message(FATAL_ERROR "platform not supported")
+  endif()
   list(APPEND COBALT_COMMON_DEFINES
     OS_STARBOARD=1
     STARBOARD=1
     COBALT=1
-    COBALT_LINUX=1
+    ${COBALT_OS_DEFINE}
     #SB_HAS_STD_UNORDERED_HASH=1 # see configuration_public.h
     #MESA_EGL_NO_X11_HEADERS=1
     #
     #COBALT_ENABLE_VERSION_COMPATIBILITY_VALIDATIONS=1
     #
-    STARBOARD_ATOMIC_INCLUDE="${COBALT_ROOT_DIR}port/linux/x64x11/atomic_public.h"
-    STARBOARD_THREAD_TYPES_INCLUDE="${COBALT_ROOT_DIR}port/linux/x64x11/thread_types_public.h"
-    STARBOARD_CONFIGURATION_INCLUDE="${COBALT_ROOT_DIR}port/linux/x64x11/configuration_public.h"
+    STARBOARD_ATOMIC_INCLUDE="${COBALT_ROOT_DIR}port/linux/x64x11/atomic_public.h" # TODO: TARGET_WINDOWS
+    STARBOARD_THREAD_TYPES_INCLUDE="${COBALT_ROOT_DIR}port/linux/x64x11/thread_types_public.h" # TODO: TARGET_WINDOWS
+    STARBOARD_CONFIGURATION_INCLUDE="${COBALT_ROOT_DIR}port/linux/x64x11/configuration_public.h" # TODO: TARGET_WINDOWS
     #
     #BASE_HASH_DEFINE_LONG_LONG_HASHES=0
     #BASE_HASH_DEFINE_STRING_HASHES=0
@@ -1067,6 +1112,8 @@ if(ENABLE_COBALT)
   #cobalt_csp
   if(TARGET_EMSCRIPTEN)
     set(ENABLE_COBALT_CSP FALSE)
+  elseif(TARGET_WINDOWS)
+    set(ENABLE_COBALT_CSP FALSE)#TRUE) # TODO
   elseif(TARGET_LINUX)
     set(ENABLE_COBALT_CSP FALSE)#TRUE) # TODO
   else()
@@ -1090,6 +1137,8 @@ if (PORT_OWN_DLOG)
     set(EMCC_COMMON "${EMCC_COMMON} -DPORT_OWN_DLOG=1")
   elseif(TARGET_LINUX)
     set(COMMON_FLAGS "${COMMON_FLAGS} -DPORT_OWN_DLOG=1")
+  elseif(TARGET_WINDOWS)
+    set(COMMON_FLAGS "${COMMON_FLAGS} -DPORT_OWN_DLOG=1")
   else()
     message(FATAL_ERROR "platform not supported")
   endif()
@@ -1103,6 +1152,13 @@ set(COMMON_FLAGS "${COMMON_FLAGS} -D_LARGEFILE_SOURCE=1")
 if(TARGET_EMSCRIPTEN)
   # TODO: -mnontrapping-fptoint
 elseif(TARGET_LINUX)
+  set(COMMON_FLAGS "${COMMON_FLAGS} -D_LARGEFILE64_SOURCE=1")
+  set(COMMON_FLAGS "${COMMON_FLAGS} -DHAVE_PTHREAD=1")
+  # Annotations useful when implementing condition variables such as CondVar,
+  # using conditional critical sections (Await/LockWhen) and when constructing
+  # user-defined synchronization mechanisms.
+  set(COMMON_FLAGS "${COMMON_FLAGS} -DDYNAMIC_ANNOTATIONS_ENABLED=1")
+elseif(TARGET_WINDOWS)
   set(COMMON_FLAGS "${COMMON_FLAGS} -D_LARGEFILE64_SOURCE=1")
   set(COMMON_FLAGS "${COMMON_FLAGS} -DHAVE_PTHREAD=1")
   # Annotations useful when implementing condition variables such as CondVar,
@@ -1843,6 +1899,12 @@ else(EMSCRIPTEN)
   if(TARGET_LINUX)
     find_package(LibDL REQUIRED)
     set(libDL_LIB LIBDL::LIBDL)
+  elseif(TARGET_EMSCRIPTEN)
+    # skip
+	elseif(TARGET_WINDOWS)
+	  # TODO: TARGET_WINDOWS
+  else()
+    message(FATAL_ERROR "platform not supported")
   endif()
 
   if(USE_SK_GPU)
@@ -1916,21 +1978,21 @@ else(EMSCRIPTEN)
   #endif ()
 
   #include(sdl2/FindSDL2_ttf.cmake)
-  find_package(SDL2_ttf REQUIRED)
-  if(SDL2_ttf_FOUND)
-    message(STATUS "Found SDL2_ttf libraries")
-    message(STATUS "SDL2_TTF_INCLUDE_DIR = ${SDL2_TTF_INCLUDE_DIR} ")
-    message(STATUS "SDL2_TTF_LIBRARY = ${SDL2_TTF_LIBRARY} ")
-    add_definitions(-DUSE_SDL2_ttf_LIB)
-  endif ()
+  #find_package(SDL2_ttf REQUIRED)
+  #if(SDL2_ttf_FOUND)
+  #  message(STATUS "Found SDL2_ttf libraries")
+  #  message(STATUS "SDL2_TTF_INCLUDE_DIR = ${SDL2_TTF_INCLUDE_DIR} ")
+  #  message(STATUS "SDL2_TTF_LIBRARY = ${SDL2_TTF_LIBRARY} ")
+  #  add_definitions(-DUSE_SDL2_ttf_LIB)
+  #endif ()
 
-  set(HAS_GLEW_LIB FALSE)
-  find_package(GLEW REQUIRED) # First try to find using the find_package method (works with vcpkg)
-  if(GLEW_FOUND) # Works with some other methods
-    message(STATUS "GLEW_INCLUDE_PATH=${GLEW_INCLUDE_PATH}")
-    message(STATUS "GLEW_LIBRARY=${GLEW_LIBRARY}")
-    set(HAS_GLEW_LIB TRUE)
-  endif()
+  #set(HAS_GLEW_LIB FALSE)
+  #find_package(GLEW REQUIRED) # First try to find using the find_package method (works with vcpkg)
+  #if(GLEW_FOUND) # Works with some other methods
+  #  message(STATUS "GLEW_INCLUDE_PATH=${GLEW_INCLUDE_PATH}")
+  #  message(STATUS "GLEW_LIBRARY=${GLEW_LIBRARY}")
+  #  set(HAS_GLEW_LIB TRUE)
+  #endif()
 
   if(USE_SYSTEM_ZLIB)
     #message(FATAL_ERROR "NOT SUPPORTED") # TODO
@@ -1961,7 +2023,7 @@ else(EMSCRIPTEN)
     set(COMMON_FLAGS "${COMMON_FLAGS} -DENABLE_HARFBUZZ=1")
   endif(ENABLE_HARFBUZZ AND NOT USE_CUSTOM_HARFBUZZ)
 
-endif(TARGET_EMSCRIPTEN)
+endif(TARGET_EMSCRIPTEN) # TODO
 
 # custom flags
 if((ENABLE_WTF OR ENABLE_COBALT OR ENABLE_BLINK) AND NOT ENABLE_BASE)
@@ -2102,7 +2164,11 @@ if(TARGET_LINUX)
   include(xdg_mime.cmake)
   # xdg_user_dirs
   include(xdg_user_dirs.cmake)
-endif(TARGET_LINUX)
+elseif(TARGET_WINDOWS OR TARGET_EMSCRIPTEN)
+  # skip
+else()
+  message(FATAL_ERROR "platform not supported")
+endif()
 
 if (ENABLE_SKIA)
   #
@@ -2564,10 +2630,10 @@ if(TARGET_EMSCRIPTEN)
 else()
   target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE
     ${SKIA_INCLUDES}
-    ${GLEW_INCLUDE_PATH}
+    #${GLEW_INCLUDE_PATH}
     ${FOUND_OPENGL_INCLUDE_DIR}
     ${SDL2_INCLUDE_DIRS}
-    ${SDL2_TTF_INCLUDE_DIR}
+    #${SDL2_TTF_INCLUDE_DIR}
     ${HARFBUZZ_INCLUDE_DIRS}
     ${OPENGLES2_INCLUDE_DIRS}
   )
@@ -2604,14 +2670,14 @@ else()
     #
     ${libZLIB_LIB}
     #
-    ${SDL2_TTF_INCLUDE_DIR}
+    #${SDL2_TTF_INCLUDE_DIR}
     ${HARFBUZZ_LIBRARIES}
     ${FOUND_OPENGL_LIBRARIES}
-    ${GLEW_LIBRARY}
+    #${GLEW_LIBRARY}
     SDL2::Main
     #SDL2:Net
     #SDL2:tff # see ${SDL2_TTF_LIBRARY}
-    ${SDL2_TTF_LIBRARY}
+    #${SDL2_TTF_LIBRARY}
     #
     ${LINK_OPTIONS}
     #
@@ -2718,7 +2784,7 @@ else()
   )
   target_compile_definitions(${PROJECT_NAME} PRIVATE
     ${APP_DEFINITIONS}
-    GLEW_NO_GLU
+    #GLEW_NO_GLU
     STATICALLY_LINKED_WITH_WTF=1 # NOTE: meaningful only if USE(EXPORT_MACROS)
     ${OPENGLES2_DEFINITIONS}
     # NOTE: prefer #ifndef NDEBUG, see https://stackoverflow.com/a/8594122
@@ -2844,7 +2910,11 @@ else()
   message(WARNING "iwyu turned off")
 endif()
 
-if(NOT EMSCRIPTEN)
+if(TARGET_LINUX)
   # target_ccache_summary from Utils.cmake
   target_ccache_summary(${PROJECT_NAME})
-endif(NOT EMSCRIPTEN)
+elseif(TARGET_EMSCRIPTEN OR TARGET_WINDOWS)
+  # skip
+else()
+  message(FATAL_ERROR "platform not supported")
+endif()

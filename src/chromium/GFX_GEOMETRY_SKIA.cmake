@@ -1,4 +1,6 @@
-﻿### --- GFX_GEOMETRY_SKIA ---###
+﻿# see https://github.com/chromium/chromium/blob/87f2e0fdc7004e428e4e6216e79bf6938fe0e23f/ui/gfx/BUILD.gn#L42
+
+### --- GFX_GEOMETRY_SKIA ---###
 
 set(GFX_GEOMETRY_SKIA_SOURCES
   #geometry_skia_export.h",

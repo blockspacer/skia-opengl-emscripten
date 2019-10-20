@@ -1,5 +1,13 @@
 ﻿### --- libevent ---###
 
+if (TARGET_EMSCRIPTEN)
+  # skip
+elseif(TARGET_LINUX)
+  # skip
+else()
+  message(FATAL_ERROR "platform not supported")
+endif()
+
 # libevent
 # see https://github.com/cliqz-oss/ceba.js/blob/master/patches/tor/0002-emscripten-main-loop.patch#L7
 # see https://github.com/cliqz-oss/ceba.js/blob/master/build.sh#L15

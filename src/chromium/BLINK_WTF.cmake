@@ -1,4 +1,6 @@
-﻿list(APPEND WTF_SOURCES
+﻿# see https://github.com/chromium/chromium/blob/9db0b5162b8648833c3a6b1af044cebd9d7d3855/third_party/blink/renderer/platform/wtf/BUILD.gn
+
+list(APPEND WTF_SOURCES
   ${BLINK_WTF_DIR}allocator.cc
   #${BLINK_WTF_DIR}allocator.h
   ${BLINK_WTF_DIR}allocator/partition_allocator.cc
@@ -143,7 +145,6 @@
   ${BLINK_WTF_DIR}threading.cc
   # #${BLINK_WTF_DIR}threading.h
   # #${BLINK_WTF_DIR}threading_primitives.h
-  ${BLINK_WTF_DIR}threading_pthreads.cc
   # ${BLINK_WTF_DIR}threading_win.cc
   ${BLINK_WTF_DIR}time.cc
   #${BLINK_WTF_DIR}time.h
@@ -178,159 +179,17 @@
   # #${BLINK_WTF_DIR}wtf_size_t.h
 )
 
-if(TARGET_EMSCRIPTEN)
-  # TODO
-elseif(TARGET_LINUX)
+if (EMSCRIPTEN OR TARGET_LINUX)
   list(APPEND WTF_SOURCES
-    # TODO
-    # ${BLINK_WTF_DIR}wtf.cc
+    ${BLINK_WTF_DIR}threading_pthreads.cc
+  )
+elseif (TARGET_WINDOWS)
+  list(APPEND WTF_SOURCES
+    # skip
   )
 else()
   message(FATAL_ERROR "TODO: port WTF")
 endif()
-
-if (EMSCRIPTEN)
-  list(APPEND WTF_SOURCES
-    # port
-    # TODO
-  )
-endif()
-
-#list(APPEND WTF_HEADERS
-#  wtf/Alignment.h
-#  wtf/AlwaysInline.h
-#  wtf/ASCIICType.h
-#  wtf/Assertions.h
-#  wtf/Atomics.h
-#  wtf/AVLTree.h
-#  wtf/Bitmap.h
-#  wtf/BlockStack.h
-#  wtf/BloomFilter.h
-#  wtf/BumpPointerAllocator.h
-#  wtf/ByteArray.h
-#  wtf/Compiler.h
-#  wtf/Complex.h
-#  wtf/CrossThreadRefCounted.h
-#  wtf/CryptographicallyRandomNumber.h
-#  wtf/CurrentTime.h
-#  wtf/DateMath.h
-#  wtf/DecimalNumber.h
-#  wtf/Decoder.h
-#  wtf/Deque.h
-#  wtf/DisallowCType.h
-#  wtf/DoublyLinkedList.h
-#  wtf/dtoa.h
-#  wtf/DynamicAnnotations.h
-#  wtf/Encoder.h
-#  wtf/ExportMacros.h
-#  wtf/FastAllocBase.h
-#  wtf/FastMalloc.h
-#  wtf/FixedArray.h
-#  wtf/Forward.h
-#  wtf/GetPtr.h
-#  wtf/HashCountedSet.h
-#  wtf/HashFunctions.h
-#  wtf/HashIterators.h
-#  wtf/HashMap.h
-#  wtf/HashSet.h
-#  wtf/HashTable.h
-#  wtf/HashTraits.h
-#  wtf/HexNumber.h
-#  wtf/ListHashSet.h
-#  wtf/ListRefPtr.h
-#  wtf/Locker.h
-#  wtf/MainThread.h
-#  wtf/MallocZoneSupport.h
-#  wtf/MathExtras.h
-#  wtf/MD5.h
-#  wtf/MessageQueue.h
-#  wtf/Noncopyable.h
-#  wtf/NonCopyingSort.h
-#  wtf/NotFound.h
-#  wtf/NullPtr.h
-#  wtf/OSAllocator.h
-#  wtf/OSRandomSource.h
-#  wtf/OwnArrayPtr.h
-#  wtf/OwnFastMallocPtr.h
-#  wtf/OwnPtr.h
-#  wtf/OwnPtrCommon.h
-#  wtf/PageAllocation.h
-#  wtf/PageAllocationAligned.h
-#  wtf/PageAllocatorSymbian.h
-#  wtf/PageBlock.h
-#  wtf/PageReservation.h
-#  wtf/ParallelJobs.h
-#  wtf/ParallelJobsGeneric.h
-#  wtf/ParallelJobsLibdispatch.h
-#  wtf/ParallelJobsOpenMP.h
-#  wtf/PassOwnArrayPtr.h
-#  wtf/PassOwnPtr.h
-#  wtf/PassRefPtr.h
-#  wtf/PassTraits.h
-#  wtf/Platform.h
-#  wtf/PossiblyNull.h
-#  wtf/RandomNumber.h
-#  wtf/RandomNumberSeed.h
-#  wtf/RefCounted.h
-#  wtf/RefCountedLeakCounter.h
-#  wtf/RefPtr.h
-#  wtf/RefPtrHashMap.h
-#  wtf/RetainPtr.h
-#  wtf/SegmentedVector.h
-#  wtf/SentinelLinkedList.h
-#  wtf/SHA1.h
-#  wtf/SinglyLinkedList.h
-#  wtf/StackBounds.h
-#  wtf/StaticConstructors.h
-#  wtf/StdLibExtras.h
-#  wtf/StringExtras.h
-#  wtf/StringHasher.h
-#  wtf/TCPackedCache.h
-#  wtf/TCPageMap.h
-#  wtf/TCSpinLock.h
-#  wtf/TCSystemAlloc.h
-#  wtf/ThreadFunctionInvocation.h
-#  wtf/ThreadIdentifierDataPthreads.h
-#  wtf/Threading.h
-#  wtf/ThreadingPrimitives.h
-#  wtf/ThreadRestrictionVerifier.h
-#  wtf/ThreadSafeRefCounted.h
-#  wtf/ThreadSpecific.h
-#  wtf/TypeTraits.h
-#  wtf/UnusedParam.h
-#  wtf/ValueCheck.h
-#  wtf/Vector.h
-#  wtf/VectorTraits.h
-#  wtf/VMTags.h
-#  wtf/WTFThreadData.h
-#  )
-#
-#list(APPEND WTF_TEXT_HEADERS
-#  wtf/text/AtomicString.h
-#  wtf/text/AtomicStringHash.h
-#  wtf/text/AtomicStringImpl.h
-#  wtf/text/CString.h
-#  wtf/text/StringBuffer.h
-#  wtf/text/StringHash.h
-#  wtf/text/StringImpl.h
-#  wtf/text/StringImplBase.h
-#  wtf/text/WTFString.h
-#  )
-#
-#list(APPEND WTF_UNICODE_HEADERS
-#  wtf/unicode/CharacterNames.h
-#  wtf/unicode/Collator.h
-#  wtf/unicode/Unicode.h
-#  wtf/unicode/UTF8.h
-#  )
-#
-#list(APPEND WTF_UNICODE_ICU_HEADERS
-#  wtf/unicode/icu/UnicodeIcu.h
-#  )
-
-if (APPLE)
-  #list(APPEND WTF_SOURCES wtf/mac/MainThreadMac.mm)
-endif ()
 
 if (EMSCRIPTEN)
   #find_package(ICU REQUIRED COMPONENTS I18N UC REQUIRED)
@@ -396,28 +255,14 @@ set(WTF_LIBRARIES
   base
 )
 
-if(TARGET_EMSCRIPTEN)
-  #set(ICU_LIBRARIES icu)
-  #list(APPEND WTF_LIBRARIES
-  #  ${ICU_LIBRARIES}
-  #)
+if(TARGET_EMSCRIPTEN OR TARGET_WINDOWS)
+  # skip
 elseif(TARGET_LINUX)
   list(APPEND WTF_LIBRARIES
     libevent
   )
-  #Components can include any of: data, i18n, io, le, lx, test, tu and uc.
-  # Note that on Windows data is named dt and i18n is named in;
-  # any of the names may be used, and the appropriate platform-specific library name will be automatically selected.
-  #find_package(ICU REQUIRED COMPONENTS i18n uc data REQUIRED)
-  #MESSAGE("ICU_INCLUDE_DIRS: " ${ICU_INCLUDE_DIRS})
-  #MESSAGE("ICU_LIBRARY_DIRS: " ${ICU_LIBRARY_DIRS})
-  #MESSAGE("ICU_LIBRARIES: " ${ICU_LIBRARIES})
-  ##
-  #list(APPEND WTF_LIBRARIES
-  #  ${ICU_LIBRARIES}
-  #)
 else()
-  message(FATAL_ERROR "icu platform not supported")
+  message(FATAL_ERROR "platform not supported")
 endif()
 
 #if(TARGET_EMSCRIPTEN)

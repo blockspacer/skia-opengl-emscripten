@@ -199,7 +199,7 @@ if(TARGET_EMSCRIPTEN)
     # POSIX_AVOID_MMAP #BUILDFLAG
     #USE_EXPERIMENTAL_ALLOCATOR_SHIM=0
   )
-else()
+elseif(TARGET_LINUX OR TARGET_WINDOWS)
   list(APPEND WTF_COMMON_DEFINITIONS
     # see in src/chromium/build/build_config.h
     # USE_TCMALLOC=1
@@ -208,7 +208,9 @@ else()
   )
 
   set(WTF_EMCC_DEFINITIONS "")
-endif ()
+else()
+  message(FATAL_ERROR "platform not supported")
+endif()
 
 if (TARGET_EMSCRIPTEN)
   # libxml
@@ -230,27 +232,45 @@ elseif(TARGET_LINUX)
   include(GZLIB.cmake)
   # zlib
   include(GZLIB_EXT.cmake)
-else()
-  message(FATAL_ERROR "platform not supported")
-endif()
 
-if(ENABLE_HARFBUZZ AND TARGET_LINUX)
-  # fontconfig
-  include(fontconfig.cmake)
-endif(ENABLE_HARFBUZZ AND TARGET_LINUX)
-
-if(ENABLE_BORINGSSL)
-  # BORINGSSL
-  include(BORINGSSL.cmake)
-endif(ENABLE_BORINGSSL)
-
-if (NOT EMSCRIPTEN)
+  if(ENABLE_HARFBUZZ)
+    # fontconfig
+    include(fontconfig.cmake)
+  endif(ENABLE_HARFBUZZ)
+  
   # libevent
   include(libevent.cmake)
 
   # tcmalloc
   include(tcmalloc.cmake)
-endif (NOT EMSCRIPTEN)
+elseif(TARGET_WINDOWS)
+  # khronos
+  if(ENABLE_KHRONOS)
+    # khronos
+    include(khronos.cmake)
+  endif(ENABLE_KHRONOS)
+  # libsync
+  set(libsync_LIB
+    libsync
+  )
+  include(libsync.cmake)
+  # zlib
+  include(GZLIB.cmake)
+  # zlib
+  include(GZLIB_EXT.cmake)
+
+  if(ENABLE_HARFBUZZ)
+    # fontconfig
+    include(fontconfig.cmake)
+  endif(ENABLE_HARFBUZZ)
+else()
+  message(FATAL_ERROR "platform not supported")
+endif()
+
+if(ENABLE_BORINGSSL)
+  # BORINGSSL
+  include(BORINGSSL.cmake)
+endif(ENABLE_BORINGSSL)
 
 # dynamic_annotations
 include(dynamic_annotations.cmake)

@@ -1,4 +1,6 @@
-﻿### --- GFX_SWITCHES ---###
+﻿# see https://github.com/chromium/chromium/blob/87f2e0fdc7004e428e4e6216e79bf6938fe0e23f/ui/gfx/BUILD.gn#L602
+
+### --- GFX_SWITCHES ---###
 
 set(GFX_SWITCHES_SOURCES
   ${GFX_SWITCHES_DIR}switches.cc

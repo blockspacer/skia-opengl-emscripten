@@ -76,7 +76,6 @@ target_include_directories(starboard_common PRIVATE
 )
 
 target_compile_definitions(starboard_common PRIVATE
-  # starboard/linux/shared/BUILD.gn
   STARBOARD_IMPLEMENTATION=1
   #
   #BASE_IMPLEMENTATION=1

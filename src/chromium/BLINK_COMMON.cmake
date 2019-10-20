@@ -1,4 +1,5 @@
-﻿# see platform
+﻿# see https://github.com/chromium/chromium/blob/b081b266c9a041b3ddc5302b2458aa40564403b6/third_party/blink/common/BUILD.gn
+# see https://github.com/chromium/chromium/blob/517881759ed5c403f1911de3ebb00142aa3cf781/third_party/blink/public/common/BUILD.gn
 
 ### --- BLINK_COMMON ---###
 
@@ -29,6 +30,27 @@ list(APPEND BLINK_COMMON_GEN_SOURCES
   #${CUR_SRC_DIR}/indexeddb/indexeddb_key_range.cc
   #${CUR_SRC_DIR}/indexeddb/indexeddb_metadata.cc
 )
+
+# TODO: is_win
+#if (is_android || is_win) {
+#  sources += [
+#    "font_unique_name_lookup/font_table_matcher.cc",
+#    "font_unique_name_lookup/font_table_persistence.cc",
+#    "font_unique_name_lookup/icu_fold_case_util.cc",
+#  ]
+#
+#  deps += [ "//third_party/icu" ]
+#}
+#if (is_win) {
+#  sources += [ "dwrite_rasterizer_support/dwrite_rasterizer_support.cc" ]
+#  deps += [ "//ui/gfx/" ]
+#}
+#if (is_android || is_win) {
+#  sources += [
+#    "font_unique_name_lookup/font_table_matcher_unittest.cc",
+#    "font_unique_name_lookup/icu_fold_case_util_unittest.cc",
+#  ]
+#}
 
 if(ENABLE_GNET)
   list(APPEND BLINK_COMMON_GEN_SOURCES
