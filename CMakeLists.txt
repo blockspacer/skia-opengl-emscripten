@@ -2176,6 +2176,14 @@ list(APPEND PROJECT_SRC
   src/custom_web_components.h
   src/custom_controllers.cc
   src/custom_controllers.h
+  src/models/scrollbar/BodyModel.cc
+  src/models/scrollbar/BodyModel.h
+  src/models/scrollbar/ScrollBarModel.cc
+  src/models/scrollbar/ScrollBarModel.h
+  src/models/scrollbar/ScrollAreaModel.cc
+  src/models/scrollbar/ScrollAreaModel.h
+  generated/models/all_models.cc
+  generated/models/all_models.h
 )
 #
 if(ENABLE_COBALT)

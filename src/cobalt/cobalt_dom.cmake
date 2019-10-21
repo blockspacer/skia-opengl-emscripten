@@ -1,5 +1,13 @@
 ﻿cmake_minimum_required(VERSION 2.8)
 
+# custom
+list(APPEND cobalt_dom_SOURCES
+  ${COBALT_CORE_DIR}dom/HTMLModel.cc
+  ${COBALT_CORE_DIR}dom/HTMLModel.h
+  ${COBALT_CORE_DIR}dom/CustomScriptValue.cc
+  ${COBALT_CORE_DIR}dom/CustomScriptValue.h
+)
+
 # '<(DEPTH)/cobalt/browser/browser_bindings_gen.gyp:generated_types',
 #'dependencies': [
 #  '<(DEPTH)/cobalt/base/base.gyp:base',
@@ -29,7 +37,7 @@
 #    'defines' : ['ENABLE_MAP_TO_MESH'],
 #  }],
 #],
-set(cobalt_dom_SOURCES
+list(APPEND cobalt_dom_SOURCES
   ${COBALT_CORE_DIR}dom/abort_controller.h
   ${COBALT_CORE_DIR}dom/abort_controller.cc
   ${COBALT_CORE_DIR}dom/abort_signal.h

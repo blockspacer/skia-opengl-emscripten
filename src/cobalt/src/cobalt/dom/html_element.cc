@@ -68,6 +68,9 @@
 #include "cobalt/dom/rule_matching.h"
 #include "cobalt/loader/image/animated_image_tracker.h"
 
+#include "generated/models/all_models.h"
+#include "HTMLModel.h"
+
 using cobalt::cssom::ViewportSize;
 
 namespace cobalt {
@@ -148,6 +151,8 @@ base::LazyInstance<NonTrivialStaticFields>::DestructorAtExit
     non_trivial_static_fields = LAZY_INSTANCE_INITIALIZER;
 
 }  // namespace
+
+const char HTMLElement::kAttrNameModel[] = "model";
 
 void HTMLElement::RuleMatchingState::Clear() {
   if (is_set) {
@@ -1214,6 +1219,13 @@ HTMLElement::HTMLElement(Document* document, base::Token local_name)
   css_computed_style_declaration_->set_animations(animations());
   style_->set_mutation_observer(this);
   dom_stat_tracker_->OnHtmlElementCreated();
+
+  DCHECK(document);
+  DCHECK(document->getHTMLModelRegistry());
+}
+
+std::string HTMLElement::model() const {
+  return GetAttribute(kAttrNameModel).value_or("");
 }
 
 HTMLElement::~HTMLElement() {
@@ -1233,11 +1245,19 @@ HTMLElement::~HTMLElement() {
 }
 
 void HTMLElement::OnInsertedIntoDocument() {
+  if(html_model_) {
+    html_model_->OnInsertedIntoDocument();
+  }
+
   Node::OnInsertedIntoDocument();
   dom_stat_tracker_->OnHtmlElementInsertedIntoDocument();
 }
 
 void HTMLElement::OnRemovedFromDocument() {
+  if(html_model_) {
+    html_model_->OnRemovedFromDocument();
+  }
+
   Node::OnRemovedFromDocument();
   dom_stat_tracker_->OnHtmlElementRemovedFromDocument();
 
@@ -1262,10 +1282,37 @@ void HTMLElement::OnRemovedFromDocument() {
   ClearRuleMatchingStateInternal(false /*invalidate_descendants*/);
 }
 
-void HTMLElement::OnMutation() { InvalidateMatchingRulesRecursively(); }
+void HTMLElement::OnMutation() {
+  if(html_model_) {
+    html_model_->OnMutation();
+  }
+
+  InvalidateMatchingRulesRecursively();
+}
+
+void HTMLElement::set_model(const std::string& value) {
+  DCHECK(!value.empty());
+
+  Document* document = node_document();
+  DCHECK(document);
+
+  if(!value.empty() && document->getHTMLModelRegistry()) {
+    html_model_ = document->getHTMLModelRegistry()->createModelByName(
+      value, const_cast<HTMLElement*>(this));
+    DCHECK(html_model_);
+  }
+}
 
 void HTMLElement::OnSetAttribute(const std::string& name,
                                  const std::string& value) {
+  if(html_model_) {
+    html_model_->OnSetAttribute(name, value);
+  }
+
+  if (name == kAttrNameModel) {
+    set_model(value);
+  }
+
   // Be sure to update HTMLElement::Duplicate() to copy over values as needed.
   if (name == "dir") {
     SetDirectionality(value);
@@ -1279,6 +1326,10 @@ void HTMLElement::OnSetAttribute(const std::string& name,
 }
 
 void HTMLElement::OnRemoveAttribute(const std::string& name) {
+  if(html_model_) {
+    html_model_->OnRemoveAttribute(name);
+  }
+
   if (name == "dir") {
     SetDirectionality("");
   } else if (name == "tabindex") {
@@ -1293,6 +1344,11 @@ void HTMLElement::OnRemoveAttribute(const std::string& name) {
 // Algorithm for IsFocusable:
 //   https://www.w3.org/TR/html5/editing.html#focusable
 bool HTMLElement::IsFocusable() {
+  /// \todo create custom events
+  /*if(html_model_) {
+    return html_model_->IsFocusable();
+  }*/
+
   return HasTabindexFocusFlag() && IsBeingRendered();
 }
 

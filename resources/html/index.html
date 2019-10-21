@@ -105,18 +105,21 @@
           background: #FFF;
           height: 100px;
       }
+      /* body I_on-mousemove-scrollbar_I="" */
+      /* body I_on-mouseup-scrollbar_I="" */
+      /* demo-scrollable I_on-wheel-demo-scrollable_I="" */
+      /* demo-scrollable-scroller I_on-mousedown-scrollbar_I="" */
     </style>
   </head>
   <body class="exanim"
-        I_on-mouseup-scrollbar_I=""
-        I_on-mousemove-scrollbar_I="">
+        model="BodyModel">
 <div class="demo-scrollable"
-     I_on-wheel-demo-scrollable_I=""
+     model="ScrollAreaModel"
      >
-        <div class="demo-scrollable-scroller"
-             I_on-mousedown-scrollbar_I=""
-             style="min-height:5px;top:0px;">
-        </div>
+    <div class="demo-scrollable-scroller"
+         model="ScrollBarModel"
+         style="min-height:1px;top:0px;">
+    </div>
     <div class="demo-scrollable-content-wrapper">
         <div class="demo-scrollable-content">
             <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Incidunt accusamus maxime voluptatem quasi. Recusandae optio nobis ratione iste consectetur consequatur cupiditate saepe laborum natus neque a provident eum explicabo delectus qui accusantium nostrum reiciendis soluta hic ut at sed laboriosam possimus repudiandae deserunt velit rerum. Aliquam ratione itaque corrupti aperiam quisquam unde aspernatur odio id repellendus corporis eaque expedita in ab minus possimus! Quo tempore consequatur repellat consectetur nemo molestiae perferendis ipsum esse nesciunt blanditiis nobis dicta? Laudantium quaerat inventore deleniti exercitationem explicabo quos pariatur sunt earum labore sed eius blanditiis architecto consequuntur ad consectetur unde sapiente nisi. Sunt eos.</p>
@@ -127,6 +130,20 @@
 <div class="nested_scroll_container"
      I_on-wheel-scroll_I="scrollable_body">
   scroll scrollable_body
+</div>
+
+<div class="demo-scrollable"
+     model="ScrollAreaModel"
+     >
+    <div class="demo-scrollable-scroller"
+         model="ScrollBarModel"
+         style="min-height:1px;top:0px;">
+    </div>
+    <div class="demo-scrollable-content-wrapper">
+        <div class="demo-scrollable-content">
+            <p>Voluptatem quasi. Recusandae optio nobis ratione iste consectetur consequatur cupiditate saepe laborum natus neque a provident eum explicabo delectus qui accusantium nostrum reiciendis soluta hic ut at sed laboriosam possimus repudiandae deserunt velit rerum. Aliquam ratione itaque corrupti aperiam quisquam unde aspernatur odio id repellendus corporis eaque expedita in ab minus possimus! Quo tempore consequatur repellat consectetur nemo molestiae perferendis ipsum esse nesciunt blanditiis nobis dicta? Laudantium quaerat inventore deleniti exercitationem explicabo quos pariatur sunt earum labore sed eius blanditiis architecto consequuntur ad consectetur unde sapiente nisi. Sunt eos.</p>
+        </div>
+    </div>
 </div>
 
 <div class="body_scroll_container" id="scrollable_body"

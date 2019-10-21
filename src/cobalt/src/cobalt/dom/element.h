@@ -39,6 +39,9 @@
 #include "base/observer_list.h"
 #include "base/observer_list_types.h"
 
+// not in spec
+#include "cobalt/dom/CustomScriptValue.h"
+
 namespace cobalt {
 namespace dom {
 
@@ -50,178 +53,6 @@ class HTMLElement;
 class HTMLElementContext;
 class NamedNodeMap;
 class Element;
-
-// The EventListener interface represents a callable object that will be called
-// when an event is fired.
-//   https://www.w3.org/TR/2014/WD-dom-20140710/#eventtarget
-class CustomEventListener : public EventListener {
- public:
-  CustomEventListener(Element* elem);
-
-  // Web API: EventListener
-  //
-  // Cobalt's implementation of callback interfaces requires the 'callback this'
-  // to be explicitly passed in.
-  base::Optional<bool> HandleEvent(
-      const scoped_refptr<script::Wrappable>& callback_this,
-      const scoped_refptr<cobalt::dom::Event>& event,
-      bool* had_exception) const override;
-
-  static std::unique_ptr<CustomEventListener> Create(Element* elem) {
-    return std::unique_ptr<CustomEventListener>(
-        new CustomEventListener(elem));
-  }
-
-  Element* elem_;
-};
-
-//typedef std::function<void(base::WeakPtr<cobalt::dom::HTMLElement> elem)> HoverCallback;
-
-typedef std::function<base::Optional<bool>(const scoped_refptr<dom::Event> &event,
-  scoped_refptr<cobalt::dom::Element>, const std::string& attrVal)> EventCallback;
-
-namespace customizer {
-  class CustomTokenToObservers;
-
-  typedef std::function<std::string(const std::string&, const std::string&,
-    const std::string&, cobalt::dom::Element& elem)> AttrLoadedCallback;
-
-  void pair_event_to_attr(const std::string& event_name, EventCallback cb);
-
-  void pair_event_to_attr(const std::string &attr_name,
-    const std::string &attr_event_name, EventCallback cb);
-
-  void create_attr(std::shared_ptr<CustomTokenToObservers> customAttributeToObservers);
-
-  void create_attr(const std::string& token, const std::string& initial_value);
-
-  //std::map<std::string, std::shared_ptr<CustomAttributeToObservers>>::iterator getAttrWithCallbacks(const std::string& key);
-
-  std::shared_ptr<CustomTokenToObservers> getCustomTokenToObservers(const std::string& token);
-
-  void set_attr_prefix(const std::string& val);
-
-  void set_attr_suffix(const std::string& val);
-
-  bool set_attr(const std::string& key, const std::string& val);
-
-  base::Optional<std::string> get_attr(const std::string& key);
-
-  class CustomTokenToObservers {
-   public:
-    class CustomTokenObserver : public base::CheckedObserver {
-     public:
-      virtual void OnMutation(const std::string& attr_val) = 0;
-
-     protected:
-      virtual ~CustomTokenObserver() {}
-    };
-
-    explicit CustomTokenToObservers(
-        const AttrLoadedCallback& loaded_callback_,
-        const std::string& initial_attr);
-
-    std::string processed_custom_token() const {
-      return processed_custom_token_;
-    }
-
-    std::string initial_custom_token() const {
-      return initial_custom_token_;
-    }
-
-    AttrLoadedCallback on_added_to_elem_cb() const {
-      return loaded_callback_;
-    }
-
-    void SetCustomValue(const std::string& value);
-
-    void AddObserver(CustomTokenObserver* observer) { observer_list_.AddObserver(observer); }
-
-    void RemoveObserver(CustomTokenObserver* observer) {
-      observer_list_.RemoveObserver(observer);
-    }
-
-    bool HasObserver(CustomTokenObserver* observer) const {
-      return observer_list_.HasObserver(observer);
-    }
-
-    void ClearObservers() { observer_list_.Clear(); }
-
-   private:
-    void RecordMutation();
-
-    std::string initial_custom_token_;
-
-    std::string processed_custom_token_;
-
-    // TODO: check if need ObserverListThreadSafe here
-    base::ObserverList<CustomTokenObserver> observer_list_;
-
-    AttrLoadedCallback loaded_callback_;
-  };
-
-  class CustomElementToken : public CustomTokenToObservers::CustomTokenObserver {
-   public:
-    enum class CustomTokenType {
-      NAME = 1,
-      VAL,
-      TOTAL
-    };
-
-    enum class CustomTokenAttrType {
-      SINGLE = 1,
-      // attribute that supports multiple values, like "style" attribute
-      MULTI,
-      TOTAL
-    };
-
-    CustomElementToken(const CustomTokenType& custom_token_type,
-                       const CustomTokenAttrType& custom_token_attr_type,
-                       const std::string& initial_custom_attribute_name_,
-                       const std::string& initial_attr_name,
-                       const std::string& initial_attr_val,
-                       Element* elem);
-
-    void OnMutation(const std::string& initial_attr_val) override;
-
-    std::string initial_custom_attribute_name() const {
-      return initial_custom_attribute_name_;
-    }
-
-    std::string initial_attr_name() const {
-      return initial_attr_name_;
-    }
-
-    std::string initial_attr_val() const {
-      return initial_attr_val_;
-    }
-
-    Element* element() const {
-      return element_;
-    }
-
-    CustomTokenType custom_token_type() const {
-      return custom_token_type_;
-    }
-
-    CustomTokenAttrType custom_token_attr_type() const {
-      return custom_token_attr_type_;
-    }
-
-  private:
-    CustomTokenType custom_token_type_;
-
-    CustomTokenAttrType custom_token_attr_type_;
-
-    const std::string initial_attr_name_;
-
-    const std::string initial_attr_val_;
-
-    std::string initial_custom_attribute_name_;
-
-    Element* element_;
-  };
-}
 
 // The Element interface represents an object of a Document. This interface
 // describes methods and properties common to all kinds of elements.
@@ -409,6 +240,11 @@ class Element : public Node {
 
   DEFINE_WRAPPABLE_TYPE(Element);
   void TraceMembers(script::Tracer* tracer) override;
+
+  std::map<std::string, std::shared_ptr<customizer::CustomElementToken>>&
+    custom_attributes() {
+    return custom_attributes_;
+  }
 
  protected:
   ~Element() override;

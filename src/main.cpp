@@ -241,6 +241,8 @@ static SkiaUiDemo skiaUiDemo;
 #include "third_party/icu/source/common/unicode/brkiter.h"
 #endif
 
+#include "generated/models/all_models.h"
+
 /*#include <stddef.h>
 
 #include <cassert>
@@ -2088,6 +2090,10 @@ CobaltTester::CobaltTester()
 
   skemgl::preload_textfield_controller_creators();
   skemgl::preload_web_components();
+  //generated::models::registerHTMLModels();
+
+  window_->document()->setHTMLModelRegistry(std::move(
+    std::make_unique<generated::models::MainHTMLModelRegistry>()));
 }
 
 static void createCobaltTester() {

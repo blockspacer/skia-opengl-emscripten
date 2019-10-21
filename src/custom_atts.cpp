@@ -46,6 +46,7 @@ namespace skemgl {
 #if defined(ENABLE_COBALT)
 static std::map<std::string, cobalt::dom::EventCallback> eventCallbacks;
 
+#if 0
 static float startScrollContentYPosition = 0.0f;
 static float startScrollbarDragYPosition = 0.0f;
 static float startScrollbarDragXPosition = 0.0f;
@@ -88,6 +89,7 @@ static void refreshScrollBar(
       std::to_string(visibleRatio * scrollbar_content_html_element->offset_height()) + "px",
       /*todo*/nullptr);
 }
+#endif // 0
 
 // see https://github.com/blockspacer/skia-opengl-emscripten/blob/bb16ab108bc4018890f4ff3179250b76c0d9053b/src/cobalt/src/cobalt/dom/css_animations_adapter.cc#L94
 //static cobalt::web_animations::KeyframeEffectReadOnly::Data
@@ -754,6 +756,7 @@ void addTestOnlyAttrCallbacks() {
             return base::nullopt;
         });
 
+#if 0
     cobalt::dom::customizer::
       pair_event_to_attr("on-mousedown-scrollbar", "on-mousedown",
         [](const scoped_refptr<cobalt::dom::Event> &event,
@@ -1130,6 +1133,7 @@ void addTestOnlyAttrCallbacks() {
                    );
             return base::nullopt;
         });
+#endif // 0
 
     cobalt::dom::customizer::
       pair_event_to_attr("on-wheel-print", "on-wheel",

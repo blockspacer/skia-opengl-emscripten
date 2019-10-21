@@ -59,6 +59,12 @@
 #include "cobalt/script/wrappable.h"
 #include "url/gurl.h"
 
+namespace models {
+
+class HTMLModel;
+
+} // namespace models
+
 namespace cobalt {
 namespace dom {
 
@@ -79,6 +85,14 @@ class HTMLScriptElement;
 class Location;
 class Text;
 class Window;
+
+class HTMLModelRegistry {
+ public:
+  virtual ~HTMLModelRegistry(){}
+
+  virtual std::unique_ptr<::models::HTMLModel> createModelByName(
+    const std::string& name, cobalt::dom::HTMLElement* elem) = 0;
+};
 
 class DocumentObserver : public base::CheckedObserver {
  public:
@@ -184,6 +198,14 @@ class Document : public Node,
 
   Document(HTMLElementContext* html_element_context,
            const Options& options = Options());
+
+  void setHTMLModelRegistry(std::unique_ptr<HTMLModelRegistry> registry) {
+    HTMLModelRegistry_ = std::move(registry);
+  }
+
+  HTMLModelRegistry* getHTMLModelRegistry() {
+    return HTMLModelRegistry_.get();
+  }
 
   // Web API: Node
   //
@@ -613,6 +635,8 @@ class Document : public Node,
   bool render_postponed_;
 
   bool hasLoadedTypefaces_ = false;
+
+  std::unique_ptr<HTMLModelRegistry> HTMLModelRegistry_;
 
   scoped_refptr<IntersectionObserverTaskManager>
       intersection_observer_task_manager_;

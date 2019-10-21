@@ -45,6 +45,10 @@
 #include "cobalt/loader/image/image_cache.h"
 #include "cobalt/ui_navigation/nav_item.h"
 
+namespace models {
+class HTMLModel;
+} // namespace models
+
 namespace cobalt {
 namespace dom {
 
@@ -137,6 +141,11 @@ class HTMLElement : public Element, public cssom::MutationObserver {
     kAncestorsAreDisplayed,
     kAncestorsAreNotDisplayed,
   };
+
+  static const char kAttrNameModel[];
+
+  std::string model() const;
+  void set_model(const std::string& value);
 
   // Web API: HTMLElement
   //
@@ -346,6 +355,10 @@ class HTMLElement : public Element, public cssom::MutationObserver {
   // https://www.w3.org/TR/html5/semantics.html#the-root-element.
   bool IsRootElement();
 
+  models::HTMLModel* getHTMLModel() const {
+    return html_model_ ? html_model_.get() : nullptr;
+  }
+
   DEFINE_WRAPPABLE_TYPE(HTMLElement);
 
  //private:
@@ -491,9 +504,13 @@ class HTMLElement : public Element, public cssom::MutationObserver {
   // boxes without requiring a new layout.
   scoped_refptr<ui_navigation::NavItem> ui_nav_item_;
 
+  std::unique_ptr<models::HTMLModel> html_model_;
+
   // HTMLElement is a friend of Animatable so that animatable can insert and
   // remove animations into HTMLElement's set of animations.
   friend class DOMAnimatable;
+
+  friend class models::HTMLModel;
 };
 
 }  // namespace dom
