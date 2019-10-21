@@ -46,6 +46,49 @@ namespace skemgl {
 #if defined(ENABLE_COBALT)
 static std::map<std::string, cobalt::dom::EventCallback> eventCallbacks;
 
+static float startScrollContentYPosition = 0.0f;
+static float startScrollbarDragYPosition = 0.0f;
+static float startScrollbarDragXPosition = 0.0f;
+//static float endScrollbarDragYPosition = 0.0f;
+//static float endScrollbarDragXPosition = 0.0f;
+static bool isScrollerBeingDragged = false;
+
+/// \note 5px arbitrary offset so scroll bar doesn't move too far beyond content wrapper bounding box
+static float scrollBarArbitraryOffset = 5.0f;
+
+// TODO: run refreshScrollBar on `loaded` event
+/*
+  You should note that you will have to adjust your version to recalculate the scroller size in certain cases:
+  1.) Where the screen is resized or
+  2.) If more content is appended.
+*/
+static void refreshScrollBar(
+  scoped_refptr<cobalt::dom::HTMLElement> scrollbar_content_html_element,
+  scoped_refptr<cobalt::dom::HTMLElement> scrollbar_wrapper,
+  scoped_refptr<cobalt::dom::HTMLElement> scrollbar_html_element)
+{
+  // Move Scroll bar to top offset
+  float scrollPercentage =
+    scrollbar_wrapper->scroll_top()
+    / scrollbar_wrapper->scroll_height();
+  float topPosition
+    = scrollPercentage
+      * (scrollbar_wrapper->offset_height() - scrollBarArbitraryOffset);
+  scrollbar_html_element->style()->set_top(
+    std::to_string(topPosition) + "px", /*todo*/nullptr);
+
+  /// \todo refresh scroller height only
+  /// on first load, resize, content change
+  ///
+  // Calculation of how tall scroller should be
+  float visibleRatio
+    = scrollbar_content_html_element->offset_height()
+    / scrollbar_wrapper->scroll_height();
+  scrollbar_html_element->style()->set_height(
+      std::to_string(visibleRatio * scrollbar_content_html_element->offset_height()) + "px",
+      /*todo*/nullptr);
+}
+
 // see https://github.com/blockspacer/skia-opengl-emscripten/blob/bb16ab108bc4018890f4ff3179250b76c0d9053b/src/cobalt/src/cobalt/dom/css_animations_adapter.cc#L94
 //static cobalt::web_animations::KeyframeEffectReadOnly::Data
 static std::vector<cobalt::web_animations::Keyframe::Data>
@@ -103,6 +146,7 @@ static std::vector<cobalt::web_animations::Keyframe::Data>
 //static bool created_web_anim = false;
 
 /// \todo hangle intermidate phases, not only finish
+///
 static void HandleAnimationEnterAfterPhase(
     cobalt::dom::HTMLElement* elementHTML,
     cobalt::dom::HTMLElement* ripple_effect_parent,
@@ -158,6 +202,7 @@ static void HandleAnimationEnterAfterPhase(
 
 
 ///\todo just use set_transition_property, not addRippleAnimationOnce
+///
 // see OnAnimationStarted
 // https://github.com/blockspacer/skia-opengl-emscripten/blob/bb16ab108bc4018890f4ff3179250b76c0d9053b/src/cobalt/src/cobalt/dom/css_animations_adapter.cc#L157
 static void addRippleAnimationOnce(
@@ -173,6 +218,8 @@ static void addRippleAnimationOnce(
   scoped_refptr<cobalt::dom::HTMLCollection> found_ripple_layers
     = elementHTML->GetElementsByClassName("ripple-effect-layer");
   if(found_ripple_layers && found_ripple_layers->length()) {
+    /// \todo handle more than one Item
+    ///
     ripple_layer = found_ripple_layers->Item(0)->AsHTMLElement();
   } else {
     ripple_layer =
@@ -308,6 +355,7 @@ static void addRippleAnimationOnce(
     ripple_effect->animations()->AddAnimation(web_animation.get());
 
     /// \todo free memory binded to handler via RetainedRef
+    ///
     // RemoveEventHandler called when the EventHandler object is destructed, this "deregisters"
     // the event handler from the Animation's event handler set.
     //event_handler =
@@ -353,6 +401,7 @@ static void addRippleAnimationOnce(
 
 #if 0
   /// \todo ugly HACK to repaint element
+  ///
   DCHECK(elementHTML);
   //DCHECK(elementHTML->IsFocusable());
   if(elementHTML->IsDisplayed()) { /// \todo do we IsDisplayed here?
@@ -366,6 +415,7 @@ static void addRippleAnimationOnce(
   }
 
   /// \todo ugly HACK to repaint element
+  ///
   DCHECK(ripple_layer);
   //DCHECK(ripple_layer->IsFocusable());
   if(ripple_layer->IsDisplayed()) { /// \todo do we IsDisplayed here?
@@ -379,6 +429,7 @@ static void addRippleAnimationOnce(
   }
 
   /// \todo ugly HACK to repaint element
+  ///
   DCHECK(ripple_effect);
   //DCHECK(ripple_effect->IsFocusable());
   if(ripple_effect->IsDisplayed()) { /// \todo do we IsDisplayed here?
@@ -417,18 +468,22 @@ static void addRippleAnimationOnce(
   // Always clear the matching state when an attribute changes. Any attribute
   // changing can potentially impact the matching rules.
   /// \todo do we need it here?
+  ///
   elementHTML->ClearRuleMatchingState();
   ripple_effect->ClearRuleMatchingState();
 
   /// \todo do we need it here?
+  ///
   elementHTML->OnCSSMutation();
 
   /// \todo ugly HACK to repaint element
+  ///
   /// calls HTMLElement::UpdateComputedStyleRecursively
   elementHTML->node_document()->SampleTimelineTime();
   elementHTML->node_document()->UpdateComputedStyles();
 
   /// \todo do we need it here?
+  ///
   elementHTML->UpdateMatchingRules();
   ripple_effect->UpdateMatchingRules();
 
@@ -440,18 +495,22 @@ static void addRippleAnimationOnce(
   // Always clear the matching state when an attribute changes. Any attribute
   // changing can potentially impact the matching rules.
   /// \todo do we need it here?
+  ///
   elementHTML->ClearRuleMatchingState();
   ripple_effect->ClearRuleMatchingState();
 
   /// \todo do we need it here?
+  ///
   elementHTML->OnCSSMutation();
 
   /// \todo ugly HACK to repaint element
+  ///
   /// calls HTMLElement::UpdateComputedStyleRecursively
   elementHTML->node_document()->SampleTimelineTime();
   elementHTML->node_document()->UpdateComputedStyles();
 
   /// \todo do we need it here?
+  ///
   elementHTML->UpdateMatchingRules();
   ripple_effect->UpdateMatchingRules();
 #endif // 0
@@ -478,13 +537,16 @@ void addTestOnlyAttrCallbacks() {
         float x = /*pointerEvent ? pointerEvent->x() :*/ mouseEvent->x();
         float y = /*pointerEvent ? pointerEvent->y() :*/ mouseEvent->y();
         printf("mousemove at (%f;%f) event %s for tag: %s, "
-               "attrVal: %s, text_content: %s\n",
+               "attrVal: %s, "
+               //"text_content: %s"
+               "\n",
                x,
                y,
                event->type().c_str(),
                elem->tag_name().c_str(),
-               attrVal.c_str(),
-               elem->text_content().value_or("").c_str());
+               attrVal.c_str()//,
+               //elem->text_content().value_or("").c_str()
+               );
         return base::nullopt;
     };
 
@@ -622,13 +684,16 @@ void addTestOnlyAttrCallbacks() {
             float y = mouseEvent->y();
 
             printf("mouseleave at (%f;%f) event %s for tag: %s, "
-                   "attrVal: %s, text_content: %s\n",
+                   "attrVal: %s, "
+                   //"text_content: %s"
+                   "\n",
                    x,
                    y,
                    event->type().c_str(),
                    elem->tag_name().c_str(),
-                   attrVal.c_str(),
-                   elem->text_content().value_or("").c_str());
+                   attrVal.c_str()//,
+                   //elem->text_content().value_or("").c_str()
+                   );
             return base::nullopt;
         });
 
@@ -675,14 +740,394 @@ void addTestOnlyAttrCallbacks() {
             }
 
             printf("on-wheel-scroll at (%f;%f;%f) event %s for tag: %s, "
-                   "attrVal: %s, text_content: %s\n",
+                   "attrVal: %s, "
+                   //"text_content: %s"
+                   "\n",
                    x,
                    y,
                    z,
                    event->type().c_str(),
                    elem->tag_name().c_str(),
-                   attrVal.c_str(),
-                   elem->text_content().value_or("").c_str());
+                   attrVal.c_str()//,
+                   //elem->text_content().value_or("").c_str()
+                   );
+            return base::nullopt;
+        });
+
+    cobalt::dom::customizer::
+      pair_event_to_attr("on-mousedown-scrollbar", "on-mousedown",
+        [](const scoped_refptr<cobalt::dom::Event> &event,
+           scoped_refptr<cobalt::dom::Element> elem,
+           const std::string& attrVal)
+        {
+            printf("on-mousedown-scrollbar 1\n");
+            CHECK(elem);
+            const cobalt::dom::MouseEvent* mouseEvent;
+            mouseEvent =
+                // TODO: base::polymorphic_downcast Check failed: dynamic_cast<Derived>(base) == base.
+                base::polymorphic_downcast<const cobalt::dom::MouseEvent*>(
+                  event.get());
+            CHECK(/*pointerEvent ||*/ mouseEvent);
+            float x = mouseEvent->page_x();
+            float y = mouseEvent->page_y();
+
+            DCHECK(event->current_target());
+            cobalt::dom::HTMLElement* targetHTML =
+              base::polymorphic_downcast<
+                cobalt::dom::HTMLElement*>(event->current_target().get());
+            DCHECK(targetHTML);
+
+            cobalt::dom::Element* parent_element
+              = targetHTML->parent_element();
+            DCHECK(parent_element);
+            cobalt::dom::HTMLElement* parent_html_element =
+              base::polymorphic_downcast<
+                cobalt::dom::HTMLElement*>(parent_element);
+            DCHECK(parent_html_element);
+
+            scoped_refptr<cobalt::dom::HTMLElement> scrollbar_wrapper;
+            scoped_refptr<cobalt::dom::HTMLCollection> found_scrollbar_wrappers
+              = parent_html_element->GetElementsByClassName("demo-scrollable-content-wrapper");
+            if(found_scrollbar_wrappers && found_scrollbar_wrappers->length()) {
+              /// \todo handle more than one Item
+              ///
+              scrollbar_wrapper = found_scrollbar_wrappers->Item(0)->AsHTMLElement();
+            } else {
+              DCHECK(false);
+              // TODO: print warning here
+            }
+            DCHECK(scrollbar_wrapper);
+
+            startScrollbarDragXPosition = x;
+            startScrollbarDragYPosition = y;
+            startScrollContentYPosition = scrollbar_wrapper->scroll_top();
+            isScrollerBeingDragged = true;
+
+            printf("mousedown-scrollbar at (%f;%f) event %s for tag: %s, "
+                   "attrVal: %s, "
+                   //"text_content: %s"
+                   "\n",
+                   x,
+                   y,
+                   event->type().c_str(),
+                   elem->tag_name().c_str(),
+                   attrVal.c_str()//,
+                   //elem->text_content().value_or("").c_str()
+                   );
+
+            return base::nullopt;
+        });
+
+    cobalt::dom::customizer::
+      pair_event_to_attr("on-mouseup-scrollbar", "on-mouseup",
+        [](const scoped_refptr<cobalt::dom::Event> &event,
+           scoped_refptr<cobalt::dom::Element> elem,
+           const std::string& attrVal)
+        {
+            printf("on-mouseup-scrollbar 1\n");
+            CHECK(elem);
+            const cobalt::dom::MouseEvent* mouseEvent;
+            mouseEvent =
+                // TODO: base::polymorphic_downcast Check failed: dynamic_cast<Derived>(base) == base.
+                base::polymorphic_downcast<const cobalt::dom::MouseEvent*>(
+                  event.get());
+            CHECK(/*pointerEvent ||*/ mouseEvent);
+            float x = mouseEvent->page_x();
+            float y = mouseEvent->page_y();
+
+            DCHECK(event->current_target());
+            cobalt::dom::HTMLElement* targetHTML =
+              base::polymorphic_downcast<
+                cobalt::dom::HTMLElement*>(event->current_target().get());
+            DCHECK(targetHTML);
+
+            cobalt::dom::Element* parent_element
+              = targetHTML->parent_element();
+            DCHECK(parent_element);
+            cobalt::dom::HTMLElement* parent_html_element =
+              base::polymorphic_downcast<
+                cobalt::dom::HTMLElement*>(parent_element);
+            DCHECK(parent_html_element);
+
+            //endScrollbarDragXPosition = x;
+            //endScrollbarDragYPosition = y;
+            isScrollerBeingDragged = false;
+
+            printf("mouseup-scrollbar at (%f;%f) event %s for tag: %s, "
+                   "attrVal: %s, "
+                   //"text_content: %s"
+                   "\n",
+                   x,
+                   y,
+                   event->type().c_str(),
+                   elem->tag_name().c_str(),
+                   attrVal.c_str()//,
+                   //elem->text_content().value_or("").c_str()
+                   );
+
+            return base::nullopt;
+        });
+
+    // TODO: handle mousemove for SDL window
+    cobalt::dom::customizer::
+      pair_event_to_attr("on-mousemove-scrollbar", "on-mousemove",
+        [](const scoped_refptr<cobalt::dom::Event> &event,
+           scoped_refptr<cobalt::dom::Element> elem,
+           const std::string& attrVal)
+        {
+            printf("on-mousemove-scrollbar 1\n");
+            CHECK(elem);
+            const cobalt::dom::MouseEvent* mouseEvent;
+            mouseEvent =
+                // TODO: base::polymorphic_downcast Check failed: dynamic_cast<Derived>(base) == base.
+                base::polymorphic_downcast<const cobalt::dom::MouseEvent*>(
+                  event.get());
+            CHECK(/*pointerEvent ||*/ mouseEvent);
+            float x = mouseEvent->page_x();
+            float y = mouseEvent->page_y();
+
+            DCHECK(event->current_target());
+            cobalt::dom::HTMLElement* targetHTML =
+              base::polymorphic_downcast<
+                cobalt::dom::HTMLElement*>(event->current_target().get());
+            DCHECK(targetHTML);
+
+            scoped_refptr<cobalt::dom::HTMLElement> scrollbar_wrapper;
+            scoped_refptr<cobalt::dom::HTMLCollection> found_scrollbar_wrappers
+              = targetHTML->GetElementsByClassName("demo-scrollable-content-wrapper");
+            if(found_scrollbar_wrappers && found_scrollbar_wrappers->length()) {
+              /// \todo handle more than one Item
+              ///
+              scrollbar_wrapper = found_scrollbar_wrappers->Item(0)->AsHTMLElement();
+            } else {
+              DCHECK(false);
+              // TODO: print warning here
+            }
+            DCHECK(scrollbar_wrapper);
+
+            cobalt::dom::Element* scrollbar_content
+              = scrollbar_wrapper->parent_element();
+            DCHECK(scrollbar_content);
+            cobalt::dom::HTMLElement* scrollbar_content_html_element =
+              base::polymorphic_downcast<
+                cobalt::dom::HTMLElement*>(scrollbar_content);
+            DCHECK(scrollbar_content_html_element);
+
+            /// \todo support X scrollbar
+            ///
+            bool scrollXChanged = false;
+            bool scrollYChanged = false;
+
+            if (isScrollerBeingDragged) {
+                float prevScrollY = scrollbar_wrapper->scroll_height();
+                float mouseYDiff
+                  = y - startScrollbarDragYPosition;
+                float scrollEquivalent
+                  = mouseYDiff
+                    * (scrollbar_wrapper->scroll_height()
+                    / scrollbar_content_html_element->offset_height());
+                float newScrollY
+                  = std::fmax(0.0f,
+                    startScrollContentYPosition + scrollEquivalent);
+                float maxHeight
+                  /// \todo wy we need to substruct client_width below?
+                  ///
+                  = scrollbar_wrapper->scroll_height() - scrollbar_wrapper->client_height();
+                bool atYScrollEnd
+                  = (scrollbar_wrapper->scroll_height() - scrollbar_wrapper->scroll_top()
+                    == scrollbar_wrapper->client_height())
+                    || (newScrollY >= maxHeight);
+                //bool isScrollingYDown = newScrollY < prevScrollY;
+
+                newScrollY
+                  = std::fmin(maxHeight, newScrollY);
+                  //= (atYScrollEnd && isScrollingYDown) ? maxHeight : newScrollY;
+
+                printf("scrollerDragged to %f\n", newScrollY);
+
+                if(y && newScrollY >= 0.0f
+                   /// \todo why we need to substruct client_height below?
+                   ///
+                   // && newScrollY <= maxHeight
+                   ) {
+                  scrollbar_wrapper->set_scroll_top(newScrollY);
+                  scrollYChanged = newScrollY != prevScrollY;
+                }
+
+                /// \todo support X scrollbar
+                ///
+                /*auto newScrollX
+                  = .....*/
+            }
+
+            if(!scrollXChanged && !scrollYChanged) {
+              return base::nullopt;
+            }
+
+            scoped_refptr<cobalt::dom::HTMLElement> scrollbar_html_element;
+            scoped_refptr<cobalt::dom::HTMLCollection> found_scrollbars
+              = targetHTML->GetElementsByClassName("demo-scrollable-scroller");
+            if(found_scrollbars && found_scrollbars->length()) {
+              /// \todo handle more than one Item
+              ///
+              scrollbar_html_element = found_scrollbars->Item(0)->AsHTMLElement();
+            } else {
+              DCHECK(false);
+              // TODO: print warning here
+            }
+            DCHECK(scrollbar_html_element);
+
+            refreshScrollBar(scrollbar_content_html_element,
+              scrollbar_wrapper, scrollbar_html_element);
+
+            printf("mousemove-scrollbar at (%f;%f) "
+                   "startScrollbarDragYPosition %f "
+                   "event %s for tag: %s, "
+                   "attrVal: %s, "
+                   //"text_content: %s"
+                   "\n",
+                   x,
+                   y,
+                   startScrollbarDragYPosition,
+                   event->type().c_str(),
+                   elem->tag_name().c_str(),
+                   attrVal.c_str()//,
+                   //elem->text_content().value_or("").c_str()
+                   );
+
+            return base::nullopt;
+        });
+
+    cobalt::dom::customizer::
+      pair_event_to_attr("on-wheel-demo-scrollable", "on-wheel",
+        [](const scoped_refptr<cobalt::dom::Event> &event,
+           scoped_refptr<cobalt::dom::Element> elem,
+           const std::string& attrVal)
+        {
+            printf("on-wheel-demo-scrollable 1\n");
+            CHECK(elem);
+            const cobalt::dom::WheelEvent* const wheelEvent =
+                // TODO: polymorphic_downcast Check failed: dynamic_cast<Derived>(base) == base.
+                base::polymorphic_downcast<
+                  const cobalt::dom::WheelEvent* const>(event.get());
+            CHECK(wheelEvent);
+            float x = static_cast<float>(wheelEvent->delta_x());
+            float y = static_cast<float>(wheelEvent->delta_y());
+            float z = static_cast<float>(wheelEvent->delta_z());
+
+            DCHECK(event->current_target());
+            cobalt::dom::HTMLElement* targetHTML =
+              base::polymorphic_downcast<
+                cobalt::dom::HTMLElement*>(event->current_target().get());
+            DCHECK(targetHTML);
+
+            CHECK(elem);
+            cobalt::dom::Document* document = elem->node_document();
+            if(!attrVal.empty()) {
+              if(document->GetElementById(attrVal)) {
+                targetHTML = base::polymorphic_downcast<
+                  cobalt::dom::HTMLElement*>(document->GetElementById(attrVal).get());
+              }
+            }
+
+            DCHECK(targetHTML);
+
+            scoped_refptr<cobalt::dom::HTMLElement> scrollbar_wrapper;
+            scoped_refptr<cobalt::dom::HTMLCollection> found_scrollbar_wrappers
+              = targetHTML->GetElementsByClassName("demo-scrollable-content-wrapper");
+            if(found_scrollbar_wrappers && found_scrollbar_wrappers->length()) {
+              /// \todo handle more than one Item
+              ///
+              scrollbar_wrapper = found_scrollbar_wrappers->Item(0)->AsHTMLElement();
+            } else {
+              DCHECK(false);
+              // TODO: print warning here
+            }
+            DCHECK(scrollbar_wrapper);
+
+            const float scrollSpeed = 10.0f;
+
+            /// \todo support X scrollbar
+            ///
+            bool scrollXChanged = false;
+            bool scrollYChanged = false;
+
+            float prevScrollY = scrollbar_wrapper->scroll_height();
+            float newScrollY
+              = std::fmax(0.0f,
+                scrollbar_wrapper->scroll_top() - y * scrollSpeed);
+            float maxHeight
+              /// \todo wy we need to substruct client_width below?
+              ///
+              = scrollbar_wrapper->scroll_height() - scrollbar_wrapper->client_height();
+            bool atYScrollEnd
+              = (scrollbar_wrapper->scroll_height() - scrollbar_wrapper->scroll_top()
+                == scrollbar_wrapper->client_height())
+                || (newScrollY >= maxHeight);
+            //bool isScrollingYDown = newScrollY < prevScrollY;
+
+            newScrollY
+              = std::fmin(maxHeight, newScrollY);
+              //= (atYScrollEnd && isScrollingYDown) ? maxHeight : newScrollY;
+
+            if(y /*&& !atYScrollEnd*/ && newScrollY >= 0.0f
+               /// \todo why we need to substruct client_height below?
+               ///
+               //&& newScrollY <= maxHeight
+               ) {
+              scrollbar_wrapper->set_scroll_top(newScrollY);
+              scrollYChanged = newScrollY != prevScrollY;
+            }
+
+            /// \todo support X scrollbar
+            ///
+            /*auto newScrollX
+              = .....*/
+
+            if(!scrollXChanged && !scrollYChanged) {
+              return base::nullopt;
+            }
+
+            scoped_refptr<cobalt::dom::HTMLElement> scrollbar_html_element;
+            scoped_refptr<cobalt::dom::HTMLCollection> found_scrollbars
+              = targetHTML->GetElementsByClassName("demo-scrollable-scroller");
+            if(found_scrollbars && found_scrollbars->length()) {
+              /// \todo handle more than one Item
+              ///
+              scrollbar_html_element = found_scrollbars->Item(0)->AsHTMLElement();
+            } else {
+              scrollbar_html_element =
+                targetHTML->AppendChild(
+                  new cobalt::dom::HTMLDivElement(
+                    targetHTML->node_document()))
+                    ->AsElement()
+                    ->AsHTMLElement();
+              scrollbar_html_element->set_class_name("demo-scrollable-scroller");
+            }
+
+            cobalt::dom::Element* scrollbar_content
+              = scrollbar_wrapper->parent_element();
+            DCHECK(scrollbar_content);
+            cobalt::dom::HTMLElement* scrollbar_content_html_element =
+              base::polymorphic_downcast<
+                cobalt::dom::HTMLElement*>(scrollbar_content);
+            DCHECK(scrollbar_content_html_element);
+
+            refreshScrollBar(scrollbar_content_html_element,
+              scrollbar_wrapper, scrollbar_html_element);
+
+            printf("on-wheel-demo-scrollable at (%f;%f;%f) event %s for tag: %s, "
+                   "attrVal: %s, "
+                   //"text_content: %s"
+                   "\n",
+                   x,
+                   y,
+                   z,
+                   event->type().c_str(),
+                   elem->tag_name().c_str(),
+                   attrVal.c_str()//,
+                   //elem->text_content().value_or("").c_str()
+                   );
             return base::nullopt;
         });
 
@@ -710,14 +1155,17 @@ void addTestOnlyAttrCallbacks() {
             DCHECK(targetHTML);
 
             printf("on-wheel-print at (%f;%f;%f) event %s for tag: %s, "
-                   "attrVal: %s, text_content: %s\n",
+                   "attrVal: %s, "
+                   //"text_content: %s"
+                   "\n",
                    x,
                    y,
                    z,
                    event->type().c_str(),
                    elem->tag_name().c_str(),
-                   attrVal.c_str(),
-                   elem->text_content().value_or("").c_str());
+                   attrVal.c_str()//,
+                   //elem->text_content().value_or("").c_str()
+                   );
             return base::nullopt;
         });
 
@@ -736,14 +1184,17 @@ void addTestOnlyAttrCallbacks() {
             float x = mouseEvent->x();
             float y = mouseEvent->y();
             printf("on-click-print at (%f;%f) attr_val=%s event %s for tag: %s, "
-                   "attrVal: %s, text_content: %s\n",
+                   "attrVal: %s, "
+                   //"text_content: %s"
+                   "\n",
                    x,
                    y,
                    elem->GetAttribute("on-click-print").value_or("").c_str(),
                    event->type().c_str(),
                    elem->tag_name().c_str(),
-                   attrVal.c_str(),
-                   elem->text_content().value_or("").c_str());
+                   attrVal.c_str()//,
+                   //elem->text_content().value_or("").c_str()
+                   );
             return base::nullopt;
         });
 
@@ -775,14 +1226,17 @@ void addTestOnlyAttrCallbacks() {
             float x = mouseEvent->x();
             float y = mouseEvent->y();
             printf("on-click-update-ripple at (%f;%f) attr_val=%s event %s for tag: %s, "
-                   "attrVal: %s, text_content: %s\n",
+                   "attrVal: %s, "
+                   //"text_content: "
+                   "%s\n",
                    x,
                    y,
                    elem->GetAttribute("on-click-update-ripple").value_or("").c_str(),
                    event->type().c_str(),
                    elem->tag_name().c_str(),
-                   attrVal.c_str(),
-                   elem->text_content().value_or("").c_str());
+                   attrVal.c_str()//,
+                   //elem->text_content().value_or("").c_str()
+                   );
 
             float maxSize = std::fmax(targetHTML->offset_width(),
                                       targetHTML->offset_height());
@@ -834,13 +1288,16 @@ void addTestOnlyAttrCallbacks() {
             float x = mouseEvent->x();
             float y = mouseEvent->y();
             printf("on-test-mouseleave at (%f;%f) event %s for tag: %s, "
-                   "attrVal: %s, text_content: %s\n",
+                   "attrVal: %s, "
+                   //"text_content: %s"
+                   "\n",
                    x,
                    y,
                    event->type().c_str(),
                    elem->tag_name().c_str(),
-                   attrVal.c_str(),
-                   elem->text_content().value_or("").c_str());
+                   attrVal.c_str()//,
+                   //elem->text_content().value_or("").c_str()
+                   );
             return base::nullopt;
         });
 
@@ -859,13 +1316,16 @@ void addTestOnlyAttrCallbacks() {
             float x = mouseEvent->x();
             float y = mouseEvent->y();
             printf("on-test-mouseover at (%f;%f) event %s for tag: %s, "
-                   "attrVal: %s, text_content: %s\n",
+                   "attrVal: %s, "
+                   //"text_content: %s"
+                   "\n",
                    x,
                    y,
                    event->type().c_str(),
                    elem->tag_name().c_str(),
-                   attrVal.c_str(),
-                   elem->text_content().value_or("").c_str());
+                   attrVal.c_str()//,
+                   //elem->text_content().value_or("").c_str()
+                   );
             //event->target()
             cobalt::dom::HTMLElement* elementHTML =
                 // TODO: polymorphic_downcast Check failed: dynamic_cast<Derived>(base) == base.
@@ -897,13 +1357,16 @@ void addTestOnlyAttrCallbacks() {
             float x = mouseEvent->x();
             float y = mouseEvent->y();
             printf("on-test-mouseout at (%f;%f) event %s for tag: %s, "
-                   "attrVal: %s, text_content: %s\n",
+                   "attrVal: %s, "
+                   //"text_content: %s"
+                   "\n",
                    x,
                    y,
                    event->type().c_str(),
                    elem->tag_name().c_str(),
-                   attrVal.c_str(),
-                   elem->text_content().value_or("").c_str());
+                   attrVal.c_str()//,
+                   //elem->text_content().value_or("").c_str()
+                   );
             cobalt::dom::HTMLElement* elementHTML =
                 // TODO: polymorphic_downcast Check failed: dynamic_cast<Derived>(base) == base.
                 base::polymorphic_downcast<
@@ -933,12 +1396,15 @@ printf("indicated_element == elementHTML\n");
                   const cobalt::dom::KeyboardEvent* const>(event.get());
             CHECK(keyboardEvent);
             printf("on-test-keyup key %s event %s for tag: %s, "
-                   "attrVal: %s, text_content: %s\n",
+                   "attrVal: %s, "
+                   //"text_content: %s"
+                   "\n",
                    keyboardEvent->key().c_str(),
                    event->type().c_str(),
                    elem->tag_name().c_str(),
-                   attrVal.c_str(),
-                   elem->text_content().value_or("").c_str());
+                   attrVal.c_str()//,
+                   //elem->text_content().value_or("").c_str()
+                   );
             printf("which %d\n", keyboardEvent->which());
             printf("keyup character %d\n", keyboardEvent->keysym());
             //printf("keyup str %s\n", keyboardEvent->keysym());
@@ -994,12 +1460,15 @@ printf("indicated_element == elementHTML\n");
                   const cobalt::dom::KeyboardEvent* const>(event.get());
             CHECK(keyboardEvent);
             printf("on-test-keypress key %s event %s for tag: %s, "
-                   "attrVal: %s, text_content: %s\n",
+                   "attrVal: %s, "
+                   //"text_content: %s"
+                   "\n",
                    keyboardEvent->key().c_str(),
                    event->type().c_str(),
                    elem->tag_name().c_str(),
-                   attrVal.c_str(),
-                   elem->text_content().value_or("").c_str());
+                   attrVal.c_str()//,
+                   //elem->text_content().value_or("").c_str()
+                   );
             printf("which %d\n", keyboardEvent->which());
             printf("character %d\n", keyboardEvent->keysym());
             wprintf(L"wprintf character %s\n", keyboardEvent->keysym());
@@ -1064,12 +1533,15 @@ printf("indicated_element == elementHTML\n");
                 const cobalt::dom::KeyboardEvent* const>(event.get());
             CHECK(keyboardEvent);
             printf("on-test-keydown key %s event %s for tag: %s, "
-                   "attrVal: %s, text_content: %s\n",
+                   "attrVal: %s, "
+                   //"text_content: %s"
+                   "\n",
                    keyboardEvent->key().c_str(),
                    event->type().c_str(),
                    elem->tag_name().c_str(),
-                   attrVal.c_str(),
-                   elem->text_content().value_or("").c_str());
+                   attrVal.c_str()//,
+                   //elem->text_content().value_or("").c_str()
+                   );
             //event->target()
             cobalt::dom::HTMLElement* elementHTML =
               // TODO: polymorphic_downcast Check failed: dynamic_cast<Derived>(base) == base.

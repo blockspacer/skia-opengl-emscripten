@@ -691,3 +691,51 @@ visuals
   padding: 10px;
   margin: 5px;
 }
+
+/*= ======
+scrollable
+  * http://jsfiddle.net/elGrecode/00dgurnn/
+  * https://stackoverflow.com/a/28666991
+  You should note that you will have to adjust your version to recalculate the scroller size in certain cases:
+  1.) Where the screen is resized or
+  2.) If more content is appended.
+=======*/
+.demo-scrollable {
+    padding: 0% 0%;
+    position: relative;
+    border: 1px solid gray;
+    overflow: scroll;
+    height: 50px;
+}
+
+.demo-scrollable.demo-scrollable-showScroll::after {
+    position: absolute;
+    content: '';
+    top: 5%;
+    right: 7px;
+    height: 90%;
+    width: 3px;
+    background: rgba(224, 224, 255, .3);
+}
+
+.demo-scrollable .demo-scrollable-content-wrapper {
+    width: 100%;
+    height: 100%;
+    padding-right: 50%;
+    /*overflow-y: scroll;*/
+    overflow: scroll;
+}
+.demo-scrollable-scroller {
+    z-index: 5;
+    cursor: pointer;
+    position: absolute;
+    width: 10px;
+    border-radius: 5px;
+    background: rgb(111, 111, 190);
+    top: 0px;
+    right: 3px;
+    transition: top .08s;
+}
+.demo-scrollable-content {
+    user-select: none;
+}
