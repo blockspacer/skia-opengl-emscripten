@@ -36,6 +36,8 @@ class WebComponent {
 
     virtual void onLoad(HTMLComponentElement* elem) = 0;
 
+    virtual void onMutated(const std::string& new_data) = 0;
+
     virtual void onUnload() = 0;
 
     /*const std::string data() const {

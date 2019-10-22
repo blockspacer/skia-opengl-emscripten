@@ -405,6 +405,8 @@ class HTMLComponentElement : public cobalt::dom::HTMLCustomElement {
     return this;
   }
 
+  std::shared_ptr<skemgl::WebComponent> get_component();
+
   // From Element.
   void OnSetAttribute(const std::string& name,
                       const std::string& value) override;

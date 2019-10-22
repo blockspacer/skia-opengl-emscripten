@@ -818,12 +818,19 @@ math::SizeF HTMLComponentElement::GetSize() const {
   return math::SizeF(width(), height());
 }
 
+std::shared_ptr<skemgl::WebComponent> HTMLComponentElement::get_component() {
+  if(!data_source().empty()) {
+    return skemgl::get_web_component(data_source());
+  }
+  return nullptr;
+}
+
 void HTMLComponentElement::onBoxGeneratorVisit(cobalt::layout::BoxGenerator& box_gen,
   cobalt::dom::HTMLCustomElement* custom_element)
 {
-  if(!data_source().empty() && data_source() != current_data_source_) {
-    std::shared_ptr<skemgl::WebComponent> component
-      = skemgl::get_web_component(data_source());
+  const bool fistLoad = data_source() != current_data_source_;
+  if(!data_source().empty() && fistLoad) {
+    std::shared_ptr<skemgl::WebComponent> component = get_component();
     if(component) {
       DCHECK(custom_element);
       component->onLoad(
@@ -835,6 +842,7 @@ void HTMLComponentElement::onBoxGeneratorVisit(cobalt::layout::BoxGenerator& box
         component->loaded_cb()(
             base::polymorphic_downcast<HTMLComponentElement*>(custom_element));
       }*/
+      component->onMutated(inner_html());
       loaded_web_component_ = component;
     } else {
         // TODO: print warning if empty component html or ...?
