@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "custom_web_components.h"
+#include "components/custom_web_components.h"
 
 #include "base/callback.h"
 #include "base/compiler_specific.h"

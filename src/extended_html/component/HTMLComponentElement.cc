@@ -774,7 +774,9 @@ void HTMLComponentElement::OnRemoveAttribute(const std::string& name) {
 HTMLComponentElement::~HTMLComponentElement() {
   printf("destroyed HTMLComponentElement\n");
   if(loaded_web_component_) {
-    loaded_web_component_->unloaded_cb();
+    //if(loaded_web_component_->unloaded_cb())
+      //loaded_web_component_->unloaded_cb();
+    loaded_web_component_->onUnload();
   }
 }
 
@@ -816,18 +818,23 @@ math::SizeF HTMLComponentElement::GetSize() const {
   return math::SizeF(width(), height());
 }
 
-void HTMLComponentElement::onBoxGeneratorVisit(cobalt::layout::BoxGenerator& box_gen, cobalt::dom::HTMLCustomElement* custom_element)
+void HTMLComponentElement::onBoxGeneratorVisit(cobalt::layout::BoxGenerator& box_gen,
+  cobalt::dom::HTMLCustomElement* custom_element)
 {
   if(!data_source().empty() && data_source() != current_data_source_) {
     std::shared_ptr<skemgl::WebComponent> component
       = skemgl::get_web_component(data_source());
-    if(component && !component->data().empty()) {
-      set_inner_html(component->data());
+    if(component) {
+      DCHECK(custom_element);
+      component->onLoad(
+        const_cast<HTMLComponentElement*>(this));
+      set_inner_html(component->data()); /// \note can be empty
+      printf("set_inner_html %s\n", component->data().c_str());
       current_data_source_ = data_source();
-      if(component->loaded_cb()) {
+      /*if(component->loaded_cb()) {
         component->loaded_cb()(
             base::polymorphic_downcast<HTMLComponentElement*>(custom_element));
-      }
+      }*/
       loaded_web_component_ = component;
     } else {
         // TODO: print warning if empty component html or ...?

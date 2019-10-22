@@ -20,16 +20,25 @@ typedef std::map<std::string, std::shared_ptr<skemgl::WebComponent>>
 
 class WebComponent {
   public:
-    WebComponent(
+    WebComponent() {}
+    /*WebComponent(
         const std::string& component_data,
         const WebComponentLoadedCb loaded_cb,
         const WebComponentUnloadedCb unloaded_cb)
           : component_data_(component_data)
           , loaded_cb_(loaded_cb)
           , unloaded_cb_(unloaded_cb)
-        {}
+        {}*/
 
-    const std::string data() const {
+    virtual ~WebComponent() {}
+
+    virtual const std::string data() const = 0;
+
+    virtual void onLoad(HTMLComponentElement* elem) = 0;
+
+    virtual void onUnload() = 0;
+
+    /*const std::string data() const {
       return component_data_;
     }
 
@@ -39,12 +48,12 @@ class WebComponent {
 
     const WebComponentUnloadedCb unloaded_cb() const {
       return unloaded_cb_;
-    }
+    }*/
 
-  private:
+  /*private:
     std::string component_data_;
     WebComponentLoadedCb loaded_cb_;
-    WebComponentUnloadedCb unloaded_cb_;
+    WebComponentUnloadedCb unloaded_cb_;*/
 };
 
 std::shared_ptr<skemgl::WebComponent> get_web_component(

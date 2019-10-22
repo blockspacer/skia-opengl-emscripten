@@ -1222,6 +1222,21 @@ HTMLElement::HTMLElement(Document* document, base::Token local_name)
 
   DCHECK(document);
   DCHECK(document->getHTMLModelRegistry());
+
+#if 0
+  this->AddEventListener("customEvent",
+    //EventListenerScriptValue::Reference(this, *utterance->onboundary())
+    //      .referenced_value(),
+    CustomScriptValue<cobalt::dom::EventListener>(
+      eventListener_.get()),
+    false /* true - executed in the capturing phase.
+               the event is first captured by
+               the outermost element and propagated to the inner elements.
+             false - Default. executed in the bubbling phase.
+               the event is first captured and handled by
+               the innermost element and then propagated
+               to outer elements. */);
+#endif
 }
 
 std::string HTMLElement::model() const {

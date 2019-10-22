@@ -130,7 +130,12 @@ See https://github.com/blockspacer/skia-opengl-emscripten/issues/6
 
 - Limitations
 
-  * Prefer CSS flexbox for laybout. No `float:right`.
+  * Prefer CSS flexbox for layout. No `float:right`.
+  * No support for layout-changing CSS animations.
+    Example: Can`t animate width/height, but can animate scaleX/scaleY/scale.
+    Renderer runs in a different thread from the Layout Engine, and can interpolate animations that do not require re-layout.
+    You can see the most popular CSS properties that, when changed, trigger layout at https://reading.supply/@jim/performance-when-animating-styles-C8MySv or https://csstriggers.com/ or https://www.html5rocks.com/en/tutorials/speed/high-performance-animations/
+    Note what you can add custom animations, it is opensource project.
   * Scrolling in HTML is experimental.
   * It is opensource project: you can participate to add more features and fix issues.
 

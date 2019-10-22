@@ -2172,8 +2172,10 @@ list(APPEND PROJECT_SRC
   src/custom_atts.h
   src/cobalt_common.h
   src/blink_demo.h
-  src/custom_web_components.cc
-  src/custom_web_components.h
+  src/components/custom_web_components.cc
+  src/components/custom_web_components.h
+  src/components/NavigationComponent.cc
+  src/components/NavigationComponent.h
   src/custom_controllers.cc
   src/custom_controllers.h
   src/models/scrollbar/BodyModel.cc

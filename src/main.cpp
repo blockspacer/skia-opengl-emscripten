@@ -405,7 +405,7 @@ static bool render_browser_window = false;
 
 #include "cobalt_common.h"
 #include "custom_atts.h"
-#include "custom_web_components.h"
+#include "components/custom_web_components.h"
 
 #ifdef ENABLE_COBALT
 #include "renderer_stub/rasterizer/skgl/software_rasterizer.h"

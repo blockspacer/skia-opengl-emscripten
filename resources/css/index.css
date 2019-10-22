@@ -734,7 +734,7 @@ scrollable
     background: rgb(111, 111, 190);
     top: 0px;
     right: 3px;
-    transition: top 0.08s;
+    /*transition: top 0.08s;*/
 }
 .demo-scrollable-content {
     /*user-select: none;*/
