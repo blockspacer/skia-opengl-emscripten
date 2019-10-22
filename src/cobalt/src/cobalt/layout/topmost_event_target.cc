@@ -350,7 +350,7 @@ void TopmostEventTarget::ConsiderElement(dom::Element* element,
     }
 
     /// \todo dirty HACK to imitate scrolling support
-    if (!element->AsHTMLElement()->layout_boxes_
+    if (!layout_boxes//element->AsHTMLElement()->layout_boxes_
         || element->AsHTMLElement()->IsRootElement()
         || element->AsHTMLElement()->AsHTMLBodyElement() ||
         !element->AsHTMLElement()->computed_style() ||

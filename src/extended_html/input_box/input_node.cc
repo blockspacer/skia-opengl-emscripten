@@ -12,7 +12,7 @@
 
 #ifdef ENABLE_COBALT
 #include "cobalt/base/polymorphic_downcast.h"
-#endif ENABLE_COBALT
+#endif // ENABLE_COBALT
 
 #ifdef ENABLE_BASE
 
@@ -325,12 +325,15 @@ void InputNode::RenderTreeNodeVisit(const NodeVisitor *render_target) {
 
   SkRect sk_rect = SkRect::MakeXYWH(math_rect.x(), math_rect.y(),
                                       math_rect.width(), math_rect.height());
-  SkRect sk_rect_transformed;
+  SkRect sk_rect_transformed = sk_rect;
+  SkRect transformed_rect = sk_rect;
+
+  /*SkRect sk_rect_transformed;
   total_matrix.mapRect(&sk_rect_transformed, sk_rect);
 
   math::RectF transformed_rect(
       sk_rect_transformed.x(), sk_rect_transformed.y(),
-      sk_rect_transformed.width(), sk_rect_transformed.height());
+      sk_rect_transformed.width(), sk_rect_transformed.height());*/
 
   /*const math::RectF& transformed_rect =
       skia_visitor->draw_state_.
@@ -353,7 +356,7 @@ void InputNode::RenderTreeNodeVisit(const NodeVisitor *render_target) {
   if(!ui::ResourceBundle::HasSharedInstance()) {
     printf("input_node: creating ui::ResourceBundle\n");
     ui::ResourceBundle::InitSharedInstanceWithLocale(
-        "en-US", NULL, ui::ResourceBundle::LOAD_COMMON_RESOURCES);
+        "en-US", nullptr, ui::ResourceBundle::LOAD_COMMON_RESOURCES);
   }
 
   DCHECK(custom_generating_node_);
@@ -603,7 +606,10 @@ void InputNode::RenderTreeNodeVisit(const NodeVisitor *render_target) {
       SkRect mEv_sk_rect_transformed;
       total_matrix.mapRect(&mEv_sk_rect_transformed, mEv_sk_rect);
 
-      SkRect boundingClientRect_sk_rect = SkRect::MakeXYWH(
+      float x = mEv.mouseEvent_.x();
+      float y = mEv.mouseEvent_.y();
+
+      /*SkRect boundingClientRect_sk_rect = SkRect::MakeXYWH(
         mEv.boundingClientRect_->left(),
         mEv.boundingClientRect_->top(),
         1,
@@ -622,7 +628,7 @@ void InputNode::RenderTreeNodeVisit(const NodeVisitor *render_target) {
         - boundingClientRect_transformed.y();
       if(y < 0) {
         y = mEv.mouseEvent_.y() + y;
-      }
+      }*/
 
       // see https://github.com/blockspacer/skia-opengl-emscripten/blob/24de863ed991dbb888a443138ae0780d0d514417/src/chromium/ui/events/event.h#L517
       gfx::Point point(x, y);

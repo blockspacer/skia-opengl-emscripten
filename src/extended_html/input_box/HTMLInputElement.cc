@@ -854,18 +854,27 @@ HTMLInputElement::HTMLInputElement(Document* document)
         // TODO: polymorphic_downcast Check failed: dynamic_cast<Derived>(base) == base.
         base::polymorphic_downcast<const dom::MouseEvent* const>(event.get());
       CHECK(mouseEvent);
-      float x = mouseEvent->client_x()
-        - elem->GetBoundingClientRect()->left();
-      float y = mouseEvent->client_y()
-        - elem->GetBoundingClientRect()->top();
+
+      DCHECK(event->current_target());
+      cobalt::dom::HTMLElement* targetHTML =
+          base::polymorphic_downcast<
+              cobalt::dom::HTMLElement*>(event->current_target().get());
+      DCHECK(targetHTML);
+      cobalt::math::Vector2dF elementLocalPos{
+          mouseEvent->client_x()
+              - targetHTML->GetBoundingClientRect()->left()
+          ,
+          mouseEvent->client_y()
+              - targetHTML->GetBoundingClientRect()->top()
+      };
       printf("InputBox on-mousedown "
              "at (%f;%f) kSbKeyMouse1: %d , kSbKeyMouse2: %d , kSbKeyMouse3: %d \n",
-              x,
-              y,
+              elementLocalPos.x(),
+              elementLocalPos.y(),
               (bool)(mouseEvent->buttons() & kSbKeyMouse1),
               (bool)(mouseEvent->buttons() & kSbKeyMouse2),
               (bool)(mouseEvent->buttons() & kSbKeyMouse3));
-      //(screen_->GetCursorScreenPoint());
+      //(client_->GetCursorScreenPoint());
       int changed_button_flags = ui::EF_NONE;
       if(mouseEvent->buttons() & kSbKeyMouse2) { // left
         changed_button_flags |= ui::EF_LEFT_MOUSE_BUTTON;
@@ -892,8 +901,8 @@ HTMLInputElement::HTMLInputElement(Document* document)
         flags |= ui::EF_COMMAND_DOWN;
       }
       {
-        gfx::Point point(x, y);
-        //gfx::Point point(screen_->GetCursorScreenPoint());
+        gfx::Point point(elementLocalPos.x(), elementLocalPos.y());
+        //gfx::Point point(client_->GetCursorScreenPoint());
         // see https://github.com/blockspacer/skia-opengl-emscripten/blob/24de863ed991dbb888a443138ae0780d0d514417/src/chromium/ui/events/event.h#L517
         ui::MouseEvent mEv(ui::ET_MOUSE_PRESSED,
                            point,
@@ -908,7 +917,7 @@ HTMLInputElement::HTMLInputElement(Document* document)
           scheduledEvents_.scheduledMouseEvents_.
             push_back(ScheduledMouseEvent{
               std::move(mEv),
-              elem->GetBoundingClientRect()
+                  elem->GetBoundingClientRect() // new cobalt::dom::DOMRect{0, 0, elem->GetBoundingClientRect()->width(), elem->GetBoundingClientRect()->height()}
             });
         }
 
@@ -929,14 +938,24 @@ HTMLInputElement::HTMLInputElement(Document* document)
         // TODO: polymorphic_downcast Check failed: dynamic_cast<Derived>(base) == base.
         base::polymorphic_downcast<const dom::MouseEvent* const>(event.get());
       CHECK(mouseEvent);
-      float x = mouseEvent->client_x()
-        - elem->GetBoundingClientRect()->left();
-      float y = mouseEvent->client_y()
-        - elem->GetBoundingClientRect()->top();
+
+      DCHECK(event->current_target());
+      cobalt::dom::HTMLElement* targetHTML =
+          base::polymorphic_downcast<
+              cobalt::dom::HTMLElement*>(event->current_target().get());
+      DCHECK(targetHTML);
+
+      cobalt::math::Vector2dF elementLocalPos{
+          mouseEvent->client_x()
+              - targetHTML->GetBoundingClientRect()->left()
+              ,
+          mouseEvent->client_y()
+              - targetHTML->GetBoundingClientRect()->top()
+      };
       printf("InputBox on-mouseup at (%f;%f) attr_val=%s event %s for tag: %s, "
              "attrVal: %s, text_content: %s\n",
-              x,
-              y,
+             elementLocalPos.x(),
+             elementLocalPos.y(),
               elem->GetAttribute("on-click-print").value_or("").c_str(),
               event->type().c_str(),
               elem->tag_name().c_str(),
@@ -969,8 +988,9 @@ HTMLInputElement::HTMLInputElement(Document* document)
         flags |= ui::EF_COMMAND_DOWN;
       }
       {
-        gfx::Point point(x, y);
-        //gfx::Point point(screen_->GetCursorScreenPoint());
+        gfx::Point point(elementLocalPos.x(),
+                         elementLocalPos.y());
+        //gfx::Point point(client_->GetCursorScreenPoint());
         // see https://github.com/blockspacer/skia-opengl-emscripten/blob/24de863ed991dbb888a443138ae0780d0d514417/src/chromium/ui/events/event.h#L517
         ui::MouseEvent mEv(ui::ET_MOUSE_RELEASED,
                            point,
@@ -985,7 +1005,7 @@ HTMLInputElement::HTMLInputElement(Document* document)
           scheduledEvents_.scheduledMouseEvents_.
             push_back(ScheduledMouseEvent{
               std::move(mEv),
-              elem->GetBoundingClientRect()
+              elem->GetBoundingClientRect() // new cobalt::dom::DOMRect{0, 0, elem->GetBoundingClientRect()->width(), elem->GetBoundingClientRect()->height()}
             });
         }
       }
@@ -1012,65 +1032,29 @@ HTMLInputElement::HTMLInputElement(Document* document)
         // TODO: polymorphic_downcast Check failed: dynamic_cast<Derived>(base) == base.
         base::polymorphic_downcast<const dom::MouseEvent* const>(event.get());
       CHECK(mouseEvent);
-      float x = mouseEvent->client_x()
-        - elem->GetBoundingClientRect()->left();
-      float y = mouseEvent->client_y()
-        - elem->GetBoundingClientRect()->top();
+
+      DCHECK(event->current_target());
+      cobalt::dom::HTMLElement* targetHTML =
+          base::polymorphic_downcast<
+              cobalt::dom::HTMLElement*>(event->current_target().get());
+      DCHECK(targetHTML);
+
+      cobalt::math::Vector2dF elementLocalPos{
+          mouseEvent->client_x()
+              - targetHTML->GetBoundingClientRect()->left()
+              ,
+          mouseEvent->client_y()
+              - targetHTML->GetBoundingClientRect()->top()
+      };
       printf("InputBox on-click-print at (%f;%f) attr_val=%s event %s for tag: %s, "
              "attrVal: %s, text_content: %s\n",
-              x,
-              y,
+              elementLocalPos.x(),
+              elementLocalPos.y(),
               elem->GetAttribute("on-click-print").value_or("").c_str(),
               event->type().c_str(),
               elem->tag_name().c_str(),
               attrVal.c_str(),
               elem->text_content().value_or("").c_str());
-
-#if 0
-      {
-        gfx::Point point(x, y);
-        //gfx::Point point(screen_->GetCursorScreenPoint());
-        // see https://github.com/blockspacer/skia-opengl-emscripten/blob/24de863ed991dbb888a443138ae0780d0d514417/src/chromium/ui/events/event.h#L517
-        ui::MouseEvent mEv(ui::ET_MOUSE_PRESSED,
-                           point,
-                           point,
-                           ui::EventTimeForNow(),
-                           ui::EF_LEFT_MOUSE_BUTTON,
-                           ui::EF_LEFT_MOUSE_BUTTON);
-
-        // TODO: event_generator_ https://github.com/blockspacer/skia-opengl-emscripten/blob/bb16ab108bc4018890f4ff3179250b76c0d9053b/src/chromium/ui/views/controls/combobox/combobox_unittest.cc#L228
-        {
-          std::scoped_lock lock(scheduledEventsMutex_);
-          scheduledEvents_.scheduledMouseEvents_.
-            push_back(ScheduledMouseEvent{
-              std::move(mEv),
-              elem->GetBoundingClientRect()
-            });
-        }
-      }
-
-      {
-        gfx::Point point(x, y);
-        //gfx::Point point(screen_->GetCursorScreenPoint());
-        // see https://github.com/blockspacer/skia-opengl-emscripten/blob/24de863ed991dbb888a443138ae0780d0d514417/src/chromium/ui/events/event.h#L517
-        ui::MouseEvent mEv(ui::ET_MOUSE_RELEASED,
-                           point,
-                           point,
-                           ui::EventTimeForNow(),
-                           ui::EF_LEFT_MOUSE_BUTTON,
-                           ui::EF_LEFT_MOUSE_BUTTON);
-
-        // TODO: event_generator_ https://github.com/blockspacer/skia-opengl-emscripten/blob/bb16ab108bc4018890f4ff3179250b76c0d9053b/src/chromium/ui/views/controls/combobox/combobox_unittest.cc#L228
-        {
-          std::scoped_lock lock(scheduledEventsMutex_);
-          scheduledEvents_.scheduledMouseEvents_.
-            push_back(ScheduledMouseEvent{
-              std::move(mEv),
-              elem->GetBoundingClientRect()
-            });
-        }
-      }
-#endif // 0
 
       return base::nullopt;
     });
@@ -1096,47 +1080,60 @@ HTMLInputElement::HTMLInputElement(Document* document)
     CHECK(/*pointerEvent ||*/ mouseEvent);
     //float x = /*pointerEvent ? pointerEvent->x() :*/ mouseEvent->client_x();
     //float y = /*pointerEvent ? pointerEvent->y() :*/ mouseEvent->client_y();
-    float x = mouseEvent->client_x()
-      - elem->GetBoundingClientRect()->left();
-    float y = mouseEvent->client_y()
-      - elem->GetBoundingClientRect()->top();
+
+    DCHECK(event->current_target());
+    cobalt::dom::HTMLElement* targetHTML =
+        base::polymorphic_downcast<
+            cobalt::dom::HTMLElement*>(event->current_target().get());
+    DCHECK(targetHTML);
+
+    cobalt::math::Vector2dF elementLocalPos{
+        mouseEvent->client_x()
+            - targetHTML->GetBoundingClientRect()->left()
+            ,
+        mouseEvent->client_y()
+            - targetHTML->GetBoundingClientRect()->top()
+    };
     printf("InputBox mousemove at (%f;%f) event %s for tag: %s, "
            "attrVal: %s, text_content: %s\n",
-            x,
-            y,
+            elementLocalPos.x(),
+            elementLocalPos.y(),
             event->type().c_str(),
             elem->tag_name().c_str(),
             attrVal.c_str(),
             elem->text_content().value_or("").c_str());
 
     int changed_button_flags = ui::EF_NONE;
-      if(mouseEvent->buttons() & kSbKeyMouse2) { // left
-        changed_button_flags |= ui::EF_LEFT_MOUSE_BUTTON;
-      }
-      // TODO
-      /*if(mouseEvent->buttons() & kSbKeyMouse2) { // middle
-        changed_button_flags |= ui::EF_MIDDLE_MOUSE_BUTTON;
-      }*/
-      if(mouseEvent->buttons() & kSbKeyMouse3) { // right
-        changed_button_flags |= ui::EF_RIGHT_MOUSE_BUTTON;
-      }
-      int flags = ui::EF_NONE;
-      flags |= changed_button_flags;
-      if(mouseEvent->ctrl_key()) {
-        flags |= ui::EF_CONTROL_DOWN;
-      }
-      if(mouseEvent->shift_key()) {
-        flags |= ui::EF_SHIFT_DOWN;
-      }
-      if(mouseEvent->alt_key()) {
-        flags |= ui::EF_ALT_DOWN;
-      }
-      if(mouseEvent->meta_key()) {
-        flags |= ui::EF_COMMAND_DOWN;
-      }
+
+    if(mouseEvent->buttons() & kSbKeyMouse2) { // left
+      changed_button_flags |= ui::EF_LEFT_MOUSE_BUTTON;
+    }
+    // TODO
+    /*if(mouseEvent->buttons() & kSbKeyMouse2) { // middle
+      changed_button_flags |= ui::EF_MIDDLE_MOUSE_BUTTON;
+    }*/
+    if(mouseEvent->buttons() & kSbKeyMouse3) { // right
+      changed_button_flags |= ui::EF_RIGHT_MOUSE_BUTTON;
+    }
+    int flags = ui::EF_NONE;
+    flags |= changed_button_flags;
+    if(mouseEvent->ctrl_key()) {
+      flags |= ui::EF_CONTROL_DOWN;
+    }
+    if(mouseEvent->shift_key()) {
+      flags |= ui::EF_SHIFT_DOWN;
+    }
+    if(mouseEvent->alt_key()) {
+      flags |= ui::EF_ALT_DOWN;
+    }
+    if(mouseEvent->meta_key()) {
+      flags |= ui::EF_COMMAND_DOWN;
+    }
+
     {
-      gfx::Point point(x, y);
-      //gfx::Point point(screen_->GetCursorScreenPoint());
+      gfx::Point point(elementLocalPos.x(),
+                       elementLocalPos.y());
+      //gfx::Point point(client_->GetCursorScreenPoint());
       // see https://github.com/blockspacer/skia-opengl-emscripten/blob/24de863ed991dbb888a443138ae0780d0d514417/src/chromium/ui/events/event.h#L517
       ui::MouseEvent mEv(ui::ET_MOUSE_MOVED, // TODO: ET_MOUSE_DRAGGED
                          point,
@@ -1151,7 +1148,7 @@ HTMLInputElement::HTMLInputElement(Document* document)
         scheduledEvents_.scheduledMouseEvents_.
           push_back(ScheduledMouseEvent{
             std::move(mEv),
-            elem->GetBoundingClientRect()
+            elem->GetBoundingClientRect() // new cobalt::dom::DOMRect{0, 0, elem->GetBoundingClientRect()->width(), elem->GetBoundingClientRect()->height()}
           });
       }
     }
@@ -1171,14 +1168,24 @@ HTMLInputElement::HTMLInputElement(Document* document)
         // TODO: polymorphic_downcast Check failed: dynamic_cast<Derived>(base) == base.
         base::polymorphic_downcast<const dom::MouseEvent* const>(event.get());
       CHECK(mouseEvent);
-      float x = mouseEvent->client_x()
-        - elem->GetBoundingClientRect()->left();
-      float y = mouseEvent->client_y()
-        - elem->GetBoundingClientRect()->top();
+
+      DCHECK(event->current_target());
+      cobalt::dom::HTMLElement* targetHTML =
+          base::polymorphic_downcast<
+              cobalt::dom::HTMLElement*>(event->current_target().get());
+      DCHECK(targetHTML);
+
+      cobalt::math::Vector2dF elementLocalPos{
+          mouseEvent->client_x()
+              - targetHTML->GetBoundingClientRect()->left()
+              ,
+          mouseEvent->client_y()
+              - targetHTML->GetBoundingClientRect()->top()
+      };
       printf("InputBox on-test-mouseover at (%f;%f) event %s for tag: %s, "
              "attrVal: %s, text_content: %s\n",
-              x,
-              y,
+              elementLocalPos.x(),
+              elementLocalPos.y(),
               event->type().c_str(),
               elem->tag_name().c_str(),
               attrVal.c_str(),
@@ -1211,14 +1218,24 @@ HTMLInputElement::HTMLInputElement(Document* document)
         // TODO: polymorphic_downcast Check failed: dynamic_cast<Derived>(base) == base.
         base::polymorphic_downcast<const dom::MouseEvent* const>(event.get());
       CHECK(mouseEvent);
-      float x = mouseEvent->client_x()
-        - elem->GetBoundingClientRect()->left();
-      float y = mouseEvent->client_y()
-        - elem->GetBoundingClientRect()->top();
+
+      DCHECK(event->current_target());
+      cobalt::dom::HTMLElement* targetHTML =
+          base::polymorphic_downcast<
+              cobalt::dom::HTMLElement*>(event->current_target().get());
+      DCHECK(targetHTML);
+
+      cobalt::math::Vector2dF elementLocalPos{
+          mouseEvent->client_x()
+              - targetHTML->GetBoundingClientRect()->left()
+              ,
+          mouseEvent->client_y()
+              - targetHTML->GetBoundingClientRect()->top()
+      };
       printf("InputBox on-test-mouseout at (%f;%f) event %s for tag: %s, "
              "attrVal: %s, text_content: %s\n",
-              x,
-              y,
+              elementLocalPos.x(),
+              elementLocalPos.y(),
               event->type().c_str(),
               elem->tag_name().c_str(),
               attrVal.c_str(),
