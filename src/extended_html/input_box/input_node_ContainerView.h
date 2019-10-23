@@ -15,8 +15,7 @@
 // Create a TYPE_DEFAULT message-loop.
 
 #include "blink_demo.h"
-
-#ifdef ENABLE_BLINK_UI
+#if defined(ENABLE_BLINK_UI)
 #include "ui/display/display.h"
 #include "ui/display/display_switches.h"
 #include "ui/display/display_list.h"
@@ -41,6 +40,7 @@
 //#include "ui/gfx/native_input_node_widget_types.h"
 #endif // ENABLE_BLINK_UI_NATIVE_THEME
 
+#if defined(ENABLE_BLINK_UI)
 #include "ui/display/manager/default_touch_transform_setter.h"
 #include "ui/display/manager/display_manager.h"
 #include "ui/display/manager/test/touch_device_manager_test_api.h"
@@ -114,9 +114,11 @@
 
 #include "ui/compositor/paint_recorder.h"
 #include "ui/compositor/canvas_painter.h"
+#endif // ENABLE_BLINK_UI
 
 #include <memory>
 
+#if defined(ENABLE_BLINK_UI)
 namespace cobalt {
 namespace layout {
 class InputBox;
@@ -257,3 +259,4 @@ class input_node_ContainerView :
 
 }  // namespace render_tree
 }  // namespace cobalt
+#endif // ENABLE_BLINK_UI

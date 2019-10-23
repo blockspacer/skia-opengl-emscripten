@@ -1092,11 +1092,18 @@ void HTMLElement::MarkNotDisplayedOnNodeAndDescendants() {
 }
 
 void HTMLElement::PurgeCachedBackgroundImagesOfNodeAndDescendants() {
+#if defined(ENABLE_NATIVE_HTML)
+  return;
+#endif
   PurgeCachedBackgroundImages();
   PurgeCachedBackgroundImagesOfDescendants();
 }
 
 void HTMLElement::PurgeCachedBackgroundImages() {
+#if defined(ENABLE_NATIVE_HTML)
+  return;
+#endif
+
   ClearActiveBackgroundImages();
   if (!cached_background_images_.empty()) {
     cached_background_images_.clear();
@@ -1955,6 +1962,10 @@ void HTMLElement::UpdateUiNavigationType() {
 }
 
 void HTMLElement::ClearActiveBackgroundImages() {
+#if defined(ENABLE_NATIVE_HTML)
+  return;
+#endif
+
   if (html_element_context() &&
       html_element_context()->animated_image_tracker()) {
     for (std::vector<GURL>::iterator it = active_background_images_.begin();
@@ -1966,6 +1977,10 @@ void HTMLElement::ClearActiveBackgroundImages() {
 }
 
 void HTMLElement::UpdateCachedBackgroundImagesFromComputedStyle() {
+#if defined(ENABLE_NATIVE_HTML)
+  return;
+#endif
+
   ClearActiveBackgroundImages();
 
   // Don't fetch or cache the image if the display of this element is turned
@@ -2016,6 +2031,10 @@ void HTMLElement::UpdateCachedBackgroundImagesFromComputedStyle() {
 }
 
 void HTMLElement::OnBackgroundImageLoaded() {
+#if defined(ENABLE_NATIVE_HTML)
+  return;
+#endif
+
   node_document()->RecordMutation();
   InvalidateLayoutBoxRenderTreeNodes();
 }

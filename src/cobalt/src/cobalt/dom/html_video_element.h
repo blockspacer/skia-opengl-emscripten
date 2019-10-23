@@ -23,6 +23,14 @@
 #include "cobalt/math/size_f.h"
 #include "cobalt/script/environment_settings.h"
 
+#if defined(OS_EMSCRIPTEN)
+#include <emscripten.h>
+#include <emscripten/bind.h>
+#include <emscripten/html5.h>
+#include <emscripten/bind.h>
+#include <emscripten/val.h>
+#endif // OS_EMSCRIPTEN
+
 namespace cobalt {
 namespace dom {
 

@@ -8,7 +8,9 @@
 
 #include "cobalt/base/polymorphic_downcast.h"
 
+#if defined(ENABLE_SKIA)
 #include "renderer_stub/rasterizer/skia/render_tree_node_visitor.h"
+#endif // ENABLE_SKIA
 
 #ifdef ENABLE_COBALT
 #include "cobalt/base/polymorphic_downcast.h"
@@ -144,6 +146,7 @@
 //#include "ui/gfx/native_input_node_widget_types.h"
 #endif // ENABLE_BLINK_UI_NATIVE_THEME
 
+#ifdef ENABLE_BLINK_UI
 #include "ui/display/manager/default_touch_transform_setter.h"
 #include "ui/display/manager/display_manager.h"
 #include "ui/display/manager/test/touch_device_manager_test_api.h"
@@ -217,7 +220,9 @@
 
 #include "ui/compositor/paint_recorder.h"
 #include "ui/compositor/canvas_painter.h"
+#endif // ENABLE_BLINK_UI
 
+#if defined(ENABLE_BLINK_UI)
 namespace {
 
 // TODO: free mem
@@ -296,13 +301,17 @@ static bool input_node_prepareUIFonts() {
 }
 
 } // namespace
+#endif // ENABLE_BLINK_UI
 
 namespace cobalt {
 namespace render_tree {
 
+#if defined(ENABLE_SKIA)
 using namespace cobalt::renderer::rasterizer::skia;
+#endif // ENABLE_SKIA
 
 void InputNode::RenderTreeNodeVisit(const NodeVisitor *render_target) {
+#if defined(ENABLE_SKIA)
   if(!custom_generating_node_) {
     //NOTREACHED
     NOTIMPLEMENTED_LOG_ONCE();
@@ -748,7 +757,8 @@ void InputNode::RenderTreeNodeVisit(const NodeVisitor *render_target) {
 
 #if ENABLE_FLUSH_AFTER_EVERY_NODE
   skia_visitor->draw_state_.render_target->flush();
-#endif
+#endif // ENABLE_FLUSH_AFTER_EVERY_NODE
+#endif // ENABLE_SKIA
 }
 
 void InputNode::Accept(NodeVisitor* visitor) {

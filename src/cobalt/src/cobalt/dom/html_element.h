@@ -45,6 +45,10 @@
 #include "cobalt/loader/image/image_cache.h"
 #include "cobalt/ui_navigation/nav_item.h"
 
+#if defined(OS_EMSCRIPTEN)
+#include <emscripten/emscripten.h>
+#endif // OS_EMSCRIPTEN
+
 namespace models {
 class HTMLModel;
 } // namespace models

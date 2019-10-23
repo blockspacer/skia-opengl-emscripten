@@ -19,6 +19,8 @@
 
 #include "base/trace_event/trace_event.h"
 #include "cobalt/base/polymorphic_downcast.h"
+
+#if defined(ENABLE_SKIA)
 #include "renderer_stub/rasterizer/skia/cobalt_skia_type_conversions.h"
 #include "renderer_stub/rasterizer/skia/font.h"
 #include "renderer_stub/rasterizer/skia/glyph_buffer.h"
@@ -27,11 +29,16 @@
 #include "renderer_stub/rasterizer/skia/software_image.h"
 #include "renderer_stub/rasterizer/skia/software_mesh.h"
 #include "renderer_stub/rasterizer/skia/typeface.h"
+#endif // ENABLE_SKIA
+
 ///#include "third_party/ots/include/opentype-sanitiser.h"
 ///#include "third_party/ots/include/ots-memory-stream.h"
+
+#if defined(ENABLE_SKIA)
 #include "third_party/skia/include/core/SkData.h"
 #include "third_party/skia/include/core/SkStream.h"
 #include "third_party/skia/include/core/SkTypeface.h"
+#endif // ENABLE_SKIA
 
 // TODO
 // #define ENABLE_DYNAMIC_FONT_LOADING 1
@@ -47,25 +54,32 @@ SoftwareResourceProvider::SoftwareResourceProvider(
     bool purge_skia_font_caches_on_destruction)
     : purge_skia_font_caches_on_destruction_(
           purge_skia_font_caches_on_destruction) {
+#if defined(ENABLE_SKIA)
   // Initialize the font manager now to ensure that it doesn't get initialized
   // on multiple threads simultaneously later.
   SkFontMgr::RefDefault();
+#endif // ENABLE_SKIA
 }
 
 SoftwareResourceProvider::~SoftwareResourceProvider() {
   if (purge_skia_font_caches_on_destruction_) {
+#if defined(ENABLE_SKIA)
     text_shaper_.PurgeCaches();
-
       sk_sp<SkFontMgr> font_manager(SkFontMgr::RefDefault());
       SkFontMgr_Cobalt* cobalt_font_manager =
           base::polymorphic_downcast<SkFontMgr_Cobalt*>(font_manager.get());
       cobalt_font_manager->PurgeCaches();
+#endif // ENABLE_SKIA
   }
 }
 
 bool SoftwareResourceProvider::PixelFormatSupported(
     render_tree::PixelFormat pixel_format) {
+#if defined(ENABLE_SKIA)
   return RenderTreeSurfaceFormatToSkia(pixel_format) == kN32_SkColorType;
+#else
+  return false;
+#endif // ENABLE_SKIA
 }
 
 bool SoftwareResourceProvider::AlphaFormatSupported(
@@ -77,6 +91,7 @@ bool SoftwareResourceProvider::AlphaFormatSupported(
 std::unique_ptr<ImageData> SoftwareResourceProvider::AllocateImageData(
     const math::Size& size, render_tree::PixelFormat pixel_format,
     render_tree::AlphaFormat alpha_format) {
+#if defined(ENABLE_SKIA)
   printf("SoftwareResourceProvider::AllocateImageData 1...\n");
 
   TRACE_EVENT0("cobalt::renderer",
@@ -85,10 +100,14 @@ std::unique_ptr<ImageData> SoftwareResourceProvider::AllocateImageData(
   DCHECK(AlphaFormatSupported(alpha_format));
   return std::unique_ptr<ImageData>(
       new SoftwareImageData(size, pixel_format, alpha_format));
+#else
+  return nullptr;
+#endif // ENABLE_SKIA
 }
 
 scoped_refptr<render_tree::Image> SoftwareResourceProvider::CreateImage(
     std::unique_ptr<ImageData> source_data) {
+#if defined(ENABLE_SKIA)
   printf("SoftwareResourceProvider::CreateImage 1...\n");
 
   TRACE_EVENT0("cobalt::renderer", "SoftwareResourceProvider::CreateImage()");
@@ -99,23 +118,31 @@ scoped_refptr<render_tree::Image> SoftwareResourceProvider::CreateImage(
       new SoftwareImage(std::move(skia_source_data)));
   printf("SoftwareResourceProvider::CreateImage GetSize %s...\n", res->GetSize().ToString().c_str());
   return res;
+#else
+  return nullptr;
+#endif // ENABLE_SKIA
 }
 
 std::unique_ptr<render_tree::RawImageMemory>
 SoftwareResourceProvider::AllocateRawImageMemory(size_t size_in_bytes,
                                                  size_t alignment) {
+#if defined(ENABLE_SKIA)
   printf("SoftwareResourceProvider::AllocateRawImageMemory 1...\n");
   TRACE_EVENT0("cobalt::renderer",
                "SoftwareResourceProvider::AllocateRawImageMemory()");
 
   return std::unique_ptr<render_tree::RawImageMemory>(
       new SoftwareRawImageMemory(size_in_bytes, alignment));
+#else
+  return nullptr;
+#endif // ENABLE_SKIA
 }
 
 scoped_refptr<render_tree::Image>
 SoftwareResourceProvider::CreateMultiPlaneImageFromRawMemory(
     std::unique_ptr<render_tree::RawImageMemory> raw_image_memory,
     const render_tree::MultiPlaneImageDataDescriptor& descriptor) {
+#if defined(ENABLE_SKIA)
   printf("SoftwareResourceProvider::CreateMultiPlaneImageFromRawMemory 1...\n");
   TRACE_EVENT0(
       "cobalt::renderer",
@@ -128,6 +155,9 @@ SoftwareResourceProvider::CreateMultiPlaneImageFromRawMemory(
   printf("SoftwareResourceProvider::CreateMultiPlaneImageFromRawMemory 2...\n");
   return base::WrapRefCounted(new SoftwareMultiPlaneImage(
       std::move(skia_software_raw_image_memory), descriptor));
+#else
+  return nullptr;
+#endif // ENABLE_SKIA
 }
 
 /*static sk_sp<SkTypeface> GetOrCreateDefaultTypeface() {
@@ -144,11 +174,12 @@ SoftwareResourceProvider::CreateMultiPlaneImageFromRawMemory(
 
 bool SoftwareResourceProvider::HasLocalFontFamily(
     const char* font_family_name) const {
-  printf("SoftwareResourceProvider::HasLocalFontFamily %s\n", font_family_name);
+  //printf("SoftwareResourceProvider::HasLocalFontFamily %s\n", font_family_name);
+
   TRACE_EVENT0("cobalt::renderer",
                "SoftwareResourceProvider::HasLocalFontFamily()");
 
-#if defined(ENABLE_DYNAMIC_FONT_LOADING)
+#if defined(ENABLE_DYNAMIC_FONT_LOADING) && defined(ENABLE_SKIA)
   sk_sp<SkFontMgr> font_manager(SkFontMgr::RefDefault());
   SkFontStyleSet* skFontStyleSet = font_manager->matchFamily(font_family_name);
   DCHECK(skFontStyleSet);
@@ -161,11 +192,12 @@ bool SoftwareResourceProvider::HasLocalFontFamily(
 
 scoped_refptr<render_tree::Typeface> SoftwareResourceProvider::GetLocalTypeface(
     const char* font_family_name, render_tree::FontStyle font_style) {
-  printf("SoftwareResourceProvider::GetLocalTypeface 1 %s\n", font_family_name);
+  //printf("SoftwareResourceProvider::GetLocalTypeface 1 %s\n", font_family_name);
+
   TRACE_EVENT0("cobalt::renderer",
                "SoftwareResourceProvider::GetLocalTypeface()");
 
-#if defined(ENABLE_DYNAMIC_FONT_LOADING)
+#if defined(ENABLE_DYNAMIC_FONT_LOADING) && defined(ENABLE_SKIA)
   /*sk_sp<SkFontMgr> font_manager(SkFontMgr::RefDefault());
   //font_manager->
   sk_sp<SkTypeface_Cobalt> typeface(
@@ -214,21 +246,26 @@ scoped_refptr<render_tree::Typeface> SoftwareResourceProvider::GetLocalTypeface(
   NOTREACHED() << font_family_name;
 
   return res;
-#else // ENABLE_DYNAMIC_FONT_LOADING
+#elif defined(ENABLE_SKIA)// ENABLE_DYNAMIC_FONT_LOADING
   scoped_refptr<render_tree::Typeface> res = scoped_refptr<render_tree::Typeface>(
     new SkiaTypeface(Font::getDefaultTypeface()));/*Sk*/
-  printf("SoftwareResourceProvider::GetLocalTypeface 2 %s\n", font_family_name);
+  //printf("SoftwareResourceProvider::GetLocalTypeface 2 %s\n", font_family_name);
+
   return res;
+#else
+  return nullptr;
 #endif // ENABLE_DYNAMIC_FONT_LOADING
 }
 
 scoped_refptr<render_tree::Typeface>
 SoftwareResourceProvider::GetLocalTypefaceByFaceNameIfAvailable(
     const char* font_face_name) {
-  printf("SoftwareResourceProvider::GetLocalTypefaceByFaceNameIfAvailable %s\n", font_face_name);
+  //printf("SoftwareResourceProvider::GetLocalTypefaceByFaceNameIfAvailable %s\n", font_face_name);
+
   TRACE_EVENT0("cobalt::renderer",
                "SoftwareResourceProvider::GetLocalTypefaceIfAvailable()");
 
+#if defined(ENABLE_SKIA)
   sk_sp<SkFontMgr> font_manager(SkFontMgr::RefDefault());
   SkFontMgr_Cobalt* cobalt_font_manager =
       base::polymorphic_downcast<SkFontMgr_Cobalt*>(font_manager.get());
@@ -248,6 +285,9 @@ SoftwareResourceProvider::GetLocalTypefaceByFaceNameIfAvailable(
 
   return scoped_refptr<render_tree::Typeface>(new SkiaTypeface(typeface));
   //return base::WrapRefCounted(new cobalt::render_tree::TypefaceStub(NULL));
+#else
+  return nullptr;
+#endif // ENABLE_SKIA
 }
 
 scoped_refptr<render_tree::Typeface>
@@ -256,9 +296,9 @@ SoftwareResourceProvider::GetCharacterFallbackTypeface(
     const std::string& language) {
   TRACE_EVENT0("cobalt::renderer",
                "SoftwareResourceProvider::GetCharacterFallbackTypeface()");
-  printf("SoftwareResourceProvider::GetCharacterFallbackTypeface 1!!! %s\n", language.c_str());
+  //printf("SoftwareResourceProvider::GetCharacterFallbackTypeface 1!!! %s\n", language.c_str());
 
-#if defined(ENABLE_DYNAMIC_FONT_LOADING)
+#if defined(ENABLE_DYNAMIC_FONT_LOADING) && defined(ENABLE_SKIA)
   sk_sp<SkFontMgr> font_manager(SkFontMgr::RefDefault());
   const char* language_cstr = language.c_str();
   /*sk_sp<SkTypeface_Cobalt> typeface(
@@ -274,19 +314,15 @@ SoftwareResourceProvider::GetCharacterFallbackTypeface(
     typeface = getPrimaryTypeface();
   }*/
 
-  //printf("language_cstr %s\n", language_cstr);
-  //DCHECK(false);
+
+    //printf("SoftwareResourceProvider::GetCharacterFallbackTypeface %s\n", language_cstr);
+
   if(!typeface) {
-//#if defined(OS_EMSCRIPTEN)
-//    HTML5_STACKTRACE();
-//#endif // OS_EMSCRIPTEN
-//    NOTREACHED();
-    printf("SoftwareResourceProvider::GetCharacterFallbackTypeface %s\n", language_cstr);
     typeface = Font::getDefaultTypeface();
   }
   DCHECK(typeface);
   return scoped_refptr<render_tree::Typeface>(new SkiaTypeface(typeface));
-#else
+#elif defined(ENABLE_SKIA)
   sk_sp<SkFontMgr> font_manager(SkFontMgr::RefDefault());
   const char* language_cstr = language.c_str();
   /*sk_sp<SkTypeface_Cobalt> typeface(
@@ -298,10 +334,12 @@ SoftwareResourceProvider::GetCharacterFallbackTypeface(
               character)));*/
   sk_sp</*SkTypeface_Cobalt*/SkTypeface> typeface =
     Font::getDefaultTypeface();/*Sk*/
-  printf("SoftwareResourceProvider::GetCharacterFallbackTypeface 2!!! %s\n", language.c_str());
+  //printf("SoftwareResourceProvider::GetCharacterFallbackTypeface 2!!! %s\n", language.c_str());
   DCHECK(typeface);
   return scoped_refptr<render_tree::Typeface>(new SkiaTypeface(typeface));
   //return base::WrapRefCounted(new cobalt::render_tree::TypefaceStub(NULL));
+#else
+  return nullptr;
 #endif // ENABLE_DYNAMIC_FONT_LOADING
 }
 
@@ -311,7 +349,7 @@ SoftwareResourceProvider::CreateTypefaceFromRawData(
         raw_data,
     std::string* error_string) {
 
-  printf("SoftwareResourceProvider::CreateTypefaceFromRawData 1...\n");
+  //printf("SoftwareResourceProvider::CreateTypefaceFromRawData 1...\n");
 
   TRACE_EVENT0("cobalt::renderer",
                "SoftwareResourceProvider::CreateFontFromRawData()");
@@ -330,6 +368,7 @@ SoftwareResourceProvider::CreateTypefaceFromRawData(
   ///  return NULL;
   ///}
 
+#if defined(ENABLE_SKIA)
   std::unique_ptr<SkStreamAsset> stream;
   {
       DCHECK(raw_data->size() > 0);
@@ -345,7 +384,7 @@ SoftwareResourceProvider::CreateTypefaceFromRawData(
   // Free the raw data now that we're done with it.
   raw_data.reset();
 
-  printf("SoftwareResourceProvider::CreateTypefaceFromRawData 2...\n");
+  //printf("SoftwareResourceProvider::CreateTypefaceFromRawData 2...\n");
 
 #if 1
   sk_sp</*SkTypeface_Cobalt*/SkTypeface> typeface(
@@ -377,7 +416,7 @@ SoftwareResourceProvider::CreateTypefaceFromRawData(
               Font::getDefaultTypeface()->makeClone(SkFontArguments()).release())); // TODO*/
   }
 
-  printf("SoftwareResourceProvider::CreateTypefaceFromRawData 1.2...\n");
+  //printf("SoftwareResourceProvider::CreateTypefaceFromRawData 1.2...\n");
 
   if (typeface) {
       //printf("SoftwareResourceProvider::CreateTypefaceFromRawData 3...\n");
@@ -391,6 +430,10 @@ SoftwareResourceProvider::CreateTypefaceFromRawData(
   }
 
   NOTREACHED();
+#else
+  return nullptr;
+#endif // ENABLE_SKIA
+
   //return base::WrapRefCounted(new cobalt::render_tree::TypefaceStub(NULL));
 }
 
@@ -402,6 +445,7 @@ SoftwareResourceProvider::CreateGlyphBuffer(
     const base::char16* text_buffer, size_t text_length,
     const std::string& language, bool is_rtl,
     render_tree::FontProvider* font_provider) {
+#if defined(ENABLE_SKIA)
   //printf("SoftwareResourceProvider::CreateGlyphBuffer 1\n");
   return text_shaper_.CreateGlyphBuffer(text_buffer, text_length, language,
                                         is_rtl, font_provider);
@@ -416,12 +460,16 @@ SoftwareResourceProvider::CreateGlyphBuffer(
   return base::WrapRefCounted(new cobalt::render_tree::GlyphBuffer(
       math::RectF(0, glyph_bounds.y(), glyph_bounds.width() * text_length,
                   glyph_bounds.height())));*/
+#else
+  return nullptr;
+#endif // ENABLE_SKIA
 }
 
 scoped_refptr<render_tree::GlyphBuffer>
 SoftwareResourceProvider::CreateGlyphBuffer(
     const std::string& utf8_string,
     const scoped_refptr<render_tree::Font>& font) {
+#if defined(ENABLE_SKIA)
   //printf("SoftwareResourceProvider::CreateGlyphBuffer 2\n");
   return text_shaper_.CreateGlyphBuffer(utf8_string, font);
   /*const math::RectF& glyph_bounds =
@@ -429,6 +477,9 @@ SoftwareResourceProvider::CreateGlyphBuffer(
   return base::WrapRefCounted(new cobalt::render_tree::GlyphBuffer(math::RectF(
       0, glyph_bounds.y(), glyph_bounds.width() * utf8_string.size(),
       glyph_bounds.height())));*/
+#else
+  return nullptr;
+#endif // ENABLE_SKIA
 }
 
 float SoftwareResourceProvider::GetTextWidth(
@@ -436,6 +487,7 @@ float SoftwareResourceProvider::GetTextWidth(
     const std::string& language, bool is_rtl,
     render_tree::FontProvider* font_provider,
     render_tree::FontVector* maybe_used_fonts) {
+#if defined(ENABLE_SKIA)
   return text_shaper_.GetTextWidth(text_buffer, text_length,
                                    language, is_rtl,
                                    font_provider, maybe_used_fonts);
@@ -448,13 +500,21 @@ float SoftwareResourceProvider::GetTextWidth(
     maybe_used_fonts->push_back(font);
   }
   return font->GetGlyphWidth(glyph_index) * text_length;*/
+#else
+  return 20.0f;
+#endif // ENABLE_SKIA
 }
 
 scoped_refptr<render_tree::Mesh> SoftwareResourceProvider::CreateMesh(
     std::unique_ptr<std::vector<render_tree::Mesh::Vertex> > vertices,
     render_tree::Mesh::DrawMode draw_mode) {
   printf("SoftwareResourceProvider::CreateMesh\n");
+
+#if defined(ENABLE_SKIA)
   return new SoftwareMesh(std::move(vertices), draw_mode);
+#else
+  return nullptr;
+#endif // ENABLE_SKIA
 }
 
 scoped_refptr<render_tree::Image> SoftwareResourceProvider::DrawOffscreenImage(

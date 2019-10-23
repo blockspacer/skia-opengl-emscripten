@@ -80,6 +80,10 @@ void HTMLImageElement::OnRemoveAttribute(const std::string& name) {
 // Algorithm for UpdateTheImageData:
 //   https://www.w3.org/TR/html5/embedded-content-0.html#update-the-image-data
 void HTMLImageElement::UpdateImageData() {
+#if defined(ENABLE_NATIVE_HTML)
+  return;
+#endif
+
   DCHECK(base::MessageLoopCurrent::Get());
   DCHECK(node_document());
   TRACE_EVENT0("cobalt::dom", "HTMLImageElement::UpdateImageData()");

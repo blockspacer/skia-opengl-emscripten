@@ -116,6 +116,13 @@ Document::Document(HTMLElementContext* html_element_context,
   //HTML5_STACKTRACE();
 #endif // OS_EMSCRIPTEN && DISABLE_PTHREADS
 
+#if defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+  if(true) {
+    emscripten::val em_node_
+      = emscripten::val::global("document");
+  }
+#endif // defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+
   DCHECK(html_element_context_);
   DCHECK(options.url.is_empty() || options.url.is_valid());
   page_visibility_state_->AddObserver(this);
@@ -655,6 +662,9 @@ scoped_refptr<render_tree::Node>
 Document::DoSynchronousLayoutAndGetRenderTree() {
   TRACE_EVENT0("cobalt::dom",
                "Document::DoSynchronousLayoutAndGetRenderTree()");
+#if defined(ENABLE_NATIVE_HTML)
+    return nullptr;
+#endif // ENABLE_NATIVE_HTML
 
   if (synchronous_layout_and_produce_render_tree_callback_.is_null()) {
     DLOG(WARNING)

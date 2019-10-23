@@ -34,8 +34,12 @@
 #include "hb-icu.h"
 #include "hb.h"
 #include "third_party/icu/source/common/unicode/uscript.h"
-#include "third_party/skia/include/core/SkTextBlob.h"
 
+#if defined(ENABLE_SKIA)
+#include "third_party/skia/include/core/SkTextBlob.h"
+#endif // ENABLE_SKIA
+
+#if defined(ENABLE_SKIA)
 namespace cobalt {
 namespace renderer {
 namespace rasterizer {
@@ -212,5 +216,7 @@ class TextShaper {
 }  // namespace rasterizer
 }  // namespace renderer
 }  // namespace cobalt
+
+#endif // ENABLE_SKIA
 
 #endif  // COBALT_RENDERER_RASTERIZER_SKIA_TEXT_SHAPER_H_

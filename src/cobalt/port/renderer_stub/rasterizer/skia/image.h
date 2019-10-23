@@ -15,6 +15,8 @@
 #ifndef COBALT_RENDERER_RASTERIZER_SKIA_IMAGE_H_
 #define COBALT_RENDERER_RASTERIZER_SKIA_IMAGE_H_
 
+#if defined(ENABLE_SKIA)
+
 #include "cobalt/base/type_id.h"
 #include "cobalt/math/rect.h"
 #include "cobalt/math/size.h"
@@ -109,5 +111,7 @@ class MultiPlaneImage : public Image {
 }  // namespace rasterizer
 }  // namespace renderer
 }  // namespace cobalt
+
+#endif // ENABLE_SKIA
 
 #endif  // COBALT_RENDERER_RASTERIZER_SKIA_IMAGE_H_

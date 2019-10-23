@@ -14,6 +14,7 @@
 
 #include "renderer_stub/rasterizer/skgl/software_rasterizer.h"
 
+#if defined(ENABLE_SKIA)
 #include <skia/include/core/SkCanvas.h>
 #include <skia/include/core/SkImageInfo.h>
 #include <skia/include/core/SkString.h>
@@ -35,6 +36,7 @@
 #include <skia/include/gpu/gl/GrGLAssembleInterface.h>
 #include <skia/include/gpu/gl/GrGLInterface.h>
 #include <skia/src/gpu/gl/GrGLUtil.h>
+#endif // ENABLE_SKIA
 
 ///#include <GLES2/gl2.h>
 ///#include <GLES2/gl2ext.h>
@@ -54,10 +56,12 @@
 #include <emscripten/threading.h>
 #endif  // OS_EMSCRIPTEN
 
+#if defined(ENABLE_SKIA)
 static SkFont* skFont = nullptr;
 static bool skFontCreated = false;
 static sk_sp<SkTypeface> sktp;
 static const float FONT_SIZE_F = 22.0f;
+#endif // ENABLE_SKIA
 
 // TODO: replace mutex with task queue/emscripten_async_run_in_main_runtime_thread
 // NOTE: surface "blinks" without mutex
@@ -68,6 +72,7 @@ namespace renderer {
 namespace rasterizer {
 namespace egl {
 
+#if defined(ENABLE_SKIA)
 static sk_sp<SkSurface> sRasterSurface;
 
 // TODO >>>
@@ -93,6 +98,7 @@ sk_sp<SkImage> getRasterizerSkImage() {
 #endif // USE_PIMG_MUTEX
   return pImage;
 }
+#endif // ENABLE_SKIA
 
 // blinks even with mutex
 /*SkPixmap getRasterizerSkPixmap() {
@@ -102,6 +108,7 @@ sk_sp<SkImage> getRasterizerSkImage() {
     return pixmap;
 }*/
 
+#if defined(ENABLE_SKIA)
 #if defined(OS_EMSCRIPTEN)
 void *updateWASMPixmapAndFreeDataCb = nullptr;
 
@@ -140,15 +147,18 @@ void tranferPixmapToMainWASMThread(const SkPixmap* pixmapCopy) {
 #endif // ASYNC_WASM_PIXMAP_TRANSFER
 }
 #endif // OS_EMSCRIPTEN
+#endif // ENABLE_SKIA
 
 SoftwareRasterizer::SoftwareRasterizer(
     ///backend::GraphicsContext* context,
     bool purge_skia_font_caches_on_destruction)
+//#if defined(ENABLE_SKIA)
     :
     /* context_(
           base::polymorphic_downcast<backend::GraphicsContextEGL*>(context))
           ,*/
           skia_rasterizer_(purge_skia_font_caches_on_destruction)
+//#endif // ENABLE_SKIA
     {}
 
 void SoftwareRasterizer::Submit(
@@ -156,8 +166,8 @@ void SoftwareRasterizer::Submit(
     const scoped_refptr<backend::RenderTarget>& render_target,
     const Options& options) {
   ///printf("SoftwareRasterizer::Submit( 1\n");
+#if defined(ENABLE_SKIA)
   DCHECK(render_target);
-
   // TODO >>
   //return;
 
@@ -330,13 +340,17 @@ void SoftwareRasterizer::Submit(
 
   context_->Blit(output_texture->gl_handle(), 0, 0, width, height);
   context_->SwapBuffers(render_target_egl);*/
+#endif // ENABLE_SKIA
 }
 
 render_tree::ResourceProvider* SoftwareRasterizer::GetResourceProvider() {
-  //return nullptr;///
+//#if defined(ENABLE_SKIA)
   printf("SoftwareRasterizer::GetResourceProvider 1\n");
   return skia_rasterizer_.GetResourceProvider();
   ///return &resource_provider_stub_;
+//#else
+//  return nullptr;///
+//#endif // ENABLE_SKIA
 }
 
 }  // namespace egl

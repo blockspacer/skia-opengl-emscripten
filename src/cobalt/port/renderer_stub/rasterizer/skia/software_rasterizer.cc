@@ -17,11 +17,19 @@
 #include "renderer_stub/rasterizer/skia/software_rasterizer.h"
 
 #include "base/trace_event/trace_event.h"
+
+#if defined(ENABLE_SKIA)
 #include "renderer_stub/rasterizer/skia/cobalt_skia_type_conversions.h"
 #include "renderer_stub/rasterizer/skia/render_tree_node_visitor.h"
+#endif // ENABLE_SKIA
+
+/// \note provides stub when !ENABLE_SKIA
 #include "renderer_stub/rasterizer/skia/software_resource_provider.h"
+
+#if defined(ENABLE_SKIA)
 #include "third_party/skia/include/core/SkCanvas.h"
 #include "third_party/skia/include/core/SkSurface.h"
+#endif // ENABLE_SKIA
 
 #include "base/bind.h"
 
@@ -30,6 +38,7 @@ namespace renderer {
 namespace rasterizer {
 namespace skia {
 
+#if defined(ENABLE_SKIA)
 namespace {
 
 sk_sp<SkSurface> CreateScratchSkSurface(const math::Size& size) {
@@ -62,14 +71,18 @@ std::unique_ptr<RenderTreeNodeVisitor::ScratchSurface> CreateScratchSurface(
 
 }  // namespace
 
+#endif // ENABLE_SKIA
+
 class SoftwareRasterizer::Impl {
  public:
   explicit Impl(bool purge_skia_font_caches_on_destruction);
 
+#if defined(ENABLE_SKIA)
   // Consume the render tree and output the results to the render target passed
   // into the constructor.
   void Submit(const scoped_refptr<render_tree::Node>& render_tree,
               SkCanvas* render_target);
+#endif // ENABLE_SKIA
 
   render_tree::ResourceProvider* GetResourceProvider();
 
@@ -83,6 +96,7 @@ SoftwareRasterizer::Impl::Impl(bool purge_skia_font_caches_on_destruction)
   TRACE_EVENT0("cobalt::renderer", "SoftwareRasterizer::SoftwareRasterizer()");
 }
 
+#if defined(ENABLE_SKIA)
 void SoftwareRasterizer::Impl::Submit(
     const scoped_refptr<render_tree::Node>& render_tree,
     SkCanvas* render_target) {
@@ -109,6 +123,7 @@ void SoftwareRasterizer::Impl::Submit(
   }
   ///printf("SoftwareRasterizer::Impl::Submit 2\n");
 }
+#endif // ENABLE_SKIA
 
 render_tree::ResourceProvider* SoftwareRasterizer::Impl::GetResourceProvider() {
   TRACE_EVENT0("cobalt::renderer", "SoftwareRasterizer::GetResourceProvider()");
@@ -121,6 +136,7 @@ SoftwareRasterizer::SoftwareRasterizer(bool purge_caches_on_destruction)
 
 SoftwareRasterizer::~SoftwareRasterizer() {}
 
+#if defined(ENABLE_SKIA)
 // Consume the render tree and output the results to the render target passed
 // into the constructor.
 void SoftwareRasterizer::Submit(
@@ -129,6 +145,7 @@ void SoftwareRasterizer::Submit(
   ///printf("SoftwareRasterizer::Submit 1\n");
   impl_->Submit(render_tree, render_target);
 }
+#endif // ENABLE_SKIA
 
 render_tree::ResourceProvider* SoftwareRasterizer::GetResourceProvider() {
   printf("SoftwareRasterizer::GetResourceProvider 1\n");

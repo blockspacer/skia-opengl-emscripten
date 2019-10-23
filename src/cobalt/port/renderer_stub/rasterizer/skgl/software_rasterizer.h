@@ -24,10 +24,12 @@
 
 #include "cobalt/render_tree/resource_provider_stub.h"
 
+#if defined(ENABLE_SKIA)
 #include <skia/include/core/SkRefCnt.h>
 
 class SkImage;
 class SkPixmap;
+#endif // ENABLE_SKIA
 
 namespace cobalt {
 namespace renderer {
@@ -39,11 +41,13 @@ namespace backend {
 namespace rasterizer {
 namespace egl {
 
+#if defined(ENABLE_SKIA)
 // TODO:
 // SkSurface and SkCanvas are both NOT thread-safe. Only SkImage and SkPicture are.
 //Thus to shard a large drawing across multiple threads, you need a separate instance of a surface/canvas in each thread.
 //sk_sp<SkSurface> getRasterizerSkSurface();
 sk_sp<SkImage> getRasterizerSkImage();
+#endif // ENABLE_SKIA
 
 //SkPixmap getRasterizerSkPixmap();
 
@@ -70,7 +74,9 @@ class SoftwareRasterizer : public Rasterizer {
 
  private:
   ///backend::GraphicsContextEGL* context_;
+//#if defined(ENABLE_SKIA)
   skia::SoftwareRasterizer skia_rasterizer_;
+//#endif // ENABLE_SKIA
 
   render_tree::ResourceProviderStub resource_provider_stub_;
 };

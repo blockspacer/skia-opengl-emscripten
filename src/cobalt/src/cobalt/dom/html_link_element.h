@@ -28,6 +28,14 @@
 #include "cobalt/loader/loader.h"
 #include "cobalt/loader/text_decoder.h"
 
+#if defined(OS_EMSCRIPTEN)
+#include <emscripten.h>
+#include <emscripten/bind.h>
+#include <emscripten/html5.h>
+#include <emscripten/bind.h>
+#include <emscripten/val.h>
+#endif // OS_EMSCRIPTEN
+
 namespace cobalt {
 namespace dom {
 
@@ -41,7 +49,18 @@ class HTMLLinkElement : public HTMLElement {
   static const std::vector<std::string> kSupportedRelValues;
 
   explicit HTMLLinkElement(Document* document)
-      : HTMLElement(document, base::Token(kTagName)) {}
+      : HTMLElement(document, base::Token(kTagName))
+{
+#if 0 // TODO: use lock-free Sequences to post tasks on main browser thread https://chromium.googlesource.com/chromium/src/+/master/docs/threading_and_tasks.md#Using-Sequences-Instead-of-Locks
+#if defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+  if(true) {
+    em_node_
+      = emscripten::val::global("document").call<emscripten::val>(
+          "createElement", emscripten::val("link"));
+  }
+#endif // defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+#endif // 0
+}
 
   // Web API: HTMLLinkElement
   //

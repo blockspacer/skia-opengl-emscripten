@@ -15,6 +15,7 @@
 #ifndef COBALT_RENDERER_RASTERIZER_SKIA_SOFTWARE_IMAGE_H_
 #define COBALT_RENDERER_RASTERIZER_SKIA_SOFTWARE_IMAGE_H_
 
+#if defined(ENABLE_SKIA)
 #include <memory>
 
 #include "base/memory/aligned_memory.h"
@@ -125,3 +126,5 @@ class SoftwareMultiPlaneImage : public MultiPlaneImage {
 }  // namespace cobalt
 
 #endif  // COBALT_RENDERER_RASTERIZER_SKIA_SOFTWARE_IMAGE_H_
+
+#endif // ENABLE_SKIA

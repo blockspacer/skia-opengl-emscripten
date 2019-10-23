@@ -527,6 +527,15 @@ static SDL_Event e;
 // Main loop flag
 static bool quitApp = false;
 
+static void onResize(int widthIn, int heightIn)
+{
+  DRAW_BUFFER_WIDTH = std::min(widthIn, MAX_DRAW_BUFFER_WIDTH);
+  DRAW_BUFFER_HEIGHT = std::min(heightIn, MAX_DRAW_BUFFER_HEIGHT);
+#if defined(ENABLE_OPENGL)
+  glViewport(0, 0, DRAW_BUFFER_WIDTH, DRAW_BUFFER_HEIGHT);
+#endif // ENABLE_OPENGL
+}
+
 #if defined(ENABLE_OPENGL)
 //static GLint uniformRedClrTint;
 
@@ -945,7 +954,11 @@ class CobaltTester {
   /// \note need value < 200ms for animations
   /// formula: MicrosecondsPerSecond / (layout_refresh_rate_ + 1.0)
   /// 1.0 = 500ms, 5.0 = 166ms, 29.0 = 33.3ms, 60.0 = 16ms
+#if defined(ENABLE_NATIVE_HTML)
+  float layout_refresh_rate_ = 0;
+#else
   float layout_refresh_rate_ = kLayoutMaxRefreshFrequencyInHz;
+#endif // ENABLE_NATIVE_HTML
 
   // Web module owns the dom and layout stat trackers.
   std::unique_ptr<layout::LayoutStatTracker> layout_stat_tracker_;
@@ -1020,16 +1033,18 @@ void CobaltTester::OnCspPolicyChanged() {
     DCHECK(g_cobaltTester);
     DCHECK_EQ(base::MessageLoopCurrent::Get().task_runner(), g_cobaltTester->self_task_runner_);
     DCHECK(g_cobaltTester->thread_checker_.CalledOnValidThread());
-
 }
 
 // Called by |layout_mananger_| after it runs the animation frame callbacks.
 void CobaltTester::OnRanAnimationFrameCallbacks() {
+#if defined(ENABLE_NATIVE_HTML)
+  return;
+#endif // ENABLE_NATIVE_HTML
+
     printf("OnRanAnimationFrameCallbacks\n");
     DCHECK(g_cobaltTester);
     DCHECK_EQ(base::MessageLoopCurrent::Get().task_runner(), g_cobaltTester->self_task_runner_);
     DCHECK(g_cobaltTester->thread_checker_.CalledOnValidThread());
-
 }
 
 // Called by the Renderer on the Renderer thread when it rasterizes a render
@@ -1038,6 +1053,10 @@ void CobaltTester::OnRanAnimationFrameCallbacks() {
 void CobaltTester::OnRenderTreeRasterized(
     scoped_refptr<base::SingleThreadTaskRunner> /*web_module_message_loop*/,
     const base::TimeTicks& /*produced_time*/) {
+#if defined(ENABLE_NATIVE_HTML)
+  return;
+#endif // ENABLE_NATIVE_HTML
+
     ///printf("OnRenderTreeRasterized\n");
 
     //DCHECK(g_cobaltTester);
@@ -1064,6 +1083,10 @@ void CobaltTester::OnRenderTreeRasterized(
 }
 
 void CobaltTester::BrowserProcessRenderTreeSubmissionQueue() {
+#if defined(ENABLE_NATIVE_HTML)
+  return;
+#endif // ENABLE_NATIVE_HTML
+
     TRACE_EVENT0("cobalt::browser",
                  "CobaltTester::ProcessRenderTreeSubmissionQueue()");
 
@@ -1102,6 +1125,10 @@ renderer::Submission CobaltTester::CreateSubmissionFromLayoutResults(
 }
 
 void CobaltTester::OnRendererSubmissionRasterized() {
+#if defined(ENABLE_NATIVE_HTML)
+  return;
+#endif // ENABLE_NATIVE_HTML
+
     ///printf("OnRendererSubmissionRasterized 1\n");
 
     TRACE_EVENT0("cobalt::browser",
@@ -1147,8 +1174,12 @@ void CobaltTester::SubmitCurrentRenderTreeToRenderer() {
 
 void CobaltTester::OnBrowserRenderTreeProduced(
     int /*main_web_module_generation*/,
-    //const browser::WebModule::LayoutResults& layout_results) {
-    const cobalt::layout::LayoutManager::LayoutResults& layout_results) {
+    const cobalt::layout::LayoutManager::LayoutResults& layout_results)
+{
+#if defined(ENABLE_NATIVE_HTML)
+  return;
+#endif // ENABLE_NATIVE_HTML
+
     DCHECK(g_cobaltTester);
     DCHECK(g_cobaltTester->thread_checker_.CalledOnValidThread());
 
@@ -1207,6 +1238,9 @@ void CobaltTester::OnBrowserRenderTreeProduced(
 void CobaltTester::QueueOnRenderTreeProduced(
     int main_web_module_generation,
     const cobalt::layout::LayoutManager::LayoutResults& layout_results) {
+#if defined(ENABLE_NATIVE_HTML)
+  return;
+#endif // ENABLE_NATIVE_HTML
 
     // printf("QueueOnRenderTreeProduced 1\n");
 
@@ -1987,6 +2021,9 @@ CobaltTester::CobaltTester()
       0,//data.options.csp_insecure_allowed_token,
       999,//data.dom_max_element_depth,
       1.0,//data.options.video_playback_rate_multiplier,
+  //#if defined(ENABLE_NATIVE_HTML)
+  //      dom::Window::kClockTypeTestRunner,
+  //#elif
 #if defined(ENABLE_TEST_RUNNER)
       data.options.layout_trigger == layout::LayoutManager::kTestRunnerMode
           ? dom::Window::kClockTypeTestRunner
@@ -2306,7 +2343,7 @@ static void animate() {
     //printf("animate end\n");
 }
 
-#if defined(ENABLE_COBALT)
+#if defined(ENABLE_COBALT) && defined(ENABLE_SKIA)
 static void drawBrowserDemo() {
     //using cobalt::renderer::rasterizer::egl::getRasterizerSkSurface;
     using cobalt::renderer::rasterizer::egl::getRasterizerSkImage;
@@ -2336,8 +2373,9 @@ static void drawBrowserDemo() {
               skiaUiDemo.drawTexture(pixmap.width(), pixmap.height(), pixmap.addr());
             //}
         } else {
-            ///if (isDebugPeriodReached())
-            printf("pixmap.bounds().isEmpty()\n");
+#if defined(ENABLE_BASE)
+            NOTIMPLEMENTED_LOG_ONCE();
+#endif // ENABLE_BASE
         }
 
 #if !defined(OS_EMSCRIPTEN)
@@ -2354,15 +2392,6 @@ static void drawBrowserDemo() {
     //}
 }
 #endif // ENABLE_COBALT
-
-static void onResize(int widthIn, int heightIn)
-{
-  DRAW_BUFFER_WIDTH = std::min(widthIn, MAX_DRAW_BUFFER_WIDTH);
-  DRAW_BUFFER_HEIGHT = std::min(heightIn, MAX_DRAW_BUFFER_HEIGHT);
-#if defined(ENABLE_OPENGL)
-  glViewport(0, 0, DRAW_BUFFER_WIDTH, DRAW_BUFFER_HEIGHT);
-#endif // ENABLE_OPENGL
-}
 
 ///
 // Draw a triangle using the shader pair created in Init()
@@ -2382,7 +2411,7 @@ static void Draw() {
 
 #if defined(ENABLE_SKIA)
 
-#if defined(ENABLE_COBALT)
+#if defined(ENABLE_COBALT) && defined(ENABLE_SKIA)
   if (render_browser_window
       /*&& g_cobaltTester
       && g_cobaltTester->window_->isDocumentStartedLoading()
@@ -4787,9 +4816,11 @@ static void mainLockFreeLoop() {
 
     wprintf(L"%s", L"Unicode -- English -- Русский -- Ελληνικά -- Español.\n");*/
 
+#if !defined(ENABLE_NATIVE_HTML)
     if(!render_browser_window) {
       skiaUiDemo.handleSDLEvent(&e);//SDL_Event * event
     }
+#endif // ENABLE_NATIVE_HTML
 
     bool isTextInput = false;
 
@@ -5239,7 +5270,7 @@ static void mainLockFreeLoop() {
 #elif defined(__EMSCRIPTEN__) // EMSCRIPTEN without SDL2
 
   // Render
-#if defined(ENABLE_OPENGL)
+#if defined(ENABLE_OPENGL) && defined(ENABLE_SKIA)
   animate();
   Draw();
 #endif // ENABLE_OPENGL
@@ -6632,7 +6663,7 @@ if(!render_browser_window) {
   //main_thread_event_.Reset();
 #endif // ENABLE_COBALT
 
-#if defined(OS_EMSCRIPTEN) && defined(ENABLE_COBALT)
+#if defined(OS_EMSCRIPTEN) && defined(ENABLE_COBALT) && defined(ENABLE_SKIA)
     using cobalt::renderer::rasterizer::egl::setUpdateWASMPixmapAndFreeDataCb;
     setUpdateWASMPixmapAndFreeDataCb((void*)(updateWASMPixmapAndFreeData));
 #endif // OS_EMSCRIPTEN

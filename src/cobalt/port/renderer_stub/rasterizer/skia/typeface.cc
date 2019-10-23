@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#if defined(ENABLE_SKIA)
 #include "renderer_stub/rasterizer/skia/typeface.h"
 
 #include "renderer_stub/rasterizer/skia/font.h"
@@ -129,3 +130,5 @@ render_tree::GlyphIndex SkiaTypeface::GetGlyphForCharacter(
 }  // namespace rasterizer
 }  // namespace renderer
 }  // namespace cobalt
+
+#endif // ENABLE_SKIA

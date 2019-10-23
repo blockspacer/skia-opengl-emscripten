@@ -45,6 +45,7 @@
 //#include "ui/gfx/native_input_node_widget_types.h"
 #endif // ENABLE_BLINK_UI_NATIVE_THEME
 
+#if defined(ENABLE_BLINK_UI)
 #include "ui/display/manager/default_touch_transform_setter.h"
 #include "ui/display/manager/display_manager.h"
 #include "ui/display/manager/test/touch_device_manager_test_api.h"
@@ -118,6 +119,7 @@
 
 #include "ui/compositor/paint_recorder.h"
 #include "ui/compositor/canvas_painter.h"
+#endif // ENABLE_BLINK_UI
 
 #include <memory>
 

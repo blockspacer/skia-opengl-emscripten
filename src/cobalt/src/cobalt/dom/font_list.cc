@@ -323,12 +323,13 @@ void FontList::GenerateSpaceWidth() {
         primary_font->GetGlyphForCharacter(' ');
     space_width_ = primary_font->GetGlyphWidth(space_glyph);
     if (space_width_ == 0) {
-      DLOG(WARNING) << "Font being used with space width of 0!";
+      //DLOG(WARNING) << "Font being used with space width of 0!";
+      NOTIMPLEMENTED_LOG_ONCE();
     }
 
     /// \todo is_space_width_set_ = true;
     is_space_width_set_ = space_width_ > 0;
-    DCHECK(is_space_width_set_);
+    //DCHECK(is_space_width_set_); // TODO: may be empty for some time
   }
 }
 

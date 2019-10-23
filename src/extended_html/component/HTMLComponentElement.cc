@@ -80,8 +80,10 @@
 #include "cobalt/dom/keyboard_event.h"
 #include "cobalt/dom/event.h"
 
+#if defined(ENABLE_SKIA)
 #include "skia/include/core/SkRefCnt.h"
 #include "skia/include/core/SkTime.h"
+#endif // ENABLE_SKIA
 
 #include <string>
 #include <map>
@@ -89,9 +91,12 @@
 #include <memory>
 
 #include "base/memory/ptr_util.h"
+
+#if defined(ENABLE_BLINK_UI)
 #include "ui/events/event.h"
 #include "ui/events/keycodes/dom/keycode_converter.h"
 #include "ui/events/keycodes/keyboard_code_conversion.h"
+#endif // ENABLE_BLINK_UI
 
 using namespace cobalt;
 using namespace cobalt::cssom;
@@ -836,7 +841,8 @@ void HTMLComponentElement::onBoxGeneratorVisit(cobalt::layout::BoxGenerator& box
       component->onLoad(
         const_cast<HTMLComponentElement*>(this));
       set_inner_html(component->data()); /// \note can be empty
-      printf("set_inner_html %s\n", component->data().c_str());
+      //printf("HTMLComponentElement::set_inner_html %s\n",
+      //  component->data().c_str());
       current_data_source_ = data_source();
       /*if(component->loaded_cb()) {
         component->loaded_cb()(

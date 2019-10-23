@@ -151,6 +151,10 @@ bool Box::IsAbsolutelyPositioned() const {
 }
 
 void Box::UpdateSize(const LayoutParams& layout_params) {
+#if defined(ENABLE_NATIVE_HTML)
+  return;
+#endif // ENABLE_NATIVE_HTML
+
   if (ValidateUpdateSizeInputs(layout_params)) {
     return;
   }

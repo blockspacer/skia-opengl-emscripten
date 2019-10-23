@@ -19,6 +19,14 @@
 
 #include "cobalt/dom/html_element.h"
 
+#if defined(OS_EMSCRIPTEN)
+#include <emscripten.h>
+#include <emscripten/bind.h>
+#include <emscripten/html5.h>
+#include <emscripten/bind.h>
+#include <emscripten/val.h>
+#endif // OS_EMSCRIPTEN
+
 namespace cobalt {
 namespace dom {
 
@@ -28,7 +36,18 @@ namespace dom {
 class HTMLUnknownElement : public HTMLElement {
  public:
   HTMLUnknownElement(Document* document, base::Token tag_name)
-      : HTMLElement(document, tag_name) {}
+      : HTMLElement(document, tag_name)
+{
+#if 0 // TODO: use lock-free Sequences to post tasks on main browser thread https://chromium.googlesource.com/chromium/src/+/master/docs/threading_and_tasks.md#Using-Sequences-Instead-of-Locks
+#if defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+  if(true) {
+    em_node_
+      = emscripten::val::global("document").call<emscripten::val>(
+          "createElement", emscripten::val("div"));
+  }
+#endif // defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+#endif // 0
+}
 
   // Custom, not in any spec.
   //

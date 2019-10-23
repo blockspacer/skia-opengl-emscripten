@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#if defined(ENABLE_SKIA)
 #include "renderer_stub/rasterizer/skia/image.h"
 
 #include "base/trace_event/trace_event.h"
@@ -54,3 +55,5 @@ void Image::DCheckForPremultipliedAlpha(const math::Size& dimensions,
 }  // namespace rasterizer
 }  // namespace renderer
 }  // namespace cobalt
+
+#endif // ENABLE_SKIA

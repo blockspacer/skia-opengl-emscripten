@@ -15,6 +15,7 @@
 #ifndef COBALT_RENDERER_RASTERIZER_SKIA_FONT_H_
 #define COBALT_RENDERER_RASTERIZER_SKIA_FONT_H_
 
+#if defined(ENABLE_SKIA)
 #include <bitset>
 #include <memory>
 
@@ -124,3 +125,5 @@ private:
 }  // namespace cobalt
 
 #endif  // COBALT_RENDERER_RASTERIZER_SKIA_FONT_H_
+
+#endif // ENABLE_SKIA

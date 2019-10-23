@@ -39,26 +39,26 @@ set(COBALT_skia_cobalt_SOURCES
 #  '<(DEPTH)/third_party/icu/icu.gyp:icuuc',
 #  '<(DEPTH)/third_party/ots/ots.gyp:ots',
 #],
-set(COBALT_skia_common_SOURCES
-  ${COBALT_CORE_DIR}/renderer/rasterizer/skia/cobalt_skia_type_conversions.cc
-  ${COBALT_CORE_DIR}/renderer/rasterizer/skia/cobalt_skia_type_conversions.h
-  ${COBALT_CORE_DIR}/renderer/rasterizer/skia/font.cc
-  ${COBALT_CORE_DIR}/renderer/rasterizer/skia/font.h
-  ${COBALT_CORE_DIR}/renderer/rasterizer/skia/glyph_buffer.cc
-  ${COBALT_CORE_DIR}/renderer/rasterizer/skia/glyph_buffer.h
-  ${COBALT_CORE_DIR}/renderer/rasterizer/skia/harfbuzz_font.cc
-  ${COBALT_CORE_DIR}/renderer/rasterizer/skia/harfbuzz_font.h
-  ${COBALT_CORE_DIR}/renderer/rasterizer/skia/image.cc
-  ${COBALT_CORE_DIR}/renderer/rasterizer/skia/image.h
-  ${COBALT_CORE_DIR}/renderer/rasterizer/skia/render_tree_node_visitor.cc
-  ${COBALT_CORE_DIR}/renderer/rasterizer/skia/render_tree_node_visitor.h
-  ${COBALT_CORE_DIR}/renderer/rasterizer/skia/scratch_surface_cache.cc
-  ${COBALT_CORE_DIR}/renderer/rasterizer/skia/scratch_surface_cache.h
-  ${COBALT_CORE_DIR}/renderer/rasterizer/skia/text_shaper.cc
-  ${COBALT_CORE_DIR}/renderer/rasterizer/skia/text_shaper.h
-  ${COBALT_CORE_DIR}/renderer/rasterizer/skia/typeface.cc
-  ${COBALT_CORE_DIR}/renderer/rasterizer/skia/typeface.h
-)
+#set(COBALT_skia_common_SOURCES
+#  ${COBALT_CORE_DIR}/renderer/rasterizer/skia/cobalt_skia_type_conversions.cc
+#  ${COBALT_CORE_DIR}/renderer/rasterizer/skia/cobalt_skia_type_conversions.h
+#  ${COBALT_CORE_DIR}/renderer/rasterizer/skia/font.cc
+#  ${COBALT_CORE_DIR}/renderer/rasterizer/skia/font.h
+#  ${COBALT_CORE_DIR}/renderer/rasterizer/skia/glyph_buffer.cc
+#  ${COBALT_CORE_DIR}/renderer/rasterizer/skia/glyph_buffer.h
+#  ${COBALT_CORE_DIR}/renderer/rasterizer/skia/harfbuzz_font.cc
+#  ${COBALT_CORE_DIR}/renderer/rasterizer/skia/harfbuzz_font.h
+#  ${COBALT_CORE_DIR}/renderer/rasterizer/skia/image.cc
+#  ${COBALT_CORE_DIR}/renderer/rasterizer/skia/image.h
+#  ${COBALT_CORE_DIR}/renderer/rasterizer/skia/render_tree_node_visitor.cc
+#  ${COBALT_CORE_DIR}/renderer/rasterizer/skia/render_tree_node_visitor.h
+#  ${COBALT_CORE_DIR}/renderer/rasterizer/skia/scratch_surface_cache.cc
+#  ${COBALT_CORE_DIR}/renderer/rasterizer/skia/scratch_surface_cache.h
+#  ${COBALT_CORE_DIR}/renderer/rasterizer/skia/text_shaper.cc
+#  ${COBALT_CORE_DIR}/renderer/rasterizer/skia/text_shaper.h
+#  ${COBALT_CORE_DIR}/renderer/rasterizer/skia/typeface.cc
+#  ${COBALT_CORE_DIR}/renderer/rasterizer/skia/typeface.h
+#)
 
 
 add_library(cobalt_renderer STATIC
@@ -85,7 +85,7 @@ target_link_libraries(cobalt_renderer PUBLIC
   icu
   ced
   glm
-  SKIA
+  ${SKIA_LIB}
   ${HARFBUZZ_LIBRARIES}
 )
 

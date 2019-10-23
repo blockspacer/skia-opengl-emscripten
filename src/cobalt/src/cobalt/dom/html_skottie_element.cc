@@ -51,6 +51,16 @@ HTMLSkottieElement::HTMLSkottieElement(Document* document)
     //: HTMLMediaElement(document, base::Token(kTagName)) {
   TRACE_EVENT0("cobalt::dom", "HTMLSkottieElement::HTMLSkottieElement()");
   printf("Created new HTMLSkottieElement for %s\n", src().c_str());
+
+#if 0 // TODO: use lock-free Sequences to post tasks on main browser thread https://chromium.googlesource.com/chromium/src/+/master/docs/threading_and_tasks.md#Using-Sequences-Instead-of-Locks
+#if defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+  if(true) {
+    em_node_
+      = emscripten::val::global("document").call<emscripten::val>(
+          "createElement", emscripten::val("div"));
+  }
+#endif // defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+#endif // 0
 }
 
 HTMLSkottieElement::~HTMLSkottieElement() {

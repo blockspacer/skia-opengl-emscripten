@@ -82,22 +82,26 @@
 #include "cobalt/dom/event.h"
 #include "cobalt/dom/keycode.h"
 
+#if defined(ENABLE_SKIA)
 #include "skia/include/core/SkRefCnt.h"
 #include "skia/include/core/SkTime.h"
+#endif // ENABLE_SKIA
 
 #include <memory>
 
 #include "base/memory/ptr_util.h"
-#include "ui/events/event.h"
-#include "ui/events/keycodes/dom/keycode_converter.h"
-#include "ui/events/keycodes/keyboard_code_conversion.h"
-
 #include "base/memory/ptr_util.h"
 #include "base/metrics/histogram.h"
 #include "base/metrics/histogram_macros.h"
 #include "base/strings/string_number_conversions.h"
 #include "base/strings/stringprintf.h"
 #include "build/build_config.h"
+
+#if defined(ENABLE_BLINK_UI)
+#include "ui/events/event.h"
+#include "ui/events/keycodes/dom/keycode_converter.h"
+#include "ui/events/keycodes/keyboard_code_conversion.h"
+
 #include "ui/events/base_event_utils.h"
 #include "ui/events/event_utils.h"
 #include "ui/events/keycodes/dom/dom_code.h"
@@ -109,6 +113,7 @@
 #include "ui/gfx/geometry/safe_integer_conversions.h"
 #include "ui/gfx/transform.h"
 #include "ui/gfx/transform_util.h"
+#endif // ENABLE_BLINK_UI
 
 using namespace cobalt;
 using namespace cobalt::cssom;
@@ -130,6 +135,7 @@ const char HTMLInputElement::kAttrNameWidth[] = "width";
 
 const char HTMLInputElement::kAttrNameHeight[] = "height";
 
+#if defined(ENABLE_BLINK_UI)
 // see cobalt/src/cobalt/dom/keycode.h and KeyCodeToSbKey
 static ui::KeyboardCode keyFromKeyCode(uint32_t key_code) {
   // Key events with key code of VKEY_PROCESSKEY, usually created by virtual
@@ -822,6 +828,7 @@ static ui::KeyboardCode keyFromKeyCode(uint32_t key_code) {
   }
   return result;
 }
+#endif // ENABLE_BLINK_UI
 
 HTMLInputElement::HTMLInputElement(Document* document)
     : HTMLCustomElement(document, base::Token(kTagName)) {
@@ -875,6 +882,7 @@ HTMLInputElement::HTMLInputElement(Document* document)
               (bool)(mouseEvent->buttons() & kSbKeyMouse2),
               (bool)(mouseEvent->buttons() & kSbKeyMouse3));
       //(client_->GetCursorScreenPoint());
+#if defined(ENABLE_BLINK_UI)
       int changed_button_flags = ui::EF_NONE;
       if(mouseEvent->buttons() & kSbKeyMouse2) { // left
         changed_button_flags |= ui::EF_LEFT_MOUSE_BUTTON;
@@ -922,6 +930,7 @@ HTMLInputElement::HTMLInputElement(Document* document)
         }
 
       }
+#endif // ENABLE_BLINK_UI
 
       return base::nullopt;
     });
@@ -961,7 +970,7 @@ HTMLInputElement::HTMLInputElement(Document* document)
               elem->tag_name().c_str(),
               attrVal.c_str(),
               elem->text_content().value_or("").c_str());
-
+#if defined(ENABLE_BLINK_UI)
       int changed_button_flags = ui::EF_NONE;
       if(mouseEvent->buttons() & kSbKeyMouse2) { // left
         changed_button_flags |= ui::EF_LEFT_MOUSE_BUTTON;
@@ -1009,6 +1018,7 @@ HTMLInputElement::HTMLInputElement(Document* document)
             });
         }
       }
+#endif // ENABLE_BLINK_UI
 
       return base::nullopt;
     });
@@ -1103,6 +1113,7 @@ HTMLInputElement::HTMLInputElement(Document* document)
             attrVal.c_str(),
             elem->text_content().value_or("").c_str());
 
+#if defined(ENABLE_BLINK_UI)
     int changed_button_flags = ui::EF_NONE;
 
     if(mouseEvent->buttons() & kSbKeyMouse2) { // left
@@ -1152,6 +1163,7 @@ HTMLInputElement::HTMLInputElement(Document* document)
           });
       }
     }
+#endif // ENABLE_BLINK_UI
 
     return base::nullopt;
   });
@@ -1317,6 +1329,7 @@ HTMLInputElement::HTMLInputElement(Document* document)
         base::polymorphic_downcast<dom::HTMLElement*>(elem.get());
       CHECK(elementHTML);
 
+#if defined(ENABLE_BLINK_UI)
       /// \todo EF_CONTROL_DOWN
       /// https://github.com/blockspacer/skia-opengl-emscripten/blob/bb16ab108bc4018890f4ff3179250b76c0d9053b/src/chromium/ui/events/keycodes/keyboard_code_conversion.cc#L266
       int flags = ui::EF_NONE;
@@ -1424,6 +1437,7 @@ HTMLInputElement::HTMLInputElement(Document* document)
           }*/
         }
       }
+#endif // ENABLE_BLINK_UI
 
       return base::nullopt;
     });
@@ -1667,6 +1681,7 @@ HTMLInputElement::HTMLInputElement(Document* document)
                base::polymorphic_downcast<dom::HTMLElement*>(elem.get());
            CHECK(elementHTML);
 
+#if defined(ENABLE_BLINK_UI)
            /// \todo EF_CONTROL_DOWN
            /// https://github.com/blockspacer/skia-opengl-emscripten/blob/bb16ab108bc4018890f4ff3179250b76c0d9053b/src/chromium/ui/events/keycodes/keyboard_code_conversion.cc#L266
            int flags = ui::EF_NONE;
@@ -1774,6 +1789,7 @@ HTMLInputElement::HTMLInputElement(Document* document)
   }*/
              }
            }
+#endif // ENABLE_BLINK_UI
       return base::nullopt;
     });
 }

@@ -23,6 +23,8 @@
 #include "cobalt/render_tree/mesh.h"
 #include "cobalt/render_tree/resource_provider.h"
 
+#if defined(ENABLE_SKIA)
+
 namespace cobalt {
 namespace renderer {
 namespace rasterizer {
@@ -56,5 +58,7 @@ class SoftwareMesh : public render_tree::Mesh {
 }  // namespace rasterizer
 }  // namespace renderer
 }  // namespace cobalt
+
+#endif // ENABLE_SKIA
 
 #endif  // COBALT_RENDERER_RASTERIZER_SKIA_SOFTWARE_MESH_H_

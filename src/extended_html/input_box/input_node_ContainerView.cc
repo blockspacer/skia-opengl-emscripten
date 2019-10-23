@@ -8,11 +8,13 @@
 
 #include "cobalt/base/polymorphic_downcast.h"
 
+#if defined(ENABLE_SKIA)
 #include "renderer_stub/rasterizer/skia/render_tree_node_visitor.h"
+#endif // ENABLE_SKIA
 
 #ifdef ENABLE_COBALT
 #include "cobalt/base/polymorphic_downcast.h"
-#endif ENABLE_COBALT
+#endif // ENABLE_COBALT
 
 #ifdef ENABLE_BASE
 
@@ -144,6 +146,7 @@
 //#include "ui/gfx/native_input_node_widget_types.h"
 #endif // ENABLE_BLINK_UI_NATIVE_THEME
 
+#if defined(ENABLE_BLINK_UI)
 #include "ui/display/manager/default_touch_transform_setter.h"
 #include "ui/display/manager/display_manager.h"
 #include "ui/display/manager/test/touch_device_manager_test_api.h"
@@ -370,3 +373,4 @@ void input_node_ContainerView::addChildren(
 
 }  // namespace render_tree
 }  // namespace cobalt
+#endif // ENABLE_BLINK_UI

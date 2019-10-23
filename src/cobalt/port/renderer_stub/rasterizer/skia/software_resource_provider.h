@@ -20,10 +20,13 @@
 #include <vector>
 
 #include "cobalt/render_tree/resource_provider.h"
+
+#if defined(ENABLE_SKIA)
 #include "renderer_stub/rasterizer/skia/text_shaper.h"
 
 //#include "skia/include/ports/SkFontMgr.h"
 //#include "skia/include/ports/SkFontMgr_empty.h"
+#endif // ENABLE_SKIA
 
 #include "base/memory/aligned_memory.h"
 #include "cobalt/base/polymorphic_downcast.h"
@@ -202,7 +205,9 @@ class SoftwareResourceProvider : public render_tree::ResourceProvider {
  private:
   const bool purge_skia_font_caches_on_destruction_;
 
+#if defined(ENABLE_SKIA)
   TextShaper text_shaper_;
+#endif // ENABLE_SKIA
 };
 
 }  // namespace skia

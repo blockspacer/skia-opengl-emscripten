@@ -21,6 +21,10 @@
 #include "cobalt/script/property_enumerator.h"
 #include "cobalt/script/wrappable.h"
 
+#if defined(OS_EMSCRIPTEN)
+#include <emscripten/emscripten.h>
+#endif // OS_EMSCRIPTEN
+
 namespace cobalt {
 namespace dom {
 

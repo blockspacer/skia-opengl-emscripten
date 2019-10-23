@@ -277,6 +277,10 @@ void LayoutManager::Impl::OnMutation() {
 
 scoped_refptr<render_tree::Node>
 LayoutManager::Impl::DoSynchronousLayoutAndGetRenderTree() {
+#if defined(ENABLE_NATIVE_HTML)
+    return nullptr;
+#endif // ENABLE_NATIVE_HTML
+
   TRACE_EVENT0("cobalt::layout",
                "LayoutManager::Impl::DoSynchronousLayoutAndGetRenderTree()");
   DoSynchronousLayout(/* forceReLayout*/ false);
@@ -301,6 +305,10 @@ LayoutManager::Impl::DoSynchronousLayoutAndGetRenderTree() {
 }
 
 void LayoutManager::Impl::DoSynchronousLayout(const bool forceReLayout) {
+#if defined(ENABLE_NATIVE_HTML)
+    return;
+#endif // ENABLE_NATIVE_HTML
+
   TRACE_EVENT0("cobalt::layout", "LayoutManager::Impl::DoSynchronousLayout()");
   if (suspended_) {
     DLOG(WARNING) << "Skipping layout since Cobalt is in a suspended state.";
@@ -358,6 +366,10 @@ bool LayoutManager::Impl::IsRenderTreePending() const {
 
 #if defined(ENABLE_TEST_RUNNER)
 void LayoutManager::Impl::DoTestRunnerLayoutCallback() {
+#if defined(ENABLE_NATIVE_HTML)
+    return;
+#endif // ENABLE_NATIVE_HTML
+
   DCHECK_EQ(kTestRunnerMode, layout_trigger_);
   DirtyLayout();
 
@@ -376,6 +388,11 @@ void LayoutManager::Impl::DoTestRunnerLayoutCallback() {
 #endif  // ENABLE_TEST_RUNNER
 
 void LayoutManager::Impl::DirtyLayout(const bool changeComputedStyles, const bool changePendingRenderTree) {
+#if defined(ENABLE_NATIVE_HTML)
+    are_computed_styles_and_box_tree_dirty_ = false;
+    is_render_tree_pending_ = false;
+#endif // ENABLE_NATIVE_HTML
+
   if (changeComputedStyles) {
     are_computed_styles_and_box_tree_dirty_ = true;
   }
@@ -386,7 +403,12 @@ void LayoutManager::Impl::DirtyLayout(const bool changeComputedStyles, const boo
 }
 
 void LayoutManager::Impl::setLayoutPending(const bool isPending) {
+#if defined(ENABLE_NATIVE_HTML)
+    are_computed_styles_and_box_tree_dirty_ = false;
+    is_render_tree_pending_ = false;
+#else
   is_render_tree_pending_ = isPending;
+#endif // ENABLE_NATIVE_HTML
 }
 
 #if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
@@ -432,6 +454,9 @@ void LayoutManager::Impl::StartLayoutTimer() {
 void LayoutManager::Impl::DoLayoutAndProduceRenderTree(const bool forceReLayout) {
   TRACE_EVENT0("cobalt::layout",
                "LayoutManager::Impl::DoLayoutAndProduceRenderTree()");
+#if defined(ENABLE_NATIVE_HTML)
+    return;
+#endif // ENABLE_NATIVE_HTML
 
   if (suspended_) return;
 

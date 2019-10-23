@@ -442,6 +442,10 @@ void Pipeline::ClearCurrentRenderTree() {
 }
 
 void Pipeline::RasterizeCurrentTree() {
+#if defined(ENABLE_NATIVE_HTML)
+    return;
+#endif // ENABLE_NATIVE_HTML
+
 #if defined(OS_EMSCRIPTEN)
   //EM_LOG("Pipeline::RasterizeCurrentTree 0\n");
 #else

@@ -228,6 +228,10 @@ math::RectF LayoutBoxes::GetScrollArea(dom::Directionality dir) const {
 }
 
 void LayoutBoxes::InvalidateSizes() {
+#if defined(ENABLE_NATIVE_HTML)
+  return;
+#endif // ENABLE_NATIVE_HTML
+
   for (Boxes::const_iterator box_iterator = boxes_.begin();
        box_iterator != boxes_.end(); ++box_iterator) {
     Box* box = (*box_iterator).get();
@@ -240,6 +244,10 @@ void LayoutBoxes::InvalidateSizes() {
 }
 
 void LayoutBoxes::InvalidateCrossReferences() {
+#if defined(ENABLE_NATIVE_HTML)
+  return;
+#endif // ENABLE_NATIVE_HTML
+
   for (Boxes::const_iterator box_iterator = boxes_.begin();
        box_iterator != boxes_.end(); ++box_iterator) {
     Box* box = (*box_iterator).get();
@@ -252,6 +260,10 @@ void LayoutBoxes::InvalidateCrossReferences() {
 }
 
 void LayoutBoxes::InvalidateRenderTreeNodes() {
+#if defined(ENABLE_NATIVE_HTML)
+  return;
+#endif // ENABLE_NATIVE_HTML
+
   for (Boxes::const_iterator box_iterator = boxes_.begin();
        box_iterator != boxes_.end(); ++box_iterator) {
     Box* box = (*box_iterator).get();

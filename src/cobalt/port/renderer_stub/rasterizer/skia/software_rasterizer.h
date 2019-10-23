@@ -21,7 +21,9 @@
 #include "cobalt/render_tree/node.h"
 #include "cobalt/render_tree/resource_provider.h"
 
+#if defined(ENABLE_SKIA)
 class SkCanvas;
+#endif // ENABLE_SKIA
 
 namespace cobalt {
 namespace renderer {
@@ -39,10 +41,12 @@ class SoftwareRasterizer {
   explicit SoftwareRasterizer(bool purge_skia_font_caches_on_destruction);
   ~SoftwareRasterizer();
 
+#if defined(ENABLE_SKIA)
   // Consume the render tree and output the results to the render target passed
   // into the constructor.
   void Submit(const scoped_refptr<render_tree::Node>& render_tree,
               SkCanvas* render_target);
+#endif // ENABLE_SKIA
 
   render_tree::ResourceProvider* GetResourceProvider();
 

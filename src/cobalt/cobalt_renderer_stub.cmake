@@ -89,116 +89,129 @@ list(APPEND RENDERER_PRIVATE_DEFINES
 #   '<(DEPTH)/third_party/ots/ots.gyp:ots',
 #   '<(DEPTH)/cobalt/renderer/rasterizer/common/common.gyp:common',
 # ],
-set(COBALT_renderer_stub_skia_SOURCES
-  #
-  # skia
-  #
-  ${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/render_tree_node_visitor.cc
-  ${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/software_rasterizer.cc
-  ${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/software_rasterizer.h
-  ${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/software_resource_provider.cc
-  ${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/software_resource_provider.h
-  #${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/hardware_image.cc
-  ${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/cobalt_skia_type_conversions.cc
-  ${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/cobalt_skia_type_conversions.h
-  #${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/gl_format_conversions.cc
-  ${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/image.cc
-  ${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/software_image.cc
-  ${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/software_mesh.h
-  ${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/font.cc
-  ${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/typeface.cc
-  ${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/skia/src/ports/SkTypeface_cobalt.cc
-  ${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/skia/src/ports/SkStream_cobalt.cc
-  ${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/skia/src/ports/SkOSFile_cobalt.cc
-  #
-  ${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/skia/src/ports/SkFontConfigParser_cobalt.cc
-  ${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/skia/src/ports/SkFontMgr_cobalt.cc
-  ${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/skia/src/ports/SkFontStyleSet_cobalt.cc
-  ${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/skia/src/ports/SkFontUtil_cobalt.cc
-  ${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/skia/src/ports/SkFreeType_cobalt.cc
-  #
-  ${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/glyph_buffer.cc
-  #
-  ${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/text_shaper.cc
-  ${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/harfbuzz_font.cc
-  #
-  # common
-  #
-  ${COBALT_PORT_DIR}/renderer_stub/rasterizer/common/find_node.cc
-  ${COBALT_PORT_DIR}/renderer_stub/rasterizer/common/offscreen_render_coordinate_mapping.cc
-  ${COBALT_PORT_DIR}/renderer_stub/rasterizer/common/scratch_surface_cache.cc
-  ${COBALT_PORT_DIR}/renderer_stub/rasterizer/common/streaming_best_fit_line.cc
-  ${COBALT_PORT_DIR}/renderer_stub/rasterizer/common/utils.cc
-)
-
-add_library(cobalt_renderer_stub_skia STATIC
-  ${COBALT_renderer_stub_skia_SOURCES}
-)
-
-#message(WARNING OPENGL_EGL_INCLUDE_DIRS=
-#  ${OPENGL_EGL_INCLUDE_DIRS})
-#message(FATAL_ERROR FOUND_OPENGL_LIBRARIES=
-#  ${FOUND_OPENGL_LIBRARIES}
-#  ${OPENGLES2_LIBRARIES})
-
-if(TARGET_LINUX)
-  list(APPEND EXTRA_cobalt_renderer_stub_skia_LIBS
-    ${FOUND_OPENGL_LIBRARIES}
-    #OpenGL::EGL
+  if(ENABLE_SKIA)
+  set(COBALT_renderer_stub_skia_SOURCES
+    #
+    # skia
+    #
+    ${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/render_tree_node_visitor.cc
+    ${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/software_rasterizer.cc
+    ${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/software_rasterizer.h
+    ${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/software_resource_provider.cc
+    ${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/software_resource_provider.h
+    #${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/hardware_image.cc
+    ${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/cobalt_skia_type_conversions.cc
+    ${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/cobalt_skia_type_conversions.h
+    #${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/gl_format_conversions.cc
+    ${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/image.cc
+    ${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/software_image.cc
+    ${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/software_mesh.h
+    ${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/font.cc
+    ${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/typeface.cc
+    ${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/skia/src/ports/SkTypeface_cobalt.cc
+    ${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/skia/src/ports/SkStream_cobalt.cc
+    ${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/skia/src/ports/SkOSFile_cobalt.cc
+    #
+    ${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/skia/src/ports/SkFontConfigParser_cobalt.cc
+    ${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/skia/src/ports/SkFontMgr_cobalt.cc
+    ${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/skia/src/ports/SkFontStyleSet_cobalt.cc
+    ${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/skia/src/ports/SkFontUtil_cobalt.cc
+    ${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/skia/src/ports/SkFreeType_cobalt.cc
+    #
+    ${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/glyph_buffer.cc
+    #
+    ${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/text_shaper.cc
+    ${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/harfbuzz_font.cc
+    #
+    # common
+    #
+    ${COBALT_PORT_DIR}/renderer_stub/rasterizer/common/find_node.cc
+    ${COBALT_PORT_DIR}/renderer_stub/rasterizer/common/offscreen_render_coordinate_mapping.cc
+    ${COBALT_PORT_DIR}/renderer_stub/rasterizer/common/scratch_surface_cache.cc
+    ${COBALT_PORT_DIR}/renderer_stub/rasterizer/common/streaming_best_fit_line.cc
+    ${COBALT_PORT_DIR}/renderer_stub/rasterizer/common/utils.cc
   )
-endif(TARGET_LINUX)
+else()
+  set(COBALT_renderer_stub_skia_SOURCES
+    #
+    # skia stub
+    #
+    ${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/software_rasterizer.cc
+    ${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/software_rasterizer.h
+    ${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/software_resource_provider.cc
+    ${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/software_resource_provider.h
+  )
+endif(ENABLE_SKIA)
 
-target_link_libraries(cobalt_renderer_stub_skia PUBLIC
-  base # TODO
-  cobalt_base
-  cobalt_math
-  cobalt_dom
-  cobalt_loader
-  cobalt_layout
-  cobalt_render_tree
-  cobalt_ui_navigation
-  cobalt_system_window
-  ${COBALT_GLIMP_LIB}
-  icu
-  starboard_platform
-  #starboard_core
-  starboard_eztime
-  starboard_common
-  modp_b64
-  dynamic_annotations
-  ${GLIBXML_LIB}
-  icu
-  ced
-  glm
-  SKIA
-  ${HARFBUZZ_LIBRARIES}
-  ${EXTRA_cobalt_renderer_stub_skia_LIBS}
-  #${OPENGLES2_LIBRARIES}
-  ${FOUND_OPENGL_LIBRARIES}
-  ${FREETYPE_LIBRARIES}
-)
+  add_library(cobalt_renderer_stub_skia STATIC
+    ${COBALT_renderer_stub_skia_SOURCES}
+  )
+  set(cobalt_renderer_stub_skia_LIB cobalt_renderer_stub_skia)
 
-set_property(TARGET cobalt_renderer_stub_skia PROPERTY CXX_STANDARD 17)
+  #message(WARNING OPENGL_EGL_INCLUDE_DIRS=
+  #  ${OPENGL_EGL_INCLUDE_DIRS})
+  #message(FATAL_ERROR FOUND_OPENGL_LIBRARIES=
+  #  ${FOUND_OPENGL_LIBRARIES}
+  #  ${OPENGLES2_LIBRARIES})
 
-target_include_directories(cobalt_renderer_stub_skia PRIVATE
-  #${UI_PARENT_DIR}
-  ${COBALT_CORE_DIR}
-  ${COBALT_CORE_PARENT_DIR}
-  ${COBALT_COMMON_INCLUDES}
-  #${COBALT_PORT_DIR}/renderer_stub
-  ${OPENGLES2_INCLUDE_DIRS}
-  ${OPENGL_EGL_INCLUDE_DIRS}
-  ${FOUND_OPENGL_INCLUDE_DIR}
-  ${FREETYPE_INCLUDE_DIRS}
-)
+  if(TARGET_LINUX)
+    list(APPEND EXTRA_cobalt_renderer_stub_skia_LIBS
+      ${FOUND_OPENGL_LIBRARIES}
+      #OpenGL::EGL
+    )
+  endif(TARGET_LINUX)
 
-target_compile_definitions(cobalt_renderer_stub_skia PUBLIC
-  ${RENDERER_PUBLIC_DEFINES}
-)
+  target_link_libraries(cobalt_renderer_stub_skia PUBLIC
+    base # TODO
+    cobalt_base
+    cobalt_math
+    cobalt_dom
+    cobalt_loader
+    cobalt_layout
+    cobalt_render_tree
+    cobalt_ui_navigation
+    cobalt_system_window
+    ${COBALT_GLIMP_LIB}
+    icu
+    starboard_platform
+    #starboard_core
+    starboard_eztime
+    starboard_common
+    modp_b64
+    dynamic_annotations
+    ${GLIBXML_LIB}
+    icu
+    ced
+    glm
+    ${SKIA_LIB}
+    ${HARFBUZZ_LIBRARIES}
+    ${EXTRA_cobalt_renderer_stub_skia_LIBS}
+    #${OPENGLES2_LIBRARIES}
+    ${FOUND_OPENGL_LIBRARIES}
+    ${FREETYPE_LIBRARIES}
+  )
 
-target_compile_definitions(cobalt_renderer_stub_skia PRIVATE
-  ${RENDERER_PRIVATE_DEFINES}
-)
+  set_property(TARGET cobalt_renderer_stub_skia PROPERTY CXX_STANDARD 17)
+
+  target_include_directories(cobalt_renderer_stub_skia PRIVATE
+    #${UI_PARENT_DIR}
+    ${COBALT_CORE_DIR}
+    ${COBALT_CORE_PARENT_DIR}
+    ${COBALT_COMMON_INCLUDES}
+    #${COBALT_PORT_DIR}/renderer_stub
+    ${OPENGLES2_INCLUDE_DIRS}
+    ${OPENGL_EGL_INCLUDE_DIRS}
+    ${FOUND_OPENGL_INCLUDE_DIR}
+    ${FREETYPE_INCLUDE_DIRS}
+  )
+
+  target_compile_definitions(cobalt_renderer_stub_skia PUBLIC
+    ${RENDERER_PUBLIC_DEFINES}
+  )
+
+  target_compile_definitions(cobalt_renderer_stub_skia PRIVATE
+    ${RENDERER_PRIVATE_DEFINES}
+  )
 
 ## ===========
 
@@ -241,7 +254,7 @@ if(TARGET_LINUX)
 endif(TARGET_LINUX)
 
 target_link_libraries(cobalt_renderer_stub_skgl PUBLIC
-  cobalt_renderer_stub_skia
+  ${cobalt_renderer_stub_skia_LIB}
   #
   base # TODO
   cobalt_base
@@ -264,7 +277,7 @@ target_link_libraries(cobalt_renderer_stub_skgl PUBLIC
   icu
   ced
   glm
-  SKIA
+  ${SKIA_LIB}
   ${HARFBUZZ_LIBRARIES}
   ${EXTRA_cobalt_renderer_stub_skgl_LIBS}
   #${OPENGLES2_LIBRARIES}
@@ -392,7 +405,7 @@ endif(TARGET_LINUX)
 
 target_link_libraries(cobalt_renderer_stub PUBLIC
   cobalt_renderer_stub_skgl
-  cobalt_renderer_stub_skia
+  ${cobalt_renderer_stub_skia_LIB}
   #
   base # TODO
   cobalt_base
@@ -415,7 +428,7 @@ target_link_libraries(cobalt_renderer_stub PUBLIC
   icu
   ced
   glm
-  SKIA
+  ${SKIA_LIB}
   ${HARFBUZZ_LIBRARIES}
   ${EXTRA_cobalt_renderer_stub_LIBS}
   #${OPENGLES2_LIBRARIES}

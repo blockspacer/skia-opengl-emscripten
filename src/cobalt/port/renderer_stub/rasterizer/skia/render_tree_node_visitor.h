@@ -33,7 +33,10 @@
 #include "cobalt/render_tree/text_node.h"
 #include "renderer_stub/backend/render_target.h"
 #include "renderer_stub/rasterizer/skia/render_tree_node_visitor_draw_state.h"
+
+#if defined(ENABLE_SKIA)
 #include "third_party/skia/include/core/SkCanvas.h"
+#endif // ENABLE_SKIA
 
 namespace cobalt {
 

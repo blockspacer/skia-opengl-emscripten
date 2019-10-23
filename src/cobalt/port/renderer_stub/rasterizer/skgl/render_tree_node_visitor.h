@@ -40,7 +40,10 @@
 ///#include "renderer_stub/rasterizer/skgl/draw_object_manager.h"
 ///#include "renderer_stub/rasterizer/skgl/graphics_state.h"
 ///#include "renderer_stub/rasterizer/skgl/offscreen_target_manager.h"
+///
+#if defined(ENABLE_SKIA)
 #include "third_party/skia/include/core/SkCanvas.h"
+#endif // ENABLE_SKIA
 
 // not in spec
 #include "cobalt/render_tree/skottie_node.h"
@@ -59,17 +62,21 @@ class RenderTreeNodeVisitor : public render_tree::NodeVisitor {
     kFallbackShouldClear = 1 << 0,
     kFallbackShouldFlush = 1 << 1,
   };
+#if defined(ENABLE_SKIA)
   typedef base::Callback<void(
       const scoped_refptr<render_tree::Node>& render_tree,
       SkCanvas* fallback_render_target, const math::Matrix3F& transform,
       const math::RectF& scissor, float opacity, uint32_t rasterize_flags)>
       FallbackRasterizeFunction;
+#endif // ENABLE_SKIA
 
   RenderTreeNodeVisitor(GraphicsState* graphics_state,
                         ///DrawObjectManager* draw_object_manager,
                         ///OffscreenTargetManager* offscreen_target_manager,
+#if defined(ENABLE_SKIA)
                         const FallbackRasterizeFunction& fallback_rasterize,
                         SkCanvas* fallback_render_target,
+#endif // ENABLE_SKIA
                         ///backend::RenderTarget* render_target,
                         const math::Rect& content_rect);
 
@@ -125,10 +132,14 @@ class RenderTreeNodeVisitor : public render_tree::NodeVisitor {
   GraphicsState* graphics_state_;
   ///DrawObjectManager* draw_object_manager_;
   ///OffscreenTargetManager* offscreen_target_manager_;
+#if defined(ENABLE_SKIA)
   FallbackRasterizeFunction fallback_rasterize_;
+#endif // ENABLE_SKIA
 
   DrawObject::BaseState draw_state_;
+#if defined(ENABLE_SKIA)
   SkCanvas* fallback_render_target_;
+#endif // ENABLE_SKIA
   ///backend::RenderTarget* render_target_;
   ///backend::RenderTarget* onscreen_render_target_;
 

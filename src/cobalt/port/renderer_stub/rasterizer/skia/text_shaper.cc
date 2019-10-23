@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#if defined(ENABLE_SKIA)
 #include "renderer_stub/rasterizer/skia/text_shaper.h"
 
 #include <algorithm>
@@ -587,3 +588,4 @@ void TextShaper::EnsureLocalTextBufferHasSize(size_t size) {
 }  // namespace rasterizer
 }  // namespace renderer
 }  // namespace cobalt
+#endif // ENABLE_SKIA

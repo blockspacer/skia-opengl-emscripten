@@ -1776,6 +1776,7 @@ void DrawRoundedRectShadowNode(render_tree::RectShadowNode* node,
 
 void RenderTreeNodeVisitor::Visit(
     render_tree::RectShadowNode* rect_shadow_node) {
+#if defined(ENABLE_SKIA)
 #if ENABLE_RENDER_TREE_VISITOR_TRACING
   TRACE_EVENT0("cobalt::renderer", "Visit(RectShadowNode)");
 #endif
@@ -1794,8 +1795,10 @@ void RenderTreeNodeVisitor::Visit(
 #if ENABLE_FLUSH_AFTER_EVERY_NODE
   draw_state_.render_target->flush();
 #endif
+#endif // ENABLE_SKIA
 }
 
+#if defined(ENABLE_SKIA)
 namespace {
 void RenderText(SkCanvas* render_target,
                 render_tree::TextNode* text_node,
@@ -1854,8 +1857,10 @@ void RenderText(SkCanvas* render_target,
   }
 }
 }  // namespace
+#endif // ENABLE_SKIA
 
 void RenderTreeNodeVisitor::Visit(render_tree::TextNode* text_node) {
+#if defined(ENABLE_SKIA)
   ///printf("RenderTreeNodeVisitor::Visit(render_tree::TextNode* text_node)\n");
 #if ENABLE_RENDER_TREE_VISITOR_TRACING && !FILTER_RENDER_TREE_VISITOR_TRACING
   TRACE_EVENT0("cobalt::renderer", "Visit(TextNode)");
@@ -1904,6 +1909,8 @@ void RenderTreeNodeVisitor::Visit(render_tree::TextNode* text_node) {
 #if ENABLE_FLUSH_AFTER_EVERY_NODE
   draw_state_.render_target->flush();
 #endif
+
+#endif // ENABLE_SKIA
 }
 
 }  // namespace skia

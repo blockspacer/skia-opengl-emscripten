@@ -22,7 +22,9 @@
 #include "cobalt/render_tree/node.h"
 #include "cobalt/render_tree/node_visitor.h"
 
+#if defined(ENABLE_SKIA)
 #include <skia/include/core/SkCanvas.h>
+#endif // ENABLE_SKIA
 
 /*namespace renderer {
 namespace rasterizer {

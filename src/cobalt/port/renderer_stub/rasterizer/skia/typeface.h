@@ -15,6 +15,8 @@
 #ifndef COBALT_RENDERER_RASTERIZER_SKIA_TYPEFACE_H_
 #define COBALT_RENDERER_RASTERIZER_SKIA_TYPEFACE_H_
 
+#if defined(ENABLE_SKIA)
+
 #include <memory>
 
 #include "base/containers/hash_tables.h"
@@ -90,5 +92,7 @@ class SkiaTypeface : public render_tree::Typeface {
 }  // namespace rasterizer
 }  // namespace renderer
 }  // namespace cobalt
+
+#endif // ENABLE_SKIA
 
 #endif  // COBALT_RENDERER_RASTERIZER_SKIA_TYPEFACE_H_

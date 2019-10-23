@@ -26,8 +26,10 @@
 #include "cobalt/render_tree/rect_node.h"
 #include "cobalt/render_tree/resource_provider.h"
 
+#if defined(ENABLE_SKIA)
 #include "skia/include/core/SkRefCnt.h"
 #include "skia/include/core/SkTime.h"
+#endif // ENABLE_SKIA
 
 using namespace cobalt;
 using namespace cobalt::cssom;

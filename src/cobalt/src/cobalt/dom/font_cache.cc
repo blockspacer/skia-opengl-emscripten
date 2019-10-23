@@ -211,16 +211,16 @@ FontCache::GetCharacterFallbackTypefaceMap(
 const scoped_refptr<render_tree::Typeface>&
 FontCache::GetCharacterFallbackTypeface(int32 utf32_character,
                                         const render_tree::FontStyle& style) {
-  printf("FontCache::GetCharacterFallbackTypefaceMap 1\n");
+  //printf("FontCache::GetCharacterFallbackTypefaceMap 1\n");
   DCHECK_CALLED_ON_VALID_THREAD(thread_checker_);
-  printf("FontCache::GetCharacterFallbackTypefaceMap 2\n");
+  //printf("FontCache::GetCharacterFallbackTypefaceMap 2\n");
   DCHECK(resource_provider());
   scoped_refptr<render_tree::Typeface> typeface =
     resource_provider()->
     GetCharacterFallbackTypeface(utf32_character, style,
       language_script_);
   DCHECK(typeface);
-  printf("FontCache::GetCharacterFallbackTypefaceMap 3\n");
+  //printf("FontCache::GetCharacterFallbackTypefaceMap 3\n");
   return GetCachedLocalTypeface(typeface);
 }
 
@@ -405,11 +405,15 @@ scoped_refptr<render_tree::Font> FontCache::TryGetLocalFont(
     return NULL;
   } else {
     *state = FontListFont::kLoadedState;
-    DCHECK(resource_provider()->GetLocalTypeface(family.c_str(), style));
-    return GetFontFromTypefaceAndSize(
-        GetCachedLocalTypeface(
-            resource_provider()->GetLocalTypeface(family.c_str(), style)),
-        size);
+    if(resource_provider()->GetLocalTypeface(family.c_str(), style)) {
+      return GetFontFromTypefaceAndSize(
+          GetCachedLocalTypeface(
+              resource_provider()->GetLocalTypeface(family.c_str(), style)),
+          size);
+    } else {
+      NOTIMPLEMENTED_LOG_ONCE();
+      return nullptr;
+    }
   }
 }
 

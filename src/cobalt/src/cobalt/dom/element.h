@@ -42,6 +42,14 @@
 // not in spec
 #include "cobalt/dom/CustomScriptValue.h"
 
+#if defined(OS_EMSCRIPTEN)
+#include <emscripten.h>
+#include <emscripten/bind.h>
+#include <emscripten/html5.h>
+#include <emscripten/bind.h>
+#include <emscripten/val.h>
+#endif // OS_EMSCRIPTEN
+
 namespace cobalt {
 namespace dom {
 

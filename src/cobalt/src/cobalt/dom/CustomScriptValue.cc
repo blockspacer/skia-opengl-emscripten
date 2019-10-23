@@ -469,9 +469,9 @@ CustomTokenToObservers::CustomTokenToObservers(
       const AttrLoadedCallback& loaded_callback,
       const std::string& initial_attr)
     : initial_custom_token_(initial_attr), processed_custom_token_(""), loaded_callback_(loaded_callback) {
-  DLOG(INFO) << __FUNCTION__
-             << ": initial custom token=" << initial_custom_token_
-             << ": processed custom token_=" << processed_custom_token_;
+  //DLOG(INFO) << __FUNCTION__
+  //           << ": initial custom token=" << initial_custom_token_
+  //           << ": processed custom token_=" << processed_custom_token_;
 }
 
 void CustomTokenToObservers::RecordMutation() {

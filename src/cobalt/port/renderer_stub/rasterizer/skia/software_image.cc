@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#if defined(ENABLE_SKIA)
 #include <memory>
 
 #include "renderer_stub/rasterizer/skia/software_image.h"
@@ -148,3 +149,5 @@ SoftwareMultiPlaneImage::SoftwareMultiPlaneImage(
 }  // namespace rasterizer
 }  // namespace renderer
 }  // namespace cobalt
+
+#endif // ENABLE_SKIA

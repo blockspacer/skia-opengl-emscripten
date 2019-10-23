@@ -15,6 +15,8 @@
 #ifndef COBALT_RENDERER_RASTERIZER_SKIA_RENDER_TREE_NODE_VISITOR_DRAW_STATE_H_
 #define COBALT_RENDERER_RASTERIZER_SKIA_RENDER_TREE_NODE_VISITOR_DRAW_STATE_H_
 
+#if defined(ENABLE_SKIA)
+
 #include "third_party/glm/glm/mat4x4.hpp"
 #include "third_party/skia/include/core/SkCanvas.h"
 
@@ -44,5 +46,7 @@ struct RenderTreeNodeVisitorDrawState {
 }  // namespace rasterizer
 }  // namespace renderer
 }  // namespace cobalt
+
+#endif // ENABLE_SKIA
 
 #endif  // COBALT_RENDERER_RASTERIZER_SKIA_RENDER_TREE_NODE_VISITOR_DRAW_STATE_H_

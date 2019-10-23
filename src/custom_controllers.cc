@@ -15,6 +15,11 @@
 
 namespace {
 
+///
+
+static skemgl::TextfieldControllerCreatorsMap textfield_controller_creators {};
+
+#if defined(ENABLE_BLINK_UI)
 // TODO: OnPaintLayer
 class Input1_controller :
   public InputElementController {
@@ -149,10 +154,6 @@ Input2_controller::Input2_controller(
 {
 }
 
-///
-
-static skemgl::TextfieldControllerCreatorsMap textfield_controller_creators {};
-
 static void add_controller_ex1() {
   skemgl::TextfieldControllerCreator controller_creator_1{
     [](HTMLInputElement* inputElem,
@@ -178,6 +179,7 @@ static void add_controller_ex2() {
   add_textfield_controller_creator("input2_controller",
     std::move(controller_creator_2));
 }
+#endif // ENABLE_BLINK_UI
 
 } // namespace
 
@@ -210,8 +212,10 @@ skemgl::TextfieldControllerCreatorsMap& get_textfield_controller_creators()
 
 void preload_textfield_controller_creators()
 {
+#if defined(ENABLE_BLINK_UI)
   add_controller_ex1();
   add_controller_ex2();
+#endif // ENABLE_BLINK_UI
 }
 
 } // namespace skemgl

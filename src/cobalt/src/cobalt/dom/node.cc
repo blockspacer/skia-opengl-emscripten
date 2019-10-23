@@ -214,6 +214,41 @@ scoped_refptr<Node> Node::AppendChild(const scoped_refptr<Node>& new_child) {
   // The appendChild(node) method must return the result of appending node to
   // the context object.
   // To append a node to a parent, pre-insert node into parent before null.
+
+#if 0 // TODO: use lock-free Sequences to post tasks on main browser thread https://chromium.googlesource.com/chromium/src/+/master/docs/threading_and_tasks.md#Using-Sequences-Instead-of-Locks
+#if defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+  if(!new_child->em_node_.isNull() && !new_child->em_node_.isUndefined()
+     && !em_node_.isNull() && !em_node_.isUndefined())
+  {
+    printf("Node::AppendChild 1\n");
+
+    em_node_.call<void>("appendChild", new_child->em_node_);
+
+    /*emscripten::val new_node
+      = emscripten::val::global("document").call<emscripten::val>(
+          "createElement", emscripten::val("div"));
+    new_node.set("innerHTML", "innerHTML.str()");
+    new_node["style"].set("display", emscripten::val("block"));
+    new_node["classList"].call<void>("add", emscripten::val("testClass1"));
+    new_node["classList"].call<void>("add", emscripten::val("testClass2"));
+    em_node_.call<void>("appendChild", new_node);*/
+  } else {
+    printf("Node::AppendChild 2\n");
+    NOTIMPLEMENTED_LOG_ONCE();
+    emscripten::val parent_node
+      = emscripten::val::global("document")["body"];
+    emscripten::val new_node
+      = emscripten::val::global("document").call<emscripten::val>(
+          "createElement", emscripten::val("div"));
+    new_node.set("innerHTML", "innerHTML.str()");
+    new_node["style"].set("display", emscripten::val("block"));
+    new_node["classList"].call<void>("add", emscripten::val("testClass1"));
+    new_node["classList"].call<void>("add", emscripten::val("testClass2"));
+    parent_node.call<void>("appendChild", new_node);
+  }
+#endif // defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+#endif // 0
+
   return PreInsert(new_child, NULL);
 }
 
@@ -465,7 +500,13 @@ Node::Node(Document* document)
       last_child_(NULL),
       inserted_into_document_(false),
       node_generation_(kInitialNodeGeneration),
-      ALLOW_THIS_IN_INITIALIZER_LIST(registered_observers_(this)) {
+      ALLOW_THIS_IN_INITIALIZER_LIST(registered_observers_(this))
+#if 0 // TODO: use lock-free Sequences to post tasks on main browser thread https://chromium.googlesource.com/chromium/src/+/master/docs/threading_and_tasks.md#Using-Sequences-Instead-of-Locks
+#if defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+      , em_node_(emscripten::val::null())
+#endif // defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+#endif // 0
+{
   DCHECK(node_document_);
   GlobalStats::GetInstance()->Add(this);
 }

@@ -28,6 +28,14 @@
 #include "cobalt/dom/mutation_observer_init.h"
 #include "cobalt/dom/registered_observer_list.h"
 
+#if defined(OS_EMSCRIPTEN)
+#include <emscripten.h>
+#include <emscripten/bind.h>
+#include <emscripten/html5.h>
+#include <emscripten/bind.h>
+#include <emscripten/val.h>
+#endif // OS_EMSCRIPTEN
+
 namespace cobalt {
 namespace dom {
 
@@ -274,6 +282,12 @@ class Node : public EventTarget {
   std::unique_ptr<RegisteredObserverVector> GatherInclusiveAncestorsObservers();
 
   void ReplaceAll(const scoped_refptr<Node>& node);
+
+#if 0 // TODO: use lock-free Sequences to post tasks on main browser thread https://chromium.googlesource.com/chromium/src/+/master/docs/threading_and_tasks.md#Using-Sequences-Instead-of-Locks
+#if defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+  emscripten::val em_node_;
+#endif // defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+#endif // 0
 
  private:
   // From EventTarget.

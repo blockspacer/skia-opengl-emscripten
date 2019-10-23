@@ -106,14 +106,18 @@
 #include "cobalt/math/size_f.h"
 #include "cobalt/render_tree/image.h"
 
+#if defined(ENABLE_BLINK_UI)
 #include "ui/views/controls/textfield/textfield_controller.h"
 #include "ui/views/controls/textfield/textfield_model.h"
+#endif // ENABLE_BLINK_UI
 
 #include "cobalt/render_tree/node_visitor.h"
 
 #include "cobalt/base/polymorphic_downcast.h"
 
+#if defined(ENABLE_SKIA)
 #include "renderer_stub/rasterizer/skia/render_tree_node_visitor.h"
+#endif // ENABLE_SKIA
 
 #ifdef ENABLE_COBALT
 #include "cobalt/base/polymorphic_downcast.h"
@@ -249,6 +253,7 @@
 //#include "ui/gfx/native_component_node_widget_types.h"
 #endif // ENABLE_BLINK_UI_NATIVE_THEME
 
+#ifdef ENABLE_BLINK_UI
 #include "ui/display/manager/default_touch_transform_setter.h"
 #include "ui/display/manager/display_manager.h"
 #include "ui/display/manager/test/touch_device_manager_test_api.h"
@@ -322,6 +327,7 @@
 
 #include "ui/compositor/paint_recorder.h"
 #include "ui/compositor/canvas_painter.h"
+#endif // ENABLE_BLINK_UI
 
 #include <algorithm>
 #include <memory>
@@ -356,8 +362,10 @@
 #include "cobalt/render_tree/rect_node.h"
 #include "cobalt/render_tree/resource_provider.h"
 
+#if defined(ENABLE_SKIA)
 #include "skia/include/core/SkRefCnt.h"
 #include "skia/include/core/SkTime.h"
+#endif // ENABLE_SKIA
 
 #include "extended_html/component/block_level_component.h"
 #include "extended_html/component/inline_level_component.h"
@@ -368,6 +376,7 @@
 class HTMLComponentElement : public cobalt::dom::HTMLCustomElement {
  public:
 
+#if defined(ENABLE_BLINK_UI)
   struct ScheduledMouseEvent {
     ui::MouseEvent mouseEvent_;
     scoped_refptr<cobalt::dom::DOMRect> boundingClientRect_{};
@@ -377,6 +386,7 @@ class HTMLComponentElement : public cobalt::dom::HTMLCustomElement {
     std::vector<ui::KeyEvent> scheduledKeyEvents_{};
     std::vector<ScheduledMouseEvent> scheduledMouseEvents_{};
   };
+#endif // ENABLE_BLINK_UI
 
   static const char kTagName[];
 
@@ -423,11 +433,13 @@ class HTMLComponentElement : public cobalt::dom::HTMLCustomElement {
   //std::unique_ptr<render_tree::component_node_ContainerView>
   //  component_node_container_;
 
+  std::string current_data_source_{};
+
+  std::shared_ptr<skemgl::WebComponent> loaded_web_component_ = nullptr;
+
+#if defined(ENABLE_BLINK_UI)
   // TODO: thread safety
   std::unique_ptr<views::Widget> component_node_widget_;
-
-  std::string current_data_source_{};
-  std::shared_ptr<skemgl::WebComponent> loaded_web_component_ = nullptr;
 
   // TODO: thread safety
   /*std::unique_ptr<cobalt::render_tree::component_node_ContainerView> component_node_container_;
@@ -435,6 +447,8 @@ class HTMLComponentElement : public cobalt::dom::HTMLCustomElement {
   std::mutex scheduledEventsMutex_;
   ScheduledEvents scheduledEvents_{};
 */
+#endif // ENABLE_BLINK_UI
+
   int HTMLComponentElementID_ = 0;
 
   // TODO: thread safety

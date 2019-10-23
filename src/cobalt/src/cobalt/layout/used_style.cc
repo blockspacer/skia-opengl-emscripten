@@ -500,6 +500,9 @@ scoped_refptr<dom::FontList> UsedStyleProvider::GetUsedFontList(
 
 scoped_refptr<loader::image::Image> UsedStyleProvider::ResolveURLToImage(
     const GURL& url) {
+#if defined(ENABLE_NATIVE_HTML)
+  return nullptr;
+#endif
   DCHECK(animated_image_tracker_);
   DCHECK(image_cache_);
   scoped_refptr<loader::image::Image> image =

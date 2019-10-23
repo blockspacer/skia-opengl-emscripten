@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#if defined(ENABLE_SKIA)
 #include "renderer_stub/rasterizer/skia/font.h"
 
 #include "base/lazy_instance.h"
@@ -29,7 +30,7 @@
 #if defined(__EMSCRIPTEN__)
 #include "emscripten/emscripten.h"
 #include "emscripten/html5.h"
-#endif
+#endif // __EMSCRIPTEN__
 
 // TODO: free memory
 static const char* fallbackFontPath = "./resources/fonts/FreeSans.ttf";
@@ -62,7 +63,9 @@ static sk_sp<SkTypeface> getOrCreateFallbackTypeface() {
     DCHECK(!skia_data->isEmpty());
     const int index = 0;
     //fallbackFontTypeface = SkTypeface::MakeFromData(::std::move(data), index);
+
     printf("getOrCreateFallbackTypeface: reading file %s\n", fallbackFontPath);
+
     //fallbackFontTypeface = SkTypeface::MakeFromFile(fallbackFontPath, index);
 
     std::unique_ptr<SkStreamAsset> stream;
@@ -88,7 +91,7 @@ static sk_sp<SkTypeface> getOrCreateFallbackTypeface() {
   DCHECK(fallbackFontTypeface->getBounds().isFinite());
   DCHECK(fallbackFontTypeface->countGlyphs() > 0);
 
-  printf("getOrCreateFallbackTypeface 2...\n");
+  //printf("getOrCreateFallbackTypeface 2...\n");
 
   return fallbackFontTypeface;
 }
@@ -101,41 +104,6 @@ static sk_sp<SkTypeface> getOrCreateFallbackTypeface() {
   DCHECK(fallbackFont);
   return fallbackFont;
 }*/
-
-#ifdef __TODO__
-static sk_sp<SkTypeface_Cobalt> getOrCreateFallbackSkTypeface() {
-#if defined(__EMSCRIPTEN__)
-  //EM_LOG("getOrCreateFallbackSkTypeface 1");
-#endif
-    printf("getOrCreateFallbackSkTypeface 1...\n");
-    if (!fallbackSkTypeface_Cobalt) {
-        DCHECK(!fallbackSkTypeface_Cobalt_Created);
-        fallbackSkTypeface_Cobalt_Created = true;
-        sk_sp<SkTypeface> fontTypeface = getOrCreateFallbackTypeface();
-        DCHECK(fontTypeface);
-        DCHECK(fontTypeface->countGlyphs() > 0);
-        DCHECK(!fontTypeface->getBounds().isEmpty());
-        fallbackSkTypeface_Cobalt =
-            sk_sp<SkTypeface_Cobalt>(
-              // TODO: polymorphic_downcast Check failed: dynamic_cast<Derived>(base) == base.
-              reinterpret_cast<SkTypeface_Cobalt*>(
-              //base::polymorphic_downcast<SkTypeface_Cobalt*>(
-                fontTypeface.get()
-                /*->makeClone(SkFontArguments()).release()*/));
-#if defined(__EMSCRIPTEN__)
-  //EM_LOG("getOrCreateFallbackSkTypeface 2");
-#endif
-    }
-    DCHECK(fallbackSkTypeface_Cobalt);
-    DCHECK(fallbackSkTypeface_Cobalt->countGlyphs() > 0);
-    DCHECK(!fallbackSkTypeface_Cobalt->getBounds().isEmpty());
-#if defined(__EMSCRIPTEN__)
-  //EM_LOG("getOrCreateFallbackSkTypeface 3");
-#endif
-    printf("getOrCreateFallbackSkTypeface 2...\n");
-    return fallbackSkTypeface_Cobalt;
-}
-#endif // TODO
 
 namespace {
 const float kXHeightEstimateFactor = 0.56f;
@@ -342,9 +310,11 @@ const math::RectF& Font::GetGlyphBounds(render_tree::GlyphIndex glyph) {
           &skia_bounds
           //, &paint
       );
-  DCHECK(width > 0);
+
+  //DCHECK(width > 0); // TODO: may be empty for some time
+
   if(width <= 0) {
-    printf("Font::GetGlyphBounds: measureText width <= 0\n");
+    //printf("Font::GetGlyphBounds: measureText width <= 0\n");
     return std::move(math::RectF());
   }
 
@@ -447,3 +417,5 @@ sk_sp<SkTypeface> Font::getDefaultTypeface() {
 }  // namespace rasterizer
 }  // namespace renderer
 }  // namespace cobalt
+
+#endif // ENABLE_SKIA
