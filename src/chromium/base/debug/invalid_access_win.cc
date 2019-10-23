@@ -29,7 +29,7 @@ void TerminateWithHeapCorruption() {
   /*
   error C2712: Cannot use __try in functions that require object unwinding
   */
-  __try 
+  //__try 
   {
     // Pre-Windows 10, it's hard to trigger a heap corruption fast fail, so
     // artificially create one instead.
@@ -51,10 +51,10 @@ void TerminateWithHeapCorruption() {
   error C2712: Cannot use __try in functions that require object unwinding
   */
   } 
-  __except (EXCEPTION_EXECUTE_HANDLER) {
+  /*__except (EXCEPTION_EXECUTE_HANDLER) {
     // Heap corruption exception should never be caught.
     CHECK(false);
-  }
+  }*/
   // Should never reach here.
   abort();
 }

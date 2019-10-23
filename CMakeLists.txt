@@ -826,6 +826,11 @@ endif()
 # TODO
 set(COMMON_CXX_FLAGS "${COMMON_CXX_FLAGS} -DCODEC_IMPLEMENTATION=1")
 
+# TODO:
+# https://github.com/ambiesoft/gsrc/blob/199d762d322087c67cec2e9f1aaa7bfd5e0eb4c4/info/20180715-builderror-220332.txt#L76
+# https://groups.google.com/a/chromium.org/forum/#!topic/gn-dev/-PraKAwRlV8
+# https://developercommunity.visualstudio.com/content/problem/339089/arm64-conversion-issue-error-c2440-initializing-1.html
+
 if(MSVC) # TODO
     # see https://docs.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warnings-by-compiler-version?view=vs-2019
     

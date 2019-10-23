@@ -190,7 +190,31 @@ void ThreadControllerImpl::DoWork(WorkType work_type) {
     {
       // Trace events should finish before we call DidRunTask to ensure that
       // SequenceManager trace events do not interfere with them.
+
+/*
+d:\den\coding\skia-opengl-emscripten\src\chromium\base\trace_event\trace_event.h(767): error C2664: 'base::trace
+       _event::TraceArguments::TraceArguments(base::trace_event::TraceArguments &&) noexcept': cannot convert argument
+       1 from 'const char *' to 'int' [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
+         d:\den\coding\skia-opengl-emscripten\src\chromium\base\trace_event\trace_event.h(769): note: There is no conte
+         xt in which this conversion is possible
+         d:\den\coding\skia-opengl-emscripten\src\chromium\base\trace_event\trace_event.h(842): note: see reference to
+         function template instantiation 'base::trace_event::TraceEventHandle trace_event_internal::AddTraceEventWithTh
+         readIdAndTimestamp<_Ty,_Ty>(char,const unsigned char *,const char *,const char *,unsigned __int64,int,const ba
+         se::TimeTicks &,unsigned int,unsigned __int64,const char *,ARG1_TYPE &&,const char *,ARG2_TYPE &&)' being comp
+         iled
+                 with
+                 [
+                     _Ty=const char *,
+                     ARG1_TYPE=const char *,
+                     ARG2_TYPE=const char *
+                 ]
+         d:\den\coding\skia-opengl-emscripten\src\chromium\base\task\sequence_manager\thread_controller_impl.cc(193): n
+         ote: see reference to function template instantiation 'base::trace_event::TraceEventHandle trace_event_interna
+         l::AddTraceEvent<const char*,const char*>(char,const unsigned char *,const char *,const char *,unsigned __int6
+         4,unsigned int,unsigned __int64,const char *,ARG1_TYPE &&,const char *,ARG2_TYPE &&)' being compiled
+*/
       TRACE_TASK_EXECUTION("ThreadControllerImpl::RunTask", *task);
+
       task_annotator_.RunTask("SequenceManager RunTask", &*task);
     }
 

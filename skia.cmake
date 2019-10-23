@@ -456,7 +456,7 @@ ExternalProject_Add(SKIA_build
   CONFIGURE_COMMAND "${CONFIGURE_COMMAND}"
   BUILD_COMMAND "${BUILD_COMMAND}"
   # there is no install step provided
-  INSTALL_COMMAND true
+  #INSTALL_COMMAND true
 )
 
 # TODO: make PRINT_ALL_GN_ARGS as target dependant of SKIA_build

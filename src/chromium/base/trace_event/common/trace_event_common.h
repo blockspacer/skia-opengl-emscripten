@@ -986,10 +986,15 @@
                                    name, id, TRACE_EVENT_FLAG_COPY, arg1_name, \
                                    arg1_val, arg2_name, arg2_val)
 
+#if defined(__EMSCRIPTEN__) || defined(_WIN32) || defined(WIN32) || defined(_WIN64) || defined(WIN64)
+#define TRACE_TASK_EXECUTION(run_function, task) \
+  (void)(0);
+#else
 // Special trace event macro to trace task execution with the location where it
 // was posted from.
 #define TRACE_TASK_EXECUTION(run_function, task) \
   INTERNAL_TRACE_TASK_EXECUTION(run_function, task)
+#endif
 
 // TRACE_EVENT_METADATA* events are information related to other
 // injected events, not events in their own right.
