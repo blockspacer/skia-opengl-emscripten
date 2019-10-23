@@ -29,7 +29,7 @@ macro(add_ccache)
       set_property(GLOBAL PROPERTY
         RULE_LAUNCH_LINK "${CCACHE_PROGRAM}")
       message(STATUS "Using CCACHE. To see if ccache is really working, you can use ccache -s command, which will display ccache statistics.")
-      message(STATUS "CCACHE: On second and all subsequent compilations the “cache hit” values should increase and thus show that ccache is working.")
+      message(STATUS "CCACHE: On second and all subsequent compilations the ï¿½cache hitï¿½ values should increase and thus show that ccache is working.")
     else()
       message(WARNING "CCACHE not found, see https://askubuntu.com/a/470636 (also note /usr/sbin/update-ccache-symlinks).")
     endif()
@@ -118,7 +118,8 @@ macro(add_compile_options target)
       )
     message( "detected compiler: Clang" )
   elseif( CMAKE_CXX_COMPILER_ID MATCHES "MSVC" )
-    target_compile_options( ${PROJECT_NAME}_lib PRIVATE /W4 /WX )
+    # TODO
+    #target_compile_options( ${PROJECT_NAME}_lib PRIVATE /W4 /WX )
   else()
     message( FATAL_ERROR "unsupported compiler" )
   endif()
@@ -183,9 +184,9 @@ macro(print_cmake_system_info)
 endmacro(print_cmake_system_info)
 
 macro(check_supported_os)
-  if (NOT WIN32
+  if (NOT WIN32 AND NOT CMAKE_HOST_WIN32
       AND NOT EMSCRIPTEN
-      AND NOT UNIX
+      AND NOT UNIX AND NOT CMAKE_HOST_UNIX
       AND NOT APPLE)
     message(FATAL_ERROR "Unsupported operating system.")
   endif ()

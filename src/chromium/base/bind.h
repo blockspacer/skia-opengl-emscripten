@@ -223,6 +223,11 @@ BindOnce(Functor&& functor, Args&&... args) {
       std::forward<Functor>(functor), std::forward<Args>(args)...));
 }
 
+/*
+bind.h(229): note: This conversion requires a reinterpr
+         et_cast, a C-style cast or function-style cast
+*/
+
 // Bind as RepeatingCallback.
 template <typename Functor, typename... Args>
 inline RepeatingCallback<MakeUnboundRunType<Functor, Args...>>

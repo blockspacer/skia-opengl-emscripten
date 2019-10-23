@@ -208,6 +208,9 @@ if(NEED_GEN_BUILDFLAGS)
   configure_file(${CHROMIUM_DIR}/cfi_buildflags.h.inc
     ${BASE_DIR}/base/cfi_buildflags.h COPYONLY)
 
+  configure_file(${CHROMIUM_DIR}/base_win_buildflags.h.inc
+    ${BASE_DIR}/base/win/base_win_buildflags.h COPYONLY)
+
   # https://github.com/chromium/chromium/blob/master/base/BUILD.gn#L1980
   configure_file(${CHROMIUM_DIR}/debugging_buildflags.h.inc
     ${BASE_DIR}/debug/debugging_buildflags.h COPYONLY)

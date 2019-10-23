@@ -36,7 +36,9 @@ enum CreateError {
   CREATE_FILE_MAPPING_FAILURE = 6,
   REDUCE_PERMISSIONS_FAILURE = 7,
   ALREADY_EXISTS = 8,
-  CREATE_ERROR_LAST = ALREADY_EXISTS
+  CREATE_ERROR_LAST = ALREADY_EXISTS,
+  /*error C2338: enumerator must define kMaxValue enumerator to use this macro!*/
+  kMaxValue = ALREADY_EXISTS
 };
 
 // Emits UMA metrics about encountered errors. Pass zero (0) for |winerror|

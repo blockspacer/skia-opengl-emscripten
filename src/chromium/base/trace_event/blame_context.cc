@@ -54,6 +54,9 @@ void BlameContext::Leave() {
 }
 
 void BlameContext::TakeSnapshot() {
+#if defined(__EMSCRIPTEN__) || defined(_WIN32) || defined(WIN32) || defined(_WIN64) || defined(WIN64)
+  NOTIMPLEMENTED_LOG_ONCE();
+#else
   DCHECK(thread_checker_.CalledOnValidThread());
   DCHECK(WasInitialized());
   if (!*category_group_enabled_)
@@ -65,6 +68,7 @@ void BlameContext::TakeSnapshot() {
   TRACE_EVENT_API_ADD_TRACE_EVENT(TRACE_EVENT_PHASE_SNAPSHOT_OBJECT,
                                   category_group_enabled_, type_, scope_, id_,
                                   &args, TRACE_EVENT_FLAG_HAS_ID);
+#endif
 }
 
 void BlameContext::OnTraceLogEnabled() {

@@ -432,6 +432,8 @@
     }                                                                \
   } while (0)
 
+#if defined(__EMSCRIPTEN__) || defined(_WIN32) || defined(WIN32) || defined(_WIN64) || defined(WIN64)
+
 #if BUILDFLAG(ENABLE_LOCATION_SOURCE)
 
 // Implementation detail: internal macro to trace a task execution with the
@@ -464,6 +466,11 @@
   INTERNAL_TRACE_EVENT_UID(task_pc_event)((task).posted_from.program_counter());
 
 #endif
+
+#else // emscripten
+#define INTERNAL_TRACE_TASK_EXECUTION(run_function, task)                 \
+  (void)(0);
+#endif // emscripten
 
 namespace trace_event_internal {
 

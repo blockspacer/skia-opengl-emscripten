@@ -154,13 +154,24 @@ class BASE_EXPORT TaskTraits {
   //     base::TaskPriority::USER_VISIBLE, base::MayBlock()};
   // constexpr base::TaskTraits other_user_visible_may_block_traits = {
   //     base::MayBlock(), base::TaskPriority::USER_VISIBLE};
-  template <class... ArgTypes,
+  template <class... ArgTypes
+#if defined(__EMSCRIPTEN__) || defined(_WIN32) || defined(WIN32) || defined(_WIN64) || defined(WIN64)
+  // TODO
+#else
+  ,
             class CheckArgumentsAreValid = std::enable_if_t<
                 trait_helpers::AreValidTraits<ValidTrait, ArgTypes...>::value ||
-                trait_helpers::AreValidTraitsForExtension<ArgTypes...>::value>>
+                trait_helpers::AreValidTraitsForExtension<ArgTypes...>::value>
+#endif
+                >
   constexpr TaskTraits(ArgTypes... args)
       : extension_(trait_helpers::GetTaskTraitsExtension(
+/*#if defined(__EMSCRIPTEN__) || defined(_WIN32) || defined(WIN32) || defined(_WIN64) || defined(WIN64)
+  // TODO
+  std::true_type,
+#else*/
             trait_helpers::AreValidTraits<ValidTrait, ArgTypes...>{},
+//#endif
             args...)),
         priority_(
             trait_helpers::GetEnum<TaskPriority, TaskPriority::USER_VISIBLE>(

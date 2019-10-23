@@ -1309,8 +1309,8 @@ elseif(TARGET_WINDOWS)
     ${BASE_DIR}threading/platform_thread_win.h
     ${BASE_DIR}threading/thread_local_storage_win.cc
     ${BASE_DIR}timer/hi_res_timer_manager_win.cc
-    ${BASE_DIR}trace_event/trace_event_etw_export_win.cc
-    ${BASE_DIR}trace_event/trace_event_etw_export_win.h
+    # TODO # ${BASE_DIR}trace_event/trace_event_etw_export_win.cc
+    # TODO # ${BASE_DIR}trace_event/trace_event_etw_export_win.h
     ${BASE_DIR}base_paths_win.cc
     ${BASE_DIR}base_paths_win.h
     # ${BASE_DIR}allocator/allocator_shim_default_dispatch_to_winheap.cc # if (use_allocator_shim)

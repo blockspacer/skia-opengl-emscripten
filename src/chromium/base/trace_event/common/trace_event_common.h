@@ -205,7 +205,7 @@
 // to explicitly enable the event.
 #define TRACE_DISABLED_BY_DEFAULT(name) "disabled-by-default-" name
 
-#ifdef __EMSCRIPTEN__
+#if defined(__EMSCRIPTEN__) || defined(_WIN32) || defined(WIN32) || defined(_WIN64) || defined(WIN64)
 
 #define TRACE_EVENT0(category_group, name)    \
   (void)(0);
@@ -221,6 +221,37 @@
   (void)(0);
 #define TRACE_EVENT_WITH_FLOW2(category_group, name, bind_id, flow_flags,    \
                                arg1_name, arg1_val, arg2_name, arg2_val)     \
+  (void)(0);
+
+
+
+// Records a single event called "name" immediately, with 0, 1 or 2
+// associated arguments. If the category is not enabled, then this
+// does nothing.
+// - category and name strings must have application lifetime (statics or
+//   literals). They may not include " chars.
+#define TRACE_EVENT_INSTANT0(category_group, name, scope)                   \
+  (void)(0);
+#define TRACE_EVENT_INSTANT1(category_group, name, scope, arg1_name, arg1_val) \
+  (void)(0);
+#define TRACE_EVENT_INSTANT2(category_group, name, scope, arg1_name, arg1_val, \
+                             arg2_name, arg2_val)                              \
+  (void)(0);
+#define TRACE_EVENT_COPY_INSTANT0(category_group, name, scope)              \
+  (void)(0);
+#define TRACE_EVENT_COPY_INSTANT1(category_group, name, scope, arg1_name,   \
+                                  arg1_val)                                 \
+  (void)(0);
+#define TRACE_EVENT_COPY_INSTANT2(category_group, name, scope, arg1_name,      \
+                                  arg1_val, arg2_name, arg2_val)               \
+  (void)(0);
+
+#define TRACE_EVENT_INSTANT_WITH_TIMESTAMP0(category_group, name, scope, \
+                                            timestamp)                   \
+  (void)(0);
+
+#define TRACE_EVENT_INSTANT_WITH_TIMESTAMP1(category_group, name, scope,  \
+                                            timestamp, arg_name, arg_val) \
   (void)(0);
 
 #else
@@ -250,8 +281,6 @@
   INTERNAL_TRACE_EVENT_ADD_SCOPED_WITH_FLOW(category_group, name, bind_id,   \
                                             flow_flags, arg1_name, arg1_val, \
                                             arg2_name, arg2_val)
-
-#endif // __EMSCRIPTEN__
 
 // Records a single event called "name" immediately, with 0, 1 or 2
 // associated arguments. If the category is not enabled, then this
@@ -293,6 +322,8 @@
   INTERNAL_TRACE_EVENT_ADD_WITH_TIMESTAMP(                                \
       TRACE_EVENT_PHASE_INSTANT, category_group, name, timestamp,         \
       TRACE_EVENT_FLAG_NONE | scope, arg_name, arg_val)
+
+#endif // __EMSCRIPTEN__
 
 // Records a single BEGIN event called "name" immediately, with 0, 1 or 2
 // associated arguments. If the category is not enabled, then this

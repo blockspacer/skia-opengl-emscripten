@@ -10,11 +10,6 @@
 #include <type_traits>
 #include <utility>
 
-#include <algorithm> // TODO
-#include <numeric> // TODO
-#include <iterator> // TODO
-#include <functional> // TODO
-
 #include "base/optional.h"
 #include "base/parameter_pack.h"
 
@@ -224,44 +219,20 @@ inline constexpr bool IsValidTrait() {
 //   ...
 // };
 
-//template <class ValidTraits, class... ArgTypes>
-//struct AreValidTraits
-//    : std::integral_constant<bool,
-//                             all_of(
-//                                 {IsValidTrait<ValidTraits, ArgTypes>()...})> {
-//};
-
-// TODO
-// https://stackoverflow.com/questions/53705903/stdis-convertibleargtypes-validtraitsvalue-dependent-name-is-not-a-type
-// https://github.com/webrtcmirrors/chromium_src_base/commit/967d5f2baa7f49c27163b3e818c0275b342c87bb
-// https://github.com/huangjingpei/rsu/blob/bd14afbe58f8eeebdc4247274ad24d926c4ce581/deps/webrtc/base/traits_bag.h#L67
-
-template <typename ValidTraits, typename... ArgTypes>
+#if defined(__EMSCRIPTEN__) || defined(_WIN32) || defined(WIN32) || defined(_WIN64) || defined(WIN64)
+  // TODO
+template <class ValidTraits, class... ArgTypes>
 struct AreValidTraits
-    : std::integral_constant<
-          bool,
-          std::all_of(std::initializer_list{typename std::is_constructible<ValidTraits, ArgTypes>::value...})> {};
-
-// Checks if all of the elements in |ilist| are true.
-// Similar to std::any_of for the case of constexpr initializer_list.
-//inline constexpr bool all_of_TODO(std::initializer_list<bool> ilist) {
-//  for (auto c : ilist) {
-//    if (!c)
-//      return false;
-//  }
-//  return true;
-//}
-//
-//template <typename ValidTraits, typename... ArgTypes>
-//struct AreValidTraits
-//    : std::integral_constant<bool,
-//                             all_of_TODO(
-//                                 std::initializer_list<bool>{IsValidTrait<ValidTraits, ArgTypes>()...})> {
-//};
-
-// TODO
-//template <typename ValidTraits, typename... ArgTypes>
-//struct AreValidTraits {};
+    : std::integral_constant<bool, true> {
+};
+#else
+template <class ValidTraits, class... ArgTypes>
+struct AreValidTraits
+    : std::integral_constant<bool,
+                             all_of(
+                                 {IsValidTrait<ValidTraits, ArgTypes>()...})> {
+};
+#endif
 
 // Helper to make getting an enum from a trait more readable.
 template <typename Enum, typename... Args>

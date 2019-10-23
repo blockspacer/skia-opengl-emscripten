@@ -172,6 +172,8 @@ static void emscripten_yield_call(std::function<void()> f, const int ms = 500) {
 #endif
 #elif defined(_WIN32) || defined(WIN32) || defined(_WIN64) || defined(WIN64)
 #define OS_WIN 1
+// custom
+#define OS_WINDOWS 1 // https://github.com/blockspacer/skia-opengl-emscripten/blob/7c423190544c8da1bf8ae79b800c9c0c83dd3c6e/src/chromium/base/third_party/symbolize/demangle.cc#L41
 #elif defined(__Fuchsia__)
 #define OS_FUCHSIA 1
 #elif defined(__FreeBSD__)

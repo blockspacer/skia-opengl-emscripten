@@ -26,7 +26,11 @@ void CreateSyntheticHeapCorruption() {
 }  // namespace
 
 void TerminateWithHeapCorruption() {
-  __try {
+  /*
+  error C2712: Cannot use __try in functions that require object unwinding
+  */
+  __try 
+  {
     // Pre-Windows 10, it's hard to trigger a heap corruption fast fail, so
     // artificially create one instead.
     if (base::win::GetVersion() < base::win::Version::WIN10)
@@ -43,7 +47,11 @@ void TerminateWithHeapCorruption() {
 
     HeapFree(heap, 0, addr);
     HeapDestroy(heap);
-  } __except (EXCEPTION_EXECUTE_HANDLER) {
+  /*
+  error C2712: Cannot use __try in functions that require object unwinding
+  */
+  } 
+  __except (EXCEPTION_EXECUTE_HANDLER) {
     // Heap corruption exception should never be caught.
     CHECK(false);
   }

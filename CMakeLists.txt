@@ -4,6 +4,53 @@
 set(PROJECT_NAME "skemgl")
 project(${PROJECT_NAME} CXX C)
 
+# NOTE: always FALSE here (change below)
+set(TARGET_EMSCRIPTEN FALSE)
+set(TARGET_LINUX FALSE)
+if(EMSCRIPTEN)
+  set(TARGET_EMSCRIPTEN TRUE)
+elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+  set(TARGET_LINUX TRUE)
+elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Windows" OR ${CMAKE_SYSTEM_NAME} STREQUAL "Generic")
+  set(TARGET_WINDOWS TRUE)
+else()
+  set(TARGET_UNKNOWN TRUE)
+  message(FATAL_ERROR "platform not supported: ${CMAKE_SYSTEM_NAME}")
+endif()
+
+#if(TARGET_WINDOWS)
+#  set(USE_CLANG_CL TRUE)
+#
+#  # which compilers to use for C and C++
+#  # clang-cl gets detected as "Clang" instead of "MSVC" so we force it here
+#  if(USE_CLANG_CL)
+#      include(CMakeForceCompiler)
+#      #CMAKE_FORCE_C_COMPILER("C:/Program Files/LLVM/bin/clang-cl.exe")
+#      set(CMAKE_C_COMPILER "C:/Program Files/LLVM/bin/clang-cl.exe")
+#      #set(CMAKE_C_COMPILER_VERSION "16.00.40219.01")
+#      set(CMAKE_LINKER "C:/Program Files/LLVM/bin/lld-link.exe")
+#      if(ARCH STREQUAL "i386")
+#          set(MSVC_C_ARCHITECTURE_ID "X86")
+#      endif()
+#      #include(${CMAKE_ROOT}/Modules/CMakeClDeps.cmake)
+#  else()
+#      set(CMAKE_C_COMPILER cl)
+#  endif()
+#
+#  if(ARCH STREQUAL "arm")
+#      include(CMakeForceCompiler)
+#      #CMAKE_FORCE_CXX_COMPILER(cl MSVC)
+#  else()
+#      if(USE_CLANG_CL)
+#          include(CMakeForceCompiler)
+#          #CMAKE_FORCE_CXX_COMPILER("C:/Program Files/LLVM/bin/clang-cl.exe")
+#          set(CMAKE_CXX_COMPILER "C:/Program Files/LLVM/bin/clang-cl.exe")
+#      else()
+#          set(CMAKE_CXX_COMPILER cl)
+#      endif()
+#  endif()
+#endif(TARGET_WINDOWS)
+
 include( cmake/Utils.cmake )
 # set_cmake_module_paths from Utils.cmake
 set_cmake_module_paths( ${PROJECT_NAME}
@@ -30,20 +77,6 @@ endif(NOT EMSCRIPTEN)
 #set(RELEASE_BUILD FALSE)
 option(RELEASE_BUILD "RELEASE_BUILD" OFF)
 message(STATUS "RELEASE_BUILD = ${RELEASE_BUILD}")
-
-# NOTE: always FALSE here (change below)
-set(TARGET_EMSCRIPTEN FALSE)
-set(TARGET_LINUX FALSE)
-if(EMSCRIPTEN)
-  set(TARGET_EMSCRIPTEN TRUE)
-elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
-  set(TARGET_LINUX TRUE)
-elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
-  set(TARGET_WINDOWS TRUE)
-else()
-  set(TARGET_UNKNOWN TRUE)
-  message(FATAL_ERROR "platform not supported: ${CMAKE_SYSTEM_NAME}")
-endif()
 
 set(CHROMIUM_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src/chromium/)
 
@@ -188,6 +221,7 @@ elseif(TARGET_LINUX OR TARGET_WINDOWS)
 else()
 message(FATAL_ERROR "platform not supported")
 endif()
+
 if(NOT USE_OPENGL_LIB)
   # make OpenGL optional
   set(FOUND_OPENGL_LIBRARIES "")
@@ -765,10 +799,23 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}
 
 # -fno-exceptions
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF) # -std=c++11 instead of -std=gnu++11
+#set(MY_CXX_COMPILE_FEATURES cxx_generic_lambdas cxx_range_for cxx_strong_enums)
 if(MSVC)
-  set(COMMON_CXX_FLAGS "${COMMON_CXX_FLAGS} /std:c++17") # use target options
+  if (MSVC_VERSION GREATER_EQUAL "1900")
+  include(CheckCXXCompilerFlag)
+  CHECK_CXX_COMPILER_FLAG("/std:c++latest" _cpp_latest_flag_supported)
+  if (_cpp_latest_flag_supported)
+      add_compile_options("/std:c++latest")
+     # message(FATAL_ERROR "CHECK_CXX_COMPILER_FLAG failed")
+  else()
+    message(FATAL_ERROR "CHECK_CXX_COMPILER_FLAG failed")
+  endif()
+  endif()
 else()
-  set(COMMON_CXX_FLAGS "${COMMON_CXX_FLAGS} -std=c++17") # use target options
+  set(COMMON_CXX_FLAGS "${COMMON_CXX_FLAGS} -std=c++latest") # use target options
 endif()
 
 # see https://github.com/chromium/chromium/blob/master/build/config/compiler/BUILD.gn#L683
@@ -780,6 +827,15 @@ endif()
 set(COMMON_CXX_FLAGS "${COMMON_CXX_FLAGS} -DCODEC_IMPLEMENTATION=1")
 
 if(MSVC) # TODO
+    # see https://docs.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warnings-by-compiler-version?view=vs-2019
+    
+    #set(COMMON_FLAGS "${COMMON_FLAGS} /wd2397") # TODO: narrowing 
+    #set(COMMON_FLAGS "${COMMON_FLAGS} /wd2398") # TODO: narrowing 
+    #set(COMMON_FLAGS "${COMMON_FLAGS} /wd2440") # TODO: narrowing 
+    #set(COMMON_FLAGS "${COMMON_FLAGS} /wd2712") # TODO: Cannot use __try in functions that require object unwinding 
+
+    # https://docs.microsoft.com/en-us/cpp/build/reference/zc-strictstrings-disable-string-literal-type-conversion?view=vs-2019
+    set(COMMON_FLAGS "${COMMON_FLAGS} /Zc:strictStrings-")
 
     # see https://github.com/chromium/chromium/blob/8e82c6ab1bc2223fa25f1a127b65071d2d58ae36/build/config/win/BUILD.gn#L276
     set(COMMON_FLAGS "${COMMON_FLAGS} -DNTDDI_VERSION=NTDDI_WIN10_RS2")
@@ -789,6 +845,11 @@ if(MSVC) # TODO
     # Exceptions in allocator shim are not supported!
     # see https://github.com/chromium/chromium/blob/5514bb10d8770fea460152d278f105895067aa38/build/config/compiler/BUILD.gn#L1775
     # TODO: /EHsc- # Disabling Exceptions for MSVC
+    set(COMMON_FLAGS "${COMMON_FLAGS} /EHsc-")
+
+    # https://stackoverflow.com/questions/1372480/c-redefinition-header-files-winsock2-h
+    set(COMMON_FLAGS "${COMMON_FLAGS} -D_WINSOCKAPI_=1")
+
     set(COMMON_FLAGS "${COMMON_FLAGS} -D_HAS_EXCEPTIONS=0")
 
     # see https://github.com/jarro2783/cxxopts/issues/49
@@ -802,7 +863,7 @@ if(MSVC) # TODO
     
     # see https://github.com/chromium/chromium/blob/5514bb10d8770fea460152d278f105895067aa38/build/config/compiler/BUILD.gn#L1093
     set(COMMON_FLAGS "${COMMON_FLAGS} /wd4117") # TODO
-    
+
     set(COMMON_FLAGS "${COMMON_FLAGS} /wd4800") # TODO
     set(COMMON_FLAGS "${COMMON_FLAGS} /wd4267") # TODO
     set(COMMON_FLAGS "${COMMON_FLAGS} /wd4996") # TODO
@@ -876,6 +937,7 @@ else()
 endif(RELEASE_BUILD)
 
 if(MSVC) # TODO
+
   # see https://software.intel.com/en-us/forums/intel-c-compiler/topic/733662
   # see https://unicode-org.atlassian.net/browse/ICU-13251?page=com.atlassian.jira.plugin.system.issuetabpanels%3Aall-tabpanel
   set(COMMON_FLAGS "${COMMON_FLAGS} /utf-8")
