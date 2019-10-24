@@ -71,6 +71,10 @@
 static bool document_initialized = false;
 #endif // OS_EMSCRIPTEN
 
+#if defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+#include "cobalt/dom/html5_native/html5_elem_queue.h"
+#endif
+
 using cobalt::cssom::ViewportSize;
 
 namespace cobalt {
@@ -116,12 +120,50 @@ Document::Document(HTMLElementContext* html_element_context,
   //HTML5_STACKTRACE();
 #endif // OS_EMSCRIPTEN && DISABLE_PTHREADS
 
+#if 0
 #if defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
-  if(true) {
-    em_node_
-      = emscripten::val::global("document");
-  }
-#endif // defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+  auto taskCb
+    = [em_node = &em_node_](const html_native::NativeHTMLTaskCbParams&&)
+    {
+      DCHECK(em_node);
+      DCHECK(em_node->isNull() || em_node->isUndefined());
+      if(em_node)
+      {
+        printf("Node::HTMLDocumentElement\n");
+
+        emscripten::val body_elements
+          = emscripten::val::global("document")
+            .call<emscripten::val>(
+              "getElementsByTagName", emscripten::val("body"));
+        emscripten::val body_node
+          = body_elements[0];
+        DCHECK(!body_node.isNull()
+               && !body_node.isUndefined());
+
+        (*em_node)
+          = body_node;
+
+        /*(*em_node)
+          = emscripten::val::global("document");
+            //.call<emscripten::val>(
+            //  "createElement", emscripten::val("video"));*/
+      } else {
+        NOTIMPLEMENTED_LOG_ONCE();
+      }
+    };
+
+  html_native::NativeHTMLTaskCbParams cbParams{1,2};
+
+  html_native::GlobalHTML5TaskQueue::getInstance()->
+    scheduleTaskInMainThread(
+      new html_native::NativeHTMLTaskParams{
+        std::move(taskCb),
+        std::move(cbParams)
+      },
+      true
+    );
+#endif
+#endif // 0
 
   DCHECK(html_element_context_);
   DCHECK(options.url.is_empty() || options.url.is_valid());

@@ -119,7 +119,9 @@ void setUpdateWASMPixmapAndFreeDataCb(void* func) {
   }
 }
 
-//#define ASYNC_WASM_PIXMAP_TRANSFER 1
+//#define EMSCRIPTEN_SUPPORTS_ASYNC_RUN 1
+
+// TODO: refactor, use `runOnBrowserThread`
 
 /// \note transfer data without locks in browser thread!
 /// \see https://github.com/emscripten-core/emscripten/blob/incoming/tests/pthread/test_pthread_run_on_main_thread.cpp#L96
@@ -127,7 +129,11 @@ void tranferPixmapToMainWASMThread(const SkPixmap* pixmapCopy) {
   //if (emscripten_has_threading_support()) {
   //}
 
-#if defined(ASYNC_WASM_PIXMAP_TRANSFER)
+#if defined(EMSCRIPTEN_SUPPORTS_ASYNC_RUN)
+#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+#error "enable threads for emscripten_async_run_in_main_runtime_thread"
+#endif // defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+
     /// \note emscripten_async_* executed in a fire and forget manner
     /// on the main thread in call order
     /// \note emscripten_async_* called from main thread may be sync,
@@ -136,7 +142,12 @@ void tranferPixmapToMainWASMThread(const SkPixmap* pixmapCopy) {
       EM_FUNC_SIG_VI /* args count */,
       updateWASMPixmapAndFreeDataCb,
       (void*)pixmapCopy);
-#else // ASYNC_WASM_PIXMAP_TRANSFER
+#else // EMSCRIPTEN_SUPPORTS_ASYNC_RUN
+
+#if defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+  /// \note no emscripten_sync_* without threads, so just run func here
+  updateWASMPixmapAndFreeDataCb((void*)pixmapCopy);
+#else
     /// \note emscripten_sync* will be proxied
     /// to be called by the main thread
     /*int retcode =*/ emscripten_sync_run_in_main_runtime_thread(
@@ -144,7 +155,9 @@ void tranferPixmapToMainWASMThread(const SkPixmap* pixmapCopy) {
       updateWASMPixmapAndFreeDataCb,
       (void*)pixmapCopy);
     //DCHECK(retcode != 0);
-#endif // ASYNC_WASM_PIXMAP_TRANSFER
+#endif // defined(__EMSCRIPTEN__) && !defined(__EMSCRIPTEN_PTHREADS__)
+
+#endif // EMSCRIPTEN_SUPPORTS_ASYNC_RUN
 }
 #endif // OS_EMSCRIPTEN
 #endif // ENABLE_SKIA

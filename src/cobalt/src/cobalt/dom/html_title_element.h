@@ -27,6 +27,10 @@
 #include <emscripten/val.h>
 #endif // OS_EMSCRIPTEN
 
+#if defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+#include "cobalt/dom/html5_native/html5_elem_queue.h"
+#endif
+
 namespace cobalt {
 namespace dom {
 
@@ -45,13 +49,36 @@ class HTMLTitleElement : public HTMLElement {
   explicit HTMLTitleElement(Document* document)
       : HTMLElement(document, base::Token(kTagName))
 {
+#if 0
 #if defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
-  if(true) {
-    em_node_
-      = emscripten::val::global("document").call<emscripten::val>(
-          "createElement", emscripten::val("title"));
-  }
-#endif // defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+  auto taskCb
+    = [em_node = &em_node_](const html_native::NativeHTMLTaskCbParams&&)
+    {
+      DCHECK(em_node);
+      DCHECK(em_node->isNull() || em_node->isUndefined());
+      if(em_node)
+      {
+        printf("Node::HTMLTitleElement\n");
+        (*em_node)
+          = emscripten::val::global("document").call<emscripten::val>(
+              "createElement", emscripten::val("div"));
+      } else {
+        NOTIMPLEMENTED_LOG_ONCE();
+      }
+    };
+
+  html_native::NativeHTMLTaskCbParams cbParams{1,2};
+
+  html_native::GlobalHTML5TaskQueue::getInstance()->
+    scheduleTaskInMainThread(
+      new html_native::NativeHTMLTaskParams{
+        std::move(taskCb),
+        std::move(cbParams)
+      },
+      true
+    );
+#endif
+#endif // 0
 }
 
   // Custom, not in any spec.

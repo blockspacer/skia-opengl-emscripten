@@ -2324,10 +2324,6 @@ static void animate() {
                   //printf("g_cobaltTester->run\n");
                   //emscripten_resume_main_loop();
               }
-#ifdef __TODO__
-              DCHECK(g_cobaltTester);
-              g_cobaltTester->run();
-#endif
           } // if(g_cobaltTester && .. )
       } // if (render_browser_window)
 
@@ -5244,7 +5240,7 @@ static void mainLockFreeLoop() {
 
   ///if (isDebugPeriodReached()) printf("draw...\n");
 
-  // Render
+  // Render on native
 #if defined(ENABLE_OPENGL)
   animate();
   Draw();
@@ -5269,11 +5265,9 @@ static void mainLockFreeLoop() {
 
 #elif defined(__EMSCRIPTEN__) // EMSCRIPTEN without SDL2
 
-  // Render
-#if defined(ENABLE_OPENGL) && defined(ENABLE_SKIA)
+  // Render on WASM
   animate();
   Draw();
-#endif // ENABLE_OPENGL
 
 #else
   #error "TODO: port SDL_PollEvent"

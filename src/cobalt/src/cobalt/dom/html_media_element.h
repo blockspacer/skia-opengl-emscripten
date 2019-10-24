@@ -43,6 +43,10 @@
 #include <emscripten/val.h>
 #endif // OS_EMSCRIPTEN
 
+#if defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+#include "cobalt/dom/html5_native/html5_elem_queue.h"
+#endif
+
 namespace cobalt {
 namespace dom {
 

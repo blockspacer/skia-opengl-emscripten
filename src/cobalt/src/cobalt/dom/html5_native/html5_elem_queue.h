@@ -38,8 +38,7 @@ class GlobalHTML5TaskQueue {
   static GlobalHTML5TaskQueue* getInstance();
 
   /// \nore manually free taskArgs pointer in callback
-  void scheduleTaskInMainThread(const NativeHTMLTask task,
-    NativeHTMLTaskParams* taskArgs, const bool async = true);
+  void scheduleTaskInMainThread(NativeHTMLTaskParams* taskArgs, const bool async = true);
 
  private:
   /* Private constructor to prevent instancing. */

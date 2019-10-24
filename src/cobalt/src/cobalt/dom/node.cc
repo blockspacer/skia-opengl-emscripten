@@ -1,4 +1,4 @@
-// Copyright 2014 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2014 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,6 +16,10 @@
 
 #include <memory>
 #include <vector>
+
+#include <string>
+#include <codecvt> /// \note for UTF-8 on WASM
+#include <locale>
 
 #include "cobalt/base/user_log.h"
 
@@ -211,6 +215,22 @@ scoped_refptr<Node> Node::InsertBefore(
   return PreInsert(new_child, reference_child);
 }
 
+namespace {
+/// \note make sure that source files are UTF with BOM
+/// \note JavaScript strings are encoded with UTF16-LE. (little endian)
+static std::wstring utf8_to_wstring(const std::string& str) {
+  std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
+  return converter.from_bytes(str);
+}
+
+/// \note make sure that source files are UTF with BOM
+/// \note JavaScript strings are encoded with UTF16-LE. (little endian)
+static std::string wstring_to_utf8(const std::wstring& str) {
+  std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
+  return converter.to_bytes(str);
+}
+} // namespace
+
 // Algorithm for AppendChild:
 //   https://www.w3.org/TR/dom/#dom-node-appendchild
 scoped_refptr<Node> Node::AppendChild(const scoped_refptr<Node>& new_child) {
@@ -219,12 +239,41 @@ scoped_refptr<Node> Node::AppendChild(const scoped_refptr<Node>& new_child) {
   // the context object.
   // To append a node to a parent, pre-insert node into parent before null.
 
-#if // 0
 #if defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
   auto taskCb
-    = [new_child_em_node = &new_child->em_node_, em_node = &em_node_](const html_native::NativeHTMLTaskCbParams&&)
+    = [new_child_em_node = &new_child->em_node_
+       , em_node = &em_node_
+       //, innerHTMLPrint = inner_html()
+       ]
+       (const html_native::NativeHTMLTaskCbParams&&)
     {
       DCHECK(em_node);
+      DCHECK(new_child_em_node);
+      if(new_child_em_node
+         && !new_child_em_node->isNull()
+         && !new_child_em_node->isUndefined())
+      {
+        // document.getElementsByTagName("body")[0].getElementsByTagName("div")[0]["localName"]
+        printf("Node::AppendChild localName %s\n", (*new_child_em_node)["localName"].as<std::string>().c_str());
+        //
+        DCHECK(new_child_em_node
+          && !new_child_em_node->isNull()
+          && !new_child_em_node->isUndefined());
+        if((*new_child_em_node)["localName"].as<std::string>() == "div") {
+          printf("Node::AppendChild innerHTML\n");
+          //(*new_child_em_node)["innerHTML"] // textContent innerHTML
+              /// \note make sure that source files are UTF with BOM
+          //  = emscripten::val("фывфывывф inner_html.c_str()");
+          //  //= emscripten::val(innerHTMLPrint.c_str());
+          new_child_em_node->set("style", "display:block");
+          new_child_em_node->set("innerHTML",
+            /// \note make sure that source files are UTF with BOM
+            utf8_to_wstring("выавывава iasdasd"));
+        }
+      } else {
+        return; // TODO
+      }
+
       if(new_child_em_node
          && !new_child_em_node->isNull()
          && !new_child_em_node->isUndefined()
@@ -234,22 +283,59 @@ scoped_refptr<Node> Node::AppendChild(const scoped_refptr<Node>& new_child) {
       {
         printf("Node::AppendChild 1\n");
 
+        DCHECK(em_node
+          && !em_node->isNull()
+          && !em_node->isUndefined());
+        DCHECK(new_child_em_node
+          && !new_child_em_node->isNull()
+          && !new_child_em_node->isUndefined());
         em_node->call<void>("appendChild", *new_child_em_node);
 
         /*emscripten::val new_node
           = emscripten::val::global("document").call<emscripten::val>(
               "createElement", emscripten::val("div"));
-        new_node.set("innerHTML", "innerHTML.str()");
+        new_node.set("innerHTML", "ûÛÂÀÛÂ innerHTML.str()");
         new_node["style"].set("display", emscripten::val("block"));
         new_node["classList"].call<void>("add", emscripten::val("testClass1"));
         new_node["classList"].call<void>("add", emscripten::val("testClass2"));
         em_node->call<void>("appendChild", new_node);*/
-      } else {
-        NOTIMPLEMENTED_LOG_ONCE();
+      } else if (new_child_em_node
+         && !new_child_em_node->isNull()
+         && !new_child_em_node->isUndefined()) {
+        //NOTIMPLEMENTED_LOG_ONCE();
 
         printf("Node::AppendChild 2\n");
-        /*emscripten::val parent_node
-          = emscripten::val::global("document")["body"];
+
+        // document.getElementsByTagName("body")[0]
+        emscripten::val body_elements
+          = emscripten::val::global("document")
+            .call<emscripten::val>(
+              "getElementsByTagName", emscripten::val("body"));
+        emscripten::val body_node
+          = body_elements[0];
+        DCHECK(!body_node.isNull()
+               && !body_node.isUndefined());
+
+        /// \todo make app_root_node configurable
+        emscripten::val* app_root_node = &body_node;
+
+        DCHECK(app_root_node
+          && !app_root_node->isNull()
+          && !app_root_node->isUndefined());
+        DCHECK(new_child_em_node
+          && !new_child_em_node->isNull()
+          && !new_child_em_node->isUndefined());
+        app_root_node->call<void>("appendChild", *new_child_em_node);
+
+        /*emscripten::val body_elements
+          = emscripten::val::global("document")
+            .call<emscripten::val>(
+              "getElementsByTagName", emscripten::val("body"));
+        emscripten::val body_node
+          = body_elements[0];
+        DCHECK(!body_node.isNull()
+               && !body_node.isUndefined());
+
         emscripten::val new_node
           = emscripten::val::global("document").call<emscripten::val>(
               "createElement", emscripten::val("div"));
@@ -257,7 +343,9 @@ scoped_refptr<Node> Node::AppendChild(const scoped_refptr<Node>& new_child) {
         new_node["style"].set("display", emscripten::val("block"));
         new_node["classList"].call<void>("add", emscripten::val("testClass1"));
         new_node["classList"].call<void>("add", emscripten::val("testClass2"));
-        parent_node.call<void>("appendChild", new_node);*/
+        body_node.call<void>("appendChild", new_node);*/
+      } else {
+        //NOTIMPLEMENTED_LOG_ONCE();
       }
     };
 
@@ -265,21 +353,6 @@ scoped_refptr<Node> Node::AppendChild(const scoped_refptr<Node>& new_child) {
 
   html_native::GlobalHTML5TaskQueue::getInstance()->
     scheduleTaskInMainThread(
-      /// \note �positive lambda�,
-      /// one with a + in front of it;
-      /// this causes automatic conversion to a function pointer
-      /// Can use only non-capturing lambda with C-style function pointer!
-      /// see https://vorbrodt.blog/2019/03/24/c-style-callbacks-and-lambda-functions/
-      +[](void* taskData) {
-        html_native::NativeHTMLTaskParams* taskArgs
-          = reinterpret_cast<html_native::NativeHTMLTaskParams*>(taskData);
-        printf("213312132213\n");
-        DCHECK(taskArgs->cb);
-        if(taskArgs->cb) {
-          taskArgs->cb(std::move(taskArgs->params));
-        }
-        delete taskArgs;
-      },
       new html_native::NativeHTMLTaskParams{
         std::move(taskCb),
         std::move(cbParams)
@@ -287,7 +360,6 @@ scoped_refptr<Node> Node::AppendChild(const scoped_refptr<Node>& new_child) {
       true
     );
 #endif
-#endif // 0
 
 #if 0 // TODO: use lock-free Sequences to post tasks on main browser thread https://chromium.googlesource.com/chromium/src/+/master/docs/threading_and_tasks.md#Using-Sequences-Instead-of-Locks
 #if defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)

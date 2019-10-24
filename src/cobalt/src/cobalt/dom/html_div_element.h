@@ -27,6 +27,10 @@
 #include <emscripten/val.h>
 #endif // OS_EMSCRIPTEN
 
+#if defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+#include "cobalt/dom/html5_native/html5_elem_queue.h"
+#endif
+
 namespace cobalt {
 namespace dom {
 
@@ -44,13 +48,34 @@ class HTMLDivElement : public HTMLElement {
       : HTMLElement(document, base::Token(kTagName))
 {
 #if defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
-  if(true) {
-    printf("HTMLDivElement: created div\n");
-    em_node_
-      = emscripten::val::global("document").call<emscripten::val>(
-          "createElement", emscripten::val("div"));
-  }
-#endif // defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+  auto taskCb
+    = [em_node = &em_node_/*, inner_html = inner_html().c_str()*/](const html_native::NativeHTMLTaskCbParams&&)
+    {
+      DCHECK(em_node);
+      DCHECK(em_node->isNull() || em_node->isUndefined());
+      if(em_node)
+      {
+        //printf("Node::HTMLDivElement %s\n", inner_html);
+        printf("Node::HTMLDivElement\n");
+        (*em_node)
+          = emscripten::val::global("document").call<emscripten::val>(
+              "createElement", emscripten::val("div"));
+      } else {
+        NOTIMPLEMENTED_LOG_ONCE();
+      }
+    };
+
+  html_native::NativeHTMLTaskCbParams cbParams{1,2};
+
+  html_native::GlobalHTML5TaskQueue::getInstance()->
+    scheduleTaskInMainThread(
+      new html_native::NativeHTMLTaskParams{
+        std::move(taskCb),
+        std::move(cbParams)
+      },
+      true
+    );
+#endif
 }
 
   // Custom, not in any spec.
