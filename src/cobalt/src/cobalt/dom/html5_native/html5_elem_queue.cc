@@ -8,8 +8,6 @@
 #include <emscripten/val.h>
 #include <emscripten/threading.h>
 
-#include <assert.h>
-
 #if defined(ENABLE_NATIVE_HTML)
 
 namespace html_native {
@@ -40,7 +38,7 @@ void GlobalHTML5TaskQueue::scheduleTaskInMainThread(
     /// Can use only non-capturing lambda with C-style function pointer!
     /// see https://vorbrodt.blog/2019/03/24/c-style-callbacks-and-lambda-functions/
     +[](void* taskData) {
-      assert(emscripten_is_main_runtime_thread());
+      DCHECK(EM_IS_MAIN_THREAD());
 
       html_native::NativeHTMLTaskParams* taskArgs
         = reinterpret_cast<html_native::NativeHTMLTaskParams*>(taskData);

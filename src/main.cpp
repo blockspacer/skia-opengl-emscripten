@@ -2075,7 +2075,7 @@ CobaltTester::CobaltTester()
 
   printf("document_->set_window...\n");
   const bool document_load_started = window_->TryForceStartDocumentLoad();
-  DCHECK(document_load_started);
+  //DCHECK(document_load_started);
 
   printf("document_->set_window...\n");
 
@@ -2250,7 +2250,7 @@ static void animate() {
           DCHECK(g_cobaltTester);
           DCHECK(g_cobaltTester->window_);
           const bool res = g_cobaltTester->window_->TryForceStartDocumentLoad();
-          DCHECK(res);
+          //DCHECK(res);
           printf("g_cobaltTester TryForceStartDocumentLoad 2\n");
           //emscripten_resume_main_loop();
       }

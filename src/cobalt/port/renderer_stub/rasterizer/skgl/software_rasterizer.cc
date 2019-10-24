@@ -110,12 +110,16 @@ sk_sp<SkImage> getRasterizerSkImage() {
 
 #if defined(ENABLE_SKIA)
 #if defined(OS_EMSCRIPTEN)
-void *updateWASMPixmapAndFreeDataCb = nullptr;
+
+typedef void (*WASMPixmapUpdateFunc)(void *data);
+
+WASMPixmapUpdateFunc updateWASMPixmapAndFreeDataCb = nullptr;
 
 void setUpdateWASMPixmapAndFreeDataCb(void* func) {
   DCHECK(func);
   if(func) {
-    updateWASMPixmapAndFreeDataCb = func;
+    updateWASMPixmapAndFreeDataCb =
+      reinterpret_cast<WASMPixmapUpdateFunc>(func);
   }
 }
 

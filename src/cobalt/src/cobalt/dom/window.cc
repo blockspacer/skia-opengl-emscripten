@@ -286,6 +286,7 @@ Window::Window(
 
 bool Window::TryForceStartDocumentLoad() {
   if(!canStartDocumentLoad_) {
+    printf("TryForceStartDocumentLoad failed due to !canStartDocumentLoad_\n");
     return false;
   }
 
@@ -320,7 +321,8 @@ bool Window::TryForceStartDocumentLoad() {
 void Window::StartDocumentLoad(
     loader::FetcherFactory* fetcher_factory, const GURL& url,
     Parser* dom_parser,
-    const loader::Decoder::OnCompleteFunction& load_complete_callback) {
+    const loader::Decoder::OnCompleteFunction& load_complete_callback)
+{
   isDocumentStartedLoading_ = true;
   document_loader_.reset(new loader::Loader(
       base::Bind(&loader::FetcherFactory::CreateFetcher,

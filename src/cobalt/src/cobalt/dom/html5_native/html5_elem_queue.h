@@ -1,6 +1,6 @@
 #pragma once
 
-/// \note place base_export.h before defined(OS_*)
+/// \note place base_export.h before defined(OS_*) and EM_IS_MAIN_THREAD
 #include "base/base_export.h"
 #include "base/callback.h"
 #include "base/containers/stack.h"
@@ -13,6 +13,10 @@
 #include <algorithm>
 #include <functional>
 #include <vector>
+
+#if !defined(EM_IS_MAIN_THREAD)
+#error "need to define EM_IS_MAIN_THREAD"
+#endif // EM_IS_MAIN_THREAD
 
 #if defined(ENABLE_NATIVE_HTML)
 
