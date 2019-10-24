@@ -32,7 +32,6 @@ HTMLStyleElement::HTMLStyleElement(Document* document)
       is_parser_inserted_(false),
       inline_style_location_(GetSourceLocationName(), 1, 1)
 {
-#if 0 // TODO: use lock-free Sequences to post tasks on main browser thread https://chromium.googlesource.com/chromium/src/+/master/docs/threading_and_tasks.md#Using-Sequences-Instead-of-Locks
 #if defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
   if(true) {
     em_node_
@@ -40,7 +39,6 @@ HTMLStyleElement::HTMLStyleElement(Document* document)
           "createElement", emscripten::val("style"));
   }
 #endif // defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
-#endif // 0
 }
 
 void HTMLStyleElement::OnInsertedIntoDocument() {

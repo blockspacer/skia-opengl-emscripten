@@ -39,7 +39,17 @@ class HTMLHtmlElement : public HTMLElement {
   static const char kTagName[];
 
   explicit HTMLHtmlElement(Document* document)
-      : HTMLElement(document, base::Token(kTagName)) {}
+      : HTMLElement(document, base::Token(kTagName))
+{
+#if defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+  if(true) {
+    em_node_
+      = emscripten::val::global("document");
+        //.call<emscripten::val>(
+        //  "createElement", emscripten::val("html"));
+  }
+#endif // defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+}
 
   // Custom, not in any spec.
   scoped_refptr<HTMLHtmlElement> AsHTMLHtmlElement() override { return this; }

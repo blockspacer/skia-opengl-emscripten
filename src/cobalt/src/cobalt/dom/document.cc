@@ -118,7 +118,7 @@ Document::Document(HTMLElementContext* html_element_context,
 
 #if defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
   if(true) {
-    emscripten::val em_node_
+    em_node_
       = emscripten::val::global("document");
   }
 #endif // defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)

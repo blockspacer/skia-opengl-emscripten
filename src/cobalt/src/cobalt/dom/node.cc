@@ -51,6 +51,10 @@
 #include <emscripten.h>
 #endif
 
+#if defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+#include "cobalt/dom/html5_native/html5_elem_queue.h"
+#endif
+
 namespace cobalt {
 namespace dom {
 
@@ -214,6 +218,76 @@ scoped_refptr<Node> Node::AppendChild(const scoped_refptr<Node>& new_child) {
   // The appendChild(node) method must return the result of appending node to
   // the context object.
   // To append a node to a parent, pre-insert node into parent before null.
+
+#if // 0
+#if defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+  auto taskCb
+    = [new_child_em_node = &new_child->em_node_, em_node = &em_node_](const html_native::NativeHTMLTaskCbParams&&)
+    {
+      DCHECK(em_node);
+      if(new_child_em_node
+         && !new_child_em_node->isNull()
+         && !new_child_em_node->isUndefined()
+         && em_node
+         && !em_node->isNull()
+         && !em_node->isUndefined())
+      {
+        printf("Node::AppendChild 1\n");
+
+        em_node->call<void>("appendChild", *new_child_em_node);
+
+        /*emscripten::val new_node
+          = emscripten::val::global("document").call<emscripten::val>(
+              "createElement", emscripten::val("div"));
+        new_node.set("innerHTML", "innerHTML.str()");
+        new_node["style"].set("display", emscripten::val("block"));
+        new_node["classList"].call<void>("add", emscripten::val("testClass1"));
+        new_node["classList"].call<void>("add", emscripten::val("testClass2"));
+        em_node->call<void>("appendChild", new_node);*/
+      } else {
+        NOTIMPLEMENTED_LOG_ONCE();
+
+        printf("Node::AppendChild 2\n");
+        /*emscripten::val parent_node
+          = emscripten::val::global("document")["body"];
+        emscripten::val new_node
+          = emscripten::val::global("document").call<emscripten::val>(
+              "createElement", emscripten::val("div"));
+        new_node.set("innerHTML", "innerHTML.str()");
+        new_node["style"].set("display", emscripten::val("block"));
+        new_node["classList"].call<void>("add", emscripten::val("testClass1"));
+        new_node["classList"].call<void>("add", emscripten::val("testClass2"));
+        parent_node.call<void>("appendChild", new_node);*/
+      }
+    };
+
+  html_native::NativeHTMLTaskCbParams cbParams{1,2};
+
+  html_native::GlobalHTML5TaskQueue::getInstance()->
+    scheduleTaskInMainThread(
+      /// \note “positive lambda”,
+      /// one with a + in front of it;
+      /// this causes automatic conversion to a function pointer
+      /// Can use only non-capturing lambda with C-style function pointer!
+      /// see https://vorbrodt.blog/2019/03/24/c-style-callbacks-and-lambda-functions/
+      +[](void* taskData) {
+        html_native::NativeHTMLTaskParams* taskArgs
+          = reinterpret_cast<html_native::NativeHTMLTaskParams*>(taskData);
+        printf("213312132213\n");
+        DCHECK(taskArgs->cb);
+        if(taskArgs->cb) {
+          taskArgs->cb(std::move(taskArgs->params));
+        }
+        delete taskArgs;
+      },
+      new html_native::NativeHTMLTaskParams{
+        std::move(taskCb),
+        std::move(cbParams)
+      },
+      true
+    );
+#endif
+#endif // 0
 
 #if 0 // TODO: use lock-free Sequences to post tasks on main browser thread https://chromium.googlesource.com/chromium/src/+/master/docs/threading_and_tasks.md#Using-Sequences-Instead-of-Locks
 #if defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
@@ -501,11 +575,11 @@ Node::Node(Document* document)
       inserted_into_document_(false),
       node_generation_(kInitialNodeGeneration),
       ALLOW_THIS_IN_INITIALIZER_LIST(registered_observers_(this))
-#if 0 // TODO: use lock-free Sequences to post tasks on main browser thread https://chromium.googlesource.com/chromium/src/+/master/docs/threading_and_tasks.md#Using-Sequences-Instead-of-Locks
+//#if 0 // TODO: use lock-free Sequences to post tasks on main browser thread https://chromium.googlesource.com/chromium/src/+/master/docs/threading_and_tasks.md#Using-Sequences-Instead-of-Locks
 #if defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
       , em_node_(emscripten::val::null())
 #endif // defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
-#endif // 0
+//#endif // 0
 {
   DCHECK(node_document_);
   GlobalStats::GetInstance()->Add(this);

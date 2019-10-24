@@ -283,11 +283,11 @@ class Node : public EventTarget {
 
   void ReplaceAll(const scoped_refptr<Node>& node);
 
-#if 0 // TODO: use lock-free Sequences to post tasks on main browser thread https://chromium.googlesource.com/chromium/src/+/master/docs/threading_and_tasks.md#Using-Sequences-Instead-of-Locks
+//#if 0 // TODO: use lock-free Sequences to post tasks on main browser thread https://chromium.googlesource.com/chromium/src/+/master/docs/threading_and_tasks.md#Using-Sequences-Instead-of-Locks
 #if defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
   emscripten::val em_node_;
 #endif // defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
-#endif // 0
+//#endif // 0
 
  private:
   // From EventTarget.

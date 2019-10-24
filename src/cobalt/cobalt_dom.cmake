@@ -1,11 +1,13 @@
 ﻿cmake_minimum_required(VERSION 2.8)
 
 # custom
-list(APPEND cobalt_dom_SOURCES
+list(APPEND cobalt_dom_custom_SOURCES
   ${COBALT_CORE_DIR}dom/HTMLModel.cc
   ${COBALT_CORE_DIR}dom/HTMLModel.h
   ${COBALT_CORE_DIR}dom/CustomScriptValue.cc
   ${COBALT_CORE_DIR}dom/CustomScriptValue.h
+  ${COBALT_CORE_DIR}dom/html5_native/html5_elem_queue.cc
+  ${COBALT_CORE_DIR}dom/html5_native/html5_elem_queue.h
 )
 
 # '<(DEPTH)/cobalt/browser/browser_bindings_gen.gyp:generated_types',
@@ -370,6 +372,7 @@ list(APPEND cobalt_dom_SOURCES
 )
 
 add_library(cobalt_dom STATIC
+  ${cobalt_dom_custom_SOURCES} # not in spec
   ${cobalt_dom_SOURCES}
 )
 
