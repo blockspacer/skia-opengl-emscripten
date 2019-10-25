@@ -118,8 +118,10 @@ void MessagePumpForUI::ScheduleWork() {
 
   // Clarify that we didn't really insert.
   work_scheduled_ = false;
+#if defined(__TODO__)
   UMA_HISTOGRAM_ENUMERATION("Chrome.MessageLoopProblem", MESSAGE_POST_ERROR,
                             MESSAGE_LOOP_PROBLEM_MAX);
+#endif // __TODO__
 }
 
 void MessagePumpForUI::ScheduleDelayedWork(const TimeTicks& delayed_work_time) {
@@ -415,8 +417,11 @@ void MessagePumpForUI::ScheduleNativeTimer(
     // If we can't set timers, we are in big trouble... but cross our fingers
     // for now.
     // TODO(jar): If we don't see this error, use a CHECK() here instead.
+
+#if defined(__TODO__)
     UMA_HISTOGRAM_ENUMERATION("Chrome.MessageLoopProblem", SET_TIMER_ERROR,
                               MESSAGE_LOOP_PROBLEM_MAX);
+#endif // __TODO__
   }
 }
 
@@ -461,8 +466,11 @@ bool MessagePumpForUI::ProcessMessageHelper(const MSG& msg) {
       state_->should_quit = true;
       return false;
     }
+
+#if defined(__TODO__)
     UMA_HISTOGRAM_ENUMERATION("Chrome.MessageLoopProblem",
                               RECEIVED_WM_QUIT_ERROR, MESSAGE_LOOP_PROBLEM_MAX);
+#endif // __TODO__
     return true;
   }
 
@@ -570,8 +578,11 @@ void MessagePumpForIO::ScheduleWork() {
   // See comment in MessagePumpForUI::ScheduleWork() for this error recovery.
 
   work_scheduled_ = false;  // Clarify that we didn't succeed.
+
+#if defined(__TODO__)
   UMA_HISTOGRAM_ENUMERATION("Chrome.MessageLoopProblem", COMPLETION_POST_ERROR,
                             MESSAGE_LOOP_PROBLEM_MAX);
+#endif // __TODO__
 }
 
 void MessagePumpForIO::ScheduleDelayedWork(const TimeTicks& delayed_work_time) {

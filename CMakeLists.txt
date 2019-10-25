@@ -838,6 +838,43 @@ if(MSVC) # TODO
     #set(COMMON_FLAGS "${COMMON_FLAGS} /wd2398") # TODO: narrowing 
     #set(COMMON_FLAGS "${COMMON_FLAGS} /wd2440") # TODO: narrowing 
     #set(COMMON_FLAGS "${COMMON_FLAGS} /wd2712") # TODO: Cannot use __try in functions that require object unwinding 
+     
+    # https://docs.microsoft.com/en-us/cpp/build/reference/gf-eliminate-duplicate-strings?view=vs-2019
+    #set(COMMON_FLAGS "${COMMON_FLAGS} /GF")
+     
+    # https://docs.microsoft.com/en-us/cpp/build/reference/z7-zi-zi-debug-information-format?view=vs-2019
+    #set(COMMON_FLAGS "${COMMON_FLAGS} /Zi")
+    
+    # https://docs.microsoft.com/en-us/cpp/build/reference/tc-tp-tc-tp-specify-source-file-type?view=vs-2019
+    #set(COMMON_FLAGS "${COMMON_FLAGS} /TP")
+
+    # TODO: https://stackoverflow.com/a/34630892
+
+    set(COMMON_FLAGS "${COMMON_FLAGS} -D_CRT_SECURE_NO_WARNINGS=1")
+
+    # https://docs.microsoft.com/en-us/cpp/build/reference/gt-support-fiber-safe-thread-local-storage?view=vs-2019
+    set(COMMON_FLAGS "${COMMON_FLAGS} /GT")
+
+    # https://docs.microsoft.com/en-us/cpp/build/reference/gs-buffer-security-check?view=vs-2019
+    set(COMMON_FLAGS "${COMMON_FLAGS} /GS-")
+
+    # https://docs.microsoft.com/en-us/cpp/build/reference/sdl-enable-additional-security-checks?view=vs-2019
+    set(COMMON_FLAGS "${COMMON_FLAGS} /sdl-")
+
+    set(COMMON_FLAGS "${COMMON_FLAGS} /D__DATE__=")
+
+    set(COMMON_FLAGS "${COMMON_FLAGS} /D__TIME__=")
+
+    set(COMMON_FLAGS "${COMMON_FLAGS} /D__TIMESTAMP__=")
+    
+    #set(COMMON_FLAGS "${COMMON_FLAGS} /d2FastFail")
+    
+    # https://docs.microsoft.com/en-us/cpp/build/reference/wx-treat-linker-warnings-as-errors?view=vs-2019
+    #set(COMMON_FLAGS "${COMMON_FLAGS} /WX")
+    
+    set(COMMON_FLAGS "${COMMON_FLAGS} -DWIN32_LEAN_AND_MEAN")
+
+    #set(COMMON_FLAGS "${COMMON_FLAGS} -DWINAPI_FAMILY=WINAPI_FAMILY_DESKTOP_APP")
 
     # https://docs.microsoft.com/en-us/cpp/build/reference/zc-strictstrings-disable-string-literal-type-conversion?view=vs-2019
     set(COMMON_FLAGS "${COMMON_FLAGS} /Zc:strictStrings-")

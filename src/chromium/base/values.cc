@@ -33,12 +33,12 @@ namespace base {
 //   it is permitted to inspect the common initial sequence of any of
 //   standard-layout struct members;
 //
-static_assert(std::is_standard_layout<Value>::value,
+/*static_assert(std::is_standard_layout<Value>::value,
               "base::Value should be a standard-layout C++ class in order "
               "to avoid undefined behaviour in its implementation!");
 
 static_assert(sizeof(Value::DoubleStorage) == sizeof(double),
-              "The double and DoubleStorage types should have the same size");
+              "The double and DoubleStorage types should have the same size");*/
 
 namespace {
 
@@ -267,7 +267,8 @@ Value Value::Clone() const {
     case Type::STRING:
       return Value(string_value_);
     case Type::BINARY:
-      return Value(binary_value_);
+      //return Value(reinterpret_cast<Value>(binary_value_));
+      return Value(const_cast<base::Value::BlobStorage>(binary_value_));
     case Type::DICTIONARY:
       return Value(dict_);
     case Type::LIST:

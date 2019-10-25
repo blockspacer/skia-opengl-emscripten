@@ -1119,22 +1119,39 @@ export LDFLAGS="-fuse-ld=lld-link"
 # cmake --build . --config Debug --parallel 6
 ```
 
-Run from "Visual Studio Command Prompt" as Admin:
+Run from "Visual Studio 2017 Tools Command Prompt for targeting x86 with x64-hosted tools" or "Visual Studio Command Prompt" as Admin:
 ```
 chcp 65001
+#
 # RUN ONCE: setx path "C:/Program Files/LLVM/;C:/Program Files/LLVM/bin/;%PATH%"
+#
 # RUN ONCE: setx path "C:/Python27/;C:/Python27/Scripts;%PATH%"
+#
 refreshenv # from https:\\chocolatey.org\docs\helpers-update-session-environment
-# Must run vcvarsall.bat
-"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" x64
+#
+# Must run from "Visual Studio 2017 Tools Command Prompt for targeting x86 with x64-hosted tools" 
+# OR use vcvarsall.bat
+# "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" x64
+#
+# OR
+# %comspec% /k "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsamd64_x86.bat"
+#
 # dir "%CD%\..\depot_tools"
+#
 # set PATH=%CD%/../depot_tools;%PATH%
+#
 set PATH=C:/Python27/;C:/Python27/Scripts;%PATH%
-set PATH=C:/Program Files/LLVM;C:/Program Files/LLVM/bin;%PATH%
+#
 set PATH=C:/Program Files/LLVM/;C:/Program Files/LLVM/bin/;D:/den/coding/vcpkg/packages/libuuid_x86-windows/;D:/den/coding/vcpkg/packages/fontconfig_x86-windows/;D:/den/coding/vcpkg/packages/icu_x86-windows/;D:/den/coding/vcpkg/packages/expat_x86-windows/;C:/Program Files (x86)/harfbuzz/;C:/Program Files (x86)/;C:/Program Files (x86)/;C:/Program Files (x86)/libpng/;C:/Program Files (x86)/SDL2/;C:/Program Files (x86)/freetype2/;C:/Program Files (x86)/freetype/include/freetype2/;C:/Program Files (x86)/freetype/lib/;C:/Program Files (x86)/freetype/lib/cmake/;%PATH%
+#
 set PATH=D:/den/coding/vcpkg/packages/libuuid_x86-windows/;D:/den/coding/vcpkg/packages/fontconfig_x86-windows/;D:/den/coding/vcpkg/packages/icu_x86-windows/;D:/den/coding/vcpkg/packages/expat_x86-windows/;C:/Program Files (x86)/harfbuzz/;C:/Program Files (x86)/;C:/Program Files (x86)/;C:/Program Files (x86)/libpng/;C:/Program Files (x86)/SDL2/;C:/Program Files (x86)/freetype2/;C:/Program Files (x86)/freetype/include/freetype2/;C:/Program Files (x86)/freetype/lib/;C:/Program Files (x86)/freetype/lib/cmake/;%PATH%
+#
 # cmake -E env LDFLAGS="-fuse-ld=lld-link" PATH="%PATH%" cmake -H.. -B. -G Ninja -DENABLE_COBALT=FALSE -DCMAKE_BUILD_TYPE="Debug" -DRELEASE_BUILD=OFF -DCMAKE_EXPORT_COMPILE_COMMANDS=ON "-DCMAKE_PREFIX_PATH=D:/den/coding/vcpkg/packages/libuuid_x86-windows/;D:/den/coding/vcpkg/packages/fontconfig_x86-windows/;D:/den/coding/vcpkg/packages/icu_x86-windows/;D:/den/coding/vcpkg/packages/expat_x86-windows/;C:/Program Files (x86)/harfbuzz/;C:/Program Files (x86)/;C:/Program Files (x86)/;C:/Program Files (x86)/libpng/;C:/Program Files (x86)/SDL2/;C:/Program Files (x86)/freetype2/;C:/Program Files (x86)/freetype/include/freetype2/;C:/Program Files (x86)/freetype/lib/;C:/Program Files (x86)/freetype/lib/cmake/"  -DCMAKE_C_COMPILER:PATH="C:/Program Files/LLVM/bin/clang.exe" -DCMAKE_CXX_COMPILER:PATH="C:/Program Files/LLVM/bin/clang.exe" -DCMAKE_C_COMPILER_ID="Clang" -DCMAKE_CXX_COMPILER_ID="Clang" -DCMAKE_SYSTEM_NAME="Generic" -DWIN32=1
+#
+set PATH=C:/Program Files/LLVM;C:/Program Files/LLVM/bin;%PATH%
+#
 # cmake -E env LDFLAGS="-fuse-ld=lld-link" PATH="%PATH%" cmake -H.. -B. -G Ninja -DENABLE_COBALT=FALSE -DCMAKE_BUILD_TYPE="Debug" -DRELEASE_BUILD=OFF -DCMAKE_EXPORT_COMPILE_COMMANDS=ON "-DCMAKE_PREFIX_PATH=D:/den/coding/vcpkg/packages/libuuid_x86-windows/;D:/den/coding/vcpkg/packages/fontconfig_x86-windows/;D:/den/coding/vcpkg/packages/icu_x86-windows/;D:/den/coding/vcpkg/packages/expat_x86-windows/;C:/Program Files (x86)/harfbuzz/;C:/Program Files (x86)/;C:/Program Files (x86)/;C:/Program Files (x86)/libpng/;C:/Program Files (x86)/SDL2/;C:/Program Files (x86)/freetype2/;C:/Program Files (x86)/freetype/include/freetype2/;C:/Program Files (x86)/freetype/lib/;C:/Program Files (x86)/freetype/lib/cmake/"  -DCMAKE_C_COMPILER:PATH="C:/Program Files/LLVM/bin/clang-cl.exe" -DCMAKE_CXX_COMPILER:PATH="C:/Program Files/LLVM/bin/clang-cl.exe" -DCMAKE_C_COMPILER_ID="Clang" -DCMAKE_CXX_COMPILER_ID="Clang" -DCMAKE_SYSTEM_NAME="Generic" -DWIN32=1
+#
 set CC=C:/Program Files/LLVM/bin/clang-cl.exe
 set CXX=C:/Program Files/LLVM/bin/clang-cl.exe
 echo %PATH%
@@ -1145,8 +1162,24 @@ cmake --version
 cmake -E remove_directory build
 cmake -E make_directory build
 cd build
-cmake "-DCMAKE_LINKER=C:/Program Files/LLVM/bin/lld-link.exe" "-DCMAKE_C_COMPILER=C:/Program Files/LLVM/bin/clang-cl.exe" "-DCMAKE_CXX_COMPILER=C:/Program Files/LLVM/bin/clang-cl.exe" -DENABLE_COBALT=FALSE -DCMAKE_BUILD_TYPE="Debug" -DRELEASE_BUILD=OFF -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ..
-#  -DCMAKE_PREFIX_PATH="C:/Program Files/LLVM/;C:/Program Files/LLVM/bin/;D:/den/coding/vcpkg/packages/libuuid_x86-windows/;D:/den/coding/vcpkg/packages/fontconfig_x86-windows/;D:/den/coding/vcpkg/packages/icu_x86-windows/;D:/den/coding/vcpkg/packages/expat_x86-windows/;C:/Program Files (x86)/harfbuzz/;C:/Program Files (x86)/;C:/Program Files (x86)/;C:/Program Files (x86)/libpng/;C:/Program Files (x86)/SDL2/;C:/Program Files (x86)/freetype2/;C:/Program Files (x86)/freetype/include/freetype2/;C:/Program Files (x86)/freetype/lib/;C:/Program Files (x86)/freetype/lib/cmake/"
+cmake -DENABLE_COBALT=FALSE -DCMAKE_BUILD_TYPE="Debug" -DRELEASE_BUILD=OFF -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ..
+#
 # cmake "-DCMAKE_LINKER=C:/Program Files/LLVM/bin/lld-link.exe" "-DCMAKE_C_COMPILER=C:/Program Files/LLVM/bin/clang-cl.exe" "-DCMAKE_CXX_COMPILER=C:/Program Files/LLVM/bin/clang-cl.exe" -DENABLE_COBALT=FALSE -DCMAKE_BUILD_TYPE="Debug" -DRELEASE_BUILD=OFF -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ..
-cmake --build . --config Debug --parallel 6
+#
+#  -DCMAKE_PREFIX_PATH="C:/Program Files/LLVM/;C:/Program Files/LLVM/bin/;D:/den/coding/vcpkg/packages/libuuid_x86-windows/;D:/den/coding/vcpkg/packages/fontconfig_x86-windows/;D:/den/coding/vcpkg/packages/icu_x86-windows/;D:/den/coding/vcpkg/packages/expat_x86-windows/;C:/Program Files (x86)/harfbuzz/;C:/Program Files (x86)/;C:/Program Files (x86)/;C:/Program Files (x86)/libpng/;C:/Program Files (x86)/SDL2/;C:/Program Files (x86)/freetype2/;C:/Program Files (x86)/freetype/include/freetype2/;C:/Program Files (x86)/freetype/lib/;C:/Program Files (x86)/freetype/lib/cmake/"
+#
+# cmake "-DCMAKE_LINKER=C:/Program Files/LLVM/bin/lld-link.exe" "-DCMAKE_C_COMPILER=C:/Program Files/LLVM/bin/clang-cl.exe" "-DCMAKE_CXX_COMPILER=C:/Program Files/LLVM/bin/clang-cl.exe" -DENABLE_COBALT=FALSE -DCMAKE_BUILD_TYPE="Debug" -DRELEASE_BUILD=OFF -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ..
+#
+cmake --build . --config Debug --parallel 10
 ```
+
+## FAQ
+
+- I got `d:\den\coding\skia-opengl-emscripten\src\chromium\base\bind.h(229): error C2440: 'initializing': cannot convert`
+  Use "Open Visual Studio 2017 Tools Command Prompt for targeting x86 with x64-hosted tools"
+  See https://stackoverflow.com/a/34630892
+
+## TODO
+
+- -D_CRT_RAND_S=
+  https://wiki.documentfoundation.org/Development/clang-cl

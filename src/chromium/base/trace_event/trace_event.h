@@ -210,6 +210,90 @@
 #define INTERNAL_TRACE_EVENT_UID(name_prefix) \
     INTERNAL_TRACE_EVENT_UID2(name_prefix, __LINE__)
 
+// Implementation detail: internal macro to return unoverridden
+// base::TimeTicks::Now(). This is important because in headless VirtualTime can
+// override base:TimeTicks::Now().
+#define INTERNAL_TRACE_TIME_TICKS_NOW() \
+  base::subtle::TimeTicksNowIgnoringOverride()
+
+// Implementation detail: internal macro to return unoverridden
+// base::Time::Now(). This is important because in headless VirtualTime can
+// override base:TimeTicks::Now().
+#define INTERNAL_TRACE_TIME_NOW() base::subtle::TimeNowIgnoringOverride()
+
+#if defined(__EMSCRIPTEN__) || defined(_WIN32) || defined(WIN32) || defined(_WIN64) || defined(WIN64)
+
+// Implementation detail: internal macro to create static category.
+// No barriers are needed, because this code is designed to operate safely
+// even when the unsigned char* points to garbage data (which may be the case
+// on processors without cache coherency).
+#define INTERNAL_TRACE_EVENT_GET_CATEGORY_INFO_CUSTOM_VARIABLES(    \
+    category_group, atomic, category_group_enabled)                 \
+  (void)(0);
+
+#define INTERNAL_TRACE_EVENT_GET_CATEGORY_INFO_MAYBE_AT_COMPILE_TIME(        \
+    category_group, k_category_group_enabled, category_group_enabled)        \
+  (void)(0);
+
+#define INTERNAL_TRACE_EVENT_GET_CATEGORY_INFO(category_group)                 \
+  (void)(0);
+
+// Implementation detail: internal macro to create static category and add
+// event if the category is enabled.
+#define INTERNAL_TRACE_EVENT_ADD(phase, category_group, name, flags, ...)  \
+  (void)(0);
+
+// Implementation detail: internal macro to create static category and add begin
+// event if the category is enabled. Also adds the end event when the scope
+// ends.
+#define INTERNAL_TRACE_EVENT_ADD_SCOPED(category_group, name, ...)           \
+  (void)(0);
+
+#define INTERNAL_TRACE_EVENT_ADD_SCOPED_WITH_FLAGS(category_group, name,     \
+                                                   flags, ...)               \
+  (void)(0);
+
+#define INTERNAL_TRACE_EVENT_ADD_SCOPED_WITH_FLOW(category_group, name,      \
+                                                  bind_id, flow_flags, ...)  \
+  (void)(0);
+
+// Implementation detail: internal macro to create static category and add
+// event if the category is enabled.
+#define INTERNAL_TRACE_EVENT_ADD_WITH_ID(phase, category_group, name, id, \
+                                         flags, ...)                      \
+  (void)(0);
+
+// Implementation detail: internal macro to create static category and add
+// event if the category is enabled.
+#define INTERNAL_TRACE_EVENT_ADD_WITH_TIMESTAMP(phase, category_group, name, \
+                                                timestamp, flags, ...)       \
+  (void)(0);
+
+// Implementation detail: internal macro to create static category and add
+// event if the category is enabled.
+#define INTERNAL_TRACE_EVENT_ADD_WITH_ID_TID_AND_TIMESTAMP(              \
+    phase, category_group, name, id, thread_id, timestamp, flags, ...)   \
+  (void)(0);
+
+// Implementation detail: internal macro to create static category and add
+// event if the category is enabled.
+#define INTERNAL_TRACE_EVENT_ADD_WITH_ID_TID_AND_TIMESTAMPS(                \
+    category_group, name, id, thread_id, begin_timestamp, end_timestamp,    \
+    thread_end_timestamp, flags, ...)                                       \
+  (void)(0);
+
+// The linked ID will not be mangled.
+#define INTERNAL_TRACE_EVENT_ADD_LINK_IDS(category_group, name, id1, id2) \
+  (void)(0);
+
+// Implementation detail: internal macro to create static category and add
+// metadata event if the category is enabled.
+#define INTERNAL_TRACE_EVENT_METADATA_ADD(category_group, name, ...) \
+  (void)(0);
+
+#else
+
+
 // Implementation detail: internal macro to create static category.
 // No barriers are needed, because this code is designed to operate safely
 // even when the unsigned char* points to garbage data (which may be the case
@@ -249,17 +333,6 @@
   INTERNAL_TRACE_EVENT_GET_CATEGORY_INFO_MAYBE_AT_COMPILE_TIME(                \
       category_group, INTERNAL_TRACE_EVENT_UID(k_category_group_enabled),      \
       INTERNAL_TRACE_EVENT_UID(category_group_enabled));
-
-// Implementation detail: internal macro to return unoverridden
-// base::TimeTicks::Now(). This is important because in headless VirtualTime can
-// override base:TimeTicks::Now().
-#define INTERNAL_TRACE_TIME_TICKS_NOW() \
-  base::subtle::TimeTicksNowIgnoringOverride()
-
-// Implementation detail: internal macro to return unoverridden
-// base::Time::Now(). This is important because in headless VirtualTime can
-// override base:TimeTicks::Now().
-#define INTERNAL_TRACE_TIME_NOW() base::subtle::TimeNowIgnoringOverride()
 
 // Implementation detail: internal macro to create static category and add
 // event if the category is enabled.
@@ -431,6 +504,8 @@
           ##__VA_ARGS__);                                            \
     }                                                                \
   } while (0)
+
+#endif // #if defined(__EMSCRIPTEN__) || defined(_WIN32) || defined(WIN32) || defined(_WIN64) || defined(WIN64)
 
 #if defined(__EMSCRIPTEN__) || defined(_WIN32) || defined(WIN32) || defined(_WIN64) || defined(WIN64)
 

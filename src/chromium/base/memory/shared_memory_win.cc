@@ -44,8 +44,10 @@ enum CreateError {
 // Emits UMA metrics about encountered errors. Pass zero (0) for |winerror|
 // if there is no associated Windows error.
 void LogError(CreateError error, DWORD winerror) {
+#if defined(__TODO__)
   UMA_HISTOGRAM_ENUMERATION("SharedMemory.CreateError", error,
                             CREATE_ERROR_LAST + 1);
+#endif
   static_assert(ERROR_SUCCESS == 0, "Windows error code changed!");
   if (winerror != ERROR_SUCCESS)
     UmaHistogramSparse("SharedMemory.CreateWinError", winerror);

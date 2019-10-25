@@ -1028,7 +1028,9 @@ void FieldTrialList::NotifyFieldTrialGroupSelection(FieldTrial* field_trial) {
     ActivateFieldTrialEntryWhileLocked(field_trial);
   }
 
-#if !defined(OS_EMSCRIPTEN)
+#if defined(__EMSCRIPTEN__) || defined(_WIN32) || defined(WIN32) || defined(_WIN64) || defined(WIN64)
+ // TODO
+#else
   // Recording for stability debugging has to be done inline as a task posted
   // to an observer may not get executed before a crash.
   base::debug::GlobalActivityTracker* tracker =

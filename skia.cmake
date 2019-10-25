@@ -447,6 +447,9 @@ set(CONFIGURE_COMMAND "${SKIA_SRC_DIR}/bin/gn;gen;--root=${SKIA_SRC_DIR};${SKIA_
 message(STATUS "CONFIGURE_COMMAND=${CONFIGURE_COMMAND}")
 
 set(BUILD_COMMAND "ninja;-C;${SKIA_BUILD_DIR};-d;keepdepfile;-j8")
+
+# windows: TODO: on skia install step: make not found
+
 message(STATUS "BUILD_COMMAND=${BUILD_COMMAND}")
 
 ExternalProject_Add(SKIA_build
@@ -456,7 +459,8 @@ ExternalProject_Add(SKIA_build
   CONFIGURE_COMMAND "${CONFIGURE_COMMAND}"
   BUILD_COMMAND "${BUILD_COMMAND}"
   # there is no install step provided
-  #INSTALL_COMMAND true
+  #INSTALL_COMMAND true # TODO: true???
+  INSTALL_COMMAND ""
 )
 
 # TODO: make PRINT_ALL_GN_ARGS as target dependant of SKIA_build

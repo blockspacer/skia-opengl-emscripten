@@ -987,14 +987,59 @@
                                    arg1_val, arg2_name, arg2_val)
 
 #if defined(__EMSCRIPTEN__) || defined(_WIN32) || defined(WIN32) || defined(_WIN64) || defined(WIN64)
+
 #define TRACE_TASK_EXECUTION(run_function, task) \
   (void)(0);
-#else
+
+// TRACE_EVENT_METADATA* events are information related to other
+// injected events, not events in their own right.
+#define TRACE_EVENT_METADATA1(category_group, name, arg1_name, arg1_val) \
+  (void)(0);
+
+// Records a clock sync event.
+#define TRACE_EVENT_CLOCK_SYNC_RECEIVER(sync_id)                               \
+  (void)(0);
+#define TRACE_EVENT_CLOCK_SYNC_ISSUER(sync_id, issue_ts, issue_end_ts)         \
+  (void)(0);
+
+// Macros to track the life time and value of arbitrary client objects.
+// See also TraceTrackableObject.
+#define TRACE_EVENT_OBJECT_CREATED_WITH_ID(category_group, name, id) \
+  (void)(0);
+
+#define TRACE_EVENT_OBJECT_SNAPSHOT_WITH_ID(category_group, name, id, \
+                                            snapshot)                 \
+  (void)(0);
+
+#define TRACE_EVENT_OBJECT_SNAPSHOT_WITH_ID_AND_TIMESTAMP(                     \
+    category_group, name, id, timestamp, snapshot)                             \
+  (void)(0);
+
+#define TRACE_EVENT_OBJECT_DELETED_WITH_ID(category_group, name, id) \
+  (void)(0);
+
+// Records entering and leaving trace event contexts. |category_group| and
+// |name| specify the context category and type. |context| is a
+// snapshotted context object id.
+#define TRACE_EVENT_ENTER_CONTEXT(category_group, name, context)      \
+  (void)(0);
+#define TRACE_EVENT_LEAVE_CONTEXT(category_group, name, context)      \
+  (void)(0);
+
+// Macro to efficiently determine if a given category group is enabled.
+#define TRACE_EVENT_CATEGORY_GROUP_ENABLED(category_group, ret)             \
+  (void)(0);
+
+// Macro to efficiently determine, through polling, if a new trace has begun.
+#define TRACE_EVENT_IS_NEW_TRACE(ret)                                      \
+  (void)(0);
+
+#else // __EMSCRIPTEN__
+
 // Special trace event macro to trace task execution with the location where it
 // was posted from.
 #define TRACE_TASK_EXECUTION(run_function, task) \
   INTERNAL_TRACE_TASK_EXECUTION(run_function, task)
-#endif
 
 // TRACE_EVENT_METADATA* events are information related to other
 // injected events, not events in their own right.
@@ -1074,6 +1119,8 @@
       *ret = false;                                                        \
     }                                                                      \
   } while (0)
+
+#endif // __EMSCRIPTEN__
 
 // Macro for getting the real base::TimeTicks::Now() which can be overridden in
 // headless when VirtualTime is enabled.

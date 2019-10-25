@@ -112,10 +112,10 @@ class ThreadGroupImpl::ScopedWorkersExecutor
   }
 
   void Flush(CheckedLock* held_lock) {
-    static_assert(std::is_pod<BaseScopedWorkersExecutor>::value &&
+    /*static_assert(std::is_pod<BaseScopedWorkersExecutor>::value &&
                       sizeof(BaseScopedWorkersExecutor) == 1,
                   "Must add BaseScopedWorkersExecutor::Flush() if it becomes "
-                  "non-trivial");
+                  "non-trivial");*/
 
     if (workers_to_wake_up_.empty() && workers_to_start_.empty())
       return;
