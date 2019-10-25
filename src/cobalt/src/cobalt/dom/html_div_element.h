@@ -48,7 +48,7 @@ class HTMLDivElement : public HTMLElement {
       : HTMLElement(document, base::Token(kTagName))
 {
 
-  printf("Node::HTMLDivElement create\n");
+  //printf("Node::HTMLDivElement create\n");
 
 #if defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
   emCreateElementInBrowserThreadAndSetGUID("div");

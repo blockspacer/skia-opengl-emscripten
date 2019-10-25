@@ -82,13 +82,13 @@ void changeAttrInBrowserThread(const int guid,
         return;
       }
 
-      if(addedOrRemoved) {
+      /*if(addedOrRemoved) {
         printf("Element::add_attr %s : %s\n",
           name_arg.c_str(), value_arg.c_str());
       } else {
         printf("Element::remove_attr %s : %s\n",
           name_arg.c_str(), value_arg.c_str());
-      }
+      }*/
 
       html_native::changeAttr(em_node_guid,
         name_arg, value_arg);
@@ -243,7 +243,7 @@ void GlobalHTML5TaskQueue::scheduleTaskInMainThread(
 
       html_native::NativeHTMLTaskParams* taskArgs
         = reinterpret_cast<html_native::NativeHTMLTaskParams*>(taskData);
-      printf("213312132213\n");
+      //printf("213312132213\n");
       DCHECK(taskArgs->cb);
       if(taskArgs->cb) {
         taskArgs->cb(std::move(taskArgs->params));

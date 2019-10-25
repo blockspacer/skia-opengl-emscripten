@@ -21,7 +21,7 @@ var kEmNodeDocumentGUID = -1005;
 
 document.cxxDomHelpers = {
   getPredefinedElement(nodePtr) {
-    console.log("js: getPredefinedElement: ", nodePtr);
+    //console.log("js: getPredefinedElement: ", nodePtr);
     if(nodePtr == kEmNodeRootGUID) {
       return document.body; // TODO: body?
     } else if(nodePtr == kEmNodeHeadGUID) {
@@ -39,12 +39,12 @@ document.cxxDomHelpers = {
     return null;
   },
   getElement(nodePtr) {
-    console.log("js: getElement: ", nodePtr);
+    //console.log("js: getElement: ", nodePtr);
     /// \note may be null or undefined
     return cxxDomNodes[nodePtr];
   },
   createElement(elemName) {
-    console.log("js: createElement start for ", elemName);
+    //console.log("js: createElement start for ", elemName);
     if(elemName === ""
        || elemName == "document"
        || elemName == "body"
@@ -53,10 +53,10 @@ document.cxxDomHelpers = {
        || elemName == "title") {
       return;
     }
-    console.log("js: createElement done");
+    //console.log("js: createElement done");
 
     if(elemName === "#text") {
-      console.log("js: createTextNode done");
+      //console.log("js: createTextNode done");
       /// \note contents of text node can be updated using nodeValue
       return addPtr(document.createTextNode(""));
     }
@@ -72,13 +72,14 @@ document.cxxDomHelpers = {
     return addPtr(document.createElement(elemName));
   },
   createTextElement(text) {
-    console.log("js: createTextElement with text = ", text);
+    //console.log("js: createTextElement with text = ", text);
 
     /// \note contents of text node can be updated using nodeValue
     return addPtr(document.createTextNode(text));
   },
   appendChild(parentPtr, childPtr) {
-    console.log("js: appendChild: ", parentPtr, " ", childPtr);
+    //console.log("js: appendChild: ", parentPtr, " ", childPtr);
+
     if (parentPtr === null || parentPtr === undefined) return;
     if (childPtr === null || childPtr === undefined) return;
 
@@ -109,7 +110,7 @@ document.cxxDomHelpers = {
       return;
     }
 
-    console.log("js: add child is ", childElm);
+    //console.log("js: add child is ", childElm);
 
     //if(parentPtr === kEmNodeRootGUID) {
     //  document.body.appendChild(childElm); // TODO: body?
@@ -122,21 +123,22 @@ document.cxxDomHelpers = {
       }
       if (parentElm === null || parentElm === undefined) return;
 
-      console.log("js: add parentElm is ", parentElm);
+      //console.log("js: add parentElm is ", parentElm);
 
     if(typeof parentElm.appendChild !== 'function') return;
 
       parentElm
         .appendChild(childElm);
     }
-    console.log("js: appendChild done");
+
+    //console.log("js: appendChild done");
   },
   removeChild(childPtr) {
-    console.log("js: removeChild: ", childPtr);
+    //console.log("js: removeChild: ", childPtr);
     var node = cxxDomNodes[childPtr];
     if (node === null || node === undefined) return;
 
-    console.log("js: remove child is ", node);
+    //console.log("js: remove child is ", node);
 
     var parent = node.parentNode;
     if (parent !== null) {
@@ -162,10 +164,10 @@ document.cxxDomHelpers = {
       parent.removeChild(node);
     }
     //_domRecycler2['default'].collect(node);
-    console.log("js: removeChild done");
+    //console.log("js: removeChild done");
   },
   setAttribute(nodePtr, name, value) {
-    console.log("js: setAttribute: ", name, " ", value);
+    //console.log("js: setAttribute: ", name, " ", value);
 
     /*if(nodePtr == kEmNodeRootGUID) {
       return;
@@ -177,13 +179,13 @@ document.cxxDomHelpers = {
     }
     if (parentElm === null || parentElm === undefined) return;
 
-    console.log("js: add parentElm is ", parentElm);
+    //console.log("js: add parentElm is ", parentElm);
 
     if(typeof parentElm.setAttribute !== 'function') return;
 
     parentElm
       .setAttribute(name, value);
 
-    console.log("js: setAttribute done");
+    //console.log("js: setAttribute done");
   },
 };

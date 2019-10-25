@@ -23,7 +23,7 @@ namespace dom {
 CharacterData::CharacterData(Document* document, const base::StringPiece& data)
     : Node(document), data_(data.begin(), data.end())
 {
-  printf("CharacterData::CharacterData create with text = %s\n", data_.c_str());
+  //printf("CharacterData::CharacterData create with text = %s\n", data_.c_str());
 
 #if 0
 #if defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
@@ -41,7 +41,7 @@ CharacterData::CharacterData(Document* document, const base::StringPiece& data)
 
       if(em_node && (em_node->isNull() || em_node->isUndefined()))
       {
-        printf("Node::CharacterData\n");
+        //printf("Node::CharacterData\n");
         (*em_node)
           = emscripten::val::global("document")
             .call<emscripten::val>(
@@ -70,7 +70,7 @@ void CharacterData::set_data(const std::string& data) {
   mutation_reporter.ReportCharacterDataMutation(data_);
   data_ = data;
 
-  printf("CharacterData::set_data %s\n", data.c_str());
+  //printf("CharacterData::set_data %s\n", data.c_str());
 
 #if defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
   emSetNodeValueInBrowserThread(data);

@@ -836,8 +836,8 @@ void Node::emCreateTextElementInBrowserThreadAndSetGUID(
 void Node::emAppendChildInBrowserThread(
   const int parentGUID, const int childGUID)
 {
-  printf("emAppendChildInBrowserThread %i %i \n",
-    parentGUID, childGUID);
+  /*printf("emAppendChildInBrowserThread %i %i \n",
+    parentGUID, childGUID);*/
 
   auto taskCb
     = [new_child_em_node_guid = childGUID
@@ -863,8 +863,8 @@ void Node::emAppendChildInBrowserThread(
 void Node::emGetElementInBrowserThread(
   const int guid, emscripten::val* output)
 {
-  printf("emGetElementInBrowserThread %i \n",
-    getEmNodeGUID());
+  /*printf("emGetElementInBrowserThread %i \n",
+    getEmNodeGUID());*/
   DCHECK(output);
 
   auto taskCb
@@ -963,8 +963,8 @@ void Node::OnInsertedIntoDocument() {
   DCHECK(!inserted_into_document_);
   inserted_into_document_ = true;
 
-  printf("OnInsertedIntoDocument %i \n",
-    getEmNodeGUID());
+  /*printf("Node::OnInsertedIntoDocument %i \n",
+    getEmNodeGUID());*/
 
 #if 0
 #if defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
@@ -1008,7 +1008,7 @@ void Node::OnInsertedIntoDocument() {
            && !em_node->isNull()
            && !em_node->isUndefined())
         {
-          printf("Node::AppendChild 1\n");
+          //printf("Node::AppendChild 1\n");
 
           DCHECK(em_node
             && !em_node->isNull()
