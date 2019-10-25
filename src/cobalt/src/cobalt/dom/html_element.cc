@@ -786,7 +786,11 @@ scoped_refptr<Node> HTMLElement::Duplicate() const {
           ->html_element_factory()
           ->CreateHTMLElement(document, local_name());
   new_html_element->CopyAttributes(*this);
+
   new_html_element->style_->AssignFrom(*this->style_);
+#if defined(ENABLE_NATIVE_HTML)
+  // TODO
+#endif // ENABLE_NATIVE_HTML
 
   // Copy cached attributes.
   new_html_element->tabindex_ = tabindex_;
@@ -1882,6 +1886,22 @@ void HTMLElement::UpdateComputedStyle(
 
   computed_style_valid_ = true;
   pseudo_elements_computed_styles_valid_ = true;
+
+#if 0
+#if defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+  changeEmcriptenAttr(em_node_
+    , "style"
+    , computed_style()->SerializeCSSDeclarationBlock()
+    , true
+    , base::polymorphic_downcast<Element*>(this)
+  );
+#endif
+  emChangeAttrInBrowserThread(
+    "style"
+    , computed_style()->SerializeCSSDeclarationBlock()
+    , true
+  );
+#endif // 0
 }
 
 void HTMLElement::SetPseudoElement(

@@ -45,6 +45,12 @@ class HTMLHeadElement : public HTMLElement {
   explicit HTMLHeadElement(Document* document)
       : HTMLElement(document, base::Token(kTagName))
 {
+
+#if defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+  setEmNodeAsHead();
+  DCHECK(isEmNodeHead());
+#endif // defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+
 #if 0
 #if defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
   auto taskCb
@@ -52,7 +58,7 @@ class HTMLHeadElement : public HTMLElement {
     {
       DCHECK(em_node);
       DCHECK(em_node->isNull() || em_node->isUndefined());
-      if(em_node)
+      if(em_node && (em_node->isNull() || em_node->isUndefined()))
       {
         printf("Node::HTMLHeadElement\n");
 
@@ -73,7 +79,7 @@ class HTMLHeadElement : public HTMLElement {
             //.call<emscripten::val>(
             //  "createElement", emscripten::val("video"));*/
       } else {
-        NOTIMPLEMENTED_LOG_ONCE();
+        // NOTIMPLEMENTED_LOG_ONCE();
       }
     };
 

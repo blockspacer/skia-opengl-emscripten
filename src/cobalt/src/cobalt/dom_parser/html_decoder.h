@@ -69,7 +69,7 @@ class HTMLDecoder : public loader::Decoder {
   bool Suspend() override { return false; }
 
   void Resume(render_tree::ResourceProvider* /*resource_provider*/) override {
-    NOTIMPLEMENTED();
+    //NOTIMPLEMENTED();
   };
 
  private:

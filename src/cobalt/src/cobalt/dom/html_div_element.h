@@ -47,19 +47,42 @@ class HTMLDivElement : public HTMLElement {
   explicit HTMLDivElement(Document* document)
       : HTMLElement(document, base::Token(kTagName))
 {
+
+  printf("Node::HTMLDivElement create\n");
+
+#if defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+  emCreateElementInBrowserThreadAndSetGUID("div");
+#endif // defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+
+#if 0
 #if defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
   auto taskCb
     = [em_node = &em_node_/*, inner_html = inner_html().c_str()*/](const html_native::NativeHTMLTaskCbParams&&)
     {
       DCHECK(em_node);
       DCHECK(em_node->isNull() || em_node->isUndefined());
-      if(em_node)
+
+      if(em_node && (em_node->isNull() || em_node->isUndefined()))
       {
         //printf("Node::HTMLDivElement %s\n", inner_html);
-        printf("Node::HTMLDivElement\n");
+        printf("Node::HTMLDivElement create\n");
+
+        DCHECK(emscripten::val::global("document").hasOwnProperty("recycler"));
+        // document.recycler
+        // aMap
         (*em_node)
-          = emscripten::val::global("document").call<emscripten::val>(
-              "createElement", emscripten::val("div"));
+          //= emscripten::val::global("document").call<emscripten::val>(
+          //    "createElement", emscripten::val("div"));
+          = emscripten::val::global("document")["recycler"].call<emscripten::val>(
+              "create", emscripten::val("div"));
+
+        //emscripten::val root_element
+        //  = emscripten::val::global("document")
+        //    .call<emscripten::val>(
+        //      "getElementById", emscripten::val("pendingEmscriptenElements"));
+        //DCHECK(!root_element.isNull()
+        //       && !root_element.isUndefined());
+        //root_element.call<void>("appendChild", (*em_node));
       } else {
         NOTIMPLEMENTED_LOG_ONCE();
       }
@@ -73,9 +96,10 @@ class HTMLDivElement : public HTMLElement {
         std::move(taskCb),
         std::move(cbParams)
       },
-      true
+      true // async if threads enabled
     );
 #endif
+#endif // 0
 }
 
   // Custom, not in any spec.

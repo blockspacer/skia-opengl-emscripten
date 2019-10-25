@@ -245,6 +245,54 @@ class Node : public EventTarget {
   DEFINE_WRAPPABLE_TYPE(Node);
   void TraceMembers(script::Tracer* tracer) override;
 
+#if defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+  /// \note must execute only in main browser thread!
+  //static emscripten::val getEmNode(const int guid);
+
+  int getEmNodeGUID() const;
+
+  void setEmNodeGUID(const int guid);
+
+  void setEmNodeAsRoot();
+
+  bool isEmNodeRoot() const;
+
+  void setEmNodeAsDocument();
+
+  bool isEmNodeDocument() const;
+
+  void setEmNodeAsHead();
+
+  bool isEmNodeHead() const;
+
+  void setEmNodeAsHTML();
+
+  bool isEmNodeHTML() const;
+
+  void setEmNodeAsTitle();
+
+  bool isEmNodeTitle() const;
+
+  void setEmNodeAsBody();
+
+  bool isEmNodeBody() const;
+
+  void emAppendChildInBrowserThread(
+    const int parentGUID, const int childGUID);
+
+  void emGetElementInBrowserThread(const int guid,
+    emscripten::val* output);
+
+  void emSetNodeValueInBrowserThread(const std::string& newValue);
+
+  void emCreateElementInBrowserThreadAndSetGUID(
+    const std::string& tagName);
+
+  void emCreateTextElementInBrowserThreadAndSetGUID(
+    const std::string& text);
+
+#endif // defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+
  protected:
   explicit Node(Document* document);
   virtual ~Node();
@@ -286,6 +334,7 @@ class Node : public EventTarget {
 //#if 0 // TODO: use lock-free Sequences to post tasks on main browser thread https://chromium.googlesource.com/chromium/src/+/master/docs/threading_and_tasks.md#Using-Sequences-Instead-of-Locks
 #if defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
   emscripten::val em_node_;
+  int em_node_guid_ = -1; /// \note -1 for undefined
 #endif // defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
 //#endif // 0
 

@@ -88,6 +88,7 @@ void UpdateComputedStylesAndLayoutBoxTree(
         document->window()->GetUiNavRoot());
   }
 
+#if !defined(ENABLE_NATIVE_HTML)
   // Generate boxes.
   if (document->html()) {
     TRACE_EVENT0("cobalt::layout", kBenchmarkStatBoxGeneration);
@@ -156,6 +157,7 @@ void UpdateComputedStylesAndLayoutBoxTree(
     (*initial_containing_block)->set_top(LayoutUnit());
     (*initial_containing_block)->UpdateSize(LayoutParams());
   }
+#endif // ENABLE_NATIVE_HTML
 }
 
 scoped_refptr<render_tree::Node> GenerateRenderTreeFromBoxTree(
@@ -173,9 +175,11 @@ scoped_refptr<render_tree::Node> GenerateRenderTreeFromBoxTree(
         base::StopWatch::kAutoStartOn, layout_stat_tracker);
 #endif
 
+//#if !defined(ENABLE_NATIVE_HTML)
     (*initial_containing_block)
         ->RenderAndAnimate(&render_tree_root_builder, math::Vector2dF(0, 0),
                            (initial_containing_block->get()));
+//#endif // ENABLE_NATIVE_HTML
   }
 
   // During computed style update and RenderAndAnimate, we get the actual images

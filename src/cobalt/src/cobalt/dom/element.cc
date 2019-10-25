@@ -1,4 +1,4 @@
-// Copyright 2014 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2014 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -278,9 +278,10 @@ void Element::set_text_content(
   std::string new_text_content = text_content.value_or("");
   if (!new_text_content.empty()) {
     new_node = new Text(node_document(), new_text_content);
+    printf("new_text_content %s \n", new_text_content.c_str());
   }
   // 3. Replace all with node within the context object.
-  ReplaceAll(new_node);
+  ReplaceAll(new_node); // TODO: textContent
 }
 
 bool Element::HasAttributes() const { return !attribute_map_.empty(); }
@@ -387,6 +388,112 @@ base::Optional<std::string> Element::GetAttribute(
   return base::nullopt;
 }
 
+#if defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+void Element::emChangeAttrInBrowserThread(
+  const std::string& attr_name, const std::string& attr_val
+  , const bool addedOrRemoved)
+{
+  html_native::changeAttrInBrowserThread(getEmNodeGUID(),
+    attr_name, attr_val, addedOrRemoved);
+}
+
+#if 0
+void Element::changeEmcriptenAttr(emscripten::val& emscripten_node
+  , const std::string& attr_name, const std::string& attr_val
+  , const bool addedOrRemoved
+  , Element* elem
+  )
+{
+  if(emscripten_node.isNull() || emscripten_node.isUndefined()) {
+    return;
+  }
+
+  auto taskCb
+    = [em_node = &emscripten_node
+      , name_arg = attr_name.c_str()
+      , value_arg = attr_val.c_str()
+      , inner_html = elem->inner_html()
+      , &addedOrRemoved]
+      (const html_native::NativeHTMLTaskCbParams&&)
+    {
+      DCHECK(em_node);
+      DCHECK(!em_node->isNull()
+             && !em_node->isUndefined());
+
+      if(em_node)
+      {
+
+        // TODO
+        //DCHECK(em_node->hasOwnProperty("localName"));
+        if(em_node->hasOwnProperty("localName")
+           && (*em_node)["localName"].as<std::string>() == "div") // TODO
+        {
+          //em_node->set("style", ";width: 50px;height: 50px;border-top-left-radius: 40px;border-top-right-radius: 40px;border-bottom-right-radius: 40px;border-bottom-left-radius: 40px;background-color: rgb(49, 95, 214);transform: translateY(402px)");
+          //em_node->set("style", "background-color: rgb(49, 95, 214)");
+
+          //em_node->set("style", "background-color: rgb(49, 95, 214)");
+
+          //em_node->set("innerHTML",
+          //  /// \note make sure that source files are UTF with BOM
+          //  html_native::utf8_to_wstring(inner_html.c_str()));
+
+          // TODO
+          em_node->set(name_arg,
+              //html_native::utf8_to_wstring(name_arg),
+              /// \note make sure that source files are UTF with BOM
+              html_native::utf8_to_wstring(value_arg));
+
+#if 0
+          (*em_node)["textContent"] = emscripten::val("Hello world.");
+
+          emscripten::val body_elements
+            = emscripten::val::global("document")
+              .call<emscripten::val>(
+                "getElementsByTagName", emscripten::val("body"));
+          emscripten::val body_node
+            = body_elements[0];
+          DCHECK(!body_node.isNull()
+                 && !body_node.isUndefined());
+          //body_node.set("style", "background-color: rgb(49, 95, 214)");
+
+          /// \todo make app_root_node configurable
+          emscripten::val* app_root_node = &body_node;
+
+          DCHECK(app_root_node
+            && !app_root_node->isNull()
+            && !app_root_node->isUndefined());
+          app_root_node->call<void>("appendChild", *em_node);
+#endif
+
+            if(addedOrRemoved) {
+              printf("Element::add_attr %s : %s\n", name_arg, value_arg);
+            } else {
+              printf("Element::remove_attr %s : %s\n", name_arg, value_arg);
+            }
+        }
+
+
+      } else {
+        NOTIMPLEMENTED_LOG_ONCE();
+      }
+
+
+    };
+
+  html_native::NativeHTMLTaskCbParams cbParams{1,2};
+
+  html_native::GlobalHTML5TaskQueue::getInstance()->
+    scheduleTaskInMainThread(
+      new html_native::NativeHTMLTaskParams{
+        std::move(taskCb),
+        std::move(cbParams)
+      },
+      true // async if threads enabled
+    );
+}
+#endif // defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+#endif // 0
+
 // Algorithm for SetAttribute:
 //   https://www.w3.org/TR/2014/WD-dom-20140710/#dom-element-setattribute
 // Algorithm for SetAttribute:
@@ -449,6 +556,21 @@ void Element::SetAttribute(const std::string& name, const std::string& value) {
         }
         //printf("OnSetAttribute 0 at %s\n", attr_name_ext.c_str());
         OnSetAttribute(/* not lowercase name */ attr_name_ext, extended_value);
+#if defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+#if 0
+        changeEmcriptenAttr(em_node_
+          , attr_name_ext
+          , extended_value
+          , true
+          , const_cast<Element*>(this)
+        );
+#endif // 0
+        emChangeAttrInBrowserThread(
+          attr_name_ext
+          , extended_value
+          , true
+        );
+#endif
         //RegenAttrPairs(attr_name_ext, extended_value);
         // Return now as SetStyleAttribute() will call OnDOMMutation() when
         // necessary.
@@ -497,6 +619,7 @@ void Element::SetAttribute(const std::string& name, const std::string& value) {
       }
       break;
   }
+
   if (named_node_map_) {
     named_node_map_->SetAttributeInternal(attr_name_ext, extended_value);
   }
@@ -508,6 +631,21 @@ void Element::SetAttribute(const std::string& name, const std::string& value) {
   //printf("OnSetAttribute 1 at %s\n", attr_name_ext.c_str());
   OnSetAttribute(/* not lowercase name */ attr_name_ext, extended_value);
   //RegenAttrPairs(attr_name_ext, extended_value);
+#if defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+#if 0
+  changeEmcriptenAttr(em_node_
+    , attr_name_ext
+    , extended_value
+    , true
+    , const_cast<Element*>(this)
+  );
+#endif // 0
+  emChangeAttrInBrowserThread(
+    attr_name_ext
+    , extended_value
+    , true
+  );
+#endif
 }
 
 // Algorithm for RemoveAttribute:
@@ -570,6 +708,22 @@ void Element::RemoveAttribute(const std::string& name) {
     document->OnDOMMutation();
   }
   OnRemoveAttribute(attr_name);
+
+#if defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+#if 0
+  changeEmcriptenAttr(em_node_
+    , attr_name
+    , ""
+    , false
+    , const_cast<Element*>(this)
+  );
+#endif // 0
+  emChangeAttrInBrowserThread(
+    attr_name
+    , ""
+    , false
+  );
+#endif
 }
 
 // Algorithm for tag_name:
@@ -754,6 +908,22 @@ void Element::set_inner_html(const std::string& inner_html) {
     document->html_element_context()->dom_parser()->ParseDocumentFragment(
         inner_html, document, this, NULL, GetInlineSourceLocation());
   }
+
+#if defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+#if 0
+  changeEmcriptenAttr(em_node_
+    , "innerHTML"
+    , inner_html
+    , true
+    , const_cast<Element*>(this)
+  );
+#endif // 0
+  emChangeAttrInBrowserThread(
+    "innerHTML"
+    , inner_html
+    , true
+  );
+#endif
 }
 
 // Algorithm for outer_html:
@@ -811,6 +981,22 @@ void Element::set_outer_html(const std::string& outer_html,
     document->html_element_context()->dom_parser()->ParseDocumentFragment(
         outer_html, document, parent, reference, GetInlineSourceLocation());
   }
+
+#if defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+#if 0
+  changeEmcriptenAttr(em_node_
+    , "outerHTML"
+    , outer_html
+    , true
+    , const_cast<Element*>(this)
+  );
+#endif // 0
+  emChangeAttrInBrowserThread(
+    "outerHTML"
+    , outer_html
+    , true
+  );
+#endif
 }
 
 void Element::SetPointerCapture(int pointer_id,
@@ -876,10 +1062,42 @@ base::Optional<std::string> Element::GetStyleAttribute() const {
 
 void Element::SetStyleAttribute(const std::string& value) {
   attribute_map_[kStyleAttributeName] = value;
+
+#if defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+#if 0
+  changeEmcriptenAttr(em_node_
+    , "style"
+    , value
+    , true
+    , const_cast<Element*>(this)
+  );
+#endif // 0
+  emChangeAttrInBrowserThread(
+    "style"
+    , value
+    , true
+  );
+#endif
 }
 
 void Element::RemoveStyleAttribute() {
   attribute_map_.erase(kStyleAttributeName);
+
+#if defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+#if 0
+  changeEmcriptenAttr(em_node_
+    , "style"
+    , ""
+    , false
+    , const_cast<Element*>(this)
+  );
+#endif // 0
+  emChangeAttrInBrowserThread(
+    "style"
+    , ""
+    , false
+  );
+#endif
 }
 
 void Element::CollectStyleSheetsOfElementAndDescendants(
@@ -974,6 +1192,9 @@ void Element::SetBooleanAttribute(const std::string& name, bool value) {
 }
 
 void Element::CopyAttributes(const Element& other) {
+#if defined(ENABLE_NATIVE_HTML)
+  // TODO
+#endif // ENABLE_NATIVE_HTML
   attribute_map_ = other.attribute_map_;
   id_attribute_ = other.id_attribute_;
 }

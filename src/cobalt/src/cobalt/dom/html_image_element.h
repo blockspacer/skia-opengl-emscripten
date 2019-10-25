@@ -49,20 +49,22 @@ class HTMLImageElement : public HTMLElement {
   explicit HTMLImageElement(Document* document)
       : HTMLElement(document, base::Token(kTagName))
 {
+#if 0
 #if defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
   auto taskCb
     = [em_node = &em_node_](const html_native::NativeHTMLTaskCbParams&&)
     {
       DCHECK(em_node);
-      DCHECK(em_node->isNull() || em_node->isUndefined());
-      if(em_node)
+      //DCHECK(em_node->isNull() || em_node->isUndefined());
+
+      if(em_node && (em_node->isNull() || em_node->isUndefined()))
       {
         printf("Node::HTMLImageElement\n");
         (*em_node)
           = emscripten::val::global("document").call<emscripten::val>(
               "createElement", emscripten::val("div"));
       } else {
-        NOTIMPLEMENTED_LOG_ONCE();
+        // NOTIMPLEMENTED_LOG_ONCE();
       }
     };
 
@@ -77,6 +79,7 @@ class HTMLImageElement : public HTMLElement {
       true
     );
 #endif
+#endif // 0
 }
 
   explicit HTMLImageElement(script::EnvironmentSettings* env_settings);

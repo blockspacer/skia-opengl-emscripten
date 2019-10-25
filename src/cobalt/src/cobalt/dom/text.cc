@@ -28,10 +28,28 @@ Text::Text(script::EnvironmentSettings* env_settings,
                         ->window()
                         ->document()
                         .get(),
-                    comment) {}
+                    comment) {
+
+#if 0
+#if defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+  if(!html_native::isEmNodeGUIDValid(getEmNodeGUID())) {
+    emCreateTextElementInBrowserThreadAndSetGUID(comment.as_string());
+  }
+#endif // defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+#endif // 0
+
+}
 
 Text::Text(Document* document, const base::StringPiece& text)
-    : CharacterData(document, text) {}
+    : CharacterData(document, text) {
+
+#if defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+  if(!html_native::isEmNodeGUIDValid(getEmNodeGUID())) {
+    emCreateTextElementInBrowserThreadAndSetGUID(text.as_string());
+  }
+#endif // defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+
+}
 
 base::Token Text::node_name() const { return base::Tokens::text_node_name(); }
 

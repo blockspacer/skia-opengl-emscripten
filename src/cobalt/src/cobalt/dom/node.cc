@@ -57,6 +57,8 @@
 
 #if defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
 #include "cobalt/dom/html5_native/html5_elem_queue.h"
+
+#include "cobalt/dom/html_body_element.h"
 #endif
 
 namespace cobalt {
@@ -180,6 +182,9 @@ scoped_refptr<Node> Node::CloneNode(bool deep) const {
   TRACK_MEMORY_SCOPE("DOM");
   TRACE_EVENT0("cobalt::dom", "Node::CloneNode()");
   scoped_refptr<Node> new_node = Duplicate();
+#if !defined(ENABLE_NATIVE_HTML)
+  // TODO
+#endif // ENABLE_NATIVE_HTML
   DCHECK(new_node);
   if (deep) {
     scoped_refptr<Node> child = first_child_;
@@ -215,22 +220,6 @@ scoped_refptr<Node> Node::InsertBefore(
   return PreInsert(new_child, reference_child);
 }
 
-namespace {
-/// \note make sure that source files are UTF with BOM
-/// \note JavaScript strings are encoded with UTF16-LE. (little endian)
-static std::wstring utf8_to_wstring(const std::string& str) {
-  std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
-  return converter.from_bytes(str);
-}
-
-/// \note make sure that source files are UTF with BOM
-/// \note JavaScript strings are encoded with UTF16-LE. (little endian)
-static std::string wstring_to_utf8(const std::wstring& str) {
-  std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
-  return converter.to_bytes(str);
-}
-} // namespace
-
 // Algorithm for AppendChild:
 //   https://www.w3.org/TR/dom/#dom-node-appendchild
 scoped_refptr<Node> Node::AppendChild(const scoped_refptr<Node>& new_child) {
@@ -239,6 +228,55 @@ scoped_refptr<Node> Node::AppendChild(const scoped_refptr<Node>& new_child) {
   // the context object.
   // To append a node to a parent, pre-insert node into parent before null.
 
+  // TODO: if it is body tag ->
+
+#if 0
+#if defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+  auto taskCb
+    = [new_child_em_node = &new_child->em_node_
+       , em_node = &em_node_
+       //, innerHTMLPrint = inner_html()
+       ]
+       (const html_native::NativeHTMLTaskCbParams&&)
+    {
+      DCHECK(em_node);
+      DCHECK(new_child_em_node);
+      if(new_child_em_node
+         && !new_child_em_node->isNull()
+         && !new_child_em_node->isUndefined()
+         && em_node
+         && !em_node->isNull()
+         && !em_node->isUndefined())
+      {
+        printf("Node::AppendChild 1\n");
+
+        DCHECK(em_node
+          && !em_node->isNull()
+          && !em_node->isUndefined());
+        DCHECK(new_child_em_node
+          && !new_child_em_node->isNull()
+          && !new_child_em_node->isUndefined());
+        em_node->call<void>("appendChild", *new_child_em_node);
+      } else {
+        // TODO: warning
+      }
+    };
+
+  html_native::NativeHTMLTaskCbParams cbParams{1,2};
+
+  html_native::GlobalHTML5TaskQueue::getInstance()->
+    scheduleTaskInMainThread(
+      new html_native::NativeHTMLTaskParams{
+        std::move(taskCb),
+        std::move(cbParams)
+      },
+      true // async if threads enabled
+    );
+
+#endif
+#endif // 0
+
+#if 0
 #if defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
   auto taskCb
     = [new_child_em_node = &new_child->em_node_
@@ -254,24 +292,25 @@ scoped_refptr<Node> Node::AppendChild(const scoped_refptr<Node>& new_child) {
          && !new_child_em_node->isUndefined())
       {
         // document.getElementsByTagName("body")[0].getElementsByTagName("div")[0]["localName"]
+        DCHECK(new_child_em_node->hasOwnProperty("localName"));
         printf("Node::AppendChild localName %s\n", (*new_child_em_node)["localName"].as<std::string>().c_str());
         //
         DCHECK(new_child_em_node
           && !new_child_em_node->isNull()
           && !new_child_em_node->isUndefined());
+        DCHECK(new_child_em_node->hasOwnProperty("localName"));
         if((*new_child_em_node)["localName"].as<std::string>() == "div") {
           printf("Node::AppendChild innerHTML\n");
           //(*new_child_em_node)["innerHTML"] // textContent innerHTML
               /// \note make sure that source files are UTF with BOM
           //  = emscripten::val("фывфывывф inner_html.c_str()");
           //  //= emscripten::val(innerHTMLPrint.c_str());
-          new_child_em_node->set("style", "display:block");
+          /*new_child_em_node->set("style", ";width: 50px;height: 50px;border-top-left-radius: 40px;border-top-right-radius: 40px;border-bottom-right-radius: 40px;border-bottom-left-radius: 40px;background-color: rgb(49, 95, 214);transform: translateY(402px)");
           new_child_em_node->set("innerHTML",
             /// \note make sure that source files are UTF with BOM
-            utf8_to_wstring("выавывава iasdasd"));
+            html_native::utf8_to_wstring("выавывава iasdasd"));*/
         }
       } else {
-        return; // TODO
       }
 
       if(new_child_em_node
@@ -290,15 +329,6 @@ scoped_refptr<Node> Node::AppendChild(const scoped_refptr<Node>& new_child) {
           && !new_child_em_node->isNull()
           && !new_child_em_node->isUndefined());
         em_node->call<void>("appendChild", *new_child_em_node);
-
-        /*emscripten::val new_node
-          = emscripten::val::global("document").call<emscripten::val>(
-              "createElement", emscripten::val("div"));
-        new_node.set("innerHTML", "ûÛÂÀÛÂ innerHTML.str()");
-        new_node["style"].set("display", emscripten::val("block"));
-        new_node["classList"].call<void>("add", emscripten::val("testClass1"));
-        new_node["classList"].call<void>("add", emscripten::val("testClass2"));
-        em_node->call<void>("appendChild", new_node);*/
       } else if (new_child_em_node
          && !new_child_em_node->isNull()
          && !new_child_em_node->isUndefined()) {
@@ -306,6 +336,7 @@ scoped_refptr<Node> Node::AppendChild(const scoped_refptr<Node>& new_child) {
 
         printf("Node::AppendChild 2\n");
 
+#if 0
         // document.getElementsByTagName("body")[0]
         emscripten::val body_elements
           = emscripten::val::global("document")
@@ -326,26 +357,10 @@ scoped_refptr<Node> Node::AppendChild(const scoped_refptr<Node>& new_child) {
           && !new_child_em_node->isNull()
           && !new_child_em_node->isUndefined());
         app_root_node->call<void>("appendChild", *new_child_em_node);
+#endif // 0
 
-        /*emscripten::val body_elements
-          = emscripten::val::global("document")
-            .call<emscripten::val>(
-              "getElementsByTagName", emscripten::val("body"));
-        emscripten::val body_node
-          = body_elements[0];
-        DCHECK(!body_node.isNull()
-               && !body_node.isUndefined());
-
-        emscripten::val new_node
-          = emscripten::val::global("document").call<emscripten::val>(
-              "createElement", emscripten::val("div"));
-        new_node.set("innerHTML", "innerHTML.str()");
-        new_node["style"].set("display", emscripten::val("block"));
-        new_node["classList"].call<void>("add", emscripten::val("testClass1"));
-        new_node["classList"].call<void>("add", emscripten::val("testClass2"));
-        body_node.call<void>("appendChild", new_node);*/
       } else {
-        //NOTIMPLEMENTED_LOG_ONCE();
+        // NOTIMPLEMENTED_LOG_ONCE();
       }
     };
 
@@ -357,43 +372,35 @@ scoped_refptr<Node> Node::AppendChild(const scoped_refptr<Node>& new_child) {
         std::move(taskCb),
         std::move(cbParams)
       },
-      true
+      true // async if threads enabled
     );
+
 #endif
+#endif // 0
 
-#if 0 // TODO: use lock-free Sequences to post tasks on main browser thread https://chromium.googlesource.com/chromium/src/+/master/docs/threading_and_tasks.md#Using-Sequences-Instead-of-Locks
+#if 0
+#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+  /// \note we can check result because operation is blocking on WASM ST
+  DCHECK(!new_child->em_node_.isNull()
+         && !new_child->em_node_.isUndefined());
+#endif
+#endif // 0
+
+//#if 0
 #if defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
-  if(!new_child->em_node_.isNull() && !new_child->em_node_.isUndefined()
-     && !em_node_.isNull() && !em_node_.isUndefined())
+  if(new_child)
   {
-    printf("Node::AppendChild 1\n");
-
-    em_node_.call<void>("appendChild", new_child->em_node_);
-
-    /*emscripten::val new_node
-      = emscripten::val::global("document").call<emscripten::val>(
-          "createElement", emscripten::val("div"));
-    new_node.set("innerHTML", "innerHTML.str()");
-    new_node["style"].set("display", emscripten::val("block"));
-    new_node["classList"].call<void>("add", emscripten::val("testClass1"));
-    new_node["classList"].call<void>("add", emscripten::val("testClass2"));
-    em_node_.call<void>("appendChild", new_node);*/
-  } else {
-    printf("Node::AppendChild 2\n");
-    NOTIMPLEMENTED_LOG_ONCE();
-    emscripten::val parent_node
-      = emscripten::val::global("document")["body"];
-    emscripten::val new_node
-      = emscripten::val::global("document").call<emscripten::val>(
-          "createElement", emscripten::val("div"));
-    new_node.set("innerHTML", "innerHTML.str()");
-    new_node["style"].set("display", emscripten::val("block"));
-    new_node["classList"].call<void>("add", emscripten::val("testClass1"));
-    new_node["classList"].call<void>("add", emscripten::val("testClass2"));
-    parent_node.call<void>("appendChild", new_node);
+    emAppendChildInBrowserThread(getEmNodeGUID(),
+      new_child->getEmNodeGUID());
   }
 #endif // defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
-#endif // 0
+//#endif // 0
+
+//#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+//  /// \note we can check result because operation is blocking on WASM ST
+//  DCHECK(!new_child->em_node_.isNull()
+//         && !new_child->em_node_.isUndefined());
+//#endif
 
   return PreInsert(new_child, NULL);
 }
@@ -402,6 +409,9 @@ scoped_refptr<Node> Node::AppendChild(const scoped_refptr<Node>& new_child) {
 //   https://www.w3.org/TR/dom/#dom-node-replacechild
 scoped_refptr<Node> Node::ReplaceChild(const scoped_refptr<Node>& node,
                                        const scoped_refptr<Node>& child) {
+#if !defined(ENABLE_NATIVE_HTML)
+  // TODO
+#endif // ENABLE_NATIVE_HTML
   TRACE_EVENT0("cobalt::dom", "Node::ReplaceChild()");
   // The replaceChild(node, child) method must return the result of replacing
   // child with node within the context object.
@@ -477,6 +487,9 @@ scoped_refptr<Node> Node::ReplaceChild(const scoped_refptr<Node>& node,
   // 11. Insert node into parent before reference child with the suppress
   // observers flag set.
   Insert(node, reference_child, true);
+#if !defined(ENABLE_NATIVE_HTML)
+  // TODO
+#endif // ENABLE_NATIVE_HTML
 
   // 12. Let nodes be node's children if node is a DocumentFragment node, and a
   // list containing solely node otherwise.
@@ -499,6 +512,9 @@ scoped_refptr<Node> Node::ReplaceChild(const scoped_refptr<Node>& node,
 // Algorithm for RemoveChild:
 //   https://www.w3.org/TR/dom/#dom-node-removechild
 scoped_refptr<Node> Node::RemoveChild(const scoped_refptr<Node>& node) {
+#if !defined(ENABLE_NATIVE_HTML)
+  // TODO
+#endif // ENABLE_NATIVE_HTML
   TRACE_EVENT0("cobalt::dom", "Node::RemoveChild()");
   // The removeChild(child) method must return the result of pre-removing child
   // from the context object.
@@ -653,6 +669,21 @@ Node::Node(Document* document)
 #endif // defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
 //#endif // 0
 {
+// #if 0
+// #if defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+//         em_node_
+//           = emscripten::val::global("document").call<emscripten::val>(
+//               "createElement", emscripten::val("div"));
+//
+//         emscripten::val root_element
+//           = emscripten::val::global("document")
+//             .call<emscripten::val>(
+//               "getElementById", emscripten::val("pendingEmscriptenElements"));
+//         DCHECK(!root_element.isNull()
+//                && !root_element.isUndefined());
+//         root_element.call<void>("appendChild", em_node_);
+// #endif // defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+// #endif // 0
   DCHECK(node_document_);
   GlobalStats::GetInstance()->Add(this);
 }
@@ -670,12 +701,349 @@ Node::~Node() {
   GlobalStats::GetInstance()->Remove(this);
 }
 
+#if defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+
+int Node::getEmNodeGUID() const {
+  return em_node_guid_;
+}
+
+void Node::setEmNodeAsRoot() {
+  html_native::setEmNodeGUIDAsRoot(em_node_guid_);
+}
+
+bool Node::isEmNodeRoot() const {
+  return html_native::isEmNodeGUIDRoot(getEmNodeGUID());
+}
+
+void Node::setEmNodeAsDocument() {
+  em_node_guid_
+    = html_native::GlobalHTML5TaskQueue::kEmNodeDocumentGUID;
+}
+
+bool Node::isEmNodeDocument() const {
+  return em_node_guid_
+    == html_native::GlobalHTML5TaskQueue::kEmNodeDocumentGUID;
+}
+
+void Node::setEmNodeGUID(const int guid) {
+  em_node_guid_ = guid;
+}
+
+void Node::setEmNodeAsHead() {
+  em_node_guid_
+    = html_native::GlobalHTML5TaskQueue::kEmNodeHeadGUID;
+}
+
+bool Node::isEmNodeHead() const {
+  return em_node_guid_
+    == html_native::GlobalHTML5TaskQueue::kEmNodeHeadGUID;
+}
+
+void Node::setEmNodeAsHTML() {
+  em_node_guid_
+    = html_native::GlobalHTML5TaskQueue::kEmNodeHTMLGUID;
+}
+
+bool Node::isEmNodeHTML() const {
+  return em_node_guid_
+    == html_native::GlobalHTML5TaskQueue::kEmNodeHTMLGUID;
+}
+
+void Node::setEmNodeAsBody() {
+  em_node_guid_
+    = html_native::GlobalHTML5TaskQueue::kEmNodeBodyGUID;
+}
+
+bool Node::isEmNodeBody() const {
+  return em_node_guid_
+    == html_native::GlobalHTML5TaskQueue::kEmNodeBodyGUID;
+}
+
+void Node::setEmNodeAsTitle() {
+  em_node_guid_
+    = html_native::GlobalHTML5TaskQueue::kEmNodeTitleGUID;
+}
+
+bool Node::isEmNodeTitle() const {
+  return em_node_guid_
+    == html_native::GlobalHTML5TaskQueue::kEmNodeTitleGUID;
+}
+
+#if !defined(EM_IS_MAIN_THREAD)
+#error "need to define EM_IS_MAIN_THREAD"
+#endif // EM_IS_MAIN_THREAD
+
+void Node::emCreateElementInBrowserThreadAndSetGUID(
+  const std::string& tagName)
+{
+  auto taskCb
+    = [em_node_guid = &this->em_node_guid_ /// \note ref data
+       , tagName /// \note copyed data
+       , out_node = &em_node_
+       ]
+       (const html_native::NativeHTMLTaskCbParams&&)
+    {
+      /// \note must execute only in main browser thread!
+      DCHECK(EM_IS_MAIN_THREAD());
+
+      DCHECK(em_node_guid);
+
+      /// \note don`t create same element twice!
+      DCHECK(!html_native::isEmNodeGUIDValid(*em_node_guid));
+
+      (*em_node_guid) =
+        html_native::createElementAndGetGUID(tagName.c_str());
+      DCHECK(em_node_guid);
+      DCHECK(html_native::isEmNodeGUIDValid((*em_node_guid)));
+
+      DCHECK(out_node);
+      html_native::getElement((*em_node_guid), out_node);
+    };
+
+  html_native::runOnMainBrowserThread(std::move(taskCb));
+}
+
+void Node::emCreateTextElementInBrowserThreadAndSetGUID(
+    const std::string& text)
+{
+  auto taskCb
+    = [em_node_guid = &this->em_node_guid_ /// \note ref data
+       , text /// \note copyed data
+       , out_node = &em_node_
+       ]
+       (const html_native::NativeHTMLTaskCbParams&&)
+    {
+      /// \note must execute only in main browser thread!
+      DCHECK(EM_IS_MAIN_THREAD());
+
+      DCHECK(em_node_guid);
+
+      /// \note don`t create same element twice!
+      DCHECK(!html_native::isEmNodeGUIDValid(*em_node_guid));
+
+      (*em_node_guid) =
+        html_native::createTextElementAndGetGUID(text.c_str());
+      DCHECK(em_node_guid);
+      DCHECK(html_native::isEmNodeGUIDValid((*em_node_guid)));
+
+      DCHECK(out_node);
+      html_native::getElement((*em_node_guid), out_node);
+    };
+
+  html_native::runOnMainBrowserThread(std::move(taskCb));
+}
+
+void Node::emAppendChildInBrowserThread(
+  const int parentGUID, const int childGUID)
+{
+  printf("emAppendChildInBrowserThread %i %i \n",
+    parentGUID, childGUID);
+
+  auto taskCb
+    = [new_child_em_node_guid = childGUID
+       , em_node_guid = parentGUID
+       //, innerHTMLPrint = inner_html()
+       ]
+       (const html_native::NativeHTMLTaskCbParams&&)
+    {
+      if(!html_native::isEmNodeGUIDValid(new_child_em_node_guid)
+         || !html_native::isEmNodeGUIDValid(em_node_guid)) {
+        printf("WASM: invalid node GUIDs: %i %i \n",
+          em_node_guid, new_child_em_node_guid);
+        return;
+      }
+
+      html_native::appendChild(em_node_guid,
+        new_child_em_node_guid);
+    };
+
+  html_native::runOnMainBrowserThread(std::move(taskCb));
+}
+
+void Node::emGetElementInBrowserThread(
+  const int guid, emscripten::val* output)
+{
+  printf("emGetElementInBrowserThread %i \n",
+    getEmNodeGUID());
+  DCHECK(output);
+
+  auto taskCb
+    = [em_node_guid = getEmNodeGUID()
+       , out_node = output]
+      (const html_native::NativeHTMLTaskCbParams&&)
+    {
+      if(!html_native::isEmNodeGUIDValid(em_node_guid)) {
+        printf("WASM: invalid node GUIDs: %i \n",
+          em_node_guid);
+        return;
+      }
+
+      DCHECK(out_node);
+      html_native::getElement(em_node_guid, out_node);
+      DCHECK(!out_node->isNull()
+             && !out_node->isUndefined());
+    };
+
+  html_native::runOnMainBrowserThread(std::move(taskCb));
+}
+
+void Node::emSetNodeValueInBrowserThread(const std::string& newValue)
+{
+  printf("emSetNodeValueInBrowserThread %i \n",
+    getEmNodeGUID());
+
+  DCHECK(html_native::isEmNodeGUIDValid(em_node_guid_));
+
+  DCHECK(!em_node_.isNull()
+         && !em_node_.isUndefined());
+
+  auto taskCb
+    = [em_node = &em_node_
+       , value = newValue /// \note copyed data
+       , node_guid = getEmNodeGUID()
+       // , target = this // TODO
+       ]
+      (const html_native::NativeHTMLTaskCbParams&&)
+    {
+      if(em_node /// \note may be freed in async/threaded call
+         && !em_node->isNull()
+         && !em_node->isUndefined())
+      {
+        em_node->set("nodeValue",
+            /// \note make sure that source files are UTF with BOM
+            emscripten::val(
+              html_native::utf8_to_wstring(value.c_str())
+            )
+        );
+        DCHECK(em_node
+               && !em_node->isNull()
+               && !em_node->isUndefined());
+      } else {
+        /// \todo debug-only-check that js object freed properly
+        /// \FIXME `check_output` async!!!
+//#if !defined(NDEBUG)
+//        emscripten::val check_output(emscripten::val::null());
+//        DCHECK(target);
+//        /// \todo async!!! target->emGetElementInBrowserThread(node_guid, &check_output);
+//        CHECK(check_output->isNull() || check_output->isUndefined());
+//#endif // NDEBUG
+      }
+    };
+
+  html_native::runOnMainBrowserThread(std::move(taskCb));
+}
+
+#if 0
+emscripten::val Node::getEmNode(const int guid) {
+  if(em_node_guid_ < 0) {
+    return; /// \note -1 for undefined
+  }
+
+  /// \note must execute only in main browser thread!
+  DCHECK(EM_IS_MAIN_THREAD());
+
+  emscripten::val cxxDomHelpers
+    = html_native::getEmCxxDomHelpers();
+  DCHECK(!cxxDomHelpers.isNull()
+         && !cxxDomHelpers.isUndefined());
+
+  cxxDomHelpers.call<emscripten::val>(
+              "getElementsByTagName", emscripten::val("body"));
+        emscripten::val body_node
+          = body_elements[0];
+        DCHECK(!body_node.isNull()
+               && !body_node.isUndefined());
+}
+#endif // 0
+
+#endif // defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+
 void Node::OnInsertedIntoDocument() {
   DCHECK(node_document_);
   DCHECK(!inserted_into_document_);
   inserted_into_document_ = true;
 
+  printf("OnInsertedIntoDocument %i \n",
+    getEmNodeGUID());
+
+#if 0
+#if defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+  if(child)
+  {
+    emAppendChildInBrowserThread(getEmNodeGUID(),
+      getEmNodeGUID());
+  }
+#endif // defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+#endif // 0
+
+#if 0
+#if defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+  //if(child)
+  {
+    auto taskCb
+      = [new_child_em_node = &this->em_node_
+         , em_node = &this->em_node_
+         //, innerHTMLPrint = inner_html()
+         ]
+         (const html_native::NativeHTMLTaskCbParams&&)
+      {
+
+      DCHECK(new_child_em_node->hasOwnProperty("localName"));
+      if((*new_child_em_node)["localName"].as<std::string>() == "div") {
+          // TODO
+          DCHECK(em_node
+            && !em_node->isNull()
+            && !em_node->isUndefined());
+          DCHECK(new_child_em_node
+            && !new_child_em_node->isNull()
+            && !new_child_em_node->isUndefined());
+      }
+
+        DCHECK(em_node);
+        DCHECK(new_child_em_node);
+        if(new_child_em_node
+           && !new_child_em_node->isNull()
+           && !new_child_em_node->isUndefined()
+           && em_node
+           && !em_node->isNull()
+           && !em_node->isUndefined())
+        {
+          printf("Node::AppendChild 1\n");
+
+          DCHECK(em_node
+            && !em_node->isNull()
+            && !em_node->isUndefined());
+          DCHECK(new_child_em_node
+            && !new_child_em_node->isNull()
+            && !new_child_em_node->isUndefined());
+
+            // TODO: == "div" ????????
+          if((*new_child_em_node)["localName"].as<std::string>() == "div") {
+            em_node->call<void>("appendChild", *new_child_em_node);
+          } else {
+            // DCHECK(false); // TODO
+          }
+        } else {
+          // TODO: warning
+        }
+      };
+
+    html_native::NativeHTMLTaskCbParams cbParams{1,2};
+
+    html_native::GlobalHTML5TaskQueue::getInstance()->
+      scheduleTaskInMainThread(
+        new html_native::NativeHTMLTaskParams{
+          std::move(taskCb),
+          std::move(cbParams)
+        },
+        true // async if threads enabled
+      );
+  }
+#endif // defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+#endif // 0
+
   Node* child = first_child_.get();
+
   while (child) {
     child->OnInsertedIntoDocument();
     child = child->next_sibling_.get();
@@ -921,7 +1289,29 @@ void Node::Insert(const scoped_refptr<Node>& node,
     if (document) {
       document->OnDOMMutation();
     }
+
+// TODO
+//#if defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+//  //if(new_child)
+//  {
+//    DCHECK(node);
+//    DCHECK(node->parent_);
+//    emAppendChildInBrowserThread(node->parent_->getEmNodeGUID(),
+//      node->getEmNodeGUID());
+//  }
+//#endif // defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+
   }
+
+#if defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+  //if(new_child)
+  {
+    DCHECK(node);
+    DCHECK(node->parent_);
+    emAppendChildInBrowserThread(node->parent_->getEmNodeGUID(),
+      node->getEmNodeGUID());
+  }
+#endif // defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
 }
 
 // Algorithm for PreRemove:
@@ -1019,6 +1409,16 @@ void Node::Remove(const scoped_refptr<Node>& node, bool suppress_observers) {
     scoped_refptr<Document> document = node->owner_document();
     if (document) {
       document->OnDOMMutation();
+#if 0
+#if defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+      //if(new_child)
+      {
+        DCHECK(node);
+        DCHECK(!node->parent_); /// \note parent undefined
+        emRemoveChildInBrowserThread(node->getEmNodeGUID());
+      }
+#endif // defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+#endif // 0
     }
   }
 }

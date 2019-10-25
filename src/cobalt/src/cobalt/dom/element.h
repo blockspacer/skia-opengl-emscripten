@@ -50,6 +50,10 @@
 #include <emscripten/val.h>
 #endif // OS_EMSCRIPTEN
 
+#if defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+#include "cobalt/dom/html5_native/html5_elem_queue.h"
+#endif
+
 namespace cobalt {
 namespace dom {
 
@@ -266,10 +270,25 @@ class Element : public Node {
 
   HTMLElementContext* html_element_context();
 
+#if 0
+#if defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+static void changeEmcriptenAttr(emscripten::val& emscripten_node
+  , const std::string& attr_name, const std::string& attr_val
+  , const bool addedOrRemoved
+  , Element* elem
+  );
+#endif // defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+#endif // 0
+
+#if defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+void emChangeAttrInBrowserThread(
+  const std::string& attr_name, const std::string& attr_val
+  , const bool addedOrRemoved);
+#endif // defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+
  private:
   // From EventTarget.
   std::string GetDebugName() override;
-
   virtual void OnSetAttribute(const std::string& /* name */,
                               const std::string& /* value */) {}
   virtual void OnRemoveAttribute(const std::string& /* name */) {}

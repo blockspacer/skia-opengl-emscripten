@@ -61,10 +61,12 @@ Tested platforms:
 - Browser without threading support (WASM ST)
 
 IN-DEV / planned platforms:
-- Windows
-- Android
-- Native HTML5 web framework (without SKIA / OpenGL / WebGL2)
-- Renderer backend (without SKIA): OpenGL / WebGL2 / imgui / nanoVG
+- (in-dev) Windows
+- (in-dev) Native HTML5/JS web framework (without SKIA / OpenGL / WebGL2)
+- (planned) Android
+- (planned) Renderer backend (without SKIA): OpenGL / WebGL2 / imgui / nanoVG
+- (planned) Widgets/controls integration: imgui
+- (planned) Widgets/controls integration: QT
 
 It can be integrated into games or game engines using render-to-texture or SKIA `GrBackendRenderTarget`, real-time 3D applications, fullscreen applications, embedded applications and many more.
 

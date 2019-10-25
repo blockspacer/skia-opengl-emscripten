@@ -32,13 +32,15 @@ const char HTMLVideoElement::kTagName[] = "video";
 HTMLVideoElement::HTMLVideoElement(Document* document)
     : HTMLMediaElement(document, base::Token(kTagName))
 {
+#if 0
 #if defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
   auto taskCb
     = [em_node = &em_node_](const html_native::NativeHTMLTaskCbParams&&)
     {
       DCHECK(em_node);
-      DCHECK(em_node->isNull() || em_node->isUndefined());
-      if(em_node)
+      //DCHECK(em_node->isNull() || em_node->isUndefined());
+
+      if(em_node && (em_node->isNull() || em_node->isUndefined()))
       {
         printf("Node::HTMLVideoElement\n");
         (*em_node)
@@ -60,6 +62,7 @@ HTMLVideoElement::HTMLVideoElement(Document* document)
       true
     );
 #endif
+#endif // 0
 }
 
 uint32 HTMLVideoElement::width() const {

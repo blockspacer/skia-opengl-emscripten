@@ -29,20 +29,22 @@ const char HTMLBRElement::kTagName[] = "br";
 HTMLBRElement::HTMLBRElement(Document* document)
     : HTMLElement(document, base::Token(kTagName))
 {
+#if 0
 #if defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
   auto taskCb
     = [em_node = &em_node_](const html_native::NativeHTMLTaskCbParams&&)
     {
       DCHECK(em_node);
-      DCHECK(em_node->isNull() || em_node->isUndefined());
-      if(em_node)
+      //DCHECK(em_node->isNull() || em_node->isUndefined());
+
+      if(em_node && (em_node->isNull() || em_node->isUndefined()))
       {
         printf("Node::HTMLBrElement\n");
         (*em_node)
           = emscripten::val::global("document").call<emscripten::val>(
               "createElement", emscripten::val("div"));
       } else {
-        NOTIMPLEMENTED_LOG_ONCE();
+        // NOTIMPLEMENTED_LOG_ONCE();
       }
     };
 
@@ -54,9 +56,10 @@ HTMLBRElement::HTMLBRElement(Document* document)
         std::move(taskCb),
         std::move(cbParams)
       },
-      true
+      true // async if threads enabled
     );
 #endif
+#endif // 0
 }
 
 }  // namespace dom

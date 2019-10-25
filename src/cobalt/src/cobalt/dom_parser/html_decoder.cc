@@ -91,11 +91,13 @@ void HTMLDecoder::DecodeChunk(const char* data, size_t size) {
 }
 
 void HTMLDecoder::Finish() {
+  printf("HTMLDecoder::Finish 1\n");
   DCHECK_CALLED_ON_VALID_THREAD(thread_checker_);
   libxml_html_parser_wrapper_->Finish();
   if (!load_complete_callback_.is_null()) {
     load_complete_callback_.Run(base::nullopt);
   }
+  printf("HTMLDecoder::Finish 2\n");
 }
 
 }  // namespace dom_parser

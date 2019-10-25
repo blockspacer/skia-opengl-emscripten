@@ -45,6 +45,13 @@ class HTMLBodyElement : public HTMLElement {
   explicit HTMLBodyElement(Document* document)
       : HTMLElement(document, base::Token(kTagName))
 {
+  printf("Node::HTMLBodyElement create\n");
+
+#if defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+  setEmNodeAsRoot();
+  DCHECK(isEmNodeRoot());
+#endif // defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+
 #if 0
 #if defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
   auto taskCb
@@ -52,7 +59,8 @@ class HTMLBodyElement : public HTMLElement {
     {
       DCHECK(em_node);
       DCHECK(em_node->isNull() || em_node->isUndefined());
-      if(em_node)
+
+      if(em_node && (em_node->isNull() || em_node->isUndefined()))
       {
         printf("Node::HTMLBodyElement\n");
 
@@ -80,9 +88,9 @@ class HTMLBodyElement : public HTMLElement {
         std::move(taskCb),
         std::move(cbParams)
       },
-      true
+      true // async if threads enabled
     );
-#endif
+#endif // defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
 #endif // 0
 }
 

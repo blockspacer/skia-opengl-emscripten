@@ -23,13 +23,23 @@ namespace dom {
 CharacterData::CharacterData(Document* document, const base::StringPiece& data)
     : Node(document), data_(data.begin(), data.end())
 {
+  printf("CharacterData::CharacterData create with text = %s\n", data_.c_str());
+
+#if 0
+#if defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+  emCreateTextElementInBrowserThreadAndSetGUID(data_);
+#endif // defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+#endif // 0
+
+#if 0
 #if defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
   auto taskCb
     = [em_node = &em_node_](const html_native::NativeHTMLTaskCbParams&&)
     {
       DCHECK(em_node);
-      DCHECK(em_node->isNull() || em_node->isUndefined());
-      if(em_node)
+      //DCHECK(em_node->isNull() || em_node->isUndefined());
+
+      if(em_node && (em_node->isNull() || em_node->isUndefined()))
       {
         printf("Node::CharacterData\n");
         (*em_node)
@@ -49,9 +59,10 @@ CharacterData::CharacterData(Document* document, const base::StringPiece& data)
         std::move(taskCb),
         std::move(cbParams)
       },
-      true
+      true // async if threads enabled
     );
 #endif
+#endif // 0
 }
 
 void CharacterData::set_data(const std::string& data) {
@@ -59,9 +70,16 @@ void CharacterData::set_data(const std::string& data) {
   mutation_reporter.ReportCharacterDataMutation(data_);
   data_ = data;
 
+  printf("CharacterData::set_data %s\n", data.c_str());
+
+#if defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+  emSetNodeValueInBrowserThread(data);
+#endif // defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+
   InvalidateLayoutBoxesOfNodeAndAncestors();
   Document* document = node_document();
   if (document) {
+  // TODO
     document->OnDOMMutation();
   }
 }

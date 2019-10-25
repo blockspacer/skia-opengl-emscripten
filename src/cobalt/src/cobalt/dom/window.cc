@@ -323,6 +323,8 @@ void Window::StartDocumentLoad(
     Parser* dom_parser,
     const loader::Decoder::OnCompleteFunction& load_complete_callback)
 {
+  printf("Window::StartDocumentLoad 1\n");
+
   isDocumentStartedLoading_ = true;
   document_loader_.reset(new loader::Loader(
       base::Bind(&loader::FetcherFactory::CreateFetcher,
@@ -336,6 +338,8 @@ void Window::StartDocumentLoad(
       , true
 #endif
       ));
+
+  printf("Window::StartDocumentLoad 2\n");
 }
 
 scoped_refptr<base::BasicClock> Window::MakePerformanceClock(

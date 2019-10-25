@@ -49,7 +49,8 @@ class HTMLAnchorElement : public HTMLElement {
   {
 #if 0 // TODO: use lock-free Sequences to post tasks on main browser thread https://chromium.googlesource.com/chromium/src/+/master/docs/threading_and_tasks.md#Using-Sequences-Instead-of-Locks
 #if defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
-    if(true) {
+    if(em_node && (em_node->isNull() || em_node->isUndefined()))
+    {
       em_node_
         = emscripten::val::global("document").call<emscripten::val>(
             "createElement", emscripten::val("a"));

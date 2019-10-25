@@ -120,14 +120,20 @@ Document::Document(HTMLElementContext* html_element_context,
   //HTML5_STACKTRACE();
 #endif // OS_EMSCRIPTEN && DISABLE_PTHREADS
 
+#if defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+  setEmNodeAsDocument();
+  DCHECK(isEmNodeDocument());
+#endif // defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+
 #if 0
 #if defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
   auto taskCb
     = [em_node = &em_node_](const html_native::NativeHTMLTaskCbParams&&)
     {
       DCHECK(em_node);
-      DCHECK(em_node->isNull() || em_node->isUndefined());
-      if(em_node)
+      //DCHECK(em_node->isNull() || em_node->isUndefined());
+
+      if(em_node && (em_node->isNull() || em_node->isUndefined()))
       {
         printf("Node::HTMLDocumentElement\n");
 
@@ -148,7 +154,7 @@ Document::Document(HTMLElementContext* html_element_context,
             //.call<emscripten::val>(
             //  "createElement", emscripten::val("video"));*/
       } else {
-        NOTIMPLEMENTED_LOG_ONCE();
+        // NOTIMPLEMENTED_LOG_ONCE();
       }
     };
 
@@ -160,9 +166,9 @@ Document::Document(HTMLElementContext* html_element_context,
         std::move(taskCb),
         std::move(cbParams)
       },
-      true
+      true // async if threads enabled
     );
-#endif
+#endif // defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
 #endif // 0
 
   DCHECK(html_element_context_);

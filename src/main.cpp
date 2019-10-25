@@ -955,7 +955,7 @@ class CobaltTester {
   /// formula: MicrosecondsPerSecond / (layout_refresh_rate_ + 1.0)
   /// 1.0 = 500ms, 5.0 = 166ms, 29.0 = 33.3ms, 60.0 = 16ms
 #if defined(ENABLE_NATIVE_HTML)
-  float layout_refresh_rate_ = 0;
+  float layout_refresh_rate_ = 1.0;
 #else
   float layout_refresh_rate_ = kLayoutMaxRefreshFrequencyInHz;
 #endif // ENABLE_NATIVE_HTML
@@ -1083,9 +1083,9 @@ void CobaltTester::OnRenderTreeRasterized(
 }
 
 void CobaltTester::BrowserProcessRenderTreeSubmissionQueue() {
-#if defined(ENABLE_NATIVE_HTML)
-  return;
-#endif // ENABLE_NATIVE_HTML
+//#if defined(ENABLE_NATIVE_HTML)
+//  return;
+//#endif // ENABLE_NATIVE_HTML
 
     TRACE_EVENT0("cobalt::browser",
                  "CobaltTester::ProcessRenderTreeSubmissionQueue()");
@@ -2335,7 +2335,7 @@ static void animate() {
   //    g_cobaltTester->layout_manager_->ForceReLayout();
   //}
 
-    ///if (isDebugPeriodReached()) printf("animate end\n");
+    if (isDebugPeriodReached()) printf("animate end\n");
     //printf("animate end\n");
 }
 
@@ -5243,7 +5243,12 @@ static void mainLockFreeLoop() {
   // Render on native
 #if defined(ENABLE_OPENGL)
   animate();
+
+  /// \note ENABLE_NATIVE_HTML may be enabled on native for debug purposes
+#if !defined(ENABLE_NATIVE_HTML)
   Draw();
+#endif // ENABLE_NATIVE_HTML
+
 #endif // ENABLE_OPENGL
 
   // Update screen
@@ -5267,7 +5272,10 @@ static void mainLockFreeLoop() {
 
   // Render on WASM
   animate();
+
+#if !defined(ENABLE_NATIVE_HTML)
   Draw();
+#endif // ENABLE_NATIVE_HTML
 
 #else
   #error "TODO: port SDL_PollEvent"

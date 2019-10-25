@@ -34,13 +34,14 @@ class DocumentType : public Node {
   DocumentType(Document* document, base::Token name)
       : Node(document), name_(name)
 {
+#if 0
 #if defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
   auto taskCb
     = [em_node = &em_node_](const html_native::NativeHTMLTaskCbParams&&)
     {
       DCHECK(em_node);
-      DCHECK(em_node->isNull() || em_node->isUndefined());
-      if(em_node)
+      //DCHECK(em_node->isNull() || em_node->isUndefined());
+      if(em_node && (em_node->isNull() || em_node->isUndefined()))
       {
         printf("Node::DocumentType\n");
 
@@ -73,9 +74,10 @@ class DocumentType : public Node {
         std::move(taskCb),
         std::move(cbParams)
       },
-      true
+      true // async if threads enabled
     );
 #endif
+#endif // 0
 }
   DocumentType(Document* document, base::Token name,
                const std::string& public_id, const std::string& system_id)

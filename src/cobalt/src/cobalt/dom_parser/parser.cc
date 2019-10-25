@@ -32,6 +32,7 @@ namespace dom_parser {
 scoped_refptr<dom::Document> Parser::ParseDocument(
     const std::string& input, dom::HTMLElementContext* html_element_context,
     const base::SourceLocation& input_location) {
+  printf("Parser::ParseDocument 1\n");
   DCHECK(html_element_context);
   scoped_refptr<dom::Document> document =
       new dom::Document(html_element_context);
@@ -95,6 +96,7 @@ std::unique_ptr<loader::Decoder> Parser::ParseDocumentAsync(
     const scoped_refptr<dom::Document>& document,
     const base::SourceLocation& input_location,
     const loader::Decoder::OnCompleteFunction& load_complete_callback) {
+  printf("Parser::ParseDocumentAsync 1\n");
 
   return std::unique_ptr<loader::Decoder>(new HTMLDecoder(
       document, document, NULL, dom_max_element_depth_, input_location,
@@ -108,12 +110,16 @@ std::unique_ptr<loader::Decoder> Parser::ParseDocumentAsync(
 std::unique_ptr<loader::Decoder> Parser::ParseXMLDocumentAsync(
     const scoped_refptr<dom::XMLDocument>& xml_document,
     const base::SourceLocation& input_location) {
+  printf("Parser::ParseXMLDocumentAsync 2\n");
+
   return std::unique_ptr<loader::Decoder>(
       new XMLDecoder(xml_document, xml_document, NULL, dom_max_element_depth_,
                      input_location, load_complete_callback_));
 }
 
 void Parser::LoadCompleteCallback(const base::Optional<std::string>& error) {
+  printf("Parser::LoadCompleteCallback 1\n");
+
   if (error) LOG(ERROR) << "Error in DOM parsing: " << error.value_or("");
 }
 

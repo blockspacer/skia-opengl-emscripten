@@ -235,6 +235,8 @@ void HTMLLinkElement::OnContentProduced(const loader::Origin& last_url_origin,
 
 void HTMLLinkElement::OnLoadingComplete(
     const base::Optional<std::string>& error) {
+// TODO: HTML5 native
+
 #if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
     DCHECK(base::MessageLoopCurrent::Get()); // TODO
   base::MessageLoopCurrent::Get()->task_runner()->PostTask(
@@ -292,8 +294,13 @@ void HTMLLinkElement::OnStylesheetLoaded(Document* document,
 
 void HTMLLinkElement::ReleaseLoader() {
   DCHECK_CALLED_ON_VALID_THREAD(thread_checker_);
+#if defined(ENABLE_NATIVE_HTML)
+  if(loader_)
+    loader_.reset();
+#else
   DCHECK(loader_);
   loader_.reset();
+#endif
 }
 
 void HTMLLinkElement::CollectStyleSheet(
