@@ -417,10 +417,10 @@ target_compile_definitions(CC PRIVATE
   CC_IMPLEMENTATION=1
 )
 
-if(MSVC) 
+#if(MSVC) 
   # TODO
-else()
+#else()
   target_compile_options(CC PRIVATE
     -Wno-format
   )
-endif()
+#endif()

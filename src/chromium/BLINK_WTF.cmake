@@ -347,11 +347,11 @@ target_compile_definitions(${WTF_LIBRARY_NAME} PRIVATE
   #MEMORY_TOOL_REPLACES_ALLOCATOR=1
 )
 
-if(MSVC) # TODO
-  target_compile_options(${WTF_LIBRARY_NAME} PRIVATE
-    /W0
-  )
-else()
+#if(MSVC) # TODO
+#  target_compile_options(${WTF_LIBRARY_NAME} PRIVATE
+#    /W0
+#  )
+#else()
   target_compile_options(${WTF_LIBRARY_NAME} PRIVATE
     # always return on non-void functions to prevent UB
     -Wreturn-type
@@ -366,4 +366,4 @@ else()
     -Wno-unused-variable
     -Wno-unused-lambda-capture
   )
-endif()
+#endif()

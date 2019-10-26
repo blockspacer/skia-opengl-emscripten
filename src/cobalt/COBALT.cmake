@@ -162,9 +162,9 @@ target_compile_definitions(COBALT_CORE INTERFACE
   ${COBALT_COMMON_DEFINES}
 )
 
-if(MSVC) 
+#if(MSVC) 
   # TODO
-else()
+#else()
   target_compile_options(COBALT_CORE INTERFACE
     -Wno-error
     -Wno-macro-redefined
@@ -200,4 +200,4 @@ else()
     #
     -Wno-inconsistent-missing-override
   )
-endif()
+#endif()

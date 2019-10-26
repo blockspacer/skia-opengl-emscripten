@@ -70,7 +70,6 @@ if(TARGET_EMSCRIPTEN)
     GLIBXML
   )
 elseif(TARGET_LINUX OR TARGET_WINDOWS)
-  # skip
   target_link_libraries(GLIBJPEG PUBLIC
     #${BASE_LIBRARIES}
     #base

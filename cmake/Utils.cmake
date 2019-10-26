@@ -80,9 +80,13 @@ macro(add_compile_options target)
       "$<$<CONFIG:RELEASE>:-Wpedantic>"
     )
   else(ENABLE_CMAKE_COMPILE_WARNINGS)
-    set(ENABLED_WARNINGS
-      -Wno-error # clang
-    )
+    if(MSVC) 
+      # TODO
+    else()
+      list(APPEND ENABLED_WARNINGS
+        -Wno-error # clang
+      )
+    endif()
   endif(ENABLE_CMAKE_COMPILE_WARNINGS)
 
   # @see https://stackoverflow.com/a/46132078/10904212

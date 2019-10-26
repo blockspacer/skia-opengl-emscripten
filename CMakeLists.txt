@@ -436,6 +436,8 @@ if(ENABLE_HARFBUZZ)
     if(TARGET_WINDOWS)
       # NOTE: HarfBuzz from skia on WINDOWS
       #set(HARFBUZZ_LIBRARIES SKIA)
+      set(HARFBUZZ_LIBRARIES harfbuzz)
+      set(HARFBUZZ_INCLUDE_DIRS ${harfbuzz_FULL_DIR}/src)
     else()
       set(HARFBUZZ_LIBRARIES harfbuzz)
       set(HARFBUZZ_INCLUDE_DIRS ${harfbuzz_FULL_DIR}/src)
@@ -479,6 +481,15 @@ if(ENABLE_GNET)
     GNET
   )
 endif(ENABLE_GNET)
+
+# TODO
+#if(TARGET_WINDOWS)
+#  #set(COMMON_FLAGS "${COMMON_FLAGS} -Wno-error")
+#  set(COMMON_FLAGS "${COMMON_FLAGS} -Wno-builtin-macro-redefined")
+#  set(COMMON_FLAGS "${COMMON_FLAGS} -Wno-unused-command-line-argument")
+#  set(COMMON_FLAGS "${COMMON_FLAGS} -Wno-unused-variable")
+#  set(COMMON_FLAGS "${COMMON_FLAGS} -Wunknown-argument")
+#endif(TARGET_WINDOWS)
 
 if (RELEASE_BUILD)
   list(APPEND APP_DEFINITIONS RELEASE_BUILD=1)
@@ -803,19 +814,28 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF) # -std=c++11 instead of -std=gnu++11
 #set(MY_CXX_COMPILE_FEATURES cxx_generic_lambdas cxx_range_for cxx_strong_enums)
-if(MSVC)
-  if (MSVC_VERSION GREATER_EQUAL "1900")
-  include(CheckCXXCompilerFlag)
-  CHECK_CXX_COMPILER_FLAG("/std:c++latest" _cpp_latest_flag_supported)
-  if (_cpp_latest_flag_supported)
-      add_compile_options("/std:c++latest")
-     # message(FATAL_ERROR "CHECK_CXX_COMPILER_FLAG failed")
-  else()
-    message(FATAL_ERROR "CHECK_CXX_COMPILER_FLAG failed")
-  endif()
-  endif()
+
+#if(MSVC)
+#  if (MSVC_VERSION GREATER_EQUAL "1900")
+#  include(CheckCXXCompilerFlag)
+#  CHECK_CXX_COMPILER_FLAG("/std:c++latest" _cpp_latest_flag_supported)
+#  if (_cpp_latest_flag_supported)
+#     #add_compile_options("/std:c++latest")
+#     set(COMMON_CXX_FLAGS "${COMMON_CXX_FLAGS} /std:c++17") # use target options
+#     # message(FATAL_ERROR "CHECK_CXX_COMPILER_FLAG failed")
+#  else()
+#    message(FATAL_ERROR "CHECK_CXX_COMPILER_FLAG failed")
+#  endif()
+#  endif()
+#else()
+#  set(COMMON_CXX_FLAGS "${COMMON_CXX_FLAGS} -std=c++17") # use target options
+#endif()
+
+if(TARGET_WINDOWS)
+  # see http://clang.llvm.org/docs/UsersManual.html#clang-cl
+  set(COMMON_CXX_FLAGS "${COMMON_CXX_FLAGS} /std:c++17")
 else()
-  set(COMMON_CXX_FLAGS "${COMMON_CXX_FLAGS} -std=c++latest") # use target options
+  set(COMMON_CXX_FLAGS "${COMMON_CXX_FLAGS} -std=c++17")
 endif()
 
 # see https://github.com/chromium/chromium/blob/master/build/config/compiler/BUILD.gn#L683
@@ -831,9 +851,15 @@ set(COMMON_CXX_FLAGS "${COMMON_CXX_FLAGS} -DCODEC_IMPLEMENTATION=1")
 # https://groups.google.com/a/chromium.org/forum/#!topic/gn-dev/-PraKAwRlV8
 # https://developercommunity.visualstudio.com/content/problem/339089/arm64-conversion-issue-error-c2440-initializing-1.html
 
+MATH(EXPR SIZEOF_VOID_P_BITS "${CMAKE_SIZEOF_VOID_P}*8")
+set(COMMON_FLAGS "${COMMON_FLAGS} -DSIZEOF_VOID_P=${SIZEOF_VOID_P_BITS}")
+message(STATUS "DSIZEOF_VOID_P=${SIZEOF_VOID_P_BITS}")
+
 if(MSVC) # TODO
     # see https://docs.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warnings-by-compiler-version?view=vs-2019
     
+    #set(COMMON_FLAGS "${COMMON_FLAGS} -DWCHAR_T_IS_UTF16=1") # TODO: narrowing 
+
     #set(COMMON_FLAGS "${COMMON_FLAGS} /wd2397") # TODO: narrowing 
     #set(COMMON_FLAGS "${COMMON_FLAGS} /wd2398") # TODO: narrowing 
     #set(COMMON_FLAGS "${COMMON_FLAGS} /wd2440") # TODO: narrowing 
@@ -850,7 +876,17 @@ if(MSVC) # TODO
 
     # TODO: https://stackoverflow.com/a/34630892
 
-    set(COMMON_FLAGS "${COMMON_FLAGS} -D_CRT_SECURE_NO_WARNINGS=1")
+    # https://docs.microsoft.com/en-us/cpp/build/reference/za-ze-disable-language-extensions?view=vs-2019
+    # set(COMMON_FLAGS "${COMMON_FLAGS} /Za")
+
+    # unknown option
+    #set(COMMON_FLAGS "${COMMON_FLAGS} /permissive")
+    
+    # https://docs.microsoft.com/en-us/cpp/build/reference/zc-strictstrings-disable-string-literal-type-conversion?view=vs-2019
+    set(COMMON_FLAGS "${COMMON_FLAGS} /Zc:strictStrings-")
+
+    # https://docs.microsoft.com/en-us/cpp/build/reference/gd-gr-gv-gz-calling-convention?view=vs-2019
+    #set(COMMON_FLAGS "${COMMON_FLAGS} /Gv")
 
     # https://docs.microsoft.com/en-us/cpp/build/reference/gt-support-fiber-safe-thread-local-storage?view=vs-2019
     set(COMMON_FLAGS "${COMMON_FLAGS} /GT")
@@ -858,14 +894,16 @@ if(MSVC) # TODO
     # https://docs.microsoft.com/en-us/cpp/build/reference/gs-buffer-security-check?view=vs-2019
     set(COMMON_FLAGS "${COMMON_FLAGS} /GS-")
 
+    set(COMMON_FLAGS "${COMMON_FLAGS} -D_CRT_SECURE_NO_WARNINGS=1")
+
     # https://docs.microsoft.com/en-us/cpp/build/reference/sdl-enable-additional-security-checks?view=vs-2019
     set(COMMON_FLAGS "${COMMON_FLAGS} /sdl-")
 
-    set(COMMON_FLAGS "${COMMON_FLAGS} /D__DATE__=")
+    #set(COMMON_FLAGS "${COMMON_FLAGS} /D__DATE__=")
 
-    set(COMMON_FLAGS "${COMMON_FLAGS} /D__TIME__=")
+    #set(COMMON_FLAGS "${COMMON_FLAGS} /D__TIME__=")
 
-    set(COMMON_FLAGS "${COMMON_FLAGS} /D__TIMESTAMP__=")
+    #set(COMMON_FLAGS "${COMMON_FLAGS} /D__TIMESTAMP__=")
     
     #set(COMMON_FLAGS "${COMMON_FLAGS} /d2FastFail")
     
@@ -874,15 +912,12 @@ if(MSVC) # TODO
     
     set(COMMON_FLAGS "${COMMON_FLAGS} -DWIN32_LEAN_AND_MEAN")
 
-    #set(COMMON_FLAGS "${COMMON_FLAGS} -DWINAPI_FAMILY=WINAPI_FAMILY_DESKTOP_APP")
-
-    # https://docs.microsoft.com/en-us/cpp/build/reference/zc-strictstrings-disable-string-literal-type-conversion?view=vs-2019
-    set(COMMON_FLAGS "${COMMON_FLAGS} /Zc:strictStrings-")
+    set(COMMON_FLAGS "${COMMON_FLAGS} -DWINAPI_FAMILY=WINAPI_FAMILY_DESKTOP_APP")
 
     # see https://github.com/chromium/chromium/blob/8e82c6ab1bc2223fa25f1a127b65071d2d58ae36/build/config/win/BUILD.gn#L276
-    set(COMMON_FLAGS "${COMMON_FLAGS} -DNTDDI_VERSION=NTDDI_WIN10_RS2")
-    set(COMMON_FLAGS "${COMMON_FLAGS} -D_WIN32_WINNT=0x0A00")
-    set(COMMON_FLAGS "${COMMON_FLAGS} -DWINVER=0x0A00")
+    # set(COMMON_FLAGS "${COMMON_FLAGS} -DNTDDI_VERSION=NTDDI_WIN10_RS2")
+    # set(COMMON_FLAGS "${COMMON_FLAGS} -D_WIN32_WINNT=0x0A00")
+    # set(COMMON_FLAGS "${COMMON_FLAGS} -DWINVER=0x0A00")
 
     # Exceptions in allocator shim are not supported!
     # see https://github.com/chromium/chromium/blob/5514bb10d8770fea460152d278f105895067aa38/build/config/compiler/BUILD.gn#L1775
@@ -899,6 +934,8 @@ if(MSVC) # TODO
     set(COMMON_FLAGS "${COMMON_FLAGS} -DNOMINMAX=1")
     
     set(COMMON_FLAGS "${COMMON_FLAGS} -DHB_NO_MT=1") # TODO
+
+    set(COMMON_FLAGS "${COMMON_FLAGS} -D_WIN32=1") # TODO
 
     set(COMMON_FLAGS "${COMMON_FLAGS} -D_CRT_NONSTDC_NO_WARNINGS=1") # TODO
     set(COMMON_FLAGS "${COMMON_FLAGS} -D_CRT_NONSTDC_NO_DEPRECATE=1") # TODO
@@ -955,7 +992,7 @@ endif(MSVC)
 if(RELEASE_BUILD)
   if(MSVC) # TODO
     set(COMMON_FLAGS "${COMMON_FLAGS} /GR-")
-    set(COMMON_FLAGS "${COMMON_FLAGS} -fno-exceptions")
+    #set(COMMON_FLAGS "${COMMON_FLAGS} -fno-exceptions")
     set(COMMON_FLAGS "${COMMON_FLAGS} -DNDEBUG=1")
   else()
     set(COMMON_FLAGS "${COMMON_FLAGS} -fno-rtti")
@@ -967,10 +1004,6 @@ else()
     # https://stackoverflow.com/a/4184877/10904212
     # see DCHECK in base::polymorphic_downcast, dynamic_cast
     set(COMMON_FLAGS "${COMMON_FLAGS} /GR")
-
-    set(COMMON_FLAGS "${COMMON_FLAGS} -DHB_NO_MT=1") # TODO
-
-    set(COMMON_FLAGS "${COMMON_FLAGS} -D_WIN32=1") # TODO
   else()
     # https://stackoverflow.com/a/4184877/10904212
     # see DCHECK in base::polymorphic_downcast, dynamic_cast
@@ -2289,6 +2322,7 @@ else(EMSCRIPTEN)
     if(USE_SHARED_HARFBUZZ)
       if(TARGET_WINDOWS OR MSVC)
         # skip
+        find_package(HarfBuzz REQUIRED)
       else()
         find_package(HarfBuzz REQUIRED)
       endif()
@@ -2296,6 +2330,10 @@ else(EMSCRIPTEN)
       if(TARGET_WINDOWS OR MSVC)
         # NOTE: HarfBuzz from skia on WINDOWS
         #set(HARFBUZZ_LIBRARIES SKIA)
+        #add_dependencies(base SKIA)
+
+        set(HARFBUZZ_LIBRARIES harfbuzz)
+        set(HARFBUZZ_INCLUDE_DIRS ${harfbuzz_FULL_DIR}/src)
       else()
         set(HARFBUZZ_LIBRARIES harfbuzz)
         set(HARFBUZZ_INCLUDE_DIRS ${harfbuzz_FULL_DIR}/src)
@@ -2471,9 +2509,10 @@ endif(USE_CUSTOM_ICU)
 #
 # HARFBUZZ
 #
-if(TARGET_EMSCRIPTEN OR TARGET_LINUX)
+if(TARGET_EMSCRIPTEN OR TARGET_LINUX OR TARGET_WINDOWS)
   if(USE_CUSTOM_HARFBUZZ)
     include(harfbuzz.cmake)
+    #message(FATAL_ERROR "TODO: harfbuzz.cmake")
   endif(USE_CUSTOM_HARFBUZZ)
 else()
   # NOTE: harfbuzz from skia on WINDOWS
@@ -2736,8 +2775,11 @@ add_executable(${PROJECT_NAME}
 
 if(ENABLE_SKIA)
   add_dependencies(${PROJECT_NAME}
+    SKIA_build
+    SKIA
     ${SKIA_LIBS}
   )
+  add_dependencies(${PROJECT_NAME} SKIA_build_alwaysbuild)
 endif(ENABLE_SKIA)
 
 # https://www.mail-archive.com/emscripten-discuss@googlegroups.com/msg07864.html
@@ -3083,33 +3125,44 @@ else()
 endif() # EMSCRIPTEN
 
 if(ENABLE_CMAKE_COMPILE_WARNINGS)
+  list(APPEND ENABLED_WARNINGS
+    #-Wno-error
+    # always return on non-void functions to prevent UB
+    -Wreturn-type
+    # https://gist.github.com/morido/8637535
+    -Werror=return-type
+    -Wall
+    -Wextra
+    -Weverything # clang
+    -Wno-builtin-macro-redefined
+    -Wno-unused-command-line-argument
+    -Wno-unused-variable
+  )
   if(MSVC) # TODO
-    set(ENABLED_WARNINGS "/W0") # TODO
+    list(APPEND ENABLED_WARNINGS "/W0") # TODO
   else()
-    set(ENABLED_WARNINGS
-      #-Wno-error
-      # always return on non-void functions to prevent UB
-      -Wreturn-type
-      # https://gist.github.com/morido/8637535
-      -Werror=return-type
-      -Wall
-      -Wextra
-      -Weverything # clang
+    list(APPEND ENABLED_WARNINGS
+      -Wno-error
     )
   endif()
 else(ENABLE_CMAKE_COMPILE_WARNINGS)
+  list(APPEND ENABLED_WARNINGS
+    -Wno-builtin-macro-redefined
+    -Wno-unused-command-line-argument
+    -Wno-unused-variable
+  )
   if(MSVC) # TODO
-    set(ENABLED_WARNINGS "/W0") # TODO
+    list(APPEND ENABLED_WARNINGS "/W0") # TODO
   else()
-    set(ENABLED_WARNINGS
+    list(APPEND ENABLED_WARNINGS
       -Wno-error # clang
     )
   endif()
 endif(ENABLE_CMAKE_COMPILE_WARNINGS)
 
-if(MSVC) 
+#if(MSVC) 
   # TODO
-else()
+#else()
   set(DISABLED_WARNINGS
     -Wno-undef
     -Wno-switch
@@ -3157,6 +3210,9 @@ else()
     -Wno-implicit-function-declaration
     -Wno-c++11-narrowing
     -Wno-macro-redefined
+    -Wno-builtin-macro-redefined
+    -Wno-unused-command-line-argument
+    -Wno-unused-variable
     #-Wno-undef
     #-Wno-unknown-pragmas
     #-Wno-nonportable-include-path
@@ -3184,14 +3240,14 @@ else()
     # Do not warn about an implicit exception spec mismatch.
     -Wno-implicit-exception-spec-mismatch
   )
-endif()
+#endif()
 
-if(NOT TARGET_WINDOWS) # TODO
+#if(NOT TARGET_WINDOWS) # TODO
   target_compile_options(${PROJECT_NAME} PRIVATE
     ${ENABLED_WARNINGS}
     ${DISABLED_WARNINGS}
   )
-endif(NOT TARGET_WINDOWS)
+#endif(NOT TARGET_WINDOWS)
 
 add_custom_target(copy-runtime-files ALL
   COMMAND cmake -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/resources ${CMAKE_CURRENT_BINARY_DIR}/resources

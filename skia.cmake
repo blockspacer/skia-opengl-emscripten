@@ -452,6 +452,7 @@ set(BUILD_COMMAND "ninja;-C;${SKIA_BUILD_DIR};-d;keepdepfile;-j8")
 
 message(STATUS "BUILD_COMMAND=${BUILD_COMMAND}")
 
+include(ExternalProject)
 ExternalProject_Add(SKIA_build
   # LIST_SEPARATOR is needed for list expansion of C(XX)_FLAGS.
   LIST_SEPARATOR "^^"
@@ -462,6 +463,10 @@ ExternalProject_Add(SKIA_build
   #INSTALL_COMMAND true # TODO: true???
   INSTALL_COMMAND ""
 )
+
+# NOTE: ninja can't handle target dependencies with external libs, so use `--target` before build:
+# cmake --build . --config Debug --parallel 8 --target SKIA_build_alwaysbuild
+add_custom_target(SKIA_build_alwaysbuild ALL DEPENDS SKIA_build)
 
 # TODO: make PRINT_ALL_GN_ARGS as target dependant of SKIA_build
 #if(EXISTS "${CMAKE_CURRENT_BINARY_DIR}/skia/args.gn")
@@ -784,7 +789,7 @@ if (NOT EXT_SKIA_SHARED)
       else()
         message(STATUS "Found library ${LIB_NAME} = ${LIB${LIB_NAME}}")
       endif ()
-      set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${LIB${LIB_NAME}}" PARENT_SCOPE)
+      set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${LIB${LIB_NAME}}")
     endforeach()
   endfunction()
 
@@ -795,20 +800,20 @@ if (NOT EXT_SKIA_SHARED)
 
     # seem to be always required...
     #ADD_SKIA_LIBRARY_DEPENDENCY("dl")
-    set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${libDL_LIB}" PARENT_SCOPE)
+    set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${libDL_LIB}")
 
     #ADD_SKIA_LIBRARY_DEPENDENCY("icuuc") # skia_use_system_icu
 
     #ADD_SKIA_LIBRARY_DEPENDENCY("expat") #skia_use_system_expat
     find_package(EXPAT REQUIRED)
-    set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};EXPAT::EXPAT" PARENT_SCOPE)
+    set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};EXPAT::EXPAT")
 
-    #set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${HARFBUZZ_LIBRARIES}" PARENT_SCOPE)
+    #set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${HARFBUZZ_LIBRARIES}")
 
-    #set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${FOUND_OPENGL_LIBRARIES}" PARENT_SCOPE)
+    #set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${FOUND_OPENGL_LIBRARIES}")
     #message(FATAL_ERROR FREETYPE_LIBRARIES=${FREETYPE_LIBRARIES})
 
-    set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${FREETYPE_LIBRARIES}" PARENT_SCOPE)
+    set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${FREETYPE_LIBRARIES}")
 
     ADD_SKIA_LIBRARY_DEPENDENCY(${EXT_SKIA_USE_FONTCONFIG} "fontconfig") # skia_use_fontconfig
     ADD_SKIA_LIBRARY_DEPENDENCY(${EXT_SKIA_USE_FREETYPE2} "freetype") # skia_use_system_freetype2
@@ -827,14 +832,14 @@ if (NOT EXT_SKIA_SHARED)
       # TODO: cannot find /lib64/libz.so.1
     endif(SK_USE_SYSTEM_ZLIB)
 
-    set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${libZLIB_LIB}" PARENT_SCOPE)
+    set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${libZLIB_LIB}")
 
     # NOTE: libjpeg_turbo requires libjpeg
-    #set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${libjpeg_LIB}" PARENT_SCOPE)
+    #set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${libjpeg_LIB}")
 
     # NOTE: libjpeg_turbo requires libjpeg
     if(USE_LIBJPEG_TURBO)
-      set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${libjpeg_TURBO_LIB}" PARENT_SCOPE)
+      set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${libjpeg_TURBO_LIB}")
     endif(USE_LIBJPEG_TURBO)
 
     #ADD_SKIA_LIBRARY_DEPENDENCY("png") # skia_use_system_libpng
@@ -845,15 +850,15 @@ if (NOT EXT_SKIA_SHARED)
     #PNG_DEFINITIONS - You should add_definitons(${PNG_DEFINITIONS}) before compiling code that includes png library files.
     #PNG_FOUND, If false, do not try to use PNG.
     #PNG_VERSION_STRING - the version of the PNG library found (since CMake 2.8.8)
-    #set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};PNG::PNG" PARENT_SCOPE)
+    #set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};PNG::PNG")
     #
     # TODO: Linking globals named 'png_sRGB_table': symbol multiply defined!
     if(SK_USE_SYSTEM_LIBPNG)
-      set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${libpng_LIB}" PARENT_SCOPE)
+      set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${libpng_LIB}")
     endif(SK_USE_SYSTEM_LIBPNG)
 
     if(USE_CUSTOM_ICU)
-      set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${CUSTOM_ICU_LIB};${HARFBUZZ_LIBRARIES}" PARENT_SCOPE)
+      set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${CUSTOM_ICU_LIB};${HARFBUZZ_LIBRARIES}")
     endif(USE_CUSTOM_ICU)
 
     # TODO: Linking globals named 'png_sRGB_table': symbol multiply defined!
@@ -867,7 +872,7 @@ if (NOT EXT_SKIA_SHARED)
     find_package(Threads REQUIRED)
     #target_link_libraries(SKIA Threads::Threads)
     message("CMAKE_THREAD_LIBS_INIT=${CMAKE_THREAD_LIBS_INIT}")
-    set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};Threads::Threads" PARENT_SCOPE)
+    set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};Threads::Threads")
   else()
     message(FATAL_ERROR "unknown platform")
   endif()
@@ -877,7 +882,7 @@ if (NOT EXT_SKIA_SHARED)
 
   #message(FATAL_ERROR OPENGLES2_LIBRARIES=${OPENGLES2_LIBRARIES})
   #
-  #set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${OPENGLES2_LIBRARIES}" PARENT_SCOPE)
+  #set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${OPENGLES2_LIBRARIES}")
   # when skia_enable_gpu:
   #
   # OpenGL::GL
@@ -894,11 +899,11 @@ if (NOT EXT_SKIA_SHARED)
   #
   if(SK_IS_EGL)
     #ADD_SKIA_LIBRARY_DEPENDENCY("EGL") # skia_use_egl
-    set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};OpenGL::EGL" PARENT_SCOPE)
+    set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};OpenGL::EGL")
     #see OPENGL_EGL_INCLUDE_DIRS
   else()
     #ADD_SKIA_LIBRARY_DEPENDENCY("GL") # !skia_use_egl # TODO: GLU?
-    set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};OpenGL::GL" PARENT_SCOPE)
+    set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};OpenGL::GL")
     #see FOUND_OPENGL_INCLUDE_DIR
   endif() # SK_IS_EGL
 else(NOT EXT_SKIA_SHARED)
@@ -1009,6 +1014,14 @@ set_target_properties(SKIA PROPERTIES
   #IMPORTED_LINK_INTERFACE_LIBRARIES "${SKIA_DEPENDENCIES}"
   IMPORTED_LINK_INTERFACE_LIBRARIES "${wuffs_LIBRARY};${jpeg_LIBRARY};${iccjpeg_LIB};${SKIA_DEPENDENCIES}"
 )
+
+if(TARGET_WINDOWS)
+  # ninja can't handle set_target_properties for interface lib
+  include_directories(${SKIA_CMAKE_ONLY_HEADERS})
+  #add_definitions(${SKIA_DEFINES})
+  add_compile_definitions(${SKIA_DEFINES})
+endif(TARGET_WINDOWS)
+
 add_dependencies(SKIA SKIA_build ${CUSTOM_ICU_LIB} ${WUFFS_LIB_NAME} ${CUSTOM_ICU_LIB} ${HARFBUZZ_LIBRARIES} ${iccjpeg_LIB} ${jpeg_LIBRARY})
 # https://stackoverflow.com/a/53945809
 target_link_libraries(SKIA INTERFACE

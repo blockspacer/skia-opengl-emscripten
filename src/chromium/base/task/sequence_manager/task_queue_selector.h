@@ -268,13 +268,13 @@ class BASE_EXPORT TaskQueueSelector : public WorkQueueSets::Observer {
           0,
 
           // kHighPriority
-          kMaxHighPriorityStarvationScore,
+          static_cast<int64_t>(kMaxHighPriorityStarvationScore),
 
           // kNormalPriority
-          kMaxNormalPriorityStarvationScore,
+          static_cast<int64_t>(kMaxNormalPriorityStarvationScore),
 
           // kLowPriority
-          kMaxLowPriorityStarvationScore,
+          static_cast<int64_t>(kMaxLowPriorityStarvationScore),
 
           // kBestEffortPriority (unused)
           std::numeric_limits<int64_t>::max()};

@@ -267,8 +267,9 @@ Value Value::Clone() const {
     case Type::STRING:
       return Value(string_value_);
     case Type::BINARY:
+      return Value(binary_value_);
       //return Value(reinterpret_cast<Value>(binary_value_));
-      return Value(const_cast<base::Value::BlobStorage>(binary_value_));
+      //return Value(const_cast<base::Value::BlobStorage>(binary_value_));
     case Type::DICTIONARY:
       return Value(dict_);
     case Type::LIST:

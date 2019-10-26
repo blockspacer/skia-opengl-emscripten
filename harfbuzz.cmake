@@ -1,6 +1,6 @@
 ﻿if(TARGET_EMSCRIPTEN)
   # skip
-elseif(TARGET_LINUX)
+elseif(TARGET_LINUX OR TARGET_WINDOWS)
   # skip
 else()
   # NOTE: harfbuzz from skia on WINDOWS

@@ -1672,10 +1672,11 @@ target_compile_definitions(base PUBLIC
   #${COBALT_COMMON_DEFINES}
 )
 
-if(MSVC) 
+#if(MSVC) 
   # TODO
-else()
+#else()
   target_compile_options(base PUBLIC
     -Wno-c++11-narrowing
+    -Wno-c++98-compat
   )
-endif()
+#endif()

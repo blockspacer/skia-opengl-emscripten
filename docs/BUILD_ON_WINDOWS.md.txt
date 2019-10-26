@@ -889,6 +889,18 @@ Prefer file paths with lowercase english characters without spaces
 
 Use Visual Studio with `English Language pack`
 
+## Install mingw-w64 with treads:win32, architecture:x86_64
+
+Follow https://perso.uclouvain.be/allan.barrea/opencv/building_tools.html#mingw
+
+Download from https://sourceforge.net/projects/mingw-w64/files/latest/download
+
+Add to PATH `\MinGW\include`, `\MinGW\include\sys` and `\MinGW\lib\gcc\mingw32\4.6.2\include\ssp`
+
+NOTE: place MinGW install dir at path start, such as `C:\Program Files\mingw-w64\x86_64-8.1.0-win32-seh-rt_v6-rev0\mingw64\x86_64-w64-mingw32`
+
+See https://stackoverflow.com/a/15893895
+
 ## SKIA on Windows
 
 Skia can build on Windows with Visual Studio 2017 or 2019. 
@@ -1093,6 +1105,7 @@ Use
 cmake -E remove_directory build
 cmake -E make_directory build
 cd build
+# NOTE: Win64
 cmake -G "Visual Studio 15 2017 Win64" -DCMAKE_C_COMPILER_ID="Clang" -DCMAKE_CXX_COMPILER_ID="Clang" "-DCMAKE_PREFIX_PATH=D:\den\coding\vcpkg\packages\libuuid_x86-windows\;D:\den\coding\vcpkg\packages\fontconfig_x86-windows\;D:\den\coding\vcpkg\packages\icu_x86-windows\;D:\den\coding\vcpkg\packages\expat_x86-windows\;C:\Program Files (x86)\harfbuzz\;C:\Program Files (x86)\;C:\Program Files (x86)\;C:\Program Files (x86)\libpng\;C:\Program Files (x86)\SDL2\;C:\Program Files (x86)\freetype2\;C:\Program Files (x86)\freetype\include\freetype2\;C:\Program Files (x86)\freetype\lib\;C:\Program Files (x86)\freetype\lib\cmake\" ..
 cmake --build . --parallel 6
 ```
@@ -1111,6 +1124,7 @@ cmake -E make_directory build
 cd build
 # export PATH=..\..\depot_tools:$PATH
 # export PATH=\c\Python27\:\c\Python27\Scripts:$PATH
+export PATH=\c\Program\ Files\CMake\bin\:$PATH
 export PATH=\c\Program\ Files\ \(x86\)\freetype\:\c\Program\ Files\ \(x86\)\freetype\include\:\c\Program\ Files\ \(x86\)\freetype\include\freetype2:\c\Program\ Files\ \(x86\)\freetype\include\freetype2\freetype:$PATH
 export PATH=\c\Program\ Files\LLVM:\c\Program\ Files\LLVM\bin:$PATH
 export LDFLAGS="-fuse-ld=lld-link" 
@@ -1119,7 +1133,9 @@ export LDFLAGS="-fuse-ld=lld-link"
 # cmake --build . --config Debug --parallel 6
 ```
 
-Run from "Visual Studio 2017 Tools Command Prompt for targeting x86 with x64-hosted tools" or "Visual Studio Command Prompt" as Admin:
+Run from cmder, use `"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" x64`
+
+# "Visual Studio 2017 Tools Command Prompt for targeting x86 with x64-hosted tools" or "Visual Studio Command Prompt" as Admin:
 ```
 chcp 65001
 #
@@ -1131,29 +1147,42 @@ refreshenv # from https:\\chocolatey.org\docs\helpers-update-session-environment
 #
 # Must run from "Visual Studio 2017 Tools Command Prompt for targeting x86 with x64-hosted tools" 
 # OR use vcvarsall.bat
-# "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" x64
+"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" x64
 #
 # OR
 # %comspec% /k "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsamd64_x86.bat"
 #
-# dir "%CD%\..\depot_tools"
+# set PATH=C:\Program Files\CMake\bin;%PATH%
 #
-# set PATH=%CD%/../depot_tools;%PATH%
+set PATH=C:\Program Files (x86)\SDL2\include;C:\Program Files (x86)\SDL2\lib;%PATH%
 #
-set PATH=C:/Python27/;C:/Python27/Scripts;%PATH%
+set PATH=C:\Python27;C:\Python27\Scripts;%PATH%
 #
-set PATH=C:/Program Files/LLVM/;C:/Program Files/LLVM/bin/;D:/den/coding/vcpkg/packages/libuuid_x86-windows/;D:/den/coding/vcpkg/packages/fontconfig_x86-windows/;D:/den/coding/vcpkg/packages/icu_x86-windows/;D:/den/coding/vcpkg/packages/expat_x86-windows/;C:/Program Files (x86)/harfbuzz/;C:/Program Files (x86)/;C:/Program Files (x86)/;C:/Program Files (x86)/libpng/;C:/Program Files (x86)/SDL2/;C:/Program Files (x86)/freetype2/;C:/Program Files (x86)/freetype/include/freetype2/;C:/Program Files (x86)/freetype/lib/;C:/Program Files (x86)/freetype/lib/cmake/;%PATH%
+set PATH=C:\Program Files\LLVM;C:\Program Files\LLVM\bin;D:\den\coding\vcpkg\packages\libuuid_x86-windows;D:\den\coding\vcpkg\packages\fontconfig_x86-windows;D:\den\coding\vcpkg\packages\icu_x86-windows;D:\den\coding\vcpkg\packages\expat_x86-windows;C:\Program Files (x86)\harfbuzz;C:\Program Files (x86);C:\Program Files (x86);C:\Program Files (x86)\libpng;C:\Program Files (x86)\SDL2;C:\Program Files (x86)\freetype2;C:\Program Files (x86)\freetype\include\freetype2;C:\Program Files (x86)\freetype\lib;C:\Program Files (x86)\freetype\lib\cmake;%PATH%
 #
-set PATH=D:/den/coding/vcpkg/packages/libuuid_x86-windows/;D:/den/coding/vcpkg/packages/fontconfig_x86-windows/;D:/den/coding/vcpkg/packages/icu_x86-windows/;D:/den/coding/vcpkg/packages/expat_x86-windows/;C:/Program Files (x86)/harfbuzz/;C:/Program Files (x86)/;C:/Program Files (x86)/;C:/Program Files (x86)/libpng/;C:/Program Files (x86)/SDL2/;C:/Program Files (x86)/freetype2/;C:/Program Files (x86)/freetype/include/freetype2/;C:/Program Files (x86)/freetype/lib/;C:/Program Files (x86)/freetype/lib/cmake/;%PATH%
+set PATH=D:\den\coding\vcpkg\packages\libuuid_x86-windows;D:\den\coding\vcpkg\packages\fontconfig_x86-windows;D:\den\coding\vcpkg\packages\icu_x86-windows;D:\den\coding\vcpkg\packages\expat_x86-windows;C:\Program Files (x86)\harfbuzz;C:\Program Files (x86);C:\Program Files (x86);C:\Program Files (x86)\libpng;C:\Program Files (x86)\SDL2;C:\Program Files (x86)\freetype2;C:\Program Files (x86)\freetype\include\freetype2;C:\Program Files (x86)\freetype\lib;C:\Program Files (x86)\freetype\lib\cmake;%PATH%
 #
 # cmake -E env LDFLAGS="-fuse-ld=lld-link" PATH="%PATH%" cmake -H.. -B. -G Ninja -DENABLE_COBALT=FALSE -DCMAKE_BUILD_TYPE="Debug" -DRELEASE_BUILD=OFF -DCMAKE_EXPORT_COMPILE_COMMANDS=ON "-DCMAKE_PREFIX_PATH=D:/den/coding/vcpkg/packages/libuuid_x86-windows/;D:/den/coding/vcpkg/packages/fontconfig_x86-windows/;D:/den/coding/vcpkg/packages/icu_x86-windows/;D:/den/coding/vcpkg/packages/expat_x86-windows/;C:/Program Files (x86)/harfbuzz/;C:/Program Files (x86)/;C:/Program Files (x86)/;C:/Program Files (x86)/libpng/;C:/Program Files (x86)/SDL2/;C:/Program Files (x86)/freetype2/;C:/Program Files (x86)/freetype/include/freetype2/;C:/Program Files (x86)/freetype/lib/;C:/Program Files (x86)/freetype/lib/cmake/"  -DCMAKE_C_COMPILER:PATH="C:/Program Files/LLVM/bin/clang.exe" -DCMAKE_CXX_COMPILER:PATH="C:/Program Files/LLVM/bin/clang.exe" -DCMAKE_C_COMPILER_ID="Clang" -DCMAKE_CXX_COMPILER_ID="Clang" -DCMAKE_SYSTEM_NAME="Generic" -DWIN32=1
 #
-set PATH=C:/Program Files/LLVM;C:/Program Files/LLVM/bin;%PATH%
+set PATH=C:\Program Files\LLVM;C:\Program Files\LLVM\bin;%PATH%
 #
-# cmake -E env LDFLAGS="-fuse-ld=lld-link" PATH="%PATH%" cmake -H.. -B. -G Ninja -DENABLE_COBALT=FALSE -DCMAKE_BUILD_TYPE="Debug" -DRELEASE_BUILD=OFF -DCMAKE_EXPORT_COMPILE_COMMANDS=ON "-DCMAKE_PREFIX_PATH=D:/den/coding/vcpkg/packages/libuuid_x86-windows/;D:/den/coding/vcpkg/packages/fontconfig_x86-windows/;D:/den/coding/vcpkg/packages/icu_x86-windows/;D:/den/coding/vcpkg/packages/expat_x86-windows/;C:/Program Files (x86)/harfbuzz/;C:/Program Files (x86)/;C:/Program Files (x86)/;C:/Program Files (x86)/libpng/;C:/Program Files (x86)/SDL2/;C:/Program Files (x86)/freetype2/;C:/Program Files (x86)/freetype/include/freetype2/;C:/Program Files (x86)/freetype/lib/;C:/Program Files (x86)/freetype/lib/cmake/"  -DCMAKE_C_COMPILER:PATH="C:/Program Files/LLVM/bin/clang-cl.exe" -DCMAKE_CXX_COMPILER:PATH="C:/Program Files/LLVM/bin/clang-cl.exe" -DCMAKE_C_COMPILER_ID="Clang" -DCMAKE_CXX_COMPILER_ID="Clang" -DCMAKE_SYSTEM_NAME="Generic" -DWIN32=1
+# cmake -E env LDFLAGS="-fuse-ld=lld-link" PATH="%PATH%" cmake -H.. -B. -G Ninja -DENABLE_COBALT=FALSE -DCMAKE_BUILD_TYPE="Debug" -DRELEASE_BUILD=OFF -DCMAKE_EXPORT_COMPILE_COMMANDS=ON "-DCMAKE_PREFIX_PATH=D:\den\coding\vcpkg\packages\libuuid_x86-windows\;D:\den\coding\vcpkg\packages\fontconfig_x86-windows\;D:\den\coding\vcpkg\packages\icu_x86-windows\;D:\den\coding\vcpkg\packages\expat_x86-windows\;C:\Program Files (x86)\harfbuzz\;C:\Program Files (x86)\;C:\Program Files (x86)\;C:\Program Files (x86)\libpng\;C:\Program Files (x86)\SDL2\;C:\Program Files (x86)\freetype2\;C:\Program Files (x86)\freetype\include\freetype2\;C:\Program Files (x86)\freetype\lib\;C:\Program Files (x86)\freetype\lib\cmake\"  -DCMAKE_C_COMPILER:PATH="C:\Program Files\LLVM\bin\clang-cl.exe" -DCMAKE_CXX_COMPILER:PATH="C:\Program Files\LLVM\bin\clang-cl.exe" -DCMAKE_C_COMPILER_ID="Clang" -DCMAKE_CXX_COMPILER_ID="Clang" -DCMAKE_SYSTEM_NAME="Generic" -DWIN32=1
+#
+# dir "%CD%\..\depot_tools"
+#
+#set PATH=%CD%\..\depot_tools;%PATH%
+#
+# find ".../MinGW/" -name "unistd.h"
+# dir /s ".../MinGW/" "unistd.h"
+# where unistd.h
+# NOTE: mingw x64!
+set PATH=C:\Program Files\mingw-w64\x86_64-8.1.0-win32-seh-rt_v6-rev0\mingw64\x86_64-w64-mingw32\include;%PATH%
 #
 set CC=C:/Program Files/LLVM/bin/clang-cl.exe
 set CXX=C:/Program Files/LLVM/bin/clang-cl.exe
+#set CFLAGS=-m64
+#set CXXFLAGS=-m64
+#set LDFLAGS="-fuse-ld=lld-link"
 echo %PATH%
 python --version
 clang-cl --version
@@ -1162,7 +1191,12 @@ cmake --version
 cmake -E remove_directory build
 cmake -E make_directory build
 cd build
-cmake -DENABLE_COBALT=FALSE -DCMAKE_BUILD_TYPE="Debug" -DRELEASE_BUILD=OFF -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ..
+# NOTE: Win64
+# -G "Visual Studio 15 2017 Win64" 
+# -A x64
+#
+# -DCMAKE_C_FLAGS:STRING="-m64" -DCMAKE_CXX_FLAGS:STRING="-m64"
+cmake -G Ninja -DCMAKE_SYSTEM_NAME="Windows" "-DCMAKE_LINKER=C:/Program Files/LLVM/bin/lld-link.exe" "-DCMAKE_C_COMPILER=C:/Program Files/LLVM/bin/clang-cl.exe" "-DCMAKE_CXX_COMPILER=C:/Program Files/LLVM/bin/clang-cl.exe" -DENABLE_COBALT=FALSE -DCMAKE_BUILD_TYPE="Debug" -DRELEASE_BUILD=OFF -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ..
 #
 # cmake "-DCMAKE_LINKER=C:/Program Files/LLVM/bin/lld-link.exe" "-DCMAKE_C_COMPILER=C:/Program Files/LLVM/bin/clang-cl.exe" "-DCMAKE_CXX_COMPILER=C:/Program Files/LLVM/bin/clang-cl.exe" -DENABLE_COBALT=FALSE -DCMAKE_BUILD_TYPE="Debug" -DRELEASE_BUILD=OFF -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ..
 #
@@ -1170,16 +1204,27 @@ cmake -DENABLE_COBALT=FALSE -DCMAKE_BUILD_TYPE="Debug" -DRELEASE_BUILD=OFF -DCMA
 #
 # cmake "-DCMAKE_LINKER=C:/Program Files/LLVM/bin/lld-link.exe" "-DCMAKE_C_COMPILER=C:/Program Files/LLVM/bin/clang-cl.exe" "-DCMAKE_CXX_COMPILER=C:/Program Files/LLVM/bin/clang-cl.exe" -DENABLE_COBALT=FALSE -DCMAKE_BUILD_TYPE="Debug" -DRELEASE_BUILD=OFF -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ..
 #
-cmake --build . --config Debug --parallel 10
+# NOTE: ninja can't handle target dependencies with external libs, so use `--target` before build:
+cmake --build . --config Debug --parallel 8 --target SKIA_build_alwaysbuild
+# 
+# must exist
+file skia/skia.lib
+#
+# to clear terminal screen
+cls
+#
+cmake --build . --config Debug --parallel 8 --target all
 ```
 
 ## FAQ
 
 - I got `d:\den\coding\skia-opengl-emscripten\src\chromium\base\bind.h(229): error C2440: 'initializing': cannot convert`
-  Use "Open Visual Studio 2017 Tools Command Prompt for targeting x86 with x64-hosted tools"
+  Use "x64_x86 Cross Tools Command Prompt for VS 2017" or "Open Visual Studio 2017 Tools Command Prompt for targeting x86 with x64-hosted tools"
   See https://stackoverflow.com/a/34630892
 
 ## TODO
 
 - -D_CRT_RAND_S=
   https://wiki.documentfoundation.org/Development/clang-cl
+
+  C:\Python27\;C:\Python27\Scripts;C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.16.27023\bin\HostX86\x86;C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCPackages;C:\Program Files (x86)\Microsoft SDKs\TypeScript\3.1;C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\CommonExtensions\Microsoft\TestWindow;C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\CommonExtensions\Microsoft\TeamFoundation\Team Explorer;C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild\15.0\bin\Roslyn;C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Team Tools\Performance Tools;C:\Program Files (x86)\Microsoft Visual Studio\Shared\Common\VSPerfCollectionTools\;C:\Program Files (x86)\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.6.1 Tools\;C:\Program Files (x86)\Windows Kits\10\bin\10.0.17763.0\x86;C:\Program Files (x86)\Windows Kits\10\bin\x86;C:\Program Files (x86)\Microsoft Visual Studio\2017\Communit

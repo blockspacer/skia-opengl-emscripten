@@ -843,6 +843,10 @@ set(SRC_EXTRA
     http.c
     evdns.c
     evrpc.c)
+	
+if(MSVC) 
+  message(FATAL_ERROR "libevent not supported on MSVC")
+endif()
 
 add_definitions(-DHAVE_CONFIG_H)
 

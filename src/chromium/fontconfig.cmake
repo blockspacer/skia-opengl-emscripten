@@ -72,7 +72,13 @@ target_link_libraries(fontconfig PUBLIC
 
 set_property(TARGET fontconfig PROPERTY CXX_STANDARD 17)
 
+if(MSVC) 
+	# TODO
+	list(APPEND EXTRA_INC_DIRS "C:/Program Files/mingw-w64/x86_64-8.1.0-win32-seh-rt_v6-rev0/mingw64/x86_64-w64-mingw32/include")
+endif()
+
 target_include_directories(fontconfig PRIVATE
+  ${EXTRA_INC_DIRS}
   ${fontconfig_DIR}
   ${fontconfig_DIR}/include
   ${fontconfig_DIR}/include/src # requires fcstdint.h
@@ -90,8 +96,14 @@ target_include_directories(fontconfig PRIVATE
 #  "//third_party/zlib",
 #]
 
+if(MSVC) 
+  # TODO
+else()
+  set(HAVE_CONFIG_H "HAVE_CONFIG_H=1")
+endif()
+
 target_compile_definitions(fontconfig PRIVATE
-  HAVE_CONFIG_H=1
+  ${HAVE_CONFIG_H}
   "FC_CACHEDIR=\"/var/cache/fontconfig\""
   "FC_TEMPLATEDIR=\"/usr/share/fontconfig/conf.avail\""
   "FONTCONFIG_PATH=\"/etc/fonts\""
@@ -101,11 +113,11 @@ target_compile_definitions(fontconfig PRIVATE
   "FC_ATTRIBUTE_VISIBILITY_EXPORT=__attribute((visibility(\"hidden\")))"
 )
 
-if(MSVC) 
+#if(MSVC) 
   # TODO
-else()
+#else()
   target_compile_options(fontconfig PRIVATE
     -Wno-non-literal-null-conversion
     -Wno-pointer-bool-conversion
   )
-endif()
+#endif()
