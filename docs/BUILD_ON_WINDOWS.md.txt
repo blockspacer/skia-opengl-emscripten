@@ -375,9 +375,9 @@ set PATH=C:\Program Files\LLVM;C:\Program Files\LLVM\bin;%PATH%
 #
 set CC=C:/Program Files/LLVM/bin/clang-cl.exe
 set CXX=C:/Program Files/LLVM/bin/clang-cl.exe
-#set CFLAGS=-m64
-#set CXXFLAGS=-m64
-#set LDFLAGS="-fuse-ld=lld-link"
+# set CFLAGS=-m64
+# set CXXFLAGS=-m64
+# set LDFLAGS="-fuse-ld=lld-link"
 echo %PATH%
 python --version
 clang-cl --version
@@ -391,11 +391,14 @@ cd build
 # -A x64
 #
 # -DCMAKE_C_FLAGS:STRING="-m64" -DCMAKE_CXX_FLAGS:STRING="-m64"
-cmake -G Ninja -DCMAKE_SYSTEM_NAME="Windows" -DIS_CLANG_CL=TRUE "-DCMAKE_LINKER=C:/Program Files/LLVM/bin/lld-link.exe" "-DCMAKE_C_COMPILER=C:/Program Files/LLVM/bin/clang-cl.exe" "-DCMAKE_CXX_COMPILER=C:/Program Files/LLVM/bin/clang-cl.exe" -DENABLE_COBALT=FALSE -DCMAKE_BUILD_TYPE="Debug" -DRELEASE_BUILD=OFF -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ..
+# "-DCMAKE_LINKER=C:/Program Files/LLVM/bin/lld-link.exe" -DCMAKE_C_FLAGS_DEBUG:INTERNAL="/MDd" 
+# "-DCMAKE_LINKER=C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.16.27023\bin\Hostx64\x64\link.exe"
+# -UCMAKE_LINKER -UCMAKE_C_FLAGS_DEBUG
+cmake -G Ninja -DCMAKE_SYSTEM_NAME="Windows" -DIS_CLANG_CL=TRUE -DENABLE_COBALT=FALSE -DCMAKE_BUILD_TYPE="Debug" "-DCMAKE_C_COMPILER=C:/Program Files/LLVM/bin/clang-cl.exe" "-DCMAKE_CXX_COMPILER=C:/Program Files/LLVM/bin/clang-cl.exe" -DRELEASE_BUILD=OFF -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ..
 #
 # cmake -G "Visual Studio 15 2017 Win64" ..
 # cmake --build . --parallel 6
-# cmake -G "Visual Studio 15 2017 Win64" -DCMAKE_SYSTEM_NAME="Windows" -DENABLE_COBALT=FALSE -DCMAKE_BUILD_TYPE="Debug" -DRELEASE_BUILD=OFF -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ..
+# cmake -G "Visual Studio 15 2017 Win64" -DCMAKE_SYSTEM_NAME="Windows" -DENABLE_COBALT=FALSE -DCMAKE_C_FLAGS_DEBUG:INTERNAL="/MDd" -DCMAKE_BUILD_TYPE="Debug" -DRELEASE_BUILD=OFF -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ..
 #
 # cmake "-DCMAKE_LINKER=C:/Program Files/LLVM/bin/lld-link.exe" "-DCMAKE_C_COMPILER=C:/Program Files/LLVM/bin/clang-cl.exe" "-DCMAKE_CXX_COMPILER=C:/Program Files/LLVM/bin/clang-cl.exe" -DENABLE_COBALT=FALSE -DCMAKE_BUILD_TYPE="Debug" -DRELEASE_BUILD=OFF -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ..
 #

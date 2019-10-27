@@ -775,7 +775,7 @@ list(APPEND BLINK_RENDERER_CORE_HTML_SOURCES
   #${CUR_SRC_DIR}html/forms/external_date_time_chooser.h
   ${CUR_SRC_DIR}html/forms/external_popup_menu.cc
   #${CUR_SRC_DIR}html/forms/external_popup_menu.h
-  ## TODO ## ${CUR_SRC_DIR}html/forms/file_chooser.cc
+  ## ${CUR_SRC_DIR}html/forms/file_chooser.cc
   #${CUR_SRC_DIR}html/forms/file_chooser.h
   ${CUR_SRC_DIR}html/forms/file_input_type.cc
   #${CUR_SRC_DIR}html/forms/file_input_type.h

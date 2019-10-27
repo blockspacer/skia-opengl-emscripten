@@ -287,9 +287,9 @@ add_dependencies(${WTF_LIBRARY_NAME}
   ${WTF_LIBRARIES}
 )
 
-if (UNIX)
+#if (UNIX)
   #list(APPEND WTF_SOURCES wtf/OSAllocatorPosix.cpp)
-elseif (WIN32)
+#elseif (WIN32)
   #list(APPEND WTF_SOURCES
   #  wtf/NullPtr.cpp
   #  wtf/OSAllocatorWin.cpp
@@ -304,12 +304,12 @@ elseif (WIN32)
   #
   #list(APPEND WTF_HEADERS unicode/wince/UnicodeWinCE.h)
   #list(APPEND WTF_LIBRARIES mmtimer)
-endif ()
+#endif ()
 
-if (SINGLE_THREADED OR EMSCRIPTEN)
+if (SINGLE_THREADED OR EMSCRIPTEN OR TARGET_WINDOWS)
   set(ENABLE_SINGLE_THREADED 1)
   #list(APPEND WTF_SOURCES wtf/ThreadingNone.cpp)
-else()
+elseif(TARGET_LINUX)
   find_package(Threads REQUIRED)
   #list(APPEND WTF_SOURCES
   #  wtf/ThreadingPthreads.cpp
@@ -317,6 +317,8 @@ else()
   #  )
   list(APPEND WTF_LIBRARIES ${CMAKE_THREAD_LIBS_INIT})
   set(HAVE_PTHREADS 1)
+else()
+  message(FATAL_ERROR "platform not supported")
 endif ()
 
 target_link_libraries(${WTF_LIBRARY_NAME} PUBLIC
@@ -326,6 +328,8 @@ target_link_libraries(${WTF_LIBRARY_NAME} PUBLIC
 target_compile_definitions(${WTF_LIBRARY_NAME} PUBLIC
   # TODO
 )
+
+message(STATUS "EXTRA_ICU_DEFINITIONS=${EXTRA_ICU_DEFINITIONS}")
 
 target_compile_definitions(${WTF_LIBRARY_NAME} PRIVATE
   WTF_IMPLEMENTATION=1

@@ -193,6 +193,8 @@
 //#undef GL_GLEXT_PROTOTYPES
 
 #if defined(ENABLE_OPENGL)
+// TODO
+//#pragma comment(lib,"opengl32.lib")
 #include "gl_helpers.h"
 #endif // ENABLE_OPENGL
 
@@ -220,6 +222,10 @@ static SkiaUiDemo skiaUiDemo;
 #include <skia/include/core/SkShader.h>
 #endif // ENABLE_SKIA
 
+//#pragma comment(lib,"SDL2.lib")
+//#pragma comment(lib,"SDL2main.lib")
+//#pragma comment(lib,"C:/Program Files (x86)/SDL2/lib/SDL2-static.lib")
+//#pragma comment(lib,"C:/Program Files (x86)/SDL2/lib/SDL2main.lib")
 #include "utils.h"
 
 //#if defined(ENABLE_SKIA)
@@ -5599,7 +5605,7 @@ int main(int argc, char** argv) {
   ServiceMain(environment.TakeServiceRequestFromCommandLine());
   base::ThreadPool::GetInstance()->Shutdown();*/
 
-#if defined(ENABLE_BASE_PREALLOC)
+#if defined(ENABLE_BASE_PREALLOC) && defined(__TODO__)
   printf("Init alloc ...\n");
   // see
   // https://cs.chromium.org/chromium/src/third_party/blink/renderer/controller/blink_initializer.cc?sq=package:chromium&dr=C&g=0&l=88

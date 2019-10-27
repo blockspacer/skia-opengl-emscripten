@@ -109,8 +109,10 @@ set(ENABLE_CMAKE_COMPILE_WARNINGS TRUE CACHE BOOL "ENABLE_CMAKE_COMPILE_WARNINGS
 # khronos
 if (TARGET_EMSCRIPTEN)
   set(ENABLE_KHRONOS FALSE) # TODO
+  set(GLESv2_lib "GLESv2")
 elseif(TARGET_LINUX)
   set(ENABLE_KHRONOS TRUE) # TODO
+  set(GLESv2_lib "GLESv2")
 elseif(TARGET_WINDOWS)
   set(ENABLE_KHRONOS TRUE) # TODO
 else()
@@ -909,6 +911,8 @@ if(MSVC) # TODO
     # unknown option
     #set(COMMON_FLAGS "${COMMON_FLAGS} /permissive")
     
+    set(COMMON_FLAGS "${COMMON_FLAGS} -DCOMPILER_MSVC=1")
+    
     # https://docs.microsoft.com/en-us/cpp/build/reference/zc-strictstrings-disable-string-literal-type-conversion?view=vs-2019
     set(COMMON_FLAGS "${COMMON_FLAGS} /Zc:strictStrings-")
 
@@ -969,6 +973,14 @@ if(MSVC) # TODO
 
     set(COMMON_FLAGS "${COMMON_FLAGS} -D_WIN32=1") # TODO
 
+    # https://github.com/blockspacer/skia-opengl-emscripten/blob/8390245e4aadd160d99e297968594bb6ad86caaa/src/chromium/third_party/ced/BUILD.gn#L57
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4005") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4006") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4018") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4309") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4310") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4267") # TODO
+
     set(COMMON_FLAGS "${COMMON_FLAGS} -D_CRT_NONSTDC_NO_WARNINGS=1") # TODO
     set(COMMON_FLAGS "${COMMON_FLAGS} -D_CRT_NONSTDC_NO_DEPRECATE=1") # TODO
     
@@ -1026,6 +1038,14 @@ if(RELEASE_BUILD)
     set(COMMON_FLAGS "${COMMON_FLAGS} /GR-")
     #set(COMMON_FLAGS "${COMMON_FLAGS} -fno-exceptions")
     set(COMMON_FLAGS "${COMMON_FLAGS} -DNDEBUG=1")
+
+    # see https://docs.microsoft.com/en-us/cpp/build/reference/md-mt-ld-use-run-time-library?view=vs-2019
+    set(COMMON_FLAGS "${COMMON_FLAGS} /MD")
+    set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} /MD")
+    set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} /MD")
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MD")
+    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MD")
+
   else()
     set(COMMON_FLAGS "${COMMON_FLAGS} -fno-rtti")
     set(COMMON_FLAGS "${COMMON_FLAGS} -fno-exceptions")
@@ -1036,6 +1056,14 @@ else()
     # https://stackoverflow.com/a/4184877/10904212
     # see DCHECK in base::polymorphic_downcast, dynamic_cast
     set(COMMON_FLAGS "${COMMON_FLAGS} /GR")
+
+    # see https://docs.microsoft.com/en-us/cpp/build/reference/md-mt-ld-use-run-time-library?view=vs-2019
+    set(COMMON_FLAGS "${COMMON_FLAGS} /MDd")
+    set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} /MDd")
+    set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} /MDd")
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MDd")
+    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MDd")
+    
   else()
     # https://stackoverflow.com/a/4184877/10904212
     # see DCHECK in base::polymorphic_downcast, dynamic_cast
@@ -1043,7 +1071,15 @@ else()
   endif()
 endif(RELEASE_BUILD)
 
+
 if(MSVC) # TODO
+
+  # 
+  set(COMMON_FLAGS "${COMMON_FLAGS} -ferror-limit=500") # for clang-cl
+  #set(COMMON_FLAGS "${COMMON_FLAGS} /errorlimit:0")
+
+  # see https://medium.com/@alasher/colored-c-compiler-output-with-ninja-clang-gcc-10bfe7f2b949
+  set(COMMON_FLAGS "${COMMON_FLAGS} -fcolor-diagnostics") # for clang-cl
 
   # see https://software.intel.com/en-us/forums/intel-c-compiler/topic/733662
   # see https://unicode-org.atlassian.net/browse/ICU-13251?page=com.atlassian.jira.plugin.system.issuetabpanels%3Aall-tabpanel
@@ -2285,7 +2321,13 @@ else(EMSCRIPTEN)
       set(FOUND_OPENGL_INCLUDE_DIR ${OPENGL_INCLUDE_DIR})
       #
       message(STATUS "OPENGL_LIBRARIES = ${OPENGL_LIBRARIES} ")
+      message(STATUS "OPENGL_gl_LIBRARY = ${OPENGL_gl_LIBRARY} ")
       message(STATUS "OPENGL_INCLUDE_DIR = ${OPENGL_INCLUDE_DIR} ")
+      if(MSVC)
+        list(APPEND FOUND_OPENGL_LIBRARIES 
+          "opengl32.lib"
+        )
+      endif(MSVC)
     endif()
   endif(USE_OPENGL_LIB)
 
@@ -2308,7 +2350,12 @@ else(EMSCRIPTEN)
     message("SDL2_INCLUDE_DIRS = ${SDL2_INCLUDE_DIRS} ")
     message("SDL2_LIBRARY = ${SDL2_LIBRARY} ")
     add_definitions(-DUSE_SDL2_LIB)
-  endif ()
+    #find_library(SDL2_LIBRARY NAME SDL2)
+    #list(APPEND SDL2_LIBRARIES
+    #  "SDL2main.lib"
+    #  "SDL2.lib"
+    #)
+  endif()
 
   #find_package(SDL2_net REQUIRED)
   #if(SDL2_net_FOUND)
@@ -3055,8 +3102,21 @@ else()
     #${SDL2_TTF_INCLUDE_DIR}
     ${HARFBUZZ_LIBRARIES}
     ${FOUND_OPENGL_LIBRARIES}
+    ${OPENGL_gl_LIBRARY}
+    #OpenGL::OpenGL
+    
+    ## TODO ## ${SDL2_LIBRARY} # NOTE: no SDL2::Main on Windows
+    ## TODO ## ${SDL2_LIBRARIES} # NOTE: no SDL2::Main on Windows
+    ## TODO ## SDL2::Main
+
+    "C:/Program Files (x86)/SDL2/lib/SDL2-static.lib"
+    "C:/Program Files (x86)/SDL2/lib/SDL2main.lib"
+    #"C:/Program Files (x86)/SDL2/lib/SDL2.lib"
+
+    #SDL2::SDL2main
+    #SDL2::SDL2
+    #SDL2::SDL2-static
     #${GLEW_LIBRARY}
-    SDL2::Main
     #SDL2:Net
     #SDL2:tff # see ${SDL2_TTF_LIBRARY}
     #${SDL2_TTF_LIBRARY}
@@ -3160,7 +3220,7 @@ else()
     #COMPONENTS_SCHEDULING_METRICS
     ${HARFBUZZ_LIBRARIES}
     #${OPENGLES2_LIBRARIES}
-    GLESv2
+    ${GLESv2_LIB}
     #OpenGL::OpenGL
     #OpenGL::EGL
   )
@@ -3174,6 +3234,12 @@ else()
     ${COBALT_COMMON_DEFINES}
   )
 endif() # EMSCRIPTEN
+
+if(IS_CLANG_CL)
+  if(NOT MSVC)
+    message(FATAL_ERROR "IS_CLANG_CL requires MSVC")
+  endif(NOT MSVC)
+endif(IS_CLANG_CL)
 
 if(ENABLE_CMAKE_COMPILE_WARNINGS)
   if(NOT MSVC OR IS_CLANG_CL)
@@ -3217,6 +3283,9 @@ endif(ENABLE_CMAKE_COMPILE_WARNINGS)
 
 if(NOT MSVC OR IS_CLANG_CL)
   set(DISABLED_WARNINGS
+    #
+    -Wno-everything # TODO
+    #
     -Wno-undef
     -Wno-switch
     #-pedantic-errors
@@ -3232,6 +3301,7 @@ if(NOT MSVC OR IS_CLANG_CL)
     #-Wno-shadow # TODO
     #-Wnocast-align # TODO
     -Wno-extra-semi
+    -Wno-extra-semi-stmt
     #-Wno-thread-safety-negative # TODO
     -Wno-documentation
     #-Wno-double-promotion # TODO
@@ -3295,6 +3365,7 @@ if(NOT MSVC OR IS_CLANG_CL)
   )
 else()
   # TODO
+  #message(FATAL_ERROR "platform not supported")
 endif()
 
 #if(NOT TARGET_WINDOWS) # TODO
@@ -3332,3 +3403,7 @@ elseif(TARGET_EMSCRIPTEN OR TARGET_WINDOWS)
 else()
   message(FATAL_ERROR "platform not supported")
 endif()
+
+#set_property(TARGET ${PROJECT_NAME} APPEND_STRING PROPERTY LINK_FLAGS " -L\"C:/Program Files (x86)/SDL2/lib\" -lSDL2 -lSDL2Main")
+set_property(TARGET ${PROJECT_NAME} APPEND_STRING PROPERTY LINK_FLAGS " /LIBPATH:\"C:/Program Files (x86)/SDL2/lib\" SDL2.lib SDL2Main.lib")
+

@@ -53,8 +53,11 @@ if(ENABLE_GNET)
   add_mojo_prefixes_3(${CUR_OUT_DIR}fetch/fetch_api_request "COLLECTED_MOJO_SOURCES")
   add_mojo_prefixes_3(${CUR_OUT_DIR}fetch/fetch_api_response "COLLECTED_MOJO_SOURCES")
 endif(ENABLE_GNET)
-add_mojo_prefixes_3(${CUR_OUT_DIR}file/file_utilities "COLLECTED_MOJO_SOURCES")
+
+## TODO ## add_mojo_prefixes_3(${CUR_OUT_DIR}file/file_utilities "COLLECTED_MOJO_SOURCES")
+
 ## TODO ## add_mojo_prefixes_3(${CUR_OUT_DIR}filesystem/file_system "COLLECTED_MOJO_SOURCES")
+
 # requires components/password_manager/core/common/credential_manager_types.h
 #add_mojo_prefixes_3(${CUR_OUT_DIR}frame/document_interface_broker "COLLECTED_MOJO_SOURCES")
 add_mojo_prefixes_3(${CUR_OUT_DIR}frame/find_in_page "COLLECTED_MOJO_SOURCES")

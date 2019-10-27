@@ -659,6 +659,24 @@ if(MSVC) # TODO
   )
 endif()
 
+#if(RELEASE_BUILD)
+#  if(MSVC) # TODO
+#    list(APPEND SKIA_DEFINES
+#      "/MD"
+#    )
+#  else()
+#    # skip
+#  endif()
+#else()
+#  if(MSVC) # TODO
+#    list(APPEND SKIA_DEFINES
+#      "/MDd"
+#    )
+#  else()
+#    # skip
+#  endif()
+#endif(RELEASE_BUILD)
+
 if(USE_SK_GPU)
   list(APPEND SKIA_DEFINES
     SK_SUPPORT_GPU=1 # skia_enable_gpu
