@@ -7,6 +7,14 @@
 
 #include "build/build_config.h"
 
+#if defined(__EMSCRIPTEN__)
+#include <GLES2/gl2.h>
+#include <GLES2/gl2ext.h>
+#else
+#include "third_party/khronos/GLES2/gl2.h"
+#include "third_party/khronos/GLES2/gl2ext.h"
+#endif
+
 // Includes the platform independent and platform dependent GL headers.
 
 // GL headers may include inttypes.h and so we need to ensure that
@@ -27,6 +35,13 @@
 #define Bool int
 #define Status int
 #endif  // USE_GLX
+
+#if defined(UI_VIEWS_PORT)
+#if defined(OS_WIN)
+// https://stackoverflow.com/a/6222888
+#include "windows.h"
+#endif // OS_WIN
+#endif // UI_VIEWS_PORT
 
 #include <GL/gl.h>
 #include <GL/glext.h>

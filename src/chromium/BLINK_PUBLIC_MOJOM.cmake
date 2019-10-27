@@ -28,7 +28,7 @@ if(ENABLE_GNET)
   add_mojo_prefixes_3(${CUR_OUT_DIR}cache_storage/cache_storage "COLLECTED_MOJO_SOURCES")
 endif(ENABLE_GNET)
 add_mojo_prefixes_3(${CUR_OUT_DIR}choosers/color_chooser "COLLECTED_MOJO_SOURCES")
-add_mojo_prefixes_3(${CUR_OUT_DIR}choosers/file_chooser "COLLECTED_MOJO_SOURCES")
+## TODO ## add_mojo_prefixes_3(${CUR_OUT_DIR}choosers/file_chooser "COLLECTED_MOJO_SOURCES")
 ## TODO ## requires skia/public/interfaces/bitmap_skbitmap_struct_traits.h
 #add_mojo_prefixes_3(${CUR_OUT_DIR}clipboard/clipboard "COLLECTED_MOJO_SOURCES")
 add_mojo_prefixes_3(${CUR_OUT_DIR}commit_result/commit_result "COLLECTED_MOJO_SOURCES")

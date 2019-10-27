@@ -461,10 +461,11 @@ void ProxyMain::SetDeferMainFrameUpdate(bool defer_main_frame_update) {
     return;
 
   defer_main_frame_update_ = defer_main_frame_update;
-  if (defer_main_frame_update_)
+  if (defer_main_frame_update_) {
     TRACE_EVENT_ASYNC_BEGIN0("cc", "ProxyMain::SetDeferMainFrameUpdate", this);
-  else
+  } else {
     TRACE_EVENT_ASYNC_END0("cc", "ProxyMain::SetDeferMainFrameUpdate", this);
+  }
 
   // The impl thread needs to know that it should not issue BeginMainFrame.
   ImplThreadTaskRunner()->PostTask(

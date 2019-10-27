@@ -80,12 +80,12 @@ macro(add_compile_options target)
       "$<$<CONFIG:RELEASE>:-Wpedantic>"
     )
   else(ENABLE_CMAKE_COMPILE_WARNINGS)
-    if(MSVC) 
-      # TODO
-    else()
+    if(NOT MSVC OR IS_CLANG_CL)
       list(APPEND ENABLED_WARNINGS
         -Wno-error # clang
       )
+    else()
+      # TODO
     endif()
   endif(ENABLE_CMAKE_COMPILE_WARNINGS)
 

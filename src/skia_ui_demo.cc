@@ -992,7 +992,14 @@ static std::unique_ptr<blink::Platform> demo_g_platform;
 //#include <skia/include/gpu/GrTypesPriv.h>
 #include <skia/src/gpu/GrGpu.h>
 ////#include <skia/src/gpu/GrDirectContext.h>
-#include <skia/src/gpu/gl/GrGLGpu.h>
+
+/*
+In file included from ..\src\skia_ui_demo.cc:995:
+..\src\chromium\third_party\skia/src/gpu/gl/GrGLGpu.h(47,67): error: expected unqualified-id
+    const GrGLInterface* glInterface() const { return fGLContext->interface(); }
+*/
+// #include <skia/src/gpu/gl/GrGLGpu.h> // TODO
+
 #include <skia/src/gpu/GrContextPriv.h>
 #include <skia/src/gpu/GrContextThreadSafeProxyPriv.h>
 //#include <skia/src/gpu/gl/GrGLDefines.h>
@@ -1045,7 +1052,18 @@ static std::unique_ptr<blink::Platform> demo_g_platform;
 //#include "SkSurface_Gpu.h"
 
 #ifdef ENABLE_HARFBUZZ
+#include <hb.h>
+#include <hb-icu.h>
 #include <hb-ot.h>
+#include <unicode/ubidi.h>
+#include <unicode/ubrk.h>
+#include <unicode/umachine.h>
+#include <unicode/urename.h>
+#include <unicode/uscript.h>
+#include <unicode/ustring.h>
+#include <unicode/utext.h>
+#include <unicode/utypes.h>
+// #include <hb-ot.h> // TODO
 #endif // ENABLE_HARFBUZZ
 
 #include "blink_demo.h"

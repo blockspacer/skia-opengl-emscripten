@@ -108,10 +108,10 @@ target_compile_definitions(GLIBPNG PRIVATE
   ${EXTRA_DEFINES}
 )
 
-#if(MSVC) 
-  # TODO
-#else()
+if(NOT MSVC OR IS_CLANG_CL)
   target_compile_options(GLIBPNG PRIVATE
     -Wno-tautological-constant-out-of-range-compare
   )
-#endif()
+else()
+  # TODO
+endif()

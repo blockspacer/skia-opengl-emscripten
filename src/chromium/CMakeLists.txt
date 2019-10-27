@@ -65,9 +65,6 @@ set(COMPONENTS_CONTENT_SETTINGS_CORE_COMMON_DIR ${COMPONENTS_CONTENT_SETTINGS_CO
 set(libsync_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/third_party/)
 set(libsync_DIR ${libsync_PARENT_DIR}libsync/)
 
-set(khronos_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/third_party/)
-set(khronos_DIR ${khronos_PARENT_DIR}khronos/)
-
 set(GFX_GEOMETRY_PARENT_DIR ${UI_DIR}/gfx/)
 set(GFX_GEOMETRY_DIR ${GFX_GEOMETRY_PARENT_DIR}geometry/)
 
@@ -233,10 +230,10 @@ elseif(TARGET_LINUX)
   # zlib
   include(GZLIB_EXT.cmake)
 
-  if(ENABLE_HARFBUZZ)
+  if(ENABLE_HARFBUZZ AND NOT HARFBUZZ_FROM_SKIA)
     # fontconfig
     include(fontconfig.cmake)
-  endif(ENABLE_HARFBUZZ)
+  endif(ENABLE_HARFBUZZ AND NOT HARFBUZZ_FROM_SKIA)
 
   # libevent
   include(libevent.cmake)
@@ -259,10 +256,10 @@ elseif(TARGET_WINDOWS)
   # zlib
   include(GZLIB_EXT.cmake)
 
-  if(ENABLE_HARFBUZZ)
+  if(ENABLE_HARFBUZZ AND NOT HARFBUZZ_FROM_SKIA)
     # fontconfig
     include(fontconfig.cmake)
-  endif(ENABLE_HARFBUZZ)
+  endif(ENABLE_HARFBUZZ AND NOT HARFBUZZ_FROM_SKIA)
 else()
   message(FATAL_ERROR "platform not supported")
 endif()

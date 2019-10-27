@@ -1577,6 +1577,11 @@ add_dependencies(base
   ${EXTRA_CHROMIUM_BASE_LIBS}
 )
 
+
+if(HARFBUZZ_FROM_SKIA)
+  add_dependencies(base SKIA) # TODO
+endif()
+
 #message(FATAL_ERROR EXTRA_CHROMIUM_BASE_LIBS=${EXTRA_CHROMIUM_BASE_LIBS})
 
 if(TARGET_WINDOWS)
@@ -1672,11 +1677,16 @@ target_compile_definitions(base PUBLIC
   #${COBALT_COMMON_DEFINES}
 )
 
-#if(MSVC) 
-  # TODO
-#else()
+if(NOT MSVC OR IS_CLANG_CL)
   target_compile_options(base PUBLIC
     -Wno-c++11-narrowing
     -Wno-c++98-compat
+    -Wno-reserved-id-macro
+    -Wno-macro-redefined
+    -Wno-implicit-function-declaration
+    -Wno-c++11-narrowing
+    -Wno-builtin-macro-redefined
   )
-#endif()
+else()
+  # TODO
+endif()

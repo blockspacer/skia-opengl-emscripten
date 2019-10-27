@@ -735,9 +735,11 @@ void CloseWindow(aura::Window* window) {
 
 #if defined(OS_WIN)
 BOOL CALLBACK WindowCallbackProc(HWND hwnd, LPARAM lParam) {
+#if !defined(UI_VIEWS_PORT)
   aura::Window* root_window =
       DesktopWindowTreeHostWin::GetContentWindowForHWND(hwnd);
   CloseWindow(root_window);
+#endif
   return TRUE;
 }
 #endif
@@ -806,11 +808,15 @@ void NativeWidgetPrivate::ReparentNativeView(gfx::NativeView native_view,
 
 // static
 gfx::FontList NativeWidgetPrivate::GetWindowTitleFontList() {
+#if defined(UI_VIEWS_PORT)
+  return gfx::FontList();
+#else
 #if defined(OS_WIN)
   return gfx::FontList(gfx::win::GetSystemFont(gfx::win::SystemFont::kCaption));
 #else
   return gfx::FontList();
 #endif
+#endif // UI_VIEWS_PORT
 }
 
 // static

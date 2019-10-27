@@ -1,5 +1,32 @@
 ﻿#pragma once
 
+#include "build/build_config.h"
+
+#if defined(OS_WIN) && !defined(ENABLE_OPENGL)
+#error "OS_WIN requires ENABLE_OPENGL"
+#endif
+
+#if defined(OS_WIN)
+#define GL_GLEXT_PROTOTYPES 1
+#define GL_GLES_PROTOTYPES 1
+
+#include "third_party/khronos/GLES2/gl2.h"
+#include "third_party/khronos/GLES2/gl2ext.h"
+
+#include "ui/gl/gl_bindings.h"
+
+#include <windows.h>
+//#include <GL/gl.h>
+//#include <GL/glext.h>
+#include <SDL2/SDL_opengl.h>
+#include <SDL2/SDL_opengl_glext.h>
+//#include <SDL_opengl.h>
+//#include <SDL_opengl_glext.h>
+#include <GL/glext.h>
+#include <GL/wglext.h>
+
+#endif // OS_WIN
+
 #ifdef __EMSCRIPTEN__
 
 /// \todo WEBGL1_SUPPORT
@@ -55,8 +82,8 @@
 #include "SDL2/SDL.h"
 #if defined(ENABLE_OPENGL)
 //#include <GL/glew.h>
-#include <SDL_opengl.h>
-#include <SDL_opengl_glext.h>
+#include <SDL2/SDL_opengl.h>
+#include <SDL2/SDL_opengl_glext.h>
 #endif // ENABLE_OPENGL
 #endif
 

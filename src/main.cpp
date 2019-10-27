@@ -196,6 +196,10 @@
 #include "gl_helpers.h"
 #endif // ENABLE_OPENGL
 
+#if defined(OS_WIN) && !defined(ENABLE_OPENGL)
+#error "OS_WIN requires ENABLE_OPENGL"
+#endif
+
 // see https://lyceum-allotments.github.io/2016/06/emscripten-and-sdl-2-tutorial-part-1/
 //#include <SDL2/SDL_ttf.h>
 
@@ -5009,6 +5013,8 @@ static void mainLockFreeLoop() {
             && (base::IsAsciiPrintable(e.key.keysym.sym)
                 || !base::IsStringASCII(e.text.text))
             && e.key.repeat == 0)*/
+#ifdef ENABLE_BASE
+#if defined(ENABLE_COBALT)
         {
           isTextInput = true;
           printf("SDL_TEXTINPUT2 text %s\n", e.text.text);
@@ -5062,6 +5068,8 @@ static void mainLockFreeLoop() {
                                }, base::Passed(&event1)));
           }
         }
+#endif // ENABLE_COBALT
+#endif // ENABLE_BASE
 
 #if 0
 #ifdef ENABLE_BASE
@@ -5479,7 +5487,9 @@ int main(int argc, char** argv) {
   printf("Init CommandLine ...\n");
 
   base::CommandLine::Init(0, nullptr);
-  base::CommandLine::ForCurrentProcess()->InitFromArgv(argc, argv);
+
+  // TODO
+  //base::CommandLine::ForCurrentProcess()->InitFromArgv(argc, argv);
 
   ///printf("SysInfo::AmountOfFreeDiskSpace %d ...\n", base::SysInfo::AmountOfFreeDiskSpace());
 
@@ -5544,7 +5554,8 @@ int main(int argc, char** argv) {
 #endif
 
 #if defined(OS_WIN)
-  base::RouteStdioToConsole(false);
+  // TODO
+  //base::RouteStdioToConsole(false);
 #endif
 
   printf("Init logging ...\n");

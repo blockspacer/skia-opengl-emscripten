@@ -122,6 +122,12 @@ if(ENABLE_KHRONOS)
     khronos
   )
 endif(ENABLE_KHRONOS)
+# clang-cl on Windows, see http://clang.llvm.org/docs/UsersManual.html#clang-cl
+set(IS_CLANG_CL TRUE CACHE BOOL "clang-cl on WINDOWS, see http://clang.llvm.org/docs/UsersManual.html#clang-cl")
+message(STATUS "IS_CLANG_CL=${IS_CLANG_CL}")
+if(IS_CLANG_CL AND NOT TARGET_WINDOWS)
+  message(FATAL_ERROR "IS_CLANG_CL requires TARGET_WINDOWS")
+endif(IS_CLANG_CL AND NOT TARGET_WINDOWS)
 # you can disable all logic to profile bundle size/memory for some OS
 set(ENABLE_MAIN TRUE CACHE BOOL "ENABLE_MAIN")
 set(USE_LIBPNG TRUE CACHE BOOL "USE_LIBPNG")
@@ -412,6 +418,18 @@ else()
   message(STATUS "\"python\" found...")
 endif(NOT PYTHON_FOUND)
 
+set(khronos_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src/chromium/third_party/)
+set(khronos_DIR ${khronos_PARENT_DIR}khronos/)
+
+if(TARGET_WINDOWS)
+  # prevent C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\um\GL/gl.h(1157,1): error: unknown type name 'WINGDIAPI'
+  include_directories("${khronos_DIR}noninclude/GL")
+  include_directories("${khronos_DIR}noninclude")
+  if(NOT EXISTS "${khronos_DIR}noninclude/GL/glext.h")
+    message(FATAL_ERROR "can't find ${khronos_DIR}noninclude/GL/glext.h")
+  endif()
+endif(TARGET_WINDOWS)
+
 # harfbuzz
 #option(ENABLE_HARFBUZZ "ENABLE_HARFBUZZ" ON)
 #if((ENABLE_BLINK OR ENABLE_COBALT) AND NOT ENABLE_HARFBUZZ)
@@ -421,6 +439,9 @@ endif(NOT PYTHON_FOUND)
 if(ENABLE_HARFBUZZ)
   set(USE_CUSTOM_HARFBUZZ TRUE)
   set(FORCE_USE_SKIA_HARFBUZZ TRUE)
+  if(TARGET_WINDOWS)
+    set(HARFBUZZ_FROM_SKIA TRUE)
+  endif(TARGET_WINDOWS)
   #
   # custom flags
   set(COMMON_FLAGS "${COMMON_FLAGS} -DENABLE_HARFBUZZ=1")
@@ -435,12 +456,16 @@ if(ENABLE_HARFBUZZ)
     #
     if(TARGET_WINDOWS)
       # NOTE: HarfBuzz from skia on WINDOWS
-      #set(HARFBUZZ_LIBRARIES SKIA)
-      set(HARFBUZZ_LIBRARIES harfbuzz)
-      set(HARFBUZZ_INCLUDE_DIRS ${harfbuzz_FULL_DIR}/src)
+      if(HARFBUZZ_FROM_SKIA)
+        #set(HARFBUZZ_LIBRARIES harfbuzz)
+        set(HARFBUZZ_LIBRARIES SKIA)
+      else()
+        set(HARFBUZZ_LIBRARIES harfbuzz)
+        list(APPEND HARFBUZZ_INCLUDE_DIRS ${harfbuzz_FULL_DIR}/src)
+      endif()
     else()
       set(HARFBUZZ_LIBRARIES harfbuzz)
-      set(HARFBUZZ_INCLUDE_DIRS ${harfbuzz_FULL_DIR}/src)
+      list(APPEND HARFBUZZ_INCLUDE_DIRS ${harfbuzz_FULL_DIR}/src)
     endif(TARGET_WINDOWS)
   else(USE_CUSTOM_HARFBUZZ)
     set(EMCC_COMMON "${EMCC_COMMON} -s USE_HARFBUZZ=1")
@@ -855,6 +880,8 @@ MATH(EXPR SIZEOF_VOID_P_BITS "${CMAKE_SIZEOF_VOID_P}*8")
 set(COMMON_FLAGS "${COMMON_FLAGS} -DSIZEOF_VOID_P=${SIZEOF_VOID_P_BITS}")
 message(STATUS "DSIZEOF_VOID_P=${SIZEOF_VOID_P_BITS}")
 
+set(COMMON_FLAGS "${COMMON_FLAGS} -DUI_VIEWS_PORT=1")
+
 if(MSVC) # TODO
     # see https://docs.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warnings-by-compiler-version?view=vs-2019
     
@@ -912,12 +939,17 @@ if(MSVC) # TODO
     
     set(COMMON_FLAGS "${COMMON_FLAGS} -DWIN32_LEAN_AND_MEAN")
 
-    set(COMMON_FLAGS "${COMMON_FLAGS} -DWINAPI_FAMILY=WINAPI_FAMILY_DESKTOP_APP")
+    # LDFLAGS https://git.m4xw.net/Switch/RetroArch/beetle-pce-fast-libretro/commit/48a734c9dc36905fa6779303fb1c80003bce4853?w=1
+    #set(COMMON_FLAGS "${COMMON_FLAGS} -SUBSYSTEM:CONSOLE")
+    #set(COMMON_FLAGS "${COMMON_FLAGS} /SUBSYSTEM:CONSOLE")
+    #set(COMMON_FLAGS "${COMMON_FLAGS} /SUBSYSTEM:WINDOWS")
+
+    #set(COMMON_FLAGS "${COMMON_FLAGS} -DWINAPI_FAMILY=WINAPI_FAMILY_DESKTOP_APP")
 
     # see https://github.com/chromium/chromium/blob/8e82c6ab1bc2223fa25f1a127b65071d2d58ae36/build/config/win/BUILD.gn#L276
-    # set(COMMON_FLAGS "${COMMON_FLAGS} -DNTDDI_VERSION=NTDDI_WIN10_RS2")
-    # set(COMMON_FLAGS "${COMMON_FLAGS} -D_WIN32_WINNT=0x0A00")
-    # set(COMMON_FLAGS "${COMMON_FLAGS} -DWINVER=0x0A00")
+    set(COMMON_FLAGS "${COMMON_FLAGS} -DNTDDI_VERSION=NTDDI_WIN10_RS2")
+    set(COMMON_FLAGS "${COMMON_FLAGS} -D_WIN32_WINNT=0x0A00")
+    set(COMMON_FLAGS "${COMMON_FLAGS} -DWINVER=0x0A00")
 
     # Exceptions in allocator shim are not supported!
     # see https://github.com/chromium/chromium/blob/5514bb10d8770fea460152d278f105895067aa38/build/config/compiler/BUILD.gn#L1775
@@ -2273,6 +2305,7 @@ else(EMSCRIPTEN)
   if(SDL2_FOUND)
     message("Found SDL2 libraries")
     message("SDL2_INCLUDE_DIR = ${SDL2_INCLUDE_DIR} ")
+    message("SDL2_INCLUDE_DIRS = ${SDL2_INCLUDE_DIRS} ")
     message("SDL2_LIBRARY = ${SDL2_LIBRARY} ")
     add_definitions(-DUSE_SDL2_LIB)
   endif ()
@@ -2322,25 +2355,27 @@ else(EMSCRIPTEN)
     if(USE_SHARED_HARFBUZZ)
       if(TARGET_WINDOWS OR MSVC)
         # skip
-        find_package(HarfBuzz REQUIRED)
+        if(NOT HARFBUZZ_FROM_SKIA)
+          find_package(HarfBuzz REQUIRED)
+        endif()
       else()
         find_package(HarfBuzz REQUIRED)
       endif()
     else()
       if(TARGET_WINDOWS OR MSVC)
         # NOTE: HarfBuzz from skia on WINDOWS
-        #set(HARFBUZZ_LIBRARIES SKIA)
-        #add_dependencies(base SKIA)
-
-        set(HARFBUZZ_LIBRARIES harfbuzz)
-        set(HARFBUZZ_INCLUDE_DIRS ${harfbuzz_FULL_DIR}/src)
+        if(HARFBUZZ_FROM_SKIA)
+          set(HARFBUZZ_LIBRARIES SKIA)
+          #add_dependencies(base SKIA) # TODO
+        else()
+          set(HARFBUZZ_LIBRARIES harfbuzz)
+          list(APPEND HARFBUZZ_INCLUDE_DIRS ${harfbuzz_FULL_DIR}/src)
+        endif()
       else()
         set(HARFBUZZ_LIBRARIES harfbuzz)
-        set(HARFBUZZ_INCLUDE_DIRS ${harfbuzz_FULL_DIR}/src)
+        list(APPEND HARFBUZZ_INCLUDE_DIRS ${harfbuzz_FULL_DIR}/src)
       endif()
     endif()
-    message(STATUS "HARFBUZZ_LIBRARIES=${HARFBUZZ_LIBRARIES}")
-    message(STATUS "HARFBUZZ_INCLUDE_DIRS=${HARFBUZZ_INCLUDE_DIRS}")
     # custom flags
     set(COMMON_FLAGS "${COMMON_FLAGS} -DENABLE_HARFBUZZ=1")
   endif(ENABLE_HARFBUZZ AND NOT USE_CUSTOM_HARFBUZZ)
@@ -2497,7 +2532,17 @@ if (ENABLE_SKIA)
   # skia
   #
   include(skia.cmake)
+  # NOTE: HarfBuzz from skia on WINDOWS
+  if(HARFBUZZ_FROM_SKIA)
+    set(HARFBUZZ_LIBRARIES SKIA)
+    list(APPEND HARFBUZZ_INCLUDE_DIRS ${SKIA_CMAKE_ONLY_HEADERS})
+    include_directories(${HARFBUZZ_INCLUDE_DIRS})
+    #list(APPEND HARFBUZZ_EXTRA_DEFINES ${SKIA_DEFINES}) # TODO
+  endif()
 endif()
+
+message(STATUS "HARFBUZZ_LIBRARIES=${HARFBUZZ_LIBRARIES}")
+message(STATUS "HARFBUZZ_INCLUDE_DIRS=${HARFBUZZ_INCLUDE_DIRS}")
 
 #
 # ICU
@@ -2511,12 +2556,15 @@ endif(USE_CUSTOM_ICU)
 #
 if(TARGET_EMSCRIPTEN OR TARGET_LINUX OR TARGET_WINDOWS)
   if(USE_CUSTOM_HARFBUZZ)
-    include(harfbuzz.cmake)
+    if(NOT HARFBUZZ_FROM_SKIA)
+      include(harfbuzz.cmake)
+    endif()
     #message(FATAL_ERROR "TODO: harfbuzz.cmake")
   endif(USE_CUSTOM_HARFBUZZ)
 else()
   # NOTE: harfbuzz from skia on WINDOWS
   #add_library(harfbuzz ALIAS SKIA)
+  message(FATAL_ERROR "platform not supported")
 endif()
 
 #
@@ -2775,11 +2823,11 @@ add_executable(${PROJECT_NAME}
 
 if(ENABLE_SKIA)
   add_dependencies(${PROJECT_NAME}
-    SKIA_build
-    SKIA
+    #SKIA_build
+    #SKIA
     ${SKIA_LIBS}
   )
-  add_dependencies(${PROJECT_NAME} SKIA_build_alwaysbuild)
+  #add_dependencies(${PROJECT_NAME} SKIA_build_alwaysbuild)
 endif(ENABLE_SKIA)
 
 # https://www.mail-archive.com/emscripten-discuss@googlegroups.com/msg07864.html
@@ -2963,7 +3011,10 @@ else()
     ${SKIA_INCLUDES}
     #${GLEW_INCLUDE_PATH}
     ${FOUND_OPENGL_INCLUDE_DIR}
+    ${SDL2_INCLUDE_DIR}
+    "${SDL2_INCLUDE_DIR}/.."
     ${SDL2_INCLUDE_DIRS}
+    "${SDL2_INCLUDE_DIRS}/.."
     #${SDL2_TTF_INCLUDE_DIR}
     ${HARFBUZZ_INCLUDE_DIRS}
     ${OPENGLES2_INCLUDE_DIRS}
@@ -3125,44 +3176,46 @@ else()
 endif() # EMSCRIPTEN
 
 if(ENABLE_CMAKE_COMPILE_WARNINGS)
-  list(APPEND ENABLED_WARNINGS
-    #-Wno-error
-    # always return on non-void functions to prevent UB
-    -Wreturn-type
-    # https://gist.github.com/morido/8637535
-    -Werror=return-type
-    -Wall
-    -Wextra
-    -Weverything # clang
-    -Wno-builtin-macro-redefined
-    -Wno-unused-command-line-argument
-    -Wno-unused-variable
-  )
-  if(MSVC) # TODO
-    list(APPEND ENABLED_WARNINGS "/W0") # TODO
-  else()
+  if(NOT MSVC OR IS_CLANG_CL)
+    list(APPEND ENABLED_WARNINGS
+      #-Wno-error
+      # always return on non-void functions to prevent UB
+      -Wreturn-type
+      # https://gist.github.com/morido/8637535
+      -Werror=return-type
+      -Wall
+      -Wextra
+      -Weverything # clang
+      -Wno-builtin-macro-redefined
+      -Wno-unused-command-line-argument
+      -Wno-unused-variable
+    )
+  endif(NOT MSVC OR IS_CLANG_CL)
+  if(NOT MSVC OR IS_CLANG_CL)
     list(APPEND ENABLED_WARNINGS
       -Wno-error
     )
+  else()
+    list(APPEND ENABLED_WARNINGS "/W0") # TODO
   endif()
 else(ENABLE_CMAKE_COMPILE_WARNINGS)
-  list(APPEND ENABLED_WARNINGS
-    -Wno-builtin-macro-redefined
-    -Wno-unused-command-line-argument
-    -Wno-unused-variable
-  )
-  if(MSVC) # TODO
-    list(APPEND ENABLED_WARNINGS "/W0") # TODO
-  else()
+  if(NOT MSVC OR IS_CLANG_CL)
+    list(APPEND ENABLED_WARNINGS
+      -Wno-builtin-macro-redefined
+      -Wno-unused-command-line-argument
+      -Wno-unused-variable
+    )
+  endif(NOT MSVC OR IS_CLANG_CL)
+  if(NOT MSVC OR IS_CLANG_CL)
     list(APPEND ENABLED_WARNINGS
       -Wno-error # clang
     )
+  else()
+    list(APPEND ENABLED_WARNINGS "/W0") # TODO
   endif()
 endif(ENABLE_CMAKE_COMPILE_WARNINGS)
 
-#if(MSVC) 
-  # TODO
-#else()
+if(NOT MSVC OR IS_CLANG_CL)
   set(DISABLED_WARNINGS
     -Wno-undef
     -Wno-switch
@@ -3240,7 +3293,9 @@ endif(ENABLE_CMAKE_COMPILE_WARNINGS)
     # Do not warn about an implicit exception spec mismatch.
     -Wno-implicit-exception-spec-mismatch
   )
-#endif()
+else()
+  # TODO
+endif()
 
 #if(NOT TARGET_WINDOWS) # TODO
   target_compile_options(${PROJECT_NAME} PRIVATE

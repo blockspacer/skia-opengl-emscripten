@@ -117,7 +117,7 @@ GFX_EXPORT FontRenderParams GetFontRenderParams(
 GFX_EXPORT void ClearFontRenderParamsCacheForTest();
 #endif
 
-#if defined(OS_LINUX) || defined(OS_ANDROID) || defined(OS_FUCHSIA) || (defined(OS_EMSCRIPTEN) && defined(ENABLE_HARFBUZZ))
+#if defined(OS_LINUX) || defined(OS_WIN) || defined(OS_ANDROID) || defined(OS_FUCHSIA) || (defined(OS_EMSCRIPTEN) && defined(ENABLE_HARFBUZZ))
 // Gets the device scale factor to query the FontRenderParams.
 GFX_EXPORT float GetFontRenderParamsDeviceScaleFactor();
 
@@ -125,6 +125,8 @@ GFX_EXPORT float GetFontRenderParamsDeviceScaleFactor();
 // if it should enable subpixel positioning.
 GFX_EXPORT void SetFontRenderParamsDeviceScaleFactor(
     float device_scale_factor);
+#else
+#error "unknown platform"
 #endif
 
 }  // namespace gfx

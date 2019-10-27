@@ -4,6 +4,12 @@
 #include <map>
 #include <string>
 
+#include "base/containers/small_map.h"
+#include "base/memory/weak_ptr.h"
+#include "base/optional.h"
+#include "base/strings/string_piece.h"
+
+#if defined(ENABLE_COBALT)
 #include "cobalt/cssom/length_value.h"
 #include "cobalt/cssom/number_value.h"
 #include "cobalt/cssom/property_definitions.h"
@@ -22,12 +28,6 @@
 #include "cobalt/web_animations/keyframe_effect_read_only.h"
 #include "cobalt/web_animations/animation_effect_timing_read_only.h"
 
-#include <map>
-#include "base/containers/small_map.h"
-#include "base/memory/weak_ptr.h"
-#include "base/optional.h"
-#include "base/strings/string_piece.h"
-
 #include "cobalt/base/token.h"
 
 #include "cobalt/cssom/style_sheet_list.h"
@@ -37,6 +37,8 @@
 #include "cobalt/web_animations/animation_set.h"
 
 #include "cobalt/dom/event_target.h"
+
+#endif // ENABLE_COBALT
 
 #include "base/observer_list.h"
 #include "base/observer_list_types.h"

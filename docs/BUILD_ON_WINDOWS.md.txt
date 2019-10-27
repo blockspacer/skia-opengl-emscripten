@@ -2,878 +2,65 @@
 
 DENABLE_COBALT
 
- 21>d:\den\coding\skia-opengl-emscripten\src\chromium\base\bind.h(229): error C2440: 'initializing': cannot convert
-       from 'R (__cdecl *)(base::internal::BindStateBase *,conditional<_Test,ObserverType*,ObserverType*&&>::type)' to
-       'PolymorphicInvoke' [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-                 with
-                 [
-                     R=void,
-                     ObserverType=base::FieldTrialList::Observer
-                 ]
-         d:\den\coding\skia-opengl-emscripten\src\chromium\base\bind.h(229): note: This conversion requires a reinterpr
-         et_cast, a C-style cast or function-style cast
-         d:\den\coding\skia-opengl-emscripten\src\chromium\base\observer_list_threadsafe.h(157): note: see reference to
-          function template instantiation 'base::RepeatingCallback<void (ObserverType *)> base::BindRepeating<void(__cd
-         ecl *)(void (__thiscall base::FieldTrialList::Observer::* )(const std::string &,const std::string &),const std
-         ::string &,const std::string &,ObserverType *),Method&,const std::string&,_Ty>(Functor &&,Method &,const std::
-         string &,_Ty &&)' being compiled
-                 with
-                 [
-                     ObserverType=base::FieldTrialList::Observer,
-                     Method=void (__thiscall base::FieldTrialList::Observer::* )(const std::string &,const std::string
-         &),
-                     _Ty=std::string,
-                     Functor=void (__cdecl *)(void (__thiscall base::FieldTrialList::Observer::* )(const std::string &,
-         const std::string &),const std::string &,const std::string &,base::FieldTrialList::Observer *)
-                 ]
-         d:\den\coding\skia-opengl-emscripten\src\chromium\base\metrics\field_trial.cc(1049): note: see reference to fu
-         nction template instantiation 'void base::ObserverListThreadSafe<base::FieldTrialList::Observer>::Notify<void(
-         __thiscall base::FieldTrialList::Observer::* )(const std::string &,const std::string &),const std::string&,std
-         ::string>(const base::Location &,Method,const std::string &,std::string &&)' being compiled
-                 with
-                 [
-                     Method=void (__thiscall base::FieldTrialList::Observer::* )(const std::string &,const std::string
-         &)
-                 ]
-         d:\den\coding\skia-opengl-emscripten\src\chromium\base\metrics\field_trial.cc(1047): note: see reference to fu
-         nction template instantiation 'void base::ObserverListThreadSafe<base::FieldTrialList::Observer>::Notify<void(
-         __thiscall base::FieldTrialList::Observer::* )(const std::string &,const std::string &),const std::string&,std
-         ::string>(const base::Location &,Method,const std::string &,std::string &&)' being compiled
-                 with
-                 [
-                     Method=void (__thiscall base::FieldTrialList::Observer::* )(const std::string &,const std::string
-         &)
-                 ]
-
-         sampling_heap_profiler.cc
-    21>d:\den\coding\skia-opengl-emscripten\src\chromium\base\bind.h(229): error C2440: 'initializing': cannot convert
-       from 'R (__cdecl *)(base::internal::BindStateBase *,conditional<_Test,const char*,const char*&&>::type)' to 'Pol
-       ymorphicInvoke' [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-                 with
-                 [
-                     R=void
-                 ]
-         d:\den\coding\skia-opengl-emscripten\src\chromium\base\bind.h(229): note: This conversion requires a reinterpr
-         et_cast, a C-style cast or function-style cast
-         d:\den\coding\skia-opengl-emscripten\src\chromium\base\sampling_heap_profiler\sampling_heap_profiler.cc(130):
-         note: see reference to function template instantiation 'base::RepeatingCallback<void (const char *)> base::Bin
-         dRepeating<base::internal::IgnoreResultHelper<const char *(__cdecl *)(const char *)>,>(Functor &&)' being comp
-         iled
-                 with
-                 [
-                     Functor=base::internal::IgnoreResultHelper<const char *(__cdecl *)(const char *)>
-                 ]
-         scoped_native_li
-
-d:\den\coding\skia-opengl-emscripten\src\chromium\base\task\thread_pool\thread_group_impl.cc(115): error C2338:
-       Must add BaseScopedWorkersExecutor::Flush() if it becomes non-trivial [D:\den\coding\skia-opengl-emscripten\buil
-       d\src\chromium\base.vcxproj]
-         thread_group_native.cc
-         thread_group_params.cc
-         thread_pool.cc
-         thread_pool_impl.cc
-    21>d:\den\coding\skia-opengl-emscripten\src\chromium\base\bind.h(187): error C2440: 'initializing': cannot convert
-       from 'R (__cdecl *)(base::internal::BindStateBase *,conditional<_Test,base::internal::Task,base::internal::Task&
-       &>::type)' to 'PolymorphicInvoke' [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-                 with
-                 [
-                     R=void
-                 ]
-         d:\den\coding\skia-opengl-emscripten\src\chromium\base\bind.h(187): note: This conversion requires a reinterpr
-         et_cast, a C-style cast or function-style cast
-         d:\den\coding\skia-opengl-emscripten\src\chromium\base\task\thread_pool\thread_pool_impl.cc(348): note: see re
-         ference to function template instantiation 'base::OnceCallback<void (base::internal::Task)> base::BindOnce<bas
-         e::internal::ThreadPoolImpl::PostTaskWithSequence::<lambda_7c7b8c29499931c06605efdc7a39e619>,scoped_refptr<bas
-         e::internal::Sequence>,base::internal::UnretainedWrapper<base::internal::ThreadPoolImpl>>(Functor &&,scoped_re
-         fptr<base::internal::Sequence> &&,base::internal::UnretainedWrapper<base::internal::ThreadPoolImpl> &&)' being
-          compiled
-                 with
-                 [
-                     Functor=base::internal::ThreadPoolImpl::PostTaskWithSequence::<lambda_7c7b8c29499931c06605efdc7a39
-         e619>
-                 ]
-         worker_thread.cc
-         worker_thread_stack.cc
-
-
-    21>d:\den\coding\skia-opengl-emscripten\src\chromium\base\values.cc(36): error C2338: base::Value should be a stand
-       ard-layout C++ class in order to avoid undefined behaviour in its implementation! [D:\den\coding\skia-opengl-ems
-       cripten\build\src\chromium\base.vcxproj]
-    21>d:\den\coding\skia-opengl-emscripten\src\chromium\base\values.cc(270): error C2440: '<function-style-cast>': can
-       not convert from 'const base::Value::BlobStorage' to 'base::Value' [D:\den\coding\skia-opengl-emscripten\build\s
-       rc\chromium\base.vcxproj]
-         d:\den\coding\skia-opengl-emscripten\src\chromium\base\values.cc(270): note: No constructor could take the sou
-         rce type, or constructor overload resolution was ambiguous
-         version.cc
-         vlog.cc
-         base_switches.cc
-         pe_image.cc
-         Generating Code...
-         Compiling...
-         com_init_check_hook.cc
-         com_init_util.cc
-         core_winrt_util.cc
-         language_selector.cc
-    21>d:\den\coding\skia-opengl-emscripten\src\chromium\base\win\embedded_i18n\language_selector.cc(280): error C2397:
-        conversion from 'int' to 'size_t' requires a narrowing conversion [D:\den\coding\skia-opengl-emscripten\build\s
-       rc\chromium\base.vcxproj]
-
-
-    21>d:\den\coding\skia-opengl-emscripten\src\chromium\base\win\embedded_i18n\language_selector.cc(280): error C2397:
-        conversion from 'int' to 'size_t' requires a narrowing conversion [D:\den\coding\skia-opengl-emscripten\build\s
-       rc\chromium\base.vcxproj]
-         enum_variant.cc
-         event_trace_controller.cc
-         event_trace_provider.cc
-         hstring_reference.cc
-         i18n.cc
-         iat_patch_function.cc
-         iunknown_impl.cc
-         message_window.cc
-         object_watcher.cc
-         patch_util.cc
-         process_startup_helper.cc
-         registry.cc
-    21>c:\program files (x86)\windows kits\10\include\10.0.17763.0\um\shlwapi.h(2126): warning C4005: 'OS_WINDOWS': mac
-       ro redefinition [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-         d:\den\coding\skia-opengl-emscripten\src\chromium\build\build_config.h(176): note: see previous definition of
-         'OS_WINDOWS'
-         resource_util.cc
-         scoped_bstr.cc
-         scoped_com_initializer.cc
-         scoped_handle.cc
-         Generating Code...
-         Compiling...
-         scoped_handle_verifier.cc
-         scoped_hstring.cc
-         scoped_process_information.cc
-         scoped_variant.cc
-         scoped_winrt_initializer.cc
-         shortcut.cc
-         startup_information.cc
-         vector.cc
-         win_util.cc
-    21>c:\program files (x86)\windows kits\10\include\10.0.17763.0\um\shlwapi.h(2126): warning C4005: 'OS_WINDOWS': mac
-       ro redefinition [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-         d:\den\coding\skia-opengl-emscripten\src\chromium\build\build_config.h(176): note: see previous definition of
-         'OS_WINDOWS'
-         windows_version.cc
-    21>d:\den\coding\skia-opengl-emscripten\src\chromium\base\win\windows_version.cc(237): error C2398: Element '1': co
-       nversion from 'const int' to '_Ty' requires a narrowing conversion [D:\den\coding\skia-opengl-emscripten\build\s
-       rc\chromium\base.vcxproj]
-                 with
-                 [
-                     _Ty=uint32_t
-                 ]
-    21>d:\den\coding\skia-opengl-emscripten\src\chromium\base\win\windows_version.cc(237): error C2398: Element '2': co
-       nversion from 'const int' to '_Ty' requires a narrowing conversion [D:\den\coding\skia-opengl-emscripten\build\s
-       rc\chromium\base.vcxproj]
-                 with
-                 [
-                     _Ty=uint32_t
-                 ]
-    21>d:\den\coding\skia-opengl-emscripten\src\chromium\base\win\windows_version.cc(237): error C2398: Element '3': co
-       nversion from 'const int' to '_Ty' requires a narrowing conversion [D:\den\coding\skia-opengl-emscripten\build\s
-       rc\chromium\base.vcxproj]
-                 with
-                 [
-                     _Ty=uint32_t
-                 ]
-    21>d:\den\coding\skia-opengl-emscripten\src\chromium\base\win\windows_version.cc(237): error C2398: Element '4': co
-       nversion from 'const int' to '_Ty' requires a narrowing conversion [D:\den\coding\skia-opengl-emscripten\build\s
-       rc\chromium\base.vcxproj]
-                 with
-                 [
-                     _Ty=uint32_t
-                 ]
-         winrt_storage_util.cc
-
-
-         close_handle_hook_win.cc
-    21>d:\den\coding\skia-opengl-emscripten\src\chromium\base\debug\close_handle_hook_win.cc(161): error C2712: Cannot
-       use __try in functions that require object unwinding [D:\den\coding\skia-opengl-emscripten\build\src\chromium\ba
-       se.vcxproj]
-         debugger_win.cc
-         gdi_debug_util_win.cc
-         invalid_access_win.cc
-    21>d:\den\coding\skia-opengl-emscripten\src\chromium\base\debug\invalid_access_win.cc(28): error C2712: Cannot use
-       __try in functions that require object unwinding [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.v
-       cxproj]
-
-
-
-$ cmake --build . --config Debug --parallel 10
-Microsoft (R) Build Engine ▒▒▒ᨨ 15.9.21+g9802d43bc3 ▒▒▒ .NET Framework
-(C) ▒▒௮▒▒▒ ▒▒▒▒▒▒▒▒ (Microsoft Corporation). ▒▒ ▒ࠢ▒ ▒▒▒饭▒.
-
-  GZLIB.vcxproj -> D:\den\coding\skia-opengl-emscripten\build\src\chromium\Debug\GZLIB.lib
-  modp_b64.vcxproj -> D:\den\coding\skia-opengl-emscripten\build\src\chromium\Debug\modp_b64.lib
-  ced.vcxproj -> D:\den\coding\skia-opengl-emscripten\build\src\chromium\Debug\ced.lib
-  dynamic_annotations.vcxproj -> D:\den\coding\skia-opengl-emscripten\build\src\chromium\Debug\dynamic_annotations.lib
-  libwebp.vcxproj -> D:\den\coding\skia-opengl-emscripten\build\Debug\libwebp.lib
-  icu.vcxproj -> D:\den\coding\skia-opengl-emscripten\build\Debug\icu.lib
-  GURL.vcxproj -> D:\den\coding\skia-opengl-emscripten\build\src\chromium\Debug\GURL.lib
-  GLIBXML.vcxproj -> D:\den\coding\skia-opengl-emscripten\build\Debug\GLIBXML.lib
-  GLIBJPEG_TURBO.vcxproj -> D:\den\coding\skia-opengl-emscripten\build\Debug\GLIBJPEG_TURBO.lib
-  iccjpeg.vcxproj -> D:\den\coding\skia-opengl-emscripten\build\Debug\iccjpeg.lib
-  libyuv.vcxproj -> D:\den\coding\skia-opengl-emscripten\build\Debug\libyuv.lib
-  icu_util.cc
-D:\den\coding\skia-opengl-emscripten\src\chromium\base\i18n\icu_util.cc(171): warning C4477: 'printf' : format string '%s' requires an argument of type 'char *', but variadic argument 1 has type 'const _Elem *' [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-          with
-          [
-              _Elem=wchar_t
-          ]
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\i18n\icu_util.cc(171): note: consider using '%ls' in the format string
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\i18n\icu_util.cc(171): note: consider using '%lls' in the format string
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\i18n\icu_util.cc(171): note: consider using '%Ls' in the format string
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\i18n\icu_util.cc(171): note: consider using '%ws' in the format string
-D:\den\coding\skia-opengl-emscripten\src\chromium\base\i18n\icu_util.cc(196): warning C4477: 'printf' : format string '%s' requires an argument of type 'char *', but variadic argument 1 has type 'const _Elem *' [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-          with
-          [
-              _Elem=wchar_t
-          ]
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\i18n\icu_util.cc(196): note: consider using '%ls' in the format string
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\i18n\icu_util.cc(196): note: consider using '%lls' in the format string
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\i18n\icu_util.cc(196): note: consider using '%Ls' in the format string
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\i18n\icu_util.cc(196): note: consider using '%ws' in the format string
-D:\den\coding\skia-opengl-emscripten\src\chromium\base\i18n\icu_util.cc(199): warning C4477: 'printf' : format string '%s' requires an argument of type 'char *', but variadic argument 1 has type 'const _Elem *' [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-          with
-          [
-              _Elem=wchar_t
-          ]
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\i18n\icu_util.cc(199): note: consider using '%ls' in the format string
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\i18n\icu_util.cc(199): note: consider using '%lls' in the format string
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\i18n\icu_util.cc(199): note: consider using '%Ls' in the format string
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\i18n\icu_util.cc(199): note: consider using '%ws' in the format string
-D:\den\coding\skia-opengl-emscripten\src\chromium\base\i18n\icu_util.cc(294): error C2664: 'void udata_setCommonData_64(const void *,UErrorCode *)': cannot convert argument 2 from 'UErrorCode' to 'UErrorCode *' [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\i18n\icu_util.cc(295): note: Conversion from integral type to pointer type requires reinterpret_cast, C-style cast or function-style cast
-  file.cc
-D:\den\coding\skia-opengl-emscripten\src\chromium\base\files\file.cc(85): error C2664: 'int printf(const char *const ,...)': cannot convert argument 1 from 'const _Elem *' to 'const char *const ' [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-          with
-          [
-              _Elem=wchar_t
-          ]
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\files\file.cc(85): note: Types pointed to are unrelated; conversion requires reinterpret_cast, C-style cast or function-style cast
-  memory_pressure_listener.cc
-D:\den\coding\skia-opengl-emscripten\src\chromium\base\bind.h(229): error C2440: 'initializing': cannot convert from 'R (__cdecl *)(base::internal::BindStateBase *,conditional<_Test,ObserverType*,ObserverType*&&>::type)' to 'PolymorphicInvoke' [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-          with
-          [
-              R=void,
-              ObserverType=base::MemoryPressureListener
-          ]
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\bind.h(229): note: This conversion requires a reinterpret_cast, a C-style cast or function-style cast
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\observer_list_threadsafe.h(157): note: see reference to function template instantiation 'base::RepeatingCallback<void (ObserverType *)> base::BindRepeating<void(__cdecl *)(void (__thiscall base::MemoryPressureListener::* )(base::MemoryPressureListener::MemoryPressureLevel),base::MemoryPressureListener::MemoryPressureLevel,ObserverType *),Method&,base::MemoryPressureListener::MemoryPressureLevel&>(Functor &&,Method &,base::MemoryPressureListener::MemoryPressureLevel &)' being compiled
-          with
-          [
-              ObserverType=base::MemoryPressureListener,
-              Method=void (__thiscall base::MemoryPressureListener::* )(base::MemoryPressureListener::MemoryPressureLevel),
-              Functor=void (__cdecl *)(void (__thiscall base::MemoryPressureListener::* )(base::MemoryPressureListener::MemoryPressureLevel),base::MemoryPressureListener::MemoryPressureLevel,base::MemoryPressureListener *)
-          ]
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\memory\memory_pressure_listener.cc(37): note: see reference to function template instantiation 'void base::ObserverListThreadSafe<base::MemoryPressureListener>::Notify<void(__thiscall base::MemoryPressureListener::* )(base::MemoryPressureListener::MemoryPressureLevel),base::MemoryPressureListener::MemoryPressureLevel&>(const base::Location &,Method,base::MemoryPressureListener::MemoryPressureLevel &)' being compiled
-          with
-          [
-              Method=void (__thiscall base::MemoryPressureListener::* )(base::MemoryPressureListener::MemoryPressureLevel)
-          ]
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\memory\memory_pressure_listener.cc(36): note: see reference to function template instantiation 'void base::ObserverListThreadSafe<base::MemoryPressureListener>::Notify<void(__thiscall base::MemoryPressureListener::* )(base::MemoryPressureListener::MemoryPressureLevel),base::MemoryPressureListener::MemoryPressureLevel&>(const base::Location &,Method,base::MemoryPressureListener::MemoryPressureLevel &)' being compiled
-          with
-          [
-              Method=void (__thiscall base::MemoryPressureListener::* )(base::MemoryPressureListener::MemoryPressureLevel)
-          ]
-D:\den\coding\skia-opengl-emscripten\src\chromium\base\trace_event\trace_event.h(737): error C2661: 'base::trace_event::TraceArguments::TraceArguments': no overloaded function takes 2 arguments [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\trace_event\trace_event.h(814): note: see reference to function template instantiation 'base::trace_event::TraceEventHandle trace_event_internal::AddTraceEventWithThreadIdAndTimestamp<base::MemoryPressureListener::MemoryPressureLevel&>(char,const unsigned char *,const char *,const char *,unsigned __int64,int,const base::TimeTicks &,unsigned int,unsigned __int64,const char *,ARG1_TYPE)' being compiled
-          with
-          [
-              ARG1_TYPE=base::MemoryPressureListener::MemoryPressureLevel &
-          ]
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\memory\memory_pressure_listener.cc(99): note: see reference to function template instantiation 'base::trace_event::TraceEventHandle trace_event_internal::AddTraceEvent<base::MemoryPressureListener::MemoryPressureLevel&>(char,const unsigned char *,const char *,const char *,unsigned __int64,unsigned int,unsigned __int64,const char *,ARG1_TYPE)' being compiled
-          with
-          [
-              ARG1_TYPE=base::MemoryPressureListener::MemoryPressureLevel &
-          ]
-  field_trial.cc
-D:\den\coding\skia-opengl-emscripten\src\chromium\base\bind.h(229): error C2440: 'initializing': cannot convert from 'R (__cdecl *)(base::internal::BindStateBase *,conditional<_Test,ObserverType*,ObserverType*&&>::type)' to 'PolymorphicInvoke' [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-          with
-          [
-              R=void,
-              ObserverType=base::FieldTrialList::Observer
-          ]
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\bind.h(229): note: This conversion requires a reinterpret_cast, a C-style cast or function-style cast
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\observer_list_threadsafe.h(157): note: see reference to function template instantiation 'base::RepeatingCallback<void (ObserverType *)> base::BindRepeating<void(__cdecl *)(void (__thiscall base::FieldTrialList::Observer::* )(const std::string &,const std::string &),const std::string &,const std::string &,ObserverType *),Method&,const std::string&,_Ty>(Functor &&,Method &,const std::string &,_Ty &&)' being compiled
-          with
-          [
-              ObserverType=base::FieldTrialList::Observer,
-              Method=void (__thiscall base::FieldTrialList::Observer::* )(const std::string &,const std::string &),
-              _Ty=std::string,
-              Functor=void (__cdecl *)(void (__thiscall base::FieldTrialList::Observer::* )(const std::string &,const std::string &),const std::string &,const std::string &,base::FieldTrialList::Observer *)
-          ]
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\metrics\field_trial.cc(1049): note: see reference to function template instantiation 'void base::ObserverListThreadSafe<base::FieldTrialList::Observer>::Notify<void(__thiscall base::FieldTrialList::Observer::* )(const std::string &,const std::string &),const std::string&,std::string>(const base::Location &,Method,const std::string &,std::string &&)' being compiled
-          with
-          [
-              Method=void (__thiscall base::FieldTrialList::Observer::* )(const std::string &,const std::string &)
-          ]
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\metrics\field_trial.cc(1047): note: see reference to function template instantiation 'void base::ObserverListThreadSafe<base::FieldTrialList::Observer>::Notify<void(__thiscall base::FieldTrialList::Observer::* )(const std::string &,const std::string &),const std::string&,std::string>(const base::Location &,Method,const std::string &,std::string &&)' being compiled
-          with
-          [
-              Method=void (__thiscall base::FieldTrialList::Observer::* )(const std::string &,const std::string &)
-          ]
-  histogram_samples.cc
-D:\den\coding\skia-opengl-emscripten\src\chromium\base\metrics\histogram_macros_internal.h(31): error C2338: enumerator must define kMaxValue enumerator to use this macro! [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\metrics\histogram_macros_internal.h(29): note: while compiling class template member function 'Enum base::internal::EnumSizeTraits<Enum,void>::Count(void)'
-          with
-          [
-              Enum=base::HistogramSamples::NegativeSampleReason
-          ]
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\metrics\histogram_samples.cc(259): note: see reference to class template instantiation 'base::internal::EnumSizeTraits<base::HistogramSamples::NegativeSampleReason,void>' being compiled
-  user_metrics.cc
-D:\den\coding\skia-opengl-emscripten\src\chromium\base\trace_event\trace_event.h(737): error C2661: 'base::trace_event::TraceArguments::TraceArguments': no overloaded function takes 2 arguments [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\trace_event\trace_event.h(814): note: see reference to function template instantiation 'base::trace_event::TraceEventHandle trace_event_internal::AddTraceEventWithThreadIdAndTimestamp<const std::string&>(char,const unsigned char *,const char *,const char *,unsigned __int64,int,const base::TimeTicks &,unsigned int,unsigned __int64,const char *,ARG1_TYPE)' being compiled
-          with
-          [
-              ARG1_TYPE=const std::string &
-          ]
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\metrics\user_metrics.cc(33): note: see reference to function template instantiation 'base::trace_event::TraceEventHandle trace_event_internal::AddTraceEvent<const std::string&>(char,const unsigned char *,const char *,const char *,unsigned __int64,unsigned int,unsigned __int64,const char *,ARG1_TYPE)' being compiled
-          with
-          [
-              ARG1_TYPE=const std::string &
-          ]
-  power_monitor.cc
-D:\den\coding\skia-opengl-emscripten\src\chromium\base\bind.h(229): error C2440: 'initializing': cannot convert from 'R (__cdecl *)(base::internal::BindStateBase *,conditional<_Test,ObserverType*,ObserverType*&&>::type)' to 'PolymorphicInvoke' [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-          with
-          [
-              R=void,
-              ObserverType=base::PowerObserver
-          ]
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\bind.h(229): note: This conversion requires a reinterpret_cast, a C-style cast or function-style cast
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\observer_list_threadsafe.h(157): note: see reference to function template instantiation 'base::RepeatingCallback<void (ObserverType *)> base::BindRepeating<void(__cdecl *)(void (__thiscall base::PowerObserver::* )(bool),bool,ObserverType *),Method&,bool&>(Functor &&,Method &,bool &)' being compiled
-          with
-          [
-              ObserverType=base::PowerObserver,
-              Method=void (__thiscall base::PowerObserver::* )(bool),
-              Functor=void (__cdecl *)(void (__thiscall base::PowerObserver::* )(bool),bool,base::PowerObserver *)
-          ]
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\power_monitor\power_monitor.cc(54): note: see reference to function template instantiation 'void base::ObserverListThreadSafe<base::PowerObserver>::Notify<void(__thiscall base::PowerObserver::* )(bool),bool&>(const base::Location &,Method,bool &)' being compiled
-          with
-          [
-              Method=void (__thiscall base::PowerObserver::* )(bool)
-          ]
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\power_monitor\power_monitor.cc(53): note: see reference to function template instantiation 'void base::ObserverListThreadSafe<base::PowerObserver>::Notify<void(__thiscall base::PowerObserver::* )(bool),bool&>(const base::Location &,Method,bool &)' being compiled
-          with
-          [
-              Method=void (__thiscall base::PowerObserver::* )(bool)
-          ]
-  kill.cc
-D:\den\coding\skia-opengl-emscripten\src\chromium\base\process\kill.cc(43): error C2664: 'bool base::PostDelayedTaskWithTraits(const base::Location &,const base::TaskTraits &,base::OnceClosure,base::TimeDelta)': cannot convert argument 2 from 'initializer list' to 'const base::TaskTraits &' [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\process\kill.cc(57): note: Reason: cannot convert from 'initializer list' to 'const base::TaskTraits'
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\process\kill.cc(57): note: No constructor could take the source type, or constructor overload resolution was ambiguous
-  stack_sampling_profiler.cc
-D:\den\coding\skia-opengl-emscripten\src\chromium\base\trace_event\trace_event.h(737): error C2661: 'base::trace_event::TraceArguments::TraceArguments': no overloaded function takes 2 arguments [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\trace_event\trace_event.h(814): note: see reference to function template instantiation 'base::trace_event::TraceEventHandle trace_event_internal::AddTraceEventWithThreadIdAndTimestamp<int&>(char,const unsigned char *,const char *,const char *,unsigned __int64,int,const base::TimeTicks &,unsigned int,unsigned __int64,const char *,ARG1_TYPE)' being compiled
-          with
-          [
-              ARG1_TYPE=int &
-          ]
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\profiler\stack_sampling_profiler.cc(742): note: see reference to function template instantiation 'base::trace_event::TraceEventHandle trace_event_internal::AddTraceEvent<int&>(char,const unsigned char *,const char *,const char *,unsigned __int64,unsigned int,unsigned __int64,const char *,ARG1_TYPE)' being compiled
-          with
-          [
-              ARG1_TYPE=int &
-          ]
-  sampling_heap_profiler.cc
-D:\den\coding\skia-opengl-emscripten\src\chromium\base\bind.h(229): error C2440: 'initializing': cannot convert from 'R (__cdecl *)(base::internal::BindStateBase *,conditional<_Test,const char*,const char*&&>::type)' to 'PolymorphicInvoke' [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-          with
-          [
-              R=void
-          ]
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\bind.h(229): note: This conversion requires a reinterpret_cast, a C-style cast or function-style cast
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\sampling_heap_profiler\sampling_heap_profiler.cc(130): note: see reference to function template instantiation 'base::RepeatingCallback<void (const char *)> base::BindRepeating<base::internal::IgnoreResultHelper<const char *(__cdecl *)(const char *)>,>(Functor &&)' being compiled
-          with
-          [
-              Functor=base::internal::IgnoreResultHelper<const char *(__cdecl *)(const char *)>
-          ]
-  sys_info.cc
-D:\den\coding\skia-opengl-emscripten\src\chromium\base\system\sys_info.cc(167): error C2664: 'scoped_refptr<base::SingleThreadTaskRunner> base::CreateCOMSTATaskRunnerWithTraits(const base::TaskTraits &,base::SingleThreadTaskRunnerThreadMode)': cannot convert argument 1 from 'initializer list' to 'const base::TaskTraits &' [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\system\sys_info.cc(167): note: Reason: cannot convert from 'initializer list' to 'const base::TaskTraits'
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\system\sys_info.cc(167): note: No constructor could take the source type, or constructor overload resolution was ambiguous
-D:\den\coding\skia-opengl-emscripten\src\chromium\base\system\sys_info.cc(166): error C2672: 'base::PostTaskAndReplyWithResult': no matching overloaded function found [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-D:\den\coding\skia-opengl-emscripten\src\chromium\base\system\sys_info.cc(168): error C2780: 'bool base::PostTaskAndReplyWithResult(const base::Location &,CallbackType<TaskReturnType(void)>,CallbackType<void(ReplyArgType)>)': expects 3 arguments - 4 provided [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\task\post_task.h(108): note: see declaration of 'base::PostTaskAndReplyWithResult'
-  system_monitor.cc
-D:\den\coding\skia-opengl-emscripten\src\chromium\base\bind.h(229): error C2440: 'initializing': cannot convert from 'R (__cdecl *)(base::internal::BindStateBase *,conditional<_Test,ObserverType*,ObserverType*&&>::type)' to 'PolymorphicInvoke' [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-          with
-          [
-              R=void,
-              ObserverType=base::SystemMonitor::DevicesChangedObserver
-          ]
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\bind.h(229): note: This conversion requires a reinterpret_cast, a C-style cast or function-style cast
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\observer_list_threadsafe.h(157): note: see reference to function template instantiation 'base::RepeatingCallback<void (ObserverType *)> base::BindRepeating<void(__cdecl *)(void (__thiscall base::SystemMonitor::DevicesChangedObserver::* )(base::SystemMonitor::DeviceType),base::SystemMonitor::DeviceType,ObserverType *),Method&,base::SystemMonitor::DeviceType&>(Functor &&,Method &,base::SystemMonitor::DeviceType &)' being compiled
-          with
-          [
-              ObserverType=base::SystemMonitor::DevicesChangedObserver,
-              Method=void (__thiscall base::SystemMonitor::DevicesChangedObserver::* )(base::SystemMonitor::DeviceType),
-              Functor=void (__cdecl *)(void (__thiscall base::SystemMonitor::DevicesChangedObserver::* )(base::SystemMonitor::DeviceType),base::SystemMonitor::DeviceType,base::SystemMonitor::DevicesChangedObserver *)
-          ]
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\system\system_monitor.cc(48): note: see reference to function template instantiation 'void base::ObserverListThreadSafe<base::SystemMonitor::DevicesChangedObserver>::Notify<void(__thiscall base::SystemMonitor::DevicesChangedObserver::* )(base::SystemMonitor::DeviceType),base::SystemMonitor::DeviceType&>(const base::Location &,Method,base::SystemMonitor::DeviceType &)' being compiled
-          with
-          [
-              Method=void (__thiscall base::SystemMonitor::DevicesChangedObserver::* )(base::SystemMonitor::DeviceType)
-          ]
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\system\system_monitor.cc(47): note: see reference to function template instantiation 'void base::ObserverListThreadSafe<base::SystemMonitor::DevicesChangedObserver>::Notify<void(__thiscall base::SystemMonitor::DevicesChangedObserver::* )(base::SystemMonitor::DeviceType),base::SystemMonitor::DeviceType&>(const base::Location &,Method,base::SystemMonitor::DeviceType &)' being compiled
-          with
-          [
-              Method=void (__thiscall base::SystemMonitor::DevicesChangedObserver::* )(base::SystemMonitor::DeviceType)
-          ]
-  task_annotator.cc
-D:\den\coding\skia-opengl-emscripten\src\chromium\base\task\common\task_annotator.cc(23): warning C4309: 'static_cast': truncation of constant value [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-D:\den\coding\skia-opengl-emscripten\src\chromium\base\trace_event\trace_event.h(737): error C2661: 'base::trace_event::TraceArguments::TraceArguments': no overloaded function takes 2 arguments [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\trace_event\trace_event.h(814): note: see reference to function template instantiation 'base::trace_event::TraceEventHandle trace_event_internal::AddTraceEventWithThreadIdAndTimestamp<const char*&>(char,const unsigned char *,const char *,const char *,unsigned __int64,int,const base::TimeTicks &,unsigned int,unsigned __int64,const char *,ARG1_TYPE)' being compiled
-          with
-          [
-              ARG1_TYPE=const char *&
-          ]
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\task\common\task_annotator.cc(71): note: see reference to function template instantiation 'base::trace_event::TraceEventHandle trace_event_internal::AddTraceEvent<const char*&>(char,const unsigned char *,const char *,const char *,unsigned __int64,unsigned int,unsigned __int64,const char *,ARG1_TYPE)' being compiled
-          with
-          [
-              ARG1_TYPE=const char *&
-          ]
-  lazy_task_runner.cc
-  post_task.cc
-D:\den\coding\skia-opengl-emscripten\src\chromium\base\task\post_task.cc(61): error C2512: 'base::TaskTraits': no appropriate default constructor available [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\task\post_task.cc(61): note: No constructor could take the source type, or constructor overload resolution was ambiguous
-D:\den\coding\skia-opengl-emscripten\src\chromium\base\task\post_task.cc(61): error C2660: 'base::PostDelayedTaskWithTraits': function does not take 3 arguments [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\task\post_task.h(127): note: see declaration of 'base::PostDelayedTaskWithTraits'
-D:\den\coding\skia-opengl-emscripten\src\chromium\base\task\post_task.cc(68): error C2512: 'base::TaskTraits': no appropriate default constructor available [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\task\post_task.cc(68): note: No constructor could take the source type, or constructor overload resolution was ambiguous
-D:\den\coding\skia-opengl-emscripten\src\chromium\base\task\post_task.cc(68): error C2660: 'base::PostTaskWithTraitsAndReply': function does not take 3 arguments [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\task\post_task.h(137): note: see declaration of 'base::PostTaskWithTraitsAndReply'
-  scoped_set_task_priority_for_current_thread.cc
-  real_time_domain.cc
-D:\den\coding\skia-opengl-emscripten\src\chromium\base\trace_event\trace_event.h(737): error C2661: 'base::trace_event::TraceArguments::TraceArguments': no overloaded function takes 2 arguments [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\trace_event\trace_event.h(814): note: see reference to function template instantiation 'base::trace_event::TraceEventHandle trace_event_internal::AddTraceEventWithThreadIdAndTimestamp<_Ty>(char,const unsigned char *,const char *,const char *,unsigned __int64,int,const base::TimeTicks &,unsigned int,unsigned __int64,const char *,ARG1_TYPE &&)' being compiled
-          with
-          [
-              _Ty=double,
-              ARG1_TYPE=double
-          ]
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\task\sequence_manager\real_time_domain.cc(44): note: see reference to function template instantiation 'base::trace_event::TraceEventHandle trace_event_internal::AddTraceEvent<double>(char,const unsigned char *,const char *,const char *,unsigned __int64,unsigned int,unsigned __int64,const char *,ARG1_TYPE &&)' being compiled
-          with
-          [
-              ARG1_TYPE=double
-          ]
-  sequence_manager_impl.cc
-D:\den\coding\skia-opengl-emscripten\src\chromium\base\trace_event\trace_event.h(737): error C2661: 'base::trace_event::TraceArguments::TraceArguments': no overloaded function takes 2 arguments [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\trace_event\trace_event.h(814): note: see reference to function template instantiation 'base::trace_event::TraceEventHandle trace_event_internal::AddTraceEventWithThreadIdAndTimestamp<_Ty>(char,const unsigned char *,const char *,const char *,unsigned __int64,int,const base::TimeTicks &,unsigned int,unsigned __int64,const char *,ARG1_TYPE &&)' being compiled
-          with
-          [
-              _Ty=const char *,
-              ARG1_TYPE=const char *
-          ]
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\task\sequence_manager\sequence_manager_impl.cc(349): note: see reference to function template instantiation 'base::trace_event::TraceEventHandle trace_event_internal::AddTraceEvent<const char*>(char,const unsigned char *,const char *,const char *,unsigned __int64,unsigned int,unsigned __int64,const char *,ARG1_TYPE &&)' being compiled
-          with
-          [
-              ARG1_TYPE=const char *
-          ]
-  task_queue.cc
-D:\den\coding\skia-opengl-emscripten\src\chromium\base\bind.h(229): error C2440: 'initializing': cannot convert from 'R (__cdecl *)(base::internal::BindStateBase *,conditional<_Test,base::TimeTicks,base::TimeTicks&&>::type)' to 'PolymorphicInvoke' [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-          with
-          [
-              R=void
-          ]
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\bind.h(229): note: This conversion requires a reinterpret_cast, a C-style cast or function-style cast
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\task\sequence_manager\task_queue.cc(323): note: see reference to function template instantiation 'base::RepeatingCallback<void (base::TimeTicks)> base::BindRepeating<void(__thiscall base::sequence_manager::TaskQueue::Observer::* )(base::sequence_manager::TaskQueue *,base::TimeTicks),base::internal::UnretainedWrapper<base::sequence_manager::TaskQueue::Observer>,base::internal::UnretainedWrapper<base::sequence_manager::TaskQueue>>(Functor &&,base::internal::UnretainedWrapper<base::sequence_manager::TaskQueue::Observer> &&,base::internal::UnretainedWrapper<base::sequence_manager::TaskQueue> &&)' being compiled
-          with
-          [
-              Functor=void (__thiscall base::sequence_manager::TaskQueue::Observer::* )(base::sequence_manager::TaskQueue *,base::TimeTicks)
-          ]
-  task_queue_impl.cc
-D:\den\coding\skia-opengl-emscripten\src\chromium\base\trace_event\trace_event.h(737): error C2661: 'base::trace_event::TraceArguments::TraceArguments': no overloaded function takes 2 arguments [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\trace_event\trace_event.h(814): note: see reference to function template instantiation 'base::trace_event::TraceEventHandle trace_event_internal::AddTraceEventWithThreadIdAndTimestamp<_Ty>(char,const unsigned char *,const char *,const char *,unsigned __int64,int,const base::TimeTicks &,unsigned int,unsigned __int64,const char *,ARG1_TYPE &&)' being compiled
-          with
-          [
-              _Ty=int,
-              ARG1_TYPE=int
-          ]
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\task\sequence_manager\task_queue_impl.cc(605): note: see reference to function template instantiation 'base::trace_event::TraceEventHandle trace_event_internal::AddTraceEvent<int>(char,const unsigned char *,const char *,const char *,unsigned __int64,unsigned int,unsigned __int64,const char *,ARG1_TYPE &&)' being compiled
-          with
-          [
-              ARG1_TYPE=int
-          ]
-D:\den\coding\skia-opengl-emscripten\src\chromium\base\logging.h(808): warning C4018: '>=': signed\unsigned mismatch [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\task\sequence_manager\lazily_deallocated_deque.h(237): note: see reference to function template instantiation 'std::string *logging::CheckGEImpl<size_t,base::sequence_manager::internal::LazilyDeallocatedDeque<base::sequence_manager::Task,base::TimeTicks base::subtle::TimeTicksNowIgnoringOverride(void)>::<unnamed-enum-kMinimumRingSize>>(const t1 &,const t2 &,const char *)' being compiled
-          with
-          [
-              t1=size_t,
-              t2=base::sequence_manager::internal::LazilyDeallocatedDeque<base::sequence_manager::Task,base::TimeTicks base::subtle::TimeTicksNowIgnoringOverride(void)>::<unnamed-enum-kMinimumRingSize>
-          ]
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\task\sequence_manager\lazily_deallocated_deque.h(231): note: while compiling class template member function 'base::sequence_manager::internal::LazilyDeallocatedDeque<base::sequence_manager::Task,base::TimeTicks base::subtle::TimeTicksNowIgnoringOverride(void)>::Ring::Ring(size_t)'
-  C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.16.27023\include\memory(2539): note: see reference to function template instantiation 'base::sequence_manager::internal::LazilyDeallocatedDeque<base::sequence_manager::Task,base::TimeTicks base::subtle::TimeTicksNowIgnoringOverride(void)>::Ring::Ring(size_t)' being compiled
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\task\sequence_manager\lazily_deallocated_deque.h(330): note: see reference to class template instantiation 'base::sequence_manager::internal::LazilyDeallocatedDeque<base::sequence_manager::Task,base::TimeTicks base::subtle::TimeTicksNowIgnoringOverride(void)>::Ring' being compiled
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\task\sequence_manager\lazily_deallocated_deque.h(329): note: while compiling class template member function 'base::sequence_manager::internal::LazilyDeallocatedDeque<base::sequence_manager::Task,base::TimeTicks base::subtle::TimeTicksNowIgnoringOverride(void)>::Iterator &base::sequence_manager::internal::LazilyDeallocatedDeque<base::sequence_manager::Task,base::TimeTicks base::subtle::TimeTicksNowIgnoringOverride(void)>::Iterator::operator ++(void)'
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\task\sequence_manager\task_queue_impl.cc(480): note: see reference to function template instantiation 'base::sequence_manager::internal::LazilyDeallocatedDeque<base::sequence_manager::Task,base::TimeTicks base::subtle::TimeTicksNowIgnoringOverride(void)>::Iterator &base::sequence_manager::internal::LazilyDeallocatedDeque<base::sequence_manager::Task,base::TimeTicks base::subtle::TimeTicksNowIgnoringOverride(void)>::Iterator::operator ++(void)' being compiled
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\task\sequence_manager\task_queue_impl.cc(480): note: see reference to class template instantiation 'base::sequence_manager::internal::LazilyDeallocatedDeque<base::sequence_manager::Task,base::TimeTicks base::subtle::TimeTicksNowIgnoringOverride(void)>::Iterator' being compiled
-  Generating Code...
-  Compiling...
-  thread_controller_impl.cc
-D:\den\coding\skia-opengl-emscripten\src\chromium\base\trace_event\trace_event.h(737): error C2661: 'base::trace_event::TraceArguments::TraceArguments': no overloaded function takes 2 arguments [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\trace_event\trace_event.h(814): note: see reference to function template instantiation 'base::trace_event::TraceEventHandle trace_event_internal::AddTraceEventWithThreadIdAndTimestamp<_Ty>(char,const unsigned char *,const char *,const char *,unsigned __int64,int,const base::TimeTicks &,unsigned int,unsigned __int64,const char *,ARG1_TYPE &&)' being compiled
-          with
-          [
-              _Ty=double,
-              ARG1_TYPE=double
-          ]
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\task\sequence_manager\thread_controller_impl.cc(118): note: see reference to function template instantiation 'base::trace_event::TraceEventHandle trace_event_internal::AddTraceEvent<double>(char,const unsigned char *,const char *,const char *,unsigned __int64,unsigned int,unsigned __int64,const char *,ARG1_TYPE &&)' being compiled
-          with
-          [
-              ARG1_TYPE=double
-          ]
-D:\den\coding\skia-opengl-emscripten\src\chromium\base\trace_event\trace_event.h(760): error C2664: 'base::trace_event::TraceArguments::TraceArguments(base::trace_event::TraceArguments &&) noexcept': cannot convert argument 1 from 'const char *' to 'int' [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\trace_event\trace_event.h(762): note: There is no context in which this conversion is possible
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\trace_event\trace_event.h(835): note: see reference to function template instantiation 'base::trace_event::TraceEventHandle trace_event_internal::AddTraceEventWithThreadIdAndTimestamp<_Ty,_Ty>(char,const unsigned char *,const char *,const char *,unsigned __int64,int,const base::TimeTicks &,unsigned int,unsigned __int64,const char *,ARG1_TYPE &&,const char *,ARG2_TYPE &&)' being compiled
-          with
-          [
-              _Ty=const char *,
-              ARG1_TYPE=const char *,
-              ARG2_TYPE=const char *
-          ]
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\task\sequence_manager\thread_controller_impl.cc(193): note: see reference to function template instantiation 'base::trace_event::TraceEventHandle trace_event_internal::AddTraceEvent<const char*,const char*>(char,const unsigned char *,const char *,const char *,unsigned __int64,unsigned int,unsigned __int64,const char *,ARG1_TYPE &&,const char *,ARG2_TYPE &&)' being compiled
-          with
-          [
-              ARG1_TYPE=const char *,
-              ARG2_TYPE=const char *
-          ]
-  thread_controller_with_message_pump_impl.cc
-D:\den\coding\skia-opengl-emscripten\src\chromium\base\trace_event\trace_event.h(760): error C2664: 'base::trace_event::TraceArguments::TraceArguments(base::trace_event::TraceArguments &&) noexcept': cannot convert argument 1 from 'const char *' to 'int' [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\trace_event\trace_event.h(762): note: There is no context in which this conversion is possible
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\trace_event\trace_event.h(835): note: see reference to function template instantiation 'base::trace_event::TraceEventHandle trace_event_internal::AddTraceEventWithThreadIdAndTimestamp<_Ty,_Ty>(char,const unsigned char *,const char *,const char *,unsigned __int64,int,const base::TimeTicks &,unsigned int,unsigned __int64,const char *,ARG1_TYPE &&,const char *,ARG2_TYPE &&)' being compiled
-          with
-          [
-              _Ty=const char *,
-              ARG1_TYPE=const char *,
-              ARG2_TYPE=const char *
-          ]
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\task\sequence_manager\thread_controller_with_message_pump_impl.cc(375): note: see reference to function template instantiation 'base::trace_event::TraceEventHandle trace_event_internal::AddTraceEvent<const char*,const char*>(char,const unsigned char *,const char *,const char *,unsigned __int64,unsigned int,unsigned __int64,const char *,ARG1_TYPE &&,const char *,ARG2_TYPE &&)' being compiled
-          with
-          [
-              ARG1_TYPE=const char *,
-              ARG2_TYPE=const char *
-          ]
-  task_executor.cc
-  task_traits.cc
-  delayed_task_manager.cc
-  environment_config.cc
-  pooled_parallel_task_runner.cc
-  pooled_sequenced_task_runner.cc
-  pooled_single_thread_task_runner_manager.cc
-D:\den\coding\skia-opengl-emscripten\src\chromium\base\task\thread_pool\pooled_single_thread_task_runner_manager.cc(339): error C2440: '<function-style-cast>': cannot convert from 'base::MayBlock' to 'base::TaskTraits' [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\task\thread_pool\pooled_single_thread_task_runner_manager.cc(339): note: No constructor could take the source type, or constructor overload resolution was ambiguous
-D:\den\coding\skia-opengl-emscripten\src\chromium\base\task\thread_pool\pooled_single_thread_task_runner_manager.cc(340): error C2672: 'MakeRefCounted': no matching overloaded function found [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  pooled_task_runner_delegate.cc
-  priority_queue.cc
-  sequence.cc
-  sequence_sort_key.cc
-  service_thread.cc
-D:\den\coding\skia-opengl-emscripten\src\chromium\base\task\thread_pool\service_thread.cc(75): error C2440: 'initializing': cannot convert from 'initializer list' to 'const base::TaskTraits' [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\task\thread_pool\service_thread.cc(77): note: No constructor could take the source type, or constructor overload resolution was ambiguous
-D:\den\coding\skia-opengl-emscripten\src\chromium\base\task\thread_pool\service_thread.cc(74): error C2131: expression did not evaluate to a constant [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\task\thread_pool\service_thread.cc(74): note: a non-constant (sub-)expression was encountered
-  task_source.cc
-  task_tracker.cc
-D:\den\coding\skia-opengl-emscripten\src\chromium\base\task\thread_pool\task_tracker.cc(387): error C2664: 'base::TaskShutdownBehavior base::internal::`anonymous-namespace'::GetEffectiveShutdownBehavior(const base::TaskTraits &,bool)': cannot convert argument 1 from 'base::TaskShutdownBehavior' to 'const base::TaskTraits &' [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\task\thread_pool\task_tracker.cc(388): note: Reason: cannot convert from 'base::TaskShutdownBehavior' to 'const base::TaskTraits'
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\task\thread_pool\task_tracker.cc(388): note: No user-defined-conversion operator available that can perform this conversion, or the operator cannot be called
-D:\den\coding\skia-opengl-emscripten\src\chromium\base\task\thread_pool\task_tracker.cc(420): error C2512: 'base::TaskTraits::TaskTraits': no appropriate default constructor available [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-D:\den\coding\skia-opengl-emscripten\src\chromium\base\task\thread_pool\task_tracker.cc(432): error C2664: 'base::TaskShutdownBehavior base::internal::`anonymous-namespace'::GetEffectiveShutdownBehavior(const base::TaskTraits &,bool)': cannot convert argument 1 from 'base::TaskShutdownBehavior' to 'const base::TaskTraits &' [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\task\thread_pool\task_tracker.cc(433): note: Reason: cannot convert from 'base::TaskShutdownBehavior' to 'const base::TaskTraits'
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\task\thread_pool\task_tracker.cc(433): note: No user-defined-conversion operator available that can perform this conversion, or the operator cannot be called
-D:\den\coding\skia-opengl-emscripten\src\chromium\base\task\thread_pool\task_tracker.cc(431): error C2789: 'effective_shutdown_behavior': an object of const-qualified type must be initialized [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\task\thread_pool\task_tracker.cc(431): note: see declaration of 'effective_shutdown_behavior'
-D:\den\coding\skia-opengl-emscripten\src\chromium\base\task\thread_pool\task_tracker.cc(486): error C2512: 'base::TaskTraits::TaskTraits': no appropriate default constructor available [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-D:\den\coding\skia-opengl-emscripten\src\chromium\base\task\thread_pool\task_tracker.cc(488): error C2440: '<function-style-cast>': cannot convert from 'initializer list' to 'base::TaskTraits' [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\task\thread_pool\task_tracker.cc(488): note: No constructor could take the source type, or constructor overload resolution was ambiguous
-D:\den\coding\skia-opengl-emscripten\src\chromium\base\task\thread_pool\task_tracker.cc(490): error C2440: '<function-style-cast>': cannot convert from 'base::TaskPriority' to 'base::TaskTraits' [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\task\thread_pool\task_tracker.cc(490): note: No constructor could take the source type, or constructor overload resolution was ambiguous
-  thread_group.cc
-  thread_group_impl.cc
-D:\den\coding\skia-opengl-emscripten\src\chromium\base\task\thread_pool\thread_group_impl.cc(115): error C2338: Must add BaseScopedWorkersExecutor::Flush() if it becomes non-trivial [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  thread_group_native.cc
-  thread_pool.cc
-  Generating Code...
-  Compiling...
-  thread_pool_impl.cc
-D:\den\coding\skia-opengl-emscripten\src\chromium\base\bind.h(187): error C2440: 'initializing': cannot convert from 'R (__cdecl *)(base::internal::BindStateBase *,conditional<_Test,base::internal::Task,base::internal::Task&&>::type)' to 'PolymorphicInvoke' [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-          with
-          [
-              R=void
-          ]
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\bind.h(187): note: This conversion requires a reinterpret_cast, a C-style cast or function-style cast
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\task\thread_pool\thread_pool_impl.cc(348): note: see reference to function template instantiation 'base::OnceCallback<void (base::internal::Task)> base::BindOnce<base::internal::ThreadPoolImpl::PostTaskWithSequence::<lambda_7c7b8c29499931c06605efdc7a39e619>,scoped_refptr<base::internal::Sequence>,base::internal::UnretainedWrapper<base::internal::ThreadPoolImpl>>(Functor &&,scoped_refptr<base::internal::Sequence> &&,base::internal::UnretainedWrapper<base::internal::ThreadPoolImpl> &&)' being compiled
-          with
-          [
-              Functor=base::internal::ThreadPoolImpl::PostTaskWithSequence::<lambda_7c7b8c29499931c06605efdc7a39e619>
-          ]
-  worker_thread.cc
-  worker_thread_stack.cc
-  scoped_blocking_call.cc
-D:\den\coding\skia-opengl-emscripten\src\chromium\base\trace_event\trace_event.h(760): error C2664: 'base::trace_event::TraceArguments::TraceArguments(base::trace_event::TraceArguments &&) noexcept': cannot convert argument 1 from 'const char *' to 'int' [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\trace_event\trace_event.h(762): note: There is no context in which this conversion is possible
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\trace_event\trace_event.h(835): note: see reference to function template instantiation 'base::trace_event::TraceEventHandle trace_event_internal::AddTraceEventWithThreadIdAndTimestamp<_Ty,_Ty>(char,const unsigned char *,const char *,const char *,unsigned __int64,int,const base::TimeTicks &,unsigned int,unsigned __int64,const char *,ARG1_TYPE &&,const char *,ARG2_TYPE &&)' being compiled
-          with
-          [
-              _Ty=const char *,
-              ARG1_TYPE=const char *,
-              ARG2_TYPE=const char *
-          ]
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\threading\scoped_blocking_call.cc(79): note: see reference to function template instantiation 'base::trace_event::TraceEventHandle trace_event_internal::AddTraceEvent<const char*,const char*>(char,const unsigned char *,const char *,const char *,unsigned __int64,unsigned int,unsigned __int64,const char *,ARG1_TYPE &&,const char *,ARG2_TYPE &&)' being compiled
-          with
-          [
-              ARG1_TYPE=const char *,
-              ARG2_TYPE=const char *
-          ]
-  blame_context.cc
-D:\den\coding\skia-opengl-emscripten\src\chromium\base\trace_event\blame_context.cc(64): error C2661: 'base::trace_event::TraceArguments::TraceArguments': no overloaded function takes 2 arguments [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  memory_dump_manager.cc
-D:\den\coding\skia-opengl-emscripten\src\chromium\base\bind.h(229): error C2440: 'initializing': cannot convert from 'R (__cdecl *)(base::internal::BindStateBase *,conditional<_Test,base::trace_event::MemoryDumpLevelOfDetail,base::trace_event::MemoryDumpLevelOfDetail&&>::type)' to 'PolymorphicInvoke' [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-          with
-          [
-              R=void
-          ]
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\bind.h(229): note: This conversion requires a reinterpret_cast, a C-style cast or function-style cast
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\trace_event\memory_dump_manager.cc(499): note: see reference to function template instantiation 'base::RepeatingCallback<void (base::trace_event::MemoryDumpLevelOfDetail)> base::BindRepeating<void(__cdecl *)(base::trace_event::MemoryDumpManager::RequestGlobalDumpFunction,base::trace_event::MemoryDumpType,base::trace_event::MemoryDumpLevelOfDetail),base::trace_event::MemoryDumpManager::RequestGlobalDumpFunction&,base::trace_event::MemoryDumpType>(Functor &&,base::trace_event::MemoryDumpManager::RequestGlobalDumpFunction &,base::trace_event::MemoryDumpType &&)' being compiled
-          with
-          [
-              Functor=void (__cdecl *)(base::trace_event::MemoryDumpManager::RequestGlobalDumpFunction,base::trace_event::MemoryDumpType,base::trace_event::MemoryDumpLevelOfDetail)
-          ]
-  trace_buffer.cc
-D:\den\coding\skia-opengl-emscripten\src\chromium\base\bind.h(229): error C2440: 'initializing': cannot convert from 'R (__cdecl *)(base::internal::BindStateBase *,conditional<_Test,const std::string&,const std::string&>::type)' to 'PolymorphicInvoke' [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-          with
-          [
-              R=void
-          ]
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\bind.h(229): note: This conversion requires a reinterpret_cast, a C-style cast or function-style cast
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\trace_event\trace_buffer.cc(306): note: see reference to function template instantiation 'base::RepeatingCallback<void (const std::string &)> base::BindRepeating<void(__thiscall base::trace_event::TraceResultBuffer::SimpleOutput::* )(const std::string &),base::internal::UnretainedWrapper<base::trace_event::TraceResultBuffer::SimpleOutput>>(Functor &&,base::internal::UnretainedWrapper<base::trace_event::TraceResultBuffer::SimpleOutput> &&)' being compiled
-          with
-          [
-              Functor=void (__thiscall base::trace_event::TraceResultBuffer::SimpleOutput::* )(const std::string &)
-          ]
-  trace_log.cc
-D:\den\coding\skia-opengl-emscripten\src\chromium\base\trace_event\trace_log.cc(1004): error C2664: 'bool base::PostTaskWithTraits(const base::Location &,const base::TaskTraits &,base::OnceClosure)': cannot convert argument 2 from 'initializer list' to 'const base::TaskTraits &' [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\trace_event\trace_log.cc(1010): note: Reason: cannot convert from 'initializer list' to 'const base::TaskTraits'
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\trace_event\trace_log.cc(1010): note: No constructor could take the source type, or constructor overload resolution was ambiguous
-  values.cc
-D:\den\coding\skia-opengl-emscripten\src\chromium\base\values.cc(36): error C2338: base::Value should be a standard-layout C++ class in order to avoid undefined behaviour in its implementation! [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-D:\den\coding\skia-opengl-emscripten\src\chromium\base\values.cc(270): error C2440: '<function-style-cast>': cannot convert from 'const base::Value::BlobStorage' to 'base::Value' [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\values.cc(270): note: No constructor could take the source type, or constructor overload resolution was ambiguous
-  language_selector.cc
-D:\den\coding\skia-opengl-emscripten\src\chromium\base\win\embedded_i18n\language_selector.cc(280): error C2397: conversion from 'int' to 'size_t' requires a narrowing conversion [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  scoped_handle_verifier.cc
-D:\den\coding\skia-opengl-emscripten\src\chromium\base\win\scoped_handle_verifier.cc(15): fatal error C1083: Cannot open include file: 'base\win\base_win_buildflags.h': No such file or directory [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  windows_version.cc
-D:\den\coding\skia-opengl-emscripten\src\chromium\base\win\windows_version.cc(237): error C2398: Element '1': conversion from 'const int' to '_Ty' requires a narrowing conversion [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-          with
-          [
-              _Ty=uint32_t
-          ]
-D:\den\coding\skia-opengl-emscripten\src\chromium\base\win\windows_version.cc(237): error C2398: Element '2': conversion from 'const int' to '_Ty' requires a narrowing conversion [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-          with
-          [
-              _Ty=uint32_t
-          ]
-D:\den\coding\skia-opengl-emscripten\src\chromium\base\win\windows_version.cc(237): error C2398: Element '3': conversion from 'const int' to '_Ty' requires a narrowing conversion [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-          with
-          [
-              _Ty=uint32_t
-          ]
-D:\den\coding\skia-opengl-emscripten\src\chromium\base\win\windows_version.cc(237): error C2398: Element '4': conversion from 'const int' to '_Ty' requires a narrowing conversion [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-          with
-          [
-              _Ty=uint32_t
-          ]
-  message_pump_win.cc
-D:\den\coding\skia-opengl-emscripten\src\chromium\base\metrics\histogram_macros_internal.h(31): error C2338: enumerator must define kMaxValue enumerator to use this macro! [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\metrics\histogram_macros_internal.h(29): note: while compiling class template member function 'Enum base::internal::EnumSizeTraits<Enum,void>::Count(void)'
-          with
-          [
-              Enum=base::`anonymous-namespace'::MessageLoopProblems
-          ]
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\message_loop\message_pump_win.cc(122): note: see reference to class template instantiation 'base::internal::EnumSizeTraits<base::`anonymous-namespace'::MessageLoopProblems,void>' being compiled
-  close_handle_hook_win.cc
-D:\den\coding\skia-opengl-emscripten\src\chromium\base\debug\close_handle_hook_win.cc(161): error C2712: Cannot use __try in functions that require object unwinding [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  invalid_access_win.cc
-D:\den\coding\skia-opengl-emscripten\src\chromium\base\debug\invalid_access_win.cc(28): error C2712: Cannot use __try in functions that require object unwinding [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  file_util_win.cc
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\shared\ws2def.h(103): warning C4005: 'AF_IPX': macro redefinition [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock.h(457): note: see previous definition of 'AF_IPX'
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\shared\ws2def.h(147): warning C4005: 'AF_MAX': macro redefinition [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock.h(476): note: see previous definition of 'AF_MAX'
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\shared\ws2def.h(185): warning C4005: 'SO_DONTLINGER': macro redefinition [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock.h(399): note: see previous definition of 'SO_DONTLINGER'
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\shared\ws2def.h(235): error C2011: 'sockaddr': 'struct' type redefinition [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock.h(1007): note: see declaration of 'sockaddr'
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\shared\ws2def.h(437): error C2059: syntax error: 'constant' [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\shared\ws2def.h(437): error C3805: 'constant': unexpected token, expected either '}' or a ',' [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\shared\ws2def.h(572): warning C4005: 'IN_CLASSA': macro redefinition [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock.h(284): note: see previous definition of 'IN_CLASSA'
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\shared\ws2def.h(578): warning C4005: 'IN_CLASSB': macro redefinition [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock.h(290): note: see previous definition of 'IN_CLASSB'
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\shared\ws2def.h(584): warning C4005: 'IN_CLASSC': macro redefinition [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock.h(296): note: see previous definition of 'IN_CLASSC'
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\shared\ws2def.h(595): warning C4005: 'INADDR_ANY': macro redefinition [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock.h(301): note: see previous definition of 'INADDR_ANY'
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\shared\ws2def.h(597): warning C4005: 'INADDR_BROADCAST': macro redefinition [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock.h(303): note: see previous definition of 'INADDR_BROADCAST'
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\shared\ws2def.h(633): error C2011: 'sockaddr_in': 'struct' type redefinition [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock.h(1011): note: see declaration of 'sockaddr_in'
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock2.h(136): error C2011: 'fd_set': 'struct' type redefinition [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock.h(1019): note: see declaration of 'fd_set'
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock2.h(156): warning C4005: 'FD_CLR': macro redefinition [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock.h(94): note: see previous definition of 'FD_CLR'
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock2.h(171): warning C4005: 'FD_SET': macro redefinition [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock.h(99): note: see previous definition of 'FD_SET'
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock2.h(180): error C2011: 'timeval': 'struct' type redefinition [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock.h(1035): note: see declaration of 'timeval'
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock2.h(236): error C2011: 'hostent': 'struct' type redefinition [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock.h(1023): note: see declaration of 'hostent'
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock2.h(249): error C2011: 'netent': 'struct' type redefinition [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock.h(177): note: see declaration of 'netent'
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock2.h(256): error C2011: 'servent': 'struct' type redefinition [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock.h(1027): note: see declaration of 'servent'
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock2.h(268): error C2011: 'protoent': 'struct' type redefinition [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock.h(1031): note: see declaration of 'protoent'
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock2.h(364): error C2011: 'WSAData': 'struct' type redefinition [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock.h(319): note: see declaration of 'WSAData'
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock2.h(462): error C2011: 'sockproto': 'struct' type redefinition [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock.h(491): note: see declaration of 'sockproto'
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock2.h(504): error C2011: 'linger': 'struct' type redefinition [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock.h(1015): note: see declaration of 'linger'
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock2.h(517): warning C4005: 'SOMAXCONN': macro redefinition [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock.h(541): note: see previous definition of 'SOMAXCONN'
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock2.h(552): warning C4005: 'FD_READ': macro redefinition [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock.h(559): note: see previous definition of 'FD_READ'
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock2.h(555): warning C4005: 'FD_WRITE': macro redefinition [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock.h(560): note: see previous definition of 'FD_WRITE'
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock2.h(558): warning C4005: 'FD_OOB': macro redefinition [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock.h(561): note: see previous definition of 'FD_OOB'
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock2.h(561): warning C4005: 'FD_ACCEPT': macro redefinition [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock.h(562): note: see previous definition of 'FD_ACCEPT'
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock2.h(564): warning C4005: 'FD_CONNECT': macro redefinition [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock.h(563): note: see previous definition of 'FD_CONNECT'
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock2.h(567): warning C4005: 'FD_CLOSE': macro redefinition [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock.h(564): note: see previous definition of 'FD_CLOSE'
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock2.h(1625): error C2375: 'accept': redefinition; different linkage [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock.h(739): note: see declaration of 'accept'
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock2.h(1647): error C2375: 'bind': redefinition; different linkage [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock.h(744): note: see declaration of 'bind'
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock2.h(1668): error C2375: 'closesocket': redefinition; different linkage [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock.h(749): note: see declaration of 'closesocket'
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock2.h(1685): error C2375: 'connect': redefinition; different linkage [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock.h(751): note: see declaration of 'connect'
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock2.h(1706): error C2375: 'ioctlsocket': redefinition; different linkage [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock.h(756): note: see declaration of 'ioctlsocket'
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock2.h(1729): error C2375: 'getpeername': redefinition; different linkage [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock.h(761): note: see declaration of 'getpeername'
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock2.h(1750): error C2375: 'getsockname': redefinition; different linkage [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock.h(766): note: see declaration of 'getsockname'
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock2.h(1771): error C2375: 'getsockopt': redefinition; different linkage [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock.h(771): note: see declaration of 'getsockopt'
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock2.h(1796): error C2375: 'htonl': redefinition; different linkage [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock.h(778): note: see declaration of 'htonl'
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock2.h(1813): error C2375: 'htons': redefinition; different linkage [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock.h(780): note: see declaration of 'htons'
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock2.h(1831): error C2375: 'inet_addr': redefinition; different linkage [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock.h(782): note: see declaration of 'inet_addr'
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock2.h(1849): error C2375: 'inet_ntoa': redefinition; different linkage [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock.h(784): note: see declaration of 'inet_ntoa'
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock2.h(1949): error C2375: 'listen': redefinition; different linkage [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock.h(786): note: see declaration of 'listen'
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock2.h(1968): error C2375: 'ntohl': redefinition; different linkage [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock.h(790): note: see declaration of 'ntohl'
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock2.h(1985): error C2375: 'ntohs': redefinition; different linkage [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock.h(792): note: see declaration of 'ntohs'
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock2.h(2002): error C2375: 'recv': redefinition; different linkage [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock.h(794): note: see declaration of 'recv'
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock2.h(2025): error C2375: 'recvfrom': redefinition; different linkage [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock.h(800): note: see declaration of 'recvfrom'
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock2.h(2052): error C2375: 'select': redefinition; different linkage [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock.h(808): note: see declaration of 'select'
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock2.h(2077): error C2375: 'send': redefinition; different linkage [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock.h(815): note: see declaration of 'send'
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock2.h(2100): error C2375: 'sendto': redefinition; different linkage [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock.h(821): note: see declaration of 'sendto'
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock2.h(2127): error C2375: 'setsockopt': redefinition; different linkage [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock.h(829): note: see declaration of 'setsockopt'
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock2.h(2152): error C2375: 'shutdown': redefinition; different linkage [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock.h(836): note: see declaration of 'shutdown'
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock2.h(2172): error C2375: 'socket': redefinition; different linkage [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock.h(840): note: see declaration of 'socket'
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock2.h(2197): error C2375: 'gethostbyaddr': redefinition; different linkage [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock.h(847): note: see declaration of 'gethostbyaddr'
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock2.h(2219): error C2375: 'gethostbyname': redefinition; different linkage [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock.h(852): note: see declaration of 'gethostbyname'
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock2.h(2236): error C2375: 'gethostname': redefinition; different linkage [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock.h(854): note: see declaration of 'gethostname'
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock2.h(2276): error C2375: 'getservbyport': redefinition; different linkage [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock.h(858): note: see declaration of 'getservbyport'
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock2.h(2295): error C2375: 'getservbyname': redefinition; different linkage [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock.h(862): note: see declaration of 'getservbyname'
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock2.h(2314): error C2375: 'getprotobynumber': redefinition; different linkage [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock.h(866): note: see declaration of 'getprotobynumber'
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock2.h(2331): error C2375: 'getprotobyname': redefinition; different linkage [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock.h(868): note: see declaration of 'getprotobyname'
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock2.h(2351): error C2375: 'WSAStartup': redefinition; different linkage [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock.h(872): note: see declaration of 'WSAStartup'
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock2.h(2371): error C2375: 'WSACleanup': redefinition; different linkage [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock.h(876): note: see declaration of 'WSACleanup'
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock2.h(2388): error C2375: 'WSASetLastError': redefinition; different linkage [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock.h(878): note: see declaration of 'WSASetLastError'
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock2.h(2405): error C2375: 'WSAGetLastError': redefinition; different linkage [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock.h(880): note: see declaration of 'WSAGetLastError'
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock2.h(2426): error C2375: 'WSAIsBlocking': redefinition; different linkage [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock.h(882): note: see declaration of 'WSAIsBlocking'
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock2.h(2444): error C2375: 'WSAUnhookBlockingHook': redefinition; different linkage [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock.h(884): note: see declaration of 'WSAUnhookBlockingHook'
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock2.h(2462): error C2375: 'WSASetBlockingHook': redefinition; different linkage [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock.h(886): note: see declaration of 'WSASetBlockingHook'
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock2.h(2480): error C2375: 'WSACancelBlockingCall': redefinition; different linkage [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock.h(888): note: see declaration of 'WSACancelBlockingCall'
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock2.h(2498): error C2375: 'WSAAsyncGetServByName': redefinition; different linkage [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock.h(890): note: see declaration of 'WSAAsyncGetServByName'
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock2.h(2526): error C2375: 'WSAAsyncGetServByPort': redefinition; different linkage [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock.h(898): note: see declaration of 'WSAAsyncGetServByPort'
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock2.h(2554): error C2375: 'WSAAsyncGetProtoByName': redefinition; different linkage [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock.h(906): note: see declaration of 'WSAAsyncGetProtoByName'
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock2.h(2580): error C2375: 'WSAAsyncGetProtoByNumber': redefinition; different linkage [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock.h(913): note: see declaration of 'WSAAsyncGetProtoByNumber'
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock2.h(2606): error C2375: 'WSAAsyncGetHostByName': redefinition; different linkage [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock.h(920): note: see declaration of 'WSAAsyncGetHostByName'
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock2.h(2632): error C2375: 'WSAAsyncGetHostByAddr': redefinition; different linkage [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock.h(927): note: see declaration of 'WSAAsyncGetHostByAddr'
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock2.h(2662): error C2375: 'WSACancelAsyncRequest': redefinition; different linkage [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock.h(936): note: see declaration of 'WSACancelAsyncRequest'
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock2.h(2680): error C2375: 'WSAAsyncSelect': redefinition; different linkage [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\um\winsock.h(938): note: see declaration of 'WSAAsyncSelect'
-D:\den\coding\skia-opengl-emscripten\src\chromium\base\files\file_util_win.cc(939): error C2065: 'ioctlsocket': undeclared identifier [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  native_library_win.cc
-D:\den\coding\skia-opengl-emscripten\src\chromium\base\metrics\histogram_macros_internal.h(31): error C2338: enumerator must define kMaxValue enumerator to use this macro! [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\metrics\histogram_macros_internal.h(29): note: while compiling class template member function 'Enum base::internal::EnumSizeTraits<Enum,void>::Count(void)'
-          with
-          [
-              Enum=base::`anonymous-namespace'::LoadLibraryResult
-          ]
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\native_library_win.cc(50): note: see reference to class template instantiation 'base::internal::EnumSizeTraits<base::`anonymous-namespace'::LoadLibraryResult,void>' being compiled
-  thread_group_native_win.cc
-  hi_res_timer_manager_win.cc
-  trace_event_etw_export_win.cc
-D:\den\coding\skia-opengl-emscripten\src\chromium\base\trace_event\trace_event_etw_export_win.cc(40): fatal error C1083: Cannot open include file: 'base\trace_event\etw_manifest\chrome_events_win.h': No such file or directory [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  Generating Code...
-  Compiling...
-  shared_memory_win.cc
-D:\den\coding\skia-opengl-emscripten\src\chromium\base\metrics\histogram_macros_internal.h(31): error C2338: enumerator must define kMaxValue enumerator to use this macro! [D:\den\coding\skia-opengl-emscripten\build\src\chromium\base.vcxproj]
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\metrics\histogram_macros_internal.h(29): note: while compiling class template member function 'Enum base::internal::EnumSizeTraits<Enum,void>::Count(void)'
-          with
-          [
-              Enum=int
-          ]
-  D:\den\coding\skia-opengl-emscripten\src\chromium\base\memory\shared_memory_win.cc(46): note: see reference to class template instantiation 'base::internal::EnumSizeTraits<int,void>' being compiled
-  Generating Code...
-
+In file included from ..\src\chromium\ui\gl\gl_image_stub.cc:7:
+C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\um\GL/gl.h(1157,1): error: unknown type name 'WINGDIAPI'
+WINGDIAPI void APIENTRY glAccum (GLenum op, GLfloat value);
+^
+C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\um\GL/gl.h(1157,24): error: expected ';' after top level declarator
+WINGDIAPI void APIENTRY glAccum (GLenum op, GLfloat value);
+                       ^
+C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\um\GL/gl.h(1158,1): error: unknown type name 'WINGDIAPI'
+WINGDIAPI void APIENTRY glAlphaFunc (GLenum func, GLclampf ref);
+^
+C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\um\GL/gl.h(1158,24): error: expected ';' after top level declarator
+WINGDIAPI void APIENTRY glAlphaFunc (GLenum func, GLclampf ref);
+                       ^
+C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\um\GL/gl.h(1159,1): error: unknown type name 'WINGDIAPI'
+WINGDIAPI GLboolean APIENTRY glAreTexturesResident (GLsizei n, const GLuint *textures, GLboolean *residences);
+^
+C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\um\GL/gl.h(1159,20): error: expected ';' after top level declarator
+WINGDIAPI GLboolean APIENTRY glAreTexturesResident (GLsizei n, const GLuint *textures, GLboolean *residences);
+                   ^
+C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\um\GL/gl.h(1160,1): error: unknown type name 'WINGDIAPI'
+WINGDIAPI void APIENTRY glArrayElement (GLint i);
+^
+C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\um\GL/gl.h(1160,24): error: expected ';' after top level declarator
+WINGDIAPI void APIENTRY glArrayElement (GLint i);
+                       ^
+C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\um\GL/gl.h(1161,1): error: unknown type name 'WINGDIAPI'
+WINGDIAPI void APIENTRY glBegin (GLenum mode);
+^
+C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\um\GL/gl.h(1161,24): error: expected ';' after top level declarator
+WINGDIAPI void APIENTRY glBegin (GLenum mode);
+                       ^
+C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\um\GL/gl.h(1162,1): error: unknown type name 'WINGDIAPI'
+WINGDIAPI void APIENTRY glBindTexture (GLenum target, GLuint texture);
+^
+C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\um\GL/gl.h(1162,24): error: expected ';' after top level declarator
+WINGDIAPI void APIENTRY glBindTexture (GLenum target, GLuint texture);
+                       ^
+C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\um\GL/gl.h(1163,1): error: unknown type name 'WINGDIAPI'
+WINGDIAPI void APIENTRY glBitmap (GLsizei width, GLsizei height, GLfloat xorig, GLfloat yorig, GLfloat xmove, GLfloat ymove, const GLubyte *bitmap);
+^
+C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\um\GL/gl.h(1163,24): error: expected ';' after top level declarator
+WINGDIAPI void APIENTRY glBitmap (GLsizei width, GLsizei height, GLfloat xorig, GLfloat yorig, GLfloat xmove, GLfloat ymove, const GLubyte *bitmap);
+                       ^
+C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\um\GL/gl.h(1164,1): error: unknown type name 'WINGDIAPI'
+WINGDIAPI void APIENTRY glBlendFunc (GLenum sfactor, GLenum dfactor);
+^
+C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\um\GL/gl.h(1164,24): error: expected ';' after top level declarator
+WINGDIAPI void APIENTRY glBlendFunc (GLenum sfactor, GLenum dfactor);
+                       ^
+C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\um\GL/gl.h(1165,1): error: unknown type name 'WINGDIAPI'
+WINGDIAPI void APIENTRY glCallList (GLuint list);
+^
+C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\um\GL/gl.h(1165,24): error: expected ';' after top level declarator
+WINGDIAPI void APIENTRY glCallList (GLuint list);
+                       ^
+C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\um\GL/gl.h(1166,1): error: unknown type name 'WINGDIAPI'
+WINGDIAPI void APIENTRY glCallLists (GLsizei n, GLenum type, const GLvoid *lists);
+^
+fatal error: too many errors emitted, stopping now [-ferror-limit=]
 
 ## Before build
 
@@ -895,7 +82,7 @@ Follow https://perso.uclouvain.be/allan.barrea/opencv/building_tools.html#mingw
 
 Download from https://sourceforge.net/projects/mingw-w64/files/latest/download
 
-Add to PATH `\MinGW\include`, `\MinGW\include\sys` and `\MinGW\lib\gcc\mingw32\4.6.2\include\ssp`
+# Add to PATH `\MinGW\include`, `\MinGW\include\sys` and `\MinGW\lib\gcc\mingw32\4.6.2\include\ssp`
 
 NOTE: place MinGW install dir at path start, such as `C:\Program Files\mingw-w64\x86_64-8.1.0-win32-seh-rt_v6-rev0\mingw64\x86_64-w64-mingw32`
 
@@ -1050,6 +237,12 @@ cmake --build . --config Release --parallel 6
 cmake --build . --config Release --target install
 ```
 
+## opengl
+
+```cmd
+vcpkg install opengl
+```
+
 ## Build ICU
 
 Option 1:
@@ -1135,6 +328,8 @@ export LDFLAGS="-fuse-ld=lld-link"
 
 Run from cmder, use `"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" x64`
 
+Note that you must use cmder for unix-like commands (`ls`, `pwd`, etc.)
+
 # "Visual Studio 2017 Tools Command Prompt for targeting x86 with x64-hosted tools" or "Visual Studio Command Prompt" as Admin:
 ```
 chcp 65001
@@ -1145,8 +340,8 @@ chcp 65001
 #
 refreshenv # from https:\\chocolatey.org\docs\helpers-update-session-environment
 #
-# Must run from "Visual Studio 2017 Tools Command Prompt for targeting x86 with x64-hosted tools" 
-# OR use vcvarsall.bat
+# use vcvarsall.bat
+# OR Must run from "Visual Studio 2017 Tools Command Prompt for targeting x86 with x64-hosted tools" 
 "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" x64
 #
 # OR
@@ -1160,7 +355,7 @@ set PATH=C:\Python27;C:\Python27\Scripts;%PATH%
 #
 set PATH=C:\Program Files\LLVM;C:\Program Files\LLVM\bin;D:\den\coding\vcpkg\packages\libuuid_x86-windows;D:\den\coding\vcpkg\packages\fontconfig_x86-windows;D:\den\coding\vcpkg\packages\icu_x86-windows;D:\den\coding\vcpkg\packages\expat_x86-windows;C:\Program Files (x86)\harfbuzz;C:\Program Files (x86);C:\Program Files (x86);C:\Program Files (x86)\libpng;C:\Program Files (x86)\SDL2;C:\Program Files (x86)\freetype2;C:\Program Files (x86)\freetype\include\freetype2;C:\Program Files (x86)\freetype\lib;C:\Program Files (x86)\freetype\lib\cmake;%PATH%
 #
-set PATH=D:\den\coding\vcpkg\packages\libuuid_x86-windows;D:\den\coding\vcpkg\packages\fontconfig_x86-windows;D:\den\coding\vcpkg\packages\icu_x86-windows;D:\den\coding\vcpkg\packages\expat_x86-windows;C:\Program Files (x86)\harfbuzz;C:\Program Files (x86);C:\Program Files (x86);C:\Program Files (x86)\libpng;C:\Program Files (x86)\SDL2;C:\Program Files (x86)\freetype2;C:\Program Files (x86)\freetype\include\freetype2;C:\Program Files (x86)\freetype\lib;C:\Program Files (x86)\freetype\lib\cmake;%PATH%
+set PATH=D:\den\coding\vcpkg\packages\opengl_x86-windows;D:\den\coding\vcpkg\packages\opengl_x86-windows\include;D:\den\coding\vcpkg\packages\libuuid_x86-windows;D:\den\coding\vcpkg\packages\fontconfig_x86-windows;D:\den\coding\vcpkg\packages\icu_x86-windows;D:\den\coding\vcpkg\packages\expat_x86-windows;C:\Program Files (x86)\harfbuzz;C:\Program Files (x86);C:\Program Files (x86);C:\Program Files (x86)\libpng;C:\Program Files (x86)\SDL2;C:\Program Files (x86)\freetype2;C:\Program Files (x86)\freetype\include\freetype2;C:\Program Files (x86)\freetype\lib;C:\Program Files (x86)\freetype\lib\cmake;%PATH%
 #
 # cmake -E env LDFLAGS="-fuse-ld=lld-link" PATH="%PATH%" cmake -H.. -B. -G Ninja -DENABLE_COBALT=FALSE -DCMAKE_BUILD_TYPE="Debug" -DRELEASE_BUILD=OFF -DCMAKE_EXPORT_COMPILE_COMMANDS=ON "-DCMAKE_PREFIX_PATH=D:/den/coding/vcpkg/packages/libuuid_x86-windows/;D:/den/coding/vcpkg/packages/fontconfig_x86-windows/;D:/den/coding/vcpkg/packages/icu_x86-windows/;D:/den/coding/vcpkg/packages/expat_x86-windows/;C:/Program Files (x86)/harfbuzz/;C:/Program Files (x86)/;C:/Program Files (x86)/;C:/Program Files (x86)/libpng/;C:/Program Files (x86)/SDL2/;C:/Program Files (x86)/freetype2/;C:/Program Files (x86)/freetype/include/freetype2/;C:/Program Files (x86)/freetype/lib/;C:/Program Files (x86)/freetype/lib/cmake/"  -DCMAKE_C_COMPILER:PATH="C:/Program Files/LLVM/bin/clang.exe" -DCMAKE_CXX_COMPILER:PATH="C:/Program Files/LLVM/bin/clang.exe" -DCMAKE_C_COMPILER_ID="Clang" -DCMAKE_CXX_COMPILER_ID="Clang" -DCMAKE_SYSTEM_NAME="Generic" -DWIN32=1
 #
@@ -1176,7 +371,7 @@ set PATH=C:\Program Files\LLVM;C:\Program Files\LLVM\bin;%PATH%
 # dir /s ".../MinGW/" "unistd.h"
 # where unistd.h
 # NOTE: mingw x64!
-set PATH=C:\Program Files\mingw-w64\x86_64-8.1.0-win32-seh-rt_v6-rev0\mingw64\x86_64-w64-mingw32\include;%PATH%
+# set PATH=C:\Program Files\mingw-w64\x86_64-8.1.0-win32-seh-rt_v6-rev0\mingw64\x86_64-w64-mingw32\include;%PATH%
 #
 set CC=C:/Program Files/LLVM/bin/clang-cl.exe
 set CXX=C:/Program Files/LLVM/bin/clang-cl.exe
@@ -1196,7 +391,11 @@ cd build
 # -A x64
 #
 # -DCMAKE_C_FLAGS:STRING="-m64" -DCMAKE_CXX_FLAGS:STRING="-m64"
-cmake -G Ninja -DCMAKE_SYSTEM_NAME="Windows" "-DCMAKE_LINKER=C:/Program Files/LLVM/bin/lld-link.exe" "-DCMAKE_C_COMPILER=C:/Program Files/LLVM/bin/clang-cl.exe" "-DCMAKE_CXX_COMPILER=C:/Program Files/LLVM/bin/clang-cl.exe" -DENABLE_COBALT=FALSE -DCMAKE_BUILD_TYPE="Debug" -DRELEASE_BUILD=OFF -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ..
+cmake -G Ninja -DCMAKE_SYSTEM_NAME="Windows" -DIS_CLANG_CL=TRUE "-DCMAKE_LINKER=C:/Program Files/LLVM/bin/lld-link.exe" "-DCMAKE_C_COMPILER=C:/Program Files/LLVM/bin/clang-cl.exe" "-DCMAKE_CXX_COMPILER=C:/Program Files/LLVM/bin/clang-cl.exe" -DENABLE_COBALT=FALSE -DCMAKE_BUILD_TYPE="Debug" -DRELEASE_BUILD=OFF -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ..
+#
+# cmake -G "Visual Studio 15 2017 Win64" ..
+# cmake --build . --parallel 6
+# cmake -G "Visual Studio 15 2017 Win64" -DCMAKE_SYSTEM_NAME="Windows" -DENABLE_COBALT=FALSE -DCMAKE_BUILD_TYPE="Debug" -DRELEASE_BUILD=OFF -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ..
 #
 # cmake "-DCMAKE_LINKER=C:/Program Files/LLVM/bin/lld-link.exe" "-DCMAKE_C_COMPILER=C:/Program Files/LLVM/bin/clang-cl.exe" "-DCMAKE_CXX_COMPILER=C:/Program Files/LLVM/bin/clang-cl.exe" -DENABLE_COBALT=FALSE -DCMAKE_BUILD_TYPE="Debug" -DRELEASE_BUILD=OFF -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ..
 #

@@ -12,6 +12,14 @@
 // no-include-guard-because-multiply-included
 // NOLINT(build/header_guard)
 
+#if defined(__EMSCRIPTEN__)
+#include <GLES2/gl2.h>
+#include <GLES2/gl2ext.h>
+#else
+#include "third_party/khronos/GLES2/gl2.h"
+#include "third_party/khronos/GLES2/gl2ext.h"
+#endif
+
 void glActiveShaderProgramFn(GLuint pipeline, GLuint program) override;
 void glActiveTextureFn(GLenum texture) override;
 void glApplyFramebufferAttachmentCMAAINTELFn(void) override;

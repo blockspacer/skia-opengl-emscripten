@@ -5,6 +5,15 @@
 #ifndef UI_GL_GL_EXPORT_H_
 #define UI_GL_GL_EXPORT_H_
 
+#if defined(WIN32)
+// https://community.khronos.org/t/wingdiapi-not-defined/17645
+#include <windows.h>
+#define GL_GLEXT_PROTOTYPES 1
+#define GL_GLES_PROTOTYPES 1
+#include "third_party/khronos/GLES2/gl2.h"
+#include "third_party/khronos/GLES2/gl2ext.h"
+#endif // WIN32
+
 #if defined(COMPONENT_BUILD)
 #if defined(WIN32)
 

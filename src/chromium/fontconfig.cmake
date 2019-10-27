@@ -1,5 +1,14 @@
 ﻿# see https://github.com/chromium/chromium/blob/5603ac3ddfc5c8f9357aeef99e6086e64cbe0daa/third_party/fontconfig/BUILD.gn
 
+if(TARGET_EMSCRIPTEN)
+  # skip
+elseif(TARGET_LINUX OR TARGET_WINDOWS)
+  # skip
+else()
+  # NOTE: harfbuzz from skia on WINDOWS
+  message(FATAL_ERROR "platform not supported")
+endif()
+
 ### --- fontconfig ---###
 
 set(fontconfig_DIR
@@ -74,7 +83,7 @@ set_property(TARGET fontconfig PROPERTY CXX_STANDARD 17)
 
 if(MSVC) 
 	# TODO
-	list(APPEND EXTRA_INC_DIRS "C:/Program Files/mingw-w64/x86_64-8.1.0-win32-seh-rt_v6-rev0/mingw64/x86_64-w64-mingw32/include")
+	#list(APPEND EXTRA_INC_DIRS "C:/Program Files/mingw-w64/x86_64-8.1.0-win32-seh-rt_v6-rev0/mingw64/x86_64-w64-mingw32/include")
 endif()
 
 target_include_directories(fontconfig PRIVATE
@@ -113,11 +122,11 @@ target_compile_definitions(fontconfig PRIVATE
   "FC_ATTRIBUTE_VISIBILITY_EXPORT=__attribute((visibility(\"hidden\")))"
 )
 
-#if(MSVC) 
-  # TODO
-#else()
+if(NOT MSVC OR IS_CLANG_CL)
   target_compile_options(fontconfig PRIVATE
     -Wno-non-literal-null-conversion
     -Wno-pointer-bool-conversion
   )
-#endif()
+else()
+  # TODO
+endif()

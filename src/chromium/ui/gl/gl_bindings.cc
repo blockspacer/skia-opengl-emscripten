@@ -4,6 +4,14 @@
 
 #include "build/build_config.h"
 
+#if defined(__EMSCRIPTEN__)
+#include <GLES2/gl2.h>
+#include <GLES2/gl2ext.h>
+#else
+#include "third_party/khronos/GLES2/gl2.h"
+#include "third_party/khronos/GLES2/gl2ext.h"
+#endif
+
 #if defined(USE_X11)
 #include "ui/gfx/x/x11.h"
 #endif  // USE_X11

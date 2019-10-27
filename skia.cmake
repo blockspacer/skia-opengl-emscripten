@@ -316,6 +316,9 @@ else()
 endif(USE_LIBJPEG_TURBO)
 
 # NOTE: in skia HARFBUZZ requires icui18n (unicode/uscript.h)
+if(HARFBUZZ_FROM_SKIA AND NOT FORCE_USE_SKIA_HARFBUZZ)
+  message(FATAL_ERROR "HARFBUZZ_FROM_SKIA requires FORCE_USE_SKIA_HARFBUZZ")
+endif(HARFBUZZ_FROM_SKIA AND NOT FORCE_USE_SKIA_HARFBUZZ)
 if(FORCE_USE_SKIA_HARFBUZZ)
   if(ENABLE_SKSHAPER) # harfbuzz used only by skshaper
     set(SK_IS_harfbuzz "true")
@@ -360,6 +363,10 @@ else(FORCE_USE_SKIA_HARFBUZZ)
   set(SK_IS_harfbuzz "false")
   set(SK_IS_icu "false")
 endif(FORCE_USE_SKIA_HARFBUZZ)
+
+if(HARFBUZZ_FROM_SKIA AND NOT SK_system_harfbuzz STREQUAL "skia_use_system_harfbuzz=false")
+  message(FATAL_ERROR "HARFBUZZ_FROM_SKIA requires skia_use_system_harfbuzz=false, but got: ${SK_system_harfbuzz}")
+endif()
 
 #
 #     "\"-I${ICU_FULL_DIR}source/common\"" # to unicode/uscript.h
@@ -522,6 +529,13 @@ if(ENABLE_SKSHAPER)
   ${SKIA_SRC_DIR}/modules/skshaper/include
   )
 endif(ENABLE_SKSHAPER)
+
+if(HARFBUZZ_FROM_SKIA)
+  list(APPEND SKIA_CMAKE_ONLY_HEADERS
+    ${SKIA_SRC_DIR}/third_party/externals/harfbuzz
+    ${SKIA_SRC_DIR}/third_party/externals/harfbuzz/src
+  )
+endif(HARFBUZZ_FROM_SKIA)
 
 list(APPEND SKIA_CMAKE_ONLY_HEADERS
   #src/chromium/third_party/
@@ -858,7 +872,11 @@ if (NOT EXT_SKIA_SHARED)
     endif(SK_USE_SYSTEM_LIBPNG)
 
     if(USE_CUSTOM_ICU)
-      set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${CUSTOM_ICU_LIB};${HARFBUZZ_LIBRARIES}")
+      if(HARFBUZZ_FROM_SKIA)
+        set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${CUSTOM_ICU_LIB}")
+      else(HARFBUZZ_FROM_SKIA)
+        set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${CUSTOM_ICU_LIB};${HARFBUZZ_LIBRARIES}")
+      endif(HARFBUZZ_FROM_SKIA)
     endif(USE_CUSTOM_ICU)
 
     # TODO: Linking globals named 'png_sRGB_table': symbol multiply defined!
@@ -877,8 +895,13 @@ if (NOT EXT_SKIA_SHARED)
     message(FATAL_ERROR "unknown platform")
   endif()
 
+if(HARFBUZZ_FROM_SKIA)
+  set(SKIA_CMAKE_ONLY_HEADERS "${SKIA_CMAKE_ONLY_HEADERS};${FOUND_OPENGL_INCLUDE_DIR};${OPENGL_EGL_INCLUDE_DIRS}")
+  set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${FOUND_OPENGL_LIBRARIES}")
+else(HARFBUZZ_FROM_SKIA)
   set(SKIA_CMAKE_ONLY_HEADERS "${SKIA_CMAKE_ONLY_HEADERS};${HARFBUZZ_INCLUDE_DIRS};${FOUND_OPENGL_INCLUDE_DIR};${OPENGL_EGL_INCLUDE_DIRS}")
   set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${HARFBUZZ_LIBRARIES};${FOUND_OPENGL_LIBRARIES}")
+endif(HARFBUZZ_FROM_SKIA)
 
   #message(FATAL_ERROR OPENGLES2_LIBRARIES=${OPENGLES2_LIBRARIES})
   #
@@ -1022,20 +1045,38 @@ if(TARGET_WINDOWS)
   add_compile_definitions(${SKIA_DEFINES})
 endif(TARGET_WINDOWS)
 
-add_dependencies(SKIA SKIA_build ${CUSTOM_ICU_LIB} ${WUFFS_LIB_NAME} ${CUSTOM_ICU_LIB} ${HARFBUZZ_LIBRARIES} ${iccjpeg_LIB} ${jpeg_LIBRARY})
-# https://stackoverflow.com/a/53945809
-target_link_libraries(SKIA INTERFACE
-  ${CUSTOM_ICU_LIB}
-  ${WUFFS_LIB_NAME}
-  ${FREETYPE_LIBRARIES}
-  ${HARFBUZZ_LIBRARIES}
-  ${libpng_LIB}
-  ${libZLIB_LIB}
-  ${libDL_LIB}
-  ${libjpeg_TURBO_LIB}
-  ${jpeg_LIBRARY}
-  ${iccjpeg_LIB}
-)
+if(HARFBUZZ_FROM_SKIA)
+  add_dependencies(SKIA SKIA_build ${CUSTOM_ICU_LIB} ${WUFFS_LIB_NAME} ${CUSTOM_ICU_LIB} ${iccjpeg_LIB} ${jpeg_LIBRARY})
+  # https://stackoverflow.com/a/53945809
+  target_link_libraries(SKIA INTERFACE
+    ${CUSTOM_ICU_LIB}
+    ${WUFFS_LIB_NAME}
+    ${FREETYPE_LIBRARIES}
+    ${libpng_LIB}
+    ${libZLIB_LIB}
+    ${libDL_LIB}
+    ${libjpeg_TURBO_LIB}
+    ${jpeg_LIBRARY}
+    ${iccjpeg_LIB}
+  )
+else(HARFBUZZ_FROM_SKIA)
+  add_dependencies(SKIA SKIA_build ${CUSTOM_ICU_LIB} ${WUFFS_LIB_NAME} ${CUSTOM_ICU_LIB} ${HARFBUZZ_LIBRARIES} ${iccjpeg_LIB} ${jpeg_LIBRARY})
+  # https://stackoverflow.com/a/53945809
+  target_link_libraries(SKIA INTERFACE
+    ${CUSTOM_ICU_LIB}
+    ${WUFFS_LIB_NAME}
+    ${FREETYPE_LIBRARIES}
+    ${HARFBUZZ_LIBRARIES}
+    ${libpng_LIB}
+    ${libZLIB_LIB}
+    ${libDL_LIB}
+    ${libjpeg_TURBO_LIB}
+    ${jpeg_LIBRARY}
+    ${iccjpeg_LIB}
+  )
+endif(HARFBUZZ_FROM_SKIA)
+
+
 #
 #set_target_properties(pathkit PROPERTIES
 #  IMPORTED_LOCATION "${PATHKIT_LIBRARY}"

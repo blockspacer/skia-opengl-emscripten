@@ -417,10 +417,10 @@ target_compile_definitions(CC PRIVATE
   CC_IMPLEMENTATION=1
 )
 
-#if(MSVC) 
-  # TODO
-#else()
+if(NOT MSVC OR IS_CLANG_CL)
   target_compile_options(CC PRIVATE
     -Wno-format
   )
-#endif()
+else()
+  # TODO
+endif()

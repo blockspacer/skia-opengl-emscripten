@@ -275,13 +275,13 @@ target_compile_definitions(libwebp PRIVATE
   #-frename-registers # use_dsp_neon
 )
 
-#if(MSVC) 
-  # TODO
-#else()
+if(NOT MSVC OR IS_CLANG_CL)
   target_compile_options(libwebp PRIVATE
     -Wno-incompatible-pointer-types
   )
-#endif()
+else()
+  # TODO
+endif()
 
 target_compile_options(libwebp PUBLIC
   ${EXTRA_OPTIONS}
