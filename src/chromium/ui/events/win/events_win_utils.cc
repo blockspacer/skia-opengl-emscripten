@@ -276,6 +276,7 @@ gfx::Point EventSystemLocationFromMSG(const MSG& native_event) {
   return gfx::Point(global_point);
 }
 
+//#if !defined(UI_VIEWS_PORT)
 KeyboardCode KeyboardCodeFromMSG(const MSG& native_event) {
   return KeyboardCodeForWindowsKeyCode(static_cast<WORD>(native_event.wParam));
 }
@@ -284,6 +285,7 @@ DomCode CodeFromMSG(const MSG& native_event) {
   const uint16_t scan_code = GetScanCodeFromLParam(native_event.lParam);
   return CodeForWindowsScanCode(scan_code);
 }
+//#endif // UI_VIEWS_PORT
 
 bool IsCharFromMSG(const MSG& native_event) {
   return native_event.message == WM_CHAR || native_event.message == WM_SYSCHAR;
@@ -421,6 +423,7 @@ LPARAM GetLParamFromScanCode(uint16_t scan_code) {
   return l_param;
 }
 
+//#if !defined(UI_VIEWS_PORT)
 KeyEvent KeyEventFromMSG(const MSG& msg) {
   DCHECK(IsKeyEvent(msg));
   EventType type = EventTypeFromMSG(msg);
@@ -438,11 +441,16 @@ KeyEvent KeyEventFromMSG(const MSG& msg) {
     return KeyEvent(type, key_code, code, flags, key, time_stamp);
   }
 }
+//#endif // UI_VIEWS_PORT
 
 MSG MSGFromKeyEvent(KeyEvent* event, HWND hwnd) {
   if (event->HasNativeEvent())
     return event->native_event();
+#if defined(UI_VIEWS_PORT)
+  uint16_t scan_code;
+#else
   uint16_t scan_code = KeycodeConverter::DomCodeToNativeKeycode(event->code());
+#endif // UI_VIEWS_PORT
   LPARAM l_param = GetLParamFromScanCode(scan_code);
   WPARAM w_param = event->GetConflatedWindowsKeyCode();
   UINT message;

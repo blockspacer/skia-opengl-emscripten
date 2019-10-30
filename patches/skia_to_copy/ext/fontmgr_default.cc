@@ -26,9 +26,17 @@ void OverrideDefaultSkFontMgr(sk_sp<SkFontMgr> fontmgr) {
 
 }  // namespace skia
 
+/*
+TODO:
+lld-link: error: duplicate symbol: 
+private: static class sk_sp<class SkFontMgr> __cdecl SkFontMgr::Factory(void) 
+in skia.lib(fontmgr_win.SkFontMgr_win_dw_factory.obj) and in SKIA_EXT.lib(fontmgr_default.cc.obj)
+*/
+#if !defined(UI_VIEWS_PORT)
 SK_API sk_sp<SkFontMgr> SkFontMgr::Factory() {
   SkDEBUGCODE(g_factory_called = true;);
 
   return g_fontmgr_override ? sk_ref_sp(g_fontmgr_override)
                             : skia::CreateDefaultSkFontMgr();
 }
+#endif // UI_VIEWS_PORT

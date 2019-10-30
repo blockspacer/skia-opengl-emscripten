@@ -74,6 +74,9 @@ bool NeedOverrideDefaultUIFont(base::string16* override_font_family,
   // the default Windows fonts are too small to be legible.  For those
   // locales, IDS_UI_FONT_FAMILY is set to an actual font family to
   // use while for other locales, it's set to 'default'.
+#if defined(UI_VIEWS_PORT)
+    return false;
+#else
   base::string16 ui_font_family = GetStringUTF16(IDS_UI_FONT_FAMILY);
   int scaler100;
   if (!base::StringToInt(l10n_util::GetStringUTF16(IDS_UI_FONT_SIZE_SCALER),
@@ -94,6 +97,7 @@ bool NeedOverrideDefaultUIFont(base::string16* override_font_family,
   if (font_size_scaler)
     *font_size_scaler = scaler100 / 100.0;
   return true;
+#endif // UI_VIEWS_PORT
 }
 
 void OverrideLocaleWithUILanguageList() {

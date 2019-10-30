@@ -230,6 +230,8 @@ else()
 message(FATAL_ERROR "platform not supported")
 endif()
 
+# TODO: GL_GLEXT_PROTOTYPES
+
 if(NOT USE_OPENGL_LIB)
   # make OpenGL optional
   set(FOUND_OPENGL_LIBRARIES "")
@@ -298,6 +300,14 @@ else(DEBUG_LEVEL)
 endif(DEBUG_LEVEL)
 
 set(COMMON_THIRDPARTY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/)
+
+if(NOT RELEASE_BUILD)
+  if(TARGET_WINDOWS)
+    set(COMMON_FLAGS "${COMMON_FLAGS} /D_DEBUG")
+  endif(TARGET_WINDOWS)
+  #
+  set(COMMON_FLAGS "${COMMON_FLAGS} -DD_DEBUG")
+endif(NOT RELEASE_BUILD)
 
 if(NOT TARGET_WINDOWS) # TODO
   # always return on non-void functions to prevent UB
@@ -885,6 +895,11 @@ message(STATUS "DSIZEOF_VOID_P=${SIZEOF_VOID_P_BITS}")
 set(COMMON_FLAGS "${COMMON_FLAGS} -DUI_VIEWS_PORT=1")
 
 if(MSVC) # TODO
+  set(COMMON_FLAGS "${COMMON_FLAGS} -DGLEW_NO_GLU=1")
+  set(COMMON_FLAGS "${COMMON_FLAGS} -DGLEW_STATIC=1")
+endif()
+
+if(MSVC) # TODO
     # see https://docs.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warnings-by-compiler-version?view=vs-2019
     
     #set(COMMON_FLAGS "${COMMON_FLAGS} -DWCHAR_T_IS_UTF16=1") # TODO: narrowing 
@@ -1043,7 +1058,7 @@ if(RELEASE_BUILD)
     set(COMMON_FLAGS "${COMMON_FLAGS} /MD")
     set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} /MD")
     set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} /MD")
-    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MD")
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MDd")
     set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MD")
 
   else()
@@ -1062,18 +1077,25 @@ else()
     set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} /MDd")
     set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} /MDd")
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MDd")
-    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MDd")
+    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MD")
     
+    # TODO 
+    # see https://stackoverflow.com/questions/7668200/error-lnk2038-mismatch-detected-for-iterator-debug-level-value-0-doesnt
+    # see https://docs.microsoft.com/en-us/previous-versions/visualstudio/visual-studio-2013/hh697468(v=vs.120)?redirectedfrom=MSDN
+    set(COMMON_FLAGS "${COMMON_FLAGS} -D_HAS_ITERATOR_DEBUGGING=0")
+    set(COMMON_FLAGS "${COMMON_FLAGS} -D_ITERATOR_DEBUG_LEVEL=0")
+
+    set(COMMON_FLAGS "${COMMON_FLAGS} -D_DEBUG=1")
   else()
     # https://stackoverflow.com/a/4184877/10904212
     # see DCHECK in base::polymorphic_downcast, dynamic_cast
     set(COMMON_FLAGS "${COMMON_FLAGS} -frtti")
+    set(COMMON_FLAGS "${COMMON_FLAGS} -D_DEBUG=1")
   endif()
 endif(RELEASE_BUILD)
 
 
 if(MSVC) # TODO
-
   # 
   set(COMMON_FLAGS "${COMMON_FLAGS} -ferror-limit=500") # for clang-cl
   #set(COMMON_FLAGS "${COMMON_FLAGS} /errorlimit:0")
@@ -1107,10 +1129,10 @@ if(MSVC) # TODO
   set(COMMON_FLAGS "${COMMON_FLAGS} -D_CRT_RAND_S")
 
   # see https://github.com/chromium/chromium/blob/8e82c6ab1bc2223fa25f1a127b65071d2d58ae36/build/config/win/BUILD.gn#L60
-  set(COMMON_FLAGS "${COMMON_FLAGS} -D_CRT_SECURE_NO_DEPRECATE")
+  #set(COMMON_FLAGS "${COMMON_FLAGS} -D_CRT_SECURE_NO_DEPRECATE")
 
   # see https://github.com/chromium/chromium/blob/8e82c6ab1bc2223fa25f1a127b65071d2d58ae36/build/config/win/BUILD.gn#L60
-  set(COMMON_FLAGS "${COMMON_FLAGS} -D_SCL_SECURE_NO_DEPRECATE")
+  #set(COMMON_FLAGS "${COMMON_FLAGS} -D_SCL_SECURE_NO_DEPRECATE")
 
   # see https://github.com/chromium/chromium/blob/8e82c6ab1bc2223fa25f1a127b65071d2d58ae36/build/config/win/BUILD.gn#L60
   #set(COMMON_FLAGS "${COMMON_FLAGS} -D_ATL_NO_OPENGL")
@@ -2329,6 +2351,9 @@ else(EMSCRIPTEN)
         )
       endif(MSVC)
     endif()
+    message(STATUS "OPENGL_gl_LIBRARY = ${OPENGL_gl_LIBRARY} ")
+    message(STATUS "OPENGL_LIBRARIES = ${OPENGL_LIBRARIES} ")
+    message(STATUS "OPENGL_INCLUDE_DIR = ${OPENGL_INCLUDE_DIR} ")
   endif(USE_OPENGL_LIB)
 
   if(USE_OPENGLES2_LIB)
@@ -3065,6 +3090,7 @@ else()
     #${SDL2_TTF_INCLUDE_DIR}
     ${HARFBUZZ_INCLUDE_DIRS}
     ${OPENGLES2_INCLUDE_DIRS}
+    "D:/den/coding/glew/glew-2.1.0/include"
   )
   target_include_directories(${PROJECT_NAME} PRIVATE
     ${GEN_COMBINED_DIR}
@@ -3101,17 +3127,24 @@ else()
     #
     #${SDL2_TTF_INCLUDE_DIR}
     ${HARFBUZZ_LIBRARIES}
-    ${FOUND_OPENGL_LIBRARIES}
-    ${OPENGL_gl_LIBRARY}
+
+    #${FOUND_OPENGL_LIBRARIES}
+    #${OPENGL_gl_LIBRARY}
+    # see https://stackoverflow.com/questions/1236670/how-to-make-opengl-apps-in-64-bit-windows
+    "C:/Program Files (x86)/Windows Kits/10/Lib/10.0.14393.0/um/x64/opengl32.lib"
+    # see https://stackoverflow.com/questions/16390078/build-error-when-trying-to-run-an-opengl-example-in-vc
+    "D:/den/coding/glew/glew-2.1.0/lib/Release/x64/glew32s.lib"
+
     #OpenGL::OpenGL
     
     ## TODO ## ${SDL2_LIBRARY} # NOTE: no SDL2::Main on Windows
     ## TODO ## ${SDL2_LIBRARIES} # NOTE: no SDL2::Main on Windows
     ## TODO ## SDL2::Main
 
-    "C:/Program Files (x86)/SDL2/lib/SDL2-static.lib"
-    "C:/Program Files (x86)/SDL2/lib/SDL2main.lib"
-    #"C:/Program Files (x86)/SDL2/lib/SDL2.lib"
+    # see https://stackoverflow.com/questions/39110217/linker-errors-from-sdl2-in-my-project
+    "C:/Program Files (x86)/SDL2/lib/SDL2main.lib" # SDL2main goes before SDL2. Linking order matters.
+    #"C:/Program Files (x86)/SDL2/lib/SDL2-static.lib"
+    "C:/Program Files (x86)/SDL2/lib/SDL2.lib"
 
     #SDL2::SDL2main
     #SDL2::SDL2
@@ -3405,5 +3438,5 @@ else()
 endif()
 
 #set_property(TARGET ${PROJECT_NAME} APPEND_STRING PROPERTY LINK_FLAGS " -L\"C:/Program Files (x86)/SDL2/lib\" -lSDL2 -lSDL2Main")
-set_property(TARGET ${PROJECT_NAME} APPEND_STRING PROPERTY LINK_FLAGS " /LIBPATH:\"C:/Program Files (x86)/SDL2/lib\" SDL2.lib SDL2Main.lib")
+#set_property(TARGET ${PROJECT_NAME} APPEND_STRING PROPERTY LINK_FLAGS " /LIBPATH:\"C:/Program Files (x86)/SDL2/lib\" SDL2Main.lib SDL2.lib")
 

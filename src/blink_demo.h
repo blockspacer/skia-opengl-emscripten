@@ -2,6 +2,8 @@
 
 #ifdef ENABLE_BLINK_PLATFORM
 
+#include "build/build_config.h"
+
 #include <third_party/blink/renderer/platform/runtime_enabled_features.h>
 
 #include "third_party/blink/renderer/platform/graphics/graphics_context.h"
@@ -45,6 +47,22 @@
 //#include "third_party/blink/renderer/platform/scheduler/public/thread_scheduler.h"
 #include "third_party/blink/public/platform/platform.h"
 #include "third_party/blink/renderer/platform/shared_buffer.h"
+
+#include "base/threading/simple_thread.h"
+#include "base/threading/thread_local.h"
+#include "base/threading/thread_restrictions.h"
+#include "base/threading/thread_task_runner_handle.h"
+#include "third_party/blink/renderer/platform/scheduler/public/thread.h"
+#include "base/single_thread_task_runner.h"
+#include "base/synchronization/waitable_event.h"
+#include "third_party/blink/public/platform/platform.h"
+#include "base/bind.h"
+#include "base/bind_helpers.h"
+#include "base/logging.h"
+#include "base/memory/singleton.h"
+#include "base/message_loop/message_loop.h"
+#include "base/message_loop/message_loop_current.h"
+//#include "base/task_scheduler/task_scheduler.h"
 
 #if defined(ENABLE_IMAGES)
 #include "third_party/blink/renderer/platform/graphics/accelerated_static_bitmap_image.h"

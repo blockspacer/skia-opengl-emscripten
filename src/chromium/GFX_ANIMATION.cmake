@@ -10,7 +10,13 @@ endif()
 
 ### --- GFX_ANIMATION ---###
 
-set(GFX_ANIMATION_SOURCES
+if(TARGET_WINDOWS)
+  list(APPEND GFX_ANIMATION_SOURCES
+    ${GFX_ANIMATION_DIR}animation_win.cc
+  )
+endif(TARGET_WINDOWS)
+
+list(APPEND GFX_ANIMATION_SOURCES
   ${GFX_ANIMATION_DIR}animation.cc
   #${GFX_ANIMATION_DIR}animation.h",
   # TODO # ${GFX_ANIMATION_DIR}animation_android.cc
@@ -23,7 +29,6 @@ set(GFX_ANIMATION_SOURCES
   #${GFX_ANIMATION_DIR}animation_mac.mm",
   ${GFX_ANIMATION_DIR}animation_runner.cc
   #${GFX_ANIMATION_DIR}animation_runner.h",
-  # TODO # ${GFX_ANIMATION_DIR}animation_win.cc
   ${GFX_ANIMATION_DIR}linear_animation.cc
   #${GFX_ANIMATION_DIR}linear_animation.h",
   ${GFX_ANIMATION_DIR}multi_animation.cc

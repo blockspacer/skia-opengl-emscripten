@@ -112,7 +112,6 @@ list(APPEND UI_BASE_SOURCES
   # TODO # ${UI_BASE_DIR}cursor/cursor_android.cc
   #${UI_BASE_DIR}cursor/cursor_loader.h
   #${UI_BASE_DIR}cursor/cursor_type.h
-  # TODO # ${UI_BASE_DIR}cursor/cursor_win.cc
   #${UI_BASE_DIR}default_style.h
   #${UI_BASE_DIR}device_form_factor.h
   # TODO # ${UI_BASE_DIR}device_form_factor_android.cc
@@ -121,12 +120,9 @@ list(APPEND UI_BASE_SOURCES
   #${UI_BASE_DIR}dragdrop/download_file_interface.h
   #${UI_BASE_DIR}dragdrop/drag_drop_types.h
   # TODO # ${UI_BASE_DIR}dragdrop/drag_drop_types_mac.mm",
-  # TODO # ${UI_BASE_DIR}dragdrop/drag_drop_types_win.cc
-  # TODO # ${UI_BASE_DIR}dragdrop/drag_source_win.cc
   #${UI_BASE_DIR}dragdrop/drag_source_win.h
   # TODO # # TODO # # TODO # ${UI_BASE_DIR}dragdrop/drop_target_event.cc
   #${UI_BASE_DIR}dragdrop/drop_target_event.h
-  # TODO # ${UI_BASE_DIR}dragdrop/drop_target_win.cc
   #${UI_BASE_DIR}dragdrop/drop_target_win.h
   # TODO # ${UI_BASE_DIR}dragdrop/os_exchange_data.cc
   #${UI_BASE_DIR}dragdrop/os_exchange_data.h
@@ -136,7 +132,6 @@ list(APPEND UI_BASE_SOURCES
   #${UI_BASE_DIR}dragdrop/os_exchange_data_provider_factory.h
   #${UI_BASE_DIR}dragdrop/os_exchange_data_provider_mac.h
   # TODO # ${UI_BASE_DIR}dragdrop/os_exchange_data_provider_mac.mm",
-  #${UI_BASE_DIR}dragdrop/os_exchange_data_provider_win.cc
   # TODO # ${UI_BASE_DIR}dragdrop/os_exchange_data_provider_win.h
   ${UI_BASE_DIR}hit_test.cc
   #${UI_BASE_DIR}hit_test.h
@@ -151,7 +146,6 @@ list(APPEND UI_BASE_SOURCES
   #${UI_BASE_DIR}l10n/l10n_util_collator.h
   #${UI_BASE_DIR}l10n/l10n_util_mac.h
   # TODO # ${UI_BASE_DIR}l10n/l10n_util_mac.mm",
-  # TODO # ${UI_BASE_DIR}l10n/l10n_util_win.cc
   #${UI_BASE_DIR}l10n/l10n_util_win.h
   # requires 'ui/strings/grit/ui_strings.h'
   ${UI_BASE_DIR}l10n/time_format.cc
@@ -225,37 +219,6 @@ list(APPEND UI_BASE_SOURCES
   #${UI_BASE_DIR}webui/jstemplate_builder.h
   # TODO # ${UI_BASE_DIR}webui/web_ui_util.cc
   # TODO # #${UI_BASE_DIR}webui/web_ui_util.h
-  #
-  # TODO # # TODO # ${UI_BASE_DIR}win/accessibility_ids_win.h
-  # TODO # ${UI_BASE_DIR}win/accessibility_misc_utils.cc
-  # TODO # #${UI_BASE_DIR}win/accessibility_misc_utils.h
-  # TODO # #${UI_BASE_DIR}win/atl_module.h
-  # TODO # ${UI_BASE_DIR}win/foreground_helper.cc
-  # TODO # #${UI_BASE_DIR}win/foreground_helper.h
-  # TODO # ${UI_BASE_DIR}win/hidden_window.cc
-  # TODO # #${UI_BASE_DIR}win/hidden_window.h
-  # TODO # # TODO # ${UI_BASE_DIR}win/hwnd_metrics.cc
-  # TODO # #${UI_BASE_DIR}win/hwnd_metrics.h
-  # TODO # # TODO # ${UI_BASE_DIR}win/hwnd_subclass.cc
-  # TODO # #${UI_BASE_DIR}win/hwnd_subclass.h
-  # TODO # ${UI_BASE_DIR}win/internal_constants.cc
-  # TODO # #${UI_BASE_DIR}win/internal_constants.h
-  # TODO # ${UI_BASE_DIR}win/lock_state.cc
-  # TODO # #${UI_BASE_DIR}win/lock_state.h
-  # TODO # # TODO # ${UI_BASE_DIR}win/message_box_win.cc
-  # TODO # #${UI_BASE_DIR}win/message_box_win.h
-  # TODO # ${UI_BASE_DIR}win/mouse_wheel_util.cc
-  # TODO # #${UI_BASE_DIR}win/mouse_wheel_util.h
-  # TODO # ${UI_BASE_DIR}win/scoped_ole_initializer.cc
-  # TODO # #${UI_BASE_DIR}win/scoped_ole_initializer.h
-  # TODO # ${UI_BASE_DIR}win/session_change_observer.cc
-  # TODO # #${UI_BASE_DIR}win/session_change_observer.h
-  # TODO # ${UI_BASE_DIR}win/shell.cc
-  # TODO # #${UI_BASE_DIR}win/shell.h
-  # TODO # ${UI_BASE_DIR}win/touch_input.cc
-  # TODO # #${UI_BASE_DIR}win/touch_input.h
-  # TODO # ${UI_BASE_DIR}win/window_event_target.cc
-  #${UI_BASE_DIR}win/window_event_target.h
   ${UI_BASE_DIR}window_open_disposition.cc
   #${UI_BASE_DIR}window_open_disposition.h
   #
@@ -353,6 +316,92 @@ list(APPEND UI_BASE_SOURCES
   ${UI_BASE_DIR}resource/scale_factor.cc
   ${UI_BASE_DIR}resource/scale_factor.h
 )
+
+if(TARGET_WINDOWS)
+  list(APPEND UI_BASE_SOURCES
+    #
+    # TODO # ${UI_BASE_DIR}win/accessibility_ids_win.h
+    ${UI_BASE_DIR}win/accessibility_misc_utils.cc
+    #${UI_BASE_DIR}win/accessibility_misc_utils.h
+    #${UI_BASE_DIR}win/atl_module.h
+    ${UI_BASE_DIR}win/foreground_helper.cc
+    #${UI_BASE_DIR}win/foreground_helper.h
+    ${UI_BASE_DIR}win/hidden_window.cc
+    #${UI_BASE_DIR}win/hidden_window.h
+    # TODO # 
+    ${UI_BASE_DIR}win/hwnd_metrics.cc
+    #${UI_BASE_DIR}win/hwnd_metrics.h
+    # TODO # 
+    ${UI_BASE_DIR}win/hwnd_subclass.cc
+    #${UI_BASE_DIR}win/hwnd_subclass.h
+    ${UI_BASE_DIR}win/internal_constants.cc
+    #${UI_BASE_DIR}win/internal_constants.h
+    ${UI_BASE_DIR}win/lock_state.cc
+    #${UI_BASE_DIR}win/lock_state.h
+    # TODO # 
+    ${UI_BASE_DIR}win/message_box_win.cc
+    #${UI_BASE_DIR}win/message_box_win.h
+    ${UI_BASE_DIR}win/mouse_wheel_util.cc
+    #${UI_BASE_DIR}win/mouse_wheel_util.h
+    ${UI_BASE_DIR}win/scoped_ole_initializer.cc
+    #${UI_BASE_DIR}win/scoped_ole_initializer.h
+    ${UI_BASE_DIR}win/session_change_observer.cc
+    #${UI_BASE_DIR}win/session_change_observer.h
+    ${UI_BASE_DIR}win/shell.cc
+    #${UI_BASE_DIR}win/shell.h
+    ${UI_BASE_DIR}win/touch_input.cc
+    #${UI_BASE_DIR}win/touch_input.h
+    ${UI_BASE_DIR}win/window_event_target.cc
+    #${UI_BASE_DIR}win/window_event_target.h
+    # TODO # 
+    ${UI_BASE_DIR}l10n/l10n_util_win.cc
+    #
+    # TODO # ${UI_BASE_DIR}dragdrop/os_exchange_data_provider_win.cc
+    # TODO # ${UI_BASE_DIR}dragdrop/drop_target_win.cc
+    # TODO # ${UI_BASE_DIR}dragdrop/drag_drop_types_win.cc
+    # TODO # 
+    ${UI_BASE_DIR}cursor/cursor_win.cc
+    # TODO # ${UI_BASE_DIR}dragdrop/drag_source_win.cc
+    ${UI_BASE_DIR}pointer/pointer_device_win.cc
+    # TODO # ${UI_BASE_DIR}accelerators/global_media_keys_listener_win.cc
+    # TODO # ${UI_BASE_DIR}accelerators/global_media_keys_listener_win.h
+    # TODO # ${UI_BASE_DIR}accelerators/media_keys_listener_win.cc
+    # TODO # ${UI_BASE_DIR}emoji/emoji_panel_helper_win.cc
+  )
+endif(TARGET_WINDOWS)
+
+if(TARGET_WINDOWS)
+  list(APPEND UI_BASE_EXTRA_DEFINES
+    IS_UI_BASE_IME_WIN_IMPL=1
+  )
+  #
+  list(APPEND UI_BASE_EXTRA_LIBS
+    imm32.lib
+  )
+  #
+  list(APPEND UI_BASE_IME_SOURCES
+    ${UI_BASE_DIR}ime/win/imm32_manager.cc
+    ${UI_BASE_DIR}ime/win/imm32_manager.h
+    ${UI_BASE_DIR}ime/win/input_method_win_base.cc
+    ${UI_BASE_DIR}ime/win/input_method_win_base.h
+    ${UI_BASE_DIR}ime/win/input_method_win_imm32.cc
+    ${UI_BASE_DIR}ime/win/input_method_win_imm32.h
+    ${UI_BASE_DIR}ime/win/input_method_win_tsf.cc
+    ${UI_BASE_DIR}ime/win/input_method_win_tsf.h
+    ${UI_BASE_DIR}ime/win/on_screen_keyboard_display_manager_input_pane.cc
+    ${UI_BASE_DIR}ime/win/on_screen_keyboard_display_manager_input_pane.h
+    ${UI_BASE_DIR}ime/win/on_screen_keyboard_display_manager_tab_tip.cc
+    ${UI_BASE_DIR}ime/win/on_screen_keyboard_display_manager_tab_tip.h
+    ${UI_BASE_DIR}ime/win/tsf_bridge.cc
+    ${UI_BASE_DIR}ime/win/tsf_bridge.h
+    ${UI_BASE_DIR}ime/win/tsf_event_router.cc
+    ${UI_BASE_DIR}ime/win/tsf_event_router.h
+    ${UI_BASE_DIR}ime/win/tsf_input_scope.cc
+    ${UI_BASE_DIR}ime/win/tsf_input_scope.h
+    ${UI_BASE_DIR}ime/win/tsf_text_store.cc
+    ${UI_BASE_DIR}ime/win/tsf_text_store.h
+  )
+endif(TARGET_WINDOWS)
 
 list(APPEND UI_BASE_IME_SOURCES
   # jumbo_component("ime")
@@ -490,6 +539,7 @@ target_link_libraries(UI_BASE PUBLIC
 target_link_libraries(UI_BASE PRIVATE
   # khronos
   ${khronos_LIB} # TODO
+  ${UI_BASE_EXTRA_LIBS}
 )
 
 set_property(TARGET UI_BASE PROPERTY CXX_STANDARD 17)
@@ -501,6 +551,7 @@ target_include_directories(UI_BASE PRIVATE
 )
 
 target_compile_definitions(UI_BASE PRIVATE
+  ${UI_BASE_EXTRA_DEFINES}
   UI_BASE_IMPLEMENTATION=1
   IS_UI_BASE_FEATURES_IMPL=1
   UI_DATA_PACK_IMPLEMENTATION=1

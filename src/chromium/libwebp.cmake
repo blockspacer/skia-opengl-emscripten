@@ -94,17 +94,25 @@ list(APPEND libwebp_SOURCES
   ## TODO ## ${libwebp_DIR}src/dsp/yuv_mips32.c
   ## TODO ## ${libwebp_DIR}src/dsp/yuv_mips_dsp_r2.c
   #
-  # static_library("libwebp_dsp_sse41")
-  #
-  # ${libwebp_DIR}src/dsp/alpha_processing_sse41.c
-  # ${libwebp_DIR}src/dsp/common_sse41.h",
-  # ${libwebp_DIR}src/dsp/dec_sse41.c
-  # ${libwebp_DIR}src/dsp/enc_sse41.c
-  # ${libwebp_DIR}src/dsp/lossless_enc_sse41.c
-  # ${libwebp_DIR}src/dsp/upsampling_sse41.c
-  # ${libwebp_DIR}src/dsp/yuv_sse41.c
-  #
 )
+
+if(TARGET_WINDOWS)
+  list(APPEND libwebp_SOURCES
+    # static_library("libwebp_dsp_sse41")
+    #
+    ${libwebp_DIR}src/dsp/alpha_processing_sse41.c
+    ${libwebp_DIR}src/dsp/common_sse41.h
+    ${libwebp_DIR}src/dsp/dec_sse41.c
+    ${libwebp_DIR}src/dsp/enc_sse41.c
+    ${libwebp_DIR}src/dsp/lossless_enc_sse41.c
+    ${libwebp_DIR}src/dsp/upsampling_sse41.c
+    ${libwebp_DIR}src/dsp/yuv_sse41.c
+  )
+elseif(TARGET_LINUX OR TARGET_EMSCRIPTEN)
+  # skip
+else()
+  message(FATAL_ERROR "platform not supported")
+endif()
 
 if(TARGET_LINUX OR TARGET_WINDOWS)
   list(APPEND libwebp_SOURCES
@@ -238,7 +246,7 @@ target_include_directories(libwebp PUBLIC
 #target_compile_options(libwebp PRIVATE
 #  -Wno-implicit-function-declaration)
 
-if(TARGET_LINUX OR TARGET_WINDOWS)
+if(TARGET_LINUX)
   list(APPEND EXTRA_DEFINES
     WEBP_HAVE_SSE2=1
   )
@@ -246,6 +254,20 @@ if(TARGET_LINUX OR TARGET_WINDOWS)
     -msse
     -msse2
     -msse3
+  )
+elseif(TARGET_WINDOWS)
+  # TODO # OR TARGET_WINDOWS)
+  # TODO # WEBP_USE_SSE41
+  list(APPEND EXTRA_DEFINES
+    WEBP_HAVE_SSE41=1 # see WEBP_USE_SSE41=1
+  )
+  list(APPEND EXTRA_OPTIONS # !is_win || is_clang
+    -msse
+    -msse2
+    -msse3
+    -msse4.1
+    -msse4.2
+    -msha
   )
 else()
   message(FATAL_ERROR "platform not supported")

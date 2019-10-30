@@ -145,7 +145,6 @@ list(APPEND WTF_SOURCES
   ${BLINK_WTF_DIR}threading.cc
   # #${BLINK_WTF_DIR}threading.h
   # #${BLINK_WTF_DIR}threading_primitives.h
-  # ${BLINK_WTF_DIR}threading_win.cc
   ${BLINK_WTF_DIR}time.cc
   #${BLINK_WTF_DIR}time.h
   #${BLINK_WTF_DIR}tree_node.h
@@ -185,7 +184,7 @@ if (EMSCRIPTEN OR TARGET_LINUX)
   )
 elseif (TARGET_WINDOWS)
   list(APPEND WTF_SOURCES
-    # skip
+    ${BLINK_WTF_DIR}threading_win.cc
   )
 else()
   message(FATAL_ERROR "TODO: port WTF")

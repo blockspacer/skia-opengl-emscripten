@@ -55,12 +55,14 @@ gfx::Point EventLocationFromMSG(const MSG& native_event);
 // Gets the location in native system coordinate space.
 gfx::Point EventSystemLocationFromMSG(const MSG& native_event);
 
+//#if !defined(UI_VIEWS_PORT)
 // Returns the KeyboardCode from a native event.
 KeyboardCode KeyboardCodeFromMSG(const MSG& native_event);
 
 // Returns the DOM KeyboardEvent code (physical location in the
 // keyboard) from a native event.
 DomCode CodeFromMSG(const MSG& native_event);
+//#endif // UI_VIEWS_PORT
 
 // Returns true if the keyboard event is a character event rather than
 // a keystroke event.

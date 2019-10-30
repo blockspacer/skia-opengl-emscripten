@@ -45,8 +45,6 @@ list(APPEND SKIA_EXT_COMMON_SOURCES
   # TODO # ${SKIA_EXT_DIR}ext/skia_utils_ios.mm",
   # TODO # ${SKIA_EXT_DIR}ext/skia_utils_mac.h",
   #${SKIA_EXT_DIR}ext/skia_utils_mac.mm",
-  # TODO # ${SKIA_EXT_DIR}ext/skia_utils_win.cc
-  #${SKIA_EXT_DIR}ext/skia_utils_win.h",
   #
   # !is_mac && !is_ios
   #
@@ -61,10 +59,30 @@ if(ENABLE_HARFBUZZ)
     list(APPEND SKIA_EXT_COMMON_SOURCES
       ${SKIA_EXT_DIR}ext/fontmgr_default_linux.cc
     )
+    #
+    list(APPEND SKIA_EXT_EXTRA_DEFINES
+      SK_GAMMA_EXPONENT=1.2
+      SK_GAMMA_CONTRAST=0.2
+    )
   elseif(TARGET_WINDOWS)
-    #list(APPEND SKIA_EXT_COMMON_SOURCES
-    #  ${SKIA_EXT_DIR}ext/fontmgr_default_win.cc
-    #)
+    list(APPEND SKIA_EXT_COMMON_SOURCES
+      ${SKIA_EXT_DIR}ext/skia_utils_win.cc
+      ${SKIA_EXT_DIR}ext/skia_utils_win.h
+      # SKIA_EXT.lib(fontmgr_default.cc.obj) : error LNK2005: "private: static class sk_sp<class SkFontMgr> __cdecl SkFontMgr::Factory(void)" (?Factory@SkFontMgr@@CA?AV?$sk_sp@VSkFontMgr@@@@XZ) already defined in skia.lib(fontmgr_win.SkFontMgr_win_dw_factory.obj)
+      # TODO # ${SKIA_EXT_DIR}ext/fontmgr_default_win.cc
+      ${SKIA_EXT_DIR}ext/fontmgr_default_linux.cc # NOTE: from linux on win!!!
+      # Select the right BitmapPlatformDevice.
+      ${SKIA_EXT_DIR}ext/raster_handle_allocator_win.cc
+    )
+    #
+    list(APPEND SKIA_EXT_EXTRA_DEFINES
+      # https://github.com/blockspacer/skia-opengl-emscripten/blob/cdb838723fe53c53abf008e9f2e8fc93089ae3f6/patches/skia_to_copy/BUILD.gn_nocopy#L155
+      SK_DEFAULT_FONT_CACHE_COUNT_LIMIT=256
+      SK_GAMMA_SRGB=1
+      SK_GAMMA_CONTRAST=0.5
+      #
+      # TODO # SK_CPU_SSE_LEVEL=31
+    )
   else()
     message(FATAL_ERROR "platform not supported")
   endif()
@@ -99,7 +117,7 @@ add_library(SKIA_EXT STATIC
 
 target_link_libraries(SKIA_EXT PUBLIC
   ${SKIA_LIBS}
-  #SKIA
+  SKIA
   #${skottie_LIB}
   #${sksg_LIB}
   #skshaper
@@ -132,6 +150,7 @@ target_include_directories(SKIA_EXT PUBLIC
 )
 
 target_compile_definitions(SKIA_EXT PRIVATE
+  ${SKIA_EXT_EXTRA_DEFINES}
   SKIA_IMPLEMENTATION=1
   #NET_DISABLE_BROTLI=1
 )

@@ -27,6 +27,7 @@ gfx::Point EventSystemLocationFromNative(const MSG& native_event) {
   return EventSystemLocationFromMSG(native_event);
 }
 
+//#if !defined(UI_VIEWS_PORT)
 KeyboardCode KeyboardCodeFromNative(const MSG& native_event) {
   return KeyboardCodeFromMSG(native_event);
 }
@@ -34,6 +35,7 @@ KeyboardCode KeyboardCodeFromNative(const MSG& native_event) {
 DomCode CodeFromNative(const MSG& native_event) {
   return CodeFromMSG(native_event);
 }
+//#endif // UI_VIEWS_PORT
 
 bool IsCharFromNative(const MSG& native_event) {
   return IsCharFromMSG(native_event);

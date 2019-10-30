@@ -103,6 +103,12 @@ class CachedFontRenderParams {
   DISALLOW_COPY_AND_ASSIGN(CachedFontRenderParams);
 };
 
+#if defined(UI_VIEWS_PORT)
+// A device scale factor used to determine if subpixel positioning
+// should be used.
+float device_scale_factor_ = 1.0f;
+#endif // UI_VIEWS_PORT
+
 }  // namespace
 
 FontRenderParams GetFontRenderParams(const FontRenderParamsQuery& query,
@@ -112,5 +118,15 @@ FontRenderParams GetFontRenderParams(const FontRenderParamsQuery& query,
   // Customized font rendering settings are not supported, only defaults.
   return CachedFontRenderParams::GetInstance()->GetParams();
 }
+
+#if defined(UI_VIEWS_PORT)
+float GetFontRenderParamsDeviceScaleFactor() {
+  return device_scale_factor_;
+}
+
+void SetFontRenderParamsDeviceScaleFactor(float device_scale_factor) {
+  device_scale_factor_ = device_scale_factor;
+}
+#endif // UI_VIEWS_PORT
 
 }  // namespace gfx

@@ -87,8 +87,6 @@ list(APPEND UI_EVENTS_SOURCES
   ## TODO ## #${UI_EVENTS_DIR}keycodes/keyboard_code_conversion_android.h",
   ## TODO ## #${UI_EVENTS_DIR}keycodes/keyboard_code_conversion_mac.h",
   ## TODO ## ${UI_EVENTS_DIR}keycodes/keyboard_code_conversion_mac.mm",
-  ## TODO ## ${UI_EVENTS_DIR}keycodes/keyboard_code_conversion_win.cc
-  ## TODO ## #${UI_EVENTS_DIR}keycodes/keyboard_code_conversion_win.h",
   ## TODO ## #${UI_EVENTS_DIR}keycodes/keyboard_codes.h",
   ${UI_EVENTS_DIR}mobile_scroller.cc
   #${UI_EVENTS_DIR}mobile_scroller.h",
@@ -113,19 +111,10 @@ list(APPEND UI_EVENTS_SOURCES
   ${UI_EVENTS_DIR}gestures/gesture_types.cc
   ${UI_EVENTS_DIR}keyboard_hook_base.cc
   #${UI_EVENTS_DIR}keyboard_hook_base.h",
-  ## TODO ## ${UI_EVENTS_DIR}keycodes/platform_key_map_win.cc
-  ## TODO ## #${UI_EVENTS_DIR}keycodes/platform_key_map_win.h",
   ## TODO ## ${UI_EVENTS_DIR}mac/keyboard_hook_mac.mm",
   ${UI_EVENTS_DIR}null_event_targeter.cc
   ${UI_EVENTS_DIR}scoped_target_handler.cc
   ${UI_EVENTS_DIR}system_input_injector.cc
-  ## TODO ## ${UI_EVENTS_DIR}win/events_win.cc
-  ## TODO ## ${UI_EVENTS_DIR}win/events_win_utils.cc
-  ## TODO ## ${UI_EVENTS_DIR}win/keyboard_hook_win_base.cc
-  ## TODO ## #${UI_EVENTS_DIR}win/keyboard_hook_win_base.h",
-  ## TODO ## ${UI_EVENTS_DIR}win/media_keyboard_hook_win.cc
-  ## TODO ## ${UI_EVENTS_DIR}win/modifier_keyboard_hook_win.cc
-  ## TODO ## ${UI_EVENTS_DIR}win/system_event_state_lookup.cc
   #
   #if (use_x11) {
   #
@@ -228,6 +217,22 @@ if(TARGET_WINDOWS)
   list(APPEND UI_EVENTS_SOURCES 
     ${UI_EVENTS_DIR}win/events_win.cc
     ${UI_EVENTS_DIR}win/events_win_utils.cc
+    #
+    ${UI_EVENTS_DIR}win/keyboard_hook_win_base.cc
+    #${UI_EVENTS_DIR}win/keyboard_hook_win_base.h",
+    ${UI_EVENTS_DIR}win/media_keyboard_hook_win.cc
+    ${UI_EVENTS_DIR}win/modifier_keyboard_hook_win.cc
+    ${UI_EVENTS_DIR}win/system_event_state_lookup.cc
+    #  sources -= [ "win/events_win.cc" ]
+    ## TODO ## 
+    ${UI_EVENTS_DIR}keycodes/platform_key_map_win.cc
+    ## TODO ## #
+    ${UI_EVENTS_DIR}keycodes/platform_key_map_win.h
+    ## TODO ## $
+    ${UI_EVENTS_DIR}keycodes/keyboard_code_conversion_win.cc
+    ## TODO ## #
+    ${UI_EVENTS_DIR}keycodes/keyboard_code_conversion_win.h
+    ${UI_EVENTS_DIR}keycodes/dom/dom_keyboard_layout_map_win.cc
   )
 endif()
 

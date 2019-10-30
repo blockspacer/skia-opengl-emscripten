@@ -120,6 +120,8 @@ wchar_t g_debug_icu_pf_filename[_MAX_PATH];
 const char kIcuDataFileName[] = "./resources/icu/icudtl.dat";
 #elif defined(OS_LINUX)
 const char kIcuDataFileName[] = "./resources/icu/icudtl.dat";
+#elif defined(OS_WIN)
+const char kIcuDataFileName[] = "./resources/icu/icudtl.dat";
 #else
 const char kIcuDataFileName[] = "icudtl.dat";
 #endif

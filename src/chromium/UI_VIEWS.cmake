@@ -99,7 +99,6 @@ list(APPEND UI_VIEWS_SOURCES
   #${UI_VIEWS_DIR}controls/menu/menu_cocoa_watcher_mac.mm",
   ${UI_VIEWS_DIR}controls/menu/menu_config.cc
   #${UI_VIEWS_DIR}controls/menu/menu_config_mac.mm",
-  #${UI_VIEWS_DIR}controls/menu/menu_config_win.cc
   ${UI_VIEWS_DIR}controls/menu/menu_controller.cc
   ${UI_VIEWS_DIR}controls/menu/menu_delegate.cc
   ${UI_VIEWS_DIR}controls/menu/menu_host.cc
@@ -113,7 +112,6 @@ list(APPEND UI_VIEWS_SOURCES
   #${UI_VIEWS_DIR}controls/menu/menu_runner_impl_cocoa.mm",
   ${UI_VIEWS_DIR}controls/menu/menu_scroll_view_container.cc
   ${UI_VIEWS_DIR}controls/menu/menu_separator.cc
-  #${UI_VIEWS_DIR}controls/menu/native_menu_win.cc
   ${UI_VIEWS_DIR}controls/menu/submenu_view.cc
   ${UI_VIEWS_DIR}controls/message_box_view.cc
   ${UI_VIEWS_DIR}controls/native/native_view_host.cc
@@ -477,6 +475,18 @@ list(APPEND UI_VIEWS_STUB_SOURCES
   ${UI_VIEWS_DIR}controls/menu/stub/menu_pre_target_handler_stub.cc
   ${UI_VIEWS_DIR}controls/menu/stub/menu_pre_target_handler_stub.h
 )
+
+if(TARGET_WINDOWS)
+  #list(APPEND UI_VIEWS_SOURCES
+    # TODO # ${UI_VIEWS_DIR}controls/menu/native_menu_win.cc
+    # TODO # ${UI_VIEWS_DIR}controls/menu/menu_config_win.cc
+    # TODO # ${UI_VIEWS_DIR}widget/desktop_aura/desktop_drag_drop_client_win.cc
+    # TODO # ${UI_VIEWS_DIR}widget/desktop_aura/desktop_drag_drop_client_win.h
+    # TODO # ${UI_VIEWS_DIR}widget/desktop_aura/desktop_screen_win.cc
+    # TODO # ${UI_VIEWS_DIR}widget/desktop_aura/desktop_screen_win.h
+    # TODO # ${UI_VIEWS_DIR}widget/desktop_aura/desktop_window_tree_host_win.cc
+  #)
+endif(TARGET_WINDOWS)
 
 if(TARGET_LINUX OR TARGET_EMSCRIPTEN OR TARGET_WINDOWS)
   list(APPEND UI_VIEWS_AURA_STUB_SOURCES

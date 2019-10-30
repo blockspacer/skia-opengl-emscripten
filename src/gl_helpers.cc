@@ -1,7 +1,33 @@
 ﻿#include "gl_helpers.h"
 
-#include <string>
 #if defined(ENABLE_OPENGL)
+
+#if defined(OS_WIN)
+#define GLEW_STATIC 1
+#include <GL/glew.h>
+#elif defined(WEBGL2_SUPPORT)
+#include <GLES3/gl3.h>
+// TODO
+//#define GL_RGBA8 0x8058
+//#include <EGL/egl.h>
+//#include <OpenGL/gl.h>
+//#include <SDL/SDL_ttf.h>
+//#include <SDL2/SDL_image.h>
+#include <GL/gl.h>
+#include <GL/glext.h>
+#else
+#include <GLES2/gl2.h>
+// TODO
+//#define GL_RGBA8 0x8058
+//#include <EGL/egl.h>
+//#include <OpenGL/gl.h>
+//#include <SDL/SDL_ttf.h>
+//#include <SDL2/SDL_image.h>
+#include <GL/gl.h>
+#include <GL/glext.h>
+#endif
+
+#include <string>
 
 void CheckOpenGLError(const char* stmt, const char* fname, int line)
 {
@@ -12,7 +38,7 @@ void CheckOpenGLError(const char* stmt, const char* fname, int line)
     }
 }
 
-GLuint LoadShader(GLenum type, const char* shaderSrc) {
+/*GLuint*/unsigned int LoadShader(/*GLenum*/unsigned int type, const char* shaderSrc) {
   GLuint shader;
   GLint compiled;
 
@@ -41,7 +67,7 @@ GLuint LoadShader(GLenum type, const char* shaderSrc) {
   return shader;
 }
 
-void drawGLTexture(const int texWidth, const int texHeight, const void* texData, const GLuint texID) {
+void drawGLTexture(const int texWidth, const int texHeight, const void* texData, const /*GLuint*/unsigned int texID) {
     GL_CHECK( glBindTexture(GL_TEXTURE_2D, texID) );
     GL_CHECK( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE) );
     GL_CHECK( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE) );

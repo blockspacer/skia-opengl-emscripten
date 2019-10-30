@@ -44,7 +44,7 @@
 #include "base/trace_event/trace_event.h"
 #include "build/build_config.h"
 
-#if defined(OS_WIN)
+#if defined(OS_WIN) && !defined(BASE_PORT)
 #include "base/trace_event/trace_event_etw_export_win.h"
 #endif
 
@@ -490,7 +490,7 @@ void TraceLog::UpdateCategoryState(TraceCategory* category) {
     state_flags |= TraceCategory::ENABLED_FOR_RECORDING;
   }
 
-#if defined(OS_WIN)
+#if defined(OS_WIN) && !defined(BASE_PORT)
   if (base::trace_event::TraceEventETWExport::IsCategoryGroupEnabled(
           category->name())) {
     state_flags |= TraceCategory::ENABLED_FOR_ETW_EXPORT;
@@ -1223,7 +1223,7 @@ TraceEventHandle TraceLog::AddTraceEventWithThreadIdAndTimestamp(
     }
   }
 
-#if defined(OS_WIN)
+#if defined(OS_WIN) && !defined(BASE_PORT)
   // This is done sooner rather than later, to avoid creating the event and
   // acquiring the lock, which is not needed for ETW as it's already threadsafe.
   if (*category_group_enabled & TraceCategory::ENABLED_FOR_ETW_EXPORT)
@@ -1416,7 +1416,7 @@ void TraceLog::UpdateTraceEventDurationExplicit(
     return;
   AutoThreadLocalBoolean thread_is_in_trace_event(&thread_is_in_trace_event_);
 
-#if defined(OS_WIN)
+#if defined(OS_WIN) && !defined(BASE_PORT)
   // Generate an ETW event that marks the end of a complete event.
   if (category_group_enabled_local & TraceCategory::ENABLED_FOR_ETW_EXPORT)
     TraceEventETWExport::AddCompleteEndEvent(name);
@@ -1676,7 +1676,7 @@ TraceBuffer* TraceLog::CreateTraceBuffer() {
                                : kTraceEventVectorBufferChunks);
 }
 
-#if defined(OS_WIN)
+#if defined(OS_WIN) && !defined(BASE_PORT)
 void TraceLog::UpdateETWCategoryGroupEnabledFlags() {
   // Go through each category and set/clear the ETW bit depending on whether the
   // category is enabled.

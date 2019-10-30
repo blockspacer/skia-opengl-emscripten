@@ -40,17 +40,58 @@ if(ENABLE_HARFBUZZ)# AND TARGET_LINUX)
     list(APPEND UI_GFX_SOURCES
       ${UI_GFX_DIR}font_render_params_win.cc # requires fontconfig
       ${UI_GFX_DIR}font_fallback_win.cc # requires fontconfig
+      ${UI_GFX_DIR}path_win.cc
+      ${UI_GFX_DIR}path_win.h
+      #${UI_GFX_DIR}platform_font_win.cc
+      #${UI_GFX_DIR}platform_font_win.h
+      #
+      #if (is_linux || is_android || is_fuchsia)
+      ${UI_GFX_DIR}platform_font_skia.cc
+      #${UI_GFX_DIR}platform_font_skia.h
+      ${UI_GFX_DIR}skia_font_delegate.cc
+      #
+      ${UI_GFX_DIR}system_fonts_win.cc
+      ${UI_GFX_DIR}system_fonts_win.h
+      ${UI_GFX_DIR}font_fallback_win.cc
+      ${UI_GFX_DIR}font_fallback_win.h
+      ${UI_GFX_DIR}win/direct_write.cc
+      ${UI_GFX_DIR}win/direct_write.h
+      ${UI_GFX_DIR}win/hwnd_util.cc
+      ${UI_GFX_DIR}win/hwnd_util.h
+      ${UI_GFX_DIR}win/msg_util.h
+      ${UI_GFX_DIR}win/physical_size.cc
+      ${UI_GFX_DIR}win/physical_size.h
+      ${UI_GFX_DIR}win/rendering_window_manager.cc
+      ${UI_GFX_DIR}win/rendering_window_manager.h
+      ${UI_GFX_DIR}win/scoped_set_map_mode.h
+      ${UI_GFX_DIR}win/singleton_hwnd.cc
+      ${UI_GFX_DIR}win/singleton_hwnd.h
+      ${UI_GFX_DIR}win/singleton_hwnd_hot_key_observer.cc
+      ${UI_GFX_DIR}win/singleton_hwnd_hot_key_observer.h
+      ${UI_GFX_DIR}win/singleton_hwnd_observer.cc
+      ${UI_GFX_DIR}win/singleton_hwnd_observer.h
+      ${UI_GFX_DIR}win/text_analysis_source.cc
+      ${UI_GFX_DIR}win/text_analysis_source.h
+      ${UI_GFX_DIR}win/window_impl.cc
+      ${UI_GFX_DIR}win/window_impl.h
+      #
+      # TODO !win # ${UI_GFX_DIR}gdi_util.cc
+      # TODO !win # #${UI_GFX_DIR}gdi_util.h",
+      # TODO !win # 
+      ${UI_GFX_DIR}sys_color_change_listener.cc
+      # TODO !win # 
+      ${UI_GFX_DIR}icon_util.cc
     )
   else()
     message(FATAL_ERROR "platform not supported")
   endif()
+else()
+  message(FATAL_ERROR "UI_GFX requires ENABLE_HARFBUZZ")
 endif(ENABLE_HARFBUZZ)# AND TARGET_LINUX)
 
 list(APPEND UI_GFX_SOURCES
   #${UI_GFX_DIR}font_fallback_linux.h",
   # # TODO # ${UI_GFX_DIR}font_fallback_mac.mm",
-  # # TODO # ${UI_GFX_DIR}font_fallback_win.cc
-  #${UI_GFX_DIR}font_fallback_win.h",
   ${UI_GFX_DIR}font_list.cc
   #${UI_GFX_DIR}font_list.h", # native_widget_types
   # TODO #
@@ -97,40 +138,38 @@ list(APPEND UI_GFX_SOURCES
 )
 
 if(ENABLE_HARFBUZZ)
-  list(APPEND UI_GFX_SOURCES
-    #if (is_linux || is_android || is_fuchsia)
-    ${UI_GFX_DIR}platform_font_skia.cc
-    #${UI_GFX_DIR}platform_font_skia.h
-    ${UI_GFX_DIR}skia_font_delegate.cc
-    #${UI_GFX_DIR}skia_font_delegate.h
-    #
-    # if ((is_linux || use_ozone) && !is_nacl)
-    # TODO # ${UI_GFX_DIR}native_pixmap_handle.cc # TODO: libdrm
-    #native_pixmap_handle.h",
+  if(TARGET_LINUX OR TARGET_EMSCRIPTEN)
+    list(APPEND UI_GFX_SOURCES
+      #if (is_linux || is_android || is_fuchsia)
+      ${UI_GFX_DIR}platform_font_skia.cc
+      #${UI_GFX_DIR}platform_font_skia.h
+      ${UI_GFX_DIR}skia_font_delegate.cc
+      #${UI_GFX_DIR}skia_font_delegate.h
+      #
+      # if ((is_linux || use_ozone) && !is_nacl)
+      # TODO # ${UI_GFX_DIR}native_pixmap_handle.cc # TODO: libdrm
+      #native_pixmap_handle.h",
 
-    #if (is_linux) {
-    #  sources += [
-    #    "linux/client_native_pixmap_dmabuf.cc",
-    #    "linux/client_native_pixmap_dmabuf.h",
-    #    "linux/client_native_pixmap_factory_dmabuf.cc",
-    #    "linux/client_native_pixmap_factory_dmabuf.h",
-    #    "linux/native_pixmap_dmabuf.cc",
-    #    "linux/native_pixmap_dmabuf.h",
-    #  ]
-    #
-    #  deps += [ "//build/config/linux/libdrm" ]
-    #}
-  )
+      #if (is_linux) {
+      #  sources += [
+      #    "linux/client_native_pixmap_dmabuf.cc",
+      #    "linux/client_native_pixmap_dmabuf.h",
+      #    "linux/client_native_pixmap_factory_dmabuf.cc",
+      #    "linux/client_native_pixmap_factory_dmabuf.h",
+      #    "linux/native_pixmap_dmabuf.cc",
+      #    "linux/native_pixmap_dmabuf.h",
+      #  ]
+      #
+      #  deps += [ "//build/config/linux/libdrm" ]
+      #}
+    )
+  endif(TARGET_LINUX OR TARGET_EMSCRIPTEN)
 endif(ENABLE_HARFBUZZ)
 
 list(APPEND UI_GFX_SOURCES
   # TODO # ${UI_GFX_DIR}font_render_params_mac.cc
-  # TODO # ${UI_GFX_DIR}font_render_params_win.cc
-  # TODO win # ${UI_GFX_DIR}gdi_util.cc
-  # TODO win # #${UI_GFX_DIR}gdi_util.h",
   ${UI_GFX_DIR}half_float.cc
   #${UI_GFX_DIR}half_float.h",
-  # TODO win # ${UI_GFX_DIR}icon_util.cc
   #${UI_GFX_DIR}icon_util.h",
   ${UI_GFX_DIR}image/image.cc
   #${UI_GFX_DIR}image/image.h",
@@ -174,8 +213,6 @@ list(APPEND UI_GFX_SOURCES
   #
   #${UI_GFX_DIR}path_mac.h",
   # TODO # ${UI_GFX_DIR}path_mac.mm",
-  # TODO # ${UI_GFX_DIR}path_win.cc
-  #${UI_GFX_DIR}path_win.h",
   # TODO # ${UI_GFX_DIR}path_x11.cc
   #${UI_GFX_DIR}path_x11.h",
   #${UI_GFX_DIR}platform_font.h",
@@ -183,8 +220,6 @@ list(APPEND UI_GFX_SOURCES
   # TODO # ${UI_GFX_DIR}platform_font_ios.mm",
   #${UI_GFX_DIR}platform_font_mac.h",
   # TODO # ${UI_GFX_DIR}platform_font_mac.mm",
-  # TODO # ${UI_GFX_DIR}platform_font_win.cc
-  #${UI_GFX_DIR}platform_font_win.h",
   #${UI_GFX_DIR}scoped_cg_context_save_gstate_mac.h",
   #${UI_GFX_DIR}scoped_ns_graphics_context_save_gstate_mac.h",
   # TODO # ${UI_GFX_DIR}scoped_ns_graphics_context_save_gstate_mac.mm",
@@ -200,10 +235,7 @@ list(APPEND UI_GFX_SOURCES
   #${UI_GFX_DIR}shadow_value.h",
   ${UI_GFX_DIR}skbitmap_operations.cc
   #${UI_GFX_DIR}skbitmap_operations.h",
-  # TODO: win # ${UI_GFX_DIR}sys_color_change_listener.cc
   #${UI_GFX_DIR}sys_color_change_listener.h",
-  # TODO # ${UI_GFX_DIR}system_fonts_win.cc
-  #${UI_GFX_DIR}system_fonts_win.h",
   #${UI_GFX_DIR}text_constants.h",
   # TODO #
   ${UI_GFX_DIR}text_elider.cc # native_widget_types
@@ -216,26 +248,6 @@ list(APPEND UI_GFX_SOURCES
   #${UI_GFX_DIR}utf16_indexing.h",
   ${UI_GFX_DIR}vsync_provider.cc
   #${UI_GFX_DIR}vsync_provider.h",
-  # TODO # ${UI_GFX_DIR}win/direct_write.cc
-  # TODO # ${UI_GFX_DIR}win/direct_write.h",
-  # TODO # ${UI_GFX_DIR}win/hwnd_util.cc
-  # TODO # ${UI_GFX_DIR}win/hwnd_util.h",
-  # TODO # ${UI_GFX_DIR}win/msg_util.h",
-  # TODO # ${UI_GFX_DIR}win/physical_size.cc
-  # TODO # ${UI_GFX_DIR}win/physical_size.h",
-  # TODO # ${UI_GFX_DIR}win/rendering_window_manager.cc
-  # TODO # ${UI_GFX_DIR}win/rendering_window_manager.h",
-  # TODO # ${UI_GFX_DIR}win/scoped_set_map_mode.h",
-  # TODO # ${UI_GFX_DIR}win/singleton_hwnd.cc
-  # TODO # ${UI_GFX_DIR}win/singleton_hwnd.h",
-  # TODO # ${UI_GFX_DIR}win/singleton_hwnd_hot_key_observer.cc
-  # TODO # ${UI_GFX_DIR}win/singleton_hwnd_hot_key_observer.h",
-  # TODO # ${UI_GFX_DIR}win/singleton_hwnd_observer.cc
-  # TODO # ${UI_GFX_DIR}win/singleton_hwnd_observer.h",
-  # TODO # ${UI_GFX_DIR}win/text_analysis_source.cc
-  # TODO # ${UI_GFX_DIR}win/text_analysis_source.h",
-  # TODO # ${UI_GFX_DIR}win/window_impl.cc
-  # TODO # ${UI_GFX_DIR}win/window_impl.h",
   #
   # !is_ios
   #
@@ -296,6 +308,14 @@ list(APPEND UI_GFX_SOURCES
   #
 )
 
+#if(TARGET_WINDOWS || TARGET_LINUX)
+#  # https://github.com/chromium/chromium/blob/87f2e0fdc7004e428e4e6216e79bf6938fe0e23f/ui/gfx/BUILD.gn#L329
+#  list(APPEND UI_GFX_SOURCES
+#    ${UI_GFX_DIR}font_fallback_skia_impl.cc
+#    ${UI_GFX_DIR}font_fallback_skia_impl.h
+#  )
+#endif(TARGET_WINDOWS)
+
 add_library(UI_GFX STATIC
   ${UI_GFX_SOURCES}
 )
@@ -327,9 +347,18 @@ target_link_libraries(UI_GFX PUBLIC
   ${EXTRA_DEPS}
 )
 
+if(TARGET_WINDOWS)
+  list(APPEND EXTRA_UI_GFX_LIBS
+    # https://github.com/chromium/chromium/blob/87f2e0fdc7004e428e4e6216e79bf6938fe0e23f/ui/gfx/BUILD.gn#L356
+    setupapi.lib
+    dwrite.lib
+  )
+endif(TARGET_WINDOWS)
+
 target_link_libraries(UI_GFX PRIVATE
   # khronos
   ${khronos_LIB}
+  ${EXTRA_UI_GFX_LIBS}
 )
 
 set_property(TARGET UI_GFX PROPERTY CXX_STANDARD 17)

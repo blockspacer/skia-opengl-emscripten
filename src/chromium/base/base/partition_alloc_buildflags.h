@@ -8,4 +8,4 @@
 
 #include "build/buildflag.h"
 
-#define BUILDFLAG_INTERNAL_USE_PARTITION_ALLOC() (0)
+#define BUILDFLAG_INTERNAL_USE_PARTITION_ALLOC() (1)

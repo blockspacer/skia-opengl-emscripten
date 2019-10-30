@@ -68,7 +68,7 @@ NativeTheme* NativeTheme::GetInstanceForWeb() {
   return NativeThemeAura::web_instance();
 }
 
-#if !defined(OS_WIN)
+#if !defined(OS_WIN) || defined(UI_VIEWS_PORT)
 // static
 NativeTheme* NativeTheme::GetInstanceForNativeUi() {
   return NativeThemeAura::instance();

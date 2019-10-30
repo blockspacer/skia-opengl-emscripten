@@ -57,6 +57,11 @@
 #include "base/i18n/rtl.h"
 #include "base/allocator/partition_allocator/page_allocator.h"
 
+#include "base/message_loop/message_loop.h"
+#include "base/at_exit.h"
+#include "base/run_loop.h"
+#include "base/task/thread_pool/thread_pool.h"
+
 #include "base/memory/scoped_refptr.h"
 
 #include "base/i18n/rtl.h"

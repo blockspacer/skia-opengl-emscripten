@@ -12,7 +12,9 @@
 namespace views {
 
 MenuConfig::MenuConfig() {
+#if !defined(UI_VIEWS_PORT)
   Init();
+#endif // UI_VIEWS_PORT
 }
 
 MenuConfig::~MenuConfig() = default;

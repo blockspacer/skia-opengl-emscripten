@@ -192,15 +192,18 @@
 // #define GL_GLEXT_PROTOTYPES
 //#undef GL_GLEXT_PROTOTYPES
 
+#if defined(OS_WIN) && !defined(ENABLE_OPENGL)
+#error "OS_WIN requires ENABLE_OPENGL"
+#endif
+
+#define GLEW_STATIC 1
+#include <GL/glew.h>
+
 #if defined(ENABLE_OPENGL)
 // TODO
 //#pragma comment(lib,"opengl32.lib")
 #include "gl_helpers.h"
 #endif // ENABLE_OPENGL
-
-#if defined(OS_WIN) && !defined(ENABLE_OPENGL)
-#error "OS_WIN requires ENABLE_OPENGL"
-#endif
 
 // see https://lyceum-allotments.github.io/2016/06/emscripten-and-sdl-2-tutorial-part-1/
 //#include <SDL2/SDL_ttf.h>
@@ -228,6 +231,10 @@ static SkiaUiDemo skiaUiDemo;
 //#pragma comment(lib,"C:/Program Files (x86)/SDL2/lib/SDL2main.lib")
 #include "utils.h"
 
+#if _ITERATOR_DEBUG_LEVEL == 0 && _SECURE_SCL != 0 
+#error _SECURE_SCL != 0 when _ITERATOR_DEBUG_LEVEL == 0 
+#endif 
+
 //#if defined(ENABLE_SKIA)
 //#define ENABLE_BLINK_PLATFORM 1
 //#endif
@@ -235,7 +242,21 @@ static SkiaUiDemo skiaUiDemo;
 // TODO >>
 // #undef ENABLE_BLINK_PLATFORM
 
-#include "blink_demo.h"
+#ifdef ENABLE_BLINK_PLATFORM
+#include <third_party/blink/renderer/platform/runtime_enabled_features.h>
+#include "ui/gfx/canvas.h"
+#include "ui/gfx/font_list.h"
+#include "ui/gfx/font.h"
+#include "ui/gfx/font_render_params.h"
+#include "ui/gfx/skia_font_delegate.h"
+#include "ui/gfx/text_utils.h"
+#include "ui/gfx/paint_vector_icon.h"
+#include "ui/gfx/vector_icon_types.h"
+#include "ui/gfx/platform_font_skia.h"
+#include "third_party/blink/renderer/platform/heap/thread_state.h"
+#endif
+
+//#include "blink_demo.h"
 
 #ifdef ENABLE_HARFBUZZ
 #include <hb-ot.h>
@@ -455,6 +476,10 @@ static base::Thread* input_browser_thread = &main_browser_thread_;
 #define SEPARATE_UI_THREAD_WRAPPER 1
 #endif // __EMSCRIPTEN__ && __EMSCRIPTEN_PTHREADS__
 
+#if defined(OS_WIN) && !defined(SEPARATE_UI_THREAD)
+#error "OS_WIN requires SEPARATE_UI_THREAD"
+#endif
+ 
 // TODO
 #if defined(SEPARATE_UI_THREAD)
 static base::Thread ui_draw_thread_("UI_Draw_Thread");
@@ -526,6 +551,12 @@ static EM_BOOL enableEmscriptenExtensionsByDefault = EM_TRUE;
 static SDL_GLContext glContext;
 #endif // ENABLE_OPENGL
 #endif // __EMSCRIPTEN__
+
+#if defined(OS_WIN)
+// Build UI thread message loop. This is used by platform
+// implementations for event polling & running background tasks.
+base::MessageLoopForUI* g_ui_message_loop;
+#endif // OS_WIN
 
 #if defined(ENABLE_HTML5_SDL) || !defined(__EMSCRIPTEN__)
 // Event handler
@@ -5392,8 +5423,17 @@ int main(int argc, char** argv) {
     printf("gfxRect top_right = %s ...\n", gfxRect.top_right().ToString().c_str());
 #endif
 
+  printf("Init AtExitManager ...\n");
+#ifdef ENABLE_BASE
+  base::AtExitManager at_exit;
+  at_exit.DisableAllAtExitManagers();
+#endif
+
 #ifdef ENABLE_BASE
     base::Thread::Options thread_options;
+#if defined(OS_WIN)
+      thread_options.message_loop_type = base::MessageLoop::TYPE_UI;
+#endif
 
     main_browser_thread_wrapper_.StartWithOptions(thread_options);
     #if defined(SEPARATE_UI_THREAD_WRAPPER)
@@ -5416,8 +5456,9 @@ int main(int argc, char** argv) {
     #endif
               {
                 base::Thread::Options options;
-
-                //options.message_loop_type = base::MessageLoop::TYPE_IO;
+#if defined(OS_WIN)
+                options.message_loop_type = base::MessageLoop::TYPE_UI;
+#endif
                 main_browser_thread_.StartWithOptions(options);
                 //input_device_thread_.StartWithOptions(options);
 
@@ -5427,6 +5468,10 @@ int main(int argc, char** argv) {
                 //input_device_thread_.WaitUntilThreadStarted();
                 printf("main_browser_thread_ Started...\n");
           #endif
+
+  /*#if defined(OS_WIN)
+                blink::Thread::CreateAndSetCompositorThread();
+  #endif // OS_WIN*/
               }
               thread_event->Signal();
           }, &main_thread_event_));
@@ -5452,6 +5497,9 @@ int main(int argc, char** argv) {
     #endif
               {
                 base::Thread::Options options;
+#if defined(OS_WIN)
+                options.message_loop_type = base::MessageLoop::TYPE_UI;
+#endif
 
     #if defined(SEPARATE_UI_THREAD)
                 ui_draw_thread_.StartWithOptions(options);
@@ -5508,12 +5556,6 @@ int main(int argc, char** argv) {
   printf("SysInfo::NumberOfProcessors %d ...\n", base::SysInfo::NumberOfProcessors());
   printf("SysInfo::NumberOfProcessors %s ...\n", base::SysInfo::OperatingSystemArchitecture().c_str());
   printf("SysInfo::NumberOfProcessors %s ...\n", base::SysInfo::CPUModelName().c_str());
-
-  printf("Init AtExitManager ...\n");
-#ifdef ENABLE_COBALT
-  base::AtExitManager at_exit;
-  at_exit.DisableAllAtExitManagers();
-#endif
 
  /* printf("Init ThreadControllerNoMT ...\n");
   if(!g_thread_controller.get()) {
@@ -5974,6 +6016,14 @@ int main(int argc, char** argv) {
       printf("5 Found == foo.end() %d\n", static_cast<int>(found == foo.end()));
   }
 #endif
+  
+#if defined(OS_WIN)
+  // Build UI thread message loop. This is used by platform
+  // implementations for event polling & running background tasks.
+  printf("Starting MessageLoopForUI...\n");
+  base::ThreadPool::CreateAndStartWithDefaultParams("MainThreadPool");
+  printf("Started MessageLoopForUI...\n");
+#endif // OS_WIN
 
   printf("Starting ...\n");
 
@@ -6251,6 +6301,18 @@ int main(int argc, char** argv) {
 #endif // ENABLE_OPENGL
 #endif
 
+#if defined(OS_WIN)
+//glutInit(&argc, argv);
+//glutCreateWindow("GLEW Test");
+/// \note You need to create a GL context. Try SDL_GL_CreateContext(window) before glewInit() call.
+GLenum err = glewInit();
+if (GLEW_OK != err)
+{
+  /* Problem: glewInit failed, something is seriously wrong. */
+  fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
+}
+#endif
+
 #if defined(ENABLE_OPENGL)
 /// \todo WEBGL1_SUPPORT
 #if defined(PRINT_GL_EXT) && (defined(WEBGL2_SUPPORT) || !defined(__EMSCRIPTEN__))
@@ -6329,6 +6391,20 @@ int main(int argc, char** argv) {
 #if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
             DCHECK(base::MessageLoopCurrent::Get());
 #endif
+
+#if 0
+#if defined(OS_WIN) || defined(OS_IOS)
+            DCHECK(!base::MessageLoopCurrentForUI::Get());
+            g_ui_message_loop = new base::MessageLoopForUI();
+            //base::TaskScheduler::CreateAndStartWithDefaultParams("Remoting");
+            //ui_message_loop.Start();
+            //base::MessageLoopCurrentForUI::Get()->Attach();
+/*#elif defined(OS_IOS)
+            ui_message_loop.Attach();*/
+            DCHECK(base::MessageLoopCurrentForUI::Get());
+#endif
+#endif // 0
+
           printf("Main thread works...\n");
           thread_event->Signal();
       }, &main_thread_event_));

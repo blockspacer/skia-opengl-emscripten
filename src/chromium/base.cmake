@@ -4,6 +4,8 @@ cmake_minimum_required(VERSION 3.4)
 
 ### --- base ---###
 
+set(USE_PARTITION_ALLOCATOR TRUE)
+
 if(ENABLE_UKM)
   list(APPEND BASE_SOURCES
      ${BASE_DIR}metrics/ukm_source_id.cc
@@ -12,7 +14,39 @@ if(ENABLE_UKM)
 endif(ENABLE_UKM)
 
 list(APPEND BASE_SOURCES
-   # sources = [
+  # sources = [
+  #${BASE_DIR}critical_closure_internal_ios.mm
+  ${BASE_DIR}debug/activity_analyzer.cc
+  ${BASE_DIR}debug/activity_analyzer.h
+  ${BASE_DIR}debug/activity_tracker.cc
+  ${BASE_DIR}debug/activity_tracker.h
+  ###${BASE_DIR}debug/alias.cc
+  ###${BASE_DIR}debug/alias.h
+  ### ${BASE_DIR}debug/asan_invalid_access.cc
+  ### ${BASE_DIR}debug/asan_invalid_access.h
+  #${BASE_DIR}debug/close_handle_hook_win.cc
+  #${BASE_DIR}debug/close_handle_hook_win.h
+  ${BASE_DIR}debug/crash_logging.cc
+  ${BASE_DIR}debug/crash_logging.h
+  ${BASE_DIR}debug/debugger.cc
+  ${BASE_DIR}debug/debugger.h
+  #${BASE_DIR}debug/debugger_win.cc
+  ${BASE_DIR}debug/dump_without_crashing.cc
+  ${BASE_DIR}debug/dump_without_crashing.h
+  #${BASE_DIR}debug/gdi_debug_util_win.cc
+  #${BASE_DIR}debug/gdi_debug_util_win.h
+  #${BASE_DIR}debug/invalid_access_win.cc
+  #${BASE_DIR}debug/invalid_access_win.h
+  ${BASE_DIR}debug/leak_annotations.h
+  ${BASE_DIR}debug/leak_tracker.h
+  ${BASE_DIR}debug/profiler.cc
+  ${BASE_DIR}debug/profiler.h
+  ${BASE_DIR}debug/stack_trace.cc
+  ${BASE_DIR}debug/stack_trace.h
+  #${BASE_DIR}debug/stack_trace_android.cc
+  #${BASE_DIR}debug/stack_trace_win.cc
+  ${BASE_DIR}debug/task_trace.cc
+  ${BASE_DIR}debug/task_trace.h
    ${BASE_DIR}i18n/base_i18n_export.h
    ${BASE_DIR}i18n/base_i18n_switches.cc
    ${BASE_DIR}i18n/base_i18n_switches.h
@@ -139,19 +173,12 @@ list(APPEND BASE_SOURCES
    ${BASE_DIR}debug/alias.h
    ## ### ${BASE_DIR}debug/asan_invalid_access.cc
    ## ### ${BASE_DIR}debug/asan_invalid_access.h
-   ## #${BASE_DIR}debug/close_handle_hook_win.cc
-   ## #${BASE_DIR}debug/close_handle_hook_win.h
    ## ${BASE_DIR}debug/crash_logging.cc
    ## ${BASE_DIR}debug/crash_logging.h
    ## ${BASE_DIR}debug/debugger.cc
    ## ${BASE_DIR}debug/debugger.h
-   ## #${BASE_DIR}debug/debugger_win.cc
    ## ${BASE_DIR}debug/dump_without_crashing.cc
    ## ${BASE_DIR}debug/dump_without_crashing.h
-   ## #${BASE_DIR}debug/gdi_debug_util_win.cc
-   ## #${BASE_DIR}debug/gdi_debug_util_win.h
-   ## #${BASE_DIR}debug/invalid_access_win.cc
-   ## #${BASE_DIR}debug/invalid_access_win.h
    ## ${BASE_DIR}debug/leak_annotations.h
    ## ${BASE_DIR}debug/leak_tracker.h
    ## ${BASE_DIR}debug/profiler.cc
@@ -159,14 +186,12 @@ list(APPEND BASE_SOURCES
    ## ${BASE_DIR}debug/stack_trace.cc
    ## ${BASE_DIR}debug/stack_trace.h
    ## #${BASE_DIR}debug/stack_trace_android.cc
-   ## #${BASE_DIR}debug/stack_trace_win.cc
    ## ${BASE_DIR}debug/task_trace.cc
    ## ${BASE_DIR}debug/task_trace.h
    ${BASE_DIR}deferred_sequenced_task_runner.cc
    ${BASE_DIR}deferred_sequenced_task_runner.h
    ${BASE_DIR}enterprise_util.h
    #${BASE_DIR}enterprise_util_mac.mm
-   #${BASE_DIR}enterprise_util_win.cc
    ${BASE_DIR}environment.cc
    ${BASE_DIR}environment.h
    ${BASE_DIR}export_template.h
@@ -175,8 +200,6 @@ list(APPEND BASE_SOURCES
    ${BASE_DIR}file_version_info.h
    #${BASE_DIR}file_version_info_mac.h
    #${BASE_DIR}file_version_info_mac.mm
-   #${BASE_DIR}file_version_info_win.cc
-   #${BASE_DIR}file_version_info_win.h
    ${BASE_DIR}files/dir_reader_fallback.h
    ${BASE_DIR}files/file.cc
    ${BASE_DIR}files/file.h
@@ -188,7 +211,6 @@ list(APPEND BASE_SOURCES
    ${BASE_DIR}files/file_path_watcher.cc
    ${BASE_DIR}files/file_path_watcher.h
    #${BASE_DIR}files/file_path_watcher_mac.cc
-   #${BASE_DIR}files/file_path_watcher_win.cc
    ${BASE_DIR}files/file_proxy.cc
    ${BASE_DIR}files/file_proxy.h
    ${BASE_DIR}files/file_tracing.cc
@@ -197,14 +219,11 @@ list(APPEND BASE_SOURCES
    ${BASE_DIR}files/file_util.h
    #${BASE_DIR}files/file_util_android.cc
    #${BASE_DIR}files/file_util_mac.mm
-   #${BASE_DIR}files/file_util_win.cc
-   #${BASE_DIR}files/file_win.cc
    #TODO file_util_emscripten.cc
    ${BASE_DIR}files/important_file_writer.cc
    ${BASE_DIR}files/important_file_writer.h
    ${BASE_DIR}files/memory_mapped_file.cc
    ${BASE_DIR}files/memory_mapped_file.h
-   #${BASE_DIR}files/memory_mapped_file_win.cc
    ${BASE_DIR}files/platform_file.h
    ${BASE_DIR}files/scoped_file.cc
    ${BASE_DIR}files/scoped_file.h
@@ -255,8 +274,6 @@ list(APPEND BASE_SOURCES
    ${BASE_DIR}location.h
    ${BASE_DIR}logging.cc
    ${BASE_DIR}logging.h
-   #${BASE_DIR}logging_win.cc
-   #${BASE_DIR}logging_win.h
    #${BASE_DIR}mac/authorization_util.h
    #${BASE_DIR}mac/authorization_util.mm
    #${BASE_DIR}mac/availability.h
@@ -335,14 +352,11 @@ list(APPEND BASE_SOURCES
    #${BASE_DIR}memory/memory_pressure_monitor_mac.h
    #${BASE_DIR}memory/memory_pressure_monitor_notifying_chromeos.cc
    #${BASE_DIR}memory/memory_pressure_monitor_notifying_chromeos.h
-   #${BASE_DIR}memory/memory_pressure_monitor_win.cc
-   #${BASE_DIR}memory/memory_pressure_monitor_win.h
    ${BASE_DIR}memory/platform_shared_memory_region.cc
    ${BASE_DIR}memory/platform_shared_memory_region.h
    ${BASE_DIR}memory/protected_memory.cc
    ${BASE_DIR}memory/protected_memory.h
    #${BASE_DIR}memory/protected_memory_cfi.h
-   #${BASE_DIR}memory/protected_memory_win.cc
    ${BASE_DIR}memory/ptr_util.h
    ${BASE_DIR}memory/raw_scoped_refptr_mismatch_checker.h
    ${BASE_DIR}memory/read_only_shared_memory_region.cc
@@ -387,8 +401,6 @@ list(APPEND BASE_SOURCES
    #${BASE_DIR}message_loop/message_pump_io_ios.h
    #${BASE_DIR}message_loop/message_pump_mac.h
    #${BASE_DIR}message_loop/message_pump_mac.mm
-   #${BASE_DIR}message_loop/message_pump_win.cc
-   #${BASE_DIR}message_loop/message_pump_win.h
    ${BASE_DIR}message_loop/timer_slack.h
    ${BASE_DIR}message_loop/work_id_provider.cc
    ${BASE_DIR}message_loop/work_id_provider.h
@@ -444,7 +456,6 @@ list(APPEND BASE_SOURCES
    ${BASE_DIR}native_library.h
    #${BASE_DIR}native_library_ios.mm
    #${BASE_DIR}native_library_mac.mm
-   #${BASE_DIR}native_library_win.cc
    ${BASE_DIR}no_destructor.h
    ${BASE_DIR}observer_list.h
    ${BASE_DIR}observer_list_internal.cc
@@ -480,25 +491,20 @@ list(APPEND BASE_SOURCES
    ${BASE_DIR}process/kill.cc
    ${BASE_DIR}process/kill.h
    #${BASE_DIR}process/kill_mac.cc
-   #${BASE_DIR}process/kill_win.cc
    ${BASE_DIR}process/launch.cc
    ${BASE_DIR}process/launch.h
    #${BASE_DIR}process/launch_ios.cc
    #${BASE_DIR}process/launch_mac.cc
-   #${BASE_DIR}process/launch_win.cc
    ${BASE_DIR}process/memory.cc
    ${BASE_DIR}process/memory.h
    #${BASE_DIR}process/memory_mac.mm
-   #${BASE_DIR}process/memory_win.cc
    #${BASE_DIR}process/port_provider_mac.cc
    #${BASE_DIR}process/port_provider_mac.h
    ${BASE_DIR}process/process.h
    ${BASE_DIR}process/process_handle.cc
    ${BASE_DIR}process/process_handle.h
    #${BASE_DIR}process/process_handle_mac.cc
-   #${BASE_DIR}process/process_handle_win.cc
    ${BASE_DIR}process/process_info.h
-   #${BASE_DIR}process/process_info_win.cc
    ${BASE_DIR}process/process_iterator.cc
    ${BASE_DIR}process/process_iterator.h
    #${BASE_DIR}process/process_mac.cc
@@ -506,8 +512,6 @@ list(APPEND BASE_SOURCES
    ${BASE_DIR}process/process_metrics.h
    #${BASE_DIR}process/process_metrics_ios.cc
    #${BASE_DIR}process/process_metrics_mac.cc
-   #${BASE_DIR}process/process_metrics_win.cc
-   #${BASE_DIR}process/process_win.cc
    ${BASE_DIR}profiler/frame.cc
    ${BASE_DIR}profiler/frame.h
    ${BASE_DIR}profiler/metadata_recorder.cc
@@ -515,8 +519,6 @@ list(APPEND BASE_SOURCES
    ${BASE_DIR}profiler/native_unwinder.h
    #${BASE_DIR}profiler/native_unwinder_mac.cc
    #${BASE_DIR}profiler/native_unwinder_mac.h
-   #${BASE_DIR}profiler/native_unwinder_win.cc
-   #${BASE_DIR}profiler/native_unwinder_win.h
    ${BASE_DIR}profiler/profile_builder.h
    ${BASE_DIR}profiler/register_context.h
    ${BASE_DIR}profiler/sample_metadata.cc
@@ -526,14 +528,11 @@ list(APPEND BASE_SOURCES
    ${BASE_DIR}profiler/stack_sampler_impl.cc
    ${BASE_DIR}profiler/stack_sampler_impl.h
    #${BASE_DIR}profiler/stack_sampler_mac.cc
-   #${BASE_DIR}profiler/stack_sampler_win.cc
    ${BASE_DIR}profiler/stack_sampling_profiler.cc
    ${BASE_DIR}profiler/stack_sampling_profiler.h
    ${BASE_DIR}profiler/thread_delegate.h
    #${BASE_DIR}profiler/thread_delegate_mac.cc
    #${BASE_DIR}profiler/thread_delegate_mac.h
-   #${BASE_DIR}profiler/thread_delegate_win.cc
-   #${BASE_DIR}profiler/thread_delegate_win.h
    ${BASE_DIR}profiler/unwinder.h
    ${BASE_DIR}rand_util.cc
    ${BASE_DIR}rand_util.h
@@ -545,13 +544,11 @@ list(APPEND BASE_SOURCES
    ${BASE_DIR}sampling_heap_profiler/module_cache.cc
    ${BASE_DIR}sampling_heap_profiler/module_cache.h
    #${BASE_DIR}sampling_heap_profiler/module_cache_mac.cc
-   #${BASE_DIR}sampling_heap_profiler/module_cache_win.cc
    ${BASE_DIR}sampling_heap_profiler/poisson_allocation_sampler.cc
    ${BASE_DIR}sampling_heap_profiler/poisson_allocation_sampler.h
    ${BASE_DIR}sampling_heap_profiler/sampling_heap_profiler.cc
    ${BASE_DIR}sampling_heap_profiler/sampling_heap_profiler.h
    ${BASE_DIR}scoped_clear_last_error.h
-   #${BASE_DIR}scoped_clear_last_error_win.cc
    ${BASE_DIR}scoped_generic.h
    ${BASE_DIR}scoped_native_library.cc
    ${BASE_DIR}scoped_native_library.h
@@ -590,13 +587,11 @@ list(APPEND BASE_SOURCES
    ${BASE_DIR}strings/string_util.cc
    ${BASE_DIR}strings/string_util.h
    ${BASE_DIR}strings/string_util_constants.cc
-   #${BASE_DIR}strings/string_util_win.h
    ${BASE_DIR}strings/stringize_macros.h
    ${BASE_DIR}strings/stringprintf.cc
    ${BASE_DIR}strings/stringprintf.h
    ${BASE_DIR}strings/sys_string_conversions.h
    #${BASE_DIR}strings/sys_string_conversions_mac.mm
-   #${BASE_DIR}strings/sys_string_conversions_win.cc
    ${BASE_DIR}strings/utf_offset_string_conversions.cc
    ${BASE_DIR}strings/utf_offset_string_conversions.h
    ${BASE_DIR}strings/utf_string_conversion_utils.cc
@@ -606,23 +601,18 @@ list(APPEND BASE_SOURCES
    ${BASE_DIR}supports_user_data.cc
    ${BASE_DIR}supports_user_data.h
    ${BASE_DIR}sync_socket.h
-   #${BASE_DIR}sync_socket_win.cc
    ${BASE_DIR}synchronization/atomic_flag.cc
    ${BASE_DIR}synchronization/atomic_flag.h
    ${BASE_DIR}synchronization/cancellation_flag.h
    ${BASE_DIR}synchronization/condition_variable.h
-   #${BASE_DIR}synchronization/condition_variable_win.cc
    ${BASE_DIR}synchronization/lock.cc
    ${BASE_DIR}synchronization/lock.h
    ${BASE_DIR}synchronization/lock_impl.h
-   #${BASE_DIR}synchronization/lock_impl_win.cc
    ${BASE_DIR}synchronization/spin_wait.h
    ${BASE_DIR}synchronization/waitable_event.h
    #${BASE_DIR}synchronization/waitable_event_mac.cc
    ${BASE_DIR}synchronization/waitable_event_watcher.h
    #${BASE_DIR}synchronization/waitable_event_watcher_mac.cc
-   #${BASE_DIR}synchronization/waitable_event_watcher_win.cc
-   #${BASE_DIR}synchronization/waitable_event_win.cc
    ${BASE_DIR}sys_byteorder.h
    ${BASE_DIR}syslog_logging.cc
    ${BASE_DIR}syslog_logging.h
@@ -733,8 +723,6 @@ list(APPEND BASE_SOURCES
    ${BASE_DIR}task/thread_pool/thread_group_native.h
    #${BASE_DIR}task/thread_pool/thread_group_native_mac.h
    #${BASE_DIR}task/thread_pool/thread_group_native_mac.mm
-   #${BASE_DIR}task/thread_pool/thread_group_native_win.cc
-   #${BASE_DIR}task/thread_pool/thread_group_native_win.h
    ${BASE_DIR}task/thread_pool/thread_group_params.cc
    ${BASE_DIR}task/thread_pool/thread_group_params.h
    ${BASE_DIR}task/thread_pool/thread_pool.cc
@@ -766,8 +754,6 @@ list(APPEND BASE_SOURCES
    ${BASE_DIR}threading/platform_thread.h
    #${BASE_DIR}threading/platform_thread_android.cc
    #${BASE_DIR}threading/platform_thread_mac.mm
-   #${BASE_DIR}threading/platform_thread_win.cc
-   #${BASE_DIR}threading/platform_thread_win.h
    ${BASE_DIR}threading/post_task_and_reply_impl.cc
    ${BASE_DIR}threading/post_task_and_reply_impl.h
    ${BASE_DIR}threading/scoped_blocking_call.cc
@@ -794,7 +780,6 @@ list(APPEND BASE_SOURCES
    ${BASE_DIR}threading/thread_local_internal.h
    ${BASE_DIR}threading/thread_local_storage.cc
    ${BASE_DIR}threading/thread_local_storage.h
-   #${BASE_DIR}threading/thread_local_storage_win.cc
    ${BASE_DIR}threading/thread_restrictions.cc
    ${BASE_DIR}threading/thread_restrictions.h
    ${BASE_DIR}threading/thread_task_runner_handle.cc
@@ -818,7 +803,6 @@ list(APPEND BASE_SOURCES
    ${BASE_DIR}timer/elapsed_timer.cc
    ${BASE_DIR}timer/elapsed_timer.h
    ${BASE_DIR}timer/hi_res_timer_manager.h
-   #${BASE_DIR}timer/hi_res_timer_manager_win.cc
    ${BASE_DIR}timer/lap_timer.cc
    ${BASE_DIR}timer/lap_timer.h
    ${BASE_DIR}timer/timer.cc
@@ -883,8 +867,6 @@ list(APPEND BASE_SOURCES
    ${BASE_DIR}trace_event/trace_config_category_filter.h
    ${BASE_DIR}trace_event/trace_event.h
    #${BASE_DIR}trace_event/trace_event_android.cc
-   #${BASE_DIR}trace_event/trace_event_etw_export_win.cc
-   #${BASE_DIR}trace_event/trace_event_etw_export_win.h
    ${BASE_DIR}trace_event/trace_event_filter.cc
    ${BASE_DIR}trace_event/trace_event_filter.h
    ${BASE_DIR}trace_event/trace_event_impl.cc
@@ -931,7 +913,7 @@ list(APPEND BASE_SOURCES
    build/build_config.h
 )
 
-if(TARGET_EMSCRIPTEN OR TARGET_LINUX)
+if(USE_PARTITION_ALLOCATOR)
   list(APPEND BASE_SOURCES
     # https://github.com/chromium/chromium/blob/master/base/BUILD.gn#L1633
     ${BASE_DIR}allocator/partition_allocator/address_space_randomization.cc
@@ -958,12 +940,27 @@ if(TARGET_EMSCRIPTEN OR TARGET_LINUX)
     ${BASE_DIR}allocator/partition_allocator/partition_root_base.h
     ${BASE_DIR}allocator/partition_allocator/spin_lock.cc
     ${BASE_DIR}allocator/partition_allocator/spin_lock.h
+  )
+else()
+  message(FATAL_ERROR "only USE_PARTITION_ALLOCATOR supported for now")
+endif(USE_PARTITION_ALLOCATOR)
+
+if(TARGET_EMSCRIPTEN OR TARGET_LINUX)
+  if(USE_PARTITION_ALLOCATOR)
+    list(APPEND BASE_SOURCES
+      # https://github.com/chromium/chromium/blob/master/base/BUILD.gn#L1665
+      ${BASE_DIR}allocator/partition_allocator/page_allocator_internals_posix.h
+    )
+  endif(USE_PARTITION_ALLOCATOR)
+  list(APPEND BASE_SOURCES
     # see https://github.com/chromium/chromium/blob/9db0b5162b8648833c3a6b1af044cebd9d7d3855/base/BUILD.gn#L1772
     ${BASE_DIR}strings/string16.cc
     ${BASE_DIR}memory/shared_memory_helper.cc
     ${BASE_DIR}memory/shared_memory_helper.h
     ${BASE_DIR}file_descriptor_store.cc
     ${BASE_DIR}file_descriptor_store.h
+    ${BASE_DIR}debug/proc_maps_linux.cc
+    ${BASE_DIR}debug/proc_maps_linux.h
     #${BASE_DIR}atomicops_internals_portable.h
     #${BASE_DIR}critical_closure_internal_ios.mm
     ${BASE_DIR}debug/activity_analyzer.cc
@@ -1006,8 +1003,6 @@ if(TARGET_EMSCRIPTEN OR TARGET_LINUX)
     ${BASE_DIR}posix/can_lower_nice_to.h
     # https://github.com/chromium/chromium/blob/master/base/BUILD.gn#L1929
     ${BASE_DIR}power_monitor/power_monitor_device_source_stub.cc
-    # https://github.com/chromium/chromium/blob/master/base/BUILD.gn#L1665
-    ${BASE_DIR}allocator/partition_allocator/page_allocator_internals_posix.h
     # https://github.com/chromium/chromium/blob/master/base/BUILD.gn#L1903
     ${BASE_DIR}memory/platform_shared_memory_region_posix.cc
     ${BASE_DIR}memory/shared_memory_handle_posix.cc
@@ -1064,7 +1059,7 @@ if(TARGET_EMSCRIPTEN OR TARGET_LINUX)
     # https://github.com/chromium/chromium/blob/master/base/BUILD.gn#L1185
     ${BASE_DIR}base_paths_posix.h
   )
-elseif(TARGET_LINUX)
+elseif(TARGET_LINUX) # TODO: see TARGET_LINUX above!!!
   list(APPEND BASE_SOURCES
     #
     ${BASE_DIR}threading/platform_thread_linux.cc
@@ -1083,40 +1078,6 @@ elseif(TARGET_LINUX)
     ${BASE_DIR}linux_util.h
     ${BASE_DIR}files/file_path_watcher_linux.cc
     ${BASE_DIR}files/dir_reader_linux.h
-    #${BASE_DIR}critical_closure_internal_ios.mm
-    ${BASE_DIR}debug/activity_analyzer.cc
-    ${BASE_DIR}debug/activity_analyzer.h
-    ${BASE_DIR}debug/activity_tracker.cc
-    ${BASE_DIR}debug/activity_tracker.h
-    ###${BASE_DIR}debug/alias.cc
-    ###${BASE_DIR}debug/alias.h
-    ### ${BASE_DIR}debug/asan_invalid_access.cc
-    ### ${BASE_DIR}debug/asan_invalid_access.h
-    #${BASE_DIR}debug/close_handle_hook_win.cc
-    #${BASE_DIR}debug/close_handle_hook_win.h
-    ${BASE_DIR}debug/crash_logging.cc
-    ${BASE_DIR}debug/crash_logging.h
-    ${BASE_DIR}debug/debugger.cc
-    ${BASE_DIR}debug/debugger.h
-    #${BASE_DIR}debug/debugger_win.cc
-    ${BASE_DIR}debug/dump_without_crashing.cc
-    ${BASE_DIR}debug/dump_without_crashing.h
-    #${BASE_DIR}debug/gdi_debug_util_win.cc
-    #${BASE_DIR}debug/gdi_debug_util_win.h
-    #${BASE_DIR}debug/invalid_access_win.cc
-    #${BASE_DIR}debug/invalid_access_win.h
-    ${BASE_DIR}debug/leak_annotations.h
-    ${BASE_DIR}debug/leak_tracker.h
-    ${BASE_DIR}debug/proc_maps_linux.cc
-    ${BASE_DIR}debug/proc_maps_linux.h
-    ${BASE_DIR}debug/profiler.cc
-    ${BASE_DIR}debug/profiler.h
-    ${BASE_DIR}debug/stack_trace.cc
-    ${BASE_DIR}debug/stack_trace.h
-    #${BASE_DIR}debug/stack_trace_android.cc
-    #${BASE_DIR}debug/stack_trace_win.cc
-    ${BASE_DIR}debug/task_trace.cc
-    ${BASE_DIR}debug/task_trace.h
     #
     ${BASE_DIR}threading/platform_thread_linux.cc
     #
@@ -1161,6 +1122,68 @@ elseif(TARGET_LINUX)
     #${BASE_DIR}files/file_descriptor_watcher_posix.h
   )
 elseif(TARGET_WINDOWS)
+  if(USE_PARTITION_ALLOCATOR)
+    list(APPEND BASE_SOURCES
+      # https://github.com/chromium/chromium/blob/master/base/BUILD.gn#L1665
+      ${BASE_DIR}allocator/partition_allocator/page_allocator_internals_win.h
+    )
+  endif(USE_PARTITION_ALLOCATOR)
+
+  list(APPEND BASE_SOURCES
+    ## TODO ## ${BASE_DIR}trace_event/trace_event_etw_export_win.cc
+    ## TODO ## ${BASE_DIR}trace_event/trace_event_etw_export_win.h
+    ${BASE_DIR}timer/hi_res_timer_manager_win.cc
+    ${BASE_DIR}threading/thread_local_storage_win.cc
+    ${BASE_DIR}threading/platform_thread_win.cc
+    ${BASE_DIR}threading/platform_thread_win.h
+    ${BASE_DIR}task/thread_pool/thread_group_native_win.cc
+    ${BASE_DIR}task/thread_pool/thread_group_native_win.h
+    ${BASE_DIR}scoped_clear_last_error_win.cc
+    ${BASE_DIR}sampling_heap_profiler/module_cache_win.cc
+    ${BASE_DIR}profiler/thread_delegate_win.cc
+    ${BASE_DIR}profiler/thread_delegate_win.h
+    ${BASE_DIR}profiler/stack_sampler_win.cc
+    ${BASE_DIR}profiler/native_unwinder_win.cc
+    ${BASE_DIR}profiler/native_unwinder_win.h
+    ${BASE_DIR}process/process_metrics_win.cc
+    ${BASE_DIR}process/process_win.cc
+    ${BASE_DIR}process/process_info_win.cc
+    ${BASE_DIR}process/process_handle_win.cc
+    ${BASE_DIR}process/memory_win.cc
+    ${BASE_DIR}process/launch_win.cc
+    ${BASE_DIR}process/kill_win.cc
+    ${BASE_DIR}native_library_win.cc
+    ${BASE_DIR}message_loop/message_pump_win.cc
+    ${BASE_DIR}message_loop/message_pump_win.h
+    ${BASE_DIR}memory/protected_memory_win.cc
+    ${BASE_DIR}memory/memory_pressure_monitor_win.cc
+    ${BASE_DIR}memory/memory_pressure_monitor_win.h
+    ${BASE_DIR}logging_win.cc
+    ${BASE_DIR}logging_win.h
+    ${BASE_DIR}files/memory_mapped_file_win.cc
+    ${BASE_DIR}files/file_util_win.cc
+    ${BASE_DIR}files/file_win.cc
+    ${BASE_DIR}files/file_path_watcher_win.cc
+    ${BASE_DIR}file_version_info_win.cc
+    ${BASE_DIR}file_version_info_win.h
+    ${BASE_DIR}enterprise_util_win.cc
+    ${BASE_DIR}debug/stack_trace_win.cc
+    ${BASE_DIR}debug/gdi_debug_util_win.cc
+    ${BASE_DIR}debug/gdi_debug_util_win.h
+    ${BASE_DIR}debug/invalid_access_win.cc
+    ${BASE_DIR}debug/invalid_access_win.h
+    ${BASE_DIR}debug/debugger_win.cc
+    ${BASE_DIR}debug/close_handle_hook_win.cc
+    ${BASE_DIR}debug/close_handle_hook_win.h
+    ${BASE_DIR}strings/string_util_win.h
+    ${BASE_DIR}strings/sys_string_conversions_win.cc
+    ${BASE_DIR}sync_socket_win.cc
+    ${BASE_DIR}synchronization/condition_variable_win.cc
+    ${BASE_DIR}synchronization/lock_impl_win.cc
+    ${BASE_DIR}synchronization/waitable_event_watcher_win.cc
+    ${BASE_DIR}synchronization/waitable_event_win.cc
+  )
+
   list(APPEND BASE_SOURCES
     # static_library("pe_image")
     ${BASE_DIR}win/current_module.h
@@ -1594,6 +1617,27 @@ if(TARGET_WINDOWS)
     userenv.lib
     wbemuuid.lib
     winmm.lib
+    # https://stackoverflow.com/questions/7028304/error-lnk2019-when-using-getfileversioninfosize
+    version.lib
+    # https://github.com/blockspacer/skia-opengl-emscripten/blob/7c423190544c8da1bf8ae79b800c9c0c83dd3c6e/src/chromium/build/config/BUILD.gn#L203
+    advapi32.lib
+    comdlg32.lib
+    dbghelp.lib
+    dnsapi.lib
+    gdi32.lib
+    msimg32.lib
+    odbc32.lib
+    odbccp32.lib
+    oleaut32.lib
+    shell32.lib
+    shlwapi.lib
+    user32.lib
+    usp10.lib
+    uuid.lib
+    wininet.lib
+    winmm.lib
+    winspool.lib
+    ws2_32.lib
   )
 endif(TARGET_WINDOWS)
 
@@ -1617,12 +1661,17 @@ target_link_libraries(base PUBLIC
   dynamic_annotations
   ${EXTRA_CHROMIUM_BASE_LIBS}
   ${LIBATOMIC} # from system, no dep. for __atomic_is_lock_free
+  # see https://stackoverflow.com/questions/1236670/how-to-make-opengl-apps-in-64-bit-windows
+  "C:/Program Files (x86)/Windows Kits/10/Lib/10.0.14393.0/um/x64/opengl32.lib"
+  # see https://stackoverflow.com/questions/16390078/build-error-when-trying-to-run-an-opengl-example-in-vc
+  "D:/den/coding/glew/glew-2.1.0/lib/Release/x64/glew32s.lib"
 )
 
 set_property(TARGET base PROPERTY CXX_STANDARD 17)
 
 set(BASE_DEFINES
   OFFICIAL_BUILD=1
+  BASE_PORT=1
 )
 
 # In your source, include files from base/ like normal.
@@ -1632,6 +1681,7 @@ target_include_directories(base PUBLIC
   ${CHROMIUM_DIR}
   # TODO
   #${COBALT_COMMON_INCLUDES}
+  "D:/den/coding/glew/glew-2.1.0/include"
 )
 
 #message(FATAL_ERROR ${CHROMIUM_DIR}/../../thirdparty/ced/src/)
@@ -1652,6 +1702,7 @@ target_compile_definitions(base PUBLIC
   ${WTF_EMCC_DEFINITIONS}
   ${WTF_COMMON_DEFINITIONS}
   ${EXTRA_DEFINES}
+  _HAS_ITERATOR_DEBUGGING=0 # https://github.com/blockspacer/skia-opengl-emscripten/blob/7c423190544c8da1bf8ae79b800c9c0c83dd3c6e/src/chromium/build/config/BUILD.gn#L164
 )
 
 if(TARGET_LINUX)

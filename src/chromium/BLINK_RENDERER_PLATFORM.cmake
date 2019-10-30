@@ -699,7 +699,7 @@ list(APPEND BLINK_RENDERER_PLATFORM_SCHEDULER_SOURCES
 )
 
 
-if(TARGET_LINUX)
+if(TARGET_WINDOWS OR TARGET_LINUX)
   list(APPEND BLINK_RENDERER_PLATFORM_SCHEDULER_SOURCES
     ## TODO ## error: no member named 'state' in 'base::sequence_manager::TaskQueue::TaskTiming'
     ## TODO ## ${CUR_SRC_DIR}scheduler/main_thread/main_thread_metrics_helper.cc
@@ -784,7 +784,7 @@ if(TARGET_LINUX)
     ${CUR_SRC_DIR}scheduler/worker/worker_thread_scheduler.cc
     #${CUR_SRC_DIR}scheduler/worker/worker_thread_scheduler.h
   )
-elseif(TARGET_WINDOWS OR TARGET_EMSCRIPTEN)
+elseif(TARGET_EMSCRIPTEN)
   # skip
 else()
   message(FATAL_ERROR "platform not supported")
@@ -1281,14 +1281,14 @@ list(APPEND BLINK_RENDERER_PLATFORM_SPEECH_SOURCES
 
 if(ENABLE_HARFBUZZ)
   if(TARGET_LINUX)
-  list(APPEND BLINK_RENDERER_PLATFORM_FONTS_SOURCES
-    ${BLINK_RENDERER_PLATFORM_DIR}fonts/linux/font_cache_linux.cc
-    ${BLINK_RENDERER_PLATFORM_DIR}fonts/linux/font_unique_name_lookup_linux.cc
-    #${BLINK_RENDERER_PLATFORM_DIR}fonts/linux/font_unique_name_lookup_linux.h
-  )
-  list(APPEND BLINK_RENDERER_PLATFORM_TEXT_SOURCES
-    ${BLINK_RENDERER_PLATFORM_DIR}text/linux/hyphenation_linux.cc
-  )
+    list(APPEND BLINK_RENDERER_PLATFORM_FONTS_SOURCES
+      ${BLINK_RENDERER_PLATFORM_DIR}fonts/linux/font_cache_linux.cc
+      ${BLINK_RENDERER_PLATFORM_DIR}fonts/linux/font_unique_name_lookup_linux.cc
+      #${BLINK_RENDERER_PLATFORM_DIR}fonts/linux/font_unique_name_lookup_linux.h
+    )
+    list(APPEND BLINK_RENDERER_PLATFORM_TEXT_SOURCES
+      ${BLINK_RENDERER_PLATFORM_DIR}text/linux/hyphenation_linux.cc
+    )
   elseif(TARGET_WINDOWS OR TARGET_EMSCRIPTEN)
     # skip
   else()

@@ -15,6 +15,8 @@
 #if defined(__EMSCRIPTEN__)
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
+/*#elif defined(WIN32) || defined(_WIN32) || defined(WIN64) || defined(_WIN64)
+#include <GL/glew.h>*/
 #else
 #include "third_party/khronos/GLES2/gl2.h"
 #include "third_party/khronos/GLES2/gl2ext.h"

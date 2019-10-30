@@ -15,6 +15,9 @@
 #if defined(OS_EMSCRIPTEN)
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
+/*#elif defined(OS_WIN)
+#define GLEW_STATIC 1
+#include <GL/glew.h>*/
 #else
 #include "third_party/khronos/GLES2/gl2.h"
 #include "third_party/khronos/GLES2/gl2ext.h"

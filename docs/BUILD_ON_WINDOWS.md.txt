@@ -2,6 +2,9 @@
 
 DENABLE_COBALT
 
+single_thread_task_runner.cc.obj : warning LNK4221: This object file does not define any previously undefined public symbols, so it will not be used by any link operation that consumes this library
+scoped_file.cc.obj : warning LNK4221: This object file does not define any previously undefined public symbols, so it will not be used by any link operation that consumes this library
+
 In file included from ..\src\chromium\ui\gl\gl_image_stub.cc:7:
 C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\um\GL/gl.h(1157,1): error: unknown type name 'WINGDIAPI'
 WINGDIAPI void APIENTRY glAccum (GLenum op, GLfloat value);
@@ -176,23 +179,26 @@ Get sources from https:\\www.zlib.net\ or https:\\www.zlib.net\zlib1211.zip
 cmake -E remove_directory build
 cmake -E make_directory build
 cd build
-cmake -DCMAKE_BUILD_TYPE=Release ..
-cmake --build . --config Release --parallel 6
+cmake -A x64 -DCMAKE_BUILD_TYPE=Release ..
+cmake --build . --config Release --parallel 8
 cmake --build . --config Release --target install
 ```
 
 Note what you may want to copy `.dll` files from ` C:\Program Files (x86)\zlib\bin\zlib.dll` to your app folder.
 
-## Build libpng
+## Build libpng (requires zlib)
 
 Get sources from http:\\www.libpng.org\pub\png\libpng.html or http:\\prdownloads.sourceforge.net\libpng\lpng1637.zip?download
+
+NOTE: Download for x64
 
 ```cmd
 cmake -E remove_directory build
 cmake -E make_directory build
 cd build
-cmake -DCMAKE_BUILD_TYPE=Release -DPNG_STATIC=ON ..
-cmake --build . --config Release --parallel 6
+# NOTE: -DPNG_STATIC=ON
+cmake -A x64 -DCMAKE_BUILD_TYPE=Release -DPNG_STATIC=ON ..
+cmake --build . --config Release --parallel 8
 cmake --build . --config Release --target install
 ```
 
@@ -206,12 +212,14 @@ See https:\\gitlab.kitware.com\cmake\cmake\issues\19270
 
 Download https:\\www.libsdl.org\release\SDL2-2.0.10.zip
 
+NOTE: Download for x64
+
 ```cmd
 cmake -E remove_directory build
 cmake -E make_directory build
 cd build
-cmake -DCMAKE_BUILD_TYPE=Release ..
-cmake --build . --config Release --parallel 6
+cmake -A x64 -DCMAKE_BUILD_TYPE=Release ..
+cmake --build . --config Release --parallel 8
 cmake --build . --config Release --target install
 ```
 
@@ -232,12 +240,14 @@ cmake -E remove_directory build
 cmake -E make_directory build
 cd build
 # NOTE: you can use -DFT_WITH_HARFBUZZ=OFF -DFT_WITH_PNG=OFF
-cmake -DCMAKE_BUILD_TYPE=Release -DFT_WITH_HARFBUZZ=OFF -DCMAKE_DISABLE_FIND_PACKAGE_HarfBuzz=TRUE -DFT_WITH_PNG=OFF -DCMAKE_DISABLE_FIND_PACKAGE_PNG=TRUE  -DFT_WITH_ZLIB=OFF -DCMAKE_DISABLE_FIND_PACKAGE_ZLIB=TRUE -DFT_WITH_BZIP2=OFF -DCMAKE_DISABLE_FIND_PACKAGE_BZip2=TRUE "-DCMAKE_PREFIX_PATH=C:\Program Files (x86)\;C:\Program Files (x86)\libpng\;C:\Program Files (x86)\harfbuzz\" ..
-cmake --build . --config Release --parallel 6
+cmake -A x64 -DCMAKE_BUILD_TYPE=Release -DFT_WITH_HARFBUZZ=OFF -DCMAKE_DISABLE_FIND_PACKAGE_HarfBuzz=TRUE -DFT_WITH_PNG=OFF -DCMAKE_DISABLE_FIND_PACKAGE_PNG=TRUE  -DFT_WITH_ZLIB=OFF -DCMAKE_DISABLE_FIND_PACKAGE_ZLIB=TRUE -DFT_WITH_BZIP2=OFF -DCMAKE_DISABLE_FIND_PACKAGE_BZip2=TRUE "-DCMAKE_PREFIX_PATH=C:\Program Files (x86);C:\Program Files (x86)\libpng;C:\Program Files (x86)\harfbuzz" ..
+cmake --build . --config Release --parallel 8
 cmake --build . --config Release --target install
 ```
 
 ## opengl
+
+optional step
 
 ```cmd
 vcpkg install opengl
@@ -248,7 +258,8 @@ vcpkg install opengl
 Option 1:
 
 ```cmd
-.\vcpkg install icu
+# TODO: --triplet x64-windows-static or x86-windows-static
+.\vcpkg install icu --triplet x86-windows
 ```
 
 Option 2:
@@ -256,6 +267,8 @@ Option 2:
 Download https:\\github.com\unicode-org\icu\releases\download\release-65-1\icu4c-65_1-Win64-MSVC2017.zip from https:\\github.com\unicode-org\icu\releases\tag\release-65-1
 
 ## Build gzip
+
+optional step
 
 ## Build harfbuzz with `-DHB_HAVE_FREETYPE=ON` and `HB_HAVE_ICU=ON`
 
@@ -266,8 +279,8 @@ cmake -E remove_directory build
 cmake -E make_directory build
 cd build
 # NOTE: change CMAKE_TOOLCHAIN_FILE for ICU path from vcpkg
-cmake -DCMAKE_TOOLCHAIN_FILE=D:\den\coding\vcpkg\scripts\buildsystems\vcpkg.cmake -DCMAKE_BUILD_TYPE=Release -DHB_HAVE_GLIB=OFF -DHB_HAVE_ICU=ON -DHB_HAVE_FREETYPE=ON "-DCMAKE_PREFIX_PATH=D:\den\coding\vcpkg\packages\icu_x86-windows\;C:\Program Files (x86)\;C:\Program Files (x86)\libpng\;C:\Program Files (x86)\freetype2\;C:\Program Files (x86)\freetype\include\freetype2\;C:\Program Files (x86)\freetype\lib\;C:\Program Files (x86)\freetype\lib\cmake\" ..
-cmake --build . --config Release --parallel 6
+cmake -A x64 -DCMAKE_TOOLCHAIN_FILE=D:\den\coding\vcpkg\scripts\buildsystems\vcpkg.cmake -DCMAKE_BUILD_TYPE=Release -DHB_HAVE_GLIB=OFF -DHB_HAVE_ICU=ON -DHB_HAVE_FREETYPE=ON "-DCMAKE_PREFIX_PATH=D:\den\coding\vcpkg\packages\icu_x86-windows;C:\Program Files (x86);C:\Program Files (x86)\libpng;C:\Program Files (x86)\freetype2;C:\Program Files (x86)\freetype\include\freetype2;C:\Program Files (x86)\freetype\lib;C:\Program Files (x86)\freetype\lib\cmake" ..
+cmake --build . --config Release --parallel 8
 cmake --build . --config Release --target install
 ```
 
@@ -283,24 +296,31 @@ Use
 ## Build expat
 
 ```cmd
-.\vcpkg install expat
+.\vcpkg install expat --triplet x64-windows
 ```
 
 ## Build fontconfig
 
 ```cmd
-.\vcpkg install fontconfig
+.\vcpkg install fontconfig --triplet x64-windows
+
+# The package fontconfig:x64-windows provides CMake targets:
+# 
+#     find_package(unofficial-fontconfig CONFIG REQUIRED)
+#     target_link_libraries(main PRIVATE unofficial::fontconfig::fontconfig)
 ```
 
 ## Create VS solution
+
+optional step
 
 ```cmd
 cmake -E remove_directory build
 cmake -E make_directory build
 cd build
 # NOTE: Win64
-cmake -G "Visual Studio 15 2017 Win64" -DCMAKE_C_COMPILER_ID="Clang" -DCMAKE_CXX_COMPILER_ID="Clang" "-DCMAKE_PREFIX_PATH=D:\den\coding\vcpkg\packages\libuuid_x86-windows\;D:\den\coding\vcpkg\packages\fontconfig_x86-windows\;D:\den\coding\vcpkg\packages\icu_x86-windows\;D:\den\coding\vcpkg\packages\expat_x86-windows\;C:\Program Files (x86)\harfbuzz\;C:\Program Files (x86)\;C:\Program Files (x86)\;C:\Program Files (x86)\libpng\;C:\Program Files (x86)\SDL2\;C:\Program Files (x86)\freetype2\;C:\Program Files (x86)\freetype\include\freetype2\;C:\Program Files (x86)\freetype\lib\;C:\Program Files (x86)\freetype\lib\cmake\" ..
-cmake --build . --parallel 6
+cmake -A x64 -G "Visual Studio 15 2017 Win64" -DCMAKE_C_COMPILER_ID="Clang" -DCMAKE_CXX_COMPILER_ID="Clang" "-DCMAKE_PREFIX_PATH=D:\den\coding\vcpkg\packages\libuuid_x86-windows\;D:\den\coding\vcpkg\packages\fontconfig_x86-windows\;D:\den\coding\vcpkg\packages\icu_x86-windows\;D:\den\coding\vcpkg\packages\expat_x86-windows\;C:\Program Files (x86)\harfbuzz\;C:\Program Files (x86)\;C:\Program Files (x86)\;C:\Program Files (x86)\libpng\;C:\Program Files (x86)\SDL2\;C:\Program Files (x86)\freetype2\;C:\Program Files (x86)\freetype\include\freetype2\;C:\Program Files (x86)\freetype\lib\;C:\Program Files (x86)\freetype\lib\cmake\" ..
+cmake --build . --parallel 8
 ```
 
 NOTE: `-T v141_clang_c2` is subdir found from command:
@@ -323,7 +343,7 @@ export PATH=\c\Program\ Files\LLVM:\c\Program\ Files\LLVM\bin:$PATH
 export LDFLAGS="-fuse-ld=lld-link" 
 # cmake -E env LDFLAGS="-fuse-ld=lld-link" PATH="$PATH" cmake -G Ninja -DENABLE_COBALT=FALSE -DCMAKE_BUILD_TYPE="Debug" -DRELEASE_BUILD=OFF -DCMAKE_EXPORT_COMPILE_COMMANDS=ON "-DCMAKE_PREFIX_PATH=D:\den\coding\vcpkg\packages\libuuid_x86-windows\;D:\den\coding\vcpkg\packages\fontconfig_x86-windows\;D:\den\coding\vcpkg\packages\icu_x86-windows\;D:\den\coding\vcpkg\packages\expat_x86-windows\;C:\Program Files (x86)\harfbuzz\;C:\Program Files (x86)\;C:\Program Files (x86)\;C:\Program Files (x86)\libpng\;C:\Program Files (x86)\SDL2\;C:\Program Files (x86)\freetype2\;C:\Program Files (x86)\freetype\include\freetype2\;C:\Program Files (x86)\freetype\lib\;C:\Program Files (x86)\freetype\lib\cmake\"  -DCMAKE_C_COMPILER:PATH="C:\Program Files\LLVM\bin\clang.exe" -DCMAKE_CXX_COMPILER:PATH="C:\Program Files\LLVM\bin\clang.exe" -DCMAKE_C_COMPILER_ID="Clang" -DCMAKE_CXX_COMPILER_ID="Clang" -DCMAKE_SYSTEM_NAME="Generic" -DWIN32=1 ..
 # clear && clear
-# cmake --build . --config Debug --parallel 6
+# cmake --build . --config Debug --parallel 8
 ```
 
 Run from cmder, use `"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" x64`
@@ -344,6 +364,9 @@ refreshenv # from https:\\chocolatey.org\docs\helpers-update-session-environment
 # OR Must run from "Visual Studio 2017 Tools Command Prompt for targeting x86 with x64-hosted tools" 
 "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" x64
 #
+# see https://stackoverflow.com/questions/43847542/rc-exe-no-longer-found-in-vs-2015-command-prompt
+set PATH=C:/Program Files (x86)/Windows Kits/10/bin/x64;%PATH%
+#
 # OR
 # %comspec% /k "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsamd64_x86.bat"
 #
@@ -355,11 +378,16 @@ set PATH=C:\Python27;C:\Python27\Scripts;%PATH%
 #
 set PATH=C:\Program Files\LLVM;C:\Program Files\LLVM\bin;D:\den\coding\vcpkg\packages\libuuid_x86-windows;D:\den\coding\vcpkg\packages\fontconfig_x86-windows;D:\den\coding\vcpkg\packages\icu_x86-windows;D:\den\coding\vcpkg\packages\expat_x86-windows;C:\Program Files (x86)\harfbuzz;C:\Program Files (x86);C:\Program Files (x86);C:\Program Files (x86)\libpng;C:\Program Files (x86)\SDL2;C:\Program Files (x86)\freetype2;C:\Program Files (x86)\freetype\include\freetype2;C:\Program Files (x86)\freetype\lib;C:\Program Files (x86)\freetype\lib\cmake;%PATH%
 #
-set PATH=D:\den\coding\vcpkg\packages\opengl_x86-windows;D:\den\coding\vcpkg\packages\opengl_x86-windows\include;D:\den\coding\vcpkg\packages\libuuid_x86-windows;D:\den\coding\vcpkg\packages\fontconfig_x86-windows;D:\den\coding\vcpkg\packages\icu_x86-windows;D:\den\coding\vcpkg\packages\expat_x86-windows;C:\Program Files (x86)\harfbuzz;C:\Program Files (x86);C:\Program Files (x86);C:\Program Files (x86)\libpng;C:\Program Files (x86)\SDL2;C:\Program Files (x86)\freetype2;C:\Program Files (x86)\freetype\include\freetype2;C:\Program Files (x86)\freetype\lib;C:\Program Files (x86)\freetype\lib\cmake;%PATH%
+# D:\den\coding\vcpkg\packages\opengl_x86-windows;D:\den\coding\vcpkg\packages\opengl_x86-windows\include;
 #
-# cmake -E env LDFLAGS="-fuse-ld=lld-link" PATH="%PATH%" cmake -H.. -B. -G Ninja -DENABLE_COBALT=FALSE -DCMAKE_BUILD_TYPE="Debug" -DRELEASE_BUILD=OFF -DCMAKE_EXPORT_COMPILE_COMMANDS=ON "-DCMAKE_PREFIX_PATH=D:/den/coding/vcpkg/packages/libuuid_x86-windows/;D:/den/coding/vcpkg/packages/fontconfig_x86-windows/;D:/den/coding/vcpkg/packages/icu_x86-windows/;D:/den/coding/vcpkg/packages/expat_x86-windows/;C:/Program Files (x86)/harfbuzz/;C:/Program Files (x86)/;C:/Program Files (x86)/;C:/Program Files (x86)/libpng/;C:/Program Files (x86)/SDL2/;C:/Program Files (x86)/freetype2/;C:/Program Files (x86)/freetype/include/freetype2/;C:/Program Files (x86)/freetype/lib/;C:/Program Files (x86)/freetype/lib/cmake/"  -DCMAKE_C_COMPILER:PATH="C:/Program Files/LLVM/bin/clang.exe" -DCMAKE_CXX_COMPILER:PATH="C:/Program Files/LLVM/bin/clang.exe" -DCMAKE_C_COMPILER_ID="Clang" -DCMAKE_CXX_COMPILER_ID="Clang" -DCMAKE_SYSTEM_NAME="Generic" -DWIN32=1
+set PATH=D:\den\coding\vcpkg\packages\libuuid_x86-windows;D:\den\coding\vcpkg\packages\fontconfig_x86-windows;D:\den\coding\vcpkg\packages\icu_x86-windows;D:\den\coding\vcpkg\packages\expat_x86-windows;C:\Program Files (x86)\harfbuzz;C:\Program Files (x86);C:\Program Files (x86);C:\Program Files (x86)\libpng;C:\Program Files (x86)\SDL2;C:\Program Files (x86)\freetype2;C:\Program Files (x86)\freetype\include\freetype2;C:\Program Files (x86)\freetype\lib;C:\Program Files (x86)\freetype\lib\cmake;%PATH%
+#
+# cmake -E env LDFLAGS="-fuse-ld=lld-link" PATH="%PATH%" cmake -H.. -B. -G Ninja -DENABLE_COBALT=FALSE -DCMAKE_BUILD_TYPE="Debug" -DRELEASE_BUILD=OFF -DCMAKE_EXPORT_COMPILE_COMMANDS=ON "-DCMAKE_PREFIX_PATH=D:/den/coding/vcpkg/packages/libuuid_x86-windows/;D:/den/coding/vcpkg/packages/fontconfig_x86-windows/;D:/den/coding/vcpkg/packages/icu_x86-windows/;D:/den/coding/vcpkg/packages/expat_x86-windows/;C:/Program Files (x86)/harfbuzz/;C:/Program Files (x86)/;C:/Program Files (x86)/;C:/Program Files (x86)/libpng/;D:/den/coding/SDL2-2.0.10/;C:/Program Files (x86)/freetype2/;C:/Program Files (x86)/freetype/include/freetype2/;C:/Program Files (x86)/freetype/lib/;C:/Program Files (x86)/freetype/lib/cmake/"  -DCMAKE_C_COMPILER:PATH="C:/Program Files/LLVM/bin/clang.exe" -DCMAKE_CXX_COMPILER:PATH="C:/Program Files/LLVM/bin/clang.exe" -DCMAKE_C_COMPILER_ID="Clang" -DCMAKE_CXX_COMPILER_ID="Clang" -DCMAKE_SYSTEM_NAME="Generic" -DWIN32=1
 #
 set PATH=C:\Program Files\LLVM;C:\Program Files\LLVM\bin;%PATH%
+#
+# https://stackoverflow.com/questions/1236670/how-to-make-opengl-apps-in-64-bit-windows
+set PATH=C:/Program Files (x86)/Windows Kits/10/Lib/10.0.14393.0/um/x64;%PATH%
 #
 # cmake -E env LDFLAGS="-fuse-ld=lld-link" PATH="%PATH%" cmake -H.. -B. -G Ninja -DENABLE_COBALT=FALSE -DCMAKE_BUILD_TYPE="Debug" -DRELEASE_BUILD=OFF -DCMAKE_EXPORT_COMPILE_COMMANDS=ON "-DCMAKE_PREFIX_PATH=D:\den\coding\vcpkg\packages\libuuid_x86-windows\;D:\den\coding\vcpkg\packages\fontconfig_x86-windows\;D:\den\coding\vcpkg\packages\icu_x86-windows\;D:\den\coding\vcpkg\packages\expat_x86-windows\;C:\Program Files (x86)\harfbuzz\;C:\Program Files (x86)\;C:\Program Files (x86)\;C:\Program Files (x86)\libpng\;C:\Program Files (x86)\SDL2\;C:\Program Files (x86)\freetype2\;C:\Program Files (x86)\freetype\include\freetype2\;C:\Program Files (x86)\freetype\lib\;C:\Program Files (x86)\freetype\lib\cmake\"  -DCMAKE_C_COMPILER:PATH="C:\Program Files\LLVM\bin\clang-cl.exe" -DCMAKE_CXX_COMPILER:PATH="C:\Program Files\LLVM\bin\clang-cl.exe" -DCMAKE_C_COMPILER_ID="Clang" -DCMAKE_CXX_COMPILER_ID="Clang" -DCMAKE_SYSTEM_NAME="Generic" -DWIN32=1
 #
@@ -394,15 +422,15 @@ cd build
 # "-DCMAKE_LINKER=C:/Program Files/LLVM/bin/lld-link.exe" -DCMAKE_C_FLAGS_DEBUG:INTERNAL="/MDd" 
 # "-DCMAKE_LINKER=C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.16.27023\bin\Hostx64\x64\link.exe"
 # -UCMAKE_LINKER -UCMAKE_C_FLAGS_DEBUG
-cmake -G Ninja -DCMAKE_SYSTEM_NAME="Windows" -DIS_CLANG_CL=TRUE -DENABLE_COBALT=FALSE -DCMAKE_BUILD_TYPE="Debug" "-DCMAKE_C_COMPILER=C:/Program Files/LLVM/bin/clang-cl.exe" "-DCMAKE_CXX_COMPILER=C:/Program Files/LLVM/bin/clang-cl.exe" -DRELEASE_BUILD=OFF -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ..
+cmake -G Ninja -DEXT_SKIA_ALWAYS_BUILD=ON "-DCMAKE_LINKER=C:/Program Files/LLVM/bin/lld-link.exe" -DCMAKE_SYSTEM_NAME="Windows" -DIS_CLANG_CL=TRUE -DENABLE_COBALT=FALSE -DCMAKE_BUILD_TYPE="Debug" "-DCMAKE_C_COMPILER=C:/Program Files/LLVM/bin/clang-cl.exe" "-DCMAKE_CXX_COMPILER=C:/Program Files/LLVM/bin/clang-cl.exe" -DRELEASE_BUILD=OFF -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ..
 #
 # cmake -G "Visual Studio 15 2017 Win64" ..
-# cmake --build . --parallel 6
+# cmake --build . --parallel 8
 # cmake -G "Visual Studio 15 2017 Win64" -DCMAKE_SYSTEM_NAME="Windows" -DENABLE_COBALT=FALSE -DCMAKE_C_FLAGS_DEBUG:INTERNAL="/MDd" -DCMAKE_BUILD_TYPE="Debug" -DRELEASE_BUILD=OFF -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ..
 #
 # cmake "-DCMAKE_LINKER=C:/Program Files/LLVM/bin/lld-link.exe" "-DCMAKE_C_COMPILER=C:/Program Files/LLVM/bin/clang-cl.exe" "-DCMAKE_CXX_COMPILER=C:/Program Files/LLVM/bin/clang-cl.exe" -DENABLE_COBALT=FALSE -DCMAKE_BUILD_TYPE="Debug" -DRELEASE_BUILD=OFF -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ..
 #
-#  -DCMAKE_PREFIX_PATH="C:/Program Files/LLVM/;C:/Program Files/LLVM/bin/;D:/den/coding/vcpkg/packages/libuuid_x86-windows/;D:/den/coding/vcpkg/packages/fontconfig_x86-windows/;D:/den/coding/vcpkg/packages/icu_x86-windows/;D:/den/coding/vcpkg/packages/expat_x86-windows/;C:/Program Files (x86)/harfbuzz/;C:/Program Files (x86)/;C:/Program Files (x86)/;C:/Program Files (x86)/libpng/;C:/Program Files (x86)/SDL2/;C:/Program Files (x86)/freetype2/;C:/Program Files (x86)/freetype/include/freetype2/;C:/Program Files (x86)/freetype/lib/;C:/Program Files (x86)/freetype/lib/cmake/"
+#  -DCMAKE_PREFIX_PATH="C:/Program Files/LLVM/;C:/Program Files/LLVM/bin/;D:/den/coding/vcpkg/packages/libuuid_x86-windows/;D:/den/coding/vcpkg/packages/fontconfig_x86-windows/;D:/den/coding/vcpkg/packages/icu_x86-windows/;D:/den/coding/vcpkg/packages/expat_x86-windows/;C:/Program Files (x86)/harfbuzz/;C:/Program Files (x86)/;C:/Program Files (x86)/;C:/Program Files (x86)/libpng/;D:/den/coding/SDL2-2.0.10/;C:/Program Files (x86)/freetype2/;C:/Program Files (x86)/freetype/include/freetype2/;C:/Program Files (x86)/freetype/lib/;C:/Program Files (x86)/freetype/lib/cmake/"
 #
 # cmake "-DCMAKE_LINKER=C:/Program Files/LLVM/bin/lld-link.exe" "-DCMAKE_C_COMPILER=C:/Program Files/LLVM/bin/clang-cl.exe" "-DCMAKE_CXX_COMPILER=C:/Program Files/LLVM/bin/clang-cl.exe" -DENABLE_COBALT=FALSE -DCMAKE_BUILD_TYPE="Debug" -DRELEASE_BUILD=OFF -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ..
 #

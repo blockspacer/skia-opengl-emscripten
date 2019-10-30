@@ -79,6 +79,26 @@ else()
   )
 endif(RELEASE_BUILD)
 
+if(RELEASE_BUILD)
+  if(MSVC)
+    set(SKIA_EXTRA_CFLAGS
+      "${SKIA_EXTRA_CFLAGS}\"/MD\", "
+    )
+  endif(MSVC)
+else()
+  if(MSVC)
+    set(SKIA_EXTRA_CFLAGS
+      "${SKIA_EXTRA_CFLAGS}\"/MDd\", "
+    )
+    set(SKIA_EXTRA_CFLAGS
+      "${SKIA_EXTRA_CFLAGS}\"/D_DEBUG\", "
+    )
+    set(SKIA_EXTRA_CFLAGS
+      "${SKIA_EXTRA_CFLAGS}\"-DD_DEBUG\", "
+    )
+  endif(MSVC)
+endif()
+
 # I wanted to expose (almost) all Skia options as CMake options but sadly
 # GN is a really bad tool - It produces non-overridable configure errors like:
 #
@@ -507,7 +527,7 @@ if (EXT_SKIA_ALWAYS_BUILD)
   # ninja build is always triggered. This is not needed if you never touch the
   # Skia sources. Please note that enabling this ends up with re-building of
   # targets that depend on the library. :(
-  ExternalProject_Add_Step(SKIA_build ForceBuild COMMAND true DEPENDERS build ALWAYS 1)
+  ExternalProject_Add_Step(SKIA_build ForceBuild COMMAND "" DEPENDERS build ALWAYS 1)
 endif ()
 #message(FATAL_ERROR ${SKIA_EXT_PARENT_DIR}/skia/config/sk_ref_cnt_ext_release.h)
 # taken from BUILD.gn (skia_public_includes, minus things that are obviously useless for us)
