@@ -153,6 +153,16 @@ hb_position_t skhb_glyph_h_advance(hb_font_t* hb_font,
     return skhb_position(advance);
 }
 
+#if defined(WIN32) || defined(_WIN32) || defined(WIN64) || defined(_WIN64)
+void skhb_glyph_h_advances(hb_font_t* hb_font,
+                           void* font_data,
+                           unsigned count,
+                           const hb_codepoint_t* glyphs,
+                           unsigned int glyph_stride,
+                           hb_position_t* advances,
+                           unsigned int advance_stride,
+                           void* user_data) {
+#else
 /*
  * WAS
  * void skhb_glyph_h_advances(hb_font_t* hb_font,
@@ -172,6 +182,7 @@ void skhb_glyph_h_advances(hb_font_t* hb_font,
                            int* advances,
                            unsigned int advance_stride,
                            void* user_data) {
+#endif
     SkFont& font = *reinterpret_cast<SkFont*>(font_data);
 
     // Batch call getWidths since entry cost is not cheap.
