@@ -831,6 +831,104 @@ void HTMLElement::RemoveStyleAttribute() {
   Element::RemoveStyleAttribute();
 }
 
+  /// \todo use cache, invalidate on scroll or layout change
+cobalt::math::Vector2dF HTMLElement::computeParentsScroll() {
+  if (!layout_boxes_
+      || IsRootElement()
+      || AsHTMLBodyElement()
+      || !computed_style()
+      || computed_style()->position()
+           == cssom::KeywordValue::GetFixed())
+  {
+    return cobalt::math::Vector2dF(0.0f, 0.0f);
+  }
+
+  float scrollX = 0.0f;
+  float scrollY = 0.0f;
+
+  /// \todo dirty HACK to imitate scrolling support
+  for (cobalt::dom::Node* ancestor_node = this->parent_node(); ancestor_node;
+       ancestor_node = ancestor_node->parent_node())
+  {
+    cobalt::dom::Element* ancestor_element = ancestor_node->AsElement();
+    if (!ancestor_element) {
+      continue;
+    }
+    cobalt::dom::HTMLElement* ancestor_html_element
+      = ancestor_element->AsHTMLElement().get();
+    if (!ancestor_html_element) {
+      continue;
+    }
+    DCHECK(ancestor_html_element->computed_style());
+    if (ancestor_html_element->AsHTMLBodyElement()) {
+      continue;
+    }
+    if (ancestor_html_element->computed_style()->position() ==
+            cobalt::cssom::KeywordValue::GetFixed()) {
+      scrollX = 0.0f;
+      scrollY = 0.0f;
+      break;
+    }
+    scrollX += ancestor_html_element
+      ->scroll_left();
+    scrollY += ancestor_html_element
+      ->scroll_top();
+  }
+  return cobalt::math::Vector2dF(scrollX, scrollY);
+}
+
+// https://stackoverflow.com/a/24829409
+  /// \todo use cache, invalidate on scroll or layout change
+  /// \todo returns same result as GetBoundingClientRect?
+cobalt::math::Vector2dF HTMLElement::computePosInDocument() {
+  float xPosition = 0.0f;
+  float yPosition = 0.0f;
+
+  scoped_refptr<cobalt::dom::Element> ancestor_element
+    = offset_parent();
+  /// \todo dirty HACK to imitate scrolling support
+#ifdef _DEBUG
+  int iters = 0;
+#endif // _DEBUG
+  while(ancestor_element)
+  {
+#ifdef _DEBUG
+    if(++iters > 1000000) {DCHECK(false); break;} // TODO
+#endif // _DEBUG
+
+    cobalt::dom::HTMLElement* ancestor_html_element
+      = ancestor_element->AsHTMLElement().get();
+    if (!ancestor_html_element) {
+      break;
+    }
+    if (ancestor_html_element->AsHTMLBodyElement()) {
+      break;
+    }
+
+    xPosition
+      += ancestor_html_element->offset_left()
+         - ancestor_html_element->scroll_left()
+         + ancestor_html_element->client_left();
+    yPosition
+      += ancestor_html_element->offset_top()
+         - ancestor_html_element->scroll_top()
+         + ancestor_html_element->client_top();
+
+    ancestor_element = ancestor_html_element->offset_parent();
+  }
+
+  xPosition
+    += offset_left()
+       - scroll_left()
+       + client_left();
+  yPosition
+    += offset_top()
+       - scroll_top()
+       + client_top();
+
+  return cobalt::math::Vector2dF(xPosition, yPosition);
+}
+
 void HTMLElement::OnCSSMutation() {
   // Invalidate the computed style of this node.
   computed_style_valid_ = false;

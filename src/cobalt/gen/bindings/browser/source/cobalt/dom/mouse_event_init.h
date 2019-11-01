@@ -43,6 +43,8 @@ class MouseEventInit : public cobalt::dom::EventModifierInit {
   MouseEventInit()
     : screen_x_(0),
       screen_y_(0),
+      original_client_x_(0),
+      original_client_y_(0),
       client_x_(0),
       client_y_(0),
       button_(0),
@@ -54,6 +56,8 @@ class MouseEventInit : public cobalt::dom::EventModifierInit {
     : cobalt::dom::EventModifierInit(other) {
     screen_x_ = other.screen_x_;
     screen_y_ = other.screen_y_;
+    original_client_x_ = other.original_client_x_;
+    original_client_y_ = other.original_client_y_;
     client_x_ = other.client_x_;
     client_y_ = other.client_y_;
     button_ = other.button_;
@@ -65,6 +69,8 @@ class MouseEventInit : public cobalt::dom::EventModifierInit {
     cobalt::dom::EventModifierInit::operator=(other);
     screen_x_ = other.screen_x_;
     screen_y_ = other.screen_y_;
+    original_client_x_ = other.original_client_x_;
+    original_client_y_ = other.original_client_y_;
     client_x_ = other.client_x_;
     client_y_ = other.client_y_;
     button_ = other.button_;
@@ -91,6 +97,26 @@ class MouseEventInit : public cobalt::dom::EventModifierInit {
   }
   void set_screen_y(double value) {
     screen_y_ = value;
+  }
+
+  bool has_original_client_x() const {
+    return true;
+  }
+  double original_client_x() const {
+    return original_client_x_;
+  }
+  void set_original_client_x(double value) {
+    original_client_x_ = value;
+  }
+
+  bool has_original_client_y() const {
+    return true;
+  }
+  double original_client_y() const {
+    return original_client_y_;
+  }
+  void set_original_client_y(double value) {
+    original_client_y_ = value;
   }
 
   bool has_client_x() const {
@@ -147,6 +173,10 @@ class MouseEventInit : public cobalt::dom::EventModifierInit {
  private:
   double screen_x_;
   double screen_y_;
+  /// \note hack to support scrolling: scroll_delta_x = original_client_x_ - screen_x_
+  double original_client_x_;
+  /// \note hack to support scrolling: scroll_delta_y = original_client_y_ - screen_y_
+  double original_client_y_;
   double client_x_;
   double client_y_;
   int16_t button_;

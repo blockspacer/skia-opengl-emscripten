@@ -45,6 +45,11 @@
 #include "cobalt/loader/image/image_cache.h"
 #include "cobalt/ui_navigation/nav_item.h"
 
+// custom
+#include "cobalt/math/vector2d.h"
+// custom
+#include "cobalt/math/vector2d_f.h"
+
 #if defined(OS_EMSCRIPTEN)
 #include <emscripten/emscripten.h>
 #endif // OS_EMSCRIPTEN
@@ -214,6 +219,11 @@ class HTMLElement : public Element, public cssom::MutationObserver {
   //
   // From cssom::CSSStyleDeclaration::MutationObserver.
   void OnCSSMutation() override;
+
+  // Custom, not in any spec.
+  //
+  cobalt::math::Vector2dF computeParentsScroll();
+  cobalt::math::Vector2dF computePosInDocument();
 
   // Safe type conversion methods that will downcast to the required type if
   // possible or return NULL otherwise.

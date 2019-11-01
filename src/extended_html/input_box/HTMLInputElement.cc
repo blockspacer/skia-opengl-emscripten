@@ -830,6 +830,85 @@ static ui::KeyboardCode keyFromKeyCode(uint32_t key_code) {
 }
 #endif // ENABLE_BLINK_UI
 
+static cobalt::math::Vector2dF mouseEventToElementLocalPos(
+  const dom::MouseEvent* const mouseEvent,
+  cobalt::dom::HTMLElement* targetHTML)
+{
+#if 0
+  float scrollX = 0.0f;
+  float scrollY = 0.0f;
+
+  /// \todo dirty HACK to imitate scrolling support
+  for (Node* ancestor_node =  targetHTML->parent_node(); ancestor_node;
+       ancestor_node = ancestor_node->parent_node())
+  {
+    Element* ancestor_element = ancestor_node->AsElement();
+    if (!ancestor_element) {
+      continue;
+    }
+    HTMLElement* ancestor_html_element = ancestor_element->AsHTMLElement().get();
+    if (!ancestor_html_element) {
+      continue;
+    }
+    DCHECK(ancestor_html_element->computed_style());
+    /*if (ancestor_html_element->AsHTMLBodyElement()) {
+      continue;
+    }*/
+    if (ancestor_html_element->computed_style()->position() ==
+            cssom::KeywordValue::GetFixed()) {
+      scrollX = 0.0f;
+      scrollY = 0.0f;
+      break;
+    }
+    //if (ancestor_html_element->computed_style()->position() ==
+    //        cssom::KeywordValue::GetAbsolute()) {
+    //  scrollX = 0.0f;
+    //  scrollY = 0.0f;
+    //  continue;
+    //}
+    scrollX += ancestor_html_element
+      //->offset_left();
+      ->scroll_left();
+    scrollY += ancestor_html_element
+      //->offset_top();
+      ->scroll_top();
+  }
+
+  printf("scroll_X = %f \n", scrollX);
+  printf("scroll_Y = %f \n", scrollY);
+#endif
+
+  auto computedScroll = targetHTML->computeParentsScroll();
+
+  /*auto posInDocument = targetHTML->computePosInDocument();
+  printf("posInDocument = %f \n", posInDocument.x());
+  printf("posInDocument = %f \n", posInDocument.y());*/
+
+  /*const auto scrollDtX = mouseEvent->client_x() - mouseEvent->original_client_x();
+  const auto scrollDtY = mouseEvent->client_y() - mouseEvent->original_client_y();
+  printf("scrollDtX = %f \n", scrollDtX);
+  printf("scrollDtY = %f \n", scrollDtY);*/
+  return cobalt::math::Vector2dF{
+      /*mouseEvent->client_x() + computedScroll.x() - posInDocument.x(),
+      mouseEvent->client_y() + computedScroll.y() - posInDocument.y()*/
+      mouseEvent->client_x() + computedScroll.x()
+          - targetHTML->GetBoundingClientRect()->left()
+          ,
+      /// \note hack to support scrolling: scroll_delta_y = original_client_y_ - screen_y_
+      mouseEvent->client_y() + computedScroll.y()
+          - targetHTML->GetBoundingClientRect()->top()
+      /*scrollDtX,
+      scrollDtY*/
+      /*/// \note hack to support scrolling: scroll_delta_x = original_client_x_ - screen_x_
+      mouseEvent->client_x() - scrollDtX
+          - targetHTML->GetBoundingClientRect()->left()
+          ,
+      /// \note hack to support scrolling: scroll_delta_y = original_client_y_ - screen_y_
+      mouseEvent->client_y() - scrollDtY
+          - targetHTML->GetBoundingClientRect()->top()*/
+  };
+}
+
 HTMLInputElement::HTMLInputElement(Document* document)
     : HTMLCustomElement(document, base::Token(kTagName)) {
   printf("created new HTMLInputElement\n");
@@ -867,13 +946,8 @@ HTMLInputElement::HTMLInputElement(Document* document)
           base::polymorphic_downcast<
               cobalt::dom::HTMLElement*>(event->current_target().get());
       DCHECK(targetHTML);
-      cobalt::math::Vector2dF elementLocalPos{
-          mouseEvent->client_x()
-              - targetHTML->GetBoundingClientRect()->left()
-          ,
-          mouseEvent->client_y()
-              - targetHTML->GetBoundingClientRect()->top()
-      };
+      cobalt::math::Vector2dF elementLocalPos
+        = mouseEventToElementLocalPos(mouseEvent, targetHTML);
       printf("InputBox on-mousedown "
              "at (%f;%f) kSbKeyMouse1: %d , kSbKeyMouse2: %d , kSbKeyMouse3: %d \n",
               elementLocalPos.x(),
@@ -954,13 +1028,8 @@ HTMLInputElement::HTMLInputElement(Document* document)
               cobalt::dom::HTMLElement*>(event->current_target().get());
       DCHECK(targetHTML);
 
-      cobalt::math::Vector2dF elementLocalPos{
-          mouseEvent->client_x()
-              - targetHTML->GetBoundingClientRect()->left()
-              ,
-          mouseEvent->client_y()
-              - targetHTML->GetBoundingClientRect()->top()
-      };
+      cobalt::math::Vector2dF elementLocalPos
+        = mouseEventToElementLocalPos(mouseEvent, targetHTML);
       printf("InputBox on-mouseup at (%f;%f) attr_val=%s event %s for tag: %s, "
              "attrVal: %s, text_content: %s\n",
              elementLocalPos.x(),
@@ -1049,13 +1118,8 @@ HTMLInputElement::HTMLInputElement(Document* document)
               cobalt::dom::HTMLElement*>(event->current_target().get());
       DCHECK(targetHTML);
 
-      cobalt::math::Vector2dF elementLocalPos{
-          mouseEvent->client_x()
-              - targetHTML->GetBoundingClientRect()->left()
-              ,
-          mouseEvent->client_y()
-              - targetHTML->GetBoundingClientRect()->top()
-      };
+      cobalt::math::Vector2dF elementLocalPos
+        = mouseEventToElementLocalPos(mouseEvent, targetHTML);
       printf("InputBox on-click-print at (%f;%f) attr_val=%s event %s for tag: %s, "
              "attrVal: %s, text_content: %s\n",
               elementLocalPos.x(),
@@ -1097,13 +1161,8 @@ HTMLInputElement::HTMLInputElement(Document* document)
             cobalt::dom::HTMLElement*>(event->current_target().get());
     DCHECK(targetHTML);
 
-    cobalt::math::Vector2dF elementLocalPos{
-        mouseEvent->client_x()
-            - targetHTML->GetBoundingClientRect()->left()
-            ,
-        mouseEvent->client_y()
-            - targetHTML->GetBoundingClientRect()->top()
-    };
+    cobalt::math::Vector2dF elementLocalPos
+      = mouseEventToElementLocalPos(mouseEvent, targetHTML);
     printf("InputBox mousemove at (%f;%f) event %s for tag: %s, "
            "attrVal: %s, text_content: %s\n",
             elementLocalPos.x(),
@@ -1187,13 +1246,8 @@ HTMLInputElement::HTMLInputElement(Document* document)
               cobalt::dom::HTMLElement*>(event->current_target().get());
       DCHECK(targetHTML);
 
-      cobalt::math::Vector2dF elementLocalPos{
-          mouseEvent->client_x()
-              - targetHTML->GetBoundingClientRect()->left()
-              ,
-          mouseEvent->client_y()
-              - targetHTML->GetBoundingClientRect()->top()
-      };
+      cobalt::math::Vector2dF elementLocalPos
+        = mouseEventToElementLocalPos(mouseEvent, targetHTML);
       printf("InputBox on-test-mouseover at (%f;%f) event %s for tag: %s, "
              "attrVal: %s, text_content: %s\n",
               elementLocalPos.x(),
@@ -1237,13 +1291,8 @@ HTMLInputElement::HTMLInputElement(Document* document)
               cobalt::dom::HTMLElement*>(event->current_target().get());
       DCHECK(targetHTML);
 
-      cobalt::math::Vector2dF elementLocalPos{
-          mouseEvent->client_x()
-              - targetHTML->GetBoundingClientRect()->left()
-              ,
-          mouseEvent->client_y()
-              - targetHTML->GetBoundingClientRect()->top()
-      };
+      cobalt::math::Vector2dF elementLocalPos
+        = mouseEventToElementLocalPos(mouseEvent, targetHTML);
       printf("InputBox on-test-mouseout at (%f;%f) event %s for tag: %s, "
              "attrVal: %s, text_content: %s\n",
               elementLocalPos.x(),
@@ -1998,7 +2047,9 @@ void HTMLInputElement::onBoxGeneratorVisit(cobalt::layout::BoxGenerator& box_gen
       *box_gen.paragraph_, text_position,
       base::nullopt, base::nullopt, base::nullopt, box_gen.context_,
       GetSize());
-  computed_style()->display()->Accept(&input_box_generator);
+  if(computed_style() && computed_style()->display()) {
+    computed_style()->display()->Accept(&input_box_generator);
+  }
 
   //printf("VisitInputElement with placeholder: %s\n", this->placeholder().c_str());
 

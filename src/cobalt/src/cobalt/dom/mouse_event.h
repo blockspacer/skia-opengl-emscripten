@@ -59,6 +59,8 @@ class MouseEvent : public UIEventWithKeyState {
   float screen_y() const { return screen_y_; }
   float client_x() const { return client_x_; }
   float client_y() const { return client_y_; }
+  float original_client_x() const { return original_client_x_; }
+  float original_client_y() const { return original_client_y_; }
 
   // Web API: CSSOM View Module: Extensions to the MouseEvent Interface
   // (partial interface). This also changes screen_* and client_* above from
@@ -100,6 +102,8 @@ class MouseEvent : public UIEventWithKeyState {
   float screen_y_;
   float client_x_;
   float client_y_;
+  float original_client_x_;
+  float original_client_y_;
   int16_t button_;
   uint16_t buttons_;
 

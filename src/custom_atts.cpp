@@ -1242,17 +1242,72 @@ void addTestOnlyAttrCallbacks() {
                    //elem->text_content().value_or("").c_str()
                    );
 
+#if 0
+            float scrollX = 0.0f;
+            float scrollY = 0.0f;
+
+            /// \todo dirty HACK to imitate scrolling support
+            for (cobalt::dom::Node* ancestor_node =  elementHTML->parent_node(); ancestor_node;
+                 ancestor_node = ancestor_node->parent_node())
+            {
+              cobalt::dom::Element* ancestor_element = ancestor_node->AsElement();
+              if (!ancestor_element) {
+                continue;
+              }
+              cobalt::dom::HTMLElement* ancestor_html_element = ancestor_element->AsHTMLElement().get();
+              if (!ancestor_html_element) {
+                continue;
+              }
+              DCHECK(ancestor_html_element->computed_style());
+              /*if (ancestor_html_element->AsHTMLBodyElement()) {
+                continue;
+              }*/
+              if (ancestor_html_element->computed_style()->position() ==
+                      cobalt::cssom::KeywordValue::GetFixed()) {
+                scrollX = 0.0f;
+                scrollY = 0.0f;
+                break;
+              }
+              //if (ancestor_html_element->computed_style()->position() ==
+              //        cobalt::cssom::KeywordValue::GetAbsolute()) {
+              //  scrollX = 0.0f;
+              //  scrollY = 0.0f;
+              //  continue;
+              //}
+              scrollX += ancestor_html_element
+                //->offset_left();
+                ->scroll_left();
+              scrollY += ancestor_html_element
+                //->offset_top();
+                ->scroll_top();
+            }
+#endif
+
+            auto computedScroll = targetHTML->computeParentsScroll();
+
             float maxSize = std::fmax(targetHTML->offset_width(),
                                       targetHTML->offset_height());
             /// \note style with `position:absolute` relative to parent.
             cobalt::math::Vector2dF elementLocalPos{
-                mouseEvent->client_x()
+                mouseEvent->client_x() + computedScroll.x()
                 - elementHTML->GetBoundingClientRect()->left()
                 - maxSize / 2.0f,
-                mouseEvent->client_y()
+                mouseEvent->client_y() + computedScroll.y()
                 - elementHTML->GetBoundingClientRect()->top()
                 - maxSize / 2.0f
             };
+
+            /*auto posInDocument = targetHTML->computePosInDocument();
+
+            float maxSize = std::fmax(targetHTML->offset_width(),
+                                      targetHTML->offset_height());
+            /// \note style with `position:absolute` relative to parent.
+            cobalt::math::Vector2dF elementLocalPos{
+                posInDocument.x() //- mouseEvent->client_x()
+                - maxSize / 2.0f,
+                posInDocument.y() //- mouseEvent->client_y()
+                - maxSize / 2.0f
+            };*/
 
             ///\todo
             /// just use set_transition_property,

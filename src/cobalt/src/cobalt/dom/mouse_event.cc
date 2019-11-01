@@ -28,6 +28,8 @@ MouseEvent::MouseEvent(const std::string& type)
       screen_y_(0),
       client_x_(0),
       client_y_(0),
+      original_client_x_(0),
+      original_client_y_(0),
       button_(0),
       buttons_(0) {}
 
@@ -38,6 +40,8 @@ MouseEvent::MouseEvent(const std::string& type, const MouseEventInit& init_dict)
       screen_y_(static_cast<float>(init_dict.screen_y())),
       client_x_(static_cast<float>(init_dict.client_x())),
       client_y_(static_cast<float>(init_dict.client_y())),
+      original_client_x_(0),
+      original_client_y_(0),
       button_(init_dict.button()),
       buttons_(init_dict.buttons()),
       related_target_(init_dict.related_target()) {}
@@ -49,6 +53,8 @@ MouseEvent::MouseEvent(base::Token type, const scoped_refptr<Window>& view,
       screen_y_(static_cast<float>(init_dict.screen_y())),
       client_x_(static_cast<float>(init_dict.client_x())),
       client_y_(static_cast<float>(init_dict.client_y())),
+      original_client_x_(static_cast<float>(init_dict.original_client_x())),
+      original_client_y_(static_cast<float>(init_dict.original_client_y())),
       button_(init_dict.button()),
       buttons_(init_dict.buttons()),
       related_target_(init_dict.related_target()) {}
@@ -61,6 +67,8 @@ MouseEvent::MouseEvent(base::Token type, Bubbles bubbles, Cancelable cancelable,
       screen_y_(static_cast<float>(init_dict.screen_y())),
       client_x_(static_cast<float>(init_dict.client_x())),
       client_y_(static_cast<float>(init_dict.client_y())),
+      original_client_x_(static_cast<float>(init_dict.original_client_x())),
+      original_client_y_(static_cast<float>(init_dict.original_client_y())),
       button_(init_dict.button()),
       buttons_(init_dict.buttons()),
       related_target_(init_dict.related_target()) {}
@@ -71,6 +79,8 @@ MouseEvent::MouseEvent(UninitializedFlag uninitialized_flag)
       screen_y_(0),
       client_x_(0),
       client_y_(0),
+      original_client_x_(0),
+      original_client_y_(0),
       button_(0),
       buttons_(0) {}
 
@@ -86,6 +96,8 @@ void MouseEvent::InitMouseEvent(
   screen_y_ = screen_y;
   client_x_ = client_x;
   client_y_ = client_y;
+  original_client_x_ = 0;
+  original_client_y_ = 0;
   button_ = button;
   buttons_ = 0;
   related_target_ = related_target;
@@ -103,6 +115,8 @@ void MouseEvent::InitMouseEvent(
   screen_y_ = screen_y;
   client_x_ = client_x;
   client_y_ = client_y;
+  original_client_x_ = 0;
+  original_client_y_ = 0;
   button_ = button;
   buttons_ = 0;
   related_target_ = related_target;

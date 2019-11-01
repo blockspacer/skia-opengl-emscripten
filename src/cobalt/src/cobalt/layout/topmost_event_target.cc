@@ -350,20 +350,23 @@ void TopmostEventTarget::ConsiderElement(dom::Element* element,
     }
 
     /// \todo dirty HACK to imitate scrolling support
+#if 0
     if (!layout_boxes//element->AsHTMLElement()->layout_boxes_
         || element->AsHTMLElement()->IsRootElement()
-        || element->AsHTMLElement()->AsHTMLBodyElement() ||
-        !element->AsHTMLElement()->computed_style() ||
-        element->AsHTMLElement()->computed_style()->position()
+        || element->AsHTMLElement()->AsHTMLBodyElement()
+        || !element->AsHTMLElement()->computed_style()
+        || element->AsHTMLElement()->computed_style()->position()
           == cssom::KeywordValue::GetFixed()) {
       ///...
-    } else {
+    }
+    else
+    {
       //scrollX += element->AsHTMLElement()->scroll_left();
       //scrollY += element->AsHTMLElement()->scroll_top();
-
       /// \todo dirty HACK to imitate scrolling support
       for (Node* ancestor_node =  element->AsHTMLElement()->parent_node(); ancestor_node;
-           ancestor_node = ancestor_node->parent_node()) {
+           ancestor_node = ancestor_node->parent_node())
+      {
         Element* ancestor_element = ancestor_node->AsElement();
         if (!ancestor_element) {
           continue;
@@ -373,9 +376,9 @@ void TopmostEventTarget::ConsiderElement(dom::Element* element,
           continue;
         }
         DCHECK(ancestor_html_element->computed_style());
-        if (ancestor_html_element->AsHTMLBodyElement()) {
+        /*if (ancestor_html_element->AsHTMLBodyElement()) {
           continue;
-        }
+        }*/
         if (ancestor_html_element->computed_style()->position() ==
                 cssom::KeywordValue::GetFixed()) {
           scrollX = 0.0f;
@@ -407,6 +410,7 @@ void TopmostEventTarget::ConsiderElement(dom::Element* element,
         //}
       }
     }
+#endif // 0
 
     //scrollX += element->AsHTMLElement()
     //  ->offset_left();
@@ -464,20 +468,23 @@ void TopmostEventTarget::ConsiderElement(dom::Element* element,
       offsetY += offsetNode->AsHTMLElement()->scroll_top();
     }*/
 
+    auto computedScroll = element->AsHTMLElement()->computeParentsScroll();
+
     element_scroll_coordinate.set_x(
       element_scroll_coordinate.x()
-      + offsetX
-      + scrollX);
+      + computedScroll.x());
     element_scroll_coordinate.set_y(
       element_scroll_coordinate.y()
-      + offsetY
-      + scrollY);
+      + computedScroll.y());
 
+    //auto posInDocument = element->AsHTMLElement()->computePosInDocument();
 
     scoped_refptr<dom::HTMLElement> html_element = element->AsHTMLElement().get();
     if (html_element && html_element->CanbeDesignatedByPointerIfDisplayed()) {
       ConsiderBoxes(html_element, layout_boxes,
         original_element_coordinate,
+        //posInDocument,
+        //posInDocument);
         element_scroll_coordinate, //element_prev_scroll_coordinate,
         element_scroll_coordinate);
     }
@@ -830,11 +837,15 @@ void InitializePointerEventInitFromEvent(
     event_init->set_client_y(mouse_event->screen_y()
     );
       //+ previous_html_element->scroll_top());
+    event_init->set_original_client_x(mouse_event->screen_x());
+    event_init->set_original_client_y(mouse_event->screen_y());
   } else {
     event_init->set_screen_x(mouse_event->screen_x());
     event_init->set_screen_y(mouse_event->screen_y());
     event_init->set_client_x(mouse_event->screen_x());
     event_init->set_client_y(mouse_event->screen_y());
+    event_init->set_original_client_x(mouse_event->screen_x());
+    event_init->set_original_client_y(mouse_event->screen_y());
   }
 
   event_init->set_button(mouse_event->button());
@@ -917,34 +928,54 @@ void TopmostEventTarget::MaybeSendPointerEvents(
       previous_html_element_weak_.get());
     // Do a hit test if there is no target override element.
     if(previous_html_element) {
+#ifdef _DEBUG // TODO: remove printf
       if(previous_html_element->scroll_top()) {
         printf("previous_html_element scroll_left %f %f \n",
           previous_html_element->scroll_left(),
           previous_html_element->scroll_top());
       }
-      math::Vector2dF coordinate(static_cast<float>(event_init.client_x()),
-                                  //+ previous_html_element->scroll_left(),
+#endif
+      math::Vector2dF client_coordinate(static_cast<float>(event_init.client_x()),
                                  static_cast<float>(event_init.client_y()));
-                                  //+ previous_html_element->scroll_top());
+      math::Vector2dF original_client_coordinate(
+                                 static_cast<float>(mouse_event->screen_x()),
+                                 static_cast<float>(mouse_event->screen_y()));
       math::Vector2dF override_coordinate;
       target_element = FindTopmostEventTarget(view->document(),
-        coordinate, &override_coordinate);
-      event_init.set_screen_x(override_coordinate.x());
+        client_coordinate, &override_coordinate);
+      /*event_init.set_screen_x(override_coordinate.x());
       event_init.set_screen_y(override_coordinate.y());
       event_init.set_client_x(override_coordinate.x());
       event_init.set_client_y(override_coordinate.y());
+      event_init.set_original_client_x(original_client_coordinate.x());
+      event_init.set_original_client_y(original_client_coordinate.y());*/
     } else {
-      math::Vector2dF coordinate(static_cast<float>(event_init.client_x()),
+      math::Vector2dF client_coordinate(static_cast<float>(event_init.client_x()),
                                  static_cast<float>(event_init.client_y()));
+      math::Vector2dF original_client_coordinate(
+                                 static_cast<float>(mouse_event->screen_x()),
+                                 static_cast<float>(mouse_event->screen_y()));
       math::Vector2dF override_coordinate;
       target_element = FindTopmostEventTarget(view->document(),
-        coordinate, &override_coordinate);
-      event_init.set_screen_x(override_coordinate.x());
+        client_coordinate, &override_coordinate);
+      /*event_init.set_screen_x(override_coordinate.x());
       event_init.set_screen_y(override_coordinate.y());
       event_init.set_client_x(override_coordinate.x());
       event_init.set_client_y(override_coordinate.y());
+      event_init.set_original_client_x(original_client_coordinate.x());
+      event_init.set_original_client_y(original_client_coordinate.y());*/
     }
   }
+#ifdef _DEBUG // TODO: remove printf
+  printf("event_init.set_client_x %f event_init.set_client_y %f \n",
+    event_init.client_x(),
+    event_init.client_y()
+  );
+  printf("event_init.set_original_client_x %f event_init.set_original_client_y %f \n",
+    event_init.original_client_x(),
+    event_init.original_client_y()
+  );
+#endif
 
   if (target_element) {
     target_element->DispatchEvent(event);

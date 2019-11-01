@@ -240,6 +240,8 @@ void UpdateMouseEventInit(const system_window::InputEvent* input_event,
   const math::PointF& position = input_event->position();
   mouse_event->set_screen_x(static_cast<float>(position.x()));
   mouse_event->set_screen_y(static_cast<float>(position.y()));
+  mouse_event->set_original_client_x(static_cast<float>(position.x()));
+  mouse_event->set_original_client_y(static_cast<float>(position.y()));
   mouse_event->set_client_x(static_cast<float>(position.x()));
   mouse_event->set_client_y(static_cast<float>(position.y()));
   ///printf("UpdateMouseEventInit 3\n");
