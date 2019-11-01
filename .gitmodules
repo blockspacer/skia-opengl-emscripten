@@ -49,3 +49,6 @@
 [submodule "src/chromium/third_party/skia"]
 	path = src/chromium/third_party/skia
 	url = ../../google/skia.git
+[submodule "submodules/CXTPL"]
+	path = submodules/CXTPL
+	url = http://github.com/blockspacer/CXTPL.git
