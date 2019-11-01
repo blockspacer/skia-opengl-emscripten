@@ -1,0 +1,741 @@
+﻿/*div:focus {
+  border: 5px solid #f1f1f1;
+  background-color:rgb(255, 255, 255) !important;
+}
+
+div:hover {
+  border: 5px solid #ffff87 !important;
+  background-color:rgb(100, 100, 0);
+}*/
+
+.showbox2 {
+  margin: 4em 1em;
+  width: 100px;
+  height: 40px;
+  border: 2px solid green;
+  background-color: #fff;
+  line-height: 40px;
+  text-align: center;
+  transition: 1s ease-in-out;
+}
+
+.showbox2.slideright:hover {
+  transform: translate(3em,0);
+}
+
+.showbox {
+  margin: 4em 1em;
+  width: 100px;
+  height: 40px;
+  border: 2px solid green;
+  background-color: #fff;
+  line-height: 40px;
+  text-align: center;
+}
+
+.polling_message {
+  color: white;
+  margin-right: 2%;
+}
+
+.view_port {
+  background-color: black;
+  height: 25px;
+  width: 100%;
+  overflow: hidden;
+}
+
+.cylon_eye {
+  background-color: red;
+  background-image: linear-gradient(to right,
+      rgba(0, 0, 0, .9) 25%,
+      rgba(0, 0, 0, .1) 50%,
+      rgba(0, 0, 0, .9) 75%);
+  color: white;
+  height: 100%;
+  width: 20%;
+  animation: 4s linear 0s infinite alternate move_eye;
+}
+
+@keyframes move_eye { from { margin-left: -20%; } to { margin-left: 100%; }  }
+
+@keyframes rotating {
+    from{
+        -webkit-transform: rotate(0deg);
+    }
+    to{
+        -webkit-transform: rotate(360deg);
+    }
+}
+
+.rotating {
+    -webkit-animation: rotating 2s linear infinite;
+}
+
+@keyframes bounceIn {
+  0% {
+    transform: scale(0.1);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.bounceInDiv {
+  animation: bounceIn 2s;
+  animation-delay: 5s;
+  animation-iteration-count: infinite;
+}
+
+@keyframes exanim {
+  from {background-color: red;}
+  to {background-color: yellow;}
+}
+
+.exanim {
+  background-color: red;
+  animation-name: exanim;
+  animation-duration: 10s;
+}
+
+@-webkit-keyframes slidein {
+    from {
+        margin-left: -20%;
+    }
+    to {
+        margin-left: 100%;
+    }
+}
+
+@keyframes slidein {
+    from {
+        margin-left: -20%;
+    }
+    to {
+        margin-left: 100%;
+    }
+}
+.hovertest:hover {
+  background-color: black;
+  color: green;
+}
+
+/* The flip card container - set the width and height to whatever you want. We have added the border property to demonstrate that the flip itself goes out of the box on hover (remove perspective if you don't want the 3D effect */
+.flip-card {
+  background-color: transparent;
+  width: 300px;
+  height: 200px;
+  border: 1px solid #f1f1f1;
+  /*perspective: 1000px;*/ /* Remove this if you don't want the 3D effect */
+  overflow: hidden;
+}
+
+/* This container is needed to position the front and back side */
+.flip-card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  transition: transform 0.8s;
+}
+
+
+/* Do an horizontal flip when you move the mouse over the flip box container */
+.flip-card:hover .flip-card-inner {
+  /*transform: rotateY(180deg);*/
+  /*filter: map-to-mesh(equirectangular, 2.5rad 3.14rad,
+                      matrix3d(1, 0, 0, 0,
+                               0, 1, 0, 0,
+                               0, 0, 1, 0,
+                               100, 100, 100, 1));*/
+
+  transform: matrix(1, 2, -1, 1, 80, 80);
+  overflow: scroll;
+
+  /*transform:
+    matrix3d(
+      1, 0, 0, 0,
+      0, 1, 0, 0,
+      0, 0, 1, 0,
+      0, 0, 0, -1
+    )
+    translateZ(-2px);
+    transform: translate(-3em,1em);*/
+}
+
+/* Position the front and back side */
+.flip-card-front, .flip-card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+/* Style the front side (fallback if image is missing) */
+.flip-card-front {
+  background-color: #bbb;
+  color: black;
+}
+
+/* Style the back side */
+.flip-card-back {
+  /*background-color: blue;*/
+  color: white;
+  /*transform: rotateY(180deg);*/
+}
+
+
+/* TODO 3D transform https://docs.microsoft.com/en-us/xamarin/xamarin-forms/user-interface/graphics/skiasharp/transforms/3d-rotation */
+/* TODO 3D transform https://github.com/math3d/Skia/blob/d4cafdc28bd86da5eb993471bcd9a5feafc3b618/README.md */
+/* TODO 3D https://dev.opera.com/articles/ru/understanding-the-css-transforms-matrix/ */
+@keyframes MotionScale {
+  from {
+    /*
+      Identity matrix is used as basis here.
+      The matrix below describes the
+      following transformations:
+        Translates every X point by -50px
+        Translates every Y point by -100px
+        Translates every Z point by 0
+        Scales down by 10%
+
+    transform: matrix3d(
+      1,0,0,0,
+      0,1,0,0,
+      0,0,1,0,
+      -50,-100,0,1.1
+    );*/
+
+  }
+  50% {
+    /*transform: matrix3d(
+      1,0,0,0,
+      0,1,0,0,
+      0,0,1,0,
+      0,0,0,0.9
+    );*/
+  }
+  to {
+     /*transform: matrix3d(
+      1,0,0,0,
+      0,1,0,0,
+      0,0,1,0,
+      50,100,0,1.1
+    )*/
+  }
+}
+
+.bg-grad {
+  max-width: 1150px;
+  position: relative;
+  background: linear-gradient(to right, red, purple);
+  padding: 3px;
+}
+
+.border-grad {
+  max-width: 1050px;
+  padding: 1rem;
+  border-width: 3px;
+  border-style: solid;
+}
+
+.border-img-slice {
+  border: 20px solid;
+}
+
+a {
+  text-decoration: none;
+}
+
+
+
+a {
+  text-decoration: none;
+}
+
+.navigation {
+  background: #ecec72;
+  margin: 0;
+  padding-left: 0;
+  width: 500px;
+  text-align: right;
+}
+
+.navigation-item {
+  color: #fff;
+  background: rgb(187, 135, 72);
+  display: inline-block;
+  vertical-align: middle;
+  padding: 12px;
+  position: relative;
+  text-decoration: none;
+  transition-duration: 0.5s;
+  height: 20px;
+}
+
+.navigation-item a {
+  color: #fff;
+}
+
+.navigation-item:hover {
+  background: red;
+}
+
+.dropdown {
+  background: rgb(68, 121, 8);
+  position: relative;
+  transition: all 0.9s ease;
+  opacity: 0;
+  width: 100%;
+  z-index:999;
+  vertical-align: bottom;
+  display: inline-block;
+}
+
+.navigation-item:hover > .dropdown, .dropdown:hover  {
+  opacity: 1;
+}
+
+.dropbtn {
+  background-color: #4CAF50;
+  color: white;
+  padding: 16px;
+  font-size: 16px;
+  border: none;
+}
+
+.dropdownbtn {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdownbtn-content {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 999;
+}
+
+.dropdownbtn-content a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+.dropdownbtn-content a:hover {background-color: #f1f1f1}
+
+.dropdownbtn:hover .dropdownbtn-content {
+  display: block;
+}
+
+.dropdownbtn:hover .dropbtn {
+  background-color: #3e8e41;
+}
+
+
+
+
+
+
+
+.share-container {
+  top: 110px;
+  position: fixed;
+  margin: 1em;
+  right: 50px;
+}
+
+.share-button {
+  box-shadow: 0px 5px 11px -2px rgba(0, 0, 0, 0.18),
+              0px 4px 12px -7px rgba(0, 0, 0, 0.15);
+  border-radius: 50%;
+  display: block;
+  width: 56px;
+  height: 56px;
+  margin: 20px auto 0;
+  position: relative;
+          transition: all .1s ease-out;
+}
+
+.share-button:active,
+.share-button:focus,
+.share-button:hover {
+  box-shadow: 0 0 4px rgba(0,0,0,.14),
+    0 4px 8px rgba(0,0,0,.28);
+}
+
+/* TODO: :not(:last-child) */
+.share-buttons-entry {
+  width: 40px;
+  height: 40px;
+  margin: 20px auto 0;
+  opacity: 0;
+          transform: translateY(50px);
+}
+
+/* TODO: :not(:last-child) */
+.share-container:hover
+.share-buttons-entry {
+  opacity: 1;
+          transform: none;
+  margin: 15px auto 0;
+}
+
+/* Unessential styling for sliding up buttons at differnt speeds */
+
+.share-buttons-1 {
+          transition-delay: 25ms;
+  background-image: url('file:///./resources/images/mouse.jpeg');
+  background-size: contain;
+}
+
+.share-buttons-1:before {
+  content: "tooltip 1";
+}
+
+.share-buttons-2 {
+          transition-delay: 20ms;
+  background-image: url('file:///./resources/images/mouse.jpeg');
+  background-size: contain;
+}
+
+.share-buttons-2:before {
+  content: "tooltip 2";
+}
+
+.share-buttons-3 {
+          transition-delay: 40ms;
+  background-image: url('file:///./resources/images/mouse.jpeg');
+  background-size: contain;
+}
+
+.share-buttons-3:before {
+  content: "tooltip 3";
+}
+
+.share-buttons-4 {
+          transition-delay: 60ms;
+  background-image: url('file:///./resources/images/mouse.jpeg');
+  background-size: contain;
+}
+
+.share-buttons-4:before {
+  content: "tooltip 4";
+}
+
+/* Show tooltip content on hover */
+
+.share-button:before {
+  bottom: 25%;
+  font-weight: 600;
+  border-radius: 2px;
+  background: #585858;
+  color: #fff;
+  font-size: 12px;
+  visibility: hidden;
+  opacity: 0;
+  padding: 5px 7px;
+  margin-right: 12px;
+  position: absolute;
+  right: 100%;
+  white-space: nowrap;
+}
+
+.share-button:hover:before,
+.share-button:hover:after {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* Set the colour of the effect */
+.bn .ripple-effect {
+  background: #206aae;
+}
+
+/* Some default button styling */
+.bn {
+  padding: 1em 2em;
+  background: #2e85d6;
+  color:#fff;
+  display: inline-block;
+  text-decoration:none;
+}
+
+.btn .ripple-effect {
+  background: #206aae;
+}
+
+/* Some default button styling */
+.btn {
+  padding: 1em 2em;
+  background: #2e85d6;
+  color:#fff;
+  display: inline-block;
+  text-decoration:none;
+  box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
+}
+
+/* Ripple Styling */
+@keyframes rippleDrop {
+  100% {
+    transform: scale(2);
+  }
+}
+.ripple-button {
+  position: relative;
+}
+.ripple-button .ripple-effect-layer {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  z-index: 0;
+  overflow: hidden;
+}
+.ripple-button .ripple-effect {
+  position: absolute;
+  border-radius: 50%;
+  transform: scale(0);
+  animation: rippleDrop 800.0ms linear;
+  animation-fill-mode: forwards;
+  width: 0px;
+  height: 0px;
+}
+.ripple-button .ripple-content {
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes widthanimIn {
+  0% {
+    transform: scaleX(1) scaleY(1);
+    opacity: 0;
+  }
+  60% {
+    transform: scaleX(2) scaleY(2);
+    opacity: 1;
+  }
+  100% {
+    transform: scaleX(3) scaleY(3);
+  }
+}
+
+.widthanim {
+  animation: widthanimIn 2s ease-in-out;
+  animation-delay: 1s;
+  animation-iteration-count: infinite;
+  width: 100px;
+  height: 100px;
+  animation-fill-mode: forwards;
+  background: #CCC;
+}
+
+.widthtransition {
+  width: 100px;
+  height: 100px;
+  background: #CCC;
+  /*transition-property: width;
+  transition-duration: 5s;
+  transition-timing-function: linear;
+  transition-delay: 1s;
+  transition: 6s ease-in-out;*/
+  transition: all 6s ease-out;
+}
+
+.widthtransition:hover {
+  width: 300px;
+  height: 300px;
+  background: #FFF;
+}
+
+.fillEntireScreen {
+  min-height: 100vh;
+}
+
+.FlexDemoContainer {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.FlexDemoItem {
+  width: 50px;
+  height: 50px;
+  margin: 10px;
+  box-shadow: 4px 7px 45px -10px rgba(0,0,0,0.7);
+  border-radius: 7px;
+  background: #CCC;
+}
+
+/*
+ = ======== flexbox ========
+*/
+.flexCards {
+   display: flex;
+   flex-wrap: wrap;
+   justify-content: center;
+   align-items: center;
+}
+
+.flexCard {
+  flex: 0 0 250px;
+}
+
+
+/*
+ = ====== visuals =========
+*/
+
+.flexCard {
+  margin: 12px;
+  background: #CCC;
+  border-radius: 7px;
+  padding: 0 0 10px 0
+}
+.flexCard > .flexHeader {
+  background: #808080;
+  height: 20px;
+  border-radius:  7px 7px 0 0;
+}
+.flexCard > .flexUL {
+  /*
+   <li></li> unsupported
+     list-style: none;
+  */
+  padding: 0;
+}
+.flexCard > .flexUL .flexLI {
+  height: 10px;
+  width: 90%;
+  margin: 5px auto;
+  background: rgba(155,155,155, 0.8);
+}
+.flexCard .flexBtn {
+  width: 50%;
+  height: 15px;
+  border: 0;
+  margin-left: 15px;
+  border-radius: 7px;
+  background: #808080;
+}
+.flexCard--big {
+  transform: scaleX(1.2);
+}
+.flexCard--big:hover {
+  transform: scaleX(2.2) scaleY(2.2);
+}
+
+/* = =====
+FLexbox Grids
+=========*/
+.row {
+   display: flex;
+   flex-wrap: wrap;
+}
+
+
+.row_cell {
+   flex: 1
+}
+.row_cell--2 {
+   flex: 2
+}
+.row_cell--3 {
+   flex: 3
+}
+
+
+.row_cell--top {
+  align-self: flex-start
+}
+.row_cell--bottom {
+  align-self: flex-end
+}
+.row_cell--center {
+  align-self: center
+}
+
+
+.row--top {
+   align-items: flex-start
+}
+.row--bottom {
+   align-items: flex-end
+}
+.row--center {
+   align-items: center
+}
+
+
+/*= ======
+visuals
+=======*/
+.row {
+  padding: 15px;
+  background: rgba(0,0,0,0.08);
+  margin: 8px 0;
+}
+.row_cell,
+.row_cell--2,
+.row_cell--3 {
+  background: rgba(0,0,0,0.13);
+  padding: 10px;
+  margin: 5px;
+}
+
+/*= ======
+scrollable
+  * http://jsfiddle.net/elGrecode/00dgurnn/
+  * https://stackoverflow.com/a/28666991
+  You should note that you will have to adjust your version to recalculate the scroller size in certain cases:
+  1.) Where the screen is resized or
+  2.) If more content is appended.
+=======*/
+.demo-scrollable {
+    padding: 0% 0%;
+    position: relative;
+    border: 1px solid gray;
+    overflow: scroll;
+    height: 50px;
+}
+
+.demo-scrollable.demo-scrollable-showScroll::after {
+    position: absolute;
+    content: '';
+    top: 5%;
+    right: 7px;
+    height: 90%;
+    width: 3px;
+    background: rgba(224, 224, 255, .3);
+}
+
+.demo-scrollable .demo-scrollable-content-wrapper {
+    width: 100%;
+    height: 100%;
+    padding-right: 50%;
+    /*overflow-y: scroll;*/
+    overflow: scroll;
+}
+.demo-scrollable-scroller {
+    z-index: 5;
+    /*cursor: pointer;*/
+    position: absolute;
+    width: 10px;
+    border-radius: 5px;
+    background: rgb(111, 111, 190);
+    top: 0px;
+    right: 3px;
+    /*transition: top 0.08s;*/
+}
+.demo-scrollable-content {
+    /*user-select: none;*/
+}

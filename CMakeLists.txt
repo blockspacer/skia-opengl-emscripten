@@ -8,6 +8,8 @@ include( cmake/Utils.cmake )
 # set_cmake_module_paths from Utils.cmake
 set_cmake_module_paths( ${PROJECT_NAME}
   "${CMAKE_CURRENT_SOURCE_DIR}/cmake;${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules" )
+list(APPEND CMAKE_MODULE_PATH
+  "${CMAKE_CURRENT_SOURCE_DIR}/submodules/CXTPL/cmake/exports")
 # print_cmake_system_info from Utils.cmake
 print_cmake_system_info()
 # prevent_in_source_builds from Utils.cmake
@@ -2854,6 +2856,26 @@ add_custom_target(copy-runtime-files ALL
   COMMAND cmake -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/resources ${CMAKE_CURRENT_BINARY_DIR}/resources
   #DEPENDS ${PROJECT_NAME}
 )
+
+#set(DEFAULT_URL_PROTOCOL "file:///")
+#if(HTML_NATIVE)
+#configure_file(resources/css/index.css index.html @ONLY)
+
+find_package(CXTPL_tool REQUIRED)
+
+set(cxtpl_in_dir "${CMAKE_CURRENT_SOURCE_DIR}/codegen/resources")
+set(cxtpl_out_dir "${CMAKE_CURRENT_SOURCE_DIR}/generated/resources")
+
+list(APPEND cxtpl_inputs "${cxtpl_in_dir}/css/index.css.cxtpl")
+list(APPEND cxtpl_outputs "${cxtpl_out_dir}/css/index.css")
+
+list(APPEND cxtpl_inputs "${cxtpl_in_dir}/html/index.html.cxtpl")
+list(APPEND cxtpl_outputs "${cxtpl_out_dir}/html/index.html")
+
+# create new codegen files for TARGET_NAME_HERE based on cxtpl_inputs and cxtpl_outputs
+target_add_cxtpl_tool(${PROJECT_NAME} "cmake_integration"
+                      "${cxtpl_in_dir}" "${cxtpl_out_dir}"
+                      "${cxtpl_inputs}" "${cxtpl_outputs}")
 
 add_dependencies(${PROJECT_NAME} copy-runtime-files)
 

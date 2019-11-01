@@ -30,6 +30,10 @@
 #include "cobalt/loader/file_fetcher.h"
 #include "cobalt/loader/net_fetcher.h"
 
+// custom
+#include "cobalt/dom/url_utils.h"
+#include "url/gurl.h"
+
 #if !defined(__EMSCRIPTEN__) && defined(__TODO__)
 #include "cobalt/network/network_module.h"
 #endif
@@ -180,6 +184,26 @@ std::unique_ptr<Fetcher> FetcherFactory::CreateSecureFetcher(
 
   if (url.SchemeIsFile()) {
     printf("url.SchemeIsFile %s\n", url.path().c_str());
+
+    /// \todo use config to disable auto-prefixer
+    // not in spec
+#if 0
+#if defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+    if(StartsWith(url.path(), "file:///",
+                         base::CompareCase::INSENSITIVE_ASCII)) {
+       base::StringPiece new_path = url.path();
+       /*if(StartsWith(new_path, "/",
+                         base::CompareCase::INSENSITIVE_ASCII)) {
+          new_path.remove_prefix(1);
+       }*/
+       cobalt::dom::URLUtils url_utils(url);
+       url_utils.set_pathname(new_path.as_string());
+       url_utils.set_protocol("http");
+       printf("(changed) url.SchemeIsFile %s\n", url.path().c_str());
+    }
+#endif // defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+#endif // 0
+
     base::FilePath file_path;
     if (!FileURLToFilePath(url, &file_path)) {
       printf("url.!FileURLToFilePath %s\n", url.path().c_str());

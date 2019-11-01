@@ -4,17 +4,17 @@
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>Emscripten-Generated Code</title>
-    <link rel="splashscreen" href="file:///resources/html/index_hello.html">
-    <link rel="stylesheet" href="file:///resources/css/index.css">
+    <link rel="splashscreen" href="file:///./resources/html/index_hello.html">
+    <link rel="stylesheet" href="file:///./resources/css/index.css">
     <style>
       @font-face {
           font-family: "UbuntuCustom";
-          src: url("file:///resources/fonts/Ubuntu-Regular.ttf");
+          src: url("file:///./resources/fonts/Ubuntu-Regular.ttf");
       }
 
       @font-face {
           font-family: "FreeSansCustom";
-          src: url("file:///resources/fonts/FreeSans.ttf");
+          src: url("file:///./resources/fonts/FreeSans.ttf");
       }
 
       #input_1 {
@@ -272,7 +272,7 @@
     </div>
 
     <div>
-      <skottie width="100" height="100" src="./resources/animations/confetti.json" style="display:block;width:100px;height:100px">
+      <skottie width="100" height="100" src="file:///./resources/animations/confetti.json" style="display:block;width:100px;height:100px">
     </div>
 
     <div I_v-test-attr-name_I="I_v-test-attr-val_I" I_on-mousemove_I="on-mousemove-event" I_on-mouseleave_I="your args here 1">
@@ -302,7 +302,7 @@
     <div class="flip-card" style="z-index:999;">
       <div class="flip-card-inner">
         <div class="flip-card-front">
-          <div style="background-image: url('file:///resources/images/mouse.jpeg'); width:300px; height:300px;">
+          <div style="background-image: url('file:///./resources/images/mouse.jpeg'); width:300px; height:300px;">
           </div>
         </div>
         <div class="flip-card-back">
@@ -312,7 +312,7 @@
                 text 2
               </sk_input>
             </div>
-            <skottie width="40" height="40" src="./resources/animations/data.json" style="display:block;color:#CCC;width:40px;height:40px;z-index:999;">
+            <skottie width="40" height="40" src="file:///./resources/animations/data.json" style="display:block;color:#CCC;width:40px;height:40px;z-index:999;">
             </skottie>
             kkk
           </div>
@@ -511,13 +511,13 @@
     <div class="hovertest">hovertest</div>
     <!-- TODO: https://cobalt.foo/development/reference/supported-features.html
     img1<br>
-    <img src="file:///resources/images/mouse.jpeg" width="200" height="200" style="border: 5px solid gray;"><br>
+    <img src="file:///./resources/images/mouse.jpeg" width="200" height="200" style="border: 5px solid gray;"><br>
     img2<br>
     -->
-    <div style="background-image: url('file:///resources/images/mouse.jpeg'); width:200px; height:200px; border: 5px solid gray;animation: slidein 3s ease-in 1s infinite;">
+    <div style="background-image: url('file:///./resources/images/mouse.jpeg'); width:200px; height:200px; border: 5px solid gray;animation: slidein 3s ease-in 1s infinite;">
     </div><br>
     img3<br>
-    <div style="background-image: url('file:///resources/images/owl.png'); width:200px; height:200px; border: 5px solid gray;animation: slidein 3s ease-in 1s infinite;">
+    <div style="background-image: url('file:///./resources/images/owl.png'); width:200px; height:200px; border: 5px solid gray;animation: slidein 3s ease-in 1s infinite;">
     </div><br>
 
     <div style="background-color:rgb(84, 208, 212);width:50px;I_width-x-px_I;width:800px;">

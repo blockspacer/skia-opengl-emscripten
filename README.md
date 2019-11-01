@@ -205,7 +205,12 @@ http://kripken.github.io/emscripten-site/docs/getting_started/downloads.html
 ### Build & clone deps with --init --recursive
 
 ```bash
-git submodule update --init --recursive
+# git submodule deinit --all -f
+git submodule sync --recursive
+git fetch --recurse-submodules
+git submodule update --init --recursive --depth 5
+# or
+git submodule update --force --recursive --init --remote
 ```
 
 ```bash
@@ -460,7 +465,7 @@ clear && clear ; gdb build-linux-minimal-st-deb/skemgl -ex "run" -ex "set pagina
 
 ```bash
 # (RUN_APP=ON, BUILD_APP=OFF)
-cmake -DRUN_APP=ON -DBUILD_APP=OFF -DBUILD_DIR=$(pwd)/build-wasm-mt-deb/  -P tools/buildWeb.cmake
+cmake -DRUN_APP=ON -DBUILD_APP=OFF -DBUILD_DIR=$(pwd)/build-wasm-mt-deb/ -P tools/buildWeb.cmake
 ```
 
 - see http://webassemblycode.com/using-browsers-debug-webassembly/

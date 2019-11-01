@@ -1,0 +1,906 @@
+﻿<!DOCTYPE html>
+<html dir="ltr" lang="en-gb">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Emscripten-Generated Code</title>
+    <link rel="splashscreen" href="file:///./resources/html/index_hello.html">
+    <link rel="stylesheet" href="file:///./resources/css/index.css">
+    <style>
+      @font-face {
+          font-family: "UbuntuCustom";
+          src: url("file:///./resources/fonts/Ubuntu-Regular.ttf");
+      }
+
+      @font-face {
+          font-family: "FreeSansCustom";
+          src: url("file:///./resources/fonts/FreeSans.ttf");
+      }
+
+      #input_1 {
+        background:yellow;
+        font-size: 22px;
+        font-family: "UbuntuCustom";
+        width:100%;
+        height:100%;
+        overflow: visible;
+        border: 5px solid #ffff87 !important;
+        background-color:rgb(100, 100, 0);
+        margin: 4em 1em;
+        width: 100px;
+        height: 40px;
+        border: 2px solid green;
+        background-color: #fff;
+        line-height: 40px;
+        text-align: center;
+        transition: 1s ease-in-out;
+        display: block;
+        padding-bottom: 9px;
+        width: 288px;
+      }
+
+      html {
+        width:100%;
+        height:100%;
+        overflow: hidden;
+      }
+
+      body {
+        background:yellow;
+
+        /*
+           calc unsupported
+             see https://css-tricks.com/fun-viewport-units/
+             Minimum 16x, and grows more slowly
+             (half the rate of screen growth)
+           font-size: calc(16px + 0.5vw);
+             see https://css-tricks.com/fun-viewport-units/
+             Line-height based on font-size,
+             with addition viewport-relative growth
+           line-height: calc(1.1em + 0.5vw);
+        */
+
+        font-family: "UbuntuCustom";
+        font-size: 20px;
+        width:100%;
+        height:100%;
+        overflow: hidden;
+      }
+
+      /*h1 {
+        calc unsupported
+          font-size: calc(1.2em + 3vw);
+      }*/
+
+      @media (min-width: 50em) {
+        h1 {
+          font-size: 50px;
+        }
+      }
+      .body_scroll_container {
+        height: 100%;
+        width: 100%;
+        border: 1px solid white;
+        overflow: scroll;
+      }
+
+      .nested_scroll_container {
+        height: 100px;
+        width: 100%;
+        border: 1px solid black;
+        overflow: scroll;
+      }
+      .nested_scroll_container > p {
+          height: 80px;
+      }
+      .scroll_element_1 {
+          background: #CCC;
+          height: 80px;
+      }
+      .scroll_element_2 {
+          background: green;
+          height: 100px;
+      }
+      .scroll_element_3 {
+          background: #FFF;
+          height: 100px;
+      }
+      /* body I_on-mousemove-scrollbar_I="" */
+      /* body I_on-mouseup-scrollbar_I="" */
+      /* demo-scrollable I_on-wheel-demo-scrollable_I="" */
+      /* demo-scrollable-scroller I_on-mousedown-scrollbar_I="" */
+    </style>
+  </head>
+  <body class="exanim"
+        model="BodyModel">
+<div class="demo-scrollable"
+     model="ScrollAreaModel"
+     >
+    <div class="demo-scrollable-scroller"
+         model="ScrollBarModel"
+         style="min-height:1px;top:0px;">
+    </div>
+    <div class="demo-scrollable-content-wrapper">
+        <div class="demo-scrollable-content">
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Incidunt accusamus maxime voluptatem quasi. Recusandae optio nobis ratione iste consectetur consequatur cupiditate saepe laborum natus neque a provident eum explicabo delectus qui accusantium nostrum reiciendis soluta hic ut at sed laboriosam possimus repudiandae deserunt velit rerum. Aliquam ratione itaque corrupti aperiam quisquam unde aspernatur odio id repellendus corporis eaque expedita in ab minus possimus! Quo tempore consequatur repellat consectetur nemo molestiae perferendis ipsum esse nesciunt blanditiis nobis dicta? Laudantium quaerat inventore deleniti exercitationem explicabo quos pariatur sunt earum labore sed eius blanditiis architecto consequuntur ad consectetur unde sapiente nisi. Sunt eos.</p>
+        </div>
+    </div>
+</div>
+
+<div class="nested_scroll_container"
+     I_on-wheel-scroll_I="scrollable_body">
+  scroll scrollable_body
+</div>
+
+<div class="demo-scrollable"
+     model="ScrollAreaModel"
+     >
+    <div class="demo-scrollable-scroller"
+         model="ScrollBarModel"
+         style="min-height:1px;top:0px;">
+    </div>
+    <div class="demo-scrollable-content-wrapper">
+        <div class="demo-scrollable-content">
+            <p>Voluptatem quasi. Recusandae optio nobis ratione iste consectetur consequatur cupiditate saepe laborum natus neque a provident eum explicabo delectus qui accusantium nostrum reiciendis soluta hic ut at sed laboriosam possimus repudiandae deserunt velit rerum. Aliquam ratione itaque corrupti aperiam quisquam unde aspernatur odio id repellendus corporis eaque expedita in ab minus possimus! Quo tempore consequatur repellat consectetur nemo molestiae perferendis ipsum esse nesciunt blanditiis nobis dicta? Laudantium quaerat inventore deleniti exercitationem explicabo quos pariatur sunt earum labore sed eius blanditiis architecto consequuntur ad consectetur unde sapiente nisi. Sunt eos.</p>
+        </div>
+    </div>
+</div>
+
+<div class="body_scroll_container" id="scrollable_body"
+     I_on-wheel-scroll_I="">
+
+   <div style="width:1000px;">
+     <component data_source="_unknown_" style="display:block;overflow:hidden;width:auto;height:auto;">
+       component 1 not loaded
+       <component data_source="_unknown_" style="display:block;overflow:hidden;width:auto;height:auto;">
+         component 2 not loaded
+         <component data_source="NavigationComponent" style="display:block;overflow:hidden;width:auto;height:auto;">
+           component 3 not loaded
+         </component>
+       </component>
+     </component>
+   </div>
+
+   <div class="dropdownbtn">
+     <div class="dropbtn">Dropdown</div>
+     <div class="dropdownbtn-content">
+     <a href="#">Link 1</a>
+     <a href="#">Link 2</a>
+     <a href="#">Link 3</a>
+     </div>
+   </div>
+
+  <sk_input
+    controller="input1_controller"
+    placeholder="placeholder_1"
+    width="100"
+    height="100"
+    style="width:100%;height:100px;"
+    tabindex="0">
+  text input1_controller
+  </sk_input>
+
+  <sk_input
+    controller="input2_controller"
+    text="text_2"
+    width="100"
+    height="100"
+    style="width:100%;height:100px;"
+    tabindex="0">
+  text input2_controller
+  </sk_input>
+
+<div class="nested_scroll_container"
+     I_on-wheel-scroll_I="">
+  nested scroll. TODO: stop event propogation and use bubbling here!
+  <p class="scroll_element_1">A</p>
+  <p>B</p>
+  <p class="scroll_element_2">C</p>
+  <p class="scroll_element_3">D</p>
+  <p>E</p>
+  <div class="nested_scroll_container"
+       I_on-wheel-scroll_I="scrollable_body">
+    scroll other
+  </div>
+  <p>F</p>
+</div>
+
+
+<div
+ class="bn ripple-button"
+ id="ripple_button_0"
+ I_on-click-update-ripple_I="your args here update-ripple">
+  <div
+   I_on-click-print_I="your args here ripple-effect-layer"
+   class='ripple-effect-layer'>
+  </div>
+  <div
+   I_on-click-print_I="your args here ripple-content"
+   class="ripple-content">
+     ripple content
+   </div>
+</div>
+
+<div
+ class="widthtransition"
+ id="ripple_button_widthtransition">
+   widthtransition widthtransition widthtransition
+</div>
+
+<div
+ class="widthanim"
+ id="ripple_button_widthanim">
+   widthanim widthanim widthanim
+</div>
+
+  <div class="share-container">
+
+    <a href="#"
+       class="share-button share-buttons-entry share-buttons-1"
+       tooltip="Google+"></a>
+
+    <a href="#"
+       class="share-button share-buttons-entry share-buttons-2"
+       tooltip="Twitter"></a>
+
+    <a href="#"
+       class="share-button share-buttons-entry share-buttons-3"
+       tooltip="Facebook"></a>
+
+    <a class="share-button share-buttons-4"
+       tooltip="Share" href="#"></a>
+
+  </div>
+
+    <div class="columns-test">
+      <div class="left-column-wrap">
+        <div class="left-column">
+          left-column
+        </div>
+      </div>
+      <div class="right-column">
+        right-column
+      </div>
+    </div>
+
+    <div style="width:100px;height:100px;border-radius:10px;overflow:hidden;background-color:white;">
+      <div style="width:10px;height:10px;border-radius:4px;I_test-y-scroll_I;I_test-background_I;border: 3px solid #CCC;position:fixed;">
+        fixed
+      </div>
+      <div style="width:50px;height:50px;border-radius:40px;I_test-background_I;I_test-y-scroll_I;">
+      </div>
+    </div>
+
+    <div>
+      <skottie width="100" height="100" src="file:///./resources/animations/confetti.json" style="display:block;width:100px;height:100px">
+    </div>
+
+    <div I_v-test-attr-name_I="I_v-test-attr-val_I" I_on-mousemove_I="on-mousemove-event" I_on-mouseleave_I="your args here 1">
+      div and vTestStyle 1
+    </div>
+
+    <div style="color:green;" I_v-test-attr-name_I="I_v-test-attr-val_I">
+      div and vTestStyle 2
+    </div>
+
+    <div I_v-test-attr-name_I="I_v-test-attr-val_I">
+      div and vTestStyle 3
+    </div>
+
+    <div style="color:green;I_test-background_I;" >
+      color:green;I_test-background_I;
+    </div>
+
+    <div style="background-color:rgb(240, 214, 99);" I_on-mouseleave_I="your args here 2">
+      on-mouseleave!
+    </div>
+
+    <div style="background-color:rgb(0, 30, 128);" I_on-wheel-print_I="your args here wheel 1">
+      on-wheel!
+    </div>
+
+    <div class="flip-card" style="z-index:999;">
+      <div class="flip-card-inner">
+        <div class="flip-card-front">
+          <div style="background-image: url('file:///./resources/images/mouse.jpeg'); width:300px; height:300px;">
+          </div>
+        </div>
+        <div class="flip-card-back">
+          <div>
+            <div style="width:1000px;">
+              <sk_input width="1000" height="50" style="width:100%;height:50px;" tabindex="0">
+                text 2
+              </sk_input>
+            </div>
+            <skottie width="40" height="40" src="file:///./resources/animations/data.json" style="display:block;color:#CCC;width:40px;height:40px;z-index:999;">
+            </skottie>
+            kkk
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div style="background-color:rgb(122, 35, 180);" I_on-keyup_I="your args here keyup">
+      no on-keyup! need tabindex & focus!
+    </div>
+
+    <div style="background-color:rgb(49, 190, 49);" I_on-keydown_I="your args here keydown">
+      no on-keydown! need tabindex & focus!
+    </div>
+
+    <div style="background-color:rgb(20, 153, 53);" tabindex="0" id="example" I_on-mouseover-focus_I="" I_on-mouseout-blur_I="" I_on-keyup-print_I=""  I_on-keydown-print_I="" I_on-keypress-print_I="" I_on-wheel-print_I="your args here wheel 2" I_on-click-print_I="your args here click 2">
+      A div by default cannot be given focus. However, you can change that by adding a tabindex attribute to the div
+      You can then give the div focus, and also blur it with the hover event
+      see https://javascript.info/mousemove-mouseover-mouseout-mouseenter-mouseleave#mouseover-mouseout-relatedtarget
+    </div>
+
+    <div style="background-color:rgb(76, 67, 23);" tabindex="0" id="example2" I_on-mouseover-focus_I="" I_on-mouseout-blur_I="" I_on-keyup-print_I=""  I_on-keydown-print_I="" I_on-keypress-print_I="" I_on-wheel-print_I="your args here wheel 2" I_on-click-print_I="your args here click 2">
+      example2
+      see https://javascript.info/mousemove-mouseover-mouseout-mouseenter-mouseleave#mouseover-mouseout-relatedtarget
+    </div>
+
+    <div style="position:absolute;background-color:white;top:60px;right:200px;z-index:99;width:100px;height:100px">
+    </div>
+    <div style="position:absolute;background-color:black;top:80px;right:150px;z-index:1;width:100px;height:100px">
+    </div>
+
+    <div>
+      <sk_input width="10" height="10" style="width:10px;height:10px;" tabindex="0">
+        text 3
+      </sk_input>
+    </div>
+
+
+<div class="FlexDemoContainer">
+  <div class="FlexDemoItem">
+    FlexDemoItem 1
+  </div>
+  <div class="FlexDemoItem">
+    FlexDemoItem 2
+  </div>
+  <div class="FlexDemoItem">
+    FlexDemoItem 3
+  </div>
+</div>
+
+<div class="flexCards">
+  <div class="flexCard">
+  <div class="flexHeader"></div>
+  <div class="flexUL">
+    <div class="flexLI"></div>
+    <div class="flexLI"></div>
+    <div class="flexLI"></div>
+  </div>
+  <div class="flexBtn"></div>
+</div>
+
+  <div class="flexCard flexCard--big">
+  <div class="flexHeader"></div>
+  <div class="flexUL">
+    <div class="flexLI"></div>
+    <div class="flexLI"></div>
+    <div class="flexLI"></div>
+    <div class="flexLI"></div>
+    <div class="flexLI"></div>
+    <div class="flexLI"></div>
+  </div>
+  <div class="flexBtn"></div>
+</div>
+
+  <div class="flexCard">
+  <div class="flexHeader"></div>
+  <div class="flexUL">
+    <div class="flexLI"></div>
+    <div class="flexLI"></div>
+    <div class="flexLI"></div>
+  </div>
+  <div class="flexBtn"></div>
+</div>
+</div>
+
+<h4>Basic Grids</h4>
+<div class="row">
+  <div class="row_cell">1</div>
+</div>
+
+<div class="row">
+  <div class="row_cell">1/3</div>
+  <div class="row_cell">1/3
+    <h6> This one is got more text than the other. Yet, the height remains the same accross the separate columns <h6>
+  </div>
+  <div class="row_cell">1/3</div>
+</div>
+
+<div class="row">
+  <div class="row_cell">1/3</div>
+  <div class="row_cell">1/3</div>
+  <div class="row_cell">1/3</div>
+</div>
+
+
+<h4> Cells with specific sizes </h4>
+<div class="row">
+  <div class="row_cell--2">2x</div>
+  <div class="row_cell">1x</div>
+</div>
+
+<div class="row">
+  <div class="row_cell--3">3x</div>
+  <div class="row_cell">1x</div>
+  <div class="row_cell">1x</div>
+</div>
+
+<h4>Specific alignments</h4>
+<div class="row">
+  <div class="row_cell row_cell--top">top</div>
+  <div class="row_cell">1/3
+    <h6> This one is got more text than the other. Yet, the height remains the same accross the separate columns <br/>
+      It's got even more text like this one. Why does it have so much text? Nothing really. Just so it's easier to see the alignment options of the other cells...<h6>
+  </div>
+  <div class="row_cell">1/3</div>
+</div>
+
+<div class="row">
+  <div class="row_cell">1/3</div>
+  <div class="row_cell">1/3
+    <h6> This one is got more text than the other. Yet, the height remains the same accross the separate columns <br/>
+      It's got even more text like this one. Why does it have so much text? Nothing really. Just so it's easier to see the alignment options of the other cells...<h6>
+  </div>
+  <div class="row_cell row_cell--bottom">bottom</div>
+</div>
+
+<div class="row">
+  <div class="row_cell row_cell--center">center</div>
+  <div class="row_cell">1/3
+    <h6> This one is got more text than the other. Yet, the height remains the same accross the separate columns <br/>
+      It's got even more text like this one. Why does it have so much text? Nothing really. Just so it's easier to see the alignment options of the other cells...<h6>
+  </div>
+  <div class="row_cell">1/3</div>
+</div>
+
+<h4>entire row alignment</h4>
+
+<div class="row row--top">
+  <div class="row_cell">top</div>
+  <div class="row_cell">top
+    <h6> This one is got more text than the other. Yet, the height remains the same accross the separate columns <br/>
+      It's got even more text like this one. Why does it have so much text? Nothing really. Just so it's easier to see the alignment options of the other cells...<h6>
+  </div>
+  <div class="row_cell">top</div>
+</div>
+
+
+<div class="row row--center">
+  <div class="row_cell">center</div>
+  <div class="row_cell">center
+    <h6> This one is got more text than the other. Yet, the height remains the same accross the separate columns <br/>
+      It's got even more text like this one. Why does it have so much text? Nothing really. Just so it's easier to see the alignment options of the other cells...<h6>
+  </div>
+  <div class="row_cell">center</div>
+</div>
+
+<div class="row row--bottom">
+  <div class="row_cell">bottom</div>
+  <div class="row_cell">bottom
+    <h6> This one is got more text than the other. Yet, the height remains the same accross the separate columns <br/>
+      It's got even more text like this one. Why does it have so much text? Nothing really. Just so it's easier to see the alignment options of the other cells...<h6>
+  </div>
+  <div class="row_cell">bottom</div>
+</div>
+
+
+<h4>Nested Rows</h4>
+<div class="row">
+  <div class="row_cell--2">2x
+  <div class="row row--center">
+  <div class="row_cell">center</div>
+  <div class="row_cell">center
+    <h6> This one is got more text than the other<h6>
+  </div>
+  <div class="row_cell">center</div>
+</div>
+  </div>
+  <div class="row_cell">1x</div>
+</div>
+
+    <div style="font-family: 'UbuntuCustom'; font-size: 12px;" class='bounceInDiv'>bbb div font-family: 'Ubuntu'</div>
+    <div style="font-family: 'FreeSansCustom'; font-size: 18px;">bbb div font-family: 'FreeSans'</div>
+    <div style="animation: MotionScale 2s alternate linear infinite;">MotionScale 2s alternate linear infinite</div>
+    <div style="font-family: 'UbuntuCustom'; font-size: 18px;">(RU) 18 пикселей</div>
+    <div class="hovertest">hovertest</div>
+    <!-- TODO: https://cobalt.foo/development/reference/supported-features.html
+    img1<br>
+    <img src="file:///./resources/images/mouse.jpeg" width="200" height="200" style="border: 5px solid gray;"><br>
+    img2<br>
+    -->
+    <div style="background-image: url('file:///./resources/images/mouse.jpeg'); width:200px; height:200px; border: 5px solid gray;animation: slidein 3s ease-in 1s infinite;">
+    </div><br>
+    img3<br>
+    <div style="background-image: url('file:///./resources/images/owl.png'); width:200px; height:200px; border: 5px solid gray;animation: slidein 3s ease-in 1s infinite;">
+    </div><br>
+
+    <div style="background-color:rgb(84, 208, 212);width:50px;I_width-x-px_I;width:800px;">
+      800px width
+    </div>
+
+    <div style="background-color:rgb(20, 153, 53);" tabindex="0" id="example" I_on-mouseover-focus_I="" I_on-mouseout-blur_I="" I_on-keyup-print_I=""  I_on-keydown-print_I="" I_on-keypress-print_I="">
+      Test keys 2
+    </div>
+
+    <div style="background-color:rgb(143, 201, 50);I_height-x-px_I;">
+      40px height
+    </div>
+
+    <div style="background-color:green;I_height-x-px_I;I_width-x-px_I;">
+      40px h & w
+    </div>
+
+    <div>
+      <div>
+        <span>dddd</span>
+        <span class="testselector">sadsad 0</span>
+      </div>
+    </div>
+    <span>hhhhhh 1</span>
+    <span class="testselector">sadsad 1</span>
+    <span>hhhhhh 2</span>
+    <span class="testselector">sadsad 2</span>
+
+    <div class="view_port">
+      <div class="polling_message">
+        Listening for dispatches
+      </div>
+      <div class="cylon_eye"></div>
+    </div>
+
+    <div class="border-grad">
+      Lorem ipsum dolor sit amet consectetur.
+      <div class="bg-grad">
+        Lorem ipsum dolor sit amet!
+      </div>
+      <div class="border-img-slice">
+        Lorem ipsum dolor sit amet consectetur...
+        <div class="bg-grad">
+          Lorem ipsum dolor sit amet consectetur!
+        </div>
+      </div>
+    </div>
+
+    <div class="showbox2 slideright">box 1</div>
+
+    <div class="showbox" style="transform: translate(3em,0);">box 1</div>
+    <div class="showbox" style="transform: rotate(30deg); border-color: red;">box 2</div>
+    <div class="showbox" style="transform: translate(-3em,1em);">box 3</div>
+    <div class="showbox" style="transform: scale(2);">box 4</div>
+
+    <div style="width:300px" class='rotating'>
+      Не следует, однако, забывать, что повышение уровня гражданского сознания, а также свежий взгляд на привычные вещи.
+      <br/>
+      Значимость этих проблем очевидна.
+    </div>
+
+    <style>
+      h1{
+        color: green;
+        text-align: center;
+      }
+      div.one{
+        margin-top: 40px;
+        text-align: center;
+      }
+      button{
+        margin-top: 10px;
+      }
+
+      #root {
+          width: 500px;
+          display: inline;
+      }
+      .first {
+          background-color: #ddd;
+          padding: 10px;
+          color: black;
+          margin-bottom: 5px;
+          border-bottom: 1px solid red;
+      }
+      .first div {
+          background-color: white;
+          border: 1px solid black;
+          height: 50px;
+          line-height: 100%;
+          text-align: center;
+          vertical-align: middle;
+      }
+      #root.second .first div {
+          border-color: red;
+          background-color: #aaa;
+          color: white;
+      }
+      .first .bunt {
+          border-radius: 25px;
+          border-top: 5px solid silver;
+          border-right: 5px solid blue;
+          border-bottom: 5px solid black;
+          border-left: 5px solid red;
+      }
+      .first .bunt2 {
+          border-radius: 5px;
+          border-top: 5px solid red;
+          border-right: 1px solid blue;
+          border-left: 1px solid blue;
+          border-bottom: 1px solid blue;
+      }
+
+      .first {
+          background-color: #eee;
+          height: 40px;
+          padding: 5px;
+          color: black;
+          border-bottom: 1px solid gray;
+      }
+      .a {
+          position: absolute;
+          top: 50px;
+          width: 250px;
+          background: #eee;
+          padding-left: 25px;
+      }
+      .a strong {
+          display: inline;
+          background: white;
+          padding: 5px;
+          padding-top: 0px;
+          border-color: red;
+          margin: 5px;
+      }
+      .a .second {
+          background: black;
+          color: white;
+          line-height: 26px;
+          vertical-align: middle;
+      }
+      .b {
+          position: absolute;
+          left: 350px;
+          top: 30px;
+          width: 50px;
+          height: 30px;
+          background: gray;
+          border: 1px solid red;
+      }
+
+      div.polaroid {
+        width: 250px;
+        height: 250px;
+        text-align: center;
+      }
+
+      div.container {
+        padding: 10px;
+      }
+
+      .container1 {
+        margin: 40px auto;
+        width: 80%;
+      }
+    </style>
+
+
+    <div style="box-shadow: -4px -10px 5px 0px rgba(0,0,0,0.75) , 4px 10px 5px 0px rgba(110,0,0,0.75) , 18px 10px 5px 0px rgba(10,220,0,0.75);">
+      <div> прары box-shadow </div>
+    </div>
+
+    <div style="box-shadow: -4px -10px 5px 0px rgba(0,0,0,0.75) , 4px 10px 5px 0px rgba(110,0,0,0.75) , 18px 10px 5px 0px rgba(10,220,0,0.75);">
+      <div> прары box-shadow </div>
+    </div>
+
+  <div id="root">
+    <div class="first">
+      <div style="border: 15px solid rgba(255,0,0,0.0);background-color:white;">border: 15px solid rgba(255,0,0,0.0);</div>
+    </div>
+    <div class="first">
+      <div style="border: 15px solid rgba(255,0,0,0.5);background-color:white;">border: 15px solid rgba(255,0,0,0.5);</div>
+    </div>
+    <div class="first">
+      <div style="border: 15px solid rgba(255,0,0,1.0);background-color:white;">border: 15px solid rgba(255,0,0,1.0);</div>
+    </div>
+    <div class="first">
+      <div style="">1px width / 1px radius</div>
+    </div>
+    <div class="first">
+      <div style="border-width: 5px">5px width / 0px radius</div>
+    </div>
+    <div class="first">
+      <div style="border-radius: 1px;">1px width / 1px radius</div>
+    </div>
+    <div class="first">
+      <div style="border-width: 5px; border-radius: 5px;">5px width / 5px radius</div>
+    </div>
+    <div class="first">
+      <div style="border-radius: 5px;">1px width / 5px radius</div>
+    </div>
+    <div class="first">
+      <div style="border-width: 5px; border-radius: 15px;">5px width / 15px radius</div>
+    </div>
+    <div class="first">
+      <div style="border-width: 5px; border-left-width: 15px; border-right-width: 15px; border-radius: 15px;">5px 15px width / 15px radius</div>
+    </div>
+    <div class="first">
+      <div style="border-width: 5px; border-left-width: 15px; border-right-width: 15px; border-radius: 25px;">5px 15px width / 25px radius</div>
+    </div>
+    <div class="first">
+      <div class="bunt">Bunt</div>
+    </div>
+  </div>
+
+
+  <div id="root" class="second">
+    <div class="first">
+      <div style="">1px width / 1px radius</div>
+    </div>
+    <div class="first">
+      <div style="border-width: 5px">5px width / 0px radius</div>
+    </div>
+    <div class="first">
+      <div style="border-radius: 1px;">1px width / 1px radius</div>
+    </div>
+    <div class="first">
+      <div style="border-width: 5px; border-radius: 5px;">5px width / 5px radius</div>
+    </div>
+    <div class="first">
+      <div style="border-radius: 5px;">1px width / 5px radius</div>
+    </div>
+    <div class="first">
+      <div style="border-width: 5px; border-radius: 15px;">5px width / 15px radius</div>
+    </div>
+    <div class="first">
+      <div style="border-width: 5px; border-left-width: 15px; border-right-width: 15px; border-radius: 15px;">5px 15px width / 15px radius</div>
+    </div>
+    <div class="first">
+      <div style="border-width: 5px; border-left-width: 15px; border-right-width: 15px; border-radius: 25px;">5px 15px width / 25px radius</div>
+    </div>
+    <div class="first">
+      <div class="bunt2">Bunt 2</div>
+    </div>
+  </div>
+
+<!--    <p>p line 1</p>
+    <p>p line 2</p>
+    <p>☎,☎,☎👶🏻 or 👩🏼‍🎨 🔍 💥 \uf08a ⚡💨 :)</p>
+    <p>Росси́я, официально также Росси́йская Федера́ция[e] (РФ[f]) — государство в Восточной Европе и Северной Азии. Территория России в рамках её конституционного устройства[c] составляет 17 125 191[6] км²; население страны (в пределах её заявленной территории[c]) составляет 146 781 095[7] чел. (2019). Занимает первое место в мире по территории, шестое — по объёму ВВП по ППС и девятое — по численности населения.
+<br/>
+Столица — Москва. Государственный язык — русский.
+
+<p>Президентско-парламентская республика[3] с федеративным устройством. С 7 мая 2012 года пост Президента занимает Владимир Путин. C 8 мая 2012 года пост Председателя Правительства занимает Дмитрий Медведев.</p>
+
+В состав Российской Федерации входят 85 субъектов[c], 46 из которых именуются областями, 22[c] — республиками, 9 — краями, 3[c] — городами федерального значения, 4 — автономными округами и 1 — автономной областью. Всего в стране около 157 тысяч населённых пунктов[16].
+
+Россия граничит с шестнадцатью государствами (больше, чем любая другая страна в мире), а также двумя частично признанными государствами.</p>
+    <div style="background-color:red; width:800px; height:100px;">
+      hello me!<br/>
+      new line! 1<br>
+      new line! 2<br>
+      new line! 3<br>
+      new line! 4<br>
+    </div>
+    <div style="background-color:green; width:200px; height:700px;">
+      hi world!
+      <p>p <i>italic</i> 1</p>
+      <p>p <b>bold</b> 2</p>
+      <font size = "6">Display this text using the font size 6</font>
+      <p style="color:orange;">This is the color orange</p>
+      <p style="color:hsl(60,100%,50%);">This is the color yellow</p>
+      <p style="color:rgb(153, 255, 153);">This is the color green</p>
+      <p style="color:#0000FF">This is the blue color</p>
+      <u>u He is a boy</u>
+      <sub>sub He is a boy</sub>
+      <sup>sup He is a boy</sup>
+      <a href="https://www.wikipedia.org/">A link to Wikipedia!</a>
+      <input type="text" />
+      <input type="file" />
+      <input type="checkbox" />
+      <p align="center">center He is a boy</p>
+      <ul>
+      <li>Item 1</li>
+      <li>Item 2</li>
+      <li>Item 3</li>
+      </ul>
+      <ol>
+      <li>Item 1</li>
+      <li>Item 2</li>
+      <li>Item 3</li>
+      </ol>
+    </div>
+    <h1>This is Your First HTML Heading</h1>
+    <h2>This is Your Second HTML Heading</h2>
+    <h1>This is Your First HTML Heading</h1>
+    <h3>This is Your Third HTML Heading</h3>
+    <h4>This is Your Fourth HTML Heading</h4>
+    <h5>This is Your Fifth HTML Heading</h5>
+    <h6>This is Your Sixth HTML Heading</h6>
+    <h1>This is Your First HTML Heading</h1>
+
+
+  <div class="header">
+    <h1>My Website</h1>
+    <p>Resize the browser window to see the effect.</p>
+  </div>
+
+  <div class="topnav">
+    <a href="#">Link</a>
+    <a href="#">Link</a>
+    <a href="#">Link</a>
+    <a href="#" style="float:right">Link</a>
+  </div>
+
+  <div class="row">
+    <div class="leftcolumn">
+      <div class="card">
+        <h2>TITLE HEADING</h2>
+        <h5>Title description, Dec 7, 2017</h5>
+        <div class="fakeimg" style="height:200px;">Image</div>
+        <p>Some text..</p>
+        <p>Sunt in culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco.</p>
+      </div>
+      <div class="card">
+        <h2>TITLE HEADING</h2>
+        <h5>Title description, Sep 2, 2017</h5>
+        <div class="fakeimg" style="height:200px;">Image</div>
+        <p>Some text..</p>
+        <p>Sunt in culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco.</p>
+      </div>
+    </div>
+    <div class="rightcolumn">
+      <div class="card">
+        <h2>About Me</h2>
+        <div class="fakeimg" style="height:100px;">Image</div>
+        <p>Some text about me in culpa qui officia deserunt mollit anim..</p>
+      </div>
+      <div class="card">
+        <h3>Popular Post</h3>
+        <div class="fakeimg"><p>Image</p></div>
+        <div class="fakeimg"><p>Image</p></div>
+        <div class="fakeimg"><p>Image</p></div>
+      </div>
+      <div class="card">
+        <h3>Follow Me</h3>
+        <p>Some text..</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <h2>Footer</h2>
+  </div>
+
+
+  <div class="left">
+      Hello Sidebar
+      <sidebar-splitter>
+      </sidebar-splitter>
+  </div>
+  <content>
+      <div id="content" cacheRender="true">
+          Hello Content
+      </div>
+      <button>Button 1</button>
+      <button if="showButton2">Button 2</button>
+      <div repeat="row in rows">
+          Hello!
+      </div>
+      <div id="footer">
+          Hello Footer
+      </div>
+  </content>
+  <div class="right">
+  </div>
+  -->
+</div>
+
+<div class="nested_scroll_container"
+     I_on-wheel-scroll_I="scrollable_body">
+  scroll scrollable_body
+</div>
+  </body>
+</html>
