@@ -64,7 +64,11 @@ class HTMLLinkElement : public HTMLElement {
 #if 0
 #if defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
   auto taskCb
-    = [em_node = &em_node_](const html_native::NativeHTMLTaskCbParams&&)
+    = [
+       em_node = &em_node_,
+       value /// \note copyed data
+      ]
+      (const html_native::NativeHTMLTaskCbParams&&)
     {
       DCHECK(em_node);
       //DCHECK(em_node->isNull() || em_node->isUndefined());
@@ -96,14 +100,122 @@ class HTMLLinkElement : public HTMLElement {
 
   // Web API: HTMLLinkElement
   //
-  std::string rel() const { return GetAttribute("rel").value_or(""); }
-  void set_rel(const std::string& value) { SetAttribute("rel", value); }
+  std::string rel() const {
+    return GetAttribute("rel").value_or("");
+  }
+  void set_rel(const std::string& value) {
+    SetAttribute("rel", value);
+#if defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+  if(em_node_guid_ == -1) {
+    return;
+  }
+
+  auto taskCb
+    = [
+       em_node = &em_node_,
+       value /// \note copyed data
+      ]
+      (const html_native::NativeHTMLTaskCbParams&&)
+    {
+      DCHECK(em_node);
+      DCHECK(!em_node->isNull()
+             && !em_node->isUndefined());
+      if(em_node)
+      {
+        em_node->set("rel", value.c_str());
+      } else {
+        NOTIMPLEMENTED_LOG_ONCE();
+      }
+    };
+  html_native::NativeHTMLTaskCbParams cbParams{1,2};
+  html_native::GlobalHTML5TaskQueue::getInstance()->
+    scheduleTaskInMainThread(
+      new html_native::NativeHTMLTaskParams{
+        std::move(taskCb),
+        std::move(cbParams)
+      },
+      true // async if threads enabled
+    );
+#endif // defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+  }
 
   std::string type() const { return GetAttribute("type").value_or(""); }
-  void set_type(const std::string& value) { SetAttribute("type", value); }
+  void set_type(const std::string& value) {
+    SetAttribute("type", value);
+#if defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+  if(em_node_guid_ == -1) {
+    return;
+  }
+
+  auto taskCb
+    = [
+       em_node = &em_node_,
+       value /// \note copyed data
+      ]
+      (const html_native::NativeHTMLTaskCbParams&&)
+    {
+      DCHECK(em_node);
+      DCHECK(!em_node->isNull()
+             && !em_node->isUndefined());
+      if(em_node)
+      {
+        em_node->set("type", value.c_str());
+      } else {
+        NOTIMPLEMENTED_LOG_ONCE();
+      }
+    };
+  html_native::NativeHTMLTaskCbParams cbParams{1,2};
+  html_native::GlobalHTML5TaskQueue::getInstance()->
+    scheduleTaskInMainThread(
+      new html_native::NativeHTMLTaskParams{
+        std::move(taskCb),
+        std::move(cbParams)
+      },
+      true // async if threads enabled
+    );
+#endif // defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+  }
 
   std::string href() const { return GetAttribute("href").value_or(""); }
-  void set_href(const std::string& value) { SetAttribute("href", value); }
+  void set_href(const std::string& value)
+  {
+    SetAttribute("href", value);
+#if defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+  if(em_node_guid_ == -1) {
+    return;
+  }
+
+  auto taskCb
+    = [
+       em_node = &em_node_,
+       value /// \note copyed data
+      ]
+      (const html_native::NativeHTMLTaskCbParams&&)
+    {
+      DCHECK(em_node);
+      DCHECK(!em_node->isNull()
+             && !em_node->isUndefined());
+      if(em_node)
+      {
+        em_node->set("href", value.c_str());
+        // custom
+        em_node->set("id", value.c_str());
+        em_node->set("media", "screen,print");
+      } else {
+        NOTIMPLEMENTED_LOG_ONCE();
+      }
+    };
+  html_native::NativeHTMLTaskCbParams cbParams{1,2};
+  html_native::GlobalHTML5TaskQueue::getInstance()->
+    scheduleTaskInMainThread(
+      new html_native::NativeHTMLTaskParams{
+        std::move(taskCb),
+        std::move(cbParams)
+      },
+      true // async if threads enabled
+    );
+#endif // defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+  }
 
   base::Optional<std::string> cross_origin() const;
   void set_cross_origin(const base::Optional<std::string>& value);

@@ -84,20 +84,28 @@ document.cxxDomHelpers = {
     if (childPtr === null || childPtr === undefined) return;
 
     if(parentPtr === childPtr) {
+      console.log("js: can't append element to itself");
       return;
     }
 
+    /// \note we can't create head/body/etc. (use predefined)
     if(childPtr == kEmNodeRootGUID) {
+      console.log("js: can't append kEmNodeRootGUID node");
       return; // TODO: body?
     } else if(childPtr == kEmNodeHeadGUID) {
+      console.log("js: can't append kEmNodeHeadGUID node");
       return;
     } else if(childPtr == kEmNodeTitleGUID) {
+      console.log("js: can't append kEmNodeTitleGUID node");
       return;
     } else if(childPtr == kEmNodeHtmlGUID) {
+      console.log("js: can't append kEmNodeHtmlGUID node");
       return;
     } else if(childPtr == kEmNodeBodyGUID) {
+      console.log("js: can't append kEmNodeBodyGUID node");
       return;
     } else if(childPtr == kEmNodeDocumentGUID) {
+      console.log("js: can't append kEmNodeDocumentGUID node");
       return;
     }
 
@@ -110,7 +118,7 @@ document.cxxDomHelpers = {
       return;
     }
 
-    //console.log("js: add child is ", childElm);
+    console.log("js: add child is ", childElm);
 
     //if(parentPtr === kEmNodeRootGUID) {
     //  document.body.appendChild(childElm); // TODO: body?
@@ -123,12 +131,16 @@ document.cxxDomHelpers = {
       }
       if (parentElm === null || parentElm === undefined) return;
 
+      console.log("js: parentElm is ", childElm);
+
       //console.log("js: add parentElm is ", parentElm);
 
-    if(typeof parentElm.appendChild !== 'function') return;
+      if(typeof parentElm.appendChild !== 'function') return;
 
       parentElm
         .appendChild(childElm);
+
+      console.log("js: appened ", childElm, " to ", parentElm);
     }
 
     //console.log("js: appendChild done");
