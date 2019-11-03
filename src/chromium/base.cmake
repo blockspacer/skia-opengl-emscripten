@@ -1721,6 +1721,7 @@ target_compile_definitions(base PRIVATE
 )
 
 target_compile_definitions(base PUBLIC
+  _USE_MATH_DEFINES=1 # https://stackoverflow.com/a/58379321
   BASE_IMPLEMENTATION=1
   BASE_I18N_IMPLEMENTATION=1
   ${EXTRA_DEFINITIONS}

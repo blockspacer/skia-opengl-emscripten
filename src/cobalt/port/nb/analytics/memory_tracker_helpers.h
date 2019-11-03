@@ -17,6 +17,7 @@
 #ifndef NB_MEMORY_TRACKER_HELPERS_H_
 #define NB_MEMORY_TRACKER_HELPERS_H_
 
+#if !defined(COBALT_PORT)
 #include <map>
 #include <vector>
 
@@ -213,5 +214,6 @@ class ConcurrentAllocationMap {
 
 }  // namespace analytics
 }  // namespace nb
+#endif // !defined(COBALT_PORT)
 
 #endif  // NB_MEMORY_TRACKER_HELPERS_H_

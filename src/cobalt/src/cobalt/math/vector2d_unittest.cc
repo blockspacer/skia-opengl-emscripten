@@ -5,7 +5,10 @@
 #include "cobalt/math/vector2d.h"
 #include "cobalt/math/vector2d_f.h"
 
+// MSVC++ requires this to be set before any other includes to get M_PI.
+#define _USE_MATH_DEFINES
 #include <cmath>
+
 #include <limits>
 
 #include "base/basictypes.h"

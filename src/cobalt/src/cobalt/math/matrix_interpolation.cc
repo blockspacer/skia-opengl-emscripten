@@ -12,9 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// MSVC++ requires this to be set before any other includes to get M_PI.
+#define _USE_MATH_DEFINES
+
 #include "cobalt/math/matrix_interpolation.h"
 
 #include <cmath>
+
+// TODO
+#ifndef M_PI
+    #define M_PI 3.14159265358979323846
+#endif
 
 #include "cobalt/math/transform_2d.h"
 

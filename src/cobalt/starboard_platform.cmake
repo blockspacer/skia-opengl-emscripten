@@ -12,24 +12,6 @@
 #]
 # see https://github.com/blockspacer/cobalt-clone-28052019/blob/master/src/starboard/linux/shared/BUILD.gn
 list(APPEND starboard_platform_SOURCES
-  ${COBALT_PORT_DIR}/starboard/linux/shared/atomic_public.h
-  ${COBALT_PORT_DIR}/starboard/linux/shared/configuration_public.h
-  ## TODO ## requires RefCounted from starboard_common
-  ${COBALT_PORT_DIR}/starboard/linux/shared/decode_target_get_info.cc
-  ${COBALT_PORT_DIR}/starboard/linux/shared/audio_sink_type_dispatcher.cc
-  ## TODO ## requires RefCounted from starboard_common
-  ${COBALT_PORT_DIR}/starboard/linux/shared/decode_target_internal.cc
-  ## TODO ## requires RefCounted from starboard_common
-  ${COBALT_PORT_DIR}/starboard/linux/shared/decode_target_internal.h
-  ## TODO ## requires RefCounted from starboard_common
-  ${COBALT_PORT_DIR}/starboard/linux/shared/decode_target_release.cc
-  ${COBALT_PORT_DIR}/starboard/linux/shared/system_get_connection_type.cc
-  ${COBALT_PORT_DIR}/starboard/linux/shared/system_get_device_type.cc
-  ${COBALT_PORT_DIR}/starboard/shared/stub/system_get_path.cc
-  #${COBALT_PORT_DIR}/starboard/shared/stub/audio_sink_type_dispatcher.cc
-  ${COBALT_PORT_DIR}/starboard/shared/stub/media_is_audio_supported.cc
-  #${COBALT_PORT_DIR}/starboard/shared/stub/alsa_audio_sink_type.cc
-  ${COBALT_PORT_DIR}/starboard/linux/shared/system_has_capability.cc
   ${COBALT_PORT_DIR}/starboard/shared/iso/character_is_alphanumeric.cc
   ${COBALT_PORT_DIR}/starboard/shared/iso/character_is_digit.cc
   ${COBALT_PORT_DIR}/starboard/shared/iso/character_is_hex_digit.cc
@@ -61,14 +43,7 @@ list(APPEND starboard_platform_SOURCES
   ${COBALT_PORT_DIR}/starboard/shared/iso/string_scan.cc
   ${COBALT_PORT_DIR}/starboard/shared/iso/system_binary_search.cc
   ${COBALT_PORT_DIR}/starboard/shared/iso/system_sort.cc
-  ${COBALT_PORT_DIR}/starboard/shared/linux/byte_swap.cc
-  ${COBALT_PORT_DIR}/starboard/shared/linux/get_home_directory.cc
-  ${COBALT_PORT_DIR}/starboard/shared/linux/memory_get_stack_bounds.cc
-  ${COBALT_PORT_DIR}/starboard/shared/linux/page_internal.cc
-  ${COBALT_PORT_DIR}/starboard/shared/linux/system_get_random_data.cc
   ${COBALT_PORT_DIR}/starboard/shared/stub/system_get_stack.cc
-  ${COBALT_PORT_DIR}/starboard/shared/linux/system_get_total_cpu_memory.cc
-  ${COBALT_PORT_DIR}/starboard/shared/linux/system_is_debugger_attached.cc
   ${COBALT_PORT_DIR}/starboard/shared/stub/system_symbolize.cc
   ${COBALT_PORT_DIR}/starboard/shared/stub/thread_get_id.cc
   ${COBALT_PORT_DIR}/starboard/shared/stub/thread_get_local_value.cc
@@ -79,79 +54,6 @@ list(APPEND starboard_platform_SOURCES
   ${COBALT_PORT_DIR}/starboard/shared/nouser/user_get_property.cc
   ${COBALT_PORT_DIR}/starboard/shared/nouser/user_get_signed_in.cc
   ${COBALT_PORT_DIR}/starboard/shared/nouser/user_internal.cc
-  ${COBALT_PORT_DIR}/starboard/shared/posix/directory_create.cc
-  ${COBALT_PORT_DIR}/starboard/shared/posix/file_can_open.cc
-  ${COBALT_PORT_DIR}/starboard/shared/posix/file_close.cc
-  ${COBALT_PORT_DIR}/starboard/shared/posix/file_delete.cc
-  ${COBALT_PORT_DIR}/starboard/shared/posix/file_exists.cc
-  ${COBALT_PORT_DIR}/starboard/shared/posix/file_flush.cc
-  ${COBALT_PORT_DIR}/starboard/shared/posix/file_get_info.cc
-  ${COBALT_PORT_DIR}/starboard/shared/posix/file_get_path_info.cc
-  ${COBALT_PORT_DIR}/starboard/shared/posix/file_open.cc
-  ${COBALT_PORT_DIR}/starboard/shared/posix/file_read.cc
-  ${COBALT_PORT_DIR}/starboard/shared/posix/file_seek.cc
-  ${COBALT_PORT_DIR}/starboard/shared/posix/file_truncate.cc
-  ${COBALT_PORT_DIR}/starboard/shared/posix/file_write.cc
-  ${COBALT_PORT_DIR}/starboard/shared/posix/log.cc
-  ${COBALT_PORT_DIR}/starboard/shared/posix/log_flush.cc
-  ${COBALT_PORT_DIR}/starboard/shared/posix/log_format.cc
-  ${COBALT_PORT_DIR}/starboard/shared/posix/log_is_tty.cc
-  ${COBALT_PORT_DIR}/starboard/shared/posix/log_raw.cc
-  ${COBALT_PORT_DIR}/starboard/shared/posix/memory_flush.cc
-  ${COBALT_PORT_DIR}/starboard/shared/posix/set_non_blocking_internal.cc
-  ${COBALT_PORT_DIR}/starboard/shared/posix/storage_write_record.cc
-  ${COBALT_PORT_DIR}/starboard/shared/posix/string_compare_no_case.cc
-  ${COBALT_PORT_DIR}/starboard/shared/posix/string_compare_no_case_n.cc
-  ${COBALT_PORT_DIR}/starboard/shared/posix/string_compare_wide.cc
-  ${COBALT_PORT_DIR}/starboard/shared/posix/string_format.cc
-  ${COBALT_PORT_DIR}/starboard/shared/posix/string_format_wide.cc
-  ${COBALT_PORT_DIR}/starboard/shared/posix/system_break_into_debugger.cc
-  ${COBALT_PORT_DIR}/starboard/shared/posix/system_clear_last_error.cc
-  ${COBALT_PORT_DIR}/starboard/shared/posix/system_get_error_string.cc
-  ${COBALT_PORT_DIR}/starboard/shared/posix/system_get_last_error.cc
-  ${COBALT_PORT_DIR}/starboard/shared/posix/system_get_locale_id.cc
-  ${COBALT_PORT_DIR}/starboard/shared/posix/system_get_number_of_processors.cc
-  ${COBALT_PORT_DIR}/starboard/shared/posix/thread_sleep.cc
-  ${COBALT_PORT_DIR}/starboard/shared/posix/time_get_monotonic_now.cc
-  ${COBALT_PORT_DIR}/starboard/shared/posix/time_get_monotonic_thread_now.cc
-  ${COBALT_PORT_DIR}/starboard/shared/posix/time_get_now.cc
-  ${COBALT_PORT_DIR}/starboard/shared/posix/time_zone_get_current.cc
-  # deprecated with SB_API_VERSION 6
-  #${COBALT_PORT_DIR}/starboard/shared/posix/time_zone_get_dst_name.cc
-  #${COBALT_PORT_DIR}/starboard/shared/posix/time_zone_get_name.cc
-  ${COBALT_PORT_DIR}/starboard/shared/pthread/condition_variable_broadcast.cc
-  ${COBALT_PORT_DIR}/starboard/shared/pthread/condition_variable_create.cc
-  ${COBALT_PORT_DIR}/starboard/shared/pthread/condition_variable_destroy.cc
-  ${COBALT_PORT_DIR}/starboard/shared/pthread/condition_variable_signal.cc
-  ${COBALT_PORT_DIR}/starboard/shared/pthread/condition_variable_wait.cc
-  ${COBALT_PORT_DIR}/starboard/shared/pthread/condition_variable_wait_timed.cc
-  ${COBALT_PORT_DIR}/starboard/shared/pthread/mutex_acquire.cc
-  ${COBALT_PORT_DIR}/starboard/shared/pthread/mutex_acquire_try.cc
-  ${COBALT_PORT_DIR}/starboard/shared/pthread/mutex_create.cc
-  ${COBALT_PORT_DIR}/starboard/shared/pthread/mutex_destroy.cc
-  ${COBALT_PORT_DIR}/starboard/shared/pthread/mutex_release.cc
-  ${COBALT_PORT_DIR}/starboard/shared/pthread/thread_context_get_pointer.cc
-  ${COBALT_PORT_DIR}/starboard/shared/pthread/thread_context_internal.h
-  ${COBALT_PORT_DIR}/starboard/shared/pthread/once.cc
-  ${COBALT_PORT_DIR}/starboard/shared/pthread/thread_create.cc
-  ${COBALT_PORT_DIR}/starboard/shared/pthread/thread_create_local_key.cc
-  ${COBALT_PORT_DIR}/starboard/shared/pthread/thread_create_priority.h
-  ${COBALT_PORT_DIR}/starboard/shared/pthread/thread_destroy_local_key.cc
-  ${COBALT_PORT_DIR}/starboard/shared/pthread/thread_detach.cc
-  ${COBALT_PORT_DIR}/starboard/shared/pthread/thread_get_current.cc
-  ${COBALT_PORT_DIR}/starboard/shared/pthread/thread_get_local_value.cc
-  ${COBALT_PORT_DIR}/starboard/shared/pthread/thread_is_equal.cc
-  ${COBALT_PORT_DIR}/starboard/shared/pthread/thread_join.cc
-  ${COBALT_PORT_DIR}/starboard/shared/pthread/thread_sampler_create.cc
-  ${COBALT_PORT_DIR}/starboard/shared/pthread/thread_sampler_destroy.cc
-  ${COBALT_PORT_DIR}/starboard/shared/pthread/thread_sampler_freeze.cc
-  ${COBALT_PORT_DIR}/starboard/shared/pthread/thread_sampler_internal.cc
-  ${COBALT_PORT_DIR}/starboard/shared/pthread/thread_sampler_internal.h
-  ${COBALT_PORT_DIR}/starboard/shared/pthread/thread_sampler_is_supported.cc
-  #${COBALT_PORT_DIR}/starboard/shared/pthread/thread_sampler_is_supported.h
-  ${COBALT_PORT_DIR}/starboard/shared/pthread/thread_sampler_thaw.cc
-  ${COBALT_PORT_DIR}/starboard/shared/pthread/thread_set_local_value.cc
-  ${COBALT_PORT_DIR}/starboard/shared/pthread/thread_yield.cc
   ${COBALT_PORT_DIR}/starboard/shared/signal/crash_signals.h
   ${COBALT_PORT_DIR}/starboard/shared/signal/crash_signals_sigaction.cc
   ${COBALT_PORT_DIR}/starboard/shared/signal/suspend_signals.cc
@@ -196,7 +98,219 @@ list(APPEND starboard_platform_SOURCES
   ${COBALT_PORT_DIR}/starboard/shared/stub/media_set_output_protection.cc
   ${COBALT_PORT_DIR}/starboard/shared/stub/media_is_buffer_using_memory_pool.cc
   ${COBALT_PORT_DIR}/starboard/shared/starboard/new.cc
+  #${COBALT_PORT_DIR}/starboard/shared/stub/audio_sink_type_dispatcher.cc
+  ${COBALT_PORT_DIR}/starboard/shared/stub/media_is_audio_supported.cc
+  #${COBALT_PORT_DIR}/starboard/shared/stub/alsa_audio_sink_type.cc
+    ${COBALT_PORT_DIR}/starboard/shared/stub/system_get_path.cc
 )
+
+if(TARGET_LINUX OR TARGET_EMSCRIPTEN)
+  list(APPEND starboard_platform_SOURCES
+    ${COBALT_PORT_DIR}/starboard/shared/pthread/condition_variable_broadcast.cc
+    ${COBALT_PORT_DIR}/starboard/shared/pthread/condition_variable_create.cc
+    ${COBALT_PORT_DIR}/starboard/shared/pthread/condition_variable_destroy.cc
+    ${COBALT_PORT_DIR}/starboard/shared/pthread/condition_variable_signal.cc
+    ${COBALT_PORT_DIR}/starboard/shared/pthread/condition_variable_wait.cc
+    ${COBALT_PORT_DIR}/starboard/shared/pthread/condition_variable_wait_timed.cc
+    ${COBALT_PORT_DIR}/starboard/shared/pthread/mutex_acquire.cc
+    ${COBALT_PORT_DIR}/starboard/shared/pthread/mutex_acquire_try.cc
+    ${COBALT_PORT_DIR}/starboard/shared/pthread/mutex_create.cc
+    ${COBALT_PORT_DIR}/starboard/shared/pthread/mutex_destroy.cc
+    ${COBALT_PORT_DIR}/starboard/shared/pthread/mutex_release.cc
+    ${COBALT_PORT_DIR}/starboard/shared/pthread/thread_context_get_pointer.cc
+    ${COBALT_PORT_DIR}/starboard/shared/pthread/thread_context_internal.h
+    ${COBALT_PORT_DIR}/starboard/shared/pthread/once.cc
+    ${COBALT_PORT_DIR}/starboard/shared/pthread/thread_create.cc
+    ${COBALT_PORT_DIR}/starboard/shared/pthread/thread_create_local_key.cc
+    ${COBALT_PORT_DIR}/starboard/shared/pthread/thread_create_priority.h
+    ${COBALT_PORT_DIR}/starboard/shared/pthread/thread_destroy_local_key.cc
+    ${COBALT_PORT_DIR}/starboard/shared/pthread/thread_detach.cc
+    ${COBALT_PORT_DIR}/starboard/shared/pthread/thread_get_current.cc
+    ${COBALT_PORT_DIR}/starboard/shared/pthread/thread_get_local_value.cc
+    ${COBALT_PORT_DIR}/starboard/shared/pthread/thread_is_equal.cc
+    ${COBALT_PORT_DIR}/starboard/shared/pthread/thread_join.cc
+    ${COBALT_PORT_DIR}/starboard/shared/pthread/thread_sampler_create.cc
+    ${COBALT_PORT_DIR}/starboard/shared/pthread/thread_sampler_destroy.cc
+    ${COBALT_PORT_DIR}/starboard/shared/pthread/thread_sampler_freeze.cc
+    ${COBALT_PORT_DIR}/starboard/shared/pthread/thread_sampler_internal.cc
+    ${COBALT_PORT_DIR}/starboard/shared/pthread/thread_sampler_internal.h
+    ${COBALT_PORT_DIR}/starboard/shared/pthread/thread_sampler_is_supported.cc
+    #${COBALT_PORT_DIR}/starboard/shared/pthread/thread_sampler_is_supported.h
+    ${COBALT_PORT_DIR}/starboard/shared/pthread/thread_sampler_thaw.cc
+    ${COBALT_PORT_DIR}/starboard/shared/pthread/thread_set_local_value.cc
+    ${COBALT_PORT_DIR}/starboard/shared/pthread/thread_yield.cc
+    #
+    ${COBALT_PORT_DIR}/starboard/linux/shared/atomic_public.h
+    ${COBALT_PORT_DIR}/starboard/linux/shared/configuration_public.h
+    ## TODO ## requires RefCounted from starboard_common
+    ${COBALT_PORT_DIR}/starboard/linux/shared/decode_target_get_info.cc
+    ${COBALT_PORT_DIR}/starboard/linux/shared/audio_sink_type_dispatcher.cc
+    ## TODO ## requires RefCounted from starboard_common
+    ${COBALT_PORT_DIR}/starboard/linux/shared/decode_target_internal.cc
+    ## TODO ## requires RefCounted from starboard_common
+    ${COBALT_PORT_DIR}/starboard/linux/shared/decode_target_internal.h
+    ## TODO ## requires RefCounted from starboard_common
+    ${COBALT_PORT_DIR}/starboard/linux/shared/decode_target_release.cc
+    ${COBALT_PORT_DIR}/starboard/linux/shared/system_get_connection_type.cc
+    ${COBALT_PORT_DIR}/starboard/linux/shared/system_get_device_type.cc
+    ${COBALT_PORT_DIR}/starboard/linux/shared/system_has_capability.cc
+    ${COBALT_PORT_DIR}/starboard/shared/linux/byte_swap.cc
+    ${COBALT_PORT_DIR}/starboard/shared/linux/get_home_directory.cc
+    ${COBALT_PORT_DIR}/starboard/shared/linux/memory_get_stack_bounds.cc
+    ${COBALT_PORT_DIR}/starboard/shared/linux/page_internal.cc
+    ${COBALT_PORT_DIR}/starboard/shared/linux/system_get_random_data.cc
+    ${COBALT_PORT_DIR}/starboard/shared/linux/system_get_total_cpu_memory.cc
+    ${COBALT_PORT_DIR}/starboard/shared/linux/system_is_debugger_attached.cc
+    ${COBALT_PORT_DIR}/starboard/shared/linux/system_get_used_cpu_memory.cc
+    #
+    ${COBALT_PORT_DIR}/starboard/shared/posix/memory_allocate_aligned_unchecked.cc
+    ${COBALT_PORT_DIR}/starboard/shared/posix/memory_free_aligned.cc
+    #
+    ${COBALT_PORT_DIR}/starboard/shared/posix/directory_create.cc
+    ${COBALT_PORT_DIR}/starboard/shared/posix/file_can_open.cc
+    ${COBALT_PORT_DIR}/starboard/shared/posix/file_close.cc
+    ${COBALT_PORT_DIR}/starboard/shared/posix/file_delete.cc
+    ${COBALT_PORT_DIR}/starboard/shared/posix/file_exists.cc
+    ${COBALT_PORT_DIR}/starboard/shared/posix/file_flush.cc
+    ${COBALT_PORT_DIR}/starboard/shared/posix/file_get_info.cc
+    ${COBALT_PORT_DIR}/starboard/shared/posix/file_get_path_info.cc
+    ${COBALT_PORT_DIR}/starboard/shared/posix/file_open.cc
+    ${COBALT_PORT_DIR}/starboard/shared/posix/file_read.cc
+    ${COBALT_PORT_DIR}/starboard/shared/posix/file_seek.cc
+    ${COBALT_PORT_DIR}/starboard/shared/posix/file_truncate.cc
+    ${COBALT_PORT_DIR}/starboard/shared/posix/file_write.cc
+    ${COBALT_PORT_DIR}/starboard/shared/posix/log.cc
+    ${COBALT_PORT_DIR}/starboard/shared/posix/log_flush.cc
+    ${COBALT_PORT_DIR}/starboard/shared/posix/log_format.cc
+    ${COBALT_PORT_DIR}/starboard/shared/posix/log_is_tty.cc
+    ${COBALT_PORT_DIR}/starboard/shared/posix/log_raw.cc
+    ${COBALT_PORT_DIR}/starboard/shared/posix/memory_flush.cc
+    ${COBALT_PORT_DIR}/starboard/shared/posix/set_non_blocking_internal.cc
+    ${COBALT_PORT_DIR}/starboard/shared/posix/storage_write_record.cc
+    ${COBALT_PORT_DIR}/starboard/shared/posix/string_compare_no_case.cc
+    ${COBALT_PORT_DIR}/starboard/shared/posix/string_compare_no_case_n.cc
+    ${COBALT_PORT_DIR}/starboard/shared/posix/string_compare_wide.cc
+    ${COBALT_PORT_DIR}/starboard/shared/posix/string_format.cc
+    ${COBALT_PORT_DIR}/starboard/shared/posix/string_format_wide.cc
+    ${COBALT_PORT_DIR}/starboard/shared/posix/system_break_into_debugger.cc
+    ${COBALT_PORT_DIR}/starboard/shared/posix/system_clear_last_error.cc
+    ${COBALT_PORT_DIR}/starboard/shared/posix/system_get_error_string.cc
+    ${COBALT_PORT_DIR}/starboard/shared/posix/system_get_last_error.cc
+    ${COBALT_PORT_DIR}/starboard/shared/posix/system_get_locale_id.cc
+    ${COBALT_PORT_DIR}/starboard/shared/posix/system_get_number_of_processors.cc
+    ${COBALT_PORT_DIR}/starboard/shared/posix/thread_sleep.cc
+    ${COBALT_PORT_DIR}/starboard/shared/posix/time_get_monotonic_now.cc
+    ${COBALT_PORT_DIR}/starboard/shared/posix/time_get_monotonic_thread_now.cc
+    ${COBALT_PORT_DIR}/starboard/shared/posix/time_get_now.cc
+    ${COBALT_PORT_DIR}/starboard/shared/posix/time_zone_get_current.cc
+    # deprecated with SB_API_VERSION 6
+    #${COBALT_PORT_DIR}/starboard/shared/posix/time_zone_get_dst_name.cc
+    #${COBALT_PORT_DIR}/starboard/shared/posix/time_zone_get_name.cc
+  )
+elseif(tARGET_WINDOWS)
+  list(APPEND starboard_platform_SOURCES
+    ${COBALT_PORT_DIR}/starboard/shared/stub/condition_variable_broadcast.cc
+    ${COBALT_PORT_DIR}/starboard/shared/stub/condition_variable_create.cc
+    ${COBALT_PORT_DIR}/starboard/shared/stub/condition_variable_destroy.cc
+    ${COBALT_PORT_DIR}/starboard/shared/stub/condition_variable_signal.cc
+    ${COBALT_PORT_DIR}/starboard/shared/stub/condition_variable_wait.cc
+    ${COBALT_PORT_DIR}/starboard/shared/stub/condition_variable_wait_timed.cc
+    ${COBALT_PORT_DIR}/starboard/shared/stub/mutex_acquire.cc
+    ${COBALT_PORT_DIR}/starboard/shared/stub/mutex_acquire_try.cc
+    ${COBALT_PORT_DIR}/starboard/shared/stub/mutex_create.cc
+    ${COBALT_PORT_DIR}/starboard/shared/stub/mutex_destroy.cc
+    ${COBALT_PORT_DIR}/starboard/shared/stub/mutex_release.cc
+    ${COBALT_PORT_DIR}/starboard/shared/stub/thread_context_get_pointer.cc
+    ${COBALT_PORT_DIR}/starboard/shared/stub/thread_context_internal.h
+    ${COBALT_PORT_DIR}/starboard/shared/stub/once.cc
+    ${COBALT_PORT_DIR}/starboard/shared/stub/thread_create.cc
+    ${COBALT_PORT_DIR}/starboard/shared/stub/thread_create_local_key.cc
+    ${COBALT_PORT_DIR}/starboard/shared/stub/thread_create_priority.h
+    ${COBALT_PORT_DIR}/starboard/shared/stub/thread_destroy_local_key.cc
+    ${COBALT_PORT_DIR}/starboard/shared/stub/thread_detach.cc
+    ${COBALT_PORT_DIR}/starboard/shared/stub/thread_get_current.cc
+    ${COBALT_PORT_DIR}/starboard/shared/stub/thread_get_local_value.cc
+    ${COBALT_PORT_DIR}/starboard/shared/stub/thread_is_equal.cc
+    ${COBALT_PORT_DIR}/starboard/shared/stub/thread_join.cc
+    ${COBALT_PORT_DIR}/starboard/shared/stub/thread_sampler_create.cc
+    ${COBALT_PORT_DIR}/starboard/shared/stub/thread_sampler_destroy.cc
+    ${COBALT_PORT_DIR}/starboard/shared/stub/thread_sampler_freeze.cc
+    ${COBALT_PORT_DIR}/starboard/shared/stub/thread_sampler_internal.cc
+    ${COBALT_PORT_DIR}/starboard/shared/stub/thread_sampler_internal.h
+    ${COBALT_PORT_DIR}/starboard/shared/stub/thread_sampler_is_supported.cc
+    #${COBALT_PORT_DIR}/starboard/shared/stub/thread_sampler_is_supported.h
+    ${COBALT_PORT_DIR}/starboard/shared/stub/thread_sampler_thaw.cc
+    ${COBALT_PORT_DIR}/starboard/shared/stub/thread_set_local_value.cc
+    ${COBALT_PORT_DIR}/starboard/shared/stub/thread_yield.cc
+    #
+    ${COBALT_PORT_DIR}/starboard/stub/shared/atomic_public.h
+    ${COBALT_PORT_DIR}/starboard/stub/shared/configuration_public.h
+    ## TODO ## requires RefCounted from starboard_common
+    ${COBALT_PORT_DIR}/starboard/stub/shared/decode_target_get_info.cc
+    ${COBALT_PORT_DIR}/starboard/stub/shared/audio_sink_type_dispatcher.cc
+    ## TODO ## requires RefCounted from starboard_common
+    ${COBALT_PORT_DIR}/starboard/stub/shared/decode_target_internal.cc
+    ## TODO ## requires RefCounted from starboard_common
+    ${COBALT_PORT_DIR}/starboard/stub/shared/decode_target_internal.h
+    ## TODO ## requires RefCounted from starboard_common
+    ${COBALT_PORT_DIR}/starboard/stub/shared/decode_target_release.cc
+    ${COBALT_PORT_DIR}/starboard/stub/shared/system_get_connection_type.cc
+    ${COBALT_PORT_DIR}/starboard/stub/shared/system_get_device_type.cc
+    ${COBALT_PORT_DIR}/starboard/stub/shared/system_has_capability.cc
+    ${COBALT_PORT_DIR}/starboard/shared/stub/byte_swap.cc
+    ${COBALT_PORT_DIR}/starboard/shared/stub/get_home_directory.cc
+    ${COBALT_PORT_DIR}/starboard/shared/stub/memory_get_stack_bounds.cc
+    ${COBALT_PORT_DIR}/starboard/shared/stub/page_internal.cc
+    ${COBALT_PORT_DIR}/starboard/shared/stub/system_get_random_data.cc
+    ${COBALT_PORT_DIR}/starboard/shared/stub/system_get_total_cpu_memory.cc
+    ${COBALT_PORT_DIR}/starboard/shared/stub/system_is_debugger_attached.cc
+    ${COBALT_PORT_DIR}/starboard/shared/stub/system_get_used_cpu_memory.cc
+    #
+    ${COBALT_PORT_DIR}/starboard/shared/stub/memory_allocate_aligned_unchecked.cc
+    ${COBALT_PORT_DIR}/starboard/shared/stub/memory_free_aligned.cc
+    #
+    ${COBALT_PORT_DIR}/starboard/shared/stub/directory_create.cc
+    ${COBALT_PORT_DIR}/starboard/shared/stub/file_can_open.cc
+    ${COBALT_PORT_DIR}/starboard/shared/stub/file_close.cc
+    ${COBALT_PORT_DIR}/starboard/shared/stub/file_delete.cc
+    ${COBALT_PORT_DIR}/starboard/shared/stub/file_exists.cc
+    ${COBALT_PORT_DIR}/starboard/shared/stub/file_flush.cc
+    ${COBALT_PORT_DIR}/starboard/shared/stub/file_get_info.cc
+    ${COBALT_PORT_DIR}/starboard/shared/stub/file_get_path_info.cc
+    ${COBALT_PORT_DIR}/starboard/shared/stub/file_open.cc
+    ${COBALT_PORT_DIR}/starboard/shared/stub/file_read.cc
+    ${COBALT_PORT_DIR}/starboard/shared/stub/file_seek.cc
+    ${COBALT_PORT_DIR}/starboard/shared/stub/file_truncate.cc
+    ${COBALT_PORT_DIR}/starboard/shared/stub/file_write.cc
+    ${COBALT_PORT_DIR}/starboard/shared/stub/log.cc
+    ${COBALT_PORT_DIR}/starboard/shared/stub/log_flush.cc
+    ${COBALT_PORT_DIR}/starboard/shared/stub/log_format.cc
+    ${COBALT_PORT_DIR}/starboard/shared/stub/log_is_tty.cc
+    ${COBALT_PORT_DIR}/starboard/shared/stub/log_raw.cc
+    ${COBALT_PORT_DIR}/starboard/shared/stub/memory_flush.cc
+    ${COBALT_PORT_DIR}/starboard/shared/stub/set_non_blocking_internal.cc
+    ${COBALT_PORT_DIR}/starboard/shared/stub/storage_write_record.cc
+    ${COBALT_PORT_DIR}/starboard/shared/stub/string_compare_no_case.cc
+    ${COBALT_PORT_DIR}/starboard/shared/stub/string_compare_no_case_n.cc
+    ${COBALT_PORT_DIR}/starboard/shared/stub/string_compare_wide.cc
+    ${COBALT_PORT_DIR}/starboard/shared/stub/string_format.cc
+    ${COBALT_PORT_DIR}/starboard/shared/stub/string_format_wide.cc
+    ${COBALT_PORT_DIR}/starboard/shared/stub/system_break_into_debugger.cc
+    ${COBALT_PORT_DIR}/starboard/shared/stub/system_clear_last_error.cc
+    ${COBALT_PORT_DIR}/starboard/shared/stub/system_get_error_string.cc
+    ${COBALT_PORT_DIR}/starboard/shared/stub/system_get_last_error.cc
+    ${COBALT_PORT_DIR}/starboard/shared/stub/system_get_locale_id.cc
+    ${COBALT_PORT_DIR}/starboard/shared/stub/system_get_number_of_processors.cc
+    ${COBALT_PORT_DIR}/starboard/shared/stub/thread_sleep.cc
+    ${COBALT_PORT_DIR}/starboard/shared/stub/time_get_monotonic_now.cc
+    ${COBALT_PORT_DIR}/starboard/shared/stub/time_get_monotonic_thread_now.cc
+    ${COBALT_PORT_DIR}/starboard/shared/stub/time_get_now.cc
+    ${COBALT_PORT_DIR}/starboard/shared/stub/time_zone_get_current.cc
+    # deprecated with SB_API_VERSION 6
+    #${COBALT_PORT_DIR}/starboard/shared/posix/time_zone_get_dst_name.cc
+    #${COBALT_PORT_DIR}/starboard/shared/posix/time_zone_get_name.cc
+  )
+endif(TARGET_LINUX OR TARGET_EMSCRIPTEN)
 
 if(TARGET_LINUX)
   list(APPEND starboard_platform_SOURCES
@@ -462,9 +576,6 @@ list(APPEND starboard_platform_SOURCES
   ${COBALT_PORT_DIR}/starboard/shared/iso/memory_allocate_unchecked.cc
   ${COBALT_PORT_DIR}/starboard/shared/iso/memory_free.cc
   ${COBALT_PORT_DIR}/starboard/shared/iso/memory_reallocate_unchecked.cc
-  ${COBALT_PORT_DIR}/starboard/shared/linux/system_get_used_cpu_memory.cc
-  ${COBALT_PORT_DIR}/starboard/shared/posix/memory_allocate_aligned_unchecked.cc
-  ${COBALT_PORT_DIR}/starboard/shared/posix/memory_free_aligned.cc
   # TODO
 )
 

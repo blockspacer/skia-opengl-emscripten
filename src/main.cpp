@@ -435,6 +435,7 @@ static bool render_browser_window = false;
 #include "cobalt_common.h"
 #include "custom_atts.h"
 #include "custom_web_components.h"
+#include "custom_controllers.h"
 
 #ifdef ENABLE_COBALT
 #include "renderer_stub/rasterizer/skgl/software_rasterizer.h"
@@ -1845,7 +1846,7 @@ CobaltTester::CobaltTester()
   //}
   fetcher_factory_.reset(new loader::FetcherFactory(
     nullptr/*network_module*/,
-    base::FilePath(R"raw()raw"),//base::FilePath("resources/html"), // extra_web_file_dir
+    base::FilePath(FILE_PATH_LITERAL(R"raw()raw")),//base::FilePath("resources/html"), // extra_web_file_dir
     dom::URL::MakeBlobResolverCallback(blob_registry_.get()),
     read_cache_callback));
   DCHECK(fetcher_factory_);

@@ -14,6 +14,7 @@
 
 #include "starboard/shared/signal/suspend_signals.h"
 
+#if !(defined(_WIN32) || defined(_WIN64))
 #include <signal.h>
 #include <sys/socket.h>
 
@@ -149,3 +150,4 @@ void UninstallSuspendSignalHandlers() {
 }  // namespace signal
 }  // namespace shared
 }  // namespace starboard
+#endif // !defined(OS_WIN)

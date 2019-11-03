@@ -594,6 +594,9 @@ list(APPEND SKIA_CMAKE_ONLY_HEADERS
 #  ${SKIA_SRC_DIR}/third_party/expat
 #  ${SKIA_SRC_DIR}/third_party/externals
   ${SKIA_SRC_DIR}/third_party/freetype2
+  ${SKIA_SRC_DIR}/third_party/freetype2/include
+  ${SKIA_SRC_DIR}/third_party/externals/freetype
+  ${SKIA_SRC_DIR}/third_party/externals/freetype/include # for ft2build.h
 #  ${SKIA_SRC_DIR}/third_party/gif
   ${SKIA_SRC_DIR}/third_party/harfbuzz
 #  ${SKIA_SRC_DIR}/third_party/icu # see USE_CUSTOM_ICU

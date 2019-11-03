@@ -14,7 +14,10 @@
 
 #include "cobalt/web_animations/animation_effect_timing_read_only.h"
 
+// MSVC++ requires this to be set before any other includes to get M_PI.
+#define _USE_MATH_DEFINES
 #include <cmath>
+
 #include <limits>
 
 namespace cobalt {

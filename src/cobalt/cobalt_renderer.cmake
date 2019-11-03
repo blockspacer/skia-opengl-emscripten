@@ -87,6 +87,8 @@ target_link_libraries(cobalt_renderer PUBLIC
   glm
   SKIA
   ${HARFBUZZ_LIBRARIES}
+  # khronos
+  ${khronos_LIB} # on _WIN32
 )
 
 set_property(TARGET cobalt_renderer PROPERTY CXX_STANDARD 17)

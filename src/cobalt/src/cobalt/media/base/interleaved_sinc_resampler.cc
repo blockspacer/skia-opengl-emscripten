@@ -47,6 +47,9 @@
 
 #include "cobalt/media/base/interleaved_sinc_resampler.h"
 
+// MSVC++ requires this to be set before any other includes to get M_PI.
+#define _USE_MATH_DEFINES
+
 #include <algorithm>
 #include <cmath>
 

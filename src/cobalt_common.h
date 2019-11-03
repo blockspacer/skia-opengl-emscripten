@@ -334,8 +334,10 @@
 #include "renderer_stub/backend/default_graphics_system.h"
 #include "renderer_stub/backend/graphics_system_stub.h"
 
-#include "extended_html/input_box/common.h"
-#include "extended_html/component/common.h"
+/*#include "extended_html/input_box/common.h"
+#include "extended_html/component/common.h"*/
+#include "extended_html/input_box/HTMLInputElement.h"
+#include "extended_html/component/HTMLComponentElement.h"
 
 typedef base::Callback<void(const cobalt::layout::LayoutManager::LayoutResults&)>
     OnRenderTreeProducedCallback;

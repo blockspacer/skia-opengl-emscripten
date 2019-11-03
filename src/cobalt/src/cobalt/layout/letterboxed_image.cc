@@ -14,6 +14,8 @@
 
 #include "cobalt/layout/letterboxed_image.h"
 
+// MSVC++ requires this to be set before any other includes to get M_PI.
+#define _USE_MATH_DEFINES
 #include <cmath>
 
 #include "cobalt/math/point_f.h"

@@ -4,6 +4,8 @@
 
 #include "cobalt/layout/vector2d_layout_unit.h"
 
+// MSVC++ requires this to be set before any other includes to get M_PI.
+#define _USE_MATH_DEFINES
 #include <cmath>
 
 #include "base/strings/stringprintf.h"

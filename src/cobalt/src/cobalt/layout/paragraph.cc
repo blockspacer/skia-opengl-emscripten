@@ -17,6 +17,11 @@
 #include "base/i18n/char_iterator.h"
 #include "cobalt/base/unicode/character_values.h"
 
+#include "base/strings/utf_string_conversions.h"
+
+#include "base/i18n/message_formatter.h"
+#include "base/i18n/unicodestring.h"
+
 #include "third_party/icu/source/common/unicode/ubidi.h"
 
 namespace cobalt {
@@ -254,7 +259,12 @@ std::string Paragraph::RetrieveUtf8SubString(int32 start_position,
 
 const base::char16* Paragraph::GetTextBuffer() const {
   //return unicode_text_.getBuffer();
+#if defined(_WIN32) || defined(_WIN64)
+  //return base::UTF16ToWide(base::i18n::UnicodeStringToString16(unicode_text_.getBuffer()));
+  return reinterpret_cast<const wchar_t *>(unicode_text_.getBuffer());
+#else
   return reinterpret_cast<const uint16_t*>(unicode_text_.getBuffer());
+#endif
 }
 
 const icu::Locale& Paragraph::GetLocale() const { return locale_; }
@@ -388,7 +398,12 @@ bool Paragraph::TryIncludeSegmentWithinAvailableWidth(
   DCHECK(unicode_text_.getBuffer());
   // TODO https://bugs.chromium.org/p/v8/issues/detail?id=6487
   LayoutUnit segment_width = LayoutUnit(used_font->GetTextWidth(
+#if defined(_WIN32) || defined(_WIN64)
+      reinterpret_cast<const wchar_t *>(unicode_text_.getBuffer()) + segment_start,
+     // base::UTF16ToWide(base::i18n::UnicodeStringToString16(unicode_text_.getBuffer())) + segment_start,
+#else
       reinterpret_cast<const uint16_t*>(unicode_text_.getBuffer()) + segment_start,
+#endif
       segment_end - segment_start,
       IsRTL(segment_start), NULL));
   // If trailing white space is being collapsed, then it will not be included
@@ -451,11 +466,20 @@ void Paragraph::GenerateBidiLevelRuns() {
     return;
   }
 
+#if defined(_WIN32) || defined(_WIN64)
+  ubidi_setPara(ubidi.get(),
+                reinterpret_cast<const wchar_t *>(unicode_text_.getBuffer()),
+                //base::UTF16ToWide(base::i18n::UnicodeStringToString16(unicode_text_.getBuffer())),
+                unicode_text_.length(),
+                UBiDiLevel(ConvertBaseDirectionToBidiLevel(base_direction_)),
+                NULL, &error);
+#else
   ubidi_setPara(ubidi.get(),
                 reinterpret_cast<const uint16_t*>(unicode_text_.getBuffer()),
                 unicode_text_.length(),
                 UBiDiLevel(ConvertBaseDirectionToBidiLevel(base_direction_)),
                 NULL, &error);
+#endif
 
   if (U_FAILURE(error)) {
     return;

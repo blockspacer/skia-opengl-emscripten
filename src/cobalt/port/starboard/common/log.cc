@@ -113,7 +113,7 @@ std::ostream& operator<<(std::ostream& out, const Stack& stack_token) {
   return out;
 }
 
-#if !defined(__EMSCRIPTEN__)
+#if !defined(__EMSCRIPTEN__) && !defined(_WIN32) && !defined(_WIN64)
 std::ostream& operator<<(std::ostream& out, const wchar_t* wstr) {
   // We don't have any good cross-platform wide character to UTF8 converter at
   // this level in the stack, so just throwing out non-ASCII characters.

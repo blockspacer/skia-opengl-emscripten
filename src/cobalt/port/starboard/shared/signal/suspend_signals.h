@@ -17,6 +17,7 @@
 
 #include "starboard/shared/internal_only.h"
 
+#if !(defined(_WIN32) || defined(_WIN64))
 namespace starboard {
 namespace shared {
 namespace signal {
@@ -27,5 +28,6 @@ void UninstallSuspendSignalHandlers();
 }  // namespace signal
 }  // namespace shared
 }  // namespace starboard
+#endif // !defined(OS_WIN)
 
 #endif  // STARBOARD_SHARED_SIGNAL_SUSPEND_SIGNALS_H_

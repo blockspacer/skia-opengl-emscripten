@@ -31,6 +31,7 @@
 #include "starboard/common/log.h"
 #include "starboard/time.h"
 
+#if !defined(COBALT_PORT)
 namespace nb {
 namespace analytics {
 namespace {
@@ -505,3 +506,4 @@ MemoryTrackerImpl::DisableMemoryTrackingInScope::
 
 }  // namespace analytics
 }  // namespace nb
+#endif // !defined(COBALT_PORT)

@@ -27,7 +27,7 @@ template <typename Type>
 class ThreadLocalPointer {
  public:
   ThreadLocalPointer() {
-    slot_ = SbThreadCreateLocalKey(NULL);  // No destructor for pointer.
+    slot_ = SbThreadCreateLocalKey(nullptr);  // No destructor for pointer.
     SB_DCHECK(kSbThreadLocalKeyInvalid != slot_);
   }
 

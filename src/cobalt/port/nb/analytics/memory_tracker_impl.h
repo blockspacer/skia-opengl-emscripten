@@ -17,6 +17,7 @@
 #ifndef NB_MEMORY_TRACKER_IMPL_H_
 #define NB_MEMORY_TRACKER_IMPL_H_
 
+#if !defined(COBALT_PORT)
 #include "nb/analytics/memory_tracker.h"
 #include "nb/analytics/memory_tracker_helpers.h"
 #include "nb/concurrent_ptr.h"
@@ -187,5 +188,6 @@ class MemoryTrackerImpl : public MemoryTracker {
 
 }  // namespace analytics
 }  // namespace nb
+#endif // COBALT_PORT
 
 #endif  // NB_MEMORY_TRACKER_IMPL_H_

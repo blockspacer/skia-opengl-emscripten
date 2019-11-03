@@ -87,7 +87,22 @@ extern "C" {
     !defined(SB_UINT16) || !defined(SB_INT32) || !defined(SB_UINT32) || \
     !defined(SB_INT64) || !defined(SB_UINT64) || !defined(SB_INTPTR) || \
     !defined(SB_UINTPTR)
-#error "No stdint.h or inttypes.h, so define SB_U?INT(8|16|32|64|PTR)."
+//#error "No stdint.h or inttypes.h, so defined SB_U?INT(8|16|32|64|PTR)."
+#include <cinttypes>
+typedef std::int8_t SB_INT8;
+typedef std::uint8_t SB_UINT8;
+
+typedef std::int16_t SB_INT16;
+typedef std::uint16_t SB_UINT16;
+
+typedef std::int32_t SB_INT32;
+typedef std::uint32_t SB_UINT32;
+
+typedef std::int64_t SB_INT64;
+typedef std::uint64_t SB_UINT64;
+
+typedef std::intptr_t SB_INTPTR;
+typedef std::uintptr_t SB_UINTPTR;
 #endif  // !defined(SB_U?INT(8|16|32|64|PTR))
 typedef SB_INT8 int8_t;
 typedef SB_UINT8 uint8_t;
@@ -125,9 +140,15 @@ typedef int64_t ssize_t;
 #endif  // !SB_HAS(STDBOOL_H) && !defined(__cplusplus)
 
 // Simulate stddef.h for platforms that don't provide it.
+#if defined(COBALT_PORT)
+#ifndef NULL
+#define NULL nullptr
+#endif // NULL
+#else
 #if !SB_HAS(STDDEF_H)
 #define NULL ((void*)0)
 #endif
+#endif // COBALT_PORT
 
 // Simulate needed portions of limits.h for platforms that don't provide it.
 
@@ -164,8 +185,11 @@ SB_COMPILE_ASSERT(sizeof(long) == sizeof(int32_t),  // NOLINT[runtime/int]
 
 #else  // SB_HAS(32_BIT_LONG)
 
+#if !defined(COBALT_PORT)
 SB_COMPILE_ASSERT(sizeof(long) == sizeof(int64_t),  // NOLINT[runtime/int]
                   starboard_long_is_64_bits);
+#endif // COBALT_PORT
+
 #if !defined(LONG_MIN)
 #define LONG_MIN SB_INT64_C(0x8000000000000000)
 #endif

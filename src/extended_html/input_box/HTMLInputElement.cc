@@ -110,6 +110,17 @@
 #include "ui/gfx/transform.h"
 #include "ui/gfx/transform_util.h"
 
+#include "ui/views/view.h"
+#include "ui/views/widget/widget.h"
+#include "ui/events/keycodes/keyboard_code_conversion.h"
+#include "third_party/blink/renderer/platform/keyboard_codes.h"
+
+#include "extended_html/input_box/block_level_input_box.h"
+#include "extended_html/input_box/inline_level_input_box.h"
+#include "extended_html/input_box/input_box.h"
+#include "extended_html/input_box/input_node.h"
+#include "extended_html/input_box/input_box_generator.h"
+
 using namespace cobalt;
 using namespace cobalt::cssom;
 using namespace cobalt::css_parser;
@@ -155,10 +166,10 @@ static ui::KeyboardCode keyFromKeyCode(uint32_t key_code) {
       result = ui::VKEY_TAB;
       break;
     }
-    case kBacktab: {
+    /*case kBacktab: {
       result = ui::VKEY_BACKTAB;
       break;
-    }
+    }*/
     case kClear: {
       result = ui::VKEY_CLEAR;
       break;
@@ -627,14 +638,14 @@ static ui::KeyboardCode keyFromKeyCode(uint32_t key_code) {
       result = ui::VKEY_SCROLL;
       break;
     }
-    case kWlan: {
+    /*case kWlan: {
       result = ui::VKEY_WLAN;
       break;
-    }
-    case kPower: {
+    }*/
+    /*case kPower: {
       result = ui::VKEY_POWER;
       break;
-    }
+    }*/
     case kLshift: {
       result = ui::VKEY_LSHIFT;
       break;
@@ -759,7 +770,7 @@ static ui::KeyboardCode keyFromKeyCode(uint32_t key_code) {
       result = ui::VKEY_OEM_3;
       break;
     }
-    case kBrightnessDown: {
+    /*case kBrightnessDown: {
       result = ui::VKEY_BRIGHTNESS_DOWN;
       break;
     }
@@ -770,7 +781,7 @@ static ui::KeyboardCode keyFromKeyCode(uint32_t key_code) {
     case kKbdBrightnessDown: {
       result = ui::VKEY_KBD_BRIGHTNESS_DOWN;
       break;
-    }
+    }*/
     case kOem4: {
       result = ui::VKEY_OEM_4;
       break;
@@ -795,10 +806,10 @@ static ui::KeyboardCode keyFromKeyCode(uint32_t key_code) {
       result = ui::VKEY_OEM_102;
       break;
     }
-    case kKbdBrightnessUp: {
+    /*case kKbdBrightnessUp: {
       result = ui::VKEY_KBD_BRIGHTNESS_UP;
       break;
-    }
+    }*/
     case kDbeSbcschar: {
       result = ui::VKEY_DBE_SBCSCHAR;
       break;
@@ -807,18 +818,18 @@ static ui::KeyboardCode keyFromKeyCode(uint32_t key_code) {
       result = ui::VKEY_DBE_DBCSCHAR;
       break;
     }
-    case kPlay: {
+    /*case kPlay: {
       result = ui::VKEY_PLAY;
       break;
-    }
-    case kMediaRewind: {
+    }*/
+    /*case kMediaRewind: {
       result = ui::VKEY_OEM_103;
       break;
-    }
-    case kMediaFastForward: {
+    }*/
+    /*case kMediaFastForward: {
       result = ui::VKEY_OEM_104;
       break;
-    }
+    }*/
   }
   return result;
 }

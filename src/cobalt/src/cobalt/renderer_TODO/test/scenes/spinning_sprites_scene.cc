@@ -14,7 +14,10 @@
 
 #include "cobalt/renderer/test/scenes/spinning_sprites_scene.h"
 
+// MSVC++ requires this to be set before any other includes to get M_PI.
+#define _USE_MATH_DEFINES
 #include <cmath>
+
 #include <vector>
 
 #include "base/files/file_path.h"

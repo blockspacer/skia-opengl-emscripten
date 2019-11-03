@@ -20,7 +20,7 @@
 ///#include FT_TYPE1_TABLES_H
 
 //#include <freetype2/freetype/ftheader.h>
-#if defined(OS_EMSCRIPTEN)
+#if defined(OS_EMSCRIPTEN) || defined(OS_WIN)
 #include <ft2build.h>
 //#include <freetype/freetype.h>
 //// https://github.com/blockspacer/cobalt-clone-28052019/blob/master/src/third_party/freetype2/docs/reference/ft2-truetype_tables.html#L127

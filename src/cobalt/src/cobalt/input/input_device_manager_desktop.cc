@@ -14,7 +14,10 @@
 
 #include "cobalt/input/input_device_manager_desktop.h"
 
+// MSVC++ requires this to be set before any other includes to get M_PI.
+#define _USE_MATH_DEFINES
 #include <cmath>
+
 #include <string>
 
 #include "base/time/time.h"

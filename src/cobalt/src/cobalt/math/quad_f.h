@@ -6,7 +6,11 @@
 #define COBALT_MATH_QUAD_F_H_
 
 #include <algorithm>
+
+// MSVC++ requires this to be set before any other includes to get M_PI.
+#define _USE_MATH_DEFINES
 #include <cmath>
+
 #include <iosfwd>
 #include <string>
 

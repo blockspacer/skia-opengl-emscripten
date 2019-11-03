@@ -368,10 +368,12 @@ SB_COMPILE_ASSERT(sizeof(long) == 4,  // NOLINT(runtime/int)
                   SB_HAS_32_BIT_LONG_is_inconsistent_with_sizeof_long);
 #endif
 
+#if !defined(COBALT_PORT)
 #if SB_HAS(64_BIT_LONG)
 SB_COMPILE_ASSERT(sizeof(long) == 8,  // NOLINT(runtime/int)
                   SB_HAS_64_BIT_LONG_is_inconsistent_with_sizeof_long);
 #endif
+#endif // COBALT_PORT
 
 #if !defined(SB_IS_BIG_ENDIAN)
 #error "Your platform must define SB_IS_BIG_ENDIAN."

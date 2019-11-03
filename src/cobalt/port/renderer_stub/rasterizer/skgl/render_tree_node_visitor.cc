@@ -15,7 +15,11 @@
 #include "renderer_stub/rasterizer/skgl/render_tree_node_visitor.h"
 
 #include <algorithm>
+
+// MSVC++ requires this to be set before any other includes to get M_PI.
+#define _USE_MATH_DEFINES
 #include <cmath>
+
 #include <limits>
 #include <memory>
 

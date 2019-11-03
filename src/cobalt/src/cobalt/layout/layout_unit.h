@@ -15,6 +15,8 @@
 #ifndef COBALT_LAYOUT_LAYOUT_UNIT_H_
 #define COBALT_LAYOUT_LAYOUT_UNIT_H_
 
+// MSVC++ requires this to be set before any other includes to get M_PI.
+#define _USE_MATH_DEFINES
 #include <cmath>
 
 #include <algorithm>

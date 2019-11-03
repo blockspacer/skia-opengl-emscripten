@@ -23,18 +23,25 @@
 namespace nb {
 namespace analytics {
 namespace {
+#if !defined(COBALT_PORT)
 SB_ONCE_INITIALIZE_FUNCTION(MemoryTrackerImpl, GetMemoryTrackerImplSingleton);
+#endif // COBALT_PORT
 }  // namespace
 
 MemoryTracker* MemoryTracker::Get() {
+#if defined(COBALT_PORT)
+  return nullptr;
+#else
   MemoryTracker* t = GetMemoryTrackerImplSingleton();
   return t;
+#endif // COBALT_PORT
 }
 
 
 MemoryStats GetProcessMemoryStats() {
   MemoryStats memory_stats;
 
+#if !defined(COBALT_PORT)
   memory_stats.total_cpu_memory = SbSystemGetTotalCPUMemory();
   memory_stats.used_cpu_memory = SbSystemGetUsedCPUMemory();
 
@@ -43,6 +50,8 @@ MemoryStats GetProcessMemoryStats() {
     memory_stats.total_gpu_memory = SbSystemGetTotalGPUMemory();
     memory_stats.used_gpu_memory = SbSystemGetUsedGPUMemory();
   }
+#endif // COBALT_PORT
+
   return memory_stats;
 }
 

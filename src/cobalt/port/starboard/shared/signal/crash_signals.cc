@@ -14,6 +14,7 @@
 
 #include "starboard/shared/signal/crash_signals.h"
 
+#if !(defined(_WIN32) || defined(_WIN64))
 #include <signal.h>
 
 #include "starboard/common/log.h"
@@ -77,3 +78,4 @@ void UninstallCrashSignalHandlers() {
 }  // namespace signal
 }  // namespace shared
 }  // namespace starboard
+#endif // !defined(OS_WIN)

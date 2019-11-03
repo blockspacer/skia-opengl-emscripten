@@ -180,6 +180,8 @@ target_link_libraries(cobalt_renderer_stub_skia PUBLIC
   #${OPENGLES2_LIBRARIES}
   ${FOUND_OPENGL_LIBRARIES}
   ${FREETYPE_LIBRARIES}
+  # khronos
+  ${khronos_LIB} # on _WIN32
 )
 
 set_property(TARGET cobalt_renderer_stub_skia PROPERTY CXX_STANDARD 17)

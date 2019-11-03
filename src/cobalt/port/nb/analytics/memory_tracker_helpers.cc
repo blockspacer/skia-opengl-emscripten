@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+#if !defined(COBALT_PORT)
 #include "nb/analytics/memory_tracker_helpers.h"
 
 #include <stdint.h>
@@ -285,3 +286,5 @@ const AtomicAllocationMap& ConcurrentAllocationMap::GetMapForPointer(
 
 }  // namespace analytics
 }  // namespace nb
+
+#endif // !defined(COBALT_PORT)
