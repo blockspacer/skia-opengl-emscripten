@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "starboard/shared/posix/file_internal.h"
+#include "starboard/shared/win/file_internal.h"
 
-#include "starboard/shared/posix/impl/file_truncate.h"
+#include "starboard/shared/win/impl/file_truncate.h"
 
 bool SbFileTruncate(SbFile file, int64_t length) {
-  return ::starboard::shared::posix::impl::FileTruncate(file, length);
+  return ::starboard::shared::win::impl::FileTruncate(file, length);
 }

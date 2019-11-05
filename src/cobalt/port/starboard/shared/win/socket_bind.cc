@@ -19,8 +19,8 @@
 
 #include "starboard/common/log.h"
 #include "starboard/memory.h"
-#include "starboard/shared/posix/handle_eintr.h"
-#include "starboard/shared/posix/socket_internal.h"
+#include "starboard/shared/win/handle_eintr.h"
+#include "starboard/shared/win/socket_internal.h"
 
 namespace sbposix = starboard::shared::posix;
 
@@ -32,10 +32,10 @@ SbSocketError SbSocketBind(SbSocket socket,
     return kSbSocketErrorFailed;
   }
 
-  sbposix::SockAddr sock_addr;
+  sbwin::SockAddr sock_addr;
   if (!sock_addr.FromSbSocketAddress(local_address)) {
     SB_DLOG(ERROR) << __FUNCTION__ << ": Invalid address";
-    return (socket->error = sbposix::TranslateSocketErrno(EINVAL));
+    return (socket->error = sbwin::TranslateSocketErrno(EINVAL));
   }
 
   SB_DCHECK(socket->socket_fd >= 0);
@@ -43,7 +43,7 @@ SbSocketError SbSocketBind(SbSocket socket,
     SB_DLOG(ERROR) << __FUNCTION__ << ": Incompatible addresses: "
                    << "socket type = " << socket->address_type
                    << ", argument type = " << local_address->type;
-    return (socket->error = sbposix::TranslateSocketErrno(EAFNOSUPPORT));
+    return (socket->error = sbwin::TranslateSocketErrno(EAFNOSUPPORT));
   }
 
 #if SB_HAS(IPV6)
@@ -52,7 +52,7 @@ SbSocketError SbSocketBind(SbSocket socket,
   // See https://www.ietf.org/rfc/rfc3493.txt for details.
   if (local_address && (local_address->type == kSbSocketAddressTypeIpv6) &&
       SbMemoryIsZero(local_address->address, 16)) {
-    if (!sbposix::SetBooleanSocketOption(socket, IPPROTO_IPV6, IPV6_V6ONLY,
+    if (!sbwin::SetBooleanSocketOption(socket, IPPROTO_IPV6, IPV6_V6ONLY,
                                          "IPV6_V6ONLY", false)) {
       // Silently ignore errors, assume the default behavior is as expected.
       socket->error = kSbSocketOk;
@@ -64,7 +64,7 @@ SbSocketError SbSocketBind(SbSocket socket,
       bind(socket->socket_fd, sock_addr.sockaddr(), sock_addr.length));
   if (result != 0) {
     SB_DLOG(ERROR) << __FUNCTION__ << ": Bind failed. errno=" << errno;
-    return (socket->error = sbposix::TranslateSocketErrno(errno));
+    return (socket->error = sbwin::TranslateSocketErrno(errno));
   }
 
   return (socket->error = kSbSocketOk);

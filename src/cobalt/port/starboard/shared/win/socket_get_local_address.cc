@@ -18,8 +18,8 @@
 #include <sys/socket.h>
 
 #include "starboard/common/log.h"
-#include "starboard/shared/posix/handle_eintr.h"
-#include "starboard/shared/posix/socket_internal.h"
+#include "starboard/shared/win/handle_eintr.h"
+#include "starboard/shared/win/socket_internal.h"
 
 namespace sbposix = starboard::shared::posix;
 
@@ -30,11 +30,11 @@ bool SbSocketGetLocalAddress(SbSocket socket, SbSocketAddress* out_address) {
   }
 
   SB_DCHECK(socket->socket_fd >= 0);
-  sbposix::SockAddr sock_addr;
+  sbwin::SockAddr sock_addr;
   int result =
       getsockname(socket->socket_fd, sock_addr.sockaddr(), &sock_addr.length);
   if (result < 0) {
-    socket->error = sbposix::TranslateSocketErrno(errno);
+    socket->error = sbwin::TranslateSocketErrno(errno);
     return false;
   }
   if (!sock_addr.ToSbSocketAddress(out_address)) {

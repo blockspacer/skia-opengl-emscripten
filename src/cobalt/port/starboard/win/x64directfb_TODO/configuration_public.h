@@ -19,12 +19,12 @@
 // Other source files should never include this header directly, but should
 // include the generic "starboard/configuration.h" instead.
 
-#ifndef STARBOARD_LINUX_X64DIRECTFB_CONFIGURATION_PUBLIC_H_
-#define STARBOARD_LINUX_X64DIRECTFB_CONFIGURATION_PUBLIC_H_
+#ifndef STARBOARD_WIN_X64DIRECTFB_CONFIGURATION_PUBLIC_H_
+#define STARBOARD_WIN_X64DIRECTFB_CONFIGURATION_PUBLIC_H_
 
 // Reuse the configuration from Linux_x64, but we'll also enable the Blitter
 // API afterwards since we'll have DirectFB available.
-#include "starboard/linux/x64x11/configuration_public.h"
+#include "starboard/win/x64x11/configuration_public.h"
 
 // Indicates whether or not the given platform supports rendering of NV12
 // textures. These textures typically originate from video decoders.
@@ -52,4 +52,4 @@
 #define SB_PREFERRED_RGBA_BYTE_ORDER SB_PREFERRED_RGBA_BYTE_ORDER_BGRA
 #endif
 
-#endif  // STARBOARD_LINUX_X64DIRECTFB_CONFIGURATION_PUBLIC_H_
+#endif  // STARBOARD_WIN_X64DIRECTFB_CONFIGURATION_PUBLIC_H_

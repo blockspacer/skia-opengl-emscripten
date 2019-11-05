@@ -16,11 +16,11 @@
 
 #include <sys/socket.h>
 
-#include "starboard/shared/posix/socket_internal.h"
+#include "starboard/shared/win/socket_internal.h"
 
 namespace sbposix = starboard::shared::posix;
 
 bool SbSocketSetReuseAddress(SbSocket socket, bool value) {
-  return sbposix::SetBooleanSocketOption(socket, SOL_SOCKET, SO_REUSEADDR,
+  return sbwin::SetBooleanSocketOption(socket, SOL_SOCKET, SO_REUSEADDR,
                                          "SO_REUSEADDR", value);
 }

@@ -17,5 +17,5 @@
 #include <pthread.h>
 
 SbThread SbThreadGetCurrent() {
-  return pthread_self();
+  return WIN_THREAD_self();
 }

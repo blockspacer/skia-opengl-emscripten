@@ -16,7 +16,7 @@
 
 #include <pthread.h>
 
-#include "starboard/shared/pthread/is_success.h"
+#include "starboard/shared/win_thread/is_success.h"
 
 bool SbThreadJoin(SbThread thread, void** out_return) {
   if (!SbThreadIsValid(thread)) {
@@ -24,7 +24,7 @@ bool SbThreadJoin(SbThread thread, void** out_return) {
   }
 
   void* joined_return = NULL;
-  int result = pthread_join(thread, &joined_return);
+  int result = WIN_THREAD_join(thread, &joined_return);
   if (!IsSuccess(result)) {
     return false;
   }

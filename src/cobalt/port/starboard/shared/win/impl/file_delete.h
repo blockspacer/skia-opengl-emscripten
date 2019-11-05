@@ -14,21 +14,28 @@
 
 // Adapted from base/platform_file_posix.cc
 
-#ifndef STARBOARD_SHARED_POSIX_IMPL_FILE_DELETE_H_
-#define STARBOARD_SHARED_POSIX_IMPL_FILE_DELETE_H_
+#ifndef STARBOARD_SHARED_WIN_IMPL_FILE_DELETE_H_
+#define STARBOARD_SHARED_WIN_IMPL_FILE_DELETE_H_
 
 #include "starboard/file.h"
 
-#include <errno.h>
+/*#include <errno.h>
 #include <sys/stat.h>
-#include <unistd.h>
+#include <unistd.h>*/
 
 #include "starboard/shared/internal_only.h"
-#include "starboard/shared/posix/impl/file_impl.h"
+#include "starboard/shared/win/impl/file_impl.h"
+
+#include "base/files/file.h"
+#include "base/files/file_enumerator.h"
+#include "base/files/file_path.h"
+#include "base/files/file_util.h"
+#include "base/files/scoped_temp_dir.h"
+#include "base/strings/utf_string_conversions.h"
 
 namespace starboard {
 namespace shared {
-namespace posix {
+namespace win {
 namespace impl {
 
 bool FileDelete(const char* path) {
@@ -36,7 +43,7 @@ bool FileDelete(const char* path) {
     return false;
   }
 
-  struct stat file_info;
+  /*struct stat file_info;
   int result = stat(path, &file_info);
   if (result) {
     return (errno == ENOENT || errno == ENOTDIR);
@@ -46,12 +53,21 @@ bool FileDelete(const char* path) {
     return !rmdir(path);
   }
 
-  return !unlink(path);
+  return !unlink(path);*/
+  
+  base::FilePath file_name;
+  file_name = file_name.Append(base::UTF8ToUTF16(path));
+  
+  /// \TODO use DeleteFileRecursively - Deletes the given path, whether it's a file or a directory.
+  if (!base::DeleteFile(file_name, /*Recursively*/true)) {
+    return false;
+  }
+
 }
 
 }  // namespace impl
-}  // namespace posix
+}  // namespace win
 }  // namespace shared
 }  // namespace starboard
 
-#endif  // STARBOARD_SHARED_POSIX_IMPL_FILE_DELETE_H_
+#endif  // STARBOARD_SHARED_WIN_IMPL_FILE_DELETE_H_

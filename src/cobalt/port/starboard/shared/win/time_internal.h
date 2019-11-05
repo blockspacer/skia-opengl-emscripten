@@ -12,14 +12,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef STARBOARD_SHARED_POSIX_TIME_INTERNAL_H_
-#define STARBOARD_SHARED_POSIX_TIME_INTERNAL_H_
+#ifndef STARBOARD_SHARED_WIN_TIME_INTERNAL_H_
+#define STARBOARD_SHARED_WIN_TIME_INTERNAL_H_
 
-#include <sys/time.h>
 #include <time.h>
 
 #include "starboard/shared/internal_only.h"
 #include "starboard/time.h"
+
+#define WIN32_LEAN_AND_MEAN
+#include <Windows.h>
+#include <stdint.h> // portable: uint64_t   MSVC: __int64 
+
+// MSVC defines this in winsock2.h!?
+typedef struct timeval {
+    long tv_sec;
+    long tv_usec;
+} timeval;
 
 namespace {
 const int64_t kMillisecondsPerSecond = kSbTimeSecond / kSbTimeMillisecond;
@@ -71,4 +80,4 @@ inline int64_t FromTimeT(time_t time) {
 }
 }  // namespace
 
-#endif  // STARBOARD_SHARED_POSIX_TIME_INTERNAL_H_
+#endif  // STARBOARD_SHARED_WIN_TIME_INTERNAL_H_

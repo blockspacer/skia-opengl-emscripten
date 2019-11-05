@@ -12,18 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef STARBOARD_SHARED_PTHREAD_THREAD_LOCAL_KEY_INTERNAL_H_
-#define STARBOARD_SHARED_PTHREAD_THREAD_LOCAL_KEY_INTERNAL_H_
+#ifndef STARBOARD_SHARED_WIN_THREAD_THREAD_LOCAL_KEY_INTERNAL_H_
+#define STARBOARD_SHARED_WIN_THREAD_THREAD_LOCAL_KEY_INTERNAL_H_
 
 #include <pthread.h>
 
 #include "starboard/shared/internal_only.h"
-#include "starboard/shared/pthread/is_success.h"
+#include "starboard/shared/win_thread/is_success.h"
 #include "starboard/thread.h"
 
 struct SbThreadLocalKeyPrivate {
   // The underlying thread-local variable handle.
-  pthread_key_t key;
+  WIN_THREAD_key_t key;
 };
 
-#endif  // STARBOARD_SHARED_PTHREAD_THREAD_LOCAL_KEY_INTERNAL_H_
+#endif  // STARBOARD_SHARED_WIN_THREAD_THREAD_LOCAL_KEY_INTERNAL_H_

@@ -15,7 +15,15 @@
 #include "starboard/common/string.h"
 
 #include <string.h>  // Non-standard, required for some platforms.
-#include <strings.h>
+
+#include <locale.h>
+#include <stdlib.h>
+
+// see https://github.com/chromium/chromium/blob/2ca8c5037021c9d2ecc00b787d58a31ed8fc8bcb/third_party/libusb/src/libusb/strerror.c#L29
+
+#if defined(_MSC_VER)
+#define strncasecmp _strnicmp
+#endif
 
 int SbStringCompareNoCaseN(const char* string1,
                            const char* string2,

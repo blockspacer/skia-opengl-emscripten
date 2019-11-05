@@ -18,7 +18,10 @@
 #include "starboard/shared/dlmalloc/page_internal.h"
 
 #include <stdio.h>
-#include <sys/mman.h>
+
+//#include <psapi.h>
+#include <windows.h>
+//#include <psapi.h>          // GetProcessMemoryInfo
 
 #include "starboard/atomic.h"
 #include "starboard/common/log.h"
@@ -33,10 +36,35 @@ int32_t GetPageCount(size_t byte_count) {
                               SB_MEMORY_PAGE_SIZE);
 }
 
+// see https://github.com/facebook/folly/blob/master/folly/portability/SysMman.cpp#L26
+// see https://github.com/spotify/annoy/blob/master/src/mman.h#L50
+
 int SbMemoryMapFlagsToMmapProtect(int sb_flags) {
   bool flag_set = false;
   int mmap_protect = 0;
 #if SB_API_VERSION >= 10
+  if (sb_flags == kSbMemoryMapProtectReserved) {
+    return PAGE_NOACCESS;
+  }
+#endif
+  if (sb_flags & kSbMemoryMapProtectRead) {
+    mmap_protect |= PAGE_READONLY;
+    flag_set = true;
+  }
+  if (sb_flags & kSbMemoryMapProtectWrite) {
+    mmap_protect |= PAGE_EXECUTE_READWRITE;
+    flag_set = true;
+  }
+#if SB_CAN(MAP_EXECUTABLE_MEMORY)
+  if (sb_flags & kSbMemoryMapProtectExec) {
+    mmap_protect |= PAGE_EXECUTE;
+    flag_set = true;
+  }
+#endif
+  if (!flag_set) {
+    mmap_protect = PAGE_NOACCESS;
+  }
+/*#if SB_API_VERSION >= 10
   if (sb_flags == kSbMemoryMapProtectReserved) {
     return PROT_NONE;
   }
@@ -57,8 +85,23 @@ int SbMemoryMapFlagsToMmapProtect(int sb_flags) {
 #endif
   if (!flag_set) {
     mmap_protect = PROT_NONE;
-  }
+  }*/
   return mmap_protect;
+}
+
+// see https://github.com/awarde96/TransactionalMemory/blob/74faae93f557bc667f97858c01c02a191c1d93f8/helper.cpp#L161
+
+//
+// getPhysicalMemSz
+//
+UINT64 getPhysicalMemSz() {
+#ifdef WIN32
+    UINT64 v;
+    GetPhysicallyInstalledSystemMemory(&v);                         // returns KB
+    return v * 1024;                                                // now bytes
+#elif __linux__
+    return (UINT64) sysconf(_SC_PHYS_PAGES)* sysconf(_SC_PAGESIZE); // NB: returns bytes
+#endif
 }
 
 }  // namespace
@@ -75,7 +118,7 @@ void* SbPageMap(size_t size_bytes, int flags, const char* /*unused_name*/) {
 void* SbPageMapUntracked(size_t size_bytes,
                          int flags,
                          const char* /*unused_name*/) {
-#if SB_CAN(MAP_EXECUTABLE_MEMORY) && SB_API_VERSION >= 10
+/*#if SB_CAN(MAP_EXECUTABLE_MEMORY) && SB_API_VERSION >= 10
   if (flags & kSbMemoryMapProtectExec) {
     // Cobalt does not allow mapping executable memory directly.
     return SB_MEMORY_MAP_FAILED;
@@ -83,7 +126,11 @@ void* SbPageMapUntracked(size_t size_bytes,
 #endif
   int mmap_protect = SbMemoryMapFlagsToMmapProtect(flags);
   void* mem = mmap(0, size_bytes, mmap_protect, MAP_PRIVATE | MAP_ANON, -1, 0);
-  return mem;
+  return mem;*/
+
+  NOTIMPLEMENTED_LOG_ONCE();
+
+  return SB_MEMORY_MAP_FAILED;
 }
 
 bool SbPageUnmap(void* ptr, size_t size_bytes) {
@@ -91,14 +138,19 @@ bool SbPageUnmap(void* ptr, size_t size_bytes) {
   return SbPageUnmapUntracked(ptr, size_bytes);
 }
 
+// see https://github.com/chromium/chromium/blob/6efa1184771ace08f3e2162b0255c93526d1750d/third_party/abseil-cpp/absl/base/internal/low_level_alloc.cc#L416
 bool SbPageUnmapUntracked(void* ptr, size_t size_bytes) {
-  return munmap(ptr, size_bytes) == 0;
+  //return munmap(ptr, size_bytes) == 0;
+  return VirtualFree(ptr, 0, MEM_RELEASE);
 }
+
+// see https://github.com/chromium/chromium/blob/9543343ae761598fb97e47b60480a0d173ec3144/base/memory/platform_shared_memory_region_unittest.cc#L273
 
 #if SB_API_VERSION >= 10
 bool SbPageProtect(void* virtual_address, int64_t size_bytes, int flags) {
   int mmap_protect = SbMemoryMapFlagsToMmapProtect(flags);
-  return mprotect(virtual_address, size_bytes, mmap_protect) == 0;
+  DWORD old_protection;
+  return VirtualProtect(virtual_address, size_bytes, mmap_protect, &old_protection);
 }
 #endif
 
@@ -108,23 +160,8 @@ size_t SbPageGetTotalPhysicalMemoryBytes() {
 }
 
 int64_t SbPageGetUnallocatedPhysicalMemoryBytes() {
-  // Computes unallocated memory as the total system memory (our fake 1GB limit)
-  // minus the # of resident pages.
-
-  // statm provides info about our memory usage.
-  // Columns are: size, resident, share, text, lib, data, and dt.
-  // Just consider "resident" pages for our purposes.
-  const char* kStatmPath = "/proc/self/statm";
-  FILE* f = fopen(kStatmPath, "r");
-  if (!f) {
-    SB_DLOG(FATAL) << "Failed to open " << kStatmPath;
-    return 0;
-  }
-  size_t program_size = 0;
-  size_t resident = 0;
-
-  fscanf(f, "%zu %zu", &program_size, &resident);
-  fclose(f);
+  // The amount of resident memory, the memory that is in physical RAM
+  size_t resident = getPhysicalMemSz();
   return SbPageGetTotalPhysicalMemoryBytes() - resident * SB_MEMORY_PAGE_SIZE;
 }
 

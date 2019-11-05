@@ -22,6 +22,9 @@
 #include "starboard/common/string.h"
 #include "starboard/configuration.h"
 
+// see https://stackoverflow.com/a/11719555
+#define strerror_r(errno,buf,len) strerror_s(buf,len,errno)
+
 int SbSystemGetErrorString(SbSystemError error,
                            char* out_string,
                            int string_length) {

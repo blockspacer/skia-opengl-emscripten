@@ -19,8 +19,8 @@
 #include <unistd.h>
 
 #include "starboard/common/log.h"
-#include "starboard/shared/posix/handle_eintr.h"
-#include "starboard/shared/posix/socket_internal.h"
+#include "starboard/shared/win/handle_eintr.h"
+#include "starboard/shared/win/socket_internal.h"
 #include "starboard/socket_waiter.h"
 
 bool SbSocketDestroy(SbSocket socket) {

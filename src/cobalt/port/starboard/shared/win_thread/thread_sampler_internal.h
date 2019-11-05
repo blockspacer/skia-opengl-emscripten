@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef STARBOARD_SHARED_PTHREAD_THREAD_SAMPLER_INTERNAL_H_
-#define STARBOARD_SHARED_PTHREAD_THREAD_SAMPLER_INTERNAL_H_
+#ifndef STARBOARD_SHARED_WIN_THREAD_THREAD_SAMPLER_INTERNAL_H_
+#define STARBOARD_SHARED_WIN_THREAD_THREAD_SAMPLER_INTERNAL_H_
 
 #include "starboard/thread.h"
 
@@ -33,4 +33,4 @@ class SbThreadSamplerPrivate {
 };
 #endif  // SB_API_VERSION >= 11
 
-#endif  // STARBOARD_SHARED_PTHREAD_THREAD_SAMPLER_INTERNAL_H_
+#endif  // STARBOARD_SHARED_WIN_THREAD_THREAD_SAMPLER_INTERNAL_H_

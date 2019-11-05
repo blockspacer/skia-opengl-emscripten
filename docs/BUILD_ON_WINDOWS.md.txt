@@ -386,7 +386,13 @@ set PATH=D:\den\coding\vcpkg\packages\libuuid_x86-windows;D:\den\coding\vcpkg\pa
 #
 set PATH=C:\Program Files\LLVM;C:\Program Files\LLVM\bin;%PATH%
 #
+set PATH=D:\den\coding\glew\glew-2.1.0;%PATH%
+set PATH=D:\den\coding\glew\glew-2.1.0\include;%PATH%
+set PATH=D:\den\coding\glew\glew-2.1.0\lib\Release;%PATH%
+set PATH=D:\den\coding\glew\glew-2.1.0\lib\Release\x64;%PATH%
+#
 # https://stackoverflow.com/questions/1236670/how-to-make-opengl-apps-in-64-bit-windows
+# path to x64 opengl32.lib
 set PATH=C:/Program Files (x86)/Windows Kits/10/Lib/10.0.14393.0/um/x64;%PATH%
 #
 # cmake -E env LDFLAGS="-fuse-ld=lld-link" PATH="%PATH%" cmake -H.. -B. -G Ninja -DENABLE_COBALT=FALSE -DCMAKE_BUILD_TYPE="Debug" -DRELEASE_BUILD=OFF -DCMAKE_EXPORT_COMPILE_COMMANDS=ON "-DCMAKE_PREFIX_PATH=D:\den\coding\vcpkg\packages\libuuid_x86-windows\;D:\den\coding\vcpkg\packages\fontconfig_x86-windows\;D:\den\coding\vcpkg\packages\icu_x86-windows\;D:\den\coding\vcpkg\packages\expat_x86-windows\;C:\Program Files (x86)\harfbuzz\;C:\Program Files (x86)\;C:\Program Files (x86)\;C:\Program Files (x86)\libpng\;C:\Program Files (x86)\SDL2\;C:\Program Files (x86)\freetype2\;C:\Program Files (x86)\freetype\include\freetype2\;C:\Program Files (x86)\freetype\lib\;C:\Program Files (x86)\freetype\lib\cmake\"  -DCMAKE_C_COMPILER:PATH="C:\Program Files\LLVM\bin\clang-cl.exe" -DCMAKE_CXX_COMPILER:PATH="C:\Program Files\LLVM\bin\clang-cl.exe" -DCMAKE_C_COMPILER_ID="Clang" -DCMAKE_CXX_COMPILER_ID="Clang" -DCMAKE_SYSTEM_NAME="Generic" -DWIN32=1

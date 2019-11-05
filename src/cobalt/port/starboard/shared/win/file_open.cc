@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "starboard/shared/posix/file_internal.h"
+#include "starboard/shared/win/file_internal.h"
 
-#include "starboard/shared/posix/impl/file_open.h"
+#include "starboard/shared/win/impl/file_open.h"
 
 SbFile SbFileOpen(const char* path,
                   int flags,
                   bool* out_created,
                   SbFileError* out_error) {
-  return ::starboard::shared::posix::impl::FileOpen(
+  return ::starboard::shared::win::impl::FileOpen(
       path, flags, out_created, out_error);
 }

@@ -16,11 +16,11 @@
 
 #include <pthread.h>
 
-#include "starboard/shared/pthread/thread_local_key_internal.h"
+#include "starboard/shared/win_thread/thread_local_key_internal.h"
 
 SbThreadLocalKey SbThreadCreateLocalKey(SbThreadLocalDestructor destructor) {
   SbThreadLocalKey key = new SbThreadLocalKeyPrivate();
-  if (!IsSuccess(pthread_key_create(&key->key, destructor))) {
+  if (!IsSuccess(WIN_THREAD_key_create(&key->key, destructor))) {
     delete key;
     return kSbThreadLocalKeyInvalid;
   }

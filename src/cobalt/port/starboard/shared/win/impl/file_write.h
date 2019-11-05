@@ -14,21 +14,21 @@
 
 // Adapted from base/platform_file_posix.cc
 
-#ifndef STARBOARD_SHARED_POSIX_IMPL_FILE_WRITE_H_
-#define STARBOARD_SHARED_POSIX_IMPL_FILE_WRITE_H_
+#ifndef STARBOARD_SHARED_WIN_IMPL_FILE_WRITE_H_
+#define STARBOARD_SHARED_WIN_IMPL_FILE_WRITE_H_
 
 #include "starboard/file.h"
 
 #include <unistd.h>
 
-#include "starboard/shared/posix/handle_eintr.h"
+#include "starboard/shared/win/handle_eintr.h"
 
 #include "starboard/shared/internal_only.h"
-#include "starboard/shared/posix/impl/file_impl.h"
+#include "starboard/shared/win/impl/file_impl.h"
 
 namespace starboard {
 namespace shared {
-namespace posix {
+namespace win {
 namespace impl {
 
 int FileWrite(SbFile file, const char* data, int size) {
@@ -40,8 +40,8 @@ int FileWrite(SbFile file, const char* data, int size) {
 }
 
 }  // namespace impl
-}  // namespace posix
+}  // namespace win
 }  // namespace shared
 }  // namespace starboard
 
-#endif  // STARBOARD_SHARED_POSIX_IMPL_FILE_WRITE_H_
+#endif  // STARBOARD_SHARED_WIN_IMPL_FILE_WRITE_H_

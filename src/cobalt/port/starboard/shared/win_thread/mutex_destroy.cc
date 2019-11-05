@@ -17,7 +17,7 @@
 #include <pthread.h>
 
 #include "starboard/common/log.h"
-#include "starboard/shared/pthread/is_success.h"
+#include "starboard/shared/win_thread/is_success.h"
 
 bool SbMutexDestroy(SbMutex* mutex) {
   if (!mutex) {
@@ -26,11 +26,11 @@ bool SbMutexDestroy(SbMutex* mutex) {
 
   // Destroying a locked mutex is undefined, so fail if the mutex is
   // already locked,
-  if (!IsSuccess(pthread_mutex_trylock(mutex))) {
+  if (!IsSuccess(WIN_THREAD_mutex_trylock(mutex))) {
     SB_LOG(ERROR) << "Trying to destroy a locked mutex";
     return false;
   }
 
-  return IsSuccess(pthread_mutex_unlock(mutex)) &&
-         IsSuccess(pthread_mutex_destroy(mutex));
+  return IsSuccess(WIN_THREAD_mutex_unlock(mutex)) &&
+         IsSuccess(WIN_THREAD_mutex_destroy(mutex));
 }

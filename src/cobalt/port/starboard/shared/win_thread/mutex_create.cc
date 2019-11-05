@@ -16,12 +16,12 @@
 
 #include <pthread.h>
 
-#include "starboard/shared/pthread/is_success.h"
+#include "starboard/shared/win_thread/is_success.h"
 
 bool SbMutexCreate(SbMutex* mutex) {
   if (!mutex) {
     return false;
   }
 
-  return IsSuccess(pthread_mutex_init(mutex, NULL));
+  return IsSuccess(WIN_THREAD_mutex_init(mutex, NULL));
 }

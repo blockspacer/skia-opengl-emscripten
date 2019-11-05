@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "starboard/shared/posix/socket_internal.h"
+#include "starboard/shared/win/socket_internal.h"
 
 #include <arpa/inet.h>
 #include <netinet/in.h>
@@ -23,7 +23,7 @@
 
 namespace starboard {
 namespace shared {
-namespace posix {
+namespace win {
 
 namespace {
 const socklen_t kAddressLengthIpv4 = 4;
@@ -217,6 +217,6 @@ bool SockAddr::FromSockaddr(const struct sockaddr* sock_addr) {
   return false;
 }
 
-}  // namespace posix
+}  // namespace win
 }  // namespace shared
 }  // namespace starboard

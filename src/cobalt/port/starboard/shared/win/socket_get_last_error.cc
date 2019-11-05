@@ -14,7 +14,7 @@
 
 #include "starboard/common/socket.h"
 
-#include "starboard/shared/posix/socket_internal.h"
+#include "starboard/shared/win/socket_internal.h"
 
 SbSocketError SbSocketGetLastError(SbSocket socket) {
   if (!SbSocketIsValid(socket)) {

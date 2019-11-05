@@ -2290,15 +2290,22 @@ endif(NOT RELEASE_BUILD)
     set(EMCC_COMMON "${EMCC_COMMON} -s OFFSCREEN_FRAMEBUFFER=1")
   endif(HAVE_SWAP_CONTROL)
 
-else(EMSCRIPTEN)
+else() # NOT EMSCRIPTEN
 
   if(TARGET_LINUX)
     find_package(LibDL REQUIRED)
     set(libDL_LIB LIBDL::LIBDL)
   elseif(TARGET_EMSCRIPTEN)
     # skip
-	elseif(TARGET_WINDOWS)
-	  # TODO: TARGET_WINDOWS
+  elseif(TARGET_WINDOWS)
+    # TODO: TARGET_WINDOWS
+    set(HAS_GLEW_LIB FALSE)
+    find_package(GLEW REQUIRED) # First try to find using the find_package method (works with vcpkg)
+    if(GLEW_FOUND) # Works with some other methods
+      message(STATUS "GLEW_INCLUDE_PATH=${GLEW_INCLUDE_PATH}")
+      message(STATUS "GLEW_LIBRARY=${GLEW_LIBRARY}")
+      set(HAS_GLEW_LIB TRUE)
+    endif(GLEW_FOUND)
   else()
     message(FATAL_ERROR "platform not supported")
   endif()
@@ -3102,7 +3109,8 @@ else()
     #${SDL2_TTF_INCLUDE_DIR}
     ${HARFBUZZ_INCLUDE_DIRS}
     ${OPENGLES2_INCLUDE_DIRS}
-    "D:/den/coding/glew/glew-2.1.0/include"
+    #"D:/den/coding/glew/glew-2.1.0/include"
+    ${GLEW_INCLUDE_PATH}
   )
   target_include_directories(${PROJECT_NAME} PRIVATE
     ${GEN_COMBINED_DIR}
@@ -3140,28 +3148,29 @@ else()
     #${SDL2_TTF_INCLUDE_DIR}
     ${HARFBUZZ_LIBRARIES}
 
-    #${FOUND_OPENGL_LIBRARIES}
-    #${OPENGL_gl_LIBRARY}
+    ${FOUND_OPENGL_LIBRARIES}
+    ${OPENGL_gl_LIBRARY}
     # see https://stackoverflow.com/questions/1236670/how-to-make-opengl-apps-in-64-bit-windows
-    "C:/Program Files (x86)/Windows Kits/10/Lib/10.0.14393.0/um/x64/opengl32.lib"
+    #"C:/Program Files (x86)/Windows Kits/10/Lib/10.0.14393.0/um/x64/opengl32.lib"
+    
     # see https://stackoverflow.com/questions/16390078/build-error-when-trying-to-run-an-opengl-example-in-vc
-    "D:/den/coding/glew/glew-2.1.0/lib/Release/x64/glew32s.lib"
+    #"D:/den/coding/glew/glew-2.1.0/lib/Release/x64/glew32s.lib"
+    ${GLEW_LIBRARY}
 
     #OpenGL::OpenGL
-    
-    ## TODO ## ${SDL2_LIBRARY} # NOTE: no SDL2::Main on Windows
-    ## TODO ## ${SDL2_LIBRARIES} # NOTE: no SDL2::Main on Windows
-    ## TODO ## SDL2::Main
 
     # see https://stackoverflow.com/questions/39110217/linker-errors-from-sdl2-in-my-project
-    "C:/Program Files (x86)/SDL2/lib/SDL2main.lib" # SDL2main goes before SDL2. Linking order matters.
-    #"C:/Program Files (x86)/SDL2/lib/SDL2-static.lib"
-    "C:/Program Files (x86)/SDL2/lib/SDL2.lib"
-
+    # SDL2main goes before SDL2. Linking order matters.
+    SDL2::Main
     #SDL2::SDL2main
+    #"C:/Program Files (x86)/SDL2/lib/SDL2main.lib"
+    #"C:/Program Files (x86)/SDL2/lib/SDL2-static.lib"
+    #"C:/Program Files (x86)/SDL2/lib/SDL2.lib"
+    ${SDL2_LIBRARY} # NOTE: no SDL2::Main on Windows
+    ${SDL2_LIBRARIES} # NOTE: no SDL2::Main on Windows
     #SDL2::SDL2
     #SDL2::SDL2-static
-    #${GLEW_LIBRARY}
+    
     #SDL2:Net
     #SDL2:tff # see ${SDL2_TTF_LIBRARY}
     #${SDL2_TTF_LIBRARY}

@@ -21,8 +21,8 @@
 
 #include "starboard/common/log.h"
 #include "starboard/common/string.h"
-#include "starboard/shared/pthread/is_success.h"
-#include "starboard/shared/pthread/thread_create_priority.h"
+#include "starboard/shared/win_thread/is_success.h"
+#include "starboard/shared/win_thread/thread_create_priority.h"
 
 namespace starboard {
 namespace shared {
@@ -94,18 +94,18 @@ SbThread SbThreadCreate(int64_t stack_size,
   }
 #endif
 
-  pthread_attr_t attributes;
-  int result = pthread_attr_init(&attributes);
+  WIN_THREAD_attr_t attributes;
+  int result = WIN_THREAD_attr_init(&attributes);
   if (!IsSuccess(result)) {
     return kSbThreadInvalid;
   }
 
-  pthread_attr_setdetachstate(
+  WIN_THREAD_attr_setdetachstate(
       &attributes,
-      (joinable ? PTHREAD_CREATE_JOINABLE : PTHREAD_CREATE_DETACHED));
+      (joinable ? WIN_THREAD_CREATE_JOINABLE : WIN_THREAD_CREATE_DETACHED));
 
   if (stack_size > 0) {
-    pthread_attr_setstacksize(&attributes, stack_size);
+    WIN_THREAD_attr_setstacksize(&attributes, stack_size);
   }
 
   ThreadParams* params = new ThreadParams();
@@ -122,9 +122,9 @@ SbThread SbThreadCreate(int64_t stack_size,
   params->priority = priority;
 
   SbThread thread = kSbThreadInvalid;
-  result = pthread_create(&thread, &attributes, ThreadFunc, params);
+  result = WIN_THREAD_create(&thread, &attributes, ThreadFunc, params);
 
-  pthread_attr_destroy(&attributes);
+  WIN_THREAD_attr_destroy(&attributes);
   if (IsSuccess(result)) {
     return thread;
   }

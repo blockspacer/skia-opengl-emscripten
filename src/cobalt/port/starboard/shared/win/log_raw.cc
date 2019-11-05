@@ -17,7 +17,7 @@
 #include <string.h>
 #include <unistd.h>
 
-#include "starboard/shared/posix/handle_eintr.h"
+#include "starboard/shared/win/handle_eintr.h"
 
 void SbLogRaw(const char* message) {
   // Cribbed from base/logging.cc's RawLog() function.

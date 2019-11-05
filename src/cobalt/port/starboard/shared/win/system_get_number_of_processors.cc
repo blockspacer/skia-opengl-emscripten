@@ -14,14 +14,32 @@
 
 #include "starboard/system.h"
 
-#include <unistd.h>
-
 #include "starboard/common/log.h"
 
+#include <windows.h>
+typedef void (WINAPI *PGNSI)(LPSYSTEM_INFO);
+
+// see https://github.com/blockspacer/cobalt-clone-28052019/blob/89664d116629734759176d820e9923257717e09c/src/v8/src/base/sys-info.cc#L50
+
 int SbSystemGetNumberOfProcessors() {
-  // It seems that sysconf returns the number of "logical" processors on both
-  // Mac and Linux.  So we get the number of "online logical" processors.
-  long res = sysconf(_SC_NPROCESSORS_ONLN);  // NOLINT[runtime/int]
+#if _WIN32_WINNT >= 0x0501
+        SYSTEM_INFO sysinfo;
+        GetNativeSystemInfo(&sysinfo);
+#else
+        PGNSI pGNSI;
+        SYSTEM_INFO sysinfo;
+
+        /* Call GetNativeSystemInfo if supported or
+         * GetSystemInfo otherwise. */
+
+        pGNSI = (PGNSI) GetProcAddress(
+                GetModuleHandle(TEXT("kernel32.dll")), "GetNativeSystemInfo");
+        if (pGNSI != NULL)
+            pGNSI(&sysinfo);
+        else
+            GetSystemInfo(&sysinfo);
+#endif
+  long res = sysinfo.dwNumberOfProcessors;  // NOLINT[runtime/int]
   if (res == -1) {
     SB_NOTREACHED();
     return 1;

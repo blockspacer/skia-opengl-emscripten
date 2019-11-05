@@ -15,8 +15,8 @@
 // Defines the pthread versions of Starboard synchronization primitives and the
 // static initializers for those primitives.
 
-#ifndef STARBOARD_SHARED_PTHREAD_TYPES_PUBLIC_H_
-#define STARBOARD_SHARED_PTHREAD_TYPES_PUBLIC_H_
+#ifndef STARBOARD_SHARED_WIN_THREAD_TYPES_PUBLIC_H_
+#define STARBOARD_SHARED_WIN_THREAD_TYPES_PUBLIC_H_
 
 #include "starboard/types.h"
 
@@ -35,10 +35,10 @@
 // --- SbConditionVariable ---
 
 // Transparent Condition Variable handle.
-// It is customized from the plain pthread_cont_t object because we
+// It is customized from the plain WIN_THREAD_cont_t object because we
 // need to ensure that each condition variable is initialized to use
 // CLOCK_MONOTONIC, which is not the default (and the default is used
-// when PTHREAD_COND_INITIALIZER is set).
+// when WIN_THREAD_COND_INITIALIZER is set).
 typedef struct SbConditionVariable {
   InitializedState initialized_state;
   CHROME_CONDITION_VARIABLE condition;
@@ -54,7 +54,7 @@ typedef struct SbConditionVariable {
 typedef CHROME_SRWLOCK SbMutex;
 
 // Mutex static initializer.
-#define SB_MUTEX_INITIALIZER PTHREAD_MUTEX_INITIALIZER
+#define SB_MUTEX_INITIALIZER WIN_THREAD_MUTEX_INITIALIZER
 
 // --- SbOnce ---
 
@@ -62,10 +62,10 @@ typedef CHROME_SRWLOCK SbMutex;
 typedef INIT_ONCE SbOnceControl;
 
 // \see https://github.com/blockspacer/skia-opengl-emscripten/blob/a47f44f6210c09f56f3e21def5b3f300366adb86/src/chromium/tcmalloc_wrapper/third_party/tcmalloc/gperftools-2.0/vendor/src/windows/port.h#L124
-//enum { PTHREAD_ONCE_INIT = 0 };   /* important that this be 0! for SpinLock */
+//enum { WIN_THREAD_ONCE_INIT = 0 };   /* important that this be 0! for SpinLock */
 
 // Once static initializer.
-//#define SB_ONCE_INITIALIZER PTHREAD_ONCE_INIT
+//#define SB_ONCE_INITIALIZER WIN_THREAD_ONCE_INIT
 #define SB_ONCE_INITIALIZER {0}
 
 // --- SbThread ---
@@ -76,4 +76,4 @@ typedef DWORD SbThread;
 // Well-defined constant value to mean "no thread handle."
 #define kSbThreadInvalid (SbThread)-1
 
-#endif  // STARBOARD_SHARED_PTHREAD_TYPES_PUBLIC_H_
+#endif  // STARBOARD_SHARED_WIN_THREAD_TYPES_PUBLIC_H_

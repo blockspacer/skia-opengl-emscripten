@@ -18,7 +18,7 @@
 #include <sys/socket.h>
 
 #include "starboard/common/log.h"
-#include "starboard/shared/posix/socket_internal.h"
+#include "starboard/shared/win/socket_internal.h"
 
 namespace sbposix = starboard::shared::posix;
 
@@ -54,7 +54,7 @@ int SbSocketSendTo(SbSocket socket,
     if (errno != EAGAIN && errno != EWOULDBLOCK) {
       SB_DLOG(ERROR) << "send failed, errno = " << errno;
     }
-    socket->error = sbposix::TranslateSocketErrno(errno);
+    socket->error = sbwin::TranslateSocketErrno(errno);
     return -1;
   } else if (socket->protocol == kSbSocketProtocolUdp) {
     if (!destination) {
@@ -63,7 +63,7 @@ int SbSocketSendTo(SbSocket socket,
       return -1;
     }
 
-    sbposix::SockAddr sock_addr;
+    sbwin::SockAddr sock_addr;
     const sockaddr* sockaddr = NULL;
     socklen_t sockaddr_length = 0;
     if (destination) {
@@ -86,7 +86,7 @@ int SbSocketSendTo(SbSocket socket,
     if (errno != EAGAIN && errno != EWOULDBLOCK) {
       SB_DLOG(ERROR) << "sendto failed, errno = " << errno;
     }
-    socket->error = sbposix::TranslateSocketErrno(errno);
+    socket->error = sbwin::TranslateSocketErrno(errno);
     return -1;
   }
 

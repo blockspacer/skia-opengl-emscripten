@@ -14,19 +14,19 @@
 
 // Adapted from base/platform_file_posix.cc
 
-#ifndef STARBOARD_SHARED_POSIX_IMPL_FILE_SEEK_H_
-#define STARBOARD_SHARED_POSIX_IMPL_FILE_SEEK_H_
+#ifndef STARBOARD_SHARED_WIN_IMPL_FILE_SEEK_H_
+#define STARBOARD_SHARED_WIN_IMPL_FILE_SEEK_H_
 
 #include "starboard/file.h"
 
 #include <unistd.h>
 
 #include "starboard/shared/internal_only.h"
-#include "starboard/shared/posix/impl/file_impl.h"
+#include "starboard/shared/win/impl/file_impl.h"
 
 namespace starboard {
 namespace shared {
-namespace posix {
+namespace win {
 namespace impl {
 
 int64_t FileSeek(SbFile file, SbFileWhence whence, int64_t offset) {
@@ -39,8 +39,8 @@ int64_t FileSeek(SbFile file, SbFileWhence whence, int64_t offset) {
 }
 
 }  // namespace impl
-}  // namespace posix
+}  // namespace win
 }  // namespace shared
 }  // namespace starboard
 
-#endif  // STARBOARD_SHARED_POSIX_IMPL_FILE_SEEK_H_
+#endif  // STARBOARD_SHARED_WIN_IMPL_FILE_SEEK_H_

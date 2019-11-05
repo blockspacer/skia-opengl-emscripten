@@ -19,7 +19,7 @@
 #include <ucontext.h>
 
 #include "starboard/common/log.h"
-#include "starboard/shared/pthread/thread_context_internal.h"
+#include "starboard/shared/win_thread/thread_context_internal.h"
 
 // TODO: Implement for e.g. Mac OSX, BSD flavors, QNX - maybe in another file.
 #if !defined(__gnu_linux__) && !defined(__EMSCRIPTEN__) // Note: __linux__ is undef'd for Starboard builds.

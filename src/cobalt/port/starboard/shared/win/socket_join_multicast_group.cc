@@ -20,7 +20,7 @@
 #include <sys/types.h>
 
 #include "starboard/common/log.h"
-#include "starboard/shared/posix/socket_internal.h"
+#include "starboard/shared/win/socket_internal.h"
 
 namespace sbposix = starboard::shared::posix;
 
@@ -47,7 +47,7 @@ bool SbSocketJoinMulticastGroup(SbSocket socket,
   if (result != 0) {
     SB_DLOG(ERROR) << "Failed to IP_ADD_MEMBERSHIP on socket "
                    << socket->socket_fd << ", errno = " << errno;
-    socket->error = sbposix::TranslateSocketErrno(errno);
+    socket->error = sbwin::TranslateSocketErrno(errno);
     return false;
   }
 

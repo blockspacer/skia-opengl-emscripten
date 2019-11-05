@@ -22,24 +22,24 @@
 #include "starboard/common/string.h"
 
 namespace {
-bool IsValidId(const char* posix_id) {
-  return !((posix_id == NULL) || (SbStringCompare("C", posix_id, 1) == 0) ||
-           (SbStringCompare("POSIX", posix_id, 5) == 0));
+bool IsValidId(const char* WIN_id) {
+  return !((WIN_id == NULL) || (SbStringCompare("C", WIN_id, 1) == 0) ||
+           (SbStringCompare("POSIX", WIN_id, 5) == 0));
 }
 }
 
 const char* SbSystemGetLocaleId() {
   // Adapted from ICU's putil.c:uprv_getPOSIXIDForCategory.
-  const char* posix_id = nullptr; // setlocale(LC_MESSAGES, NULL)
-  if (!IsValidId(posix_id)) {
-    posix_id = getenv("LC_ALL");
-    if (posix_id == NULL) {
-      posix_id = getenv("LC_MESSAGES");
-      if (posix_id == NULL) {
-        posix_id = getenv("LANG");
+  const char* WIN_id = nullptr; // setlocale(LC_MESSAGES, NULL)
+  if (!IsValidId(WIN_id)) {
+    WIN_id = getenv("LC_ALL");
+    if (WIN_id == NULL) {
+      WIN_id = getenv("LC_MESSAGES");
+      if (WIN_id == NULL) {
+        WIN_id = getenv("LANG");
       }
     }
   }
 
-  return posix_id;
+  return WIN_id;
 }

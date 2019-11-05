@@ -18,8 +18,8 @@
 #include <sys/socket.h>
 
 #include "starboard/common/log.h"
-#include "starboard/shared/posix/handle_eintr.h"
-#include "starboard/shared/posix/socket_internal.h"
+#include "starboard/shared/win/handle_eintr.h"
+#include "starboard/shared/win/socket_internal.h"
 
 namespace sbposix = starboard::shared::posix;
 
@@ -45,13 +45,13 @@ int SbSocketReceiveFrom(SbSocket socket,
   SB_DCHECK(socket->socket_fd >= 0);
   if (socket->protocol == kSbSocketProtocolTcp) {
     if (out_source) {
-      sbposix::SockAddr sock_addr;
+      sbwin::SockAddr sock_addr;
       int result = getpeername(socket->socket_fd, sock_addr.sockaddr(),
                                &sock_addr.length);
       if (result < 0) {
         SB_DLOG(ERROR) << __FUNCTION__
                        << ": getpeername failed, errno = " << errno;
-        socket->error = sbposix::TranslateSocketErrno(errno);
+        socket->error = sbwin::TranslateSocketErrno(errno);
         return -1;
       }
 
@@ -70,13 +70,13 @@ int SbSocketReceiveFrom(SbSocket socket,
     }
 
     if (IsReportableErrno(errno) &&
-        socket->error != sbposix::TranslateSocketErrno(errno)) {
+        socket->error != sbwin::TranslateSocketErrno(errno)) {
       SB_DLOG(ERROR) << "recv failed, errno = " << errno;
     }
-    socket->error = sbposix::TranslateSocketErrno(errno);
+    socket->error = sbwin::TranslateSocketErrno(errno);
     return -1;
   } else if (socket->protocol == kSbSocketProtocolUdp) {
-    sbposix::SockAddr sock_addr;
+    sbwin::SockAddr sock_addr;
     ssize_t bytes_read =
         recvfrom(socket->socket_fd, out_data, data_size, kRecvFlags,
                  sock_addr.sockaddr(), &sock_addr.length);
@@ -95,10 +95,10 @@ int SbSocketReceiveFrom(SbSocket socket,
     }
 
     if (errno != EAGAIN && errno != EWOULDBLOCK &&
-        socket->error != sbposix::TranslateSocketErrno(errno)) {
+        socket->error != sbwin::TranslateSocketErrno(errno)) {
       SB_DLOG(ERROR) << "recvfrom failed, errno = " << errno;
     }
-    socket->error = sbposix::TranslateSocketErrno(errno);
+    socket->error = sbwin::TranslateSocketErrno(errno);
     return -1;
   }
 

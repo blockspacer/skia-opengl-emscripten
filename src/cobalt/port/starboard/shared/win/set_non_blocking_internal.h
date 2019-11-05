@@ -12,20 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef STARBOARD_SHARED_POSIX_SET_NON_BLOCKING_INTERNAL_H_
-#define STARBOARD_SHARED_POSIX_SET_NON_BLOCKING_INTERNAL_H_
+#ifndef STARBOARD_SHARED_WIN_SET_NON_BLOCKING_INTERNAL_H_
+#define STARBOARD_SHARED_WIN_SET_NON_BLOCKING_INTERNAL_H_
 
 #include "starboard/shared/internal_only.h"
 
 namespace starboard {
 namespace shared {
-namespace posix {
+namespace win {
 
 // Makes the socket file descriptor non-blocking.
 bool SetNonBlocking(int socket_fd);
 
-}  // namespace posix
+}  // namespace win
 }  // namespace shared
 }  // namespace starboard
 
-#endif  // STARBOARD_SHARED_POSIX_SET_NON_BLOCKING_INTERNAL_H_
+#endif  // STARBOARD_SHARED_WIN_SET_NON_BLOCKING_INTERNAL_H_

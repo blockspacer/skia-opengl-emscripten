@@ -24,5 +24,5 @@ bool SbOnce(SbOnceControl* once_control, SbOnceInitRoutine init_routine) {
     return false;
   }
 
-  return pthread_once(once_control, init_routine) == 0;
+  return WIN_THREAD_once(once_control, init_routine) == 0;
 }

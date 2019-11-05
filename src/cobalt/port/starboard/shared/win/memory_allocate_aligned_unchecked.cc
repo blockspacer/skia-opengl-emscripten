@@ -14,11 +14,10 @@
 
 #include "starboard/memory.h"
 
-// Some platforms declare memory functions in stdlib.h, others do so in
-// malloc.h.
-#include <malloc.h>
+#include "base/memory/aligned_memory.h"
+
 #include <stdlib.h>
 
 void* SbMemoryAllocateAlignedUnchecked(size_t alignment, size_t size) {
-  return memalign(alignment, size);
+  return base::AlignedAlloc(alignment, size);
 }

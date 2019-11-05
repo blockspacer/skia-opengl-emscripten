@@ -15,7 +15,7 @@
 #include "starboard/media.h"
 
 bool SbMediaIsOutputProtected() {
-  // Pretend that HDCP is always on because Linux is only able to play SD
+  // Pretend that HDCP is always on because win is only able to play SD
   // protected content.
   return true;
 }

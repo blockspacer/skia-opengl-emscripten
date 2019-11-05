@@ -16,12 +16,12 @@
 
 #include <pthread.h>
 
-#include "starboard/shared/pthread/thread_local_key_internal.h"
+#include "starboard/shared/win_thread/thread_local_key_internal.h"
 
 void* SbThreadGetLocalValue(SbThreadLocalKey key) {
   if (!SbThreadIsValidLocalKey(key)) {
     return NULL;
   }
 
-  return pthread_getspecific(key->key);
+  return WIN_THREAD_getspecific(key->key);
 }

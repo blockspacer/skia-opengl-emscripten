@@ -17,11 +17,11 @@
 #include <netinet/tcp.h>
 #include <sys/socket.h>
 
-#include "starboard/shared/posix/socket_internal.h"
+#include "starboard/shared/win/socket_internal.h"
 
 namespace sbposix = starboard::shared::posix;
 
 bool SbSocketSetTcpNoDelay(SbSocket socket, bool value) {
-  return sbposix::SetBooleanSocketOption(socket, IPPROTO_TCP, TCP_NODELAY,
+  return sbwin::SetBooleanSocketOption(socket, IPPROTO_TCP, TCP_NODELAY,
                                          "TCP_NODELAY", value);
 }

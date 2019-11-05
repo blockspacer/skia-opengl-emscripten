@@ -17,11 +17,46 @@
 #include <time.h>
 
 #include "starboard/common/log.h"
-#include "starboard/shared/posix/time_internal.h"
+#include "starboard/shared/win/time_internal.h"
+
+#define WIN32_LEAN_AND_MEAN
+#include <Windows.h>
+#include <stdint.h> // portable: uint64_t   MSVC: __int64 
+
+#define BILLION                             (1E9)
+
+static BOOL g_first_time = 1;
+static LARGE_INTEGER g_counts_per_sec;
+
+int clock_gettime(int dummy, struct timespec *ct)
+{
+    LARGE_INTEGER count;
+
+    if (g_first_time)
+    {
+        g_first_time = 0;
+
+        if (0 == QueryPerformanceFrequency(&g_counts_per_sec))
+        {
+            g_counts_per_sec.QuadPart = 0;
+        }
+    }
+
+    if ((NULL == ct) || (g_counts_per_sec.QuadPart <= 0) ||
+            (0 == QueryPerformanceCounter(&count)))
+    {
+        return -1;
+    }
+
+    ct->tv_sec = count.QuadPart / g_counts_per_sec.QuadPart;
+    ct->tv_nsec = ((count.QuadPart % g_counts_per_sec.QuadPart) * BILLION) / g_counts_per_sec.QuadPart;
+
+    return 0;
+}
 
 SbTimeMonotonic SbTimeGetMonotonicThreadNow() {
   struct timespec time;
-  if (clock_gettime(CLOCK_THREAD_CPUTIME_ID, &time) != 0) {
+  if (clock_gettime(/*CLOCK_THREAD_CPUTIME_ID*/0, &time) != 0) {
     SB_NOTREACHED() << "clock_gettime(CLOCK_THREAD_CPUTIME_ID) failed.";
     return 0;
   }

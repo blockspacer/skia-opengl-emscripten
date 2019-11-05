@@ -15,7 +15,11 @@
 #include "starboard/common/string.h"
 
 #include <string.h>  // Non-standard, required for some platforms.
-#include <strings.h>
+
+// see https://github.com/chromium/chromium/blob/2ca8c5037021c9d2ecc00b787d58a31ed8fc8bcb/third_party/crashpad/crashpad/compat/win/strings.cc#L21
+int strcasecmp(const char* s1, const char* s2) {
+  return _stricmp(s1, s2);
+}
 
 int SbStringCompareNoCase(const char* string1, const char* string2) {
   return strcasecmp(string1, string2);

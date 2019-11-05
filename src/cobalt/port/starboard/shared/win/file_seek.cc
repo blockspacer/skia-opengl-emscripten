@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "starboard/shared/posix/file_internal.h"
+#include "starboard/shared/win/file_internal.h"
 
-#include "starboard/shared/posix/impl/file_seek.h"
+#include "starboard/shared/win/impl/file_seek.h"
 
 int64_t SbFileSeek(SbFile file, SbFileWhence whence, int64_t offset) {
-  return ::starboard::shared::posix::impl::FileSeek(file, whence, offset);
+  return ::starboard::shared::win::impl::FileSeek(file, whence, offset);
 }

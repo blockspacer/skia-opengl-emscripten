@@ -14,21 +14,19 @@
 
 // Adapted from base/platform_file_posix.cc
 
-#ifndef STARBOARD_SHARED_POSIX_IMPL_FILE_CLOSE_H_
-#define STARBOARD_SHARED_POSIX_IMPL_FILE_CLOSE_H_
+#ifndef STARBOARD_SHARED_WIN_IMPL_FILE_CLOSE_H_
+#define STARBOARD_SHARED_WIN_IMPL_FILE_CLOSE_H_
 
 #include "starboard/file.h"
 
-#include <unistd.h>
-
-#include "starboard/shared/posix/handle_eintr.h"
+#include "starboard/shared/win/handle_eintr.h"
 
 #include "starboard/shared/internal_only.h"
-#include "starboard/shared/posix/impl/file_impl.h"
+#include "starboard/shared/win/impl/file_impl.h"
 
 namespace starboard {
 namespace shared {
-namespace posix {
+namespace win {
 namespace impl {
 
 bool FileClose(SbFile file) {
@@ -36,9 +34,18 @@ bool FileClose(SbFile file) {
     return false;
   }
 
+  // todo: SetPlatformFile
+  // see https://github.com/chromium/chromium/blob/96ec251e2ff8f9fc5cd3e98ba87fe094b215fa9c/base/files/file_win.cc#L445
+
   bool result = false;
-  if (file->descriptor >= 0) {
+
+  /*if (file->descriptor >= 0) {
     result = !HANDLE_EINTR(close(file->descriptor));
+  }*/
+
+  if (file->descriptor.IsValid()) {
+    file->descriptor.Close();
+    result = true;
   }
 
   delete file;
@@ -47,8 +54,8 @@ bool FileClose(SbFile file) {
 }
 
 }  // namespace impl
-}  // namespace posix
+}  // namespace win
 }  // namespace shared
 }  // namespace starboard
 
-#endif  // STARBOARD_SHARED_POSIX_IMPL_FILE_CLOSE_H_
+#endif  // STARBOARD_SHARED_WIN_IMPL_FILE_CLOSE_H_

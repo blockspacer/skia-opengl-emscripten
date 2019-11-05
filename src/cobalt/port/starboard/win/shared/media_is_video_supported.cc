@@ -69,7 +69,7 @@ SB_EXPORT bool SbMediaIsVideoSupported(SbMediaVideoCodec video_codec,
     return false;
   }
 #else
-  // Assume that all non-Blitter Linux platforms can play decode-to-texture
+  // Assume that all non-Blitter win platforms can play decode-to-texture
   // video just as well as normal video.
   SB_UNREFERENCED_PARAMETER(decode_to_texture_required);
 #endif  // SB_HAS(BLITTER)

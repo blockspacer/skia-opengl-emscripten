@@ -15,11 +15,13 @@
 #include "starboard/directory.h"
 
 #include <stddef.h>
-#include <sys/stat.h>
 
 #include <string>
 
 #include "starboard/file.h"
+
+#include "base/files/file_util.h"
+#include "base/strings/utf_string_conversions.h"
 
 namespace {
 
@@ -64,9 +66,15 @@ bool SbDirectoryCreate(const char* path) {
     return false;
   }
 
-  if (mkdir(adjusted.c_str(), 0700) == 0) {
+  base::File::Error error;
+  base::FilePath files_dir;
+  files_dir = files_dir.Append(base::UTF8ToUTF16(adjusted.c_str()));
+  if (base::CreateDirectoryAndGetError(files_dir, &error)) {
     return true;
   }
+  /*if (mkdir(adjusted.c_str(), 0700) == 0) {
+    return true;
+  }*/
 
   // If mkdir failed, the directory may still exist now (because of another
   // racing process or thread), so check again.

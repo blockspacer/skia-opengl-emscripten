@@ -19,7 +19,7 @@
 #include <sys/types.h>
 
 #include "starboard/common/log.h"
-#include "starboard/shared/posix/socket_internal.h"
+#include "starboard/shared/win/socket_internal.h"
 
 namespace sbposix = starboard::shared::posix;
 
@@ -48,7 +48,7 @@ SbSocketError SbSocketListen(SbSocket socket) {
 #endif
   int result = listen(socket->socket_fd, kMaxConn);
   if (result != 0) {
-    return (socket->error = sbposix::TranslateSocketErrno(result));
+    return (socket->error = sbwin::TranslateSocketErrno(result));
   }
 
   return (socket->error = kSbSocketOk);

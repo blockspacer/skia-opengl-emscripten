@@ -16,14 +16,14 @@
 
 #include <pthread.h>
 
-#include "starboard/shared/pthread/thread_local_key_internal.h"
+#include "starboard/shared/win_thread/thread_local_key_internal.h"
 
 bool SbThreadSetLocalValue(SbThreadLocalKey key, void* value) {
   if (!SbThreadIsValidLocalKey(key)) {
     return false;
   }
 
-  if (IsSuccess(pthread_setspecific(key->key, value))) {
+  if (IsSuccess(WIN_THREAD_setspecific(key->key, value))) {
     return true;
   }
 

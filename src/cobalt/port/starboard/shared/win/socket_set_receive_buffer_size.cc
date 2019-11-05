@@ -16,11 +16,11 @@
 
 #include <sys/socket.h>
 
-#include "starboard/shared/posix/socket_internal.h"
+#include "starboard/shared/win/socket_internal.h"
 
 namespace sbposix = starboard::shared::posix;
 
 bool SbSocketSetReceiveBufferSize(SbSocket socket, int32_t size) {
-  return sbposix::SetIntegerSocketOption(socket, SOL_SOCKET, SO_RCVBUF,
+  return sbwin::SetIntegerSocketOption(socket, SOL_SOCKET, SO_RCVBUF,
                                          "SO_RCVBUF", size);
 }

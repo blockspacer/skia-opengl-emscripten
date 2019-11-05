@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "starboard/shared/posix/file_internal.h"
+#include "starboard/shared/win/file_internal.h"
 
-#include "starboard/shared/posix/impl/file_close.h"
+#include "starboard/shared/win/impl/file_close.h"
 
 bool SbFileClose(SbFile file) {
-  return ::starboard::shared::posix::impl::FileClose(file);
+  return ::starboard::shared::win::impl::FileClose(file);
 }

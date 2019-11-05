@@ -19,7 +19,7 @@
 #include <sys/socket.h>
 
 #include "starboard/common/log.h"
-#include "starboard/shared/posix/socket_internal.h"
+#include "starboard/shared/win/socket_internal.h"
 
 namespace sbposix = starboard::shared::posix;
 
@@ -56,7 +56,7 @@ SbSocketResolution* SbSocketResolve(const char* hostname, int filters) {
   SbSocketResolution* result = new SbSocketResolution();
 
   // Translate all the sockaddrs.
-  sbposix::SockAddr* sock_addrs = new sbposix::SockAddr[address_count];
+  sbwin::SockAddr* sock_addrs = new sbwin::SockAddr[address_count];
   bool* parsed = new bool[address_count];
   int index = 0;
   int skip = 0;

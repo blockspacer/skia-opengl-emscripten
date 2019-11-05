@@ -22,9 +22,9 @@ const OEMCrypto_HDCP_Capability kWidevineMaximumHdcpVersion = HDCP_V1;
 
 namespace wvoec_mock {
 
-class CryptoEngineLinux : public CryptoEngine {
+class CryptoEngineWin : public CryptoEngine {
  public:
-  explicit CryptoEngineLinux(std::auto_ptr<wvcdm::FileSystem> file_system)
+  explicit CryptoEngineWin(std::auto_ptr<wvcdm::FileSystem> file_system)
       : CryptoEngine(file_system) {}
 
   OEMCrypto_HDCP_Capability config_current_hdcp_capability() override {
@@ -41,7 +41,7 @@ class CryptoEngineLinux : public CryptoEngine {
 
 CryptoEngine* CryptoEngine::MakeCryptoEngine(
     std::auto_ptr<wvcdm::FileSystem> file_system) {
-  return new CryptoEngineLinux(file_system);
+  return new CryptoEngineWin(file_system);
 }
 
 }  // namespace wvoec_mock

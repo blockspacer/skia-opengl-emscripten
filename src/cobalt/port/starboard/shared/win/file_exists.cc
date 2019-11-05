@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "starboard/shared/posix/file_internal.h"
+#include "starboard/shared/win/file_internal.h"
 
-#include "starboard/shared/posix/impl/file_exists.h"
+#include "starboard/shared/win/impl/file_exists.h"
 
 bool SbFileExists(const char* path) {
-  return ::starboard::shared::posix::impl::FileExists(path);
+  return ::starboard::shared::win::impl::FileExists(path);
 }

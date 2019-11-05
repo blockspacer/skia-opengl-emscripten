@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef STARBOARD_SHARED_PTHREAD_THREAD_CREATE_PRIORITY_H_
-#define STARBOARD_SHARED_PTHREAD_THREAD_CREATE_PRIORITY_H_
+#ifndef STARBOARD_SHARED_WIN_THREAD_THREAD_CREATE_PRIORITY_H_
+#define STARBOARD_SHARED_WIN_THREAD_THREAD_CREATE_PRIORITY_H_
 
 #include "starboard/thread.h"
 
@@ -31,4 +31,4 @@ void ThreadSetPriority(SbThreadPriority priority);
 }  // namespace shared
 }  // namespace starboard
 
-#endif  // STARBOARD_SHARED_PTHREAD_THREAD_CREATE_PRIORITY_H_
+#endif  // STARBOARD_SHARED_WIN_THREAD_THREAD_CREATE_PRIORITY_H_

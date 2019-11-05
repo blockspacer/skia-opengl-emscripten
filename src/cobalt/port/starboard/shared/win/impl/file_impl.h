@@ -14,8 +14,8 @@
 
 // Should be included by headers that implement Posix file methods.
 
-#ifndef STARBOARD_SHARED_POSIX_IMPL_FILE_IMPL_H_
-#define STARBOARD_SHARED_POSIX_IMPL_FILE_IMPL_H_
+#ifndef STARBOARD_SHARED_WIN_IMPL_FILE_IMPL_H_
+#define STARBOARD_SHARED_WIN_IMPL_FILE_IMPL_H_
 
 #include "starboard/configuration.h"
 #include "starboard/file.h"
@@ -26,4 +26,4 @@
 SB_COMPILE_ASSERT(sizeof(((SbFile)0)->descriptor), \
                   SbFilePrivate_must_have_descriptor);
 
-#endif  // STARBOARD_SHARED_POSIX_IMPL_FILE_IMPL_H_
+#endif  // STARBOARD_SHARED_WIN_IMPL_FILE_IMPL_H_

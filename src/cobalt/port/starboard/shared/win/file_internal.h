@@ -12,17 +12,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef STARBOARD_SHARED_POSIX_FILE_INTERNAL_H_
-#define STARBOARD_SHARED_POSIX_FILE_INTERNAL_H_
+#ifndef STARBOARD_SHARED_WIN_FILE_INTERNAL_H_
+#define STARBOARD_SHARED_WIN_FILE_INTERNAL_H_
 
 #include <errno.h>
 
 #include "starboard/file.h"
 #include "starboard/shared/internal_only.h"
 
+#include "build/build_config.h"
+
+#include "base/win/scoped_handle.h"
+#include "base/win/windows_types.h"
+#include "base/files/file.h"
+
+// see https://github.com/chromium/chromium/blob/2ca8c5037021c9d2ecc00b787d58a31ed8fc8bcb/base/files/platform_file.h#L24
 struct SbFilePrivate {
-  // The POSIX file descriptor of this file.
-  int descriptor;
+  // file descriptor of this file.
+  //HANDLE descriptor;
+  base::File descriptor;
 };
 
-#endif  // STARBOARD_SHARED_POSIX_FILE_INTERNAL_H_
+#endif  // STARBOARD_SHARED_WIN_FILE_INTERNAL_H_

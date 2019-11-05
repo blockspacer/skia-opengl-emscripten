@@ -12,19 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "starboard/system.h"
+#include "base/system/sys_info.h"
 
-#include <unistd.h>
+#include "starboard/system.h"
 
 #include "starboard/common/log.h"
 
 int64_t SbSystemGetTotalCPUMemory() {
-  long pages = sysconf(_SC_PHYS_PAGES);     // NOLINT[runtime/int]
+  /*long pages = sysconf(_SC_PHYS_PAGES);     // NOLINT[runtime/int]
   long page_size = sysconf(_SC_PAGE_SIZE);  // NOLINT[runtime/int]
   if (pages == -1 || page_size == -1) {
     SB_NOTREACHED();
     return 0;
   }
 
-  return static_cast<int64_t>(pages) * page_size;
+  return static_cast<int64_t>(pages) * page_size;*/
+  return base::SysInfo::AmountOfPhysicalMemory();
 }

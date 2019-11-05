@@ -14,9 +14,10 @@
 
 #include "starboard/thread.h"
 
-#include <unistd.h>
-
 #include "starboard/time.h"
+
+#include "base/threading/platform_thread.h"
+#include "base/time/time.h"
 
 void SbThreadSleep(SbTime duration) {
   if (duration <= 0) {
@@ -24,5 +25,8 @@ void SbThreadSleep(SbTime duration) {
   }
 
   // SbTime is microseconds, so this is easy.
-  usleep(duration);
+  //usleep(duration);
+
+  const base::TimeDelta sleepDuration = base::TimeDelta::FromMicroseconds(duration);
+  base::PlatformThread::Sleep(sleepDuration);
 }

@@ -14,13 +14,16 @@
 
 #include "starboard/memory.h"
 
-#include <sys/mman.h>
+#include "base/metrics/persistent_memory_allocator.h"
+
+#include <windows.h>
+#include "winbase.h"
 
 #include <iomanip>
 
-#if SB_IS(ARCH_MIPS)
+/*#if SB_IS(ARCH_MIPS)
 #include <sys/cachectl.h>
-#endif
+#endif*/
 
 #include "starboard/common/log.h"
 
@@ -29,9 +32,19 @@
        "memory pages as executable"
 #endif
 
+// see https://github.com/chromium/chromium/blob/6efa1184771ace08f3e2162b0255c93526d1750d/base/metrics/persistent_memory_allocator.cc#L1118
+
 void SbMemoryFlush(void* virtual_address, int64_t size_bytes) {
   char* memory = reinterpret_cast<char*>(virtual_address);
-#if !SB_IS(ARCH_ARM) && !SB_IS(ARCH_MIPS)
+
+  // TODO
+
+  NOTIMPLEMENTED_LOG_ONCE();
+
+  BOOL success = ::FlushViewOfFile(virtual_address, size_bytes);
+  DPCHECK(success);
+
+/*#if !SB_IS(ARCH_ARM) && !SB_IS(ARCH_MIPS)
   int result = msync(memory, size_bytes, MS_SYNC);
   SB_DCHECK(result == 0) << "msync failed: 0x" << std::hex << result << " ("
                          << std::dec << result << "d)";
@@ -50,5 +63,5 @@ void SbMemoryFlush(void* virtual_address, int64_t size_bytes) {
   __builtin___clear_cache(memory, memory + size_bytes);
 #elif defined(__clear_cache)
   __clear_cache(memory, memory + size_bytes);
-#endif
+#endif*/
 }

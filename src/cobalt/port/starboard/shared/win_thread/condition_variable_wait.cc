@@ -16,7 +16,7 @@
 
 #include <pthread.h>
 
-#include "starboard/shared/pthread/is_success.h"
+#include "starboard/shared/win_thread/is_success.h"
 #include "starboard/shared/starboard/lazy_initialization_internal.h"
 
 using starboard::shared::starboard::EnsureInitialized;
@@ -36,7 +36,7 @@ SbConditionVariableResult SbConditionVariableWait(
     SbConditionVariableCreate(condition, mutex);
   }
 
-  if (IsSuccess(pthread_cond_wait(&condition->condition, mutex))) {
+  if (IsSuccess(WIN_THREAD_cond_wait(&condition->condition, mutex))) {
     return kSbConditionVariableSignaled;
   }
 

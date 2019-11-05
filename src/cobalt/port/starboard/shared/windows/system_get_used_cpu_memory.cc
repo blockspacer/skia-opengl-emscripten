@@ -14,12 +14,7 @@
 
 #include "starboard/system.h"
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/sysinfo.h>
-#include <sys/types.h>
-#include <unistd.h>
+#include "base/process/process_metrics.h"
 
 #include "starboard/common/log.h"
 #include "starboard/common/string.h"
@@ -43,7 +38,7 @@
 // Searches for a specific value we're interested in and return it.  Will
 // modify |buffer| in order to do so quickly and easily.  Returns the memory
 // value in bytes (not kilobytes as it is presented in /proc/self/status).
-int64_t SearchForMemoryValue(
+/*int64_t SearchForMemoryValue(
     const char* search_key, const char* buffer) {
   const char* found = SbStringFindString(buffer, search_key);
   if (!found) {
@@ -70,11 +65,11 @@ int64_t SearchForMemoryValue(
   }
 
   return memory_value_in_kilobytes * 1024;
-}
+}*/
 
 int64_t SbSystemGetUsedCPUMemory() {
   // Read our process' current physical memory usage from /proc/self/status.
-  starboard::ScopedFile status_file("/proc/self/status",
+  /*starboard::ScopedFile status_file("/proc/self/status",
                                     kSbFileOpenOnly | kSbFileRead);
   if (!status_file.IsValid()) {
     SB_LOG(ERROR)
@@ -96,5 +91,22 @@ int64_t SbSystemGetUsedCPUMemory() {
 
   // Return the result, multiplied by 1024 because it is given in kilobytes.
   return SearchForMemoryValue("VmRSS", buffer) +
-         SearchForMemoryValue("VmSwap", buffer);
+         SearchForMemoryValue("VmSwap", buffer);*/
+  
+  base::SystemMemoryInfoKB memory_info;
+  // This function uses the following mapping between MEMORYSTATUSEX and
+  // SystemMemoryInfoKB:
+  //   ullTotalPhys ==> total
+  //   ullAvailPhys ==> avail_phys
+  //   ullTotalPageFile ==> swap_total
+  //   ullAvailPageFile ==> swap_free
+  if (!base::GetSystemMemoryInfo(&memory_info)) {
+    NOTIMPLEMENTED_LOG_ONCE();
+    return 1024;
+  }
+
+  // see https://stackoverflow.com/questions/63166/how-to-determine-cpu-and-memory-consumption-from-inside-a-process
+
+  // Return the result, multiplied by 1024 because it is given in kilobytes.
+  return 1024 * (memory_info.swap_total + memory_info.swap_free);
 }

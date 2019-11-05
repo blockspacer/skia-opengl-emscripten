@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "starboard/shared/posix/file_internal.h"
+#include "starboard/shared/win/file_internal.h"
 
-#include "starboard/shared/posix/impl/file_flush.h"
+#include "starboard/shared/win/impl/file_flush.h"
 
 bool SbFileFlush(SbFile file) {
-  return ::starboard::shared::posix::impl::FileFlush(file);
+  return ::starboard::shared::win::impl::FileFlush(file);
 }

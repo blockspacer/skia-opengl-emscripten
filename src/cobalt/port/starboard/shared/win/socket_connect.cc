@@ -18,8 +18,8 @@
 #include <sys/socket.h>
 
 #include "starboard/common/log.h"
-#include "starboard/shared/posix/handle_eintr.h"
-#include "starboard/shared/posix/socket_internal.h"
+#include "starboard/shared/win/handle_eintr.h"
+#include "starboard/shared/win/socket_internal.h"
 
 namespace sbposix = starboard::shared::posix;
 
@@ -28,7 +28,7 @@ SbSocketError SbSocketConnect(SbSocket socket, const SbSocketAddress* address) {
     return kSbSocketErrorFailed;
   }
 
-  sbposix::SockAddr sock_addr;
+  sbwin::SockAddr sock_addr;
   if (!sock_addr.FromSbSocketAddress(address)) {
     SB_DLOG(ERROR) << __FUNCTION__ << ": Invalid address";
     return (socket->error = kSbSocketErrorFailed);

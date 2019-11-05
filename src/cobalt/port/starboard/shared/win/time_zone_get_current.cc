@@ -16,9 +16,14 @@
 
 #include <time.h>
 
+#include <chrono>
+#include <ctime>
+#include <limits>
+#include <utility>
+
 SbTimeZone SbTimeZoneGetCurrent() {
-  // TODO: Using timezone assumes that tzset() has been called at some
+  // TODO: Using timezone assumes that _tzset() has been called at some
   // point. That should happen as part of Starboard's main loop initialization,
   // but that doesn't exist yet.
-  return timezone / 60;
+  return _timezone / 60;
 }

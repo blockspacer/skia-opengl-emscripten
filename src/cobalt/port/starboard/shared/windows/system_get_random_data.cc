@@ -14,6 +14,8 @@
 
 // Adapted from base/rand_util_posix.cc
 
+#include "base/rand_util.h"
+
 #include "starboard/system.h"
 
 #include "starboard/common/log.h"
@@ -23,7 +25,7 @@
 
 namespace {
 
-// We keep the open file descriptor for /dev/urandom around so we don't need to
+/*// We keep the open file descriptor for /dev/urandom around so we don't need to
 // reopen it (which is expensive).
 class URandomFile {
  public:
@@ -51,13 +53,16 @@ SbOnceControl g_urandom_file_once = SB_ONCE_INITIALIZER;
 void InitializeRandom() {
   SB_DCHECK(g_urandom_file == NULL);
   g_urandom_file = new URandomFile();
-}
+}*/
 
 }  // namespace
 
 void SbSystemGetRandomData(void* out_buffer, int buffer_size) {
   SB_DCHECK(out_buffer);
-  char* buffer = reinterpret_cast<char*>(out_buffer);
+
+  base::RandBytes(out_buffer, buffer_size);
+
+  /*char* buffer = reinterpret_cast<char*>(out_buffer);
   int remaining = buffer_size;
   bool once_result = SbOnce(&g_urandom_file_once, &InitializeRandom);
   SB_DCHECK(once_result);
@@ -75,5 +80,5 @@ void SbSystemGetRandomData(void* out_buffer, int buffer_size) {
     buffer += result;
   } while (remaining);
 
-  SB_CHECK(remaining == 0);
+  SB_CHECK(remaining == 0);*/
 }

@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef STARBOARD_SHARED_PTHREAD_IS_SUCCESS_H_
-#define STARBOARD_SHARED_PTHREAD_IS_SUCCESS_H_
+#ifndef STARBOARD_SHARED_WIN_THREAD_IS_SUCCESS_H_
+#define STARBOARD_SHARED_WIN_THREAD_IS_SUCCESS_H_
 
 #include "starboard/shared/internal_only.h"
 #include "starboard/types.h"
@@ -25,4 +25,4 @@ inline bool IsSuccess(int result_code) {
 }
 }  // namespace
 
-#endif  // STARBOARD_SHARED_PTHREAD_IS_SUCCESS_H_
+#endif  // STARBOARD_SHARED_WIN_THREAD_IS_SUCCESS_H_

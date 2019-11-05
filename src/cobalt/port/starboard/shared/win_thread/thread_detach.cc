@@ -21,5 +21,5 @@ void SbThreadDetach(SbThread thread) {
     return;
   }
 
-  pthread_detach(thread);
+  WIN_THREAD_detach(thread);
 }

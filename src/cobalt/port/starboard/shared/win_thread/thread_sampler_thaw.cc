@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "starboard/shared/pthread/thread_sampler_internal.h"
+#include "starboard/shared/win_thread/thread_sampler_internal.h"
 
 #if SB_API_VERSION >= 11
 bool SbThreadSamplerThaw(SbThreadSampler sampler) {

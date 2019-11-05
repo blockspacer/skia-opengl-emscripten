@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "starboard/memory.h"
+#include "base/files/file_util.h"
 
-#include <pthread.h>
+#include "starboard/memory.h"
 
 #include "starboard/common/log.h"
 
@@ -22,14 +22,10 @@ void SbMemoryGetStackBounds(void** out_high, void** out_low) {
   void* stackBase = 0;
   size_t stackSize = 0;
 
-  pthread_t thread = pthread_self();
-  pthread_attr_t sattr;
-  pthread_attr_init(&sattr);
-  pthread_getattr_np(thread, &sattr);
-  int rc = pthread_attr_getstack(&sattr, &stackBase, &stackSize);
-  SB_DCHECK(rc == 0);
-  SB_DCHECK(stackBase);
-  pthread_attr_destroy(&sattr);
+  SB_DLOG(WARNING) << "No SbMemoryGetStackBounds.";
+  
+  NOTIMPLEMENTED_LOG_ONCE();
+
   *out_high = static_cast<char*>(stackBase) + stackSize;
   *out_low = stackBase;
 }

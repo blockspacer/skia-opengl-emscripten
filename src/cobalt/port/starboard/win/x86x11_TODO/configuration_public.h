@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef STARBOARD_LINUX_X86X11_CONFIGURATION_PUBLIC_H_
-#define STARBOARD_LINUX_X86X11_CONFIGURATION_PUBLIC_H_
+#ifndef STARBOARD_WIN_X86X11_CONFIGURATION_PUBLIC_H_
+#define STARBOARD_WIN_X86X11_CONFIGURATION_PUBLIC_H_
 
-#include "starboard/linux/x64x11/configuration_public.h"
+#include "starboard/win/x64x11/configuration_public.h"
 
-#endif  // STARBOARD_LINUX_X86X11_CONFIGURATION_PUBLIC_H_
+#endif  // STARBOARD_WIN_X86X11_CONFIGURATION_PUBLIC_H_

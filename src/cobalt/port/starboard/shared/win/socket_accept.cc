@@ -20,9 +20,9 @@
 #include <unistd.h>
 
 #include "starboard/common/log.h"
-#include "starboard/shared/posix/handle_eintr.h"
-#include "starboard/shared/posix/set_non_blocking_internal.h"
-#include "starboard/shared/posix/socket_internal.h"
+#include "starboard/shared/win/handle_eintr.h"
+#include "starboard/shared/win/set_non_blocking_internal.h"
+#include "starboard/shared/win/socket_internal.h"
 
 namespace sbposix = starboard::shared::posix;
 
@@ -36,14 +36,14 @@ SbSocket SbSocketAccept(SbSocket socket) {
 
   int socket_fd = HANDLE_EINTR(accept(socket->socket_fd, NULL, NULL));
   if (socket_fd < 0) {
-    socket->error = sbposix::TranslateSocketErrno(errno);
+    socket->error = sbwin::TranslateSocketErrno(errno);
     return kSbSocketInvalid;
   }
 
   // All Starboard sockets are non-blocking, so let's ensure it.
-  if (!sbposix::SetNonBlocking(socket_fd)) {
+  if (!sbwin::SetNonBlocking(socket_fd)) {
     // Something went wrong, we'll clean up and return failure.
-    socket->error = sbposix::TranslateSocketErrno(errno);
+    socket->error = sbwin::TranslateSocketErrno(errno);
     HANDLE_EINTR(close(socket_fd));
     return kSbSocketInvalid;
   }

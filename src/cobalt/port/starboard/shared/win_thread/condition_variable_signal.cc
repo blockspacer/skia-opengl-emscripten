@@ -16,7 +16,7 @@
 
 #include <pthread.h>
 
-#include "starboard/shared/pthread/is_success.h"
+#include "starboard/shared/win_thread/is_success.h"
 #include "starboard/shared/starboard/lazy_initialization_internal.h"
 
 using starboard::shared::starboard::IsInitialized;
@@ -32,5 +32,5 @@ bool SbConditionVariableSignal(SbConditionVariable* condition) {
     return true;
   }
 
-  return IsSuccess(pthread_cond_signal(&condition->condition));
+  return IsSuccess(WIN_THREAD_cond_signal(&condition->condition));
 }

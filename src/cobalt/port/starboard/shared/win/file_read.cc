@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "starboard/shared/posix/file_internal.h"
+#include "starboard/shared/win/file_internal.h"
 
-#include "starboard/shared/posix/impl/file_read.h"
+#include "starboard/shared/win/impl/file_read.h"
 
 int SbFileRead(SbFile file, char* data, int size) {
-  return ::starboard::shared::posix::impl::FileRead(file, data, size);
+  return ::starboard::shared::win::impl::FileRead(file, data, size);
 }

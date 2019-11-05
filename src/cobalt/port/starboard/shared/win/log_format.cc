@@ -18,7 +18,7 @@
 #include <stdio.h>
 #include <unistd.h>
 
-#include "starboard/shared/posix/handle_eintr.h"
+#include "starboard/shared/win/handle_eintr.h"
 
 void SbLogFormat(const char* format, va_list arguments) {
   vfprintf(stderr, format, arguments);

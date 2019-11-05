@@ -16,13 +16,13 @@
 
 #include <pthread.h>
 
-#include "starboard/shared/pthread/thread_local_key_internal.h"
+#include "starboard/shared/win_thread/thread_local_key_internal.h"
 
 void SbThreadDestroyLocalKey(SbThreadLocalKey key) {
   if (!SbThreadIsValidLocalKey(key)) {
     return;
   }
 
-  pthread_key_delete(key->key);
+  WIN_THREAD_key_delete(key->key);
   delete key;
 }

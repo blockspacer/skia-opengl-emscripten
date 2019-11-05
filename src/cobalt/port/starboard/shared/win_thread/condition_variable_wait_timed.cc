@@ -19,7 +19,7 @@
 #include <time.h>
 
 #include "starboard/shared/posix/time_internal.h"
-#include "starboard/shared/pthread/is_success.h"
+#include "starboard/shared/win_thread/is_success.h"
 #include "starboard/shared/starboard/lazy_initialization_internal.h"
 #include "starboard/time.h"
 
@@ -63,7 +63,7 @@ SbConditionVariableResult SbConditionVariableWaitTimed(
   }
 
   int result =
-      pthread_cond_timedwait(&condition->condition, mutex, &timeout_ts);
+      WIN_THREAD_cond_timedwait(&condition->condition, mutex, &timeout_ts);
   if (IsSuccess(result)) {
     return kSbConditionVariableSignaled;
   }

@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef STARBOARD_SHARED_POSIX_HANDLE_EINTR_H_
-#define STARBOARD_SHARED_POSIX_HANDLE_EINTR_H_
+#ifndef STARBOARD_SHARED_WIN_HANDLE_EINTR_H_
+#define STARBOARD_SHARED_WIN_HANDLE_EINTR_H_
 
 #include <errno.h>
 
@@ -28,4 +28,4 @@
     __eintr_result__;                                   \
   })
 
-#endif  // STARBOARD_SHARED_POSIX_HANDLE_EINTR_H_
+#endif  // STARBOARD_SHARED_WIN_HANDLE_EINTR_H_

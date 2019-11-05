@@ -14,21 +14,21 @@
 
 // Adapted from base/platform_file_posix.cc
 
-#ifndef STARBOARD_SHARED_POSIX_IMPL_FILE_GET_INFO_H_
-#define STARBOARD_SHARED_POSIX_IMPL_FILE_GET_INFO_H_
+#ifndef STARBOARD_SHARED_WIN_IMPL_FILE_GET_INFO_H_
+#define STARBOARD_SHARED_WIN_IMPL_FILE_GET_INFO_H_
 
 #include "starboard/file.h"
 
 #include <sys/stat.h>
 
-#include "starboard/shared/posix/time_internal.h"
+#include "starboard/shared/win/time_internal.h"
 
 #include "starboard/shared/internal_only.h"
-#include "starboard/shared/posix/impl/file_impl.h"
+#include "starboard/shared/win/impl/file_impl.h"
 
 namespace starboard {
 namespace shared {
-namespace posix {
+namespace win {
 namespace impl {
 
 bool FileGetInfo(SbFile file, SbFileInfo* out_info) {
@@ -52,8 +52,8 @@ bool FileGetInfo(SbFile file, SbFileInfo* out_info) {
 }
 
 }  // namespace impl
-}  // namespace posix
+}  // namespace win
 }  // namespace shared
 }  // namespace starboard
 
-#endif  // STARBOARD_SHARED_POSIX_IMPL_FILE_GET_INFO_H_
+#endif  // STARBOARD_SHARED_WIN_IMPL_FILE_GET_INFO_H_

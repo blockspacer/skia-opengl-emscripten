@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "starboard/shared/pthread/thread_sampler_internal.h"
+#include "starboard/shared/win_thread/thread_sampler_internal.h"
 
 #if SB_API_VERSION >= 11
 
@@ -21,7 +21,7 @@
 
 #include "starboard/common/log.h"
 #include "starboard/common/mutex.h"
-#include "starboard/shared/pthread/thread_context_internal.h"
+#include "starboard/shared/win_thread/thread_context_internal.h"
 #include "starboard/thread.h"
 
 namespace {
@@ -100,7 +100,7 @@ SbThreadContext SignalHandler::Freeze(SbThreadSampler sampler) {
     return kSbThreadContextInvalid;
   }
   frozen_sampler_ = sampler;
-  pthread_kill(sampler->thread(), SIGPROF);
+  WIN_THREAD_kill(sampler->thread(), SIGPROF);
   sem_wait(&freeze_semaphore_);
   return &sb_context_;
 }

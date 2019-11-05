@@ -12,19 +12,57 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "starboard/shared/posix/set_non_blocking_internal.h"
+#include "starboard/shared/win/set_non_blocking_internal.h"
 
 #include <fcntl.h>
 
-namespace starboard {
-namespace shared {
-namespace posix {
+#include <windows.h>
+#include <io.h>
+#include <psapi.h>
+#include <shellapi.h>
+#include <shlobj.h>
+#include <stddef.h>
+#include <stdint.h>
+#include <time.h>
+#include <winsock2.h>
 
-bool SetNonBlocking(int socket_fd) {
-  int flags = fcntl(socket_fd, F_GETFL, 0);
-  return !(flags < 0 || fcntl(socket_fd, F_SETFL, flags | O_NONBLOCK) == -1);
+// see https://stackoverflow.com/a/1549344
+
+/** Returns true on success, or false if there was an error */
+/*bool SetSocketBlockingEnabled(int fd, bool blocking)
+{
+   if (fd < 0) return false;
+
+#ifdef _WIN32
+   unsigned long mode = blocking ? 0 : 1;
+   return (ioctlsocket(fd, FIONBIO, &mode) == 0) ? true : false;
+#else
+   int flags = fcntl(fd, F_GETFL, 0);
+   if (flags == -1) return false;
+   flags = blocking ? (flags & ~O_NONBLOCK) : (flags | O_NONBLOCK);
+   return (fcntl(fd, F_SETFL, flags) == 0) ? true : false;
+#endif
+}*/
+
+// see https://github.com/chromium/chromium/blob/75fb429759aa71bae59cdd57b69a482c1153579e/base/files/file_util_win.cc#L927
+
+bool SetNonBlocking(int fd) {
+  unsigned long nonblocking = 1;
+  if (ioctlsocket(fd, FIONBIO, &nonblocking) == 0)
+    return true;
+  return false;
 }
 
-}  // namespace posix
+namespace starboard {
+namespace shared {
+namespace win {
+
+bool SetNonBlocking(int socket_fd) {
+  /*int flags = fcntl(socket_fd, F_GETFL, 0);
+  return !(flags < 0 || fcntl(socket_fd, F_SETFL, flags | O_NONBLOCK) == -1);*/
+  return SetNonBlocking(socket_fd);
+}
+
+}  // namespace win
 }  // namespace shared
 }  // namespace starboard

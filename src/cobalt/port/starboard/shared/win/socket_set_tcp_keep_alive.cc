@@ -17,24 +17,24 @@
 #include <netinet/tcp.h>
 #include <sys/socket.h>
 
-#include "starboard/shared/posix/socket_internal.h"
+#include "starboard/shared/win/socket_internal.h"
 
 namespace sbposix = starboard::shared::posix;
 
 bool SbSocketSetTcpKeepAlive(SbSocket socket, bool value, SbTime period) {
-  bool result = sbposix::SetBooleanSocketOption(
+  bool result = sbwin::SetBooleanSocketOption(
       socket, SOL_SOCKET, SO_KEEPALIVE, "SO_KEEPALIVE", value);
   if (!result) {
     return false;
   }
 
   int period_seconds = static_cast<int>(period / kSbTimeSecond);
-  result = sbposix::SetIntegerSocketOption(socket, SOL_TCP, TCP_KEEPIDLE,
+  result = sbwin::SetIntegerSocketOption(socket, SOL_TCP, TCP_KEEPIDLE,
                                            "TCP_KEEPIDLE", period_seconds);
   if (!result) {
     return false;
   }
 
-  return sbposix::SetIntegerSocketOption(socket, SOL_TCP, TCP_KEEPINTVL,
+  return sbwin::SetIntegerSocketOption(socket, SOL_TCP, TCP_KEEPINTVL,
                                          "TCP_KEEPINTVL", period_seconds);
 }

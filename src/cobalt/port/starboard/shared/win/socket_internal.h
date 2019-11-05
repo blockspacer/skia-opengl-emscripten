@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef STARBOARD_SHARED_POSIX_SOCKET_INTERNAL_H_
-#define STARBOARD_SHARED_POSIX_SOCKET_INTERNAL_H_
+#ifndef STARBOARD_SHARED_WIN_SOCKET_INTERNAL_H_
+#define STARBOARD_SHARED_WIN_SOCKET_INTERNAL_H_
 
 #include <errno.h>
 #include <netinet/in.h>
@@ -53,7 +53,7 @@ struct SbSocketPrivate {
 
 namespace starboard {
 namespace shared {
-namespace posix {
+namespace win {
 
 // Translates an errno from a socket call into an SbSocketError.
 SbSocketError TranslateSocketErrno(int error);
@@ -125,8 +125,8 @@ class SockAddr {
   struct sockaddr_storage storage_;
 };
 
-}  // namespace posix
+}  // namespace win
 }  // namespace shared
 }  // namespace starboard
 
-#endif  // STARBOARD_SHARED_POSIX_SOCKET_INTERNAL_H_
+#endif  // STARBOARD_SHARED_WIN_SOCKET_INTERNAL_H_

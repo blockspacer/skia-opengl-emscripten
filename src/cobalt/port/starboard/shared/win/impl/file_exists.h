@@ -14,29 +14,38 @@
 
 // Adapted from base/platform_file_posix.cc
 
-#ifndef STARBOARD_SHARED_POSIX_IMPL_FILE_EXISTS_H_
-#define STARBOARD_SHARED_POSIX_IMPL_FILE_EXISTS_H_
+#ifndef STARBOARD_SHARED_WIN_IMPL_FILE_EXISTS_H_
+#define STARBOARD_SHARED_WIN_IMPL_FILE_EXISTS_H_
 
 #include "starboard/file.h"
 
-#include <sys/stat.h>
-
 #include "starboard/shared/internal_only.h"
-#include "starboard/shared/posix/impl/file_impl.h"
+#include "starboard/shared/win/impl/file_impl.h"
+
+#include "base/files/file.h"
+#include "base/files/file_enumerator.h"
+#include "base/files/file_path.h"
+#include "base/files/file_util.h"
+#include "base/files/scoped_temp_dir.h"
+#include "base/strings/utf_string_conversions.h"
 
 namespace starboard {
 namespace shared {
-namespace posix {
+namespace win {
 namespace impl {
 
 bool FileExists(const char* path) {
-  struct stat file_info;
-  return stat(path, &file_info) == 0;
+  /*struct stat file_info;
+  return stat(path, &file_info) == 0;*/
+  base::FilePath file_name;
+  file_name = file_name.Append(base::UTF8ToUTF16(path));
+
+  return base::PathExists(file_name);
 }
 
 }  // namespace impl
-}  // namespace posix
+}  // namespace win
 }  // namespace shared
 }  // namespace starboard
 
-#endif  // STARBOARD_SHARED_POSIX_IMPL_FILE_EXISTS_H_
+#endif  // STARBOARD_SHARED_WIN_IMPL_FILE_EXISTS_H_
