@@ -426,7 +426,7 @@ cmake -DRUN_APP=ON -DBUILD_APP=OFF -DBUILD_DIR=$(pwd)/build-linux-deb/ -DBUILD_T
 ### Run example on gdb (Unix)
 
 ```bash
-clear && clear ; gdb build-linux-deb/skemgl -ex "run" -ex "set pagination off" -ex "bt" -ex "set confirm off" -ex "quit"
+clear && clear ; cd build-linux-deb ; gdb skemgl -ex "run" -ex "set pagination off" -ex "bt" -ex "set confirm off" -ex "quit"
 ```
 
 ### Compile example on HTML5 platform / browser / WASM
@@ -458,7 +458,7 @@ cmake -DRUN_APP=ON -DBUILD_APP=ON -DEXTRA_EMMAKE_OPTS="-j;6" -DBUILD_TYPE="Debug
 # build for native Linux without skia/blink
 # TODO: -DUSE_ICU=FALSE;-DENABLE_HARFBUZZ=FALSE;-DENABLE_GLIBXML=FALSE;
 cmake -DRUN_APP=ON -DBUILD_APP=ON -DEXTRA_EMMAKE_OPTS="-j;6" -DBUILD_TYPE="Debug" -DCLEAN_BUILD=OFF -DENABLE_EMCMAKE_CLEAN_FIRST=OFF -DBUILD_DIR=$(pwd)/build-linux-minimal-st-deb/ -DEXTRA_CMAKE_OPTS="-DENABLE_NATIVE_HTML=1;-DENABLE_GLIBXML=TRUE;-DENABLE_WEB_PTHREADS=FALSE;-DENABLE_LIBWEBP=TRUE;-DENABLE_BLINK=FALSE;-DENABLE_COBALT=TRUE;-DENABLE_BASE=TRUE;-DENABLE_WTF=TRUE;-DDISABLE_FORMATTING=FALSE;-DENABLE_SKIA=FALSE;-DENABLE_SKSG=FALSE;-DENABLE_SKIA_UTILS=FALSE;-DENABLE_SKOTTIE=FALSE;-DENABLE_SKSHAPER=FALSE;-DFORCE_DISABLE_SK_GPU=TRUE;-DENABLE_BLINK_UI_VIEWS=FALSE;-DENABLE_BLINK_UI_NATIVE_THEME=FALSE;-DENABLE_MAIN=TRUE" -P tools/buildUnix.cmake
-clear && clear ; gdb build-linux-minimal-st-deb/skemgl -ex "run" -ex "set pagination off" -ex "bt" -ex "set confirm off" -ex "quit"
+clear && clear ; cd build-linux-minimal-st-deb ; gdb skemgl -ex "run" -ex "set pagination off" -ex "bt" -ex "set confirm off" -ex "quit"
 ```
 
 ### Run example on HTML5 platform / browser / WASM (needs '--emrun' cxx flag)

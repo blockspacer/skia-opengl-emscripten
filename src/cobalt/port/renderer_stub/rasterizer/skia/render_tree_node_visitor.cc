@@ -833,34 +833,34 @@ void RenderTreeNodeVisitor::Visit(
 
 #if defined(ENABLE_SKOTTIE)
   sk_sp<skottie::Animation> animation = skottie->data().animation;
-  DCHECK(animation);
+  if(animation) {
+    // TODO:
+    //skottie->data().on_draw_cb_.Run(
+    //  const_cast<RenderTreeNodeVisitor*>(this),
+    //  skottie);
 
-  // TODO:
-  //skottie->data().on_draw_cb_.Run(
-  //  const_cast<RenderTreeNodeVisitor*>(this),
-  //  skottie);
+    std::pair<SkMSec, SkMSec&> animation_time
+      = skottie->data().skottie_animation_time_cb.Run(); // TODO
 
-  std::pair<SkMSec, SkMSec&> animation_time
-    = skottie->data().skottie_animation_time_cb.Run(); // TODO
+    const SkMSec tElapsed
+      = animation_time.first /*timer_msecs*/
+        - animation_time.second /*base*/;
+    //EM_LOG("animate 9\n");
+    const SkScalar duration = animation->duration() * 1000.0;
+    //EM_LOG("animate 10\n");
+    const double animPos = ::std::fmod(tElapsed, duration) / duration;
+    //EM_LOG("animate 11\n");
 
-  const SkMSec tElapsed
-    = animation_time.first /*timer_msecs*/
-      - animation_time.second /*base*/;
-  //EM_LOG("animate 9\n");
-  const SkScalar duration = animation->duration() * 1000.0;
-  //EM_LOG("animate 10\n");
-  const double animPos = ::std::fmod(tElapsed, duration) / duration;
-  //EM_LOG("animate 11\n");
+    if(tElapsed) {
+      animation->seek(static_cast<SkScalar>(animPos));
 
-  if(tElapsed) {
-    animation->seek(static_cast<SkScalar>(animPos));
+      const auto dstR = SkRect::MakeSize(
+        SkSize::Make(skottie->data().rect.width(), skottie->data().rect.height()));
 
-    const auto dstR = SkRect::MakeSize(
-      SkSize::Make(skottie->data().rect.width(), skottie->data().rect.height()));
+      //printf("fAnimation->render...\n");
 
-    //printf("fAnimation->render...\n");
-
-    animation->render(draw_state_.render_target, &dstR);
+      animation->render(draw_state_.render_target, &dstR);
+    }
   }
 #endif // ENABLE_SKOTTIE
 
