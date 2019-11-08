@@ -76,6 +76,8 @@ bool Element::DispatchEvent(const scoped_refptr<Event> &event)
   return Node::DispatchEvent(event) ;//&& HandleCustomEvent(event);
 }
 
+/// \todo remove that func and move custom handlers
+/// for attribute parser into separate files
 void Element::add_event_cb(const std::string &custom_token,
   EventCallback cb)
 {
@@ -91,6 +93,7 @@ void Element::add_event_cb(const std::string &custom_token,
     return;
   }
 
+  /// \todo create eventListener only once or properly free resources
   const std::string to_event_name
     = custom_token.substr(customizer::Customizer::custom_event_prefix.length(),
         custom_token.length());
@@ -120,6 +123,8 @@ void Element::add_event_cb(const std::string &custom_token,
     true /* true - executed in the capturing phase
              false - Default. executed in the bubbling phase */);
 #endif // 0
+
+  printf("add_event_cb (AddEventListener) for %s\n", to_event_name.c_str());
 
   AddEventListener(to_event_name,
     //EventListenerScriptValue::Reference(this, *utterance->onboundary())

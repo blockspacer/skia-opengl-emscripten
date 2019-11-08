@@ -132,10 +132,14 @@ std::unique_ptr<Fetcher> FetcherFactory::CreateSecureFetcher(
         new ErrorFetcher(handler, error_message.str()));
   }
 
+#if defined(__EMSCRIPTEN__)
+  if ((url.SchemeIs("https") || url.SchemeIs("http") || url.SchemeIs("data"))) {
+    // TODO: xhr fetcher for emscripten
+  }
+#else
   if ((url.SchemeIs("https") || url.SchemeIs("http") || url.SchemeIs("data")) &&
       network_module_) {
     printf("url.network_module_ %s\n", url.path().c_str());
-
 #if defined(ENABLE_GNET)
     NetFetcher::Options options;
     return std::unique_ptr<Fetcher>(
@@ -150,8 +154,8 @@ std::unique_ptr<Fetcher> FetcherFactory::CreateSecureFetcher(
 #endif
                        options, request_mode, origin));
 #endif
-
   }
+#endif // __EMSCRIPTEN__
 
   if (url.SchemeIs("blob") && !blob_resolver_.is_null()) {
     printf("url.blob %s\n", url.path().c_str());
@@ -237,7 +241,7 @@ std::unique_ptr<Fetcher> FetcherFactory::CreateSecureFetcher(
 
 #endif
 
-  DCHECK(false);
+  //DCHECK(false);
   printf("Unknown fetcher scheme");
 
   std::stringstream error_message;

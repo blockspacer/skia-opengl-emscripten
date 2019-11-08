@@ -117,12 +117,16 @@ base::Optional<bool> ScrollBarModelEventListener::HandleEvent(
   /// \todo return elem_->HandleCustomEvent(callback_this, event, had_exception)
   //return elem_->HandleCustomEvent(event);
 
+#if defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+  /// \todo skip for now
+#else
   if(event->type() == base::Tokens::pointerdown() ||
          event->type() == base::Tokens::mousedown()) {
     return HandleMouseDown(callback_this, event, had_exception);
   } else {
     DCHECK(false) << "event not handled for " << event->type().c_str();
   }
+#endif
 
   return base::nullopt;
 }

@@ -57,9 +57,42 @@
 
 #if defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
 #include "cobalt/dom/html5_native/html5_elem_queue.h"
+#include "cobalt/dom/html5_native/html5_bind.h"
 
 #include "cobalt/dom/html_body_element.h"
 #endif
+
+#include "base/logging.h"
+#include "base/strings/stringprintf.h"
+
+#include "cobalt/base/event_dispatcher.h"
+#include "cobalt/base/tokens.h"
+#include "cobalt/dom/event.h"
+#include "cobalt/dom/input_event.h"
+#include "cobalt/dom/input_event_init.h"
+#include "cobalt/dom/keyboard_event.h"
+#include "cobalt/dom/keyboard_event_init.h"
+#include "cobalt/dom/mouse_event.h"
+#include "cobalt/dom/mouse_event_init.h"
+#include "cobalt/dom/pointer_event.h"
+#include "cobalt/dom/pointer_event_init.h"
+#include "cobalt/dom/pointer_state.h"
+#include "cobalt/dom/ui_event.h"
+#include "cobalt/dom/wheel_event.h"
+#include "cobalt/math/vector2d.h"
+#include "cobalt/math/vector2d_f.h"
+#include "cobalt/system_window/input_event.h"
+#include "cobalt/system_window/system_window.h"
+
+#include "starboard/event.h"
+#include "starboard/accessibility.h"
+#include "starboard/log.h"
+#include "starboard/configuration.h"
+#include "starboard/window.h"
+#include "starboard/decode_target.h"
+#include "starboard/file.h"
+#include "starboard/double.h"
+#include "starboard/system.h"
 
 namespace cobalt {
 namespace dom {
@@ -1141,6 +1174,278 @@ Node::GatherInclusiveAncestorsObservers() {
     current = current->parent_;
   }
   return inclusive_observers;
+}
+
+// custom modification
+void Node::AddEventListener(const std::string& type,
+                      const EventTarget::EventListenerScriptValue& listener,
+                      bool use_capture) {
+  EventTarget::AddEventListener(type, listener, use_capture);
+
+  std::cout << "EventTarget::AddEventListener " << type << std::endl;
+
+  DCHECK(!type.empty());
+
+#if defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+  auto taskCb
+    = [this,
+       &type,
+       cb_listener = &listener, /// \note ref data
+       em_node = &em_node_, /// \note ref data
+       em_node_guid = &this->em_node_guid_ /// \note ref data
+      ]
+      (const html_native::NativeHTMLTaskCbParams&&)
+    {
+      DCHECK(em_node);
+      DCHECK(em_node_guid);
+      DCHECK(cb_listener);
+
+      if(!html_native::isEmNodeGUIDValid(*em_node_guid)) {
+        printf("WASM: (AddEventListener) invalid node GUIDs: %i \n",
+          *em_node_guid);
+        std::cout << "onEvent  !isEmNodeGUIDValid" << std::endl;
+        return;
+      }
+
+      if(em_node->isNull() || em_node->isUndefined()) {
+          std::cout << "onEvent target isNull" << std::endl;
+          return;
+      }
+
+      std::cout << "onEventCb target = "
+        << em_node->call<emscripten::val>("toString")
+           .as<std::string>() << std::endl;
+
+      auto onEventCb = [this](emscripten::val event) {
+          if(event.isNull() || event.isUndefined()) {
+              std::cout << "onEventCb target isNull" << std::endl;
+          }
+          std::cout << "onEvent event = " << event.call<emscripten::val>("toString").as<std::string>() << std::endl;
+          if (!event.hasOwnProperty("type")) {
+            std::cout << "!event.hasOwnProperty(type)" << std::endl;
+          }
+          std::cout << "onEventCb target type " << event["type"].as<std::string>() << std::endl;
+
+          if(!html_native::isEmNodeGUIDValid(em_node_guid_)) {
+            printf("WASM: (AddEventListener) invalid node GUIDs: %i \n",
+              em_node_guid_);
+            std::cout << "onEventCb !isEmNodeGUIDValid" << std::endl;
+            return;
+          }
+
+          if(em_node_.isNull() || em_node_.isUndefined()) {
+              std::cout << "onEventCb target isNull" << std::endl;
+              return;
+          }
+
+          const std::string type = event["type"].as<std::string>();
+          DCHECK(!type.empty());
+
+          scoped_refptr<Window> window;
+          if (IsInDocument()) {
+            DCHECK(node_document());
+            if(node_document()->default_view()) { // TODO
+              //P_LOG("Node::DispatchEvent 2.4\n");
+              window = node_document()->default_view();
+            }
+          }
+
+          // TODO: more web events https://developer.mozilla.org/en-US/docs/Web/API/Element
+
+          // TODO: map events from HTML5 to native
+          // https://github.com/blockspacer/skia-opengl-emscripten/blob/cdb838723fe53c53abf008e9f2e8fc93089ae3f6/src/cobalt/src/cobalt/input/input_device_manager_desktop.cc#L362
+
+          if(type == "mouseover"
+             || type == "mouseout"
+             || type == "mousemove"
+             || type == "mousedown"
+             || type == "mouseup"
+             || type == "mouseenter"
+             || type == "mouseleave"
+             || type == "pointerdown"
+             || type == "pointerenter"
+             || type == "pointerleave"
+             || type == "pointermove"
+             || type == "pointerout"
+             || type == "pointerover"
+             || type == "pointerup"
+             || type == "click"
+             || type == "dblclick"
+             || type == "auxclick"
+             || type == "contextmenu"
+             || type == "touchcancel"
+             || type == "touchend"
+             || type == "touchmove"
+             || type == "touchstart")
+          {
+            dom::MouseEventInit event_init;
+
+            // TODO: event current_target
+
+            // TODO: event timestamp
+
+            const math::PointF position(
+              0, 0
+            );
+            event_init.set_screen_x(position.x());
+            event_init.set_screen_y(position.y());
+            event_init.set_client_x(position.x());
+            event_init.set_client_y(position.y());
+
+            // see https://github.com/blockspacer/skia-opengl-emscripten/blob/cdb838723fe53c53abf008e9f2e8fc93089ae3f6/src/cobalt/port/cobalt/base/tokens.h#L30
+            this->DispatchEvent(
+                new cobalt::dom::MouseEvent(
+                  base::Token(type.c_str()),
+                  window.get(), event_init));
+            /*this->DispatchEvent(
+                new cobalt::dom::MouseEvent(
+                  base::Tokens::mousedown(),
+                  //base::Token(type.c_str()),
+                  window.get(), event_init));
+            this->DispatchEvent(
+                new cobalt::dom::MouseEvent(
+                  base::Tokens::mouseup(),
+                  //base::Token(type.c_str()),
+                  window.get(), event_init));
+            this->DispatchEvent(
+                new cobalt::dom::MouseEvent(
+                  base::Tokens::click(),
+                  //base::Token(type.c_str()),
+                  window.get(), event_init));*/
+          }
+          else if(type == "wheel"
+                  || type == "scroll")
+          {
+            dom::WheelEventInit event_init;
+
+            // TODO: event current_target
+
+            // TODO: event timestamp
+
+            const math::PointF position(
+              0, 0
+            );
+            event_init.set_screen_x(position.x());
+            event_init.set_screen_y(position.y());
+            event_init.set_client_x(position.x());
+            event_init.set_client_y(position.y());
+
+            event_init.set_delta_x(0);
+            event_init.set_delta_y(0);
+            event_init.set_delta_z(0);
+            event_init.set_delta_mode(dom::WheelEvent::kDomDeltaLine);
+
+            // see https://github.com/blockspacer/skia-opengl-emscripten/blob/cdb838723fe53c53abf008e9f2e8fc93089ae3f6/src/cobalt/port/cobalt/base/tokens.h#L30
+            this->DispatchEvent(
+                new cobalt::dom::WheelEvent(
+                  base::Token(type.c_str()),
+                  window.get(), event_init));
+            /*this->DispatchEvent(
+                new cobalt::dom::WheelEvent(
+                  base::Tokens::wheel(),
+                  //base::Token(type.c_str()),
+                  window.get(), event_init));*/
+          }
+          else if(type == "keydown"
+                  || type == "keyup"
+                  || type == "keypress") {
+            dom::KeyboardEventInit event_init;
+
+            // TODO: event current_target
+
+            // TODO: event timestamp
+            printf("node.cc: type == keys\n");
+
+            unsigned int key_code = 18;
+
+            dom::KeyboardEvent::KeyLocationCode location =
+              dom::KeyboardEvent::KeyCodeToKeyLocation(key_code);
+
+            const uint32 modifiers = 0;
+            event_init.set_ctrl_key(modifiers & cobalt::system_window::InputEvent::kCtrlKey);
+            event_init.set_shift_key(modifiers & cobalt::system_window::InputEvent::kShiftKey);
+            event_init.set_alt_key(modifiers & cobalt::system_window::InputEvent::kAltKey);
+            event_init.set_meta_key(modifiers & cobalt::system_window::InputEvent::kMetaKey);
+
+            event_init.set_location(location);
+            event_init.set_repeat(false);
+            event_init.set_char_code(key_code);
+            event_init.set_key_code(key_code);
+            event_init.set_keysym(static_cast<int>('K'));
+            event_init.set_is_printable(true);
+            event_init.set_text("input_event->text()");
+
+            // see https://github.com/blockspacer/skia-opengl-emscripten/blob/cdb838723fe53c53abf008e9f2e8fc93089ae3f6/src/cobalt/port/cobalt/base/tokens.h#L30
+            this->DispatchEvent(
+                new cobalt::dom::KeyboardEvent(
+                  base::Token(type.c_str()),
+                  window.get(), event_init));
+            /*this->DispatchEvent(
+                new cobalt::dom::KeyboardEvent(
+                  base::Tokens::keydown(),
+                  //base::Token(type.c_str()),
+                  window.get(), event_init));
+            this->DispatchEvent(
+                new cobalt::dom::KeyboardEvent(
+                  base::Tokens::keypress(),
+                  //base::Token(type.c_str()),
+                  window.get(), event_init));
+            this->DispatchEvent(
+                new cobalt::dom::KeyboardEvent(
+                  base::Tokens::keyup(),
+                  //base::Token(type.c_str()),
+                  window.get(), event_init));*/
+          }
+
+      };
+
+      em_node->call<emscripten::val>(
+        "addEventListener",
+        emscripten::val(type.c_str()),
+        embinder::bind(onEventCb, std::placeholders::_1),
+        emscripten::val(false) /*passive: if true, will never call preventDefault()*/
+      );
+
+// TODO: convert native event  -> SbEvent -> cobalt::system_window::InputEvent -> dom events
+// https://github.com/blockspacer/skia-opengl-emscripten/blob/bb16ab108bc4018890f4ff3179250b76c0d9053b/src/cobalt/src/cobalt/input/input_device_manager_desktop.cc#L233
+#if 0
+      std::unique_ptr<cobalt::system_window::InputEvent> input_event(
+        new cobalt::system_window::InputEvent(SbTimeGetMonotonicNow()/*timestamp*/,
+         cobalt::system_window::InputEvent::Type::kKeyDown/*type*/, 0/*data.device_id*/,
+         static_cast<int>('K')/*key_code*/, true/*data.is_printable*/, static_cast<int>('K')/*data.keysym*/,
+         "K"/*data.text*/, kSbKeyModifiersNone/*modifiers*/,
+         false/*is_repeat*/, math::PointF(/*data.position.x*/0, /*data.position.y*/0),
+         math::PointF(/*data.delta.x*/ 0, /*data.delta.y*/ 0), /*pressure*/0,
+         math::PointF(/*data.size.x*/ 0,  /*data.size.y*/ 0),
+         math::PointF(/*data.tilt.x*/ 0,  /*data.tilt.y*/ 0)));
+
+      scoped_refptr<Window> window;
+      if (IsInDocument()) {
+        DCHECK(node_document());
+        if(node_document()->default_view()) { // TODO
+          //P_LOG("Node::DispatchEvent 2.4\n");
+          window = node_document()->default_view();
+        }
+      }
+
+      this->DispatchEvent(
+          new cobalt::dom::KeyboardEvent(
+            base::Token(type.c_str()),
+            window.get(), event_init));
+#endif // 0
+    };
+
+  html_native::runOnMainBrowserThread(std::move(taskCb));
+#endif // defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+}
+
+// custom modification
+void Node::RemoveEventListener(const std::string& type,
+                         const EventTarget::EventListenerScriptValue& listener,
+                         bool use_capture) {
+  EventTarget::RemoveEventListener(type, listener, use_capture);
+
+  // TODO
 }
 
 // Algorithm for EnsurePreInsertionValidity:

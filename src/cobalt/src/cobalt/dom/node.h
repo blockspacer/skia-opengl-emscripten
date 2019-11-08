@@ -293,6 +293,15 @@ class Node : public EventTarget {
 
 #endif // defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
 
+  // custom modification
+  void AddEventListener(const std::string& type,
+                        const EventTarget::EventListenerScriptValue& listener,
+                        bool use_capture) override;
+  // custom modification
+  void RemoveEventListener(const std::string& type,
+                           const EventTarget::EventListenerScriptValue& listener,
+                           bool use_capture) override;
+
  protected:
   explicit Node(Document* document);
   virtual ~Node();

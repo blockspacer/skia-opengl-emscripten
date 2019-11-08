@@ -79,9 +79,11 @@ class EventTarget : public script::Wrappable,
 
   // Web API: EventTarget
   //
+  virtual // virtual: custom modification
   void AddEventListener(const std::string& type,
                         const EventListenerScriptValue& listener,
                         bool use_capture);
+  virtual // virtual: custom modification
   void RemoveEventListener(const std::string& type,
                            const EventListenerScriptValue& listener,
                            bool use_capture);
