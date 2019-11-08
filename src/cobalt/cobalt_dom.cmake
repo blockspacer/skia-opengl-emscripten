@@ -8,6 +8,8 @@ list(APPEND cobalt_dom_custom_SOURCES
   ${COBALT_CORE_DIR}dom/CustomScriptValue.h
   ${COBALT_CORE_DIR}dom/html5_native/html5_elem_queue.cc
   ${COBALT_CORE_DIR}dom/html5_native/html5_elem_queue.h
+  ${COBALT_CORE_DIR}dom/native_events_port/native_event.cc
+  ${COBALT_CORE_DIR}dom/native_events_port/native_event.h
 )
 
 # '<(DEPTH)/cobalt/browser/browser_bindings_gen.gyp:generated_types',
