@@ -91,6 +91,23 @@ set(ENABLE_NATIVE_HTML FALSE CACHE BOOL "ENABLE_NATIVE_HTML")
 if(RELEASE_BUILD AND NOT EMSCRIPTEN AND ENABLE_NATIVE_HTML)
   message(FATAL_ERROR "need emscripten for ENABLE_NATIVE_HTML")
 endif()
+
+if (TARGET_EMSCRIPTEN AND NOT ENABLE_NATIVE_HTML)
+  list(APPEND CXTPL_EXTRA_ARGS "-extra-arg=-DPLATFORM_NAME=\"WEBGL\"")
+  list(APPEND CXTPL_EXTRA_ARGS "-extra-arg=-DPLATFORM_TYPE=PlatformType::WEBGL")
+elseif (TARGET_EMSCRIPTEN AND ENABLE_NATIVE_HTML)
+  list(APPEND CXTPL_EXTRA_ARGS "-extra-arg=-DPLATFORM_NAME=\"HTML5\"")
+  list(APPEND CXTPL_EXTRA_ARGS "-extra-arg=-DPLATFORM_TYPE=PlatformType::HTML5")
+elseif(TARGET_LINUX)
+  list(APPEND CXTPL_EXTRA_ARGS "-extra-arg=-DPLATFORM_NAME=\"LINUX\"")
+  list(APPEND CXTPL_EXTRA_ARGS "-extra-arg=-DPLATFORM_TYPE=PlatformType::LINUX")
+elseif(TARGET_WINDOWS)
+  list(APPEND CXTPL_EXTRA_ARGS "-extra-arg=-DPLATFORM_NAME=\"WIN\"")
+  list(APPEND CXTPL_EXTRA_ARGS "-extra-arg=-DPLATFORM_TYPE=PlatformType::WIN")
+else()
+  message(FATAL_ERROR "platform not supported")
+endif()
+
 # you can disable all logic to profile bundle size/memory for some OS
 set(ENABLE_MAIN TRUE CACHE BOOL "ENABLE_MAIN")
 set(USE_LIBPNG TRUE CACHE BOOL "USE_LIBPNG")
@@ -257,6 +274,10 @@ if(ENABLE_NATIVE_HTML)
   message(STATUS "ENABLE_NATIVE_HTML=${ENABLE_NATIVE_HTML}")
   set(COMMON_FLAGS "${COMMON_FLAGS} -DENABLE_NATIVE_HTML=1")
   list(APPEND CXTPL_EXTRA_ARGS "-extra-arg=-DENABLE_NATIVE_HTML=1")
+  if(NOT WEBSITE_ROOT_URL)
+    message(FATAL_ERROR "need to define WEBSITE_ROOT_URL when enabled ENABLE_NATIVE_HTML")
+  endif(NOT WEBSITE_ROOT_URL)
+  list(APPEND CXTPL_EXTRA_ARGS "-extra-arg=-DWEBSITE_ROOT_URL=\"${WEBSITE_ROOT_URL}\"")
 endif(ENABLE_NATIVE_HTML)
 
 # always return on non-void functions to prevent UB
@@ -2878,7 +2899,7 @@ target_add_cxtpl_tool(TARGET ${PROJECT_NAME}
                       INPUTS "${cxtpl_inputs}"
                       OUTPUTS "${cxtpl_outputs}"
                       GENERATOR_PATH "${CMAKE_CURRENT_SOURCE_DIR}/codegen/cxtpl_generators/text_generator/text_generator.cpp"
-                      LOG_CONFIG ".:=INFO:default:console\\ default=file:path=CXTPL_tool_for_${PROJECT_NAME}.log,async=true,sync_level=DBG9\\ console=stream:stream=stderr"
+                      LOG_CONFIG ".:=DBG1:default:console\\ default=file:path=CXTPL_tool_for_${PROJECT_NAME}.log,async=true,sync_level=DBG9\\ console=stream:stream=stderr"
                       EXTRA_ARGS ${CXTPL_EXTRA_ARGS})
 
 add_custom_target(copy-generated-runtime-files ALL

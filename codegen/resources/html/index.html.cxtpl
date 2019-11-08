@@ -1,20 +1,42 @@
-﻿<!DOCTYPE html>
+﻿[[~ // parameters begin
+
+const std::string index_hello_path
+  = LOCAL_FILE("resources/html/index_hello.html");
+
+const std::string index_css_path
+  = LOCAL_FILE("resources/css/index.css");
+
+const std::string fonts_Ubuntu_path
+  = LOCAL_FILE("resources/fonts/Ubuntu-Regular.ttf");
+
+const std::string fonts_FreeSans_path
+  = LOCAL_FILE("resources/fonts/FreeSans.ttf");
+
+const std::string mouse_jpeg_path
+  = LOCAL_FILE("resources/images/mouse.jpeg");
+
+const std::string owl_png_path
+  = LOCAL_FILE("resources/images/owl.png");
+
+// parameters end
+~]][[~]] /* no newline */
+<!DOCTYPE html>
 <html dir="ltr" lang="en-gb">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>Emscripten-Generated Code</title>
-    <link rel="splashscreen" href="[[+ LOCAL_FILE("resources/html/index_hello.html") +]]">
-    <link rel="stylesheet" href="[[+ LOCAL_FILE("resources/css/index.css") +]]">
+    <link rel="splashscreen" href="[[+ index_hello_path +]]">
+    <link rel="stylesheet" href="[[+ index_css_path +]]">
     <style>
       @font-face {
           font-family: "UbuntuCustom";
-          src: url("[[+LOCAL_FILE("resources/fonts/Ubuntu-Regular.ttf")+]]");
+          src: url("[[+fonts_Ubuntu_path+]]");
       }
 
       @font-face {
           font-family: "FreeSansCustom";
-          src: url("[[+ LOCAL_FILE("resources/fonts/FreeSans.ttf") +]]");
+          src: url("[[+ fonts_FreeSans_path +]]");
       }
 
       #input_1 {
@@ -126,6 +148,36 @@
         </div>
     </div>
 </div>
+
+<div> g_platform_name is [[+ g_platform_name +]] </div>
+[[~]] /* no newline */
+[[~]] if(g_platform_type == PlatformType::HTML5 || g_platform_type == PlatformType::WEBGL) {
+<div> detected emscripten platform (HTML5 or WEBGL) </div>
+[[~]] }
+[[~]] /* no newline */
+[[~]] if(g_platform_type == PlatformType::WEBGL) {
+<div> detected WEBGL platform </div>
+[[~]] }
+[[~]] /* no newline */
+[[~]] if(g_platform_type == PlatformType::HTML5) {
+<div> detected HTML5 platform </div>
+[[~]] }
+[[~]] /* no newline */
+[[~]] if(g_platform_type == PlatformType::WIN) {
+<div> detected WINDOWS platform </div>
+[[~]] }
+[[~]] /* no newline */
+[[~]] if(g_platform_type == PlatformType::LINUX) {
+<div> detected LINUX platform </div>
+[[~]] }
+[[~]] /* no newline */
+[[~]] if(g_platform_type == PlatformType::MAC) {
+<div> detected MAC platform </div>
+[[~]] }
+[[~]] /* no newline */
+[[~]] if(g_platform_type == PlatformType::ANDROID) {
+<div> detected ANDROID platform </div>
+[[~]] }
 
 <div class="nested_scroll_container"
      I_on-wheel-scroll_I="scrollable_body">
@@ -302,7 +354,7 @@
     <div class="flip-card" style="z-index:999;">
       <div class="flip-card-inner">
         <div class="flip-card-front">
-          <div style="background-image: url('[[+ LOCAL_FILE("resources/images/mouse.jpeg") +]]'); width:300px; height:300px;">
+          <div style="background-image: url('[[+ mouse_jpeg_path +]]'); width:300px; height:300px;">
           </div>
         </div>
         <div class="flip-card-back">
@@ -511,13 +563,13 @@
     <div class="hovertest">hovertest</div>
     <!-- TODO: https://cobalt.foo/development/reference/supported-features.html
     img1<br>
-    <img src="file:///./resources/images/mouse.jpeg" width="200" height="200" style="border: 5px solid gray;"><br>
+    <img src="[[+ mouse_jpeg_path +]]" width="200" height="200" style="border: 5px solid gray;"><br>
     img2<br>
     -->
-    <div style="background-image: url('file:///./resources/images/mouse.jpeg'); width:200px; height:200px; border: 5px solid gray;animation: slidein 3s ease-in 1s infinite;">
+    <div style="background-image: url('[[+ mouse_jpeg_path +]]'); width:200px; height:200px; border: 5px solid gray;animation: slidein 3s ease-in 1s infinite;">
     </div><br>
     img3<br>
-    <div style="background-image: url('file:///./resources/images/owl.png'); width:200px; height:200px; border: 5px solid gray;animation: slidein 3s ease-in 1s infinite;">
+    <div style="background-image: url('[[+ owl_png_path +]]'); width:200px; height:200px; border: 5px solid gray;animation: slidein 3s ease-in 1s infinite;">
     </div><br>
 
     <div style="background-color:rgb(84, 208, 212);width:50px;I_width-x-px_I;width:800px;">

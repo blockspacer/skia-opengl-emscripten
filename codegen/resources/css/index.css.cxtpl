@@ -1,4 +1,11 @@
-﻿/*div:focus {
+﻿[[~ // parameters begin
+
+const std::string mouse_jpeg_path
+  = LOCAL_FILE("resources/images/mouse.jpeg");
+
+// parameters end
+~]][[~]] /* no newline */
+/*div:focus {
   border: 5px solid #f1f1f1;
   background-color:rgb(255, 255, 255) !important;
 }
@@ -364,7 +371,7 @@ a {
           transition: all .1s ease-out;
 }
 
-.share-button:active,
+/* NOTIMPLEMENTED (:active) .share-button:active,*/
 .share-button:focus,
 .share-button:hover {
   box-shadow: 0 0 4px rgba(0,0,0,.14),
@@ -392,7 +399,7 @@ a {
 
 .share-buttons-1 {
           transition-delay: 25ms;
-  background-image: url('[[+ LOCAL_FILE("resources/images/mouse.jpeg") +]]');
+  background-image: url('[[+ mouse_jpeg_path +]]');
   background-size: contain;
 }
 
@@ -402,7 +409,7 @@ a {
 
 .share-buttons-2 {
           transition-delay: 20ms;
-  background-image: url('[[+ LOCAL_FILE("resources/images/mouse.jpeg") +]]');
+  background-image: url('[[+ mouse_jpeg_path +]]');
   background-size: contain;
 }
 
@@ -412,7 +419,7 @@ a {
 
 .share-buttons-3 {
           transition-delay: 40ms;
-  background-image: url('[[+ LOCAL_FILE("resources/images/mouse.jpeg") +]]');
+  background-image: url('[[+ mouse_jpeg_path +]]');
   background-size: contain;
 }
 
@@ -422,7 +429,7 @@ a {
 
 .share-buttons-4 {
           transition-delay: 60ms;
-  background-image: url('[[+ LOCAL_FILE("resources/images/mouse.jpeg") +]]');
+  background-image: url('[[+ mouse_jpeg_path +]]');
   background-size: contain;
 }
 
