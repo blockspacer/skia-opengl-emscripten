@@ -14,7 +14,7 @@
 
 #include "starboard/common/mutex.h"
 
-#include <pthread.h>
+#include <windows.h>
 
 #include "starboard/shared/win_thread/is_success.h"
 
@@ -23,5 +23,8 @@ bool SbMutexCreate(SbMutex* mutex) {
     return false;
   }
 
-  return IsSuccess(WIN_THREAD_mutex_init(mutex, NULL));
+  //return IsSuccess(WIN_THREAD_mutex_init(mutex, NULL));
+  (*mutex) = SRWLOCK_INIT;
+
+  return true;
 }

@@ -15,7 +15,16 @@
 #include "starboard/common/log.h"
 
 #include <string.h>
-#include <unistd.h>
+#include <stdio.h>
+#include <stdarg.h>
+#include <io.h>
+
+// see https://github.com/chromium/chromium/blob/ccd149af47315e4c6f2fc45d55be1b271f39062c/base/logging.cc#L24
+#include <windows.h>
+// Windows warns on using write().  It prefers _write().
+#define write(fd, buf, count) _write(fd, buf, static_cast<unsigned int>(count))
+// Windows doesn't define STDERR_FILENO.  Define it here.
+#define STDERR_FILENO 2
 
 #include "starboard/shared/win/handle_eintr.h"
 

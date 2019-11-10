@@ -14,8 +14,9 @@
 
 #include "starboard/common/log.h"
 
-#include <unistd.h>
+#include <stdio.h>
+#include <io.h>
 
 bool SbLogIsTty() {
-  return isatty(STDERR_FILENO) == 1;
+  return _isatty( _fileno( stderr ) );
 }

@@ -16,7 +16,8 @@
 
 #include <stdio.h>
 #include <string.h>
-#include <unistd.h>
+#include <io.h>
+#include <stdarg.h>
 
 #if SB_API_VERSION >= 11
 #include "starboard/shared/starboard/log_mutex.h"

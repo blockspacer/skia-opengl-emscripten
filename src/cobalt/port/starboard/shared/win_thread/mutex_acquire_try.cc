@@ -14,17 +14,21 @@
 
 #include "starboard/common/mutex.h"
 
-#include <pthread.h>
-
 #include "starboard/shared/win_thread/is_success.h"
+
+#include <windows.h>
 
 SbMutexResult SbMutexAcquireTry(SbMutex* mutex) {
   if (!mutex) {
     return kSbMutexDestroyed;
   }
 
-  int result = WIN_THREAD_mutex_trylock(mutex);
+  /*int result = WIN_THREAD_mutex_trylock(mutex);
   if (IsSuccess(result)) {
+    return kSbMutexAcquired;
+  }*/
+  
+  if(!!::TryAcquireSRWLockExclusive(reinterpret_cast<PSRWLOCK>(mutex))) {
     return kSbMutexAcquired;
   }
 

@@ -14,14 +14,20 @@
 
 #include "starboard/common/mutex.h"
 
-#include <pthread.h>
+#include <windows.h>
 
 #include "starboard/shared/win_thread/is_success.h"
+
+// see https://github.com/blockspacer/skia-opengl-emscripten/blob/eed8d0d256897d8c3638646d4d864a81aa38af42/src/chromium/base/synchronization/lock_impl.h#L66
 
 bool SbMutexRelease(SbMutex* mutex) {
   if (!mutex) {
     return false;
   }
 
-  return IsSuccess(WIN_THREAD_mutex_unlock(mutex));
+  ::ReleaseSRWLockExclusive(reinterpret_cast<PSRWLOCK>(mutex));
+
+  return true;
+
+  //return IsSuccess(WIN_THREAD_mutex_unlock(mutex));
 }

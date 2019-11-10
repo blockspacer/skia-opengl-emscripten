@@ -25,12 +25,16 @@
 #include "base/macros.h"
 #include "build/build_config.h"
 #include "base/win/windows_types.h"
+#include "base/threading/thread_local_storage.h"
+#include "base/threading/thread.h"
 
 #include <windows.h>
 
 //#include <pthread.h>
 
 #include "starboard/shared/starboard/lazy_initialization_public.h"
+
+// see https://github.com/chromium/chromium/blob/c50dc3a2cea454eb0876c23a250c8d4c82b69469/base/win/windows_types.h#L128
 
 // --- SbConditionVariable ---
 
@@ -71,9 +75,17 @@ typedef INIT_ONCE SbOnceControl;
 // --- SbThread ---
 
 // Transparent pthread handle.
-typedef DWORD SbThread;
+//typedef base::Thread* SbThread; 
+//typedef base::PlatformThreadHandle SbThread; 
+typedef void* SbThread; // see PlatformThreadHandle
 
+#if defined(_WIN32) || defined(_WIN64)
+// Well-defined constant value to mean "no thread handle."
+//#define kSbThreadInvalid (SbThread)0
+#define kSbThreadInvalid (SbThread)0
+#else
 // Well-defined constant value to mean "no thread handle."
 #define kSbThreadInvalid (SbThread)-1
+#endif 
 
 #endif  // STARBOARD_SHARED_WIN_THREAD_TYPES_PUBLIC_H_

@@ -15,7 +15,9 @@
 #ifndef STARBOARD_SHARED_WIN_THREAD_THREAD_LOCAL_KEY_INTERNAL_H_
 #define STARBOARD_SHARED_WIN_THREAD_THREAD_LOCAL_KEY_INTERNAL_H_
 
-#include <pthread.h>
+//#include <pthread.h>
+#include "base/threading/thread_local_storage.h"
+#include "build/build_config.h"
 
 #include "starboard/shared/internal_only.h"
 #include "starboard/shared/win_thread/is_success.h"
@@ -23,7 +25,7 @@
 
 struct SbThreadLocalKeyPrivate {
   // The underlying thread-local variable handle.
-  WIN_THREAD_key_t key;
+  base::internal::PlatformThreadLocalStorage::TLSKey key;
 };
 
 #endif  // STARBOARD_SHARED_WIN_THREAD_THREAD_LOCAL_KEY_INTERNAL_H_

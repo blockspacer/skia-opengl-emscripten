@@ -14,10 +14,16 @@
 
 #include "starboard/common/condition_variable.h"
 
-#include <pthread.h>
-
 #include "starboard/shared/win_thread/is_success.h"
 #include "starboard/shared/starboard/lazy_initialization_internal.h"
+
+#include "base/optional.h"
+#include "base/synchronization/lock.h"
+#include "base/threading/scoped_blocking_call.h"
+#include "base/threading/thread_restrictions.h"
+#include "base/time/time.h"
+
+#include <windows.h>
 
 using starboard::shared::starboard::IsInitialized;
 
@@ -32,5 +38,9 @@ bool SbConditionVariableDestroy(SbConditionVariable* condition) {
     return true;
   }
 
-  return IsSuccess(WIN_THREAD_cond_destroy(&condition->condition));
+  // see https://github.com/blockspacer/skia-opengl-emscripten/blob/7318ee910f647ac5bc3337cc2002aa77391d12e6/src/chromium/base/synchronization/condition_variable_posix.cc#L53
+
+  //return IsSuccess(WIN_THREAD_cond_destroy(&condition->condition));
+
+  return true;
 }

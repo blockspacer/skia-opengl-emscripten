@@ -188,7 +188,11 @@ void PlayerWorker::UpdatePlayerError(const std::string& message) {
 #endif  // SB_HAS(PLAYER_ERROR_MESSAGE)
 
 // static
+#if defined(_WIN32) || defined(_WIN64)
+DWORD PlayerWorker::ThreadEntryPoint(void* context) {
+#else
 void* PlayerWorker::ThreadEntryPoint(void* context) {
+#endif
   ThreadParam* param = static_cast<ThreadParam*>(context);
   SB_DCHECK(param != NULL);
   PlayerWorker* player_worker = param->player_worker;

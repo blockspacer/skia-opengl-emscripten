@@ -250,6 +250,11 @@ class BASE_EXPORT Thread : PlatformThread::Delegate {
   // Returns true if the thread has been started, and not yet stopped.
   bool IsRunning() const;
 
+  // custom
+  base::PlatformThreadHandle GetUnsafePlatformThreadHandle() const {
+    return thread_;
+  }
+
  protected:
   // Called just prior to starting the message loop
   virtual void Init() {}

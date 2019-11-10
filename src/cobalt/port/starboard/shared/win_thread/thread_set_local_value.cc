@@ -14,7 +14,15 @@
 
 #include "starboard/thread.h"
 
-#include <pthread.h>
+//#include <pthread.h>
+
+#include "base/threading/thread.h"
+#include "base/threading/platform_thread.h"
+#include "base/threading/thread_local_storage.h"
+#include "base/atomicops.h"
+#include "base/logging.h"
+#include "base/synchronization/lock.h"
+#include "build/build_config.h"
 
 #include "starboard/shared/win_thread/thread_local_key_internal.h"
 
@@ -23,9 +31,13 @@ bool SbThreadSetLocalValue(SbThreadLocalKey key, void* value) {
     return false;
   }
 
-  if (IsSuccess(WIN_THREAD_setspecific(key->key, value))) {
+  /*if (IsSuccess(WIN_THREAD_setspecific(key->key, value))) {
     return true;
-  }
+  }*/
 
-  return false;
+  base::internal::PlatformThreadLocalStorage::SetTLSValue(key->key, value);
+
+  return true;
+
+  //return false;
 }

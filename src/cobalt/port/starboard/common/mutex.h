@@ -40,7 +40,11 @@ class Mutex {
   void debugSetReleased() const;
   void debugPreAcquire() const;
   void debugSetAcquired() const;
+#if defined(_WIN32) || defined(_WIN64)
   mutable SbThread current_thread_acquired_;
+#else
+  mutable SbThread current_thread_acquired_;
+#endif
 #else
   void debugInit();
   void debugSetReleased() const;

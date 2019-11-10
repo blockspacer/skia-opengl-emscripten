@@ -34,10 +34,10 @@ namespace win {
 namespace impl {
 
 bool FileCanOpen(const char* path, int flags) {
-  base::FilePath file_name;
-  file_name = file_name.Append(base::UTF8ToUTF16(path));
+  base::FilePath file_path;
+  file_path = file_path.Append(base::UTF8ToUTF16(path));
   base::File file;
-  file.Initialize(file_name, flags);
+  file.Initialize(file_path, flags);
 
   bool can_read = flags & kSbFileRead;
   bool can_write = flags & kSbFileWrite;

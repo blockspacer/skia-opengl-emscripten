@@ -14,15 +14,25 @@
 
 #include "starboard/common/condition_variable.h"
 
-#include <pthread.h>
-
 #include "starboard/shared/win_thread/is_success.h"
 #include "starboard/shared/starboard/lazy_initialization_internal.h"
 
+#include "base/synchronization/condition_variable.h"
+
+#include "base/optional.h"
+#include "base/synchronization/lock.h"
+#include "base/threading/scoped_blocking_call.h"
+#include "base/threading/thread_restrictions.h"
+#include "base/time/time.h"
+
+#include <windows.h>
+
 using starboard::shared::starboard::SetInitialized;
 
+// see https://github.com/blockspacer/skia-opengl-emscripten/blob/7318ee910f647ac5bc3337cc2002aa77391d12e6/src/chromium/base/synchronization/condition_variable_posix.cc#L42
+
 namespace {
-struct ConditionVariableAttributes {
+/*struct ConditionVariableAttributes {
  public:
   ConditionVariableAttributes() {
     valid_ = IsSuccess(WIN_THREAD_condattr_init(&attributes_));
@@ -39,7 +49,8 @@ struct ConditionVariableAttributes {
  private:
   bool valid_;
   WIN_THREAD_condattr_t attributes_;
-};
+};*/
+
 }  // namespace
 
 bool SbConditionVariableCreate(SbConditionVariable* out_condition,
@@ -48,7 +59,7 @@ bool SbConditionVariableCreate(SbConditionVariable* out_condition,
     return false;
   }
 
-  ConditionVariableAttributes attributes;
+  /*ConditionVariableAttributes attributes;
   if (!attributes.valid()) {
     SB_DLOG(ERROR) << "Failed to call WIN_THREAD_condattr_init().";
     return false;
@@ -66,7 +77,12 @@ bool SbConditionVariableCreate(SbConditionVariable* out_condition,
 #endif  // !SB_HAS_QUIRK(NO_CONDATTR_SETCLOCK_SUPPORT)
 
   bool status = IsSuccess(WIN_THREAD_cond_init(
-                    &out_condition->condition, attributes.attributes()));
+                    &out_condition->condition, attributes.attributes()));*/
+
+  bool status = true;
+
+  // see https://github.com/blockspacer/skia-opengl-emscripten/blob/bb16ab108bc4018890f4ff3179250b76c0d9053b/src/chromium/third_party/libwebp/src/utils/thread_utils.c#L146
+  InitializeConditionVariable(reinterpret_cast<PCONDITION_VARIABLE>(&out_condition->condition));
 
   // We mark that we are initialized regardless of whether initialization
   // was successful or not.

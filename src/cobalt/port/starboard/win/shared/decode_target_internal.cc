@@ -14,21 +14,22 @@
 
 #include "starboard/win/shared/decode_target_internal.h"
 
-#if SB_HAS(GLES2)
+ /// \todo
+/*#if SB_HAS(GLES2)
 #include <EGL/egl.h>
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
 
 #include "starboard/shared/gles/gl_call.h"
-#endif
+#endif*/
 
 #include "starboard/decode_target.h"
 
 SbDecodeTargetPrivate::Data::~Data() {
-#if SB_HAS(GLES2)
+/*#if SB_HAS(GLES2)
   glDeleteTextures(1, &info.planes[0].texture);
   SB_DCHECK(glGetError() == GL_NO_ERROR);
-#endif
+#endif*/
 }
 
 namespace starboard {
@@ -51,7 +52,7 @@ struct CreateParamsForImage {
   SbDecodeTargetFormat format;
 };
 
-#if SB_HAS(GLES2)
+/*#if SB_HAS(GLES2)
 void CreateTargetFromVideoFrameWithContextRunner(void* context) {
   CreateParamsForVideoFrame* params =
       static_cast<CreateParamsForVideoFrame*>(context);
@@ -175,7 +176,7 @@ void CreateTargetFromImageWithContextRunner(void* context) {
   target_info.width = params->width;
   target_info.height = params->height;
 }
-#endif
+#endif*/
 
 }  // namespace
 
@@ -187,7 +188,7 @@ SbDecodeTarget DecodeTargetCreate(
   params.decode_target_out = decode_target;
   params.frame = frame;
 
-#if SB_HAS(GLES2)
+/*#if SB_HAS(GLES2)
   if (!provider) {
     if (SbDecodeTargetIsValid(params.decode_target_out)) {
       // Should the decode target have been created and the GLES context been
@@ -199,7 +200,7 @@ SbDecodeTarget DecodeTargetCreate(
     SbDecodeTargetRunInGlesContext(
         provider, &CreateTargetFromVideoFrameWithContextRunner, &params);
   }
-#endif
+#endif*/
 
   return params.decode_target_out;
 }
@@ -219,10 +220,10 @@ SbDecodeTarget DecodeTargetCreate(
   params.height = height;
   params.format = format;
 
-#if SB_HAS(GLES2)
+/*#if SB_HAS(GLES2)
   SbDecodeTargetRunInGlesContext(
       provider, &CreateTargetFromImageWithContextRunner, &params);
-#endif
+#endif*/
 
   return params.decode_target_out;
 }
@@ -230,10 +231,10 @@ SbDecodeTarget DecodeTargetCreate(
 void DecodeTargetRelease(SbDecodeTargetGraphicsContextProvider*
                              decode_target_graphics_context_provider,
                          SbDecodeTarget decode_target) {
-#if SB_HAS(GLES2)
+/*#if SB_HAS(GLES2)
   SbDecodeTargetReleaseInGlesContext(decode_target_graphics_context_provider,
                                      decode_target);
-#endif
+#endif*/
 }
 
 SbDecodeTarget DecodeTargetCopy(SbDecodeTarget decode_target) {

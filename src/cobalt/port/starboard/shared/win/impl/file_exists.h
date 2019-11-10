@@ -37,10 +37,10 @@ namespace impl {
 bool FileExists(const char* path) {
   /*struct stat file_info;
   return stat(path, &file_info) == 0;*/
-  base::FilePath file_name;
-  file_name = file_name.Append(base::UTF8ToUTF16(path));
+  base::FilePath file_path;
+  file_path = file_path.Append(base::UTF8ToUTF16(path));
 
-  return base::PathExists(file_name);
+  return base::PathExists(file_path);
 }
 
 }  // namespace impl

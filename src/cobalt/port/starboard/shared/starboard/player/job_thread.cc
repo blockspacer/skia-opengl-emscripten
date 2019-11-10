@@ -54,7 +54,11 @@ JobThread::~JobThread() {
 }
 
 // static
+#if defined(_WIN32) || defined(_WIN64)
+DWORD JobThread::ThreadEntryPoint(void* context) {
+#else
 void* JobThread::ThreadEntryPoint(void* context) {
+#endif
   ThreadParam* param = static_cast<ThreadParam*>(context);
   SB_DCHECK(param != NULL);
   JobThread* job_thread = param->job_thread;

@@ -1575,6 +1575,11 @@ else()
  set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_SUPPORT_GPU=0") # skia_enable_gpu
 endif(USE_SK_GPU)
 
+# TODO
+# SK_GAMMA_SRGB
+#"SK_GAMMA_EXPONENT=1.4",
+#"SK_GAMMA_CONTRAST=0.0",
+
 set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_DISABLE_READBUFFER=1")
 #set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DLIBANGLE_IMPLEMENTATION=1")
 #set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DLIBGLESV2_IMPLEMENTATION=1")
@@ -2298,14 +2303,9 @@ else() # NOT EMSCRIPTEN
   elseif(TARGET_EMSCRIPTEN)
     # skip
   elseif(TARGET_WINDOWS)
-    # TODO: TARGET_WINDOWS
-    set(HAS_GLEW_LIB FALSE)
     find_package(GLEW REQUIRED) # First try to find using the find_package method (works with vcpkg)
-    if(GLEW_FOUND) # Works with some other methods
-      message(STATUS "GLEW_INCLUDE_PATH=${GLEW_INCLUDE_PATH}")
-      message(STATUS "GLEW_LIBRARY=${GLEW_LIBRARY}")
-      set(HAS_GLEW_LIB TRUE)
-    endif(GLEW_FOUND)
+    message(STATUS "GLEW_INCLUDE_PATH=${GLEW_INCLUDE_PATH}")
+    message(STATUS "GLEW_LIBRARY=${GLEW_LIBRARY}")
   else()
     message(FATAL_ERROR "platform not supported")
   endif()
@@ -2417,14 +2417,6 @@ else() # NOT EMSCRIPTEN
   #  message(STATUS "SDL2_TTF_LIBRARY = ${SDL2_TTF_LIBRARY} ")
   #  add_definitions(-DUSE_SDL2_ttf_LIB)
   #endif ()
-
-  #set(HAS_GLEW_LIB FALSE)
-  #find_package(GLEW REQUIRED) # First try to find using the find_package method (works with vcpkg)
-  #if(GLEW_FOUND) # Works with some other methods
-  #  message(STATUS "GLEW_INCLUDE_PATH=${GLEW_INCLUDE_PATH}")
-  #  message(STATUS "GLEW_LIBRARY=${GLEW_LIBRARY}")
-  #  set(HAS_GLEW_LIB TRUE)
-  #endif()
 
   if(USE_SYSTEM_ZLIB)
     #message(FATAL_ERROR "NOT SUPPORTED") # TODO
@@ -3100,7 +3092,6 @@ if(TARGET_EMSCRIPTEN)
 else()
   target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE
     ${SKIA_INCLUDES}
-    #${GLEW_INCLUDE_PATH}
     ${FOUND_OPENGL_INCLUDE_DIR}
     ${SDL2_INCLUDE_DIR}
     "${SDL2_INCLUDE_DIR}/.."
@@ -3161,7 +3152,7 @@ else()
 
     # see https://stackoverflow.com/questions/39110217/linker-errors-from-sdl2-in-my-project
     # SDL2main goes before SDL2. Linking order matters.
-    SDL2::Main
+    #SDL2::Main
     #SDL2::SDL2main
     #"C:/Program Files (x86)/SDL2/lib/SDL2main.lib"
     #"C:/Program Files (x86)/SDL2/lib/SDL2-static.lib"

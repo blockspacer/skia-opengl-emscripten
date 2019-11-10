@@ -19,12 +19,17 @@
 
 #include "starboard/file.h"
 
-#include <unistd.h>
-
 #include "starboard/shared/win/handle_eintr.h"
 
 #include "starboard/shared/internal_only.h"
 #include "starboard/shared/win/impl/file_impl.h"
+
+#include "base/files/file.h"
+#include "base/files/file_enumerator.h"
+#include "base/files/file_path.h"
+#include "base/files/file_util.h"
+#include "base/files/scoped_temp_dir.h"
+#include "base/strings/utf_string_conversions.h"
 
 namespace starboard {
 namespace shared {
@@ -32,11 +37,14 @@ namespace win {
 namespace impl {
 
 int FileWrite(SbFile file, const char* data, int size) {
-  if (!file || file->descriptor < 0 || size < 0) {
+  if (!file || !file->descriptor.IsValid() || size < 0) {
     return -1;
   }
 
-  return HANDLE_EINTR(write(file->descriptor, data, size));
+  //return HANDLE_EINTR(write(file->descriptor, data, size));
+
+  // see https://github.com/chromium/chromium/blob/ccd149af47315e4c6f2fc45d55be1b271f39062c/base/files/file.h#L237
+  return file->descriptor.Write(/*offset*/ 0, data, size);
 }
 
 }  // namespace impl

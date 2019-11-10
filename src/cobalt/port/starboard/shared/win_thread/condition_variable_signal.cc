@@ -14,10 +14,14 @@
 
 #include "starboard/common/condition_variable.h"
 
-#include <pthread.h>
-
 #include "starboard/shared/win_thread/is_success.h"
 #include "starboard/shared/starboard/lazy_initialization_internal.h"
+
+#include "base/optional.h"
+#include "base/synchronization/lock.h"
+#include "base/threading/scoped_blocking_call.h"
+#include "base/threading/thread_restrictions.h"
+#include "base/time/time.h"
 
 using starboard::shared::starboard::IsInitialized;
 
@@ -32,5 +36,9 @@ bool SbConditionVariableSignal(SbConditionVariable* condition) {
     return true;
   }
 
-  return IsSuccess(WIN_THREAD_cond_signal(&condition->condition));
+  //return IsSuccess(WIN_THREAD_cond_signal(&condition->condition));
+
+  WakeConditionVariable(reinterpret_cast<PCONDITION_VARIABLE>(&condition->condition));
+
+  return true;
 }

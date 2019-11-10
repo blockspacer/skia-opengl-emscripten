@@ -14,17 +14,71 @@
 
 #include "starboard/common/condition_variable.h"
 
-#include <errno.h>
-#include <pthread.h>
-#include <time.h>
-
-#include "starboard/shared/posix/time_internal.h"
+#include "starboard/shared/win/time_internal.h"
 #include "starboard/shared/win_thread/is_success.h"
 #include "starboard/shared/starboard/lazy_initialization_internal.h"
 #include "starboard/time.h"
 
+#include "base/optional.h"
+#include "base/synchronization/lock.h"
+#include "base/threading/scoped_blocking_call.h"
+#include "base/threading/thread_restrictions.h"
+#include "base/time/time.h"
+
 using starboard::shared::starboard::EnsureInitialized;
 
+// see https://github.com/blockspacer/skia-opengl-emscripten/blob/7318ee910f647ac5bc3337cc2002aa77391d12e6/src/chromium/base/synchronization/condition_variable_posix.cc#L110
+
+SbConditionVariableResult SbConditionVariableWaitTimed(
+    SbConditionVariable* condition,
+    SbMutex* mutex,
+    SbTime timeout) {
+  if (!condition || !mutex) {
+    return kSbConditionVariableFailed;
+  }
+
+  if (timeout < 0) {
+    timeout = 0;
+  }
+
+  if (!EnsureInitialized(&condition->initialized_state)) {
+    // The condition variable is set to SB_CONDITION_VARIABLE_INITIALIZER and
+    // is uninitialized, so call SbConditionVariableCreate() to initialize the
+    // condition variable. SbConditionVariableCreate() is responsible for
+    // marking the variable as initialized.
+    SbConditionVariableCreate(condition, mutex);
+  }
+
+  DWORD timeout_dword = static_cast<DWORD>(timeout /*InMilliseconds ??? */);
+
+  if (!SleepConditionVariableSRW(reinterpret_cast<PCONDITION_VARIABLE>(&condition->condition),
+                                 reinterpret_cast<PSRWLOCK>(mutex), timeout_dword,
+                                 0)) {
+    // On failure, we only expect the CV to timeout. Any other error value means
+    // that we've unexpectedly woken up.
+    // Note that WAIT_TIMEOUT != ERROR_TIMEOUT. WAIT_TIMEOUT is used with the
+    // WaitFor* family of functions as a direct return value. ERROR_TIMEOUT is
+    // used with GetLastError().
+    DCHECK_EQ(static_cast<DWORD>(ERROR_TIMEOUT), GetLastError());
+    return kSbConditionVariableTimedOut;
+  }
+
+  /*int result =
+      WIN_THREAD_cond_timedwait(&condition->condition, mutex, &timeout_ts);
+  if (IsSuccess(result)) {
+    return kSbConditionVariableSignaled;
+  }
+
+  if (result == ETIMEDOUT) {
+    return kSbConditionVariableTimedOut;
+  }
+
+  return kSbConditionVariableFailed;*/
+
+  return kSbConditionVariableSignaled;
+}
+
+#if 0
 SbConditionVariableResult SbConditionVariableWaitTimed(
     SbConditionVariable* condition,
     SbMutex* mutex,
@@ -74,3 +128,4 @@ SbConditionVariableResult SbConditionVariableWaitTimed(
 
   return kSbConditionVariableFailed;
 }
+#endif // 0

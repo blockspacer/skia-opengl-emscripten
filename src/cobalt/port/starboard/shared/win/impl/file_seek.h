@@ -19,10 +19,15 @@
 
 #include "starboard/file.h"
 
-#include <unistd.h>
-
 #include "starboard/shared/internal_only.h"
 #include "starboard/shared/win/impl/file_impl.h"
+
+#include "base/files/file.h"
+#include "base/files/file_enumerator.h"
+#include "base/files/file_path.h"
+#include "base/files/file_util.h"
+#include "base/files/scoped_temp_dir.h"
+#include "base/strings/utf_string_conversions.h"
 
 namespace starboard {
 namespace shared {
@@ -30,12 +35,34 @@ namespace win {
 namespace impl {
 
 int64_t FileSeek(SbFile file, SbFileWhence whence, int64_t offset) {
-  if (!file || file->descriptor < 0) {
+  if (!file || !file->descriptor.IsValid()) {
     return -1;
   }
 
-  return lseek(file->descriptor, static_cast<off_t>(offset),
-               static_cast<int>(whence));
+  /*
+  If whence is SEEK_SET, the file offset shall be set to offset bytes.
+
+  If whence is SEEK_CUR, the file offset shall be set to its current location plus offset.
+
+  If whence is SEEK_END, the file offset shall be set to the size of the file plus offset.
+  */
+  /*return lseek(file->descriptor, static_cast<off_t>(offset),
+               static_cast<int>(whence));*/
+
+  // see https://github.com/chromium/chromium/blob/ccd149af47315e4c6f2fc45d55be1b271f39062c/base/files/file.h#L202
+  return file->descriptor.Seek(
+    /*
+    // This explicit mapping matches both FILE_ on Windows and SEEK_ on Linux.
+    enum Whence {
+      FROM_BEGIN   = 0,
+      FROM_CURRENT = 1,
+      FROM_END     = 2
+    };
+    */
+    // see https://github.com/chromium/chromium/blob/d1c11daad4acf661af37668b2a04148ccca4f9f6/base/files/file.h#L111
+    static_cast<base::File::Whence>(static_cast<int>(whence)), 
+    static_cast<off_t>(offset)
+  );
 }
 
 }  // namespace impl

@@ -14,12 +14,18 @@
 
 #include "starboard/common/condition_variable.h"
 
-#include <pthread.h>
-
 #include "starboard/shared/win_thread/is_success.h"
 #include "starboard/shared/starboard/lazy_initialization_internal.h"
 
+#include "base/optional.h"
+#include "base/synchronization/lock.h"
+#include "base/threading/scoped_blocking_call.h"
+#include "base/threading/thread_restrictions.h"
+#include "base/time/time.h"
+
 using starboard::shared::starboard::EnsureInitialized;
+
+// see https://github.com/blockspacer/skia-opengl-emscripten/blob/7318ee910f647ac5bc3337cc2002aa77391d12e6/src/chromium/base/synchronization/condition_variable_win.cc#L29
 
 SbConditionVariableResult SbConditionVariableWait(
     SbConditionVariable* condition,
@@ -36,9 +42,11 @@ SbConditionVariableResult SbConditionVariableWait(
     SbConditionVariableCreate(condition, mutex);
   }
 
-  if (IsSuccess(WIN_THREAD_cond_wait(&condition->condition, mutex))) {
+  /*if (IsSuccess(WIN_THREAD_cond_wait(&condition->condition, mutex))) {
     return kSbConditionVariableSignaled;
   }
 
-  return kSbConditionVariableFailed;
+  return kSbConditionVariableFailed;*/
+
+  return SbConditionVariableWaitTimed(condition,  mutex, kSbInt64Max);
 }

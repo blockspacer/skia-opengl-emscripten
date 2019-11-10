@@ -1,69 +1,31 @@
-## TODO
+# About
 
-DENABLE_COBALT
+Guide: how to build on Windows.
 
-single_thread_task_runner.cc.obj : warning LNK4221: This object file does not define any previously undefined public symbols, so it will not be used by any link operation that consumes this library
-scoped_file.cc.obj : warning LNK4221: This object file does not define any previously undefined public symbols, so it will not be used by any link operation that consumes this library
+Tested on 
+Win 10 x64
+MS VS 2017
 
-In file included from ..\src\chromium\ui\gl\gl_image_stub.cc:7:
-C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\um\GL/gl.h(1157,1): error: unknown type name 'WINGDIAPI'
-WINGDIAPI void APIENTRY glAccum (GLenum op, GLfloat value);
-^
-C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\um\GL/gl.h(1157,24): error: expected ';' after top level declarator
-WINGDIAPI void APIENTRY glAccum (GLenum op, GLfloat value);
-                       ^
-C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\um\GL/gl.h(1158,1): error: unknown type name 'WINGDIAPI'
-WINGDIAPI void APIENTRY glAlphaFunc (GLenum func, GLclampf ref);
-^
-C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\um\GL/gl.h(1158,24): error: expected ';' after top level declarator
-WINGDIAPI void APIENTRY glAlphaFunc (GLenum func, GLclampf ref);
-                       ^
-C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\um\GL/gl.h(1159,1): error: unknown type name 'WINGDIAPI'
-WINGDIAPI GLboolean APIENTRY glAreTexturesResident (GLsizei n, const GLuint *textures, GLboolean *residences);
-^
-C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\um\GL/gl.h(1159,20): error: expected ';' after top level declarator
-WINGDIAPI GLboolean APIENTRY glAreTexturesResident (GLsizei n, const GLuint *textures, GLboolean *residences);
-                   ^
-C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\um\GL/gl.h(1160,1): error: unknown type name 'WINGDIAPI'
-WINGDIAPI void APIENTRY glArrayElement (GLint i);
-^
-C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\um\GL/gl.h(1160,24): error: expected ';' after top level declarator
-WINGDIAPI void APIENTRY glArrayElement (GLint i);
-                       ^
-C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\um\GL/gl.h(1161,1): error: unknown type name 'WINGDIAPI'
-WINGDIAPI void APIENTRY glBegin (GLenum mode);
-^
-C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\um\GL/gl.h(1161,24): error: expected ';' after top level declarator
-WINGDIAPI void APIENTRY glBegin (GLenum mode);
-                       ^
-C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\um\GL/gl.h(1162,1): error: unknown type name 'WINGDIAPI'
-WINGDIAPI void APIENTRY glBindTexture (GLenum target, GLuint texture);
-^
-C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\um\GL/gl.h(1162,24): error: expected ';' after top level declarator
-WINGDIAPI void APIENTRY glBindTexture (GLenum target, GLuint texture);
-                       ^
-C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\um\GL/gl.h(1163,1): error: unknown type name 'WINGDIAPI'
-WINGDIAPI void APIENTRY glBitmap (GLsizei width, GLsizei height, GLfloat xorig, GLfloat yorig, GLfloat xmove, GLfloat ymove, const GLubyte *bitmap);
-^
-C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\um\GL/gl.h(1163,24): error: expected ';' after top level declarator
-WINGDIAPI void APIENTRY glBitmap (GLsizei width, GLsizei height, GLfloat xorig, GLfloat yorig, GLfloat xmove, GLfloat ymove, const GLubyte *bitmap);
-                       ^
-C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\um\GL/gl.h(1164,1): error: unknown type name 'WINGDIAPI'
-WINGDIAPI void APIENTRY glBlendFunc (GLenum sfactor, GLenum dfactor);
-^
-C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\um\GL/gl.h(1164,24): error: expected ';' after top level declarator
-WINGDIAPI void APIENTRY glBlendFunc (GLenum sfactor, GLenum dfactor);
-                       ^
-C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\um\GL/gl.h(1165,1): error: unknown type name 'WINGDIAPI'
-WINGDIAPI void APIENTRY glCallList (GLuint list);
-^
-C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\um\GL/gl.h(1165,24): error: expected ';' after top level declarator
-WINGDIAPI void APIENTRY glCallList (GLuint list);
-                       ^
-C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\um\GL/gl.h(1166,1): error: unknown type name 'WINGDIAPI'
-WINGDIAPI void APIENTRY glCallLists (GLsizei n, GLenum type, const GLvoid *lists);
-^
-fatal error: too many errors emitted, stopping now [-ferror-limit=]
+```cmd
+python --version
+Python 2.7.2
+```
+
+```cmd
+clang-cl --version
+clang version 9.0.0 (tags/RELEASE_900/final)
+Target: x86_64-pc-windows-msvc
+Thread model: posix
+InstalledDir: C:/Program Files/LLVM/bin
+```
+
+```cmd
+cmake version 3.12.18081601-MSVC_2
+```
+
+```cmd
+glew-2.1.0/lib/Release/x64/glew32s.lib
+```
 
 ## Before build
 
@@ -428,7 +390,7 @@ cd build
 # "-DCMAKE_LINKER=C:/Program Files/LLVM/bin/lld-link.exe" -DCMAKE_C_FLAGS_DEBUG:INTERNAL="/MDd" 
 # "-DCMAKE_LINKER=C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.16.27023\bin\Hostx64\x64\link.exe"
 # -UCMAKE_LINKER -UCMAKE_C_FLAGS_DEBUG
-cmake -G Ninja -DEXT_SKIA_ALWAYS_BUILD=ON "-DCMAKE_LINKER=C:/Program Files/LLVM/bin/lld-link.exe" -DCMAKE_SYSTEM_NAME="Windows" -DIS_CLANG_CL=TRUE -DENABLE_COBALT=FALSE -DCMAKE_BUILD_TYPE="Debug" "-DCMAKE_C_COMPILER=C:/Program Files/LLVM/bin/clang-cl.exe" "-DCMAKE_CXX_COMPILER=C:/Program Files/LLVM/bin/clang-cl.exe" -DRELEASE_BUILD=OFF -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ..
+cmake -G Ninja -DENABLE_COBALT=TRUE -DEXT_SKIA_ALWAYS_BUILD=ON "-DCMAKE_LINKER=C:/Program Files/LLVM/bin/lld-link.exe" -DCMAKE_SYSTEM_NAME="Windows" -DIS_CLANG_CL=TRUE -DCMAKE_BUILD_TYPE="Debug" "-DCMAKE_C_COMPILER=C:/Program Files/LLVM/bin/clang-cl.exe" "-DCMAKE_CXX_COMPILER=C:/Program Files/LLVM/bin/clang-cl.exe" -DRELEASE_BUILD=OFF -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ..
 #
 # cmake -G "Visual Studio 15 2017 Win64" ..
 # cmake --build . --parallel 8

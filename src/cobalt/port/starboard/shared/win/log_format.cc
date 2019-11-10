@@ -16,7 +16,8 @@
 
 #include <stdarg.h>
 #include <stdio.h>
-#include <unistd.h>
+#include <stdarg.h>
+#include <io.h>
 
 #include "starboard/shared/win/handle_eintr.h"
 

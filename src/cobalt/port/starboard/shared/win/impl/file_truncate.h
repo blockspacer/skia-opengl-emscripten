@@ -19,12 +19,17 @@
 
 #include "starboard/file.h"
 
-#include <unistd.h>
-
 #include "starboard/shared/win/handle_eintr.h"
 
 #include "starboard/shared/internal_only.h"
 #include "starboard/shared/win/impl/file_impl.h"
+
+#include "base/files/file.h"
+#include "base/files/file_enumerator.h"
+#include "base/files/file_path.h"
+#include "base/files/file_util.h"
+#include "base/files/scoped_temp_dir.h"
+#include "base/strings/utf_string_conversions.h"
 
 namespace starboard {
 namespace shared {
@@ -32,11 +37,12 @@ namespace win {
 namespace impl {
 
 bool FileTruncate(SbFile file, int64_t length) {
-  if (!file || file->descriptor < 0 || length < 0) {
+  if (!file || !file->descriptor.IsValid() || length < 0) {
     return false;
   }
 
-  return !HANDLE_EINTR(ftruncate(file->descriptor, length));
+  //return !HANDLE_EINTR(ftruncate(file->descriptor, length));
+  return file->descriptor.SetLength(length);
 }
 
 }  // namespace impl

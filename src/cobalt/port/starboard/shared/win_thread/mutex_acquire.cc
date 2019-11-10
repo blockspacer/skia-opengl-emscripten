@@ -14,19 +14,34 @@
 
 #include "starboard/common/mutex.h"
 
-#include <pthread.h>
-
 #include "starboard/shared/win_thread/is_success.h"
+
+#include <windows.h>
+
+/*
+// see https://github.com/blockspacer/skia-opengl-emscripten/blob/eed8d0d256897d8c3638646d4d864a81aa38af42/src/chromium/base/synchronization/lock_impl_posix.cc#L89
+bool LockTry(SbMutex* mutex) {
+  return !!::TryAcquireSRWLockExclusive(
+      reinterpret_cast<PSRWLOCK>(mutex));
+}*/
 
 SbMutexResult SbMutexAcquire(SbMutex* mutex) {
   if (!mutex) {
     return kSbMutexDestroyed;
   }
 
-  int result = WIN_THREAD_mutex_lock(mutex);
+  /*if(!LockTry) {
+    return kSbMutexBusy;
+  }*/
+
+  /*int result = WIN_THREAD_mutex_lock(mutex);
   if (IsSuccess(result)) {
     return kSbMutexAcquired;
-  }
+  }*/
 
-  return kSbMutexBusy;
+  ::AcquireSRWLockExclusive(reinterpret_cast<PSRWLOCK>(mutex));
+
+  //return kSbMutexBusy;
+
+  return kSbMutexAcquired;
 }

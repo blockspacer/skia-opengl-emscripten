@@ -17,9 +17,11 @@
 
 #include "starboard/atomic.h"
 
-#ifdef __cplusplus
+/*#ifdef __cplusplus
 extern "C" {
-#endif
+#endif*/
+
+// see https://github.com/blockspacer/skia-opengl-emscripten/blob/a47f44f6210c09f56f3e21def5b3f300366adb86/src/chromium/tcmalloc_wrapper/third_party/tcmalloc/chromium/src/base/atomicops-internals-windows.h#L47
 
 static SB_C_FORCE_INLINE SbAtomic32
 SbAtomicNoBarrier_CompareAndSwap(volatile SbAtomic32* ptr,
@@ -201,8 +203,8 @@ SbAtomicRelease_Load64(volatile const SbAtomic64* ptr) {
 }
 #endif  // SB_HAS(64_BIT_ATOMICS)
 
-#ifdef __cplusplus
+/*#ifdef __cplusplus
 }  // extern "C"
-#endif
+#endif*/
 
 #endif  // STARBOARD_SHARED_GCC_ATOMIC_GCC_PUBLIC_H_

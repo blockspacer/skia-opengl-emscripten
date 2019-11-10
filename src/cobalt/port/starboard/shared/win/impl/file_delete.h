@@ -55,11 +55,11 @@ bool FileDelete(const char* path) {
 
   return !unlink(path);*/
   
-  base::FilePath file_name;
-  file_name = file_name.Append(base::UTF8ToUTF16(path));
-  
+  base::FilePath file_path;
+  file_path = file_path.Append(base::UTF8ToUTF16(path));
+
   /// \TODO use DeleteFileRecursively - Deletes the given path, whether it's a file or a directory.
-  if (!base::DeleteFile(file_name, /*Recursively*/true)) {
+  if (!base::DeleteFile(file_path, /*Recursively*/true)) {
     return false;
   }
 

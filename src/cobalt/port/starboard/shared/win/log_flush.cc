@@ -15,7 +15,8 @@
 #include "starboard/common/log.h"
 
 #include <stdio.h>
-#include <unistd.h>
+#include <stdarg.h>
+#include <io.h>
 
 void SbLogFlush() {
   fflush(stderr);

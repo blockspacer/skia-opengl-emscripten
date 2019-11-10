@@ -54,11 +54,19 @@ void SimpleThread::SleepMilliseconds(int value) {
   return Sleep(value * kSbTimeMillisecond);
 }
 
+#if defined(_WIN32) || defined(_WIN64)
+DWORD SimpleThread::ThreadEntryPoint(void* context) {
+  SimpleThread* this_ptr = static_cast<SimpleThread*>(context);
+  this_ptr->Run();
+  return NULL;
+}
+#else
 void* SimpleThread::ThreadEntryPoint(void* context) {
   SimpleThread* this_ptr = static_cast<SimpleThread*>(context);
   this_ptr->Run();
   return NULL;
 }
+#endif
 
 void SimpleThread::Join() {
   SB_DCHECK(join_called_.load() == false);

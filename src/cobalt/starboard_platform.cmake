@@ -373,53 +373,53 @@ if(TARGET_LINUX OR TARGET_EMSCRIPTEN)
   )
 elseif(TARGET_WINDOWS)
   list(APPEND starboard_platform_SOURCES
-    # # ${COBALT_PORT_DIR}/starboard/shared/win_thread/condition_variable_broadcast.cc
-    # # ${COBALT_PORT_DIR}/starboard/shared/win_thread/condition_variable_create.cc
-    # # ${COBALT_PORT_DIR}/starboard/shared/win_thread/condition_variable_destroy.cc
-    # # ${COBALT_PORT_DIR}/starboard/shared/win_thread/condition_variable_signal.cc
-    # # ${COBALT_PORT_DIR}/starboard/shared/win_thread/condition_variable_wait.cc
-    # # ${COBALT_PORT_DIR}/starboard/shared/win_thread/condition_variable_wait_timed.cc
-    # # ${COBALT_PORT_DIR}/starboard/shared/win_thread/mutex_acquire.cc
-    # # ${COBALT_PORT_DIR}/starboard/shared/win_thread/mutex_acquire_try.cc
-    # # ${COBALT_PORT_DIR}/starboard/shared/win_thread/mutex_create.cc
-    # # ${COBALT_PORT_DIR}/starboard/shared/win_thread/mutex_destroy.cc
-    # # ${COBALT_PORT_DIR}/starboard/shared/win_thread/mutex_release.cc
+    ${COBALT_PORT_DIR}/starboard/shared/win_thread/condition_variable_broadcast.cc
+    ${COBALT_PORT_DIR}/starboard/shared/win_thread/condition_variable_create.cc
+    ${COBALT_PORT_DIR}/starboard/shared/win_thread/condition_variable_destroy.cc
+    ${COBALT_PORT_DIR}/starboard/shared/win_thread/condition_variable_signal.cc
+    ${COBALT_PORT_DIR}/starboard/shared/win_thread/condition_variable_wait.cc
+    ${COBALT_PORT_DIR}/starboard/shared/win_thread/condition_variable_wait_timed.cc
+    ${COBALT_PORT_DIR}/starboard/shared/win_thread/mutex_acquire.cc
+    ${COBALT_PORT_DIR}/starboard/shared/win_thread/mutex_acquire_try.cc
+    ${COBALT_PORT_DIR}/starboard/shared/win_thread/mutex_create.cc
+    ${COBALT_PORT_DIR}/starboard/shared/win_thread/mutex_destroy.cc
+    ${COBALT_PORT_DIR}/starboard/shared/win_thread/mutex_release.cc
     # # ${COBALT_PORT_DIR}/starboard/shared/win_thread/thread_context_get_pointer.cc
     # # ${COBALT_PORT_DIR}/starboard/shared/win_thread/thread_context_internal.h
-    # # ${COBALT_PORT_DIR}/starboard/shared/win_thread/once.cc
-    # # ${COBALT_PORT_DIR}/starboard/shared/win_thread/thread_create.cc
-    # # ${COBALT_PORT_DIR}/starboard/shared/win_thread/thread_create_local_key.cc
-    # # ${COBALT_PORT_DIR}/starboard/shared/win_thread/thread_create_priority.h
-    # # ${COBALT_PORT_DIR}/starboard/shared/win_thread/thread_destroy_local_key.cc
-    # # ${COBALT_PORT_DIR}/starboard/shared/win_thread/thread_detach.cc
-    # # ${COBALT_PORT_DIR}/starboard/shared/win_thread/thread_get_current.cc
-    # # ${COBALT_PORT_DIR}/starboard/shared/win_thread/thread_get_local_value.cc
-    # # ${COBALT_PORT_DIR}/starboard/shared/win_thread/thread_is_equal.cc
-    # # ${COBALT_PORT_DIR}/starboard/shared/win_thread/thread_join.cc
+    ${COBALT_PORT_DIR}/starboard/shared/win_thread/once.cc
+    ${COBALT_PORT_DIR}/starboard/shared/win_thread/thread_create.cc
+    ${COBALT_PORT_DIR}/starboard/shared/win_thread/thread_create_local_key.cc
+    ${COBALT_PORT_DIR}/starboard/shared/win_thread/thread_create_priority.h
+    ${COBALT_PORT_DIR}/starboard/shared/win_thread/thread_destroy_local_key.cc
+    ${COBALT_PORT_DIR}/starboard/shared/win_thread/thread_detach.cc
+    ${COBALT_PORT_DIR}/starboard/shared/win_thread/thread_get_current.cc
+    ${COBALT_PORT_DIR}/starboard/shared/win_thread/thread_get_local_value.cc
+    ${COBALT_PORT_DIR}/starboard/shared/win_thread/thread_is_equal.cc
+    ${COBALT_PORT_DIR}/starboard/shared/win_thread/thread_join.cc
     # # ${COBALT_PORT_DIR}/starboard/shared/win_thread/thread_sampler_create.cc
     # # ${COBALT_PORT_DIR}/starboard/shared/win_thread/thread_sampler_destroy.cc
     # # ${COBALT_PORT_DIR}/starboard/shared/win_thread/thread_sampler_freeze.cc
     # # ${COBALT_PORT_DIR}/starboard/shared/win_thread/thread_sampler_internal.cc
     # # ${COBALT_PORT_DIR}/starboard/shared/win_thread/thread_sampler_internal.h
-    # # ${COBALT_PORT_DIR}/starboard/shared/win_thread/thread_sampler_is_supported.cc
+    ${COBALT_PORT_DIR}/starboard/shared/win_thread/thread_sampler_is_supported.cc
     # # #${COBALT_PORT_DIR}/starboard/shared/win_thread/thread_sampler_is_supported.h
     # # ${COBALT_PORT_DIR}/starboard/shared/win_thread/thread_sampler_thaw.cc
-    # # ${COBALT_PORT_DIR}/starboard/shared/win_thread/thread_set_local_value.cc
-    # # ${COBALT_PORT_DIR}/starboard/shared/win_thread/thread_yield.cc
+    ${COBALT_PORT_DIR}/starboard/shared/win_thread/thread_set_local_value.cc
+    ${COBALT_PORT_DIR}/starboard/shared/win_thread/thread_yield.cc
     #
     ${COBALT_PORT_DIR}/starboard/win/shared/atomic_public.h
     ${COBALT_PORT_DIR}/starboard/win/shared/configuration_public.h
     ## TODO ## requires RefCounted from starboard_common
     # # ${COBALT_PORT_DIR}/starboard/win/shared/decode_target_get_info.cc
-    # # ${COBALT_PORT_DIR}/starboard/win/shared/audio_sink_type_dispatcher.cc
+    ${COBALT_PORT_DIR}/starboard/win/shared/audio_sink_type_dispatcher.cc
     # # ## TODO ## requires RefCounted from starboard_common
-    # # ${COBALT_PORT_DIR}/starboard/win/shared/decode_target_internal.cc
+    ${COBALT_PORT_DIR}/starboard/win/shared/decode_target_internal.cc
     # # ## TODO ## requires RefCounted from starboard_common
-    # # ${COBALT_PORT_DIR}/starboard/win/shared/decode_target_internal.h
+    ${COBALT_PORT_DIR}/starboard/win/shared/decode_target_internal.h
     # # ## TODO ## requires RefCounted from starboard_common
-    # # ${COBALT_PORT_DIR}/starboard/win/shared/decode_target_release.cc
-    # # ${COBALT_PORT_DIR}/starboard/win/shared/system_get_connection_type.cc
-    # # ${COBALT_PORT_DIR}/starboard/win/shared/system_get_device_type.cc
+    ${COBALT_PORT_DIR}/starboard/win/shared/decode_target_release.cc
+    ${COBALT_PORT_DIR}/starboard/win/shared/system_get_connection_type.cc
+    ${COBALT_PORT_DIR}/starboard/win/shared/system_get_device_type.cc
     ${COBALT_PORT_DIR}/starboard/win/shared/system_has_capability.cc
     ${COBALT_PORT_DIR}/starboard/shared/windows/byte_swap.cc
     ${COBALT_PORT_DIR}/starboard/shared/windows/get_home_directory.cc
@@ -427,7 +427,7 @@ elseif(TARGET_WINDOWS)
     ${COBALT_PORT_DIR}/starboard/shared/windows/page_internal.cc
     ${COBALT_PORT_DIR}/starboard/shared/windows/system_get_random_data.cc
     ${COBALT_PORT_DIR}/starboard/shared/windows/system_get_total_cpu_memory.cc
-    # # ${COBALT_PORT_DIR}/starboard/shared/windows/system_is_debugger_attached.cc
+    ${COBALT_PORT_DIR}/starboard/shared/windows/system_is_debugger_attached.cc
     ${COBALT_PORT_DIR}/starboard/shared/windows/system_get_used_cpu_memory.cc
     # # #
     ${COBALT_PORT_DIR}/starboard/shared/win/memory_allocate_aligned_unchecked.cc
@@ -438,19 +438,19 @@ elseif(TARGET_WINDOWS)
     ${COBALT_PORT_DIR}/starboard/shared/win/file_close.cc
     ${COBALT_PORT_DIR}/starboard/shared/win/file_delete.cc
     ${COBALT_PORT_DIR}/starboard/shared/win/file_exists.cc
-    # # ${COBALT_PORT_DIR}/starboard/shared/win/file_flush.cc
-    # # ${COBALT_PORT_DIR}/starboard/shared/win/file_get_info.cc
-    # # ${COBALT_PORT_DIR}/starboard/shared/win/file_get_path_info.cc
-    # # ${COBALT_PORT_DIR}/starboard/shared/win/file_open.cc
-    # # ${COBALT_PORT_DIR}/starboard/shared/win/file_read.cc
-    # # ${COBALT_PORT_DIR}/starboard/shared/win/file_seek.cc
-    # # ${COBALT_PORT_DIR}/starboard/shared/win/file_truncate.cc
-    # # ${COBALT_PORT_DIR}/starboard/shared/win/file_write.cc
-    # # ${COBALT_PORT_DIR}/starboard/shared/win/log.cc
-    # # ${COBALT_PORT_DIR}/starboard/shared/win/log_flush.cc
-    # # ${COBALT_PORT_DIR}/starboard/shared/win/log_format.cc
-    # # ${COBALT_PORT_DIR}/starboard/shared/win/log_is_tty.cc
-    # # ${COBALT_PORT_DIR}/starboard/shared/win/log_raw.cc
+    ${COBALT_PORT_DIR}/starboard/shared/win/file_flush.cc
+    ${COBALT_PORT_DIR}/starboard/shared/win/file_get_info.cc
+    ${COBALT_PORT_DIR}/starboard/shared/win/file_get_path_info.cc
+    ${COBALT_PORT_DIR}/starboard/shared/win/file_open.cc
+    ${COBALT_PORT_DIR}/starboard/shared/win/file_read.cc
+    ${COBALT_PORT_DIR}/starboard/shared/win/file_seek.cc
+    ${COBALT_PORT_DIR}/starboard/shared/win/file_truncate.cc
+    ${COBALT_PORT_DIR}/starboard/shared/win/file_write.cc
+    ${COBALT_PORT_DIR}/starboard/shared/win/log.cc
+    ${COBALT_PORT_DIR}/starboard/shared/win/log_flush.cc
+    ${COBALT_PORT_DIR}/starboard/shared/win/log_format.cc
+    ${COBALT_PORT_DIR}/starboard/shared/win/log_is_tty.cc
+    ${COBALT_PORT_DIR}/starboard/shared/win/log_raw.cc
     ${COBALT_PORT_DIR}/starboard/shared/win/memory_flush.cc
     ${COBALT_PORT_DIR}/starboard/shared/win/set_non_blocking_internal.cc
     ${COBALT_PORT_DIR}/starboard/shared/win/storage_write_record.cc

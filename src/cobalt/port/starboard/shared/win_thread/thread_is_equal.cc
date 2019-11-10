@@ -14,8 +14,7 @@
 
 #include "starboard/thread.h"
 
-#include <pthread.h>
-
 bool SbThreadIsEqual(SbThread thread1, SbThread thread2) {
-  return WIN_THREAD_equal(thread1, thread2) != 0;
+  //return WIN_THREAD_equal(thread1, thread2) != 0;
+  return thread1 == thread2;
 }

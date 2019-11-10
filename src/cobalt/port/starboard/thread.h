@@ -25,9 +25,11 @@
 #include "starboard/time.h"
 #include "starboard/types.h"
 
-#ifdef __cplusplus
+#include "base/threading/thread.h"
+
+/*#ifdef __cplusplus
 extern "C" {
-#endif
+#endif*/
 
 // A spectrum of thread priorities. Platforms map them appropriately to their
 // own priority system. Note that scheduling is platform-specific, and what
@@ -77,11 +79,20 @@ typedef enum SbThreadPriority {
 } SbThreadPriority;
 
 // An ID type that is unique per thread.
+#if defined(_WIN32) || defined(_WIN64)
+ // see PlatformThreadId https://github.com/blockspacer/skia-opengl-emscripten/blob/bb16ab108bc4018890f4ff3179250b76c0d9053b/src/chromium/base/threading/platform_thread.h#L38
+typedef DWORD SbThreadId;
+#else
 typedef int32_t SbThreadId;
+#endif
 
 // Function pointer type for SbThreadCreate.  |context| is a pointer-sized bit
 // of data passed in from the calling thread.
+#if defined(_WIN32) || defined(_WIN64)
+typedef DWORD (*SbThreadEntryPoint)(void* context);
+#else
 typedef void* (*SbThreadEntryPoint)(void* context);
+#endif
 
 // Function pointer type for Thread-Local destructors.
 typedef void (*SbThreadLocalDestructor)(void* value);
@@ -98,7 +109,11 @@ typedef struct SbThreadLocalKeyPrivate SbThreadLocalKeyPrivate;
 typedef SbThreadLocalKeyPrivate* SbThreadLocalKey;
 
 // Well-defined constant value to mean "no thread ID."
+#if defined(_WIN32) || defined(_WIN64)
+#define kSbThreadInvalidId base::kInvalidThreadId
+#else
 #define kSbThreadInvalidId (SbThreadId)0
+#endif
 
 // Well-defined constant value to mean "no affinity."
 #define kSbThreadNoAffinity (SbThreadAffinity) kSbInvalidInt
@@ -106,15 +121,21 @@ typedef SbThreadLocalKeyPrivate* SbThreadLocalKey;
 // Well-defined constant value to mean "no thread local key."
 #define kSbThreadLocalKeyInvalid (SbThreadLocalKey) NULL
 
-// Returns whether the given thread handle is valid.
-static SB_C_INLINE bool SbThreadIsValid(SbThread thread) {
-  return thread != kSbThreadInvalid;
-}
-
 // Returns whether the given thread ID is valid.
 static SB_C_INLINE bool SbThreadIsValidId(SbThreadId id) {
   return id != kSbThreadInvalidId;
 }
+
+// Returns whether the given thread handle is valid.
+#if defined(_WIN32) || defined(_WIN64)
+static SB_C_INLINE bool SbThreadIsValid(SbThread thread) {
+  return thread != kSbThreadInvalid;// && SbThreadIsValidId(thread.CurrentId());
+}
+#else
+static SB_C_INLINE bool SbThreadIsValid(SbThread thread) {
+  return thread != kSbThreadInvalid;
+}
+#endif
 
 // Returns whether the given thread priority is valid.
 static SB_C_INLINE bool SbThreadIsValidPriority(SbThreadPriority priority) {
@@ -178,14 +199,22 @@ SB_EXPORT SbThread SbThreadCreate(int64_t stack_size,
 //   |thread| must have been created with SbThreadCreate.
 // |out_return|: If this is not |NULL|, then the SbThreadJoin function populates
 //   it with the return value of the thread's |main| function.
+#if defined(_WIN32) || defined(_WIN64)
 SB_EXPORT bool SbThreadJoin(SbThread thread, void** out_return);
+#else
+SB_EXPORT bool SbThreadJoin(SbThread thread, void** out_return);
+#endif
 
 // Detaches |thread|, which prevents it from being joined. This is sort of like
 // a non-blocking join. This function is a no-op if the thread is already
 // detached or if the thread is already being joined by another thread.
 //
 // |thread|: The thread to be detached.
+#if defined(_WIN32) || defined(_WIN64)
 SB_EXPORT void SbThreadDetach(SbThread thread);
+#else
+SB_EXPORT void SbThreadDetach(SbThread thread);
+#endif
 
 // Yields the currently executing thread, so another thread has a chance to run.
 SB_EXPORT void SbThreadYield();
@@ -207,7 +236,11 @@ SB_EXPORT SbThreadId SbThreadGetId();
 //
 // |thread1|: The first thread to compare.
 // |thread2|: The second thread to compare.
+#if defined(_WIN32) || defined(_WIN64)
 SB_EXPORT bool SbThreadIsEqual(SbThread thread1, SbThread thread2);
+#else
+SB_EXPORT bool SbThreadIsEqual(SbThread thread1, SbThread thread2);
+#endif
 
 // Returns the debug name of the currently executing thread.
 SB_EXPORT void SbThreadGetName(char* buffer, int buffer_size);
@@ -256,9 +289,16 @@ SB_EXPORT bool SbThreadSetLocalValue(SbThreadLocalKey key, void* value);
 // Returns whether |thread| is the current thread.
 //
 // |thread|: The thread to check.
+#if defined(_WIN32) || defined(_WIN64)
+static SB_C_INLINE bool SbThreadIsCurrent(SbThread thread) {
+  //return SbThreadIsValid(thread) && thread.CurrentId() == SbThreadGetId();
+  return SbThreadGetCurrent() == thread;
+}
+#else
 static SB_C_INLINE bool SbThreadIsCurrent(SbThread thread) {
   return SbThreadGetCurrent() == thread;
 }
+#endif
 
 #if SB_API_VERSION >= 11
 
@@ -318,7 +358,11 @@ SB_EXPORT bool SbThreadSamplerIsSupported();
 //
 // If successful, this function returns the newly created handle.
 // If unsuccessful, this function returns |kSbThreadSamplerInvalid|.
+#if defined(_WIN32) || defined(_WIN64)
 SB_EXPORT SbThreadSampler SbThreadSamplerCreate(SbThread thread);
+#else
+SB_EXPORT SbThreadSampler SbThreadSamplerCreate(SbThread thread);
+#endif
 
 // Destroys the |sampler| and frees whatever resources it was using.
 SB_EXPORT void SbThreadSamplerDestroy(SbThreadSampler sampler);
@@ -337,8 +381,8 @@ SB_EXPORT bool SbThreadSamplerThaw(SbThreadSampler sampler);
 
 #endif  // SB_API_VERSION >= 11
 
-#ifdef __cplusplus
+/*#ifdef __cplusplus
 }  // extern "C"
-#endif
+#endif*/
 
 #endif  // STARBOARD_THREAD_H_

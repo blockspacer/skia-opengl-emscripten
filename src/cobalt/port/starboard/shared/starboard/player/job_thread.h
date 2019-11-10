@@ -40,7 +40,11 @@ class JobThread {
   JobQueue* job_queue() { return job_queue_.get(); }
 
  private:
+#if defined(_WIN32) || defined(_WIN64)
+  static DWORD ThreadEntryPoint(void* context);
+#else
   static void* ThreadEntryPoint(void* context);
+#endif
   void RunLoop();
 
   SbThread thread_;

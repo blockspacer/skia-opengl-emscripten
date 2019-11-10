@@ -93,6 +93,15 @@ PunchoutVideoRendererSink::DrawFrameStatus PunchoutVideoRendererSink::DrawFrame(
   return kNotReleased;
 }
 
+#if defined(_WIN32) || defined(_WIN64)
+// static
+DWORD PunchoutVideoRendererSink::ThreadEntryPoint(void* context) {
+  PunchoutVideoRendererSink* this_ptr =
+      static_cast<PunchoutVideoRendererSink*>(context);
+  this_ptr->RunLoop();
+  return NULL;
+}
+#else
 // static
 void* PunchoutVideoRendererSink::ThreadEntryPoint(void* context) {
   PunchoutVideoRendererSink* this_ptr =
@@ -100,6 +109,7 @@ void* PunchoutVideoRendererSink::ThreadEntryPoint(void* context) {
   this_ptr->RunLoop();
   return NULL;
 }
+#endif
 
 }  // namespace filter
 }  // namespace player

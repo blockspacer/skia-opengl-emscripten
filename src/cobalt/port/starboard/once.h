@@ -24,12 +24,22 @@
 #include "starboard/thread_types.h"
 #include "starboard/types.h"
 
+#if defined(_WIN32) || defined(_WIN64)
+#include "windows.h"
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 // Function pointer type for methods that can be called via the SbOnce() system.
+//#if defined(_WIN32) || defined(_WIN64)
 typedef void (*SbOnceInitRoutine)(void);
+/*#else
+typedef bool (*SbOnceInitRoutine)(PINIT_ONCE once,
+                                  PVOID param,
+                                  PVOID *context);
+#endif*/
 
 // Thread-safely runs |init_routine| only once.
 // - If this |once_control| has not run a function yet, this function runs

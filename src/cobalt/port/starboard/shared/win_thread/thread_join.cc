@@ -14,7 +14,13 @@
 
 #include "starboard/thread.h"
 
-#include <pthread.h>
+#include "base/threading/thread.h"
+#include "base/threading/platform_thread.h"
+#include "base/threading/thread_local_storage.h"
+#include "base/atomicops.h"
+#include "base/logging.h"
+#include "base/synchronization/lock.h"
+#include "build/build_config.h"
 
 #include "starboard/shared/win_thread/is_success.h"
 
@@ -24,10 +30,13 @@ bool SbThreadJoin(SbThread thread, void** out_return) {
   }
 
   void* joined_return = NULL;
-  int result = WIN_THREAD_join(thread, &joined_return);
+  /*int result = WIN_THREAD_join(thread, &joined_return);
   if (!IsSuccess(result)) {
     return false;
-  }
+  }*/
+
+  // see https://github.com/chromium/chromium/blob/76cd905f0fb391085d670c4d2936fea37e0b67d6/base/threading/platform_thread_win.cc#L299
+  base::PlatformThread::Join(base::PlatformThreadHandle(thread));
 
   if (out_return) {
     *out_return = joined_return;

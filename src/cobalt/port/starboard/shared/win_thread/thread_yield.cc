@@ -14,8 +14,12 @@
 
 #include "starboard/thread.h"
 
-#include <sched.h>
+//#include <sched.h>
+#include "base/threading/platform_thread.h"
+#include "build/build_config.h"
 
+// see https://github.com/chromium/chromium/blob/76cd905f0fb391085d670c4d2936fea37e0b67d6/base/threading/platform_thread_win.cc#L233
 void SbThreadYield() {
-  sched_yield();
+  //sched_yield();
+  base::PlatformThread::YieldCurrentThread();
 }

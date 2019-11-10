@@ -14,12 +14,20 @@
 
 #include "starboard/thread.h"
 
-#include <pthread.h>
+#include "base/threading/thread.h"
+#include "base/threading/platform_thread.h"
+#include "base/threading/thread_local_storage.h"
+#include "base/atomicops.h"
+#include "base/logging.h"
+#include "base/synchronization/lock.h"
+#include "build/build_config.h"
 
 void SbThreadDetach(SbThread thread) {
   if (!SbThreadIsValid(thread)) {
     return;
   }
 
-  WIN_THREAD_detach(thread);
+  //WIN_THREAD_detach(thread);
+
+  base::PlatformThread::Detach(base::PlatformThreadHandle(thread));
 }

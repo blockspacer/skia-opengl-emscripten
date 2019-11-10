@@ -75,14 +75,15 @@ if(ENABLE_HARFBUZZ)
       ${SKIA_EXT_DIR}ext/raster_handle_allocator_win.cc
     )
     #
-    list(APPEND SKIA_EXT_EXTRA_DEFINES
+    # TODO
+    #list(APPEND SKIA_EXT_EXTRA_DEFINES
       # https://github.com/blockspacer/skia-opengl-emscripten/blob/cdb838723fe53c53abf008e9f2e8fc93089ae3f6/patches/skia_to_copy/BUILD.gn_nocopy#L155
-      SK_DEFAULT_FONT_CACHE_COUNT_LIMIT=256
+      #SK_DEFAULT_FONT_CACHE_COUNT_LIMIT=256
       #SK_GAMMA_SRGB=1
-      SK_GAMMA_CONTRAST=0.5
+      #SK_GAMMA_CONTRAST=0.5
       #
       # TODO # SK_CPU_SSE_LEVEL=31
-    )
+    #)
   else()
     message(FATAL_ERROR "platform not supported")
   endif()
