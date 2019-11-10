@@ -605,7 +605,12 @@ static int InitGL() {
                       //		"  gl_FragColor = vColor;        \n"
                       "    vec4 colour = texture2D(u_tex, v_texcoord);\n"
                       //    "    vec4 colour = vec4(100, 0, 100, 100);\n"
-                      "    colour.rgba = colour.rgba;\n"
+                      // TODO
+#if defined(OS_WIN)
+                      "    colour.rgba = colour.bgra;\n" 
+#else
+                      "    colour.rgba = colour.rgba;\n" 
+#endif
                       //"    colour.r = clrRedTint;\n"
                       "    gl_FragColor = colour;\n"
                       "}                                            \n";
@@ -5382,7 +5387,10 @@ std::unique_ptr<base::sequence_manager::SequenceManager> sequence_manager;
 
 /// \note don`t use int main(void)
 /// \see https://github.com/emscripten-core/emscripten/issues/8757
-int main(int argc, char** argv) {
+/// \note use main compatible with SDL2
+//int main(int argc, char** argv) 
+int main(int argc, char* argv[])
+{
     printf("main 0...\n");
 #if !defined(ENABLE_MAIN)
   return EXIT_SUCCESS;

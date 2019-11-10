@@ -3728,7 +3728,8 @@ void SkiaUiDemo::initUISkiaSurface(int /*w*/, int /*h*/) {
 
     // TODO: we use em_ctx for now
     info.fFormat = GR_GL_BGRA8; //  TODO
-    colorType = kBGRA_8888_SkColorType;
+    
+    colorType = kBGRA_8888_SkColorType; //  TODO
 
     printf("create GrBackendRenderTarget...\n");
 

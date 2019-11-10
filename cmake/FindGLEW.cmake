@@ -7,13 +7,20 @@
 # GLEW_LIBRARY
 # 
 
+if("${GLEW_LIB_SEARCH_NAMES}" STREQUAL "")
+	list(APPEND GLEW_LIB_SEARCH_NAMES glew)
+	list(APPEND GLEW_LIB_SEARCH_NAMES GLEW)
+	list(APPEND GLEW_LIB_SEARCH_NAMES glew32)
+	list(APPEND GLEW_LIB_SEARCH_NAMES glew32s)
+endif()
+
 IF (WIN32)
 	FIND_PATH( GLEW_INCLUDE_PATH GL/glew.h
 		$ENV{PROGRAMFILES}/GLEW/include
 		${PROJECT_SOURCE_DIR}/src/nvgl/glew/include
 		DOC "The directory where GL/glew.h resides")
 	FIND_LIBRARY( GLEW_LIBRARY
-		NAMES glew GLEW glew32 glew32s
+		NAMES ${GLEW_LIB_SEARCH_NAMES}
 		PATHS
 		$ENV{PROGRAMFILES}/GLEW/lib
 		${PROJECT_SOURCE_DIR}/src/nvgl/glew/bin
@@ -27,7 +34,7 @@ ELSE (WIN32)
 		/opt/local/include
 		DOC "The directory where GL/glew.h resides")
 	FIND_LIBRARY( GLEW_LIBRARY
-		NAMES GLEW glew
+		NAMES ${GLEW_LIB_SEARCH_NAMES}
 		PATHS
 		/usr/lib64
 		/usr/lib

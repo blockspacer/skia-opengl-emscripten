@@ -166,7 +166,7 @@ void SoftwareRasterizer::Submit(
 
   // Determine the image size and format that we will use to render to.
   SkImageInfo output_image_info =
-      SkImageInfo::MakeN32(width, height, kPremul_SkAlphaType);
+      SkImageInfo::MakeN32(width, height, kPremul_SkAlphaType); // TODO
 
   // Allocate the pixels for the output image.
   /*GLenum gl_format = GL_INVALID_ENUM;

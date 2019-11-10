@@ -20,7 +20,7 @@ InstalledDir: C:/Program Files/LLVM/bin
 ```
 
 ```cmd
-cmake version 3.12.18081601-MSVC_2
+# cmake https://github.com/Kitware/CMake/releases/download/v3.16.0-rc3/cmake-3.16.0-rc3-win64-x64.msi
 ```
 
 ```cmd
@@ -346,7 +346,9 @@ set PATH=D:\den\coding\vcpkg\packages\libuuid_x86-windows;D:\den\coding\vcpkg\pa
 #
 # cmake -E env LDFLAGS="-fuse-ld=lld-link" PATH="%PATH%" cmake -H.. -B. -G Ninja -DENABLE_COBALT=FALSE -DCMAKE_BUILD_TYPE="Debug" -DRELEASE_BUILD=OFF -DCMAKE_EXPORT_COMPILE_COMMANDS=ON "-DCMAKE_PREFIX_PATH=D:/den/coding/vcpkg/packages/libuuid_x86-windows/;D:/den/coding/vcpkg/packages/fontconfig_x86-windows/;D:/den/coding/vcpkg/packages/icu_x86-windows/;D:/den/coding/vcpkg/packages/expat_x86-windows/;C:/Program Files (x86)/harfbuzz/;C:/Program Files (x86)/;C:/Program Files (x86)/;C:/Program Files (x86)/libpng/;D:/den/coding/SDL2-2.0.10/;C:/Program Files (x86)/freetype2/;C:/Program Files (x86)/freetype/include/freetype2/;C:/Program Files (x86)/freetype/lib/;C:/Program Files (x86)/freetype/lib/cmake/"  -DCMAKE_C_COMPILER:PATH="C:/Program Files/LLVM/bin/clang.exe" -DCMAKE_CXX_COMPILER:PATH="C:/Program Files/LLVM/bin/clang.exe" -DCMAKE_C_COMPILER_ID="Clang" -DCMAKE_CXX_COMPILER_ID="Clang" -DCMAKE_SYSTEM_NAME="Generic" -DWIN32=1
 #
-set PATH=C:\Program Files\LLVM;C:\Program Files\LLVM\bin;%PATH%
+set PATH=C:\Program Files\CMake\bin;%PATH%
+#
+set PATH=C:\Program Files (x86)\SDL2\include;C:\Program Files (x86)\SDL2\lib;%PATH%
 #
 set PATH=D:\den\coding\glew\glew-2.1.0;%PATH%
 set PATH=D:\den\coding\glew\glew-2.1.0\include;%PATH%
