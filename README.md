@@ -14,23 +14,28 @@
 
 - CSS animations from cobalt.foo
 - CSS Flexbox from cobalt.foo
-- Lottie animation format (skottie /Bodymovin animation) see https://skia.org/user/modules/skottie
-- Modified cobalt.foo to support mouse events propogation with ScrollTop/ScrollLeft
+- Lottie animation format (skottie/Bodymovin animation) see https://skia.org/user/modules/skottie
+- Modified cobalt.foo to support mouse events propagation with ScrollTop/ScrollLeft
 - skia compiled to browser (emscripten WASM)
-- cobalt.foo (chromium`s fork) ported to browser (emscripten WASM).
+- made optional: video/audio support from cobalt.foo. You can use custom libs to add video/audio support.
+- JS (V8) disabled. Use C++ for better speed and app size.
+- cobalt.foo (chromium`s fork) ported to browser (WebGL2, emscripten, WASM).
   - updated cobalt.foo to new SKIA version
   - updated cobalt.foo to new chromium`s base version (removed `base` folder duplication)
-  - JS (V8) disabled. Use C++ for better speed and app size.
   - added custom tags / controls (similar to React.js/Vue.js)
+- (needs more testing) cobalt.foo ported to HTML5 tags (maps tags from cobalt to HTML5 tags). You can use that project to create websites or web frameworks.
+- (needs more testing) renderer from cobalt.foo ported to Windows 10 x64
 - chromium ui/views (widget based UI framework) from Blink ported to WASM (and other OS)
   - window & widgets code modified to use custom code for window creation.
+  - see docs: https://chromium.googlesource.com/chromium/src/+/master/docs/ui/views/overview.md
+  - see docs: https://www.chromium.org/developers/design-documents/chromeviews
 - chromium `base` (libchrome) from Blink ported to WASM (and other OS)
   - supports threaded (MT) browser (emscripten WASM)
   - supports single-threaded (ST) browser (emscripten WASM)
-  - see https://emscripten.org/docs/porting/pthreads.html
-  - see https://www.chromium.org/chromium-os/packages/libchrome
+  - see docs: https://emscripten.org/docs/porting/pthreads.html
+  - see docs: https://www.chromium.org/chromium-os/packages/libchrome
 - WTF (Web Template Framework) from Blink ported to WASM (and other OS)
-  - see https://github.com/endlessm/chromium-browser/tree/master/third_party/blink/renderer
+  - see docs: https://github.com/endlessm/chromium-browser/tree/master/third_party/blink/renderer
 - custom fonts
 - unicode fonts and harfbuzz
 - uses SDL2 to create window on Unix
@@ -38,14 +43,14 @@
 - uses CMake (replaced chromium`s GN with CMake)
 - supports WebGL 2 / GLSL 300 es as there really isn`t a reason to support WebGL 1 at this point
 - supports WASM as there really isn`t a reason to support ASM.js at this point
-  - see https://emscripten.org/docs/compiling/WebAssembly.html?highlight=wasm
+  - see docs: https://emscripten.org/docs/compiling/WebAssembly.html?highlight=wasm
 - Most features from cobalt.foo/chromium can be turned on/off via CMake options. Useful for platforms what require small resulting app size (browser WASM, mobile, etc.)
 
 ## Project status
 
 In development
 
-![](docs/img/skull.png)
+![](docs/img/skull.png =50x50)
 
 # FAQ
 
@@ -59,10 +64,10 @@ Tested platforms:
 - Linux
 - Browser with threading support (WASM MT). Prefer WASM MT because it is more stable.
 - Browser without threading support (WASM ST)
+- (needs more testing) Windows
+- (needs more testing) Native HTML5/JS web framework (without SKIA / OpenGL / WebGL2)
 
 IN-DEV / planned platforms:
-- (in-dev) Windows
-- (in-dev) Native HTML5/JS web framework (without SKIA / OpenGL / WebGL2)
 - (planned) Android
 - (planned) Renderer backend (without SKIA): OpenGL / WebGL2 / imgui / nanoVG
 - (planned) Widgets/controls integration: imgui
@@ -106,11 +111,9 @@ Inspired by:
 - Pesto https://github.com/marcj/Pesto
 - LCUI https://github.com/lc-soft/LCUI
 - blink
+- (more) https://news.ycombinator.com/item?id=17733515
 
 Let`s combine best of them all together.
-
-Also see:
-- https://news.ycombinator.com/item?id=17733515
 
 - Can't build?
 
