@@ -1151,7 +1151,9 @@ int Box::GetOrder() const {
 bool Box::IsUnderCoordinate(const Vector2dLayoutUnit& original_coordinate,
     const Vector2dLayoutUnit& prev_coordinate,
     const Vector2dLayoutUnit& coordinate) const {
-  // >>>
+#if defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+  bool res = true; /// \note we send events directly to element and can skip FindTopmostEventTarget
+#else
   RectLayoutUnit rect = GetBorderBoxFromRoot(true /*transform_forms_root*/);
   const scoped_refptr<cssom::PropertyValue>& position_property =
       computed_style()->position();
@@ -1160,6 +1162,7 @@ bool Box::IsUnderCoordinate(const Vector2dLayoutUnit& original_coordinate,
   bool res = false;
   res = coordinate.x() >= rect.x() && coordinate.x() <= rect.x() + rect.width() &&
         coordinate.y() >= rect.y() && coordinate.y() <= rect.y() + rect.height();
+#endif // defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
 
 #if 0
   if(position_property == cssom::KeywordValue::GetFixed()) {

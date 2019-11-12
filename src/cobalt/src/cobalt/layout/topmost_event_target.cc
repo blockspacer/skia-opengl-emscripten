@@ -924,6 +924,10 @@ void TopmostEventTarget::MaybeSendPointerEvents(
   if (target_override_element) {
     target_element = target_override_element;
   } else {
+#if defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+    /// \note we send events directly to element and can skip FindTopmostEventTarget
+    NOTIMPLEMENTED_LOG_ONCE();
+#else
     scoped_refptr<dom::HTMLElement> previous_html_element(
       previous_html_element_weak_.get());
     // Do a hit test if there is no target override element.
@@ -965,7 +969,9 @@ void TopmostEventTarget::MaybeSendPointerEvents(
       event_init.set_original_client_x(original_client_coordinate.x());
       event_init.set_original_client_y(original_client_coordinate.y());*/
     }
+#endif // defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
   }
+
 #ifdef _DEBUG // TODO: remove printf
   printf("event_init.set_client_x %f event_init.set_client_y %f \n",
     event_init.client_x(),
