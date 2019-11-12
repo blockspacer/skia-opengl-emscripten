@@ -1330,6 +1330,9 @@ void addTestOnlyAttrCallbacks() {
            const std::string& attrVal)
         {
             CHECK(elem);
+#if defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+            // TODO
+#else
             const cobalt::dom::MouseEvent* const mouseEvent =
                 // TODO: polymorphic_downcast Check failed: dynamic_cast<Derived>(base) == base.
                 base::polymorphic_downcast<
@@ -1356,6 +1359,8 @@ void addTestOnlyAttrCallbacks() {
             CHECK(elementHTML);
             //elementHTML->GetUiNavItem()->Focus();
             elementHTML->Focus();
+#endif // defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+
             return base::nullopt;
         });
 
@@ -1368,8 +1373,11 @@ void addTestOnlyAttrCallbacks() {
             CHECK(elem);
             cobalt::dom::Document* document = elem->node_document();
             CHECK(document);
+#if defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+            // TODO
+#else
             scoped_refptr<cobalt::dom::HTMLElement> indicated_element
-              = document->indicated_element();
+              = document->indicated_element(); // TODO
             CHECK(indicated_element);
             const cobalt::dom::MouseEvent* const mouseEvent =
                 // TODO: polymorphic_downcast Check failed: dynamic_cast<Derived>(base) == base.
@@ -1402,6 +1410,8 @@ printf("indicated_element == elementHTML\n");
 } else {
 //elementHTML->Blur();
 }*/
+#endif // defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+
             return base::nullopt;
         });
 
@@ -1442,7 +1452,8 @@ printf("indicated_element == elementHTML\n");
                 printf("keyup normalized_str %s\n", utf8_str.c_str());
             }
 
-            wprintf(L"keysym character, %s", keyboardEvent->keysym());
+            wprintf(L"keysym character, %s\n", keyboardEvent->keysym());
+            printf("text %s\n", keyboardEvent->text().c_str());
             printf("ctrl_key %d\n", keyboardEvent->ctrl_key());
             printf("shift_key %d\n", keyboardEvent->shift_key());
             printf("alt_key %d\n", keyboardEvent->alt_key());
@@ -1460,6 +1471,15 @@ printf("indicated_element == elementHTML\n");
             // base::ReadUnicodeCharacter
             const char* sbSystemGetLocaleId = SbSystemGetLocaleId();
             printf("SbSystemGetLocaleId %s\n", sbSystemGetLocaleId);
+
+            base::string16 utf16_str;
+            if(utf16_str.empty()
+                && !keyboardEvent->text().empty())
+            {
+              std::cout << "keyboardEvent->text() " << keyboardEvent->text() << std::endl;
+              utf16_str = base::UTF8ToUTF16(keyboardEvent->text());
+              std::cout << "keyboardEvent->text() utf16_str " << utf16_str << std::endl;
+            }
 
             cobalt::dom::HTMLElement* elementHTML =
                 // TODO: polymorphic_downcast Check failed: dynamic_cast<Derived>(base) == base.
@@ -1512,7 +1532,8 @@ printf("indicated_element == elementHTML\n");
                 printf("keypress normalized_str %s\n", utf8_str.c_str());
             }
 
-            wprintf(L"keysym character, %s", keyboardEvent->keysym());
+            wprintf(L"keysym character, %s\n", keyboardEvent->keysym());
+            printf("text %s\n", keyboardEvent->text().c_str());
             printf("ctrl_key %d\n", keyboardEvent->ctrl_key());
             printf("shift_key %d\n", keyboardEvent->shift_key());
             printf("alt_key %d\n", keyboardEvent->alt_key());
@@ -1530,6 +1551,15 @@ printf("indicated_element == elementHTML\n");
             // base::ReadUnicodeCharacter
             const char* sbSystemGetLocaleId = SbSystemGetLocaleId();
             printf("SbSystemGetLocaleId %s\n", sbSystemGetLocaleId);
+
+            base::string16 utf16_str;
+            if(utf16_str.empty()
+                && !keyboardEvent->text().empty())
+            {
+              std::cout << "keyboardEvent->text() " << keyboardEvent->text() << std::endl;
+              utf16_str = base::UTF8ToUTF16(keyboardEvent->text());
+              std::cout << "keyboardEvent->text() utf16_str " << utf16_str << std::endl;
+            }
 
             cobalt::dom::HTMLElement* elementHTML =
               // TODO: polymorphic_downcast Check failed: dynamic_cast<Derived>(base) == base.
