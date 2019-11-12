@@ -460,7 +460,10 @@ list(APPEND APP_DEFINITIONS ENABLE_OPENGL=1)
 list(APPEND APP_DEFINITIONS ENABLE_CUSTOM_FONTS=1)
 list(APPEND APP_DEFINITIONS HARFBUZZ_UNICODE=1)
 list(APPEND APP_DEFINITIONS ENABLE_SK_EFFECTS=1)
-list(APPEND APP_DEFINITIONS ENABLE_EMSCRIPTEN_INPUT=1)
+
+if(NOT ENABLE_NATIVE_HTML)
+  list(APPEND APP_DEFINITIONS ENABLE_EMSCRIPTEN_INPUT=1)
+endif(NOT ENABLE_NATIVE_HTML)
 
 if(ENABLE_SKIA)
   list(APPEND APP_DEFINITIONS ENABLE_SK_UI=1)
@@ -1402,6 +1405,8 @@ else(ENABLE_WEB_PTHREADS)
   #
   # ORIGINAL_EXPORTED_FUNCTIONS
   #
+  # EXTRA_EXPORTED_RUNTIME_METHODS
+  #
   # EXPORT_FUNCTION_TABLES
   #
   # EXPORTED_RUNTIME_METHODS=["FS_createFolder",
@@ -1420,6 +1425,10 @@ else(ENABLE_WEB_PTHREADS)
   # see https://emscripten.org/docs/getting_started/FAQ.html#why-do-functions-in-my-c-c-source-code-vanish-when-i-compile-to-javascript-and-or-i-get-no-functions-to-process
   #set(EMCC_COMMON "${EMCC_COMMON} -s EXPORTED_FUNCTIONS=["_main", "qsort", "trinkle", "__toread", "__uflow", "__fwritex", "MUSL_vfprintf", "__Wait", "__TimedWait"]")
   #set(EMCC_COMMON "${EMCC_COMMON} -s EXPORTED_FUNCTIONS=["_main", "qsort", "trinkle", "__toread", "__uflow", "__fwritex", "MUSL_vfprintf", "_Wait", "_TimedWait"]")
+  set(EMCC_COMMON "${EMCC_COMMON} -s EXPORTED_FUNCTIONS='[_main, _malloc, _free]'")
+  # see https://github.com/nskipper1110/objectivemedia/blob/c65c3f652e72dfac81b1739e55ded9397580371f/emsdk-portable/emscripten/1.38.13/tests/test_core.py#L4736
+  #set(EMCC_COMMON "${EMCC_COMMON} -s EXTRA_EXPORTED_RUNTIME_METHODS=[\"getValue\", \"setValue\", \"UTF8ToString\", \"stringToUTF8\"]")
+  set(EMCC_COMMON "${EMCC_COMMON} -s EXTRA_EXPORTED_RUNTIME_METHODS='[UTF8ToString, stringToUTF8, UTF16ToString, stringToUTF16, UTF32ToString, stringToUTF32, ccall, cwrap, setValue, getValue, intArrayFromString, intArrayToString, writeStringToMemory, writeArrayToMemory, writeAsciiToMemory, addRunDependency, removeRunDependency, Pointer_stringify, stackTrace]'")
   #
   # You can optionally use -s 'EMTERPRETIFY_FILE="data.binary"' to store the emterpreter bytecode in a file
   #
