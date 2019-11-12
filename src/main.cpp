@@ -2823,35 +2823,37 @@ static void handleEmscriptenMouseEvent(int emsc_type, const EmscriptenMouseEvent
       }
 
 #if defined(ENABLE_COBALT)
-      unsigned int button_modifiers = native_event::EmscMouseEventToSbButtonModifiers(emsc_event->button);
+      if(g_cobaltTester) {
+        unsigned int button_modifiers = native_event::EmscMouseEventToSbButtonModifiers(emsc_event->button);
 
-      if(is_sb_event) {
-        event =  native_event::createSbMouseEvent(
-          SbEventType::kSbEventTypeInput,
-          sbInputEventType,
-          sb_window,
-          emsc_event->button,
-          emsc_event->altKey,
-          emsc_event->ctrlKey,
-          emsc_event->metaKey,
-          emsc_event->shiftKey,
-          mouse_x,
-          mouse_y,
-          button_modifiers,
-          native_event::EmscMouseEventToSbKey(emsc_event->button)
-        );
-      }
+        if(is_sb_event) {
+          event =  native_event::createSbMouseEvent(
+            SbEventType::kSbEventTypeInput,
+            sbInputEventType,
+            sb_window,
+            emsc_event->button,
+            emsc_event->altKey,
+            emsc_event->ctrlKey,
+            emsc_event->metaKey,
+            emsc_event->shiftKey,
+            mouse_x,
+            mouse_y,
+            button_modifiers,
+            native_event::EmscMouseEventToSbKey(emsc_event->button)
+          );
+        }
 
-      if(!input_browser_thread) {
-        sendBrowserInputEvent(std::move(event));
-      } else {
-        DCHECK(input_browser_thread);
-        DCHECK(input_browser_thread->IsRunning());
-        input_browser_thread->task_runner()->PostTask(
-          FROM_HERE, base::Bind(
-                       [](std::unique_ptr<SbEvent> event) {
-                         sendBrowserInputEvent(std::move(event));
-                       }, base::Passed(&event)));
+        if(!input_browser_thread) {
+          sendBrowserInputEvent(std::move(event));
+        } else {
+          DCHECK(input_browser_thread);
+          DCHECK(input_browser_thread->IsRunning());
+          input_browser_thread->task_runner()->PostTask(
+            FROM_HERE, base::Bind(
+                         [](std::unique_ptr<SbEvent> event) {
+                           sendBrowserInputEvent(std::move(event));
+                         }, base::Passed(&event)));
+        }
       }
 #endif // ENABLE_COBALT
   }
@@ -2932,40 +2934,43 @@ static void handleEmscriptenKeyboardEvent(int emsc_type, const EmscriptenKeyboar
   }
 
 #if defined(ENABLE_COBALT)
-  if(isKeyEvent) {
-    event =  native_event::createSbKeyboardEvent(
-      SbEventType::kSbEventTypeInput,
-      sbInputEventType,
-      sb_window,
-      emsc_event->altKey,
-      emsc_event->ctrlKey,
-      emsc_event->metaKey,
-      emsc_event->shiftKey,
-      SbInputDeviceType::kSbInputDeviceTypeKeyboard,
-      native_event::EmscKeycodeToSbKey(dom_pk_code),
-      native_event::EmscKeycodeToSbKeyLocation(dom_pk_code),
-      Character,
-      Character,
-      is_printable
-    );
+  if(g_cobaltTester) {
+    if(isKeyEvent) {
+      event =  native_event::createSbKeyboardEvent(
+        SbEventType::kSbEventTypeInput,
+        sbInputEventType,
+        sb_window,
+        emsc_event->altKey,
+        emsc_event->ctrlKey,
+        emsc_event->metaKey,
+        emsc_event->shiftKey,
+        SbInputDeviceType::kSbInputDeviceTypeKeyboard,
+        native_event::EmscKeycodeToSbKey(dom_pk_code),
+        native_event::EmscKeycodeToSbKeyLocation(dom_pk_code),
+        Character,
+        Character,
+        emsc_event->key,
+        is_printable
+      );
 
-    if(!input_browser_thread) {
-      sendBrowserInputEvent(std::move(event));
-    } else {
-      DCHECK(input_browser_thread);
-      DCHECK(input_browser_thread->IsRunning());
-      input_browser_thread->task_runner()->PostTask(
-        FROM_HERE, base::Bind(
-                     [](std::unique_ptr<SbEvent> inputEvent) {
-                       sendBrowserInputEvent(std::move(inputEvent));
-                     }, base::Passed(&event)));
+      if(!input_browser_thread) {
+        sendBrowserInputEvent(std::move(event));
+      } else {
+        DCHECK(input_browser_thread);
+        DCHECK(input_browser_thread->IsRunning());
+        input_browser_thread->task_runner()->PostTask(
+          FROM_HERE, base::Bind(
+                       [](std::unique_ptr<SbEvent> inputEvent) {
+                         sendBrowserInputEvent(std::move(inputEvent));
+                       }, base::Passed(&event)));
+      }
     }
   }
 #endif // ENABLE_COBALT
 }
 #endif // EMSCRIPTEN
 
-#if defined(__EMSCRIPTEN__)
+#if defined(__EMSCRIPTEN__) && !defined(ENABLE_NATIVE_HTML)
 static EM_BOOL emsc_keydown_cb(int emsc_type, const EmscriptenKeyboardEvent* emsc_event, void* user_data) {
   //printf("emsc_keydown_cb\n");
   DCHECK(emsc_event);
@@ -3032,52 +3037,56 @@ static EM_BOOL emsc_mouse_wheel_cb(int emsc_type, const EmscriptenWheelEvent* em
   float mouse_x = 0.0f;
   float mouse_y = 0.0f;
 
-  switch(emsc_type)
-  {
-    case EMSCRIPTEN_EVENT_WHEEL:
+  if(g_cobaltTester) {
+    switch(emsc_type)
     {
-      mouse_x = (emsc_event->mouse.canvasX * wasm_dpi_scale);
-      mouse_y = (emsc_event->mouse.canvasY * wasm_dpi_scale);
-      break;
+      case EMSCRIPTEN_EVENT_WHEEL:
+      {
+        mouse_x = (emsc_event->mouse.canvasX * wasm_dpi_scale);
+        mouse_y = (emsc_event->mouse.canvasY * wasm_dpi_scale);
+        break;
+      }
     }
-  }
 
-  SbWindow sb_window = nullptr;
-   // TODO: free mem
-  if(g_cobaltTester && g_cobaltTester->system_window_) {
-    sb_window = g_cobaltTester->system_window_->GetSbWindow();
-  }
+    SbWindow sb_window = nullptr;
+     // TODO: free mem
+    if(g_cobaltTester && g_cobaltTester->system_window_) {
+      sb_window = g_cobaltTester->system_window_->GetSbWindow();
+    } else {
+      DCHECK(false);
+    }
 
-  unsigned int button_modifiers = native_event::EmscMouseEventToSbButtonModifiers(emsc_event->mouse.button);
+    unsigned int button_modifiers = native_event::EmscMouseEventToSbButtonModifiers(emsc_event->mouse.button);
 
-  std::unique_ptr<SbEvent> event
-    = native_event::createSbWheelEvent(
-        SbEventType::kSbEventTypeInput,
-        SbInputEventType::kSbInputEventTypeWheel,
-        sb_window,
-        emsc_event->mouse.button,
-        emsc_event->mouse.altKey,
-        emsc_event->mouse.ctrlKey,
-        emsc_event->mouse.metaKey,
-        emsc_event->mouse.shiftKey,
-        mouse_x,
-        mouse_y,
-        emsc_event->deltaX,
-        emsc_event->deltaY,
-        button_modifiers,
-        native_event::EmscMouseEventToSbKey(emsc_event->mouse.button)
-    );
+    std::unique_ptr<SbEvent> event
+      = native_event::createSbWheelEvent(
+          SbEventType::kSbEventTypeInput,
+          SbInputEventType::kSbInputEventTypeWheel,
+          sb_window,
+          emsc_event->mouse.button,
+          emsc_event->mouse.altKey,
+          emsc_event->mouse.ctrlKey,
+          emsc_event->mouse.metaKey,
+          emsc_event->mouse.shiftKey,
+          mouse_x,
+          mouse_y,
+          emsc_event->deltaX,
+          emsc_event->deltaY,
+          button_modifiers,
+          native_event::EmscMouseEventToSbKey(emsc_event->mouse.button)
+      );
 
-  if(!input_browser_thread) {
-    sendBrowserInputEvent(std::move(event));
-  } else {
-    DCHECK(input_browser_thread);
-    DCHECK(input_browser_thread->IsRunning());
-    input_browser_thread->task_runner()->PostTask(
-      FROM_HERE, base::Bind(
-                   [](std::unique_ptr<SbEvent> inputEvent) {
-                     sendBrowserInputEvent(std::move(inputEvent));
-                   }, base::Passed(&event)));
+    if(!input_browser_thread) {
+      sendBrowserInputEvent(std::move(event));
+    } else {
+      DCHECK(input_browser_thread);
+      DCHECK(input_browser_thread->IsRunning());
+      input_browser_thread->task_runner()->PostTask(
+        FROM_HERE, base::Bind(
+                     [](std::unique_ptr<SbEvent> inputEvent) {
+                       sendBrowserInputEvent(std::move(inputEvent));
+                     }, base::Passed(&event)));
+    }
   }
 #endif // ENABLE_COBALT
 
@@ -3427,7 +3436,7 @@ static void mainLockFreeLoop() {
             && (base::IsAsciiPrintable(e.key.keysym.sym)
                 || !base::IsStringASCII(e.text.text))
             && e.key.repeat == 0)*/
-        {
+        if(g_cobaltTester) {
           isTextInput = true;
           printf("SDL_TEXTINPUT2 text %s\n", e.text.text);
 
@@ -3438,7 +3447,9 @@ static void mainLockFreeLoop() {
             data1 = native_event::createEmptySbEventData();
             // TODO: free mem
             if(g_cobaltTester && g_cobaltTester->system_window_) {
-              data->window = g_cobaltTester->system_window_->GetSbWindow();
+              data1->window = g_cobaltTester->system_window_->GetSbWindow();
+            } else {
+              DCHECK(false);
             }
             DCHECK(data1);
             data1->key_modifiers = native_event::SDL2ModStateToSbKeyModifiers(modState);
@@ -3466,7 +3477,9 @@ static void mainLockFreeLoop() {
             data1 = native_event::createEmptySbEventData();
             // TODO: free mem
             if(g_cobaltTester && g_cobaltTester->system_window_) {
-              data->window = g_cobaltTester->system_window_->GetSbWindow();
+              data1->window = g_cobaltTester->system_window_->GetSbWindow();
+            } else {
+              DCHECK(false);
             }
             DCHECK(data1);
             data1->key_modifiers = native_event::SDL2ModStateToSbKeyModifiers(modState);
@@ -4471,7 +4484,7 @@ int main(int argc, char** argv) {
   }
 #endif
 
-#if defined(__EMSCRIPTEN__) && !defined(ENABLE_HTML5_SDL)
+#if defined(__EMSCRIPTEN__) && !defined(ENABLE_HTML5_SDL) && !defined(ENABLE_NATIVE_HTML)
   // port SDL_PollEvent (emscripten_set_mousedown_callback, e.t.c.)
   // "see https://github.com/floooh/sokol/blob/master/sokol_app.h#L2403 for example"
   // "see https://github.com/hongkk/urho/blob/master/Source/Urho3D/Input/Input.cpp for example"
