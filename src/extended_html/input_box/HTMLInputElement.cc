@@ -1356,6 +1356,7 @@ HTMLInputElement::HTMLInputElement(Document* document)
       }
 
       wprintf(L"keysym character, %s", keyboardEvent->keysym());
+      printf("text %s\n", keyboardEvent->text().c_str());
       printf("ctrl_key %d\n", keyboardEvent->ctrl_key());
       printf("shift_key %d\n", keyboardEvent->shift_key());
       printf("alt_key %d\n", keyboardEvent->alt_key());

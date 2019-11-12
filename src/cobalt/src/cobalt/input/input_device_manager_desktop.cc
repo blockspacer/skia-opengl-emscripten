@@ -267,9 +267,9 @@ void InputDeviceManagerDesktop::HandleKeyboardEvent(
   keyboard_event.set_repeat(input_event->is_repeat());
   keyboard_event.set_char_code(key_code);
   keyboard_event.set_key_code(key_code);
-  keyboard_event.set_keysym(input_event->keysym());
-  keyboard_event.set_is_printable(input_event->is_printable());
-  keyboard_event.set_text(input_event->text());
+  keyboard_event.set_keysym(input_event->keysym()); // custom
+  keyboard_event.set_is_printable(input_event->is_printable()); // custom
+  keyboard_event.set_text(input_event->text()); // custom
   keypress_generator_filter_.HandleKeyboardEvent(type, keyboard_event);
 
   int32_t key_code_in_int32 = static_cast<int32_t>(key_code);

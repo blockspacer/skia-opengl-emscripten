@@ -1178,6 +1178,21 @@ Node::GatherInclusiveAncestorsObservers() {
   return inclusive_observers;
 }
 
+#if 0
+#if defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+// In browsers, KeyDown events do not carry a "character code" for most characters, but KeyPresses do.
+// For WSAD input, we'd like to know the character code of the button press already at KeyDown time, so
+// use the following method to interpret it from the event structure already at KeyDown event.
+static int InterpretCharCode(const emscripten::val keyEvent)
+{
+  if (keyEvent["which"].as<int>()) return keyEvent["which"].as<int>();
+  if (keyEvent["charCode"].as<int>()) return keyEvent["charCode"].as<int>();
+  if (strlen(keyEvent["key"].as<std::string>().c_str()) == 1) return (int)tolower(keyEvent["key"].as<std::string>().c_str()[0]);
+  return (keyEvent["keyCode"].as<int>());
+}
+#endif // defined(OS_EMSCRIPTEN) && defined(ENABLE_NATIVE_HTML)
+#endif //0
+
 // custom modification
 void Node::AddEventListener(const std::string& type,
                       const EventTarget::EventListenerScriptValue& listener,
@@ -1214,18 +1229,15 @@ void Node::AddEventListener(const std::string& type,
           return;
       }
 
-      std::cout << "onEventCb target = "
+      std::cout << "add onEventCb target = "
         << em_node->call<emscripten::val>("toString")
            .as<std::string>() << std::endl;
 
       auto onEventCb = [this](emscripten::val event) {
-          if(event.isNull() || event.isUndefined()) {
-              std::cout << "onEventCb target isNull" << std::endl;
-          }
           std::cout << "onEvent event = " << event.call<emscripten::val>("toString").as<std::string>() << std::endl;
-          if (!event.hasOwnProperty("type")) {
-            std::cout << "!event.hasOwnProperty(type)" << std::endl;
-          }
+
+          DCHECK(!event["type"].isNull() && !event["type"].isUndefined());
+
           std::cout << "onEventCb target type " << event["type"].as<std::string>() << std::endl;
 
           if(!html_native::isEmNodeGUIDValid(em_node_guid_)) {
@@ -1265,20 +1277,20 @@ void Node::AddEventListener(const std::string& type,
 
           if(type == "mousedown"
              || type == "mouseup"
-             /*|| type == "mouseover"
-             || type == "mouseout"*/
+             || type == "mouseover"
+             || type == "mouseout"
              || type == "mousemove"
-             /*|| type == "mouseenter"
-             || type == "mouseleave"*/
+             || type == "mouseenter"
+             || type == "mouseleave"
              || type == "pointerdown"
              || type == "pointerup"
-             /*|| type == "pointerenter"
-             || type == "pointerleave"*/
+             || type == "pointerenter"
+             || type == "pointerleave"
              || type == "pointermove"
-             /*|| type == "pointerout"
-             || type == "pointerover"*/
-             /*|| type == "click"
-             || type == "dblclick"
+             || type == "pointerout"
+             || type == "pointerover"
+             || type == "click"
+             /*|| type == "dblclick"
              || type == "auxclick"
              || type == "contextmenu"
              || type == "touchcancel"
@@ -1302,6 +1314,17 @@ void Node::AddEventListener(const std::string& type,
             }
             else if(type == "mousemove" || type == "pointermove") {
               sbInputEventType= SbInputEventType::kSbInputEventTypeMove;
+            }
+            else if(type == "mouseover" || type == "mouseout"
+                    || type == "pointerover" || type == "pointerout") {
+              sbInputEventType= SbInputEventType::kSbInputEventTypeMove;
+            }
+            else if(type == "mouseenter" || type == "mouseleave"
+                    || type == "pointerenter" || type == "pointerleave") {
+              sbInputEventType= SbInputEventType::kSbInputEventTypeMove;
+            }
+            else if(type == "click" || type == "dblclick" || type == "auxclick") {
+              sbInputEventType= SbInputEventType::kSbInputEventTypePress;
             } else {
               NOTIMPLEMENTED_LOG_ONCE();
               DCHECK(false);
@@ -1330,6 +1353,9 @@ void Node::AddEventListener(const std::string& type,
             cobalt::dom::Event* dom_event
               = native_event::InputEventToDomEvent(type, input_event.get(), window);
 
+            std::cout << "(mouse) DispatchEvent dom_event type: "
+              << dom_event->type() << std::endl;
+
             // see https://github.com/blockspacer/skia-opengl-emscripten/blob/cdb838723fe53c53abf008e9f2e8fc93089ae3f6/src/cobalt/port/cobalt/base/tokens.h#L30
             this->DispatchEvent(dom_event);
           }
@@ -1342,6 +1368,11 @@ void Node::AddEventListener(const std::string& type,
 
             const unsigned int button_modifiers
               = native_event::EmscMouseEventToSbButtonModifiers(event["button"].as<unsigned short>());
+
+            std::cout << "(wheel) event[deltaX].as<float>(): "
+              << event["deltaX"].as<float>() << std::endl;
+            std::cout << "(wheel) event[deltaY].as<float>(): "
+              << event["deltaY"].as<float>() << std::endl;
 
             std::unique_ptr<SbEvent> sb_ev
               = native_event::createSbWheelEvent(
@@ -1356,7 +1387,7 @@ void Node::AddEventListener(const std::string& type,
                   mouse_x,
                   mouse_y,
                   event["deltaX"].as<float>(),
-                  event["deltaX"].as<float>(),
+                  event["deltaY"].as<float>(),
                   button_modifiers,
                   native_event::EmscMouseEventToSbKey(event["button"].as<unsigned short>())
               );
@@ -1368,6 +1399,9 @@ void Node::AddEventListener(const std::string& type,
             cobalt::dom::Event* dom_event
               = native_event::InputEventToDomEvent(type, input_event.get(), window);
 
+            std::cout << "(wheel) DispatchEvent dom_event type: "
+              << dom_event->type() << std::endl;
+
             // see https://github.com/blockspacer/skia-opengl-emscripten/blob/cdb838723fe53c53abf008e9f2e8fc93089ae3f6/src/cobalt/port/cobalt/base/tokens.h#L30
             this->DispatchEvent(dom_event);
           }
@@ -1378,6 +1412,60 @@ void Node::AddEventListener(const std::string& type,
             SbInputEventType sbInputEventType;
             bool isKeyEvent = false;
 
+            DCHECK(!event["which"].isNull() && !event["which"].isUndefined());
+
+            DCHECK(!event["code"].isNull() && !event["code"].isUndefined());
+
+            DCHECK(!event["key"].isNull() && !event["key"].isUndefined());
+            DCHECK(!event["altKey"].isNull() && !event["altKey"].isUndefined());
+
+            // see https://github.com/emscripten-core/emscripten/blob/fb8a9847c1584cbdbd59bd3d03dab484fd0a9132/src/library_html5.js#L238
+
+            emscripten::val moduleEm = emscripten::val::global("Module");
+            DCHECK(!moduleEm.isNull() && !moduleEm.isUndefined());
+
+            emscripten::val whichEm = event["which"];
+
+            emscripten::val stringEm = emscripten::val::global("String");
+            DCHECK(!stringEm.isNull() && !stringEm.isUndefined());
+
+            emscripten::val whichAsStrEm = stringEm.call<emscripten::val>("fromCharCode", event["which"]);
+
+            //emscripten::val whichAsUTF8Str = moduleEm.call<emscripten::val>("stringToUTF8", whichAsStrEm);
+
+            std::string keyUTF = whichAsStrEm.as<std::string>();
+
+            //std::string keyUTF = whichAsUTF8Str.as<std::string>();
+
+            /*const size_t whichAsUTF8StrSize = 128;
+            char* whichAsUTF8Str = nullptr;
+            EM_ASM({
+              var buffer = _malloc($2);
+              stringToUTF8($1, buffer, $2);
+            }, whichAsStrEm.as<std::string>().c_str(), whichAsUTF8Str, sizeof(char)*whichAsUTF8StrSize);*/
+
+            /*std::string keyUTF = whichAsUTF8Str;
+            delete[] whichAsUTF8Str;*/
+
+            /*const size_t whichAsUTF8StrSize = 128;
+            char* whichAsUTF8Str = new char[whichAsUTF8StrSize];
+            emscripten::val numBytesWritten = moduleEm.call<emscripten::val>("stringToUTF8",
+              whichAsStrEm,
+              emscripten::val(whichAsUTF8Str),
+              emscripten::val(whichAsUTF8StrSize));*/
+
+            /*const size_t whichAsUTF8StrSize = 128;
+            char whichAsUTF8Str[whichAsUTF8StrSize];
+            EM_ASM({
+              var numBytesWritten = Module.stringToUTF8($0, $1, $2);
+            }, whichAsStrEm.as<std::string>().c_str(), whichAsUTF8Str, whichAsUTF8StrSize);
+
+            std::string keyUTF = whichAsUTF8Str; //.as<std::string>();
+
+            delete[] whichAsUTF8Str;*/
+
+            //std::string keyUTF = event["key"].as<std::string>();
+
             if(type == "keydown") {
               sbInputEventType= SbInputEventType::kSbInputEventTypePress;
               isKeyEvent = true;
@@ -1386,16 +1474,20 @@ void Node::AddEventListener(const std::string& type,
               sbInputEventType= SbInputEventType::kSbInputEventTypeUnpress;
               isKeyEvent = true;
             }
+            /// \note keypress supports Unicode
+            /// \note KeyPress event is invoked only for character (printable) keys,
+            /// but KeyDown event is raised for all including nonprintable such as Control, Shift, Alt, BackSpace, etc.
             else if(type == "keypress") {
               // Heuristic: Assume all printables are represented by
               // a string that has exactly one character, other are control characters.
-              if (native_event::NumCharsInUTF8String((const unsigned char*)event["key"].as<std::string>().c_str()) == 1)
+              /*if (native_event::NumCharsInUTF8String((const unsigned char*)keyUTF.c_str()) == 1)
               {
                 sbInputEventType = SbInputEventType::kSbInputEventTypePress;
                 isKeyEvent = true;
               } else {
                 isKeyEvent = false;
-              }
+              }*/
+              isKeyEvent = true;
             } else {
               NOTIMPLEMENTED_LOG_ONCE();
               DCHECK(false);
@@ -1405,11 +1497,36 @@ void Node::AddEventListener(const std::string& type,
               return;
             }
 
+            // charCode is never set in the keydown and keyup events. In these cases, keyCode is set instead.
+            /*printf("(key) event[keyCode].as<std::string>(): %s\n",
+              event["keyCode"].as<std::string>().c_str());*/
+            /*printf("(key) event[charCode].as<std::string>(): %s\n",
+              event["charCode"].as<std::string>().c_str());*/
+
+            //  To get the code of the key regardless of whether it was stored
+            // in keyCode or charCode, query the which property.
+            /*printf("(key) event[which].as<std::string>(): %s\n",
+              event["which"].as<std::string>().c_str());
+            printf("(key) event[code].as<std::string>(): %s\n",
+              event["code"].as<std::string>().c_str());
+            printf("(key) event[key].as<std::string>(): %s\n",
+              event["key"].as<std::string>().c_str());*/
+
+            printf("keyUTF: %s\n",
+              keyUTF.c_str());
+
+            // Heuristic: Assume all printables are represented by
+            // a string that has exactly one character, other are control characters.
+            const bool is_printable = native_event::number_of_characters_in_utf8_string(keyUTF.c_str()) == 1;
+
+            printf("is_printable: %s\n", (is_printable ? "1" : "0"));
+
             const int dom_pk_code = emscripten_compute_dom_pk_code(event["code"].as<std::string>().c_str());
-            unsigned int Character = native_event::Utf8CharToUtf32((const unsigned char*)event["key"].as<std::string>().c_str());
+            wchar_t Character
+              //= (wchar_t)keyUTF.c_str()[0];
+              = native_event::Utf8CharToUtf32((const unsigned char*)keyUTF.c_str());
             const SbKey key = native_event::EmscKeycodeToSbKey(dom_pk_code);
             const SbKeyLocation key_location = native_event::EmscKeycodeToSbKeyLocation(dom_pk_code);
-            const bool is_printable = native_event::number_of_characters_in_utf8_string(event["key"].as<std::string>().c_str()) == 1;
 
             std::unique_ptr<SbEvent> sb_ev
               = native_event::createSbKeyboardEvent(
@@ -1425,6 +1542,7 @@ void Node::AddEventListener(const std::string& type,
                   key_location,
                   Character,
                   Character,
+                  keyUTF,
                   is_printable
               );
 
@@ -1435,36 +1553,16 @@ void Node::AddEventListener(const std::string& type,
             cobalt::dom::Event* dom_event
               = native_event::InputEventToDomEvent(type, input_event.get(), window);
 
+            std::cout << "(key) DispatchEvent dom_event type: "
+              << dom_event->type() << std::endl;
+
             // see https://github.com/blockspacer/skia-opengl-emscripten/blob/cdb838723fe53c53abf008e9f2e8fc93089ae3f6/src/cobalt/port/cobalt/base/tokens.h#L30
             this->DispatchEvent(dom_event);
-
-#if 0
-            dom::KeyboardEvent::KeyLocationCode location =
-              dom::KeyboardEvent::KeyCodeToKeyLocation(key_code);
-
-            const uint32 modifiers = 0;
-            event_init.set_ctrl_key(modifiers & cobalt::system_window::InputEvent::kCtrlKey);
-            event_init.set_shift_key(modifiers & cobalt::system_window::InputEvent::kShiftKey);
-            event_init.set_alt_key(modifiers & cobalt::system_window::InputEvent::kAltKey);
-            event_init.set_meta_key(modifiers & cobalt::system_window::InputEvent::kMetaKey);
-
-            event_init.set_location(location);
-            event_init.set_repeat(false);
-            event_init.set_char_code(key_code);
-            event_init.set_key_code(key_code);
-            event_init.set_keysym(static_cast<int>('K'));
-            event_init.set_is_printable(true);
-            event_init.set_text("input_event->text()");
-
-            // see https://github.com/blockspacer/skia-opengl-emscripten/blob/cdb838723fe53c53abf008e9f2e8fc93089ae3f6/src/cobalt/port/cobalt/base/tokens.h#L30
-            this->DispatchEvent(
-                new cobalt::dom::KeyboardEvent(
-                  base::Token(type.c_str()),
-                  window.get(), event_init));
-#endif // 0
           }
 
       };
+
+      printf("HTML5 AddEventListener %s\n", type.c_str());
 
       em_node->call<emscripten::val>(
         "addEventListener",
@@ -1472,35 +1570,6 @@ void Node::AddEventListener(const std::string& type,
         embinder::bind(onEventCb, std::placeholders::_1),
         emscripten::val(false) /*passive: if true, will never call preventDefault()*/
       );
-
-// TODO: convert native event  -> SbEvent -> cobalt::system_window::InputEvent -> dom events
-// https://github.com/blockspacer/skia-opengl-emscripten/blob/bb16ab108bc4018890f4ff3179250b76c0d9053b/src/cobalt/src/cobalt/input/input_device_manager_desktop.cc#L233
-#if 0
-      // see https://github.com/blockspacer/skia-opengl-emscripten/blob/cdb838723fe53c53abf008e9f2e8fc93089ae3f6/src/cobalt/port/cobalt/system_window/system_window.cc#L161
-      std::unique_ptr<cobalt::system_window::InputEvent> input_event(
-        new cobalt::system_window::InputEvent(SbTimeGetMonotonicNow()/*timestamp*/,
-         cobalt::system_window::InputEvent::Type::kKeyDown/*type*/, 0/*data.device_id*/,
-         static_cast<int>('K')/*key_code*/, true/*data.is_printable*/, static_cast<int>('K')/*data.keysym*/,
-         "K"/*data.text*/, kSbKeyModifiersNone/*modifiers*/,
-         false/*is_repeat*/, math::PointF(/*data.position.x*/0, /*data.position.y*/0),
-         math::PointF(/*data.delta.x*/ 0, /*data.delta.y*/ 0), /*pressure*/0,
-         math::PointF(/*data.size.x*/ 0,  /*data.size.y*/ 0),
-         math::PointF(/*data.tilt.x*/ 0,  /*data.tilt.y*/ 0)));
-
-      scoped_refptr<Window> window;
-      if (IsInDocument()) {
-        DCHECK(node_document());
-        if(node_document()->default_view()) { // TODO
-          //P_LOG("Node::DispatchEvent 2.4\n");
-          window = node_document()->default_view();
-        }
-      }
-
-      this->DispatchEvent(
-          new cobalt::dom::KeyboardEvent(
-            base::Token(type.c_str()),
-            window.get(), event_init));
-#endif // 0
     };
 
   html_native::runOnMainBrowserThread(std::move(taskCb));
