@@ -1,3 +1,57 @@
+## Performance tracing with chromium
+
+TODO: measure performance
+
+## Memory usage
+
+TODO: measure memory usage
+
+## Community
+
+TODO: Setup Slack notifications
+
+## Docs
+
+TODO: Create docs
+
+## Tutorials
+
+TODO: Create tutorials
+
+## UI Dev-tools
+
+TODO
+
+## UI hot-reload and UI state serialisation
+
+TODO
+
+## Samples
+
+TODO: see src/main.cpp, src/extended_html/input_box/HTMLInputElement.cc and src/skia_ui_demo.cc
+
+## SDK installer
+
+TODO
+
+## Project management tool
+
+TODO: tool to configure cmake flags and ICU languages
+
+## Linking to the pre-built Library
+
+TODO: setup CI to release pre-built Library
+
+TODO: Linking on MSVC with `Linker ? General ? Additional Library Directories`
+
+TODO: Linking on UNIX with `LDFLAGS`
+
+TODO: Linking on macOS with `General ? Linked Frameworks and Libraries`
+
+TODO: Using with CMake
+
+TODO: Using with Godot/UE4/Unity
+
 # build IWYU
 
 ```

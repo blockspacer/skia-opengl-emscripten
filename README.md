@@ -5,7 +5,7 @@
   </a>
 </p>
 <h3 align="center">SKIA based C++ HTML/CSS UI</h3>
-<p align="center">A fully open source, powerful solution for HTML/CSS UI. Supports subset of HTML/CSS. Based on chromium/cobalt.foo without JavaScript overhead.</p>
+<p align="center">A fully open source, powerful solution for HTML/CSS UI. C++ HTML/CSS UI. Supports subset of HTML/CSS. Based on chromium/cobalt.foo without JavaScript overhead. Uses SKIA 2D graphics library. Can be used to build UI for cross-platform app or game. Can support browser as HTML5 web framework or WebGL UI renderer.</p>
 <hr />
 
 ![](docs/img/demo1.gif)
@@ -53,6 +53,8 @@ In development
 ![](./docs/img/skull.png =50x50)
 
 <img src="./docs/img/skull.png" width="50" height="50"/>
+
+TODO: move .md file from [./docs/TODO.md](./docs/TODO.md)
 
 # FAQ
 
@@ -117,6 +119,10 @@ Inspired by:
 
 Let`s combine best of them all together.
 
+- How It Works?
+
+Started over with cobalt.foo, stripped it to the bare-minimum. Added support for web components, scrolling, ui/views widget framework from chromium.
+
 - Can't build?
 
 Check readme & issues. Don't forget to replace files based on `patches`.
@@ -162,6 +168,34 @@ See https://github.com/blockspacer/skia-opengl-emscripten/issues/6
 
 Need to review opensource `LICENSE`-s used by thirdparty libs. Any help wanted. See issues: https://github.com/blockspacer/skia-opengl-emscripten/issues/4
 
+## Project goals
+
+Create GUI framework that is
+
+- Free
+- Opensource
+- Lightweight
+- Customizable
+- Can use animations
+- Fast, performance matters for web games
+- Can support multiple surfaces in 3D (like multiple PC screens in WEB VR game world)
+- Can support browser, mobile, native, etc. without a lot of code changes
+- Small enough to be used in browser
+- With ability to turn on/off features and modify source code
+- Can support UTF8 fonts, font rendering and i18n matters
+- Can support shape drawing, curves
+- Can be used without a lot of boilerplate code (supports reactivity, custom widgets, etc.)
+- Can support animation formats like lottie (SKOTTIE)
+- Can render both on CPU and GPU
+- Can be integrated with existing apps or game engines (integrates with existing window creation, threads management, etc.)
+- Can control low-level platform functionality (such as file system, rendering, clipboard, etc.).
+- Focused on UI. Goal is to keep project small, but with ability to integrate third-party libraries
+
+## Lightweight
+
+- ~6.0MiB uncompressed (~3MiB compressed), size depends on enabled features and languages (i18n).
+- low memory usage
+
 ## Clone with --recursive
 
 ```bash
@@ -192,7 +226,7 @@ TODO: contribute docs about emscripten SDK usage on Windows.
 
 ## How to apply patches
 
-Just copy and replace files based on `patches` folder.
+Just copy and replace files based on `patches` folder. See build instructions.
 
 TODO: contribute `git`-based patches.
 
