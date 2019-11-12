@@ -188,8 +188,11 @@ void SoftwareRasterizer::Submit(
   // TODO >>
   //return;
 
-  int width = render_target->GetSize().width();
+  int width = render_target->GetSize().width(); // TODO
   int height = render_target->GetSize().height();
+
+  /*printf("SoftwareRasterizer::Submit render_target->GetSize() %s\n",
+    render_target->GetSize().ToString().c_str());*/
 
   // Determine the image size and format that we will use to render to.
   SkImageInfo output_image_info =
@@ -222,8 +225,11 @@ void SoftwareRasterizer::Submit(
   // output.
   SkCanvas canvas(bitmap);*/
 
+  // TODO: re-use SkCanvas, not sRasterSurface https://github.com/google/skia/blob/76365c6a090e157c9e3b046c55d9617eb9a153ec/dm/DMSrcSink.cpp#L1891
+
   //printf("SoftwareRasterizer::Submit( 2\n");
-  if (!sRasterSurface) {
+  //if (!sRasterSurface) // allow resize
+  {
     const SkImageInfo info = SkImageInfo::MakeN32(width, height, kPremul_SkAlphaType);
     sRasterSurface = SkSurface::MakeRaster(info);
     if (!sRasterSurface) {

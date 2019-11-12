@@ -745,10 +745,15 @@ void Window::SetSize(ViewportSize size, float device_pixel_ratio) {
 
   if (html_element_context_->page_visibility_state()->GetVisibilityState() ==
       page_visibility::kVisibilityStateVisible) {
+    //printf("Window::SetSize Dispatch resize Event\n");
     DispatchEvent(new Event(base::Tokens::resize()));
   } else {
+    //printf("Window::SetSize pending\n");
     is_resize_event_pending_ = true;
   }
+
+  /*printf("Window:: viewport_size_.width_height()  %s\n",
+    viewport_size_.width_height().ToString().c_str());*/
 }
 
 void Window::SetCamera3D(const scoped_refptr<input::Camera3D>& camera_3d) {

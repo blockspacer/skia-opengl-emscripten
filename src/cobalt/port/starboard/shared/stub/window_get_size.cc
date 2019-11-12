@@ -21,7 +21,7 @@ bool SbWindowGetSize(SbWindow window, SbWindowSize* size) {
   if(window) {
     size->width = window->width;
     size->height = window->height;
-    size->video_pixel_ratio = window->video_pixel_ratio;
+    size->video_pixel_ratio = window->video_pixel_ratio; // TODO
     return true;
   }
 //#endif

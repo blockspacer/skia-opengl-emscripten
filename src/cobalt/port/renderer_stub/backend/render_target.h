@@ -41,6 +41,9 @@ class RenderTarget : public base::RefCountedThreadSafe<RenderTarget> {
   // Return metadata about the render target such as dimensions and format.
   virtual const math::Size& GetSize() const = 0;
 
+  // custom
+  virtual void SetSize(const math::Size&) = 0;
+
   // Returns a platform-specific handle to the render target that can be
   // passed into platform-specific code.
   virtual intptr_t GetPlatformHandle() const = 0;

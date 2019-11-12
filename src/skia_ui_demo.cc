@@ -3733,7 +3733,7 @@ void SkiaUiDemo::initUISkiaSurface(int /*w*/, int /*h*/) {
   const SkImageInfo info = SkImageInfo::MakeN32(
     /*width*/ DRAW_SURFACE_WIDTH, /*height*/ DRAW_SURFACE_HEIGHT,
     kPremul_SkAlphaType); // TODO
-  sRasterSurface = SkSurface::MakeRaster(info);
+  sRasterSurface = SkSurface::MakeRaster(info); // allow resize
   if (!sRasterSurface) {
     printf("failed to create raster surface\n");
   }

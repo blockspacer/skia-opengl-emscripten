@@ -529,15 +529,6 @@ static SDL_Event e;
 // Main loop flag
 static bool quitApp = false;
 
-static void onResize(int widthIn, int heightIn)
-{
-  DRAW_BUFFER_WIDTH = std::min(widthIn, MAX_DRAW_BUFFER_WIDTH);
-  DRAW_BUFFER_HEIGHT = std::min(heightIn, MAX_DRAW_BUFFER_HEIGHT);
-#if defined(ENABLE_OPENGL)
-  glViewport(0, 0, DRAW_BUFFER_WIDTH, DRAW_BUFFER_HEIGHT);
-#endif // ENABLE_OPENGL
-}
-
 #if defined(ENABLE_OPENGL)
 //static GLint uniformRedClrTint;
 
@@ -577,6 +568,7 @@ static int InitGL() {
                       "    vec4 colour = texture2D(u_tex, v_texcoord);\n"
                       //    "    vec4 colour = vec4(100, 0, 100, 100);\n"
                       "    colour.rgba = colour.rgba;\n"
+                      //"    colour.rgba = vec4(v_texcoord, 0.0f, 1.0f);\n"
                       //"    colour.r = clrRedTint;\n"
                       "    gl_FragColor = colour;\n"
                       "}                                            \n";
@@ -1957,6 +1949,12 @@ CobaltTester::CobaltTester()
 
   layout_trigger = layout::LayoutManager::LayoutTrigger::kOnDocumentMutation;
 
+  // In the off chance we have non-square pixels, use the max ratio so the
+  // highest quality video suitable to the device gets selected.
+  /*float video_pixel_ratio = std::max(
+      static_cast<float>(display_width) / size->width,
+      static_cast<float>(display_height) / size->height);*/
+
   DCHECK(input_device_manager_);
   window_ = new cobalt::dom::Window(
       /* autoStartDocumentLoad */ false,
@@ -2131,8 +2129,8 @@ CobaltTester::CobaltTester()
   skemgl::preload_web_components();
   //generated::models::registerHTMLModels();
 
-  window_->document()->setHTMLModelRegistry(std::move(
-    std::make_unique<generated::models::MainHTMLModelRegistry>()));
+  window_->document()->setHTMLModelRegistry(
+    std::make_unique<generated::models::MainHTMLModelRegistry>());
 }
 
 static void createCobaltTester() {
@@ -2341,6 +2339,131 @@ static void animate() {
     //printf("animate end\n");
 }
 
+static void onResize(int widthIn, int heightIn)
+{
+  DCHECK(widthIn <= MAX_DRAW_BUFFER_WIDTH && widthIn >= 0);
+  DCHECK(heightIn <= MAX_DRAW_BUFFER_HEIGHT && heightIn >= 0);
+
+  DRAW_BUFFER_WIDTH = widthIn;//std::min(widthIn, MAX_DRAW_BUFFER_WIDTH);
+  DRAW_BUFFER_HEIGHT = heightIn;//std::min(heightIn, MAX_DRAW_BUFFER_HEIGHT);
+
+  DRAW_SURFACE_WIDTH = DRAW_BUFFER_WIDTH;
+  DRAW_SURFACE_HEIGHT = DRAW_BUFFER_HEIGHT;
+
+  BROWSER_WIDTH = DRAW_SURFACE_WIDTH;
+  BROWSER_HEIGHT = DRAW_SURFACE_HEIGHT;
+
+#if defined(ENABLE_OPENGL)
+  glViewport(0, 0, widthIn, heightIn);
+#endif // ENABLE_OPENGL
+
+  // see https://github.com/blockspacer/cobalt-clone-28052019/blob/89664d116629734759176d820e9923257717e09c/src/starboard/shared/x11/application_x11.cc#L1299
+#if defined(ENABLE_COBALT)
+  base::OnceClosure func = base::Bind([](int w, int h)
+  {
+    float diagonal = 0.0f;  // Special value meaning diagonal size is not known.
+#if defined(__EMSCRIPTEN__)
+    // https://github.com/Becavalier/Book-DISO-WebAssembly/issues/10
+    double dpr = emscripten_get_device_pixel_ratio();
+#else
+    double dpr = 1.0; //(float)w / (float)h;
+    /*if (g_cobaltTester && g_cobaltTester->system_window_) {
+      dpr = g_cobaltTester->system_window_->GetVideoPixelRatio();
+    }*/
+#endif // __EMSCRIPTEN__
+
+    if(g_cobaltTester && g_cobaltTester->system_window_) {
+      DCHECK(g_cobaltTester->system_window_->GetSbWindow());
+      g_cobaltTester->system_window_->GetSbWindow()->width = w;
+      g_cobaltTester->system_window_->GetSbWindow()->height = h;
+
+      // In the off chance we have non-square pixels, use the max ratio so the
+      // highest quality video suitable to the device gets selected.
+      /*float video_pixel_ratio = std::max(
+          static_cast<float>(display_width) / size->width,
+          static_cast<float>(display_height) / size->height);*/
+
+      g_cobaltTester->system_window_->GetSbWindow()->video_pixel_ratio = 1.0;//dpr;
+
+      printf("system_window_->GetWindowSize().c_str() %s\n",
+        g_cobaltTester->system_window_->GetWindowSize().ToString().c_str());
+
+      DCHECK(g_cobaltTester->system_window_->GetWindowSize().GetArea() > 0);
+    }
+
+    if(g_cobaltTester && g_cobaltTester->window_) {
+      DCHECK(g_cobaltTester->renderer_module_);
+      DCHECK(g_cobaltTester->renderer_module_->pipeline());
+      DCHECK(g_cobaltTester->layout_manager_);
+      DCHECK(g_cobaltTester->renderer_module_->render_target());
+      DCHECK(g_cobaltTester->window_->document());
+
+      // see DisplayStub
+      g_cobaltTester->renderer_module_->render_target()->SetSize(cobalt::math::Size(w, h));
+
+      printf("g_cobaltTester->renderer_module_->render_target()->GetSize().c_str() %s\n",
+        g_cobaltTester->renderer_module_->render_target()->GetSize().ToString().c_str());
+
+      /// \note SetSize calls window_->document()->SetViewport
+      g_cobaltTester->window_->SetSize(
+        cobalt::cssom::ViewportSize(w, h/*, diagonal*/), dpr);
+      g_cobaltTester->window_->document()->SetViewport(
+        cobalt::cssom::ViewportSize(w, h/*, diagonal*/));
+      // TODO: render_target_size
+
+      printf("g_cobaltTester->window_->inner_width %f inner_height %f\n",
+        g_cobaltTester->window_->inner_width(), g_cobaltTester->window_->inner_height());
+
+      printf("g_cobaltTester->window_->outer_width %f outer_height %f\n",
+        g_cobaltTester->window_->outer_width(), g_cobaltTester->window_->outer_height());
+
+      printf("g_cobaltTester->window_->screen_x %f screen_y %f\n",
+        g_cobaltTester->window_->screen_x(), g_cobaltTester->window_->screen_y());
+
+      printf("g_cobaltTester->window_->device_pixel_ratio %f\n",
+        g_cobaltTester->window_->device_pixel_ratio());
+
+      printf("g_cobaltTester->window_->screen()->avail_width() %f avail_height %f\n",
+        g_cobaltTester->window_->screen()->avail_width(), g_cobaltTester->window_->screen()->avail_height());
+
+      if (!g_cobaltTester->window_->document()->html()) {
+        DCHECK(false);
+      }
+
+      // g_cobaltTester->window_->document()->SampleTimelineTime();
+
+      // g_cobaltTester->layout_manager_->ForceReLayout();
+
+      // g_cobaltTester->renderer_module_->pipeline()->RasterizeCurrentTree();
+
+      printf("g_cobaltTester->window_->screen() size %f %f\n",
+        g_cobaltTester->window_->screen()->width(),
+        g_cobaltTester->window_->screen()->height());
+
+      printf("g_cobaltTester->window_->document()->viewport_size().width_height()  %s\n",
+        g_cobaltTester->window_->document()->viewport_size().width_height().ToString().c_str());
+
+    }
+  }, BROWSER_WIDTH, BROWSER_HEIGHT);
+
+#if !defined(DISABLE_PTHREADS)
+  if(g_cobaltTester && g_cobaltTester->system_window_) {
+    main_browser_thread_.task_runner()->PostTask(
+      FROM_HERE, base::BindOnce([](base::OnceClosure func) {
+        DCHECK(g_cobaltTester);
+        DCHECK(g_cobaltTester->system_window_);
+        std::move(func).Run();
+        printf("main_browser_thread_ system_window_->GetWindowSize().ToString().c_str() %s\n",
+          g_cobaltTester->system_window_->GetWindowSize().ToString().c_str());
+      }, std::move(func))
+    );
+#elif defined(DISABLE_PTHREADS)
+    std::move(func).Run();
+#endif // DISABLE_PTHREADS
+  }
+#endif // ENABLE_COBALT
+}
+
 #if defined(ENABLE_COBALT) && defined(ENABLE_SKIA)
 static void drawBrowserDemo() {
     //using cobalt::renderer::rasterizer::egl::getRasterizerSkSurface;
@@ -2372,7 +2495,7 @@ static void drawBrowserDemo() {
             //}
         } else {
 #if defined(ENABLE_BASE)
-            NOTIMPLEMENTED_LOG_ONCE();
+            NOTIMPLEMENTED_LOG_ONCE(); // TODO
 #endif // ENABLE_BASE
         }
 
@@ -2495,7 +2618,16 @@ static void Draw() {
 #ifdef __EMSCRIPTEN__
   // see
   // https://github.com/floooh/oryol/blob/master/code/Modules/Gfx/private/emsc/emscDisplayMgr.cc#L174
-  emscripten_get_canvas_element_size("#canvas", &w, &h); //, &fs); // width, height, isFullscreen
+  EMSCRIPTEN_RESULT r = emscripten_get_canvas_element_size("#canvas", &w, &h); //, &fs); // width, height, isFullscreen
+  if (r != EMSCRIPTEN_RESULT_SUCCESS) {
+    DCHECK(false);
+  }
+  EmscriptenFullscreenChangeEvent e_fullscreen;
+  r = emscripten_get_fullscreen_status(&e_fullscreen);
+  if (r != EMSCRIPTEN_RESULT_SUCCESS) {
+    DCHECK(false);
+  }
+  const bool isFullscreen = e_fullscreen.isFullscreen;
 #else
   w = DRAW_SURFACE_WIDTH;
   h = DRAW_SURFACE_HEIGHT;
@@ -2538,10 +2670,10 @@ static void updateGlobalMousePos(const int screenMouseX, const int screenMouseY)
   //}
 #endif // ENABLE_SKIA
 
-  DCHECK(curScreenMouseX > -1);
+  /*DCHECK(curScreenMouseX > -1);
   DCHECK(curScreenMouseX <= DRAW_SURFACE_WIDTH);
   DCHECK(curScreenMouseY > -1);
-  DCHECK(curScreenMouseY <= DRAW_SURFACE_HEIGHT);
+  DCHECK(curScreenMouseY <= DRAW_SURFACE_HEIGHT);*/
 
   // https://github.com/blockspacer/cobalt-clone-28052019/blob/89664d116629734759176d820e9923257717e09c/src/starboard/shared/linux/dev_input/dev_input.cc#L910
   // https://github.com/blockspacer/cobalt-clone-28052019/blob/master/src/starboard/android/shared/input_events_generator.cc#L703
@@ -2978,7 +3110,7 @@ static EM_BOOL emsc_keydown_cb(int emsc_type, const EmscriptenKeyboardEvent* ems
   handleEmscriptenKeyboardEvent(emsc_type, emsc_event, user_data);
 
   // Return true for events we want to suppress default web browser handling for.
-  return true;
+  return false;
 }
 
 static EM_BOOL emsc_keypress_cb(int emsc_type, const EmscriptenKeyboardEvent* emsc_event, void* user_data) {
@@ -2988,7 +3120,33 @@ static EM_BOOL emsc_keypress_cb(int emsc_type, const EmscriptenKeyboardEvent* em
   handleEmscriptenKeyboardEvent(emsc_type, emsc_event, user_data);
 
   // Return true for events we want to suppress default web browser handling for.
-  return true;
+  return false;
+}
+
+static EM_BOOL emsc_resize_cb(int emsc_type, const EmscriptenUiEvent *emsc_event, void *userData) {
+  //printf("emsc_resize_cb\n");
+  DCHECK(emsc_event);
+
+  float dpr = emscripten_get_device_pixel_ratio();
+  double w = DRAW_SURFACE_WIDTH;
+  double h = DRAW_SURFACE_HEIGHT;
+
+  // see https://emscripten.org/docs/api_reference/html5.h.html#c.EmscriptenUiEvent
+  if(emsc_type == EMSCRIPTEN_EVENT_RESIZE) {
+    printf("emsc_resize_cb %i %i\n", emsc_event->documentBodyClientWidth, emsc_event->documentBodyClientHeight);
+
+    w = emsc_event->documentBodyClientWidth;
+    w = emsc_event->documentBodyClientHeight;
+
+    //emscripten_get_element_css_size("#canvas", &w, &h);
+    emscripten_set_canvas_element_size("#canvas", w * dpr, h * dpr);
+    emscripten_set_element_css_size("#canvas", w, h);
+
+    onResize((int)w, (int)h);
+  }
+
+  // Return true for events we want to suppress default web browser handling for.
+  return false;
 }
 
 static EM_BOOL emsc_keyup_cb(int emsc_type, const EmscriptenKeyboardEvent* emsc_event, void* user_data) {
@@ -2998,7 +3156,7 @@ static EM_BOOL emsc_keyup_cb(int emsc_type, const EmscriptenKeyboardEvent* emsc_
   handleEmscriptenKeyboardEvent(emsc_type, emsc_event, user_data);
 
   // Return true for events we want to suppress default web browser handling for.
-  return true;
+  return false;
 }
 
 static EM_BOOL emsc_mouse_down_cb(int emsc_type, const EmscriptenMouseEvent* emsc_event, void* user_data) {
@@ -3007,7 +3165,7 @@ static EM_BOOL emsc_mouse_down_cb(int emsc_type, const EmscriptenMouseEvent* ems
   handleEmscriptenMouseEvent(emsc_type, emsc_event, user_data);
 
   // Return true for events we want to suppress default web browser handling for.
-  return true;
+  return false;
 }
 
 static EM_BOOL emsc_mouse_up_cb(int emsc_type, const EmscriptenMouseEvent* emsc_event, void* user_data) {
@@ -3016,7 +3174,7 @@ static EM_BOOL emsc_mouse_up_cb(int emsc_type, const EmscriptenMouseEvent* emsc_
   handleEmscriptenMouseEvent(emsc_type, emsc_event, user_data);
 
   // Return true for events we want to suppress default web browser handling for.
-  return true;
+  return false;
 }
 
 static EM_BOOL emsc_mouse_move_cb(int emsc_type, const EmscriptenMouseEvent* emsc_event, void* user_data) {
@@ -3025,7 +3183,7 @@ static EM_BOOL emsc_mouse_move_cb(int emsc_type, const EmscriptenMouseEvent* ems
   handleEmscriptenMouseEvent(emsc_type, emsc_event, user_data);
 
   // Return true for events we want to suppress default web browser handling for.
-  return true;
+  return false;
 }
 
 static EM_BOOL emsc_mouse_wheel_cb(int emsc_type, const EmscriptenWheelEvent* emsc_event, void* user_data) {
@@ -3091,7 +3249,7 @@ static EM_BOOL emsc_mouse_wheel_cb(int emsc_type, const EmscriptenWheelEvent* em
 #endif // ENABLE_COBALT
 
   // Return true for events we want to suppress default web browser handling for.
-  return true;
+  return false;
 }
 #endif // __EMSCRIPTEN__
 
@@ -3516,8 +3674,20 @@ static void mainLockFreeLoop() {
       case SDL_FINGERMOTION:
         break; // ignore
 
-      case SDL_WINDOWEVENT:
+      case SDL_WINDOWEVENT: {
+        switch (e.window.event) {
+          case SDL_WINDOWEVENT_RESIZED:
+          /// \note SDL_WINDOWEVENT_SIZE_CHANGED event is followed by SDL_WINDOWEVENT_RESIZED
+          case SDL_WINDOWEVENT_SIZE_CHANGED: {
+            onResize((int)e.window.data1, (int)e.window.data2);
+            std::cout << e.window.data1 << " e.window.data2 " << e.window.data2 << std::endl;
+            break;
+          }
+          default:
+            break;
+        }
         break;
+      }
     }
 
 #if defined(ENABLE_COBALT)
@@ -4325,8 +4495,8 @@ int main(int argc, char** argv) {
 
   //https://github.com/Becavalier/Book-DISO-WebAssembly/issues/10
   double dpr = emscripten_get_device_pixel_ratio();
-  emscripten_set_element_css_size("#canvas", DRAW_SURFACE_WIDTH / dpr, DRAW_SURFACE_HEIGHT / dpr);
-  emscripten_set_canvas_element_size("#canvas", DRAW_SURFACE_WIDTH, DRAW_SURFACE_HEIGHT);
+  //emscripten_set_element_css_size("#canvas", DRAW_SURFACE_WIDTH / dpr, DRAW_SURFACE_HEIGHT / dpr);
+  emscripten_set_canvas_element_size("#canvas", DRAW_SURFACE_WIDTH * dpr, DRAW_SURFACE_HEIGHT * dpr);
 
   /// @note use EmscriptenWebGLContextAttributes, not SDL_GL
   /// @see https://github.com/emscripten-core/emscripten/issues/7684
@@ -4500,16 +4670,16 @@ int main(int argc, char** argv) {
   emscripten_set_keydown_callback("#window", 0, true, emsc_keydown_cb);
   emscripten_set_keyup_callback("#window", 0, true, emsc_keyup_cb);
   emscripten_set_keypress_callback("#window", 0, true, emsc_keypress_cb);
+  emscripten_set_resize_callback("#window", 0, false, emsc_resize_cb);
 #else // USE_DEPRECATED_FIND_EVENT_TARGET
   emscripten_set_keydown_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, 0, true, emsc_keydown_cb);
   emscripten_set_keyup_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, 0, true, emsc_keyup_cb);
   emscripten_set_keypress_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, 0, true, emsc_keypress_cb);
+  emscripten_set_resize_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, 0, false, emsc_resize_cb);
 #endif // USE_DEPRECATED_FIND_EVENT_TARGET
 
 #endif // ENABLE_EMSCRIPTEN_INPUT
 
-  // TODO
-  // emscripten_set_resize_callback
 #endif // defined(__EMSCRIPTEN__) && !defined(ENABLE_HTML5_SDL)
 
 #if defined(ENABLE_HTML5_SDL) || !defined(__EMSCRIPTEN__)
@@ -4533,18 +4703,18 @@ int main(int argc, char** argv) {
 
 #if defined(__EMSCRIPTEN__)
   /// \note we don`t use SDL_WINDOW_OPENGL, see emscripten_webgl_create_context
-  window = SDL_CreateWindow("skemgl", 0, 0, width,
+  window = SDL_CreateWindow("skemgl", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, DRAW_SURFACE_WIDTH, DRAW_SURFACE_HEIGHT,
 #if defined(ENABLE_OPENGL)
-                            height, SDL_WINDOW_OPENGL); // TODO
+                            SDL_WINDOW_OPENGL); // TODO
 #else // ENABLE_OPENGL
-                             height, SDL_WINDOW_SHOWN); // TODO
+                            SDL_WINDOW_SHOWN); // TODO
 #endif // ENABLE_OPENGL
 #else
-  window = SDL_CreateWindow("skemgl", 0, 0, DRAW_SURFACE_WIDTH,
+  window = SDL_CreateWindow("skemgl", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, DRAW_SURFACE_WIDTH, DRAW_SURFACE_HEIGHT,
 #if defined(ENABLE_OPENGL)
-                            DRAW_SURFACE_HEIGHT, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN); // TODO
+                            SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE); // TODO
 #else // ENABLE_OPENGL
-                             height, SDL_WINDOW_SHOWN); // TODO
+                            SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE); // TODO
 #endif // ENABLE_OPENGL
 #endif
 

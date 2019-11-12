@@ -30,6 +30,12 @@ class RenderTargetStub : public RenderTarget {
 
   const math::Size& GetSize() const override { return size_; }
 
+  // custom
+  void SetSize(const math::Size& size) override {
+    size_.set_width(size.width());
+    size_.set_height(size.height());
+  }
+
   intptr_t GetPlatformHandle() const override { return 0; }
 
   bool CreationError() override { return false; }
