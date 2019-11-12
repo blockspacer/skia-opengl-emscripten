@@ -2,53 +2,50 @@
   path = submodules/include-what-you-use
   url = https://github.com/include-what-you-use/include-what-you-use.git
 [submodule "thirdparty/SDL2"]
-	path = thirdparty/SDL2
-	url = https://github.com/spurious/SDL-mirror.git
+  path = thirdparty/SDL2
+  url = https://github.com/spurious/SDL-mirror.git
 [submodule "thirdparty/glew"]
-	path = thirdparty/glew
-	url = https://github.com/nigels-com/glew.git
+  path = thirdparty/glew
+  url = https://github.com/nigels-com/glew.git
 [submodule "cmake/sdl2"]
-	path = cmake/sdl2
-	url = ../../aminosbh/sdl2-cmake-modules
+  path = cmake/sdl2
+  url = https://github.com/aminosbh/sdl2-cmake-modules.git
 [submodule "thirdparty/depot_tools"]
-	path = thirdparty/depot_tools
-	url = https://chromium.googlesource.com/chromium/tools/depot_tools.git
+  path = thirdparty/depot_tools
+  url = https://chromium.googlesource.com/chromium/tools/depot_tools.git
 [submodule "thirdparty/SDL2_ttf"]
-	path = thirdparty/SDL2_ttf
-	url = https://github.com/davidsiaw/SDL2_ttf
+  path = thirdparty/SDL2_ttf
+  url = https://github.com/davidsiaw/SDL2_ttf
 [submodule "thirdparty/SDL_net"]
-	path = thirdparty/SDL_net
-	url = https://github.com/SDL-mirror/SDL_net.git
+  path = thirdparty/SDL_net
+  url = https://github.com/SDL-mirror/SDL_net.git
 [submodule "src/chromium/third_party/ced/src"]
-	path = src/chromium/third_party/ced/src
-	url = https://chromium.googlesource.com/external/github.com/google/compact_enc_det.git
+  path = src/chromium/third_party/ced/src
+  url = https://github.com/google/compact_enc_det.git
 [submodule "src/chromium/media/cdm/api"]
-	path = src/chromium/media/cdm/api
-	url = https://chromium.googlesource.com/chromium/cdm.git
+  path = src/chromium/media/cdm/api
+  url = https://chromium.googlesource.com/chromium/cdm.git
 [submodule "src/chromium/third_party/libsync/src"]
-	path = src/chromium/third_party/libsync/src
-	url = https://chromium.googlesource.com/aosp/platform/system/core/libsync.git
+  path = src/chromium/third_party/libsync/src
+  url = https://chromium.googlesource.com/aosp/platform/system/core/libsync.git
 [submodule "src/chromium/third_party/libjpeg_turbo"]
-	path = src/chromium/third_party/libjpeg_turbo
-	url = https://chromium.googlesource.com/chromium/deps/libjpeg_turbo.git
+  path = src/chromium/third_party/libjpeg_turbo
+  url = https://chromium.googlesource.com/chromium/deps/libjpeg_turbo.git
 [submodule "src/chromium/third_party/fontconfig/src"]
-	path = src/chromium/third_party/fontconfig/src
-	url = https://chromium.googlesource.com/external/fontconfig.git
+  path = src/chromium/third_party/fontconfig/src
+  url = https://chromium.googlesource.com/external/fontconfig.git
 [submodule "src/chromium/third_party/libyuv"]
-	path = src/chromium/third_party/libyuv
-	url = https://chromium.googlesource.com/libyuv/libyuv.git
+  path = src/chromium/third_party/libyuv
+  url = https://chromium.googlesource.com/libyuv/libyuv.git
 [submodule "src/chromium/third_party/re2/src"]
-	path = src/chromium/third_party/re2/src
-	url = https://chromium.googlesource.com/external/github.com/google/re2.git
+  path = src/chromium/third_party/re2/src
+  url = https://github.com/google/re2.git
 [submodule "src/chromium/third_party/emoji-segmenter/src"]
-	path = src/chromium/third_party/emoji-segmenter/src
-	url = https://chromium.googlesource.com/external/github.com/googlei18n/emoji-segmenter.git
-[submodule "/mnt/data/skemgl/src/chromium/third_party/skia"]
-	path = /mnt/data/skemgl/src/chromium/third_party/skia
-	url = https://github.com/google/skia.git
+  path = src/chromium/third_party/emoji-segmenter/src
+  url = https://github.com/googlei18n/emoji-segmenter.git
 [submodule "src/chromium/third_party/skia"]
-	path = src/chromium/third_party/skia
-	url = ../../google/skia.git
+  path = src/chromium/third_party/skia
+  url = https://github.com/google/skia.git
 [submodule "submodules/CXTPL"]
-	path = submodules/CXTPL
-	url = http://github.com/blockspacer/CXTPL.git
+  path = submodules/CXTPL
+  url = http://github.com/blockspacer/CXTPL.git
