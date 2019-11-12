@@ -168,7 +168,9 @@ std::unique_ptr<SbEvent> createSbKeyboardEvent(
   const SbKey key,
   const SbKeyLocation key_location,
   const unsigned int keysym,
-  const unsigned int character,
+  const wchar_t character,
+  // the null-terminated input text in UTF-8 encoding
+  const std::string& text,
   bool is_printable
 );
 
