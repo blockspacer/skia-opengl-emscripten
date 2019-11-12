@@ -1745,7 +1745,8 @@ std::unique_ptr<SbEvent> createSbKeyboardEvent(
     const SbKey key,
     const SbKeyLocation key_location,
     const unsigned int keysym,
-    const unsigned int character,
+    const wchar_t character,
+    const std::string& text,
     bool is_printable
   )
 {
@@ -1768,7 +1769,8 @@ std::unique_ptr<SbEvent> createSbKeyboardEvent(
   data->device_type = device_type;
   data->key = key;
   data->key_location = key_location;
-  data->keysym = character;
+  data->keysym = keysym;
+  data->text = text;
   data->character = character;
 
   event->data = data.release();
@@ -1844,6 +1846,8 @@ std::unique_ptr<cobalt::system_window::InputEvent> CreateInputEvent(const SbInpu
                      cobalt::math::PointF(data.size.x, data.size.y),
                      cobalt::math::PointF(data.tilt.x, data.tilt.y)));
 #endif  // SB_HAS(ON_SCREEN_KEYBOARD)
+
+  printf("input_event text %s\n", input_event->text().c_str());
 
   return std::move(input_event);
 }
@@ -2078,6 +2082,9 @@ cobalt::dom::KeyboardEventInit KeyboardInitFromInputEvent(
   keyboard_event.set_repeat(input_event->is_repeat());
   keyboard_event.set_char_code(key_code);
   keyboard_event.set_key_code(key_code);
+  keyboard_event.set_keysym(input_event->keysym()); // custom
+  keyboard_event.set_is_printable(input_event->is_printable()); // custom
+  keyboard_event.set_text(input_event->text()); // custom
 
   int32_t key_code_in_int32 = static_cast<int32_t>(key_code);
   return std::move(keyboard_event);
