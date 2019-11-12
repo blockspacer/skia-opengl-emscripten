@@ -50,9 +50,7 @@
 
 In development
 
-![](./docs/img/skull.png =50x50)
-
-<img src="./docs/img/skull.png" width="50" height="50"/>
+<img src="./docs/img/skull.png" width="400" height="400"/>
 
 TODO: move .md file from [./docs/TODO.md](./docs/TODO.md)
 
