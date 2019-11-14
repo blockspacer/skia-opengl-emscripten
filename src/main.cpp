@@ -2446,6 +2446,7 @@ static void onResize(int widthIn, int heightIn)
     }
   }, BROWSER_WIDTH, BROWSER_HEIGHT);
 
+  if(g_cobaltTester && g_cobaltTester->system_window_) {
 #if !defined(DISABLE_PTHREADS)
   if(g_cobaltTester && g_cobaltTester->system_window_) {
     main_browser_thread_.task_runner()->PostTask(
