@@ -175,10 +175,12 @@ static ui::KeyboardCode keyFromKeyCode(uint32_t key_code) {
     }
     case kShift: {
       result = ui::VKEY_SHIFT;
+      printf("kShift -> ui::VKEY_SHIFT\n");
       break;
     }
     case kControl: {
       result = ui::VKEY_CONTROL;
+      printf("kControl -> ui::VKEY_CONTROL\n");
       break;
     }
     case kMenu: {
@@ -255,10 +257,12 @@ static ui::KeyboardCode keyFromKeyCode(uint32_t key_code) {
     }
     case kHome: {
       result = ui::VKEY_HOME;
+      printf("kHome -> ui::VKEY_HOME\n");
       break;
     }
     case kLeft: {
       result = ui::VKEY_LEFT;
+      printf("kLeft -> ui::VKEY_LEFT\n");
       break;
     }
     case kUp: {
@@ -435,6 +439,7 @@ static ui::KeyboardCode keyFromKeyCode(uint32_t key_code) {
     }
     case kX: {
       result = ui::VKEY_X;
+      printf("kX -> ui::VKEY_X\n");
       break;
     }
     case kY: {
@@ -958,17 +963,21 @@ HTMLInputElement::HTMLInputElement(Document* document)
       //(client_->GetCursorScreenPoint());
 #if defined(ENABLE_BLINK_UI)
       int changed_button_flags = ui::EF_NONE;
-      if(mouseEvent->buttons() & kSbKeyMouse2) { // left
+      // see https://github.com/blockspacer/skia-opengl-emscripten/blob/ff8aa85cedc189cef05dc8fbcc5287df272b0d9f/src/cobalt/src/cobalt/dom/native_events_port/native_event.cc#L1965
+      if(mouseEvent->buttons() & 1) { // left
         changed_button_flags |= ui::EF_LEFT_MOUSE_BUTTON;
+        printf("changed_button_flags |= EF_LEFT_MOUSE_BUTTON\n");
+      }
+      if(mouseEvent->buttons() & 2) { // right
+        changed_button_flags |= ui::EF_RIGHT_MOUSE_BUTTON;
+        printf("changed_button_flags |= EF_RIGHT_MOUSE_BUTTON\n");
       }
       // TODO
-      /*if(mouseEvent->buttons() & kSbKeyMouse2) { // middle
+      if(mouseEvent->buttons() & 4) { // middle
         changed_button_flags |= ui::EF_MIDDLE_MOUSE_BUTTON;
-      }*/
-      if(mouseEvent->buttons() & kSbKeyMouse3) { // right
-        changed_button_flags |= ui::EF_RIGHT_MOUSE_BUTTON;
+        printf("changed_button_flags |= EF_MIDDLE_MOUSE_BUTTON\n");
       }
-      int flags = ui::EF_NONE;
+      /*int flags = ui::EF_NONE;
       flags |= changed_button_flags;
       if(mouseEvent->ctrl_key()) {
         flags |= ui::EF_CONTROL_DOWN;
@@ -981,7 +990,8 @@ HTMLInputElement::HTMLInputElement(Document* document)
       }
       if(mouseEvent->meta_key()) {
         flags |= ui::EF_COMMAND_DOWN;
-      }
+      }*/
+      int flags = changed_button_flags;
       {
         gfx::Point point(elementLocalPos.x(), elementLocalPos.y());
         //gfx::Point point(client_->GetCursorScreenPoint());
@@ -1041,17 +1051,21 @@ HTMLInputElement::HTMLInputElement(Document* document)
               elem->text_content().value_or("").c_str());
 #if defined(ENABLE_BLINK_UI)
       int changed_button_flags = ui::EF_NONE;
-      if(mouseEvent->buttons() & kSbKeyMouse2) { // left
-        changed_button_flags |= ui::EF_LEFT_MOUSE_BUTTON;
-      }
-      // TODO
-      /*if(mouseEvent->buttons() & kSbKeyMouse2) { // middle
-        changed_button_flags |= ui::EF_MIDDLE_MOUSE_BUTTON;
-      }*/
-      if(mouseEvent->buttons() & kSbKeyMouse3) { // right
-        changed_button_flags |= ui::EF_RIGHT_MOUSE_BUTTON;
-      }
-      int flags = ui::EF_NONE;
+      // see https://github.com/blockspacer/skia-opengl-emscripten/blob/ff8aa85cedc189cef05dc8fbcc5287df272b0d9f/src/cobalt/src/cobalt/dom/native_events_port/native_event.cc#L1965
+     if(mouseEvent->buttons() & 1) { // left
+       changed_button_flags |= ui::EF_LEFT_MOUSE_BUTTON;
+       printf("changed_button_flags |= EF_LEFT_MOUSE_BUTTON\n");
+     }
+     if(mouseEvent->buttons() & 2) { // right
+       changed_button_flags |= ui::EF_RIGHT_MOUSE_BUTTON;
+       printf("changed_button_flags |= EF_RIGHT_MOUSE_BUTTON\n");
+     }
+     // TODO
+     if(mouseEvent->buttons() & 4) { // middle
+       changed_button_flags |= ui::EF_MIDDLE_MOUSE_BUTTON;
+       printf("changed_button_flags |= EF_MIDDLE_MOUSE_BUTTON\n");
+     }
+      /*int flags = ui::EF_NONE;
       flags |= changed_button_flags;
       if(mouseEvent->ctrl_key()) {
         flags |= ui::EF_CONTROL_DOWN;
@@ -1064,7 +1078,8 @@ HTMLInputElement::HTMLInputElement(Document* document)
       }
       if(mouseEvent->meta_key()) {
         flags |= ui::EF_COMMAND_DOWN;
-      }
+      }*/
+      int flags = changed_button_flags;
       {
         gfx::Point point(elementLocalPos.x(),
                          elementLocalPos.y());
@@ -1175,17 +1190,22 @@ HTMLInputElement::HTMLInputElement(Document* document)
 #if defined(ENABLE_BLINK_UI)
     int changed_button_flags = ui::EF_NONE;
 
-    if(mouseEvent->buttons() & kSbKeyMouse2) { // left
+    // see https://github.com/blockspacer/skia-opengl-emscripten/blob/ff8aa85cedc189cef05dc8fbcc5287df272b0d9f/src/cobalt/src/cobalt/dom/native_events_port/native_event.cc#L1965
+    if(mouseEvent->buttons() & 1) { // left
       changed_button_flags |= ui::EF_LEFT_MOUSE_BUTTON;
+      printf("changed_button_flags |= EF_LEFT_MOUSE_BUTTON\n");
+    }
+    if(mouseEvent->buttons() & 2) { // right
+      changed_button_flags |= ui::EF_RIGHT_MOUSE_BUTTON;
+      printf("changed_button_flags |= EF_RIGHT_MOUSE_BUTTON\n");
     }
     // TODO
-    /*if(mouseEvent->buttons() & kSbKeyMouse2) { // middle
+    if(mouseEvent->buttons() & 4) { // middle
       changed_button_flags |= ui::EF_MIDDLE_MOUSE_BUTTON;
-    }*/
-    if(mouseEvent->buttons() & kSbKeyMouse3) { // right
-      changed_button_flags |= ui::EF_RIGHT_MOUSE_BUTTON;
+      printf("changed_button_flags |= EF_MIDDLE_MOUSE_BUTTON\n");
     }
-    int flags = ui::EF_NONE;
+    int flags = changed_button_flags;
+    /*int flags = ui::EF_NONE;
     flags |= changed_button_flags;
     if(mouseEvent->ctrl_key()) {
       flags |= ui::EF_CONTROL_DOWN;
@@ -1198,14 +1218,16 @@ HTMLInputElement::HTMLInputElement(Document* document)
     }
     if(mouseEvent->meta_key()) {
       flags |= ui::EF_COMMAND_DOWN;
-    }
+    }*/
+
+    printf("changed_button_flags flags %s\n", (flags ? "ui::ET_MOUSE_DRAGGED" : "ui::ET_MOUSE_MOVED"));
 
     {
       gfx::Point point(elementLocalPos.x(),
                        elementLocalPos.y());
       //gfx::Point point(client_->GetCursorScreenPoint());
       // see https://github.com/blockspacer/skia-opengl-emscripten/blob/24de863ed991dbb888a443138ae0780d0d514417/src/chromium/ui/events/event.h#L517
-      ui::MouseEvent mEv(ui::ET_MOUSE_MOVED, // TODO: ET_MOUSE_DRAGGED
+      ui::MouseEvent mEv(flags ? ui::ET_MOUSE_DRAGGED : ui::ET_MOUSE_MOVED, // TODO: ET_MOUSE_DRAGGED
                          point,
                          point,
                          ui::EventTimeForNow(),
@@ -1395,6 +1417,7 @@ HTMLInputElement::HTMLInputElement(Document* document)
       if(keyboardEvent->meta_key()) {
         flags |= ui::EF_COMMAND_DOWN;
       }
+      flags |= ui::EF_IS_SYNTHESIZED;
       base::string16 utf16_str;
       if(utf16_str.empty()
           && !keyboardEvent->text().empty()
@@ -1461,8 +1484,12 @@ HTMLInputElement::HTMLInputElement(Document* document)
           std::cout << "keyup is_printable 2" << (is_printable ? "true" : "false") << std::endl;
           if(is_printable)
           {
-            release_event.set_character(*i);
+            release_event.set_character(*i); // sets DomKey
           }
+          release_event.set_key_code(keyboardCode);
+
+          printf("release_event.key_code() == ui::VKEY_A %s \n",
+            (release_event.key_code() == ui::VKEY_A ? "true" : "false"));
           //release_event.set_character(base::UTF8ToUTF16("Ф").at(0));
           release_event.set_source_device_id(0);
 
@@ -1475,7 +1502,10 @@ HTMLInputElement::HTMLInputElement(Document* document)
           {
             std::scoped_lock lock(scheduledEventsMutex_);
             scheduledEvents_.scheduledKeyEvents_.
-              push_back(std::move(release_event));
+              push_back(ScheduledKeyEvent{
+              std::move(release_event),
+              keyboardEvent->is_printable()
+            });
           }
 
           /*if(input_node_widget_) {
@@ -1571,6 +1601,7 @@ HTMLInputElement::HTMLInputElement(Document* document)
       if(keyboardEvent->meta_key()) {
         flags |= ui::EF_COMMAND_DOWN;
       }
+      flags |= ui::EF_IS_SYNTHESIZED;
       /// \todo EF_CONTROL_DOWN
       /// https://github.com/blockspacer/skia-opengl-emscripten/blob/bb16ab108bc4018890f4ff3179250b76c0d9053b/src/chromium/ui/events/keycodes/keyboard_code_conversion.cc#L266
       base::string16 utf16_str;
@@ -1642,8 +1673,12 @@ HTMLInputElement::HTMLInputElement(Document* document)
                std::cout << "keypress is_printable 2" << (is_printable ? "true" : "false") << std::endl;
           if(is_printable)
           {
-            press_event.set_character(*i);
+            press_event.set_character(*i); // sets DomKey
           }
+          press_event.set_key_code(keyboardCode);
+          printf("press_event.key_code() == ui::VKEY_A %s \n",
+            (press_event.key_code() == ui::VKEY_A ? "true" : "false"));
+
           //press_event.set_character(base::UTF8ToUTF16("Ф").at(0));
           press_event.set_source_device_id(0);
           DCHECK(!press_event.stopped_propagation());
@@ -1651,7 +1686,10 @@ HTMLInputElement::HTMLInputElement(Document* document)
           {
             std::scoped_lock lock(scheduledEventsMutex_);
             scheduledEvents_.scheduledKeyEvents_.
-              push_back(std::move(press_event));
+              push_back(ScheduledKeyEvent{
+              std::move(press_event),
+              keyboardEvent->is_printable()
+            });
           }
 
           //DCHECK(newNode);
@@ -1747,6 +1785,7 @@ HTMLInputElement::HTMLInputElement(Document* document)
            if(keyboardEvent->meta_key()) {
              flags |= ui::EF_COMMAND_DOWN;
            }
+           flags |= ui::EF_IS_SYNTHESIZED;
            /// \todo EF_CONTROL_DOWN
            /// https://github.com/blockspacer/skia-opengl-emscripten/blob/bb16ab108bc4018890f4ff3179250b76c0d9053b/src/chromium/ui/events/keycodes/keyboard_code_conversion.cc#L266
            base::string16 utf16_str;
@@ -1818,8 +1857,12 @@ HTMLInputElement::HTMLInputElement(Document* document)
                std::cout << "keydown is_printable 2" << (is_printable ? "true" : "false") << std::endl;
                if(is_printable)
                {
-                 press_event.set_character(*i);
+                 press_event.set_character(*i); // sets DomKey
                }
+               press_event.set_key_code(keyboardCode);
+               printf("press_event.key_code() == ui::VKEY_A %s \n",
+                 (press_event.key_code() == ui::VKEY_A ? "true" : "false"));
+
                //press_event.set_character(base::UTF8ToUTF16("Ф").at(0));
                press_event.set_source_device_id(0);
                DCHECK(!press_event.stopped_propagation());
@@ -1827,7 +1870,10 @@ HTMLInputElement::HTMLInputElement(Document* document)
                {
                  std::scoped_lock lock(scheduledEventsMutex_);
                  scheduledEvents_.scheduledKeyEvents_.
-                     push_back(std::move(press_event));
+                   push_back(ScheduledKeyEvent{
+                   std::move(press_event),
+                   keyboardEvent->is_printable()
+                 });
                }
 
                //DCHECK(newNode);

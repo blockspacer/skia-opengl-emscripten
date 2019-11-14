@@ -99,6 +99,12 @@ unsigned int Utf8CharToUtf32(const unsigned char *utf8Char);
 void Utf8StringToUtf32(unsigned int *dstUtf32, int maxBytesToWrite, const unsigned char *utf8);
 #endif // __EMSCRIPTEN__
 
+SbKey ASCIIToSbKey(const std::string& symbol);
+SbKeyLocation modstateToSbKeyLocation(const bool LALT, const bool LCTRL
+  , const bool LSHIFT, const bool RALT, const bool RCTRL, const bool RSHIFT);
+
+//SbKeyLocation ASCIIToSbKeyLocation(const std::string& symbol);
+
 #if defined(ENABLE_HTML5_SDL) || !defined(__EMSCRIPTEN__)
 unsigned int SDL2ModStateToSbKeyModifiers(const SDL_Keymod& modState);
 
@@ -106,7 +112,11 @@ unsigned int SDL2MouseEventToSbButtonModifiers(const Uint8& button);
 
 SbKey SDL2MouseEventToSbKey(const Uint8& button);
 
+std::string keycodeToASCII(SDL_Keycode& keysum);
+
 SbKeyLocation SDL2KeycodeToSbKeyLocation(const SDL_Keycode& keysum);
+
+SbKeyLocation SDL2ScancodeToSbKeyLocation(const SDL_Scancode& keysum);
 
 SbKey SDL2ScancodeToSbKey(const SDL_Scancode& keysum);
 

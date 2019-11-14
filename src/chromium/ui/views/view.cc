@@ -1217,9 +1217,13 @@ bool View::OnMouseWheel(const ui::MouseWheelEvent& event) {
 }
 
 void View::OnKeyEvent(ui::KeyEvent* event) {
-  printf("View::OnKeyEvent %us\n", event->GetText());
+  printf("View::OnKeyEvent %s\n", (event->type() == ui::ET_KEY_PRESSED) ? "OnKeyPressed(*event)" :
+                                                          "OnKeyReleased(*event)");
   bool consumed = (event->type() == ui::ET_KEY_PRESSED) ? OnKeyPressed(*event) :
                                                           OnKeyReleased(*event);
+
+  printf("View::OnKeyEvent consumed %s\n", (consumed) ? "true" :
+                                                          "false");
   if (consumed)
     event->StopPropagation();
 }

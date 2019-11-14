@@ -259,86 +259,7 @@ void input_node_ContainerView::addChildren(
     textfield_->SetEnabled(true);
     textfield_->SetVisible(true);
     textfield_->UseDefaultSelectionBackgroundColor();
-#if 0
-    textfield_->set_controller(this);
-#endif // 0
-    //AddChildView(textfield_);
   }
-
-#if 0
-  title_ = new views::Label();
-  title_->SetFontList(font_list);
-  title_->SetHorizontalAlignment(gfx::ALIGN_LEFT);
-  title_->SetEnabledColor(
-        blink::Color(1.0f, 0.5f, 0.5f, 0.5f).Rgb());
-  title_->SelectRange({0, 4});
-  title_->SetBackgroundColor(
-        blink::Color(1.0f, 1.0f, 1.0f, 1.0f).Rgb());
-  title_->SetBorder(views::CreateSolidBorder(2, SK_ColorWHITE));
-  set_title(base::UTF8ToUTF16("title_ ! title_ ! title_ !"));
-  //AddChildView(title_);
-
-  message_ = new views::Label();
-  message_->SetFontList(font_list);
-  message_->SetHorizontalAlignment(gfx::ALIGN_RIGHT);
-  message_->SetObscured(false);
-  message_->SetSelectable(true);
-  message_->SetSelectionBackgroundColor(
-        blink::Color(0.1f, 0.2f, 0.0f, 0.5f).Rgb());
-  message_->SetSelectionTextColor(
-        blink::Color(0.4f, 0.4f, 0.9f, 0.5f).Rgb());
-  message_->SetBackgroundColor(
-        blink::Color(0.9f, 0.0f, 0.9f, 0.5f).Rgb());
-  message_->SetElideBehavior(gfx::ELIDE_TAIL);
-  message_->SetEnabledColor(
-        blink::Color(1.0f, 0.0f, 1.0f, 0.5f).Rgb());
-  set_message(base::UTF8ToUTF16("message_ ! message_ ! message_ !"));
-  message_->SelectRange({0, 4});
-  //message_->RecalculateFont();
-  message_->SetBorder(views::CreateSolidBorder(2, SK_ColorCYAN));
-  message_->SetHorizontalAlignment(gfx::ALIGN_TO_HEAD);
-  //AddChildView(message_);
-
-  DCHECK(!textfield2_);
-  textfield2_ = new views::Textfield();
-  textfield2_->SetFontList(font_list);
-
-  //textfield2_->SetSize(gfx::Size(100, 100));
-
-  textfield2_->SetBorder(
-        views::CreateSolidBorder(2, SK_ColorGRAY));
-  textfield2_->SetColor(
-        blink::Color(1.0f, 0.0f, 1.0f, 0.5f).Rgb());
-  textfield2_->SetTextInputType(ui::TEXT_INPUT_TYPE_TEXT);
-  textfield2_->set_placeholder_text(
-        base::ASCIIToUTF16("TEXT_2"));
-  textfield2_->set_controller(this);
-  //
-
-  auto MakeRow = [layout](int column_set_id, View* view1) {
-    //DCHECK(view1);
-    //DCHECK(view2);
-    // GridLayout |resize_percent| constants.
-    const float kFixed = 0.f;
-    const float kStretchy = 1.f;
-    layout->StartRowWithPadding(
-          /* vertical_resize */ kFixed,
-          /* column_set_id */ column_set_id,
-          /* padding_resize */ kFixed,
-          /* padding */ 0);
-    if (view1)
-      layout->AddView(view1);
-  };
-
-  // id 0
-  //MakeRow(0, title_, textfield_);
-  MakeRow(0, textfield_);
-  MakeRow(0, textfield2_);
-  //MakeRow(0, nullptr, nullptr);
-  //MakeRow(0, nullptr, textfield2_);
-  MakeRow(0, title_);
-  MakeRow(0, message_);
-#endif // 0
 
   DCHECK(inputNode_);
   DCHECK(inputNode_->custom_generating_node_);
@@ -352,8 +273,7 @@ void input_node_ContainerView::addChildren(
   textfield_->SetTextInputType(ui::TEXT_INPUT_TYPE_TEXT);
   DCHECK(textfield_->GetTextInputType()
           == ui::TEXT_INPUT_TYPE_TEXT);
-  /*DCHECK(textfield_->GetInputMethod()->GetTextInputType()
-          == ui::TEXT_INPUT_TYPE_TEXT);*/
+
   DCHECK(textfield_->GetInputMethod());
   DCHECK(textfield_->IsFocusable());
   DCHECK(textfield_->GetEnabled());

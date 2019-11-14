@@ -64,10 +64,13 @@ gfx::Vector2d GetMouseWheelOffset(const PlatformEvent& native_event) {
 
 PlatformEvent CopyNativeEvent(const PlatformEvent& event) {
   NOTIMPLEMENTED() << "Don't know how to copy PlatformEvent for this platform";
-  return NULL;
+  return event;
 }
 
-void ReleaseCopiedNativeEvent(const PlatformEvent& event) {}
+void ReleaseCopiedNativeEvent(const PlatformEvent& event) {
+  // TODO: deleting pointer to incomplete type 'XEvent' (aka '_XEvent') may cause undefined behavior
+  //delete event;
+}
 
 void ClearTouchIdIfReleased(const PlatformEvent& native_event) {
   NOTIMPLEMENTED();

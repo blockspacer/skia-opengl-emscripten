@@ -61,7 +61,7 @@
 #undef ENABLE_GFX_GEOMETRY
 #endif
 
-#define ENABLE_THREAD_TESTS 1
+//#define ENABLE_THREAD_TESTS 1
 #if defined(ENABLE_THREAD_TESTS) && !defined(ENABLE_WTF)
 #warning "ENABLE_THREAD_TESTS requires WTF"
 #undef ENABLE_THREAD_TESTS
@@ -2448,7 +2448,6 @@ static void onResize(int widthIn, int heightIn)
 
   if(g_cobaltTester && g_cobaltTester->system_window_) {
 #if !defined(DISABLE_PTHREADS)
-  if(g_cobaltTester && g_cobaltTester->system_window_) {
     main_browser_thread_.task_runner()->PostTask(
       FROM_HERE, base::BindOnce([](base::OnceClosure func) {
         DCHECK(g_cobaltTester);
@@ -2690,6 +2689,12 @@ static void updateGlobalMousePos(const int screenMouseX, const int screenMouseY)
 static void sendBrowserInputEvent(std::unique_ptr<SbEvent> event) {
   ///if (base::MessageLoopCurrent::Get().task_runner() != g_cobaltTester->self_task_runner_) {
     //main_browser_thread_.task_runner()->PostBlockingTask(
+
+  if (event->type == kSbEventTypeInput) {
+    SbInputData* data = reinterpret_cast<SbInputData*>(event->data);
+    DCHECK(data);
+    printf("main.cc HandleInputEvent data.key %d\n", data->key);
+  }
 
   base::OnceClosure func = base::Bind(
           [](std::unique_ptr<SbEvent> event) {
@@ -2999,6 +3004,15 @@ static void handleEmscriptenKeyboardEvent(int emsc_type, const EmscriptenKeyboar
   const int CharCode = InterpretCharCode(emsc_type, emsc_event);
   unsigned int Character = native_event::Utf8CharToUtf32((const unsigned char*)emsc_event->key);
 
+  /// \note "keypress" event will give you a charCode property whenever you press a character key.
+  /// \note "keydown" event will capture every keystroke, but it doesn't have a charCode property
+  const bool isControlCharacter = !emsc_event->charCode;
+
+  /// \note skips shiftKey
+  const bool hasModifier = emsc_event->altKey
+    || emsc_event->ctrlKey
+    || emsc_event->metaKey;
+
   printf("%s, key: \"%s\" (printable: %s), code: \"%s\" = %s (%d), "
          "location: %lu,%s%s%s%s repeat: %d, locale: \"%s\", "
          "char: \"%s\", charCode: %lu (interpreted: %d), "
@@ -3018,7 +3032,6 @@ static void handleEmscriptenKeyboardEvent(int emsc_type, const EmscriptenKeyboar
 #if defined(ENABLE_COBALT)
   std::unique_ptr<SbEvent> event = nullptr;
   SbInputEventType sbInputEventType;
-  bool isKeyEvent = false;
 
   SbWindow sb_window = nullptr;
   // TODO: free mem
@@ -3026,49 +3039,11 @@ static void handleEmscriptenKeyboardEvent(int emsc_type, const EmscriptenKeyboar
     sb_window = g_cobaltTester->system_window_->GetSbWindow();
   }
 
-  const bool is_printable = native_event::emscripten_key_event_is_printable_character(emsc_event);
+  bool is_printable = true; //native_event::emscripten_key_event_is_printable_character(emsc_event);
 
-#endif // ENABLE_COBALT
-
-  switch(emsc_type)
+  auto pressKey = [&]()
   {
-    case EMSCRIPTEN_EVENT_KEYDOWN:
-    {
-#if defined(ENABLE_COBALT)
-      sbInputEventType = SbInputEventType::kSbInputEventTypePress;
-      isKeyEvent = true;
-#endif // ENABLE_COBALT
-      break;
-    }
-    case EMSCRIPTEN_EVENT_KEYUP:
-    {
-#if defined(ENABLE_COBALT)
-      sbInputEventType = SbInputEventType::kSbInputEventTypeUnpress;
-      isKeyEvent = true;
-#endif // ENABLE_COBALT
-
-      break;
-    }
-    case EMSCRIPTEN_EVENT_KEYPRESS:
-    {
-#if defined(ENABLE_COBALT)
-      // Heuristic: Assume all printables are represented by
-      // a string that has exactly one character, other are control characters.
-      if (native_event::NumCharsInUTF8String((const unsigned char*)emsc_event->key) == 1)
-      {
-        sbInputEventType = SbInputEventType::kSbInputEventTypePress;
-        isKeyEvent = true;
-      } else {
-        isKeyEvent = false;
-      }
-#endif // ENABLE_COBALT
-      break;
-    }
-  }
-
-#if defined(ENABLE_COBALT)
-  if(g_cobaltTester) {
-    if(isKeyEvent) {
+    if(g_cobaltTester) {
       event =  native_event::createSbKeyboardEvent(
         SbEventType::kSbEventTypeInput,
         sbInputEventType,
@@ -3098,8 +3073,74 @@ static void handleEmscriptenKeyboardEvent(int emsc_type, const EmscriptenKeyboar
                        }, base::Passed(&event)));
       }
     }
-  }
+  };
 #endif // ENABLE_COBALT
+
+  switch(emsc_type)
+  {
+    case EMSCRIPTEN_EVENT_KEYDOWN:
+    {
+      if(!isControlCharacter) {
+        break;
+      }
+#if defined(ENABLE_COBALT)
+      sbInputEventType = SbInputEventType::kSbInputEventTypePress;
+      is_printable = false;
+      pressKey();
+#endif // ENABLE_COBALT
+      break;
+    }
+    case EMSCRIPTEN_EVENT_KEYUP:
+    {
+      if(!isControlCharacter) {
+        break;
+      }
+#if defined(ENABLE_COBALT)
+      sbInputEventType = SbInputEventType::kSbInputEventTypeUnpress;
+      is_printable = false;
+      pressKey();
+#endif // ENABLE_COBALT
+
+      break;
+    }
+    case EMSCRIPTEN_EVENT_KEYPRESS:
+    {
+#if defined(ENABLE_COBALT)
+      // Heuristic: Assume all printables are represented by
+      // a string that has exactly one character, other are control characters.
+      /// \todo does not work with emojis or Unicode astral https://stackoverflow.com/a/44052348
+      if (native_event::NumCharsInUTF8String((const unsigned char*)emsc_event->key) != 1) {
+        break;
+      }
+
+      if(isControlCharacter || hasModifier) {
+        break;
+      }
+
+      /*if (native_event::NumCharsInUTF8String((const unsigned char*)emsc_event->key) == 1)
+      {
+        sbInputEventType = SbInputEventType::kSbInputEventTypePress;
+        isKeyEvent = true;
+      } else {
+        isKeyEvent = false;
+      }*/
+
+      if(g_cobaltTester) {
+        {
+          sbInputEventType = SbInputEventType::kSbInputEventTypePress;
+          is_printable = true;
+          pressKey();
+        }
+        {
+          sbInputEventType = SbInputEventType::kSbInputEventTypeUnpress;
+          is_printable = true;
+          pressKey();
+        }
+      }
+#endif // ENABLE_COBALT
+      break;
+    }
+  }
 }
 #endif // EMSCRIPTEN
 
@@ -3254,6 +3295,26 @@ static EM_BOOL emsc_mouse_wheel_cb(int emsc_type, const EmscriptenWheelEvent* em
 }
 #endif // __EMSCRIPTEN__
 
+#if defined(ENABLE_HTML5_SDL) || !defined(__EMSCRIPTEN__)
+static bool isPrintableKeycode(SDL_Keycode key)
+{
+  // We test `key` on SDL's internal values for keys
+  //
+  // To get a list of them, go here:
+  // http://wiki.libsdl.org/SDLKeycodeLookup
+
+  return ((key > SDLK_SPACE) && (key < SDLK_z));
+}
+
+/*static std::string keycodeToASCII(SDL_Keycode key)
+{
+  DCHECK(isPrintableKeycode(key));
+  char c = (char)(key);
+  const char* a = &c;
+  return (std::string(a));
+}*/
+#endif // defined(ENABLE_HTML5_SDL) || !defined(__EMSCRIPTEN__)
+
 static void mainLockFreeLoop() {
 #if defined(__EMSCRIPTEN__)
 
@@ -3341,12 +3402,13 @@ static void mainLockFreeLoop() {
 
 #if defined(ENABLE_HTML5_SDL) || !defined(__EMSCRIPTEN__)
   while (SDL_PollEvent(&e) != 0) {
+    const SDL_Keymod modState = SDL_GetModState();
 
 #if defined(ENABLE_COBALT)
     bool isSbEvent = false;
     bool isSbKeyEvent = false;
     // TODO: free mem
-    std::unique_ptr<SbEvent> event = std::make_unique<SbEvent>();
+    /*std::unique_ptr<SbEvent> event = std::make_unique<SbEvent>();
     event->type = SbEventType::kSbEventTypeInput;
     std::unique_ptr<SbInputData> data = nullptr;
     data = native_event::createEmptySbEventData();
@@ -3354,10 +3416,23 @@ static void mainLockFreeLoop() {
     if(g_cobaltTester && g_cobaltTester->system_window_) {
       data->window = g_cobaltTester->system_window_->GetSbWindow();
     }
-    DCHECK(data);
-#endif // ENABLE_COBALT
+    DCHECK(data);*/
 
-    const SDL_Keymod modState = SDL_GetModState();
+    std::unique_ptr<SbEvent> event = nullptr;
+    SbInputEventType sbInputEventType;
+
+    SbWindow sb_window = nullptr;
+    // TODO: free mem
+    if(g_cobaltTester && g_cobaltTester->system_window_) {
+      sb_window = g_cobaltTester->system_window_->GetSbWindow();
+    }
+
+    /// \note skips KMOD_SHIFT
+    const bool hasModifier = modState & KMOD_ALT
+      || modState & KMOD_CTRL
+      || modState & KMOD_MODE;
+
+#endif // ENABLE_COBALT
 
     /*std::system("chcp 1251");
     if (setlocale(LC_ALL, "ru-RU") == NULL) {
@@ -3375,6 +3450,7 @@ static void mainLockFreeLoop() {
 #endif // ENABLE_NATIVE_HTML
 
     bool isTextInput = false;
+    bool isPrintable = true;
 
     //SDL_WaitEvent(&e);
 
@@ -3392,12 +3468,23 @@ static void mainLockFreeLoop() {
         isSbEvent = true;
         unsigned int button_modifiers = native_event::SDL2MouseEventToSbButtonModifiers(e.button.button);
         unsigned int key_modifiers = button_modifiers | native_event::SDL2ModStateToSbKeyModifiers(modState);
-        data = native_event::setMouseSbEventData(std::move(data),
-                                   static_cast<double>(screenMouseX),
-                                   static_cast<double>(screenMouseY),
-                                   SbInputEventType::kSbInputEventTypeMove,
-                                   key_modifiers,
-                                   native_event::SDL2MouseEventToSbKey(e.button.button));
+
+        sbInputEventType = SbInputEventType::kSbInputEventTypeMove;
+        event =  native_event::createSbMouseEvent(
+          SbEventType::kSbEventTypeInput,
+          sbInputEventType,
+          sb_window,
+          e.button.button,
+          modState & KMOD_ALT,
+          modState & KMOD_CTRL,
+          modState & KMOD_MODE,
+          modState & KMOD_SHIFT,
+          static_cast<double>(screenMouseX),
+          static_cast<double>(screenMouseY),
+          button_modifiers,
+          native_event::SDL2MouseEventToSbKey(e.button.button)
+        );
+
         //SDL_GetGlobalMouseState(&screenMouseX, &screenMouseY);
         //SDL_GetMouseState(&screenMouseX, &screenMouseY);
 
@@ -3413,12 +3500,23 @@ static void mainLockFreeLoop() {
         isSbEvent = true;
         unsigned int button_modifiers = native_event::SDL2MouseEventToSbButtonModifiers(e.button.button);
         unsigned int key_modifiers = button_modifiers | native_event::SDL2ModStateToSbKeyModifiers(modState);
-        data = native_event::setMouseSbEventData(std::move(data),
-                                   static_cast<double>(screenMouseX),
-                                   static_cast<double>(screenMouseY),
-                                   SbInputEventType::kSbInputEventTypePress,
-                                   key_modifiers,
-                                   native_event::SDL2MouseEventToSbKey(e.button.button));
+
+        sbInputEventType = SbInputEventType::kSbInputEventTypePress;
+        event =  native_event::createSbMouseEvent(
+          SbEventType::kSbEventTypeInput,
+          sbInputEventType,
+          sb_window,
+          e.button.button,
+          modState & KMOD_ALT,
+          modState & KMOD_CTRL,
+          modState & KMOD_MODE,
+          modState & KMOD_SHIFT,
+          static_cast<double>(screenMouseX),
+          static_cast<double>(screenMouseY),
+          button_modifiers,
+          native_event::SDL2MouseEventToSbKey(e.button.button)
+        );
+
 #endif // ENABLE_COBALT
         break;
       }
@@ -3430,12 +3528,23 @@ static void mainLockFreeLoop() {
         isSbEvent = true;
         unsigned int button_modifiers = native_event::SDL2MouseEventToSbButtonModifiers(e.button.button);
         unsigned int key_modifiers = button_modifiers | native_event::SDL2ModStateToSbKeyModifiers(modState);
-        data = native_event::setMouseSbEventData(std::move(data),
-                                   static_cast<double>(screenMouseX),
-                                   static_cast<double>(screenMouseY),
-                                   SbInputEventType::kSbInputEventTypeUnpress,
-                                   key_modifiers,
-                                   native_event::SDL2MouseEventToSbKey(e.button.button));
+
+        sbInputEventType = SbInputEventType::kSbInputEventTypeUnpress;
+        event =  native_event::createSbMouseEvent(
+          SbEventType::kSbEventTypeInput,
+          sbInputEventType,
+          sb_window,
+          e.button.button,
+          modState & KMOD_ALT,
+          modState & KMOD_CTRL,
+          modState & KMOD_MODE,
+          modState & KMOD_SHIFT,
+          static_cast<double>(screenMouseX),
+          static_cast<double>(screenMouseY),
+          button_modifiers,
+          native_event::SDL2MouseEventToSbKey(e.button.button)
+        );
+
 #endif // ENABLE_COBALT
         break;
       }
@@ -3447,62 +3556,69 @@ static void mainLockFreeLoop() {
         isSbEvent = true;
         unsigned int button_modifiers = native_event::SDL2MouseEventToSbButtonModifiers(e.button.button);
         unsigned int key_modifiers = button_modifiers | native_event::SDL2ModStateToSbKeyModifiers(modState);
-        data = native_event::setWheelSbEventData(std::move(data),
-                                   static_cast<double>(screenMouseX),
-                                   static_cast<double>(screenMouseY),
-                                   static_cast<double>(e.wheel.x),
-                                   static_cast<double>(e.wheel.y),
-                                   0.0, // TODO: wheel.z
-                                   SbInputEventType::kSbInputEventTypeWheel,
-                                   key_modifiers,
-                                   native_event::SDL2MouseEventToSbKey(e.button.button));
+
+        sbInputEventType = SbInputEventType::kSbInputEventTypeWheel;
+        event = native_event::createSbWheelEvent(
+            SbEventType::kSbEventTypeInput,
+            sbInputEventType,
+            sb_window,
+            e.button.button,
+            modState & KMOD_ALT,
+            modState & KMOD_CTRL,
+            modState & KMOD_MODE,
+            modState & KMOD_SHIFT,
+            static_cast<double>(screenMouseX),
+            static_cast<double>(screenMouseY),
+            static_cast<double>(e.wheel.x),
+            static_cast<double>(e.wheel.y),
+            //0.0, // TODO: wheel.z
+            button_modifiers,
+            native_event::SDL2MouseEventToSbKey(e.button.button)
+        );
 #endif // ENABLE_COBALT
         break;
       }
 
       case SDL_KEYDOWN:
       {
+      printf("SDL_KEYDOWN e.key.keysym.sym %d\n", e.key.keysym.sym);
+      printf("SDL_KEYDOWN SDL2KeycodeToSbKey(e.key.keysym.sym) %d\n", native_event::SDL2KeycodeToSbKey(e.key.keysym.sym));
+      printf("SDL_TEXTINPUT1 e.key.keysym.scancode %d\n", e.key.keysym.scancode);
+      printf("SDL_TEXTINPUT1 SDL2ScancodeToSbKey(e.key.keysym.scancode %d\n", native_event::SDL2ScancodeToSbKey(e.key.keysym.scancode));
+
 #if defined(ENABLE_COBALT)
         /// \note SDL_KEYDOWN NOT for text input!
         /// Use SDL_KEYDOWN only for special keys!
         if(native_event::SDL2KeycodeToSbKey(e.key.keysym.sym) != kSbKeyUnknown
             && native_event::SDL2ScancodeToSbKey(e.key.keysym.scancode) != kSbKeyUnknown
-            && !base::IsAsciiPrintable(e.key.keysym.sym)
+            // TODO
+            //&& !base::IsAsciiPrintable(e.key.keysym.sym)
             && e.key.repeat == 0)
         {
-          printf("SDL_KEYDOWN %s\n", SDL_GetKeyName(e.key.keysym.sym));
+          printf("SDL_KEYDOWN SDL_GetKeyName %s\n", SDL_GetKeyName(e.key.keysym.sym));
+          printf("SDL_KEYDOWN keycodeToASCII %s\n", native_event::keycodeToASCII(e.key.keysym.sym).c_str());
+          printf("SDL_KEYDOWN isPrintableKeycode %d\n", isPrintableKeycode(e.key.keysym.sym));
 
           isSbEvent = true;
           isSbKeyEvent = true;
 
-          data->key_modifiers = native_event::SDL2ModStateToSbKeyModifiers(modState);
-
-          data->type = SbInputEventType::kSbInputEventTypePress;
-          data->device_type = SbInputDeviceType::kSbInputDeviceTypeKeyboard;
-
-          data->is_printable = true; // TODO
-
-          data->key = native_event::SDL2KeycodeToSbKey(e.key.keysym.sym);
-          //data->key = native_event::SDL2ScancodeToSbKey(e.key.keysym.scancode);
-
-          data->key_location = native_event::SDL2KeycodeToSbKeyLocation(e.key.keysym.sym);
-
-          // std::string input_str = e.text.text;
-          // base::string16 normalized_str = base::UTF8ToUTF16(input_str);
-          // //base::ConvertToUtf8AndNormalize(input_str, base::kCodepageUTF8,
-          //  //                               &normalized_str);
-          // if (!normalized_str.empty()) {
-          //   std::cout << "normalized_str_value " << normalized_str << std::endl;
-          //   /*printf("SDL_TEXTINPUT normalized_str %s\n", normalized_str.c_str());
-          //   std::wstring wide_value = base::SysUTF8ToWide(normalized_str);
-          //   std::wcout << "SDL_TEXTINPUT wide_value " << wide_value << std::endl;*/
-          // }
-
-          //data->character = e.key.keysym.sym;
-
-          //data->text = e.text.text;
-          data->keysym = e.key.keysym.sym; // scancode
-          data->character = e.key.keysym.sym; // scancode
+          sbInputEventType = SbInputEventType::kSbInputEventTypePress;
+          event =  native_event::createSbKeyboardEvent(
+            SbEventType::kSbEventTypeInput,
+            sbInputEventType,
+            sb_window,
+            modState & KMOD_ALT,
+            modState & KMOD_CTRL,
+            modState & KMOD_MODE,
+            modState & KMOD_SHIFT,
+            SbInputDeviceType::kSbInputDeviceTypeKeyboard,
+            native_event::SDL2KeycodeToSbKey(e.key.keysym.sym),
+            native_event::SDL2KeycodeToSbKeyLocation(e.key.keysym.sym),
+            e.key.keysym.sym,
+            e.key.keysym.sym,
+            "", //isPrintableKeycode(e.key.keysym.sym) ? native_event::keycodeToASCII(e.key.keysym.sym) : "",
+            false//isPrintableKeycode(e.key.keysym.sym) //true // TODO
+          );
 
           //SDL_KeyboardEvent* keyboard = (reinterpret_cast<SDL_KeyboardEvent*> (&event));
 
@@ -3525,140 +3641,151 @@ static void mainLockFreeLoop() {
 #ifdef ENABLE_BASE
 
 #if defined(ENABLE_COBALT)
-      /// \note SDL_KEYUP NOT for text input!
-      /// Use SDL_KEYUP only for special keys!
-      if(native_event::SDL2KeycodeToSbKey(e.key.keysym.sym) != kSbKeyUnknown
-          && native_event::SDL2ScancodeToSbKey(e.key.keysym.scancode) != kSbKeyUnknown
-          && !base::IsAsciiPrintable(e.key.keysym.sym)
-          && e.key.repeat == 0)
-      {
-        printf("SDL_KEYUP %s\n",SDL_GetKeyName(e.key.keysym.sym));
+        printf("SDL_KEYUP e.key.keysym.sym %d\n", e.key.keysym.sym);
+        printf("SDL_KEYUP SDL2KeycodeToSbKey(e.key.keysym.sym) %d\n", native_event::SDL2KeycodeToSbKey(e.key.keysym.sym));
+        printf("SDL_TEXTINPUT1 e.key.keysym.scancode %d\n", e.key.keysym.scancode);
+        printf("SDL_TEXTINPUT1 SDL2ScancodeToSbKey(e.key.keysym.scancode %d\n", native_event::SDL2ScancodeToSbKey(e.key.keysym.scancode));
 
-        isSbEvent = true;
-        isSbKeyEvent = true;
+        /// \note SDL_KEYUP NOT for text input!
+        /// Use SDL_KEYUP only for special keys!
+        if(native_event::SDL2KeycodeToSbKey(e.key.keysym.sym) != kSbKeyUnknown
+            && native_event::SDL2ScancodeToSbKey(e.key.keysym.scancode) != kSbKeyUnknown
+            // TODO
+            //&& !base::IsAsciiPrintable(e.key.keysym.sym)
+            && e.key.repeat == 0)
+        {
+          printf("SDL_KEYUP SDL_GetKeyName %s\n", SDL_GetKeyName(e.key.keysym.sym));
+          printf("SDL_KEYUP keycodeToASCII %s\n", native_event::keycodeToASCII(e.key.keysym.sym).c_str());
+          printf("SDL_KEYUP isPrintableKeycode %d\n", isPrintableKeycode(e.key.keysym.sym));
 
-        data->key_modifiers = native_event::SDL2ModStateToSbKeyModifiers(modState);
+          isSbEvent = true;
+          isSbKeyEvent = true;
 
-        data->type = SbInputEventType::kSbInputEventTypeUnpress;
-        data->device_type = SbInputDeviceType::kSbInputDeviceTypeKeyboard;
+          sbInputEventType = SbInputEventType::kSbInputEventTypeUnpress;
+          event =  native_event::createSbKeyboardEvent(
+            SbEventType::kSbEventTypeInput,
+            sbInputEventType,
+            sb_window,
+            modState & KMOD_ALT,
+            modState & KMOD_CTRL,
+            modState & KMOD_MODE,
+            modState & KMOD_SHIFT,
+            SbInputDeviceType::kSbInputDeviceTypeKeyboard,
+            native_event::SDL2KeycodeToSbKey(e.key.keysym.sym),
+            native_event::SDL2KeycodeToSbKeyLocation(e.key.keysym.sym),
+            e.key.keysym.sym,
+            e.key.keysym.sym,
+            "", //isPrintableKeycode(e.key.keysym.sym) ? native_event::keycodeToASCII(e.key.keysym.sym) : "",
+            false//isPrintableKeycode(e.key.keysym.sym) //true // TODO
+          );
 
-        data->is_printable = true; // TODO
-
-        data->key = native_event::SDL2KeycodeToSbKey(e.key.keysym.sym);
-        //data->key = native_event::SDL2ScancodeToSbKey(e.key.keysym.scancode);
-
-        /*if (e.key.keysym.sym == SDLK_x) {
-          printf("(2) detected SDLK_x\n");
         }
-
-        if (e.key.keysym.scancode == SDL_SCANCODE_X) {
-          printf("(2) detected SDL_SCANCODE_X\n");
-        }*/
-
-            data->key_location = native_event::SDL2KeycodeToSbKeyLocation(e.key.keysym.sym);
-
-        // std::string input_str = e.text.text;
-        // base::string16 normalized_str = base::UTF8ToUTF16(input_str);
-        // //base::ConvertToUtf8AndNormalize(input_str, base::kCodepageUTF8,
-        // //                               &normalized_str);
-        // if (!normalized_str.empty()) {
-        //   std::cout << "normalized_str_value " << normalized_str << std::endl;
-        //   /*printf("SDL_TEXTINPUT normalized_str %s\n", normalized_str.c_str());
-        //   std::wstring wide_value = base::SysUTF8ToWide(normalized_str);
-        //   std::wcout << "SDL_TEXTINPUT wide_value " << wide_value << std::endl;*/
-        // }
-
-        /*std::string input_str = e.text.text;
-        std::string normalized_str;
-        if (base::ConvertToUtf8AndNormalize(input_str, base::kCodepageUTF8,
-                                      &normalized_str) &&
-            !normalized_str.empty()) {
-          printf("SDL_TEXTINPUT normalized_str %s\n", normalized_str.c_str());
-          std::wstring wide_value = base::SysUTF8ToWide(normalized_str);
-          std::wcout << "SDL_TEXTINPUT wide_value " << wide_value << std::endl;
-        }*/
-
-        // TODO: e.text.text
-        data->keysym = e.key.keysym.sym; // scancode
-        data->character = e.key.keysym.sym; // scancode
-      }
 #endif // ENABLE_COBALT
 #endif // ENABLE_BASE
-      break;
-    }
+        break;
+      }
       case SDL_TEXTINPUT: // use SDL_StartTextInput();
       {
+        /// \note Make sure keys with modifiers are handled only during `keyup` and `keydown`.
+        if(hasModifier) {
+          break;
+        }
+
+        /*if(base::IsStringASCII(std::string(e.text.text))) {
+          /// \note ASCII handled by SDL_KEYUP and SDL_KEYDOWN
+          break;
+        }*/
+        bool isASCII = strlen(e.text.text) == 1 && (e.text.text[0] & 0x80) == 0;
+        wchar_t symbolASCII = e.text.text[0];
+        SbKey keyASCII;
+        SbKeyLocation keylocationASCII;
+        printf("SDL_TEXTINPUT1 isASCII %d\n", isASCII);
+        if(isASCII) {
+          keyASCII = native_event::ASCIIToSbKey(e.text.text);
+          keylocationASCII = native_event::modstateToSbKeyLocation(
+              modState & KMOD_LALT,
+              modState & KMOD_LCTRL,
+              modState & KMOD_LSHIFT, // TODO: KMOD_LGUI?
+              modState & KMOD_RALT,
+              modState & KMOD_RCTRL,
+              modState & KMOD_RSHIFT);//ASCIIToSbKeyLocation(e.text.text);
+        }
+
+        /// \note empty e.key.keysym.sym and e.key.keysym.scancode here!
+        //const Uint8 *keys = SDL_GetKeyboardState(NULL);
         printf("SDL_TEXTINPUT1 text %s\n", e.text.text);
+        /*printf("SDL_TEXTINPUT1 SDL_GetKeyName %s\n", SDL_GetKeyName(e.key.keysym.sym));
+        printf("SDL_TEXTINPUT1 e.key.keysym.sym %d\n", e.key.keysym.sym);
+        printf("SDL_TEXTINPUT1 SDL2KeycodeToSbKey(e.key.keysym.sym) %d\n", native_event::SDL2KeycodeToSbKey(e.key.keysym.sym));
+        printf("SDL_TEXTINPUT1 e.key.keysym.scancode %d\n", e.key.keysym.scancode);
+        printf("SDL_TEXTINPUT1 SDL2ScancodeToSbKey(e.key.keysym.scancode %d\n", native_event::SDL2ScancodeToSbKey(e.key.keysym.scancode));
+        */
+
+        // TODO WideToUTF8 UTF16ToASCII SDL_TEXTINPUTEVENT_TEXT_SIZE
+        /*if(base::IsAsciiPrintable(e.text.text)) {
+        }*/
+
         /// \note SDL_TEXTINPUT NOT for special keys!
         /// Use SDL_TEXTINPUT only for text input!
         /*if(native_event::SDL2KeycodeToSbKey(e.key.keysym.sym) == kSbKeyUnknown
             && (base::IsAsciiPrintable(e.key.keysym.sym)
                 || !base::IsStringASCII(e.text.text))
             && e.key.repeat == 0)*/
+#if defined(ENABLE_COBALT)
         if(g_cobaltTester) {
-          isTextInput = true;
+          isTextInput = true; /// \note not isSbEvent
           printf("SDL_TEXTINPUT2 text %s\n", e.text.text);
 
-          {
-            std::unique_ptr<SbEvent> event1 = std::make_unique<SbEvent>();
-            event1->type = SbEventType::kSbEventTypeInput;
-            std::unique_ptr<SbInputData> data1 = nullptr;
-            data1 = native_event::createEmptySbEventData();
-            // TODO: free mem
-            if(g_cobaltTester && g_cobaltTester->system_window_) {
-              data1->window = g_cobaltTester->system_window_->GetSbWindow();
-            } else {
-              DCHECK(false);
+          auto pressKey = [&]() {
+            std::unique_ptr<SbEvent> event1 =  native_event::createSbKeyboardEvent(
+              SbEventType::kSbEventTypeInput,
+              sbInputEventType,
+              sb_window,
+              modState & KMOD_ALT,
+              modState & KMOD_CTRL,
+              modState & KMOD_MODE,
+              modState & KMOD_SHIFT,
+              SbInputDeviceType::kSbInputDeviceTypeKeyboard,
+              keyASCII, //native_event::SDL2ScancodeToSbKey(e.key.keysym.scancode),
+              keylocationASCII, //native_event::SDL2ScancodeToSbKeyLocation(e.key.keysym.scancode),
+              symbolASCII, // e.key.keysym.scancode,
+              symbolASCII, // e.key.keysym.scancode,
+              e.text.text,
+              isPrintable // TODO
+            );
+            DCHECK(event1);
+
+            if (event1->type == kSbEventTypeInput) {
+              SbInputData* data = reinterpret_cast<SbInputData*>(event1->data);
+              DCHECK(data);
+              printf("SDL_TEXTINPUT press HandleInputEvent data.key %d\n", data->key);
             }
-            DCHECK(data1);
-            data1->key_modifiers = native_event::SDL2ModStateToSbKeyModifiers(modState);
-            data1->type = SbInputEventType::kSbInputEventTypePress;
-            data1->device_type = SbInputDeviceType::kSbInputDeviceTypeKeyboard;
-            data1->is_printable = true; // TODO
-            data1->key = native_event::SDL2KeycodeToSbKey(e.key.keysym.sym);
-            data1->key_location = native_event::SDL2KeycodeToSbKeyLocation(e.key.keysym.sym);
-            data1->text = e.text.text;
-            data1->keysym = e.key.keysym.sym; // scancode
-            data1->character = e.key.keysym.sym; // scancode
-            event1->data = data1.release();
-            DCHECK(input_browser_thread);
-            DCHECK(input_browser_thread->IsRunning());
-            input_browser_thread->task_runner()->PostTask(
-                FROM_HERE, base::Bind(
-                               [](std::unique_ptr<SbEvent> event1) {
-                                 sendBrowserInputEvent(std::move(event1));
-                               }, base::Passed(&event1)));
-          }
-          {
-            std::unique_ptr<SbEvent> event1 = std::make_unique<SbEvent>();
-            event1->type = SbEventType::kSbEventTypeInput;
-            std::unique_ptr<SbInputData> data1 = nullptr;
-            data1 = native_event::createEmptySbEventData();
-            // TODO: free mem
-            if(g_cobaltTester && g_cobaltTester->system_window_) {
-              data1->window = g_cobaltTester->system_window_->GetSbWindow();
+
+            if(!input_browser_thread) {
+              sendBrowserInputEvent(std::move(event1));
             } else {
-              DCHECK(false);
-            }
-            DCHECK(data1);
-            data1->key_modifiers = native_event::SDL2ModStateToSbKeyModifiers(modState);
-            data1->type = SbInputEventType::kSbInputEventTypeUnpress;
-            data1->device_type = SbInputDeviceType::kSbInputDeviceTypeKeyboard;
-            data1->is_printable = true; // TODO
-            data1->key = native_event::SDL2KeycodeToSbKey(e.key.keysym.sym);
-            data1->key_location = native_event::SDL2KeycodeToSbKeyLocation(e.key.keysym.sym);
-            data1->text = e.text.text;
-            data1->keysym = e.key.keysym.sym; // scancode
-            data1->character = e.key.keysym.sym; // scancode
-            event1->data = data1.release();
-            DCHECK(input_browser_thread);
-            DCHECK(input_browser_thread->IsRunning());
-            input_browser_thread->task_runner()->PostTask(
+              DCHECK(input_browser_thread);
+              DCHECK(input_browser_thread->IsRunning());
+              input_browser_thread->task_runner()->PostTask(
                 FROM_HERE, base::Bind(
-                               [](std::unique_ptr<SbEvent> event1) {
-                                 sendBrowserInputEvent(std::move(event1));
-                               }, base::Passed(&event1)));
+                             [](std::unique_ptr<SbEvent> event) {
+                               sendBrowserInputEvent(std::move(event));
+                             }, base::Passed(&event1)));
+            }
+          };
+
+          {
+            sbInputEventType = SbInputEventType::kSbInputEventTypePress;
+            isPrintable = true;
+            pressKey();
           }
+         // TODO: collect codes like CTRL+A+C+G
+         {
+           sbInputEventType = SbInputEventType::kSbInputEventTypeUnpress;
+           isPrintable = true;
+           pressKey();
+         }
+#endif //ENABLE_COBALT
         }
       break;
     }
@@ -3692,26 +3819,12 @@ static void mainLockFreeLoop() {
     }
 
 #if defined(ENABLE_COBALT)
-    if(isSbKeyEvent) {
-      DCHECK(isSbEvent);
-      /*if(data->device_type == SbInputDeviceType::kSbInputDeviceTypeKeyboard) {
-        std::cout << std::endl << "INPUT: type=" << data->type
-                  << ", window=" << data->window
-                  << ", device_type=" << data->device_type
-                  << ", device_id=" << data->device_id
-                  << ", key=0x" << std::hex << data->key
-                  << ", character=" << data->character
-                  << ", modifiers=0x" << std::hex << data->key_modifiers
-                  << ", location=" << std::dec << data->key_location << std::endl;
-
-        printf("ВВОД: Physical %s key acting as %s key\n",
-               SDL_GetScancodeName(e.key.keysym.scancode),
-               SDL_GetKeyName(e.key.keysym.sym)); // calls SDL_UCS4ToUTF8
-      }*/
-    }
     if (isSbEvent) {
       {
-        event->data = data.release();
+
+        //event->data = data.release();
+
+        DCHECK(event);
         if(!input_browser_thread) {
           sendBrowserInputEvent(std::move(event));
         } else {
@@ -4092,7 +4205,9 @@ int main(int argc, char** argv) {
   /// \note nothing to do, see InitCobalt
 #else
 #ifdef HAS_ICU
+  printf("InitializeICU start\n");
   bool icu_initialized = base::i18n::InitializeICU();
+  printf("InitializeICU end\n");
 #if defined(OS_EMSCRIPTEN)
   if(!icu_initialized) {
     DCHECK(false);
@@ -4140,7 +4255,7 @@ int main(int argc, char** argv) {
       }
     }
   }
-#endif // 0
+#endif // ENABLE_BASE_PREALLOC
 #endif
 
 #ifdef ENABLE_WTF
@@ -5128,7 +5243,7 @@ if(!render_browser_window) {
 //    DCHECK_EQ(base::MessageLoopCurrent::Get().task_runner(), g_cobaltTester->self_task_runner_);
 //    DCHECK(g_cobaltTester->thread_checker_.CalledOnValidThread());
 
-  printf("Waiting COBALT tests...\n");
+  //printf("Waiting COBALT tests...\n");
   //// \NOTE: DON`T BLOCK MAIN WASM THREAD
   /// WAITING FOR INFINITE THREAD!
 #if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))

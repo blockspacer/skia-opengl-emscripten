@@ -109,12 +109,26 @@ constexpr gfx::SelectionBehavior kMoveParagraphSelectionBehavior =
 
 // Get the default command for a given key |event|.
 ui::TextEditCommand GetCommandForKeyEvent(const ui::KeyEvent& event) {
+  printf("GetCommandForKeyEvent\n");
   if (event.type() != ui::ET_KEY_PRESSED || event.IsUnicodeKeyCode())
     return ui::TextEditCommand::INVALID_COMMAND;
 
   const bool shift = event.IsShiftDown();
   const bool control = event.IsControlDown() || event.IsCommandDown();
   const bool alt = event.IsAltDown() || event.IsAltGrDown();
+  printf("GetCommandForKeyEvent shift %s\n", (shift ? "true" : "false"));
+  printf("GetCommandForKeyEvent control %s\n", (control ? "true" : "false"));
+  printf("GetCommandForKeyEvent alt %s\n", (alt ? "true" : "false"));
+  printf("GetCommandForKeyEvent event.key_code() == ui::VKEY_Z %s\n", (event.key_code() == ui::VKEY_Z ? "true" : "false"));
+  printf("GetCommandForKeyEvent event.key_code() == ui::VKEY_A %s\n", (event.key_code() == ui::VKEY_A ? "true" : "false"));
+  printf("GetCommandForKeyEvent event.key_code() == ui::VKEY_C %s\n", (event.key_code() == ui::VKEY_C ? "true" : "false"));
+  printf("GetCommandForKeyEvent event.key_code() == ui::VKEY_X %s\n", (event.key_code() == ui::VKEY_X ? "true" : "false"));
+  printf("GetCommandForKeyEvent event.key_code() == ui::VKEY_Y %s\n", (event.key_code() == ui::VKEY_Y ? "true" : "false"));
+  printf("GetCommandForKeyEvent event.key_code() == ui::VKEY_RIGHT %s\n", (event.key_code() == ui::VKEY_RIGHT ? "true" : "false"));
+  printf("GetCommandForKeyEvent event.key_code() == ui::VKEY_LEFT %s\n", (event.key_code() == ui::VKEY_LEFT ? "true" : "false"));
+  printf("GetCommandForKeyEvent event.key_code() == ui::VKEY_HOME %s\n", (event.key_code() == ui::VKEY_HOME ? "true" : "false"));
+  printf("GetCommandForKeyEvent event.key_code() == ui::VKEY_BACK %s\n", (event.key_code() == ui::VKEY_BACK ? "true" : "false"));
+
   switch (event.key_code()) {
     case ui::VKEY_Z:
       if (control && !shift && !alt)
@@ -677,7 +691,9 @@ gfx::NativeCursor Textfield::GetCursor(const ui::MouseEvent& event) {
 bool Textfield::OnMousePressed(const ui::MouseEvent& event) {
   printf("Textfield::OnMousePressed\n");
   const bool had_focus = HasFocus();
+  printf("Textfield::OnMousePressed HasFocus %s\n", (had_focus ? "true" : "false"));
   bool handled = controller_ && controller_->HandleMouseEvent(this, event);
+  printf("Textfield::OnMousePressed HasFocus %s\n", (handled ? "true" : "false"));
 
   // If the controller triggered the focus, then record the focus reason as
   // other.
@@ -912,7 +928,7 @@ void Textfield::AboutToRequestFocusFromTabTraversal(bool reverse) {
 }
 
 bool Textfield::SkipDefaultKeyEventProcessing(const ui::KeyEvent& event) {
-#if defined(OS_LINUX) && !defined(OS_CHROMEOS) && !defined(UI_VIEWS_PORT)
+#if defined(OS_LINUX) && !defined(OS_CHROMEOS) && !defined(UI_VIEWS_PORT) // TODO
   // Skip any accelerator handling that conflicts with custom keybindings.
   ui::TextEditKeyBindingsDelegateAuraLinux* delegate =
       ui::GetTextEditKeyBindingsDelegate();
@@ -927,6 +943,7 @@ bool Textfield::SkipDefaultKeyEventProcessing(const ui::KeyEvent& event) {
   // Skip backspace accelerator handling; editable textfields handle this key.
   // Also skip processing Windows [Alt]+<num-pad digit> Unicode alt-codes.
   const bool is_backspace = event.key_code() == ui::VKEY_BACK;
+  // see https://github.com/chromium/chromium/blob/4b67984fc8fa9298a5f2cec8cfba88cffdf86a06/ui/events/event.cc#L1079
   return (is_backspace && !read_only()) || event.IsUnicodeKeyCode();
 }
 

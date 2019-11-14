@@ -1247,9 +1247,19 @@ void Node::AddEventListener(const std::string& type,
             return;
           }
 
+          /// \note "keypress" event will give you a charCode property whenever you press a character key.
+          /// \note "keydown" event will capture every keystroke, but it doesn't have a charCode property
+          bool isControlCharacter = event["charCode"].isNull()
+            || event["charCode"].isUndefined()
+            || event["charCode"].as<int>() == 0;
+
+          if(!event["charCode"].isNull() && !event["charCode"].isUndefined()) {
+            printf("event[charCode].as<int>() %d\n", event["charCode"].as<int>());
+          }
+
           if(em_node_.isNull() || em_node_.isUndefined()) {
-              std::cout << "onEventCb target isNull" << std::endl;
-              return;
+            std::cout << "onEventCb target isNull" << std::endl;
+            return;
           }
 
           const std::string type = event["type"].as<std::string>();
@@ -1410,7 +1420,6 @@ void Node::AddEventListener(const std::string& type,
                   || type == "keypress") {
 
             SbInputEventType sbInputEventType;
-            bool isKeyEvent = false;
 
             DCHECK(!event["which"].isNull() && !event["which"].isUndefined());
 
@@ -1418,6 +1427,11 @@ void Node::AddEventListener(const std::string& type,
 
             DCHECK(!event["key"].isNull() && !event["key"].isUndefined());
             DCHECK(!event["altKey"].isNull() && !event["altKey"].isUndefined());
+
+            /// \note skips shiftKey
+            const bool hasModifier = event["altKey"].as<bool>()
+                    || event["ctrlKey"].as<bool>()
+                    || event["metaKey"].as<bool>();
 
             // see https://github.com/emscripten-core/emscripten/blob/fb8a9847c1584cbdbd59bd3d03dab484fd0a9132/src/library_html5.js#L238
 
@@ -1466,60 +1480,14 @@ void Node::AddEventListener(const std::string& type,
 
             //std::string keyUTF = event["key"].as<std::string>();
 
-            if(type == "keydown") {
-              sbInputEventType= SbInputEventType::kSbInputEventTypePress;
-              isKeyEvent = true;
-            }
-            else if(type == "keyup") {
-              sbInputEventType= SbInputEventType::kSbInputEventTypeUnpress;
-              isKeyEvent = true;
-            }
-            /// \note keypress supports Unicode
-            /// \note KeyPress event is invoked only for character (printable) keys,
-            /// but KeyDown event is raised for all including nonprintable such as Control, Shift, Alt, BackSpace, etc.
-            else if(type == "keypress") {
-              // Heuristic: Assume all printables are represented by
-              // a string that has exactly one character, other are control characters.
-              /*if (native_event::NumCharsInUTF8String((const unsigned char*)keyUTF.c_str()) == 1)
-              {
-                sbInputEventType = SbInputEventType::kSbInputEventTypePress;
-                isKeyEvent = true;
-              } else {
-                isKeyEvent = false;
-              }*/
-              isKeyEvent = true;
-            } else {
-              NOTIMPLEMENTED_LOG_ONCE();
-              DCHECK(false);
-            }
-
-            if(!isKeyEvent) {
-              return;
-            }
-
-            // charCode is never set in the keydown and keyup events. In these cases, keyCode is set instead.
-            /*printf("(key) event[keyCode].as<std::string>(): %s\n",
-              event["keyCode"].as<std::string>().c_str());*/
-            /*printf("(key) event[charCode].as<std::string>(): %s\n",
-              event["charCode"].as<std::string>().c_str());*/
-
-            //  To get the code of the key regardless of whether it was stored
-            // in keyCode or charCode, query the which property.
-            /*printf("(key) event[which].as<std::string>(): %s\n",
-              event["which"].as<std::string>().c_str());
-            printf("(key) event[code].as<std::string>(): %s\n",
-              event["code"].as<std::string>().c_str());
-            printf("(key) event[key].as<std::string>(): %s\n",
-              event["key"].as<std::string>().c_str());*/
+            // Heuristic: Assume all printables are represented by
+            // a string that has exactly one character, other are control characters.
+            bool is_printable = true;//native_event::number_of_characters_in_utf8_string(keyUTF.c_str()) == 1;
 
             printf("keyUTF: %s\n",
               keyUTF.c_str());
 
-            // Heuristic: Assume all printables are represented by
-            // a string that has exactly one character, other are control characters.
-            const bool is_printable = native_event::number_of_characters_in_utf8_string(keyUTF.c_str()) == 1;
-
-            printf("is_printable: %s\n", (is_printable ? "1" : "0"));
+            //printf("is_printable: %s\n", (is_printable ? "1" : "0"));
 
             const int dom_pk_code = emscripten_compute_dom_pk_code(event["code"].as<std::string>().c_str());
             wchar_t Character
@@ -1528,36 +1496,94 @@ void Node::AddEventListener(const std::string& type,
             const SbKey key = native_event::EmscKeycodeToSbKey(dom_pk_code);
             const SbKeyLocation key_location = native_event::EmscKeycodeToSbKeyLocation(dom_pk_code);
 
-            std::unique_ptr<SbEvent> sb_ev
-              = native_event::createSbKeyboardEvent(
-                  SbEventType::kSbEventTypeInput,
-                  sbInputEventType,
-                  starboard_window,
-                  event["altKey"].as<bool>(),
-                  event["ctrlKey"].as<bool>(),
-                  event["metaKey"].as<bool>(),
-                  event["shiftKey"].as<bool>(),
-                  SbInputDeviceType::kSbInputDeviceTypeKeyboard,
-                  key,
-                  key_location,
-                  Character,
-                  Character,
-                  keyUTF,
-                  is_printable
-              );
+            auto pressKey = [&]()
+            {
+              std::unique_ptr<SbEvent> sb_ev
+                = native_event::createSbKeyboardEvent(
+                    SbEventType::kSbEventTypeInput,
+                    sbInputEventType,
+                    starboard_window,
+                    event["altKey"].as<bool>(),
+                    event["ctrlKey"].as<bool>(),
+                    event["metaKey"].as<bool>(),
+                    event["shiftKey"].as<bool>(),
+                    SbInputDeviceType::kSbInputDeviceTypeKeyboard,
+                    key,
+                    key_location,
+                    Character,
+                    Character,
+                    keyUTF,
+                    is_printable
+                );
 
-            std::unique_ptr<cobalt::system_window::InputEvent> input_event
-              = native_event::SbEventToInputEvent(sb_ev.get());
-            DCHECK(input_event);
+              std::unique_ptr<cobalt::system_window::InputEvent> input_event
+                = native_event::SbEventToInputEvent(sb_ev.get());
+              DCHECK(input_event);
 
-            cobalt::dom::Event* dom_event
-              = native_event::InputEventToDomEvent(type, input_event.get(), window);
+              cobalt::dom::Event* dom_event
+                = native_event::InputEventToDomEvent(type, input_event.get(), window);
 
-            std::cout << "(key) DispatchEvent dom_event type: "
-              << dom_event->type() << std::endl;
+              std::cout << "(key) DispatchEvent dom_event type: "
+                << dom_event->type() << std::endl;
 
-            // see https://github.com/blockspacer/skia-opengl-emscripten/blob/cdb838723fe53c53abf008e9f2e8fc93089ae3f6/src/cobalt/port/cobalt/base/tokens.h#L30
-            this->DispatchEvent(dom_event);
+              // see https://github.com/blockspacer/skia-opengl-emscripten/blob/cdb838723fe53c53abf008e9f2e8fc93089ae3f6/src/cobalt/port/cobalt/base/tokens.h#L30
+              this->DispatchEvent(dom_event);
+            };
+
+            if(type == "keydown") {
+              if(!isControlCharacter) {
+                return;
+              }
+              sbInputEventType= SbInputEventType::kSbInputEventTypePress;
+              is_printable = false;
+              pressKey();
+            }
+            else if(type == "keyup") {
+              if(!isControlCharacter) {
+                return;
+              }
+              sbInputEventType= SbInputEventType::kSbInputEventTypeUnpress;
+              is_printable = false;
+              pressKey();
+            }
+            /// \note keypress supports Unicode
+            /// \note KeyPress event is invoked only for character (printable) keys,
+            /// but KeyDown event is raised for all including nonprintable such as Control, Shift, Alt, BackSpace, etc.
+            else if(type == "keypress") {
+              if(isControlCharacter || hasModifier) {
+                return;
+              }
+              is_printable = true;
+              // Heuristic: Assume all printables are represented by
+              // a string that has exactly one character, other are control characters.
+              /// \todo does not work with emojis or Unicode astral https://stackoverflow.com/a/44052348
+              if (native_event::NumCharsInUTF8String((const unsigned char*)event["key"].as<std::string>().c_str()) != 1) {
+                return;
+              }
+
+              /*if (native_event::NumCharsInUTF8String((const unsigned char*)event["key"].as<std::string>().c_str()) == 1)
+              {
+                sbInputEventType = SbInputEventType::kSbInputEventTypePress;
+                isKeyEvent = true;
+              } else {
+                isKeyEvent = false;
+              }*/
+
+              is_printable = true;
+
+              {
+                sbInputEventType = SbInputEventType::kSbInputEventTypePress;
+                pressKey();
+              }
+
+              {
+                sbInputEventType = SbInputEventType::kSbInputEventTypeUnpress;
+                pressKey();
+              }
+            } else {
+              NOTIMPLEMENTED_LOG_ONCE();
+              DCHECK(false);
+            }
           }
 
       };

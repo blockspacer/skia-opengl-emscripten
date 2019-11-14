@@ -140,43 +140,6 @@ class input_node_ContainerView :
 #endif // 0
   {
  public:
-
-#if 0
-  void ContentsChanged(views::Textfield* sender,
-                                          const base::string16& new_contents) override {
-    printf("ContentsChanged %s\n", new_contents.c_str());
-    // Set search box focused when query changes.
-    ///search_box_->RequestFocus();
-    //UpdateModel(true);
-    ///NotifyQueryChanged();
-    ///if (!new_contents.empty())
-    ///  SetSearchBoxActive(true, ui::ET_KEY_PRESSED);
-    ///UpdateButtonsVisisbility();
-
-    SchedulePaint();
-  }
-
-  bool HandleMouseEvent(views::Textfield* sender,
-                                           const ui::MouseEvent& mouse_event) override {
-    //return OnTextfieldEvent(mouse_event.type());
-    SchedulePaint();
-    return true;
-  }
-
-  bool HandleGestureEvent(
-      views::Textfield* sender,
-      const ui::GestureEvent& gesture_event) override {
-    //return OnTextfieldEvent(gesture_event.type());
-
-    SchedulePaint();
-    return true;
-  }
-
-  void ButtonPressed(views::Button* sender, const ui::Event& event) override {
-    printf("ButtonPressed\n");
-  }
-#endif // 0
-
   std::unique_ptr<views::LayoutProvider> layout_provider_ =
       std::make_unique<views::LayoutProvider>();
 

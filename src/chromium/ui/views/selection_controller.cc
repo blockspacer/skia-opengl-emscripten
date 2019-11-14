@@ -32,18 +32,23 @@ bool SelectionController::OnMousePressed(
     const ui::MouseEvent& event,
     bool handled,
     InitialFocusStateOnMousePress initial_focus_state) {
+  printf("SelectionController::OnMousePressed\n");
   gfx::RenderText* render_text = GetRenderText();
   DCHECK(render_text);
 
   TrackMouseClicks(event);
-  if (handled)
+  if (handled) {
+    printf("SelectionController::OnMousePressed already handled\n");
     return true;
+  }
 
   if (event.IsOnlyLeftMouseButton()) {
+    printf("SelectionController IsOnlyLeftMouseButton\n");
     first_drag_location_ = event.location();
     if (delegate_->SupportsDrag())
       delegate_->SetTextBeingDragged(false);
 
+    printf("SelectionController aggregated_clicks_ %zu\n", aggregated_clicks_);
     switch (aggregated_clicks_) {
       case 0:
         // If the click location is within an existing selection, it may be a
@@ -73,6 +78,7 @@ bool SelectionController::OnMousePressed(
   }
 
   if (event.IsOnlyRightMouseButton()) {
+    printf("SelectionController IsOnlyRightMouseButton\n");
     if (PlatformStyle::kSelectAllOnRightClickWhenUnfocused &&
         initial_focus_state == InitialFocusStateOnMousePress::UNFOCUSED) {
       SelectAll();
@@ -85,6 +91,7 @@ bool SelectionController::OnMousePressed(
 
   if (handles_selection_clipboard_ && event.IsOnlyMiddleMouseButton() &&
       !delegate_->IsReadOnly()) {
+    printf("SelectionController IsOnlyMiddleMouseButton\n");
     delegate_->OnBeforePointerAction();
     const bool selection_changed =
         render_text->MoveCursorToPoint(event.location(), false);
@@ -97,6 +104,7 @@ bool SelectionController::OnMousePressed(
 }
 
 bool SelectionController::OnMouseDragged(const ui::MouseEvent& event) {
+  printf("SelectionController::OnMouseDragged\n");
   DCHECK(GetRenderText());
   // If |drag_selection_timer_| is running, |last_drag_location_| will be used
   // to update the selection.
@@ -134,6 +142,7 @@ bool SelectionController::OnMouseDragged(const ui::MouseEvent& event) {
 }
 
 void SelectionController::OnMouseReleased(const ui::MouseEvent& event) {
+  printf("SelectionController::OnMouseReleased\n");
   gfx::RenderText* render_text = GetRenderText();
   DCHECK(render_text);
 
@@ -143,6 +152,7 @@ void SelectionController::OnMouseReleased(const ui::MouseEvent& event) {
 
   // Cancel suspected drag initiations, the user was clicking in the selection.
   if (delegate_->HasTextBeingDragged()) {
+    printf("SelectionController delegate_->HasTextBeingDragged()\n");
     delegate_->OnBeforePointerAction();
     const bool selection_changed =
         render_text->MoveCursorToPoint(event.location(), false);
@@ -157,6 +167,7 @@ void SelectionController::OnMouseReleased(const ui::MouseEvent& event) {
 }
 
 void SelectionController::OnMouseCaptureLost() {
+  printf("SelectionController::OnMouseCaptureLost\n");
   gfx::RenderText* render_text = GetRenderText();
   DCHECK(render_text);
 

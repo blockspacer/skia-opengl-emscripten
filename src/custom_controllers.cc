@@ -37,7 +37,14 @@ class Input1_controller :
                                            const ui::MouseEvent& mouse_event) override {
     //return OnTextfieldEvent(mouse_event.type());
     sender->SchedulePaint();
-    return true;
+    return false; // event handled or not
+  }
+
+  bool HandleKeyEvent(views::Textfield* sender,
+                                           const ui::KeyEvent& key_event) override {
+    //return OnTextfieldEvent(mouse_event.type());
+    sender->SchedulePaint();
+    return false; // event handled or not
   }
 
   bool HandleGestureEvent(
@@ -46,7 +53,7 @@ class Input1_controller :
     //return OnTextfieldEvent(gesture_event.type());
 
     sender->SchedulePaint();
-    return true;
+    return false; // event handled or not
   }
 
   DISALLOW_COPY_AND_ASSIGN(Input1_controller);
@@ -105,7 +112,14 @@ class Input2_controller :
                                            const ui::MouseEvent& mouse_event) override {
     //return OnTextfieldEvent(mouse_event.type());
     sender->SchedulePaint();
-    return true;
+    return false; // event handled or not
+  }
+
+  bool HandleKeyEvent(views::Textfield* sender,
+                                           const ui::KeyEvent& key_event) override {
+    //return OnTextfieldEvent(mouse_event.type());
+    sender->SchedulePaint();
+    return false; // event handled or not
   }
 
   bool HandleGestureEvent(
@@ -114,7 +128,7 @@ class Input2_controller :
     //return OnTextfieldEvent(gesture_event.type());
 
     sender->SchedulePaint();
-    return true;
+    return false; // event handled or not
   }
 
   DISALLOW_COPY_AND_ASSIGN(Input2_controller);

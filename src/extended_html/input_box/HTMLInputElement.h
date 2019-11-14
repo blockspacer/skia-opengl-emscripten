@@ -413,9 +413,14 @@ class HTMLInputElement : public cobalt::dom::HTMLCustomElement {
     scoped_refptr<cobalt::dom::DOMRect> boundingClientRect_{};
   };
 
+  struct ScheduledKeyEvent {
+    ui::KeyEvent keyEvent_;
+    bool is_printable_;
+  };
+
   /// \note dynamic data, must be thread safe
   struct ScheduledEvents {
-    std::vector<ui::KeyEvent> scheduledKeyEvents_{};
+    std::vector<ScheduledKeyEvent> scheduledKeyEvents_{};
     std::vector<ScheduledMouseEvent> scheduledMouseEvents_{};
   };
 #endif // ENABLE_BLINK_UI

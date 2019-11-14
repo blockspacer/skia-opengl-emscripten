@@ -479,6 +479,7 @@ SbKey EmscKeycodeToSbKey(const int keysum) {
     return kSbKeyNumpad9;
   }
   if (keysum == DOM_PK_A) {
+    printf("keysum == DOM_PK_A\n");
     return kSbKeyA;
   }
   if (keysum == DOM_PK_B) {
@@ -638,6 +639,45 @@ void Utf8StringToUtf32(unsigned int *dstUtf32, int maxBytesToWrite, const unsign
 
 #endif // __EMSCRIPTEN__
 
+SbKey ASCIIToSbKey(const std::string& symbol) {
+  printf("ASCIIToSbKey for %s\n", symbol.c_str());
+  if (symbol == "a" || symbol == "A") {
+    printf("symbol == a\n");
+    return kSbKeyA;
+  }
+  if (symbol == "a" || symbol == "A") {
+    printf("symbol == a\n");
+    return kSbKeyA;
+  }
+  NOTIMPLEMENTED();
+  // TODO
+  return kSbKeyUnknown;
+}
+
+SbKeyLocation modstateToSbKeyLocation(const bool LALT, const bool LCTRL
+  , const bool LSHIFT, const bool RALT, const bool RCTRL, const bool RSHIFT)
+{
+  if (LALT) {
+    return kSbKeyLocationLeft;
+  }
+  if (LCTRL) {
+    return kSbKeyLocationLeft;
+  }
+  if (LSHIFT) {
+    return kSbKeyLocationLeft;
+  }
+  if (RALT) {
+    return kSbKeyLocationRight;
+  }
+  if (RCTRL) {
+    return kSbKeyLocationRight;
+  }
+  if (RSHIFT) {
+    return kSbKeyLocationRight;
+  }
+  return kSbKeyLocationUnspecified;
+}
+
 #if defined(ENABLE_HTML5_SDL) || !defined(__EMSCRIPTEN__)
 unsigned int SDL2ModStateToSbKeyModifiers(const SDL_Keymod& modState) {
   unsigned int modifiers = kSbKeyModifiersNone;
@@ -679,6 +719,214 @@ unsigned int SDL2MouseEventToSbButtonModifiers(const Uint8& button) {
     modifiers |= kSbKeyModifiersPointerButtonForward;
   }
   return modifiers;
+}
+
+std::string keycodeToASCII(SDL_Keycode& keysum)
+{
+  //DCHECK(isPrintableKeycode(key));
+  SbKey key = kSbKeyUnknown;
+  if (keysum == SDLK_SPACE) {
+    return " ";
+  }
+  if (keysum == SDLK_KP_PLUS) {
+    return "+";
+  }
+  if (keysum == SDLK_PLUS) {
+    return "+";
+  }
+  if (keysum == SDLK_EQUALS) {
+    return "=";
+  }
+  if (keysum == SDLK_KP_EQUALS) {
+    return "=";
+  }
+  if (keysum == SDLK_KP_MINUS) {
+    return "-";
+  }
+  if (keysum == SDLK_MINUS) {
+    return "-";
+  }
+  if (keysum == SDLK_KP_MULTIPLY) { // NUMPAD MULTIPLY
+    return "*";
+  }
+  if (keysum == SDLK_KP_DIVIDE) {
+    return "/";
+  }
+  if (keysum == SDLK_COMMA) {
+    return ",";
+  }
+  if (keysum == SDLK_KP_COMMA) {
+    return ",";
+  }
+  if (keysum == SDLK_KP_PERIOD) { // DOT
+    return ".";
+  }
+  if (keysum == SDLK_PERIOD) {
+    return ".";
+  }
+  if (keysum == SDLK_SEMICOLON) {
+    return ";";
+  }
+  if (keysum == SDLK_SLASH) {
+    return "/";
+  }
+  if (keysum == SDLK_BACKQUOTE) { // GRAVE
+    return "`";
+  }
+  if (keysum == SDLK_LEFTBRACKET) {
+    return "}";
+  }
+  if (keysum == SDLK_BACKSLASH) {
+    return "\\";
+  }
+  if (keysum == SDLK_RIGHTBRACKET) {
+    return "/";
+  }
+  if (keysum == SDLK_QUOTE) { // APOSTROPHE
+    return "'";
+  }
+  if (keysum == SDLK_0) {
+    return "0";
+  }
+  if (keysum == SDLK_1) {
+    return "1";
+  }
+  if (keysum == SDLK_2) {
+    return "2";
+  }
+  if (keysum == SDLK_3) {
+    return "3";
+  }
+  if (keysum == SDLK_4) {
+    return "4";
+  }
+  if (keysum == SDLK_5) {
+    return "5";
+  }
+  if (keysum == SDLK_6) {
+    return "6";
+  }
+  if (keysum == SDLK_7) {
+    return "7";
+  }
+  if (keysum == SDLK_8) {
+    return "8";
+  }
+  if (keysum == SDLK_9) {
+    return "9";
+  }
+  if (keysum == SDLK_KP_0) {
+    return "0";
+  }
+  if (keysum == SDLK_KP_1) {
+    return "1";
+  }
+  if (keysum == SDLK_KP_2) {
+    return "2";
+  }
+  if (keysum == SDLK_KP_3) {
+    return "3";
+  }
+  if (keysum == SDLK_KP_4) {
+    return "4";
+  }
+  if (keysum == SDLK_KP_5) {
+    return "5";
+  }
+  if (keysum == SDLK_KP_6) {
+    return "6";
+  }
+  if (keysum == SDLK_KP_7) {
+    return "7";
+  }
+  if (keysum == SDLK_KP_8) {
+    return "8";
+  }
+  if (keysum == SDLK_KP_9) {
+    return "9";
+  }
+  if (keysum == SDLK_a) {
+    printf("text keysum == SDLK_a\n");
+    return "a";
+  }
+  if (keysum == SDLK_b) {
+    return "b";
+  }
+  if (keysum == SDLK_c) {
+    return "c";
+  }
+  if (keysum == SDLK_d) {
+    return "d";
+  }
+  if (keysum == SDLK_e) {
+    return "e";
+  }
+  if (keysum == SDLK_f) {
+    return "f";
+  }
+  if (keysum == SDLK_g) {
+    return "g";
+  }
+  if (keysum == SDLK_h) {
+    return "h";
+  }
+  if (keysum == SDLK_i) {
+    return "i";
+  }
+  if (keysum == SDLK_j) {
+    return "j";
+  }
+  if (keysum == SDLK_k) {
+    return "k";
+  }
+  if (keysum == SDLK_l) {
+    return "l";
+  }
+  if (keysum == SDLK_m) {
+    return "m";
+  }
+  if (keysum == SDLK_n) {
+    return "n";
+  }
+  if (keysum == SDLK_o) {
+    return "o";
+  }
+  if (keysum == SDLK_p) {
+    return "p";
+  }
+  if (keysum == SDLK_q) {
+    return "q";
+  }
+  if (keysum == SDLK_r) {
+    return "r";
+  }
+  if (keysum == SDLK_s) {
+    return "s";
+  }
+  if (keysum == SDLK_t) {
+    return "t";
+  }
+  if (keysum == SDLK_u) {
+    return "u";
+  }
+  if (keysum == SDLK_v) {
+    return "v";
+  }
+  if (keysum == SDLK_w) {
+    return "w";
+  }
+  if (keysum == SDLK_x) {
+    printf("text keysum == SDLK_x\n");
+    return "x";
+  }
+  if (keysum == SDLK_y) {
+    return "y";
+  }
+  if (keysum == SDLK_z) {
+    printf("text keysum == SDLK_z\n");
+    return "z";
+  }
+  return "";
 }
 
 SbKey SDL2MouseEventToSbKey(const Uint8& button) {
@@ -723,6 +971,28 @@ SbKeyLocation SDL2KeycodeToSbKeyLocation(const SDL_Keycode& keysum) {
     return kSbKeyLocationRight;
   }
   if (keysum == SDLK_RSHIFT) {
+    return kSbKeyLocationRight;
+  }
+  return kSbKeyLocationUnspecified;
+}
+
+SbKeyLocation SDL2ScancodeToSbKeyLocation(const SDL_Scancode& keysum) {
+  if (keysum == SDL_SCANCODE_LALT) {
+    return kSbKeyLocationLeft;
+  }
+  if (keysum == SDL_SCANCODE_LCTRL) {
+    return kSbKeyLocationLeft;
+  }
+  if (keysum == SDL_SCANCODE_LSHIFT) {
+    return kSbKeyLocationLeft;
+  }
+  if (keysum == SDL_SCANCODE_RALT) {
+    return kSbKeyLocationRight;
+  }
+  if (keysum == SDL_SCANCODE_RCTRL) {
+    return kSbKeyLocationRight;
+  }
+  if (keysum == SDL_SCANCODE_RSHIFT) {
     return kSbKeyLocationRight;
   }
   return kSbKeyLocationUnspecified;
@@ -1073,6 +1343,7 @@ SbKey SDL2ScancodeToSbKey(const SDL_Scancode& keysum) {
     return kSbKeyNumpad9;
   }
   if (keysum == SDL_SCANCODE_A) {
+    printf("keysum == SDL_SCANCODE_A\n");
     return kSbKeyA;
   }
   if (keysum == SDL_SCANCODE_B) {
@@ -1354,6 +1625,7 @@ SbKey SDL2KeycodeToSbKey(const SDL_Keycode& keysum) {
 
   // Deletion
   if (keysum == SDLK_BACKSPACE) {
+    printf("keysum == SDLK_BACKSPACE\n");
     return kSbKeyBack;
   }
   /*if (keysum == SDLK_FORWARD_DEL) {
@@ -1363,6 +1635,7 @@ SbKey SDL2KeycodeToSbKey(const SDL_Keycode& keysum) {
     return kSbKeyClear;
   }
   if (keysum == SDLK_INSERT) {
+    printf("keysum == SDLK_INSERT\n");
     return kSbKeyInsert;
   }
   if (keysum == SDLK_KP_PLUS) {
@@ -1519,6 +1792,7 @@ SbKey SDL2KeycodeToSbKey(const SDL_Keycode& keysum) {
     return kSbKeyNumpad9;
   }
   if (keysum == SDLK_a) {
+    printf("keysum == SDLK_a\n");
     return kSbKeyA;
   }
   if (keysum == SDLK_b) {
@@ -1588,12 +1862,14 @@ SbKey SDL2KeycodeToSbKey(const SDL_Keycode& keysum) {
     return kSbKeyW;
   }
   if (keysum == SDLK_x) {
+    printf("keysum == SDLK_x\n");
     return kSbKeyX;
   }
   if (keysum == SDLK_y) {
     return kSbKeyY;
   }
   if (keysum == SDLK_z) {
+    printf("keysum == SDLK_z\n");
     return kSbKeyZ;
   }
 
@@ -1768,10 +2044,16 @@ std::unique_ptr<SbEvent> createSbKeyboardEvent(
   data->type = sbInputEventType;
   data->device_type = device_type;
   data->key = key;
+  printf("createSbKeyboardEvent data->key %d\n", data->key);
   data->key_location = key_location;
   data->keysym = keysym;
-  data->text = text;
+  printf("createSbKeyboardEvent data->keysym %d\n", data->keysym);
+  if(!text.empty()) {
+    data->text = text;
+    printf("createSbKeyboardEvent data->text %s\n", data->text.c_str());
+  }
   data->character = character;
+  printf("createSbKeyboardEvent data->character %d\n", data->character);
 
   event->data = data.release();
   return std::move(event);
@@ -1847,7 +2129,13 @@ std::unique_ptr<cobalt::system_window::InputEvent> CreateInputEvent(const SbInpu
                      cobalt::math::PointF(data.tilt.x, data.tilt.y)));
 #endif  // SB_HAS(ON_SCREEN_KEYBOARD)
 
-  printf("input_event text %s\n", input_event->text().c_str());
+  if(!input_event->text().empty()) {
+    printf("input_event text %s\n", input_event->text().c_str());
+  }
+
+  DCHECK(input_event);
+  wprintf(L"input_event keysym character, %s\n", input_event->keysym());
+  printf("input_event key_code %u\n", input_event->key_code());
 
   return std::move(input_event);
 }
@@ -1909,11 +2197,13 @@ std::unique_ptr<cobalt::system_window::InputEvent>
   switch (data.type) {
     case kSbInputEventTypePress: {
       return CreateInputEvent(data, cobalt::system_window::InputEvent::kKeyDown, /*key_down_*/ false);
+      /// \todo
       //key_down_ = true;
       break;
     }
     case kSbInputEventTypeUnpress: {
       return CreateInputEvent(data, cobalt::system_window::InputEvent::kKeyUp, false /* is_repeat */);
+      /// \todo
       //key_down_ = false;
       break;
     }
@@ -1937,6 +2227,7 @@ std::unique_ptr<cobalt::system_window::InputEvent>
 std::unique_ptr<cobalt::system_window::InputEvent>
   SbEventToInputEvent(const SbEvent* event)
 {
+  printf("native_event.cc SbEventToInputEvent...\n");
   if (event->type != kSbEventTypeInput) {
     return nullptr;
   }
@@ -1947,9 +2238,11 @@ std::unique_ptr<cobalt::system_window::InputEvent>
   if ((kSbInputDeviceTypeMouse == data->device_type) ||
       (kSbInputDeviceTypeTouchScreen == data->device_type) ||
       (kSbInputDeviceTypeTouchPad == data->device_type)) {
+    printf("native_event.cc PointerSbInputDataToInputEvent...\n");
     return std::move(PointerSbInputDataToInputEvent(*data));
   }
 
+  printf("native_event.cc SbInputDataToInputEvent...\n");
   return std::move(SbInputDataToInputEvent(*data));
 }
 
@@ -2084,7 +2377,9 @@ cobalt::dom::KeyboardEventInit KeyboardInitFromInputEvent(
   keyboard_event.set_key_code(key_code);
   keyboard_event.set_keysym(input_event->keysym()); // custom
   keyboard_event.set_is_printable(input_event->is_printable()); // custom
-  keyboard_event.set_text(input_event->text()); // custom
+  if(!input_event->text().empty()) {
+    keyboard_event.set_text(input_event->text()); // custom
+  }
 
   int32_t key_code_in_int32 = static_cast<int32_t>(key_code);
   return std::move(keyboard_event);

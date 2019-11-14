@@ -451,16 +451,16 @@ void InputNode::RenderTreeNodeVisit(const NodeVisitor *render_target) {
 
     /// \TODO handle memory properly!
     input_node_widget_->SetContentsView(input_node_container_.get());
+
+    DCHECK(input_node_widget_);
   }
 
-  DCHECK(input_node_widget_);
-
-  input_node_widget_->SetSize(
-    gfx::Size(transformed_rect.width(), transformed_rect.height()));
-  input_node_widget_->SetBounds(
-    gfx::Rect(
-     sk_rect_transformed.x(), sk_rect_transformed.y(),
-     transformed_rect.width(), transformed_rect.height()));
+    input_node_widget_->SetSize(
+      gfx::Size(transformed_rect.width(), transformed_rect.height()));
+    input_node_widget_->SetBounds(
+      gfx::Rect(
+       sk_rect_transformed.x(), sk_rect_transformed.y(),
+       transformed_rect.width(), transformed_rect.height()));
 
   views::View* root_view = input_node_widget_->GetRootView();
   DCHECK(root_view);
@@ -471,37 +471,41 @@ void InputNode::RenderTreeNodeVisit(const NodeVisitor *render_target) {
 
     printf("added input_node_container_ to root_view\n");
   }
-  DCHECK(root_view->GetEffectiveViewTargeter());
 
-  input_node_container_->SetEnabled(true);
+    input_node_container_->SetEnabled(true);
 
-  input_node_container_->SetPreferredSize(
-    gfx::Size(sk_rect.width(), sk_rect.height()));
+    input_node_container_->SetPreferredSize(
+      gfx::Size(sk_rect.width(), sk_rect.height()));
 
-  //input_node_container_->SetNativeTheme(nativeThemeAura);
-  input_node_container_->SetBackground(views::CreateSolidBackground(
-        blink::Color(0.9f, 1.0f, 1.0f, 0.9f).Rgb()));
+    //input_node_container_->SetNativeTheme(nativeThemeAura);
+    input_node_container_->SetBackground(views::CreateSolidBackground(
+          blink::Color(0.9f, 1.0f, 1.0f, 0.9f).Rgb()));
 
-  //input_node_container_->SetBorder(views::CreateSolidBorder(2, SK_ColorBLUE));
-  const gfx::Insets child_margins(1, 1);
+    //input_node_container_->SetBorder(views::CreateSolidBorder(2, SK_ColorBLUE));
+    input_node_container_->
+      SetFocusBehavior(views::View::FocusBehavior::ALWAYS);
 
-  // TODO: free mem?
+    // TODO: free mem?
 
-  input_node_container_->set_owned_by_client(); // prevents view_to_be_deleted by parent
+    input_node_container_->set_owned_by_client(); // prevents view_to_be_deleted by parent
 
   input_node_container_->SchedulePaint();
   input_node_container_->
     SetFocusBehavior(views::View::FocusBehavior::ALWAYS);
-  DCHECK(input_node_container_->IsFocusable());
 
-  root_view->InvalidateLayout();
-  root_view->SizeToPreferredSize();
-  root_view->Layout();
+    DCHECK(input_node_container_->IsFocusable());
+    input_node_container_->Focus();
 
-  input_node_widget_->SetFullscreen(/*true*/false);
-  input_node_widget_->Maximize();
-  input_node_widget_->Show(); // TODO: input_node_widget_.Close();
-  input_node_widget_->Activate(); // TODO: wait?
+    root_view->InvalidateLayout();
+    root_view->SizeToPreferredSize();
+    root_view->Layout();
+
+    input_node_widget_->SetFullscreen(/*true*/false);
+    input_node_widget_->Maximize();
+    input_node_widget_->Show(); // TODO: input_node_widget_.Close();
+    input_node_widget_->Activate(); // TODO: wait?
+
+  DCHECK(root_view->GetEffectiveViewTargeter());
 
   //
 
@@ -519,11 +523,18 @@ void InputNode::RenderTreeNodeVisit(const NodeVisitor *render_target) {
       init_data.placeholder_text_,
       init_data.initial_text_);
     input_node_container_->has_children = true;
+
+    input_node_container_->InvalidateLayout();
+    input_node_container_->SizeToPreferredSize();
+    input_node_container_->Layout();
   }
 
   DCHECK(input_node_container_);
   DCHECK(input_node_container_->inputNode_);
   DCHECK(input_node_container_->textfield_);
+
+  DCHECK(input_node_container_->textfield_->IsFocusable());
+  input_node_container_->textfield_->Focus();
 
   if(needReinitFont) {
     const int size_delta = std::abs(font_list.GetFontSize() - 15); // size in pixels to add
@@ -533,20 +544,6 @@ void InputNode::RenderTreeNodeVisit(const NodeVisitor *render_target) {
             -size_delta, gfx::Font::UNDERLINE, gfx::Font::Weight::BOLD));
   }
 
-#if 0
-  printf("init_data.controller_text_ %s\n", init_data.controller_text_.c_str());
-  if(/*current_controller_id_ != init_data.controller_text_
-      &&*/ !init_data.controller_text_.empty()) {
-    printf("controller_text_ = %s\n", init_data.controller_text_.c_str());
-    if(!custom_generating_node_->input1_controller_) {
-      custom_generating_node_->input1_controller_ = std::make_unique<Input1_controller>(this);
-      DCHECK(custom_generating_node_->input1_controller_);
-    }
-    DCHECK(custom_generating_node_->input1_controller_);
-    input_node_container_->textfield_->
-      set_controller(custom_generating_node_->input1_controller_.get()); // TODO: check memory management
-  }
-#endif
   if(custom_generating_node_->current_controller_id_ != init_data.controller_text_
       && !init_data.controller_text_.empty()) {
     skemgl::TextfieldControllerCreator textfieldControllerCreator
@@ -580,16 +577,59 @@ void InputNode::RenderTreeNodeVisit(const NodeVisitor *render_target) {
     // TODO: better mutex
     std::scoped_lock lock(custom_generating_node_->scheduledEventsMutex_);
 
-    for(ui::KeyEvent& kEv :
+    for(HTMLInputElement::ScheduledKeyEvent& kEv :
           custom_generating_node_->
           scheduledEvents_
           .scheduledKeyEvents_)
     {
       DCHECK(input_node_widget_);
       DCHECK(input_node_widget_->GetInputMethod());
-      ui::InputMethod* im =
-          input_node_widget_->GetInputMethod();
-      im->DispatchKeyEvent(&kEv); // TODO: SendEventToSink
+
+      /*if(kEv.keyEvent_.type() == ui::ET_KEY_PRESSED) {
+        printf("kEv.keyEvent_.type() == ui::ET_KEY_PRESSED\n");
+        input_node_container_->textfield_->OnKeyPressed(kEv.keyEvent_);
+      } else if(kEv.keyEvent_.type() == ui::ET_KEY_RELEASED) {
+        printf("kEv.keyEvent_.type() == ui::ET_KEY_RELEASED\n");
+        input_node_container_->textfield_->OnKeyReleased(kEv.keyEvent_);
+      } else {
+        DCHECK(false);
+      }*/
+
+      std::unique_ptr<ui::Event> event_copy = ui::Event::Clone(kEv.keyEvent_);
+      DCHECK(event_copy);
+      if(!kEv.is_printable_) {
+        // used to support control characters, like DELETE key
+        input_node_widget_->OnKeyEvent(event_copy->AsKeyEvent()); // !is_printable
+      } else /*if(kEv.is_printable_)*/ {
+        // used to support printable characters, like unicode text
+        // TODO: SendEventToSink
+        ui::InputMethod* im =
+            input_node_widget_->GetInputMethod();
+        im->DispatchKeyEvent(&kEv.keyEvent_); // is_printable
+      }
+
+      /*ui::DomKey key;
+      ui::KeyboardCode key_code;
+      if (DomCodeToControlCharacter(input_node_widget_->code(), flags(), &key, &key_code)) {
+        input_node_widget_->OnKeyEvent(&kEv.keyEvent_); // !is_printable
+      } else {
+        ui::InputMethod* im =
+            input_node_widget_->GetInputMethod();
+        im->DispatchKeyEvent(&kEv.keyEvent_); // TODO: SendEventToSink
+      }*/
+
+      /*if(kEv.keyEvent_.GetCharacter()) { // is_printable
+        ui::InputMethod* im =
+            input_node_widget_->GetInputMethod();
+        im->DispatchKeyEvent(&kEv.keyEvent_); // TODO: SendEventToSink
+      } else {
+        input_node_widget_->OnKeyEvent(&kEv.keyEvent_);
+      }*/
+
+      //views::View* root_view = input_node_widget_->GetRootView();
+      //DCHECK(root_view);
+      //ui::EventDispatchDetails details = root_view->OnEventFromSource(&kEv.keyEvent_);
+
     }
     custom_generating_node_->
       scheduledEvents_.scheduledKeyEvents_.clear();
@@ -615,10 +655,10 @@ void InputNode::RenderTreeNodeVisit(const NodeVisitor *render_target) {
       SkRect mEv_sk_rect_transformed;
       total_matrix.mapRect(&mEv_sk_rect_transformed, mEv_sk_rect);
 
-      float x = mEv.mouseEvent_.x();
-      float y = mEv.mouseEvent_.y();
+      /*float x = mEv.mouseEvent_.x();
+      float y = mEv.mouseEvent_.y();*/
 
-      /*SkRect boundingClientRect_sk_rect = SkRect::MakeXYWH(
+      SkRect boundingClientRect_sk_rect = SkRect::MakeXYWH(
         mEv.boundingClientRect_->left(),
         mEv.boundingClientRect_->top(),
         1,
@@ -630,12 +670,12 @@ void InputNode::RenderTreeNodeVisit(const NodeVisitor *render_target) {
 
       float x = mEv_sk_rect_transformed.x()
         - boundingClientRect_transformed.x();
-      if(x < 0) {
+      /*if(x < 0) {
         x = mEv.mouseEvent_.x() + x;
-      }
+      }*/
       float y = mEv_sk_rect_transformed.y()
         - boundingClientRect_transformed.y();
-      if(y < 0) {
+      /*if(y < 0) {
         y = mEv.mouseEvent_.y() + y;
       }*/
 
@@ -649,33 +689,29 @@ void InputNode::RenderTreeNodeVisit(const NodeVisitor *render_target) {
                          mEv.mouseEvent_.button_flags(),
                          mEv.mouseEvent_.button_flags());
 
-      input_node_widget_->OnMouseEvent(&mEvTransformed);
+      //input_node_widget_->OnMouseEvent(&mEvTransformed);
+
+      input_node_widget_->OnMouseEvent(&mEv.mouseEvent_);
+
+      /*if(mEv.mouseEvent_.type() == ui::ET_MOUSE_DRAGGED) {
+        printf("mEv.mouseEvent_.type() == ui::ET_MOUSE_DRAGGED\n");
+        input_node_container_->textfield_->OnMouseDragged(mEv.mouseEvent_);
+      } else if(mEv.mouseEvent_.type() == ui::ET_MOUSE_PRESSED) {
+        printf("mEv.mouseEvent_.type() == ui::ET_MOUSE_PRESSED\n");
+        input_node_container_->textfield_->OnMousePressed(mEv.mouseEvent_);
+      } else if(mEv.mouseEvent_.type() == ui::ET_MOUSE_RELEASED) {
+        printf("mEv.mouseEvent_.type() == ui::ET_MOUSE_RELEASED\n");
+        input_node_container_->textfield_->OnMouseReleased(mEv.mouseEvent_);
+      } else if(mEv.mouseEvent_.type() == ui::ET_MOUSE_MOVED) {
+        printf("mEv.mouseEvent_.type() == ui::ET_MOUSE_MOVED\n");
+        input_node_container_->textfield_->OnMouseMoved(mEv.mouseEvent_);
+      } else {
+        DCHECK(false);
+      }*/
     }
     custom_generating_node_->
       scheduledEvents_.scheduledMouseEvents_.clear();
   }
-
-      /*// see https://github.com/blockspacer/skia-opengl-emscripten/blob/24de863ed991dbb888a443138ae0780d0d514417/src/chromium/ui/views/controls/textfield/textfield_unittest.cc#L673
-      {
-        gfx::Point point(screen_->GetCursorScreenPoint());
-        ui::MouseEvent click(ui::ET_MOUSE_PRESSED, point, point,
-                             ui::EventTimeForNow(), ui::EF_LEFT_MOUSE_BUTTON,
-                             ui::EF_LEFT_MOUSE_BUTTON);
-        container_->OnMousePressed(click);
-
-        // TODO: event_generator_ https://github.com/blockspacer/skia-opengl-emscripten/blob/bb16ab108bc4018890f4ff3179250b76c0d9053b/src/chromium/ui/views/controls/combobox/combobox_unittest.cc#L228
-        DCHECK(widget_);
-        widget_->OnMouseEvent(&click);
-
-        ui::MouseEvent release(ui::ET_MOUSE_RELEASED, point, point,
-                               ui::EventTimeForNow(), ui::EF_LEFT_MOUSE_BUTTON,
-                               ui::EF_LEFT_MOUSE_BUTTON);
-        container_->OnMouseReleased(release);
-
-        // TODO: event_generator_ https://github.com/blockspacer/skia-opengl-emscripten/blob/bb16ab108bc4018890f4ff3179250b76c0d9053b/src/chromium/ui/views/controls/combobox/combobox_unittest.cc#L228
-        DCHECK(widget_);
-        widget_->OnMouseEvent(&release);
-    }*/
 
   input_node_container_->InvalidateLayout();
   input_node_container_->SizeToPreferredSize();
@@ -685,14 +721,6 @@ void InputNode::RenderTreeNodeVisit(const NodeVisitor *render_target) {
   input_node_widget_->GetRootView()->SchedulePaint();
   input_node_container_->SchedulePaint();
   input_node_widget_->GetRootView()->SchedulePaint();
-
-  /*views::View* root_view = input_node_widget_->GetRootView();
-  DCHECK(root_view);
-  if(!root_view->Contains(input_node_container_)) {
-    root_view->AddChildView(input_node_container_);
-    printf("added input_node_container_ to root_view\n");
-  }
-  DCHECK(root_view->GetEffectiveViewTargeter());*/
 
   // see https://github.com/blockspacer/skia-opengl-emscripten/blob/master/src/chromium/ui/views/controls/label_unittest.cc#L61
   gfx::Rect first_paint(1, 1);
