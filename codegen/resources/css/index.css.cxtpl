@@ -567,6 +567,14 @@ a {
   min-height: 100vh;
 }
 
+.fillEntireHeight {
+  height: 100vh;
+}
+
+.fillEntireWidth {
+  width: 100vw;
+}
+
 .FlexDemoContainer {
   display: flex;
   align-items: center;
@@ -746,3 +754,103 @@ scrollable
 .demo-scrollable-content {
     /*user-select: none;*/
 }
+
+@keyframes background-anim {
+  from {
+    background-color: rgb(30,100, 30);
+  }
+  to {
+    background-color: rgb(30, 30, 100);
+  }
+}
+
+
+#material-spinner-background {
+  background-color: #282828;
+  animation: background-anim 5s alternate-reverse infinite ease-in-out;
+  min-width:100px;
+  min-height:100px;
+}
+.absolute-center {
+  margin: auto;
+  position: absolute !important;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+.material-spinner {
+  display: inline-block;
+  position: relative;
+  width: 4.25rem;
+  height: 4.25rem;
+  animation: container-rotate 1568.23529ms linear infinite; }
+  .material-spinner .spinner-layer {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    animation: fill-unfill-rotate 5332ms cubic-bezier(0.4, 0, 0.2, 1) infinite both; }
+  .material-spinner .circle-clipper {
+    display: inline-block;
+    position: relative;
+    width: 50%;
+    height: 100%;
+    overflow: hidden; }
+  .material-spinner .half-circle {
+    position: absolute;
+    width: 4.25rem;
+    height: 4.25rem; }
+    .material-spinner .half-circle > div > div {
+      width: 50%;
+      height: 100%;
+      overflow: hidden; }
+      .material-spinner .half-circle > div > div > div {
+        width: 3.75rem;
+        height: 3.75rem;
+        border: 0.25rem solid #eee;
+        border-radius: 50%; }
+  .material-spinner .left .half-circle {
+    transform: rotate(129deg);
+    animation: left-spin 1333ms cubic-bezier(0.4, 0, 0.2, 1) infinite both; }
+    .material-spinner .left .half-circle > div {
+      transform: rotate(45deg); }
+  .material-spinner .right .half-circle {
+    left: -100%;
+    transform: rotate(-129deg);
+    animation: right-spin 1333ms cubic-bezier(0.4, 0, 0.2, 1) infinite both; }
+    .material-spinner .right .half-circle > div {
+      transform: rotate(135deg); }
+@keyframes container-rotate {
+  to {
+    transform: rotate(360deg); } }
+@keyframes fill-unfill-rotate {
+  12.5% {
+    transform: rotate(135deg); }
+  25% {
+    transform: rotate(270deg); }
+  37.5% {
+    transform: rotate(405deg); }
+  50% {
+    transform: rotate(540deg); }
+  62.5% {
+    transform: rotate(675deg); }
+  75% {
+    transform: rotate(810deg); }
+  87.5% {
+    transform: rotate(945deg); }
+  to {
+    transform: rotate(1080deg); } }
+@keyframes left-spin {
+  from {
+    transform: rotate(130deg); }
+  50% {
+    transform: rotate(-5deg); }
+  to {
+    transform: rotate(130deg); } }
+@keyframes right-spin {
+  from {
+    transform: rotate(-130deg); }
+  50% {
+    transform: rotate(5deg); }
+  to {
+    transform: rotate(-130deg); } }

@@ -213,6 +213,18 @@ const std::string owl_png_path
      </component>
    </div>
 
+  <div id="material-spinner-background">
+      <div class="material-spinner">
+      <div class="spinner-layer">
+        <div class="circle-clipper left">
+          <div class="half-circle"><div><div><div></div></div></div></div>
+        </div><div class="circle-clipper right">
+          <div class="half-circle"><div><div><div></div></div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
    <div class="dropdownbtn">
      <div class="dropbtn">Dropdown</div>
      <div class="dropdownbtn-content">
