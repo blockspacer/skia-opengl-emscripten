@@ -35,8 +35,10 @@
 #include <vector>
 #include "base/memory/scoped_refptr.h"
 #include "base/memory/weak_ptr.h"
+#if !defined(DISABLE_MOJO)
 #include "mojo/public/cpp/bindings/interface_ptr_info.h"
 #include "mojo/public/cpp/bindings/interface_request.h"
+#endif // !defined(DISABLE_MOJO)
 #include "third_party/blink/public/common/messaging/message_port_channel.h"
 #include "third_party/blink/renderer/platform/platform_export.h"
 #include "third_party/blink/renderer/platform/wtf/assertions.h"
@@ -268,6 +270,7 @@ struct CrossThreadCopier<String> {
   PLATFORM_EXPORT static Type Copy(const String&);
 };
 
+#if !defined(DISABLE_MOJO)
 // mojo::InterfacePtrInfo is a cross-thread safe mojo::InterfacePtr.
 template <typename Interface>
 struct CrossThreadCopier<mojo::InterfacePtrInfo<Interface>> {
@@ -286,6 +289,7 @@ struct CrossThreadCopier<mojo::InterfaceRequest<Interface>> {
     return request;  // This is in fact a move.
   }
 };
+#endif // !defined(DISABLE_MOJO)
 
 template <>
 struct CrossThreadCopier<MessagePortChannel> {

@@ -41,8 +41,11 @@
 #include "base/threading/thread.h"
 #include "base/time/time.h"
 #include "components/viz/common/surfaces/frame_sink_id.h"
+
+#if !defined(DISABLE_MOJO)
 #include "mojo/public/cpp/system/data_pipe.h"
 #include "mojo/public/cpp/system/message_pipe.h"
+#endif // !defined(DISABLE_MOJO)
 
 //#if !defined(OS_EMSCRIPTEN) && defined(ENABLE_NETWORK)
 #if defined(ENABLE_GNET)
@@ -50,27 +53,35 @@
 #endif // ENABLE_GNET
 //#endif // OS_EMSCRIPTEN
 
+#if !defined(DISABLE_MOJO)
 //#if !defined(OS_EMSCRIPTEN) && defined(ENABLE_MOJOM)
 #include "third_party/blink/public/common/feature_policy/feature_policy.h"
 //#endif // OS_EMSCRIPTEN
+#endif // !defined(DISABLE_MOJO)
 
 #include "third_party/blink/public/common/user_agent/user_agent_metadata.h"
 
+#if !defined(DISABLE_MOJO)
 //#if !defined(OS_EMSCRIPTEN) && defined(ENABLE_MOJOM)
 #include "third_party/blink/public/mojom/loader/code_cache.mojom-shared.h"
 //#endif // OS_EMSCRIPTEN
+#endif // !defined(DISABLE_MOJO)
 
 #include "third_party/blink/public/platform/blame_context.h"
 
+#if !defined(DISABLE_MOJO)
 //#if !defined(OS_EMSCRIPTEN) && defined(ENABLE_MOJOM)
 #include "third_party/blink/public/platform/code_cache_loader.h"
 //#endif // OS_EMSCRIPTEN
+#endif // !defined(DISABLE_MOJO)
 
 #include "third_party/blink/public/platform/user_metrics_action.h"
 
+#include "third_party/blink/public/platform/web_common.h"
+
+//#if !defined(DISABLE_MOJO)
 //#if !defined(OS_EMSCRIPTEN) && defined(ENABLE_MOJOM)
 #include "third_party/blink/public/platform/web_audio_device.h"
-#include "third_party/blink/public/platform/web_common.h"
 #include "third_party/blink/public/platform/web_data.h"
 #include "third_party/blink/public/platform/web_dedicated_worker_host_factory_client.h"
 #include "third_party/blink/public/platform/web_gesture_device.h"
@@ -83,6 +94,7 @@
 #include "third_party/blink/public/platform/web_url_loader.h"
 #include "third_party/blink/public/platform/web_url_loader_factory.h"
 //#endif // OS_EMSCRIPTEN
+//#endif // !defined(DISABLE_MOJO)
 
 namespace base {
 class SingleThreadTaskRunner;
@@ -398,6 +410,8 @@ class BLINK_PLATFORM_EXPORT Platform {
     return blink::UserAgentMetadata();
   }
 
+
+#if !defined(DISABLE_MOJO)
   // A suggestion to cache this metadata in association with this URL.
   virtual void CacheMetadata(blink::mojom::CodeCacheType cache_type,
                              const WebURL&,
@@ -413,6 +427,7 @@ class BLINK_PLATFORM_EXPORT Platform {
                                FetchCachedCodeCallback) {}
   virtual void ClearCodeCacheEntry(blink::mojom::CodeCacheType cache_type,
                                    const GURL&) {}
+#endif // !defined(DISABLE_MOJO)
 
 
   // A suggestion to cache this metadata in association with this URL which
