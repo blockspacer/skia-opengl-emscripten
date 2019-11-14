@@ -51,7 +51,7 @@ add_library(cobalt_input STATIC
   ${cobalt_input_SOURCES}
 )
 
-target_link_libraries(cobalt_input PUBLIC
+target_link_libraries(cobalt_input PRIVATE
   base # TODO
   cobalt_base
   cobalt_nanobase

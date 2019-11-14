@@ -154,7 +154,7 @@ add_library(UI_GL STATIC
   ${UI_GL_SOURCES}
 )
 
-target_link_libraries(UI_GL PUBLIC
+target_link_libraries(UI_GL PRIVATE
   base # TODO
   #dynamic_annotations
   #${BASE_LIBRARIES}
@@ -173,9 +173,6 @@ target_link_libraries(UI_GL PUBLIC
   GFX_GEOMETRY
   #egl
   #GLESv2
-)
-
-target_link_libraries(UI_GL PRIVATE
   # khronos
   ${khronos_LIB}
 )

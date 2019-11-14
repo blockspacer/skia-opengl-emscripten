@@ -296,7 +296,7 @@ if(ENABLE_HARFBUZZ AND TARGET_LINUX)
   )
 endif(ENABLE_HARFBUZZ AND TARGET_LINUX)
 
-target_link_libraries(UI_GFX PUBLIC
+target_link_libraries(UI_GFX PRIVATE
   #${BASE_LIBRARIES}
   BASE_CC
   PAINT_CC
@@ -314,9 +314,6 @@ target_link_libraries(UI_GFX PUBLIC
   ${libsync_LIB}
   #
   ${EXTRA_DEPS}
-)
-
-target_link_libraries(UI_GFX PRIVATE
   # khronos
   ${khronos_LIB}
 )

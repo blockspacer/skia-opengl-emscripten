@@ -8,6 +8,7 @@ set(CUR_SRC_DIR ${BLINK_COMMON_DIR})
 set(CUR_OUT_DIR ${GEN_COMBINED_DIR}/third_party/blink/common/)
 
 list(APPEND BLINK_COMMON_GEN_SOURCES
+  ## TODO
   ${CUR_SRC_DIR}/associated_interfaces/associated_interface_provider.cc
   ${CUR_SRC_DIR}/associated_interfaces/associated_interface_registry.cc
   ${CUR_SRC_DIR}/blob/blob_utils.cc
@@ -16,9 +17,11 @@ list(APPEND BLINK_COMMON_GEN_SOURCES
   ${CUR_SRC_DIR}/device_memory/approximated_device_memory.cc
   ${CUR_SRC_DIR}/dom_storage/session_storage_namespace_id.cc
   ${CUR_SRC_DIR}/experiments/memory_ablation_experiment.cc
+  ## TODO
   ${CUR_SRC_DIR}/feature_policy/feature_policy.cc
   ${CUR_SRC_DIR}/feature_policy/policy_value.cc
   ${CUR_SRC_DIR}/features.cc
+  ## TODO
   ${CUR_SRC_DIR}/frame/frame_policy.cc
   ${CUR_SRC_DIR}/frame/from_ad_state.cc
   ${CUR_SRC_DIR}/frame/user_activation_state.cc
@@ -38,10 +41,12 @@ if(ENABLE_GNET)
 endif(ENABLE_GNET)
 
 list(APPEND BLINK_COMMON_GEN_SOURCES
+  ## TODO
   ${CUR_SRC_DIR}/logging/logging_utils.cc
   ${CUR_SRC_DIR}/manifest/manifest.cc
   ${CUR_SRC_DIR}/manifest/manifest_icon_selector.cc
   ${CUR_SRC_DIR}/manifest/manifest_util.cc
+  ## TODO
   ${CUR_SRC_DIR}/mediastream/media_devices.cc
   ${CUR_SRC_DIR}/mediastream/media_devices_mojom_traits.cc
   ${CUR_SRC_DIR}/mediastream/media_stream_controls.cc
@@ -64,16 +69,22 @@ if(ENABLE_GNET)
 endif(ENABLE_GNET)
 
 list(APPEND BLINK_COMMON_GEN_SOURCES
+  ## TODO ##
+  ## TODO
   ${CUR_SRC_DIR}/mediastream/media_stream_request.cc
   # requires skia/public/interfaces/bitmap_skbitmap_struct_traits.h
+  ## TODO
   ${CUR_SRC_DIR}/notifications/notification_resources.cc
   # requires skia/public/interfaces/bitmap_skbitmap_struct_traits.h
-  ## TODO ## ${CUR_SRC_DIR}/notifications/notification_struct_traits.cc
+  ## TODO ##
+  ${CUR_SRC_DIR}/notifications/notification_struct_traits.cc
+  ## TODO
   ${CUR_SRC_DIR}/notifications/platform_notification_data.cc
   ${CUR_SRC_DIR}/origin_policy/origin_policy.cc
   ${CUR_SRC_DIR}/origin_policy/origin_policy_parser.cc
   #$CUR_SRC_DIRR}/origin_policy/origin_policy_parser.h
   ${CUR_SRC_DIR}/privacy_preferences.cc
+  ## TODO
   ${CUR_SRC_DIR}/service_worker/service_worker_status_code.cc
   ${CUR_SRC_DIR}/service_worker/service_worker_type_converters.cc
   ${CUR_SRC_DIR}/service_worker/service_worker_utils.cc
@@ -89,10 +100,10 @@ add_library(BLINK_COMMON STATIC
   ${BLINK_COMMON_GEN_SOURCES}
 )
 
-target_link_libraries(BLINK_COMMON PUBLIC
+target_link_libraries(BLINK_COMMON PRIVATE
   base
   ${GNET_LIBS}
-  MOJO
+  ${MOJO_LIB}
   ${SERVICES_NETWORK_PUBLIC_CPP_LIB}
   ${CUSTOM_ICU_LIB}
   ${HARFBUZZ_LIBRARIES}

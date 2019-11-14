@@ -14,7 +14,7 @@ add_library(GFX_RANGE STATIC
   ${GFX_RANGE_SOURCES}
 )
 
-target_link_libraries(GFX_RANGE PUBLIC
+target_link_libraries(GFX_RANGE PRIVATE
   #${BASE_LIBRARIES}
   base
   #${OPENGLES2_LIBRARIES}

@@ -169,11 +169,11 @@ add_library(GLIBXML STATIC
 )
 
 if (EMSCRIPTEN)
-  target_link_libraries(GLIBXML PUBLIC
+  target_link_libraries(GLIBXML PRIVATE
     ${CUSTOM_ICU_LIB} # icuuc
   )
 else()
-  target_link_libraries(GLIBXML PUBLIC
+  target_link_libraries(GLIBXML PRIVATE
     #base
     #${ZLIB_LIBRARIES}
     #zlib

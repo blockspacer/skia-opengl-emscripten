@@ -5,17 +5,21 @@
 #include "ui/base/ime/input_method_delegate.h"
 
 #include "base/callback.h"
+#if !defined(DISABLE_MOJO)
 #include "ui/base/ime/mojo/ime.mojom.h"
+#endif // !defined(DISABLE_MOJO)
 #include "ui/events/event.h"
 
 namespace ui {
 namespace internal {
 
+#if !defined(DISABLE_MOJO)
 bool InputMethodDelegate::ConnectToImeEngine(
     ::ime::mojom::ImeEngineRequest engine_request,
     ::ime::mojom::ImeEngineClientPtr client) {
   return false;
 }
+#endif // !defined(DISABLE_MOJO)
 
 // static
 void InputMethodDelegate::RunDispatchKeyEventPostIMECallback(

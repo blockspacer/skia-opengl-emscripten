@@ -88,7 +88,7 @@ add_library(SKIA_EXT STATIC
   ${SKIA_EXT_COMMON_SOURCES}
 )
 
-target_link_libraries(SKIA_EXT PUBLIC
+target_link_libraries(SKIA_EXT PRIVATE
   ${SKIA_LIBS}
   #SKIA
   #${skottie_LIB}

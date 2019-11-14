@@ -93,7 +93,7 @@ add_library(PAINT_CC STATIC
   ${PAINT_CC_SOURCES}
 )
 
-target_link_libraries(PAINT_CC PUBLIC
+target_link_libraries(PAINT_CC PRIVATE
   #GURL
   #${GNET_LIBS}
   #${BASE_LIBRARIES}

@@ -63,7 +63,7 @@ add_library(cobalt_math STATIC
   ${cobalt_math_SOURCES}
 )
 
-target_link_libraries(cobalt_math PUBLIC
+target_link_libraries(cobalt_math PRIVATE
   cobalt_base
   #cobalt_nanobase
   #cobalt_script

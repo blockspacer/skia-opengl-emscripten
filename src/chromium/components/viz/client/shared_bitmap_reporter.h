@@ -7,7 +7,10 @@
 
 #include "components/viz/client/viz_client_export.h"
 #include "components/viz/common/resources/shared_bitmap.h"
+
+#if !defined(DISABLE_MOJO)
 #include "mojo/public/cpp/system/buffer.h"
+#endif // !defined(DISABLE_MOJO)
 
 namespace viz {
 
@@ -18,9 +21,12 @@ namespace viz {
 // notifications on to the display compositor via the CompositorFrameSink.
 class VIZ_CLIENT_EXPORT SharedBitmapReporter {
  public:
+
+#if !defined(DISABLE_MOJO)
   // Associates a SharedBitmapId with a shared buffer handle.
   virtual void DidAllocateSharedBitmap(mojo::ScopedSharedBufferHandle buffer,
                                        const SharedBitmapId& id) = 0;
+#endif // !defined(DISABLE_MOJO)
 
   // Disassociates a SharedBitmapId previously passed to
   // DidAllocateSharedBitmap.

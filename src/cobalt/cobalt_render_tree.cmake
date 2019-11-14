@@ -66,7 +66,7 @@ add_library(cobalt_render_tree STATIC
 #   '<(DEPTH)/cobalt/math/math.gyp:math',
 #   '<(DEPTH)/third_party/ots/ots.gyp:ots',
 # ],
-target_link_libraries(cobalt_render_tree PUBLIC
+target_link_libraries(cobalt_render_tree PRIVATE
   cobalt_base
   cobalt_math
   base # TODO

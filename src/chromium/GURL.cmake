@@ -50,7 +50,7 @@ add_library(GURL STATIC
   ${GURL_SOURCES}
 )
 
-target_link_libraries(GURL PUBLIC
+target_link_libraries(GURL PRIVATE
   #base # TODO
   #cobalt_base
   #cobalt_nanobase

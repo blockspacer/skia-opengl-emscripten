@@ -21,7 +21,7 @@ add_library(COMPONENTS_CONTENT_SETTINGS_CORE_COMMON STATIC
   ${COMPONENTS_CONTENT_SETTINGS_CORE_COMMON_SOURCES}
 )
 
-target_link_libraries(COMPONENTS_CONTENT_SETTINGS_CORE_COMMON PUBLIC
+target_link_libraries(COMPONENTS_CONTENT_SETTINGS_CORE_COMMON PRIVATE
   #deps = [
   #  "//base",
   #  "//mojo/public/cpp/base",
@@ -30,7 +30,7 @@ target_link_libraries(COMPONENTS_CONTENT_SETTINGS_CORE_COMMON PUBLIC
   #  "//url",
   #]
   base
-  MOJO
+  ${MOJO_LIB}
   ${GNET_LIBS}
   GURL
   #BLINK_PUBLIC_COMMON

@@ -28,7 +28,7 @@ add_library(cobalt_web_animations STATIC
   ${cobalt_web_animations_SOURCES}
 )
 
-target_link_libraries(cobalt_web_animations PUBLIC
+target_link_libraries(cobalt_web_animations PRIVATE
   #base # TODO
   cobalt_base
   cobalt_cssom

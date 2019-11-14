@@ -2341,6 +2341,8 @@ static void animate() {
 
 static void onResize(int widthIn, int heightIn)
 {
+  printf("onResize %d %d\n", widthIn, heightIn);
+
   DCHECK(widthIn <= MAX_DRAW_BUFFER_WIDTH && widthIn >= 0);
   DCHECK(heightIn <= MAX_DRAW_BUFFER_HEIGHT && heightIn >= 0);
 
@@ -3166,7 +3168,7 @@ static EM_BOOL emsc_keypress_cb(int emsc_type, const EmscriptenKeyboardEvent* em
 }
 
 static EM_BOOL emsc_resize_cb(int emsc_type, const EmscriptenUiEvent *emsc_event, void *userData) {
-  //printf("emsc_resize_cb\n");
+  printf("emsc_resize_cb\n");
   DCHECK(emsc_event);
 
   float dpr = emscripten_get_device_pixel_ratio();
@@ -3180,9 +3182,8 @@ static EM_BOOL emsc_resize_cb(int emsc_type, const EmscriptenUiEvent *emsc_event
     w = emsc_event->documentBodyClientWidth;
     w = emsc_event->documentBodyClientHeight;
 
-    //emscripten_get_element_css_size("#canvas", &w, &h);
-    emscripten_set_canvas_element_size("#canvas", w * dpr, h * dpr);
-    emscripten_set_element_css_size("#canvas", w, h);
+    emscripten_set_canvas_element_size("#canvas", w, h);
+    emscripten_set_element_css_size("#canvas", w * dpr, h * dpr);
 
     onResize((int)w, (int)h);
   }
@@ -3270,8 +3271,8 @@ static EM_BOOL emsc_mouse_wheel_cb(int emsc_type, const EmscriptenWheelEvent* em
           emsc_event->mouse.shiftKey,
           mouse_x,
           mouse_y,
-          emsc_event->deltaX,
-          emsc_event->deltaY,
+          -1.0 * emsc_event->deltaX,
+          -1.0 * emsc_event->deltaY,
           button_modifiers,
           native_event::EmscMouseEventToSbKey(emsc_event->mouse.button)
       );
@@ -4258,11 +4259,13 @@ int main(int argc, char** argv) {
 #endif // ENABLE_BASE_PREALLOC
 #endif
 
-#ifdef ENABLE_WTF
+#ifdef ENABLE_BLINK_UI
   printf("Init Partitions ...\n");
   // see
   // https://github.com/chromium/chromium/blob/master/third_party/blink/renderer/platform/exported/platform.cc#L119
+#ifdef ENABLE_WTF
   WTF::Partitions::Initialize(nullptr); // TODO
+#endif // ENABLE_WTF
 
 #if defined(ENABLE_BLINK_UI) //&& defined(__TODO__)
     //base::Thread ui_thread("render");
@@ -4289,20 +4292,25 @@ int main(int argc, char** argv) {
 #endif
   main_thread_event_.Reset();
 #else
+
+#ifdef ENABLE_WTF
   printf("Init WTF ...\n");
   WTF::Initialize(nullptr); // TODO
+#endif // ENABLE_WTF
+
 #endif
 
-  printf("Testing ...\n");
-
+#ifdef ENABLE_WTF
+  printf("Testing WTF ...\n");
   {
     BindChecks bc;
     printf("BindChecks ... %d\n", bc.Run());
   }
-
   WTF::Bind([] {
     printf("WTF::Bind!\n");
   }).Run();
+#endif // ENABLE_WTF
+
 #endif
 
 #if defined(ENABLE_THREAD_TESTS)
@@ -4611,8 +4619,8 @@ int main(int argc, char** argv) {
 
   //https://github.com/Becavalier/Book-DISO-WebAssembly/issues/10
   double dpr = emscripten_get_device_pixel_ratio();
-  //emscripten_set_element_css_size("#canvas", DRAW_SURFACE_WIDTH / dpr, DRAW_SURFACE_HEIGHT / dpr);
-  emscripten_set_canvas_element_size("#canvas", DRAW_SURFACE_WIDTH * dpr, DRAW_SURFACE_HEIGHT * dpr);
+  emscripten_set_canvas_element_size("#canvas", DRAW_SURFACE_WIDTH, DRAW_SURFACE_HEIGHT);
+  emscripten_set_element_css_size("#canvas", DRAW_SURFACE_WIDTH * dpr, DRAW_SURFACE_HEIGHT * dpr);
 
   /// @note use EmscriptenWebGLContextAttributes, not SDL_GL
   /// @see https://github.com/emscripten-core/emscripten/issues/7684
@@ -4984,7 +4992,7 @@ if(!render_browser_window) {
       //base::Thread ui_thread("render");
             //blink::ThreadCreationParams params(blink::WebThreadType::kMainThread);
 
-    //#if DCHECK_IS_ON()
+    //#if DCHECK_IS_ON() && defined(ENABLE_WTF)
     //  WTF::WillCreateThread();
     //#endif
 
@@ -5035,7 +5043,10 @@ if(!render_browser_window) {
                 std::unique_ptr<blink::Thread> toBlinkThread =
                   blink::Thread::CreateThread(params);*/
                 //blink::Thread::CreateAndSetCompositorThread();
+#if defined(ENABLE_BLINK_PLATFORM)
                 blink::ThreadState::AttachCurrentThread();
+#endif // ENABLE_BLINK_PLATFORM
+
   #endif // SEPARATE_UI_THREAD
 
                 //if(!render_browser_window) {

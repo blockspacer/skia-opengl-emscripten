@@ -92,7 +92,7 @@ if(TARGET_LINUX)
   )
 endif(TARGET_LINUX)
 
-target_link_libraries(cobalt_base PUBLIC
+target_link_libraries(cobalt_base PRIVATE
   base # TODO
   starboard_platform
   #starboard_core

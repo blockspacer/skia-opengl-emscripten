@@ -396,11 +396,12 @@ set(WTF_LIBRARIES
   base
 )
 
+list(APPEND WTF_LIBRARIES
+  ${CUSTOM_ICU_LIB}
+)
+
 if(TARGET_EMSCRIPTEN)
   #set(ICU_LIBRARIES icu)
-  #list(APPEND WTF_LIBRARIES
-  #  ${ICU_LIBRARIES}
-  #)
 elseif(TARGET_LINUX)
   list(APPEND WTF_LIBRARIES
     libevent

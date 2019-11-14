@@ -111,9 +111,12 @@ BitmapRasterBufferProvider::AcquireBufferForRaster(
     base::MappedReadOnlyRegion mapped_region =
         viz::bitmap_allocation::AllocateSharedBitmap(size, viz::RGBA_8888);
     backing->mapping = std::move(mapped_region.mapping);
+
+#if !defined(DISABLE_MOJO)
     frame_sink_->DidAllocateSharedBitmap(
         viz::bitmap_allocation::ToMojoHandle(std::move(mapped_region.region)),
         backing->shared_bitmap_id);
+#endif // !defined(DISABLE_MOJO)
 
     resource.set_software_backing(std::move(backing));
   }

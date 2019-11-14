@@ -68,7 +68,7 @@ add_library(GCRYPTO STATIC
   ${GCRYPTO_SOURCES}
 )
 
-target_link_libraries(GCRYPTO PUBLIC
+target_link_libraries(GCRYPTO PRIVATE
   ${BORINGSSL_LIBS}
   dynamic_annotations
   base

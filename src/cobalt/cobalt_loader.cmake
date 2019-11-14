@@ -158,7 +158,7 @@ add_library(cobalt_loader STATIC
 
 #message(FATAL_ERROR "libjpeg_TURBO_LIB=${libjpeg_TURBO_LIB}")
 
-target_link_libraries(cobalt_loader PUBLIC
+target_link_libraries(cobalt_loader PRIVATE
   cobalt_base
   #cobalt_nanobase
   #cobalt_script

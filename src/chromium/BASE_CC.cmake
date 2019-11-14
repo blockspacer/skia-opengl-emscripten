@@ -44,7 +44,7 @@ add_library(BASE_CC STATIC
   ${BASE_CC_COMMON_SOURCES}
 )
 
-target_link_libraries(BASE_CC PUBLIC
+target_link_libraries(BASE_CC PRIVATE
   #GFX_GEOMETRY
   #${BASE_LIBRARIES}
   base

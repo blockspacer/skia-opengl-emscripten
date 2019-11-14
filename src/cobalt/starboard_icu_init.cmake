@@ -14,7 +14,7 @@ add_library(starboard_icu_init STATIC
   ${starboard_icu_init_SOURCES}
 )
 
-target_link_libraries(starboard_icu_init PUBLIC
+target_link_libraries(starboard_icu_init PRIVATE
   icu
   ced
   glm

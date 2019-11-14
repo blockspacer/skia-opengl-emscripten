@@ -232,7 +232,7 @@ add_library(UI_EVENTS STATIC
   ${UI_EVENTS_SOURCES}
 )
 
-target_link_libraries(UI_EVENTS PUBLIC
+target_link_libraries(UI_EVENTS PRIVATE
   dynamic_annotations
   base
   GFX_GEOMETRY

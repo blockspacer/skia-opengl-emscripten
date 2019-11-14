@@ -388,7 +388,7 @@ add_library(GMEDIA STATIC
   #${GMEDIA_GEN_SOURCES}
 )
 
-target_link_libraries(GMEDIA PUBLIC
+target_link_libraries(GMEDIA PRIVATE
   #deps = [
   #  "//base",
   #  "//base:i18n",
@@ -415,11 +415,11 @@ target_link_libraries(GMEDIA PUBLIC
   dynamic_annotations
   CC
   PAINT_CC
-  GCRYPTO
+  ${GCRYPTO_LIB}
   base
   ${GNET_LIBS}
   UI_EVENTS
-  MOJO
+  ${MOJO_LIB}
   ${SERVICES_NETWORK_PUBLIC_CPP_LIB}
   ${CUSTOM_ICU_LIB}
   ${HARFBUZZ_LIBRARIES}

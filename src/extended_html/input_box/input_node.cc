@@ -311,7 +311,7 @@ using namespace cobalt::renderer::rasterizer::skia;
 #endif // ENABLE_SKIA
 
 void InputNode::RenderTreeNodeVisit(const NodeVisitor *render_target) {
-#if defined(ENABLE_SKIA)
+#if defined(ENABLE_SKIA) && defined(ENABLE_BLINK_UI_VIEWS)
   if(!custom_generating_node_) {
     //NOTREACHED
     NOTIMPLEMENTED_LOG_ONCE();
@@ -479,7 +479,8 @@ void InputNode::RenderTreeNodeVisit(const NodeVisitor *render_target) {
 
     //input_node_container_->SetNativeTheme(nativeThemeAura);
     input_node_container_->SetBackground(views::CreateSolidBackground(
-          blink::Color(0.9f, 1.0f, 1.0f, 0.9f).Rgb()));
+          //blink::Color(0.9f, 1.0f, 1.0f, 0.9f).Rgb()));
+          SkColorSetARGB(128, 255, 128, 0)));
 
     //input_node_container_->SetBorder(views::CreateSolidBorder(2, SK_ColorBLUE));
     input_node_container_->
@@ -786,7 +787,7 @@ void InputNode::RenderTreeNodeVisit(const NodeVisitor *render_target) {
 #if ENABLE_FLUSH_AFTER_EVERY_NODE
   skia_visitor->draw_state_.render_target->flush();
 #endif // ENABLE_FLUSH_AFTER_EVERY_NODE
-#endif // ENABLE_SKIA
+#endif // ENABLE_SKIA && defined(ENABLE_BLINK_UI_VIEWS)
 }
 
 void InputNode::Accept(NodeVisitor* visitor) {

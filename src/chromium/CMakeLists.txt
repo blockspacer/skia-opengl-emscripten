@@ -10,8 +10,10 @@ set(BLINK_WTF_DIR ${BLINK_WTF_PARENT_DIR}wtf/)
 set(BASE_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/)
 set(BASE_DIR ${BASE_PARENT_DIR}base/)
 
-set(MOJO_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/)
-set(MOJO_DIR ${MOJO_PARENT_DIR}mojo/)
+if(ENABLE_MOJO)
+  set(MOJO_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/)
+  set(MOJO_DIR ${MOJO_PARENT_DIR}mojo/)
+endif(ENABLE_MOJO)
 
 set(UI_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/)
 set(UI_DIR ${UI_PARENT_DIR}ui/)
@@ -108,7 +110,9 @@ set(GMEDIA_DIR ${CMAKE_CURRENT_SOURCE_DIR}/media/)
 set(BLINK_PUBLIC_COMMON_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/third_party/)
 set(BLINK_PUBLIC_COMMON_DIR ${BLINK_PUBLIC_COMMON_PARENT_DIR}blink/public/common/)
 
-set(BLINK_PUBLIC_MOJOM_DIR ${BLINK_PUBLIC_COMMON_PARENT_DIR}blink/public/mojom/)
+if(ENABLE_BLINK_PUBLIC_MOJOM)
+  set(BLINK_PUBLIC_MOJOM_DIR ${BLINK_PUBLIC_COMMON_PARENT_DIR}blink/public/mojom/)
+endif(ENABLE_BLINK_PUBLIC_MOJOM)
 
 set(BASE_CC_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/cc/)
 set(BASE_CC_DIR ${BASE_CC_PARENT_DIR}base/)
@@ -127,8 +131,10 @@ if(ENABLE_BORINGSSL)
   set(BORINGSSL_DIR ${BORINGSSL_PARENT_DIR}boringssl/)
 endif(ENABLE_BORINGSSL)
 
-set(GCRYPTO_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/)
-set(GCRYPTO_DIR ${GCRYPTO_PARENT_DIR}crypto/)
+if(ENABLE_GCRYPTO)
+  set(GCRYPTO_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/)
+  set(GCRYPTO_DIR ${GCRYPTO_PARENT_DIR}crypto/)
+endif(ENABLE_GCRYPTO)
 
 #set(xdg_mime_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/base/third_party/)
 #set(xdg_mime_DIR ${xdg_mime_PARENT_DIR}xdg_mime/)
@@ -265,7 +271,9 @@ include(GURL.cmake)
 # TODO: use nss, not BoringSSL
 # as in https://github.com/Tarnyko/chromium-lite/blob/master/README
 #
-include(GCRYPTO.cmake)
+if(ENABLE_GCRYPTO)
+  include(GCRYPTO.cmake)
+endif(ENABLE_GCRYPTO)
 
 # base: General-purpose toolkit
 # Depends on : libevent, libicui18n
@@ -292,7 +300,9 @@ endif(ENABLE_GNET)
 if(ENABLE_BLINK)
   # GIPC:  Mojo IPC and bindings library.
   # Depends on : base, url, crypto, gin, net
-  include(MOJO.cmake)
+  if(ENABLE_MOJO)
+    include(MOJO.cmake)
+  endif(ENABLE_MOJO)
 
   if(ENABLE_GIPC)
     set(GIPC_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/)
@@ -431,7 +441,7 @@ endif(ENABLE_GNET AND ENABLE_BLINK)
 
 if(ENABLE_BLINK)
   # LIB_V8_INTERFACE
-  include(LIB_V8_INTERFACE.cmake)
+  #include(LIB_V8_INTERFACE.cmake)
 
   # COMPONENTS_SCHEDULING_METRICS
   include(COMPONENTS_SCHEDULING_METRICS.cmake)
@@ -439,7 +449,9 @@ endif(ENABLE_BLINK)
 
 if(ENABLE_SKIA AND ENABLE_BLINK)
   # BLINK_PUBLIC_MOJOM
-  include(BLINK_PUBLIC_MOJOM.cmake)
+  if(ENABLE_BLINK_PUBLIC_MOJOM)
+    include(BLINK_PUBLIC_MOJOM.cmake)
+  endif(ENABLE_BLINK_PUBLIC_MOJOM)
 
   # BLINK_PUBLIC_COMMON
   include(BLINK_PUBLIC_COMMON.cmake)
@@ -448,16 +460,24 @@ if(ENABLE_SKIA AND ENABLE_BLINK)
   #include(BLINK_RENDERER_NETWORK.cmake)
 
   # GMEDIA
-  include(GMEDIA.cmake)
+  if(ENABLE_GMEDIA)
+    include(GMEDIA.cmake)
+  endif(ENABLE_GMEDIA)
 
   # BLINK_COMMON
-  include(BLINK_COMMON.cmake)
+  if(ENABLE_BLINK_COMMON)
+    include(BLINK_COMMON.cmake)
+  endif(ENABLE_BLINK_COMMON)
 
   # BLINK_RENDERER_PLATFORM
-  include(BLINK_RENDERER_PLATFORM.cmake)
+  if(ENABLE_BLINK_PLATFORM)
+    include(BLINK_RENDERER_PLATFORM.cmake)
+  endif(ENABLE_BLINK_PLATFORM)
 
   # BLINK_RENDERER_CORE
-  include(BLINK_RENDERER_CORE.cmake)
+  if(ENABLE_BLINK_RENDERER_CORE)
+    include(BLINK_RENDERER_CORE.cmake)
+  endif(ENABLE_BLINK_RENDERER_CORE)
 
   if(ENABLE_BLINK_UI_NATIVE_THEME)
     include(UI_NATIVE_THEME.cmake) # TODO

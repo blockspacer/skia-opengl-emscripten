@@ -74,7 +74,7 @@ add_library(UI_COMPOSITOR STATIC
   ${UI_COMPOSITOR_SOURCES}
 )
 
-target_link_libraries(UI_COMPOSITOR PUBLIC
+target_link_libraries(UI_COMPOSITOR PRIVATE
   #"//cc",
   BASE_CC
   CC

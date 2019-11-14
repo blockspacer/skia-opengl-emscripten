@@ -1859,7 +1859,7 @@ add_library(GNET STATIC
 
 #message(FATAL_ERROR BORINGSSL_LIBS=${BORINGSSL_LIBS})
 
-target_link_libraries(GNET PUBLIC
+target_link_libraries(GNET PRIVATE
   #${BASE_LIBRARIES}
   base
   #cobalt_base
@@ -1869,7 +1869,7 @@ target_link_libraries(GNET PUBLIC
   ${STARBOARD_EZTIME_LIB}
   ${STARBOARD_COMMON_LIB}
   modp_b64
-  GCRYPTO
+  ${GCRYPTO_LIB}
   GURL
   # sql
   # protobuf

@@ -10,7 +10,7 @@ add_library(GFX_SWITCHES STATIC
   ${GFX_SWITCHES_SOURCES}
 )
 
-target_link_libraries(GFX_SWITCHES PUBLIC
+target_link_libraries(GFX_SWITCHES PRIVATE
   #${BASE_LIBRARIES}
   base
   #${OPENGLES2_LIBRARIES}

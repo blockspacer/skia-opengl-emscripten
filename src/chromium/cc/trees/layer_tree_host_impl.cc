@@ -5511,9 +5511,13 @@ void LayerTreeHostImpl::CreateUIResource(UIResourceId uid,
         overlay_candidate);
     transferable.format = format;
   } else {
+
+#if !defined(DISABLE_MOJO)
     layer_tree_frame_sink_->DidAllocateSharedBitmap(
         viz::bitmap_allocation::ToMojoHandle(std::move(mapped_region.region)),
         shared_bitmap_id);
+#endif // !defined(DISABLE_MOJO)
+
     transferable = viz::TransferableResource::MakeSoftware(shared_bitmap_id,
                                                            upload_size, format);
   }

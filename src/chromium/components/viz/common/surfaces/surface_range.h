@@ -8,13 +8,19 @@
 #include "base/optional.h"
 #include "components/viz/common/surfaces/surface_id.h"
 #include "components/viz/common/viz_common_export.h"
+
+#if !defined(DISABLE_MOJO)
 #include "mojo/public/cpp/bindings/struct_traits.h"
+#endif // !defined(DISABLE_MOJO)
 
 namespace viz {
 
+
+#if !defined(DISABLE_MOJO)
 namespace mojom {
 class SurfaceRangeDataView;
 }
+#endif // !defined(DISABLE_MOJO)
 
 // SurfaceRange consists of two SurfaceIds representing a range of surfaces
 // [start,end] ordered by SurfaceId where |start| is an optional surface
@@ -60,7 +66,9 @@ class VIZ_COMMON_EXPORT SurfaceRange {
   std::string ToString() const;
 
  private:
+#if !defined(DISABLE_MOJO)
   friend struct mojo::StructTraits<mojom::SurfaceRangeDataView, SurfaceRange>;
+#endif // !defined(DISABLE_MOJO)
 
   base::Optional<SurfaceId> start_;
   SurfaceId end_;

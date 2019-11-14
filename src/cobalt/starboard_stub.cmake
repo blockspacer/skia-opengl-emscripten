@@ -289,7 +289,7 @@ add_library(starboard_stub STATIC
   ${starboard_stub_SOURCES}
 )
 
-target_link_libraries(starboard_stub PUBLIC
+target_link_libraries(starboard_stub PRIVATE
   #base # TODO
   #cobalt_base
   starboard_core # just headers
@@ -315,7 +315,7 @@ target_link_libraries(starboard_stub PUBLIC
   ## services/ws/public/cpp/gpu
   ##${BASE_LIBRARIES}
   #base
-  GLIBXML
+  ${GLIBXML_LIB}
   #SKIA
   ##skcms
   #ced

@@ -10,7 +10,10 @@
 #include "base/memory/read_only_shared_memory_region.h"
 #include "components/viz/common/resources/resource_format.h"
 #include "components/viz/common/viz_common_export.h"
+
+#if !defined(DISABLE_MOJO)
 #include "mojo/public/cpp/system/buffer.h"
+#endif // !defined(DISABLE_MOJO)
 
 namespace gfx {
 class Size;
@@ -26,6 +29,8 @@ VIZ_COMMON_EXPORT base::MappedReadOnlyRegion AllocateSharedBitmap(
     const gfx::Size& size,
     ResourceFormat format);
 
+
+#if !defined(DISABLE_MOJO)
 // Converts a base::ReadOnlySharedMemoryRegion to its corresponding
 // Mojo scoped handle. This simply calls mojo::WrapReadOnlySharedMemoryRegion()
 // but allows the caller to not include the corresponding header where it is
@@ -41,6 +46,7 @@ VIZ_COMMON_EXPORT mojo::ScopedSharedBufferHandle ToMojoHandle(
 // TODO(crbug.com/951391): Remove once refactor is completed.
 VIZ_COMMON_EXPORT base::ReadOnlySharedMemoryRegion FromMojoHandle(
     mojo::ScopedSharedBufferHandle handle);
+#endif // !defined(DISABLE_MOJO)
 
 }  // namespace bitmap_allocation
 

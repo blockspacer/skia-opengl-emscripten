@@ -113,7 +113,7 @@ if(TARGET_LINUX)
   )
 endif(TARGET_LINUX)
 
-target_link_libraries(cobalt_glimp PUBLIC
+target_link_libraries(cobalt_glimp PRIVATE
   base # TODO
   cobalt_base
   cobalt_nanobase
@@ -122,7 +122,7 @@ target_link_libraries(cobalt_glimp PUBLIC
   #cobalt_dom
   #cobalt_loader
   #${GNET_LIBS}
-  #GLIBXML
+  #${GLIBXML_LIB}
   #cobalt_nanobase
   #${COBALT_CSP_LIB_NAME}
   #${COBALT_LOADER_LIB_NAME}
@@ -136,7 +136,7 @@ target_link_libraries(cobalt_glimp PUBLIC
   #modp_b64
   #dynamic_annotations
   #GURL
-  #GLIBXML
+  #${GLIBXML_LIB}
   #icu
   #ced
   #glm

@@ -49,7 +49,7 @@ add_library(ANIMATION_CC STATIC
   ${ANIMATION_CC_SOURCES}
 )
 
-target_link_libraries(ANIMATION_CC PUBLIC
+target_link_libraries(ANIMATION_CC PRIVATE
   PAINT_CC
   CC
   GFX_ANIMATION

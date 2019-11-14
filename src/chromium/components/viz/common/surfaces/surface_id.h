@@ -15,13 +15,18 @@
 #include "components/viz/common/surfaces/frame_sink_id.h"
 #include "components/viz/common/surfaces/local_surface_id.h"
 #include "components/viz/common/viz_common_export.h"
+
+#if !defined(DISABLE_MOJO)
 #include "mojo/public/cpp/bindings/struct_traits.h"
+#endif // !defined(DISABLE_MOJO)
 
 namespace viz {
 
+#if !defined(DISABLE_MOJO)
 namespace mojom {
 class SurfaceIdDataView;
 }
+#endif // !defined(DISABLE_MOJO)
 
 class VIZ_COMMON_EXPORT SurfaceId {
  public:
@@ -88,7 +93,9 @@ class VIZ_COMMON_EXPORT SurfaceId {
   }
 
  private:
+#if !defined(DISABLE_MOJO)
   friend struct mojo::StructTraits<mojom::SurfaceIdDataView, SurfaceId>;
+#endif // !defined(DISABLE_MOJO)
 
   FrameSinkId frame_sink_id_;
   LocalSurfaceId local_surface_id_;

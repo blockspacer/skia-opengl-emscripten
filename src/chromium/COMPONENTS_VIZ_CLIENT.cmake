@@ -21,7 +21,7 @@ add_library(COMPONENTS_VIZ_CLIENT STATIC
   ${COMPONENTS_VIZ_CLIENT_SOURCES}
 )
 
-target_link_libraries(COMPONENTS_VIZ_CLIENT PUBLIC
+target_link_libraries(COMPONENTS_VIZ_CLIENT PRIVATE
   #public_deps = [
   #  "//base",
   #  "//components/viz/common",

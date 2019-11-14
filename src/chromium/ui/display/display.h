@@ -8,7 +8,9 @@
 #include <stdint.h>
 
 #include "base/compiler_specific.h"
+#if !defined(DISABLE_MOJO)
 #include "mojo/public/cpp/bindings/struct_traits.h"
+#endif // !defined(DISABLE_MOJO)
 #include "ui/display/display_export.h"
 #include "ui/display/types/display_constants.h"
 #include "ui/gfx/color_space.h"
@@ -16,9 +18,11 @@
 
 namespace display {
 
+#if !defined(DISABLE_MOJO)
 namespace mojom {
 class DisplayDataView;
 }
+#endif // !defined(DISABLE_MOJO)
 
 // Returns true if one of following conditions is met.
 // 1) id1 is internal.
@@ -259,7 +263,9 @@ class DISPLAY_EXPORT Display final {
   bool operator!=(const Display& rhs) const { return !(*this == rhs); }
 
  private:
+#if !defined(DISABLE_MOJO)
   friend struct mojo::StructTraits<mojom::DisplayDataView, Display>;
+#endif // !defined(DISABLE_MOJO)
 
   int64_t id_ = kInvalidDisplayId;
   gfx::Rect bounds_;

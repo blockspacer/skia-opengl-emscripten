@@ -13,7 +13,7 @@ add_library(v8_stub STATIC
   ${v8_stub_SOURCES}
 )
 
-target_link_libraries(v8_stub PUBLIC
+target_link_libraries(v8_stub PRIVATE
   base # TODO
   cobalt_base
   cobalt_nanobase

@@ -30,7 +30,7 @@ add_library(GFX_ANIMATION STATIC
   ${GFX_ANIMATION_SOURCES}
 )
 
-target_link_libraries(GFX_ANIMATION PUBLIC
+target_link_libraries(GFX_ANIMATION PRIVATE
   #dynamic_annotations
   #${BASE_LIBRARIES}
   base

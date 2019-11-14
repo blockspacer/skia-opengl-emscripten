@@ -19,7 +19,7 @@ add_library(DEBUG_CC STATIC
   ${DEBUG_CC_SOURCES}
 )
 
-target_link_libraries(DEBUG_CC PUBLIC
+target_link_libraries(DEBUG_CC PRIVATE
   #GURL
   #${GNET_LIBS}
   #${BASE_LIBRARIES}

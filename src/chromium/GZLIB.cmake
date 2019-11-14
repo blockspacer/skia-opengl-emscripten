@@ -48,12 +48,6 @@ add_library(GZLIB STATIC
   ${GZLIB_SOURCES}
 )
 
-target_link_libraries(GZLIB PUBLIC
-  #base
-  #${ZLIB_LIBRARIES}
-  #zlib
-)
-
 set_property(TARGET GZLIB PROPERTY CXX_STANDARD 17)
 
 target_include_directories(GZLIB PRIVATE

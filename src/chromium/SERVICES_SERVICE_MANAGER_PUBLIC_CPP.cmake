@@ -125,7 +125,7 @@ add_library(SERVICES_SERVICE_MANAGER_PUBLIC_CPP STATIC
 )
 
 
-target_link_libraries(SERVICES_SERVICE_MANAGER_PUBLIC_CPP PUBLIC
+target_link_libraries(SERVICES_SERVICE_MANAGER_PUBLIC_CPP PRIVATE
   #public_deps = [
   #  ":cpp_types",
   #  "//base",
@@ -148,32 +148,11 @@ target_link_libraries(SERVICES_SERVICE_MANAGER_PUBLIC_CPP PUBLIC
   #  "//services/service_manager/public/mojom:mojom_shared",
   #]
   base
-  MOJO
+  ${MOJO_LIB}
   #GNET
   #GURL
   #icu # icuuc
 )
-
-#if (EMSCRIPTEN)
-#  target_link_libraries(SERVICES_SERVICE_MANAGER_PUBLIC_CPP PUBLIC
-#    GNET
-#    GURL
-#    #icu # icuuc
-#  )
-#else()
-#  target_link_libraries(SERVICES_SERVICE_MANAGER_PUBLIC_CPP PUBLIC
-#    GNET
-#    GURL
-#    MOJO
-#    #${BASE_LIBRARIES}
-#    #base
-#    #${ZLIB_LIBRARIES}
-#    #zlib
-#    #GZLIB
-#    #icu # icuuc
-#    COMPONENTS_CONTENT_SETTINGS_CORE_COMMON
-#  )
-#endif()
 
 set_property(TARGET SERVICES_SERVICE_MANAGER_PUBLIC_CPP PROPERTY CXX_STANDARD 17)
 

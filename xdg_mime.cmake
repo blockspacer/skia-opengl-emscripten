@@ -23,10 +23,6 @@ add_library(xdg_mime STATIC
   ${xdg_mime_SOURCES}
 )
 
-#target_link_libraries(xdg_mime PUBLIC
-  #base # TODO
-#)
-
 set_property(TARGET xdg_mime PROPERTY CXX_STANDARD 17)
 
 target_include_directories(xdg_mime PUBLIC

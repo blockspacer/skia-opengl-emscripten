@@ -9,10 +9,6 @@ add_library(xdg_user_dirs STATIC
   ${xdg_user_dirs_SOURCES}
 )
 
-#target_link_libraries(xdg_user_dirs PUBLIC
-  #base # TODO
-#)
-
 set_property(TARGET xdg_user_dirs PROPERTY CXX_STANDARD 17)
 
 target_include_directories(xdg_user_dirs PUBLIC

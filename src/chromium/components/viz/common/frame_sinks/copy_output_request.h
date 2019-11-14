@@ -16,15 +16,21 @@
 #include "components/viz/common/viz_common_export.h"
 #include "gpu/command_buffer/common/mailbox.h"
 #include "gpu/command_buffer/common/sync_token.h"
+
+#if !defined(DISABLE_MOJO)
 #include "mojo/public/cpp/bindings/struct_traits.h"
+#endif // !defined(DISABLE_MOJO)
+
 #include "ui/gfx/geometry/rect.h"
 #include "ui/gfx/geometry/vector2d.h"
 
 namespace viz {
 
+#if !defined(DISABLE_MOJO)
 namespace mojom {
 class CopyOutputRequestDataView;
 }
+#endif // !defined(DISABLE_MOJO)
 
 // Holds all the properties pertaining to a copy of a surface or layer.
 // Implementations that execute these requests must provide the requested
@@ -122,8 +128,10 @@ class VIZ_COMMON_EXPORT CopyOutputRequest {
   // Note: The StructTraits may "steal" the |result_callback_|, to allow it to
   // outlive this CopyOutputRequest (and wait for the result from another
   // process).
+#if !defined(DISABLE_MOJO)
   friend struct mojo::StructTraits<mojom::CopyOutputRequestDataView,
                                    std::unique_ptr<CopyOutputRequest>>;
+#endif // !defined(DISABLE_MOJO)
 
   const ResultFormat result_format_;
   CopyOutputRequestCallback result_callback_;

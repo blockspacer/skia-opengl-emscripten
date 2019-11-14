@@ -30,7 +30,7 @@ add_library(cobalt_csp STATIC
   ${COBALT_CSP_SOURCES}
 )
 
-target_link_libraries(cobalt_csp PUBLIC
+target_link_libraries(cobalt_csp PRIVATE
   cobalt_base
   base # TODO
   modp_b64
@@ -54,7 +54,7 @@ target_link_libraries(cobalt_csp PUBLIC
   ## services/service_manager
   ## services/ws/public/cpp/gpu
   ##${BASE_LIBRARIES}
-  GLIBXML
+  ${GLIBXML_LIB}
   #SKIA
   ##skcms
   #ced

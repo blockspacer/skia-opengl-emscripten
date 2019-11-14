@@ -28,7 +28,7 @@ add_library(cobalt_overlay_info STATIC
   ${cobalt_overlay_info_SOURCES}
 )
 
-target_link_libraries(cobalt_overlay_info PUBLIC
+target_link_libraries(cobalt_overlay_info PRIVATE
   base # TODO
   cobalt_base
   cobalt_nanobase

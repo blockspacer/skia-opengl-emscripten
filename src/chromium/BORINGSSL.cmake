@@ -279,7 +279,7 @@ add_library(BORINGSSL STATIC
   ${BORINGSSL_SOURCES}
 )
 
-target_link_libraries(BORINGSSL PUBLIC
+target_link_libraries(BORINGSSL PRIVATE
   dynamic_annotations
   #${BASE_LIBRARIES}
   base

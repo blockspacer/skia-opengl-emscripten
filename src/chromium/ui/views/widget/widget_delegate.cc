@@ -6,7 +6,11 @@
 
 #include "base/logging.h"
 #include "base/strings/utf_string_conversions.h"
+
+#if !defined(DISABLE_MOJO)
 #include "services/ws/public/mojom/window_tree_constants.mojom.h"
+#endif // !defined(DISABLE_MOJO)
+
 #include "ui/gfx/image/image_skia.h"
 #include "ui/views/view.h"
 #include "ui/views/views_delegate.h"
@@ -76,6 +80,7 @@ bool WidgetDelegate::CanMinimize() const {
 }
 
 int32_t WidgetDelegate::GetResizeBehavior() const {
+#if !defined(DISABLE_MOJO)
   int32_t behavior = ws::mojom::kResizeBehaviorNone;
   if (CanResize())
     behavior |= ws::mojom::kResizeBehaviorCanResize;
@@ -84,6 +89,9 @@ int32_t WidgetDelegate::GetResizeBehavior() const {
   if (CanMinimize())
     behavior |= ws::mojom::kResizeBehaviorCanMinimize;
   return behavior;
+#else
+  return 0;
+#endif // !defined(DISABLE_MOJO)
 }
 
 bool WidgetDelegate::CanActivate() const {

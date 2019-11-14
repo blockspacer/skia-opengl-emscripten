@@ -38,7 +38,7 @@ add_library(UI_NATIVE_THEME STATIC
   ${UI_NATIVE_THEME_SOURCES}
 )
 
-target_link_libraries(UI_NATIVE_THEME PUBLIC
+target_link_libraries(UI_NATIVE_THEME PRIVATE
   #"//skia",
   SKIA
   #"//base",

@@ -218,7 +218,7 @@ add_library(cobalt_media STATIC
   ${cobalt_media_SOURCES}
 )
 
-target_link_libraries(cobalt_media PUBLIC
+target_link_libraries(cobalt_media PRIVATE
   base # TODO
   cobalt_base
   cobalt_nanobase

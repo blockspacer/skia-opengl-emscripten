@@ -241,7 +241,7 @@ add_library(cobalt_cssom STATIC
   ${cobalt_cssom_SOURCES}
 )
 
-target_link_libraries(cobalt_cssom PUBLIC
+target_link_libraries(cobalt_cssom PRIVATE
   base # TODO
   # cobalt_network # TODO
   # cobalt_browser # TODO

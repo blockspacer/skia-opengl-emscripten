@@ -69,7 +69,7 @@ add_library(libyuv STATIC
   #endif()
 #endif(SUPPORTS_JPEG)
 
-target_link_libraries(libyuv PUBLIC
+target_link_libraries(libyuv PRIVATE
   #${libjpeg_LIB}
   ${libjpeg_TURBO_LIB}
   ${libZLIB_LIB}

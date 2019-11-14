@@ -12,7 +12,7 @@ add_library(cobalt_dom_exception STATIC
   ${COBALT_dom_exception_SOURCES}
 )
 
-target_link_libraries(cobalt_dom_exception PUBLIC
+target_link_libraries(cobalt_dom_exception PRIVATE
   #cobalt_base
   #cobalt_nanobase
   cobalt_script

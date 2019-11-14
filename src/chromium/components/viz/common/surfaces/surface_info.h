@@ -9,16 +9,20 @@
 #include "components/viz/common/viz_common_export.h"
 #include "ui/gfx/geometry/size.h"
 
+#if !defined(DISABLE_MOJO)
 namespace IPC {
 template <class T>
 struct ParamTraits;
 }  // namespace IPC
+#endif // !defined(DISABLE_MOJO)
 
 namespace viz {
 
+#if !defined(DISABLE_MOJO)
 namespace mojom {
 class SurfaceInfoDataView;
 }  // namespace mojom
+#endif // !defined(DISABLE_MOJO)
 
 // This class contains information about the surface that is being embedded.
 class VIZ_COMMON_EXPORT SurfaceInfo {
@@ -51,8 +55,10 @@ class VIZ_COMMON_EXPORT SurfaceInfo {
   std::string ToString() const;
 
  private:
+#if !defined(DISABLE_MOJO)
   friend struct mojo::StructTraits<mojom::SurfaceInfoDataView, SurfaceInfo>;
   friend struct IPC::ParamTraits<SurfaceInfo>;
+#endif // !defined(DISABLE_MOJO)
 
   SurfaceId id_;
   float device_scale_factor_ = 1.f;

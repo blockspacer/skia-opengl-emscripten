@@ -16,7 +16,7 @@ add_library(GFX_COLOR_SPACE STATIC
   ${GFX_COLOR_SPACE_SOURCES}
 )
 
-target_link_libraries(GFX_COLOR_SPACE PUBLIC
+target_link_libraries(GFX_COLOR_SPACE PRIVATE
   #${BASE_LIBRARIES}
   base
   SKIA

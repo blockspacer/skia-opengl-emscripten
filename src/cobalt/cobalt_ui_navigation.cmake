@@ -14,7 +14,7 @@ add_library(cobalt_ui_navigation STATIC
   ${COBALT_ui_navigation_SOURCES}
 )
 
-target_link_libraries(cobalt_ui_navigation PUBLIC
+target_link_libraries(cobalt_ui_navigation PRIVATE
   cobalt_base
   base # TODO
   #modp_b64

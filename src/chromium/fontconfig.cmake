@@ -51,7 +51,7 @@ find_package(LibUUID REQUIRED)
 message(STATUS "LibUUID_INCLUDE_DIRS=${LibUUID_INCLUDE_DIRS}")
 message(STATUS "LibUUID_LIBRARIES=${LibUUID_LIBRARIES}")
 
-target_link_libraries(fontconfig PUBLIC
+target_link_libraries(fontconfig PRIVATE
   base
   ${GLIBXML_LIB}
   #GZLIB

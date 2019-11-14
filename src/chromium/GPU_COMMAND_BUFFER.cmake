@@ -46,7 +46,7 @@ set(GPU_CONFIG_DIR
 
 
 list(APPEND GPU_COMMAND_BUFFER_COMMON_SOURCES
-  ${GPU_COMMAND_BUFFER_DIR}common/activity_flags.cc
+  ## TODO ${GPU_COMMAND_BUFFER_DIR}common/activity_flags.cc
   #${GPU_COMMAND_BUFFER_DIR}common/activity_flags.h",
   #${GPU_COMMAND_BUFFER_DIR}common/bitfield_helpers.h",
   ${GPU_COMMAND_BUFFER_DIR}common/buffer.cc
@@ -482,7 +482,7 @@ add_library(GPU_COMMAND_BUFFER STATIC
   ${GPU_COMMAND_BUFFER_ES2_SOURCES}
 )
 
-target_link_libraries(GPU_COMMAND_BUFFER PUBLIC
+target_link_libraries(GPU_COMMAND_BUFFER PRIVATE
   #UI_GL
   GFX_GEOMETRY
   UI_GFX

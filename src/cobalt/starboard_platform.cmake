@@ -474,7 +474,7 @@ add_library(starboard_platform STATIC
 
 set_property(TARGET starboard_platform PROPERTY CXX_STANDARD 17)
 
-target_link_libraries(starboard_platform PUBLIC
+target_link_libraries(starboard_platform PRIVATE
   starboard_common
 )
 

@@ -5503,7 +5503,7 @@ add_library(BLINK_RENDERER_CORE STATIC
   #${BLINK_RENDERER_SCRIPT_SOURCES}
 )
 
-target_link_libraries(BLINK_RENDERER_CORE PUBLIC
+target_link_libraries(BLINK_RENDERER_CORE PRIVATE
   #public_deps = [
   #  "//services/network/public/cpp:cpp",
   #  "//services/service_manager/public/cpp",
@@ -5536,12 +5536,12 @@ target_link_libraries(BLINK_RENDERER_CORE PUBLIC
   #  "//third_party/blink/renderer/bindings/modules/v8:bindings_modules_v8_generated",
   #]
   BLINK_PUBLIC_COMMON
-  BLINK_PUBLIC_MOJOM
+  ${BLINK_PUBLIC_MOJOM_LIB}
   #BLINK_RENDERER_NETWORK
   BLINK_RENDERER_PLATFORM
   GURL
   ${GNET_LIBS}
-  GCRYPTO
+  ${GCRYPTO_LIB}
   GFX_GEOMETRY
   UI_GFX
   # mojo
@@ -5567,18 +5567,15 @@ target_link_libraries(BLINK_RENDERER_CORE PUBLIC
   ${libjpeg_TURBO_LIB}
   #${libpng_LIB}
   ${iccjpeg_LIB}
-  MOJO
+  ${MOJO_LIB}
   #
-  LIB_V8_INTERFACE
+  ## LIB_V8_INTERFACE
   COMPONENTS_SCHEDULING_METRICS
   ${HARFBUZZ_LIBRARIES}
-  GMEDIA
+  ${GMEDIA_LIB}
   GZLIB_EXT
   ${SERVICES_SERVICE_MANAGER_PUBLIC_CPP_LIB}
   GFX_CODEC
-)
-
-target_link_libraries(BLINK_RENDERER_CORE PRIVATE
   # khronos
   ${khronos_LIB}
 )

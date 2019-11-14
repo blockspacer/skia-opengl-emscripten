@@ -130,16 +130,16 @@ add_library(SERVICES_NETWORK_PUBLIC_CPP STATIC
 )
 
 if (EMSCRIPTEN)
-  target_link_libraries(SERVICES_NETWORK_PUBLIC_CPP PUBLIC
+  target_link_libraries(SERVICES_NETWORK_PUBLIC_CPP PRIVATE
     ${GNET_LIBS}
     GURL
     #icu # icuuc
   )
 else()
-  target_link_libraries(SERVICES_NETWORK_PUBLIC_CPP PUBLIC
+  target_link_libraries(SERVICES_NETWORK_PUBLIC_CPP PRIVATE
     ${GNET_LIBS}
     GURL
-    MOJO
+    ${MOJO_LIB}
     #${BASE_LIBRARIES}
     #base
     #${ZLIB_LIBRARIES}

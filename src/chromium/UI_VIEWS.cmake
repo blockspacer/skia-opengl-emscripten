@@ -671,7 +671,7 @@ add_library(UI_VIEWS STATIC
   ${UI_VIEWS_AURA_STUB_SOURCES}
 )
 
-target_link_libraries(UI_VIEWS PUBLIC
+target_link_libraries(UI_VIEWS PRIVATE
   #"+cc/paint",
   PAINT_CC
   #"+components/crash/core/common/crash_key.h
@@ -707,6 +707,7 @@ target_link_libraries(UI_VIEWS PUBLIC
   #"//base:i18n",
   base
   #"//base/third_party/dynamic_annotations",
+  dynamic_annotations
   #"//cc/paint",
   PAINT_CC
   #"//mojo/public/cpp/bindings",
@@ -741,26 +742,23 @@ target_link_libraries(UI_VIEWS PUBLIC
   #"//ui/events:events_base",
   #"//ui/events/platform",
   #"//ui/gfx",
-  UI_GFX
+  #UI_GFX
   #"//ui/gfx/animation",
   #"//ui/gfx/geometry",
   #"//ui/views/resources",
-  dynamic_annotations
   BASE_CC
-  PAINT_CC
-  SKIA_EXT
-  GFX_ANIMATION
-  GFX_CODEC
-  GFX_COLOR_SPACE
-  GFX_GEOMETRY_SKIA
-  GFX_GEOMETRY
-  GFX_SWITCHES
-  GFX_RANGE
+  #GFX_ANIMATION
+  #GFX_CODEC
+  #GFX_COLOR_SPACE
+  #GFX_GEOMETRY_SKIA
+  #GFX_GEOMETRY
+  #GFX_SWITCHES
+  #GFX_RANGE
   #if (use_x11) {
   #  deps += [ "//ui/display/util" ]
   #}
-  MOJO
-  BLINK_PUBLIC_MOJOM
+  ${MOJO_LIB}
+  ${BLINK_PUBLIC_MOJOM_LIB}
 )
 
 set_property(TARGET UI_VIEWS PROPERTY CXX_STANDARD 17)

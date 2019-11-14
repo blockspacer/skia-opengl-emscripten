@@ -15,7 +15,7 @@ add_library(starboard_eztime STATIC
   ${starboard_eztime_SOURCES}
 )
 
-target_link_libraries(starboard_eztime PUBLIC
+target_link_libraries(starboard_eztime PRIVATE
   #base # TODO
   #cobalt_base
   #starboard_common

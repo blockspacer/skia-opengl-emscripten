@@ -331,9 +331,11 @@ void HeadsUpDisplayLayerImpl::UpdateHudTexture(
                                                        pool_resource.format());
       backing->shared_mapping = std::move(mapped_region.mapping);
 
+#if !defined(DISABLE_MOJO)
       layer_tree_frame_sink->DidAllocateSharedBitmap(
           viz::bitmap_allocation::ToMojoHandle(std::move(mapped_region.region)),
           backing->shared_bitmap_id);
+#endif // !defined(DISABLE_MOJO)
 
       pool_resource.set_software_backing(std::move(backing));
     }

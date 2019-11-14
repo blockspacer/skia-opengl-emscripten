@@ -28,7 +28,7 @@ add_library(cobalt_dom_parser STATIC
   ${cobalt_dom_parser_SOURCES}
 )
 
-target_link_libraries(cobalt_dom_parser PUBLIC
+target_link_libraries(cobalt_dom_parser PRIVATE
   base # TODO
   cobalt_base
   cobalt_dom

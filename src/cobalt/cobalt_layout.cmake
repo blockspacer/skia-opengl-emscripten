@@ -112,7 +112,7 @@ add_library(cobalt_layout STATIC
 #    'defines' : ['FORCE_VIDEO_EXTERNAL_MESH'],
 #  }],
 #],
-target_link_libraries(cobalt_layout PUBLIC
+target_link_libraries(cobalt_layout PRIVATE
   base # TODO
   cobalt_base
   cobalt_dom

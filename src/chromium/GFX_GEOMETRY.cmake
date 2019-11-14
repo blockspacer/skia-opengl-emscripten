@@ -59,7 +59,7 @@ add_library(GFX_GEOMETRY STATIC
   ${GFX_GEOMETRY_SOURCES}
 )
 
-target_link_libraries(GFX_GEOMETRY PUBLIC
+target_link_libraries(GFX_GEOMETRY PRIVATE
   #dynamic_annotations
   #${BASE_LIBRARIES}
   base

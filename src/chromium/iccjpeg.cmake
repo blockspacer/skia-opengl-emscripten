@@ -12,7 +12,7 @@ add_library(iccjpeg STATIC
   ${iccjpeg_SOURCES}
 )
 
-target_link_libraries(iccjpeg PUBLIC
+target_link_libraries(iccjpeg PRIVATE
   #${libjpeg_LIB}
   ${libjpeg_TURBO_LIB}
 )

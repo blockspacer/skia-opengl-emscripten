@@ -231,7 +231,7 @@ void SoftwareRasterizer::Submit(
   //if (!sRasterSurface) // allow resize
   {
     const SkImageInfo info = SkImageInfo::MakeN32(width, height, kPremul_SkAlphaType);
-    sRasterSurface = SkSurface::MakeRaster(info);
+    sRasterSurface = SkSurface::MakeRaster(info); // TODO
     if (!sRasterSurface) {
       printf("failed to create raster surface\n");
     }

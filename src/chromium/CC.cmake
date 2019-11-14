@@ -373,7 +373,7 @@ add_library(CC STATIC
 
 #message(FATAL_ERROR ${BASE_LIBRARIES})
 
-target_link_libraries(CC PUBLIC
+target_link_libraries(CC PRIVATE
   BASE_CC
   DEBUG_CC
   PAINT_CC
@@ -393,9 +393,6 @@ target_link_libraries(CC PUBLIC
   base
   GURL
   COMPONENTS_VIZ_CLIENT
-)
-
-target_link_libraries(CC PRIVATE
   # khronos
   ${khronos_LIB}
 )

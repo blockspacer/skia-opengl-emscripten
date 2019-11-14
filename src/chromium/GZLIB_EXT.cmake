@@ -36,7 +36,7 @@ add_library(GZLIB_EXT STATIC
 
 #message(FATAL_ERROR ${libZLIB_LIB})
 
-target_link_libraries(GZLIB_EXT PUBLIC
+target_link_libraries(GZLIB_EXT PRIVATE
   base
   #${ZLIB_LIBRARIES}
   ${libZLIB_LIB}

@@ -191,7 +191,8 @@ Create GUI framework that is
 
 ## Lightweight
 
-- ~6.0MiB uncompressed (~3MiB compressed), size depends on enabled features and languages (i18n).
+- WASM: ~6.0MiB uncompressed (~3MiB compressed), size depends on enabled features and languages (i18n).
+- UNIX: ~22.0MiB uncompressed, size depends on enabled features and languages (i18n).
 - low memory usage
 
 ## Clone with --recursive

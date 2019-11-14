@@ -127,8 +127,10 @@ class CC_EXPORT LayerTreeFrameSink : public viz::SharedBitmapReporter,
   virtual void DidNotProduceFrame(const viz::BeginFrameAck& ack) = 0;
 
   // viz::SharedBitmapReporter implementation.
+#if !defined(DISABLE_MOJO)
   void DidAllocateSharedBitmap(mojo::ScopedSharedBufferHandle buffer,
                                const viz::SharedBitmapId& id) override = 0;
+#endif // !defined(DISABLE_MOJO)
   void DidDeleteSharedBitmap(const viz::SharedBitmapId& id) override = 0;
 
   // Ensure next CompositorFrame is submitted to a new surface. Only used when

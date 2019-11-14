@@ -14,12 +14,18 @@
 #include "base/hash/hash.h"
 #include "base/unguessable_token.h"
 #include "components/viz/common/viz_common_export.h"
+
+#if !defined(DISABLE_MOJO)
 #include "mojo/public/cpp/bindings/struct_traits.h"
+#endif // !defined(DISABLE_MOJO)
 
 namespace viz {
+
+#if !defined(DISABLE_MOJO)
 namespace mojom {
 class LocalSurfaceIdDataView;
 }
+#endif // !defined(DISABLE_MOJO)
 
 class ParentLocalSurfaceIdAllocator;
 class ChildLocalSurfaceIdAllocator;
@@ -149,8 +155,10 @@ class VIZ_COMMON_EXPORT LocalSurfaceId {
   LocalSurfaceId ToSmallestId() const;
 
  private:
+#if !defined(DISABLE_MOJO)
   friend struct mojo::StructTraits<mojom::LocalSurfaceIdDataView,
                                    LocalSurfaceId>;
+#endif // !defined(DISABLE_MOJO)
   friend class ParentLocalSurfaceIdAllocator;
   friend class ChildLocalSurfaceIdAllocator;
 

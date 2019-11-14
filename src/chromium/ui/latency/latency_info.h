@@ -20,12 +20,14 @@
 #endif // ENABLE_UKM
 #include "ui/gfx/geometry/point_f.h"
 
+#if !defined(DISABLE_MOJO)
 #if !defined(OS_IOS)
 #if defined(ENABLE_GIPC)
 #include "ipc/ipc_param_traits.h"  // nogncheck
 #endif // ENABLE_GIPC
 #include "mojo/public/cpp/bindings/struct_traits.h"  // nogncheck
 #endif
+#endif // !defined(DISABLE_MOJO)
 
 namespace base {
 namespace trace_event {
@@ -35,11 +37,13 @@ class ConvertableToTraceFormat;
 
 namespace ui {
 
+#if !defined(DISABLE_MOJO)
 #if !defined(OS_IOS)
 namespace mojom {
 class LatencyInfoDataView;
 }
 #endif
+#endif // !defined(DISABLE_MOJO)
 
 // When adding new components, or new metrics based on LatencyInfo,
 // please update latency_info.dot.
@@ -246,6 +250,8 @@ class LatencyInfo {
   float scroll_update_delta_;
   float predicted_scroll_update_delta_;
 
+
+#if !defined(DISABLE_MOJO)
 #if !defined(OS_IOS)
 
 #if defined(ENABLE_GIPC)
@@ -255,6 +261,7 @@ class LatencyInfo {
   friend struct mojo::StructTraits<ui::mojom::LatencyInfoDataView,
                                    ui::LatencyInfo>;
 #endif
+#endif // !defined(DISABLE_MOJO)
 };
 
 // This is declared here for use in gtest-based unit tests, but is defined in

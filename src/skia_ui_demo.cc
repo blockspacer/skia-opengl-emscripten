@@ -6,6 +6,8 @@
 
 #include "utils.h"
 
+#include <mutex>
+
 #ifdef ENABLE_COBALT
 #include "cobalt/base/polymorphic_downcast.h"
 #endif ENABLE_COBALT
@@ -220,7 +222,7 @@ static sk_sp<SkImage> skImageSp;
 #include "ui/compositor/paint_recorder.h"
 #include "ui/compositor/canvas_painter.h"
 
-#if defined(ENABLE_BLINK_PLATFORM)
+#if defined(ENABLE_BLINK_UI_VIEWS)
 // TODO: free mem
 static gfx::Font* demo_default_font = nullptr;
 static gfx::PlatformFont* demoCustomPlatformFont = nullptr;
@@ -236,7 +238,7 @@ static gfx::FontList DemoGetTextFontList() {
                                        gfx::Font::Weight::NORMAL);
   return gfx::FontList(font);
 }
-#endif // ENABLE_BLINK_PLATFORM
+#endif // ENABLE_BLINK_UI_VIEWS
 
 static gfx::FontList DemoGetTextFontList();
 
@@ -464,10 +466,12 @@ bool HandleGestureEvent(
     title_->SetFontList(font_list);
     title_->SetHorizontalAlignment(gfx::ALIGN_LEFT);
     title_->SetEnabledColor(
-      blink::Color(1.0f, 0.5f, 0.5f, 0.5f).Rgb());
+      //blink::Color(1.0f, 0.5f, 0.5f, 0.5f).Rgb());
+      SkColorSetARGB(128, 255, 128, 0));
     title_->SelectRange({0, 4});
     title_->SetBackgroundColor(
-      blink::Color(1.0f, 1.0f, 1.0f, 1.0f).Rgb());
+      //blink::Color(1.0f, 1.0f, 1.0f, 1.0f).Rgb());
+      SkColorSetARGB(128, 255, 128, 0));
     title_->SetBorder(views::CreateSolidBorder(2, SK_ColorWHITE));
     set_title(base::UTF8ToUTF16("title_ ! title_ ! title_ !"));
     //AddChildView(title_);
@@ -478,14 +482,18 @@ bool HandleGestureEvent(
     message_->SetObscured(false);
     message_->SetSelectable(true);
     message_->SetSelectionBackgroundColor(
-      blink::Color(0.1f, 0.2f, 0.0f, 0.5f).Rgb());
+      //blink::Color(0.1f, 0.2f, 0.0f, 0.5f).Rgb());
+      SkColorSetARGB(128, 255, 128, 0));
     message_->SetSelectionTextColor(
-      blink::Color(0.4f, 0.4f, 0.9f, 0.5f).Rgb());
+      //blink::Color(0.4f, 0.4f, 0.9f, 0.5f).Rgb());
+      SkColorSetARGB(128, 255, 128, 0));
     message_->SetBackgroundColor(
-      blink::Color(0.9f, 0.0f, 0.9f, 0.5f).Rgb());
+      //blink::Color(0.9f, 0.0f, 0.9f, 0.5f).Rgb());
+      SkColorSetARGB(128, 255, 128, 0));
     message_->SetElideBehavior(gfx::ELIDE_TAIL);
     message_->SetEnabledColor(
-      blink::Color(1.0f, 0.0f, 1.0f, 0.5f).Rgb());
+      //blink::Color(1.0f, 0.0f, 1.0f, 0.5f).Rgb());
+      SkColorSetARGB(128, 255, 128, 0));
     set_message(base::UTF8ToUTF16("message_ ! message_ ! message_ !"));
     message_->SelectRange({0, 4});
     //message_->RecalculateFont();
@@ -503,7 +511,8 @@ bool HandleGestureEvent(
     textfield_->SetBorder(
       views::CreateSolidBorder(2, SK_ColorGRAY));
     textfield_->SetColor(
-      blink::Color(1.0f, 0.0f, 1.0f, 0.5f).Rgb());
+      //blink::Color(1.0f, 0.0f, 1.0f, 0.5f).Rgb());
+      SkColorSetARGB(128, 255, 128, 0));
     textfield_->SetTextInputType(ui::TEXT_INPUT_TYPE_TEXT);
     textfield_->SetText(base::UTF8ToUTF16("TEXT_1 текст_1"));
     textfield_->SetReadOnly(false);
@@ -518,7 +527,8 @@ bool HandleGestureEvent(
     //AddChildView(textfield_);
 
     textfield_->SetColor(
-        blink::Color(0.0f, 1.0f, 0.5f, 0.5f).Rgb());
+        //blink::Color(0.0f, 1.0f, 0.5f, 0.5f).Rgb());
+        SkColorSetARGB(128, 255, 128, 0));
     /*textfield_->GetRenderTextForSelectionController()->
     SetElideBehavior(gfx::ELIDE_TAIL);*/
     textfield_->GetRenderTextForSelectionController()->
@@ -526,14 +536,16 @@ bool HandleGestureEvent(
             SkColorSetARGB(150, 0, 188, 112));
     textfield_->GetRenderTextForSelectionController()->
         set_selection_color(
-            blink::Color(0.0f, 0.0f, 1.0f, 0.5f).Rgb()
-            );
+            //blink::Color(0.0f, 0.0f, 1.0f, 0.5f).Rgb());
+            SkColorSetARGB(128, 255, 128, 0));
     //textfield_->GetRenderTextForSelectionController()->
     //  SetSelectable(true);
     textfield_->SetSelectionBackgroundColor(
-        blink::Color(0.1f, 0.2f, 0.0f, 0.5f).Rgb());
+        //blink::Color(0.1f, 0.2f, 0.0f, 0.5f).Rgb());
+        SkColorSetARGB(128, 255, 128, 0));
     textfield_->SetSelectionTextColor(
-        blink::Color(0.4f, 0.4f, 0.9f, 0.5f).Rgb());
+        //blink::Color(0.4f, 0.4f, 0.9f, 0.5f).Rgb());
+        SkColorSetARGB(128, 255, 128, 0));
 
     textfield_->ChangeTextDirectionAndLayoutAlignment(
         base::i18n::LEFT_TO_RIGHT);
@@ -543,11 +555,14 @@ bool HandleGestureEvent(
     textfield_->SetCursorEnabled(false);
     //textfield_->SetEditableSelectionRange(false);
     textfield_->SetSelectionBackgroundColor(
-        blink::Color(0.1f, 0.2f, 0.0f, 0.5f).Rgb());
+        //blink::Color(0.1f, 0.2f, 0.0f, 0.5f).Rgb());
+        SkColorSetARGB(128, 255, 128, 0));
     textfield_->SetSelectionTextColor(
-        blink::Color(0.4f, 0.4f, 0.9f, 0.5f).Rgb());
+        //blink::Color(0.4f, 0.4f, 0.9f, 0.5f).Rgb());
+        SkColorSetARGB(128, 255, 128, 0));
     textfield_->SetBackgroundColor(
-        blink::Color(0.9f, 0.0f, 0.9f, 0.5f).Rgb());
+        //blink::Color(0.9f, 0.0f, 0.9f, 0.5f).Rgb());
+        SkColorSetARGB(128, 255, 128, 0));
     textfield_->SelectRange({0, 4});
     //message_->RecalculateFont();
     textfield_->SetBorder(views::CreateSolidBorder(2, SK_ColorCYAN));
@@ -561,7 +576,8 @@ bool HandleGestureEvent(
     textfield2_->SetBorder(
       views::CreateSolidBorder(2, SK_ColorGRAY));
     textfield2_->SetColor(
-      blink::Color(1.0f, 0.0f, 1.0f, 0.5f).Rgb());
+      //blink::Color(1.0f, 0.0f, 1.0f, 0.5f).Rgb());
+      SkColorSetARGB(128, 255, 128, 0));
     textfield2_->SetTextInputType(ui::TEXT_INPUT_TYPE_TEXT);
     textfield2_->set_placeholder_text(
       base::ASCIIToUTF16("TEXT_2"));
@@ -575,7 +591,8 @@ bool HandleGestureEvent(
       views::CreateSolidBorder(2, SK_ColorBLACK));
     checkbox_->SetSize(gfx::Size(100, 100));
     checkbox_->SetBackground(views::CreateSolidBackground(
-        blink::Color(1.0f, 0.0f, 1.0f, 0.5f).Rgb()));
+        //blink::Color(1.0f, 0.0f, 1.0f, 0.5f).Rgb()));
+        SkColorSetARGB(128, 255, 128, 0)));
     checkbox_->SetChecked(true);
     checkbox_->SetBounds(0,0,100,100);
     //AddChildView(checkbox_);
@@ -629,7 +646,8 @@ bool HandleGestureEvent(
     scrollable_contents->SetSize(scrollable_->size());
     scrollable_contents->SetBorder(views::CreateSolidBorder(2, SK_ColorGRAY));
     scrollable_contents->SetBackground(views::CreateSolidBackground(
-          blink::Color(0.9f, 0.1f, 0.3f, 0.2f).Rgb()));
+          //blink::Color(0.9f, 0.1f, 0.3f, 0.2f).Rgb()));
+          SkColorSetARGB(128, 255, 128, 0)));
     scrollable_contents->SetEnabled(true);
     scrollable_contents->InvalidateLayout();
     scrollable_contents->SizeToPreferredSize();
@@ -649,12 +667,14 @@ bool HandleGestureEvent(
     scrollable_contents->SetBorder(
       views::CreateSolidBorder(2, SK_ColorGRAY));
     scrollable_contents->SetColor(
-      blink::Color(1.0f, 0.0f, 1.0f, 0.5f).Rgb());
+      //blink::Color(1.0f, 0.0f, 1.0f, 0.5f).Rgb());
+      SkColorSetARGB(128, 255, 128, 0));
     scrollable_contents->SetTextInputType(ui::TEXT_INPUT_TYPE_TEXT);
     scrollable_contents->set_placeholder_text(
       base::ASCIIToUTF16("TEXT_scrollable_contents"));
     scrollable_contents->SetBackground(views::CreateSolidBackground(
-          blink::Color(1.0f, 0.5f, 1.0f, 0.5f).Rgb()));
+          //blink::Color(1.0f, 0.5f, 1.0f, 0.5f).Rgb()));
+          SkColorSetARGB(128, 255, 128, 0));
     scrollable_contents->set_controller(this);
 #endif // 0
 
@@ -698,7 +718,8 @@ bool HandleGestureEvent(
     scroll_view_->SetSize(gfx::Size(250, 250));
     scroll_view_->SetBorder(views::CreateSolidBorder(2, SK_ColorGRAY));
     scroll_view_->SetBackground(views::CreateSolidBackground(
-          blink::Color(0.9f, 0.1f, 0.3f, 0.2f).Rgb()));
+          //blink::Color(0.9f, 0.1f, 0.3f, 0.2f).Rgb()));
+          SkColorSetARGB(128, 255, 128, 0)));
     //scroll_view_->SetVisible(true);
     scroll_view_->SetEnabled(true);
     scroll_view_->InvalidateLayout();
@@ -922,6 +943,7 @@ static views::Label* custom_label_ = nullptr;*/
 //#include "third_party/blink/renderer/platform/image-decoders/image_decoder.h"
 static scoped_refptr<blink::StaticBitmapImage> sStaticBitmapImage;
 #endif // ENABLE_IMAGES
+
 static std::unique_ptr<blink::Platform> demo_g_platform;
 #endif // ENABLE_BLINK_PLATFORM
 
@@ -1110,6 +1132,38 @@ static inline bool WithinEpsilon(const double a, const double b) {
   return std::abs(a - b) < std::numeric_limits<double>::epsilon();
 }
 
+#if 0 && defined(ENABLE_BLINK_UI) && defined(ENABLE_WTF)
+
+template <typename FunctionType, typename... Ps>
+WTF::CrossThreadFunction<base::MakeUnboundRunType<FunctionType, Ps...>>
+CrossThreadBind(FunctionType&& function, Ps&&... parameters) {
+  static_assert(
+      WTF::internal::CheckGCedTypeRestrictions<std::index_sequence_for<Ps...>,
+                                               std::decay_t<Ps>...>::ok,
+      "A bound argument uses a bad pattern.");
+  using UnboundRunType = base::MakeUnboundRunType<FunctionType, Ps...>;
+  return WTF::CrossThreadFunction<UnboundRunType>(
+      base::Bind(function, CrossThreadCopier<std::decay_t<Ps>>::Copy(
+                               std::forward<Ps>(parameters))...));
+}
+
+static void CallOnMainThreadFunction(WTF::MainThreadFunction function,
+                                     void* context) {
+  /*PostCrossThreadTask(
+      *Thread::MainThread()->GetTaskRunner(), FROM_HERE,
+      CrossThreadBind(function, CrossThreadUnretained(context)));*/
+
+   WTF::CrossThreadClosure task
+    = CrossThreadBind(function, CrossThreadUnretained(context))
+
+  *Thread::MainThread()->GetTaskRunner()
+     .PostDelayedTask(FROM_HERE,
+        ConvertToBaseCallback(std::move(task)),
+        base::TimeDelta()
+      );
+}
+#endif // ENABLE_BLINK_UI
+
 #if defined(ENABLE_BLINK_UI)
 static std::unique_ptr<display::ScreenBase> screen_;
 #endif // ENABLE_BLINK_UI
@@ -1123,9 +1177,25 @@ void SkiaUiDemo::SetCursorScreenPoint(int x, int y) {
 
 #if defined(ENABLE_BLINK_UI)
 void SkiaUiDemo::initBlinkPlatform() {
+
+#if defined(ENABLE_BLINK_PLATFORM)
   demo_g_platform = std::make_unique<blink::Platform>();
   ///mojo::core::Init();
   blink::Platform::CreateMainThreadAndInitialize(demo_g_platform.get());
+#elif defined(ENABLE_WTF)
+  // see https://github.com/blockspacer/skia-opengl-emscripten/blob/bb16ab108bc4018890f4ff3179250b76c0d9053b/src/chromium/third_party/blink/renderer/platform/exported/platform.cc#L203
+
+  //
+  //WTF::Initialize(CallOnMainThreadFunction);
+
+  printf("skia_ui_demo.cc: Init WTF ...\n");
+  //WTF::Partitions::Initialize(nullptr);
+
+  WTF::Initialize(nullptr); // TODO
+
+  //std::unique_ptr<blink::Thread> main_thread = std::make_unique<SimpleMainThread>();
+  //blink::Thread::SetMainThread(std::move(main_thread));
+#endif // defined(ENABLE_BLINK_PLATFORM)
 
   // TODO >>>
   //ui::DeviceDataManager::CreateInstance();
@@ -1557,7 +1627,8 @@ void SkiaUiDemo::handleTestEvent(const char* text) {
 
 #if defined(ENABLE_HTML5_SDL) || !defined(__EMSCRIPTEN__)
 
-static unsigned int SDL2ModStateToSbKeyModifiers(const SDL_Keymod& modState) {
+static unsigned int SDL2ModStateToUIModifiers(const SDL_Keymod& modState) {
+#if defined(ENABLE_BLINK_UI_VIEWS)
   unsigned int modifiers = ui::EF_NONE;
   if (modState & KMOD_ALT) {
     modifiers |= ui::EF_ALT_DOWN;
@@ -1573,10 +1644,14 @@ static unsigned int SDL2ModStateToSbKeyModifiers(const SDL_Keymod& modState) {
     modifiers |= ui::EF_SHIFT_DOWN;
   }
   return modifiers;
+#else
+  return 0;
+#endif // ENABLE_BLINK_UI_VIEWS
 }
 
 // Javascript event.button 0 = left, 1 = middle, 2 = right
-static unsigned int SDL2MouseEventToSbButtonModifiers(const Uint8& button) {
+static unsigned int SDL2MouseEventToUIModifiers(const Uint8& button) {
+#if defined(ENABLE_BLINK_UI_VIEWS)
   unsigned int modifiers = ui::EF_NONE;
   //const SDL_MouseButtonEvent& button = event.button;
   if (button == SDL_BUTTON_LEFT) {
@@ -1597,960 +1672,24 @@ static unsigned int SDL2MouseEventToSbButtonModifiers(const Uint8& button) {
     modifiers |= ui::EF_FORWARD_MOUSE_BUTTON;
   }
   return modifiers;
+#else
+  return 0;
+#endif // ENABLE_BLINK_UI_VIEWS
 }
-#if 0
-static SbKey SDL2MouseEventToSbKey(const Uint8& button) {
-  SbKey key = kSbKeyUnknown;
-  unsigned int modifiers = kSbKeyModifiersNone;
-  //const SDL_MouseButtonEvent& button = event.button.button;
-  if (button == SDL_BUTTON_LEFT) { // left
-    //printf("kSbKeyMouse1\n");
-    return kSbKeyMouse1;
-  }
-  if (button == SDL_BUTTON_RIGHT) { // right
-    //printf("kSbKeyMouse3\n");
-    return kSbKeyMouse3;
-  }
-  if (button == SDL_BUTTON_MIDDLE) { // middle
-    //printf("kSbKeyMouse2\n");
-    return kSbKeyMouse2;
-  }
-  if (button == SDL_BUTTON_X1) {
-    NOTIMPLEMENTED();
-  }
-  if (button == SDL_BUTTON_X2) {
-    NOTIMPLEMENTED();
-  }
-  return key;
-}
-
-static SbKeyLocation SDL2KeycodeToSbKeyLocation(const SDL_Keycode& keysum) {
-  if (keysum == SDLK_LALT) {
-    return kSbKeyLocationLeft;
-  }
-  if (keysum == SDLK_LCTRL) {
-    return kSbKeyLocationLeft;
-  }
-  if (keysum == SDLK_LSHIFT) {
-    return kSbKeyLocationLeft;
-  }
-  if (keysum == SDLK_RALT) {
-    return kSbKeyLocationRight;
-  }
-  if (keysum == SDLK_RCTRL) {
-    return kSbKeyLocationRight;
-  }
-  if (keysum == SDLK_RSHIFT) {
-    return kSbKeyLocationRight;
-  }
-  return kSbKeyLocationUnspecified;
-}
-
-// see https://github.com/blockspacer/cobalt-clone-28052019/blob/89664d116629734759176d820e9923257717e09c/src/starboard/android/shared/input_events_generator.cc#L117
-// see https://github.com/libretro/RetroArch/blob/master/input/input_keymaps.c#L1223
-static SbKey SDL2ScancodeToSbKey(const SDL_Scancode& keysum) {
-  SbKey key = kSbKeyUnknown;
-  if (keysum == SDL_SCANCODE_LALT) {
-    return kSbKeyMenu;
-  }
-  if (keysum == SDL_SCANCODE_RALT) {
-    return kSbKeyMenu;
-  }
-  if (keysum == SDL_SCANCODE_LCTRL) {
-    return kSbKeyControl;
-  }
-  if (keysum == SDL_SCANCODE_RCTRL) {
-    return kSbKeyControl;
-  }
-  if (keysum == SDL_SCANCODE_LSHIFT) {
-    return kSbKeyShift;
-  }
-  if (keysum == SDL_SCANCODE_RSHIFT) {
-    return kSbKeyShift;
-  }
-  if (keysum == SDL_SCANCODE_CAPSLOCK) {
-    return kSbKeyCapital;
-  }
-  if (keysum == SDL_SCANCODE_NUMLOCKCLEAR) {
-    return kSbKeyNumlock;
-  }
-  if (keysum == SDL_SCANCODE_SCROLLLOCK) {
-    return kSbKeyScroll;
-  }
-  if (keysum == SDL_SCANCODE_SLEEP) {
-    return kSbKeySleep;
-  }
-  if (keysum == SDL_SCANCODE_HELP) {
-    return kSbKeyHelp;
-  }
-  if (keysum == SDL_SCANCODE_BACKSLASH) {
-    return kSbKeyEscape;
-  }
-  if (keysum == SDL_SCANCODE_ESCAPE) {
-    return kSbKeyEscape;
-  }
-  if (keysum == SDL_SCANCODE_RETURN) {
-    return kSbKeyReturn;
-  }
-  if (keysum == SDL_SCANCODE_KP_ENTER) { // NUMPAD_ENTER
-    return kSbKeyReturn;
-  }
-  if (keysum == SDL_SCANCODE_PAGEUP) {
-    return kSbKeyPrior;
-  }
-  if (keysum == SDL_SCANCODE_PAGEDOWN) {
-    return kSbKeyNext;
-  }
-  if (keysum == SDL_SCANCODE_HOME) {
-    return kSbKeyHome;
-  }
-  if (keysum == SDL_SCANCODE_END) {
-    return kSbKeyEnd;
-  }
-
-  if (keysum == SDL_SCANCODE_UP) {
-    return kSbKeyUp;
-  }
-  if (keysum == SDL_SCANCODE_LEFT) {
-    return kSbKeyLeft;
-  }
-  if (keysum == SDL_SCANCODE_RIGHT) {
-    return kSbKeyRight;
-  }
-  if (keysum == SDL_SCANCODE_DOWN) {
-    //printf("SDL_SCANCODE_DOWN\n");
-    return kSbKeyDown;
-  }
-
-  // Dpad
-  if (keysum == SDL_SCANCODE_UP) {
-    return kSbKeyGamepadDPadUp;
-  }
-  if (keysum == SDL_SCANCODE_DOWN) {
-    return kSbKeyGamepadDPadDown;
-  }
-  if (keysum == SDL_SCANCODE_LEFT) {
-    return kSbKeyGamepadDPadLeft;
-  }
-  if (keysum == SDL_SCANCODE_RIGHT) {
-    return kSbKeyGamepadDPadRight;
-  }
-  /*if (keysum == SDL_SCANCODE_DPAD_CENTER) {
-    return kSbKeyGamepad1;
-  }*/
-
-  // Game controller
-  /*
-  case SDL_SCANCODE_BUTTON_A:
-    return kSbKeyGamepad1;
-  case SDL_SCANCODE_BUTTON_B:
-    return kSbKeyGamepad2;
-  case SDL_SCANCODE_BUTTON_C:
-    return kSbKeyUnknown;
-  case SDL_SCANCODE_BUTTON_X:
-    return kSbKeyGamepad3;
-  case SDL_SCANCODE_BUTTON_Y:
-    return kSbKeyGamepad4;
-  case SDL_SCANCODE_BUTTON_L1:
-    return kSbKeyGamepadLeftBumper;
-  case SDL_SCANCODE_BUTTON_R1:
-    return kSbKeyGamepadRightBumper;
-  case SDL_SCANCODE_BUTTON_L2:
-    return kSbKeyGamepadLeftTrigger;
-  case SDL_SCANCODE_BUTTON_R2:
-    return kSbKeyGamepadRightTrigger;
-  case SDL_SCANCODE_BUTTON_THUMBL:
-    return kSbKeyGamepadLeftStick;
-  case SDL_SCANCODE_BUTTON_THUMBR:
-    return kSbKeyGamepadRightStick;
-  case SDL_SCANCODE_BUTTON_START:
-    return kSbKeyGamepad6;
-  case SDL_SCANCODE_BUTTON_SELECT:
-    return kSbKeyGamepad5;
-  case SDL_SCANCODE_BUTTON_MODE:
-    return kSbKeyModechange;*/
-
-
-  // Media transport
-  /*case SDL_SCANCODE_MEDIA_PLAY_PAUSE:
-    return kSbKeyMediaPlayPause;
-  case SDL_SCANCODE_MEDIA_PLAY:
-    return kSbKeyPlay;
-  case SDL_SCANCODE_MEDIA_PAUSE:
-    return kSbKeyPause;
-  case SDL_SCANCODE_MEDIA_STOP:
-    return kSbKeyMediaStop;
-  case SDL_SCANCODE_MEDIA_NEXT:
-    return kSbKeyMediaNextTrack;
-  case SDL_SCANCODE_MEDIA_PREVIOUS:
-    return kSbKeyMediaPrevTrack;
-  case SDL_SCANCODE_MEDIA_REWIND:
-    return kSbKeyMediaRewind;
-  case SDL_SCANCODE_MEDIA_FAST_FORWARD:
-    return kSbKeyMediaFastForward;*/
-
-  /*#if SB_API_VERSION >= 6
-    // TV Remote specific
-    case SDL_SCANCODE_CHANNEL_UP:
-      return kSbKeyChannelUp;
-    case SDL_SCANCODE_CHANNEL_DOWN:
-      return kSbKeyChannelDown;
-    case SDL_SCANCODE_CAPTIONS:
-      return kSbKeyClosedCaption;
-    case SDL_SCANCODE_INFO:
-      return kSbKeyInfo;
-    case SDL_SCANCODE_GUIDE:
-      return kSbKeyGuide;
-    case SDL_SCANCODE_LAST_CHANNEL:
-      return kSbKeyLast;
-    case SDL_SCANCODE_MEDIA_AUDIO_TRACK:
-      return kSbKeyMediaAudioTrack;
-
-case SDL_SCANCODE_PROG_RED:
-  return kSbKeyRed;
-case SDL_SCANCODE_PROG_GREEN:
-  return kSbKeyGreen;
-case SDL_SCANCODE_PROG_YELLOW:
-  return kSbKeyYellow;
-case SDL_SCANCODE_PROG_BLUE:
-  return kSbKeyBlue;
-#endif  // SB_API_VERSION >= 6*/
-
-  // Whitespace
-  if (keysum == SDL_SCANCODE_TAB) {
-    return kSbKeyTab;
-  }
-  if (keysum == SDL_SCANCODE_SPACE) {
-    return kSbKeySpace;
-  }
-
-  // Deletion
-  if (keysum == SDL_SCANCODE_BACKSPACE) {
-    return kSbKeyBack;
-  }
-  /*if (keysum == SDL_SCANCODE_FORWARD_DEL) {
-    return kSbKeyDelete;
-  }*/
-  if (keysum == SDL_SCANCODE_CLEAR) {
-    return kSbKeyClear;
-  }
-  if (keysum == SDL_SCANCODE_INSERT) {
-    return kSbKeyInsert;
-  }
-  if (keysum == SDL_SCANCODE_KP_PLUS) {
-    return kSbKeyAdd;
-  }
-  /*if (keysum == SDL_SCANCODE_PLUS) {
-    return kSbKeyOemPlus;
-  }*/
-  if (keysum == SDL_SCANCODE_EQUALS) {
-    return kSbKeyOemPlus;
-  }
-  if (keysum == SDL_SCANCODE_KP_EQUALS) {
-    return kSbKeyOemPlus;
-  }
-  if (keysum == SDL_SCANCODE_KP_MINUS) {
-    return kSbKeySubtract;
-  }
-  if (keysum == SDL_SCANCODE_MINUS) {
-    return kSbKeyOemMinus;
-  }
-  if (keysum == SDL_SCANCODE_KP_MULTIPLY) { // NUMPAD MULTIPLY
-    return kSbKeyMultiply;
-  }
-  if (keysum == SDL_SCANCODE_KP_DIVIDE) {
-    return kSbKeyDivide;
-  }
-  if (keysum == SDL_SCANCODE_COMMA) {
-    return kSbKeyOemComma;
-  }
-  if (keysum == SDL_SCANCODE_KP_COMMA) {
-    return kSbKeyOemComma;
-  }
-  if (keysum == SDL_SCANCODE_KP_PERIOD) { // DOT
-    return kSbKeyDecimal;
-  }
-  if (keysum == SDL_SCANCODE_PERIOD) {
-    return kSbKeyOemPeriod;
-  }
-  if (keysum == SDL_SCANCODE_SEMICOLON) {
-    return kSbKeyOem1;
-  }
-  if (keysum == SDL_SCANCODE_SLASH) {
-    return kSbKeyOem2;
-  }
-  /*if (keysum == SDL_SCANCODE_BACKQUOTE) { // GRAVE
-    return kSbKeyOem3;
-  }*/
-  if (keysum == SDL_SCANCODE_LEFTBRACKET) {
-    return kSbKeyOem4;
-  }
-  if (keysum == SDL_SCANCODE_BACKSLASH) {
-    return kSbKeyOem5;
-  }
-  if (keysum == SDL_SCANCODE_RIGHTBRACKET) {
-    return kSbKeyOem6;
-  }
-  /*if (keysum == SDL_SCANCODE_QUOTE) { // APOSTROPHE
-    return kSbKeyOem7;
-  }*/
-  if (keysum == SDL_SCANCODE_F1) {
-    return kSbKeyF1;
-  }
-  if (keysum == SDL_SCANCODE_F2) {
-    return kSbKeyF2;
-  }
-  if (keysum == SDL_SCANCODE_F3) {
-    return kSbKeyF3;
-  }
-  if (keysum == SDL_SCANCODE_F4) {
-    return kSbKeyF4;
-  }
-  if (keysum == SDL_SCANCODE_F5) {
-    return kSbKeyF5;
-  }
-  if (keysum == SDL_SCANCODE_F6) {
-    return kSbKeyF6;
-  }
-  if (keysum == SDL_SCANCODE_F7) {
-    return kSbKeyF7;
-  }
-  if (keysum == SDL_SCANCODE_F8) {
-    return kSbKeyF8;
-  }
-  if (keysum == SDL_SCANCODE_F9) {
-    return kSbKeyF9;
-  }
-  if (keysum == SDL_SCANCODE_F10) {
-    return kSbKeyF10;
-  }
-  if (keysum == SDL_SCANCODE_F11) {
-    return kSbKeyF11;
-  }
-  if (keysum == SDL_SCANCODE_F12) {
-    return kSbKeyF12;
-  }
-  if (keysum == SDL_SCANCODE_0) {
-    return kSbKey0;
-  }
-  if (keysum == SDL_SCANCODE_1) {
-    return kSbKey1;
-  }
-  if (keysum == SDL_SCANCODE_2) {
-    return kSbKey2;
-  }
-  if (keysum == SDL_SCANCODE_3) {
-    return kSbKey3;
-  }
-  if (keysum == SDL_SCANCODE_4) {
-    return kSbKey4;
-  }
-  if (keysum == SDL_SCANCODE_5) {
-    return kSbKey5;
-  }
-  if (keysum == SDL_SCANCODE_6) {
-    return kSbKey6;
-  }
-  if (keysum == SDL_SCANCODE_7) {
-    return kSbKey7;
-  }
-  if (keysum == SDL_SCANCODE_8) {
-    return kSbKey8;
-  }
-  if (keysum == SDL_SCANCODE_9) {
-    return kSbKey9;
-  }
-  if (keysum == SDL_SCANCODE_KP_0) {
-    return kSbKeyNumpad0;
-  }
-  if (keysum == SDL_SCANCODE_KP_1) {
-    return kSbKeyNumpad1;
-  }
-  if (keysum == SDL_SCANCODE_KP_2) {
-    return kSbKeyNumpad2;
-  }
-  if (keysum == SDL_SCANCODE_KP_3) {
-    return kSbKeyNumpad3;
-  }
-  if (keysum == SDL_SCANCODE_KP_4) {
-    return kSbKeyNumpad4;
-  }
-  if (keysum == SDL_SCANCODE_KP_5) {
-    return kSbKeyNumpad5;
-  }
-  if (keysum == SDL_SCANCODE_KP_6) {
-    return kSbKeyNumpad6;
-  }
-  if (keysum == SDL_SCANCODE_KP_7) {
-    return kSbKeyNumpad7;
-  }
-  if (keysum == SDL_SCANCODE_KP_8) {
-    return kSbKeyNumpad8;
-  }
-  if (keysum == SDL_SCANCODE_KP_9) {
-    return kSbKeyNumpad9;
-  }
-  if (keysum == SDL_SCANCODE_A) {
-    return kSbKeyA;
-  }
-  if (keysum == SDL_SCANCODE_B) {
-    return kSbKeyB;
-  }
-  if (keysum == SDL_SCANCODE_C) {
-    return kSbKeyC;
-  }
-  if (keysum == SDL_SCANCODE_D) {
-    return kSbKeyD;
-  }
-  if (keysum == SDL_SCANCODE_E) {
-    return kSbKeyE;
-  }
-  if (keysum == SDL_SCANCODE_F) {
-    return kSbKeyF;
-  }
-  if (keysum == SDL_SCANCODE_G) {
-    return kSbKeyG;
-  }
-  if (keysum == SDL_SCANCODE_H) {
-    return kSbKeyH;
-  }
-  if (keysum == SDL_SCANCODE_I) {
-    return kSbKeyI;
-  }
-  if (keysum == SDL_SCANCODE_J) {
-    return kSbKeyJ;
-  }
-  if (keysum == SDL_SCANCODE_K) {
-    return kSbKeyK;
-  }
-  if (keysum == SDL_SCANCODE_L) {
-    return kSbKeyL;
-  }
-  if (keysum == SDL_SCANCODE_M) {
-    return kSbKeyM;
-  }
-  if (keysum == SDL_SCANCODE_N) {
-    return kSbKeyN;
-  }
-  if (keysum == SDL_SCANCODE_O) {
-    return kSbKeyO;
-  }
-  if (keysum == SDL_SCANCODE_P) {
-    return kSbKeyP;
-  }
-  if (keysum == SDL_SCANCODE_Q) {
-    return kSbKeyQ;
-  }
-  if (keysum == SDL_SCANCODE_R) {
-    return kSbKeyR;
-  }
-  if (keysum == SDL_SCANCODE_S) {
-    return kSbKeyS;
-  }
-  if (keysum == SDL_SCANCODE_T) {
-    return kSbKeyT;
-  }
-  if (keysum == SDL_SCANCODE_U) {
-    return kSbKeyU;
-  }
-  if (keysum == SDL_SCANCODE_V) {
-    return kSbKeyV;
-  }
-  if (keysum == SDL_SCANCODE_W) {
-    return kSbKeyW;
-  }
-  if (keysum == SDL_SCANCODE_X) {
-    return kSbKeyX;
-  }
-  if (keysum == SDL_SCANCODE_Y) {
-    return kSbKeyY;
-  }
-  if (keysum == SDL_SCANCODE_Z) {
-    return kSbKeyZ;
-  }
-
-  // Don't handle these keys so the OS can in a uniform manner.
-  if (keysum == SDL_SCANCODE_VOLUMEUP) {
-    return kSbKeyUnknown;
-  }
-  if (keysum == SDL_SCANCODE_VOLUMEDOWN) {
-    return kSbKeyUnknown;
-  }
-  if (keysum == SDL_SCANCODE_MUTE) {
-    return kSbKeyUnknown;
-  }
-  if (keysum == SDL_SCANCODE_BRIGHTNESSUP) {
-    return kSbKeyUnknown;
-  }
-  if (keysum == SDL_SCANCODE_BRIGHTNESSDOWN) {
-    return kSbKeyUnknown;
-  }
-  if (keysum == SDL_SCANCODE_FIND) { // SEARCH
-    return kSbKeyUnknown;
-  }
-
-  return key;
-}
-
-// see https://github.com/blockspacer/cobalt-clone-28052019/blob/89664d116629734759176d820e9923257717e09c/src/starboard/android/shared/input_events_generator.cc#L117
-// see https://github.com/libretro/RetroArch/blob/master/input/input_keymaps.c#L1223
-static SbKey SDL2KeycodeToSbKey(const SDL_Keycode& keysum) {
-  SbKey key = kSbKeyUnknown;
-  if (keysum == SDLK_LALT) {
-    return kSbKeyMenu;
-  }
-  if (keysum == SDLK_RALT) {
-    return kSbKeyMenu;
-  }
-  if (keysum == SDLK_LCTRL) {
-    return kSbKeyControl;
-  }
-  if (keysum == SDLK_RCTRL) {
-    return kSbKeyControl;
-  }
-  if (keysum == SDLK_LSHIFT) {
-    return kSbKeyShift;
-  }
-  if (keysum == SDLK_RSHIFT) {
-    return kSbKeyShift;
-  }
-  if (keysum == SDLK_CAPSLOCK) {
-    return kSbKeyCapital;
-  }
-  if (keysum == SDLK_NUMLOCKCLEAR) {
-    return kSbKeyNumlock;
-  }
-  if (keysum == SDLK_SCROLLLOCK) {
-    return kSbKeyScroll;
-  }
-  if (keysum == SDLK_SLEEP) {
-    return kSbKeySleep;
-  }
-  if (keysum == SDLK_HELP) {
-    return kSbKeyHelp;
-  }
-  if (keysum == SDLK_BACKSLASH) {
-    return kSbKeyEscape;
-  }
-  if (keysum == SDLK_ESCAPE) {
-    return kSbKeyEscape;
-  }
-  if (keysum == SDLK_RETURN) {
-    return kSbKeyReturn;
-  }
-  if (keysum == SDLK_KP_ENTER) { // NUMPAD_ENTER
-    return kSbKeyReturn;
-  }
-  if (keysum == SDLK_PAGEUP) {
-    return kSbKeyPrior;
-  }
-  if (keysum == SDLK_PAGEDOWN) {
-    return kSbKeyNext;
-  }
-  if (keysum == SDLK_HOME) {
-    return kSbKeyHome;
-  }
-  if (keysum == SDLK_END) {
-    return kSbKeyEnd;
-  }
-
-  if (keysum == SDLK_UP) {
-    return kSbKeyUp;
-  }
-  if (keysum == SDLK_LEFT) {
-    return kSbKeyLeft;
-  }
-  if (keysum == SDLK_RIGHT) {
-    return kSbKeyRight;
-  }
-  if (keysum == SDLK_DOWN) {
-    //printf("SDLK_DOWN\n");
-    return kSbKeyDown;
-  }
-
-  // Dpad
-  if (keysum == SDLK_UP) {
-    return kSbKeyGamepadDPadUp;
-  }
-  if (keysum == SDLK_DOWN) {
-    return kSbKeyGamepadDPadDown;
-  }
-  if (keysum == SDLK_LEFT) {
-    return kSbKeyGamepadDPadLeft;
-  }
-  if (keysum == SDLK_RIGHT) {
-    return kSbKeyGamepadDPadRight;
-  }
-  /*if (keysum == SDLK_DPAD_CENTER) {
-    return kSbKeyGamepad1;
-  }*/
-
-  // Game controller
-  /*
-  case SDLK_BUTTON_A:
-    return kSbKeyGamepad1;
-  case SDLK_BUTTON_B:
-    return kSbKeyGamepad2;
-  case SDLK_BUTTON_C:
-    return kSbKeyUnknown;
-  case SDLK_BUTTON_X:
-    return kSbKeyGamepad3;
-  case SDLK_BUTTON_Y:
-    return kSbKeyGamepad4;
-  case SDLK_BUTTON_L1:
-    return kSbKeyGamepadLeftBumper;
-  case SDLK_BUTTON_R1:
-    return kSbKeyGamepadRightBumper;
-  case SDLK_BUTTON_L2:
-    return kSbKeyGamepadLeftTrigger;
-  case SDLK_BUTTON_R2:
-    return kSbKeyGamepadRightTrigger;
-  case SDLK_BUTTON_THUMBL:
-    return kSbKeyGamepadLeftStick;
-  case SDLK_BUTTON_THUMBR:
-    return kSbKeyGamepadRightStick;
-  case SDLK_BUTTON_START:
-    return kSbKeyGamepad6;
-  case SDLK_BUTTON_SELECT:
-    return kSbKeyGamepad5;
-  case SDLK_BUTTON_MODE:
-    return kSbKeyModechange;*/
-
-
-  // Media transport
-  /*case SDLK_MEDIA_PLAY_PAUSE:
-    return kSbKeyMediaPlayPause;
-  case SDLK_MEDIA_PLAY:
-    return kSbKeyPlay;
-  case SDLK_MEDIA_PAUSE:
-    return kSbKeyPause;
-  case SDLK_MEDIA_STOP:
-    return kSbKeyMediaStop;
-  case SDLK_MEDIA_NEXT:
-    return kSbKeyMediaNextTrack;
-  case SDLK_MEDIA_PREVIOUS:
-    return kSbKeyMediaPrevTrack;
-  case SDLK_MEDIA_REWIND:
-    return kSbKeyMediaRewind;
-  case SDLK_MEDIA_FAST_FORWARD:
-    return kSbKeyMediaFastForward;*/
-
-  /*#if SB_API_VERSION >= 6
-    // TV Remote specific
-    case SDLK_CHANNEL_UP:
-      return kSbKeyChannelUp;
-    case SDLK_CHANNEL_DOWN:
-      return kSbKeyChannelDown;
-    case SDLK_CAPTIONS:
-      return kSbKeyClosedCaption;
-    case SDLK_INFO:
-      return kSbKeyInfo;
-    case SDLK_GUIDE:
-      return kSbKeyGuide;
-    case SDLK_LAST_CHANNEL:
-      return kSbKeyLast;
-    case SDLK_MEDIA_AUDIO_TRACK:
-      return kSbKeyMediaAudioTrack;
-
-case SDLK_PROG_RED:
-  return kSbKeyRed;
-case SDLK_PROG_GREEN:
-  return kSbKeyGreen;
-case SDLK_PROG_YELLOW:
-  return kSbKeyYellow;
-case SDLK_PROG_BLUE:
-  return kSbKeyBlue;
-#endif  // SB_API_VERSION >= 6*/
-
-  // Whitespace
-  if (keysum == SDLK_TAB) {
-    return kSbKeyTab;
-  }
-  if (keysum == SDLK_SPACE) {
-    return kSbKeySpace;
-  }
-
-  // Deletion
-  if (keysum == SDLK_BACKSPACE) {
-    return kSbKeyBack;
-  }
-  /*if (keysum == SDLK_FORWARD_DEL) {
-    return kSbKeyDelete;
-  }*/
-  if (keysum == SDLK_CLEAR) {
-    return kSbKeyClear;
-  }
-  if (keysum == SDLK_INSERT) {
-    return kSbKeyInsert;
-  }
-  if (keysum == SDLK_KP_PLUS) {
-    return kSbKeyAdd;
-  }
-  if (keysum == SDLK_PLUS) {
-    return kSbKeyOemPlus;
-  }
-  if (keysum == SDLK_EQUALS) {
-    return kSbKeyOemPlus;
-  }
-  if (keysum == SDLK_KP_EQUALS) {
-    return kSbKeyOemPlus;
-  }
-  if (keysum == SDLK_KP_MINUS) {
-    return kSbKeySubtract;
-  }
-  if (keysum == SDLK_MINUS) {
-    return kSbKeyOemMinus;
-  }
-  if (keysum == SDLK_KP_MULTIPLY) { // NUMPAD MULTIPLY
-    return kSbKeyMultiply;
-  }
-  if (keysum == SDLK_KP_DIVIDE) {
-    return kSbKeyDivide;
-  }
-  if (keysum == SDLK_COMMA) {
-    return kSbKeyOemComma;
-  }
-  if (keysum == SDLK_KP_COMMA) {
-    return kSbKeyOemComma;
-  }
-  if (keysum == SDLK_KP_PERIOD) { // DOT
-    return kSbKeyDecimal;
-  }
-  if (keysum == SDLK_PERIOD) {
-    return kSbKeyOemPeriod;
-  }
-  if (keysum == SDLK_SEMICOLON) {
-    return kSbKeyOem1;
-  }
-  if (keysum == SDLK_SLASH) {
-    return kSbKeyOem2;
-  }
-  if (keysum == SDLK_BACKQUOTE) { // GRAVE
-    return kSbKeyOem3;
-  }
-  if (keysum == SDLK_LEFTBRACKET) {
-    return kSbKeyOem4;
-  }
-  if (keysum == SDLK_BACKSLASH) {
-    return kSbKeyOem5;
-  }
-  if (keysum == SDLK_RIGHTBRACKET) {
-    return kSbKeyOem6;
-  }
-  if (keysum == SDLK_QUOTE) { // APOSTROPHE
-    return kSbKeyOem7;
-  }
-  if (keysum == SDLK_F1) {
-    return kSbKeyF1;
-  }
-  if (keysum == SDLK_F2) {
-    return kSbKeyF2;
-  }
-  if (keysum == SDLK_F3) {
-    return kSbKeyF3;
-  }
-  if (keysum == SDLK_F4) {
-    return kSbKeyF4;
-  }
-  if (keysum == SDLK_F5) {
-    return kSbKeyF5;
-  }
-  if (keysum == SDLK_F6) {
-    return kSbKeyF6;
-  }
-  if (keysum == SDLK_F7) {
-    return kSbKeyF7;
-  }
-  if (keysum == SDLK_F8) {
-    return kSbKeyF8;
-  }
-  if (keysum == SDLK_F9) {
-    return kSbKeyF9;
-  }
-  if (keysum == SDLK_F10) {
-    return kSbKeyF10;
-  }
-  if (keysum == SDLK_F11) {
-    return kSbKeyF11;
-  }
-  if (keysum == SDLK_F12) {
-    return kSbKeyF12;
-  }
-  if (keysum == SDLK_0) {
-    return kSbKey0;
-  }
-  if (keysum == SDLK_1) {
-    return kSbKey1;
-  }
-  if (keysum == SDLK_2) {
-    return kSbKey2;
-  }
-  if (keysum == SDLK_3) {
-    return kSbKey3;
-  }
-  if (keysum == SDLK_4) {
-    return kSbKey4;
-  }
-  if (keysum == SDLK_5) {
-    return kSbKey5;
-  }
-  if (keysum == SDLK_6) {
-    return kSbKey6;
-  }
-  if (keysum == SDLK_7) {
-    return kSbKey7;
-  }
-  if (keysum == SDLK_8) {
-    return kSbKey8;
-  }
-  if (keysum == SDLK_9) {
-    return kSbKey9;
-  }
-  if (keysum == SDLK_KP_0) {
-    return kSbKeyNumpad0;
-  }
-  if (keysum == SDLK_KP_1) {
-    return kSbKeyNumpad1;
-  }
-  if (keysum == SDLK_KP_2) {
-    return kSbKeyNumpad2;
-  }
-  if (keysum == SDLK_KP_3) {
-    return kSbKeyNumpad3;
-  }
-  if (keysum == SDLK_KP_4) {
-    return kSbKeyNumpad4;
-  }
-  if (keysum == SDLK_KP_5) {
-    return kSbKeyNumpad5;
-  }
-  if (keysum == SDLK_KP_6) {
-    return kSbKeyNumpad6;
-  }
-  if (keysum == SDLK_KP_7) {
-    return kSbKeyNumpad7;
-  }
-  if (keysum == SDLK_KP_8) {
-    return kSbKeyNumpad8;
-  }
-  if (keysum == SDLK_KP_9) {
-    return kSbKeyNumpad9;
-  }
-  if (keysum == SDLK_a) {
-    return kSbKeyA;
-  }
-  if (keysum == SDLK_b) {
-    return kSbKeyB;
-  }
-  if (keysum == SDLK_c) {
-    return kSbKeyC;
-  }
-  if (keysum == SDLK_d) {
-    return kSbKeyD;
-  }
-  if (keysum == SDLK_e) {
-    return kSbKeyE;
-  }
-  if (keysum == SDLK_f) {
-    return kSbKeyF;
-  }
-  if (keysum == SDLK_g) {
-    return kSbKeyG;
-  }
-  if (keysum == SDLK_h) {
-    return kSbKeyH;
-  }
-  if (keysum == SDLK_i) {
-    return kSbKeyI;
-  }
-  if (keysum == SDLK_j) {
-    return kSbKeyJ;
-  }
-  if (keysum == SDLK_k) {
-    return kSbKeyK;
-  }
-  if (keysum == SDLK_l) {
-    return kSbKeyL;
-  }
-  if (keysum == SDLK_m) {
-    return kSbKeyM;
-  }
-  if (keysum == SDLK_n) {
-    return kSbKeyN;
-  }
-  if (keysum == SDLK_o) {
-    return kSbKeyO;
-  }
-  if (keysum == SDLK_p) {
-    return kSbKeyP;
-  }
-  if (keysum == SDLK_q) {
-    return kSbKeyQ;
-  }
-  if (keysum == SDLK_r) {
-    return kSbKeyR;
-  }
-  if (keysum == SDLK_s) {
-    return kSbKeyS;
-  }
-  if (keysum == SDLK_t) {
-    return kSbKeyT;
-  }
-  if (keysum == SDLK_u) {
-    return kSbKeyU;
-  }
-  if (keysum == SDLK_v) {
-    return kSbKeyV;
-  }
-  if (keysum == SDLK_w) {
-    return kSbKeyW;
-  }
-  if (keysum == SDLK_x) {
-    return kSbKeyX;
-  }
-  if (keysum == SDLK_y) {
-    return kSbKeyY;
-  }
-  if (keysum == SDLK_z) {
-    return kSbKeyZ;
-  }
-
-  // Don't handle these keys so the OS can in a uniform manner.
-  if (keysum == SDLK_VOLUMEUP) {
-    return kSbKeyUnknown;
-  }
-  if (keysum == SDLK_VOLUMEDOWN) {
-    return kSbKeyUnknown;
-  }
-  if (keysum == SDLK_MUTE) {
-    return kSbKeyUnknown;
-  }
-  if (keysum == SDLK_BRIGHTNESSUP) {
-    return kSbKeyUnknown;
-  }
-  if (keysum == SDLK_BRIGHTNESSDOWN) {
-    return kSbKeyUnknown;
-  }
-  if (keysum == SDLK_FIND) { // SEARCH
-    return kSbKeyUnknown;
-  }
-
-  return key;
-}
-#endif
 
 void SkiaUiDemo::handleSDLEvent(SDL_Event *e)
 {
+#if defined(ENABLE_BLINK_UI_VIEWS)
   const SDL_Keymod modState = SDL_GetModState();
 
   int screenMouseX, screenMouseY;
   SDL_GetMouseState(&screenMouseX, &screenMouseY);
 
-  unsigned int buttons_flags = SDL2MouseEventToSbButtonModifiers(e->button.button);
+  unsigned int buttons_flags = SDL2MouseEventToUIModifiers(e->button.button);
 
   /// \todo EF_CONTROL_DOWN
   /// https://github.com/blockspacer/skia-opengl-emscripten/blob/bb16ab108bc4018890f4ff3179250b76c0d9053b/src/chromium/ui/events/keycodes/keyboard_code_conversion.cc#L266
-  unsigned int flags = SDL2ModStateToSbKeyModifiers(modState);
+  unsigned int flags = SDL2ModStateToUIModifiers(modState);
 
   ui::EventType type;
   bool isMouseEv = false;
@@ -2711,6 +1850,7 @@ void SkiaUiDemo::handleSDLEvent(SDL_Event *e)
           }
     });
   }
+#endif // ENABLE_BLINK_UI_VIEWS
 }
 #endif // defined(ENABLE_HTML5_SDL) || !defined(__EMSCRIPTEN__)
 
@@ -3044,7 +2184,7 @@ public:
     // TODO >>>
     //return;
 
-#ifdef ENABLE_BLINK_PLATFORM
+#if defined(ENABLE_BLINK_UI_VIEWS) && defined(ENABLE_BLINK_PLATFORM)
   // see https://chromium.googlesource.com/chromium/src/+/master/third_party/blink/renderer/platform/graphics/paint/README.md
   // see https://blog.csdn.net/tornmy/article/details/82593718
   // see https://github.com/chromium/chromium/blob/master/third_party/blink/renderer/platform/graphics/graphics_context_test.cc
@@ -3075,7 +2215,7 @@ public:
   //
 
 #if defined(ENABLE_BLINK_UI)
-#if defined(ENABLE_IMAGES)
+#if defined(ENABLE_IMAGES) && defined(ENABLE_BLINK_PLATFORM)
   if (!sStaticBitmapImage || sStaticBitmapImage->IsNull() || !sStaticBitmapImage->IsValid()) {
     printf("Invalid StaticBitmapImage\n");
   }
@@ -3153,7 +2293,7 @@ public:
   paint_controller->CommitNewDisplayItems();
 
   //printf("FillRect 91\n");
-#endif // ENABLE_BLINK_PLATFORM
+#endif // ENABLE_BLINK_UI_VIEWS && defined(ENABLE_BLINK_PLATFORM)
 
     // TODO >>>
     //return;
@@ -3267,14 +2407,16 @@ public:
       shadows.push_back(shadow);
       render_text->set_shadows(shadows);
       render_text->SetColor(
-        blink::Color(0.0f, 1.0f, 0.5f, 0.5f).Rgb());
+        SkColorSetARGB(128, 255, 128, 0));
+        //blink::Color(0.0f, 1.0f, 0.5f, 0.5f).Rgb());
       render_text->SetElideBehavior(gfx::ELIDE_TAIL);
       render_text->set_selection_background_focused_color(
           SkColorSetARGB(150, 0, 188, 112));
       render_text->set_selection_color(
         //SkColorSetARGB(150, 0, 188, 182)
-        blink::Color(0.0f, 0.0f, 1.0f, 0.5f).Rgb()
-      );
+        //blink::Color(0.0f, 0.0f, 1.0f, 0.5f).Rgb());
+        SkColorSetARGB(128, 255, 128, 0));
+
       render_text->SetObscured(false);
       // render_text->SetSelectionModel(); // see SelectRange
       render_text->SetMultiline(true);
@@ -3416,7 +2558,8 @@ public:
   //container_->SetPreferredSize(gfx::Size(800, 800));
   //container_->SetNativeTheme(nativeThemeAura);
   container_->SetBackground(views::CreateSolidBackground(
-        blink::Color(0.9f, 1.0f, 1.0f, 0.9f).Rgb()));
+        //blink::Color(0.9f, 1.0f, 1.0f, 0.9f).Rgb()));
+        SkColorSetARGB(128, 255, 128, 0)));
   //container_->SetBorder(views::CreateSolidBorder(2, SK_ColorBLUE));
   const gfx::Insets child_margins(1, 1);
   // TODO: free mem?
@@ -3920,12 +3063,13 @@ static bool Decode(const unsigned char* input, size_t input_size,
       DCHECK(skImageSp);
       //std::cout << std::endl; // flush
 
-//#ifdef __TODO__
+#if defined(ENABLE_BLINK_PLATFORM)
       base::WeakPtr<blink::WebGraphicsContext3DProviderWrapper> wptr = nullptr;
       DCHECK(skImageSp);
       sStaticBitmapImage =
           blink::StaticBitmapImage::Create(skImageSp, ::std::move(wptr));
-//#endif
+#endif // ENABLE_BLINK_PLATFORM
+
       // Shutdown the thread (via its scheduler).
       //thread_->Scheduler()->Shutdown();
 

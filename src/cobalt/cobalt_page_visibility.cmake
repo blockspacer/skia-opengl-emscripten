@@ -13,7 +13,7 @@ add_library(cobalt_page_visibility STATIC
   ${cobalt_page_visibility_SOURCES}
 )
 
-target_link_libraries(cobalt_page_visibility PUBLIC
+target_link_libraries(cobalt_page_visibility PRIVATE
   base # TODO
   cobalt_base
   #cobalt_browser ## TODO ##

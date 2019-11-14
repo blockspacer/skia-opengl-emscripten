@@ -106,7 +106,7 @@ add_library(UI_DISPLAY STATIC
   ${UI_DISPLAY_FAKE_SOURCES}
 )
 
-target_link_libraries(UI_DISPLAY PUBLIC
+target_link_libraries(UI_DISPLAY PRIVATE
   #"//skia",
   SKIA
   #"//base",

@@ -776,7 +776,6 @@ if (NOT EXT_SKIA_SHARED)
 
     #ADD_SKIA_LIBRARY_DEPENDENCY("pthread")
     find_package(Threads REQUIRED)
-    #target_link_libraries(SKIA Threads::Threads)
     message("CMAKE_THREAD_LIBS_INIT=${CMAKE_THREAD_LIBS_INIT}")
     set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};Threads::Threads" PARENT_SCOPE)
   else()

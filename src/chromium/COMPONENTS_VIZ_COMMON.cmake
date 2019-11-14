@@ -141,7 +141,7 @@ add_library(COMPONENTS_VIZ_COMMON STATIC
   ${COMPONENTS_VIZ_COMMON_SOURCES}
 )
 
-target_link_libraries(COMPONENTS_VIZ_COMMON PUBLIC
+target_link_libraries(COMPONENTS_VIZ_COMMON PRIVATE
   #deps = [
   #  "//base",
   #
@@ -189,11 +189,8 @@ target_link_libraries(COMPONENTS_VIZ_COMMON PUBLIC
   #UI_GFX
   #${OPENGLES2_LIBRARIES}
   ${FOUND_OPENGL_LIBRARIES}
-  MOJO
-  BLINK_PUBLIC_MOJOM
-)
-
-target_link_libraries(COMPONENTS_VIZ_COMMON PRIVATE
+  ${MOJO_LIB}
+  ${BLINK_PUBLIC_MOJOM_LIB}
   # khronos
   ${khronos_LIB}
 )

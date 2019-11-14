@@ -185,7 +185,7 @@ else()
     ${TCMALLOC_PRIVATE_DEFINES}
   )
 
-  target_link_libraries(tcmalloc PUBLIC
+  target_link_libraries(tcmalloc PRIVATE
     dynamic_annotations
   )
 

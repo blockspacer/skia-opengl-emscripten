@@ -409,7 +409,7 @@ add_library(UI_BASE STATIC
   #${UI_BASE_STUB_SOURCES}
 )
 
-target_link_libraries(UI_BASE PUBLIC
+target_link_libraries(UI_BASE PRIVATE
   base # TODO
   #public_deps = [
   #  ":buildflags",
@@ -471,9 +471,6 @@ target_link_libraries(UI_BASE PUBLIC
   #"//ui/base/ime/mojo",
   #"//ui/events:dom_keycode_converter",
   #"//ui/gfx:native_widget_types",
-)
-
-target_link_libraries(UI_BASE PRIVATE
   # khronos
   ${khronos_LIB} # TODO
 )

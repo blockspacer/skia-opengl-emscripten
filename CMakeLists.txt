@@ -2,7 +2,12 @@
 
 # project() must be before checks, see https://stackoverflow.com/a/26437667/10904212
 set(PROJECT_NAME "skemgl")
-project(${PROJECT_NAME} CXX C)
+set(PROJECT_VERSION 1.0.0.1)
+project(${PROJECT_NAME}
+  VERSION ${PROJECT_VERSION}
+  LANGUAGES CXX C)
+
+# ------------------------------- Options --------------------------------------
 
 include( cmake/Utils.cmake )
 # set_cmake_module_paths from Utils.cmake
@@ -168,9 +173,9 @@ set(ENABLE_WEBGL2 TRUE CACHE BOOL "ENABLE_WEB_PTHREADS")
 #set(ENABLE_WEBGL1 TRUE) # TODO
 set(ENABLE_WEBGL_DEBUG_CHECKS TRUE CACHE BOOL "ENABLE_WEBGL_DEBUG_CHECKS") # only in debug
 set(ENABLE_BASE TRUE CACHE BOOL "ENABLE_BASE")
-set(ENABLE_WTF TRUE CACHE BOOL "ENABLE_WTF")
+set(ENABLE_WTF FALSE CACHE BOOL "ENABLE_WTF")
 if(ENABLE_BLINK AND NOT ENABLE_WTF)
-  message(FATAL_ERROR "BLINK requires LIBWTF")
+  #message(FATAL_ERROR "BLINK requires LIBWTF")
 endif()
 set(ENABLE_GRE2 TRUE CACHE BOOL "ENABLE_GRE2")
 if(ENABLE_BLINK AND NOT ENABLE_GRE2)
@@ -211,6 +216,32 @@ set(ENABLE_HARFBUZZ TRUE CACHE BOOL "ENABLE_HARFBUZZ")
 if(ENABLE_HARFBUZZ AND NOT USE_ICU)
   message(FATAL_ERROR "HARFBUZZ requires ICU")
 endif()
+
+set(ENABLE_MOJO FALSE)
+set(MOJO_BASE_ONLY FALSE)
+if(ENABLE_MOJO)
+  set(MOJO_LIB MOJO)
+endif(ENABLE_MOJO)
+
+set(ENABLE_BLINK_PUBLIC_MOJOM FALSE)
+if(ENABLE_BLINK_PUBLIC_MOJOM)
+  set(BLINK_PUBLIC_MOJOM_LIB BLINK_PUBLIC_MOJOM)
+endif(ENABLE_BLINK_PUBLIC_MOJOM)
+
+set(ENABLE_BLINK_PUBLIC_COMMON FALSE)
+if(ENABLE_BLINK_PUBLIC_COMMON)
+  set(BLINK_PUBLIC_COMMON_LIB BLINK_PUBLIC_COMMON)
+endif(ENABLE_BLINK_PUBLIC_COMMON)
+
+set(ENABLE_GMEDIA FALSE)
+if(ENABLE_GMEDIA)
+  set(GMEDIA_LIB GMEDIA)
+endif(ENABLE_GMEDIA)
+
+set(ENABLE_GCRYPTO FALSE)
+if(ENABLE_GCRYPTO)
+  set(GCRYPTO_LIB GCRYPTO)
+endif(ENABLE_GCRYPTO)
 
 macro(add_mojo_prefixes_3 ARG_BASE_PATH ARG_WHERE_COLLECT)
   set(CUR_MOJO_TO_PREFIXES
@@ -284,6 +315,10 @@ endif(ENABLE_NATIVE_HTML)
 set(COMMON_FLAGS "${COMMON_FLAGS} -Wreturn-type")
 # https://gist.github.com/morido/8637535
 set(COMMON_FLAGS "${COMMON_FLAGS} -Werror=return-type")
+
+if(NOT ENABLE_MOJO)
+  set(COMMON_FLAGS "${COMMON_FLAGS} -DDISABLE_MOJO=1")
+endif(NOT ENABLE_MOJO)
 
 if(USE_ICU)
   set(COMMON_FLAGS "${COMMON_FLAGS} -DHAS_ICU=1")
@@ -556,7 +591,7 @@ if(ENABLE_COBALT)
   list(APPEND COBALT_LIBS
     base
     ced
-    GCRYPTO
+    ${GCRYPTO_LIB}
     GURL
   )
 endif(ENABLE_COBALT)
@@ -573,11 +608,25 @@ if(ENABLE_BLINK)
   set(COMMON_FLAGS "${COMMON_FLAGS} -DENABLE_BLINK=1")
   #list(APPEND APP_DEFINITIONS ENABLE_LATENCY=1) # ui/latency
   #list(APPEND APP_DEFINITIONS ENABLE_CC_BENCH=1) # cc/benchmarks
-  set(COMMON_FLAGS "${COMMON_FLAGS} -DENABLE_BLINK_PLATFORM=1")
+  set(ENABLE_BLINK_COMMON FALSE)
+  if(ENABLE_BLINK_COMMON)
+    list(APPEND APP_DEFINITIONS ENABLE_BLINK_COMMON=1)
+    set(BLINK_COMMON_LIB BLINK_COMMON)
+  endif(ENABLE_BLINK_COMMON)
+  set(ENABLE_BLINK_PLATFORM FALSE)
+  if(ENABLE_BLINK_PLATFORM)
+    list(APPEND APP_DEFINITIONS ENABLE_BLINK_PLATFORM=1)
+    set(BLINK_RENDERER_PLATFORM_LIB BLINK_RENDERER_PLATFORM)
+  endif(ENABLE_BLINK_PLATFORM)
+  set(ENABLE_BLINK_RENDERER_CORE FALSE)
+  if(ENABLE_BLINK_PLATFORM)
+    list(APPEND APP_DEFINITIONS ENABLE_BLINK_RENDERER_CORE=1)
+    set(BLINK_RENDERER_CORE_LIB BLINK_RENDERER_CORE)
+  endif(ENABLE_BLINK_PLATFORM)
   #
   set(BLINK_GFX_LIBS
     #BLINK_RENDERER_CORE
-    BLINK_RENDERER_PLATFORM
+    # BLINK_RENDERER_PLATFORM
     COMPONENTS_VIZ_CLIENT
     CC
     BASE_CC
@@ -593,7 +642,7 @@ if(ENABLE_BLINK)
     GFX_RANGE
     SKIA_EXT
     UI_GFX
-    BLINK_PUBLIC_COMMON
+    ${BLINK_PUBLIC_COMMON_LIB}
     COMPONENTS_VIZ_CLIENT
     COMPONENTS_VIZ_COMMON
     CC
@@ -603,8 +652,8 @@ if(ENABLE_BLINK)
     BASE_CC
     PAINT_CC
     CC
-    LIB_V8_INTERFACE
-    MOJO
+    ## LIB_V8_INTERFACE
+    ${MOJO_LIB}
     UI_COMPOSITOR
     ${UI_DISPLAY_LIB}
     ${UI_NATIVE_THEME_LIB}
@@ -617,7 +666,7 @@ if(ENABLE_BLINK)
   list(APPEND BLINK_LIBS
     base
     ced
-    GCRYPTO
+    ${GCRYPTO_LIB}
     GURL
   )
   if(NOT TARGET_EMSCRIPTEN)
@@ -670,7 +719,7 @@ endif(ENABLE_UKM)
 
 if(ENABLE_BLINK)
   # TODO: keep wasm build as small as possible
-  set(ENABLE_GIPC TRUE)
+  set(ENABLE_GIPC FALSE)
 else()
   set(ENABLE_GIPC FALSE)
 endif()
@@ -2237,6 +2286,7 @@ list(APPEND PROJECT_SRC
   generated/models/all_models.h
 )
 #
+
 if(ENABLE_COBALT)
   list(APPEND PROJECT_SRC
     src/render_tree_combiner.cc
@@ -2537,7 +2587,7 @@ if(TARGET_EMSCRIPTEN)
   # link order is top down:
   # Top is the executable, followed by directly used libraries.
   # see https://floooh.github.io/2016/01/12/cmake-dependency-juggling.html
-  target_link_libraries(${PROJECT_NAME} PUBLIC
+  target_link_libraries(${PROJECT_NAME} PRIVATE
     ${BASE_LIB}
     #
     ${COBALT_LIBRARY_NAME}
@@ -2638,7 +2688,7 @@ else()
   # link order is top down:
   # Top is the executable, followed by directly used libraries.
   # see https://floooh.github.io/2016/01/12/cmake-dependency-juggling.html
-  target_link_libraries(${PROJECT_NAME} PUBLIC
+  target_link_libraries(${PROJECT_NAME} PRIVATE
     ${BASE_LIB}
     #
     ${COBALT_LIBRARY_NAME}
@@ -2686,7 +2736,7 @@ else()
     #skcms
     # "//third_party:freetype_harfbuzz",
     #  "//third_party/blink/public/common",
-    #MOJO
+    #${MOJO_LIB}
     # emoji-segmenter
     ${HARFBUZZ_LIBRARIES}
     ${CUSTOM_ICU_LIB}
@@ -2746,7 +2796,7 @@ else()
     #GFX_RANGE
     #SKIA_EXT
     #UI_GFX
-    #BLINK_PUBLIC_COMMON
+    #${BLINK_PUBLIC_COMMON_LIB}
     #COMPONENTS_VIZ_CLIENT
     #COMPONENTS_VIZ_COMMON
     #CC

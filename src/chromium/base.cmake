@@ -1501,7 +1501,7 @@ add_dependencies(base
 #  'base_static',
 #  'third_party/dynamic_annotations/dynamic_annotations.gyp:dynamic_annotations',
 #],
-target_link_libraries(base PUBLIC
+target_link_libraries(base PRIVATE
   ${COBALT_NANOBASE_LIB}
   ${STARBOARD_PLATFORM_LIB}
   #starboard_core

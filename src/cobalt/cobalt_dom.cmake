@@ -402,7 +402,7 @@ add_library(cobalt_dom STATIC
 #  '<(DEPTH)/net/net.gyp:net',
 #  '<(DEPTH)/url/url.gyp:url',
 #],
-target_link_libraries(cobalt_dom PUBLIC
+target_link_libraries(cobalt_dom PRIVATE
   base # TODO
   cobalt_base
   cobalt_nanobase

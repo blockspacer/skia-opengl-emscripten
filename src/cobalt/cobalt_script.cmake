@@ -64,7 +64,7 @@ add_library(cobalt_script STATIC
   ${cobalt_script_SOURCES}
 )
 
-target_link_libraries(cobalt_script PUBLIC
+target_link_libraries(cobalt_script PRIVATE
   cobalt_base
   cobalt_nanobase
   base # TODO

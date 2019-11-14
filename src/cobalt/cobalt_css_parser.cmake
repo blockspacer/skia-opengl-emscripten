@@ -51,7 +51,7 @@ add_library(cobalt_css_parser STATIC
   ${cobalt_css_parser_SOURCES}
 )
 
-target_link_libraries(cobalt_css_parser PUBLIC
+target_link_libraries(cobalt_css_parser PRIVATE
   base # TODO
   cobalt_base
   cobalt_cssom

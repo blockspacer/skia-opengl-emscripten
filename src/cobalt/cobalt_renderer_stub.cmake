@@ -161,7 +161,7 @@ endif(ENABLE_SKIA)
     )
   endif(TARGET_LINUX)
 
-  target_link_libraries(cobalt_renderer_stub_skia PUBLIC
+  target_link_libraries(cobalt_renderer_stub_skia PRIVATE
     base # TODO
     cobalt_base
     cobalt_math
@@ -253,7 +253,7 @@ if(TARGET_LINUX)
   )
 endif(TARGET_LINUX)
 
-target_link_libraries(cobalt_renderer_stub_skgl PUBLIC
+target_link_libraries(cobalt_renderer_stub_skgl PRIVATE
   ${cobalt_renderer_stub_skia_LIB}
   #
   base # TODO
@@ -403,7 +403,7 @@ if(TARGET_LINUX)
   )
 endif(TARGET_LINUX)
 
-target_link_libraries(cobalt_renderer_stub PUBLIC
+target_link_libraries(cobalt_renderer_stub PRIVATE
   cobalt_renderer_stub_skgl
   ${cobalt_renderer_stub_skia_LIB}
   #

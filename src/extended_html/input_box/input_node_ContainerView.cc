@@ -240,7 +240,8 @@ void input_node_ContainerView::addChildren(
     textfield_->SetBorder(
           views::CreateSolidBorder(2, SK_ColorGRAY));
     textfield_->SetColor(
-          blink::Color(1.0f, 0.0f, 1.0f, 0.5f).Rgb());
+          //blink::Color(1.0f, 0.0f, 1.0f, 0.5f).Rgb());
+          SkColorSetARGB(128, 255, 128, 0));
     textfield_->SetTextInputType(ui::TEXT_INPUT_TYPE_TEXT);
     if(!placeholder_text.empty()) {
       textfield_->set_placeholder_text(
@@ -250,7 +251,8 @@ void input_node_ContainerView::addChildren(
     textfield_->SetBorder(
         views::CreateSolidBorder(2, SK_ColorGRAY));
     textfield_->SetColor(
-        blink::Color(1.0f, 0.0f, 1.0f, 0.5f).Rgb());
+        //blink::Color(1.0f, 0.0f, 1.0f, 0.5f).Rgb());
+        SkColorSetARGB(128, 255, 128, 0));
     textfield_->SetTextInputType(ui::TEXT_INPUT_TYPE_TEXT);
     if(!initial_text.empty()) {
       textfield_->SetText(base::UTF8ToUTF16(initial_text));

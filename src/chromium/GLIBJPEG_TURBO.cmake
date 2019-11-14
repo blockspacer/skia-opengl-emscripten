@@ -181,7 +181,7 @@ add_library(GLIBJPEG_TURBO STATIC
 #endif()
 
 if (EMSCRIPTEN)
-  target_link_libraries(GLIBJPEG_TURBO PUBLIC
+  target_link_libraries(GLIBJPEG_TURBO PRIVATE
     #base
     #${ZLIB_LIBRARIES}
     #GZLIB
@@ -190,7 +190,7 @@ if (EMSCRIPTEN)
     # todo sudo apt-get install libjpeg-dev
   )
 else()
-  target_link_libraries(GLIBJPEG_TURBO PUBLIC
+  target_link_libraries(GLIBJPEG_TURBO PRIVATE
     ${libZLIB_LIB}
     ${GLIBXML_LIB}
   )
