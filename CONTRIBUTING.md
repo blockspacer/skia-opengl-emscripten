@@ -1,16 +1,39 @@
-# How to Contribute
+# Contributing
 
-We'd love to accept your patches and contributions to this project. There are
-just a few small guidelines you need to follow.
+## How to Contribute
 
-## Code reviews
+This repository is built for the purpose of encouraging your contributions, big or small. **All** changes are considered, as long as they do not complicate the process for others.
 
-All submissions, including submissions by project members, require review. We
-use pull requests for this purpose. Consult
-[GitHub Help](https://help.github.com/articles/about-pull-requests/) for more
-information on using pull requests.
+That said, suggested ways to contribute include:
 
-## Community Guidelines
+* Fork the project in GitHub
+* Clone your forked repo locally
+* Add your name to README.md or a code sample (or both)
+* Commit and push to your forked repository
+* Create a PR from your fork to the main repo in GitHub
+* Add a title, edit the PR template, and submit for review
+* Watch for changes requested
 
-This project follows
-[Google's Open Source Community Guidelines](https://opensource.google.com/conduct/).
+### Your name on the README.md
+
+* Add your name and description to the README.md using this example:
+
+```
+### My Name
+- Description about me
+- [![twitter-alt][twitter-img]](https://twitter.com/example)
+  [![github-alt][github-img]](https://github.com/example)
+```
+
+* Make sure you add your name to the correct letter section (alphabetically by first name)
+* Avoid making any whitespace changes or alterations to someone else's profile
+
+### A code sample
+
+* Fork the project.
+* Create a code sample under `/code` named <yourname>.<language-file-extension>. I.e. `lukeoliff.js`, `lukeoliff.php` (please create your own rather than editing an existing one)
+* Create a working hello world example inside your file.
+
+## Code of Conduct
+
+Please note that this project is released with a [Contributor Code of Conduct](CODE_OF_CONDUCT.md). By participating in this project you agree to abide by its terms.
