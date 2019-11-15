@@ -5275,8 +5275,11 @@ if(!render_browser_window) {
 #ifdef __EMSCRIPTEN__
   printf("running with __EMSCRIPTEN__\n");
   // If using own main loop, must use explicit context swapping (explicitSwapControl and OFFSCREENCANVAS_SUPPORT)
-  //emscripten_set_main_loop(mainLockFreeLoop, 0, 1);
-  emscripten_set_main_loop(mainLockFreeLoop, 60, 1);
+  //emscripten_set_main_loop(mainLockFreeLoop, 60, 1);
+  /// \note You should use 0 for the frame rate in emscripten_set_main_loop
+  /// in order to use requestAnimationFrame, as that can greatly
+  /// improve your frame rates!
+  emscripten_set_main_loop(mainLockFreeLoop, 0, 1);
 #else
 #if defined(ENABLE_OPENGL)
   printf("running with glew\n");
