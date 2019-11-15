@@ -1908,8 +1908,8 @@ std::unique_ptr<SbInputData> setMouseSbEventData(std::unique_ptr<SbInputData> da
   data->position.y = static_cast<float>(screenMouseY);
   data->tilt.x = 0.0f;
   data->tilt.y = 0.0f;
-  data->delta.x = 1.0f;
-  data->delta.y = 1.0f;
+  data->delta.x = 0.0f;
+  data->delta.y = 0.0f;
   data->size.x = 1.0f;
   data->size.y = 1.0f;
   data->pressure = 1.0f;
@@ -1929,14 +1929,12 @@ std::unique_ptr<SbInputData> setWheelSbEventData(std::unique_ptr<SbInputData> da
   data->position.y = static_cast<float>(screenMouseY);
   data->delta.x = static_cast<float>(wheelX);
   data->delta.y = static_cast<float>(wheelY);
+  //wheelZ; // TODO
   data->tilt.x = 0.0f;
   data->tilt.y = 0.0f;
-  data->delta.x = 1.0f;
-  data->delta.y = 1.0f;
   data->size.x = 1.0f;
   data->size.y = 1.0f;
   data->pressure = 1.0f;
-  // data->delta.z = wheelZ; // TODO
   //data->key = key;
   data->key = kSbKeyUnknown;
   return std::move(data);
@@ -2059,8 +2057,8 @@ std::unique_ptr<SbEvent> createSbKeyboardEvent(
   data->device_type = device_type;
   data->tilt.x = 0.0f;
   data->tilt.y = 0.0f;
-  data->delta.x = 1.0f;
-  data->delta.y = 1.0f;
+  data->delta.x = 0.0f;
+  data->delta.y = 0.0f;
   data->size.x = 1.0f;
   data->size.y = 1.0f;
   data->pressure = 1.0f;
