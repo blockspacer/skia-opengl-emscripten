@@ -16,12 +16,17 @@
 #include "third_party/skia/include/core/SkImage.h"
 #include "third_party/skia/include/core/SkImageInfo.h"
 #include "third_party/skia/include/core/SkPixmap.h"
+#if !defined(SK_SUPPORT_GPU)
 #include "third_party/skia/include/gpu/GrContext.h"
 #include "third_party/skia/include/gpu/GrTypes.h"
+#else
+//NOTIMPLEMENTED();
+#endif // !defined(SK_SUPPORT_GPU)
 
 namespace cc {
 namespace {
 
+#if !defined(SK_SUPPORT_GPU)
 // TODO(ericrk): Replace calls to this with calls to SkImage::makeTextureImage,
 // once that function handles colorspaces. https://crbug.com/834837
 sk_sp<SkImage> MakeTextureImage(GrContext* context,
@@ -59,6 +64,9 @@ sk_sp<SkImage> MakeTextureImage(GrContext* context,
 
   return uploaded_image;
 }
+#else
+//NOTIMPLEMENTED();
+#endif // !defined(SK_SUPPORT_GPU)
 
 }  // namespace
 
@@ -143,6 +151,7 @@ ServiceImageTransferCacheEntry::ServiceImageTransferCacheEntry(
 ServiceImageTransferCacheEntry& ServiceImageTransferCacheEntry::operator=(
     ServiceImageTransferCacheEntry&& other) = default;
 
+#if !defined(SK_SUPPORT_GPU)
 bool ServiceImageTransferCacheEntry::BuildFromDecodedData(
     GrContext* context,
     base::span<const uint8_t> decoded_image,
@@ -167,11 +176,13 @@ bool ServiceImageTransferCacheEntry::BuildFromDecodedData(
   return MakeSkImage(SkPixmap(image_info, decoded_image.data(), row_bytes),
                      width, height, target_color_space);
 }
+#endif // !defined(SK_SUPPORT_GPU)
 
 size_t ServiceImageTransferCacheEntry::CachedSize() const {
   return size_;
 }
 
+#if !defined(SK_SUPPORT_GPU)
 bool ServiceImageTransferCacheEntry::Deserialize(
     GrContext* context,
     base::span<const uint8_t> data) {
@@ -235,25 +246,32 @@ bool ServiceImageTransferCacheEntry::Deserialize(
                   image_info.minRowBytes());
   return MakeSkImage(pixmap, width, height, target_color_space);
 }
+#endif // !defined(SK_SUPPORT_GPU)
 
 bool ServiceImageTransferCacheEntry::MakeSkImage(
     const SkPixmap& pixmap,
     uint32_t width,
     uint32_t height,
     sk_sp<SkColorSpace> target_color_space) {
+#if !defined(SK_SUPPORT_GPU)
   DCHECK(context_);
 
   // Depending on whether the pixmap will fit in a GPU texture, either create
   // a software or GPU SkImage.
   uint32_t max_size = context_->maxTextureSize();
   fits_on_gpu_ = width <= max_size && height <= max_size;
+
   if (fits_on_gpu_) {
     sk_sp<SkImage> image = SkImage::MakeFromRaster(pixmap, nullptr, nullptr);
     if (!image)
       return false;
     image_ = MakeTextureImage(context_, std::move(image), target_color_space,
                               has_mips_ ? GrMipMapped::kYes : GrMipMapped::kNo);
-  } else {
+  } else
+#else
+    NOTIMPLEMENTED();
+#endif // !defined(SK_SUPPORT_GPU)
+  {
     sk_sp<SkImage> original =
         SkImage::MakeFromRaster(pixmap, [](const void*, void*) {}, nullptr);
     if (!original)
@@ -275,12 +293,16 @@ bool ServiceImageTransferCacheEntry::MakeSkImage(
 void ServiceImageTransferCacheEntry::EnsureMips() {
   if (has_mips_)
     return;
+#if !defined(SK_SUPPORT_GPU)
 
   has_mips_ = true;
   // TODO(ericrk): consider adding in the DeleteSkImageAndPreventCaching
   // optimization from GpuImageDecodeCache where we forcefully remove the
   // intermediate from Skia's cache.
   image_ = image_->makeTextureImage(context_, nullptr, GrMipMapped::kYes);
+#else
+    NOTIMPLEMENTED();
+#endif // !defined(SK_SUPPORT_GPU)
 }
 
 }  // namespace cc

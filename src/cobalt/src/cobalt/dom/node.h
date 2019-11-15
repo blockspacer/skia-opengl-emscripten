@@ -32,7 +32,6 @@
 #include <emscripten.h>
 #include <emscripten/bind.h>
 #include <emscripten/html5.h>
-#include <emscripten/bind.h>
 #include <emscripten/val.h>
 #endif // OS_EMSCRIPTEN
 

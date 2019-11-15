@@ -111,6 +111,7 @@ Inspired by:
 - livecode https://github.com/livecode/livecode/blob/develop/libgraphics/src/context.cpp
 - chromium-lite
 - Pesto https://github.com/marcj/Pesto
+- aardvark https://github.com/sunflowerdeath/aardvark
 - LCUI https://github.com/lc-soft/LCUI
 - blink
 - (more) https://news.ycombinator.com/item?id=17733515
@@ -191,8 +192,9 @@ Create GUI framework that is
 
 ## Lightweight
 
-- WASM: ~6.0MiB uncompressed (~3MiB compressed), size depends on enabled features and languages (i18n).
+- WASM with SKIA renderer: ~8.0MiB uncompressed (~4MiB compressed), size depends on enabled features and languages (i18n).
 - UNIX: ~22.0MiB uncompressed, size depends on enabled features and languages (i18n).
+- WASM without SKIA renderer (HTML5 native tags): ~3.0MiB
 - low memory usage
 
 ## Clone with --recursive
@@ -288,3 +290,24 @@ see:
  - https://github.com/sillsdev/icu-dotnet/wiki/Making-a-minimal-build-for-ICU58-or-later
  - https://www.oipapio.com/question-4138842
  - https://qiita.com/shimacpyon/items/82d275c2f5f508cbd7f4
+
+## How to make ICU smaller?
+
+Define `UCONFIG_NO_COLLATION` or `UCONFIG_ONLY_COLLATION`, `UCONFIG_NO_LEGACY_CONVERSION`, `UCONFIG_ONLY_HTML_CONVERSION`, `UCONFIG_NO_IDNA`, etc.
+
+see:
+- https://github.com/sillsdev/icu-dotnet/wiki/Making-a-minimal-build-for-ICU58-or-later
+- http://userguide.icu-project.org/howtouseicu
+- http://transit.iut2.upmf-grenoble.fr/doc/icu-doc/html/uconfig_8h.html
+
+# How to enable skottie/lottie support
+
+Build with flags
+
+```bash
+-DENABLE_SKSG=TRUE;
+-DENABLE_SKSHAPER=TRUE;
+-DENABLE_SKOTTIE=TRUE;
+-DENABLE_SKIA_UTILS=TRUE;
+-DFORCE_DISABLE_SK_GPU=FALSE;
+```
