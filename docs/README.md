@@ -154,6 +154,7 @@ See https://github.com/blockspacer/skia-opengl-emscripten/issues/6
 
 - Limitations
 
+  * Some HTML tags not supported. For example, use `<div>` instead of `<p>`.
   * Prefer CSS flexbox for layout. No `float:right`.
   * No support for layout-changing CSS animations.
     Example: Can`t animate width/height, but can animate scaleX/scaleY/scale.
@@ -182,12 +183,22 @@ Create GUI framework that is
 - Small enough to be used in browser
 - With ability to turn on/off features and modify source code
 - Can support UTF8 fonts, font rendering and i18n matters
-- Can support shape drawing, curves
+- Can support vector graphics, shape drawing, curves. Vector graphics can be scaled larger or smaller and still look perfect for all resolutions
 - Can be used without a lot of boilerplate code (supports reactivity, custom widgets, etc.)
 - Can support animation formats like lottie (SKOTTIE)
 - Can render both on CPU and GPU
 - Can be integrated with existing apps or game engines (integrates with existing window creation, threads management, etc.)
 - Can control low-level platform functionality (such as file system, rendering, clipboard, etc.).
+- Maintaining a solid framerate: It is not so important to make frames render faster as it is having them rendering constantly and without janks.
+- Ability to re-use existion low-level application layer: change file or thread creation code etc.
+- No build-in scripting language or virtual machine. Probably app needs to be run on platform with limited resources or already have a scripting solution.
+- Can support dynamic UI, with lots of animation per frame, worst-case scenarios (performance cliffs). Be prepared to paint every pixel on every frame.
+- Allow static linking with all libraries to eliminate dead code and use compilation techniques like `Whole Program Optimization`.
+- Uses reflection and data binding to provide a simple and powerful way to auto-update data between the model and the user interface.
+- Use declarative formats, like HTML, because thay are more compact than the equivalent procedural code. They also establish a clear separation between the markup that defines the UI and the code that makes the application do something. For example, a designer on your team could design a UI and then hand off the declarative format to the developer to add the procedural code.
+- Extendable with custom widgets, controls. Provide UI frameworks as separate projects. Elements like Button, CheckBox, Label, ListBox, ComboBox, Menu, TreeView, ToolBar, ProgressBar, Slider, TextBox, or PasswordBox.
+- Provides theming mechanisms
+- Focused on highly-optimized code. All aspects need to be kept under control: precise control on memory allocations, never create threads under the hood, it should always provide a renderer-agnostic API, and it should never communicate directly with the GPU
 - Focused on UI. Goal is to keep project small, but with ability to integrate third-party libraries
 
 ## Lightweight
