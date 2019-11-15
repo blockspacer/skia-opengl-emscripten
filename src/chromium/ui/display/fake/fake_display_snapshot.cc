@@ -12,7 +12,9 @@
 #include "base/strings/string_number_conversions.h"
 #include "base/strings/string_split.h"
 #include "base/strings/stringprintf.h"
+#if !defined(DISABLE_GRE2)
 #include "third_party/re2/src/re2/re2.h"
+#endif // !defined(DISABLE_GRE2)
 #include "ui/display/util/display_util.h"
 
 using base::StringPiece;
@@ -49,12 +51,16 @@ std::unique_ptr<DisplayMode> ParseDisplayMode(const std::string& str) {
   int height = 0;
   std::string refresh_rate_str;
 
+#if !defined(DISABLE_GRE2)
   // Check against regex and extract values.
   if (!RE2::FullMatch(str, "(\\d+)x(\\d+)(?:%(\\d+\\.?\\d*))?", &width, &height,
                       &refresh_rate_str)) {
     LOG(ERROR) << "Invalid display mode string \"" << str << "\"";
     return nullptr;
   }
+#else
+    NOTIMPLEMENTED();
+#endif // !defined(DISABLE_GRE2)
 
   if (width <= 0 || height <= 0) {
     LOG(ERROR) << "Resolution " << width << "x" << height << " is invalid";

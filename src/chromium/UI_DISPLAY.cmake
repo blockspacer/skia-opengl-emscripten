@@ -128,7 +128,7 @@ target_link_libraries(UI_DISPLAY PRIVATE
   #
   # deps for fake display
   #
-  GRE2
+  ${GRE2_LIB}
 )
 
 set_property(TARGET UI_DISPLAY PROPERTY CXX_STANDARD 17)
@@ -136,9 +136,9 @@ set_property(TARGET UI_DISPLAY PROPERTY CXX_STANDARD 17)
 target_include_directories(UI_DISPLAY PRIVATE
   ${UI_DISPLAY_DIR}
   ${BASE_DIR}
-  ${GRE2_PARENT_DIR}
-  ${GRE2_DIR}
-  ${GRE2_DIR}/src
+  #${GRE2_PARENT_DIR}
+  #${GRE2_DIR}
+  #${GRE2_DIR}/src
 )
 
 target_compile_definitions(UI_DISPLAY PRIVATE
@@ -146,6 +146,7 @@ target_compile_definitions(UI_DISPLAY PRIVATE
   DISPLAY_TYPES_IMPLEMENTATION=1
   FAKE_DISPLAY_IMPLEMENTATION=1
   DISPLAY_UTIL_IMPLEMENTATION=1
+  ${DISABLE_GRE2_DEFINE}
 )
 
 target_compile_definitions(UI_DISPLAY PUBLIC

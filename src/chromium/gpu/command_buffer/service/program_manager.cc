@@ -30,7 +30,11 @@
 #include "gpu/command_buffer/service/program_cache.h"
 #include "gpu/command_buffer/service/shader_manager.h"
 #include "gpu/config/gpu_preferences.h"
+#if !defined(DISABLE_GRE2)
 #include "third_party/re2/src/re2/re2.h"
+#else
+//NOTIMPLEMENTED();
+#endif // !defined(DISABLE_GRE2)
 #include "ui/gl/gl_version_info.h"
 #include "ui/gl/progress_reporter.h"
 
@@ -574,6 +578,7 @@ void Program::UpdateDrawIDUniformLocation() {
 }
 
 std::string Program::ProcessLogInfo(const std::string& log) {
+#if !defined(DISABLE_GRE2)
   std::string output;
   re2::StringPiece input(log);
   std::string prior_log;
@@ -593,6 +598,10 @@ std::string Program::ProcessLogInfo(const std::string& log) {
   }
 
   return output + input.as_string();
+#else
+    return log;
+    NOTIMPLEMENTED();
+#endif // !defined(DISABLE_GRE2)
 }
 
 void Program::UpdateLogInfo() {

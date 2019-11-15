@@ -5,7 +5,11 @@
 #include "gpu/config/gpu_info_collector.h"
 
 // This has to be included before windows.h.
+#if !defined(DISABLE_GRE2)
 #include "third_party/re2/src/re2/re2.h"
+#else
+//NOTIMPLEMENTED();
+#endif // !defined(DISABLE_GRE2)
 
 #include <windows.h>
 
@@ -133,10 +137,16 @@ std::string ParseNVIDIARegistryDriverVersion(std::string registry_version) {
   // This matches with the actual driver version that NVML also returns.
   std::string second_to_last_digits;
   std::string last_digits;
+
+#if !defined(DISABLE_GRE2)
   if (!RE2::FullMatch(registry_version, "\\d+\\.\\d+\\.(\\d+)\\.(\\d+)",
                       &second_to_last_digits, &last_digits)) {
     return registry_version;
   }
+#else
+    NOTIMPLEMENTED();
+#endif // !defined(DISABLE_GRE2)
+
   std::string digits = second_to_last_digits + last_digits;
   if (digits.length() < 5u) {
     return registry_version;
@@ -573,6 +583,8 @@ bool CollectContextGraphicsInfo(GPUInfo* gpu_info,
   int vertex_shader_minor_version = 0;
   int pixel_shader_major_version = 0;
   int pixel_shader_minor_version = 0;
+
+#if !defined(DISABLE_GRE2)
   if (RE2::FullMatch(gpu_info->gl_renderer,
                      "ANGLE \\(.*\\)") &&
       RE2::PartialMatch(gpu_info->gl_renderer,
@@ -624,6 +636,10 @@ bool CollectContextGraphicsInfo(GPUInfo* gpu_info,
     // DirectX diagnostics are collected asynchronously because it takes a
     // couple of seconds.
   }
+#else
+    NOTIMPLEMENTED();
+#endif // !defined(DISABLE_GRE2)
+
   return true;
 }
 

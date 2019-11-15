@@ -16,7 +16,12 @@
 #include "base/values.h"
 #include "build/build_config.h"
 #include "gpu/config/gpu_util.h"
+
+#if !defined(DISABLE_GRE2)
 #include "third_party/re2/src/re2/re2.h"
+#else
+    NOTIMPLEMENTED();
+#endif // !defined(DISABLE_GRE2)
 
 namespace gpu {
 namespace {
@@ -98,9 +103,14 @@ int CompareLexicalNumberStrings(
 
 // A mismatch is identified only if both |input| and |pattern| are not empty.
 bool StringMismatch(const std::string& input, const std::string& pattern) {
+#if !defined(DISABLE_GRE2)
   if (input.empty() || pattern.empty())
     return false;
   return !RE2::FullMatch(input, pattern);
+#else
+    NOTIMPLEMENTED();
+    return false;
+#endif // !defined(DISABLE_GRE2)
 }
 
 bool StringMismatch(const std::string& input, const char* pattern) {
@@ -182,7 +192,12 @@ bool GpuControlList::More::GLVersionInfoMismatch(
   GLType target_gl_type = kGLTypeNone;
   if (segments.size() > 2 &&
       segments[0] == "OpenGL" && segments[1] == "ES") {
+#if !defined(DISABLE_GRE2)
     bool full_match = RE2::FullMatch(segments[2], "([\\d.]+).*", &number);
+#else
+    bool full_match = false;
+    NOTIMPLEMENTED();
+#endif // !defined(DISABLE_GRE2)
     DCHECK(full_match);
 
     target_gl_type = kGLTypeGLES;
@@ -268,11 +283,15 @@ bool GpuControlList::MachineModelInfo::Contains(const GPUInfo& gpu_info) const {
       return false;
     bool found_match = false;
     for (size_t ii = 0; ii < machine_model_name_size; ++ii) {
+#if !defined(DISABLE_GRE2)
       if (RE2::FullMatch(gpu_info.machine_model_name,
                          machine_model_names[ii])) {
         found_match = true;
         break;
       }
+#else
+    NOTIMPLEMENTED();
+#endif // !defined(DISABLE_GRE2)
     }
     if (!found_match)
       return false;

@@ -64,13 +64,9 @@ target_link_libraries(GRE2 PRIVATE
 
 set_property(TARGET GRE2 PROPERTY CXX_STANDARD 17)
 
-# TODO
-# target_include_directories(GRE2 PUBLIC
-#   ${GRE2_DIR}
-#   ${GRE2_DIR}/src
-#   #${GRE2_DIR}/util
-#   #${BASE_DIR}
-# )
+target_include_directories(GRE2 PUBLIC
+  ${GRE2_PARENT_DIR}
+)
 
 target_include_directories(GRE2 PRIVATE
   ${GRE2_DIR}
