@@ -199,9 +199,10 @@ static void HandleAnimationEnterAfterPhase(
     // TODO: remove here
   }
 
-  DCHECK(ripple_effect_parent->RemoveChild(ripple_effect));
+  scoped_refptr<cobalt::dom::Node> removed_node
+    = ripple_effect_parent->RemoveChild(ripple_effect);
+  DCHECK(removed_node);
 }
-
 
 ///\todo just use set_transition_property, not addRippleAnimationOnce
 ///
