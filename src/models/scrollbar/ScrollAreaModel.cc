@@ -210,17 +210,19 @@ base::Optional<bool> ScrollAreaModelEventListener::HandleMouseWheel(
   }
   DCHECK(scrollbar_wrapper);*/
 
-  const float scrollSpeed = 10.0f;
-
   /// \todo support X scrollbar
   ///
   /*bool scrollXChanged = false;
   bool scrollYChanged = false;*/
 
+  const float scrollSpeedBase = 10.0f;
+  const float scrollSpeedX = x > 0 ? scrollSpeedBase : -scrollSpeedBase;
+  const float scrollSpeedY = y > 0 ? scrollSpeedBase : -scrollSpeedBase;
+
   float prevScrollY = scrollbar_wrapper->scroll_height();
   float newScrollY
     = std::fmax(0.0f,
-      scrollbar_wrapper->scroll_top() - y * scrollSpeed);
+      scrollbar_wrapper->scroll_top() - scrollSpeedY);
   float maxHeight
     /// \todo wy we need to substruct client_width below?
     ///

@@ -734,12 +734,14 @@ void addTestOnlyAttrCallbacks() {
 
             DCHECK(targetHTML);
 
-            const float scrollSpeed = 10.0f;
+            const float scrollSpeedBase = 10.0f;
+            const float scrollSpeedX = x > 0 ? scrollSpeedBase : -scrollSpeedBase;
+            const float scrollSpeedY = y > 0 ? scrollSpeedBase : -scrollSpeedBase;
             if(y) {
-              targetHTML->set_scroll_top(targetHTML->scroll_top() - y * scrollSpeed);
+              targetHTML->set_scroll_top(targetHTML->scroll_top() - scrollSpeedY);
             }
             if(x) {
-              targetHTML->set_scroll_left(targetHTML->scroll_left() - x * scrollSpeed);
+              targetHTML->set_scroll_left(targetHTML->scroll_left() - scrollSpeedX);
             }
 
             printf("on-wheel-scroll at (%f;%f;%f) event %s for tag: %s, "
@@ -1049,7 +1051,9 @@ void addTestOnlyAttrCallbacks() {
             }
             DCHECK(scrollbar_wrapper);
 
-            const float scrollSpeed = 10.0f;
+            const float scrollSpeedBase = 10.0f;
+            const float scrollSpeedX = x > 0 ? scrollSpeedBase : -scrollSpeedBase;
+            const float scrollSpeedY = y > 0 ? scrollSpeedBase : -scrollSpeedBase;
 
             /// \todo support X scrollbar
             ///
@@ -1059,7 +1063,7 @@ void addTestOnlyAttrCallbacks() {
             float prevScrollY = scrollbar_wrapper->scroll_height();
             float newScrollY
               = std::fmax(0.0f,
-                scrollbar_wrapper->scroll_top() - y * scrollSpeed);
+                scrollbar_wrapper->scroll_top() - scrollSpeedY);
             float maxHeight
               /// \todo wy we need to substruct client_width below?
               ///
