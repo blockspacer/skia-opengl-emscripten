@@ -14,7 +14,9 @@
 
 #include "starboard/client_porting/eztime/eztime.h"
 
+#if !defined(UCONFIG_NO_FORMATTING)
 #include <unicode/ucal.h>
+#endif // !defined(UCONFIG_NO_FORMATTING)
 #include <unicode/udata.h>
 #include <unicode/uloc.h>
 #include <unicode/ustring.h>
@@ -122,6 +124,7 @@ bool EzTimeValueExplode(const EzTimeValue* SB_RESTRICT value,
   // used, and in tm struct's documentation it is specified that year should
   // be an offset from 1900.
 
+#if !defined(UCONFIG_NO_FORMATTING)
   // See:
   // http://pubs.opengroup.org/onlinepubs/009695399/functions/gmtime.html
   UCalendar* calendar = ucal_open(GetTimeZoneId(timezone), -1,
@@ -152,6 +155,10 @@ bool EzTimeValueExplode(const EzTimeValue* SB_RESTRICT value,
   }
 
   ucal_close(calendar);
+#else
+  SB_NOTIMPLEMENTED();
+#endif // !defined(UCONFIG_NO_FORMATTING)
+
   return U_SUCCESS(status);
 }
 
@@ -173,6 +180,7 @@ EzTimeValue EzTimeValueImplode(EzTimeExploded* SB_RESTRICT exploded,
   // used, and in tm struct's documentation it is specified that year should
   // be an offset from 1900.
 
+#if !defined(UCONFIG_NO_FORMATTING)
   // See:
   // http://pubs.opengroup.org/onlinepubs/009695399/functions/gmtime.html
   UCalendar* calendar = ucal_open(GetTimeZoneId(timezone), -1,
@@ -197,6 +205,9 @@ EzTimeValue EzTimeValueImplode(EzTimeExploded* SB_RESTRICT exploded,
   if (status <= U_ZERO_ERROR) {
     return EzTimeValueFromSbTime(UDateToSbTime(udate));
   }
+#else
+  SB_NOTIMPLEMENTED();
+#endif // !defined(UCONFIG_NO_FORMATTING)
 
   EzTimeValue zero_time = {};
   return zero_time;

@@ -176,6 +176,7 @@ std::unique_ptr<icu::PluralRules> BuildPluralRules() {
   return rules;
 }
 
+#if !defined(UCONFIG_NO_FORMATTING)
 void FormatNumberInPlural(const icu::MessageFormat& format, int number,
                           icu::UnicodeString* result, UErrorCode* err) {
   if (U_FAILURE(*err)) return;
@@ -185,6 +186,7 @@ void FormatNumberInPlural(const icu::MessageFormat& format, int number,
   DCHECK(U_SUCCESS(*err));
   return;
 }
+#endif // !defined(UCONFIG_NO_FORMATTING)
 
 }  // namespace
 
@@ -194,12 +196,16 @@ Formatter::Formatter(const Pluralities& sec_pluralities,
                      const Pluralities& day_pluralities,
                      const Pluralities& month_pluralities,
                      const Pluralities& year_pluralities) {
+#if !defined(UCONFIG_NO_FORMATTING)
   simple_format_[UNIT_SEC] = InitFormat(sec_pluralities);
   simple_format_[UNIT_MIN] = InitFormat(min_pluralities);
   simple_format_[UNIT_HOUR] = InitFormat(hour_pluralities);
   simple_format_[UNIT_DAY] = InitFormat(day_pluralities);
   simple_format_[UNIT_MONTH] = InitFormat(month_pluralities);
   simple_format_[UNIT_YEAR] = InitFormat(year_pluralities);
+#else
+  NOTIMPLEMENTED();
+#endif // !defined(UCONFIG_NO_FORMATTING)
 }
 
 Formatter::Formatter(const Pluralities& sec_pluralities,
@@ -214,6 +220,7 @@ Formatter::Formatter(const Pluralities& sec_pluralities,
                      const Pluralities& hour_min_pluralities2,
                      const Pluralities& day_hour_pluralities1,
                      const Pluralities& day_hour_pluralities2) {
+#if !defined(UCONFIG_NO_FORMATTING)
   simple_format_[UNIT_SEC] = InitFormat(sec_pluralities);
   simple_format_[UNIT_MIN] = InitFormat(min_pluralities);
   simple_format_[UNIT_HOUR] = InitFormat(hour_pluralities);
@@ -226,17 +233,24 @@ Formatter::Formatter(const Pluralities& sec_pluralities,
   detailed_format_[TWO_UNITS_HOUR_MIN][1] = InitFormat(hour_min_pluralities2);
   detailed_format_[TWO_UNITS_DAY_HOUR][0] = InitFormat(day_hour_pluralities1);
   detailed_format_[TWO_UNITS_DAY_HOUR][1] = InitFormat(day_hour_pluralities2);
+#else
+  NOTIMPLEMENTED();
+#endif // !defined(UCONFIG_NO_FORMATTING)
 }
 
 void Formatter::Format(Unit unit,
                        int value,
                        icu::UnicodeString* formatted_string) const {
+#if !defined(UCONFIG_NO_FORMATTING)
   DCHECK(simple_format_[unit]);
   DCHECK(formatted_string->isEmpty() == TRUE);
   UErrorCode error = U_ZERO_ERROR;
   FormatNumberInPlural(*simple_format_[unit],
                         value, formatted_string, &error);
   DCHECK(U_SUCCESS(error)) << "Error in icu::PluralFormat::format().";
+#else
+  NOTIMPLEMENTED();
+#endif // !defined(UCONFIG_NO_FORMATTING)
   return;
 }
 
@@ -244,6 +258,7 @@ void Formatter::Format(TwoUnits units,
                        int value_1,
                        int value_2,
                        icu::UnicodeString* formatted_string) const {
+#if !defined(UCONFIG_NO_FORMATTING)
   DCHECK(detailed_format_[units][0])
       << "Detailed() not implemented for your (format, length) combination!";
   DCHECK(detailed_format_[units][1])
@@ -256,9 +271,13 @@ void Formatter::Format(TwoUnits units,
   FormatNumberInPlural(*detailed_format_[units][1], value_2,
                         formatted_string, &error);
   DCHECK(U_SUCCESS(error));
+#else
+  NOTIMPLEMENTED();
+#endif // !defined(UCONFIG_NO_FORMATTING)
   return;
 }
 
+#if !defined(UCONFIG_NO_FORMATTING)
 std::unique_ptr<icu::MessageFormat> Formatter::CreateFallbackFormat(
     const icu::PluralRules& rules,
     const Pluralities& pluralities) const {
@@ -290,6 +309,7 @@ std::unique_ptr<icu::MessageFormat> Formatter::InitFormat(
   std::unique_ptr<icu::PluralRules> rules(BuildPluralRules());
   return CreateFallbackFormat(*rules, pluralities);
 }
+#endif // !defined(UCONFIG_NO_FORMATTING)
 
 const Formatter* FormatterContainer::Get(TimeFormat::Format format,
                                          TimeFormat::Length length) const {

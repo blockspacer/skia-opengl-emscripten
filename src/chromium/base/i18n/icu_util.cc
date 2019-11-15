@@ -35,7 +35,9 @@
 #include "unicode/numfmt.h"
 #include "unicode/strenum.h"
 #include "unicode/ubrk.h"
+#if !defined(UCONFIG_NO_FORMATTING)
 #include "unicode/ucal.h"
+#endif // !defined(UCONFIG_NO_FORMATTING)
 #include "unicode/uclean.h"
 #include "unicode/ucol.h"
 #include "unicode/ucurr.h"

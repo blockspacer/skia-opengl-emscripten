@@ -71,6 +71,7 @@ class Formatter {
               icu::UnicodeString* formatted_string) const;
 
  private:
+#if !defined(UCONFIG_NO_FORMATTING)
   // Create a hard-coded fallback message format for plural formatting.
   // This will never be called unless translators make a mistake.
   std::unique_ptr<icu::MessageFormat> CreateFallbackFormat(
@@ -82,6 +83,7 @@ class Formatter {
 
   std::unique_ptr<icu::MessageFormat> simple_format_[UNIT_COUNT];
   std::unique_ptr<icu::MessageFormat> detailed_format_[TWO_UNITS_COUNT][2];
+#endif // !defined(UCONFIG_NO_FORMATTING)
 
   DISALLOW_IMPLICIT_CONSTRUCTORS(Formatter);
 };
