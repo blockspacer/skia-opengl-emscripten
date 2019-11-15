@@ -825,8 +825,21 @@ set(COMMON_CXX_FLAGS "${COMMON_CXX_FLAGS} -std=c++17") # use target options
 # TODO
 set(COMMON_CXX_FLAGS "${COMMON_CXX_FLAGS} -DCODEC_IMPLEMENTATION=1")
 
+if(TARGET_EMSCRIPTEN)
+  set(ENABLE_EMBIND TRUE)
+  set(COMMON_FLAGS "${COMMON_FLAGS} -DENABLE_EMBIND=1")
+endif(TARGET_EMSCRIPTEN)
+
 if(RELEASE_BUILD)
-  set(COMMON_FLAGS "${COMMON_FLAGS} -fno-rtti")
+  if(ENABLE_EMBIND)
+    # see https://github.com/emscripten-core/emscripten/issues/7001
+    # see https://github.com/emscripten-core/emscripten/issues/9122
+    # set(COMMON_FLAGS "${COMMON_FLAGS} -frtti")
+    set(COMMON_FLAGS "${COMMON_FLAGS} -DEMSCRIPTEN_HAS_UNBOUND_TYPE_NAMES=0")
+    set(COMMON_FLAGS "${COMMON_FLAGS} -fno-rtti")
+  else()
+    set(COMMON_FLAGS "${COMMON_FLAGS} -fno-rtti")
+  endif(ENABLE_EMBIND)
   set(COMMON_FLAGS "${COMMON_FLAGS} -fno-exceptions")
   set(COMMON_FLAGS "${COMMON_FLAGS} -DNDEBUG=1")
 else()
@@ -1313,9 +1326,9 @@ if(TARGET_EMSCRIPTEN)
 set(HAS_EMTERPRETIFY FALSE)
 set(HAS_ASYNCIFY FALSE)
 
-if(ENABLE_NATIVE_HTML)
+if(ENABLE_EMBIND)
   set(EMCC_COMMON "${EMCC_COMMON} --bind")
-endif(ENABLE_NATIVE_HTML)
+endif(ENABLE_EMBIND)
 
 if (ENABLE_WEB_PTHREADS)
   #custom defines
