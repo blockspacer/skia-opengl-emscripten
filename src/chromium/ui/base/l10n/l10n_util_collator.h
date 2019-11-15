@@ -19,6 +19,7 @@
 
 namespace l10n_util {
 
+#if !defined(UCONFIG_NO_COLLATION)
 // Used by SortStringsUsingMethod. Invokes a method on the objects passed to
 // operator (), comparing the string results using a collator.
 template <class T, class Method>
@@ -40,6 +41,9 @@ class StringMethodComparatorWithCollator {
   icu::Collator* collator_;
   Method method_;
 };
+#else
+//NOTIMPLEMENTED();
+#endif // !defined(UCONFIG_NO_COLLATION)
 
 // Used by SortStringsUsingMethod. Invokes a method on the objects passed to
 // operator (), comparing the string results using <.
@@ -58,6 +62,7 @@ class StringMethodComparator {
   Method method_;
 };
 
+#if !defined(UCONFIG_NO_COLLATION)
 // Sorts the objects in |elements| using the method |method|, which must return
 // a string. Sorting is done using a collator, unless a collator can not be
 // found in which case the strings are sorted using the operator <.
@@ -152,6 +157,9 @@ void SortVectorWithStringKey(const std::string& locale,
   SortVectorWithStringKey<Element>(locale, elements, 0, elements->size(),
                                    needs_stable_sort);
 }
+#else
+//NOTIMPLEMENTED();
+#endif // !defined(UCONFIG_NO_COLLATION)
 
 }  // namespace l10n_util
 

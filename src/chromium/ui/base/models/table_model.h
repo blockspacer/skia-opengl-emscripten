@@ -60,8 +60,12 @@ class UI_BASE_EXPORT TableModel {
  protected:
   virtual ~TableModel() {}
 
+#if !defined(UCONFIG_NO_COLLATION)
   // Returns the collator used by CompareValues.
   icu::Collator* GetCollator();
+#else
+    // NOTIMPLEMENTED();
+#endif // !defined(UCONFIG_NO_COLLATION)
 };
 
 // TableColumn specifies the title, alignment and size of a particular column.

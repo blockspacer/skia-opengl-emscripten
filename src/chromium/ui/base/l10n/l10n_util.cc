@@ -890,10 +890,14 @@ base::string16 GetSingleOrMultipleStringUTF16(int message_id,
       GetStringUTF16(message_id), is_multiple ? "multiple" : "single");
 }
 
+#if !defined(UCONFIG_NO_COLLATION)
 void SortStrings16(const std::string& locale,
                    std::vector<base::string16>* strings) {
   SortVectorWithStringKey(locale, strings, false);
 }
+#else
+//NOTIMPLEMENTED();
+#endif // !defined(UCONFIG_NO_COLLATION)
 
 const std::vector<std::string>& GetAvailableLocales() {
   return g_available_locales.Get();

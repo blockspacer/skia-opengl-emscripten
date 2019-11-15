@@ -39,8 +39,12 @@ TableColumn::TableColumn(const TableColumn& other) = default;
 
 // TableModel -----------------------------------------------------------------
 
+#if !defined(UCONFIG_NO_COLLATION)
 // Used for sorting.
 static icu::Collator* collator = NULL;
+#else
+//NOTIMPLEMENTED();
+#endif // !defined(UCONFIG_NO_COLLATION)
 
 gfx::ImageSkia TableModel::GetIcon(int row) {
   return gfx::ImageSkia();
@@ -55,20 +59,30 @@ int TableModel::CompareValues(int row1, int row2, int column_id) {
          row2 >= 0 && row2 < RowCount());
   base::string16 value1 = GetText(row1, column_id);
   base::string16 value2 = GetText(row2, column_id);
+
+#if !defined(UCONFIG_NO_COLLATION)
   icu::Collator* collator = GetCollator();
 
   if (collator)
     return base::i18n::CompareString16WithCollator(*collator, value1, value2);
+#else
+    NOTIMPLEMENTED();
+#endif // !defined(UCONFIG_NO_COLLATION)
 
   NOTREACHED();
   return 0;
 }
 
 void TableModel::ClearCollator() {
+#if !defined(UCONFIG_NO_COLLATION)
   delete collator;
   collator = NULL;
+#else
+    NOTIMPLEMENTED();
+#endif // !defined(UCONFIG_NO_COLLATION)
 }
 
+#if !defined(UCONFIG_NO_COLLATION)
 icu::Collator* TableModel::GetCollator() {
   if (!collator) {
     UErrorCode create_status = U_ZERO_ERROR;
@@ -80,5 +94,8 @@ icu::Collator* TableModel::GetCollator() {
   }
   return collator;
 }
+#else
+//NOTIMPLEMENTED();
+#endif // !defined(UCONFIG_NO_COLLATION)
 
 }  // namespace ui
