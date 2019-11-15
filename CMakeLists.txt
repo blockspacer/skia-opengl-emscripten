@@ -405,7 +405,11 @@ set(EMSCRIPTEN_USE_SAFE_HEAP TRUE CACHE BOOL "EMSCRIPTEN_USE_SAFE_HEAP") # only 
 set(EMSCRIPTEN_USE_PROFILING FALSE CACHE BOOL "EMSCRIPTEN_USE_PROFILING")
 
 # NOTE: see https://github.com/emscripten-core/emscripten/issues/8755
-set(EMSCRIPTEN_ASSERTION_LEVEL "1" CACHE STRING "EMSCRIPTEN_ASSERTION_LEVEL")
+set(EMSCRIPTEN_ASSERTION_LEVEL "" CACHE STRING "EMSCRIPTEN_ASSERTION_LEVEL")
+
+# may be clamp, js, etc.
+# see https://emscripten.org/docs/compiling/WebAssembly.html#fastcomp-asm2wasm
+set(BINARYEN_TRAP_MODE "" CACHE STRING "BINARYEN_TRAP_MODE")
 
 set(EMSCRIPTEN_EMIT_SYMBOL_MAP TRUE CACHE BOOL "EMSCRIPTEN_EMIT_SYMBOL_MAP") # only for debug builds
 
@@ -1196,6 +1200,12 @@ if(TARGET_EMSCRIPTEN)
   # "#window" deprecated, use EMSCRIPTEN_EVENT_TARGET_WINDOW in new versions
   set(USE_DEPRECATED_FIND_EVENT_TARGET TRUE)
 
+  # see https://github.com/emscripten-core/emscripten/issues/9315
+  # https://github.com/emscripten-core/emscripten/commit/6803b566b0e9d7ca68e39bec7a22bb5d61b9c2c2
+  if(NOT BINARYEN_TRAP_MODE MATCHES "")
+    set(EMCC_COMMON "${EMCC_COMMON} -s BINARYEN_TRAP_MODE='${BINARYEN_TRAP_MODE}'")
+  endif(NOT BINARYEN_TRAP_MODE MATCHES "")
+
   # https://github.com/emscripten-core/emscripten/pull/7977
   # https://github.com/emscripten-ports/SDL2/pull/75
   # (new since 1.38.27) — leads to minor code size savings
@@ -1824,19 +1834,29 @@ endif(NOT RELEASE_BUILD)
   # also enables STACK_OVERFLOW_CHECK
   # see https://emscripten.org/docs/porting/Debugging.html
   # see https://github.com/emscripten-core/emscripten/blob/master/src/settings.js#L41
-  if(NOT RELEASE_BUILD)
-    if(EMSCRIPTEN_ASSERTION_LEVEL MATCHES "1")
+
+  if(EMSCRIPTEN_ASSERTION_LEVEL MATCHES "")
+    if(NOT RELEASE_BUILD)
+      message(WARNING "You need to set not empty EMSCRIPTEN_ASSERTION_LEVEL for debug build.")
       set(EMCC_COMMON "${EMCC_COMMON} -s ASSERTIONS=1")
-    elseif(EMSCRIPTEN_ASSERTION_LEVEL MATCHES "2")
-      # ASSERTIONS == 2 gives even more runtime checks
-      set(EMCC_COMMON "${EMCC_COMMON} -s ASSERTIONS=2")
-    else()
-      message(FATAL_ERROR
-        "You need to set EMSCRIPTEN_ASSERTION_LEVEL for debug build.
-        Current EMSCRIPTEN_ASSERTION_LEVEL=${EMSCRIPTEN_ASSERTION_LEVEL}"
-      )
-    endif()
-  endif(NOT RELEASE_BUILD)
+    endif(NOT RELEASE_BUILD)
+  elseif(EMSCRIPTEN_ASSERTION_LEVEL MATCHES "1")
+    set(EMCC_COMMON "${EMCC_COMMON} -s ASSERTIONS=1")
+    if(RELEASE_BUILD)
+      message(WARNING "You need to set empty EMSCRIPTEN_ASSERTION_LEVEL for release build.")
+    endif(RELEASE_BUILD)
+  elseif(EMSCRIPTEN_ASSERTION_LEVEL MATCHES "2")
+    # ASSERTIONS == 2 gives even more runtime checks
+    set(EMCC_COMMON "${EMCC_COMMON} -s ASSERTIONS=2")
+    if(RELEASE_BUILD)
+      message(WARNING "You need to set empty EMSCRIPTEN_ASSERTION_LEVEL for release build.")
+    endif(RELEASE_BUILD)
+  else()
+    message(FATAL_ERROR
+      "You need to set known EMSCRIPTEN_ASSERTION_LEVEL.
+      Current EMSCRIPTEN_ASSERTION_LEVEL=${EMSCRIPTEN_ASSERTION_LEVEL}"
+    )
+  endif()
 
   # see https://github.com/emscripten-core/emscripten/blob/master/src/settings.js#L443
   #set(EMCC_COMMON "${EMCC_COMMON} -s LZ4=1")

@@ -1906,6 +1906,13 @@ std::unique_ptr<SbInputData> setMouseSbEventData(std::unique_ptr<SbInputData> da
   data->key_modifiers = key_modifiers;
   data->position.x = static_cast<float>(screenMouseX);
   data->position.y = static_cast<float>(screenMouseY);
+  data->tilt.x = 0.0f;
+  data->tilt.y = 0.0f;
+  data->delta.x = 1.0f;
+  data->delta.y = 1.0f;
+  data->size.x = 1.0f;
+  data->size.y = 1.0f;
+  data->pressure = 1.0f;
   data->key = key;
   return std::move(data);
 }
@@ -1922,6 +1929,13 @@ std::unique_ptr<SbInputData> setWheelSbEventData(std::unique_ptr<SbInputData> da
   data->position.y = static_cast<float>(screenMouseY);
   data->delta.x = static_cast<float>(wheelX);
   data->delta.y = static_cast<float>(wheelY);
+  data->tilt.x = 0.0f;
+  data->tilt.y = 0.0f;
+  data->delta.x = 1.0f;
+  data->delta.y = 1.0f;
+  data->size.x = 1.0f;
+  data->size.y = 1.0f;
+  data->pressure = 1.0f;
   // data->delta.z = wheelZ; // TODO
   //data->key = key;
   data->key = kSbKeyUnknown;
@@ -2043,6 +2057,13 @@ std::unique_ptr<SbEvent> createSbKeyboardEvent(
   data->is_printable = is_printable;
   data->type = sbInputEventType;
   data->device_type = device_type;
+  data->tilt.x = 0.0f;
+  data->tilt.y = 0.0f;
+  data->delta.x = 1.0f;
+  data->delta.y = 1.0f;
+  data->size.x = 1.0f;
+  data->size.y = 1.0f;
+  data->pressure = 1.0f;
   data->key = key;
   printf("createSbKeyboardEvent data->key %d\n", data->key);
   data->key_location = key_location;
@@ -2337,14 +2358,17 @@ void UpdateMouseEventInitButtons(const cobalt::system_window::InputEvent* input_
 
 void UpdateMouseEventInit(const cobalt::system_window::InputEvent* input_event,
                           cobalt::dom::MouseEventInit* mouse_event) {
+  //printf("UpdateMouseEventInit 1\n");
   UpdateEventModifierInit(input_event, mouse_event);
   UpdateMouseEventInitButtons(input_event, mouse_event);
+  //printf("UpdateMouseEventInit 2\n");
 
   const cobalt::math::PointF& position = input_event->position();
   mouse_event->set_screen_x(static_cast<float>(position.x()));
   mouse_event->set_screen_y(static_cast<float>(position.y()));
   mouse_event->set_client_x(static_cast<float>(position.x()));
   mouse_event->set_client_y(static_cast<float>(position.y()));
+  //printf("UpdateMouseEventInit 3\n");
 }
 
 // Returns the value or the default_value when value is NaN.
@@ -2387,9 +2411,11 @@ cobalt::dom::KeyboardEventInit KeyboardInitFromInputEvent(
 
 cobalt::dom::PointerEventInit PointerEventInitFromInputEvent(
     base::Token type, const cobalt::system_window::InputEvent* input_event) {
+  //printf("PointerEventInitFromInputEvent 1\n");
   cobalt::dom::PointerEventInit pointer_event;
   UpdateEventInit(input_event, &pointer_event);
   UpdateMouseEventInit(input_event, &pointer_event);
+  //printf("PointerEventInitFromInputEvent 2\n");
 
   switch (input_event->type()) {
     case cobalt::system_window::InputEvent::kTouchpadDown:
@@ -2413,18 +2439,25 @@ cobalt::dom::PointerEventInit PointerEventInitFromInputEvent(
       pointer_event.set_pointer_type("mouse");
       break;
   }
+  //printf("PointerEventInitFromInputEvent 3\n");
   pointer_event.set_pointer_id(input_event->device_id());
 #if SB_API_VERSION >= 6
   pointer_event.set_width(native_event::value_or(input_event->size().x(), 0.0f));
+  //printf("PointerEventInitFromInputEvent 3.1\n");
   pointer_event.set_height(native_event::value_or(input_event->size().y(), 0.0f));
+  //printf("PointerEventInitFromInputEvent 3.2\n");
   pointer_event.set_pressure(native_event::value_or(input_event->pressure(),
                                       input_event->modifiers() ? 0.5f : 0.0f));
+  //printf("PointerEventInitFromInputEvent 3.3\n");
   pointer_event.set_tilt_x(
       native_event::value_or(static_cast<float>(input_event->tilt().x()), 0.0f));
+  //printf("PointerEventInitFromInputEvent 3.4\n");
   pointer_event.set_tilt_y(
       native_event::value_or(static_cast<float>(input_event->tilt().y()), 0.0f));
+  //printf("PointerEventInitFromInputEvent 3.5\n");
 #endif  // SB_API_VERSION >= 6
   pointer_event.set_is_primary(true);
+  //printf("PointerEventInitFromInputEvent 4\n");
   return std::move(pointer_event);
 }
 
@@ -2462,9 +2495,11 @@ cobalt::dom::Event* InputEventToDomEvent(const std::string& dom_event_type,
   cobalt::system_window::InputEvent* input_event,
   scoped_refptr<Window> window)
 {
+  //printf("InputEventToDomEvent 1\n");
   SB_DCHECK(input_event);
   int key_code = input_event->key_code();
 
+  //printf("InputEventToDomEvent 2\n");
   cobalt::dom::Event* dom_event = nullptr;
 
   switch (input_event->type()) {
@@ -2580,6 +2615,7 @@ cobalt::dom::Event* InputEventToDomEvent(const std::string& dom_event_type,
       break;
     }
   }
+  //printf("InputEventToDomEvent 3\n");
 
   return dom_event;
 }
