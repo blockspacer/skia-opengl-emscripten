@@ -26,7 +26,7 @@ endif(ENABLE_GNET)
 if(ENABLE_GNET)
   add_mojo_prefixes_3(${CUR_OUT_DIR}background_sync/background_sync "COLLECTED_MOJO_SOURCES")
   add_mojo_prefixes_3(${CUR_OUT_DIR}cache_storage/cache_storage "COLLECTED_MOJO_SOURCES")
-  add_mojo_prefixes_3(${CUR_OUT_DIR}choosers/color_chooser "COLLECTED_MOJO_SOURCES")
+  ## TODO ## add_mojo_prefixes_3(${CUR_OUT_DIR}choosers/color_chooser "COLLECTED_MOJO_SOURCES")
   add_mojo_prefixes_3(${CUR_OUT_DIR}choosers/file_chooser "COLLECTED_MOJO_SOURCES")
 endif(ENABLE_GNET)
 ## TODO ## requires skia/public/interfaces/bitmap_skbitmap_struct_traits.h
@@ -53,8 +53,10 @@ if(ENABLE_GNET)
   add_mojo_prefixes_3(${CUR_OUT_DIR}fetch/fetch_api_request "COLLECTED_MOJO_SOURCES")
   add_mojo_prefixes_3(${CUR_OUT_DIR}fetch/fetch_api_response "COLLECTED_MOJO_SOURCES")
 endif(ENABLE_GNET)
-add_mojo_prefixes_3(${CUR_OUT_DIR}file/file_utilities "COLLECTED_MOJO_SOURCES")
+## TODO ## add_mojo_prefixes_3(${CUR_OUT_DIR}file/file_utilities "COLLECTED_MOJO_SOURCES")
+
 ## TODO ## add_mojo_prefixes_3(${CUR_OUT_DIR}filesystem/file_system "COLLECTED_MOJO_SOURCES")
+
 # requires components/password_manager/core/common/credential_manager_types.h
 #add_mojo_prefixes_3(${CUR_OUT_DIR}frame/document_interface_broker "COLLECTED_MOJO_SOURCES")
 if(ENABLE_GNET)

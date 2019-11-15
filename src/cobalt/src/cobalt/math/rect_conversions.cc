@@ -5,6 +5,9 @@
 #include "cobalt/math/rect_conversions.h"
 
 #include <algorithm>
+
+// MSVC++ requires this to be set before any other includes to get M_PI.
+#define _USE_MATH_DEFINES
 #include <cmath>
 
 #include "base/logging.h"

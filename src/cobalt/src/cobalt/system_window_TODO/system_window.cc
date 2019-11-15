@@ -15,7 +15,11 @@
 #include "cobalt/system_window/system_window.h"
 
 #include <algorithm>
+
+// MSVC++ requires this to be set before any other includes to get M_PI.
+#define _USE_MATH_DEFINES
 #include <cmath>
+
 #include <memory>
 
 #include "base/logging.h"

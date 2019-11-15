@@ -1,6 +1,22 @@
-﻿### --- GFX_ANIMATION ---###
+﻿# see https://github.com/chromium/chromium/blob/06c9513ba20f85908b376865d0777633a29740ea/ui/gfx/animation/BUILD.gn
 
-set(GFX_ANIMATION_SOURCES
+if(TARGET_WINDOWS)
+  # skip
+elseif(TARGET_LINUX OR TARGET_EMSCRIPTEN)
+  # skip
+else()
+  message(FATAL_ERROR "platform not supported")
+endif()
+
+### --- GFX_ANIMATION ---###
+
+if(TARGET_WINDOWS)
+  list(APPEND GFX_ANIMATION_SOURCES
+    ${GFX_ANIMATION_DIR}animation_win.cc
+  )
+endif(TARGET_WINDOWS)
+
+list(APPEND GFX_ANIMATION_SOURCES
   ${GFX_ANIMATION_DIR}animation.cc
   #${GFX_ANIMATION_DIR}animation.h",
   # TODO # ${GFX_ANIMATION_DIR}animation_android.cc
@@ -13,7 +29,6 @@ set(GFX_ANIMATION_SOURCES
   #${GFX_ANIMATION_DIR}animation_mac.mm",
   ${GFX_ANIMATION_DIR}animation_runner.cc
   #${GFX_ANIMATION_DIR}animation_runner.h",
-  # TODO # ${GFX_ANIMATION_DIR}animation_win.cc
   ${GFX_ANIMATION_DIR}linear_animation.cc
   #${GFX_ANIMATION_DIR}linear_animation.h",
   ${GFX_ANIMATION_DIR}multi_animation.cc

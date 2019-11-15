@@ -21,7 +21,7 @@ set(GZLIB_EXT_SOURCES
 )
 
 # if (current_cpu == "x86" || current_cpu == "x64")
-if(TARGET_LINUX)
+if(TARGET_LINUX) # TODO
   #list(APPEND zlib_SOURCES
   #  ${GZLIB_EXT_DIR}intel/filter_sse2_intrinsics.c
   #  ${GZLIB_EXT_DIR}intel/intel_init.c
@@ -54,7 +54,7 @@ target_include_directories(GZLIB_EXT PRIVATE
 
 #"//third_party/zlib",
 
-target_compile_definitions(GZLIB_EXT PRIVATE
+#target_compile_definitions(GZLIB_EXT PRIVATE
   #ZLIB_IMPLEMENTATION=1
   #"ADLER32_SIMD_SSSE3",
   #"ADLER32_SIMD_NEON",
@@ -69,4 +69,4 @@ target_compile_definitions(GZLIB_EXT PRIVATE
   #INFLATE_CHUNK_SIMD_NEON
   #CRC32_SIMD_SSE42_PCLMUL
   #USE_FILE32API=1 # if (is_mac || is_ios || is_android || is_nacl)
-)
+#)

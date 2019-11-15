@@ -208,6 +208,13 @@ Create GUI framework that is
 - WASM without SKIA renderer (HTML5 native tags): ~3.0MiB
 - low memory usage
 
+## Can`t clone with git?
+
+```bash
+# see https://stackoverflow.com/a/21423542
+git config --global url."https://".insteadOf git://
+```
+
 ## Clone with --recursive
 
 ```bash

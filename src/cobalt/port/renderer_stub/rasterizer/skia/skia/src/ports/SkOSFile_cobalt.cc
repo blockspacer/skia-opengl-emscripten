@@ -20,6 +20,13 @@
 #include "starboard/file.h"
 #include "base/files/platform_file.h"
 
+#include "base/base_paths.h"
+#include "base/environment.h"
+#include "base/files/file_path.h"
+#include "base/path_service.h"
+#include "base/strings/string_util.h"
+#include "base/strings/utf_string_conversions.h"
+
 // Implement functionality declared in SkOSFile.h via primitives provided
 // by Chromium.  In doing this, we need only ensure that support for Chromium
 // file utilities is working and then Skia file utilities will also work.
@@ -163,13 +170,15 @@ int sk_fileno(FILE* sk_file_a) {
 bool sk_exists(const char* path, SkFILE_Flags) {
   printf("SkOSFile_cobalt.cc: sk_exists\n");
 
-  return base::PathExists(base::FilePath(path));
+  // TODO: base::MakeAbsoluteFilePath
+  return base::PathExists(base::FilePath(base::FilePath::StringType{path}));
 }
 
 bool sk_isdir(const char* path) {
   printf("SkOSFile_cobalt.cc: sk_isdir\n");
 
-  return base::DirectoryExists(base::FilePath(path));
+  // TODO: base::MakeAbsoluteFilePath
+  return base::DirectoryExists(base::FilePath(base::FilePath::StringType{path}));
 }
 
 bool sk_mkdir(const char* path) {

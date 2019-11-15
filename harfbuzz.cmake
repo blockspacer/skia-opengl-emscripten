@@ -1,5 +1,14 @@
 ﻿### --- harfbuzz ---###
 
+if(TARGET_EMSCRIPTEN)
+  # skip
+elseif(TARGET_LINUX OR TARGET_WINDOWS)
+  # skip
+else()
+  # NOTE: harfbuzz from skia on WINDOWS
+  message(FATAL_ERROR "platform not supported")
+endif()
+
 # see https://github.com/google/skia/blob/81abc43e6f0b1a789e1bf116820c8ede68d778ab/third_party/harfbuzz/BUILD.gn
 set(harfbuzz_SOURCES
  ${harfbuzz_FULL_DIR}src/hb-aat-fdsc-table.hh

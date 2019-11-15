@@ -1,4 +1,6 @@
-﻿cmake_minimum_required(VERSION 3.5)
+﻿# see BLINK_COMMON.cmake
+
+cmake_minimum_required(VERSION 3.5)
 
 add_library(BLINK_PUBLIC_COMMON INTERFACE)
 

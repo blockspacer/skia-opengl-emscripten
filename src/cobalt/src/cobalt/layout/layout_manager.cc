@@ -15,7 +15,11 @@
 #include "cobalt/layout/layout_manager.h"
 
 #include <algorithm>
+
+// MSVC++ requires this to be set before any other includes to get M_PI.
+#define _USE_MATH_DEFINES
 #include <cmath>
+
 #include <memory>
 #include <string>
 
@@ -358,10 +362,6 @@ bool LayoutManager::Impl::IsRenderTreePending() const {
 
 #if defined(ENABLE_TEST_RUNNER)
 void LayoutManager::Impl::DoTestRunnerLayoutCallback() {
-//#if defined(ENABLE_NATIVE_HTML)
-//    return;
-//#endif // ENABLE_NATIVE_HTML
-
   DCHECK_EQ(kTestRunnerMode, layout_trigger_);
   DirtyLayout();
 
@@ -380,11 +380,6 @@ void LayoutManager::Impl::DoTestRunnerLayoutCallback() {
 #endif  // ENABLE_TEST_RUNNER
 
 void LayoutManager::Impl::DirtyLayout(const bool changeComputedStyles, const bool changePendingRenderTree) {
-#if defined(ENABLE_NATIVE_HTML)
-    are_computed_styles_and_box_tree_dirty_ = false;
-    is_render_tree_pending_ = false;
-#endif // ENABLE_NATIVE_HTML
-
   if (changeComputedStyles) {
     are_computed_styles_and_box_tree_dirty_ = true;
   }
@@ -395,12 +390,7 @@ void LayoutManager::Impl::DirtyLayout(const bool changeComputedStyles, const boo
 }
 
 void LayoutManager::Impl::setLayoutPending(const bool isPending) {
-#if defined(ENABLE_NATIVE_HTML)
-    are_computed_styles_and_box_tree_dirty_ = false;
-    is_render_tree_pending_ = false;
-#else
   is_render_tree_pending_ = isPending;
-#endif // ENABLE_NATIVE_HTML
 }
 
 #if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
@@ -536,9 +526,7 @@ void LayoutManager::Impl::DoLayoutAndProduceRenderTree(const bool forceReLayout)
   DCHECK(on_layout_callback_);
   DCHECK(!on_layout_callback_.is_null());
 
-//#if !defined(ENABLE_NATIVE_HTML)
   on_layout_callback_.Run();
-//#endif // ENABLE_NATIVE_HTML
 }
 
 LayoutManager::LayoutManager(

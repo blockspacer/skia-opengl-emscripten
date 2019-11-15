@@ -92,11 +92,24 @@
 
 #include "base/memory/ptr_util.h"
 
+#include "extended_html/component/block_level_component.h"
+#include "extended_html/component/inline_level_component.h"
+#include "extended_html/component/component.h"
+#include "extended_html/component/component_node.h"
+#include "extended_html/component/component_generator.h"
+
 #if defined(ENABLE_BLINK_UI)
 #include "ui/events/event.h"
 #include "ui/events/keycodes/dom/keycode_converter.h"
 #include "ui/events/keycodes/keyboard_code_conversion.h"
+#include "ui/views/view.h"
+#include "ui/views/widget/widget.h"
+#include "ui/events/keycodes/keyboard_code_conversion.h"
 #endif // ENABLE_BLINK_UI
+
+#if defined(ENABLE_BLINK_PLATFORM)
+//#include "third_party/blink/renderer/platform/keyboard_codes.h"
+#endif // ENABLE_BLINK_PLATFORM
 
 using namespace cobalt;
 using namespace cobalt::cssom;

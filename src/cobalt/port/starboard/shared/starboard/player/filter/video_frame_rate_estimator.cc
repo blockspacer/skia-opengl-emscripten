@@ -14,6 +14,8 @@
 
 #include "starboard/shared/starboard/player/filter/video_frame_rate_estimator.h"
 
+// MSVC++ requires this to be set before any other includes to get M_PI.
+#define _USE_MATH_DEFINES
 #include <cmath>
 
 #include "starboard/common/log.h"

@@ -67,9 +67,6 @@ set(COMPONENTS_CONTENT_SETTINGS_CORE_COMMON_DIR ${COMPONENTS_CONTENT_SETTINGS_CO
 set(libsync_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/third_party/)
 set(libsync_DIR ${libsync_PARENT_DIR}libsync/)
 
-set(khronos_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/third_party/)
-set(khronos_DIR ${khronos_PARENT_DIR}khronos/)
-
 set(GFX_GEOMETRY_PARENT_DIR ${UI_DIR}/gfx/)
 set(GFX_GEOMETRY_DIR ${GFX_GEOMETRY_PARENT_DIR}geometry/)
 
@@ -205,7 +202,7 @@ if(TARGET_EMSCRIPTEN)
     # POSIX_AVOID_MMAP #BUILDFLAG
     #USE_EXPERIMENTAL_ALLOCATOR_SHIM=0
   )
-else()
+elseif(TARGET_LINUX OR TARGET_WINDOWS)
   list(APPEND WTF_COMMON_DEFINITIONS
     # see in src/chromium/build/build_config.h
     # USE_TCMALLOC=1
@@ -214,7 +211,9 @@ else()
   )
 
   set(WTF_EMCC_DEFINITIONS "")
-endif ()
+else()
+  message(FATAL_ERROR "platform not supported")
+endif()
 
 if (TARGET_EMSCRIPTEN)
   # libxml
@@ -229,34 +228,52 @@ elseif(TARGET_LINUX)
   endif(ENABLE_KHRONOS)
   # libsync
   set(libsync_LIB
-    libsync
+    libsync # is_linux || is_android
   )
   include(libsync.cmake)
   # zlib
   include(GZLIB.cmake)
   # zlib
   include(GZLIB_EXT.cmake)
-else()
-  message(FATAL_ERROR "platform not supported")
-endif()
 
-if(ENABLE_HARFBUZZ AND TARGET_LINUX)
-  # fontconfig
-  include(fontconfig.cmake)
-endif(ENABLE_HARFBUZZ AND TARGET_LINUX)
+  if(ENABLE_HARFBUZZ AND NOT HARFBUZZ_FROM_SKIA)
+    # fontconfig
+    include(fontconfig.cmake)
+  endif(ENABLE_HARFBUZZ AND NOT HARFBUZZ_FROM_SKIA)
 
-if(ENABLE_BORINGSSL)
-  # BORINGSSL
-  include(BORINGSSL.cmake)
-endif(ENABLE_BORINGSSL)
-
-if (NOT EMSCRIPTEN)
   # libevent
   include(libevent.cmake)
 
   # tcmalloc
   include(tcmalloc.cmake)
-endif (NOT EMSCRIPTEN)
+elseif(TARGET_WINDOWS)
+  # khronos
+  if(ENABLE_KHRONOS)
+    # khronos
+    include(khronos.cmake)
+  endif(ENABLE_KHRONOS)
+  # libsync
+  #set(libsync_LIB
+  #  libsync # is_linux || is_android
+  #)
+  #include(libsync.cmake)
+  # zlib
+  include(GZLIB.cmake)
+  # zlib
+  include(GZLIB_EXT.cmake)
+
+  if(ENABLE_HARFBUZZ AND NOT HARFBUZZ_FROM_SKIA)
+    # fontconfig
+    include(fontconfig.cmake)
+  endif(ENABLE_HARFBUZZ AND NOT HARFBUZZ_FROM_SKIA)
+else()
+  message(FATAL_ERROR "platform not supported")
+endif()
+
+if(ENABLE_BORINGSSL)
+  # BORINGSSL
+  include(BORINGSSL.cmake)
+endif(ENABLE_BORINGSSL)
 
 # dynamic_annotations
 include(dynamic_annotations.cmake)

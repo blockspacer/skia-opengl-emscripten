@@ -38,6 +38,13 @@
 #include "cobalt/network/network_module.h"
 #endif
 
+#include "base/base_paths.h"
+#include "base/environment.h"
+#include "base/files/file_path.h"
+#include "base/path_service.h"
+#include "base/strings/string_util.h"
+#include "base/strings/utf_string_conversions.h"
+
 namespace cobalt {
 namespace loader {
 namespace {
@@ -54,7 +61,7 @@ bool FileURLToFilePath(const GURL& url, base::FilePath* file_path) {
   printf("FileURLToFilePath path %s\n", path.c_str());
   DCHECK_EQ('/', path[0]);
   path.erase(0, 1);
-  *file_path = base::FilePath(path);
+  *file_path = base::FilePath(base::FilePath::StringType{path});
   return !file_path->empty();
 }
 

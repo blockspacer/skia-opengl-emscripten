@@ -229,6 +229,7 @@ base::string16 Accelerator::GetShortcutText() const {
 
 base::string16 Accelerator::ApplyLongFormModifiers(
     base::string16 shortcut) const {
+#if !defined(UI_VIEWS_PORT)
   if (IsShiftDown())
     shortcut = ApplyModifierToAcceleratorString(shortcut, IDS_APP_SHIFT_KEY);
 
@@ -251,7 +252,7 @@ base::string16 Accelerator::ApplyLongFormModifiers(
     NOTREACHED();
 #endif
   }
-
+#endif // !defined(UI_VIEWS_PORT)
   return shortcut;
 }
 
@@ -312,6 +313,7 @@ base::string16 Accelerator::KeyCodeToMacSymbol(KeyboardCode key_code) const {
 
 base::string16 Accelerator::KeyCodeToName(KeyboardCode key_code) const {
   int string_id = 0;
+#if !defined(UI_VIEWS_PORT)
   switch (key_code_) {
     case VKEY_TAB:
       string_id = IDS_APP_TAB_KEY;
@@ -388,6 +390,7 @@ base::string16 Accelerator::KeyCodeToName(KeyboardCode key_code) const {
     default:
       break;
   }
+#endif // !defined(UI_VIEWS_PORT)
   return string_id ? l10n_util::GetStringUTF16(string_id) : base::string16();
 }
 

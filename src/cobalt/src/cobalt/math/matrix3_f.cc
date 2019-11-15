@@ -5,8 +5,12 @@
 #include "cobalt/math/matrix3_f.h"
 
 #include <algorithm>
+
+// MSVC++ requires this to be set before any other includes to get M_PI.
+#define _USE_MATH_DEFINES
 #include <cmath>
-#include <limits>
+
+#include <limits> 
 
 namespace cobalt {
 namespace math {

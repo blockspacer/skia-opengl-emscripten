@@ -26,6 +26,11 @@
 #     add_executable(foo foo.cc)
 #     target_link_libraries(foo ${HarfBuzz_LIBRARIES})
 
+
+if(MSVC OR TARGET_WINDOWS)
+  message(FATAL_ERROR "HarfBuzz from skia on WINDOWS")
+endif()
+
 find_path(HarfBuzz_INCLUDE_DIR harfbuzz/hb.h
   HINTS $ENV{HARFBUZZ_DIR}
   PATHS

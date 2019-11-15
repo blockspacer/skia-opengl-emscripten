@@ -16,7 +16,10 @@
 
 #include <jni.h>
 
+// MSVC++ requires this to be set before any other includes to get M_PI.
+#define _USE_MATH_DEFINES
 #include <cmath>
+
 #include <functional>
 
 #include "starboard/android/shared/application_android.h"

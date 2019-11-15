@@ -161,6 +161,9 @@ void HTMLLinkElement::Obtain() {
     return;
   }
 
+#if defined(ENABLE_NATIVE_HTML)
+  // skip: use in-browser loader (attribute `src`)
+#else
   // 4. Do a potentially CORS-enabled fetch of the resulting absolute URL, with
   // the mode being the current state of the element's crossorigin content
   // attribute, the origin being the origin of the link element's Document, and
@@ -195,6 +198,7 @@ void HTMLLinkElement::Obtain() {
       , request_mode_,
       base::Bind(&HTMLLinkElement::OnContentProduced, base::Unretained(this)),
       base::Bind(&HTMLLinkElement::OnLoadingComplete, base::Unretained(this)));
+#endif // ENABLE_NATIVE_HTML
 }
 
 void HTMLLinkElement::OnContentProduced(const loader::Origin& last_url_origin,

@@ -31,6 +31,13 @@ list(APPEND GMEDIA_SOURCES
 #  #${CUR_SRC_DIR}base/vector_math_testing.h
 )
 
+if(TARGET_LINUX)
+  list(APPEND GMEDIA_BASE_SOURCES
+    ${CUR_SRC_DIR}base/scopedfd_helper.cc # if (is_linux)
+    ${CUR_SRC_DIR}base/keyboard_event_counter.cc # if (is_linux)
+  )
+endif(TARGET_LINUX)
+
 list(APPEND GMEDIA_BASE_SOURCES
 ## TODO ##   ${CUR_SRC_DIR}base/android_overlay_config.cc
 ## TODO ## #  ${CUR_SRC_DIR}base/android_overlay_config.h
@@ -306,8 +313,6 @@ ${CUR_SRC_DIR}base/audio_codecs.cc
 #  ${CUR_SRC_DIR}base/watch_time_keys.cc
 #  ${CUR_SRC_DIR}base/watch_time_keys.h
 #  ${CUR_SRC_DIR}base/webvtt_util.h
-  ${CUR_SRC_DIR}base/scopedfd_helper.cc # if (is_linux)
-  ${CUR_SRC_DIR}base/keyboard_event_counter.cc # if (is_linux)
 )
 
 list(APPEND GMEDIA_FILTERS_SOURCES

@@ -1,5 +1,9 @@
 ﻿### --- libwebp ---###
 
+if(TARGET_EMSCRIPTEN OR EMSCRIPTEN)
+  message(FATAL_ERROR "platform not supported")
+endif()
+
 set(libwebp_DIR
   ${CHROMIUM_DIR}/third_party/libwebp/)
 
@@ -94,19 +98,27 @@ list(APPEND libwebp_SOURCES
   ## TODO ## ${libwebp_DIR}src/dsp/yuv_mips32.c
   ## TODO ## ${libwebp_DIR}src/dsp/yuv_mips_dsp_r2.c
   #
-  # static_library("libwebp_dsp_sse41")
-  #
-  # ${libwebp_DIR}src/dsp/alpha_processing_sse41.c
-  # ${libwebp_DIR}src/dsp/common_sse41.h",
-  # ${libwebp_DIR}src/dsp/dec_sse41.c
-  # ${libwebp_DIR}src/dsp/enc_sse41.c
-  # ${libwebp_DIR}src/dsp/lossless_enc_sse41.c
-  # ${libwebp_DIR}src/dsp/upsampling_sse41.c
-  # ${libwebp_DIR}src/dsp/yuv_sse41.c
-  #
 )
 
-if(TARGET_LINUX)
+if(TARGET_WINDOWS)
+  list(APPEND libwebp_SOURCES
+    # static_library("libwebp_dsp_sse41")
+    #
+    ${libwebp_DIR}src/dsp/alpha_processing_sse41.c
+    ${libwebp_DIR}src/dsp/common_sse41.h
+    ${libwebp_DIR}src/dsp/dec_sse41.c
+    ${libwebp_DIR}src/dsp/enc_sse41.c
+    ${libwebp_DIR}src/dsp/lossless_enc_sse41.c
+    ${libwebp_DIR}src/dsp/upsampling_sse41.c
+    ${libwebp_DIR}src/dsp/yuv_sse41.c
+  )
+elseif(TARGET_LINUX OR TARGET_EMSCRIPTEN)
+  # skip
+else()
+  message(FATAL_ERROR "platform not supported")
+endif()
+
+if(TARGET_LINUX OR TARGET_WINDOWS)
   list(APPEND libwebp_SOURCES
     # static_library("libwebp_dsp_sse2")
     #
@@ -123,6 +135,8 @@ if(TARGET_LINUX)
     ${libwebp_DIR}src/dsp/upsampling_sse2.c
     ${libwebp_DIR}src/dsp/yuv_sse2.c
   )
+else()
+  message(FATAL_ERROR "platform not supported")
 endif()
 
 list(APPEND libwebp_SOURCES
@@ -236,7 +250,6 @@ target_include_directories(libwebp PUBLIC
 #target_compile_options(libwebp PRIVATE
 #  -Wno-implicit-function-declaration)
 
-
 if(TARGET_LINUX)
   list(APPEND EXTRA_DEFINES
     WEBP_HAVE_SSE2=1
@@ -246,6 +259,22 @@ if(TARGET_LINUX)
     -msse2
     -msse3
   )
+elseif(TARGET_WINDOWS)
+  # TODO # OR TARGET_WINDOWS)
+  # TODO # WEBP_USE_SSE41
+  list(APPEND EXTRA_DEFINES
+    WEBP_HAVE_SSE41=1 # see WEBP_USE_SSE41=1
+  )
+  list(APPEND EXTRA_OPTIONS # !is_win || is_clang
+    -msse
+    -msse2
+    -msse3
+    -msse4.1
+    -msse4.2
+    -msha
+  )
+else()
+  message(FATAL_ERROR "platform not supported")
 endif()
 
 target_compile_definitions(libwebp PRIVATE
@@ -272,9 +301,13 @@ target_compile_definitions(libwebp PRIVATE
   #-frename-registers # use_dsp_neon
 )
 
-target_compile_options(libwebp PRIVATE
-  -Wno-incompatible-pointer-types
-)
+if(NOT MSVC OR IS_CLANG_CL)
+  target_compile_options(libwebp PRIVATE
+    -Wno-incompatible-pointer-types
+  )
+else()
+  # TODO
+endif()
 
 target_compile_options(libwebp PUBLIC
   ${EXTRA_OPTIONS}

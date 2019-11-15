@@ -15,7 +15,10 @@
 #ifndef COBALT_RENDER_TREE_BRUSH_H_
 #define COBALT_RENDER_TREE_BRUSH_H_
 
+// MSVC++ requires this to be set before any other includes to get M_PI.
+#define _USE_MATH_DEFINES
 #include <cmath>
+
 #include <memory>
 #include <utility>
 #include <vector>

@@ -14,7 +14,10 @@
 
 #include "cobalt/renderer/test/scenes/scaling_text_scene.h"
 
+// MSVC++ requires this to be set before any other includes to get M_PI.
+#define _USE_MATH_DEFINES
 #include <cmath>
+
 #include <string>
 
 #include "base/bind.h"

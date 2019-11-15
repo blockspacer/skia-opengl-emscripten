@@ -14,7 +14,10 @@
 
 #include "cobalt/input/input_device_manager_desktop.h"
 
+// MSVC++ requires this to be set before any other includes to get M_PI.
+#define _USE_MATH_DEFINES
 #include <cmath>
+
 #include <string>
 
 #include "base/time/time.h"
@@ -240,8 +243,6 @@ void UpdateMouseEventInit(const system_window::InputEvent* input_event,
   const math::PointF& position = input_event->position();
   mouse_event->set_screen_x(static_cast<float>(position.x()));
   mouse_event->set_screen_y(static_cast<float>(position.y()));
-  mouse_event->set_original_client_x(static_cast<float>(position.x()));
-  mouse_event->set_original_client_y(static_cast<float>(position.y()));
   mouse_event->set_client_x(static_cast<float>(position.x()));
   mouse_event->set_client_y(static_cast<float>(position.y()));
   ///printf("UpdateMouseEventInit 3\n");
@@ -267,15 +268,9 @@ void InputDeviceManagerDesktop::HandleKeyboardEvent(
   keyboard_event.set_repeat(input_event->is_repeat());
   keyboard_event.set_char_code(key_code);
   keyboard_event.set_key_code(key_code);
-  keyboard_event.set_keysym(input_event->keysym()); // custom
-  keyboard_event.set_is_printable(input_event->is_printable()); // custom
-  if(!input_event->text().empty()) {
-    keyboard_event.set_text(input_event->text()); // custom
-  }
-
-  wprintf(L"input_device_manager_desktop.cc keyboard_event keysym character, %s\n", keyboard_event.keysym());
-  printf("input_device_manager_desktop.cc keyboard_event key_code %u\n", keyboard_event.key_code());
-
+  keyboard_event.set_keysym(input_event->keysym());
+  keyboard_event.set_is_printable(input_event->is_printable());
+  keyboard_event.set_text(input_event->text());
   keypress_generator_filter_.HandleKeyboardEvent(type, keyboard_event);
 
   int32_t key_code_in_int32 = static_cast<int32_t>(key_code);

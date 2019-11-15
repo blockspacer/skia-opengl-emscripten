@@ -53,17 +53,28 @@ void Mutex::DCheckAcquired() const {
 
 #ifdef _DEBUG
 void Mutex::debugInit() {
+#if defined(_WIN32) || defined(_WIN64)
   current_thread_acquired_ = kSbThreadInvalid;
+#else
+  current_thread_acquired_ = kSbThreadInvalid;
+#endif
 }
 void Mutex::debugSetReleased() const {
   SbThread current_thread = SbThreadGetCurrent();
-  SB_DCHECK(current_thread_acquired_ == current_thread);
+  SB_DCHECK(current_thread_acquired_ == current_thread); // TODO
   current_thread_acquired_ = kSbThreadInvalid;
 }
 void Mutex::debugPreAcquire() const {
   // Check that the mutex is not held by the current thread.
   SbThread current_thread = SbThreadGetCurrent();
+#if defined(_WIN32) || defined(_WIN64)
+  // TODO
   SB_DCHECK(current_thread_acquired_ != current_thread);
+  //SB_DCHECK(!current_thread_acquired_->GetThreadId() != current_thread->GetThreadId());
+  //SB_DCHECK(!current_thread_acquired_->platform_thread().CurrentHandle().is_equal(current_thread->platform_thread().CurrentHandle()));
+#else
+  SB_DCHECK(current_thread_acquired_ != current_thread);
+#endif
 }
 void Mutex::debugSetAcquired() const {
   // Check that the thread has already not been held.

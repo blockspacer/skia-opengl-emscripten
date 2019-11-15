@@ -30,12 +30,11 @@ set(GLIBPNG_SOURCES
   ${GLIBPNG_DIR}pngwutil.c
 )
 
-# if (current_cpu == "x86" || current_cpu == "x64")
-if(EMSCRIPTEN)
-  # nothing
-elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
-  if(CMAKE_CL_64)
-    #
+if(TARGET_EMSCRIPTEN)
+  # skip
+elseif(TARGET_LINUX OR TARGET_WINDOWS)
+  if(CMAKE_CL_64) # if (current_cpu == "x86" || current_cpu == "x64")
+  #
   else(CMAKE_CL_64)
     list(APPEND GLIBPNG_SOURCES
       ${GLIBPNG_DIR}intel/filter_sse2_intrinsics.c
@@ -43,9 +42,7 @@ elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
     )
     list(APPEND EXTRA_DEFINES PNG_INTEL_SSE_OPT=1)
   endif(CMAKE_CL_64)
-
   #find_package(ZLIB)
-
 else()
   message(FATAL_ERROR "platform not supported")
 endif()
@@ -111,6 +108,10 @@ target_compile_definitions(GLIBPNG PRIVATE
   ${EXTRA_DEFINES}
 )
 
-target_compile_options(GLIBPNG PRIVATE
-  -Wno-tautological-constant-out-of-range-compare
-)
+if(NOT MSVC OR IS_CLANG_CL)
+  target_compile_options(GLIBPNG PRIVATE
+    -Wno-tautological-constant-out-of-range-compare
+  )
+else()
+  # TODO
+endif()

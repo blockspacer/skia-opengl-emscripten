@@ -844,6 +844,10 @@ set(SRC_EXTRA
     evdns.c
     evrpc.c)
 
+if(MSVC)
+  message(FATAL_ERROR "libevent not supported on MSVC")
+endif()
+
 add_definitions(-DHAVE_CONFIG_H)
 
 # We use BEFORE here so we don't accidentally look in system directories

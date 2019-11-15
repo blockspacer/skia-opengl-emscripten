@@ -1,6 +1,6 @@
 ### --- UI_EVENTS ---###
 
-set(UI_EVENTS_SOURCES
+list(APPEND UI_EVENTS_SOURCES
   #
   # jumbo_static_library("dom_keycode_converter")
   #
@@ -108,7 +108,7 @@ set(UI_EVENTS_SOURCES
   ${UI_EVENTS_DIR}event_target.cc
   ${UI_EVENTS_DIR}event_utils.cc
   ${UI_EVENTS_DIR}events_exports.cc
-  ${UI_EVENTS_DIR}events_stub.cc
+  ## TODO ## ${UI_EVENTS_DIR}events_stub.cc
   ${UI_EVENTS_DIR}gestures/gesture_recognizer.cc
   ## TODO ## ${UI_EVENTS_DIR}gestures/gesture_recognizer_impl_mac.cc
   ${UI_EVENTS_DIR}gestures/gesture_types.cc
@@ -227,6 +227,41 @@ set(UI_EVENTS_SOURCES
   #  sources += [ "gesture_detection/gesture_configuration_default.cc" ]
   #}
 )
+
+if(TARGET_WINDOWS)
+  list(APPEND UI_EVENTS_SOURCES
+    ${UI_EVENTS_DIR}win/events_win.cc
+    ${UI_EVENTS_DIR}win/events_win_utils.cc
+    #
+    ${UI_EVENTS_DIR}win/keyboard_hook_win_base.cc
+    #${UI_EVENTS_DIR}win/keyboard_hook_win_base.h",
+    ${UI_EVENTS_DIR}win/media_keyboard_hook_win.cc
+    ${UI_EVENTS_DIR}win/modifier_keyboard_hook_win.cc
+    ${UI_EVENTS_DIR}win/system_event_state_lookup.cc
+    #  sources -= [ "win/events_win.cc" ]
+    ## TODO ##
+    ${UI_EVENTS_DIR}keycodes/platform_key_map_win.cc
+    ## TODO ## #
+    ${UI_EVENTS_DIR}keycodes/platform_key_map_win.h
+    ## TODO ## $
+    ${UI_EVENTS_DIR}keycodes/keyboard_code_conversion_win.cc
+    ## TODO ## #
+    ${UI_EVENTS_DIR}keycodes/keyboard_code_conversion_win.h
+    ${UI_EVENTS_DIR}keycodes/dom/dom_keyboard_layout_map_win.cc
+  )
+endif()
+
+if(TARGET_WINDOWS OR TARGET_LINUX)
+  #if (is_win || is_mac || use_x11 || use_ozone) {
+  #  sources -= [ "events_stub.cc" ]
+  #}
+elseif(TARGET_EMSCRIPTEN)
+  list(APPEND UI_EVENTS_SOURCES
+    ${UI_EVENTS_DIR}events_stub.cc
+  )
+else()
+  message(FATAL_ERROR "platform not supported")
+endif()
 
 add_library(UI_EVENTS STATIC
   ${UI_EVENTS_SOURCES}

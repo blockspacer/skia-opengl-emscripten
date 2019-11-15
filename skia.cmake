@@ -11,12 +11,12 @@
 #
 
 # case-insensitive match TODO: is debug, Debug, DEBUG all valid?
-#if (CMAKE_BUILD_TYPE MATCHES "[dD][eE][bB][uU][gG]")
+#if(CMAKE_BUILD_TYPE MATCHES "[dD][eE][bB][uU][gG]")
 #  set(IS_DEBUG_BUILD ON)
 #else()
 #  set(IS_DEBUG_BUILD OFF)
 #  set(EXT_SKIA_OFFICIAL_BUILD "true")
-#endif ()
+#endif()
 
 option(SKIA_FORCE_BUILD_MODE "" "") # TODO
 
@@ -25,19 +25,36 @@ if(RELEASE_BUILD)
   message(STATUS "building SKIA in RELEASE mode")
   set(IS_DEBUG_BUILD OFF)
   set(EXT_SKIA_OFFICIAL_BUILD "true")
-  set(SKIA_EXTRA_CFLAGS
-    "${SKIA_EXTRA_CFLAGS}\"-fno-rtti\", "
-  )
-  # If you're using our GYP files to build Skia,
-  # you're using build scripts mostly designed for development
-  # (even Release) where we don't pay much attention to
-  # library structure or size.
-  # They're all built with -g,
-  # which bloats the file size considerably.
-  # https://groups.google.com/forum/#!topic/skia-discuss/5hNRcmERVSI
-  set(SKIA_EXTRA_CFLAGS
-    "${SKIA_EXTRA_CFLAGS}\"-g0\", "
-  )
+  if(MSVC) # TODO
+    # /GR- disables run-time type information.
+    set(SKIA_EXTRA_CFLAGS
+      "${SKIA_EXTRA_CFLAGS}\"/GR-\", "
+    )
+    # If you're using our GYP files to build Skia,
+    # you're using build scripts mostly designed for development
+    # (even Release) where we don't pay much attention to
+    # library structure or size.
+    # They're all built with -g,
+    # which bloats the file size considerably.
+    # https://groups.google.com/forum/#!topic/skia-discuss/5hNRcmERVSI
+    set(SKIA_EXTRA_CFLAGS
+      "${SKIA_EXTRA_CFLAGS}\"/RELEASE\", "
+    )
+  else()
+    set(SKIA_EXTRA_CFLAGS
+      "${SKIA_EXTRA_CFLAGS}\"-fno-rtti\", "
+    )
+    # If you're using our GYP files to build Skia,
+    # you're using build scripts mostly designed for development
+    # (even Release) where we don't pay much attention to
+    # library structure or size.
+    # They're all built with -g,
+    # which bloats the file size considerably.
+    # https://groups.google.com/forum/#!topic/skia-discuss/5hNRcmERVSI
+    set(SKIA_EXTRA_CFLAGS
+      "${SKIA_EXTRA_CFLAGS}\"-g0\", "
+    )
+  endif()
   set(SKIA_EXTRA_CFLAGS
     "${SKIA_EXTRA_CFLAGS}\"-DNDEBUG=1\", "
   )
@@ -47,13 +64,40 @@ if(RELEASE_BUILD)
 else()
   message(STATUS "building SKIA in DEBUG mode")
   set(IS_DEBUG_BUILD ON)
-  set(SKIA_EXTRA_CFLAGS
-    "${SKIA_EXTRA_CFLAGS}\"-frtti\", "
-  )
+  if(MSVC) # TODO
+    # When /GR is on, the compiler defines the _CPPRTTI preprocessor macro. By default, /GR is on.
+    set(SKIA_EXTRA_CFLAGS
+      "${SKIA_EXTRA_CFLAGS}\"/GR\", "
+    )
+  else()
+    set(SKIA_EXTRA_CFLAGS
+      "${SKIA_EXTRA_CFLAGS}\"-frtti\", " # -frtti -rtti
+    )
+  endif()
   set(SKIA_EXTRA_CFLAGS
     "${SKIA_EXTRA_CFLAGS}\"-DSK_DEBUG=1\", "
   )
 endif(RELEASE_BUILD)
+
+if(RELEASE_BUILD)
+  if(MSVC)
+    set(SKIA_EXTRA_CFLAGS
+      "${SKIA_EXTRA_CFLAGS}\"/MD\", "
+    )
+  endif(MSVC)
+else()
+  if(MSVC)
+    set(SKIA_EXTRA_CFLAGS
+      "${SKIA_EXTRA_CFLAGS}\"/MDd\", "
+    )
+    set(SKIA_EXTRA_CFLAGS
+      "${SKIA_EXTRA_CFLAGS}\"/D_DEBUG\", "
+    )
+    set(SKIA_EXTRA_CFLAGS
+      "${SKIA_EXTRA_CFLAGS}\"-DD_DEBUG\", "
+    )
+  endif(MSVC)
+endif()
 
 # I wanted to expose (almost) all Skia options as CMake options but sadly
 # GN is a really bad tool - It produces non-overridable configure errors like:
@@ -75,9 +119,9 @@ endif(TARGET_EMSCRIPTEN)
 
 set(SKIA_SRC_DIR "${SKIA_DIR}")
 
-if (NOT EXISTS ${SKIA_SRC_DIR})
+if(NOT EXISTS ${SKIA_SRC_DIR})
   message(FATAL_ERROR "Can't find Skia sources. Please run download-dependencies.sh.")
-endif ()
+endif()
 
 set(SKIA_BUILD_DIR "${CMAKE_CURRENT_BINARY_DIR}/skia")
 
@@ -86,7 +130,12 @@ set(SKIA_BUILD_DIR "${CMAKE_CURRENT_BINARY_DIR}/skia")
 # Skia comes with -Werror on by default. That's a cool feature for release...
 set(NEW_CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
 
-set(NEW_CMAKE_C_FLAGS "${NEW_CMAKE_C_FLAGS} -Wno-error")
+# TODO
+if(MSVC)
+  set(NEW_CMAKE_C_FLAGS "${NEW_CMAKE_C_FLAGS} /W0")
+else()
+  set(NEW_CMAKE_C_FLAGS "${NEW_CMAKE_C_FLAGS} -Wno-error")
+endif()
 
 STRING(REGEX REPLACE " " "\",\"" NEW_CMAKE_C_FLAGS "${NEW_CMAKE_C_FLAGS}")
 set(SKIA_C_FLAGS "\"${NEW_CMAKE_C_FLAGS}\"")
@@ -109,7 +158,12 @@ if(TARGET_EMSCRIPTEN)
   #set(NEW_CMAKE_CXX_FLAGS "${NEW_CMAKE_CXX_FLAGS} -s STRICT=1")
 endif() # EMSCRIPTEN
 
-set(NEW_CMAKE_CXX_FLAGS "${NEW_CMAKE_CXX_FLAGS} -Wno-error")
+# TODO
+if(MSVC)
+  set(NEW_CMAKE_CXX_FLAGS "${NEW_CMAKE_CXX_FLAGS} /W0")
+else()
+  set(NEW_CMAKE_CXX_FLAGS "${NEW_CMAKE_CXX_FLAGS} -Wno-error")
+endif()
 
 # The string literal "\\\\" represents "\\" in memory which is a valid regex (representing a single backslash).
 STRING(REGEX REPLACE " " "\",\"" NEW_CMAKE_CXX_FLAGS "${NEW_CMAKE_CXX_FLAGS}")
@@ -119,22 +173,25 @@ message(STATUS "SKIA_CXX_FLAGS=${SKIA_CXX_FLAGS}")
 # NOTE: header from SKIA_EXT
 # set(SKIA_CXX_FLAGS "${SKIA_CXX_FLAGS},\"-DSK_USER_CONFIG_HEADER=\"${CMAKE_CURRENT_SOURCE_DIR}/src/chromium/skia/config/SkUserConfig.h\"\"") # skia_use_libpng
 
-set(SKIA_LDFLAGS "\"-Wno-error\"")
-#set(SKIA_LDFLAGS "\"\"")
+if(MSVC)
+  set(SKIA_LDFLAGS "\"/W0\"")
+else()
+  set(SKIA_LDFLAGS "\"-Wno-error\"")
+endif()
 
 function(SET_SKIA_CONFIG_OPTION OPT_NAME OPT_VALUE)
-  if (OPT_VALUE)
+  if(OPT_VALUE)
     set(${OPT_NAME} "true" PARENT_SCOPE)
   else ()
     set(${OPT_NAME} "false" PARENT_SCOPE)
-  endif ()
+  endif()
 endfunction()
 
 SET_SKIA_CONFIG_OPTION(SK_CONF_DEBUG ${EXT_SKIA_DEBUG})
 SET_SKIA_CONFIG_OPTION(SK_CONF_SHARED ${EXT_SKIA_SHARED})
 
 # it's not possible to enable both OFFICIAL and DEBUG
-if (EXT_SKIA_OFFICIAL_BUILD AND NOT EXT_SKIA_DEBUG)
+if(EXT_SKIA_OFFICIAL_BUILD AND NOT EXT_SKIA_DEBUG)
   set(SK_CONF_IS_OFFICIAL_BUILD "true")
 else ()
   set(SK_CONF_IS_OFFICIAL_BUILD "false")
@@ -150,7 +207,7 @@ else(USE_SK_GPU)
   message(STATUS "SKIA build without GPU support.")
 endif(USE_SK_GPU)
 
-if (EMSCRIPTEN)
+if(EMSCRIPTEN)
   set(SK_IS_x11 "true")
 
   set(SK_IS_EGL "true")
@@ -172,7 +229,17 @@ if (EMSCRIPTEN)
   set(SK_GL_STANDARD "skia_gl_standard=\"webgl\"") # SK_ASSUME_WEBGL
   #set(SK_GL_STANDARD "skia_gl_standard=\"gles\"") # SK_ASSUME_GL_ES
   #set(SK_GL_STANDARD "skia_gl_standard=\"gl\"") # SK_ASSUME_GL
-else(EMSCRIPTEN)
+elseif(TARGET_WINDOWS)
+  set(SK_IS_x11 "false")
+  set(SK_IS_EGL "false")
+
+  set(SK_IS_processors "false") # see SKSL_STANDALONE
+  set(SK_IS_workarounds "false")
+  set(SK_IS_ccpr "true")
+
+  set(SK_TARGET_CPU "")
+  set(SK_GL_STANDARD "") # default
+else()
   set(SK_IS_x11 "true")
   set(SK_IS_EGL "false")
 
@@ -182,7 +249,7 @@ else(EMSCRIPTEN)
 
   set(SK_TARGET_CPU "")
   set(SK_GL_STANDARD "") # default
-endif (EMSCRIPTEN)
+endif()
 
 # TODO: target_cpu=\"wasm\" \
 # skia_use_system_zlib=true \
@@ -219,13 +286,26 @@ if(TARGET_EMSCRIPTEN)
     set(SK_USE_SYSTEM_LIBPNG TRUE) # TODO: path to png.h (SkPngCodec.cpp)
   endif()
   set(SK_USE_SYSTEM_ZLIB FALSE) # TODO
+  set(SK_system_freetype2
+    "skia_use_system_freetype2=true"
+  )
+elseif(TARGET_WINDOWS)
+  # TODO
+  set(SK_USE_SYSTEM_LIBPNG FALSE)
+  set(SK_USE_SYSTEM_ZLIB FALSE) # TODO
+  set(SK_system_freetype2
+    "skia_use_system_freetype2=false"
+  )
 else()
   # TODO
   if(USE_SYSTEM_PNG)
     set(SK_USE_SYSTEM_LIBPNG TRUE)
   endif()
   set(SK_USE_SYSTEM_ZLIB FALSE) # TODO
-endif(TARGET_EMSCRIPTEN)
+  set(SK_system_freetype2
+    "skia_use_system_freetype2=true"
+  )
+endif()
 
 if(SK_USE_SYSTEM_LIBPNG)
   set(SK_system_libpng
@@ -256,25 +336,40 @@ else()
 endif(USE_LIBJPEG_TURBO)
 
 # NOTE: in skia HARFBUZZ requires icui18n (unicode/uscript.h)
+if(HARFBUZZ_FROM_SKIA AND NOT FORCE_USE_SKIA_HARFBUZZ)
+  message(FATAL_ERROR "HARFBUZZ_FROM_SKIA requires FORCE_USE_SKIA_HARFBUZZ")
+endif(HARFBUZZ_FROM_SKIA AND NOT FORCE_USE_SKIA_HARFBUZZ)
 if(FORCE_USE_SKIA_HARFBUZZ)
   if(ENABLE_SKSHAPER) # harfbuzz used only by skshaper
     set(SK_IS_harfbuzz "true")
     #
-    set(SK_system_harfbuzz
-      "skia_use_system_harfbuzz=true"
-    )
+    if(TARGET_WINDOWS)
+      set(SK_system_harfbuzz
+        "skia_use_system_harfbuzz=false"
+      )
+    else()
+      set(SK_system_harfbuzz
+        "skia_use_system_harfbuzz=true"
+      )
+    endif(TARGET_WINDOWS)
     #
     set(SK_IS_icu "true")
     #
-    set(SK_system_icu
-      "skia_use_system_icu=true"
-    )
+    if(TARGET_WINDOWS)
+      set(SK_system_icu
+        "skia_use_system_icu=false"
+      )
+    else()
+      set(SK_system_icu
+        "skia_use_system_icu=true"
+      )
+    endif(TARGET_WINDOWS)
   else(ENABLE_SKSHAPER)
     set(SK_IS_harfbuzz "false")
     set(SK_IS_icu "false")
   endif(ENABLE_SKSHAPER)
   #
-  if (USE_CUSTOM_ICU)
+  if(USE_CUSTOM_ICU)
     list(APPEND SKIA_CMAKE_ONLY_HEADERS
       ${OWN_ICU_INCLUDE_DIRS}
     )
@@ -288,6 +383,10 @@ else(FORCE_USE_SKIA_HARFBUZZ)
   set(SK_IS_harfbuzz "false")
   set(SK_IS_icu "false")
 endif(FORCE_USE_SKIA_HARFBUZZ)
+
+if(HARFBUZZ_FROM_SKIA AND NOT SK_system_harfbuzz STREQUAL "skia_use_system_harfbuzz=false")
+  message(FATAL_ERROR "HARFBUZZ_FROM_SKIA requires skia_use_system_harfbuzz=false, but got: ${SK_system_harfbuzz}")
+endif()
 
 #
 #     "\"-I${ICU_FULL_DIR}source/common\"" # to unicode/uscript.h
@@ -348,7 +447,7 @@ skia_use_sfntly=false \
 skia_enable_atlas_text=false \
 skia_use_fontconfig=false \
 skia_use_freetype=true \
-skia_use_system_freetype2=true \
+${SK_system_freetype2} \
 skia_enable_tools=false \
 skia_use_lua=false \
 skia_use_piex=false \
@@ -375,7 +474,10 @@ set(CONFIGURE_COMMAND "${SKIA_SRC_DIR}/bin/gn;gen;--root=${SKIA_SRC_DIR};${SKIA_
 message(STATUS "CONFIGURE_COMMAND=${CONFIGURE_COMMAND}")
 
 set(BUILD_COMMAND "ninja;-C;${SKIA_BUILD_DIR};-d;keepdepfile;-j8")
+
 message(STATUS "BUILD_COMMAND=${BUILD_COMMAND}")
+
+include(ExternalProject)
 
 ExternalProject_Add(SKIA_build
   # LIST_SEPARATOR is needed for list expansion of C(XX)_FLAGS.
@@ -384,8 +486,13 @@ ExternalProject_Add(SKIA_build
   CONFIGURE_COMMAND "${CONFIGURE_COMMAND}"
   BUILD_COMMAND "${BUILD_COMMAND}"
   # there is no install step provided
-  INSTALL_COMMAND true
+  #INSTALL_COMMAND true # TODO: true???
+  INSTALL_COMMAND ""
 )
+
+# NOTE: ninja can't handle target dependencies with external libs, so use `--target` before build:
+# cmake --build . --config Debug --parallel 8 --target SKIA_build_alwaysbuild
+add_custom_target(SKIA_build_alwaysbuild ALL DEPENDS SKIA_build)
 
 # TODO: make PRINT_ALL_GN_ARGS as target dependant of SKIA_build
 #if(EXISTS "${CMAKE_CURRENT_BINARY_DIR}/skia/args.gn")
@@ -412,17 +519,25 @@ ExternalProject_Add(SKIA_build
 #  message( STATUS "gn_args_list=${_gn_args_list}")
 #endif(PRINT_ALL_GN_ARGS)
 
-if (EXT_SKIA_ALWAYS_BUILD)
+if(EXT_SKIA_ALWAYS_BUILD)
   message(STATUS "Forced skia rebuild")
   # Make sure the target is always rebuilt.
   # Without this changing Skia sources doesn't trigger a ninja build. With this
   # ninja build is always triggered. This is not needed if you never touch the
   # Skia sources. Please note that enabling this ends up with re-building of
   # targets that depend on the library. :(
-  ExternalProject_Add_Step(SKIA_build ForceBuild COMMAND true DEPENDERS build ALWAYS 1)
-endif ()
+  ExternalProject_Add_Step(SKIA_build ForceBuild COMMAND "" DEPENDERS build ALWAYS 1)
+endif()
 #message(FATAL_ERROR ${SKIA_EXT_PARENT_DIR}/skia/config/sk_ref_cnt_ext_release.h)
 # taken from BUILD.gn (skia_public_includes, minus things that are obviously useless for us)
+
+if(HARFBUZZ_FROM_SKIA)
+  list(APPEND SKIA_CMAKE_ONLY_HEADERS
+    ${SKIA_SRC_DIR}/third_party/externals/harfbuzz
+    ${SKIA_SRC_DIR}/third_party/externals/harfbuzz/src
+  )
+  set(SKIA_HB_DIR "${SKIA_SRC_DIR}/third_party/harfbuzz")
+endif(HARFBUZZ_FROM_SKIA)
 
 if(ENABLE_SKOTTIE)
   list(APPEND SKIA_CMAKE_ONLY_HEADERS
@@ -479,8 +594,11 @@ list(APPEND SKIA_CMAKE_ONLY_HEADERS
 #  ${SKIA_SRC_DIR}/third_party/expat
 #  ${SKIA_SRC_DIR}/third_party/externals
   ${SKIA_SRC_DIR}/third_party/freetype2
+  ${SKIA_SRC_DIR}/third_party/freetype2/include
+  ${SKIA_SRC_DIR}/third_party/externals/freetype
+  ${SKIA_SRC_DIR}/third_party/externals/freetype/include # for ft2build.h
 #  ${SKIA_SRC_DIR}/third_party/gif
-#  ${SKIA_SRC_DIR}/third_party/harfbuzz
+  ${SKIA_HB_DIR}
 #  ${SKIA_SRC_DIR}/third_party/icu # see USE_CUSTOM_ICU
 #  ${SKIA_SRC_DIR}/third_party/imgui
 #  ${SKIA_SRC_DIR}/third_party/libjpeg-turbo
@@ -558,6 +676,12 @@ endif(ENABLE_WUFFS)
   #EGL_EGLEXT_PROTOTYPES
   #LIBEGL_IMPLEMENTATION
 
+if(MSVC) # TODO
+  list(APPEND SKIA_DEFINES
+    HB_NO_MT=1
+  )
+endif()
+
 if(USE_SK_GPU)
   list(APPEND SKIA_DEFINES
     SK_SUPPORT_GPU=1 # skia_enable_gpu
@@ -611,7 +735,7 @@ endif()
 #list(APPEND SKIA_DEFINES SKOTTIE_HACK)
 #list(APPEND SKIA_DEFINES SKOTTIE_HACK=1)
 
-if (EMSCRIPTEN)
+if(EMSCRIPTEN)
   list(APPEND SKIA_DEFINES OS_EMSCRIPTEN=1) # same as in base/WTF/blink
   #if(ENABLE_WASM)
   if(ENABLE_SIMD)
@@ -661,11 +785,11 @@ else(EMSCRIPTEN)
   if(USE_SK_GPU)
    list(APPEND SKIA_DEFINES SK_ENABLE_DUMP_GPU=1)
   endif(USE_SK_GPU)
-endif (EMSCRIPTEN)
+endif(EMSCRIPTEN)
 
-if (SK_CONF_SHARED)
+if(SK_CONF_SHARED)
   list(APPEND SKIA_DEFINES SKIA_DLL=1)
-endif ()
+endif()
 
 ## TODO
 #list(APPEND SKIA_DEFINES LIB_ICU_I18N_STATIC=1)
@@ -685,41 +809,41 @@ endif ()
 # This is needed only for static library build where the dependencies have
 # to be added explicitly.
 
-if (NOT EXT_SKIA_SHARED)
+if(NOT EXT_SKIA_SHARED)
   function(ADD_SKIA_LIBRARY_DEPENDENCY LIB_NAME_LIST)
     foreach(LIB_NAME ${LIB_NAME_LIST})
       message(STATUS "Searching for ${LIB_NAME}...")
       find_library(LIB${LIB_NAME} ${LIB_NAME})
-      if (NOT LIB${LIB_NAME})
+      if(NOT LIB${LIB_NAME})
         message(FATAL_ERROR "Can't find required library ${LIB_NAME}.")
       else()
         message(STATUS "Found library ${LIB_NAME} = ${LIB${LIB_NAME}}")
-      endif ()
-      set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${LIB${LIB_NAME}}" PARENT_SCOPE)
+      endif()
+      set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${LIB${LIB_NAME}}")
     endforeach()
   endfunction()
 
   if(TARGET_EMSCRIPTEN)
     message(STATUS "building skia for EMSCRIPTEN")
-  elseif(TARGET_LINUX)
-    message(STATUS "building skia for LINUX")
+  elseif(TARGET_LINUX OR TARGET_WINDOWS)
+    message(STATUS "building skia for ${CMAKE_SYSTEM_NAME}")
 
     # seem to be always required...
     #ADD_SKIA_LIBRARY_DEPENDENCY("dl")
-    set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${libDL_LIB}" PARENT_SCOPE)
+    set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${libDL_LIB}")
 
     #ADD_SKIA_LIBRARY_DEPENDENCY("icuuc") # skia_use_system_icu
 
     #ADD_SKIA_LIBRARY_DEPENDENCY("expat") #skia_use_system_expat
     find_package(EXPAT REQUIRED)
-    set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};EXPAT::EXPAT" PARENT_SCOPE)
+    set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};EXPAT::EXPAT")
 
-    #set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${HARFBUZZ_LIBRARIES}" PARENT_SCOPE)
+    #set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${HARFBUZZ_LIBRARIES}")
 
-    #set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${FOUND_OPENGL_LIBRARIES}" PARENT_SCOPE)
+    #set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${FOUND_OPENGL_LIBRARIES}")
     #message(FATAL_ERROR FREETYPE_LIBRARIES=${FREETYPE_LIBRARIES})
 
-    set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${FREETYPE_LIBRARIES}" PARENT_SCOPE)
+    set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${FREETYPE_LIBRARIES}")
 
     ADD_SKIA_LIBRARY_DEPENDENCY(${EXT_SKIA_USE_FONTCONFIG} "fontconfig") # skia_use_fontconfig
     ADD_SKIA_LIBRARY_DEPENDENCY(${EXT_SKIA_USE_FREETYPE2} "freetype") # skia_use_system_freetype2
@@ -738,14 +862,14 @@ if (NOT EXT_SKIA_SHARED)
       # TODO: cannot find /lib64/libz.so.1
     endif(SK_USE_SYSTEM_ZLIB)
 
-    set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${libZLIB_LIB}" PARENT_SCOPE)
+    set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${libZLIB_LIB}")
 
     # NOTE: libjpeg_turbo requires libjpeg
-    #set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${libjpeg_LIB}" PARENT_SCOPE)
+    #set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${libjpeg_LIB}")
 
     # NOTE: libjpeg_turbo requires libjpeg
     if(USE_LIBJPEG_TURBO)
-      set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${libjpeg_TURBO_LIB}" PARENT_SCOPE)
+      set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${libjpeg_TURBO_LIB}")
     endif(USE_LIBJPEG_TURBO)
 
     #ADD_SKIA_LIBRARY_DEPENDENCY("png") # skia_use_system_libpng
@@ -756,15 +880,19 @@ if (NOT EXT_SKIA_SHARED)
     #PNG_DEFINITIONS - You should add_definitons(${PNG_DEFINITIONS}) before compiling code that includes png library files.
     #PNG_FOUND, If false, do not try to use PNG.
     #PNG_VERSION_STRING - the version of the PNG library found (since CMake 2.8.8)
-    #set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};PNG::PNG" PARENT_SCOPE)
+    #set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};PNG::PNG")
     #
     # TODO: Linking globals named 'png_sRGB_table': symbol multiply defined!
     if(SK_USE_SYSTEM_LIBPNG)
-      set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${libpng_LIB}" PARENT_SCOPE)
+      set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${libpng_LIB}")
     endif(SK_USE_SYSTEM_LIBPNG)
 
     if(USE_CUSTOM_ICU)
-      set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${CUSTOM_ICU_LIB};${HARFBUZZ_LIBRARIES}" PARENT_SCOPE)
+      if(HARFBUZZ_FROM_SKIA)
+        set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${CUSTOM_ICU_LIB}")
+      else(HARFBUZZ_FROM_SKIA)
+        set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${CUSTOM_ICU_LIB};${HARFBUZZ_LIBRARIES}")
+      endif(HARFBUZZ_FROM_SKIA)
     endif(USE_CUSTOM_ICU)
 
     # TODO: Linking globals named 'png_sRGB_table': symbol multiply defined!
@@ -777,17 +905,22 @@ if (NOT EXT_SKIA_SHARED)
     #ADD_SKIA_LIBRARY_DEPENDENCY("pthread")
     find_package(Threads REQUIRED)
     message("CMAKE_THREAD_LIBS_INIT=${CMAKE_THREAD_LIBS_INIT}")
-    set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};Threads::Threads" PARENT_SCOPE)
+    set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};Threads::Threads")
   else()
     message(FATAL_ERROR "unknown platform")
   endif()
 
-  set(SKIA_CMAKE_ONLY_HEADERS "${SKIA_CMAKE_ONLY_HEADERS};${HARFBUZZ_INCLUDE_DIRS};${FOUND_OPENGL_INCLUDE_DIR};${OPENGL_EGL_INCLUDE_DIRS}")
-  set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${HARFBUZZ_LIBRARIES};${FOUND_OPENGL_LIBRARIES}")
+  if(HARFBUZZ_FROM_SKIA)
+    set(SKIA_CMAKE_ONLY_HEADERS "${SKIA_CMAKE_ONLY_HEADERS};${FOUND_OPENGL_INCLUDE_DIR};${OPENGL_EGL_INCLUDE_DIRS}")
+    set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${FOUND_OPENGL_LIBRARIES}")
+  else(HARFBUZZ_FROM_SKIA)
+    set(SKIA_CMAKE_ONLY_HEADERS "${SKIA_CMAKE_ONLY_HEADERS};${HARFBUZZ_INCLUDE_DIRS};${FOUND_OPENGL_INCLUDE_DIR};${OPENGL_EGL_INCLUDE_DIRS}")
+    set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${HARFBUZZ_LIBRARIES};${FOUND_OPENGL_LIBRARIES}")
+  endif(HARFBUZZ_FROM_SKIA)
 
   #message(FATAL_ERROR OPENGLES2_LIBRARIES=${OPENGLES2_LIBRARIES})
   #
-  #set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${OPENGLES2_LIBRARIES}" PARENT_SCOPE)
+  #set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${OPENGLES2_LIBRARIES}")
   # when skia_enable_gpu:
   #
   # OpenGL::GL
@@ -804,11 +937,11 @@ if (NOT EXT_SKIA_SHARED)
   #
   if(SK_IS_EGL)
     #ADD_SKIA_LIBRARY_DEPENDENCY("EGL") # skia_use_egl
-    set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};OpenGL::EGL" PARENT_SCOPE)
+    set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};OpenGL::EGL")
     #see OPENGL_EGL_INCLUDE_DIRS
   else()
     #ADD_SKIA_LIBRARY_DEPENDENCY("GL") # !skia_use_egl # TODO: GLU?
-    set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};OpenGL::GL" PARENT_SCOPE)
+    set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};OpenGL::GL")
     #see FOUND_OPENGL_INCLUDE_DIR
   endif() # SK_IS_EGL
 else(NOT EXT_SKIA_SHARED)
@@ -818,7 +951,7 @@ endif(NOT EXT_SKIA_SHARED)
 message(STATUS "SKIA_CMAKE_ONLY_HEADERS=${SKIA_CMAKE_ONLY_HEADERS}")
 message(STATUS "SKIA_DEPENDENCIES=${SKIA_DEPENDENCIES}")
 
-if (EXT_SKIA_SHARED)
+if(EXT_SKIA_SHARED)
   set(SKIA_LIBRARY_PREFIX "${CMAKE_SHARED_LIBRARY_PREFIX}")
   set(SKIA_LIBRARY_SUFFIX "${CMAKE_SHARED_LIBRARY_SUFFIX}")
   message(FATAL_ERROR "TODO: SUPPORT SHARED BUILDS") # TODO
@@ -827,7 +960,7 @@ else (EXT_SKIA_SHARED)
   set(SKIA_LIBRARY_PREFIX "${CMAKE_STATIC_LIBRARY_PREFIX}")
   set(SKIA_LIBRARY_SUFFIX "${CMAKE_STATIC_LIBRARY_SUFFIX}")
   set(SK_LIBRARY_TYPE STATIC)
-endif (EXT_SKIA_SHARED)
+endif(EXT_SKIA_SHARED)
 
 if(TARGET_EMSCRIPTEN)
   set(SK_LIBRARY_TYPE STATIC) # FORCE STATIC
@@ -919,20 +1052,55 @@ set_target_properties(SKIA PROPERTIES
   #IMPORTED_LINK_INTERFACE_LIBRARIES "${SKIA_DEPENDENCIES}"
   IMPORTED_LINK_INTERFACE_LIBRARIES "${wuffs_LIBRARY};${jpeg_LIBRARY};${iccjpeg_LIB};${SKIA_DEPENDENCIES}"
 )
-add_dependencies(SKIA SKIA_build ${CUSTOM_ICU_LIB} ${WUFFS_LIB_NAME} ${CUSTOM_ICU_LIB} ${HARFBUZZ_LIBRARIES} ${iccjpeg_LIB} ${jpeg_LIBRARY})
-# https://stackoverflow.com/a/53945809
-target_link_libraries(SKIA INTERFACE
-  ${CUSTOM_ICU_LIB}
-  ${WUFFS_LIB_NAME}
-  ${FREETYPE_LIBRARIES}
-  ${HARFBUZZ_LIBRARIES}
-  ${libpng_LIB}
-  ${libZLIB_LIB}
-  ${libDL_LIB}
-  ${libjpeg_TURBO_LIB}
-  ${jpeg_LIBRARY}
-  ${iccjpeg_LIB}
-)
+
+if(TARGET_WINDOWS)
+  # ninja can't handle set_target_properties for interface lib
+  include_directories(${SKIA_CMAKE_ONLY_HEADERS})
+  #add_definitions(${SKIA_DEFINES})
+  add_compile_definitions(${SKIA_DEFINES})
+endif(TARGET_WINDOWS)
+
+message(STATUS "CUSTOM_ICU_LIB = ${CUSTOM_ICU_LIB} ")
+message(STATUS "WUFFS_LIB_NAME = ${WUFFS_LIB_NAME} ")
+message(STATUS "FREETYPE_LIBRARIES = ${FREETYPE_LIBRARIES} ")
+message(STATUS "libpng_LIB = ${libpng_LIB} ")
+message(STATUS "libZLIB_LIB = ${libZLIB_LIB} ")
+message(STATUS "libDL_LIB = ${libDL_LIB} ")
+message(STATUS "libjpeg_TURBO_LIB = ${libjpeg_TURBO_LIB} ")
+message(STATUS "jpeg_LIBRARY = ${jpeg_LIBRARY} ")
+message(STATUS "iccjpeg_LIB = ${iccjpeg_LIB} ")
+
+if(HARFBUZZ_FROM_SKIA)
+  add_dependencies(SKIA SKIA_build ${CUSTOM_ICU_LIB} ${WUFFS_LIB_NAME} ${CUSTOM_ICU_LIB} ${iccjpeg_LIB} ${jpeg_LIBRARY})
+  # https://stackoverflow.com/a/53945809
+  target_link_libraries(SKIA INTERFACE
+    ${CUSTOM_ICU_LIB}
+    ${WUFFS_LIB_NAME}
+    ${FREETYPE_LIBRARIES}
+    ${libpng_LIB}
+    ${libZLIB_LIB}
+    ${libDL_LIB}
+    ${libjpeg_TURBO_LIB}
+    ${jpeg_LIBRARY}
+    ${iccjpeg_LIB}
+  )
+else(HARFBUZZ_FROM_SKIA)
+  add_dependencies(SKIA SKIA_build ${CUSTOM_ICU_LIB} ${WUFFS_LIB_NAME} ${CUSTOM_ICU_LIB} ${HARFBUZZ_LIBRARIES} ${iccjpeg_LIB} ${jpeg_LIBRARY})
+  # https://stackoverflow.com/a/53945809
+  target_link_libraries(SKIA INTERFACE
+    ${CUSTOM_ICU_LIB}
+    ${WUFFS_LIB_NAME}
+    ${FREETYPE_LIBRARIES}
+    ${HARFBUZZ_LIBRARIES}
+    ${libpng_LIB}
+    ${libZLIB_LIB}
+    ${libDL_LIB}
+    ${libjpeg_TURBO_LIB}
+    ${jpeg_LIBRARY}
+    ${iccjpeg_LIB}
+  )
+endif(HARFBUZZ_FROM_SKIA)
+
 #
 #set_target_properties(pathkit PROPERTIES
 #  IMPORTED_LOCATION "${PATHKIT_LIBRARY}"

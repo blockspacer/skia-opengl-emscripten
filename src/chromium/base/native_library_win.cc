@@ -41,7 +41,9 @@ enum LoadLibraryResult {
   // but fails.
   UNAVAILABLE_AND_FAIL,
   // Add new items before this one, always keep this one at the end.
-  END
+  END,
+  /*error C2338: enumerator must define kMaxValue enumerator to use this macro!*/
+  kMaxValue = END
 };
 
 // A helper method to log library loading result to UMA.

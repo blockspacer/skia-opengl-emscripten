@@ -192,9 +192,9 @@
 // #define GL_GLEXT_PROTOTYPES
 //#undef GL_GLEXT_PROTOTYPES
 
-#if defined(ENABLE_OPENGL)
-#include "gl_helpers.h"
-#endif // ENABLE_OPENGL
+#if defined(OS_WIN) && !defined(ENABLE_OPENGL)
+#error "OS_WIN requires ENABLE_OPENGL"
+#endif
 
 // see https://lyceum-allotments.github.io/2016/06/emscripten-and-sdl-2-tutorial-part-1/
 //#include <SDL2/SDL_ttf.h>
@@ -217,6 +217,20 @@ static SkiaUiDemo skiaUiDemo;
 #endif // ENABLE_SKIA
 
 #include "utils.h"
+
+#ifdef ENABLE_BLINK_PLATFORM
+#include <third_party/blink/renderer/platform/runtime_enabled_features.h>
+#include "ui/gfx/canvas.h"
+#include "ui/gfx/font_list.h"
+#include "ui/gfx/font.h"
+#include "ui/gfx/font_render_params.h"
+#include "ui/gfx/skia_font_delegate.h"
+#include "ui/gfx/text_utils.h"
+#include "ui/gfx/paint_vector_icon.h"
+#include "ui/gfx/vector_icon_types.h"
+#include "ui/gfx/platform_font_skia.h"
+#include "third_party/blink/renderer/platform/heap/thread_state.h"
+#endif
 
 //#if defined(ENABLE_SKIA)
 //#define ENABLE_BLINK_PLATFORM 1
@@ -242,6 +256,25 @@ static SkiaUiDemo skiaUiDemo;
 #endif
 
 #include "generated/models/all_models.h"
+
+#if defined(OS_WIN)
+#define GL_GLEXT_PROTOTYPES 1
+#define GL_GLES_PROTOTYPES 1
+//#define GLEW_STATIC 1
+//#include <GL/glew.h>
+#include <GL/gl.h>
+#include <GL/glext.h>
+#include "gl_helpers.h"
+#else // OS_WIN
+#define GL_GLEXT_PROTOTYPES 1
+#define GL_GLES_PROTOTYPES 1
+#define GLEW_STATIC 1
+#include <GL/glew.h>
+#endif // defined(OS_WIN)
+
+#include "gl_helpers.h"
+
+#include <stdint.h>
 
 /*#include <stddef.h>
 
@@ -406,6 +439,7 @@ static bool render_browser_window = false;
 #include "cobalt_common.h"
 #include "custom_atts.h"
 #include "components/custom_web_components.h"
+#include "custom_controllers.h"
 
 #ifdef ENABLE_COBALT
 #include "renderer_stub/rasterizer/skgl/software_rasterizer.h"
@@ -448,6 +482,10 @@ static base::Thread* input_browser_thread = &main_browser_thread_;
 #define SEPARATE_UI_THREAD 1
 #define SEPARATE_UI_THREAD_WRAPPER 1
 #endif // __EMSCRIPTEN__ && __EMSCRIPTEN_PTHREADS__
+
+#if defined(OS_WIN) && !defined(SEPARATE_UI_THREAD)
+#error "OS_WIN requires SEPARATE_UI_THREAD"
+#endif
 
 // TODO
 #if defined(SEPARATE_UI_THREAD)
@@ -521,6 +559,12 @@ static SDL_GLContext glContext;
 #endif // ENABLE_OPENGL
 #endif // __EMSCRIPTEN__
 
+#if defined(OS_WIN)
+// Build UI thread message loop. This is used by platform
+// implementations for event polling & running background tasks.
+base::MessageLoopForUI* g_ui_message_loop;
+#endif // OS_WIN
+
 #if defined(ENABLE_HTML5_SDL) || !defined(__EMSCRIPTEN__)
 // Event handler
 static SDL_Event e;
@@ -567,7 +611,11 @@ static int InitGL() {
                       //		"  gl_FragColor = vColor;        \n"
                       "    vec4 colour = texture2D(u_tex, v_texcoord);\n"
                       //    "    vec4 colour = vec4(100, 0, 100, 100);\n"
+#if defined(OS_WIN)
+                      "    colour.rgba = colour.bgra;\n"
+#else
                       "    colour.rgba = colour.rgba;\n"
+#endif
                       //"    colour.rgba = vec4(v_texcoord, 0.0f, 1.0f);\n"
                       //"    colour.r = clrRedTint;\n"
                       "    gl_FragColor = colour;\n"
@@ -1834,7 +1882,7 @@ CobaltTester::CobaltTester()
   //}
   fetcher_factory_.reset(new loader::FetcherFactory(
     nullptr/*network_module*/,
-    base::FilePath(R"raw()raw"),//base::FilePath("resources/html"), // extra_web_file_dir
+    base::FilePath(FILE_PATH_LITERAL(R"raw()raw")),//base::FilePath("resources/html"), // extra_web_file_dir
     dom::URL::MakeBlobResolverCallback(blob_registry_.get()),
     read_cache_callback));
   DCHECK(fetcher_factory_);
@@ -3979,7 +4027,10 @@ std::unique_ptr<base::sequence_manager::SequenceManager> sequence_manager;
 
 /// \note don`t use int main(void)
 /// \see https://github.com/emscripten-core/emscripten/issues/8757
-int main(int argc, char** argv) {
+/// \note use main compatible with SDL2
+//int main(int argc, char** argv)
+int main(int argc, char* argv[])
+{
     printf("main 0...\n");
 #if !defined(ENABLE_MAIN)
   return EXIT_SUCCESS;
@@ -4022,7 +4073,16 @@ int main(int argc, char** argv) {
 #endif
 
 #ifdef ENABLE_BASE
+    printf("Init AtExitManager ...\n");
+  base::AtExitManager at_exit;
+  at_exit.DisableAllAtExitManagers();
+#endif
+
+#ifdef ENABLE_BASE
     base::Thread::Options thread_options;
+#if defined(OS_WIN)
+      thread_options.message_loop_type = base::MessageLoop::TYPE_UI;
+#endif
 
     main_browser_thread_wrapper_.StartWithOptions(thread_options);
     #if defined(SEPARATE_UI_THREAD_WRAPPER)
@@ -4045,7 +4105,9 @@ int main(int argc, char** argv) {
     #endif
               {
                 base::Thread::Options options;
-
+#if defined(OS_WIN)
+                options.message_loop_type = base::MessageLoop::TYPE_UI;
+#endif
                 //options.message_loop_type = base::MessageLoop::TYPE_IO;
                 main_browser_thread_.StartWithOptions(options);
                 //input_device_thread_.StartWithOptions(options);
@@ -4081,6 +4143,9 @@ int main(int argc, char** argv) {
     #endif
               {
                 base::Thread::Options options;
+#if defined(OS_WIN)
+                options.message_loop_type = base::MessageLoop::TYPE_UI;
+#endif
 
     #if defined(SEPARATE_UI_THREAD)
                 ui_draw_thread_.StartWithOptions(options);
@@ -4136,12 +4201,6 @@ int main(int argc, char** argv) {
   printf("SysInfo::NumberOfProcessors %s ...\n", base::SysInfo::OperatingSystemArchitecture().c_str());
   printf("SysInfo::NumberOfProcessors %s ...\n", base::SysInfo::CPUModelName().c_str());
 
-  printf("Init AtExitManager ...\n");
-#ifdef ENABLE_COBALT
-  base::AtExitManager at_exit;
-  at_exit.DisableAllAtExitManagers();
-#endif
-
  /* printf("Init ThreadControllerNoMT ...\n");
   if(!g_thread_controller.get()) {
 
@@ -4187,7 +4246,7 @@ int main(int argc, char** argv) {
 #endif
 
 #if defined(OS_WIN)
-  base::RouteStdioToConsole(false);
+  //base::RouteStdioToConsole(false);
 #endif
 
   printf("Init logging ...\n");
@@ -4233,7 +4292,7 @@ int main(int argc, char** argv) {
   ServiceMain(environment.TakeServiceRequestFromCommandLine());
   base::ThreadPool::GetInstance()->Shutdown();*/
 
-#if defined(ENABLE_BASE_PREALLOC)
+#if defined(ENABLE_BASE_PREALLOC) && defined(__TODO__)
   printf("Init alloc ...\n");
   // see
   // https://cs.chromium.org/chromium/src/third_party/blink/renderer/controller/blink_initializer.cc?sq=package:chromium&dr=C&g=0&l=88
@@ -4610,6 +4669,14 @@ int main(int argc, char** argv) {
   }
 #endif
 
+#if defined(OS_WIN)
+  // Build UI thread message loop. This is used by platform
+  // implementations for event polling & running background tasks.
+  printf("Starting MessageLoopForUI...\n");
+  base::ThreadPool::CreateAndStartWithDefaultParams("MainThreadPool");
+  printf("Started MessageLoopForUI...\n");
+#endif // OS_WIN
+
   printf("Starting ...\n");
 
 #ifdef __EMSCRIPTEN__
@@ -4869,11 +4936,11 @@ int main(int argc, char** argv) {
   }
 
   // Initialize GLEW
-  glewExperimental = GL_TRUE;
+  /*glewExperimental = GL_TRUE;
   GLenum glewError = glewInit();
   if (glewError != GLEW_OK) {
     printf("Error initializing GLEW! %s\n", glewGetErrorString(glewError));
-  }
+  }*/
 
   printf("SDL_GL_MakeCurrent ...\n");
 
@@ -4884,6 +4951,18 @@ int main(int argc, char** argv) {
     return success;
   }
 #endif // ENABLE_OPENGL
+#endif
+
+#if defined(OS_WIN) //|| defined(OS_POSIX)
+//glutInit(&argc, argv);
+//glutCreateWindow("GLEW Test");
+/// \note You need to create a GL context. Try SDL_GL_CreateContext(window) before glewInit() call.
+GLenum err = glewInit();
+if (GLEW_OK != err)
+{
+  /* Problem: glewInit failed, something is seriously wrong. */
+  fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
+}
 #endif
 
 #if defined(ENABLE_OPENGL)
@@ -5282,7 +5361,7 @@ if(!render_browser_window) {
   emscripten_set_main_loop(mainLockFreeLoop, 0, 1);
 #else
 #if defined(ENABLE_OPENGL)
-  printf("running with glew\n");
+  printf("running with opengl\n");
 #else
   printf("running without GL\n");
 #endif // ENABLE_OPENGL

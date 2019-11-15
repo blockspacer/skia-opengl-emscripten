@@ -80,9 +80,13 @@ macro(add_compile_options target)
       "$<$<CONFIG:RELEASE>:-Wpedantic>"
     )
   else(ENABLE_CMAKE_COMPILE_WARNINGS)
-    set(ENABLED_WARNINGS
-      -Wno-error # clang
-    )
+    if(NOT MSVC OR IS_CLANG_CL)
+      list(APPEND ENABLED_WARNINGS
+        -Wno-error # clang
+      )
+    else()
+      # TODO
+    endif()
   endif(ENABLE_CMAKE_COMPILE_WARNINGS)
 
   # @see https://stackoverflow.com/a/46132078/10904212
@@ -118,7 +122,7 @@ macro(add_compile_options target)
       )
     message( "detected compiler: Clang" )
   elseif( CMAKE_CXX_COMPILER_ID MATCHES "MSVC" )
-    target_compile_options( ${PROJECT_NAME}_lib PRIVATE /W4 /WX )
+    #target_compile_options( ${PROJECT_NAME}_lib PRIVATE /W4 /WX )
   else()
     message( FATAL_ERROR "unsupported compiler" )
   endif()
@@ -183,9 +187,9 @@ macro(print_cmake_system_info)
 endmacro(print_cmake_system_info)
 
 macro(check_supported_os)
-  if (NOT WIN32
+  if (NOT WIN32 AND NOT CMAKE_HOST_WIN32
       AND NOT EMSCRIPTEN
-      AND NOT UNIX
+      AND NOT UNIX AND NOT CMAKE_HOST_UNIX
       AND NOT APPLE)
     message(FATAL_ERROR "Unsupported operating system.")
   endif ()

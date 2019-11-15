@@ -59,7 +59,13 @@ class Thread {
   bool join_called() const;
 
  protected:
+
+#if defined(_WIN32) || defined(_WIN64)
+  static DWORD ThreadEntryPoint(void* context);
+#else
   static void* ThreadEntryPoint(void* context);
+#endif
+
   static void Sleep(SbTime microseconds);
   static void SleepMilliseconds(int value);
 

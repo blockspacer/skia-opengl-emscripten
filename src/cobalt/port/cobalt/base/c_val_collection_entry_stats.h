@@ -15,7 +15,11 @@
 #define COBALT_BASE_C_VAL_COLLECTION_ENTRY_STATS_H_
 
 #include <algorithm>
+
+// MSVC++ requires this to be set before any other includes to get M_PI.
+#define _USE_MATH_DEFINES
 #include <cmath>
+
 #include <memory>
 #include <numeric>
 #include <sstream>

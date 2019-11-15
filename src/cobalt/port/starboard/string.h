@@ -347,7 +347,7 @@ SB_EXPORT long SbStringParseSignedInteger(const char* start,
 // |value|: The string to be converted.
 static SB_C_INLINE int SbStringAToI(const char* value) {
   // NOLINTNEXTLINE(readability/casting)
-  return (int)SbStringParseSignedInteger(value, NULL, 10);
+  return (int)SbStringParseSignedInteger(value, nullptr, 10);
 }
 
 // Parses a string into a base-10, long integer. This is a shorthand
@@ -357,7 +357,7 @@ static SB_C_INLINE int SbStringAToI(const char* value) {
 // NOLINTNEXTLINE(runtime/int)
 static SB_C_INLINE long SbStringAToL(const char* value) {
   // NOLINTNEXTLINE(readability/casting)
-  return SbStringParseSignedInteger(value, NULL, 10);
+  return SbStringParseSignedInteger(value, nullptr, 10);
 }
 
 // Extracts a string that represents an integer from the beginning of |start|

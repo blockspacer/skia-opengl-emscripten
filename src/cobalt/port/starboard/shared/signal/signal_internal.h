@@ -20,6 +20,7 @@
 #include "starboard/common/log.h"
 #include "starboard/shared/internal_only.h"
 
+#if !(defined(_WIN32) || defined(_WIN64))
 namespace starboard {
 namespace shared {
 namespace signal {
@@ -78,5 +79,6 @@ typedef void (*SignalHandlerFunction)(int);
 }  // namespace signal
 }  // namespace shared
 }  // namespace starboard
+#endif // !defined(OS_WIN)
 
 #endif  // STARBOARD_SHARED_SIGNAL_SIGNAL_INTERNAL_H_

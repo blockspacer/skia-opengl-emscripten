@@ -1,4 +1,5 @@
-﻿# see platform
+﻿# see https://github.com/chromium/chromium/blob/b081b266c9a041b3ddc5302b2458aa40564403b6/third_party/blink/common/BUILD.gn
+# see https://github.com/chromium/chromium/blob/517881759ed5c403f1911de3ebb00142aa3cf781/third_party/blink/public/common/BUILD.gn
 
 ### --- BLINK_COMMON ---###
 

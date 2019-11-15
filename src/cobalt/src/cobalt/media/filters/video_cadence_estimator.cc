@@ -5,7 +5,11 @@
 #include "cobalt/media/filters/video_cadence_estimator.h"
 
 #include <algorithm>
+
+// MSVC++ requires this to be set before any other includes to get M_PI.
+#define _USE_MATH_DEFINES
 #include <cmath>
+
 #include <iterator>
 #include <limits>
 #include <string>

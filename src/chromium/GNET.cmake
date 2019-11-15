@@ -1,5 +1,13 @@
 ﻿## --- GNET ---###
 
+if(TARGET_EMSCRIPTEN)
+  # skip
+elseif(TARGET_LINUX)
+  # skip
+else()
+  message(FATAL_ERROR "platform not supported")
+endif()
+
 # TODO https://github.com/Tarnyko/chromium-lite/blob/master/03a-net/CMakeLists.txt
 
 set(GNET_DNS_uri_template_SOURCES

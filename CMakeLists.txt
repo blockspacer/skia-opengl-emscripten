@@ -9,6 +9,22 @@ project(${PROJECT_NAME}
 
 # ------------------------------- Options --------------------------------------
 
+# NOTE: always FALSE here (change below)
+set(TARGET_EMSCRIPTEN FALSE)
+set(TARGET_LINUX FALSE)
+set(TARGET_WINDOWS FALSE)
+if(EMSCRIPTEN)
+  set(TARGET_EMSCRIPTEN TRUE)
+elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+  set(TARGET_LINUX TRUE)
+elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+# TODO OR ${CMAKE_SYSTEM_NAME} STREQUAL "Generic")
+  set(TARGET_WINDOWS TRUE)
+else()
+  set(TARGET_UNKNOWN TRUE)
+  message(FATAL_ERROR "platform=${CMAKE_SYSTEM_NAME} not supported")
+endif()
+
 include( cmake/Utils.cmake )
 # set_cmake_module_paths from Utils.cmake
 set_cmake_module_paths( ${PROJECT_NAME}
@@ -37,18 +53,6 @@ endif(NOT EMSCRIPTEN)
 #set(RELEASE_BUILD FALSE)
 option(RELEASE_BUILD "RELEASE_BUILD" OFF)
 message(STATUS "RELEASE_BUILD = ${RELEASE_BUILD}")
-
-# NOTE: always FALSE here (change below)
-set(TARGET_EMSCRIPTEN FALSE)
-set(TARGET_LINUX FALSE)
-if(EMSCRIPTEN)
-  set(TARGET_EMSCRIPTEN TRUE)
-elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
-  set(TARGET_LINUX TRUE)
-else()
-  set(TARGET_UNKNOWN TRUE)
-  message(FATAL_ERROR "platform not supported")
-endif()
 
 set(CHROMIUM_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src/chromium/)
 
@@ -81,11 +85,22 @@ set(ENABLE_CMAKE_COMPILE_WARNINGS TRUE CACHE BOOL "ENABLE_CMAKE_COMPILE_WARNINGS
 # khronos
 if (TARGET_EMSCRIPTEN)
   set(ENABLE_KHRONOS FALSE) # TODO
+  set(GLESv2_lib "GLESv2")
 elseif(TARGET_LINUX)
+  set(ENABLE_KHRONOS TRUE) # TODO
+  set(GLESv2_lib "GLESv2")
+elseif(TARGET_WINDOWS)
   set(ENABLE_KHRONOS TRUE) # TODO
 else()
   message(FATAL_ERROR "platform not supported")
 endif()
+#
+# clang-cl on Windows, see http://clang.llvm.org/docs/UsersManual.html#clang-cl
+set(IS_CLANG_CL FALSE CACHE BOOL "clang-cl on WINDOWS, see http://clang.llvm.org/docs/UsersManual.html#clang-cl")
+message(STATUS "IS_CLANG_CL=${IS_CLANG_CL}")
+if(IS_CLANG_CL AND NOT TARGET_WINDOWS)
+  message(FATAL_ERROR "IS_CLANG_CL requires TARGET_WINDOWS")
+endif(IS_CLANG_CL AND NOT TARGET_WINDOWS)
 #
 if(ENABLE_KHRONOS)
   set(khronos_LIB
@@ -96,6 +111,8 @@ set(ENABLE_NATIVE_HTML FALSE CACHE BOOL "ENABLE_NATIVE_HTML")
 if(RELEASE_BUILD AND NOT EMSCRIPTEN AND ENABLE_NATIVE_HTML)
   message(FATAL_ERROR "need emscripten for ENABLE_NATIVE_HTML")
 endif()
+
+message(STATUS "khronos_LIB=${khronos_LIB}")
 
 if (TARGET_EMSCRIPTEN AND NOT ENABLE_NATIVE_HTML)
   list(APPEND CXTPL_EXTRA_ARGS "-extra-arg=-DPLATFORM_NAME=\"WEBGL\"")
@@ -142,8 +159,10 @@ if(TARGET_EMSCRIPTEN)
   else()
     set(USE_SK_GPU FALSE) # TODO
   endif()
-else()
+elseif(TARGET_LINUX OR TARGET_WINDOWS)
   set(USE_SK_GPU TRUE)
+else()
+  message(FATAL_ERROR "platform not supported")
 endif()
 # TODO Use SKIA GrContext (enable SK_GPU) for native & WASM
 # NOTE: SK_GPU takes +3Mib
@@ -196,16 +215,23 @@ set(USE_LIBJPEG_TURBO TRUE CACHE BOOL "USE_LIBJPEG_TURBO")
 ### Find Libraries
 if(TARGET_EMSCRIPTEN)
   set(USE_OPENGL_LIB FALSE) # no system OPENGL for wasm
-else()
+elseif(TARGET_WINDOWS OR TARGET_LINUX)
   set(USE_OPENGL_LIB TRUE)
+else()
+  message(FATAL_ERROR "platform not supported")
 endif()
 if(TARGET_EMSCRIPTEN)
   set(USE_OPENGLES2_LIB FALSE) # no system OPENGLES for wasm
   set(USE_OPENGL_LIB FALSE)
-else()
+elseif(TARGET_LINUX OR TARGET_WINDOWS)
   set(USE_OPENGLES2_LIB FALSE) # TODO
   set(USE_OPENGL_LIB TRUE)
+else()
+  message(FATAL_ERROR "platform not supported")
 endif()
+
+# TODO: GL_GLEXT_PROTOTYPES
+
 if(NOT USE_OPENGL_LIB)
   # make OpenGL optional
   set(FOUND_OPENGL_LIBRARIES "")
@@ -311,10 +337,20 @@ if(ENABLE_NATIVE_HTML)
   list(APPEND CXTPL_EXTRA_ARGS "-extra-arg=-DWEBSITE_ROOT_URL=\"${WEBSITE_ROOT_URL}\"")
 endif(ENABLE_NATIVE_HTML)
 
-# always return on non-void functions to prevent UB
-set(COMMON_FLAGS "${COMMON_FLAGS} -Wreturn-type")
-# https://gist.github.com/morido/8637535
-set(COMMON_FLAGS "${COMMON_FLAGS} -Werror=return-type")
+if(NOT RELEASE_BUILD)
+  if(TARGET_WINDOWS)
+    set(COMMON_FLAGS "${COMMON_FLAGS} /D_DEBUG")
+  endif(TARGET_WINDOWS)
+  #
+  set(COMMON_FLAGS "${COMMON_FLAGS} -DD_DEBUG")
+endif(NOT RELEASE_BUILD)
+
+if(NOT TARGET_WINDOWS OR IS_CLANG_CL) # TODO
+  # always return on non-void functions to prevent UB
+  set(COMMON_FLAGS "${COMMON_FLAGS} -Wreturn-type")
+  # https://gist.github.com/morido/8637535
+  set(COMMON_FLAGS "${COMMON_FLAGS} -Werror=return-type")
+endif(NOT TARGET_WINDOWS OR IS_CLANG_CL)
 
 if(NOT ENABLE_MOJO)
   set(COMMON_FLAGS "${COMMON_FLAGS} -DDISABLE_MOJO=1")
@@ -359,8 +395,10 @@ endif(USE_ICU)
 
 if(TARGET_EMSCRIPTEN)
   set(USE_CUSTOM_LIBPNG FALSE)
-else()
+elseif(TARGET_LINUX OR TARGET_WINDOWS)
   set(USE_CUSTOM_LIBPNG FALSE)
+else()
+  message(FATAL_ERROR "platform not supported")
 endif()
 if(USE_LIBPNG)
   set(COMMON_FLAGS "${COMMON_FLAGS} -DHAS_LIBPNG=1")
@@ -372,19 +410,23 @@ if(USE_LIBPNG)
     if(TARGET_EMSCRIPTEN)
       set(USE_SYSTEM_PNG TRUE) # TODO
       #message(FATAL_ERROR "wasm: only custom LIBPNG is supported for now")
-    else()
+    elseif(TARGET_LINUX OR TARGET_WINDOWS)
       set(USE_SYSTEM_PNG TRUE)
-    endif(TARGET_EMSCRIPTEN)
+    else()
+      message(FATAL_ERROR "platform not supported")
+    endif()
   endif(USE_CUSTOM_LIBPNG)
   #
   if(USE_SYSTEM_PNG)
     #message(FATAL_ERROR "NOT SUPPORTED: SYSTEM PNG")
     if(TARGET_EMSCRIPTEN)
       set(EMCC_COMMON "${EMCC_COMMON} -s USE_LIBPNG=1")
-    else()
+    elseif(TARGET_LINUX OR TARGET_WINDOWS)
       find_package(PNG REQUIRED) # PNG::PNG
       set(libpng_LIB PNG::PNG)
       #set(libpng_LIB GLIBPNG)
+    else()
+      message(FATAL_ERROR "platform not supported")
     endif()
   else()
     if(USE_CUSTOM_LIBPNG)
@@ -432,6 +474,18 @@ else()
   message(STATUS "\"python\" found...")
 endif(NOT PYTHON_FOUND)
 
+set(khronos_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src/chromium/third_party/)
+set(khronos_DIR ${khronos_PARENT_DIR}khronos/)
+
+if(TARGET_WINDOWS)
+  # prevent C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\um\GL/gl.h(1157,1): error: unknown type name 'WINGDIAPI'
+  include_directories("${khronos_DIR}noninclude/GL")
+  include_directories("${khronos_DIR}noninclude")
+  if(NOT EXISTS "${khronos_DIR}noninclude/GL/glext.h")
+    message(FATAL_ERROR "can't find ${khronos_DIR}noninclude/GL/glext.h")
+  endif()
+endif(TARGET_WINDOWS)
+
 # harfbuzz
 #option(ENABLE_HARFBUZZ "ENABLE_HARFBUZZ" ON)
 #if((ENABLE_BLINK OR ENABLE_COBALT) AND NOT ENABLE_HARFBUZZ)
@@ -441,6 +495,9 @@ endif(NOT PYTHON_FOUND)
 if(ENABLE_HARFBUZZ)
   set(USE_CUSTOM_HARFBUZZ TRUE)
   set(FORCE_USE_SKIA_HARFBUZZ TRUE)
+  if(TARGET_WINDOWS)
+    set(HARFBUZZ_FROM_SKIA TRUE)
+  endif(TARGET_WINDOWS)
   #
   # custom flags
   set(COMMON_FLAGS "${COMMON_FLAGS} -DENABLE_HARFBUZZ=1")
@@ -453,8 +510,19 @@ if(ENABLE_HARFBUZZ)
   #
   if(USE_CUSTOM_HARFBUZZ)
     #
-    set(HARFBUZZ_LIBRARIES harfbuzz)
-    set(HARFBUZZ_INCLUDE_DIRS ${harfbuzz_FULL_DIR}/src)
+    if(TARGET_WINDOWS)
+      # NOTE: HarfBuzz from skia on WINDOWS
+      if(HARFBUZZ_FROM_SKIA)
+        #set(HARFBUZZ_LIBRARIES harfbuzz)
+        set(HARFBUZZ_LIBRARIES SKIA)
+      else()
+        set(HARFBUZZ_LIBRARIES harfbuzz)
+        list(APPEND HARFBUZZ_INCLUDE_DIRS ${harfbuzz_FULL_DIR}/src)
+      endif()
+    else()
+      set(HARFBUZZ_LIBRARIES harfbuzz)
+      list(APPEND HARFBUZZ_INCLUDE_DIRS ${harfbuzz_FULL_DIR}/src)
+    endif(TARGET_WINDOWS)
   else(USE_CUSTOM_HARFBUZZ)
     set(EMCC_COMMON "${EMCC_COMMON} -s USE_HARFBUZZ=1")
     # see find_package below for linux
@@ -464,6 +532,8 @@ endif(ENABLE_HARFBUZZ)
 if(TARGET_EMSCRIPTEN)
   set(ENABLE_BORINGSSL FALSE)
 elseif(TARGET_LINUX)
+  set(ENABLE_BORINGSSL FALSE) # TODO: add src/chromium/third_party/boringssl/src/ssl/CMakeLists.txt
+elseif(TARGET_WINDOWS)
   set(ENABLE_BORINGSSL FALSE) # TODO: add src/chromium/third_party/boringssl/src/ssl/CMakeLists.txt
 else()
   message(FATAL_ERROR "platform not supported")
@@ -478,6 +548,8 @@ endif(ENABLE_BORINGSSL)
 if(TARGET_EMSCRIPTEN)
   set(ENABLE_GNET FALSE)
 elseif(TARGET_LINUX)
+  set(ENABLE_GNET FALSE) # TODO
+elseif(TARGET_WINDOWS)
   set(ENABLE_GNET FALSE) # TODO
 else()
   message(FATAL_ERROR "platform not supported")
@@ -495,6 +567,7 @@ if (RELEASE_BUILD)
   list(APPEND APP_DEFINITIONS RELEASE_BUILD=1)
 endif (RELEASE_BUILD)
 
+list(APPEND APP_DEFINITIONS SDL_MAIN_HANDLED=1)
 list(APPEND APP_DEFINITIONS ENABLE_OPENGL=1)
 list(APPEND APP_DEFINITIONS ENABLE_CUSTOM_FONTS=1)
 list(APPEND APP_DEFINITIONS HARFBUZZ_UNICODE=1)
@@ -674,12 +747,18 @@ if(ENABLE_BLINK)
     GURL
   )
   if(NOT TARGET_EMSCRIPTEN)
-    list(APPEND BLINK_LIBS
-      # tcmalloc only for posix/linux/e.t.c.
-      tcmalloc
-      # libevent only for posix/linux/e.t.c.
-      libevent
-    )
+    if(TARGET_LINUX)
+        list(APPEND BLINK_LIBS
+          # tcmalloc only for posix/linux/e.t.c.
+          tcmalloc
+          # libevent only for posix/linux/e.t.c.
+          libevent
+        )
+    elseif(TARGET_WINDOWS)
+      # skip
+    else()
+      message(FATAL_ERROR "platform not supported")
+    endif()
   endif(NOT TARGET_EMSCRIPTEN)
   if(ENABLE_GNET)
     set(SERVICES_SERVICE_MANAGER_PUBLIC_CPP_LIB
@@ -714,8 +793,10 @@ endif(TARGET_EMSCRIPTEN)
 
 if(TARGET_EMSCRIPTEN)
   set(ENABLE_UKM FALSE) # keep wasm build as small as possible
-else()
+elseif(TARGET_LINUX OR TARGET_WINDOWS)
   set(ENABLE_UKM FALSE) # TODO: UKM NOT SUPPORTED FOR NOW
+else()
+  message(FATAL_ERROR "platform not supported")
 endif()
 if(ENABLE_UKM)
   set(COMMON_FLAGS "${COMMON_FLAGS} -DENABLE_UKM=1")
@@ -770,7 +851,16 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}
 
 # -fno-exceptions
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
-set(COMMON_CXX_FLAGS "${COMMON_CXX_FLAGS} -std=c++17") # use target options
+## set(CMAKE_CXX_STANDARD 17)
+## set(CMAKE_CXX_STANDARD_REQUIRED ON)
+## set(CMAKE_CXX_EXTENSIONS OFF) # -std=c++11 instead of -std=gnu++11
+
+if(TARGET_WINDOWS)
+  # see http://clang.llvm.org/docs/UsersManual.html#clang-cl
+  set(COMMON_CXX_FLAGS "${COMMON_CXX_FLAGS} /std:c++17")
+else()
+  set(COMMON_CXX_FLAGS "${COMMON_CXX_FLAGS} -std=c++17") # use target options
+endif()
 
 # see https://github.com/chromium/chromium/blob/master/build/config/compiler/BUILD.gn#L683
 #set(COMMON_CXX_FLAGS "${COMMON_CXX_FLAGS} -ftime-trace")
@@ -785,23 +875,289 @@ if(TARGET_EMSCRIPTEN)
   set(COMMON_FLAGS "${COMMON_FLAGS} -DENABLE_EMBIND=1")
 endif(TARGET_EMSCRIPTEN)
 
+# TODO:
+# https://github.com/ambiesoft/gsrc/blob/199d762d322087c67cec2e9f1aaa7bfd5e0eb4c4/info/20180715-builderror-220332.txt#L76
+# https://groups.google.com/a/chromium.org/forum/#!topic/gn-dev/-PraKAwRlV8
+# https://developercommunity.visualstudio.com/content/problem/339089/arm64-conversion-issue-error-c2440-initializing-1.html
+
+MATH(EXPR SIZEOF_VOID_P_BITS "${CMAKE_SIZEOF_VOID_P}*8")
+set(COMMON_FLAGS "${COMMON_FLAGS} -DSIZEOF_VOID_P=${SIZEOF_VOID_P_BITS}")
+message(STATUS "DSIZEOF_VOID_P=${SIZEOF_VOID_P_BITS}")
+
+set(COMMON_FLAGS "${COMMON_FLAGS} -DUI_VIEWS_PORT=1")
+
+if(MSVC) # TODO
+  set(COMMON_FLAGS "${COMMON_FLAGS} -DGLEW_NO_GLU=1")
+  set(GLEW_STATIC TRUE)
+  if(GLEW_STATIC)
+    set(COMMON_FLAGS "${COMMON_FLAGS} -DGLEW_STATIC=1")
+  endif(GLEW_STATIC)
+endif()
+
+if(MSVC) # TODO
+    # see https://docs.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warnings-by-compiler-version?view=vs-2019
+
+    #set(COMMON_FLAGS "${COMMON_FLAGS} -DWCHAR_T_IS_UTF16=1") # TODO: narrowing
+
+    #set(COMMON_FLAGS "${COMMON_FLAGS} /wd2397") # TODO: narrowing
+    #set(COMMON_FLAGS "${COMMON_FLAGS} /wd2398") # TODO: narrowing
+    #set(COMMON_FLAGS "${COMMON_FLAGS} /wd2440") # TODO: narrowing
+    #set(COMMON_FLAGS "${COMMON_FLAGS} /wd2712") # TODO: Cannot use __try in functions that require object unwinding
+
+    # https://docs.microsoft.com/en-us/cpp/build/reference/gf-eliminate-duplicate-strings?view=vs-2019
+    #set(COMMON_FLAGS "${COMMON_FLAGS} /GF")
+
+    # https://docs.microsoft.com/en-us/cpp/build/reference/z7-zi-zi-debug-information-format?view=vs-2019
+    #set(COMMON_FLAGS "${COMMON_FLAGS} /Zi")
+
+    # https://docs.microsoft.com/en-us/cpp/build/reference/tc-tp-tc-tp-specify-source-file-type?view=vs-2019
+    #set(COMMON_FLAGS "${COMMON_FLAGS} /TP")
+
+    # TODO: https://stackoverflow.com/a/34630892
+
+    # https://docs.microsoft.com/en-us/cpp/build/reference/za-ze-disable-language-extensions?view=vs-2019
+    # set(COMMON_FLAGS "${COMMON_FLAGS} /Za")
+
+    # unknown option
+    #set(COMMON_FLAGS "${COMMON_FLAGS} /permissive")
+
+    set(COMMON_FLAGS "${COMMON_FLAGS} -DCOMPILER_MSVC=1")
+
+    # https://docs.microsoft.com/en-us/cpp/build/reference/zc-strictstrings-disable-string-literal-type-conversion?view=vs-2019
+    set(COMMON_FLAGS "${COMMON_FLAGS} /Zc:strictStrings-")
+
+    # https://docs.microsoft.com/en-us/cpp/build/reference/gd-gr-gv-gz-calling-convention?view=vs-2019
+    #set(COMMON_FLAGS "${COMMON_FLAGS} /Gv")
+
+    # https://docs.microsoft.com/en-us/cpp/build/reference/gt-support-fiber-safe-thread-local-storage?view=vs-2019
+    set(COMMON_FLAGS "${COMMON_FLAGS} /GT")
+
+    # https://docs.microsoft.com/en-us/cpp/build/reference/gs-buffer-security-check?view=vs-2019
+    set(COMMON_FLAGS "${COMMON_FLAGS} /GS-")
+
+    set(COMMON_FLAGS "${COMMON_FLAGS} -D_CRT_SECURE_NO_WARNINGS=1")
+
+    # https://docs.microsoft.com/en-us/cpp/build/reference/sdl-enable-additional-security-checks?view=vs-2019
+    set(COMMON_FLAGS "${COMMON_FLAGS} /sdl-")
+
+    #set(COMMON_FLAGS "${COMMON_FLAGS} /D__DATE__=")
+
+    #set(COMMON_FLAGS "${COMMON_FLAGS} /D__TIME__=")
+
+    #set(COMMON_FLAGS "${COMMON_FLAGS} /D__TIMESTAMP__=")
+
+    #set(COMMON_FLAGS "${COMMON_FLAGS} /d2FastFail")
+
+    # https://docs.microsoft.com/en-us/cpp/build/reference/wx-treat-linker-warnings-as-errors?view=vs-2019
+    #set(COMMON_FLAGS "${COMMON_FLAGS} /WX")
+
+    set(COMMON_FLAGS "${COMMON_FLAGS} -DWIN32_LEAN_AND_MEAN")
+
+    # LDFLAGS https://git.m4xw.net/Switch/RetroArch/beetle-pce-fast-libretro/commit/48a734c9dc36905fa6779303fb1c80003bce4853?w=1
+    #set(COMMON_FLAGS "${COMMON_FLAGS} -SUBSYSTEM:CONSOLE")
+    #set(COMMON_FLAGS "${COMMON_FLAGS} /SUBSYSTEM:CONSOLE")
+    #set(COMMON_FLAGS "${COMMON_FLAGS} /SUBSYSTEM:WINDOWS")
+
+    set(COMMON_FLAGS "${COMMON_FLAGS} -D_CONSOLE=1")
+
+    #set(COMMON_FLAGS "${COMMON_FLAGS} -DWINAPI_FAMILY=WINAPI_FAMILY_DESKTOP_APP")
+
+    # see https://github.com/chromium/chromium/blob/8e82c6ab1bc2223fa25f1a127b65071d2d58ae36/build/config/win/BUILD.gn#L276
+    set(COMMON_FLAGS "${COMMON_FLAGS} -DNTDDI_VERSION=NTDDI_WIN10_RS2")
+    set(COMMON_FLAGS "${COMMON_FLAGS} -D_WIN32_WINNT=0x0A00")
+    set(COMMON_FLAGS "${COMMON_FLAGS} -DWINVER=0x0A00")
+
+    # Exceptions in allocator shim are not supported!
+    # see https://github.com/chromium/chromium/blob/5514bb10d8770fea460152d278f105895067aa38/build/config/compiler/BUILD.gn#L1775
+    # TODO: /EHsc- # Disabling Exceptions for MSVC
+    set(COMMON_FLAGS "${COMMON_FLAGS} /EHsc-")
+
+    # https://stackoverflow.com/questions/1372480/c-redefinition-header-files-winsock2-h
+    set(COMMON_FLAGS "${COMMON_FLAGS} -D_WINSOCKAPI_=1")
+
+    set(COMMON_FLAGS "${COMMON_FLAGS} -D_HAS_EXCEPTIONS=0")
+
+    # see https://github.com/jarro2783/cxxopts/issues/49
+    # see https://github.com/chromium/chromium/blob/8e82c6ab1bc2223fa25f1a127b65071d2d58ae36/build/config/win/BUILD.gn#L601
+    set(COMMON_FLAGS "${COMMON_FLAGS} -DNOMINMAX=1")
+
+    set(COMMON_FLAGS "${COMMON_FLAGS} -DHB_NO_MT=1") # TODO
+
+    set(COMMON_FLAGS "${COMMON_FLAGS} -D_WIN32=1") # TODO
+
+    # https://github.com/blockspacer/skia-opengl-emscripten/blob/8390245e4aadd160d99e297968594bb6ad86caaa/src/chromium/third_party/ced/BUILD.gn#L57
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4005") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4006") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4018") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4309") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4310") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4267") # TODO
+
+    set(COMMON_FLAGS "${COMMON_FLAGS} -D_CRT_NONSTDC_NO_WARNINGS=1") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} -D_CRT_NONSTDC_NO_DEPRECATE=1") # TODO
+
+    # see https://github.com/chromium/chromium/blob/5514bb10d8770fea460152d278f105895067aa38/build/config/compiler/BUILD.gn#L1093
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4117") # TODO
+
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4800") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4267") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4996") # TODO
+
+    # see https://github.com/chromium/chromium/blob/5514bb10d8770fea460152d278f105895067aa38/build/config/compiler/BUILD.gn#L1093
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4091") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4127") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4251") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4275") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4312") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4324") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4351") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4355") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4589") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4611") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4100") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4121") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4244") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4505") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4510") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4512") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4610") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4838") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4995") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4996") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4456") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4457") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4458") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4459") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4200") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4201") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4204") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4221") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4245") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4267") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4305") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4389") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4702") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4701") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4703") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4661") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4706") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4715") # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /wd4577") # TODO
+endif(MSVC)
+
 if(RELEASE_BUILD)
-  if(ENABLE_EMBIND)
-    # see https://github.com/emscripten-core/emscripten/issues/7001
-    # see https://github.com/emscripten-core/emscripten/issues/9122
-    # set(COMMON_FLAGS "${COMMON_FLAGS} -frtti")
-    set(COMMON_FLAGS "${COMMON_FLAGS} -DEMSCRIPTEN_HAS_UNBOUND_TYPE_NAMES=0")
-    set(COMMON_FLAGS "${COMMON_FLAGS} -fno-rtti")
+  if(MSVC) # TODO
+    set(COMMON_FLAGS "${COMMON_FLAGS} /GR-")
+    #set(COMMON_FLAGS "${COMMON_FLAGS} -fno-exceptions")
+    set(COMMON_FLAGS "${COMMON_FLAGS} -DNDEBUG=1")
+    #
+    # see https://docs.microsoft.com/en-us/cpp/build/reference/md-mt-ld-use-run-time-library?view=vs-2019
+    set(COMMON_FLAGS "${COMMON_FLAGS} /MD")
+    set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} /MD")
+    set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} /MD")
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MDd")
+    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MD")
   else()
-    set(COMMON_FLAGS "${COMMON_FLAGS} -fno-rtti")
-  endif(ENABLE_EMBIND)
-  set(COMMON_FLAGS "${COMMON_FLAGS} -fno-exceptions")
-  set(COMMON_FLAGS "${COMMON_FLAGS} -DNDEBUG=1")
+    if(ENABLE_EMBIND)
+      # see https://github.com/emscripten-core/emscripten/issues/7001
+      # see https://github.com/emscripten-core/emscripten/issues/9122
+      # set(COMMON_FLAGS "${COMMON_FLAGS} -frtti")
+      set(COMMON_FLAGS "${COMMON_FLAGS} -DEMSCRIPTEN_HAS_UNBOUND_TYPE_NAMES=0")
+      set(COMMON_FLAGS "${COMMON_FLAGS} -fno-rtti")
+    else()
+      set(COMMON_FLAGS "${COMMON_FLAGS} -fno-rtti")
+    endif(ENABLE_EMBIND)
+    set(COMMON_FLAGS "${COMMON_FLAGS} -fno-exceptions")
+    set(COMMON_FLAGS "${COMMON_FLAGS} -DNDEBUG=1")
+  endif()
 else()
-  # https://stackoverflow.com/a/4184877/10904212
-  # see DCHECK in base::polymorphic_downcast, dynamic_cast
-  set(COMMON_FLAGS "${COMMON_FLAGS} -frtti")
+  if(MSVC) # TODO
+    # https://stackoverflow.com/a/4184877/10904212
+    # see DCHECK in base::polymorphic_downcast, dynamic_cast
+    set(COMMON_FLAGS "${COMMON_FLAGS} /GR")
+
+    # see https://docs.microsoft.com/en-us/cpp/build/reference/md-mt-ld-use-run-time-library?view=vs-2019
+    set(COMMON_FLAGS "${COMMON_FLAGS} /MDd")
+    set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} /MDd")
+    set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} /MDd")
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MDd")
+    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MD")
+
+    # TODO
+    # see https://stackoverflow.com/questions/7668200/error-lnk2038-mismatch-detected-for-iterator-debug-level-value-0-doesnt
+    # see https://docs.microsoft.com/en-us/previous-versions/visualstudio/visual-studio-2013/hh697468(v=vs.120)?redirectedfrom=MSDN
+    set(COMMON_FLAGS "${COMMON_FLAGS} -D_HAS_ITERATOR_DEBUGGING=0")
+    set(COMMON_FLAGS "${COMMON_FLAGS} -D_ITERATOR_DEBUG_LEVEL=0")
+
+    set(COMMON_FLAGS "${COMMON_FLAGS} -D_DEBUG=1")
+  else()
+    # https://stackoverflow.com/a/4184877/10904212
+    # see DCHECK in base::polymorphic_downcast, dynamic_cast
+    set(COMMON_FLAGS "${COMMON_FLAGS} -frtti")
+    set(COMMON_FLAGS "${COMMON_FLAGS} -D_DEBUG=1")
+  endif()
 endif(RELEASE_BUILD)
+
+if(MSVC) # TODO
+  #
+  set(COMMON_FLAGS "${COMMON_FLAGS} -ferror-limit=500") # for clang-cl
+  #set(COMMON_FLAGS "${COMMON_FLAGS} /errorlimit:0")
+
+  # see https://medium.com/@alasher/colored-c-compiler-output-with-ninja-clang-gcc-10bfe7f2b949
+  set(COMMON_FLAGS "${COMMON_FLAGS} -fcolor-diagnostics") # for clang-cl
+
+  # see https://software.intel.com/en-us/forums/intel-c-compiler/topic/733662
+  # see https://unicode-org.atlassian.net/browse/ICU-13251?page=com.atlassian.jira.plugin.system.issuetabpanels%3Aall-tabpanel
+  set(COMMON_FLAGS "${COMMON_FLAGS} /utf-8")
+
+  # see https://github.com/chromium/chromium/blob/8e82c6ab1bc2223fa25f1a127b65071d2d58ae36/build/config/win/BUILD.gn#L60
+  set(COMMON_FLAGS "${COMMON_FLAGS} /Gy")
+
+  # see https://github.com/chromium/chromium/blob/8e82c6ab1bc2223fa25f1a127b65071d2d58ae36/build/config/win/BUILD.gn#L60
+  set(COMMON_FLAGS "${COMMON_FLAGS} /FS")
+
+  # see https://github.com/chromium/chromium/blob/8e82c6ab1bc2223fa25f1a127b65071d2d58ae36/build/config/win/BUILD.gn#L60
+  set(COMMON_FLAGS "${COMMON_FLAGS} /bigobj")
+
+  # see https://docs.microsoft.com/en-us/cpp/build/reference/zc-cplusplus?view=vs-2019
+  set(COMMON_FLAGS "${COMMON_FLAGS} /Zc:__cplusplus")
+
+  # see https://github.com/chromium/chromium/blob/8e82c6ab1bc2223fa25f1a127b65071d2d58ae36/build/config/win/BUILD.gn#L60
+  set(COMMON_FLAGS "${COMMON_FLAGS} /Zc:sizedDealloc-")
+
+  # see https://github.com/chromium/chromium/blob/8e82c6ab1bc2223fa25f1a127b65071d2d58ae36/build/config/win/BUILD.gn#L60
+  set(COMMON_FLAGS "${COMMON_FLAGS} -D__STD_C")
+
+  # see https://github.com/chromium/chromium/blob/8e82c6ab1bc2223fa25f1a127b65071d2d58ae36/build/config/win/BUILD.gn#L60
+  set(COMMON_FLAGS "${COMMON_FLAGS} -D_CRT_RAND_S")
+
+  # see https://github.com/chromium/chromium/blob/8e82c6ab1bc2223fa25f1a127b65071d2d58ae36/build/config/win/BUILD.gn#L60
+  #set(COMMON_FLAGS "${COMMON_FLAGS} -D_CRT_SECURE_NO_DEPRECATE")
+
+  # see https://github.com/chromium/chromium/blob/8e82c6ab1bc2223fa25f1a127b65071d2d58ae36/build/config/win/BUILD.gn#L60
+  #set(COMMON_FLAGS "${COMMON_FLAGS} -D_SCL_SECURE_NO_DEPRECATE")
+
+  # see https://github.com/chromium/chromium/blob/8e82c6ab1bc2223fa25f1a127b65071d2d58ae36/build/config/win/BUILD.gn#L60
+  #set(COMMON_FLAGS "${COMMON_FLAGS} -D_ATL_NO_OPENGL")
+
+  # see https://github.com/chromium/chromium/blob/8e82c6ab1bc2223fa25f1a127b65071d2d58ae36/build/config/win/BUILD.gn#L60
+  set(COMMON_FLAGS "${COMMON_FLAGS} -D_WINDOWS")
+
+  # see https://github.com/chromium/chromium/blob/8e82c6ab1bc2223fa25f1a127b65071d2d58ae36/build/config/win/BUILD.gn#L60
+  set(COMMON_FLAGS "${COMMON_FLAGS} -DCERT_CHAIN_PARA_HAS_EXTRA_FIELDS")
+
+  # see https://github.com/chromium/chromium/blob/8e82c6ab1bc2223fa25f1a127b65071d2d58ae36/build/config/win/BUILD.gn#L60
+  set(COMMON_FLAGS "${COMMON_FLAGS} -DPSAPI_VERSION=2")
+
+  # see https://github.com/chromium/chromium/blob/8e82c6ab1bc2223fa25f1a127b65071d2d58ae36/build/config/win/BUILD.gn#L60
+  set(COMMON_FLAGS "${COMMON_FLAGS} -DWIN32")
+
+  # see https://github.com/chromium/chromium/blob/8e82c6ab1bc2223fa25f1a127b65071d2d58ae36/build/config/win/BUILD.gn#L60
+  set(COMMON_FLAGS "${COMMON_FLAGS} -D_SECURE_ATL")
+
+  # see https://github.com/chromium/chromium/blob/8e82c6ab1bc2223fa25f1a127b65071d2d58ae36/build/config/win/BUILD.gn#L60
+  set(COMMON_FLAGS "${COMMON_FLAGS} -D_USING_V110_SDK71_")
+endif()
 
 if(ENABLE_COBALT AND NOT RELEASE_BUILD)
   list(APPEND COBALT_COMMON_DEFINES COBALT_BUILD_TYPE_DEBUG=1)
@@ -829,6 +1185,13 @@ if (EMSCRIPTEN)
   set(COMMON_FLAGS "${COMMON_FLAGS} -DNO_CHROMIUM_WINDOW=1")
 elseif(TARGET_LINUX)
   set(COMMON_FLAGS "${COMMON_FLAGS} -DUSE_X11=1")
+  # custom define
+  set(COMMON_FLAGS "${COMMON_FLAGS} -DNO_CHROMIUM_WINDOW=1")
+elseif(TARGET_WINDOWS)
+  #set(COMMON_FLAGS "${COMMON_FLAGS} -DUSE_X11=1") # TODO <<<
+  set(COMMON_FLAGS "${COMMON_FLAGS} -D_UNICODE=1") # TODO <<<
+  set(COMMON_FLAGS "${COMMON_FLAGS} -DUNICODE=1") # TODO <<<
+  set(COMMON_FLAGS "${COMMON_FLAGS} -DNO_TCMALLOC=1") # TODO <<<
   # custom define
   set(COMMON_FLAGS "${COMMON_FLAGS} -DNO_CHROMIUM_WINDOW=1")
 else()
@@ -860,6 +1223,8 @@ if(USE_LIBJPEG)
   if(TARGET_EMSCRIPTEN)
     set(libjpeg_LIB GLIBJPEG)
   elseif(TARGET_LINUX)
+    set(libjpeg_LIB GLIBJPEG)
+  elseif(TARGET_WINDOWS)
     set(libjpeg_LIB GLIBJPEG)
   else()
     message(FATAL_ERROR "platform not supported")
@@ -895,6 +1260,8 @@ if(USE_LIBJPEG_TURBO)
     set(libjpeg_TURBO_LIB GLIBJPEG_TURBO)
   elseif(TARGET_LINUX)
     set(libjpeg_TURBO_LIB GLIBJPEG_TURBO)
+  elseif(TARGET_WINDOWS)
+    set(libjpeg_TURBO_LIB GLIBJPEG_TURBO)
   else()
     message(FATAL_ERROR "platform not supported")
   endif()
@@ -921,19 +1288,42 @@ if(ENABLE_COBALT)
   set(COBALT_GEN_DOM_PARSER_PARENT_DIR
     ${COBALT_GEN_DIR}cobalt/
   )
+  if(TARGET_EMSCRIPTEN)
+    set(COBALT_OS_DEFINE COBALT_LINUX=1)
+  elseif(TARGET_LINUX)
+    set(COBALT_OS_DEFINE COBALT_LINUX=1)
+  elseif(TARGET_WINDOWS)
+    set(COBALT_OS_DEFINE COBALT_WINDOWS=1)
+  else()
+    message(FATAL_ERROR "platform not supported")
+  endif()
+  if(TARGET_WINDOWS)
+    list(APPEND EXTRA_STARBOARD_DEFINES
+      STARBOARD_ATOMIC_INCLUDE="${COBALT_ROOT_DIR}port/win/x64x11/atomic_public.h" # TODO: TARGET_WINDOWS
+      STARBOARD_THREAD_TYPES_INCLUDE="${COBALT_ROOT_DIR}port/win/x64x11/thread_types_public.h" # TODO: TARGET_WINDOWS
+      STARBOARD_CONFIGURATION_INCLUDE="${COBALT_ROOT_DIR}port/win/x64x11/configuration_public.h" # TODO: TARGET_WINDOWS
+    )
+  elseif(TARGET_LINUX OR TARGET_EMSCRIPTEN)
+    list(APPEND EXTRA_STARBOARD_DEFINES
+      STARBOARD_ATOMIC_INCLUDE="${COBALT_ROOT_DIR}port/linux/x64x11/atomic_public.h" # TODO: TARGET_WINDOWS
+      STARBOARD_THREAD_TYPES_INCLUDE="${COBALT_ROOT_DIR}port/linux/x64x11/thread_types_public.h" # TODO: TARGET_WINDOWS
+      STARBOARD_CONFIGURATION_INCLUDE="${COBALT_ROOT_DIR}port/linux/x64x11/configuration_public.h" # TODO: TARGET_WINDOWS
+    )
+  else()
+    message(FATAL_ERROR "platform not supported")
+  endif()
   list(APPEND COBALT_COMMON_DEFINES
+    COBALT_PORT=1
     OS_STARBOARD=1
     STARBOARD=1
     COBALT=1
-    COBALT_LINUX=1
+    ${COBALT_OS_DEFINE}
     #SB_HAS_STD_UNORDERED_HASH=1 # see configuration_public.h
     #MESA_EGL_NO_X11_HEADERS=1
     #
     #COBALT_ENABLE_VERSION_COMPATIBILITY_VALIDATIONS=1
     #
-    STARBOARD_ATOMIC_INCLUDE="${COBALT_ROOT_DIR}port/linux/x64x11/atomic_public.h"
-    STARBOARD_THREAD_TYPES_INCLUDE="${COBALT_ROOT_DIR}port/linux/x64x11/thread_types_public.h"
-    STARBOARD_CONFIGURATION_INCLUDE="${COBALT_ROOT_DIR}port/linux/x64x11/configuration_public.h"
+    ${EXTRA_STARBOARD_DEFINES}
     #
     #BASE_HASH_DEFINE_LONG_LONG_HASHES=0
     #BASE_HASH_DEFINE_STRING_HASHES=0
@@ -1120,6 +1510,8 @@ if(ENABLE_COBALT)
   #cobalt_csp
   if(TARGET_EMSCRIPTEN)
     set(ENABLE_COBALT_CSP FALSE)
+  elseif(TARGET_WINDOWS)
+    set(ENABLE_COBALT_CSP FALSE)#TRUE) # TODO
   elseif(TARGET_LINUX)
     set(ENABLE_COBALT_CSP FALSE)#TRUE) # TODO
   else()
@@ -1143,6 +1535,8 @@ if (PORT_OWN_DLOG)
     set(EMCC_COMMON "${EMCC_COMMON} -DPORT_OWN_DLOG=1")
   elseif(TARGET_LINUX)
     set(COMMON_FLAGS "${COMMON_FLAGS} -DPORT_OWN_DLOG=1")
+  elseif(TARGET_WINDOWS)
+    set(COMMON_FLAGS "${COMMON_FLAGS} -DPORT_OWN_DLOG=1")
   else()
     message(FATAL_ERROR "platform not supported")
   endif()
@@ -1151,13 +1545,23 @@ endif(PORT_OWN_DLOG)
 # https://github.com/emscripten-core/emscripten/issues/4932
 # https://github.com/kosh04/newlisp/blob/master/newlisp.h#L164
 # TODO
-set(COMMON_FLAGS "${COMMON_FLAGS} -D_FILE_OFFSET_BITS=64")
-set(COMMON_FLAGS "${COMMON_FLAGS} -D_LARGEFILE_SOURCE=1")
+if(TARGET_EMSCRIPTEN OR TARGET_LINUX)
+  set(COMMON_FLAGS "${COMMON_FLAGS} -D_FILE_OFFSET_BITS=64")
+  set(COMMON_FLAGS "${COMMON_FLAGS} -D_LARGEFILE_SOURCE=1")
+endif()
+
 if(TARGET_EMSCRIPTEN)
   # TODO: -mnontrapping-fptoint
 elseif(TARGET_LINUX)
   set(COMMON_FLAGS "${COMMON_FLAGS} -D_LARGEFILE64_SOURCE=1")
   set(COMMON_FLAGS "${COMMON_FLAGS} -DHAVE_PTHREAD=1")
+  # Annotations useful when implementing condition variables such as CondVar,
+  # using conditional critical sections (Await/LockWhen) and when constructing
+  # user-defined synchronization mechanisms.
+  set(COMMON_FLAGS "${COMMON_FLAGS} -DDYNAMIC_ANNOTATIONS_ENABLED=1")
+elseif(TARGET_WINDOWS)
+  #set(COMMON_FLAGS "${COMMON_FLAGS} -D_LARGEFILE64_SOURCE=1")
+  #set(COMMON_FLAGS "${COMMON_FLAGS} -DHAVE_PTHREAD=1")
   # Annotations useful when implementing condition variables such as CondVar,
   # using conditional critical sections (Await/LockWhen) and when constructing
   # user-defined synchronization mechanisms.
@@ -1175,6 +1579,43 @@ if(USE_SK_GPU)
 else()
  set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_SUPPORT_GPU=0") # skia_enable_gpu
 endif(USE_SK_GPU)
+
+# see https://github.com/zenoalbisser/chromium/blob/e71f21b9b4b9b839f5093301974a45545dad2691/skia/BUILD.gn#L164
+# see https://github.com/google/skia/blob/a6dc5c54e6f854c5d73d46d0ad2edbde9701e6d9/public.bzl#L596
+if(TARGET_LINUX)
+  set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_BUILD_FOR_UNIX=1") # note: NOT from BUILD.gn
+  set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_GAMMA_EXPONENT=1.2")
+  set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_GAMMA_CONTRAST=0.2")
+  set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_DEFAULT_FONT_CACHE_LIMIT=20971520")
+elseif(TARGET_EMSCRIPTEN)
+  set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DPNG_SKIP_SETJMP_CHECK=1")
+  set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_GAMMA_EXPONENT=1.2")
+  set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_GAMMA_CONTRAST=0.2")
+  set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_DEFAULT_FONT_CACHE_LIMIT=20971520")
+elseif(TARGET_WINDOWS)
+  set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_BUILD_FOR_WIN=1") # note: NOT from BUILD.gn
+  set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_GAMMA_SRGB=1")
+  set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_GAMMA_CONTRAST=0.5")
+  set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_DEFAULT_FONT_CACHE_LIMIT=20971520")
+  set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_DEFAULT_FONT_CACHE_COUNT_LIMIT=256")
+  set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DGR_GL_FUNCTION_TYPE=__stdcall")
+elseif(TARGET_ANDROID)
+  set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_BUILD_FOR_ANDROID=1") # note: from BUILD.gn
+  set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_BUILD_FOR_ANDROID=1") # note: from BUILD.gn
+  set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DUSE_CHROMIUM_SKIA=1")
+  set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_GAMMA_APPLY_TO_A8=1")
+  set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_GAMMA_EXPONENT=1.4")
+  set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_GAMMA_CONTRAST=0.0")
+  set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_DEFAULT_FONT_CACHE_LIMIT=1048576")
+elseif(TARGET_MAC)
+  set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_BUILD_FOR_MAC=1") # note: from BUILD.gn
+  set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_METAL=1")
+  set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_GAMMA_SRGB=1")
+  set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_GAMMA_CONTRAST=0.0")
+  set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_DEFAULT_FONT_CACHE_LIMIT=20971520")
+else()
+  message(FATAL_ERROR "platform not supported")
+endif()
 
 set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_DISABLE_READBUFFER=1")
 #set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DLIBANGLE_IMPLEMENTATION=1")
@@ -1920,11 +2361,29 @@ endif(NOT RELEASE_BUILD)
     set(EMCC_COMMON "${EMCC_COMMON} -s OFFSCREEN_FRAMEBUFFER=1")
   endif(HAVE_SWAP_CONTROL)
 
-else(EMSCRIPTEN)
+  message(STATUS "GLEW_INCLUDE_PATH=${GLEW_INCLUDE_PATH}")
+  message(STATUS "GLEW_LIBRARY=${GLEW_LIBRARY}")
+  message(STATUS "OPENGL_LIBRARIES = ${OPENGL_LIBRARIES} ")
+  message(STATUS "OPENGL_gl_LIBRARY = ${OPENGL_gl_LIBRARY} ")
+  message(STATUS "OPENGL_INCLUDE_DIR = ${OPENGL_INCLUDE_DIR} ")
+
+else() # NOT EMSCRIPTEN
 
   if(TARGET_LINUX)
     find_package(LibDL REQUIRED)
     set(libDL_LIB LIBDL::LIBDL)
+  elseif(TARGET_EMSCRIPTEN)
+    # skip
+  elseif(TARGET_WINDOWS)
+    if(GLEW_STATIC)
+      # override GLEW_LIB_SEARCH_NAMES to force `glew32s`, `s` suffix for static
+      list(APPEND GLEW_LIB_SEARCH_NAMES glew32s)
+    endif(GLEW_STATIC)
+    find_package(GLEW REQUIRED) # First try to find using the find_package method (works with vcpkg)
+    message(STATUS "GLEW_INCLUDE_PATH=${GLEW_INCLUDE_PATH}")
+    message(STATUS "GLEW_LIBRARY=${GLEW_LIBRARY}")
+  else()
+    message(FATAL_ERROR "platform not supported")
   endif()
 
   if(USE_SK_GPU)
@@ -1936,14 +2395,28 @@ else(EMSCRIPTEN)
   if(NOT RELEASE_BUILD)
 
     if(NOT DEBUG_LEVEL)
-      set(DEBUG_LEVEL "${DEBUG_LEVEL} -g")
+      if(MSVC)
+        set(DEBUG_LEVEL "${DEBUG_LEVEL} /DEBUG")
+      else()
+        set(DEBUG_LEVEL "${DEBUG_LEVEL} -g")
+      endif()
     endif(NOT DEBUG_LEVEL)
     if(NOT OPTIMIZE_LEVEL)
-      set(OPTIMIZE_LEVEL "${OPTIMIZE_LEVEL} -O0")
+      if(MSVC)
+        # TODO
+        #set(OPTIMIZE_LEVEL "${OPTIMIZE_LEVEL} -O0")
+      else()
+        set(OPTIMIZE_LEVEL "${OPTIMIZE_LEVEL} -O0")
+      endif()
     endif(NOT OPTIMIZE_LEVEL)
   else()
     if(NOT OPTIMIZE_LEVEL)
-      set(OPTIMIZE_LEVEL "${OPTIMIZE_LEVEL} -O3")
+      if(MSVC)
+        # TODO
+        set(OPTIMIZE_LEVEL "${OPTIMIZE_LEVEL} /RELEASE")
+      else()
+        set(OPTIMIZE_LEVEL "${OPTIMIZE_LEVEL} -O3")
+      endif()
     endif(NOT OPTIMIZE_LEVEL)
     if(NOT DEBUG_LEVEL)
       # Use -s to strip debug info from the binary (and don't use -g).
@@ -1961,12 +2434,24 @@ else(EMSCRIPTEN)
       COMPONENTS OpenGL EGL
       REQUIRED)
     if(OPENGL_FOUND)
-      set(FOUND_OPENGL_LIBRARIES ${OPENGL_LIBRARIES})
+      list(APPEND FOUND_OPENGL_LIBRARIES ${OPENGL_gl_LIBRARY})
+      if(NOT MSVC) # need only opengl32.lib
+        list(APPEND FOUND_OPENGL_LIBRARIES ${OPENGL_LIBRARIES})
+      endif(NOT MSVC)
       set(FOUND_OPENGL_INCLUDE_DIR ${OPENGL_INCLUDE_DIR})
       #
       message(STATUS "OPENGL_LIBRARIES = ${OPENGL_LIBRARIES} ")
+      message(STATUS "OPENGL_gl_LIBRARY = ${OPENGL_gl_LIBRARY} ")
       message(STATUS "OPENGL_INCLUDE_DIR = ${OPENGL_INCLUDE_DIR} ")
+      #if(MSVC)
+      #  list(APPEND FOUND_OPENGL_LIBRARIES
+      #    "opengl32.lib"
+      #  )
+      #endif(MSVC)
     endif()
+    message(STATUS "OPENGL_gl_LIBRARY = ${OPENGL_gl_LIBRARY} ")
+    message(STATUS "OPENGL_LIBRARIES = ${OPENGL_LIBRARIES} ")
+    message(STATUS "OPENGL_INCLUDE_DIR = ${OPENGL_INCLUDE_DIR} ")
   endif(USE_OPENGL_LIB)
 
   if(USE_OPENGLES2_LIB)
@@ -1985,6 +2470,7 @@ else(EMSCRIPTEN)
   if(SDL2_FOUND)
     message("Found SDL2 libraries")
     message("SDL2_INCLUDE_DIR = ${SDL2_INCLUDE_DIR} ")
+    message("SDL2_INCLUDE_DIRS = ${SDL2_INCLUDE_DIRS} ")
     message("SDL2_LIBRARY = ${SDL2_LIBRARY} ")
     add_definitions(-DUSE_SDL2_LIB)
   endif ()
@@ -1998,21 +2484,13 @@ else(EMSCRIPTEN)
   #endif ()
 
   #include(sdl2/FindSDL2_ttf.cmake)
-  find_package(SDL2_ttf REQUIRED)
-  if(SDL2_ttf_FOUND)
-    message(STATUS "Found SDL2_ttf libraries")
-    message(STATUS "SDL2_TTF_INCLUDE_DIR = ${SDL2_TTF_INCLUDE_DIR} ")
-    message(STATUS "SDL2_TTF_LIBRARY = ${SDL2_TTF_LIBRARY} ")
-    add_definitions(-DUSE_SDL2_ttf_LIB)
-  endif ()
-
-  set(HAS_GLEW_LIB FALSE)
-  find_package(GLEW REQUIRED) # First try to find using the find_package method (works with vcpkg)
-  if(GLEW_FOUND) # Works with some other methods
-    message(STATUS "GLEW_INCLUDE_PATH=${GLEW_INCLUDE_PATH}")
-    message(STATUS "GLEW_LIBRARY=${GLEW_LIBRARY}")
-    set(HAS_GLEW_LIB TRUE)
-  endif()
+  #find_package(SDL2_ttf REQUIRED)
+  #if(SDL2_ttf_FOUND)
+  #  message(STATUS "Found SDL2_ttf libraries")
+  #  message(STATUS "SDL2_TTF_INCLUDE_DIR = ${SDL2_TTF_INCLUDE_DIR} ")
+  #  message(STATUS "SDL2_TTF_LIBRARY = ${SDL2_TTF_LIBRARY} ")
+  #  add_definitions(-DUSE_SDL2_ttf_LIB)
+  #endif ()
 
   if(USE_SYSTEM_ZLIB)
     #message(FATAL_ERROR "NOT SUPPORTED") # TODO
@@ -2032,13 +2510,29 @@ else(EMSCRIPTEN)
     # harfbuzz
     set(USE_SHARED_HARFBUZZ "true")
     if(USE_SHARED_HARFBUZZ)
-      find_package(HarfBuzz REQUIRED)
+      if(TARGET_WINDOWS OR MSVC)
+        # skip
+        if(NOT HARFBUZZ_FROM_SKIA)
+          find_package(HarfBuzz REQUIRED)
+        endif()
+      else()
+        find_package(HarfBuzz REQUIRED)
+      endif()
     else()
-      set(HARFBUZZ_LIBRARIES harfbuzz)
-      set(HARFBUZZ_INCLUDE_DIRS ${harfbuzz_FULL_DIR}/src)
+      if(TARGET_WINDOWS OR MSVC)
+        # NOTE: HarfBuzz from skia on WINDOWS
+        if(HARFBUZZ_FROM_SKIA)
+          set(HARFBUZZ_LIBRARIES SKIA)
+          #add_dependencies(base SKIA) # TODO
+        else()
+          set(HARFBUZZ_LIBRARIES harfbuzz)
+          list(APPEND HARFBUZZ_INCLUDE_DIRS ${harfbuzz_FULL_DIR}/src)
+        endif()
+      else()
+        set(HARFBUZZ_LIBRARIES harfbuzz)
+        list(APPEND HARFBUZZ_INCLUDE_DIRS ${harfbuzz_FULL_DIR}/src)
+      endif()
     endif()
-    message(STATUS "HARFBUZZ_LIBRARIES=${HARFBUZZ_LIBRARIES}")
-    message(STATUS "HARFBUZZ_INCLUDE_DIRS=${HARFBUZZ_INCLUDE_DIRS}")
     # custom flags
     set(COMMON_FLAGS "${COMMON_FLAGS} -DENABLE_HARFBUZZ=1")
   endif(ENABLE_HARFBUZZ AND NOT USE_CUSTOM_HARFBUZZ)
@@ -2188,14 +2682,28 @@ if(TARGET_LINUX)
   include(xdg_mime.cmake)
   # xdg_user_dirs
   include(xdg_user_dirs.cmake)
-endif(TARGET_LINUX)
+elseif(TARGET_WINDOWS OR TARGET_EMSCRIPTEN)
+  # skip
+else()
+  message(FATAL_ERROR "platform not supported")
+endif()
 
 if (ENABLE_SKIA)
   #
   # skia
   #
   include(skia.cmake)
+  # NOTE: HarfBuzz from skia on WINDOWS
+  if(HARFBUZZ_FROM_SKIA)
+    set(HARFBUZZ_LIBRARIES SKIA)
+    list(APPEND HARFBUZZ_INCLUDE_DIRS ${SKIA_CMAKE_ONLY_HEADERS})
+    include_directories(${HARFBUZZ_INCLUDE_DIRS})
+    #list(APPEND HARFBUZZ_EXTRA_DEFINES ${SKIA_DEFINES}) # TODO
+  endif()
 endif()
+
+message(STATUS "HARFBUZZ_LIBRARIES=${HARFBUZZ_LIBRARIES}")
+message(STATUS "HARFBUZZ_INCLUDE_DIRS=${HARFBUZZ_INCLUDE_DIRS}")
 
 #
 # ICU
@@ -2207,9 +2715,18 @@ endif(USE_CUSTOM_ICU)
 #
 # HARFBUZZ
 #
-if(USE_CUSTOM_HARFBUZZ)
-  include(harfbuzz.cmake)
-endif(USE_CUSTOM_HARFBUZZ)
+if(TARGET_EMSCRIPTEN OR TARGET_LINUX OR TARGET_WINDOWS)
+  if(USE_CUSTOM_HARFBUZZ)
+    if(NOT HARFBUZZ_FROM_SKIA)
+      include(harfbuzz.cmake)
+    endif()
+    #message(FATAL_ERROR "TODO: harfbuzz.cmake")
+  endif(USE_CUSTOM_HARFBUZZ)
+else()
+  # NOTE: harfbuzz from skia on WINDOWS
+  #add_library(harfbuzz ALIAS SKIA)
+  message(FATAL_ERROR "platform not supported")
+endif()
 
 #
 # WTF
@@ -2661,12 +3178,15 @@ if(TARGET_EMSCRIPTEN)
 else()
   target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE
     ${SKIA_INCLUDES}
-    ${GLEW_INCLUDE_PATH}
     ${FOUND_OPENGL_INCLUDE_DIR}
+    ${SDL2_INCLUDE_DIR}
+    "${SDL2_INCLUDE_DIR}/.."
     ${SDL2_INCLUDE_DIRS}
-    ${SDL2_TTF_INCLUDE_DIR}
+    "${SDL2_INCLUDE_DIRS}/.."
+    #${SDL2_TTF_INCLUDE_DIR}
     ${HARFBUZZ_INCLUDE_DIRS}
     ${OPENGLES2_INCLUDE_DIRS}
+    ${GLEW_INCLUDE_PATH}
   )
   target_include_directories(${PROJECT_NAME} PRIVATE
     ${GEN_COMBINED_DIR}
@@ -2701,14 +3221,23 @@ else()
     #
     ${libZLIB_LIB}
     #
-    ${SDL2_TTF_INCLUDE_DIR}
+    #${SDL2_TTF_INCLUDE_DIR}
     ${HARFBUZZ_LIBRARIES}
     ${FOUND_OPENGL_LIBRARIES}
+    # see https://stackoverflow.com/questions/16390078/build-error-when-trying-to-run-an-opengl-example-in-vc
+    # see https://stackoverflow.com/questions/1236670/how-to-make-opengl-apps-in-64-bit-windows
+    #${OPENGL_gl_LIBRARY}
+    ${FOUND_OPENGL_LIBRARIES}
     ${GLEW_LIBRARY}
-    SDL2::Main
-    #SDL2:Net
-    #SDL2:tff # see ${SDL2_TTF_LIBRARY}
-    ${SDL2_TTF_LIBRARY}
+    # see https://stackoverflow.com/questions/39110217/linker-errors-from-sdl2-in-my-project
+    # SDL2main goes before SDL2. Linking order matters.
+    #SDL2::Main
+    #SDL2::SDL2main
+    ${SDL2_LIBRARY} # NOTE: no SDL2::Main on Windows
+    #${SDL2_LIBRARIES} # NOTE: no SDL2::Main on Windows
+    #SDL2::SDL2
+    #SDL2::SDL2-static
+    #${SDL2_TTF_LIBRARY}
     #
     ${LINK_OPTIONS}
     #
@@ -2809,7 +3338,7 @@ else()
     #COMPONENTS_SCHEDULING_METRICS
     ${HARFBUZZ_LIBRARIES}
     #${OPENGLES2_LIBRARIES}
-    GLESv2
+    ${GLESv2_LIB}
     #OpenGL::OpenGL
     #OpenGL::EGL
   )
@@ -2824,102 +3353,153 @@ else()
   )
 endif() # EMSCRIPTEN
 
+if(IS_CLANG_CL)
+  if(NOT MSVC)
+    message(FATAL_ERROR "IS_CLANG_CL requires MSVC")
+  endif(NOT MSVC)
+endif(IS_CLANG_CL)
+
 if(ENABLE_CMAKE_COMPILE_WARNINGS)
-  set(ENABLED_WARNINGS
-    #-Wno-error
-    # always return on non-void functions to prevent UB
-    -Wreturn-type
-    # https://gist.github.com/morido/8637535
-    -Werror=return-type
-    -Wall
-    -Wextra
-    -Weverything # clang
-  )
+  if(NOT MSVC OR IS_CLANG_CL)
+    list(APPEND ENABLED_WARNINGS
+      #-Wno-error
+      # always return on non-void functions to prevent UB
+      -Wreturn-type
+      # https://gist.github.com/morido/8637535
+      -Werror=return-type
+      -Wall
+      -Wextra
+      -Weverything # clang
+      -Wno-builtin-macro-redefined
+      -Wno-unused-command-line-argument
+      -Wno-unused-variable
+    )
+  endif(NOT MSVC OR IS_CLANG_CL)
+  if(NOT MSVC OR IS_CLANG_CL)
+    list(APPEND ENABLED_WARNINGS
+      -Wno-error
+    )
+  else()
+    list(APPEND ENABLED_WARNINGS "/W0") # TODO
+  endif()
 else(ENABLE_CMAKE_COMPILE_WARNINGS)
-  set(ENABLED_WARNINGS
-    -Wno-error # clang
-  )
+  if(NOT MSVC OR IS_CLANG_CL)
+    list(APPEND ENABLED_WARNINGS
+      -Wno-builtin-macro-redefined
+      -Wno-unused-command-line-argument
+      -Wno-unused-variable
+    )
+  endif(NOT MSVC OR IS_CLANG_CL)
+  if(NOT MSVC OR IS_CLANG_CL)
+    list(APPEND ENABLED_WARNINGS
+      -Wno-error # clang
+    )
+  else()
+    list(APPEND ENABLED_WARNINGS "/W0") # TODO
+  endif()
 endif(ENABLE_CMAKE_COMPILE_WARNINGS)
 
-set(DISABLED_WARNINGS
-  -Wno-undef
-  -Wno-switch
-  #-pedantic-errors
-  -Wno-pedantic
-  -Wno-duplicate-enum
-  -Wno-newline-eof
-  -Wno-disabled-macro-expansion
-  -Wno-c++98-compat-pedantic
-  -Wno-c++98-compat-local-type-template-args
-  -Wno-c++98-compat
-  -Wno-weak-vtables
-  -Wno-missing-prototypes
-  #-Wno-shadow # TODO
-  #-Wnocast-align # TODO
-  -Wno-extra-semi
-  #-Wno-thread-safety-negative # TODO
-  -Wno-documentation
-  #-Wno-double-promotion # TODO
-  #-Wno-float-equal # TODO
-  -Wno-missing-noreturn
-  -Wno-exit-time-destructors
-  -Wno-inconsistent-missing-destructor-override
-  -Wno-global-constructors
-  -Wno-documentation-unknown-command
-  -Wno-zero-as-null-pointer-constant
-  -Wno-shadow-field-in-constructor
-  -Wno-padded
-  -Wno-old-style-cast
-  -Wno-nested-anon-types
-  -Wno-deprecated-declarations
-  -Wno-deprecated
-  -Wno-expansion-to-defined
-  -Wno-gnu-zero-variadic-macro-arguments
-  -Wno-double-promotion
-  -Wno-unused-value
-  -Wno-unused-template
-  -Wno-unused-parameter
-  -Wno-unused-variable
-  -Wno-unused-function
-  -Wno-unused-member-function
-  -Wno-unused-lambda-capture
-  -Wno-reserved-id-macro
-  -Wno-macro-redefined
-  -Wno-implicit-function-declaration
-  -Wno-c++11-narrowing
-  -Wno-macro-redefined
-  #-Wno-undef
-  #-Wno-unknown-pragmas
-  #-Wno-nonportable-include-path
-  #-Wno-unknown-argument
-  # Warn for implicit type conversions that may change a value.
-  #-Wconversion
-  -Wno-c++11-compat
-  # This complains about "override", which we use heavily.
-  -Wno-c++11-extensions
-  # Warns on switches on enums that cover all enum values but
-  # also contain a default: branch. Chrome is full of that.
-  -Wno-covered-switch-default
-  # protobuf uses hash_map.
-  -Wno-deprecated
-  # Don't warn about the "struct foo f = {0};" initialization pattern.
-  -Wno-missing-field-initializers
-  # Do not warn for implicit sign conversions.
-  -Wno-sign-conversion
-  -Wno-unnamed-type-template-args
-  # Triggered by the COMPILE_ASSERT macro.
-  -Wno-unused-local-typedef
-  # Do not warn if a function or variable cannot be implicitly
-  # instantiated.
-  -Wno-undefined-var-template
-  # Do not warn about an implicit exception spec mismatch.
-  -Wno-implicit-exception-spec-mismatch
-)
+if(NOT MSVC OR IS_CLANG_CL)
+  set(DISABLED_WARNINGS
+    #
+    -Wno-everything # TODO
+    #
+    -Wno-undef
+    -Wno-switch
+    #-pedantic-errors
+    -Wno-pedantic
+    -Wno-duplicate-enum
+    -Wno-newline-eof
+    -Wno-disabled-macro-expansion
+    -Wno-c++98-compat-pedantic
+    -Wno-c++98-compat-local-type-template-args
+    -Wno-c++98-compat
+    -Wno-weak-vtables
+    -Wno-missing-prototypes
+    #-Wno-shadow # TODO
+    #-Wnocast-align # TODO
+    -Wno-extra-semi
+    -Wno-extra-semi-stmt
+    #-Wno-thread-safety-negative # TODO
+    -Wno-documentation
+    #-Wno-double-promotion # TODO
+    #-Wno-float-equal # TODO
+    -Wno-missing-noreturn
+    -Wno-exit-time-destructors
+    -Wno-inconsistent-missing-destructor-override
+    -Wno-global-constructors
+    -Wno-documentation-unknown-command
+    -Wno-zero-as-null-pointer-constant
+    -Wno-shadow-field-in-constructor
+    -Wno-padded
+    -Wno-old-style-cast
+    -Wno-nested-anon-types
+    -Wno-deprecated-declarations
+    -Wno-deprecated
+    -Wno-expansion-to-defined
+    -Wno-gnu-zero-variadic-macro-arguments
+    -Wno-double-promotion
+    -Wno-unused-value
+    -Wno-unused-template
+    -Wno-unused-parameter
+    -Wno-unused-variable
+    -Wno-unused-function
+    -Wno-unused-member-function
+    -Wno-unused-lambda-capture
+    -Wno-reserved-id-macro
+    -Wno-macro-redefined
+    -Wno-implicit-function-declaration
+    -Wno-c++11-narrowing
+    -Wno-macro-redefined
+    -Wno-builtin-macro-redefined
+    -Wno-unused-command-line-argument
+    -Wno-unused-variable
+    #-Wno-undef
+    #-Wno-unknown-pragmas
+    #-Wno-nonportable-include-path
+    #-Wno-unknown-argument
+    # Warn for implicit type conversions that may change a value.
+    #-Wconversion
+    -Wno-c++11-compat
+    # This complains about "override", which we use heavily.
+    -Wno-c++11-extensions
+    # Warns on switches on enums that cover all enum values but
+    # also contain a default: branch. Chrome is full of that.
+    -Wno-covered-switch-default
+    # protobuf uses hash_map.
+    -Wno-deprecated
+    # Don't warn about the "struct foo f = {0};" initialization pattern.
+    -Wno-missing-field-initializers
+    # Do not warn for implicit sign conversions.
+    -Wno-sign-conversion
+    -Wno-unnamed-type-template-args
+    # Triggered by the COMPILE_ASSERT macro.
+    -Wno-unused-local-typedef
+    # Do not warn if a function or variable cannot be implicitly
+    # instantiated.
+    -Wno-undefined-var-template
+    # Do not warn about an implicit exception spec mismatch.
+    -Wno-implicit-exception-spec-mismatch
+  )
+else()
+  # TODO
+  #message(FATAL_ERROR "platform not supported")
+endif()
 
 target_compile_options(${PROJECT_NAME} PRIVATE
   ${ENABLED_WARNINGS}
   ${DISABLED_WARNINGS}
 )
+
+if(TARGET_WINDOWS)
+  #target_link_options(${PROJECT_NAME} PUBLIC -Wl,--subsystem,console)
+  #target_link_options(${PROJECT_NAME} PUBLIC "/SUBSYSTEM:CONSOLE,10")
+  set_target_properties(${PROJECT_NAME} PROPERTIES
+    LINK_FLAGS
+    "/SUBSYSTEM:CONSOLE"
+    #"/SUBSYSTEM:CONSOLE /ENTRY:\"main\""
+  )
+endif(TARGET_WINDOWS)
 
 add_custom_target(copy-runtime-files ALL
   COMMAND cmake -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/resources ${CMAKE_CURRENT_BINARY_DIR}/resources
@@ -2968,7 +3548,14 @@ else()
   message(WARNING "iwyu turned off")
 endif()
 
-if(NOT EMSCRIPTEN)
+if(TARGET_LINUX)
   # target_ccache_summary from Utils.cmake
   target_ccache_summary(${PROJECT_NAME})
-endif(NOT EMSCRIPTEN)
+elseif(TARGET_EMSCRIPTEN OR TARGET_WINDOWS)
+  # skip
+else()
+  message(FATAL_ERROR "platform not supported")
+endif()
+
+#set_property(TARGET ${PROJECT_NAME} APPEND_STRING PROPERTY LINK_FLAGS " -L\"C:/Program Files (x86)/SDL2/lib\" -lSDL2 -lSDL2Main")
+#set_property(TARGET ${PROJECT_NAME} APPEND_STRING PROPERTY LINK_FLAGS " /LIBPATH:\"C:/Program Files (x86)/SDL2/lib\" SDL2Main.lib SDL2.lib")

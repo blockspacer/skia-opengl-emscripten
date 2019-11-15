@@ -52,7 +52,7 @@
 #include "ui/views/widget/tooltip_manager.h"
 #include "ui/views/widget/widget.h"
 
-#if defined(OS_WIN)
+#if defined(OS_WIN) && !defined(UI_VIEWS_PORT)
 #include "ui/aura/window_tree_host.h"
 #include "ui/base/win/internal_constants.h"
 #include "ui/display/win/screen_win.h"
@@ -188,7 +188,7 @@ View* GetNextFocusableView(View* ancestor, View* start_at, bool forward) {
   return nullptr;
 }
 
-#if defined(OS_WIN)
+#if defined(OS_WIN) && !defined(UI_VIEWS_PORT)
 // Determines the correct coordinates and window to repost |event| to, if it is
 // a mouse or touch event.
 static void RepostEventImpl(const ui::LocatedEvent* event,
@@ -205,7 +205,7 @@ static void RepostEventImpl(const ui::LocatedEvent* event,
   if (!native_view)
     return;
 
-#if defined(OS_WIN)
+#if defined(OS_WIN) && !defined(UI_VIEWS_PORT)
   gfx::Point screen_loc_pixels =
       display::win::ScreenWin::DIPToScreenPoint(screen_loc);
   HWND target_window = ::WindowFromPoint(screen_loc_pixels.ToPOINT());
@@ -1582,7 +1582,7 @@ void MenuController::OnKeyDown(ui::KeyboardCode key_code) {
     }
 #endif
 
-#if defined(OS_WIN)
+#if defined(OS_WIN) && !defined(UI_VIEWS_PORT)
     // On Windows, pressing Alt and F10 keys should hide the menu to match the
     // OS behavior.
     case ui::VKEY_MENU:
@@ -2747,7 +2747,7 @@ void MenuController::RepostEventAndCancel(SubmenuView* source,
   gfx::Point screen_loc(event->location());
   View::ConvertPointToScreen(source->GetScrollViewContainer(), &screen_loc);
 
-#if defined(OS_WIN) || defined(OS_CHROMEOS)
+#if (defined(OS_WIN) || defined(OS_CHROMEOS)) && !defined(UI_VIEWS_PORT)
   gfx::NativeView native_view = source->GetWidget()->GetNativeView();
   gfx::NativeWindow window = nullptr;
   if (native_view) {
@@ -2756,7 +2756,7 @@ void MenuController::RepostEventAndCancel(SubmenuView* source,
   }
 #endif
 
-#if defined(OS_WIN)
+#if defined(OS_WIN) && !defined(UI_VIEWS_PORT)
   if (event->IsMouseEvent() || event->IsTouchEvent()) {
     base::WeakPtr<MenuController> this_ref = AsWeakPtr();
     if (state_.item) {
@@ -2946,7 +2946,7 @@ MenuItemView* MenuController::ExitTopMostMenu() {
   // Close any open menus.
   SetSelection(nullptr, SELECTION_UPDATE_IMMEDIATELY | SELECTION_EXIT);
 
-#if defined(OS_WIN)
+#if defined(OS_WIN) && !defined(UI_VIEWS_PORT)
   // On Windows, if we select the menu item by touch and if the window at the
   // location is another window on the same thread, that window gets a
   // WM_MOUSEACTIVATE message and ends up activating itself, which is not

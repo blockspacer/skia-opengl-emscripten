@@ -1,4 +1,13 @@
-﻿
+﻿# see https://github.com/chromium/chromium/blob/2a27babc13bef4f2a2371844c96424c7bb26d94c/third_party/boringssl/BUILD.generated.gni
+
+if(TARGET_EMSCRIPTEN)
+  # skip
+elseif(TARGET_LINUX)
+# skip
+else()
+  message(FATAL_ERROR "platform not supported")
+endif()
+
 ### --- BORINGSSL ---###
 
 # TODO: add skia-opengl-emscripten/src/chromium/third_party/boringssl/src/ssl/CMakeLists.txt
@@ -279,7 +288,7 @@ add_library(BORINGSSL STATIC
   ${BORINGSSL_SOURCES}
 )
 
-target_link_libraries(BORINGSSL PRIVATE
+target_link_libraries(BORINGSSL PUBLIC
   dynamic_annotations
   #${BASE_LIBRARIES}
   base

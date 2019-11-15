@@ -96,9 +96,17 @@ list(APPEND MOJO_BASE_GEN_SOURCES
   list(APPEND MOJO_PUBLIC_CPP_BASE_SOURCES
     # see process_id.typemap
     #${MOJO_DIR}/public/cpp/base/file_error_mojom_traits.h # header only
-    ${MOJO_DIR}/public/cpp/base/file_info_mojom_traits.cc
-    ${MOJO_DIR}/public/cpp/base/file_path_mojom_traits.cc
-    ${MOJO_DIR}/public/cpp/base/file_mojom_traits.cc
+
+    # TODO
+    # ..\src\chromium\mojo\public\cpp\base\file_path_mojom_traits.cc(16,24): error: cannot initialize a parameter of type 'mojo::StringDataView *' with an rvalue of type 'ArrayDataView<uint16_t> *' (aka 'ArrayDataView<unsigned short> *')
+    #    data.GetPathDataView(&view);
+    #    ^~~~~
+    #  ..\src\chromium\gen\gen_combined\mojo/public/mojom/base/file_path.mojom-shared.h(144,27): note: passing argument to parameter 'output' here
+    #  mojo::StringDataView* output) {
+    #${MOJO_DIR}/public/cpp/base/file_info_mojom_traits.cc
+    #${MOJO_DIR}/public/cpp/base/file_path_mojom_traits.cc
+    #${MOJO_DIR}/public/cpp/base/file_mojom_traits.cc
+
     ${MOJO_DIR}/public/cpp/base/read_only_buffer_mojom_traits.cc
     ${MOJO_DIR}/public/cpp/base/memory_allocator_dump_cross_process_uid_mojom_traits.cc
     ${MOJO_DIR}/public/cpp/base/memory_pressure_level_mojom_traits.cc
@@ -124,8 +132,6 @@ list(APPEND MOJO_BASE_GEN_SOURCES
     ${MOJO_DIR}/public/cpp/base/file_info_mojom_traits.cc
     #${MOJO_DIR}/public/cpp/base/file_info_mojom_traits.h
     # gens mojo/public/mojom/base/file_path.mojom-shared.h
-    ${MOJO_DIR}/public/cpp/base/file_path_mojom_traits.cc
-    #${MOJO_DIR}/public/cpp/base/file_path_mojom_traits.h
     # gens mojo/public/mojom/base/shared_memory.mojom-shared.h
     ${MOJO_DIR}/public/cpp/base/shared_memory_mojom_traits.cc
     #${MOJO_DIR}/public/cpp/base/shared_memory_mojom_traits.h

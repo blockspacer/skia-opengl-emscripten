@@ -15,7 +15,13 @@
 #ifndef COBALT_RENDERER_RASTERIZER_EGL_SHADER_BASE_H_
 #define COBALT_RENDERER_RASTERIZER_EGL_SHADER_BASE_H_
 
+#if defined(__EMSCRIPTEN__)
 #include <GLES2/gl2.h>
+#include <GLES2/gl2ext.h>
+#else
+#include "third_party/khronos/GLES2/gl2.h"
+#include "third_party/khronos/GLES2/gl2ext.h"
+#endif
 
 namespace cobalt {
 namespace renderer {

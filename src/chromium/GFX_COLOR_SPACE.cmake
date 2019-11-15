@@ -1,10 +1,22 @@
-﻿### --- GFX_COLOR_SPACE ---###
+﻿# see https://github.com/chromium/chromium/blob/87f2e0fdc7004e428e4e6216e79bf6938fe0e23f/ui/gfx/BUILD.gn#L401
 
-set(GFX_COLOR_SPACE_SOURCES
+### --- GFX_COLOR_SPACE ---###
+
+if(TARGET_WINDOWS)
+  list(APPEND GFX_COLOR_SPACE_SOURCES
+    ${GFX_COLOR_SPACE_DIR}color_space_export.h
+    ${GFX_COLOR_SPACE_DIR}color_space_win.cc
+  )
+elseif(TARGET_LINUX OR TARGET_EMSCRIPTEN)
+  # skip
+else()
+  message(FATAL_ERROR "platform not supported")
+endif()
+
+list(APPEND GFX_COLOR_SPACE_SOURCES
   ${GFX_COLOR_SPACE_DIR}color_space.cc
   #"color_space.h",
   #"color_space_export.h",
-  # TODO # "color_space_win.cc
   #"color_space_win.h",
   ${GFX_COLOR_SPACE_DIR}icc_profile.cc
   #"icc_profile.h",

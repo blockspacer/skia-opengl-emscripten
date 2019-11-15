@@ -25,6 +25,17 @@
 //#include "v8/include/libplatform/libplatform.h"
 //#include "v8/include/v8.h"
 
+#if defined(OS_WIN)
+#include <windows.h>
+#endif // OS_WIN
+
+#include "base/base_paths.h"
+#include "base/environment.h"
+#include "base/files/file_path.h"
+#include "base/path_service.h"
+#include "base/strings/string_util.h"
+#include "base/strings/utf_string_conversions.h"
+
 namespace cobalt {
 namespace script {
 namespace v8c {
@@ -88,7 +99,7 @@ int V8cMain(int argc, char** argv) {
       if (std::string(argv[i]) == "-f") {
         std::string filename = std::string(argv[i + 1]);
         // Execute source file.
-        base::FilePath source_file(filename);
+        base::FilePath source_file(base::FilePath::StringType{filename});
         standalone_runner.ExecuteFile(source_file);
         ++i;
       } else if (std::string(argv[i]) == "-e") {

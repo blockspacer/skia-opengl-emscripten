@@ -193,6 +193,7 @@ cd src/chromium/third_party/skia
 # from https://chromium.googlesource.com/chromium/src.git/+/589d8ec2fcaab6f5e48af84d703a1eb430ee9716/DEPS#136
 git checkout f5ca01a69ab6f427c515bb3b4a9748047f04cb13
 tools/git-sync-deps
+# OR py -2 tools/git-sync-deps
 # If some header files are missing, install the corresponding dependencies
 tools/install_dependencies.sh
 # see https://github.com/google/skia/blob/master/src/sksl/README#L77
@@ -239,7 +240,6 @@ sudo apt-get -f install
 # The -a option is an improved recursive option, that preserve all file attributes, and also preserve symlinks.
 # The . at end of the source path is a specific cp syntax that allow to copy all files and folders, included hidden ones.
 cp -a "patches/skia_to_copy/." src/chromium/third_party/skia/
-cp -a "patches/skia/." src/chromium/third_party/skia/
 cp -a "patches/skia/." src/chromium/third_party/skia/
 
 cp -a "patches/libjpeg_turbo/." src/chromium/third_party/libjpeg_turbo/

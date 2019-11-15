@@ -17,6 +17,9 @@
 #include "cobalt/input/camera_3d_input_poller.h"
 
 #include <algorithm>
+
+// MSVC++ requires this to be set before any other includes to get M_PI.
+#define _USE_MATH_DEFINES
 #include <cmath>
 
 #include "cobalt/input/create_default_camera_3d.h"

@@ -89,7 +89,7 @@ list(APPEND cobalt_media_SOURCES
   ${COBALT_CORE_DIR}media/base/text_track_config.h
 )
 
-if(TARGET_LINUX)
+if(TARGET_LINUX OR TARGET_WINDOWS)
   list(APPEND cobalt_media_SOURCES
     ${COBALT_CORE_DIR}media/base/video_codecs.cc
     ${COBALT_CORE_DIR}media/base/video_codecs.h
@@ -198,7 +198,11 @@ if(TARGET_LINUX)
     ${COBALT_CORE_DIR}media/player/web_media_player_proxy.cc
     ${COBALT_CORE_DIR}media/player/web_media_player_proxy.h
   )
-endif(TARGET_LINUX)
+elseif(TARGET_EMSCRIPTEN)
+  # skip
+else()
+  message(FATAL_ERROR "platform not supported")
+endif()
 
 list(APPEND cobalt_media_SOURCES
   ${COBALT_CORE_DIR}media/filters/chunk_demuxer.cc

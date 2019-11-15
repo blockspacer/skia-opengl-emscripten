@@ -1,4 +1,6 @@
-﻿### --- COMPONENTS_CONTENT_SETTINGS_CORE_COMMON ---###
+﻿# see https://github.com/chromium/chromium/blob/4273996759e4c956d7f5303cd289ffc034f30ab5/components/content_settings/core/common/BUILD.gn
+
+### --- COMPONENTS_CONTENT_SETTINGS_CORE_COMMON ---###
 
 # TODO https://github.com/chromium/chromium/blob/master/third_party/blink/renderer/platform/BUILD.gn
 set(COMPONENTS_CONTENT_SETTINGS_CORE_COMMON_SOURCES

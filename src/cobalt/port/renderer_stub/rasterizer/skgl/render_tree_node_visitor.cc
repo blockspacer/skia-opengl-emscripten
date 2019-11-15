@@ -15,7 +15,11 @@
 #include "renderer_stub/rasterizer/skgl/render_tree_node_visitor.h"
 
 #include <algorithm>
+
+// MSVC++ requires this to be set before any other includes to get M_PI.
+#define _USE_MATH_DEFINES
 #include <cmath>
+
 #include <limits>
 #include <memory>
 
@@ -41,10 +45,7 @@
 #include "renderer_stub/rasterizer/skgl/draw_rrect_color.h"
 #include "renderer_stub/rasterizer/skgl/draw_rrect_color_texture.h"
 #include "renderer_stub/rasterizer/skia/hardware_image.h"*/
-
-#if defined(ENABLE_SKIA)
 #include "renderer_stub/rasterizer/skia/image.h"
-#endif // ENABLE_SKIA
 
 #include "cobalt/base/polymorphic_downcast.h"
 #include "cobalt/math/matrix3_f.h"
@@ -309,19 +310,15 @@ RenderTreeNodeVisitor::RenderTreeNodeVisitor(
     GraphicsState* graphics_state,
     ///DrawObjectManager* draw_object_manager,
     ///OffscreenTargetManager* offscreen_target_manager,
-#if defined(ENABLE_SKIA)
     const FallbackRasterizeFunction& fallback_rasterize,
     SkCanvas* fallback_render_target,
-#endif // ENABLE_SKIA
     ///backend::RenderTarget* render_target,
     const math::Rect& content_rect)
     : graphics_state_(graphics_state),
       ///draw_object_manager_(draw_object_manager),
       ///offscreen_target_manager_(offscreen_target_manager),
-#if defined(ENABLE_SKIA)
       fallback_rasterize_(fallback_rasterize),
       fallback_render_target_(fallback_render_target),
-#endif // ENABLE_SKIA
       ///render_target_(render_target),
       ///onscreen_render_target_(render_target),
       last_draw_id_(0) {
@@ -339,7 +336,6 @@ void RenderTreeNodeVisitor::Visit(render_tree::ClearRectNode* clear_rect_node) {
 
 void RenderTreeNodeVisitor::Visit(
     render_tree::CompositionNode* composition_node) {
-#if defined(ENABLE_SKIA)
   const render_tree::CompositionNode::Builder& data = composition_node->data();
   math::Matrix3F old_transform = draw_state_.transform;
   draw_state_.transform =
@@ -354,7 +350,6 @@ void RenderTreeNodeVisitor::Visit(
   }
   draw_state_.rounded_scissor_rect.Offset(data.offset());
   draw_state_.transform = old_transform;
-#endif // ENABLE_SKIA
 }
 
 void RenderTreeNodeVisitor::Visit(
@@ -362,25 +357,20 @@ void RenderTreeNodeVisitor::Visit(
   // This is used in conjunction with a map-to-mesh filter. If that filter is
   // implemented natively, then this transform 3D must be handled natively
   // as well. Otherwise, use the fallback rasterizer for both.
-#if defined(ENABLE_SKIA)
   FallbackRasterize(transform_3d_node);
-#endif // ENABLE_SKIA
 }
 
 void RenderTreeNodeVisitor::Visit(
     render_tree::MatrixTransformNode* transform_node) {
-#if defined(ENABLE_SKIA)
   const render_tree::MatrixTransformNode::Builder& data =
       transform_node->data();
   math::Matrix3F old_transform = draw_state_.transform;
   draw_state_.transform = draw_state_.transform * data.transform;
   data.source->Accept(this);
   draw_state_.transform = old_transform;
-#endif // ENABLE_SKIA
 }
 
 void RenderTreeNodeVisitor::Visit(render_tree::FilterNode* filter_node) {
-#if defined(ENABLE_SKIA)
   const render_tree::FilterNode::Builder& data = filter_node->data();
 
   // Handle viewport-only filter.
@@ -505,13 +495,12 @@ void RenderTreeNodeVisitor::Visit(render_tree::FilterNode* filter_node) {
 
   // Use the fallback rasterizer to handle everything else.
   FallbackRasterize(filter_node);
-#endif // ENABLE_SKIA
 }
 
 void RenderTreeNodeVisitor::Visit(render_tree::ImageNode* image_node) {
   const render_tree::ImageNode::Builder& data = image_node->data();
   printf("skgl RenderTreeNodeVisitor::Visit(render_tree::ImageNode\n");
-#if defined(ENABLE_SKIA)
+
   // The image node may contain nothing. For example, when it represents a video
   // element before any frame is decoded.
   if (!data.source) {
@@ -633,7 +622,6 @@ void RenderTreeNodeVisitor::Visit(render_tree::ImageNode* image_node) {
   /*AddDraw(std::move(draw), image_node->GetBounds(),
           is_opaque ? DrawObjectManager::kBlendNoneOrSrcAlpha
                     : DrawObjectManager::kBlendSrcAlpha);*/
-#endif // ENABLE_SKIA
 }
 
 void RenderTreeNodeVisitor::Visit(
@@ -652,7 +640,6 @@ void RenderTreeNodeVisitor::Visit(
 
 void RenderTreeNodeVisitor::Visit(
     render_tree::PunchThroughVideoNode* video_node) {
-#if defined(ENABLE_SKIA)
   if (!IsVisible(video_node->GetBounds())) {
     return;
   }
@@ -664,11 +651,9 @@ void RenderTreeNodeVisitor::Visit(
 
   DCHECK_EQ(data.rect, video_node->GetBounds());
   AddClear(data.rect, kTransparentBlack);
-#endif // ENABLE_SKIA
 }
 
 void RenderTreeNodeVisitor::Visit(render_tree::RectNode* rect_node) {
-#if defined(ENABLE_SKIA)
   math::RectF node_bounds(rect_node->GetBounds());
   if (!IsVisible(node_bounds)) {
     return;
@@ -800,7 +785,6 @@ void RenderTreeNodeVisitor::Visit(render_tree::RectNode* rect_node) {
     AddDraw(std::unique_ptr<DrawObject>(draw_radial.release()), node_bounds,
             DrawObjectManager::kBlendSrcAlpha);
   }*/
-#endif // ENABLE_SKIA
 }
 
 void RenderTreeNodeVisitor::Visit(render_tree::RectShadowNode* shadow_node) {
@@ -862,13 +846,11 @@ void RenderTreeNodeVisitor::Visit(render_tree::RectShadowNode* shadow_node) {
 }
 
 void RenderTreeNodeVisitor::Visit(render_tree::TextNode* text_node) {
-#if defined(ENABLE_SKIA)
   if (!IsVisible(text_node->GetBounds())) {
     return;
   }
 
   FallbackRasterize(text_node);
-#endif // ENABLE_SKIA
 }
 
 // Get a scratch texture row region for use in rendering |node|.
@@ -1046,7 +1028,6 @@ void RenderTreeNodeVisitor::OffscreenRasterize(
     scoped_refptr<render_tree::Node> node,
     //const backend::TextureEGL** out_texture,
     math::Matrix3F* out_texcoord_transform, math::RectF* out_content_rect) {
-#if defined(ENABLE_SKIA)
   // Check whether the node is visible.
   math::RectF mapped_bounds = draw_state_.transform.MapRect(node->GetBounds());
 
@@ -1125,7 +1106,6 @@ void RenderTreeNodeVisitor::OffscreenRasterize(
   draw_state_ = old_draw_state;
   fallback_render_target_ = old_fallback_render_target;
   render_target_ = old_render_target;*/
-#endif // ENABLE_SKIA
 }
 
 bool RenderTreeNodeVisitor::IsVisible(const math::RectF& bounds) {
@@ -1138,10 +1118,8 @@ void RenderTreeNodeVisitor::AddDraw(std::unique_ptr<DrawObject> object,
                                     const math::RectF& local_bounds
                                     //, DrawObjectManager::BlendType blend_type
                                     ) {
-#if defined(ENABLE_SKIA)
   base::TypeId draw_type = object->GetTypeId();
   math::RectF mapped_bounds = draw_state_.transform.MapRect(local_bounds);
-#endif // ENABLE_SKIA
   /*if (render_target_ != onscreen_render_target_) {
     last_draw_id_ = draw_object_manager_->AddOffscreenDraw(
         std::move(object), blend_type, draw_type, render_target_,

@@ -91,11 +91,19 @@ starboard::atomic_bool* Thread::joined_bool() {
   return &d_->join_called_;
 }
 
+#if defined(_WIN32) || defined(_WIN64)
+DWORD Thread::ThreadEntryPoint(void* context) {
+  Thread* this_ptr = static_cast<Thread*>(context);
+  this_ptr->Run();
+  return NULL;
+}
+#else
 void* Thread::ThreadEntryPoint(void* context) {
   Thread* this_ptr = static_cast<Thread*>(context);
   this_ptr->Run();
   return NULL;
 }
+#endif
 
 void Thread::Join() {
   SB_DCHECK(d_->join_called_.load() == false);

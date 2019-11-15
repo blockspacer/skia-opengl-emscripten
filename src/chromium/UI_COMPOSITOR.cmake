@@ -56,8 +56,8 @@ set(UI_COMPOSITOR_SOURCES
   ${UI_COMPOSITOR_DIR}paint_recorder.cc
   ${UI_COMPOSITOR_DIR}paint_recorder.h
   ${UI_COMPOSITOR_DIR}property_change_reason.h
-  ${UI_COMPOSITOR_DIR}recyclable_compositor_mac.cc
-  ${UI_COMPOSITOR_DIR}recyclable_compositor_mac.h
+  ## TODO ${UI_COMPOSITOR_DIR}recyclable_compositor_mac.cc
+  ## TODO ${UI_COMPOSITOR_DIR}recyclable_compositor_mac.h
   ${UI_COMPOSITOR_DIR}reflector.cc
   ${UI_COMPOSITOR_DIR}reflector.h
   ${UI_COMPOSITOR_DIR}scoped_animation_duration_scale_mode.cc

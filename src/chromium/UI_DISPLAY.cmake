@@ -99,6 +99,25 @@ list(APPEND UI_DISPLAY_SOURCES
   #}
 )
 
+if(TARGET_WINDOWS)
+  list(APPEND UI_DISPLAY_SOURCES
+    ${UI_DISPLAY_DIR}win/color_profile_reader.cc
+    ${UI_DISPLAY_DIR}win/color_profile_reader.h
+    ${UI_DISPLAY_DIR}win/display_info.cc
+    ${UI_DISPLAY_DIR}win/display_info.h
+    ${UI_DISPLAY_DIR}win/dpi.cc
+    ${UI_DISPLAY_DIR}win/dpi.h
+    ${UI_DISPLAY_DIR}win/scaling_util.cc
+    ${UI_DISPLAY_DIR}win/scaling_util.h
+    ${UI_DISPLAY_DIR}win/screen_win.cc
+    ${UI_DISPLAY_DIR}win/screen_win.h
+    ${UI_DISPLAY_DIR}win/screen_win_display.cc
+    ${UI_DISPLAY_DIR}win/screen_win_display.h
+    ${UI_DISPLAY_DIR}win/uwp_text_scale_factor.cc
+    ${UI_DISPLAY_DIR}win/uwp_text_scale_factor.h
+  )
+endif(TARGET_WINDOWS)
+
 add_library(UI_DISPLAY STATIC
   ${UI_DISPLAY_TYPES_SOURCES}
   ${UI_DISPLAY_UTIL_SOURCES}

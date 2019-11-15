@@ -12,6 +12,29 @@
 
 ### --- UI_BASE ---###
 
+if(TARGET_EMSCRIPTEN OR TARGET_LINUX)
+  list(APPEND UI_BASE_SOURCES
+    ${UI_BASE_DIR}accelerators/menu_label_accelerator_util_linux.cc
+    #${UI_BASE_DIR}accelerators/menu_label_accelerator_util_linux.h
+    ${UI_BASE_DIR}resource/resource_bundle_auralinux.cc
+    # TODO # ${UI_BASE_DIR}resource/resource_bundle_ios.mm",
+    # TODO # ${UI_BASE_DIR}resource/resource_bundle_mac.mm",
+    # TODO # ${UI_BASE_DIR}resource/resource_bundle_win.cc
+    # TODO # ${UI_BASE_DIR}resource/resource_bundle_win.h
+    # TODO # ${UI_BASE_DIR}resource/resource_data_dll_win.cc
+    # TODO # ${UI_BASE_DIR}resource/resource_data_dll_win.h
+
+    # TODO
+    # pointer_device_linux
+  )
+elseif(TARGET_WINDOWS)
+  list(APPEND UI_BASE_SOURCES
+    ${UI_BASE_DIR}resource/resource_bundle_win.cc
+  )
+else()
+  message(FATAL_ERROR "platform not supported")
+endif()
+
 list(APPEND UI_BASE_SOURCES
   ${UI_BASE_DIR}accelerators/media_keys_listener.cc
   #${UI_BASE_DIR}accelerators/media_keys_listener.h
@@ -19,8 +42,6 @@ list(APPEND UI_BASE_SOURCES
   #${UI_BASE_DIR}accelerators/media_keys_util.h
   ${UI_BASE_DIR}accelerators/menu_label_accelerator_util.cc
   #${UI_BASE_DIR}accelerators/menu_label_accelerator_util.h
-  ${UI_BASE_DIR}accelerators/menu_label_accelerator_util_linux.cc
-  #${UI_BASE_DIR}accelerators/menu_label_accelerator_util_linux.h
   #${UI_BASE_DIR}accelerators/platform_accelerator_cocoa.h
   # TODO # ${UI_BASE_DIR}accelerators/platform_accelerator_cocoa.mm",
   ${UI_BASE_DIR}class_property.cc
@@ -175,7 +196,6 @@ list(APPEND UI_BASE_SOURCES
   #${UI_BASE_DIR}resource/resource_bundle.h
   # TODO # ${UI_BASE_DIR}resource/resource_bundle_android.cc
   # TODO # ${UI_BASE_DIR}resource/resource_bundle_android.h
-  ${UI_BASE_DIR}resource/resource_bundle_auralinux.cc
   # TODO # ${UI_BASE_DIR}resource/resource_bundle_ios.mm",
   # TODO # ${UI_BASE_DIR}resource/resource_bundle_mac.mm",
   # TODO # ${UI_BASE_DIR}resource/resource_bundle_win.cc
@@ -340,6 +360,92 @@ list(APPEND UI_BASE_SOURCES
   ${UI_BASE_DIR}resource/scale_factor.h
 )
 
+if(TARGET_WINDOWS)
+  list(APPEND UI_BASE_SOURCES
+    #
+    # TODO # ${UI_BASE_DIR}win/accessibility_ids_win.h
+    ${UI_BASE_DIR}win/accessibility_misc_utils.cc
+    #${UI_BASE_DIR}win/accessibility_misc_utils.h
+    #${UI_BASE_DIR}win/atl_module.h
+    ${UI_BASE_DIR}win/foreground_helper.cc
+    #${UI_BASE_DIR}win/foreground_helper.h
+    ${UI_BASE_DIR}win/hidden_window.cc
+    #${UI_BASE_DIR}win/hidden_window.h
+    # TODO #
+    ${UI_BASE_DIR}win/hwnd_metrics.cc
+    #${UI_BASE_DIR}win/hwnd_metrics.h
+    # TODO #
+    ${UI_BASE_DIR}win/hwnd_subclass.cc
+    #${UI_BASE_DIR}win/hwnd_subclass.h
+    ${UI_BASE_DIR}win/internal_constants.cc
+    #${UI_BASE_DIR}win/internal_constants.h
+    ${UI_BASE_DIR}win/lock_state.cc
+    #${UI_BASE_DIR}win/lock_state.h
+    # TODO #
+    ${UI_BASE_DIR}win/message_box_win.cc
+    #${UI_BASE_DIR}win/message_box_win.h
+    ${UI_BASE_DIR}win/mouse_wheel_util.cc
+    #${UI_BASE_DIR}win/mouse_wheel_util.h
+    ${UI_BASE_DIR}win/scoped_ole_initializer.cc
+    #${UI_BASE_DIR}win/scoped_ole_initializer.h
+    ${UI_BASE_DIR}win/session_change_observer.cc
+    #${UI_BASE_DIR}win/session_change_observer.h
+    ${UI_BASE_DIR}win/shell.cc
+    #${UI_BASE_DIR}win/shell.h
+    ${UI_BASE_DIR}win/touch_input.cc
+    #${UI_BASE_DIR}win/touch_input.h
+    ${UI_BASE_DIR}win/window_event_target.cc
+    #${UI_BASE_DIR}win/window_event_target.h
+    # TODO #
+    ${UI_BASE_DIR}l10n/l10n_util_win.cc
+    #
+    # TODO # ${UI_BASE_DIR}dragdrop/os_exchange_data_provider_win.cc
+    # TODO # ${UI_BASE_DIR}dragdrop/drop_target_win.cc
+    # TODO # ${UI_BASE_DIR}dragdrop/drag_drop_types_win.cc
+    # TODO #
+    ${UI_BASE_DIR}cursor/cursor_win.cc
+    # TODO # ${UI_BASE_DIR}dragdrop/drag_source_win.cc
+    ${UI_BASE_DIR}pointer/pointer_device_win.cc
+    # TODO # ${UI_BASE_DIR}accelerators/global_media_keys_listener_win.cc
+    # TODO # ${UI_BASE_DIR}accelerators/global_media_keys_listener_win.h
+    # TODO # ${UI_BASE_DIR}accelerators/media_keys_listener_win.cc
+    # TODO # ${UI_BASE_DIR}emoji/emoji_panel_helper_win.cc
+  )
+endif(TARGET_WINDOWS)
+
+if(TARGET_WINDOWS)
+  list(APPEND UI_BASE_EXTRA_DEFINES
+    IS_UI_BASE_IME_WIN_IMPL=1
+  )
+  #
+  list(APPEND UI_BASE_EXTRA_LIBS
+    imm32.lib
+  )
+  #
+  list(APPEND UI_BASE_IME_SOURCES
+    ${UI_BASE_DIR}ime/win/imm32_manager.cc
+    ${UI_BASE_DIR}ime/win/imm32_manager.h
+    ${UI_BASE_DIR}ime/win/input_method_win_base.cc
+    ${UI_BASE_DIR}ime/win/input_method_win_base.h
+    ${UI_BASE_DIR}ime/win/input_method_win_imm32.cc
+    ${UI_BASE_DIR}ime/win/input_method_win_imm32.h
+    ${UI_BASE_DIR}ime/win/input_method_win_tsf.cc
+    ${UI_BASE_DIR}ime/win/input_method_win_tsf.h
+    ${UI_BASE_DIR}ime/win/on_screen_keyboard_display_manager_input_pane.cc
+    ${UI_BASE_DIR}ime/win/on_screen_keyboard_display_manager_input_pane.h
+    ${UI_BASE_DIR}ime/win/on_screen_keyboard_display_manager_tab_tip.cc
+    ${UI_BASE_DIR}ime/win/on_screen_keyboard_display_manager_tab_tip.h
+    ${UI_BASE_DIR}ime/win/tsf_bridge.cc
+    ${UI_BASE_DIR}ime/win/tsf_bridge.h
+    ${UI_BASE_DIR}ime/win/tsf_event_router.cc
+    ${UI_BASE_DIR}ime/win/tsf_event_router.h
+    ${UI_BASE_DIR}ime/win/tsf_input_scope.cc
+    ${UI_BASE_DIR}ime/win/tsf_input_scope.h
+    ${UI_BASE_DIR}ime/win/tsf_text_store.cc
+    ${UI_BASE_DIR}ime/win/tsf_text_store.h
+  )
+endif(TARGET_WINDOWS)
+
 list(APPEND UI_BASE_IME_SOURCES
   # jumbo_component("ime")
   ${UI_BASE_DIR}ime/constants.cc
@@ -473,6 +579,7 @@ target_link_libraries(UI_BASE PRIVATE
   #"//ui/gfx:native_widget_types",
   # khronos
   ${khronos_LIB} # TODO
+  ${UI_BASE_EXTRA_LIBS}
 )
 
 set_property(TARGET UI_BASE PROPERTY CXX_STANDARD 17)
@@ -484,6 +591,7 @@ target_include_directories(UI_BASE PRIVATE
 )
 
 target_compile_definitions(UI_BASE PRIVATE
+  ${UI_BASE_EXTRA_DEFINES}
   UI_BASE_IMPLEMENTATION=1
   IS_UI_BASE_FEATURES_IMPL=1
   UI_DATA_PACK_IMPLEMENTATION=1

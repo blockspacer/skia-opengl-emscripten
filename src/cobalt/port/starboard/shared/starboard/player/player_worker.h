@@ -185,7 +185,12 @@ class PlayerWorker {
   void UpdatePlayerError(const std::string& message);
 #endif  // SB_HAS(PLAYER_ERROR_MESSAGE)
 
+#if defined(_WIN32) || defined(_WIN64)
+  static DWORD ThreadEntryPoint(void* context);
+#else
   static void* ThreadEntryPoint(void* context);
+#endif
+
   void RunLoop();
   void DoInit();
   void DoSeek(SbTime seek_to_time, int ticket);

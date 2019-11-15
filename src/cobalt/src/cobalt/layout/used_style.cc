@@ -15,7 +15,11 @@
 #include "cobalt/layout/used_style.h"
 
 #include <algorithm>
+
+// MSVC++ requires this to be set before any other includes to get M_PI.
+#define _USE_MATH_DEFINES
 #include <cmath>
+
 #include <memory>
 #include <string>
 #include <utility>
@@ -500,9 +504,6 @@ scoped_refptr<dom::FontList> UsedStyleProvider::GetUsedFontList(
 
 scoped_refptr<loader::image::Image> UsedStyleProvider::ResolveURLToImage(
     const GURL& url) {
-#if defined(ENABLE_NATIVE_HTML)
-  return nullptr;
-#endif
   DCHECK(animated_image_tracker_);
   DCHECK(image_cache_);
   scoped_refptr<loader::image::Image> image =

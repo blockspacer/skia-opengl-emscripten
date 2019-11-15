@@ -1,15 +1,25 @@
-﻿
+﻿# see https://github.com/chromium/chromium/blob/c6115abffc30eb537c5979508d999636153772b3/crypto/BUILD.gn
+
+if(TARGET_WINDOWS)
+  # skip
+elseif(TARGET_LINUX OR TARGET_EMSCRIPTEN)
+  list(APPEND GCRYPTO_SOURCES
+    ${GCRYPTO_DIR}capi_util.cc # !is_win
+    ${GCRYPTO_DIR}capi_util.h # !is_win
+  )
+else()
+  message(FATAL_ERROR "platform not supported")
+endif()
+
 #### --- GCRYPTO ---###
 
 # TODO https://github.com/chromium/chromium/blob/master/third_party/blink/renderer/platform/BUILD.gn
-set(GCRYPTO_SOURCES
+list(APPEND GCRYPTO_SOURCES
   ${GCRYPTO_DIR}aead.cc
   #${GCRYPTO_DIR}aead.h",
   #${GCRYPTO_DIR}apple_keychain.h",
   #${GCRYPTO_DIR}apple_keychain_ios.mm",
   #${GCRYPTO_DIR}apple_keychain_mac.mm",
-  # ${GCRYPTO_DIR}capi_util.cc # is_win
-  #${GCRYPTO_DIR}capi_util.h", # is_win
   #${GCRYPTO_DIR}crypto_export.h",
   ${GCRYPTO_DIR}ec_private_key.cc
   #${GCRYPTO_DIR}ec_private_key.h",

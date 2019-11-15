@@ -22,6 +22,25 @@
 #include "cobalt/base/cobalt_paths.h"
 #include "starboard/system.h"
 
+#if defined(OS_WIN)
+#include <windows.h>
+#include <KnownFolders.h>
+#include <shlobj.h>
+#endif // OS_WIN
+
+#include "base/base_paths.h"
+#include "base/environment.h"
+#include "base/files/file_path.h"
+#include "base/path_service.h"
+#include "base/strings/string_util.h"
+#include "base/strings/utf_string_conversions.h"
+
+#if defined(OS_WIN)
+#include "base/win/current_module.h"
+#include "base/win/scoped_co_mem.h"
+#include "base/win/windows_version.h"
+#endif // OS_WIN
+
 namespace {
 base::FilePath GetOrCreateDirectory(SbSystemPathId path_id) {
     printf("GetOrCreateDirectory 1");
@@ -29,7 +48,7 @@ base::FilePath GetOrCreateDirectory(SbSystemPathId path_id) {
   path[0] = '\0';
   if (SbSystemGetPath(path_id, path.get(), SB_FILE_MAX_PATH)) {
       printf("GetOrCreateDirectory 2");
-    base::FilePath directory(path.get());
+    base::FilePath directory(base::FilePath::StringType{path.get()});
     if (base::PathExists(directory) || base::CreateDirectory(directory)) {
         printf("GetOrCreateDirectory 3");
       return directory;

@@ -19,6 +19,9 @@
 #include <string>
 #include <vector>
 
+// TODO: https://stackoverflow.com/a/6570154
+#include <algorithm>
+
 #include "base/memory/aligned_memory.h"
 #include "cobalt/base/polymorphic_downcast.h"
 #include "cobalt/render_tree/font.h"

@@ -1,4 +1,6 @@
-﻿### --- COMPONENTS_VIZ_COMMON ---###
+﻿# see https://github.com/chromium/chromium/blob/2b8620be75bb04be49192306fa8292ea8da615f8/components/viz/common/BUILD.gn
+
+### --- COMPONENTS_VIZ_COMMON ---###
 
 set(COMPONENTS_VIZ_COMMON_SOURCES
   #

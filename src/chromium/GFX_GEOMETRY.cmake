@@ -1,4 +1,6 @@
-﻿### --- GFX_GEOMETRY ---###
+﻿# see https://github.com/chromium/chromium/blob/64b1c74a653803bb1f4441e045f44a8d2f801538/ui/gfx/geometry/BUILD.gn
+
+### --- GFX_GEOMETRY ---###
 
 set(GFX_GEOMETRY_SOURCES
   #${GFX_GEOMETRY_DIR}../gfx_export.h

@@ -32,6 +32,13 @@
 #include "cobalt/render_tree/rect_node.h"
 #include "nb/memory_scope.h"
 
+#include "base/base_paths.h"
+#include "base/environment.h"
+#include "base/files/file_path.h"
+#include "base/path_service.h"
+#include "base/strings/string_util.h"
+#include "base/strings/utf_string_conversions.h"
+
 #if defined(OS_EMSCRIPTEN)
 #include "emscripten/emscripten.h"
 #include "emscripten/html5.h"
@@ -442,10 +449,6 @@ void Pipeline::ClearCurrentRenderTree() {
 }
 
 void Pipeline::RasterizeCurrentTree() {
-#if defined(ENABLE_NATIVE_HTML)
-    return;
-#endif // ENABLE_NATIVE_HTML
-
 #if defined(OS_EMSCRIPTEN)
   //EM_LOG("Pipeline::RasterizeCurrentTree 0\n");
 #else
@@ -879,7 +882,13 @@ void Pipeline::OnDumpCurrentRenderTree(const std::string& message) {
     base::FilePath out_dir;
     base::PathService::Get(paths::DIR_COBALT_DEBUG_OUT, &out_dir);
 
-    base::WriteFile(out_dir.Append(message), tree_dump.c_str(),
+    base::WriteFile(
+#if defined(_WIN32) || defined(_WIN64)
+                    out_dir.Append(base::ASCIIToUTF16(message)),
+#else
+                    out_dir.Append(message), 
+#endif
+                    tree_dump.c_str(),
                     tree_dump.length());
   }
 }

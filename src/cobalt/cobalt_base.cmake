@@ -90,7 +90,11 @@ if(TARGET_LINUX)
     xdg_mime
     xdg_user_dirs
   )
-endif(TARGET_LINUX)
+elseif(TARGET_WINDOWS OR TARGET_EMSCRIPTEN)
+  # TODO
+else()
+  message(FATAL_ERROR "platform not supported")
+endif()
 
 target_link_libraries(cobalt_base PRIVATE
   base # TODO

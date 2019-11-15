@@ -599,6 +599,9 @@ void TSFBridge::Shutdown() {
 
 // static
 TSFBridge* TSFBridge::GetInstance() {
+#if defined(UI_VIEWS_PORT)
+  return nullptr;
+#else
   if (!base::MessageLoopCurrentForUI::IsSet()) {
     DVLOG(1) << "Do not use TSFBridge without UI thread.";
     return nullptr;
@@ -606,6 +609,7 @@ TSFBridge* TSFBridge::GetInstance() {
   TSFBridgeImpl* delegate = static_cast<TSFBridgeImpl*>(TSFBridgeTLS().Get());
   DCHECK(delegate) << "Do no call GetInstance before TSFBridge::Initialize.";
   return delegate;
+#endif // UI_VIEWS_PORT
 }
 
 }  // namespace ui

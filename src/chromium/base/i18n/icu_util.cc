@@ -117,14 +117,16 @@ wchar_t g_debug_icu_pf_filename[_MAX_PATH];
 // see http://userguide.icu-project.org/icudata
 // see http://userguide.icu-project.org/howtouseicu#TOC-C-With-Your-Own-Build-System
 // see https://github.com/unicode-org/icu/blob/master/docs/userguide/icu_data/buildtool.md
-const char kIcuDataFileName[] = "./resources/icu/icudtl.dat";
+const base::FilePath::CharType kIcuDataFileName[] = FILE_PATH_LITERAL("./resources/icu/icudtl.dat");
 #elif defined(OS_LINUX)
-const char kIcuDataFileName[] = "./resources/icu/icudtl.dat";
+const base::FilePath::CharType kIcuDataFileName[] = FILE_PATH_LITERAL("./resources/icu/icudtl.dat");
+#elif defined(OS_WIN)
+const base::FilePath::CharType kIcuDataFileName[] = FILE_PATH_LITERAL("./resources/icu/icudtl.dat");
 #else
-const char kIcuDataFileName[] = "icudtl.dat";
+const base::FilePath::CharType kIcuDataFileName[] = FILE_PATH_LITERAL("icudtl.dat");
 #endif
 #if defined(OS_ANDROID)
-const char kAndroidAssetsIcuDataFileName[] = "assets/icudtl.dat";
+const base::FilePath::CharType kAndroidAssetsIcuDataFileName[] = FILE_PATH_LITERAL("assets/icudtl.dat";
 #endif
 
 // File handle intentionally never closed. Not using File here because its
@@ -242,7 +244,9 @@ printf("InitializeICUWithFileDescriptorInternal 2\n");
   std::unique_ptr<MemoryMappedFile> icudtl_mapped_file(new MemoryMappedFile());
   //if (!icudtl_mapped_file->Initialize(File(data_fd), data_region)) {
   //const base::string16 str = base::ASCIIToUTF16("data_fd");
-  if (!icudtl_mapped_file->Initialize(FilePath(kIcuDataFileName))) {
+  if (!icudtl_mapped_file->Initialize(base::FilePath(
+      kIcuDataFileName)))
+  {
     g_debug_icu_load = 2;  // To debug http://crbug.com/445616.
     LOG(ERROR) << "Couldn't mmap icu data file: " << kIcuDataFileName;
 printf("InitializeICUWithFileDescriptorInternal 2.1\n");
@@ -263,32 +267,37 @@ printf("InitializeICUWithFileDescriptorInternal 3\n");
   DCHECK(g_icudtl_mapped_file->IsValid());
 printf("InitializeICUWithFileDescriptorInternal 3.0\n");
 
+#if defined(__EMSCRIPTEN__)
   /// TODO: wasm alignment fault udata_setCommonData 4 -> udata_checkCommonData
   ///udata_setCommonData(const_cast<uint8_t*>(g_icudtl_mapped_file->data()), &err);
 
-
-    /// \see "Alignment" at http://userguide.icu-project.org/icudata#TOC-ICU-Data-File-Formats
-    /// \see https://github.com/tombo-a2o/Foundation/blob/51e451959cba7eade126e0cb3df28c370def7498/System/CoreFoundation/src/CFRuntime.c#L999
-    UErrorCode err2 = U_ZERO_ERROR;
-    int icuDataFd = open(kIcuDataFileName, O_RDONLY);
-    if (icuDataFd != -1) {
-        struct stat stbuf;
-        fstat(icuDataFd, &stbuf);
-        size_t icuDataLen = stbuf.st_size;
-
-        // void *icuData = mmap(0, icuDataLen, PROT_READ, MAP_SHARED, icuDataFd, 0);
-        char *icuData = (char*)malloc(icuDataLen);
-        read(icuDataFd, icuData, icuDataLen);
-        close(icuDataFd);
-
-        udata_setCommonData(icuData, &err2);
-        if (err2 != 0)
-        {
-            printf("icu initialization failed with error %d\n", (int)err);
-        }
-    } else {
-        printf("No icu data found, using minimal built-in tables\n");
-    }
+   /// \see "Alignment" at http://userguide.icu-project.org/icudata#TOC-ICU-Data-File-Formats
+   /// \see https://github.com/tombo-a2o/Foundation/blob/51e451959cba7eade126e0cb3df28c370def7498/System/CoreFoundation/src/CFRuntime.c#L999
+   UErrorCode err2 = U_ZERO_ERROR;
+   int icuDataFd = open(kIcuDataFileName, O_RDONLY);
+   if (icuDataFd != -1) {
+       struct stat stbuf;
+       fstat(icuDataFd, &stbuf);
+       size_t icuDataLen = stbuf.st_size;
+//
+       // void *icuData = mmap(0, icuDataLen, PROT_READ, MAP_SHARED, icuDataFd, 0);
+       char *icuData = (char*)malloc(icuDataLen);
+       read(icuDataFd, icuData, icuDataLen);
+       close(icuDataFd);
+//
+       udata_setCommonData(icuData, &err2);
+       if (err2 != 0)
+       {
+           printf("icu initialization failed with error %d\n", (int)err);
+       }
+   } else {
+       printf("No icu data found, using minimal built-in tables\n");
+   }
+#else
+  // see https://github.com/chromium/chromium/blob/master/base/i18n/icu_util.cc#L188
+  udata_setCommonData(const_cast<uint8_t*>(g_icudtl_mapped_file->data()),
+                      &err);
+#endif // __EMSCRIPTEN__
 
   if (err != U_ZERO_ERROR) {
 printf("udata_setCommonData error!\n");

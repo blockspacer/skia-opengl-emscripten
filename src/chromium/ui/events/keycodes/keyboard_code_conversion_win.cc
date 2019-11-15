@@ -47,7 +47,11 @@ DomCode CodeForWindowsScanCode(WORD scan_code) {
       break;
   }
 
+#if defined(UI_VIEWS_PORT)
+  return DomCode();
+#else
   return ui::KeycodeConverter::NativeKeycodeToDomCode(scan_code);
+#endif // UI_VIEWS_PORT
 }
 
 }  // namespace ui

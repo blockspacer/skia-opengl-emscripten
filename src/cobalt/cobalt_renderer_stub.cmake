@@ -20,7 +20,7 @@ if(TARGET_EMSCRIPTEN)
     # see 'TODO' file in commit 0e4faf to reproduce
     # ENABLE_RASTERIZER_THREAD=1
   )
-elseif(TARGET_LINUX)
+elseif(TARGET_LINUX OR TARGET_WINDOWS)
   list(APPEND RENDERER_PUBLIC_DEFINES
     ENABLE_RASTERIZER_THREAD=1
   )
@@ -246,12 +246,16 @@ add_library(cobalt_renderer_stub_skgl STATIC
 #  ${FOUND_OPENGL_LIBRARIES}
 #  ${OPENGLES2_LIBRARIES})
 
-if(TARGET_LINUX)
+if(TARGET_LINUX OR TARGET_WINDOWS)
   list(APPEND EXTRA_cobalt_renderer_stub_skgl_LIBS
     ${FOUND_OPENGL_LIBRARIES}
     #OpenGL::EGL
   )
-endif(TARGET_LINUX)
+elseif(TARGET_EMSCRIPTEN)
+  # skip
+else()
+  message(FATAL_ERROR "platform not supported")
+endif()
 
 target_link_libraries(cobalt_renderer_stub_skgl PRIVATE
   ${cobalt_renderer_stub_skia_LIB}
@@ -283,6 +287,8 @@ target_link_libraries(cobalt_renderer_stub_skgl PRIVATE
   #${OPENGLES2_LIBRARIES}
   ${FOUND_OPENGL_LIBRARIES}
   ${FREETYPE_LIBRARIES}
+  # khronos
+  ${khronos_LIB} # on _WIN32
 )
 
 set_property(TARGET cobalt_renderer_stub_skgl PROPERTY CXX_STANDARD 17)
@@ -396,12 +402,16 @@ add_library(cobalt_renderer_stub STATIC
 #  ${FOUND_OPENGL_LIBRARIES}
 #  ${OPENGLES2_LIBRARIES})
 
-if(TARGET_LINUX)
+if(TARGET_LINUX OR TARGET_WINDOWS)
   list(APPEND EXTRA_cobalt_renderer_stub_LIBS
     ${FOUND_OPENGL_LIBRARIES}
     #OpenGL::EGL
   )
-endif(TARGET_LINUX)
+elseif(TARGET_EMSCRIPTEN)
+  # skip
+else()
+  message(FATAL_ERROR "platform not supported")
+endif()
 
 target_link_libraries(cobalt_renderer_stub PRIVATE
   cobalt_renderer_stub_skgl

@@ -12,6 +12,11 @@ add_library(libsync STATIC
   ${libsync_SOURCES}
 )
 
+#target_link_libraries(libsync PUBLIC
+#  #dynamic_annotations
+#  #base
+#)
+
 set_property(TARGET libsync PROPERTY CXX_STANDARD 17)
 
 target_include_directories(libsync PRIVATE
@@ -23,8 +28,12 @@ target_include_directories(libsync PUBLIC
   ${libsync_DIR}src/include
 )
 
-target_compile_options(libsync PRIVATE
-  -Wno-implicit-function-declaration)
+if(NOT MSVC OR IS_CLANG_CL)
+  target_compile_options(libsync PRIVATE
+    -Wno-implicit-function-declaration)
+else()
+  # TODO
+endif()
 
 #target_compile_definitions(libsync PRIVATE
 #  # IS_IPC_IMPL=1

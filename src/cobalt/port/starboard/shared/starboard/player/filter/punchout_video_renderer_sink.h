@@ -43,7 +43,11 @@ class PunchoutVideoRendererSink : public VideoRendererSink {
   DrawFrameStatus DrawFrame(const scoped_refptr<VideoFrame>& frame,
                             int64_t release_time_in_nanoseconds);
 
+#if defined(_WIN32) || defined(_WIN64)
+  static DWORD ThreadEntryPoint(void* context);
+#else
   static void* ThreadEntryPoint(void* context);
+#endif
 
   SbPlayer player_;
   SbTime render_interval_;

@@ -21,6 +21,12 @@
 #    set(${OUT} ${ABS_FILE} PARENT_SCOPE)
 #endfunction()
 
+if(TARGET_EMSCRIPTEN OR TARGET_LINUX)
+  # skip
+else()
+  message(FATAL_ERROR "platform not supported")
+endif()
+
 #if(TARGET_EMSCRIPTEN)
 #else()
 #  # You should install Google Perftools.

@@ -50,7 +50,11 @@ class SimpleThread {
   static void SleepMilliseconds(int value);
 
  private:
+#if defined(_WIN32) || defined(_WIN64)
+  static DWORD ThreadEntryPoint(void* context);
+#else
   static void* ThreadEntryPoint(void* context);
+#endif
 
   const std::string name_;
   SbThread thread_;

@@ -60,10 +60,12 @@ class ThreadChecker {
     thread_id_ = kSbThreadInvalidId;
   }
 
+  // see https://github.com/blockspacer/skia-opengl-emscripten/blob/7c423190544c8da1bf8ae79b800c9c0c83dd3c6e/src/chromium/base/threading/thread_collision_warner.cc#L33
   bool CalledOnValidThread() const {
     SbThreadId current_thread_id = SbThreadGetId();
+    SbAtomic32 thread_id_32 = static_cast<SbAtomic32>(thread_id_);
     SbThreadId stored_thread_id = SbAtomicNoBarrier_CompareAndSwap(
-        &thread_id_, kSbThreadInvalidId, current_thread_id);
+        &thread_id_32, kSbThreadInvalidId, current_thread_id);
     return stored_thread_id == kSbThreadInvalidId ||
            stored_thread_id == current_thread_id;
   }

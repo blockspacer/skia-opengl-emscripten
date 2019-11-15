@@ -1,3 +1,5 @@
+# see https://github.com/chromium/chromium/blob/2ca8c5037021c9d2ecc00b787d58a31ed8fc8bcb/cc/debug/BUILD.gn
+
 ### --- DEBUG_CC ---###
 
 # TODO https://github.com/chromium/chromium/blob/master/third_party/blink/renderer/platform/BUILD.gn

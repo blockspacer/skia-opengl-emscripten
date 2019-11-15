@@ -63,38 +63,43 @@ target_compile_definitions(COBALT_CORE INTERFACE
   ${COBALT_COMMON_DEFINES}
 )
 
-target_compile_options(COBALT_CORE INTERFACE
-  -Wno-error
-  -Wno-macro-redefined
-  -Wno-implicit-function-declaration
-  -Wno-c++11-narrowing
-  -Wno-macro-redefined
-  #-Wno-undef
-  #-Wno-unknown-pragmas
-  #-Wno-nonportable-include-path
-  #-Wno-unknown-argument
-  # Warn for implicit type conversions that may change a value.
-  #-Wconversion
-  -Wno-c++11-compat
-  # This complains about "override", which we use heavily.
-  -Wno-c++11-extensions
-  # Warns on switches on enums that cover all enum values but
-  # also contain a default: branch. Chrome is full of that.
-  -Wno-covered-switch-default
-  # protobuf uses hash_map.
-  -Wno-deprecated
-  # Don't warn about the "struct foo f = {0};" initialization pattern.
-  -Wno-missing-field-initializers
-  # Do not warn for implicit sign conversions.
-  -Wno-sign-conversion
-  -Wno-unnamed-type-template-args
-  # Triggered by the COMPILE_ASSERT macro.
-  -Wno-unused-local-typedef
-  # Do not warn if a function or variable cannot be implicitly
-  # instantiated.
-  -Wno-undefined-var-template
-  # Do not warn about an implicit exception spec mismatch.
-  -Wno-implicit-exception-spec-mismatch
-  #
-  -Wno-inconsistent-missing-override
-)
+
+if(NOT MSVC OR IS_CLANG_CL)
+  target_compile_options(COBALT_CORE INTERFACE
+    -Wno-error
+    -Wno-macro-redefined
+    -Wno-implicit-function-declaration
+    -Wno-c++11-narrowing
+    -Wno-macro-redefined
+    #-Wno-undef
+    #-Wno-unknown-pragmas
+    #-Wno-nonportable-include-path
+    #-Wno-unknown-argument
+    # Warn for implicit type conversions that may change a value.
+    #-Wconversion
+    -Wno-c++11-compat
+    # This complains about "override", which we use heavily.
+    -Wno-c++11-extensions
+    # Warns on switches on enums that cover all enum values but
+    # also contain a default: branch. Chrome is full of that.
+    -Wno-covered-switch-default
+    # protobuf uses hash_map.
+    -Wno-deprecated
+    # Don't warn about the "struct foo f = {0};" initialization pattern.
+    -Wno-missing-field-initializers
+    # Do not warn for implicit sign conversions.
+    -Wno-sign-conversion
+    -Wno-unnamed-type-template-args
+    # Triggered by the COMPILE_ASSERT macro.
+    -Wno-unused-local-typedef
+    # Do not warn if a function or variable cannot be implicitly
+    # instantiated.
+    -Wno-undefined-var-template
+    # Do not warn about an implicit exception spec mismatch.
+    -Wno-implicit-exception-spec-mismatch
+    #
+    -Wno-inconsistent-missing-override
+  )
+else()
+  # TODO
+endif()

@@ -8,4 +8,8 @@
 
 #include "build/buildflag.h"
 
+#if defined(WIN32) || defined(WIN64)
+#define BUILDFLAG_INTERNAL_USE_PARTITION_ALLOC() (1)
+#else
 #define BUILDFLAG_INTERNAL_USE_PARTITION_ALLOC() (0)
+#endif

@@ -160,6 +160,25 @@ elseif(TARGET_LINUX)
     ${GLIBXML_DIR}/linux/include # requires "libxml/xmlversion.h"
   )
   #find_package(ZLIB)
+elseif(TARGET_WINDOWS) # TODO
+  if(CMAKE_CL_64)
+    #
+  else(CMAKE_CL_64)
+    #list(APPEND GLIBXML_SOURCES
+    #  ${GLIBXML_DIR}intel/filter_sse2_intrinsics.c
+    #  ${GLIBXML_DIR}intel/intel_init.c
+    #)
+  endif(CMAKE_CL_64)
+  list(APPEND GLIBXML_OS_PRIVATE_DIRS
+    ${GLIBXML_DIR}/win32 # requires "config.h"
+    #${GLIBXML_DIR}/src
+    # ${GLIBXML_DIR}/src/include # requires "libxml/parser.h"
+    #${GLIBXML_DIR}/src/include/libxml
+  )
+  list(APPEND GLIBXML_OS_PUBLIC_DIRS
+    ${GLIBXML_DIR}/win32/include # requires "libxml/xmlversion.h"
+  )
+  #find_package(ZLIB)
 else()
   message(FATAL_ERROR "platform not supported")
 endif()
@@ -169,11 +188,11 @@ add_library(GLIBXML STATIC
 )
 
 if (EMSCRIPTEN)
-  target_link_libraries(GLIBXML PRIVATE
+  target_link_libraries(GLIBXML PUBLIC
     ${CUSTOM_ICU_LIB} # icuuc
   )
 else()
-  target_link_libraries(GLIBXML PRIVATE
+  target_link_libraries(GLIBXML PUBLIC
     #base
     #${ZLIB_LIBRARIES}
     #zlib

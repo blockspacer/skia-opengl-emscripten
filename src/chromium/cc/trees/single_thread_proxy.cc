@@ -275,12 +275,13 @@ void SingleThreadProxy::SetDeferMainFrameUpdate(bool defer_main_frame_update) {
   if (defer_main_frame_update_ == defer_main_frame_update)
     return;
 
-  if (defer_main_frame_update)
+  if (defer_main_frame_update) {
     TRACE_EVENT_ASYNC_BEGIN0("cc", "SingleThreadProxy::SetDeferMainFrameUpdate",
                              this);
-  else
+  } else {
     TRACE_EVENT_ASYNC_END0("cc", "SingleThreadProxy::SetDeferMainFrameUpdate",
                            this);
+  }
 
   defer_main_frame_update_ = defer_main_frame_update;
 
