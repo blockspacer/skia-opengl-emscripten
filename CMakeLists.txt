@@ -2372,6 +2372,7 @@ else() # NOT EMSCRIPTEN
 
   find_package( Threads REQUIRED )
   message(STATUS "CMAKE_THREAD_LIBS_INIT = ${CMAKE_THREAD_LIBS_INIT}")
+  set(PTHREADS_LIBS ${CMAKE_THREAD_LIBS_INIT}) # note: not set for emscripten
 
   if(TARGET_LINUX)
     find_package(LibDL REQUIRED)

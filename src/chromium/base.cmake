@@ -1033,9 +1033,10 @@ if(TARGET_EMSCRIPTEN OR TARGET_LINUX)
     ${BASE_DIR}process/launch_posix.cc
     ${BASE_DIR}base_paths_posix.h
     # posix
+    ${BASE_DIR}base_paths_posix.cc
     ${BASE_DIR}file_descriptor_posix.h
     ${BASE_DIR}files/dir_reader_posix.h
-    ##${BASE_DIR}files/file_util_posix.cc
+    ${BASE_DIR}files/file_util_posix.cc
     ${BASE_DIR}files/memory_mapped_file_posix.cc
     ${BASE_DIR}memory/protected_memory_posix.cc
     ${BASE_DIR}message_loop/watchable_io_message_pump_posix.cc
@@ -1064,15 +1065,17 @@ if(TARGET_EMSCRIPTEN OR TARGET_LINUX)
     ${BASE_DIR}timer/hi_res_timer_manager_posix.cc
     # https://github.com/chromium/chromium/blob/master/base/BUILD.gn#L1185
     ${BASE_DIR}base_paths_posix.h
+    #
+    ${BASE_DIR}threading/platform_thread_linux.cc
+    #
+    ${BASE_DIR}files/file_util_linux.cc
+    ${BASE_DIR}files/file_enumerator_posix.cc
+    ${BASE_DIR}files/file_posix.cc
   )
 endif(TARGET_EMSCRIPTEN OR TARGET_LINUX)
 
 if(TARGET_LINUX) # TODO: see TARGET_LINUX above!!!
   list(APPEND BASE_SOURCES
-    #
-    ${BASE_DIR}threading/platform_thread_linux.cc
-    #
-    ${BASE_DIR}files/file_util_linux.cc
     ${BASE_DIR}process/memory_linux.cc
     ${BASE_DIR}process/process_handle_linux.cc
     #
@@ -1098,8 +1101,6 @@ if(TARGET_LINUX) # TODO: see TARGET_LINUX above!!!
     # requires mojo::StructTraits<mojo_base::mojom::ProcessIdDataView,
     #
     ##${BASE_DIR}debug/stack_trace_posix.cc
-    ${BASE_DIR}files/file_enumerator_posix.cc
-    ${BASE_DIR}files/file_posix.cc
     ${BASE_DIR}posix/eintr_wrapper.h
     ${BASE_DIR}posix/file_descriptor_shuffle.cc
     ${BASE_DIR}posix/file_descriptor_shuffle.h
@@ -1392,8 +1393,6 @@ if(TARGET_LINUX)
     #    "metrics/persistent_histogram_storage.cc",
     #    "metrics/persistent_histogram_storage.h",
     #  ]
-    ${BASE_DIR}base_paths_posix.cc
-    ${BASE_DIR}files/file_util_posix.cc
     ##${BASE_DIR}process/process_metrics_posix.cc
     ## TODO ##
     ##${BASE_DIR}debug/stack_trace_posix.cc
@@ -1671,7 +1670,7 @@ target_link_libraries(base PRIVATE
   # see https://stackoverflow.com/questions/1236670/how-to-make-opengl-apps-in-64-bit-windows
   ${FOUND_OPENGL_LIBRARIES}
   # ${GLEW_LIBRARY}
-  ${CMAKE_THREAD_LIBS_INIT} # pthread, https://cmake.org/cmake/help/v3.13/module/FindThreads.html
+  ${PTHREADS_LIBS} # note: not set for emscripten
 )
 
 set_property(TARGET base PROPERTY CXX_STANDARD 17)
