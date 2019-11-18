@@ -4924,8 +4924,7 @@ int main(int argc, char* argv[])
 #endif // ENABLE_OPENGL
 #endif // ENABLE_HTML5_SDL
 
-#ifndef __EMSCRIPTEN__
-#if defined(ENABLE_OPENGL)
+#if !defined(__EMSCRIPTEN__)
   printf("SDL_GL_CreateContext ...\n");
 
   glContext = SDL_GL_CreateContext(window);
@@ -4934,14 +4933,19 @@ int main(int argc, char* argv[])
     SDL_ClearError();
     return 0;
   }
+#endif // !defined(__EMSCRIPTEN__)
 
-  // Initialize GLEW
-  /*glewExperimental = GL_TRUE;
+#if !defined(__EMSCRIPTEN__) && (defined(OS_WIN) || defined(OS_POSIX))
+  /// \note You need to create a GL context. Try SDL_GL_CreateContext(window) before glewInit() call.
   GLenum glewError = glewInit();
-  if (glewError != GLEW_OK) {
-    printf("Error initializing GLEW! %s\n", glewGetErrorString(glewError));
-  }*/
+  if (GLEW_OK != glewError)
+  {
+    /* Problem: glewInit failed, something is seriously wrong. */
+    fprintf(stderr, "Error initializing GLEW: %s\n", glewGetErrorString(glewError));
+  }
+#endif
 
+#if !defined(__EMSCRIPTEN__)
   printf("SDL_GL_MakeCurrent ...\n");
 
   int success = SDL_GL_MakeCurrent(window, glContext);
@@ -4950,20 +4954,7 @@ int main(int argc, char* argv[])
     SDL_ClearError();
     return success;
   }
-#endif // ENABLE_OPENGL
-#endif
-
-#if defined(OS_WIN) //|| defined(OS_POSIX)
-//glutInit(&argc, argv);
-//glutCreateWindow("GLEW Test");
-/// \note You need to create a GL context. Try SDL_GL_CreateContext(window) before glewInit() call.
-GLenum err = glewInit();
-if (GLEW_OK != err)
-{
-  /* Problem: glewInit failed, something is seriously wrong. */
-  fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
-}
-#endif
+#endif // !defined(__EMSCRIPTEN__)
 
 #if defined(ENABLE_OPENGL)
 /// \todo WEBGL1_SUPPORT

@@ -2380,6 +2380,12 @@ else() # NOT EMSCRIPTEN
   elseif(TARGET_EMSCRIPTEN)
     # skip
   elseif(TARGET_WINDOWS)
+    # skip
+  else()
+    message(FATAL_ERROR "platform not supported")
+  endif()
+
+  if(TARGET_LINUX OR TARGET_WINDOWS)
     set(ENABLE_GLEW TRUE)
     if(GLEW_STATIC)
       # override GLEW_LIB_SEARCH_NAMES to force `glew32s`, `s` suffix for static
@@ -2388,6 +2394,8 @@ else() # NOT EMSCRIPTEN
     find_package(GLEW REQUIRED) # First try to find using the find_package method (works with vcpkg)
     message(STATUS "GLEW_INCLUDE_PATH=${GLEW_INCLUDE_PATH}")
     message(STATUS "GLEW_LIBRARY=${GLEW_LIBRARY}")
+  elseif(TARGET_EMSCRIPTEN)
+    # skip
   else()
     message(FATAL_ERROR "platform not supported")
   endif()
@@ -2500,19 +2508,9 @@ else() # NOT EMSCRIPTEN
   #  add_definitions(-DUSE_SDL2_ttf_LIB)
   #endif ()
 
-  set(HAS_GLEW_LIB FALSE)
-  if(ENABLE_GLEW)
-    if(GLEW_STATIC)
-      # override GLEW_LIB_SEARCH_NAMES to force `glew32s`, `s` suffix for static
-      list(APPEND GLEW_LIB_SEARCH_NAMES glew32s)
-    endif(GLEW_STATIC)
-    find_package(GLEW REQUIRED) # First try to find using the find_package method (works with vcpkg)
-    if(GLEW_FOUND) # Works with some other methods
-      set(HAS_GLEW_LIB TRUE)
-    endif()
-    message(STATUS "GLEW_INCLUDE_PATH=${GLEW_INCLUDE_PATH}")
-    message(STATUS "GLEW_LIBRARY=${GLEW_LIBRARY}")
-  endif(ENABLE_GLEW)
+  message(STATUS "GLEW_INCLUDE_PATH=${GLEW_INCLUDE_PATH}")
+  message(STATUS "GLEW_LIBRARY=${GLEW_LIBRARY}")
+
 
   if(USE_SYSTEM_ZLIB)
     #message(FATAL_ERROR "NOT SUPPORTED") # TODO
