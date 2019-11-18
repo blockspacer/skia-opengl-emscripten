@@ -103,9 +103,9 @@ if(IS_CLANG_CL AND NOT TARGET_WINDOWS)
 endif(IS_CLANG_CL AND NOT TARGET_WINDOWS)
 #
 if(ENABLE_KHRONOS)
-  set(khronos_LIB
-    khronos
-  )
+  set(khronos_LIB khronos)
+else()
+  set(khronos_LIB "")
 endif(ENABLE_KHRONOS)
 set(ENABLE_NATIVE_HTML FALSE CACHE BOOL "ENABLE_NATIVE_HTML")
 if(RELEASE_BUILD AND NOT EMSCRIPTEN AND ENABLE_NATIVE_HTML)
@@ -339,10 +339,10 @@ endif(ENABLE_NATIVE_HTML)
 
 if(NOT RELEASE_BUILD)
   if(TARGET_WINDOWS)
-    set(COMMON_FLAGS "${COMMON_FLAGS} /D_DEBUG")
+    set(COMMON_FLAGS "${COMMON_FLAGS} /D_DEBUG") #
   endif(TARGET_WINDOWS)
   #
-  set(COMMON_FLAGS "${COMMON_FLAGS} -DD_DEBUG")
+  set(COMMON_FLAGS "${COMMON_FLAGS} -DD_DEBUG") #
 endif(NOT RELEASE_BUILD)
 
 if(NOT TARGET_WINDOWS OR IS_CLANG_CL) # TODO
@@ -838,7 +838,7 @@ else()
   #add_definitions(-D_DEBUG=1)
 
   # see cobalt/src/cobalt/layout/layout_unit.h
-  set(COMMON_FLAGS "${COMMON_FLAGS} -D_DEBUG=1")
+  set(COMMON_FLAGS "${COMMON_FLAGS} -D_DEBUG=1") #
   # see https://github.com/blockspacer/cobalt-clone-28052019/blob/master/src/cobalt/renderer/pipeline.cc#L119
   #set(COMMON_FLAGS "${COMMON_FLAGS} -DENABLE_DEBUGGER=1")
 endif(RELEASE_BUILD)
@@ -886,6 +886,7 @@ message(STATUS "DSIZEOF_VOID_P=${SIZEOF_VOID_P_BITS}")
 
 set(COMMON_FLAGS "${COMMON_FLAGS} -DUI_VIEWS_PORT=1")
 
+set(ENABLE_GLEW FALSE)
 if(MSVC) # TODO
   set(COMMON_FLAGS "${COMMON_FLAGS} -DGLEW_NO_GLU=1")
   set(GLEW_STATIC TRUE)
@@ -1089,12 +1090,12 @@ else()
     set(COMMON_FLAGS "${COMMON_FLAGS} -D_HAS_ITERATOR_DEBUGGING=0")
     set(COMMON_FLAGS "${COMMON_FLAGS} -D_ITERATOR_DEBUG_LEVEL=0")
 
-    set(COMMON_FLAGS "${COMMON_FLAGS} -D_DEBUG=1")
+    set(COMMON_FLAGS "${COMMON_FLAGS} -D_DEBUG=1") #
   else()
     # https://stackoverflow.com/a/4184877/10904212
     # see DCHECK in base::polymorphic_downcast, dynamic_cast
     set(COMMON_FLAGS "${COMMON_FLAGS} -frtti")
-    set(COMMON_FLAGS "${COMMON_FLAGS} -D_DEBUG=1")
+    set(COMMON_FLAGS "${COMMON_FLAGS} -D_DEBUG=1") #
   endif()
 endif(RELEASE_BUILD)
 
@@ -2375,6 +2376,7 @@ else() # NOT EMSCRIPTEN
   elseif(TARGET_EMSCRIPTEN)
     # skip
   elseif(TARGET_WINDOWS)
+    set(ENABLE_GLEW TRUE)
     if(GLEW_STATIC)
       # override GLEW_LIB_SEARCH_NAMES to force `glew32s`, `s` suffix for static
       list(APPEND GLEW_LIB_SEARCH_NAMES glew32s)
@@ -2434,10 +2436,12 @@ else() # NOT EMSCRIPTEN
       COMPONENTS OpenGL EGL
       REQUIRED)
     if(OPENGL_FOUND)
-      list(APPEND FOUND_OPENGL_LIBRARIES ${OPENGL_gl_LIBRARY})
-      if(NOT MSVC) # need only opengl32.lib
+      if(OPENGL_gl_LIBRARY)
+        list(APPEND FOUND_OPENGL_LIBRARIES ${OPENGL_gl_LIBRARY})
+      endif(OPENGL_gl_LIBRARY)
+      if(OPENGL_LIBRARIES AND NOT MSVC) # need only opengl32.lib
         list(APPEND FOUND_OPENGL_LIBRARIES ${OPENGL_LIBRARIES})
-      endif(NOT MSVC)
+      endif(OPENGL_LIBRARIES AND NOT MSVC)
       set(FOUND_OPENGL_INCLUDE_DIR ${OPENGL_INCLUDE_DIR})
       #
       message(STATUS "OPENGL_LIBRARIES = ${OPENGL_LIBRARIES} ")
@@ -2491,6 +2495,20 @@ else() # NOT EMSCRIPTEN
   #  message(STATUS "SDL2_TTF_LIBRARY = ${SDL2_TTF_LIBRARY} ")
   #  add_definitions(-DUSE_SDL2_ttf_LIB)
   #endif ()
+
+  set(HAS_GLEW_LIB FALSE)
+  if(ENABLE_GLEW)
+    if(GLEW_STATIC)
+      # override GLEW_LIB_SEARCH_NAMES to force `glew32s`, `s` suffix for static
+      list(APPEND GLEW_LIB_SEARCH_NAMES glew32s)
+    endif(GLEW_STATIC)
+    find_package(GLEW REQUIRED) # First try to find using the find_package method (works with vcpkg)
+    if(GLEW_FOUND) # Works with some other methods
+      set(HAS_GLEW_LIB TRUE)
+    endif()
+    message(STATUS "GLEW_INCLUDE_PATH=${GLEW_INCLUDE_PATH}")
+    message(STATUS "GLEW_LIBRARY=${GLEW_LIBRARY}")
+  endif(ENABLE_GLEW)
 
   if(USE_SYSTEM_ZLIB)
     #message(FATAL_ERROR "NOT SUPPORTED") # TODO

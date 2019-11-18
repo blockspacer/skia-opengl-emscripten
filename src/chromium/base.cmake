@@ -1600,7 +1600,6 @@ add_dependencies(base
   ${EXTRA_CHROMIUM_BASE_LIBS}
 )
 
-
 if(HARFBUZZ_FROM_SKIA)
   add_dependencies(base SKIA) # TODO
 endif()
@@ -1663,8 +1662,7 @@ target_link_libraries(base PRIVATE
   ${LIBATOMIC} # from system, no dep. for __atomic_is_lock_free
   # see https://stackoverflow.com/questions/1236670/how-to-make-opengl-apps-in-64-bit-windows
   ${OPENGL_gl_LIBRARY}
-  # see https://stackoverflow.com/questions/16390078/build-error-when-trying-to-run-an-opengl-example-in-vc
-  ${GLEW_INCLUDE_PATH}
+  # ${GLEW_LIBRARY}
 )
 
 set_property(TARGET base PROPERTY CXX_STANDARD 17)
@@ -1681,7 +1679,8 @@ target_include_directories(base PUBLIC
   ${CHROMIUM_DIR}
   # TODO
   #${COBALT_COMMON_INCLUDES}
-  ${GLEW_LIBRARY}
+  # see https://stackoverflow.com/questions/16390078/build-error-when-trying-to-run-an-opengl-example-in-vc
+  # ${GLEW_INCLUDE_PATH}
 )
 
 #message(FATAL_ERROR ${CHROMIUM_DIR}/../../thirdparty/ced/src/)
