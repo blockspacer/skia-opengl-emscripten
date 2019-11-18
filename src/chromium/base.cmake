@@ -1661,7 +1661,7 @@ target_link_libraries(base PRIVATE
   ${EXTRA_CHROMIUM_BASE_LIBS}
   ${LIBATOMIC} # from system, no dep. for __atomic_is_lock_free
   # see https://stackoverflow.com/questions/1236670/how-to-make-opengl-apps-in-64-bit-windows
-  ${OPENGL_gl_LIBRARY}
+  ${FOUND_OPENGL_LIBRARIES}
   # ${GLEW_LIBRARY}
 )
 
