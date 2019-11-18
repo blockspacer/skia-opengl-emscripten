@@ -2370,6 +2370,9 @@ endif(NOT RELEASE_BUILD)
 
 else() # NOT EMSCRIPTEN
 
+  find_package( Threads REQUIRED )
+  message(STATUS "CMAKE_THREAD_LIBS_INIT = ${CMAKE_THREAD_LIBS_INIT}")
+
   if(TARGET_LINUX)
     find_package(LibDL REQUIRED)
     set(libDL_LIB LIBDL::LIBDL)

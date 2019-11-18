@@ -1663,6 +1663,7 @@ target_link_libraries(base PRIVATE
   # see https://stackoverflow.com/questions/1236670/how-to-make-opengl-apps-in-64-bit-windows
   ${FOUND_OPENGL_LIBRARIES}
   # ${GLEW_LIBRARY}
+  ${CMAKE_THREAD_LIBS_INIT} # pthread, https://cmake.org/cmake/help/v3.13/module/FindThreads.html
 )
 
 set_property(TARGET base PROPERTY CXX_STANDARD 17)
