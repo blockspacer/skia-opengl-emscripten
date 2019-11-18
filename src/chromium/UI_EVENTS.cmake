@@ -251,11 +251,11 @@ if(TARGET_WINDOWS)
   )
 endif()
 
-if(TARGET_WINDOWS OR TARGET_LINUX)
+if(TARGET_WINDOWS)
   #if (is_win || is_mac || use_x11 || use_ozone) {
   #  sources -= [ "events_stub.cc" ]
   #}
-elseif(TARGET_EMSCRIPTEN)
+elseif(TARGET_EMSCRIPTEN OR TARGET_LINUX)
   list(APPEND UI_EVENTS_SOURCES
     ${UI_EVENTS_DIR}events_stub.cc
   )

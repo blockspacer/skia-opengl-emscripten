@@ -2,6 +2,12 @@
 
 cmake_minimum_required(VERSION 3.4)
 
+if(TARGET_WINDOWS OR TARGET_LINUX OR TARGET_EMSCRIPTEN)
+  # skip
+else()
+  message(FATAL_ERROR "unknown platform")
+endif()
+
 ### --- base ---###
 
 set(USE_PARTITION_ALLOCATOR TRUE)
@@ -1059,7 +1065,9 @@ if(TARGET_EMSCRIPTEN OR TARGET_LINUX)
     # https://github.com/chromium/chromium/blob/master/base/BUILD.gn#L1185
     ${BASE_DIR}base_paths_posix.h
   )
-elseif(TARGET_LINUX) # TODO: see TARGET_LINUX above!!!
+endif(TARGET_EMSCRIPTEN OR TARGET_LINUX)
+
+if(TARGET_LINUX) # TODO: see TARGET_LINUX above!!!
   list(APPEND BASE_SOURCES
     #
     ${BASE_DIR}threading/platform_thread_linux.cc
@@ -1121,7 +1129,9 @@ elseif(TARGET_LINUX) # TODO: see TARGET_LINUX above!!!
     ${BASE_DIR}files/file_descriptor_watcher_posix.cc
     #${BASE_DIR}files/file_descriptor_watcher_posix.h
   )
-elseif(TARGET_WINDOWS)
+endif(TARGET_LINUX)
+
+if(TARGET_WINDOWS)
   if(USE_PARTITION_ALLOCATOR)
     list(APPEND BASE_SOURCES
       # https://github.com/chromium/chromium/blob/master/base/BUILD.gn#L1665
@@ -1352,9 +1362,7 @@ elseif(TARGET_WINDOWS)
     ${BASE_DIR}system/sys_info_win.cc
     ${BASE_DIR}time/time_win.cc
   )
-else()
-  message(FATAL_ERROR "TODO: port base")
-endif()
+endif(TARGET_WINDOWS)
 
 list(APPEND BASE_SOURCES
   ${BASE_DIR}base_paths.cc
