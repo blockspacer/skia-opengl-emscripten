@@ -15,6 +15,8 @@
 #ifndef COBALT_DOM_STORAGE_H_
 #define COBALT_DOM_STORAGE_H_
 
+#if !defined(DISABLE_COBALT_STORAGE)
+
 #include <memory>
 #include <string>
 
@@ -85,5 +87,7 @@ class Storage : public script::Wrappable {
 
 }  // namespace dom
 }  // namespace cobalt
+
+#endif // !DISABLE_COBALT_STORAGE
 
 #endif  // COBALT_DOM_STORAGE_H_

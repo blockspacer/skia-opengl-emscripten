@@ -4,11 +4,6 @@
 #include <map>
 #include <string>
 
-#include "base/containers/small_map.h"
-#include "base/memory/weak_ptr.h"
-#include "base/optional.h"
-#include "base/strings/string_piece.h"
-
 #if defined(ENABLE_COBALT)
 #include "cobalt/cssom/length_value.h"
 #include "cobalt/cssom/number_value.h"
@@ -40,8 +35,15 @@
 
 #endif // ENABLE_COBALT
 
+#if defined(ENABLE_BASE)
 #include "base/observer_list.h"
 #include "base/observer_list_types.h"
+
+#include "base/containers/small_map.h"
+#include "base/memory/weak_ptr.h"
+#include "base/optional.h"
+#include "base/strings/string_piece.h"
+#endif // defined(ENABLE_BASE)
 
 namespace skemgl {
 

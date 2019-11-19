@@ -1,7 +1,7 @@
 ﻿cmake_minimum_required(VERSION 2.8)
 
 # https://github.com/blockspacer/cobalt-clone-28052019/blob/master/src/starboard/stub/stub_sources.gypi
-set(starboard_stub_SOURCES
+list(APPEND starboard_stub_SOURCES
   ${COBALT_PORT_DIR}/starboard/shared/starboard/application.cc
   ${COBALT_PORT_DIR}/starboard/shared/starboard/command_line.cc
   ${COBALT_PORT_DIR}/starboard/shared/starboard/command_line.h
@@ -298,7 +298,7 @@ target_link_libraries(starboard_stub PRIVATE
   #${BASE_LIBRARIES}
   #base
   #SKIA
-  dynamic_annotations
+  #dynamic_annotations
   #UI_GFX
   ##BLINK_RENDERER_CORE
   #BLINK_PUBLIC_COMMON
@@ -323,7 +323,7 @@ target_link_libraries(starboard_stub PRIVATE
   ## webrtc
   ## zlib
   icu
-  ced
+  #ced
   glm
   #CC
   ##G_GPU

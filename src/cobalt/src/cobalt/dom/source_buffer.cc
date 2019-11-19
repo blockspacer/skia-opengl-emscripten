@@ -44,6 +44,8 @@
 
 #include "cobalt/dom/source_buffer.h"
 
+#if !defined(DISABLE_COBALT_MEDIA)
+
 #include <algorithm>
 #include <limits>
 #include <memory>
@@ -533,3 +535,5 @@ void SourceBuffer::RemoveMediaTracks() { NOTREACHED(); }
 
 }  // namespace dom
 }  // namespace cobalt
+
+#endif // !DISABLE_COBALT_MEDIA

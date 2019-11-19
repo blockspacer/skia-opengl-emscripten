@@ -23,20 +23,20 @@
 #include "cobalt/dom/dom_exception.h"
 #include "cobalt/dom/dom_settings.h"
 #include "cobalt/dom/eme/media_key_system_access.h"
-#if defined(ENABLE_COBALT_MEDIA_CAPTURE)
+#if !defined(DISABLE_COBALT_MEDIA_CAPTURE)
 #include "cobalt/media_capture/media_devices.h"
-#endif // ENABLE_COBALT_MEDIA_CAPTURE
-#if defined(ENABLE_COBALT_MEDIA_SESSION)
+#endif // DISABLE_COBALT_MEDIA_CAPTURE
+#if !defined(DISABLE_COBALT_MEDIA_SESSION)
 #include "cobalt/media_session/media_session_client.h"
 #include "cobalt/media_session/media_session.h"
-#endif // ENABLE_COBALT_MEDIA_SESSION
+#endif // DISABLE_COBALT_MEDIA_SESSION
 #include "cobalt/script/script_value_factory.h"
 #include "starboard/file.h"
 #include "starboard/media.h"
 
-#if defined(ENABLE_COBALT_MEDIA_SESSION)
+#if !defined(DISABLE_COBALT_MEDIA_SESSION)
 using cobalt::media_session::MediaSession;
-#endif // ENABLE_COBALT_MEDIA_SESSION
+#endif // DISABLE_COBALT_MEDIA_SESSION
 
 namespace {
 const char kLicensesRelativePath[] = "/licenses/licenses_cobalt.txt";
@@ -47,21 +47,21 @@ namespace dom {
 
 Navigator::Navigator(
     const std::string& user_agent, const std::string& language,
-#if defined(ENABLE_COBALT_MEDIA_SESSION)
+#if !defined(DISABLE_COBALT_MEDIA_SESSION)
     scoped_refptr<MediaSession> media_session,
-#endif // ENABLE_COBALT_MEDIA_SESSION
+#endif // DISABLE_COBALT_MEDIA_SESSION
     scoped_refptr<cobalt::dom::captions::SystemCaptionSettings> captions,
     script::ScriptValueFactory* script_value_factory)
     : user_agent_(user_agent),
       language_(language),
       mime_types_(new MimeTypeArray()),
       plugins_(new PluginArray()),
-#if defined(ENABLE_COBALT_MEDIA_SESSION)
+#if !defined(DISABLE_COBALT_MEDIA_SESSION)
       media_session_(media_session),
-#endif // ENABLE_COBALT_MEDIA_SESSION
-#if defined(ENABLE_COBALT_MEDIA_CAPTURE)
+#endif // DISABLE_COBALT_MEDIA_SESSION
+#if !defined(DISABLE_COBALT_MEDIA_CAPTURE)
       media_devices_(new media_capture::MediaDevices(script_value_factory)),
-#endif // ENABLE_COBALT_MEDIA_CAPTURE
+#endif // DISABLE_COBALT_MEDIA_CAPTURE
       system_caption_settings_(captions),
       script_value_factory_(script_value_factory) {}
 
@@ -117,11 +117,11 @@ bool Navigator::java_enabled() const { return false; }
 
 bool Navigator::cookie_enabled() const { return false; }
 
-#if defined(ENABLE_COBALT_MEDIA_CAPTURE)
+#if !defined(DISABLE_COBALT_MEDIA_CAPTURE)
 scoped_refptr<media_capture::MediaDevices> Navigator::media_devices() {
   return media_devices_;
 }
-#endif // ENABLE_COBALT_MEDIA_CAPTURE
+#endif // DISABLE_COBALT_MEDIA_CAPTURE
 
 const scoped_refptr<MimeTypeArray>& Navigator::mime_types() const {
   return mime_types_;
@@ -131,17 +131,18 @@ const scoped_refptr<PluginArray>& Navigator::plugins() const {
   return plugins_;
 }
 
-#if defined(ENABLE_COBALT_MEDIA_SESSION)
+#if !defined(DISABLE_COBALT_MEDIA_SESSION)
 const scoped_refptr<media_session::MediaSession>& Navigator::media_session()
     const {
   return media_session_;
 }
-#endif // ENABLE_COBALT_MEDIA_SESSION
+#endif // DISABLE_COBALT_MEDIA_SESSION
 
 namespace {
 
 // See
 // https://www.w3.org/TR/encrypted-media/#get-supported-capabilities-for-audio-video-type.
+#if !defined(DISABLE_COBALT_MEDIA)
 base::Optional<script::Sequence<MediaKeySystemMediaCapability>>
 TryGetSupportedCapabilities(
     const std::string& key_system,
@@ -191,6 +192,7 @@ NOTIMPLEMENTED_LOG_ONCE();
   // 5. Return supported media capabilities.
   return supported_media_capabilities;
 }
+#endif // !DISABLE_COBALT_MEDIA
 
 // Technically, a user agent is supposed to implement "3.1.1.1 Get Supported
 // Configuration" which requests the user consent until it's given. But since
@@ -198,6 +200,7 @@ NOTIMPLEMENTED_LOG_ONCE();
 // is always given and go straight to "3.1.1.2 Get Supported Configuration and
 // Consent". See
 // https://www.w3.org/TR/encrypted-media/#get-supported-configuration-and-consent.
+#if !defined(DISABLE_COBALT_MEDIA)
 base::Optional<eme::MediaKeySystemConfiguration> TryGetSupportedConfiguration(
     const std::string& key_system,
     const eme::MediaKeySystemConfiguration& candidate_configuration,
@@ -287,9 +290,11 @@ base::Optional<eme::MediaKeySystemConfiguration> TryGetSupportedConfiguration(
   // 23. Return accumulated configuration.
   return accumulated_configuration;
 }
+#endif // !DISABLE_COBALT_MEDIA
 
 }  // namespace
 
+#if !defined(DISABLE_COBALT_MEDIA)
 // See
 // https://www.w3.org/TR/encrypted-media/#dom-navigator-requestmediakeysystemaccess.
 script::Handle<Navigator::InterfacePromise>
@@ -339,6 +344,7 @@ Navigator::RequestMediaKeySystemAccess(
   promise->Reject(new DOMException(DOMException::kNotSupportedErr));
   return promise;
 }
+#endif // !DISABLE_COBALT_MEDIA
 
 const scoped_refptr<cobalt::dom::captions::SystemCaptionSettings>&
 Navigator::system_caption_settings() const {
@@ -349,13 +355,13 @@ void Navigator::TraceMembers(script::Tracer* tracer) {
   tracer->Trace(mime_types_);
   tracer->Trace(plugins_);
 
-#if defined(ENABLE_COBALT_MEDIA_SESSION)
+#if !defined(DISABLE_COBALT_MEDIA_SESSION)
   tracer->Trace(media_session_);
-#endif // ENABLE_COBALT_MEDIA_SESSION
+#endif // DISABLE_COBALT_MEDIA_SESSION
 
-#if defined(ENABLE_COBALT_MEDIA_CAPTURE)
+#if !defined(DISABLE_COBALT_MEDIA_CAPTURE)
   tracer->Trace(media_devices_);
-#endif // ENABLE_COBALT_MEDIA_CAPTURE
+#endif // DISABLE_COBALT_MEDIA_CAPTURE
 
   tracer->Trace(system_caption_settings_);
 }

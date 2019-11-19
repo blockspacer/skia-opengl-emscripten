@@ -7,6 +7,8 @@
 
 #include "ui/gfx/gfx_export.h"
 
+#if defined(ENABLE_SKOTTIE)
+
 namespace gfx {
 class SkiaVectorAnimation;
 
@@ -29,5 +31,7 @@ class GFX_EXPORT SkiaVectorAnimationObserver {
 };
 
 }  // namespace gfx
+
+#endif // ENABLE_SKOTTIE
 
 #endif  // UI_GFX_SKIA_VECTOR_ANIMATION_OBSERVER_H_

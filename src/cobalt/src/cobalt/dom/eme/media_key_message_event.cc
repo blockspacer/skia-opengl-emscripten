@@ -14,6 +14,8 @@
 
 #include "cobalt/dom/eme/media_key_message_event.h"
 
+#if !defined(DISABLE_COBALT_MEDIA)
+
 #include "cobalt/base/tokens.h"
 #include "cobalt/dom/eme/media_key_message_type.h"
 
@@ -31,3 +33,5 @@ MediaKeyMessageEvent::MediaKeyMessageEvent(
 }  // namespace eme
 }  // namespace dom
 }  // namespace cobalt
+
+#endif // !DISABLE_COBALT_MEDIA

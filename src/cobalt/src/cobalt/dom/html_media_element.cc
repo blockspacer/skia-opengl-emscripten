@@ -14,6 +14,8 @@
 
 #include "cobalt/dom/html_media_element.h"
 
+#if !defined(DISABLE_COBALT_MEDIA)
+
 #include "cobalt/base/user_log.h"
 
 #include <algorithm>
@@ -1785,3 +1787,5 @@ void HTMLMediaElement::SetMaxVideoCapabilities(
 
 }  // namespace dom
 }  // namespace cobalt
+
+#endif // !DISABLE_COBALT_MEDIA

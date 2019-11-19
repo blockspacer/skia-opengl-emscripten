@@ -36,9 +36,11 @@ namespace dom {
 //   https://rawgit.com/w3c/media-source/cfb1b3d4309a6e6e2c01bd87e048758172a86e4b/media-source.html#dom-createobjecturl
 class URL : public script::Wrappable {
  public:
+#if !defined(DISABLE_COBALT_MEDIA)
   static std::string CreateObjectURL(
       script::EnvironmentSettings* environment_settings,
       const scoped_refptr<MediaSource>& media_source);
+#endif // !DISABLE_COBALT_MEDIA
   static std::string CreateObjectURL(
       script::EnvironmentSettings* environment_settings,
       const scoped_refptr<Blob>& blob);

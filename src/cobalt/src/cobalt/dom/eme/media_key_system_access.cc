@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#if !defined(DISABLE_COBALT_MEDIA)
+
 #include "cobalt/dom/eme/media_key_system_access.h"
 
 #include "base/memory/ref_counted.h"
@@ -71,3 +73,5 @@ MediaKeySystemAccess::CreateMediaKeys() const {
 }  // namespace eme
 }  // namespace dom
 }  // namespace cobalt
+
+#endif // !DISABLE_COBALT_MEDIA

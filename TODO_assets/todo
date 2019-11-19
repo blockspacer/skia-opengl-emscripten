@@ -1,4 +1,31 @@
-﻿links between pages
+﻿shared:WARNING: loading from archive memory_reallocate_unchecked.cc.o, which has duplicate entries (files with identical base names). this is dangerous as only the last will be taken into account, and you may see surprising undefined symbols later. you should rename source files to avoid this problem (or avoid .a archives, and just link bitcode together to form libraries for later linking)
+shared:WARNING:    duplicate: thread_get_local_value.cc.o
+shared:WARNING: loading from archive views_touch_selection_controller_factory_stub.cc.o, which has duplicate entries (files with identical base names). this is dangerous as only the last will be taken into account, and you may see surprising undefined symbols later. you should rename source files to avoid this problem (or avoid .a archives, and just link bitcode together to form libraries for later linking)
+shared:WARNING:    duplicate: window_button_order_provider.cc.o
+shared:WARNING: loading from archive memory_reallocate_unchecked.cc.o, which has duplicate entries (files with identical base names). this is dangerous as only the last will be taken into account, and you may see surprising undefined symbols later. you should rename source files to avoid this problem (or avoid .a archives, and just link bitcode together to form libraries for later linking)
+shared:WARNING:    duplicate: thread_get_local_value.cc.o
+shared:WARNING: loading from archive memory_reallocate_unchecked.cc.o, which has duplicate entries (files with identical base names). this is dangerous as only the last will be taken into account, and you may see surprising undefined symbols later. you should rename source files to avoid this problem (or avoid .a archives, and just link bitcode together to form libraries for later linking)
+shared:WARNING:    duplicate: thread_get_local_value.cc.o
+
+#if !defined(UI_VIEWS_PORT)
+    ui::ScopedClipboardWriter(
+        ui::CLIPBOARD_TYPE_COPY_PASTE).WriteText(GetSelectedText());
+#endif // UI_VIEWS_PORT
+
+    if (layer_tree_frame_sink_->context_provider()) {
+      SkPixmap pixmap;
+      scaled_surface->peekPixels(&pixmap);
+      viz::ContextProvider* context_provider =
+          layer_tree_frame_sink_->context_provider();
+      auto* sii = context_provider->SharedImageInterface();
+      mailbox = sii->CreateSharedImage(
+          format, upload_size, color_space, shared_image_usage,
+          base::span<const uint8_t>(
+              reinterpret_cast<const uint8_t*>(pixmap.addr()),
+              pixmap.computeByteSize()));
+    }
+
+links between pages
 FIXME: skottie elem resets timer on hover
 opengl font atlas (see SK_SUPPORT_ATLAS_TEXT)
 ICU/harfbuzz replacement
@@ -495,7 +522,7 @@ UBUNTU WITH SK_GPU=TRUE: (rebuild time 179s.=~3m.): 5.7MiB
 UBUNTU WITH SK_GPU=FALSE: (rebuild time 96s.=~2m.): 3.0MiB
 ===
 Release build size
-WASM MT: 1.5MiB
+WASM MT: 1.8MiB
 UBUNTU: (rebuild time 255s.=~5m.): 3.0MiB
 -DENABLE_BLINK=FALSE;
 -DENABLE_COBALT=FALSE;

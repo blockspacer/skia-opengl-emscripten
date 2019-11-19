@@ -23,12 +23,18 @@ HTMLElementContext::HTMLElementContext()
     : fetcher_factory_(NULL),
       loader_factory_(NULL),
       css_parser_(NULL),
+#if !defined(DISABLE_COBALT_DOM_PARSER)
       dom_parser_(NULL),
+#endif // !DISABLE_COBALT_DOM_PARSER
+#if !defined(DISABLE_COBALT_MEDIA)
       can_play_type_handler_(NULL),
       web_media_player_factory_(NULL),
+#endif // !DISABLE_COBALT_MEDIA
       script_runner_(NULL),
       script_value_factory_(NULL),
+#if !defined(DISABLE_COBALT_MEDIA)
       media_source_registry_(NULL),
+#endif // !DISABLE_COBALT_MEDIA
       resource_provider_(NULL),
       animated_image_tracker_(NULL),
       image_cache_(NULL),
@@ -46,11 +52,18 @@ HTMLElementContext::HTMLElementContext()
 HTMLElementContext::HTMLElementContext(
     loader::FetcherFactory* fetcher_factory,
     loader::LoaderFactory* loader_factory, cssom::CSSParser* css_parser,
-    Parser* dom_parser, media::CanPlayTypeHandler* can_play_type_handler,
+#if !defined(DISABLE_COBALT_DOM_PARSER)
+    Parser* dom_parser,
+#endif // !DISABLE_COBALT_DOM_PARSER
+#if !defined(DISABLE_COBALT_MEDIA)
+    media::CanPlayTypeHandler* can_play_type_handler,
     media::WebMediaPlayerFactory* web_media_player_factory,
+#endif // !DISABLE_COBALT_MEDIA
     script::ScriptRunner* script_runner,
     script::ScriptValueFactory* script_value_factory,
+#if !defined(DISABLE_COBALT_MEDIA)
     MediaSourceRegistry* media_source_registry,
+#endif // !DISABLE_COBALT_MEDIA
     render_tree::ResourceProvider** resource_provider,
     loader::image::AnimatedImageTracker* animated_image_tracker,
     loader::image::ImageCache* image_cache,
@@ -65,12 +78,18 @@ HTMLElementContext::HTMLElementContext(
     : fetcher_factory_(fetcher_factory),
       loader_factory_(loader_factory),
       css_parser_(css_parser),
+#if !defined(DISABLE_COBALT_DOM_PARSER)
       dom_parser_(dom_parser),
+#endif // !DISABLE_COBALT_DOM_PARSER
+#if !defined(DISABLE_COBALT_MEDIA)
       can_play_type_handler_(can_play_type_handler),
       web_media_player_factory_(web_media_player_factory),
+#endif // !DISABLE_COBALT_MEDIA
       script_runner_(script_runner),
       script_value_factory_(script_value_factory),
+#if !defined(DISABLE_COBALT_MEDIA)
       media_source_registry_(media_source_registry),
+#endif // !DISABLE_COBALT_MEDIA
       resource_provider_(resource_provider),
       animated_image_tracker_(animated_image_tracker),
       image_cache_(image_cache),

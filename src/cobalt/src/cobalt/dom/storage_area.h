@@ -15,6 +15,8 @@
 #ifndef COBALT_DOM_STORAGE_AREA_H_
 #define COBALT_DOM_STORAGE_AREA_H_
 
+#if !defined(DISABLE_COBALT_STORAGE)
+
 #include <memory>
 #include <string>
 
@@ -73,5 +75,7 @@ class StorageArea {
 
 }  // namespace dom
 }  // namespace cobalt
+
+#endif // !DISABLE_COBALT_STORAGE
 
 #endif  // COBALT_DOM_STORAGE_AREA_H_

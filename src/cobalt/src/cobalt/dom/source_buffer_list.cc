@@ -44,6 +44,8 @@
 
 #include "cobalt/dom/source_buffer_list.h"
 
+#if !defined(DISABLE_COBALT_MEDIA)
+
 #include <algorithm>
 #include <limits>
 
@@ -141,3 +143,5 @@ void SourceBufferList::ScheduleEvent(base::Token event_name) {
 
 }  // namespace dom
 }  // namespace cobalt
+
+#endif // !DISABLE_COBALT_MEDIA

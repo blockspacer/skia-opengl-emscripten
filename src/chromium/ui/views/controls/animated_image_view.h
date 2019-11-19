@@ -7,6 +7,8 @@
 
 #include <memory>
 
+#if defined(ENABLE_SKOTTIE)
+
 #include "base/macros.h"
 #include "ui/gfx/skia_vector_animation.h"
 #include "ui/views/controls/image_view_base.h"
@@ -90,5 +92,7 @@ class VIEWS_EXPORT AnimatedImageView : public ImageViewBase,
 };
 
 }  // namespace views
+
+#endif // ENABLE_SKOTTIE
 
 #endif  // UI_VIEWS_CONTROLS_ANIMATED_IMAGE_VIEW_H_

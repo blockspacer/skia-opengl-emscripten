@@ -1,5 +1,7 @@
 #include "all_models.h"
 
+#if defined(ENABLE_COBALT)
+
 #include "cobalt/dom/HTMLModel.h"
 
 #include "models/scrollbar/BodyModel.h"
@@ -67,3 +69,5 @@ std::unique_ptr<::models::HTMLModel>
 
 } // namespace models
 } // namespace generated
+
+#endif // defined(ENABLE_COBALT)

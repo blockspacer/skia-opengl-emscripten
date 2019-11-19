@@ -170,6 +170,7 @@ std::unique_ptr<Fetcher> FetcherFactory::CreateSecureFetcher(
         new BlobFetcher(url, handler, blob_resolver_));
   }
 
+#if 0
   if (url.SchemeIs(kEmbeddedScheme)) {
     printf("url.kEmbeddedScheme %s\n", url.path().c_str());
     EmbeddedFetcher::Options options;
@@ -180,6 +181,7 @@ std::unique_ptr<Fetcher> FetcherFactory::CreateSecureFetcher(
 #endif
         handler, options));
   }
+#endif // 0
 
   // h5vcc-cache: scheme requires read_cache_callback_ which is not available
   // in the main WebModule.

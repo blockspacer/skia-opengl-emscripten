@@ -1,7 +1,7 @@
 ﻿cmake_minimum_required(VERSION 2.8)
 
 # cobalt/layout/layout.gyp
-set(cobalt_layout_SOURCES
+list(APPEND cobalt_layout_SOURCES
   ${COBALT_CORE_DIR}layout/anonymous_block_box.cc
   ${COBALT_CORE_DIR}layout/anonymous_block_box.h
   ${COBALT_CORE_DIR}layout/base_direction.h

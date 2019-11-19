@@ -14,6 +14,8 @@
 
 #include "cobalt/loader/embedded_fetcher.h"
 
+#if 0
+
 #include <algorithm>
 #include <vector>
 
@@ -153,3 +155,5 @@ void EmbeddedFetcher::LocalizeFileData(std::string* output_file) {
 
 }  // namespace loader
 }  // namespace cobalt
+
+#endif // 0

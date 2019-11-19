@@ -46,7 +46,9 @@ include(cobalt_math.cmake)
 include(cobalt_loader.cmake)
 #endif()
 
-include(cobalt_media.cmake)
+if(ENABLE_COBALT_MEDIA)
+  include(cobalt_media.cmake)
+endif(ENABLE_COBALT_MEDIA)
 
 include(cobalt_page_visibility.cmake)
 
@@ -58,7 +60,9 @@ include(cobalt_dom.cmake)
 
 include(cobalt_layout.cmake)
 
-include(cobalt_dom_parser.cmake)
+if(ENABLE_GLIBXML AND ENABLE_COBALT_DOM_PARSER)
+  include(cobalt_dom_parser.cmake)
+endif(ENABLE_GLIBXML AND ENABLE_COBALT_DOM_PARSER)
 
 include(cobalt_css_parser.cmake)
 

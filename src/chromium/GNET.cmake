@@ -10,13 +10,13 @@ endif()
 
 # TODO https://github.com/Tarnyko/chromium-lite/blob/master/03a-net/CMakeLists.txt
 
-set(GNET_DNS_uri_template_SOURCES
+list(APPEND GNET_DNS_uri_template_SOURCES
   ${GNET_DIR}third_party/uri_template/uri_template.cc
   #${GNET_DIR}third_party/uri_template/uri_template.h
 )
 
 # requires net/third_party/uri_template
-set(GNET_DNS_PUBLIC_SOURCES
+list(APPEND GNET_DNS_PUBLIC_SOURCES
   ${GNET_DIR}/dns/public/dns_protocol.h
   ${GNET_DIR}/dns/public/dns_query_type.cc
   ${GNET_DIR}/dns/public/dns_query_type.h
@@ -25,7 +25,7 @@ set(GNET_DNS_PUBLIC_SOURCES
 )
 
 # requires net/third_party/uri_template
-set(GNET_DNS_SOURCES
+list(APPEND GNET_DNS_SOURCES
   #if (enable_built_in_dns) {
   #  sources += [ "dns_client.cc" ]
   #

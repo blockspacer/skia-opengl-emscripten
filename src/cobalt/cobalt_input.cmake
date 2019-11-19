@@ -20,7 +20,7 @@
 #    }],
 #  ],
 #},
-set(cobalt_input_SOURCES
+list(APPEND cobalt_input_SOURCES
   ${COBALT_CORE_DIR}input/camera_3d.h
   ${COBALT_CORE_DIR}input/create_default_camera_3d.h
   ${COBALT_CORE_DIR}input/input_device_manager.h

@@ -1,5 +1,7 @@
 #pragma once
 
+#if defined(ENABLE_COBALT)
+
 #include "cobalt/dom/element.h"
 #include "cobalt/dom/HTMLModel.h"
 
@@ -82,3 +84,5 @@ class BodyModel : public models::HTMLModel {
 };
 
 } // namespace models
+
+#endif // defined(ENABLE_COBALT)

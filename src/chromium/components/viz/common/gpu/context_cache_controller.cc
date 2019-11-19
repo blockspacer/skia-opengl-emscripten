@@ -11,7 +11,9 @@
 #include "base/memory/ptr_util.h"
 #include "base/synchronization/lock.h"
 #include "gpu/command_buffer/client/context_support.h"
+//#if SK_SUPPORT_GPU
 #include "third_party/skia/include/gpu/GrContext.h"
+//#endif // SK_SUPPORT_GPU
 
 namespace viz {
 namespace {

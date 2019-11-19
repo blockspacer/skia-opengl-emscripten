@@ -34,7 +34,9 @@
 #include "third_party/skia/include/core/SkMultiPictureDraw.h"
 #include "third_party/skia/include/core/SkPictureRecorder.h"
 #include "third_party/skia/include/core/SkSurface.h"
+//#if SK_SUPPORT_GPU
 #include "third_party/skia/include/gpu/GrContext.h"
+//#endif // SK_SUPPORT_GPU
 #include "ui/gfx/geometry/axis_transform2d.h"
 #include "url/gurl.h"
 

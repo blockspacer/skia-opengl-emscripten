@@ -26,7 +26,7 @@
 #include "base/strings/stringprintf.h"
 #include "base/trace_event/trace_event.h"
 #include "cobalt/base/polymorphic_downcast.h"
-#include "cobalt/script/v8c/embedded_resources.h"
+//#include "cobalt/script/v8c/embedded_resources.h"
 //#include "cobalt/script/v8c/entry_scope.h"
 //#include "cobalt/script/v8c/v8c_script_value_factory.h"
 //#include "cobalt/script/v8c/v8c_source_code.h"
@@ -115,9 +115,9 @@ void V8cGlobalEnvironment::CreateGlobalObject() {
   v8::HandleScope handle_scope(isolate_);
   v8::Local<v8::Context> context = v8::Context::New(isolate_);
   context_.Reset(isolate_, context);
-  v8::Context::Scope context_scope(context);*/
+  v8::Context::Scope context_scope(context);
 
-  EvaluateAutomatics();
+  EvaluateAutomatics();*/
 }
 
 bool V8cGlobalEnvironment::EvaluateScript(
@@ -468,6 +468,7 @@ v8::MaybeLocal<v8::Value> V8cGlobalEnvironment::EvaluateScriptInternal(
 }
 #endif
 
+#if 0
 void V8cGlobalEnvironment::EvaluateEmbeddedScript(const unsigned char* data,
                                                   size_t size,
                                                   const char* filename) {
@@ -500,6 +501,7 @@ void V8cGlobalEnvironment::EvaluateAutomatics() {
   EvaluateEmbeddedScript(V8cEmbeddedResources::fetch_js,
                          sizeof(V8cEmbeddedResources::fetch_js), "fetch.js");
 }
+#endif // 0
 
 bool V8cGlobalEnvironment::HasInterfaceData(int key) const {
   DCHECK_GE(key, 0);

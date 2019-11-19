@@ -45,6 +45,8 @@
 #ifndef COBALT_DOM_SOURCE_BUFFER_LIST_H_
 #define COBALT_DOM_SOURCE_BUFFER_LIST_H_
 
+#if !defined(DISABLE_COBALT_MEDIA)
+
 #include <string>
 #include <vector>
 
@@ -99,5 +101,7 @@ class SourceBufferList : public EventTarget {
 
 }  // namespace dom
 }  // namespace cobalt
+
+#endif // !DISABLE_COBALT_MEDIA
 
 #endif  // COBALT_DOM_SOURCE_BUFFER_LIST_H_

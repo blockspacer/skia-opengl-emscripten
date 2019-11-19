@@ -3,7 +3,7 @@
 ### --- DEBUG_CC ---###
 
 # TODO https://github.com/chromium/chromium/blob/master/third_party/blink/renderer/platform/BUILD.gn
-set(DEBUG_CC_SOURCES
+list(APPEND DEBUG_CC_SOURCES
   ${DEBUG_CC_DIR}debug_colors.cc
   #${DEBUG_CC_DIR}debug_colors.h",
   #${DEBUG_CC_DIR}debug_export.h",

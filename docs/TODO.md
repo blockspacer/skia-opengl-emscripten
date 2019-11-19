@@ -672,3 +672,6 @@ NOTE: disabled rasterizer thread (!!!) due to deadlocks on WASM MT
 NOTE: related to locks in SkScalerContext_FreeType::generateImage
 see 'TODO' file in commit 0e4faf to reproduce
 ENABLE_RASTERIZER_THREAD=1
+
+# TODO: Use WASM font tables
+https://www.chromestatus.com/feature/5082047209013248

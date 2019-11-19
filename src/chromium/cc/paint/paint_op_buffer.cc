@@ -16,7 +16,9 @@
 #include "third_party/skia/include/core/SkCanvas.h"
 #include "third_party/skia/include/core/SkRegion.h"
 #include "third_party/skia/include/core/SkSerialProcs.h"
+//#if SK_SUPPORT_GPU
 #include "third_party/skia/include/gpu/GrContext.h"
+//#endif // SK_SUPPORT_GPU
 
 namespace cc {
 namespace {
@@ -2439,6 +2441,7 @@ void PaintOpBuffer::Playback(SkCanvas* canvas,
     if (skip_op)
       continue;
 
+//#if SK_SUPPORT_GPU
     if (op->IsPaintOpWithFlags()) {
       const auto* flags_op = static_cast<const PaintOpWithFlags*>(op);
       auto* context = canvas->getGrContext();
@@ -2447,7 +2450,11 @@ void PaintOpBuffer::Playback(SkCanvas* canvas,
           context ? context->maxTextureSize() : 0, iter.alpha());
       if (const auto* raster_flags = scoped_flags.flags())
         flags_op->RasterWithFlags(canvas, raster_flags, new_params);
-    } else {
+    } else
+/*#else
+  NOTIMPLEMENTED();
+#endif // SK_SUPPORT_GPU*/
+    {
       // TODO(enne): skip SaveLayer followed by restore with nothing in
       // between, however SaveLayer with image filters on it (or maybe
       // other PaintFlags options) are not a noop.  Figure out what these

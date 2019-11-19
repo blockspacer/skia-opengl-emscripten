@@ -79,7 +79,7 @@ if (BUILD_APP)
   execute_process(
     COMMAND
       ${COLORED_OUTPUT_ENABLER}
-        ${CMAKE_COMMAND} "-E" "time" "cmake" "--build" "." ${CMAKE_CLEAN_FIRST} "--" ${MAKE_OPTS} ${EXTRA_MAKE_OPTS}
+        ${CMAKE_COMMAND} "-E" "time" "cmake" "--build" "." ${CMAKE_BUILD_TARGET} ${CMAKE_CLEAN_FIRST} "--" ${MAKE_OPTS} ${EXTRA_MAKE_OPTS}
     WORKING_DIRECTORY ${BUILD_DIR}
     TIMEOUT 7200 # sec
     RESULT_VARIABLE retcode

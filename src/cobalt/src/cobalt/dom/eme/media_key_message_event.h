@@ -15,6 +15,8 @@
 #ifndef COBALT_DOM_EME_MEDIA_KEY_MESSAGE_EVENT_H_
 #define COBALT_DOM_EME_MEDIA_KEY_MESSAGE_EVENT_H_
 
+#if !defined(DISABLE_COBALT_MEDIA)
+
 #include <string>
 
 #include "base/memory/ref_counted.h"
@@ -53,5 +55,7 @@ class MediaKeyMessageEvent : public Event {
 }  // namespace eme
 }  // namespace dom
 }  // namespace cobalt
+
+#endif // !DISABLE_COBALT_MEDIA
 
 #endif  // COBALT_DOM_EME_MEDIA_KEY_MESSAGE_EVENT_H_

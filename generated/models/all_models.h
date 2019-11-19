@@ -4,6 +4,8 @@
 #include <memory>
 #include <functional>
 
+#if defined(ENABLE_COBALT)
+
 #include "cobalt/dom/document.h"
 
 namespace cobalt {
@@ -29,3 +31,5 @@ class MainHTMLModelRegistry : public cobalt::dom::HTMLModelRegistry {
 
 } // namespace models
 } // namespace generated
+
+#endif // defined(ENABLE_COBALT)

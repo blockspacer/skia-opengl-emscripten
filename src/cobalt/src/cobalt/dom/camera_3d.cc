@@ -16,6 +16,8 @@
 
 #include "cobalt/dom/camera_3d.h"
 
+#if !defined(DISABLE_COBALT_CAMERA3D)
+
 #include "third_party/glm/glm/gtx/euler_angles.hpp"
 
 #include "base/basictypes.h"
@@ -136,3 +138,5 @@ void Camera3D::FireOrientationEvent(base::WeakPtr<EventTarget> target) {
 
 }  // namespace dom
 }  // namespace cobalt
+
+#endif // !defined(DISABLE_COBALT_CAMERA3D)

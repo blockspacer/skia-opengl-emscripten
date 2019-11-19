@@ -16,7 +16,7 @@
 
 ### --- UI_GL ---###
 
-set(UI_GL_SOURCES
+list(APPEND UI_GL_SOURCES
   # component("gl")
   ## TODO ## ${UI_GL_DIR}android/android_surface_control_compat.cc
   ## TODO ## ${UI_GL_DIR}android/android_surface_control_compat.h

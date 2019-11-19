@@ -15,7 +15,7 @@
 #     'standalone_javascript_runner.h
 #   ],
 # },
-set(cobalt_script_SOURCES
+list(APPEND cobalt_script_SOURCES
   ${COBALT_CORE_DIR}script/array_buffer.h
   ${COBALT_CORE_DIR}script/array_buffer_view.h
   ${COBALT_CORE_DIR}script/call_frame.h

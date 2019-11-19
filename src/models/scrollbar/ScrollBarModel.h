@@ -1,8 +1,9 @@
 #pragma once
 
+#if defined(ENABLE_COBALT)
+
 #include "cobalt/dom/element.h"
 #include "cobalt/dom/HTMLModel.h"
-
 
 namespace cobalt {
 namespace dom {
@@ -94,3 +95,5 @@ class ScrollBarModel : public models::HTMLModel {
 };
 
 } // namespace models
+
+#endif // defined(ENABLE_COBALT)

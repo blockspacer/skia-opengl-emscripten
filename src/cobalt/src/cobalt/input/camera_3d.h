@@ -15,6 +15,8 @@
 #ifndef COBALT_INPUT_CAMERA_3D_H_
 #define COBALT_INPUT_CAMERA_3D_H_
 
+#if !defined(DISABLE_COBALT_CAMERA3D)
+
 #include "base/basictypes.h"
 #include "base/memory/ref_counted.h"
 #include "cobalt/base/camera_transform.h"
@@ -94,5 +96,7 @@ class Camera3D : public base::RefCountedThreadSafe<Camera3D> {
 
 }  // namespace input
 }  // namespace cobalt
+
+#endif // !defined(DISABLE_COBALT_CAMERA3D)
 
 #endif  // COBALT_INPUT_CAMERA_3D_H_

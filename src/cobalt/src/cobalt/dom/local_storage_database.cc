@@ -12,22 +12,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <memory>
-
 #include "cobalt/dom/local_storage_database.h"
+
+#if !defined(DISABLE_COBALT_STORAGE)
+
+#include <memory>
 
 #include "base/trace_event/trace_event.h"
 #include "cobalt/dom/storage_area.h"
-#if defined(ENABLE_COBALT_STORAGE)
+//#if defined(ENABLE_COBALT_STORAGE)
 #include "cobalt/storage/storage_manager.h"
 #include "cobalt/storage/store/memory_store.h"
-#endif // ENABLE_COBALT_STORAGE
+//#endif // ENABLE_COBALT_STORAGE
 #include "nb/memory_scope.h"
 
 namespace cobalt {
 namespace dom {
 
-#if defined(ENABLE_COBALT_STORAGE)
+//#if defined(ENABLE_COBALT_STORAGE)
 namespace {
 
 void LocalStorageInit(const storage::MemoryStore& memory_store) {
@@ -67,7 +69,7 @@ void LocalStorageClear(const loader::Origin& origin,
   memory_store->ClearLocalStorage(origin);
 }
 }  // namespace
-#endif // ENABLE_COBALT_STORAGE
+//#endif // ENABLE_COBALT_STORAGE
 
 LocalStorageDatabase::LocalStorageDatabase(storage::StorageManager* storage)
     : storage_(storage), initialized_(false) {}
@@ -76,56 +78,58 @@ LocalStorageDatabase::LocalStorageDatabase(storage::StorageManager* storage)
 // a potential wait while the storage manager loads from disk.
 void LocalStorageDatabase::Init() {
   if (!initialized_) {
-#if defined(ENABLE_COBALT_STORAGE)
+//#if defined(ENABLE_COBALT_STORAGE)
     storage_->WithReadOnlyMemoryStore(base::Bind(&LocalStorageInit));
-#endif // ENABLE_COBALT_STORAGE
+//#endif // ENABLE_COBALT_STORAGE
     initialized_ = true;
   }
 }
 
 void LocalStorageDatabase::ReadAll(const loader::Origin& origin,
                                    const ReadCompletionCallback& callback) {
-#if defined(ENABLE_COBALT_STORAGE)
+//#if defined(ENABLE_COBALT_STORAGE)
   TRACK_MEMORY_SCOPE("Storage");
   Init();
   storage_->WithReadOnlyMemoryStore(
       base::Bind(&LocalStorageReadValues, origin, callback));
-#endif // ENABLE_COBALT_STORAGE
+//#endif // ENABLE_COBALT_STORAGE
 }
 
 void LocalStorageDatabase::Write(const loader::Origin& origin,
                                  const std::string& key,
                                  const std::string& value) {
-#if defined(ENABLE_COBALT_STORAGE)
+//#if defined(ENABLE_COBALT_STORAGE)
   TRACK_MEMORY_SCOPE("Storage");
   Init();
   storage_->WithMemoryStore(base::Bind(&LocalStorageWrite, origin, key, value));
-#endif // ENABLE_COBALT_STORAGE
+//#endif // ENABLE_COBALT_STORAGE
 }
 
 void LocalStorageDatabase::Delete(const loader::Origin& origin,
                                   const std::string& key) {
-#if defined(ENABLE_COBALT_STORAGE)
+//#if defined(ENABLE_COBALT_STORAGE)
   TRACK_MEMORY_SCOPE("Storage");
   Init();
   storage_->WithMemoryStore(base::Bind(&LocalStorageDelete, origin, key));
-#endif // ENABLE_COBALT_STORAGE
+//#endif // ENABLE_COBALT_STORAGE
 }
 
 void LocalStorageDatabase::Clear(const loader::Origin& origin) {
-#if defined(ENABLE_COBALT_STORAGE)
+//#if defined(ENABLE_COBALT_STORAGE)
   TRACK_MEMORY_SCOPE("Storage");
   Init();
   storage_->WithMemoryStore(base::Bind(&LocalStorageClear, origin));
-#endif // ENABLE_COBALT_STORAGE
+//#endif // ENABLE_COBALT_STORAGE
 }
 
 void LocalStorageDatabase::Flush(const base::Closure& callback) {
-#if defined(ENABLE_COBALT_STORAGE)
+//#if defined(ENABLE_COBALT_STORAGE)
   TRACK_MEMORY_SCOPE("Storage");
   storage_->FlushNow(callback);
-#endif // ENABLE_COBALT_STORAGE
+//#endif // ENABLE_COBALT_STORAGE
 }
 
 }  // namespace dom
 }  // namespace cobalt
+
+#endif // !DISABLE_COBALT_STORAGE

@@ -23,15 +23,21 @@
 #include "cobalt/base/application_state.h"
 #include "cobalt/cssom/css_parser.h"
 #include "cobalt/dom/dom_stat_tracker.h"
+#if !defined(DISABLE_COBALT_DOM_PARSER)
 #include "cobalt/dom/parser.h"
+#endif // !DISABLE_COBALT_DOM_PARSER
 #include "cobalt/dom/url_registry.h"
 #include "cobalt/loader/fetcher_factory.h"
 #include "cobalt/loader/font/remote_typeface_cache.h"
 #include "cobalt/loader/image/animated_image_tracker.h"
 #include "cobalt/loader/image/image_cache.h"
 #include "cobalt/loader/mesh/mesh_cache.h"
+
+#if !defined(DISABLE_COBALT_MEDIA)
 #include "cobalt/media/can_play_type_handler.h"
 #include "cobalt/media/web_media_player_factory.h"
+#endif // !DISABLE_COBALT_MEDIA
+
 #include "cobalt/page_visibility/page_visibility_state.h"
 #include "cobalt/script/script_runner.h"
 #include "cobalt/script/script_value_factory.h"
@@ -40,24 +46,35 @@ namespace cobalt {
 namespace dom {
 
 class HTMLElementFactory;
+#if !defined(DISABLE_COBALT_MEDIA)
 class MediaSource;
+#endif // !DISABLE_COBALT_MEDIA
 
 // This class contains references to several objects that are required by HTML
 // elements, including HTML element factory, which is used to create new
 // HTML elements.
 class HTMLElementContext {
  public:
+#if !defined(DISABLE_COBALT_MEDIA)
   typedef UrlRegistry<MediaSource> MediaSourceRegistry;
+#endif // !DISABLE_COBALT_MEDIA
 
   HTMLElementContext();
   HTMLElementContext(
       loader::FetcherFactory* fetcher_factory,
       loader::LoaderFactory* loader_factory, cssom::CSSParser* css_parser,
-      Parser* dom_parser, media::CanPlayTypeHandler* can_play_type_handler,
+#if !defined(DISABLE_COBALT_DOM_PARSER)
+      Parser* dom_parser,
+#endif // !DISABLE_COBALT_DOM_PARSER
+#if !defined(DISABLE_COBALT_MEDIA)
+      media::CanPlayTypeHandler* can_play_type_handler,
       media::WebMediaPlayerFactory* web_media_player_factory,
+#endif // !DISABLE_COBALT_MEDIA
       script::ScriptRunner* script_runner,
       script::ScriptValueFactory* script_value_factory,
+#if !defined(DISABLE_COBALT_MEDIA)
       MediaSourceRegistry* media_source_registry,
+#endif // !DISABLE_COBALT_MEDIA
       render_tree::ResourceProvider** resource_provider,
       loader::image::AnimatedImageTracker* animated_image_tracker,
       loader::image::ImageCache* image_cache,
@@ -77,8 +94,11 @@ class HTMLElementContext {
 
   cssom::CSSParser* css_parser() { return css_parser_; }
 
+#if !defined(DISABLE_COBALT_DOM_PARSER)
   Parser* dom_parser() { return dom_parser_; }
+#endif // !DISABLE_COBALT_DOM_PARSER
 
+#if !defined(DISABLE_COBALT_MEDIA)
   media::CanPlayTypeHandler* can_play_type_handler() {
     return can_play_type_handler_;
   }
@@ -89,6 +109,7 @@ class HTMLElementContext {
       media::WebMediaPlayerFactory* web_media_player_factory) {
     web_media_player_factory_ = web_media_player_factory;
   }
+#endif // !DISABLE_COBALT_MEDIA
 
   script::ScriptRunner* script_runner() const { return script_runner_; }
 
@@ -96,9 +117,11 @@ class HTMLElementContext {
     return script_value_factory_;
   }
 
+#if !defined(DISABLE_COBALT_MEDIA)
   MediaSourceRegistry* media_source_registry() {
     return media_source_registry_;
   }
+#endif // !DISABLE_COBALT_MEDIA
 
   render_tree::ResourceProvider** resource_provider() const {
     return resource_provider_;
@@ -149,12 +172,18 @@ class HTMLElementContext {
   loader::FetcherFactory* const fetcher_factory_;
   loader::LoaderFactory* const loader_factory_;
   cssom::CSSParser* const css_parser_;
+#if !defined(DISABLE_COBALT_DOM_PARSER)
   Parser* const dom_parser_;
+#endif // !DISABLE_COBALT_DOM_PARSER
+#if !defined(DISABLE_COBALT_MEDIA)
   media::CanPlayTypeHandler* can_play_type_handler_;
   media::WebMediaPlayerFactory* web_media_player_factory_;
+#endif // !DISABLE_COBALT_MEDIA
   script::ScriptRunner* const script_runner_;
   script::ScriptValueFactory* const script_value_factory_;
+#if !defined(DISABLE_COBALT_MEDIA)
   MediaSourceRegistry* const media_source_registry_;
+#endif // !DISABLE_COBALT_MEDIA
   render_tree::ResourceProvider** resource_provider_;
   loader::image::AnimatedImageTracker* const animated_image_tracker_;
   loader::image::ImageCache* const image_cache_;

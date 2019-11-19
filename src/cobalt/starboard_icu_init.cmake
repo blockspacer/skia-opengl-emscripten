@@ -5,7 +5,7 @@
 # '<(DEPTH)/third_party/icu/icu.gyp:icui18n',
 # '<(DEPTH)/third_party/icu/icu.gyp:icuuc',
 #],
-set(starboard_icu_init_SOURCES
+list(APPEND starboard_icu_init_SOURCES
   ${COBALT_PORT_DIR}/starboard/client_porting/icu_init/icu_init.cc
   ${COBALT_PORT_DIR}/starboard/client_porting/icu_init/icu_init.h
 )
@@ -16,7 +16,7 @@ add_library(starboard_icu_init STATIC
 
 target_link_libraries(starboard_icu_init PRIVATE
   icu
-  ced
+  #ced
   glm
 )
 

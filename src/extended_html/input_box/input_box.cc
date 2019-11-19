@@ -319,7 +319,6 @@
 #include "cobalt/script/exception_state.h"
 #include "cobalt/web_animations/animation_set.h"
 #include "cobalt/dom/event_target.h"
-#include "cobalt/dom_parser/html_decoder.h"
 #include "cobalt/dom/attr.h"
 #include "cobalt/dom/font_cache.h"
 #include "cobalt/dom/document.h"

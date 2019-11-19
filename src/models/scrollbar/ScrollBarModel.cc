@@ -1,5 +1,7 @@
 #include "ScrollBarModel.h"
 
+#if defined(ENABLE_COBALT)
+
 #include <map>
 #include <string>
 
@@ -321,3 +323,5 @@ const char* ScrollBarModel::getModelName() {
 }
 
 } // namespace models
+
+#endif // defined(ENABLE_COBALT)

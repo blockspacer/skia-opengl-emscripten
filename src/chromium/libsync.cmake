@@ -1,7 +1,7 @@
 ### --- libsync ---###
 # libsync used by ui/gfx
 
-set(libsync_SOURCES
+list(APPEND libsync_SOURCES
   #${libsync_DIR}src/include/sync/sync.h",
   #${libsync_DIR}src/sw_sync.h",
   ${libsync_DIR}src/sync.c

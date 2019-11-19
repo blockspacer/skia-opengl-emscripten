@@ -16,7 +16,7 @@ endif()
 
 ### --- GFX_RANGE ---###
 
-set(GFX_RANGE_SOURCES
+list(APPEND GFX_RANGE_SOURCES
   #${GFX_RANGE_DIR}gfx_range_export.h",
   ${GFX_RANGE_DIR}range.cc
   #${GFX_RANGE_DIR}range.h",

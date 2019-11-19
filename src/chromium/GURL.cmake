@@ -1,7 +1,7 @@
 ﻿## --- GURL ---###
 
 # TODO https://github.com/chromium/chromium/blob/master/third_party/blink/renderer/platform/BUILD.gn
-set(GURL_SOURCES
+list(APPEND GURL_SOURCES
   ${GURL_DIR}gurl.cc
   #${GURL_DIR}gurl.h",
   ${GURL_DIR}origin.cc

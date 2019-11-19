@@ -10,7 +10,9 @@
 #include "base/optional.h"
 #include "gpu/raster_export.h"
 
+//#if SK_SUPPORT_GPU
 class GrContext;
+//#endif // SK_SUPPORT_GPU
 
 namespace base {
 namespace trace_event {
@@ -29,12 +31,14 @@ RASTER_EXPORT void DefaultGrCacheLimitsForTests(
     size_t* max_resource_cache_bytes,
     size_t* max_glyph_cache_texture_bytes);
 
+//#if SK_SUPPORT_GPU
 // Dumps memory usage from the |context| to |pmd|. A |tracing_guid| can be used
 // if these resources are referenced across processes for sharing across dumps.
 RASTER_EXPORT void DumpGrMemoryStatistics(
     const GrContext* context,
     base::trace_event::ProcessMemoryDump* pmd,
     base::Optional<uint64_t> tracing_guid);
+//#endif // SK_SUPPORT_GPU
 
 }  // namespace raster
 }  // namespace gpu

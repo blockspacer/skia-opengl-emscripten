@@ -10,7 +10,7 @@
 #  '<(DEPTH)/third_party/libxml/src/include',
 #],
 # https://github.com/blockspacer/cobalt-clone-28052019/blob/master/src/cobalt/base/base.gyp
-set(COBALT_base_SOURCES
+list(APPEND COBALT_base_SOURCES
   ##${COBALT_CORE_DIR}/base/accessibility_changed_event.h
   #${COBALT_CORE_DIR}/base/address_sanitizer.h
   ${COBALT_PORT_DIR}/cobalt/base/camera_transform.h
@@ -103,10 +103,10 @@ target_link_libraries(cobalt_base PRIVATE
   starboard_eztime
   starboard_common
   modp_b64
-  dynamic_annotations
+  #dynamic_annotations
   ${GLIBXML_LIB}
   icu
-  ced
+  #ced
   glm
   ${EXTRA_COBALT_BASE_LIBS}
 )

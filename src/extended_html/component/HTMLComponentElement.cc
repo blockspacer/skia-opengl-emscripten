@@ -65,7 +65,6 @@
 #include "cobalt/script/exception_state.h"
 #include "cobalt/web_animations/animation_set.h"
 #include "cobalt/dom/event_target.h"
-#include "cobalt/dom_parser/html_decoder.h"
 #include "cobalt/dom/attr.h"
 #include "cobalt/dom/font_cache.h"
 #include "cobalt/dom/document.h"
@@ -853,7 +852,12 @@ void HTMLComponentElement::onBoxGeneratorVisit(cobalt::layout::BoxGenerator& box
       DCHECK(custom_element);
       component->onLoad(
         const_cast<HTMLComponentElement*>(this));
+#if !defined(DISABLE_COBALT_DOM_PARSER)
+      /// \TODO
       set_inner_html(component->data()); /// \note can be empty
+#else
+      NOTIMPLEMENTED();
+#endif // DISABLE_COBALT_DOM_PARSER
       //printf("HTMLComponentElement::set_inner_html %s\n",
       //  component->data().c_str());
       current_data_source_ = data_source();

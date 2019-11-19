@@ -24,9 +24,11 @@
 
 namespace cobalt {
 
+#if !defined(DISABLE_COBALT_MEDIA)
 namespace dom {
 class HTMLVideoElement;
 }  // namespace dom
+#endif // !DISABLE_COBALT_MEDIA
 
 namespace layout {
 
@@ -98,7 +100,9 @@ class BoxGenerator : public dom::NodeVisitor {
 
 /// \todo private:
 // private:
+#if !defined(DISABLE_COBALT_MEDIA)
   void VisitVideoElement(dom::HTMLVideoElement* video_element);
+#endif // !DISABLE_COBALT_MEDIA
   void VisitBrElement(dom::HTMLBRElement* br_element);
   void VisitNonReplacedElement(dom::HTMLElement* html_element);
 

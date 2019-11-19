@@ -219,7 +219,9 @@ if (TARGET_EMSCRIPTEN)
   # libxml
   #include(GLIBXML.cmake)
   # zlib
-  include(GZLIB_EXT.cmake)
+  if(ENABLE_BLINK_PLATFORM)
+    include(GZLIB_EXT.cmake)
+  endif(ENABLE_BLINK_PLATFORM)
 elseif(TARGET_LINUX)
   # khronos
   if(ENABLE_KHRONOS)
@@ -234,12 +236,14 @@ elseif(TARGET_LINUX)
   # zlib
   include(GZLIB.cmake)
   # zlib
-  include(GZLIB_EXT.cmake)
+  if(ENABLE_BLINK_PLATFORM)
+    include(GZLIB_EXT.cmake)
+  endif(ENABLE_BLINK_PLATFORM)
 
-  if(ENABLE_HARFBUZZ AND NOT HARFBUZZ_FROM_SKIA)
+  if(ENABLE_FONTCONFIG AND ENABLE_HARFBUZZ AND NOT HARFBUZZ_FROM_SKIA)
     # fontconfig
     include(fontconfig.cmake)
-  endif(ENABLE_HARFBUZZ AND NOT HARFBUZZ_FROM_SKIA)
+  endif(ENABLE_FONTCONFIG AND ENABLE_HARFBUZZ AND NOT HARFBUZZ_FROM_SKIA)
 
   # libevent
   include(libevent.cmake)
@@ -260,12 +264,14 @@ elseif(TARGET_WINDOWS)
   # zlib
   include(GZLIB.cmake)
   # zlib
-  include(GZLIB_EXT.cmake)
+  if(ENABLE_BLINK_PLATFORM)
+    include(GZLIB_EXT.cmake)
+  endif(ENABLE_BLINK_PLATFORM)
 
-  if(ENABLE_HARFBUZZ AND NOT HARFBUZZ_FROM_SKIA)
+  if(ENABLE_FONTCONFIG AND ENABLE_HARFBUZZ AND NOT HARFBUZZ_FROM_SKIA)
     # fontconfig
     include(fontconfig.cmake)
-  endif(ENABLE_HARFBUZZ AND NOT HARFBUZZ_FROM_SKIA)
+  endif(ENABLE_FONTCONFIG AND ENABLE_HARFBUZZ AND NOT HARFBUZZ_FROM_SKIA)
 else()
   message(FATAL_ERROR "platform not supported")
 endif()
@@ -276,7 +282,13 @@ if(ENABLE_BORINGSSL)
 endif(ENABLE_BORINGSSL)
 
 # dynamic_annotations
-include(dynamic_annotations.cmake)
+if(ENABLE_DYNAMIC_ANNOTATIONS)
+  include(dynamic_annotations.cmake)
+endif(ENABLE_DYNAMIC_ANNOTATIONS)
+
+if(ENABLE_COMPACT_ENC_DET)
+  include(ced.cmake)
+endif(ENABLE_COMPACT_ENC_DET)
 
 # GURL: URL parsing.
 # Depends on : icu (libicuuc), base.
@@ -375,10 +387,10 @@ if(ENABLE_SKIA AND ENABLE_BLINK)
   include(GFX_SWITCHES.cmake)
 endif(ENABLE_SKIA AND ENABLE_BLINK)
 
-if(ENABLE_SKIA AND ENABLE_BLINK)
+if(ENABLE_SKIA_EXT AND ENABLE_SKIA AND ENABLE_BLINK)
   # SKIA_EXT
   include(SKIA_EXT.cmake)
-endif(ENABLE_SKIA AND ENABLE_BLINK)
+endif(ENABLE_SKIA_EXT AND ENABLE_SKIA AND ENABLE_BLINK)
 
 if(ENABLE_SKIA AND ENABLE_BLINK)
   # UI_GFX
@@ -430,10 +442,16 @@ if(ENABLE_SKIA AND ENABLE_BLINK)
   include(PAINT_CC.cmake)
 
   # COMPONENTS_VIZ_COMMON
-  include(COMPONENTS_VIZ_COMMON.cmake)
+  #
+  if(ENABLE_CHROMIUM_COMPONENTS_VIZ_COMMON)
+    include(COMPONENTS_VIZ_COMMON.cmake)
+  endif(ENABLE_CHROMIUM_COMPONENTS_VIZ_COMMON)
 
   # COMPONENTS_VIZ_CLIENT
-  include(COMPONENTS_VIZ_CLIENT.cmake)
+  #
+  if(ENABLE_CHROMIUM_COMPONENTS_VIZ_CLIENT)
+    include(COMPONENTS_VIZ_CLIENT.cmake)
+  endif(ENABLE_CHROMIUM_COMPONENTS_VIZ_CLIENT)
 
   # GPU_GLES2
   #include(GPU_GLES2.cmake)
@@ -441,8 +459,12 @@ if(ENABLE_SKIA AND ENABLE_BLINK)
   # ui/gl
 
   # CC
-  include(CC.cmake)
-  include(ANIMATION_CC.cmake)
+  if(ENABLE_CHROMIUM_CC)
+    include(CC.cmake)
+  endif(ENABLE_CHROMIUM_CC)
+  if(ENABLE_CHROMIUM_ANIMATION_CC)
+    include(ANIMATION_CC.cmake)
+  endif(ENABLE_CHROMIUM_ANIMATION_CC)
 endif(ENABLE_SKIA AND ENABLE_BLINK)
 
 if(ENABLE_GNET AND ENABLE_BLINK)
@@ -502,7 +524,9 @@ if(ENABLE_SKIA AND ENABLE_BLINK)
 
   include(UI_DISPLAY.cmake)
 
-  include(UI_COMPOSITOR.cmake)
+  if(ENABLE_CHROMIUM_UI_COMPOSITOR)
+    include(UI_COMPOSITOR.cmake)
+  endif(ENABLE_CHROMIUM_UI_COMPOSITOR)
 
   if(ENABLE_BLINK_UI_VIEWS)
     include(UI_VIEWS.cmake) # TODO

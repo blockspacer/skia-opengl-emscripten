@@ -15,6 +15,8 @@
 #ifndef COBALT_DOM_HTML_AUDIO_ELEMENT_H_
 #define COBALT_DOM_HTML_AUDIO_ELEMENT_H_
 
+#if !defined(DISABLE_COBALT_MEDIA)
+
 #include "cobalt/dom/html_media_element.h"
 
 #if defined(OS_EMSCRIPTEN)
@@ -49,5 +51,7 @@ class HTMLAudioElement : public HTMLMediaElement {
 
 }  // namespace dom
 }  // namespace cobalt
+
+#endif // !DISABLE_COBALT_MEDIA
 
 #endif  // COBALT_DOM_HTML_AUDIO_ELEMENT_H_

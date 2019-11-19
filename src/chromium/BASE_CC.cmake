@@ -2,7 +2,7 @@
 
 ## --- BASE_CC ---###
 
-set(BASE_CC_COMMON_SOURCES
+list(APPEND BASE_CC_COMMON_SOURCES
   #${BASE_CC_DIR}base_export.h",
   #${BASE_CC_DIR}completion_event.h",
   #${BASE_CC_DIR}container_util.h",
@@ -51,7 +51,7 @@ target_link_libraries(BASE_CC PRIVATE
   #${BASE_LIBRARIES}
   base
   SKIA
-  dynamic_annotations
+  #dynamic_annotations
   UI_GFX
 )
 

@@ -15,6 +15,8 @@
 #ifndef COBALT_DOM_HTML_MEDIA_ELEMENT_H_
 #define COBALT_DOM_HTML_MEDIA_ELEMENT_H_
 
+#if !defined(DISABLE_COBALT_MEDIA)
+
 #include <memory>
 #include <string>
 
@@ -318,5 +320,7 @@ class HTMLMediaElement : public HTMLElement, private WebMediaPlayerClient {
 
 }  // namespace dom
 }  // namespace cobalt
+
+#endif // !DISABLE_COBALT_MEDIA
 
 #endif  // COBALT_DOM_HTML_MEDIA_ELEMENT_H_

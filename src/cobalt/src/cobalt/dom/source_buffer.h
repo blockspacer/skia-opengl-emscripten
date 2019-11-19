@@ -45,6 +45,8 @@
 #ifndef COBALT_DOM_SOURCE_BUFFER_H_
 #define COBALT_DOM_SOURCE_BUFFER_H_
 
+#if !defined(DISABLE_COBALT_MEDIA)
+
 #include <memory>
 #include <string>
 #include <vector>
@@ -197,5 +199,7 @@ class SourceBuffer : public dom::EventTarget {
 
 }  // namespace dom
 }  // namespace cobalt
+
+#endif // !DISABLE_COBALT_MEDIA
 
 #endif  // COBALT_DOM_SOURCE_BUFFER_H_

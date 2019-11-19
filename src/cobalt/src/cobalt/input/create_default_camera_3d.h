@@ -15,6 +15,8 @@
 #ifndef COBALT_INPUT_CREATE_DEFAULT_CAMERA_3D_H_
 #define COBALT_INPUT_CREATE_DEFAULT_CAMERA_3D_H_
 
+#if !defined(DISABLE_COBALT_CAMERA3D)
+
 #include "base/memory/ref_counted.h"
 #include "cobalt/input/camera_3d.h"
 #include "cobalt/input/input_poller.h"
@@ -28,5 +30,7 @@ scoped_refptr<Camera3D> CreatedDefaultCamera3D(
 
 }  // namespace input
 }  // namespace cobalt
+
+#endif // !defined(DISABLE_COBALT_CAMERA3D)
 
 #endif  // COBALT_INPUT_CREATE_DEFAULT_CAMERA_3D_H_

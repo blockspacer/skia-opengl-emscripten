@@ -268,7 +268,7 @@ add_library(UI_EVENTS STATIC
 )
 
 target_link_libraries(UI_EVENTS PRIVATE
-  dynamic_annotations
+  #dynamic_annotations
   base
   GFX_GEOMETRY
   #

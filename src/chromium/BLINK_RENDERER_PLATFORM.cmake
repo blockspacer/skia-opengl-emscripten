@@ -1846,8 +1846,8 @@ target_link_libraries(BLINK_RENDERER_PLATFORM PRIVATE
   GURL
   ${GNET_LIBS}
   ${GCRYPTO_LIB}
-  COMPONENTS_VIZ_CLIENT
-  COMPONENTS_VIZ_COMMON
+  ${COMPONENTS_VIZ_CLIENT_LIB}
+  ${COMPONENTS_VIZ_COMMON_LIB}
   # services/service_manager
   # services/ws/public/cpp/gpu
   #${BASE_LIBRARIES}
@@ -1862,7 +1862,7 @@ target_link_libraries(BLINK_RENDERER_PLATFORM PRIVATE
   BLINK_COMMON
   ${BLINK_PUBLIC_MOJOM_LIB} # see blink/public/mojom/mime/mime_registry.mojom
   ${MOJO_LIB}
-  ced
+  #ced
   # emoji-segmenter
   ${CUSTOM_ICU_LIB}
   ${HARFBUZZ_LIBRARIES}
@@ -1909,10 +1909,10 @@ target_link_libraries(BLINK_RENDERER_PLATFORM PRIVATE
   #  "//url",
   #  "//v8",
   #]
-  ANIMATION_CC
+  ${ANIMATION_CC_LIB}
   BASE_CC
   PAINT_CC
-  CC
+  ${CC_LIB}
   ${SERVICES_NETWORK_PUBLIC_CPP_LIB}
   ${SERVICES_SERVICE_MANAGER_PUBLIC_CPP_LIB}
   ${WEBP_LIB} # requires libpng

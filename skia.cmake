@@ -313,11 +313,16 @@ if(SK_USE_SYSTEM_LIBPNG)
   )
 endif(SK_USE_SYSTEM_LIBPNG)
 
-if(SK_USE_SYSTEM_ZLIB)
-  set(SK_system_zlib
-    "skia_use_system_zlib=true"
-  )
-endif(SK_USE_SYSTEM_ZLIB)
+if(ENABLE_ZLIB)
+  set(SK_IS_zlib "true")
+  if(SK_USE_SYSTEM_ZLIB)
+    set(SK_system_zlib
+      "skia_use_system_zlib=true"
+    )
+  endif(SK_USE_SYSTEM_ZLIB)
+else(ENABLE_ZLIB)
+  set(SK_IS_zlib "false")
+endif(ENABLE_ZLIB)
 
 if(USE_LIBJPEG_TURBO)
   set(SK_IS_libjpeg_turbo "true")
@@ -438,7 +443,7 @@ skia_use_libjpeg_turbo=${SK_IS_libjpeg_turbo} \
 ${SK_system_libjpeg_turbo} \
 skia_use_libpng=true \
 ${SK_system_libpng} \
-skia_use_zlib=true \
+skia_use_zlib=${SK_IS_zlib} \
 ${SK_system_zlib} \
 skia_use_wuffs=${SK_IS_wuffs} \
 skia_use_libwebp=false \
@@ -454,6 +459,7 @@ skia_use_piex=false \
 skia_use_angle=false \
 skia_use_dng_sdk=false \
 skia_use_metal=false \
+skia_enable_flutter_defines=false \
 skia_enable_fontmgr_empty=false \
 skia_enable_fontmgr_custom=true \
 skia_use_libheif=false \
@@ -933,17 +939,19 @@ if(NOT EXT_SKIA_SHARED)
   #   Defined if the system has GLX.
   # OpenGL::EGL
   #   Defined if the system has EGL.
-  find_package(OpenGL REQUIRED) # see FOUND_OPENGL_LIBRARIES
-  #
-  if(SK_IS_EGL)
-    #ADD_SKIA_LIBRARY_DEPENDENCY("EGL") # skia_use_egl
-    set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};OpenGL::EGL")
-    #see OPENGL_EGL_INCLUDE_DIRS
-  else()
-    #ADD_SKIA_LIBRARY_DEPENDENCY("GL") # !skia_use_egl # TODO: GLU?
-    set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};OpenGL::GL")
-    #see FOUND_OPENGL_INCLUDE_DIR
-  endif() # SK_IS_EGL
+  if(NOT EMSCRIPTEN)
+    find_package(OpenGL REQUIRED) # see FOUND_OPENGL_LIBRARIES
+    #
+    if(SK_IS_EGL)
+      #ADD_SKIA_LIBRARY_DEPENDENCY("EGL") # skia_use_egl
+      set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};OpenGL::EGL")
+      #see OPENGL_EGL_INCLUDE_DIRS
+    else()
+      #ADD_SKIA_LIBRARY_DEPENDENCY("GL") # !skia_use_egl # TODO: GLU?
+      set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};OpenGL::GL")
+      #see FOUND_OPENGL_INCLUDE_DIR
+    endif() # SK_IS_EGL
+  endif(NOT EMSCRIPTEN)
 else(NOT EXT_SKIA_SHARED)
   #message(FATAL_ERROR "unknown platform")
 endif(NOT EXT_SKIA_SHARED)

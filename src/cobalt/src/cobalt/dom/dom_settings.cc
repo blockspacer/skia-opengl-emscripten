@@ -24,8 +24,13 @@ namespace dom {
 DOMSettings::DOMSettings(
     const int max_dom_element_depth, loader::FetcherFactory* fetcher_factory,
     network::NetworkModule* network_module, const scoped_refptr<Window>& window,
-    MediaSourceRegistry* media_source_registry, Blob::Registry* blob_registry,
+#if !defined(DISABLE_COBALT_MEDIA)
+    MediaSourceRegistry* media_source_registry,
+#endif // !DISABLE_COBALT_MEDIA
+    Blob::Registry* blob_registry,
+#if !defined(DISABLE_COBALT_MEDIA)
     media::CanPlayTypeHandler* can_play_type_handler,
+#endif // !DISABLE_COBALT_MEDIA
     script::JavaScriptEngine* engine,
     script::GlobalEnvironment* global_environment,
     MutationObserverTaskManager* mutation_observer_task_manager,
@@ -37,9 +42,13 @@ DOMSettings::DOMSettings(
       fetcher_factory_(fetcher_factory),
       network_module_(network_module),
       window_(window),
+#if !defined(DISABLE_COBALT_MEDIA)
       media_source_registry_(media_source_registry),
+#endif // !DISABLE_COBALT_MEDIA
       blob_registry_(blob_registry),
+#if !defined(DISABLE_COBALT_MEDIA)
       can_play_type_handler_(can_play_type_handler),
+#endif // !DISABLE_COBALT_MEDIA
       javascript_engine_(engine),
       global_environment_(global_environment),
       mutation_observer_task_manager_(mutation_observer_task_manager) {}

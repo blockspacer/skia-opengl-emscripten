@@ -15,6 +15,8 @@
 #ifndef COBALT_DOM_EME_MEDIA_ENCRYPTED_EVENT_H_
 #define COBALT_DOM_EME_MEDIA_ENCRYPTED_EVENT_H_
 
+#if !defined(DISABLE_COBALT_MEDIA)
+
 #include <memory>
 #include <string>
 
@@ -58,5 +60,7 @@ class MediaEncryptedEvent : public Event {
 }  // namespace eme
 }  // namespace dom
 }  // namespace cobalt
+
+#endif // !DISABLE_COBALT_MEDIA
 
 #endif  // COBALT_DOM_EME_MEDIA_ENCRYPTED_EVENT_H_

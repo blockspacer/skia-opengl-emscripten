@@ -34,9 +34,9 @@
 #include "cobalt/dom_parser/parser.h"
 #include "cobalt/loader/fetcher_factory.h"
 #include "cobalt/loader/loader_factory.h"
-#if defined(ENABLE_COBALT_MEDIA_SESSION)
+#if !defined(DISABLE_COBALT_MEDIA_SESSION)
 #include "cobalt/media_session/media_session.h"
-#endif // ENABLE_COBALT_MEDIA_SESSION
+#endif // DISABLE_COBALT_MEDIA_SESSION
 #include "cobalt/script/global_environment.h"
 #include "cobalt/script/javascript_engine.h"
 #include "starboard/window.h"

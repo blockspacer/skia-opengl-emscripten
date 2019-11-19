@@ -10,7 +10,9 @@
 #include "base/containers/span.h"
 #include "cc/paint/paint_export.h"
 
+//#if SK_SUPPORT_GPU
 class GrContext;
+//#endif // SK_SUPPORT_GPU
 
 namespace cc {
 
@@ -84,8 +86,11 @@ class CC_PAINT_EXPORT ServiceTransferCacheEntry {
 
   // Deserialize the cache entry from the given span of memory with the given
   // context.
+
+//#if SK_SUPPORT_GPU
   virtual bool Deserialize(GrContext* context,
                            base::span<const uint8_t> data) = 0;
+//#endif // SK_SUPPORT_GPU
 };
 
 // Helpers to simplify subclassing.

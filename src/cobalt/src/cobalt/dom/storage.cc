@@ -14,6 +14,8 @@
 
 #include "cobalt/dom/storage.h"
 
+#if !defined(DISABLE_COBALT_STORAGE)
+
 #include "cobalt/dom/document.h"
 #include "cobalt/dom/storage_area.h"
 #include "cobalt/dom/storage_event.h"
@@ -61,3 +63,5 @@ GURL Storage::origin() const { return window_->document()->url_as_gurl(); }
 
 }  // namespace dom
 }  // namespace cobalt
+
+#endif // !DISABLE_COBALT_STORAGE

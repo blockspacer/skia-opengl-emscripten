@@ -1,6 +1,6 @@
 ### --- UI_COMPOSITOR ---###
 
-set(UI_COMPOSITOR_SOURCES
+list(APPEND UI_COMPOSITOR_SOURCES
   ${UI_COMPOSITOR_DIR}callback_layer_animation_observer.cc
   ${UI_COMPOSITOR_DIR}callback_layer_animation_observer.h
   ${UI_COMPOSITOR_DIR}canvas_painter.cc
@@ -77,19 +77,21 @@ add_library(UI_COMPOSITOR STATIC
 target_link_libraries(UI_COMPOSITOR PRIVATE
   #"//cc",
   BASE_CC
-  CC
+  ${CC_LIB}
   #"//base",
   base
   #"//base/third_party/dynamic_annotations",
-  dynamic_annotations
+  #dynamic_annotations
   #"//cc/animation",
-  ANIMATION_CC
+  ${ANIMATION_CC_LIB}
   #"//cc/paint",
   PAINT_CC
   #"//components/viz/host",
   #"//components/viz/service",
-  COMPONENTS_VIZ_CLIENT
-  COMPONENTS_VIZ_COMMON
+  #
+  ${COMPONENTS_VIZ_CLIENT_LIB}
+  #
+  ${COMPONENTS_VIZ_COMMON_LIB}
   #"//gpu/command_buffer/common",
   GPU_COMMAND_BUFFER
   #"//skia",

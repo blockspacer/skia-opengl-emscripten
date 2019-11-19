@@ -20,8 +20,10 @@
 #include "ui/base/ime/input_method.h"
 #include "ui/base/l10n/l10n_font_util.h"
 #include "ui/base/resource/resource_bundle.h"
+#if !defined(UI_VIEWS_NO_COMPOSITOR)
 #include "ui/compositor/compositor.h"
 #include "ui/compositor/layer.h"
+#endif // !UI_VIEWS_NO_COMPOSITOR
 #include "ui/display/screen.h"
 #include "ui/events/event.h"
 #include "ui/events/event_utils.h"
@@ -1020,10 +1022,12 @@ void Widget::FrameTypeChanged() {
   native_widget_->FrameTypeChanged();
 }
 
+#if !defined(UI_VIEWS_NO_COMPOSITOR)
 const ui::Compositor* Widget::GetCompositor() const {
   DCHECK(native_widget_);
   return native_widget_->GetCompositor();
 }
+#endif // !UI_VIEWS_NO_COMPOSITOR
 
 const ui::Layer* Widget::GetLayer() const {
   DCHECK(native_widget_);

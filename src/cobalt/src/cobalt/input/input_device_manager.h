@@ -63,7 +63,10 @@ class InputDeviceManager {
   virtual ~InputDeviceManager() {}
 
   scoped_refptr<InputPoller> input_poller() { return input_poller_; }
+
+#if !defined(DISABLE_COBALT_CAMERA3D)
   scoped_refptr<Camera3D> camera_3d() { return camera_3d_; }
+#endif // !defined(DISABLE_COBALT_CAMERA3D)
 
  protected:
   InputDeviceManager() {}
@@ -72,7 +75,9 @@ class InputDeviceManager {
   scoped_refptr<InputPoller> input_poller_;
 
   // Used for holding the 3D camera state.
+#if !defined(DISABLE_COBALT_CAMERA3D)
   scoped_refptr<Camera3D> camera_3d_;
+#endif // !defined(DISABLE_COBALT_CAMERA3D)
 };
 
 }  // namespace input

@@ -4,7 +4,7 @@
 #  '<(DEPTH)/cobalt/base/base.gyp:base',
 #  '<(DEPTH)/cobalt/browser/browser_bindings_gen.gyp:generated_types',
 #],
-set(cobalt_page_visibility_SOURCES
+list(APPEND cobalt_page_visibility_SOURCES
   ${COBALT_CORE_DIR}page_visibility/page_visibility_state.cc
   ${COBALT_CORE_DIR}page_visibility/page_visibility_state.h
 )
@@ -22,10 +22,10 @@ target_link_libraries(cobalt_page_visibility PRIVATE
   #v8_stub
   base # TODO
   modp_b64
-  dynamic_annotations
+  #dynamic_annotations
   ${GLIBXML_LIB}
   icu
-  ced
+  #ced
   glm
 )
 

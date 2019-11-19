@@ -24,7 +24,9 @@
 #include "SkFontStyle.h"
 #include "base/memory/ptr_util.h"
 #include "base/trace_event/trace_event.h"
+#if !defined(DISABLE_COBALT_FONTCONFIG)
 #include "renderer_stub/rasterizer/skia/skia/src/ports/SkFontConfigParser_cobalt.h"
+#endif // !DISABLE_COBALT_FONTCONFIG
 #include "renderer_stub/rasterizer/skia/skia/src/ports/SkFreeType_cobalt.h"
 #include "renderer_stub/rasterizer/skia/skia/src/ports/SkTypeface_cobalt.h"
 
@@ -284,11 +286,13 @@ void SkFontMgr_Cobalt::ParseConfigAndBuildFamilies(
     const char* font_config_directory, const char* font_files_directory,
     PriorityStyleSetArrayMap* priority_fallback_families) {
   SkTDArray<FontFamilyInfo*> config_font_families;
+#if !defined(DISABLE_COBALT_FONTCONFIG)
   {
     TRACE_EVENT0("cobalt::renderer", "SkFontConfigParser::GetFontFamilies()");
     SkFontConfigParser::GetFontFamilies(font_config_directory,
                                         &config_font_families);
   }
+#endif // !DISABLE_COBALT_FONTCONFIG
   BuildNameToFamilyMap(font_files_directory, &config_font_families,
                        priority_fallback_families);
   config_font_families.deleteAll();

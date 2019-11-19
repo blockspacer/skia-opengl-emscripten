@@ -19,6 +19,12 @@ option(BUILD_APP "build app (you can also run it)" ON)
 
 set(BUILD_TYPE "Debug" CACHE STRING "Debug, RelWithDebInfo or Release")
 
+set(BUILD_TARGET "all" CACHE STRING "cmake build target")
+
+if(BUILD_TARGET)
+  set(CMAKE_BUILD_TARGET "--target;${BUILD_TARGET}")
+endif(BUILD_TARGET)
+
 # DEBINFO = lower performance, better stacktrace
 set(HAVE_DEBINFO FALSE)
 

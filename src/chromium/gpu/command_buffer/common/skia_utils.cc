@@ -9,7 +9,9 @@
 #include "base/trace_event/process_memory_dump.h"
 #include "build/build_config.h"
 #include "third_party/skia/include/core/SkTraceMemoryDump.h"
+//#if SK_SUPPORT_GPU
 #include "third_party/skia/include/gpu/GrContext.h"
+//#endif // SK_SUPPORT_GPU
 #include "ui/gl/trace_util.h"
 
 namespace gpu {
@@ -167,12 +169,14 @@ void DefaultGrCacheLimitsForTests(size_t* max_resource_cache_bytes,
   *max_glyph_cache_texture_bytes = kDefaultGlyphCacheTextureBytes;
 }
 
+//#if SK_SUPPORT_GPU
 void DumpGrMemoryStatistics(const GrContext* context,
                             base::trace_event::ProcessMemoryDump* pmd,
                             base::Optional<uint64_t> tracing_guid) {
   SkiaGpuTraceMemoryDump trace_memory_dump(pmd, tracing_guid);
   context->dumpMemoryStatistics(&trace_memory_dump);
 }
+//#endif // SK_SUPPORT_GPU
 
 }  // namespace raster
 }  // namespace gpu

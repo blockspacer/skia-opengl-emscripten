@@ -893,6 +893,7 @@ std::string Element::inner_html() const {
 
 // Algorithm for set_inner_html:
 //   https://www.w3.org/TR/DOM-Parsing/#widl-Element-innerHTML
+#if !defined(DISABLE_COBALT_DOM_PARSER)
 void Element::set_inner_html(const std::string& inner_html) {
   TRACK_MEMORY_SCOPE("DOM");
   // 1. Let fragment be the result of invoking the fragment parsing algorithm
@@ -930,6 +931,7 @@ void Element::set_inner_html(const std::string& inner_html) {
   );
 #endif
 }
+#endif // !DISABLE_COBALT_DOM_PARSER
 
 // Algorithm for outer_html:
 //   https://www.w3.org/TR/DOM-Parsing/#widl-Element-innerHTML
@@ -942,6 +944,7 @@ std::string Element::outer_html(
   return oss.str();
 }
 
+#if !defined(DISABLE_COBALT_DOM_PARSER)
 // Algorithm for set_outer_html:
 //   https://www.w3.org/TR/DOM-Parsing/#widl-Element-outerHTML
 void Element::set_outer_html(const std::string& outer_html,
@@ -1003,6 +1006,7 @@ void Element::set_outer_html(const std::string& outer_html,
   );
 #endif
 }
+#endif // !DISABLE_COBALT_DOM_PARSER
 
 void Element::SetPointerCapture(int pointer_id,
                                 script::ExceptionState* exception_state) {

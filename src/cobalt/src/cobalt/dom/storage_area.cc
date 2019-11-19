@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#if !defined(DISABLE_COBALT_STORAGE)
+
 #include <memory>
 
 #include "cobalt/dom/storage_area.h"
@@ -20,9 +22,9 @@
 #include "base/strings/stringprintf.h"
 #include "cobalt/dom/local_storage_database.h"
 #include "cobalt/dom/storage.h"
-#if defined(ENABLE_COBALT_STORAGE)
+//#if defined(ENABLE_COBALT_STORAGE)
 #include "cobalt/storage/store/memory_store.h"
-#endif // ENABLE_COBALT_STORAGE
+//#endif // ENABLE_COBALT_STORAGE
 
 namespace cobalt {
 namespace dom {
@@ -159,3 +161,5 @@ void StorageArea::OnInitComplete(std::unique_ptr<StorageMap> data) {
 
 }  // namespace dom
 }  // namespace cobalt
+
+#endif // !DISABLE_COBALT_STORAGE

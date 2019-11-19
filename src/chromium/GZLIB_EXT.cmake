@@ -1,12 +1,14 @@
 ﻿### --- GZLIB_EXT ---###
 
+if(NOT ENABLE_BLINK_PLATFORM)
+  message(FATAL_ERROR "disable GZLIB_EXT")
+endif(NOT ENABLE_BLINK_PLATFORM)
+
 # see chromium/src/third_party/zlib/google/
 
-set(GZLIB_EXT_DIR
-  ${CHROMIUM_DIR}third_party/zlib/google/
-)
+set(GZLIB_EXT_DIR ${CHROMIUM_DIR}third_party/zlib/google/)
 
-set(GZLIB_EXT_SOURCES
+list(APPEND GZLIB_EXT_SOURCES
   ${GZLIB_EXT_DIR}zip.cc
   #${GZLIB_EXT_DIR}zip.h
   ${GZLIB_EXT_DIR}zip_internal.cc

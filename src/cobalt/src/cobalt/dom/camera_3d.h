@@ -17,6 +17,8 @@
 #ifndef COBALT_DOM_CAMERA_3D_H_
 #define COBALT_DOM_CAMERA_3D_H_
 
+#if !defined(DISABLE_COBALT_CAMERA3D)
+
 #include "base/basictypes.h"
 #if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
 #include "base/timer/timer.h"
@@ -101,5 +103,7 @@ class Camera3D : public script::Wrappable {
 
 }  // namespace dom
 }  // namespace cobalt
+
+#endif // !defined(DISABLE_COBALT_CAMERA3D)
 
 #endif  // COBALT_DOM_CAMERA_3D_H_

@@ -22,12 +22,12 @@
 #include "cobalt/dom/eme/media_key_system_configuration.h"
 #include "cobalt/dom/mime_type_array.h"
 #include "cobalt/dom/plugin_array.h"
-#if defined(ENABLE_COBALT_MEDIA_CAPTURE)
+#if !defined(DISABLE_COBALT_MEDIA_CAPTURE)
 #include "cobalt/media_capture/media_devices.h"
-#endif // ENABLE_COBALT_MEDIA_CAPTURE
-#if defined(ENABLE_COBALT_MEDIA_SESSION)
+#endif // DISABLE_COBALT_MEDIA_CAPTURE
+#if !defined(DISABLE_COBALT_MEDIA_SESSION)
 #include "cobalt/media_session/media_session.h"
-#endif // ENABLE_COBALT_MEDIA_SESSION
+#endif // DISABLE_COBALT_MEDIA_SESSION
 #include "cobalt/script/promise.h"
 #include "cobalt/script/script_value_factory.h"
 #include "cobalt/script/wrappable.h"
@@ -49,9 +49,9 @@ class Navigator : public script::Wrappable {
  public:
   Navigator(
       const std::string& user_agent, const std::string& language,
-#if defined(ENABLE_COBALT_MEDIA_SESSION)
+#if !defined(DISABLE_COBALT_MEDIA_SESSION)
       scoped_refptr<cobalt::media_session::MediaSession> media_session,
-#endif // ENABLE_COBALT_MEDIA_SESSION
+#endif // DISABLE_COBALT_MEDIA_SESSION
       scoped_refptr<cobalt::dom::captions::SystemCaptionSettings> captions,
       script::ScriptValueFactory* script_value_factory);
 
@@ -71,24 +71,27 @@ class Navigator : public script::Wrappable {
   bool cookie_enabled() const;
 
   // Web API: MediaDevices
-#if defined(ENABLE_COBALT_MEDIA_CAPTURE)
+#if !defined(DISABLE_COBALT_MEDIA_CAPTURE)
   scoped_refptr<media_capture::MediaDevices> media_devices();
-#endif // ENABLE_COBALT_MEDIA_CAPTURE
+#endif // DISABLE_COBALT_MEDIA_CAPTURE
 
   const scoped_refptr<MimeTypeArray>& mime_types() const;
   const scoped_refptr<PluginArray>& plugins() const;
 
-#if defined(ENABLE_COBALT_MEDIA_SESSION)
+#if !defined(DISABLE_COBALT_MEDIA_SESSION)
   const scoped_refptr<cobalt::media_session::MediaSession>& media_session()
       const;
-#endif // ENABLE_COBALT_MEDIA_SESSION
+#endif // DISABLE_COBALT_MEDIA_SESSION
 
   // Web API: extension defined in Encrypted Media Extensions (16 March 2017).
   using InterfacePromise = script::Promise<scoped_refptr<script::Wrappable>>;
+
+#if !defined(DISABLE_COBALT_MEDIA)
   script::Handle<InterfacePromise> RequestMediaKeySystemAccess(
       script::EnvironmentSettings* settings, const std::string& key_system,
       const script::Sequence<eme::MediaKeySystemConfiguration>&
           supported_configurations);
+#endif // !DISABLE_COBALT_MEDIA
 
   const scoped_refptr<cobalt::dom::captions::SystemCaptionSettings>&
   system_caption_settings() const;
@@ -97,7 +100,7 @@ class Navigator : public script::Wrappable {
   void TraceMembers(script::Tracer* tracer) override;
 
   void SetEnvironmentSettings(script::EnvironmentSettings* settings) {
-#if defined(ENABLE_COBALT_MEDIA_CAPTURE)
+#if !defined(DISABLE_COBALT_MEDIA_CAPTURE)
     media_devices_->SetEnvironmentSettings(settings);
 #endif
   }
@@ -110,13 +113,13 @@ class Navigator : public script::Wrappable {
   scoped_refptr<MimeTypeArray> mime_types_;
   scoped_refptr<PluginArray> plugins_;
 
-#if defined(ENABLE_COBALT_MEDIA_SESSION)
+#if !defined(DISABLE_COBALT_MEDIA_SESSION)
   scoped_refptr<cobalt::media_session::MediaSession> media_session_;
-#endif // ENABLE_COBALT_MEDIA_SESSION
+#endif // DISABLE_COBALT_MEDIA_SESSION
 
-#if defined(ENABLE_COBALT_MEDIA_CAPTURE)
+#if !defined(DISABLE_COBALT_MEDIA_CAPTURE)
   scoped_refptr<cobalt::media_capture::MediaDevices> media_devices_;
-#endif // ENABLE_COBALT_MEDIA_CAPTURE
+#endif // DISABLE_COBALT_MEDIA_CAPTURE
 
   scoped_refptr<cobalt::dom::captions::SystemCaptionSettings>
       system_caption_settings_;

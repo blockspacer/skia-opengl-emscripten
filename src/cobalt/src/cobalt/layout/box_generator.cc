@@ -49,7 +49,9 @@
 #include "cobalt/layout/text_box.h"
 #include "cobalt/layout/used_style.h"
 #include "cobalt/layout/white_space_processing.h"
+#if !defined(DISABLE_COBALT_MEDIA)
 #include "cobalt/media/base/video_frame_provider.h"
+#endif // !DISABLE_COBALT_MEDIA
 #include "cobalt/render_tree/image.h"
 #include "cobalt/web_animations/keyframe_effect_read_only.h"
 #include "starboard/decode_target.h"
@@ -57,10 +59,13 @@
 namespace cobalt {
 namespace layout {
 
+#if !defined(DISABLE_COBALT_MEDIA)
 using media::VideoFrameProvider;
+#endif // !DISABLE_COBALT_MEDIA
 
 namespace {
 
+#if !defined(DISABLE_COBALT_MEDIA)
 scoped_refptr<render_tree::Image> GetVideoFrame(
     const scoped_refptr<VideoFrameProvider>& frame_provider,
     render_tree::ResourceProvider* resource_provider) {
@@ -78,6 +83,7 @@ scoped_refptr<render_tree::Image> GetVideoFrame(
     return NULL;
   }
 }
+#endif // !DISABLE_COBALT_MEDIA
 
 }  // namespace
 
@@ -144,12 +150,14 @@ void BoxGenerator::Visit(dom::Element* element) {
     }
   }
 
+#if !defined(DISABLE_COBALT_MEDIA)
   scoped_refptr<dom::HTMLVideoElement> video_element =
       html_element->AsHTMLVideoElement();
   if (video_element) {
     VisitVideoElement(video_element.get());
     return;
   }
+#endif // !DISABLE_COBALT_MEDIA
 
   scoped_refptr<dom::HTMLBRElement> br_element =
       html_element->AsHTMLBRElement();
@@ -559,6 +567,7 @@ void ReplacedBoxGenerator::VisitKeyword(cssom::KeywordValue* keyword) {
 
 }  // namespace
 
+#if !defined(DISABLE_COBALT_MEDIA)
 void BoxGenerator::VisitVideoElement(dom::HTMLVideoElement* video_element) {
   // For video elements, create a replaced box.
 
@@ -629,6 +638,7 @@ void BoxGenerator::VisitVideoElement(dom::HTMLVideoElement* video_element) {
   // model.
   //   https://www.w3.org/TR/CSS21/conform.html#replaced-element
 }
+#endif // !DISABLE_COBALT_MEDIA
 
 void BoxGenerator::VisitBrElement(dom::HTMLBRElement* br_element) {
   // If the br element has "display: none", then it has no effect on the layout.

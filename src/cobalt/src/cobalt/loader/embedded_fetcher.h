@@ -15,6 +15,8 @@
 #ifndef COBALT_LOADER_EMBEDDED_FETCHER_H_
 #define COBALT_LOADER_EMBEDDED_FETCHER_H_
 
+#if 0
+
 #include <limits>
 #include <string>
 
@@ -69,5 +71,7 @@ class EmbeddedFetcher : public Fetcher {
 
 }  // namespace loader
 }  // namespace cobalt
+
+#endif // 0
 
 #endif  // COBALT_LOADER_EMBEDDED_FETCHER_H_

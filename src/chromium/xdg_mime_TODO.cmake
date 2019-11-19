@@ -1,8 +1,7 @@
-﻿
-#### --- xdg_mime ---###
+﻿#### --- xdg_mime ---###
 
 # TODO https://github.com/chromium/chromium/blob/master/third_party/blink/renderer/platform/BUILD.gn
-set(xdg_mime_SOURCES
+list(APPEND xdg_mime_SOURCES
   ${xdg_mime_DIR}xdgmime.c
   ${xdg_mime_DIR}xdgmime.h
   ${xdg_mime_DIR}xdgmimealias.c

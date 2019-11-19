@@ -14,6 +14,8 @@
 
 #include "cobalt/dom/html_audio_element.h"
 
+#if !defined(DISABLE_COBALT_MEDIA)
+
 namespace cobalt {
 namespace dom {
 
@@ -37,3 +39,5 @@ HTMLAudioElement::HTMLAudioElement(Document* document)
 
 }  // namespace dom
 }  // namespace cobalt
+
+#endif // !DISABLE_COBALT_MEDIA

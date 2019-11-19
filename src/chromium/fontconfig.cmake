@@ -11,11 +11,9 @@ endif()
 
 ### --- fontconfig ---###
 
-set(fontconfig_DIR
-  third_party/fontconfig/
-)
+set(fontconfig_DIR third_party/fontconfig/)
 
-set(fontconfig_SOURCES
+list(APPEND fontconfig_SOURCES
   #${fontconfig_DIR}src/src/fcarch.h
   ${fontconfig_DIR}src/src/fcatomic.c
   ${fontconfig_DIR}src/src/fccache.c

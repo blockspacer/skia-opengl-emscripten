@@ -15,7 +15,7 @@
 #  '<(DEPTH)/third_party/icu/icu.gyp:icuuc',
 #  'css_grammar',
 #],
-set(cobalt_css_parser_SOURCES
+list(APPEND cobalt_css_parser_SOURCES
   ${COBALT_CORE_DIR}css_parser/animation_shorthand_property_parse_structures.cc
   ${COBALT_CORE_DIR}css_parser/animation_shorthand_property_parse_structures.h
   ${COBALT_CORE_DIR}css_parser/background_shorthand_property_parse_structures.cc

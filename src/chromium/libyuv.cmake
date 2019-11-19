@@ -1,10 +1,8 @@
 ﻿### --- libyuv ---###
 
-set(libyuv_DIR
-  ${CHROMIUM_DIR}third_party/libyuv/
-)
+set(libyuv_DIR ${CHROMIUM_DIR}third_party/libyuv/)
 
-set(libyuv_SOURCES
+list(APPEND libyuv_SOURCES
   ${libyuv_DIR}source/compare.cc
   ${libyuv_DIR}source/compare_common.cc
   ${libyuv_DIR}source/compare_gcc.cc

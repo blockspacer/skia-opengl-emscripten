@@ -114,7 +114,9 @@
 #if defined(ENABLE_UKM)
 #include "services/metrics/public/cpp/ukm_recorder.h"
 #endif // ENABLE_UKM
+//#if SK_SUPPORT_GPU
 #include "third_party/skia/include/gpu/GrContext.h"
+//#endif // SK_SUPPORT_GPU
 #include "ui/gfx/geometry/point_conversions.h"
 #include "ui/gfx/geometry/rect_conversions.h"
 #include "ui/gfx/geometry/scroll_offset.h"

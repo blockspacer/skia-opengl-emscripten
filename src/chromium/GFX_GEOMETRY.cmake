@@ -2,7 +2,7 @@
 
 ### --- GFX_GEOMETRY ---###
 
-set(GFX_GEOMETRY_SOURCES
+list(APPEND GFX_GEOMETRY_SOURCES
   #${GFX_GEOMETRY_DIR}../gfx_export.h
   #${GFX_GEOMETRY_DIR}angle_conversions.h
   ${GFX_GEOMETRY_DIR}axis_transform2d.cc

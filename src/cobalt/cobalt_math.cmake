@@ -3,7 +3,7 @@
 # 'dependencies': [
 #   '<(DEPTH)/base/base.gyp:base',
 # ],
-set(cobalt_math_SOURCES
+list(APPEND cobalt_math_SOURCES
   ${COBALT_CORE_DIR}math/box_f.cc
   ${COBALT_CORE_DIR}math/box_f.h
   ${COBALT_CORE_DIR}math/clamp.h
@@ -70,10 +70,10 @@ target_link_libraries(cobalt_math PRIVATE
   #v8_stub
   base # TODO
   modp_b64
-  dynamic_annotations
+  #dynamic_annotations
   ${GLIBXML_LIB}
   icu
-  ced
+  #ced
   glm
 )
 

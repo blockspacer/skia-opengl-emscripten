@@ -944,9 +944,11 @@ scoped_refptr<HTMLAnchorElement> HTMLElement::AsHTMLAnchorElement() {
   return NULL;
 }
 
+#if !defined(DISABLE_COBALT_MEDIA)
 scoped_refptr<HTMLAudioElement> HTMLElement::AsHTMLAudioElement() {
   return NULL;
 }
+#endif // !DISABLE_COBALT_MEDIA
 
 scoped_refptr<HTMLBodyElement> HTMLElement::AsHTMLBodyElement() { return NULL; }
 
@@ -1002,9 +1004,11 @@ scoped_refptr<HTMLUnknownElement> HTMLElement::AsHTMLUnknownElement() {
   return NULL;
 }
 
+#if !defined(DISABLE_COBALT_MEDIA)
 scoped_refptr<HTMLVideoElement> HTMLElement::AsHTMLVideoElement() {
   return NULL;
 }
+#endif // !DISABLE_COBALT_MEDIA
 
 void HTMLElement::ClearRuleMatchingState() {
   ClearRuleMatchingStateInternal(true /*invalidate_descendants*/);

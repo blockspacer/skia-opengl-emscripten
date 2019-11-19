@@ -4,7 +4,7 @@
 #  '<(DEPTH)/cobalt/base/base.gyp:base',
 #  '<(DEPTH)/cobalt/cssom/cssom.gyp:cssom',
 #],
-set(cobalt_web_animations_SOURCES
+list(APPEND cobalt_web_animations_SOURCES
   ${COBALT_CORE_DIR}web_animations/animatable.h
   ${COBALT_CORE_DIR}web_animations/animation.cc
   ${COBALT_CORE_DIR}web_animations/animation.h

@@ -12,7 +12,7 @@ endif()
 
 # TODO: add skia-opengl-emscripten/src/chromium/third_party/boringssl/src/ssl/CMakeLists.txt
 
-set(BORINGSSL_SOURCES
+list(APPEND BORINGSSL_SOURCES
   ${BORINGSSL_DIR}err_data.c
   ${BORINGSSL_DIR}src/crypto/asn1/a_bitstr.c
   ${BORINGSSL_DIR}src/crypto/asn1/a_bool.c
@@ -289,7 +289,7 @@ add_library(BORINGSSL STATIC
 )
 
 target_link_libraries(BORINGSSL PUBLIC
-  dynamic_annotations
+  #dynamic_annotations
   #${BASE_LIBRARIES}
   base
 )

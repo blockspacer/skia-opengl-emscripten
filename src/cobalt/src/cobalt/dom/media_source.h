@@ -45,6 +45,8 @@
 #ifndef COBALT_DOM_MEDIA_SOURCE_H_
 #define COBALT_DOM_MEDIA_SOURCE_H_
 
+#if !defined(DISABLE_COBALT_MEDIA)
+
 #include <string>
 
 #include "base/memory/ref_counted.h"
@@ -143,5 +145,7 @@ class MediaSource : public EventTarget {
 
 }  // namespace dom
 }  // namespace cobalt
+
+#endif // !DISABLE_COBALT_MEDIA
 
 #endif  // COBALT_DOM_MEDIA_SOURCE_H_

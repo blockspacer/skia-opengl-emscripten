@@ -3,7 +3,7 @@
 #'dependencies': [
 #  '<(DEPTH)/starboard/starboard_headers_only.gyp:starboard_headers_only',
 #],
-set(COBALT_nb_SOURCES
+list(APPEND COBALT_nb_SOURCES
   ${COBALT_PORT_DIR}nb/allocator.h
   ${COBALT_PORT_DIR}nb/analytics/memory_tracker.cc
   ${COBALT_PORT_DIR}nb/analytics/memory_tracker.h

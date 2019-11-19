@@ -55,10 +55,10 @@ list(APPEND cobalt_dom_SOURCES
   ${COBALT_CORE_DIR}dom/intersection_observer.h
   ${COBALT_CORE_DIR}dom/intersection_observer_entry.cc
   ${COBALT_CORE_DIR}dom/intersection_observer_entry.h
-  ${COBALT_GEN_DIR}bindings/browser/source/cobalt/dom/intersection_observer_init.h
+  #${COBALT_GEN_DIR}bindings/browser/source/cobalt/dom/intersection_observer_init.h
   ${COBALT_CORE_DIR}dom/intersection_observer_task_manager.cc
   ${COBALT_CORE_DIR}dom/intersection_observer_task_manager.h
-  ${COBALT_GEN_DIR}bindings/browser/source/cobalt/dom/intersection_observer_entry_init.h
+  #${COBALT_GEN_DIR}bindings/browser/source/cobalt/dom/intersection_observer_entry_init.h
   ${COBALT_CORE_DIR}dom/animation_frame_request_callback_list.cc
   ${COBALT_CORE_DIR}dom/animation_frame_request_callback_list.h
   ${COBALT_CORE_DIR}dom/attr.cc
@@ -95,7 +95,7 @@ list(APPEND cobalt_dom_SOURCES
   ${COBALT_CORE_DIR}dom/csp_delegate.cc
   ${COBALT_CORE_DIR}dom/csp_delegate.h
   ##${COBALT_CORE_DIR}dom/csp_delegate_enum.h
-  ${COBALT_GEN_DIR}bindings/browser/source/cobalt/dom/blob_property_bag.h
+  #${COBALT_GEN_DIR}bindings/browser/source/cobalt/dom/blob_property_bag.h
   #
   ${COBALT_CORE_DIR}dom/csp_delegate_factory.cc
   ${COBALT_CORE_DIR}dom/csp_delegate_factory.h
@@ -109,7 +109,7 @@ list(APPEND cobalt_dom_SOURCES
   ${COBALT_CORE_DIR}dom/device_orientation_event.cc
   ${COBALT_CORE_DIR}dom/device_orientation_event.h
   #${COBALT_CORE_DIR}dom/device_orientation_event_init.h
-  ${COBALT_GEN_DIR}bindings/browser/source/cobalt/dom/device_orientation_event_init.h
+  #${COBALT_GEN_DIR}bindings/browser/source/cobalt/dom/device_orientation_event_init.h
   #
   ${COBALT_CORE_DIR}dom/document.cc
   ${COBALT_CORE_DIR}dom/document.h
@@ -153,7 +153,7 @@ list(APPEND cobalt_dom_SOURCES
   ${COBALT_CORE_DIR}dom/event.cc
   ${COBALT_CORE_DIR}dom/event.h
   #${COBALT_CORE_DIR}dom/event_init.h
-  ${COBALT_GEN_DIR}bindings/browser/source/cobalt/dom/event_init.h
+  #${COBALT_GEN_DIR}bindings/browser/source/cobalt/dom/event_init.h
   #
   ${COBALT_CORE_DIR}dom/event_listener.h
   ${COBALT_CORE_DIR}dom/event_queue.cc
@@ -163,7 +163,7 @@ list(APPEND cobalt_dom_SOURCES
   ${COBALT_CORE_DIR}dom/focus_event.cc
   ${COBALT_CORE_DIR}dom/focus_event.h
   #${COBALT_CORE_DIR}dom/focus_event_init.h
-  ${COBALT_GEN_DIR}bindings/browser/source/cobalt/dom/focus_event_init.h
+  #${COBALT_GEN_DIR}bindings/browser/source/cobalt/dom/focus_event_init.h
   #
   ${COBALT_CORE_DIR}dom/font_cache.cc
   ${COBALT_CORE_DIR}dom/font_cache.h
@@ -231,12 +231,12 @@ list(APPEND cobalt_dom_SOURCES
   ${COBALT_CORE_DIR}dom/input_event.cc
   ${COBALT_CORE_DIR}dom/input_event.h
   #${COBALT_CORE_DIR}dom/input_event_init.h
-  ${COBALT_GEN_DIR}bindings/browser/source/cobalt/dom/input_event_init.h
+  #${COBALT_GEN_DIR}bindings/browser/source/cobalt/dom/input_event_init.h
   #
   ${COBALT_CORE_DIR}dom/keyboard_event.cc
   ${COBALT_CORE_DIR}dom/keyboard_event.h
   #${COBALT_CORE_DIR}dom/keyboard_event_init.h
-  ${COBALT_GEN_DIR}bindings/browser/source/cobalt/dom/keyboard_event_init.h
+  #${COBALT_GEN_DIR}bindings/browser/source/cobalt/dom/keyboard_event_init.h
   #
   ${COBALT_CORE_DIR}dom/keycode.h
   ${COBALT_CORE_DIR}dom/keyframes_map_updater.cc
@@ -259,12 +259,12 @@ list(APPEND cobalt_dom_SOURCES
   ${COBALT_CORE_DIR}dom/mouse_event.cc
   ${COBALT_CORE_DIR}dom/mouse_event.h
   #${COBALT_CORE_DIR}dom/mouse_event_init.h
-  ${COBALT_GEN_DIR}bindings/browser/source/cobalt/dom/mouse_event_init.h
+  #${COBALT_GEN_DIR}bindings/browser/source/cobalt/dom/mouse_event_init.h
   #
   ${COBALT_CORE_DIR}dom/mutation_observer.cc
   ${COBALT_CORE_DIR}dom/mutation_observer.h
   #${COBALT_CORE_DIR}dom/mutation_observer_init.h
-  ${COBALT_GEN_DIR}bindings/browser/source/cobalt/dom/mutation_observer_init.h
+  #${COBALT_GEN_DIR}bindings/browser/source/cobalt/dom/mutation_observer_init.h
   #
   ${COBALT_CORE_DIR}dom/mutation_observer_task_manager.cc
   ${COBALT_CORE_DIR}dom/mutation_observer_task_manager.h
@@ -302,7 +302,7 @@ list(APPEND cobalt_dom_SOURCES
   ${COBALT_CORE_DIR}dom/pointer_event.cc
   ${COBALT_CORE_DIR}dom/pointer_event.h
   #${COBALT_CORE_DIR}dom/pointer_event_init.h
-  ${COBALT_GEN_DIR}bindings/browser/source/cobalt/dom/pointer_event_init.h
+  #${COBALT_GEN_DIR}bindings/browser/source/cobalt/dom/pointer_event_init.h
   #
   ${COBALT_CORE_DIR}dom/pointer_state.cc
   ${COBALT_CORE_DIR}dom/pointer_state.h
@@ -348,7 +348,7 @@ list(APPEND cobalt_dom_SOURCES
   ${COBALT_CORE_DIR}dom/ui_event.cc
   ${COBALT_CORE_DIR}dom/ui_event.h
   #${COBALT_CORE_DIR}dom/ui_event_init.h
-  ${COBALT_GEN_DIR}bindings/browser/source/cobalt/dom/ui_event_init.h
+  #${COBALT_GEN_DIR}bindings/browser/source/cobalt/dom/ui_event_init.h
   #
   ${COBALT_CORE_DIR}dom/ui_event_with_key_state.cc
   ${COBALT_CORE_DIR}dom/ui_event_with_key_state.h
@@ -362,7 +362,7 @@ list(APPEND cobalt_dom_SOURCES
   ${COBALT_CORE_DIR}dom/wheel_event.cc
   ${COBALT_CORE_DIR}dom/wheel_event.h
   #${COBALT_CORE_DIR}dom/wheel_event_init.h
-  ${COBALT_GEN_DIR}bindings/browser/source/cobalt/dom/wheel_event_init.h
+  #${COBALT_GEN_DIR}bindings/browser/source/cobalt/dom/wheel_event_init.h
   #
   ${COBALT_CORE_DIR}dom/window.cc
   ${COBALT_CORE_DIR}dom/window.h
@@ -417,12 +417,12 @@ target_link_libraries(cobalt_dom PRIVATE
   cobalt_web_animations
   #cobalt_browser ## TODO ##
   modp_b64
-  dynamic_annotations
+  #dynamic_annotations
   GURL
   ${GNET_LIBS}
   ${GLIBXML_LIB}
   icu
-  ced
+  #ced
   glm
 )
 

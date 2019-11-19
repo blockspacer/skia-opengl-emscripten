@@ -1,6 +1,6 @@
 ﻿### --- GLIBJPEG ---###
 
-set(GLIBJPEG_SOURCES
+list(APPEND GLIBJPEG_SOURCES
   ${GLIBJPEG_DIR}jcapimin.c
   ${GLIBJPEG_DIR}jcapistd.c
   ${GLIBJPEG_DIR}jccoefct.c

@@ -47,7 +47,9 @@
 #include "cobalt/dom/media_query_list.h"
 #include "cobalt/dom/on_screen_keyboard.h"
 #include "cobalt/dom/on_screen_keyboard_bridge.h"
+#if !defined(DISABLE_COBALT_DOM_PARSER)
 #include "cobalt/dom/parser.h"
+#endif // !DISABLE_COBALT_DOM_PARSER
 #include "cobalt/dom/screenshot_manager.h"
 #if defined(ENABLE_TEST_RUNNER)
 #include "cobalt/dom/test_runner.h"
@@ -65,12 +67,17 @@
 #include "cobalt/loader/loader.h"
 #include "cobalt/loader/loader_factory.h"
 #include "cobalt/loader/mesh/mesh_cache.h"
+
+#if !defined(DISABLE_COBALT_MEDIA)
 #include "cobalt/media/can_play_type_handler.h"
 #include "cobalt/media/web_media_player_factory.h"
+#endif // !DISABLE_COBALT_MEDIA
+
 #if defined(ENABLE_GNET)//!defined(__EMSCRIPTEN__) && defined(__TODO__)
 #include "cobalt/network_bridge/cookie_jar.h"
 #include "cobalt/network_bridge/net_poster.h"
 #endif // ENABLE_GNET
+
 #include "cobalt/page_visibility/page_visibility_state.h"
 #include "cobalt/script/callback_function.h"
 #include "cobalt/script/environment_settings.h"
@@ -83,11 +90,11 @@
 #include "url/gurl.h"
 
 namespace cobalt {
-#if defined(ENABLE_COBALT_MEDIA_SESSION)
+#if !defined(DISABLE_COBALT_MEDIA_SESSION)
 namespace media_session {
 class MediaSession;
 }  // namespace media_session
-#endif // ENABLE_COBALT_MEDIA_SESSION
+#endif // DISABLE_COBALT_MEDIA_SESSION
 #if defined(ENABLE_SPEECH)
 namespace speech {
 class SpeechSynthesis;
@@ -98,20 +105,29 @@ class SpeechSynthesis;
 namespace cobalt {
 namespace dom {
 
+#if !defined(DISABLE_COBALT_CAMERA3D)
 class Camera3D;
+#endif // !defined(DISABLE_COBALT_CAMERA3D)
+
 class Console;
 class Document;
 class Element;
 class Event;
 class History;
+#if !defined(DISABLE_COBALT_STORAGE)
 class LocalStorageDatabase;
+#endif // !DISABLE_COBALT_STORAGE
 class Location;
+#if !defined(DISABLE_COBALT_MEDIA)
 class MediaSource;
+#endif // !DISABLE_COBALT_MEDIA
 class Navigator;
 class OnScreenKeyboard;
 class Performance;
 class Screen;
+#if !defined(DISABLE_COBALT_STORAGE)
 class Storage;
+#endif // !DISABLE_COBALT_STORAGE
 class WindowTimers;
 
 // The window object represents a window containing a DOM document.
@@ -133,7 +149,9 @@ class Window : public EventTarget,
   // base::TimeDelta parameter will contain the document's timeline time when
   // close() was called.
   typedef base::Callback<void(base::TimeDelta)> CloseCallback;
+#if !defined(DISABLE_COBALT_MEDIA)
   typedef UrlRegistry<MediaSource> MediaSourceRegistry;
+#endif // !DISABLE_COBALT_MEDIA
   typedef base::Callback<bool(const GURL&, const std::string&)> CacheCallback;
 
   enum ClockType {
@@ -142,11 +160,14 @@ class Window : public EventTarget,
     kClockTypeResolutionLimitedSystemTime
   };
 
-  Window(
+  Window(scoped_refptr<cobalt::dom::Performance>& performance,
       const bool autoStartDocumentLoad,
       const cssom::ViewportSize& view_size, float device_pixel_ratio,
       base::ApplicationState initial_application_state,
-      cssom::CSSParser* css_parser, Parser* dom_parser,
+      cssom::CSSParser* css_parser,
+#if !defined(DISABLE_COBALT_DOM_PARSER)
+      Parser* dom_parser,
+#endif // !DISABLE_COBALT_DOM_PARSER
       loader::FetcherFactory* fetcher_factory,
       loader::LoaderFactory* loader_factory,
       render_tree::ResourceProvider** resource_provider,
@@ -156,14 +177,22 @@ class Window : public EventTarget,
           reduced_image_cache_capacity_manager,
       loader::font::RemoteTypefaceCache* remote_typeface_cache,
       loader::mesh::MeshCache* mesh_cache,
+#if !defined(DISABLE_COBALT_STORAGE)
       LocalStorageDatabase* local_storage_database,
+#endif // !DISABLE_COBALT_STORAGE
+#if !defined(DISABLE_COBALT_MEDIA)
       media::CanPlayTypeHandler* can_play_type_handler,
       media::WebMediaPlayerFactory* web_media_player_factory,
+#endif // !DISABLE_COBALT_MEDIA
       script::ExecutionState* execution_state,
       script::ScriptRunner* script_runner,
       script::ScriptValueFactory* script_value_factory,
+#if !defined(DISABLE_COBALT_MEDIA)
       MediaSourceRegistry* media_source_registry,
-      DomStatTracker* dom_stat_tracker, const GURL& url,
+#endif // !DISABLE_COBALT_MEDIA
+      DomStatTracker* dom_stat_tracker,
+      const GURL& url,
+      scoped_refptr<cobalt::dom::Document>& new_document,
       const std::string& user_agent, const std::string& language,
       const std::string& font_language_script,
       const base::Callback<void(const GURL&)> navigation_callback,
@@ -181,10 +210,12 @@ class Window : public EventTarget,
       const CloseCallback& window_close_callback,
       const base::Closure& window_minimize_callback,
       OnScreenKeyboardBridge* on_screen_keyboard_bridge,
+#if !defined(DISABLE_COBALT_CAMERA3D)
       const scoped_refptr<input::Camera3D>& camera_3d,
-#if defined(ENABLE_COBALT_MEDIA_SESSION)
+#endif // !defined(DISABLE_COBALT_CAMERA3D)
+#if !defined(DISABLE_COBALT_MEDIA_SESSION)
       const scoped_refptr<cobalt::media_session::MediaSession>& media_session,
-#endif // ENABLE_COBALT_MEDIA_SESSION
+#endif // DISABLE_COBALT_MEDIA_SESSION
       const OnStartDispatchEventCallback&
           start_tracking_dispatch_event_callback,
       const OnStopDispatchEventCallback& stop_tracking_dispatch_event_callback,
@@ -246,8 +277,10 @@ class Window : public EventTarget,
   // Web API: CSSOM View Module (partial interface)
   //
 
+#if !defined(DISABLE_COBALT_MEDIA)
   // Parses a media query.
   scoped_refptr<MediaQueryList> MatchMedia(const std::string& query);
+#endif // !DISABLE_COBALT_MEDIA
 
   // As its name suggests, the Screen interface represents information about the
   // screen of the output device.
@@ -321,8 +354,10 @@ class Window : public EventTarget,
   void DestroyTimers();
 
   // Web API: Storage (implements)
+#if !defined(DISABLE_COBALT_STORAGE)
   scoped_refptr<Storage> local_storage() const;
   scoped_refptr<Storage> session_storage() const;
+#endif // !DISABLE_COBALT_STORAGE
 
   // Access to the Performance API (partial interface)
   //   https://dvcs.w3.org/hg/webperf/raw-file/tip/specs/NavigationTiming/Overview.html#sec-window.performance-attribute
@@ -340,7 +375,9 @@ class Window : public EventTarget,
   //
   const scoped_refptr<Console>& console() const;
 
+#if !defined(DISABLE_COBALT_CAMERA3D)
   const scoped_refptr<Camera3D>& camera_3d() const;
+#endif // !defined(DISABLE_COBALT_CAMERA3D)
 
 #if defined(ENABLE_TEST_RUNNER)
   const scoped_refptr<TestRunner>& test_runner() const;
@@ -373,13 +410,17 @@ class Window : public EventTarget,
 
   void SetSize(cssom::ViewportSize size, float device_pixel_ratio);
 
+#if !defined(DISABLE_COBALT_CAMERA3D)
   void SetCamera3D(const scoped_refptr<input::Camera3D>& camera_3d);
+#endif // !defined(DISABLE_COBALT_CAMERA3D)
 
+#if !defined(DISABLE_COBALT_MEDIA)
   void set_web_media_player_factory(
       media::WebMediaPlayerFactory* web_media_player_factory) {
     html_element_context_->set_web_media_player_factory(
         web_media_player_factory);
   }
+#endif // !DISABLE_COBALT_MEDIA
 
   // Sets the current application state, forwarding on to the
   // PageVisibilityState associated with it and its document, causing
@@ -430,7 +471,9 @@ class Window : public EventTarget,
     return ui_nav_root_;
   }
 
+#if !defined(DISABLE_COBALT_DOM_PARSER)
   bool TryForceStartDocumentLoad();
+#endif // !DISABLE_COBALT_DOM_PARSER
 
   bool isDocumentStartedLoading() const {
     return isDocumentStartedLoading_;
@@ -442,15 +485,20 @@ class Window : public EventTarget,
   /// \note custom
   void ForceStartDocumentLoader();
 
+  void FireHashChangeEvent();
+
+  static scoped_refptr<base::BasicClock> MakePerformanceClock(
+      Window::ClockType clock_type);
+
   DEFINE_WRAPPABLE_TYPE(Window);
 
  private:
   void StartDocumentLoad(
       loader::FetcherFactory* fetcher_factory, const GURL& url,
+#if !defined(DISABLE_COBALT_DOM_PARSER)
       Parser* dom_parser,
+#endif // !DISABLE_COBALT_DOM_PARSER
       const loader::Decoder::OnCompleteFunction& load_complete_callback);
-  scoped_refptr<base::BasicClock> MakePerformanceClock(
-      Window::ClockType clock_type);
 
   class RelayLoadEvent;
 
@@ -458,8 +506,6 @@ class Window : public EventTarget,
 
   // From EventTarget.
   std::string GetDebugName() override { return "Window"; }
-
-  void FireHashChangeEvent();
 
   cssom::ViewportSize viewport_size_;
 
@@ -482,12 +528,16 @@ class Window : public EventTarget,
   const std::unique_ptr<HTMLElementContext> html_element_context_;
   scoped_refptr<Performance> performance_;
   scoped_refptr<Document> document_;
+#if !defined(DISABLE_COBALT_DOM_PARSER)
   std::unique_ptr<loader::Loader> document_loader_;
+#endif // !DISABLE_COBALT_DOM_PARSER
   scoped_refptr<History> history_;
   scoped_refptr<Navigator> navigator_;
   std::unique_ptr<RelayLoadEvent> relay_on_load_event_;
   scoped_refptr<Console> console_;
+#if !defined(DISABLE_COBALT_CAMERA3D)
   scoped_refptr<Camera3D> camera_3d_;
+#endif // !defined(DISABLE_COBALT_CAMERA3D)
   std::unique_ptr<WindowTimers> window_timers_;
   std::unique_ptr<AnimationFrameRequestCallbackList>
       animation_frame_request_callback_list_;
@@ -497,8 +547,10 @@ class Window : public EventTarget,
   scoped_refptr<speech::SpeechSynthesis> speech_synthesis_;
 #endif // ENABLE_SPEECH
 
+#if !defined(DISABLE_COBALT_STORAGE)
   scoped_refptr<Storage> local_storage_;
   scoped_refptr<Storage> session_storage_;
+#endif // !DISABLE_COBALT_STORAGE
 
   scoped_refptr<Screen> screen_;
 

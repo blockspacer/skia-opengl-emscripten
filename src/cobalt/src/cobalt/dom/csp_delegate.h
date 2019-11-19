@@ -21,7 +21,7 @@
 #include "cobalt/base/source_location.h"
 #if defined(ENABLE_COBALT_CSP)
 #include "cobalt/csp/content_security_policy.h"
-#endif
+#endif // ENABLE_COBALT_CSP
 #include "cobalt/dom/csp_violation_reporter.h"
 
 namespace cobalt {

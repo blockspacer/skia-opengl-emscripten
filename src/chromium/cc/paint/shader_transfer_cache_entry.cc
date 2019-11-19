@@ -18,6 +18,7 @@ size_t ServiceShaderTransferCacheEntry::CachedSize() const {
   return size_;
 }
 
+//#if SK_SUPPORT_GPU
 bool ServiceShaderTransferCacheEntry::Deserialize(
     GrContext* context,
     base::span<const uint8_t> data) {
@@ -25,5 +26,6 @@ bool ServiceShaderTransferCacheEntry::Deserialize(
   NOTREACHED();
   return false;
 }
+//#endif // SK_SUPPORT_GPU
 
 }  // namespace cc

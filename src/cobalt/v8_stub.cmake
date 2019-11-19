@@ -1,6 +1,6 @@
 ﻿cmake_minimum_required(VERSION 2.8)
 
-set(v8_stub_SOURCES
+list(APPEND v8_stub_SOURCES
   ${COBALT_PORT_DIR}v8_stub/v8c_array_buffer.cc
   ${COBALT_PORT_DIR}v8_stub/v8c_engine.cc
   ${COBALT_PORT_DIR}v8_stub/v8c_global_environment.cc

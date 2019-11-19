@@ -1,6 +1,6 @@
 ﻿### --- GLIBXML ---###
 
-set(GLIBXML_SOURCES
+list(APPEND GLIBXML_SOURCES
   ${GLIBXML_DIR}chromium/libxml_utils.cc
   ${GLIBXML_DIR}chromium/libxml_utils.h
   ${GLIBXML_DIR}linux/config.h

@@ -2,7 +2,7 @@
 
 # see https://github.com/chromium/chromium/blob/2ca8c5037021c9d2ecc00b787d58a31ed8fc8bcb/cc/animation/BUILD.gn
 
-set(ANIMATION_CC_SOURCES
+list(APPEND ANIMATION_CC_SOURCES
   ${ANIMATION_CC_DIR}animation.cc
   #${ANIMATION_CC_DIR}animation.h",
   ${ANIMATION_CC_DIR}animation_curve.cc
@@ -52,7 +52,7 @@ add_library(ANIMATION_CC STATIC
 
 target_link_libraries(ANIMATION_CC PRIVATE
   PAINT_CC
-  CC
+  ${CC_LIB}
   GFX_ANIMATION
   GFX_CODEC
   GFX_COLOR_SPACE

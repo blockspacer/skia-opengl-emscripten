@@ -14,6 +14,8 @@
 
 #include "cobalt/dom/storage_event.h"
 
+#if !defined(DISABLE_COBALT_STORAGE)
+
 #include "cobalt/base/token.h"
 #include "cobalt/base/tokens.h"
 #include "cobalt/dom/storage.h"
@@ -47,3 +49,5 @@ void StorageEvent::TraceMembers(script::Tracer* tracer) {
 
 }  // namespace dom
 }  // namespace cobalt
+
+#endif // !defined(DISABLE_COBALT_STORAGE)

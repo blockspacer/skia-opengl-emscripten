@@ -3,7 +3,7 @@
 
 # skia_cobalt.gypi
 # TODO: uses outdated skia ver!
-set(COBALT_skia_cobalt_SOURCES
+list(APPEND COBALT_skia_cobalt_SOURCES
   ${COBALT_CORE_DIR}/renderer/rasterizer/skia/skia/config/SkUserConfig.h
   ${COBALT_CORE_DIR}/renderer/rasterizer/skia/skia/src/effects/SkNV122RGBShader.cc
   ${COBALT_CORE_DIR}/renderer/rasterizer/skia/skia/src/effects/SkNV122RGBShader.h
@@ -50,10 +50,10 @@ target_link_libraries(cobalt_renderer PRIVATE
   starboard_eztime
   starboard_common
   modp_b64
-  dynamic_annotations
+  #dynamic_annotations
   ${GLIBXML_LIB}
   icu
-  ced
+  #ced
   glm
   ${SKIA_LIB}
   ${HARFBUZZ_LIBRARIES}

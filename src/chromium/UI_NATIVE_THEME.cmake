@@ -1,6 +1,6 @@
 ### --- UI_NATIVE_THEME ---###
 
-set(UI_NATIVE_THEME_SOURCES
+list(APPEND UI_NATIVE_THEME_SOURCES
   ${UI_NATIVE_THEME_DIR}caption_style.cc
   ${UI_NATIVE_THEME_DIR}caption_style.h
   ## TODO ##${UI_NATIVE_THEME_DIR}caption_style_mac.mm",
@@ -44,7 +44,7 @@ target_link_libraries(UI_NATIVE_THEME PRIVATE
   #"//base",
   base
   #"//base/third_party/dynamic_annotations",
-  dynamic_annotations
+  #dynamic_annotations
   #"//cc/paint",
   PAINT_CC
   #"//ui/base",

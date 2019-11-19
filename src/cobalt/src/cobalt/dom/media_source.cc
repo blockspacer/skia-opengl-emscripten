@@ -42,6 +42,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#if !defined(DISABLE_COBALT_MEDIA)
+
 #include "cobalt/dom/media_source.h"
 
 #include <algorithm>
@@ -595,3 +597,5 @@ void MediaSource::ScheduleEvent(base::Token event_name) {
 
 }  // namespace dom
 }  // namespace cobalt
+
+#endif // !DISABLE_COBALT_MEDIA

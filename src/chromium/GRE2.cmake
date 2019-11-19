@@ -1,6 +1,6 @@
 ## --- GRE2 ---###
 
-set(GRE2_SOURCES
+list(APPEND GRE2_SOURCES
  ${GRE2_DIR}src/re2/bitmap256.h
  ${GRE2_DIR}src/re2/bitstate.cc
  ${GRE2_DIR}src/re2/compile.cc

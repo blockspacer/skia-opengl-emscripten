@@ -15,6 +15,8 @@
 #ifndef COBALT_DOM_EME_MEDIA_KEYS_H_
 #define COBALT_DOM_EME_MEDIA_KEYS_H_
 
+#if !defined(DISABLE_COBALT_MEDIA)
+
 #include <string>
 #include <vector>
 
@@ -83,5 +85,7 @@ class MediaKeys : public script::Wrappable,
 }  // namespace eme
 }  // namespace dom
 }  // namespace cobalt
+
+#endif // !DISABLE_COBALT_MEDIA
 
 #endif  // COBALT_DOM_EME_MEDIA_KEYS_H_

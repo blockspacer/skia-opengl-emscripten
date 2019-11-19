@@ -17,7 +17,7 @@
 #       '<(DEPTH)/third_party/QR-Code-generator/qr_code_generator.gyp:qr_code_generator',
 #     ],
 #   },
-set(cobalt_overlay_info_SOURCES
+list(APPEND cobalt_overlay_info_SOURCES
   ${COBALT_CORE_DIR}overlay_info/overlay_info_registry.cc
   ${COBALT_CORE_DIR}overlay_info/overlay_info_registry.h
   ## TODO ## ${COBALT_CORE_DIR}overlay_info/qr_code_overlay.cc

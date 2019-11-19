@@ -5,6 +5,8 @@
 #ifndef UI_GFX_SKIA_VECTOR_ANIMATION_H_
 #define UI_GFX_SKIA_VECTOR_ANIMATION_H_
 
+#if defined(ENABLE_SKOTTIE)
+
 #include <memory>
 
 #include "base/macros.h"
@@ -19,7 +21,7 @@
 namespace cc {
 #if defined(ENABLE_SKOTTIE)
 class SkottieWrapper;
-#endif
+#endif // ENABLE_SKOTTIE
 }  // namespace cc
 
 namespace gfx {
@@ -88,7 +90,8 @@ class GFX_EXPORT SkiaVectorAnimation {
 
 #if defined(ENABLE_SKOTTIE)
   explicit SkiaVectorAnimation(scoped_refptr<cc::SkottieWrapper> skottie);
-#endif
+#endif // ENABLE_SKOTTIE
+
   ~SkiaVectorAnimation();
 
   void SetAnimationObserver(SkiaVectorAnimationObserver* Observer);
@@ -147,7 +150,7 @@ class GFX_EXPORT SkiaVectorAnimation {
 #if defined(ENABLE_SKOTTIE)
   // Returns the skottie object that contins the animation data.
   scoped_refptr<cc::SkottieWrapper> skottie() const { return skottie_; }
-#endif
+#endif // ENABLE_SKOTTIE
 
  private:
   friend class SkiaVectorAnimationTest;
@@ -242,11 +245,13 @@ class GFX_EXPORT SkiaVectorAnimation {
 
 #if defined(ENABLE_SKOTTIE)
   scoped_refptr<cc::SkottieWrapper> skottie_;
-#endif
+#endif // ENABLE_SKOTTIE
 
   DISALLOW_COPY_AND_ASSIGN(SkiaVectorAnimation);
 };
 
 }  // namespace gfx
+
+#endif // ENABLE_SKOTTIE
 
 #endif  // UI_GFX_SKIA_VECTOR_ANIMATION_H_

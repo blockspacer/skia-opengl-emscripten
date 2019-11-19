@@ -1,6 +1,6 @@
 ﻿cmake_minimum_required(VERSION 2.8)
 
-set(cobalt_render_tree_SOURCES
+list(APPEND cobalt_render_tree_SOURCES
   ${COBALT_CORE_DIR}render_tree/blur_filter.h
   ${COBALT_CORE_DIR}render_tree/border.cc
   ${COBALT_CORE_DIR}render_tree/border.h
@@ -51,7 +51,7 @@ set(cobalt_render_tree_SOURCES
   ${COBALT_CORE_DIR}render_tree/viewport_filter.h
 )
 
-set(cobalt_render_tree_animations_SOURCES
+list(APPEND cobalt_render_tree_animations_SOURCES
   ${COBALT_CORE_DIR}render_tree/animations/animate_node.cc
   ${COBALT_CORE_DIR}render_tree/animations/animate_node.h
 )
@@ -71,7 +71,7 @@ target_link_libraries(cobalt_render_tree PRIVATE
   cobalt_math
   base # TODO
   modp_b64
-  dynamic_annotations
+  #dynamic_annotations
   ${SKIA_LIB} # TODO
   ${skottie_LIB} # TODO
 )

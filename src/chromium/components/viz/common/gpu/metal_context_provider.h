@@ -8,7 +8,9 @@
 #include <memory>
 #include "components/viz/common/viz_metal_context_provider_export.h"
 
+//#if SK_SUPPORT_GPU
 class GrContext;
+//#endif // SK_SUPPORT_GPU
 
 #if __OBJC__
 @protocol MTLDevice;

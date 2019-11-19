@@ -72,8 +72,8 @@ if (BUILD_APP)
   # --- build ---
   execute_process(
     COMMAND
-    ${COLORED_OUTPUT_ENABLER}
-      ${EMSCRIPTEN_MAKE} "make" ${MAKE_OPTS} ${EXTRA_EMMAKE_OPTS}
+      ${COLORED_OUTPUT_ENABLER}
+        ${CMAKE_COMMAND} "-E" "time" "cmake" "--build" "." ${CMAKE_BUILD_TARGET} ${CMAKE_CLEAN_FIRST} "--" ${MAKE_OPTS} ${EXTRA_EMMAKE_OPTS}
     WORKING_DIRECTORY ${BUILD_DIR}
     TIMEOUT 7200 # sec
     RESULT_VARIABLE retcode
@@ -82,6 +82,19 @@ if (BUILD_APP)
   if(NOT "${retcode}" STREQUAL "0")
     message( FATAL_ERROR "Bad exit status ${retcode} ${_ERROR_VARIABLE}")
   endif()
+
+  #execute_process(
+  #  COMMAND
+  #  ${COLORED_OUTPUT_ENABLER}
+  #    ${EMSCRIPTEN_MAKE} "make" ${BUILD_TARGET} ${MAKE_OPTS} ${EXTRA_EMMAKE_OPTS}
+  #  WORKING_DIRECTORY ${BUILD_DIR}
+  #  TIMEOUT 7200 # sec
+  #  RESULT_VARIABLE retcode
+  #  ERROR_VARIABLE _ERROR_VARIABLE
+  #)
+  #if(NOT "${retcode}" STREQUAL "0")
+  #  message( FATAL_ERROR "Bad exit status ${retcode} ${_ERROR_VARIABLE}")
+  #endif()
 
   #execute_process(
   #  COMMAND

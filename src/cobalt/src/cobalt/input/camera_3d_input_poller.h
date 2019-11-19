@@ -17,6 +17,8 @@
 #ifndef COBALT_INPUT_CAMERA_3D_INPUT_POLLER_H_
 #define COBALT_INPUT_CAMERA_3D_INPUT_POLLER_H_
 
+#if !defined(DISABLE_COBALT_CAMERA3D)
+
 #include <map>
 #include <utility>
 
@@ -93,5 +95,7 @@ class Camera3DInputPoller : public Camera3D {
 
 }  // namespace input
 }  // namespace cobalt
+
+#endif // !defined(DISABLE_COBALT_CAMERA3D)
 
 #endif  // COBALT_INPUT_CAMERA_3D_INPUT_POLLER_H_

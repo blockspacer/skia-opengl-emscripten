@@ -238,12 +238,12 @@ target_link_libraries(cobalt_media PRIVATE
   starboard_common
   #starboard_core
   modp_b64
-  dynamic_annotations
+  #dynamic_annotations
   GURL
   ${GNET_LIBS}
   ${GLIBXML_LIB}
   icu
-  ced
+  #ced
   glm
   ${WEBP_LIB} # requires libpng
   #${libjpeg_LIB}

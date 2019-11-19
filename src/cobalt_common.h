@@ -32,7 +32,11 @@
 
 #include "cobalt/dom/html_custom_element.h"
 
+#if !defined(DISABLE_COBALT_DOM_PARSER)
 #include "cobalt/dom_parser/html_decoder.h"
+#include "cobalt/dom_parser/parser.h"
+#endif // !DISABLE_COBALT_DOM_PARSER
+
 #include "cobalt/dom/attr.h"
 #include "cobalt/dom/font_cache.h"
 #include "cobalt/dom/document.h"
@@ -68,7 +72,8 @@
 #include "cobalt/dom/node_list.h"
 #include "cobalt/dom/text.h"
 #include "cobalt/dom/xml_document.h"
-#include "cobalt/dom_parser/parser.h"
+
+#include "cobalt/dom/performance.h"
 
 #include "cobalt/dom/rule_matching.h"
 
@@ -76,7 +81,7 @@
 //#include "cobalt/dom/testing/stub_script_runner.h"
 
 #include "cobalt/dom/text.h"
-#include "cobalt/dom_parser/parser.h"
+
 //#include "cobalt/loader/fetcher_factory.h"
 
 #include "cobalt/css_parser/parser.h"
@@ -143,6 +148,7 @@
 #include "cobalt/cssom/url_src_value.h"
 #include "cobalt/cssom/url_value.h"
 #include "cobalt/cssom/viewport_size.h"
+#include "cobalt/cssom/user_agent_style_sheet.h"
 
 //#include "cobalt/browser/splash_screen_cache.h"
 //#include "cobalt/browser/stack_size_constants.h"
@@ -160,15 +166,16 @@
 #include "cobalt/dom/input_event_init.h"
 #include "cobalt/dom/keyboard_event.h"
 #include "cobalt/dom/keyboard_event_init.h"
+#if !defined(DISABLE_COBALT_STORAGE)
 #include "cobalt/dom/local_storage_database.h"
+#include "cobalt/dom/storage.h"
+#endif // !DISABLE_COBALT_STORAGE
 #include "cobalt/dom/mutation_observer_task_manager.h"
 #include "cobalt/dom/pointer_event.h"
-#include "cobalt/dom/storage.h"
 #include "cobalt/dom/ui_event.h"
 #include "cobalt/dom/url.h"
 #include "cobalt/dom/wheel_event.h"
 #include "cobalt/dom/window.h"
-#include "cobalt/dom_parser/parser.h"
 //#include "cobalt/h5vcc/h5vcc.h"
 #include "cobalt/layout/topmost_event_target.h"
 #include "cobalt/loader/image/animated_image_tracker.h"
@@ -176,7 +183,6 @@
 #include "cobalt/page_visibility/visibility_state.h"
 #include "cobalt/script/error_report.h"
 #include "cobalt/script/javascript_engine.h"
-//#include "cobalt/storage/storage_manager.h"
 #include "starboard/accessibility.h"
 #include "starboard/log.h"
 
@@ -201,19 +207,21 @@
 #include "cobalt/dom/dom_settings.h"
 #include "cobalt/dom/input_event_init.h"
 #include "cobalt/dom/keyboard_event_init.h"
-#include "cobalt/dom/local_storage_database.h"
 #include "cobalt/dom/media_source.h"
 #include "cobalt/dom/on_screen_keyboard_bridge.h"
 #include "cobalt/dom/pointer_event_init.h"
 //#include "cobalt/dom/screenshot_manager.h"
 #include "cobalt/dom/wheel_event_init.h"
 #include "cobalt/dom/window.h"
-#include "cobalt/dom_parser/parser.h"
 #include "cobalt/layout/layout_manager.h"
 #include "cobalt/loader/fetcher_factory.h"
 #include "cobalt/math/size.h"
+#if !defined(DISABLE_COBALT_MEDIA)
 #include "cobalt/media/can_play_type_handler.h"
 #include "cobalt/media/web_media_player_factory.h"
+#include "cobalt/media/base/video_frame_provider.h"
+#include "cobalt/media/media_module.h"
+#endif // !DISABLE_COBALT_MEDIA
 //#include "cobalt/network/network_module.h"
 #include "cobalt/render_tree/node.h"
 #include "cobalt/render_tree/resource_provider.h"
@@ -269,13 +277,9 @@
 #include "cobalt/layout/text_box.h"
 #include "cobalt/layout/used_style.h"
 #include "cobalt/layout/white_space_processing.h"
-#include "cobalt/media/base/video_frame_provider.h"
 #include "cobalt/render_tree/image.h"
 #include "cobalt/web_animations/keyframe_effect_read_only.h"
 #include "starboard/decode_target.h"
-
-#include "cobalt/media/can_play_type_handler.h"
-#include "cobalt/media/media_module.h"
 //#include "cobalt/network/network_module.h"
 //#include "cobalt/overlay_info/qr_code_overlay.h"
 #include "cobalt/render_tree/node.h"
@@ -283,7 +287,6 @@
 #include "cobalt/render_tree/resource_provider_stub.h"
 //#include "cobalt/renderer/renderer_module.h"
 //#include "cobalt/script/array_buffer.h"
-//#include "cobalt/storage/storage_manager.h"
 #include "cobalt/system_window/system_window.h"
 //#include "cobalt/webdriver/session_driver.h"
 #include "starboard/configuration.h"
@@ -308,7 +311,6 @@
 #include "cobalt/dom/screen.h"
 #include "cobalt/dom/screenshot.h"
 #include "cobalt/dom/screenshot_manager.h"
-#include "cobalt/dom/storage.h"
 #include "cobalt/dom/wheel_event.h"
 #include "cobalt/dom/window_timers.h"
 //#include "cobalt/media_session/media_session_client.h"

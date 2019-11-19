@@ -3,7 +3,7 @@
 # 'dependencies': [
 #   '<(DEPTH)/cobalt/base/base.gyp:base',
 # ],
-set(COBALT_ui_navigation_SOURCES
+list(APPEND COBALT_ui_navigation_SOURCES
   ${COBALT_CORE_DIR}ui_navigation/interface.cc
   ${COBALT_CORE_DIR}ui_navigation/interface.h
   ${COBALT_CORE_DIR}ui_navigation/nav_item.cc

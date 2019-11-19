@@ -9,7 +9,7 @@
 #  '<(DEPTH)/net/net.gyp:net',
 #  '<(DEPTH)/third_party/libxml/libxml.gyp:libxml',
 #],
-set(cobalt_dom_parser_SOURCES
+list(APPEND cobalt_dom_parser_SOURCES
   ${COBALT_CORE_DIR}dom_parser/html_decoder.cc
   ${COBALT_CORE_DIR}dom_parser/html_decoder.h
   ${COBALT_CORE_DIR}dom_parser/libxml_html_parser_wrapper.cc

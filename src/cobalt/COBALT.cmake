@@ -1,9 +1,9 @@
 ﻿cmake_minimum_required(VERSION 2.8)
 
-set(cobalt_third_party_super_fast_hash_SOURCES
+#list(APPEND cobalt_third_party_super_fast_hash_SOURCES
   # embedded src!
   #${COBALT_PORT_DIR}third_party/super_fast_hash/super_fast_hash.cc
-)
+#)
 
 ## --- COBALT_CORE ---###
 

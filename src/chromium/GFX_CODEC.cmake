@@ -2,7 +2,7 @@
 
 ### --- GFX_CODEC ---###
 
-set(GFX_CODEC_SOURCES
+list(APPEND GFX_CODEC_SOURCES
   #${GFX_CODEC_DIR}codec_export.h
   # TODO # ${GFX_CODEC_DIR}jpeg_codec.cc
   # TODO # ${GFX_CODEC_DIR}png_codec.cc
@@ -47,7 +47,7 @@ target_link_libraries(GFX_CODEC PRIVATE
   #${libjpeg_LIB}
   ${libjpeg_TURBO_LIB}
   #${libpng_LIB}
-  dynamic_annotations
+  #dynamic_annotations
   ${BASE_LIBRARIES}
   GFX_GEOMETRY_SKIA
   GFX_GEOMETRY

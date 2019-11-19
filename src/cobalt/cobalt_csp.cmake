@@ -6,7 +6,7 @@ cmake_minimum_required(VERSION 2.8)
 #  '<(DEPTH)/net/net.gyp:net',
 #  '<(DEPTH)/url/url.gyp:url',
 #],
-set(COBALT_CSP_SOURCES
+list(APPEND COBALT_CSP_SOURCES
   ${COBALT_CORE_DIR}csp/content_security_policy.cc
   ${COBALT_CORE_DIR}csp/content_security_policy.h
   ${COBALT_CORE_DIR}csp/crypto.cc
@@ -38,7 +38,7 @@ target_link_libraries(cobalt_csp PRIVATE
   #${BASE_LIBRARIES}
   #base
   #SKIA
-  dynamic_annotations
+  #dynamic_annotations
   #UI_GFX
   ##BLINK_RENDERER_CORE
   #BLINK_PUBLIC_COMMON
@@ -62,7 +62,7 @@ target_link_libraries(cobalt_csp PRIVATE
   ## webrtc
   ## zlib
   icu
-  ced
+  #ced
   glm
   #CC
   ##G_GPU

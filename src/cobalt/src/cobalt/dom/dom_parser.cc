@@ -36,6 +36,7 @@ DOMParser::DOMParser(HTMLElementContext* html_element_context)
 
 scoped_refptr<Document> DOMParser::ParseFromString(
     const std::string& str, DOMParserSupportedType type) {
+#if !defined(DISABLE_COBALT_DOM_PARSER)
   switch (type) {
     case kDOMParserSupportedTypeTextHtml:
       return html_element_context_->dom_parser()->ParseDocument(
@@ -47,6 +48,7 @@ scoped_refptr<Document> DOMParser::ParseFromString(
       return html_element_context_->dom_parser()->ParseXMLDocument(
           str, html_element_context_, GetInlineSourceLocation());
   }
+#endif // !DISABLE_COBALT_DOM_PARSER
   LOG(WARNING) << "DOMParse.ParseFromString received invalid type value.";
   return NULL;
 }

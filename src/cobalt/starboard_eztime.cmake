@@ -6,7 +6,7 @@
 #  '<(DEPTH)/third_party/icu/icu.gyp:icui18n',
 #  '<(DEPTH)/third_party/icu/icu.gyp:icuuc',
 #],
-set(starboard_eztime_SOURCES
+list(APPEND starboard_eztime_SOURCES
   ${COBALT_PORT_DIR}/starboard/client_porting/eztime/eztime.cc
   ${COBALT_PORT_DIR}/starboard/client_porting/eztime/eztime.h
 )

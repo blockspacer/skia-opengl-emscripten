@@ -2,7 +2,7 @@
 
 ### --- GFX_GEOMETRY_SKIA ---###
 
-set(GFX_GEOMETRY_SKIA_SOURCES
+list(APPEND GFX_GEOMETRY_SKIA_SOURCES
   #geometry_skia_export.h",
   ${GFX_GEOMETRY_SKIA_DIR}rrect_f.cc
   #rrect_f.h",

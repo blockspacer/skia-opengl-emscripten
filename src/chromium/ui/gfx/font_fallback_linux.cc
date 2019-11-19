@@ -4,9 +4,9 @@
 
 #include "ui/gfx/font_fallback_linux.h"
 
-#if !defined(OS_EMSCRIPTEN)
+#if !defined(DISABLE_FONTCONFIG)
 #include <fontconfig/fontconfig.h>
-#endif
+#endif // !defined(DISABLE_FONTCONFIG)
 
 #include <map>
 #include <memory>
@@ -29,7 +29,7 @@ typedef std::map<std::string, std::vector<Font> > FallbackCache;
 base::LazyInstance<FallbackCache>::Leaky g_fallback_cache =
     LAZY_INSTANCE_INITIALIZER;
 
-#if !defined(OS_EMSCRIPTEN)
+#if !defined(DISABLE_FONTCONFIG)
 std::string GetFilenameFromFcPattern(FcPattern* pattern) {
   const char* c_filename = nullptr;
   if (FcPatternGetString(pattern, FC_FILE, 0,
@@ -41,7 +41,7 @@ std::string GetFilenameFromFcPattern(FcPattern* pattern) {
       reinterpret_cast<const char*>(FcConfigGetSysRoot(nullptr));
   return std::string(sysroot ? sysroot : "") + c_filename;
 }
-#endif
+#endif // !defined(DISABLE_FONTCONFIG)
 
 }  // namespace
 
@@ -54,7 +54,7 @@ std::vector<Font> GetFallbackFonts(const Font& font) {
   if (!fallback_fonts->empty())
     return *fallback_fonts;
 
-#if !defined(OS_EMSCRIPTEN)
+#if !defined(DISABLE_FONTCONFIG)
   FcPattern* pattern = FcPatternCreate();
   FcValue family;
   family.type = FcTypeString;
@@ -83,12 +83,12 @@ std::vector<Font> GetFallbackFonts(const Font& font) {
 
   if (fallback_fonts->empty())
     fallback_fonts->push_back(Font(font_family, 13));
-#endif
+#endif // !defined(DISABLE_FONTCONFIG)
 
   return *fallback_fonts;
 }
 
-#if !defined(OS_EMSCRIPTEN)
+#if !defined(DISABLE_FONTCONFIG)
 namespace {
 
 class CachedFont {
@@ -268,17 +268,17 @@ base::LazyInstance<FontSetCache>::Leaky g_font_sets_by_locale =
     LAZY_INSTANCE_INITIALIZER;
 
 }  // namespace
-#endif // OS_EMSCRIPTEN
+#endif // !defined(DISABLE_FONTCONFIG)
 
 FallbackFontData GetFallbackFontForChar(UChar32 c, const std::string& locale) {
-#if !defined(OS_EMSCRIPTEN)
+#if !defined(DISABLE_FONTCONFIG)
   auto& cached_font_set = g_font_sets_by_locale.Get()[locale];
   if (!cached_font_set)
     cached_font_set = CachedFontSet::CreateForLocale(locale);
   return cached_font_set->GetFallbackFontForChar(c);
 #else
     return FallbackFontData();
-#endif
+#endif // !defined(DISABLE_FONTCONFIG)
 }
 
 }  // namespace gfx

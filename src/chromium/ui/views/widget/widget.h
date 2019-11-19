@@ -39,7 +39,9 @@ class Rect;
 
 namespace ui {
 class Accelerator;
+#if !defined(UI_VIEWS_NO_COMPOSITOR)
 class Compositor;
+#endif // !UI_VIEWS_NO_COMPOSITOR
 class DefaultThemeProvider;
 class GestureRecognizer;
 class InputMethod;

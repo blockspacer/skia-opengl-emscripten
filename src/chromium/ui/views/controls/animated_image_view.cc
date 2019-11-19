@@ -4,6 +4,7 @@
 
 #include "ui/views/controls/animated_image_view.h"
 
+#if defined(ENABLE_SKOTTIE)
 #include <utility>
 
 #include "base/logging.h"
@@ -143,3 +144,5 @@ void AnimatedImageView::ClearCurrentCompositor() {
 }
 
 }  // namespace views
+
+#endif // ENABLE_SKOTTIE

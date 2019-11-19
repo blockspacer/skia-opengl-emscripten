@@ -1,6 +1,8 @@
 ﻿#pragma once
 
+#if defined(ENABLE_BASE)
 #include "build/build_config.h"
+#endif // defined(ENABLE_BASE)
 
 #if defined(OS_WIN) && !defined(ENABLE_OPENGL)
 #error "OS_WIN requires ENABLE_OPENGL"

@@ -1,10 +1,8 @@
 ﻿### --- GLIBPNG ---###
 
-set(GLIBPNG_DIR
-  ${CHROMIUM_DIR}third_party/libpng/
-)
+set(GLIBPNG_DIR ${CHROMIUM_DIR}third_party/libpng/)
 
-set(GLIBPNG_SOURCES
+list(APPEND GLIBPNG_SOURCES
   ${GLIBPNG_DIR}png.c
   ${GLIBPNG_DIR}png.h
   ${GLIBPNG_DIR}pngconf.h

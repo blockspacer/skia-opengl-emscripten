@@ -13,9 +13,9 @@
 #include "cc/paint/transfer_cache_entry.h"
 #include "third_party/skia/include/core/SkRefCnt.h"
 
-#if defined(SK_SUPPORT_GPU)
+//#if SK_SUPPORT_GPU
 class GrContext;
-#endif // defined(SK_SUPPORT_GPU)
+//#endif // SK_SUPPORT_GPU
 class SkColorSpace;
 class SkImage;
 struct SkImageInfo;
@@ -65,21 +65,21 @@ class CC_PAINT_EXPORT ServiceImageTransferCacheEntry
   // Populates this entry using |decoded_image| described by |row_bytes| and
   // |image_info|. The image is uploaded to the GPU if its dimensions are both
   // at most |context_|->maxTextureSize().
-#if defined(SK_SUPPORT_GPU)
+//#if SK_SUPPORT_GPU
   bool BuildFromDecodedData(GrContext* context,
                             base::span<const uint8_t> decoded_image,
                             size_t row_bytes,
                             const SkImageInfo& image_info,
                             bool needs_mips,
                             sk_sp<SkColorSpace> target_color_space);
-#endif // defined(SK_SUPPORT_GPU)
+//#endif // SK_SUPPORT_GPU
 
   // ServiceTransferCacheEntry implementation:
   size_t CachedSize() const final;
 
-#if defined(SK_SUPPORT_GPU)
+//#if SK_SUPPORT_GPU
   bool Deserialize(GrContext* context, base::span<const uint8_t> data) final;
-#endif // defined(SK_SUPPORT_GPU)
+//#endif // SK_SUPPORT_GPU
 
   bool fits_on_gpu() const { return fits_on_gpu_; }
   const sk_sp<SkImage>& image() const { return image_; }
@@ -93,9 +93,9 @@ class CC_PAINT_EXPORT ServiceImageTransferCacheEntry
                    uint32_t height,
                    sk_sp<SkColorSpace> target_color_space);
 
-#if defined(SK_SUPPORT_GPU)
+//#if SK_SUPPORT_GPU
   GrContext* context_ = nullptr;
-#endif // defined(SK_SUPPORT_GPU)
+//#endif // SK_SUPPORT_GPU
   sk_sp<SkImage> image_;
   bool has_mips_ = false;
   size_t size_ = 0;

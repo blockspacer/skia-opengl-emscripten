@@ -20,7 +20,9 @@
 #include "cobalt/dom/mutation_observer_task_manager.h"
 #include "cobalt/dom/url_registry.h"
 #include "cobalt/dom/url_utils.h"
+#if !defined(DISABLE_COBALT_MEDIA)
 #include "cobalt/media/can_play_type_handler.h"
+#endif // !DISABLE_COBALT_MEDIA
 #include "cobalt/script/environment_settings.h"
 
 #include "cobalt/script/global_environment.h"
@@ -42,14 +44,18 @@ namespace script {
 class JavaScriptEngine;
 }
 namespace dom {
+#if !defined(DISABLE_COBALT_MEDIA)
 class MediaSource;
+#endif // !DISABLE_COBALT_MEDIA
 class Window;
 
 // A package of global state to be passed around to script objects
 // that ask for it in their IDL custom attributes.
 class DOMSettings : public script::EnvironmentSettings {
  public:
+#if !defined(DISABLE_COBALT_MEDIA)
   typedef UrlRegistry<MediaSource> MediaSourceRegistry;
+#endif // !DISABLE_COBALT_MEDIA
   // Hold optional settings for DOMSettings.
   struct Options {
 #ifdef ENABLE_SPEECH
@@ -62,9 +68,13 @@ class DOMSettings : public script::EnvironmentSettings {
               loader::FetcherFactory* fetcher_factory,
               network::NetworkModule* network_module,
               const scoped_refptr<Window>& window,
+#if !defined(DISABLE_COBALT_MEDIA)
               MediaSourceRegistry* media_source_registry,
+#endif // !DISABLE_COBALT_MEDIA
               Blob::Registry* blob_registry,
+#if !defined(DISABLE_COBALT_MEDIA)
               media::CanPlayTypeHandler* can_play_type_handler,
+#endif // !DISABLE_COBALT_MEDIA
               script::JavaScriptEngine* engine,
               script::GlobalEnvironment* global_environment_proxy,
               MutationObserverTaskManager* mutation_observer_task_manager,
@@ -95,12 +105,14 @@ class DOMSettings : public script::EnvironmentSettings {
   script::GlobalEnvironment* global_environment() const {
     return global_environment_;
   }
+#if !defined(DISABLE_COBALT_MEDIA)
   MediaSourceRegistry* media_source_registry() const {
     return media_source_registry_;
   }
   media::CanPlayTypeHandler* can_play_type_handler() const {
     return can_play_type_handler_;
   }
+#endif // !DISABLE_COBALT_MEDIA
   MutationObserverTaskManager* mutation_observer_task_manager() const {
     return mutation_observer_task_manager_;
   }
@@ -120,9 +132,13 @@ class DOMSettings : public script::EnvironmentSettings {
   loader::FetcherFactory* fetcher_factory_;
   network::NetworkModule* network_module_;
   scoped_refptr<Window> window_;
+#if !defined(DISABLE_COBALT_MEDIA)
   MediaSourceRegistry* media_source_registry_;
+#endif // !DISABLE_COBALT_MEDIA
   Blob::Registry* blob_registry_;
+#if !defined(DISABLE_COBALT_MEDIA)
   media::CanPlayTypeHandler* can_play_type_handler_;
+#endif // !DISABLE_COBALT_MEDIA
   script::JavaScriptEngine* javascript_engine_;
   script::GlobalEnvironment* global_environment_;
   MutationObserverTaskManager* mutation_observer_task_manager_;

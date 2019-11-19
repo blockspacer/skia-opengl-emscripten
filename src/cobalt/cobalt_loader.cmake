@@ -5,7 +5,7 @@
 # includes
 # * "base/optional.h"
 # * "url/gurl.h"
-set(cobalt_loader_origin_SOURCES
+list(APPEND cobalt_loader_origin_SOURCES
   ${COBALT_CORE_DIR}loader/origin.cc
   ${COBALT_CORE_DIR}loader/origin.h
 )
@@ -167,12 +167,12 @@ target_link_libraries(cobalt_loader PRIVATE
   ${COBALT_RENDER_TREE_LIB}
   base # TODO
   modp_b64
-  dynamic_annotations
+  #dynamic_annotations
   GURL
   ${GNET_LIBS}
   ${GLIBXML_LIB}
   icu
-  ced
+  #ced
   glm
   ${WEBP_LIB} # requires libpng
   #${libjpeg_LIB}

@@ -199,7 +199,7 @@ git submodule update --init --recursive
 mkdir build
 cd build
 cmake ..
-cmake --build -- -j6
+cmake --build . -- -j6
 # -d symbols gives you a sorted list of the biggest size funcs
 ./bloaty -d sections,segments,symbols build-emscripten/*.wasm
 ```

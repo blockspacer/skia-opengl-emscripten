@@ -1,5 +1,12 @@
 ### --- UI_VIEWS ---###
 
+if(NOT ENABLE_CHROMIUM_UI_COMPOSITOR)
+  # skip
+  list(APPEND UI_VIEWS_PUBLIC_DEFS
+    UI_VIEWS_NO_COMPOSITOR=1
+  )
+endif(NOT ENABLE_CHROMIUM_UI_COMPOSITOR)
+
 if(TARGET_EMSCRIPTEN OR TARGET_LINUX)
   list(APPEND UI_VIEWS_SOURCES
     ${UI_VIEWS_DIR}controls/menu/menu_config_chromeos.cc
@@ -39,37 +46,81 @@ if(NOT UI_VIEWS_NO_AX)
   )
 endif(NOT UI_VIEWS_NO_AX)
 
+set(ENABLE_UI_VIEWS_WINDOW TRUE)
+if(ENABLE_UI_VIEWS_WINDOW)
+  list(APPEND UI_VIEWS_SOURCES
+    #
+    # window
+    #
+    ${UI_VIEWS_DIR}window/caption_button_layout_constants.cc
+    ${UI_VIEWS_DIR}window/client_view.cc
+    ${UI_VIEWS_DIR}window/custom_frame_view.cc
+    ${UI_VIEWS_DIR}window/dialog_client_view.cc
+    ${UI_VIEWS_DIR}window/dialog_delegate.cc
+    ${UI_VIEWS_DIR}window/frame_background.cc
+    ${UI_VIEWS_DIR}window/frame_caption_button.cc
+    ${UI_VIEWS_DIR}window/hit_test_utils.cc
+    ${UI_VIEWS_DIR}window/native_frame_view.cc
+    ${UI_VIEWS_DIR}window/non_client_view.cc
+    ${UI_VIEWS_DIR}window/window_button_order_provider.cc
+    ${UI_VIEWS_DIR}window/window_resize_utils.cc
+    ${UI_VIEWS_DIR}window/window_shape.cc
+  )
+endif(ENABLE_UI_VIEWS_WINDOW)
+
+set(ENABLE_UI_VIEWS_ANIMATION TRUE)
+if(ENABLE_UI_VIEWS_ANIMATION)
+  list(APPEND UI_VIEWS_SOURCES
+    #
+    # animation
+    #
+    ${UI_VIEWS_DIR}animation/animation_delegate_views.cc
+    ${UI_VIEWS_DIR}animation/bounds_animator.cc
+    ${UI_VIEWS_DIR}animation/compositor_animation_runner.cc
+    ${UI_VIEWS_DIR}animation/flood_fill_ink_drop_ripple.cc
+    ${UI_VIEWS_DIR}animation/ink_drop.cc
+    ${UI_VIEWS_DIR}animation/ink_drop_animation_ended_reason.cc
+    ${UI_VIEWS_DIR}animation/ink_drop_event_handler.cc
+    ${UI_VIEWS_DIR}animation/ink_drop_highlight.cc
+    ${UI_VIEWS_DIR}animation/ink_drop_host_view.cc
+    ${UI_VIEWS_DIR}animation/ink_drop_impl.cc
+    ${UI_VIEWS_DIR}animation/ink_drop_mask.cc
+    ${UI_VIEWS_DIR}animation/ink_drop_painted_layer_delegates.cc
+    ${UI_VIEWS_DIR}animation/ink_drop_ripple.cc
+    ${UI_VIEWS_DIR}animation/ink_drop_state.cc
+    ${UI_VIEWS_DIR}animation/ink_drop_stub.cc
+    ${UI_VIEWS_DIR}animation/ink_drop_util.cc
+    ${UI_VIEWS_DIR}animation/installable_ink_drop.cc
+    ${UI_VIEWS_DIR}animation/scroll_animator.cc
+    ${UI_VIEWS_DIR}animation/square_ink_drop_ripple.cc
+  )
+else()
+  list(APPEND UI_VIEWS_SOURCES
+    #
+    # animation
+    #
+    ${UI_VIEWS_DIR}animation/ink_drop_stub.cc
+  )
+endif(ENABLE_UI_VIEWS_ANIMATION)
+
+set(ENABLE_UI_VIEWS_BUBBLE TRUE)
+if(ENABLE_UI_VIEWS_BUBBLE)
+  list(APPEND UI_VIEWS_SOURCES
+    #
+    # animation
+    #
+    ${UI_VIEWS_DIR}bubble/bubble_border.cc
+    ${UI_VIEWS_DIR}bubble/bubble_dialog_delegate_view.cc
+    ${UI_VIEWS_DIR}bubble/bubble_frame_view.cc
+    ${UI_VIEWS_DIR}bubble/footnote_container_view.cc
+    ${UI_VIEWS_DIR}bubble/info_bubble.cc
+    ${UI_VIEWS_DIR}bubble/tooltip_icon.cc
+  )
+endif(ENABLE_UI_VIEWS_BUBBLE)
+
 list(APPEND UI_VIEWS_SOURCES
-  #
-  # animation
-  #
-  ${UI_VIEWS_DIR}animation/animation_delegate_views.cc
-  ${UI_VIEWS_DIR}animation/bounds_animator.cc
-  ${UI_VIEWS_DIR}animation/compositor_animation_runner.cc
-  ${UI_VIEWS_DIR}animation/flood_fill_ink_drop_ripple.cc
-  ${UI_VIEWS_DIR}animation/ink_drop.cc
-  ${UI_VIEWS_DIR}animation/ink_drop_animation_ended_reason.cc
-  ${UI_VIEWS_DIR}animation/ink_drop_event_handler.cc
-  ${UI_VIEWS_DIR}animation/ink_drop_highlight.cc
-  ${UI_VIEWS_DIR}animation/ink_drop_host_view.cc
-  ${UI_VIEWS_DIR}animation/ink_drop_impl.cc
-  ${UI_VIEWS_DIR}animation/ink_drop_mask.cc
-  ${UI_VIEWS_DIR}animation/ink_drop_painted_layer_delegates.cc
-  ${UI_VIEWS_DIR}animation/ink_drop_ripple.cc
-  ${UI_VIEWS_DIR}animation/ink_drop_state.cc
-  ${UI_VIEWS_DIR}animation/ink_drop_stub.cc
-  ${UI_VIEWS_DIR}animation/ink_drop_util.cc
-  ${UI_VIEWS_DIR}animation/installable_ink_drop.cc
-  ${UI_VIEWS_DIR}animation/scroll_animator.cc
-  ${UI_VIEWS_DIR}animation/square_ink_drop_ripple.cc
   ${UI_VIEWS_DIR}background.cc
   ${UI_VIEWS_DIR}border.cc
-  ${UI_VIEWS_DIR}bubble/bubble_border.cc
-  ${UI_VIEWS_DIR}bubble/bubble_dialog_delegate_view.cc
-  ${UI_VIEWS_DIR}bubble/bubble_frame_view.cc
-  ${UI_VIEWS_DIR}bubble/footnote_container_view.cc
-  ${UI_VIEWS_DIR}bubble/info_bubble.cc
-  ${UI_VIEWS_DIR}bubble/tooltip_icon.cc
   ${UI_VIEWS_DIR}button_drag_utils.cc
   ${UI_VIEWS_DIR}color_chooser/color_chooser_view.cc
   ${UI_VIEWS_DIR}context_menu_controller.cc
@@ -211,22 +262,6 @@ list(APPEND UI_VIEWS_SOURCES
   ${UI_VIEWS_DIR}widget/widget_deletion_observer.cc
   ${UI_VIEWS_DIR}widget/widget_utils.cc
   #${UI_VIEWS_DIR}widget/widget_utils_mac.mm",
-  #
-  # window
-  #
-  ${UI_VIEWS_DIR}window/caption_button_layout_constants.cc
-  ${UI_VIEWS_DIR}window/client_view.cc
-  ${UI_VIEWS_DIR}window/custom_frame_view.cc
-  ${UI_VIEWS_DIR}window/dialog_client_view.cc
-  ${UI_VIEWS_DIR}window/dialog_delegate.cc
-  ${UI_VIEWS_DIR}window/frame_background.cc
-  ${UI_VIEWS_DIR}window/frame_caption_button.cc
-  ${UI_VIEWS_DIR}window/hit_test_utils.cc
-  ${UI_VIEWS_DIR}window/native_frame_view.cc
-  ${UI_VIEWS_DIR}window/non_client_view.cc
-  ${UI_VIEWS_DIR}window/window_button_order_provider.cc
-  ${UI_VIEWS_DIR}window/window_resize_utils.cc
-  ${UI_VIEWS_DIR}window/window_shape.cc
   # #
   # # cocoa
   # #
@@ -731,9 +766,9 @@ target_link_libraries(UI_VIEWS PRIVATE
   #"//base:i18n",
   base
   #"//base/third_party/dynamic_annotations",
-  dynamic_annotations
+  #dynamic_annotations
   #"//cc/paint",
-  PAINT_CC
+  #PAINT_CC
   #"//mojo/public/cpp/bindings",
   #"//services/ws/public/mojom",
   #"//skia",
@@ -756,11 +791,11 @@ target_link_libraries(UI_VIEWS PRIVATE
   #"//components/vector_icons",
   #"//ui/accessibility:ax_enums_mojo",
   #"//ui/base",
-  UI_BASE
+  #UI_BASE
   #"//ui/base/clipboard",
   #"//ui/base/ime/init",
   #"//ui/compositor",
-  UI_COMPOSITOR
+  ${UI_COMPOSITOR_LIB}
   #"//ui/display",
   #"//ui/events",
   #"//ui/events:events_base",
@@ -783,6 +818,55 @@ target_link_libraries(UI_VIEWS PRIVATE
   #}
   ${MOJO_LIB}
   ${BLINK_PUBLIC_MOJOM_LIB}
+  #
+  #
+  #
+  # #"//cc",
+  # BASE_CC
+  # ${CC_LIB}
+  # #"//base",
+  # base
+  # #"//base/third_party/dynamic_annotations",
+  # #dynamic_annotations
+  # #"//cc/animation",
+  # ${ANIMATION_CC_LIB}
+  # #"//cc/paint",
+  # PAINT_CC
+  # #"//components/viz/host",
+  # #"//components/viz/service",
+  # #
+  # ${COMPONENTS_VIZ_CLIENT_LIB}
+  # #
+  # ${COMPONENTS_VIZ_COMMON_LIB}
+  # #"//gpu/command_buffer/common",
+  # GPU_COMMAND_BUFFER
+  # #"//skia",
+  # SKIA
+  # SKIA_EXT
+  # #"//ui/base",
+  # UI_BASE
+  # #"//ui/display",
+  # UI_DISPLAY
+  # #"//ui/events",
+  # UI_EVENTS
+  # #"//ui/gfx",
+  # UI_GFX
+  # #"//ui/gfx/animation",
+  # GFX_ANIMATION
+  # #"//ui/gfx/geometry",
+  # GFX_GEOMETRY
+  # GFX_GEOMETRY_SKIA
+  # #"//ui/gl",
+  # UI_GL
+  # #if (is_mac) {
+  # #  deps += [ "//ui/accelerated_widget_mac" ]
+  # #}
+  # #
+  # #if (is_win && use_aura) {
+  # #  # TODO(sky): before we make this real need to remove
+  # #  # IDR_BITMAP_BRUSH_IMAGE.
+  # #  deps += [ "//ui/resources" ]
+  # #}
 )
 
 set_property(TARGET UI_VIEWS PROPERTY CXX_STANDARD 17)

@@ -175,10 +175,14 @@ class Element : public Node {
   //   https://www.w3.org/TR/DOM-Parsing/#extensions-to-the-element-interface
   //
   std::string inner_html() const;
+#if !defined(DISABLE_COBALT_DOM_PARSER)
   void set_inner_html(const std::string& inner_html);
+#endif // !DISABLE_COBALT_DOM_PARSER
   std::string outer_html(script::ExceptionState* exception_state) const;
+#if !defined(DISABLE_COBALT_DOM_PARSER)
   void set_outer_html(const std::string& outer_html,
                       script::ExceptionState* exception_state);
+#endif // !DISABLE_COBALT_DOM_PARSER
 
   // Web API: Pointer Events: Extensions to the Element Interface (partial
   // interface)

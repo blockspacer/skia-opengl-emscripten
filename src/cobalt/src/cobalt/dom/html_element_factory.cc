@@ -66,7 +66,9 @@ HTMLElementFactory::HTMLElementFactory() {
   RegisterHTMLElementWithSingleTagName<HTMLAnchorElement>();
 
   /// \todo
-  //RegisterHTMLElementWithSingleTagName<HTMLAudioElement>();
+#if !defined(DISABLE_COBALT_MEDIA)
+  RegisterHTMLElementWithSingleTagName<HTMLAudioElement>();
+#endif // !DISABLE_COBALT_MEDIA
 
   RegisterHTMLElementWithSingleTagName<HTMLBodyElement>();
   RegisterHTMLElementWithSingleTagName<HTMLBRElement>();
@@ -83,7 +85,9 @@ HTMLElementFactory::HTMLElementFactory() {
   RegisterHTMLElementWithSingleTagName<HTMLTitleElement>();
 
   /// \todo
-  //RegisterHTMLElementWithSingleTagName<HTMLVideoElement>();
+#if !defined(DISABLE_COBALT_MEDIA)
+  RegisterHTMLElementWithSingleTagName<HTMLVideoElement>();
+#endif // !DISABLE_COBALT_MEDIA
 
   // Register HTML elements that have multiple tag names in the map.
   RegisterHTMLElementWithMultipleTagName<HTMLHeadingElement>();

@@ -2,7 +2,7 @@
 
 # requires EzTimeValueGetNow = starboard_eztime
  # requires SbThreadGetId = starboard_stub
-set(starboard_common_SOURCES
+list(APPEND starboard_common_SOURCES
  ${COBALT_PORT_DIR}/starboard/common/byte_swap.h
  ${COBALT_PORT_DIR}/starboard/common/common.cc
  ${COBALT_PORT_DIR}/starboard/common/condition_variable.cc

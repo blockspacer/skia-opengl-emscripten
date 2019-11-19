@@ -2,7 +2,7 @@
 
 ### --- GFX_SWITCHES ---###
 
-set(GFX_SWITCHES_SOURCES
+list(APPEND GFX_SWITCHES_SOURCES
   ${GFX_SWITCHES_DIR}switches.cc
   #"switches.h",
   #"switches_export.h",

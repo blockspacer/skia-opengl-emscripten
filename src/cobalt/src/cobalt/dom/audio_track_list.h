@@ -15,6 +15,8 @@
 #ifndef COBALT_DOM_AUDIO_TRACK_LIST_H_
 #define COBALT_DOM_AUDIO_TRACK_LIST_H_
 
+#if !defined(DISABLE_COBALT_MEDIA)
+
 #include "cobalt/dom/audio_track.h"
 #include "cobalt/dom/html_media_element.h"
 #include "cobalt/dom/track_list_base.h"
@@ -55,5 +57,7 @@ class AudioTrackList : public TrackListBase<AudioTrack> {
 
 }  // namespace dom
 }  // namespace cobalt
+
+#endif // !DISABLE_COBALT_MEDIA
 
 #endif  // COBALT_DOM_AUDIO_TRACK_LIST_H_

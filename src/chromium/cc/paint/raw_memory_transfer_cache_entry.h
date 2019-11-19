@@ -37,7 +37,9 @@ class CC_PAINT_EXPORT ServiceRawMemoryTransferCacheEntry
   ServiceRawMemoryTransferCacheEntry();
   ~ServiceRawMemoryTransferCacheEntry() final;
   size_t CachedSize() const final;
+//#if SK_SUPPORT_GPU
   bool Deserialize(GrContext* context, base::span<const uint8_t> data) final;
+//#endif // SK_SUPPORT_GPU
   const std::vector<uint8_t>& data() { return data_; }
 
  private:

@@ -30,7 +30,9 @@
 #endif
 #include "base/trace_event/trace_event.h"
 #include "cobalt/cssom/cascade_precedence.h"
+#if !defined(DISABLE_COBALT_CAMERA3D)
 #include "cobalt/dom/camera_3d.h"
+#endif // !DISABLE_COBALT_CAMERA3D
 #include "cobalt/dom/html_body_element.h"
 #include "cobalt/dom/html_element_context.h"
 #include "cobalt/dom/html_head_element.h"
@@ -144,6 +146,7 @@ class LayoutManager::Impl : public dom::DocumentObserver {
 
 namespace {
 
+#if !defined(DISABLE_COBALT_CAMERA3D)
 void UpdateCamera(
     float width_to_height_aspect_ratio, scoped_refptr<input::Camera3D> camera,
     float max_horizontal_fov_rad, float max_vertical_fov_rad,
@@ -160,6 +163,7 @@ void UpdateCamera(
       transform.left_eye_or_mono.projection_matrix *
       transform.left_eye_or_mono.view_matrix;
 }
+#endif // DISABLE_COBALT_CAMERA3D
 
 scoped_refptr<render_tree::Node> AttachCameraNodes(
     const scoped_refptr<dom::Window> window,
@@ -174,11 +178,13 @@ scoped_refptr<render_tree::Node> AttachCameraNodes(
   // We setup an animation on the camera transform node such that the camera
   // is driven by the renderer thread and can bypass layout entirely.
   render_tree::animations::AnimateNode::Builder animate_node_builder;
+#if !defined(DISABLE_COBALT_CAMERA3D)
   animate_node_builder.Add(
       transform_node,
       base::Bind(&UpdateCamera, window->inner_width() / window->inner_height(),
                  window->camera_3d()->impl(), max_horizontal_fov_rad,
                  max_vertical_fov_rad));
+#endif // !DISABLE_COBALT_CAMERA3D
   return new render_tree::animations::AnimateNode(animate_node_builder,
                                                   transform_node);
 }
@@ -417,14 +423,14 @@ void LayoutManager::Impl::StartLayoutTimer() {
                            (layout_refresh_rate_ + 1.0f));
   timer_interval_ = base::TimeDelta::FromMicroseconds(timer_interval_in_microseconds);
 
-  printf("LayoutManager timer_interval_.InMilliseconds() = %d\n", timer_interval_.InMilliseconds());
+  printf("LayoutManager timer_interval_.InMilliseconds() = %lld\n", timer_interval_.InMilliseconds());
 
   /// \note no reason to refresh layout less than once per millisecond
   DCHECK(timer_interval_.InMilliseconds() > 0
          && timer_interval_ != base::TimeDelta::Max());
 
 #if !(defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
-  printf("layout_timer_.Start %ld\n", timer_interval_in_microseconds);
+  printf("layout_timer_.Start %lld\n", timer_interval_in_microseconds);
   layout_timer_.Start(
       FROM_HERE,
       timer_interval_,

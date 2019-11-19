@@ -14,6 +14,8 @@
 
 #include "cobalt/dom/html_video_element.h"
 
+#if !defined(DISABLE_COBALT_MEDIA)
+
 #include "base/logging.h"
 #include "base/strings/string_number_conversions.h"
 #include "cobalt/dom/dom_settings.h"
@@ -142,3 +144,5 @@ math::SizeF HTMLVideoElement::GetVideoSize() const {
 
 }  // namespace dom
 }  // namespace cobalt
+
+#endif // !DISABLE_COBALT_MEDIA

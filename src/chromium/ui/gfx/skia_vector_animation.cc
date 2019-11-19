@@ -4,6 +4,8 @@
 
 #include "ui/gfx/skia_vector_animation.h"
 
+#if defined(ENABLE_SKOTTIE)
+
 #include "base/trace_event/trace_event.h"
 #include "cc/paint/skottie_wrapper.h"
 #include "third_party/skia/include/core/SkBitmap.h"
@@ -263,3 +265,5 @@ void SkiaVectorAnimation::UpdateState(const base::TimeTicks& timestamp) {
 }
 
 }  // namespace gfx
+
+#endif // ENABLE_SKOTTIE

@@ -1,6 +1,6 @@
 ﻿## --- SKIA_EXT ---###
 
-set(SKIA_EXT_COMMON_SOURCES
+list(APPEND SKIA_EXT_COMMON_SOURCES
   # Chrome sources.
   #${SKIA_EXT_DIR}config/SkUserConfig.h",
   #${SKIA_EXT_DIR}config/sk_ref_cnt_ext_debug.h",

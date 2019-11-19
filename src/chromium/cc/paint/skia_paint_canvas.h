@@ -14,7 +14,9 @@
 #include "cc/paint/paint_flags.h"
 #include "cc/paint/paint_record.h"
 #include "third_party/skia/include/core/SkCanvas.h"
+//#if SK_SUPPORT_GPU
 #include "third_party/skia/include/gpu/GrContext.h"
+//#endif // SK_SUPPORT_GPU
 
 namespace cc {
 class ImageProvider;
@@ -149,8 +151,13 @@ class CC_PAINT_EXPORT SkiaPaintCanvas final : public PaintCanvas {
   void FlushAfterDrawIfNeeded();
 
   int max_texture_size() const {
+//#if SK_SUPPORT_GPU
     auto* context = canvas_->getGrContext();
     return context ? context->maxTextureSize() : 0;
+/*#else
+  NOTIMPLEMENTED();
+  return 0;
+#endif // SK_SUPPORT_GPU*/
   }
 
   SkCanvas* canvas_;

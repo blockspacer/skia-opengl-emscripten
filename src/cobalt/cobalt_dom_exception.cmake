@@ -3,7 +3,7 @@
 # 'dependencies': [
 #   '<(DEPTH)/cobalt/script/script.gyp:script',
 # ],
-set(COBALT_dom_exception_SOURCES
+list(APPEND COBALT_dom_exception_SOURCES
   ${COBALT_CORE_DIR}dom/dom_exception.cc
   #${COBALT_CORE_DIR}dom/dom_exception.h
 )

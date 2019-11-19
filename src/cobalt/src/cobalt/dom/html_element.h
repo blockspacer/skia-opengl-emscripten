@@ -63,7 +63,9 @@ namespace dom {
 
 class DOMStringMap;
 class HTMLAnchorElement;
+#if !defined(DISABLE_COBALT_MEDIA)
 class HTMLAudioElement;
+#endif // !DISABLE_COBALT_MEDIA
 class HTMLBodyElement;
 class HTMLBRElement;
 class HTMLDivElement;
@@ -80,7 +82,9 @@ class HTMLSpanElement;
 class HTMLStyleElement;
 class HTMLTitleElement;
 class HTMLUnknownElement;
+#if !defined(DISABLE_COBALT_MEDIA)
 class HTMLVideoElement;
+#endif // !DISABLE_COBALT_MEDIA
 
 // not in spec
 class HTMLSkottieElement;
@@ -228,7 +232,9 @@ class HTMLElement : public Element, public cssom::MutationObserver {
   // Safe type conversion methods that will downcast to the required type if
   // possible or return NULL otherwise.
   virtual scoped_refptr<HTMLAnchorElement> AsHTMLAnchorElement();
+#if !defined(DISABLE_COBALT_MEDIA)
   virtual scoped_refptr<HTMLAudioElement> AsHTMLAudioElement();
+#endif // !DISABLE_COBALT_MEDIA
   virtual scoped_refptr<HTMLBodyElement> AsHTMLBodyElement();
   virtual scoped_refptr<HTMLBRElement> AsHTMLBRElement();
   virtual scoped_refptr<HTMLDivElement> AsHTMLDivElement();
@@ -244,7 +250,9 @@ class HTMLElement : public Element, public cssom::MutationObserver {
   virtual scoped_refptr<HTMLStyleElement> AsHTMLStyleElement();
   virtual scoped_refptr<HTMLTitleElement> AsHTMLTitleElement();
   virtual scoped_refptr<HTMLUnknownElement> AsHTMLUnknownElement();
+#if !defined(DISABLE_COBALT_MEDIA)
   virtual scoped_refptr<HTMLVideoElement> AsHTMLVideoElement();
+#endif // !DISABLE_COBALT_MEDIA
 
   // not in spec
   virtual scoped_refptr<HTMLSkottieElement> AsHTMLSkottieElement();

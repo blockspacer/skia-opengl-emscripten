@@ -5557,14 +5557,14 @@ target_link_libraries(BLINK_RENDERER_CORE PRIVATE
   base
   SKIA
   #skcms
-  ced
+  #ced
   # emoji-segmenter
   # webrtc
   # zlib
   # icu
-  CC
+  ${CC_LIB}
   #G_GPU
-  ANIMATION_CC
+  ${ANIMATION_CC_LIB}
   BASE_CC
   PAINT_CC
   ${SERVICES_NETWORK_PUBLIC_CPP_LIB}

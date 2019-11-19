@@ -29,7 +29,9 @@ class CC_PAINT_EXPORT ServiceShaderTransferCacheEntry
                                            size_t size);
   ~ServiceShaderTransferCacheEntry() final;
   size_t CachedSize() const final;
+//#if SK_SUPPORT_GPU
   bool Deserialize(GrContext* context, base::span<const uint8_t> data) final;
+//#endif // SK_SUPPORT_GPU
 
   sk_sp<PaintShader> shader() const { return shader_; }
 

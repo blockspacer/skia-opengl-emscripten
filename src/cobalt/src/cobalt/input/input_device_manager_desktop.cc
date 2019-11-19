@@ -95,8 +95,10 @@ InputDeviceManagerDesktop::InputDeviceManagerDesktop(
       wheel_event_callback_(wheel_event_callback) {
   input_poller_ = new InputPollerImpl();
   DCHECK(system_window_);
+#if !defined(DISABLE_COBALT_CAMERA3D)
   camera_3d_ =
       CreatedDefaultCamera3D(system_window->GetSbWindow(), input_poller_);
+#endif // !defined(DISABLE_COBALT_CAMERA3D)
 
   if (system_window_) {
     // Add this object's keyboard event callback to the system window.

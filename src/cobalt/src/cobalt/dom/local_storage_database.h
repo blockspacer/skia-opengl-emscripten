@@ -15,6 +15,8 @@
 #ifndef COBALT_DOM_LOCAL_STORAGE_DATABASE_H_
 #define COBALT_DOM_LOCAL_STORAGE_DATABASE_H_
 
+#if !defined(DISABLE_COBALT_STORAGE)
+
 #include <memory>
 #include <string>
 
@@ -57,5 +59,7 @@ class LocalStorageDatabase {
 };
 }  // namespace dom
 }  // namespace cobalt
+
+#endif // !DISABLE_COBALT_STORAGE
 
 #endif  // COBALT_DOM_LOCAL_STORAGE_DATABASE_H_

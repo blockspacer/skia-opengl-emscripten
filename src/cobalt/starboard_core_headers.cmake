@@ -4,7 +4,7 @@
 #deps = [
 #  "//starboard/common",
 #]
-set(starboard_core_SOURCES
+list(APPEND starboard_core_SOURCES
   ${COBALT_PORT_DIR}/starboard/atomic.h
   ${COBALT_PORT_DIR}/starboard/audio_sink.h
   ${COBALT_PORT_DIR}/starboard/blitter.h

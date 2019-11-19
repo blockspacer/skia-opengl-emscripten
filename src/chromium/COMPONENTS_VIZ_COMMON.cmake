@@ -2,7 +2,7 @@
 
 ### --- COMPONENTS_VIZ_COMMON ---###
 
-set(COMPONENTS_VIZ_COMMON_SOURCES
+list(APPEND COMPONENTS_VIZ_COMMON_SOURCES
   #
   ${COMPONENTS_VIZ_COMMON_DIR}resources/resource_format_utils.cc
   #${COMPONENTS_VIZ_COMMON_DIR}resources/resource_format_utils.h

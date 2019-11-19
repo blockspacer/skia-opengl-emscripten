@@ -718,7 +718,9 @@ static int InitGL() {
 
 #ifdef ENABLE_COBALT
 using namespace cobalt;
+#if !defined(DISABLE_COBALT_DOM_PARSER)
 using namespace cobalt::dom_parser;
+#endif // !DISABLE_COBALT_DOM_PARSER
 using namespace cobalt::loader;
 using namespace cobalt::cssom;
 using namespace cobalt::css_parser;
@@ -729,7 +731,9 @@ using namespace cobalt::dom::customizer;
 using namespace cobalt::input;
 using namespace cobalt::script;
 using namespace cobalt::network;
+#if !defined(DISABLE_COBALT_MEDIA)
 using namespace cobalt::media;
+#endif // !DISABLE_COBALT_MEDIA
 using namespace cobalt::renderer;
 using namespace cobalt::browser;
 //using namespace cobalt::ras;
@@ -842,7 +846,9 @@ class CobaltTester {
 
   std::unique_ptr<loader::LoaderFactory> loader_factory_;
 
+#if !defined(DISABLE_COBALT_DOM_PARSER)
   std::unique_ptr<cobalt::dom_parser::Parser> dom_parser_;
+#endif // !DISABLE_COBALT_DOM_PARSER
 
   std::unique_ptr<cobalt::css_parser::Parser> css_parser_;
 
@@ -885,7 +891,9 @@ class CobaltTester {
   std::unique_ptr<loader::mesh::MeshCache> mesh_cache_;
 
   // Interface between LocalStorage and the Storage Manager.
+#if !defined(DISABLE_COBALT_STORAGE)
   std::unique_ptr<dom::LocalStorageDatabase> local_storage_database_;
+#endif // !DISABLE_COBALT_STORAGE
 
   // Stats for the web module. Both the dom stat tracker and layout stat
   // tracker are contained within it.
@@ -907,8 +915,10 @@ class CobaltTester {
   // Interface for the document to execute JavaScript code.
   std::unique_ptr<script::ScriptRunner> script_runner_;
 
+#if !defined(DISABLE_COBALT_MEDIA)
   // Object to register and retrieve MediaSource object with a string key.
   std::unique_ptr<dom::MediaSource::Registry> media_source_registry_;
+#endif // !DISABLE_COBALT_MEDIA
 
   // Object to register and retrieve Blob objects with a string key.
   std::unique_ptr<dom::Blob::Registry> blob_registry_;
@@ -971,7 +981,9 @@ class CobaltTester {
 
 
   // Allows checking if particular media type can be played.
+#if !defined(DISABLE_COBALT_MEDIA)
   std::unique_ptr<cobalt::media::CanPlayTypeHandler> can_play_type_handler_;
+#endif // !DISABLE_COBALT_MEDIA
 
   dom::DOMSettings::Options dom_settings_options;
 
@@ -1035,9 +1047,8 @@ static std::unique_ptr<CobaltTester> g_cobaltTester;
 
 void CobaltTester::OnWindowClose(base::TimeDelta /*close_time*/) {
     printf("OnWindowClose\n");
-    DCHECK(g_cobaltTester);
-    DCHECK_EQ(base::MessageLoopCurrent::Get().task_runner(), g_cobaltTester->self_task_runner_);
-    DCHECK(g_cobaltTester->thread_checker_.CalledOnValidThread());
+    DCHECK_EQ(base::MessageLoopCurrent::Get().task_runner(), self_task_runner_);
+    DCHECK(thread_checker_.CalledOnValidThread());
 /*#if defined(ENABLE_DEBUGGER)
     if (input_device_manager_fuzzer_) {
         return;
@@ -1049,9 +1060,8 @@ void CobaltTester::OnWindowClose(base::TimeDelta /*close_time*/) {
 
 void CobaltTester::OnWindowMinimize() {
     printf("OnWindowMinimize\n");
-    DCHECK(g_cobaltTester);
-    DCHECK_EQ(base::MessageLoopCurrent::Get().task_runner(), g_cobaltTester->self_task_runner_);
-    DCHECK(g_cobaltTester->thread_checker_.CalledOnValidThread());
+    DCHECK_EQ(base::MessageLoopCurrent::Get().task_runner(), self_task_runner_);
+    DCHECK(thread_checker_.CalledOnValidThread());
 /*#if defined(ENABLE_DEBUGGER)
     if (input_device_manager_fuzzer_) {
         return;
@@ -1064,17 +1074,15 @@ void CobaltTester::OnWindowMinimize() {
 void CobaltTester::OnLoadComplete(const base::Optional<std::string>& error) {
     printf("OnLoadComplete %s\n", error.value_or("no errors").c_str());
     //if (error) error_callback_.Run(window_->location()->url(), *error);
-    DCHECK(g_cobaltTester);
-    DCHECK_EQ(base::MessageLoopCurrent::Get().task_runner(), g_cobaltTester->self_task_runner_);
-    DCHECK(g_cobaltTester->thread_checker_.CalledOnValidThread());
-    g_cobaltTester->isLoadComplete = true;
+    DCHECK_EQ(base::MessageLoopCurrent::Get().task_runner(), self_task_runner_);
+    DCHECK(thread_checker_.CalledOnValidThread());
+    isLoadComplete = true;
 }
 
 void CobaltTester::OnCspPolicyChanged() {
     printf("OnCspPolicyChanged\n");
-    DCHECK(g_cobaltTester);
-    DCHECK_EQ(base::MessageLoopCurrent::Get().task_runner(), g_cobaltTester->self_task_runner_);
-    DCHECK(g_cobaltTester->thread_checker_.CalledOnValidThread());
+    DCHECK_EQ(base::MessageLoopCurrent::Get().task_runner(), self_task_runner_);
+    DCHECK(thread_checker_.CalledOnValidThread());
 }
 
 // Called by |layout_mananger_| after it runs the animation frame callbacks.
@@ -1084,9 +1092,8 @@ void CobaltTester::OnRanAnimationFrameCallbacks() {
 #endif // ENABLE_NATIVE_HTML
 
     printf("OnRanAnimationFrameCallbacks\n");
-    DCHECK(g_cobaltTester);
-    DCHECK_EQ(base::MessageLoopCurrent::Get().task_runner(), g_cobaltTester->self_task_runner_);
-    DCHECK(g_cobaltTester->thread_checker_.CalledOnValidThread());
+    DCHECK_EQ(base::MessageLoopCurrent::Get().task_runner(), self_task_runner_);
+    DCHECK(thread_checker_.CalledOnValidThread());
 }
 
 // Called by the Renderer on the Renderer thread when it rasterizes a render
@@ -1101,9 +1108,8 @@ void CobaltTester::OnRenderTreeRasterized(
 
     ///printf("OnRenderTreeRasterized\n");
 
-    //DCHECK(g_cobaltTester);
-    //DCHECK_EQ(base::MessageLoopCurrent::Get().task_runner(), g_cobaltTester->self_task_runner_);
-    //DCHECK(g_cobaltTester->thread_checker_.CalledOnValidThread());
+    //DCHECK_EQ(base::MessageLoopCurrent::Get().task_runner(), self_task_runner_);
+    //DCHECK(thread_checker_.CalledOnValidThread());
 
     // TODO
     //main_web_module_layer_->Reset();
@@ -1132,9 +1138,8 @@ void CobaltTester::BrowserProcessRenderTreeSubmissionQueue() {
     TRACE_EVENT0("cobalt::browser",
                  "CobaltTester::ProcessRenderTreeSubmissionQueue()");
 
-    DCHECK(g_cobaltTester);
-    DCHECK_EQ(base::MessageLoopCurrent::Get().task_runner(), g_cobaltTester->self_task_runner_);
-    DCHECK(g_cobaltTester->thread_checker_.CalledOnValidThread());
+    DCHECK_EQ(base::MessageLoopCurrent::Get().task_runner(), self_task_runner_);
+    DCHECK(thread_checker_.CalledOnValidThread());
 
     //printf("BrowserProcessRenderTreeSubmissionQueue 1\n");
 
@@ -1176,9 +1181,6 @@ void CobaltTester::OnRendererSubmissionRasterized() {
     TRACE_EVENT0("cobalt::browser",
                  "CobaltTester::OnRendererSubmissionRasterized()");
 
-    //DCHECK(g_cobaltTester);
-    //DCHECK(g_cobaltTester->thread_checker_.CalledOnValidThread());
-
     //if (!is_rendered_) {
     //    // Hide the system splash screen when the first render has completed.
     //    is_rendered_ = true;
@@ -1189,8 +1191,7 @@ void CobaltTester::OnRendererSubmissionRasterized() {
 //static render_tree::animations::AnimateNode::AnimateResults animateResults; // TODO
 
 void CobaltTester::SubmitCurrentRenderTreeToRenderer() {
-    DCHECK(g_cobaltTester);
-    DCHECK(g_cobaltTester->thread_checker_.CalledOnValidThread());
+    DCHECK(thread_checker_.CalledOnValidThread());
 
     //printf("SubmitCurrentRenderTreeToRenderer 1\n");
 
@@ -1222,13 +1223,12 @@ void CobaltTester::OnBrowserRenderTreeProduced(
   return;
 #endif // ENABLE_NATIVE_HTML
 
-    DCHECK(g_cobaltTester);
-    DCHECK(g_cobaltTester->thread_checker_.CalledOnValidThread());
+    DCHECK(thread_checker_.CalledOnValidThread());
 
     /// \note WASM MT don`t have platform fonts,
     /// rendering without custom fonts may cause deadlock
-    //g_cobaltTester->window_->document()->font_cache()->TryGetFont()
-    /*if(g_cobaltTester->window_->document()->hasLoadedTypefaces()) {
+    //window_->document()->font_cache()->TryGetFont()
+    /*if(window_->document()->hasLoadedTypefaces()) {
       /// \note tree must be produced on typeface load event
       //DCHECK(false) << "hasLoadedTypefaces";
     } else {
@@ -1290,8 +1290,8 @@ void CobaltTester::QueueOnRenderTreeProduced(
 
     /// \note WASM MT don`t have platform fonts,
     /// rendering without custom fonts may cause deadlock
-    //g_cobaltTester->window_->document()->font_cache()->TryGetFont()
-    /*if(g_cobaltTester->window_->document()->hasLoadedTypefaces()) {
+    //window_->document()->font_cache()->TryGetFont()
+    /*if(window_->document()->hasLoadedTypefaces()) {
       /// \note tree must be produced on typeface load event
       //DCHECK(false) << "hasLoadedTypefaces";
     } else {
@@ -1300,8 +1300,7 @@ void CobaltTester::QueueOnRenderTreeProduced(
       return;
     }*/
 
-  DCHECK(g_cobaltTester);
-  DCHECK(g_cobaltTester->thread_checker_.CalledOnValidThread());
+  DCHECK(thread_checker_.CalledOnValidThread());
 
     render_tree_submission_queue_.AddMessage(
         base::Bind(&CobaltTester::OnBrowserRenderTreeProduced,
@@ -1309,8 +1308,7 @@ void CobaltTester::QueueOnRenderTreeProduced(
                    main_web_module_generation, layout_results));
     //self_message_loop_->task_runner()->PostTask(
 
-    DCHECK(g_cobaltTester);
-    g_cobaltTester->self_task_runner_->PostTask(
+    self_task_runner_->PostTask(
         FROM_HERE,
         base::Bind(&CobaltTester::BrowserProcessRenderTreeSubmissionQueue,
                    base::Unretained(this)));
@@ -1333,8 +1331,8 @@ void CobaltTester::OnRenderTreeProduced(const cobalt::layout::LayoutManager::Lay
 
   /// \note WASM MT don`t have platform fonts,
   /// rendering without custom fonts may cause deadlock
-  //g_cobaltTester->window_->document()->font_cache()->TryGetFont()
-  /*if(g_cobaltTester->window_->document()->hasLoadedTypefaces()) {
+  //window_->document()->font_cache()->TryGetFont()
+  /*if(window_->document()->hasLoadedTypefaces()) {
     /// \note tree must be produced on typeface load event
     //DCHECK(false) << "hasLoadedTypefaces";
   } else {
@@ -1344,7 +1342,7 @@ void CobaltTester::OnRenderTreeProduced(const cobalt::layout::LayoutManager::Lay
   }*/
 
   // TODO: remove IsRenderTreePending
-  //if(g_cobaltTester->layout_manager_->IsRenderTreePending()) {
+  //if(layout_manager_->IsRenderTreePending()) {
   //  return;
   //}
 
@@ -1375,9 +1373,7 @@ void CobaltTester::OnRenderTreeProduced(const cobalt::layout::LayoutManager::Lay
 
     //printf("OnRenderTreeProduced 1.2\n");
 
-    DCHECK(g_cobaltTester);
-
-    DCHECK(g_cobaltTester->thread_checker_.CalledOnValidThread());
+    DCHECK(thread_checker_.CalledOnValidThread());
 
     /// \see https://github.com/blockspacer/cobalt-clone-28052019/blob/master/src/cobalt/browser/browser_module.cc#L736
     auto last_render_tree_produced_time_ = base::TimeTicks::Now();
@@ -1385,7 +1381,7 @@ void CobaltTester::OnRenderTreeProduced(const cobalt::layout::LayoutManager::Lay
         layout_results.render_tree, layout_results.layout_time,
         base::Bind(&CobaltTester::OnRenderTreeRasterized,
                    base::Unretained(this),
-                   g_cobaltTester->self_task_runner_,
+                   self_task_runner_,
                    last_render_tree_produced_time_));
 
     int main_web_module_generation_ = 1; // TODO
@@ -1427,9 +1423,8 @@ void CobaltTester::HandlePointerEvents() {
   // TODO >>>
   //return;
 
-  //DCHECK(g_cobaltTester);
-  //DCHECK_EQ(base::MessageLoopCurrent::Get().task_runner(), g_cobaltTester->self_task_runner_);
-  //DCHECK(g_cobaltTester->thread_checker_.CalledOnValidThread());
+  //DCHECK_EQ(base::MessageLoopCurrent::Get().task_runner(), self_task_runner_);
+  //DCHECK(thread_checker_.CalledOnValidThread());
 
   DCHECK(base::MessageLoopCurrent::Get().task_runner() == main_browser_thread_.task_runner());
   if (base::MessageLoopCurrent::Get().task_runner() != main_browser_thread_.task_runner()) {
@@ -1489,9 +1484,8 @@ void CobaltTester::OnLoad() {
 #if SB_HAS(ON_SCREEN_KEYBOARD)
 void CobaltTester::OnOnScreenKeyboardInputEventProduced(
     base::Token type, const dom::InputEventInit& event) {
-  DCHECK(g_cobaltTester);
-  DCHECK_EQ(base::MessageLoopCurrent::Get().task_runner(), g_cobaltTester->self_task_runner_);
-  DCHECK(g_cobaltTester->thread_checker_.CalledOnValidThread());
+  DCHECK_EQ(base::MessageLoopCurrent::Get().task_runner(), self_task_runner_);
+  DCHECK(thread_checker_.CalledOnValidThread());
 
   /// \todo
   NOTIMPLEMENTED();
@@ -1526,9 +1520,8 @@ void CobaltTester::InjectInputEvent(scoped_refptr<cobalt::dom::Element> element,
   TRACE_EVENT1("cobalt::browser", "WebModule::Impl::InjectInputEvent()",
                "event", event->type().c_str());
 
-  //DCHECK(g_cobaltTester);
-  //DCHECK_EQ(base::MessageLoopCurrent::Get().task_runner(), g_cobaltTester->self_task_runner_);
-  //DCHECK(g_cobaltTester->thread_checker_.CalledOnValidThread());
+  //DCHECK_EQ(base::MessageLoopCurrent::Get().task_runner(), self_task_runner_);
+  //DCHECK(thread_checker_.CalledOnValidThread());
 
   //DCHECK(is_running_);
   DCHECK(window_);
@@ -1590,9 +1583,8 @@ void CobaltTester::OnKeyEventProduced(base::Token type,
                                        const dom::KeyboardEventInit& event) {
   printf("OnKeyEventProduced 1 %s\n", type.c_str());
 
-  //DCHECK(g_cobaltTester);
-  //DCHECK_EQ(base::MessageLoopCurrent::Get().task_runner(), g_cobaltTester->self_task_runner_);
-  //DCHECK(g_cobaltTester->thread_checker_.CalledOnValidThread());
+  //DCHECK_EQ(base::MessageLoopCurrent::Get().task_runner(), self_task_runner_);
+  //DCHECK(thread_checker_.CalledOnValidThread());
 
   //printf("OnKeyEventProduced client_x %s \n", event.code().c_str());
 
@@ -1637,9 +1629,8 @@ void CobaltTester::OnPointerEventProduced(base::Token type,
                                            const dom::PointerEventInit& event) {
   // printf("OnPointerEventProduced 1 %s\n", type.c_str());
 
-  //DCHECK(g_cobaltTester);
-  //DCHECK_EQ(base::MessageLoopCurrent::Get().task_runner(), g_cobaltTester->self_task_runner_);
-  //DCHECK(g_cobaltTester->thread_checker_.CalledOnValidThread());
+  //DCHECK_EQ(base::MessageLoopCurrent::Get().task_runner(), self_task_runner_);
+  //DCHECK(thread_checker_.CalledOnValidThread());
 
   //printf("OnPointerEventProduced client_x %f client_y %f \n", event.client_x(), event.client_y());
   TRACE_EVENT0("cobalt::browser", "CobaltTester::OnPointerEventProduced()");
@@ -1689,9 +1680,8 @@ void CobaltTester::OnWheelEventProduced(base::Token type,
                                          const dom::WheelEventInit& event) {
   printf("OnWheelEventProduced 1 %s\n", type.c_str());
 
-  DCHECK(g_cobaltTester);
-  DCHECK_EQ(base::MessageLoopCurrent::Get().task_runner(), g_cobaltTester->self_task_runner_);
-  DCHECK(g_cobaltTester->thread_checker_.CalledOnValidThread());
+  DCHECK_EQ(base::MessageLoopCurrent::Get().task_runner(), self_task_runner_);
+  DCHECK(thread_checker_.CalledOnValidThread());
 
   //printf("OnWheelEventProduced delta_x %f delta_y %f delta_z %f \n",
   //  event.delta_x(), event.delta_y(), event.delta_z());
@@ -1816,8 +1806,11 @@ CobaltTester::CobaltTester()
 
   // see RendererModuleWithCameraOptions
   DCHECK(input_device_manager_);
+
+#if !defined(DISABLE_COBALT_CAMERA3D)
   render_module_options.get_camera_transform = base::Bind(
       &input::Camera3D::GetCameraTransformAndUpdateOrientation, input_device_manager_->camera_3d());
+#endif // !defined(DISABLE_COBALT_CAMERA3D)
 
   DCHECK(system_window_);
 
@@ -1870,7 +1863,10 @@ CobaltTester::CobaltTester()
   */
   css_parser_ = cobalt::css_parser::Parser::Create(supports_map_to_mesh);
 
+#if !defined(DISABLE_COBALT_DOM_PARSER)
   dom_parser_.reset(new cobalt::dom_parser::Parser());
+#endif // !DISABLE_COBALT_DOM_PARSER
+
   blob_registry_.reset(new dom::Blob::Registry);
 
   base::Callback<int(const std::string&, std::unique_ptr<char[]>*)>
@@ -1907,9 +1903,11 @@ CobaltTester::CobaltTester()
       script::ScriptRunner::CreateScriptRunner(global_environment_);
   DCHECK(script_runner_);
 
+#if !defined(DISABLE_COBALT_MEDIA)
   can_play_type_handler_ = cobalt::media::MediaModule::CreateCanPlayTypeHandler();
 
   media_source_registry_.reset(new dom::MediaSource::Registry);
+#endif // !DISABLE_COBALT_MEDIA
 
   animated_image_tracker_.reset(new loader::image::AnimatedImageTracker(
       base::ThreadPriority::BACKGROUND));
@@ -1953,10 +1951,19 @@ CobaltTester::CobaltTester()
    html_element_context_.reset(new cobalt::dom::HTMLElementContext(
         //&fetcher_factory_, &loader_factory_, &stub_css_parser_,
         fetcher_factory_.get(), loader_factory_.get(), css_parser_.get(),
-        dom_parser_.get(), can_play_type_handler_.get() ,
-        //NULL , &stub_script_runner_,
-        nullptr , script_runner_.get(),
-        nullptr , media_source_registry_.get(), &resource_provider_,
+#if !defined(DISABLE_COBALT_DOM_PARSER)
+        dom_parser_.get(),
+#endif // !DISABLE_COBALT_DOM_PARSER
+#if !defined(DISABLE_COBALT_MEDIA)
+        can_play_type_handler_.get(),
+        nullptr , // web_media_player_factory_
+#endif // !DISABLE_COBALT_MEDIA
+        script_runner_.get(), // &stub_script_runner_,
+        nullptr ,
+#if !defined(DISABLE_COBALT_MEDIA)
+        media_source_registry_.get(),
+#endif // !DISABLE_COBALT_MEDIA
+        &resource_provider_,
         animated_image_tracker_.get(), image_cache_.get(),
         reduced_image_cache_capacity_manager_.get(), remote_typeface_cache_.get(),
         mesh_cache_.get(), dom_stat_tracker_.get(),
@@ -1964,16 +1971,20 @@ CobaltTester::CobaltTester()
         base::kApplicationStateStarted,
         &synchronous_loader_interrupt_));
 
+#if !defined(DISABLE_COBALT_STORAGE)
   local_storage_database_.reset(
       //new dom::LocalStorageDatabase(data.network_module->storage_manager()));
       new dom::LocalStorageDatabase(nullptr));
   DCHECK(local_storage_database_);
+#endif // !DISABLE_COBALT_STORAGE
 
   /*web_module_stat_tracker_.reset(
       new browser::WebModuleStatTracker(name_, data.options.track_event_stats));
   DCHECK(web_module_stat_tracker_);*/
 
+#if !defined(DISABLE_COBALT_MEDIA)
   //media_session_client_ = media_session::MediaSessionClient::Create();
+#endif // !DISABLE_COBALT_MEDIA
 
   system_caption_settings_ = new cobalt::dom::captions::SystemCaptionSettings();
 
@@ -1983,7 +1994,9 @@ CobaltTester::CobaltTester()
   // These members will reference other |Traceable|s, however are not
   // accessible from |Window|, so we must explicitly add them as roots.
   global_environment_->AddRoot(&mutation_observer_task_manager_);
+#if !defined(DISABLE_COBALT_MEDIA)
   global_environment_->AddRoot(media_source_registry_.get());
+#endif // !DISABLE_COBALT_MEDIA
   global_environment_->AddRoot(blob_registry_.get());
 
   P_LOG("Create ui_nav_root_...\n");
@@ -2003,14 +2016,64 @@ CobaltTester::CobaltTester()
       static_cast<float>(display_width) / size->width,
       static_cast<float>(display_height) / size->height);*/
 
+  /*scoped_refptr<cobalt::dom::Document> new_document_
+    = new cobalt::dom::Document(html_element_context_.get());*/
+
+#if defined(ENABLE_TEST_RUNNER)
+  auto clock_type =
+    data.options.layout_trigger == layout::LayoutManager::kTestRunnerMode
+      ? dom::Window::kClockTypeTestRunner
+      : (data.options.limit_performance_timer_resolution
+             ? dom::Window::kClockTypeResolutionLimitedSystemTime
+             : dom::Window::kClockTypeSystemTime);
+#else
+  auto clock_type =
+    dom::Window::kClockTypeSystemTime;//kClockTypeResolutionLimitedSystemTime;
+#endif
+
+  scoped_refptr<cobalt::dom::Performance> performance
+    = new cobalt::dom::Performance(
+        cobalt::dom::Window::MakePerformanceClock(clock_type));
+
+  GURL url(R"raw(file:///resources/html/index.html)raw");
+
+  scoped_refptr<cobalt::dom::Document> new_document_
+    = new Document(
+          html_element_context_.get(),
+          Document::Options(
+              //GURL(R"raw(file:///resources/html/index.html)raw"),
+              //GURL(R"raw()raw"),
+              url,
+              window_.get(),
+              base::Bind(&cobalt::dom::Window::FireHashChangeEvent, base::Unretained(window_.get())),
+              performance->timing()->GetNavigationStartClock(),
+              base::Bind(&CobaltTester::CobaltTester::navigationCallback, base::Unretained(this)),//navigation_callback,
+              cobalt::cssom::ParseUserAgentStyleSheet(css_parser_.get()),
+              cobalt::cssom::ViewportSize(BROWSER_WIDTH, BROWSER_HEIGHT),//view_size,
+#if defined(ENABLE_GNET)//!defined(__EMSCRIPTEN__) && defined(__TODO__)
+              //cookie_jar, post_sender,
+#endif
+#if defined(ENABLE_COBALT_CSP)
+              //require_csp,
+#endif
+              cobalt::dom::CspEnforcementType::kCspEnforcementDisable,//csp_enforcement_mode,
+              base::Bind(&CobaltTester::OnCspPolicyChanged, base::Unretained(this)), // csp_policy_changed_callback,
+              0,//csp_insecure_allowed_token,
+              999//dom_max_element_depth
+              ));
+
   DCHECK(input_device_manager_);
+  const bool autoStartDocumentLoad = false;
   window_ = new cobalt::dom::Window(
-      /* autoStartDocumentLoad */ false,
+      performance,
+      autoStartDocumentLoad,
       cssom::ViewportSize(BROWSER_WIDTH, BROWSER_HEIGHT), //data.window_dimensions,
       1.0,//data.video_pixel_ratio,
       base::ApplicationState::kApplicationStateStarted,//data.initial_application_state,
       css_parser_.get(),
+#if !defined(DISABLE_COBALT_DOM_PARSER)
       dom_parser_.get(),
+#endif // !DISABLE_COBALT_DOM_PARSER
       fetcher_factory_.get(),
       loader_factory_.get(),
       &resource_provider_,
@@ -2019,15 +2082,24 @@ CobaltTester::CobaltTester()
       reduced_image_cache_capacity_manager_.get(),
       remote_typeface_cache_.get(),
       mesh_cache_.get(),
+#if !defined(DISABLE_COBALT_STORAGE)
       local_storage_database_.get(),
+#endif // !DISABLE_COBALT_STORAGE
+#if !defined(DISABLE_COBALT_MEDIA)
       can_play_type_handler_.get(),//data.can_play_type_handler,
       nullptr,//data.web_media_player_factory,
+#endif // !DISABLE_COBALT_MEDIA
       execution_state_.get(),
       script_runner_.get(),
       global_environment_->script_value_factory(),
+#if !defined(DISABLE_COBALT_MEDIA)
       media_source_registry_.get(),
+#endif // !DISABLE_COBALT_MEDIA
       dom_stat_tracker_.get(),//nullptr,//web_module_stat_tracker_->dom_stat_tracker(),
-      GURL(R"raw(file:///resources/html/index.html)raw"),//data.initial_url,
+      //GURL(R"raw(file:///resources/html/index.html)raw"),//data.initial_url,
+      //GURL(R"raw()raw"),//data.initial_url,
+      url,
+      new_document_,
       "data.network_module->GetUserAgent()",
       "data.network_module->preferred_language()",
       "en_US", // font_language_script
@@ -2056,7 +2128,9 @@ CobaltTester::CobaltTester()
       //base::Bind(&OnWindowMinimize, base::Unretained(this)), //data.window_minimize_callback, // base::Closure
       base::Bind(&CobaltTester::OnWindowMinimize, base::Unretained(this)),
       on_screen_keyboard_bridge, //data.options.on_screen_keyboard_bridge,
+#if !defined(DISABLE_COBALT_CAMERA3D)
       input_device_manager_->camera_3d(), //new Camera3D(),//data.options.camera_3d,
+#endif // !defined(DISABLE_COBALT_CAMERA3D)
       // //media_session_client_->GetMediaSession(),
       base::Bind(&CobaltTester::OnStartDispatchEvent, base::Unretained(this)),
       //base::Bind(&WebModule::Impl::OnStartDispatchEvent,
@@ -2072,15 +2146,7 @@ CobaltTester::CobaltTester()
   //#if defined(ENABLE_NATIVE_HTML)
   //      dom::Window::kClockTypeTestRunner,
   //#elif
-#if defined(ENABLE_TEST_RUNNER)
-      data.options.layout_trigger == layout::LayoutManager::kTestRunnerMode
-          ? dom::Window::kClockTypeTestRunner
-          : (data.options.limit_performance_timer_resolution
-                 ? dom::Window::kClockTypeResolutionLimitedSystemTime
-                 : dom::Window::kClockTypeSystemTime),
-#else
-      dom::Window::kClockTypeSystemTime,//kClockTypeResolutionLimitedSystemTime,
-#endif
+      clock_type,
       splash_screen_cache_callback,
       system_caption_settings_,
       false//log_tts
@@ -2122,8 +2188,13 @@ CobaltTester::CobaltTester()
   DCHECK(window_weak_);
 
   printf("document_->set_window...\n");
-  const bool document_load_started = window_->TryForceStartDocumentLoad();
-  //DCHECK(document_load_started);
+#if !defined(DISABLE_COBALT_DOM_PARSER)
+  if(!autoStartDocumentLoad)
+  {
+    const bool document_load_started = window_->TryForceStartDocumentLoad();
+    //DCHECK(document_load_started);
+  }
+#endif // !DISABLE_COBALT_DOM_PARSER
 
   printf("document_->set_window...\n");
 
@@ -2136,9 +2207,13 @@ CobaltTester::CobaltTester()
       fetcher_factory_.get(),
       nullptr,//data.network_module,
       window_,
+#if !defined(DISABLE_COBALT_MEDIA)
       media_source_registry_.get(),
+#endif // !DISABLE_COBALT_MEDIA
       blob_registry_.get(),
+#if !defined(DISABLE_COBALT_MEDIA)
       can_play_type_handler_.get(),//data.can_play_type_handler,
+#endif // !DISABLE_COBALT_MEDIA
       javascript_engine_.get(),
       global_environment_.get(),
       &mutation_observer_task_manager_,
@@ -2179,6 +2254,83 @@ CobaltTester::CobaltTester()
 
   window_->document()->setHTMLModelRegistry(
     std::make_unique<generated::models::MainHTMLModelRegistry>());
+
+#if defined(DISABLE_COBALT_DOM_PARSER)
+  scoped_refptr<cobalt::dom::HTMLElement> new_root_
+    = new_document_->CreateElement("html")->AsHTMLElement();
+  scoped_refptr<cobalt::dom::HTMLElement> new_head_
+    = new_document_->CreateElement("head")->AsHTMLElement();
+  scoped_refptr<cobalt::dom::HTMLElement> new_body_
+    = new_document_->CreateElement("body")->AsHTMLElement();
+  new_root_->AppendChild(new_head_);
+  new_root_->AppendChild(new_body_);
+  new_document_->AppendChild(new_root_);
+#if 0
+  new_head_->set_inner_html(
+      R"raw(<style>
+      html {
+        width:100%;
+        height:100%;
+        overflow: hidden;
+      }
+      body {
+        background:yellow;
+
+        /*
+           calc unsupported
+             see https://css-tricks.com/fun-viewport-units/
+             Minimum 16x, and grows more slowly
+             (half the rate of screen growth)
+           font-size: calc(16px + 0.5vw);
+             see https://css-tricks.com/fun-viewport-units/
+             Line-height based on font-size,
+             with addition viewport-relative growth
+           line-height: calc(1.1em + 0.5vw);
+        */
+
+        font-family: "UbuntuCustom";
+        font-size: 20px;
+        width:100%;
+        height:100%;
+        overflow: hidden;
+      }
+      </style>)raw");
+  new_body_->set_inner_html(
+    R"raw(
+    <div class="flip-card" style="z-index:999;">
+      <div class="flip-card-inner">
+        <div class="flip-card-front">
+          <div style="background-image: url('file:///resources/images/mouse.jpeg'); width:300px; height:300px;">
+          </div>
+        </div>
+        <div class="flip-card-back">
+          <div>
+            <div style="width:1000px;">
+              <sk_input width="1000" height="50" style="width:100%;height:50px;" tabindex="0">
+                text 2
+              </sk_input>
+            </div>
+            <skottie width="40" height="40" src="./resources/animations/data.json" style="display:block;color:#CCC;width:40px;height:40px;z-index:999;">
+            </skottie>
+            kkk
+          </div>
+        </div>
+      </div>
+    </div>
+    )raw");
+#endif // 0
+  //new_body_->set_text_content("text_content");
+
+  new_body_->SetAttribute("style", "font-size: 20px;width:100%;height:100%;overflow: hidden;background:yellow;");
+
+  scoped_refptr<HTMLElement> div_element_3 =
+    new cobalt::dom::HTMLDivElement(document_.get());
+  div_element_3->SetAttribute("style", "height:120px;width:100px;background:red;padding:10px;border:5px solid green;");
+  div_element_3->AsHTMLElement()->
+    style()->set_width("210px", /*todo*/nullptr);
+  div_element_3->AppendChild(new cobalt::dom::Text(document_.get(), "This ваыва 123 `1`12"));
+  new_body_->AppendChild(div_element_3);
+#endif // DISABLE_COBALT_DOM_PARSER
 }
 
 static void createCobaltTester() {
@@ -2293,6 +2445,7 @@ static void animate() {
       /// or browser will crash/hang/loose webgl context
       /// you MUST split work between main loop iterations
       else if(!g_cobaltTester->window_->isDocumentStartedLoading()) {
+#if !defined(DISABLE_COBALT_DOM_PARSER)
           //emscripten_pause_main_loop();
           printf("g_cobaltTester TryForceStartDocumentLoad 1\n");
           DCHECK(g_cobaltTester);
@@ -2301,6 +2454,9 @@ static void animate() {
           //DCHECK(res);
           printf("g_cobaltTester TryForceStartDocumentLoad 2\n");
           //emscripten_resume_main_loop();
+#else
+          DCHECK(false);
+#endif // !defined(DISABLE_COBALT_DOM_PARSER)
       }
       else if(!g_cobaltTester->window_->isStartedDocumentLoader()) {
           //emscripten_pause_main_loop();
@@ -2827,7 +2983,13 @@ static void sendBrowserInputEvent(std::unique_ptr<SbEvent> event) {
               if (indicated_element->text_content().value_or("") == "hovertest") {
                 //indicated_element->set_text_content(std::string("New text content"));
                 /// \todo check html on page is fully loaded before editing html
-                indicated_element->set_inner_html("<br>Cobalt<br>best<br>");
+
+#if !defined(DISABLE_COBALT_DOM_PARSER)
+      indicated_element->set_inner_html("<br>Cobalt<br>best<br>");
+#else
+      indicated_element->set_text_content("<br>Cobalt<br>best<br>");
+#endif // !DISABLE_COBALT_DOM_PARSER
+
                 // TODO:: free memory
                 scoped_refptr<HTMLElement> div_element_3 =
                     indicated_element->AppendChild(new cobalt::dom::HTMLDivElement(document_.get()))
@@ -3052,7 +3214,6 @@ static void handleEmscriptenKeyboardEvent(int emsc_type, const EmscriptenKeyboar
   const int keyCode = emsc_event->keyCode;
   const int dom_pk_code = emscripten_compute_dom_pk_code(emsc_event->code);
   const int CharCode = InterpretCharCode(emsc_type, emsc_event);
-  unsigned int Character = native_event::Utf8CharToUtf32((const unsigned char*)emsc_event->key);
 
   /// \note "keypress" event will give you a charCode property whenever you press a character key.
   /// \note "keydown" event will capture every keystroke, but it doesn't have a charCode property
@@ -3062,6 +3223,9 @@ static void handleEmscriptenKeyboardEvent(int emsc_type, const EmscriptenKeyboar
   const bool hasModifier = emsc_event->altKey
     || emsc_event->ctrlKey
     || emsc_event->metaKey;
+
+#if defined(ENABLE_COBALT)
+  unsigned int Character = native_event::Utf8CharToUtf32((const unsigned char*)emsc_event->key);
 
   printf("%s, key: \"%s\" (printable: %s), code: \"%s\" = %s (%d), "
          "location: %lu,%s%s%s%s repeat: %d, locale: \"%s\", "
@@ -3079,7 +3243,6 @@ static void handleEmscriptenKeyboardEvent(int emsc_type, const EmscriptenKeyboar
     emscripten_dom_vk_to_string(emsc_event->keyCode), emsc_event->keyCode,
     emsc_event->which, CharCode, Character);
 
-#if defined(ENABLE_COBALT)
   std::unique_ptr<SbEvent> event = nullptr;
   SbInputEventType sbInputEventType;
 

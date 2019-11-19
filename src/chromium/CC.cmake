@@ -394,7 +394,8 @@ target_link_libraries(CC PRIVATE
   SKIA
   base
   GURL
-  COMPONENTS_VIZ_CLIENT
+  #
+  ${COMPONENTS_VIZ_CLIENT_LIB}
   # khronos
   ${khronos_LIB}
 )

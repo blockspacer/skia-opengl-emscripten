@@ -3,7 +3,7 @@
 ### --- COMPONENTS_CONTENT_SETTINGS_CORE_COMMON ---###
 
 # TODO https://github.com/chromium/chromium/blob/master/third_party/blink/renderer/platform/BUILD.gn
-set(COMPONENTS_CONTENT_SETTINGS_CORE_COMMON_SOURCES
+list(APPEND COMPONENTS_CONTENT_SETTINGS_CORE_COMMON_SOURCES
   ${COMPONENTS_CONTENT_SETTINGS_CORE_COMMON_DIR}content_settings.cc
   #${COMPONENTS_CONTENT_SETTINGS_CORE_COMMON_DIR}content_settings.h",
   ${COMPONENTS_CONTENT_SETTINGS_CORE_COMMON_DIR}content_settings_pattern.cc

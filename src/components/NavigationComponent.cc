@@ -193,7 +193,13 @@ base::Optional<bool> NavigationComponentEventListener::HandleEvent(
       DCHECK(component_);
       std::string new_html_element_content = "demo-row-";
       new_html_element_content += std::to_string(component_->row_count_);
+
+#if !defined(DISABLE_COBALT_DOM_PARSER)
       new_html_element->set_inner_html(new_html_element_content);
+#else
+      new_html_element->set_text_content(new_html_element_content);
+#endif // !DISABLE_COBALT_DOM_PARSER
+
       component_->row_count_++;
     } else {
       DCHECK(false);
@@ -258,6 +264,7 @@ void NavigationComponent::onMutated(const std::string& new_data) {
     /// \todo handle more than one Item
     ///
     add_row_btn_html_element = found_add_row_btns->Item(0)->AsHTMLElement();
+    DCHECK(add_row_btn_html_element);
 
     if(!add_row_btn_eventListener_) {
       add_row_btn_eventListener_ = AddRowBtnEventListener::Create(
@@ -277,10 +284,13 @@ void NavigationComponent::onMutated(const std::string& new_data) {
                    to outer elements. */);
     }
   } else {
+#if !defined(DISABLE_COBALT_DOM_PARSER)
     DCHECK(false);
+#else
+    NOTIMPLEMENTED();
+#endif // DISABLE_COBALT_DOM_PARSER
     // TODO: print warning here
   }
-  DCHECK(add_row_btn_html_element);
 
   loaded_data_ = new_data;
 }

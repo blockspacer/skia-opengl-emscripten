@@ -25,7 +25,9 @@
 #endif // OS_EMSCRIPTEN
 #include "third_party/skia/include/core/SkSurface.h"
 #include "third_party/skia/include/gpu/GrBackendSurface.h"
+//#if SK_SUPPORT_GPU
 #include "third_party/skia/include/gpu/GrContext.h"
+//#endif // SK_SUPPORT_GPU
 
 namespace gpu {
 namespace gles2 {

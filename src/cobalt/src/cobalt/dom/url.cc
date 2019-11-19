@@ -30,6 +30,7 @@ const char kBlobUrlProtocol[] = "blob";
 }  // namespace
 
 // static
+#if !defined(DISABLE_COBALT_MEDIA)
 std::string URL::CreateObjectURL(
     script::EnvironmentSettings* environment_settings,
     const scoped_refptr<MediaSource>& media_source) {
@@ -46,6 +47,7 @@ std::string URL::CreateObjectURL(
   dom_settings->media_source_registry()->Register(blob_url, media_source);
   return blob_url;
 }
+#endif // !DISABLE_COBALT_MEDIA
 
 // static
 std::string URL::CreateObjectURL(
@@ -71,7 +73,9 @@ void URL::RevokeObjectURL(script::EnvironmentSettings* environment_settings,
   DOMSettings* dom_settings =
       base::polymorphic_downcast<DOMSettings*>(environment_settings);
   DCHECK(dom_settings);
+#if !defined(DISABLE_COBALT_MEDIA)
   DCHECK(dom_settings->media_source_registry());
+#endif // !DISABLE_COBALT_MEDIA
 
   // 1. If the url refers to a Blob that has a readability state of CLOSED OR if
   // the value provided for the url argument is not a Blob URL, OR if the value
@@ -83,12 +87,14 @@ void URL::RevokeObjectURL(script::EnvironmentSettings* environment_settings,
     return;
   }
 
+#if !defined(DISABLE_COBALT_MEDIA)
   // 2. Otherwise, user agents must remove the entry from the Blob URL Store for
   // url.
   if (!dom_settings->media_source_registry()->Unregister(url) &&
       !dom_settings->blob_registry()->Unregister(url)) {
     DLOG(WARNING) << "Cannot find object for blob url " << url;
   }
+#endif // !DISABLE_COBALT_MEDIA
 }
 
 bool URL::BlobResolver(dom::Blob::Registry* registry, const GURL& url,

@@ -2,7 +2,7 @@
 
 # skia_cobalt.gypi
 # TODO: uses outdated skia ver!
-set(COBALT_system_window_SOURCES
+list(APPEND COBALT_system_window_SOURCES
   ${COBALT_PORT_DIR}/cobalt/system_window/system_window.cc
   #'application_event.h',
   #'keyboard_event.h',

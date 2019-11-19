@@ -1,8 +1,6 @@
 ﻿## --- GPU_COMMAND_BUFFER ---###
 
-set(GPU_CONFIG_DIR
-  ${GPU_DIR}config/
-)
+set(GPU_CONFIG_DIR ${GPU_DIR}config/)
 
 #./src/chromium/gen/gen_services_network_public/gpu/command_buffer/service/disk_cache_proto.pb.cc
 #./src/chromium/gen/gen_services_network_public/gpu/config/gpu_driver_bug_list_autogen.cc
@@ -411,7 +409,7 @@ list(APPEND GPU_COMMAND_BUFFER_CLIENT_SOURCES
 )
 
 ### GPU_CONFIG ###
-set(GPU_CONFIG_SOURCES
+list(APPEND GPU_CONFIG_SOURCES
   ${GPU_CONFIG_DIR}dx_diag_node.cc
   ${GPU_CONFIG_DIR}dx_diag_node.h
   ## TODO ## ${GPU_CONFIG_DIR}gpu_blacklist.cc

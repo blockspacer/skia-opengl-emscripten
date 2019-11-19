@@ -14,6 +14,8 @@
 
 #include "cobalt/dom/eme/media_encrypted_event.h"
 
+#if !defined(DISABLE_COBALT_MEDIA)
+
 #include "cobalt/base/tokens.h"
 
 namespace cobalt {
@@ -39,3 +41,5 @@ MediaEncryptedEvent::MediaEncryptedEvent(
 }  // namespace eme
 }  // namespace dom
 }  // namespace cobalt
+
+#endif // !DISABLE_COBALT_MEDIA

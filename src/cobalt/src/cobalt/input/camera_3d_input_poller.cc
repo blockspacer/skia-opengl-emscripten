@@ -16,6 +16,8 @@
 
 #include "cobalt/input/camera_3d_input_poller.h"
 
+#if !defined(DISABLE_COBALT_CAMERA3D)
+
 #include <algorithm>
 
 // MSVC++ requires this to be set before any other includes to get M_PI.
@@ -176,3 +178,5 @@ scoped_refptr<Camera3D> CreatedDefaultCamera3D(
 
 }  // namespace input
 }  // namespace cobalt
+
+#endif // !defined(DISABLE_COBALT_CAMERA3D)

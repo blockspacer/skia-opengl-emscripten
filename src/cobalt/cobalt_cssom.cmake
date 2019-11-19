@@ -16,7 +16,7 @@
 #  '<(DEPTH)/url/url.gyp:url',
 #  'embed_resources_as_header_files',
 #],
-set(cobalt_cssom_SOURCES
+list(APPEND cobalt_cssom_SOURCES
   ${COBALT_CORE_DIR}cssom/absolute_url_value.cc
   ${COBALT_CORE_DIR}cssom/absolute_url_value.h
   ${COBALT_CORE_DIR}cssom/active_pseudo_class.cc
@@ -261,12 +261,12 @@ target_link_libraries(cobalt_cssom PRIVATE
   #starboard_core
   base # TODO
   modp_b64
-  dynamic_annotations
+  #dynamic_annotations
   GURL
   ${GNET_LIBS}
   ${GLIBXML_LIB}
   icu
-  ced
+  #ced
   glm
   #${WEBP_LIB} # requires libpng
   #${libjpeg_LIB}

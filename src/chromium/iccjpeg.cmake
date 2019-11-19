@@ -1,9 +1,8 @@
 ﻿### --- iccjpeg ---###
 
-set(iccjpeg_DIR
-  ${CHROMIUM_DIR}/third_party/iccjpeg/)
+set(iccjpeg_DIR ${CHROMIUM_DIR}/third_party/iccjpeg/)
 
-set(iccjpeg_SOURCES
+list(APPEND iccjpeg_SOURCES
   ${iccjpeg_DIR}iccjpeg.c
   ${iccjpeg_DIR}iccjpeg.h
 )

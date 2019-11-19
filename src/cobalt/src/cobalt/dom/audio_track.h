@@ -15,6 +15,8 @@
 #ifndef COBALT_DOM_AUDIO_TRACK_H_
 #define COBALT_DOM_AUDIO_TRACK_H_
 
+#if !defined(DISABLE_COBALT_MEDIA)
+
 #include <string>
 
 #include "cobalt/dom/track_base.h"
@@ -77,5 +79,7 @@ class AudioTrack : public TrackBase {
 
 }  // namespace dom
 }  // namespace cobalt
+
+#endif // !DISABLE_COBALT_MEDIA
 
 #endif  // COBALT_DOM_AUDIO_TRACK_H_

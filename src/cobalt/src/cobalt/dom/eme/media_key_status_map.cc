@@ -14,6 +14,8 @@
 
 #include "cobalt/dom/eme/media_key_status_map.h"
 
+#if !defined(DISABLE_COBALT_MEDIA)
+
 #include "base/logging.h"
 #include "base/polymorphic_downcast.h"
 #include "cobalt/dom/dom_settings.h"
@@ -92,3 +94,5 @@ void MediaKeyStatusMap::ForEach(script::EnvironmentSettings* settings,
 }  // namespace eme
 }  // namespace dom
 }  // namespace cobalt
+
+#endif // !DISABLE_COBALT_MEDIA

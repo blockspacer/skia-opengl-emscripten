@@ -2,11 +2,11 @@
 
 ### --- COMPONENTS_SCHEDULING_METRICS ---###
 
-set(COMPONENTS_SCHEDULING_METRICS_DIR
+list(APPEND COMPONENTS_SCHEDULING_METRICS_DIR
   components/scheduling_metrics/
 )
 
-set(COMPONENTS_SCHEDULING_METRICS_SOURCES
+list(APPEND COMPONENTS_SCHEDULING_METRICS_SOURCES
     #"task_duration_metric_reporter.h",
   ${COMPONENTS_SCHEDULING_METRICS_DIR}thread_metrics.cc
     #"thread_metrics.h",

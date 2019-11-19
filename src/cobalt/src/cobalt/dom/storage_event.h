@@ -15,6 +15,8 @@
 #ifndef COBALT_DOM_STORAGE_EVENT_H_
 #define COBALT_DOM_STORAGE_EVENT_H_
 
+#if !defined(DISABLE_COBALT_STORAGE)
+
 #include <string>
 
 #include "base/optional.h"
@@ -56,5 +58,7 @@ class StorageEvent : public Event {
 
 }  // namespace dom
 }  // namespace cobalt
+
+#endif // !defined(DISABLE_COBALT_STORAGE)
 
 #endif  // COBALT_DOM_STORAGE_EVENT_H_

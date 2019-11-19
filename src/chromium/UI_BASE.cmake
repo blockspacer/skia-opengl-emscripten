@@ -542,7 +542,7 @@ target_link_libraries(UI_BASE PRIVATE
   #  "//url",
   #]
   #
-  dynamic_annotations
+  #dynamic_annotations
   base
   SKIA
   UI_GFX

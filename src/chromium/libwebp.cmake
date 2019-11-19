@@ -4,8 +4,7 @@ if(TARGET_EMSCRIPTEN OR EMSCRIPTEN)
   message(FATAL_ERROR "platform not supported")
 endif()
 
-set(libwebp_DIR
-  ${CHROMIUM_DIR}/third_party/libwebp/)
+set(libwebp_DIR ${CHROMIUM_DIR}/third_party/libwebp/)
 
 list(APPEND libwebp_SOURCES
   #

@@ -89,8 +89,14 @@ list(APPEND RENDERER_PRIVATE_DEFINES
 #   '<(DEPTH)/third_party/ots/ots.gyp:ots',
 #   '<(DEPTH)/cobalt/renderer/rasterizer/common/common.gyp:common',
 # ],
-  if(ENABLE_SKIA)
-  set(COBALT_renderer_stub_skia_SOURCES
+if(ENABLE_SKIA)
+  if(ENABLE_FONTCONFIG)
+    list(APPEND COBALT_renderer_stub_skia_SOURCES
+      ${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/skia/src/ports/SkFontConfigParser_cobalt.cc
+    )
+  endif(ENABLE_FONTCONFIG)
+  #
+  list(APPEND COBALT_renderer_stub_skia_SOURCES
     #
     # skia
     #
@@ -112,7 +118,6 @@ list(APPEND RENDERER_PRIVATE_DEFINES
     ${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/skia/src/ports/SkStream_cobalt.cc
     ${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/skia/src/ports/SkOSFile_cobalt.cc
     #
-    ${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/skia/src/ports/SkFontConfigParser_cobalt.cc
     ${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/skia/src/ports/SkFontMgr_cobalt.cc
     ${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/skia/src/ports/SkFontStyleSet_cobalt.cc
     ${COBALT_PORT_DIR}/renderer_stub/rasterizer/skia/skia/src/ports/SkFontUtil_cobalt.cc
@@ -132,7 +137,7 @@ list(APPEND RENDERER_PRIVATE_DEFINES
     ${COBALT_PORT_DIR}/renderer_stub/rasterizer/common/utils.cc
   )
 else()
-  set(COBALT_renderer_stub_skia_SOURCES
+  list(APPEND COBALT_renderer_stub_skia_SOURCES
     #
     # skia stub
     #
@@ -178,10 +183,10 @@ endif(ENABLE_SKIA)
     starboard_eztime
     starboard_common
     modp_b64
-    dynamic_annotations
+    #dynamic_annotations
     ${GLIBXML_LIB}
     icu
-    ced
+    #ced
     glm
     ${SKIA_LIB}
     ${HARFBUZZ_LIBRARIES}
@@ -228,7 +233,7 @@ endif(ENABLE_SKIA)
 #
 # 'target_name': 'software_rasterizer',
 #
-set(COBALT_renderer_stub_skgl_SOURCES
+list(APPEND COBALT_renderer_stub_skgl_SOURCES
   ${COBALT_PORT_DIR}/renderer_stub/rasterizer/skgl/software_rasterizer.cc
   ${COBALT_PORT_DIR}/renderer_stub/rasterizer/skgl/render_tree_node_visitor.cc
   #${COBALT_PORT_DIR}/renderer_stub/rasterizer/skgl/textured_mesh_renderer.cc
@@ -276,10 +281,10 @@ target_link_libraries(cobalt_renderer_stub_skgl PRIVATE
   starboard_eztime
   starboard_common
   modp_b64
-  dynamic_annotations
+  #dynamic_annotations
   ${GLIBXML_LIB}
   icu
-  ced
+  #ced
   glm
   ${SKIA_LIB}
   ${HARFBUZZ_LIBRARIES}
@@ -433,10 +438,10 @@ target_link_libraries(cobalt_renderer_stub PRIVATE
   starboard_eztime
   starboard_common
   modp_b64
-  dynamic_annotations
+  #dynamic_annotations
   ${GLIBXML_LIB}
   icu
-  ced
+  #ced
   glm
   ${SKIA_LIB}
   ${HARFBUZZ_LIBRARIES}

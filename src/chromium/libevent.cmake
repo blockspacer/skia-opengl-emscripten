@@ -15,9 +15,7 @@ endif()
 # see https://github.com/libevent/libevent
 # defines https://github.com/libevent/libevent/blob/master/event-config.h.cmake
 # see HAVE_CONFIG_H https://github.com/chromium/chromium/blob/master/base/third_party/libevent/BUILD.gn#L37
-set(LIBEVENT_DIR
-  ${BASE_DIR}third_party/libevent/
-)
+set(LIBEVENT_DIR ${BASE_DIR}third_party/libevent/)
 
 list(APPEND LIBEVENT_SOURCES
   ${LIBEVENT_DIR}buffer.c
@@ -48,7 +46,7 @@ list(APPEND LIBEVENT_SOURCES
   ${LIBEVENT_DIR}strlcpy.c
 )
 
-set(LIBEVENT_INCLUDE_DIRS
+list(APPEND LIBEVENT_INCLUDE_DIRS
   #../..
   #..
   ${BASE_DIR}third_party/libevent
@@ -62,7 +60,7 @@ else()
   set(HAVE_CONFIG_H HAVE_CONFIG_H=1)
 endif()
 
-set(LIBEVENT_DEFINES
+list(APPEND LIBEVENT_DEFINES
   ${HAVE_CONFIG_H}
 )
 

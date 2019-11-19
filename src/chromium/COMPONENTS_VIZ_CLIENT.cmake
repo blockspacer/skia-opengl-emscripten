@@ -2,7 +2,7 @@
 
 ### --- COMPONENTS_VIZ_CLIENT ---###
 
-set(COMPONENTS_VIZ_CLIENT_SOURCES
+list(APPEND COMPONENTS_VIZ_CLIENT_SOURCES
   #
   ${COMPONENTS_VIZ_CLIENT_DIR}client_resource_provider.cc
   #${COMPONENTS_VIZ_CLIENT_DIR}client_resource_provider.h",

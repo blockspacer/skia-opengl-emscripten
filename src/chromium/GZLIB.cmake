@@ -1,10 +1,8 @@
 ﻿### --- GZLIB ---###
 
-set(GZLIB_DIR
-  third_party/zlib/
-)
+set(GZLIB_DIR third_party/zlib/)
 
-set(GZLIB_SOURCES
+list(APPEND GZLIB_SOURCES
   ${GZLIB_DIR}adler32.c
   #${GZLIB_DIR}chromeconf.h
   ${GZLIB_DIR}compress.c

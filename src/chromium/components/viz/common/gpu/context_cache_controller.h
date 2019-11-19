@@ -14,7 +14,9 @@
 #include "base/single_thread_task_runner.h"
 #include "components/viz/common/viz_common_export.h"
 
+//#if SK_SUPPORT_GPU
 class GrContext;
+//#endif // SK_SUPPORT_GPU
 
 namespace base {
 class Lock;

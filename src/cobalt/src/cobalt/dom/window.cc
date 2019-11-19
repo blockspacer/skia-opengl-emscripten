@@ -40,7 +40,9 @@
 #include "cobalt/dom/input_event.h"
 #include "cobalt/dom/keyboard_event.h"
 #include "cobalt/dom/location.h"
+#if !defined(DISABLE_COBALT_MEDIA)
 #include "cobalt/dom/media_source.h"
+#endif // !DISABLE_COBALT_MEDIA
 #include "cobalt/dom/mouse_event.h"
 #include "cobalt/dom/mutation_observer_task_manager.h"
 #include "cobalt/dom/navigator.h"
@@ -49,13 +51,15 @@
 #include "cobalt/dom/screen.h"
 #include "cobalt/dom/screenshot.h"
 #include "cobalt/dom/screenshot_manager.h"
+#if !defined(DISABLE_COBALT_STORAGE)
 #include "cobalt/dom/storage.h"
+#endif // !defined(DISABLE_COBALT_STORAGE)
 #include "cobalt/dom/wheel_event.h"
 #include "cobalt/dom/window_timers.h"
 
-#if defined(ENABLE_COBALT_MEDIA_SESSION)
+#if !defined(DISABLE_COBALT_MEDIA_SESSION)
 #include "cobalt/media_session/media_session_client.h"
-#endif // ENABLE_COBALT_MEDIA_SESSION
+#endif // DISABLE_COBALT_MEDIA_SESSION
 
 #include "cobalt/script/environment_settings.h"
 #include "cobalt/script/javascript_engine.h"
@@ -73,9 +77,9 @@ static bool window_initialized = false;
 
 using cobalt::cssom::ViewportSize;
 
-#if defined(ENABLE_COBALT_MEDIA_SESSION)
+#if !defined(DISABLE_COBALT_MEDIA_SESSION)
 using cobalt::media_session::MediaSession;
-#endif // ENABLE_COBALT_MEDIA_SESSION
+#endif // DISABLE_COBALT_MEDIA_SESSION
 
 namespace cobalt {
 namespace dom {
@@ -107,10 +111,14 @@ const int64_t kPerformanceTimerMinResolutionInMicroseconds = 20;
 }  // namespace
 
 Window::Window(
+    scoped_refptr<cobalt::dom::Performance>& performance,
     const bool autoStartDocumentLoad,
     const ViewportSize& view_size, float device_pixel_ratio,
     base::ApplicationState initial_application_state,
-    cssom::CSSParser* css_parser, Parser* dom_parser,
+    cssom::CSSParser* css_parser,
+#if !defined(DISABLE_COBALT_DOM_PARSER)
+    Parser* dom_parser,
+#endif // !DISABLE_COBALT_DOM_PARSER
     loader::FetcherFactory* fetcher_factory,
     loader::LoaderFactory* loader_factory,
     render_tree::ResourceProvider** resource_provider,
@@ -120,14 +128,22 @@ Window::Window(
         reduced_image_cache_capacity_manager,
     loader::font::RemoteTypefaceCache* remote_typeface_cache,
     loader::mesh::MeshCache* mesh_cache,
+#if !defined(DISABLE_COBALT_STORAGE)
     LocalStorageDatabase* local_storage_database,
+#endif // !DISABLE_COBALT_STORAGE
+#if !defined(DISABLE_COBALT_MEDIA)
     media::CanPlayTypeHandler* can_play_type_handler,
     media::WebMediaPlayerFactory* web_media_player_factory,
+#endif // !DISABLE_COBALT_MEDIA
     script::ExecutionState* execution_state,
     script::ScriptRunner* script_runner,
     script::ScriptValueFactory* script_value_factory,
+#if !defined(DISABLE_COBALT_MEDIA)
     MediaSource::Registry* media_source_registry,
-    DomStatTracker* dom_stat_tracker, const GURL& url,
+#endif // !DISABLE_COBALT_MEDIA
+    DomStatTracker* dom_stat_tracker,
+    const GURL& url,
+    scoped_refptr<cobalt::dom::Document>& new_document,
     const std::string& user_agent, const std::string& language,
     const std::string& font_language_script,
     const base::Callback<void(const GURL&)> navigation_callback,
@@ -148,10 +164,12 @@ Window::Window(
     const CloseCallback& window_close_callback,
     const base::Closure& window_minimize_callback,
     OnScreenKeyboardBridge* on_screen_keyboard_bridge,
+#if !defined(DISABLE_COBALT_CAMERA3D)
     const scoped_refptr<input::Camera3D>& camera_3d,
-#if defined(ENABLE_COBALT_MEDIA_SESSION)
+#endif // !defined(DISABLE_COBALT_CAMERA3D)
+#if !defined(DISABLE_COBALT_MEDIA_SESSION)
     const scoped_refptr<MediaSession>& media_session,
-#endif // ENABLE_COBALT_MEDIA_SESSION
+#endif // DISABLE_COBALT_MEDIA_SESSION
     const OnStartDispatchEventCallback& on_start_dispatch_event_callback,
     const OnStopDispatchEventCallback& on_stop_dispatch_event_callback,
     const ScreenshotManager::ProvideScreenshotFunctionCallback&
@@ -178,16 +196,28 @@ Window::Window(
       test_runner_(new TestRunner()),
 #endif  // ENABLE_TEST_RUNNER
       html_element_context_(new HTMLElementContext(
-          fetcher_factory, loader_factory, css_parser, dom_parser,
-          can_play_type_handler, web_media_player_factory, script_runner,
-          script_value_factory, media_source_registry, resource_provider,
+          fetcher_factory, loader_factory, css_parser,
+#if !defined(DISABLE_COBALT_DOM_PARSER)
+          dom_parser,
+#endif // !DISABLE_COBALT_DOM_PARSER
+#if !defined(DISABLE_COBALT_MEDIA)
+          can_play_type_handler,
+          web_media_player_factory,
+#endif // !DISABLE_COBALT_MEDIA
+          script_runner,
+          script_value_factory,
+#if !defined(DISABLE_COBALT_MEDIA)
+          media_source_registry,
+#endif // !DISABLE_COBALT_MEDIA
+          resource_provider,
           animated_image_tracker, image_cache,
           reduced_image_cache_capacity_manager, remote_typeface_cache,
           mesh_cache, dom_stat_tracker, font_language_script,
           initial_application_state, synchronous_loader_interrupt,
           video_playback_rate_multiplier)),
-      performance_(new Performance(MakePerformanceClock(clock_type))),
-      ALLOW_THIS_IN_INITIALIZER_LIST(document_(new Document(
+      performance_(performance),
+      //performance_(new Performance(MakePerformanceClock(clock_type))),
+      /*ALLOW_THIS_IN_INITIALIZER_LIST(document_(new Document(
           html_element_context_.get(),
           Document::Options(
               url, this,
@@ -202,13 +232,16 @@ Window::Window(
               require_csp,
 #endif
               csp_enforcement_mode, csp_policy_changed_callback,
-              csp_insecure_allowed_token, dom_max_element_depth)))),
+              csp_insecure_allowed_token, dom_max_element_depth)))),*/
+      document_(new_document),
+#if !defined(DISABLE_COBALT_DOM_PARSER)
       document_loader_(nullptr),
+#endif // !DISABLE_COBALT_DOM_PARSER
       history_(new History()),
       navigator_(new Navigator(user_agent, language
-#if defined(ENABLE_COBALT_MEDIA_SESSION)
+#if !defined(DISABLE_COBALT_MEDIA_SESSION)
       , media_session
-#endif // ENABLE_COBALT_MEDIA_SESSION
+#endif // DISABLE_COBALT_MEDIA_SESSION
       , captions
       , script_value_factory)),
       ALLOW_THIS_IN_INITIALIZER_LIST(
@@ -226,10 +259,12 @@ Window::Window(
 #if defined(ENABLE_SPEECH)
       speech_synthesis_(new speech::SpeechSynthesis(navigator_, log_tts)),
 #endif // ENABLE_SPEECH
+#if !defined(DISABLE_COBALT_STORAGE)
       ALLOW_THIS_IN_INITIALIZER_LIST(local_storage_(
           new Storage(this, Storage::kLocalStorage, local_storage_database))),
       ALLOW_THIS_IN_INITIALIZER_LIST(
           session_storage_(new Storage(this, Storage::kSessionStorage, NULL))),
+#endif // !DISABLE_COBALT_STORAGE
       screen_(new Screen(view_size)),
 #if defined(ENABLE_GNET)
       preflight_cache_(new loader::CORSPreflightCache()),
@@ -262,12 +297,16 @@ Window::Window(
 #endif
   document_->AddObserver(relay_on_load_event_.get());
   html_element_context_->page_visibility_state()->AddObserver(this);
+
+#if !defined(DISABLE_COBALT_CAMERA3D)
   SetCamera3D(camera_3d);
+#endif // !defined(DISABLE_COBALT_CAMERA3D)
 
   if (ui_nav_root_) {
     ui_nav_root_->SetEnabled(true); // TODO
   }
 
+#if !defined(DISABLE_COBALT_DOM_PARSER)
   // Document load start is deferred from this constructor so that we can be
   // guaranteed that this Window object is fully constructed before document
   // loading begins.
@@ -282,8 +321,25 @@ Window::Window(
   }
 
   canStartDocumentLoad_ = true;
+#else // DISABLE_COBALT_DOM_PARSER
+  canStartDocumentLoad_ = true;
+
+  isDocumentStartedLoading_ = true;
+
+  document_->NotifyUrlChanged(url);
+  //document_->DisableJit();
+
+  document_->IncreaseLoadingCounter();
+
+  document_->DecreaseLoadingCounterAndMaybeDispatchLoadEvent();
+
+  //std::move(load_complete_callback).Run();
+  //const std::string load_complete_callback_error;
+  load_complete_callback.Run(base::nullopt);
+#endif // !DISABLE_COBALT_DOM_PARSER
 }
 
+#if !defined(DISABLE_COBALT_DOM_PARSER)
 bool Window::TryForceStartDocumentLoad() {
   if(!canStartDocumentLoad_) {
     printf("TryForceStartDocumentLoad failed due to !canStartDocumentLoad_\n");
@@ -317,15 +373,19 @@ bool Window::TryForceStartDocumentLoad() {
 
   return isDocumentStartedLoading_;
 }
+#endif // !DISABLE_COBALT_DOM_PARSER
 
 void Window::StartDocumentLoad(
     loader::FetcherFactory* fetcher_factory, const GURL& url,
+#if !defined(DISABLE_COBALT_DOM_PARSER)
     Parser* dom_parser,
+#endif // !DISABLE_COBALT_DOM_PARSER
     const loader::Decoder::OnCompleteFunction& load_complete_callback)
 {
   printf("Window::StartDocumentLoad 1\n");
 
   isDocumentStartedLoading_ = true;
+#if !defined(DISABLE_COBALT_DOM_PARSER)
   document_loader_.reset(new loader::Loader(
       base::Bind(&loader::FetcherFactory::CreateFetcher,
                  base::Unretained(fetcher_factory), url),
@@ -338,6 +398,7 @@ void Window::StartDocumentLoad(
       , true
 #endif
       ));
+#endif // !DISABLE_COBALT_DOM_PARSER
 
   printf("Window::StartDocumentLoad 2\n");
 }
@@ -474,6 +535,7 @@ void Window::CancelAnimationFrame(int32 handle) {
   animation_frame_request_callback_list_->CancelAnimationFrame(handle);
 }
 
+#if !defined(DISABLE_COBALT_MEDIA)
 scoped_refptr<MediaQueryList> Window::MatchMedia(const std::string& query) {
   DCHECK(html_element_context_->css_parser());
   scoped_refptr<cssom::MediaList> media_list =
@@ -481,6 +543,7 @@ scoped_refptr<MediaQueryList> Window::MatchMedia(const std::string& query) {
           query, GetInlineSourceLocation());
   return base::WrapRefCounted(new MediaQueryList(media_list, screen_));
 }
+#endif // !DISABLE_COBALT_MEDIA
 
 const scoped_refptr<Screen>& Window::screen() { return screen_; }
 
@@ -561,11 +624,13 @@ void Window::ClearInterval(int handle) {
 
 void Window::DestroyTimers() { window_timers_->DisableCallbacks(); }
 
+#if !defined(DISABLE_COBALT_STORAGE)
 scoped_refptr<Storage> Window::local_storage() const { return local_storage_; }
 
 scoped_refptr<Storage> Window::session_storage() const {
   return session_storage_;
 }
+#endif // !defined(DISABLE_COBALT_STORAGE)
 
 const scoped_refptr<Performance>& Window::performance() const {
   return performance_;
@@ -579,7 +644,9 @@ scoped_refptr<speech::SpeechSynthesis> Window::speech_synthesis() const {
 
 const scoped_refptr<Console>& Window::console() const { return console_; }
 
+#if !defined(DISABLE_COBALT_CAMERA3D)
 const scoped_refptr<Camera3D>& Window::camera_3d() const { return camera_3d_; }
+#endif // !defined(DISABLE_COBALT_CAMERA3D)
 
 #if defined(ENABLE_TEST_RUNNER)
 const scoped_refptr<TestRunner>& Window::test_runner() const {
@@ -756,10 +823,12 @@ void Window::SetSize(ViewportSize size, float device_pixel_ratio) {
     viewport_size_.width_height().ToString().c_str());*/
 }
 
+#if !defined(DISABLE_COBALT_CAMERA3D)
 void Window::SetCamera3D(const scoped_refptr<input::Camera3D>& camera_3d) {
   camera_3d_ = new Camera3D(camera_3d);
   camera_3d_->StartOrientationEvents(base::AsWeakPtr(this));
 }
+#endif // !defined(DISABLE_COBALT_CAMERA3D)
 
 void Window::OnWindowFocusChanged(bool has_focus) {
   DispatchEvent(
@@ -814,27 +883,36 @@ void Window::TraceMembers(script::Tracer* tracer) {
   tracer->Trace(history_);
   tracer->Trace(navigator_);
   tracer->Trace(console_);
+#if !defined(DISABLE_COBALT_CAMERA3D)
   tracer->Trace(camera_3d_);
+#endif // !defined(DISABLE_COBALT_CAMERA3D)
   tracer->Trace(crypto_);
 #if defined(ENABLE_SPEECH)
   tracer->Trace(speech_synthesis_);
 #endif // ENABLE_SPEECH
+#if !defined(DISABLE_COBALT_STORAGE)
   tracer->Trace(local_storage_);
   tracer->Trace(session_storage_);
+#endif // !defined(DISABLE_COBALT_STORAGE)
   tracer->Trace(screen_);
   tracer->Trace(on_screen_keyboard_);
 }
 
 /// \note custom
 bool Window::isStartedDocumentLoader() const {
+#if !defined(DISABLE_COBALT_DOM_PARSER)
   return document_loader_ && document_loader_->isStarted();
+#else
+  return true;
+#endif // !DISABLE_COBALT_DOM_PARSER
 }
 
 /// \note custom
 void Window::ForceStartDocumentLoader() {
+#if !defined(DISABLE_COBALT_DOM_PARSER)
   DCHECK(document_loader_);
   document_loader_->Resume(nullptr);
-  //document_loader_->Start();
+#endif // !DISABLE_COBALT_DOM_PARSER
 }
 
 void Window::SetEnvironmentSettings(script::EnvironmentSettings* settings) {
