@@ -106,11 +106,6 @@
 #include "cobalt/math/size_f.h"
 #include "cobalt/render_tree/image.h"
 
-#if defined(ENABLE_BLINK_UI)
-#include "ui/views/controls/textfield/textfield_controller.h"
-#include "ui/views/controls/textfield/textfield_model.h"
-#endif // ENABLE_BLINK_UI
-
 #include "cobalt/render_tree/node_visitor.h"
 
 #include "cobalt/base/polymorphic_downcast.h"
@@ -264,8 +259,13 @@
 #include "skia/include/core/SkTime.h"
 #endif // ENABLE_SKIA*/
 
+#if defined(ENABLE_BLINK_UI)
+#include "ui/views/controls/textfield/textfield_controller.h"
+#include "ui/views/controls/textfield/textfield_model.h"
+
 #include "ui/events/event.h"
 #include "ui/events/event_utils.h"
+#endif // ENABLE_BLINK_UI
 
 /*#include "third_party/blink/renderer/core/events/mouse_event.h"
 #include "third_party/blink/renderer/core/events/wheel_event.h"

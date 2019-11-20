@@ -253,9 +253,6 @@
 #include "cobalt/render_tree/rect_node.h"
 #include "cobalt/render_tree/resource_provider.h"
 
-#include "ui/events/event.h"
-#include "ui/events/event_utils.h"
-
 /*#include "third_party/blink/renderer/core/events/mouse_event.h"
 #include "third_party/blink/renderer/core/events/wheel_event.h"
 #include "third_party/blink/renderer/core/events/keyboard_event.h"*/
@@ -271,8 +268,12 @@
 #include "extended_html/input_box/input_node.h"
 #include "extended_html/input_box/input_box_generator.h"*/
 
+#if defined(ENABLE_BLINK_UI)
+#include "ui/events/event.h"
+#include "ui/events/event_utils.h"
 #include "ui/views/controls/textfield/textfield_controller.h"
 #include "ui/views/controls/textfield/textfield_model.h"
+#endif // ENABLE_BLINK_UI
 
 namespace cobalt {
 namespace layout {
