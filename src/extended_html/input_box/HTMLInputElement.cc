@@ -1388,7 +1388,7 @@ HTMLInputElement::HTMLInputElement(Document* document)
         utf8_str.clear();
       }
 
-      wprintf(L"keysym character, %s", keyboardEvent->keysym());
+      //wprintf(L"keysym character, %s", keyboardEvent->keysym());
       printf("text %s\n", keyboardEvent->text().c_str());
       printf("ctrl_key %d\n", keyboardEvent->ctrl_key());
       printf("shift_key %d\n", keyboardEvent->shift_key());
@@ -1555,7 +1555,7 @@ HTMLInputElement::HTMLInputElement(Document* document)
               elem->text_content().value_or("").c_str());
       printf("which %d\n", keyboardEvent->which());
       printf("keypress character %d\n", keyboardEvent->keysym());
-      wprintf(L"wprintf character %s\n", keyboardEvent->keysym());
+      //wprintf(L"//wprintf character %s\n", keyboardEvent->keysym());
 /*#if defined(ENABLE_HTML5_SDL) || !defined(__EMSCRIPTEN__)
       printf("printf character SDL_GetKeyName %s\n", SDL_GetKeyName(keyboardEvent->keysym()));
 #endif*/
@@ -1574,7 +1574,7 @@ HTMLInputElement::HTMLInputElement(Document* document)
         utf8_str.clear();
       }
 
-      wprintf(L"keysym character, %s", keyboardEvent->keysym());
+      //wprintf(L"keysym character, %s", keyboardEvent->keysym());
       printf("ctrl_key %d\n", keyboardEvent->ctrl_key());
       printf("shift_key %d\n", keyboardEvent->shift_key());
       printf("alt_key %d\n", keyboardEvent->alt_key());
@@ -1738,7 +1738,7 @@ HTMLInputElement::HTMLInputElement(Document* document)
                   elem->text_content().value_or("").c_str());
            printf("which %d\n", keyboardEvent->which());
            printf("keydown character %d\n", keyboardEvent->keysym());
-           wprintf(L"wprintf character %s\n", keyboardEvent->keysym());
+           //wprintf(L"//wprintf character %s\n", keyboardEvent->keysym());
            /*#if defined(ENABLE_HTML5_SDL) || !defined(__EMSCRIPTEN__)
   printf("printf character SDL_GetKeyName %s\n", SDL_GetKeyName(keyboardEvent->keysym()));
   #endif*/
@@ -1757,7 +1757,7 @@ HTMLInputElement::HTMLInputElement(Document* document)
              utf8_str.clear();
            }
 
-           wprintf(L"keysym character, %s", keyboardEvent->keysym());
+           //wprintf(L"keysym character, %s", keyboardEvent->keysym());
            printf("ctrl_key %d\n", keyboardEvent->ctrl_key());
            printf("shift_key %d\n", keyboardEvent->shift_key());
            printf("alt_key %d\n", keyboardEvent->alt_key());

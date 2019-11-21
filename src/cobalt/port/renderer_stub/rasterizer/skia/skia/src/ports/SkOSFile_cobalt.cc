@@ -171,14 +171,18 @@ bool sk_exists(const char* path, SkFILE_Flags) {
   printf("SkOSFile_cobalt.cc: sk_exists\n");
 
   // TODO: base::MakeAbsoluteFilePath
-  return base::PathExists(base::FilePath(base::FilePath::StringType{path}));
+  base::FilePath file_path;
+  file_path = file_path.AppendASCII(path);
+  return base::PathExists(file_path);
 }
 
 bool sk_isdir(const char* path) {
   printf("SkOSFile_cobalt.cc: sk_isdir\n");
 
   // TODO: base::MakeAbsoluteFilePath
-  return base::DirectoryExists(base::FilePath(base::FilePath::StringType{path}));
+  base::FilePath file_path;
+  file_path = file_path.AppendASCII(path);
+  return base::DirectoryExists(file_path);
 }
 
 bool sk_mkdir(const char* path) {

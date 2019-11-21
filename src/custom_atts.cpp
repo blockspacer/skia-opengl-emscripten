@@ -1343,7 +1343,7 @@ printf("indicated_element == elementHTML\n");
                 printf("keyup normalized_str %s\n", utf8_str.c_str());
             }
 
-            wprintf(L"keysym character, %s\n", keyboardEvent->keysym());
+            //wprintf(L"keysym character, %s\n", keyboardEvent->keysym());
             printf("text %s\n", keyboardEvent->text().c_str());
             printf("ctrl_key %d\n", keyboardEvent->ctrl_key());
             printf("shift_key %d\n", keyboardEvent->shift_key());
@@ -1404,7 +1404,7 @@ printf("indicated_element == elementHTML\n");
                    );
             printf("which %d\n", keyboardEvent->which());
             printf("character %d\n", keyboardEvent->keysym());
-            wprintf(L"wprintf character %s\n", keyboardEvent->keysym());
+            //wprintf(L"//wprintf character %s\n", keyboardEvent->keysym());
 
   /*
   #if defined(ENABLE_HTML5_SDL) || !defined(__EMSCRIPTEN__)
@@ -1423,7 +1423,7 @@ printf("indicated_element == elementHTML\n");
                 printf("keypress normalized_str %s\n", utf8_str.c_str());
             }
 
-            wprintf(L"keysym character, %s\n", keyboardEvent->keysym());
+            //wprintf(L"keysym character, %s\n", keyboardEvent->keysym());
             printf("text %s\n", keyboardEvent->text().c_str());
             printf("ctrl_key %d\n", keyboardEvent->ctrl_key());
             printf("shift_key %d\n", keyboardEvent->shift_key());

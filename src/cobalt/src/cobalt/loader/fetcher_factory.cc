@@ -61,7 +61,9 @@ bool FileURLToFilePath(const GURL& url, base::FilePath* file_path) {
   printf("FileURLToFilePath path %s\n", path.c_str());
   DCHECK_EQ('/', path[0]);
   path.erase(0, 1);
-  *file_path = base::FilePath(base::FilePath::StringType{path});
+  DCHECK(file_path);
+  *file_path = base::FilePath();
+  *file_path = file_path->AppendASCII(path.c_str()); // TODO: support unicode in paths
   return !file_path->empty();
 }
 

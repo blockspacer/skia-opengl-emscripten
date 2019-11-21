@@ -37,7 +37,9 @@
 #pragma clang diagnostic ignored "-Wextra-semi"
 #endif
 
+//#if __TODO__
 #include "base/trace_event/etw_manifest/chrome_events_win.h"  // NOLINT
+//#endif
 
 #if defined(__clang__)
 #pragma clang diagnostic pop

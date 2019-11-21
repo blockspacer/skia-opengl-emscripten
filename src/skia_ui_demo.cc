@@ -1091,7 +1091,7 @@ In file included from ..\src\skia_ui_demo.cc:995:
 //#include "SkSurface.h"
 //#include "SkSurface_Gpu.h"
 
-#ifdef ENABLE_HARFBUZZ
+#if 0 && defined(ENABLE_HARFBUZZ)
 #include <hb.h>
 #include <hb-icu.h>
 #include <hb-ot.h>
@@ -1118,7 +1118,7 @@ In file included from ..\src\skia_ui_demo.cc:995:
 static SkString fImagePath = SkString("./resources/images/image.png");
 #endif // ENABLE_IMAGES
 
-#ifdef ENABLE_HARFBUZZ
+#if 0 && defined(ENABLE_HARFBUZZ)
 // see https://github.com/sam8dec/skia/blob/master/tools/using_skia_and_harfbuzz.cpp#L140
 // see https://github.com/chromium/chromium/blob/master/third_party/blink/renderer/platform/fonts/shaping/harfbuzz_face.cc#L68
 struct HBFDel { void operator()(hb_face_t* f) { hb_face_destroy(f); } };
@@ -1258,7 +1258,7 @@ static bool sktpForUICreated = false;
 static const char* fontPath = "./resources/fonts/FreeSans.ttf";
 //static const char* fontPath = "./resources/fonts/arialuni.ttf";
 
-#if defined(ENABLE_CUSTOM_FONTS) && defined(ENABLE_HARFBUZZ)
+#if 0 && defined(ENABLE_CUSTOM_FONTS) && defined(ENABLE_HARFBUZZ)
 /// \note see SkShaper_harfbuzz.cpp if you want shaping in rectangle
 /// \see https://github.com/skui-org/skia/blob/f577133e703ea6a81602426aea879857cfd0b2e1/experimental/canvaskit/canvaskit_bindings.cpp#L477
 /// \see https://github.com/skui-org/skia/blob/f577133e703ea6a81602426aea879857cfd0b2e1/modules/skshaper/src/SkShaper_harfbuzz.cpp#L888
@@ -1912,7 +1912,7 @@ void SkiaUiDemo::prepareUIFonts() {
     const int index = 0;
     sktpForUI = SkTypeface::MakeFromData(data, index);
 
-    #ifdef ENABLE_HARFBUZZ
+    #if 0 && defined(ENABLE_HARFBUZZ)
       printf("Creating harfbuzz fonts...\n");
       auto destroy = [](void *d) { static_cast<SkData*>(d)->unref(); };
       const char* bytes = static_cast<const char*>(data->data());
@@ -2062,7 +2062,7 @@ public:
     //printf("onDraw y1\n");
 
 // see https://github.com/google/skia/blob/master/modules/skshaper/src/SkShaper_harfbuzz.cpp#L1221
-#ifdef ENABLE_HARFBUZZ
+#if 0 && defined(ENABLE_HARFBUZZ)
         paint.setColor(SK_ColorBLACK);
         paint.setStyle(SkPaint::kFill_Style);
 
@@ -2382,7 +2382,7 @@ public:
 
     //printf("onDraw() x4\n");
 
-#if defined(ENABLE_CUSTOM_FONTS) && defined(ENABLE_HARFBUZZ)
+#if 0 && defined(ENABLE_CUSTOM_FONTS) && defined(ENABLE_HARFBUZZ)
     {
       //gfx::RenderText::CreateHarfBuzzInstance();
       // https://github.com/chromium/chromium/blob/422f901782f0a5f274a6065fbff3983279ef3c0b/chrome/browser/vr/elements/text.cc#L424

@@ -1141,8 +1141,10 @@ if(TARGET_WINDOWS)
   endif(USE_PARTITION_ALLOCATOR)
 
   list(APPEND BASE_SOURCES
-    ## TODO ## ${BASE_DIR}trace_event/trace_event_etw_export_win.cc
-    ## TODO ## ${BASE_DIR}trace_event/trace_event_etw_export_win.h
+    ## TODO ## 
+    ${BASE_DIR}trace_event/trace_event_etw_export_win.cc
+    ## TODO ## 
+    ${BASE_DIR}trace_event/trace_event_etw_export_win.h
     ${BASE_DIR}timer/hi_res_timer_manager_win.cc
     ${BASE_DIR}threading/thread_local_storage_win.cc
     ${BASE_DIR}threading/platform_thread_win.cc

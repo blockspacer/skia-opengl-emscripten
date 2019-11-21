@@ -54,6 +54,8 @@ endif(NOT EMSCRIPTEN)
 option(RELEASE_BUILD "RELEASE_BUILD" OFF)
 message(STATUS "RELEASE_BUILD = ${RELEASE_BUILD}")
 
+option(ENABLE_CXTPL "ENABLE_CXTPL" ON)
+
 set(CHROMIUM_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src/chromium/)
 
 set(GN_GEN_DIR ${CHROMIUM_DIR}gen/)
@@ -345,12 +347,12 @@ if(NOT RELEASE_BUILD)
   set(COMMON_FLAGS "${COMMON_FLAGS} -DD_DEBUG") #
 endif(NOT RELEASE_BUILD)
 
-if(NOT TARGET_WINDOWS OR IS_CLANG_CL) # TODO
+if(NOT TARGET_WINDOWS)
   # always return on non-void functions to prevent UB
   set(COMMON_FLAGS "${COMMON_FLAGS} -Wreturn-type")
   # https://gist.github.com/morido/8637535
   set(COMMON_FLAGS "${COMMON_FLAGS} -Werror=return-type")
-endif(NOT TARGET_WINDOWS OR IS_CLANG_CL)
+endif(NOT TARGET_WINDOWS)
 
 if(NOT ENABLE_MOJO)
   set(COMMON_FLAGS "${COMMON_FLAGS} -DDISABLE_MOJO=1")
@@ -493,7 +495,11 @@ endif(TARGET_WINDOWS)
 #  option(ENABLE_HARFBUZZ "ENABLE_HARFBUZZ" ON)
 #endif()
 if(ENABLE_HARFBUZZ)
-  set(USE_CUSTOM_HARFBUZZ TRUE)
+  if(TARGET_WINDOWS)
+    set(USE_CUSTOM_HARFBUZZ FALSE)
+  else()
+    set(USE_CUSTOM_HARFBUZZ TRUE)
+  endif(TARGET_WINDOWS)
   set(FORCE_USE_SKIA_HARFBUZZ TRUE)
   if(TARGET_WINDOWS)
     set(HARFBUZZ_FROM_SKIA TRUE)
@@ -3527,33 +3533,35 @@ add_custom_target(copy-runtime-files ALL
 )
 add_dependencies(${PROJECT_NAME} copy-runtime-files)
 
-find_package(CXTPL_tool REQUIRED)
+if(ENABLE_CXTPL)
+  find_package(CXTPL_tool REQUIRED)
 
-set(cxtpl_in_dir "${CMAKE_CURRENT_SOURCE_DIR}/codegen/resources")
-set(cxtpl_out_dir "${CMAKE_CURRENT_SOURCE_DIR}/generated/resources")
+  set(cxtpl_in_dir "${CMAKE_CURRENT_SOURCE_DIR}/codegen/resources")
+  set(cxtpl_out_dir "${CMAKE_CURRENT_SOURCE_DIR}/generated/resources")
 
-list(APPEND cxtpl_inputs "${cxtpl_in_dir}/css/index.css.cxtpl")
-list(APPEND cxtpl_outputs "${cxtpl_out_dir}/css/index.css")
+  list(APPEND cxtpl_inputs "${cxtpl_in_dir}/css/index.css.cxtpl")
+  list(APPEND cxtpl_outputs "${cxtpl_out_dir}/css/index.css")
 
-list(APPEND cxtpl_inputs "${cxtpl_in_dir}/html/index.html.cxtpl")
-list(APPEND cxtpl_outputs "${cxtpl_out_dir}/html/index.html")
+  list(APPEND cxtpl_inputs "${cxtpl_in_dir}/html/index.html.cxtpl")
+  list(APPEND cxtpl_outputs "${cxtpl_out_dir}/html/index.html")
 
-# create new codegen files
-target_add_cxtpl_tool(TARGET ${PROJECT_NAME}
-                      GUID "codegen_cxtpl_1"
-                      INPUTS_DIR "${cxtpl_in_dir}"
-                      OUTPUTS_DIR "${cxtpl_out_dir}"
-                      INPUTS "${cxtpl_inputs}"
-                      OUTPUTS "${cxtpl_outputs}"
-                      GENERATOR_PATH "${CMAKE_CURRENT_SOURCE_DIR}/codegen/cxtpl_generators/text_generator/text_generator.cpp"
-                      LOG_CONFIG ".:=DBG1:default:console\\ default=file:path=CXTPL_tool_for_${PROJECT_NAME}.log,async=true,sync_level=DBG9\\ console=stream:stream=stderr"
-                      EXTRA_ARGS ${CXTPL_EXTRA_ARGS})
+  # create new codegen files
+  target_add_cxtpl_tool(TARGET ${PROJECT_NAME}
+                        GUID "codegen_cxtpl_1"
+                        INPUTS_DIR "${cxtpl_in_dir}"
+                        OUTPUTS_DIR "${cxtpl_out_dir}"
+                        INPUTS "${cxtpl_inputs}"
+                        OUTPUTS "${cxtpl_outputs}"
+                        GENERATOR_PATH "${CMAKE_CURRENT_SOURCE_DIR}/codegen/cxtpl_generators/text_generator/text_generator.cpp"
+                        LOG_CONFIG ".:=DBG1:default:console\\ default=file:path=CXTPL_tool_for_${PROJECT_NAME}.log,async=true,sync_level=DBG9\\ console=stream:stream=stderr"
+                        EXTRA_ARGS ${CXTPL_EXTRA_ARGS})
 
-add_custom_target(copy-generated-runtime-files ALL
-  COMMAND cmake -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/generated/resources ${CMAKE_CURRENT_BINARY_DIR}/resources
-  #DEPENDS ${PROJECT_NAME}
-)
-add_dependencies(${PROJECT_NAME} copy-generated-runtime-files)
+  add_custom_target(copy-generated-runtime-files ALL
+    COMMAND cmake -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/generated/resources ${CMAKE_CURRENT_BINARY_DIR}/resources
+    #DEPENDS ${PROJECT_NAME}
+  )
+  add_dependencies(${PROJECT_NAME} copy-generated-runtime-files)
+endif(ENABLE_CXTPL)
 
 # IWYU detects superfluous includes and when the include can be replaced with a forward declaration.
 # It can be obtained using "apt-get install iwyu" or from "github.com/include-what-you-use".

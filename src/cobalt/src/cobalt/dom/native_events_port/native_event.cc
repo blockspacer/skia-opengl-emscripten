@@ -2153,7 +2153,7 @@ std::unique_ptr<cobalt::system_window::InputEvent> CreateInputEvent(const SbInpu
   }
 
   DCHECK(input_event);
-  wprintf(L"input_event keysym character, %s\n", input_event->keysym());
+  //wprintf(L"input_event keysym character, %s\n", input_event->keysym());
   printf("input_event key_code %u\n", input_event->key_code());
 
   return std::move(input_event);

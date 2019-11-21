@@ -8,6 +8,8 @@ The Chromium Projects https://www.chromium.org/developers
 
 Chromium docs https://chromium.googlesource.com/chromium/src/+/master/docs
 
+Prelude - A path through the jungle of Chromium source https://xzwang2005.github.io/Prelude/
+
 ## Cobalt
 
 Cobalt docs https://www.cobalt.foo/overview.html

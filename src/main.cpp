@@ -260,8 +260,8 @@ static SkiaUiDemo skiaUiDemo;
 #if defined(OS_WIN)
 #define GL_GLEXT_PROTOTYPES 1
 #define GL_GLES_PROTOTYPES 1
-//#define GLEW_STATIC 1
-//#include <GL/glew.h>
+#define GLEW_STATIC 1
+#include <GL/glew.h>
 #include <GL/gl.h>
 #include <GL/glext.h>
 #include "gl_helpers.h"
@@ -275,6 +275,11 @@ static SkiaUiDemo skiaUiDemo;
 #include "gl_helpers.h"
 
 #include <stdint.h>
+
+#if defined(OS_WIN)
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#endif
 
 /*#include <stddef.h>
 
@@ -3490,7 +3495,8 @@ static void mainLockFreeLoop() {
 
     std::wcout << L"Unicode -- English -- Русский -- Ελληνικά -- Español." << std::endl;
 
-    wprintf(L"%s", L"Unicode -- English -- Русский -- Ελληνικά -- Español.\n");*/
+    //wprintf(L"%s", L"Unicode -- English -- Русский -- Ελληνικά -- Español.\n");
+	*/
 
 #if !defined(ENABLE_NATIVE_HTML)
     if(!render_browser_window) {
@@ -3740,29 +3746,48 @@ static void mainLockFreeLoop() {
           break;
         }
 
+		// TODO: SysMultiByteToWide _WIN32 MultiByteToWideChar https://discourse.libsdl.org/t/how-do-i-read-sdl-event-text-text-when-it-is-not-7-bit-ascii/23675/5
+
         /*if(base::IsStringASCII(std::string(e.text.text))) {
           /// \note ASCII handled by SDL_KEYUP and SDL_KEYDOWN
           break;
         }*/
+		/*wchar_t wcharStr[32] = { 0 };
+		bool cvtResult = MultiByteToWideChar(CP_UTF8, 0, e.text.text, -1, wcharStr,
+			SDL_TEXTINPUTEVENT_TEXT_SIZE) > 0;
+		DCHECK(cvtResult);*/
+		auto utf8_decode = [](const std::string &str) -> std::wstring
+		{
+			if (str.empty()) return std::wstring();
+			int size_needed = MultiByteToWideChar(CP_UTF8, 0, &str[0], (int)str.size(), NULL, 0);
+			std::wstring wstrTo(size_needed, 0);
+			MultiByteToWideChar(CP_UTF8, 0, &str[0], (int)str.size(), &wstrTo[0], size_needed);
+			return wstrTo;
+		};
+		std::string utf8str(e.text.text);
+		std::wstring utf16str = utf8_decode(utf8str);
+		OutputDebugStringW(utf16str.c_str());
+		std::string textUTF8 = base::SysWideToUTF8(utf16str);
+
         bool isASCII = strlen(e.text.text) == 1 && (e.text.text[0] & 0x80) == 0;
         wchar_t symbolASCII = e.text.text[0];
         SbKey keyASCII;
         SbKeyLocation keylocationASCII;
         printf("SDL_TEXTINPUT1 isASCII %d\n", isASCII);
         if(isASCII) {
-          keyASCII = native_event::ASCIIToSbKey(e.text.text);
+          keyASCII = native_event::ASCIIToSbKey(textUTF8);
           keylocationASCII = native_event::modstateToSbKeyLocation(
               modState & KMOD_LALT,
               modState & KMOD_LCTRL,
               modState & KMOD_LSHIFT, // TODO: KMOD_LGUI?
               modState & KMOD_RALT,
               modState & KMOD_RCTRL,
-              modState & KMOD_RSHIFT);//ASCIIToSbKeyLocation(e.text.text);
+              modState & KMOD_RSHIFT);//ASCIIToSbKeyLocation(textUTF8);
         }
 
         /// \note empty e.key.keysym.sym and e.key.keysym.scancode here!
         //const Uint8 *keys = SDL_GetKeyboardState(NULL);
-        printf("SDL_TEXTINPUT1 text %s\n", e.text.text);
+        printf("SDL_TEXTINPUT1 text %s\n", textUTF8);
         /*printf("SDL_TEXTINPUT1 SDL_GetKeyName %s\n", SDL_GetKeyName(e.key.keysym.sym));
         printf("SDL_TEXTINPUT1 e.key.keysym.sym %d\n", e.key.keysym.sym);
         printf("SDL_TEXTINPUT1 SDL2KeycodeToSbKey(e.key.keysym.sym) %d\n", native_event::SDL2KeycodeToSbKey(e.key.keysym.sym));
@@ -3771,19 +3796,19 @@ static void mainLockFreeLoop() {
         */
 
         // TODO WideToUTF8 UTF16ToASCII SDL_TEXTINPUTEVENT_TEXT_SIZE
-        /*if(base::IsAsciiPrintable(e.text.text)) {
+        /*if(base::IsAsciiPrintable(textUTF8)) {
         }*/
 
         /// \note SDL_TEXTINPUT NOT for special keys!
         /// Use SDL_TEXTINPUT only for text input!
         /*if(native_event::SDL2KeycodeToSbKey(e.key.keysym.sym) == kSbKeyUnknown
             && (base::IsAsciiPrintable(e.key.keysym.sym)
-                || !base::IsStringASCII(e.text.text))
+                || !base::IsStringASCII(textUTF8))
             && e.key.repeat == 0)*/
 #if defined(ENABLE_COBALT)
         if(g_cobaltTester) {
           isTextInput = true; /// \note not isSbEvent
-          printf("SDL_TEXTINPUT2 text %s\n", e.text.text);
+          printf("SDL_TEXTINPUT2 text %s\n", textUTF8);
 
           auto pressKey = [&]() {
             std::unique_ptr<SbEvent> event1 =  native_event::createSbKeyboardEvent(
@@ -3799,7 +3824,7 @@ static void mainLockFreeLoop() {
               keylocationASCII, //native_event::SDL2ScancodeToSbKeyLocation(e.key.keysym.scancode),
               symbolASCII, // e.key.keysym.scancode,
               symbolASCII, // e.key.keysym.scancode,
-              e.text.text,
+              textUTF8,
               isPrintable // TODO
             );
             DCHECK(event1);
@@ -4187,7 +4212,7 @@ int main(int argc, char* argv[])
   printf("Init CommandLine ...\n");
 
   base::CommandLine::Init(0, nullptr);
-  base::CommandLine::ForCurrentProcess()->InitFromArgv(argc, argv);
+  //base::CommandLine::ForCurrentProcess()->InitFromArgv(argc, argv);
 
   ///printf("SysInfo::AmountOfFreeDiskSpace %d ...\n", base::SysInfo::AmountOfFreeDiskSpace());
 

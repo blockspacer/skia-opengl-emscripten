@@ -99,7 +99,8 @@ int V8cMain(int argc, char** argv) {
       if (std::string(argv[i]) == "-f") {
         std::string filename = std::string(argv[i + 1]);
         // Execute source file.
-        base::FilePath source_file(base::FilePath::StringType{filename});
+        base::FilePath source_file;
+        source_file = source_file.AppendASCII(filename.c_str()); // TODO: support unicode in paths
         standalone_runner.ExecuteFile(source_file);
         ++i;
       } else if (std::string(argv[i]) == "-e") {

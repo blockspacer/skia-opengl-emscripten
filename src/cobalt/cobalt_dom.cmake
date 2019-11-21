@@ -424,6 +424,8 @@ target_link_libraries(cobalt_dom PRIVATE
   icu
   ced
   glm
+  # SDL used by native_events_port
+  ${SDL2_LIBRARY} # NOTE: no SDL2::Main on Windows
 )
 
 set_property(TARGET cobalt_dom PROPERTY CXX_STANDARD 17)
@@ -434,6 +436,10 @@ target_include_directories(cobalt_dom PRIVATE
   ${COBALT_CORE_PARENT_DIR}
   ${COBALT_COMMON_INCLUDES}
   ${CHROMIUM_DIR} # to third_party/skia/include/core/SkWriteBuffer.h
+  ${SDL2_INCLUDE_DIR}
+  "${SDL2_INCLUDE_DIR}/.."
+  ${SDL2_INCLUDE_DIRS}
+  "${SDL2_INCLUDE_DIRS}/.."
 )
 
 target_compile_definitions(cobalt_dom PRIVATE
