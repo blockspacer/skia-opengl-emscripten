@@ -2006,7 +2006,7 @@ CobaltTester::CobaltTester()
       // Currently, events do not need to be processed for the root item.
       base::Closure(), base::Closure(), base::Closure()));
 
-  P_LOG("Create dom::Window...\n");
+  P_LOG("Create dom::Window 1...\n");
 
   layout_trigger = layout::LayoutManager::LayoutTrigger::kOnDocumentMutation;
 
@@ -2037,33 +2037,11 @@ CobaltTester::CobaltTester()
 
   GURL url(R"raw(file:///resources/html/index.html)raw");
 
-  scoped_refptr<cobalt::dom::Document> new_document_
-    = new Document(
-          html_element_context_.get(),
-          Document::Options(
-              //GURL(R"raw(file:///resources/html/index.html)raw"),
-              //GURL(R"raw()raw"),
-              url,
-              window_.get(),
-              base::Bind(&cobalt::dom::Window::FireHashChangeEvent, base::Unretained(window_.get())),
-              performance->timing()->GetNavigationStartClock(),
-              base::Bind(&CobaltTester::CobaltTester::navigationCallback, base::Unretained(this)),//navigation_callback,
-              cobalt::cssom::ParseUserAgentStyleSheet(css_parser_.get()),
-              cobalt::cssom::ViewportSize(BROWSER_WIDTH, BROWSER_HEIGHT),//view_size,
-#if defined(ENABLE_GNET)//!defined(__EMSCRIPTEN__) && defined(__TODO__)
-              //cookie_jar, post_sender,
-#endif
-#if defined(ENABLE_COBALT_CSP)
-              //require_csp,
-#endif
-              cobalt::dom::CspEnforcementType::kCspEnforcementDisable,//csp_enforcement_mode,
-              base::Bind(&CobaltTester::OnCspPolicyChanged, base::Unretained(this)), // csp_policy_changed_callback,
-              0,//csp_insecure_allowed_token,
-              999//dom_max_element_depth
-              ));
+  P_LOG("Create dom::Window 2...\n");
 
   DCHECK(input_device_manager_);
   const bool autoStartDocumentLoad = false;
+  DCHECK(!window_);
   window_ = new cobalt::dom::Window(
       performance,
       autoStartDocumentLoad,
@@ -2099,7 +2077,6 @@ CobaltTester::CobaltTester()
       //GURL(R"raw(file:///resources/html/index.html)raw"),//data.initial_url,
       //GURL(R"raw()raw"),//data.initial_url,
       url,
-      new_document_,
       "data.network_module->GetUserAgent()",
       "data.network_module->preferred_language()",
       "en_US", // font_language_script
@@ -2257,14 +2234,14 @@ CobaltTester::CobaltTester()
 
 #if defined(DISABLE_COBALT_DOM_PARSER)
   scoped_refptr<cobalt::dom::HTMLElement> new_root_
-    = new_document_->CreateElement("html")->AsHTMLElement();
+    = window_->document()->CreateElement("html")->AsHTMLElement();
   scoped_refptr<cobalt::dom::HTMLElement> new_head_
-    = new_document_->CreateElement("head")->AsHTMLElement();
+    = window_->document()->CreateElement("head")->AsHTMLElement();
   scoped_refptr<cobalt::dom::HTMLElement> new_body_
-    = new_document_->CreateElement("body")->AsHTMLElement();
+    = window_->document()->CreateElement("body")->AsHTMLElement();
   new_root_->AppendChild(new_head_);
   new_root_->AppendChild(new_body_);
-  new_document_->AppendChild(new_root_);
+  window_->document()->AppendChild(new_root_);
 #if 0
   new_head_->set_inner_html(
       R"raw(<style>

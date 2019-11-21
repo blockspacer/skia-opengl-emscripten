@@ -1006,6 +1006,11 @@ void Document::SetViewport(const ViewportSize& viewport_size) {
 }
 
 Document::~Document() {
+#if (defined(OS_EMSCRIPTEN) && defined(DISABLE_PTHREADS))
+  printf("can`t destroy Document on wasm ST platform!");
+  HTML5_STACKTRACE();
+#endif
+
   if (page_visibility_state_) {
     page_visibility_state_->RemoveObserver(this);
   }

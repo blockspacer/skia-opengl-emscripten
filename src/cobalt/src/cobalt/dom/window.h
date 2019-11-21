@@ -192,7 +192,6 @@ class Window : public EventTarget,
 #endif // !DISABLE_COBALT_MEDIA
       DomStatTracker* dom_stat_tracker,
       const GURL& url,
-      scoped_refptr<cobalt::dom::Document>& new_document,
       const std::string& user_agent, const std::string& language,
       const std::string& font_language_script,
       const base::Callback<void(const GURL&)> navigation_callback,

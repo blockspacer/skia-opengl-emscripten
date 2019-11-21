@@ -143,7 +143,6 @@ Window::Window(
 #endif // !DISABLE_COBALT_MEDIA
     DomStatTracker* dom_stat_tracker,
     const GURL& url,
-    scoped_refptr<cobalt::dom::Document>& new_document,
     const std::string& user_agent, const std::string& language,
     const std::string& font_language_script,
     const base::Callback<void(const GURL&)> navigation_callback,
@@ -217,7 +216,7 @@ Window::Window(
           video_playback_rate_multiplier)),
       performance_(performance),
       //performance_(new Performance(MakePerformanceClock(clock_type))),
-      /*ALLOW_THIS_IN_INITIALIZER_LIST(document_(new Document(
+      ALLOW_THIS_IN_INITIALIZER_LIST(document_(new Document(
           html_element_context_.get(),
           Document::Options(
               url, this,
@@ -232,8 +231,7 @@ Window::Window(
               require_csp,
 #endif
               csp_enforcement_mode, csp_policy_changed_callback,
-              csp_insecure_allowed_token, dom_max_element_depth)))),*/
-      document_(new_document),
+              csp_insecure_allowed_token, dom_max_element_depth)))),
 #if !defined(DISABLE_COBALT_DOM_PARSER)
       document_loader_(nullptr),
 #endif // !DISABLE_COBALT_DOM_PARSER
@@ -939,6 +937,7 @@ Window::~Window() {
   printf("can`t destroy Window on wasm ST platform!");
   HTML5_STACKTRACE();
 #endif
+
   if (ui_nav_root_) {
     ui_nav_root_->SetEnabled(false);
   }
