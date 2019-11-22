@@ -8,7 +8,7 @@ MS VS 2017
 
 ```cmd
 python --version
-Python 2.7.2
+Python 2.7.17
 ```
 
 ```cmd
@@ -42,18 +42,6 @@ Check that you applied all patches
 Prefer file paths with lowercase english characters without spaces
 
 Use Visual Studio with `English Language pack`
-
-## Install mingw-w64 with treads:win32, architecture:x86_64
-
-Follow https://perso.uclouvain.be/allan.barrea/opencv/building_tools.html#mingw
-
-Download from https://sourceforge.net/projects/mingw-w64/files/latest/download
-
-# Add to PATH `\MinGW\include`, `\MinGW\include\sys` and `\MinGW\lib\gcc\mingw32\4.6.2\include\ssp`
-
-NOTE: place MinGW install dir at path start, such as `C:\Program Files\mingw-w64\x86_64-8.1.0-win32-seh-rt_v6-rev0\mingw64\x86_64-w64-mingw32`
-
-See https://stackoverflow.com/a/15893895
 
 ## SKIA on Windows
 
@@ -394,7 +382,7 @@ cd build
 # "-DCMAKE_LINKER=C:/Program Files/LLVM/bin/lld-link.exe" -DCMAKE_C_FLAGS_DEBUG:INTERNAL="/MDd"
 # "-DCMAKE_LINKER=C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.16.27023\bin\Hostx64\x64\link.exe"
 # -UCMAKE_LINKER -UCMAKE_C_FLAGS_DEBUG
-cmake -G Ninja -DENABLE_COBALT=TRUE -DEXT_SKIA_ALWAYS_BUILD=ON "-DCMAKE_LINKER=C:/Program Files/LLVM/bin/lld-link.exe" -DCMAKE_SYSTEM_NAME="Windows" -DIS_CLANG_CL=TRUE -DCMAKE_BUILD_TYPE="Debug" "-DCMAKE_C_COMPILER=C:/Program Files/LLVM/bin/clang-cl.exe" "-DCMAKE_CXX_COMPILER=C:/Program Files/LLVM/bin/clang-cl.exe" -DRELEASE_BUILD=OFF -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ..
+cmake -G Ninja -DENABLE_COBALT=TRUE -DEXT_SKIA_ALWAYS_BUILD=ON "-DCMAKE_LINKER=C:/Program Files/LLVM/bin/lld-link.exe" -DCMAKE_SYSTEM_NAME="Windows" -DIS_CLANG_CL=TRUE -DCMAKE_BUILD_TYPE="Debug" "-DCMAKE_C_COMPILER=C:/Program Files/LLVM/bin/clang-cl.exe" "-DCMAKE_CXX_COMPILER=C:/Program Files/LLVM/bin/clang-cl.exe" -DRELEASE_BUILD=OFF -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DENABLE_CXTPL=TRUE -DENABLE_WTF=FALSE -DDISABLE_FORMATTING=TRUE -DENABLE_SKOTTIE=TRUE -DENABLE_SKSG=TRUE -DENABLE_SKIA_UTILS=TRUE -DENABLE_SKSHAPER=TRUE -DFORCE_DISABLE_SK_GPU=FALSE -DENABLE_BLINK=TRUE -DENABLE_BLINK_UI_VIEWS=TRUE -DENABLE_BLINK_UI_NATIVE_THEME=TRUE ..
 #
 # cmake -G "Visual Studio 15 2017 Win64" ..
 # cmake --build . --parallel 8

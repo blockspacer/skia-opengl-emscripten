@@ -190,7 +190,7 @@ list(APPEND BASE_DEFINES
 # So if you want to use the string printf API, do:
 # #include <base/stringprintf.h>
 target_include_directories(base PUBLIC
-  #${CHROMIUM_DIR}
+  ${CHROMIUM_DIR} # TODO
   ${CMAKE_CURRENT_SOURCE_DIR} # path to base/threading/thread.h
   # TODO
   #${COBALT_COMMON_INCLUDES}

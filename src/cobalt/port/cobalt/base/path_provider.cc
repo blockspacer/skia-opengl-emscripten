@@ -44,11 +44,12 @@
 namespace {
 base::FilePath GetOrCreateDirectory(SbSystemPathId path_id) {
     printf("GetOrCreateDirectory 1");
-  std::unique_ptr<char[]> path(new char[SB_FILE_MAX_PATH]);
+  std::unique_ptr<char[]> path(new char[SB_FILE_MAX_PATH]); // TODO: support unicode in paths
   path[0] = '\0';
   if (SbSystemGetPath(path_id, path.get(), SB_FILE_MAX_PATH)) {
       printf("GetOrCreateDirectory 2");
-    base::FilePath directory(base::FilePath::StringType{path.get()});
+    base::FilePath directory;
+    directory = directory.AppendASCII(path.get());
     if (base::PathExists(directory) || base::CreateDirectory(directory)) {
         printf("GetOrCreateDirectory 3");
       return directory;

@@ -345,7 +345,7 @@ if(HARFBUZZ_FROM_SKIA AND NOT FORCE_USE_SKIA_HARFBUZZ)
   message(FATAL_ERROR "HARFBUZZ_FROM_SKIA requires FORCE_USE_SKIA_HARFBUZZ")
 endif(HARFBUZZ_FROM_SKIA AND NOT FORCE_USE_SKIA_HARFBUZZ)
 if(FORCE_USE_SKIA_HARFBUZZ)
-  if(ENABLE_SKSHAPER) # harfbuzz used only by skshaper
+  #if(ENABLE_SKSHAPER) # harfbuzz used only by skshaper
     set(SK_IS_harfbuzz "true")
     #
     if(TARGET_WINDOWS)
@@ -369,10 +369,10 @@ if(FORCE_USE_SKIA_HARFBUZZ)
         "skia_use_system_icu=true"
       )
     endif(TARGET_WINDOWS)
-  else(ENABLE_SKSHAPER)
-    set(SK_IS_harfbuzz "false")
-    set(SK_IS_icu "false")
-  endif(ENABLE_SKSHAPER)
+  #else(ENABLE_SKSHAPER)
+  #  set(SK_IS_harfbuzz "false")
+  #  set(SK_IS_icu "false")
+  #endif(ENABLE_SKSHAPER)
   #
   if(USE_CUSTOM_ICU)
     list(APPEND SKIA_CMAKE_ONLY_HEADERS
@@ -825,6 +825,7 @@ if(NOT EXT_SKIA_SHARED)
       else()
         message(STATUS "Found library ${LIB_NAME} = ${LIB${LIB_NAME}}")
       endif()
+      # NOTE: HARFBUZZ_LIBRARIES is SKIA here, prevent recursion
       set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${LIB${LIB_NAME}}")
     endforeach()
   endfunction()
@@ -844,6 +845,7 @@ if(NOT EXT_SKIA_SHARED)
     find_package(EXPAT REQUIRED)
     set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};EXPAT::EXPAT")
 
+    # NOTE: HARFBUZZ_LIBRARIES is SKIA here, prevent recursion
     #set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${HARFBUZZ_LIBRARIES}")
 
     #set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${FOUND_OPENGL_LIBRARIES}")
@@ -895,6 +897,7 @@ if(NOT EXT_SKIA_SHARED)
 
     if(USE_CUSTOM_ICU)
       if(HARFBUZZ_FROM_SKIA)
+        # NOTE: HARFBUZZ_LIBRARIES is SKIA here, prevent recursion
         set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${CUSTOM_ICU_LIB}")
       else(HARFBUZZ_FROM_SKIA)
         set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${CUSTOM_ICU_LIB};${HARFBUZZ_LIBRARIES}")
@@ -918,6 +921,7 @@ if(NOT EXT_SKIA_SHARED)
 
   if(HARFBUZZ_FROM_SKIA)
     set(SKIA_CMAKE_ONLY_HEADERS "${SKIA_CMAKE_ONLY_HEADERS};${FOUND_OPENGL_INCLUDE_DIR};${OPENGL_EGL_INCLUDE_DIRS}")
+    # NOTE: HARFBUZZ_LIBRARIES is SKIA here, prevent recursion
     set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${FOUND_OPENGL_LIBRARIES}")
   else(HARFBUZZ_FROM_SKIA)
     set(SKIA_CMAKE_ONLY_HEADERS "${SKIA_CMAKE_ONLY_HEADERS};${HARFBUZZ_INCLUDE_DIRS};${FOUND_OPENGL_INCLUDE_DIR};${OPENGL_EGL_INCLUDE_DIRS}")
@@ -1079,6 +1083,7 @@ message(STATUS "jpeg_LIBRARY = ${jpeg_LIBRARY} ")
 message(STATUS "iccjpeg_LIB = ${iccjpeg_LIB} ")
 
 if(HARFBUZZ_FROM_SKIA)
+  # NOTE: HARFBUZZ_LIBRARIES is SKIA here, prevent recursion
   add_dependencies(SKIA SKIA_build ${CUSTOM_ICU_LIB} ${WUFFS_LIB_NAME} ${CUSTOM_ICU_LIB} ${iccjpeg_LIB} ${jpeg_LIBRARY})
   # https://stackoverflow.com/a/53945809
   target_link_libraries(SKIA INTERFACE

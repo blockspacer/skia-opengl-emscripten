@@ -260,8 +260,8 @@ static SkiaUiDemo skiaUiDemo;
 #if defined(OS_WIN)
 #define GL_GLEXT_PROTOTYPES 1
 #define GL_GLES_PROTOTYPES 1
-//#define GLEW_STATIC 1
-//#include <GL/glew.h>
+#define GLEW_STATIC 1
+#include <GL/glew.h>
 #include <GL/gl.h>
 #include <GL/glext.h>
 #include "gl_helpers.h"
@@ -3630,7 +3630,8 @@ static void mainLockFreeLoop() {
 
     std::wcout << L"Unicode -- English -- Русский -- Ελληνικά -- Español." << std::endl;
 
-    wprintf(L"%s", L"Unicode -- English -- Русский -- Ελληνικά -- Español.\n");*/
+    //wprintf(L"%s", L"Unicode -- English -- Русский -- Ελληνικά -- Español.\n");
+*/
 
 #if !defined(ENABLE_NATIVE_HTML)
     if(!render_browser_window) {
@@ -4327,7 +4328,9 @@ int main(int argc, char* argv[])
   printf("Init CommandLine ...\n");
 
   base::CommandLine::Init(0, nullptr);
+#if __TODO__
   base::CommandLine::ForCurrentProcess()->InitFromArgv(argc, argv);
+#endif // __TODO__
 
   ///printf("SysInfo::AmountOfFreeDiskSpace %d ...\n", base::SysInfo::AmountOfFreeDiskSpace());
 

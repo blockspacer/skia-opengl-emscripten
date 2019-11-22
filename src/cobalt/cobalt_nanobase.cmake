@@ -58,6 +58,10 @@ add_library(cobalt_nanobase STATIC
 
 set_property(TARGET cobalt_nanobase PROPERTY CXX_STANDARD 17)
 
+target_link_libraries(cobalt_nanobase PRIVATE
+  base
+)
+
 target_include_directories(cobalt_nanobase PRIVATE
   #${UI_PARENT_DIR}
   ${COBALT_CORE_DIR}

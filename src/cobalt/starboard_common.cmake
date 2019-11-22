@@ -53,8 +53,11 @@ add_library(starboard_common STATIC
   ${starboard_common_SOURCES}
 )
 
+target_link_libraries(starboard_common PUBLIC
+  base
+)
+
 target_link_libraries(starboard_common PRIVATE
-  base # TODO
   #cobalt_base
   starboard_eztime
   starboard_icu_init

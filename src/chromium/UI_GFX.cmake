@@ -368,6 +368,7 @@ set_property(TARGET UI_GFX PROPERTY CXX_STANDARD 17)
 target_include_directories(UI_GFX PRIVATE
   ${CHROMIUM_DIR} # see /device/vr/buildflags/buildflags.h
   ${UI_GFX_DIR}
+  ${UI_PARENT_DIR} # path to ui/gfx/geometry/axis_transform2d.h
   ${BASE_DIR}
 )
 

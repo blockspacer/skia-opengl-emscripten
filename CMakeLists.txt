@@ -1,5 +1,7 @@
 ﻿cmake_minimum_required(VERSION 3.5)
 
+set(BASE_STANDALONE FALSE) # TODO
+
 # project() must be before checks, see https://stackoverflow.com/a/26437667/10904212
 set(PROJECT_NAME "skemgl")
 set(PROJECT_VERSION 1.0.0.1)
@@ -116,12 +118,12 @@ if(NOT RELEASE_BUILD)
   set(COMMON_FLAGS "${COMMON_FLAGS} -DD_DEBUG") #
 endif(NOT RELEASE_BUILD)
 
-if(NOT TARGET_WINDOWS OR IS_CLANG_CL) # TODO
+if(NOT TARGET_WINDOWS)
   # always return on non-void functions to prevent UB
   set(COMMON_FLAGS "${COMMON_FLAGS} -Wreturn-type")
   # https://gist.github.com/morido/8637535
   set(COMMON_FLAGS "${COMMON_FLAGS} -Werror=return-type")
-endif(NOT TARGET_WINDOWS OR IS_CLANG_CL)
+endif(NOT TARGET_WINDOWS)
 
 if(RELEASE_BUILD)
   list(APPEND APP_DEFINITIONS RELEASE_BUILD=1)
@@ -698,6 +700,15 @@ endif()
 # WTF
 #
 if(ENABLE_WTF OR ENABLE_BLINK OR ENABLE_COBALT OR ENABLE_BASE)
+  # base: General-purpose toolkit
+  # Depends on : libevent, libicui18n
+  #
+  # NOTE: remove fork of libicui
+  # as in https://github.com/Tarnyko/chromium-lite/blob/master/README#L76
+  #
+  add_subdirectory(src/base)
+
+  # chromium
   add_subdirectory(src/chromium) # requires skia above
 endif()
 if(ENABLE_WTF)

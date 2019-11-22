@@ -61,7 +61,9 @@ bool FileURLToFilePath(const GURL& url, base::FilePath* file_path) {
   printf("FileURLToFilePath path %s\n", path.c_str());
   DCHECK_EQ('/', path[0]);
   path.erase(0, 1);
-  *file_path = base::FilePath(base::FilePath::StringType{path});
+  DCHECK(file_path);
+  *file_path = base::FilePath();
+  *file_path = file_path->AppendASCII(path.c_str()); // TODO: support unicode in paths
   return !file_path->empty();
 }
 
@@ -170,7 +172,7 @@ std::unique_ptr<Fetcher> FetcherFactory::CreateSecureFetcher(
         new BlobFetcher(url, handler, blob_resolver_));
   }
 
-#if 0
+#if __TODO__
   if (url.SchemeIs(kEmbeddedScheme)) {
     printf("url.kEmbeddedScheme %s\n", url.path().c_str());
     EmbeddedFetcher::Options options;
@@ -181,7 +183,7 @@ std::unique_ptr<Fetcher> FetcherFactory::CreateSecureFetcher(
 #endif
         handler, options));
   }
-#endif // 0
+#endif // __TODO__
 
   // h5vcc-cache: scheme requires read_cache_callback_ which is not available
   // in the main WebModule.
