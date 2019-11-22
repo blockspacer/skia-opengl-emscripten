@@ -1,4 +1,4 @@
-﻿set(modp_b64_FULL_DIR third_party/modp_b64/)
+﻿set(modp_b64_FULL_DIR ${CHROMIUM_DIR}third_party/modp_b64/)
 
 set(modp_b64_INCLUDE_DIRS ${modp_b64_FULL_DIR})
 

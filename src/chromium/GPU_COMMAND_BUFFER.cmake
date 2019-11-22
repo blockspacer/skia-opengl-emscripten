@@ -1,6 +1,8 @@
 ﻿## --- GPU_COMMAND_BUFFER ---###
 
-set(GPU_CONFIG_DIR ${GPU_DIR}config/)
+set(GPU_CONFIG_DIR
+  ${GPU_DIR}config/
+)
 
 #./src/chromium/gen/gen_services_network_public/gpu/command_buffer/service/disk_cache_proto.pb.cc
 #./src/chromium/gen/gen_services_network_public/gpu/config/gpu_driver_bug_list_autogen.cc
@@ -397,7 +399,9 @@ if (EMSCRIPTEN)
   #    defines += [ "EGLAPI=__attribute__((visibility(\"default\")))" ]
   #  }
 elseif(TARGET_LINUX)
-  #
+  # skip
+elseif(TARGET_WINDOWS)
+  # skip
 else()
   message(FATAL_ERROR "unknown platform")
 endif()
@@ -409,7 +413,7 @@ list(APPEND GPU_COMMAND_BUFFER_CLIENT_SOURCES
 )
 
 ### GPU_CONFIG ###
-list(APPEND GPU_CONFIG_SOURCES
+set(GPU_CONFIG_SOURCES
   ${GPU_CONFIG_DIR}dx_diag_node.cc
   ${GPU_CONFIG_DIR}dx_diag_node.h
   ## TODO ## ${GPU_CONFIG_DIR}gpu_blacklist.cc

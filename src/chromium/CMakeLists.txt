@@ -7,7 +7,7 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 set(BLINK_WTF_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/third_party/blink/renderer/platform/)
 set(BLINK_WTF_DIR ${BLINK_WTF_PARENT_DIR}wtf/)
 
-set(BASE_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/)
+set(BASE_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../base/)
 set(BASE_DIR ${BASE_PARENT_DIR}base/)
 
 if(ENABLE_MOJO)
@@ -303,14 +303,6 @@ include(GURL.cmake)
 if(ENABLE_GCRYPTO)
   include(GCRYPTO.cmake)
 endif(ENABLE_GCRYPTO)
-
-# base: General-purpose toolkit
-# Depends on : libevent, libicui18n
-#
-# NOTE: remove fork of libicui
-# as in https://github.com/Tarnyko/chromium-lite/blob/master/README#L76
-#
-include(base.cmake)
 
 if(ENABLE_WTF)
   # WTF

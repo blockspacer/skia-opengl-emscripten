@@ -169,7 +169,7 @@ printf("reading icu data 2...\n");
   wcscpy_s(tmp_buffer, as_wcstr(data_path.value()));
   debug::Alias(tmp_buffer);
 #endif
-  data_path = data_path.AppendASCII(kIcuDataFileName);
+  data_path = data_path.Append(kIcuDataFileName);
 printf("reading icu data 2.1 %s...\n", data_path.value().c_str());
 
 #if defined(OS_WIN)
@@ -396,7 +396,7 @@ printf("InitializeICU() 1\n");
 #if (ICU_UTIL_DATA_IMPL == ICU_UTIL_DATA_SHARED)
   FilePath data_path;
   PathService::Get(DIR_ASSETS, &data_path);
-  data_path = data_path.AppendASCII(ICU_UTIL_DATA_SHARED_MODULE_NAME);
+  data_path = data_path.Append(ICU_UTIL_DATA_SHARED_MODULE_NAME);
 
   HMODULE module = LoadLibrary(data_path.value().c_str());
   if (!module) {

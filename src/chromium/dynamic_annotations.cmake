@@ -1,14 +1,15 @@
 ﻿### --- dynamic_annotations ---###
 
 add_library(dynamic_annotations STATIC
-  ${CHROMIUM_DIR}/base/third_party/dynamic_annotations/dynamic_annotations.c
+  ${BASE_DIR}/third_party/dynamic_annotations/dynamic_annotations.c
 )
 
 target_include_directories(dynamic_annotations PRIVATE
-  ${CHROMIUM_DIR}
-  ${CHROMIUM_DIR}/base/third_party
-  ${CHROMIUM_DIR}/base/third_party/dynamic_annotations
-  ${CHROMIUM_DIR}/base/third_party/valgrind
+  #${CHROMIUM_DIR}
+  ${BASE_PARENT_DIR} # path to base/third_party/dynamic_annotations/dynamic_annotations.h
+  ${BASE_DIR}/third_party
+  ${BASE_DIR}/third_party/dynamic_annotations
+  ${BASE_DIR}/third_party/valgrind
   ${BASE_DIR}
 )
 

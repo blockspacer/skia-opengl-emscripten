@@ -41,7 +41,7 @@ endif()
 if(TARGET_EMSCRIPTEN)
 else()
   # see https://github.com/chromium/chromium/blob/master/base/allocator/BUILD.gn#L77
-  set(TCMALLOC_DIR "tcmalloc_wrapper/third_party/tcmalloc/chromium/")
+  set(TCMALLOC_DIR "${CHROMIUM_DIR}/tcmalloc_wrapper/third_party/tcmalloc/chromium/")
   list(APPEND TCMALLOC_SOURCES
     # Generated for our configuration from tcmalloc's build
     # and checked in.
@@ -149,7 +149,7 @@ else()
     #${TCMALLOC_DIR}src/windows/port.h
     #
     ### build ###
-    build/build_config.h
+    ${CHROMIUM_DIR}/build/build_config.h
   )
 
   # https://github.com/chromium/chromium/blob/master/base/allocator/BUILD.gn#L204
@@ -167,7 +167,7 @@ else()
   list(APPEND TCMALLOC_PUBLIC_INCLUDE_DIRS
     #base/allocator
     #${TCMALLOC_DIR}
-    tcmalloc_wrapper/
+    ${CHROMIUM_DIR}/tcmalloc_wrapper/
   )
 
   add_library(tcmalloc STATIC
@@ -181,6 +181,7 @@ else()
     ${TCMALLOC_DIR}
     ${TCMALLOC_DIR}src/
     ${TCMALLOC_DIR}src/base/
+    ${CHROMIUM_DIR}/ # path to build/build_config.h
   )
 
   target_include_directories(tcmalloc PUBLIC

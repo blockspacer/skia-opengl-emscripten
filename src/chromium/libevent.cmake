@@ -92,6 +92,7 @@ set_property(TARGET libevent PROPERTY CXX_STANDARD 17)
 
 target_include_directories(libevent PUBLIC
   ${LIBEVENT_INCLUDE_DIRS}
+  ${BASE_PARENT_DIR} # base/third_party/libevent/linux/event-config.h
 )
 
 target_include_directories(libevent PRIVATE

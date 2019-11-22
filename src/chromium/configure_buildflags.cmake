@@ -205,33 +205,6 @@ if(NEED_GEN_BUILDFLAGS)
   configure_file(${CHROMIUM_DIR}/allocator_buildflags.h.inc
     ${BASE_DIR}allocator/buildflags.h COPYONLY)
 
-  configure_file(${CHROMIUM_DIR}/cfi_buildflags.h.inc
-    ${BASE_DIR}/base/cfi_buildflags.h COPYONLY)
-
-  if(TARGET_WINDOWS)
-    configure_file(${CHROMIUM_DIR}/base_win_buildflags.h.inc
-      ${BASE_DIR}/base/win/base_win_buildflags.h COPYONLY)
-  endif(TARGET_WINDOWS)
-
-  # https://github.com/chromium/chromium/blob/master/base/BUILD.gn#L1980
-  configure_file(${CHROMIUM_DIR}/debugging_buildflags.h.inc
-    ${BASE_DIR}/debug/debugging_buildflags.h COPYONLY)
-
-  # https://github.com/chromium/chromium/blob/master/base/BUILD.gn#L2017
-  # https://github.com/geanix/courgette/blob/master/gen/base/synchronization/synchronization_buildflags.h
-  configure_file(${CHROMIUM_DIR}/synchronization_buildflags.h.inc
-    ${BASE_DIR}/base/synchronization/synchronization_buildflags.h COPYONLY)
-
-  configure_file(${CHROMIUM_DIR}/protected_memory_buildflags.h.inc
-    ${BASE_DIR}/base/memory/protected_memory_buildflags.h COPYONLY)
-
-  configure_file(${CHROMIUM_DIR}/partition_alloc_buildflags.h.inc
-    ${BASE_DIR}/base/partition_alloc_buildflags.h COPYONLY)
-
-  # https://github.com/chromium/chromium/blob/master/base/BUILD.gn#L2044
-  configure_file(${CHROMIUM_DIR}/clang_coverage_buildflags.h.inc
-    ${BASE_DIR}/base/clang_coverage_buildflags.h COPYONLY)
-
   # https://github.com/stormcenter/QuicDemo/blob/master/app/src/main/jni/third_party/chromium/include/net/net_buildflags.h
   configure_file(${CHROMIUM_DIR}/gpu_vulkan_buildflags.h.inc
     ${CHROMIUM_DIR}/gpu/vulkan/buildflags.h COPYONLY)
