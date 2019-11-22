@@ -116,7 +116,6 @@ if(RELEASE_BUILD)
   set(EMCC_COMMON "${EMCC_COMMON} -s EVAL_CTORS=1")
 endif(RELEASE_BUILD)
 
-
 set(HAS_EMTERPRETIFY FALSE)
 set(HAS_ASYNCIFY FALSE)
 
@@ -258,37 +257,38 @@ else(ENABLE_WEB_PTHREADS)
   # see https://github.com/caiiiycuk/js-dos/blob/6.22/js-dos-cpp/emterpretify.txt
   #set(EMCC_COMMON "${EMCC_COMMON} -s EMTERPRETIFY_WHITELIST=@${CMAKE_CURRENT_SOURCE_DIR}/assets/emterpretify_whitelist.txt")
   #set(EMCC_COMMON "${EMCC_COMMON} -s EMTERPRETIFY_WHITELIST=["qsort", "trinkle", "__toread", "__uflow", "__fwritex", "MUSL_vfprintf", "__Wait", "__TimedWait"]")
-  #
-  # ORIGINAL_EXPORTED_FUNCTIONS
-  #
-  # EXTRA_EXPORTED_RUNTIME_METHODS
-  #
-  # EXPORT_FUNCTION_TABLES
-  #
-  # EXPORTED_RUNTIME_METHODS=["FS_createFolder",
-  #
-  # DEFAULT_LIBRARY_FUNCS_TO_INCLUDE=["memcpy", "memset", "malloc", "free"]'
-  # https://stackoverflow.com/a/55933880
-  #set(EMCC_COMMON "${EMCC_COMMON} -s EXTRA_EXPORTED_RUNTIME_METHODS=["ccall", "cwrap"]")
-  #
-  # see https://stackoverflow.com/a/21220605
-  # see https://stackoverflow.com/a/16725147
-  # Create an "extern c" block.
-  # Inside this block define the functions you want to expose to javascript.
-  # These functions should be prefixed with an underscore.
-  # Inside one of these functions you can instantiate your C++ class.
-  # NOTE: EMSCRIPTEN_KEEPALIVE also exports the function, as if it were on EXPORTED_FUNCTIONS.
-  # see https://emscripten.org/docs/getting_started/FAQ.html#why-do-functions-in-my-c-c-source-code-vanish-when-i-compile-to-javascript-and-or-i-get-no-functions-to-process
-  #set(EMCC_COMMON "${EMCC_COMMON} -s EXPORTED_FUNCTIONS=["_main", "qsort", "trinkle", "__toread", "__uflow", "__fwritex", "MUSL_vfprintf", "__Wait", "__TimedWait"]")
-  #set(EMCC_COMMON "${EMCC_COMMON} -s EXPORTED_FUNCTIONS=["_main", "qsort", "trinkle", "__toread", "__uflow", "__fwritex", "MUSL_vfprintf", "_Wait", "_TimedWait"]")
-  set(EMCC_COMMON "${EMCC_COMMON} -s EXPORTED_FUNCTIONS='[_main, _malloc, _free]'")
-  # see https://github.com/nskipper1110/objectivemedia/blob/c65c3f652e72dfac81b1739e55ded9397580371f/emsdk-portable/emscripten/1.38.13/tests/test_core.py#L4736
-  #set(EMCC_COMMON "${EMCC_COMMON} -s EXTRA_EXPORTED_RUNTIME_METHODS=[\"getValue\", \"setValue\", \"UTF8ToString\", \"stringToUTF8\"]")
-  set(EMCC_COMMON "${EMCC_COMMON} -s EXTRA_EXPORTED_RUNTIME_METHODS='[UTF8ToString, stringToUTF8, UTF16ToString, stringToUTF16, UTF32ToString, stringToUTF32, ccall, cwrap, setValue, getValue, intArrayFromString, intArrayToString, writeStringToMemory, writeArrayToMemory, writeAsciiToMemory, addRunDependency, removeRunDependency, Pointer_stringify, stackTrace]'")
-  #
-  # You can optionally use -s 'EMTERPRETIFY_FILE="data.binary"' to store the emterpreter bytecode in a file
-  #
 endif(ENABLE_WEB_PTHREADS)
+
+#
+# ORIGINAL_EXPORTED_FUNCTIONS
+#
+# EXTRA_EXPORTED_RUNTIME_METHODS
+#
+# EXPORT_FUNCTION_TABLES
+#
+# EXPORTED_RUNTIME_METHODS=["FS_createFolder",
+#
+# DEFAULT_LIBRARY_FUNCS_TO_INCLUDE=["memcpy", "memset", "malloc", "free"]'
+# https://stackoverflow.com/a/55933880
+#set(EMCC_COMMON "${EMCC_COMMON} -s EXTRA_EXPORTED_RUNTIME_METHODS=["ccall", "cwrap"]")
+#
+# see https://stackoverflow.com/a/21220605
+# see https://stackoverflow.com/a/16725147
+# Create an "extern c" block.
+# Inside this block define the functions you want to expose to javascript.
+# These functions should be prefixed with an underscore.
+# Inside one of these functions you can instantiate your C++ class.
+# NOTE: EMSCRIPTEN_KEEPALIVE also exports the function, as if it were on EXPORTED_FUNCTIONS.
+# see https://emscripten.org/docs/getting_started/FAQ.html#why-do-functions-in-my-c-c-source-code-vanish-when-i-compile-to-javascript-and-or-i-get-no-functions-to-process
+#set(EMCC_COMMON "${EMCC_COMMON} -s EXPORTED_FUNCTIONS=["_main", "qsort", "trinkle", "__toread", "__uflow", "__fwritex", "MUSL_vfprintf", "__Wait", "__TimedWait"]")
+#set(EMCC_COMMON "${EMCC_COMMON} -s EXPORTED_FUNCTIONS=["_main", "qsort", "trinkle", "__toread", "__uflow", "__fwritex", "MUSL_vfprintf", "_Wait", "_TimedWait"]")
+#set(EMCC_COMMON "${EMCC_COMMON} -s EXPORTED_FUNCTIONS='[_main, _malloc, _free]'")
+# see https://github.com/nskipper1110/objectivemedia/blob/c65c3f652e72dfac81b1739e55ded9397580371f/emsdk-portable/emscripten/1.38.13/tests/test_core.py#L4736
+#set(EMCC_COMMON "${EMCC_COMMON} -s EXTRA_EXPORTED_RUNTIME_METHODS=[\"getValue\", \"setValue\", \"UTF8ToString\", \"stringToUTF8\"]")
+#set(EMCC_COMMON "${EMCC_COMMON} -s EXTRA_EXPORTED_RUNTIME_METHODS='[UTF8ToString, stringToUTF8, UTF16ToString, stringToUTF16, UTF32ToString, stringToUTF32, ccall, cwrap, setValue, getValue, intArrayFromString, intArrayToString, writeStringToMemory, writeArrayToMemory, writeAsciiToMemory, addRunDependency, removeRunDependency, Pointer_stringify, stackTrace]'")
+#
+# You can optionally use -s 'EMTERPRETIFY_FILE="data.binary"' to store the emterpreter bytecode in a file
+#
 
 if (HAS_ASYNCIFY OR HAS_EMTERPRETIFY)
   #custom defines
