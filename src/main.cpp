@@ -3876,15 +3876,86 @@ static void mainLockFreeLoop() {
       }
       case SDL_TEXTINPUT: // use SDL_StartTextInput();
       {
+#if 0
+        std::cout << TEXT("АГГГГГГГГГГГГГыфвфыв") << std::endl;
+
+        std::cout << u8"Greek: αβγδ; German: Übergrößenträger" << std::endl;
+
+        wchar_t wcharStr[4096];//SDL_TEXTINPUTEVENT_TEXT_SIZE = { 0 };
+        if (MultiByteToWideChar(CP_UTF8, 0, e.text.text, strlen(e.text.text) + 1, wcharStr,
+          /*SDL_TEXTINPUTEVENT_TEXT_SIZE*/_countof(wcharStr)) > 0)
+        {
+          std::cout << TEXT("SDL_TEXTINPUTIN wcharStr = ") <<  wcharStr << std::endl;
+        }
+        else {
+          std::cout << TEXT("SDL_ETEXTINPUTINA") << std::endl;
+        }
+#endif // 0
+
         /// \note Make sure keys with modifiers are handled only during `keyup` and `keydown`.
         if(hasModifier) {
           break;
         }
 
+        // Try to ignore keypad presses.
+        /*if (keypad_pressed_without_KMOD_NUM) {
+          // Need to fix KMOD_NUM state here.
+          SDL_Keymod mod = SDL_GetModState();
+          if (!(mod & KMOD_NUM)) {
+            mod |= KMOD_NUM;
+            SDL_SetModState(mod);
+            D("Detected NUMLOCK is active - toggling KMOD_NUM flag");
+            // Break here to ignore this keypress.
+            break;
+          }
+        }*/
+
         /*if(base::IsStringASCII(std::string(e.text.text))) {
           /// \note ASCII handled by SDL_KEYUP and SDL_KEYDOWN
           break;
         }*/
+
+        /*const char* utf8str = e.text.text;
+
+        static SDL_iconv_t cd = SDL_iconv_t(-1);
+
+        if (cd == SDL_iconv_t(-1))
+        {
+          // note: just "UTF-32" doesn't work as toFormat, because then you get BOMs, which we don't want.
+          const char* toFormat = "UTF-32LE"; // TODO: what does CEGUI expect on big endian machines?
+          cd = SDL_iconv_open(toFormat, "UTF-8");
+          if (cd == SDL_iconv_t(-1))
+          {
+            std::cerr << "Couldn't initialize SDL_iconv for UTF-8 to UTF-32!" << std::endl;
+            return;
+          }
+        }
+
+        // utf8str has at most SDL_TEXTINPUTEVENT_TEXT_SIZE (32) chars,
+        // so we won't have have more utf32 chars than that
+        Uint32 utf32buf[SDL_TEXTINPUTEVENT_TEXT_SIZE] = { 0 };
+
+        // we'll convert utf8str to a utf32 string, saved in utf32buf.
+        // the utf32 chars will be injected into cegui
+
+        size_t len = strlen(utf8str);
+
+        size_t inbytesleft = len;
+        size_t outbytesleft = 4 * SDL_TEXTINPUTEVENT_TEXT_SIZE; // *4 because utf-32 needs 4x as much space as utf-8
+        char* outbuf = (char*)utf32buf;
+        size_t n = SDL_iconv(cd, &utf8str, &inbytesleft, &outbuf, &outbytesleft);
+
+        if (n == size_t(-1)) // some error occured during iconv
+        {
+          std::cerr << "Converting UTF-8 string " << utf8str << " from SDL_TEXTINPUT to UTF-32 failed!" << std::endl;
+        }
+
+        const std::string in_text = outbuf;
+
+        // reset cd so it can be used again
+        SDL_iconv(cd, NULL, &inbytesleft, NULL, &outbytesleft);*/
+        const std::string in_text = e.text.text;
+
         bool isASCII = strlen(e.text.text) == 1 && (e.text.text[0] & 0x80) == 0;
         wchar_t symbolASCII = e.text.text[0];
         SbKey keyASCII;
@@ -3903,7 +3974,7 @@ static void mainLockFreeLoop() {
 
         /// \note empty e.key.keysym.sym and e.key.keysym.scancode here!
         //const Uint8 *keys = SDL_GetKeyboardState(NULL);
-        printf("SDL_TEXTINPUT1 text %s\n", e.text.text);
+        //printf("SDL_TEXTINPUT1 text %s\n", in_text.c_str());
         /*printf("SDL_TEXTINPUT1 SDL_GetKeyName %s\n", SDL_GetKeyName(e.key.keysym.sym));
         printf("SDL_TEXTINPUT1 e.key.keysym.sym %d\n", e.key.keysym.sym);
         printf("SDL_TEXTINPUT1 SDL2KeycodeToSbKey(e.key.keysym.sym) %d\n", native_event::SDL2KeycodeToSbKey(e.key.keysym.sym));
@@ -3924,9 +3995,10 @@ static void mainLockFreeLoop() {
 #if defined(ENABLE_COBALT)
         if(g_cobaltTester) {
           isTextInput = true; /// \note not isSbEvent
-          printf("SDL_TEXTINPUT2 text %s\n", e.text.text);
+          //printf("SDL_TEXTINPUT2 text %s\n", in_text);
 
           auto pressKey = [&]() {
+            //printf("pressKey in_text %s\n", in_text);
             std::unique_ptr<SbEvent> event1 =  native_event::createSbKeyboardEvent(
               SbEventType::kSbEventTypeInput,
               sbInputEventType,
@@ -3940,7 +4012,7 @@ static void mainLockFreeLoop() {
               keylocationASCII, //native_event::SDL2ScancodeToSbKeyLocation(e.key.keysym.scancode),
               symbolASCII, // e.key.keysym.scancode,
               symbolASCII, // e.key.keysym.scancode,
-              e.text.text,
+              in_text,
               isPrintable // TODO
             );
             DCHECK(event1);
@@ -4172,6 +4244,13 @@ std::unique_ptr<base::sequence_manager::SequenceManager> sequence_manager;
 //int main(int argc, char** argv)
 int main(int argc, char* argv[])
 {
+#if defined(OS_WIN)
+  // Set console code page to UTF-8 so console known how to interpret string data
+  SetConsoleOutputCP(CP_UTF8);
+  // Enable buffering to prevent VS from chopping up UTF-8 byte sequences
+  setvbuf(stdout, nullptr, _IOFBF, 1000);
+#endif // OS_WIN
+
     printf("main 0...\n");
 #if !defined(ENABLE_MAIN)
   return EXIT_SUCCESS;
