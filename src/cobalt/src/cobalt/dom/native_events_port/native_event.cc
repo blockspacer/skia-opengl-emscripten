@@ -1,11 +1,16 @@
 #include "cobalt/dom/native_events_port/native_event.h"
 
+#if defined(OS_WIN)
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#endif // OS_WIN
+
 namespace native_event {
 
 std::unique_ptr<SbInputData> createEmptySbEventData() {
     // TODO: free mem
     std::unique_ptr<SbInputData> data(new SbInputData());
-    SbMemorySet(data.get(), 0, sizeof(*data));
+    //SbMemorySet(data.get(), 0, sizeof(*data));
     data->device_id = 0; // kGamepadDeviceId
     data->key_location = kSbKeyLocationUnspecified;
     //data->character = "k";
@@ -1959,10 +1964,10 @@ std::unique_ptr<SbEvent> createSbWheelEvent(
 {
   std::unique_ptr<SbEvent> event = std::make_unique<SbEvent>();
   event->type = type;
-  std::unique_ptr<SbInputData> data = nullptr;
-  data = native_event::createEmptySbEventData();
-  data->window = window;
+  std::unique_ptr<SbInputData> data = native_event::createEmptySbEventData();
   DCHECK(data);
+
+  data->window = window;
 
   unsigned int key_modifiers = button_modifiers;
   key_modifiers |= native_event::createSbKeyModifiers(
@@ -2000,10 +2005,10 @@ std::unique_ptr<SbEvent> createSbMouseEvent(
 {
   std::unique_ptr<SbEvent> event = std::make_unique<SbEvent>();
   event->type = type;
-  std::unique_ptr<SbInputData> data = nullptr;
-  data = native_event::createEmptySbEventData();
-  data->window = window;
+  std::unique_ptr<SbInputData> data = native_event::createEmptySbEventData();
   DCHECK(data);
+
+  data->window = window;
 
   unsigned int key_modifiers = button_modifiers;
   key_modifiers |= native_event::createSbKeyModifiers(
@@ -2038,12 +2043,13 @@ std::unique_ptr<SbEvent> createSbKeyboardEvent(
     bool is_printable
   )
 {
+  //std::cout << "createSbKeyboardEvent in_text = " << text << std::endl;
   std::unique_ptr<SbEvent> event = std::make_unique<SbEvent>();
   event->type = type;
-  std::unique_ptr<SbInputData> data = nullptr;
-  data = native_event::createEmptySbEventData();
-  data->window = window;
+  std::unique_ptr<SbInputData> data = native_event::createEmptySbEventData();
   DCHECK(data);
+
+  data->window = window;
 
   unsigned int key_modifiers = native_event::createSbKeyModifiers(
     altKey,
@@ -2067,10 +2073,15 @@ std::unique_ptr<SbEvent> createSbKeyboardEvent(
   data->key_location = key_location;
   data->keysym = keysym;
   printf("createSbKeyboardEvent data->keysym %d\n", data->keysym);
+  std::cout << "createSbKeyboardEvent text = " << text << std::endl;
+  data->text = text;
+  /*
   if(!text.empty()) {
     data->text = text;
     printf("createSbKeyboardEvent data->text %s\n", data->text.c_str());
+    std::cout << "createSbKeyboardEvent data->text = " << data->text << std::endl;
   }
+  */
   data->character = character;
   printf("createSbKeyboardEvent data->character %d\n", data->character);
 
