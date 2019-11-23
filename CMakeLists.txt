@@ -1293,33 +1293,35 @@ add_custom_target(copy-runtime-files ALL
 )
 add_dependencies(${PROJECT_NAME} copy-runtime-files)
 
-find_package(CXTPL_tool REQUIRED)
+if(ENABLE_CXTPL)
+  find_package(CXTPL_tool REQUIRED)
 
-set(cxtpl_in_dir "${CMAKE_CURRENT_SOURCE_DIR}/codegen/resources")
-set(cxtpl_out_dir "${CMAKE_CURRENT_SOURCE_DIR}/generated/resources")
+  set(cxtpl_in_dir "${CMAKE_CURRENT_SOURCE_DIR}/codegen/resources")
+  set(cxtpl_out_dir "${CMAKE_CURRENT_SOURCE_DIR}/generated/resources")
 
-list(APPEND cxtpl_inputs "${cxtpl_in_dir}/css/index.css.cxtpl")
-list(APPEND cxtpl_outputs "${cxtpl_out_dir}/css/index.css")
+  list(APPEND cxtpl_inputs "${cxtpl_in_dir}/css/index.css.cxtpl")
+  list(APPEND cxtpl_outputs "${cxtpl_out_dir}/css/index.css")
 
-list(APPEND cxtpl_inputs "${cxtpl_in_dir}/html/index.html.cxtpl")
-list(APPEND cxtpl_outputs "${cxtpl_out_dir}/html/index.html")
+  list(APPEND cxtpl_inputs "${cxtpl_in_dir}/html/index.html.cxtpl")
+  list(APPEND cxtpl_outputs "${cxtpl_out_dir}/html/index.html")
 
-# create new codegen files
-target_add_cxtpl_tool(TARGET ${PROJECT_NAME}
-                      GUID "codegen_cxtpl_1"
-                      INPUTS_DIR "${cxtpl_in_dir}"
-                      OUTPUTS_DIR "${cxtpl_out_dir}"
-                      INPUTS "${cxtpl_inputs}"
-                      OUTPUTS "${cxtpl_outputs}"
-                      GENERATOR_PATH "${CMAKE_CURRENT_SOURCE_DIR}/codegen/cxtpl_generators/text_generator/text_generator.cpp"
-                      LOG_CONFIG ".:=DBG1:default:console\\ default=file:path=CXTPL_tool_for_${PROJECT_NAME}.log,async=true,sync_level=DBG9\\ console=stream:stream=stderr"
-                      EXTRA_ARGS ${CXTPL_EXTRA_ARGS})
+  # create new codegen files
+  target_add_cxtpl_tool(TARGET ${PROJECT_NAME}
+                        GUID "codegen_cxtpl_1"
+                        INPUTS_DIR "${cxtpl_in_dir}"
+                        OUTPUTS_DIR "${cxtpl_out_dir}"
+                        INPUTS "${cxtpl_inputs}"
+                        OUTPUTS "${cxtpl_outputs}"
+                        GENERATOR_PATH "${CMAKE_CURRENT_SOURCE_DIR}/codegen/cxtpl_generators/text_generator/text_generator.cpp"
+                        LOG_CONFIG ".:=DBG1:default:console\\ default=file:path=CXTPL_tool_for_${PROJECT_NAME}.log,async=true,sync_level=DBG9\\ console=stream:stream=stderr"
+                        EXTRA_ARGS ${CXTPL_EXTRA_ARGS})
 
-add_custom_target(copy-generated-runtime-files ALL
-  COMMAND cmake -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/generated/resources ${CMAKE_CURRENT_BINARY_DIR}/resources
-  #DEPENDS ${PROJECT_NAME}
-)
-add_dependencies(${PROJECT_NAME} copy-generated-runtime-files)
+  add_custom_target(copy-generated-runtime-files ALL
+    COMMAND cmake -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/generated/resources ${CMAKE_CURRENT_BINARY_DIR}/resources
+    #DEPENDS ${PROJECT_NAME}
+  )
+  add_dependencies(${PROJECT_NAME} copy-generated-runtime-files)
+endif(ENABLE_CXTPL)
 
 # IWYU detects superfluous includes and when the include can be replaced with a forward declaration.
 # It can be obtained using "apt-get install iwyu" or from "github.com/include-what-you-use".
