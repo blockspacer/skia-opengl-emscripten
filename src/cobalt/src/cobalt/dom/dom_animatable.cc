@@ -30,17 +30,25 @@ DOMAnimatable::GetDefaultTimeline() const {
 
 void DOMAnimatable::Register(web_animations::Animation* animation) {
   if (element_) {
-    element_->animations()->AddAnimation(animation);
+    if(element_->animations()) {
+      element_->animations()->AddAnimation(animation);
+    }
   } else if (pseudo_element_) {
-    pseudo_element_->animations()->AddAnimation(animation);
+    if(pseudo_element_->animations()) {
+      pseudo_element_->animations()->AddAnimation(animation);
+    }
   }
 }
 
 void DOMAnimatable::Deregister(web_animations::Animation* animation) {
   if (element_) {
-    element_->animations()->RemoveAnimation(animation);
+    if(element_->animations()) {
+      element_->animations()->RemoveAnimation(animation);
+    }
   } else if (pseudo_element_) {
-    pseudo_element_->animations()->RemoveAnimation(animation);
+    if(pseudo_element_->animations()) {
+      pseudo_element_->animations()->RemoveAnimation(animation);
+    }
   }
 }
 

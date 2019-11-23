@@ -22,13 +22,21 @@ namespace web_animations {
 AnimationSet::AnimationSet() {}
 
 void AnimationSet::AddAnimation(Animation* animation) {
-  animations_.insert(animation);
-  animation->OnAddedToAnimationSet(this);
+  DCHECK(animation);
+  
+  if(animation) {
+    animations_.insert(animation);
+    animation->OnAddedToAnimationSet(this);
+  }
 }
 
 void AnimationSet::RemoveAnimation(Animation* animation) {
-  animations_.erase(animation);
-  animation->OnRemovedFromAnimationSet(this);
+  DCHECK(animation);
+  
+  if(animation) {
+    animations_.erase(animation);
+    animation->OnRemovedFromAnimationSet(this);
+  }
 }
 
 bool AnimationSet::IsPropertyAnimated(cssom::PropertyKey property_name) const {
@@ -37,6 +45,7 @@ bool AnimationSet::IsPropertyAnimated(cssom::PropertyKey property_name) const {
     const KeyframeEffectReadOnly* keyframe_effect =
         base::polymorphic_downcast<const KeyframeEffectReadOnly*>(
             (*iter)->effect().get());
+    DCHECK(keyframe_effect);
     if (keyframe_effect->data().IsPropertyAnimated(property_name)) {
       return true;
     }

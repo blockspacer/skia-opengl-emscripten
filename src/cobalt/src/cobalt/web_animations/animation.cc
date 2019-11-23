@@ -148,7 +148,13 @@ Animation::~Animation() {
   std::set<scoped_refptr<AnimationSet>> contained_in_animation_sets =
       contained_in_animation_sets_;
   for (const auto& animation_set : contained_in_animation_sets) {
-    animation_set->RemoveAnimation(this);
+    if(animation_set) {
+      animation_set->RemoveAnimation(this);
+    }
+  }
+
+  if(has_destruction_callback()) {
+    std::move(on_destruction_cb_).Run();
   }
 }
 
@@ -215,17 +221,21 @@ std::unique_ptr<Animation::EventHandler> Animation::AttachEventHandler(
 }
 
 void Animation::OnAddedToAnimationSet(const scoped_refptr<AnimationSet>& set) {
+  DCHECK(set);
   contained_in_animation_sets_.insert(set);
 }
 
 void Animation::OnRemovedFromAnimationSet(
     const scoped_refptr<AnimationSet>& set) {
-  contained_in_animation_sets_.erase(set);
+  if(set) {
+    contained_in_animation_sets_.erase(set);
+  }
 }
 
 void Animation::RemoveEventHandler(EventHandler* handler) {
   // Called when the EventHandler object is destructed, this "deregisters"
   // the event handler from the Animation's event handler set.
+  DCHECK(handler);
   std::set<EventHandler*>::iterator found = event_handlers_.find(handler);
   DCHECK(found != event_handlers_.end());
 

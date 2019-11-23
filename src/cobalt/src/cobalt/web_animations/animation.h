@@ -158,8 +158,18 @@ class Animation : public script::Wrappable {
   DEFINE_WRAPPABLE_TYPE(Animation);
   void TraceMembers(script::Tracer* tracer) override;
 
+  // custom, not in spec
+  using DestructionCallback = base::OnceCallback<void(void)>;
+  void set_destruction_cb(DestructionCallback cb) {
+    on_destruction_cb_ = std::move(cb);
+  }
+  bool has_destruction_callback() const { return !on_destruction_cb_.is_null(); }
+
  private:
   ~Animation() override;
+
+  // custom, not in spec
+  DestructionCallback on_destruction_cb_; 
 
   // This will be called by EventHandler's destructor.
   void RemoveEventHandler(EventHandler* handler);

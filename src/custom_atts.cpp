@@ -200,12 +200,27 @@ static void HandleAnimationEnterAfterPhase(
    = std::fabs(timing_input->iterations()
      - progress.current_iteration.value_or(0.0)) < kEpsilon;
   if(finalIteration) {
-    // TODO: remove here
+    /// \todo remove here
   }
 
+  DCHECK(web_animation);
+  web_animation->Cancel();
+
+  DCHECK(ripple_effect_parent);
   scoped_refptr<cobalt::dom::Node> removed_node
     = ripple_effect_parent->RemoveChild(ripple_effect);
-  DCHECK(removed_node);
+
+  /// \note prolong lifetime of element because it must be destroyed after animation destruction
+  DCHECK(!web_animation->has_destruction_callback());
+  web_animation->set_destruction_cb(
+    base::BindOnce([](scoped_refptr<cobalt::dom::Node> removed_node) {
+        DCHECK(removed_node);
+      },
+      removed_node
+    )
+  );
+
+  std::cout << "HandleAnimationEnterAfterPhase finished" << std::endl;
 }
 
 ///\todo just use set_transition_property, not addRippleAnimationOnce
@@ -386,6 +401,13 @@ static void addRippleAnimationOnce(
               base::Unretained(web_animation.get())
             );
 
+    /*
+    /// \todo may cause crash on double adding of animation
+    DCHECK(elementHTML->animations());
+    if(elementHTML->animations()) {
+      elementHTML->animations()->AddAnimation(web_animation.get()); // see DOMAnimatable::Register
+    }*/
+
     DCHECK(cb);
     event_handler =
       web_animation->AttachEventHandler(std::move(cb));
@@ -404,6 +426,7 @@ static void addRippleAnimationOnce(
     web_animation->Play();
 
     printf("created custom animation!\n");
+    DCHECK(web_animation);
   }
 }
 
