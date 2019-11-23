@@ -4216,7 +4216,7 @@ int main(int argc, char* argv[])
 #ifdef ENABLE_BASE
     printf("Init AtExitManager ...\n");
   base::AtExitManager at_exit;
-  at_exit.DisableAllAtExitManagers();
+  //at_exit.DisableAllAtExitManagers();
 #endif
 
 #ifdef ENABLE_BASE
