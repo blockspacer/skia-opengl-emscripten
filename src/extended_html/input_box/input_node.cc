@@ -586,6 +586,11 @@ void InputNode::RenderTreeNodeVisit(const NodeVisitor *render_target) {
       DCHECK(input_node_widget_);
       DCHECK(input_node_widget_->GetInputMethod());
 
+    //std::cout << "HTMLInputElement::ScheduledKeyEvent& kEv character() :" << kEv.keyEvent_.character() << std::endl;
+
+    //std::cout << "HTMLInputElement::ScheduledKeyEvent& kEv text() :" << kEv.keyEvent_.ToString() << std::endl;
+    //std::cout << "HTMLInputElement::ScheduledKeyEvent& kEv GetCharacter() :" << kEv.keyEvent_.GetCharacter() << std::endl;
+
       /*if(kEv.keyEvent_.type() == ui::ET_KEY_PRESSED) {
         printf("kEv.keyEvent_.type() == ui::ET_KEY_PRESSED\n");
         input_node_container_->textfield_->OnKeyPressed(kEv.keyEvent_);
@@ -601,13 +606,18 @@ void InputNode::RenderTreeNodeVisit(const NodeVisitor *render_target) {
       if(!kEv.is_printable_) {
         // used to support control characters, like DELETE key
         input_node_widget_->OnKeyEvent(event_copy->AsKeyEvent()); // !is_printable
+        //std::cout << "!kEv.is_printable_ " << kEv.keyEvent_.GetCharacter() << std::endl;
       } else /*if(kEv.is_printable_)*/ {
         // used to support printable characters, like unicode text
         // TODO: SendEventToSink
         ui::InputMethod* im =
             input_node_widget_->GetInputMethod();
         im->DispatchKeyEvent(&kEv.keyEvent_); // is_printable
+        //std::cout << "kEv.is_printable_ " << kEv.keyEvent_.GetCharacter() << std::endl;
       }
+      /*ui::InputMethod* im =
+        input_node_widget_->GetInputMethod();
+      im->DispatchKeyEvent(&kEv.keyEvent_); // is_printable*/
 
       /*ui::DomKey key;
       ui::KeyboardCode key_code;

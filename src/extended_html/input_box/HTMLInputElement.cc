@@ -1,5 +1,10 @@
 ﻿#include "extended_html/input_box/HTMLInputElement.h"
 
+#if defined(OS_WIN)
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#endif // OS_WIN
+
 #include <algorithm>
 #include <memory>
 
@@ -1389,7 +1394,8 @@ HTMLInputElement::HTMLInputElement(Document* document)
       }
 
       //wprintf(L"keysym character, %s", keyboardEvent->keysym());
-      printf("text %s\n", keyboardEvent->text().c_str());
+      //printf("text %s\n", keyboardEvent->text().c_str());
+      std::cout << "cout keyup text" << keyboardEvent->text() << std::endl;
       printf("ctrl_key %d\n", keyboardEvent->ctrl_key());
       printf("shift_key %d\n", keyboardEvent->shift_key());
       printf("alt_key %d\n", keyboardEvent->alt_key());
@@ -1429,7 +1435,8 @@ HTMLInputElement::HTMLInputElement(Document* document)
         flags |= ui::EF_COMMAND_DOWN;
       }
       flags |= ui::EF_IS_SYNTHESIZED;
-      base::string16 utf16_str;
+
+      base::string16 utf16_str;// = base::UTF8ToUTF16(keyboardEvent->text());
       if(utf16_str.empty()
           && !keyboardEvent->text().empty()
           /*&& !base::IsStringASCII(keyboardEvent->text())*/) {
@@ -1502,6 +1509,7 @@ HTMLInputElement::HTMLInputElement(Document* document)
           printf("release_event.key_code() == ui::VKEY_A %s \n",
             (release_event.key_code() == ui::VKEY_A ? "true" : "false"));
           //release_event.set_character(base::UTF8ToUTF16("Ф").at(0));
+          //release_event.set_character(L'A');
           release_event.set_source_device_id(0);
 
           DCHECK(!release_event.stopped_propagation());
@@ -1615,7 +1623,8 @@ HTMLInputElement::HTMLInputElement(Document* document)
       flags |= ui::EF_IS_SYNTHESIZED;
       /// \todo EF_CONTROL_DOWN
       /// https://github.com/blockspacer/skia-opengl-emscripten/blob/bb16ab108bc4018890f4ff3179250b76c0d9053b/src/chromium/ui/events/keycodes/keyboard_code_conversion.cc#L266
-      base::string16 utf16_str;
+
+      base::string16 utf16_str;// = base::UTF8ToUTF16(keyboardEvent->text());
       if(utf16_str.empty()
           && !keyboardEvent->text().empty()
           /*&& !base::IsStringASCII(keyboardEvent->text())*/) {
@@ -1691,6 +1700,8 @@ HTMLInputElement::HTMLInputElement(Document* document)
             (press_event.key_code() == ui::VKEY_A ? "true" : "false"));
 
           //press_event.set_character(base::UTF8ToUTF16("Ф").at(0));
+
+          //press_event.set_character(L'A');
           press_event.set_source_device_id(0);
           DCHECK(!press_event.stopped_propagation());
 
@@ -1799,7 +1810,8 @@ HTMLInputElement::HTMLInputElement(Document* document)
            flags |= ui::EF_IS_SYNTHESIZED;
            /// \todo EF_CONTROL_DOWN
            /// https://github.com/blockspacer/skia-opengl-emscripten/blob/bb16ab108bc4018890f4ff3179250b76c0d9053b/src/chromium/ui/events/keycodes/keyboard_code_conversion.cc#L266
-           base::string16 utf16_str;
+
+           base::string16 utf16_str;// = base::UTF8ToUTF16(keyboardEvent->text());
            if(utf16_str.empty()
                && !keyboardEvent->text().empty()
                /*&& !base::IsStringASCII(keyboardEvent->text())*/) {
@@ -1875,6 +1887,7 @@ HTMLInputElement::HTMLInputElement(Document* document)
                  (press_event.key_code() == ui::VKEY_A ? "true" : "false"));
 
                //press_event.set_character(base::UTF8ToUTF16("Ф").at(0));
+               //press_event.set_character(L'A');
                press_event.set_source_device_id(0);
                DCHECK(!press_event.stopped_propagation());
 
