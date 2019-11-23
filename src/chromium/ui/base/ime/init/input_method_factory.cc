@@ -11,6 +11,8 @@
 #include "ui/base/ui_base_features.h"
 #include "ui/gfx/switches.h"
 
+#if !defined(UI_VIEWS_PORT)
+
 #if defined(OS_CHROMEOS)
 #include "ui/base/ime/chromeos/input_method_chromeos.h"
 #elif defined(OS_WIN)
@@ -25,6 +27,10 @@
 #else
 #include "ui/base/ime/input_method_minimal.h"
 #endif
+
+#else // UI_VIEWS_PORT
+#include "ui/base/ime/input_method_minimal.h"
+#endif // UI_VIEWS_PORT
 
 namespace {
 
@@ -56,6 +62,8 @@ std::unique_ptr<InputMethod> CreateInputMethod(
   if (base::CommandLine::ForCurrentProcess()->HasSwitch(switches::kHeadless))
     return base::WrapUnique(new MockInputMethod(delegate));
 
+#if !defined(UI_VIEWS_PORT)
+
 #if defined(OS_CHROMEOS)
   return std::make_unique<InputMethodChromeOS>(delegate);
 #elif defined(OS_WIN)
@@ -71,6 +79,10 @@ std::unique_ptr<InputMethod> CreateInputMethod(
 #else
   return std::make_unique<InputMethodMinimal>(delegate);
 #endif
+
+#else // UI_VIEWS_PORT
+  return std::make_unique<InputMethodMinimal>(delegate);
+#endif // UI_VIEWS_PORT
 }
 
 void SetUpInputMethodFactoryForTesting() {
