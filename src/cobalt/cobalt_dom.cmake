@@ -437,9 +437,7 @@ target_include_directories(cobalt_dom PRIVATE
   ${COBALT_COMMON_INCLUDES}
   ${CHROMIUM_DIR} # to third_party/skia/include/core/SkWriteBuffer.h
   ${SDL2_INCLUDE_DIR}
-  "${SDL2_INCLUDE_DIR}/.." # TODO /.. ?
   ${SDL2_INCLUDE_DIRS}
-  "${SDL2_INCLUDE_DIRS}/.." # TODO /.. ?
 )
 
 target_compile_definitions(cobalt_dom PRIVATE
