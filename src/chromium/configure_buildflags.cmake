@@ -23,26 +23,9 @@ set(NEED_GEN_MOJO FALSE) # TODO: not supported for now
 
 # TODO
 if(RUN_GENERATORS)
-  set(NEED_GEN_BUILD_DATE TRUE) # TODO
   set(NEED_GEN_BUILDFLAGS TRUE) # TODO
 else()
-  set(NEED_GEN_BUILD_DATE FALSE) # TODO
   set(NEED_GEN_BUILDFLAGS FALSE) # TODO
-endif()
-
-if(NEED_GEN_BUILD_DATE)
-  execute_process(
-    COMMAND ${GIT_EXECUTABLE} log -n1 --format="%at"
-    WORKING_DIRECTORY ${CHROMIUM_DIR}
-    OUTPUT_VARIABLE _build_timestamp
-    #ERROR_QUIET
-    OUTPUT_STRIP_TRAILING_WHITESPACE
-    ERROR_VARIABLE _ERROR_VARIABLE
-    RESULT_VARIABLE retcode
-  )
-  if(NOT "${retcode}" STREQUAL "0")
-    message( FATAL_ERROR "Bad exit status ${_ERROR_VARIABLE}")
-  endif()
 endif()
 
 # src/chromium/third_party/blink/renderer/platform/runtime_enabled_features.cc
@@ -184,27 +167,9 @@ if(NEED_GEN_MOJO)
   )
 endif(NEED_GEN_MOJO)
 
-#
-#
-#
-if(NEED_GEN_BUILD_DATE)
-  string(REPLACE "\"" "" _build_timestamp ${_build_timestamp})
-  #message(FATAL_ERROR ${_build_timestamp})
-
-  # PRE-GENERATION GENERATED_BUILD_DATE.H (NEEDED BY "build_time.cc")
-  execute_process(
-    COMMAND sh -c "python ${BUILD_TOOLS_DIR}/write_build_date_header.py generated_build_date.h ${_build_timestamp}"
-    WORKING_DIRECTORY ${BASE_DIR})
-endif(NEED_GEN_BUILD_DATE)
-
 # TODO: replace configure_file to write_buildflag_header.py https://github.com/Tarnyko/chromium-lite/blob/7d7b2b8a96bbc8370f3c2423885140b074ced151/01a-base/CMakeLists.txt#L70
 
 if(NEED_GEN_BUILDFLAGS)
-  # https://github.com/chromium/chromium/blob/master/base/allocator/BUILD.gn#L291
-  # https://github.com/ruslanch/quic-cmake/blob/master/base/CMakeLists.txt#L35
-  configure_file(${CHROMIUM_DIR}/allocator_buildflags.h.inc
-    ${BASE_DIR}allocator/buildflags.h COPYONLY)
-
   # https://github.com/stormcenter/QuicDemo/blob/master/app/src/main/jni/third_party/chromium/include/net/net_buildflags.h
   configure_file(${CHROMIUM_DIR}/gpu_vulkan_buildflags.h.inc
     ${CHROMIUM_DIR}/gpu/vulkan/buildflags.h COPYONLY)
