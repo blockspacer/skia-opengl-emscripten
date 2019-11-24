@@ -44,11 +44,11 @@ include(PlatformDetection)
 
 include(BuildOptions)
 
+include(CommonOptions)
+
 if(TARGET_EMSCRIPTEN)
   include(EmscriptenOptions)
 endif(TARGET_EMSCRIPTEN)
-
-include(CommonOptions)
 
 include(ChromiumOptions)
 
