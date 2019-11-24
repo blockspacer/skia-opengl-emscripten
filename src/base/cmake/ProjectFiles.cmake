@@ -1,4 +1,4 @@
-include_guard( DIRECTORY )
+﻿include_guard( DIRECTORY )
 
 if(ENABLE_UKM)
   list(APPEND BASE_SOURCES
@@ -952,6 +952,7 @@ if(TARGET_EMSCRIPTEN OR TARGET_LINUX)
     )
   endif(BASE_USE_PARTITION_ALLOCATOR)
   list(APPEND BASE_SOURCES
+    ${BASE_SOURCES_PATH}debug/stack_trace_posix.cc
     # see https://github.com/chromium/chromium/blob/9db0b5162b8648833c3a6b1af044cebd9d7d3855/base/BUILD.gn#L1772
     ${BASE_SOURCES_PATH}strings/string16.cc
     ${BASE_SOURCES_PATH}memory/shared_memory_helper.cc
@@ -1373,7 +1374,6 @@ list(APPEND BASE_SOURCES
 
 if(TARGET_LINUX)
   list(APPEND BASE_SOURCES
-    ${BASE_SOURCES_PATH}debug/stack_trace_posix.cc
     #if (!is_nacl) {
     #  sources += [
     #    "base_paths.cc",
