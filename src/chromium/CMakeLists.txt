@@ -245,9 +245,6 @@ elseif(TARGET_LINUX)
     include(fontconfig.cmake)
   endif(ENABLE_FONTCONFIG AND ENABLE_HARFBUZZ AND NOT HARFBUZZ_FROM_SKIA)
 
-  # libevent
-  include(libevent.cmake)
-
   # tcmalloc
   include(tcmalloc.cmake)
 elseif(TARGET_WINDOWS)

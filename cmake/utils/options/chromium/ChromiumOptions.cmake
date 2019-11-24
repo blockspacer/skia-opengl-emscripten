@@ -125,6 +125,14 @@ if(ENABLE_GCRYPTO)
   set(GCRYPTO_LIB GCRYPTO)
 endif(ENABLE_GCRYPTO)
 
+if(ENABLE_BLINK_PLATFORM AND DISABLE_COLLATION)
+  message(FATAL_ERROR "BLINK_PLATFORM requires ICU COLLATION")
+endif()
+
+if(ENABLE_BLINK_PLATFORM AND DISABLE_FORMATTING)
+  message(FATAL_ERROR "BLINK_PLATFORM requires ICU FORMATTING")
+endif()
+
 macro(add_mojo_prefixes_3 ARG_BASE_PATH ARG_WHERE_COLLECT)
   set(CUR_MOJO_TO_PREFIXES
     ${ARG_BASE_PATH}.mojom.cc
@@ -169,32 +177,6 @@ if(USE_ICU)
   set(USE_CUSTOM_ICU TRUE)
   if(USE_CUSTOM_ICU)
     set(COMMON_FLAGS "${COMMON_FLAGS} -DUSE_CUSTOM_ICU=1")
-    #
-    #
-    #
-    #set(COMMON_FLAGS "${COMMON_FLAGS} -DSK_USING_THIRD_PARTY_ICU=1")
-    # https://github.com/google/skia/blob/master/third_party/icu/BUILD.gn#L15
-    #set(COMMON_FLAGS "${COMMON_FLAGS} -DU_USING_ICU_NAMESPACE=0")
-    #
-    set(ICU_PARENT_FULL_DIR
-      #third_party/icu/
-      #../../thirdparty/skia/third_party/externals/icu/
-      ${COMMON_THIRDPARTY_DIR}/icu_wrapper/
-    )
-
-    set(ICU_FULL_DIR
-      #third_party/icu/
-      #../../thirdparty/skia/third_party/externals/icu/
-      ${ICU_PARENT_FULL_DIR}third_party/icu/
-    )
-
-    set(OWN_ICU_INCLUDE_DIRS
-      ${ICU_PARENT_FULL_DIR}
-      ${ICU_FULL_DIR}
-      ${ICU_FULL_DIR}source/common/unicode
-      ${ICU_FULL_DIR}source/common
-      ${ICU_FULL_DIR}source/i18n
-    )
     set(CUSTOM_ICU_LIB icu) # see icu.cmake
   else(USE_CUSTOM_ICU)
     set(CUSTOM_ICU_LIB icu) # platform specific

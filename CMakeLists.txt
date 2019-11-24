@@ -662,6 +662,15 @@ else()
   message(FATAL_ERROR "platform not supported")
 endif()
 
+if(TARGET_LINUX)
+  # libevent
+  add_subdirectory(thirdparty/chromium_libevent)
+elseif(TARGET_WINDOWS OR TARGET_EMSCRIPTEN)
+  # skip
+else()
+  message(FATAL_ERROR "platform not supported")
+endif()
+
 if(ENABLE_SKIA)
   #
   # skia
@@ -683,7 +692,7 @@ message(STATUS "HARFBUZZ_INCLUDE_DIRS=${HARFBUZZ_INCLUDE_DIRS}")
 # ICU
 #
 if(USE_CUSTOM_ICU)
-  include(icu.cmake)
+  add_subdirectory(thirdparty/chromium_icu)
 endif(USE_CUSTOM_ICU)
 
 #
@@ -712,7 +721,7 @@ if(ENABLE_WTF OR ENABLE_BLINK OR ENABLE_COBALT OR ENABLE_BASE)
   # NOTE: remove fork of libicui
   # as in https://github.com/Tarnyko/chromium-lite/blob/master/README#L76
   #
-  add_subdirectory(src/base)
+  add_subdirectory(thirdparty/chromium_base)
 
   # chromium
   add_subdirectory(src/chromium) # requires skia above
