@@ -299,7 +299,7 @@ elseif(TARGET_LINUX)
   set(SK_USE_SYSTEM_FREETYPE TRUE)
 else()
   message(FATAL_ERROR "platform not supported")
-endif(USE_SK_GPU)
+endif()
 
 if(SK_USE_SYSTEM_LIBPNG)
   set(SK_system_libpng

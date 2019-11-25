@@ -37,6 +37,14 @@ Check that all git submodules initialized
 
 Check that you applied all patches
 
+## Install conan - a crossplatform dependency manager for C++
+
+See https://github.com/blockspacer/CXTPL#install-conan---a-crossplatform-dependency-manager-for-c
+
+## Install conan deps
+
+See https://github.com/blockspacer/CXTPL#how-to-build
+
 ## Windows specific
 
 Prefer file paths with lowercase english characters without spaces

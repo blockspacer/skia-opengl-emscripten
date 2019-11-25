@@ -39,13 +39,21 @@ make -j4
 sudo make install
 ```
 
-### WASM
+## Install conan - a crossplatform dependency manager for C++
+
+See https://github.com/blockspacer/CXTPL#install-conan---a-crossplatform-dependency-manager-for-c
+
+## Install conan deps
+
+See https://github.com/blockspacer/CXTPL#how-to-build
+
+## WASM
 
 Download, install & configure emscripten as per your environment requires:
 
 http://kripken.github.io/emscripten-site/docs/getting_started/downloads.html
 
-### Build & clone deps with --init --recursive
+## Build & clone deps with --init --recursive
 
 ```bash
 # git submodule deinit --all -f
