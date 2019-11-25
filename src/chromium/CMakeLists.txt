@@ -7,7 +7,7 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 set(BLINK_WTF_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/third_party/blink/renderer/platform/)
 set(BLINK_WTF_DIR ${BLINK_WTF_PARENT_DIR}wtf/)
 
-set(BASE_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../base/)
+set(BASE_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../thirdparty/chromium_base/)
 set(BASE_DIR ${BASE_PARENT_DIR}base/)
 
 if(ENABLE_MOJO)
