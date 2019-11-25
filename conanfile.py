@@ -1,4 +1,4 @@
-from conans import ConanFile, CMake, tools
+﻿from conans import ConanFile, CMake, tools
 import traceback
 import os
 import shutil
@@ -70,7 +70,9 @@ class SKG_conan_project(ConanFile):
     #  self.run("git clone %s ......." % url)
 
     def requirements(self):
-        self.requires("chromium_libevent/master@conan/stable")
+        if self.settings.os == "Linux":
+            self.requires("chromium_libevent/master@conan/stable")
+
         if self.options.enable_tests:
             self.requires("catch2/[>=2.1.0]@bincrafters/stable")
             self.requires("gtest/[>=1.8.0]@bincrafters/stable")
