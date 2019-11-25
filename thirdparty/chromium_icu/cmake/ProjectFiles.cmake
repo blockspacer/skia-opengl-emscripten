@@ -1,6 +1,5 @@
 ﻿include_guard( DIRECTORY )
 
-
 # find source/i18n -maxdepth 1 ! -type d | egrep '\.(c|cpp)$' |  sort | sed "s/^\(.*\)$/ '\1',/"
 # find source/common -maxdepth 1 ! -type d | egrep '\.(c|cpp)$' |  sort | sed "s/^\(.*\)$/ '\1',/"
 # see https://github.com/unicode-org/icu/tree/master/icu4c/source/common

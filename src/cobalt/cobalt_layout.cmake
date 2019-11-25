@@ -119,7 +119,7 @@ target_link_libraries(cobalt_layout PRIVATE
   cobalt_loader
   cobalt_render_tree
   cobalt_ui_navigation
-  icu
+  ${CUSTOM_ICU_LIB}
   ${SKIA_LIB} # TODO
   ${skottie_LIB} # TODO
 )

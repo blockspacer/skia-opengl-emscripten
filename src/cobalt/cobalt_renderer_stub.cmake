@@ -177,7 +177,6 @@ endif(ENABLE_SKIA)
     cobalt_ui_navigation
     cobalt_system_window
     ${COBALT_GLIMP_LIB}
-    icu
     starboard_platform
     #starboard_core
     starboard_eztime
@@ -185,7 +184,7 @@ endif(ENABLE_SKIA)
     modp_b64
     #dynamic_annotations
     ${GLIBXML_LIB}
-    icu
+    ${CUSTOM_ICU_LIB}
     #ced
     glm
     ${SKIA_LIB}
@@ -275,7 +274,6 @@ target_link_libraries(cobalt_renderer_stub_skgl PRIVATE
   cobalt_ui_navigation
   cobalt_system_window
   ${COBALT_GLIMP_LIB}
-  icu
   starboard_platform
   #starboard_core
   starboard_eztime
@@ -283,7 +281,7 @@ target_link_libraries(cobalt_renderer_stub_skgl PRIVATE
   modp_b64
   #dynamic_annotations
   ${GLIBXML_LIB}
-  icu
+  ${CUSTOM_ICU_LIB}
   #ced
   glm
   ${SKIA_LIB}
@@ -432,7 +430,6 @@ target_link_libraries(cobalt_renderer_stub PRIVATE
   cobalt_ui_navigation
   cobalt_system_window
   ${COBALT_GLIMP_LIB}
-  icu
   starboard_platform
   #starboard_core
   starboard_eztime
@@ -440,7 +437,7 @@ target_link_libraries(cobalt_renderer_stub PRIVATE
   modp_b64
   #dynamic_annotations
   ${GLIBXML_LIB}
-  icu
+  ${CUSTOM_ICU_LIB}
   #ced
   glm
   ${SKIA_LIB}

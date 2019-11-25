@@ -44,7 +44,6 @@ target_link_libraries(cobalt_renderer PRIVATE
   cobalt_render_tree
   cobalt_ui_navigation
   cobalt_system_window
-  icu
   starboard_platform
   #starboard_core
   starboard_eztime
@@ -52,7 +51,7 @@ target_link_libraries(cobalt_renderer PRIVATE
   modp_b64
   #dynamic_annotations
   ${GLIBXML_LIB}
-  icu
+  ${CUSTOM_ICU_LIB}
   #ced
   glm
   ${SKIA_LIB}

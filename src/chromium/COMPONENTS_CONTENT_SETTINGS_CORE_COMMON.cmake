@@ -52,7 +52,7 @@ target_link_libraries(COMPONENTS_CONTENT_SETTINGS_CORE_COMMON PRIVATE
   ## emoji-segmenter
   ## webrtc
   ## zlib
-  ## icu
+  ## ${CUSTOM_ICU_LIB}
   #CC
   #G_GPU
 )

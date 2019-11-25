@@ -21,7 +21,7 @@ target_link_libraries(cobalt_system_window PRIVATE
   #cobalt_loader
   #cobalt_render_tree
   #cobalt_ui_navigation
-  #icu
+  #${CUSTOM_ICU_LIB}
   starboard_platform # requires SbWindowCreate -> SbWindowPrivate -> window_create.cc
   #starboard_core
   #starboard_eztime

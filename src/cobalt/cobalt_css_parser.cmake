@@ -56,7 +56,7 @@ target_link_libraries(cobalt_css_parser PRIVATE
   cobalt_base
   cobalt_cssom
   cobalt_nanobase
-  icu
+  ${CUSTOM_ICU_LIB}
 )
 
 set_property(TARGET cobalt_css_parser PROPERTY CXX_STANDARD 17)

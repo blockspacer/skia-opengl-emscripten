@@ -139,7 +139,7 @@ target_link_libraries(cobalt_glimp PRIVATE
   #modp_b64
   #dynamic_annotations
   #GURL
-  #icu
+  #${CUSTOM_ICU_LIB}
   #ced
   #glm
 )

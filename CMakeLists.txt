@@ -595,11 +595,16 @@ if(DEFINED SDL2_INCLUDE_DIR AND SDL2_INCLUDE_DIR)
   list(APPEND SDL2_INCLUDE_DIR ${SDL2_INCLUDE_DIR}/..) # TODO: hack to include SDL2/SDL.h on windows
 endif(DEFINED SDL2_INCLUDE_DIR AND SDL2_INCLUDE_DIR)
 
-find_ZLIB()
+if(ENABLE_ZLIB AND USE_SYSTEM_ZLIB)
+  find_ZLIB()
+endif(ENABLE_ZLIB AND USE_SYSTEM_ZLIB)
 
 find_freetype()
 
-find_harfbuzz()
+if(ENABLE_HARFBUZZ AND NOT USE_CUSTOM_HARFBUZZ)
+  message(FATAL_ERROR "TODO: support for find_harfbuzz()")
+  find_harfbuzz()
+endif(ENABLE_HARFBUZZ AND NOT USE_CUSTOM_HARFBUZZ)
 
 set_optimize_flags()
 
@@ -651,6 +656,15 @@ if(TARGET_EMSCRIPTEN)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${EMCC_COMMON}")
 endif(TARGET_EMSCRIPTEN)
 
+#
+# ICU
+#
+if(USE_CUSTOM_ICU)
+  add_subdirectory(thirdparty/chromium_icu)
+else()
+  message(FATAL_ERROR "TODO: supports not only USE_CUSTOM_ICU")
+endif(USE_CUSTOM_ICU)
+
 if(TARGET_LINUX)
   # xdg_mime
   include(xdg_mime.cmake)
@@ -671,6 +685,20 @@ else()
   message(FATAL_ERROR "platform not supported")
 endif()
 
+#
+# HARFBUZZ
+#
+if(TARGET_EMSCRIPTEN OR TARGET_LINUX OR TARGET_WINDOWS)
+  if(USE_CUSTOM_HARFBUZZ)
+    # NOTE: harfbuzz from skia on WINDOWS
+    if(NOT HARFBUZZ_FROM_SKIA)
+      include(harfbuzz.cmake)
+    endif(NOT HARFBUZZ_FROM_SKIA)
+  endif(USE_CUSTOM_HARFBUZZ)
+else()
+  message(FATAL_ERROR "platform not supported")
+endif()
+
 if(ENABLE_SKIA)
   #
   # skia
@@ -687,29 +715,6 @@ endif()
 
 message(STATUS "HARFBUZZ_LIBRARIES=${HARFBUZZ_LIBRARIES}")
 message(STATUS "HARFBUZZ_INCLUDE_DIRS=${HARFBUZZ_INCLUDE_DIRS}")
-
-#
-# ICU
-#
-if(USE_CUSTOM_ICU)
-  add_subdirectory(thirdparty/chromium_icu)
-endif(USE_CUSTOM_ICU)
-
-#
-# HARFBUZZ
-#
-if(TARGET_EMSCRIPTEN OR TARGET_LINUX OR TARGET_WINDOWS)
-  if(USE_CUSTOM_HARFBUZZ)
-    if(NOT HARFBUZZ_FROM_SKIA)
-      include(harfbuzz.cmake)
-    endif()
-    #message(FATAL_ERROR "TODO: harfbuzz.cmake")
-  endif(USE_CUSTOM_HARFBUZZ)
-else()
-  # NOTE: harfbuzz from skia on WINDOWS
-  #add_library(harfbuzz ALIAS SKIA)
-  message(FATAL_ERROR "platform not supported")
-endif()
 
 #
 # WTF
@@ -733,7 +738,7 @@ if(ENABLE_WTF)
     ${WTF_LIBRARY_NAME}
     base
     #libevent
-    #icu
+    #${CUSTOM_ICU_LIB}
   )
 endif(ENABLE_WTF)
 
@@ -748,7 +753,7 @@ if(ENABLE_COBALT)
   #  ${WTF_LIBRARY_NAME}
   #  #base
   #  #libevent
-  #  #icu
+  #  #${CUSTOM_ICU_LIB}
   #)
 endif(ENABLE_COBALT)
 

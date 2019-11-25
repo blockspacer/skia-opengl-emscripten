@@ -61,7 +61,7 @@ target_link_libraries(cobalt_csp PRIVATE
   ## emoji-segmenter
   ## webrtc
   ## zlib
-  icu
+  ${CUSTOM_ICU_LIB}
   #ced
   glm
   #CC

@@ -24,7 +24,7 @@ target_link_libraries(cobalt_page_visibility PRIVATE
   modp_b64
   #dynamic_annotations
   ${GLIBXML_LIB}
-  icu
+  ${CUSTOM_ICU_LIB}
   #ced
   glm
 )

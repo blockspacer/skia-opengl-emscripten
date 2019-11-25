@@ -171,7 +171,7 @@ target_link_libraries(cobalt_loader PRIVATE
   GURL
   ${GNET_LIBS}
   ${GLIBXML_LIB}
-  icu
+  ${CUSTOM_ICU_LIB}
   #ced
   glm
   ${WEBP_LIB} # requires libpng

@@ -29,11 +29,25 @@ include(cmake/ProjectFiles)
 
 set(OWN_ICU_INCLUDE_DIRS
   ${ICU_PARENT_FULL_DIR}
+  ${ICU_PARENT_FULL_DIR}third_party
   ${ICU_FULL_DIR}
+  ${ICU_FULL_DIR}source
+  ${ICU_FULL_DIR}source/common # path to unicode/uvernum.h
   ${ICU_FULL_DIR}source/common/unicode
-  ${ICU_FULL_DIR}source/common
   ${ICU_FULL_DIR}source/i18n
+  ${ICU_FULL_DIR}source/allinone
+  ${ICU_FULL_DIR}source/config
+  ${ICU_FULL_DIR}source/data
+  ${ICU_FULL_DIR}source/extra
+  ${ICU_FULL_DIR}source/io
+  ${ICU_FULL_DIR}source/layoutex
+  ${ICU_FULL_DIR}source/stubdata
+  ${ICU_FULL_DIR}source/tools
 )
+
+if(NOT EXISTS "${ICU_FULL_DIR}source/common")
+  message(FATAL_ERROR "Unable to find ${ICU_FULL_DIR}source/common")
+endif(NOT EXISTS "${ICU_FULL_DIR}source/common")
 
 #if(TARGET_EMSCRIPTEN)
 #  set(USE_OWN_ICU TRUE)
@@ -54,21 +68,21 @@ set(OWN_ICU_INCLUDE_DIRS
 #endif()
 
 #if(USE_OWN_ICU)
-  add_library(icu STATIC
+  add_library(chromium_icu STATIC
     ${ICU_SOURCES}
   )
 
-  set_property(TARGET icu PROPERTY CXX_STANDARD 17)
+  set_property(TARGET chromium_icu PROPERTY CXX_STANDARD 17)
 
   # In your source, include files from base/ like normal.
   # So if you want to use the string printf API, do:
   # #include <base/stringprintf.h>
-  target_include_directories(icu PUBLIC
+  target_include_directories(chromium_icu PUBLIC
     #${CHROMIUM_DIR}
     ${OWN_ICU_INCLUDE_DIRS}
   )
 
-  #target_include_directories(icu PRIVATE
+  #target_include_directories(chromium_icu PRIVATE
     #${BASE_DIR}
   #)
 
@@ -227,7 +241,7 @@ endif(DISABLE_FORMATTING)
   #    # please see: https://crbug.com/822820
   #    "U_IMPORT=U_EXPORT",
 
-  target_compile_definitions(icu PUBLIC
+  target_compile_definitions(chromium_icu PUBLIC
     ${ICU_PUBLIC_DEFINES}
     #${WTF_EMCC_DEFINITIONS}
     #${WTF_COMMON_DEFINITIONS}
@@ -237,7 +251,7 @@ endif(DISABLE_FORMATTING)
     #U_ATTRIBUTE_DEPRECATED
   )
 
-  target_compile_definitions(icu PRIVATE
+  target_compile_definitions(chromium_icu PRIVATE
     ICU_IMPLEMENTATION=1
     U_STATIC_IMPLEMENTATION=1
     U_COMMON_IMPLEMENTATION=1
@@ -262,7 +276,7 @@ endif(DISABLE_FORMATTING)
     #MEMORY_TOOL_REPLACES_ALLOCATOR=1
   )
 
-  target_compile_options(icu PRIVATE
+  target_compile_options(chromium_icu PRIVATE
     -Wno-error
     # TODO: remove rtti from icu
     # https://bugs.chromium.org/p/chromium/issues/detail?id=463085

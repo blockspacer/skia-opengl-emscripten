@@ -105,7 +105,7 @@ target_link_libraries(cobalt_base PRIVATE
   modp_b64
   #dynamic_annotations
   ${GLIBXML_LIB}
-  icu
+  ${CUSTOM_ICU_LIB}
   #ced
   glm
   ${EXTRA_COBALT_BASE_LIBS}

@@ -285,33 +285,37 @@ if(TARGET_EMSCRIPTEN)
   if(USE_SYSTEM_PNG)
     set(SK_USE_SYSTEM_LIBPNG TRUE) # TODO: path to png.h (SkPngCodec.cpp)
   endif()
-  set(SK_USE_SYSTEM_ZLIB FALSE) # TODO
-  set(SK_system_freetype2
-    "skia_use_system_freetype2=true"
-  )
+  set(SK_USE_SYSTEM_ZLIB FALSE)
+  set(SK_USE_SYSTEM_FREETYPE TRUE)
 elseif(TARGET_WINDOWS)
-  # TODO
   set(SK_USE_SYSTEM_LIBPNG FALSE)
-  set(SK_USE_SYSTEM_ZLIB FALSE) # TODO
-  set(SK_system_freetype2
-    "skia_use_system_freetype2=false"
-  )
-else()
-  # TODO
+  set(SK_USE_SYSTEM_ZLIB FALSE)
+  set(SK_USE_SYSTEM_FREETYPE FALSE)
+elseif(TARGET_LINUX)
   if(USE_SYSTEM_PNG)
     set(SK_USE_SYSTEM_LIBPNG TRUE)
   endif()
-  set(SK_USE_SYSTEM_ZLIB FALSE) # TODO
-  set(SK_system_freetype2
-    "skia_use_system_freetype2=true"
-  )
-endif()
+  set(SK_USE_SYSTEM_ZLIB FALSE)
+  set(SK_USE_SYSTEM_FREETYPE TRUE)
+else()
+  message(FATAL_ERROR "platform not supported")
+endif(USE_SK_GPU)
 
 if(SK_USE_SYSTEM_LIBPNG)
   set(SK_system_libpng
     "skia_use_system_libpng=true"
   )
 endif(SK_USE_SYSTEM_LIBPNG)
+
+if(SK_USE_SYSTEM_FREETYPE)
+  set(SK_system_freetype2
+    "skia_use_system_freetype2=true"
+  )
+else()
+  set(SK_system_freetype2
+    "skia_use_system_freetype2=false"
+  )
+endif(SK_USE_SYSTEM_FREETYPE)
 
 if(ENABLE_ZLIB)
   set(SK_IS_zlib "true")
@@ -339,6 +343,10 @@ if(USE_LIBJPEG_TURBO)
 else()
   set(SK_IS_libjpeg_turbo "false")
 endif(USE_LIBJPEG_TURBO)
+
+if(NOT FORCE_USE_SKIA_HARFBUZZ)
+  message(FATAL_ERROR "TODO: SKIA builds without FORCE_USE_SKIA_HARFBUZZ")
+endif(NOT FORCE_USE_SKIA_HARFBUZZ)
 
 # NOTE: in skia HARFBUZZ requires icui18n (unicode/uscript.h)
 if(HARFBUZZ_FROM_SKIA AND NOT FORCE_USE_SKIA_HARFBUZZ)
@@ -374,15 +382,41 @@ if(FORCE_USE_SKIA_HARFBUZZ)
   #  set(SK_IS_icu "false")
   #endif(ENABLE_SKSHAPER)
   #
+
+  # TODO: hack to pass library include dirs to GN
+  get_target_property(CUSTOM_ICU_INCLUDE_DIRECTORIES ${CUSTOM_ICU_LIB} INCLUDE_DIRECTORIES)
+  message(STATUS "CUSTOM_ICU_INCLUDE_DIRECTORIES=${CUSTOM_ICU_INCLUDE_DIRECTORIES}")
+
+  #set(ICU_PARENT_FULL_DIR ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/chromium_icu/)
+  #set(ICU_FULL_DIR ${ICU_PARENT_FULL_DIR}third_party/icu/)
+  #if(NOT EXISTS "${ICU_FULL_DIR}")
+  #  message(FATAL_ERROR "NOT FOUND: ${ICU_FULL_DIR}")
+  #endif(NOT EXISTS "${ICU_FULL_DIR}")
+  #set(OWN_ICU_INCLUDE_DIRS
+  #  ${ICU_PARENT_FULL_DIR}
+  #  ${ICU_FULL_DIR}
+  #  ${ICU_FULL_DIR}source/common/unicode
+  #  ${ICU_FULL_DIR}source/common
+  #  ${ICU_FULL_DIR}source/i18n
+  #)
+  #message(STATUS "OWN_ICU_INCLUDE_DIRS=${OWN_ICU_INCLUDE_DIRS}")
+
   if(USE_CUSTOM_ICU)
     list(APPEND SKIA_CMAKE_ONLY_HEADERS
-      ${OWN_ICU_INCLUDE_DIRS}
+      ${CUSTOM_ICU_INCLUDE_DIRECTORIES}
+      #${OWN_ICU_INCLUDE_DIRS}
     )
     #
     # NOTE: WITH trailing comma
-    set(SKIA_EXTRA_CFLAGS
-      "${SKIA_EXTRA_CFLAGS}\"-I${ICU_FULL_DIR}source/common\", "
-    )
+    #set(SKIA_EXTRA_CFLAGS
+    #  "${SKIA_EXTRA_CFLAGS}\"-I${ICU_FULL_DIR}source/common\", "
+    #)
+    foreach(prop ${CUSTOM_ICU_INCLUDE_DIRECTORIES})
+      # TODO: hack to pass library include dirs to GN
+      set(SKIA_EXTRA_CFLAGS
+        "${SKIA_EXTRA_CFLAGS}\"-I${prop}\", "
+      )
+    endforeach(prop)
   endif(USE_CUSTOM_ICU)
 else(FORCE_USE_SKIA_HARFBUZZ)
   set(SK_IS_harfbuzz "false")
@@ -393,13 +427,12 @@ if(HARFBUZZ_FROM_SKIA AND NOT SK_system_harfbuzz STREQUAL "skia_use_system_harfb
   message(FATAL_ERROR "HARFBUZZ_FROM_SKIA requires skia_use_system_harfbuzz=false, but got: ${SK_system_harfbuzz}")
 endif()
 
-#
-#     "\"-I${ICU_FULL_DIR}source/common\"" # to unicode/uscript.h
-#     # LIBJPEG (jpeglib.h) CONFLICTS WITH LIBJPEG_TURBO (jpeglib.h) # "\"-I${GLIBJPEG_DIR}\"" # to libjpeg/jpeglib.h
-#     "\"-I${GLIBJPEG_TURBO_DIR}\"" # to libjpeg_turbo/jpeglib.h
-#
 # NOTE: WITHOUT trailing comma
 if(USE_LIBJPEG_TURBO)
+  if(NOT DEFINED GLIBJPEG_TURBO_DIR)
+    message(FATAL_ERROR "NOT DEFINED: GLIBJPEG_TURBO_DIR")
+  endif(NOT DEFINED GLIBJPEG_TURBO_DIR)
+  # TODO: hack to pass library include dirs to GN
   set(SKIA_EXTRA_CFLAGS
     "${SKIA_EXTRA_CFLAGS}\"-I${GLIBJPEG_TURBO_DIR}\""
   )
@@ -900,6 +933,14 @@ if(NOT EXT_SKIA_SHARED)
         # NOTE: HARFBUZZ_LIBRARIES is SKIA here, prevent recursion
         set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${CUSTOM_ICU_LIB}")
       else(HARFBUZZ_FROM_SKIA)
+        if(NOT DEFINED HARFBUZZ_LIBRARIES)
+          message(FATAL_ERROR "NOT DEFINED: HARFBUZZ_LIBRARIES")
+        endif(NOT DEFINED HARFBUZZ_LIBRARIES)
+        #
+        if(NOT DEFINED CUSTOM_ICU_LIB)
+          message(FATAL_ERROR "NOT DEFINED: CUSTOM_ICU_LIB")
+        endif(NOT DEFINED CUSTOM_ICU_LIB)
+        #
         set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${CUSTOM_ICU_LIB};${HARFBUZZ_LIBRARIES}")
       endif(HARFBUZZ_FROM_SKIA)
     endif(USE_CUSTOM_ICU)
@@ -924,7 +965,11 @@ if(NOT EXT_SKIA_SHARED)
     # NOTE: HARFBUZZ_LIBRARIES is SKIA here, prevent recursion
     set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${FOUND_OPENGL_LIBRARIES}")
   else(HARFBUZZ_FROM_SKIA)
-    set(SKIA_CMAKE_ONLY_HEADERS "${SKIA_CMAKE_ONLY_HEADERS};${HARFBUZZ_INCLUDE_DIRS};${FOUND_OPENGL_INCLUDE_DIR};${OPENGL_EGL_INCLUDE_DIRS}")
+    # TODO: hack to pass library include dirs to GN
+    get_target_property(HARFBUZZ_INCLUDE_DIRECTORIES ${HARFBUZZ_LIBRARIES} INCLUDE_DIRECTORIES)
+    message(STATUS "HARFBUZZ_INCLUDE_DIRECTORIES=${HARFBUZZ_INCLUDE_DIRECTORIES}")
+
+    set(SKIA_CMAKE_ONLY_HEADERS "${SKIA_CMAKE_ONLY_HEADERS};${HARFBUZZ_INCLUDE_DIRECTORIES};${FOUND_OPENGL_INCLUDE_DIR};${OPENGL_EGL_INCLUDE_DIRS}")
     set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${HARFBUZZ_LIBRARIES};${FOUND_OPENGL_LIBRARIES}")
   endif(HARFBUZZ_FROM_SKIA)
 
@@ -1074,8 +1119,14 @@ endif(TARGET_WINDOWS)
 
 message(STATUS "CUSTOM_ICU_LIB = ${CUSTOM_ICU_LIB} ")
 message(STATUS "WUFFS_LIB_NAME = ${WUFFS_LIB_NAME} ")
+if(NOT TARGET_EMSCRIPTEN AND SK_USE_SYSTEM_FREETYPE AND NOT DEFINED FREETYPE_LIBRARIES)
+  message(FATAL_ERROR "NOT DEFINED: FREETYPE_LIBRARIES")
+endif(NOT TARGET_EMSCRIPTEN AND SK_USE_SYSTEM_FREETYPE AND NOT DEFINED FREETYPE_LIBRARIES)
 message(STATUS "FREETYPE_LIBRARIES = ${FREETYPE_LIBRARIES} ")
 message(STATUS "libpng_LIB = ${libpng_LIB} ")
+if(NOT TARGET_EMSCRIPTEN AND SK_USE_SYSTEM_ZLIB AND NOT DEFINED libZLIB_LIB)
+  message(FATAL_ERROR "NOT DEFINED: libZLIB_LIB")
+endif(NOT TARGET_EMSCRIPTEN AND SK_USE_SYSTEM_ZLIB AND NOT DEFINED libZLIB_LIB)
 message(STATUS "libZLIB_LIB = ${libZLIB_LIB} ")
 message(STATUS "libDL_LIB = ${libDL_LIB} ")
 message(STATUS "libjpeg_TURBO_LIB = ${libjpeg_TURBO_LIB} ")

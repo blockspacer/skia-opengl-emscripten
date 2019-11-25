@@ -194,8 +194,8 @@ target_include_directories(harfbuzz PUBLIC
   ${harfbuzz_FULL_DIR}src
 )
 
-target_include_directories(harfbuzz PRIVATE
-)
+#target_include_directories(harfbuzz PRIVATE
+#)
 
 target_link_libraries(harfbuzz PUBLIC
   ${CUSTOM_ICU_LIB}
@@ -209,6 +209,8 @@ list(APPEND harfbuzz_PUBLIC_DEFINES
 )
 
 list(APPEND harfbuzz_PRIVATE_DEFINES
+  # TODO(https://crbug.com/949962): Remove once this is fixed upstream.
+  #U_DISABLE_VERSION_SUFFIX=1
 )
 
 target_compile_definitions(harfbuzz PUBLIC

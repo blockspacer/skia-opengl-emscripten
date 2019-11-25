@@ -421,7 +421,7 @@ target_link_libraries(cobalt_dom PRIVATE
   GURL
   ${GNET_LIBS}
   ${GLIBXML_LIB}
-  icu
+  ${CUSTOM_ICU_LIB}
   #ced
   glm
   # SDL used by native_events_port
