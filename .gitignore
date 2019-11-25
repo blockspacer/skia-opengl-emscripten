@@ -108,4 +108,4 @@ src/chromium/third_party/boringssl_TODO/
 
 /generated/resources
 
-!src/base/codegen/build
+!thirdparty/chromium_base/codegen/build
