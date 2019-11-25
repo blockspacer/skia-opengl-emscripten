@@ -259,8 +259,11 @@ message(STATUS "HARFBUZZ_LIBRARIES=${HARFBUZZ_LIBRARIES}")
 if(TARGET_EMSCRIPTEN OR TARGET_WINDOWS)
   # skip
 elseif(TARGET_LINUX)
+  if(NOT DEFINED libevent_LIB)
+    message(FATAL_ERROR "NOT DEFINED libevent_LIB")
+  endif(NOT DEFINED libevent_LIB)
   list(APPEND WTF_LIBRARIES
-    libevent
+    ${libevent_LIB}
   )
 else()
   message(FATAL_ERROR "platform not supported")

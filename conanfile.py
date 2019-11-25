@@ -17,8 +17,8 @@ import shutil
 # package(),
 # package_info()
 
-class chromium_libevent_conan_project(ConanFile):
-    name = "chromium_libevent"
+class SKG_conan_project(ConanFile):
+    name = "SKG"
 
     # Indicates License type of the packaged library
     # TODO (!!!)
@@ -29,7 +29,7 @@ class chromium_libevent_conan_project(ConanFile):
     # TODO (!!!)
     #url = "https://github.com/blockspacer/CXXCTP"
 
-    description = "modified `libevent` library from chromium"
+    description = "`SKG` library"
     topics = ('c++')
 
     options = {
@@ -70,6 +70,7 @@ class chromium_libevent_conan_project(ConanFile):
     #  self.run("git clone %s ......." % url)
 
     def requirements(self):
+        self.requires("chromium_libevent/master@conan/stable")
         if self.options.enable_tests:
             self.requires("catch2/[>=2.1.0]@bincrafters/stable")
             self.requires("gtest/[>=1.8.0]@bincrafters/stable")
@@ -131,16 +132,7 @@ class chromium_libevent_conan_project(ConanFile):
     # from the CMake install automatically.
     # For instance, you need to specify the lib directories, etc.
     def package_info(self):
-        self.cpp_info.libs = ["chromium_libevent"]
-
-        #self.cpp_info.includedirs.append(os.getcwd())
-        #self.cpp_info.includedirs.append(
-        #  os.path.join("base", "third_party", "libevent"))
-        #self.cpp_info.includedirs.append(
-        #  os.path.join("base", "third_party", "libevent", "compat"))
-
-        #if self.settings.os == "Linux":
-        #  self.cpp_info.defines.append('HAVE_CONFIG_H=1')
+        self.cpp_info.libs = ["SKG"]
 
         # in linux we need to link also with these libs
         #if self.settings.os == "Linux":

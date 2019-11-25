@@ -28,7 +28,7 @@ conan create . conan/stable
 
 TODO
 ```
-# conan install --build=missing --profile gcc -o enable_tests=False ..
+# conan install --build=missing --profile clang -o enable_tests=False ..
 ```
 
 ## USAGE EXAMPLES

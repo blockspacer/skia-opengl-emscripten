@@ -761,6 +761,13 @@ set_property(TARGET starboard_platform PROPERTY CXX_STANDARD 17)
 
 target_link_libraries(starboard_platform PRIVATE
   starboard_common
+#  ":starboard_base_symbolize",
+#  "//third_party/dlmalloc",
+  # TODO: dlmalloc
+#  "//third_party/libevent",
+  #${libevent_LIB}
+#  "//third_party/libvpx",
+  # TODO: libvpx
 )
 
 target_include_directories(starboard_platform PRIVATE

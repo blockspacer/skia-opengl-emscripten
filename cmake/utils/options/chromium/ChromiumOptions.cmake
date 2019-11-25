@@ -450,7 +450,7 @@ if(ENABLE_BLINK)
           # tcmalloc only for posix/linux/e.t.c.
           tcmalloc
           # libevent only for posix/linux/e.t.c.
-          libevent
+          ${libevent_LIB}
         )
     elseif(TARGET_WINDOWS)
       # skip

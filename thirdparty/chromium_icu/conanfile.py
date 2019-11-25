@@ -27,7 +27,7 @@ class chromium_base_conan_project(ConanFile):
         "enable_tests=False",
         "enable_sanitizers=False"
         # build
-        "*:shared=False"
+        #"*:shared=False"
     )
 
     generators = 'cmake_find_package', "cmake", "cmake_paths"
@@ -69,7 +69,7 @@ class chromium_base_conan_project(ConanFile):
         cmake.definitions["CMAKE_TOOLCHAIN_FILE"] = 'conan_paths.cmake'
         cmake.configure()
         cmake.build()
-        cmake.test()
+        #cmake.test()
 
     # Importing files copies files from the local store to your project.
     def imports(self):

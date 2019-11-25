@@ -95,13 +95,16 @@ if(TARGET_EMSCRIPTEN)
     ${CUSTOM_ICU_LIB}
   )
 elseif(TARGET_LINUX)
+  if(NOT DEFINED libevent_LIB)
+    message(FATAL_ERROR "NOT DEFINED libevent_LIB")
+  endif(NOT DEFINED libevent_LIB)
 
   list(APPEND EXTRA_CHROMIUM_BASE_LIBS
     tcmalloc
     ${ced_LIB}
     ${CUSTOM_ICU_LIB}
     # libevent only for posix/linux/e.t.c.
-    libevent
+    ${libevent_LIB}
     modp_b64
   )
   add_dependencies(base
@@ -116,7 +119,7 @@ elseif(TARGET_WINDOWS)
     ${ced_LIB}
     ${CUSTOM_ICU_LIB}
     # libevent only for posix/linux/e.t.c.
-    #libevent
+    #${libevent_LIB}
     modp_b64
   )
   add_dependencies(base

@@ -62,6 +62,7 @@ if (BUILD_APP)
   set(CMAKE_OPTS "${CMAKE_OPTS};-DCMAKE_CXX_COMPILER=${CXX_COMPILER}")
 
   # --- configure ---
+  # TODO: "-DCMAKE_TOOLCHAIN_FILE=conan_paths.cmake"
   execute_process(
     COMMAND
       ${COLORED_OUTPUT_ENABLER}
