@@ -692,7 +692,7 @@ if(USE_ICU)
       # see https://gitlab.kitware.com/cmake/community/wikis/doc/tutorials/How-to-create-a-ProjectConfig.cmake-file
       find_package(chromium_icu REQUIRED)
       #
-      if(NOT TARGET chromium_icu::chromium_icu)
+      if(NOT TARGET chromium_icu::chromium_icu-static)
         message(FATAL_ERROR "not supported: using system provided libevent library")
       endif()
     elseif(TARGET_WINDOWS OR TARGET_EMSCRIPTEN)
@@ -702,7 +702,7 @@ if(USE_ICU)
     endif()
     #
     set(COMMON_FLAGS "${COMMON_FLAGS} -DUSE_CUSTOM_ICU=1")
-    set(CUSTOM_ICU_LIB chromium_icu::chromium_icu) # see icu.cmake
+    set(CUSTOM_ICU_LIB chromium_icu::chromium_icu-static) # see icu.cmake
   else()
     set(CUSTOM_ICU_LIB icu) # platform specific
     message(FATAL_ERROR "TODO: supports not only USE_CUSTOM_ICU")
@@ -730,8 +730,8 @@ if(TARGET_LINUX)
   # see https://gitlab.kitware.com/cmake/community/wikis/doc/tutorials/How-to-create-a-ProjectConfig.cmake-file
   find_package(chromium_libevent REQUIRED)
   #
-  if(TARGET chromium_libevent::chromium_libevent)
-    set(libevent_LIB chromium_libevent::chromium_libevent)
+  if(TARGET chromium_libevent::chromium_libevent-static)
+    set(libevent_LIB chromium_libevent::chromium_libevent-static)
   else()
     message(FATAL_ERROR "not supported: using system provided libevent library")
   endif()
