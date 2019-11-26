@@ -35,6 +35,10 @@ add_library(cobalt_renderer STATIC
   ${COBALT_skia_cobalt_SOURCES}
 )
 
+if(NOT DEFINED CUSTOM_ICU_LIB)
+  message(FATAL_ERROR "CUSTOM_ICU_LIB must be defined")
+endif(NOT DEFINED CUSTOM_ICU_LIB)
+
 target_link_libraries(cobalt_renderer PRIVATE
   base # TODO
   cobalt_base

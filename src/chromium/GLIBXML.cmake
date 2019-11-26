@@ -187,7 +187,11 @@ add_library(GLIBXML STATIC
   ${GLIBXML_SOURCES}
 )
 
-if (EMSCRIPTEN)
+if(NOT DEFINED CUSTOM_ICU_LIB)
+  message(FATAL_ERROR "CUSTOM_ICU_LIB must be defined")
+endif(NOT DEFINED CUSTOM_ICU_LIB)
+
+if(EMSCRIPTEN)
   target_link_libraries(GLIBXML PUBLIC
     ${CUSTOM_ICU_LIB} # icuuc
   )

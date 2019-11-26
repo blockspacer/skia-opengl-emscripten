@@ -922,7 +922,7 @@ if(ENABLE_GRE2)
   set(GRE2_PARENT_DIR ${CHROMIUM_DIR}third_party/)
   set(GRE2_DIR ${GRE2_PARENT_DIR}re2/)
   set(GRE2_LIB GRE2)
-  include(${CHROMIUM_DIR}GRE2.cmake)
+  #include(${CHROMIUM_DIR}GRE2.cmake)
 else()
   set(DISABLE_GRE2_DEFINE DISABLE_GRE2=1)
 endif(ENABLE_GRE2)#
@@ -944,7 +944,7 @@ if(ENABLE_GLIBXML)
   set(GLIBXML_DIR
     ${GLIBXML_PARENT_DIR}libxml/
   )
-  include(${CHROMIUM_DIR}GLIBXML.cmake)
+  #include(${CHROMIUM_DIR}GLIBXML.cmake)
   set(GLIBXML_LIB
     GLIBXML
   )
@@ -952,21 +952,20 @@ else()
   list(APPEND COBALT_COMMON_DEFINES LIBXML_DISABLED=1)
 endif(ENABLE_GLIBXML)
 
-
 if (USE_LIBPNG AND USE_CUSTOM_LIBPNG)
   # GLIBPNG
-  include(${CHROMIUM_DIR}GLIBPNG.cmake)
+  #include(${CHROMIUM_DIR}GLIBPNG.cmake)
 endif()
 
 if(USE_LIBJPEG AND USE_CUSTOM_LIBJPEG)
   message(FATAL_ERROR "GLIBJPEG not supported yet")
   # libjpeg: requires LIBXML
-  include(${CHROMIUM_DIR}GLIBJPEG.cmake)
+  #include(${CHROMIUM_DIR}GLIBJPEG.cmake)
 endif(USE_LIBJPEG AND USE_CUSTOM_LIBJPEG)
 
 if(USE_LIBJPEG_TURBO AND USE_CUSTOM_LIBJPEG_TURBO)
   # GLIBJPEG_TURBO: requires LIBJPEG
-  include(${CHROMIUM_DIR}GLIBJPEG_TURBO.cmake)
+  #include(${CHROMIUM_DIR}GLIBJPEG_TURBO.cmake)
 else()
   if(ENABLE_COBALT OR ENABLE_BLINK)
     message(FATAL_ERROR "GLIBJPEG_TURBO must be active")
@@ -981,7 +980,7 @@ if(ENABLE_LIBYUV)
   set(libyuv_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/${CHROMIUM_DIR}third_party/)
   set(libyuv_DIR ${libyuv_PARENT_DIR}libyuv/)
   # libyuv: requires LIBJPEG
-  include(${CHROMIUM_DIR}libyuv.cmake)
+  #include(${CHROMIUM_DIR}libyuv.cmake)
 endif(ENABLE_LIBYUV)
 
 #if((ENABLE_BLINK OR ENABLE_COBALT) AND NOT ENABLE_ICCJPEG)
@@ -990,7 +989,7 @@ endif(ENABLE_LIBYUV)
 #endif()
 if(ENABLE_ICCJPEG)
   # iccjpeg: requires LIBJPEG
-  include(${CHROMIUM_DIR}iccjpeg.cmake)
+  #include(${CHROMIUM_DIR}iccjpeg.cmake)
 endif(ENABLE_ICCJPEG)
 
 # libwebp: requires libpng, zlib
@@ -999,7 +998,7 @@ endif(ENABLE_ICCJPEG)
 #  set(ENABLE_LIBWEBP TRUE)
 #endif()
 if(ENABLE_LIBWEBP)
-  include(${CHROMIUM_DIR}libwebp.cmake)
+  #include(${CHROMIUM_DIR}libwebp.cmake)
   set(WEBP_LIB libwebp)
   list(APPEND APP_DEFINITIONS ENABLE_LIBWEBP=1)
   list(APPEND COBALT_COMMON_DEFINES ENABLE_LIBWEBP=1)
