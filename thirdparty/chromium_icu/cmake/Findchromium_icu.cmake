@@ -1,6 +1,6 @@
 # uses Config.cmake or a -config.cmake file
 # see https://gitlab.kitware.com/cmake/community/wikis/doc/tutorials/How-to-create-a-ProjectConfig.cmake-file
-find_package(chromium_libevent CONFIG REQUIRED)
+find_package(chromium_icu CONFIG REQUIRED)
 
 function(clone_imported_target_properties dst src)
   get_property(_INTERFACE_LINK_LIBRARIES TARGET ${src} PROPERTY INTERFACE_LINK_LIBRARIES )
@@ -15,7 +15,7 @@ function(clone_imported_target_properties dst src)
 endfunction()
 
 # ALIAS
-add_library(chromium_libevent::chromium_libevent INTERFACE IMPORTED)
-target_link_libraries(chromium_libevent::chromium_libevent INTERFACE chromium_libevent::chromium_libevent-static)
+add_library(chromium_icu::chromium_icu INTERFACE IMPORTED)
+target_link_libraries(chromium_icu::chromium_icu INTERFACE chromium_icu::chromium_icu-static)
 # TODO: hack to make INTERFACE ALIAS with same settings as original lib
-clone_imported_target_properties(chromium_libevent::chromium_libevent chromium_libevent::chromium_libevent-static)
+clone_imported_target_properties(chromium_icu::chromium_icu chromium_icu::chromium_icu-static)

@@ -110,6 +110,24 @@ endif(NOT EMSCRIPTEN)
 
 find_threads()
 
+# --------------------------- conan configuration ------------------------------
+
+if(EXISTS "${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
+  list(APPEND CMAKE_MODULE_PATH ${CMAKE_BINARY_DIR}/)
+  include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+  #include(${CMAKE_BINARY_DIR}/conan_paths.cmake OPTIONAL)
+  conan_basic_setup(
+    # prevent conan_basic_setup from resetting cmake variables
+    TARGETS
+    KEEP_RPATHS
+    # see https://github.com/conan-io/conan/issues/6012
+    NO_OUTPUT_DIRS)
+else()
+  message (FATAL_ERROR "must use conan")
+endif()
+
+# ------------------------------- definitions ----------------------------------
+
 if(NOT RELEASE_BUILD)
   if(TARGET_WINDOWS)
     set(COMMON_FLAGS "${COMMON_FLAGS} /D_DEBUG") #
@@ -662,11 +680,38 @@ endif(TARGET_EMSCRIPTEN)
 #
 # ICU
 #
-if(USE_CUSTOM_ICU)
-  add_subdirectory(thirdparty/chromium_icu)
-else()
-  message(FATAL_ERROR "TODO: supports not only USE_CUSTOM_ICU")
-endif(USE_CUSTOM_ICU)
+if(USE_ICU)
+  set(COMMON_FLAGS "${COMMON_FLAGS} -DHAS_ICU=1")
+  if(NOT DEFINED USE_CUSTOM_ICU)
+    message(FATAL_ERROR "need to define USE_CUSTOM_ICU")
+  endif(NOT DEFINED USE_CUSTOM_ICU)
+  if(USE_CUSTOM_ICU)
+    # chromium_icu
+    if(TARGET_LINUX)
+      # uses Config.cmake or a -config.cmake file
+      # see https://gitlab.kitware.com/cmake/community/wikis/doc/tutorials/How-to-create-a-ProjectConfig.cmake-file
+      find_package(chromium_icu REQUIRED)
+      #
+      if(NOT TARGET chromium_icu::chromium_icu)
+        message(FATAL_ERROR "not supported: using system provided libevent library")
+      endif()
+    elseif(TARGET_WINDOWS OR TARGET_EMSCRIPTEN)
+      # skip
+    else()
+      message(FATAL_ERROR "chromium_icu not found")
+    endif()
+    #
+    set(COMMON_FLAGS "${COMMON_FLAGS} -DUSE_CUSTOM_ICU=1")
+    set(CUSTOM_ICU_LIB chromium_icu::chromium_icu) # see icu.cmake
+  else()
+    set(CUSTOM_ICU_LIB icu) # platform specific
+    message(FATAL_ERROR "TODO: supports not only USE_CUSTOM_ICU")
+  endif(USE_CUSTOM_ICU)
+endif(USE_ICU)
+
+if(NOT DEFINED CUSTOM_ICU_LIB)
+  message(FATAL_ERROR "CUSTOM_ICU_LIB must be defined")
+endif(NOT DEFINED CUSTOM_ICU_LIB)
 
 if(TARGET_LINUX)
   # xdg_mime
@@ -679,20 +724,6 @@ else()
   message(FATAL_ERROR "platform not supported")
 endif()
 
-if(EXISTS "${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
-  list(APPEND CMAKE_MODULE_PATH ${CMAKE_BINARY_DIR}/)
-  include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-  #include(${CMAKE_BINARY_DIR}/conan_paths.cmake OPTIONAL)
-  conan_basic_setup(
-    # prevent conan_basic_setup from resetting cmake variables
-    TARGETS
-    KEEP_RPATHS
-    # see https://github.com/conan-io/conan/issues/6012
-    NO_OUTPUT_DIRS)
-else()
-  message (FATAL_ERROR "must use conan")
-endif()
-
 # libevent
 if(TARGET_LINUX)
   # uses Config.cmake or a -config.cmake file
@@ -700,7 +731,6 @@ if(TARGET_LINUX)
   find_package(chromium_libevent REQUIRED)
   #
   if(TARGET chromium_libevent::chromium_libevent)
-    message(STATUS "using conan provided libevent library")
     set(libevent_LIB chromium_libevent::chromium_libevent)
   else()
     message(FATAL_ERROR "not supported: using system provided libevent library")

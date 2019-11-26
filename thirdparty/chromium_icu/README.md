@@ -19,16 +19,18 @@ Chromium docs https://chromium.googlesource.com/chromium/src/+/master/docs
 
 ## HOW TO BUILD FROM SOURCE
 
-TODO
+Create conan profile, see https://github.com/blockspacer/CXXCTP#install-conan---a-crossplatform-dependency-manager-for-c
+
+Build with created conan profile:
+
 ```
-conan create . conan/stable
+conan create . conan/stable --profile clang
 ```
 
 ## HOW TO INSTALL FROM CONAN
 
-TODO
 ```
-# conan install --build=missing --profile clang -o enable_tests=False ..
+conan install --build=missing --profile clang -o enable_tests=False ..
 ```
 
 ## USAGE EXAMPLES

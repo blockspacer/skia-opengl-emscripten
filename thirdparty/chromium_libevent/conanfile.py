@@ -62,7 +62,7 @@ class chromium_libevent_conan_project(ConanFile):
                        "scripts/*", "tools/*", "codegen/*", "assets/*",
                        "docs/*", "licenses/*", "patches/*", "resources/*",
                        "submodules/*", "thirdparty/*", "third-party/*",
-                       "base/*")
+                       "third_party/*", "base/*")
 
     settings = "os", "compiler", "build_type", "arch"
 

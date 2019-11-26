@@ -197,6 +197,10 @@ target_include_directories(harfbuzz PUBLIC
 #target_include_directories(harfbuzz PRIVATE
 #)
 
+if(NOT DEFINED CUSTOM_ICU_LIB)
+  message(FATAL_ERROR "CUSTOM_ICU_LIB must be defined")
+endif(NOT DEFINED CUSTOM_ICU_LIB)
+
 target_link_libraries(harfbuzz PUBLIC
   ${CUSTOM_ICU_LIB}
 )

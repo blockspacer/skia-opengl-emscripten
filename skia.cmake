@@ -20,31 +20,23 @@
 
 option(SKIA_FORCE_BUILD_MODE "" "") # TODO
 
-macro(copy_lib_include_properties SRC_LIB OUT_VAR_NAME NEED_INCLUDE_DIRECTORIES NEED_INTERFACE_INCLUDE_DIRECTORIES)
+macro(copy_lib_include_properties
+        SRC_LIB
+        OUT_VAR_NAME
+        NEED_APPEND_TO_CMAKE_INCLUDE_DIRECTORIES
+        NEED_INCLUDE_DIRECTORIES
+        NEED_INTERFACE_INCLUDE_DIRECTORIES
+        DEBUG_MODE)
   # TODO: hack to pass library include dirs to GN
-  if(NEED_INCLUDE_DIRECTORIES)
-    get_target_property(CUSTOM_${SRC_LIB}_INCLUDE_DIRECTORIES ${SRC_LIB} INCLUDE_DIRECTORIES)
-    if(DEFINED CUSTOM_${SRC_LIB}_INCLUDE_DIRECTORIES
-       AND NOT "${CUSTOM_${SRC_LIB}_INCLUDE_DIRECTORIES}" STREQUAL "CUSTOM_${SRC_LIB}_INCLUDE_DIRECTORIES-NOTFOUND")
-      message(STATUS "CUSTOM_${SRC_LIB}_INCLUDE_DIRECTORIES=${CUSTOM_${SRC_LIB}_INCLUDE_DIRECTORIES}")
+
+  if(${NEED_INCLUDE_DIRECTORIES})
+    get_target_property(CUSTOM__INCLUDE_DIRECTORIES ${SRC_LIB} INCLUDE_DIRECTORIES)
+    message(FATAL_ERROR "CUSTOM__INCLUDE_DIRECTORIES=${CUSTOM__INCLUDE_DIRECTORIES}")
+    if(DEFINED CUSTOM__INCLUDE_DIRECTORIES
+       AND NOT "${CUSTOM__INCLUDE_DIRECTORIES}" STREQUAL "CUSTOM__INCLUDE_DIRECTORIES-NOTFOUND")
+      message(STATUS "CUSTOM__INCLUDE_DIRECTORIES=${CUSTOM__INCLUDE_DIRECTORIES}")
       # NOTE: WITH trailing comma
-      foreach(prop ${CUSTOM_${SRC_LIB}_INCLUDE_DIRECTORIES})
-        # TODO: hack to pass library include dirs to GN
-        set(${OUT_VAR_NAME}
-          "${${OUT_VAR_NAME}}\"-I${prop}\", "
-        )
-        #list(APPEND SKIA_CMAKE_ONLY_HEADERS ${prop})
-      endforeach(prop)
-    endif()
-  endif(NEED_INCLUDE_DIRECTORIES)
-  #
-  if(NEED_INTERFACE_INCLUDE_DIRECTORIES)
-    get_target_property(CUSTOM_${SRC_LIB}_INTERFACE_INCLUDE_DIRECTORIES ${SRC_LIB} INTERFACE_INCLUDE_DIRECTORIES)
-    if(DEFINED CUSTOM_${SRC_LIB}_INTERFACE_INCLUDE_DIRECTORIES
-       AND NOT "${CUSTOM_${SRC_LIB}_INTERFACE_INCLUDE_DIRECTORIES}" STREQUAL "CUSTOM_${SRC_LIB}_INTERFACE_INCLUDE_DIRECTORIES-NOTFOUND")
-      message(STATUS "CUSTOM_${SRC_LIB}_INTERFACE_INCLUDE_DIRECTORIES=${CUSTOM_${SRC_LIB}_INTERFACE_INCLUDE_DIRECTORIES}")
-      # NOTE: WITH trailing comma
-      foreach(prop ${CUSTOM_${SRC_LIB}_INTERFACE_INCLUDE_DIRECTORIES})
+      foreach(prop ${CUSTOM__INCLUDE_DIRECTORIES})
         # TODO: hack to pass library include dirs to GN
         set(${OUT_VAR_NAME}
           "${${OUT_VAR_NAME}}\"-I${prop}\", "
@@ -52,10 +44,44 @@ macro(copy_lib_include_properties SRC_LIB OUT_VAR_NAME NEED_INCLUDE_DIRECTORIES 
         if(NOT EXISTS "${prop}")
           message(FATAL_ERROR "include dir not found: ${prop}")
         endif(NOT EXISTS "${prop}")
+        if(${DEBUG_MODE})
+          message(STATUS "copy_lib_include_properties: SRC_LIB=${SRC_LIB} ; prop = ${prop}")
+        endif(${DEBUG_MODE})
         #list(APPEND SKIA_CMAKE_ONLY_HEADERS ${prop})
       endforeach(prop)
     endif()
-  endif(NEED_INTERFACE_INCLUDE_DIRECTORIES)
+    #
+    if(${NEED_APPEND_TO_CMAKE_INCLUDE_DIRECTORIES})
+      list(APPEND SKIA_CMAKE_ONLY_HEADERS ${CUSTOM__INCLUDE_DIRECTORIES})
+    endif(${NEED_APPEND_TO_CMAKE_INCLUDE_DIRECTORIES})
+  endif(${NEED_INCLUDE_DIRECTORIES})
+  #
+  if(${NEED_INTERFACE_INCLUDE_DIRECTORIES})
+    get_target_property(CUSTOM__INTERFACE_INCLUDE_DIRECTORIES ${SRC_LIB} INTERFACE_INCLUDE_DIRECTORIES)
+    message(STATUS "${SRC_LIB}: CUSTOM__INTERFACE_INCLUDE_DIRECTORIES=${CUSTOM__INTERFACE_INCLUDE_DIRECTORIES}")
+    if(DEFINED CUSTOM__INTERFACE_INCLUDE_DIRECTORIES
+       AND NOT "${CUSTOM__INTERFACE_INCLUDE_DIRECTORIES}" STREQUAL "CUSTOM__INTERFACE_INCLUDE_DIRECTORIES-NOTFOUND")
+      message(STATUS "CUSTOM__INTERFACE_INCLUDE_DIRECTORIES=${CUSTOM__INTERFACE_INCLUDE_DIRECTORIES}")
+      # NOTE: WITH trailing comma
+      foreach(prop ${CUSTOM__INTERFACE_INCLUDE_DIRECTORIES})
+        # TODO: hack to pass library include dirs to GN
+        set(${OUT_VAR_NAME}
+          "${${OUT_VAR_NAME}}\"-I${prop}\", "
+        )
+        if(NOT EXISTS "${prop}")
+          message(FATAL_ERROR "include dir not found: ${prop}")
+        endif(NOT EXISTS "${prop}")
+        if(${DEBUG_MODE})
+          message(STATUS "copy_lib_include_properties: SRC_LIB=${SRC_LIB} ; prop = ${prop}")
+        endif(${DEBUG_MODE})
+        #list(APPEND SKIA_CMAKE_ONLY_HEADERS ${prop})
+      endforeach(prop)
+    endif()
+    #
+    if(${NEED_APPEND_TO_CMAKE_INCLUDE_DIRECTORIES})
+      list(APPEND SKIA_CMAKE_ONLY_HEADERS ${CUSTOM__INTERFACE_INCLUDE_DIRECTORIES})
+    endif(${NEED_APPEND_TO_CMAKE_INCLUDE_DIRECTORIES})
+  endif(${NEED_INTERFACE_INCLUDE_DIRECTORIES})
 endmacro(copy_lib_include_properties)
 
 # force OFFICIAL_BUILD
@@ -387,7 +413,12 @@ if(NOT FORCE_USE_SKIA_HARFBUZZ)
 endif(NOT FORCE_USE_SKIA_HARFBUZZ)
 
 if(DEFINED libevent_LIB)
-  copy_lib_include_properties("${libevent_LIB}" "SKIA_EXTRA_CFLAGS" TRUE TRUE)
+  # TODO: hack to pass library include dirs to GN
+  copy_lib_include_properties("${libevent_LIB}" "SKIA_EXTRA_CFLAGS" TRUE FALSE TRUE FALSE)
+
+  # TODO: copy_lib_define_properties
+
+  # TODO: copy_lib_link_properties
 endif(DEFINED libevent_LIB)
 
 # NOTE: in skia HARFBUZZ requires icui18n (unicode/uscript.h)
@@ -425,9 +456,21 @@ if(FORCE_USE_SKIA_HARFBUZZ)
   #endif(ENABLE_SKSHAPER)
   #
 
-  # TODO: hack to pass library include dirs to GN
-  get_target_property(CUSTOM_ICU_INCLUDE_DIRECTORIES ${CUSTOM_ICU_LIB} INCLUDE_DIRECTORIES)
-  message(STATUS "CUSTOM_ICU_INCLUDE_DIRECTORIES=${CUSTOM_ICU_INCLUDE_DIRECTORIES}")
+  if(NOT DEFINED CUSTOM_ICU_LIB)
+    message(FATAL_ERROR "CUSTOM_ICU_LIB must be defined")
+  endif(NOT DEFINED CUSTOM_ICU_LIB)
+
+  if(DEFINED CUSTOM_ICU_LIB AND USE_CUSTOM_ICU)
+    # TODO: hack to pass library include dirs to GN
+    copy_lib_include_properties("${CUSTOM_ICU_LIB}" "SKIA_EXTRA_CFLAGS" TRUE FALSE TRUE TRUE)
+
+    # TODO: copy_lib_define_properties
+
+    # TODO: copy_lib_link_properties
+  endif(DEFINED CUSTOM_ICU_LIB AND USE_CUSTOM_ICU)
+
+  #get_target_property(CUSTOM_ICU_INCLUDE_DIRECTORIES ${CUSTOM_ICU_LIB} INCLUDE_DIRECTORIES)
+  #message(STATUS "CUSTOM_ICU_INCLUDE_DIRECTORIES=${CUSTOM_ICU_INCLUDE_DIRECTORIES}")
 
   #set(ICU_PARENT_FULL_DIR ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/chromium_icu/)
   #set(ICU_FULL_DIR ${ICU_PARENT_FULL_DIR}third_party/icu/)
@@ -443,24 +486,24 @@ if(FORCE_USE_SKIA_HARFBUZZ)
   #)
   #message(STATUS "OWN_ICU_INCLUDE_DIRS=${OWN_ICU_INCLUDE_DIRS}")
 
-  if(USE_CUSTOM_ICU)
-    list(APPEND SKIA_CMAKE_ONLY_HEADERS
-      ${CUSTOM_ICU_INCLUDE_DIRECTORIES}
-      #${OWN_ICU_INCLUDE_DIRS}
-    )
-    #
-    # NOTE: WITH trailing comma
-    #set(SKIA_EXTRA_CFLAGS
-    #  "${SKIA_EXTRA_CFLAGS}\"-I${ICU_FULL_DIR}source/common\", "
-    #)
-    # NOTE: WITH trailing comma
-    foreach(prop ${CUSTOM_ICU_INCLUDE_DIRECTORIES})
-      # TODO: hack to pass library include dirs to GN
-      set(SKIA_EXTRA_CFLAGS
-        "${SKIA_EXTRA_CFLAGS}\"-I${prop}\", "
-      )
-    endforeach(prop)
-  endif(USE_CUSTOM_ICU)
+  #if(USE_CUSTOM_ICU)
+  #  list(APPEND SKIA_CMAKE_ONLY_HEADERS
+  #    ${CUSTOM_ICU_INCLUDE_DIRECTORIES}
+  #    #${OWN_ICU_INCLUDE_DIRS}
+  #  )
+  #  #
+  #  # NOTE: WITH trailing comma
+  #  #set(SKIA_EXTRA_CFLAGS
+  #  #  "${SKIA_EXTRA_CFLAGS}\"-I${ICU_FULL_DIR}source/common\", "
+  #  #)
+  #  # NOTE: WITH trailing comma
+  #  foreach(prop ${CUSTOM_ICU_INCLUDE_DIRECTORIES})
+  #    # TODO: hack to pass library include dirs to GN
+  #    set(SKIA_EXTRA_CFLAGS
+  #      "${SKIA_EXTRA_CFLAGS}\"-I${prop}\", "
+  #    )
+  #  endforeach(prop)
+  #endif(USE_CUSTOM_ICU)
 else(FORCE_USE_SKIA_HARFBUZZ)
   set(SK_IS_harfbuzz "false")
   set(SK_IS_icu "false")

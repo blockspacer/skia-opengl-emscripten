@@ -96,6 +96,10 @@ else()
   message(FATAL_ERROR "platform not supported")
 endif()
 
+if(NOT DEFINED CUSTOM_ICU_LIB)
+  message(FATAL_ERROR "CUSTOM_ICU_LIB must be defined")
+endif(NOT DEFINED CUSTOM_ICU_LIB)
+
 target_link_libraries(cobalt_base PRIVATE
   base # TODO
   starboard_platform

@@ -9,6 +9,13 @@ project(${PROJECT_NAME}
   VERSION ${PROJECT_VERSION}
   LANGUAGES CXX C)
 
+set(STATIC_LIB_NAME ${PROJECT_NAME}-static)
+
+if(EXISTS "${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
+  include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+  conan_basic_setup(TARGETS)
+endif(EXISTS "${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
+
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/)
 
 set(ICU_PARENT_FULL_DIR ${CMAKE_CURRENT_SOURCE_DIR}/)
@@ -17,33 +24,26 @@ set(ICU_FULL_DIR ${ICU_PARENT_FULL_DIR}third_party/icu/)
 
 include(cmake/PlatformChecks)
 
-include(cmake/Options)
+include(cmake/CommonOptions)
+
+include(cmake/icuOptions)
 
 include(cmake/ProjectFiles)
+
+# $<INSTALL_INTERFACE:...> is exported using install(EXPORT)
+# $<BUILD_INTERFACE:...> is exported using export(), or when the target is used by another target in the same buildsystem
+macro(add_relative_include_dir TARGET VISIBILITY_BUILD VISIBILITY_INSTALL NEW_ELEM)
+  target_include_directories(${TARGET}
+    ${VISIBILITY_BUILD} "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/${NEW_ELEM}>"
+    ${VISIBILITY_BUILD} "$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}/${NEW_ELEM}>"
+  )
+endmacro(add_relative_include_dir)
 
 #
 #set(COMMON_FLAGS "${COMMON_FLAGS} -DSK_USING_THIRD_PARTY_ICU=1")
 # https://github.com/google/skia/blob/master/third_party/icu/BUILD.gn#L15
 #set(COMMON_FLAGS "${COMMON_FLAGS} -DU_USING_ICU_NAMESPACE=0")
 #
-
-set(OWN_ICU_INCLUDE_DIRS
-  ${ICU_PARENT_FULL_DIR}
-  ${ICU_PARENT_FULL_DIR}third_party
-  ${ICU_FULL_DIR}
-  ${ICU_FULL_DIR}source
-  ${ICU_FULL_DIR}source/common # path to unicode/uvernum.h
-  ${ICU_FULL_DIR}source/common/unicode
-  ${ICU_FULL_DIR}source/i18n
-  ${ICU_FULL_DIR}source/allinone
-  ${ICU_FULL_DIR}source/config
-  ${ICU_FULL_DIR}source/data
-  ${ICU_FULL_DIR}source/extra
-  ${ICU_FULL_DIR}source/io
-  ${ICU_FULL_DIR}source/layoutex
-  ${ICU_FULL_DIR}source/stubdata
-  ${ICU_FULL_DIR}source/tools
-)
 
 if(NOT EXISTS "${ICU_FULL_DIR}source/common")
   message(FATAL_ERROR "Unable to find ${ICU_FULL_DIR}source/common")
@@ -68,21 +68,62 @@ endif(NOT EXISTS "${ICU_FULL_DIR}source/common")
 #endif()
 
 #if(USE_OWN_ICU)
-  add_library(chromium_icu STATIC
+  add_library(${STATIC_LIB_NAME} STATIC
     ${ICU_SOURCES}
   )
 
-  set_property(TARGET chromium_icu PROPERTY CXX_STANDARD 17)
+  add_relative_include_dir(${STATIC_LIB_NAME} PUBLIC PUBLIC "")
+
+  add_relative_include_dir(${STATIC_LIB_NAME} PUBLIC PUBLIC "third_party/icu/")
+
+  #add_relative_include_dir(${STATIC_LIB_NAME} PUBLIC PUBLIC "third_party/icu/third_party")
+
+  add_relative_include_dir(${STATIC_LIB_NAME} PUBLIC PUBLIC "third_party/icu/")
+
+  add_relative_include_dir(${STATIC_LIB_NAME} PUBLIC PUBLIC "third_party/icu/source")
+
+  # path to unicode/uvernum.h
+  add_relative_include_dir(${STATIC_LIB_NAME} PUBLIC PUBLIC "third_party/icu/source/common")
+
+  # path to uvernum.h
+  add_relative_include_dir(${STATIC_LIB_NAME} PUBLIC PUBLIC "third_party/icu/source/common/unicode")
+
+  add_relative_include_dir(${STATIC_LIB_NAME} PUBLIC PUBLIC "third_party/icu/source/i18n")
+
+  add_relative_include_dir(${STATIC_LIB_NAME} PUBLIC PUBLIC "third_party/icu/source/allinone")
+
+  add_relative_include_dir(${STATIC_LIB_NAME} PUBLIC PUBLIC "third_party/icu/source/config")
+
+  add_relative_include_dir(${STATIC_LIB_NAME} PUBLIC PUBLIC "third_party/icu/source/data")
+
+  add_relative_include_dir(${STATIC_LIB_NAME} PUBLIC PUBLIC "third_party/icu/source/extra")
+
+  add_relative_include_dir(${STATIC_LIB_NAME} PUBLIC PUBLIC "third_party/icu/source/io")
+
+  add_relative_include_dir(${STATIC_LIB_NAME} PUBLIC PUBLIC "third_party/icu/source/layoutex")
+
+  add_relative_include_dir(${STATIC_LIB_NAME} PUBLIC PUBLIC "third_party/icu/source/stubdata")
+
+  add_relative_include_dir(${STATIC_LIB_NAME} PUBLIC PUBLIC "third_party/icu/source/tools")
+
+  set_property(TARGET ${STATIC_LIB_NAME} PROPERTY CXX_STANDARD 17)
+
+  target_compile_features(${STATIC_LIB_NAME} PRIVATE
+    PUBLIC cxx_auto_type
+    PRIVATE cxx_variadic_templates)
+
+  target_compile_options(${STATIC_LIB_NAME} PRIVATE
+    $<$<CXX_COMPILER_ID:GNU>:-Wall>)
 
   # In your source, include files from base/ like normal.
   # So if you want to use the string printf API, do:
   # #include <base/stringprintf.h>
-  target_include_directories(chromium_icu PUBLIC
-    #${CHROMIUM_DIR}
-    ${OWN_ICU_INCLUDE_DIRS}
-  )
+  #target_include_directories(${STATIC_LIB_NAME} PUBLIC
+  #  #${CHROMIUM_DIR}
+  #  ${OWN_ICU_INCLUDE_DIRS}
+  #)
 
-  #target_include_directories(chromium_icu PRIVATE
+  #target_include_directories(${STATIC_LIB_NAME} PRIVATE
     #${BASE_DIR}
   #)
 
@@ -241,7 +282,7 @@ endif(DISABLE_FORMATTING)
   #    # please see: https://crbug.com/822820
   #    "U_IMPORT=U_EXPORT",
 
-  target_compile_definitions(chromium_icu PUBLIC
+  target_compile_definitions(${STATIC_LIB_NAME} PUBLIC
     ${ICU_PUBLIC_DEFINES}
     #${WTF_EMCC_DEFINITIONS}
     #${WTF_COMMON_DEFINITIONS}
@@ -251,7 +292,7 @@ endif(DISABLE_FORMATTING)
     #U_ATTRIBUTE_DEPRECATED
   )
 
-  target_compile_definitions(chromium_icu PRIVATE
+  target_compile_definitions(${STATIC_LIB_NAME} PRIVATE
     ICU_IMPLEMENTATION=1
     U_STATIC_IMPLEMENTATION=1
     U_COMMON_IMPLEMENTATION=1
@@ -276,7 +317,7 @@ endif(DISABLE_FORMATTING)
     #MEMORY_TOOL_REPLACES_ALLOCATOR=1
   )
 
-  target_compile_options(chromium_icu PRIVATE
+  target_compile_options(${STATIC_LIB_NAME} PRIVATE
     -Wno-error
     # TODO: remove rtti from icu
     # https://bugs.chromium.org/p/chromium/issues/detail?id=463085
@@ -289,3 +330,17 @@ endif(DISABLE_FORMATTING)
 #  # double-conversion-utils.h doesn't know how to operate.
 #  set(ICU_DEFINES "${ICU_DEFINES} -D__i386__=1")
 #endif()
+
+set_property(TARGET ${STATIC_LIB_NAME} PROPERTY CXX_STANDARD 17)
+
+set(DEBUG_LIBRARY_SUFFIX "-d")
+set_target_properties(${STATIC_LIB_NAME}
+  PROPERTIES
+    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}" # TODO: /lib
+    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}" # TODO: /lib
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}" # TODO: /bin
+    OUTPUT_NAME "${STATIC_LIB_NAME}$<$<CONFIG:Debug>:${DEBUG_LIBRARY_SUFFIX}>"
+)
+
+# install and export steps
+include(cmake/Exports)

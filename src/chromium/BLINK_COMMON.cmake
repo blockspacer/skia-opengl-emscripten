@@ -101,6 +101,10 @@ add_library(BLINK_COMMON STATIC
   ${BLINK_COMMON_GEN_SOURCES}
 )
 
+if(NOT DEFINED CUSTOM_ICU_LIB)
+  message(FATAL_ERROR "CUSTOM_ICU_LIB must be defined")
+endif(NOT DEFINED CUSTOM_ICU_LIB)
+
 target_link_libraries(BLINK_COMMON PRIVATE
   base
   ${GNET_LIBS}

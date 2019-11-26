@@ -26,6 +26,8 @@ include(cmake/CommonOptions)
 
 include(cmake/ProjectFiles)
 
+# $<INSTALL_INTERFACE:...> is exported using install(EXPORT)
+# $<BUILD_INTERFACE:...> is exported using export(), or when the target is used by another target in the same buildsystem
 macro(add_relative_include_dir TARGET VISIBILITY_BUILD VISIBILITY_INSTALL NEW_ELEM)
   target_include_directories(${TARGET}
     ${VISIBILITY_BUILD} "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/${NEW_ELEM}>"

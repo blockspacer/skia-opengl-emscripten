@@ -14,6 +14,10 @@ add_library(starboard_icu_init STATIC
   ${starboard_icu_init_SOURCES}
 )
 
+if(NOT DEFINED CUSTOM_ICU_LIB)
+  message(FATAL_ERROR "CUSTOM_ICU_LIB must be defined")
+endif(NOT DEFINED CUSTOM_ICU_LIB)
+
 target_link_libraries(starboard_icu_init PRIVATE
   base # for "base/base_export.h"
   ${CUSTOM_ICU_LIB}
