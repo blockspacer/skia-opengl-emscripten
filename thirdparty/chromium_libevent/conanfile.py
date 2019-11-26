@@ -49,6 +49,7 @@ class chromium_libevent_conan_project(ConanFile):
     _build_subfolder = "build_subfolder"
 
     generators = 'cmake_find_package', "cmake", "cmake_paths"
+    #generators = "cmake", "cmake_paths"
 
     # Packages the license for the conanfile.py
     #exports = ["LICENSE.md"]

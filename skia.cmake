@@ -348,6 +348,40 @@ if(NOT FORCE_USE_SKIA_HARFBUZZ)
   message(FATAL_ERROR "TODO: SKIA builds without FORCE_USE_SKIA_HARFBUZZ")
 endif(NOT FORCE_USE_SKIA_HARFBUZZ)
 
+if(DEFINED libevent_LIB)
+  # TODO: hack to pass library include dirs to GN
+  # get_target_property(CUSTOM_libevent_INCLUDE_DIRECTORIES ${libevent_LIB} INCLUDE_DIRECTORIES)
+  # if(DEFINED CUSTOM_libevent_INCLUDE_DIRECTORIES
+  #    AND NOT "${CUSTOM_libevent_INCLUDE_DIRECTORIES}" STREQUAL "CUSTOM_libevent_INCLUDE_DIRECTORIES-NOTFOUND")
+  #   message(STATUS "CUSTOM_libevent_INCLUDE_DIRECTORIES=${CUSTOM_libevent_INCLUDE_DIRECTORIES}")
+  #   # NOTE: WITH trailing comma
+  #   foreach(prop ${CUSTOM_libevent_INCLUDE_DIRECTORIES})
+  #     # TODO: hack to pass library include dirs to GN
+  #     set(SKIA_EXTRA_CFLAGS
+  #       "${SKIA_EXTRA_CFLAGS}\"-I${prop}\", "
+  #     )
+  #     #list(APPEND SKIA_CMAKE_ONLY_HEADERS ${prop})
+  #   endforeach(prop)
+  # endif()
+  #
+  get_target_property(CUSTOM_libevent_INTERFACE_INCLUDE_DIRECTORIES ${libevent_LIB} INTERFACE_INCLUDE_DIRECTORIES)
+  if(DEFINED CUSTOM_libevent_INTERFACE_INCLUDE_DIRECTORIES
+     AND NOT "${CUSTOM_libevent_INTERFACE_INCLUDE_DIRECTORIES}" STREQUAL "CUSTOM_libevent_INTERFACE_INCLUDE_DIRECTORIES-NOTFOUND")
+    message(STATUS "CUSTOM_libevent_INTERFACE_INCLUDE_DIRECTORIES=${CUSTOM_libevent_INTERFACE_INCLUDE_DIRECTORIES}")
+    # NOTE: WITH trailing comma
+    foreach(prop ${CUSTOM_libevent_INTERFACE_INCLUDE_DIRECTORIES})
+      # TODO: hack to pass library include dirs to GN
+      set(SKIA_EXTRA_CFLAGS
+        "${SKIA_EXTRA_CFLAGS}\"-I${prop}\", "
+      )
+      if(NOT EXISTS "${prop}")
+        message(FATAL_ERROR "include dir not found: ${prop}")
+      endif(NOT EXISTS "${prop}")
+      #list(APPEND SKIA_CMAKE_ONLY_HEADERS ${prop})
+    endforeach(prop)
+  endif()
+endif(DEFINED libevent_LIB)
+
 # NOTE: in skia HARFBUZZ requires icui18n (unicode/uscript.h)
 if(HARFBUZZ_FROM_SKIA AND NOT FORCE_USE_SKIA_HARFBUZZ)
   message(FATAL_ERROR "HARFBUZZ_FROM_SKIA requires FORCE_USE_SKIA_HARFBUZZ")
@@ -411,6 +445,7 @@ if(FORCE_USE_SKIA_HARFBUZZ)
     #set(SKIA_EXTRA_CFLAGS
     #  "${SKIA_EXTRA_CFLAGS}\"-I${ICU_FULL_DIR}source/common\", "
     #)
+    # NOTE: WITH trailing comma
     foreach(prop ${CUSTOM_ICU_INCLUDE_DIRECTORIES})
       # TODO: hack to pass library include dirs to GN
       set(SKIA_EXTRA_CFLAGS

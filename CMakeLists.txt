@@ -683,7 +683,12 @@ if(EXISTS "${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
   list(APPEND CMAKE_MODULE_PATH ${CMAKE_BINARY_DIR}/)
   include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
   #include(${CMAKE_BINARY_DIR}/conan_paths.cmake OPTIONAL)
-  conan_basic_setup(TARGETS)
+  conan_basic_setup(
+    # prevent conan_basic_setup from resetting cmake variables
+    TARGETS
+    KEEP_RPATHS
+    # see https://github.com/conan-io/conan/issues/6012
+    NO_OUTPUT_DIRS)
 else()
   message (FATAL_ERROR "must use conan")
 endif()
@@ -692,22 +697,42 @@ endif()
 if(TARGET_LINUX)
   # uses Config.cmake or a -config.cmake file
   # see https://gitlab.kitware.com/cmake/community/wikis/doc/tutorials/How-to-create-a-ProjectConfig.cmake-file
-  find_package(chromium_libevent_pcf CONFIG REQUIRED)
-  find_package(chromium_libevent REQUIRED)
-  #
+  #find_package(chromium_libevent_pcf CONFIG REQUIRED)
+  find_package(chromium_libevent CONFIG REQUIRED)
+  #message(FATAL_ERROR "CHROMIUM_LIBEVENT_LIBRARY=${CHROMIUM_LIBEVENT_LIBRARY}")
+  #find_package(chromium_libevent REQUIRED)
+  #find_package(chromium_libevent CONFIG REQUIRED)
+  ##
   #get_target_property(chromium_libevent_pcf_INTERFACE_INCLUDE_DIRECTORIES
-  #  chromium_libevent_pcf INTERFACE_INCLUDE_DIRECTORIES)
+  #  chromium_libevent::chromium_libevent_pcf INTERFACE_INCLUDE_DIRECTORIES)
+  #get_target_property(chromium_libevent_pcf_INTERFACE_COMPILE_DEFINITIONS
+  #  chromium_libevent::chromium_libevent_pcf INTERFACE_COMPILE_DEFINITIONS)
   #if(NOT DEFINED chromium_libevent_pcf_INTERFACE_INCLUDE_DIRECTORIES)
   #  message(FATAL_ERROR "NOT DEFINED: chromium_libevent_pcf_INTERFACE_INCLUDE_DIRECTORIES")
   #endif(NOT DEFINED chromium_libevent_pcf_INTERFACE_INCLUDE_DIRECTORIES)
   #
+
+#message(STATUS "chromium_libevent_pcf_INTERFACE_COMPILE_DEFINITIONS=${chromium_libevent_pcf_INTERFACE_COMPILE_DEFINITIONS}")
+#message(FATAL_ERROR "chromium_libevent_pcf_INTERFACE_INCLUDE_DIRECTORIES=${chromium_libevent_pcf_INTERFACE_INCLUDE_DIRECTORIES}")
+
   if(TARGET chromium_libevent::chromium_libevent)
     message(STATUS "using conan provided libevent library")
+    #set(libevent_LIB chromium_libevent::chromium_libevent-static)
+    #set(libevent_LIB chromium_libevent::chromium_libevent-static)
     set(libevent_LIB chromium_libevent::chromium_libevent)
-    # PCFs are generally expected to be authored by dependencies and to be installed alongside their artifacts.
-    # see https://jfreeman.dev/blog/2019/05/22/trying-conan-with-modern-cmake:-dependencies/
+
     target_link_libraries(chromium_libevent::chromium_libevent INTERFACE
-      chromium_libevent_pcf) # public library config as separate lib
+      chromium_libevent::chromium_libevent_pcf) # public library config as separate lib
+    #target_link_libraries(chromium_libevent::chromium_libevent-static INTERFACE
+    #  chromium_libevent::chromium_libevent_pcf) # public library config as separate lib
+
+#get_target_property(chromium_libevent_pcf_INTERFACE_INCLUDE_DIRECTORIES
+#  chromium_libevent::chromium_libevent-static INTERFACE_INCLUDE_DIRECTORIES)
+#get_target_property(chromium_libevent_pcf_INTERFACE_COMPILE_DEFINITIONS
+#  chromium_libevent::chromium_libevent-static INTERFACE_COMPILE_DEFINITIONS)
+#message(STATUS "chromium_libevent_pcf_INTERFACE_COMPILE_DEFINITIONS=${chromium_libevent_pcf_INTERFACE_COMPILE_DEFINITIONS}")
+#message(FATAL_ERROR "chromium_libevent_pcf_INTERFACE_INCLUDE_DIRECTORIES=${chromium_libevent_pcf_INTERFACE_INCLUDE_DIRECTORIES}")
+
   else()
     message(FATAL_ERROR "not supported: using system provided libevent library") # TODO
     add_subdirectory(thirdparty/chromium_libevent)
@@ -850,13 +875,6 @@ endif(ENABLE_SKIA)
 add_executable(${PROJECT_NAME}
   ${PROJECT_SRC}
   #DEPENDS SKIA
-)
-
-set_target_properties(${PROJECT_NAME}
-    PROPERTIES
-    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}" # TODO: /lib
-    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}" # TODO: /lib
-    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}" # TODO: /bin
 )
 
 # TODO
@@ -1342,6 +1360,16 @@ endif()
 target_compile_options(${PROJECT_NAME} PRIVATE
   ${ENABLED_WARNINGS}
   ${DISABLED_WARNINGS}
+)
+
+#message(FATAL_ERROR ${PROJECT_NAME})
+
+set(DEBUG_LIBRARY_SUFFIX "-d")
+set_target_properties(${PROJECT_NAME} PROPERTIES
+  ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}" # TODO: /lib
+  LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}" # TODO: /lib
+  RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}" # TODO: /bin
+  #OUTPUT_NAME "${PROJECT_NAME}$<$<CONFIG:Debug>:${DEBUG_LIBRARY_SUFFIX}>"
 )
 
 if(TARGET_WINDOWS)

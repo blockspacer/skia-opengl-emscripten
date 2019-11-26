@@ -9,6 +9,8 @@ project(${PROJECT_NAME}
   VERSION ${PROJECT_VERSION}
   LANGUAGES CXX C)
 
+set(STATIC_LIB_NAME ${PROJECT_NAME})
+
 if(EXISTS "${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
   include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
   conan_basic_setup(TARGETS)
@@ -23,10 +25,24 @@ include(cmake/PlatformChecks)
 
 include(cmake/ProjectFiles)
 
-macro(add_relative_include_dir TARGET VISIBILITY NEW_ELEM)
-  target_include_directories(${TARGET} ${VISIBILITY}
-    #$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/${NEW_ELEM}>
-    $<INSTALL_INTERFACE:${NEW_ELEM}>
+include(GNUInstallDirs)
+include(CMakePackageConfigHelpers)
+
+if (NOT DEFINED CMAKE_INSTALL_BINDIR)
+  set(CMAKE_INSTALL_BINDIR "bin")
+endif()
+if (NOT DEFINED CMAKE_INSTALL_INCLUDEDIR)
+  set(CMAKE_INSTALL_INCLUDEDIR "include")
+endif()
+if (NOT DEFINED CMAKE_INSTALL_LIBDIR)
+  set(CMAKE_INSTALL_LIBDIR "lib")
+endif()
+
+macro(add_relative_include_dir TARGET VISIBILITY_BUILD NEW_ELEM)
+  target_include_directories(${TARGET}
+    ${VISIBILITY_BUILD} "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/${NEW_ELEM}>"
+    INTERFACE "$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}/${NEW_ELEM}>"
+    # ${CMAKE_INSTALL_INCLUDEDIR}
   )
 endmacro(add_relative_include_dir)
 
@@ -50,37 +66,125 @@ list(APPEND LIBEVENT_DEFINES
   ${HAVE_CONFIG_H}
 )
 
+add_library(${STATIC_LIB_NAME} STATIC # TODO: rename to ${PROJECT_NAME}_static
+  ${LIBEVENT_SOURCES}
+)
+
+#Add an alias so that library can be used inside the build tree, e.g. when testing
+#add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${STATIC_LIB_NAME})
+
+# PCFs are generally expected to be authored by dependencies and to be installed alongside their artifacts.
+# see https://jfreeman.dev/blog/2019/05/22/trying-conan-with-modern-cmake:-dependencies/
 add_library(${PROJECT_NAME}_pcf INTERFACE)
 
-#target_include_directories(${PROJECT_NAME}_pcf PUBLIC
+#target_include_directories(${PROJECT_NAME} PUBLIC
 #  ${LIBEVENT_INCLUDE_DIRS}
 #  #"."
 #  ${CMAKE_CURRENT_SOURCE_DIR} # path to base/third_party/libevent/linux/event-config.h
 #)
 
-add_relative_include_dir(${PROJECT_NAME}_pcf INTERFACE ".")
+add_relative_include_dir(${STATIC_LIB_NAME} PUBLIC "")
+add_relative_include_dir(${PROJECT_NAME}_pcf INTERFACE "")
+
+#set_target_properties(${PROJECT_NAME}_pcf PROPERTIES
+#  INTERFACE_INCLUDE_DIRECTORIES
+#    "$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}"
+#)
+
+target_include_directories(${STATIC_LIB_NAME} PUBLIC
+  "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/base/third_party/libevent>"
+  "$<BUILD_INTERFACE:${LIBEVENT_DIR}compat>"
+  "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>" # path to base/third_party/libevent/linux/event-config.h
+)
+
+target_include_directories(${STATIC_LIB_NAME} PUBLIC
+  $<INSTALL_INTERFACE:include>
+  $<INSTALL_INTERFACE:include/base>
+  $<INSTALL_INTERFACE:include/base/third_party>
+  $<INSTALL_INTERFACE:include/base/third_party/libevent>
+  $<INSTALL_INTERFACE:include/base/third_party/libevent/emscripten>
+  $<INSTALL_INTERFACE:include/base/third_party/libevent/compat>
+  #"$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}/base/third_party/libevent/emscripten>"
+  "$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}/base/third_party/libevent>"
+  #"$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}/base/third_party/libevent/linux>"
+  "$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}/base/third_party/libevent/emscripten>"
+  "$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}/base/third_party/libevent/compat>"
+  "$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}/>" # path to base/third_party/libevent/linux/event-config.h
+)
+
+add_relative_include_dir(${STATIC_LIB_NAME} PUBLIC "base/third_party/libevent")
 add_relative_include_dir(${PROJECT_NAME}_pcf INTERFACE "base/third_party/libevent")
+#set_target_properties(${PROJECT_NAME}_pcf PROPERTIES
+#  INTERFACE_INCLUDE_DIRECTORIES
+#    "$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}/base/third_party/libevent"
+#)
 
 if(TARGET_EMSCRIPTEN)
+  add_relative_include_dir(${STATIC_LIB_NAME} PUBLIC "base/third_party/libevent/emscripten")
   add_relative_include_dir(${PROJECT_NAME}_pcf INTERFACE "base/third_party/libevent/emscripten")
+  #set_target_properties(${PROJECT_NAME}_pcf PROPERTIES
+  #  INTERFACE_INCLUDE_DIRECTORIES
+  #    "$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}/base/third_party/libevent/emscripten"
+  #)
+  target_include_directories(${STATIC_LIB_NAME}
+    PUBLIC "$<BUILD_INTERFACE:${LIBEVENT_DIR}emscripten>"
+    PUBLIC "$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}/base/third_party/libevent/emscripten>"
+  )
 elseif(TARGET_LINUX)
-  add_relative_include_dir(${PROJECT_NAME}_pcf INTERFACE "base/third_party/libevent/linux")
+  # add_relative_include_dir(${STATIC_LIB_NAME} PUBLIC "base/third_party/libevent/linux")
+  # add_relative_include_dir(${PROJECT_NAME}_pcf INTERFACE "base/third_party/libevent/linux")
+  # #set_target_properties(${PROJECT_NAME}_pcf PROPERTIES
+  # #  INTERFACE_INCLUDE_DIRECTORIES
+  # #    "$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}/base/third_party/libevent/linux"
+  # #)
+  # target_include_directories(${STATIC_LIB_NAME}
+  #   PUBLIC "$<BUILD_INTERFACE:${LIBEVENT_DIR}linux>"
+  #   INTERFACE "$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}/base/third_party/libevent/linux>"
+  # )
+  add_relative_include_dir(${STATIC_LIB_NAME} PUBLIC "base/third_party/libevent/emscripten")
+  add_relative_include_dir(${PROJECT_NAME}_pcf INTERFACE "base/third_party/libevent/emscripten")
+  #set_target_properties(${PROJECT_NAME}_pcf PROPERTIES
+  #  INTERFACE_INCLUDE_DIRECTORIES
+  #    "$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}/base/third_party/libevent/emscripten"
+  #)
+  target_include_directories(${STATIC_LIB_NAME}
+    PUBLIC "$<BUILD_INTERFACE:${LIBEVENT_DIR}emscripten>"
+    PUBLIC "$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}/base/third_party/libevent/emscripten>"
+  )
 else()
   message(FATAL_ERROR "platform not supported")
 endif()
 
+add_relative_include_dir(${STATIC_LIB_NAME} PUBLIC "base/third_party/libevent/compat")
 add_relative_include_dir(${PROJECT_NAME}_pcf INTERFACE "base/third_party/libevent/compat")
+#set_target_properties(${PROJECT_NAME}_pcf PROPERTIES
+#  INTERFACE_INCLUDE_DIRECTORIES
+#    "$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}/base/third_party/libevent"
+#)
 
-#target_include_directories(${PROJECT_NAME}_pcf PUBLIC
+#target_include_directories(${PROJECT_NAME} PUBLIC
 #  ${${PROJECT_NAME}_pcf_INCLUDE_DIRS}
 #  #$<BUILD_INTERFACE:${BUILD_INTERFACE_INCLUDE_DIRS}>
 #  #$<INSTALL_INTERFACE:"${INSTALL_INTERFACE_INCLUDE_DIRS};base/third_party/libevent">
 #  #$<INSTALL_INTERFACE:base/third_party/libevent>
 #)
 
-#target_include_directories(${PROJECT_NAME}_pcf PRIVATE
+#target_include_directories(${PROJECT_NAME} PRIVATE
 #  ${CHROMIUM_DIR}
 #)
+
+target_compile_features(${STATIC_LIB_NAME} PRIVATE
+  PUBLIC cxx_auto_type
+  PRIVATE cxx_variadic_templates)
+
+target_compile_options(${STATIC_LIB_NAME} PRIVATE
+  $<$<CXX_COMPILER_ID:GNU>:-Wall>)
+
+target_compile_definitions(${STATIC_LIB_NAME} PUBLIC
+  ${LIBEVENT_DEFINES}
+  #${WTF_EMCC_DEFINITIONS}
+  #${WTF_COMMON_DEFINITIONS}
+)
 
 target_compile_definitions(${PROJECT_NAME}_pcf INTERFACE
   ${LIBEVENT_DEFINES}
@@ -89,69 +193,32 @@ target_compile_definitions(${PROJECT_NAME}_pcf INTERFACE
 )
 
 # PUBLIC_HEADER - will be installed to INCLUDES DESTINATION
-if(DEFINED PUBLIC_HEADERS)
-  set_target_properties(${PROJECT_NAME}_pcf PROPERTIES PUBLIC_HEADER ${PUBLIC_HEADERS})
-endif(DEFINED PUBLIC_HEADERS)
+#if(DEFINED PUBLIC_HEADERS)
+#  set_target_properties(${STATIC_LIB_NAME}
+#    PROPERTIES
+#      PUBLIC_HEADER ${PUBLIC_HEADERS})
+#endif(DEFINED PUBLIC_HEADERS)
 
-#set_property(TARGET ${PROJECT_NAME}_pcf
+#set_property(TARGET ${PROJECT_NAME}
 #    APPEND PROPERTY INTERFACE_COMPILE_DEFINITIONS
 #      ${LIBEVENT_DEFINES}
 #      CUSTOM_TEST_DEF=1
 #)
 
-add_library(${PROJECT_NAME} STATIC # TODO: rename to ${PROJECT_NAME}_static
-  ${LIBEVENT_SOURCES}
+set_property(TARGET ${STATIC_LIB_NAME} PROPERTY CXX_STANDARD 17)
+
+set(DEBUG_LIBRARY_SUFFIX "-d")
+set_target_properties(${STATIC_LIB_NAME}
+  PROPERTIES
+    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}" # TODO: /lib
+    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}" # TODO: /lib
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}" # TODO: /bin
+    OUTPUT_NAME "${STATIC_LIB_NAME}$<$<CONFIG:Debug>:${DEBUG_LIBRARY_SUFFIX}>"
 )
 
-set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 17)
+#target_link_libraries(${STATIC_LIB_NAME} INTERFACE
+#  # public library config as separate lib
+#  ${PROJECT_NAME}_pcf
+#)
 
-list(APPEND LIBEVENT_INCLUDE_DIRS
-  ${CMAKE_CURRENT_SOURCE_DIR}base/third_party/libevent
-  ${LIBEVENT_DIR}emscripten
-  ${LIBEVENT_DIR}compat
-)
-
-target_link_libraries(${PROJECT_NAME} PUBLIC
-  # public library config as separate lib
-  ${PROJECT_NAME}_pcf
-)
-
-target_include_directories(${PROJECT_NAME} PUBLIC
-  ${LIBEVENT_INCLUDE_DIRS}
-  ${CMAKE_CURRENT_SOURCE_DIR} # path to base/third_party/libevent/linux/event-config.h
-)
-
-if (NOT DEFINED CMAKE_INSTALL_BINDIR)
-  set(CMAKE_INSTALL_BINDIR "${CMAKE_INSTALL_PREFIX}/bin")
-endif()
-if (NOT DEFINED CMAKE_INSTALL_INCLUDEDIR)
-  set(CMAKE_INSTALL_INCLUDEDIR "${CMAKE_INSTALL_PREFIX}/include")
-endif()
-if (NOT DEFINED CMAKE_INSTALL_LIBDIR)
-  set(CMAKE_INSTALL_LIBDIR "${CMAKE_INSTALL_PREFIX}/lib")
-endif()
-
-# NOTE: preserve directory structure
-install(
-    DIRECTORY ${CMAKE_SOURCE_DIR}/base/
-    DESTINATION base
-    FILES_MATCHING PATTERN "*")
-
-#install(TARGETS ${PROJECT_NAME}_pcf
-#  INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-#  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-#  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-#  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
-
-install(TARGETS ${PROJECT_NAME}_pcf EXPORT ${PROJECT_NAME}_pcf-config)
-install(EXPORT  ${PROJECT_NAME}_pcf-config DESTINATION cmake)
-#install(EXPORT ${PROJECT_NAME}_pcf-config DESTINATION ".")
-# see Package Configuration File (PCF) https://jfreeman.dev/blog/2019/05/22/trying-conan-with-modern-cmake:-dependencies/
-export(TARGETS ${PROJECT_NAME}_pcf
-  FILE ${PROJECT_NAME}_pcf-config.cmake)
-
-install(TARGETS ${PROJECT_NAME}
-  INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
+include(cmake/Exports)

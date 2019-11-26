@@ -139,9 +139,9 @@ if(TARGET_LINUX)
   )
 endif(TARGET_LINUX)
 
-add_dependencies(base
-  ${EXTRA_CHROMIUM_BASE_LIBS}
-)
+#add_dependencies(base
+#  ${EXTRA_CHROMIUM_BASE_LIBS}
+#)
 
 #message(FATAL_ERROR EXTRA_CHROMIUM_BASE_LIBS=${EXTRA_CHROMIUM_BASE_LIBS})
 
