@@ -697,58 +697,19 @@ endif()
 if(TARGET_LINUX)
   # uses Config.cmake or a -config.cmake file
   # see https://gitlab.kitware.com/cmake/community/wikis/doc/tutorials/How-to-create-a-ProjectConfig.cmake-file
-  #find_package(chromium_libevent_pcf CONFIG REQUIRED)
-  find_package(chromium_libevent CONFIG REQUIRED)
-  #message(FATAL_ERROR "CHROMIUM_LIBEVENT_LIBRARY=${CHROMIUM_LIBEVENT_LIBRARY}")
-  #find_package(chromium_libevent REQUIRED)
-  #find_package(chromium_libevent CONFIG REQUIRED)
-  ##
-  #get_target_property(chromium_libevent_pcf_INTERFACE_INCLUDE_DIRECTORIES
-  #  chromium_libevent::chromium_libevent_pcf INTERFACE_INCLUDE_DIRECTORIES)
-  #get_target_property(chromium_libevent_pcf_INTERFACE_COMPILE_DEFINITIONS
-  #  chromium_libevent::chromium_libevent_pcf INTERFACE_COMPILE_DEFINITIONS)
-  #if(NOT DEFINED chromium_libevent_pcf_INTERFACE_INCLUDE_DIRECTORIES)
-  #  message(FATAL_ERROR "NOT DEFINED: chromium_libevent_pcf_INTERFACE_INCLUDE_DIRECTORIES")
-  #endif(NOT DEFINED chromium_libevent_pcf_INTERFACE_INCLUDE_DIRECTORIES)
+  find_package(chromium_libevent REQUIRED)
   #
-
-#message(STATUS "chromium_libevent_pcf_INTERFACE_COMPILE_DEFINITIONS=${chromium_libevent_pcf_INTERFACE_COMPILE_DEFINITIONS}")
-#message(FATAL_ERROR "chromium_libevent_pcf_INTERFACE_INCLUDE_DIRECTORIES=${chromium_libevent_pcf_INTERFACE_INCLUDE_DIRECTORIES}")
-
   if(TARGET chromium_libevent::chromium_libevent)
     message(STATUS "using conan provided libevent library")
-    #set(libevent_LIB chromium_libevent::chromium_libevent-static)
-    #set(libevent_LIB chromium_libevent::chromium_libevent-static)
     set(libevent_LIB chromium_libevent::chromium_libevent)
-
-    target_link_libraries(chromium_libevent::chromium_libevent INTERFACE
-      chromium_libevent::chromium_libevent_pcf) # public library config as separate lib
-    #target_link_libraries(chromium_libevent::chromium_libevent-static INTERFACE
-    #  chromium_libevent::chromium_libevent_pcf) # public library config as separate lib
-
-#get_target_property(chromium_libevent_pcf_INTERFACE_INCLUDE_DIRECTORIES
-#  chromium_libevent::chromium_libevent-static INTERFACE_INCLUDE_DIRECTORIES)
-#get_target_property(chromium_libevent_pcf_INTERFACE_COMPILE_DEFINITIONS
-#  chromium_libevent::chromium_libevent-static INTERFACE_COMPILE_DEFINITIONS)
-#message(STATUS "chromium_libevent_pcf_INTERFACE_COMPILE_DEFINITIONS=${chromium_libevent_pcf_INTERFACE_COMPILE_DEFINITIONS}")
-#message(FATAL_ERROR "chromium_libevent_pcf_INTERFACE_INCLUDE_DIRECTORIES=${chromium_libevent_pcf_INTERFACE_INCLUDE_DIRECTORIES}")
-
   else()
-    message(FATAL_ERROR "not supported: using system provided libevent library") # TODO
-    add_subdirectory(thirdparty/chromium_libevent)
+    message(FATAL_ERROR "not supported: using system provided libevent library")
   endif()
 elseif(TARGET_WINDOWS OR TARGET_EMSCRIPTEN)
   # skip
 else()
   message(FATAL_ERROR "chromium_libevent not found")
 endif()
-
-#message(STATUS "chromium_libevent_INCLUDES=${chromium_libevent_INCLUDES}")
-#message(STATUS "chromium_libevent_INCLUDE_DIRS=${chromium_libevent_INCLUDE_DIRS}")
-#message(STATUS "chromium_libevent_DEFINITIONS=${chromium_libevent_DEFINITIONS}")
-#message(STATUS "chromium_libevent_COMPILE_DEFINITIONS=${chromium_libevent_COMPILE_DEFINITIONS}")
-#message(STATUS "chromium_libevent_LINKER_FLAGS_LIST=${chromium_libevent_LINKER_FLAGS_LIST}")
-#message(FATAL_ERROR "chromium_libevent_COMPILE_OPTIONS_LIST=${chromium_libevent_COMPILE_OPTIONS_LIST}")
 
 #
 # HARFBUZZ
