@@ -449,7 +449,6 @@ add_library(MOJO STATIC
 
 target_link_libraries(MOJO PRIVATE
   ${WTF_LIBRARY_NAME}
-  #dynamic_annotations
   #${BASE_LIBRARIES}
   #
   # MOJO_CORE

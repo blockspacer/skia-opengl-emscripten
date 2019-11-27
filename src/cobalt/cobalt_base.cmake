@@ -87,8 +87,8 @@ add_library(cobalt_base STATIC
 
 if(TARGET_LINUX)
   list(APPEND EXTRA_COBALT_BASE_LIBS
-    xdg_mime
-    xdg_user_dirs
+    ${xdg_mime_LIB}
+    ${xdg_user_dirs_LIB}
   )
 elseif(TARGET_WINDOWS OR TARGET_EMSCRIPTEN)
   # TODO
@@ -106,13 +106,20 @@ target_link_libraries(cobalt_base PRIVATE
   #starboard_core
   starboard_eztime
   starboard_common
-  modp_b64
-  #dynamic_annotations
+  ${modp_b64_LIB}
   ${GLIBXML_LIB}
   ${CUSTOM_ICU_LIB}
   #ced
   glm
   ${EXTRA_COBALT_BASE_LIBS}
+)
+
+if(NOT DEFINED build_util_LIB)
+  message(FATAL_ERROR "NOT DEFINED: build_util_LIB")
+endif(NOT DEFINED build_util_LIB)
+
+target_link_libraries(cobalt_base PUBLIC
+  ${build_util_LIB}
 )
 
 set_property(TARGET cobalt_base PROPERTY CXX_STANDARD 17)

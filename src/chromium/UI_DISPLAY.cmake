@@ -131,7 +131,7 @@ target_link_libraries(UI_DISPLAY PRIVATE
   #"//base",
   base
   #"//base/third_party/dynamic_annotations",
-  #dynamic_annotations
+  #${dynamic_annotations_LIB}
   #"//cc/paint",
   PAINT_CC
   #"//ui/base",

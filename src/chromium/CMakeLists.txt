@@ -165,7 +165,7 @@ include(configure_buildflags.cmake)
 
 option(SINGLE_THREADED "Enable single threaded mode" OFF) # TODO
 
-include(modp_b64.cmake) # TODO: link with modp_b64
+#include(modp_b64.cmake) # TODO: link with modp_b64
 
 #configure_file(cmakeconfig.h.cmake ${CMAKE_CURRENT_SOURCE_DIR}/cmakeconfig.h)
 add_definitions(-DBUILDING_WTF)
@@ -246,7 +246,7 @@ elseif(TARGET_LINUX)
   endif(ENABLE_FONTCONFIG AND ENABLE_HARFBUZZ AND NOT HARFBUZZ_FROM_SKIA)
 
   # tcmalloc
-  include(tcmalloc.cmake)
+  #include(tcmalloc.cmake)
 elseif(TARGET_WINDOWS)
   # khronos
   if(ENABLE_KHRONOS)
@@ -278,14 +278,9 @@ if(ENABLE_BORINGSSL)
   include(BORINGSSL.cmake)
 endif(ENABLE_BORINGSSL)
 
-# dynamic_annotations
-if(ENABLE_DYNAMIC_ANNOTATIONS)
-  include(dynamic_annotations.cmake)
-endif(ENABLE_DYNAMIC_ANNOTATIONS)
-
-if(ENABLE_COMPACT_ENC_DET)
-  include(ced.cmake)
-endif(ENABLE_COMPACT_ENC_DET)
+#if(ENABLE_COMPACT_ENC_DET)
+#  include(ced.cmake)
+#endif(ENABLE_COMPACT_ENC_DET)
 
 # GURL: URL parsing.
 # Depends on : icu (libicuuc), base.
@@ -363,7 +358,6 @@ if(ENABLE_SKIA AND ENABLE_BLINK)
     #skshaper
     #particles
     #${skottie_LIB}
-    #dynamic_annotations
     #libjpeg
     #libpng
     #zlib

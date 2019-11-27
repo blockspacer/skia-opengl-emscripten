@@ -35,7 +35,6 @@ target_link_libraries(cobalt_web_animations PRIVATE
   #cobalt_nanobase
   #cobalt_script
   #v8_stub
-  #modp_b64
 )
 
 set_property(TARGET cobalt_web_animations PROPERTY CXX_STANDARD 17)

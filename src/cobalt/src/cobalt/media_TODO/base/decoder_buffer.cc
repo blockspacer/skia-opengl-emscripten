@@ -2,11 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#include "build/build_config.h" /// \note must be first include
+
 #include "cobalt/media/base/decoder_buffer.h"
 
 #include <vector>
 
-#include "cobalt/build/build_config.h"
 #include "starboard/media.h"
 #include "starboard/memory.h"
 

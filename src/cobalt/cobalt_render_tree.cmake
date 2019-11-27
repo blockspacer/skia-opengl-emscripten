@@ -70,7 +70,7 @@ target_link_libraries(cobalt_render_tree PRIVATE
   cobalt_base
   cobalt_math
   base # TODO
-  modp_b64
+  ${modp_b64_LIB}
   #dynamic_annotations
   ${SKIA_LIB} # TODO
   ${skottie_LIB} # TODO

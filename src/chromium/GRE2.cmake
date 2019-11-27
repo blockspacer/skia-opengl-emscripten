@@ -59,7 +59,6 @@ target_link_libraries(GRE2 PRIVATE
   # libnss or boringssl
   # libnspr
   # open-vcdiff
-  #dynamic_annotations
 )
 
 set_property(TARGET GRE2 PROPERTY CXX_STANDARD 17)

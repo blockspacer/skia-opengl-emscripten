@@ -416,7 +416,7 @@ target_link_libraries(cobalt_dom PRIVATE
   cobalt_ui_navigation
   cobalt_web_animations
   #cobalt_browser ## TODO ##
-  modp_b64
+  ${modp_b64_LIB}
   #dynamic_annotations
   GURL
   ${GNET_LIBS}

@@ -1876,7 +1876,7 @@ target_link_libraries(GNET PRIVATE
   #starboard_core
   ${STARBOARD_EZTIME_LIB}
   ${STARBOARD_COMMON_LIB}
-  modp_b64
+  ${modp_b64_LIB}
   ${GCRYPTO_LIB}
   GURL
   # sql
@@ -1885,7 +1885,6 @@ target_link_libraries(GNET PRIVATE
   ${BORINGSSL_LIBS}
   # libnspr
   # open-vcdiff
-  #dynamic_annotations
 )
 
 set_property(TARGET GNET PROPERTY CXX_STANDARD 17)

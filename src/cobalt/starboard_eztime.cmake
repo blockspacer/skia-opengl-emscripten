@@ -21,7 +21,6 @@ target_link_libraries(starboard_eztime PRIVATE
   #starboard_common
   starboard_icu_init
   #starboard_core
-  #modp_b64
 )
 
 set_property(TARGET starboard_eztime PROPERTY CXX_STANDARD 17)

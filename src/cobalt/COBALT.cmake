@@ -13,7 +13,7 @@ add_library(COBALT_CORE INTERFACE
 
 target_link_libraries(COBALT_CORE INTERFACE
   base # TODO
-  modp_b64
+  ${modp_b64_LIB}
   ${COBALT_LIBS}
   #cobalt_base
   #cobalt_nanobase

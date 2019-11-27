@@ -542,7 +542,6 @@ target_link_libraries(UI_BASE PRIVATE
   #  "//url",
   #]
   #
-  #dynamic_annotations
   base
   SKIA
   UI_GFX
@@ -551,11 +550,9 @@ target_link_libraries(UI_BASE PRIVATE
   ${CUSTOM_ICU_LIB}
   ${HARFBUZZ_LIBRARIES}
   #
-  #dynamic_annotations
   #base
   #GFX_GEOMETRY
   #
-  #dynamic_annotations
   #${BASE_LIBRARIES}
   ## linux libsync
   #${libsync_LIB}

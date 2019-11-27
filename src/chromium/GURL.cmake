@@ -58,11 +58,10 @@ target_link_libraries(GURL PRIVATE
   #starboard_core
   ${STARBOARD_EZTIME_LIB}
   ${STARBOARD_COMMON_LIB}
-  modp_b64
+  ${modp_b64_LIB}
   #${BASE_LIBRARIES}
   ${CUSTOM_ICU_LIB}
   ${HARFBUZZ_LIBRARIES}
-  #dynamic_annotations
 )
 
 set_property(TARGET GURL PROPERTY CXX_STANDARD 17)

@@ -81,7 +81,7 @@ target_link_libraries(UI_COMPOSITOR PRIVATE
   #"//base",
   base
   #"//base/third_party/dynamic_annotations",
-  #dynamic_annotations
+  #${dynamic_annotations_LIB}
   #"//cc/animation",
   ${ANIMATION_CC_LIB}
   #"//cc/paint",

@@ -766,7 +766,7 @@ target_link_libraries(UI_VIEWS PRIVATE
   #"//base:i18n",
   base
   #"//base/third_party/dynamic_annotations",
-  #dynamic_annotations
+  #${dynamic_annotations_LIB}
   #"//cc/paint",
   #PAINT_CC
   #"//mojo/public/cpp/bindings",
@@ -827,7 +827,7 @@ target_link_libraries(UI_VIEWS PRIVATE
   # #"//base",
   # base
   # #"//base/third_party/dynamic_annotations",
-  # #dynamic_annotations
+  # #${dynamic_annotations_LIB}
   # #"//cc/animation",
   # ${ANIMATION_CC_LIB}
   # #"//cc/paint",

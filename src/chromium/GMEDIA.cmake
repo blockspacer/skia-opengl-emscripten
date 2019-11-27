@@ -417,7 +417,6 @@ target_link_libraries(GMEDIA PRIVATE
 #  #  ":shared_memory_support",
   #  "//ui/gfx:color_space",
   #]
-  #dynamic_annotations
   CC
   PAINT_CC
   ${GCRYPTO_LIB}

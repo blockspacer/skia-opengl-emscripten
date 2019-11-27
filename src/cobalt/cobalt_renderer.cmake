@@ -52,7 +52,7 @@ target_link_libraries(cobalt_renderer PRIVATE
   #starboard_core
   starboard_eztime
   starboard_common
-  modp_b64
+  ${modp_b64_LIB}
   #dynamic_annotations
   ${GLIBXML_LIB}
   ${CUSTOM_ICU_LIB}

@@ -9,6 +9,25 @@ project(${PROJECT_NAME}
   VERSION ${PROJECT_VERSION}
   LANGUAGES CXX C)
 
+# --------------------------- conan configuration ------------------------------
+
+if(EXISTS "${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
+  list(APPEND CMAKE_MODULE_PATH ${CMAKE_BINARY_DIR}/)
+  include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+  include(${CMAKE_BINARY_DIR}/conan_paths.cmake OPTIONAL)
+  conan_basic_setup(
+    # prevent conan_basic_setup from resetting cmake variables
+    TARGETS
+    KEEP_RPATHS
+    # see https://github.com/conan-io/conan/issues/6012
+    NO_OUTPUT_DIRS)
+else()
+  message (FATAL_ERROR "must use conan")
+endif()
+
+find_package(cmake_platform_detection REQUIRED)
+run_cmake_platform_detection()
+
 # this sets the paths that cmake will use to locate libs (via the FindXXX.cmake or XXConfig.cmake scripts)
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/)
 list(APPEND CMAKE_PREFIX_PATH ${CMAKE_CURRENT_SOURCE_DIR}/lib/SDL2)
@@ -40,7 +59,7 @@ include(ConfigSafeGuards)
 
 include(ForceLatinPaths)
 
-include(PlatformDetection)
+include(PlatformChecks)
 
 include(BuildOptions)
 
@@ -107,22 +126,6 @@ if(NOT EMSCRIPTEN)
 endif(NOT EMSCRIPTEN)
 
 find_threads()
-
-# --------------------------- conan configuration ------------------------------
-
-if(EXISTS "${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
-  list(APPEND CMAKE_MODULE_PATH ${CMAKE_BINARY_DIR}/)
-  include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-  include(${CMAKE_BINARY_DIR}/conan_paths.cmake REQUIRED)
-  conan_basic_setup(
-    # prevent conan_basic_setup from resetting cmake variables
-    TARGETS
-    KEEP_RPATHS
-    # see https://github.com/conan-io/conan/issues/6012
-    NO_OUTPUT_DIRS)
-else()
-  message (FATAL_ERROR "must use conan")
-endif()
 
 # ------------------------- print_cmake_system_info ----------------------------
 
@@ -661,17 +664,6 @@ endif()
 #set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_REF_CNT_MIXIN_INCLUDE=\\\"${SKIA_EXT_DIR}config/sk_ref_cnt_ext_release.h\\\"")
 
 #
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${COMMON_C_FLAGS}")
-#
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${COMMON_CXX_FLAGS}")
-#
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${COMMON_FLAGS}")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${COMMON_FLAGS}")
-
-#
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${SK_COMMON_FLAGS}")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${SK_COMMON_FLAGS}")
-#
 # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${ICU_DEFINES}")
 # set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${ICU_DEFINES}")
 #
@@ -679,6 +671,20 @@ if(TARGET_EMSCRIPTEN)
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${EMCC_COMMON}")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${EMCC_COMMON}")
 endif(TARGET_EMSCRIPTEN)
+
+find_package(chromium_base REQUIRED)
+if(TARGET chromium_base::chromium_base-static)
+  set(chromium_base_LIB chromium_base::chromium_base-static)
+else()
+  message(FATAL_ERROR "not supported: using system provided chromium_base library")
+endif()
+
+find_package(chromium_build_util REQUIRED)
+if(TARGET chromium_build_util::chromium_build_util-static)
+  set(build_util_LIB chromium_build_util::chromium_build_util-static)
+else()
+  message(FATAL_ERROR "not supported: using system provided chromium_build_util library")
+endif()
 
 #
 # ICU
@@ -691,10 +697,7 @@ if(USE_ICU)
   if(USE_CUSTOM_ICU)
     # chromium_icu
     if(TARGET_LINUX OR TARGET_EMSCRIPTEN)
-      # uses Config.cmake or a -config.cmake file
-      # see https://gitlab.kitware.com/cmake/community/wikis/doc/tutorials/How-to-create-a-ProjectConfig.cmake-file
       find_package(chromium_icu REQUIRED)
-      #
       if(NOT TARGET chromium_icu::chromium_icu-static)
         message(FATAL_ERROR "not supported: using system provided libevent library")
       endif()
@@ -711,28 +714,88 @@ if(USE_ICU)
     message(FATAL_ERROR "TODO: supports not only USE_CUSTOM_ICU")
   endif(USE_CUSTOM_ICU)
 endif(USE_ICU)
-
+#
 if(NOT DEFINED CUSTOM_ICU_LIB)
   message(FATAL_ERROR "CUSTOM_ICU_LIB must be defined")
 endif(NOT DEFINED CUSTOM_ICU_LIB)
 
+# TODO: move to base
+# ${dynamic_annotations_LIB}
 if(TARGET_LINUX)
-  # xdg_mime
-  include(xdg_mime.cmake)
-  # xdg_user_dirs
-  include(xdg_user_dirs.cmake)
+  # ENABLE_DYNAMIC_ANNOTATIONS option defines DYNAMIC_ANNOTATIONS_ENABLED=1
+  # NOTE: we always need to link with dynamic_annotations
+  set(ENABLE_DYNAMIC_ANNOTATIONS TRUE) # required by tcmalloc
+elseif(TARGET_EMSCRIPTEN OR TARGET_WINDOWS)
+  set(ENABLE_DYNAMIC_ANNOTATIONS FALSE)
+else()
+  message(FATAL_ERROR "unknown platform")
+endif()
+if(NOT DEFINED ENABLE_DYNAMIC_ANNOTATIONS)
+  message(FATAL_ERROR "ENABLE_DYNAMIC_ANNOTATIONS must be defined")
+endif(NOT DEFINED ENABLE_DYNAMIC_ANNOTATIONS)
+
+find_package(chromium_dynamic_annotations REQUIRED)
+if(TARGET chromium_dynamic_annotations::chromium_dynamic_annotations-static)
+  set(dynamic_annotations_LIB chromium_dynamic_annotations::chromium_dynamic_annotations-static)
+else()
+  message(FATAL_ERROR "not supported: using system provided dynamic_annotations library")
+endif()
+
+if(TARGET_LINUX)
+  find_package(chromium_tcmalloc REQUIRED)
+  if(TARGET chromium_tcmalloc::chromium_tcmalloc-static)
+    set(tcmalloc_LIB chromium_tcmalloc::chromium_tcmalloc-static)
+  else()
+    message(FATAL_ERROR "not supported: using system provided chromium_tcmalloc library")
+  endif()
 elseif(TARGET_WINDOWS OR TARGET_EMSCRIPTEN)
   # skip
 else()
   message(FATAL_ERROR "platform not supported")
 endif()
 
+#if(TARGET_LINUX)
+#  # xdg_mime
+#  include(xdg_mime.cmake)
+#  # xdg_user_dirs
+#  include(xdg_user_dirs.cmake)
+#elseif(TARGET_WINDOWS OR TARGET_EMSCRIPTEN)
+#  # skip
+#else()
+#  message(FATAL_ERROR "platform not supported")
+#endif()
+
+# xdg_user_dirs
+if(TARGET_LINUX)
+  find_package(chromium_xdg_user_dirs REQUIRED)
+  if(TARGET chromium_xdg_user_dirs::chromium_xdg_user_dirs-static)
+    set(xdg_user_dirs_LIB chromium_xdg_user_dirs::chromium_xdg_user_dirs-static)
+  else()
+    message(FATAL_ERROR "not supported: using system provided xdg_user_dirs library")
+  endif()
+elseif(TARGET_WINDOWS OR TARGET_EMSCRIPTEN)
+  # skip
+else()
+  message(FATAL_ERROR "platform no supported")
+endif()
+
+# xdg_mime
+if(TARGET_LINUX)
+  find_package(chromium_xdg_mime REQUIRED)
+  if(TARGET chromium_xdg_mime::chromium_xdg_mime-static)
+    set(xdg_mime_LIB chromium_xdg_mime::chromium_xdg_mime-static)
+  else()
+    message(FATAL_ERROR "not supported: using system provided xdg_mime library")
+  endif()
+elseif(TARGET_WINDOWS OR TARGET_EMSCRIPTEN)
+  # skip
+else()
+  message(FATAL_ERROR "platform no supported")
+endif()
+
 # libevent
 if(TARGET_LINUX)
-  # uses Config.cmake or a -config.cmake file
-  # see https://gitlab.kitware.com/cmake/community/wikis/doc/tutorials/How-to-create-a-ProjectConfig.cmake-file
   find_package(chromium_libevent REQUIRED)
-  #
   if(TARGET chromium_libevent::chromium_libevent-static)
     set(libevent_LIB chromium_libevent::chromium_libevent-static)
   else()
@@ -741,8 +804,30 @@ if(TARGET_LINUX)
 elseif(TARGET_WINDOWS OR TARGET_EMSCRIPTEN)
   # skip
 else()
-  message(FATAL_ERROR "chromium_libevent not found")
+  message(FATAL_ERROR "platform no supported")
 endif()
+
+# modp_b64
+find_package(chromium_modp_b64 REQUIRED)
+if(TARGET chromium_modp_b64::chromium_modp_b64-static)
+  set(modp_b64_LIB chromium_modp_b64::chromium_modp_b64-static)
+else()
+  message(FATAL_ERROR "not supported: using system provided modp_b64 library")
+endif()
+
+# compact_enc_det
+set(ENABLE_COMPACT_ENC_DET TRUE)
+if(NOT ENABLE_COMPACT_ENC_DET)
+  set(COMMON_FLAGS "${COMMON_FLAGS} -DDISABLE_COMPACT_ENC_DET=1")
+endif(NOT ENABLE_COMPACT_ENC_DET)
+if(ENABLE_COMPACT_ENC_DET)
+  find_package(chromium_compact_enc_det REQUIRED)
+  if(TARGET chromium_compact_enc_det::chromium_compact_enc_det-static)
+    set(ced_LIB chromium_compact_enc_det::chromium_compact_enc_det-static)
+  else()
+    message(FATAL_ERROR "not supported: using system provided compact_enc_det library")
+  endif()
+endif(ENABLE_COMPACT_ENC_DET)
 
 #
 # HARFBUZZ
@@ -757,6 +842,18 @@ if(TARGET_EMSCRIPTEN OR TARGET_LINUX OR TARGET_WINDOWS)
 else()
   message(FATAL_ERROR "platform not supported")
 endif()
+
+#
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${COMMON_C_FLAGS}")
+#
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${COMMON_CXX_FLAGS}")
+#
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${COMMON_FLAGS}")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${COMMON_FLAGS}")
+
+#
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${SK_COMMON_FLAGS}")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${SK_COMMON_FLAGS}")
 
 if(ENABLE_SKIA)
   #
@@ -821,7 +918,7 @@ if(ENABLE_WTF OR ENABLE_BLINK OR ENABLE_COBALT OR ENABLE_BASE)
   # NOTE: remove fork of libicui
   # as in https://github.com/Tarnyko/chromium-lite/blob/master/README#L76
   #
-  add_subdirectory(thirdparty/chromium_base)
+  #add_subdirectory(thirdparty/chromium_base)
 
   # chromium
   add_subdirectory(src/chromium) # requires skia above
@@ -1057,7 +1154,7 @@ if(TARGET_EMSCRIPTEN)
     #
     ${WTF_LIBS}
     # tcmalloc only for posix/linux/e.t.c.
-    #tcmalloc
+    #${tcmalloc_LIB}
     #
     #UI_GFX
     #CC

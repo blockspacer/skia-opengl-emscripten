@@ -69,7 +69,7 @@ target_link_libraries(cobalt_math PRIVATE
   #cobalt_script
   #v8_stub
   base # TODO
-  modp_b64
+  ${modp_b64_LIB}
   #dynamic_annotations
   ${GLIBXML_LIB}
   ${CUSTOM_ICU_LIB}

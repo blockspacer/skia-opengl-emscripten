@@ -97,23 +97,18 @@ if(ENABLE_CHROMIUM_UI_COMPOSITOR)
   set(UI_COMPOSITOR_LIB UI_COMPOSITOR)
 endif(ENABLE_CHROMIUM_UI_COMPOSITOR)
 
-if(TARGET_LINUX)
-  set(ENABLE_DYNAMIC_ANNOTATIONS TRUE) # required by tcmalloc
-elseif(TARGET_EMSCRIPTEN OR TARGET_WINDOWS)
-  # skip
-  set(ENABLE_DYNAMIC_ANNOTATIONS FALSE)
-else()
-  message(FATAL_ERROR "unknown platform")
-endif()
+#if(TARGET_LINUX)
+#  set(ENABLE_DYNAMIC_ANNOTATIONS TRUE) # required by tcmalloc
+#elseif(TARGET_EMSCRIPTEN OR TARGET_WINDOWS)
+#  # skip
+#  set(ENABLE_DYNAMIC_ANNOTATIONS FALSE)
+#else()
+#  message(FATAL_ERROR "unknown platform")
+#endif()
 
-if(ENABLE_DYNAMIC_ANNOTATIONS)
-  set(dynamic_annotations_LIB dynamic_annotations)
-endif(ENABLE_DYNAMIC_ANNOTATIONS)
-
-set(ENABLE_COMPACT_ENC_DET FALSE)
-if(ENABLE_COMPACT_ENC_DET)
-  set(ced_LIB ced)
-endif(ENABLE_COMPACT_ENC_DET)
+#if(ENABLE_DYNAMIC_ANNOTATIONS)
+#  set(dynamic_annotations_LIB dynamic_annotations)
+#endif(ENABLE_DYNAMIC_ANNOTATIONS)
 
 set(ENABLE_COBALT_DOM_PARSER FALSE CACHE BOOL "ENABLE_COBALT_DOM_PARSER")
 if(ENABLE_COBALT_DOM_PARSER AND NOT ENABLE_GLIBXML)
@@ -306,16 +301,12 @@ if(TARGET_WINDOWS)
   endif()
 endif(TARGET_WINDOWS)
 
-# Annotations useful when implementing condition variables such as CondVar,
-# using conditional critical sections (Await/LockWhen) and when constructing
-# user-defined synchronization mechanisms.
-if(ENABLE_DYNAMIC_ANNOTATIONS)
-  set(COMMON_FLAGS "${COMMON_FLAGS} -DDYNAMIC_ANNOTATIONS_ENABLED=1")
-endif(ENABLE_DYNAMIC_ANNOTATIONS)
-
-if(NOT ENABLE_COMPACT_ENC_DET)
-  set(COMMON_FLAGS "${COMMON_FLAGS} -DDISABLE_COMPACT_ENC_DET=1")
-endif(NOT ENABLE_COMPACT_ENC_DET)
+# # Annotations useful when implementing condition variables such as CondVar,
+# # using conditional critical sections (Await/LockWhen) and when constructing
+# # user-defined synchronization mechanisms.
+# if(ENABLE_DYNAMIC_ANNOTATIONS)
+#   set(COMMON_FLAGS "${COMMON_FLAGS} -DDYNAMIC_ANNOTATIONS_ENABLED=1")
+# endif(ENABLE_DYNAMIC_ANNOTATIONS)
 
 if(ENABLE_SKIA AND ENABLE_BLINK)
   set(COMMON_FLAGS "${COMMON_FLAGS} -DENABLE_BLINK_UI=1")
@@ -448,7 +439,7 @@ if(ENABLE_BLINK)
     if(TARGET_LINUX)
         list(APPEND BLINK_LIBS
           # tcmalloc only for posix/linux/e.t.c.
-          tcmalloc
+          ${tcmalloc_LIB}
           # libevent only for posix/linux/e.t.c.
           ${libevent_LIB}
         )

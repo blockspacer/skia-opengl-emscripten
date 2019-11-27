@@ -909,7 +909,7 @@ list(APPEND BASE_SOURCES
   ## ${BASE_SOURCES_PATH}posix/unix_domain_socket_unittest.cc
   ## ${BASE_SOURCES_PATH}task/thread_pool/task_tracker_posix_unittest.cc
   ### build ###
-  ${BUILD_CONFIG_PARENT_PATH}/build_config.h
+  #${BUILD_CONFIG_PARENT_PATH}/build_config.h
 )
 
 if(BASE_USE_PARTITION_ALLOCATOR)

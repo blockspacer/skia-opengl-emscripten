@@ -380,7 +380,6 @@ target_link_libraries(CC PRIVATE
   DEBUG_CC
   PAINT_CC
   #ANIMATION_CC
-  #dynamic_annotations
   #${BASE_LIBRARIES}
   #GPU_COMMAND_BUFFER
   SKIA_EXT

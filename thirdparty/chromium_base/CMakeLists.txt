@@ -9,20 +9,168 @@ project(${PROJECT_NAME}
   VERSION ${PROJECT_VERSION}
   LANGUAGES CXX C)
 
-# TODO
-if(NOT DEFINED BASE_STANDALONE)
-  message("FATAL_ERROR: TODO: USE BASE_STANDALONE")
-  set(BASE_STANDALONE TRUE) # TODO
-endif(NOT DEFINED BASE_STANDALONE)
+set(STATIC_LIB_NAME ${PROJECT_NAME}-static)
 
-if(BASE_STANDALONE)
-  set(CHROMIUM_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../chromium/)
-  set(COMMON_THIRDPARTY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../thirdparty/)
-  set(ICU_PARENT_FULL_DIR ${COMMON_THIRDPARTY_DIR}/icu_wrapper/)
-  set(ICU_FULL_DIR ${ICU_PARENT_FULL_DIR}third_party/icu/)
-  set(BASE_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/)
-  set(BASE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/base/)
-endif(BASE_STANDALONE)
+# --------------------------- conan configuration ------------------------------
+
+if(EXISTS "${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
+  list(APPEND CMAKE_MODULE_PATH ${CMAKE_BINARY_DIR}/)
+  include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+  include(${CMAKE_BINARY_DIR}/conan_paths.cmake OPTIONAL)
+  conan_basic_setup(
+    # prevent conan_basic_setup from resetting cmake variables
+    TARGETS
+    KEEP_RPATHS
+    # see https://github.com/conan-io/conan/issues/6012
+    NO_OUTPUT_DIRS)
+else()
+  message (FATAL_ERROR "must use conan")
+endif()
+
+find_package(cmake_platform_detection REQUIRED)
+run_cmake_platform_detection()
+
+find_package(chromium_build_util REQUIRED)
+if(TARGET chromium_build_util::chromium_build_util-static)
+  set(build_util_LIB chromium_build_util::chromium_build_util-static)
+else()
+  message(FATAL_ERROR "not supported: using system provided chromium_build_util library")
+endif()
+
+#
+# ICU
+#
+list(APPEND BASE_DEFINES HAS_ICU=1)
+# chromium_icu
+if(TARGET_LINUX OR TARGET_EMSCRIPTEN)
+  find_package(chromium_icu REQUIRED)
+  if(NOT TARGET chromium_icu::chromium_icu-static)
+    message(FATAL_ERROR "not supported: using system provided libevent library")
+  endif()
+elseif(TARGET_WINDOWS)
+  # skip
+else()
+  message(FATAL_ERROR "chromium_icu not found")
+endif()
+#
+list(APPEND BASE_DEFINES USE_CUSTOM_ICU=1)
+set(CUSTOM_ICU_LIB chromium_icu::chromium_icu-static) # see icu.cmake
+#
+if(NOT DEFINED CUSTOM_ICU_LIB)
+  message(FATAL_ERROR "CUSTOM_ICU_LIB must be defined")
+endif(NOT DEFINED CUSTOM_ICU_LIB)
+
+if(TARGET_LINUX)
+  # ENABLE_DYNAMIC_ANNOTATIONS option defines DYNAMIC_ANNOTATIONS_ENABLED=1
+  # NOTE: we always need to link with dynamic_annotations
+  set(ENABLE_DYNAMIC_ANNOTATIONS TRUE) # required by tcmalloc
+elseif(TARGET_EMSCRIPTEN OR TARGET_WINDOWS)
+  set(ENABLE_DYNAMIC_ANNOTATIONS FALSE)
+else()
+  message(FATAL_ERROR "unknown platform")
+endif()
+if(NOT DEFINED ENABLE_DYNAMIC_ANNOTATIONS)
+  message(FATAL_ERROR "ENABLE_DYNAMIC_ANNOTATIONS must be defined")
+endif(NOT DEFINED ENABLE_DYNAMIC_ANNOTATIONS)
+
+find_package(chromium_dynamic_annotations REQUIRED)
+if(TARGET chromium_dynamic_annotations::chromium_dynamic_annotations-static)
+  set(dynamic_annotations_LIB chromium_dynamic_annotations::chromium_dynamic_annotations-static)
+else()
+  message(FATAL_ERROR "not supported: using system provided dynamic_annotations library")
+endif()
+
+if(TARGET_LINUX)
+  find_package(chromium_tcmalloc REQUIRED)
+  if(TARGET chromium_tcmalloc::chromium_tcmalloc-static)
+    set(tcmalloc_LIB chromium_tcmalloc::chromium_tcmalloc-static)
+  else()
+    message(FATAL_ERROR "not supported: using system provided chromium_tcmalloc library")
+  endif()
+elseif(TARGET_WINDOWS OR TARGET_EMSCRIPTEN)
+  # skip
+else()
+  message(FATAL_ERROR "platform not supported")
+endif()
+
+# xdg_user_dirs
+if(TARGET_LINUX)
+  find_package(chromium_xdg_user_dirs REQUIRED)
+  if(TARGET chromium_xdg_user_dirs::chromium_xdg_user_dirs-static)
+    set(xdg_user_dirs_LIB chromium_xdg_user_dirs::chromium_xdg_user_dirs-static)
+  else()
+    message(FATAL_ERROR "not supported: using system provided xdg_user_dirs library")
+  endif()
+elseif(TARGET_WINDOWS OR TARGET_EMSCRIPTEN)
+  # skip
+else()
+  message(FATAL_ERROR "platform no supported")
+endif()
+
+# xdg_mime
+if(TARGET_LINUX)
+  find_package(chromium_xdg_mime REQUIRED)
+  if(TARGET chromium_xdg_mime::chromium_xdg_mime-static)
+    set(xdg_mime_LIB chromium_xdg_mime::chromium_xdg_mime-static)
+  else()
+    message(FATAL_ERROR "not supported: using system provided xdg_mime library")
+  endif()
+elseif(TARGET_WINDOWS OR TARGET_EMSCRIPTEN)
+  # skip
+else()
+  message(FATAL_ERROR "platform no supported")
+endif()
+
+# libevent
+if(TARGET_LINUX)
+  find_package(chromium_libevent REQUIRED)
+  if(TARGET chromium_libevent::chromium_libevent-static)
+    set(libevent_LIB chromium_libevent::chromium_libevent-static)
+  else()
+    message(FATAL_ERROR "not supported: using system provided libevent library")
+  endif()
+elseif(TARGET_WINDOWS OR TARGET_EMSCRIPTEN)
+  # skip
+else()
+  message(FATAL_ERROR "platform no supported")
+endif()
+
+# modp_b64
+find_package(chromium_modp_b64 REQUIRED)
+if(TARGET chromium_modp_b64::chromium_modp_b64-static)
+  set(modp_b64_LIB chromium_modp_b64::chromium_modp_b64-static)
+else()
+  message(FATAL_ERROR "not supported: using system provided modp_b64 library")
+endif()
+
+# compact_enc_det
+set(ENABLE_COMPACT_ENC_DET TRUE)
+if(NOT ENABLE_COMPACT_ENC_DET)
+  list(APPEND BASE_DEFINES DISABLE_COMPACT_ENC_DET=1)
+endif(NOT ENABLE_COMPACT_ENC_DET)
+if(ENABLE_COMPACT_ENC_DET)
+  find_package(chromium_compact_enc_det REQUIRED)
+  if(TARGET chromium_compact_enc_det::chromium_compact_enc_det-static)
+    set(ced_LIB chromium_compact_enc_det::chromium_compact_enc_det-static)
+  else()
+    message(FATAL_ERROR "not supported: using system provided compact_enc_det library")
+  endif()
+endif(ENABLE_COMPACT_ENC_DET)
+
+# TODO
+#if(NOT DEFINED BASE_STANDALONE)
+#  message("FATAL_ERROR: TODO: USE BASE_STANDALONE")
+#  set(BASE_STANDALONE TRUE) # TODO
+#endif(NOT DEFINED BASE_STANDALONE)
+
+#if(BASE_STANDALONE)
+#  set(CHROMIUM_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../chromium/)
+#  set(COMMON_THIRDPARTY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../thirdparty/)
+#  set(ICU_PARENT_FULL_DIR ${COMMON_THIRDPARTY_DIR}/icu_wrapper/)
+#  set(ICU_FULL_DIR ${ICU_PARENT_FULL_DIR}third_party/icu/)
+#  set(BASE_PARENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/)
+#  set(BASE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/base/)
+#endif(BASE_STANDALONE)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/)
 
@@ -34,60 +182,33 @@ include(cmake/GenBuildFlags)
 
 include(cmake/ProjectFiles)
 
+# $<INSTALL_INTERFACE:...> is exported using install(EXPORT)
+# $<BUILD_INTERFACE:...> is exported using export(), or when the target is used by another target in the same buildsystem
+macro(add_relative_include_dir TARGET VISIBILITY_BUILD VISIBILITY_INSTALL NEW_ELEM)
+  target_include_directories(${TARGET}
+    ${VISIBILITY_BUILD} "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/${NEW_ELEM}>"
+    ${VISIBILITY_BUILD} "$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}/${NEW_ELEM}>"
+  )
+endmacro(add_relative_include_dir)
+
 if(TARGET_LINUX)
   include(cmake/detect_atomic32_support)
 endif(TARGET_LINUX)
 
-if(BASE_STANDALONE)
-  set(OWN_ICU_INCLUDE_DIRS
-    ${ICU_PARENT_FULL_DIR}
-    ${ICU_FULL_DIR}
-    ${ICU_FULL_DIR}source/common/unicode
-    ${ICU_FULL_DIR}source/common
-    ${ICU_FULL_DIR}source/i18n
-  )
-  list(APPEND CMAKE_MODULE_PATH ${CHROMIUM_DIR})
-  list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../../)
-  #message(FATAL_ERROR "CHROMIUM_DIR=${CHROMIUM_DIR}")
-  include(dynamic_annotations)
-  include(ced)
-  if(TARGET_LINUX)
-    # libevent
-    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../chromium_libevent)
-  elseif(TARGET_WINDOWS OR TARGET_EMSCRIPTEN)
-    # skip
-  else()
-    message(FATAL_ERROR "platform not supported")
-  endif()
-  include(tcmalloc)
-  include(icu)
-  include(modp_b64)
-  include(xdg_mime)
-  include(xdg_user_dirs)
-  set(CUSTOM_ICU_LIB icu)
-  set(ced_LIB ced)
-  #
-  #find_package(LibDL REQUIRED)
-  #set(libDL_LIB LIBDL::LIBDL)
-  #
-  if(TARGET_EMSCRIPTEN)
-    # skip
-  elseif(TARGET_LINUX OR TARGET_WINDOWS)
-    find_package( Threads REQUIRED )
-    message(STATUS "CMAKE_THREAD_LIBS_INIT = ${CMAKE_THREAD_LIBS_INIT}")
-    set(PTHREADS_LIBS ${CMAKE_THREAD_LIBS_INIT}) # note: not set for emscripten
-  else()
-    message(FATAL_ERROR "platform not supported")
-  endif()
-  #
-  find_package(ZLIB REQUIRED)
-  set(libZLIB_LIB ZLIB::ZLIB)
-endif(BASE_STANDALONE)
-
-add_library(base STATIC
+add_library(${STATIC_LIB_NAME} STATIC
   ${BASE_SOURCES}
   ${COBALT_port_base_SOURCES}
 )
+
+if(NOT DEFINED ENABLE_COMPACT_ENC_DET)
+  message(FATAL_ERROR "NOT DEFINED ENABLE_COMPACT_ENC_DET")
+endif(NOT DEFINED ENABLE_COMPACT_ENC_DET)
+
+if(ENABLE_COMPACT_ENC_DET)
+  if(NOT DEFINED ced_LIB)
+    message(FATAL_ERROR "NOT DEFINED ced_LIB")
+  endif(NOT DEFINED ced_LIB)
+endif(ENABLE_COMPACT_ENC_DET)
 
 if(TARGET_EMSCRIPTEN)
   list(APPEND EXTRA_CHROMIUM_BASE_LIBS
@@ -99,19 +220,27 @@ elseif(TARGET_LINUX)
     message(FATAL_ERROR "NOT DEFINED libevent_LIB")
   endif(NOT DEFINED libevent_LIB)
 
+  if(NOT DEFINED tcmalloc_LIB)
+    message(FATAL_ERROR "NOT DEFINED tcmalloc_LIB")
+  endif(NOT DEFINED tcmalloc_LIB)
+
+  if(NOT DEFINED modp_b64_LIB)
+    message(FATAL_ERROR "NOT DEFINED modp_b64_LIB")
+  endif(NOT DEFINED modp_b64_LIB)
+
   list(APPEND EXTRA_CHROMIUM_BASE_LIBS
-    tcmalloc
+    ${tcmalloc_LIB}
     ${ced_LIB}
     ${CUSTOM_ICU_LIB}
     # libevent only for posix/linux/e.t.c.
     ${libevent_LIB}
-    modp_b64
+    ${modp_b64_LIB}
   )
-  add_dependencies(base
-    tcmalloc
+  add_dependencies(${STATIC_LIB_NAME}
+    ${tcmalloc_LIB}
     ${ced_LIB}
     ${CUSTOM_ICU_LIB}
-    modp_b64
+    ${modp_b64_LIB}
   )
 elseif(TARGET_WINDOWS)
   list(APPEND EXTRA_CHROMIUM_BASE_LIBS
@@ -120,13 +249,13 @@ elseif(TARGET_WINDOWS)
     ${CUSTOM_ICU_LIB}
     # libevent only for posix/linux/e.t.c.
     #${libevent_LIB}
-    modp_b64
+    ${modp_b64_LIB}
   )
-  add_dependencies(base
+  add_dependencies(${STATIC_LIB_NAME}
     #tcmalloc
     ${ced_LIB}
     ${CUSTOM_ICU_LIB}
-    modp_b64
+    ${modp_b64_LIB}
   )
 else()
   message(FATAL_ERROR "platform not supported")
@@ -134,8 +263,8 @@ endif()
 
 if(TARGET_LINUX)
   list(APPEND EXTRA_CHROMIUM_BASE_LIBS
-    xdg_mime
-    xdg_user_dirs
+    ${xdg_mime_LIB}
+    ${xdg_user_dirs_LIB}
   )
 endif(TARGET_LINUX)
 
@@ -179,6 +308,10 @@ if(TARGET_WINDOWS)
   )
 endif(TARGET_WINDOWS)
 
+if(NOT DEFINED dynamic_annotations_LIB)
+  message(FATAL_ERROR "NOT DEFINED: dynamic_annotations_LIB")
+endif(NOT DEFINED dynamic_annotations_LIB)
+
 #'dependencies': [
 #  '<(DEPTH)/nb/nb.gyp:nb',
 #  '<(DEPTH)/starboard/client_porting/eztime/eztime.gyp:eztime',
@@ -188,13 +321,13 @@ endif(TARGET_WINDOWS)
 #  'base_static',
 #  'third_party/dynamic_annotations/dynamic_annotations.gyp:dynamic_annotations',
 #],
-target_link_libraries(base PRIVATE
+target_link_libraries(${STATIC_LIB_NAME} PRIVATE
   ${COBALT_NANOBASE_LIB}
   ${STARBOARD_PLATFORM_LIB}
   #starboard_core
   ${STARBOARD_EZTIME_LIB}
   ${STARBOARD_COMMON_LIB}
-  modp_b64
+  ${modp_b64_LIB}
   #
   ${dynamic_annotations_LIB}
   ${EXTRA_CHROMIUM_BASE_LIBS}
@@ -205,43 +338,46 @@ target_link_libraries(base PRIVATE
   ${PTHREADS_LIBS} # note: not set for emscripten
 )
 
-set_property(TARGET base PROPERTY CXX_STANDARD 17)
+if(NOT DEFINED build_util_LIB)
+  message(FATAL_ERROR "NOT DEFINED: build_util_LIB")
+endif(NOT DEFINED build_util_LIB)
+
+target_link_libraries(${STATIC_LIB_NAME} PUBLIC
+  ${build_util_LIB}
+)
+
+set_property(TARGET ${STATIC_LIB_NAME} PROPERTY CXX_STANDARD 17)
+
+if(TARGET_LINUX)
+  set(ENABLE_DYNAMIC_ANNOTATIONS TRUE) # required by tcmalloc
+elseif(TARGET_EMSCRIPTEN OR TARGET_WINDOWS)
+  # skip
+  set(ENABLE_DYNAMIC_ANNOTATIONS FALSE)
+else()
+  message(FATAL_ERROR "unknown platform")
+endif()
+
+# Annotations useful when implementing condition variables such as CondVar,
+# using conditional critical sections (Await/LockWhen) and when constructing
+# user-defined synchronization mechanisms.
+if(ENABLE_DYNAMIC_ANNOTATIONS)
+  list(APPEND BASE_DEFINES DYNAMIC_ANNOTATIONS_ENABLED=1)
+endif(ENABLE_DYNAMIC_ANNOTATIONS)
 
 list(APPEND BASE_DEFINES
   OFFICIAL_BUILD=1
   BASE_PORT=1
 )
 
-# In your source, include files from base/ like normal.
-# So if you want to use the string printf API, do:
-# #include <base/stringprintf.h>
-target_include_directories(base PUBLIC
-  ${CHROMIUM_DIR} # TODO
-  ${CMAKE_CURRENT_SOURCE_DIR} # path to base/threading/thread.h
-  # TODO
-  #${COBALT_COMMON_INCLUDES}
-  # see https://stackoverflow.com/questions/16390078/build-error-when-trying-to-run-an-opengl-example-in-vc
-  # ${GLEW_INCLUDE_PATH}
-)
+add_relative_include_dir(${STATIC_LIB_NAME} PUBLIC PUBLIC "")
 
-#message(FATAL_ERROR ${CHROMIUM_DIR}/../../thirdparty/ced/src/)
-target_include_directories(base PRIVATE
-  #${CHROMIUM_DIR}/../..
-  #${CHROMIUM_DIR}/../../thirdparty/ced/src
-  ../../thirdparty/icu_wrapper/ # TODO
-  third_party
-  third_party/tcmalloc
-  third_party/tcmalloc/chromium/src
-  third_party/tcmalloc/chromium/src/gperftools
-  #${BASE_DIR}
-  ${CMAKE_CURRENT_SOURCE_DIR}
-  ${COBALT_COMMON_INCLUDES}
-)
+# TODO: COBALT_COMMON_INCLUDES
+# add_relative_include_dir(${STATIC_LIB_NAME} PRIVATE PRIVATE "")
 
-target_compile_definitions(base PUBLIC
+target_compile_definitions(${STATIC_LIB_NAME} PUBLIC
   ${BASE_DEFINES}
-  ${WTF_EMCC_DEFINITIONS}
-  ${WTF_COMMON_DEFINITIONS}
+  #${WTF_EMCC_DEFINITIONS}
+  #${WTF_COMMON_DEFINITIONS}
   ${EXTRA_DEFINES}
   # _HAS_ITERATOR_DEBUGGING=0 # https://github.com/blockspacer/skia-opengl-emscripten/blob/7c423190544c8da1bf8ae79b800c9c0c83dd3c6e/src/chromium/build/config/BUILD.gn#L164
 )
@@ -256,12 +392,12 @@ elseif(TARGET_WINDOWS)
   )
 endif()
 
-target_compile_definitions(base PRIVATE
+target_compile_definitions(${STATIC_LIB_NAME} PRIVATE
   # TODO
   ${COBALT_COMMON_DEFINES}
 )
 
-target_compile_definitions(base PUBLIC
+target_compile_definitions(${STATIC_LIB_NAME} PUBLIC
   _USE_MATH_DEFINES=1 # https://stackoverflow.com/a/58379321
   BASE_IMPLEMENTATION=1
   BASE_I18N_IMPLEMENTATION=1
@@ -270,8 +406,12 @@ target_compile_definitions(base PUBLIC
   #${COBALT_COMMON_DEFINES}
 )
 
+target_compile_features(${STATIC_LIB_NAME} PRIVATE
+  PUBLIC cxx_auto_type
+  PRIVATE cxx_variadic_templates)
+
 if(NOT MSVC OR IS_CLANG_CL)
-  target_compile_options(base PUBLIC
+  target_compile_options(${STATIC_LIB_NAME} PUBLIC
     -Wno-c++11-narrowing
     -Wno-c++98-compat
     -Wno-reserved-id-macro
@@ -283,3 +423,15 @@ if(NOT MSVC OR IS_CLANG_CL)
 else()
   # TODO
 endif()
+
+set(DEBUG_LIBRARY_SUFFIX "-d")
+set_target_properties(${STATIC_LIB_NAME}
+  PROPERTIES
+    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}" # TODO: /lib
+    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}" # TODO: /lib
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}" # TODO: /bin
+    OUTPUT_NAME "${STATIC_LIB_NAME}$<$<CONFIG:Debug>:${DEBUG_LIBRARY_SUFFIX}>"
+)
+
+# install and export steps
+include(cmake/Exports)

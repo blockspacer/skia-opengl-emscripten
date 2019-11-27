@@ -260,7 +260,7 @@ target_link_libraries(cobalt_cssom PRIVATE
   starboard_common
   #starboard_core
   base # TODO
-  modp_b64
+  ${modp_b64_LIB}
   #dynamic_annotations
   GURL
   ${GNET_LIBS}

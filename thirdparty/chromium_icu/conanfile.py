@@ -46,7 +46,7 @@ class chromium_icu_conan_project(ConanFile):
 
     # Custom attributes for Bincrafters recipe conventions
     _source_subfolder = "."
-    _build_subfolder = "build_subfolder"
+    _build_subfolder = "."
 
     # NOTE: no cmake_find_package due to custom FindXXX.cmake
     generators = "cmake", "cmake_paths"
@@ -71,6 +71,10 @@ class chromium_icu_conan_project(ConanFile):
     #  self.run("git clone %s ......." % url)
 
     def requirements(self):
+        self.requires("cmake_platform_detection/master@conan/stable")
+
+        self.requires("chromium_build_util/master@conan/stable")
+
         if self.options.enable_tests:
             self.requires("catch2/[>=2.1.0]@bincrafters/stable")
             self.requires("gtest/[>=1.8.0]@bincrafters/stable")

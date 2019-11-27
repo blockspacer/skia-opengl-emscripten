@@ -33,12 +33,11 @@ add_library(cobalt_csp STATIC
 target_link_libraries(cobalt_csp PRIVATE
   cobalt_base
   base # TODO
-  modp_b64
+  ${modp_b64_LIB}
   #GFX_GEOMETRY
   #${BASE_LIBRARIES}
   #base
   #SKIA
-  #dynamic_annotations
   #UI_GFX
   ##BLINK_RENDERER_CORE
   #BLINK_PUBLIC_COMMON

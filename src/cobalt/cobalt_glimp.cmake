@@ -136,7 +136,7 @@ target_link_libraries(cobalt_glimp PRIVATE
   #cobalt_ui_navigation
   #cobalt_web_animations
   ##cobalt_browser ## TODO ##
-  #modp_b64
+  #${modp_b64_LIB}
   #dynamic_annotations
   #GURL
   #${CUSTOM_ICU_LIB}

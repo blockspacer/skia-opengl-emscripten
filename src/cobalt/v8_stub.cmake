@@ -18,7 +18,6 @@ target_link_libraries(v8_stub PRIVATE
   cobalt_base
   cobalt_nanobase
   cobalt_script
-  #modp_b64
 )
 
 set_property(TARGET v8_stub PROPERTY CXX_STANDARD 17)

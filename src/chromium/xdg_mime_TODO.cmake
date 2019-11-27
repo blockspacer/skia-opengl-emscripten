@@ -24,14 +24,6 @@ add_library(xdg_mime STATIC
   ${xdg_mime_SOURCES}
 )
 
-#target_link_libraries(xdg_mime PUBLIC
-#  #BORINGSSL
-#  dynamic_annotations
-#  #${BASE_LIBRARIES}
-#  base
-#  GLIBJPEG_TURBO
-#)
-
 set_property(TARGET xdg_mime PROPERTY CXX_STANDARD 17)
 
 target_include_directories(xdg_mime PRIVATE

@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "cobalt/build/build_config.h" /// \note must be first include
+#include "build/build_config.h" /// \note must be first include
 
 #include "cobalt/layout/topmost_event_target.h"
 

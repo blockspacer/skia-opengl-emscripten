@@ -11,10 +11,24 @@ project(${PROJECT_NAME}
 
 set(STATIC_LIB_NAME ${PROJECT_NAME}-static)
 
+# --------------------------- conan configuration ------------------------------
+
 if(EXISTS "${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
+  list(APPEND CMAKE_MODULE_PATH ${CMAKE_BINARY_DIR}/)
   include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-  conan_basic_setup(TARGETS)
-endif(EXISTS "${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
+  include(${CMAKE_BINARY_DIR}/conan_paths.cmake OPTIONAL)
+  conan_basic_setup(
+    # prevent conan_basic_setup from resetting cmake variables
+    TARGETS
+    KEEP_RPATHS
+    # see https://github.com/conan-io/conan/issues/6012
+    NO_OUTPUT_DIRS)
+else()
+  message (FATAL_ERROR "must use conan")
+endif()
+
+find_package(cmake_platform_detection REQUIRED)
+run_cmake_platform_detection()
 
 set(LIBEVENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/base/third_party/libevent/)
 

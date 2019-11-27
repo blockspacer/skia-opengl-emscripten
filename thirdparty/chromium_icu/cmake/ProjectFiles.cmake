@@ -5,7 +5,7 @@
 # see https://github.com/unicode-org/icu/tree/master/icu4c/source/common
 # see https://chromium.googlesource.com/chromium/deps/icu/+/refs/heads/master/icu.gypi
 # see https://github.com/unicode-org/icu/blob/release-64-2/icu4c/source/i18n/i18n.vcxproj#L164
-set(ICU_SOURCES
+list(APPEND ICU_SOURCES
   ## ${ICU_FULL_DIR}cmemory.c
   ${ICU_FULL_DIR}source/stubdata/stubdata.cpp # if 'OS == "win" or icu_use_data_file_flag==1'
    # I18N_SRC_START

@@ -46,7 +46,6 @@ add_library(GFX_ANIMATION STATIC
 )
 
 target_link_libraries(GFX_ANIMATION PRIVATE
-  #dynamic_annotations
   #${BASE_LIBRARIES}
   base
   SKIA

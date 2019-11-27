@@ -293,7 +293,7 @@ target_link_libraries(starboard_stub PRIVATE
   #base # TODO
   #cobalt_base
   starboard_core # just headers
-  modp_b64
+  ${modp_b64_LIB}
   #GFX_GEOMETRY
   #${BASE_LIBRARIES}
   #base

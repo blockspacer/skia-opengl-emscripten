@@ -268,7 +268,6 @@ add_library(UI_EVENTS STATIC
 )
 
 target_link_libraries(UI_EVENTS PRIVATE
-  #dynamic_annotations
   base
   GFX_GEOMETRY
   #
@@ -286,7 +285,6 @@ target_link_libraries(UI_EVENTS PRIVATE
   # "//ui/latency",
   # ]
   #
-  #dynamic_annotations
   #${BASE_LIBRARIES}
   # khronos
   #${khronos_LIB}

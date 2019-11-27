@@ -272,13 +272,13 @@ endif()
 #if(TARGET_EMSCRIPTEN)
 #else()
 #  list(APPEND WTF_LIBRARIES
-#    tcmalloc
+#    ${tcmalloc_LIB}
 #  )
 #endif(TARGET_EMSCRIPTEN)
 
 target_include_directories(${WTF_LIBRARY_NAME} PRIVATE
   #${LIBEVENT_INCLUDE_DIRS}
-  ${modp_b64_INCLUDE_DIRS}
+  #${modp_b64_INCLUDE_DIRS}
   ${WTF_PRIVATE_INCLUDE_DIRECTORIES}
   #${BLINK_WTF_DIR}
   ${OWN_ICU_INCLUDE_DIRS}

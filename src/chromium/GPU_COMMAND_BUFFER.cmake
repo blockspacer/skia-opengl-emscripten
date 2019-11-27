@@ -486,6 +486,10 @@ add_library(GPU_COMMAND_BUFFER STATIC
   ${GPU_COMMAND_BUFFER_ES2_SOURCES}
 )
 
+if(NOT DEFINED dynamic_annotations_LIB)
+  message(FATAL_ERROR "NOT DEFINED: dynamic_annotations_LIB")
+endif(NOT DEFINED dynamic_annotations_LIB)
+
 target_link_libraries(GPU_COMMAND_BUFFER PRIVATE
   #UI_GL
   GFX_GEOMETRY
@@ -498,6 +502,7 @@ target_link_libraries(GPU_COMMAND_BUFFER PRIVATE
   ${GRE2_LIB}
   #${OPENGLES2_LIBRARIES}
   ${FOUND_OPENGL_LIBRARIES}
+  ${dynamic_annotations_LIB}
 )
 
 target_link_libraries(GPU_COMMAND_BUFFER PRIVATE

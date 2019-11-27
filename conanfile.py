@@ -17,8 +17,8 @@ import shutil
 # package(),
 # package_info()
 
-class SKG_conan_project(ConanFile):
-    name = "SKG"
+class skg_conan_project(ConanFile):
+    name = "skg"
 
     # Indicates License type of the packaged library
     # TODO (!!!)
@@ -29,7 +29,7 @@ class SKG_conan_project(ConanFile):
     # TODO (!!!)
     #url = "https://github.com/blockspacer/CXXCTP"
 
-    description = "`SKG` library"
+    description = "`skg` library"
     topics = ('c++')
 
     options = {
@@ -70,10 +70,26 @@ class SKG_conan_project(ConanFile):
     #  self.run("git clone %s ......." % url)
 
     def requirements(self):
+        self.requires("cmake_platform_detection/master@conan/stable")
+
+        self.requires("chromium_build_util/master@conan/stable")
+
+        #self.requires("chromium_base/master@conan/stable")
+
         if self.settings.os == "Linux":
             self.requires("chromium_libevent/master@conan/stable")
 
         self.requires("chromium_icu/master@conan/stable")
+
+        # TODO: move to base
+        self.requires("chromium_dynamic_annotations/master@conan/stable")
+        self.requires("chromium_modp_b64/master@conan/stable")
+        self.requires("chromium_compact_enc_det/master@conan/stable")
+
+        if self.settings.os == "Linux":
+          self.requires("chromium_tcmalloc/master@conan/stable")
+          self.requires("chromium_xdg_user_dirs/master@conan/stable")
+          self.requires("chromium_xdg_mime/master@conan/stable")
 
         if self.options.enable_tests:
             self.requires("catch2/[>=2.1.0]@bincrafters/stable")

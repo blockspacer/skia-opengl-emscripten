@@ -47,7 +47,6 @@ target_link_libraries(GFX_CODEC PRIVATE
   #${libjpeg_LIB}
   ${libjpeg_TURBO_LIB}
   #${libpng_LIB}
-  #dynamic_annotations
   ${BASE_LIBRARIES}
   GFX_GEOMETRY_SKIA
   GFX_GEOMETRY

@@ -51,7 +51,6 @@ target_link_libraries(BASE_CC PRIVATE
   #${BASE_LIBRARIES}
   base
   SKIA
-  #dynamic_annotations
   UI_GFX
 )
 

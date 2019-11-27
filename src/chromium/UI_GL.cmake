@@ -156,7 +156,6 @@ add_library(UI_GL STATIC
 
 target_link_libraries(UI_GL PRIVATE
   base # TODO
-  #dynamic_annotations
   #${BASE_LIBRARIES}
   # linux libsync
   ${libsync_LIB}

@@ -18,7 +18,7 @@ target_link_libraries(cobalt_dom_exception PRIVATE
   cobalt_script
   v8_stub
   #base # TODO
-  #modp_b64
+  #${modp_b64_LIB}
 )
 
 set_property(TARGET cobalt_dom_exception PROPERTY CXX_STANDARD 17)

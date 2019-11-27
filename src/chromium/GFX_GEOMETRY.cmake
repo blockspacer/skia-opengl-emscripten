@@ -62,7 +62,6 @@ add_library(GFX_GEOMETRY STATIC
 )
 
 target_link_libraries(GFX_GEOMETRY PRIVATE
-  #dynamic_annotations
   #${BASE_LIBRARIES}
   base
   #${OPENGLES2_LIBRARIES}

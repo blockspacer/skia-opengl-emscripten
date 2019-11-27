@@ -65,7 +65,6 @@ target_link_libraries(starboard_common PRIVATE
   ##
   #starboard_platform
   #starboard
-  #modp_b64
 )
 
 set_property(TARGET starboard_common PROPERTY CXX_STANDARD 17)

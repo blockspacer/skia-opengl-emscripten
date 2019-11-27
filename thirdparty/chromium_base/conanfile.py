@@ -3,6 +3,20 @@ import traceback
 import os
 import shutil
 
+# conan runs the methods in this order:
+# config_options(),
+# configure(),
+# requirements(),
+# package_id(),
+# build_requirements(),
+# build_id(),
+# system_requirements(),
+# source(),
+# imports(),
+# build(),
+# package(),
+# package_info()
+
 class chromium_base_conan_project(ConanFile):
     name = "chromium_base"
 
@@ -15,7 +29,7 @@ class chromium_base_conan_project(ConanFile):
     # TODO (!!!)
     #url = "https://github.com/blockspacer/CXXCTP"
 
-    description = "modified `base` library from chromium"
+    description = "modified `icu` library from chromium"
     topics = ('c++')
 
     options = {
@@ -30,44 +44,92 @@ class chromium_base_conan_project(ConanFile):
         #"*:shared=False"
     )
 
-    generators = 'cmake_find_package', "cmake", "cmake_paths"
+    # Custom attributes for Bincrafters recipe conventions
+    _source_subfolder = "."
+    _build_subfolder = "."
+
+    # NOTE: no cmake_find_package due to custom FindXXX.cmake
+    generators = "cmake", "cmake_paths"
 
     # Packages the license for the conanfile.py
     #exports = ["LICENSE.md"]
-    exports_sources = ("LICENSE", "README.md", "include/*", "src/*",
+
+    # If the source code is going to be in the same repo as the Conan recipe,
+    # there is no need to define a `source` method. The source folder can be
+    # defined like this
+    exports_sources = ("LICENSE", "*.md", "include/*", "src/*",
                        "cmake/*", "CMakeLists.txt", "tests/*", "benchmarks/*",
-                       "scripts/*")
+                       "scripts/*", "tools/*", "codegen/*", "assets/*",
+                       "docs/*", "licenses/*", "patches/*", "resources/*",
+                       "submodules/*", "thirdparty/*", "third-party/*",
+                       "third_party/*", "base/*")
 
     settings = "os", "compiler", "build_type", "arch"
 
+    #def source(self):
+    #  url = "https://github.com/....."
+    #  self.run("git clone %s ......." % url)
+
     def requirements(self):
+        self.requires("cmake_platform_detection/master@conan/stable")
+
+        self.requires("chromium_build_util/master@conan/stable")
+
+        if self.settings.os == "Linux":
+            self.requires("chromium_libevent/master@conan/stable")
+
+        self.requires("chromium_icu/master@conan/stable")
+
+        # TODO: move to base
+        self.requires("chromium_dynamic_annotations/master@conan/stable")
+        self.requires("chromium_modp_b64/master@conan/stable")
+        self.requires("chromium_compact_enc_det/master@conan/stable")
+
+        if self.settings.os == "Linux":
+          self.requires("chromium_tcmalloc/master@conan/stable")
+          self.requires("chromium_xdg_user_dirs/master@conan/stable")
+          self.requires("chromium_xdg_mime/master@conan/stable")
+
         if self.options.enable_tests:
             self.requires("catch2/[>=2.1.0]@bincrafters/stable")
             self.requires("gtest/[>=1.8.0]@bincrafters/stable")
             self.requires("FakeIt/[>=2.0.4]@gasuketsu/stable")
 
-    def package(self):
+    def _configure_cmake(self):
         cmake = CMake(self)
+        cmake.parallel = True
+        cmake.verbose = True
+
+        def add_cmake_option(var_name, value):
+            value_str = "{}".format(value)
+            var_value = "ON" if value_str == 'True' else "OFF" if value_str == 'False' else value_str
+            cmake.definitions[var_name] = var_value
+
+        add_cmake_option("ENABLE_SANITIZERS", self.options.enable_sanitizers)
+
+        add_cmake_option("ENABLE_TESTS", self.options.enable_tests)
+
+        cmake.configure(build_folder=self._build_subfolder)
+
+        return cmake
+
+    def package(self):
+        self.copy(pattern="LICENSE", dst="licenses", src=self._source_subfolder)
+        cmake = self._configure_cmake()
         cmake.install()
 
     def build(self):
-        cmake = CMake(self)
+        cmake = self._configure_cmake()
         if self.settings.compiler == 'gcc':
             cmake.definitions["CMAKE_C_COMPILER"] = "gcc-{}".format(
                 self.settings.compiler.version)
             cmake.definitions["CMAKE_CXX_COMPILER"] = "g++-{}".format(
                 self.settings.compiler.version)
 
-        cmake.definitions["ENABLE_SANITIZERS"] = 'ON'
-        if not self.options.enable_sanitizers:
-            cmake.definitions["ENABLE_SANITIZERS"] = 'OFF'
+        #cmake.definitions["CMAKE_TOOLCHAIN_FILE"] = 'conan_paths.cmake'
 
-        cmake.definitions["ENABLE_TESTS"] = 'ON'
-        if not self.options.enable_tests:
-            cmake.definitions["ENABLE_TESTS"] = 'OFF'
-
-        cmake.definitions["CMAKE_TOOLCHAIN_FILE"] = 'conan_paths.cmake'
-        cmake.configure()
+        # The CMakeLists.txt file must be in `source_folder`
+        cmake.configure(source_folder=".")
         cmake.build()
         #cmake.test()
 
@@ -77,7 +139,32 @@ class chromium_base_conan_project(ConanFile):
         self.output.info("CONAN_IMPORT_PATH is ${CONAN_IMPORT_PATH}")
         self.copy("license*", dst=dest, ignore_case=True)
         self.copy("*.dll", dst=dest, src="bin")
-        self.copy("*.so", dst=dest, src="bin")
+        self.copy("*.so*", dst=dest, src="bin")
         self.copy("*.dylib*", dst=dest, src="lib")
         self.copy("*.lib*", dst=dest, src="lib")
         self.copy("*.a*", dst=dest, src="lib")
+
+    # package_info() method specifies the list of
+    # the necessary libraries, defines and flags
+    # for different build configurations for the consumers of the package.
+    # This is necessary as there is no possible way to extract this information
+    # from the CMake install automatically.
+    # For instance, you need to specify the lib directories, etc.
+    def package_info(self):
+        self.cpp_info.libs = ["chromium_base"]
+
+        #self.cpp_info.includedirs.append(os.getcwd())
+        #self.cpp_info.includedirs.append(
+        #  os.path.join("base", "third_party", "icu"))
+        #self.cpp_info.includedirs.append(
+        #  os.path.join("base", "third_party", "icu", "compat"))
+
+        #if self.settings.os == "Linux":
+        #  self.cpp_info.defines.append('HAVE_CONFIG_H=1')
+
+        # in linux we need to link also with these libs
+        #if self.settings.os == "Linux":
+        #    self.cpp_info.libs.extend(["pthread", "dl", "rt"])
+
+        #self.cpp_info.libs = tools.collect_libs(self)
+        #self.cpp_info.defines.append('PDFLIB_DLL')

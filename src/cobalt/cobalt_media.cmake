@@ -237,7 +237,7 @@ target_link_libraries(cobalt_media PRIVATE
   starboard_platform # requires starboard_stub
   starboard_common
   #starboard_core
-  modp_b64
+  ${modp_b64_LIB}
   #dynamic_annotations
   GURL
   ${GNET_LIBS}
