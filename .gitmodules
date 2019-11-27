@@ -9,7 +9,7 @@
   url = https://chromium.googlesource.com/chromium/tools/depot_tools.git
 [submodule "thirdparty/chromium_compact_enc_det/chromium/third_party/ced/src"]
 	path = thirdparty/chromium_compact_enc_det/chromium/third_party/ced/src
-	url = https://chromium.googlesource.com/external/github.com/google/compact_enc_det.git
+  url = https://github.com/google/compact_enc_det.git
 [submodule "src/chromium/media/cdm/api"]
   path = src/chromium/media/cdm/api
   url = https://chromium.googlesource.com/chromium/cdm.git
