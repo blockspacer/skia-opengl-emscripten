@@ -603,6 +603,7 @@ if(ENABLE_COBALT)
   else()
     message(FATAL_ERROR "platform not supported")
   endif()
+  # TODO: port to conan
   list(APPEND COBALT_COMMON_DEFINES
     # ENABLE_SCRIPT_RUNNER
     COBALT_PORT=1

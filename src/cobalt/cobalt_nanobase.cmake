@@ -63,7 +63,7 @@ if(NOT DEFINED base_LIB)
 endif(NOT DEFINED base_LIB)
 
 target_link_libraries(cobalt_nanobase PRIVATE
-  ${base_LIB}
+  ${base_LIB} # TODO: recursion
 )
 
 target_include_directories(cobalt_nanobase PRIVATE

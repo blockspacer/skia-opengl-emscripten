@@ -334,11 +334,11 @@ endif(NOT DEFINED dynamic_annotations_LIB)
 #  'third_party/dynamic_annotations/dynamic_annotations.gyp:dynamic_annotations',
 #],
 target_link_libraries(${STATIC_LIB_NAME} PRIVATE
-  ${COBALT_NANOBASE_LIB}
-  ${STARBOARD_PLATFORM_LIB}
+  ${COBALT_NANOBASE_LIB} # TODO: recursion
+  ${STARBOARD_PLATFORM_LIB} # TODO: recursion
   #starboard_core
-  ${STARBOARD_EZTIME_LIB}
-  ${STARBOARD_COMMON_LIB}
+  ${STARBOARD_EZTIME_LIB} # TODO: recursion
+  ${STARBOARD_COMMON_LIB} # TODO: recursion
   ${modp_b64_LIB}
   #
   ${dynamic_annotations_LIB}

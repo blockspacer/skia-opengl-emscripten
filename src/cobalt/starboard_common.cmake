@@ -54,7 +54,7 @@ add_library(starboard_common STATIC
 )
 
 target_link_libraries(starboard_common PUBLIC
-  ${base_LIB}
+  ${base_LIB} # TODO: recursion
 )
 
 target_link_libraries(starboard_common PRIVATE
