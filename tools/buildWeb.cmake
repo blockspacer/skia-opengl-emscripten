@@ -36,6 +36,8 @@ endif(EXTRA_CMAKE_OPTS)
 # --- vars ---
 set(BUILD_DIR "${CMAKE_CURRENT_SOURCE_DIR}/build-emscripten/" CACHE STRING "output directory")
 
+set(CONAN_ARGS "--build=missing;--profile;emscripten;-o;enable_tests=False" CACHE STRING "parameters for conan install")
+
 if (BUILD_APP)
   message(STATUS "building for web from ${CMAKE_CURRENT_SOURCE_DIR} into ${BUILD_DIR} ...")
 
@@ -48,6 +50,21 @@ if (BUILD_APP)
   # --- some info before build ---
   colored_notify("Building with CMAKE_OPTS=${CMAKE_OPTS} and EXTRA_EMCMAKE_OPTS=${EXTRA_EMCMAKE_OPTS}")
   colored_notify("Building with MAKE_OPTS=${MAKE_OPTS} and EXTRA_EMMAKE_OPTS=${EXTRA_EMMAKE_OPTS}")
+
+  # --- conan ---
+  execute_process(
+    COMMAND
+      ${COLORED_OUTPUT_ENABLER}
+        # TODO: ability to change "--profile"
+        ${CMAKE_COMMAND} "-E" "time" "conan" "install" ${CONAN_ARGS} ".."
+    WORKING_DIRECTORY ${BUILD_DIR}
+    TIMEOUT 7200 # sec
+    RESULT_VARIABLE retcode
+    ERROR_VARIABLE _ERROR_VARIABLE
+  )
+  if(NOT "${retcode}" STREQUAL "0")
+    message( FATAL_ERROR "Bad exit status ${retcode} ${_ERROR_VARIABLE}")
+  endif()
 
   # --- configure ---
   execute_process(

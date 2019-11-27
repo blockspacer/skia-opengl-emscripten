@@ -1,4 +1,4 @@
-## --- GRE2 ---###
+﻿## --- GRE2 ---###
 
 list(APPEND GRE2_SOURCES
  ${GRE2_DIR}src/re2/bitmap256.h
@@ -51,7 +51,7 @@ add_library(GRE2 STATIC
 )
 
 target_link_libraries(GRE2 PRIVATE
-  base
+  ${base_LIB}
   #GCRYPTO
   #GURL
   # sql

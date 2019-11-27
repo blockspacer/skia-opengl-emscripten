@@ -29,7 +29,7 @@ add_library(cobalt_overlay_info STATIC
 )
 
 target_link_libraries(cobalt_overlay_info PRIVATE
-  base # TODO
+  ${base_LIB} # TODO
   cobalt_base
   cobalt_nanobase
   #cobalt_dom

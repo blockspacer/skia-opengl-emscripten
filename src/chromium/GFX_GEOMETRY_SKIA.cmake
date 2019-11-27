@@ -2,6 +2,14 @@
 
 ### --- GFX_GEOMETRY_SKIA ---###
 
+if(NOT DEFINED CHROMIUM_DIR)
+  message(FATAL_ERROR "NOT DEFINED: CHROMIUM_DIR")
+endif(NOT DEFINED CHROMIUM_DIR)
+
+set(UI_GFX_PARENT_DIR
+  ${CHROMIUM_DIR}
+)
+
 list(APPEND GFX_GEOMETRY_SKIA_SOURCES
   #geometry_skia_export.h",
   ${GFX_GEOMETRY_SKIA_DIR}rrect_f.cc
@@ -22,7 +30,7 @@ target_link_libraries(GFX_GEOMETRY_SKIA PRIVATE
   #${BASE_LIBRARIES}
   SKIA
   GFX_GEOMETRY
-  base
+  ${base_LIB}
   #${OPENGLES2_LIBRARIES}
   ${FOUND_OPENGL_LIBRARIES}
 )
@@ -33,6 +41,7 @@ target_include_directories(GFX_GEOMETRY_SKIA PRIVATE
   ${GFX_GEOMETRY_SKIA_DIR}
   ${BASE_DIR}
   ${OPENGL_INCLUDE_DIR}
+  ${UI_GFX_PARENT_DIR}
 )
 
 target_compile_definitions(GFX_GEOMETRY_SKIA PRIVATE

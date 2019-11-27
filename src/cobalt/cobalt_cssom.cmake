@@ -242,7 +242,7 @@ add_library(cobalt_cssom STATIC
 )
 
 target_link_libraries(cobalt_cssom PRIVATE
-  base # TODO
+  ${base_LIB} # TODO
   # cobalt_network # TODO
   # cobalt_browser # TODO
   cobalt_dom_exception
@@ -259,7 +259,6 @@ target_link_libraries(cobalt_cssom PRIVATE
   starboard_platform # requires starboard_stub
   starboard_common
   #starboard_core
-  base # TODO
   ${modp_b64_LIB}
   #dynamic_annotations
   GURL

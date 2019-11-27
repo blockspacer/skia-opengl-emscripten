@@ -1868,7 +1868,7 @@ target_link_libraries(BLINK_RENDERER_PLATFORM PRIVATE
   ${HARFBUZZ_LIBRARIES}
   ${libZLIB_LIB}
   # webrtc
-  base
+  ${base_LIB}
   CC
   #G_GPU
   UI_GFX

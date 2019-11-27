@@ -58,8 +58,12 @@ add_library(cobalt_nanobase STATIC
 
 set_property(TARGET cobalt_nanobase PROPERTY CXX_STANDARD 17)
 
+if(NOT DEFINED base_LIB)
+  message(FATAL_ERROR "NOT DEFINED: base_LIB")
+endif(NOT DEFINED base_LIB)
+
 target_link_libraries(cobalt_nanobase PRIVATE
-  base
+  ${base_LIB}
 )
 
 target_include_directories(cobalt_nanobase PRIVATE

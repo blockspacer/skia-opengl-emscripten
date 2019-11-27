@@ -420,7 +420,7 @@ target_link_libraries(GMEDIA PRIVATE
   CC
   PAINT_CC
   ${GCRYPTO_LIB}
-  base
+  ${base_LIB}
   ${GNET_LIBS}
   UI_EVENTS
   ${MOJO_LIB}

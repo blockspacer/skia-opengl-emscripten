@@ -223,7 +223,7 @@ add_library(cobalt_media STATIC
 )
 
 target_link_libraries(cobalt_media PRIVATE
-  base # TODO
+  ${base_LIB} # TODO
   cobalt_base
   cobalt_nanobase
   #cobalt_script

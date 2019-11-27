@@ -101,7 +101,6 @@ if(NOT DEFINED CUSTOM_ICU_LIB)
 endif(NOT DEFINED CUSTOM_ICU_LIB)
 
 target_link_libraries(cobalt_base PRIVATE
-  base # TODO
   starboard_platform
   #starboard_core
   starboard_eztime
@@ -120,6 +119,14 @@ endif(NOT DEFINED build_util_LIB)
 
 target_link_libraries(cobalt_base PUBLIC
   ${build_util_LIB}
+)
+
+if(NOT DEFINED base_LIB)
+  message(FATAL_ERROR "NOT DEFINED: base_LIB")
+endif(NOT DEFINED base_LIB)
+
+target_link_libraries(cobalt_base PUBLIC
+  ${base_LIB}
 )
 
 set_property(TARGET cobalt_base PROPERTY CXX_STANDARD 17)

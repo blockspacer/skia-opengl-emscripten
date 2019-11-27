@@ -19,7 +19,7 @@ if(NOT DEFINED CUSTOM_ICU_LIB)
 endif(NOT DEFINED CUSTOM_ICU_LIB)
 
 target_link_libraries(starboard_icu_init PRIVATE
-  base # for "base/base_export.h"
+  ${base_LIB} # for "base/base_export.h"
   ${CUSTOM_ICU_LIB}
   #ced
   glm

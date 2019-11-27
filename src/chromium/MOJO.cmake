@@ -463,7 +463,7 @@ target_link_libraries(MOJO PRIVATE
   #"+mojo",
   ${GCRYPTO_LIB}
   #ashmem
-  base
+  ${base_LIB}
   #
   # MOJO_PUBLIC
   #

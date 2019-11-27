@@ -361,7 +361,7 @@ if(ENABLE_SKIA AND ENABLE_BLINK)
     #libjpeg
     #libpng
     #zlib
-    base
+    ${base_LIB}
     #${WUFFS_LIB_NAME}
     #jpeg
   )

@@ -2,6 +2,14 @@
 
 ### --- GFX_COLOR_SPACE ---###
 
+if(NOT DEFINED CHROMIUM_DIR)
+  message(FATAL_ERROR "NOT DEFINED: CHROMIUM_DIR")
+endif(NOT DEFINED CHROMIUM_DIR)
+
+set(UI_GFX_PARENT_DIR
+  ${CHROMIUM_DIR}
+)
+
 if(TARGET_WINDOWS)
   list(APPEND GFX_COLOR_SPACE_SOURCES
     ${GFX_COLOR_SPACE_DIR}color_space_export.h
@@ -30,7 +38,7 @@ add_library(GFX_COLOR_SPACE STATIC
 
 target_link_libraries(GFX_COLOR_SPACE PRIVATE
   #${BASE_LIBRARIES}
-  base
+  ${base_LIB}
   SKIA
   #skcms
   #${OPENGLES2_LIBRARIES}
@@ -43,6 +51,7 @@ target_include_directories(GFX_COLOR_SPACE PRIVATE
   ${GFX_COLOR_SPACE_DIR}
   ${BASE_DIR}
   ${OPENGL_INCLUDE_DIR}
+  ${UI_GFX_PARENT_DIR}
 )
 
 target_compile_definitions(GFX_COLOR_SPACE PRIVATE

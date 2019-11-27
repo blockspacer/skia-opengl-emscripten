@@ -108,7 +108,7 @@ target_link_libraries(PAINT_CC PRIVATE
   GFX_SWITCHES
   GFX_RANGE
   SKIA
-  base
+  ${base_LIB}
   #${OPENGLES2_LIBRARIES}
   ${FOUND_OPENGL_LIBRARIES}
 )

@@ -498,7 +498,7 @@ target_link_libraries(GPU_COMMAND_BUFFER PRIVATE
   #GPU_GLES2 # same as ${GPU_COMMAND_BUFFER_DIR}
   #${BASE_LIBRARIES}
   #mojom
-  base
+  ${base_LIB}
   ${GRE2_LIB}
   #${OPENGLES2_LIBRARIES}
   ${FOUND_OPENGL_LIBRARIES}

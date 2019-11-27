@@ -165,7 +165,7 @@ target_link_libraries(cobalt_loader PRIVATE
   #v8_stub
   ${COBALT_CSP_LIB_NAME}
   ${COBALT_RENDER_TREE_LIB}
-  base # TODO
+  ${base_LIB} # TODO
   ${modp_b64_LIB}
   #dynamic_annotations
   GURL

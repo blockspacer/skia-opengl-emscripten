@@ -52,7 +52,7 @@ add_library(cobalt_input STATIC
 )
 
 target_link_libraries(cobalt_input PRIVATE
-  base # TODO
+  ${base_LIB} # TODO
   cobalt_base
   cobalt_nanobase
   cobalt_dom

@@ -516,7 +516,6 @@ add_library(UI_BASE STATIC
 )
 
 target_link_libraries(UI_BASE PRIVATE
-  base # TODO
   #public_deps = [
   #  ":buildflags",
   #  ":features",
@@ -542,7 +541,7 @@ target_link_libraries(UI_BASE PRIVATE
   #  "//url",
   #]
   #
-  base
+  ${base_LIB}
   SKIA
   UI_GFX
   GFX_GEOMETRY

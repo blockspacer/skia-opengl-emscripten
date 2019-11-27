@@ -10,6 +10,14 @@ endif()
 
 ### --- GFX_ANIMATION ---###
 
+if(NOT DEFINED CHROMIUM_DIR)
+  message(FATAL_ERROR "NOT DEFINED: CHROMIUM_DIR")
+endif(NOT DEFINED CHROMIUM_DIR)
+
+set(UI_GFX_PARENT_DIR
+  ${CHROMIUM_DIR}
+)
+
 if(TARGET_WINDOWS)
   list(APPEND GFX_ANIMATION_SOURCES
     ${GFX_ANIMATION_DIR}animation_win.cc
@@ -47,7 +55,7 @@ add_library(GFX_ANIMATION STATIC
 
 target_link_libraries(GFX_ANIMATION PRIVATE
   #${BASE_LIBRARIES}
-  base
+  ${base_LIB}
   SKIA
   GFX_GEOMETRY
   GFX_GEOMETRY_SKIA
@@ -61,6 +69,7 @@ target_include_directories(GFX_ANIMATION PRIVATE
   ${GFX_ANIMATION_DIR}
   ${BASE_DIR}
   ${OPENGL_INCLUDE_DIR}
+  ${UI_GFX_PARENT_DIR}
 )
 
 target_compile_definitions(GFX_ANIMATION PRIVATE

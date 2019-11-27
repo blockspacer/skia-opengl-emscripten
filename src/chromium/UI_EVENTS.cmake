@@ -1,4 +1,4 @@
-### --- UI_EVENTS ---###
+﻿### --- UI_EVENTS ---###
 
 list(APPEND UI_EVENTS_SOURCES
   #
@@ -268,7 +268,7 @@ add_library(UI_EVENTS STATIC
 )
 
 target_link_libraries(UI_EVENTS PRIVATE
-  base
+  ${base_LIB}
   GFX_GEOMETRY
   #
   # public_deps = [
@@ -295,7 +295,6 @@ target_link_libraries(UI_EVENTS PRIVATE
   ##"+ui/base/x",
   UI_GFX
   ##
-  #base
   ##mesa_headers
   ##  "//ui/events/platform",
   #UI_GFX

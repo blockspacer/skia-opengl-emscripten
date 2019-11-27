@@ -183,7 +183,7 @@ add_library(GLIBJPEG_TURBO STATIC
 
 if(TARGET_EMSCRIPTEN)
   target_link_libraries(GLIBJPEG_TURBO PRIVATE
-    #base
+    #${base_LIB}
     #${ZLIB_LIBRARIES}
     #GZLIB
     ${GLIBXML_LIB}

@@ -67,7 +67,7 @@ else()
 endif()
 
 target_link_libraries(fontconfig PUBLIC
-  base
+  ${base_LIB}
   ${GLIBXML_LIB}
   #GZLIB
   ${libZLIB_LIB}

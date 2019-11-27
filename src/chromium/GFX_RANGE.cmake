@@ -14,6 +14,14 @@ else()
   message(FATAL_ERROR "platform not supported")
 endif()
 
+if(NOT DEFINED CHROMIUM_DIR)
+  message(FATAL_ERROR "NOT DEFINED: CHROMIUM_DIR")
+endif(NOT DEFINED CHROMIUM_DIR)
+
+set(UI_GFX_PARENT_DIR
+  ${CHROMIUM_DIR}
+)
+
 ### --- GFX_RANGE ---###
 
 list(APPEND GFX_RANGE_SOURCES
@@ -32,7 +40,7 @@ add_library(GFX_RANGE STATIC
 
 target_link_libraries(GFX_RANGE PRIVATE
   #${BASE_LIBRARIES}
-  base
+  ${base_LIB}
   #${OPENGLES2_LIBRARIES}
   ${FOUND_OPENGL_LIBRARIES}
 )
@@ -43,6 +51,7 @@ target_include_directories(GFX_RANGE PRIVATE
   ${GFX_RANGE_DIR}
   ${BASE_DIR}
   ${OPENGL_INCLUDE_DIR}
+  ${UI_GFX_PARENT_DIR}
 )
 
 target_compile_definitions(GFX_RANGE PRIVATE

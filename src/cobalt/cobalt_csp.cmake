@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+﻿cmake_minimum_required(VERSION 2.8)
 
 #'dependencies': [
 #  '<(DEPTH)/cobalt/base/base.gyp:base',
@@ -32,7 +32,7 @@ add_library(cobalt_csp STATIC
 
 target_link_libraries(cobalt_csp PRIVATE
   cobalt_base
-  base # TODO
+  ${base_LIB} # TODO
   ${modp_b64_LIB}
   #GFX_GEOMETRY
   #${BASE_LIBRARIES}

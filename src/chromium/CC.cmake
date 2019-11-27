@@ -2,6 +2,15 @@
 
 ### --- CC ---###
 
+if(NOT DEFINED CHROMIUM_DIR)
+  message(FATAL_ERROR "NOT DEFINED: CHROMIUM_DIR")
+endif(NOT DEFINED CHROMIUM_DIR)
+
+# path to cc/debug/layer_tree_debug_state.h
+set(CC_PARENT_DIR
+  ${CHROMIUM_DIR}
+)
+
 list(APPEND CC_SOURCES
   ${CC_DIR}cc_export.h
   #${CC_DIR}benchmarks/benchmark_instrumentation.cc
@@ -391,7 +400,7 @@ target_link_libraries(CC PRIVATE
   GFX_SWITCHES
   GFX_RANGE
   SKIA
-  base
+  ${base_LIB}
   GURL
   #
   ${COMPONENTS_VIZ_CLIENT_LIB}

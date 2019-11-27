@@ -5554,7 +5554,7 @@ target_link_libraries(BLINK_RENDERER_CORE PRIVATE
   # services/service_manager
   # services/ws/public/cpp/gpu
   #${BASE_LIBRARIES}
-  base
+  ${base_LIB}
   SKIA
   #skcms
   #ced

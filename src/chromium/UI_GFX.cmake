@@ -2,6 +2,14 @@
 
 ### --- UI_GFX ---###
 
+if(NOT DEFINED CHROMIUM_DIR)
+  message(FATAL_ERROR "NOT DEFINED: CHROMIUM_DIR")
+endif(NOT DEFINED CHROMIUM_DIR)
+
+set(UI_GFX_PARENT_DIR
+  ${CHROMIUM_DIR}
+)
+
 list(APPEND UI_GFX_SOURCES
   #${UI_GFX_DIR}gfx_export.h
   # TODO # ${UI_GFX_DIR}android/java_bitmap.cc
@@ -342,7 +350,7 @@ target_link_libraries(UI_GFX PRIVATE
   GFX_SWITCHES
   GFX_RANGE
   SKIA
-  base
+  ${base_LIB}
   # linux libsync
   ${libsync_LIB}
   #
@@ -370,6 +378,7 @@ target_include_directories(UI_GFX PRIVATE
   ${UI_GFX_DIR}
   ${UI_PARENT_DIR} # path to ui/gfx/geometry/axis_transform2d.h
   ${BASE_DIR}
+  ${UI_GFX_PARENT_DIR}
 )
 
 target_compile_definitions(UI_GFX PRIVATE

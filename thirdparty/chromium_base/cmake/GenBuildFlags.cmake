@@ -1,4 +1,4 @@
-include_guard( DIRECTORY )
+﻿include_guard( DIRECTORY )
 
 # https://cmake.org/cmake/help/latest/module/FindPythonInterp.html
 find_package(PythonInterp 2.7 REQUIRED)
@@ -12,19 +12,28 @@ if(BASE_NEED_GEN_BUILD_DATE)
   if(NOT GIT_EXECUTABLE)
     MESSAGE(FATAL_ERROR "Python not found! Aborting...")
   endif(NOT GIT_EXECUTABLE)
-  #
-  execute_process(
-    COMMAND ${GIT_EXECUTABLE} log -n1 --format="%at"
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-    OUTPUT_VARIABLE _build_timestamp
-    #ERROR_QUIET
-    OUTPUT_STRIP_TRAILING_WHITESPACE
-    ERROR_VARIABLE _ERROR_VARIABLE
-    RESULT_VARIABLE retcode
-  )
-  if(NOT "${retcode}" STREQUAL "0")
-    message( FATAL_ERROR "Bad exit status ${_ERROR_VARIABLE}")
-  endif()
+  # NOTE: git timestamp can be populated only when WORKING_DIRECTORY
+  # points to valid git repo
+  set(TIMESTAMP_FROM_GIT FALSE)
+  if(TIMESTAMP_FROM_GIT)
+    execute_process(
+      COMMAND ${GIT_EXECUTABLE} log -n1 --format="%at"
+      # NOTE: must point to folder containing .git
+      WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/../.."
+      OUTPUT_VARIABLE _build_timestamp
+      #ERROR_QUIET
+      OUTPUT_STRIP_TRAILING_WHITESPACE
+      ERROR_VARIABLE _ERROR_VARIABLE
+      RESULT_VARIABLE retcode
+    )
+    if(NOT "${retcode}" STREQUAL "0")
+      message( FATAL_ERROR "Bad exit status ${_ERROR_VARIABLE}")
+    endif()
+  else()
+    # %s - Seconds since midnight (UTC) 1-Jan-1970 (UNIX time).
+    # see https://gitlab.kitware.com/cmake/cmake/blob/master/Help/command/string.rst
+    string(TIMESTAMP _build_timestamp "%s")
+  endif(TIMESTAMP_FROM_GIT)
 endif(BASE_NEED_GEN_BUILD_DATE)
 
 #

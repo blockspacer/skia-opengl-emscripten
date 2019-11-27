@@ -29,7 +29,6 @@ add_library(cobalt_web_animations STATIC
 )
 
 target_link_libraries(cobalt_web_animations PRIVATE
-  #base # TODO
   cobalt_base
   cobalt_cssom
   #cobalt_nanobase

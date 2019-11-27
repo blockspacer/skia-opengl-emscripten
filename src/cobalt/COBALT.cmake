@@ -12,7 +12,7 @@ add_library(COBALT_CORE INTERFACE
 )
 
 target_link_libraries(COBALT_CORE INTERFACE
-  base # TODO
+  ${base_LIB} # TODO
   ${modp_b64_LIB}
   ${COBALT_LIBS}
   #cobalt_base

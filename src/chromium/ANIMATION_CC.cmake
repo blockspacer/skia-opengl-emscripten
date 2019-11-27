@@ -61,7 +61,7 @@ target_link_libraries(ANIMATION_CC PRIVATE
   GFX_SWITCHES
   GFX_RANGE
   #${BASE_LIBRARIES}
-  base
+  ${base_LIB}
   #${OPENGLES2_LIBRARIES}
   ${FOUND_OPENGL_LIBRARIES}
 )

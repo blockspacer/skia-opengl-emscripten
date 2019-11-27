@@ -74,7 +74,7 @@ class skg_conan_project(ConanFile):
 
         self.requires("chromium_build_util/master@conan/stable")
 
-        #self.requires("chromium_base/master@conan/stable")
+        self.requires("chromium_base/master@conan/stable")
 
         if self.settings.os == "Linux":
             self.requires("chromium_libevent/master@conan/stable")

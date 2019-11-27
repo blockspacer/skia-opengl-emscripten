@@ -1,4 +1,4 @@
-### --- UI_COMPOSITOR ---###
+﻿### --- UI_COMPOSITOR ---###
 
 list(APPEND UI_COMPOSITOR_SOURCES
   ${UI_COMPOSITOR_DIR}callback_layer_animation_observer.cc
@@ -79,7 +79,7 @@ target_link_libraries(UI_COMPOSITOR PRIVATE
   BASE_CC
   ${CC_LIB}
   #"//base",
-  base
+  ${base_LIB}
   #"//base/third_party/dynamic_annotations",
   #${dynamic_annotations_LIB}
   #"//cc/animation",

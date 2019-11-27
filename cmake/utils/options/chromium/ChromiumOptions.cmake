@@ -430,7 +430,7 @@ if(ENABLE_BLINK)
     COMPONENTS_SCHEDULING_METRICS
   )
   list(APPEND BLINK_LIBS
-    base
+    ${base_LIB}
     #ced
     ${GCRYPTO_LIB}
     GURL
@@ -889,7 +889,7 @@ endif(ENABLE_SKIA)
 
 if(ENABLE_COBALT)
   list(APPEND COBALT_LIBS
-    base
+    ${base_LIB}
     #ced
     ${GCRYPTO_LIB}
     GURL

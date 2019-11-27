@@ -17,7 +17,7 @@ target_link_libraries(cobalt_dom_exception PRIVATE
   #cobalt_nanobase
   cobalt_script
   v8_stub
-  #base # TODO
+  #${base_LIB} # TODO
   #${modp_b64_LIB}
 )
 

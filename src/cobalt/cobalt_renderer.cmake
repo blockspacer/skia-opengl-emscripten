@@ -40,7 +40,7 @@ if(NOT DEFINED CUSTOM_ICU_LIB)
 endif(NOT DEFINED CUSTOM_ICU_LIB)
 
 target_link_libraries(cobalt_renderer PRIVATE
-  base # TODO
+  ${base_LIB} # TODO
   cobalt_base
   cobalt_dom
   cobalt_loader

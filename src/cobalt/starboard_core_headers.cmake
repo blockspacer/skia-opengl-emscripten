@@ -50,7 +50,7 @@ add_library(starboard_core STATIC
 )
 
 target_link_libraries(starboard_core PUBLIC
-  base
+  ${base_LIB}
 )
 
 set_property(TARGET starboard_core PROPERTY CXX_STANDARD 17)

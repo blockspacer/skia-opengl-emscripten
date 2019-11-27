@@ -72,7 +72,7 @@ if(TARGET_EMSCRIPTEN)
 elseif(TARGET_LINUX OR TARGET_WINDOWS)
   target_link_libraries(GLIBJPEG PRIVATE
     #${BASE_LIBRARIES}
-    #base
+    #${base_LIB}
     #${ZLIB_LIBRARIES}
     ${libZLIB_LIB}
     GLIBXML

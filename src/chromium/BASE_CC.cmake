@@ -1,4 +1,4 @@
-# see https://github.com/chromium/chromium/blob/db47b3e7cc3b539b2cfdeb625dc6ee278fd0a569/cc/base/BUILD.gn
+﻿# see https://github.com/chromium/chromium/blob/db47b3e7cc3b539b2cfdeb625dc6ee278fd0a569/cc/base/BUILD.gn
 
 ## --- BASE_CC ---###
 
@@ -49,7 +49,7 @@ add_library(BASE_CC STATIC
 target_link_libraries(BASE_CC PRIVATE
   #GFX_GEOMETRY
   #${BASE_LIBRARIES}
-  base
+  ${base_LIB}
   SKIA
   UI_GFX
 )

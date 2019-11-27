@@ -171,7 +171,7 @@ endif(ENABLE_SKIA)
   endif(TARGET_LINUX)
 
   target_link_libraries(cobalt_renderer_stub_skia PRIVATE
-    base # TODO
+    ${base_LIB} # TODO
     cobalt_base
     cobalt_math
     cobalt_dom
@@ -268,7 +268,7 @@ endif()
 target_link_libraries(cobalt_renderer_stub_skgl PRIVATE
   ${cobalt_renderer_stub_skia_LIB}
   #
-  base # TODO
+  ${base_LIB} # TODO
   cobalt_base
   cobalt_math
   cobalt_dom
@@ -424,7 +424,7 @@ target_link_libraries(cobalt_renderer_stub PRIVATE
   cobalt_renderer_stub_skgl
   ${cobalt_renderer_stub_skia_LIB}
   #
-  base # TODO
+  ${base_LIB} # TODO
   cobalt_base
   cobalt_math
   cobalt_dom

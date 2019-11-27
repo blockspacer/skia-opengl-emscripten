@@ -2,6 +2,14 @@
 
 ### --- GFX_GEOMETRY ---###
 
+if(NOT DEFINED CHROMIUM_DIR)
+  message(FATAL_ERROR "NOT DEFINED: CHROMIUM_DIR")
+endif(NOT DEFINED CHROMIUM_DIR)
+
+set(UI_GFX_PARENT_DIR
+  ${CHROMIUM_DIR}
+)
+
 list(APPEND GFX_GEOMETRY_SOURCES
   #${GFX_GEOMETRY_DIR}../gfx_export.h
   #${GFX_GEOMETRY_DIR}angle_conversions.h
@@ -63,7 +71,7 @@ add_library(GFX_GEOMETRY STATIC
 
 target_link_libraries(GFX_GEOMETRY PRIVATE
   #${BASE_LIBRARIES}
-  base
+  ${base_LIB}
   #${OPENGLES2_LIBRARIES}
   ${FOUND_OPENGL_LIBRARIES}
 )
@@ -74,6 +82,7 @@ target_include_directories(GFX_GEOMETRY PRIVATE
   ${GFX_GEOMETRY_DIR}
   ${BASE_DIR}
   ${OPENGL_INCLUDE_DIR}
+  ${UI_GFX_PARENT_DIR}
 )
 
 target_compile_definitions(GFX_GEOMETRY PRIVATE

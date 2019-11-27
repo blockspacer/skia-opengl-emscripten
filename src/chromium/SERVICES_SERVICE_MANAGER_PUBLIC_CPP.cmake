@@ -147,7 +147,7 @@ target_link_libraries(SERVICES_SERVICE_MANAGER_PUBLIC_CPP PRIVATE
   #  "//mojo/public/cpp/base:shared_typemap_traits",
   #  "//services/service_manager/public/mojom:mojom_shared",
   #]
-  base
+  ${base_LIB}
   ${MOJO_LIB}
   #GNET
   #GURL

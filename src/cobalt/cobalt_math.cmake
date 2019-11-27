@@ -68,7 +68,7 @@ target_link_libraries(cobalt_math PRIVATE
   #cobalt_nanobase
   #cobalt_script
   #v8_stub
-  base # TODO
+  ${base_LIB} # TODO
   ${modp_b64_LIB}
   #dynamic_annotations
   ${GLIBXML_LIB}

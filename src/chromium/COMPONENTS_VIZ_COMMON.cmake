@@ -178,7 +178,7 @@ target_link_libraries(COMPONENTS_VIZ_COMMON PRIVATE
   UI_GL
   BASE_CC
   PAINT_CC
-  base
+  ${base_LIB}
   SKIA
   GFX_ANIMATION
   GFX_CODEC

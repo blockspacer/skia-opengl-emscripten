@@ -378,6 +378,10 @@ add_library(cobalt_dom STATIC
   ${cobalt_dom_SOURCES}
 )
 
+if(NOT DEFINED base_LIB)
+ message(FATAL_ERROR "NOT DEFINED: base_LIB")
+endif(NOT DEFINED base_LIB)
+
 # '<(DEPTH)/cobalt/browser/browser_bindings_gen.gyp:generated_types',
 #'dependencies': [
 #  '<(DEPTH)/cobalt/base/base.gyp:base',
@@ -403,7 +407,7 @@ add_library(cobalt_dom STATIC
 #  '<(DEPTH)/url/url.gyp:url',
 #],
 target_link_libraries(cobalt_dom PRIVATE
-  base # TODO
+  ${base_LIB} # TODO
   cobalt_base
   cobalt_nanobase
   ${COBALT_CSP_LIB_NAME}

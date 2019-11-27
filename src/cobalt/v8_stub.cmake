@@ -14,7 +14,7 @@ add_library(v8_stub STATIC
 )
 
 target_link_libraries(v8_stub PRIVATE
-  base # TODO
+  ${base_LIB} # TODO
   cobalt_base
   cobalt_nanobase
   cobalt_script

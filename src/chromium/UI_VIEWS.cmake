@@ -1,4 +1,4 @@
-### --- UI_VIEWS ---###
+﻿### --- UI_VIEWS ---###
 
 if(NOT ENABLE_CHROMIUM_UI_COMPOSITOR)
   # skip
@@ -764,7 +764,7 @@ target_link_libraries(UI_VIEWS PRIVATE
   #"+ui/wm/public",
   #":buildflags",
   #"//base:i18n",
-  base
+  ${base_LIB}
   #"//base/third_party/dynamic_annotations",
   #${dynamic_annotations_LIB}
   #"//cc/paint",
@@ -825,7 +825,6 @@ target_link_libraries(UI_VIEWS PRIVATE
   # BASE_CC
   # ${CC_LIB}
   # #"//base",
-  # base
   # #"//base/third_party/dynamic_annotations",
   # #${dynamic_annotations_LIB}
   # #"//cc/animation",

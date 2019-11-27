@@ -22,7 +22,10 @@ install(
   TARGETS
     ${STATIC_LIB_NAME}
   EXPORT
-    ${PROJECT_NAME}-config)
+    ${PROJECT_NAME}-config
+  DESTINATION
+    cmake)
+
 install(
   EXPORT
     ${PROJECT_NAME}-config

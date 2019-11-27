@@ -1,4 +1,6 @@
-﻿include_guard( DIRECTORY )
+﻿cmake_minimum_required(VERSION 3.4)
+
+include_guard( DIRECTORY )
 
 # NOTE: preserve directory structure
 install(
@@ -13,7 +15,10 @@ install(
   TARGETS
     ${STATIC_LIB_NAME}
   EXPORT
-    ${PROJECT_NAME}-config)
+    ${PROJECT_NAME}-config
+  DESTINATION
+    cmake)
+
 install(
   EXPORT
     ${PROJECT_NAME}-config

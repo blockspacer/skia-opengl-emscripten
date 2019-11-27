@@ -39,6 +39,8 @@ if(EXTRA_EMCMAKE_OPTS)
 endif(EXTRA_EMCMAKE_OPTS)
 
 # --- vars ---
+set(CONAN_ARGS "--build=missing;--profile;clang;-o;enable_tests=False" CACHE STRING "parameters for conan install")
+
 set(BUILD_DIR "${CMAKE_CURRENT_SOURCE_DIR}/build-linux/" CACHE STRING "output directory")
 
 set(C_COMPILER "/usr/bin/clang-6.0" CACHE STRING "C COMPILER, must be full path to clang > 4")
@@ -61,8 +63,22 @@ if (BUILD_APP)
   set(CMAKE_OPTS "${CMAKE_OPTS};-DCMAKE_C_COMPILER=${C_COMPILER}")
   set(CMAKE_OPTS "${CMAKE_OPTS};-DCMAKE_CXX_COMPILER=${CXX_COMPILER}")
 
+  # --- conan ---
+  execute_process(
+    COMMAND
+      ${COLORED_OUTPUT_ENABLER}
+        # TODO: ability to change "--profile"
+        ${CMAKE_COMMAND} "-E" "time" "conan" "install" ${CONAN_ARGS} ".."
+    WORKING_DIRECTORY ${BUILD_DIR}
+    TIMEOUT 7200 # sec
+    RESULT_VARIABLE retcode
+    ERROR_VARIABLE _ERROR_VARIABLE
+  )
+  if(NOT "${retcode}" STREQUAL "0")
+    message( FATAL_ERROR "Bad exit status ${retcode} ${_ERROR_VARIABLE}")
+  endif()
+
   # --- configure ---
-  # TODO: "-DCMAKE_TOOLCHAIN_FILE=conan_paths.cmake"
   execute_process(
     COMMAND
       ${COLORED_OUTPUT_ENABLER}

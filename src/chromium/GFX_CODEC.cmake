@@ -2,6 +2,14 @@
 
 ### --- GFX_CODEC ---###
 
+if(NOT DEFINED CHROMIUM_DIR)
+  message(FATAL_ERROR "NOT DEFINED: CHROMIUM_DIR")
+endif(NOT DEFINED CHROMIUM_DIR)
+
+set(UI_GFX_PARENT_DIR
+  ${CHROMIUM_DIR}
+)
+
 list(APPEND GFX_CODEC_SOURCES
   #${GFX_CODEC_DIR}codec_export.h
   # TODO # ${GFX_CODEC_DIR}jpeg_codec.cc
@@ -64,7 +72,7 @@ target_link_libraries(GFX_CODEC PRIVATE
   #libpng
   #zlib
   ${libZLIB_LIB}
-  base
+  ${base_LIB}
   #
   # "//base",
   # "//skia",
@@ -82,6 +90,7 @@ target_include_directories(GFX_CODEC PRIVATE
   ${GFX_CODEC_DIR}
   ${BASE_DIR}
   ${OPENGL_INCLUDE_DIR}
+  ${UI_GFX_PARENT_DIR}
 )
 
 target_compile_definitions(GFX_CODEC PRIVATE

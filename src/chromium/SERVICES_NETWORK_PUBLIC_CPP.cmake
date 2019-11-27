@@ -141,7 +141,7 @@ else()
     GURL
     ${MOJO_LIB}
     #${BASE_LIBRARIES}
-    #base
+    #${base_LIB}
     #${ZLIB_LIBRARIES}
     #zlib
     #GZLIB

@@ -16,7 +16,7 @@ add_library(cobalt_ui_navigation STATIC
 
 target_link_libraries(cobalt_ui_navigation PRIVATE
   cobalt_base
-  base # TODO
+  ${base_LIB} # TODO
 )
 
 set_property(TARGET cobalt_ui_navigation PROPERTY CXX_STANDARD 17)

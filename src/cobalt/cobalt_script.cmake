@@ -67,7 +67,7 @@ add_library(cobalt_script STATIC
 target_link_libraries(cobalt_script PRIVATE
   cobalt_base
   cobalt_nanobase
-  base # TODO
+  ${base_LIB} # TODO
   #${COBALT_V8_STUB_LIB}
   #GFX_GEOMETRY
 )

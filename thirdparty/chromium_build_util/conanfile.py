@@ -1,4 +1,4 @@
-from conans import ConanFile, CMake, tools
+﻿from conans import ConanFile, CMake, tools
 import traceback
 import os
 import shutil
@@ -71,7 +71,7 @@ class chromium_build_util_conan_project(ConanFile):
     #  self.run("git clone %s ......." % url)
 
     def requirements(self):
-        self.requires("chromium_cmake_platform_detection/master@conan/stable")
+        self.requires("cmake_platform_detection/master@conan/stable")
 
         if self.options.enable_tests:
             self.requires("catch2/[>=2.1.0]@bincrafters/stable")

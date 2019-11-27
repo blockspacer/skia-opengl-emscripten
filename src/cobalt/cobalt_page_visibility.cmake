@@ -14,13 +14,12 @@ add_library(cobalt_page_visibility STATIC
 )
 
 target_link_libraries(cobalt_page_visibility PRIVATE
-  base # TODO
+  ${base_LIB} # TODO
   cobalt_base
   #cobalt_browser ## TODO ##
   #cobalt_nanobase
   #cobalt_script
   #v8_stub
-  base # TODO
   ${modp_b64_LIB}
   #dynamic_annotations
   ${GLIBXML_LIB}

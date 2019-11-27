@@ -1,5 +1,14 @@
 ﻿## --- SKIA_EXT ---###
 
+if(NOT DEFINED CHROMIUM_DIR)
+  message(FATAL_ERROR "NOT DEFINED: CHROMIUM_DIR")
+endif(NOT DEFINED CHROMIUM_DIR)
+
+# path to third_party/skia/include/core/SkTypes.h
+set(SKIA_THIRD_PARTY_PARENT_DIR
+  ${CHROMIUM_DIR}
+)
+
 list(APPEND SKIA_EXT_COMMON_SOURCES
   # Chrome sources.
   #${SKIA_EXT_DIR}config/SkUserConfig.h",
@@ -127,7 +136,7 @@ target_link_libraries(SKIA_EXT PRIVATE
   #${WUFFS_LIB_NAME}
   #jpeg
   #${BASE_LIBRARIES}
-  base
+  ${base_LIB}
 )
 
 set_property(TARGET SKIA_EXT PROPERTY CXX_STANDARD 17)
@@ -148,6 +157,7 @@ target_include_directories(SKIA_EXT PUBLIC
   ${SKIA_EXT_DIR}/common
   ${SKIA_INCLUDES}
   ${BASE_DIR}
+  ${SKIA_THIRD_PARTY_PARENT_DIR}
 )
 
 target_compile_definitions(SKIA_EXT PRIVATE

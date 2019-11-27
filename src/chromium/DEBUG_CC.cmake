@@ -1,6 +1,15 @@
-# see https://github.com/chromium/chromium/blob/2ca8c5037021c9d2ecc00b787d58a31ed8fc8bcb/cc/debug/BUILD.gn
+﻿# see https://github.com/chromium/chromium/blob/2ca8c5037021c9d2ecc00b787d58a31ed8fc8bcb/cc/debug/BUILD.gn
 
 ### --- DEBUG_CC ---###
+
+if(NOT DEFINED CHROMIUM_DIR)
+  message(FATAL_ERROR "NOT DEFINED: CHROMIUM_DIR")
+endif(NOT DEFINED CHROMIUM_DIR)
+
+# path to cc/debug/layer_tree_debug_state.h
+set(CC_PARENT_DIR
+  ${CHROMIUM_DIR}
+)
 
 # TODO https://github.com/chromium/chromium/blob/master/third_party/blink/renderer/platform/BUILD.gn
 list(APPEND DEBUG_CC_SOURCES
@@ -25,7 +34,7 @@ target_link_libraries(DEBUG_CC PRIVATE
   #GURL
   #${GNET_LIBS}
   #${BASE_LIBRARIES}
-  base
+  ${base_LIB}
   SKIA
   GFX_ANIMATION
   GFX_CODEC
@@ -41,6 +50,7 @@ set_property(TARGET DEBUG_CC PROPERTY CXX_STANDARD 17)
 target_include_directories(DEBUG_CC PRIVATE
   ${DEBUG_CC_DIR}
   ${BASE_DIR}
+  ${CC_PARENT_DIR}
 )
 
 target_compile_definitions(DEBUG_CC PRIVATE

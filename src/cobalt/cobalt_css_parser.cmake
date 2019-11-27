@@ -52,7 +52,7 @@ add_library(cobalt_css_parser STATIC
 )
 
 target_link_libraries(cobalt_css_parser PRIVATE
-  base # TODO
+  ${base_LIB} # TODO
   cobalt_base
   cobalt_cssom
   cobalt_nanobase

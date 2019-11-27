@@ -73,7 +73,7 @@ add_library(GLIBPNG STATIC
 )
 
 target_link_libraries(GLIBPNG PRIVATE
-  #base
+  #${base_LIB}
   #${ZLIB_LIBRARIES}
   ${libZLIB_LIB}
   #GLIBXML

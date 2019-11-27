@@ -80,7 +80,7 @@ add_library(GCRYPTO STATIC
 
 target_link_libraries(GCRYPTO PRIVATE
   ${BORINGSSL_LIBS}
-  base
+  ${base_LIB}
   #GLIBJPEG_TURBO
   ${libjpeg_TURBO_LIB}
 )

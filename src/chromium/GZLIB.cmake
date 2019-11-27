@@ -47,7 +47,7 @@ add_library(GZLIB STATIC
 )
 
 #target_link_libraries(GZLIB PRIVATE
-  #base
+  #${base_LIB}
   #${ZLIB_LIBRARIES}
   #zlib
 #)

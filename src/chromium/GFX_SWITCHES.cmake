@@ -2,6 +2,14 @@
 
 ### --- GFX_SWITCHES ---###
 
+if(NOT DEFINED CHROMIUM_DIR)
+  message(FATAL_ERROR "NOT DEFINED: CHROMIUM_DIR")
+endif(NOT DEFINED CHROMIUM_DIR)
+
+set(UI_GFX_PARENT_DIR
+  ${CHROMIUM_DIR}
+)
+
 list(APPEND GFX_SWITCHES_SOURCES
   ${GFX_SWITCHES_DIR}switches.cc
   #"switches.h",
@@ -14,7 +22,7 @@ add_library(GFX_SWITCHES STATIC
 
 target_link_libraries(GFX_SWITCHES PRIVATE
   #${BASE_LIBRARIES}
-  base
+  ${base_LIB}
   #${OPENGLES2_LIBRARIES}
   ${FOUND_OPENGL_LIBRARIES}
 )
@@ -25,6 +33,7 @@ target_include_directories(GFX_SWITCHES PRIVATE
   ${GFX_SWITCHES_DIR}
   ${BASE_DIR}
   ${OPENGL_INCLUDE_DIR}
+  ${UI_GFX_PARENT_DIR}
 )
 
 target_compile_definitions(GFX_SWITCHES PRIVATE

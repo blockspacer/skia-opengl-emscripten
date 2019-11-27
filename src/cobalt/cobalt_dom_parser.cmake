@@ -29,7 +29,7 @@ add_library(cobalt_dom_parser STATIC
 )
 
 target_link_libraries(cobalt_dom_parser PRIVATE
-  base # TODO
+  ${base_LIB} # TODO
   cobalt_base
   cobalt_dom
   cobalt_loader

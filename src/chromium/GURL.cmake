@@ -1,5 +1,14 @@
 ﻿## --- GURL ---###
 
+if(NOT DEFINED CHROMIUM_DIR)
+  message(FATAL_ERROR "NOT DEFINED: CHROMIUM_DIR")
+endif(NOT DEFINED CHROMIUM_DIR)
+
+# path to url/gurl.h
+set(GURL_PARENT_DIR
+  ${CHROMIUM_DIR}
+)
+
 # TODO https://github.com/chromium/chromium/blob/master/third_party/blink/renderer/platform/BUILD.gn
 list(APPEND GURL_SOURCES
   ${GURL_DIR}gurl.cc
@@ -51,7 +60,7 @@ add_library(GURL STATIC
 )
 
 target_link_libraries(GURL PRIVATE
-  #base # TODO
+  #${base_LIB} # TODO
   #cobalt_base
   #cobalt_nanobase
   ${STARBOARD_PLATFORM_LIB}
@@ -66,11 +75,12 @@ target_link_libraries(GURL PRIVATE
 
 set_property(TARGET GURL PROPERTY CXX_STANDARD 17)
 
-#target_include_directories(GURL PRIVATE
-#  ${GURL_DIR}
-#  # TODO
-#  ${COBALT_COMMON_INCLUDES}
-#)
+target_include_directories(GURL PRIVATE
+  ${GURL_PARENT_DIR}
+  #${GURL_DIR}
+  # TODO
+  #${COBALT_COMMON_INCLUDES}
+)
 #
 #target_include_directories(GURL PUBLIC
 #  ${COBALT_COMMON_INCLUDES}

@@ -1,4 +1,4 @@
-### --- UI_DISPLAY ---###
+﻿### --- UI_DISPLAY ---###
 
 # see DISPLAY_UTIL_IMPLEMENTATION=1
 list(APPEND UI_DISPLAY_UTIL_SOURCES
@@ -129,7 +129,7 @@ target_link_libraries(UI_DISPLAY PRIVATE
   #"//skia",
   SKIA
   #"//base",
-  base
+  ${base_LIB}
   #"//base/third_party/dynamic_annotations",
   #${dynamic_annotations_LIB}
   #"//cc/paint",

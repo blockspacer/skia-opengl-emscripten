@@ -290,7 +290,7 @@ add_library(BORINGSSL STATIC
 
 target_link_libraries(BORINGSSL PUBLIC
   #${BASE_LIBRARIES}
-  base
+  ${base_LIB}
 )
 
 set_property(TARGET BORINGSSL PROPERTY CXX_STANDARD 17)

@@ -644,9 +644,6 @@ endif(NOT TARGET_EMSCRIPTEN)
 if(ENABLE_BASE)
   set(COMMON_FLAGS "${COMMON_FLAGS} -DENABLE_BASE=1")
   #list(APPEND APP_DEFINITIONS ENABLE_BASE_PREALLOC=1)
-  set(BASE_LIB
-    base
-  )
 elseif(EMSCRIPTEN)
   # NOTE: OS_EMSCRIPTEN defined by BASE otherwise
   list(APPEND APP_DEFINITIONS OS_EMSCRIPTEN=1) # useful if base disabled
@@ -674,7 +671,7 @@ endif(TARGET_EMSCRIPTEN)
 
 find_package(chromium_base REQUIRED)
 if(TARGET chromium_base::chromium_base-static)
-  set(chromium_base_LIB chromium_base::chromium_base-static)
+  set(base_LIB chromium_base::chromium_base-static)
 else()
   message(FATAL_ERROR "not supported: using system provided chromium_base library")
 endif()
@@ -928,7 +925,7 @@ if(ENABLE_WTF)
   #message(FATAL_ERROR ${WTF_LIBRARY_NAME})
   set(WTF_LIBS
     ${WTF_LIBRARY_NAME}
-    base
+    ${base_LIB}
     #${libevent_LIB}
     #${CUSTOM_ICU_LIB}
   )
@@ -1101,7 +1098,7 @@ if(TARGET_EMSCRIPTEN)
   # Top is the executable, followed by directly used libraries.
   # see https://floooh.github.io/2016/01/12/cmake-dependency-juggling.html
   target_link_libraries(${PROJECT_NAME} PRIVATE
-    ${BASE_LIB}
+    ${base_LIB}
     #
     ${COBALT_LIBRARY_NAME}
     ${COBALT_LIBS}
@@ -1202,7 +1199,7 @@ else()
   # Top is the executable, followed by directly used libraries.
   # see https://floooh.github.io/2016/01/12/cmake-dependency-juggling.html
   target_link_libraries(${PROJECT_NAME} PRIVATE
-    ${BASE_LIB}
+    ${base_LIB}
     #
     ${COBALT_LIBRARY_NAME}
     ${COBALT_LIBS}

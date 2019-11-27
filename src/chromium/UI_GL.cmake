@@ -155,7 +155,6 @@ add_library(UI_GL STATIC
 )
 
 target_link_libraries(UI_GL PRIVATE
-  base # TODO
   #${BASE_LIBRARIES}
   # linux libsync
   ${libsync_LIB}
@@ -164,7 +163,7 @@ target_link_libraries(UI_GL PRIVATE
   UI_BASE
   UI_GFX
   #
-  base
+  ${base_LIB}
   #mesa_headers
   #  "//ui/events/platform",
   UI_GFX

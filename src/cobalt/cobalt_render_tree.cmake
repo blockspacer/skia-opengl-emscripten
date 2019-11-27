@@ -69,7 +69,7 @@ add_library(cobalt_render_tree STATIC
 target_link_libraries(cobalt_render_tree PRIVATE
   cobalt_base
   cobalt_math
-  base # TODO
+  ${base_LIB} # TODO
   ${modp_b64_LIB}
   #dynamic_annotations
   ${SKIA_LIB} # TODO

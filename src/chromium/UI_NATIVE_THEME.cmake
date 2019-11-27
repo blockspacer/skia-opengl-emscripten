@@ -1,4 +1,4 @@
-### --- UI_NATIVE_THEME ---###
+﻿### --- UI_NATIVE_THEME ---###
 
 list(APPEND UI_NATIVE_THEME_SOURCES
   ${UI_NATIVE_THEME_DIR}caption_style.cc
@@ -42,7 +42,7 @@ target_link_libraries(UI_NATIVE_THEME PRIVATE
   #"//skia",
   SKIA
   #"//base",
-  base
+  ${base_LIB}
   #"//base/third_party/dynamic_annotations",
   #${dynamic_annotations_LIB}
   #"//cc/paint",

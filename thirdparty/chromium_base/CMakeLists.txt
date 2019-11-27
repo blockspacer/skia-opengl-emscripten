@@ -178,16 +178,28 @@ include(cmake/PlatformChecks)
 
 include(cmake/Options)
 
+include(cmake/CommonOptions)
+
 include(cmake/GenBuildFlags)
 
 include(cmake/ProjectFiles)
+
+if(TARGET_EMSCRIPTEN)
+  # skip
+elseif(TARGET_LINUX OR TARGET_WINDOWS)
+  find_package( Threads REQUIRED )
+  message(STATUS "CMAKE_THREAD_LIBS_INIT = ${CMAKE_THREAD_LIBS_INIT}")
+  set(PTHREADS_LIBS ${CMAKE_THREAD_LIBS_INIT}) # note: not set for emscripten
+else()
+  message(FATAL_ERROR "platform not supported")
+endif()
 
 # $<INSTALL_INTERFACE:...> is exported using install(EXPORT)
 # $<BUILD_INTERFACE:...> is exported using export(), or when the target is used by another target in the same buildsystem
 macro(add_relative_include_dir TARGET VISIBILITY_BUILD VISIBILITY_INSTALL NEW_ELEM)
   target_include_directories(${TARGET}
     ${VISIBILITY_BUILD} "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/${NEW_ELEM}>"
-    ${VISIBILITY_BUILD} "$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}/${NEW_ELEM}>"
+    ${VISIBILITY_INSTALL} "$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}/${NEW_ELEM}>"
   )
 endmacro(add_relative_include_dir)
 
@@ -370,6 +382,8 @@ list(APPEND BASE_DEFINES
 )
 
 add_relative_include_dir(${STATIC_LIB_NAME} PUBLIC PUBLIC "")
+
+# path to base/threading/thread.h
 
 # TODO: COBALT_COMMON_INCLUDES
 # add_relative_include_dir(${STATIC_LIB_NAME} PRIVATE PRIVATE "")

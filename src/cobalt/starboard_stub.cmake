@@ -290,13 +290,10 @@ add_library(starboard_stub STATIC
 )
 
 target_link_libraries(starboard_stub PRIVATE
-  #base # TODO
   #cobalt_base
   starboard_core # just headers
   ${modp_b64_LIB}
   #GFX_GEOMETRY
-  #${BASE_LIBRARIES}
-  #base
   #SKIA
   #dynamic_annotations
   #UI_GFX
@@ -314,7 +311,6 @@ target_link_libraries(starboard_stub PRIVATE
   ## services/service_manager
   ## services/ws/public/cpp/gpu
   ##${BASE_LIBRARIES}
-  #base
   ${GLIBXML_LIB}
   #SKIA
   ##skcms

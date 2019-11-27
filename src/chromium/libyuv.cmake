@@ -73,7 +73,6 @@ target_link_libraries(libyuv PRIVATE
   ${libZLIB_LIB}
   #JPEG
   #
-  #base
   #GLIBXML
   #GZLIB
   ##freetype

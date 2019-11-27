@@ -216,7 +216,7 @@ target_link_libraries(BLINK_PUBLIC_MOJOM PRIVATE
   #  "//url/mojom:url_mojom_gurl",
   #  "//url/mojom:url_mojom_origin",
   #]
-  base
+  ${base_LIB}
   GFX_GEOMETRY
   UI_GFX
   ${GNET_LIBS}

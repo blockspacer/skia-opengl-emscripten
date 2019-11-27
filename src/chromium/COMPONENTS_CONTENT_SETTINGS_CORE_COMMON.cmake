@@ -31,7 +31,7 @@ target_link_libraries(COMPONENTS_CONTENT_SETTINGS_CORE_COMMON PRIVATE
   #  "//net",
   #  "//url",
   #]
-  base
+  ${base_LIB}
   ${MOJO_LIB}
   ${GNET_LIBS}
   GURL
