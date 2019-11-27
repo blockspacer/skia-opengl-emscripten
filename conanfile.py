@@ -72,7 +72,8 @@ class SKG_conan_project(ConanFile):
     def requirements(self):
         if self.settings.os == "Linux":
             self.requires("chromium_libevent/master@conan/stable")
-            self.requires("chromium_icu/master@conan/stable")
+
+        self.requires("chromium_icu/master@conan/stable")
 
         if self.options.enable_tests:
             self.requires("catch2/[>=2.1.0]@bincrafters/stable")

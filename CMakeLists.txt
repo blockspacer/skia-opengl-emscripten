@@ -93,8 +93,6 @@ set_cmake_module_paths( ${PROJECT_NAME}
   "${CMAKE_CURRENT_SOURCE_DIR}/cmake;${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules" )
 list(APPEND CMAKE_MODULE_PATH
   "${CMAKE_CURRENT_SOURCE_DIR}/submodules/CXTPL/cmake/exports")
-# print_cmake_system_info from Utils.cmake
-print_cmake_system_info()
 # prevent_in_source_builds from Utils.cmake
 prevent_in_source_builds()
 # check_supported_os from Utils.cmake
@@ -115,7 +113,7 @@ find_threads()
 if(EXISTS "${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
   list(APPEND CMAKE_MODULE_PATH ${CMAKE_BINARY_DIR}/)
   include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-  #include(${CMAKE_BINARY_DIR}/conan_paths.cmake OPTIONAL)
+  include(${CMAKE_BINARY_DIR}/conan_paths.cmake REQUIRED)
   conan_basic_setup(
     # prevent conan_basic_setup from resetting cmake variables
     TARGETS
@@ -125,6 +123,11 @@ if(EXISTS "${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
 else()
   message (FATAL_ERROR "must use conan")
 endif()
+
+# ------------------------- print_cmake_system_info ----------------------------
+
+# print_cmake_system_info from Utils.cmake
+print_cmake_system_info()
 
 # ------------------------------- definitions ----------------------------------
 
@@ -687,7 +690,7 @@ if(USE_ICU)
   endif(NOT DEFINED USE_CUSTOM_ICU)
   if(USE_CUSTOM_ICU)
     # chromium_icu
-    if(TARGET_LINUX)
+    if(TARGET_LINUX OR TARGET_EMSCRIPTEN)
       # uses Config.cmake or a -config.cmake file
       # see https://gitlab.kitware.com/cmake/community/wikis/doc/tutorials/How-to-create-a-ProjectConfig.cmake-file
       find_package(chromium_icu REQUIRED)
@@ -695,7 +698,7 @@ if(USE_ICU)
       if(NOT TARGET chromium_icu::chromium_icu-static)
         message(FATAL_ERROR "not supported: using system provided libevent library")
       endif()
-    elseif(TARGET_WINDOWS OR TARGET_EMSCRIPTEN)
+    elseif(TARGET_WINDOWS)
       # skip
     else()
       message(FATAL_ERROR "chromium_icu not found")
@@ -931,6 +934,7 @@ endif(ENABLE_SKIA)
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 17)
 
 if(TARGET_EMSCRIPTEN)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D__STDC_NO_ATOMICS__=1")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --emrun")
   # https://emscripten.org/docs/getting_started/Tutorial.html#generating-html
   #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -o hello.html")
@@ -1125,7 +1129,6 @@ else()
     #
     ${libZLIB_LIB}
     #
-    #${SDL2_TTF_INCLUDE_DIR}
     ${HARFBUZZ_LIBRARIES}
     ${FOUND_OPENGL_LIBRARIES}
     # see https://stackoverflow.com/questions/16390078/build-error-when-trying-to-run-an-opengl-example-in-vc
@@ -1141,7 +1144,6 @@ else()
     #${SDL2_LIBRARIES} # NOTE: no SDL2::Main on Windows
     #SDL2::SDL2
     #SDL2::SDL2-static
-    #${SDL2_TTF_LIBRARY}
     #
     ${LINK_OPTIONS}
     #

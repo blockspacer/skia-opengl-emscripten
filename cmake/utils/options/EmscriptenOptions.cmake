@@ -314,6 +314,7 @@ endif(NOT DEFINED USE_CUSTOM_ICU)
 
 if(USE_ICU AND NOT USE_CUSTOM_ICU)
   set(EMCC_COMMON "${EMCC_COMMON} -s USE_ICU=1")
+  message(FATAL_ERROR "not supported: USE_ICU AND NOT USE_CUSTOM_ICU")
 endif(USE_ICU AND NOT USE_CUSTOM_ICU)
 
 #set(EMCC_COMMON "${EMCC_COMMON} -s USE_LIBPNG=1")
@@ -573,7 +574,7 @@ else()
     #
     ## see https://emscripten.org/docs/tools_reference/emcc.html#emcc-compiler-optimization-options
     set(EMCC_COMMON "${EMCC_COMMON} --profiling-funcs")
-  endif(RELEASE_BUILD)
+  endif(EMSCRIPTEN_USE_PROFILING)
   #
   ## see https://emscripten.org/docs/tools_reference/emcc.html#emcc-compiler-optimization-options
   #set(EMCC_COMMON "${EMCC_COMMON} --tracing")
