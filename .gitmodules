@@ -1,12 +1,6 @@
 [submodule "submodules/include-what-you-use"]
   path = submodules/include-what-you-use
   url = https://github.com/include-what-you-use/include-what-you-use.git
-[submodule "thirdparty/SDL2"]
-  path = thirdparty/SDL2
-  url = https://github.com/spurious/SDL-mirror.git
-[submodule "thirdparty/glew"]
-  path = thirdparty/glew
-  url = https://github.com/nigels-com/glew.git
 [submodule "cmake/sdl2"]
   path = cmake/sdl2
   url = https://github.com/aminosbh/sdl2-cmake-modules.git
