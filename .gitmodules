@@ -13,12 +13,6 @@
 [submodule "thirdparty/depot_tools"]
   path = thirdparty/depot_tools
   url = https://chromium.googlesource.com/chromium/tools/depot_tools.git
-[submodule "thirdparty/SDL2_ttf"]
-  path = thirdparty/SDL2_ttf
-  url = https://github.com/davidsiaw/SDL2_ttf
-[submodule "thirdparty/SDL_net"]
-  path = thirdparty/SDL_net
-  url = https://github.com/SDL-mirror/SDL_net.git
 [submodule "src/chromium/third_party/ced/src"]
   path = src/chromium/third_party/ced/src
   url = https://github.com/google/compact_enc_det.git
