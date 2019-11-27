@@ -45,6 +45,14 @@ See https://github.com/blockspacer/CXTPL#install-conan---a-crossplatform-depende
 
 See https://github.com/blockspacer/CXTPL#how-to-build
 
+## Install conan deps from local dir
+
+```bash
+cmake -DEXTRA_OPTS="conan/stable;--profile;emscripten" -P tools/buildConanThirdparty.cmake
+```
+
+Change `--profile;emscripten` to valid conan profile name.
+
 ## Windows specific
 
 Prefer file paths with lowercase english characters without spaces
