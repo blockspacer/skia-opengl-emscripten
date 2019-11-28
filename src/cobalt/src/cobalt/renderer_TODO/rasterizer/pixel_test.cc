@@ -47,8 +47,8 @@
 #include "cobalt/render_tree/typeface.h"
 #include "cobalt/renderer/rasterizer/pixel_test_fixture.h"
 #include "testing/gtest/include/gtest/gtest.h"
-#include "third_party/glm/glm/gtc/matrix_transform.hpp"
-#include "third_party/glm/glm/gtx/transform.hpp"
+#include "glm/gtc/matrix_transform.hpp"
+#include "glm/gtx/transform.hpp"
 
 #define BILINEAR_FILTERING_SUPPORTED 1
 #define NV12_TEXTURE_SUPPORTED 1

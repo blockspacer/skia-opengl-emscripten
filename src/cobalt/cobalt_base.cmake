@@ -109,7 +109,9 @@ target_link_libraries(cobalt_base PRIVATE
   ${GLIBXML_LIB}
   ${CUSTOM_ICU_LIB}
   #ced
-  glm
+  # NOTE: force glm from conan, otherwise we can break
+  # some isolated builds (emscripten) with -system /usr/include
+  CONAN_PKG::glm
   ${EXTRA_COBALT_BASE_LIBS}
 )
 

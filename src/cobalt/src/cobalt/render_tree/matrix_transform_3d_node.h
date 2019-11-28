@@ -21,7 +21,7 @@
 #include "base/compiler_specific.h"
 #include "cobalt/base/type_id.h"
 #include "cobalt/render_tree/node.h"
-#include "third_party/glm/glm/mat4x4.hpp"
+#include "glm/mat4x4.hpp"
 
 namespace cobalt {
 namespace render_tree {

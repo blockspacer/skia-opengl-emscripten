@@ -25,9 +25,9 @@
 #include <cmath>
 
 #include "cobalt/input/create_default_camera_3d.h"
-#include "third_party/glm/glm/gtc/matrix_transform.hpp"
-#include "third_party/glm/glm/gtc/quaternion.hpp"
-#include "third_party/glm/glm/gtx/transform.hpp"
+#include "glm/gtc/matrix_transform.hpp"
+#include "glm/gtc/quaternion.hpp"
+#include "glm/gtx/transform.hpp"
 
 namespace cobalt {
 namespace input {

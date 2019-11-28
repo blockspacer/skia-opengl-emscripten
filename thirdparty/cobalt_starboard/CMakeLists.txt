@@ -150,7 +150,9 @@ endif(NOT DEFINED CUSTOM_ICU_LIB)
 
 target_link_libraries(${STATIC_LIB_NAME} PRIVATE
   ${CUSTOM_ICU_LIB}
-  glm # CONAN_PKG::glm
+  # NOTE: force glm from conan, otherwise we can break
+  # some isolated builds (emscripten) with -system /usr/include
+  CONAN_PKG::glm
 )
 
 set(DEBUG_LIBRARY_SUFFIX "-d")

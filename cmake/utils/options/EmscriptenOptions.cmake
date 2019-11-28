@@ -1,8 +1,22 @@
 include_guard( DIRECTORY )
 
 if(NOT TARGET_EMSCRIPTEN)
-  message(FATAL_ERROR "That files requires emscripten platform")
+  message(FATAL_ERROR "That file requires emscripten platform")
 endif(NOT TARGET_EMSCRIPTEN)
+
+set(ENABLE_WASM TRUE CACHE BOOL "ENABLE_WASM")
+if(NOT ENABLE_WASM)
+  message(FATAL_ERROR "only WASM build supported for now")
+endif(NOT ENABLE_WASM)
+
+set(ENABLE_WEB_PTHREADS TRUE CACHE BOOL "ENABLE_WEB_PTHREADS")
+if(TARGET_EMSCRIPTEN)
+  message(STATUS "ENABLE_WEB_PTHREADS=${ENABLE_WEB_PTHREADS}")
+endif(TARGET_EMSCRIPTEN)
+
+set(ENABLE_WEBGL2 TRUE CACHE BOOL "ENABLE_WEB_PTHREADS")
+#set(ENABLE_WEBGL1 TRUE) # TODO
+set(ENABLE_WEBGL_DEBUG_CHECKS TRUE CACHE BOOL "ENABLE_WEBGL_DEBUG_CHECKS") # only in debug
 
 # NOTE: SOURCE_MAP requires -g4 and --source-map-base
 # see http://webassemblycode.com/using-browsers-debug-webassembly/
@@ -44,7 +58,7 @@ endif(NOT BINARYEN_TRAP_MODE MATCHES "")
 # NOTE: will drop support for DISABLE_DEPRECATED_FIND_EVENT_TARGET_BEHAVIOR=0 at 1.39
 # https://github.com/emscripten-core/emscripten/issues/8047
 # set(EMCC_COMMON "${EMCC_COMMON} -s DISABLE_DEPRECATED_FIND_EVENT_TARGET_BEHAVIOR=1")
-if ("${EMSCRIPTEN_VERSION}" VERSION_GREATER 1.38.27)
+if("${EMSCRIPTEN_VERSION}" VERSION_GREATER 1.38.27)
   # see https://github.com/emscripten-core/emscripten/blob/incoming/ChangeLog.md#v13827-02102019
   set(EMCC_COMMON "${EMCC_COMMON} -s DISABLE_DEPRECATED_FIND_EVENT_TARGET_BEHAVIOR=0")
   set(USE_DEPRECATED_FIND_EVENT_TARGET FALSE)
@@ -123,7 +137,7 @@ if(ENABLE_EMBIND)
   set(EMCC_COMMON "${EMCC_COMMON} --bind")
 endif(ENABLE_EMBIND)
 
-if (ENABLE_WEB_PTHREADS)
+if(ENABLE_WEB_PTHREADS)
   #custom defines
   set(EMCC_COMMON "${EMCC_COMMON} -DHAVE_PTHREAD=1")
   set(EMCC_COMMON "${EMCC_COMMON} -DEMSCRIPTEN_SUPPORTS_ASYNC_RUN=1")
@@ -290,7 +304,7 @@ endif(ENABLE_WEB_PTHREADS)
 # You can optionally use -s 'EMTERPRETIFY_FILE="data.binary"' to store the emterpreter bytecode in a file
 #
 
-if (HAS_ASYNCIFY OR HAS_EMTERPRETIFY)
+if(HAS_ASYNCIFY OR HAS_EMTERPRETIFY)
   #custom defines
   message(FATAL_ERROR "TODO: SUPPORT HAS_ASYNC")
   set(EMCC_COMMON "${EMCC_COMMON} -DHAS_ASYNC=1")
@@ -321,7 +335,7 @@ endif(USE_ICU AND NOT USE_CUSTOM_ICU)
 
 if(USE_EMCC_LIBJPEG_PORT)
   message(FATAL_ERROR "LIBJPEG port not supported yet")
-  if ("${EMSCRIPTEN_VERSION}" VERSION_GREATER 1.38.32)
+  if("${EMSCRIPTEN_VERSION}" VERSION_GREATER 1.38.32)
     message(STATUS "using LIBJPEG port, Emscripten version is ${EMSCRIPTEN_VERSION}")
   else()
     message(WARNING "can`t use LIBJPEG port, EMSCRIPTEN_VERSION is not present, or is older than 1.38.32: '${EMSCRIPTEN_VERSION}'")
@@ -336,7 +350,7 @@ if(RELEASE_BUILD)
   set(ENABLE_WEBGL_DEBUG_CHECKS FALSE)
 endif(RELEASE_BUILD)
 
-if (ENABLE_WEBGL2 OR ENABLE_WEBGL1)
+if(ENABLE_WEBGL2 OR ENABLE_WEBGL1)
   #
   # WEBGL (see also OFFSCREEN_CAVAS settings)
   #
@@ -344,7 +358,7 @@ if (ENABLE_WEBGL2 OR ENABLE_WEBGL1)
   # see https://github.com/emscripten-core/emscripten/blob/master/src/settings.js#L369
   # see https://www.khronos.org/registry/webgl/specs/2.0/#4.1.2
   # TODO: check freezes with threads
-  if (ENABLE_WEBGL2)
+  if(ENABLE_WEBGL2)
     set(EMCC_COMMON "${EMCC_COMMON} -s USE_WEBGL2=1")
     # custom defines
     set(EMCC_COMMON "${EMCC_COMMON} -DWEBGL2_SUPPORT=1")
@@ -355,14 +369,14 @@ if (ENABLE_WEBGL2 OR ENABLE_WEBGL1)
     set(EMCC_COMMON "${EMCC_COMMON} -s WEBGL2_BACKWARDS_COMPATIBILITY_EMULATION=1")
   endif(ENABLE_WEBGL2)
   # ES3/ES2
-  if (ENABLE_WEBGL2)
+  if(ENABLE_WEBGL2)
     # Forces support for all GLES3 features, not just the WebGL2-friendly subset.
     set(EMCC_COMMON "${EMCC_COMMON} -s FULL_ES3=1")
-  elseif (ENABLE_WEBGL1)
+  elseif(ENABLE_WEBGL1)
     # // Forces support for all GLES2 features, not just the WebGL-friendly subset.
     # set(EMCC_COMMON "${EMCC_COMMON} -s FULL_ES2=1")
   endif(ENABLE_WEBGL2)
-  if (ENABLE_WEBGL_DEBUG_CHECKS)
+  if(ENABLE_WEBGL_DEBUG_CHECKS)
     #
     # see https://emscripten.org/docs/porting/multimedia_and_graphics/OpenGL-support.html?highlight=use_webgl2#emulation-of-older-desktop-opengl-api-features
     # Incomplete but useful
@@ -431,7 +445,7 @@ endif(NOT RELEASE_BUILD)
 #set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DNDEBUG=1")
 
 # https://github.com/google/skia/blob/master/BUILD.gn#L502
-# set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSKSL_STANDALONE") # if (skia_compile_processors)
+# set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSKSL_STANDALONE") # if(skia_compile_processors)
 #set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_DISABLE_LEGACY_SHADERCONTEXT=1")
 #set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_DISABLE_LOWP_RASTER_PIPELINE=1")
 #set(SK_COMMON_FLAGS "${SK_COMMON_FLAGS} -DSK_FORCE_RASTER_PIPELINE_BLITTER=1")
@@ -503,7 +517,7 @@ endif(NOT RELEASE_BUILD)
 # EMTERPRETIFY is not compatible with source maps
 # (maps are not useful in emterpreted code,
 # and splitting out non-emterpreted source maps is not yet implemented)
-if (HAS_EMTERPRETIFY)
+if(HAS_EMTERPRETIFY)
   message(FATAL_ERROR "TODO: REMOVE EMTERPRETIFY FLAGS")
 else(HAS_EMTERPRETIFY)
   if(EMSCRIPTEN_USE_SOURCE_MAP)
@@ -594,7 +608,7 @@ else()
   endif(EMSCRIPTEN_MEMORY_PROFILER)
   ## see https://emscripten.org/docs/tools_reference/emcc.html#emcc-compiler-optimization-options
   #
-  if (ENABLE_WEB_PTHREADS AND EMSCRIPTEN_THREAD_PROFILER)
+  if(ENABLE_WEB_PTHREADS AND EMSCRIPTEN_THREAD_PROFILER)
     set(EMCC_COMMON "${EMCC_COMMON} --threadprofiler")
   endif(ENABLE_WEB_PTHREADS AND EMSCRIPTEN_THREAD_PROFILER)
   #

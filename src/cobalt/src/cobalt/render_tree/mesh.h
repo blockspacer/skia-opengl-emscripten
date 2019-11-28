@@ -22,8 +22,8 @@
 #include "base/memory/ref_counted.h"
 #include "base/optional.h"
 #include "starboard/types.h"
-#include "third_party/glm/glm/vec2.hpp"
-#include "third_party/glm/glm/vec3.hpp"
+#include "glm/vec2.hpp"
+#include "glm/vec3.hpp"
 
 namespace cobalt {
 namespace render_tree {

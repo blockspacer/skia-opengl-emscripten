@@ -427,7 +427,9 @@ target_link_libraries(cobalt_dom PRIVATE
   ${GLIBXML_LIB}
   ${CUSTOM_ICU_LIB}
   #ced
-  glm
+  # NOTE: force glm from conan, otherwise we can break
+  # some isolated builds (emscripten) with -system /usr/include
+  CONAN_PKG::glm
   # SDL used by native_events_port
   ${SDL2_LIBRARY} # NOTE: no SDL2::Main on Windows
 )

@@ -34,7 +34,9 @@ target_link_libraries(cobalt_page_visibility PRIVATE
   ${GLIBXML_LIB}
   ${CUSTOM_ICU_LIB}
   #ced
-  glm
+  # NOTE: force glm from conan, otherwise we can break
+  # some isolated builds (emscripten) with -system /usr/include
+  CONAN_PKG::glm
 )
 
 set_property(TARGET cobalt_page_visibility PROPERTY CXX_STANDARD 17)

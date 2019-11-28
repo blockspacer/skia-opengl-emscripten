@@ -15,6 +15,8 @@ option(CLEAN_BUILD "remove old build dir" ON)
 
 option(RUN_APP "run resulting app" OFF)
 
+option(INSTALL_CONAN_DEPS "INSTALL_CONAN_DEPS" ON)
+
 option(BUILD_APP "build app (you can also run it)" ON)
 
 set(BUILD_TYPE "Debug" CACHE STRING "Debug, RelWithDebInfo or Release")

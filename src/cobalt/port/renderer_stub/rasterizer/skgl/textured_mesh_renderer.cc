@@ -23,7 +23,7 @@
 #include "base/strings/stringprintf.h"
 #include "cobalt/math/size.h"
 #include "renderer_stub/backend/egl/utils.h"
-#include "third_party/glm/glm/gtc/type_ptr.hpp"
+#include "glm/gtc/type_ptr.hpp"
 
 namespace cobalt {
 namespace renderer {

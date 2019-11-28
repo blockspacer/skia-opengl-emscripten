@@ -74,7 +74,9 @@ target_link_libraries(cobalt_renderer PRIVATE
   ${GLIBXML_LIB}
   ${CUSTOM_ICU_LIB}
   #ced
-  glm
+  # NOTE: force glm from conan, otherwise we can break
+  # some isolated builds (emscripten) with -system /usr/include
+  CONAN_PKG::glm
   ${SKIA_LIB}
   ${HARFBUZZ_LIBRARIES}
   # khronos

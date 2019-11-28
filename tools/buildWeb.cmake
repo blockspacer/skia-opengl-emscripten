@@ -36,7 +36,7 @@ endif(EXTRA_CMAKE_OPTS)
 # --- vars ---
 set(BUILD_DIR "${CMAKE_CURRENT_SOURCE_DIR}/build-emscripten/" CACHE STRING "output directory")
 
-set(CONAN_ARGS "--build=missing;--profile;emscripten;-o;enable_tests=False" CACHE STRING "parameters for conan install")
+set(CONAN_ARGS "--build=missing;--profile;${CMAKE_CURRENT_SOURCE_DIR}/conan/emscripten_MT.profile;-o;enable_tests=False" CACHE STRING "parameters for conan install")
 
 if (BUILD_APP)
   message(STATUS "building for web from ${CMAKE_CURRENT_SOURCE_DIR} into ${BUILD_DIR} ...")
@@ -51,7 +51,26 @@ if (BUILD_APP)
   colored_notify("Building with CMAKE_OPTS=${CMAKE_OPTS} and EXTRA_EMCMAKE_OPTS=${EXTRA_EMCMAKE_OPTS}")
   colored_notify("Building with MAKE_OPTS=${MAKE_OPTS} and EXTRA_EMMAKE_OPTS=${EXTRA_EMMAKE_OPTS}")
 
-  # --- conan ---
+  # --- conan deps ---
+  if(INSTALL_CONAN_DEPS)
+    message(STATUS "running conan create ...")
+    execute_process(
+      COMMAND
+        ${COLORED_OUTPUT_ENABLER}
+          # TODO: ability to change "--profile"
+          ${CMAKE_COMMAND} "-E" "time" "cmake" "-DUSE_LIBEVENT=FALSE" "-DUSE_TCMALLOC=FALSE" "-DUSE_XDG_MIME=FALSE" "-DUSE_XDG_USER_DIRS=FALSE" "-DEXTRA_OPTS=conan/stable;${CONAN_ARGS}" "-P" "tools/buildConanThirdparty.cmake"
+      WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+      TIMEOUT 7200 # sec
+      RESULT_VARIABLE retcode
+      ERROR_VARIABLE _ERROR_VARIABLE
+    )
+    if(NOT "${retcode}" STREQUAL "0")
+      message( FATAL_ERROR "Bad exit status ${retcode} ${_ERROR_VARIABLE}")
+    endif()
+  endif(INSTALL_CONAN_DEPS)
+
+  # --- conan install ---
+  message(STATUS "running conan install ...")
   execute_process(
     COMMAND
       ${COLORED_OUTPUT_ENABLER}
@@ -67,6 +86,7 @@ if (BUILD_APP)
   endif()
 
   # --- configure ---
+  message(STATUS "running cmake configure ...")
   execute_process(
     COMMAND
       ${COLORED_OUTPUT_ENABLER}
@@ -87,6 +107,7 @@ if (BUILD_APP)
   conditional_remove(TRUE ${BUILD_DIR}skemgl.mem ${BUILD_DIR})
 
   # --- build ---
+  message(STATUS "running cmake build ...")
   execute_process(
     COMMAND
       ${COLORED_OUTPUT_ENABLER}

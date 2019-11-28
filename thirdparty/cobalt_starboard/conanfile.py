@@ -34,12 +34,14 @@ class cobalt_starboard_conan_project(ConanFile):
 
     options = {
         "enable_tests": [True, False],
-        "enable_sanitizers": [True, False]
+        "enable_sanitizers": [True, False],
+        "enable_web_pthreads": [True, False]
     }
 
     default_options = (
         "enable_tests=False",
-        "enable_sanitizers=False"
+        "enable_sanitizers=False",
+        "enable_web_pthreads=True"
         # build
         #"*:shared=False"
     )
@@ -102,6 +104,8 @@ class cobalt_starboard_conan_project(ConanFile):
         add_cmake_option("ENABLE_SANITIZERS", self.options.enable_sanitizers)
 
         add_cmake_option("ENABLE_TESTS", self.options.enable_tests)
+
+        add_cmake_option("ENABLE_WEB_PTHREADS", self.options.enable_web_pthreads)
 
         cmake.configure(build_folder=self._build_subfolder)
 

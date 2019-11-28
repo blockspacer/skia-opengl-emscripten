@@ -39,7 +39,7 @@ if(EXTRA_EMCMAKE_OPTS)
 endif(EXTRA_EMCMAKE_OPTS)
 
 # --- vars ---
-set(CONAN_ARGS "--build=missing;--profile;clang;-o;enable_tests=False" CACHE STRING "parameters for conan install")
+set(CONAN_ARGS "--build=missing;--profile;${CMAKE_CURRENT_SOURCE_DIR}/conan/clang.profile;-o;enable_tests=False" CACHE STRING "parameters for conan install")
 
 set(BUILD_DIR "${CMAKE_CURRENT_SOURCE_DIR}/build-linux/" CACHE STRING "output directory")
 
@@ -63,7 +63,26 @@ if (BUILD_APP)
   set(CMAKE_OPTS "${CMAKE_OPTS};-DCMAKE_C_COMPILER=${C_COMPILER}")
   set(CMAKE_OPTS "${CMAKE_OPTS};-DCMAKE_CXX_COMPILER=${CXX_COMPILER}")
 
-  # --- conan ---
+  # --- conan deps ---
+  if(INSTALL_CONAN_DEPS)
+    message(STATUS "running conan create ...")
+    execute_process(
+      COMMAND
+        ${COLORED_OUTPUT_ENABLER}
+          # TODO: ability to change "--profile"
+          ${CMAKE_COMMAND} "-E" "time" "cmake" "-DEXTRA_OPTS=conan/stable;${CONAN_ARGS}" "-P" "tools/buildConanThirdparty.cmake"
+      WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+      TIMEOUT 7200 # sec
+      RESULT_VARIABLE retcode
+      ERROR_VARIABLE _ERROR_VARIABLE
+    )
+    if(NOT "${retcode}" STREQUAL "0")
+      message( FATAL_ERROR "Bad exit status ${retcode} ${_ERROR_VARIABLE}")
+    endif()
+  endif(INSTALL_CONAN_DEPS)
+
+  # --- conan install ---
+  message(STATUS "running conan install ...")
   execute_process(
     COMMAND
       ${COLORED_OUTPUT_ENABLER}
@@ -79,6 +98,7 @@ if (BUILD_APP)
   endif()
 
   # --- configure ---
+  message(STATUS "running cmake configure ...")
   execute_process(
     COMMAND
       ${COLORED_OUTPUT_ENABLER}
@@ -93,6 +113,7 @@ if (BUILD_APP)
   endif()
 
   # --- build ---
+  message(STATUS "running cmake build ...")
   execute_process(
     COMMAND
       ${COLORED_OUTPUT_ENABLER}

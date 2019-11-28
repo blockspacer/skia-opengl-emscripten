@@ -23,8 +23,8 @@
 #include "cobalt/render_tree/resource_provider.h"
 #include "cobalt/renderer/backend/egl/graphics_context.h"
 #include "cobalt/renderer/rasterizer/skia/vertex_buffer_object.h"
-#include "third_party/glm/glm/vec2.hpp"
-#include "third_party/glm/glm/vec3.hpp"
+#include "glm/vec2.hpp"
+#include "glm/vec3.hpp"
 
 namespace cobalt {
 namespace renderer {

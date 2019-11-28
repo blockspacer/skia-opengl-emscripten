@@ -27,7 +27,7 @@
 #include "base/synchronization/lock.h"
 #include "cobalt/input/camera_3d.h"
 #include "cobalt/input/input_poller.h"
-#include "third_party/glm/glm/mat4x4.hpp"
+#include "glm/mat4x4.hpp"
 
 namespace cobalt {
 namespace input {

@@ -150,7 +150,9 @@ target_link_libraries(cobalt_glimp PRIVATE
   #GURL
   #${CUSTOM_ICU_LIB}
   #ced
-  #glm
+  # NOTE: force glm from conan, otherwise we can break
+  # some isolated builds (emscripten) with -system /usr/include
+  CONAN_PKG::glm
 )
 
 set_property(TARGET cobalt_glimp PROPERTY CXX_STANDARD 17)

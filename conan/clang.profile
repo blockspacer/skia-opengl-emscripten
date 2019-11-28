@@ -9,6 +9,9 @@ compiler=clang
 compiler.version=6.0
 compiler.libcxx=libstdc++11
 
+[build_requires]
+ninja_installer/1.8.2@bincrafters/stable
+
 [env]
 CC=/usr/bin/clang
 CXX=/usr/bin/clang++

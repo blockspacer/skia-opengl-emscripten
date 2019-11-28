@@ -16,7 +16,7 @@
 #define COBALT_BASE_CAMERA_TRANSFORM_H_
 
 #include "base/optional.h"
-#include "third_party/glm/glm/mat4x4.hpp"
+#include "glm/mat4x4.hpp"
 
 namespace base {
 

@@ -28,6 +28,8 @@ endif()
 find_package(cmake_platform_detection REQUIRED)
 run_cmake_platform_detection()
 
+find_package(glm REQUIRED)
+
 # this sets the paths that cmake will use to locate libs (via the FindXXX.cmake or XXConfig.cmake scripts)
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/)
 list(APPEND CMAKE_PREFIX_PATH ${CMAKE_CURRENT_SOURCE_DIR}/lib/SDL2)

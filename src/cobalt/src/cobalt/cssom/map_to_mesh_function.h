@@ -26,7 +26,7 @@
 #include "cobalt/cssom/keyword_value.h"
 #include "cobalt/cssom/property_value.h"
 #include "cobalt/cssom/url_value.h"
-#include "third_party/glm/glm/mat4x4.hpp"
+#include "glm/mat4x4.hpp"
 
 namespace cobalt {
 namespace cssom {

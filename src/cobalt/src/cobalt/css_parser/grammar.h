@@ -82,8 +82,8 @@
 #include "cobalt/cssom/transform_function.h"
 #include "cobalt/cssom/transform_function_list_value.h"
 #include "cobalt/cssom/url_src_value.h"
-#include "third_party/glm/glm/gtc/type_ptr.hpp"
-#include "third_party/glm/glm/mat4x4.hpp"
+#include "glm/gtc/type_ptr.hpp"
+#include "glm/mat4x4.hpp"
 
 namespace cobalt {
 namespace css_parser {

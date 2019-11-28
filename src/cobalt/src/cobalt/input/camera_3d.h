@@ -22,7 +22,7 @@
 #include "cobalt/base/camera_transform.h"
 #include "cobalt/input/input_poller.h"
 #include "starboard/window.h"
-#include "third_party/glm/glm/gtc/quaternion.hpp"
+#include "glm/gtc/quaternion.hpp"
 
 namespace cobalt {
 namespace input {

@@ -2,7 +2,7 @@
 
 project(COBALT)
 
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/third_party/glm)
+#add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/third_party/glm)
 
 #include(starboard_core_headers.cmake) # just headers
 

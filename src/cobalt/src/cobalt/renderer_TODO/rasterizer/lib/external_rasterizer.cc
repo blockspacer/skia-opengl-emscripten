@@ -39,8 +39,8 @@
 #include "cobalt/renderer/rasterizer/skia/hardware_mesh.h"
 #include "cobalt/renderer/rasterizer/skia/hardware_rasterizer.h"
 #include "starboard/shared/gles/gl_call.h"
-#include "third_party/glm/glm/gtc/matrix_transform.hpp"
-#include "third_party/glm/glm/gtc/type_ptr.hpp"
+#include "glm/gtc/matrix_transform.hpp"
+#include "glm/gtc/type_ptr.hpp"
 
 #ifdef ANGLE_ENABLE_D3D11
 // Normally, ANGLE defines this symbol internally using its gyp files.

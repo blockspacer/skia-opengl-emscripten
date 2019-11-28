@@ -25,7 +25,7 @@
 #include "cobalt/math/rect.h"
 #include "cobalt/renderer/backend/egl/graphics_context.h"
 #include "cobalt/renderer/backend/egl/texture.h"
-#include "third_party/glm/glm/mat4x4.hpp"
+#include "glm/mat4x4.hpp"
 
 namespace cobalt {
 namespace renderer {

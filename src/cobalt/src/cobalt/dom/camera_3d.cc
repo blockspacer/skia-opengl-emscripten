@@ -18,7 +18,7 @@
 
 #if !defined(DISABLE_COBALT_CAMERA3D)
 
-#include "third_party/glm/glm/gtx/euler_angles.hpp"
+#include "glm/gtx/euler_angles.hpp"
 
 #include "base/basictypes.h"
 #include "base/time/time.h"

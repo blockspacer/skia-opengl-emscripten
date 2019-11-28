@@ -15,7 +15,7 @@
 #ifndef COBALT_RENDERER_RASTERIZER_SKIA_RENDER_TREE_NODE_VISITOR_DRAW_STATE_H_
 #define COBALT_RENDERER_RASTERIZER_SKIA_RENDER_TREE_NODE_VISITOR_DRAW_STATE_H_
 
-#include "third_party/glm/glm/mat4x4.hpp"
+#include "glm/mat4x4.hpp"
 #include "third_party/skia/include/core/SkCanvas.h"
 
 namespace cobalt {
