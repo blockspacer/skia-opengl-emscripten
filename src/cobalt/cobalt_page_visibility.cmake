@@ -24,11 +24,7 @@ target_link_libraries(cobalt_page_visibility PUBLIC
 
 target_link_libraries(cobalt_page_visibility PRIVATE
   ${base_LIB} # TODO
-  cobalt_base
-  #cobalt_browser ## TODO ##
-  #cobalt_nanobase
-  #cobalt_script
-  #v8_stub
+  ${cobalt_base_LIB}
   ${modp_b64_LIB}
   #dynamic_annotations
   ${GLIBXML_LIB}
@@ -59,4 +55,5 @@ target_compile_definitions(cobalt_page_visibility PRIVATE
   #COBALT_ENABLE_VERSION_COMPATIBILITY_VALIDATIONS=1
   #
   ${COBALT_COMMON_DEFINES}
+  COBALT_IMPLEMENTATION=1
 )

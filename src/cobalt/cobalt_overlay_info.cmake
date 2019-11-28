@@ -39,9 +39,8 @@ target_link_libraries(cobalt_overlay_info PUBLIC
 
 target_link_libraries(cobalt_overlay_info PRIVATE
   ${base_LIB} # TODO
-  cobalt_base
-  cobalt_nanobase
-  #cobalt_dom
+  ${cobalt_base_LIB}
+  ${cobalt_nanobase_LIB}
   cobalt_math
   cobalt_render_tree
 )
@@ -72,4 +71,5 @@ target_compile_definitions(cobalt_overlay_info PRIVATE
   #COBALT_ENABLE_VERSION_COMPATIBILITY_VALIDATIONS=1
   #
   ${COBALT_COMMON_DEFINES}
+  COBALT_IMPLEMENTATION=1
 )

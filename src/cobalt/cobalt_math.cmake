@@ -73,10 +73,7 @@ target_link_libraries(cobalt_math PUBLIC
 )
 
 target_link_libraries(cobalt_math PRIVATE
-  cobalt_base
-  #cobalt_nanobase
-  #cobalt_script
-  #v8_stub
+  ${cobalt_base_LIB}
   ${base_LIB} # TODO
   ${modp_b64_LIB}
   #dynamic_annotations
@@ -108,4 +105,5 @@ target_compile_definitions(cobalt_math PRIVATE
   #COBALT_ENABLE_VERSION_COMPATIBILITY_VALIDATIONS=1
   #
   ${COBALT_COMMON_DEFINES}
+  COBALT_IMPLEMENTATION=1
 )

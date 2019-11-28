@@ -64,13 +64,10 @@ if(NOT DEFINED base_LIB)
 endif(NOT DEFINED base_LIB)
 
 target_link_libraries(GURL PRIVATE
-  ${base_LIB}
+  ${base_LIB} # TODO: header only
 )
 
 target_link_libraries(GURL PRIVATE
-  #${base_LIB} # TODO
-  #cobalt_base
-  #cobalt_nanobase
   ${STARBOARD_PLATFORM_LIB}
   #starboard_core
   ${STARBOARD_EZTIME_LIB}

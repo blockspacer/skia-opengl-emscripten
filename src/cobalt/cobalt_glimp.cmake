@@ -128,8 +128,8 @@ target_link_libraries(cobalt_glimp PUBLIC
 
 target_link_libraries(cobalt_glimp PRIVATE
   base # TODO
-  cobalt_base
-  cobalt_nanobase
+  ${cobalt_base_LIB}
+  ${cobalt_nanobase_LIB}
   ${EXTRA_cobalt_glimp_LIBS}
   ${OPENGLES2_LIBRARIES}
   #cobalt_dom

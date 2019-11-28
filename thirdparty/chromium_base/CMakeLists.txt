@@ -33,6 +33,9 @@ endif()
 find_package(cmake_platform_detection REQUIRED)
 run_cmake_platform_detection()
 
+find_package(cmake_build_options REQUIRED)
+setup_cmake_build_options()
+
 find_package(chromium_build_util REQUIRED)
 if(TARGET chromium_build_util::chromium_build_util-static)
   set(build_util_LIB chromium_build_util::chromium_build_util-static)
@@ -388,11 +391,11 @@ endif(ENABLE_COBALT)
 #  'third_party/dynamic_annotations/dynamic_annotations.gyp:dynamic_annotations',
 #],
 target_link_libraries(${STATIC_LIB_NAME} PRIVATE
-  ${COBALT_NANOBASE_LIB} # TODO: recursion
-  ${STARBOARD_PLATFORM_LIB} # TODO: recursion
-  #starboard_core
-  ${STARBOARD_EZTIME_LIB} # TODO: recursion
-  ${STARBOARD_COMMON_LIB} # TODO: recursion
+  # ${cobalt_nanobase_LIB} # TODO: recursion
+  # ${STARBOARD_PLATFORM_LIB} # TODO: recursion
+  # #starboard_core
+  # ${STARBOARD_EZTIME_LIB} # TODO: recursion
+  # ${STARBOARD_COMMON_LIB} # TODO: recursion
   ${modp_b64_LIB}
   #
   ${dynamic_annotations_LIB}
@@ -463,6 +466,13 @@ elseif(TARGET_WINDOWS)
     COM_INIT_CHECK_HOOK_DISABLED=1
   )
 endif()
+
+if(ENABLE_COBALT)
+  list(APPEND BASE_EXTRA_DEFINITIONS
+    STARBOARD_IMPLEMENTATION=1
+    COBALT_IMPLEMENTATION=1
+  )
+endif(ENABLE_COBALT)
 
 target_compile_definitions(${STATIC_LIB_NAME} PRIVATE
   # TODO

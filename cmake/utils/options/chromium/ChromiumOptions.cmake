@@ -709,8 +709,8 @@ if(ENABLE_COBALT)
   )
   set(COBALT_LIBRARY_NAME COBALT_CORE)
   #
-  set(COBALT_BASE_LIB cobalt_base)
-  set(COBALT_NANOBASE_LIB cobalt_nanobase)
+  #set(COBALT_BASE_LIB cobalt_base)
+  ## set(COBALT_NANOBASE_LIB cobalt_nanobase)
   set(COBALT_SCRIPT_LIB cobalt_script)
   set(COBALT_SYSTEM_WINDOW_LIB cobalt_system_window)
   set(COBALT_V8_STUB_LIB v8_stub)
@@ -803,7 +803,7 @@ if(ENABLE_COBALT)
     ${STARBOARD_EZTIME_LIB}
     ${STARBOARD_COMMON_LIB}
     #
-    ${COBALT_BASE_LIB}
+    #${COBALT_BASE_LIB}
     ${COBALT_NANOBASE_LIB}
     ${COBALT_SYSTEM_WINDOW_LIB}
     ${COBALT_SCRIPT_LIB}

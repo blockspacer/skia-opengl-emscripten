@@ -38,11 +38,8 @@ target_link_libraries(cobalt_web_animations PUBLIC
 )
 
 target_link_libraries(cobalt_web_animations PRIVATE
-  cobalt_base
+  ${cobalt_base_LIB}
   cobalt_cssom
-  #cobalt_nanobase
-  #cobalt_script
-  #v8_stub
 )
 
 set_property(TARGET cobalt_web_animations PROPERTY CXX_STANDARD 17)
@@ -65,4 +62,5 @@ target_compile_definitions(cobalt_web_animations PRIVATE
   #COBALT_ENABLE_VERSION_COMPATIBILITY_VALIDATIONS=1
   #
   ${COBALT_COMMON_DEFINES}
+  COBALT_IMPLEMENTATION=1
 )

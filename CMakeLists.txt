@@ -28,6 +28,9 @@ endif()
 find_package(cmake_platform_detection REQUIRED)
 run_cmake_platform_detection()
 
+find_package(cmake_build_options REQUIRED)
+setup_cmake_build_options()
+
 find_package(glm REQUIRED)
 
 # this sets the paths that cmake will use to locate libs (via the FindXXX.cmake or XXConfig.cmake scripts)
@@ -691,6 +694,20 @@ if(ENABLE_COBALT)
     set(cobalt_starboard_LIB cobalt_starboard::cobalt_starboard-static)
   else()
     message(FATAL_ERROR "not supported: using system provided cobalt_starboard library")
+  endif()
+
+  find_package(cobalt_nanobase REQUIRED)
+  if(TARGET cobalt_nanobase::cobalt_nanobase-static)
+    set(cobalt_nanobase_LIB cobalt_nanobase::cobalt_nanobase-static)
+  else()
+    message(FATAL_ERROR "not supported: using system provided cobalt_nanobase library")
+  endif()
+
+  find_package(cobalt_base REQUIRED)
+  if(TARGET cobalt_base::cobalt_base-static)
+    set(cobalt_base_LIB cobalt_base::cobalt_base-static)
+  else()
+    message(FATAL_ERROR "not supported: using system provided cobalt_base library")
   endif()
 endif(ENABLE_COBALT)
 

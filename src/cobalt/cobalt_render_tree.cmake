@@ -76,7 +76,7 @@ target_link_libraries(cobalt_page_visibility PUBLIC
 #   '<(DEPTH)/third_party/ots/ots.gyp:ots',
 # ],
 target_link_libraries(cobalt_render_tree PRIVATE
-  cobalt_base
+  ${cobalt_base_LIB}
   cobalt_math
   ${base_LIB} # TODO
   ${modp_b64_LIB}
@@ -110,4 +110,5 @@ target_compile_definitions(cobalt_render_tree PRIVATE
   #COBALT_ENABLE_XHR_HEADER_FILTERING=1
   #
   ${COBALT_COMMON_DEFINES}
+  COBALT_IMPLEMENTATION=1
 )

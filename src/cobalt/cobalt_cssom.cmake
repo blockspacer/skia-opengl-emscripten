@@ -265,8 +265,8 @@ target_link_libraries(cobalt_cssom PRIVATE
   cobalt_dom_exception
   cobalt_math
   cobalt_ui_navigation
-  cobalt_base
-  cobalt_nanobase
+  ${cobalt_base_LIB}
+  ${cobalt_nanobase_LIB}
   #cobalt_script
   #${COBALT_V8_STUB_LIB}
   ${COBALT_CSP_LIB_NAME}
@@ -313,4 +313,5 @@ target_compile_definitions(cobalt_cssom PRIVATE
   #COBALT_ENABLE_VERSION_COMPATIBILITY_VALIDATIONS=1
   #
   ${COBALT_COMMON_DEFINES}
+  COBALT_IMPLEMENTATION=1
 )

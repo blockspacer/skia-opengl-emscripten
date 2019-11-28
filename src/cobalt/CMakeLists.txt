@@ -22,9 +22,7 @@ project(COBALT)
 
 #include(starboard_platform.cmake) # requires starboard_stub
 
-include(cobalt_nanobase.cmake)
-
-include(cobalt_base.cmake)
+#include(cobalt_base.cmake)
 
 if(ENABLE_COBALT_CSP)
   include(cobalt_csp.cmake)

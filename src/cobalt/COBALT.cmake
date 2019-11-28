@@ -15,27 +15,6 @@ target_link_libraries(COBALT_CORE INTERFACE
   ${base_LIB} # TODO
   ${modp_b64_LIB}
   ${COBALT_LIBS}
-  #cobalt_base
-  #cobalt_nanobase
-  #cobalt_csp
-  #cobalt_script
-  ##v8_stub
-  #cobalt_dom_exception
-  #cobalt_ui_navigation
-  #cobalt_math
-  #cobalt_media
-  #cobalt_loader
-  #cobalt_page_visibility
-  #cobalt_cssom
-  #cobalt_web_animations
-  #cobalt_dom
-  #starboard_icu_init
-  #starboard_eztime  # requires starboard_icu_init
-  #starboard_stub
-  #starboard_platform # requires starboard_stub
-  #starboard_common
-  #starboard_core
-  ### TODO ## starboard_platform
 )
 
 #set_property(TARGET COBALT_CORE PROPERTY CXX_STANDARD 17)

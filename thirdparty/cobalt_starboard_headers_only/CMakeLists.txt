@@ -30,6 +30,9 @@ endif()
 find_package(cmake_platform_detection REQUIRED)
 run_cmake_platform_detection()
 
+find_package(cmake_build_options REQUIRED)
+setup_cmake_build_options()
+
 # uses Config.cmake or a -config.cmake file
 # see https://gitlab.kitware.com/cmake/community/wikis/doc/tutorials/How-to-create-a-ProjectConfig.cmake-file
 find_package(chromium_build_util REQUIRED)
@@ -80,6 +83,7 @@ target_compile_features(${STATIC_LIB_NAME}
 # target_compile_definitions(${STATIC_LIB_NAME} PRIVATE
 #   # starboard/linux/shared/BUILD.gn
 #   STARBOARD_IMPLEMENTATION=1
+#   COBALT_IMPLEMENTATION=1
 # )
 
 if(TARGET_EMSCRIPTEN)
@@ -116,6 +120,26 @@ elseif(TARGET_LINUX OR TARGET_EMSCRIPTEN)
   )
 else()
   message(FATAL_ERROR "platform not supported")
+endif()
+
+if(NOT RELEASE_BUILD)
+  list(APPEND COBALT_COMMON_DEFINES COBALT_BUILD_TYPE_DEBUG=1)
+  list(APPEND COBALT_COMMON_DEFINES COBALT_BUILD_TYPE_DEVEL=1)
+  # TODO # ENABLE_DEBUGGER
+  # TODO # COBALT_BUILD_TYPE_QA
+  # TODO # COBALT_ENABLE_JAVASCRIPT_ERROR_LOGGING
+  # TODO # COBALT_SECURITY_SCREEN_CLEAR_TO_UGLY_COLOR
+  # TODO # ENABLE_DEBUG_COMMAND_LINE_SWITCHES
+  # TODO # ENABLE_DEBUG_C_VAL
+  # TODO # ENABLE_DEBUG_CONSOLE
+  # TODO # ENABLE_IGNORE_CERTIFICATE_ERRORS
+  # TODO # ENABLE_PARTIAL_LAYOUT_CONTROL
+  # TODO # ENABLE_TEST_DATA
+  # TODO # ENABLE_TEST_RUNNER
+  # TODO # COBALT_BOX_DUMP_ENABLED
+  # TODO # COBALT_FORCE_CSP
+  # TODO # COBALT_FORCE_HTTPS
+  # TODO # COBALT_BUILD_TYPE_GOLD
 endif()
 
 target_compile_definitions(${STATIC_LIB_NAME} INTERFACE

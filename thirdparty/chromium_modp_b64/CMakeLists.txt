@@ -30,6 +30,9 @@ endif()
 find_package(cmake_platform_detection REQUIRED)
 run_cmake_platform_detection()
 
+find_package(cmake_build_options REQUIRED)
+setup_cmake_build_options()
+
 # uses Config.cmake or a -config.cmake file
 # see https://gitlab.kitware.com/cmake/community/wikis/doc/tutorials/How-to-create-a-ProjectConfig.cmake-file
 find_package(chromium_build_util REQUIRED)

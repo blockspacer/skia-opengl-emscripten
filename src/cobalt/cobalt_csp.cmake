@@ -31,7 +31,7 @@ add_library(cobalt_csp STATIC
 )
 
 target_link_libraries(cobalt_csp PRIVATE
-  cobalt_base
+  ${cobalt_base_LIB}
   ${base_LIB} # TODO
   ${modp_b64_LIB}
   #GFX_GEOMETRY
@@ -118,4 +118,5 @@ target_compile_definitions(cobalt_csp PRIVATE
   #COBALT_ENABLE_VERSION_COMPATIBILITY_VALIDATIONS=1
   #
   ${COBALT_COMMON_DEFINES}
+  COBALT_IMPLEMENTATION=1
 )

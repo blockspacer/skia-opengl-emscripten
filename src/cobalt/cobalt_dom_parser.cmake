@@ -39,7 +39,7 @@ target_link_libraries(cobalt_dom_parser PUBLIC
 
 target_link_libraries(cobalt_dom_parser PRIVATE
   ${base_LIB} # TODO
-  cobalt_base
+  ${cobalt_base_LIB}
   cobalt_dom
   cobalt_loader
   ${GNET_LIBS}
@@ -73,4 +73,5 @@ target_compile_definitions(cobalt_dom_parser PRIVATE
   #COBALT_ENABLE_VERSION_COMPATIBILITY_VALIDATIONS=1
   #
   ${COBALT_COMMON_DEFINES}
+  COBALT_IMPLEMENTATION=1
 )

@@ -13,8 +13,6 @@ add_library(cobalt_dom_exception STATIC
 )
 
 target_link_libraries(cobalt_dom_exception PRIVATE
-  #cobalt_base
-  #cobalt_nanobase
   cobalt_script
   v8_stub
   #${base_LIB} # TODO
@@ -50,4 +48,5 @@ target_compile_definitions(cobalt_dom_exception PRIVATE
   #COBALT_ENABLE_VERSION_COMPATIBILITY_VALIDATIONS=1
   #
   ${COBALT_COMMON_DEFINES}
+  COBALT_IMPLEMENTATION=1
 )

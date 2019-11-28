@@ -24,7 +24,7 @@ target_link_libraries(cobalt_ui_navigation PUBLIC
 )
 
 target_link_libraries(cobalt_ui_navigation PRIVATE
-  cobalt_base
+  ${cobalt_base_LIB}
   ${base_LIB} # TODO
 )
 
@@ -48,4 +48,5 @@ target_compile_definitions(cobalt_ui_navigation PRIVATE
   #COBALT_ENABLE_VERSION_COMPATIBILITY_VALIDATIONS=1
   #
   ${COBALT_COMMON_DEFINES}
+  COBALT_IMPLEMENTATION=1
 )

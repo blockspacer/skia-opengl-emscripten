@@ -123,7 +123,7 @@ target_link_libraries(cobalt_layout PUBLIC
 #],
 target_link_libraries(cobalt_layout PRIVATE
   ${base_LIB} # TODO
-  cobalt_base
+  ${cobalt_base_LIB}
   cobalt_dom
   cobalt_loader
   cobalt_render_tree

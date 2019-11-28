@@ -1870,8 +1870,6 @@ add_library(GNET STATIC
 target_link_libraries(GNET PRIVATE
   #${BASE_LIBRARIES}
   ${base_LIB}
-  #cobalt_base
-  #cobalt_nanobase
   ${STARBOARD_PLATFORM_LIB}
   #starboard_core
   ${STARBOARD_EZTIME_LIB}

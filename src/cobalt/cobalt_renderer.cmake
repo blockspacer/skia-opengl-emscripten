@@ -58,7 +58,7 @@ target_link_libraries(cobalt_renderer PUBLIC
 
 target_link_libraries(cobalt_renderer PRIVATE
   ${base_LIB} # TODO
-  cobalt_base
+  ${cobalt_base_LIB}
   cobalt_dom
   cobalt_loader
   cobalt_layout

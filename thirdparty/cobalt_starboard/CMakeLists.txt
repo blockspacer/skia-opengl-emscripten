@@ -35,6 +35,9 @@ find_package(glm REQUIRED)
 find_package(cmake_platform_detection REQUIRED)
 run_cmake_platform_detection()
 
+find_package(cmake_build_options REQUIRED)
+setup_cmake_build_options()
+
 find_package(cobalt_starboard_headers_only REQUIRED)
 if(TARGET cobalt_starboard_headers_only::cobalt_starboard_headers_only-static)
   set(cobalt_starboard_headers_only_LIB cobalt_starboard_headers_only::cobalt_starboard_headers_only-static)
@@ -133,6 +136,7 @@ target_compile_options(${STATIC_LIB_NAME} PRIVATE
 target_compile_definitions(${STATIC_LIB_NAME} PRIVATE
   # starboard/linux/shared/BUILD.gn
   STARBOARD_IMPLEMENTATION=1
+  COBALT_IMPLEMENTATION=1
 )
 
 if(NOT DEFINED build_util_LIB)

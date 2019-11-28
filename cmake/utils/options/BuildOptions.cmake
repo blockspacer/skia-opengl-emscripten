@@ -6,12 +6,6 @@ if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_CURRENT_BINARY_DIR)
   message(FATAL_ERROR "You must set your binary directory different from your source")
 endif()
 
-# build mode. separated from CMAKE_BUILD_TYPE to provide custom debug level
-# for example, you may want build optimized wasm with debug stack trace support
-# NOTE: measure performace on RELEASE builds!
-#set(RELEASE_BUILD TRUE)
-#set(RELEASE_BUILD FALSE)
-option(RELEASE_BUILD "RELEASE_BUILD" OFF)
 message(STATUS "RELEASE_BUILD = ${RELEASE_BUILD}")
 
 # clang-cl on Windows, see http://clang.llvm.org/docs/UsersManual.html#clang-cl
@@ -41,22 +35,7 @@ if(TARGET_EMSCRIPTEN)
   endif()
 endif(TARGET_EMSCRIPTEN)
 
-if(RELEASE_BUILD)
-  if(NOT CMAKE_BUILD_TYPE MATCHES Release)
-    if(TARGET_EMSCRIPTEN)
-      message(WARNING "build with -DCMAKE_BUILD_TYPE=Release")
-    else(EMSCRIPTEN)
-      message(FATAL_ERROR "build with -DCMAKE_BUILD_TYPE=Release")
-    endif(TARGET_EMSCRIPTEN)
-  endif(NOT CMAKE_BUILD_TYPE MATCHES Release)
-else()
-  if(NOT CMAKE_BUILD_TYPE MATCHES Debug)
-    if(TARGET_EMSCRIPTEN)
-      message(WARNING "build with -DCMAKE_BUILD_TYPE=Debug")
-    else(EMSCRIPTEN)
-      message(FATAL_ERROR "build with -DCMAKE_BUILD_TYPE=Debug")
-    endif(TARGET_EMSCRIPTEN)
-  endif(NOT CMAKE_BUILD_TYPE MATCHES Debug)
+if(NOT RELEASE_BUILD)
   #
   # Debugging CFLAGS. Turn optimizations off; turn debugging symbols on.
   # see https://github.com/mmatyas/supermariowar/blob/master/CMakeLists.txt#L165

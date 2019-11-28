@@ -24,8 +24,8 @@ target_link_libraries(v8_stub PUBLIC
 
 target_link_libraries(v8_stub PRIVATE
   ${base_LIB} # TODO
-  cobalt_base
-  cobalt_nanobase
+  ${cobalt_base_LIB}
+  ${cobalt_nanobase_LIB}
   cobalt_script
 )
 
@@ -49,4 +49,5 @@ target_compile_definitions(v8_stub PRIVATE
   #COBALT_ENABLE_VERSION_COMPATIBILITY_VALIDATIONS=1
   #
   ${COBALT_COMMON_DEFINES}
+  COBALT_IMPLEMENTATION=1
 )

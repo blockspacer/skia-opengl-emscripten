@@ -62,9 +62,9 @@ target_link_libraries(cobalt_css_parser PUBLIC
 
 target_link_libraries(cobalt_css_parser PRIVATE
   ${base_LIB} # TODO
-  cobalt_base
+  ${cobalt_base_LIB}
   cobalt_cssom
-  cobalt_nanobase
+  ${cobalt_nanobase_LIB}
   ${CUSTOM_ICU_LIB}
 )
 

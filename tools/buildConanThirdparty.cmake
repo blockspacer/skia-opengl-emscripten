@@ -53,6 +53,12 @@ if(USE_CMAKE_PLATFORM_DETECTION)
   conan_create_target(${THIRDPARTY_DIR}cmake_platform_detection)
 endif(USE_CMAKE_PLATFORM_DETECTION)
 
+set(USE_CMAKE_BUILD_OPTIONS TRUE CACHE BOOL "USE_CMAKE_BUILD_OPTIONS")
+if(USE_CMAKE_BUILD_OPTIONS)
+  # provides helpful cmake macros
+  conan_create_target(${THIRDPARTY_DIR}cmake_build_options)
+endif(USE_CMAKE_BUILD_OPTIONS)
+
 set(USE_CHROMIUM_BUILD_UTIL TRUE CACHE BOOL "USE_CHROMIUM_BUILD_UTIL")
 if(USE_CHROMIUM_BUILD_UTIL)
   # provides build/build_config.h
@@ -112,6 +118,8 @@ if(ENABLE_COBALT)
     #conan_create_target(${THIRDPARTY_DIR}cobalt_starboard_eztime)
     #conan_create_target(${THIRDPARTY_DIR}cobalt_starboard_common)
     #conan_create_target(${THIRDPARTY_DIR}cobalt_starboard_platform)
+    conan_create_target(${THIRDPARTY_DIR}cobalt_nanobase)
+    conan_create_target(${THIRDPARTY_DIR}cobalt_base)
   endif(USE_COBALT_HEADERS)
 endif(ENABLE_COBALT)
 

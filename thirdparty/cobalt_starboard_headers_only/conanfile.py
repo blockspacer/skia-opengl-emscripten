@@ -72,18 +72,20 @@ class cobalt_starboard_headers_only_conan_project(ConanFile):
     #  url = "https://github.com/....."
     #  self.run("git clone %s ......." % url)
 
-    def requirements(self):
-        self.requires("cmake_platform_detection/master@conan/stable")
+    def build_requirements(self):
+        self.build_requires("cmake_platform_detection/master@conan/stable")
+        self.build_requires("cmake_build_options/master@conan/stable")
 
+        if self.options.enable_tests:
+            self.build_requires("catch2/[>=2.1.0]@bincrafters/stable")
+            self.build_requires("gtest/[>=1.8.0]@bincrafters/stable")
+            self.build_requires("FakeIt/[>=2.0.4]@gasuketsu/stable")
+
+    def requirements(self):
         self.requires("chromium_build_util/master@conan/stable")
 
         # if self.settings.os == "Linux":
         #     self.requires("chromium_dynamic_annotations/master@conan/stable")
-
-        if self.options.enable_tests:
-            self.requires("catch2/[>=2.1.0]@bincrafters/stable")
-            self.requires("gtest/[>=1.8.0]@bincrafters/stable")
-            self.requires("FakeIt/[>=2.0.4]@gasuketsu/stable")
 
     def _configure_cmake(self):
         cmake = CMake(self)

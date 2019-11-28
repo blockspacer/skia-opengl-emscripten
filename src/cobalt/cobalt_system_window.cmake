@@ -33,7 +33,7 @@ target_link_libraries(cobalt_system_window PUBLIC
 
 target_link_libraries(cobalt_system_window PRIVATE
   ${base_LIB} # TODO
-  cobalt_base
+  ${cobalt_base_LIB}
   #cobalt_dom
   #cobalt_loader
   #cobalt_render_tree

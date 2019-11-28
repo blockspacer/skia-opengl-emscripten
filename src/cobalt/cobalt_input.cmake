@@ -62,8 +62,8 @@ target_link_libraries(cobalt_input PUBLIC
 
 target_link_libraries(cobalt_input PRIVATE
   ${base_LIB} # TODO
-  cobalt_base
-  cobalt_nanobase
+  ${cobalt_base_LIB}
+  ${cobalt_nanobase_LIB}
   cobalt_dom
   cobalt_overlay_info
   #${COBALT_CSP_LIB_NAME}
@@ -101,4 +101,5 @@ target_compile_definitions(cobalt_input PRIVATE
   #ENABLE_OVERLAY_INFO=1
   #
   ${COBALT_COMMON_DEFINES}
+  COBALT_IMPLEMENTATION=1
 )

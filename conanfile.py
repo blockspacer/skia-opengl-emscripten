@@ -73,10 +73,17 @@ class skg_conan_project(ConanFile):
     #  url = "https://github.com/....."
     #  self.run("git clone %s ......." % url)
 
+    def build_requirements(self):
+        self.build_requires("cmake_platform_detection/master@conan/stable")
+        self.build_requires("cmake_build_options/master@conan/stable")
+
+        if self.options.enable_tests:
+            self.build_requires("catch2/[>=2.1.0]@bincrafters/stable")
+            self.build_requires("gtest/[>=1.8.0]@bincrafters/stable")
+            self.build_requires("FakeIt/[>=2.0.4]@gasuketsu/stable")
+
     def requirements(self):
         self.requires("glm/0.9.9.1@g-truc/stable")
-
-        self.requires("cmake_platform_detection/master@conan/stable")
 
         if self.settings.os == "Linux":
             self.requires("chromium_libevent/master@conan/stable")
@@ -91,14 +98,11 @@ class skg_conan_project(ConanFile):
         self.requires("chromium_compact_enc_det/master@conan/stable")
         self.requires("chromium_base/master@conan/stable")
 
-        if self.options.enable_tests:
-            self.requires("catch2/[>=2.1.0]@bincrafters/stable")
-            self.requires("gtest/[>=1.8.0]@bincrafters/stable")
-            self.requires("FakeIt/[>=2.0.4]@gasuketsu/stable")
-
         if self.options.enable_cobalt:
           self.requires("cobalt_starboard_headers_only/master@conan/stable")
           self.requires("cobalt_starboard/master@conan/stable")
+          self.requires("cobalt_nanobase/master@conan/stable")
+          self.requires("cobalt_base/master@conan/stable")
 
     def _configure_cmake(self):
         cmake = CMake(self)

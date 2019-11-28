@@ -168,10 +168,7 @@ target_link_libraries(cobalt_loader PUBLIC
 )
 
 target_link_libraries(cobalt_loader PRIVATE
-  cobalt_base
-  #cobalt_nanobase
-  #cobalt_script
-  #v8_stub
+  ${cobalt_base_LIB}
   ${COBALT_CSP_LIB_NAME}
   ${COBALT_RENDER_TREE_LIB}
   ${base_LIB} # TODO
@@ -221,5 +218,6 @@ target_compile_definitions(cobalt_loader PRIVATE
   #COBALT_ENABLE_XHR_HEADER_FILTERING=1
   #
   ${COBALT_COMMON_DEFINES}
+  COBALT_IMPLEMENTATION=1
   ENABLE_PNG=1
 )

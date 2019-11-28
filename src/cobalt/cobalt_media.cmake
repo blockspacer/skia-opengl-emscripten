@@ -241,10 +241,8 @@ target_link_libraries(cobalt_media PUBLIC
 
 target_link_libraries(cobalt_media PRIVATE
   ${base_LIB} # TODO
-  cobalt_base
-  cobalt_nanobase
-  #cobalt_script
-  #v8_stub
+  ${cobalt_base_LIB}
+  ${cobalt_nanobase_LIB}
   ${COBALT_LOADER_LIB_NAME} ## TODO
   ${COBALT_CSP_LIB_NAME}
   cobalt_system_window # TODO
@@ -292,6 +290,7 @@ target_compile_definitions(cobalt_media PRIVATE
   #
   MEDIA_IMPLEMENTATION=1
   ${COBALT_COMMON_DEFINES}
+  COBALT_IMPLEMENTATION=1
   # TODO # COBALT_DISABLE_SPDY
   # TODO # DIAL_SERVER
   # TODO # COBALT_MEDIA_SOURCE_2016=1

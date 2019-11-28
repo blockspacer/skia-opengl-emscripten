@@ -74,8 +74,8 @@ target_link_libraries(cobalt_script PUBLIC
 )
 
 target_link_libraries(cobalt_script PRIVATE
-  cobalt_base
-  cobalt_nanobase
+  ${cobalt_base_LIB}
+  ${cobalt_nanobase_LIB}
   ${base_LIB} # TODO
   #${COBALT_V8_STUB_LIB}
   #GFX_GEOMETRY
@@ -101,4 +101,5 @@ target_compile_definitions(cobalt_script PRIVATE
   #COBALT_ENABLE_VERSION_COMPATIBILITY_VALIDATIONS=1
   #
   ${COBALT_COMMON_DEFINES}
+  COBALT_IMPLEMENTATION=1
 )

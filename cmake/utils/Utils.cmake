@@ -15,7 +15,6 @@ directory..")
   endif()
 endmacro()
 
-
 # see https://www.virag.si/2015/07/use-ccache-with-cmake-for-faster-compilation/
 # TODO: Xcode support https://stackoverflow.com/a/36515503
 # TODO: CMAKE_XCODE_ATTRIBUTE_CC https://crascit.com/2016/04/09/using-ccache-with-cmake/

@@ -82,7 +82,6 @@ list(APPEND COBALT_base_SOURCES
 
 add_library(cobalt_base STATIC
   ${COBALT_base_SOURCES}
-  ${COBALT_port_base_SOURCES}
 )
 
 if(TARGET_LINUX)
@@ -164,4 +163,5 @@ target_compile_definitions(cobalt_base PRIVATE
   #COBALT_ENABLE_VERSION_COMPATIBILITY_VALIDATIONS=1
   #
   ${COBALT_COMMON_DEFINES}
+  COBALT_IMPLEMENTATION=1
 )
