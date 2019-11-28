@@ -39,6 +39,23 @@ if(NOT DEFINED CUSTOM_ICU_LIB)
   message(FATAL_ERROR "CUSTOM_ICU_LIB must be defined")
 endif(NOT DEFINED CUSTOM_ICU_LIB)
 
+if(NOT DEFINED cobalt_starboard_LIB)
+  message(FATAL_ERROR "NOT DEFINED: cobalt_starboard_LIB")
+endif(NOT DEFINED cobalt_starboard_LIB)
+
+target_link_libraries(cobalt_renderer PUBLIC
+  ${cobalt_starboard_LIB}
+)
+
+if(NOT DEFINED cobalt_starboard_headers_only_LIB)
+  message(FATAL_ERROR "NOT DEFINED: cobalt_starboard_headers_only_LIB")
+endif(NOT DEFINED cobalt_starboard_headers_only_LIB)
+
+target_link_libraries(cobalt_renderer PUBLIC
+  ${cobalt_starboard_LIB} # TODO
+  ${cobalt_starboard_headers_only_LIB}
+)
+
 target_link_libraries(cobalt_renderer PRIVATE
   ${base_LIB} # TODO
   cobalt_base
@@ -48,10 +65,10 @@ target_link_libraries(cobalt_renderer PRIVATE
   cobalt_render_tree
   cobalt_ui_navigation
   cobalt_system_window
-  starboard_platform
+  ## starboard_platform
   #starboard_core
-  starboard_eztime
-  starboard_common
+  ## starboard_eztime
+  ## starboard_common
   ${modp_b64_LIB}
   #dynamic_annotations
   ${GLIBXML_LIB}

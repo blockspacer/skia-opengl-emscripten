@@ -117,6 +117,15 @@ else()
   message(FATAL_ERROR "platform not supported")
 endif()
 
+if(NOT DEFINED cobalt_starboard_headers_only_LIB)
+  message(FATAL_ERROR "NOT DEFINED: cobalt_starboard_headers_only_LIB")
+endif(NOT DEFINED cobalt_starboard_headers_only_LIB)
+
+target_link_libraries(cobalt_glimp PUBLIC
+  ${cobalt_starboard_LIB} # TODO
+  ${cobalt_starboard_headers_only_LIB}
+)
+
 target_link_libraries(cobalt_glimp PRIVATE
   base # TODO
   cobalt_base

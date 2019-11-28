@@ -99,7 +99,25 @@ if(USE_MODP_B64)
   conan_create_target(${THIRDPARTY_DIR}chromium_modp_b64)
 endif(USE_MODP_B64)
 
+# TODO
+# set(ENABLE_CHROMIUM TRUE CACHE BOOL "ENABLE_CHROMIUM")
+
+set(ENABLE_COBALT TRUE CACHE BOOL "ENABLE_COBALT")
+if(ENABLE_COBALT)
+  set(USE_COBALT_HEADERS TRUE CACHE BOOL "USE_COBALT_HEADERS")
+  if(USE_COBALT_HEADERS)
+    conan_create_target(${THIRDPARTY_DIR}cobalt_starboard_headers_only)
+    conan_create_target(${THIRDPARTY_DIR}cobalt_starboard)
+    #conan_create_target(${THIRDPARTY_DIR}cobalt_starboard_icu_init)
+    #conan_create_target(${THIRDPARTY_DIR}cobalt_starboard_eztime)
+    #conan_create_target(${THIRDPARTY_DIR}cobalt_starboard_common)
+    #conan_create_target(${THIRDPARTY_DIR}cobalt_starboard_platform)
+  endif(USE_COBALT_HEADERS)
+endif(ENABLE_COBALT)
+
 set(USE_BASE TRUE CACHE BOOL "USE_BASE")
 if(USE_BASE)
+  # NOTE: depends on cobalt_starboard_headers_only
   conan_create_target(${THIRDPARTY_DIR}chromium_base)
 endif(USE_BASE)
+

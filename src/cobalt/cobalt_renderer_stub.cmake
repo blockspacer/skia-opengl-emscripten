@@ -170,6 +170,23 @@ endif(ENABLE_SKIA)
     )
   endif(TARGET_LINUX)
 
+  if(NOT DEFINED cobalt_starboard_LIB)
+    message(FATAL_ERROR "NOT DEFINED: cobalt_starboard_LIB")
+  endif(NOT DEFINED cobalt_starboard_LIB)
+
+  target_link_libraries(cobalt_renderer_stub_skia PUBLIC
+    ${cobalt_starboard_LIB}
+  )
+
+  if(NOT DEFINED cobalt_starboard_headers_only_LIB)
+    message(FATAL_ERROR "NOT DEFINED: cobalt_starboard_headers_only_LIB")
+  endif(NOT DEFINED cobalt_starboard_headers_only_LIB)
+
+  target_link_libraries(cobalt_renderer_stub_skia PUBLIC
+    ${cobalt_starboard_LIB} # TODO
+    ${cobalt_starboard_headers_only_LIB}
+  )
+
   target_link_libraries(cobalt_renderer_stub_skia PRIVATE
     ${base_LIB} # TODO
     cobalt_base
@@ -181,10 +198,10 @@ endif(ENABLE_SKIA)
     cobalt_ui_navigation
     cobalt_system_window
     ${COBALT_GLIMP_LIB}
-    starboard_platform
+    ## starboard_platform
     #starboard_core
-    starboard_eztime
-    starboard_common
+    ## starboard_eztime
+    ## starboard_common
     ${modp_b64_LIB}
     #dynamic_annotations
     ${GLIBXML_LIB}
@@ -265,6 +282,23 @@ else()
   message(FATAL_ERROR "platform not supported")
 endif()
 
+if(NOT DEFINED cobalt_starboard_LIB)
+  message(FATAL_ERROR "NOT DEFINED: cobalt_starboard_LIB")
+endif(NOT DEFINED cobalt_starboard_LIB)
+
+target_link_libraries(cobalt_renderer_stub_skgl PUBLIC
+  ${cobalt_starboard_LIB} # TODO
+  ${cobalt_starboard_LIB}
+)
+
+if(NOT DEFINED cobalt_starboard_headers_only_LIB)
+  message(FATAL_ERROR "NOT DEFINED: cobalt_starboard_headers_only_LIB")
+endif(NOT DEFINED cobalt_starboard_headers_only_LIB)
+
+target_link_libraries(cobalt_renderer_stub_skgl PUBLIC
+  ${cobalt_starboard_headers_only_LIB}
+)
+
 target_link_libraries(cobalt_renderer_stub_skgl PRIVATE
   ${cobalt_renderer_stub_skia_LIB}
   #
@@ -278,10 +312,10 @@ target_link_libraries(cobalt_renderer_stub_skgl PRIVATE
   cobalt_ui_navigation
   cobalt_system_window
   ${COBALT_GLIMP_LIB}
-  starboard_platform
+  ## starboard_platform
   #starboard_core
-  starboard_eztime
-  starboard_common
+  ## starboard_eztime
+  ## starboard_common
   ${modp_b64_LIB}
   #dynamic_annotations
   ${GLIBXML_LIB}
@@ -420,6 +454,22 @@ else()
   message(FATAL_ERROR "platform not supported")
 endif()
 
+if(NOT DEFINED cobalt_starboard_LIB)
+  message(FATAL_ERROR "NOT DEFINED: cobalt_starboard_LIB")
+endif(NOT DEFINED cobalt_starboard_LIB)
+
+target_link_libraries(cobalt_renderer_stub PUBLIC
+  ${cobalt_starboard_LIB}
+)
+
+if(NOT DEFINED cobalt_starboard_headers_only_LIB)
+  message(FATAL_ERROR "NOT DEFINED: cobalt_starboard_headers_only_LIB")
+endif(NOT DEFINED cobalt_starboard_headers_only_LIB)
+
+target_link_libraries(cobalt_renderer_stub PUBLIC
+  ${cobalt_starboard_headers_only_LIB}
+)
+
 target_link_libraries(cobalt_renderer_stub PRIVATE
   cobalt_renderer_stub_skgl
   ${cobalt_renderer_stub_skia_LIB}
@@ -434,10 +484,10 @@ target_link_libraries(cobalt_renderer_stub PRIVATE
   cobalt_ui_navigation
   cobalt_system_window
   ${COBALT_GLIMP_LIB}
-  starboard_platform
+  ## starboard_platform
   #starboard_core
-  starboard_eztime
-  starboard_common
+  ## starboard_eztime
+  ## starboard_common
   ${modp_b64_LIB}
   #dynamic_annotations
   ${GLIBXML_LIB}

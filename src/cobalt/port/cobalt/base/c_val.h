@@ -29,8 +29,8 @@
 #include "base/containers/hash_tables.h"
 //#include <map>
 
-#include "port/base/basictypes.h"
-#include "port/starboard/configuration.h"
+#include "base/basictypes.h"
+#include "starboard/configuration.h"
 
 #include "base/logging.h"
 #include "base/memory/singleton.h"

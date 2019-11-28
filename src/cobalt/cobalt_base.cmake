@@ -101,10 +101,10 @@ if(NOT DEFINED CUSTOM_ICU_LIB)
 endif(NOT DEFINED CUSTOM_ICU_LIB)
 
 target_link_libraries(cobalt_base PRIVATE
-  starboard_platform
+  ## starboard_platform
   #starboard_core
-  starboard_eztime
-  starboard_common
+  ## starboard_eztime
+  ## starboard_common
   ${modp_b64_LIB}
   ${GLIBXML_LIB}
   ${CUSTOM_ICU_LIB}
@@ -119,6 +119,19 @@ endif(NOT DEFINED build_util_LIB)
 
 target_link_libraries(cobalt_base PUBLIC
   ${build_util_LIB}
+)
+
+if(NOT DEFINED cobalt_starboard_LIB)
+  message(FATAL_ERROR "NOT DEFINED: cobalt_starboard_LIB")
+endif(NOT DEFINED cobalt_starboard_LIB)
+
+if(NOT DEFINED cobalt_starboard_headers_only_LIB)
+  message(FATAL_ERROR "NOT DEFINED: cobalt_starboard_headers_only_LIB")
+endif(NOT DEFINED cobalt_starboard_headers_only_LIB)
+
+target_link_libraries(cobalt_base PUBLIC
+  ${cobalt_starboard_LIB} # TODO
+  ${cobalt_starboard_headers_only_LIB}
 )
 
 if(NOT DEFINED base_LIB)

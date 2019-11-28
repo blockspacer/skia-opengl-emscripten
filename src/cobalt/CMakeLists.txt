@@ -12,15 +12,15 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/third_party/glm)
 
 #include(xdg_user_dirs.cmake)
 
-include(starboard_icu_init.cmake)
+#include(starboard_icu_init.cmake)
 
-include(starboard_eztime.cmake) # requires starboard_icu_init
+#include(starboard_eztime.cmake) # requires starboard_icu_init
 
 # requires EzTimeValueGetNow = starboard_eztime
  # requires SbThreadGetId = starboard_stub
-include(starboard_common.cmake)
+#include(starboard_common.cmake)
 
-include(starboard_platform.cmake) # requires starboard_stub
+#include(starboard_platform.cmake) # requires starboard_stub
 
 include(cobalt_nanobase.cmake)
 

@@ -11,6 +11,9 @@ project(${PROJECT_NAME}
 
 set(STATIC_LIB_NAME ${PROJECT_NAME}-static)
 
+set(COBALT_DIR cobalt)
+set(LOCAL_COBALT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/${COBALT_DIR}/)
+
 # --------------------------- conan configuration ------------------------------
 
 if(EXISTS "${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
@@ -156,6 +159,23 @@ if(ENABLE_COMPACT_ENC_DET)
     message(FATAL_ERROR "not supported: using system provided compact_enc_det library")
   endif()
 endif(ENABLE_COMPACT_ENC_DET)
+
+option(ENABLE_COBALT "ENABLE_COBALT" ON)
+if(ENABLE_COBALT)
+  find_package(cobalt_starboard_headers_only REQUIRED)
+  if(TARGET cobalt_starboard_headers_only::cobalt_starboard_headers_only-static)
+    set(cobalt_starboard_headers_only_LIB cobalt_starboard_headers_only::cobalt_starboard_headers_only-static)
+  else()
+    message(FATAL_ERROR "not supported: using system provided cobalt_starboard_headers_only library")
+  endif()
+  #
+  find_package(cobalt_starboard REQUIRED)
+  if(TARGET cobalt_starboard::cobalt_starboard-static)
+    set(cobalt_starboard_LIB cobalt_starboard::cobalt_starboard-static)
+  else()
+    message(FATAL_ERROR "not supported: using system provided cobalt_starboard library")
+  endif()
+endif(ENABLE_COBALT)
 
 # TODO
 #if(NOT DEFINED BASE_STANDALONE)
@@ -324,6 +344,40 @@ if(NOT DEFINED dynamic_annotations_LIB)
   message(FATAL_ERROR "NOT DEFINED: dynamic_annotations_LIB")
 endif(NOT DEFINED dynamic_annotations_LIB)
 
+#if(TARGET_WINDOWS)
+#  list(APPEND EXTRA_STARBOARD_DEFINES
+#    STARBOARD_ATOMIC_INCLUDE="starboard/win/x64x11/atomic_public.h"
+#    STARBOARD_THREAD_TYPES_INCLUDE="starboard/win/x64x11/thread_types_public.h"
+#    STARBOARD_CONFIGURATION_INCLUDE="starboard/win/x64x11/configuration_public.h"
+#  )
+#elseif(TARGET_LINUX OR TARGET_EMSCRIPTEN)
+#  list(APPEND EXTRA_STARBOARD_DEFINES
+#    STARBOARD_ATOMIC_INCLUDE="starboard/linux/x64x11/atomic_public.h"
+#    STARBOARD_THREAD_TYPES_INCLUDE="starboard/linux/x64x11/thread_types_public.h"
+#    STARBOARD_CONFIGURATION_INCLUDE="starboard/linux/x64x11/configuration_public.h"
+#  )
+#else()
+#  message(FATAL_ERROR "platform not supported")
+#endif()
+#
+#target_compile_definitions(${STATIC_LIB_NAME} PUBLIC
+#  ${EXTRA_STARBOARD_DEFINES}
+#)
+
+if(NOT DEFINED ENABLE_COBALT)
+  message(FATAL_ERROR "NOT DEFINED: ENABLE_COBALT")
+endif(NOT DEFINED ENABLE_COBALT)
+if(ENABLE_COBALT)
+  if(NOT DEFINED cobalt_starboard_LIB)
+    message(FATAL_ERROR "NOT DEFINED: cobalt_starboard_LIB")
+  endif(NOT DEFINED cobalt_starboard_LIB)
+
+  target_link_libraries(${STATIC_LIB_NAME} PRIVATE
+    ${cobalt_starboard_LIB}
+    ${cobalt_starboard_headers_only_LIB}
+  )
+endif(ENABLE_COBALT)
+
 #'dependencies': [
 #  '<(DEPTH)/nb/nb.gyp:nb',
 #  '<(DEPTH)/starboard/client_porting/eztime/eztime.gyp:eztime',
@@ -382,6 +436,10 @@ list(APPEND BASE_DEFINES
 )
 
 add_relative_include_dir(${STATIC_LIB_NAME} PUBLIC PUBLIC "")
+
+if(ENABLE_COBALT)
+  add_relative_include_dir(${STATIC_LIB_NAME} PUBLIC PUBLIC "${COBALT_DIR}")
+endif(ENABLE_COBALT)
 
 # path to base/threading/thread.h
 

@@ -669,18 +669,34 @@ if(TARGET_EMSCRIPTEN)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${EMCC_COMMON}")
 endif(TARGET_EMSCRIPTEN)
 
-find_package(chromium_base REQUIRED)
-if(TARGET chromium_base::chromium_base-static)
-  set(base_LIB chromium_base::chromium_base-static)
-else()
-  message(FATAL_ERROR "not supported: using system provided chromium_base library")
-endif()
-
 find_package(chromium_build_util REQUIRED)
 if(TARGET chromium_build_util::chromium_build_util-static)
   set(build_util_LIB chromium_build_util::chromium_build_util-static)
 else()
   message(FATAL_ERROR "not supported: using system provided chromium_build_util library")
+endif()
+
+if(ENABLE_COBALT)
+  find_package(cobalt_starboard_headers_only REQUIRED)
+  if(TARGET cobalt_starboard_headers_only::cobalt_starboard_headers_only-static)
+    set(cobalt_starboard_headers_only_LIB cobalt_starboard_headers_only::cobalt_starboard_headers_only-static)
+  else()
+    message(FATAL_ERROR "not supported: using system provided cobalt_starboard_headers_only library")
+  endif()
+
+  find_package(cobalt_starboard REQUIRED)
+  if(TARGET cobalt_starboard::cobalt_starboard-static)
+    set(cobalt_starboard_LIB cobalt_starboard::cobalt_starboard-static)
+  else()
+    message(FATAL_ERROR "not supported: using system provided cobalt_starboard library")
+  endif()
+endif(ENABLE_COBALT)
+
+find_package(chromium_base REQUIRED)
+if(TARGET chromium_base::chromium_base-static)
+  set(base_LIB chromium_base::chromium_base-static)
+else()
+  message(FATAL_ERROR "not supported: using system provided chromium_base library")
 endif()
 
 #
@@ -1094,6 +1110,21 @@ if(TARGET_EMSCRIPTEN)
     ${COBALT_COMMON_INCLUDES}
     ${CMAKE_CURRENT_SOURCE_DIR}/src
   )
+
+  if(NOT DEFINED ENABLE_COBALT)
+    message(FATAL_ERROR "NOT DEFINED: ENABLE_COBALT")
+  endif(NOT DEFINED ENABLE_COBALT)
+  if(ENABLE_COBALT)
+    if(NOT DEFINED cobalt_starboard_LIB)
+      message(FATAL_ERROR "NOT DEFINED: cobalt_starboard_LIB")
+    endif(NOT DEFINED cobalt_starboard_LIB)
+
+    target_link_libraries(${PROJECT_NAME} PRIVATE
+      ${cobalt_starboard_LIB}
+      ${cobalt_starboard_headers_only_LIB}
+    )
+  endif(ENABLE_COBALT)
+
   # link order is top down:
   # Top is the executable, followed by directly used libraries.
   # see https://floooh.github.io/2016/01/12/cmake-dependency-juggling.html
@@ -1195,6 +1226,21 @@ else()
     ${COBALT_COMMON_INCLUDES}
     ${CMAKE_CURRENT_SOURCE_DIR}/src
   )
+
+  if(NOT DEFINED ENABLE_COBALT)
+    message(FATAL_ERROR "NOT DEFINED: ENABLE_COBALT")
+  endif(NOT DEFINED ENABLE_COBALT)
+  if(ENABLE_COBALT)
+    if(NOT DEFINED cobalt_starboard_LIB)
+      message(FATAL_ERROR "NOT DEFINED: cobalt_starboard_LIB")
+    endif(NOT DEFINED cobalt_starboard_LIB)
+
+    target_link_libraries(${PROJECT_NAME} PRIVATE
+      ${cobalt_starboard_LIB}
+      ${cobalt_starboard_headers_only_LIB}
+    )
+  endif(ENABLE_COBALT)
+
   # link order is top down:
   # Top is the executable, followed by directly used libraries.
   # see https://floooh.github.io/2016/01/12/cmake-dependency-juggling.html

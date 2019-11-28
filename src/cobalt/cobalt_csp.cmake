@@ -89,6 +89,15 @@ target_link_libraries(cobalt_csp PRIVATE
 
 set_property(TARGET cobalt_csp PROPERTY CXX_STANDARD 17)
 
+if(NOT DEFINED cobalt_starboard_headers_only_LIB)
+  message(FATAL_ERROR "NOT DEFINED: cobalt_starboard_headers_only_LIB")
+endif(NOT DEFINED cobalt_starboard_headers_only_LIB)
+
+target_link_libraries(cobalt_csp PUBLIC
+  ${cobalt_starboard_LIB} # TODO
+  ${cobalt_starboard_headers_only_LIB}
+)
+
 target_include_directories(cobalt_csp PRIVATE
   #${UI_PARENT_DIR}
   ${COBALT_CORE_DIR}

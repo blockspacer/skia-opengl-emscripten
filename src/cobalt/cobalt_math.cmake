@@ -63,6 +63,15 @@ add_library(cobalt_math STATIC
   ${cobalt_math_SOURCES}
 )
 
+if(NOT DEFINED cobalt_starboard_headers_only_LIB)
+  message(FATAL_ERROR "NOT DEFINED: cobalt_starboard_headers_only_LIB")
+endif(NOT DEFINED cobalt_starboard_headers_only_LIB)
+
+target_link_libraries(cobalt_math PUBLIC
+  ${cobalt_starboard_LIB} # TODO
+  ${cobalt_starboard_headers_only_LIB}
+)
+
 target_link_libraries(cobalt_math PRIVATE
   cobalt_base
   #cobalt_nanobase

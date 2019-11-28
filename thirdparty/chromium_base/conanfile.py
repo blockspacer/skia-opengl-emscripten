@@ -34,12 +34,14 @@ class chromium_base_conan_project(ConanFile):
 
     options = {
         "enable_tests": [True, False],
-        "enable_sanitizers": [True, False]
+        "enable_sanitizers": [True, False],
+        "enable_cobalt": [True, False]
     }
 
     default_options = (
         "enable_tests=False",
-        "enable_sanitizers=False"
+        "enable_sanitizers=False",
+        "enable_cobalt=True"
         # build
         #"*:shared=False"
     )
@@ -62,7 +64,7 @@ class chromium_base_conan_project(ConanFile):
                        "scripts/*", "tools/*", "codegen/*", "assets/*",
                        "docs/*", "licenses/*", "patches/*", "resources/*",
                        "submodules/*", "thirdparty/*", "third-party/*",
-                       "third_party/*", "base/*")
+                       "third_party/*", "base/*", "cobalt/*", "starboard/*")
 
     settings = "os", "compiler", "build_type", "arch"
 
@@ -80,7 +82,6 @@ class chromium_base_conan_project(ConanFile):
 
         self.requires("chromium_icu/master@conan/stable")
 
-        # TODO: move to base
         self.requires("chromium_dynamic_annotations/master@conan/stable")
         self.requires("chromium_modp_b64/master@conan/stable")
         self.requires("chromium_compact_enc_det/master@conan/stable")
@@ -95,6 +96,10 @@ class chromium_base_conan_project(ConanFile):
             self.requires("gtest/[>=1.8.0]@bincrafters/stable")
             self.requires("FakeIt/[>=2.0.4]@gasuketsu/stable")
 
+        if self.options.enable_cobalt:
+          self.requires("cobalt_starboard_headers_only/master@conan/stable")
+          self.requires("cobalt_starboard/master@conan/stable")
+
     def _configure_cmake(self):
         cmake = CMake(self)
         cmake.parallel = True
@@ -108,6 +113,8 @@ class chromium_base_conan_project(ConanFile):
         add_cmake_option("ENABLE_SANITIZERS", self.options.enable_sanitizers)
 
         add_cmake_option("ENABLE_TESTS", self.options.enable_tests)
+
+        add_cmake_option("ENABLE_COBALT", self.options.enable_cobalt)
 
         cmake.configure(build_folder=self._build_subfolder)
 

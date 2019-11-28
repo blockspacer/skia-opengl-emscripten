@@ -1446,29 +1446,33 @@ if(TARGET_LINUX)
   )
 endif()
 
+if(NOT DEFINED ENABLE_COBALT)
+  message(FATAL_ERROR "NOT DEFINED: ENABLE_COBALT")
+endif(NOT DEFINED ENABLE_COBALT)
 if(ENABLE_COBALT)
   list(APPEND COBALT_port_base_SOURCES
-    #${COBALT_PORT_DIR}base/base_paths_starboard.cc
-    #${COBALT_PORT_DIR}base/debug/debugger_starboard.cc
-    #${COBALT_PORT_DIR}base/debug/stack_trace_starboard.cc
-    #${COBALT_PORT_DIR}base/files/file_enumerator_starboard.cc
-    #${COBALT_PORT_DIR}base/files/file_starboard.cc
-    #${COBALT_PORT_DIR}base/files/file_util_starboard.cc
-    #${COBALT_PORT_DIR}base/message_loop/message_pump_io_starboard.cc
-    #${COBALT_PORT_DIR}base/message_loop/message_pump_ui_starboard.cc
-    #${COBALT_PORT_DIR}base/process/memory_starboard.cc
-    #${COBALT_PORT_DIR}base/process/process_starboard.cc
-    #${COBALT_PORT_DIR}base/profiler/native_stack_sampler_starboard.cc
-    #${COBALT_PORT_DIR}base/rand_util_starboard.cc
-    #${COBALT_PORT_DIR}base/sampling_heap_profiler/module_cache_starboard.cc
-    #${COBALT_PORT_DIR}base/strings/sys_string_conversions_starboard.cc
-    #${COBALT_PORT_DIR}base/synchronization/condition_variable_starboard.cc
-    #${COBALT_PORT_DIR}base/synchronization/lock_impl_starboard.cc
-    #${COBALT_PORT_DIR}base/synchronization/waitable_event_starboard.cc
-    #${COBALT_PORT_DIR}base/sys_info_starboard.cc
-    #${COBALT_PORT_DIR}base/threading/platform_thread_starboard.cc
-    #${COBALT_PORT_DIR}base/threading/thread_local_storage_starboard.cc
-    #${COBALT_PORT_DIR}base/time/time_now_starboard.cc
-    ${COBALT_PORT_DIR}base/time/time_starboard.cc
+    # TODO: port chromium base to starboard
+    #${LOCAL_COBALT_DIR}base/base_paths_starboard.cc
+    #${LOCAL_COBALT_DIR}base/debug/debugger_starboard.cc
+    #${LOCAL_COBALT_DIR}base/debug/stack_trace_starboard.cc
+    #${LOCAL_COBALT_DIR}base/files/file_enumerator_starboard.cc
+    #${LOCAL_COBALT_DIR}base/files/file_starboard.cc
+    #${LOCAL_COBALT_DIR}base/files/file_util_starboard.cc
+    #${LOCAL_COBALT_DIR}base/message_loop/message_pump_io_starboard.cc
+    #${LOCAL_COBALT_DIR}base/message_loop/message_pump_ui_starboard.cc
+    #${LOCAL_COBALT_DIR}base/process/memory_starboard.cc
+    #${LOCAL_COBALT_DIR}base/process/process_starboard.cc
+    #${LOCAL_COBALT_DIR}base/profiler/native_stack_sampler_starboard.cc
+    #${LOCAL_COBALT_DIR}base/rand_util_starboard.cc
+    #${LOCAL_COBALT_DIR}base/sampling_heap_profiler/module_cache_starboard.cc
+    #${LOCAL_COBALT_DIR}base/strings/sys_string_conversions_starboard.cc
+    #${LOCAL_COBALT_DIR}base/synchronization/condition_variable_starboard.cc
+    #${LOCAL_COBALT_DIR}base/synchronization/lock_impl_starboard.cc
+    #${LOCAL_COBALT_DIR}base/synchronization/waitable_event_starboard.cc
+    #${LOCAL_COBALT_DIR}base/sys_info_starboard.cc
+    #${LOCAL_COBALT_DIR}base/threading/platform_thread_starboard.cc
+    #${LOCAL_COBALT_DIR}base/threading/thread_local_storage_starboard.cc
+    #${LOCAL_COBALT_DIR}base/time/time_now_starboard.cc
+    ${LOCAL_COBALT_DIR}base/time/time_starboard.cc
   )
 endif(ENABLE_COBALT)

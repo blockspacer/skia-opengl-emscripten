@@ -61,6 +61,15 @@ add_library(cobalt_render_tree STATIC
   ${cobalt_render_tree_animations_SOURCES}
 )
 
+if(NOT DEFINED cobalt_starboard_headers_only_LIB)
+  message(FATAL_ERROR "NOT DEFINED: cobalt_starboard_headers_only_LIB")
+endif(NOT DEFINED cobalt_starboard_headers_only_LIB)
+
+target_link_libraries(cobalt_page_visibility PUBLIC
+  ${cobalt_starboard_LIB} # TODO
+  ${cobalt_starboard_headers_only_LIB}
+)
+
 # 'dependencies': [
 #   '<(DEPTH)/cobalt/base/base.gyp:base',
 #   '<(DEPTH)/cobalt/math/math.gyp:math',

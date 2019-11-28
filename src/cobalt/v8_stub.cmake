@@ -13,6 +13,15 @@ add_library(v8_stub STATIC
   ${v8_stub_SOURCES}
 )
 
+if(NOT DEFINED cobalt_starboard_headers_only_LIB)
+  message(FATAL_ERROR "NOT DEFINED: cobalt_starboard_headers_only_LIB")
+endif(NOT DEFINED cobalt_starboard_headers_only_LIB)
+
+target_link_libraries(v8_stub PUBLIC
+  ${cobalt_starboard_LIB} # TODO
+  ${cobalt_starboard_headers_only_LIB}
+)
+
 target_link_libraries(v8_stub PRIVATE
   ${base_LIB} # TODO
   cobalt_base

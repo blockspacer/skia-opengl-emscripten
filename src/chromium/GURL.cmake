@@ -59,6 +59,14 @@ add_library(GURL STATIC
   ${GURL_SOURCES}
 )
 
+if(NOT DEFINED base_LIB)
+  message(FATAL_ERROR "NOT DEFINED: base_LIB")
+endif(NOT DEFINED base_LIB)
+
+target_link_libraries(GURL PRIVATE
+  ${base_LIB}
+)
+
 target_link_libraries(GURL PRIVATE
   #${base_LIB} # TODO
   #cobalt_base

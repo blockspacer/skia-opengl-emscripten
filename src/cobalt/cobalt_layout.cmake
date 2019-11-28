@@ -93,6 +93,15 @@ add_library(cobalt_layout STATIC
   ${cobalt_layout_SOURCES}
 )
 
+if(NOT DEFINED cobalt_starboard_headers_only_LIB)
+  message(FATAL_ERROR "NOT DEFINED: cobalt_starboard_headers_only_LIB")
+endif(NOT DEFINED cobalt_starboard_headers_only_LIB)
+
+target_link_libraries(cobalt_layout PUBLIC
+  ${cobalt_starboard_LIB} # TODO
+  ${cobalt_starboard_headers_only_LIB}
+)
+
 #'dependencies': [
 #  '<(DEPTH)/cobalt/base/base.gyp:base',
 #  '<(DEPTH)/cobalt/dom/dom.gyp:dom',

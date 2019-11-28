@@ -21,6 +21,15 @@ target_link_libraries(cobalt_dom_exception PRIVATE
   #${modp_b64_LIB}
 )
 
+if(NOT DEFINED cobalt_starboard_headers_only_LIB)
+  message(FATAL_ERROR "NOT DEFINED: cobalt_starboard_headers_only_LIB")
+endif(NOT DEFINED cobalt_starboard_headers_only_LIB)
+
+target_link_libraries(cobalt_dom_exception PUBLIC
+  ${cobalt_starboard_LIB} # TODO
+  ${cobalt_starboard_headers_only_LIB}
+)
+
 set_property(TARGET cobalt_dom_exception PROPERTY CXX_STANDARD 17)
 
 target_include_directories(cobalt_dom_exception PRIVATE

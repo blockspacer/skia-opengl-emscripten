@@ -64,6 +64,15 @@ add_library(cobalt_script STATIC
   ${cobalt_script_SOURCES}
 )
 
+if(NOT DEFINED cobalt_starboard_headers_only_LIB)
+  message(FATAL_ERROR "NOT DEFINED: cobalt_starboard_headers_only_LIB")
+endif(NOT DEFINED cobalt_starboard_headers_only_LIB)
+
+target_link_libraries(cobalt_script PUBLIC
+  ${cobalt_starboard_LIB} # TODO
+  ${cobalt_starboard_headers_only_LIB}
+)
+
 target_link_libraries(cobalt_script PRIVATE
   cobalt_base
   cobalt_nanobase

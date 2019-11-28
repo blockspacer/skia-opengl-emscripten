@@ -14,6 +14,23 @@ add_library(cobalt_system_window STATIC
   ${COBALT_system_window_SOURCES}
 )
 
+if(NOT DEFINED cobalt_starboard_LIB)
+  message(FATAL_ERROR "NOT DEFINED: cobalt_starboard_LIB")
+endif(NOT DEFINED cobalt_starboard_LIB)
+
+target_link_libraries(cobalt_system_window PUBLIC
+  ${cobalt_starboard_LIB}
+)
+
+if(NOT DEFINED cobalt_starboard_headers_only_LIB)
+  message(FATAL_ERROR "NOT DEFINED: cobalt_starboard_headers_only_LIB")
+endif(NOT DEFINED cobalt_starboard_headers_only_LIB)
+
+target_link_libraries(cobalt_system_window PUBLIC
+  ${cobalt_starboard_LIB} # TODO
+  ${cobalt_starboard_headers_only_LIB}
+)
+
 target_link_libraries(cobalt_system_window PRIVATE
   ${base_LIB} # TODO
   cobalt_base
@@ -22,10 +39,10 @@ target_link_libraries(cobalt_system_window PRIVATE
   #cobalt_render_tree
   #cobalt_ui_navigation
   #${CUSTOM_ICU_LIB}
-  starboard_platform # requires SbWindowCreate -> SbWindowPrivate -> window_create.cc
+  ## starboard_platform # requires SbWindowCreate -> SbWindowPrivate -> window_create.cc
   #starboard_core
   #starboard_eztime
-  starboard_common
+  ## starboard_common
 )
 
 set_property(TARGET cobalt_system_window PROPERTY CXX_STANDARD 17)

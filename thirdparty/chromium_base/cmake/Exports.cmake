@@ -18,6 +18,15 @@ install(
   FILES_MATCHING
     PATTERN "*")
 
+# NOTE: preserve directory structure
+install(
+  DIRECTORY
+    ${CMAKE_SOURCE_DIR}/cobalt/
+  DESTINATION
+    ${CMAKE_INSTALL_INCLUDEDIR}/cobalt
+  FILES_MATCHING
+    PATTERN "*")
+
 install(
   TARGETS
     ${STATIC_LIB_NAME}

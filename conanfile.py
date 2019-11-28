@@ -34,12 +34,14 @@ class skg_conan_project(ConanFile):
 
     options = {
         "enable_tests": [True, False],
-        "enable_sanitizers": [True, False]
+        "enable_sanitizers": [True, False],
+        "enable_cobalt": [True, False]
     }
 
     default_options = (
         "enable_tests=False",
-        "enable_sanitizers=False"
+        "enable_sanitizers=False",
+        "enable_cobalt=True"
         # build
         #"*:shared=False"
     )
@@ -72,29 +74,27 @@ class skg_conan_project(ConanFile):
     def requirements(self):
         self.requires("cmake_platform_detection/master@conan/stable")
 
-        self.requires("chromium_build_util/master@conan/stable")
-
-        self.requires("chromium_base/master@conan/stable")
-
         if self.settings.os == "Linux":
             self.requires("chromium_libevent/master@conan/stable")
+            self.requires("chromium_tcmalloc/master@conan/stable")
+            self.requires("chromium_xdg_user_dirs/master@conan/stable")
+            self.requires("chromium_xdg_mime/master@conan/stable")
 
+        self.requires("chromium_build_util/master@conan/stable")
         self.requires("chromium_icu/master@conan/stable")
-
-        # TODO: move to base
         self.requires("chromium_dynamic_annotations/master@conan/stable")
         self.requires("chromium_modp_b64/master@conan/stable")
         self.requires("chromium_compact_enc_det/master@conan/stable")
-
-        if self.settings.os == "Linux":
-          self.requires("chromium_tcmalloc/master@conan/stable")
-          self.requires("chromium_xdg_user_dirs/master@conan/stable")
-          self.requires("chromium_xdg_mime/master@conan/stable")
+        self.requires("chromium_base/master@conan/stable")
 
         if self.options.enable_tests:
             self.requires("catch2/[>=2.1.0]@bincrafters/stable")
             self.requires("gtest/[>=1.8.0]@bincrafters/stable")
             self.requires("FakeIt/[>=2.0.4]@gasuketsu/stable")
+
+        if self.options.enable_cobalt:
+          self.requires("cobalt_starboard_headers_only/master@conan/stable")
+          self.requires("cobalt_starboard/master@conan/stable")
 
     def _configure_cmake(self):
         cmake = CMake(self)
@@ -109,6 +109,8 @@ class skg_conan_project(ConanFile):
         add_cmake_option("ENABLE_SANITIZERS", self.options.enable_sanitizers)
 
         add_cmake_option("ENABLE_TESTS", self.options.enable_tests)
+
+        add_cmake_option("ENABLE_COBALT", self.options.enable_cobalt)
 
         cmake.configure(build_folder=self._build_subfolder)
 

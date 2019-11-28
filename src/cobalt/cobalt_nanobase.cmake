@@ -58,6 +58,15 @@ add_library(cobalt_nanobase STATIC
 
 set_property(TARGET cobalt_nanobase PROPERTY CXX_STANDARD 17)
 
+if(NOT DEFINED cobalt_starboard_headers_only_LIB)
+  message(FATAL_ERROR "NOT DEFINED: cobalt_starboard_headers_only_LIB")
+endif(NOT DEFINED cobalt_starboard_headers_only_LIB)
+
+target_link_libraries(cobalt_nanobase PUBLIC
+  ${cobalt_starboard_LIB} # TODO
+  ${cobalt_starboard_headers_only_LIB}
+)
+
 if(NOT DEFINED base_LIB)
   message(FATAL_ERROR "NOT DEFINED: base_LIB")
 endif(NOT DEFINED base_LIB)

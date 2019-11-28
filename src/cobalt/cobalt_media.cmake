@@ -222,6 +222,23 @@ add_library(cobalt_media STATIC
   ${cobalt_media_SOURCES}
 )
 
+if(NOT DEFINED cobalt_starboard_LIB)
+  message(FATAL_ERROR "NOT DEFINED: cobalt_starboard_LIB")
+endif(NOT DEFINED cobalt_starboard_LIB)
+
+target_link_libraries(cobalt_media PUBLIC
+  ${cobalt_starboard_LIB}
+)
+
+if(NOT DEFINED cobalt_starboard_headers_only_LIB)
+  message(FATAL_ERROR "NOT DEFINED: cobalt_starboard_headers_only_LIB")
+endif(NOT DEFINED cobalt_starboard_headers_only_LIB)
+
+target_link_libraries(cobalt_media PUBLIC
+  ${cobalt_starboard_LIB} # TODO
+  ${cobalt_starboard_headers_only_LIB}
+)
+
 target_link_libraries(cobalt_media PRIVATE
   ${base_LIB} # TODO
   cobalt_base
@@ -231,11 +248,11 @@ target_link_libraries(cobalt_media PRIVATE
   ${COBALT_LOADER_LIB_NAME} ## TODO
   ${COBALT_CSP_LIB_NAME}
   cobalt_system_window # TODO
-  starboard_icu_init
-  starboard_eztime  # requires starboard_icu_init
+  ## starboard_icu_init
+  ## starboard_eztime  # requires starboard_icu_init
   #starboard_stub
-  starboard_platform # requires starboard_stub
-  starboard_common
+  ## starboard_platform # requires starboard_stub
+  ## starboard_common
   #starboard_core
   ${modp_b64_LIB}
   #dynamic_annotations
