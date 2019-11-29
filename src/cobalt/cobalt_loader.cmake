@@ -167,21 +167,28 @@ target_link_libraries(cobalt_loader PUBLIC
   ${cobalt_starboard_headers_only_LIB}
 )
 
+if(NOT USE_SYSTEM_ZLIB)
+  if(NOT DEFINED zlib_LIB)
+    message(FATAL_ERROR "zlib_LIB must be defined")
+  endif(NOT DEFINED zlib_LIB)
+endif(NOT USE_SYSTEM_ZLIB)
+
 target_link_libraries(cobalt_loader PRIVATE
   ${cobalt_base_LIB}
+  ${cobalt_nanobase_LIB}
   ${COBALT_CSP_LIB_NAME}
   ${COBALT_RENDER_TREE_LIB}
   ${base_LIB} # TODO
   ${modp_b64_LIB}
   #dynamic_annotations
-  GURL
+  ${url_LIB}
   ${GNET_LIBS}
-  ${GLIBXML_LIB}
+  ${libxml_LIB}
   ${CUSTOM_ICU_LIB}
   #ced
   # NOTE: force glm from conan, otherwise we can break
   # some isolated builds (emscripten) with -system /usr/include
-  CONAN_PKG::glm
+  CONAN_PKG::cobalt_glm
   ${WEBP_LIB} # requires libpng
   #${libjpeg_LIB}
   ${libjpeg_TURBO_LIB}
@@ -189,7 +196,7 @@ target_link_libraries(cobalt_loader PRIVATE
   ${libpng_LIB}
   #${iccjpeg_LIB}
   #SKIA
-  ${libZLIB_LIB}
+  ${zlib_LIB}
 )
 
 set_property(TARGET cobalt_loader PROPERTY CXX_STANDARD 17)

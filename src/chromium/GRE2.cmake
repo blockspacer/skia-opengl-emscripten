@@ -52,13 +52,6 @@ add_library(GRE2 STATIC
 
 target_link_libraries(GRE2 PRIVATE
   ${base_LIB}
-  #GCRYPTO
-  #GURL
-  # sql
-  # protobuf
-  # libnss or boringssl
-  # libnspr
-  # open-vcdiff
 )
 
 set_property(TARGET GRE2 PROPERTY CXX_STANDARD 17)

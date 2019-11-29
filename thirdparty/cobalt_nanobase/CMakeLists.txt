@@ -33,7 +33,7 @@ find_package(cmake_platform_detection REQUIRED)
 run_cmake_platform_detection()
 
 find_package(cmake_build_options REQUIRED)
-setup_cmake_build_options()
+setup_cmake_build_options(RELEASE DEBUG)
 
 find_package(cobalt_starboard_headers_only REQUIRED)
 if(TARGET cobalt_starboard_headers_only::cobalt_starboard_headers_only-static)
@@ -84,6 +84,7 @@ add_library(${STATIC_LIB_NAME} STATIC
   ${PROJECT_SOURCES}
 )
 
+# path to nb/memory_scope.h
 add_relative_include_dir(${STATIC_LIB_NAME} PUBLIC PUBLIC "cobalt")
 
 set_property(TARGET ${STATIC_LIB_NAME} PROPERTY CXX_STANDARD 17)

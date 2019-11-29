@@ -294,6 +294,7 @@ endif(ENABLE_GNET)
 
 if(TARGET_WINDOWS)
   # prevent C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\um\GL/gl.h(1157,1): error: unknown type name 'WINGDIAPI'
+  # TODO: use target_include_directories
   include_directories("${khronos_DIR}noninclude/GL") # TODO: use target_include_directories
   include_directories("${khronos_DIR}noninclude") # TODO: use target_include_directories
   if(NOT EXISTS "${khronos_DIR}noninclude/GL/glext.h")
@@ -429,11 +430,14 @@ if(ENABLE_BLINK)
     ${BLINK_GFX_LIBS}
     COMPONENTS_SCHEDULING_METRICS
   )
+  if(NOT DEFINED base_LIB)
+    message(FATAL_ERROR "NOT DEFINED: base_LIB")
+  endif(NOT DEFINED base_LIB)
   list(APPEND BLINK_LIBS
     ${base_LIB}
     #ced
     ${GCRYPTO_LIB}
-    GURL
+    ${url_LIB}
   )
   if(NOT TARGET_EMSCRIPTEN)
     if(TARGET_LINUX)
@@ -797,14 +801,19 @@ if(ENABLE_COBALT)
     )
   endif(ENABLE_COBALT_RENDER_TREE)
   #
-  list(APPEND COBALT_LIBS
+  if(NOT DEFINED cobalt_base_LIB)
+    message(FATAL_ERROR "NOT DEFINED: cobalt_base_LIB")
+  endif(NOT DEFINED cobalt_base_LIB)
+  list(APPEND COBALT_LIBS # TODO: completely remove COBALT_LIBS
     ${STARBOARD_PLATFORM_LIB}
     ${STARBOARD_ICU_INIT_LIB}
     ${STARBOARD_EZTIME_LIB}
     ${STARBOARD_COMMON_LIB}
     #
     #${COBALT_BASE_LIB}
-    ${COBALT_NANOBASE_LIB}
+    ${cobalt_base_LIB}
+    #${COBALT_NANOBASE_LIB}
+    ${cobalt_nanobase_LIB}
     ${COBALT_SYSTEM_WINDOW_LIB}
     ${COBALT_SCRIPT_LIB}
     ${COBALT_V8_STUB_LIB}
@@ -893,7 +902,7 @@ if(ENABLE_COBALT)
     ${base_LIB}
     #ced
     ${GCRYPTO_LIB}
-    GURL
+    ${url_LIB}
   )
 endif(ENABLE_COBALT)
 
@@ -937,9 +946,9 @@ if(ENABLE_GLIBXML)
     ${GLIBXML_PARENT_DIR}libxml/
   )
   #include(${CHROMIUM_DIR}GLIBXML.cmake)
-  set(GLIBXML_LIB
-    GLIBXML
-  )
+  #set(GLIBXML_LIB
+  #  GLIBXML
+  #)
 else()
   list(APPEND COBALT_COMMON_DEFINES LIBXML_DISABLED=1)
 endif(ENABLE_GLIBXML)

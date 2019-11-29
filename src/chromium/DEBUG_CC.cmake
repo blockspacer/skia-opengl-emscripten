@@ -31,9 +31,6 @@ add_library(DEBUG_CC STATIC
 )
 
 target_link_libraries(DEBUG_CC PRIVATE
-  #GURL
-  #${GNET_LIBS}
-  #${BASE_LIBRARIES}
   ${base_LIB}
   SKIA
   GFX_ANIMATION

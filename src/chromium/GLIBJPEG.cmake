@@ -67,15 +67,15 @@ add_library(GLIBJPEG STATIC
 
 if(TARGET_EMSCRIPTEN)
   target_link_libraries(GLIBJPEG PRIVATE
-    GLIBXML
+    ${libxml_LIB}
   )
 elseif(TARGET_LINUX OR TARGET_WINDOWS)
   target_link_libraries(GLIBJPEG PRIVATE
     #${BASE_LIBRARIES}
     #${base_LIB}
     #${ZLIB_LIBRARIES}
-    ${libZLIB_LIB}
-    GLIBXML
+    ${zlib_LIB}
+    ${libxml_LIB}
     #freetype
     # todo sudo apt-get install libjpeg-dev
   )

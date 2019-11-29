@@ -80,6 +80,14 @@ list(APPEND COBALT_base_SOURCES
   ${COBALT_PORT_DIR}/cobalt/base/version_compatibility.h
 )
 
+if(NOT DEFINED CUSTOM_ICU_LIB)
+  message(FATAL_ERROR "CUSTOM_ICU_LIB must be defined")
+endif(NOT DEFINED CUSTOM_ICU_LIB)
+
+if(NOT DEFINED libxml_LIB)
+  message(FATAL_ERROR "libxml_LIB must be defined")
+endif(NOT DEFINED libxml_LIB)
+
 add_library(cobalt_base STATIC
   ${COBALT_base_SOURCES}
 )
@@ -95,22 +103,18 @@ else()
   message(FATAL_ERROR "platform not supported")
 endif()
 
-if(NOT DEFINED CUSTOM_ICU_LIB)
-  message(FATAL_ERROR "CUSTOM_ICU_LIB must be defined")
-endif(NOT DEFINED CUSTOM_ICU_LIB)
-
 target_link_libraries(cobalt_base PRIVATE
   ## starboard_platform
   #starboard_core
   ## starboard_eztime
   ## starboard_common
   ${modp_b64_LIB}
-  ${GLIBXML_LIB}
+  ${libxml_LIB}
   ${CUSTOM_ICU_LIB}
   #ced
   # NOTE: force glm from conan, otherwise we can break
   # some isolated builds (emscripten) with -system /usr/include
-  CONAN_PKG::glm
+  CONAN_PKG::cobalt_glm
   ${EXTRA_COBALT_BASE_LIBS}
 )
 

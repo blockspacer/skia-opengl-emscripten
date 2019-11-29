@@ -227,7 +227,7 @@ add_library(libwebp STATIC
 target_link_libraries(libwebp PRIVATE
   #${libpng_LIB}
   # zlib
-  ${libZLIB_LIB}
+  ${zlib_LIB}
 )
 
 set_property(TARGET libwebp PROPERTY CXX_STANDARD 17)

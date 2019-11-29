@@ -785,7 +785,7 @@ target_link_libraries(UI_VIEWS PRIVATE
   #"//ui/strings",
   #"//ui/views/resources",
   #"//url",
-  GURL
+  ${url_LIB}
   #":views_vector_icons",
   #"//base",
   #"//components/vector_icons",

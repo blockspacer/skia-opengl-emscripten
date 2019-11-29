@@ -253,6 +253,10 @@ if(NOT DEFINED cobalt_starboard_headers_only_LIB)
   message(FATAL_ERROR "NOT DEFINED: cobalt_starboard_headers_only_LIB")
 endif(NOT DEFINED cobalt_starboard_headers_only_LIB)
 
+if(NOT DEFINED libxml_LIB)
+  message(FATAL_ERROR "NOT DEFINED: libxml_LIB")
+endif(NOT DEFINED libxml_LIB)
+
 target_link_libraries(cobalt_cssom PUBLIC
   ${cobalt_starboard_LIB} # TODO
   ${cobalt_starboard_headers_only_LIB}
@@ -278,14 +282,14 @@ target_link_libraries(cobalt_cssom PRIVATE
   #starboard_core
   ${modp_b64_LIB}
   #dynamic_annotations
-  GURL
+  ${url_LIB}
   ${GNET_LIBS}
-  ${GLIBXML_LIB}
+  ${libxml_LIB}
   ${CUSTOM_ICU_LIB}
   #ced
   # NOTE: force glm from conan, otherwise we can break
   # some isolated builds (emscripten) with -system /usr/include
-  CONAN_PKG::glm
+  CONAN_PKG::cobalt_glm
   #${WEBP_LIB} # requires libpng
   #${libjpeg_LIB}
   #${libjpeg_TURBO_LIB}

@@ -8,6 +8,15 @@
 
 cmake_minimum_required(VERSION 3.5)
 
+# TODO: make local, not global
+# allows to run `execute_process` without printing to console
+option(PRINT_TO_STDOUT "PRINT_TO_STDOUT" ON)
+if(PRINT_TO_STDOUT)
+  set(OUTPUT_VARS ) # undefined
+else()
+  set(OUTPUT_VARS OUTPUT_VARIABLE stdout)
+endif(PRINT_TO_STDOUT)
+
 # --- includes ---
 # WHY CMAKE_CURRENT_LIST_DIR? see https://stackoverflow.com/a/12854575/10904212
 set(CURRENT_SCRIPT_DIR ${CMAKE_CURRENT_LIST_DIR})
@@ -23,10 +32,11 @@ macro(gen_ninja_build_step ARG_GEN_TARGETS ARG_BUILD_DIR ARG_WORKING_DIR)
     COMMAND ${gn_COMMAND} "gen" "${GN_BUILD_RALATIVE_DIR}"
     WORKING_DIRECTORY ${ARG_WORKING_DIR}
     RESULT_VARIABLE retcode
-    ERROR_VARIABLE _ERROR_VARIABLE
+    ERROR_VARIABLE stderr
+    ${OUTPUT_VARS}
   )
   if(NOT "${retcode}" STREQUAL "0")
-    message( FATAL_ERROR "Bad exit status ${retcode} ${_ERROR_VARIABLE}")
+    message( FATAL_ERROR "Bad exit status ${retcode} ${stdout} ${stderr}")
   endif()
 
   colored_notify("running ${autoninja_COMMAND} ..." --yellow --bold)
@@ -34,10 +44,11 @@ macro(gen_ninja_build_step ARG_GEN_TARGETS ARG_BUILD_DIR ARG_WORKING_DIR)
     COMMAND ${autoninja_COMMAND} "-C" "${ARG_BUILD_DIR}" ${ARG_GEN_TARGETS}
     WORKING_DIRECTORY ${ARG_WORKING_DIR}
     RESULT_VARIABLE retcode
-    ERROR_VARIABLE _ERROR_VARIABLE
+    ERROR_VARIABLE stderr
+    ${OUTPUT_VARS}
   )
   if(NOT "${retcode}" STREQUAL "0")
-    message( FATAL_ERROR "Bad exit status ${retcode} ${_ERROR_VARIABLE}")
+    message( FATAL_ERROR "Bad exit status ${retcode} ${stdout} ${stderr}")
   endif()
 endmacro(gen_ninja_build_step)
 
@@ -50,10 +61,11 @@ macro(gen_copy_results_step ARG_CLEAN FROM_DIR TO_DIR ARG_WORKING_DIR)
     COMMAND find ${FROM_DIR} -name *buildflag*.h -exec rm {} \;
     WORKING_DIRECTORY ${ARG_WORKING_DIR}
     RESULT_VARIABLE retcode
-    ERROR_VARIABLE _ERROR_VARIABLE
+    ERROR_VARIABLE stderr
+    ${OUTPUT_VARS}
   )
   if(NOT "${retcode}" STREQUAL "0")
-    message( FATAL_ERROR "Bad exit status ${retcode} ${_ERROR_VARIABLE}")
+    message( FATAL_ERROR "Bad exit status ${retcode} ${stdout} ${stderr}")
   endif()
 
   colored_notify("copying from ${FROM_DIR} to ${TO_DIR} ..." --yellow --bold)
@@ -61,10 +73,11 @@ macro(gen_copy_results_step ARG_CLEAN FROM_DIR TO_DIR ARG_WORKING_DIR)
     COMMAND ${CMAKE_COMMAND} "-E"  "copy_directory" "${FROM_DIR}" "${TO_DIR}"
     WORKING_DIRECTORY ${ARG_WORKING_DIR}
     RESULT_VARIABLE retcode
-    ERROR_VARIABLE _ERROR_VARIABLE
+    ERROR_VARIABLE stderr
+    ${OUTPUT_VARS}
   )
   if(NOT "${retcode}" STREQUAL "0")
-    message( FATAL_ERROR "Bad exit status ${retcode} ${_ERROR_VARIABLE}")
+    message( FATAL_ERROR "Bad exit status ${retcode} ${stdout} ${stderr}")
   endif()
 endmacro(gen_copy_results_step)
 

@@ -401,7 +401,7 @@ target_link_libraries(CC PRIVATE
   GFX_RANGE
   SKIA
   ${base_LIB}
-  GURL
+  ${url_LIB}
   #
   ${COMPONENTS_VIZ_CLIENT_LIB}
   # khronos

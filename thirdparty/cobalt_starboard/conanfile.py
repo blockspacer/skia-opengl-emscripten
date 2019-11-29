@@ -82,7 +82,8 @@ class cobalt_starboard_conan_project(ConanFile):
             self.build_requires("FakeIt/[>=2.0.4]@gasuketsu/stable")
 
     def requirements(self):
-        self.requires("glm/0.9.9.1@g-truc/stable")
+        # NOTE: same as self.requires("glm/0.9.9.1@g-truc/stable")
+        self.requires("cobalt_glm/0.9.9.1@conan/stable")
 
         self.requires("chromium_build_util/master@conan/stable")
 

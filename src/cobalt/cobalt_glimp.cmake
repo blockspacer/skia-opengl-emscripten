@@ -147,12 +147,12 @@ target_link_libraries(cobalt_glimp PRIVATE
   ##cobalt_browser ## TODO ##
   #${modp_b64_LIB}
   #dynamic_annotations
-  #GURL
+  #${url_LIB}
   #${CUSTOM_ICU_LIB}
   #ced
   # NOTE: force glm from conan, otherwise we can break
   # some isolated builds (emscripten) with -system /usr/include
-  CONAN_PKG::glm
+  CONAN_PKG::cobalt_glm
 )
 
 set_property(TARGET cobalt_glimp PROPERTY CXX_STANDARD 17)

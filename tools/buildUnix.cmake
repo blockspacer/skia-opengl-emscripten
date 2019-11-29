@@ -39,9 +39,20 @@ if(EXTRA_EMCMAKE_OPTS)
 endif(EXTRA_EMCMAKE_OPTS)
 
 # --- vars ---
-set(CONAN_ARGS "--build=missing;--profile;${CMAKE_CURRENT_SOURCE_DIR}/conan/clang.profile;-o;enable_tests=False" CACHE STRING "parameters for conan install")
+
+# TODO: make local, not global
+# allows to run `execute_process` without printing to console
+option(PRINT_TO_STDOUT "PRINT_TO_STDOUT" ON)
+if(PRINT_TO_STDOUT)
+  set(OUTPUT_VARS ) # undefined
+else()
+  set(OUTPUT_VARS OUTPUT_VARIABLE stdout)
+endif(PRINT_TO_STDOUT)
 
 set(BUILD_DIR "${CMAKE_CURRENT_SOURCE_DIR}/build-linux/" CACHE STRING "output directory")
+
+# see https://docs.conan.io/en/latest/mastering/policies.html#build-policies
+set(CONAN_ARGS "--build;--profile;${CMAKE_CURRENT_SOURCE_DIR}/conan/clang.profile;-o;enable_tests=False" CACHE STRING "parameters for conan install")
 
 set(C_COMPILER "/usr/bin/clang-6.0" CACHE STRING "C COMPILER, must be full path to clang > 4")
 
@@ -64,20 +75,22 @@ if (BUILD_APP)
   set(CMAKE_OPTS "${CMAKE_OPTS};-DCMAKE_CXX_COMPILER=${CXX_COMPILER}")
 
   # --- conan deps ---
+  # NOTE: remove --build=missing if you need full rebuild of deps
   if(INSTALL_CONAN_DEPS)
     message(STATUS "running conan create ...")
     execute_process(
       COMMAND
         ${COLORED_OUTPUT_ENABLER}
           # TODO: ability to change "--profile"
-          ${CMAKE_COMMAND} "-E" "time" "cmake" "-DEXTRA_OPTS=conan/stable;${CONAN_ARGS}" "-P" "tools/buildConanThirdparty.cmake"
+          ${CMAKE_COMMAND} "-E" "time" "cmake" "-DEXTRA_CONAN_OPTS=conan/stable;${CONAN_ARGS}" "-P" "tools/buildConanThirdparty.cmake"
       WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
       TIMEOUT 7200 # sec
       RESULT_VARIABLE retcode
-      ERROR_VARIABLE _ERROR_VARIABLE
+      ERROR_VARIABLE stderr
+      ${OUTPUT_VARS}
     )
     if(NOT "${retcode}" STREQUAL "0")
-      message( FATAL_ERROR "Bad exit status ${retcode} ${_ERROR_VARIABLE}")
+      message( FATAL_ERROR "Bad exit status ${retcode} ${stdout} ${stderr}")
     endif()
   endif(INSTALL_CONAN_DEPS)
 
@@ -91,10 +104,11 @@ if (BUILD_APP)
     WORKING_DIRECTORY ${BUILD_DIR}
     TIMEOUT 7200 # sec
     RESULT_VARIABLE retcode
-    ERROR_VARIABLE _ERROR_VARIABLE
+    ERROR_VARIABLE stderr
+    ${OUTPUT_VARS}
   )
   if(NOT "${retcode}" STREQUAL "0")
-    message( FATAL_ERROR "Bad exit status ${retcode} ${_ERROR_VARIABLE}")
+    message( FATAL_ERROR "Bad exit status ${retcode} ${stdout} ${stderr}")
   endif()
 
   # --- configure ---
@@ -106,10 +120,11 @@ if (BUILD_APP)
     WORKING_DIRECTORY ${BUILD_DIR}
     TIMEOUT 7200 # sec
     RESULT_VARIABLE retcode
-    ERROR_VARIABLE _ERROR_VARIABLE
+    ERROR_VARIABLE stderr
+    ${OUTPUT_VARS}
   )
   if(NOT "${retcode}" STREQUAL "0")
-    message( FATAL_ERROR "Bad exit status ${retcode} ${_ERROR_VARIABLE}")
+    message( FATAL_ERROR "Bad exit status ${retcode} ${stdout} ${stderr}")
   endif()
 
   # --- build ---
@@ -121,10 +136,11 @@ if (BUILD_APP)
     WORKING_DIRECTORY ${BUILD_DIR}
     TIMEOUT 7200 # sec
     RESULT_VARIABLE retcode
-    ERROR_VARIABLE _ERROR_VARIABLE
+    ERROR_VARIABLE stderr
+    ${OUTPUT_VARS}
   )
   if(NOT "${retcode}" STREQUAL "0")
-    message( FATAL_ERROR "Bad exit status ${retcode} ${_ERROR_VARIABLE}")
+    message( FATAL_ERROR "Bad exit status ${retcode} ${stdout} ${stderr}")
   endif()
 endif(BUILD_APP)
 
@@ -140,9 +156,10 @@ if(RUN_APP)
     WORKING_DIRECTORY ${BUILD_DIR}
     TIMEOUT 7200 # sec
     RESULT_VARIABLE retcode
-    ERROR_VARIABLE _ERROR_VARIABLE
+    ERROR_VARIABLE stderr
+    ${OUTPUT_VARS}
   )
   if(NOT "${retcode}" STREQUAL "0")
-    message( WARNING "Bad exit status ${retcode} ${_ERROR_VARIABLE}")
+    message( WARNING "Bad exit status ${retcode} ${stdout} ${stderr}")
   endif()
 endif(RUN_APP)

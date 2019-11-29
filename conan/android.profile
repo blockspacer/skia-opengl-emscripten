@@ -7,9 +7,10 @@ compiler.libcxx=libc++
 compiler.version=8
 os=Android
 os.api_level=21
+build_type=Debug
 [build_requires]
 android_ndk_installer/r20@bincrafters/stable
-ninja_installer/1.8.2@bincrafters/stable
+#ninja_installer/1.8.2@bincrafters/stable
 [options]
 [env]
 #ANDROID_NDK_ROOT=/home/conan/android-ndk-r18b

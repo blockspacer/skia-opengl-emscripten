@@ -1876,7 +1876,7 @@ target_link_libraries(GNET PRIVATE
   ${STARBOARD_COMMON_LIB}
   ${modp_b64_LIB}
   ${GCRYPTO_LIB}
-  GURL
+  ${url_LIB}
   # sql
   # protobuf
   # libnss or boringssl

@@ -31,7 +31,7 @@ find_package(cmake_platform_detection REQUIRED)
 run_cmake_platform_detection()
 
 find_package(cmake_build_options REQUIRED)
-setup_cmake_build_options()
+setup_cmake_build_options(RELEASE DEBUG)
 
 # uses Config.cmake or a -config.cmake file
 # see https://gitlab.kitware.com/cmake/community/wikis/doc/tutorials/How-to-create-a-ProjectConfig.cmake-file
@@ -88,7 +88,7 @@ add_relative_include_dir(${STATIC_LIB_NAME} PUBLIC PUBLIC "third_party/tcmalloc/
 
 set_property(TARGET ${STATIC_LIB_NAME} PROPERTY CXX_STANDARD 17)
 
-target_compile_features(${STATIC_LIB_NAME} PRIVATE
+target_compile_features(${STATIC_LIB_NAME}
   PUBLIC cxx_auto_type
   PRIVATE cxx_variadic_templates)
 

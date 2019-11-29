@@ -132,20 +132,14 @@ add_library(SERVICES_NETWORK_PUBLIC_CPP STATIC
 if (EMSCRIPTEN)
   target_link_libraries(SERVICES_NETWORK_PUBLIC_CPP PRIVATE
     ${GNET_LIBS}
-    GURL
+    ${url_LIB}
     #${CUSTOM_ICU_LIB} # icuuc
   )
 else()
   target_link_libraries(SERVICES_NETWORK_PUBLIC_CPP PRIVATE
     ${GNET_LIBS}
-    GURL
+    ${url_LIB}
     ${MOJO_LIB}
-    #${BASE_LIBRARIES}
-    #${base_LIB}
-    #${ZLIB_LIBRARIES}
-    #zlib
-    #GZLIB
-    #${CUSTOM_ICU_LIB} # icuuc
     COMPONENTS_CONTENT_SETTINGS_CORE_COMMON
   )
 endif()

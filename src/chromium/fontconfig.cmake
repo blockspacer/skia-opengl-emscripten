@@ -68,10 +68,8 @@ endif()
 
 target_link_libraries(fontconfig PUBLIC
   ${base_LIB}
-  ${GLIBXML_LIB}
-  #GZLIB
-  ${libZLIB_LIB}
-  #freetype
+  ${libxml_LIB}
+  ${zlib_LIB}
   ${FREETYPE_LIBRARIES}
   ${LibUUID_LIBRARIES}
   ${HARFBUZZ_LIBRARIES}

@@ -34,9 +34,20 @@ if(EXTRA_CMAKE_OPTS)
 endif(EXTRA_CMAKE_OPTS)
 
 # --- vars ---
+
+# TODO: make local, not global
+# allows to run `execute_process` without printing to console
+option(PRINT_TO_STDOUT "PRINT_TO_STDOUT" ON)
+if(PRINT_TO_STDOUT)
+  set(OUTPUT_VARS ) # undefined
+else()
+  set(OUTPUT_VARS OUTPUT_VARIABLE stdout)
+endif(PRINT_TO_STDOUT)
+
 set(BUILD_DIR "${CMAKE_CURRENT_SOURCE_DIR}/build-emscripten/" CACHE STRING "output directory")
 
-set(CONAN_ARGS "--build=missing;--profile;${CMAKE_CURRENT_SOURCE_DIR}/conan/emscripten_MT.profile;-o;enable_tests=False" CACHE STRING "parameters for conan install")
+# see https://docs.conan.io/en/latest/mastering/policies.html#build-policies
+set(CONAN_ARGS "--build;--profile;${CMAKE_CURRENT_SOURCE_DIR}/conan/emscripten_MT.profile;-o;enable_tests=False" CACHE STRING "parameters for conan install")
 
 if (BUILD_APP)
   message(STATUS "building for web from ${CMAKE_CURRENT_SOURCE_DIR} into ${BUILD_DIR} ...")
@@ -52,20 +63,22 @@ if (BUILD_APP)
   colored_notify("Building with MAKE_OPTS=${MAKE_OPTS} and EXTRA_EMMAKE_OPTS=${EXTRA_EMMAKE_OPTS}")
 
   # --- conan deps ---
+  # NOTE: remove --build=missing if you need full rebuild of deps
   if(INSTALL_CONAN_DEPS)
     message(STATUS "running conan create ...")
     execute_process(
       COMMAND
         ${COLORED_OUTPUT_ENABLER}
           # TODO: ability to change "--profile"
-          ${CMAKE_COMMAND} "-E" "time" "cmake" "-DUSE_LIBEVENT=FALSE" "-DUSE_TCMALLOC=FALSE" "-DUSE_XDG_MIME=FALSE" "-DUSE_XDG_USER_DIRS=FALSE" "-DEXTRA_OPTS=conan/stable;${CONAN_ARGS}" "-P" "tools/buildConanThirdparty.cmake"
+          ${CMAKE_COMMAND} "-E" "time" "cmake" "-DUSE_ZLIB=FALSE" "-DUSE_LIBEVENT=FALSE" "-DUSE_TCMALLOC=FALSE" "-DUSE_XDG_MIME=FALSE" "-DUSE_XDG_USER_DIRS=FALSE" "-DEXTRA_CONAN_OPTS=conan/stable;${CONAN_ARGS}" "-P" "tools/buildConanThirdparty.cmake"
       WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
       TIMEOUT 7200 # sec
       RESULT_VARIABLE retcode
-      ERROR_VARIABLE _ERROR_VARIABLE
+      ERROR_VARIABLE stderr
+      ${OUTPUT_VARS}
     )
     if(NOT "${retcode}" STREQUAL "0")
-      message( FATAL_ERROR "Bad exit status ${retcode} ${_ERROR_VARIABLE}")
+      message( FATAL_ERROR "Bad exit status ${retcode} ${stdout} ${stderr}")
     endif()
   endif(INSTALL_CONAN_DEPS)
 
@@ -79,10 +92,11 @@ if (BUILD_APP)
     WORKING_DIRECTORY ${BUILD_DIR}
     TIMEOUT 7200 # sec
     RESULT_VARIABLE retcode
-    ERROR_VARIABLE _ERROR_VARIABLE
+    ERROR_VARIABLE stderr
+    ${OUTPUT_VARS}
   )
   if(NOT "${retcode}" STREQUAL "0")
-    message( FATAL_ERROR "Bad exit status ${retcode} ${_ERROR_VARIABLE}")
+    message( FATAL_ERROR "Bad exit status ${retcode} ${stdout} ${stderr}")
   endif()
 
   # --- configure ---
@@ -94,10 +108,11 @@ if (BUILD_APP)
     WORKING_DIRECTORY ${BUILD_DIR}
     TIMEOUT 7200 # sec
     RESULT_VARIABLE retcode
-    ERROR_VARIABLE _ERROR_VARIABLE
+    ERROR_VARIABLE stderr
+    ${OUTPUT_VARS}
   )
   if(NOT "${retcode}" STREQUAL "0")
-    message( FATAL_ERROR "Bad exit status ${retcode} ${_ERROR_VARIABLE}")
+    message( FATAL_ERROR "Bad exit status ${retcode} ${stdout} ${stderr}")
   endif()
 
   # force file repackaging
@@ -115,10 +130,11 @@ if (BUILD_APP)
     WORKING_DIRECTORY ${BUILD_DIR}
     TIMEOUT 7200 # sec
     RESULT_VARIABLE retcode
-    ERROR_VARIABLE _ERROR_VARIABLE
+    ERROR_VARIABLE stderr
+    ${OUTPUT_VARS}
   )
   if(NOT "${retcode}" STREQUAL "0")
-    message( FATAL_ERROR "Bad exit status ${retcode} ${_ERROR_VARIABLE}")
+    message( FATAL_ERROR "Bad exit status ${retcode} ${stdout} ${stderr}")
   endif()
 
   #execute_process(
@@ -128,10 +144,11 @@ if (BUILD_APP)
   #  WORKING_DIRECTORY ${BUILD_DIR}
   #  TIMEOUT 7200 # sec
   #  RESULT_VARIABLE retcode
-  #  ERROR_VARIABLE _ERROR_VARIABLE
+  #  ERROR_VARIABLE stderr
+  #  ${OUTPUT_VARS}
   #)
   #if(NOT "${retcode}" STREQUAL "0")
-  #  message( FATAL_ERROR "Bad exit status ${retcode} ${_ERROR_VARIABLE}")
+  #  message( FATAL_ERROR "Bad exit status ${retcode} ${stdout} ${stderr}")
   #endif()
 
   #execute_process(
@@ -140,10 +157,11 @@ if (BUILD_APP)
   #    python "${EMSCRIPTEN_PACKAGER_SCRIPT}" "skemgl.data" "--preload" "${PACKAGER_DATA_DIR}" "--no-heap-copy" "--js-output=skemgl.js" ${COMPRESSION_LEVEL}
   #  WORKING_DIRECTORY ${BUILD_DIR}
   #  RESULT_VARIABLE retcode
-  #  ERROR_VARIABLE _ERROR_VARIABLE
+  #  ERROR_VARIABLE stderr
+  #  ${OUTPUT_VARS}
   #)
   #if(NOT "${retcode}" STREQUAL "0")
-  #  message( FATAL_ERROR "Bad exit status ${retcode} ${_ERROR_VARIABLE}")
+  #  message( FATAL_ERROR "Bad exit status ${retcode} ${stdout} ${stderr}")
   #endif()
 
   # --- check resulting files ---
@@ -165,10 +183,11 @@ if (BUILD_APP)
       WORKING_DIRECTORY ${BUILD_DIR}
       TIMEOUT 7200 # sec
       RESULT_VARIABLE retcode
-      ERROR_VARIABLE _ERROR_VARIABLE
+      ERROR_VARIABLE stderr
+      ${OUTPUT_VARS}
     )
     if(NOT "${retcode}" STREQUAL "0")
-      message( FATAL_ERROR "Bad exit status ${retcode} ${_ERROR_VARIABLE}")
+      message( FATAL_ERROR "Bad exit status ${retcode} ${stdout} ${stderr}")
     endif()
   endif(ENABLE_WASM_GZIP)
 
@@ -181,10 +200,11 @@ if (BUILD_APP)
       WORKING_DIRECTORY ${BUILD_DIR}
       TIMEOUT 7200 # sec
       RESULT_VARIABLE retcode
-      ERROR_VARIABLE _ERROR_VARIABLE
+      ERROR_VARIABLE stderr
+      ${OUTPUT_VARS}
     )
     if(NOT "${retcode}" STREQUAL "0")
-      message( FATAL_ERROR "Bad exit status ${retcode} ${_ERROR_VARIABLE}")
+      message( FATAL_ERROR "Bad exit status ${retcode} ${stdout} ${stderr}")
     endif()
   endif(ENABLE_WASM_BROTLI)
 
@@ -212,9 +232,10 @@ if(RUN_APP)
     WORKING_DIRECTORY ${BUILD_DIR}
     TIMEOUT 7200 # sec
     RESULT_VARIABLE retcode
-    ERROR_VARIABLE _ERROR_VARIABLE
+    ERROR_VARIABLE stderr
+    ${OUTPUT_VARS}
   )
   if(NOT "${retcode}" STREQUAL "0")
-    message( FATAL_ERROR "Bad exit status ${retcode} ${_ERROR_VARIABLE}")
+    message( FATAL_ERROR "Bad exit status ${retcode} ${stdout} ${stderr}")
   endif()
 endif(RUN_APP)

@@ -33,9 +33,9 @@ find_package(cmake_platform_detection REQUIRED)
 run_cmake_platform_detection()
 
 find_package(cmake_build_options REQUIRED)
-setup_cmake_build_options()
+setup_cmake_build_options(RELEASE DEBUG)
 
-find_package(glm REQUIRED)
+find_package(cobalt_glm REQUIRED)
 # TODO: add_definitions(-DGLM_ENABLE_EXPERIMENTAL)
 
 find_package(cobalt_starboard_headers_only REQUIRED)
@@ -87,6 +87,13 @@ else()
   message(FATAL_ERROR "not supported: using system provided chromium_base library")
 endif()
 
+find_package(chromium_url REQUIRED)
+if(TARGET chromium_url::chromium_url-static)
+  set(url_LIB chromium_url::chromium_url-static)
+else()
+  message(FATAL_ERROR "not supported: using system provided chromium_url library")
+endif()
+
 # xdg_user_dirs
 if(TARGET_LINUX)
   find_package(chromium_xdg_user_dirs REQUIRED)
@@ -123,6 +130,14 @@ else()
   message(FATAL_ERROR "not supported: using system provided modp_b64 library")
 endif()
 
+# chromium_libxml
+find_package(chromium_libxml MODULE REQUIRED)
+if(TARGET chromium_libxml::chromium_libxml-static)
+  set(libxml_LIB chromium_libxml::chromium_libxml-static)
+else()
+  message(FATAL_ERROR "not supported: using system provided chromium_libxml library")
+endif()
+
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/)
 
 include(cmake/PlatformChecks)
@@ -140,9 +155,20 @@ macro(add_relative_include_dir TARGET VISIBILITY_BUILD VISIBILITY_INSTALL NEW_EL
   )
 endmacro(add_relative_include_dir)
 
+if(NOT DEFINED CUSTOM_ICU_LIB)
+  message(FATAL_ERROR "CUSTOM_ICU_LIB must be defined")
+endif(NOT DEFINED CUSTOM_ICU_LIB)
+
+if(NOT DEFINED libxml_LIB)
+  message(FATAL_ERROR "libxml_LIB must be defined")
+endif(NOT DEFINED libxml_LIB)
+
 add_library(${STATIC_LIB_NAME} STATIC
   ${PROJECT_SOURCES}
 )
+
+# path to cobalt/base/init_cobalt.h
+add_relative_include_dir(${STATIC_LIB_NAME} PUBLIC PUBLIC "")
 
 add_relative_include_dir(${STATIC_LIB_NAME} PUBLIC PUBLIC "cobalt")
 
@@ -178,7 +204,15 @@ if(NOT DEFINED base_LIB)
 endif(NOT DEFINED base_LIB)
 
 target_link_libraries(${STATIC_LIB_NAME} PRIVATE
-  ${base_LIB} # TODO: recursion
+  ${base_LIB}
+)
+
+if(NOT DEFINED url_LIB)
+  message(FATAL_ERROR "NOT DEFINED: url_LIB")
+endif(NOT DEFINED url_LIB)
+
+target_link_libraries(${STATIC_LIB_NAME} PRIVATE
+  ${url_LIB}
 )
 
 target_link_libraries(${STATIC_LIB_NAME} PUBLIC
@@ -206,26 +240,18 @@ else()
   message(FATAL_ERROR "platform not supported")
 endif()
 
-if(NOT DEFINED CUSTOM_ICU_LIB)
-  message(FATAL_ERROR "CUSTOM_ICU_LIB must be defined")
-endif(NOT DEFINED CUSTOM_ICU_LIB)
-
-if(NOT DEFINED GLIBXML_LIB)
-  message(FATAL_ERROR "GLIBXML_LIB must be defined")
-endif(NOT DEFINED GLIBXML_LIB)
-
-target_link_libraries(cobalt_base PRIVATE
+target_link_libraries(${STATIC_LIB_NAME} PRIVATE
   ## starboard_platform
   #starboard_core
   ## starboard_eztime
   ## starboard_common
   ${modp_b64_LIB}
-  ${GLIBXML_LIB}
+  ${libxml_LIB}
   ${CUSTOM_ICU_LIB}
   #ced
   # NOTE: force glm from conan, otherwise we can break
   # some isolated builds (emscripten) with -system /usr/include
-  CONAN_PKG::glm
+  CONAN_PKG::cobalt_glm
   ${EXTRA_COBALT_BASE_LIBS}
 )
 

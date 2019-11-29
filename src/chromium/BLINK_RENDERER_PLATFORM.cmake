@@ -1843,7 +1843,7 @@ target_link_libraries(BLINK_RENDERER_PLATFORM PRIVATE
   #${libpng_LIB}
   #GLIBPNG
   BLINK_PUBLIC_COMMON
-  GURL
+  ${url_LIB}
   ${GNET_LIBS}
   ${GCRYPTO_LIB}
   ${COMPONENTS_VIZ_CLIENT_LIB}
@@ -1866,7 +1866,7 @@ target_link_libraries(BLINK_RENDERER_PLATFORM PRIVATE
   # emoji-segmenter
   ${CUSTOM_ICU_LIB}
   ${HARFBUZZ_LIBRARIES}
-  ${libZLIB_LIB}
+  ${zlib_LIB}
   # webrtc
   ${base_LIB}
   CC

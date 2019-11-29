@@ -67,17 +67,15 @@ add_library(libyuv STATIC
   #endif()
 #endif(SUPPORTS_JPEG)
 
+if(NOT USE_SYSTEM_ZLIB)
+  if(NOT DEFINED zlib_LIB)
+    message(FATAL_ERROR "zlib_LIB must be defined")
+  endif(NOT DEFINED zlib_LIB)
+endif(NOT USE_SYSTEM_ZLIB)
+
 target_link_libraries(libyuv PRIVATE
-  #${libjpeg_LIB}
   ${libjpeg_TURBO_LIB}
-  ${libZLIB_LIB}
-  #JPEG
-  #
-  #GLIBXML
-  #GZLIB
-  ##freetype
-  #${FREETYPE_LIBRARIES}
-  #${LibUUID_LIBRARIES}
+  ${zlib_LIB}
 )
 
 set_property(TARGET libyuv PROPERTY CXX_STANDARD 17)

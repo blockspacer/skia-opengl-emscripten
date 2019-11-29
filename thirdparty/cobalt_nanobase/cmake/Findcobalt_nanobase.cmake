@@ -4,9 +4,9 @@ list(APPEND CMAKE_MODULE_PATH ${CURRENT_CMAKE_DIR})
 #include(CMakeFindDependencyMacro) # use find_package instead
 
 # NOTE: some packages may be optional (platform-specific, etc.)
+find_package(chromium_build_util REQUIRED)
 find_package(cobalt_starboard_headers_only QUIET)
 find_package(cobalt_starboard QUIET)
-find_package(chromium_build_util QUIET)
 find_package(chromium_base QUIET)
 
 list(REMOVE_AT CMAKE_MODULE_PATH -1)

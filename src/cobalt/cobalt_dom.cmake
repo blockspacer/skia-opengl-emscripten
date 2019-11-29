@@ -422,14 +422,14 @@ target_link_libraries(cobalt_dom PRIVATE
   #cobalt_browser ## TODO ##
   ${modp_b64_LIB}
   #dynamic_annotations
-  GURL
+  ${url_LIB}
   ${GNET_LIBS}
-  ${GLIBXML_LIB}
+  ${libxml_LIB}
   ${CUSTOM_ICU_LIB}
   #ced
   # NOTE: force glm from conan, otherwise we can break
   # some isolated builds (emscripten) with -system /usr/include
-  CONAN_PKG::glm
+  CONAN_PKG::cobalt_glm
   # SDL used by native_events_port
   ${SDL2_LIBRARY} # NOTE: no SDL2::Main on Windows
 )

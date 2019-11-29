@@ -191,6 +191,12 @@ if(NOT DEFINED CUSTOM_ICU_LIB)
   message(FATAL_ERROR "CUSTOM_ICU_LIB must be defined")
 endif(NOT DEFINED CUSTOM_ICU_LIB)
 
+if(NOT USE_SYSTEM_ZLIB)
+  if(NOT DEFINED zlib_LIB)
+    message(FATAL_ERROR "zlib_LIB must be defined")
+  endif(NOT DEFINED zlib_LIB)
+endif(NOT USE_SYSTEM_ZLIB)
+
 if(EMSCRIPTEN)
   target_link_libraries(GLIBXML PUBLIC
     ${CUSTOM_ICU_LIB} # icuuc
@@ -200,7 +206,7 @@ else()
     #${base_LIB}
     #${ZLIB_LIBRARIES}
     #zlib
-    ${libZLIB_LIB}
+    ${zlib_LIB}
     ${CUSTOM_ICU_LIB} # icuuc
   )
 endif()
@@ -216,7 +222,7 @@ if(ENABLE_COBALT)
   endif(NOT DEFINED cobalt_starboard_headers_only_LIB)
 
   # see defined(COBALT) in htmlEmitImpliedRootLevelParagraph
-  target_link_libraries(GLIBXML PRIVATE
+  target_link_libraries(GLIBXML PUBLIC
     ${cobalt_starboard_headers_only_LIB}
   )
 endif(ENABLE_COBALT)

@@ -36,14 +36,16 @@ class skg_conan_project(ConanFile):
         "enable_tests": [True, False],
         "enable_sanitizers": [True, False],
         "enable_cobalt": [True, False],
-        "enable_web_pthreads": [True, False]
+        "enable_web_pthreads": [True, False],
+        "use_system_zlib": [True, False]
     }
 
     default_options = (
         "enable_tests=False",
         "enable_sanitizers=False",
         "enable_cobalt=True",
-        "enable_web_pthreads=True"
+        "enable_web_pthreads=True",
+        "use_system_zlib=False"
         # build
         #"*:shared=False"
     )
@@ -52,7 +54,8 @@ class skg_conan_project(ConanFile):
     _source_subfolder = "."
     _build_subfolder = "build_subfolder"
 
-    generators = 'cmake_find_package', "cmake", "cmake_paths"
+    # NOTE: no cmake_find_package due to custom FindXXX.cmake
+    generators = "cmake", "cmake_paths"
 
     # Packages the license for the conanfile.py
     #exports = ["LICENSE.md"]
@@ -73,6 +76,10 @@ class skg_conan_project(ConanFile):
     #  url = "https://github.com/....."
     #  self.run("git clone %s ......." % url)
 
+    def configure(self):
+        if self.settings.os == "Emscripten":
+           self.options.use_system_zlib = "True"
+
     def build_requirements(self):
         self.build_requires("cmake_platform_detection/master@conan/stable")
         self.build_requires("cmake_build_options/master@conan/stable")
@@ -83,7 +90,13 @@ class skg_conan_project(ConanFile):
             self.build_requires("FakeIt/[>=2.0.4]@gasuketsu/stable")
 
     def requirements(self):
-        self.requires("glm/0.9.9.1@g-truc/stable")
+        # NOTE: same as self.requires("glm/0.9.9.1@g-truc/stable")
+        self.requires("cobalt_glm/0.9.9.1@conan/stable")
+
+        if not self.options.use_system_zlib:
+          self.requires("chromium_zlib/master@conan/stable")
+
+        self.requires("chromium_libxml/master@conan/stable")
 
         if self.settings.os == "Linux":
             self.requires("chromium_libevent/master@conan/stable")
@@ -96,6 +109,7 @@ class skg_conan_project(ConanFile):
         self.requires("chromium_dynamic_annotations/master@conan/stable")
         self.requires("chromium_modp_b64/master@conan/stable")
         self.requires("chromium_compact_enc_det/master@conan/stable")
+        self.requires("chromium_url/master@conan/stable")
         self.requires("chromium_base/master@conan/stable")
 
         if self.options.enable_cobalt:
@@ -117,6 +131,8 @@ class skg_conan_project(ConanFile):
         add_cmake_option("ENABLE_SANITIZERS", self.options.enable_sanitizers)
 
         add_cmake_option("ENABLE_TESTS", self.options.enable_tests)
+
+        add_cmake_option("USE_SYSTEM_ZLIB", self.options.use_system_zlib)
 
         add_cmake_option("ENABLE_COBALT", self.options.enable_cobalt)
 

@@ -51,6 +51,12 @@ add_library(GFX_CODEC STATIC
   ${GFX_CODEC_SOURCES}
 )
 
+if(NOT USE_SYSTEM_ZLIB)
+  if(NOT DEFINED zlib_LIB)
+    message(FATAL_ERROR "NOT DEFINED: zlib_LIB")
+  endif(NOT DEFINED zlib_LIB)
+endif(NOT USE_SYSTEM_ZLIB)
+
 target_link_libraries(GFX_CODEC PRIVATE
   #${libjpeg_LIB}
   ${libjpeg_TURBO_LIB}
@@ -71,7 +77,7 @@ target_link_libraries(GFX_CODEC PRIVATE
   #jpeg
   #libpng
   #zlib
-  ${libZLIB_LIB}
+  ${zlib_LIB}
   ${base_LIB}
   #
   # "//base",

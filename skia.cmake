@@ -985,11 +985,11 @@ if(NOT EXT_SKIA_SHARED)
     #ADD_SKIA_LIBRARY_DEPENDENCY(${EXT_SKIA_USE_SYSTEM_ZLIB} "z") # skia_use_system_zlib
     if(SK_USE_SYSTEM_ZLIB)
       #find_package(ZLIB REQUIRED)
-      #message(FATAL_ERROR "libZLIB_LIB=${libZLIB_LIB}")
+      #message(FATAL_ERROR "zlib_LIB=${zlib_LIB}")
       # TODO: cannot find /lib64/libz.so.1
     endif(SK_USE_SYSTEM_ZLIB)
 
-    set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${libZLIB_LIB}")
+    set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${zlib_LIB}")
 
     # NOTE: libjpeg_turbo requires libjpeg
     #set(SKIA_DEPENDENCIES "${SKIA_DEPENDENCIES};${libjpeg_LIB}")
@@ -1198,6 +1198,7 @@ set_target_properties(SKIA PROPERTIES
 
 if(TARGET_WINDOWS)
   # ninja can't handle set_target_properties for interface lib
+  # TODO: use target_include_directories
   include_directories(${SKIA_CMAKE_ONLY_HEADERS})
   #add_definitions(${SKIA_DEFINES})
   add_compile_definitions(${SKIA_DEFINES})
@@ -1210,10 +1211,10 @@ if(NOT TARGET_EMSCRIPTEN AND SK_USE_SYSTEM_FREETYPE AND NOT DEFINED FREETYPE_LIB
 endif(NOT TARGET_EMSCRIPTEN AND SK_USE_SYSTEM_FREETYPE AND NOT DEFINED FREETYPE_LIBRARIES)
 message(STATUS "FREETYPE_LIBRARIES = ${FREETYPE_LIBRARIES} ")
 message(STATUS "libpng_LIB = ${libpng_LIB} ")
-if(NOT TARGET_EMSCRIPTEN AND SK_USE_SYSTEM_ZLIB AND NOT DEFINED libZLIB_LIB)
-  message(FATAL_ERROR "NOT DEFINED: libZLIB_LIB")
-endif(NOT TARGET_EMSCRIPTEN AND SK_USE_SYSTEM_ZLIB AND NOT DEFINED libZLIB_LIB)
-message(STATUS "libZLIB_LIB = ${libZLIB_LIB} ")
+if(NOT TARGET_EMSCRIPTEN AND SK_USE_SYSTEM_ZLIB AND NOT DEFINED zlib_LIB)
+  message(FATAL_ERROR "NOT DEFINED: zlib_LIB")
+endif(NOT TARGET_EMSCRIPTEN AND SK_USE_SYSTEM_ZLIB AND NOT DEFINED zlib_LIB)
+message(STATUS "zlib_LIB = ${zlib_LIB} ")
 message(STATUS "libDL_LIB = ${libDL_LIB} ")
 message(STATUS "libjpeg_TURBO_LIB = ${libjpeg_TURBO_LIB} ")
 message(STATUS "jpeg_LIBRARY = ${jpeg_LIBRARY} ")
@@ -1228,7 +1229,7 @@ if(HARFBUZZ_FROM_SKIA)
     ${WUFFS_LIB_NAME}
     ${FREETYPE_LIBRARIES}
     ${libpng_LIB}
-    ${libZLIB_LIB}
+    ${zlib_LIB}
     ${libDL_LIB}
     ${libjpeg_TURBO_LIB}
     ${jpeg_LIBRARY}
@@ -1243,7 +1244,7 @@ else(HARFBUZZ_FROM_SKIA)
     ${FREETYPE_LIBRARIES}
     ${HARFBUZZ_LIBRARIES}
     ${libpng_LIB}
-    ${libZLIB_LIB}
+    ${zlib_LIB}
     ${libDL_LIB}
     ${libjpeg_TURBO_LIB}
     ${jpeg_LIBRARY}

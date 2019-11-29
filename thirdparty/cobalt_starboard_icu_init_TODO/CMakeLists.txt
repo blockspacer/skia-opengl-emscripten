@@ -29,14 +29,14 @@ else()
   message (FATAL_ERROR "must use conan")
 endif()
 
-find_package(glm REQUIRED)
+find_package(cobalt_glm REQUIRED)
 # TODO: add_definitions(-DGLM_ENABLE_EXPERIMENTAL)
 
 find_package(cmake_platform_detection REQUIRED)
 run_cmake_platform_detection()
 
 find_package(cmake_build_options REQUIRED)
-setup_cmake_build_options()
+setup_cmake_build_options(RELEASE DEBUG)
 
 find_package(cobalt_starboard_headers_only REQUIRED)
 if(TARGET cobalt_starboard_headers_only::cobalt_starboard_headers_only-static)

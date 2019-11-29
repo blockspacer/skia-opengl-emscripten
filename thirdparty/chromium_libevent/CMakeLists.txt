@@ -31,7 +31,7 @@ find_package(cmake_platform_detection REQUIRED)
 run_cmake_platform_detection()
 
 find_package(cmake_build_options REQUIRED)
-setup_cmake_build_options()
+setup_cmake_build_options(RELEASE DEBUG)
 
 set(LIBEVENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/base/third_party/libevent/)
 
@@ -117,7 +117,7 @@ endif()
 
 add_relative_include_dir(${STATIC_LIB_NAME} PUBLIC PUBLIC "base/third_party/libevent/compat")
 
-target_compile_features(${STATIC_LIB_NAME} PRIVATE
+target_compile_features(${STATIC_LIB_NAME}
   PUBLIC cxx_auto_type
   PRIVATE cxx_variadic_templates)
 

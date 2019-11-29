@@ -71,12 +71,12 @@ target_link_libraries(cobalt_renderer PRIVATE
   ## starboard_common
   ${modp_b64_LIB}
   #dynamic_annotations
-  ${GLIBXML_LIB}
+  ${libxml_LIB}
   ${CUSTOM_ICU_LIB}
   #ced
   # NOTE: force glm from conan, otherwise we can break
   # some isolated builds (emscripten) with -system /usr/include
-  CONAN_PKG::glm
+  CONAN_PKG::cobalt_glm
   ${SKIA_LIB}
   ${HARFBUZZ_LIBRARIES}
   # khronos

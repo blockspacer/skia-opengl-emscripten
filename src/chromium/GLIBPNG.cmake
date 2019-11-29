@@ -72,11 +72,14 @@ add_library(GLIBPNG STATIC
   ${GLIBPNG_SOURCES}
 )
 
+if(NOT USE_SYSTEM_ZLIB)
+  if(NOT DEFINED zlib_LIB)
+    message(FATAL_ERROR "zlib_LIB must be defined")
+  endif(NOT DEFINED zlib_LIB)
+endif(NOT USE_SYSTEM_ZLIB)
+
 target_link_libraries(GLIBPNG PRIVATE
-  #${base_LIB}
-  #${ZLIB_LIBRARIES}
-  ${libZLIB_LIB}
-  #GLIBXML
+  ${zlib_LIB}
 )
 
 set_property(TARGET GLIBPNG PROPERTY CXX_STANDARD 17)

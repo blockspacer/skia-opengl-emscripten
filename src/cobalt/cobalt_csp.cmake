@@ -44,7 +44,7 @@ target_link_libraries(cobalt_csp PRIVATE
   #BLINK_PUBLIC_MOJOM
   ##BLINK_RENDERER_NETWORK
   #BLINK_RENDERER_PLATFORM
-  GURL
+  ${url_LIB}
   ${GNET_LIBS}
   #GCRYPTO
   #GFX_GEOMETRY
@@ -53,7 +53,7 @@ target_link_libraries(cobalt_csp PRIVATE
   ## services/service_manager
   ## services/ws/public/cpp/gpu
   ##${BASE_LIBRARIES}
-  ${GLIBXML_LIB}
+  ${libxml_LIB}
   #SKIA
   ##skcms
   #ced
@@ -64,29 +64,7 @@ target_link_libraries(cobalt_csp PRIVATE
   #ced
   # NOTE: force glm from conan, otherwise we can break
   # some isolated builds (emscripten) with -system /usr/include
-  CONAN_PKG::glm
-  #CC
-  ##G_GPU
-  #ANIMATION_CC
-  #BASE_CC
-  #PAINT_CC
-  #SERVICES_NETWORK_PUBLIC_CPP
-  #${WEBP_LIB} # requires libpng
-  #${libjpeg_LIB}
-  #${libjpeg_TURBO_LIB}
-  #${libpng_LIB}
-  #${iccjpeg_LIB}
-  #MOJO
-  ##
-  ## khronos
-  #${khronos_LIB}
-  #LIB_V8_INTERFACE
-  #COMPONENTS_SCHEDULING_METRICS
-  #${HARFBUZZ_LIBRARIES}
-  #GMEDIA
-  #GZLIB_EXT
-  #SERVICES_SERVICE_MANAGER_PUBLIC_CPP
-  #GFX_CODEC
+  CONAN_PKG::cobalt_glm
 )
 
 set_property(TARGET cobalt_csp PROPERTY CXX_STANDARD 17)

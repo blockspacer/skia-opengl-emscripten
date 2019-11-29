@@ -234,7 +234,7 @@ elseif(TARGET_LINUX)
   )
   include(libsync.cmake)
   # zlib
-  include(GZLIB.cmake)
+  #include(GZLIB.cmake)
   # zlib
   if(ENABLE_BLINK_PLATFORM)
     include(GZLIB_EXT.cmake)
@@ -259,7 +259,7 @@ elseif(TARGET_WINDOWS)
   #)
   #include(libsync.cmake)
   # zlib
-  include(GZLIB.cmake)
+  #include(GZLIB.cmake)
   # zlib
   if(ENABLE_BLINK_PLATFORM)
     include(GZLIB_EXT.cmake)
@@ -284,7 +284,7 @@ endif(ENABLE_BORINGSSL)
 
 # GURL: URL parsing.
 # Depends on : icu (libicuuc), base.
-include(GURL.cmake)
+#include(GURL.cmake)
 
 # GCRYPTO: Cryptographic helper library.
 # Depends on : base, libnss or BoringSSL

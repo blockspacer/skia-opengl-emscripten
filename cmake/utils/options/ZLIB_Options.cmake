@@ -8,13 +8,16 @@ macro(find_ZLIB)
       if(USE_SYSTEM_ZLIB)
         #message(FATAL_ERROR "NOT SUPPORTED") # TODO
         find_package(ZLIB REQUIRED) # ZLIB::ZLIB
-        set(libZLIB_LIB ZLIB::ZLIB)
+        if(DEFINED zlib_LIB)
+          message(FATAL_ERROR "REDEFINITION: zlib_LIB")
+        endif(DEFINED zlib_LIB)
+        set(zlib_LIB ZLIB::ZLIB)
         # see chromium/third_party/zlib/google/compression_utils.cc
         # TODO
         # set(COMMON_FLAGS "${COMMON_FLAGS} -DUSE_SYSTEM_ZLIB=1")
         list(APPEND APP_DEFINITIONS USE_SYSTEM_ZLIB=1)
       else()
-        set(libZLIB_LIB GZLIB)
+        #set(libZLIB_LIB GZLIB) # see zlib_LIB
       endif()
     endif()
   else()

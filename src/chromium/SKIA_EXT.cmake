@@ -137,6 +137,8 @@ target_link_libraries(SKIA_EXT PRIVATE
   #jpeg
   #${BASE_LIBRARIES}
   ${base_LIB}
+  #${cobalt_starboard_LIB}
+  #${cobalt_starboard_headers_only_LIB}
 )
 
 set_property(TARGET SKIA_EXT PROPERTY CXX_STANDARD 17)

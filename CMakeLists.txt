@@ -29,9 +29,9 @@ find_package(cmake_platform_detection REQUIRED)
 run_cmake_platform_detection()
 
 find_package(cmake_build_options REQUIRED)
-setup_cmake_build_options()
+setup_cmake_build_options(RELEASE DEBUG)
 
-find_package(glm REQUIRED)
+find_package(cobalt_glm REQUIRED)
 
 # this sets the paths that cmake will use to locate libs (via the FindXXX.cmake or XXConfig.cmake scripts)
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/)
@@ -627,6 +627,10 @@ if(TARGET_WINDOWS)
  endif(DEFINED SDL2_INCLUDE_DIR AND SDL2_INCLUDE_DIR)
 endif(TARGET_WINDOWS)
 
+if(NOT TARGET_EMSCRIPTEN AND USE_SYSTEM_ZLIB)
+  message(FATAL_ERROR "USE_SYSTEM_ZLIB supported only on EMSCRIPTEN platform")
+endif(NOT TARGET_EMSCRIPTEN AND USE_SYSTEM_ZLIB)
+
 if(ENABLE_ZLIB AND USE_SYSTEM_ZLIB)
   find_ZLIB()
 endif(ENABLE_ZLIB AND USE_SYSTEM_ZLIB)
@@ -718,6 +722,13 @@ else()
   message(FATAL_ERROR "not supported: using system provided chromium_base library")
 endif()
 
+find_package(chromium_url REQUIRED)
+if(TARGET chromium_url::chromium_url-static)
+  set(url_LIB chromium_url::chromium_url-static)
+else()
+  message(FATAL_ERROR "not supported: using system provided chromium_url library")
+endif()
+
 #
 # ICU
 #
@@ -731,7 +742,7 @@ if(USE_ICU)
     if(TARGET_LINUX OR TARGET_EMSCRIPTEN)
       find_package(chromium_icu REQUIRED)
       if(NOT TARGET chromium_icu::chromium_icu-static)
-        message(FATAL_ERROR "not supported: using system provided libevent library")
+        message(FATAL_ERROR "not supported: using system provided chromium_icu library")
       endif()
     elseif(TARGET_WINDOWS)
       # skip
@@ -847,6 +858,27 @@ else()
   message(FATAL_ERROR "not supported: using system provided modp_b64 library")
 endif()
 
+# chromium_zlib
+if(NOT USE_SYSTEM_ZLIB)
+  find_package(chromium_zlib REQUIRED)
+  if(TARGET chromium_zlib::chromium_zlib-static)
+    if(DEFINED zlib_LIB)
+      message(FATAL_ERROR "REDEFINITION: zlib_LIB")
+    endif(DEFINED zlib_LIB)
+    set(zlib_LIB chromium_zlib::chromium_zlib-static)
+  else()
+    message(FATAL_ERROR "not supported: using system provided chromium_zlib library")
+  endif()
+endif(NOT USE_SYSTEM_ZLIB)
+
+# chromium_libxml
+find_package(chromium_libxml REQUIRED)
+if(TARGET chromium_libxml::chromium_libxml-static)
+  set(libxml_LIB chromium_libxml::chromium_libxml-static)
+else()
+  message(FATAL_ERROR "not supported: using system provided chromium_libxml library")
+endif()
+
 # compact_enc_det
 set(ENABLE_COMPACT_ENC_DET TRUE)
 if(NOT ENABLE_COMPACT_ENC_DET)
@@ -908,9 +940,9 @@ if(ENABLE_GRE2)
   include(${CHROMIUM_DIR}GRE2.cmake)
 endif(ENABLE_GRE2)#
 
-if(ENABLE_GLIBXML)
-  include(${CHROMIUM_DIR}GLIBXML.cmake)
-endif(ENABLE_GLIBXML)
+#if(ENABLE_GLIBXML)
+#  include(${CHROMIUM_DIR}GLIBXML.cmake)
+#endif(ENABLE_GLIBXML)
 
 if (USE_LIBPNG AND USE_CUSTOM_LIBPNG)
   # GLIBPNG
@@ -1138,11 +1170,17 @@ if(TARGET_EMSCRIPTEN)
       message(FATAL_ERROR "NOT DEFINED: cobalt_starboard_LIB")
     endif(NOT DEFINED cobalt_starboard_LIB)
 
-    target_link_libraries(${PROJECT_NAME} PRIVATE
+    target_link_libraries(${PROJECT_NAME} PUBLIC
       ${cobalt_starboard_LIB}
       ${cobalt_starboard_headers_only_LIB}
     )
   endif(ENABLE_COBALT)
+
+  if(NOT USE_SYSTEM_ZLIB)
+    if(NOT DEFINED zlib_LIB)
+      message(FATAL_ERROR "zlib_LIB must be defined")
+    endif(NOT DEFINED zlib_LIB)
+  endif(NOT USE_SYSTEM_ZLIB)
 
   # link order is top down:
   # Top is the executable, followed by directly used libraries.
@@ -1155,7 +1193,7 @@ if(TARGET_EMSCRIPTEN)
     #
     ${HARFBUZZ_LIBRARIES}
     ${CUSTOM_ICU_LIB}
-    ${libZLIB_LIB}
+    ${zlib_LIB}
     #
     #base # TODO
     #modp_b64
@@ -1254,7 +1292,7 @@ else()
       message(FATAL_ERROR "NOT DEFINED: cobalt_starboard_LIB")
     endif(NOT DEFINED cobalt_starboard_LIB)
 
-    target_link_libraries(${PROJECT_NAME} PRIVATE
+    target_link_libraries(${PROJECT_NAME} PUBLIC
       ${cobalt_starboard_LIB}
       ${cobalt_starboard_headers_only_LIB}
     )
@@ -1286,7 +1324,7 @@ else()
     #${WUFFS_LIB_NAME}
     #jpeg
     #
-    ${libZLIB_LIB}
+    ${zlib_LIB}
     #
     ${HARFBUZZ_LIBRARIES}
     ${FOUND_OPENGL_LIBRARIES}
@@ -1322,7 +1360,7 @@ else()
     # emoji-segmenter
     ${HARFBUZZ_LIBRARIES}
     ${CUSTOM_ICU_LIB}
-    ${libZLIB_LIB}
+    ${zlib_LIB}
     # webrtc
     #public_deps = [
     #  ":bindings_buildflags",

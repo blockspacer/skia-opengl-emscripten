@@ -43,7 +43,7 @@ target_link_libraries(cobalt_dom_parser PRIVATE
   cobalt_dom
   cobalt_loader
   ${GNET_LIBS}
-  ${GLIBXML_LIB}
+  ${libxml_LIB}
 )
 
 set_property(TARGET cobalt_dom_parser PROPERTY CXX_STANDARD 17)

@@ -34,7 +34,7 @@ find_package(cmake_platform_detection REQUIRED)
 run_cmake_platform_detection()
 
 find_package(cmake_build_options REQUIRED)
-setup_cmake_build_options()
+setup_cmake_build_options(RELEASE DEBUG)
 
 find_package(chromium_build_util REQUIRED)
 if(TARGET chromium_build_util::chromium_build_util-static)
@@ -375,7 +375,7 @@ if(ENABLE_COBALT)
     message(FATAL_ERROR "NOT DEFINED: cobalt_starboard_LIB")
   endif(NOT DEFINED cobalt_starboard_LIB)
 
-  target_link_libraries(${STATIC_LIB_NAME} PRIVATE
+  target_link_libraries(${STATIC_LIB_NAME} PUBLIC
     ${cobalt_starboard_LIB}
     ${cobalt_starboard_headers_only_LIB}
   )
@@ -488,7 +488,7 @@ target_compile_definitions(${STATIC_LIB_NAME} PUBLIC
   #${COBALT_COMMON_DEFINES}
 )
 
-target_compile_features(${STATIC_LIB_NAME} PRIVATE
+target_compile_features(${STATIC_LIB_NAME}
   PUBLIC cxx_auto_type
   PRIVATE cxx_variadic_templates)
 

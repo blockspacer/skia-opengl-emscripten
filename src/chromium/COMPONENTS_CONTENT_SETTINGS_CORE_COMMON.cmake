@@ -34,27 +34,7 @@ target_link_libraries(COMPONENTS_CONTENT_SETTINGS_CORE_COMMON PRIVATE
   ${base_LIB}
   ${MOJO_LIB}
   ${GNET_LIBS}
-  GURL
-  #BLINK_PUBLIC_COMMON
-  #GURL
-  #GNET
-  #GCRYPTO
-  #GFX_GEOMETRY
-  #UI_GFX
-  ## mojo
-  ## services/service_manager
-  ## services/ws/public/cpp/gpu
-  ##${BASE_LIBRARIES}
-  #base
-  #SKIA
-  #skcms
-  #ced
-  ## emoji-segmenter
-  ## webrtc
-  ## zlib
-  ## ${CUSTOM_ICU_LIB}
-  #CC
-  #G_GPU
+  ${url_LIB}
 )
 
 set_property(TARGET COMPONENTS_CONTENT_SETTINGS_CORE_COMMON PROPERTY CXX_STANDARD 17)

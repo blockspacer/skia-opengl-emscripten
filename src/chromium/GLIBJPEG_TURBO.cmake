@@ -185,15 +185,14 @@ if(TARGET_EMSCRIPTEN)
   target_link_libraries(GLIBJPEG_TURBO PRIVATE
     #${base_LIB}
     #${ZLIB_LIBRARIES}
-    #GZLIB
-    ${GLIBXML_LIB}
+    ${libxml_LIB}
     #freetype
     # todo sudo apt-get install libjpeg-dev
   )
 elseif(TARGET_LINUX OR TARGET_WINDOWS)
   target_link_libraries(GLIBJPEG_TURBO PRIVATE
-    ${libZLIB_LIB}
-    ${GLIBXML_LIB}
+    ${zlib_LIB}
+    ${libxml_LIB}
   )
 else()
   message(FATAL_ERROR "platform not supported")

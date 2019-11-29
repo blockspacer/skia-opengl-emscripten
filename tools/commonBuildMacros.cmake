@@ -2,6 +2,15 @@
 
 cmake_minimum_required(VERSION 3.5)
 
+# TODO: make local, not global
+# allows to run `execute_process` without printing to console
+option(PRINT_TO_STDOUT "PRINT_TO_STDOUT" ON)
+if(PRINT_TO_STDOUT)
+  set(OUTPUT_VARS ) # undefined
+else()
+  set(OUTPUT_VARS OUTPUT_VARIABLE stdout)
+endif(PRINT_TO_STDOUT)
+
 macro(set_parent_scoped ARG_OUT_VAR_NAME ARG_VALUE)
   # see https://stackoverflow.com/a/25217937
   get_directory_property(hasParent PARENT_DIRECTORY)
@@ -46,10 +55,11 @@ macro(mkdir_with_rm_condition ARG_CLEAN ARG_MAKE_DIR ARG_WORKING_DIR)
     WORKING_DIRECTORY ${ARG_WORKING_DIR}
     TIMEOUT 7200 # sec
     RESULT_VARIABLE retcode
-    ERROR_VARIABLE _ERROR_VARIABLE
+    ERROR_VARIABLE stderr
+    ${OUTPUT_VARS}
   )
   if(NOT "${retcode}" STREQUAL "0")
-    message( FATAL_ERROR "Bad exit status ${retcode} ${_ERROR_VARIABLE}")
+    message( FATAL_ERROR "Bad exit status ${retcode} ${stdout} ${stderr}")
   endif()
   # checks result of make_directory
   if (NOT EXISTS ${ARG_MAKE_DIR})
@@ -104,9 +114,10 @@ macro(wasm_opt_metrics ARG_WASM_FILE_PATH ARG_DIR)
     WORKING_DIRECTORY ${ARG_DIR}
     TIMEOUT 7200 # sec
     RESULT_VARIABLE retcode
-    ERROR_VARIABLE _ERROR_VARIABLE
+    ERROR_VARIABLE stderr
+    ${OUTPUT_VARS}
   )
   if(NOT "${retcode}" STREQUAL "0")
-    message( FATAL_ERROR "Bad exit status ${retcode} ${_ERROR_VARIABLE}")
+    message( FATAL_ERROR "Bad exit status ${retcode} ${stdout} ${stderr}")
   endif()
 endmacro(wasm_opt_metrics)
