@@ -77,8 +77,8 @@ if(TARGET_EMSCRIPTEN)
   # use PROPERTY CXX_STANDARD 17
 else()
   target_compile_features(${STATIC_LIB_NAME}
-    PUBLIC cxx_auto_type
-    PRIVATE cxx_variadic_templates)
+    INTERFACE cxx_auto_type
+    INTERFACE cxx_variadic_templates)
 endif()
 
 #target_compile_options(${STATIC_LIB_NAME} PRIVATE
