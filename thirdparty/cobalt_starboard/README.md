@@ -1,6 +1,13 @@
-# About
+﻿# About
 
 Modified `starboard` library from cobalt.foo
+
+## NOTE
+
+```
+# duplicate entries not supported by emscripten => log.cc renamed to common_log.cc
+# duplicate entries not supported by emscripten => new.cc renamed to common_new.cc
+```
 
 ## EXTRA FEATURES
 

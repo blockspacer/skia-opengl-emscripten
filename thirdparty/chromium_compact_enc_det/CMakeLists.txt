@@ -116,9 +116,13 @@ else()
   message(FATAL_ERROR "platform not supported")
 endif()
 
-target_compile_features(${STATIC_LIB_NAME}
-  PUBLIC cxx_auto_type
-  PRIVATE cxx_variadic_templates)
+if(TARGET_EMSCRIPTEN)
+  # use PROPERTY CXX_STANDARD 17
+else()
+  target_compile_features(${STATIC_LIB_NAME}
+    PUBLIC cxx_auto_type
+    PRIVATE cxx_variadic_templates)
+endif()
 
 set(DEBUG_LIBRARY_SUFFIX "-d")
 set_target_properties(${STATIC_LIB_NAME}

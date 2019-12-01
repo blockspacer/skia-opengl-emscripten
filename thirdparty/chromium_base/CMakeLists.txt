@@ -488,9 +488,13 @@ target_compile_definitions(${STATIC_LIB_NAME} PUBLIC
   #${COBALT_COMMON_DEFINES}
 )
 
-target_compile_features(${STATIC_LIB_NAME}
-  PUBLIC cxx_auto_type
-  PRIVATE cxx_variadic_templates)
+if(TARGET_EMSCRIPTEN)
+  # use PROPERTY CXX_STANDARD 17
+else()
+  target_compile_features(${STATIC_LIB_NAME}
+    PUBLIC cxx_auto_type
+    PRIVATE cxx_variadic_templates)
+endif()
 
 if(NOT MSVC OR IS_CLANG_CL)
   target_compile_options(${STATIC_LIB_NAME} PUBLIC

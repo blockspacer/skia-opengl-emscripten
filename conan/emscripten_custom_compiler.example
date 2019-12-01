@@ -9,9 +9,10 @@ compiler.libcxx=libc++
 arch_build=x86_64
 build_type=Debug
 [options]
+*:enable_cobalt=True
 *:enable_web_threads=True
 [build_requires]
-#emsdk_installer/1.38.29@bincrafters/stable
+#emsdk_installer/1.38.31@bincrafters/stable
 #ninja_installer/1.8.2@bincrafters/stable
 [env]
 # NOTE: -g4: Preserve LLVM debug information. This is the highest level of debuggability

@@ -1,6 +1,14 @@
-# About
+﻿# About
 
 That guide supposes that you already built your app for browser.
+
+## FAQ
+
+- Got compile-time errors about `undefined symbols`, like `CheckHeldAndUnmark`
+Validate `DCHECK_IS_ON` result and `build_type=Debug` in conan profiles.
+
+- Got compile-time errors about `unexpected argument type i32`
+Use upstream backend. See https://github.com/emscripten-core/emscripten/issues/9331
 
 ## NOTE (If need support of pthreads in wasm)
 

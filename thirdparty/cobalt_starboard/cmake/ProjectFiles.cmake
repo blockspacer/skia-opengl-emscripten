@@ -19,7 +19,11 @@ list(APPEND STARBOARD_SOURCES
  ${STARBOARD_DIR}/common/condition_variable.h
  ${STARBOARD_DIR}/common/flat_map.h
  ${STARBOARD_DIR}/common/locked_ptr.h
- ${STARBOARD_DIR}/common/log.cc
+ #
+ # duplicate entries not supported by emscripten => log.cc renamed to common_log.cc
+ #${STARBOARD_DIR}/common/log.cc
+ ${STARBOARD_DIR}/common/common_log.cc
+ #
  ${STARBOARD_DIR}/common/log.h
  ${STARBOARD_DIR}/common/memory.cc
  ${STARBOARD_DIR}/common/move.h
@@ -27,7 +31,11 @@ list(APPEND STARBOARD_SOURCES
  ${STARBOARD_DIR}/common/murmurhash2.h
  ${STARBOARD_DIR}/common/mutex.cc
  ${STARBOARD_DIR}/common/mutex.h
- ${STARBOARD_DIR}/common/new.cc
+ #
+ # duplicate entries not supported by emscripten => new.cc renamed to common_new.cc
+ #${STARBOARD_DIR}/common/new.cc
+ ${STARBOARD_DIR}/common/common_new.cc
+ #
  ${STARBOARD_DIR}/common/optional.cc
  ${STARBOARD_DIR}/common/optional.h
  ${STARBOARD_DIR}/common/queue.h
@@ -105,7 +113,10 @@ list(APPEND STARBOARD_SOURCES
   ${STARBOARD_DIR}/shared/stub/system_get_stack.cc
   ${STARBOARD_DIR}/shared/stub/system_symbolize.cc
   ${STARBOARD_DIR}/shared/stub/thread_get_id.cc
-  ${STARBOARD_DIR}/shared/stub/thread_get_local_value.cc
+  #
+  # duplicate entries not supported by emscripten
+  #${STARBOARD_DIR}/shared/stub/thread_get_local_value.cc
+  #
   ${STARBOARD_DIR}/shared/stub/thread_get_name.cc
   ${STARBOARD_DIR}/shared/stub/thread_set_name.cc
   ${STARBOARD_DIR}/shared/stub/socket_get_interface_address.cc

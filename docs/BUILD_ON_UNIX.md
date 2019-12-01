@@ -10,6 +10,32 @@ lsb_release -a
 # Codename:       bionic
 ```
 
+## FAQ
+
+- WASM (emscripten) builds tested with `emcc` version
+
+```bash
+1.38.31
+```
+
+- How to enable `set_inner_html`, html parsing from files, etc.
+
+```bash
+-DENABLE_GLIBXML=TRUE;-DENABLE_COBALT_DOM_PARSER=TRUE"
+```
+
+Note that you can create HTML node tree with C++ code.
+
+- Don't forget to change BOTH cmake vars and conan options
+
+```bash
+# in conan `.profile` file:
+# *:enable_cobalt=True
+
+# in cmake command:
+# -DENABLE_COBALT=TRUE
+```
+
 ## Build and install CMake manually (recommended)
 
 Uninstall any previous version (if needed):
@@ -344,7 +370,7 @@ cmake -DRUN_APP=ON -DBUILD_APP=OFF -DBUILD_DIR=$(pwd)/build-wasm-mt-deb/ -P tool
 
 To run your applications, while not strictly necessary, it's recommended to host on a server that can serve files with the <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types">mime type</a- <code>application/wasm</code>
 
-## NOTE: need emcc version - 1.38.21
+## NOTE: need emcc version - 1.38.31
 
 - see https://emscripten.org/docs/getting_started/downloads.html#updating-the-sdk
 

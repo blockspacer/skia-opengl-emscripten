@@ -125,9 +125,13 @@ endif(NOT EXISTS "${ICU_FULL_DIR}source/common")
 
   set_property(TARGET ${STATIC_LIB_NAME} PROPERTY CXX_STANDARD 17)
 
-  target_compile_features(${STATIC_LIB_NAME}
-    PUBLIC cxx_auto_type
-    PRIVATE cxx_variadic_templates)
+  if(TARGET_EMSCRIPTEN)
+    # use PROPERTY CXX_STANDARD 17
+  else()
+    target_compile_features(${STATIC_LIB_NAME}
+      PUBLIC cxx_auto_type
+      PRIVATE cxx_variadic_templates)
+  endif()
 
   target_compile_options(${STATIC_LIB_NAME} PRIVATE
     $<$<CXX_COMPILER_ID:GNU>:-Wall>)

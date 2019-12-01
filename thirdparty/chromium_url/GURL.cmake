@@ -63,7 +63,7 @@ if(NOT DEFINED base_LIB)
   message(FATAL_ERROR "NOT DEFINED: base_LIB")
 endif(NOT DEFINED base_LIB)
 
-target_link_libraries(GURL PRIVATE
+target_link_libraries(GURL PRIVATE #PUBLIC
   ${base_LIB} # TODO: header only
 )
 

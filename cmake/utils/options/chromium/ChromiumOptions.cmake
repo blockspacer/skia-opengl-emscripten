@@ -895,6 +895,12 @@ if (ENABLE_SKIA)
 endif(ENABLE_SKIA)
 
 if(ENABLE_COBALT)
+  if(NOT DEFINED base_LIB)
+    message(FATAL_ERROR "NOT DEFINED: base_LIB")
+  endif(NOT DEFINED base_LIB)
+  if(NOT DEFINED url_LIB)
+    message(FATAL_ERROR "NOT DEFINED: url_LIB")
+  endif(NOT DEFINED url_LIB)
   list(APPEND COBALT_LIBS
     ${base_LIB}
     #ced
