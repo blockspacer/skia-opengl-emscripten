@@ -17,10 +17,18 @@
 #include <fcntl.h>
 #include <string.h>
 
+#include <stddef.h>
+#include <stdint.h>
+
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+
 #include "starboard/common/log.h"
 
-#include "base/debug/debugger.h"
+//#include "base/debug/debugger.h"
 
 bool SbSystemIsDebuggerAttached() {
-  return base::debug::BeingDebugged();
+  // based on base::debug::BeingDebugged();
+  // see https://github.com/blockspacer/skia-opengl-emscripten/blob/7c423190544c8da1bf8ae79b800c9c0c83dd3c6e/src/chromium/base/debug/debugger_win.cc#L16
+  return ::IsDebuggerPresent() != 0;
 }

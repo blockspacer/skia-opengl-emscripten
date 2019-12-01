@@ -24,12 +24,22 @@
 #include "starboard/shared/internal_only.h"
 #include "starboard/shared/win/impl/file_impl.h"
 
-#include "base/files/file.h"
+/*#include "base/files/file.h"
 #include "base/files/file_enumerator.h"
 #include "base/files/file_path.h"
 #include "base/files/file_util.h"
 #include "base/files/scoped_temp_dir.h"
-#include "base/strings/utf_string_conversions.h"
+#include "base/strings/utf_string_conversions.h"*/
+
+#define NOMINMAX
+#define WIN32_LEAN_AND_MEAN
+#include <Windows.h>
+
+#include <io.h>
+#include <stdint.h>
+
+#include <tchar.h>
+#include <stdio.h>
 
 namespace starboard {
 namespace shared {
@@ -37,14 +47,27 @@ namespace win {
 namespace impl {
 
 int FileWrite(SbFile file, const char* data, int size) {
-  if (!file || !file->descriptor.IsValid() || size < 0) {
+  if (!file->descriptor || !file->descriptor/*.IsValid()*/ || size < 0) {
     return -1;
   }
 
   //return HANDLE_EINTR(write(file->descriptor, data, size));
 
   // see https://github.com/chromium/chromium/blob/ccd149af47315e4c6f2fc45d55be1b271f39062c/base/files/file.h#L237
-  return file->descriptor.Write(/*offset*/ 0, data, size);
+  //return file->descriptor.Write(/*offset*/ 0, data, size);
+
+  LARGE_INTEGER offset_li;
+  offset_li.QuadPart = /*offset*/ 0;
+
+  OVERLAPPED overlapped = {};
+  overlapped.Offset = offset_li.LowPart;
+  overlapped.OffsetHigh = offset_li.HighPart;
+
+  DWORD bytes_written;
+  if (::WriteFile(file->descriptor, data, size, &bytes_written, &overlapped))
+    return bytes_written;
+
+  return -1;
 }
 
 }  // namespace impl

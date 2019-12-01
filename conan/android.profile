@@ -1,12 +1,12 @@
 include(default)
 [settings]
 arch=armv8
-build_type=Release
 compiler=clang
 compiler.libcxx=libc++
 compiler.version=8
 os=Android
 os.api_level=21
+# Must match CMAKE_BUILD_TYPE
 build_type=Debug
 [build_requires]
 android_ndk_installer/r20@bincrafters/stable
@@ -15,3 +15,5 @@ android_ndk_installer/r20@bincrafters/stable
 [env]
 #ANDROID_NDK_ROOT=/home/conan/android-ndk-r18b
 #CONAN_CACERT_PATH=...
+#CXXFLAGS="-DNOMINMAX=1"
+#CFLAGS=""

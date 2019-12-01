@@ -14,11 +14,79 @@
 
 #include "starboard/system.h"
 
-#include "base/process/process_metrics.h"
+//#include "base/process/process_metrics.h"
+
+#include <stddef.h>
+#include <stdint.h>
+
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+
+#include <limits>
 
 #include "starboard/common/log.h"
 #include "starboard/common/string.h"
 #include "starboard/file.h"
+
+namespace {
+
+// see https://github.com/blockspacer/skia-opengl-emscripten/blob/7c423190544c8da1bf8ae79b800c9c0c83dd3c6e/src/chromium/base/process/process_metrics.h#L307
+
+// Data about system-wide memory consumption. Values are in KB. Available on
+// Windows, Mac, Linux, Android and Chrome OS.
+//
+// Total memory are available on all platforms that implement
+// GetSystemMemoryInfo(). Total/free swap memory are available on all platforms
+// except on Mac. Buffers/cached/active_anon/inactive_anon/active_file/
+// inactive_file/dirty/reclaimable/pswpin/pswpout/pgmajfault are available on
+// Linux/Android/Chrome OS. Shmem/slab/gem_objects/gem_size are Chrome OS only.
+// Speculative/file_backed/purgeable are Mac and iOS only.
+// Free is absent on Windows (see "avail_phys" below).
+struct /*BASE_EXPORT*/ SystemMemoryInfoKB {
+  SystemMemoryInfoKB();
+  SystemMemoryInfoKB(const SystemMemoryInfoKB& other);
+
+  int total = 0;
+
+  // "This is the amount of physical memory that can be immediately reused
+  // without having to write its contents to disk first. It is the sum of the
+  // size of the standby, free, and zero lists." (MSDN).
+  // Standby: not modified pages of physical ram (file-backed memory) that are
+  // not actively being used.
+  int avail_phys = 0;
+
+  int swap_total = 0;
+  int swap_free = 0;
+};
+
+SystemMemoryInfoKB::SystemMemoryInfoKB() = default;
+
+SystemMemoryInfoKB::SystemMemoryInfoKB(const SystemMemoryInfoKB& other) =
+    default;
+
+// see https://github.com/blockspacer/skia-opengl-emscripten/blob/7c423190544c8da1bf8ae79b800c9c0c83dd3c6e/src/chromium/base/process/process_metrics_win.cc
+
+// This function uses the following mapping between MEMORYSTATUSEX and
+// SystemMemoryInfoKB:
+//   ullTotalPhys ==> total
+//   ullAvailPhys ==> avail_phys
+//   ullTotalPageFile ==> swap_total
+//   ullAvailPageFile ==> swap_free
+static bool GetSystemMemoryInfo(SystemMemoryInfoKB* meminfo) {
+  MEMORYSTATUSEX mem_status;
+  mem_status.dwLength = sizeof(mem_status);
+  if (!::GlobalMemoryStatusEx(&mem_status))
+    return false;
+
+  meminfo->total = mem_status.ullTotalPhys / 1024;
+  meminfo->avail_phys = mem_status.ullAvailPhys / 1024;
+  meminfo->swap_total = mem_status.ullTotalPageFile / 1024;
+  meminfo->swap_free = mem_status.ullAvailPageFile / 1024;
+
+  return true;
+}
+
+} // namespace
 
 // We find the current amount of used memory on Linux by opening
 // '/proc/self/status' and scan the file for its "VmRSS" and "VmSwap" entries.
@@ -93,15 +161,16 @@ int64_t SbSystemGetUsedCPUMemory() {
   return SearchForMemoryValue("VmRSS", buffer) +
          SearchForMemoryValue("VmSwap", buffer);*/
   
-  base::SystemMemoryInfoKB memory_info;
+  SystemMemoryInfoKB memory_info;
   // This function uses the following mapping between MEMORYSTATUSEX and
   // SystemMemoryInfoKB:
   //   ullTotalPhys ==> total
   //   ullAvailPhys ==> avail_phys
   //   ullTotalPageFile ==> swap_total
   //   ullAvailPageFile ==> swap_free
-  if (!base::GetSystemMemoryInfo(&memory_info)) {
-    NOTIMPLEMENTED_LOG_ONCE();
+  if (!GetSystemMemoryInfo(&memory_info)) {
+    //NOTIMPLEMENTED_LOG_ONCE();
+    SB_DLOG(WARNING) << "NOTIMPLEMENTED: SbSystemGetUsedCPUMemory";
     return 1024;
   }
 

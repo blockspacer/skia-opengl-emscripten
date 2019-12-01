@@ -22,15 +22,19 @@
 
 #include "build/build_config.h"
 
-#include "base/win/scoped_handle.h"
+/*#include "base/win/scoped_handle.h"
 #include "base/win/windows_types.h"
-#include "base/files/file.h"
+#include "base/files/file.h"*/
+
+#define WIN32_LEAN_AND_MEAN
+#define NOMINMAX
+#include <windows.h>
 
 // see https://github.com/chromium/chromium/blob/2ca8c5037021c9d2ecc00b787d58a31ed8fc8bcb/base/files/platform_file.h#L24
 struct SbFilePrivate {
   // file descriptor of this file.
-  //HANDLE descriptor;
-  base::File descriptor;
+  // see base::File
+  HANDLE descriptor;
 };
 
 #endif  // STARBOARD_SHARED_WIN_FILE_INTERNAL_H_

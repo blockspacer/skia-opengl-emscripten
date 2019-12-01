@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "base/files/file_util.h"
+// #include "base/files/file_util.h"
 
 #include "starboard/memory.h"
 
@@ -24,7 +24,8 @@ void SbMemoryGetStackBounds(void** out_high, void** out_low) {
 
   SB_DLOG(WARNING) << "No SbMemoryGetStackBounds.";
   
-  NOTIMPLEMENTED_LOG_ONCE();
+  //NOTIMPLEMENTED_LOG_ONCE();
+  SB_DLOG(WARNING) << "NOTIMPLEMENTED: SbMemoryGetStackBounds";
 
   *out_high = static_cast<char*>(stackBase) + stackSize;
   *out_low = stackBase;

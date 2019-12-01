@@ -49,7 +49,7 @@ if(ENABLE_COBALT)
 endif(ENABLE_COBALT)
 
 # chromium_icu
-find_package(chromium_icu REQUIRED)
+find_package(chromium_icu REQUIRED) # TODO: WIN
 if(NOT TARGET chromium_icu::chromium_icu-static)
   message(FATAL_ERROR "not supported: using system provided chromium_icu library")
 endif()

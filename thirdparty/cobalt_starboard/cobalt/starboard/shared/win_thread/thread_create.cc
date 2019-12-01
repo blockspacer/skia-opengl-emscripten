@@ -19,7 +19,7 @@
 #include "starboard/shared/win_thread/is_success.h"
 #include "starboard/shared/win_thread/thread_create_priority.h"
 
-#include "base/threading/thread_local_storage.h"
+/*#include "base/threading/thread_local_storage.h"
 #include "base/threading/thread.h"
 #include "build/build_config.h"
 
@@ -40,12 +40,12 @@
 #include "base/threading/thread_id_name_manager.h"
 #include "base/threading/thread_local.h"
 #include "base/threading/thread_restrictions.h"
-#include "base/threading/thread_task_runner_handle.h"
+#include "base/threading/thread_task_runner_handle.h"*/
 #include "build/build_config.h"
 
 #include <stddef.h>
 
-#include "base/debug/activity_tracker.h"
+/*#include "base/debug/activity_tracker.h"
 #include "base/debug/alias.h"
 #include "base/debug/crash_logging.h"
 #include "base/debug/profiler.h"
@@ -59,9 +59,9 @@
 #include "base/threading/thread_restrictions.h"
 #include "base/time/time_override.h"
 #include "base/win/scoped_handle.h"
-#include "base/win/windows_version.h"
-#include "build/build_config.h"
+#include "base/win/windows_version.h"*/
 
+#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
 namespace starboard {
@@ -175,7 +175,7 @@ SbThread SbThreadCreate(int64_t stack_size,
 
   params->priority = priority;
 
-  SbThread thread = kSbThreadInvalid;
+  //SbThread thread = kSbThreadInvalid;
 
   /*{
     bool success =

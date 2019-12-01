@@ -14,12 +14,16 @@
 
 #include "starboard/thread.h"
 
-#include "base/threading/thread.h"
+/*#include "base/threading/thread.h"
 #include "base/threading/platform_thread.h"
 #include "base/threading/thread_local_storage.h"
 #include "base/atomicops.h"
 #include "base/logging.h"
-#include "base/synchronization/lock.h"
+#include "base/synchronization/lock.h"*/
+
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+
 #include "build/build_config.h"
 
 void SbThreadDetach(SbThread thread) {
@@ -27,7 +31,6 @@ void SbThreadDetach(SbThread thread) {
     return;
   }
 
-  //WIN_THREAD_detach(thread);
-
-  base::PlatformThread::Detach(base::PlatformThreadHandle(thread));
+  // based on base::PlatformThread::Detach(base::PlatformThreadHandle(thread));
+  CloseHandle(thread);
 }

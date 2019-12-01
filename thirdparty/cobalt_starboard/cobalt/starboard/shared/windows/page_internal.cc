@@ -128,7 +128,8 @@ void* SbPageMapUntracked(size_t size_bytes,
   void* mem = mmap(0, size_bytes, mmap_protect, MAP_PRIVATE | MAP_ANON, -1, 0);
   return mem;*/
 
-  NOTIMPLEMENTED_LOG_ONCE();
+  //NOTIMPLEMENTED_LOG_ONCE();
+  SB_DLOG(WARNING) << "NOTIMPLEMENTED: SbPageMapUntracked";
 
   return SB_MEMORY_MAP_FAILED;
 }

@@ -14,6 +14,7 @@
 
 #include "starboard/common/mutex.h"
 
+#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
 #include "starboard/shared/win_thread/is_success.h"

@@ -12,6 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#define _WINSOCKAPI_    // stops windows.h including winsock.h
+#define NOMINMAX
+#define WIN32_LEAN_AND_MEAN
+
 #include "starboard/common/condition_variable.h"
 
 #include "starboard/shared/win/time_internal.h"
@@ -19,11 +23,13 @@
 #include "starboard/shared/starboard/lazy_initialization_internal.h"
 #include "starboard/time.h"
 
-#include "base/optional.h"
+/*#include "base/optional.h"
 #include "base/synchronization/lock.h"
 #include "base/threading/scoped_blocking_call.h"
 #include "base/threading/thread_restrictions.h"
-#include "base/time/time.h"
+#include "base/time/time.h"*/
+
+#include <windows.h>
 
 using starboard::shared::starboard::EnsureInitialized;
 
@@ -59,7 +65,10 @@ SbConditionVariableResult SbConditionVariableWaitTimed(
     // Note that WAIT_TIMEOUT != ERROR_TIMEOUT. WAIT_TIMEOUT is used with the
     // WaitFor* family of functions as a direct return value. ERROR_TIMEOUT is
     // used with GetLastError().
-    DCHECK_EQ(static_cast<DWORD>(ERROR_TIMEOUT), GetLastError());
+
+    // TODO !!!
+    SB_DCHECK(static_cast<DWORD>(ERROR_TIMEOUT) == GetLastError());
+
     return kSbConditionVariableTimedOut;
   }
 

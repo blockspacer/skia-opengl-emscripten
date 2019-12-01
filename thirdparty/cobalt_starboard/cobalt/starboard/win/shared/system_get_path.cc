@@ -21,6 +21,10 @@
 
 #include <cstring>
 
+#define WIN32_LEAN_AND_MEAN
+#include <Windows.h>
+#include <stdint.h> // portable: uint64_t   MSVC: __int64 
+
 #include "starboard/common/log.h"
 #include "starboard/common/string.h"
 #include "starboard/directory.h"

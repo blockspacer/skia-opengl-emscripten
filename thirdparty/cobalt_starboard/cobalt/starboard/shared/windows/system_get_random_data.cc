@@ -12,9 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// MSVC++ requires this to be set before any other includes to get M_PI.
+#define _USE_MATH_DEFINES
+#define NOMINMAX
+
 // Adapted from base/rand_util_posix.cc
 
-#include "base/rand_util.h"
+//#include "base/rand_util.h"
 
 #include "starboard/system.h"
 
@@ -22,6 +26,21 @@
 #include "starboard/common/mutex.h"
 #include "starboard/file.h"
 #include "starboard/once.h"
+
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#include <stddef.h>
+#include <stdint.h>
+
+// #define needed to link in RtlGenRandom(), a.k.a. SystemFunction036.  See the
+// "Community Additions" comment on MSDN here:
+// http://msdn.microsoft.com/en-us/library/windows/desktop/aa387694.aspx
+#define SystemFunction036 NTAPI SystemFunction036
+#include <NTSecAPI.h>
+#undef SystemFunction036
+
+#include <algorithm>
+#include <limits>
 
 namespace {
 
@@ -55,12 +74,27 @@ void InitializeRandom() {
   g_urandom_file = new URandomFile();
 }*/
 
+static void RandBytes(void* output, size_t output_length) {
+  char* output_ptr = static_cast<char*>(output);
+  while (output_length > 0) {
+    const ULONG output_bytes_this_pass = static_cast<ULONG>(std::min(
+        output_length, static_cast<size_t>(std::numeric_limits<ULONG>::max())));
+    const bool success =
+        RtlGenRandom(output_ptr, output_bytes_this_pass) != FALSE;
+    SB_CHECK(success);
+    output_length -= output_bytes_this_pass;
+    output_ptr += output_bytes_this_pass;
+  }
+}
+
 }  // namespace
 
 void SbSystemGetRandomData(void* out_buffer, int buffer_size) {
   SB_DCHECK(out_buffer);
 
-  base::RandBytes(out_buffer, buffer_size);
+  // based on base::RandBytes(out_buffer, buffer_size);
+  // see https://github.com/blockspacer/skia-opengl-emscripten/blob/7c423190544c8da1bf8ae79b800c9c0c83dd3c6e/src/chromium/base/rand_util_win.cc#L25
+  RandBytes(out_buffer, buffer_size);
 
   /*char* buffer = reinterpret_cast<char*>(out_buffer);
   int remaining = buffer_size;

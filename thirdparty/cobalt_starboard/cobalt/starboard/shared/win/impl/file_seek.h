@@ -22,12 +22,22 @@
 #include "starboard/shared/internal_only.h"
 #include "starboard/shared/win/impl/file_impl.h"
 
-#include "base/files/file.h"
+/*#include "base/files/file.h"
 #include "base/files/file_enumerator.h"
 #include "base/files/file_path.h"
 #include "base/files/file_util.h"
 #include "base/files/scoped_temp_dir.h"
-#include "base/strings/utf_string_conversions.h"
+#include "base/strings/utf_string_conversions.h"*/
+
+#define NOMINMAX
+#define WIN32_LEAN_AND_MEAN
+#include <Windows.h>
+
+#include <io.h>
+#include <stdint.h>
+
+#include <tchar.h>
+#include <stdio.h>
 
 namespace starboard {
 namespace shared {
@@ -35,7 +45,7 @@ namespace win {
 namespace impl {
 
 int64_t FileSeek(SbFile file, SbFileWhence whence, int64_t offset) {
-  if (!file || !file->descriptor.IsValid()) {
+  if (!file || !file->descriptor/*.IsValid()*/) {
     return -1;
   }
 
@@ -49,6 +59,7 @@ int64_t FileSeek(SbFile file, SbFileWhence whence, int64_t offset) {
   /*return lseek(file->descriptor, static_cast<off_t>(offset),
                static_cast<int>(whence));*/
 
+#if 0
   // see https://github.com/chromium/chromium/blob/ccd149af47315e4c6f2fc45d55be1b271f39062c/base/files/file.h#L202
   return file->descriptor.Seek(
     /*
@@ -63,6 +74,15 @@ int64_t FileSeek(SbFile file, SbFileWhence whence, int64_t offset) {
     static_cast<base::File::Whence>(static_cast<int>(whence)), 
     static_cast<off_t>(offset)
   );
+#endif // 0
+
+  // see https://github.com/blockspacer/skia-opengl-emscripten/blob/7c423190544c8da1bf8ae79b800c9c0c83dd3c6e/src/chromium/base/files/file_win.cc#L46
+  LARGE_INTEGER distance, res;
+  distance.QuadPart = static_cast<int64_t>(offset);
+  DWORD move_method = static_cast<DWORD>(whence);
+  if (!SetFilePointerEx(file->descriptor, distance, &res, move_method))
+    return -1;
+  return res.QuadPart;
 }
 
 }  // namespace impl

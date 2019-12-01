@@ -20,14 +20,6 @@
 
 #include "starboard/types.h"
 
-#include "base/base_export.h"
-#include "base/logging.h"
-#include "base/macros.h"
-#include "build/build_config.h"
-#include "base/win/windows_types.h"
-#include "base/threading/thread_local_storage.h"
-#include "base/threading/thread.h"
-
 #include <windows.h>
 
 //#include <pthread.h>
@@ -38,6 +30,11 @@
 
 // --- SbConditionVariable ---
 
+// based on CHROME_CONDITION_VARIABLE
+struct SB_CONDITION_VARIABLE_INTERNAL {
+  PVOID Ptr;
+};
+
 // Transparent Condition Variable handle.
 // It is customized from the plain WIN_THREAD_cont_t object because we
 // need to ensure that each condition variable is initialized to use
@@ -45,7 +42,9 @@
 // when WIN_THREAD_COND_INITIALIZER is set).
 typedef struct SbConditionVariable {
   InitializedState initialized_state;
-  CHROME_CONDITION_VARIABLE condition;
+  // based on CHROME_CONDITION_VARIABLE
+  SB_CONDITION_VARIABLE_INTERNAL condition;
+
 } SbConditionVariable;
 
 // Condition Variable static initializer.
@@ -54,8 +53,13 @@ typedef struct SbConditionVariable {
 
 // --- SbMutex ---
 
+// based on CHROME_SRWLOCK
+struct SB_SRWLOCK_INTERNAL {
+  PVOID Ptr;
+};
+
 // Transparent Mutex handle.
-typedef CHROME_SRWLOCK SbMutex;
+typedef SB_SRWLOCK_INTERNAL SbMutex;
 
 // Mutex static initializer.
 #define SB_MUTEX_INITIALIZER WIN_THREAD_MUTEX_INITIALIZER

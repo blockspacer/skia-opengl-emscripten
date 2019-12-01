@@ -17,6 +17,13 @@
 #ifndef STARBOARD_SHARED_WIN_IMPL_FILE_CLOSE_H_
 #define STARBOARD_SHARED_WIN_IMPL_FILE_CLOSE_H_
 
+#define NOMINMAX
+#define WIN32_LEAN_AND_MEAN
+#include <Windows.h>
+
+#include <io.h>
+#include <stdint.h>
+
 #include "starboard/file.h"
 
 #include "starboard/shared/win/handle_eintr.h"
@@ -30,7 +37,7 @@ namespace win {
 namespace impl {
 
 bool FileClose(SbFile file) {
-  if (!file) {
+  if (!file || !file->descriptor) {
     return false;
   }
 
@@ -43,10 +50,13 @@ bool FileClose(SbFile file) {
     result = !HANDLE_EINTR(close(file->descriptor));
   }*/
 
-  if (file->descriptor.IsValid()) {
+  /*if (file->descriptor.IsValid()) {
     file->descriptor.Close();
     result = true;
-  }
+  }*/
+
+  // see https://github.com/chromium/chromium/blob/2ca8c5037021c9d2ecc00b787d58a31ed8fc8bcb/base/win/scoped_handle.cc#L15
+  ::CloseHandle(file->descriptor);
 
   delete file;
 

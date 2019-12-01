@@ -12,11 +12,34 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "base/system/sys_info.h"
+//#include "base/system/sys_info.h"
 
 #include "starboard/system.h"
 
 #include "starboard/common/log.h"
+
+#include <stddef.h>
+#include <stdint.h>
+
+#define NOMINMAX
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+
+#include <limits>
+
+static int64_t AmountOfMemory(DWORDLONG MEMORYSTATUSEX::*memory_field) {
+  MEMORYSTATUSEX memory_info;
+  memory_info.dwLength = sizeof(memory_info);
+  if (!GlobalMemoryStatusEx(&memory_info)) {
+
+    // TODO !!! NOTREACHED();
+
+    return 0;
+  }
+
+  int64_t rv = static_cast<int64_t>(memory_info.*memory_field);
+  return rv < 0 ? std::numeric_limits<int64_t>::max() : rv;
+}
 
 int64_t SbSystemGetTotalCPUMemory() {
   /*long pages = sysconf(_SC_PHYS_PAGES);     // NOLINT[runtime/int]
@@ -27,5 +50,8 @@ int64_t SbSystemGetTotalCPUMemory() {
   }
 
   return static_cast<int64_t>(pages) * page_size;*/
-  return base::SysInfo::AmountOfPhysicalMemory();
+
+  // based on base::SysInfo::AmountOfPhysicalMemory()
+  // see https://github.com/blockspacer/skia-opengl-emscripten/blob/7c423190544c8da1bf8ae79b800c9c0c83dd3c6e/src/chromium/base/system/sys_info_win.cc#L70
+  return AmountOfMemory(&MEMORYSTATUSEX::ullTotalPhys);
 }

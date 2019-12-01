@@ -45,13 +45,15 @@ See https://github.com/blockspacer/CXTPL#install-conan---a-crossplatform-depende
 
 See https://github.com/blockspacer/CXTPL#how-to-build
 
+## Create conan profile
+
+See `conan\clang-cl.profile`
+
 ## Install conan deps from local dir
 
-```bash
-cmake -DEXTRA_OPTS="conan/stable;--profile;emscripten" -P tools/buildConanThirdparty.cmake
-```
+See `tools/buildConanThirdparty.cmake`
 
-Change `--profile;emscripten` to valid conan profile name.
+Change `--profile;clang-cl` to valid conan profile name.
 
 ## Windows specific
 
@@ -361,6 +363,8 @@ set PATH=D:\den\coding\glew\glew-2.1.0\include;%PATH%
 set PATH=D:\den\coding\glew\glew-2.1.0\lib\Release;%PATH%
 set PATH=D:\den\coding\glew\glew-2.1.0\lib\Release\x64;%PATH%
 #
+set PATH=C:\Program Files\Git\cmd;%PATH%
+#
 # https://stackoverflow.com/questions/1236670/how-to-make-opengl-apps-in-64-bit-windows
 # path to x64 opengl32.lib
 set PATH=C:/Program Files (x86)/Windows Kits/10/Lib/10.0.14393.0/um/x64;%PATH%
@@ -387,9 +391,15 @@ python --version
 clang-cl --version
 "%CXX%" --version
 cmake --version
+conan --version
+git --version
+#
+cmake -DUSE_LIBEVENT=FALSE -DUSE_TCMALLOC=FALSE -DUSE_XDG_MIME=FALSE -DUSE_XDG_USER_DIRS=FALSE -DEXTRA_CONAN_OPTS="conan/stable;--profile;clang-cl" -P tools/buildConanThirdparty.cmake
+#
 cmake -E remove_directory build
 cmake -E make_directory build
 cd build
+conan install --build=missing --profile clang-cl -o enable_tests=False ..
 # NOTE: Win64
 # -G "Visual Studio 15 2017 Win64"
 # -A x64

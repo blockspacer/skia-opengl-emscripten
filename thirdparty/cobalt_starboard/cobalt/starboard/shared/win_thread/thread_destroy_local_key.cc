@@ -16,21 +16,26 @@
 
 #include "starboard/shared/win_thread/thread_local_key_internal.h"
 
-#include "base/threading/thread.h"
+/*#include "base/threading/thread.h"
 #include "base/threading/platform_thread.h"
 #include "base/threading/thread_local_storage.h"
 #include "base/atomicops.h"
 #include "base/logging.h"
-#include "base/synchronization/lock.h"
+#include "base/synchronization/lock.h"*/
+
 #include "build/build_config.h"
+
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
 
 void SbThreadDestroyLocalKey(SbThreadLocalKey key) {
   if (!SbThreadIsValidLocalKey(key)) {
     return;
   }
   
-  base::internal::PlatformThreadLocalStorage::FreeTLS(key->key);
+  // based on base::internal::PlatformThreadLocalStorage::FreeTLS(key->key);
+  // see https://github.com/blockspacer/skia-opengl-emscripten/blob/7c423190544c8da1bf8ae79b800c9c0c83dd3c6e/src/chromium/base/threading/thread_local_storage_win.cc#L24
+  BOOL ret = TlsFree(key->key);
 
-  //WIN_THREAD_key_delete(key->key);
   delete key;
 }

@@ -16,6 +16,7 @@
 
 #include "starboard/shared/win_thread/is_success.h"
 
+#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
 SbMutexResult SbMutexAcquireTry(SbMutex* mutex) {

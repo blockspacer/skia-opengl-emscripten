@@ -14,11 +14,15 @@
 
 #include "starboard/thread.h"
 
-#include "base/threading/platform_thread.h"
+//#include "base/threading/platform_thread.h"
+
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
 
 //#include <pthread.h>
 
-// see https://github.com/chromium/chromium/blob/76cd905f0fb391085d670c4d2936fea37e0b67d6/base/threading/platform_thread_win.cc#L228
 SbThread SbThreadGetCurrent() {
-  return base::PlatformThread::CurrentHandle().platform_handle();//base::CurrentThread();
+  // see https://github.com/chromium/chromium/blob/76cd905f0fb391085d670c4d2936fea37e0b67d6/base/threading/platform_thread_win.cc#L228
+  // based on return base::PlatformThread::CurrentHandle().platform_handle();//base::CurrentThread();
+  return ::GetCurrentThread();
 }

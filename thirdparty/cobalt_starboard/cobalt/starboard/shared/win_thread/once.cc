@@ -16,6 +16,7 @@
 
 //#include <pthread.h>
 
+#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
 // see https://github.com/GerbilSoft/rom-properties/blob/edc3e87c1b22ae2dc54837959ac874f4bc361c43/src/librpthreads/pthread_once.c#L24

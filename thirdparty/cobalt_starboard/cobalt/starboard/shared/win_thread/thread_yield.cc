@@ -15,11 +15,16 @@
 #include "starboard/thread.h"
 
 //#include <sched.h>
-#include "base/threading/platform_thread.h"
+//#include "base/threading/platform_thread.h"
+
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+
 #include "build/build_config.h"
 
-// see https://github.com/chromium/chromium/blob/76cd905f0fb391085d670c4d2936fea37e0b67d6/base/threading/platform_thread_win.cc#L233
 void SbThreadYield() {
-  //sched_yield();
-  base::PlatformThread::YieldCurrentThread();
+  // similar to sched_yield();
+  // based on base::PlatformThread::YieldCurrentThread();
+  // see https://github.com/chromium/chromium/blob/76cd905f0fb391085d670c4d2936fea37e0b67d6/base/threading/platform_thread_win.cc#L233
+  ::Sleep(0);
 }

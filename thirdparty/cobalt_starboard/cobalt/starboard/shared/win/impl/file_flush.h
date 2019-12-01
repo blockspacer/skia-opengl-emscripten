@@ -24,12 +24,22 @@
 #include "starboard/shared/internal_only.h"
 #include "starboard/shared/win/impl/file_impl.h"
 
-#include "base/files/file.h"
+#define NOMINMAX
+#define WIN32_LEAN_AND_MEAN
+#include <Windows.h>
+
+#include <io.h>
+#include <stdint.h>
+
+#include <tchar.h>
+#include <stdio.h>
+
+/*#include "base/files/file.h"
 #include "base/files/file_enumerator.h"
 #include "base/files/file_path.h"
 #include "base/files/file_util.h"
 #include "base/files/scoped_temp_dir.h"
-#include "base/strings/utf_string_conversions.h"
+#include "base/strings/utf_string_conversions.h"*/
 
 namespace starboard {
 namespace shared {
@@ -43,11 +53,13 @@ bool FileFlush(SbFile file) {
 
   return !HANDLE_EINTR(fsync(file->descriptor));*/
   
-  if (!file || !file->descriptor.IsValid()) {
+  if (!file || !file->descriptor/*.IsValid()*/) {
     return false;
   }
 
-  return file->descriptor.Flush();
+  //return file->descriptor.Flush();
+  // see https://github.com/chromium/chromium/blob/75fb429759aa71bae59cdd57b69a482c1153579e/base/files/file_win.cc#L434
+  return ::FlushFileBuffers(file->descriptor) != FALSE;
 }
 
 }  // namespace impl

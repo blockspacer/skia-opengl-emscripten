@@ -14,7 +14,7 @@
 
 #include "starboard/memory.h"
 
-#include "base/metrics/persistent_memory_allocator.h"
+//#include "base/metrics/persistent_memory_allocator.h"
 
 #include <windows.h>
 #include "winbase.h"
@@ -39,10 +39,10 @@ void SbMemoryFlush(void* virtual_address, int64_t size_bytes) {
 
   // TODO
 
-  NOTIMPLEMENTED_LOG_ONCE();
+  SB_DLOG(WARNING) << "NOTIMPLEMENTED: SbMemoryFlush";
 
   BOOL success = ::FlushViewOfFile(virtual_address, size_bytes);
-  DPCHECK(success);
+  SB_DCHECK(success);
 
 /*#if !SB_IS(ARCH_ARM) && !SB_IS(ARCH_MIPS)
   int result = msync(memory, size_bytes, MS_SYNC);

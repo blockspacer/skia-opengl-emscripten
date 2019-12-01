@@ -55,12 +55,12 @@ endif()
 set(USE_CUSTOM_ICU TRUE) # TODO
 if(USE_CUSTOM_ICU)
   # chromium_icu
-  if(TARGET_LINUX OR TARGET_EMSCRIPTEN)
+  if(TARGET_LINUX OR TARGET_WINDOWS OR TARGET_EMSCRIPTEN)
     find_package(chromium_icu REQUIRED)
     if(NOT TARGET chromium_icu::chromium_icu-static)
-      message(FATAL_ERROR "not supported: using system provided libevent library")
+      message(FATAL_ERROR "not supported: using system provided chromium_icu library")
     endif()
-  elseif(TARGET_WINDOWS)
+  #elseif(TARGET_WINDOWS)
     # skip
   else()
     message(FATAL_ERROR "chromium_icu not found")

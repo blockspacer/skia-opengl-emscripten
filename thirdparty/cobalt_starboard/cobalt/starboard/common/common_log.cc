@@ -12,6 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#define _WINSOCKAPI_    // stops windows.h including winsock.h
+#define NOMINMAX
+#define WIN32_LEAN_AND_MEAN
+
 #include "starboard/common/log.h"
 
 #include <algorithm>

@@ -14,10 +14,35 @@
 
 #include "starboard/memory.h"
 
-#include "base/memory/aligned_memory.h"
+#include "starboard/common/log.h"
 
+//#include "base/memory/aligned_memory.h"
+
+#include <stddef.h>
+#include <stdint.h>
+
+#include <type_traits>
+#include <malloc.h>
 #include <stdlib.h>
 
 void* SbMemoryAllocateAlignedUnchecked(size_t alignment, size_t size) {
-  return base::AlignedAlloc(alignment, size);
+  // based on base::AlignedAlloc(alignment, size);
+  // see https://github.com/chromium/chromium/blob/2ca8c5037021c9d2ecc00b787d58a31ed8fc8bcb/base/memory/aligned_memory.cc#L16
+  SB_DCHECK(size >= 0U);
+  SB_DCHECK(alignment & (alignment - 1) == 0U);
+  SB_DCHECK(alignment % sizeof(void*) == 0U);
+  void* ptr = nullptr;
+  ptr = _aligned_malloc(size, alignment);
+
+  // Since aligned allocations may fail for non-memory related reasons, force a
+  // crash if we encounter a failed allocation; maintaining consistent behavior
+  // with a normal allocation failure in Chrome.
+  if (!ptr) {
+    SB_DLOG(ERROR) << "If you crashed here, your aligned allocation is incorrect: "
+                << "size=" << size << ", alignment=" << alignment;
+    SB_CHECK(false);
+  }
+  // Sanity check alignment just to be safe.
+  SB_DCHECK(reinterpret_cast<uintptr_t>(ptr) & (alignment - 1) == 0U);
+  return ptr;
 }

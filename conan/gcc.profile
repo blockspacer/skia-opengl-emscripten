@@ -4,6 +4,7 @@ os_build=Linux
 os=Linux
 arch_build=x86_64
 arch=x86_64
+# Must match CMAKE_BUILD_TYPE
 build_type=Debug
 
 compiler=gcc
@@ -17,3 +18,5 @@ compiler.libcxx=libstdc++11
 CC=/usr/bin/gcc
 CXX=/usr/bin/g++
 #CONAN_CACERT_PATH=...
+#CXXFLAGS=""
+#CFLAGS=""

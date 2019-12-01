@@ -21,6 +21,10 @@
 #define _USE_MATH_DEFINES
 #endif
 
+#if !defined(NOMINMAX)
+#define NOMINMAX
+#endif
+
 #include "starboard/shared/starboard/player/filter/wsola_internal.h"
 
 #include <algorithm>

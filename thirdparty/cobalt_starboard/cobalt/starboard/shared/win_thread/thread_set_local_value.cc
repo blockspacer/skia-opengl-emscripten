@@ -16,12 +16,16 @@
 
 //#include <pthread.h>
 
-#include "base/threading/thread.h"
+/*#include "base/threading/thread.h"
 #include "base/threading/platform_thread.h"
 #include "base/threading/thread_local_storage.h"
 #include "base/atomicops.h"
 #include "base/logging.h"
-#include "base/synchronization/lock.h"
+#include "base/synchronization/lock.h"*/
+
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+
 #include "build/build_config.h"
 
 #include "starboard/shared/win_thread/thread_local_key_internal.h"
@@ -35,7 +39,9 @@ bool SbThreadSetLocalValue(SbThreadLocalKey key, void* value) {
     return true;
   }*/
 
-  base::internal::PlatformThreadLocalStorage::SetTLSValue(key->key, value);
+  // based on base::internal::PlatformThreadLocalStorage::SetTLSValue(key->key, value);
+  // see https://github.com/blockspacer/skia-opengl-emscripten/blob/7c423190544c8da1bf8ae79b800c9c0c83dd3c6e/src/chromium/base/threading/thread_local_storage_win.cc#L29
+  BOOL ret = TlsSetValue(key->key, value);
 
   return true;
 

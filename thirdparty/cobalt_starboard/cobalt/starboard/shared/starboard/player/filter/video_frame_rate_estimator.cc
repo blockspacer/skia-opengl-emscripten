@@ -12,10 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "starboard/shared/starboard/player/filter/video_frame_rate_estimator.h"
-
 // MSVC++ requires this to be set before any other includes to get M_PI.
 #define _USE_MATH_DEFINES
+#define NOMINMAX
+
+#include "starboard/shared/starboard/player/filter/video_frame_rate_estimator.h"
+
 #include <cmath>
 
 #include "starboard/common/log.h"

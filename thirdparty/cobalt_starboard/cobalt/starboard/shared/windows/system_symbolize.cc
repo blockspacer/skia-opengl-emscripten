@@ -17,10 +17,26 @@
 
 #include "starboard/system.h"
 
-#include "base/third_party/symbolize/symbolize.h"
+//#include "base/third_party/symbolize/symbolize.h"
+
+#include <stddef.h>
+#include <stdint.h>
+
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+
+#include <limits>
+
+#include "starboard/common/log.h"
+#include "starboard/common/string.h"
 
 bool SbSystemSymbolize(const void* address, char* out_buffer, int buffer_size) {
   // I believe this casting-away const in the implementation is better than the
   // alternative of removing const-ness from the address parameter.
-  return google::Symbolize(const_cast<void*>(address), out_buffer, buffer_size);
+  // based on google::Symbolize(const_cast<void*>(address), out_buffer, buffer_size);
+
+  SB_DLOG(WARNING) << "NOTIMPLEMENTED: SbSystemSymbolize";
+  SB_CHECK(false);
+
+  return false;
 }

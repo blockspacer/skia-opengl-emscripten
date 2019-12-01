@@ -15,16 +15,19 @@
 #ifndef STARBOARD_SHARED_WIN_TIME_INTERNAL_H_
 #define STARBOARD_SHARED_WIN_TIME_INTERNAL_H_
 
+#define _WINSOCKAPI_    // stops windows.h including winsock.h
+#define NOMINMAX
+#define WIN32_LEAN_AND_MEAN
+
 #include <time.h>
 
 #include "starboard/shared/internal_only.h"
 #include "starboard/time.h"
 
-#define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 #include <stdint.h> // portable: uint64_t   MSVC: __int64 
 
-// MSVC defines this in winsock2.h!?
+// MSVC defines this in winsock2.h
 typedef struct timeval {
     long tv_sec;
     long tv_usec;

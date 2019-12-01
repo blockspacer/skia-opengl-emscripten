@@ -16,7 +16,9 @@
 #define STARBOARD_SHARED_WIN_THREAD_THREAD_LOCAL_KEY_INTERNAL_H_
 
 //#include <pthread.h>
-#include "base/threading/thread_local_storage.h"
+
+//#include "base/threading/thread_local_storage.h"
+
 #include "build/build_config.h"
 
 #include "starboard/shared/internal_only.h"
@@ -25,7 +27,9 @@
 
 struct SbThreadLocalKeyPrivate {
   // The underlying thread-local variable handle.
-  base::internal::PlatformThreadLocalStorage::TLSKey key;
+  // based on base::internal::PlatformThreadLocalStorage::TLSKey key;
+  // see https://github.com/blockspacer/skia-opengl-emscripten/blob/7318ee910f647ac5bc3337cc2002aa77391d12e6/src/chromium/base/threading/thread_local_storage.h#L57
+  unsigned long key;
 };
 
 #endif  // STARBOARD_SHARED_WIN_THREAD_THREAD_LOCAL_KEY_INTERNAL_H_
