@@ -33,6 +33,237 @@ setup_cmake_build_options(RELEASE DEBUG)
 
 find_package(cobalt_glm REQUIRED)
 
+find_package(chromium_build_util REQUIRED)
+if(TARGET chromium_build_util::chromium_build_util-static)
+  set(build_util_LIB chromium_build_util::chromium_build_util-static)
+else()
+  message(FATAL_ERROR "not supported: using system provided chromium_build_util library")
+endif()
+
+# cobalt
+set(ENABLE_COBALT TRUE CACHE BOOL "ENABLE_COBALT")
+message(STATUS "ENABLE_COBALT = ${ENABLE_COBALT}")
+
+if(ENABLE_COBALT)
+  find_package(cobalt_starboard_headers_only REQUIRED)
+  if(TARGET cobalt_starboard_headers_only::cobalt_starboard_headers_only-static)
+    set(cobalt_starboard_headers_only_LIB cobalt_starboard_headers_only::cobalt_starboard_headers_only-static)
+  else()
+    message(FATAL_ERROR "not supported: using system provided cobalt_starboard_headers_only library")
+  endif()
+
+  find_package(cobalt_starboard REQUIRED)
+  if(TARGET cobalt_starboard::cobalt_starboard-static)
+    set(cobalt_starboard_LIB cobalt_starboard::cobalt_starboard-static)
+  else()
+    message(FATAL_ERROR "not supported: using system provided cobalt_starboard library")
+  endif()
+
+  find_package(cobalt_nanobase REQUIRED)
+  if(TARGET cobalt_nanobase::cobalt_nanobase-static)
+    set(cobalt_nanobase_LIB cobalt_nanobase::cobalt_nanobase-static)
+  else()
+    message(FATAL_ERROR "not supported: using system provided cobalt_nanobase library")
+  endif()
+
+  find_package(cobalt_base REQUIRED)
+  if(TARGET cobalt_base::cobalt_base-static)
+    set(cobalt_base_LIB cobalt_base::cobalt_base-static)
+  else()
+    message(FATAL_ERROR "not supported: using system provided cobalt_base library")
+  endif()
+endif(ENABLE_COBALT)
+
+find_package(chromium_base REQUIRED)
+if(TARGET chromium_base::chromium_base-static)
+  set(base_LIB chromium_base::chromium_base-static)
+else()
+  message(FATAL_ERROR "not supported: using system provided chromium_base library")
+endif()
+
+find_package(chromium_url REQUIRED)
+if(TARGET chromium_url::chromium_url-static)
+  set(url_LIB chromium_url::chromium_url-static)
+else()
+  message(FATAL_ERROR "not supported: using system provided chromium_url library")
+endif()
+
+set(USE_ICU TRUE CACHE BOOL "USE_ICU")
+if(USE_ICU)
+  set(USE_CUSTOM_ICU TRUE)
+endif(USE_ICU)
+
+#
+# ICU
+#
+if(USE_ICU)
+  set(COMMON_FLAGS "${COMMON_FLAGS} -DHAS_ICU=1")
+  if(NOT DEFINED USE_CUSTOM_ICU)
+    message(FATAL_ERROR "need to define USE_CUSTOM_ICU")
+  endif(NOT DEFINED USE_CUSTOM_ICU)
+  if(USE_CUSTOM_ICU)
+    # chromium_icu
+    if(TARGET_LINUX OR TARGET_EMSCRIPTEN)
+      find_package(chromium_icu REQUIRED)
+      if(NOT TARGET chromium_icu::chromium_icu-static)
+        message(FATAL_ERROR "not supported: using system provided chromium_icu library")
+      endif()
+    elseif(TARGET_WINDOWS)
+      # skip
+    else()
+      message(FATAL_ERROR "chromium_icu not found")
+    endif()
+    #
+    set(COMMON_FLAGS "${COMMON_FLAGS} -DUSE_CUSTOM_ICU=1")
+    set(CUSTOM_ICU_LIB chromium_icu::chromium_icu-static) # see icu.cmake
+  else()
+    set(CUSTOM_ICU_LIB icu) # platform specific
+    message(FATAL_ERROR "TODO: supports not only USE_CUSTOM_ICU")
+  endif(USE_CUSTOM_ICU)
+endif(USE_ICU)
+#
+if(NOT DEFINED CUSTOM_ICU_LIB)
+  message(FATAL_ERROR "CUSTOM_ICU_LIB must be defined")
+endif(NOT DEFINED CUSTOM_ICU_LIB)
+
+# TODO: move to base
+# ${dynamic_annotations_LIB}
+if(TARGET_LINUX)
+  # ENABLE_DYNAMIC_ANNOTATIONS option defines DYNAMIC_ANNOTATIONS_ENABLED=1
+  # NOTE: we always need to link with dynamic_annotations
+  set(ENABLE_DYNAMIC_ANNOTATIONS TRUE) # required by tcmalloc
+elseif(TARGET_EMSCRIPTEN OR TARGET_WINDOWS)
+  set(ENABLE_DYNAMIC_ANNOTATIONS FALSE)
+else()
+  message(FATAL_ERROR "unknown platform")
+endif()
+if(NOT DEFINED ENABLE_DYNAMIC_ANNOTATIONS)
+  message(FATAL_ERROR "ENABLE_DYNAMIC_ANNOTATIONS must be defined")
+endif(NOT DEFINED ENABLE_DYNAMIC_ANNOTATIONS)
+
+find_package(chromium_dynamic_annotations REQUIRED)
+if(TARGET chromium_dynamic_annotations::chromium_dynamic_annotations-static)
+  set(dynamic_annotations_LIB chromium_dynamic_annotations::chromium_dynamic_annotations-static)
+else()
+  message(FATAL_ERROR "not supported: using system provided dynamic_annotations library")
+endif()
+
+if(TARGET_LINUX)
+  find_package(chromium_tcmalloc REQUIRED)
+  if(TARGET chromium_tcmalloc::chromium_tcmalloc-static)
+    set(tcmalloc_LIB chromium_tcmalloc::chromium_tcmalloc-static)
+  else()
+    message(FATAL_ERROR "not supported: using system provided chromium_tcmalloc library")
+  endif()
+elseif(TARGET_WINDOWS OR TARGET_EMSCRIPTEN)
+  # skip
+else()
+  message(FATAL_ERROR "platform not supported")
+endif()
+
+#if(TARGET_LINUX)
+#  # xdg_mime
+#  include(xdg_mime.cmake)
+#  # xdg_user_dirs
+#  include(xdg_user_dirs.cmake)
+#elseif(TARGET_WINDOWS OR TARGET_EMSCRIPTEN)
+#  # skip
+#else()
+#  message(FATAL_ERROR "platform not supported")
+#endif()
+
+# xdg_user_dirs
+if(TARGET_LINUX)
+  find_package(chromium_xdg_user_dirs REQUIRED)
+  if(TARGET chromium_xdg_user_dirs::chromium_xdg_user_dirs-static)
+    set(xdg_user_dirs_LIB chromium_xdg_user_dirs::chromium_xdg_user_dirs-static)
+  else()
+    message(FATAL_ERROR "not supported: using system provided xdg_user_dirs library")
+  endif()
+elseif(TARGET_WINDOWS OR TARGET_EMSCRIPTEN)
+  # skip
+else()
+  message(FATAL_ERROR "platform no supported")
+endif()
+
+# xdg_mime
+if(TARGET_LINUX)
+  find_package(chromium_xdg_mime REQUIRED)
+  if(TARGET chromium_xdg_mime::chromium_xdg_mime-static)
+    set(xdg_mime_LIB chromium_xdg_mime::chromium_xdg_mime-static)
+  else()
+    message(FATAL_ERROR "not supported: using system provided xdg_mime library")
+  endif()
+elseif(TARGET_WINDOWS OR TARGET_EMSCRIPTEN)
+  # skip
+else()
+  message(FATAL_ERROR "platform no supported")
+endif()
+
+# libevent
+if(TARGET_LINUX)
+  find_package(chromium_libevent REQUIRED)
+  if(TARGET chromium_libevent::chromium_libevent-static)
+    set(libevent_LIB chromium_libevent::chromium_libevent-static)
+  else()
+    message(FATAL_ERROR "not supported: using system provided libevent library")
+  endif()
+elseif(TARGET_WINDOWS OR TARGET_EMSCRIPTEN)
+  # skip
+else()
+  message(FATAL_ERROR "platform no supported")
+endif()
+
+# modp_b64
+find_package(chromium_modp_b64 REQUIRED)
+if(TARGET chromium_modp_b64::chromium_modp_b64-static)
+  set(modp_b64_LIB chromium_modp_b64::chromium_modp_b64-static)
+else()
+  message(FATAL_ERROR "not supported: using system provided modp_b64 library")
+endif()
+
+set(ENABLE_ZLIB TRUE CACHE BOOL "ENABLE_ZLIB")
+if(TARGET_EMSCRIPTEN)
+  set(USE_SYSTEM_ZLIB TRUE CACHE BOOL "USE_SYSTEM_ZLIB")
+else()
+  set(USE_SYSTEM_ZLIB FALSE CACHE BOOL "USE_SYSTEM_ZLIB")
+endif(TARGET_EMSCRIPTEN)
+
+# chromium_zlib
+if(NOT USE_SYSTEM_ZLIB)
+  find_package(chromium_zlib REQUIRED)
+  if(TARGET chromium_zlib::chromium_zlib-static)
+    if(DEFINED zlib_LIB)
+      message(FATAL_ERROR "REDEFINITION: zlib_LIB")
+    endif(DEFINED zlib_LIB)
+    set(zlib_LIB chromium_zlib::chromium_zlib-static)
+  else()
+    message(FATAL_ERROR "not supported: using system provided chromium_zlib library")
+  endif()
+endif(NOT USE_SYSTEM_ZLIB)
+
+# chromium_libxml
+find_package(chromium_libxml REQUIRED)
+if(TARGET chromium_libxml::chromium_libxml-static)
+  set(libxml_LIB chromium_libxml::chromium_libxml-static)
+else()
+  message(FATAL_ERROR "not supported: using system provided chromium_libxml library")
+endif()
+
+# compact_enc_det
+set(ENABLE_COMPACT_ENC_DET TRUE)
+if(NOT ENABLE_COMPACT_ENC_DET)
+  set(COMMON_FLAGS "${COMMON_FLAGS} -DDISABLE_COMPACT_ENC_DET=1")
+endif(NOT ENABLE_COMPACT_ENC_DET)
+if(ENABLE_COMPACT_ENC_DET)
+  find_package(chromium_compact_enc_det REQUIRED)
+  if(TARGET chromium_compact_enc_det::chromium_compact_enc_det-static)
+    set(ced_LIB chromium_compact_enc_det::chromium_compact_enc_det-static)
+  else()
+    message(FATAL_ERROR "not supported: using system provided compact_enc_det library")
+  endif()
+endif(ENABLE_COMPACT_ENC_DET)
+
 # this sets the paths that cmake will use to locate libs (via the FindXXX.cmake or XXConfig.cmake scripts)
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/)
 list(APPEND CMAKE_PREFIX_PATH ${CMAKE_CURRENT_SOURCE_DIR}/lib/SDL2)
@@ -677,221 +908,6 @@ if(TARGET_EMSCRIPTEN)
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${EMCC_COMMON}")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${EMCC_COMMON}")
 endif(TARGET_EMSCRIPTEN)
-
-find_package(chromium_build_util REQUIRED)
-if(TARGET chromium_build_util::chromium_build_util-static)
-  set(build_util_LIB chromium_build_util::chromium_build_util-static)
-else()
-  message(FATAL_ERROR "not supported: using system provided chromium_build_util library")
-endif()
-
-if(ENABLE_COBALT)
-  find_package(cobalt_starboard_headers_only REQUIRED)
-  if(TARGET cobalt_starboard_headers_only::cobalt_starboard_headers_only-static)
-    set(cobalt_starboard_headers_only_LIB cobalt_starboard_headers_only::cobalt_starboard_headers_only-static)
-  else()
-    message(FATAL_ERROR "not supported: using system provided cobalt_starboard_headers_only library")
-  endif()
-
-  find_package(cobalt_starboard REQUIRED)
-  if(TARGET cobalt_starboard::cobalt_starboard-static)
-    set(cobalt_starboard_LIB cobalt_starboard::cobalt_starboard-static)
-  else()
-    message(FATAL_ERROR "not supported: using system provided cobalt_starboard library")
-  endif()
-
-  find_package(cobalt_nanobase REQUIRED)
-  if(TARGET cobalt_nanobase::cobalt_nanobase-static)
-    set(cobalt_nanobase_LIB cobalt_nanobase::cobalt_nanobase-static)
-  else()
-    message(FATAL_ERROR "not supported: using system provided cobalt_nanobase library")
-  endif()
-
-  find_package(cobalt_base REQUIRED)
-  if(TARGET cobalt_base::cobalt_base-static)
-    set(cobalt_base_LIB cobalt_base::cobalt_base-static)
-  else()
-    message(FATAL_ERROR "not supported: using system provided cobalt_base library")
-  endif()
-endif(ENABLE_COBALT)
-
-find_package(chromium_base REQUIRED)
-if(TARGET chromium_base::chromium_base-static)
-  set(base_LIB chromium_base::chromium_base-static)
-else()
-  message(FATAL_ERROR "not supported: using system provided chromium_base library")
-endif()
-
-find_package(chromium_url REQUIRED)
-if(TARGET chromium_url::chromium_url-static)
-  set(url_LIB chromium_url::chromium_url-static)
-else()
-  message(FATAL_ERROR "not supported: using system provided chromium_url library")
-endif()
-
-#
-# ICU
-#
-if(USE_ICU)
-  set(COMMON_FLAGS "${COMMON_FLAGS} -DHAS_ICU=1")
-  if(NOT DEFINED USE_CUSTOM_ICU)
-    message(FATAL_ERROR "need to define USE_CUSTOM_ICU")
-  endif(NOT DEFINED USE_CUSTOM_ICU)
-  if(USE_CUSTOM_ICU)
-    # chromium_icu
-    if(TARGET_LINUX OR TARGET_EMSCRIPTEN)
-      find_package(chromium_icu REQUIRED)
-      if(NOT TARGET chromium_icu::chromium_icu-static)
-        message(FATAL_ERROR "not supported: using system provided chromium_icu library")
-      endif()
-    elseif(TARGET_WINDOWS)
-      # skip
-    else()
-      message(FATAL_ERROR "chromium_icu not found")
-    endif()
-    #
-    set(COMMON_FLAGS "${COMMON_FLAGS} -DUSE_CUSTOM_ICU=1")
-    set(CUSTOM_ICU_LIB chromium_icu::chromium_icu-static) # see icu.cmake
-  else()
-    set(CUSTOM_ICU_LIB icu) # platform specific
-    message(FATAL_ERROR "TODO: supports not only USE_CUSTOM_ICU")
-  endif(USE_CUSTOM_ICU)
-endif(USE_ICU)
-#
-if(NOT DEFINED CUSTOM_ICU_LIB)
-  message(FATAL_ERROR "CUSTOM_ICU_LIB must be defined")
-endif(NOT DEFINED CUSTOM_ICU_LIB)
-
-# TODO: move to base
-# ${dynamic_annotations_LIB}
-if(TARGET_LINUX)
-  # ENABLE_DYNAMIC_ANNOTATIONS option defines DYNAMIC_ANNOTATIONS_ENABLED=1
-  # NOTE: we always need to link with dynamic_annotations
-  set(ENABLE_DYNAMIC_ANNOTATIONS TRUE) # required by tcmalloc
-elseif(TARGET_EMSCRIPTEN OR TARGET_WINDOWS)
-  set(ENABLE_DYNAMIC_ANNOTATIONS FALSE)
-else()
-  message(FATAL_ERROR "unknown platform")
-endif()
-if(NOT DEFINED ENABLE_DYNAMIC_ANNOTATIONS)
-  message(FATAL_ERROR "ENABLE_DYNAMIC_ANNOTATIONS must be defined")
-endif(NOT DEFINED ENABLE_DYNAMIC_ANNOTATIONS)
-
-find_package(chromium_dynamic_annotations REQUIRED)
-if(TARGET chromium_dynamic_annotations::chromium_dynamic_annotations-static)
-  set(dynamic_annotations_LIB chromium_dynamic_annotations::chromium_dynamic_annotations-static)
-else()
-  message(FATAL_ERROR "not supported: using system provided dynamic_annotations library")
-endif()
-
-if(TARGET_LINUX)
-  find_package(chromium_tcmalloc REQUIRED)
-  if(TARGET chromium_tcmalloc::chromium_tcmalloc-static)
-    set(tcmalloc_LIB chromium_tcmalloc::chromium_tcmalloc-static)
-  else()
-    message(FATAL_ERROR "not supported: using system provided chromium_tcmalloc library")
-  endif()
-elseif(TARGET_WINDOWS OR TARGET_EMSCRIPTEN)
-  # skip
-else()
-  message(FATAL_ERROR "platform not supported")
-endif()
-
-#if(TARGET_LINUX)
-#  # xdg_mime
-#  include(xdg_mime.cmake)
-#  # xdg_user_dirs
-#  include(xdg_user_dirs.cmake)
-#elseif(TARGET_WINDOWS OR TARGET_EMSCRIPTEN)
-#  # skip
-#else()
-#  message(FATAL_ERROR "platform not supported")
-#endif()
-
-# xdg_user_dirs
-if(TARGET_LINUX)
-  find_package(chromium_xdg_user_dirs REQUIRED)
-  if(TARGET chromium_xdg_user_dirs::chromium_xdg_user_dirs-static)
-    set(xdg_user_dirs_LIB chromium_xdg_user_dirs::chromium_xdg_user_dirs-static)
-  else()
-    message(FATAL_ERROR "not supported: using system provided xdg_user_dirs library")
-  endif()
-elseif(TARGET_WINDOWS OR TARGET_EMSCRIPTEN)
-  # skip
-else()
-  message(FATAL_ERROR "platform no supported")
-endif()
-
-# xdg_mime
-if(TARGET_LINUX)
-  find_package(chromium_xdg_mime REQUIRED)
-  if(TARGET chromium_xdg_mime::chromium_xdg_mime-static)
-    set(xdg_mime_LIB chromium_xdg_mime::chromium_xdg_mime-static)
-  else()
-    message(FATAL_ERROR "not supported: using system provided xdg_mime library")
-  endif()
-elseif(TARGET_WINDOWS OR TARGET_EMSCRIPTEN)
-  # skip
-else()
-  message(FATAL_ERROR "platform no supported")
-endif()
-
-# libevent
-if(TARGET_LINUX)
-  find_package(chromium_libevent REQUIRED)
-  if(TARGET chromium_libevent::chromium_libevent-static)
-    set(libevent_LIB chromium_libevent::chromium_libevent-static)
-  else()
-    message(FATAL_ERROR "not supported: using system provided libevent library")
-  endif()
-elseif(TARGET_WINDOWS OR TARGET_EMSCRIPTEN)
-  # skip
-else()
-  message(FATAL_ERROR "platform no supported")
-endif()
-
-# modp_b64
-find_package(chromium_modp_b64 REQUIRED)
-if(TARGET chromium_modp_b64::chromium_modp_b64-static)
-  set(modp_b64_LIB chromium_modp_b64::chromium_modp_b64-static)
-else()
-  message(FATAL_ERROR "not supported: using system provided modp_b64 library")
-endif()
-
-# chromium_zlib
-if(NOT USE_SYSTEM_ZLIB)
-  find_package(chromium_zlib REQUIRED)
-  if(TARGET chromium_zlib::chromium_zlib-static)
-    if(DEFINED zlib_LIB)
-      message(FATAL_ERROR "REDEFINITION: zlib_LIB")
-    endif(DEFINED zlib_LIB)
-    set(zlib_LIB chromium_zlib::chromium_zlib-static)
-  else()
-    message(FATAL_ERROR "not supported: using system provided chromium_zlib library")
-  endif()
-endif(NOT USE_SYSTEM_ZLIB)
-
-# chromium_libxml
-find_package(chromium_libxml REQUIRED)
-if(TARGET chromium_libxml::chromium_libxml-static)
-  set(libxml_LIB chromium_libxml::chromium_libxml-static)
-else()
-  message(FATAL_ERROR "not supported: using system provided chromium_libxml library")
-endif()
-
-# compact_enc_det
-set(ENABLE_COMPACT_ENC_DET TRUE)
-if(NOT ENABLE_COMPACT_ENC_DET)
-  set(COMMON_FLAGS "${COMMON_FLAGS} -DDISABLE_COMPACT_ENC_DET=1")
-endif(NOT ENABLE_COMPACT_ENC_DET)
-if(ENABLE_COMPACT_ENC_DET)
-  find_package(chromium_compact_enc_det REQUIRED)
-  if(TARGET chromium_compact_enc_det::chromium_compact_enc_det-static)
-    set(ced_LIB chromium_compact_enc_det::chromium_compact_enc_det-static)
-  else()
-    message(FATAL_ERROR "not supported: using system provided compact_enc_det library")
-  endif()
-endif(ENABLE_COMPACT_ENC_DET)
 
 #
 # HARFBUZZ

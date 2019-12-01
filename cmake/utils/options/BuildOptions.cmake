@@ -1,4 +1,4 @@
-include_guard( DIRECTORY )
+﻿include_guard( DIRECTORY )
 
 #message(STATUS "CMAKE_SYSTEM_NAME = ${CMAKE_SYSTEM_NAME}")
 
@@ -47,7 +47,7 @@ if(NOT RELEASE_BUILD)
   set(COMMON_FLAGS "${COMMON_FLAGS} -D_DEBUG=1") #
   # see https://github.com/blockspacer/cobalt-clone-28052019/blob/master/src/cobalt/renderer/pipeline.cc#L119
   #set(COMMON_FLAGS "${COMMON_FLAGS} -DENABLE_DEBUGGER=1")
-endif(RELEASE_BUILD)
+endif(NOT RELEASE_BUILD)
 
 set(OPTIMIZE_LEVEL "" CACHE STRING "for example, -O0")
 if(OPTIMIZE_LEVEL)
