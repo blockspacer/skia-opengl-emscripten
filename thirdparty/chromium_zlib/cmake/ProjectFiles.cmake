@@ -10,6 +10,17 @@ if(TARGET_LINUX) # TODO
   #find_package(ZLIB)
 endif()
 
+if(TARGET_LINUX OR TARGET_WINDOWS)
+  list(APPEND zlib_SOURCES
+    # TODO: https://github.com/chromium/chromium/blob/18f14dd8fb096b0b895832a7dbaec02383bdc343/third_party/zlib/BUILD.gn
+    ${zlib_DIR}simd_stub.c
+  )
+elseif(TARGET_EMSCRIPTEN)
+  # skip
+else()
+  message(FATAL_ERROR "unknown platform")
+endif()
+
 list(APPEND zlib_SOURCES
   ${zlib_DIR}adler32.c
   #${zlib_DIR}chromeconf.h
