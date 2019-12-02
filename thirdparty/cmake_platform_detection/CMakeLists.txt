@@ -11,6 +11,17 @@ set(STATIC_LIB_NAME ${PROJECT_NAME}-static)
 
 # --------------------------- conan configuration ------------------------------
 
+# Conan package manager List of packages used by the project is container in
+# conanfile.py
+option(CONAN_AUTO_INSTALL "Let CMake call conan install automatically" OFF)
+if (CONAN_AUTO_INSTALL)
+  set(CONAN_PROFILE
+      "default"
+      CACHE STRING "Conan profile to use during installation")
+  include(cmake/conan-auto-install.cmake)
+  conan_auto_install(${CONAN_PROFILE})
+endif()
+
 if(EXISTS "${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
   list(APPEND CMAKE_MODULE_PATH ${CMAKE_BINARY_DIR}/)
   include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)

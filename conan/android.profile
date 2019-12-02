@@ -11,6 +11,7 @@ build_type=Debug
 [build_requires]
 android_ndk_installer/r20@bincrafters/stable
 #ninja_installer/1.8.2@bincrafters/stable
+cmake_installer/3.15.5@conan/stable
 [options]
 [env]
 #ANDROID_NDK_ROOT=/home/conan/android-ndk-r18b

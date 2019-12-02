@@ -15,6 +15,17 @@ set(COBALT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/cobalt/)
 
 # --------------------------- conan configuration ------------------------------
 
+# Conan package manager List of packages used by the project is container in
+# conanfile.py
+option(CONAN_AUTO_INSTALL "Let CMake call conan install automatically" OFF)
+if (CONAN_AUTO_INSTALL)
+  set(CONAN_PROFILE
+      "default"
+      CACHE STRING "Conan profile to use during installation")
+  include(cmake/conan-auto-install.cmake)
+  conan_auto_install(${CONAN_PROFILE})
+endif()
+
 if(EXISTS "${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
   list(APPEND CMAKE_MODULE_PATH ${CMAKE_BINARY_DIR}/)
   include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
@@ -33,6 +44,7 @@ find_package(cmake_platform_detection REQUIRED)
 run_cmake_platform_detection()
 
 find_package(cmake_build_options REQUIRED)
+setup_default_build_type(RELEASE)
 setup_cmake_build_options(RELEASE DEBUG)
 
 find_package(cobalt_starboard_headers_only REQUIRED)

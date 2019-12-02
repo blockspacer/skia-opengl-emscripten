@@ -33,6 +33,8 @@ class skg_conan_project(ConanFile):
     topics = ('c++')
 
     options = {
+        "shared": [True, False],
+        "debug": [True, False],
         "enable_tests": [True, False],
         "enable_sanitizers": [True, False],
         "enable_cobalt": [True, False],
@@ -41,6 +43,8 @@ class skg_conan_project(ConanFile):
     }
 
     default_options = (
+        "shared=False",
+        "debug=False",
         "enable_tests=False",
         "enable_sanitizers=False",
         "enable_cobalt=True",
@@ -55,7 +59,7 @@ class skg_conan_project(ConanFile):
     _build_subfolder = "build_subfolder"
 
     # NOTE: no cmake_find_package due to custom FindXXX.cmake
-    generators = "cmake", "cmake_paths"
+    generators = "cmake", "cmake_paths", "virtualenv"
 
     # Packages the license for the conanfile.py
     #exports = ["LICENSE.md"]
@@ -123,6 +127,9 @@ class skg_conan_project(ConanFile):
         cmake.parallel = True
         cmake.verbose = True
 
+        if self.options.shared:
+            cmake.definitions["BUILD_SHARED_LIBS"] = "ON"
+
         def add_cmake_option(var_name, value):
             value_str = "{}".format(value)
             var_value = "ON" if value_str == 'True' else "OFF" if value_str == 'False' else value_str
@@ -159,8 +166,17 @@ class skg_conan_project(ConanFile):
 
         # The CMakeLists.txt file must be in `source_folder`
         cmake.configure(source_folder=".")
-        cmake.build()
-        #cmake.test()
+
+        cpu_count = tools.cpu_count()
+        self.output.info('Detected %s CPUs' % (cpu_count))
+
+        # -j flag for parallel builds
+        cmake.build(args=["--", "-j%s" % cpu_count])
+
+        if self.options.enable_tests:
+          self.output.info('Running tests')
+          self.run('ctest --parallel %s' % (cpu_count))
+          # TODO: use cmake.test()
 
     # Importing files copies files from the local store to your project.
     def imports(self):
@@ -169,6 +185,7 @@ class skg_conan_project(ConanFile):
         self.copy("license*", dst=dest, ignore_case=True)
         self.copy("*.dll", dst=dest, src="bin")
         self.copy("*.so*", dst=dest, src="bin")
+        self.copy("*.pdb", dst=dest, src="lib")
         self.copy("*.dylib*", dst=dest, src="lib")
         self.copy("*.lib*", dst=dest, src="lib")
         self.copy("*.a*", dst=dest, src="lib")
@@ -180,7 +197,17 @@ class skg_conan_project(ConanFile):
     # from the CMake install automatically.
     # For instance, you need to specify the lib directories, etc.
     def package_info(self):
-        self.cpp_info.libs = ["SKG"]
+        #self.cpp_info.libs = ["SKG"]
+
+        self.cpp_info.includedirs = ["include"]
+        self.cpp_info.libs = tools.collect_libs(self)
+        self.cpp_info.libdirs = ["lib"]
+        self.cpp_info.bindirs = ["bin"]
+        self.env_info.LD_LIBRARY_PATH.append(
+            os.path.join(self.package_folder, "lib"))
+        self.env_info.PATH.append(os.path.join(self.package_folder, "bin"))
+        for libpath in self.deps_cpp_info.lib_paths:
+            self.env_info.LD_LIBRARY_PATH.append(libpath)
 
         # in linux we need to link also with these libs
         #if self.settings.os == "Linux":

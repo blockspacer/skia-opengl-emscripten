@@ -16,6 +16,7 @@ build_type=Debug
 # NOTE: Use latest emscripten from official website, not emsdk_installer! provide CC and CXX in env
 emsdk_installer/1.38.31@bincrafters/stable
 #ninja_installer/1.8.2@bincrafters/stable
+cmake_installer/3.15.5@conan/stable
 [env]
 # NOTE: -g4: Preserve LLVM debug information. This is the highest level of debuggability
 CXXFLAGS="-g4 -UHAVE_PTHREAD -UEMSCRIPTEN_SUPPORTS_ASYNC_RUN -DDISABLE_PTHREADS=1 -DDISABLE_LOCKS=1 -UUSE_FAKE_THREAD_LS -DWEB_ASSEMBLY=1 -DENABLE_EMBIND=1 -DWEBGL2_SUPPORT=1 -DIS_WEBGL=1 -DEMSCRIPTEN_SUPPORTS_ASYNC_RUN=1 -fno-exceptions"

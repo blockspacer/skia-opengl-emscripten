@@ -11,10 +11,14 @@ class cobalt_glmConan(ConanFile):
 
     # TODO: unused option
     options = {
+        "shared": [True, False],
+        "debug": [True, False],
         "enable_tests": [True, False]
     }
 
     default_options = (
+        "shared=False",
+        "debug=False",
         "enable_tests=False"
     )
 

@@ -17,6 +17,7 @@ compiler.libcxx=libstdc++11
 
 [build_requires]
 #ninja_installer/1.8.2@bincrafters/stable
+cmake_installer/3.15.5@conan/stable
 
 [env]
 CC=/usr/bin/clang
