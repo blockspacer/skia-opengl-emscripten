@@ -16,7 +16,12 @@ if(TARGET_EMSCRIPTEN OR TARGET_LINUX)
     #
     ${UI_VIEWS_DIR}linux_ui/linux_ui.cc
     ${UI_VIEWS_DIR}linux_ui/status_icon_linux.cc
-    ${UI_VIEWS_DIR}linux_ui/window_button_order_provider.cc
+    #
+    # renamed due to duplicate entries
+    # (files with identical base names) NOT supported by emscripten
+    ${UI_VIEWS_DIR}linux_ui/linux_ui_window_button_order_provider.cc
+    #${UI_VIEWS_DIR}linux_ui/window_button_order_provider.cc
+    #
   )
 elseif(TARGET_WINDOWS)
   # TODO
