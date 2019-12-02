@@ -320,3 +320,7 @@ target_compile_definitions(UI_EVENTS PRIVATE
 target_compile_definitions(UI_EVENTS PUBLIC
   UI_EVENTS_PORT=1
 )
+
+target_compile_options(UI_EVENTS PRIVATE
+  -Wno-c++11-narrowing
+)

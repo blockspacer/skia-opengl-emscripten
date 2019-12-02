@@ -171,3 +171,7 @@ target_compile_definitions(UI_DISPLAY PRIVATE
 target_compile_definitions(UI_DISPLAY PUBLIC
   UI_DISPLAY_PORTED=1
 )
+
+target_compile_options(UI_DISPLAY PRIVATE
+  -Wno-c++11-narrowing
+)

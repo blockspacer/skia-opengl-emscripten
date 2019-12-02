@@ -384,3 +384,7 @@ target_include_directories(UI_GFX PRIVATE
 target_compile_definitions(UI_GFX PRIVATE
   GFX_IMPLEMENTATION=1
 )
+
+target_compile_options(UI_GFX PRIVATE
+  -Wno-c++11-narrowing
+)

@@ -890,3 +890,7 @@ target_compile_definitions(UI_VIEWS PUBLIC
   UI_VIEWS_PORT=1
   ${UI_VIEWS_PUBLIC_DEFS}
 )
+
+target_compile_options(UI_VIEWS PRIVATE
+  -Wno-c++11-narrowing
+)
