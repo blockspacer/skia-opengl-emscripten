@@ -102,3 +102,7 @@
 	path = thirdparty/cobalt_glm
 	url = https://github.com/blockspacer/cobalt_glm_conan.git
 	branch = master
+[submodule "thirdparty/cobalt_nanobase"]
+	path = thirdparty/cobalt_nanobase
+	url = https://github.com/blockspacer/cobalt_nanobase_conan.git
+	branch = master
