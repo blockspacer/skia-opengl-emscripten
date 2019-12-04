@@ -38,3 +38,7 @@
 	path = thirdparty/chromium_base
 	url = https://github.com/blockspacer/chromium_base_conan.git
 	branch = master
+[submodule "thirdparty/chromium_build_util"]
+	path = thirdparty/chromium_build_util
+	url = https://github.com/blockspacer/chromium_build_util_conan.git
+	branch = master
