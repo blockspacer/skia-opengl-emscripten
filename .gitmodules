@@ -46,3 +46,7 @@
 	path = thirdparty/chromium_compact_enc_det
 	url = https://github.com/blockspacer/chromium_compact_enc_det_conan.git
 	branch = master
+[submodule "thirdparty/chromium_dynamic_annotations"]
+	path = thirdparty/chromium_dynamic_annotations
+	url = https://github.com/blockspacer/chromium_dynamic_annotations_conan.git
+	branch = master
