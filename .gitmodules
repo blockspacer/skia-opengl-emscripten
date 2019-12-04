@@ -74,3 +74,7 @@
 	path = thirdparty/chromium_url
 	url = https://github.com/blockspacer/chromium_url_conan.git
 	branch = master
+[submodule "thirdparty/chromium_xdg_mime"]
+	path = thirdparty/chromium_xdg_mime
+	url = https://github.com/blockspacer/chromium_xdg_mime_conan.git
+	branch = master
