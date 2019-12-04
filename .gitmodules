@@ -34,3 +34,7 @@
 [submodule "submodules/CXTPL"]
   path = submodules/CXTPL
   url = http://github.com/blockspacer/CXTPL.git
+[submodule "thirdparty/chromium_base"]
+	path = thirdparty/chromium_base
+	url = https://github.com/blockspacer/chromium_base_conan.git
+	branch = master
