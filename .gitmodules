@@ -94,3 +94,7 @@
 	path = thirdparty/cmake_platform_detection
 	url = https://github.com/blockspacer/cmake_platform_detection_conan.git
 	branch = master
+[submodule "thirdparty/cobalt_base"]
+	path = thirdparty/cobalt_base
+	url = https://github.com/blockspacer/cobalt_base_conan.git
+	branch = master
