@@ -90,3 +90,7 @@
 	path = thirdparty/cmake_build_options
 	url = https://github.com/blockspacer/cmake_build_options_conan.git
 	branch = master
+[submodule "thirdparty/cmake_platform_detection"]
+	path = thirdparty/cmake_platform_detection
+	url = https://github.com/blockspacer/cmake_platform_detection_conan.git
+	branch = master
