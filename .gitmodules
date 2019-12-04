@@ -62,3 +62,7 @@
 	path = thirdparty/chromium_libxml
 	url = https://github.com/blockspacer/chromium_libxml_conan.git
 	branch = master
+[submodule "thirdparty/chromium_modp_b64"]
+	path = thirdparty/chromium_modp_b64
+	url = https://github.com/blockspacer/chromium_modp_b64_conan.git
+	branch = master
