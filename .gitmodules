@@ -54,3 +54,7 @@
 	path = thirdparty/chromium_icu
 	url = https://github.com/blockspacer/chromium_icu_conan.git
 	branch = master
+[submodule "thirdparty/chromium_libevent"]
+	path = thirdparty/chromium_libevent
+	url = https://github.com/blockspacer/chromium_libevent_conan.git
+	branch = master
