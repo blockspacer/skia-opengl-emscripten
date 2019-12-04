@@ -86,3 +86,7 @@
 	path = thirdparty/chromium_zlib
 	url = https://github.com/blockspacer/chromium_zlib_conan.git
 	branch = master
+[submodule "thirdparty/cmake_build_options"]
+	path = thirdparty/cmake_build_options
+	url = https://github.com/blockspacer/cmake_build_options_conan.git
+	branch = master
