@@ -70,3 +70,7 @@
 	path = thirdparty/chromium_tcmalloc
 	url = https://github.com/blockspacer/chromium_tcmalloc_conan.git
 	branch = master
+[submodule "thirdparty/chromium_url"]
+	path = thirdparty/chromium_url
+	url = https://github.com/blockspacer/chromium_url_conan.git
+	branch = master
