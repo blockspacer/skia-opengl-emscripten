@@ -50,3 +50,7 @@
 	path = thirdparty/chromium_dynamic_annotations
 	url = https://github.com/blockspacer/chromium_dynamic_annotations_conan.git
 	branch = master
+[submodule "thirdparty/chromium_icu"]
+	path = thirdparty/chromium_icu
+	url = https://github.com/blockspacer/chromium_icu_conan.git
+	branch = master
