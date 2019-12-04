@@ -42,3 +42,7 @@
 	path = thirdparty/chromium_build_util
 	url = https://github.com/blockspacer/chromium_build_util_conan.git
 	branch = master
+[submodule "thirdparty/chromium_compact_enc_det"]
+	path = thirdparty/chromium_compact_enc_det
+	url = https://github.com/blockspacer/chromium_compact_enc_det_conan.git
+	branch = master
