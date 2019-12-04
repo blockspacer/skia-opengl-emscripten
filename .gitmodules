@@ -106,3 +106,7 @@
 	path = thirdparty/cobalt_nanobase
 	url = https://github.com/blockspacer/cobalt_nanobase_conan.git
 	branch = master
+[submodule "thirdparty/cobalt_starboard"]
+	path = thirdparty/cobalt_starboard
+	url = https://github.com/blockspacer/cobalt_starboard_conan.git
+	branch = master
