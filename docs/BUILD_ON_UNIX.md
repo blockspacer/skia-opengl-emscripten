@@ -81,6 +81,16 @@ cmake -DEXTRA_OPTS="conan/stable;--profile;emscripten" -P tools/buildConanThirdp
 
 Change `--profile;emscripten` to valid conan profile name.
 
+## Add conan remotes
+
+To be able to add the list of dependency remotes please type the following command:
+
+```bash
+cmake -E time conan config install conan/remotes/
+# OR:
+# cmake -E time conan config install conan/remotes_disabled_ssl/
+```
+
 ## WASM
 
 Download, install & configure emscripten as per your environment requires:
