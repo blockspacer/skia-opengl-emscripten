@@ -1,12 +1,44 @@
 # cmake utils
 
+macro(build_type_to_string)
+  # user-provided: supported build types
+  set(options SILENT FORCE RELEASE DEBUG PROFILE MINSIZEREL RELWITHDEBINFO COVERAGE DOCS TEST CHECK)
+  set(oneValueArgs OUT_VAR)
+  cmake_parse_arguments(ARGUMENTS "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN} )
+
+  if(ARGUMENTS_RELEASE)
+    set(${ARGUMENTS_OUT_VAR} "Release")
+  elseif(ARGUMENTS_DEBUG)
+    set(${ARGUMENTS_OUT_VAR} "Debug")
+  elseif(ARGUMENTS_PROFILE)
+    set(${ARGUMENTS_OUT_VAR} "Profile")
+  elseif(ARGUMENTS_MINSIZEREL)
+    set(${ARGUMENTS_OUT_VAR} "MinSizeRel")
+  elseif(ARGUMENTS_RELWITHDEBINFO)
+    set(${ARGUMENTS_OUT_VAR} "RelWithDebInfo")
+  elseif(ARGUMENTS_COVERAGE)
+    set(${ARGUMENTS_OUT_VAR} "Coverage")
+  elseif(ARGUMENTS_DOCS)
+    set(${ARGUMENTS_OUT_VAR} "Docs")
+  elseif(ARGUMENTS_TEST)
+    set(${ARGUMENTS_OUT_VAR} "Test")
+  elseif(ARGUMENTS_CHECK)
+    set(${ARGUMENTS_OUT_VAR} "Check")
+  else()
+    message(FATAL_ERROR "(build_type_to_string)
+      unknown build type")
+  endif()
+endmacro(build_type_to_string)
+
 #
 # USAGE:
 #  setup_default_build_type(RELEASE)
+#  setup_default_build_type(RELEASE FORCE)
+#  setup_default_build_type(RELEASE SILENT)
 #
 macro(setup_default_build_type)
   # user-provided: supported build types
-  set(options RELEASE DEBUG PROFILE MINSIZEREL RELWITHDEBINFO COVERAGE DOCS TEST CHECK)
+  set(options SILENT FORCE RELEASE DEBUG PROFILE MINSIZEREL RELWITHDEBINFO COVERAGE DOCS TEST CHECK)
   cmake_parse_arguments(ARGUMENTS "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN} )
 
   if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
@@ -24,38 +56,26 @@ macro(setup_default_build_type)
         "Check")
   endif(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
 
-  if(ARGUMENTS_RELEASE)
-    set(build_type "Release")
-  elseif(ARGUMENTS_DEBUG)
-    set(build_type "Debug")
-  elseif(ARGUMENTS_PROFILE)
-    set(build_type "Profile")
-  elseif(ARGUMENTS_MINSIZEREL)
-    set(build_type "MinSizeRel")
-  elseif(ARGUMENTS_RELWITHDEBINFO)
-    set(build_type "RelWithDebInfo")
-  elseif(ARGUMENTS_COVERAGE)
-    set(build_type "Coverage")
-  elseif(ARGUMENTS_DOCS)
-    set(build_type "Docs")
-  elseif(ARGUMENTS_TEST)
-    set(build_type "Test")
-  elseif(ARGUMENTS_CHECK)
-    set(build_type "Check")
-  else()
-    message(FATAL_ERROR "(setup_default_build_type)
-      unknown build type")
-  endif()
+  if(NOT CMAKE_BUILD_TYPE OR ARGUMENTS_FORCE)
+    build_type_to_string(
+      ${ARGN} # original arguments
+      OUT_VAR build_type)
+    #
+    if(NOT build_type)
+      message(FATAL_ERROR "(setup_default_build_type)
+        unknown build type")
+    endif(NOT build_type)
 
-  if(CMAKE_BUILD_TYPE)
-    message(WARNING "(setup_default_build_type)
-      changed build type from CMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
-      to ${build_type}")
-  endif(CMAKE_BUILD_TYPE)
+    if(NOT ARGUMENTS_SILENT)
+      message(WARNING "(setup_default_build_type)
+        changed build type from CMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+        to ${build_type}")
+    endif(NOT ARGUMENTS_SILENT)
 
-  set(CMAKE_BUILD_TYPE
-      "${build_type}"
-      CACHE STRING "Choose the type of build." FORCE)
+    set(CMAKE_BUILD_TYPE
+        "${build_type}"
+        CACHE STRING "Choose the type of build." FORCE)
+  endif(NOT CMAKE_BUILD_TYPE OR ARGUMENTS_FORCE)
 endmacro(setup_default_build_type)
 
 #
