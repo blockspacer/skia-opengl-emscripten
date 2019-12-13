@@ -132,87 +132,105 @@ endmacro(conan_build_target_if)
 set(THIRDPARTY_DIR ${CURRENT_SCRIPT_DIR}/../thirdparty/)
 
 # provides helpful cmake macros
-conan_build_target_if("cmake_platform_detection"
-  "${THIRDPARTY_DIR}cmake_platform_detection"
+conan_build_target_if(
+  "cmake_platform_detection" # target to clean
+  "${THIRDPARTY_DIR}cmake_platform_detection" # target to build
   USE_CMAKE_PLATFORM_DETECTION)
 
 # provides helpful cmake macros
-conan_build_target_if("cmake_build_options"
-  "${THIRDPARTY_DIR}cmake_build_options"
+conan_build_target_if(
+  "cmake_build_options" # target to clean
+  "${THIRDPARTY_DIR}cmake_build_options" # target to build
   USE_CMAKE_BUILD_OPTIONS)
 
-conan_build_target_if("cobalt_glm"
-  "${THIRDPARTY_DIR}cobalt_glm"
+conan_build_target_if(
+  "cobalt_glm" # target to clean
+  "${THIRDPARTY_DIR}cobalt_glm" # target to build
   USE_GLM)
 
 # provides build/build_config.h
-conan_build_target_if("chromium_build_util"
-  "${THIRDPARTY_DIR}chromium_build_util"
+conan_build_target_if(
+  "chromium_build_util" # target to clean
+  "${THIRDPARTY_DIR}chromium_build_util" # target to build
   USE_CHROMIUM_BUILD_UTIL)
 
-conan_build_target_if("chromium_icu"
-  "${THIRDPARTY_DIR}chromium_icu"
+conan_build_target_if(
+  "chromium_icu" # target to clean
+  "${THIRDPARTY_DIR}chromium_icu" # target to build
   USE_ICU)
 
-conan_build_target_if("chromium_libevent"
-  "${THIRDPARTY_DIR}chromium_libevent"
+conan_build_target_if(
+  "chromium_libevent" # target to clean
+  "${THIRDPARTY_DIR}chromium_libevent" # target to build
   USE_LIBEVENT)
 
-conan_build_target_if("chromium_dynamic_annotations"
-  "${THIRDPARTY_DIR}chromium_dynamic_annotations"
+conan_build_target_if(
+  "chromium_dynamic_annotations" # target to clean
+  "${THIRDPARTY_DIR}chromium_dynamic_annotations" # target to build
   USE_DYNAMIC_ANNOTATIONS)
 
-conan_build_target_if("chromium_tcmalloc"
+conan_build_target_if(
+  "chromium_tcmalloc" # target to clean
   "${THIRDPARTY_DIR}chromium_tcmalloc"
   USE_TCMALLOC)
 
-conan_build_target_if("chromium_xdg_mime"
-  "${THIRDPARTY_DIR}chromium_xdg_mime"
+conan_build_target_if(
+  "chromium_xdg_mime" # target to clean
+  "${THIRDPARTY_DIR}chromium_xdg_mime" # target to build
   USE_XDG_MIME)
 
-conan_build_target_if("chromium_xdg_user_dirs"
-  "${THIRDPARTY_DIR}chromium_xdg_user_dirs"
+conan_build_target_if(
+  "chromium_xdg_user_dirs" # target to clean
+  "${THIRDPARTY_DIR}chromium_xdg_user_dirs" # target to build
   USE_XDG_USER_DIRS)
 
-conan_build_target_if("chromium_compact_enc_det"
-  "${THIRDPARTY_DIR}chromium_compact_enc_det"
+conan_build_target_if(
+  "chromium_compact_enc_det" # target to clean
+  "${THIRDPARTY_DIR}chromium_compact_enc_det" # target to build
   USE_CED)
 
-conan_build_target_if("chromium_modp_b64"
-  "${THIRDPARTY_DIR}chromium_modp_b64"
+conan_build_target_if(
+  "chromium_modp_b64" # target to clean
+  "${THIRDPARTY_DIR}chromium_modp_b64" # target to build
   USE_MODP_B64)
 
-conan_build_target_if("chromium_zlib"
-  "${THIRDPARTY_DIR}chromium_zlib"
+conan_build_target_if(
+  "chromium_zlib" # target to clean
+  "${THIRDPARTY_DIR}chromium_zlib" # target to build
   USE_ZLIB)
 
 if(ENABLE_COBALT)
-  conan_build_target_if("cobalt_starboard_headers_only"
-    "${THIRDPARTY_DIR}cobalt_starboard_headers_only"
+  conan_build_target_if(
+    "cobalt_starboard_headers_only" # target to clean
+    "${THIRDPARTY_DIR}cobalt_starboard_headers_only" # target to build
     USE_COBALT_HEADERS)
 endif(ENABLE_COBALT)
 
 if(ENABLE_COBALT)
-  conan_build_target_if("cobalt_starboard"
-    "${THIRDPARTY_DIR}cobalt_starboard"
+  conan_build_target_if(
+    "cobalt_starboard" # target to clean
+    "${THIRDPARTY_DIR}cobalt_starboard" # target to build
     USE_COBALT_STARBOARD)
 endif(ENABLE_COBALT)
 
-conan_build_target_if("chromium_libxml"
-  "${THIRDPARTY_DIR}chromium_libxml"
+conan_build_target_if(
+  "chromium_libxml" # target to clean
+  "${THIRDPARTY_DIR}chromium_libxml" # target to build
   USE_LIBXML)
 
 if(USE_BASE)
   # NOTE: depends on cobalt_starboard_headers_only
   # NOTE: shared between cobalt and chromium libs
-  conan_build_target_if("chromium_base"
-    "${THIRDPARTY_DIR}chromium_base"
+  conan_build_target_if(
+    "chromium_base" # target to clean
+    "${THIRDPARTY_DIR}chromium_base" # target to build
     USE_CHROMIUM_BASE)
 endif(USE_BASE)
 
 # NOTE: shared between cobalt and chromium libs
-conan_build_target_if("chromium_url"
-  "${THIRDPARTY_DIR}chromium_url"
+conan_build_target_if(
+  "chromium_url" # target to clean
+  "${THIRDPARTY_DIR}chromium_url" # target to build
   USE_GURL)
 
 if(ENABLE_COBALT)
@@ -225,12 +243,14 @@ if(ENABLE_COBALT)
     #conan_remove_target("cobalt_starboard_platform")
     #conan_create_target(${THIRDPARTY_DIR}cobalt_starboard_platform)
 
-    conan_build_target_if("cobalt_nanobase"
-      "${THIRDPARTY_DIR}cobalt_nanobase"
+    conan_build_target_if(
+      "cobalt_nanobase" # target to clean
+      "${THIRDPARTY_DIR}cobalt_nanobase" # target to build
       USE_COBALT_NANOBASE)
 
-    conan_build_target_if("cobalt_base"
-      "${THIRDPARTY_DIR}cobalt_base"
+    conan_build_target_if(
+      "cobalt_base" # target to clean
+      "${THIRDPARTY_DIR}cobalt_base" # target to build
       USE_COBALT_BASE)
 endif(ENABLE_COBALT)
 
