@@ -38,8 +38,12 @@ else()
   message (FATAL_ERROR "must use conan")
 endif()
 
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/)
+
 find_package(cmake_platform_detection REQUIRED)
 run_cmake_platform_detection()
+# NOTE: perform platform checks before everything else
+include(cmake/PlatformChecks)
 
 find_package(cmake_build_options REQUIRED)
 setup_default_build_type(RELEASE)
@@ -62,11 +66,7 @@ else()
   message(FATAL_ERROR "not supported: using system provided chromium_build_util library")
 endif()
 
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/)
-
 set(STARBOARD_DIR "${CMAKE_CURRENT_SOURCE_DIR}/cobalt/starboard")
-
-include(cmake/PlatformChecks)
 
 include(cmake/CommonOptions)
 
