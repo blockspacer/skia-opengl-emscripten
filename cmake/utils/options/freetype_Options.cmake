@@ -5,6 +5,7 @@ macro(find_freetype)
     # skip
   elseif(TARGET_LINUX OR TARGET_WINDOWS)
     find_package(Freetype)
+    message(STATUS "FREETYPE_LIBRARIES = ${FREETYPE_LIBRARIES} ")
   else()
     message(FATAL_ERROR "platform not supported")
   endif()
