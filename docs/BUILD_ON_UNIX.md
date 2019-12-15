@@ -76,10 +76,17 @@ See https://github.com/blockspacer/CXTPL#how-to-build
 ## Install conan deps from local dir
 
 ```bash
-cmake -DEXTRA_OPTS="conan/stable;--profile;emscripten" -P tools/buildConanThirdparty.cmake
+cmake -DEXTRA_CONAN_OPTS="conan/stable;--profile;clang" -P tools/buildConanThirdparty.cmake
 ```
 
 Change `--profile;emscripten` to valid conan profile name.
+
+Don't forget to disable some platform-specific libs!
+
+```bash
+# example (EMSCRIPTEN):
+cmake -DUSE_LIBEVENT=FALSE -DUSE_TCMALLOC=FALSE -DUSE_XDG_MIME=FALSE -DUSE_XDG_USER_DIRS=FALSE -DEXTRA_CONAN_OPTS="conan/stable;--profile;emscripten" -P tools/buildConanThirdparty.cmake
+```
 
 ## Add conan remotes
 
