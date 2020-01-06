@@ -1,4 +1,4 @@
-// Copyright 2014 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2014 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -448,7 +448,9 @@ UsedStyleProvider::UsedStyleProvider(
     : font_cache_(font_cache),
       animated_image_tracker_(html_element_context->animated_image_tracker()),
       image_cache_(html_element_context->image_cache()),
+#if defined(ENABLE_COBALT_SPATIAL_MESH)
       mesh_cache_(html_element_context->mesh_cache()),
+#endif // ENABLE_COBALT_SPATIAL_MESH
       attach_camera_node_function_(attach_camera_node_function),
       enable_image_animations_(enable_image_animations) {}
 
@@ -517,12 +519,18 @@ scoped_refptr<loader::image::Image> UsedStyleProvider::ResolveURLToImage(
   return image;
 }
 
+#if defined(ENABLE_COBALT_SPATIAL_MESH)
 scoped_refptr<loader::mesh::MeshProjection>
 UsedStyleProvider::ResolveURLToMeshProjection(const GURL& url) {
+#if defined(ENABLE_COBALT_SPATIAL_MESH)
   DCHECK(mesh_cache_);
   return mesh_cache_->GetOrCreateCachedResource(url, loader::Origin())
       ->TryGetResource();
+#else
+  return nullptr;
+#endif // ENABLE_COBALT_SPATIAL_MESH
 }
+#endif // ENABLE_COBALT_SPATIAL_MESH
 
 void UsedStyleProvider::UpdateAnimatedImages() {
   animated_image_tracker_->ProcessRecordedImages();

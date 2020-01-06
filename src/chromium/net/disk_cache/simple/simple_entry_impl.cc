@@ -1,4 +1,4 @@
-// Copyright (c) 2013 The Chromium Authors. All rights reserved.
+﻿// Copyright (c) 2013 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -36,7 +36,11 @@
 #include "net/disk_cache/simple/simple_util.h"
 #include "net/log/net_log.h"
 #include "net/log/net_log_source_type.h"
+#if defined(OS_EMSCRIPTEN)
+#include "zlib.h"
+#else
 #include "third_party/zlib/zlib.h"
+#endif // EMSCRIPTEN
 
 namespace disk_cache {
 namespace {

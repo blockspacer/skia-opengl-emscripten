@@ -1,4 +1,4 @@
-// Copyright 2015 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2015 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -176,7 +176,9 @@ class Window : public EventTarget,
       loader::image::ReducedCacheCapacityManager*
           reduced_image_cache_capacity_manager,
       loader::font::RemoteTypefaceCache* remote_typeface_cache,
+#if defined(ENABLE_COBALT_SPATIAL_MESH)
       loader::mesh::MeshCache* mesh_cache,
+#endif // ENABLE_COBALT_SPATIAL_MESH
 #if !defined(DISABLE_COBALT_STORAGE)
       LocalStorageDatabase* local_storage_database,
 #endif // !DISABLE_COBALT_STORAGE

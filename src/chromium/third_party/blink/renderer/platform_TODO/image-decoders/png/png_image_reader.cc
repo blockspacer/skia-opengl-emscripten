@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (C) 2006 Apple Computer, Inc.
  * Copyright (C) Research In Motion Limited 2009-2010. All rights reserved.
  *
@@ -43,7 +43,11 @@
 #include "third_party/blink/renderer/platform/image-decoders/fast_shared_buffer_reader.h"
 #include "third_party/blink/renderer/platform/image-decoders/png/png_image_decoder.h"
 #include "third_party/blink/renderer/platform/image-decoders/segment_reader.h"
+#if defined(OS_EMSCRIPTEN)
 #include "zlib.h"
+#else
+#include "third_party/zlib/zlib.h"
+#endif // EMSCRIPTEN
 
 namespace {
 

@@ -1,4 +1,4 @@
-// Copyright 2016 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2016 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -108,6 +108,7 @@ std::unique_ptr<Loader> LoaderFactory::CreateLinkLoader(
   return loader;
 }
 
+#if defined(ENABLE_COBALT_SPATIAL_MESH)
 // Creates a loader that fetches and decodes a Mesh.
 std::unique_ptr<Loader> LoaderFactory::CreateMeshLoader(
     const GURL& url, const Origin& origin,
@@ -136,6 +137,7 @@ std::unique_ptr<Loader> LoaderFactory::CreateMeshLoader(
   OnLoaderCreated(loader.get());
   return loader;
 }
+#endif // ENABLE_COBALT_SPATIAL_MESH
 
 std::unique_ptr<Loader> LoaderFactory::CreateScriptLoader(
     const GURL& url, const Origin& origin,

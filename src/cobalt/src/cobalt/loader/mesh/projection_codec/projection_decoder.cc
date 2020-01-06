@@ -1,4 +1,4 @@
-// Copyright 2016 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2016 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,9 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#if defined(ENABLE_COBALT_SPATIAL_MESH)
+
 #include "cobalt/loader/mesh/projection_codec/projection_decoder.h"
 
-#include <zlib.h>
+#if defined(OS_EMSCRIPTEN)
+#include "zlib.h"
+#else
+#include "third_party/zlib/zlib.h"
+#endif // EMSCRIPTEN
 
 // MSVC++ requires this to be set before any other includes to get M_PI.
 #define _USE_MATH_DEFINES
@@ -659,3 +665,5 @@ void ProjectionDecoder::DecodeMeshData() {
 }  // namespace mesh
 }  // namespace loader
 }  // namespace cobalt
+
+#endif // ENABLE_COBALT_SPATIAL_MESH

@@ -1,4 +1,4 @@
-// Copyright 2014 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2014 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -305,7 +305,7 @@ void ReplacedBox::RenderAndAnimateContent(
     // Nothing to render.
     return;
   }
-
+#if defined(ENABLE_COBALT_SPATIAL_MESH)
   const cssom::MapToMeshFunction* mtm_filter_function =
       cssom::MapToMeshFunction::ExtractFromFilterList(
           computed_style()->filter().get());
@@ -317,7 +317,9 @@ void ReplacedBox::RenderAndAnimateContent(
            "filters.";
     RenderAndAnimateContentWithMapToMesh(border_node_builder,
                                          mtm_filter_function);
-  } else {
+  } else
+#endif // ENABLE_COBALT_SPATIAL_MESH
+  {
 #if defined(FORCE_VIDEO_EXTERNAL_MESH)
     if (!*is_video_punched_out_) {
       AnimateNode::Builder animate_node_builder;
@@ -620,6 +622,7 @@ void ReplacedBox::DumpProperties(std::ostream* stream) const {
 
 #endif  // COBALT_BOX_DUMP_ENABLED
 
+#if defined(ENABLE_COBALT_SPATIAL_MESH)
 void ReplacedBox::RenderAndAnimateContentWithMapToMesh(
     CompositionNode::Builder* border_node_builder,
     const cssom::MapToMeshFunction* mtm_function) const {
@@ -734,6 +737,7 @@ void ReplacedBox::RenderAndAnimateContentWithMapToMesh(
   border_node_builder->AddChild(filter_node);
 #endif
 }
+#endif // ENABLE_COBALT_SPATIAL_MESH
 
 void ReplacedBox::RenderAndAnimateContentWithLetterboxing(
     CompositionNode::Builder* border_node_builder) const {

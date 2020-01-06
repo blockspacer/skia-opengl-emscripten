@@ -1,4 +1,4 @@
-// Copyright 2014 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2014 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -82,8 +82,10 @@ class UsedStyleProvider {
       const scoped_refptr<cssom::PropertyValue>& font_weight_refptr);
 
   scoped_refptr<loader::image::Image> ResolveURLToImage(const GURL& url);
+#if defined(ENABLE_COBALT_SPATIAL_MESH)
   scoped_refptr<loader::mesh::MeshProjection> ResolveURLToMeshProjection(
       const GURL& url);
+#endif // ENABLE_COBALT_SPATIAL_MESH
 
   const AttachCameraNodeFunction attach_camera_node_function() const {
     return attach_camera_node_function_;
@@ -104,7 +106,9 @@ class UsedStyleProvider {
   dom::FontCache* const font_cache_;
   loader::image::AnimatedImageTracker* const animated_image_tracker_;
   loader::image::ImageCache* const image_cache_;
+#if defined(ENABLE_COBALT_SPATIAL_MESH)
   loader::mesh::MeshCache* const mesh_cache_;
+#endif // ENABLE_COBALT_SPATIAL_MESH
   AttachCameraNodeFunction attach_camera_node_function_;
 
   // |font_list_key_| is retained in between lookups so that the font names

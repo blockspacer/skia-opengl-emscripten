@@ -1,4 +1,4 @@
-// Copyright 2015 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2015 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -103,9 +103,11 @@ class ReplacedBox : public Box {
       const base::Optional<LayoutUnit>& maybe_margin_right) = 0;
 
  private:
+#if defined(ENABLE_COBALT_SPATIAL_MESH)
   void RenderAndAnimateContentWithMapToMesh(
       render_tree::CompositionNode::Builder* border_node_builder,
       const cssom::MapToMeshFunction* mtm_function) const;
+#endif // ENABLE_COBALT_SPATIAL_MESH
   void RenderAndAnimateContentWithLetterboxing(
       render_tree::CompositionNode::Builder* border_node_builder) const;
 

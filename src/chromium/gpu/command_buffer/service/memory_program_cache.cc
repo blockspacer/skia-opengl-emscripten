@@ -1,4 +1,4 @@
-// Copyright (c) 2012 The Chromium Authors. All rights reserved.
+﻿// Copyright (c) 2012 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -23,7 +23,11 @@
 #include "gpu/command_buffer/service/gles2_cmd_decoder.h"
 #include "gpu/command_buffer/service/shader_manager.h"
 #include "gpu/config/gpu_preferences.h"
+#if defined(OS_EMSCRIPTEN)
+#include "zlib.h"
+#else
 #include "third_party/zlib/zlib.h"
+#endif // EMSCRIPTEN
 #include "ui/gl/gl_bindings.h"
 
 // Macro to help with logging times under 10ms.

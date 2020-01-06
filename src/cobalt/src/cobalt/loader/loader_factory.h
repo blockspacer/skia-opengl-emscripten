@@ -1,4 +1,4 @@
-// Copyright 2016 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2016 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -67,6 +67,7 @@ class LoaderFactory {
       const TextDecoder::TextAvailableCallback& link_available_callback,
       const Loader::OnCompleteFunction& load_complete_callback);
 
+#if defined(ENABLE_COBALT_SPATIAL_MESH)
   // Creates a loader that fetches and decodes a Mesh.
   std::unique_ptr<Loader> CreateMeshLoader(
       const GURL& url, const Origin& origin,
@@ -75,6 +76,7 @@ class LoaderFactory {
 #endif
       const mesh::MeshDecoder::MeshAvailableCallback& mesh_available_callback,
       const Loader::OnCompleteFunction& load_complete_callback);
+#endif // ENABLE_COBALT_SPATIAL_MESH
 
   // Creates a loader that fetches and decodes a Javascript resource.
   std::unique_ptr<Loader> CreateScriptLoader(

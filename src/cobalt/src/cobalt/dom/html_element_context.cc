@@ -1,4 +1,4 @@
-// Copyright 2015 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2015 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -40,7 +40,9 @@ HTMLElementContext::HTMLElementContext()
       image_cache_(NULL),
       reduced_image_cache_capacity_manager_(NULL),
       remote_typeface_cache_(NULL),
+#if defined(ENABLE_COBALT_SPATIAL_MESH)
       mesh_cache_(NULL),
+#endif // ENABLE_COBALT_SPATIAL_MESH
       dom_stat_tracker_(NULL),
       page_visibility_state_weak_ptr_factory_(&page_visibility_state_),
       video_playback_rate_multiplier_(1.f),
@@ -70,7 +72,10 @@ HTMLElementContext::HTMLElementContext(
     loader::image::ReducedCacheCapacityManager*
         reduced_image_cache_capacity_manager,
     loader::font::RemoteTypefaceCache* remote_typeface_cache,
-    loader::mesh::MeshCache* mesh_cache, DomStatTracker* dom_stat_tracker,
+#if defined(ENABLE_COBALT_SPATIAL_MESH)
+    loader::mesh::MeshCache* mesh_cache,
+#endif // ENABLE_COBALT_SPATIAL_MESH
+    DomStatTracker* dom_stat_tracker,
     const std::string& font_language_script,
     base::ApplicationState initial_application_state,
     base::WaitableEvent* synchronous_loader_interrupt,
@@ -96,7 +101,9 @@ HTMLElementContext::HTMLElementContext(
       reduced_image_cache_capacity_manager_(
           reduced_image_cache_capacity_manager),
       remote_typeface_cache_(remote_typeface_cache),
+#if defined(ENABLE_COBALT_SPATIAL_MESH)
       mesh_cache_(mesh_cache),
+#endif // ENABLE_COBALT_SPATIAL_MESH
       dom_stat_tracker_(dom_stat_tracker),
       font_language_script_(font_language_script),
       page_visibility_state_(initial_application_state),

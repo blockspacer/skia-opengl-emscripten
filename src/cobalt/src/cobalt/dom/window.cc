@@ -1,4 +1,4 @@
-// Copyright 2015 The Cobalt Authors. All Rights Reserved.
+﻿// Copyright 2015 The Cobalt Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -127,7 +127,9 @@ Window::Window(
     loader::image::ReducedCacheCapacityManager*
         reduced_image_cache_capacity_manager,
     loader::font::RemoteTypefaceCache* remote_typeface_cache,
+#if defined(ENABLE_COBALT_SPATIAL_MESH)
     loader::mesh::MeshCache* mesh_cache,
+#endif // ENABLE_COBALT_SPATIAL_MESH
 #if !defined(DISABLE_COBALT_STORAGE)
     LocalStorageDatabase* local_storage_database,
 #endif // !DISABLE_COBALT_STORAGE
@@ -211,7 +213,10 @@ Window::Window(
           resource_provider,
           animated_image_tracker, image_cache,
           reduced_image_cache_capacity_manager, remote_typeface_cache,
-          mesh_cache, dom_stat_tracker, font_language_script,
+#if defined(ENABLE_COBALT_SPATIAL_MESH)
+          mesh_cache,
+#endif // ENABLE_COBALT_SPATIAL_MESH
+          dom_stat_tracker, font_language_script,
           initial_application_state, synchronous_loader_interrupt,
           video_playback_rate_multiplier)),
       performance_(performance),

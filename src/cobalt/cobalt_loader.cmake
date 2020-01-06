@@ -162,16 +162,20 @@ if(NOT DEFINED cobalt_starboard_headers_only_LIB)
   message(FATAL_ERROR "NOT DEFINED: cobalt_starboard_headers_only_LIB")
 endif(NOT DEFINED cobalt_starboard_headers_only_LIB)
 
-target_link_libraries(cobalt_loader PUBLIC
-  ${cobalt_starboard_LIB} # TODO
-  ${cobalt_starboard_headers_only_LIB}
-)
-
-if(NOT USE_SYSTEM_ZLIB)
+if(NOT DEFINED USE_SYSTEM_ZLIB)
+  message(FATAL_ERROR "USE_SYSTEM_ZLIB must be defined")
+endif(NOT DEFINED USE_SYSTEM_ZLIB)
+if(NOT TARGET_EMSCRIPTEN)
   if(NOT DEFINED zlib_LIB)
     message(FATAL_ERROR "zlib_LIB must be defined")
   endif(NOT DEFINED zlib_LIB)
-endif(NOT USE_SYSTEM_ZLIB)
+endif(NOT TARGET_EMSCRIPTEN)
+
+target_link_libraries(cobalt_loader PUBLIC
+  ${cobalt_starboard_LIB} # TODO
+  ${cobalt_starboard_headers_only_LIB}
+  ${zlib_LIB}
+)
 
 target_link_libraries(cobalt_loader PRIVATE
   ${cobalt_base_LIB}
@@ -196,7 +200,6 @@ target_link_libraries(cobalt_loader PRIVATE
   ${libpng_LIB}
   #${iccjpeg_LIB}
   #SKIA
-  ${zlib_LIB}
 )
 
 set_property(TARGET cobalt_loader PROPERTY CXX_STANDARD 17)

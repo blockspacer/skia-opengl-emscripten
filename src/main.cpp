@@ -887,8 +887,10 @@ class CobaltTester {
   // from URLs.
   std::unique_ptr<loader::font::RemoteTypefaceCache> remote_typeface_cache_;
 
+#if defined(ENABLE_COBALT_SPATIAL_MESH)
   // MeshCache that is used to manage mesh cache logic.
   std::unique_ptr<loader::mesh::MeshCache> mesh_cache_;
+#endif // ENABLE_COBALT_SPATIAL_MESH
 
   // Interface between LocalStorage and the Storage Manager.
 #if !defined(DISABLE_COBALT_STORAGE)
@@ -1941,11 +1943,13 @@ CobaltTester::CobaltTester()
       loader_factory_.get());
   DCHECK(remote_typeface_cache_);
 
+#if defined(ENABLE_COBALT_SPATIAL_MESH)
   mesh_cache_ = loader::mesh::CreateMeshCache(
       base::StringPrintf("%s.MeshCache", "name_.c_str()"),
       static_cast<uint32>(1024/*data.options.mesh_cache_capacity*/),
       loader_factory_.get());
   DCHECK(mesh_cache_);
+#endif // ENABLE_COBALT_SPATIAL_MESH
 
    P_LOG("Create html_element_context_...\n");
    html_element_context_.reset(new cobalt::dom::HTMLElementContext(
@@ -1966,7 +1970,10 @@ CobaltTester::CobaltTester()
         &resource_provider_,
         animated_image_tracker_.get(), image_cache_.get(),
         reduced_image_cache_capacity_manager_.get(), remote_typeface_cache_.get(),
-        mesh_cache_.get(), dom_stat_tracker_.get(),
+#if defined(ENABLE_COBALT_SPATIAL_MESH)
+        mesh_cache_.get(),
+#endif // ENABLE_COBALT_SPATIAL_MESH
+        dom_stat_tracker_.get(),
         "en_US", //"font_language_script",
         base::kApplicationStateStarted,
         &synchronous_loader_interrupt_));
@@ -2059,7 +2066,9 @@ CobaltTester::CobaltTester()
       image_cache_.get(),
       reduced_image_cache_capacity_manager_.get(),
       remote_typeface_cache_.get(),
+#if defined(ENABLE_COBALT_SPATIAL_MESH)
       mesh_cache_.get(),
+#endif // ENABLE_COBALT_SPATIAL_MESH
 #if !defined(DISABLE_COBALT_STORAGE)
       local_storage_database_.get(),
 #endif // !DISABLE_COBALT_STORAGE

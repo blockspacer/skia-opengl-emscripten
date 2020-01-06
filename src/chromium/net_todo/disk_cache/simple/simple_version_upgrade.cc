@@ -1,4 +1,4 @@
-// Copyright 2013 The Chromium Authors. All rights reserved.
+﻿// Copyright 2013 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -15,7 +15,11 @@
 #include "base/pickle.h"
 #include "net/disk_cache/simple/simple_backend_version.h"
 #include "net/disk_cache/simple/simple_entry_format_history.h"
+#if defined(OS_EMSCRIPTEN)
+#include "zlib.h"
+#else
 #include "third_party/zlib/zlib.h"
+#endif // EMSCRIPTEN
 
 namespace {
 
