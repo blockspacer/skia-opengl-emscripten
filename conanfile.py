@@ -1,4 +1,4 @@
-﻿from conans import ConanFile, CMake, tools
+﻿from conans import ConanFile, CMake, tools, python_requires
 import traceback
 import os
 import shutil
@@ -17,7 +17,9 @@ import shutil
 # package(),
 # package_info()
 
-class skg_conan_project(ConanFile):
+conan_build_helper = python_requires("conan_build_helper/[~=0.0]@conan/stable")
+
+class skg_conan_project(conan_build_helper.CMakePackage):
     name = "skg"
 
     # Indicates License type of the packaged library
@@ -130,20 +132,15 @@ class skg_conan_project(ConanFile):
         if self.options.shared:
             cmake.definitions["BUILD_SHARED_LIBS"] = "ON"
 
-        def add_cmake_option(var_name, value):
-            value_str = "{}".format(value)
-            var_value = "ON" if value_str == 'True' else "OFF" if value_str == 'False' else value_str
-            cmake.definitions[var_name] = var_value
+        self.add_cmake_option(cmake, "ENABLE_SANITIZERS", self.options.enable_sanitizers)
 
-        add_cmake_option("ENABLE_SANITIZERS", self.options.enable_sanitizers)
+        self.add_cmake_option(cmake, "ENABLE_TESTS", self.options.enable_tests)
 
-        add_cmake_option("ENABLE_TESTS", self.options.enable_tests)
+        self.add_cmake_option(cmake, "USE_SYSTEM_ZLIB", self.options.use_system_zlib)
 
-        add_cmake_option("USE_SYSTEM_ZLIB", self.options.use_system_zlib)
+        self.add_cmake_option(cmake, "ENABLE_COBALT", self.options.enable_cobalt)
 
-        add_cmake_option("ENABLE_COBALT", self.options.enable_cobalt)
-
-        add_cmake_option("ENABLE_WEB_PTHREADS", self.options.enable_web_pthreads)
+        self.add_cmake_option(cmake, "ENABLE_WEB_PTHREADS", self.options.enable_web_pthreads)
 
         cmake.configure(build_folder=self._build_subfolder)
 

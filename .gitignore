@@ -66,6 +66,7 @@ CMakeCache.txt*
 cmake_install.cmake*
 /out*
 build-*/
+local_build
 thirdparty/icu_wrapper/third_party/icu/build*
 *.tmp
 thirdparty/SDL2/
