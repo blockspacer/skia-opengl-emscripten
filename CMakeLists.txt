@@ -13,7 +13,9 @@ project(${PROJECT_NAME}
 
 # Conan package manager List of packages used by the project is container in
 # conanfile.py
-option(CONAN_AUTO_INSTALL "Let CMake call conan install automatically" OFF)
+option(CONAN_AUTO_INSTALL "Let CMake call conan install automatically"
+  OFF
+)
 if (CONAN_AUTO_INSTALL)
   set(CONAN_PROFILE
       "default"
